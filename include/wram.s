@@ -2916,6 +2916,7 @@ wRoomLayoutEnd: ; $cfc0
 	; this is used in Seasons for the puzzle where you kill armos in order?)
 	killedArmosPositions:
 		dsb $10
+
 .endu
 .endu
 

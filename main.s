@@ -128274,170 +128274,247 @@ _thwomp_updateLinkRidingSelf:
 	ld (wLinkRidingObject),a		; $67f9
 	ret			; $67fc
 
-;;
-; @addr{67fd}
+
+; ==============================================================================
+; ENEMYID_VERAN_SPIDER
+; ==============================================================================
 enemyCode0f:
 	ld b,a			; $67fd
-	ld a,($cfd0)		; $67fe
+
+	; Kill spiders when a cutscene trigger occurs
+	ld a,(wTmpcfc0.genericCutscene.cfd0)		; $67fe
 	or a			; $6801
 	ld a,b			; $6802
-	jr z,_label_266	; $6803
-	ld a,$03		; $6805
-_label_266:
+	jr z,+			; $6803
+	ld a,ENEMYSTATUS_NO_HEALTH		; $6805
++
 	or a			; $6807
-	jr z,_label_267	; $6808
-	sub $03			; $680a
+	jr z,@normalStatus			; $6808
+	sub ENEMYSTATUS_NO_HEALTH			; $680a
 	ret c			; $680c
 	jp z,enemyDie		; $680d
 	dec a			; $6810
 	jp nz,_ecom_updateKnockback		; $6811
 	ret			; $6814
-_label_267:
+
+@normalStatus:
 	call _ecom_checkScentSeedActive		; $6815
-	jr z,_label_268	; $6818
-	ld e,$90		; $681a
-	ld a,$32		; $681c
+	jr z,++			; $6818
+	ld e,Enemy.speed		; $681a
+	ld a,SPEED_140		; $681c
 	ld (de),a		; $681e
-_label_268:
-	ld e,$84		; $681f
+++
+	ld e,Enemy.state		; $681f
 	ld a,(de)		; $6821
 	rst_jumpTable			; $6822
-.dw $6839
-.dw $68ad
-.dw $68ad
-.dw $6870
-.dw $6881
-.dw _ecom_blownByGaleSeedState
-.dw $68ad
-.dw $68ad
-.dw $68ae
-.dw $68cc
-.dw $6900
+	.dw _veranSpider_state_uninitialized
+	.dw _veranSpider_state_stub
+	.dw _veranSpider_state_stub
+	.dw _veranSpider_state_switchHook
+	.dw _veranSpider_state_scentSeed
+	.dw _ecom_blownByGaleSeedState
+	.dw _veranSpider_state_stub
+	.dw _veranSpider_state_stub
+	.dw _veranSpider_state8
+	.dw _veranSpider_state9
+	.dw _veranSpider_stateA
+
+
+_veranSpider_state_uninitialized:
 	ld a,PALH_8a		; $6839
 	call loadPaletteHeader		; $683b
-_label_269:
+
+	; Choose a random position roughly within the current screen bounds to spawn the
+	; spider at. This prevents the spider from spawning off-screen. But, the width is
+	; only checked properly in the last row; if this were spawned in a small room, the
+	; spiders could spawn off-screen. (Large rooms aren't a problem since there is no
+	; off-screen area to the right, aside from one column, which is marked as solid.)
+--
 	call getRandomNumber		; $683e
 	and $7f			; $6841
-	cp $7a			; $6843
-	jr nc,_label_269	; $6845
+	cp $70 + SCREEN_WIDTH			; $6843
+	jr nc,--		; $6845
+
 	ld c,a			; $6847
 	call objectSetShortPosition		; $6848
+
+	; Adjust position to be relative to screen bounds
 	ldh a,(<hCameraX)	; $684b
 	add (hl)		; $684d
 	ldd (hl),a		; $684e
 	ld c,a			; $684f
+
 	dec l			; $6850
 	ldh a,(<hCameraY)	; $6851
 	add (hl)		; $6853
 	ld (hl),a		; $6854
 	ld b,a			; $6855
+
+	; If solid at this position, try again next frame.
 	call getTileCollisionsAtPosition		; $6856
 	ret nz			; $6859
+
 	ld c,$08		; $685a
 	call _ecom_setZAboveScreen		; $685c
-	ld a,$0f		; $685f
+	ld a,SPEED_60		; $685f
 	call _ecom_setSpeedAndState8		; $6861
-	ld l,$a4		; $6864
+
+	ld l,Enemy.collisionType		; $6864
 	set 7,(hl)		; $6866
+
 	ld a,SND_FALLINHOLE		; $6868
 	call playSound		; $686a
 	jp objectSetVisiblec1		; $686d
+
+
+_veranSpider_state_switchHook:
 	inc e			; $6870
 	ld a,(de)		; $6871
 	rst_jumpTable			; $6872
-.dw _ecom_incState2
-.dw $687b
-.dw $687b
-.dw $687c
+	.dw _ecom_incState2
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+
+@substate1:
+@substate2:
 	ret			; $687b
+
+@substate3:
 	ld b,$09		; $687c
 	jp _ecom_fallToGroundAndSetState		; $687e
+
+
+_veranSpider_state_scentSeed:
 	ld a,(wScentSeedActive)		; $6881
 	or a			; $6884
-	jr z,_label_271	; $6885
+	jr z,_veranSpider_gotoState9	; $6885
+
 	call _ecom_updateAngleToScentSeed		; $6887
-	ld e,$89		; $688a
+	ld e,Enemy.angle		; $688a
 	ld a,(de)		; $688c
 	and $18			; $688d
 	add $04			; $688f
 	ld (de),a		; $6891
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $6892
+
+
+;;
+; @addr{6895}
+_veranSpider_updateAnimation:
 	ld h,d			; $6895
-	ld l,$a0		; $6896
+	ld l,Enemy.animCounter		; $6896
 	ld a,(hl)		; $6898
 	sub $03			; $6899
-	jr nc,_label_270	; $689b
+	jr nc,+			; $689b
 	xor a			; $689d
-_label_270:
++
 	inc a			; $689e
 	ld (hl),a		; $689f
 	jp enemyAnimate		; $68a0
-_label_271:
+
+;;
+; @addr{68a3}
+_veranSpider_gotoState9:
 	ld h,d			; $68a3
-	ld l,$84		; $68a4
+	ld l,Enemy.state		; $68a4
 	ld (hl),$09		; $68a6
-	ld l,$90		; $68a8
-	ld (hl),$0f		; $68aa
+	ld l,Enemy.speed		; $68a8
+	ld (hl),SPEED_60		; $68aa
 	ret			; $68ac
+
+
+_veranSpider_state_stub:
 	ret			; $68ad
+
+
+; Falling from sky
+_veranSpider_state8:
 	ld c,$0e		; $68ae
 	call objectUpdateSpeedZ_paramC		; $68b0
 	ret nz			; $68b3
-	ld l,$94		; $68b4
+
+	; Landed on ground
+	ld l,Enemy.speedZ		; $68b4
 	ldi (hl),a		; $68b6
 	ld (hl),a		; $68b7
-	ld l,$84		; $68b8
+
+	ld l,Enemy.state		; $68b8
 	inc (hl)		; $68ba
-	ld l,$bf		; $68bb
+
+	; Enable scent seeds
+	ld l,Enemy.var3f		; $68bb
 	set 4,(hl)		; $68bd
+
 	call objectSetVisiblec2		; $68bf
 	ld a,SND_BOMB_LAND		; $68c2
 	call playSound		; $68c4
-	call $6912		; $68c7
-	jr _label_273		; $68ca
+
+	call _veranSpider_setRandomAngleAndCounter1		; $68c7
+	jr _veranSpider_animate		; $68ca
+
+
+; Moving in some direction for [counter1] frames
+_veranSpider_state9:
+	; Check if Link is along a diagonal relative to self?
 	call objectGetAngleTowardEnemyTarget		; $68cc
 	and $07			; $68cf
 	sub $04			; $68d1
 	inc a			; $68d3
 	cp $03			; $68d4
-	jr nc,_label_272	; $68d6
-	ld e,$87		; $68d8
+	jr nc,@moveNormally	; $68d6
+
+	; He is on a diagonal; if counter2 is zero, go to state $0a (charge at Link).
+	ld e,Enemy.counter2		; $68d8
 	ld a,(de)		; $68da
 	or a			; $68db
-	jr nz,_label_272	; $68dc
+	jr nz,@moveNormally	; $68dc
+
 	call _ecom_updateAngleTowardTarget		; $68de
 	and $18			; $68e1
 	add $04			; $68e3
 	ld (de),a		; $68e5
+
 	call _ecom_incState		; $68e6
-	ld l,$90		; $68e9
-	ld (hl),$32		; $68eb
-	ld l,$86		; $68ed
-	ld (hl),$78		; $68ef
+	ld l,Enemy.speed		; $68e9
+	ld (hl),SPEED_140		; $68eb
+	ld l,Enemy.counter1		; $68ed
+	ld (hl),120		; $68ef
 	ret			; $68f1
-_label_272:
+
+@moveNormally:
 	call _ecom_decCounter2		; $68f2
 	dec l			; $68f5
-	dec (hl)		; $68f6
+	dec (hl) ; [counter1]--
 	call nz,_ecom_applyVelocityForSideviewEnemyNoHoles		; $68f7
-	jp z,$6912		; $68fa
-_label_273:
+	jp z,_veranSpider_setRandomAngleAndCounter1		; $68fa
+
+_veranSpider_animate:
 	jp enemyAnimate		; $68fd
+
+
+; Charging in some direction for [counter1] frames
+_veranSpider_stateA:
 	call _ecom_decCounter1		; $6900
-	jr z,_label_274	; $6903
+	jr z,++			; $6903
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $6905
-	jp nz,$6895		; $6908
-_label_274:
-	call $68a3		; $690b
-	ld l,$87		; $690e
+	jp nz,_veranSpider_updateAnimation		; $6908
+++
+	call _veranSpider_gotoState9		; $690b
+	ld l,Enemy.counter2		; $690e
 	ld (hl),$40		; $6910
+
+
+;;
+; @addr{6912}
+_veranSpider_setRandomAngleAndCounter1:
 	ld bc,$1870		; $6912
 	call _ecom_randomBitwiseAndBCE		; $6915
-	ld e,$89		; $6918
+	ld e,Enemy.angle		; $6918
 	ld a,b			; $691a
 	add $04			; $691b
 	ld (de),a		; $691d
-	ld e,$86		; $691e
+	ld e,Enemy.counter1		; $691e
 	ld a,c			; $6920
 	add $70			; $6921
 	ld (de),a		; $6923

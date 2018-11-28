@@ -71,8 +71,10 @@
 .define ENEMYID_BLADE_TRAP			$0e
 
 ;;
-; Spider that Veran spawns when fighting posessed Ambi
+; Spider that Veran spawns when fighting posessed Ambi. Spawns in a random position within
+; the screen boundary. If used in a small room, it could spawn off-screen...
 ; @palette{PALH_8a}
+; @postype{none}
 .define ENEMYID_VERAN_SPIDER			$0f
 
 ;;
@@ -249,6 +251,7 @@
 ;;
 .define ENEMYID_THWIMP				$2e
 
+;;
 .define ENEMYID_THWOMP				$2f
 
 ;;
