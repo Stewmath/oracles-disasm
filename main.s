@@ -129563,190 +129563,309 @@ enemyCode30:
 	call enemySetAnimation		; $45bf
 	jp objectSetVisiblec2		; $45c2
 
-;;
-; @addr{45c5}
+
+; ==============================================================================
+; ENEMYID_STALFOS
+; ==============================================================================
 enemyCode31:
 	call _ecom_checkHazards		; $45c5
-	jr z,_label_043	; $45c8
-	sub $03			; $45ca
+	jr z,@normalStatus	; $45c8
+	sub ENEMYSTATUS_NO_HEALTH			; $45ca
 	ret c			; $45cc
 	jp z,enemyDie		; $45cd
 	dec a			; $45d0
 	jp nz,_ecom_updateKnockbackAndCheckHazards		; $45d1
 	ret			; $45d4
-_label_043:
-	call $46f9		; $45d5
-	ld e,$84		; $45d8
+
+@normalStatus:
+	call _stalfos_checkJumpAwayFromLink		; $45d5
+	ld e,Enemy.state		; $45d8
 	ld a,(de)		; $45da
 	rst_jumpTable			; $45db
-.dw $45fe
-.dw $460f
-.dw $460f
-.dw $4603
-.dw $460f
-.dw _ecom_blownByGaleSeedState
-.dw $460f
-.dw $460f
-.dw $4610
-.dw $4629
-.dw $463e
-.dw $4654
-.dw $4672
-.dw $4679
-.dw $468b
-.dw $4692
-.dw $46a7
-	ld a,$14		; $45fe
+	.dw _stalfos_state_uninitialized
+	.dw _stalfos_state_stub
+	.dw _stalfos_state_stub
+	.dw _stalfos_state_switchHook
+	.dw _stalfos_state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw _stalfos_state_stub
+	.dw _stalfos_state_stub
+	.dw _stalfos_state08
+	.dw _stalfos_state09
+	.dw _stalfos_state0a
+	.dw _stalfos_state0b
+	.dw _stalfos_state0c
+	.dw _stalfos_state0d
+	.dw _stalfos_state0e
+	.dw _stalfos_state0f
+	.dw _stalfos_state10
+
+
+_stalfos_state_uninitialized:
+	ld a,SPEED_80		; $45fe
 	jp _ecom_setSpeedAndState8AndVisible		; $4600
+
+
+_stalfos_state_switchHook:
 	inc e			; $4603
 	ld a,(de)		; $4604
 	rst_jumpTable			; $4605
-.dw _ecom_incState2
-.dw $460e
-.dw $460e
-.dw _ecom_fallToGroundAndSetState8
+	.dw _ecom_incState2
+	.dw @substate1
+	.dw @substate2
+	.dw _ecom_fallToGroundAndSetState8
+
+@substate1:
+@substate2:
 	ret			; $460e
+
+
+_stalfos_state_stub:
 	ret			; $460f
-	call $46ce		; $4610
+
+
+; Choosing what to do next (move in a random direction, or shoot a bone an Link)
+_stalfos_state08:
+	call _stalfos_checkSubid3StompsLink		; $4610
+	; Above function call may pop its return address, ignoring everything below this
+
 	call getRandomNumber_noPreserveVars		; $4613
 	and $07			; $4616
-	jp nz,$46ab		; $4618
-	ld e,$82		; $461b
+	jp nz,_stalfos_moveInRandomAngle		; $4618
+
+	ld e,Enemy.subid		; $461b
 	ld a,(de)		; $461d
 	cp $02			; $461e
-	jp nz,$46ab		; $4620
-	ld e,$84		; $4623
+	jp nz,_stalfos_moveInRandomAngle		; $4620
+
+	; For subid 2 only, there's a 1 in 8 chance of getting here (shooting a bone at
+	; Link)
+	ld e,Enemy.state		; $4623
 	ld a,$0c		; $4625
 	ld (de),a		; $4627
 	ret			; $4628
-	call $46ce		; $4629
+
+
+; Moving in some direction for [counter1] frames
+_stalfos_state09:
+	call _stalfos_checkSubid3StompsLink		; $4629
+	; Above function call may pop its return address, ignoring everything below this
+
 	call _ecom_decCounter1		; $462c
-	jr nz,_label_044	; $462f
-	ld l,$84		; $4631
+	jr nz,++		; $462f
+	ld l,Enemy.state		; $4631
 	ld (hl),$08		; $4633
-_label_044:
+++
 	call _ecom_bounceOffWallsAndHoles		; $4635
 	call objectApplySpeed		; $4638
 	jp enemyAnimate		; $463b
-	ld bc,$fe00		; $463e
+
+
+; Just starting a jump away from Link
+_stalfos_state0a:
+	ld bc,-$200		; $463e
 	call objectSetSpeedZ		; $4641
+
 	ld l,e			; $4644
-	inc (hl)		; $4645
-	ld l,$a4		; $4646
+	inc (hl) ; [state]
+
+	; Make him invincible while he's moving upward
+	ld l,Enemy.collisionType		; $4646
 	res 7,(hl)		; $4648
-	ld l,$90		; $464a
-	ld (hl),$32		; $464c
+
+	ld l,Enemy.speed		; $464a
+	ld (hl),SPEED_140		; $464c
+
 	call _ecom_updateCardinalAngleAwayFromTarget		; $464e
-	jp $46ec		; $4651
+	jp _stalfos_beginJumpAnimation		; $4651
+
+
+; Jumping until hitting the ground
+_stalfos_state0b:
 	ld c,$20		; $4654
 	call objectUpdateSpeedZ_paramC		; $4656
-	jr z,_label_046	; $4659
-	ld a,(hl)		; $465b
+	jr z,@hitGround	; $4659
+
+	; Make him vulnerable to attack again once he starts moving down
+	ld a,(hl) ; a = [speedZ]
 	or a			; $465c
-	jr nz,_label_045	; $465d
-	ld l,$a4		; $465f
+	jr nz,++		; $465d
+	ld l,Enemy.collisionType		; $465f
 	set 7,(hl)		; $4661
-_label_045:
+++
 	jp _ecom_applyVelocityForSideviewEnemy		; $4663
-_label_046:
-	ld a,$14		; $4666
+
+@hitGround:
+	ld a,SPEED_80		; $4666
 	call _ecom_setSpeedAndState8		; $4668
 	xor a			; $466b
 	call enemySetAnimation		; $466c
 	jp objectSetVisiblec2		; $466f
-	ld b,$1c		; $4672
+
+
+; Firing a projectile, then immediately going to state 9 to keep moving
+_stalfos_state0c:
+	ld b,PARTID_STALFOS_BONE		; $4672
 	call _ecom_spawnProjectile		; $4674
-	jr _label_047		; $4677
+	jr _stalfos_moveInRandomAngle		; $4677
+
+
+; Stomping on Link
+_stalfos_state0d:
 	ld c,$20		; $4679
 	call objectUpdateSpeedZ_paramC		; $467b
+
+	; Check if he's begun moving down yet
 	ld a,(hl)		; $467e
 	or a			; $467f
 	jp nz,_ecom_applyVelocityForSideviewEnemyNoHoles		; $4680
-	ld l,$86		; $4683
+
+	; He's begun moving down. Go to next state so he freezes in the air.
+	ld l,Enemy.counter1		; $4683
 	ld (hl),$08		; $4685
-	ld l,$84		; $4687
+	ld l,Enemy.state		; $4687
 	inc (hl)		; $4689
 	ret			; $468a
+
+
+; Wait for 8 frames while hanging in the air mid-stomp
+_stalfos_state0e:
 	call _ecom_decCounter1		; $468b
 	ret nz			; $468e
 	ld l,e			; $468f
-	inc (hl)		; $4690
+	inc (hl) ; [state]
 	ret			; $4691
+
+
+; Fall down for the stomp
+_stalfos_state0f:
 	ld h,d			; $4692
-	ld l,$8f		; $4693
+	ld l,Enemy.zh		; $4693
 	ld a,(hl)		; $4695
 	add $03			; $4696
 	ld (hl),a		; $4698
 	cp $80			; $4699
 	ret nc			; $469b
+
+	; Hit the ground
 	xor a			; $469c
-	ld (hl),a		; $469d
+	ld (hl),a ; [zh] = 0
+
 	ld l,e			; $469e
-	inc (hl)		; $469f
-	ld l,$86		; $46a0
-	ld (hl),$1e		; $46a2
+	inc (hl) ; [state]
+
+	ld l,Enemy.counter1		; $46a0
+	ld (hl),30		; $46a2
 	jp objectSetVisiblec2		; $46a4
+
+
+; Laying on the ground for [counter1] frames until he starts moving again
+_stalfos_state10:
 	call _ecom_decCounter1		; $46a7
 	ret nz			; $46aa
-_label_047:
+
+
+;;
+; Go to state 9 with a freshly chosen angle
+; @addr{46ab}
+_stalfos_moveInRandomAngle:
 	ld e,$30		; $46ab
 	ld bc,$1f0f		; $46ad
 	call _ecom_randomBitwiseAndBCE		; $46b0
+
 	ld h,d			; $46b3
-	ld l,$84		; $46b4
+	ld l,Enemy.state		; $46b4
 	ld (hl),$09		; $46b6
-	ld l,$90		; $46b8
-	ld (hl),$14		; $46ba
+	ld l,Enemy.speed		; $46b8
+	ld (hl),SPEED_80		; $46ba
+
 	ld a,$20		; $46bc
 	add e			; $46be
-	ld l,$86		; $46bf
+	ld l,Enemy.counter1		; $46bf
 	ld (hl),a		; $46c1
+
+	; 1 in 16 chance of moving toward Link; otherwise, move in random direction
 	dec c			; $46c2
 	ld a,b			; $46c3
 	call z,objectGetAngleTowardEnemyTarget		; $46c4
-	ld e,$89		; $46c7
+	ld e,Enemy.angle		; $46c7
 	ld (de),a		; $46c9
 	xor a			; $46ca
 	jp enemySetAnimation		; $46cb
-	ld e,$82		; $46ce
+
+
+;;
+; For subid 3 only, if Link approaches close enough, it will jump toward Link to stomp on
+; him (goes to state $0d).
+; @addr{46ce}
+_stalfos_checkSubid3StompsLink:
+	ld e,Enemy.subid		; $46ce
 	ld a,(de)		; $46d0
 	cp $03			; $46d1
 	ret nz			; $46d3
+
 	ld c,$1c		; $46d4
 	call objectCheckLinkWithinDistance		; $46d6
 	ret nc			; $46d9
-	ld bc,$fdc0		; $46da
+
+	ld bc,-$240		; $46da
 	call objectSetSpeedZ		; $46dd
-	ld l,$84		; $46e0
+
+	ld l,Enemy.state		; $46e0
 	ld (hl),$0d		; $46e2
-	ld l,$90		; $46e4
-	ld (hl),$3c		; $46e6
-	pop hl			; $46e8
+	ld l,Enemy.speed		; $46e4
+	ld (hl),SPEED_180		; $46e6
+
+	pop hl ; Return from caller
+
 	call _ecom_updateAngleTowardTarget		; $46e9
+
+
+;;
+; @addr{46ec}
+_stalfos_beginJumpAnimation:
 	ld a,$01		; $46ec
 	call enemySetAnimation		; $46ee
 	ld a,SND_ENEMY_JUMP		; $46f1
 	call playSound		; $46f3
 	jp objectSetVisiblec1		; $46f6
-	ld e,$82		; $46f9
+
+
+;;
+; If Link is swinging something near this object, it will set its state to $0a if not
+; already jumping.
+; @addr{46f9}
+_stalfos_checkJumpAwayFromLink:
+	; Not for subid 0
+	ld e,Enemy.subid		; $46f9
 	ld a,(de)		; $46fb
 	or a			; $46fc
 	ret z			; $46fd
+
+	; Check specifically for w1WeaponItem being used?
 	ld a,(wLinkUsingItem1)		; $46fe
 	and $f0			; $4701
 	ret z			; $4703
-	ld e,$84		; $4704
+
+	ld e,Enemy.state		; $4704
 	ld a,(de)		; $4706
 	cp $0a			; $4707
 	ret nc			; $4709
+
 	ld c,$2c		; $470a
 	call objectCheckLinkWithinDistance		; $470c
 	ret nc			; $470f
-	ld e,$84		; $4710
+
+	ld e,Enemy.state		; $4710
 	ld a,$0a		; $4712
 	ld (de),a		; $4714
 	ret			; $4715
-	ld e,$84		; $4716
+
+;;
+; Unused
+; @addr{4716}
+_stalfos_setState8:
+	ld e,Enemy.state		; $4716
 	ld a,$08		; $4718
 	ld (de),a		; $471a
 	ret			; $471b

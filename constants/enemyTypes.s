@@ -275,8 +275,8 @@
 ;;
 ; @subid_00{Plain}
 ; @subid_01{Red (jumps away from you, more health)}
-; @subid_02{Orange (jumps away from you, more health, shoots bones at you)}
-; @subid_03{Green (like red?}
+; @subid_02{Orange (like red, also shoots bones at you)}
+; @subid_03{Green (like red, but doesn't shoot bones, and tries to stomp on Link)}
 .define ENEMYID_STALFOS				$31
 
 ;;

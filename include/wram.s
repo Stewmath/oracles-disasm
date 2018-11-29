@@ -1818,7 +1818,7 @@ wcc5e: ; $cc5e
 	db
 
 wLinkUsingItem1: ; $cc5f
-; This is a bitset of special item objects ($d2-$d5) which are being used?
+; This is a bitset of special item objects ($d2-$d6) which are being used?
 	db
 
 wLinkTurningDisabled: ; $cc60
