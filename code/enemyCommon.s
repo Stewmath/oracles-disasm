@@ -822,6 +822,7 @@ _ecom_bounceOffScreenBoundary:
 
 ;;
 ; ANDs 'b', 'c', and 'e' with random values.
+; @param[out]	a	Zero
 ; @addr{434f}
 _ecom_randomBitwiseAndBCE:
 	push bc			; $434f

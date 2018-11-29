@@ -129870,195 +129870,278 @@ _stalfos_setState8:
 	ld (de),a		; $471a
 	ret			; $471b
 
-;;
-; @addr{471c}
+
+; ==============================================================================
+; ENEMYID_KEESE
+;
+; Variables (for subid 1 only, the one that moves as Link approaches):
+;   var30: Amount to add to angle each frame. (Clockwise or counterclockwise turning)
+; ==============================================================================
 enemyCode32:
-	jr z,_label_048	; $471c
-	sub $03			; $471e
+	jr z,@normalStatus	; $471c
+	sub ENEMYSTATUS_NO_HEALTH			; $471e
 	ret c			; $4720
 	jp z,enemyDie		; $4721
 	dec a			; $4724
 	jp nz,_ecom_updateKnockbackNoSolidity		; $4725
 	ret			; $4728
-_label_048:
-	call _ecom_getSubidAndCpStateTo08		; $4729
-	jr nc,_label_049	; $472c
-	rst_jumpTable			; $472e
-.dw $4745
-.dw $474e
-.dw $474e
-.dw $474e
-.dw $474e
-.dw _ecom_blownByGaleSeedState
-.dw $474e
-.dw $474e
 
-_label_049:
+@normalStatus:
+	call _ecom_getSubidAndCpStateTo08		; $4729
+	jr nc,@normalState	; $472c
+	rst_jumpTable			; $472e
+	.dw _keese_state_uninitialized
+	.dw _keese_state_stub
+	.dw _keese_state_stub
+	.dw _keese_state_stub
+	.dw _keese_state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw _keese_state_stub
+	.dw _keese_state_stub
+
+@normalState:
 	ld a,b			; $473f
 	rst_jumpTable			; $4740
-.dw $474f
-.dw $47ca
+	.dw _keese_subid00
+	.dw _keese_subid01
+
+
+_keese_state_uninitialized:
 	call _ecom_setSpeedAndState8		; $4745
-	call $4851		; $4748
+	call _keese_initializeSubid		; $4748
 	jp objectSetVisible82		; $474b
+
+
+_keese_state_stub:
 	ret			; $474e
+
+
+_keese_subid00:
 	ld a,(de)		; $474f
 	sub $08			; $4750
 	rst_jumpTable			; $4752
-.dw $4759
-.dw $477a
-.dw $47a0
+	.dw _keese_subid00_state8
+	.dw _keese_subid00_state9
+	.dw _keese_subid00_stateA
+
+
+; Resting for [counter1] frames
+_keese_subid00_state8:
 	call _ecom_decCounter1		; $4759
 	ret nz			; $475c
+
+	; Choose random angle and counter1
 	ld bc,$1f3f		; $475d
 	call _ecom_randomBitwiseAndBCE		; $4760
 	call _ecom_incState		; $4763
-	ld l,$89		; $4766
+
+	ld l,Enemy.angle		; $4766
 	ld (hl),b		; $4768
-	ld l,$90		; $4769
-	ld (hl),$1e		; $476b
+	ld l,Enemy.speed		; $4769
+	ld (hl),SPEED_c0		; $476b
+
 	ld a,$c0		; $476d
 	add c			; $476f
-	ld l,$86		; $4770
+	ld l,Enemy.counter1		; $4770
 	ld (hl),a		; $4772
+
 	ld a,$01		; $4773
 	call enemySetAnimation		; $4775
-	jr _label_051		; $4778
+	jr _keese_animate		; $4778
+
+
+; Moving in some direction for [counter1] frames
+_keese_subid00_state9:
 	call objectApplySpeed		; $477a
 	call _ecom_bounceOffScreenBoundary		; $477d
 	ld a,(wFrameCounter)		; $4780
 	rrca			; $4783
-	jr c,_label_051	; $4784
+	jr c,_keese_animate	; $4784
+
 	call _ecom_decCounter1		; $4786
-	jr z,_label_050	; $4789
+	jr z,@timeToStop			; $4789
+
+	; 1 in 16 chance, per frame, of randomly choosing a new angle to move in
 	ld bc,$0f1f		; $478b
 	call _ecom_randomBitwiseAndBCE		; $478e
 	or b			; $4791
-	jr nz,_label_051	; $4792
-	ld e,$89		; $4794
+	jr nz,_keese_animate	; $4792
+
+	ld e,Enemy.angle		; $4794
 	ld a,c			; $4796
 	ld (de),a		; $4797
-	jr _label_051		; $4798
-_label_050:
-	ld l,$84		; $479a
+	jr _keese_animate		; $4798
+
+@timeToStop:
+	ld l,Enemy.state		; $479a
 	inc (hl)		; $479c
-_label_051:
+
+_keese_animate:
 	jp enemyAnimate		; $479d
-	ld e,$86		; $47a0
+
+
+; Decelerating until [counter1] counts up to $7f, when it stops completely.
+_keese_subid00_stateA:
+	ld e,Enemy.counter1		; $47a0
 	ld a,(de)		; $47a2
 	cp $68			; $47a3
-	jr nc,_label_052	; $47a5
+	jr nc,++		; $47a5
 	call objectApplySpeed		; $47a7
 	call _ecom_bounceOffScreenBoundary		; $47aa
-_label_052:
-	call $481c		; $47ad
+++
+	call _keese_updateDeceleration		; $47ad
 	ld h,d			; $47b0
-	ld l,$86		; $47b1
+	ld l,Enemy.counter1		; $47b1
 	inc (hl)		; $47b3
+
 	ld a,$7f		; $47b4
 	cp (hl)			; $47b6
 	ret nz			; $47b7
-	ld l,$84		; $47b8
+
+	; Full stop
+	ld l,Enemy.state		; $47b8
 	ld (hl),$08		; $47ba
+
+	; Set counter1 randomly
 	call getRandomNumber_noPreserveVars		; $47bc
 	and $7f			; $47bf
-	ld e,$86		; $47c1
+	ld e,Enemy.counter1		; $47c1
 	add $20			; $47c3
 	ld (de),a		; $47c5
 	xor a			; $47c6
 	jp enemySetAnimation		; $47c7
+
+
+_keese_subid01:
 	ld a,(de)		; $47ca
 	sub $08			; $47cb
 	rst_jumpTable			; $47cd
-.dw $47d2
-.dw $47f7
+	.dw _keese_subid01_state8
+	.dw _keese_subid02_state9
+
+
+; Waiting for Link to approach
+_keese_subid01_state8:
 	ld c,$31		; $47d2
 	call objectCheckLinkWithinDistance		; $47d4
 	ret nc			; $47d7
+
 	call _ecom_updateAngleTowardTarget		; $47d8
 	call _ecom_incState		; $47db
-	ld l,$90		; $47de
-	ld (hl),$28		; $47e0
-	ld e,$89		; $47e2
-	ld l,$b0		; $47e4
+
+	ld l,Enemy.speed		; $47de
+	ld (hl),SPEED_100		; $47e0
+
+	; Turn clockwise or counterclockwise, based on var30
+	ld e,Enemy.angle		; $47e2
+	ld l,Enemy.var30		; $47e4
 	ld a,(de)		; $47e6
 	add (hl)		; $47e7
 	and $1f			; $47e8
 	ld (de),a		; $47ea
-	ld l,$86		; $47eb
-	ld (hl),$0c		; $47ed
+
+	ld l,Enemy.counter1		; $47eb
+	ld (hl),12		; $47ed
 	inc l			; $47ef
-	ld (hl),$0c		; $47f0
+	ld (hl),12 ; [counter2]
+
 	ld a,$01		; $47f2
 	jp enemySetAnimation		; $47f4
+
+
+_keese_subid02_state9:
 	call objectApplySpeed		; $47f7
 	call _ecom_bounceOffScreenBoundary		; $47fa
 	call _ecom_decCounter1		; $47fd
-	jr nz,_label_051	; $4800
-	ld (hl),$0c		; $4802
-	ld l,$b0		; $4804
-	ld e,$89		; $4806
+	jr nz,_keese_animate	; $4800
+
+	ld (hl),12 ; [counter1]
+
+	; Turn clockwise or counterclockwise, based on var30
+	ld l,Enemy.var30		; $4804
+	ld e,Enemy.angle		; $4806
 	ld a,(de)		; $4808
 	add (hl)		; $4809
 	and $1f			; $480a
 	ld (de),a		; $480c
-	ld l,$87		; $480d
+
+	ld l,Enemy.counter2		; $480d
 	dec (hl)		; $480f
-	jr nz,_label_051	; $4810
-	ld l,$84		; $4812
+	jr nz,_keese_animate	; $4810
+
+	; Done moving.
+	ld l,Enemy.state		; $4812
 	dec (hl)		; $4814
-	call $4861		; $4815
+	call _keese_chooseWhetherToReverseTurningAngle		; $4815
 	xor a			; $4818
 	jp enemySetAnimation		; $4819
-	ld e,$86		; $481c
+
+
+;;
+; Every 16 frames (based on counter1) this updates the keese's speed as it's decelerating.
+; Also handles the animation (which slows down).
+; @addr{481c}
+_keese_updateDeceleration:
+	ld e,Enemy.counter1		; $481c
 	ld a,(de)		; $481e
 	and $0f			; $481f
-	jr nz,_label_053	; $4821
+	jr nz,++		; $4821
+
 	ld a,(de)		; $4823
 	swap a			; $4824
-	ld hl,$4841		; $4826
+	ld hl,@speeds		; $4826
 	rst_addAToHl			; $4829
 	ld a,(hl)		; $482a
-	ld e,$90		; $482b
+	ld e,Enemy.speed		; $482b
 	ld (de),a		; $482d
-_label_053:
-	ld e,$86		; $482e
+++
+	ld e,Enemy.counter1		; $482e
 	ld a,(de)		; $4830
 	and $f0			; $4831
 	swap a			; $4833
-	ld hl,$4849		; $4835
+	ld hl,@bits		; $4835
 	rst_addAToHl			; $4838
 	ld a,(wFrameCounter)		; $4839
 	and (hl)		; $483c
 	jp z,enemyAnimate		; $483d
 	ret			; $4840
-	ld e,$14		; $4841
-	ld a,(bc)		; $4843
-	ld a,(bc)		; $4844
-	dec b			; $4845
-	dec b			; $4846
-	dec b			; $4847
-	dec b			; $4848
-	nop			; $4849
-	nop			; $484a
-	ld bc,$0301		; $484b
-	inc bc			; $484e
-	rlca			; $484f
-	nop			; $4850
+
+@speeds:
+	.db SPEED_c0, SPEED_80, SPEED_40, SPEED_40, SPEED_20, SPEED_20, SPEED_20, SPEED_20
+
+@bits:
+	.db $00 $00 $01 $01 $03 $03 $07 $00
+
+
+;;
+; @addr{4851}
+_keese_initializeSubid:
 	dec b			; $4851
-	jr z,_label_054	; $4852
-	ld l,$86		; $4854
+	jr z,@subid1			; $4852
+
+@subid0:
+	; Just set how long to wait initially
+	ld l,Enemy.counter1		; $4854
 	ld (hl),$20		; $4856
 	ret			; $4858
-_label_054:
-	ld l,$8f		; $4859
+
+@subid1:
+	ld l,Enemy.zh		; $4859
 	ld (hl),$ff		; $485b
-	ld l,$b0		; $485d
+
+	ld l,Enemy.var30		; $485d
 	ld (hl),$02		; $485f
+
+;;
+; For subid 1 only, this has a 1 in 4 chance of deciding to reverse the turning angle
+; (clockwise or counterclockwise).
+; @addr{4861}
+_keese_chooseWhetherToReverseTurningAngle:
 	call getRandomNumber_noPreserveVars		; $4861
 	and $03			; $4864
 	ret nz			; $4866
-	ld e,$b0		; $4867
+
+	ld e,Enemy.var30		; $4867
 	ld a,(de)		; $4869
 	cpl			; $486a
 	inc a			; $486b

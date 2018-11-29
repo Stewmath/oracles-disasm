@@ -281,6 +281,8 @@
 
 ;;
 ; Goddamned annoying bat enemy
+; @subid_00{Moves all the time}
+; @subid_01{Only moves when Link approaches, moves in circular patterns}
 .define ENEMYID_KEESE				$32
 
 ;;
