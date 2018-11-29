@@ -171,6 +171,10 @@
 
 ;;
 ; Something that flies at you then despawns when off-screen. (Missing palette?)
+; TODO: what is this?
+; @subid_00{Moves down}
+; @subid_01{Moves down-left}
+; @subid_02{Moves up-right}
 .define ENEMYID_1f				$1f
 
 ;;

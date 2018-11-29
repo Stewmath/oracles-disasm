@@ -129167,64 +129167,84 @@ _ironMask_chooseAmountOfTimeToStand:
 @counter1Vals:
 	.db 15 30 45 60
 
-;;
-; @addr{6c4c}
+
+; ==============================================================================
+; ENEMYID_1f
+; ==============================================================================
 enemyCode1f:
-	jr z,_label_294	; $6c4c
-	sub $03			; $6c4e
+	jr z,@normalStatus	; $6c4c
+	sub ENEMYSTATUS_NO_HEALTH			; $6c4e
 	ret c			; $6c50
 	jp z,enemyDie		; $6c51
 	dec a			; $6c54
 	jp nz,_ecom_updateKnockbackNoSolidity		; $6c55
 	ret			; $6c58
-_label_294:
-	ld e,$84		; $6c59
+
+@normalStatus:
+	ld e,Enemy.state		; $6c59
 	ld a,(de)		; $6c5b
 	rst_jumpTable			; $6c5c
-.dw $6c73
-.dw $6c8d
-.dw $6c8d
-.dw $6c8d
-.dw $6c8d
-.dw _ecom_blownByGaleSeedState
-.dw $6c8d
-.dw $6c8d
-.dw $6c8e
-.dw $6c9f
-.dw $6ca9
-	ld a,$50		; $6c73
+	.dw @state_uninitialized
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state8
+	.dw @state9
+	.dw @stateA
+
+
+@state_uninitialized:
+	ld a,SPEED_200		; $6c73
 	call _ecom_setSpeedAndState8		; $6c75
-	ld l,$86		; $6c78
+	ld l,Enemy.counter1		; $6c78
 	ld (hl),$10		; $6c7a
-	ld e,$82		; $6c7c
+
+	ld e,Enemy.subid		; $6c7c
 	ld a,(de)		; $6c7e
-	ld hl,$6c8a		; $6c7f
+	ld hl,@angleVals		; $6c7f
 	rst_addAToHl			; $6c82
-	ld e,$89		; $6c83
+	ld e,Enemy.angle		; $6c83
 	ld a,(hl)		; $6c85
 	ld (de),a		; $6c86
 	jp objectSetVisible83		; $6c87
-	stop			; $6c8a
-	ld d,$0a		; $6c8b
+
+@angleVals:
+	.db $10 $16 $0a
+
+
+@state_stub:
 	ret			; $6c8d
+
+
+@state8:
 	call _ecom_decCounter1		; $6c8e
-	jr z,_label_296	; $6c91
+	jr z,++			; $6c91
 	call objectApplySpeed		; $6c93
-	jr _label_297		; $6c96
-_label_296:
-	ld (hl),$0c		; $6c98
+	jr @animate		; $6c96
+++
+	ld (hl),$0c ; [counter1]
 	ld l,e			; $6c9a
-	inc (hl)		; $6c9b
-_label_297:
+	inc (hl) ; [state]
+@animate:
 	jp enemyAnimate		; $6c9c
+
+
+@state9:
 	call _ecom_decCounter1		; $6c9f
-	jr nz,_label_297	; $6ca2
+	jr nz,@animate	; $6ca2
 	ld l,e			; $6ca4
-	inc (hl)		; $6ca5
+	inc (hl) ; [state]
 	call _ecom_updateAngleTowardTarget		; $6ca6
+
+
+@stateA:
 	call objectApplySpeed		; $6ca9
 	call objectCheckWithinRoomBoundary		; $6cac
-	jr c,_label_297	; $6caf
+	jr c,@animate	; $6caf
 	call decNumEnemies		; $6cb1
 	jp enemyDelete		; $6cb4
 
