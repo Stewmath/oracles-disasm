@@ -11,6 +11,7 @@
 .include "constants/globalFlags.s"
 .include "constants/hardware.s"
 .include "constants/interactionTypes.s"
+.include "constants/itemDrops.s"
 .include "constants/itemTypes.s"
 .include "constants/linkAnimations.s"
 .include "constants/linkStates.s"

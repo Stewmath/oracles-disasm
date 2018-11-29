@@ -60648,7 +60648,7 @@ func_483d:
 	call getFreePartSlot		; $4843
 	jr nz,@done		; $4846
 
-	ld (hl),PARTID_FAIRY	; $4848
+	ld (hl),PARTID_ITEM_DROP	; $4848
 	inc l			; $484a
 	ld (hl),c		; $484b
 	ld l,Part.yh		; $484c
@@ -123229,7 +123229,7 @@ _spark_stateA:
 	ld e,Enemy.id		; $50ef
 	ld a,(de)		; $50f1
 	cp ENEMYID_SPARK			; $50f2
-	ld b,PARTID_FAIRY		; $50f4
+	ld b,PARTID_ITEM_DROP		; $50f4
 	call z,_ecom_spawnProjectile		; $50f6
 	jp enemyDelete		; $50f9
 
@@ -129248,77 +129248,109 @@ enemyCode1f:
 	call decNumEnemies		; $6cb1
 	jp enemyDelete		; $6cb4
 
-;;
-; @addr{6cb7}
+
+; ==============================================================================
+; ENEMYID_ANGER_FISH_BUBBLE
+; ==============================================================================
 enemyCode26:
-	jr z,_label_298	; $6cb7
-	sub $03			; $6cb9
+	jr z,@normalStatus	; $6cb7
+	sub ENEMYSTATUS_NO_HEALTH			; $6cb9
 	ret c			; $6cbb
-	call $6d06		; $6cbc
-_label_298:
-	ld e,$84		; $6cbf
+	call @popBubble		; $6cbc
+
+@normalStatus:
+	ld e,Enemy.state		; $6cbf
 	ld a,(de)		; $6cc1
 	rst_jumpTable			; $6cc2
-.dw $6cc9
-.dw $6cec
-.dw $6d37
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+
+; Initialization
+@state0:
 	ld h,d			; $6cc9
 	ld l,e			; $6cca
-	inc (hl)		; $6ccb
-	ld l,$86		; $6ccc
+	inc (hl) ; [state]
+
+	; Can bounce off walls 5 times before popping
+	ld l,Enemy.counter1		; $6ccc
 	ld (hl),$05		; $6cce
-	ld l,$90		; $6cd0
-	ld (hl),$28		; $6cd2
-	ld a,$08		; $6cd4
+
+	ld l,Enemy.speed		; $6cd0
+	ld (hl),SPEED_100		; $6cd2
+
+	ld a,Object.direction		; $6cd4
 	call objectGetRelatedObject1Var		; $6cd6
 	bit 0,(hl)		; $6cd9
 	ld c,$f4		; $6cdb
-	jr z,_label_299	; $6cdd
+	jr z,+			; $6cdd
 	ld c,$0c		; $6cdf
-_label_299:
++
 	ld b,$00		; $6ce1
 	call objectTakePositionWithOffset		; $6ce3
 	call _ecom_updateAngleTowardTarget		; $6ce6
 	jp objectSetVisible81		; $6ce9
-	ld a,$01		; $6cec
+
+
+; Bubble moving around
+@state1:
+	ld a,Object.id		; $6cec
 	call objectGetRelatedObject1Var		; $6cee
 	ld a,(hl)		; $6cf1
-	cp $76			; $6cf2
-	jr nz,_label_301	; $6cf4
+	cp ENEMYID_ANGLER_FISH			; $6cf2
+	jr nz,@popBubble	; $6cf4
+
 	call objectApplySpeed		; $6cf6
 	call _ecom_bounceOffWallsAndHoles		; $6cf9
-	jr z,_label_300	; $6cfc
+	jr z,@animate	; $6cfc
+
+	; Each time it bounces off a wall, decrement counter1
 	call _ecom_decCounter1		; $6cfe
-	jr z,_label_301	; $6d01
-_label_300:
+	jr z,@popBubble	; $6d01
+
+@animate:
 	jp enemyAnimate		; $6d03
-_label_301:
+
+@popBubble:
 	ld h,d			; $6d06
-	ld l,$84		; $6d07
+	ld l,Enemy.state		; $6d07
 	ld (hl),$02		; $6d09
-	ld l,$86		; $6d0b
+
+	ld l,Enemy.counter1		; $6d0b
 	ld (hl),$08		; $6d0d
-	ld l,$a4		; $6d0f
+
+	ld l,Enemy.collisionType		; $6d0f
 	res 7,(hl)		; $6d11
-	ld l,$ad		; $6d13
+
+	ld l,Enemy.knockbackCounter		; $6d13
 	ld (hl),$00		; $6d15
+
+	; 1 in 4 chance of item drop
 	call getRandomNumber_noPreserveVars		; $6d17
 	cp $40			; $6d1a
-	jr nc,_label_302	; $6d1c
+	jr nc,++		; $6d1c
+
 	call getFreePartSlot		; $6d1e
-	jr nz,_label_302	; $6d21
-	ld (hl),$01		; $6d23
+	jr nz,++		; $6d21
+	ld (hl),PARTID_ITEM_DROP		; $6d23
 	inc l			; $6d25
-	ld (hl),$06		; $6d26
-	ld l,$eb		; $6d28
+	ld (hl),ITEM_DROP_SCENT_SEEDS		; $6d26
+
+	ld l,Part.invincibilityCounter		; $6d28
 	ld (hl),$f0		; $6d2a
 	call objectCopyPosition		; $6d2c
-_label_302:
+++
+	; Bubble pop animation
 	ld a,$01		; $6d2f
 	call enemySetAnimation		; $6d31
 	jp objectSetVisible83		; $6d34
+
+
+; Bubble in the process of popping
+@state2:
 	call _ecom_decCounter1		; $6d37
-	jr nz,_label_300	; $6d3a
+	jr nz,@animate	; $6d3a
 	jp enemyDelete		; $6d3c
 
 ;;

@@ -1,4 +1,17 @@
-.define PARTID_FAIRY	 			$01
+;;
+; Subids correspond to "constants/itemDrops.s".
+; @subid_00{Fairy}
+; @subid_01{Heart}
+; @subid_02{1 Rupee}
+; @subid_03{5 Rupees}
+; @subid_04{Bombs}
+; @subid_05{Ember}
+; @subid_06{Scent seeds}
+; @subid_07{Pegasus seeds}
+; @subid_08{Gale seeds}
+; @subid_09{Mystery seeds}
+.define PARTID_ITEM_DROP 			$01
+
 .define PARTID_ENEMY_DESTROYED	 		$02
 .define PARTID_ORB				$03 ; Orb that toggles raisable blocks
 

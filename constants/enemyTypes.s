@@ -211,8 +211,8 @@
 .define ENEMYID_GOPONGA_FLOWER			$25
 
 ;;
-; ?
-.define ENEMYID_26				$26
+; This object automatically deletes itself if [relatedObj1.id] != ENEMYID_ANGLER_FISH.
+.define ENEMYID_ANGER_FISH_BUBBLE		$26
 
 ;;
 ; Deku scrub that shoots seeds at you. His "bush" graphic (ENEMYID_BUSH_OR_ROCK) only
@@ -455,7 +455,8 @@
 .define ENEMYID_BUSH_OR_ROCK			$58
 
 ;;
-; Invisible object
+; Invisible object. This is made whenever an "item drop" object is in a room.
+; Subid corresponds to constants/itemDrops.s? (TODO: confirm)
 .define ENEMYID_ITEM_DROP_PRODUCER		$59
 
 ;;
