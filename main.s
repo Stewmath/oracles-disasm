@@ -129353,24 +129353,29 @@ enemyCode26:
 	jr nz,@animate	; $6d3a
 	jp enemyDelete		; $6d3c
 
-;;
-; @addr{6d3f}
+
+; ==============================================================================
+; ENEMYID_ENABLE_SIDESCROLL_DOWN_TRANSITION
+; ==============================================================================
 enemyCode2b:
-	ld e,$84		; $6d3f
+	ld e,Enemy.state		; $6d3f
 	ld a,(de)		; $6d41
 	or a			; $6d42
 	jp z,_ecom_incState		; $6d43
+
 	ld hl,w1Link.xh		; $6d46
 	ld a,(hl)		; $6d49
 	cp $d0			; $6d4a
 	ret c			; $6d4c
-	ld l,$0b		; $6d4d
+
+	ld l,<w1Link.yh		; $6d4d
 	ld a,(hl)		; $6d4f
-	ld l,$15		; $6d50
+	ld l,<w1Link.speedZ+1		; $6d50
 	add (hl)		; $6d52
-	cp $a8			; $6d53
+	cp LARGE_ROOM_HEIGHT<<4 - 8			; $6d53
 	ret c			; $6d55
-	ld a,$82		; $6d56
+
+	ld a,$80|DIR_DOWN		; $6d56
 	ld (wScreenTransitionDirection),a		; $6d58
 	ret			; $6d5b
 

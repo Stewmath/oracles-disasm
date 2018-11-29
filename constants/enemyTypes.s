@@ -245,9 +245,9 @@
 .define ENEMYID_GIANT_BLADE_TRAP		$2a
 
 ;;
-; This object allows down-transitions to work in sidescrolling areas when it is present.
-; In particular, it forces a transition to occur if Link falls onto the bottom boundary of
-; the screen.
+; This object allows down-transitions to work in the "donkey kong" sidescrolling area with
+; vire. In particular, it forces a transition to occur if Link falls onto the bottom
+; boundary of the screen, and is far enough to the right side of the screen.
 .define ENEMYID_ENABLE_SIDESCROLL_DOWN_TRANSITION	$2b
 
 ;;
