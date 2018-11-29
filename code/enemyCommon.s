@@ -71,13 +71,14 @@ _ecom_updateKnockbackNoSolidity:
 
 ;;
 ; @addr{403c}
-_ecom_func_403c:
+_ecom_updateKnockbackAndCheckHazardsNoAnimationsForHoles:
 	call _ecom_updateKnockback		; $403c
 	call _ecom_checkHazardsNoAnimationForHoles		; $403f
 	ret			; $4042
 
 ;;
 ; Like "_ecom_checkHazards", but the enemy doesn't animate when they fall into a hole.
+; That is, they just get stuck on the last frame of their animation as they get sucked in.
 ; @addr{4043}
 _ecom_checkHazardsNoAnimationForHoles:
 	ldh (<hFF8F),a	; $4043

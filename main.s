@@ -130299,255 +130299,397 @@ _babyCucco_updateAnimationFromAngle:
 	ld (hl),a		; $4929
 	jp enemySetAnimation		; $492a
 
-;;
-; @addr{492d}
+
+; ==============================================================================
+; ENEMYID_ZOL
+;
+; Variables:
+;   var30: 1 when the zol is out of the ground, 0 otherwise. (only for subid 0, and only
+;          used to prevent the "jump" sound effect from playing more than once.)
+; ==============================================================================
 enemyCode34:
 	call _ecom_checkHazardsNoAnimationForHoles		; $492d
-	jr z,_label_060	; $4930
-	sub $03			; $4932
+	jr z,@normalStatus	; $4930
+	sub ENEMYSTATUS_NO_HEALTH			; $4932
 	ret c			; $4934
 	jp z,enemyDie		; $4935
 	dec a			; $4938
-	jp nz,_ecom_func_403c		; $4939
-	ld e,$82		; $493c
+	jp nz,_ecom_updateKnockbackAndCheckHazardsNoAnimationsForHoles		; $4939
+
+	; ENEMYSTATUS_JUST_HIT
+
+	ld e,Enemy.subid		; $493c
 	ld a,(de)		; $493e
 	or a			; $493f
 	ret z			; $4940
-	ld e,$aa		; $4941
+
+	; Subid 1 only: Collision with anything except Link or a shield causes it to
+	; split in two.
+	ld e,Enemy.var2a		; $4941
 	ld a,(de)		; $4943
-	cp $80			; $4944
-	jr z,_label_060	; $4946
+	cp COLLISIONTYPE_LINK|$80			; $4944
+	jr z,@normalStatus	; $4946
+
 	res 7,a			; $4948
-	sub $01			; $494a
-	cp $03			; $494c
+	sub COLLISIONTYPE_L1_SHIELD			; $494a
+	cp COLLISIONTYPE_L3_SHIELD - COLLISIONTYPE_L1_SHIELD + 1			; $494c
 	ret c			; $494e
-	ld e,$84		; $494f
+
+	ld e,Enemy.state		; $494f
 	ld a,$0c		; $4951
 	ld (de),a		; $4953
 	ret			; $4954
-_label_060:
-	call _ecom_getSubidAndCpStateTo08		; $4955
-	jr nc,_label_061	; $4958
-	rst_jumpTable			; $495a
-.dw $4971
-.dw $4989
-.dw $4989
-.dw $4989
-.dw $4989
-.dw _ecom_blownByGaleSeedState
-.dw $4989
-.dw $4989
 
-_label_061:
+@normalStatus:
+	call _ecom_getSubidAndCpStateTo08		; $4955
+	jr nc,@normalState	; $4958
+	rst_jumpTable			; $495a
+	.dw _zol_state_uninitialized
+	.dw _zol_state_stub
+	.dw _zol_state_stub
+	.dw _zol_state_stub
+	.dw _zol_state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw _zol_state_stub
+	.dw _zol_state_stub
+
+@normalState:
 	ld a,b			; $496b
 	rst_jumpTable			; $496c
-.dw $498a
-.dw $4a3b
+	.dw _zol_subid00
+	.dw _zol_subid01
+
+
+_zol_state_uninitialized:
 	ld a,b			; $4971
 	or a			; $4972
-	ld a,$1e		; $4973
+	ld a,SPEED_c0		; $4973
 	jp z,_ecom_setSpeedAndState8		; $4975
+
+	; Subid 1 only
 	ld h,d			; $4978
-	ld l,$86		; $4979
+	ld l,Enemy.counter1		; $4979
 	ld (hl),$18		; $497b
-	ld l,$a4		; $497d
+	ld l,Enemy.collisionType		; $497d
 	set 7,(hl)		; $497f
+
 	ld a,$04		; $4981
 	call enemySetAnimation		; $4983
 	jp _ecom_setSpeedAndState8AndVisible		; $4986
+
+
+_zol_state_stub:
 	ret			; $4989
+
+
+_zol_subid00:
 	ld a,(de)		; $498a
 	sub $08			; $498b
 	rst_jumpTable			; $498d
-.dw $499a
-.dw $49b0
-.dw $49d8
-.dw $49f4
-.dw $4a19
-.dw $4a30
+	.dw _zol_subid00_state8
+	.dw _zol_subid00_state9
+	.dw _zol_subid00_stateA
+	.dw _zol_subid00_stateB
+	.dw _zol_subid00_stateC
+	.dw _zol_subid00_stateD
+
+
+; Hiding in ground, waiting for Link to approach
+_zol_subid00_state8:
 	ld c,$28		; $499a
 	call objectCheckLinkWithinDistance		; $499c
 	ret nc			; $499f
-	ld bc,$fe00		; $49a0
+
+	ld bc,-$200		; $49a0
 	call objectSetSpeedZ		; $49a3
-	ld l,$84		; $49a6
+
+	ld l,Enemy.state		; $49a6
 	inc (hl)		; $49a8
-	ld l,$87		; $49a9
+
+	; [counter2] = number of hops before disappearing
+	ld l,Enemy.counter2		; $49a9
 	ld (hl),$04		; $49ab
+
 	jp objectSetVisiblec2		; $49ad
+
+
+; Jumping out of ground
+_zol_subid00_state9:
 	ld h,d			; $49b0
-	ld l,$a1		; $49b1
+	ld l,Enemy.animParameter		; $49b1
 	ld a,(hl)		; $49b3
 	or a			; $49b4
-	jr z,_label_064	; $49b5
-	ld l,$b0		; $49b7
+	jr z,_zol_animate	; $49b5
+
+	ld l,Enemy.var30		; $49b7
 	and (hl)		; $49b9
-	jr nz,_label_062	; $49ba
+	jr nz,++		; $49ba
 	ld (hl),$01		; $49bc
 	ld a,SND_ENEMY_JUMP		; $49be
 	call playSound		; $49c0
-_label_062:
+++
 	ld c,$28		; $49c3
 	call objectUpdateSpeedZ_paramC		; $49c5
 	ret nz			; $49c8
+
+	; Landed on ground; go to next state
 	call _ecom_incState		; $49c9
-	ld l,$86		; $49cc
+
+	ld l,Enemy.counter1		; $49cc
 	ld (hl),$30		; $49ce
-	ld l,$a4		; $49d0
+
+	ld l,Enemy.collisionType		; $49d0
 	set 7,(hl)		; $49d2
 	inc a			; $49d4
 	jp enemySetAnimation		; $49d5
+
+
+; Holding still for [counter1] frames, preparing to hop toward Link
+_zol_subid00_stateA:
 	call _ecom_decCounter1		; $49d8
 	ret nz			; $49db
+
 	ld l,e			; $49dc
-	inc (hl)		; $49dd
-	ld bc,$fe00		; $49de
+	inc (hl) ; [state]
+
+	ld bc,-$200		; $49de
 	call objectSetSpeedZ		; $49e1
-_label_063:
+
 	call _ecom_updateAngleTowardTarget		; $49e4
+
 	ld a,$02		; $49e7
 	call enemySetAnimation		; $49e9
+
 	ld a,SND_ENEMY_JUMP		; $49ec
 	call playSound		; $49ee
-_label_064:
+
+_zol_animate:
 	jp enemyAnimate		; $49f1
+
+
+; Hopping toward Link
+_zol_subid00_stateB:
 	call _ecom_applyVelocityForSideviewEnemy		; $49f4
+
 	ld c,$28		; $49f7
 	call objectUpdateSpeedZ_paramC		; $49f9
 	ret nz			; $49fc
+
+	; Hit the ground
+
 	ld h,d			; $49fd
-	ld l,$86		; $49fe
+	ld l,Enemy.counter1		; $49fe
 	ld (hl),$30		; $4a00
 	inc l			; $4a02
-	dec (hl)		; $4a03
+	dec (hl) ; [counter2]-- (number of hops remaining)
+
 	ld a,$0a		; $4a04
 	ld b,$01		; $4a06
-	jr nz,_label_065	; $4a08
-	ld l,$a4		; $4a0a
+	jr nz,++		; $4a08
+
+	; [counter2] == 0; go to state $0c, and disable collisions as we're disappearing
+	; now
+	ld l,Enemy.collisionType		; $4a0a
 	res 7,(hl)		; $4a0c
 	ld a,$0c		; $4a0e
 	ld b,$03		; $4a10
-_label_065:
-	ld l,$84		; $4a12
+++
+	ld l,Enemy.state		; $4a12
 	ld (hl),a		; $4a14
 	ld a,b			; $4a15
 	jp enemySetAnimation		; $4a16
+
+
+; Disappearing into the ground
+_zol_subid00_stateC:
 	ld h,d			; $4a19
-	ld l,$a1		; $4a1a
+	ld l,Enemy.animParameter		; $4a1a
 	ld a,(hl)		; $4a1c
 	or a			; $4a1d
-	jr z,_label_064	; $4a1e
+	jr z,_zol_animate	; $4a1e
+
 	ld l,e			; $4a20
-	inc (hl)		; $4a21
-	ld l,$86		; $4a22
-	ld (hl),$28		; $4a24
-	ld l,$b0		; $4a26
+	inc (hl) ; [state]
+
+	ld l,Enemy.counter1		; $4a22
+	ld (hl),40		; $4a24
+
+	ld l,Enemy.var30		; $4a26
 	xor a			; $4a28
 	ld (hl),a		; $4a29
+
 	call enemySetAnimation		; $4a2a
 	jp objectSetInvisible		; $4a2d
+
+
+; Fully disappeared into ground. Wait [counter1] frames before we can emerge again
+_zol_subid00_stateD:
 	call _ecom_decCounter1		; $4a30
 	ret nz			; $4a33
+
 	ld l,e			; $4a34
-	ld (hl),$08		; $4a35
+	ld (hl),$08 ; [state]
+
 	xor a			; $4a37
 	jp enemySetAnimation		; $4a38
+
+
+_zol_subid01:
 	ld a,(de)		; $4a3b
 	sub $08			; $4a3c
 	rst_jumpTable			; $4a3e
-.dw $4a4b
-.dw $4a73
-.dw $4a86
-.dw $4aa9
-.dw $4ac3
-.dw $4adc
+	.dw _zol_subid01_state8
+	.dw _zol_subid01_state9
+	.dw _zol_subid01_stateA
+	.dw _zol_subid01_stateB
+	.dw _zol_subid01_stateC
+	.dw _zol_subid01_stateD
+
+
+; Holding still for [counter1] frames before deciding whether to hop or move forward
+_zol_subid01_state8:
 	call _ecom_decCounter1		; $4a4b
-	jr nz,_label_067	; $4a4e
+	jr nz,_zol_animate2	; $4a4e
+
+	; 1 in 8 chance of hopping toward Link
 	call getRandomNumber_noPreserveVars		; $4a50
 	and $07			; $4a53
 	ld h,d			; $4a55
-	ld l,$86		; $4a56
-	jr z,_label_066	; $4a58
-	ld (hl),$10		; $4a5a
-	ld l,$84		; $4a5c
+	ld l,Enemy.counter1		; $4a56
+	jr z,@hopTowardLink	; $4a58
+
+	; 7 in 8 chance of sliding toward Link
+	ld (hl),$10 ; [counter1]
+	ld l,Enemy.state		; $4a5c
 	inc (hl)		; $4a5e
-	ld l,$90		; $4a5f
-	ld (hl),$14		; $4a61
+
+	ld l,Enemy.speed		; $4a5f
+	ld (hl),SPEED_80		; $4a61
 	call _ecom_updateAngleTowardTarget		; $4a63
-	jr _label_067		; $4a66
-_label_066:
-	ld (hl),$20		; $4a68
-	ld l,$84		; $4a6a
+	jr _zol_animate2		; $4a66
+
+@hopTowardLink:
+	ld (hl),$20 ; [counter1]
+	ld l,Enemy.state		; $4a6a
 	ld (hl),$0a		; $4a6c
 	ld a,$05		; $4a6e
 	jp enemySetAnimation		; $4a70
+
+
+; Sliding toward Link
+_zol_subid01_state9:
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $4a73
 	call _ecom_bounceOffScreenBoundary		; $4a76
+
 	call _ecom_decCounter1		; $4a79
-	jr nz,_label_067	; $4a7c
-	ld (hl),$18		; $4a7e
-	ld l,$84		; $4a80
+	jr nz,_zol_animate2	; $4a7c
+
+	ld (hl),$18 ; [counter1]
+	ld l,Enemy.state		; $4a80
 	dec (hl)		; $4a82
-_label_067:
+
+_zol_animate2:
 	jp enemyAnimate		; $4a83
+
+
+; Shaking before hopping toward Link
+_zol_subid01_stateA:
 	call _ecom_decCounter1		; $4a86
-	jr nz,_label_067	; $4a89
+	jr nz,_zol_animate2	; $4a89
+
 	call _ecom_incState		; $4a8b
-	ld l,$94		; $4a8e
-	ld (hl),$00		; $4a90
+
+	ld l,Enemy.speedZ		; $4a8e
+	ld (hl),<(-$200)		; $4a90
 	inc l			; $4a92
-	ld (hl),$fe		; $4a93
-	ld l,$90		; $4a95
-	ld (hl),$28		; $4a97
+	ld (hl),>(-$200)		; $4a93
+
+	ld l,Enemy.speed		; $4a95
+	ld (hl),SPEED_100		; $4a97
 	call _ecom_updateAngleTowardTarget		; $4a99
+
 	ld a,$02		; $4a9c
 	call enemySetAnimation		; $4a9e
 	ld a,SND_ENEMY_JUMP		; $4aa1
 	call playSound		; $4aa3
+
 	jp objectSetVisiblec1		; $4aa6
+
+
+; Hopping toward Link
+_zol_subid01_stateB:
 	call _ecom_applyVelocityForSideviewEnemy		; $4aa9
 	ld c,$28		; $4aac
 	call objectUpdateSpeedZ_paramC		; $4aae
 	ret nz			; $4ab1
+
+	; Hit ground
 	ld h,d			; $4ab2
-	ld l,$86		; $4ab3
+	ld l,Enemy.counter1		; $4ab3
 	ld (hl),$18		; $4ab5
-	ld l,$84		; $4ab7
+
+	ld l,Enemy.state		; $4ab7
 	ld (hl),$08		; $4ab9
+
 	ld a,$04		; $4abb
 	call enemySetAnimation		; $4abd
 	jp objectSetVisiblec2		; $4ac0
-	ld b,$08		; $4ac3
+
+
+; Zol has been attacked, create puff, disable collisions, prepare to spawn two gels in the
+; zol's place.
+_zol_subid01_stateC:
+	ld b,INTERACID_KILLENEMYPUFF		; $4ac3
 	call objectCreateInteractionWithSubid00		; $4ac5
+
 	ld h,d			; $4ac8
-	ld l,$87		; $4ac9
-	ld (hl),$12		; $4acb
-	ld l,$a4		; $4acd
+	ld l,Enemy.counter2		; $4ac9
+	ld (hl),18		; $4acb
+
+	ld l,Enemy.collisionType		; $4acd
 	res 7,(hl)		; $4acf
-	ld l,$84		; $4ad1
+
+	ld l,Enemy.state		; $4ad1
 	inc (hl)		; $4ad3
+
 	ld a,SND_KILLENEMY		; $4ad4
 	call playSound		; $4ad6
+
 	jp objectSetInvisible		; $4ad9
+
+
+; Zol has been attacked, spawn gels after [counter2] frames
+_zol_subid01_stateD:
 	call _ecom_decCounter2		; $4adc
 	ret nz			; $4adf
+
 	ld c,$04		; $4ae0
-	call $4af0		; $4ae2
-	ld c,$fc		; $4ae5
-	call $4af0		; $4ae7
+	call _zol_spawnGel		; $4ae2
+	ld c,-$04		; $4ae5
+	call _zol_spawnGel		; $4ae7
+
 	call decNumEnemies		; $4aea
 	jp enemyDelete		; $4aed
-	ld b,$43		; $4af0
+
+;;
+; @param	c	X offset
+; @addr{4af0}
+_zol_spawnGel:
+	ld b,ENEMYID_GEL		; $4af0
 	call _ecom_spawnEnemyWithSubid01		; $4af2
 	ret nz			; $4af5
-	ld (hl),a		; $4af6
+
+	ld (hl),a ; [child.subid] = 0
 	ld b,$00		; $4af7
 	call objectCopyPositionWithOffset		; $4af9
+
 	xor a			; $4afc
-	ld l,$8e		; $4afd
+	ld l,Enemy.z		; $4afd
 	ldi (hl),a		; $4aff
 	ld (hl),a		; $4b00
-	ld l,$80		; $4b01
+
+	; Transfer "enemy index" to gel
+	ld l,Enemy.enabled		; $4b01
 	ld e,l			; $4b03
 	ld a,(de)		; $4b04
 	ld (hl),a		; $4b05
