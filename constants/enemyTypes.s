@@ -269,7 +269,7 @@
 
 ;;
 ; @subid_00{Plain}
-; @subid_01{Blue}
+; @subid_01{Blue, more health, jumps more often}
 .define ENEMYID_TEKTITE				$30
 
 ;;

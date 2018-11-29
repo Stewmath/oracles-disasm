@@ -129385,6 +129385,7 @@ enemyCode2b:
 	.include "data/enemyAnimations.s"
 .ends
 
+
 .BANK $0e SLOT 1
 .ORG 0
 
@@ -129392,120 +129393,171 @@ enemyCode2b:
 
 	.include "code/enemyCommon.s"
 
-;;
-; @addr{44f0}
+
+; ==============================================================================
+; ENEMYID_TEKTITE
+;
+; Variables:
+;   var30: Gravity
+;   var31: Minimum value for counter1 (lower value = more frequent jumping)
+; ==============================================================================
 enemyCode30:
 	call _ecom_checkHazards		; $44f0
 	jr z,@normalStatus	; $44f3
-	sub $03			; $44f5
+	sub ENEMYSTATUS_NO_HEALTH			; $44f5
 	ret c			; $44f7
 	jp z,enemyDie		; $44f8
 	dec a			; $44fb
 	jp nz,_ecom_updateKnockbackAndCheckHazards		; $44fc
 	ret			; $44ff
+
 @normalStatus:
-	ld e,$84		; $4500
+	ld e,Enemy.state		; $4500
 	ld a,(de)		; $4502
 	rst_jumpTable			; $4503
-.dw $451c
-.dw $454c
-.dw $454c
-.dw $4537
-.dw $454c
-.dw _ecom_blownByGaleSeedState
-.dw $454c
-.dw $454c
-.dw $454d
-.dw $456a
-.dw $4575
-.dw $45a1
+	.dw @state_uninitialized
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_switchHook
+	.dw @state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state8
+	.dw @state9
+	.dw @stateA
+	.dw @stateB
+
+
+@state_uninitialized:
+	; Subid 1 has lower value for var31, meaning more frequent jumps.
 	ld h,d			; $451c
-	ld l,$82		; $451d
+	ld l,Enemy.subid		; $451d
 	bit 0,(hl)		; $451f
-	ld l,$b1		; $4521
-	ld (hl),$5a		; $4523
-	jr z,_label_040	; $4525
-	ld (hl),$2d		; $4527
-_label_040:
+	ld l,Enemy.var31		; $4521
+	ld (hl),90		; $4523
+	jr z,+			; $4525
+	ld (hl),45		; $4527
++
 	call getRandomNumber_noPreserveVars		; $4529
 	and $7f			; $452c
 	inc a			; $452e
-	ld e,$86		; $452f
+	ld e,Enemy.counter1		; $452f
 	ld (de),a		; $4531
-	ld a,$32		; $4532
+	ld a,SPEED_140		; $4532
 	jp _ecom_setSpeedAndState8AndVisible		; $4534
+
+
+@state_switchHook:
 	inc e			; $4537
 	ld a,(de)		; $4538
 	rst_jumpTable			; $4539
-.dw _ecom_incState2
-.dw $4542
-.dw $4542
-.dw $4543
+	.dw _ecom_incState2
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+
+@substate1:
+@substate2:
 	ret			; $4542
+
+@substate3:
 	ld b,$08		; $4543
 	call _ecom_fallToGroundAndSetState		; $4545
 	ret nz			; $4548
-	jp $45ae		; $4549
+	jp @gotoState8		; $4549
+
+
+@state_stub:
 	ret			; $454c
+
+
+; Standing in place for [counter1] frames
+@state8:
 	call _ecom_decCounter1		; $454d
-	jr nz,_label_041	; $4550
+	jr nz,@animate	; $4550
+
+	; Set [counter1] to how long the crouch will last
 	call getRandomNumber_noPreserveVars		; $4552
 	and $7f			; $4555
 	call _ecom_incState		; $4557
-	ld l,$b1		; $455a
+	ld l,Enemy.var31		; $455a
 	add (hl)		; $455c
-	ld l,$86		; $455d
+	ld l,Enemy.counter1		; $455d
 	ldi (hl),a		; $455f
 	ld (hl),$18		; $4560
 	ld a,$01		; $4562
 	jp enemySetAnimation		; $4564
-_label_041:
+@animate:
 	jp enemyAnimate		; $4567
+
+
+; Crouching before a leap
+@state9:
 	call _ecom_decCounter2		; $456a
 	ret nz			; $456d
 	ld l,e			; $456e
 	inc (hl)		; $456f
 	ld a,$02		; $4570
 	jp enemySetAnimation		; $4572
+
+
+; About to start a leap
+@stateA:
 	ld a,$0b		; $4575
-	ld (de),a		; $4577
+	ld (de),a ; [state]
+
 	call getRandomNumber_noPreserveVars		; $4578
 	and $07			; $457b
-	ld hl,$459b		; $457d
-	jr nz,_label_042	; $4580
-	ld hl,$459e		; $4582
-_label_042:
-	ld e,$94		; $4585
+	ld hl,@smallLeap		; $457d
+	jr nz,+			; $4580
+	ld hl,@bigLeap		; $4582
++
+	ld e,Enemy.speedZ		; $4585
 	ldi a,(hl)		; $4587
 	ld (de),a		; $4588
 	inc e			; $4589
 	ldi a,(hl)		; $458a
 	ld (de),a		; $458b
-	ld e,$b0		; $458c
+
+	; Gravity
+	ld e,Enemy.var30		; $458c
 	ldi a,(hl)		; $458e
 	ld (de),a		; $458f
+
 	call _ecom_updateAngleTowardTarget		; $4590
 	ld a,SND_ENEMY_JUMP		; $4593
 	call playSound		; $4595
 	jp objectSetVisiblec1		; $4598
-	xor d			; $459b
-	cp $0e			; $459c
-	add b			; $459e
-	cp $0c			; $459f
+
+
+; speedZ, gravity
+@smallLeap:
+	dwb $feaa, $0e
+@bigLeap:
+	dwb $fe80, $0c
+
+
+; Leaping
+@stateB:
 	call _ecom_bounceOffScreenBoundary		; $45a1
-	ld e,$b0		; $45a4
+	ld e,Enemy.var30		; $45a4
 	ld a,(de)		; $45a6
 	ld c,a			; $45a7
 	call objectUpdateSpeedZ_paramC		; $45a8
 	jp nz,_ecom_applyVelocityForSideviewEnemy		; $45ab
+
+;;
+; @addr{45ae}
+@gotoState8:
 	call getRandomNumber_noPreserveVars		; $45ae
 	and $7f			; $45b1
 	ld h,d			; $45b3
-	ld l,$b1		; $45b4
+	ld l,Enemy.var31		; $45b4
 	add (hl)		; $45b6
-	ld l,$86		; $45b7
+	ld l,Enemy.counter1		; $45b7
 	ld (hl),a		; $45b9
-	ld l,$84		; $45ba
+	ld l,Enemy.state		; $45ba
 	ld (hl),$08		; $45bc
 	xor a			; $45be
 	call enemySetAnimation		; $45bf
