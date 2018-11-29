@@ -286,7 +286,7 @@
 .define ENEMYID_KEESE				$32
 
 ;;
-; Baby chicken that follows you around
+; Baby chicken that follows you around. Only coded properly for small rooms.
 .define ENEMYID_BABY_CUCCO			$33
 
 ;;

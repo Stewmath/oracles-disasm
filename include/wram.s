@@ -2969,7 +2969,11 @@ wRoomLayoutEnd: ; $cfc0
 .ENDE
 
 .ENUM $dc00
-	; The item that Link is holding / throwing?
+	; The item that Link is holding / throwing. Even if Link is holding some other
+	; object like an enemy or Dimitri, this object still exists as ITEMID_BRACELET,
+	; or at least it does while the object is being thrown. This invisible object will
+	; copy its position to the actual object being thrown each frame, and update that
+	; object's state accordingly (ie. ENEMYSTATE_GRABBED).
 	w1ReservedItemC:	instanceof ItemStruct
 .ENDE
 

@@ -6594,7 +6594,7 @@ checkGrabbableObjects:
 	; l = Object.state
 	add Object.state-Object.enabled			; $1cc8
 	ld l,a			; $1cca
-	ld (hl),$02		; $1ccb
+	ld (hl),ENEMYSTATE_GRABBED ; TODO: Better name? it's not just for enemies
 
 	; l = Object.state2
 	inc l			; $1ccd
@@ -130148,109 +130148,152 @@ _keese_chooseWhetherToReverseTurningAngle:
 	ld (de),a		; $486c
 	ret			; $486d
 
-;;
-; @addr{486e}
+
+; ==============================================================================
+; ENEMYID_BABY_CUCCO
+; ==============================================================================
 enemyCode33:
-	ld e,$84		; $486e
+	ld e,Enemy.state		; $486e
 	ld a,(de)		; $4870
 	rst_jumpTable			; $4871
-.dw $4886
-.dw $48e4
-.dw $488b
-.dw $48e4
-.dw $48e4
-.dw $48e4
-.dw $48e4
-.dw $48e4
-.dw $48e5
-.dw $490f
-	ld a,$0a		; $4886
+	.dw _babyCucco_state_uninitialized
+	.dw _babyCucco_state_stub
+	.dw _babyCucco_state_grabbed
+	.dw _babyCucco_state_stub
+	.dw _babyCucco_state_stub
+	.dw _babyCucco_state_stub
+	.dw _babyCucco_state_stub
+	.dw _babyCucco_state_stub
+	.dw _babyCucco_state8
+	.dw _babyCucco_state9
+
+
+_babyCucco_state_uninitialized:
+	ld a,SPEED_40		; $4886
 	jp _ecom_setSpeedAndState8AndVisible		; $4888
+
+
+_babyCucco_state_grabbed:
 	inc e			; $488b
 	ld a,(de)		; $488c
 	rst_jumpTable			; $488d
-.dw $4896
-.dw $48b1
-.dw $48c2
-.dw $48d4
+	.dw @justGrabbed
+	.dw @beingHeld
+	.dw @released
+	.dw @landed
+
+@justGrabbed:
 	ld h,d			; $4896
 	ld l,e			; $4897
-	inc (hl)		; $4898
-	ld l,$a4		; $4899
+	inc (hl) ; [state2]
+
+	ld l,Enemy.collisionType		; $4899
 	res 7,(hl)		; $489b
+
 	xor a			; $489d
 	ld (wLinkGrabState2),a		; $489e
+
 	ld a,(w1Link.direction)		; $48a1
 	srl a			; $48a4
 	xor $01			; $48a6
-	ld l,$88		; $48a8
+	ld l,Enemy.direction		; $48a8
 	ld (hl),a		; $48aa
 	call enemySetAnimation		; $48ab
+
 	jp objectSetVisiblec1		; $48ae
+
+@beingHeld:
 	ld h,d			; $48b1
-	ld l,$88		; $48b2
+	ld l,Enemy.direction		; $48b2
 	ld a,(w1Link.direction)		; $48b4
 	srl a			; $48b7
 	xor $01			; $48b9
 	cp (hl)			; $48bb
-	jr z,_label_055	; $48bc
+	jr z,@released		; $48bc
 	ld (hl),a		; $48be
 	jp enemySetAnimation		; $48bf
-_label_055:
-	ld e,$8b		; $48c2
+
+@released:
+	ld e,Enemy.yh		; $48c2
 	ld a,(de)		; $48c4
-	cp $80			; $48c5
-	jr nc,_label_056	; $48c7
-	ld e,$8d		; $48c9
+	cp SMALL_ROOM_HEIGHT<<4			; $48c5
+	jr nc,@delete		; $48c7
+
+	ld e,Enemy.xh		; $48c9
 	ld a,(de)		; $48cb
-	cp $a0			; $48cc
+	cp SMALL_ROOM_WIDTH<<4			; $48cc
 	jp c,enemyAnimate		; $48ce
-_label_056:
+@delete:
 	jp enemyDelete		; $48d1
+
+@landed:
 	ld h,d			; $48d4
-	ld l,$84		; $48d5
+	ld l,Enemy.state		; $48d5
 	ld (hl),$08		; $48d7
-	ld l,$a4		; $48d9
+	ld l,Enemy.collisionType		; $48d9
 	set 7,(hl)		; $48db
-	ld l,$88		; $48dd
+	ld l,Enemy.direction		; $48dd
 	ld (hl),$ff		; $48df
 	jp objectSetVisiblec2		; $48e1
+
+
+_babyCucco_state_stub:
 	ret			; $48e4
+
+
+_babyCucco_state8:
 	call objectAddToGrabbableObjectBuffer		; $48e5
 	call objectSetPriorityRelativeToLink_withTerrainEffects		; $48e8
+
 	call _ecom_updateAngleTowardTarget		; $48eb
-	call $491a		; $48ee
+	call _babyCucco_updateAnimationFromAngle		; $48ee
+
 	ld c,$10		; $48f1
 	call objectCheckLinkWithinDistance		; $48f3
-	jr nc,_label_057	; $48f6
+	jr nc,@moveCloserToLink	; $48f6
+
+	; If near Link, 1 in 64 chance of hopping (per frame)
 	call getRandomNumber_noPreserveVars		; $48f8
 	and $3f			; $48fb
 	ret nz			; $48fd
+
 	call _ecom_incState		; $48fe
-	ld l,$94		; $4901
-	ld a,$40		; $4903
+	ld l,Enemy.speedZ		; $4901
+	ld a,<($ff40)		; $4903
 	ldi (hl),a		; $4905
-	ld (hl),$ff		; $4906
+	ld (hl),>($ff40)		; $4906
 	ret			; $4908
-_label_057:
+
+@moveCloserToLink:
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $4909
-_label_058:
+
+_babyCucco_animate:
 	jp enemyAnimate		; $490c
+
+
+; Hopping
+_babyCucco_state9:
 	ld c,$12		; $490f
 	call objectUpdateSpeedZ_paramC		; $4911
-	jr nz,_label_058	; $4914
-	ld l,$84		; $4916
+	jr nz,_babyCucco_animate	; $4914
+
+	ld l,Enemy.state		; $4916
 	dec (hl)		; $4918
 	ret			; $4919
-	ld e,$89		; $491a
+
+
+;;
+; @addr{491a}
+_babyCucco_updateAnimationFromAngle:
+	ld e,Enemy.angle		; $491a
 	ld a,(de)		; $491c
 	cp $10			; $491d
 	ld a,$01		; $491f
-	jr c,_label_059	; $4921
+	jr c,+			; $4921
 	xor a			; $4923
-_label_059:
++
 	ld h,d			; $4924
-	ld l,$88		; $4925
+	ld l,Enemy.direction		; $4925
 	cp (hl)			; $4927
 	ret z			; $4928
 	ld (hl),a		; $4929
