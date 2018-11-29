@@ -120863,7 +120863,7 @@ _octorok_state_uninitialized:
 	jr nc,+			; $45db
 	ld a,SPEED_c0		; $45dd
 +
-	call _ecom_initState8		; $45df
+	call _ecom_setSpeedAndState8AndVisible		; $45df
 	ld (hl),$0a ; [state] = $0a
 
 	; Enable moving toward scent seeds
@@ -121109,7 +121109,7 @@ enemyCode0a:
 
 @state_uninitialized:
 	ld a,SPEED_80		; $4701
-	call _ecom_initState8		; $4703
+	call _ecom_setSpeedAndState8AndVisible		; $4703
 	ld l,Enemy.var3f		; $4706
 	set 4,(hl)		; $4708
 	jp @gotoState8WithRandomAngleAndCounter		; $470a
@@ -122099,7 +122099,7 @@ enemyCode0e:
 ++
 	ld e,Enemy.var3e		; $4be0
 	ld (de),a		; $4be2
-	jp _ecom_initState8		; $4be3
+	jp _ecom_setSpeedAndState8AndVisible		; $4be3
 
 @state_stub:
 	ret			; $4be6
@@ -122663,7 +122663,7 @@ enemyCode10:
 	ld l,Enemy.var3f		; $4e52
 	set 4,(hl)		; $4e54
 
-	jp _ecom_initState8		; $4e56
+	jp _ecom_setSpeedAndState8AndVisible		; $4e56
 
 
 @state_switchHook:
@@ -123077,7 +123077,7 @@ enemyCode12:
 
 @uninitialized:
 	ld a,SPEED_80		; $503e
-	jp _ecom_initState8		; $5040
+	jp _ecom_setSpeedAndState8AndVisible		; $5040
 
 
 @state_switchHook:
@@ -123535,7 +123535,7 @@ enemyCode14:
 @state_uninitialized:
 	call @setRandomAngleAndCounter1		; $5267
 	ld a,SPEED_40		; $526a
-	jp _ecom_initState8		; $526c
+	jp _ecom_setSpeedAndState8AndVisible		; $526c
 
 
 @state_stub:
@@ -123802,7 +123802,7 @@ enemyCode16:
 
 
 @state_uninitialized:
-	call _ecom_initState8		; $53b8
+	call _ecom_setSpeedAndState8AndVisible		; $53b8
 	ld l,Enemy.counter1		; $53bb
 	ld (hl),$05		; $53bd
 	jp objectMakeTileSolid		; $53bf
@@ -124401,7 +124401,7 @@ enemyCode18:
 
 _buzzblob_state_uninitialized:
 	ld a,SPEED_40		; $569b
-	call _ecom_initState8		; $569d
+	call _ecom_setSpeedAndState8AndVisible		; $569d
 
 	; Enable moving toward scent seeds, and...?
 	ld l,Enemy.var3f		; $56a0
@@ -124533,7 +124533,7 @@ enemyCode1a:
 	ld h,d			; $573d
 	ld l,Enemy.var3f		; $573e
 	set 4,(hl)		; $5740
-	jp _ecom_initState8		; $5742
+	jp _ecom_setSpeedAndState8AndVisible		; $5742
 
 
 @state_scentSeed:
@@ -127974,7 +127974,7 @@ enemyCode2e:
 
 	ld l,Enemy.angle		; $66a7
 	ld (hl),ANGLE_DOWN		; $66a9
-	jp _ecom_initState8		; $66ab
+	jp _ecom_setSpeedAndState8AndVisible		; $66ab
 
 
 @state_stub:
@@ -128913,186 +128913,259 @@ _eyesoarChild_state10:
 	ld l,Enemy.var3a		; $6b06
 	jp setFlag		; $6b08
 
-;;
-; @addr{6b0b}
+
+; ==============================================================================
+; ENEMYID_IRON_MASK
+; ==============================================================================
 enemyCode1c:
 	call _ecom_checkHazards		; $6b0b
-	jr z,_label_288	; $6b0e
-	sub $03			; $6b10
+	jr z,@normalStatus	; $6b0e
+	sub ENEMYSTATUS_NO_HEALTH			; $6b10
 	ret c			; $6b12
 	jp z,enemyDie		; $6b13
 	dec a			; $6b16
 	jp nz,_ecom_updateKnockbackAndCheckHazards		; $6b17
-_label_288:
+
+@normalStatus:
 	call _ecom_getSubidAndCpStateTo08		; $6b1a
-	jr c,_label_289	; $6b1d
+	jr c,@commonState	; $6b1d
 	bit 0,b			; $6b1f
-	jp z,$6bb1		; $6b21
-	jp $6be2		; $6b24
-_label_289:
+	jp z,_ironMask_subid00		; $6b21
+	jp _ironMask_subid01		; $6b24
+
+@commonState:
 	rst_jumpTable			; $6b27
-.dw $6b38
-.dw $6bb0
-.dw $6bb0
-.dw $6b54
-.dw $6bb0
-.dw _ecom_blownByGaleSeedState
-.dw $6bb0
-.dw $6bb0
-	ld a,$14		; $6b38
-	call _ecom_initState8		; $6b3a
-	ld l,$86		; $6b3d
+	.dw _ironMask_state_uninitialized
+	.dw _ironMask_state_stub
+	.dw _ironMask_state_stub
+	.dw _ironMask_state_switchHook
+	.dw _ironMask_state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw _ironMask_state_stub
+	.dw _ironMask_state_stub
+
+
+_ironMask_state_uninitialized:
+	ld a,SPEED_80		; $6b38
+	call _ecom_setSpeedAndState8AndVisible		; $6b3a
+
+	ld l,Enemy.counter1		; $6b3d
 	inc (hl)		; $6b3f
+
 	bit 0,b			; $6b40
 	ret z			; $6b42
-	ld l,$a5		; $6b43
-	ld (hl),$53		; $6b45
-	ld l,$ad		; $6b47
+
+	; Subid 1 only
+	ld l,Enemy.collisionReactionSet		; $6b43
+	ld (hl),COLLISIONREACTIONSET_53		; $6b45
+	ld l,Enemy.knockbackCounter		; $6b47
 	ld (hl),$10		; $6b49
-	ld l,$ab		; $6b4b
+	ld l,Enemy.invincibilityCounter		; $6b4b
 	ld (hl),$e8		; $6b4d
 	ld a,$04		; $6b4f
 	jp enemySetAnimation		; $6b51
+
+
+_ironMask_state_switchHook:
 	inc e			; $6b54
 	ld a,(de)		; $6b55
 	rst_jumpTable			; $6b56
-.dw $6b5f
-.dw $6b96
-.dw $6b96
-.dw $6b97
-	ld e,$82		; $6b5f
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+
+; Using switch hook may cause this enemy's mask to be removed.
+@substate0:
+	ld e,Enemy.subid		; $6b5f
 	ld a,(de)		; $6b61
 	or a			; $6b62
-	jr nz,_label_290	; $6b63
-	ld e,$a5		; $6b65
+	jr nz,@dontRemoveMask	; $6b63
+
+	ld e,Enemy.collisionReactionSet		; $6b65
 	ld a,(de)		; $6b67
-	cp $53			; $6b68
-	jr z,_label_290	; $6b6a
-	ld b,$1c		; $6b6c
+	cp COLLISIONREACTIONSET_53			; $6b68
+	jr z,@dontRemoveMask	; $6b6a
+
+	ld b,ENEMYID_IRON_MASK		; $6b6c
 	call _ecom_spawnUncountedEnemyWithSubid01		; $6b6e
-	jr nz,_label_290	; $6b71
-	ld l,$80		; $6b73
+	jr nz,@dontRemoveMask	; $6b71
+
+	; Transfer "index" from enabled byte to new enemy
+	ld l,Enemy.enabled		; $6b73
 	ld e,l			; $6b75
 	ld a,(de)		; $6b76
 	ld (hl),a		; $6b77
-	ld l,$ac		; $6b78
+
+	ld l,Enemy.knockbackAngle		; $6b78
 	ld e,l			; $6b7a
 	ld a,(de)		; $6b7b
 	ld (hl),a		; $6b7c
 	call objectCopyPosition		; $6b7d
+
 	ld a,$05		; $6b80
 	call enemySetAnimation		; $6b82
+
 	ld a,SND_BOMB_LAND		; $6b85
 	call playSound		; $6b87
-	ld a,$3c		; $6b8a
-	jr _label_291		; $6b8c
-_label_290:
-	ld a,$10		; $6b8e
-_label_291:
-	ld e,$86		; $6b90
+
+	ld a,60		; $6b8a
+	jr ++			; $6b8c
+
+@dontRemoveMask:
+	ld a,16		; $6b8e
+++
+	ld e,Enemy.counter1		; $6b90
 	ld (de),a		; $6b92
 	jp _ecom_incState2		; $6b93
+
+@substate1:
+@substate2:
 	ret			; $6b96
-	ld e,$82		; $6b97
+
+@substate3:
+	ld e,Enemy.subid		; $6b97
 	ld a,(de)		; $6b99
 	or a			; $6b9a
 	jp nz,_ecom_fallToGroundAndSetState8		; $6b9b
-	ld e,$a5		; $6b9e
+
+	ld e,Enemy.collisionReactionSet		; $6b9e
 	ld a,(de)		; $6ba0
-	cp $1d			; $6ba1
+	cp COLLISIONREACTIONSET_1d			; $6ba1
 	jp nz,_ecom_fallToGroundAndSetState8		; $6ba3
+
 	ld b,$0a		; $6ba6
 	call _ecom_fallToGroundAndSetState		; $6ba8
-	ld l,$a4		; $6bab
+
+	ld l,Enemy.collisionType		; $6bab
 	res 7,(hl)		; $6bad
 	ret			; $6baf
+
+
+_ironMask_state_stub:
 	ret			; $6bb0
+
+
+; Iron mask with mask on
+_ironMask_subid00:
 	ld a,(de)		; $6bb1
 	sub $08			; $6bb2
 	rst_jumpTable			; $6bb4
-.dw $6bbb
-.dw $6bc6
-.dw $6bd9
+	.dw @state8
+	.dw @state9
+	.dw @stateA
+
+
+; Standing in place
+@state8:
 	call _ecom_decCounter1		; $6bbb
-	jp nz,$6bee		; $6bbe
+	jp nz,_ironMask_updateCollisionsFromLinkRelativeAngle		; $6bbe
 	ld l,e			; $6bc1
-	inc (hl)		; $6bc2
-	call $6c05		; $6bc3
+	inc (hl) ; [state]
+	call _ironMask_chooseRandomAngleAndCounter1		; $6bc3
+
+; Moving in some direction for [counter1] frames
+@state9:
 	call _ecom_decCounter1		; $6bc6
-	jr nz,_label_292	; $6bc9
+	jr nz,++		; $6bc9
 	ld l,e			; $6bcb
-	dec (hl)		; $6bcc
-	call _func_6c3a		; $6bcd
-_label_292:
+	dec (hl) ; [state]
+	call _ironMask_chooseAmountOfTimeToStand		; $6bcd
+++
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $6bd0
-	call $6bee		; $6bd3
+	call _ironMask_updateCollisionsFromLinkRelativeAngle		; $6bd3
 	jp enemyAnimate		; $6bd6
+
+; This enemy has turned into the mask that was removed; will delete self after [counter1]
+; frames.
+@stateA:
 	call _ecom_decCounter1		; $6bd9
 	jp nz,_ecom_flickerVisibility		; $6bdc
 	jp enemyDelete		; $6bdf
+
+
+; Iron mask without mask on
+_ironMask_subid01:
 	call _ecom_decCounter1		; $6be2
-	call z,$6c05		; $6be5
+	call z,_ironMask_chooseRandomAngleAndCounter1		; $6be5
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $6be8
 	jp enemyAnimate		; $6beb
+
+
+;;
+; Modifies this object's collisionReactionSet based on if Link is directly behind the iron
+; mask or not.
+; @addr{6bee}
+_ironMask_updateCollisionsFromLinkRelativeAngle:
 	call objectGetAngleTowardEnemyTarget		; $6bee
 	ld h,d			; $6bf1
-	ld l,$89		; $6bf2
+	ld l,Enemy.angle		; $6bf2
 	sub (hl)		; $6bf4
 	and $1f			; $6bf5
 	sub $0c			; $6bf7
 	cp $09			; $6bf9
-	ld l,$a5		; $6bfb
-	jr c,_label_293	; $6bfd
-	ld (hl),$1d		; $6bff
+	ld l,Enemy.collisionReactionSet		; $6bfb
+	jr c,++			; $6bfd
+	ld (hl),COLLISIONREACTIONSET_1d		; $6bff
 	ret			; $6c01
-_label_293:
-	ld (hl),$53		; $6c02
+++
+	ld (hl),COLLISIONREACTIONSET_53		; $6c02
 	ret			; $6c04
+
+
+;;
+; @addr{6c05}
+_ironMask_chooseRandomAngleAndCounter1:
 	ld bc,$0703		; $6c05
 	call _ecom_randomBitwiseAndBCE		; $6c08
 	ld a,b			; $6c0b
-	ld hl,@data		; $6c0c
+	ld hl,@counter1Vals		; $6c0c
 	rst_addAToHl			; $6c0f
-	ld e,$86		; $6c10
+
+	ld e,Enemy.counter1		; $6c10
 	ld a,(hl)		; $6c12
 	ld (de),a		; $6c13
-	ld e,$82		; $6c14
+
+	ld e,Enemy.subid		; $6c14
 	ld a,(de)		; $6c16
 	or a			; $6c17
 	jp nz,_ecom_setRandomCardinalAngle		; $6c18
-	call $6c2a		; $6c1b
+
+	; Subid 0 only: 1 in 4 chance of turning directly toward Link, otherwise just
+	; choose a random angle
+	call @chooseAngle		; $6c1b
 	swap a			; $6c1e
 	rlca			; $6c20
 	ld h,d			; $6c21
-	ld l,$88		; $6c22
+	ld l,Enemy.direction		; $6c22
 	cp (hl)			; $6c24
 	ret z			; $6c25
 	ld (hl),a		; $6c26
 	jp enemySetAnimation		; $6c27
+
+@chooseAngle:
 	ld a,c			; $6c2a
 	or a			; $6c2b
 	jp z,_ecom_updateCardinalAngleTowardTarget		; $6c2c
 	jp _ecom_setRandomCardinalAngle		; $6c2f
 
-; @addr{6c32}
-@data:
-	.db $19 $1e $23 $28 $2d $32 $37 $3c
+@counter1Vals:
+	.db 25 30 35 40 45 50 55 60
 
 ;;
 ; @addr{6c3a}
-_func_6c3a:
+_ironMask_chooseAmountOfTimeToStand:
 	call getRandomNumber_noPreserveVars		; $6c3a
 	and $03			; $6c3d
-	ld hl,@data		; $6c3f
+	ld hl,@counter1Vals		; $6c3f
 	rst_addAToHl			; $6c42
-	ld e,$86		; $6c43
+	ld e,Enemy.counter1		; $6c43
 	ld a,(hl)		; $6c45
 	ld (de),a		; $6c46
 	ret			; $6c47
 
-; @addr{6c48}
-@data:
-	.db $0f $1e $2d $3c
+@counter1Vals:
+	.db 15 30 45 60
 
 ;;
 ; @addr{6c4c}
@@ -129303,7 +129376,7 @@ _label_040:
 	ld e,$86		; $452f
 	ld (de),a		; $4531
 	ld a,$32		; $4532
-	jp _ecom_initState8		; $4534
+	jp _ecom_setSpeedAndState8AndVisible		; $4534
 	inc e			; $4537
 	ld a,(de)		; $4538
 	rst_jumpTable			; $4539
@@ -129415,7 +129488,7 @@ _label_043:
 .dw $4692
 .dw $46a7
 	ld a,$14		; $45fe
-	jp _ecom_initState8		; $4600
+	jp _ecom_setSpeedAndState8AndVisible		; $4600
 	inc e			; $4603
 	ld a,(de)		; $4604
 	rst_jumpTable			; $4605
@@ -129781,7 +129854,7 @@ enemyCode33:
 .dw $48e5
 .dw $490f
 	ld a,$0a		; $4886
-	jp _ecom_initState8		; $4888
+	jp _ecom_setSpeedAndState8AndVisible		; $4888
 	inc e			; $488b
 	ld a,(de)		; $488c
 	rst_jumpTable			; $488d
@@ -129927,7 +130000,7 @@ _label_061:
 	set 7,(hl)		; $497f
 	ld a,$04		; $4981
 	call enemySetAnimation		; $4983
-	jp _ecom_initState8		; $4986
+	jp _ecom_setSpeedAndState8AndVisible		; $4986
 	ret			; $4989
 	ld a,(de)		; $498a
 	sub $08			; $498b
@@ -130566,7 +130639,7 @@ _label_087:
 .dw $4e8d
 .dw $4e9b
 	ld a,$14		; $4dd3
-	call _ecom_initState8		; $4dd5
+	call _ecom_setSpeedAndState8AndVisible		; $4dd5
 	ld l,$bf		; $4dd8
 	set 5,(hl)		; $4dda
 	ret			; $4ddc
@@ -131755,7 +131828,7 @@ _label_138:
 	call _ecom_setRandomCardinalAngle		; $55a3
 	call _ecom_updateAnimationFromAngle		; $55a6
 	ld a,$14		; $55a9
-	call _ecom_initState8		; $55ab
+	call _ecom_setSpeedAndState8AndVisible		; $55ab
 	ld l,$86		; $55ae
 	inc (hl)		; $55b0
 	ld l,$bf		; $55b1
@@ -132066,7 +132139,7 @@ _label_153:
 .dw $57f4
 .dw $580f
 .dw $582b
-	call _ecom_initState8		; $57d4
+	call _ecom_setSpeedAndState8AndVisible		; $57d4
 	ld l,$86		; $57d7
 	inc (hl)		; $57d9
 	ret			; $57da
@@ -132940,7 +133013,7 @@ _label_196:
 	ld e,$86		; $5d7b
 	ld a,$10		; $5d7d
 	ld (de),a		; $5d7f
-	jp _ecom_initState8		; $5d80
+	jp _ecom_setSpeedAndState8AndVisible		; $5d80
 	ret			; $5d83
 	call _ecom_decCounter1		; $5d84
 	jr nz,_label_198	; $5d87
@@ -133329,7 +133402,7 @@ _label_210:
 	call $6095		; $601b
 	ret nz			; $601e
 	ld a,$0f		; $601f
-	call _ecom_initState8		; $6021
+	call _ecom_setSpeedAndState8AndVisible		; $6021
 	ld l,$b1		; $6024
 	ld (hl),$08		; $6026
 	ret			; $6028
@@ -133451,7 +133524,7 @@ _label_215:
 	ld a,PALH_8d		; $60e6
 	call z,loadPaletteHeader		; $60e8
 	ld a,$0f		; $60eb
-	jp _ecom_initState8		; $60ed
+	jp _ecom_setSpeedAndState8AndVisible		; $60ed
 	ret			; $60f0
 	call _ecom_updateAngleTowardTarget		; $60f1
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $60f4
@@ -133520,7 +133593,7 @@ _label_217:
 	ld (de),a		; $615e
 	call enemySetAnimation		; $615f
 	ld a,$28		; $6162
-	jp _ecom_initState8		; $6164
+	jp _ecom_setSpeedAndState8AndVisible		; $6164
 	inc e			; $6167
 	ld a,(de)		; $6168
 	rst_jumpTable			; $6169
@@ -133625,7 +133698,7 @@ _label_223:
 	ld (de),a		; $61fd
 	jr _label_225		; $61fe
 _label_224:
-	call _ecom_initState8		; $6200
+	call _ecom_setSpeedAndState8AndVisible		; $6200
 	ld a,b			; $6203
 	dec a			; $6204
 	ret z			; $6205
@@ -135353,7 +135426,7 @@ _label_276:
 .dw $6c6c
 .dw $6c6c
 	ld a,$0f		; $6c3e
-	call _ecom_initState8		; $6c40
+	call _ecom_setSpeedAndState8AndVisible		; $6c40
 	ld l,$86		; $6c43
 	ld (hl),$04		; $6c45
 	ld l,$8f		; $6c47
@@ -135829,7 +135902,7 @@ _label_294:
 .dw $6fe8
 .dw $7000
 	ld a,$32		; $6f7d
-	call _ecom_initState8		; $6f7f
+	call _ecom_setSpeedAndState8AndVisible		; $6f7f
 	ld l,$86		; $6f82
 	ld (hl),$96		; $6f84
 	inc l			; $6f86
@@ -136992,7 +137065,7 @@ _label_354:
 	ld a,$1e		; $7647
 	ld (de),a		; $7649
 	ld a,$0a		; $764a
-	jp _ecom_initState8		; $764c
+	jp _ecom_setSpeedAndState8AndVisible		; $764c
 	ret			; $764f
 	call _ecom_decCounter1		; $7650
 	ret nz			; $7653
@@ -140224,7 +140297,7 @@ _label_0f_101:
 	ld a,$04		; $51fa
 	call enemySetAnimation		; $51fc
 _label_0f_102:
-	jp _ecom_initState8		; $51ff
+	jp _ecom_setSpeedAndState8AndVisible		; $51ff
 	inc e			; $5202
 	ld a,(de)		; $5203
 	rst_jumpTable			; $5204
@@ -144993,7 +145066,7 @@ _label_0f_272:
 	ld hl,$7142		; $7122
 	rst_addAToHl			; $7125
 	ld a,(hl)		; $7126
-	jp _ecom_initState8		; $7127
+	jp _ecom_setSpeedAndState8AndVisible		; $7127
 	ld a,$7c		; $712a
 	ld b,$00		; $712c
 	call _enemyBoss_initializeRoom		; $712e

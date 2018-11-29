@@ -844,8 +844,8 @@ _ecom_randomBitwiseAndBCE:
 ; @param	a	Speed
 ; @param[out]	hl	Enemy.state
 ; @addr{435e}
-_ecom_initState8:
-	call $4364		; $435e
+_ecom_setSpeedAndState8AndVisible:
+	call _ecom_setSpeedAndState8		; $435e
 	jp objectSetVisiblec2		; $4361
 
 ;;
