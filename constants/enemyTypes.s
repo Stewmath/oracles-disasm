@@ -295,7 +295,21 @@
 .define ENEMYID_ZOL				$34
 
 ;;
-; Blue hand that appears from the ground and warps you to dungeon entrance
+; Blue hand that appears from the ground and warps you to dungeon entrance. Only subid 0,
+; the spawner, should be used; it takes care of spawning the actual floormasters. Bugs may
+; occur if the other subids are used by themselves.
+;
+; This might not work properly in small rooms (could spawn outside the screen).
+;
+; @postype{none}
+; @Y{High digit is number of floormasters to spawn}
+; @X{High digit is the subid of floormasters to spawn (minus one). Ie. "$20" spawns
+;    wallmasters with subid 3.}
+; @subid_00{Floormaster spawner.
+;           @postype{none}}
+; @subid_01{Only moves in cardinal directions toward Link}
+; @subid_02{Moves in any direction toward Link}
+; @subid_03{Moves in any direction toward Link, fast}
 .define ENEMYID_FLOORMASTER			$35
 
 ;;

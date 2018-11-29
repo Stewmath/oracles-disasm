@@ -7838,6 +7838,7 @@ checkBEnemySlotsAvailable:
 ; @param	a	Distance away from bc to put the object
 ; @param	bc	Relative offset ("center of the circle")
 ; @param	de	Pointer to the object's angle value
+; @param[out]	de	Object.xh
 ; @addr{210e}
 objectSetPositionInCircleArc:
 	push bc			; $210e
@@ -130695,386 +130696,553 @@ _zol_spawnGel:
 	ld (hl),a		; $4b05
 	ret			; $4b06
 
-;;
-; @addr{4b07}
+
+; ==============================================================================
+; ENEMYID_FLOORMASTER
+;
+; Variables for subids other than 0:
+;   relatedObj1: Reference to spawner object (subid 0)
+;   var30: Animation index
+;   var31: Index for z-position to use while chasing Link (0-7)
+;   var32: Angle relative to Link where floormaster should spawn
+;
+; Variables for spawner (subid 0):
+;   var30: Number of floormaster currently spawned (they delete themselves after
+;          disappearing into the ground)
+;   var31/var32: Link's position last time a floormaster was spawned. If Link hasn't moved
+;                far from here, the floormaster will spawn at a random angle relative to
+;                him; otherwise it will spawn in the direction Link is moving.
+;   var33: # floormasters to spawn. Children decrement this when they're killed.
+;          (High nibble of original Y value.)
+;   var34: Subid for child objects (high nibble of original X value, plus one)
+; ==============================================================================
 enemyCode35:
-	jr z,_label_069	; $4b07
-	sub $03			; $4b09
+	jr z,@normalStatus	; $4b07
+	sub ENEMYSTATUS_NO_HEALTH			; $4b09
 	ret c			; $4b0b
-	jr z,_label_068	; $4b0c
+	jr z,@dead	; $4b0c
 	dec a			; $4b0e
 	jp nz,_ecom_updateKnockbackNoSolidity		; $4b0f
-	ld e,$aa		; $4b12
+
+	; ENEMYSTATUS_JUST_HIT
+
+	ld e,Enemy.var2a		; $4b12
 	ld a,(de)		; $4b14
-	cp $80			; $4b15
+	cp $80|COLLISIONTYPE_LINK			; $4b15
 	ret nz			; $4b17
+
+	; Grabbed Link
 	ld h,d			; $4b18
-	ld l,$84		; $4b19
+	ld l,Enemy.state		; $4b19
 	ld (hl),$0c		; $4b1b
-	ld l,$8f		; $4b1d
+	ld l,Enemy.zh		; $4b1d
 	ld (hl),$fb		; $4b1f
-	call $4d0f		; $4b21
+
+	call _floormaster_updateAngleTowardLink		; $4b21
 	add $04			; $4b24
 	call enemySetAnimation		; $4b26
+
+	; Move to halfway point between Link and floormaster
 	ld h,d			; $4b29
-	ld l,$8b		; $4b2a
+	ld l,Enemy.yh		; $4b2a
 	ld a,(w1Link.yh)		; $4b2c
 	sub (hl)		; $4b2f
 	sra a			; $4b30
 	add (hl)		; $4b32
 	ld (hl),a		; $4b33
-	ld l,$8d		; $4b34
+
+	ld l,Enemy.xh		; $4b34
 	ld a,(w1Link.xh)		; $4b36
 	sub (hl)		; $4b39
 	sra a			; $4b3a
 	add (hl)		; $4b3c
 	ld (hl),a		; $4b3d
 	ret			; $4b3e
-_label_068:
-	ld a,$30		; $4b3f
+
+@dead:
+	ld a,Object.var30		; $4b3f
 	call objectGetRelatedObject1Var		; $4b41
 	dec (hl)		; $4b44
-	ld l,$b3		; $4b45
+	ld l,Enemy.var33		; $4b45
 	dec (hl)		; $4b47
 	jp enemyDie_uncounted		; $4b48
-_label_069:
-	ld e,$84		; $4b4b
+
+@normalStatus:
+	ld e,Enemy.state		; $4b4b
 	ld a,(de)		; $4b4d
 	rst_jumpTable			; $4b4e
-.dw $4b6b
-.dw $4b7c
-.dw $4bc6
-.dw $4bc6
-.dw $4bc6
-.dw $4bb6
-.dw $4bc6
-.dw $4bc6
-.dw $4bc7
-.dw $4c44
-.dw $4c58
-.dw $4c9a
-.dw $4cd2
-.dw $4cfe
+	.dw _floormaster_state_uninitialized
+	.dw _floormaster_state1
+	.dw _floormaster_state_stub
+	.dw _floormaster_state_stub
+	.dw _floormaster_state_stub
+	.dw _floormaster_state_galeSeed
+	.dw _floormaster_state_stub
+	.dw _floormaster_state_stub
+	.dw _floormaster_state8
+	.dw _floormaster_state9
+	.dw _floormaster_stateA
+	.dw _floormaster_stateB
+	.dw _floormaster_stateC
+	.dw _floormaster_stateD
+
+
+_floormaster_state_uninitialized:
 	ld h,d			; $4b6b
-	ld l,$86		; $4b6c
-	ld (hl),$3c		; $4b6e
+	ld l,Enemy.counter1		; $4b6c
+	ld (hl),60		; $4b6e
 	ld l,e			; $4b70
-	inc (hl)		; $4b71
-	ld e,$82		; $4b72
+	inc (hl) ; [state] = 1
+
+	ld e,Enemy.subid		; $4b72
 	ld a,(de)		; $4b74
 	or a			; $4b75
-	jp z,$4d89		; $4b76
-	ld (hl),$08		; $4b79
+	jp z,_floormaster_initSpawner		; $4b76
+
+	; Subid 1 only
+	ld (hl),$08 ; [state] = 8
 	ret			; $4b7b
+
+
+; State 1: only for subid 0 (spawner).
+_floormaster_state1:
+	; Delete self if all floormasters were killed
 	ld h,d			; $4b7c
-	ld l,$b3		; $4b7d
+	ld l,Enemy.var33		; $4b7d
 	ld a,(hl)		; $4b7f
 	or a			; $4b80
-	jr z,_label_070	; $4b81
-	ld e,$b0		; $4b83
+	jr z,@delete	; $4b81
+
+	; Return if all available floormasters have spawned already
+	ld e,Enemy.var30		; $4b83
 	ld a,(de)		; $4b85
 	sub (hl)		; $4b86
 	ret nc			; $4b87
-	ld l,$86		; $4b88
+
+	; Spawn another floormaster in [counter1] frames
+	ld l,Enemy.counter1		; $4b88
 	dec (hl)		; $4b8a
 	ret nz			; $4b8b
-	ld (hl),$01		; $4b8c
-	ld l,$b0		; $4b8e
+
+	ld (hl),$01 ; [counter1]
+
+	; Maximum of 3 on-screen at any given time
+	ld l,Enemy.var30		; $4b8e
 	ld a,(hl)		; $4b90
 	cp $03			; $4b91
 	ret nc			; $4b93
-	ld b,$35		; $4b94
+
+	ld b,ENEMYID_FLOORMASTER		; $4b94
 	call _ecom_spawnUncountedEnemyWithSubid01		; $4b96
 	ret nz			; $4b99
-	ld e,$b4		; $4b9a
+
+	ld e,Enemy.var34		; $4b9a
 	ld a,(de)		; $4b9c
-	ld (hl),a		; $4b9d
-	ld l,$96		; $4b9e
-	ld a,$80		; $4ba0
+	ld (hl),a ; [child.subid] = [this.var34]
+
+	ld l,Enemy.relatedObj1		; $4b9e
+	ld a,Enemy.start		; $4ba0
 	ldi (hl),a		; $4ba2
 	ld (hl),d		; $4ba3
+
 	ld h,d			; $4ba4
-	ld l,$b0		; $4ba5
+	ld l,Enemy.var30		; $4ba5
 	inc (hl)		; $4ba7
-	ld l,$86		; $4ba8
+
+	ld l,Enemy.counter1		; $4ba8
 	ld (hl),$80		; $4baa
 	ret			; $4bac
-_label_070:
+
+@delete:
 	call decNumEnemies		; $4bad
 	call markEnemyAsKilledInRoom		; $4bb0
 	jp enemyDelete		; $4bb3
+
+
+_floormaster_state_galeSeed:
 	call _ecom_galeSeedEffect		; $4bb6
 	ret c			; $4bb9
-	ld a,$30		; $4bba
+
+	ld a,Object.var30		; $4bba
 	call objectGetRelatedObject1Var		; $4bbc
 	dec (hl)		; $4bbf
-	ld l,$b3		; $4bc0
+	ld l,Enemy.var33		; $4bc0
 	dec (hl)		; $4bc2
 	jp enemyDelete		; $4bc3
+
+
+_floormaster_state_stub:
 	ret			; $4bc6
-	call $4d6f		; $4bc7
+
+
+; States 8+ are for subids 1+ (not spawner objects; actual, physical floormasters).
+
+; Choosing a position to spawn at.
+_floormaster_state8:
+	; If Link is within 8 pixels of his position last time a floormaster was spawned,
+	; the floormaster will spawn at a random angle relative to Link. Otherwise, it
+	; will spawn in the direction Link is moving.
+	call _floormaster_checkLinkMoved8PixelsAway		; $4bc7
 	ld a,$00		; $4bca
 	push bc			; $4bcc
 	call c,getRandomNumber_noPreserveVars		; $4bcd
 	pop bc			; $4bd0
+
 	ld e,a			; $4bd1
-	ld a,($d009)		; $4bd2
+	ld a,(w1Link.angle)		; $4bd2
 	add e			; $4bd5
 	and $1f			; $4bd6
-	ld e,$b2		; $4bd8
+	ld e,Enemy.var32		; $4bd8
 	ld (de),a		; $4bda
+
+	; Try various distances away from Link ($50 to $10)
 	ld a,$50		; $4bdb
 	ldh (<hFF8A),a	; $4bdd
-_label_071:
+
+@tryDistance:
 	ldh a,(<hFF8A)	; $4bdf
 	sub $10			; $4be1
-	jr z,_label_075	; $4be3
+	jr z,@doneLoop	; $4be3
 	ldh (<hFF8A),a	; $4be5
+
 	push bc			; $4be7
-	ld e,$b2		; $4be8
+	ld e,Enemy.var32		; $4be8
 	call objectSetPositionInCircleArc		; $4bea
 	pop bc			; $4bed
+
+	; Check that this position candidate is valid.
+
+	; a = abs([w1Link.xh] - [this.xh])
 	ld a,(de)		; $4bee
 	ld e,a			; $4bef
 	ld a,(w1Link.xh)		; $4bf0
 	sub e			; $4bf3
-	jr nc,_label_072	; $4bf4
+	jr nc,+			; $4bf4
 	cpl			; $4bf6
 	inc a			; $4bf7
-_label_072:
++
 	cp $80			; $4bf8
-	jr nc,_label_071	; $4bfa
-	ld e,$8b		; $4bfc
+	jr nc,@tryDistance	; $4bfa
+
+	ld e,Enemy.yh		; $4bfc
 	ld a,(de)		; $4bfe
-	cp $b0			; $4bff
-	jr nc,_label_071	; $4c01
+	cp LARGE_ROOM_HEIGHT<<4			; $4bff
+	jr nc,@tryDistance	; $4c01
+
+	; Tile must not be solid
 	push bc			; $4c03
 	call objectGetTileCollisions		; $4c04
 	pop bc			; $4c07
-	jr nz,_label_071	; $4c08
+	jr nz,@tryDistance	; $4c08
+
+	; Found a valid position. Go to state 9
 	ld h,d			; $4c0a
-	ld l,$84		; $4c0b
+	ld l,Enemy.state		; $4c0b
 	ld (hl),$09		; $4c0d
-	ld l,$86		; $4c0f
+
+	ld l,Enemy.counter1		; $4c0f
 	ld (hl),$20		; $4c11
+
 	call objectGetAngleTowardEnemyTarget		; $4c13
 	ld b,a			; $4c16
-	ld e,$82		; $4c17
+
+	; Subid 1 only: angle must be a cardinal direction
+	ld e,Enemy.subid		; $4c17
 	ld a,(de)		; $4c19
 	dec a			; $4c1a
 	ld a,b			; $4c1b
-	jr nz,_label_073	; $4c1c
+	jr nz,+			; $4c1c
 	add $04			; $4c1e
 	and $18			; $4c20
-_label_073:
-	ld e,$89		; $4c22
++
+	ld e,Enemy.angle		; $4c22
 	ld (de),a		; $4c24
+
+	; Decide animation to use
 	cp $10			; $4c25
 	ld a,$00		; $4c27
-	jr nc,_label_074	; $4c29
+	jr nc,+			; $4c29
 	inc a			; $4c2b
-_label_074:
-	ld e,$b0		; $4c2c
++
+	ld e,Enemy.var30		; $4c2c
 	ld (de),a		; $4c2e
 	call enemySetAnimation		; $4c2f
 	call objectSetVisiblec1		; $4c32
-_label_075:
-	ld e,$97		; $4c35
+
+@doneLoop:
+	; Copy Link's position to spawner.var31/var32
+	ld e,Enemy.relatedObj1+1		; $4c35
 	ld a,(de)		; $4c37
 	ld h,a			; $4c38
-	ld l,$b1		; $4c39
+	ld l,Enemy.var31		; $4c39
 	ld a,(w1Link.yh)		; $4c3b
 	ldi (hl),a		; $4c3e
 	ld a,(w1Link.xh)		; $4c3f
 	ld (hl),a		; $4c42
 	ret			; $4c43
-	ld e,$a1		; $4c44
+
+
+; Emerging from ground
+_floormaster_state9:
+	ld e,Enemy.animParameter		; $4c44
 	ld a,(de)		; $4c46
 	dec a			; $4c47
 	jp nz,enemyAnimate		; $4c48
-	ld e,$84		; $4c4b
+
+	ld e,Enemy.state		; $4c4b
 	ld a,$0a		; $4c4d
 	ld (de),a		; $4c4f
-	ld e,$b0		; $4c50
+
+	ld e,Enemy.var30		; $4c50
 	ld a,(de)		; $4c52
 	add $02			; $4c53
 	jp enemySetAnimation		; $4c55
+
+
+; Floating in place for [counter1] frames before chasing Link
+_floormaster_stateA:
 	call _ecom_decCounter1		; $4c58
-	jr z,_label_076	; $4c5b
+	jr z,@beginChasing	; $4c5b
+
 	ld a,(hl)		; $4c5d
 	srl a			; $4c5e
 	srl a			; $4c60
-	ld hl,$4c92		; $4c62
+	ld hl,@zVals		; $4c62
 	rst_addAToHl			; $4c65
 	ld a,(hl)		; $4c66
-	ld e,$8f		; $4c67
+	ld e,Enemy.zh		; $4c67
 	ld (de),a		; $4c69
 	ret			; $4c6a
-_label_076:
-	ld (hl),$f0		; $4c6b
-	ld l,$a4		; $4c6d
+
+@beginChasing:
+	ld (hl),$f0 ; [counter1]
+
+	ld l,Enemy.collisionType		; $4c6d
 	set 7,(hl)		; $4c6f
-	ld l,$84		; $4c71
+
+	ld l,Enemy.state		; $4c71
 	ld (hl),$0b		; $4c73
-	call $4d0f		; $4c75
+
+	call _floormaster_updateAngleTowardLink		; $4c75
 	ld b,a			; $4c78
-	ld e,$97		; $4c79
+
+	ld e,Enemy.relatedObj1+1		; $4c79
 	ld a,(de)		; $4c7b
 	ld h,a			; $4c7c
-	ld l,$8d		; $4c7d
+	ld l,Enemy.xh		; $4c7d
 	bit 5,(hl)		; $4c7f
+
+	; Certain subids have higher speed?
 	ld h,d			; $4c81
-	ld l,$90		; $4c82
-	ld (hl),$0f		; $4c84
-	jr z,_label_077	; $4c86
-	ld (hl),$19		; $4c88
-_label_077:
+	ld l,Enemy.speed		; $4c82
+	ld (hl),SPEED_60		; $4c84
+	jr z,+			; $4c86
+	ld (hl),SPEED_a0		; $4c88
++
 	ld a,b			; $4c8a
 	add $02			; $4c8b
 	call enemySetAnimation		; $4c8d
-	jr _label_080		; $4c90
-	ei			; $4c92
-.DB $fc				; $4c93
-.DB $fd				; $4c94
-.DB $fd				; $4c95
-	cp $fe			; $4c96
-	rst $38			; $4c98
-	rst $38			; $4c99
+	jr _floormaster_animate		; $4c90
+
+@zVals:
+	.db $fb $fc $fd $fd $fe $fe $ff $ff
+
+
+; Chasing Link
+_floormaster_stateB:
 	call _ecom_decCounter1		; $4c9a
-	jr nz,_label_078	; $4c9d
-	ld l,$8f		; $4c9f
+	jr nz,@stillChasing	; $4c9d
+
+	; Time to go back into ground
+	ld l,Enemy.zh		; $4c9f
 	ld (hl),$00		; $4ca1
-	ld l,$a4		; $4ca3
+	ld l,Enemy.collisionType		; $4ca3
 	res 7,(hl)		; $4ca5
+
 	ld l,e			; $4ca7
-	ld (hl),$0d		; $4ca8
-	ld l,$b0		; $4caa
+	ld (hl),$0d ; [state]
+
+	ld l,Enemy.var30		; $4caa
 	ld a,$06		; $4cac
 	add (hl)		; $4cae
 	jp enemySetAnimation		; $4caf
-_label_078:
-	ld e,$b0		; $4cb2
+
+@stillChasing:
+	ld e,Enemy.var30		; $4cb2
 	ld a,(de)		; $4cb4
 	ldh (<hFF8D),a	; $4cb5
-	call $4d0f		; $4cb7
+
+	call _floormaster_updateAngleTowardLink		; $4cb7
 	ld b,a			; $4cba
 	ldh a,(<hFF8D)	; $4cbb
 	cp b			; $4cbd
-	jr z,_label_079	; $4cbe
+	jr z,++			; $4cbe
 	ld a,$02		; $4cc0
 	add b			; $4cc2
 	call enemySetAnimation		; $4cc3
-_label_079:
-	call $4d51		; $4cc6
-	call $4d9f		; $4cc9
+++
+	call _floormaster_updateZPosition		; $4cc6
+	call _floormaster_getAdjacentWallsBitset		; $4cc9
 	call _ecom_applyVelocityGivenAdjacentWalls		; $4ccc
-_label_080:
+
+_floormaster_animate:
 	jp enemyAnimate		; $4ccf
-	ld e,$a1		; $4cd2
+
+
+; Grabbing Link
+_floormaster_stateC:
+	ld e,Enemy.animParameter		; $4cd2
 	ld a,(de)		; $4cd4
 	dec a			; $4cd5
-	jr z,_label_081	; $4cd6
+	jr z,@makeLinkInvisible	; $4cd6
 	dec a			; $4cd8
-	jr z,_label_082	; $4cd9
+	jr z,@setZToZero	; $4cd9
 	dec a			; $4cdb
-	jr nz,_label_080	; $4cdc
+	jr nz,_floormaster_animate	; $4cdc
+
+	; [animParameter] == 3
+	; Set state2 for LINK_STATE_GRABBED_BY_WALLMASTER
 	ld a,$02		; $4cde
-	ld ($d005),a		; $4ce0
+	ld (w1Link.state2),a		; $4ce0
 	jp objectSetInvisible		; $4ce3
-_label_081:
+
+@makeLinkInvisible: ; [animParameter] == 1
 	ld (de),a		; $4ce6
-	ld ($d01a),a		; $4ce7
-	ld e,$8b		; $4cea
+	ld (w1Link.visible),a		; $4ce7
+
+	ld e,Enemy.yh		; $4cea
 	ld a,(w1Link.yh)		; $4cec
 	ld (de),a		; $4cef
-	ld e,$8d		; $4cf0
+	ld e,Enemy.xh		; $4cf0
 	ld a,(w1Link.xh)		; $4cf2
 	ld (de),a		; $4cf5
 	ret			; $4cf6
-_label_082:
+
+@setZToZero: ; [animParameter] == 2
 	xor a			; $4cf7
 	ld (de),a		; $4cf8
-	ld e,$8f		; $4cf9
+	ld e,Enemy.zh		; $4cf9
 	ld (de),a		; $4cfb
-	jr _label_080		; $4cfc
-	ld e,$a1		; $4cfe
+	jr _floormaster_animate		; $4cfc
+
+
+; Sinking into ground
+_floormaster_stateD:
+	ld e,Enemy.animParameter		; $4cfe
 	ld a,(de)		; $4d00
 	cp $03			; $4d01
-	jr nz,_label_080	; $4d03
-	ld e,$97		; $4d05
+	jr nz,_floormaster_animate	; $4d03
+
+	; Tell spawner that there's one less floormaster on-screen before deleting self
+	ld e,Enemy.relatedObj1+1		; $4d05
 	ld a,(de)		; $4d07
 	ld h,a			; $4d08
-	ld l,$b0		; $4d09
+	ld l,Enemy.var30		; $4d09
 	dec (hl)		; $4d0b
+
 	jp enemyDelete		; $4d0c
-	call $4d48		; $4d0f
+
+
+;;
+; @param[out]	a	Value written to var30 (0 if Link is to the left, 1 if right)
+; @addr{4d0f}
+_floormaster_updateAngleTowardLink:
+	call @checkLinkCollisionsEnabled		; $4d0f
 	ret nc			; $4d12
+
 	call objectGetAngleTowardLink		; $4d13
 	ld b,a			; $4d16
 	and $0f			; $4d17
-	jr nz,_label_083	; $4d19
-	ld e,$89		; $4d1b
+	jr nz,++		; $4d19
+
+	; Link is directly above or below the floormaster
+	ld e,Enemy.angle		; $4d1b
 	ld a,b			; $4d1d
 	ld (de),a		; $4d1e
-	ld e,$b0		; $4d1f
+	ld e,Enemy.var30		; $4d1f
 	ld a,(de)		; $4d21
 	ret			; $4d22
-_label_083:
-	ld e,$82		; $4d23
+++
+	ld e,Enemy.subid		; $4d23
 	ld a,(de)		; $4d25
 	dec a			; $4d26
 	ld a,b			; $4d27
-	jr nz,_label_085	; $4d28
-	ld e,$89		; $4d2a
+	jr nz,@subid0		; $4d28
+
+@subid1:
+	; Only move in cardinal directions
+	ld e,Enemy.angle		; $4d2a
 	and $f8			; $4d2c
 	ld (de),a		; $4d2e
+
 	cp $10			; $4d2f
 	ld a,$00		; $4d31
-	jr nc,_label_084	; $4d33
+	jr nc,+			; $4d33
 	inc a			; $4d35
-_label_084:
-	ld e,$b0		; $4d36
++
+	ld e,Enemy.var30		; $4d36
 	ld (de),a		; $4d38
 	ret			; $4d39
-_label_085:
-	ld e,$89		; $4d3a
+
+@subid0:
+	ld e,Enemy.angle		; $4d3a
 	ld (de),a		; $4d3c
+
 	cp $10			; $4d3d
 	ld a,$00		; $4d3f
-	jr nc,_label_086	; $4d41
+	jr nc,+			; $4d41
 	inc a			; $4d43
-_label_086:
-	ld e,$b0		; $4d44
++
+	ld e,Enemy.var30		; $4d44
 	ld (de),a		; $4d46
 	ret			; $4d47
-	ld a,($d024)		; $4d48
+
+;;
+; @param[out]	cflag	c if Link's collisions are enabled
+; @addr{4d48}
+@checkLinkCollisionsEnabled:
+	ld a,(w1Link.collisionType)		; $4d48
 	rlca			; $4d4b
 	ret c			; $4d4c
-	ld e,$b0		; $4d4d
+	ld e,Enemy.var30		; $4d4d
 	ld a,(de)		; $4d4f
 	ret			; $4d50
-	ld e,$86		; $4d51
+
+
+;;
+; @addr{4d51}
+_floormaster_updateZPosition:
+	ld e,Enemy.counter1		; $4d51
 	ld a,(de)		; $4d53
 	and $07			; $4d54
 	ret nz			; $4d56
-	ld e,$b1		; $4d57
+
+	ld e,Enemy.var31		; $4d57
 	ld a,(de)		; $4d59
 	inc a			; $4d5a
 	and $07			; $4d5b
 	ld (de),a		; $4d5d
-	ld hl,$4d67		; $4d5e
+	ld hl,@zVals		; $4d5e
 	rst_addAToHl			; $4d61
-	ld e,$8f		; $4d62
+	ld e,Enemy.zh		; $4d62
 	ld a,(hl)		; $4d64
 	ld (de),a		; $4d65
 	ret			; $4d66
-	ei			; $4d67
-.DB $fc				; $4d68
-.DB $fd				; $4d69
-.DB $fc				; $4d6a
-	ei			; $4d6b
-	ld a,($faf9)		; $4d6c
-	ld a,$31		; $4d6f
+
+@zVals:
+	.db $fb $fc $fd $fc $fb $fa $f9 $fa
+
+
+
+;;
+; Checks whether Link has moved 8 pixels away from his position last time a floormaster
+; was spawned.
+;
+; @param[out]	bc	Link's position
+; @param[out]	cflag	c if he's within 8 pixels
+; @addr{4d6f}
+_floormaster_checkLinkMoved8PixelsAway:
+	ld a,Object.var31		; $4d6f
 	call objectGetRelatedObject1Var		; $4d71
 	ld a,(w1Link.yh)		; $4d74
 	ld b,a			; $4d77
@@ -131084,25 +131252,37 @@ _label_086:
 	ld a,(w1Link.xh)		; $4d7d
 	ld c,a			; $4d80
 	ret nc			; $4d81
+
 	inc l			; $4d82
-	sub (hl)		; $4d83
+	sub (hl) ; [var32]
 	add $08			; $4d84
 	cp $10			; $4d86
 	ret			; $4d88
-	ld e,$8b		; $4d89
+
+
+;;
+; @addr{4d89}
+_floormaster_initSpawner:
+	ld e,Enemy.yh		; $4d89
 	ld a,(de)		; $4d8b
 	and $f0			; $4d8c
 	swap a			; $4d8e
-	ld e,$b3		; $4d90
+	ld e,Enemy.var33		; $4d90
 	ld (de),a		; $4d92
-	ld e,$8d		; $4d93
+
+	ld e,Enemy.xh		; $4d93
 	ld a,(de)		; $4d95
 	and $f0			; $4d96
 	swap a			; $4d98
 	inc a			; $4d9a
-	ld e,$b4		; $4d9b
+	ld e,Enemy.var34		; $4d9b
 	ld (de),a		; $4d9d
 	ret			; $4d9e
+
+;;
+; Only screen boundaries count as "walls" for floormaster.
+; @addr{4d9f}
+_floormaster_getAdjacentWallsBitset:
 	ld a,$02		; $4d9f
 	jp _ecom_getTopDownAdjacentWallsBitset		; $4da1
 
