@@ -2,6 +2,11 @@
 ;
 ; TODO: determine which enemies are supposed to count toward wNumEnemies, and which don't.
 
+
+; Enemies $00-$07, and $68-$7f, count as bosses. (These ID ranges are checked in
+; enemyBossCommon.s.)
+
+;;
 .define ENEMYID_MERGED_TWINROVA			$01
 
 ;;
@@ -87,6 +92,10 @@
 
 ;;
 ; Part of D4 boss (ENEMYID_EYESOAR)
+; @subid_00{Spawns above eyesoar}
+; @subid_01{Right of eyesoar}
+; @subid_02{Below eyesoar}
+; @subid_03{Left of eyesoar}
 .define ENEMYID_EYESOAR_CHILD			$11
 
 ;;
@@ -495,6 +504,11 @@
 .define ENEMYID_STUB_65				$65
 .define ENEMYID_STUB_66				$66
 .define ENEMYID_STUB_67				$67
+
+
+; Enemies $00-$07, and $68-$7f, count as bosses. (These ID ranges are checked in
+; enemyBossCommon.s.)
+
 .define ENEMYID_STUB_68				$68
 .define ENEMYID_STUB_69				$69
 .define ENEMYID_STUB_6a				$6a
@@ -526,10 +540,16 @@
 .define ENEMYID_PUMPKIN_HEAD			$78
 .define ENEMYID_HEAD_THWOMP			$79
 .define ENEMYID_SHADOW_HAG			$7a
+
+;;
+; @subid_00{Spawner; spawns subid 1 and 4 children}
+; @subid_01{The main part of the boss}
 .define ENEMYID_EYESOAR				$7b
 .define ENEMYID_SMOG				$7c
 .define ENEMYID_OCTOGON				$7d
 .define ENEMYID_PLASMARINE			$7e
 .define ENEMYID_KING_MOBLIN			$7f
 
-; Also ramrock with ID 7
+; Also ramrock with ID 7.
+
+; Can't have enemies with ID beyond $80, for various reasons.

@@ -2,6 +2,11 @@
 .define PARTID_ENEMY_DESTROYED	 		$02
 .define PARTID_ORB				$03 ; Orb that toggles raisable blocks
 
+;;
+; Boss death explosion?
+; @subid{ID of enemy being killed}
+.define PARTID_04				$04
+
 ; Makes a torch lightable.
 ; Subid:
 ;   0: Once lit, it stays lit.

@@ -128520,287 +128520,397 @@ _veranSpider_setRandomAngleAndCounter1:
 	ld (de),a		; $6923
 	ret			; $6924
 
-;;
-; @addr{6925}
+
+; ==============================================================================
+; ENEMYID_EYESOAR_CHILD
+;
+; Variables:
+;   relatedObj1: Pointer to ENEMYID_EYESOAR
+;   relatedObj2: Pointer to INTERACID_0b?
+;   var30: Distance away from Eyesoar (position in "circle arc")
+;   var31: "Target" distance away from Eyesoar (var30 is moving toward this value)
+;   var32: Angle offset for this child (each subid is a quarter circle apart)
+;
+; See also ENEMYID_EYESOAR variables.
+; ==============================================================================
 enemyCode11:
-	jr z,_label_275	; $6925
-	sub $03			; $6927
+	jr z,@normalStatus	; $6925
+	sub ENEMYSTATUS_NO_HEALTH			; $6927
 	ret c			; $6929
-	jr nz,_label_275	; $692a
-	ld a,$29		; $692c
+	jr nz,@normalStatus	; $692a
+
+	ld a,Object.health		; $692c
 	call objectGetRelatedObject1Var		; $692e
 	ld a,(hl)		; $6931
 	or a			; $6932
 	jp z,enemyDie_uncounted		; $6933
+
 	call objectCreatePuff		; $6936
 	ld h,d			; $6939
-	ld l,$84		; $693a
+	ld l,Enemy.state		; $693a
 	ld (hl),$0c		; $693c
-	ld l,$86		; $693e
-	ld (hl),$1e		; $6940
-	ld l,$b0		; $6942
+
+	ld l,Enemy.counter1		; $693e
+	ld (hl),30		; $6940
+
+	ld l,Enemy.var30		; $6942
 	ld (hl),$00		; $6944
-	ld l,$a4		; $6946
+
+	ld l,Enemy.collisionType		; $6946
 	res 7,(hl)		; $6948
-	ld l,$a9		; $694a
+
+	ld l,Enemy.health		; $694a
 	ld (hl),$04		; $694c
 	call objectSetInvisible		; $694e
-_label_275:
-	ld a,$39		; $6951
+
+@normalStatus:
+	ld a,Object.var39		; $6951
 	call objectGetRelatedObject1Var		; $6953
 	bit 1,(hl)		; $6956
 	ld b,h			; $6958
-	ld e,$84		; $6959
-	jr z,_label_277	; $695b
+
+	ld e,Enemy.state		; $6959
+	jr z,@runState	; $695b
 	ld a,(de)		; $695d
 	cp $0f			; $695e
-	jr nc,_label_277	; $6960
+	jr nc,@runState	; $6960
 	cp $0c			; $6962
 	ld h,d			; $6964
-	jr z,_label_276	; $6965
+	jr z,++		; $6965
+
 	ld l,e			; $6967
-	ld (hl),$0f		; $6968
-	ld l,$86		; $696a
+	ld (hl),$0f ; [state]
+	ld l,Enemy.counter1		; $696a
 	ld (hl),$f0		; $696c
-_label_276:
-	ld l,$b1		; $696e
+++
+	ld l,Enemy.var31		; $696e
 	ld (hl),$18		; $6970
-_label_277:
+
+@runState:
+	; Note: b == parent (ENEMYID_EYESOAR), which is used in some of the states below.
 	ld a,(de)		; $6972
 	rst_jumpTable			; $6973
-.dw $6996
-.dw $69c0
-.dw $69c0
-.dw $69c0
-.dw $69c0
-.dw $69c0
-.dw $69c0
-.dw $69c0
-.dw $69c1
-.dw $69d7
-.dw $69f1
-.dw $6a20
-.dw $6a3f
-.dw $6a6b
-.dw $6a7f
-.dw $6a8d
-.dw $6abe
-	ld a,$0b		; $6996
+	.dw _eyesoarChild_state_uninitialized
+	.dw _eyesoarChild_state_stub
+	.dw _eyesoarChild_state_stub
+	.dw _eyesoarChild_state_stub
+	.dw _eyesoarChild_state_stub
+	.dw _eyesoarChild_state_stub
+	.dw _eyesoarChild_state_stub
+	.dw _eyesoarChild_state_stub
+	.dw _eyesoarChild_state8
+	.dw _eyesoarChild_state9
+	.dw _eyesoarChild_stateA
+	.dw _eyesoarChild_stateB
+	.dw _eyesoarChild_stateC
+	.dw _eyesoarChild_stateD
+	.dw _eyesoarChild_stateE
+	.dw _eyesoarChild_stateF
+	.dw _eyesoarChild_state10
+
+
+_eyesoarChild_state_uninitialized:
+	ld a,Object.yh		; $6996
 	call objectGetRelatedObject1Var		; $6998
 	ld b,(hl)		; $699b
-	ld l,$8d		; $699c
+	ld l,Enemy.xh		; $699c
 	ld c,(hl)		; $699e
-	ld e,$82		; $699f
+
+	ld e,Enemy.subid		; $699f
 	ld a,(de)		; $69a1
-	ld hl,$69bc		; $69a2
+	ld hl,@initialAnglesForSubids		; $69a2
 	rst_addAToHl			; $69a5
-	ld e,$89		; $69a6
+
+	ld e,Enemy.angle		; $69a6
 	ld a,(hl)		; $69a8
 	ld (de),a		; $69a9
-	ld e,$b2		; $69aa
+	ld e,Enemy.var32		; $69aa
 	ld (de),a		; $69ac
 	ld a,$18		; $69ad
 	call objectSetPositionInCircleArc		; $69af
-	ld e,$86		; $69b2
-	ld a,$5a		; $69b4
+
+	ld e,Enemy.counter1		; $69b2
+	ld a,90		; $69b4
 	ld (de),a		; $69b6
-	ld a,$28		; $69b7
+	ld a,SPEED_100		; $69b7
 	jp _ecom_setSpeedAndState8		; $69b9
-	nop			; $69bc
-	ld ($1810),sp		; $69bd
+
+@initialAnglesForSubids:
+	.db ANGLE_UP, ANGLE_RIGHT, ANGLE_DOWN, ANGLE_LEFT
+
+
+
+_eyesoarChild_state_stub:
 	ret			; $69c0
+
+
+; Wait for [counter1] frames before becoming visible
+_eyesoarChild_state8:
 	call _ecom_decCounter1		; $69c1
 	ret nz			; $69c4
-	ld bc,$0b02		; $69c5
+	ldbc INTERACID_0b,$02		; $69c5
 	call objectCreateInteraction		; $69c8
 	ret nz			; $69cb
-	ld e,$98		; $69cc
-	ld a,$40		; $69ce
+	ld e,Enemy.relatedObj2		; $69cc
+	ld a,Interaction.start		; $69ce
 	ld (de),a		; $69d0
 	inc e			; $69d1
 	ld a,h			; $69d2
 	ld (de),a		; $69d3
+
 	jp _ecom_incState		; $69d4
-	ld a,$21		; $69d7
+
+
+_eyesoarChild_state9:
+	ld a,Object.animParameter		; $69d7
 	call objectGetRelatedObject2Var		; $69d9
 	bit 7,(hl)		; $69dc
 	ret z			; $69de
+
 	call _ecom_incState		; $69df
-	ld l,$86		; $69e2
+	ld l,Enemy.counter1		; $69e2
 	ld (hl),$f0		; $69e4
-	ld l,$8f		; $69e6
+	ld l,Enemy.zh		; $69e6
 	ld (hl),$fe		; $69e8
-	ld l,$b0		; $69ea
+	ld l,Enemy.var30		; $69ea
 	ld (hl),$18		; $69ec
 	jp objectSetVisiblec2		; $69ee
+
+
+; Moving around Eyesoar in a circle
+_eyesoarChild_stateA:
 	ld h,b			; $69f1
-	ld l,$b9		; $69f2
+	ld l,Enemy.var39		; $69f2
 	bit 2,(hl)		; $69f4
-_label_278:
-	jr z,_label_279	; $69f6
-	ld l,$b8		; $69f8
+	jr z,_eyesoarChild_updatePosition			; $69f6
+
+	ld l,Enemy.var38		; $69f8
 	ld a,(hl)		; $69fa
 	and $f8			; $69fb
-	ld e,$b1		; $69fd
+	ld e,Enemy.var31		; $69fd
 	ld (de),a		; $69ff
-	ld e,$84		; $6a00
+	ld e,Enemy.state		; $6a00
 	ld a,$0b		; $6a02
 	ld (de),a		; $6a04
-_label_279:
-	ld l,$8b		; $6a05
+
+;;
+; @addr{6a05}
+_eyesoarChild_updatePosition:
+	ld l,Enemy.yh		; $6a05
 	ld b,(hl)		; $6a07
-	ld l,$8d		; $6a08
+	ld l,Enemy.xh		; $6a08
 	ld c,(hl)		; $6a0a
-	ld l,$bb		; $6a0b
-	ld e,$b2		; $6a0d
+
+	; [this.var32] += [parent.var3b] (update angle by rotation speed)
+	ld l,Enemy.var3b		; $6a0b
+	ld e,Enemy.var32		; $6a0d
 	ld a,(de)		; $6a0f
 	add (hl)		; $6a10
 	and $1f			; $6a11
-	ld e,$89		; $6a13
+	ld e,Enemy.angle		; $6a13
 	ld (de),a		; $6a15
+
 	ld h,d			; $6a16
-	ld l,$b0		; $6a17
+	ld l,Enemy.var30		; $6a17
 	ld a,(hl)		; $6a19
 	call objectSetPositionInCircleArc		; $6a1a
 	jp enemyAnimate		; $6a1d
+
+
+_eyesoarChild_stateB:
+	; Check if we're the correct distance away
 	ld h,d			; $6a20
-	ld l,$b1		; $6a21
+	ld l,Enemy.var31		; $6a21
 	ldd a,(hl)		; $6a23
-	cp (hl)			; $6a24
-	jr nz,_label_280	; $6a25
+	cp (hl) ; [var30]
+	jr nz,_eyesoarChild_incOrDecHL	; $6a25
+
 	ld l,e			; $6a27
-	dec (hl)		; $6a28
+	dec (hl) ; [state]
+
+	; Mark flag in parent indicating we're in position
 	ld h,b			; $6a29
-	ld l,$ba		; $6a2a
-	ld e,$82		; $6a2c
+	ld l,Enemy.var3a		; $6a2a
+	ld e,Enemy.subid		; $6a2c
 	ld a,(de)		; $6a2e
 	call setFlag		; $6a2f
-	jr _label_279		; $6a32
-_label_280:
+	jr _eyesoarChild_updatePosition		; $6a32
+
+
+_eyesoarChild_incOrDecHL:
 	ld a,$01		; $6a34
-	jr nc,_label_281	; $6a36
+	jr nc,+			; $6a36
 	ld a,$ff		; $6a38
-_label_281:
++
 	add (hl)		; $6a3a
 	ld (hl),a		; $6a3b
 	ld h,b			; $6a3c
-	jr _label_279		; $6a3d
+	jr _eyesoarChild_updatePosition		; $6a3d
+
+
+; Was just "killed"; waiting a bit before reappearing
+_eyesoarChild_stateC:
 	ld h,b			; $6a3f
-	ld l,$b9		; $6a40
+	ld l,Enemy.var39		; $6a40
 	bit 0,(hl)		; $6a42
-	jr nz,_label_282	; $6a44
+	jr nz,@stillInvisible	; $6a44
 	call _ecom_decCounter1		; $6a46
-	jr nz,_label_282	; $6a49
+	jr nz,@stillInvisible	; $6a49
+
 	ld l,e			; $6a4b
-	inc (hl)		; $6a4c
-	ld l,$a4		; $6a4d
+	inc (hl) ; [state]
+
+	ld l,Enemy.collisionType		; $6a4d
 	set 7,(hl)		; $6a4f
 	call objectSetVisiblec2		; $6a51
 	ld h,b			; $6a54
-	jr _label_279		; $6a55
-_label_282:
+	jr _eyesoarChild_updatePosition		; $6a55
+
+@stillInvisible:
 	ld h,b			; $6a57
-	ld e,$82		; $6a58
+	ld e,Enemy.subid		; $6a58
 	ld a,(de)		; $6a5a
-	ld bc,$6a67		; $6a5b
+	ld bc,@data		; $6a5b
 	call addAToBc		; $6a5e
 	ld a,(bc)		; $6a61
-	ld l,$ba		; $6a62
+	ld l,Enemy.var3a		; $6a62
 	or (hl)			; $6a64
 	ld (hl),a		; $6a65
 	ret			; $6a66
-	ld de,$4422		; $6a67
-	adc b			; $6a6a
+
+@data:
+	.db $11 $22 $44 $88
+
+
+; Just reappeared
+_eyesoarChild_stateD:
+	; Update position relative to eyesoar
 	ld h,b			; $6a6b
-	ld l,$b8		; $6a6c
+	ld l,Enemy.var38		; $6a6c
 	ld a,(hl)		; $6a6e
 	and $f8			; $6a6f
 	ld h,d			; $6a71
-	ld l,$b0		; $6a72
+	ld l,Enemy.var30		; $6a72
 	cp (hl)			; $6a74
-	jr nz,_label_280	; $6a75
-	ld l,$84		; $6a77
+	jr nz,_eyesoarChild_incOrDecHL	; $6a75
+
+	; Reached desired position, go back to state $0a
+	ld l,Enemy.state		; $6a77
 	ld (hl),$0a		; $6a79
+
 	ld h,b			; $6a7b
-	jp $6a05		; $6a7c
+	jp _eyesoarChild_updatePosition		; $6a7c
+
+
+_eyesoarChild_stateE:
 	ld h,b			; $6a7f
-	ld l,$b9		; $6a80
+	ld l,Enemy.var39		; $6a80
 	bit 4,(hl)		; $6a82
-	jp nz,$6a05		; $6a84
+	jp nz,_eyesoarChild_updatePosition		; $6a84
+
 	ld a,$0b		; $6a87
-	ld (de),a		; $6a89
-	jp $6a05		; $6a8a
+	ld (de),a ; [state]
+	jp _eyesoarChild_updatePosition		; $6a8a
+
+
+; Moving around randomly
+_eyesoarChild_stateF:
 	ld h,b			; $6a8d
-	ld l,$b9		; $6a8e
+	ld l,Enemy.var39		; $6a8e
 	bit 3,(hl)		; $6a90
-	jr nz,_label_283	; $6a92
-	ld l,$bb		; $6a94
-	ld e,$b2		; $6a96
+	jr nz,@stillMovingRandomly	; $6a92
+
+	; Calculate the angle relative to Eyesoar it should move to
+	ld l,Enemy.var3b		; $6a94
+	ld e,Enemy.var32		; $6a96
 	ld a,(de)		; $6a98
 	add (hl)		; $6a99
 	and $1f			; $6a9a
-	ld e,$89		; $6a9c
+	ld e,Enemy.angle		; $6a9c
 	ld (de),a		; $6a9e
+
 	call _ecom_incState		; $6a9f
-	ld l,$b0		; $6aa2
+
+	; $18 units away from Eyesoar
+	ld l,Enemy.var30		; $6aa2
 	ld (hl),$18		; $6aa4
-	jr _label_285		; $6aa6
-_label_283:
+
+	jr _eyesoarChild_animate		; $6aa6
+
+@stillMovingRandomly:
 	ld a,(wFrameCounter)		; $6aa8
 	and $0f			; $6aab
-	jr nz,_label_284	; $6aad
+	jr nz,+			; $6aad
 	call objectGetAngleTowardEnemyTarget		; $6aaf
 	call objectNudgeAngleTowards		; $6ab2
-_label_284:
++
 	call objectApplySpeed		; $6ab5
 	call _ecom_bounceOffScreenBoundary		; $6ab8
-_label_285:
+
+_eyesoarChild_animate:
 	jp enemyAnimate		; $6abb
+
+
+; Moving back toward Eyesoar
+_eyesoarChild_state10:
+	; Load into wTmpcec0 the position offset relative to Eyesoar where we should be
+	; moving to
 	ld h,b			; $6abe
-	ld l,$bb		; $6abf
+	ld l,Enemy.var3b		; $6abf
 	ld a,(hl)		; $6ac1
-	ld e,$b2		; $6ac2
+	ld e,Enemy.var32		; $6ac2
 	ld a,(de)		; $6ac4
 	add (hl)		; $6ac5
 	and $1f			; $6ac6
 	ld c,a			; $6ac8
 	ld a,$18		; $6ac9
-	ld b,$28		; $6acb
+	ld b,SPEED_100		; $6acb
 	call getScaledPositionOffsetForVelocity		; $6acd
-	ld a,$0b		; $6ad0
+
+	; Get parent.position + offset in bc
+	ld a,Object.yh		; $6ad0
 	call objectGetRelatedObject1Var		; $6ad2
-	ld a,($cec1)		; $6ad5
+	ld a,(wTmpcec0+1)		; $6ad5
 	add (hl)		; $6ad8
 	ld b,a			; $6ad9
-	ld l,$8d		; $6ada
-	ld a,($cec3)		; $6adc
+	ld l,Enemy.xh		; $6ada
+	ld a,(wTmpcec0+3)		; $6adc
 	add (hl)		; $6adf
 	ld c,a			; $6ae0
+
+	; Store current position
 	ld e,l			; $6ae1
 	ld a,(de)		; $6ae2
 	ldh (<hFF8E),a	; $6ae3
-	ld e,$8b		; $6ae5
+	ld e,Enemy.yh		; $6ae5
 	ld a,(de)		; $6ae7
 	ldh (<hFF8F),a	; $6ae8
+
+	; Check if we've reached the target position
 	cp b			; $6aea
-	jr nz,_label_286	; $6aeb
+	jr nz,++		; $6aeb
 	ldh a,(<hFF8E)	; $6aed
 	cp c			; $6aef
-	jr z,_label_287	; $6af0
-_label_286:
+	jr z,@reachedTargetPosition	; $6af0
+++
 	call _ecom_moveTowardPosition		; $6af2
-	jr _label_285		; $6af5
-_label_287:
-	ld l,$b9		; $6af7
+	jr _eyesoarChild_animate		; $6af5
+
+@reachedTargetPosition:
+	; Wait for signal to change state
+	ld l,Enemy.var39		; $6af7
 	bit 1,(hl)		; $6af9
 	ret nz			; $6afb
-	ld e,$84		; $6afc
+
+	ld e,Enemy.state		; $6afc
 	ld a,$0e		; $6afe
 	ld (de),a		; $6b00
-	ld e,$82		; $6b01
+
+	; Set flag in parent's var3a indicating we're good to go?
+	ld e,Enemy.subid		; $6b01
 	ld a,(de)		; $6b03
 	add $04			; $6b04
-	ld l,$ba		; $6b06
+	ld l,Enemy.var3a		; $6b06
 	jp setFlag		; $6b08
 
 ;;
@@ -138333,94 +138443,7 @@ _label_406:
  m_section_free Enemy_Code_Bank0f NAMESPACE bank0f
 
 	.include "code/enemyCommon.s"
-
-	ld h,d			; $44f0
-	ld l,$a4		; $44f1
-	ld a,(hl)		; $44f3
-	or a			; $44f4
-	jr z,_label_0f_039	; $44f5
-	ld (hl),$00		; $44f7
-	ld l,$86		; $44f9
-	ld (hl),$78		; $44fb
-	ld a,$01		; $44fd
-	ld (wDisableLinkCollisionsAndMenu),a		; $44ff
-	ld a,SND_BOSS_DEAD		; $4502
-	call playSound		; $4504
-_label_0f_039:
-	call _ecom_decCounter1		; $4507
-	jp nz,_ecom_flickerVisibility		; $450a
-	inc (hl)		; $450d
-	call getFreePartSlot		; $450e
-	ret nz			; $4511
-	ld (hl),$04		; $4512
-	inc l			; $4514
-	ld e,$81		; $4515
-	ld a,(de)		; $4517
-	ld (hl),a		; $4518
-	call objectCopyPosition		; $4519
-	call markEnemyAsKilledInRoom		; $451c
-	ld e,$81		; $451f
-	ld a,(de)		; $4521
-	sub $08			; $4522
-	cp $68			; $4524
-	jr c,_label_0f_040	; $4526
-	ld a,(wActiveMusic2)		; $4528
-	ld (wActiveMusic),a		; $452b
-	call playSound		; $452e
-_label_0f_040:
-	jp enemyDelete		; $4531
-	call getFreePartSlot		; $4534
-	ret nz			; $4537
-	ld (hl),$07		; $4538
-	inc l			; $453a
-	ld (hl),b		; $453b
-	inc l			; $453c
-	ld (hl),c		; $453d
-	ld l,$d6		; $453e
-	ld a,$80		; $4540
-	ldi (hl),a		; $4542
-	ld (hl),d		; $4543
-	xor a			; $4544
-	ret			; $4545
-	bit 7,a			; $4546
-	jr nz,_label_0f_041	; $4548
-	ld (wEnemyIDToLoadExtraGfx),a		; $454a
-_label_0f_041:
-	ld a,b			; $454d
-	or a			; $454e
-	call nz,loadPaletteHeader		; $454f
-	ld a,SNDCTRL_STOPMUSIC		; $4552
-	call playSound		; $4554
-	xor a			; $4557
-	ld (wDisableLinkCollisionsAndMenu),a		; $4558
-	dec a			; $455b
-	ld (wActiveMusic),a		; $455c
-	ld hl,$cc93		; $455f
-	set 7,(hl)		; $4562
-	ld a,(wScrollMode)		; $4564
-	and $01			; $4567
-	ret nz			; $4569
-	ld a,$0b		; $456a
-	ld (wLinkForceState),a		; $456c
-	ld a,$16		; $456f
-	ld (wLinkStateParameter),a		; $4571
-	ld hl,w1Link.direction		; $4574
-	ld a,(wScreenTransitionDirection)		; $4577
-	ldi (hl),a		; $457a
-	swap a			; $457b
-	rrca			; $457d
-	ld (hl),a		; $457e
-	ret			; $457f
-	ld b,MUS_MINIBOSS		; $4580
-	jr _label_0f_042		; $4582
-	ld b,MUS_BOSS		; $4584
-_label_0f_042:
-	xor a			; $4586
-	ld (wDisabledObjects),a		; $4587
-	ld (wMenuDisabled),a		; $458a
-	ld a,b			; $458d
-	ld (wActiveMusic),a		; $458e
-	jp playSound		; $4591
+	.include "code/enemyBossCommon.s"
 
 ;;
 ; @addr{4594}
@@ -138429,7 +138452,7 @@ enemyCode70:
 	sub $03			; $4596
 	ret c			; $4598
 	jr nz,_label_0f_043	; $4599
-	jp $44f0		; $459b
+	jp _enemyBoss_dead		; $459b
 _label_0f_043:
 	call $46da		; $459e
 	ld e,$84		; $45a1
@@ -138448,7 +138471,7 @@ _label_0f_043:
 .dw $46a2
 	ld a,$70		; $45bb
 	ld b,$00		; $45bd
-	call $4546		; $45bf
+	call _enemyBoss_initializeRoom		; $45bf
 	call _ecom_setSpeedAndState8		; $45c2
 	ld bc,$0040		; $45c5
 	call objectSetSpeedZ		; $45c8
@@ -138496,7 +138519,7 @@ _label_0f_043:
 	ld (de),a		; $461a
 	call _ecom_decCounter1		; $461b
 	ret nz			; $461e
-	call $4580		; $461f
+	call _enemyBoss_beginMiniboss		; $461f
 	call objectSetVisible80		; $4622
 	xor a			; $4625
 	call enemySetAnimation		; $4626
@@ -138673,7 +138696,7 @@ enemyCode71:
 	sub $03			; $4744
 	ret c			; $4746
 	jp nz,$474d		; $4747
-	jp $44f0		; $474a
+	jp _enemyBoss_dead		; $474a
 _label_0f_051:
 	ld e,$84		; $474d
 	ld a,(de)		; $474f
@@ -138692,7 +138715,7 @@ _label_0f_051:
 .dw $4874
 	ld a,$71		; $4769
 	ld b,$00		; $476b
-	call $4546		; $476d
+	call _enemyBoss_initializeRoom		; $476d
 	call _ecom_setSpeedAndState8		; $4770
 	ld b,$01		; $4773
 	ld c,$08		; $4775
@@ -138750,7 +138773,7 @@ _label_0f_053:
 	call showText		; $47db
 	jp _ecom_incState2		; $47de
 	call retIfTextIsActive		; $47e1
-	call $4580		; $47e4
+	call _enemyBoss_beginMiniboss		; $47e4
 	call _ecom_incState2		; $47e7
 	jp $4937		; $47ea
 	call $47fe		; $47ed
@@ -139005,7 +139028,7 @@ enemyCode72:
 	sub $03			; $49ae
 	ret c			; $49b0
 	jr nz,_label_0f_064	; $49b1
-	jp $44f0		; $49b3
+	jp _enemyBoss_dead		; $49b3
 _label_0f_064:
 	ld e,$b0		; $49b6
 	ld a,(de)		; $49b8
@@ -139029,7 +139052,7 @@ _label_0f_064:
 .dw $4bcb
 	ld a,$72		; $49db
 	ld b,$be		; $49dd
-	call $4546		; $49df
+	call _enemyBoss_initializeRoom		; $49df
 	call _ecom_setSpeedAndState8		; $49e2
 _label_0f_065:
 	ld a,$07		; $49e5
@@ -139097,7 +139120,7 @@ _label_0f_065:
 	call showText		; $4a68
 	jp _ecom_incState2		; $4a6b
 	call retIfTextIsActive		; $4a6e
-	call $4580		; $4a71
+	call _enemyBoss_beginMiniboss		; $4a71
 	xor a			; $4a74
 	ld (wDisabledObjects),a		; $4a75
 	ld (wMenuDisabled),a		; $4a78
@@ -139406,7 +139429,7 @@ enemyCode73:
 	ld e,$82		; $4c96
 	ld a,(de)		; $4c98
 	dec a			; $4c99
-	jp z,$44f0		; $4c9a
+	jp z,_enemyBoss_dead		; $4c9a
 	dec a			; $4c9d
 	jr nz,_label_0f_073	; $4c9e
 	call _ecom_killRelatedObj2		; $4ca0
@@ -139447,7 +139470,7 @@ _label_0f_075:
 	ld (wDisabledObjects),a		; $4cdb
 	ld (wMenuDisabled),a		; $4cde
 	ld a,$73		; $4ce1
-	jp $4546		; $4ce3
+	jp _enemyBoss_initializeRoom		; $4ce3
 	ld b,$03		; $4ce6
 	call checkBEnemySlotsAvailable		; $4ce8
 	ret nz			; $4ceb
@@ -139548,7 +139571,7 @@ _label_0f_075:
 	inc (hl)		; $4d92
 	ld l,$86		; $4d93
 	ld (hl),$1e		; $4d95
-	call $4580		; $4d97
+	call _enemyBoss_beginMiniboss		; $4d97
 	ld a,$02		; $4d9a
 	jp enemySetAnimation		; $4d9c
 	call _ecom_decCounter1		; $4d9f
@@ -140135,7 +140158,7 @@ _label_0f_096:
 	ld a,(de)		; $5190
 	or a			; $5191
 	call nz,_ecom_killRelatedObj1		; $5192
-	jp $44f0		; $5195
+	jp _enemyBoss_dead		; $5195
 _label_0f_097:
 	call $552b		; $5198
 	call _ecom_getSubidAndCpStateTo08		; $519b
@@ -140159,7 +140182,7 @@ _label_0f_098:
 	jr nz,_label_0f_100	; $51bb
 	ld b,a			; $51bd
 	ld a,$ff		; $51be
-	call $4546		; $51c0
+	call _enemyBoss_initializeRoom		; $51c0
 	ld b,$74		; $51c3
 	call _ecom_spawnUncountedEnemyWithSubid01		; $51c5
 	ret nz			; $51c8
@@ -140417,7 +140440,7 @@ _label_0f_110:
 	bit 0,(hl)		; $5373
 	jr nz,_label_0f_111	; $5375
 	inc (hl)		; $5377
-	call $4580		; $5378
+	call _enemyBoss_beginMiniboss		; $5378
 _label_0f_111:
 	ld a,$04		; $537b
 	call objectGetRelatedObject1Var		; $537d
@@ -140748,7 +140771,7 @@ _label_0f_126:
 	ld l,$84		; $5597
 	ld a,(hl)		; $5599
 	cp $0f			; $559a
-	jp z,$44f0		; $559c
+	jp z,_enemyBoss_dead		; $559c
 	ld (hl),$0f		; $559f
 	inc l			; $55a1
 	ld (hl),$00		; $55a2
@@ -140788,7 +140811,7 @@ _label_0f_128:
 	ld (hl),$fc		; $55dd
 	dec a			; $55df
 	ld b,$00		; $55e0
-	jp $4546		; $55e2
+	jp _enemyBoss_initializeRoom		; $55e2
 	ret			; $55e5
 	ld e,$88		; $55e6
 	ld a,(de)		; $55e8
@@ -141608,7 +141631,7 @@ enemyCode76:
 	ld e,$82		; $5b79
 	ld a,(de)		; $5b7b
 	or a			; $5b7c
-	jp z,$44f0		; $5b7d
+	jp z,_enemyBoss_dead		; $5b7d
 	call _ecom_killRelatedObj1		; $5b80
 	jp enemyDelete		; $5b83
 _label_0f_158:
@@ -141659,7 +141682,7 @@ _label_0f_161:
 .dw $5c08
 	ld a,$ff		; $5bd4
 	ld b,$00		; $5bd6
-	call $4546		; $5bd8
+	call _enemyBoss_initializeRoom		; $5bd8
 	ld e,$82		; $5bdb
 	ld a,(de)		; $5bdd
 	bit 7,a			; $5bde
@@ -141741,7 +141764,7 @@ _label_0f_162:
 	ld (hl),$02		; $5c69
 	ret			; $5c6b
 _label_0f_163:
-	call $4580		; $5c6c
+	call _enemyBoss_beginMiniboss		; $5c6c
 	call _ecom_incState		; $5c6f
 	ld l,$87		; $5c72
 	ld (hl),$b4		; $5c74
@@ -141918,7 +141941,7 @@ enemyCode77:
 	jr z,_label_0f_168	; $5d9c
 	sub $03			; $5d9e
 	ret c			; $5da0
-	jp z,$44f0		; $5da1
+	jp z,_enemyBoss_dead		; $5da1
 	dec a			; $5da4
 	jr nz,_label_0f_168	; $5da5
 _label_0f_168:
@@ -141951,7 +141974,7 @@ _label_0f_169:
 	ld l,$8f		; $5dd4
 	ld (hl),$ff		; $5dd6
 	ld a,$77		; $5dd8
-	jp $4546		; $5dda
+	jp _enemyBoss_initializeRoom		; $5dda
 	ld b,$03		; $5ddd
 	call checkBEnemySlotsAvailable		; $5ddf
 	ret nz			; $5de2
@@ -142549,7 +142572,7 @@ _label_0f_186:
 	ld (de),a		; $61c4
 	ld a,$78		; $61c5
 	ld b,$00		; $61c7
-	jp $4546		; $61c9
+	jp _enemyBoss_initializeRoom		; $61c9
 	ld a,($cc93)		; $61cc
 	or a			; $61cf
 	ret nz			; $61d0
@@ -143368,7 +143391,7 @@ _label_0f_204:
 	ld h,(hl)		; $677f
 	call _ecom_killObjectH		; $6780
 _label_0f_205:
-	call $44f0		; $6783
+	call _enemyBoss_dead		; $6783
 	xor a			; $6786
 	ret			; $6787
 _label_0f_206:
@@ -143399,7 +143422,7 @@ enemyCode79:
 	jr z,_label_0f_207	; $67b3
 	sub $03			; $67b5
 	ret c			; $67b7
-	jp z,$44f0		; $67b8
+	jp z,_enemyBoss_dead		; $67b8
 _label_0f_207:
 	ld e,$84		; $67bb
 	ld a,(de)		; $67bd
@@ -143424,7 +143447,7 @@ _label_0f_207:
 .dw $6a69
 	ld a,$79		; $67e3
 	ld b,$81		; $67e5
-	call $4546		; $67e7
+	call _enemyBoss_initializeRoom		; $67e7
 	call _ecom_setSpeedAndState8		; $67ea
 	ld l,$86		; $67ed
 	ld (hl),$12		; $67ef
@@ -143446,7 +143469,7 @@ _label_0f_207:
 	call _ecom_incState		; $6814
 	ld l,$b4		; $6817
 	ld (hl),$f0		; $6819
-	call $4584		; $681b
+	call _enemyBoss_beginBoss		; $681b
 	call $6ab0		; $681e
 	ret nz			; $6821
 	call $6b2b		; $6822
@@ -143977,7 +144000,7 @@ _label_0f_230:
 	cp $e0			; $6b85
 	jr c,_label_0f_230	; $6b87
 _label_0f_231:
-	jp $44f0		; $6b89
+	jp _enemyBoss_dead		; $6b89
 _label_0f_232:
 	ld e,$84		; $6b8c
 	ld a,(de)		; $6b8e
@@ -144004,7 +144027,7 @@ _label_0f_232:
 .dw $6dac
 	ld a,$7a		; $6bb8
 	ld b,$00		; $6bba
-	call $4546		; $6bbc
+	call _enemyBoss_initializeRoom		; $6bbc
 	ld a,$14		; $6bbf
 	jp _ecom_setSpeedAndState8		; $6bc1
 	ret			; $6bc4
@@ -144069,7 +144092,7 @@ _label_0f_232:
 	call _ecom_decCounter1		; $6c2f
 	jr nz,_label_0f_233	; $6c32
 	call $6df3		; $6c34
-	call $4584		; $6c37
+	call _enemyBoss_beginBoss		; $6c37
 _label_0f_233:
 	jp enemyAnimate		; $6c3a
 	call _ecom_decCounter2		; $6c3d
@@ -144376,350 +144399,507 @@ _label_0f_246:
 	cp b			; $6e4d
 	ret			; $6e4e
 
-;;
-; @addr{6e4f}
+
+; ==============================================================================
+; ENEMYID_EYESOAR
+;
+; Variables:
+;   var30-var35: Object indices of children
+;   var36/var37: Target Y/X position for state $0b
+;   var38: The distance each child should be from Eyesoar (the value they're moving
+;          toward)
+;   var39: Bit 4: Set when children should return?
+;          Bit 3: Unset to make the children start moving back to Eyesoar (after using
+;                 switch hook on him)
+;          Bit 2: Set while eyesoar is in his "dazed" state (Signals children to start
+;                 moving around randomly)
+;          Bit 1: Set to indicate the children should start moving again as normal after
+;                 returning to Eyesoar
+;          Bit 0: While set, children don't respawn?
+;   var3a: Bits 0-3: set when corresponding children have reached their target distance
+;                    away from eyesoar?
+;          Bits 4-7: set when corresponding children have reached their target position
+;                    relative to eyesoar after using the switch hook on him?
+;   var3b: Current "angle" (rotation offset for children)
+;   var3c: Counter until bit 0 of var39 gets reset
+; ==============================================================================
 enemyCode7b:
-	jr z,_label_0f_247	; $6e4f
-	sub $03			; $6e51
+	jr z,@normalStatus	; $6e4f
+	sub ENEMYSTATUS_NO_HEALTH			; $6e51
 	ret c			; $6e53
-	jp z,$7040		; $6e54
+	jp z,_eyesoar_dead		; $6e54
+
+	; ENEMYSTATUS_JUST_HIT or ENEMYSTATUS_KNOCKBACK
+
+	; TODO: Checking for mystery seed? Why?
 	ld h,d			; $6e57
-	ld l,$aa		; $6e58
+	ld l,Enemy.var2a		; $6e58
 	ld a,(hl)		; $6e5a
-	cp $9a			; $6e5b
-	jr nz,_label_0f_247	; $6e5d
-	ld l,$bc		; $6e5f
+	cp $80|COLLISIONTYPE_MYSTERY_SEED			; $6e5b
+	jr nz,@normalStatus	; $6e5d
+	ld l,Enemy.var3c		; $6e5f
 	ld (hl),$78		; $6e61
-	ld l,$b9		; $6e63
+	ld l,Enemy.var39		; $6e63
 	set 0,(hl)		; $6e65
-_label_0f_247:
+
+@normalStatus:
 	ld h,d			; $6e67
-	ld l,$bc		; $6e68
+	ld l,Enemy.var3c		; $6e68
 	ld a,(hl)		; $6e6a
 	or a			; $6e6b
-	jr z,_label_0f_248	; $6e6c
+	jr z,++			; $6e6c
 	dec (hl)		; $6e6e
-	jr nz,_label_0f_248	; $6e6f
-	ld l,$b9		; $6e71
+	jr nz,++		; $6e6f
+
+	ld l,Enemy.var39		; $6e71
 	res 0,(hl)		; $6e73
-_label_0f_248:
-	ld e,$84		; $6e75
+++
+	ld e,Enemy.state		; $6e75
 	ld a,(de)		; $6e77
 	rst_jumpTable			; $6e78
-.dw $6e97
-.dw $6eb2
-.dw $6f18
-.dw $6ee1
-.dw $6f18
-.dw $6f18
-.dw $6f18
-.dw $6f18
-.dw $6f19
-.dw $6f35
-.dw $6f44
-.dw $6f78
-.dw $6fa0
-.dw $6faf
-.dw $6fcf
+	.dw _eyesoar_state_uninitialized
+	.dw _eyesoar_state1
+	.dw _eyesoar_state_stub
+	.dw _eyesoar_state_switchHook
+	.dw _eyesoar_state_stub
+	.dw _eyesoar_state_stub
+	.dw _eyesoar_state_stub
+	.dw _eyesoar_state_stub
+	.dw _eyesoar_state8
+	.dw _eyesoar_state9
+	.dw _eyesoar_stateA
+	.dw _eyesoar_stateB
+	.dw _eyesoar_stateC
+	.dw _eyesoar_stateD
+	.dw _eyesoar_stateE
+
+
+_eyesoar_state_uninitialized:
 	ld h,d			; $6e97
-	ld l,$86		; $6e98
-	ld (hl),$3c		; $6e9a
-	ld l,$8f		; $6e9c
+	ld l,Enemy.counter1		; $6e98
+	ld (hl),60		; $6e9a
+
+	ld l,Enemy.zh		; $6e9c
 	ld (hl),$fe		; $6e9e
-	ld l,$82		; $6ea0
+
+	; Check for subid 1
+	ld l,Enemy.subid		; $6ea0
 	ld a,(hl)		; $6ea2
 	or a			; $6ea3
-	ld a,$14		; $6ea4
+	ld a,SPEED_80		; $6ea4
 	jp nz,_ecom_setSpeedAndState8		; $6ea6
+
+	; BUG: This sets an invalid state!
+	; 'a+1' == SPEED_80+1 == $15, a state which isn't defined.
+	; Doesn't really matter, since this object will be deleted anyway...
+	; But there are obscure conditions below where it returns before deleting itself.
+	; Then this would become a problem. But those conditions probably never happen...
 	inc a			; $6ea9
-	ld (de),a		; $6eaa
+	ld (de),a ; [state] = $15 (!)
+
 	ld a,$ff		; $6eab
 	ld b,$00		; $6ead
-	call $4546		; $6eaf
+	call _enemyBoss_initializeRoom		; $6eaf
+
+
+; Spawning "real" eyesoar and children.
+_eyesoar_state1:
+	; If this actually returns here, the game could crash (see above note).
 	ld b,$05		; $6eb2
 	call checkBEnemySlotsAvailable		; $6eb4
 	ret nz			; $6eb7
-	ld b,$7b		; $6eb8
+
+	; Spawn the "real" version of the boss (subid 1).
+	ld b,ENEMYID_EYESOAR		; $6eb8
 	call _ecom_spawnUncountedEnemyWithSubid01		; $6eba
-	ld l,$80		; $6ebd
+
+	ld l,Enemy.enabled		; $6ebd
 	ld e,l			; $6ebf
 	ld a,(de)		; $6ec0
 	ld (hl),a		; $6ec1
 	call objectCopyPosition		; $6ec2
-	ld l,$b0		; $6ec5
+
+	; Spawn 4 children.
+	ld l,Enemy.var30		; $6ec5
 	ld b,h			; $6ec7
 	ld c,$04		; $6ec8
-_label_0f_249:
+
+@spawnChildLoop:
 	push hl			; $6eca
 	call getFreeEnemySlot_uncounted		; $6ecb
-	ld (hl),$11		; $6ece
+	ld (hl),ENEMYID_EYESOAR_CHILD		; $6ece
 	inc l			; $6ed0
 	dec c			; $6ed1
-	ld (hl),c		; $6ed2
-	ld l,$97		; $6ed3
+	ld (hl),c ; [child.subid]
+
+	ld l,Enemy.relatedObj1+1		; $6ed3
 	ld a,b			; $6ed5
 	ldd (hl),a		; $6ed6
-	ld (hl),$80		; $6ed7
+	ld (hl),Enemy.start		; $6ed7
 	ld a,h			; $6ed9
 	pop hl			; $6eda
-	ldi (hl),a		; $6edb
-	jr nz,_label_0f_249	; $6edc
+	ldi (hl),a ; [var30+i] = child object index
+	jr nz,@spawnChildLoop	; $6edc
+
 	jp enemyDelete		; $6ede
+
+
+_eyesoar_state_switchHook:
 	inc e			; $6ee1
 	ld a,(de)		; $6ee2
 	rst_jumpTable			; $6ee3
-.dw $6eec
-.dw $6f08
-.dw $6f09
-.dw $6f13
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+
+@substate0:
+	; Signal children to run around randomly
 	ld h,d			; $6eec
-	ld l,$b9		; $6eed
+	ld l,Enemy.var39		; $6eed
 	ld a,(hl)		; $6eef
 	or $0a			; $6ef0
 	ldd (hl),a		; $6ef2
+
+	; Jdust var38 (distance away children should be)?
 	ld a,(hl)		; $6ef3
 	and $07			; $6ef4
 	or $18			; $6ef6
 	ld (hl),a		; $6ef8
-	ld l,$a5		; $6ef9
-	ld (hl),$4c		; $6efb
-	ld l,$86		; $6efd
-	ld (hl),$96		; $6eff
-	ld l,$88		; $6f01
+
+	ld l,Enemy.collisionReactionSet		; $6ef9
+	ld (hl),COLLISIONREACTIONSET_4c		; $6efb
+	ld l,Enemy.counter1		; $6efd
+	ld (hl),150		; $6eff
+	ld l,Enemy.direction		; $6f01
 	ld (hl),$00		; $6f03
 	jp _ecom_incState2		; $6f05
+
+@substate1:
 	ret			; $6f08
-	ld e,$88		; $6f09
+
+@substate2:
+	ld e,Enemy.direction		; $6f09
 	ld a,(de)		; $6f0b
 	or a			; $6f0c
 	ret nz			; $6f0d
+
 	inc a			; $6f0e
 	ld (de),a		; $6f0f
 	jp enemySetAnimation		; $6f10
+
+@substate3:
 	ld b,$0c		; $6f13
 	jp _ecom_fallToGroundAndSetState		; $6f15
+
+
+_eyesoar_state_stub:
 	ret			; $6f18
+
+
+; Flickering into existence
+_eyesoar_state8:
+	; Something about doors?
 	ld a,($cc93)		; $6f19
 	or a			; $6f1c
 	ret nz			; $6f1d
+
 	inc a			; $6f1e
 	ld (wDisabledObjects),a		; $6f1f
 	call _ecom_decCounter1		; $6f22
 	jp nz,_ecom_flickerVisibility		; $6f25
-	ld (hl),$3c		; $6f28
+
+	ld (hl),60  ; [counter1]
 	inc l			; $6f2a
-	ld (hl),$b4		; $6f2b
-	ld l,$ba		; $6f2d
+	ld (hl),180 ; [counter2]
+
+	; [var3a] = $ff (all children are in place at the beginning)
+	ld l,Enemy.var3a		; $6f2d
 	dec (hl)		; $6f2f
+
 	ld l,e			; $6f30
-	inc (hl)		; $6f31
+	inc (hl) ; [state]
 	jp objectSetVisiblec2		; $6f32
+
+
+; Waiting [counter1] frames until fight begins
+_eyesoar_state9:
 	call _ecom_decCounter1		; $6f35
-	jr nz,_label_0f_257	; $6f38
+	jr nz,_eyesoar_animate	; $6f38
+
 	ld l,e			; $6f3a
-	inc (hl)		; $6f3b
-	ld l,$86		; $6f3c
+	inc (hl) ; [state]
+
+	ld l,Enemy.counter1		; $6f3c
 	inc (hl)		; $6f3e
-	call $4584		; $6f3f
-	jr _label_0f_257		; $6f42
-	call $6ffa		; $6f44
+
+	call _enemyBoss_beginBoss		; $6f3f
+	jr _eyesoar_animate		; $6f42
+
+
+; Standing still for [counter1] frames?
+_eyesoar_stateA:
+	call _eyesoar_updateFormation		; $6f44
 	call _ecom_decCounter1		; $6f47
-	jr nz,_label_0f_257	; $6f4a
-	ld l,$84		; $6f4c
+	jr nz,_eyesoar_animate	; $6f4a
+
+	ld l,Enemy.state		; $6f4c
 	inc (hl)		; $6f4e
-	ld l,$b6		; $6f4f
+
+	; Decide on target position (written to var36/var37)
+	ld l,Enemy.var36		; $6f4f
 	ldh a,(<hEnemyTargetY)	; $6f51
 	ld b,a			; $6f53
 	sub $40			; $6f54
 	cp $30			; $6f56
-	jr c,_label_0f_254	; $6f58
+	jr c,++			; $6f58
 	cp $c0			; $6f5a
 	ld b,$40		; $6f5c
-	jr nc,_label_0f_254	; $6f5e
+	jr nc,++		; $6f5e
 	ld b,$70		; $6f60
-_label_0f_254:
+++
 	ld a,b			; $6f62
-	ldi (hl),a		; $6f63
+	ldi (hl),a ; [var36]
+
 	ldh a,(<hEnemyTargetX)	; $6f64
 	ld b,a			; $6f66
 	sub $40			; $6f67
 	cp $70			; $6f69
-	jr c,_label_0f_255	; $6f6b
+	jr c,++			; $6f6b
 	cp $c0			; $6f6d
 	ld b,$40		; $6f6f
-	jr nc,_label_0f_255	; $6f71
+	jr nc,++		; $6f71
 	ld b,$b0		; $6f73
-_label_0f_255:
-	ld (hl),b		; $6f75
-	jr _label_0f_257		; $6f76
-	call $6ffa		; $6f78
+++
+	ld (hl),b ; [var37]
+
+	jr _eyesoar_animate		; $6f76
+
+
+; Moving until it reaches its target position
+_eyesoar_stateB:
+	call _eyesoar_updateFormation		; $6f78
 	ld h,d			; $6f7b
-	ld l,$b6		; $6f7c
+	ld l,Enemy.var36		; $6f7c
+
 	call _ecom_readPositionVars		; $6f7e
 	sub c			; $6f81
 	add $02			; $6f82
 	cp $05			; $6f84
-	jr nc,_label_0f_256	; $6f86
+	jr nc,++	; $6f86
 	ldh a,(<hFF8F)	; $6f88
 	sub b			; $6f8a
 	add $02			; $6f8b
 	cp $05			; $6f8d
-	jr nc,_label_0f_256	; $6f8f
-	ld l,$84		; $6f91
+	jr nc,++	; $6f8f
+
+	ld l,Enemy.state		; $6f91
 	dec (hl)		; $6f93
-	ld l,$86		; $6f94
-	ld (hl),$3c		; $6f96
-	jr _label_0f_257		; $6f98
-_label_0f_256:
+	ld l,Enemy.counter1		; $6f94
+	ld (hl),60		; $6f96
+	jr _eyesoar_animate		; $6f98
+++
 	call _ecom_moveTowardPosition		; $6f9a
-_label_0f_257:
+
+_eyesoar_animate:
 	jp enemyAnimate		; $6f9d
+
+
+; Spinning in place after being switch hook'd
+_eyesoar_stateC:
 	call _ecom_decCounter1		; $6fa0
-	jr nz,_label_0f_257	; $6fa3
+	jr nz,_eyesoar_animate	; $6fa3
+
 	ld l,e			; $6fa5
-	inc (hl)		; $6fa6
-	ld l,$a5		; $6fa7
-	ld (hl),$6d		; $6fa9
+	inc (hl) ; [state]
+
+	ld l,Enemy.collisionReactionSet		; $6fa7
+	ld (hl),COLLISIONREACTIONSET_6d		; $6fa9
+
 	xor a			; $6fab
 	call enemySetAnimation		; $6fac
+
+
+; Moving back up into the air
+_eyesoar_stateD:
 	ld h,d			; $6faf
-	ld l,$8e		; $6fb0
+	ld l,Enemy.z		; $6fb0
 	ld a,(hl)		; $6fb2
 	sub $80			; $6fb3
 	ldi (hl),a		; $6fb5
 	ld a,(hl)		; $6fb6
 	sbc $00			; $6fb7
 	ld (hl),a		; $6fb9
+
 	cp $fe			; $6fba
-	jr nz,_label_0f_257	; $6fbc
+	jr nz,_eyesoar_animate	; $6fbc
+
 	ld l,e			; $6fbe
-	inc (hl)		; $6fbf
-	ld l,$86		; $6fc0
-	ld (hl),$f0		; $6fc2
-	ld l,$ba		; $6fc4
+	inc (hl) ; [state]
+
+	ld l,Enemy.counter1		; $6fc0
+	ld (hl),240		; $6fc2
+
+	ld l,Enemy.var3a		; $6fc4
 	ld (hl),$0f		; $6fc6
-	ld l,$b9		; $6fc8
+
+	ld l,Enemy.var39		; $6fc8
 	res 1,(hl)		; $6fca
-	call $7057		; $6fcc
+	call _eyesoar_chooseNewAngle		; $6fcc
+
+
+; Flying around kinda randomly
+_eyesoar_stateE:
 	call _ecom_decCounter1		; $6fcf
-	jr nz,_label_0f_258	; $6fd2
-	ld l,$b9		; $6fd4
+	jr nz,++		; $6fd2
+	ld l,Enemy.var39		; $6fd4
 	res 3,(hl)		; $6fd6
 	set 4,(hl)		; $6fd8
-_label_0f_258:
-	ld l,$ba		; $6fda
+++
+	ld l,Enemy.var3a		; $6fda
 	ld a,(hl)		; $6fdc
 	inc a			; $6fdd
-	jr nz,_label_0f_259	; $6fde
+	jr nz,++		; $6fde
+
+	; All children dead?
 	dec l			; $6fe0
-	res 4,(hl)		; $6fe1
+	res 4,(hl) ; [var39]
 	ld l,e			; $6fe3
-	ld (hl),$0a		; $6fe4
-	ld l,$86		; $6fe6
-	ld (hl),$01		; $6fe8
+	ld (hl),$0a ; [state]
+
+	ld l,Enemy.counter1		; $6fe6
+	ld (hl),$01 ; [counter1]		; $6fe8
 	inc l			; $6fea
-	ld (hl),$08		; $6feb
-_label_0f_259:
-	ld l,$86		; $6fed
+	ld (hl),$08 ; [counter2]
+++
+	ld l,Enemy.counter1		; $6fed
 	ld a,(hl)		; $6fef
 	and $3f			; $6ff0
-	call z,$7057		; $6ff2
+	call z,_eyesoar_chooseNewAngle		; $6ff2
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $6ff5
-	jr _label_0f_257		; $6ff8
-	ld e,$ba		; $6ffa
+	jr _eyesoar_animate		; $6ff8
+
+
+;;
+; Checks to update the "formation", that is, the distances away from Eyesoar for the
+; children.
+; @addr{6ffa}
+_eyesoar_updateFormation:
+	; Check all children are at their target distance away from Eyesoar
+	ld e,Enemy.var3a		; $6ffa
 	ld a,(de)		; $6ffc
 	ld c,a			; $6ffd
 	and $f0			; $6ffe
 	cp $f0			; $7000
 	ret nz			; $7002
+
+	; Increment angle offset for children
 	ld a,(wFrameCounter)		; $7003
 	and $03			; $7006
-	jr nz,_label_0f_260	; $7008
-	ld e,$bb		; $700a
+	jr nz,++		; $7008
+	ld e,Enemy.var3b		; $700a
 	ld a,(de)		; $700c
 	inc a			; $700d
 	and $1f			; $700e
 	ld (de),a		; $7010
-_label_0f_260:
+++
+	; Check that all children are in formation
 	inc c			; $7011
-	jr nz,_label_0f_261	; $7012
+	jr nz,@notInFormation	; $7012
+
 	call _ecom_decCounter2		; $7014
 	ret nz			; $7017
-	ld (hl),$b4		; $7018
-	ld l,$b9		; $701a
+	ld (hl),180		; $7018
+
+	; Signal children to begin moving to new distance away from eyesoar
+	ld l,Enemy.var39		; $701a
 	set 2,(hl)		; $701c
-	ld l,$ba		; $701e
+	ld l,Enemy.var3a		; $701e
 	ld (hl),$f0		; $7020
-	ld e,$b8		; $7022
+
+	; Choose new distance away
+	ld e,Enemy.var38		; $7022
 	ld a,(de)		; $7024
 	inc a			; $7025
 	and $07			; $7026
 	ld b,a			; $7028
-	ld hl,$7038		; $7029
+	ld hl,distancesFromEyesoar		; $7029
 	rst_addAToHl			; $702c
 	ld a,(hl)		; $702d
 	or b			; $702e
 	ld (de),a		; $702f
 	ret			; $7030
-_label_0f_261:
-	ld e,$b9		; $7031
+
+@notInFormation:
+	ld e,Enemy.var39		; $7031
 	ld a,(de)		; $7033
 	res 2,a			; $7034
 	ld (de),a		; $7036
 	ret			; $7037
-	jr $28			; $7038
-	jr nc,_label_0f_265	; $703a
-	jr nc,$18		; $703c
-	jr z,_label_0f_266	; $703e
-	ld e,$a4		; $7040
+
+; Distances away from Eyesoar for the children
+distancesFromEyesoar:
+	.db $18 $28 $30 $20 $30 $18 $28 $20
+
+
+
+_eyesoar_dead:
+	ld e,Enemy.collisionType		; $7040
 	ld a,(de)		; $7042
 	or a			; $7043
-	jr z,_label_0f_263	; $7044
-	ld e,$b0		; $7046
-_label_0f_262:
+	jr z,@doneKillingChildren	; $7044
+
+	ld e,Enemy.var30		; $7046
+@killNextChild:
 	ld a,(de)		; $7048
 	ld h,a			; $7049
 	ld l,e			; $704a
 	call _ecom_killObjectH		; $704b
 	inc e			; $704e
 	ld a,e			; $704f
-	cp $b6			; $7050
-	jr c,_label_0f_262	; $7052
-_label_0f_263:
-	jp $44f0		; $7054
-_label_0f_264:
+	cp Enemy.var36			; $7050
+	jr c,@killNextChild	; $7052
+
+@doneKillingChildren:
+	jp _enemyBoss_dead		; $7054
+
+
+;;
+; Chooses an angle which roughly goes toward the center of the room, plus a small, random
+; angle offset.
+; @addr{7057}
+_eyesoar_chooseNewAngle:
+	; Get random angle offset in 'c'
 	call getRandomNumber_noPreserveVars		; $7057
 	and $0f			; $705a
-_label_0f_265:
 	cp $09			; $705c
-	jr nc,_label_0f_264	; $705e
-_label_0f_266:
+	jr nc,_eyesoar_chooseNewAngle	; $705e
+
 	ld c,a			; $7060
 	ld b,$00		; $7061
-	ld e,$8b		; $7063
+	ld e,Enemy.yh		; $7063
 	ld a,(de)		; $7065
-	cp $58			; $7066
-	jr c,_label_0f_267	; $7068
+	cp (LARGE_ROOM_HEIGHT/2)<<4 + 8			; $7066
+	jr c,+			; $7068
 	inc b			; $706a
-_label_0f_267:
-	ld e,$8d		; $706b
++
+	ld e,Enemy.xh		; $706b
 	ld a,(de)		; $706d
-	cp $78			; $706e
-	jr c,_label_0f_268	; $7070
+	cp (LARGE_ROOM_WIDTH/2)<<4 + 8			; $706e
+	jr c,+			; $7070
 	set 1,b			; $7072
-_label_0f_268:
++
 	ld a,b			; $7074
-	ld hl,@data		; $7075
+	ld hl,@angleVals		; $7075
 	rst_addAToHl			; $7078
 	ld a,(hl)		; $7079
 	add c			; $707a
 	and $1f			; $707b
-	ld e,$89		; $707d
+	ld e,Enemy.angle		; $707d
 	ld (de),a		; $707f
 	ret			; $7080
 
-; @addr{7081}
-@data:
+@angleVals:
 	.db $08 $00 $10 $18
 
 ;;
@@ -144729,7 +144909,7 @@ enemyCode7c:
 	sub $03			; $7087
 	ret c			; $7089
 	jr nz,_label_0f_269	; $708a
-	jp $44f0		; $708c
+	jp _enemyBoss_dead		; $708c
 _label_0f_269:
 	ld e,$84		; $708f
 	ld a,(de)		; $7091
@@ -144766,7 +144946,7 @@ _label_0f_269:
 	ld (de),a		; $70cc
 	ld a,$00		; $70cd
 	jr _label_0f_272		; $70cf
-	call $4584		; $70d1
+	call _enemyBoss_beginBoss		; $70d1
 	ld h,d			; $70d4
 	ld e,$88		; $70d5
 	ld l,$b3		; $70d7
@@ -144816,7 +144996,7 @@ _label_0f_272:
 	jp _ecom_initState8		; $7127
 	ld a,$7c		; $712a
 	ld b,$00		; $712c
-	call $4546		; $712e
+	call _enemyBoss_initializeRoom		; $712e
 	call _ecom_setSpeedAndState8		; $7131
 	ld l,$a4		; $7134
 	res 7,(hl)		; $7136
@@ -145297,7 +145477,7 @@ enemyCode7d:
 	ld a,(de)		; $7420
 	or a			; $7421
 	call nz,_ecom_killRelatedObj1		; $7422
-	jp $44f0		; $7425
+	jp _enemyBoss_dead		; $7425
 _label_0f_296:
 	ld a,$2b		; $7428
 	call objectGetRelatedObject1Var		; $742a
@@ -146290,7 +146470,7 @@ enemyCode7e:
 	jr z,_label_0f_338	; $7a5c
 	sub $03			; $7a5e
 	ret c			; $7a60
-	jp z,$44f0		; $7a61
+	jp z,_enemyBoss_dead		; $7a61
 	ld e,$a5		; $7a64
 	ld a,(de)		; $7a66
 	cp $68			; $7a67
@@ -146335,7 +146515,7 @@ _label_0f_338:
 	ld (wDisabledObjects),a		; $7ab2
 	ld a,$7e		; $7ab5
 	ld b,$00		; $7ab7
-	call $4546		; $7ab9
+	call _enemyBoss_initializeRoom		; $7ab9
 	jp objectSetVisible83		; $7abc
 	inc e			; $7abf
 	ld a,(de)		; $7ac0
@@ -146402,7 +146582,7 @@ _label_0f_340:
 	ld l,$a4		; $7b29
 	set 7,(hl)		; $7b2b
 	call $7c32		; $7b2d
-	call $4584		; $7b30
+	call _enemyBoss_beginBoss		; $7b30
 	xor a			; $7b33
 	jp enemySetAnimation		; $7b34
 	call _ecom_decCounter1		; $7b37
@@ -146758,7 +146938,7 @@ _label_0f_353:
 	inc l			; $7d92
 	ld b,(hl)		; $7d93
 	ld (bc),a		; $7d94
-	call $4584		; $7d95
+	call _enemyBoss_beginBoss		; $7d95
 	xor a			; $7d98
 	jp enemySetAnimation		; $7d99
 	call _ecom_decCounter2		; $7d9c
@@ -147085,94 +147265,7 @@ _label_0f_366:
  m_section_free Enemy_Code_Bank10 NAMESPACE bank10
 
 	.include "code/enemyCommon.s"
-
-	ld h,d			; $44f0
-	ld l,$a4		; $44f1
-	ld a,(hl)		; $44f3
-	or a			; $44f4
-	jr z,_label_10_039	; $44f5
-	ld (hl),$00		; $44f7
-	ld l,$86		; $44f9
-	ld (hl),$78		; $44fb
-	ld a,$01		; $44fd
-	ld (wDisableLinkCollisionsAndMenu),a		; $44ff
-	ld a,SND_BOSS_DEAD		; $4502
-	call playSound		; $4504
-_label_10_039:
-	call _ecom_decCounter1		; $4507
-	jp nz,_ecom_flickerVisibility		; $450a
-	inc (hl)		; $450d
-	call getFreePartSlot		; $450e
-	ret nz			; $4511
-	ld (hl),$04		; $4512
-	inc l			; $4514
-	ld e,$81		; $4515
-	ld a,(de)		; $4517
-	ld (hl),a		; $4518
-	call objectCopyPosition		; $4519
-	call markEnemyAsKilledInRoom		; $451c
-	ld e,$81		; $451f
-	ld a,(de)		; $4521
-	sub $08			; $4522
-	cp $68			; $4524
-	jr c,_label_10_040	; $4526
-	ld a,(wActiveMusic2)		; $4528
-	ld (wActiveMusic),a		; $452b
-	call playSound		; $452e
-_label_10_040:
-	jp enemyDelete		; $4531
-	call getFreePartSlot		; $4534
-	ret nz			; $4537
-	ld (hl),$07		; $4538
-	inc l			; $453a
-	ld (hl),b		; $453b
-	inc l			; $453c
-	ld (hl),c		; $453d
-	ld l,$d6		; $453e
-	ld a,$80		; $4540
-	ldi (hl),a		; $4542
-	ld (hl),d		; $4543
-	xor a			; $4544
-	ret			; $4545
-	bit 7,a			; $4546
-	jr nz,_label_10_041	; $4548
-	ld (wEnemyIDToLoadExtraGfx),a		; $454a
-_label_10_041:
-	ld a,b			; $454d
-	or a			; $454e
-	call nz,loadPaletteHeader		; $454f
-	ld a,SNDCTRL_STOPMUSIC		; $4552
-	call playSound		; $4554
-	xor a			; $4557
-	ld (wDisableLinkCollisionsAndMenu),a		; $4558
-	dec a			; $455b
-	ld (wActiveMusic),a		; $455c
-	ld hl,$cc93		; $455f
-	set 7,(hl)		; $4562
-	ld a,(wScrollMode)		; $4564
-	and $01			; $4567
-	ret nz			; $4569
-	ld a,$0b		; $456a
-	ld (wLinkForceState),a		; $456c
-	ld a,$16		; $456f
-	ld (wLinkStateParameter),a		; $4571
-	ld hl,w1Link.direction		; $4574
-	ld a,(wScreenTransitionDirection)		; $4577
-	ldi (hl),a		; $457a
-	swap a			; $457b
-	rrca			; $457d
-	ld (hl),a		; $457e
-	ret			; $457f
-	ld b,MUS_MINIBOSS		; $4580
-	jr _label_10_042		; $4582
-	ld b,MUS_BOSS		; $4584
-_label_10_042:
-	xor a			; $4586
-	ld (wDisabledObjects),a		; $4587
-	ld (wMenuDisabled),a		; $458a
-	ld a,b			; $458d
-	ld (wActiveMusic),a		; $458e
-	jp playSound		; $4591
+	.include "code/enemyBossCommon.s"
 
 ;;
 ; @addr{4594}
@@ -151968,7 +152061,7 @@ _label_10_219:
 	inc (hl)		; $654e
 	ld l,$87		; $654f
 	ld (hl),$78		; $6551
-	jp $4584		; $6553
+	jp _enemyBoss_beginBoss		; $6553
 	call getRandomNumber_noPreserveVars		; $6556
 	and $07			; $6559
 	ld b,a			; $655b
@@ -152394,7 +152487,7 @@ enemyCode07:
 .dw $6b5b
 	ld a,$07		; $67ec
 	ld b,$83		; $67ee
-	call $4546		; $67f0
+	call _enemyBoss_initializeRoom		; $67f0
 	ld a,$28		; $67f3
 	call _ecom_setSpeedAndState8		; $67f5
 	ld a,$04		; $67f8
@@ -152989,7 +153082,7 @@ _label_10_258:
 	ld e,$a9		; $6c38
 	xor a			; $6c3a
 	ld (de),a		; $6c3b
-	jp $44f0		; $6c3c
+	jp _enemyBoss_dead		; $6c3c
 	call _ecom_applyVelocityForSideviewEnemy		; $6c3f
 	ret nz			; $6c42
 	ld e,$89		; $6c43

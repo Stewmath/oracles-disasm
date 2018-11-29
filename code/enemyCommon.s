@@ -3,7 +3,7 @@
 ; Although the function names are the same in each bank, they won't cause conflicts
 ; because each bank is in its own namespace.
 ;
-; Function names are prefixed with "ecom" to show they come from here.
+; Function names are prefixed with "_ecom" to show they come from here.
 
 ;;
 ; @addr{4000}
@@ -1076,8 +1076,10 @@ _ecom_moveTowardPosition:
 ; Call this just before calling "_ecom_moveTowardPosition" above.
 ;
 ; @param	hl	Position to read into bc (angle to move toward)
-; @param[out]	a	Enemy's X-position
+; @param[out]	a	[Enemy.x]
 ; @param[out]	bc	Position read from hl
+; @param[out]	hFF8F	[Enemy.y]
+; @param[out]	hFF8E	[Enemy.x]
 ; @addr{4439}
 _ecom_readPositionVars:
 	ld b,(hl)		; $4439
@@ -1120,6 +1122,7 @@ _ecom_setZAboveScreen:
 
 ;;
 ; @param	h	Object index
+; @param	l	Object type
 ; @addr{445e}
 _ecom_killObjectH:
 	ld a,l			; $445e

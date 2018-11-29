@@ -52,7 +52,11 @@
 .define INTERACID_KILLENEMYPUFF		$08
 .define INTERACID_SNOWDEBRIS		$09
 .define INTERACID_SHOVELDEBRIS		$0a
+
+;;
+; Blue oval thing used by ENEMYID_EYESOAR_CHILD when spawning
 .define INTERACID_0b			$0b
+
 .define INTERACID_ROCKDEBRIS2		$0c
 
 .define INTERACID_STUB_0d		$0d
