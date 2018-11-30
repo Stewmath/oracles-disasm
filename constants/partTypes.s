@@ -71,6 +71,10 @@
 
 .define PARTID_DEKU_SCRUB_PROJECTILE		$1e
 
+;;
+; Created by fire keese
+.define PARTID_FIRE				$20
+
 .define PARTID_MOBLIN_BOOMERANG			$21
 
 .define PARTID_CUCCO_ATTACKER			$22

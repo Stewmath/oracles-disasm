@@ -132062,226 +132062,328 @@ _greatFairy_playSoundEvery8Frames:
 	ld a,SND_UNKNOWN7		; $514a
 	jp playSound		; $514c
 
-;;
-; @addr{514f}
+
+; ==============================================================================
+; ENEMYID_FIRE_KEESE
+;
+; Variables:
+;   var30: Distance away (in tiles) closest lit torch is
+;   var31/var32: Position of lit torch it's moving towards to re-light itself
+;   var33: Nonzero if fire has been shed (set to 2). Doubles as animation index?
+;   var34: Position at which to search for a lit torch ($16 tiles are checked each frame,
+;          so this gets incremented by $16 each frame)
+;   var35: Angular rotation for subid 0. (set to -1 or 1 randomly on initialization, for
+;          counterclockwise or clockwise movement)
+; ==============================================================================
 enemyCode39:
-	jr z,_label_105	; $514f
-	sub $03			; $5151
+	jr z,@normalStatus	; $514f
+	sub ENEMYSTATUS_NO_HEALTH			; $5151
 	ret c			; $5153
 	jp z,enemyDie		; $5154
 	dec a			; $5157
 	jp nz,_ecom_updateKnockbackNoSolidity		; $5158
-	ld e,$aa		; $515b
+
+	; ENEMYSTATUS_JUST_HIT
+	ld e,Enemy.var2a		; $515b
 	ld a,(de)		; $515d
-	cp $80			; $515e
+	cp $80|COLLISIONTYPE_LINK			; $515e
 	ret nz			; $5160
-	ld e,$b3		; $5161
+
+	; We collided with Link; if still on fire, transfer that fire to the ground.
+	ld e,Enemy.var33		; $5161
 	ld a,(de)		; $5163
 	or a			; $5164
 	ret nz			; $5165
-	ld b,$20		; $5166
+
+	ld b,PARTID_FIRE		; $5166
 	call _ecom_spawnProjectile		; $5168
+
 	ld h,d			; $516b
-	ld l,$9c		; $516c
+	ld l,Enemy.oamFlags		; $516c
 	ld a,$01		; $516e
 	ldd (hl),a		; $5170
 	ld (hl),a		; $5171
-	ld l,$84		; $5172
+
+	ld l,Enemy.state		; $5172
 	ld (hl),$08		; $5174
-	ld l,$a8		; $5176
-	ld (hl),$fc		; $5178
-	ld l,$b3		; $517a
+
+	ld l,Enemy.damage		; $5176
+	ld (hl),-$04		; $5178
+
+	ld l,Enemy.var33		; $517a
 	ld (hl),$02		; $517c
-	ld l,$90		; $517e
-	ld (hl),$1e		; $5180
+
+	ld l,Enemy.speed		; $517e
+	ld (hl),SPEED_c0		; $5180
+
 	ld a,$03		; $5182
 	jp enemySetAnimation		; $5184
-_label_105:
+
+@normalStatus:
 	call _ecom_getSubidAndCpStateTo08		; $5187
 	cp $0b			; $518a
-	jr nc,_label_106	; $518c
+	jr nc,_fireKeese_stateBOrHigher	; $518c
 	rst_jumpTable			; $518e
-.dw $51ab
-.dw $51e2
-.dw $51e2
-.dw $51e2
-.dw $51e2
-.dw _ecom_blownByGaleSeedState
-.dw $51e2
-.dw $51e2
-.dw $51e3
-.dw $521f
-.dw $5246
+	.dw _fireKeese_state_uninitialized
+	.dw _fireKeese_state_stub
+	.dw _fireKeese_state_stub
+	.dw _fireKeese_state_stub
+	.dw _fireKeese_state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw _fireKeese_state_stub
+	.dw _fireKeese_state_stub
+	.dw _fireKeese_state8
+	.dw _fireKeese_state9
+	.dw _fireKeese_stateA
 
-_label_106:
+_fireKeese_stateBOrHigher:
 	ld a,b			; $51a5
 	rst_jumpTable			; $51a6
-.dw $527c
-.dw $5302
+	.dw _fireKeese_subid0
+	.dw _fireKeese_subid1
+
+
+_fireKeese_state_uninitialized:
 	ld h,d			; $51ab
-	ld l,$86		; $51ac
+	ld l,Enemy.counter1		; $51ac
 	ld (hl),$08		; $51ae
-	ld l,$a8		; $51b0
-	ld (hl),$f8		; $51b2
+
+	ld l,Enemy.damage		; $51b0
+	ld (hl),-$08		; $51b2
+
 	bit 0,b			; $51b4
 	ld l,e			; $51b6
-	jr z,_label_107	; $51b7
-	ld (hl),$0b		; $51b9
+	jr z,@subid0	; $51b7
+
+@subid1:
+	ld (hl),$0b ; [state]
 	jp objectSetVisible82		; $51bb
-_label_107:
-	ld (hl),$0b		; $51be
-	ld l,$8f		; $51c0
-	ld (hl),$e4		; $51c2
-	ld l,$90		; $51c4
-	ld (hl),$14		; $51c6
+
+@subid0:
+	ld (hl),$0b ; [state]
+
+	ld l,Enemy.zh		; $51c0
+	ld (hl),-$1c		; $51c2
+
+	ld l,Enemy.speed		; $51c4
+	ld (hl),SPEED_80		; $51c6
+
+	; Random angle
 	ld bc,$1f01		; $51c8
 	call _ecom_randomBitwiseAndBCE		; $51cb
-	ld e,$89		; $51ce
+	ld e,Enemy.angle		; $51ce
 	ld a,b			; $51d0
 	ld (de),a		; $51d1
+
+	; Set var35 to 1 or -1 for clockwise or counterclockwise movement.
 	ld a,c			; $51d2
 	or a			; $51d3
-	jr nz,_label_108	; $51d4
+	jr nz,+			; $51d4
 	dec a			; $51d6
-_label_108:
-	ld e,$b5		; $51d7
++
+	ld e,Enemy.var35		; $51d7
 	ld (de),a		; $51d9
+
 	ld a,$01		; $51da
 	call enemySetAnimation		; $51dc
 	jp objectSetVisiblec1		; $51df
+
+
+_fireKeese_state_stub:
 	ret			; $51e2
-	ld e,$b0		; $51e3
+
+
+; Just lost fire; looks for a torch if one exists, otherwise it will keep flying around
+; like normal.
+_fireKeese_state8:
+	; Initialize "infinite" distance away from closest lit torch (none found yet)
+	ld e,Enemy.var30		; $51e3
 	ld a,$ff		; $51e5
 	ld (de),a		; $51e7
+
+	; Check all tiles in the room, try to find a lit torch to light self back on fire
 	call objectGetTileAtPosition		; $51e8
 	ld c,l			; $51eb
 	ld l,$00		; $51ec
-_label_109:
+@nextTile:
 	ld a,(hl)		; $51ee
-	cp $09			; $51ef
-	call z,$53c4		; $51f1
+	cp TILEINDEX_LIT_TORCH			; $51ef
+	call z,_fireKeese_addCandidateTorch		; $51f1
 	inc l			; $51f4
 	ld a,l			; $51f5
-	cp $b0			; $51f6
-	jr c,_label_109	; $51f8
-	ld e,$b0		; $51fa
+	cp LARGE_ROOM_HEIGHT<<4			; $51f6
+	jr c,@nextTile	; $51f8
+
+	; Check if one was found
+	ld e,Enemy.var30		; $51fa
 	ld a,(de)		; $51fc
 	inc a			; $51fd
 	ld h,d			; $51fe
-	jr nz,_label_111	; $51ff
-	ld l,$82		; $5201
+	jr nz,@torchFound	; $51ff
+
+	; No torch found. Go back to doing subid-specific movement.
+
+	ld l,Enemy.subid		; $5201
 	bit 0,(hl)		; $5203
 	ld a,$0d		; $5205
-	jr z,_label_110	; $5207
-	ld l,$86		; $5209
-	ld (hl),$78		; $520b
+	jr z,++			; $5207
+
+	; Subid 1
+	ld l,Enemy.counter1		; $5209
+	ld (hl),120		; $520b
 	ld a,$0c		; $520d
-_label_110:
-	ld l,$84		; $520f
+++
+	ld l,Enemy.state		; $520f
 	ld (hl),a		; $5211
 	ret			; $5212
-_label_111:
-	ld l,$84		; $5213
+
+@torchFound:
+	ld l,Enemy.state		; $5213
 	inc (hl)		; $5215
-	ld l,$90		; $5216
-	ld (hl),$1e		; $5218
+	ld l,Enemy.speed		; $5216
+	ld (hl),SPEED_c0		; $5218
 	ld a,$03		; $521a
 	jp enemySetAnimation		; $521c
+
+
+; Moving towards a torch's position, marked in var31/var32
+_fireKeese_state9:
 	ld h,d			; $521f
-	ld l,$b1		; $5220
+	ld l,Enemy.var31		; $5220
 	call _ecom_readPositionVars		; $5222
 	cp c			; $5225
-	jr nz,_label_112	; $5226
+	jr nz,@notAtTargetPosition		; $5226
+
 	ldh a,(<hFF8F)	; $5228
 	cp b			; $522a
-	jr z,_label_113	; $522b
-_label_112:
-	call $5427		; $522d
+	jr z,@atTargetPosition	; $522b
+
+@notAtTargetPosition:
+	call _fireKeese_moveToGround		; $522d
 	call _ecom_moveTowardPosition		; $5230
 	jp enemyAnimate		; $5233
-_label_113:
-	call $5427		; $5236
+
+@atTargetPosition:
+	call _fireKeese_moveToGround		; $5236
 	ret c			; $5239
-	ld l,$84		; $523a
+
+	ld l,Enemy.state		; $523a
 	inc (hl)		; $523c
-	ld l,$86		; $523d
-	ld (hl),$3c		; $523f
+
+	ld l,Enemy.counter1		; $523d
+	ld (hl),60		; $523f
+
 	ld a,$02		; $5241
 	jp enemySetAnimation		; $5243
+
+
+; Touched down on the torch; in the process of being lit back on fire
+_fireKeese_stateA:
 	call _ecom_decCounter1		; $5246
-	jr z,_label_114	; $5249
-	ld a,(hl)		; $524b
-	sub $1e			; $524c
+	jr z,@gotoNextState	; $5249
+
+	ld a,(hl) ; [counter1]
+	sub 30			; $524c
 	ret nz			; $524e
-	ld l,$9c		; $524f
+
+	; [counter1] == 30
+	ld l,Enemy.oamFlags		; $524f
 	ld a,$05		; $5251
 	ldd (hl),a		; $5253
 	ld (hl),a		; $5254
-	ld l,$a8		; $5255
-	ld (hl),$f8		; $5257
-	ld l,$b3		; $5259
+
+	ld l,Enemy.damage		; $5255
+	ld (hl),-$08		; $5257
+	ld l,Enemy.var33		; $5259
 	xor a			; $525b
 	ld (hl),a		; $525c
 	jp enemySetAnimation		; $525d
-_label_114:
-	ld l,$89		; $5260
+
+@gotoNextState:
+	ld l,Enemy.angle		; $5260
 	ld a,(hl)		; $5262
 	add $10			; $5263
 	and $1f			; $5265
 	ld (hl),a		; $5267
-	ld l,$82		; $5268
+
+	ld l,Enemy.subid		; $5268
 	bit 0,(hl)		; $526a
 	ld a,$0d		; $526c
-	jr z,_label_115	; $526e
-	ld l,$86		; $5270
-	ld (hl),$78		; $5272
+	jr z,++			; $526e
+
+	; Subid 1
+	ld l,Enemy.counter1		; $5270
+	ld (hl),120		; $5272
 	ld a,$0c		; $5274
-_label_115:
+++
 	ld (de),a		; $5276
 	ld a,$01		; $5277
 	jp enemySetAnimation		; $5279
-	call $53fc		; $527c
-	ld e,$84		; $527f
+
+
+; Keese which move up and down on Z axis
+_fireKeese_subid0:
+	call _fireKeese_checkForNewlyLitTorch		; $527c
+	; Above function call may pop its return address, ignore everything below here
+
+	ld e,Enemy.state		; $527f
 	ld a,(de)		; $5281
 	sub $0b			; $5282
 	rst_jumpTable			; $5284
-.dw $528b
-.dw $52b3
-.dw $52e6
-	call $53af		; $528b
-	jr nc,_label_116	; $528e
-	ld l,$84		; $5290
+	.dw _fireKeese_subid0_stateB
+	.dw _fireKeese_subid0_stateC
+	.dw _fireKeese_subid0_stateD
+
+
+; Flying around on fire
+_fireKeese_subid0_stateB:
+	call _fireKeese_checkCloseToLink		; $528b
+	jr nc,@linkNotClose	; $528e
+
+	; Link is close
+	ld l,Enemy.state		; $5290
 	inc (hl)		; $5292
-	ld l,$86		; $5293
-	ld (hl),$5b		; $5295
-	ld l,$90		; $5297
-	ld (hl),$19		; $5299
-_label_116:
+	ld l,Enemy.counter1		; $5293
+	ld (hl),91		; $5295
+	ld l,Enemy.speed		; $5297
+	ld (hl),SPEED_a0		; $5299
+
+@linkNotClose:
 	call _ecom_decCounter1		; $529b
-	jr nz,_label_117	; $529e
-	ld (hl),$08		; $52a0
-	ld e,$b5		; $52a2
+	jr nz,++		; $529e
+
+	ld (hl),$08 ; [counter1]
+
+	; Move clockwise or counterclockwise (var35 is randomly set to 1 or -1 on
+	; initialization)
+	ld e,Enemy.var35		; $52a2
 	ld a,(de)		; $52a4
-	ld l,$89		; $52a5
+	ld l,Enemy.angle		; $52a5
 	add (hl)		; $52a7
 	and $1f			; $52a8
 	ld (hl),a		; $52aa
-_label_117:
+++
 	call objectApplySpeed		; $52ab
-	call $543b		; $52ae
-	jr _label_120		; $52b1
+	call _fireKeese_moveTowardCenterIfOutOfBounds		; $52ae
+	jr _fireKeese_animate		; $52b1
+
+
+; Divebombing because Link got close enough
+_fireKeese_subid0_stateC:
 	call _ecom_decCounter1		; $52b3
-	jr nz,_label_118	; $52b6
-	ld l,$84		; $52b8
+	jr nz,++		; $52b6
+	ld l,Enemy.state		; $52b8
 	inc (hl)		; $52ba
-	jr _label_120		; $52bb
-_label_118:
+	jr _fireKeese_animate		; $52bb
+++
+	; Add some amount to Z-position
 	ld a,(hl)		; $52bd
 	and $f0			; $52be
 	swap a			; $52c0
-	ld hl,_data_0e_5460		; $52c2
+	ld hl,_fireKeese_subid0_zOffsets		; $52c2
 	rst_addAToHl			; $52c5
-	ld e,$8e		; $52c6
+
+	ld e,Enemy.z		; $52c6
 	ld a,(de)		; $52c8
 	add (hl)		; $52c9
 	ld (de),a		; $52ca
@@ -132289,146 +132391,223 @@ _label_118:
 	ld a,(de)		; $52cc
 	adc $00			; $52cd
 	ld (de),a		; $52cf
+
+	; Adjust angle toward Link
 	call objectGetAngleTowardEnemyTarget		; $52d0
 	ld b,a			; $52d3
-	ld e,$86		; $52d4
+	ld e,Enemy.counter1		; $52d4
 	ld a,(de)		; $52d6
 	and $03			; $52d7
 	ld a,b			; $52d9
 	call z,objectNudgeAngleTowards		; $52da
-_label_119:
+
+_fireKeese_updatePosition:
 	call _ecom_bounceOffScreenBoundary		; $52dd
 	call objectApplySpeed		; $52e0
-_label_120:
+
+_fireKeese_animate:
 	jp enemyAnimate		; $52e3
+
+
+; Moving back up after divebombing
+_fireKeese_subid0_stateD:
 	ld h,d			; $52e6
-	ld l,$8e		; $52e7
+	ld l,Enemy.z		; $52e7
 	ld a,(hl)		; $52e9
-	sub $40			; $52ea
+	sub <($0040)			; $52ea
 	ldi (hl),a		; $52ec
 	ld a,(hl)		; $52ed
-	sbc $00			; $52ee
+	sbc >($0040)			; $52ee
 	ld (hl),a		; $52f0
+
 	cp $e4			; $52f1
-	jr nc,_label_119	; $52f3
+	jr nc,_fireKeese_updatePosition	; $52f3
+
 	ld l,e			; $52f5
-	ld (hl),$0b		; $52f6
-	ld l,$90		; $52f8
-	ld (hl),$14		; $52fa
-	ld l,$86		; $52fc
+	ld (hl),$0b ; [state]
+
+	ld l,Enemy.speed		; $52f8
+	ld (hl),SPEED_80		; $52fa
+
+	ld l,Enemy.counter1		; $52fc
 	ld (hl),$08		; $52fe
-	jr _label_120		; $5300
-	call $53fc		; $5302
-	ld e,$84		; $5305
+	jr _fireKeese_animate		; $5300
+
+
+; Keese which has no Z-axis movement
+_fireKeese_subid1:
+	call _fireKeese_checkForNewlyLitTorch		; $5302
+	; Above function call may pop its return address, ignore everything below here
+
+	ld e,Enemy.state		; $5305
 	ld a,(de)		; $5307
 	sub $0b			; $5308
 	rst_jumpTable			; $530a
-.dw $5311
-.dw $533e
-.dw $535d
+	.dw _fireKeese_subid1_stateB
+	.dw _fireKeese_subid1_stateC
+	.dw _fireKeese_subid1_stateD
+
+
+; Waiting [counter1] frames (8 frames) before moving
+_fireKeese_subid1_stateB:
 	call _ecom_decCounter1		; $5311
 	ret nz			; $5314
+
 	ld l,e			; $5315
-	inc (hl)		; $5316
-	ld l,$90		; $5317
-	ld (hl),$1e		; $5319
+	inc (hl) ; [state]
+
+	ld l,Enemy.speed		; $5317
+	ld (hl),SPEED_c0		; $5319
+
+	; Random angle
 	ld bc,$1f3f		; $531b
 	call _ecom_randomBitwiseAndBCE		; $531e
-	ld e,$89		; $5321
+	ld e,Enemy.angle		; $5321
 	ld a,b			; $5323
 	ld (de),a		; $5324
+
+	; Random counter1 between $c0-$ff
 	ld a,$c0		; $5325
 	add c			; $5327
-	ld e,$86		; $5328
+	ld e,Enemy.counter1		; $5328
 	ld (de),a		; $532a
-	ld e,$b3		; $532b
+
+	; Set animation based on if on fire
+	ld e,Enemy.var33		; $532b
 	ld a,(de)		; $532d
 	inc a			; $532e
 	call enemySetAnimation		; $532f
-	ld e,$b3		; $5332
+
+	; Create fire when initially spawning
+	ld e,Enemy.var33		; $5332
 	ld a,(de)		; $5334
 	or a			; $5335
-	ld b,$20		; $5336
+	ld b,PARTID_FIRE		; $5336
 	call z,_ecom_spawnProjectile		; $5338
 	jp enemyAnimate		; $533b
-	call $52dd		; $533e
+
+
+; Moving around randomly for [counter1]*2 frames
+_fireKeese_subid1_stateC:
+	call _fireKeese_updatePosition		; $533e
+
 	ld a,(wFrameCounter)		; $5341
 	and $01			; $5344
 	ret nz			; $5346
+
 	call _ecom_decCounter1		; $5347
-	jr z,_label_121	; $534a
+	jr z,@gotoNextState	; $534a
+
+	; 1 in 16 chance of changing angle (every 2 frames)
 	ld bc,$0f1f		; $534c
 	call _ecom_randomBitwiseAndBCE		; $534f
 	or b			; $5352
 	ret nz			; $5353
-	ld e,$89		; $5354
+	ld e,Enemy.angle		; $5354
 	ld a,c			; $5356
 	ld (de),a		; $5357
 	ret			; $5358
-_label_121:
-	ld l,$84		; $5359
+
+@gotoNextState:
+	ld l,Enemy.state		; $5359
 	inc (hl)		; $535b
 	ret			; $535c
-	ld e,$86		; $535d
+
+
+; Slowing down, then stopping for a brief period
+_fireKeese_subid1_stateD:
+	ld e,Enemy.counter1		; $535d
 	ld a,(de)		; $535f
 	cp $68			; $5360
-	jr nc,_label_122	; $5362
+	jr nc,++		; $5362
+
 	call _ecom_bounceOffScreenBoundary		; $5364
 	call objectApplySpeed		; $5367
-_label_122:
-	call $538a		; $536a
+++
+	call _fireKeese_subid1_setSpeedAndAnimateBasedOnCounter1		; $536a
+
 	ld h,d			; $536d
-	ld l,$86		; $536e
+	ld l,Enemy.counter1		; $536e
 	inc (hl)		; $5370
 	ld a,$7f		; $5371
 	cp (hl)			; $5373
 	ret nz			; $5374
-	ld l,$84		; $5375
+
+	; Time to start moving again; go back to state $0b where we'll abruptly go fast.
+	ld l,Enemy.state		; $5375
 	ld (hl),$0b		; $5377
-	ld e,$b3		; $5379
+
+	ld e,Enemy.var33		; $5379
 	ld a,(de)		; $537b
 	call enemySetAnimation		; $537c
+
+	; Set counter1 to random value from $20-$9f
 	call getRandomNumber_noPreserveVars		; $537f
 	and $7f			; $5382
-	ld e,$86		; $5384
+	ld e,Enemy.counter1		; $5384
 	add $20			; $5386
 	ld (de),a		; $5388
 	ret			; $5389
-	ld e,$86		; $538a
+
+
+;;
+; Subid 1 slows down gradually in state $0d.
+; @addr{538a}
+_fireKeese_subid1_setSpeedAndAnimateBasedOnCounter1:
+	ld e,Enemy.counter1		; $538a
 	ld a,(de)		; $538c
 	and $0f			; $538d
-	jr nz,_label_123	; $538f
+	jr nz,++		; $538f
+
+	; Set speed based on value of counter1
 	ld a,(de)		; $5391
 	swap a			; $5392
-	ld hl,$5466		; $5394
+	ld hl,_fireKeese_subid1_speeds		; $5394
 	rst_addAToHl			; $5397
-	ld e,$90		; $5398
+	ld e,Enemy.speed		; $5398
 	ld a,(hl)		; $539a
 	ld (de),a		; $539b
-_label_123:
-	ld e,$86		; $539c
+++
+	; Animate at some rate based on value of counter1
+	ld e,Enemy.counter1		; $539c
 	ld a,(de)		; $539e
 	and $f0			; $539f
 	swap a			; $53a1
-	ld hl,$546e		; $53a3
+	ld hl,_fireKeese_subid1_animFrequencies		; $53a3
 	rst_addAToHl			; $53a6
 	ld a,(wFrameCounter)		; $53a7
 	and (hl)		; $53aa
 	jp z,enemyAnimate		; $53ab
 	ret			; $53ae
+
+
+;;
+; @param[out]	cflag	c if Link is within 32 pixels of keese in each direction
+; @addr{53af}
+_fireKeese_checkCloseToLink:
 	ld h,d			; $53af
-	ld l,$8b		; $53b0
+	ld l,Enemy.yh		; $53b0
 	ldh a,(<hEnemyTargetY)	; $53b2
 	sub (hl)		; $53b4
 	add $20			; $53b5
 	cp $41			; $53b7
 	ret nc			; $53b9
-	ld l,$8d		; $53ba
+	ld l,Enemy.xh		; $53ba
 	ldh a,(<hEnemyTargetX)	; $53bc
 	sub (hl)		; $53be
 	add $20			; $53bf
 	cp $41			; $53c1
 	ret			; $53c3
+
+
+;;
+; Given the position of a torch, checks whether to update "position of closest known
+; torch" (var31/var32).
+;
+; @param	c	Position of lit torch
+; @addr{53c4}
+_fireKeese_addCandidateTorch:
+	; Get Y distance
 	ld a,c			; $53c4
 	and $f0			; $53c5
 	swap a			; $53c7
@@ -132437,30 +132616,37 @@ _label_123:
 	and $f0			; $53cb
 	swap a			; $53cd
 	sub b			; $53cf
-	jr nc,_label_124	; $53d0
+	jr nc,+			; $53d0
 	cpl			; $53d2
 	inc a			; $53d3
-_label_124:
++
 	ld b,a			; $53d4
+
+	; Get X distance
 	ld a,c			; $53d5
 	and $0f			; $53d6
 	ld e,a			; $53d8
 	ld a,l			; $53d9
 	and $0f			; $53da
 	sub e			; $53dc
-	jr nc,_label_125	; $53dd
+	jr nc,+			; $53dd
 	cpl			; $53df
 	inc a			; $53e0
-_label_125:
++
+	; Compare with closest candidate, return if farther away
 	add b			; $53e1
 	ld b,a			; $53e2
-	ld e,$b0		; $53e3
+	ld e,Enemy.var30		; $53e3
 	ld a,(de)		; $53e5
 	cp b			; $53e6
 	ret c			; $53e7
+
+	; This is the closest torch found so far.
 	ld a,b			; $53e8
 	ld (de),a		; $53e9
-	ld e,$b1		; $53ea
+
+	; Mark its position in var31/var32
+	ld e,Enemy.var31		; $53ea
 	ld a,l			; $53ec
 	and $f0			; $53ed
 	add $08			; $53ef
@@ -132472,81 +132658,123 @@ _label_125:
 	add $08			; $53f8
 	ld (de),a		; $53fa
 	ret			; $53fb
-	ld e,$b3		; $53fc
+
+
+;;
+; While the keese is not lit on fire, this function checks if any new lit torches suddenly
+; appear in the room. If so, it sets the state to 8 and returns from the caller (discards
+; return address).
+; @addr{53fc}
+_fireKeese_checkForNewlyLitTorch:
+	; Return if on fire already
+	ld e,Enemy.var33		; $53fc
 	ld a,(de)		; $53fe
 	or a			; $53ff
 	ret z			; $5400
-	ld e,$b4		; $5401
+
+	; Check $16 tiles per frame, searching for a torch. (Searching all of them could
+	; cause lag, especially with a lot of bats on-screen.)
+	ld e,Enemy.var34		; $5401
 	ld a,(de)		; $5403
 	ld l,a			; $5404
-	ld h,$cf		; $5405
+	ld h,>wRoomLayout		; $5405
 	ld b,$16		; $5407
-_label_126:
+@loop:
 	ldi a,(hl)		; $5409
-	cp $09			; $540a
-	jr z,_label_128	; $540c
+	cp TILEINDEX_LIT_TORCH			; $540a
+	jr z,@foundTorch	; $540c
 	dec b			; $540e
-	jr nz,_label_126	; $540f
+	jr nz,@loop	; $540f
+
 	ld a,l			; $5411
-	cp $b0			; $5412
-	jr nz,_label_127	; $5414
+	cp LARGE_ROOM_HEIGHT<<4			; $5412
+	jr nz,+			; $5414
 	xor a			; $5416
-_label_127:
++
 	ld (de),a		; $5417
 	ret			; $5418
-_label_128:
-	pop hl			; $5419
+
+@foundTorch:
+	pop hl ; Return from caller
+
 	ld h,d			; $541a
 	ld l,e			; $541b
-	ld (hl),$00		; $541c
-	ld l,$84		; $541e
+	ld (hl),$00 ; [var34]
+
+	; State 8 will cause the bat to move toward the torch.
+	; (var31/var32 are not set here because the search will be done again in state 8.)
+	ld l,Enemy.state		; $541e
 	ld (hl),$08		; $5420
-	ld l,$90		; $5422
-	ld (hl),$1e		; $5424
+
+	ld l,Enemy.speed		; $5422
+	ld (hl),SPEED_c0		; $5424
 	ret			; $5426
-	ld e,$8f		; $5427
+
+;;
+; @param[out]	cflag	nc if reached ground (or at most 6 units away)
+; @addr{5427}
+_fireKeese_moveToGround:
+	ld e,Enemy.zh		; $5427
 	ld a,(de)		; $5429
 	or a			; $542a
 	ret z			; $542b
+
 	cp $fa			; $542c
 	ret nc			; $542e
+
+	; [Enemy.z] += $0080
 	dec e			; $542f
 	ld a,(de)		; $5430
-	add $80			; $5431
+	add <($0080)			; $5431
 	ld (de),a		; $5433
 	inc e			; $5434
 	ld a,(de)		; $5435
-	adc $00			; $5436
+	adc >($0080)			; $5436
 	ld (de),a		; $5438
 	scf			; $5439
 	ret			; $543a
-	ld e,$8b		; $543b
+
+
+;;
+; @addr{543b}
+_fireKeese_moveTowardCenterIfOutOfBounds:
+	ld e,Enemy.yh		; $543b
 	ld a,(de)		; $543d
-	cp $b0			; $543e
-	jr nc,_label_129	; $5440
-	ld e,$8d		; $5442
+	cp LARGE_ROOM_HEIGHT<<4			; $543e
+	jr nc,@outOfBounds		; $5440
+
+	ld e,Enemy.xh		; $5442
 	ld a,(de)		; $5444
 	cp $f0			; $5445
 	ret c			; $5447
-_label_129:
-	ld e,$8b		; $5448
+
+@outOfBounds:
+	ld e,Enemy.yh		; $5448
 	ld a,(de)		; $544a
 	ldh (<hFF8F),a	; $544b
-	ld e,$8d		; $544d
+	ld e,Enemy.xh		; $544d
 	ld a,(de)		; $544f
 	ldh (<hFF8E),a	; $5450
-	ld bc,$5878		; $5452
+
+	ldbc (LARGE_ROOM_HEIGHT/2)<<4 + 8, (LARGE_ROOM_WIDTH/2)<<4 + 8		; $5452
 	call objectGetRelativeAngleWithTempVars		; $5455
 	ld c,a			; $5458
-	ld b,$28		; $5459
-	ld e,$89		; $545b
+	ld b,SPEED_100		; $5459
+	ld e,Enemy.angle		; $545b
 	jp objectApplyGivenSpeed		; $545d
 
-; @addr{5460}
-_data_0e_5460:
-	.db $80 $60 $40 $30 $20 $20 $1e $14
-	.db $0a $0a $05 $05 $05 $05 $00 $00
-	.db $01 $01 $03 $03 $07 $00
+
+; Offsets for Z position, in subpixels.
+_fireKeese_subid0_zOffsets:
+	.db $80 $60 $40 $30 $20 $20
+
+; Speed values for subid 1, where it gradually slows down.
+_fireKeese_subid1_speeds:
+	.db SPEED_c0 SPEED_80 SPEED_40 SPEED_40
+	.db SPEED_20 SPEED_20 SPEED_20 SPEED_20
+
+_fireKeese_subid1_animFrequencies:
+	.db $00 $00 $01 $01 $03 $03 $07 $00
 
 ;;
 ; @addr{5476}

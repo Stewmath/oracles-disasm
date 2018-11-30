@@ -329,6 +329,14 @@
 
 ;;
 ; Goddamned annoying bat enemy (on fire)
+;
+; Doesn't work quite right in outdoor areas since it looks for unlit torches to light
+; itself back on fire (tile index $09, which is different outdoors). Also, it assumes that
+; it's in a large room for various things (ie. room boundary checking).
+;
+; @subid_00{Has "height", and moves in a circle (clockwise/counterclockwise chosen
+;           randomly) until Link approaches; it will attempt to divebomb him.}
+; @subid_01{No height; very similar to a normal keese, except on fire.}
 .define ENEMYID_FIRE_KEESE			$39
 
 ;;
