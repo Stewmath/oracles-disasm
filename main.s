@@ -131286,325 +131286,457 @@ _floormaster_getAdjacentWallsBitset:
 	ld a,$02		; $4d9f
 	jp _ecom_getTopDownAdjacentWallsBitset		; $4da1
 
-;;
-; @addr{4da4}
+
+; ==============================================================================
+; ENEMYID_CUCCO
+;
+; Shares some code with ENEMYID_GIANT_CUCCO.
+;
+; Variables:
+;   relatedObj1: INTERACID_PUFF object when transforming
+;   var30: Number of times it's been hit (also read by PARTID_CUCCO_ATTACKER to decide
+;          speed)
+;   var31: Enemy ID to transform into, when a mystery seed is used on it
+;   var32: Counter used while being held
+;   var33: Counter until next PARTID_CUCCO_ATTACKER is spawned
+; ==============================================================================
 enemyCode36:
-	jr z,_label_087	; $4da4
+	jr z,@normalStatus	; $4da4
+
 	ld h,d			; $4da6
-	ld l,$aa		; $4da7
+	ld l,Enemy.var2a		; $4da7
 	ld a,(hl)		; $4da9
-	cp $9a			; $4daa
-	jp z,$4f9c		; $4dac
-	cp $9e			; $4daf
-	jp nz,$4f77		; $4db1
-_label_087:
-	call $4f49		; $4db4
-	ld e,$84		; $4db7
+	cp $80|COLLISIONTYPE_MYSTERY_SEED			; $4daa
+	jp z,_cucco_hitWithMysterySeed		; $4dac
+
+	cp $80|COLLISIONTYPE_GALE_SEED			; $4daf
+	jp nz,_cucco_attacked		; $4db1
+
+@normalStatus:
+	call _cucco_checkSpawnCuccoAttacker		; $4db4
+	ld e,Enemy.state		; $4db7
 	ld a,(de)		; $4db9
 	rst_jumpTable			; $4dba
-.dw $4dd3
-.dw $4e45
-.dw $4ddd
-.dw $4e45
-.dw $4e45
-.dw _ecom_blownByGaleSeedState
-.dw $4e45
-.dw $4e45
-.dw $4e46
-.dw $4e64
-.dw $4e8d
-.dw $4e9b
-	ld a,$14		; $4dd3
+	.dw _cucco_state_uninitialized
+	.dw _cucco_state_stub
+	.dw _cucco_state_grabbed
+	.dw _cucco_state_stub
+	.dw _cucco_state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw _cucco_state_stub
+	.dw _cucco_state_stub
+	.dw _cucco_state8
+	.dw _cucco_state9
+	.dw _cucco_stateA
+	.dw _cucco_stateB
+
+
+_cucco_state_uninitialized:
+	ld a,SPEED_80		; $4dd3
 	call _ecom_setSpeedAndState8AndVisible		; $4dd5
-	ld l,$bf		; $4dd8
+
+	ld l,Enemy.var3f		; $4dd8
 	set 5,(hl)		; $4dda
 	ret			; $4ddc
+
+
+; Also used by ENEMYID_GIANT_CUCCO
+_cucco_state_grabbed:
 	inc e			; $4ddd
 	ld a,(de)		; $4dde
 	rst_jumpTable			; $4ddf
-.dw $4de8
-.dw $4e0b
-.dw $4e1f
-.dw $4e31
+	.dw @justGrabbed
+	.dw @holding
+	.dw @checkOutOfScreenBounds
+	.dw @landed
+
+@justGrabbed:
 	ld h,d			; $4de8
 	ld l,e			; $4de9
-	inc (hl)		; $4dea
-	ld l,$a4		; $4deb
+	inc (hl) ; [state]
+
+	ld l,Enemy.collisionType		; $4deb
 	res 7,(hl)		; $4ded
-	ld l,$b2		; $4def
+	ld l,Enemy.var32		; $4def
 	xor a			; $4df1
 	ld (hl),a		; $4df2
 	ld (wLinkGrabState2),a		; $4df3
+
 	ld a,(w1Link.direction)		; $4df6
 	srl a			; $4df9
 	xor $01			; $4dfb
-	ld l,$88		; $4dfd
+	ld l,Enemy.direction		; $4dfd
 	ld (hl),a		; $4dff
 	call enemySetAnimation		; $4e00
+
 	ld a,SND_CHICKEN		; $4e03
 	call playSound		; $4e05
 	jp objectSetVisiblec1		; $4e08
-	call $4fc7		; $4e0b
+
+@holding:
+	call _cucco_playChickenSoundEvery32Frames		; $4e0b
 	ld h,d			; $4e0e
-	ld l,$88		; $4e0f
+	ld l,Enemy.direction		; $4e0f
 	ld a,(w1Link.direction)		; $4e11
 	srl a			; $4e14
 	xor $01			; $4e16
 	cp (hl)			; $4e18
-	jr z,_label_088	; $4e19
+	jr z,@checkOutOfScreenBounds	; $4e19
 	ld (hl),a		; $4e1b
 	jp enemySetAnimation		; $4e1c
-_label_088:
-	ld e,$8b		; $4e1f
+
+@checkOutOfScreenBounds:
+	ld e,Enemy.yh		; $4e1f
 	ld a,(de)		; $4e21
-	cp $80			; $4e22
-	jr nc,_label_089	; $4e24
-	ld e,$8d		; $4e26
+	cp SMALL_ROOM_HEIGHT<<4			; $4e22
+	jr nc,++		; $4e24
+	ld e,Enemy.xh		; $4e26
 	ld a,(de)		; $4e28
-	cp $a0			; $4e29
+	cp SMALL_ROOM_WIDTH<<4			; $4e29
 	jp c,enemyAnimate		; $4e2b
-_label_089:
+++
 	jp enemyDelete		; $4e2e
+
+@landed:
 	ld h,d			; $4e31
-	ld l,$84		; $4e32
+	ld l,Enemy.state		; $4e32
 	ld (hl),$0a		; $4e34
-	ld l,$a4		; $4e36
+
+	ld l,Enemy.collisionType		; $4e36
 	set 7,(hl)		; $4e38
-	ld l,$90		; $4e3a
-	ld (hl),$28		; $4e3c
-	ld l,$86		; $4e3e
+
+	ld l,Enemy.speed		; $4e3a
+	ld (hl),SPEED_100		; $4e3c
+
+	ld l,Enemy.counter1		; $4e3e
 	ld (hl),$01		; $4e40
 	jp objectSetVisiblec2		; $4e42
+
+
+_cucco_state_stub:
 	ret			; $4e45
+
+
+; Standing still.
+; Also used by ENEMYID_GIANT_CUCCO.
+_cucco_state8:
 	call objectAddToGrabbableObjectBuffer		; $4e46
+
 	ld e,$3f		; $4e49
 	ld bc,$031f		; $4e4b
 	call _ecom_randomBitwiseAndBCE		; $4e4e
 	or e			; $4e51
-	ret nz			; $4e52
+	ret nz ; 63 in 64 chance of returning
+
 	call _ecom_incState		; $4e53
-	ld l,$86		; $4e56
-	ldi (hl),a		; $4e58
+
+	ld l,Enemy.counter1		; $4e56
+	ldi (hl),a ; [counter1] = 0
+
 	ld a,$02		; $4e59
 	add b			; $4e5b
-	ld (hl),a		; $4e5c
-	ld l,$89		; $4e5d
+	ld (hl),a ; [counter2] = random value between 2-6 (number of hops)
+
+	ld l,Enemy.angle		; $4e5d
 	ld a,c			; $4e5f
 	ld (hl),a		; $4e60
-	jp $4f25		; $4e61
+	jp _cucco_setAnimationFromAngle		; $4e61
+
+
+; Moving in some direction until [counter2] == 0.
+; Also used by ENEMYID_GIANT_CUCCO.
+_cucco_state9:
 	call objectAddToGrabbableObjectBuffer		; $4e64
 	ld h,d			; $4e67
-	ld l,$86		; $4e68
+	ld l,Enemy.counter1		; $4e68
 	ld a,(hl)		; $4e6a
 	and $0f			; $4e6b
 	inc (hl)		; $4e6d
-	ld hl,$4f39		; $4e6e
+
+	ld hl,_cucco_zVals		; $4e6e
 	rst_addAToHl			; $4e71
-	ld e,$8f		; $4e72
+	ld e,Enemy.zh		; $4e72
 	ld a,(hl)		; $4e74
 	ld (de),a		; $4e75
 	or a			; $4e76
-	jr nz,_label_090	; $4e77
+	jr nz,++		; $4e77
+
+	; Just finished a hop
 	call _ecom_decCounter2		; $4e79
-	jr nz,_label_090	; $4e7c
-	ld l,$84		; $4e7e
+	jr nz,++		; $4e7c
+
+	; Stop moving
+	ld l,Enemy.state		; $4e7e
 	dec (hl)		; $4e80
-_label_090:
+++
 	call _ecom_bounceOffWallsAndHoles		; $4e81
-	call nz,$4f25		; $4e84
+	call nz,_cucco_setAnimationFromAngle		; $4e84
 	call objectApplySpeed		; $4e87
-_label_091:
+_cucco_animate:
 	jp enemyAnimate		; $4e8a
+
+
+; Just landed after being thrown. Run away from Link indefinitely.
+_cucco_stateA:
 	call objectAddToGrabbableObjectBuffer		; $4e8d
 	call _ecom_updateCardinalAngleAwayFromTarget		; $4e90
-	call $4f25		; $4e93
+	call _cucco_setAnimationFromAngle		; $4e93
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $4e96
-	jr _label_091		; $4e99
-	ld a,$21		; $4e9b
+	jr _cucco_animate		; $4e99
+
+
+; In the process of transforming (into ENEMYID_BABY_CUCCO or ENEMYID_GIANT_CUCCO, based on
+; var31)
+_cucco_stateB:
+	ld a,Object.animParameter		; $4e9b
 	call objectGetRelatedObject1Var		; $4e9d
 	bit 7,(hl)		; $4ea0
 	ret z			; $4ea2
-	ld e,$b1		; $4ea3
+
+	ld e,Enemy.var31		; $4ea3
 	ld a,(de)		; $4ea5
 	ld b,a			; $4ea6
 	ld c,$00		; $4ea7
 	jp objectReplaceWithID		; $4ea9
 
-;;
-; @addr{4eac}
+
+; ==============================================================================
+; ENEMYID_GIANT_CUCCO
+;
+; Variables are the same as ENEMYID_CUCCO.
+; ==============================================================================
 enemyCode3b:
-	jr z,_label_092	; $4eac
-	sub $03			; $4eae
+	jr z,@normalStatus	; $4eac
+	sub ENEMYSTATUS_NO_HEALTH			; $4eae
 	ret c			; $4eb0
-	ld e,$aa		; $4eb1
+
+	ld e,Enemy.var2a		; $4eb1
 	ld a,(de)		; $4eb3
 	res 7,a			; $4eb4
-	cp $04			; $4eb6
-	jr c,_label_092	; $4eb8
+
+	; Check if hit by anything other than Link or shield.
+	cp COLLISIONTYPE_L1_SWORD			; $4eb6
+	jr c,@normalStatus	; $4eb8
+
 	ld h,d			; $4eba
-	ld l,$b0		; $4ebb
+	ld l,Enemy.var30		; $4ebb
 	inc (hl)		; $4ebd
-	ld l,$a9		; $4ebe
+
+	; NOTE: The cucco starts with 0 health. It's constantly reset to $40 here. This
+	; isn't a problem in Seasons, but in Ages this seems to trigger a bug causing its
+	; collisions to get disabled. See enemyTypes.s for details.
+	ld l,Enemy.health		; $4ebe
 	ld (hl),$40		; $4ec0
-	ld l,$84		; $4ec2
+
+	ld l,Enemy.state		; $4ec2
 	ld a,(hl)		; $4ec4
 	cp $0a			; $4ec5
-	jr nc,_label_092	; $4ec7
+	jr nc,@normalStatus	; $4ec7
 	ld (hl),$0a		; $4ec9
-	ld l,$8f		; $4ecb
+	ld l,Enemy.zh		; $4ecb
 	ld (hl),$00		; $4ecd
-_label_092:
-	ld e,$84		; $4ecf
+
+@normalStatus:
+	ld e,Enemy.state		; $4ecf
 	ld a,(de)		; $4ed1
 	rst_jumpTable			; $4ed2
-.dw $4eeb
-.dw $4e45
-.dw $4ddd
-.dw $4e45
-.dw $4e45
-.dw $4e45
-.dw $4e45
-.dw $4e45
-.dw $4e46
-.dw $4e64
-.dw $4ef8
-.dw $4f16
-	ld a,$1e		; $4eeb
+	.dw _giantCucco_state_uninitialized
+	.dw _cucco_state_stub
+	.dw _cucco_state_grabbed
+	.dw _cucco_state_stub
+	.dw _cucco_state_stub
+	.dw _cucco_state_stub
+	.dw _cucco_state_stub
+	.dw _cucco_state_stub
+	.dw _cucco_state8 ; States 8 and 9 same as normal cucco (wandering around)
+	.dw _cucco_state9
+	.dw _giantCucco_stateA
+	.dw _giantCucco_stateB
+
+
+_giantCucco_state_uninitialized:
+	ld a,SPEED_c0		; $4eeb
 	call _ecom_setSpeedAndState8		; $4eed
 	ld a,$30		; $4ef0
 	call setScreenShakeCounter		; $4ef2
 	jp objectSetVisiblec1		; $4ef5
-	ld e,$b0		; $4ef8
+
+
+; Hit with anything other than Link or shield
+_giantCucco_stateA:
+	ld e,Enemy.var30		; $4ef8
 	ld a,(de)		; $4efa
 	cp $08			; $4efb
-	jr c,_label_093	; $4efd
+	jr c,@runAway	; $4efd
+
+	; Hit at least 8 times
 	call _ecom_incState		; $4eff
-	ld l,$b2		; $4f02
+
+	ld l,Enemy.var32		; $4f02
 	ld (hl),$00		; $4f04
+
 	ld a,SND_TELEPORT		; $4f06
 	jp playSound		; $4f08
-_label_093:
+
+@runAway:
 	call _ecom_updateCardinalAngleAwayFromTarget		; $4f0b
-	call $4f25		; $4f0e
+	call _cucco_setAnimationFromAngle		; $4f0e
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $4f11
-	jr _label_094		; $4f14
+	jr _giantCucco_animate		; $4f14
+
+
+; Charging toward Link after being hit 8 times
+_giantCucco_stateB:
 	call objectGetAngleTowardEnemyTarget		; $4f16
 	call objectNudgeAngleTowards		; $4f19
-	call $4f25		; $4f1c
+	call _cucco_setAnimationFromAngle		; $4f1c
 	call objectApplySpeed		; $4f1f
-_label_094:
+
+_giantCucco_animate:
 	jp enemyAnimate		; $4f22
+
+
+;;
+; @addr{4f25}
+_cucco_setAnimationFromAngle:
 	ld h,d			; $4f25
-	ld l,$89		; $4f26
+	ld l,Enemy.angle		; $4f26
 	ld a,(hl)		; $4f28
 	and $0f			; $4f29
 	ret z			; $4f2b
+
 	ldd a,(hl)		; $4f2c
 	and $10			; $4f2d
 	swap a			; $4f2f
 	xor $01			; $4f31
-	cp (hl)			; $4f33
+	cp (hl) ; hl == direction
 	ret z			; $4f34
 	ld (hl),a		; $4f35
 	jp enemySetAnimation		; $4f36
-	nop			; $4f39
-	rst $38			; $4f3a
-	rst $38			; $4f3b
-	cp $fe			; $4f3c
-	cp $fd			; $4f3e
-.DB $fd				; $4f40
-.DB $fd				; $4f41
-.DB $fd				; $4f42
-	cp $fe			; $4f43
-	cp $ff			; $4f45
-	rst $38			; $4f47
-	nop			; $4f48
+
+
+_cucco_zVals:
+	.db $00 $ff $ff $fe $fe $fe $fd $fd
+	.db $fd $fd $fe $fe $fe $ff $ff $00
+
+
+;;
+; @addr{4f49}
+_cucco_checkSpawnCuccoAttacker:
 	ld h,d			; $4f49
-	ld l,$b3		; $4f4a
+	ld l,Enemy.var33		; $4f4a
 	ld a,(hl)		; $4f4c
 	or a			; $4f4d
-	jr z,_label_095	; $4f4e
+	jr z,+			; $4f4e
 	dec (hl)		; $4f50
 	ret nz			; $4f51
-_label_095:
-	ld l,$b0		; $4f52
++
+	; Must have been hit at least 16 times
+	ld l,Enemy.var30		; $4f52
 	ld a,(hl)		; $4f54
 	cp $10			; $4f55
 	ret c			; $4f57
-	ld b,$22		; $4f58
+
+	ld b,PARTID_CUCCO_ATTACKER		; $4f58
 	call _ecom_spawnProjectile		; $4f5a
-	ld e,$b0		; $4f5d
+
+	ld e,Enemy.var30		; $4f5d
 	ld a,(de)		; $4f5f
 	sub $10			; $4f60
 	and $1e			; $4f62
 	rrca			; $4f64
-	ld hl,$4f6e		; $4f65
+	ld hl,@var33Vals		; $4f65
 	rst_addAToHl			; $4f68
-	ld e,$b3		; $4f69
+	ld e,Enemy.var33		; $4f69
 	ld a,(hl)		; $4f6b
 	ld (de),a		; $4f6c
 	ret			; $4f6d
-	ld e,$1a		; $4f6e
-	jr $16			; $4f70
-	inc d			; $4f72
-	ld (de),a		; $4f73
-	stop			; $4f74
-	ld c,$0c		; $4f75
-	ld l,$a9		; $4f77
+
+@var33Vals:
+	.db $1e $1a $18 $16 $14 $12 $10 $0e
+	.db $0c
+
+
+_cucco_attacked:
+	ld l,Enemy.health		; $4f77
 	ld (hl),$40		; $4f79
-	ld l,$84		; $4f7b
+
+	ld l,Enemy.state		; $4f7b
 	ld a,$0a		; $4f7d
 	cp (hl)			; $4f7f
-	jr z,_label_096	; $4f80
+	jr z,++			; $4f80
+
+	; Just starting to run away
 	ld (hl),a		; $4f82
-	ld l,$90		; $4f83
-	ld (hl),$28		; $4f85
-	ld l,$8f		; $4f87
+	ld l,Enemy.speed		; $4f83
+	ld (hl),SPEED_100		; $4f85
+	ld l,Enemy.zh		; $4f87
 	ld (hl),$00		; $4f89
-_label_096:
-	ld e,$aa		; $4f8b
+++
+	ld e,Enemy.var2a		; $4f8b
 	ld a,(de)		; $4f8d
 	rlca			; $4f8e
 	ret nc			; $4f8f
-	ld l,$b0		; $4f90
+
+	; Increment number of times hit
+	ld l,Enemy.var30		; $4f90
 	bit 5,(hl)		; $4f92
-	jr nz,_label_097	; $4f94
+	jr nz,+			; $4f94
 	inc (hl)		; $4f96
-_label_097:
++
 	ld a,SND_CHICKEN		; $4f97
 	jp playSound		; $4f99
-	ld l,$a4		; $4f9c
+
+
+;;
+; Cucco will transform into ENEMYID_BABY_CUCCO (if not aggressive) or ENEMYID_GIANT_CUCCO
+; (if aggressive).
+; @addr{4f9c}
+_cucco_hitWithMysterySeed:
+	ld l,Enemy.collisionType		; $4f9c
 	res 7,(hl)		; $4f9e
-	ld l,$b0		; $4fa0
+
+	; Check if the cucco been hit 16 or more times
+	ld l,Enemy.var30		; $4fa0
 	ld a,(hl)		; $4fa2
 	cp $10			; $4fa3
-	jr c,_label_098	; $4fa5
-	ld a,$3b		; $4fa7
-	jr _label_099		; $4fa9
-_label_098:
-	ld a,$33		; $4fab
-_label_099:
-	ld e,$b1		; $4fad
+	jr c,+			; $4fa5
+	ld a,ENEMYID_GIANT_CUCCO		; $4fa7
+	jr ++			; $4fa9
++
+	ld a,ENEMYID_BABY_CUCCO		; $4fab
+++
+	ld e,Enemy.var31		; $4fad
 	ld (de),a		; $4faf
-	ld bc,$0502		; $4fb0
+
+	ldbc INTERACID_PUFF,$02		; $4fb0
 	call objectCreateInteraction		; $4fb3
 	ret nz			; $4fb6
-	ld e,$96		; $4fb7
-	ld a,$40		; $4fb9
+
+	ld e,Enemy.relatedObj1		; $4fb7
+	ld a,Interaction.start		; $4fb9
 	ld (de),a		; $4fbb
 	inc e			; $4fbc
 	ld a,h			; $4fbd
 	ld (de),a		; $4fbe
-	ld e,$84		; $4fbf
+
+	ld e,Enemy.state		; $4fbf
 	ld a,$0b		; $4fc1
 	ld (de),a		; $4fc3
+
 	jp objectSetInvisible		; $4fc4
+
+
+;;
+; @addr{4fc7}
+_cucco_playChickenSoundEvery32Frames:
 	ld h,d			; $4fc7
-	ld l,$ab		; $4fc8
+	ld l,Enemy.invincibilityCounter		; $4fc8
 	ld a,(hl)		; $4fca
 	or a			; $4fcb
 	ret nz			; $4fcc
-	ld l,$b2		; $4fcd
+
+	ld l,Enemy.var32		; $4fcd
 	dec (hl)		; $4fcf
 	ld a,(hl)		; $4fd0
 	and $1f			; $4fd1
@@ -159550,119 +159682,110 @@ _label_11_143:
 	ld (de),a		; $5437
 	ret			; $5438
 
-;;
-; @addr{5439}
+
+; ==============================================================================
+; PARTID_CUCCO_ATTACKER
+; ==============================================================================
 partCode22:
-	ld e,$c4		; $5439
+	ld e,Part.state		; $5439
 	ld a,(de)		; $543b
 	rst_jumpTable			; $543c
-.dw $5443
-.dw $549c
-.dw $54a5
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
 	ld h,d			; $5443
 	ld l,e			; $5444
-	inc (hl)		; $5445
-	ld l,$c6		; $5446
+	inc (hl) ; [state]
+
+	ld l,Part.counter1		; $5446
 	ld (hl),$18		; $5448
-	ld l,$cf		; $544a
+	ld l,Part.zh		; $544a
 	ld (hl),$fa		; $544c
-	ld a,$30		; $544e
+
+	ld a,Object.var30		; $544e
 	call objectGetRelatedObject1Var		; $5450
 	ld a,(hl)		; $5453
 	sub $10			; $5454
 	and $1e			; $5456
 	rrca			; $5458
-	ld hl,$54d5		; $5459
+	ld hl,@speedVals		; $5459
 	rst_addAToHl			; $545c
-	ld e,$d0		; $545d
+	ld e,Part.speed		; $545d
 	ld a,(hl)		; $545f
 	ld (de),a		; $5460
+
 	call objectSetVisiblec1		; $5461
+
 	call getRandomNumber_noPreserveVars		; $5464
 	ld c,a			; $5467
 	and $30			; $5468
 	ld b,a			; $546a
 	swap b			; $546b
 	and $10			; $546d
-	ld hl,$54b5		; $546f
+	ld hl,@xOrYVals		; $546f
 	rst_addAToHl			; $5472
 	ld a,c			; $5473
 	and $0f			; $5474
 	rst_addAToHl			; $5476
 	bit 0,b			; $5477
-	ld e,$cb		; $5479
-	ld c,$cd		; $547b
-	jr nz,_label_11_144	; $547d
+	ld e,Part.yh		; $5479
+	ld c,Part.xh		; $547b
+	jr nz,+			; $547d
 	ld e,c			; $547f
-	ld c,$cb		; $5480
-_label_11_144:
+	ld c,Part.yh		; $5480
++
 	ld a,(hl)		; $5482
 	ld (de),a		; $5483
+
 	ld a,b			; $5484
-	ld hl,$54b1		; $5485
+	ld hl,@screenEdgePositions		; $5485
 	rst_addAToHl			; $5488
 	ld e,c			; $5489
 	ld a,(hl)		; $548a
 	ld (de),a		; $548b
 	call objectGetAngleTowardEnemyTarget		; $548c
-	ld e,$c9		; $548f
+	ld e,Part.angle		; $548f
 	ld (de),a		; $5491
+
+	; Decide animation based on angle
 	cp $11			; $5492
 	ld a,$00		; $5494
-	jr nc,_label_11_145	; $5496
+	jr nc,+			; $5496
 	inc a			; $5498
-_label_11_145:
++
 	jp partSetAnimation		; $5499
+
+
+@state1:
 	call _partDecCounter1IfNonzero		; $549c
-	jr nz,_label_11_146	; $549f
+	jr nz,@applySpeedAndAnimate	; $549f
 	ld l,e			; $54a1
 	inc (hl)		; $54a2
-	jr _label_11_146		; $54a3
+	jr @applySpeedAndAnimate		; $54a3
+
+
+@state2:
 	call objectCheckWithinScreenBoundary		; $54a5
 	jp nc,partDelete		; $54a8
-_label_11_146:
+@applySpeedAndAnimate:
 	call objectApplySpeed		; $54ab
 	jp partAnimate		; $54ae
-	ld ($8898),sp		; $54b1
-	ld ($0e05),sp		; $54b4
-	rla			; $54b7
-	jr nz,_label_11_147	; $54b8
-	ldd (hl),a		; $54ba
-	dec sp			; $54bb
-	ld b,h			; $54bc
-	ld c,l			; $54bd
-	ld d,(hl)		; $54be
-	ld e,a			; $54bf
-	ld l,b			; $54c0
-	ld (hl),c		; $54c1
-	ld a,d			; $54c2
-	add e			; $54c3
-	adc h			; $54c4
-	dec b			; $54c5
-	rrca			; $54c6
-	add hl,de		; $54c7
-	inc hl			; $54c8
-	dec l			; $54c9
-	scf			; $54ca
-	ld b,c			; $54cb
-	ld c,e			; $54cc
-	ld d,l			; $54cd
-	ld e,a			; $54ce
-	ld l,c			; $54cf
-	ld (hl),e		; $54d0
-	ld a,l			; $54d1
-	add a			; $54d2
-	sub c			; $54d3
-	sbc e			; $54d4
-	ldd (hl),a		; $54d5
-	inc a			; $54d6
-	ld b,(hl)		; $54d7
-	ld d,b			; $54d8
-	ld e,d			; $54d9
-	ld e,d			; $54da
-	ld h,h			; $54db
-	ld l,(hl)		; $54dc
-	ld a,b			; $54dd
+
+@screenEdgePositions:
+	.db $08 $98 $88 $08
+
+@xOrYVals:
+	.db $05 $0e $17 $20 $29 $32 $3b $44
+	.db $4d $56 $5f $68 $71 $7a $83 $8c
+	.db $05 $0f $19 $23 $2d $37 $41 $4b
+	.db $55 $5f $69 $73 $7d $87 $91 $9b
+
+@speedVals:
+	.db SPEED_140 SPEED_180 SPEED_1c0 SPEED_200
+	.db SPEED_240 SPEED_240 SPEED_280 SPEED_2c0
+	.db SPEED_300
 
 ;;
 ; @addr{54de}

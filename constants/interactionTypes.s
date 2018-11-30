@@ -1529,6 +1529,7 @@
 .define INTERACID_TINGLE		$c8
 
 ;;
+; See also ENEMYID_CUCCO. (TODO: what's the difference?)
 .define INTERACID_CUCCO			$c9
 
 ;;

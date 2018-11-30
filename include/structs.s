@@ -217,7 +217,7 @@
 	; Enemies:
 	;   Bit 7: if set, it disappears instantly when killed instead of dying in a puff
 	;          of smoke?
-	;   Bit 5: ? (Used by buzzblobs, podoboo towers?)
+	;   Bit 5: ? (Used by buzzblobs, podoboo towers, cuccos?)
 	;   Bit 4: if set, the enemy moves toward scent seeds?
 	;   Bit 1: affects how an enemy behaves when it has no health?
 	;   Bits 0-3: Nonzero when the enemy has touched a hazard. Corresponds to entries

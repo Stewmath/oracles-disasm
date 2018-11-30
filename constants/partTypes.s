@@ -73,6 +73,8 @@
 
 .define PARTID_MOBLIN_BOOMERANG			$21
 
+.define PARTID_CUCCO_ATTACKER			$22
+
 .define PARTID_SPARKLE				$26
 
 ; Lightning strikes a specified position

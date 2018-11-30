@@ -313,7 +313,10 @@
 .define ENEMYID_FLOORMASTER			$35
 
 ;;
-; Adult chicken
+; Adult chicken. Doesn't work 100% in large rooms. See also INTERACID_CUCCO.
+;
+; Transforms into ENEMYID_BABY_CUCCO or ENEMYID_GIANT_CUCCO when mystery seeds are used on
+; it (depends if the cucco revenge squad has been called in or not).
 .define ENEMYID_CUCCO				$36
 
 ;;
@@ -332,6 +335,15 @@
 .define ENEMYID_WATER_TEKTITE			$3a
 
 ;;
+; Transforms from normal Cucco to attack Link.
+;
+; This is somewhat bugged in Ages? After attacking it once, it just runs away from Link
+; forever, and its collisions become disabled. Behaves different in Seasons; after
+; attacking it 8 times, it charges at Link, and will not stop... until he is dead.
+;
+; This bug seems to result from its health value being 0 (it doesn't die). Perhaps an
+; engine feature relating to this was added in Ages, which caused the bug? Since cuccos
+; aren't used in Ages, this was probably untested.
 .define ENEMYID_GIANT_CUCCO			$3b
 
 ;;
