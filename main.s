@@ -125542,6 +125542,8 @@ _fish_setRandomCounter1:
 ; Gets the "adjacent walls bitset" for the fish; since this swims, water is traversable,
 ; everything else is not.
 ;
+; This is identical to "_waterTektite_getAdjacentWallsBitsetGivenAngle".
+;
 ; @param[out]	hFF8B	Bitset of adjacent walls
 ; @addr{5bbb}
 _fish_getAdjacentWallsBitsetForKnockback:
@@ -125556,6 +125558,7 @@ _fish_getAdjacentWallsBitsetForKnockback:
 	ld c,(hl)		; $5bc7
 	ld hl,_ecom_sideviewAdjacentWallOffsetTable		; $5bc8
 	rst_addAToHl			; $5bcb
+
 	ld a,$10		; $5bcc
 	ldh (<hFF8B),a	; $5bce
 	ld d,>wRoomLayout		; $5bd0
@@ -132776,105 +132779,154 @@ _fireKeese_subid1_speeds:
 _fireKeese_subid1_animFrequencies:
 	.db $00 $00 $01 $01 $03 $03 $07 $00
 
-;;
-; @addr{5476}
+
+; ==============================================================================
+; ENEMYID_WATER_TEKTITE
+; ==============================================================================
 enemyCode3a:
-	jr z,_label_130	; $5476
-	sub $03			; $5478
+	jr z,@normalStatus	; $5476
+	sub ENEMYSTATUS_NO_HEALTH			; $5478
 	ret c			; $547a
 	jp z,enemyDie		; $547b
 	dec a			; $547e
 	ret z			; $547f
-	ld e,$90		; $5480
+
+	; ENEMYSTATUS_KNOCKBACK
+	; Need special knockback code for special "solidity" properties (water is
+	; traversible, everything else is solid)
+	ld e,Enemy.speed		; $5480
 	ld a,(de)		; $5482
 	push af			; $5483
-	ld a,$50		; $5484
+	ld a,SPEED_200		; $5484
 	ld (de),a		; $5486
-	ld e,$ac		; $5487
-	call $550a		; $5489
-	ld e,$ac		; $548c
+	ld e,Enemy.knockbackAngle		; $5487
+	call _waterTektite_getAdjacentWallsBitsetGivenAngle		; $5489
+	ld e,Enemy.knockbackAngle		; $548c
 	call _ecom_applyVelocityGivenAdjacentWalls		; $548e
+
 	pop af			; $5491
-	ld e,$90		; $5492
+	ld e,Enemy.speed		; $5492
 	ld (de),a		; $5494
 	ret			; $5495
-_label_130:
-	ld e,$84		; $5496
+
+@normalStatus:
+	ld e,Enemy.state		; $5496
 	ld a,(de)		; $5498
 	rst_jumpTable			; $5499
-.dw $54ae
-.dw $54e2
-.dw $54e2
-.dw $54e2
-.dw $54e2
-.dw _ecom_blownByGaleSeedState
-.dw $54e2
-.dw $54e2
-.dw $54e3
-.dw $5501
+	.dw _waterTektite_state_uninitialized
+	.dw _waterTektike_state_stub
+	.dw _waterTektike_state_stub
+	.dw _waterTektike_state_stub
+	.dw _waterTektike_state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw _waterTektike_state_stub
+	.dw _waterTektike_state_stub
+	.dw _waterTektike_state8
+	.dw _waterTektike_state9
 
+
+_waterTektite_state_uninitialized:
 	call objectSetVisible82		; $54ae
+
+_waterTektike_decideNewAngle:
 	ld h,d			; $54b1
-	ld l,$84		; $54b2
+	ld l,Enemy.state		; $54b2
 	ld (hl),$08		; $54b4
-	ld l,$86		; $54b6
+
+	ld l,Enemy.counter1		; $54b6
 	ld (hl),$40		; $54b8
+
 	ld a,(wScentSeedActive)		; $54ba
 	or a			; $54bd
-	jr nz,_label_131	; $54be
+	jr nz,@scentSeedActive	; $54be
+
+	; Random diagonal angle
 	call getRandomNumber_noPreserveVars		; $54c0
 	and $18			; $54c3
 	add $04			; $54c5
-	ld e,$89		; $54c7
+	ld e,Enemy.angle		; $54c7
 	ld (de),a		; $54c9
-	jr _label_133		; $54ca
-_label_131:
+	jr _waterTektike_animate		; $54ca
+
+@scentSeedActive:
 	ldh a,(<hFFB2)	; $54cc
 	ldh (<hFF8F),a	; $54ce
 	ldh a,(<hFFB3)	; $54d0
 	ldh (<hFF8E),a	; $54d2
-	ld l,$8b		; $54d4
+	ld l,Enemy.yh		; $54d4
 	ldi a,(hl)		; $54d6
 	ld b,a			; $54d7
 	inc l			; $54d8
 	ld c,(hl)		; $54d9
 	call objectGetRelativeAngleWithTempVars		; $54da
-	ld e,$89		; $54dd
+	ld e,Enemy.angle		; $54dd
 	ld (de),a		; $54df
-	jr _label_133		; $54e0
+	jr _waterTektike_animate		; $54e0
+
+
+_waterTektike_state_stub:
 	ret			; $54e2
+
+
+; Moving in some direction for [counter1] frames, at varying speeds.
+_waterTektike_state8:
 	call _ecom_decCounter1		; $54e3
-	jr nz,_label_132	; $54e6
+	jr nz,++		; $54e6
+
 	ld l,e			; $54e8
-	inc (hl)		; $54e9
-	ld l,$86		; $54ea
+	inc (hl) ; [state]
+
+	ld l,Enemy.counter1		; $54ea
 	ld (hl),$08		; $54ec
-	jr _label_133		; $54ee
-_label_132:
-	call $5542		; $54f0
-	call $5508		; $54f3
-	ld e,$89		; $54f6
+	jr _waterTektike_animate		; $54ee
+++
+	call _waterTektike_setSpeedFromCounter1		; $54f0
+
+	call _waterTektite_getAdjacentWallsBitset		; $54f3
+	ld e,Enemy.angle		; $54f6
 	call _ecom_applyVelocityGivenAdjacentWalls		; $54f8
 	call _ecom_bounceOffScreenBoundary		; $54fb
-_label_133:
+
+_waterTektike_animate:
 	jp enemyAnimate		; $54fe
+
+
+
+; Not moving for [counter1] frames; then choosing new angle
+_waterTektike_state9:
 	call _ecom_decCounter1		; $5501
-	jr nz,_label_133	; $5504
-	jr -$57			; $5506
-	ld e,$89		; $5508
+	jr nz,_waterTektike_animate	; $5504
+	jr _waterTektike_decideNewAngle		; $5506
+
+;;
+; Gets the "adjacent walls bitset" for the tektike; since this swims, water is
+; traversable, everything else is not.
+;
+; This is identical to "_fish_getAdjacentWallsBitsetForKnockback".
+;
+; @addr{5508}
+_waterTektite_getAdjacentWallsBitset:
+	ld e,Enemy.angle		; $5508
+
+;;
+; @param	de	Angle variable
+; @addr{550a}
+_waterTektite_getAdjacentWallsBitsetGivenAngle:
 	ld a,(de)		; $550a
 	call _ecom_getAdjacentWallTableOffset		; $550b
+
 	ld h,d			; $550e
-	ld l,$8b		; $550f
+	ld l,Enemy.yh		; $550f
 	ld b,(hl)		; $5511
-	ld l,$8d		; $5512
+	ld l,Enemy.xh		; $5512
 	ld c,(hl)		; $5514
 	ld hl,_ecom_sideviewAdjacentWallOffsetTable		; $5515
 	rst_addAToHl			; $5518
+
 	ld a,$10		; $5519
 	ldh (<hFF8B),a	; $551b
-	ld d,$cf		; $551d
-_label_134:
+	ld d,>wRoomLayout		; $551d
+@nextOffset:
 	ldi a,(hl)		; $551f
 	add b			; $5520
 	ld b,a			; $5521
@@ -132888,39 +132940,37 @@ _label_134:
 	or e			; $552c
 	ld e,a			; $552d
 	ld a,(de)		; $552e
-	sub $f9			; $552f
-	cp $05			; $5531
+	sub TILEINDEX_PUDDLE			; $552f
+	cp TILEINDEX_FD-TILEINDEX_PUDDLE+1			; $5531
 	ldh a,(<hFF8B)	; $5533
 	rla			; $5535
 	ldh (<hFF8B),a	; $5536
-	jr nc,_label_134	; $5538
+	jr nc,@nextOffset	; $5538
+
 	xor $0f			; $553a
 	ldh (<hFF8B),a	; $553c
 	ldh a,(<hActiveObject)	; $553e
 	ld d,a			; $5540
 	ret			; $5541
+
+
+;;
+; @param	hl	Pointer to counter1
+; @addr{5542}
+_waterTektike_setSpeedFromCounter1:
 	ld a,(hl)		; $5542
 	srl a			; $5543
 	srl a			; $5545
-	ld hl,$5550		; $5547
+	ld hl,@speedVals		; $5547
 	rst_addAToHl			; $554a
-	ld e,$90		; $554b
+	ld e,Enemy.speed		; $554b
 	ld a,(hl)		; $554d
 	ld (de),a		; $554e
 	ret			; $554f
-	dec b			; $5550
-	ld a,(bc)		; $5551
-	inc d			; $5552
-	ld e,$28		; $5553
-	ldd (hl),a		; $5555
-	ldd (hl),a		; $5556
-	ldd (hl),a		; $5557
-	jr z,_label_137	; $5558
-	ld e,$1e		; $555a
-	inc d			; $555c
-	inc d			; $555d
-	ld a,(bc)		; $555e
-	ld a,(bc)		; $555f
+
+@speedVals:
+	.db SPEED_020 SPEED_040 SPEED_080 SPEED_0c0 SPEED_100 SPEED_140 SPEED_140 SPEED_140
+	.db SPEED_100 SPEED_100 SPEED_0c0 SPEED_0c0 SPEED_080 SPEED_080 SPEED_040 SPEED_040
 
 ;;
 ; @addr{5560}
