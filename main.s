@@ -131744,29 +131744,37 @@ _cucco_playChickenSoundEvery32Frames:
 	ld a,SND_CHICKEN		; $4fd4
 	jp playSound		; $4fd6
 
-;;
-; @addr{4fd9}
+
+; ==============================================================================
+; ENEMYID_BUTTERFLY
+; ==============================================================================
 enemyCode37:
-	ld e,$84		; $4fd9
+	ld e,Enemy.state		; $4fd9
 	ld a,(de)		; $4fdb
 	rst_jumpTable			; $4fdc
-.dw $4fe1
-.dw $4fee
+	.dw @state0
+	.dw @state1
+
+@state0:
 	ld h,d			; $4fe1
 	ld l,e			; $4fe2
-	inc (hl)		; $4fe3
-	ld l,$90		; $4fe4
-	ld (hl),$0a		; $4fe6
+	inc (hl) ; [state]
+
+	ld l,Enemy.speed		; $4fe4
+	ld (hl),SPEED_40		; $4fe6
 	call _ecom_setRandomAngle		; $4fe8
+
 	jp objectSetVisible81		; $4feb
+
+@state1:
 	ld bc,$1f1f		; $4fee
 	call _ecom_randomBitwiseAndBCE		; $4ff1
 	or b			; $4ff4
-	jr nz,_label_100	; $4ff5
+	jr nz,++		; $4ff5
 	ld h,d			; $4ff7
-	ld l,$89		; $4ff8
+	ld l,Enemy.angle		; $4ff8
 	ld (hl),c		; $4ffa
-_label_100:
+++
 	call objectApplySpeed		; $4ffb
 	call _ecom_bounceOffScreenBoundary		; $4ffe
 	jp enemyAnimate		; $5001
