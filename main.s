@@ -131779,187 +131779,283 @@ enemyCode37:
 	call _ecom_bounceOffScreenBoundary		; $4ffe
 	jp enemyAnimate		; $5001
 
-;;
-; @addr{5004}
+
+; ==============================================================================
+; ENEMYID_GREAT_FAIRY
+;
+; Variables:
+;   relatedObj2: Reference to INTERACID_PUFF
+;   var30: Counter used to update Z-position as she floats up and down
+;   var31: Number of hearts spawned (the ones that circle around Link)
+; ==============================================================================
 enemyCode38:
-	ld e,$84		; $5004
+	ld e,Enemy.state		; $5004
 	ld a,(de)		; $5006
 	rst_jumpTable			; $5007
-.dw $501c
-.dw $5024
-.dw $5035
-.dw $5040
-.dw $507e
-.dw $5088
-.dw $50a3
-.dw $50b5
-.dw $50c5
-.dw $50da
+	.dw _greatFairy_state_uninitialized
+	.dw _greatFairy_state1
+	.dw _greatFairy_state2
+	.dw _greatFairy_state3
+	.dw _greatFairy_state4
+	.dw _greatFairy_state5
+	.dw _greatFairy_state6
+	.dw _greatFairy_state7
+	.dw _greatFairy_state8
+	.dw _greatFairy_state9
+
+
+_greatFairy_state_uninitialized:
 	ld h,d			; $501c
 	ld l,e			; $501d
-	inc (hl)		; $501e
-	ld l,$8f		; $501f
+	inc (hl) ; [state]
+	ld l,Enemy.zh		; $501f
 	ld (hl),$f0		; $5021
 	ret			; $5023
-	call $5134		; $5024
+
+
+; Create puff
+_greatFairy_state1:
+	call _greatFairy_createPuff		; $5024
 	ret nz			; $5027
-	ld l,$84		; $5028
+
+	ld l,Enemy.state		; $5028
 	inc (hl)		; $502a
-	ld l,$86		; $502b
+
+	ld l,Enemy.counter1		; $502b
 	ld (hl),$11		; $502d
-	ld a,$0f		; $502f
+	ld a,MUS_FAIRY		; $502f
 	ld (wActiveMusic),a		; $5031
 	ret			; $5034
-	ld a,$21		; $5035
+
+
+; Waiting for puff to disappear
+_greatFairy_state2:
+	ld a,Object.animParameter		; $5035
 	call objectGetRelatedObject2Var		; $5037
 	bit 7,(hl)		; $503a
 	ret z			; $503c
+
 	call _ecom_incState		; $503d
-	call $510a		; $5040
-	jr nc,_label_102	; $5043
+
+
+; Waiting for Link to approach
+_greatFairy_state3:
+	call _greatFairy_checkLinkApproached		; $5040
+	jr nc,_greatFairy_animate	; $5043
+
 	ld a,$80		; $5045
 	ld (wMenuDisabled),a		; $5047
-	ld a,$21		; $504a
+
+	ld a,DISABLE_COMPANION|DISABLE_LINK		; $504a
 	ld (wDisabledObjects),a		; $504c
+
 	ld hl,wLinkHealth		; $504f
 	ldi a,(hl)		; $5052
 	cp (hl)			; $5053
 	ld a,$04		; $5054
-	ld bc,$4100		; $5056
-	jr nz,_label_101	; $5059
-	ld e,$86		; $505b
-	ld a,$1e		; $505d
+	ld bc,TX_4100		; $5056
+	jr nz,++		; $5059
+
+	; Full health already
+	ld e,Enemy.counter1		; $505b
+	ld a,30		; $505d
 	ld (de),a		; $505f
 	ld a,$08		; $5060
-	ld bc,$4105		; $5062
-_label_101:
-	ld e,$84		; $5065
+	ld bc,TX_4105		; $5062
+++
+	ld e,Enemy.state		; $5065
 	ld (de),a		; $5067
 	call showText		; $5068
-_label_102:
-	call $50ee		; $506b
+
+_greatFairy_animate:
+	call _greatFairy_updateZPosition		; $506b
 	call enemyAnimate		; $506e
-	ld e,$8b		; $5071
+	ld e,Enemy.yh		; $5071
 	ld a,(de)		; $5073
 	ld b,a			; $5074
 	ldh a,(<hEnemyTargetY)	; $5075
 	cp b			; $5077
 	jp c,objectSetVisiblec1		; $5078
 	jp objectSetVisiblec2		; $507b
+
+
+; Begin healing Link
+_greatFairy_state4:
 	ld h,d			; $507e
 	ld l,e			; $507f
-	inc (hl)		; $5080
-	ld l,$86		; $5081
+	inc (hl) ; [state]
+
+	ld l,Enemy.counter1		; $5081
 	ld (hl),$0c		; $5083
 	inc l			; $5085
-	ld (hl),$09		; $5086
-	call $5144		; $5088
+	ld (hl),$09 ; [counter2]
+
+
+; Spawning hearts
+_greatFairy_state5:
+	call _greatFairy_playSoundEvery8Frames		; $5088
 	call _ecom_decCounter1		; $508b
-	jr nz,_label_102	; $508e
-	ld (hl),$0c		; $5090
+	jr nz,_greatFairy_animate	; $508e
+
+	ld (hl),$0c ; [counter1]
 	inc l			; $5092
-	dec (hl)		; $5093
-	jr z,_label_103	; $5094
-	call $5123		; $5096
-	jr _label_102		; $5099
-_label_103:
+	dec (hl) ; [counter2]
+	jr z,@spawnedAllHearts			; $5094
+	call _greatFairy_spawnCirclingHeart		; $5096
+	jr _greatFairy_animate		; $5099
+
+@spawnedAllHearts:
 	dec l			; $509b
-	ld (hl),$1e		; $509c
-	ld l,$84		; $509e
+	ld (hl),30 ; [counter1]
+
+	ld l,Enemy.state		; $509e
 	inc (hl)		; $50a0
-	jr _label_102		; $50a1
-	call $5144		; $50a3
+	jr _greatFairy_animate		; $50a1
+
+
+; Hearts have all spawned, are now circling around Link
+_greatFairy_state6:
+	call _greatFairy_playSoundEvery8Frames		; $50a3
 	call _ecom_decCounter1		; $50a6
-	jr nz,_label_102	; $50a9
-	ld l,$84		; $50ab
+	jr nz,_greatFairy_animate	; $50a9
+	ld l,Enemy.state		; $50ab
 	inc (hl)		; $50ad
-	ld a,$29		; $50ae
-	ld c,$40		; $50b0
+	ld a,TREASURE_HEART_REFILL		; $50ae
+	ld c,MAX_LINK_HEALTH		; $50b0
 	call giveTreasure		; $50b2
-	call $5144		; $50b5
-	ld e,$b1		; $50b8
+
+
+; Waiting for all hearts to disappear
+_greatFairy_state7:
+	call _greatFairy_playSoundEvery8Frames		; $50b5
+	ld e,Enemy.var31		; $50b8
 	ld a,(de)		; $50ba
 	or a			; $50bb
-	jr nz,_label_102	; $50bc
+	jr nz,_greatFairy_animate	; $50bc
+
 	call _ecom_incState		; $50be
-	ld l,$86		; $50c1
-	ld (hl),$1e		; $50c3
+	ld l,Enemy.counter1		; $50c1
+	ld (hl),30		; $50c3
+
+
+; About to disappear; staying in place for 30 frames
+_greatFairy_state8:
 	call _ecom_decCounter1		; $50c5
-	jr nz,_label_102	; $50c8
-	ld (hl),$3c		; $50ca
+	jr nz,_greatFairy_animate	; $50c8
+
+	ld (hl),60 ; [counter1]
 	ld l,e			; $50cc
-	inc (hl)		; $50cd
+	inc (hl) ; [state]
+
 	xor a			; $50ce
 	ld (wDisabledObjects),a		; $50cf
 	ld (wMenuDisabled),a		; $50d2
+
 	ld a,SND_FAIRYCUTSCENE		; $50d5
 	call playSound		; $50d7
+
+
+; Disappearing
+_greatFairy_state9:
 	call _ecom_decCounter1		; $50da
 	jp z,enemyDelete		; $50dd
-	call $506b		; $50e0
+
+	call _greatFairy_animate		; $50e0
+
+	; Flicker visibility
 	ld h,d			; $50e3
-	ld l,$86		; $50e4
+	ld l,Enemy.counter1		; $50e4
 	bit 0,(hl)		; $50e6
 	ret nz			; $50e8
-	ld l,$9a		; $50e9
+	ld l,Enemy.visible		; $50e9
 	res 7,(hl)		; $50eb
 	ret			; $50ed
+
+
+;;
+; @addr{50ee}
+_greatFairy_updateZPosition:
 	ld h,d			; $50ee
-	ld l,$b0		; $50ef
+	ld l,Enemy.var30		; $50ef
 	dec (hl)		; $50f1
 	ld a,(hl)		; $50f2
 	and $07			; $50f3
 	ret nz			; $50f5
+
 	ld a,(hl)		; $50f6
 	and $18			; $50f7
 	swap a			; $50f9
 	rlca			; $50fb
 	sub $02			; $50fc
 	bit 5,(hl)		; $50fe
-	jr nz,_label_104	; $5100
+	jr nz,++		; $5100
 	cpl			; $5102
 	inc a			; $5103
-_label_104:
+++
 	sub $10			; $5104
-	ld l,$8f		; $5106
+	ld l,Enemy.zh		; $5106
 	ld (hl),a		; $5108
 	ret			; $5109
+
+
+;;
+; @param[out]	cflag	c if Link approached
+; @addr{510a}
+_greatFairy_checkLinkApproached:
 	call checkLinkVulnerable		; $510a
 	ret nc			; $510d
+
 	ld h,d			; $510e
-	ld l,$8b		; $510f
+	ld l,Enemy.yh		; $510f
 	ldh a,(<hEnemyTargetY)	; $5111
 	sub (hl)		; $5113
 	sub $10			; $5114
 	cp $21			; $5116
 	ret nc			; $5118
-	ld l,$8d		; $5119
+
+	ld l,Enemy.xh		; $5119
 	ldh a,(<hEnemyTargetX)	; $511b
 	sub (hl)		; $511d
 	add $18			; $511e
 	cp $31			; $5120
 	ret			; $5122
+
+;;
+; @addr{5123}
+_greatFairy_spawnCirclingHeart:
 	call getFreePartSlot		; $5123
 	ret nz			; $5126
-	ld (hl),$30		; $5127
-	ld l,$d6		; $5129
-	ld a,$80		; $512b
+
+	ld (hl),PARTID_GREAT_FAIRY_HEART		; $5127
+	ld l,Part.relatedObj1		; $5129
+	ld a,Enemy.start		; $512b
 	ldi (hl),a		; $512d
 	ld (hl),d		; $512e
+
 	ld h,d			; $512f
-	ld l,$b1		; $5130
+	ld l,Enemy.var31		; $5130
 	inc (hl)		; $5132
 	ret			; $5133
-	ld bc,$0502		; $5134
+
+
+;;
+; @addr{5134}
+_greatFairy_createPuff:
+	ldbc INTERACID_PUFF,$02		; $5134
 	call objectCreateInteraction		; $5137
 	ret nz			; $513a
+
 	ld a,h			; $513b
 	ld h,d			; $513c
-	ld l,$99		; $513d
+	ld l,Enemy.relatedObj2+1		; $513d
 	ldd (hl),a		; $513f
-	ld (hl),$40		; $5140
+	ld (hl),Interaction.start		; $5140
 	xor a			; $5142
 	ret			; $5143
+
+;;
+; @addr{5144}
+_greatFairy_playSoundEvery8Frames:
 	ld a,(wFrameCounter)		; $5144
 	and $07			; $5147
 	ret nz			; $5149

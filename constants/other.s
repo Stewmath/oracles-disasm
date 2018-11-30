@@ -10,6 +10,9 @@
 .define SCREEN_WIDTH		$0a
 .define SCREEN_HEIGHT		$08
 
+; Amount used for heart reflils (great fairy)
+.define MAX_LINK_HEALTH		$40
+
 ; Overworld size
 .ifdef ROM_AGES
 	.define OVERWORLD_WIDTH		14

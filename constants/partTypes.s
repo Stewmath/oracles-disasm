@@ -87,6 +87,10 @@
 .define PARTID_SEA_EFFECTS			$2e
 
 ;;
+; Decorative heart when Great Fairy is healing Link
+.define PARTID_GREAT_FAIRY_HEART		$30
+
+;;
 ; Also used by ENEMYID_PODOBOO_TOWER
 .define PARTID_GOPONGA_PROJECTILE		$31
 
