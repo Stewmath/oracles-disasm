@@ -137462,131 +137462,126 @@ enemyCode5a:
 
 	jp enemyDelete		; $690c
 
-;;
-; @addr{690f}
+
+; ==============================================================================
+; ENEMYID_TWINROVA_ICE
+;
+; Variables:
+;   var3e: ?
+; ==============================================================================
 enemyCode5d:
-	jr z,_label_263	; $690f
+	jr z,@normalStatus	; $690f
 	sub $03			; $6911
 	ret c			; $6913
-	ld e,$aa		; $6914
+
+	ld e,Enemy.var2a		; $6914
 	ld a,(de)		; $6916
-	cp $80			; $6917
-	jr z,_label_263	; $6919
+	cp $80|COLLISIONTYPE_LINK			; $6917
+	jr z,@normalStatus	; $6919
+
 	res 7,a			; $691b
-	sub $02			; $691d
-	cp $02			; $691f
-	call c,$6972		; $6921
+	sub COLLISIONTYPE_L2_SHIELD			; $691d
+	cp COLLISIONTYPE_L3_SHIELD-COLLISIONTYPE_L2_SHIELD + 1			; $691f
+	call c,_twinrovaIce_bounceOffShield		; $6921
 	call _ecom_updateCardinalAngleAwayFromTarget		; $6924
-_label_263:
-	ld e,$84		; $6927
+
+@normalStatus:
+	ld e,Enemy.state		; $6927
 	ld a,(de)		; $6929
 	rst_jumpTable			; $692a
-.dw $6931
-.dw $6948
-.dw $6950
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+
+; Initialization
+@state0:
 	ld h,d			; $6931
 	ld l,e			; $6932
-	inc (hl)		; $6933
-	ld l,$90		; $6934
-	ld (hl),$46		; $6936
-	ld l,$86		; $6938
-	ld (hl),$78		; $693a
-	ld l,$be		; $693c
+	inc (hl) ; [state]
+
+	ld l,Enemy.speed		; $6934
+	ld (hl),SPEED_1c0		; $6936
+
+	ld l,Enemy.counter1		; $6938
+	ld (hl),120		; $693a
+
+	ld l,Enemy.var3e		; $693c
 	ld (hl),$08		; $693e
+
 	ld a,SND_POOF		; $6940
 	call playSound		; $6942
 	jp objectSetVisible82		; $6945
+
+
+@state1:
 	call _ecom_decCounter1		; $6948
 	jp nz,enemyAnimate		; $694b
+
 	ld l,e			; $694e
 	inc (hl)		; $694f
-	ld a,$29		; $6950
+
+
+@state2:
+	; Check if parent is dead
+	ld a,Object.health		; $6950
 	call objectGetRelatedObject1Var		; $6952
 	ld a,(hl)		; $6955
 	or a			; $6956
-	jr z,_label_264	; $6957
-	ld l,$84		; $6959
+	jr z,@delete	; $6957
+
+	ld l,Enemy.state		; $6959
 	ld a,(hl)		; $695b
 	cp $0a			; $695c
-	jr z,_label_264	; $695e
+	jr z,@delete	; $695e
+
 	call objectApplySpeed		; $6960
 	call _ecom_bounceOffWallsAndHoles		; $6963
 	ret z			; $6966
 	ld a,SND_CLINK		; $6967
 	jp playSound		; $6969
-_label_264:
+
+@delete:
 	call objectCreatePuff		; $696c
 	jp enemyDelete		; $696f
+
+
+;;
+; This doesn't appear to do anything other than make a sound, because the angle is
+; immediately overwritten after this is called?
+; @addr{6972}
+_twinrovaIce_bounceOffShield:
 	ld a,(w1Link.direction)		; $6972
 	swap a			; $6975
 	ld b,a			; $6977
-	ld e,$89		; $6978
+	ld e,Enemy.angle		; $6978
 	ld a,(de)		; $697a
 	add b			; $697b
-	ld hl,$6989		; $697c
+	ld hl,@bounceTable		; $697c
 	rst_addAToHl			; $697f
-	ld e,$89		; $6980
+	ld e,Enemy.angle		; $6980
 	ld a,(hl)		; $6982
 	ld (de),a		; $6983
 	ld a,SND_CLINK		; $6984
 	jp playSound		; $6986
-	stop			; $6989
-	rrca			; $698a
-	ld c,$0d		; $698b
-	inc c			; $698d
-	dec bc			; $698e
-	ld a,(bc)		; $698f
-	add hl,bc		; $6990
-	ld ($0607),sp		; $6991
-	dec b			; $6994
-	inc b			; $6995
-	inc bc			; $6996
-	ld (bc),a		; $6997
-	ld bc,$1f00		; $6998
-	ld e,$1d		; $699b
-	inc e			; $699d
-	dec de			; $699e
-	ld a,(de)		; $699f
-	add hl,de		; $69a0
-	jr $17			; $69a1
-	ld d,$15		; $69a3
-	inc d			; $69a5
-	inc de			; $69a6
-	ld (de),a		; $69a7
-	ld de,$0f10		; $69a8
-	ld c,$0d		; $69ab
-	inc c			; $69ad
-	dec bc			; $69ae
-	ld a,(bc)		; $69af
-	add hl,bc		; $69b0
-	ld ($0607),sp		; $69b1
-	dec b			; $69b4
-	inc b			; $69b5
-	inc bc			; $69b6
-	ld (bc),a		; $69b7
-	ld bc,$1f00		; $69b8
-	ld e,$1d		; $69bb
-	inc e			; $69bd
-	dec de			; $69be
-	ld a,(de)		; $69bf
-	add hl,de		; $69c0
-	jr $17			; $69c1
-	ld d,$15		; $69c3
-	inc d			; $69c5
-	inc de			; $69c6
-	ld (de),a		; $69c7
-	ld de,$0f10		; $69c8
-	ld c,$0d		; $69cb
-	inc c			; $69cd
-	dec bc			; $69ce
-	ld a,(bc)		; $69cf
-	add hl,bc		; $69d0
-	ld ($0607),sp		; $69d1
-	dec b			; $69d4
-	inc b			; $69d5
-	inc bc			; $69d6
-	ld (bc),a		; $69d7
-	.db $01
+
+@bounceTable:
+	.db $10 $0f $0e $0d $0c $0b $0a $09
+	.db $08 $07 $06 $05 $04 $03 $02 $01
+
+	.db $00 $1f $1e $1d $1c $1b $1a $19
+	.db $18 $17 $16 $15 $14 $13 $12 $11
+
+	.db $10 $0f $0e $0d $0c $0b $0a $09
+	.db $08 $07 $06 $05 $04 $03 $02 $01
+
+	.db $00 $1f $1e $1d $1c $1b $1a $19
+	.db $18 $17 $16 $15 $14 $13 $12 $11
+
+	.db $10 $0f $0e $0d $0c $0b $0a $09
+	.db $08 $07 $06 $05 $04 $03 $02 $01
+
+
 
 ;;
 ; @addr{69d9}
