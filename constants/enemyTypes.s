@@ -503,6 +503,9 @@
 .define ENEMYID_FLYING_TILE			$52
 
 ;;
+; Decorative bug, non-interactable. Only designed to work in small rooms (moves roughly
+; around the center of a small room)
+; @subid{Gets written directly to oamFlags?}
 .define ENEMYID_DRAGONFLY			$53
 
 ;;

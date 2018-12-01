@@ -136905,127 +136905,180 @@ _flyingTile_layoutData:
 	.db $00
 
 
-;;
-; @addr{669e}
+; ==============================================================================
+; ENEMYID_DRAGONFLY
+; ==============================================================================
 enemyCode53:
-	ld e,$84		; $669e
+	ld e,Enemy.state		; $669e
 	ld a,(de)		; $66a0
 	rst_jumpTable			; $66a1
-.dw $66ae
-.dw $66bf
-.dw $6705
-.dw $6719
-.dw $6740
-.dw $675b
+	.dw _dragonfly_state0
+	.dw _dragonfly_state1
+	.dw _dragonfly_state2
+	.dw _dragonfly_state3
+	.dw _dragonfly_state4
+	.dw _dragonfly_state5
+
+
+; Initialization
+_dragonfly_state0:
 	ld h,d			; $66ae
 	ld l,e			; $66af
-	inc (hl)		; $66b0
-	ld l,$82		; $66b1
+	inc (hl) ; [state]
+
+	ld l,Enemy.subid		; $66b1
 	ld a,(hl)		; $66b3
-	ld l,$9b		; $66b4
+	ld l,Enemy.oamFlagsBackup		; $66b4
 	ldi (hl),a		; $66b6
 	ld (hl),a		; $66b7
-	ld l,$8f		; $66b8
-	ld (hl),$f8		; $66ba
+
+	ld l,Enemy.zh		; $66b8
+	ld (hl),-$08		; $66ba
 	jp objectSetVisiblec1		; $66bc
+
+
+; Choosing new direction to move in
+_dragonfly_state1:
 	ld h,d			; $66bf
 	ld l,e			; $66c0
-	inc (hl)		; $66c1
-	ld l,$86		; $66c2
+	inc (hl) ; [state]
+
+	ld l,Enemy.counter1		; $66c2
 	ld (hl),$03		; $66c4
-	ld l,$90		; $66c6
-	ld (hl),$50		; $66c8
+
+	ld l,Enemy.speed		; $66c6
+	ld (hl),SPEED_200		; $66c8
+
 	call getRandomNumber_noPreserveVars		; $66ca
 	and $06			; $66cd
 	ld c,a			; $66cf
+
 	ld b,$00		; $66d0
-	ld e,$8b		; $66d2
+	ld e,Enemy.yh		; $66d2
 	ld a,(de)		; $66d4
-	cp $40			; $66d5
-	jr c,_label_251	; $66d7
+	cp (SMALL_ROOM_HEIGHT/2)<<4			; $66d5
+	jr c,+			; $66d7
 	inc b			; $66d9
-_label_251:
-	ld e,$8d		; $66da
++
+	ld e,Enemy.xh		; $66da
 	ld a,(de)		; $66dc
-	cp $50			; $66dd
-	jr c,_label_252	; $66df
+	cp (SMALL_ROOM_WIDTH/2)<<4			; $66dd
+	jr c,+			; $66df
 	set 1,b			; $66e1
-_label_252:
++
 	ld a,b			; $66e3
-	ld hl,$6701		; $66e4
+	ld hl,@angleVals		; $66e4
 	rst_addAToHl			; $66e7
 	ld a,(hl)		; $66e8
 	add c			; $66e9
 	and $1f			; $66ea
-	ld e,$89		; $66ec
+	ld e,Enemy.angle		; $66ec
 	ld (de),a		; $66ee
-	ld e,$89		; $66ef
+
+	; Update animation
+	ld e,Enemy.angle		; $66ef
 	ld a,(de)		; $66f1
 	ld b,a			; $66f2
 	and $0f			; $66f3
 	ret z			; $66f5
+
 	ld a,b			; $66f6
 	cp $10			; $66f7
 	ld a,$01		; $66f9
-	jr c,_label_253	; $66fb
+	jr c,+			; $66fb
 	dec a			; $66fd
-_label_253:
++
 	jp enemySetAnimation		; $66fe
-	ld ($1202),sp		; $6701
-	jr -$33			; $6704
-	ld h,l			; $6706
-	ld h,a			; $6707
-	jr nz,_label_254	; $6708
+
+@angleVals:
+	.db $08 $02 $12 $18
+
+
+; Move in given direction for 3 frames at SPEED_200
+_dragonfly_state2:
+	call _dragonfly_applySpeed		; $6705
+	jr nz,@nextState	; $6708
+
 	call _ecom_decCounter1		; $670a
-	jr nz,_label_255	; $670d
-_label_254:
+	jr nz,_dragonfly_animate	; $670d
+
+@nextState:
 	call _ecom_incState		; $670f
-	ld l,$86		; $6712
+	ld l,Enemy.counter1		; $6712
 	ld (hl),$0c		; $6714
-_label_255:
+
+_dragonfly_animate:
 	jp enemyAnimate		; $6716
-	call $6765		; $6719
-	jr nz,_label_256	; $671c
+
+
+; Slowing down over 12 frames, eventually reaching SPEED_140
+_dragonfly_state3:
+	call _dragonfly_applySpeed		; $6719
+	jr nz,@nextState	; $671c
+
 	call _ecom_decCounter1		; $671e
-	jr z,_label_256	; $6721
-	ld a,(hl)		; $6723
+	jr z,@nextState	; $6721
+
+	ld a,(hl) ; [counter1]
 	rrca			; $6724
-	jr nc,_label_255	; $6725
-	ld l,$90		; $6727
+	jr nc,_dragonfly_animate	; $6725
+
+	ld l,Enemy.speed		; $6727
 	ld a,(hl)		; $6729
-	sub $05			; $672a
+	sub SPEED_20			; $672a
 	ld (hl),a		; $672c
-	jr _label_255		; $672d
-_label_256:
-	ld e,$84		; $672f
+	jr _dragonfly_animate		; $672d
+
+@nextState:
+	ld e,Enemy.state		; $672f
 	ld a,$04		; $6731
 	ld (de),a		; $6733
+
+	; Set counter1 somewhere in range $18-$1f
 	call getRandomNumber_noPreserveVars		; $6734
 	and $07			; $6737
 	add $18			; $6739
-	ld e,$86		; $673b
+	ld e,Enemy.counter1		; $673b
 	ld (de),a		; $673d
-	jr _label_255		; $673e
-	call $6765		; $6740
-	jr nz,_label_257	; $6743
+	jr _dragonfly_animate		; $673e
+
+
+; Moving at SPEED_140 for between 24-31 frames
+_dragonfly_state4:
+	call _dragonfly_applySpeed		; $6740
+	jr nz,@nextState	; $6743
+
 	call _ecom_decCounter1		; $6745
-	jr nz,_label_255	; $6748
-_label_257:
+	jr nz,_dragonfly_animate	; $6748
+
+@nextState:
 	call getRandomNumber_noPreserveVars		; $674a
 	and $7f			; $674d
 	add $20			; $674f
-	ld e,$86		; $6751
+	ld e,Enemy.counter1		; $6751
 	ld (de),a		; $6753
-	ld e,$84		; $6754
+
+	ld e,Enemy.state		; $6754
 	ld a,$05		; $6756
 	ld (de),a		; $6758
-	jr _label_255		; $6759
+	jr _dragonfly_animate		; $6759
+
+
+; Holding still for [counter1] frames
+_dragonfly_state5:
 	call _ecom_decCounter1		; $675b
-	jr nz,_label_255	; $675e
+	jr nz,_dragonfly_animate	; $675e
+
 	ld l,e			; $6760
-	ld (hl),$01		; $6761
-	jr _label_255		; $6763
-	ld a,$02		; $6765
+	ld (hl),$01 ; [state]
+	jr _dragonfly_animate		; $6763
+
+
+;;
+; @param[out]	zflag	nz if touched a wall
+; @addr{6765}
+_dragonfly_applySpeed:
+	ld a,$02 ; Only screen boundaries count as walls
 	call _ecom_getSideviewAdjacentWallsBitset		; $6767
 	ret nz			; $676a
 	call objectApplySpeed		; $676b
