@@ -493,7 +493,13 @@
 .define ENEMYID_BEETLE				$51
 
 ;;
-; @subid{The "index" of the "flying tile data" to use (which tiles attack)? Hardcoded?}
+; Creates a bunch of tiles from the ground that attack Link.
+; @postype{none}
+; @subid_00-02{"Spawners" for flying tiles. Each subid in this range has a hardcoded
+;              pattern that it follows.}
+; @subid_80-84{Actual tiles that spawn at the given position. The range of subids have
+;              different values for the tile that gets replaced underneath them.
+;              @postype{normal}}
 .define ENEMYID_FLYING_TILE			$52
 
 ;;

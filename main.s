@@ -136659,150 +136659,250 @@ _beetle_checkHazards:
 	ld a,b			; $6578
 	jp _ecom_checkHazards		; $6579
 
-;;
-; @addr{657c}
+
+; ==============================================================================
+; ENEMYID_FLYING_TILE
+;
+; Variables:
+;   var30/var31: Pointer to current address in _flyingTile_layoutData
+; ==============================================================================
 enemyCode52:
-	jr z,_label_245	; $657c
-	sub $03			; $657e
+	jr z,@normalStatus	; $657c
+	sub ENEMYSTATUS_NO_HEALTH			; $657e
 	ret c			; $6580
-	jp $6636		; $6581
-_label_245:
-	ld e,$84		; $6584
+	jp _flyingTile_dead		; $6581
+
+@normalStatus:
+	ld e,Enemy.state		; $6584
 	ld a,(de)		; $6586
 	rst_jumpTable			; $6587
-.dw $65a0
-.dw $65af
-.dw $65fc
-.dw $65fc
-.dw $65fc
-.dw $65fc
-.dw $65fc
-.dw $65fc
-.dw $65fd
-.dw $660a
-.dw $6622
-.dw $662e
-	ld e,$82		; $65a0
+	.dw _flyingTile_state_uninitialized
+	.dw _flyingTile_state_spawner
+	.dw _flyingTile_state_stub
+	.dw _flyingTile_state_stub
+	.dw _flyingTile_state_stub
+	.dw _flyingTile_state_stub
+	.dw _flyingTile_state_stub
+	.dw _flyingTile_state_stub
+	.dw _flyingTile_state8
+	.dw _flyingTile_state9
+	.dw _flyingTile_stateA
+	.dw _flyingTile_stateB
+
+
+_flyingTile_state_uninitialized:
+	ld e,Enemy.subid		; $65a0
 	ld a,(de)		; $65a2
 	rlca			; $65a3
-	ld a,$46		; $65a4
+	ld a,SPEED_1c0		; $65a4
 	jp c,_ecom_setSpeedAndState8		; $65a6
-	ld e,$84		; $65a9
+
+	; Subids $00-$7f only
+	ld e,Enemy.state		; $65a9
 	ld a,$01		; $65ab
 	ld (de),a		; $65ad
 	ret			; $65ae
+
+
+_flyingTile_state_spawner:
 	inc e			; $65af
-	ld a,(de)		; $65b0
+	ld a,(de) ; [state2]
 	rst_jumpTable			; $65b1
-.dw $65b6
-.dw $65d2
+	.dw @substate0
+	.dw @substate1
+
+@substate0:
 	ld h,d			; $65b6
 	ld l,e			; $65b7
-	inc (hl)		; $65b8
+	inc (hl) ; [state2]
+
 	inc l			; $65b9
-	ld (hl),$78		; $65ba
-	ld e,$82		; $65bc
+	ld (hl),120 ; [counter1]
+
+	ld e,Enemy.subid		; $65bc
 	ld a,(de)		; $65be
-	ld hl,$6657		; $65bf
+	ld hl,_flyingTile_layoutData		; $65bf
 	rst_addDoubleIndex			; $65c2
 	ldi a,(hl)		; $65c3
 	ld h,(hl)		; $65c4
 	ld l,a			; $65c5
-	ld e,$83		; $65c6
+
+	ld e,Enemy.var03		; $65c6
 	ldi a,(hl)		; $65c8
 	ld (de),a		; $65c9
-	ld e,$b0		; $65ca
+
+
+;;
+; @param	hl	Address to save to var30/var31
+; @addr{65ca}
+@flyingTile_saveTileDataAddress:
+	ld e,Enemy.var30		; $65ca
 	ld a,l			; $65cc
 	ld (de),a		; $65cd
 	inc e			; $65ce
 	ld a,h			; $65cf
 	ld (de),a		; $65d0
 	ret			; $65d1
+
+@substate1:
 	call _ecom_decCounter1		; $65d2
 	ret nz			; $65d5
-	ld (hl),$3c		; $65d6
-	ld l,$b0		; $65d8
+
+	ld (hl),60		; $65d6
+
+	; Retrieve address in _flyingTile_layoutData
+	ld l,Enemy.var30		; $65d8
 	ldi a,(hl)		; $65da
 	ld h,(hl)		; $65db
 	ld l,a			; $65dc
+
+	; Get next position to spawn tile at
 	ldi a,(hl)		; $65dd
 	ld c,a			; $65de
 	push hl			; $65df
-	call $65ca		; $65e0
-	ld b,$52		; $65e3
+
+	call @flyingTile_saveTileDataAddress		; $65e0
+	ld b,ENEMYID_FLYING_TILE		; $65e3
 	call _ecom_spawnEnemyWithSubid01		; $65e5
-	jr nz,_label_246	; $65e8
-	ld l,$82		; $65ea
-	ld e,$83		; $65ec
+	jr nz,++		; $65e8
+
+	; [child.subid] = [this.var03]
+	ld l,Enemy.subid		; $65ea
+	ld e,Enemy.var03		; $65ec
 	ld a,(de)		; $65ee
 	ld (hl),a		; $65ef
-	ld l,$8b		; $65f0
+
+	ld l,Enemy.yh		; $65f0
 	call setShortPosition_paramC		; $65f2
-_label_246:
+++
 	pop hl			; $65f5
 	ld a,(hl)		; $65f6
 	or a			; $65f7
 	ret nz			; $65f8
-	jp $663b		; $65f9
+
+	; Spawned all tiles; delete the spawner.
+	jp _flyingTile_delete		; $65f9
+
+
+_flyingTile_state_stub:
 	ret			; $65fc
+
+
+; Initialization of actual flying tile (not spawner)
+_flyingTile_state8:
 	ld h,d			; $65fd
 	ld l,e			; $65fe
-	inc (hl)		; $65ff
-	ld l,$a4		; $6600
+	inc (hl) ; [state]
+
+	ld l,Enemy.collisionType		; $6600
 	set 7,(hl)		; $6602
-	call $6641		; $6604
+
+	call _flyingTile_overwriteTileHere		; $6604
 	jp objectSetVisiblec2		; $6607
+
+
+; Moving up before charging at Link
+_flyingTile_state9:
 	ld h,d			; $660a
-	ld l,$8e		; $660b
+	ld l,Enemy.z		; $660b
 	ld a,(hl)		; $660d
-	sub $80			; $660e
+	sub <($0080)			; $660e
 	ldi (hl),a		; $6610
 	ld a,(hl)		; $6611
-	sbc $00			; $6612
+	sbc >($0080)			; $6612
 	ld (hl),a		; $6614
+
 	cp $fd			; $6615
-	jr nc,_label_247	; $6617
+	jr nc,_flyingTile_animate		; $6617
+
+	; Moved high enoguh
 	ld l,e			; $6619
-	inc (hl)		; $661a
-	ld l,$86		; $661b
+	inc (hl) ; [state]
+	ld l,Enemy.counter1		; $661b
 	ld (hl),$0f		; $661d
-_label_247:
+
+_flyingTile_animate:
 	jp enemyAnimate		; $661f
+
+
+; Staying in place for [counter1] frames before charging Link
+_flyingTile_stateA:
 	call _ecom_decCounter1		; $6622
-	jr nz,_label_247	; $6625
+	jr nz,_flyingTile_animate	; $6625
+
 	ld l,e			; $6627
-	inc (hl)		; $6628
+	inc (hl) ; [state]
+
 	call _ecom_updateAngleTowardTarget		; $6629
-	jr _label_247		; $662c
+	jr _flyingTile_animate		; $662c
+
+
+; Charging at Link
+_flyingTile_stateB:
 	call objectApplySpeed		; $662e
 	call objectCheckTileCollision_allowHoles		; $6631
-	jr nc,_label_247	; $6634
-	ld b,$06		; $6636
+	jr nc,_flyingTile_animate	; $6634
+
+
+;;
+; @addr{6636}
+_flyingTile_dead:
+	ld b,INTERACID_ROCKDEBRIS		; $6636
 	call objectCreateInteractionWithSubid00		; $6638
+
+;;
+; @addr{663b}
+_flyingTile_delete:
 	call decNumEnemies		; $663b
 	jp enemyDelete		; $663e
+
+;;
+; Overwrites the tile at this position with whatever it should become after a flying tile
+; is created there (depends on subid).
+; @addr{6641}
+_flyingTile_overwriteTileHere:
 	call objectGetShortPosition		; $6641
 	ld c,a			; $6644
-	ld e,$82		; $6645
+	ld e,Enemy.subid		; $6645
 	ld a,(de)		; $6647
 	and $0f			; $6648
-	ld hl,@data		; $664a
+	ld hl,@tileReplacements		; $664a
 	rst_addAToHl			; $664d
 	ld a,(hl)		; $664e
 	jp setTile		; $664f
 
-; @addr{6652}
-@data:
-	.db $a0 $f3 $f4 $4c $a4 $5d $66 $76
-	.db $66 $8c $66 $80 $57 $56 $46 $47
-	.db $48 $58 $68 $67 $66 $65 $55 $45
-	.db $36 $37 $38 $49 $59 $69 $78 $77
-	.db $76 $54 $5a $00 $80 $57 $46 $48
-	.db $39 $35 $26 $37 $59 $49 $38 $29
-	.db $28 $36 $45 $56 $58 $27 $47 $55
-	.db $25 $00 $80 $67 $54 $5a $47 $34
-	.db $3a $76 $38 $78 $36 $58 $45 $49
-	.db $56 $65 $69 $00
+
+@tileReplacements:
+	.db $a0 $f3 $f4 $4c $a4
+
+
+_flyingTile_layoutData:
+	.dw @subid0
+	.dw @subid1
+	.dw @subid2
+
+; First byte is value for var03 (subid for spawned children).
+; All remaining bytes are positions at which to spawn flying tiles.
+; Ends when it reads $00.
+@subid0:
+	.db $80
+	.db $57 $56 $46 $47 $48 $58 $68 $67
+	.db $66 $65 $55 $45 $36 $37 $38 $49
+	.db $59 $69 $78 $77 $76 $54 $5a
+	.db $00
+
+@subid1:
+	.db $80
+	.db $57 $46 $48 $39 $35 $26 $37 $59
+	.db $49 $38 $29 $28 $36 $45 $56 $58
+	.db $27 $47 $55 $25
+	.db $00
+
+@subid2:
+	.db $80
+	.db $67 $54 $5a $47 $34 $3a $76 $38
+	.db $78 $36 $58 $45 $49 $56 $65 $69
+	.db $00
 
 
 ;;
