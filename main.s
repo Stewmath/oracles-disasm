@@ -134947,112 +134947,172 @@ _gel_setAngleAwayFromLink:
 	ld (de),a		; $5e58
 	ret			; $5e59
 
-;;
-; @addr{5e5a}
+
+; ==============================================================================
+; ENEMYID_PINCER
+;
+; Variables:
+;   relatedObj1: Pointer to "head", aka subid 1 (only for body parts, subids 2+)
+;   var31/var32: Base Y/X position (where it originates from)
+;   var33: Amount extended (0 means still in hole)
+;   var34: Copy of parent's "id" value. For body parts only.
+; ==============================================================================
 enemyCode45:
-	jr z,_label_204	; $5e5a
-	sub $03			; $5e5c
+	jr z,@normalStatus	; $5e5a
+	sub ENEMYSTATUS_NO_HEALTH			; $5e5c
 	ret c			; $5e5e
 	jp z,enemyDie		; $5e5f
-_label_204:
-	call _ecom_getSubidAndCpStateTo08		; $5e62
-	jr nc,_label_205	; $5e65
-	rst_jumpTable			; $5e67
-.dw $5e83
-.dw $5e8a
-.dw $5eb6
-.dw $5eb6
-.dw $5eb6
-.dw $5eb6
-.dw $5eb6
-.dw $5eb6
 
-_label_205:
+@normalStatus:
+	call _ecom_getSubidAndCpStateTo08		; $5e62
+	jr nc,@normalState	; $5e65
+	rst_jumpTable			; $5e67
+	.dw _pincer_state_uninitialized
+	.dw _pincer_state1
+	.dw _pincer_state_stub
+	.dw _pincer_state_stub
+	.dw _pincer_state_stub
+	.dw _pincer_state_stub
+	.dw _pincer_state_stub
+	.dw _pincer_state_stub
+
+@normalState:
 	dec b			; $5e78
 	ld a,b			; $5e79
 	rst_jumpTable			; $5e7a
-.dw $5eb7
-.dw $5f69
-.dw $5f69
-.dw $5f69
+	.dw _pincer_head
+	.dw _pincer_body
+	.dw _pincer_body
+	.dw _pincer_body
+
+
+_pincer_state_uninitialized:
 	ld a,b			; $5e83
 	or a			; $5e84
 	jp nz,_ecom_setSpeedAndState8		; $5e85
+
+	; subid 0 only
 	inc a			; $5e88
-	ld (de),a		; $5e89
+	ld (de),a ; [state] = 1
+
+
+; Spawner only (subid 0): Spawn head and body parts, then delete self.
+_pincer_state1:
 	ld b,$04		; $5e8a
 	call checkBEnemySlotsAvailable		; $5e8c
 	ret nz			; $5e8f
-	ld b,$45		; $5e90
+
+	; Spawn head
+	ld b,ENEMYID_PINCER		; $5e90
 	call _ecom_spawnUncountedEnemyWithSubid01		; $5e92
-	ld l,$80		; $5e95
+	ld l,Enemy.enabled		; $5e95
 	ld e,l			; $5e97
 	ld a,(de)		; $5e98
 	ld (hl),a		; $5e99
 	call objectCopyPosition		; $5e9a
+
+	; Spawn body parts
 	ld c,h			; $5e9d
 	call _ecom_spawnUncountedEnemyWithSubid01		; $5e9e
-	call $5fb3		; $5ea1
+	call _pincer_setChildRelatedObj1		; $5ea1
+	; [child.subid] = 2 (incremented in above function call)
+
 	call _ecom_spawnUncountedEnemyWithSubid01		; $5ea4
-	inc (hl)		; $5ea7
-	call $5fb3		; $5ea8
+	inc (hl)
+	call _pincer_setChildRelatedObj1		; $5ea8
+	; [child.subid] = 3
+
 	call _ecom_spawnUncountedEnemyWithSubid01		; $5eab
 	inc (hl)		; $5eae
-	inc (hl)		; $5eaf
-	call $5fb3		; $5eb0
+	inc (hl)
+	call _pincer_setChildRelatedObj1		; $5eb0
+	; [child.subid] = 4
+
+	; Spawner no longer needed
 	jp enemyDelete		; $5eb3
+
+
+_pincer_state_stub:
 	ret			; $5eb6
+
+
+; Subid 1: Head of pincer (the "main" part, which is attackable)
+_pincer_head:
 	ld a,(de)		; $5eb7
 	sub $08			; $5eb8
 	rst_jumpTable			; $5eba
-.dw $5ec9
-.dw $5ed7
-.dw $5ee5
-.dw $5f21
-.dw $5f37
-.dw $5f3e
-.dw $5f54
+	.dw _pincer_head_state8
+	.dw _pincer_head_state9
+	.dw _pincer_head_stateA
+	.dw _pincer_head_stateB
+	.dw _pincer_head_stateC
+	.dw _pincer_head_stateD
+	.dw _pincer_head_stateE
+
+
+; Initialization
+_pincer_head_state8:
 	ld h,d			; $5ec9
 	ld l,e			; $5eca
-	inc (hl)		; $5ecb
-	ld e,$8b		; $5ecc
-	ld l,$b1		; $5ece
+	inc (hl) ; [state]
+
+	ld e,Enemy.yh		; $5ecc
+	ld l,Enemy.var31		; $5ece
 	ld a,(de)		; $5ed0
 	ldi (hl),a		; $5ed1
-	ld e,$8d		; $5ed2
+	ld e,Enemy.xh		; $5ed2
 	ld a,(de)		; $5ed4
 	ld (hl),a		; $5ed5
 	ret			; $5ed6
+
+
+; Waiting for Link to approach
+_pincer_head_state9:
 	ld c,$28		; $5ed7
 	call objectCheckLinkWithinDistance		; $5ed9
 	ret nc			; $5edc
-	ld e,$84		; $5edd
+
+	ld e,Enemy.state		; $5edd
 	ld a,$0a		; $5edf
 	ld (de),a		; $5ee1
 	jp objectSetVisible82		; $5ee2
-	ld e,$a1		; $5ee5
+
+
+; Showing eyes as a "warning" that it's about to attack
+_pincer_head_stateA:
+	ld e,Enemy.animParameter		; $5ee5
 	ld a,(de)		; $5ee7
 	dec a			; $5ee8
 	jp nz,enemyAnimate		; $5ee9
+
+	; Time to attack
 	call _ecom_incState		; $5eec
-	ld l,$a4		; $5eef
+
+	ld l,Enemy.collisionType		; $5eef
 	set 7,(hl)		; $5ef1
-	ld l,$b3		; $5ef3
+
+	; Initial "extended" amount is 0
+	ld l,Enemy.var33		; $5ef3
 	ld (hl),$00		; $5ef5
-	ld l,$8b		; $5ef7
+
+	; "Dig up" the tile if coming from underground
+	ld l,Enemy.yh		; $5ef7
 	ld b,(hl)		; $5ef9
-	ld l,$8d		; $5efa
+	ld l,Enemy.xh		; $5efa
 	ld c,(hl)		; $5efc
-	ld a,$06		; $5efd
+	ld a,BREAKABLETILESOURCE_06		; $5efd
 	call tryToBreakTile		; $5eff
+
+	; If in water, create a splash
 	call objectCheckTileAtPositionIsWater		; $5f02
-	jr nc,_label_206	; $5f05
+	jr nc,++		; $5f05
+
 	call getFreeInteractionSlot		; $5f07
-	jr nz,_label_206	; $5f0a
-	ld (hl),$03		; $5f0c
+	jr nz,++		; $5f0a
+	ld (hl),INTERACID_SPLASH		; $5f0c
 	ld bc,$fa00		; $5f0e
 	call objectCopyPositionWithOffset		; $5f11
-_label_206:
+++
 	call _ecom_updateAngleTowardTarget		; $5f14
 	add $02			; $5f17
 	and $1c			; $5f19
@@ -135060,137 +135120,211 @@ _label_206:
 	rrca			; $5f1c
 	inc a			; $5f1d
 	jp enemySetAnimation		; $5f1e
-	call $5fbb		; $5f21
-	ld e,$b3		; $5f24
+
+
+; Extending toward target
+_pincer_head_stateB:
+	call _pincer_updatePosition		; $5f21
+
+	ld e,Enemy.var33		; $5f24
 	ld a,(de)		; $5f26
 	add $02			; $5f27
 	cp $20			; $5f29
-	jr nc,_label_207	; $5f2b
+	jr nc,@fullyExtended	; $5f2b
 	ld (de),a		; $5f2d
 	ret			; $5f2e
-_label_207:
+
+@fullyExtended:
 	call _ecom_incState		; $5f2f
-	ld l,$86		; $5f32
+	ld l,Enemy.counter1		; $5f32
 	ld (hl),$08		; $5f34
 	ret			; $5f36
+
+
+; Staying fully extended for several frames
+_pincer_head_stateC:
 	call _ecom_decCounter1		; $5f37
 	ret nz			; $5f3a
 	ld l,e			; $5f3b
-	inc (hl)		; $5f3c
+	inc (hl) ; [state]
 	ret			; $5f3d
-	call $5fbb		; $5f3e
+
+
+; Retracting
+_pincer_head_stateD:
+	call _pincer_updatePosition		; $5f3e
+
 	ld h,d			; $5f41
-	ld l,$b3		; $5f42
+	ld l,Enemy.var33		; $5f42
 	dec (hl)		; $5f44
 	ret nz			; $5f45
-	ld l,$86		; $5f46
-	ld (hl),$1e		; $5f48
-	ld l,$84		; $5f4a
+
+	; Fully retracted
+	ld l,Enemy.counter1		; $5f46
+	ld (hl),30		; $5f48
+
+	ld l,Enemy.state		; $5f4a
 	inc (hl)		; $5f4c
-	ld l,$a4		; $5f4d
+
+	ld l,Enemy.collisionType		; $5f4d
 	res 7,(hl)		; $5f4f
 	jp objectSetInvisible		; $5f51
+
+
+; Fully retracted; on cooldown
+_pincer_head_stateE:
 	call _ecom_decCounter1		; $5f54
 	ret nz			; $5f57
+
+	; Cooldown over
 	ld l,e			; $5f58
-	ld (hl),$09		; $5f59
-	ld l,$b1		; $5f5b
-	ld e,$8b		; $5f5d
+	ld (hl),$09 ; [state]
+
+	; Make sure Y/X position is fully fixed back to origin
+	ld l,Enemy.var31		; $5f5b
+	ld e,Enemy.yh		; $5f5d
 	ldi a,(hl)		; $5f5f
 	ld (de),a		; $5f60
-	ld e,$8d		; $5f61
+	ld e,Enemy.xh		; $5f61
 	ld a,(hl)		; $5f63
 	ld (de),a		; $5f64
+
 	xor a			; $5f65
 	jp enemySetAnimation		; $5f66
+
+
+;;
+; Subid 2-4: body of pincer (just decoration)
+; @addr{5f69}
+_pincer_body:
 	ld a,(de)		; $5f69
 	sub $08			; $5f6a
 	rst_jumpTable			; $5f6c
-.dw $5f71
-.dw $5f8c
+	.dw @state8
+	.dw @state9
+
+; Initialization
+@state8:
 	ld a,$09		; $5f71
-	ld (de),a		; $5f73
-	ld a,$0b		; $5f74
+	ld (de),a ; [state]
+
+	; Copy parent's base position (var31/var32)
+	ld a,Object.yh		; $5f74
 	call objectGetRelatedObject1Var		; $5f76
-	ld e,$b1		; $5f79
+	ld e,Enemy.var31		; $5f79
 	ldi a,(hl)		; $5f7b
 	ld (de),a		; $5f7c
 	inc l			; $5f7d
 	inc e			; $5f7e
 	ld a,(hl)		; $5f7f
 	ld (de),a		; $5f80
-	ld e,$b4		; $5f81
-	ld l,$81		; $5f83
+
+	ld e,Enemy.var34		; $5f81
+	ld l,Enemy.id		; $5f83
 	ld a,(hl)		; $5f85
 	ld (de),a		; $5f86
+
 	ld a,$09		; $5f87
 	jp enemySetAnimation		; $5f89
-	ld a,$01		; $5f8c
+
+@state9:
+	; Check if parent was deleted
+	ld a,Object.id		; $5f8c
 	call objectGetRelatedObject1Var		; $5f8e
-	ld e,$b4		; $5f91
+	ld e,Enemy.var34		; $5f91
 	ld a,(de)		; $5f93
 	cp (hl)			; $5f94
 	jp nz,enemyDelete		; $5f95
-	ld l,$89		; $5f98
+
+	; Copy parent's angle, invincibilityCounter
+	ld l,Enemy.angle		; $5f98
 	ld e,l			; $5f9a
 	ld a,(hl)		; $5f9b
 	ld (de),a		; $5f9c
-	ld l,$ab		; $5f9d
+	ld l,Enemy.invincibilityCounter		; $5f9d
 	ld e,l			; $5f9f
 	ld a,(hl)		; $5fa0
 	ld (de),a		; $5fa1
-	ld l,$84		; $5fa2
+
+	; Copy parent's visibility only if parent is in state $0b or higher
+	ld l,Enemy.state		; $5fa2
 	ld a,(hl)		; $5fa4
 	cp $0b			; $5fa5
-	jr c,_label_208	; $5fa7
-	ld l,$9a		; $5fa9
+	jr c,++		; $5fa7
+
+	ld l,Enemy.visible		; $5fa9
 	ld e,l			; $5fab
 	ld a,(hl)		; $5fac
 	ld (de),a		; $5fad
-_label_208:
-	call $5fc8		; $5fae
-	jr _label_209		; $5fb1
-	inc (hl)		; $5fb3
-	ld l,$96		; $5fb4
-	ld a,$80		; $5fb6
+++
+	call _pincer_body_updateExtendedAmount		; $5fae
+	jr _pincer_updatePosition		; $5fb1
+
+
+;;
+; Sets relatedObj1 of object 'h' to object 'c'.
+; 'h' is part of the pincer's body, 'c' is the pincer's head.
+; Also increments the body part's subid since that does need to be done...
+; @addr{5fb3}
+_pincer_setChildRelatedObj1:
+	inc (hl) ; [subid]++
+	ld l,Enemy.relatedObj1		; $5fb4
+	ld a,Enemy.start		; $5fb6
 	ldi (hl),a		; $5fb8
 	ld (hl),c		; $5fb9
 	ret			; $5fba
-_label_209:
+
+;;
+; Updates position based on "base position" (var31), angle, and distance extended (var33).
+; @addr{5fbb}
+_pincer_updatePosition:
 	ld h,d			; $5fbb
-	ld l,$b1		; $5fbc
+	ld l,Enemy.var31		; $5fbc
 	ld b,(hl)		; $5fbe
 	inc l			; $5fbf
 	ld c,(hl)		; $5fc0
 	inc l			; $5fc1
 	ld a,(hl)		; $5fc2
-	ld e,$89		; $5fc3
+	ld e,Enemy.angle		; $5fc3
 	jp objectSetPositionInCircleArc		; $5fc5
+
+;;
+; Calculates value for var33 (amount extended) for a body part.
+; @addr{5fc8}
+_pincer_body_updateExtendedAmount:
 	push hl			; $5fc8
-	ld e,$82		; $5fc9
+	ld e,Enemy.subid		; $5fc9
 	ld a,(de)		; $5fcb
 	sub $02			; $5fcc
 	rst_jumpTable			; $5fce
-.dw $5fd5
-.dw $5fde
-.dw $5fe5
+	.dw @subid2
+	.dw @subid3
+	.dw @subid4
+
+@subid2:
 	pop hl			; $5fd5
-	call $5feb		; $5fd6
+	call @getExtendedAmountDividedByFour		; $5fd6
 	ld b,a			; $5fd9
 	add a			; $5fda
 	add b			; $5fdb
 	ld (de),a		; $5fdc
 	ret			; $5fdd
+
+@subid3:
 	pop hl			; $5fde
-	call $5feb		; $5fdf
+	call @getExtendedAmountDividedByFour		; $5fdf
 	add a			; $5fe2
 	ld (de),a		; $5fe3
 	ret			; $5fe4
+
+@subid4:
 	pop hl			; $5fe5
-	call $5feb		; $5fe6
+	call @getExtendedAmountDividedByFour		; $5fe6
 	ld (de),a		; $5fe9
 	ret			; $5fea
-	ld l,$b3		; $5feb
+
+@getExtendedAmountDividedByFour:
+	ld l,Enemy.var33		; $5feb
 	ld e,l			; $5fed
 	ld a,(hl)		; $5fee
 	srl a			; $5fef

@@ -402,6 +402,11 @@
 
 ;;
 ; Hides in ground or in a hole to attack Link when he approaches.
+; @subid_00{Spawner; spawns all 4 components of the pincer, then deletes self. Use this.}
+; @subid_01{Head of pincer}
+; @subid_02{Body part (3/4ths extended)}
+; @subid_03{Body part (1/2 extended)}
+; @subid_04{Body part (1/4th extended)}
 .define ENEMYID_PINCER				$45
 
 ;;
