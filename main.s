@@ -133456,165 +133456,213 @@ _swordDarknut_delete:
 	call decNumEnemies		; $57a1
 	jp enemyDelete		; $57a4
 
-;;
-; @addr{57a7}
+
+; ==============================================================================
+; ENEMYID_PEAHAT
+; ==============================================================================
 enemyCode3e:
-	jr z,_label_153	; $57a7
-	sub $03			; $57a9
+	jr z,@normalStatus	; $57a7
+	sub ENEMYSTATUS_NO_HEALTH			; $57a9
 	ret c			; $57ab
 	jp z,enemyDie		; $57ac
-	ld e,$a5		; $57af
+
+	; ENEMYSTATUS_KNOCKBACK
+	ld e,Enemy.collisionReactionSet		; $57af
 	ld a,(de)		; $57b1
-	cp $58			; $57b2
+	cp COLLISIONREACTIONSET_58			; $57b2
 	ret nz			; $57b4
-_label_153:
-	call $5849		; $57b5
-	ld e,$84		; $57b8
+
+@normalStatus:
+	call _peahat_updateCollisionReactionSet		; $57b5
+	ld e,Enemy.state		; $57b8
 	ld a,(de)		; $57ba
 	rst_jumpTable			; $57bb
-.dw $57d4
-.dw $57db
-.dw $57db
-.dw $57db
-.dw $57db
-.dw _ecom_blownByGaleSeedState
-.dw $57db
-.dw $57db
-.dw $57dc
-.dw $57f4
-.dw $580f
-.dw $582b
+	.dw _peahat_state_uninitialized
+	.dw _peahet_state_stub
+	.dw _peahet_state_stub
+	.dw _peahet_state_stub
+	.dw _peahet_state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw _peahet_state_stub
+	.dw _peahet_state_stub
+	.dw _peahat_state8
+	.dw _peahat_state9
+	.dw _peahat_stateA
+	.dw _peahat_stateB
+
+
+_peahat_state_uninitialized:
 	call _ecom_setSpeedAndState8AndVisible		; $57d4
-	ld l,$86		; $57d7
+	ld l,Enemy.counter1		; $57d7
 	inc (hl)		; $57d9
 	ret			; $57da
+
+
+_peahet_state_stub:
 	ret			; $57db
+
+
+; Stationary for [counter1] frames
+_peahat_state8:
 	call _ecom_decCounter1		; $57dc
 	ret nz			; $57df
-	ld l,$84		; $57e0
+
+	ld l,Enemy.state		; $57e0
 	inc (hl)		; $57e2
-	ld l,$86		; $57e3
+
+	ld l,Enemy.counter1		; $57e3
 	ld (hl),$7f		; $57e5
-	ld l,$90		; $57e7
-	ld (hl),$05		; $57e9
-	ld l,$b0		; $57eb
+
+	ld l,Enemy.speed		; $57e7
+	ld (hl),SPEED_20		; $57e9
+
+	ld l,Enemy.var30		; $57eb
 	ld (hl),$0f		; $57ed
 	call objectSetVisiblec1		; $57ef
-	jr _label_155		; $57f2
+	jr _peahat_animate		; $57f2
+
+
+; Accelerating
+_peahat_state9:
 	call _ecom_decCounter1		; $57f4
-	jp nz,$5857		; $57f7
-	ld l,$84		; $57fa
+	jp nz,_peahat_updatePosition		; $57f7
+
+	ld l,Enemy.state		; $57fa
 	inc (hl)		; $57fc
+
 	call getRandomNumber_noPreserveVars		; $57fd
 	and $07			; $5800
-	ld hl,$58aa		; $5802
+	ld hl,_peahat_counter1Vals		; $5802
 	rst_addAToHl			; $5805
-	ld e,$86		; $5806
+	ld e,Enemy.counter1		; $5806
 	ld a,(hl)		; $5808
 	ld (de),a		; $5809
 	call _ecom_setRandomAngle		; $580a
-	jr _label_155		; $580d
+	jr _peahat_animate		; $580d
+
+
+; Flying around at top speed
+_peahat_stateA:
 	call _ecom_decCounter1		; $580f
-	jr z,_label_154	; $5812
+	jr z,@beginSlowingDown	; $5812
+
+	; Change angle every 32 frames
 	ld a,(hl)		; $5814
 	and $1f			; $5815
 	call z,_ecom_setRandomAngle		; $5817
+
 	call objectApplySpeed		; $581a
 	call _ecom_bounceOffScreenBoundary		; $581d
-	jr _label_155		; $5820
-_label_154:
+	jr _peahat_animate		; $5820
+
+@beginSlowingDown:
 	ld l,e			; $5822
-	inc (hl)		; $5823
-	ld l,$86		; $5824
+	inc (hl) ; [state]
+	ld l,Enemy.counter1		; $5824
 	ld (hl),$00		; $5826
-_label_155:
+
+_peahat_animate:
 	jp enemyAnimate		; $5828
+
+
+; Slowing down
+_peahat_stateB:
 	ld h,d			; $582b
-	ld l,$86		; $582c
+	ld l,Enemy.counter1		; $582c
 	inc (hl)		; $582e
+
 	ld a,$80		; $582f
 	cp (hl)			; $5831
-	jp nz,$5857		; $5832
-	ld (hl),$80		; $5835
+	jp nz,_peahat_updatePosition		; $5832
+
+	; Go to state 8 for $80 frames (if tile is non-solid) or 1 frame (if tile is
+	; solid).
+	ld (hl),$80 ; [counter1]
 	push hl			; $5837
 	call objectGetTileCollisions		; $5838
 	pop hl			; $583b
-	jr z,_label_156	; $583c
-	ld (hl),$01		; $583e
-_label_156:
-	ld l,$84		; $5840
+	jr z,+			; $583c
+	ld (hl),$01 ; [counter1]
++
+	ld l,Enemy.state		; $5840
 	ld (hl),$08		; $5842
 	call objectSetVisiblec2		; $5844
-	jr _label_155		; $5847
-	ld e,$8f		; $5849
+	jr _peahat_animate		; $5847
+
+
+;;
+; @addr{5849}
+_peahat_updateCollisionReactionSet:
+	ld e,Enemy.zh		; $5849
 	ld a,(de)		; $584b
 	or a			; $584c
-	ld a,$2e		; $584d
-	jr z,_label_157	; $584f
-	ld a,$58		; $5851
-_label_157:
-	ld e,$a5		; $5853
+	ld a,COLLISIONREACTIONSET_2e		; $584d
+	jr z,+			; $584f
+	ld a,COLLISIONREACTIONSET_58		; $5851
++
+	ld e,Enemy.collisionReactionSet		; $5853
 	ld (de),a		; $5855
 	ret			; $5856
-	ld e,$86		; $5857
+
+;;
+; Adjusts speed based on counter1, updates position, animates.
+; @addr{5857}
+_peahat_updatePosition:
+	ld e,Enemy.counter1		; $5857
 	ld a,(de)		; $5859
 	dec a			; $585a
 	cp $41			; $585b
-	jr nc,_label_159	; $585d
+	jr nc,@animate	; $585d
+
 	and $78			; $585f
 	swap a			; $5861
 	rlca			; $5863
 	ld b,a			; $5864
 	sub $06			; $5865
-	jr c,_label_158	; $5867
+	jr c,+			; $5867
 	xor a			; $5869
-_label_158:
-	ld e,$8f		; $586a
++
+	ld e,Enemy.zh		; $586a
 	ld (de),a		; $586c
+
+	; Determine speed
 	ld a,b			; $586d
-	ld hl,$58a1		; $586e
+	ld hl,@speedVals		; $586e
 	rst_addAToHl			; $5871
-	ld e,$90		; $5872
+	ld e,Enemy.speed		; $5872
 	ld a,(hl)		; $5874
 	ld (de),a		; $5875
 	call objectApplySpeed		; $5876
 	call _ecom_bounceOffScreenBoundary		; $5879
-_label_159:
-	ld e,$86		; $587c
+
+@animate:
+	ld e,Enemy.counter1		; $587c
 	ld a,(de)		; $587e
 	and $f0			; $587f
 	swap a			; $5881
-	ld hl,$5899		; $5883
+	ld hl,@animFrequencies		; $5883
 	rst_addAToHl			; $5886
 	ld b,(hl)		; $5887
 	ld a,b			; $5888
 	inc a			; $5889
-	jr nz,_label_160	; $588a
+	jr nz,+			; $588a
 	call enemyAnimate		; $588c
 	ld b,$00		; $588f
-_label_160:
++
 	ld a,(wFrameCounter)		; $5891
 	and b			; $5894
 	jp z,enemyAnimate		; $5895
 	ret			; $5898
-	rst $38			; $5899
-	rst $38			; $589a
-	rst $38			; $589b
-	nop			; $589c
-	nop			; $589d
-	ld bc,$0703		; $589e
-	ld e,$1e		; $58a1
-	ld e,$14		; $58a3
-	inc d			; $58a5
-	ld a,(bc)		; $58a6
-	ld a,(bc)		; $58a7
-	dec b			; $58a8
-	dec b			; $58a9
-	or h			; $58aa
-	or h			; $58ab
-	jp nc,$f0d2		; $58ac
-	ld a,($ff00+R_P1)	; $58af
-	nop			; $58b1
+
+@animFrequencies:
+	.db $ff $ff $ff $00 $00 $01 $03 $07
+
+@speedVals:
+	.db SPEED_c0 SPEED_c0 SPEED_c0 SPEED_80 SPEED_80 SPEED_40 SPEED_40 SPEED_20
+	.db SPEED_20
+
+_peahat_counter1Vals:
+	.db 180 180 210 210 240 240 0 0
 
 ;;
 ; @addr{58b2}
