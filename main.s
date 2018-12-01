@@ -8592,7 +8592,8 @@ objectMimicBgTile:
 
 ;;
 ; @param	c	Gravity
-; @param[out]	cflag	Set if the object will no longer bounce (speedZ is sufficiently low).
+; @param[out]	cflag	c if the object will no longer bounce (speedZ is sufficiently low).
+; @param[out]	zflag	z if the object touched the ground
 ; @addr{2370}
 objectUpdateSpeedZAndBounce:
 	call objectUpdateSpeedZ_paramC		; $2370
@@ -8603,7 +8604,8 @@ objectUpdateSpeedZAndBounce:
 ;
 ; Once it reaches a speed of less than 1 pixel per frame downwards, it stops.
 ;
-; @param[out]	cflag	Set when this function stops decreasing speed.
+; @param[out]	cflag	c if the object will no longer bounce (speedZ is sufficiently low).
+; @param[out]	zflag	z if the object touched the ground
 ; @addr{2374}
 objectNegateAndHalveSpeedZ:
 	ld h,d			; $2374
@@ -136281,250 +136283,379 @@ _fireballShooter_checkAllEnemiesKilled:
 	ret nz			; $63de
 	jp enemyDelete		; $63df
 
-;;
-; @addr{63e2}
+
+; ==============================================================================
+; ENEMYID_BEETLE
+;
+; Variables for spawner (subid 0):
+;   var30: Number of beetles spawned in? It's never actually used, and it doesn't seem to
+;          update correctly, so this was probably for some abandoned idea.
+;
+; Variables for actual beetles (subid 1+):
+;   relatedObj1: Reference to spawner object (optional)
+; ==============================================================================
 enemyCode51:
-	call $6558		; $63e2
+	call _beetle_checkHazards		; $63e2
 	or a			; $63e5
-	jr z,_label_235	; $63e6
-	sub $03			; $63e8
+	jr z,@normalStatus	; $63e6
+	sub ENEMYSTATUS_NO_HEALTH			; $63e8
 	ret c			; $63ea
-	jr z,_label_233	; $63eb
+	jr z,@dead	; $63eb
 	dec a			; $63ed
 	jp nz,_ecom_updateKnockbackAndCheckHazards		; $63ee
-	ld e,$82		; $63f1
+
+	; ENEMYSTATUS_JUST_HIT
+
+	ld e,Enemy.subid		; $63f1
 	ld a,(de)		; $63f3
 	cp $02			; $63f4
 	ret nz			; $63f6
-	ld e,$aa		; $63f7
+
+	ld e,Enemy.var2a		; $63f7
 	ld a,(de)		; $63f9
-	cp $80			; $63fa
+	cp $80|COLLISIONTYPE_LINK			; $63fa
 	ret z			; $63fc
+
 	ld h,d			; $63fd
-	ld l,$84		; $63fe
+	ld l,Enemy.state		; $63fe
 	ld (hl),$0a		; $6400
-	ld l,$86		; $6402
+
+	ld l,Enemy.counter1		; $6402
 	ld (hl),$01		; $6404
 	ret			; $6406
-_label_233:
-	ld e,$82		; $6407
+
+@dead:
+	ld e,Enemy.subid		; $6407
 	ld a,(de)		; $6409
 	dec a			; $640a
-	jr nz,_label_234	; $640b
-	ld e,$97		; $640d
+	jr nz,++		; $640b
+
+	; Subid 1 only (falling from sky): Update spawner's var30.
+	; Since the spawner spawns subid 2, this is probably broken... (not that it
+	; matters since the spawner doesn't check its var30 anyway)
+	ld e,Enemy.relatedObj1+1		; $640d
 	ld a,(de)		; $640f
 	or a			; $6410
-	jr z,_label_234	; $6411
-	ld a,$30		; $6413
+	jr z,++			; $6411
+	ld a,Object.var30		; $6413
 	call objectGetRelatedObject1Var		; $6415
 	dec (hl)		; $6418
-_label_234:
+++
 	jp enemyDie		; $6419
-_label_235:
-	call _ecom_getSubidAndCpStateTo08		; $641c
-	jr nc,_label_236	; $641f
-	rst_jumpTable			; $6421
-.dw $643b
-.dw $6445
-.dw $6483
-.dw $6472
-.dw $6483
-.dw $645e
-.dw $6483
-.dw $6483
 
-_label_236:
+@normalStatus:
+	call _ecom_getSubidAndCpStateTo08		; $641c
+	jr nc,@normalState	; $641f
+	rst_jumpTable			; $6421
+	.dw _beetle_state_uninitialized
+	.dw _beetle_state_spawner
+	.dw _beetle_state_stub
+	.dw _beetle_state_switchHook
+	.dw _beetle_state_stub
+	.dw _beetle_state_galeSeed
+	.dw _beetle_state_stub
+	.dw _beetle_state_stub
+
+@normalState:
 	dec b			; $6432
 	ld a,b			; $6433
 	rst_jumpTable			; $6434
-.dw $6484
-.dw $64c8
-.dw $64f7
+	.dw _beetle_subid1
+	.dw _beetle_subid2
+	.dw _beetle_subid3
+
+
+_beetle_state_uninitialized:
 	ld a,b			; $643b
 	or a			; $643c
-	ld a,$14		; $643d
+	ld a,SPEED_80		; $643d
 	jp nz,_ecom_setSpeedAndState8		; $643f
+
+	; Subid 0
 	ld a,$01		; $6442
-	ld (de),a		; $6444
+	ld (de),a ; [state]
+
+
+_beetle_state_spawner:
 	call _ecom_decCounter2		; $6445
 	ret nz			; $6448
+
+	; Only spawn beetles when Link is close
 	ld c,$20		; $6449
 	call objectCheckLinkWithinDistance		; $644b
 	ret nc			; $644e
-	ld e,$87		; $644f
-	ld a,$5a		; $6451
+
+	ld e,Enemy.counter2		; $644f
+	ld a,90		; $6451
 	ld (de),a		; $6453
-	ld b,$51		; $6454
+
+	ld b,ENEMYID_BEETLE		; $6454
 	call _ecom_spawnEnemyWithSubid01		; $6456
 	ret nz			; $6459
-	inc (hl)		; $645a
+	inc (hl) ; [subid] = 2
 	jp objectCopyPosition		; $645b
+
+
+_beetle_state_galeSeed:
 	call _ecom_galeSeedEffect		; $645e
 	ret c			; $6461
-	ld e,$97		; $6462
+
+	ld e,Enemy.relatedObj1+1		; $6462
 	ld a,(de)		; $6464
 	or a			; $6465
-	jr z,_label_237	; $6466
+	jr z,++			; $6466
+
 	ld h,a			; $6468
-	ld l,$b0		; $6469
+	ld l,Enemy.var30		; $6469
 	dec (hl)		; $646b
-_label_237:
+++
 	call decNumEnemies		; $646c
 	jp enemyDelete		; $646f
+
+
+_beetle_state_switchHook:
 	inc e			; $6472
 	ld a,(de)		; $6473
 	rst_jumpTable			; $6474
-.dw _ecom_incState2
-.dw $647d
-.dw $647d
-.dw $647e
+	.dw _ecom_incState2
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+
+@substate1:
+@substate2:
 	ret			; $647d
+
+@substate3:
 	ld b,$0a		; $647e
 	jp _ecom_fallToGroundAndSetState		; $6480
+
+
+_beetle_state_stub:
 	ret			; $6483
+
+
+; Falls from the sky
+_beetle_subid1:
 	ld a,(de)		; $6484
 	sub $08			; $6485
 	rst_jumpTable			; $6487
-.dw $648e
-.dw $64a2
-.dw $64bc
+	.dw @state8
+	.dw @state9
+	.dw _beetle_stateA
+
+
+; Initialization
+@state8:
 	ld h,d			; $648e
 	ld l,e			; $648f
-	inc (hl)		; $6490
-	ld l,$a4		; $6491
+	inc (hl) ; [state]
+
+	ld l,Enemy.collisionType		; $6491
 	set 7,(hl)		; $6493
+
 	ld c,$08		; $6495
 	call _ecom_setZAboveScreen		; $6497
+
 	call objectSetVisiblec1		; $649a
+
 	ld a,SND_FALLINHOLE		; $649d
 	jp playSound		; $649f
+
+
+; Falling in from above the screen
+@state9:
 	ld c,$0e		; $64a2
 	call objectUpdateSpeedZ_paramC		; $64a4
 	ret nz			; $64a7
-	ld l,$94		; $64a8
+
+	; [speedZ] = 0
+	ld l,Enemy.speedZ		; $64a8
 	ldi (hl),a		; $64aa
 	ld (hl),a		; $64ab
-	ld l,$84		; $64ac
+
+	ld l,Enemy.state		; $64ac
 	inc (hl)		; $64ae
+
 	call objectSetVisiblec2		; $64af
+
 	ld a,SND_BOMB_LAND		; $64b2
 	call playSound		; $64b4
-	call $653c		; $64b7
-	jr _label_239		; $64ba
-_label_238:
+
+	call _beetle_chooseRandomAngleAndCounter1		; $64b7
+	jr _beetle_animate		; $64ba
+
+
+; Common beetle state
+_beetle_stateA:
 	call _ecom_decCounter1		; $64bc
-	call z,$653c		; $64bf
+	call z,_beetle_chooseRandomAngleAndCounter1		; $64bf
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $64c2
-_label_239:
+
+_beetle_animate:
 	jp enemyAnimate		; $64c5
+
+
+; Spawns in instantly
+_beetle_subid2:
 	ld a,(de)		; $64c8
 	sub $08			; $64c9
 	rst_jumpTable			; $64cb
-.dw $64d2
-.dw $64df
-.dw $64bc
+	.dw @state8
+	.dw @state9
+	.dw _beetle_stateA
+
+
+; Initialization
+@state8:
 	ld h,d			; $64d2
 	ld l,e			; $64d3
-	inc (hl)		; $64d4
-	ld l,$86		; $64d5
-	ld (hl),$1e		; $64d7
+	inc (hl) ; [state]
+
+	ld l,Enemy.counter1		; $64d5
+	ld (hl),30		; $64d7
+
 	call _ecom_updateCardinalAngleTowardTarget		; $64d9
 	jp objectSetVisiblec2		; $64dc
+
+
+; Moving toward Link for 30 frames, before starting random movement
+@state9:
 	call _ecom_decCounter1		; $64df
-	jr nz,_label_240	; $64e2
-	inc (hl)		; $64e4
+	jr nz,@keepMovingTowardLink	; $64e2
+
+	inc (hl) ; [counter1] = 1
 	ld l,e			; $64e5
-	inc (hl)		; $64e6
-	jr _label_238		; $64e7
-_label_240:
+	inc (hl) ; [state]
+	jr _beetle_stateA		; $64e7
+
+@keepMovingTowardLink:
 	ld a,(hl)		; $64e9
-	cp $16			; $64ea
-	jr nz,_label_241	; $64ec
-	ld l,$a4		; $64ee
+	cp 22			; $64ea
+	jr nz,++		; $64ec
+	ld l,Enemy.collisionType		; $64ee
 	set 7,(hl)		; $64f0
-_label_241:
+++
 	call _ecom_applyVelocityForSideviewEnemy		; $64f2
-	jr _label_239		; $64f5
+	jr _beetle_animate		; $64f5
+
+
+; "Bounces in" when it spawns (dug up from the ground)
+_beetle_subid3:
 	ld a,(de)		; $64f7
 	sub $08			; $64f8
 	rst_jumpTable			; $64fa
-.dw $6501
-.dw $651b
-.dw $64bc
+	.dw @state8
+	.dw @state9
+	.dw _beetle_stateA
+
+
+; Initialization
+@state8:
 	ld h,d			; $6501
 	ld l,e			; $6502
-	inc (hl)		; $6503
-	ld l,$94		; $6504
-	ld a,$fe		; $6506
+	inc (hl) ; [state]
+
+	ld l,Enemy.speedZ		; $6504
+	ld a,<(-$102)		; $6506
 	ldi (hl),a		; $6508
-	ld (hl),$fe		; $6509
-	ld l,$90		; $650b
-	ld (hl),$1e		; $650d
-	ld l,$89		; $650f
+	ld (hl),>(-$102)		; $6509
+
+	ld l,Enemy.speed		; $650b
+	ld (hl),SPEED_c0		; $650d
+
+	; Bounce in the direction Link is facing
+	ld l,Enemy.angle		; $650f
 	ld a,(w1Link.direction)		; $6511
 	swap a			; $6514
 	rrca			; $6516
 	ld (hl),a		; $6517
+
 	jp objectSetVisiblec2		; $6518
+
+
+; Bouncing
+@state9:
 	ld c,$0e		; $651b
 	call objectUpdateSpeedZAndBounce		; $651d
-	jr c,_label_243	; $6520
+	jr c,@doneBouncing	; $6520
+
 	ld a,SND_BOMB_LAND		; $6522
 	call z,playSound		; $6524
-	ld e,$95		; $6527
+
+	; Enable collisions when it starts moving back down
+	ld e,Enemy.speedZ+1		; $6527
 	ld a,(de)		; $6529
 	or a			; $652a
-	jr nz,_label_242	; $652b
+	jr nz,++		; $652b
 	ld h,d			; $652d
-	ld l,$a4		; $652e
+	ld l,Enemy.collisionType		; $652e
 	set 7,(hl)		; $6530
-_label_242:
+++
 	jp _ecom_applyVelocityForSideviewEnemyNoHoles		; $6532
-_label_243:
+
+@doneBouncing:
 	call _ecom_incState		; $6535
-	ld l,$90		; $6538
-	ld (hl),$14		; $653a
+	ld l,Enemy.speed		; $6538
+	ld (hl),SPEED_80		; $653a
+
+
+;;
+; @addr{653c}
+_beetle_chooseRandomAngleAndCounter1:
 	ld bc,$071c		; $653c
 	call _ecom_randomBitwiseAndBCE		; $653f
-	ld e,$89		; $6542
+	ld e,Enemy.angle		; $6542
 	ld a,c			; $6544
 	ld (de),a		; $6545
+
 	ld a,b			; $6546
-	ld hl,$6550		; $6547
+	ld hl,@counter1Vals		; $6547
 	rst_addAToHl			; $654a
-	ld e,$86		; $654b
+	ld e,Enemy.counter1		; $654b
 	ld a,(hl)		; $654d
 	ld (de),a		; $654e
 	ret			; $654f
-	rrca			; $6550
-	ld e,$1e		; $6551
-	inc a			; $6553
-	inc a			; $6554
-	inc a			; $6555
-	ld e,d			; $6556
-	ld e,d			; $6557
+
+@counter1Vals:
+	.db 15 30 30 60 60 60 90 90
+
+
+
+;;
+; Beetle has custom checkHazards function so it can decrease the spawner's var30 (number
+; of spawned
+; @addr{6558}
+_beetle_checkHazards:
 	ld b,a			; $6558
-	ld e,$84		; $6559
+	ld e,Enemy.state		; $6559
 	ld a,(de)		; $655b
 	cp $0a			; $655c
 	ld a,b			; $655e
 	ret c			; $655f
+
+	; Check if currently sinking in lava? (water doesn't count?)
 	ld h,d			; $6560
-	ld l,$bf		; $6561
+	ld l,Enemy.var3f		; $6561
 	bit 1,(hl)		; $6563
-	jr z,_label_244	; $6565
-	ld l,$86		; $6567
+	jr z,@checkHazards	; $6565
+
+	; When [counter1] == 59, decrement spawner's var30 if it exists?
+	ld l,Enemy.counter1		; $6567
 	ld a,(hl)		; $6569
-	cp $3b			; $656a
-	jr nz,_label_244	; $656c
-	ld l,$97		; $656e
+	cp 59			; $656a
+	jr nz,@checkHazards	; $656c
+
+	ld l,Enemy.relatedObj1+1		; $656e
 	ld a,(hl)		; $6570
 	or a			; $6571
-	jr z,_label_244	; $6572
+	jr z,@checkHazards	; $6572
+
 	ld h,a			; $6574
-	ld l,$b0		; $6575
+	ld l,Enemy.var30		; $6575
 	dec (hl)		; $6577
-_label_244:
+
+@checkHazards:
 	ld a,b			; $6578
 	jp _ecom_checkHazards		; $6579
 

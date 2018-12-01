@@ -484,10 +484,12 @@
 .define ENEMYID_FIREBALL_SHOOTER		$50
 
 ;;
-; @subid_00{Spawns beetles at this position}
+; @subid_00{Spawns beetles at this position when Link is close. (No limit... this could
+;           easily fill all enemy slots.)}
 ; @subid_01{Beetle falls in from sky}
 ; @subid_02{Beetle appears instantly}
-; @subid_03{Beetle "bounces" as he spawns?}
+; @subid_03{Beetle "bounces" as he spawns, in the direction Link is facing. (Dug up from
+;           ground)}
 .define ENEMYID_BEETLE				$51
 
 ;;

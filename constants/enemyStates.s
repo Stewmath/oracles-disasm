@@ -5,7 +5,7 @@
 
 .enum 0
 	ENEMYSTATE_UNINITIALIZED	db
-	ENEMYSTATE_1			db
+	ENEMYSTATE_1			db ; Not reserved, but frequently used by spawners
 	ENEMYSTATE_GRABBED		db ; NOTE: This actually applies to all grabbable objects
 	ENEMYSTATE_SWITCH_HOOK		db
 	ENEMYSTATE_MOVING_TO_SCENT_SEED	db

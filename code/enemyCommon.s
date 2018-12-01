@@ -88,6 +88,8 @@ _ecom_checkHazardsNoAnimationForHoles:
 
 ;;
 ; Standard implementation of "enemy experiencing knockback" state?
+; Also, doesn't "return from caller" if it fell in a hazard since it calls the
+; "_ecom_checkHazards" function instead of jumping to it.
 ; @addr{404a}
 _ecom_updateKnockbackAndCheckHazards:
 	call _ecom_updateKnockback		; $404a
