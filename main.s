@@ -137583,77 +137583,107 @@ _twinrovaIce_bounceOffShield:
 
 
 
-;;
-; @addr{69d9}
+; ==============================================================================
+; ENEMYID_TWINROVA_BAT
+; ==============================================================================
 enemyCode5e:
 	jr z,+			; $69d9
-	sub $03			; $69db
+	sub ENEMYSTATUS_NO_HEALTH			; $69db
 	ret c			; $69dd
 	jp z,enemyDie_uncounted		; $69de
 +
-	ld a,$01		; $69e1
+	ld a,Object.id		; $69e1
 	call objectGetRelatedObject1Var		; $69e3
 	ld a,(hl)		; $69e6
-	cp $01			; $69e7
+	cp ENEMYID_MERGED_TWINROVA			; $69e7
 	jp nz,enemyDelete		; $69e9
-	ld e,$86		; $69ec
+
+	ld e,Enemy.counter1		; $69ec
 	ld a,(de)		; $69ee
 	inc a			; $69ef
 	and $1f			; $69f0
 	ld a,SND_BOOMERANG		; $69f2
 	call z,playSound		; $69f4
-	ld e,$84		; $69f7
+
+	ld e,Enemy.state		; $69f7
 	ld a,(de)		; $69f9
 	rst_jumpTable			; $69fa
-.dw $6a01
-.dw $6a1a
-.dw $6a27
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+
+@state0:
 	ld h,d			; $6a01
 	ld l,e			; $6a02
-	inc (hl)		; $6a03
-	ld l,$90		; $6a04
-	ld (hl),$50		; $6a06
-	ld l,$87		; $6a08
+	inc (hl) ; [state]
+
+	ld l,Enemy.speed		; $6a04
+	ld (hl),SPEED_200		; $6a06
+
+	ld l,Enemy.counter2		; $6a08
 	ld (hl),$50		; $6a0a
+
 	call getRandomNumber_noPreserveVars		; $6a0c
-	ld e,$86		; $6a0f
+	ld e,Enemy.counter1		; $6a0f
 	ld (de),a		; $6a11
+
 	ld a,SND_VERAN_FAIRY_ATTACK		; $6a12
 	call playSound		; $6a14
 	jp objectSetVisible82		; $6a17
-	call $6a42		; $6a1a
+
+
+@state1:
+	call @updateOamFlags		; $6a1a
 	call _ecom_decCounter2		; $6a1d
-	jr nz,_label_265	; $6a20
+	jr nz,@animate	; $6a20
+
 	ld l,e			; $6a22
-	inc (hl)		; $6a23
+	inc (hl) ; [state]
 	call _ecom_updateAngleTowardTarget		; $6a24
-	call $6a36		; $6a27
+
+
+@state2:
+	call @checkInBounds		; $6a27
 	jp nc,enemyDelete		; $6a2a
-	call $6a42		; $6a2d
+
+	call @updateOamFlags		; $6a2d
 	call objectApplySpeed		; $6a30
-_label_265:
+@animate:
 	jp enemyAnimate		; $6a33
-	ld e,$8b		; $6a36
+
+
+;;
+; @param[out]	cflag	c if in bounds
+; @addr{6a36}
+@checkInBounds:
+	ld e,Enemy.yh		; $6a36
 	ld a,(de)		; $6a38
-	cp $b0			; $6a39
+	cp LARGE_ROOM_HEIGHT<<4			; $6a39
 	ret nc			; $6a3b
-	ld e,$8d		; $6a3c
+	ld e,Enemy.xh		; $6a3c
 	ld a,(de)		; $6a3e
-	cp $f0			; $6a3f
+	cp LARGE_ROOM_WIDTH<<4			; $6a3f
 	ret			; $6a41
+
+;;
+; @addr{6a42}
+@updateOamFlags:
 	call _ecom_decCounter1		; $6a42
 	ld a,(hl)		; $6a45
 	and $04			; $6a46
 	rrca			; $6a48
 	rrca			; $6a49
 	add $02			; $6a4a
-	ld l,$9b		; $6a4c
+	ld l,Enemy.oamFlagsBackup		; $6a4c
 	ldi (hl),a		; $6a4e
 	ld (hl),a		; $6a4f
 	ret			; $6a50
 
-;;
-; @addr{6a51}
+
+; ==============================================================================
+; ENEMYID_60 (TODO: document this along with bosses)
+; ==============================================================================
 enemyCode60:
 	ld e,$82		; $6a51
 	ld a,(de)		; $6a53

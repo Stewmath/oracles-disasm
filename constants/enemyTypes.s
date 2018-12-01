@@ -560,7 +560,8 @@
 .define ENEMYID_TWINROVA_ICE			$5d
 
 ;;
-.define ENEMYID_5e				$5e
+; Bat enemy that merged Twinrova spawns during the fight?
+.define ENEMYID_TWINROVA_BAT			$5e
 
 ;;
 ; Hardhat beetle that just pushes Link away. Has a purple tint.
