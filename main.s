@@ -135531,39 +135531,50 @@ _ballAndChain_setDefaultState:
 	ld (hl),a		; $60b9
 	ret			; $60ba
 
-;;
-; @addr{60bb}
+
+; ==============================================================================
+; ENEMYID_HARDHAT_BEETLE
+; ENEMYID_HARMLESS_HARDHAT_BEETLE
+; ==============================================================================
 enemyCode4d:
 enemyCode5f:
 	call _ecom_checkHazards		; $60bb
-	jr z,_label_215	; $60be
-	sub $03			; $60c0
+	jr z,@normalStatus	; $60be
+	sub ENEMYSTATUS_NO_HEALTH			; $60c0
 	ret c			; $60c2
 	jp z,enemyDie		; $60c3
 	dec a			; $60c6
 	jp nz,_ecom_updateKnockbackAndCheckHazards		; $60c7
 	ret			; $60ca
-_label_215:
-	ld e,$84		; $60cb
+
+@normalStatus:
+	ld e,Enemy.state		; $60cb
 	ld a,(de)		; $60cd
 	rst_jumpTable			; $60ce
-.dw $60e1
-.dw $60f0
-.dw $60f0
-.dw $60f0
-.dw $60f0
-.dw _ecom_blownByGaleSeedState
-.dw $60f0
-.dw $60f0
-.dw $60f1
-	ld e,$81		; $60e1
+	.dw @state_uninitialized
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state8
+
+@state_uninitialized:
+	ld e,Enemy.id		; $60e1
 	ld a,(de)		; $60e3
-	cp $5f			; $60e4
+	cp ENEMYID_HARMLESS_HARDHAT_BEETLE			; $60e4
 	ld a,PALH_8d		; $60e6
 	call z,loadPaletteHeader		; $60e8
-	ld a,$0f		; $60eb
+
+	ld a,SPEED_60		; $60eb
 	jp _ecom_setSpeedAndState8AndVisible		; $60ed
+
+@state_stub:
 	ret			; $60f0
+
+@state8:
 	call _ecom_updateAngleTowardTarget		; $60f1
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $60f4
 	jp enemyAnimate		; $60f7
