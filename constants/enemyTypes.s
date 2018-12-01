@@ -441,7 +441,7 @@
 .define ENEMYID_BALL_AND_CHAIN_SOLDIER		$4b
 
 ;;
-; Black crow. Behaviour is (almost) identical to ENEMYID_CROW.
+; Blue crow. Behaviour is (almost) identical to ENEMYID_CROW.
 ;
 ; Only works properly in small rooms (they disappear at the boundaries of a small room).
 ;
