@@ -364,6 +364,7 @@
 ; Moblin with a sword.
 ; @subid_00{Red}
 ; @subid_01{Blue}
+; @subid_02{Blue, less cooldown between charges}
 .define ENEMYID_SWORD_MOBLIN			$3d
 
 ;;
@@ -414,12 +415,16 @@
 
 ;;
 ; Shrouded stalfos with a sword.
+; @subid_00{Normal}
+; @subid_01{Less cooldown between charges}
+; @subid_02{Even less cooldown between charges}
 .define ENEMYID_SWORD_SHROUDED_STALFOS		$49
 
 ;;
 ; The type of moblin you'd see in the Goron area, with white horns, with sword
 ; @subid_00{Red}
 ; @subid_01{Blue}
+; @subid_02{Blue, less cooldown between charges}
 .define ENEMYID_SWORD_MASKED_MOBLIN		$4a
 
 ;;

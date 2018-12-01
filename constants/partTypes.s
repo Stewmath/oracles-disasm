@@ -69,6 +69,10 @@
 
 .define PARTID_STALFOS_BONE			$1c
 
+;;
+; Invisible object which provides collisions for enemy swords
+.define PARTID_ENEMY_SWORD			$1d
+
 .define PARTID_DEKU_SCRUB_PROJECTILE		$1e
 
 ;;

@@ -717,8 +717,8 @@ wNumRingsAppraised: ; $c6ce
 wKilledGoldenEnemies: ; $c6cf
 ; Bit 0: killed golden octorok
 ; Bit 1: killed golden moblin
-; Bit 2: killed golden lynel
-; Bit 3: killed golden darknut
+; Bit 2: killed golden darknut
+; Bit 3: killed golden lynel
 	db
 
 wGlobalFlags: ; $c6d0/$c6ca

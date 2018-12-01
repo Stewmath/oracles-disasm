@@ -132972,332 +132972,487 @@ _waterTektike_setSpeedFromCounter1:
 	.db SPEED_020 SPEED_040 SPEED_080 SPEED_0c0 SPEED_100 SPEED_140 SPEED_140 SPEED_140
 	.db SPEED_100 SPEED_100 SPEED_0c0 SPEED_0c0 SPEED_080 SPEED_080 SPEED_040 SPEED_040
 
-;;
-; @addr{5560}
+
+; ==============================================================================
+; ENEMYID_SWORD_MOBLIN
+; ENEMYID_SWORD_SHROUDED_STALFOS
+; ENEMYID_SWORD_MASKED_MOBLIN
+;
+; Shares some code with ENEMYID_SWORD_DARKNUT.
+;
+; Variables:
+;   var30: Nonzero if collisionReactionSet was changed to ignore sword damage (due to the
+;          enemy's sword blocking it)
+; ==============================================================================
 enemyCode3d:
 enemyCode49:
 enemyCode4a:
 	call _ecom_checkHazards		; $5560
-	call $5569		; $5563
-	jp $573b		; $5566
-	jr z,_label_136	; $5569
-	sub $03			; $556b
+	call @runState		; $5563
+	jp _swordEnemy_updateCollisionReactionSet		; $5566
+
+@runState:
+	jr z,@normalStatus	; $5569
+	sub ENEMYSTATUS_NO_HEALTH			; $556b
 	ret c			; $556d
-	jr z,_label_135	; $556e
+	jr z,@dead	; $556e
 	dec a			; $5570
 	jp nz,_ecom_updateKnockbackAndCheckHazards		; $5571
 	ret			; $5574
-_label_135:
+@dead:
 	pop hl			; $5575
 	jp enemyDie		; $5576
-_label_136:
+
+@normalStatus:
 	call _ecom_checkScentSeedActive		; $5579
-	jr z,_label_138	; $557c
-	ld e,$90		; $557e
-	ld a,$19		; $5580
-_label_137:
+	jr z,++			; $557c
+	ld e,Enemy.speed		; $557e
+	ld a,SPEED_a0		; $5580
 	ld (de),a		; $5582
-_label_138:
-	ld e,$84		; $5583
+++
+	ld e,Enemy.state		; $5583
 	ld a,(de)		; $5585
 	rst_jumpTable			; $5586
-.dw $559d
-.dw $55e4
-.dw $55e4
-.dw $55b8
-.dw $55ce
-.dw _ecom_blownByGaleSeedState
-.dw $55e4
-.dw $55e4
-.dw $55e5
-.dw $55ff
-.dw $560c
-	ld b,$1d		; $559d
+	.dw _swordEnemy_state_uninitialized
+	.dw _swordEnemy_state_stub
+	.dw _swordEnemy_state_stub
+	.dw _swordEnemy_state_switchHook
+	.dw _swordEnemy_state_scentSeed
+	.dw _ecom_blownByGaleSeedState
+	.dw _swordEnemy_state_stub
+	.dw _swordEnemy_state_stub
+	.dw _swordEnemy_state8
+	.dw _swordEnemy_state9
+	.dw _swordEnemy_stateA
+
+
+_swordEnemy_state_uninitialized:
+	ld b,PARTID_ENEMY_SWORD		; $559d
 	call _ecom_spawnProjectile		; $559f
 	ret nz			; $55a2
+
 	call _ecom_setRandomCardinalAngle		; $55a3
 	call _ecom_updateAnimationFromAngle		; $55a6
-	ld a,$14		; $55a9
+
+	ld a,SPEED_80		; $55a9
 	call _ecom_setSpeedAndState8AndVisible		; $55ab
-	ld l,$86		; $55ae
+
+	ld l,Enemy.counter1		; $55ae
 	inc (hl)		; $55b0
-	ld l,$bf		; $55b1
+
+	; Enable scent seeds
+	ld l,Enemy.var3f		; $55b1
 	set 4,(hl)		; $55b3
-	jp $572a		; $55b5
+
+	jp _swordEnemy_setChaseCooldown		; $55b5
+
+
+_swordEnemy_state_switchHook:
 	inc e			; $55b8
 	ld a,(de)		; $55b9
 	rst_jumpTable			; $55ba
-.dw _ecom_incState2
-.dw $55c3
-.dw $55c3
-.dw $55c4
+	.dw _ecom_incState2
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
 
+@substate1:
+@substate2:
 	ret			; $55c3
+
+@substate3:
 	ld b,$09		; $55c4
 	call _ecom_fallToGroundAndSetState		; $55c6
-	ld l,$86		; $55c9
+	ld l,Enemy.counter1		; $55c9
 	ld (hl),$10		; $55cb
 	ret			; $55cd
+
+
+_swordEnemy_state_scentSeed:
 	ld a,(wScentSeedActive)		; $55ce
 	or a			; $55d1
 	ld h,d			; $55d2
-	jp z,$5628		; $55d3
+	jp z,_swordEnemy_gotoState8		; $55d3
 	call _ecom_updateAngleToScentSeed		; $55d6
 	call _ecom_updateAnimationFromAngle		; $55d9
 	call _ecom_applyVelocityForSideviewEnemy		; $55dc
 	call enemyAnimate		; $55df
-	jr _label_139		; $55e2
+	jr _swordEnemy_animate		; $55e2
+
+
+_swordEnemy_state_stub:
 	ret			; $55e4
-	call $56fa		; $55e5
-	jp c,$56d3		; $55e8
+
+
+; Moving slowly in cardinal directions until Link get close.
+_swordEnemy_state8:
+	call _swordEnemy_checkLinkIsClose		; $55e5
+	jp c,_swordEnemy_beginChasingLink		; $55e8
+
 	call _ecom_decCounter1		; $55eb
-	jp z,$56e0		; $55ee
+	jp z,_swordEnemy_chooseRandomAngleAndCounter1		; $55ee
+
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $55f1
-	jr nz,_label_139	; $55f4
+	jr nz,_swordEnemy_animate	; $55f4
+
+	; Hit a wall
 	call _ecom_bounceOffWallsAndHoles		; $55f6
 	jp nz,_ecom_updateAnimationFromAngle		; $55f9
-_label_139:
+
+_swordEnemy_animate:
 	jp enemyAnimate		; $55fc
+
+
+; Started chasing Link (don't adjust angle until next state).
+_swordEnemy_state9:
 	call _ecom_decCounter1		; $55ff
 	ret nz			; $5602
 	ld (hl),$60		; $5603
 	ld l,e			; $5605
-	inc (hl)		; $5606
-	ld l,$90		; $5607
-	ld (hl),$19		; $5609
+	inc (hl) ; [state]
+	ld l,Enemy.speed		; $5607
+	ld (hl),SPEED_a0		; $5609
 	ret			; $560b
+
+
+; Chasing Link for [counter1] frames (adjusts angle appropriately).
+_swordEnemy_stateA:
 	call _ecom_decCounter1		; $560c
-	jp z,$5628		; $560f
+	jp z,_swordEnemy_gotoState8		; $560f
+
 	ld a,(hl)		; $5612
 	and $03			; $5613
-	jr nz,_label_140	; $5615
+	jr nz,++		; $5615
 	call objectGetAngleTowardEnemyTarget		; $5617
 	call objectNudgeAngleTowards		; $561a
 	call _ecom_updateAnimationFromAngle		; $561d
-_label_140:
+++
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $5620
+
+	; Animate at double speed
 	call enemyAnimate		; $5623
-	jr _label_139		; $5626
+	jr _swordEnemy_animate		; $5626
+
+
+;;
+; Reverts to state 8; wandering around in cardinal directions
+; @addr{5628}
+_swordEnemy_gotoState8:
 	ld l,e			; $5628
-	ld (hl),$08		; $5629
-	ld l,$90		; $562b
-	ld (hl),$14		; $562d
-	ld l,$89		; $562f
+	ld (hl),$08 ; [state]
+
+	ld l,Enemy.speed		; $562b
+	ld (hl),SPEED_80		; $562d
+	ld l,Enemy.angle		; $562f
 	ld a,(hl)		; $5631
 	add $04			; $5632
 	and $18			; $5634
 	ld (hl),a		; $5636
-	call _ecom_updateAnimationFromAngle		; $5637
-	call $572a		; $563a
-	jr _label_139		; $563d
 
-;;
-; @addr{563f}
+	call _ecom_updateAnimationFromAngle		; $5637
+	call _swordEnemy_setChaseCooldown		; $563a
+	jr _swordEnemy_animate		; $563d
+
+
+; ==============================================================================
+; ENEMYID_SWORD_DARKNUT
+; ==============================================================================
 enemyCode48:
 	call _ecom_checkHazards		; $563f
-	call $5648		; $5642
-	jp $5760		; $5645
-	jr z,_label_143	; $5648
-	sub $03			; $564a
+	call @runState		; $5642
+	jp _swordDarknut_updateCollisionReactionSet		; $5645
+
+@runState:
+	jr z,@normalStatus	; $5648
+	sub ENEMYSTATUS_NO_HEALTH			; $564a
 	ret c			; $564c
-	jr z,_label_141	; $564d
+	jr z,@dead	; $564d
 	dec a			; $564f
 	call nz,_ecom_updateKnockbackAndCheckHazards		; $5650
-	jp $5760		; $5653
-_label_141:
-	ld e,$82		; $5656
+	jp _swordDarknut_updateCollisionReactionSet		; $5653
+
+@dead:
+	ld e,Enemy.subid		; $5656
 	ld a,(de)		; $5658
 	cp $02			; $5659
-	jr nz,_label_142	; $565b
+	jr nz,++		; $565b
 	ld hl,wKilledGoldenEnemies		; $565d
 	set 2,(hl)		; $5660
-_label_142:
+++
 	pop hl			; $5662
 	jp enemyDie		; $5663
-_label_143:
-	ld e,$84		; $5666
+
+@normalStatus:
+	ld e,Enemy.state		; $5666
 	ld a,(de)		; $5668
 	rst_jumpTable			; $5669
-.dw $5680
-.dw $55e4
-.dw $55e4
-.dw $55b8
-.dw $55e4
-.dw $55e4
-.dw $55e4
-.dw $55e4
-.dw $5692
-.dw $56aa
-.dw $56b7
-	ld e,$82		; $5680
+	.dw _swordDarknut_state_uninitialized
+	.dw _swordEnemy_state_stub
+	.dw _swordEnemy_state_stub
+	.dw _swordEnemy_state_switchHook
+	.dw _swordEnemy_state_stub
+	.dw _swordEnemy_state_stub
+	.dw _swordEnemy_state_stub
+	.dw _swordEnemy_state_stub
+	.dw _swordDarknut_state8
+	.dw _swordDarknut_state9
+	.dw _swordDarknut_stateA
+
+
+_swordDarknut_state_uninitialized:
+	ld e,Enemy.subid		; $5680
 	ld a,(de)		; $5682
 	cp $02			; $5683
-	jr nz,_label_144	; $5685
+	jr nz,++		; $5685
 	ld a,(wKilledGoldenEnemies)		; $5687
 	bit 2,a			; $568a
-	jp nz,$57a1		; $568c
-_label_144:
-	jp $559d		; $568f
-	call $5712		; $5692
-	jr c,_label_147	; $5695
+	jp nz,_swordDarknut_delete		; $568c
+++
+	jp _swordEnemy_state_uninitialized		; $568f
+
+
+; Moving slowly in cardinal directions until Link get close.
+; Identical to _swordEnemy_state8.
+_swordDarknut_state8:
+	call _swordDarknut_checkLinkIsClose		; $5692
+	jr c,_swordEnemy_beginChasingLink	; $5695
+
 	call _ecom_decCounter1		; $5697
-	jr z,_label_148	; $569a
+	jr z,_swordEnemy_chooseRandomAngleAndCounter1	; $569a
+
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $569c
-	jr nz,_label_145	; $569f
+	jr nz,_swordDarknut_animate	; $569f
+
+	; Hit a wall
 	call _ecom_bounceOffWallsAndHoles		; $56a1
 	jp nz,_ecom_updateAnimationFromAngle		; $56a4
-_label_145:
+
+_swordDarknut_animate:
 	jp enemyAnimate		; $56a7
+
+
+; Started chasing Link (don't adjust angle until next state).
+; Identical to _swordEnemy_state9 except for the speed.
+_swordDarknut_state9:
 	call _ecom_decCounter1		; $56aa
 	ret nz			; $56ad
 	ld (hl),$60		; $56ae
 	ld l,e			; $56b0
-	inc (hl)		; $56b1
-	ld l,$90		; $56b2
-	ld (hl),$1e		; $56b4
+	inc (hl) ; [state]
+	ld l,Enemy.speed		; $56b2
+	ld (hl),SPEED_c0		; $56b4
 	ret			; $56b6
+
+
+; Chasing Link for [counter1] frames (adjusts angle appropriately).
+; Identical to _swordEnemy_stateA except for how quickly it turns toward Link.
+_swordDarknut_stateA:
 	call _ecom_decCounter1		; $56b7
-	jp z,$5628		; $56ba
+	jp z,_swordEnemy_gotoState8		; $56ba
+
 	ld a,(hl)		; $56bd
 	and $01			; $56be
-	jr nz,_label_146	; $56c0
+	jr nz,++		; $56c0
 	call objectGetAngleTowardEnemyTarget		; $56c2
 	call objectNudgeAngleTowards		; $56c5
 	call _ecom_updateAnimationFromAngle		; $56c8
-_label_146:
+++
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $56cb
+
+	; Animate at double speed
 	call enemyAnimate		; $56ce
-	jr _label_145		; $56d1
-_label_147:
-	ld l,$84		; $56d3
+	jr _swordDarknut_animate		; $56d1
+
+;;
+; @addr{56d3}
+_swordEnemy_beginChasingLink:
+	ld l,Enemy.state		; $56d3
 	inc (hl)		; $56d5
-	ld l,$86		; $56d6
+	ld l,Enemy.counter1		; $56d6
 	ld (hl),$10		; $56d8
 	call _ecom_updateAngleTowardTarget		; $56da
 	jp _ecom_updateAnimationFromAngle		; $56dd
-_label_148:
+
+;;
+; @addr{56e0}
+_swordEnemy_chooseRandomAngleAndCounter1:
 	ld bc,$3f07		; $56e0
 	call _ecom_randomBitwiseAndBCE		; $56e3
-	ld e,$86		; $56e6
+	ld e,Enemy.counter1		; $56e6
 	ld a,$50		; $56e8
 	add b			; $56ea
 	ld (de),a		; $56eb
-	call $56f2		; $56ec
+
+	call @chooseAngle		; $56ec
 	jp _ecom_updateAnimationFromAngle		; $56ef
+
+@chooseAngle:
+	; 1 in 8 chance of moving toward Link
 	ld a,c			; $56f2
 	or a			; $56f3
 	jp z,_ecom_updateCardinalAngleTowardTarget		; $56f4
 	jp _ecom_setRandomCardinalAngle		; $56f7
+
+
+;;
+; @param[out]	cflag	c if Link is within 40 pixels of enemy in both directions (and
+;			counter2, the timeout, has reached 0)
+; @addr{56fa}
+_swordEnemy_checkLinkIsClose:
 	call _ecom_decCounter2		; $56fa
 	ret nz			; $56fd
-	ld l,$8b		; $56fe
+
+	; NOTE: Why does this use hFFB2, then hEnemyTargetX? It's mixing two position
+	; variables.
+	ld l,Enemy.yh		; $56fe
 	ldh a,(<hFFB2)	; $5700
 	sub (hl)		; $5702
 	add $28			; $5703
 	cp $51			; $5705
 	ret nc			; $5707
-	ld l,$8d		; $5708
+	ld l,Enemy.xh		; $5708
 	ldh a,(<hEnemyTargetX)	; $570a
 	sub (hl)		; $570c
 	add $28			; $570d
 	cp $51			; $570f
 	ret			; $5711
+
+;;
+; This is identical to the above function.
+; @addr{5712}
+_swordDarknut_checkLinkIsClose:
 	call _ecom_decCounter2		; $5712
 	ret nz			; $5715
-	ld l,$8b		; $5716
+
+	; NOTE: Why does this use hFFB2, then hEnemyTargetX? It's mixing two position
+	; variables.
+	ld l,Enemy.yh		; $5716
 	ldh a,(<hFFB2)	; $5718
 	sub (hl)		; $571a
 	add $28			; $571b
 	cp $51			; $571d
 	ret nc			; $571f
-	ld l,$8d		; $5720
+	ld l,Enemy.xh		; $5720
 	ldh a,(<hEnemyTargetX)	; $5722
 	sub (hl)		; $5724
 	add $28			; $5725
 	cp $51			; $5727
 	ret			; $5729
-	ld e,$82		; $572a
+
+
+;;
+; Sets counter2 to the number of frames to wait before chasing Link again. Higher subids
+; have lower cooldowns.
+; @addr{572a}
+_swordEnemy_setChaseCooldown:
+	ld e,Enemy.subid		; $572a
 	ld a,(de)		; $572c
-	ld bc,$5738		; $572d
+	ld bc,@counter2Vals		; $572d
 	call addAToBc		; $5730
-	ld e,$87		; $5733
+	ld e,Enemy.counter2		; $5733
 	ld a,(bc)		; $5735
 	ld (de),a		; $5736
 	ret			; $5737
-	inc d			; $5738
-	stop			; $5739
-	inc c			; $573a
+
+@counter2Vals:
+	.db $14 $10 $0c
+
+
+;;
+; Updates collisionReactionSet based on Link's angle relative to the enemy. In this way,
+; Link's sword doesn't damage the enemy if positioned in such a way that their sword
+; should block it.
+; @addr{573b}
+_swordEnemy_updateCollisionReactionSet:
 	ld b,$00		; $573b
-	ld e,$ae		; $573d
+	ld e,Enemy.stunCounter		; $573d
 	ld a,(de)		; $573f
 	or a			; $5740
-	jr nz,_label_149	; $5741
-	call $577c		; $5743
-	ld a,$55		; $5746
+	jr nz,++		; $5741
+
+	call _swordEnemy_checkIgnoreCollision		; $5743
+	ld a,COLLISIONREACTIONSET_55		; $5746
 	ld b,$00		; $5748
-	jr nz,_label_150	; $574a
-_label_149:
+	jr nz,@setVars	; $574a
+++
 	inc b			; $574c
-	ld e,$81		; $574d
+	ld e,Enemy.id		; $574d
 	ld a,(de)		; $574f
-	cp $49			; $5750
-	ld a,$11		; $5752
-	jr nz,_label_150	; $5754
-	ld a,$11		; $5756
-_label_150:
-	ld e,$a5		; $5758
+	cp ENEMYID_SWORD_SHROUDED_STALFOS			; $5750
+	ld a,COLLISIONREACTIONSET_11		; $5752
+	jr nz,@setVars	; $5754
+	ld a,COLLISIONREACTIONSET_11		; $5756
+
+@setVars:
+	ld e,Enemy.collisionReactionSet		; $5758
 	ld (de),a		; $575a
-	ld e,$b0		; $575b
+
+	ld e,Enemy.var30		; $575b
 	ld a,b			; $575d
 	ld (de),a		; $575e
 	ret			; $575f
+
+;;
+; Same as above, but with a different collisionReactionSet for the darknut.
+; @addr{5760}
+_swordDarknut_updateCollisionReactionSet:
 	ld b,$00		; $5760
-	ld e,$ae		; $5762
+	ld e,Enemy.stunCounter		; $5762
 	ld a,(de)		; $5764
 	or a			; $5765
-	jr nz,_label_151	; $5766
-	call $577c		; $5768
-	ld a,$56		; $576b
+	jr nz,++		; $5766
+
+	call _swordEnemy_checkIgnoreCollision		; $5768
+	ld a,COLLISIONREACTIONSET_56		; $576b
 	ld b,$00		; $576d
-	jr nz,_label_152	; $576f
-_label_151:
-	ld a,$20		; $5771
+	jr nz,@setVars	; $576f
+++
+	ld a,COLLISIONREACTIONSET_20		; $5771
 	inc b			; $5773
-_label_152:
-	ld e,$a5		; $5774
+
+@setVars:
+	ld e,Enemy.collisionReactionSet		; $5774
 	ld (de),a		; $5776
-	ld e,$b0		; $5777
+
+	ld e,Enemy.var30		; $5777
 	ld a,b			; $5779
 	ld (de),a		; $577a
 	ret			; $577b
-	ld e,$ad		; $577c
+
+;;
+; Check whether the angle between Link and the enemy is such that the collision should be
+; ignored (due to the sword blocking it)
+;
+; Knockback is handled by PARTID_ENEMY_SWORD.
+;
+; @param[out]	zflag	z if sword hits should be ignored
+; @addr{577c}
+_swordEnemy_checkIgnoreCollision:
+	ld e,Enemy.knockbackCounter		; $577c
 	ld a,(de)		; $577e
 	or a			; $577f
 	ret nz			; $5780
+
 	call objectGetAngleTowardEnemyTarget		; $5781
 	ld b,a			; $5784
-	ld e,$88		; $5785
+	ld e,Enemy.direction		; $5785
 	ld a,(de)		; $5787
 	add a			; $5788
-	ld hl,$5791		; $5789
+	ld hl,@angleBits		; $5789
 	rst_addDoubleIndex			; $578c
 	ld a,b			; $578d
 	jp checkFlag		; $578e
-	ccf			; $5791
-	nop			; $5792
-	nop			; $5793
-	nop			; $5794
-	nop			; $5795
-	ccf			; $5796
-	nop			; $5797
-	nop			; $5798
-	nop			; $5799
-	nop			; $579a
-	ccf			; $579b
-	nop			; $579c
-	nop			; $579d
-	nop			; $579e
-	ld hl,sp+$01		; $579f
+
+@angleBits:
+	.db $3f $00 $00 $00 ; DIR_UP
+	.db $00 $3f $00 $00 ; DIR_RIGHT
+	.db $00 $00 $3f $00 ; DIR_DOWN
+	.db $00 $00 $f8 $01 ; DIR_LEFT
+
+
+;;
+; @addr{57a1}
+_swordDarknut_delete:
 	call decNumEnemies		; $57a1
 	jp enemyDelete		; $57a4
 
