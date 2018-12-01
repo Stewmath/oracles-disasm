@@ -134249,328 +134249,477 @@ _wizzrobe_markSpotAsTaken:
 	pop bc			; $5b32
 	ret			; $5b33
 
-;;
-; @addr{5b34}
+
+; ==============================================================================
+; ENEMYID_CROW
+; ENEMYID_BLUE_CROW
+;
+; Variables:
+;   var30: "Base" animation index (direction gets added to this)
+;   var31: Actual animation index
+;   var32/var33: Target position (subid 1 only)
+; ==============================================================================
 enemyCode41:
 enemyCode4c:
-	jr z,_label_178	; $5b34
-	sub $03			; $5b36
+	jr z,@normalStatus	; $5b34
+	sub ENEMYSTATUS_NO_HEALTH			; $5b36
 	ret c			; $5b38
 	jp z,enemyDie		; $5b39
 	dec a			; $5b3c
 	ret z			; $5b3d
 	jp _ecom_updateKnockbackNoSolidity		; $5b3e
-_label_178:
-	call _ecom_getSubidAndCpStateTo08		; $5b41
-	jr nc,_label_179	; $5b44
-	rst_jumpTable			; $5b46
-.dw $5b5d
-.dw $5b6c
-.dw $5b6c
-.dw $5b6c
-.dw $5b6c
-.dw _ecom_blownByGaleSeedState
-.dw $5b6c
-.dw $5b6c
 
-_label_179:
+@normalStatus:
+	call _ecom_getSubidAndCpStateTo08		; $5b41
+	jr nc,@normalState	; $5b44
+	rst_jumpTable			; $5b46
+	.dw _crow_state_uninitialized
+	.dw _crow_state_stub
+	.dw _crow_state_stub
+	.dw _crow_state_stub
+	.dw _crow_state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw _crow_state_stub
+	.dw _crow_state_stub
+
+@normalState:
 	ld a,b			; $5b57
 	rst_jumpTable			; $5b58
-.dw $5b6d
-.dw $5bf0
-	ld e,$82		; $5b5d
+	.dw _crow_subid0
+	.dw _crow_subid1
+
+
+_crow_state_uninitialized:
+	ld e,Enemy.subid		; $5b5d
 	ld a,(de)		; $5b5f
 	or a			; $5b60
 	jp nz,_ecom_setSpeedAndState8		; $5b61
-	ld a,$32		; $5b64
+
+	; Subid 0
+	ld a,SPEED_140		; $5b64
 	call _ecom_setSpeedAndState8		; $5b66
 	jp objectSetVisiblec1		; $5b69
+
+
+_crow_state_stub:
 	ret			; $5b6c
+
+
+_crow_subid0:
 	ld a,(de)		; $5b6d
 	sub $08			; $5b6e
 	rst_jumpTable			; $5b70
-.dw $5b77
-.dw $5b9e
-.dw $5bd1
+	.dw _crow_subid0_state8
+	.dw _crow_subid0_state9
+	.dw _crow_subid0_stateA
+
+
+; Perched, waiting for Link to approach
+_crow_subid0_state8:
 	call _ecom_updateAngleTowardTarget		; $5b77
-	call $5ccc		; $5b7a
+	call _crow_setAnimationFromAngle		; $5b7a
+
+	; Check if Link has approached
 	ld h,d			; $5b7d
-	ld l,$8b		; $5b7e
+	ld l,Enemy.yh		; $5b7e
 	ldh a,(<hEnemyTargetY)	; $5b80
 	sub (hl)		; $5b82
 	add $30			; $5b83
 	cp $61			; $5b85
 	ret nc			; $5b87
-	ld l,$8d		; $5b88
+
+	ld l,Enemy.xh		; $5b88
 	ldh a,(<hEnemyTargetX)	; $5b8a
 	sub (hl)		; $5b8c
 	add $18			; $5b8d
 	cp $31			; $5b8f
 	ret nc			; $5b91
+
+	; Link has approached.
 	call _ecom_incState		; $5b92
-	ld l,$86		; $5b95
-	ld (hl),$19		; $5b97
-	ld l,$b0		; $5b99
+	ld l,Enemy.counter1		; $5b95
+	ld (hl),25		; $5b97
+
+	ld l,Enemy.var30		; $5b99
 	ld (hl),$02		; $5b9b
 	ret			; $5b9d
+
+
+; Moving up and preparing to charge at Link after [counter1] frames (25 frames)
+_crow_subid0_state9:
 	call _ecom_updateAngleTowardTarget		; $5b9e
-	call $5ccc		; $5ba1
+	call _crow_setAnimationFromAngle		; $5ba1
 	call _ecom_decCounter1		; $5ba4
-	jr z,_label_180	; $5ba7
-	ld a,(hl)		; $5ba9
+	jr z,@beginCharge	; $5ba7
+
+	ld a,(hl) ; [counter1]
 	and $03			; $5baa
-	jr nz,_label_183	; $5bac
-	ld l,$8f		; $5bae
+	jr nz,_crow_subid0_animate	; $5bac
+
+	ld l,Enemy.zh		; $5bae
 	dec (hl)		; $5bb0
-	jr _label_183		; $5bb1
-_label_180:
+	jr _crow_subid0_animate		; $5bb1
+
+@beginCharge:
 	inc l			; $5bb3
-	ld (hl),$5a		; $5bb4
-	ld l,$84		; $5bb6
+	ld (hl),90 ; [counter2]
+
+	ld l,Enemy.state		; $5bb6
 	inc (hl)		; $5bb8
-	ld l,$a4		; $5bb9
+
+	ld l,Enemy.collisionType		; $5bb9
 	set 7,(hl)		; $5bbb
+
 	call _ecom_updateAngleTowardTarget		; $5bbd
+
+	; Randomly add or subtract 4 from angle (will either overshoot or undershoot Link)
 	call getRandomNumber_noPreserveVars		; $5bc0
 	and $04			; $5bc3
-	jr nz,_label_181	; $5bc5
-	ld a,$fc		; $5bc7
-_label_181:
+	jr nz,+			; $5bc5
+	ld a,-$04		; $5bc7
++
 	ld b,a			; $5bc9
-	ld e,$89		; $5bca
+	ld e,Enemy.angle		; $5bca
 	ld a,(de)		; $5bcc
 	add b			; $5bcd
 	ld (de),a		; $5bce
-	jr _label_183		; $5bcf
-	call $5ce3		; $5bd1
+
+	jr _crow_subid0_animate		; $5bcf
+
+
+; Charging toward Link
+_crow_subid0_stateA:
+	call _crow_subid0_checkWithinScreenBounds		; $5bd1
 	jp nc,enemyDelete		; $5bd4
+
 	call _ecom_decCounter2		; $5bd7
-	jr z,_label_182	; $5bda
+	jr z,@applySpeed	; $5bda
+
+	; Adjust angle toward Link every 8 frames
 	ld a,(hl)		; $5bdc
 	and $07			; $5bdd
-	jr nz,_label_182	; $5bdf
+	jr nz,@applySpeed	; $5bdf
+
 	call objectGetAngleTowardEnemyTarget		; $5be1
 	call objectNudgeAngleTowards		; $5be4
-	call $5ccc		; $5be7
-_label_182:
+	call _crow_setAnimationFromAngle		; $5be7
+
+@applySpeed:
 	call objectApplySpeed		; $5bea
-_label_183:
+
+_crow_subid0_animate:
 	jp enemyAnimate		; $5bed
+
+
+_crow_subid1:
 	ld a,(de)		; $5bf0
 	sub $08			; $5bf1
 	rst_jumpTable			; $5bf3
-.dw $5c00
-.dw $5c2f
-.dw $5c77
-.dw $5c8b
-.dw $5ca5
-.dw $5cba
-	ld hl,$d081		; $5c00
+	.dw _crow_subid1_state8
+	.dw _crow_subid1_state9
+	.dw _crow_subid1_stateA
+	.dw _crow_subid1_stateB
+	.dw _crow_subid1_stateC
+	.dw _crow_subid1_stateD
+
+
+; Checking whether it's ok to charge in right now
+_crow_subid1_state8:
+	; Count the number of crows that are in state 9 or higher (number of crows that
+	; are either about to or are already charging across the screen)
+	ldhl FIRST_ENEMY_INDEX, Enemy.id		; $5c00
 	ld b,$00		; $5c03
-_label_184:
+@nextEnemy:
 	ld a,(hl)		; $5c05
-	cp $41			; $5c06
-	jr nz,_label_185	; $5c08
-	ld l,e			; $5c0a
+	cp ENEMYID_CROW			; $5c06
+	jr nz,++		; $5c08
+
+	ld l,e ; l = state
 	ldd a,(hl)		; $5c0b
 	dec l			; $5c0c
 	dec l			; $5c0d
 	cp $09			; $5c0e
-	jr c,_label_185	; $5c10
+	jr c,++		; $5c10
 	inc b			; $5c12
-_label_185:
+++
 	inc h			; $5c13
 	ld a,h			; $5c14
-	cp $e0			; $5c15
-	jr c,_label_184	; $5c17
+	cp LAST_ENEMY_INDEX+1			; $5c15
+	jr c,@nextEnemy	; $5c17
+
+	; Only allow 2 such crows at a time (this one needs to wait)
 	ld a,b			; $5c19
 	cp $02			; $5c1a
 	ret nc			; $5c1c
+
 	ld h,d			; $5c1d
 	ld l,e			; $5c1e
-	inc (hl)		; $5c1f
-	ld l,$86		; $5c20
+	inc (hl) ; [state]
+
+	ld l,Enemy.counter1		; $5c20
 	or a			; $5c22
-	ld a,$3c		; $5c23
-	jr z,_label_186	; $5c25
-	ld a,$f0		; $5c27
-_label_186:
+	ld a,60   ; 1st crow on-screen
+	jr z,+			; $5c25
+	ld a,240  ; 2nd crow on-screen
++
 	ld (hl),a		; $5c29
-	ld l,$b0		; $5c2a
+
+	ld l,Enemy.var30		; $5c2a
 	ld (hl),$02		; $5c2c
 	ret			; $5c2e
+
+
+; Spawn in after [counter1] frames
+_crow_subid1_state9:
 	call _ecom_decCounter1		; $5c2f
 	ret nz			; $5c32
+
+	; Determine spawn/target position data to read based on which screen quadrant Link
+	; is in
 	ld b,$00		; $5c33
 	ldh a,(<hEnemyTargetY)	; $5c35
-	cp $40			; $5c37
-	jr c,_label_187	; $5c39
+	cp (SMALL_ROOM_HEIGHT/2)<<4			; $5c37
+	jr c,+			; $5c39
 	ld b,$08		; $5c3b
-_label_187:
++
 	ldh a,(<hEnemyTargetX)	; $5c3d
-	cp $50			; $5c3f
-	jr c,_label_188	; $5c41
+	cp (SMALL_ROOM_WIDTH/2)<<4			; $5c3f
+	jr c,+			; $5c41
 	set 2,b			; $5c43
-_label_188:
++
 	ld a,b			; $5c45
-	ld hl,$5d34		; $5c46
+	ld hl,_crow_offScreenSpawnData		; $5c46
 	rst_addAToHl			; $5c49
-	ld e,$8b		; $5c4a
+
+	; Read in spawn position
+	ld e,Enemy.yh		; $5c4a
 	ldi a,(hl)		; $5c4c
 	ld (de),a		; $5c4d
 	ldh (<hFF8F),a	; $5c4e
-	ld e,$8d		; $5c50
+
+	ld e,Enemy.xh		; $5c50
 	ldi a,(hl)		; $5c52
 	ld (de),a		; $5c53
 	ldh (<hFF8E),a	; $5c54
-	ld e,$b2		; $5c56
+
+	; Read in target position
+	ld e,Enemy.var32		; $5c56
 	ldi a,(hl)		; $5c58
 	ld (de),a		; $5c59
 	ld b,a			; $5c5a
+
 	inc e			; $5c5b
 	ld a,(hl)		; $5c5c
 	ld (de),a		; $5c5d
 	ld c,a			; $5c5e
+
+	; Set angle to target position
 	call _ecom_updateAngleTowardTarget		; $5c5f
+
 	call _ecom_incState		; $5c62
-	ld l,$a4		; $5c65
+
+	ld l,Enemy.collisionType		; $5c65
 	set 7,(hl)		; $5c67
-	ld l,$90		; $5c69
-	ld (hl),$14		; $5c6b
-	ld l,$8f		; $5c6d
-	ld (hl),$fa		; $5c6f
-	call $5ccc		; $5c71
+
+	ld l,Enemy.speed		; $5c69
+	ld (hl),SPEED_80		; $5c6b
+
+	ld l,Enemy.zh		; $5c6d
+	ld (hl),-$06		; $5c6f
+
+	call _crow_setAnimationFromAngle		; $5c71
 	jp objectSetVisiblec1		; $5c74
-	call $5cef		; $5c77
-	jr nc,_label_189	; $5c7a
+
+
+; Moving into screen
+_crow_subid1_stateA:
+	call _crow_moveTowardTargetPosition		; $5c77
+	jr nc,_crow_subid1_animate	; $5c7a
+
 	ld l,e			; $5c7c
-	inc (hl)		; $5c7d
-	ld l,$86		; $5c7e
-	ld (hl),$3c		; $5c80
+	inc (hl) ; [state]
+
+	ld l,Enemy.counter1		; $5c7e
+	ld (hl),60		; $5c80
+
 	call _ecom_updateAngleTowardTarget		; $5c82
-	call $5ccc		; $5c85
-_label_189:
+	call _crow_setAnimationFromAngle		; $5c85
+
+_crow_subid1_animate:
 	jp enemyAnimate		; $5c88
+
+
+; Hovering in position for [counter1] frames before charging
+_crow_subid1_stateB:
 	call _ecom_decCounter1		; $5c8b
-	jr nz,_label_189	; $5c8e
-	ld (hl),$18		; $5c90
+	jr nz,_crow_subid1_animate	; $5c8e
+
+	ld (hl),24  ; [counter1]
 	inc l			; $5c92
-	ld (hl),$00		; $5c93
+	ld (hl),$00 ; [counter2]
+
 	ld l,e			; $5c95
-	inc (hl)		; $5c96
-	ld l,$b2		; $5c97
+	inc (hl) ; [state]
+
+	ld l,Enemy.var32		; $5c97
 	ldh a,(<hEnemyTargetY)	; $5c99
 	ldi (hl),a		; $5c9b
 	ldh a,(<hEnemyTargetX)	; $5c9c
 	ld (hl),a		; $5c9e
-	ld l,$90		; $5c9f
-	ld (hl),$05		; $5ca1
-	jr _label_189		; $5ca3
-	call $5d20		; $5ca5
-	jr nc,_label_190	; $5ca8
-	call $5cc5		; $5caa
-	call $5d0a		; $5cad
+
+	ld l,Enemy.speed		; $5c9f
+	ld (hl),SPEED_20		; $5ca1
+	jr _crow_subid1_animate		; $5ca3
+
+
+; Moving, accelerating toward Link
+_crow_subid1_stateC:
+	call _crow_subid1_checkWithinScreenBounds		; $5ca5
+	jr nc,@outOfBounds	; $5ca8
+
+	call _crow_updateAngleTowardLinkIfCounter1Zero		; $5caa
+	call _crow_updateSpeed		; $5cad
 	call objectApplySpeed		; $5cb0
-	jr _label_189		; $5cb3
-_label_190:
+	jr _crow_subid1_animate		; $5cb3
+
+@outOfBounds:
 	call _ecom_incState		; $5cb5
-	jr _label_189		; $5cb8
+	jr _crow_subid1_animate		; $5cb8
+
+
+; Moved out of bounds; go back to state 8 to eventually charge again
+_crow_subid1_stateD:
 	ld h,d			; $5cba
 	ld l,e			; $5cbb
-	ld (hl),$08		; $5cbc
-	ld l,$a4		; $5cbe
+	ld (hl),$08 ; [state]
+
+	ld l,Enemy.collisionType		; $5cbe
 	res 7,(hl)		; $5cc0
+
 	jp objectSetInvisible		; $5cc2
+
+
+;;
+; Adjusts angle to move directly toward Link when [counter1] reaches 0. After this it
+; underflows to 255, so the angle correction only happens once.
+; @addr{5cc5}
+_crow_updateAngleTowardLinkIfCounter1Zero:
 	call _ecom_decCounter1		; $5cc5
 	ret nz			; $5cc8
 	call _ecom_updateAngleTowardTarget		; $5cc9
+
+
+;;
+; @addr{5ccc}
+_crow_setAnimationFromAngle:
 	ld h,d			; $5ccc
-	ld l,$89		; $5ccd
+	ld l,Enemy.angle		; $5ccd
 	ld a,(hl)		; $5ccf
 	and $0f			; $5cd0
 	ret z			; $5cd2
+
 	bit 4,(hl)		; $5cd3
-	ld l,$b0		; $5cd5
+	ld l,Enemy.var30		; $5cd5
 	ld a,(hl)		; $5cd7
-	jr nz,_label_191	; $5cd8
+	jr nz,+			; $5cd8
 	inc a			; $5cda
-_label_191:
-	ld l,$b1		; $5cdb
++
+	ld l,Enemy.var31		; $5cdb
 	cp (hl)			; $5cdd
-_label_192:
 	ret z			; $5cde
 	ld (hl),a		; $5cdf
 	jp enemySetAnimation		; $5ce0
-	ld e,$8b		; $5ce3
+
+;;
+; Identical to _crow_subid1_checkWithinScreenBounds.
+;
+; @param[out]	cflag	c if within screen bounds
+; @addr{5ce3}
+_crow_subid0_checkWithinScreenBounds:
+	ld e,Enemy.yh		; $5ce3
 	ld a,(de)		; $5ce5
-	cp $88			; $5ce6
+	cp SMALL_ROOM_HEIGHT<<4 + 8			; $5ce6
 	ret nc			; $5ce8
-	ld e,$8d		; $5ce9
+	ld e,Enemy.xh		; $5ce9
 	ld a,(de)		; $5ceb
-	cp $a8			; $5cec
+	cp SMALL_ROOM_WIDTH<<4 + 8			; $5cec
 	ret			; $5cee
+
+;;
+; @param[out]	cflag	c if within 1 pixel of target position
+; @addr{5cef}
+_crow_moveTowardTargetPosition:
 	ld h,d			; $5cef
-	ld l,$b2		; $5cf0
+	ld l,Enemy.var32		; $5cf0
 	call _ecom_readPositionVars		; $5cf2
 	sub c			; $5cf5
 	inc a			; $5cf6
 	cp $02			; $5cf7
-	jr nc,_label_193	; $5cf9
+	jr nc,@moveToward	; $5cf9
+
 	ldh a,(<hFF8F)	; $5cfb
 	sub b			; $5cfd
 	inc a			; $5cfe
 	cp $02			; $5cff
 	ret c			; $5d01
-_label_193:
+
+@moveToward:
 	call _ecom_moveTowardPosition		; $5d02
-	call $5ccc		; $5d05
+	call _crow_setAnimationFromAngle		; $5d05
 	or d			; $5d08
 	ret			; $5d09
-	ld e,$87		; $5d0a
+
+;;
+; Updates speed based on counter2. For subid 1.
+; @addr{5d0a}
+_crow_updateSpeed:
+	ld e,Enemy.counter2		; $5d0a
 	ld a,(de)		; $5d0c
 	cp $7f			; $5d0d
-	jr z,_label_194	; $5d0f
+	jr z,+			; $5d0f
 	inc a			; $5d11
 	ld (de),a		; $5d12
-_label_194:
++
 	and $f0			; $5d13
 	swap a			; $5d15
-	ld hl,$5d2c		; $5d17
+	ld hl,_crow_speeds		; $5d17
 	rst_addAToHl			; $5d1a
-	ld e,$90		; $5d1b
+	ld e,Enemy.speed		; $5d1b
 	ld a,(hl)		; $5d1d
 	ld (de),a		; $5d1e
 	ret			; $5d1f
-	ld e,$8b		; $5d20
+
+
+;;
+; Identical to _crow_subid0_checkWithinScreenBounds.
+;
+; @param[out]	cflag	c if within screen bounds
+; @addr{5d20}
+_crow_subid1_checkWithinScreenBounds:
+	ld e,Enemy.yh		; $5d20
 	ld a,(de)		; $5d22
-	cp $88			; $5d23
+	cp SCREEN_HEIGHT<<4 + 8			; $5d23
 	ret nc			; $5d25
-	ld e,$8d		; $5d26
+	ld e,Enemy.xh		; $5d26
 	ld a,(de)		; $5d28
-	cp $a8			; $5d29
+	cp SCREEN_WIDTH<<4 + 8			; $5d29
 	ret			; $5d2b
-	ld a,(bc)		; $5d2c
-	inc d			; $5d2d
-	ld e,$28		; $5d2e
-	ldd (hl),a		; $5d30
-	inc a			; $5d31
-	ld b,(hl)		; $5d32
-	ld d,b			; $5d33
-	ld h,b			; $5d34
-	and b			; $5d35
-	ld (hl),b		; $5d36
-	sub b			; $5d37
-	ld h,b			; $5d38
-	nop			; $5d39
-	ld (hl),b		; $5d3a
-	stop			; $5d3b
-	jr nz,_label_192	; $5d3c
-	stop			; $5d3e
-	sub b			; $5d3f
-	jr nz,_label_195	; $5d40
-_label_195:
-	stop			; $5d42
-	stop			; $5d43
+
+
+; Speeds for subid 1; accerelates while chasing Link.
+_crow_speeds:
+	.db SPEED_040 SPEED_080 SPEED_0c0 SPEED_100
+	.db SPEED_140 SPEED_180 SPEED_1c0 SPEED_200
+
+; Each row corresponds to a screen quadrant Link is in.
+; Byte values:
+;   b0/b1: Spawn Y/X position
+;   b2/b3: Target Y/X position (position to move to before charging in)
+_crow_offScreenSpawnData:
+	.db $60 $a0 $70 $90
+	.db $60 $00 $70 $10
+	.db $20 $a0 $10 $90
+	.db $20 $00 $10 $10
 
 ;;
 ; @addr{5d44}

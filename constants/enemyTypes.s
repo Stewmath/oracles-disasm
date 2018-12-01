@@ -381,7 +381,12 @@
 .define ENEMYID_WIZZROBE			$40
 
 ;;
-; Black crow. See also ENEMYID_BLUE_CROW.
+; Black crow. Behaviour is (almost) identical to ENEMYID_BLUE_CROW.
+;
+; Only works properly in small rooms (they disappear at the boundaries of a small room).
+;
+; @subid_00{Perched, waiting for Link to approach.}
+; @subid_01{Spawns crows from outside the screen; maximum of two at a time.}
 .define ENEMYID_CROW				$41
 
 ;;
@@ -431,9 +436,14 @@
 .define ENEMYID_BALL_AND_CHAIN_SOLDIER		$4b
 
 ;;
-; Similar to ENEMYID_CROW.
+; Black crow. Behaviour is (almost) identical to ENEMYID_CROW.
+;
+; Only works properly in small rooms (they disappear at the boundaries of a small room).
+;
 ; @subid_00{Perched, waiting for Link to approach}
-; @subid_01{Spawns crows from outside the screen}
+; @subid_01{Spawns crows from outside the screen. No maximum of two at a time as with
+;           ENEMYID_CROW, but this is probably an oversight. If more than two are used,
+;           multiple crows will spawn in the same spot.}
 .define ENEMYID_BLUE_CROW			$4c
 
 ;;
