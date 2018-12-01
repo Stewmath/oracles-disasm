@@ -536,8 +536,13 @@
 .define ENEMYID_BUSH_OR_ROCK			$58
 
 ;;
-; Invisible object. This is made whenever an "item drop" object is in a room.
-; Subid corresponds to constants/itemDrops.s? (TODO: confirm)
+; Invisible object. This is made whenever an "item drop" object is in a room, and it
+; spawns PARTID_ITEM_DROP when the tile at its position is destroyed.
+;
+; The reason this is an enemy is probably so it can use the "markEnemyAsKilledInRoom"
+; function to prevent item drops from respawning for a while.
+;
+; @subid{Corresponds to constants/itemDrops.s.}
 .define ENEMYID_ITEM_DROP_PRODUCER		$59
 
 ;;

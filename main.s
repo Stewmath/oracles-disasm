@@ -5190,18 +5190,19 @@ func_16eb:
 	ret			; $1702
 
 ;;
-; @param	a
-; @param[out]	a
-; @param[out]	zflag
+; Checks whether an item drop of a given type can spawn.
+;
+; @param	a	Item drop index (see constants/itemDrops.s)
+; @param[out]	zflag	z if item cannot spawn (Link doesn't have it)
 ; @addr{1703}
-func_1703:
+checkItemDropUnavailable:
 	ld c,a			; $1703
 	ldh a,(<hRomBank)	; $1704
 	push af			; $1706
-	ld a,:bank3f.func_4782		; $1707
+	ld a,:bank3f.checkItemDropUnavailable_body		; $1707
 	setrombank		; $1709
 	ld a,c			; $170e
-	call bank3f.func_4782		; $170f
+	call bank3f.checkItemDropUnavailable_body		; $170f
 	pop af			; $1712
 	setrombank		; $1713
 	ld a,c			; $1718
@@ -137301,41 +137302,52 @@ enemyCode58:
 	ld (de),a		; $685d
 	ret			; $685e
 
-;;
-; "Item drop"; an invisible object that produces an item drop when a tile is destroyed
+
+; ==============================================================================
+; ENEMYID_ITEM_DROP_PRODUCER
 ;
-; @addr{685f}
+; Variables:
+;   var30: Tile at position (item drop will spawn when this changes)
+; ==============================================================================
 enemyCode59:
 	ld e,Enemy.state		; $685f
 	ld a,(de)		; $6861
 	or a			; $6862
-	jr nz,++		; $6863
+	jr nz,@state1		; $6863
 
+@state0:
 	; Initialization
 	ld a,$01		; $6865
-	ld (de),a		; $6867
+	ld (de),a ; [state]
 	call objectGetTileAtPosition		; $6868
 	ld e,Enemy.var30		; $686b
 	ld (de),a		; $686d
-++
+
+@state1
 	call objectGetTileAtPosition		; $686e
 	ld h,d			; $6871
 	ld l,Enemy.var30		; $6872
 	cp (hl)			; $6874
 	ret z			; $6875
 
+	; Tile has changed.
+
+	; Delete self if Link can't get the item drop yet (ie. doesn't have bombs)
 	ld e,Enemy.subid		; $6876
 	ld a,(de)		; $6878
-	call func_1703		; $6879
+	call checkItemDropUnavailable		; $6879
 	jp z,enemyDelete		; $687c
 
 	call getFreePartSlot		; $687f
 	ret nz			; $6882
-	ld (hl),$01		; $6883
+	ld (hl),PARTID_ITEM_DROP		; $6883
+
+	; [child.subid] = [this.subid]
 	inc l			; $6885
 	ld e,Enemy.subid		; $6886
 	ld a,(de)		; $6888
 	ld (hl),a		; $6889
+
 	call objectCopyPosition		; $688a
 	call markEnemyAsKilledInRoom		; $688d
 	jp enemyDelete		; $6890
@@ -176729,7 +176741,7 @@ func_4744:
 	ld a,(hl)		; $4754
 	ld c,a			; $4755
 	cp $ff			; $4756
-	jr z,func_4782@done		; $4758
+	jr z,checkItemDropUnavailable_body@done		; $4758
 
 	swap a			; $475a
 	rrca			; $475c
@@ -176742,7 +176754,7 @@ func_4744:
 	call getRandomNumber		; $4766
 	and $3f			; $4769
 	call checkFlag		; $476b
-	jr z,func_4782@done		; $476e
+	jr z,checkItemDropUnavailable_body@done		; $476e
 
 	ld a,c			; $4770
 	and $1f			; $4771
@@ -176758,12 +176770,14 @@ func_4744:
 	ld c,a			; $4781
 
 ;;
-; @param	c
-; @param[out]	c
+; Checks whether an item drop of a given type can spawn.
+;
+; @param	c	Item drop index (see constants/itemDrops.s)
+; @param[out]	c	$ff if item cannot spawn (Link doesn't have it)
 ; @addr{4782}
-func_4782:
+checkItemDropUnavailable_body:
 	ld a,c			; $4782
-	ld hl,_table_47de		; $4783
+	ld hl,_itemDropAvailabilityTable		; $4783
 	rst_addDoubleIndex			; $4786
 	ldi a,(hl)		; $4787
 	ld b,(hl)		; $4788
@@ -176831,18 +176845,23 @@ _label_3f_085:
 	ld b,$4a		; $47da
 	ld h,$4a		; $47dc
 
+
+; Each row corresponds to an item drop (see constants/itemDrops.s).
+;   Byte 0: Variable in $c600 block to check
+;   Byte 1: Value to AND with that variable to check availability; if nonzero, the item
+;           can drop.
 ; @addr{47de}
-_table_47de:
-	.db <wc608 $ff
-	.db <wc608 $ff
-	.db <wc608 $ff
-	.db <wc608 $ff
-	.db (<wObtainedTreasureFlags+TREASURE_BOMBS/8)         1<<(TREASURE_BOMBS&7)
-	.db (<wObtainedTreasureFlags+TREASURE_EMBER_SEEDS/8)   1<<(TREASURE_EMBER_SEEDS&7)
-	.db (<wObtainedTreasureFlags+TREASURE_SCENT_SEEDS/8)   1<<(TREASURE_SCENT_SEEDS&7)
-	.db (<wObtainedTreasureFlags+TREASURE_PEGASUS_SEEDS/8) 1<<(TREASURE_PEGASUS_SEEDS&7)
-	.db (<wObtainedTreasureFlags+TREASURE_GALE_SEEDS/8)    1<<(TREASURE_GALE_SEEDS&7)
-	.db (<wObtainedTreasureFlags+TREASURE_MYSTERY_SEEDS/8) 1<<(TREASURE_MYSTERY_SEEDS&7)
+_itemDropAvailabilityTable:
+	.db <wc608, $ff ; ITEM_DROP_FAIRY
+	.db <wc608, $ff ; ITEM_DROP_HEART
+	.db <wc608, $ff ; ITEM_DROP_1_RUPEE
+	.db <wc608, $ff ; ITEM_DROP_5_RUPEES
+	.db (<wObtainedTreasureFlags+TREASURE_BOMBS/8)        , 1<<(TREASURE_BOMBS&7)
+	.db (<wObtainedTreasureFlags+TREASURE_EMBER_SEEDS/8)  , 1<<(TREASURE_EMBER_SEEDS&7)
+	.db (<wObtainedTreasureFlags+TREASURE_SCENT_SEEDS/8)  , 1<<(TREASURE_SCENT_SEEDS&7)
+	.db (<wObtainedTreasureFlags+TREASURE_PEGASUS_SEEDS/8), 1<<(TREASURE_PEGASUS_SEEDS&7)
+	.db (<wObtainedTreasureFlags+TREASURE_GALE_SEEDS/8)   , 1<<(TREASURE_GALE_SEEDS&7)
+	.db (<wObtainedTreasureFlags+TREASURE_MYSTERY_SEEDS/8), 1<<(TREASURE_MYSTERY_SEEDS&7)
 
 	rlca			; $47f2
 	nop			; $47f3
