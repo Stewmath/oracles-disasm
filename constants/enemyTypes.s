@@ -547,8 +547,9 @@
 
 ;;
 ; Spawns seeds on a tree (corresponding "PARTID_SEED_ON_TREE" object).
-; @subid{Bits 0-3: Index for "seedTreeRefilledBitset".\n
+; @subid{Bits 0-3: Index for "wSeedTreeRefilledBitset". Must be unique.\n
 ;        Bits 4-7: Seed type (0-4).}
+; @postype{none}
 .define ENEMYID_SEEDS_ON_TREE			$5a
 
 .define ENEMYID_STUB_5b				$5b

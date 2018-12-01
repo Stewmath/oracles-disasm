@@ -137352,28 +137352,38 @@ enemyCode59:
 	call markEnemyAsKilledInRoom		; $688d
 	jp enemyDelete		; $6890
 
-;;
-; Seeds on a seed tree
-; @addr{6893}
+
+; ==============================================================================
+; ENEMYID_SEEDS_ON_TREE
+;
+; Variables:
+;   var03: Child "PARTID_SEED_ON_TREE" objects write here when Link touches them?
+; ==============================================================================
 enemyCode5a:
 	ld e,Enemy.state	; $6893
 	ld a,(de)		; $6895
 	or a			; $6896
-	jr nz,@waitForLinkCollision	; $6897
+	jr nz,@state1	; $6897
 
-@initialize:
+
+; Initialization
+@state0:
 	ld a,$01		; $6899
-	ld (de),a		; $689b
+	ld (de),a ; [state]
+
+	; Locate tree
 	ld a,TILEINDEX_MYSTICAL_TREE_TL		; $689c
 	call findTileInRoom		; $689e
-	jp nz,interactionDelete		; $68a1
+	jp nz,interactionDelete ; BUG: Wrong function call! (see below)
 
+	; Move to that position
 	ld c,l			; $68a4
 	ld h,d			; $68a5
 	ld l,Enemy.yh		; $68a6
 	call setShortPosition_paramC		; $68a8
 	ld bc,$0808		; $68ab
 	call objectCopyPositionWithOffset		; $68ae
+
 	ld e,Enemy.subid	; $68b1
 	ld a,(de)		; $68b3
 	and $0f			; $68b4
@@ -137381,18 +137391,26 @@ enemyCode5a:
 	call checkFlag		; $68b9
 	jp z,interactionDelete		; $68bc
 
+	; BUG: Above function call is wrong! Should be "enemyDelete"!
+	; If a seed tree's seeds are exhausted, instead of deleting this object, it will
+	; try to delete the interaction in the corresponding spot!
+	; This is not be very noticeable, because often this will be in slot $d0, which
+	; for interactions, is reserved for items from chests and stuff like that. But
+	; that can be manipulated by digging up enemies from the ground...
+
 	ld a,(de)		; $68bf
 	swap a			; $68c0
 	and $0f			; $68c2
 	ldh (<hFF8B),a	; $68c4
 
+	; Spawn the 3 seed objects
 	xor a			; $68c6
 	call @addSeed		; $68c7
 	ld a,$01		; $68ca
 	call @addSeed		; $68cc
 	ld a,$02		; $68cf
 @addSeed:
-	ld hl,@data		; $68d1
+	ld hl,@positionOffsets		; $68d1
 	rst_addDoubleIndex			; $68d4
 	ld e,Enemy.yh		; $68d5
 	ld a,(de)		; $68d7
@@ -137403,36 +137421,45 @@ enemyCode5a:
 	ld a,(de)		; $68dd
 	add (hl)		; $68de
 	ld c,a			; $68df
+
 	call getFreePartSlot		; $68e0
 	ld (hl),PARTID_SEED_ON_TREE		; $68e3
 	inc l			; $68e5
 	ldh a,(<hFF8B)	; $68e6
-	ld (hl),a		; $68e8
+	ld (hl),a ; [subid]
+
 	ld l,Part.yh		; $68e9
 	ld (hl),b		; $68eb
 	ld l,Part.xh		; $68ec
 	ld (hl),c		; $68ee
+
 	ld l,Part.relatedObj2	; $68ef
 	ld (hl),Enemy.start	; $68f1
 	inc l			; $68f3
 	ld (hl),d		; $68f4
 	ret			; $68f5
 
-; @addr{68f6}
-@data:
-	.db $f8 $00 $00 $f8 $00 $08
+@positionOffsets:
+	.db $f8 $00
+	.db $00 $f8
+	.db $00 $08
 
-@waitForLinkCollision:
+
+@state1:
+	; Waiting for one of the PARTID_SEED_ON_TREE objects to write to var03, indicating
+	; that they were grabbed
 	ld e,Enemy.var03
 	ld a,(de)		; $68fe
 	or a			; $68ff
 	ret z			; $6900
 
+	; Mark seeds as taken
 	ld e,Enemy.subid	; $6901
 	ld a,(de)		; $6903
 	and $0f			; $6904
 	ld hl,wSeedTreeRefilledBitset		; $6906
 	call unsetFlag		; $6909
+
 	jp enemyDelete		; $690c
 
 ;;
