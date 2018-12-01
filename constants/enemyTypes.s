@@ -569,8 +569,10 @@
 .define ENEMYID_HARMLESS_HARDHAT_BEETLE		$5f
 
 ;;
-; Part of cutscene for Ganon revival or something?
-.define ENEMYID_60				$60
+; Part of cutscene for Ganon revival; darkens screen, makes shadows come toward Twinrova.
+; @subid_00{Cutscene controller}
+; @subid_01{An individual shadow}
+.define ENEMYID_GANON_REVIVAL_CUTSCENE		$60
 
 ;;
 ; Fight either Nayru or Ambi posessed by Nayru.

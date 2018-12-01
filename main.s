@@ -137682,28 +137682,40 @@ enemyCode5e:
 
 
 ; ==============================================================================
-; ENEMYID_60 (TODO: document this along with bosses)
+; ENEMYID_GANON_REVIVAL_CUTSCENE (TODO: document this along with bosses)
+;
+; Variables:
+;   var30: Copied to counter2?
+;   var31: Nonzero if initialization has occurred? (spawner only)
 ; ==============================================================================
 enemyCode60:
-	ld e,$82		; $6a51
+	ld e,Enemy.subid		; $6a51
 	ld a,(de)		; $6a53
 	or a			; $6a54
-	ld e,$b1		; $6a55
-	jr z,_label_269	; $6a57
+	ld e,Enemy.var31		; $6a55
+	jr z,_ganonRevivalCutscene_controller	; $6a57
+
+	; This is an individual shadow in the cutscene.
+
 	ld a,(de)		; $6a59
 	or a			; $6a5a
 	jr nz,_label_266	; $6a5b
+
 	ld h,d			; $6a5d
 	ld l,e			; $6a5e
-	inc (hl)		; $6a5f
-	ld l,$90		; $6a60
-	ld (hl),$50		; $6a62
+	inc (hl) ; [state]
+
+	ld l,Enemy.speed		; $6a60
+	ld (hl),SPEED_200		; $6a62
+
 	call objectSetVisible83		; $6a64
+
 	ld a,SND_WIND		; $6a67
 	call playSound		; $6a69
+
 _label_266:
 	ld bc,$5478		; $6a6c
-	ld e,$8b		; $6a6f
+	ld e,Enemy.yh		; $6a6f
 	ld a,(de)		; $6a71
 	ldh (<hFF8F),a	; $6a72
 	ld e,$8d		; $6a74
@@ -137713,119 +137725,145 @@ _label_266:
 	add $08			; $6a7a
 	cp $11			; $6a7c
 	jr nc,_label_267	; $6a7e
+
 	ldh a,(<hFF8F)	; $6a80
 	sub b			; $6a82
 	add $08			; $6a83
 	cp $11			; $6a85
 	jp c,enemyDelete		; $6a87
+
 _label_267:
+	; Nudge toward target every 8 frames
 	ld a,(wFrameCounter)		; $6a8a
 	and $07			; $6a8d
-	jr nz,_label_268	; $6a8f
+	jr nz,++		; $6a8f
 	call objectGetRelativeAngleWithTempVars		; $6a91
 	call objectNudgeAngleTowards		; $6a94
-_label_268:
+++
 	call objectApplySpeed		; $6a97
 	jp _ecom_flickerVisibility		; $6a9a
-_label_269:
-	ld a,(de)		; $6a9d
+
+
+_ganonRevivalCutscene_controller:
+	ld a,(de) ; [var31]
 	or a			; $6a9e
 	jr nz,_label_270	; $6a9f
+
+	; Just starting the cutscene
+
 	ld a,(wPaletteThread_mode)		; $6aa1
 	or a			; $6aa4
 	ret nz			; $6aa5
+
 	ld h,d			; $6aa6
 	ld l,e			; $6aa7
-	inc (hl)		; $6aa8
-	ld l,$b0		; $6aa9
+	inc (hl) ; [var31] = 1
+
+	ld l,Enemy.var30		; $6aa9
 	ld (hl),$28		; $6aab
+
 	call hideStatusBar		; $6aad
+
 	ldh a,(<hActiveObject)	; $6ab0
 	ld d,a			; $6ab2
 	ld a,$0e		; $6ab3
 	call fadeoutToBlackWithDelay		; $6ab5
+
 	xor a			; $6ab8
 	ld (wDirtyFadeSprPalettes),a		; $6ab9
 	ld (wFadeSprPaletteSources),a		; $6abc
+
 _label_270:
 	call _ecom_decCounter2		; $6abf
 	ret nz			; $6ac2
+
+	; Check number of shadows spawned already
 	dec l			; $6ac3
-	ld a,(hl)		; $6ac4
+	ld a,(hl) ; [counter1]
 	cp $10			; $6ac5
 	inc (hl)		; $6ac7
-	jr nc,_label_271	; $6ac8
-	call $6ae6		; $6aca
-	ld e,$b0		; $6acd
+	jr nc,@delete	; $6ac8
+
+	call _ganonRevivalCutscene_spawnShadow		; $6aca
+
+	ld e,Enemy.var30		; $6acd
 	ld a,(de)		; $6acf
-	ld e,$87		; $6ad0
+	ld e,Enemy.counter2		; $6ad0
 	ld (de),a		; $6ad2
-	ld e,$b0		; $6ad3
+
+	ld e,Enemy.var30		; $6ad3
 	ld a,(de)		; $6ad5
 	sub $04			; $6ad6
 	cp $10			; $6ad8
 	ret c			; $6ada
 	ld (de),a		; $6adb
 	ret			; $6adc
-_label_271:
-	ld a,$06		; $6add
+
+@delete:
+	; Signal parent to move to next phase of cutscene?
+	ld a,Object.counter1		; $6add
 	call objectGetRelatedObject1Var		; $6adf
 	inc (hl)		; $6ae2
 	jp enemyDelete		; $6ae3
+
+;;
+; @addr{6ae6}
+_ganonRevivalCutscene_spawnShadow:
 	call getFreeEnemySlot_uncounted		; $6ae6
 	ret nz			; $6ae9
-	ld (hl),$60		; $6aea
+
+	ld (hl),ENEMYID_GANON_REVIVAL_CUTSCENE		; $6aea
 	inc l			; $6aec
-	inc (hl)		; $6aed
-	ld e,$86		; $6aee
+	inc (hl) ; [child.subid] = 1
+
+	ld e,Enemy.counter1		; $6aee
 	ld a,(de)		; $6af0
 	and $07			; $6af1
 	ld b,a			; $6af3
 	add a			; $6af4
 	add b			; $6af5
-	ld bc,$6b0a		; $6af6
+	ld bc,@shadowVariables		; $6af6
 	call addAToBc		; $6af9
-	ld l,$8b		; $6afc
+
+	ld l,Enemy.yh		; $6afc
 	ld a,(bc)		; $6afe
 	ldi (hl),a		; $6aff
 	inc l			; $6b00
 	inc bc			; $6b01
 	ld a,(bc)		; $6b02
-	ld (hl),a		; $6b03
-	ld l,$89		; $6b04
+	ld (hl),a ; [xh]
+
+	ld l,Enemy.angle		; $6b04
 	inc bc			; $6b06
 	ld a,(bc)		; $6b07
 	ld (hl),a		; $6b08
 	ret			; $6b09
-	ld h,b			; $6b0a
-	ld a,($ff00+R_NR24)	; $6b0b
-	cp b			; $6b0d
-	ret nc			; $6b0e
-	nop			; $6b0f
-	sub b			; $6b10
-	nop			; $6b11
-	ld (bc),a		; $6b12
-	ld b,b			; $6b13
-	ld a,($ff00+R_NR21)	; $6b14
-	cp b			; $6b16
-	ld h,b			; $6b17
-	ld e,$b8		; $6b18
-	jr nz,_label_272	; $6b1a
-	sub b			; $6b1c
-	ld a,($ff00+R_NR23)	; $6b1d
-	ld b,b			; $6b1f
-	nop			; $6b20
-_label_272:
-	ld b,$24		; $6b21
-	ld l,e			; $6b23
-	inc d			; $6b24
-	nop			; $6b25
-	ld (bc),a		; $6b26
-	sbc b			; $6b27
-	inc b			; $6b28
-	ld l,b			; $6b29
-	nop			; $6b2a
-	ld h,$6b		; $6b2b
+
+; Byte 0: yh
+; Byte 1: xh
+; Byte 2: angle
+@shadowVariables:
+	.db $60 $f0 $19
+	.db $b8 $d0 $00
+	.db $90 $00 $02
+	.db $40 $f0 $16
+	.db $b8 $60 $1e
+	.db $b8 $20 $05
+	.db $90 $f0 $18
+	.db $40 $00 $06
+
+
+; ==============================================================================
+; TODO: what is this? Relates to function immediately below.
+
+data_6b22:
+	.dw @subid0
+
+@subid0:
+	.db SPEED_80, DIR_UP
+@loop:
+	.db $02 $98 $04 $68 $00
+	.dw @loop
 
 ;;
 ; Called from objectFunc_3035 in bank 0.
@@ -137834,25 +137872,28 @@ _label_272:
 ; @addr{6b2d}
 objectFunc_6b2d:
 	ldh a,(<hActiveObjectType)	; $6b2d
-	add $02			; $6b2f
+	add Object.subid			; $6b2f
 	ld e,a			; $6b31
 	ld a,(de)		; $6b32
 	rst_addDoubleIndex			; $6b33
 	ldi a,(hl)		; $6b34
 	ld h,(hl)		; $6b35
 	ld l,a			; $6b36
+
 	ld a,e			; $6b37
-	add $0e			; $6b38
+	add Object.speed-Object.subid			; $6b38
 	ld e,a			; $6b3a
 	ldi a,(hl)		; $6b3b
 	ld (de),a		; $6b3c
+
 	ld a,e			; $6b3d
-	add $f8			; $6b3e
+	add Object.direction-Object.speed			; $6b3e
 	ld e,a			; $6b40
 	ldi a,(hl)		; $6b41
 	ld (de),a		; $6b42
+
 	ld a,e			; $6b43
-	add $28			; $6b44
+	add Object.var30-Object.direction 			; $6b44
 	ld e,a			; $6b46
 	ld a,l			; $6b47
 	ld (de),a		; $6b48
@@ -137861,7 +137902,7 @@ objectFunc_6b2d:
 	ld (de),a		; $6b4b
 
 ;;
-; Called from objectFunc_3049 in bank0.
+; Called from objectFunc_3049 in bank0. For a type of mini-script? (TODO)
 ;
 ; @addr{6b4c}
 objectFunc_6b4c:
@@ -137873,112 +137914,146 @@ objectFunc_6b4c:
 	inc e			; $6b53
 	ld a,(de)		; $6b54
 	ld h,a			; $6b55
-_label_273:
+
+@nextOp:
 	ldi a,(hl)		; $6b56
 	push hl			; $6b57
 	rst_jumpTable			; $6b58
-.dw $6b67
-.dw $6b6d
-.dw $6b83
-.dw $6b99
-.dw $6baf
-.dw $6bc5
-.dw $6bda
+	.dw @cmd00_jump
+	.dw @val1
+	.dw @val2
+	.dw @val3
+	.dw @val4
+	.dw @val5
+	.dw @val6
+
+
+@cmd00_jump:
 	pop hl			; $6b67
 	ldi a,(hl)		; $6b68
 	ld h,(hl)		; $6b69
 	ld l,a			; $6b6a
-	jr _label_273		; $6b6b
+	jr @nextOp		; $6b6b
+
+
+@val1:
 	pop bc			; $6b6d
 	ld h,d			; $6b6e
 	ldh a,(<hActiveObjectType)	; $6b6f
-	add $32			; $6b71
+	add Object.var32			; $6b71
 	ld l,a			; $6b73
 	ld a,(bc)		; $6b74
 	ld (hl),a		; $6b75
+
 	ld a,l			; $6b76
-	add $d7			; $6b77
+	add Object.angle-Object.var32			; $6b77
 	ld l,a			; $6b79
-	ld (hl),$00		; $6b7a
-	add $fb			; $6b7c
+	ld (hl),ANGLE_UP		; $6b7a
+
+	add Object.state-Object.angle			; $6b7c
 	ld l,a			; $6b7e
 	ld (hl),$08		; $6b7f
-	jr _label_274		; $6b81
+	jr @storePointer		; $6b81
+
+
+@val2:
 	pop bc			; $6b83
 	ld h,d			; $6b84
 	ldh a,(<hActiveObjectType)	; $6b85
-	add $33			; $6b87
+	add Object.var33			; $6b87
 	ld l,a			; $6b89
 	ld a,(bc)		; $6b8a
 	ld (hl),a		; $6b8b
+
 	ld a,l			; $6b8c
-	add $d6			; $6b8d
+	add Object.angle-Object.var33			; $6b8d
 	ld l,a			; $6b8f
-	ld (hl),$08		; $6b90
-	add $fb			; $6b92
+	ld (hl),ANGLE_RIGHT		; $6b90
+
+	add Object.state-Object.angle			; $6b92
 	ld l,a			; $6b94
 	ld (hl),$09		; $6b95
-	jr _label_274		; $6b97
+	jr @storePointer		; $6b97
+
+
+@val3:
 	pop bc			; $6b99
 	ld h,d			; $6b9a
 	ldh a,(<hActiveObjectType)	; $6b9b
-	add $32			; $6b9d
+	add Object.var32			; $6b9d
 	ld l,a			; $6b9f
 	ld a,(bc)		; $6ba0
 	ld (hl),a		; $6ba1
+
 	ld a,l			; $6ba2
-	add $d7			; $6ba3
+	add Object.angle-Object.var32			; $6ba3
 	ld l,a			; $6ba5
-	ld (hl),$10		; $6ba6
-	add $fb			; $6ba8
+	ld (hl),ANGLE_DOWN		; $6ba6
+
+	add Object.state-Object.angle			; $6ba8
 	ld l,a			; $6baa
 	ld (hl),$0a		; $6bab
-	jr _label_274		; $6bad
+	jr @storePointer		; $6bad
+
+
+@val4:
 	pop bc			; $6baf
 	ld h,d			; $6bb0
 	ldh a,(<hActiveObjectType)	; $6bb1
-	add $33			; $6bb3
+	add Object.var33			; $6bb3
 	ld l,a			; $6bb5
 	ld a,(bc)		; $6bb6
 	ld (hl),a		; $6bb7
+
 	ld a,l			; $6bb8
-	add $d6			; $6bb9
+	add Object.angle-Object.var33			; $6bb9
 	ld l,a			; $6bbb
-	ld (hl),$18		; $6bbc
-	add $fb			; $6bbe
+	ld (hl),ANGLE_LEFT		; $6bbc
+
+	add Object.state-Object.angle			; $6bbe
 	ld l,a			; $6bc0
 	ld (hl),$0b		; $6bc1
-	jr _label_274		; $6bc3
+	jr @storePointer		; $6bc3
+
+
+@val5:
 	pop bc			; $6bc5
 	ld h,d			; $6bc6
 	ldh a,(<hActiveObjectType)	; $6bc7
-	add $06			; $6bc9
+	add Object.counter1			; $6bc9
 	ld l,a			; $6bcb
 	ld a,(bc)		; $6bcc
 	ldd (hl),a		; $6bcd
+
 	dec l			; $6bce
-	ld (hl),$0c		; $6bcf
-_label_274:
+	ld (hl),$0c ; [state]
+
+@storePointer:
 	inc bc			; $6bd1
 	ld a,l			; $6bd2
-	add $2c			; $6bd3
+	add Object.var30-Object.state			; $6bd3
 	ld l,a			; $6bd5
 	ld (hl),c		; $6bd6
 	inc l			; $6bd7
 	ld (hl),b		; $6bd8
 	ret			; $6bd9
+
+
+@val6:
 	pop bc			; $6bda
 	ld h,d			; $6bdb
 	ldh a,(<hActiveObjectType)	; $6bdc
-	add $06			; $6bde
+	add Object.counter1			; $6bde
 	ld l,a			; $6be0
 	ld a,(bc)		; $6be1
 	ldd (hl),a		; $6be2
+
 	dec l			; $6be3
 	inc bc			; $6be4
 	ld a,(bc)		; $6be5
-	ld (hl),a		; $6be6
-	jr _label_274		; $6be7
+	ld (hl),a ; [state]
+
+	jr @storePointer		; $6be7
 
 ;;
 ; @addr{6be9}
@@ -159515,7 +159590,7 @@ _label_11_053:
 .dw $4853
 
 _label_11_054:
-	ld hl,$6b22		; $4806
+	ld hl,bank0e.data_6b22		; $4806
 	call objectFunc_3035		; $4809
 	ld h,d			; $480c
 	ld l,$c3		; $480d
