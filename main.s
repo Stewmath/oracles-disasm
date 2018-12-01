@@ -133664,295 +133664,451 @@ _peahat_updatePosition:
 _peahat_counter1Vals:
 	.db 180 180 210 210 240 240 0 0
 
-;;
-; @addr{58b2}
+
+; ==============================================================================
+; ENEMYID_WIZZROBE
+;
+; Variables:
+;   var30: The low byte of wWizzrobePositionReservations that this wizzrobe is using
+;          (red wizzrobes only)
+;   var31/var32: Target position (blue wizzrobes only)
+; ==============================================================================
 enemyCode40:
 	call _ecom_checkHazardsNoAnimationForHoles		; $58b2
-	jr z,_label_162	; $58b5
-	sub $03			; $58b7
+	jr z,@normalStatus	; $58b5
+	sub ENEMYSTATUS_NO_HEALTH			; $58b7
 	ret c			; $58b9
 	jp z,enemyDie		; $58ba
 	dec a			; $58bd
 	jp nz,_ecom_updateKnockbackAndCheckHazards		; $58be
-	jr _label_161		; $58c1
-_label_161:
-	ld e,$82		; $58c3
+	jr @justHit		; $58c1
+
+@justHit:
+	; For red wizzrobes only...
+	ld e,Enemy.subid		; $58c3
 	ld a,(de)		; $58c5
 	dec a			; $58c6
 	ret nz			; $58c7
-	ld e,$ae		; $58c8
+
+	ld e,Enemy.stunCounter		; $58c8
 	ld a,(de)		; $58ca
 	or a			; $58cb
 	ret nz			; $58cc
-	ld e,$aa		; $58cd
-	ld a,(de)		; $58cf
-	cp $80			; $58d0
-	ret z			; $58d2
-	jp $5a08		; $58d3
-_label_162:
-	call _ecom_getSubidAndCpStateTo08		; $58d6
-	jr nc,_label_163	; $58d9
-	rst_jumpTable			; $58db
-.dw $58f4
-.dw $5950
-.dw $5950
-.dw $5926
-.dw $5950
-.dw _ecom_blownByGaleSeedState
-.dw $5950
-.dw $5950
 
-_label_163:
+	ld e,Enemy.var2a		; $58cd
+	ld a,(de)		; $58cf
+	cp COLLISIONTYPE_LINK|$80			; $58d0
+	ret z			; $58d2
+
+	; The wizzrobe is knocked out of its normal position; allow other wizzrobes to
+	; spawn there
+	jp _wizzrobe_removePositionReservation		; $58d3
+
+@normalStatus:
+	call _ecom_getSubidAndCpStateTo08		; $58d6
+	jr nc,@normalState	; $58d9
+	rst_jumpTable			; $58db
+	.dw _wizzrobe_state_uninitialized
+	.dw _wizzrobe_state_stub
+	.dw _wizzrobe_state_stub
+	.dw _wizzrobe_state_switchHook
+	.dw _wizzrobe_state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw _wizzrobe_state_stub
+	.dw _wizzrobe_state_stub
+
+@normalState:
 	ld a,b			; $58ec
 	rst_jumpTable			; $58ed
-.dw $5951
-.dw $59a6
-.dw $5a14
+	.dw _wizzrobe_subid0
+	.dw _wizzrobe_subid1
+	.dw _wizzrobe_subid2
+
+
+_wizzrobe_state_uninitialized:
 	ld h,d			; $58f4
-	ld l,$9a		; $58f5
+	ld l,Enemy.visible		; $58f5
 	ld a,(hl)		; $58f7
 	or $42			; $58f8
 	ld (hl),a		; $58fa
+
 	ld l,e			; $58fb
-	ld e,$82		; $58fc
+	ld e,Enemy.subid		; $58fc
 	ld a,(de)		; $58fe
 	or a			; $58ff
-	jr nz,_label_164	; $5900
-	ld (hl),$08		; $5902
-	ld l,$86		; $5904
+	jr nz,@subid1Or2	; $5900
+
+@subid0:
+	ld (hl),$08 ; [state]
+	ld l,Enemy.counter1		; $5904
 	ld (hl),$50		; $5906
 	ret			; $5908
-_label_164:
+
+@subid1Or2:
 	dec a			; $5909
-	jr nz,_label_165	; $590a
-	ld (hl),$08		; $590c
-	ld hl,$cee0		; $590e
+	jr nz,@subid2	; $590a
+
+@subid1:
+	ld (hl),$08 ; [state]
+	ld hl,wWizzrobePositionReservations		; $590e
 	ld b,$10		; $5911
 	jp clearMemory		; $5913
-_label_165:
-	ld (hl),$0b		; $5916
-	ld l,$90		; $5918
-	ld (hl),$14		; $591a
-	ld l,$86		; $591c
+
+@subid2:
+	ld (hl),$0b ; [state]
+	ld l,Enemy.speed		; $5918
+	ld (hl),SPEED_80		; $591a
+
+	ld l,Enemy.counter1		; $591c
 	ld (hl),$08		; $591e
 	call _ecom_setRandomCardinalAngle		; $5920
-	jp $5aa7		; $5923
+	jp _wizzrobe_setAnimationFromAngle		; $5923
+
+
+_wizzrobe_state_switchHook:
 	inc e			; $5926
 	ld a,(de)		; $5927
 	rst_jumpTable			; $5928
-.dw _ecom_incState2
-.dw $5931
-.dw $5931
-.dw $5932
+	.dw _ecom_incState2
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+
+@substate1:
+@substate2:
 	ret			; $5931
+
+@substate3:
 	call _ecom_fallToGroundAndSetState		; $5932
 	ret nz			; $5935
-	ld l,$a4		; $5936
+
+	ld l,Enemy.collisionType		; $5936
 	res 7,(hl)		; $5938
-	ld e,$82		; $593a
+
+	ld e,Enemy.subid		; $593a
 	ld a,(de)		; $593c
-	ld hl,$594a		; $593d
+	ld hl,@stateAndCounter1		; $593d
 	rst_addDoubleIndex			; $5940
-	ld e,$84		; $5941
+
+	ld e,Enemy.state		; $5941
 	ldi a,(hl)		; $5943
 	ld (de),a		; $5944
-	ld e,$86		; $5945
+	ld e,Enemy.counter1		; $5945
 	ld a,(hl)		; $5947
 	ld (de),a		; $5948
 	ret			; $5949
-	dec bc			; $594a
-	ld e,$0b		; $594b
-	sub (hl)		; $594d
-	add hl,bc		; $594e
-	nop			; $594f
+
+@stateAndCounter1:
+	.db $0b,  30 ; 0 == [subid]
+	.db $0b, 150 ; 1
+	.db $09,   0 ; 2
+
+
+_wizzrobe_state_stub:
 	ret			; $5950
+
+
+; Green wizzrobe
+_wizzrobe_subid0:
 	ld a,(de)		; $5951
 	sub $08			; $5952
 	rst_jumpTable			; $5954
-.dw $595d
-.dw $5968
-.dw $597c
-.dw $5994
+	.dw _wizzrobe_subid0_state8
+	.dw _wizzrobe_subid0_state9
+	.dw _wizzrobe_subid0_stateA
+	.dw _wizzrobe_subid0_stateB
+
+
+; Waiting [counter1] frames before spawning in
+_wizzrobe_subid0_state8:
 	call _ecom_decCounter1		; $595d
 	ret nz			; $5960
-	ld (hl),$4b		; $5961
+	ld (hl),75		; $5961
 	ld l,e			; $5963
-	inc (hl)		; $5964
+	inc (hl) ; [state]
 	jp objectSetVisiblec2		; $5965
+
+
+; Phasing in for [counter1] frames
+_wizzrobe_subid0_state9:
 	call _ecom_decCounter1		; $5968
-	jp nz,$5ab5		; $596b
-	ld (hl),$48		; $596e
+	jp nz,_wizzrobe_checkFlickerVisibility		; $596b
+
+	ld (hl),72 ; [counter1]
 	ld l,e			; $5970
-	inc (hl)		; $5971
-	ld l,$a4		; $5972
+	inc (hl) ; [state]
+
+	ld l,Enemy.collisionType		; $5972
 	set 7,(hl)		; $5974
+
 	call _ecom_updateCardinalAngleTowardTarget		; $5976
-	jp $5aa7		; $5979
+	jp _wizzrobe_setAnimationFromAngle		; $5979
+
+
+; Fully phased in; standing there for [counter1] frames, and firing a projectile at some
+; point
+_wizzrobe_subid0_stateA:
 	call _ecom_decCounter1		; $597c
-	jr z,_label_166	; $597f
+	jr z,@phaseOut	; $597f
+
+	; Fire a projectile when [counter1] == 52
 	ld a,(hl)		; $5981
-	cp $34			; $5982
+	cp 52			; $5982
 	ret nz			; $5984
-	ld b,$1f		; $5985
+	ld b,PARTID_WIZZROBE_PROJECTILE		; $5985
 	jp _ecom_spawnProjectile		; $5987
-_label_166:
+
+@phaseOut:
 	ld l,e			; $598a
-	inc (hl)		; $598b
-	ld l,$a4		; $598c
+	inc (hl) ; [state]
+
+	ld l,Enemy.collisionType		; $598c
 	res 7,(hl)		; $598e
+
 	xor a			; $5990
 	jp enemySetAnimation		; $5991
+
+
+; Phasing out
+_wizzrobe_subid0_stateB:
 	ld h,d			; $5994
-	ld l,$86		; $5995
+	ld l,Enemy.counter1		; $5995
 	inc (hl)		; $5997
 	ld a,(hl)		; $5998
-	cp $4b			; $5999
-	jp c,$5ab5		; $599b
-	ld (hl),$48		; $599e
+	cp 75			; $5999
+	jp c,_wizzrobe_checkFlickerVisibility		; $599b
+
+	ld (hl),72 ; [counter1]
 	ld l,e			; $59a0
-	ld (hl),$08		; $59a1
+	ld (hl),$08 ; [state]
 	jp objectSetInvisible		; $59a3
+
+
+; Red wizzrobe
+_wizzrobe_subid1:
 	ld a,(de)		; $59a6
 	sub $08			; $59a7
 	rst_jumpTable			; $59a9
-.dw $59b2
-.dw $59ce
-.dw $59df
-.dw $59f6
-	call $5adf		; $59b2
+	.dw _wizzrobe_subid1_state8
+	.dw _wizzrobe_subid1_state9
+	.dw _wizzrobe_subid1_stateA
+	.dw _wizzrobe_subid1_stateB
+
+
+; Choosing a new position to spawn at
+_wizzrobe_subid1_state8:
+	call _wizzrobe_chooseSpawnPosition		; $59b2
 	ret nz			; $59b5
-	call $5b0d		; $59b6
+	call _wizzrobe_markSpotAsTaken		; $59b6
 	ret z			; $59b9
+
 	ld h,d			; $59ba
-	ld l,$8b		; $59bb
+	ld l,Enemy.yh		; $59bb
 	ld (hl),b		; $59bd
-	ld l,$8d		; $59be
+	ld l,Enemy.xh		; $59be
 	ld (hl),c		; $59c0
-	ld l,$84		; $59c1
+
+	ld l,Enemy.state		; $59c1
 	inc (hl)		; $59c3
-	ld l,$86		; $59c4
-	ld (hl),$3c		; $59c6
+
+	ld l,Enemy.counter1		; $59c4
+	ld (hl),60		; $59c6
+
 	call _ecom_updateCardinalAngleTowardTarget		; $59c8
-	jp $5aa7		; $59cb
+	jp _wizzrobe_setAnimationFromAngle		; $59cb
+
+
+; Phasing in for [counter1] frames
+_wizzrobe_subid1_state9:
 	call _ecom_decCounter1		; $59ce
 	jp nz,_ecom_flickerVisibility		; $59d1
-	ld (hl),$48		; $59d4
+
+	ld (hl),72 ; [counter1]
 	ld l,e			; $59d6
-	inc (hl)		; $59d7
-	ld l,$a4		; $59d8
+	inc (hl) ; [state]
+
+	ld l,Enemy.collisionType		; $59d8
 	set 7,(hl)		; $59da
 	jp objectSetVisiblec2		; $59dc
+
+
+; Fully phased in; standing there for [counter1] frames, and firing a projectile at some
+; point
+_wizzrobe_subid1_stateA:
 	call _ecom_decCounter1		; $59df
-	jr z,_label_167	; $59e2
+	jr z,@phaseOut	; $59e2
+
+	; Fire a projectile when [counter1] == 52
 	ld a,(hl)		; $59e4
-	cp $34			; $59e5
+	cp 52			; $59e5
 	ret nz			; $59e7
-	ld b,$1f		; $59e8
+	ld b,PARTID_WIZZROBE_PROJECTILE		; $59e8
 	jp _ecom_spawnProjectile		; $59ea
-_label_167:
-	ld (hl),$b4		; $59ed
+
+@phaseOut:
+	ld (hl),180 ; [counter1]
 	ld l,e			; $59ef
-	inc (hl)		; $59f0
-	ld l,$a4		; $59f1
+	inc (hl) ; [state]
+
+	ld l,Enemy.collisionType		; $59f1
 	res 7,(hl)		; $59f3
 	ret			; $59f5
+
+
+; Phasing out
+_wizzrobe_subid1_stateB:
 	call _ecom_decCounter1		; $59f6
-	jr z,_label_168	; $59f9
+	jr z,@gotoState8	; $59f9
+
 	ld a,(hl)		; $59fb
-	cp $78			; $59fc
+	cp 120			; $59fc
 	ret c			; $59fe
 	jp z,objectSetInvisible		; $59ff
 	jp _ecom_flickerVisibility		; $5a02
-_label_168:
+
+@gotoState8:
 	ld l,e			; $5a05
-	ld (hl),$08		; $5a06
+	ld (hl),$08 ; [state]
+
+
+;;
+; Removes position reservation in "wWizzrobePositionReservations" allowing other wizzrobes
+; to spawn here.
+; @addr{5a08}
+_wizzrobe_removePositionReservation:
 	ld h,d			; $5a08
-	ld l,$b0		; $5a09
+	ld l,Enemy.var30		; $5a09
 	ld l,(hl)		; $5a0b
-	ld h,$ce		; $5a0c
+	ld h,>wWizzrobePositionReservations		; $5a0c
 	ld a,(hl)		; $5a0e
 	sub d			; $5a0f
 	ret nz			; $5a10
 	ldd (hl),a		; $5a11
 	ld (hl),a		; $5a12
 	ret			; $5a13
+
+
+; Blue wizzrobe
+_wizzrobe_subid2:
 	ld a,(de)		; $5a14
 	sub $08			; $5a15
 	rst_jumpTable			; $5a17
-.dw $5a20
-.dw $5a48
-.dw $5a5f
-.dw $5a7f
+	.dw _wizzrobe_subid2_state8
+	.dw _wizzrobe_subid2_state9
+	.dw _wizzrobe_subid2_stateA
+	.dw _wizzrobe_subid2_stateB
+
+
+; Currently phased in, attacking until [counter1] reaches 0 or it hits a wall
+_wizzrobe_subid2_state8:
 	call _ecom_decCounter1		; $5a20
-	jr z,_label_170	; $5a23
+	jr z,@phaseOut	; $5a23
+
+	; Reorient toward Link in [counter2] frames
 	inc l			; $5a25
-	dec (hl)		; $5a26
-	jr nz,_label_169	; $5a27
+	dec (hl) ; [counter2]
+	jr nz,@updatePosition	; $5a27
+
 	call _ecom_updateCardinalAngleTowardTarget		; $5a29
-	call $5aa7		; $5a2c
+	call _wizzrobe_setAnimationFromAngle		; $5a2c
+
+	; Set random counter2 from $20-$5f
 	call getRandomNumber_noPreserveVars		; $5a2f
 	and $3f			; $5a32
 	add $20			; $5a34
-	ld e,$87		; $5a36
+	ld e,Enemy.counter2		; $5a36
 	ld (de),a		; $5a38
-_label_169:
-	call $5b02		; $5a39
+
+@updatePosition:
+	call _wizzrobe_fireEvery32Frames		; $5a39
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $5a3c
 	ret nz			; $5a3f
-_label_170:
+
+@phaseOut:
 	call _ecom_incState		; $5a40
-	ld l,$a4		; $5a43
+	ld l,Enemy.collisionType		; $5a43
 	res 7,(hl)		; $5a45
 	ret			; $5a47
-	call $5adf		; $5a48
+
+
+; Currently phased out, choosing a target position
+_wizzrobe_subid2_state9:
+	call _wizzrobe_chooseSpawnPosition		; $5a48
 	jp nz,_ecom_flickerVisibility		; $5a4b
+
+	; Store target position
 	ld h,d			; $5a4e
-	ld l,$b1		; $5a4f
+	ld l,Enemy.var31		; $5a4f
 	ld (hl),b		; $5a51
 	inc l			; $5a52
 	ld (hl),c		; $5a53
-	ld l,$84		; $5a54
+
+	ld l,Enemy.state		; $5a54
 	inc (hl)		; $5a56
-	ld l,$8f		; $5a57
+
+	ld l,Enemy.zh		; $5a57
 	dec (hl)		; $5a59
-	call $5ad2		; $5a5a
-	jr _label_172		; $5a5d
-	call $5ad2		; $5a5f
+
+	call _wizzrobe_setAngleTowardTargetPosition		; $5a5a
+	jr _wizzrobe_setAnimationFromAngle		; $5a5d
+
+
+; Currently phased out, moving toward target position
+_wizzrobe_subid2_stateA:
+	call _wizzrobe_setAngleTowardTargetPosition		; $5a5f
 	call _ecom_flickerVisibility		; $5a62
-	call $5abe		; $5a65
+	call _wizzrobe_checkReachedTargetPosition		; $5a65
 	jp nc,objectApplySpeed		; $5a68
-	ld l,$84		; $5a6b
+
+	; Reached target position
+	ld l,Enemy.state		; $5a6b
 	inc (hl)		; $5a6d
-	ld l,$86		; $5a6e
+
+	ld l,Enemy.counter1		; $5a6e
 	ld (hl),$08		; $5a70
-	ld l,$8f		; $5a72
-_label_171:
+
+	ld l,Enemy.zh		; $5a72
 	ld (hl),$00		; $5a74
+
 	call _ecom_updateCardinalAngleTowardTarget		; $5a76
-	call $5aa7		; $5a79
+	call _wizzrobe_setAnimationFromAngle		; $5a79
 	jp objectSetVisiblec2		; $5a7c
+
+
+; Standing still for [counter1] frames (8 frames) before phasing in and attacking again
+_wizzrobe_subid2_stateB:
 	call _ecom_decCounter1		; $5a7f
 	jp nz,_ecom_flickerVisibility		; $5a82
+
 	ld h,d			; $5a85
 	ld l,e			; $5a86
-	ld (hl),$08		; $5a87
-	ld l,$a4		; $5a89
+	ld (hl),$08 ; [state]
+
+	ld l,Enemy.collisionType		; $5a89
 	set 7,(hl)		; $5a8b
+
+	; Choose random counter1 between $80-$ff (how long to stay in state 8)
 	ld bc,$7f3f		; $5a8d
 	call _ecom_randomBitwiseAndBCE		; $5a90
-	ld e,$86		; $5a93
+	ld e,Enemy.counter1		; $5a93
 	ld a,b			; $5a95
 	add $80			; $5a96
 	ld (de),a		; $5a98
+
+	; Choose random counter2 between $10-$4f (when to reorient toward Link)
 	inc e			; $5a99
 	ld a,c			; $5a9a
 	add $10			; $5a9b
 	ld (de),a		; $5a9d
+
 	call _ecom_updateCardinalAngleTowardTarget		; $5a9e
-	call $5aa7		; $5aa1
+	call _wizzrobe_setAnimationFromAngle		; $5aa1
 	jp objectSetVisiblec2		; $5aa4
-_label_172:
-	ld e,$89		; $5aa7
+
+;;
+; @addr{5aa7}
+_wizzrobe_setAnimationFromAngle:
+	ld e,Enemy.angle		; $5aa7
 	ld a,(de)		; $5aa9
 	add $04			; $5aaa
 	and $18			; $5aac
@@ -133960,46 +134116,73 @@ _label_172:
 	rlca			; $5ab0
 	inc a			; $5ab1
 	jp enemySetAnimation		; $5ab2
-	ld e,$86		; $5ab5
+
+;;
+; Flicker visibility when [counter1] < 45.
+; @addr{5ab5}
+_wizzrobe_checkFlickerVisibility:
+	ld e,Enemy.counter1		; $5ab5
 	ld a,(de)		; $5ab7
-	cp $2d			; $5ab8
+	cp 45			; $5ab8
 	ret c			; $5aba
 	jp _ecom_flickerVisibility		; $5abb
+
+;;
+; @param[out]	cflag	c if within 1 pixel of target position in both directions
+; @addr{5abe}
+_wizzrobe_checkReachedTargetPosition:
 	ld h,d			; $5abe
-	ld l,$8b		; $5abf
-	ld e,$b1		; $5ac1
+	ld l,Enemy.yh		; $5abf
+	ld e,Enemy.var31		; $5ac1
 	ld a,(de)		; $5ac3
 	sub (hl)		; $5ac4
 	inc a			; $5ac5
 	cp $03			; $5ac6
 	ret nc			; $5ac8
-	ld l,$8d		; $5ac9
+	ld l,Enemy.xh		; $5ac9
 	inc e			; $5acb
 	ld a,(de)		; $5acc
 	sub (hl)		; $5acd
 	inc a			; $5ace
 	cp $03			; $5acf
 	ret			; $5ad1
+
+
+;;
+; @addr{5ad2}
+_wizzrobe_setAngleTowardTargetPosition:
 	ld h,d			; $5ad2
-	ld l,$b1		; $5ad3
+	ld l,Enemy.var31		; $5ad3
 	call _ecom_readPositionVars		; $5ad5
 	call objectGetRelativeAngleWithTempVars		; $5ad8
-	ld e,$89		; $5adb
+	ld e,Enemy.angle		; $5adb
 	ld (de),a		; $5add
 	ret			; $5ade
+
+
+;;
+; Chooses a random position somewhere within the screen boundaries (accounting for camera
+; position). It may choose a solid position (in which case this need to be called again).
+;
+; @param[out]	bc	Chosen position (long form)
+; @param[out]	l	Chosen position (short form)
+; @param[out]	zflag	nz if this tile has solidity
+; @addr{5adf}
+_wizzrobe_chooseSpawnPosition:
 	call getRandomNumber_noPreserveVars		; $5adf
-	and $70			; $5ae2
+	and $70 ; Value strictly under SCREEN_HEIGHT<<4
 	ld b,a			; $5ae4
 	ldh a,(<hCameraY)	; $5ae5
 	add b			; $5ae7
 	and $f0			; $5ae8
 	add $08			; $5aea
 	ld b,a			; $5aec
-_label_173:
+--
 	call getRandomNumber		; $5aed
 	and $f0			; $5af0
-	cp $a0			; $5af2
-	jr nc,_label_173	; $5af4
+	cp SCREEN_WIDTH<<4			; $5af2
+	jr nc,--		; $5af4
+
 	ld c,a			; $5af6
 	ldh a,(<hCameraX)	; $5af7
 	add c			; $5af9
@@ -134007,43 +134190,62 @@ _label_173:
 	add $08			; $5afc
 	ld c,a			; $5afe
 	jp getTileCollisionsAtPosition		; $5aff
-	ld e,$86		; $5b02
+
+;;
+; @addr{5b02}
+_wizzrobe_fireEvery32Frames:
+	ld e,Enemy.counter1		; $5b02
 	ld a,(de)		; $5b04
 	and $1f			; $5b05
 	ret nz			; $5b07
-	ld b,$1f		; $5b08
+	ld b,PARTID_WIZZROBE_PROJECTILE		; $5b08
 	jp _ecom_spawnProjectile		; $5b0a
+
+
+;;
+; Marks a spot as taken in wWizzrobePositionReservations; the position is reserved so no
+; other red wizzrobe can spawn there. If this position is already reserved, this returns
+; with the zflag set.
+;
+; @param	l	Position
+; @param[out]	zflag	z if position already reserved, or wWizzrobePositionReservations
+;			is full
+; @addr{5b0d}
+_wizzrobe_markSpotAsTaken:
 	push bc			; $5b0d
 	ld e,l			; $5b0e
 	ld b,$08		; $5b0f
 	ld c,b			; $5b11
-	ld hl,$cee0		; $5b12
-_label_174:
+	ld hl,wWizzrobePositionReservations		; $5b12
+--
 	ldi a,(hl)		; $5b15
 	cp e			; $5b16
-	jr z,_label_177	; $5b17
+	jr z,@ret	; $5b17
 	inc l			; $5b19
 	dec b			; $5b1a
-	jr nz,_label_174	; $5b1b
-	ld l,$e0		; $5b1d
-_label_175:
+	jr nz,--		; $5b1b
+
+	ld l,<wWizzrobePositionReservations		; $5b1d
+--
 	ld a,(hl)		; $5b1f
 	or a			; $5b20
-	jr z,_label_176	; $5b21
+	jr z,@fillBlankSpot	; $5b21
 	inc l			; $5b23
 	inc l			; $5b24
 	dec c			; $5b25
-	jr nz,_label_175	; $5b26
-	jr _label_177		; $5b28
-_label_176:
+	jr nz,--		; $5b26
+	jr @ret		; $5b28
+
+@fillBlankSpot:
 	ld (hl),e		; $5b2a
 	inc l			; $5b2b
 	ld (hl),d		; $5b2c
-	ld e,$b0		; $5b2d
+	ld e,Enemy.var30		; $5b2d
 	ld a,l			; $5b2f
 	ld (de),a		; $5b30
 	or d			; $5b31
-_label_177:
+
+@ret:
 	pop bc			; $5b32
 	ret			; $5b33
 

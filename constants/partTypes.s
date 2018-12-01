@@ -75,6 +75,8 @@
 
 .define PARTID_DEKU_SCRUB_PROJECTILE		$1e
 
+.define PARTID_WIZZROBE_PROJECTILE		$1f
+
 ;;
 ; Created by fire keese
 .define PARTID_FIRE				$20

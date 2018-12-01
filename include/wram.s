@@ -2572,6 +2572,7 @@ wTmpcec0: ; $cec0
 .enum $cec0
 	wEnemyPlacement: instanceof EnemyPlacementStruct
 .ende
+
 .enum $cee0
 	wShootingGalleryTileLayoutsToShow: ; $cee0
 	; This consists of the numbers 0-9. As the game progresses, a number is read from
@@ -2581,6 +2582,14 @@ wTmpcec0: ; $cec0
 	;
 	; The goron dance also uses this in exactly the same way.
 		dsb 10
+.ende
+
+.enum $cee0
+	wWizzrobePositionReservations: ; $cee0
+	; Each 2 bytes are the position and object index of a wizzrobe. Keeps track of
+	; their positions so multiple red wizzrobes don't spawn on top of each other.
+	; A red could still spawn on top of a green, though.
+		dsb $10
 .ende
 
 
