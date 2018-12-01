@@ -135331,121 +135331,203 @@ _pincer_body_updateExtendedAmount:
 	srl a			; $5ff1
 	ret			; $5ff3
 
-;;
-; @addr{5ff4}
+
+; ==============================================================================
+; ENEMYID_BALL_AND_CHAIN_SOLDIER
+;
+; Variables:
+;   relatedObj2: reference to PARTID_SPIKED_BALL
+;   counter1: Written to by PARTID_SPIKED_BALL?
+;   var30: Signal for PARTID_SPIKED_BALL.
+;          0: Ball should rotate at normal speed.
+;          1: Ball should rotate at double speed.
+;          2: Ball should be thrown at Link.
+;   var31: State to return to after switch hook is used on enemy
+; ==============================================================================
 enemyCode4b:
-	jr z,_label_210	; $5ff4
-	sub $03			; $5ff6
+	jr z,@normalStatus	; $5ff4
+	sub ENEMYSTATUS_NO_HEALTH			; $5ff6
 	ret c			; $5ff8
-	jr nz,_label_210	; $5ff9
+	jr nz,@normalStatus	; $5ff9
 	jp enemyDie		; $5ffb
-_label_210:
+
+@normalStatus:
 	call _ecom_checkHazards		; $5ffe
-	ld e,$84		; $6001
+	ld e,Enemy.state		; $6001
 	ld a,(de)		; $6003
 	rst_jumpTable			; $6004
-.dw $601b
-.dw $603c
-.dw $603c
-.dw $6029
-.dw $603c
-.dw $603c
-.dw $603c
-.dw $603c
-.dw $603d
-.dw $605f
-.dw $606e
-	call $6095		; $601b
+	.dw _ballAndChain_state_uninitialized
+	.dw _ballAndChain_state_stub
+	.dw _ballAndChain_state_stub
+	.dw _ballAndChain_state_switchHook
+	.dw _ballAndChain_state_stub
+	.dw _ballAndChain_state_stub
+	.dw _ballAndChain_state_stub
+	.dw _ballAndChain_state_stub
+	.dw _ballAndChain_state8
+	.dw _ballAndChain_state9
+	.dw _ballAndChain_stateA
+
+
+_ballAndChain_state_uninitialized:
+	call _ballAndChain_spawnSpikedBall		; $601b
 	ret nz			; $601e
-	ld a,$0f		; $601f
+
+	ld a,SPEED_60		; $601f
 	call _ecom_setSpeedAndState8AndVisible		; $6021
-	ld l,$b1		; $6024
+
+	ld l,Enemy.var31		; $6024
 	ld (hl),$08		; $6026
 	ret			; $6028
+
+
+_ballAndChain_state_switchHook:
 	inc e			; $6029
 	ld a,(de)		; $602a
 	rst_jumpTable			; $602b
-.dw _ecom_incState2
-.dw $6034
-.dw $6034
-.dw $6035
+	.dw _ecom_incState2
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+
+@substate1:
+@substate2:
 	ret			; $6034
-	ld e,$b1		; $6035
+
+@substate3:
+	ld e,Enemy.var31		; $6035
 	ld a,(de)		; $6037
 	ld b,a			; $6038
 	jp _ecom_fallToGroundAndSetState		; $6039
+
+
+_ballAndChain_state_stub:
 	ret			; $603c
+
+
+; Waiting for Link to be close enough to attack
+_ballAndChain_state8:
 	ld c,$38		; $603d
 	call objectCheckLinkWithinDistance		; $603f
-	jr nc,_label_211	; $6042
+	jr nc,@moveTowardLink	; $6042
+
+	; Link is close enough
 	call _ecom_incState		; $6044
-	call $60b6		; $6047
-	ld l,$86		; $604a
-	ld (hl),$5a		; $604c
-	ld l,$b0		; $604e
+	call _ballAndChain_setDefaultState		; $6047
+
+	ld l,Enemy.counter1		; $604a
+	ld (hl),90		; $604c
+
+	; Signal PARTID_SPIKED_BALL to rotate faster
+	ld l,Enemy.var30		; $604e
 	inc (hl)		; $6050
+
 	ld a,$01		; $6051
 	jp enemySetAnimation		; $6053
-_label_211:
+
+@moveTowardLink:
 	call _ecom_updateAngleTowardTarget		; $6056
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $6059
-_label_212:
+
+_ballAndChain_animate:
 	jp enemyAnimate		; $605c
+
+
+; Spinning up ball for [counter1] frames before attacking
+_ballAndChain_state9:
 	call _ecom_decCounter1		; $605f
-	jr nz,_label_212	; $6062
-	inc (hl)		; $6064
+	jr nz,_ballAndChain_animate	; $6062
+
+	inc (hl) ; [counter1]
 	ld l,e			; $6065
-	inc (hl)		; $6066
-	call $60b6		; $6067
-	ld l,$b0		; $606a
+	inc (hl) ; [state]
+
+	call _ballAndChain_setDefaultState		; $6067
+
+	; Signal PARTID_SPIKED_BALL to begin throw toward Link
+	ld l,Enemy.var30		; $606a
 	inc (hl)		; $606c
 	ret			; $606d
-	ld e,$86		; $606e
+
+
+; Waiting for PARTID_SPIKED_BALL to set this object's counter1 to 0 (signalling the throw
+; is done)
+_ballAndChain_stateA:
+	ld e,Enemy.counter1		; $606e
 	ld a,(de)		; $6070
 	or a			; $6071
 	ret nz			; $6072
+
+	; Throw done
+
 	ld c,$38		; $6073
 	call objectCheckLinkWithinDistance		; $6075
 	ld h,d			; $6078
-	ld l,$84		; $6079
-	jr nc,_label_213	; $607b
-	dec (hl)		; $607d
-	call $60b6		; $607e
-	ld l,$86		; $6081
-	ld (hl),$5a		; $6083
-	ld l,$b0		; $6085
+	ld l,Enemy.state		; $6079
+	jr nc,@gotoState8	; $607b
+
+	; Link is close; attack again immediately
+	dec (hl) ; [state] = 9
+	call _ballAndChain_setDefaultState		; $607e
+	ld l,Enemy.counter1		; $6081
+	ld (hl),90		; $6083
+
+	ld l,Enemy.var30		; $6085
 	dec (hl)		; $6087
 	ret			; $6088
-_label_213:
-	ld (hl),$08		; $6089
-	call $60b6		; $608b
-	ld l,$b0		; $608e
+
+@gotoState8:
+	; Link isn't close; go to state 8, waiting for him to be close enough
+	ld (hl),$08 ; [state]
+	call _ballAndChain_setDefaultState		; $608b
+
+	ld l,Enemy.var30		; $608e
 	xor a			; $6090
 	ld (hl),a		; $6091
 	jp enemySetAnimation		; $6092
+
+
+;;
+; @param[out]	zflag	z if spawned successfully
+; @addr{6095}
+_ballAndChain_spawnSpikedBall:
+	; BUG: This checks for 4 enemy slots, but we actually need 4 part slots...
 	ld b,$04		; $6095
 	call checkBEnemySlotsAvailable		; $6097
 	ret nz			; $609a
-	ld b,$2a		; $609b
+
+	; Spawn the ball
+	ld b,PARTID_SPIKED_BALL		; $609b
 	call _ecom_spawnProjectile		; $609d
+
+	; Spawn the 3 parts of the chain. Their "relatedObj1" will be set to the ball (not
+	; this enemy).
 	ld c,h			; $60a0
 	ld e,$01		; $60a1
-_label_214:
+@nextChain:
 	call getFreePartSlot		; $60a3
 	ld (hl),b		; $60a6
 	inc l			; $60a7
 	ld (hl),e		; $60a8
-	ld l,$d6		; $60a9
-	ld a,$c0		; $60ab
+	ld l,Part.relatedObj1		; $60a9
+	ld a,Part.start		; $60ab
 	ldi (hl),a		; $60ad
 	ld (hl),c		; $60ae
 	inc e			; $60af
 	ld a,e			; $60b0
 	cp $04			; $60b1
-	jr nz,_label_214	; $60b3
+	jr nz,@nextChain	; $60b3
 	ret			; $60b5
+
+
+;;
+; Sets state the enemy will return to after switch hook is used on it
+;
+; @param	hl	Pointer to state
+; @addr{60b6}
+_ballAndChain_setDefaultState:
 	ld a,(hl)		; $60b6
-	ld l,$b1		; $60b7
+	ld l,Enemy.var31		; $60b7
 	ld (hl),a		; $60b9
 	ret			; $60ba
 
@@ -161354,86 +161436,132 @@ _label_11_161:
 	jp z,objectSetVisible81		; $5763
 	jp objectSetInvisible		; $5766
 
-;;
-; @addr{5769}
+
+; ==============================================================================
+; PARTID_SPIKED_BALL
+;
+; Variables:
+;   speed: Nonstandard usage; it's a 16-bit variable which gets added to var30 (distance
+;          away from origin).
+;   relatedObj1: ENEMYID_BALL_AND_CHAIN_SOLDIER (for the head / subid 0),
+;                or PARTID_SPIKED_BALL (the head; for subids 1-3).
+;   var30: Distance away from origin point
+; ==============================================================================
 partCode2a:
-	jr z,_label_11_163	; $5769
-	ld e,$ea		; $576b
+	jr z,@normalStatus	; $5769
+
+	; Check for sword or shield collision
+	ld e,Part.var2a		; $576b
 	ld a,(de)		; $576d
 	res 7,a			; $576e
-	sub $01			; $5770
-	cp $09			; $5772
-	jr nc,_label_11_163	; $5774
-	ld a,$2b		; $5776
+	sub COLLISIONTYPE_L1_SHIELD			; $5770
+	cp COLLISIONTYPE_SWORD_HELD-COLLISIONTYPE_L1_SHIELD + 1
+	jr nc,@normalStatus	; $5774
+
+	; Make "parent" immune since the ball blocked the attack
+	ld a,Object.invincibilityCounter		; $5776
 	call objectGetRelatedObject1Var		; $5778
 	ld a,(hl)		; $577b
 	or a			; $577c
-	jr nz,_label_11_162	; $577d
+	jr nz,+			; $577d
 	ld (hl),$f4		; $577f
-_label_11_162:
++
+	; If speedZ is positive, make it 0?
 	ld h,d			; $5781
-	ld l,$d5		; $5782
+	ld l,Part.speedZ+1		; $5782
 	ld a,(hl)		; $5784
 	rlca			; $5785
-	jr c,_label_11_163	; $5786
+	jr c,@normalStatus	; $5786
 	xor a			; $5788
 	ldd (hl),a		; $5789
 	ld (hl),a		; $578a
-_label_11_163:
-	ld e,$c2		; $578b
+
+@normalStatus:
+	ld e,Part.subid		; $578b
 	ld a,(de)		; $578d
 	ld b,a			; $578e
-	ld e,$c4		; $578f
+	ld e,Part.state		; $578f
 	ld a,b			; $5791
 	rst_jumpTable			; $5792
-.dw $579b
-.dw $583d
-.dw $583d
-.dw $583d
-	ld a,$01		; $579b
+	.dw _spikedBall_head
+	.dw _spikedBall_chain
+	.dw _spikedBall_chain
+	.dw _spikedBall_chain
+
+
+; The main part of the spiked ball (actually has collisions, etc)
+_spikedBall_head:
+	; Check if parent was deleted
+	ld a,Object.id		; $579b
 	call objectGetRelatedObject1Var		; $579d
 	ld a,(hl)		; $57a0
-	cp $4b			; $57a1
+	cp ENEMYID_BALL_AND_CHAIN_SOLDIER			; $57a1
 	jp nz,partDelete		; $57a3
+
 	ld b,h			; $57a6
-	call $58a5		; $57a7
-	ld e,$c4		; $57aa
+	call _spikedBall_updateStateFromParent		; $57a7
+	ld e,Part.state		; $57aa
 	ld a,(de)		; $57ac
 	rst_jumpTable			; $57ad
-.dw $57ba
-.dw $57c4
-.dw $57cd
-.dw $57e5
-.dw $5817
-.dw $5834
+	.dw _spikedBall_head_state0
+	.dw _spikedBall_head_state1
+	.dw _spikedBall_head_state2
+	.dw _spikedBall_head_state3
+	.dw _spikedBall_head_state4
+	.dw _spikedBall_head_state5
+
+
+; Initialization
+_spikedBall_head_state0:
 	ld h,d			; $57ba
 	ld l,e			; $57bb
-	inc (hl)		; $57bc
-	ld l,$e4		; $57bd
+	inc (hl) ; [state]
+
+	ld l,Part.collisionType		; $57bd
 	set 7,(hl)		; $57bf
 	call objectSetVisible81		; $57c1
-	ld e,$c9		; $57c4
+
+
+; Rotating slowly
+_spikedBall_head_state1:
+	ld e,Part.angle		; $57c4
 	ld a,(de)		; $57c6
 	inc a			; $57c7
 	and $1f			; $57c8
 	ld (de),a		; $57ca
-	jr _label_11_165		; $57cb
-_label_11_164:
-	ld e,$c9		; $57cd
+	jr _spikedBall_head_setDefaultDistanceAway		; $57cb
+
+
+; Rotating faster
+_spikedBall_head_state2:
+	ld e,Part.angle		; $57cd
 	ld a,(de)		; $57cf
 	add $02			; $57d0
 	and $1f			; $57d2
 	ld (de),a		; $57d4
-_label_11_165:
-	ld e,$f0		; $57d5
+
+_spikedBall_head_setDefaultDistanceAway:
+	ld e,Part.var30		; $57d5
 	ld a,$0a		; $57d7
 	ld (de),a		; $57d9
-	call $5862		; $57da
-	ld e,$f0		; $57dd
+
+;;
+; @param	b	Enemy object
+; @addr{57da}
+_spikedBall_updatePosition:
+	call _spikedBall_copyParentPosition		; $57da
+	ld e,Part.var30		; $57dd
 	ld a,(de)		; $57df
-	ld e,$c9		; $57e0
+	ld e,Part.angle		; $57e0
 	jp objectSetPositionInCircleArc		; $57e2
-	call $5862		; $57e5
+
+
+; About to throw the ball; waiting for it to rotate into a good position for throwing.
+_spikedBall_head_state3:
+	call _spikedBall_copyParentPosition		; $57e5
+
+	; Compare the ball's angle with Link; must keep rotating it until it's aligned
+	; perfectly.
 	ldh a,(<hEnemyTargetY)	; $57e8
 	ldh (<hFF8F),a	; $57ea
 	ldh a,(<hEnemyTargetX)	; $57ec
@@ -161446,64 +161574,99 @@ _label_11_165:
 	sub $06			; $57f8
 	and $1f			; $57fa
 	ld h,d			; $57fc
-	ld l,$c9		; $57fd
+	ld l,Part.angle		; $57fd
 	sub (hl)		; $57ff
 	inc a			; $5800
 	and $1f			; $5801
 	cp $03			; $5803
-	jr nc,_label_11_164	; $5805
+	jr nc,_spikedBall_head_state2 ; keep rotating
+
+	; It's aligned perfectly; begin throwing it.
 	ld a,e			; $5807
 	sub $03			; $5808
 	and $1f			; $580a
-	ld (hl),a		; $580c
-	ld l,$c4		; $580d
+	ld (hl),a ; [angle]
+
+	ld l,Part.state		; $580d
 	inc (hl)		; $580f
-	ld l,$f0		; $5810
+
+	ld l,Part.var30		; $5810
 	ld (hl),$0d		; $5812
-	jp $57da		; $5814
+	jp _spikedBall_updatePosition		; $5814
+
+
+; Ball has just been released
+_spikedBall_head_state4:
 	ld h,d			; $5817
 	ld l,e			; $5818
-	inc (hl)		; $5819
-	ld l,$c6		; $581a
+	inc (hl) ; [state]
+
+	ld l,Part.counter1		; $581a
 	ld (hl),$00		; $581c
-	ld l,$c9		; $581e
+
+	ld l,Part.angle		; $581e
 	ld a,(hl)		; $5820
 	add $03			; $5821
 	and $1f			; $5823
 	ld (hl),a		; $5825
-	ld l,$f0		; $5826
+
+	; Distance from origin
+	ld l,Part.var30		; $5826
 	ld (hl),$12		; $5828
-	ld l,$d0		; $582a
-	ld a,$40		; $582c
+
+	; speed variable is used in a nonstandard way (added to var30, aka distance from
+	; origin)
+	ld l,Part.speed		; $582a
+	ld a,<($0340)		; $582c
 	ldi (hl),a		; $582e
-	ld (hl),$03		; $582f
-	jp $57da		; $5831
-	call $5874		; $5834
-	call $5887		; $5837
-	jp $57da		; $583a
+	ld (hl),>($0340)		; $582f
+
+	jp _spikedBall_updatePosition		; $5831
+
+
+_spikedBall_head_state5:
+	call _spikedBall_checkCollisionWithItem		; $5834
+	call _spikedBall_head_updateDistanceFromOrigin		; $5837
+	jp _spikedBall_updatePosition		; $583a
+
+
+; The chain part of the ball (just decorative)
+_spikedBall_chain:
 	ld a,(de)		; $583d
 	or a			; $583e
-	jr nz,_label_11_166	; $583f
+	jr nz,@state1	; $583f
+
+@state0:
 	inc a			; $5841
-	ld (de),a		; $5842
+	ld (de),a ; [state]
 	call partSetAnimation		; $5843
 	call objectSetVisible81		; $5846
-_label_11_166:
-	ld a,$01		; $5849
+
+@state1:
+	ld a,Object.id		; $5849
 	call objectGetRelatedObject1Var		; $584b
 	ld a,(hl)		; $584e
-	cp $2a			; $584f
+	cp PARTID_SPIKED_BALL			; $584f
 	jp nz,partDelete		; $5851
-	ld l,$c9		; $5854
+
+	; Copy parent's angle
+	ld l,Part.angle		; $5854
 	ld e,l			; $5856
 	ld a,(hl)		; $5857
 	ld (de),a		; $5858
-	call $58c5		; $5859
-	ld l,$d7		; $585c
+
+	call _spikedBall_chain_updateDistanceFromOrigin		; $5859
+	ld l,Part.relatedObj1+1		; $585c
 	ld b,(hl)		; $585e
-	jp $57da		; $585f
+	jp _spikedBall_updatePosition		; $585f
+
+
+;;
+; @param	b	Enemy object
+; @addr{5862}
+_spikedBall_copyParentPosition:
 	ld h,b			; $5862
-	ld l,$8b		; $5863
+	ld l,Enemy.yh		; $5863
 	ldi a,(hl)		; $5865
 	sub $05			; $5866
 	ld b,a			; $5868
@@ -161513,78 +161676,122 @@ _label_11_166:
 	ld c,a			; $586d
 	inc l			; $586e
 	ld a,(hl)		; $586f
-	ld e,$cf		; $5870
+	ld e,Part.zh		; $5870
 	ld (de),a		; $5872
 	ret			; $5873
+
+
+;;
+; If the ball collides with any item other than Link, this sets its speed to 0 (begins
+; retracting earlier).
+; @addr{5874}
+_spikedBall_checkCollisionWithItem:
+	; Check for collision with any item other than Link himself
 	ld h,d			; $5874
-	ld l,$ea		; $5875
+	ld l,Part.var2a		; $5875
 	bit 7,(hl)		; $5877
 	ret z			; $5879
 	ld a,(hl)		; $587a
-	cp $80			; $587b
+	cp $80|COLLISIONTYPE_LINK			; $587b
 	ret z			; $587d
-	ld l,$d1		; $587e
+
+	ld l,Part.speed+1		; $587e
 	bit 7,(hl)		; $5880
 	ret nz			; $5882
 	xor a			; $5883
 	ldd (hl),a		; $5884
 	ld (hl),a		; $5885
 	ret			; $5886
+
+
+;;
+; @addr{5887}
+_spikedBall_head_updateDistanceFromOrigin:
 	ld h,d			; $5887
-	ld e,$f0		; $5888
-	ld l,$d1		; $588a
+	ld e,Part.var30		; $5888
+	ld l,Part.speed+1		; $588a
 	ld a,(de)		; $588c
 	add (hl)		; $588d
 	cp $0a			; $588e
-	jr c,_label_11_167	; $5890
+	jr c,@fullyRetracted	; $5890
+
 	ld (de),a		; $5892
+
+	; Deceleration
 	dec l			; $5893
 	ld a,(hl)		; $5894
-	sub $20			; $5895
+	sub <($0020)			; $5895
 	ldi (hl),a		; $5897
 	ld a,(hl)		; $5898
-	sbc $00			; $5899
+	sbc >($0020)			; $5899
 	ld (hl),a		; $589b
 	ret			; $589c
-_label_11_167:
-	ld a,$06		; $589d
+
+@fullyRetracted:
+	; Tell parent (ENEMYID_BALL_AND_CHAIN_SOLDIER) we're fully retracted
+	ld a,Object.counter1		; $589d
 	call objectGetRelatedObject1Var		; $589f
 	ld (hl),$00		; $58a2
 	ret			; $58a4
-	ld l,$b0		; $58a5
-	ld e,$c4		; $58a7
+
+
+;;
+; Reads parent's var30 to decide whether to update state>
+; @addr{58a5}
+_spikedBall_updateStateFromParent:
+	ld l,Enemy.var30		; $58a5
+
+	; Check state between 1-3
+	ld e,Part.state		; $58a7
 	ld a,(de)		; $58a9
 	dec a			; $58aa
 	cp $03			; $58ab
-	jr c,_label_11_168	; $58ad
+	jr c,++			; $58ad
+
+	; If uninitialized (state 0), return
 	inc a			; $58af
 	ret z			; $58b0
+
+	; State is 4 or above (ball is being thrown).
+	; Continue if [parent.var30] != 2 (signal to throw ball)
 	ld a,(hl)		; $58b1
 	cp $02			; $58b2
 	ret z			; $58b4
-_label_11_168:
+++
+	; Set state to:
+	; * 1 if [parent.var30] == 0 (ball rotates slowly)
+	; * 2 if [parent.var30] == 1 (ball rotates quickly)
+	; * 3 if [parent.var30] >= 2 (ball should be thrown)
 	ld a,(hl)		; $58b5
 	or a			; $58b6
 	ld c,$01		; $58b7
-	jr z,_label_11_169	; $58b9
+	jr z,++			; $58b9
 	inc c			; $58bb
 	dec a			; $58bc
-	jr z,_label_11_169	; $58bd
+	jr z,++			; $58bd
 	inc c			; $58bf
-_label_11_169:
-	ld e,$c4		; $58c0
+++
+	ld e,Part.state		; $58c0
 	ld a,c			; $58c2
 	ld (de),a		; $58c3
 	ret			; $58c4
-	ld l,$f0		; $58c5
+
+;;
+; @param	h	Parent object (the actual ball)
+; @addr{58c5}
+_spikedBall_chain_updateDistanceFromOrigin:
+	ld l,Part.var30		; $58c5
 	push hl			; $58c7
-	ld e,$c2		; $58c8
+	ld e,Part.subid		; $58c8
 	ld a,(de)		; $58ca
 	dec a			; $58cb
 	rst_jumpTable			; $58cc
-.dw $58d3
-.dw $58e0
-.dw $58ea
+	.dw @subid1
+	.dw @subid2
+	.dw @subid3
+
+@subid1:
+	; [var30] = [parent.var30] * 3/4
 	pop hl			; $58d3
 	ld e,l			; $58d4
 	ld a,(hl)		; $58d5
@@ -161596,6 +161803,9 @@ _label_11_169:
 	inc a			; $58dd
 	ld (de),a		; $58de
 	ret			; $58df
+
+@subid2:
+	; [var30] = [parent.var30] * 2/4
 	pop hl			; $58e0
 	ld e,l			; $58e1
 	ld a,(hl)		; $58e2
@@ -161604,6 +161814,9 @@ _label_11_169:
 	add a			; $58e7
 	ld (de),a		; $58e8
 	ret			; $58e9
+
+@subid3:
+	; [var30] = [parent.var30] * 1/4
 	pop hl			; $58ea
 	ld e,l			; $58eb
 	ld a,(hl)		; $58ec

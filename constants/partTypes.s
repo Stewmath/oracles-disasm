@@ -92,6 +92,14 @@
 
 .define PARTID_BEAM				$29
 
+;;
+; Used by ENEMYID_BALL_AND_CHAIN_SOLDIER.
+; @subid_00{The ball}
+; @subid_01{Part of the chain; 3/4ths extended}
+; @subid_02{Part of the chain; 1/2 extended}
+; @subid_03{Part of the chain; 1/4th extended}
+.define PARTID_SPIKED_BALL			$2a
+
 ; When this object exists, it applies the effects of whirlpool and pollution tiles.
 ; It's a bit weird to put this functionality in an object...
 .define PARTID_SEA_EFFECTS			$2e
