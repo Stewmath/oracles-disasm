@@ -1830,6 +1830,7 @@ wLinkImmobilized: ; $cc61
 ; Set when link is using an item which immobilizes him. Each bit corresponds to
 ; a different item.
 ; Bit 4: Set when Link is falling down a hole
+; Bit 5: Set every other frame while Link is latched by a gel
 	db
 
 wcc62: ; $cc62
@@ -2186,6 +2187,7 @@ wInformativeTextsShown: ; $ccd7
 
 wccd8: ; $ccd8
 ; If nonzero, link can't use his sword. Relates to dimitri?
+; Bit 5 set while latched by a gel
 	db
 
 wScentSeedActive: ; $ccd9

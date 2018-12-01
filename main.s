@@ -134721,151 +134721,229 @@ _crow_offScreenSpawnData:
 	.db $20 $a0 $10 $90
 	.db $20 $00 $10 $10
 
-;;
-; @addr{5d44}
+
+; ==============================================================================
+; ENEMYID_GEL
+; ==============================================================================
 enemyCode43:
 	call _ecom_checkHazardsNoAnimationForHoles		; $5d44
-	jr z,_label_196	; $5d47
-	sub $03			; $5d49
+	jr z,@normalStatus	; $5d47
+	sub ENEMYSTATUS_NO_HEALTH			; $5d49
 	ret c			; $5d4b
 	jp z,enemyDie		; $5d4c
-	ld e,$aa		; $5d4f
+
+	; ENEMYSTATUS_JUST_HIT or ENEMYSTATUS_KNOCKBACK
+	ld e,Enemy.var2a		; $5d4f
 	ld a,(de)		; $5d51
-	cp $80			; $5d52
-	jr nz,_label_196	; $5d54
-	ld e,$84		; $5d56
+	cp $80|COLLISIONTYPE_LINK			; $5d52
+	jr nz,@normalStatus	; $5d54
+
+	; Touched Link; attach self to him.
+	ld e,Enemy.state		; $5d56
 	ld a,$0c		; $5d58
 	ld (de),a		; $5d5a
-_label_196:
-	ld e,$84		; $5d5b
+
+@normalStatus:
+	ld e,Enemy.state		; $5d5b
 	ld a,(de)		; $5d5d
 	rst_jumpTable			; $5d5e
-.dw $5d7b
-.dw $5d83
-.dw $5d83
-.dw $5d83
-.dw $5d83
-.dw _ecom_blownByGaleSeedState
-.dw $5d83
-.dw $5d83
-.dw $5d84
-.dw $5dae
-.dw $5dc1
-.dw $5dcc
-.dw $5de5
-.dw $5df1
-	ld e,$86		; $5d7b
+	.dw _gel_state_uninitialized
+	.dw _gel_state_stub
+	.dw _gel_state_stub
+	.dw _gel_state_stub
+	.dw _gel_state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw _gel_state_stub
+	.dw _gel_state_stub
+	.dw _gel_state8
+	.dw _gel_state9
+	.dw _gel_stateA
+	.dw _gel_stateB
+	.dw _gel_stateC
+	.dw _gel_stateD
+
+
+_gel_state_uninitialized:
+	ld e,Enemy.counter1		; $5d7b
 	ld a,$10		; $5d7d
 	ld (de),a		; $5d7f
 	jp _ecom_setSpeedAndState8AndVisible		; $5d80
+
+
+_gel_state_stub:
 	ret			; $5d83
+
+
+; Standing in place for [counter1] frames
+_gel_state8:
 	call _ecom_decCounter1		; $5d84
-	jr nz,_label_198	; $5d87
+	jr nz,_gel_animate	; $5d87
+
+	; 1 in 8 chance of switching to "hopping" state
 	call getRandomNumber_noPreserveVars		; $5d89
 	and $07			; $5d8c
 	ld h,d			; $5d8e
-	jr nz,_label_197	; $5d8f
-	ld l,$86		; $5d91
+	jr nz,@inchForward	; $5d8f
+
+	; Prepare to hop
+	ld l,Enemy.counter1		; $5d91
 	ld (hl),$30		; $5d93
-	ld l,$84		; $5d95
+
+	ld l,Enemy.state		; $5d95
 	ld (hl),$0a		; $5d97
+
 	ld a,$02		; $5d99
 	jp enemySetAnimation		; $5d9b
-_label_197:
-	ld l,$86		; $5d9e
+
+@inchForward:
+	ld l,Enemy.counter1		; $5d9e
 	ld (hl),$08		; $5da0
-	ld l,$84		; $5da2
+
+	ld l,Enemy.state		; $5da2
 	inc (hl)		; $5da4
-	ld l,$90		; $5da5
-	ld (hl),$0a		; $5da7
+
+	ld l,Enemy.speed		; $5da5
+	ld (hl),SPEED_40		; $5da7
+
 	call _ecom_updateAngleTowardTarget		; $5da9
-	jr _label_198		; $5dac
+	jr _gel_animate		; $5dac
+
+
+; Inching toward Link for [counter1] frames
+_gel_state9:
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $5dae
 	call _ecom_decCounter1		; $5db1
-	jr nz,_label_198	; $5db4
-	ld l,$84		; $5db6
+	jr nz,_gel_animate	; $5db4
+
+	ld l,Enemy.state		; $5db6
 	ld (hl),$08		; $5db8
-	ld l,$86		; $5dba
+	ld l,Enemy.counter1		; $5dba
 	ld (hl),$10		; $5dbc
-_label_198:
+
+_gel_animate:
 	jp enemyAnimate		; $5dbe
+
+
+; Preparing to hop toward Link
+_gel_stateA:
 	call _ecom_decCounter1		; $5dc1
-	jr nz,_label_198	; $5dc4
-	call $5e32		; $5dc6
+	jr nz,_gel_animate	; $5dc4
+
+	call _gel_beginHop		; $5dc6
 	jp _ecom_updateAngleTowardTarget		; $5dc9
+
+
+; Hopping toward Link
+_gel_stateB:
 	call _ecom_applyVelocityForSideviewEnemy		; $5dcc
 	ld c,$28		; $5dcf
 	call objectUpdateSpeedZ_paramC		; $5dd1
 	ret nz			; $5dd4
+
+	; Just landed
+
 	ld h,d			; $5dd5
-	ld l,$84		; $5dd6
+	ld l,Enemy.state		; $5dd6
 	ld (hl),$08		; $5dd8
-	ld l,$86		; $5dda
+
+	ld l,Enemy.counter1		; $5dda
 	ld (hl),$10		; $5ddc
-	ld l,$a4		; $5dde
+
+	ld l,Enemy.collisionType		; $5dde
 	set 7,(hl)		; $5de0
 	jp objectSetVisiblec2		; $5de2
+
+
+; Just latched onto Link
+_gel_stateC:
 	ld h,d			; $5de5
 	ld l,e			; $5de6
-	inc (hl)		; $5de7
-	ld l,$87		; $5de8
-	ld (hl),$78		; $5dea
+	inc (hl) ; [state]
+
+	ld l,Enemy.counter2		; $5de8
+	ld (hl),120		; $5dea
+
 	ld a,$01		; $5dec
 	jp enemySetAnimation		; $5dee
+
+
+; Attached to Link, slowing him down
+_gel_stateD:
 	ld a,(w1Link.yh)		; $5df1
-	ld e,$8b		; $5df4
+	ld e,Enemy.yh		; $5df4
 	ld (de),a		; $5df6
 	ld a,(w1Link.xh)		; $5df7
-	ld e,$8d		; $5dfa
+	ld e,Enemy.xh		; $5dfa
 	ld (de),a		; $5dfc
+
 	call _ecom_decCounter2		; $5dfd
-	jr z,_label_202	; $5e00
+	jr z,@hopOff	; $5e00
+
+	; If any button is pressed, counter2 goes down more quickly
 	ld a,(wGameKeysJustPressed)		; $5e02
 	or a			; $5e05
-	jr z,_label_200	; $5e06
-	ld a,(hl)		; $5e08
+	jr z,++		; $5e06
+
+	ld a,(hl) ; [counter2]
 	sub $03			; $5e09
-	jr nc,_label_199	; $5e0b
+	jr nc,+			; $5e0b
 	ld a,$01		; $5e0d
-_label_199:
++
 	ld (hl),a		; $5e0f
-_label_200:
+++
+	; Invert draw priority every 4 frames
 	ld a,(hl)		; $5e10
 	and $03			; $5e11
-	jr nz,_label_201	; $5e13
-	ld l,$9a		; $5e15
+	jr nz,++		; $5e13
+	ld l,Enemy.visible		; $5e15
 	ld a,(hl)		; $5e17
 	xor $07			; $5e18
 	ld (hl),a		; $5e1a
-_label_201:
-	ld hl,$ccd8		; $5e1b
+++
+	; Disable use of sword
+	ld hl,wccd8		; $5e1b
 	set 5,(hl)		; $5e1e
+
+	; Disable movement every other frame
 	ld a,(wFrameCounter)		; $5e20
 	rrca			; $5e23
-	jr nc,_label_198	; $5e24
+	jr nc,_gel_animate	; $5e24
 	ld hl,wLinkImmobilized		; $5e26
 	set 5,(hl)		; $5e29
-	jr _label_198		; $5e2b
-_label_202:
-	call $5e4c		; $5e2d
-	jr _label_203		; $5e30
-_label_203:
-	ld bc,$fe00		; $5e32
+	jr _gel_animate		; $5e2b
+
+@hopOff:
+	call _gel_setAngleAwayFromLink		; $5e2d
+	jr _gel_beginHop		; $5e30
+
+
+;;
+; @addr{5e32}
+_gel_beginHop:
+	ld bc,-$200		; $5e32
 	call objectSetSpeedZ		; $5e35
-	ld l,$84		; $5e38
+
+	ld l,Enemy.state		; $5e38
 	ld (hl),$0b		; $5e3a
-	ld l,$90		; $5e3c
-	ld (hl),$28		; $5e3e
+
+	ld l,Enemy.speed		; $5e3c
+	ld (hl),SPEED_100		; $5e3e
+
 	xor a			; $5e40
 	call enemySetAnimation		; $5e41
+
 	ld a,SND_ENEMY_JUMP		; $5e44
 	call playSound		; $5e46
 	jp objectSetVisiblec1		; $5e49
-	ld a,($d009)		; $5e4c
+
+;;
+; @addr{5e4c}
+_gel_setAngleAwayFromLink:
+	ld a,(w1Link.angle)		; $5e4c
 	bit 7,a			; $5e4f
 	jp nz,_ecom_setRandomAngle		; $5e51
 	xor $10			; $5e54
-	ld e,$89		; $5e56
+	ld e,Enemy.angle		; $5e56
 	ld (de),a		; $5e58
 	ret			; $5e59
 
