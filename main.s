@@ -135579,98 +135579,137 @@ enemyCode5f:
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $60f4
 	jp enemyAnimate		; $60f7
 
-;;
-; @addr{60fa}
+
+; ==============================================================================
+; ENEMYID_LINK_MIMIC
+;
+; Shares code with ENEMYID_ARM_MIMIC.
+; ==============================================================================
 enemyCode64:
-	jr z,_label_216	; $60fa
-	sub $03			; $60fc
+	jr z,@normalStatus	; $60fa
+	sub ENEMYSTATUS_NO_HEALTH			; $60fc
 	ret c			; $60fe
 	jp z,enemyDie		; $60ff
 	dec a			; $6102
 	jp nz,_ecom_updateKnockback		; $6103
 	ret			; $6106
-_label_216:
-	ld e,$84		; $6107
+
+@normalStatus:
+	ld e,Enemy.state		; $6107
 	ld a,(de)		; $6109
 	rst_jumpTable			; $610a
-.dw $611d
-.dw $6173
-.dw $6173
-.dw $6167
-.dw $6173
-.dw _ecom_blownByGaleSeedState
-.dw $6173
-.dw $6173
-.dw $6128
+	.dw @state_uninitialized
+	.dw _armMimic_state_stub
+	.dw _armMimic_state_stub
+	.dw _armMimic_state_switchHook
+	.dw _armMimic_state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw _armMimic_state_stub
+	.dw _armMimic_state_stub
+	.dw _linkMimic_state8
+
+
+@state_uninitialized:
 	ld a,PALH_82		; $611d
 	call loadPaletteHeader		; $611f
-	call $6155		; $6122
+	call _armMimic_uninitialized		; $6122
 	jp objectSetVisible83		; $6125
+
+
+_linkMimic_state8:
 	ld a,(wDisabledObjects)		; $6128
 	or a			; $612b
 	ret nz			; $612c
-	jr _label_218		; $612d
+	jr _armMimic_state8		; $612d
 
-;;
-; @addr{612f}
+
+; ==============================================================================
+; ENEMYID_ARM_MIMIC
+;
+; Shares code with ENEMYID_LINK_MIMIC.
+;
+; Variables:
+;   var30: Animation index
+; ==============================================================================
 enemyCode4e:
 	call _ecom_checkHazards		; $612f
-	jr z,_label_217	; $6132
-	sub $03			; $6134
+	jr z,@normalStatus	; $6132
+	sub ENEMYSTATUS_NO_HEALTH			; $6134
 	ret c			; $6136
 	jp z,enemyDie		; $6137
 	dec a			; $613a
 	jp nz,_ecom_updateKnockbackAndCheckHazards		; $613b
 	ret			; $613e
-_label_217:
-	ld e,$84		; $613f
+
+@normalStatus:
+	ld e,Enemy.state		; $613f
 	ld a,(de)		; $6141
 	rst_jumpTable			; $6142
-.dw $6155
-.dw $6173
-.dw $6173
-.dw $6167
-.dw $6173
-.dw _ecom_blownByGaleSeedState
-.dw $6173
-.dw $6173
-.dw $6174
-	ld e,$b0		; $6155
+	.dw _armMimic_uninitialized
+	.dw _armMimic_state_stub
+	.dw _armMimic_state_stub
+	.dw _armMimic_state_switchHook
+	.dw _armMimic_state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw _armMimic_state_stub
+	.dw _armMimic_state_stub
+	.dw _armMimic_state8
+
+
+_armMimic_uninitialized:
+	ld e,Enemy.var30		; $6155
 	ld a,(w1Link.direction)		; $6157
 	add $02			; $615a
 	and $03			; $615c
 	ld (de),a		; $615e
 	call enemySetAnimation		; $615f
-	ld a,$28		; $6162
+
+	ld a,SPEED_100		; $6162
 	jp _ecom_setSpeedAndState8AndVisible		; $6164
+
+
+_armMimic_state_switchHook:
 	inc e			; $6167
 	ld a,(de)		; $6168
 	rst_jumpTable			; $6169
-.dw _ecom_incState2
-.dw $6172
-.dw $6172
-.dw _ecom_fallToGroundAndSetState8
+	.dw _ecom_incState2
+	.dw @substate1
+	.dw @substate2
+	.dw _ecom_fallToGroundAndSetState8
+
+@substate1:
+@substate2:
 	ret			; $6172
+
+
+_armMimic_state_stub:
 	ret			; $6173
-_label_218:
+
+
+; Only "normal" state; simply moves in reverse of Link's direction.
+_armMimic_state8:
+	; Check that Link is moving
 	ld a,(wLinkAngle)		; $6174
 	inc a			; $6177
 	ret z			; $6178
+
 	add $0f			; $6179
 	and $1f			; $617b
-	ld e,$89		; $617d
+	ld e,Enemy.angle		; $617d
 	ld (de),a		; $617f
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $6180
+
 	ld h,d			; $6183
-	ld l,$b0		; $6184
+	ld l,Enemy.var30		; $6184
 	ld a,(w1Link.direction)		; $6186
 	add $02			; $6189
 	and $03			; $618b
 	cp (hl)			; $618d
-	jr z,_label_219	; $618e
+	jr z,@animate	; $618e
+
 	ld (hl),a		; $6190
 	call enemySetAnimation		; $6191
-_label_219:
+@animate:
 	jp enemyAnimate		; $6194
 
 ;;

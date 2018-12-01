@@ -456,7 +456,8 @@
 .define ENEMYID_HARDHAT_BEETLE			$4d
 
 ;;
-.define ENEMYID_MIMIC				$4e
+; Moves in the opposite direction Link is moving.
+.define ENEMYID_ARM_MIMIC			$4e
 
 ;;
 .define ENEMYID_MOLDORM				$4f
@@ -558,7 +559,8 @@
 .define ENEMYID_TARGET_CART_CRYSTAL		$63
 
 ;;
-; Used in final battle against Veran.
+; Used in final battle against Veran. Almost identical to ENEMYID_ARM_MIMIC aside from
+; health and appearance.
 ; @palette{PALH_82}
 .define ENEMYID_LINK_MIMIC			$64
 
