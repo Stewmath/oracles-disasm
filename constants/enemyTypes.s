@@ -467,10 +467,19 @@
 .define ENEMYID_MOLDORM				$4f
 
 ;;
-; @postype{none}
+; @var03{For subids $80+ only, this is a value from 0-3, which acts as an initial "timing
+;        offset" so they don't all fire at the same time.}
+; @subid_00{Shoots fireballs from all tiles with index equal to given "Y" parameter.
+;           Does not stop when all enemies are killed.
+;           @postype{none}}
 ; @subid_01{Shoots fireballs from all tiles with index equal to given "Y" parameter.
+;           Stops when all enemies are killed.
 ;           @postype{none}}
 ; @subid_80{Shoots fireballs at Link from the actual position object is placed at.
+;           Does not stop when all enemies are killed.
+;           @postype{normal}}
+; @subid_81{Shoots fireballs at Link from the actual position object is placed at.
+;           Stops when all enemies are killed.
 ;           @postype{normal}}
 .define ENEMYID_FIREBALL_SHOOTER		$50
 

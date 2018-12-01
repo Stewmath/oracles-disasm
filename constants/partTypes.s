@@ -109,7 +109,7 @@
 .define PARTID_GREAT_FAIRY_HEART		$30
 
 ;;
-; Also used by ENEMYID_PODOBOO_TOWER
+; Also used by ENEMYID_PODOBOO_TOWER, ENEMYID_FIREBALL_SHOOTER
 .define PARTID_GOPONGA_PROJECTILE		$31
 
 ; Ball for the shooting gallery

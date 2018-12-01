@@ -136120,8 +136120,10 @@ _moldorm_checkHazards:
 	ld a,b			; $6336
 	jp _ecom_checkHazardsNoAnimationForHoles		; $6337
 
-;;
-; @addr{633a}
+
+; ==============================================================================
+; ENEMYID_FIREBALL_SHOOTER
+; ==============================================================================
 enemyCode50:
 	dec a			; $633a
 	ret z			; $633b
@@ -136130,60 +136132,74 @@ enemyCode50:
 	ld e,Enemy.state		; $633e
 	ld a,(de)		; $6340
 	rst_jumpTable			; $6341
-	.dw @state0
-	.dw @state1
-	.dw @stateDefault
-	.dw @stateDefault
-	.dw @stateDefault
-	.dw @stateDefault
-	.dw @stateDefault
-	.dw @stateDefault
-	.dw @state8
-	.dw @state9
+	.dw _fireballShooter_state_uninitialized
+	.dw _fireballShooter_state1
+	.dw _fireballShooter_state_stub
+	.dw _fireballShooter_state_stub
+	.dw _fireballShooter_state_stub
+	.dw _fireballShooter_state_stub
+	.dw _fireballShooter_state_stub
+	.dw _fireballShooter_state_stub
+	.dw _fireballShooter_state8
+	.dw _fireballShooter_state9
 
-@state0:
+
+_fireballShooter_state_uninitialized:
 	ld h,d			; $6356
 	ld l,e			; $6357
-	inc (hl)		; $6358
+	inc (hl) ; [state]
+
 	ld e,Enemy.subid		; $6359
 	ld a,(de)		; $635b
 	bit 7,a			; $635c
 	ret z			; $635e
-	ld (hl),$08		; $635f
+	ld (hl),$08 ; [state]
 	ret			; $6361
 
-@state1:
+
+; "Spawner"; spawns shooters at each appropriate tile index, then deletes self.
+_fireballShooter_state1:
 	xor a			; $6362
 	ldh (<hFF8D),a	; $6363
-	ld e,$8b		; $6365
+
+	ld e,Enemy.yh		; $6365
 	ld a,(de)		; $6367
-	ld c,a			; $6368
+	ld c,a ; c = tile index to spawn at
+
 	ld hl,wRoomLayout		; $6369
-	ld b,$b0		; $636c
-@label_230:
+	ld b,LARGE_ROOM_HEIGHT<<4		; $636c
+
+@nextTile:
 	ldi a,(hl)		; $636e
 	cp c			; $636f
-	jr nz,@label_231	; $6370
+	jr nz,+++		; $6370
+
 	push bc			; $6372
 	push hl			; $6373
 	ld c,l			; $6374
 	dec c			; $6375
-	ld b,$50		; $6376
+	ld b,ENEMYID_FIREBALL_SHOOTER		; $6376
 	call _ecom_spawnUncountedEnemyWithSubid01		; $6378
-	jr nz,@label_232	; $637b
+	jr nz,@delete	; $637b
+
+	; [child.subid] = [this.subid] | $80
 	ld e,l			; $637d
 	ld a,(de)		; $637e
 	set 7,a			; $637f
 	ldi (hl),a		; $6381
+
+	; [child.var03] = ([hFF8D]+1)&3 (timing offset)
 	ldh a,(<hFF8D)	; $6382
 	inc a			; $6384
 	and $03			; $6385
 	ldh (<hFF8D),a	; $6387
 	ld (hl),a		; $6389
+
+	; Set child's position
 	ld a,c			; $638a
 	and $f0			; $638b
 	add $06			; $638d
-	ld l,$8b		; $638f
+	ld l,Enemy.yh		; $638f
 	ldi (hl),a		; $6391
 	ld a,c			; $6392
 	and $0f			; $6393
@@ -136191,49 +136207,72 @@ enemyCode50:
 	add $08			; $6397
 	inc l			; $6399
 	ld (hl),a		; $639a
+
 	pop hl			; $639b
 	pop bc			; $639c
-@label_231:
++++
 	dec b			; $639d
-	jr nz,@label_230	; $639e
-@label_232:
+	jr nz,@nextTile	; $639e
+
+@delete:
 	jp enemyDelete		; $63a0
 
-@stateDefault:
+
+_fireballShooter_state_stub:
 	ret			; $63a3
 
-@state8:
+
+; Initialization for "actual" shooter (not spawner)
+_fireballShooter_state8:
 	ld a,$09		; $63a4
-	ld (de),a		; $63a6
-	ld e,$83		; $63a7
+	ld (de),a ; [state]
+
+	ld e,Enemy.var03		; $63a7
 	ld a,(de)		; $63a9
-	ld hl,$63d0		; $63aa
+	ld hl,_fireballShooter_timingOffsets		; $63aa
 	rst_addAToHl			; $63ad
-	ld e,$86		; $63ae
+	ld e,Enemy.counter1		; $63ae
 	ld a,(hl)		; $63b0
 	ld (de),a		; $63b1
 	ret			; $63b2
 
-@state9:
-	call $63d4		; $63b3
+
+; Main state for actual shooter
+_fireballShooter_state9:
+	call _fireballShooter_checkAllEnemiesKilled		; $63b3
+	; BUG: This does NOT return if it's just deleted itself! This could cause counter1
+	; to be dirty the next time an enemy is spawned in its former slot.
+
+	; Wait for Link to be far enough away
 	ld c,$24		; $63b6
 	call objectCheckLinkWithinDistance		; $63b8
 	ret c			; $63bb
+
+	; Wait for cooldown
 	call _ecom_decCounter1		; $63bc
 	ret nz			; $63bf
-	ld b,$31		; $63c0
+
+	ld b,PARTID_GOPONGA_PROJECTILE		; $63c0
 	call _ecom_spawnProjectile		; $63c2
+
+	; Random cooldown between $c0-$c7
 	call getRandomNumber_noPreserveVars		; $63c5
 	and $07			; $63c8
 	add $c0			; $63ca
-	ld e,$86		; $63cc
+	ld e,Enemy.counter1		; $63cc
 	ld (de),a		; $63ce
 	ret			; $63cf
-	ld c,(hl)		; $63d0
-	ld a,(hl)		; $63d1
-	xor (hl)		; $63d2
-	sbc $1e			; $63d3
-	add d			; $63d5
+
+
+_fireballShooter_timingOffsets:
+	.db $4e $7e $ae $de
+
+
+;;
+; For subid $81 only, this deletes itself when all enemies are killed.
+; @addr{63d4}
+_fireballShooter_checkAllEnemiesKilled:
+	ld e,Enemy.subid	; $63d4
 	ld a,(de)		; $63d6
 	cp $81			; $63d7
 	ret nz			; $63d9
