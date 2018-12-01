@@ -460,6 +460,10 @@
 .define ENEMYID_ARM_MIMIC			$4e
 
 ;;
+; @subid_00{Spawner; spawns all 3 components of the moldorm, then deletes self. Use this.}
+; @subid_01{The head}
+; @subid_02{Tail 1}
+; @subid_03{Tail 2}
 .define ENEMYID_MOLDORM				$4f
 
 ;;

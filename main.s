@@ -126369,6 +126369,7 @@ enemyCode25:
 	ret			; $5f8d
 
 
+; Closed
 @state8:
 	call _ecom_decCounter1		; $5f8e
 	ret nz			; $5f91
@@ -126379,9 +126380,10 @@ enemyCode25:
 	jp enemySetAnimation		; $5f98
 
 
+; Open, about to shoot a projectile
 @state9:
 	call _ecom_decCounter1		; $5f9b
-	jr z,_label_220	; $5f9e
+	jr z,@closeFlower	; $5f9e
 
 	ld a,(hl)		; $5fa0
 	cp 40			; $5fa1
@@ -126396,7 +126398,7 @@ enemyCode25:
 	ld b,PARTID_GOPONGA_PROJECTILE		; $5fae
 	jp _ecom_spawnProjectile		; $5fb0
 
-_label_220:
+@closeFlower:
 	ld e,Enemy.subid		; $5fb3
 	ld a,(de)		; $5fb5
 	ld bc,@counter1Vals		; $5fb6
@@ -135712,39 +135714,63 @@ _armMimic_state8:
 @animate:
 	jp enemyAnimate		; $6194
 
-;;
-; @addr{6197}
+
+; ==============================================================================
+; ENEMYID_MOLDORM
+;
+; Variables for head (subid 1):
+;   var30: Tail 1 object index
+;   var31: Tail 2 object index
+;   var32: Animation index
+;   var33: Angular speed (added to angle)
+;
+; Variables for tail (subids 2-3):
+;   relatedObj1: Object to follow (either the head or the tail in front)
+;   var30: Index for offset buffer
+;   var31/var32: Parent object's position last frame
+;   var33-var3b: Offset buffer. Stores the parent's movement offsets for up to 8 frames.
+; ==============================================================================
 enemyCode4f:
-	call $6322		; $6197
-	jr z,_label_222	; $619a
-	sub $03			; $619c
+	call _moldorm_checkHazards		; $6197
+	jr z,@normalStatus	; $619a
+	sub ENEMYSTATUS_NO_HEALTH			; $619c
 	ret c			; $619e
-	jr z,_label_220	; $619f
+	jr z,@dead	; $619f
 	dec a			; $61a1
-	jr nz,_label_221	; $61a2
-	ld e,$82		; $61a4
+	jr nz,@knockback	; $61a2
+
+	; ENEMYSTATUS_JUST_HIT
+	; Only apply this to the head (subid 1)
+	ld e,Enemy.subid		; $61a4
 	ld a,(de)		; $61a6
 	dec a			; $61a7
-	jr nz,_label_222	; $61a8
-	ld e,$ab		; $61aa
+	jr nz,@normalStatus	; $61a8
+
+	; [tail1.invincibilityCounter] = [this.invincibilityCounter]
+	ld e,Enemy.invincibilityCounter		; $61aa
 	ld l,e			; $61ac
 	ld a,(de)		; $61ad
 	ld b,a			; $61ae
-	ld e,$b0		; $61af
+	ld e,Enemy.var30		; $61af
 	ld a,(de)		; $61b1
 	ld h,a			; $61b2
 	ld (hl),b		; $61b3
+
+	; [tail2.invincibilityCounter] = [this.invincibilityCounter]
 	inc e			; $61b4
 	ld a,(de)		; $61b5
 	ld h,a			; $61b6
 	ld (hl),b		; $61b7
 	ret			; $61b8
-_label_220:
-	ld e,$82		; $61b9
+
+@dead:
+	ld e,Enemy.subid		; $61b9
 	ld a,(de)		; $61bb
 	dec a			; $61bc
-	jp nz,$62f2		; $61bd
-	ld e,$b0		; $61c0
+	jp nz,_moldorm_tail_delete		; $61bd
+
+	; Head only; kill the tails.
+	ld e,Enemy.var30		; $61c0
 	ld a,(de)		; $61c2
 	ld h,a			; $61c3
 	call _ecom_killObjectH		; $61c4
@@ -135753,141 +135779,210 @@ _label_220:
 	ld h,a			; $61c9
 	call _ecom_killObjectH		; $61ca
 	jp enemyDie		; $61cd
-_label_221:
-	ld e,$82		; $61d0
+
+@knockback:
+	ld e,Enemy.subid		; $61d0
 	ld a,(de)		; $61d2
 	dec a			; $61d3
-	jr nz,_label_222	; $61d4
+	jr nz,@normalStatus	; $61d4
 	jp _ecom_updateKnockbackAndCheckHazards		; $61d6
-_label_222:
-	call _ecom_getSubidAndCpStateTo08		; $61d9
-	jr nc,_label_223	; $61dc
-	rst_jumpTable			; $61de
-.dw $61f8
-.dw $620b
-.dw $623c
-.dw $623c
-.dw $623c
-.dw $623c
-.dw $623c
-.dw $623c
 
-_label_223:
+@normalStatus:
+	call _ecom_getSubidAndCpStateTo08		; $61d9
+	jr nc,@normalState	; $61dc
+	rst_jumpTable			; $61de
+	.dw _moldorm_state_uninitialized
+	.dw _moldorm_state1
+	.dw _moldorm_state_stub
+	.dw _moldorm_state_stub
+	.dw _moldorm_state_stub
+	.dw _moldorm_state_stub
+	.dw _moldorm_state_stub
+	.dw _moldorm_state_stub
+
+@normalState:
 	dec b			; $61ef
 	ld a,b			; $61f0
 	rst_jumpTable			; $61f1
-.dw $623d
-.dw $6283
-.dw $6283
+	.dw _moldorm_head
+	.dw _moldorm_tail
+	.dw _moldorm_tail
+
+
+_moldorm_state_uninitialized:
 	ld a,b			; $61f8
 	or a			; $61f9
-	jr nz,_label_224	; $61fa
+	jr nz,@notSpawner		; $61fa
+
+@spawner:
 	inc a			; $61fc
-	ld (de),a		; $61fd
-	jr _label_225		; $61fe
-_label_224:
+	ld (de),a ; [state] = 1
+	jr _moldorm_state1		; $61fe
+
+@notSpawner:
 	call _ecom_setSpeedAndState8AndVisible		; $6200
 	ld a,b			; $6203
 	dec a			; $6204
 	ret z			; $6205
 	add $07			; $6206
 	jp enemySetAnimation		; $6208
-_label_225:
+
+
+; Spawner; spawn the head and tails, then delete self.
+_moldorm_state1:
 	ld b,$03		; $620b
 	call checkBEnemySlotsAvailable		; $620d
 	jp nz,objectSetVisible82		; $6210
-	ld b,$4f		; $6213
+
+	; Spawn head
+	ld b,ENEMYID_MOLDORM		; $6213
 	call _ecom_spawnUncountedEnemyWithSubid01		; $6215
+
+	; Spawn tail 1
 	ld c,h			; $6218
 	push hl			; $6219
 	call _ecom_spawnEnemyWithSubid01		; $621a
-	inc (hl)		; $621d
-	call $62f8		; $621e
+	inc (hl) ; [subid] = 2
+	call _moldorm_tail_setRelatedObj1AndCopyPosition ; Follows head
+
+	; Spawn tail 2
 	ld c,h			; $6221
 	call _ecom_spawnEnemyWithSubid01		; $6222
 	inc (hl)		; $6225
-	inc (hl)		; $6226
-	call $62f8		; $6227
+	inc (hl) ; [subid] = 3
+	call _moldorm_tail_setRelatedObj1AndCopyPosition ; Follows tail1
+
+	; [head.var30] = tail1
 	ld b,h			; $622a
 	pop hl			; $622b
-	ld l,$b0		; $622c
+	ld l,Enemy.var30		; $622c
 	ld (hl),c		; $622e
+
+	; [head.var31] = tail2
 	inc l			; $622f
 	ld (hl),b		; $6230
-	ld l,$80		; $6231
+
+	; [head.enabled] = [this.enabled] (copy spawned index value)
+	ld l,Enemy.enabled		; $6231
 	ld e,l			; $6233
 	ld a,(de)		; $6234
 	ld (hl),a		; $6235
+
 	call objectCopyPosition		; $6236
 	jp enemyDelete		; $6239
+
+
+_moldorm_state_stub:
 	ret			; $623c
+
+
+; Subid 1
+_moldorm_head:
 	ld a,(de)		; $623d
 	sub $08			; $623e
 	rst_jumpTable			; $6240
-.dw $6245
-.dw $625a
+	.dw @state8
+	.dw @state9
+
+
+; Initialization
+@state8:
 	ld h,d			; $6245
 	ld l,e			; $6246
-	inc (hl)		; $6247
-	ld l,$86		; $6248
+	inc (hl) ; [state]
+
+	ld l,Enemy.counter1		; $6248
 	ld (hl),$08		; $624a
-	ld l,$90		; $624c
-	ld (hl),$28		; $624e
-	ld l,$b3		; $6250
+
+	ld l,Enemy.speed		; $624c
+	ld (hl),SPEED_100		; $624e
+
+	; Angular speed
+	ld l,Enemy.var33		; $6250
 	ld (hl),$02		; $6252
+
 	call _ecom_setRandomAngle		; $6254
-	jp $6301		; $6257
+	jp _moldorm_head_updateAnimationFromAngle		; $6257
+
+
+; Main state for head
+@state9:
 	call _ecom_decCounter1		; $625a
-	jr nz,_label_226	; $625d
-	ld (hl),$08		; $625f
-	ld l,$b3		; $6261
-	ld e,$89		; $6263
+	jr nz,@applySpeed	; $625d
+
+	ld (hl),$08 ; [counter1]
+
+	; Angle is updated every 8 frames.
+	ld l,Enemy.var33		; $6261
+	ld e,Enemy.angle		; $6263
 	ld a,(de)		; $6265
 	add (hl)		; $6266
 	and $1f			; $6267
 	ld (de),a		; $6269
-	call $6301		; $626a
+	call _moldorm_head_updateAnimationFromAngle		; $626a
+
+	; 1 in 16 chance of inverting rotation every 8 frames
 	call getRandomNumber_noPreserveVars		; $626d
 	and $0f			; $6270
-	jr nz,_label_226	; $6272
-	ld e,$b3		; $6274
+	jr nz,@applySpeed	; $6272
+	ld e,Enemy.var33		; $6274
 	ld a,(de)		; $6276
 	cpl			; $6277
 	inc a			; $6278
 	ld (de),a		; $6279
-_label_226:
+
+@applySpeed:
 	call _ecom_bounceOffWallsAndHoles		; $627a
-	call nz,$6301		; $627d
+	call nz,_moldorm_head_updateAnimationFromAngle		; $627d
 	jp objectApplySpeed		; $6280
-	ld e,$84		; $6283
+
+
+_moldorm_tail:
+	ld e,Enemy.state		; $6283
 	ld a,(de)		; $6285
 	sub $08			; $6286
 	rst_jumpTable			; $6288
-.dw $628d
-.dw $62a4
+	.dw @state8
+	.dw @state9
+
+
+; Initialization
+@state8:
 	ld h,d			; $628d
 	ld l,e			; $628e
-	inc (hl)		; $628f
-	ld l,$a4		; $6290
+	inc (hl) ; [state]
+
+	ld l,Enemy.collisionType		; $6290
 	res 7,(hl)		; $6292
-	ld l,$97		; $6294
+
+	; Copy parent's current position into var31/var32
+	ld l,Enemy.relatedObj1+1		; $6294
 	ld h,(hl)		; $6296
-	ld l,$8b		; $6297
-	ld e,$b1		; $6299
+	ld l,Enemy.yh		; $6297
+	ld e,Enemy.var31		; $6299
 	ldi a,(hl)		; $629b
 	ld (de),a		; $629c
 	inc e			; $629d
 	inc l			; $629e
 	ld a,(hl)		; $629f
 	ld (de),a		; $62a0
-	jp $6313		; $62a1
-	ld a,$00		; $62a4
+
+	jp _moldorm_tail_clearOffsetBuffer		; $62a1
+
+
+; Main state for tail
+@state9:
+	; Check if parent deleted
+	ld a,Object.enabled		; $62a4
 	call objectGetRelatedObject1Var		; $62a6
 	ld a,(hl)		; $62a9
 	or a			; $62aa
-	jr z,_label_227	; $62ab
-	ld l,$8b		; $62ad
-	ld e,$b1		; $62af
+	jr z,_moldorm_tail_delete	; $62ab
+
+	; Get distance between parent's last and current Y position in high nibble of 'b'.
+	; (Add 8 so it's positive.)
+	ld l,Enemy.yh		; $62ad
+	ld e,Enemy.var31		; $62af
 	ld a,(de)		; $62b1
 	ld b,a			; $62b2
 	ldi a,(hl)		; $62b3
@@ -135895,6 +135990,8 @@ _label_226:
 	add $08			; $62b5
 	swap a			; $62b7
 	ld b,a			; $62b9
+
+	; Get distance between parent's last and current X position in low nibble of 'b'.
 	inc e			; $62ba
 	inc l			; $62bb
 	ld a,(de)		; $62bc
@@ -135904,87 +136001,122 @@ _label_226:
 	add $08			; $62c0
 	or b			; $62c2
 	ld b,a			; $62c3
+
+	; Copy parent's Y/X to var31/var32
 	ldd a,(hl)		; $62c4
 	ld (de),a		; $62c5
 	dec e			; $62c6
 	dec l			; $62c7
 	ld a,(hl)		; $62c8
 	ld (de),a		; $62c9
-	ld e,$b0		; $62ca
+
+	; Add the calculated position difference to the offset buffer starting at var33
+	ld e,Enemy.var30		; $62ca
 	ld a,(de)		; $62cc
-	add $b3			; $62cd
+	add Enemy.var33			; $62cd
 	ld e,a			; $62cf
 	ld a,b			; $62d0
 	ld (de),a		; $62d1
 	ld h,d			; $62d2
-	ld l,$8b		; $62d3
-	ld e,$b0		; $62d5
+	ld l,Enemy.yh		; $62d3
+
+	; Offset buffer index ++
+	ld e,Enemy.var30		; $62d5
 	ld a,(de)		; $62d7
 	inc a			; $62d8
 	and $07			; $62d9
 	ld (de),a		; $62db
-	add $b3			; $62dc
+
+	; Read next byte in offset buffer (value from 8 frames ago) to get the value to
+	; add to our current position.
+	add Enemy.var33			; $62dc
 	ld e,a			; $62de
 	ld a,(de)		; $62df
 	ld b,a			; $62e0
 	and $f0			; $62e1
 	swap a			; $62e3
 	sub $08			; $62e5
-	add (hl)		; $62e7
+	add (hl) ; [yh]
 	ldi (hl),a		; $62e8
 	inc l			; $62e9
 	ld a,b			; $62ea
 	and $0f			; $62eb
 	sub $08			; $62ed
-	add (hl)		; $62ef
+	add (hl) ; [xh]
 	ld (hl),a		; $62f0
 	ret			; $62f1
-_label_227:
+
+;;
+; @addr{62f2}
+_moldorm_tail_delete:
 	call decNumEnemies		; $62f2
 	jp enemyDelete		; $62f5
-	ld l,$96		; $62f8
-	ld a,$80		; $62fa
+
+
+;;
+; @param	h	Object to follow (either the head or the tail in front)
+; @addr{62f8}
+_moldorm_tail_setRelatedObj1AndCopyPosition:
+	ld l,Enemy.relatedObj1		; $62f8
+	ld a,Enemy.start		; $62fa
 	ldi (hl),a		; $62fc
 	ld (hl),c		; $62fd
 	jp objectCopyPosition		; $62fe
-	ld e,$89		; $6301
+
+
+;;
+; @addr{6301}
+_moldorm_head_updateAnimationFromAngle:
+	ld e,Enemy.angle		; $6301
 	ld a,(de)		; $6303
 	add $02			; $6304
 	and $1c			; $6306
 	rrca			; $6308
 	rrca			; $6309
 	ld h,d			; $630a
-	ld l,$b2		; $630b
+	ld l,Enemy.var32		; $630b
 	cp (hl)			; $630d
 	ret z			; $630e
 	ld (hl),a		; $630f
 	jp enemySetAnimation		; $6310
+
+;;
+; @addr{6313}
+_moldorm_tail_clearOffsetBuffer:
 	ld h,d			; $6313
-	ld l,$b3		; $6314
+	ld l,Enemy.var33		; $6314
 	ld b,$02		; $6316
 	ld a,$88		; $6318
-_label_228:
+--
 	ldi (hl),a		; $631a
 	ldi (hl),a		; $631b
 	ldi (hl),a		; $631c
 	ldi (hl),a		; $631d
 	dec b			; $631e
-	jr nz,_label_228	; $631f
+	jr nz,--		; $631f
 	ret			; $6321
+
+
+;;
+; @addr{6322}
+_moldorm_checkHazards:
 	ld b,a			; $6322
-	ld e,$82		; $6323
+	ld e,Enemy.subid		; $6323
 	ld a,(de)		; $6325
 	dec a			; $6326
-	jr z,_label_229	; $6327
-	ld a,$3f		; $6329
+	jr z,@checkHazards	; $6327
+
+	; Tails only; check if parent fell into a hazard
+	ld a,Object.var3f		; $6329
 	call objectGetRelatedObject1Var		; $632b
 	ld a,(hl)		; $632e
 	and $07			; $632f
-	jr nz,_label_229	; $6331
+	jr nz,@checkHazards	; $6331
 	ld a,b			; $6333
 	or a			; $6334
 	ret			; $6335
-_label_229:
+
+@checkHazards:
 	ld a,b			; $6336
 	jp _ecom_checkHazardsNoAnimationForHoles		; $6337
 
