@@ -415,6 +415,7 @@
 
 ;;
 ; Enemies in floor-tile-changing puzzles in Ages only.
+; @palette{PALH_bf}
 .define ENEMYID_COLOR_CHANGING_GEL		$47
 
 ;;

@@ -138360,8 +138360,10 @@ _bari_updateZPosition:
 @zVals:
 	.db $fc $fd $fe $fd
 
-;;
-; @addr{6d4f}
+
+; ==============================================================================
+; ENEMYID_GIANT_GHINI_CHILD (TODO: Do this along with bosses)
+; ==============================================================================
 enemyCode3f:
 	jr z,_label_282	; $6d4f
 	sub $03			; $6d51
@@ -138548,8 +138550,10 @@ _label_287:
 	nop			; $6e8a
 	.db $18
 
-;;
-; @addr{6e8c}
+
+; ==============================================================================
+; ENEMYID_SHADOW_HAG_CHILD (TODO: Do this along with bosses)
+; ==============================================================================
 enemyCode42:
 	jr z,++			; $6e8c
 	sub $03			; $6e8e
@@ -138641,223 +138645,323 @@ _label_291:
 	dec (hl)		; $6f29
 	jp enemyDelete		; $6f2a
 
-;;
-; @addr{6f2d}
+
+; ==============================================================================
+; ENEMYID_COLOR_CHANGING_GEL
+;
+; Variables:
+;   var30/var31: Target position while hopping
+;   var32: Tile index at current position (purposely outdated so there's lag in updating
+;          the color)
+; ==============================================================================
 enemyCode47:
 	call _ecom_checkHazards		; $6f2d
-	jr z,_label_294	; $6f30
-	sub $03			; $6f32
+	jr z,@normalStatus	; $6f30
+	sub ENEMYSTATUS_NO_HEALTH			; $6f32
 	ret c			; $6f34
 	jp z,enemyDie		; $6f35
+
+	; ENEMYSTATUS_JUST_HIT
+
 	ld h,d			; $6f38
-	ld l,$aa		; $6f39
+	ld l,Enemy.var2a		; $6f39
 	ld a,(hl)		; $6f3b
-	cp $9a			; $6f3c
-	jr nz,_label_292	; $6f3e
-	call $7081		; $6f40
-	jr _label_294		; $6f43
-_label_292:
-	ld e,$a5		; $6f45
+	cp $80|COLLISIONTYPE_MYSTERY_SEED			; $6f3c
+	jr nz,@attacked	; $6f3e
+
+	; Mystery seed hit the gel
+	call _colorChangingGel_chooseRandomColor		; $6f40
+	jr @normalStatus		; $6f43
+
+@attacked:
+	; Ignore all attacks if color matches floor
+	ld e,Enemy.collisionReactionSet		; $6f45
 	ld a,(de)		; $6f47
-	cp $6e			; $6f48
-	jr nz,_label_294	; $6f4a
+	cp COLLISIONREACTIONSET_6e			; $6f48
+	jr nz,@normalStatus	; $6f4a
+
+	; Only allow switch hook and sword attacks to kill the gel
 	ldi a,(hl)		; $6f4c
 	res 7,a			; $6f4d
-	cp $0d			; $6f4f
-	jr z,_label_293	; $6f51
-	sub $04			; $6f53
-	cp $06			; $6f55
-	jr nc,_label_294	; $6f57
-_label_293:
-	ld (hl),$f4		; $6f59
+	cp COLLISIONTYPE_SWITCH_HOOK			; $6f4f
+	jr z,@wasDamagingAttack			; $6f51
+	sub COLLISIONTYPE_L1_SWORD			; $6f53
+	cp COLLISIONTYPE_SWORD_HELD-COLLISIONTYPE_L1_SWORD + 1
+	jr nc,@normalStatus	; $6f57
+
+@wasDamagingAttack
+	ld (hl),$f4 ; [invincibilityCounter] = $f4
 	ld a,SND_DAMAGE_ENEMY		; $6f5b
 	call playSound		; $6f5d
-_label_294:
-	call $702c		; $6f60
-	ld e,$84		; $6f63
+
+@normalStatus:
+	call _colorChangingGel_updateColor		; $6f60
+	ld e,Enemy.state		; $6f63
 	ld a,(de)		; $6f65
 	rst_jumpTable			; $6f66
-.dw $6f7d
-.dw $6fa1
-.dw $6fa1
-.dw $6fa1
-.dw $6fa1
-.dw _ecom_blownByGaleSeedState
-.dw $6fa1
-.dw $6fa1
-.dw $6fa2
-.dw $6fe8
-.dw $7000
-	ld a,$32		; $6f7d
+	.dw _colorChangingGel_state_uninitialized
+	.dw _colorChangingGel_state_stub
+	.dw _colorChangingGel_state_stub
+	.dw _colorChangingGel_state_stub
+	.dw _colorChangingGel_state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw _colorChangingGel_state_stub
+	.dw _colorChangingGel_state_stub
+	.dw _colorChangingGel_state8
+	.dw _colorChangingGel_state9
+	.dw _colorChangingGel_stateA
+
+
+_colorChangingGel_state_uninitialized:
+	ld a,SPEED_140		; $6f7d
 	call _ecom_setSpeedAndState8AndVisible		; $6f7f
-	ld l,$86		; $6f82
-	ld (hl),$96		; $6f84
+
+	ld l,Enemy.counter1		; $6f82
+	ld (hl),150		; $6f84
 	inc l			; $6f86
-	ld (hl),$00		; $6f87
-	ld l,$a5		; $6f89
-	ld (hl),$6e		; $6f8b
-	ld l,$bf		; $6f8d
+	ld (hl),$00 ; [counter2]
+
+	ld l,Enemy.collisionReactionSet		; $6f89
+	ld (hl),COLLISIONREACTIONSET_6e		; $6f8b
+
+	ld l,Enemy.var3f		; $6f8d
 	set 5,(hl)		; $6f8f
+
 	call objectGetTileAtPosition		; $6f91
-	ld e,$b2		; $6f94
+	ld e,Enemy.var32		; $6f94
 	ld (de),a		; $6f96
+
 	ld a,PALH_bf		; $6f97
 	call loadPaletteHeader		; $6f99
 	ld a,$03		; $6f9c
 	jp enemySetAnimation		; $6f9e
+
+
+_colorChangingGel_state_stub:
 	ret			; $6fa1
+
+
+; Standing still for [counter1] frames
+_colorChangingGel_state8:
 	call _ecom_decCounter1		; $6fa2
 	ret nz			; $6fa5
-	inc (hl)		; $6fa6
+
+	inc (hl) ; [counter1] = 1
+
+	; Choose random direction to jump
 	call getRandomNumber_noPreserveVars		; $6fa7
 	and $0e			; $6faa
-	ld hl,$6fd8		; $6fac
+	ld hl,@directionsToJump		; $6fac
 	rst_addAToHl			; $6faf
-	ld e,$8b		; $6fb0
+
+	; Store target position in var30/var31
+	ld e,Enemy.yh		; $6fb0
 	ld a,(de)		; $6fb2
 	add (hl)		; $6fb3
-	ld e,$b0		; $6fb4
+	ld e,Enemy.var30		; $6fb4
 	ld (de),a		; $6fb6
 	ld b,a			; $6fb7
-	ld e,$8d		; $6fb8
+
+	ld e,Enemy.xh		; $6fb8
 	ld a,(de)		; $6fba
 	inc hl			; $6fbb
 	add (hl)		; $6fbc
-	ld e,$b1		; $6fbd
+	ld e,Enemy.var31		; $6fbd
 	ld (de),a		; $6fbf
 	ld c,a			; $6fc0
+
+	; Target position must not be solid (if it is, try again next frame)
 	call getTileCollisionsAtPosition		; $6fc1
 	ret nz			; $6fc4
+
 	call _ecom_incState		; $6fc5
-	ld l,$86		; $6fc8
-	ld (hl),$3c		; $6fca
-	ld l,$94		; $6fcc
-	ld a,$80		; $6fce
+
+	ld l,Enemy.counter1		; $6fc8
+	ld (hl),60		; $6fca
+
+	ld l,Enemy.speedZ		; $6fcc
+	ld a,<(-$180)		; $6fce
 	ldi (hl),a		; $6fd0
-	ld (hl),$fe		; $6fd1
+	ld (hl),>(-$180)		; $6fd1
+
 	ld a,$02		; $6fd3
 	jp enemySetAnimation		; $6fd5
-	ld a,($ff00+$f0)	; $6fd8
-	ld a,($ff00+R_P1)	; $6fda
-	ld a,($ff00+R_NR10)	; $6fdc
-	nop			; $6fde
-	ld a,($ff00+R_P1)	; $6fdf
-	stop			; $6fe1
-	stop			; $6fe2
-	ld a,($ff00+R_NR10)	; $6fe3
-	nop			; $6fe5
-	stop			; $6fe6
-	stop			; $6fe7
+
+@directionsToJump:
+	.db $f0 $f0
+	.db $f0 $00
+	.db $f0 $10
+	.db $00 $f0
+	.db $00 $10
+	.db $10 $f0
+	.db $10 $00
+	.db $10 $10
+
+
+; Waiting [counter1] frames before hopping to target position
+_colorChangingGel_state9:
 	call _ecom_decCounter1		; $6fe8
 	jp nz,enemyAnimate		; $6feb
+
 	ld l,e			; $6fee
-	inc (hl)		; $6fef
+	inc (hl) ; [state]
+
+	; Calculate angle to jump in
 	ld h,d			; $6ff0
-	ld l,$b0		; $6ff1
+	ld l,Enemy.var30		; $6ff1
 	call _ecom_readPositionVars		; $6ff3
 	call objectGetRelativeAngleWithTempVars		; $6ff6
 	and $10			; $6ff9
 	swap a			; $6ffb
 	jp enemySetAnimation		; $6ffd
+
+
+; Hopping to target
+_colorChangingGel_stateA:
 	ld c,$30		; $7000
 	call objectUpdateSpeedZ_paramC		; $7002
-	jr nz,_label_295	; $7005
-	ld l,$84		; $7007
+	jr nz,@stillInAir	; $7005
+
+	; Landed
+	ld l,Enemy.state		; $7007
 	ld (hl),$08		; $7009
-	ld l,$86		; $700b
-	ld (hl),$96		; $700d
+
+	ld l,Enemy.counter1		; $700b
+	ld (hl),150		; $700d
+
 	call objectCenterOnTile		; $700f
+
 	ld a,$03		; $7012
 	jp enemySetAnimation		; $7014
-_label_295:
-	ld l,$b0		; $7017
+
+@stillInAir:
+	; Move toward position if we're not there yet already (ignoring Z position)
+	ld l,Enemy.var30		; $7017
 	call _ecom_readPositionVars		; $7019
 	sub c			; $701c
 	inc a			; $701d
 	cp $03			; $701e
-	jr nc,_label_296	; $7020
+	jr nc,++		; $7020
 	ldh a,(<hFF8F)	; $7022
 	sub b			; $7024
 	inc a			; $7025
 	cp $03			; $7026
 	ret c			; $7028
-_label_296:
+++
 	jp _ecom_moveTowardPosition		; $7029
-	ld e,$8f		; $702c
+
+
+;;
+; Updates the gel's color with intentional lag. Every 90 frames, this uses the value of
+; var32 (tile index) to set the gel's color, then it updates the value of var32. Due to
+; the order this is done in, it takes 180 frames for the color to update fully.
+; @addr{702c}
+_colorChangingGel_updateColor:
+	; Must be on ground
+	ld e,Enemy.zh		; $702c
 	ld a,(de)		; $702e
 	rlca			; $702f
 	ret c			; $7030
+
+	; Wait for cooldown
 	call _ecom_decCounter2		; $7031
-	jr z,_label_298	; $7034
+	jr z,@updateStoredColor	; $7034
+
+	; If [counter2] == 1, update color
 	ld a,(hl)		; $7036
 	dec a			; $7037
-	jr z,_label_297	; $7038
+	jr z,@updateColor	; $7038
+
 	pop bc			; $703a
-	jr _label_299		; $703b
-_label_297:
-	ld e,$b2		; $703d
+	jr @updateImmunity		; $703b
+
+@updateColor:
+	; Update color based on tile index stored in var32 (which may be outdated).
+	ld e,Enemy.var32		; $703d
 	ld a,(de)		; $703f
-	call $7066		; $7040
-	ldi (hl),a		; $7043
-	ld (hl),a		; $7044
-_label_298:
-	call $7052		; $7045
+	call @lookupFloorColor		; $7040
+	ldi (hl),a ; [oamFlagsBackup]
+	ld (hl),a  ; [oamFlags]
+
+@updateStoredColor:
+	call @updateImmunity		; $7045
 	ret z			; $7048
+
 	pop bc			; $7049
-	ld l,$87		; $704a
-	ld (hl),$5a		; $704c
-	ld l,$b2		; $704e
+	ld l,Enemy.counter2		; $704a
+	ld (hl),90		; $704c
+
+	; Write tile index to var32?
+	ld l,Enemy.var32		; $704e
 	ld (hl),e		; $7050
 	ret			; $7051
-_label_299:
+
+;;
+; Sets collisionReactionSet depending on whether the gel's color matches the floor or not.
+;
+; @param[out]	zflag	z if immune
+; @addr{7052}
+@updateImmunity:
 	call objectGetTileAtPosition		; $7052
-	cp $da			; $7055
+	cp TILEINDEX_SOMARIA_BLOCK			; $7055
 	ret z			; $7057
-	call $7066		; $7058
+
+	call @lookupFloorColor		; $7058
 	cp (hl)			; $705b
-	ld b,$6e		; $705c
-	jr z,_label_300	; $705e
-	ld b,$35		; $7060
-_label_300:
-	ld l,$a5		; $7062
+	ld b,COLLISIONREACTIONSET_6e		; $705c
+	jr z,+			; $705e
+	ld b,COLLISIONREACTIONSET_35		; $7060
++
+	ld l,Enemy.collisionReactionSet		; $7062
 	ld (hl),b		; $7064
 	ret			; $7065
+
+;;
+; @param	a	Tile index
+; @param[out]	a	Color (defaults to red ($02) if floor tile not listed)
+; @param[out]	hl	Enemy.oamFlagsBackup
+; @addr{7066}
+@lookupFloorColor:
 	ld e,a			; $7066
-	ld hl,$7074		; $7067
+	ld hl,@floorColors		; $7067
 	call lookupKey		; $706a
 	ld h,d			; $706d
-	ld l,$9b		; $706e
+	ld l,Enemy.oamFlagsBackup		; $706e
 	ret c			; $7070
 	ld a,$02		; $7071
 	ret			; $7073
-	sbc l			; $7074
-	ld (bc),a		; $7075
-	sbc (hl)		; $7076
-	ld b,$9f		; $7077
-	ld bc,$02ad		; $7079
-	xor (hl)		; $707c
-	ld b,$af		; $707d
-	ld bc,wScrollMode		; $707f
-	ld d,e			; $7082
-	inc b			; $7083
+
+@floorColors:
+	.db TILEINDEX_RED_FLOOR,         , $02
+	.db TILEINDEX_YELLOW_FLOOR       , $06
+	.db TILEINDEX_BLUE_FLOOR         , $01
+	.db TILEINDEX_RED_TOGGLE_FLOOR   , $02
+	.db TILEINDEX_YELLOW_TOGGLE_FLOOR, $06
+	.db TILEINDEX_BLUE_TOGGLE_FLOOR  , $01
+	.db $00
+
+;;
+; Sets the gel's color to something random that isn't its current color.
+; @addr{7081}
+_colorChangingGel_chooseRandomColor:
+	call getRandomNumber_noPreserveVars		; $7081
 	and $01			; $7084
 	ld b,a			; $7086
-	ld e,$9b		; $7087
+	ld e,Enemy.oamFlagsBackup		; $7087
 	ld a,(de)		; $7089
 	res 0,a			; $708a
 	add b			; $708c
-	ld hl,$7096		; $708d
+	ld hl,@oamFlagMap		; $708d
 	rst_addAToHl			; $7090
+
 	ldi a,(hl)		; $7091
-	ld (de),a		; $7092
+	ld (de),a ; [oamFlagsBackup]
 	inc e			; $7093
-	ld (de),a		; $7094
+	ld (de),a ; [oamFlags]
 	ret			; $7095
-	ld (bc),a		; $7096
-	ld b,$01		; $7097
-	ld b,$ff		; $7099
-	rst $38			; $709b
-	.db $01 $02
+
+@oamFlagMap:
+	.db $02 $06 $01 $06 $ff $ff $01 $02
 
 ;;
 ; @addr{709e}
@@ -139294,8 +139398,6 @@ _label_325:
 	add $04			; $7376
 	and $18			; $7378
 	ld e,$89		; $737a
-
-@state2:
 	ld (de),a		; $737c
 	swap a			; $737d
 	rlca			; $737f
