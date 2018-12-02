@@ -355,9 +355,10 @@
 .define ENEMYID_GIANT_CUCCO			$3b
 
 ;;
-; Jellyfish enemy that splits in two.
+; Jellyfish enemy that splits in two. The large ones always hover close to their spawn
+; position, the small ones move toward Link.
 ; @subid_00{Normal version}
-; @subid_00{Split version}
+; @subid_01{Small version}
 .define ENEMYID_BARI				$3c
 
 ;;

@@ -138055,205 +138055,310 @@ objectFunc_6b4c:
 
 	jr @storePointer		; $6be7
 
-;;
-; @addr{6be9}
+
+; ==============================================================================
+; ENEMYID_BARI
+;
+; Variables:
+;   var30/var31: Initial Y/X position (aka target position; they always hover around this
+;                area. For subid 0 (large baris) only.)
+;   var32: Counter for "bobbing" of Z position
+; ==============================================================================
 enemyCode3c:
-	jr z,_label_275	; $6be9
-	sub $03			; $6beb
+	jr z,@normalStatus	; $6be9
+	sub ENEMYSTATUS_NO_HEALTH			; $6beb
 	ret c			; $6bed
 	jp z,enemyDie		; $6bee
 	dec a			; $6bf1
 	jp nz,_ecom_updateKnockback		; $6bf2
-	ld e,$aa		; $6bf5
+
+	; ENEMYSTATUS_JUST_HIT
+	; The bari should be split in two if it's subid 0, and the right kind of collision
+	; occurred, while it's not in its "shocking" state.
+
+	ld e,Enemy.var2a		; $6bf5
 	ld a,(de)		; $6bf7
-	cp $9e			; $6bf8
-	jr z,_label_275	; $6bfa
-	ld e,$a9		; $6bfc
+	cp $80|COLLISIONTYPE_GALE_SEED			; $6bf8
+	jr z,@normalStatus	; $6bfa
+
+	ld e,Enemy.health		; $6bfc
 	ld a,(de)		; $6bfe
 	or a			; $6bff
 	ret z			; $6c00
-	ld e,$82		; $6c01
+
+	ld e,Enemy.subid		; $6c01
 	ld a,(de)		; $6c03
 	or a			; $6c04
-	jr nz,_label_275	; $6c05
-	ld e,$a5		; $6c07
+	jr nz,@normalStatus	; $6c05
+
+	ld e,Enemy.collisionReactionSet		; $6c07
 	ld a,(de)		; $6c09
-	cp $59			; $6c0a
-	jr z,_label_275	; $6c0c
-	ld e,$aa		; $6c0e
+	cp COLLISIONREACTIONSET_59			; $6c0a
+	jr z,@normalStatus	; $6c0c
+
+	; FIXME: This checks if collisionType is strictly less than L3 shield, which is
+	; odd? Does that mean the mirror shield would cause the bari to split? Though it
+	; shouldn't matter anyway, shields can't be used underwater...
+	ld e,Enemy.var2a		; $6c0e
 	ld a,(de)		; $6c10
-	cp $83			; $6c11
-	jr c,_label_275	; $6c13
+	cp $80|COLLISIONTYPE_L3_SHIELD			; $6c11
+	jr c,@normalStatus	; $6c13
+
 	ld h,d			; $6c15
-	ld l,$84		; $6c16
+	ld l,Enemy.state		; $6c16
 	ld (hl),$0a		; $6c18
-_label_275:
+
+@normalStatus:
 	call _ecom_getSubidAndCpStateTo08		; $6c1a
-	jr c,_label_276	; $6c1d
-	call $6d39		; $6c1f
-	ld e,$84		; $6c22
+	jr c,@commonState	; $6c1d
+
+	call _bari_updateZPosition		; $6c1f
+	ld e,Enemy.state		; $6c22
 	ld a,b			; $6c24
 	or a			; $6c25
-	jp z,$6c6d		; $6c26
-	jp $6d1d		; $6c29
-_label_276:
+	jp z,_bari_subid0		; $6c26
+	jp _bari_subid1		; $6c29
+
+@commonState:
 	ld a,(de)		; $6c2c
 	rst_jumpTable			; $6c2d
-.dw $6c3e
-.dw $6c6c
-.dw $6c6c
-.dw $6c6c
-.dw $6c6c
-.dw _ecom_blownByGaleSeedState
-.dw $6c6c
-.dw $6c6c
-	ld a,$0f		; $6c3e
+	.dw _bari_state_uninitialized
+	.dw _bari_state_stub
+	.dw _bari_state_stub
+	.dw _bari_state_stub
+	.dw _bari_state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw _bari_state_stub
+	.dw _bari_state_stub
+
+
+_bari_state_uninitialized:
+	ld a,SPEED_60		; $6c3e
 	call _ecom_setSpeedAndState8AndVisible		; $6c40
-	ld l,$86		; $6c43
+
+	ld l,Enemy.counter1		; $6c43
 	ld (hl),$04		; $6c45
-	ld l,$8f		; $6c47
+
+	ld l,Enemy.zh		; $6c47
 	ld (hl),$fc		; $6c49
-	ld e,$8b		; $6c4b
-	ld l,$b0		; $6c4d
+
+	; Copy Y/X to var30/var31
+	ld e,Enemy.yh		; $6c4b
+	ld l,Enemy.var30		; $6c4d
 	ld a,(de)		; $6c4f
 	ldi (hl),a		; $6c50
-	ld e,$8d		; $6c51
+	ld e,Enemy.xh		; $6c51
 	ld a,(de)		; $6c53
 	ld (hl),a		; $6c54
+
 	call getRandomNumber_noPreserveVars		; $6c55
-	ld e,$b2		; $6c58
+	ld e,Enemy.var32		; $6c58
 	ld (de),a		; $6c5a
-	ld e,$82		; $6c5b
+
+	ld e,Enemy.subid		; $6c5b
 	ld a,(de)		; $6c5d
 	or a			; $6c5e
-	jp z,$6cbc		; $6c5f
-	ld e,$90		; $6c62
-	ld a,$0a		; $6c64
+	jp z,_bari_setRandomAngleAndCounter2		; $6c5f
+
+	; Subid 1 only
+	ld e,Enemy.speed		; $6c62
+	ld a,SPEED_40		; $6c64
 	ld (de),a		; $6c66
 	ld a,$02		; $6c67
 	jp enemySetAnimation		; $6c69
+
+
+_bari_state_stub:
 	ret			; $6c6c
+
+
+_bari_subid0:
 	ld a,(de)		; $6c6d
 	sub $08			; $6c6e
 	rst_jumpTable			; $6c70
-.dw $6c77
-.dw $6caa
-.dw $6cd0
+	.dw _bari_subid0_state8
+	.dw _bari_state9
+	.dw _bari_subid0_stateA
+
+
+; "Non-electric-shock" state
+_bari_subid0_state8:
 	call _ecom_decCounter2		; $6c77
-	jr nz,_label_277	; $6c7a
-	ld (hl),$3c		; $6c7c
+	jr nz,@dontShockYet	; $6c7a
+
+	; Begin electric shock
+	ld (hl),60 ; [counter2]
 	ld l,e			; $6c7e
-	inc (hl)		; $6c7f
-	ld l,$a5		; $6c80
-	ld (hl),$59		; $6c82
+	inc (hl) ; [state]
+
+	ld l,Enemy.collisionReactionSet		; $6c80
+	ld (hl),COLLISIONREACTIONSET_59		; $6c82
+
 	ld a,$01		; $6c84
 	jp enemySetAnimation		; $6c86
-_label_277:
+
+@dontShockYet:
 	call _ecom_decCounter1		; $6c89
-	jr nz,_label_278	; $6c8c
+	jr nz,_bari_applySpeed	; $6c8c
+
 	call getRandomNumber		; $6c8e
 	and $0e			; $6c91
 	add $02			; $6c93
-	ld (hl),a		; $6c95
-	ld l,$b0		; $6c96
+	ld (hl),a ; [counter1]
+
+	; Nudge angle towards target position (original position)
+	ld l,Enemy.var30		; $6c96
 	call _ecom_readPositionVars		; $6c98
 	call objectGetRelativeAngleWithTempVars		; $6c9b
 	call objectNudgeAngleTowards		; $6c9e
-_label_278:
+
+_bari_applySpeed:
 	call objectApplySpeed		; $6ca1
 	call _ecom_bounceOffScreenBoundary		; $6ca4
-_label_279:
+
+_bari_animate:
 	jp enemyAnimate		; $6ca7
+
+
+; In its "electric shock" state. This is shared between subids 0 and 1 (large and small).
+_bari_state9:
 	call _ecom_decCounter2		; $6caa
-	jr nz,_label_279	; $6cad
+	jr nz,_bari_animate	; $6cad
+
+	; Stop the shock
 	ld l,e			; $6caf
-	dec (hl)		; $6cb0
-	ld l,$a5		; $6cb1
-	ld (hl),$2d		; $6cb3
+	dec (hl) ; [state] = 8
+
+	ld l,Enemy.collisionReactionSet		; $6cb1
+	ld (hl),COLLISIONREACTIONSET_2d		; $6cb3
+
 	dec l			; $6cb5
-	set 7,(hl)		; $6cb6
+	set 7,(hl) ; [collisionType]
+
 	xor a			; $6cb8
 	call enemySetAnimation		; $6cb9
+
+
+;;
+; @addr{6cbc}
+_bari_setRandomAngleAndCounter2:
 	call getRandomNumber_noPreserveVars		; $6cbc
 	and $03			; $6cbf
-	ld hl,$6ccc		; $6cc1
+	ld hl,@counter2Vals		; $6cc1
 	rst_addAToHl			; $6cc4
-	ld e,$87		; $6cc5
+	ld e,Enemy.counter2		; $6cc5
 	ld a,(hl)		; $6cc7
 	ld (de),a		; $6cc8
 	jp _ecom_setRandomAngle		; $6cc9
-	inc a			; $6ccc
-	ld e,d			; $6ccd
-	ld a,b			; $6cce
-	sub (hl)		; $6ccf
+
+@counter2Vals:
+	.db 60 90 120 150
+
+
+; Bari has just been attacked; now it's splitting in two.
+_bari_subid0_stateA:
 	inc e			; $6cd0
-	ld a,(de)		; $6cd1
+	ld a,(de) ; [state2]
 	or a			; $6cd2
-	jr z,_label_280	; $6cd3
+	jr z,@substate0	; $6cd3
+
+@substate1:
 	call _ecom_decCounter2		; $6cd5
 	ret nz			; $6cd8
+
+	; Spawn the two small baris, then delete self.
 	call _ecom_updateAngleTowardTarget		; $6cd9
 	ld c,$04		; $6cdc
-	call $6cec		; $6cde
+	call @spawnSmallBari		; $6cde
 	ld c,$fc		; $6ce1
-	call $6cec		; $6ce3
+	call @spawnSmallBari		; $6ce3
 	call decNumEnemies		; $6ce6
 	jp enemyDelete		; $6ce9
-	ld b,$3c		; $6cec
+
+;;
+; @param	c	X-offset (and value to add to angle)
+; @addr{6cec}
+@spawnSmallBari:
+	ld b,ENEMYID_BARI		; $6cec
 	call _ecom_spawnEnemyWithSubid01		; $6cee
 	ret nz			; $6cf1
-	ld l,$80		; $6cf2
+
+	; Copy "enemy index" value
+	ld l,Enemy.enabled		; $6cf2
 	ld e,l			; $6cf4
 	ld a,(de)		; $6cf5
 	ld (hl),a		; $6cf6
-	ld l,$89		; $6cf7
+
+	ld l,Enemy.angle		; $6cf7
 	ld e,l			; $6cf9
 	ld a,(de)		; $6cfa
 	add c			; $6cfb
 	and $1f			; $6cfc
 	ld (hl),a		; $6cfe
+
 	ld b,$00		; $6cff
 	jp objectCopyPositionWithOffset		; $6d01
-_label_280:
-	ld b,$08		; $6d04
+
+@substate0:
+	ld b,INTERACID_KILLENEMYPUFF		; $6d04
 	call objectCreateInteractionWithSubid00		; $6d06
+
 	ld h,d			; $6d09
-	ld l,$a4		; $6d0a
+	ld l,Enemy.collisionType		; $6d0a
 	res 7,(hl)		; $6d0c
-	ld l,$87		; $6d0e
+
+	ld l,Enemy.counter2		; $6d0e
 	ld (hl),$04		; $6d10
-	ld l,$85		; $6d12
+
+	ld l,Enemy.state2		; $6d12
 	inc (hl)		; $6d14
+
 	ld a,SND_KILLENEMY		; $6d15
 	call playSound		; $6d17
 	jp objectSetInvisible		; $6d1a
+
+
+; A small bari.
+_bari_subid1:
 	ld a,(de)		; $6d1d
 	sub $08			; $6d1e
-	jp nz,$6caa		; $6d20
+	jp nz,_bari_state9		; $6d20
+
+@state8:
 	call _ecom_decCounter1		; $6d23
-	jp nz,$6ca1		; $6d26
+	jp nz,_bari_applySpeed		; $6d26
+
+	; Randomly choose counter1 value
 	call getRandomNumber		; $6d29
 	and $1c			; $6d2c
 	inc a			; $6d2e
 	ld (hl),a		; $6d2f
+
+	; Adjust angle toward Link
 	call objectGetAngleTowardEnemyTarget		; $6d30
 	call objectNudgeAngleTowards		; $6d33
-	jp $6ca1		; $6d36
+	jp _bari_applySpeed		; $6d36
+
+
+;;
+; Bobs up and down
+; @addr{6d39}
+_bari_updateZPosition:
 	ld h,d			; $6d39
-	ld l,$b2		; $6d3a
+	ld l,Enemy.var32		; $6d3a
 	dec (hl)		; $6d3c
 	ld a,(hl)		; $6d3d
 	and $30			; $6d3e
 	swap a			; $6d40
-	ld hl,$6d4b		; $6d42
+	ld hl,@zVals		; $6d42
 	rst_addAToHl			; $6d45
-	ld e,$8f		; $6d46
+	ld e,Enemy.zh		; $6d46
 	ld a,(hl)		; $6d48
 	ld (de),a		; $6d49
 	ret			; $6d4a
-.DB $fc				; $6d4b
-.DB $fd				; $6d4c
-	cp $fd			; $6d4d
+
+@zVals:
+	.db $fc $fd $fe $fd
 
 ;;
 ; @addr{6d4f}
