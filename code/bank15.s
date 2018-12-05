@@ -2201,7 +2201,7 @@ ralph_decVar3f:
 	jp _writeFlagsTocddb		; $56c6
 
 
-; Cutscene after Nayru is posessed
+; Cutscene after Nayru is possessed
 ralphSubid02Script:
 	asm15 setLinkAnimation, LINK_ANIM_MODE_NONE
 	wait 120
@@ -6610,12 +6610,12 @@ fairyHidingMinigame_subid02Script:
 
 
 ; ==============================================================================
-; INTERACID_POSESSED_NAYRU
+; INTERACID_POSSESSED_NAYRU
 ; ==============================================================================
 
 ;;
 ; @addr{6d27}
-posessedNayru_moveLinkForward:
+possessedNayru_moveLinkForward:
 	ld a,LINK_STATE_FORCE_MOVEMENT		; $6d27
 	ld (wLinkForceState),a		; $6d29
 	ld a,$08		; $6d2c
@@ -6628,7 +6628,7 @@ posessedNayru_moveLinkForward:
 
 ;;
 ; @addr{6d38}
-posessedNayru_makeExclamationMark:
+possessedNayru_makeExclamationMark:
 	ld a,SNDCTRL_STOPMUSIC		; $6d38
 	call playSound		; $6d3a
 	ld a,$18		; $6d3d

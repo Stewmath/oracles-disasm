@@ -50131,8 +50131,8 @@ _linkState06:
 	jp _initLinkStateAndAnimateStanding		; $53e7
 
 ;;
-; LINK_STATE_AMBI_POSESSED_CUTSCENE
-; This state is used during the cutscene in the black tower where Ambi gets un-posessed.
+; LINK_STATE_AMBI_POSSESSED_CUTSCENE
+; This state is used during the cutscene in the black tower where Ambi gets un-possessed.
 ; @addr{53ea}
 _linkState09:
 	ld e,SpecialObject.state2		; $53ea
@@ -79971,7 +79971,7 @@ interactionCode31:
 	bit 6,a			; $5a62
 	jp nz,interactionDelete		; $5a64
 
-	; Load a custom palette and use it for posessed impa
+	; Load a custom palette and use it for possessed impa
 	ld a,PALH_97		; $5a67
 	call loadPaletteHeader		; $5a69
 	ld e,Interaction.oamFlags		; $5a6c
@@ -80123,7 +80123,7 @@ _impaState1:
 	.dw interactionAnimate
 
 ;;
-; Posessed Impa.
+; Possessed Impa.
 ;
 ; Variables:
 ;   var37-var3a: Last frame's Y, X, and Direction values. Used for checking whether to
@@ -80430,7 +80430,7 @@ _impaSubid0:
 	call clearFollowingLinkObject		; $5d1e
 	ldbc $68,$38		; $5d21
 	call interactionSetPosition		; $5d24
-	ld hl,impaScript_revealPosession		; $5d27
+	ld hl,impaScript_revealPossession		; $5d27
 	jp interactionSetScript		; $5d2a
 
 @substateE:
@@ -82725,13 +82725,13 @@ nayruState0:
 	ld hl,nayruScript01		; $68de
 	call interactionSetScript		; $68e1
 
-@init0e: ; This is also called from ambi subids 4 and 5 (to initialize posessed palettes)
+@init0e: ; This is also called from ambi subids 4 and 5 (to initialize possessed palettes)
 	ld a,$06		; $68e4
 	ld e,Interaction.oamFlags		; $68e6
 	ld (de),a		; $68e8
 
 @loadEvilPalette:
-	; Load the posessed version of her palette into palette 6.
+	; Load the possessed version of her palette into palette 6.
 	ld a,PALH_97		; $68e9
 	jp loadPaletteHeader		; $68eb
 
@@ -82952,13 +82952,13 @@ _nayruState1:
 	.dw _nayruSubid13
 
 
-; Subid $00: cutscene at the beginning of the game (Nayru talks, gets posessed, goes back
+; Subid $00: cutscene at the beginning of the game (Nayru talks, gets possessed, goes back
 ; in time).
 ; Variables:
-;   var38:    "Status" of posession flickering
-;   var39:    Counter for number of times to flicker palette while being posessed.
-;   var3a/3b: Number of frames to stay in her "unposessed" (var3a) or "posessed" (var3b)
-;             palette. These are copied to var39. Her "posessed" counter gets longer while
+;   var38:    "Status" of possession flickering
+;   var39:    Counter for number of times to flicker palette while being possessed.
+;   var3a/3b: Number of frames to stay in her "unpossessed" (var3a) or "possessed" (var3b)
+;             palette. These are copied to var39. Her "possessed" counter gets longer while
 ;             the other gets shorter.
 _nayruSubid00:
 	ld e,Interaction.state2		; $6a6f
@@ -83007,7 +83007,7 @@ _nayruSubid00:
 	jp objectCreateFloatingMusicNote		; $6ab2
 
 
-; Palette is flickering while being posessed
+; Palette is flickering while being possessed
 @substate1:
 	call interactionAnimate		; $6ab5
 	call interactionRunScript		; $6ab8
@@ -83033,10 +83033,10 @@ _nayruSubid00:
 	inc a			; $6ad3
 	ld (hl),a		; $6ad4
 
-	call _nayruUpdatePosessionPaletteDurations		; $6ad5
+	call _nayruUpdatePossessionPaletteDurations		; $6ad5
 	jr nz,++		; $6ad8
 
-	; Done flickering with posession
+	; Done flickering with possession
 	call interactionIncState2		; $6ada
 	ld l,Interaction.oamFlags		; $6add
 	ld (hl),$06		; $6adf
@@ -83353,12 +83353,12 @@ _nayruSubid05:
 	jpab scriptHlp.turnToFaceSomething		; $6c7d
 
 ;;
-; For Nayru subid 0 (getting posessed cutscene), this updates var3a, var3b representing
-; how long Nayru's palette should be "normal" or "posessed".
+; For Nayru subid 0 (getting possessed cutscene), this updates var3a, var3b representing
+; how long Nayru's palette should be "normal" or "possessed".
 ;
-; @param[out]	zflag	Set when Nayru is fully posessed
+; @param[out]	zflag	Set when Nayru is fully possessed
 ; @addr{6c85}
-_nayruUpdatePosessionPaletteDurations:
+_nayruUpdatePossessionPaletteDurations:
 	ld a,(wFrameCounter)		; $6c85
 	and $01			; $6c88
 	ret nz			; $6c8a
@@ -83372,7 +83372,7 @@ _nayruUpdatePosessionPaletteDurations:
 	.dw @var38_4
 
 @var38_0:
-	; Decrement var3a (unposessed palette duration), increment var3b (posessed
+	; Decrement var3a (unpossessed palette duration), increment var3b (possessed
 	; palette duration) until the two are equal, then increment var38.
 	ld h,d			; $6c99
 	ld l,Interaction.var3a		; $6c9a
@@ -83901,7 +83901,7 @@ _ralphRunSubid:
 	.dw _ralphSubid12
 
 ;;
-; Cutscene where Nayru gets posessed
+; Cutscene where Nayru gets possessed
 ; @addr{6fc7}
 _ralphSubid00:
 	ld e,Interaction.state2		; $6fc7
@@ -83944,7 +83944,7 @@ _ralphSubid00:
 	ret			; $7003
 
 ;;
-; Cutscene after Nayru is posessed
+; Cutscene after Nayru is possessed
 ; @addr{7004}
 _ralphSubid02:
 	; They probably meant to call "checkInteractionState2" instead? It looks like
@@ -89260,7 +89260,7 @@ interactionCode3e:
 	.dw _runVeranGhostSubid2
 
 
-; Cutscene at start of game (unposessing Impa)
+; Cutscene at start of game (unpossessing Impa)
 _runVeranGhostSubid0:
 	ld e,Interaction.var39		; $4cfa
 	ld a,(de)		; $4cfc
@@ -89419,7 +89419,7 @@ _runVeranGhostSubid0:
 	jp interactionDelete		; $4df8
 
 
-; Cutscene just before fighting posessed Ambi
+; Cutscene just before fighting possessed Ambi
 _runVeranGhostSubid1:
 	ld a,(wTextIsActive)		; $4dfb
 	or a			; $4dfe
@@ -89430,7 +89430,7 @@ _runVeranGhostSubid1:
 	jp interactionAnimate		; $4e07
 
 
-; Cutscene just after fighting posessed Ambi
+; Cutscene just after fighting possessed Ambi
 _runVeranGhostSubid2:
 	ld e,Interaction.state2		; $4e0a
 	ld a,(de)		; $4e0c
@@ -92989,20 +92989,20 @@ interactionCode4d:
 
 ; Cutscene where Ralph confronts Ambi
 @initSubid05:
-	; Call some of nayru's code to load posessed palette
+	; Call some of nayru's code to load possessed palette
 	callab interactionBank1.nayruState0@init0e		; $6172
 
 	call objectSetVisiblec3		; $617a
 	jp _ambi_loadScript		; $617d
 
 
-; Cutscene just before fighting posessed Ambi
+; Cutscene just before fighting possessed Ambi
 @initSubid06:
 	call getThisRoomFlags		; $6180
 	bit 7,a			; $6183
 	jp nz,interactionDelete		; $6185
 
-	; Load posessed palette and use it
+	; Load possessed palette and use it
 	ld a,PALH_85		; $6188
 	call loadPaletteHeader		; $618a
 	ld h,d			; $618d
@@ -93253,7 +93253,7 @@ _ambi_runSubid05:
 	.db $82 $90 $00 $55 $03
 
 
-; $06: Cutscene just before fighting posessed Ambi
+; $06: Cutscene just before fighting possessed Ambi
 ; $07: Cutscene where Ambi regains control of herself
 _ambi_runSubid06:
 _ambi_runSubid07:
@@ -101942,19 +101942,19 @@ _fairyHidingMinigame_checkMinigameActive:
 
 
 ; ==============================================================================
-; INTERACID_POSESSED_NAYRU
+; INTERACID_POSSESSED_NAYRU
 ; ==============================================================================
 interactionCode6d:
 	ld e,Interaction.subid		; $53fd
 	ld a,(de)		; $53ff
 	ld e,Interaction.state		; $5400
 	rst_jumpTable			; $5402
-	.dw _posessedNayru_subid00
-	.dw _posessedNayru_ghost
-	.dw _posessedNayru_ghost
+	.dw _possessedNayru_subid00
+	.dw _possessedNayru_ghost
+	.dw _possessedNayru_ghost
 
 
-_posessedNayru_subid00:
+_possessedNayru_subid00:
 	ld a,(de)		; $5409
 	rst_jumpTable			; $540a
 	.dw @state0
@@ -101963,21 +101963,21 @@ _posessedNayru_subid00:
 	.dw @state3
 
 @state0:
-	ld a,GLOBALFLAG_BEAT_POSESSED_NAYRU		; $5413
+	ld a,GLOBALFLAG_BEAT_POSSESSED_NAYRU		; $5413
 	call checkGlobalFlag		; $5415
 	jp nz,interactionDelete		; $5418
 
 	ld a,PALH_85		; $541b
 	call loadPaletteHeader		; $541d
 
-	ld a,GLOBALFLAG_BEGAN_POSESSED_NAYRU_FIGHT		; $5420
+	ld a,GLOBALFLAG_BEGAN_POSSESSED_NAYRU_FIGHT		; $5420
 	call checkGlobalFlag		; $5422
 	jr nz,@state2	; $5425
 
 	; Spawn "ghost" veran
 	call getFreeInteractionSlot		; $5427
 	ret nz			; $542a
-	ld (hl),INTERACID_POSESSED_NAYRU		; $542b
+	ld (hl),INTERACID_POSSESSED_NAYRU		; $542b
 	inc l			; $542d
 	ld (hl),$02		; $542e
 	ld l,Interaction.relatedObj1		; $5430
@@ -102006,7 +102006,7 @@ _posessedNayru_subid00:
 	ld (wMenuDisabled),a		; $5456
 	call interactionIncState		; $5459
 	call objectSetVisible82		; $545c
-	ld hl,posessedNayru_beginFightScript		; $545f
+	ld hl,possessedNayru_beginFightScript		; $545f
 	jp interactionSetScript		; $5462
 
 @state1:
@@ -102017,7 +102017,7 @@ _posessedNayru_subid00:
 @state2:
 	call getFreeEnemySlot		; $546c
 	ret nz			; $546f
-	ld (hl),ENEMYID_VERAN_POSESSION_BOSS		; $5470
+	ld (hl),ENEMYID_VERAN_POSSESSION_BOSS		; $5470
 	call objectCopyPosition		; $5472
 	ld h,d			; $5475
 	ld l,Interaction.state		; $5476
@@ -102025,7 +102025,7 @@ _posessedNayru_subid00:
 	ret			; $547a
 
 @state3:
-	ld a,GLOBALFLAG_BEGAN_POSESSED_NAYRU_FIGHT		; $547b
+	ld a,GLOBALFLAG_BEGAN_POSSESSED_NAYRU_FIGHT		; $547b
 	call setGlobalFlag		; $547d
 	xor a			; $5480
 	ld (wDisabledObjects),a		; $5481
@@ -102035,7 +102035,7 @@ _posessedNayru_subid00:
 	jp interactionDelete		; $548b
 
 
-_posessedNayru_ghost:
+_possessedNayru_ghost:
 	ld a,(de)		; $548e
 	rst_jumpTable			; $548f
 	.dw @state0
@@ -102061,7 +102061,7 @@ _posessedNayru_ghost:
 	ld l,Interaction.speed		; $54ad
 	ld (hl),SPEED_80		; $54af
 	call objectSetVisible81		; $54b1
-	ld hl,posessedNayru_veranGhostScript		; $54b4
+	ld hl,possessedNayru_veranGhostScript		; $54b4
 	jp interactionSetScript		; $54b7
 
 @state2:
@@ -102089,7 +102089,7 @@ interactionCode6e:
 	.dw _interaction6e_subid04
 
 
-; Nayru waking up after being freed from posession
+; Nayru waking up after being freed from possession
 _interaction6e_subid00:
 	ld a,(de)		; $54da
 	rst_jumpTable			; $54db
@@ -102146,7 +102146,7 @@ _interaction6e_subid00:
 	ld a,(wPaletteThread_mode)		; $553a
 	or a			; $553d
 	ret nz			; $553e
-	ld a,GLOBALFLAG_BEAT_POSESSED_NAYRU		; $553f
+	ld a,GLOBALFLAG_BEAT_POSSESSED_NAYRU		; $553f
 	call setGlobalFlag		; $5541
 	ld a,CUTSCENE_NAYRU_WARP_TO_MAKU_TREE		; $5544
 	ld (wCutsceneTrigger),a		; $5546
@@ -102220,7 +102220,7 @@ _interaction6e_subid01:
 	jp interactionSetAnimation		; $55a3
 
 
-; Veran in process of posessing Ambi
+; Veran in process of possessing Ambi
 @state3:
 	ld a,(wTmpcfc0.genericCutscene.cfd0)		; $55a6
 	cp $07			; $55a9
@@ -102256,7 +102256,7 @@ _interaction6e_subid01:
 	jp fadeinFromWhiteWithDelay		; $55db
 
 
-; Now finished being posessed
+; Now finished being possessed
 @state4:
 	ld a,(wPaletteThread_mode)		; $55de
 	or a			; $55e1
@@ -102334,7 +102334,7 @@ _interaction6e_subid02:
 ; Circling around Ambi
 @state2:
 	call interactionDecCounter1		; $5649
-	jr z,@beginPosessingAmbi	; $564c
+	jr z,@beginPossessingAmbi	; $564c
 
 	ld a,(hl)		; $564e
 	push af			; $564f
@@ -102356,7 +102356,7 @@ _interaction6e_subid02:
 	call objectSetPositionInCircleArc		; $5667
 	jp interactionAnimate		; $566a
 
-@beginPosessingAmbi:
+@beginPossessingAmbi:
 	ld (hl),$50		; $566d
 
 	ld l,e			; $566f
@@ -140298,40 +140298,47 @@ _candle_stateE:
 	call decNumEnemies		; $76ec
 	jp enemyDelete		; $76ef
 
-;;
-; @addr{76f2}
-enemyCode56:
-	ld hl,$6c8e		; $76f2
-	ld e,$10		; $76f5
-	jp interBankCall		; $76f7
 
-;;
-; @addr{76fa}
+; ==============================================================================
+; ENEMYID_56
+; ==============================================================================
+enemyCode56:
+	jpab bank10.enemyCode56_body		; $76f2
+
+
+; ==============================================================================
+; ENEMYID_VERAN_POSSESSION_BOSS
+; ==============================================================================
 enemyCode61:
-	jr z,_label_359	; $76fa
-	sub $03			; $76fc
+	jr z,@normalStatus	; $76fa
+	sub ENEMYSTATUS_NO_HEALTH			; $76fc
 	ret c			; $76fe
-	call $7b11		; $76ff
-_label_359:
+
+	; ENEMYSTATUS_KNOCKBACK or ENEMYSTATUS_JUST_HIT
+	call _veranPossessionBoss_wasHit		; $76ff
+
+@normalStatus:
 	call _ecom_getSubidAndCpStateTo08		; $7702
-	jr c,_label_360	; $7705
+	jr c,@commonState	; $7705
 	ld a,b			; $7707
 	rst_jumpTable			; $7708
-.dw $776e
-.dw $791f
-.dw $79b3
-.dw $7adb
+	.dw $776e
+	.dw $791f
+	.dw $79b3
+	.dw $7adb
 
-_label_360:
+@commonState:
 	rst_jumpTable			; $7711
-.dw $7722
-.dw $776d
-.dw $776d
-.dw $7750
-.dw $776d
-.dw $776d
-.dw $776d
-.dw $776d
+	.dw $7722
+	.dw $776d
+	.dw $776d
+	.dw $7750
+	.dw $776d
+	.dw $776d
+	.dw $776d
+	.dw $776d
+
+
 	bit 1,b			; $7722
 	jr nz,_label_361	; $7724
 	ld a,$61		; $7726
@@ -140878,6 +140885,11 @@ _label_371:
 	ld a,$01		; $7b09
 	ld (wLoadedTreeGfxIndex),a		; $7b0b
 	jp enemyDelete		; $7b0e
+
+
+;;
+; @addr{7b11}
+_veranPossessionBoss_wasHit:
 	ld h,d			; $7b11
 	ld l,$ad		; $7b12
 	ld (hl),$00		; $7b14
@@ -156354,20 +156366,27 @@ _label_10_263:
 	call objectApplyGivenSpeed		; $6c8a
 _label_10_264:
 	ret			; $6c8d
-	ld e,$84		; $6c8e
+
+
+; ==============================================================================
+; ENEMYID_56
+; ==============================================================================
+enemyCode56_body:
+	ld e,Enemy.state		; $6c8e
 	ld a,(de)		; $6c90
 	rst_jumpTable			; $6c91
-.dw $6ca8
-.dw enemyAnimate
-.dw $6cd7
-.dw $6ce4
-.dw $6cf7
-.dw $6d12
-.dw $6d33
-.dw $6d3f
-.dw $6d70
-.dw $6d8e
-.dw $6da2
+	.dw $6ca8
+	.dw enemyAnimate
+	.dw $6cd7
+	.dw $6ce4
+	.dw $6cf7
+	.dw $6d12
+	.dw $6d33
+	.dw $6d3f
+	.dw $6d70
+	.dw $6d8e
+	.dw $6da2
+
 	ld h,d			; $6ca8
 	ld l,e			; $6ca9
 	inc (hl)		; $6caa

@@ -76,7 +76,7 @@
 .define ENEMYID_BLADE_TRAP			$0e
 
 ;;
-; Spider that Veran spawns when fighting posessed Ambi. Spawns in a random position within
+; Spider that Veran spawns when fighting possessed Ambi. Spawns in a random position within
 ; the screen boundary. If used in a small room, it could spawn off-screen...
 ; @palette{PALH_8a}
 ; @postype{none}
@@ -581,14 +581,16 @@
 .define ENEMYID_GANON_REVIVAL_CUTSCENE		$60
 
 ;;
-; Fight either Nayru or Ambi posessed by Nayru.
+; Fight either Nayru or Ambi possessed by Nayru.
 ;
 ; This doesn't load the needed palette; assumes it's loaded already?
 ;
 ; @subid_00{Nayru}
 ; @subid_01{Ambi}
+; @subid_02{?}
+; @subid_03{?}
 ; @palette{PALH_85}
-.define ENEMYID_VERAN_POSESSION_BOSS		$61
+.define ENEMYID_VERAN_POSSESSION_BOSS		$61
 
 ;;
 ; This should never be used manually

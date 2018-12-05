@@ -346,7 +346,7 @@
 .define INTERACID_CHILD			$35
 
 ; Subid:
-;   00: Cutscene at the beginning of game (talking to Link, then gets posessed)
+;   00: Cutscene at the beginning of game (talking to Link, then gets possessed)
 ;   01: Cutscene in Ambi's palace after getting bombs
 ;   02: Cutscene on maku tree screen after being saved
 ;   03: Cutscene with Nayru and Ralph when Link exits the black tower
@@ -369,9 +369,9 @@
 .define INTERACID_NAYRU			$36
 
 ; Subid:
-;   00: Cutscene where Nayru gets posessed
+;   00: Cutscene where Nayru gets possessed
 ;   01: Cutscene outside Ambi's palace before getting mystery seeds
-;   02: Cutscene after Nayru is posessed
+;   02: Cutscene after Nayru is possessed
 ;   03: Cutscene after talking to Rafton
 ;   04: Cutscene on maku tree screen after saving Nayru
 ;   05: Cutscene in black tower where Nayru/Ralph meet you to try to escape
@@ -473,9 +473,9 @@
 .define INTERACID_OLD_LADY		$3d
 
 ; Subid:
-;   00: Cutscene at start of game (unposessing Impa)
-;   01: Cutscene just before fighting posessed Ambi
-;   02: Cutscene just after fighting posessed Ambi
+;   00: Cutscene at start of game (unpossessing Impa)
+;   01: Cutscene just before fighting possessed Ambi
+;   02: Cutscene just after fighting possessed Ambi
 .define INTERACID_GHOST_VERAN		$3e
 
 ; Boy with sort of hostile-looking eyes?
@@ -649,7 +649,7 @@
 ;   03: Cutscene where Ambi does evil stuff atop black tower (after d7)
 ;   04: Same cutscene as subid $03 (black tower after d7), but second part
 ;   05: Cutscene where Ralph confronts Ambi
-;   06: Cutscene just before fighting posessed Ambi
+;   06: Cutscene just before fighting possessed Ambi
 ;   07: Cutscene where Ambi regains control of herself
 ;   08: Cutscene after d3 where you're told Ambi's tower will soon be complete
 ;   09: Does nothing?
@@ -918,18 +918,18 @@
 .define INTERACID_FAIRY_HIDING_MINIGAME	$6c
 
 ;;
-; Posessed version of Nayru/Ambi, or veran's ghost.
+; Possessed version of Nayru/Ambi, or veran's ghost.
 ;
-; @subid_00{Posessed Nayru in ambi's palace, starts boss fight}
-; @subid_01{Posessed Ambi? (No code defined for this?)}
+; @subid_00{Possessed Nayru in ambi's palace, starts boss fight}
+; @subid_01{Possessed Ambi? (No code defined for this?)}
 ; @subid_02{Ghost Veran}
 ; @palette{PALH_85}
-.define INTERACID_POSESSED_NAYRU	$6d
+.define INTERACID_POSSESSED_NAYRU	$6d
 
 ;;
-; NPCs for the cutscene where Nayru is freed from her posession.
+; NPCs for the cutscene where Nayru is freed from her possession.
 ;
-; @subid_00{Nayru waking up after being freed from posession}
+; @subid_00{Nayru waking up after being freed from possession}
 ; @subid_01{Queen Ambi}
 ; @subid_02{Ghost Veran}
 ; @subid_03{Ralph}

@@ -23,7 +23,7 @@
 	CUTSCENE_PREGAME_INTRO		db ; 0x0d: "Accept our quest, hero!"
 	CUTSCENE_TWINROVA_REVEAL	db ; 0x0e: Twinrova taunts Link at maku tree
 	CUTSCENE_ROOM_OF_RITES_COLLAPSE	db ; 0x0f: Plays after talking to Zelda
-	CUTSCENE_TURN_TO_STONE		db ; 0x10: Posessed Ambi turns people to stone
+	CUTSCENE_TURN_TO_STONE		db ; 0x10: Possessed Ambi turns people to stone
 	CUTSCENE_FLAME_OF_SORROW	db ; 0x11: Flame is lit after beating Veran
 	CUTSCENE_ZELDA_KIDNAPPED	db ; 0x12: Zelda kidnapped by Twinrova
 	CUTSCENE_FAIRIES_HIDE		db ; 0x13: Hide & seek minigame

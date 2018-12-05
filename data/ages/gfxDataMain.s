@@ -194,7 +194,7 @@
 	m_GfxData gfx_plasmarine_3 ; $0b33b5
 	m_GfxData gfx_ramrock_1 ; $0b3462
 	m_GfxData gfx_ramrock_2 ; $0b3551
-	m_GfxData gfx_nayru_ambi_posessed ; $0b3720
+	m_GfxData gfx_nayru_ambi_possessed ; $0b3720
 	m_GfxData gfx_veran_human ; $0b38c8
 	m_GfxData gfx_wtf_darklink ; $0b3a2b
 	m_GfxData gfx_veranbeetleandwing ; $0b3bc3

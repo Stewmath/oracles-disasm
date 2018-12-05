@@ -207,7 +207,7 @@ objectGfxHeaderTable:
 	/* $cd */ m_ObjectGfxHeader gfx_plasmarine_3 $80
 	/* $ce */ m_ObjectGfxHeader gfx_ramrock_1 $00
 	/* $cf */ m_ObjectGfxHeader gfx_ramrock_2 $80
-	/* $d0 */ m_ObjectGfxHeader gfx_nayru_ambi_posessed $00
+	/* $d0 */ m_ObjectGfxHeader gfx_nayru_ambi_possessed $00
 	/* $d1 */ m_ObjectGfxHeader gfx_veran_human $00
 	/* $d2 */ m_ObjectGfxHeader gfx_wtf_darklink $00
 	/* $d3 */ m_ObjectGfxHeader gfx_veranbeetleandwing $80

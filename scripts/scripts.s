@@ -1199,7 +1199,7 @@ adlarScript:
 	jumptable_objectbyte Interaction.var38
 	.dw @firstMeeting
 	.dw @nayruPossessed
-	.dw @queenPosessed
+	.dw @queenPossessed
 	.dw @queenMissing
 	.dw @queenBackToNormal
 
@@ -1212,10 +1212,10 @@ adlarScript:
 	showtext TX_3711
 	jump2byte @nayruPossessed
 
-@queenPosessed:
+@queenPossessed:
 	checkabutton
 	showtext TX_3712
-	jump2byte @queenPosessed
+	jump2byte @queenPossessed
 
 @queenMissing:
 	checkabutton
@@ -2088,7 +2088,7 @@ impaScript_rockJustMoved:
 	loadscript scriptHlp.impaScript_rockJustMoved
 
 ; Impa reveals that she's under veran's control
-impaScript_revealPosession:
+impaScript_revealPossession:
 	setanimation $02
 	checkmemoryeq $cfd0 $0d
 	wait 30
@@ -2833,7 +2833,7 @@ childScript_stage9_singer:
 ; INTERACID_NAYRU
 ; ==============================================================================
 
-; Subid $00: Cutscene at the beginning of game (talking to Link, then gets posessed)
+; Subid $00: Cutscene at the beginning of game (talking to Link, then gets possessed)
 nayruScript00_part1:
 	setanimation $02
 	checkmemoryeq $cfd0 $0a
@@ -2878,7 +2878,7 @@ nayruScript00_part1:
 	setcoords $28 $78
 	wait 210
 
-	; Fully posessed
+	; Fully possessed
 	setanimation $05
 	writeobjectbyte Interaction.oamFlags, $06
 	playsound SND_SWORD_OBTAINED
@@ -3085,7 +3085,7 @@ nayruScript13:
 ; INTERACID_RALPH
 ; ==============================================================================
 
-; Cutscene where Nayru gets posessed
+; Cutscene where Nayru gets possessed
 ralphSubid00Script:
 	wait 30
 	callscript _jumpAndWaitUntilLanded
@@ -3125,12 +3125,12 @@ ralphSubid00Script:
 	setanimation $00
 	wait 220
 
-	; Back away from posessed nayru slowly
+	; Back away from possessed nayru slowly
 	setspeed SPEED_020
 	setangle $10
 	applyspeed $81
 
-	checkmemoryeq $cfd0 $17 ; Wait for posession to finish
+	checkmemoryeq $cfd0 $17 ; Wait for possession to finish
 	wait 120
 
 	; Move toward Nayru
@@ -4270,7 +4270,7 @@ ghostVeranSubid1Script_part2:
 	writememory $cfd0 $1a
 	scriptend
 
-; Cutscene just before fighting posessed Ambi
+; Cutscene just before fighting possessed Ambi
 ghostVeranSubid1Script:
 	checkmemoryeq $cc93 $00
 	wait 8
@@ -5553,11 +5553,11 @@ ambiSubid05Script:
 	scriptend
 
 
-; Cutscene just before fighting posessed Ambi
+; Cutscene just before fighting possessed Ambi
 ambiSubid06Script:
 	disableinput
 	checkcfc0bit 0
-	spawnenemyhere ENEMYID_VERAN_POSESSION_BOSS, $01
+	spawnenemyhere ENEMYID_VERAN_POSSESSION_BOSS, $01
 	wait 1
 	enableinput
 	scriptend
@@ -7979,10 +7979,10 @@ fairyHidingMinigame_subid02Script:
 
 
 ; ==============================================================================
-; INTERACID_POSESSED_NAYRU
+; INTERACID_POSSESSED_NAYRU
 ; ==============================================================================
-posessedNayru_beginFightScript:
-	asm15 scriptHlp.posessedNayru_makeExclamationMark
+possessedNayru_beginFightScript:
+	asm15 scriptHlp.possessedNayru_makeExclamationMark
 	wait 30
 
 	setanimation $03
@@ -7991,7 +7991,7 @@ posessedNayru_beginFightScript:
 	wait 16
 
 	showtext TX_5608
-	asm15 scriptHlp.posessedNayru_moveLinkForward
+	asm15 scriptHlp.possessedNayru_moveLinkForward
 	wait 12
 
 	showtext TX_5609
@@ -8002,7 +8002,7 @@ posessedNayru_beginFightScript:
 	scriptend
 
 ; Ghost taunting Link just before fight starts
-posessedNayru_veranGhostScript:
+possessedNayru_veranGhostScript:
 	asm15 playSound, SND_POOF
 	applyspeed $1e
 	wait 30
@@ -8020,7 +8020,7 @@ posessedNayru_veranGhostScript:
 ; INTERACID_NAYRU_SAVED_CUTSCENE
 ; ==============================================================================
 
-; Nayru waking up after being freed from posession
+; Nayru waking up after being freed from possession
 interaction6e_subid00Script:
 	wait 30
 	spawninteraction INTERACID_NAYRU_SAVED_CUTSCENE, $01, $b0, $78
@@ -8053,7 +8053,7 @@ interaction6e_subid00Script:
 	scriptend
 
 
-; Queen Ambi (before being posessed)
+; Queen Ambi (before being possessed)
 interaction6e_subid01Script_part1:
 	wait 30
 	showtext TX_1308
@@ -8073,7 +8073,7 @@ interaction6e_subid01Script_part1:
 	scriptend
 
 
-; Queen Ambi (after being posessed)
+; Queen Ambi (after being possessed)
 interaction6e_subid01Script_part2:
 	wait 60
 	setanimation $04

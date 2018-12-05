@@ -332,7 +332,7 @@
 	SND_bd                  db ; $bd ; A single sound slowly lowering in pitch
 .endif
 
-	SND_VERAN_PROJECTILE    db ; $be ; Used for Veran's projectile attack in her posessed forms
+	SND_VERAN_PROJECTILE    db ; $be ; Used for Veran's projectile attack in her possessed forms
 	SND_CHARGE              db ; $bf ; Might be unused; sounds similar to SND_TINGLE
 	SND_TRANSFORM           db ; $c0 ; LADX sound where nightmare transforms into Dethyl
 	SND_RESTORE             db ; $c1 ; Used in ie. the ending Seasons cutscene when seasons are restored
@@ -343,7 +343,7 @@
 	SND_DEKU_SCRUB          db ; $c6
 	SND_GORON               db ; $c7
 	SND_DING                db ; $c8 ; Used as the bell in matches with Blaino
-	SND_CIRCLING            db ; $c9 ; Used in the cutscene where Veran posesses Ambi (veran is circling around)
+	SND_CIRCLING            db ; $c9 ; Used in the cutscene where Veran possesses Ambi (veran is circling around)
 
 .ifdef ROM_AGES
 	SND_CA                  db ; $ca (blank)

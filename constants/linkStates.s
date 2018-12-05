@@ -20,7 +20,7 @@
 	; Link stays in this state as long as [wDisabledObjects] is nonzero.
 	LINK_STATE_08				db ; $08
 
-	; State for the cutscene where Ambi is unposessed, Link moves back, then jumps to
+	; State for the cutscene where Ambi is unpossessed, Link moves back, then jumps to
 	; avoid Veran.
 	LINK_STATE_AMBI_UNPOSSESSED_CUTSCENE	db ; $09
 
