@@ -3,10 +3,10 @@
 ;;
 ; @param	hl
 ; @addr{3035}
-objectFunc_3035:
+objectLoadMovementScript:
 	ldh a,(<hRomBank)	; $3035
 	push af			; $3037
-	callfrombank0 bank0e.objectFunc_6b2d		; $3038
+	callfrombank0 bank0e.objectLoadMovementScript_body		; $3038
 	pop af			; $3042
 	ldh (<hRomBank),a	; $3043
 	ld ($2222),a		; $3045
@@ -14,10 +14,10 @@ objectFunc_3035:
 
 ;;
 ; @addr{3049}
-objectFunc_3049:
+objectRunMovementScript:
 	ldh a,(<hRomBank)	; $3049
 	push af			; $304b
-	callfrombank0 bank0e.objectFunc_6b4c		; $304c
+	callfrombank0 bank0e.objectRunMovementScript_body		; $304c
 	pop af			; $3056
 	setrombank		; $3057
 	ret			; $305c

@@ -9,6 +9,7 @@
 .include "include/macros.s"
 .include "include/script_commands.s"
 .include "include/simplescript_commands.s"
+.include "include/movementscript_commands.s"
 
 .include "objects/macros.s"
 .include "include/gfxDataMacros.s"
@@ -113794,7 +113795,7 @@ interactionCodea1:
 
 @state0To7:
 	ld hl,bank0e.label_0e_7eaf		; $5832
-	call objectFunc_3035		; $5835
+	call objectLoadMovementScript		; $5835
 	call interactionInitGraphics		; $5838
 	ld e,Interaction.direction		; $583b
 	ld a,(de)		; $583d
@@ -113919,7 +113920,7 @@ interactionCodea2:
 
 @state0To7:
 	ld hl,bank0e.label_0e_7f0b		; $58ec
-	call objectFunc_3035		; $58ef
+	call objectLoadMovementScript		; $58ef
 	call interactionInitGraphics		; $58f2
 	ld h,d			; $58f5
 	ld l,Interaction.collisionRadiusY		; $58f6
@@ -114540,7 +114541,7 @@ _sidescrollPlatform_pushLinkAwayHorizontal:
 ;;
 ; @addr{5bfc}
 _sidescrollPlatformFunc_5bfc:
-	call objectFunc_3049		; $5bfc
+	call objectRunMovementScript		; $5bfc
 	ld a,(wLinkRidingObject)		; $5bff
 	cp d			; $5c02
 	ret nz			; $5c03
@@ -137854,23 +137855,26 @@ _ganonRevivalCutscene_spawnShadow:
 
 
 ; ==============================================================================
-; TODO: what is this? Relates to function immediately below.
+; TODO: what object uses this?
 
 data_6b22:
-	.dw @subid0
+	.dw @subid00
 
-@subid0:
-	.db SPEED_80, DIR_UP
-@loop:
-	.db $02 $98 $04 $68 $00
-	.dw @loop
+@subid00:
+	.db SPEED_80
+	.db DIR_UP
+@@loop:
+	ms_right $98
+	ms_left  $68
+	ms_loop  @@loop
+
 
 ;;
-; Called from objectFunc_3035 in bank 0.
+; Called from objectRunMovementScript in bank0. See include/movementscript_commands.s.
 ;
-; @param	hl
+; @param	hl	Script address
 ; @addr{6b2d}
-objectFunc_6b2d:
+objectLoadMovementScript_body:
 	ldh a,(<hActiveObjectType)	; $6b2d
 	add Object.subid			; $6b2f
 	ld e,a			; $6b31
@@ -137902,10 +137906,9 @@ objectFunc_6b2d:
 	ld (de),a		; $6b4b
 
 ;;
-; Called from objectFunc_3049 in bank0. For a type of mini-script? (TODO)
-;
+; Called from objectRunMovementScript in bank0. See include/movementscript_commands.s.
 ; @addr{6b4c}
-objectFunc_6b4c:
+objectRunMovementScript_body:
 	ldh a,(<hActiveObjectType)	; $6b4c
 	add Object.var30			; $6b4e
 	ld e,a			; $6b50
@@ -137920,12 +137923,12 @@ objectFunc_6b4c:
 	push hl			; $6b57
 	rst_jumpTable			; $6b58
 	.dw @cmd00_jump
-	.dw @val1
-	.dw @val2
-	.dw @val3
-	.dw @val4
-	.dw @val5
-	.dw @val6
+	.dw @moveUp
+	.dw @moveRight
+	.dw @moveDown
+	.dw @moveLeft
+	.dw @wait
+	.dw @setstate
 
 
 @cmd00_jump:
@@ -137936,7 +137939,7 @@ objectFunc_6b4c:
 	jr @nextOp		; $6b6b
 
 
-@val1:
+@moveUp:
 	pop bc			; $6b6d
 	ld h,d			; $6b6e
 	ldh a,(<hActiveObjectType)	; $6b6f
@@ -137956,7 +137959,7 @@ objectFunc_6b4c:
 	jr @storePointer		; $6b81
 
 
-@val2:
+@moveRight:
 	pop bc			; $6b83
 	ld h,d			; $6b84
 	ldh a,(<hActiveObjectType)	; $6b85
@@ -137976,7 +137979,7 @@ objectFunc_6b4c:
 	jr @storePointer		; $6b97
 
 
-@val3:
+@moveDown:
 	pop bc			; $6b99
 	ld h,d			; $6b9a
 	ldh a,(<hActiveObjectType)	; $6b9b
@@ -137996,7 +137999,7 @@ objectFunc_6b4c:
 	jr @storePointer		; $6bad
 
 
-@val4:
+@moveLeft:
 	pop bc			; $6baf
 	ld h,d			; $6bb0
 	ldh a,(<hActiveObjectType)	; $6bb1
@@ -138016,7 +138019,7 @@ objectFunc_6b4c:
 	jr @storePointer		; $6bc3
 
 
-@val5:
+@wait:
 	pop bc			; $6bc5
 	ld h,d			; $6bc6
 	ldh a,(<hActiveObjectType)	; $6bc7
@@ -138039,7 +138042,7 @@ objectFunc_6b4c:
 	ret			; $6bd9
 
 
-@val6:
+@setstate:
 	pop bc			; $6bda
 	ld h,d			; $6bdb
 	ldh a,(<hActiveObjectType)	; $6bdc
@@ -138963,245 +138966,365 @@ _colorChangingGel_chooseRandomColor:
 @oamFlagMap:
 	.db $02 $06 $01 $06 $ff $ff $01 $02
 
-;;
-; @addr{709e}
+
+; ==============================================================================
+; ENEMYID_AMBI_GUARD
+;
+; Variables:
+;   relatedObj2: PARTID_DETECTION_HELPER; checks when Link is visible.
+;   var30-var31: Movement script address
+;   var32: Y-destination (reserved by movement script)
+;   var33: X-destination (reserved by movement script)
+;   var34: Bit 0 set when Link should be noticed; Bit 1 set once the guard has started
+;          reacting to Link (shown exclamation mark).
+;   var35: Nonzero if just hit with an indirect attack (moves more quickly)
+;   var36: While this is nonzero, all "normal code" is ignored. It counts down to zero,
+;          and once it's done, it sets var35 to 1 (move more quickly) and normal code
+;          resumes. Used for the delay between noticing Link and taking action.
+;   var37: Timer until guard "notices" scent seed.
+;   var3a: When set to $ff, faces PARTID_DETECTION_HELPER?
+;   var3b: When set to $ff, the guard immediately notices Link. (Written to by
+;          PARTID_DETECTION_HELPER.)
+; ==============================================================================
 enemyCode54:
-	jr z,+	 		; $709e
-	sub $03			; $70a0
+	jr z,@normalStatus	 		; $709e
+	sub ENEMYSTATUS_NO_HEALTH			; $70a0
 	ret c			; $70a2
-	jp z,$7397		; $70a3
+	jp z,_ambiGuard_noHealth		; $70a3
 	dec a			; $70a6
 	jp nz,_ecom_updateKnockback		; $70a7
-	call $7357		; $70aa
-+
-	ld e,$82		; $70ad
+	call _ambiGuard_collisionOccured		; $70aa
+
+@normalStatus:
+	ld e,Enemy.subid		; $70ad
 	ld a,(de)		; $70af
 	rlca			; $70b0
-	jp c,$7197		; $70b1
-	call $72b5		; $70b4
-	call $7269		; $70b7
-	ld e,$84		; $70ba
+	jp c,_ambiGuard_attacksLink		; $70b1
+
+
+; Subids $00-$7f
+_ambiGuard_tossesLinkOut:
+	call _ambiGuard_checkSpottedLink		; $70b4
+	call _ambiGuard_checkAlertTrigger		; $70b7
+	ld e,Enemy.state		; $70ba
 	ld a,(de)		; $70bc
 	rst_jumpTable			; $70bd
-.dw $70e2
-.dw $7105
-.dw $7105
-.dw $7105
-.dw $7105
-.dw $70f2
-.dw $7105
-.dw $7105
-.dw $7106
-.dw $7119
-.dw $712c
-.dw $713f
-.dw $7152
-.dw $715b
-.dw $7152
-.dw $7171
-.dw $7180
-.dw $7196
-	ld hl,$73f2		; $70e2
-	call objectFunc_3035		; $70e5
-	call $7228		; $70e8
+	.dw _ambiGuard_tossesLinkOut_uninitialized
+	.dw _ambiGuard_state_stub
+	.dw _ambiGuard_state_stub
+	.dw _ambiGuard_state_stub
+	.dw _ambiGuard_state_stub
+	.dw _ambiGuard_state_galeSeed
+	.dw _ambiGuard_state_stub
+	.dw _ambiGuard_state_stub
+	.dw _ambiGuard_state8
+	.dw _ambiGuard_state9
+	.dw _ambiGuard_stateA
+	.dw _ambiGuard_stateB
+	.dw _ambiGuard_stateC
+	.dw _ambiGuard_stateD
+	.dw _ambiGuard_stateE
+	.dw _ambiGuard_tossesLinkOut_stateF
+	.dw _ambiGuard_tossesLinkOut_state10
+	.dw _ambiGuard_tossesLinkOut_state11
+
+
+_ambiGuard_tossesLinkOut_uninitialized:
+	ld hl,_ambiGuard_tossesLinkOut_scriptTable		; $70e2
+	call objectLoadMovementScript		; $70e5
+
+	call _ambiGuard_commonInitialization		; $70e8
 	ret nz			; $70eb
-	ld e,$88		; $70ec
+
+	ld e,Enemy.direction		; $70ec
 	ld a,(de)		; $70ee
 	jp enemySetAnimation		; $70ef
+
+
+; NOTE: Guards don't seem to react to gale seeds? Is this unused?
+_ambiGuard_state_galeSeed:
 	call _ecom_galeSeedEffect		; $70f2
 	ret c			; $70f5
-	ld e,$b4		; $70f6
+
+	ld e,Enemy.var34		; $70f6
 	ld a,(de)		; $70f8
 	or a			; $70f9
-	ld e,$b5		; $70fa
-	call z,$7292		; $70fc
+	ld e,Enemy.var35		; $70fa
+	call z,_ambiGuard_alertAllGuards		; $70fc
 	call decNumEnemies		; $70ff
 	jp enemyDelete		; $7102
+
+
+_ambiGuard_state_stub:
 	ret			; $7105
-	ld e,$b2		; $7106
+
+
+; Moving up
+_ambiGuard_state8:
+	ld e,Enemy.var32		; $7106
 	ld a,(de)		; $7108
 	ld h,d			; $7109
-	ld l,$8b		; $710a
+	ld l,Enemy.yh		; $710a
 	cp (hl)			; $710c
-	jr nc,_label_301	; $710d
+	jr nc,@reachedDestination		; $710d
 	call objectApplySpeed		; $710f
-	jr _label_305		; $7112
-_label_301:
+	jr _ambiGuard_animate		; $7112
+
+@reachedDestination:
 	ld a,(de)		; $7114
 	ld (hl),a		; $7115
-	jp $725b		; $7116
-	ld e,$8d		; $7119
+	jp _ambiGuard_runMovementScript		; $7116
+
+
+; Moving right
+_ambiGuard_state9:
+	ld e,Enemy.xh		; $7119
 	ld a,(de)		; $711b
 	ld h,d			; $711c
-	ld l,$b3		; $711d
+	ld l,Enemy.var33		; $711d
 	cp (hl)			; $711f
-	jr nc,_label_302	; $7120
+	jr nc,@reachedDestination		; $7120
 	call objectApplySpeed		; $7122
-	jr _label_305		; $7125
-_label_302:
+	jr _ambiGuard_animate		; $7125
+
+@reachedDestination:
 	ld a,(hl)		; $7127
 	ld (de),a		; $7128
-	jp $725b		; $7129
-	ld e,$8b		; $712c
+	jp _ambiGuard_runMovementScript		; $7129
+
+
+; Moving down
+_ambiGuard_stateA:
+	ld e,Enemy.yh		; $712c
 	ld a,(de)		; $712e
 	ld h,d			; $712f
-	ld l,$b2		; $7130
+	ld l,Enemy.var32		; $7130
 	cp (hl)			; $7132
-	jr nc,_label_303	; $7133
+	jr nc,@reachedDestination		; $7133
 	call objectApplySpeed		; $7135
-	jr _label_305		; $7138
-_label_303:
+	jr _ambiGuard_animate		; $7138
+
+@reachedDestination:
 	ld a,(hl)		; $713a
 	ld (de),a		; $713b
-	jp $725b		; $713c
-	ld e,$b3		; $713f
+	jp _ambiGuard_runMovementScript		; $713c
+
+
+; Moving left
+_ambiGuard_stateB:
+	ld e,Enemy.var33		; $713f
 	ld a,(de)		; $7141
 	ld h,d			; $7142
-	ld l,$8d		; $7143
+	ld l,Enemy.xh		; $7143
 	cp (hl)			; $7145
-	jr nc,_label_304	; $7146
+	jr nc,@reachedDestination		; $7146
 	call objectApplySpeed		; $7148
-	jr _label_305		; $714b
-_label_304:
+	jr _ambiGuard_animate		; $714b
+
+@reachedDestination:
 	ld a,(de)		; $714d
 	ld (hl),a		; $714e
-	jp $725b		; $714f
+	jp _ambiGuard_runMovementScript		; $714f
+
+
+; Waiting
+_ambiGuard_stateC:
+_ambiGuard_stateE:
 	call _ecom_decCounter1		; $7152
-	jp z,$725b		; $7155
-_label_305:
+	jp z,_ambiGuard_runMovementScript		; $7155
+
+_ambiGuard_animate:
 	jp enemyAnimate		; $7158
+
+
+; Standing in place for [counter1] frames, then turn the other way for 30 frames, then
+; resume movemnet
+_ambiGuard_stateD:
 	call _ecom_decCounter1		; $715b
 	ret nz			; $715e
+
 	ld l,e			; $715f
-	inc (hl)		; $7160
-	ld l,$86		; $7161
-	ld (hl),$1e		; $7163
-	ld l,$89		; $7165
+	inc (hl) ; [state]
+
+	ld l,Enemy.counter1		; $7161
+	ld (hl),30		; $7163
+
+	ld l,Enemy.angle		; $7165
 	ld a,(hl)		; $7167
 	xor $10			; $7168
 	ld (hl),a		; $716a
 	swap a			; $716b
 	rlca			; $716d
 	jp enemySetAnimation		; $716e
+
+
+; Begin moving toward Link after noticing him
+_ambiGuard_tossesLinkOut_stateF:
 	ld h,d			; $7171
 	ld l,e			; $7172
-	inc (hl)		; $7173
-	ld l,$86		; $7174
-	ld (hl),$5a		; $7176
-	call $720f		; $7178
+	inc (hl) ; [state]
+
+	ld l,Enemy.counter1		; $7174
+	ld (hl),90		; $7176
+	call _ambiGuard_turnToFaceLink		; $7178
 	ld a,SND_WHISTLE		; $717b
 	jp playSound		; $717d
+
+
+; Moving toward Link until screen fades out and Link gets booted out
+_ambiGuard_tossesLinkOut_state10:
 	call enemyAnimate		; $7180
 	call _ecom_decCounter1		; $7183
-	jr z,_label_306	; $7186
+	jr z,++		; $7186
 	ld c,$18		; $7188
 	call objectCheckLinkWithinDistance		; $718a
 	jp nc,_ecom_applyVelocityForSideviewEnemyNoHoles		; $718d
-_label_306:
-	ld a,$14		; $7190
+++
+	ld a,CUTSCENE_BOOTED_FROM_PALACE		; $7190
 	ld (wCutsceneTrigger),a		; $7192
 	ret			; $7195
+
+
+_ambiGuard_tossesLinkOut_state11:
 	ret			; $7196
-	call $72b5		; $7197
-	call $7269		; $719a
-	ld e,$84		; $719d
+
+
+_ambiGuard_attacksLink:
+	call _ambiGuard_checkSpottedLink		; $7197
+	call _ambiGuard_checkAlertTrigger		; $719a
+	ld e,Enemy.state		; $719d
 	ld a,(de)		; $719f
 	rst_jumpTable			; $71a0
-.dw $71c5
-.dw $7105
-.dw $7105
-.dw $7105
-.dw $7105
-.dw $70f2
-.dw $7105
-.dw $7105
-.dw $7106
-.dw $7119
-.dw $712c
-.dw $713f
-.dw $7152
-.dw $715b
-.dw $7152
-.dw $71df
-.dw $71ef
-.dw $7218
+	.dw _ambiGuard_attacksLink_state_uninitialized
+	.dw _ambiGuard_state_stub
+	.dw _ambiGuard_state_stub
+	.dw _ambiGuard_state_stub
+	.dw _ambiGuard_state_stub
+	.dw _ambiGuard_state_galeSeed
+	.dw _ambiGuard_state_stub
+	.dw _ambiGuard_state_stub
+	.dw _ambiGuard_state8
+	.dw _ambiGuard_state9
+	.dw _ambiGuard_stateA
+	.dw _ambiGuard_stateB
+	.dw _ambiGuard_stateC
+	.dw _ambiGuard_stateD
+	.dw _ambiGuard_stateE
+	.dw _ambiGuard_attacksLink_stateF
+	.dw _ambiGuard_attacksLink_state10
+	.dw _ambiGuard_attacksLink_state11
+
+
+_ambiGuard_attacksLink_state_uninitialized:
 	ld h,d			; $71c5
-	ld l,$82		; $71c6
+	ld l,Enemy.subid		; $71c6
 	res 7,(hl)		; $71c8
-	ld hl,$7505		; $71ca
-	call objectFunc_3035		; $71cd
+
+	ld hl,_ambiGuard_attacksLink_scriptTable		; $71ca
+	call objectLoadMovementScript		; $71cd
+
 	ld h,d			; $71d0
-	ld l,$82		; $71d1
+	ld l,Enemy.subid		; $71d1
 	set 7,(hl)		; $71d3
-	call $7228		; $71d5
+
+	call _ambiGuard_commonInitialization		; $71d5
 	ret nz			; $71d8
-	ld e,$88		; $71d9
+
+	ld e,Enemy.direction		; $71d9
 	ld a,(de)		; $71db
 	jp enemySetAnimation		; $71dc
+
+
+; Just noticed Link
+_ambiGuard_attacksLink_stateF:
 	ld h,d			; $71df
 	ld l,e			; $71e0
-	inc (hl)		; $71e1
-	ld l,$87		; $71e2
+	inc (hl) ; [state]
+
+	ld l,Enemy.counter2		; $71e2
 	ld a,(hl)		; $71e4
 	or a			; $71e5
-	jr nz,_label_307	; $71e6
-	ld (hl),$3c		; $71e8
-_label_307:
-	call $734f		; $71ea
-	jr _label_309		; $71ed
+	jr nz,+			; $71e6
+	ld (hl),60		; $71e8
++
+	call _ambiGuard_createExclamationMark		; $71ea
+	jr _ambiGuard_turnToFaceLink		; $71ed
+
+
+; Looking at Link; counting down until he starts chasing him
+_ambiGuard_attacksLink_state10:
 	call _ecom_decCounter2		; $71ef
-	jr z,_label_308	; $71f2
+	jr z,@beginChasing	; $71f2
+
 	ld a,(hl)		; $71f4
-	cp $3c			; $71f5
+	cp 60			; $71f5
 	ret nz			; $71f7
+
 	ld a,SND_WHISTLE		; $71f8
 	call playSound		; $71fa
-	ld e,$b4		; $71fd
-	jp $7292		; $71ff
-_label_308:
+	ld e,Enemy.var34		; $71fd
+	jp _ambiGuard_alertAllGuards		; $71ff
+
+@beginChasing:
 	dec l			; $7202
-	ld (hl),$14		; $7203
+	ld (hl),20 ; [counter1]
 	ld l,e			; $7205
-	inc (hl)		; $7206
-	ld l,$90		; $7207
-	ld (hl),$3c		; $7209
-	ld l,$a5		; $720b
-	ld (hl),$3d		; $720d
-_label_309:
+	inc (hl) ; [state]
+
+	ld l,Enemy.speed		; $7207
+	ld (hl),SPEED_180		; $7209
+	ld l,Enemy.collisionReactionSet		; $720b
+	ld (hl),COLLISIONREACTIONSET_3d		; $720d
+
+;;
+; @addr{720f}
+_ambiGuard_turnToFaceLink:
 	call _ecom_updateCardinalAngleTowardTarget		; $720f
 	swap a			; $7212
 	rlca			; $7214
 	jp enemySetAnimation		; $7215
+
+
+; Currently chasing Link
+_ambiGuard_attacksLink_state11:
 	call _ecom_decCounter1		; $7218
-	jr nz,_label_310	; $721b
-	ld (hl),$14		; $721d
-	call $720f		; $721f
-_label_310:
+	jr nz,++		; $721b
+	ld (hl),20		; $721d
+	call _ambiGuard_turnToFaceLink		; $721f
+++
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $7222
 	jp enemyAnimate		; $7225
-	ld hl,$c9fc		; $7228
+
+;;
+; Deletes self if Veran was defeated, otherwise spawns PARTID_DETECTION_HELPER.
+;
+; @param[out]	zflag	nz if caller should return immediately (deleted self)
+; @addr{7228}
+_ambiGuard_commonInitialization:
+	ld hl,wGroup4Flags+$fc		; $7228
 	bit 7,(hl)		; $722b
-	jr z,_label_311	; $722d
+	jr z,++			; $722d
 	call enemyDelete		; $722f
 	or d			; $7232
 	ret			; $7233
-_label_311:
+++
 	call getFreePartSlot		; $7234
-_label_312:
-	jr nz,_label_313	; $7237
-	ld (hl),$0e		; $7239
-	ld l,$d6		; $723b
-	ld a,$80		; $723d
+	jr nz,++		; $7237
+	ld (hl),PARTID_DETECTION_HELPER		; $7239
+	ld l,Part.relatedObj1		; $723b
+	ld a,Enemy.start		; $723d
 	ldi (hl),a		; $723f
 	ld (hl),d		; $7240
-	ld e,$98		; $7241
-	ld a,$c0		; $7243
+
+	ld e,Enemy.relatedObj2		; $7241
+	ld a,Part.start		; $7243
 	ld (de),a		; $7245
 	inc e			; $7246
 	ld a,h			; $7247
 	ld (de),a		; $7248
+
 	ld h,d			; $7249
-	ld l,$88		; $724a
+	ld l,Enemy.direction		; $724a
 	ldi a,(hl)		; $724c
 	swap a			; $724d
 	rrca			; $724f
@@ -139209,710 +139332,772 @@ _label_312:
 	call objectSetVisiblec2		; $7251
 	xor a			; $7254
 	ret			; $7255
-_label_313:
-	ld e,$84		; $7256
+++
+	ld e,Enemy.state		; $7256
 	xor a			; $7258
 	ld (de),a		; $7259
 	ret			; $725a
-	call objectFunc_3049		; $725b
-	ld e,$89		; $725e
+
+;;
+; @addr{725b}
+_ambiGuard_runMovementScript:
+	call objectRunMovementScript		; $725b
+
+	; Update animation
+	ld e,Enemy.angle		; $725e
 	ld a,(de)		; $7260
 	and $18			; $7261
 	swap a			; $7263
 	rlca			; $7265
 	jp enemySetAnimation		; $7266
+
+;;
+; When var36 is nonzero, this counts it down, then sets var35 to nonzero when var36
+; reaches 0. (This alerts the guard to start moving faster.) Also, all other guards
+; on-screen will be alerted in this way.
+;
+; As long as var36 is nonzero, this "returns from caller" (discards return address).
+; @addr{7269}
+_ambiGuard_checkAlertTrigger:
 	ld h,d			; $7269
-	ld l,$b6		; $726a
+	ld l,Enemy.var36		; $726a
 	ld a,(hl)		; $726c
 	or a			; $726d
 	ret z			; $726e
-	pop bc			; $726f
+
+	pop bc ; return from caller
+
 	dec (hl)		; $7270
 	ld a,(hl)		; $7271
 	dec a			; $7272
-	jr nz,_label_314	; $7273
-	ld l,$84		; $7275
+	jr nz,@stillCountingDown	; $7273
+
+	; Check if in a standard movement state
+	ld l,Enemy.state		; $7275
 	ld a,(hl)		; $7277
 	sub $08			; $7278
 	cp $04			; $727a
 	ret nc			; $727c
+
+	; Update angle, animation based on state
 	ld b,a			; $727d
 	swap a			; $727e
 	rrca			; $7280
-	ld e,$89		; $7281
+	ld e,Enemy.angle		; $7281
 	ld (de),a		; $7283
 	ld a,b			; $7284
 	jp enemySetAnimation		; $7285
-_label_314:
-	cp $3b			; $7288
+
+@stillCountingDown:
+	cp 59			; $7288
 	ret nz			; $728a
+
+	; NOTE: Why on earth is this sound played? SND_WHISTLE would make more sense...
 	ld a,SND_MAKU_TREE_PAST		; $728b
 	call playSound		; $728d
-	ld e,$b5		; $7290
-	ld hl,$d080		; $7292
-_label_315:
-	ld l,$81		; $7295
+
+	; Alert all guards to start moving more quickly
+	ld e,Enemy.var35		; $7290
+
+
+;;
+; @param	de	Variable to set on the guards. "var34" to alert them to Link
+;			immediately, "var35" to make them patrol faster.
+; @addr{7292}
+_ambiGuard_alertAllGuards:
+	ldhl FIRST_ENEMY_INDEX,Enemy.enabled		; $7292
+---
+	ld l,Enemy.id		; $7295
 	ld a,(hl)		; $7297
-	cp $54			; $7298
-	jr nz,_label_316	; $729a
+	cp ENEMYID_AMBI_GUARD			; $7298
+	jr nz,@nextEnemy	; $729a
+
 	ld a,h			; $729c
 	cp d			; $729d
-	jr z,_label_316	; $729e
+	jr z,@nextEnemy	; $729e
+
 	ld l,e			; $72a0
 	ld a,(hl)		; $72a1
 	or a			; $72a2
-	jr nz,_label_316	; $72a3
+	jr nz,@nextEnemy	; $72a3
+
 	inc (hl)		; $72a5
 	bit 0,l			; $72a6
-	jr z,_label_316	; $72a8
-	ld l,$b6		; $72aa
-	ld (hl),$3c		; $72ac
-_label_316:
+	jr z,@nextEnemy	; $72a8
+
+	ld l,Enemy.var36		; $72aa
+	ld (hl),60		; $72ac
+@nextEnemy:
 	inc h			; $72ae
 	ld a,h			; $72af
-	cp $e0			; $72b0
-	jr c,_label_315	; $72b2
+	cp LAST_ENEMY_INDEX+1			; $72b0
+	jr c,---		; $72b2
 	ret			; $72b4
+
+
+;;
+; Checks for spotting Link, among other things?
+; @addr{72b5}
+_ambiGuard_checkSpottedLink:
 	ld a,(wScentSeedActive)		; $72b5
 	or a			; $72b8
-	jr nz,_label_318	; $72b9
-_label_317:
+	jr nz,@scentSeed	; $72b9
+
+@normalCheck:
+	; Notice Link if playing the flute.
+	; (Doesn't work properly for harp tunes?)
 	ld a,(wLinkPlayingInstrument)		; $72bb
 	or a			; $72be
-	jr nz,_label_320	; $72bf
-	ld e,$ba		; $72c1
+	jr nz,@faceLink	; $72bf
+
+	; if var3a == $ff, turn toward part object?
+	ld e,Enemy.var3a		; $72c1
 	ld a,(de)		; $72c3
 	inc a			; $72c4
-	jr nz,_label_322	; $72c5
-	ld (de),a		; $72c7
-	ld a,$0b		; $72c8
+	jr nz,@commonUpdate	; $72c5
+
+	ld (de),a ; [var3a] = 0
+
+	ld a,Object.yh		; $72c8
 	call objectGetRelatedObject2Var		; $72ca
 	ld b,(hl)		; $72cd
-	ld l,$0d		; $72ce
+	ld l,Object.xh		; $72ce
 	ld c,(hl)		; $72d0
 	call objectGetRelativeAngle		; $72d1
-	jr _label_321		; $72d4
-_label_318:
+	jr @alertGuardToMoveFast		; $72d4
+
+@scentSeed:
+	; When [var37] == 0, the guard notices the scent seed (turns toward it and has an
+	; exclamation point).
 	ld h,d			; $72d6
-	ld l,$b7		; $72d7
+	ld l,Enemy.var37		; $72d7
 	ld a,(hl)		; $72d9
 	or a			; $72da
-	jr z,_label_319	; $72db
+	jr z,@noticedScentSeed	; $72db
+
 	ld a,(wFrameCounter)		; $72dd
 	rrca			; $72e0
-	jr c,_label_317	; $72e1
+	jr c,@normalCheck	; $72e1
 	dec (hl)		; $72e3
-	jr _label_317		; $72e4
-_label_319:
-	ld (hl),$96		; $72e6
-_label_320:
+	jr @normalCheck		; $72e4
+
+@noticedScentSeed:
+	; Set the counter to more than the duration of a scent seed, so the guard only
+	; turns toward it once...
+	ld (hl),150 ; [var37]
+
+@faceLink:
 	call objectGetAngleTowardEnemyTarget		; $72e8
-_label_321:
+
+@alertGuardToMoveFast:
+	; When reaching here, a == angle the guard should face
 	ld h,d			; $72eb
-	ld l,$b5		; $72ec
+	ld l,Enemy.var35		; $72ec
 	inc (hl)		; $72ee
 	inc l			; $72ef
-	ld (hl),$3c		; $72f0
-	call $7376		; $72f2
-_label_322:
+	ld (hl),60 ; [var36]
+	call _ambiGuard_setAngle		; $72f2
+
+@commonUpdate:
+	; If [var3b] == $ff, notice Link immediately.
 	ld h,d			; $72f5
-	ld l,$bb		; $72f6
+	ld l,Enemy.var3b		; $72f6
 	ld a,(hl)		; $72f8
 	ld (hl),$00		; $72f9
 	inc a			; $72fb
-	jr nz,_label_323	; $72fc
-	ld l,$b4		; $72fe
+	jr nz,++		; $72fc
+	ld l,Enemy.var34		; $72fe
 	ld a,(hl)		; $7300
 	or a			; $7301
-	jr nz,_label_323	; $7302
-	inc (hl)		; $7304
-	call $7388		; $7305
-_label_323:
-	ld e,$b4		; $7308
+	jr nz,++		; $7302
+	inc (hl) ; [var34]
+	call _ambiGuard_setCounter2ForAttackingTypeOnly		; $7305
+++
+	ld e,Enemy.var34		; $7308
 	ld a,(de)		; $730a
 	rrca			; $730b
-	jr nc,_label_325	; $730c
+	jr nc,@haventSeenLinkYet	; $730c
+
+	; Return if bit 1 of var34 set (already noticed Link)
 	rrca			; $730e
 	ret c			; $730f
-	ld l,$82		; $7310
+
+	; Link is close enough to have been noticed. Do some extra checks for the "tossing
+	; Link out" subids only.
+
+	ld l,Enemy.subid		; $7310
 	bit 7,(hl)		; $7312
-	jr nz,_label_324	; $7314
+	jr nz,@noticedLink	; $7314
+
 	call checkLinkCollisionsEnabled		; $7316
 	ret nc			; $7319
+
 	ld a,(w1Link.zh)		; $731a
 	rlca			; $731d
 	ret c			; $731e
+
+	; Link has been seen. Disable inputs, etc.
+
 	ld a,$80		; $731f
 	ld (wMenuDisabled),a		; $7321
-	ld a,$21		; $7324
+
+	ld a,DISABLE_COMPANION|DISABLE_LINK		; $7324
 	ld (wDisabledObjects),a		; $7326
 	ld (wDisableScreenTransitions),a		; $7329
-	ld e,$b6		; $732c
-	ld a,$3c		; $732e
+
+	; Wait for 60 frames
+	ld e,Enemy.var36		; $732c
+	ld a,60		; $732e
 	ld (de),a		; $7330
-	call $734f		; $7331
-_label_324:
+
+	call _ambiGuard_createExclamationMark		; $7331
+
+@noticedLink:
+	; Mark bit 1 to indicate the exclamation mark was shown already, etc.
 	ld h,d			; $7334
-	ld l,$b4		; $7335
+	ld l,Enemy.var34		; $7335
 	set 1,(hl)		; $7337
-	ld l,$84		; $7339
+
+	ld l,Enemy.state		; $7339
 	ld (hl),$0f		; $733b
-	ld a,$29		; $733d
+
+	; Delete PARTID_DETECTION_HELPER
+	ld a,Object.health		; $733d
 	call objectGetRelatedObject2Var		; $733f
 	ld (hl),$00		; $7342
 	ret			; $7344
-_label_325:
+
+@haventSeenLinkYet:
+	; Was the guard hit with an indirect attack?
 	inc e			; $7345
-	ld a,(de)		; $7346
+	ld a,(de) ; [var35]
 	rrca			; $7347
 	ret nc			; $7348
+
+	; He was; update speed, make exclamation mark.
 	xor a			; $7349
 	ld (de),a		; $734a
-	ld l,$90		; $734b
-	ld (hl),$32		; $734d
-	ld a,$2d		; $734f
+
+	ld l,Enemy.speed		; $734b
+	ld (hl),SPEED_140		; $734d
+
+	; fall through
+
+;;
+; @addr{734f}
+_ambiGuard_createExclamationMark:
+	ld a,45		; $734f
 	ld bc,$f408		; $7351
 	jp objectCreateExclamationMark		; $7354
-	ld e,$b4		; $7357
+
+
+_ambiGuard_collisionOccured:
+	; If already noticed Link, return
+	ld e,Enemy.var34		; $7357
 	ld a,(de)		; $7359
 	or a			; $735a
 	ret nz			; $735b
+
+	; Check whether attack type was direct or indirect
 	ld h,d			; $735c
-	ld l,$aa		; $735d
+	ld l,Enemy.var2a		; $735d
 	ld a,(hl)		; $735f
-	cp $92			; $7360
-	jr c,_label_326	; $7362
-	cp $9e			; $7364
+	cp $80|COLLISIONTYPE_11+1			; $7360
+	jr c,_ambiGuard_directAttackOccurred	; $7362
+
+	cp $80|COLLISIONTYPE_GALE_SEED			; $7364
 	ret z			; $7366
+
+	; COLLISION_TYPE_SOMARIA_BLOCK or above (indirect attack)
 	ld h,d			; $7367
-	ld l,$b5		; $7368
+	ld l,Enemy.var35		; $7368
 	ld a,(hl)		; $736a
 	or a			; $736b
 	ret nz			; $736c
-	inc (hl)		; $736d
+
+	inc (hl) ; [var35] = 1 (make guard move move quickly)
 	inc l			; $736e
-	ld (hl),$5a		; $736f
-	ld l,$ac		; $7371
+	ld (hl),90 ; [var36] (wait for 90 frames)
+
+	ld l,Enemy.knockbackAngle		; $7371
 	ld a,(hl)		; $7373
 	xor $10			; $7374
+
+	; fall through
+
+
+;;
+; @param	a	Angle
+; @addr{7376}
+_ambiGuard_setAngle:
 	add $04			; $7376
 	and $18			; $7378
-	ld e,$89		; $737a
+	ld e,Enemy.angle		; $737a
 	ld (de),a		; $737c
+
 	swap a			; $737d
 	rlca			; $737f
 	jp enemySetAnimation		; $7380
-_label_326:
-	ld e,$b4		; $7383
+
+;;
+; A collision with one of Link's direct attacks (sword, fist, etc) occurred.
+; @addr{7383}
+_ambiGuard_directAttackOccurred:
+	; Guard notices Link right away
+	ld e,Enemy.var34		; $7383
 	ld a,$01		; $7385
 	ld (de),a		; $7387
-	ld e,$82		; $7388
+
+;;
+; Does some initialization for "attacking link" type only, when they just notice Link.
+; @addr{7388}
+_ambiGuard_setCounter2ForAttackingTypeOnly:
+	ld e,Enemy.subid		; $7388
 	ld a,(de)		; $738a
 	rlca			; $738b
 	ret nc			; $738c
-	ld e,$87		; $738d
-	ld a,$5a		; $738f
+
+	; For "attacking Link" subids only, do extra initialization
+	ld e,Enemy.counter2		; $738d
+	ld a,90		; $738f
 	ld (de),a		; $7391
-	ld e,$b6		; $7392
+	ld e,Enemy.var36		; $7392
 	xor a			; $7394
 	ld (de),a		; $7395
 	ret			; $7396
-	ld e,$85		; $7397
+
+
+; Scampering away when health is 0
+_ambiGuard_noHealth:
+	ld e,Enemy.state2		; $7397
 	ld a,(de)		; $7399
 	rst_jumpTable			; $739a
-.dw $73a1
-.dw $73ab
-.dw $73cf
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+
+@substate0:
 	ld h,d			; $73a1
 	ld l,e			; $73a2
-	inc (hl)		; $73a3
-	ld l,$94		; $73a4
+	inc (hl) ; [state2]
+
+	ld l,Enemy.speedZ		; $73a4
 	ld a,$00		; $73a6
 	ldi (hl),a		; $73a8
 	ld (hl),$ff		; $73a9
+
+; Initial jump before moving away
+@substate1:
 	ld c,$20		; $73ab
 	call objectUpdateSpeedZ_paramC		; $73ad
 	ret nz			; $73b0
-	ld l,$85		; $73b1
+
+	; Landed
+	ld l,Enemy.state2		; $73b1
 	inc (hl)		; $73b3
-	ld l,$94		; $73b4
-	ld a,$40		; $73b6
+
+	ld l,Enemy.speedZ		; $73b4
+	ld a,<(-$1c0)		; $73b6
 	ldi (hl),a		; $73b8
-	ld (hl),$fe		; $73b9
-	ld l,$90		; $73bb
-	ld (hl),$32		; $73bd
-	ld l,$ac		; $73bf
+	ld (hl),>(-$1c0)		; $73b9
+
+	ld l,Enemy.speed		; $73bb
+	ld (hl),SPEED_140		; $73bd
+
+	ld l,Enemy.knockbackAngle		; $73bf
 	ld a,(hl)		; $73c1
-	ld l,$89		; $73c2
+	ld l,Enemy.angle		; $73c2
 	ld (hl),a		; $73c4
+
 	add $04			; $73c5
 	and $18			; $73c7
 	swap a			; $73c9
 	rlca			; $73cb
 	jp enemySetAnimation		; $73cc
-	ld e,$8b		; $73cf
+
+; Moving away until off-screen
+@substate2:
+	ld e,Enemy.yh		; $73cf
 	ld a,(de)		; $73d1
-	cp $b0			; $73d2
+	cp LARGE_ROOM_HEIGHT<<4			; $73d2
 	jp nc,enemyDelete		; $73d4
-	ld e,$8d		; $73d7
+
+	ld e,Enemy.xh		; $73d7
 	ld a,(de)		; $73d9
-	cp $f0			; $73da
+	cp LARGE_ROOM_WIDTH<<4			; $73da
 	jp nc,enemyDelete		; $73dc
+
 	call objectApplySpeed		; $73df
 	ld c,$20		; $73e2
 	call objectUpdateSpeedZ_paramC		; $73e4
 	jp nz,enemyAnimate		; $73e7
-	ld l,$94		; $73ea
-	ld a,$40		; $73ec
+
+	; Landed on ground
+	ld l,Enemy.speedZ		; $73ea
+	ld a,<(-$1c0)		; $73ec
 	ldi (hl),a		; $73ee
-	ld (hl),$fe		; $73ef
+	ld (hl),>(-$1c0)		; $73ef
 	ret			; $73f1
-	inc c			; $73f2
-	ld (hl),h		; $73f3
-	add hl,de		; $73f4
-	ld (hl),h		; $73f5
-	jr nc,_label_336	; $73f6
-	ld b,e			; $73f8
-	ld (hl),h		; $73f9
-	ld d,(hl)		; $73fa
-	ld (hl),h		; $73fb
-	ld (hl),e		; $73fc
-	ld (hl),h		; $73fd
-	sub h			; $73fe
-	ld (hl),h		; $73ff
-	and a			; $7400
-	ld (hl),h		; $7401
-	cp d			; $7402
-	ld (hl),h		; $7403
-	push de			; $7404
-	ld (hl),h		; $7405
-	ld a,($ff00+$74)	; $7406
-	rst $30			; $7408
-	ld (hl),h		; $7409
-	cp $74			; $740a
-	ld e,$00		; $740c
-	ld bc,$0418		; $740e
-	jr z,_label_327	; $7411
-	ld e,b			; $7413
-	ld (bc),a		; $7414
-	ld l,b			; $7415
-_label_327:
-	nop			; $7416
-	ld c,$74		; $7417
-	ld e,$01		; $7419
-	ld (bc),a		; $741b
-	jr nc,$06		; $741c
-	rrca			; $741e
-	dec c			; $741f
-	ld (bc),a		; $7420
-	ld e,b			; $7421
-	dec b			; $7422
-	ld e,$04		; $7423
-	jr nc,_label_328	; $7425
-	rrca			; $7427
-	dec c			; $7428
-	inc b			; $7429
-	ld ($1e05),sp		; $742a
-_label_328:
-	nop			; $742d
-	dec de			; $742e
-	ld (hl),h		; $742f
-	inc d			; $7430
-	ld bc,$7802		; $7431
-	inc bc			; $7434
-	jr $05			; $7435
-	inc a			; $7437
-	inc b			; $7438
-	jr c,_label_329	; $7439
-	jr _label_330		; $743b
-	inc a			; $743d
-_label_329:
-	ld (bc),a		; $743e
-	ld e,b			; $743f
-	nop			; $7440
-	ldd (hl),a		; $7441
-_label_330:
-	ld (hl),h		; $7442
-	inc d			; $7443
-	ld bc,$7802		; $7444
-	ld bc,$0538		; $7447
-	inc a			; $744a
-	inc b			; $744b
-	jr _label_331		; $744c
-	jr c,_label_332	; $744e
-	inc a			; $7450
-_label_331:
-	ld (bc),a		; $7451
-	ld c,b			; $7452
-	nop			; $7453
-	ld b,l			; $7454
-_label_332:
-	ld (hl),h		; $7455
-	inc d			; $7456
-	ld (bc),a		; $7457
-	inc bc			; $7458
-	jr c,_label_333	; $7459
-	ld c,b			; $745b
-	dec b			; $745c
-_label_333:
-	inc a			; $745d
-	inc b			; $745e
-	jr _label_334		; $745f
-	jr c,_label_335	; $7461
-	inc a			; $7463
-_label_334:
-	ld bc,$0218		; $7464
-	ld c,b			; $7467
-_label_335:
-	ld b,$0f		; $7468
-	dec c			; $746a
-	dec b			; $746b
-_label_336:
-	jr z,_label_337	; $746c
-	rrca			; $746e
-	dec c			; $746f
-	nop			; $7470
-	ld e,b			; $7471
-	ld (hl),h		; $7472
-	inc d			; $7473
-_label_337:
-	nop			; $7474
-	ld bc,$0638		; $7475
-	rrca			; $7478
-	dec c			; $7479
-	dec b			; $747a
-	jr z,_label_338	; $747b
-	rrca			; $747d
-	dec c			; $747e
-	inc b			; $747f
-	jr c,$03		; $7480
-	ld e,b			; $7482
-_label_338:
-	inc b			; $7483
-	jr c,_label_339	; $7484
-	inc a			; $7486
-	ld (bc),a		; $7487
-	ld l,b			; $7488
-	ld b,$0f		; $7489
-_label_339:
-	dec c			; $748b
-	dec b			; $748c
-	jr z,_label_340	; $748d
-	rrca			; $748f
-	dec c			; $7490
-	nop			; $7491
-	ld (hl),l		; $7492
-	ld (hl),h		; $7493
-	inc d			; $7494
-_label_340:
-	ld bc,$3802		; $7495
-	inc bc			; $7498
-	ld c,b			; $7499
-	ld (bc),a		; $749a
-	jr c,$05		; $749b
-	inc a			; $749d
-	inc bc			; $749e
-	ld l,b			; $749f
-	inc b			; $74a0
-	jr $01			; $74a1
-	jr _label_341		; $74a3
-_label_341:
-	sub (hl)		; $74a5
-	ld (hl),h		; $74a6
-	inc d			; $74a7
-	nop			; $74a8
-	ld bc,$0218		; $74a9
-	adc b			; $74ac
-	inc bc			; $74ad
-	ld l,b			; $74ae
-	inc b			; $74af
-	ld l,b			; $74b0
-	ld bc,$0448		; $74b1
-	ld l,b			; $74b4
-	dec b			; $74b5
-	inc a			; $74b6
-	nop			; $74b7
-	xor c			; $74b8
-	ld (hl),h		; $74b9
-	inc d			; $74ba
-	inc bc			; $74bb
-	inc b			; $74bc
-	jr _label_342		; $74bd
-	rrca			; $74bf
-	dec c			; $74c0
-	ld bc,$0618		; $74c1
-	rrca			; $74c4
-_label_342:
-	dec c			; $74c5
-	ld (bc),a		; $74c6
-	ld a,b			; $74c7
-	ld b,$0f		; $74c8
-	dec c			; $74ca
-	inc bc			; $74cb
-	ld e,b			; $74cc
-	ld b,$0f		; $74cd
-	dec c			; $74cf
-	inc b			; $74d0
-	ld c,b			; $74d1
-	nop			; $74d2
-	cp h			; $74d3
-	ld (hl),h		; $74d4
-	inc d			; $74d5
-	ld bc,$7802		; $74d6
-	ld b,$0f		; $74d9
-	dec c			; $74db
-	ld bc,$0618		; $74dc
-	rrca			; $74df
-	dec c			; $74e0
-	inc b			; $74e1
-	jr z,_label_343	; $74e2
-	rrca			; $74e4
-	dec c			; $74e5
-	inc bc			; $74e6
-	ld e,b			; $74e7
-	ld b,$0f		; $74e8
-_label_343:
-	dec c			; $74ea
-	ld (bc),a		; $74eb
-	ld e,b			; $74ec
-	nop			; $74ed
-	rst_addAToHl			; $74ee
-	ld (hl),h		; $74ef
-	inc d			; $74f0
-	ld (bc),a		; $74f1
-	dec b			; $74f2
-	ld a,a			; $74f3
-	nop			; $74f4
-	ld a,($ff00+c)		; $74f5
-	ld (hl),h		; $74f6
-	inc d			; $74f7
-	ld bc,$7f05		; $74f8
-	nop			; $74fb
-	ld sp,hl		; $74fc
-	ld (hl),h		; $74fd
-	inc d			; $74fe
-	inc bc			; $74ff
-	dec b			; $7500
-	ld a,a			; $7501
-	nop			; $7502
-	nop			; $7503
-	ld (hl),l		; $7504
-	rra			; $7505
-	ld (hl),l		; $7506
-	inc l			; $7507
-	ld (hl),l		; $7508
-	ld b,e			; $7509
-	ld (hl),l		; $750a
-	ld h,d			; $750b
-	ld (hl),l		; $750c
-	ld a,c			; $750d
-	ld (hl),l		; $750e
-	add (hl)		; $750f
-	ld (hl),l		; $7510
-	sub e			; $7511
-	ld (hl),l		; $7512
-	and b			; $7513
-	ld (hl),l		; $7514
-	xor l			; $7515
-	ld (hl),l		; $7516
-	cp d			; $7517
-	ld (hl),l		; $7518
-	rst_jumpTable			; $7519
-	ld (hl),l		; $751a
-	ld ($ff00+$75),a	; $751b
-	push af			; $751d
-	ld (hl),l		; $751e
-	ld e,$00		; $751f
-	ld bc,$0418		; $7521
-	jr z,_label_344	; $7524
-	ld e,b			; $7526
-	ld (bc),a		; $7527
-	ld l,b			; $7528
-_label_344:
-	nop			; $7529
-	ld hl,$1e75		; $752a
-	ld bc,$3002		; $752d
-	ld b,$0f		; $7530
-	dec c			; $7532
-	ld (bc),a		; $7533
-	ld e,b			; $7534
-	dec b			; $7535
-	ld e,$04		; $7536
-	jr nc,_label_345	; $7538
-	rrca			; $753a
-	dec c			; $753b
-	inc b			; $753c
-	ld ($1e05),sp		; $753d
-_label_345:
-	nop			; $7540
-	ld l,$75		; $7541
-	inc d			; $7543
-	ld (bc),a		; $7544
-	inc bc			; $7545
-	adc b			; $7546
-	inc b			; $7547
-	jr z,_label_346	; $7548
-	ld c,b			; $754a
-_label_346:
-	ld b,$0f		; $754b
-	dec c			; $754d
-	inc bc			; $754e
-	adc b			; $754f
-	ld (bc),a		; $7550
-	sbc b			; $7551
-	ld bc,$0428		; $7552
-	jr z,_label_347	; $7555
-	ld c,b			; $7557
-	ld b,$0f		; $7558
-_label_347:
-	dec c			; $755a
-	ld bc,$0228		; $755b
-	sbc b			; $755e
-	nop			; $755f
-	ld b,l			; $7560
-	ld (hl),l		; $7561
-	inc d			; $7562
-	nop			; $7563
-	ld bc,$0258		; $7564
-	ret c			; $7567
-	ld bc,$0428		; $7568
-	sbc b			; $756b
-	inc bc			; $756c
-	ld e,b			; $756d
-	ld (bc),a		; $756e
-	ret c			; $756f
-	inc bc			; $7570
-	adc b			; $7571
-	inc b			; $7572
-	sbc b			; $7573
-	ld bc,$0078		; $7574
-	ld h,h			; $7577
-	ld (hl),l		; $7578
-	inc d			; $7579
-	nop			; $757a
-	ld bc,$0218		; $757b
-	ret c			; $757e
-	inc bc			; $757f
-	adc b			; $7580
-	inc b			; $7581
-	jr _label_348		; $7582
-_label_348:
-	ld a,e			; $7584
-	ld (hl),l		; $7585
-	inc d			; $7586
-	ld (bc),a		; $7587
-	inc bc			; $7588
-	adc b			; $7589
-	inc b			; $758a
-	jr $01			; $758b
-	jr _label_349		; $758d
-	ret c			; $758f
-	nop			; $7590
-_label_349:
-	adc b			; $7591
-	ld (hl),l		; $7592
-	inc d			; $7593
-	ld (bc),a		; $7594
-	inc bc			; $7595
-	ld e,b			; $7596
-	inc b			; $7597
-	jr z,$01		; $7598
-	jr z,_label_350	; $759a
-	ld l,b			; $759c
-	nop			; $759d
-_label_350:
-	sub l			; $759e
-	ld (hl),l		; $759f
-	inc d			; $75a0
-	ld bc,$c802		; $75a1
-	ld bc,$0428		; $75a4
-	adc b			; $75a7
-	inc bc			; $75a8
-	ld e,b			; $75a9
-	nop			; $75aa
-	and d			; $75ab
-	ld (hl),l		; $75ac
-	inc d			; $75ad
-	nop			; $75ae
-	ld bc,$0458		; $75af
-	ld e,b			; $75b2
-	inc bc			; $75b3
-	adc b			; $75b4
-	ld (bc),a		; $75b5
-	sbc b			; $75b6
-	nop			; $75b7
-	xor a			; $75b8
-	ld (hl),l		; $75b9
-	inc d			; $75ba
-	nop			; $75bb
-	ld bc,$0428		; $75bc
-	jr c,_label_351	; $75bf
-	adc b			; $75c1
-	ld (bc),a		; $75c2
-	sbc b			; $75c3
-_label_351:
-	nop			; $75c4
-	cp h			; $75c5
-	ld (hl),l		; $75c6
-	inc d			; $75c7
-	ld (bc),a		; $75c8
-	inc bc			; $75c9
-	sbc b			; $75ca
-	ld (bc),a		; $75cb
-	ret z			; $75cc
-	ld bc,$0418		; $75cd
-	xor b			; $75d0
-	dec b			; $75d1
-	inc a			; $75d2
-	ld (bc),a		; $75d3
-	ret z			; $75d4
-	inc bc			; $75d5
-	sbc b			; $75d6
-	inc b			; $75d7
-	xor b			; $75d8
-	ld bc,$0518		; $75d9
-	inc a			; $75dc
-	nop			; $75dd
-	ret			; $75de
-	ld (hl),l		; $75df
-	inc d			; $75e0
-	nop			; $75e1
-	ld bc,$0418		; $75e2
-	jr z,_label_352	; $75e5
-	ld e,b			; $75e7
-	ld (bc),a		; $75e8
-	ld c,b			; $75e9
-_label_352:
-	inc bc			; $75ea
-	sbc b			; $75eb
-	inc b			; $75ec
-	jr z,_label_353	; $75ed
-	ld e,b			; $75ef
-_label_353:
-	ld (bc),a		; $75f0
-	ld c,b			; $75f1
-	nop			; $75f2
-	ld ($ff00+c),a		; $75f3
-	ld (hl),l		; $75f4
-	inc d			; $75f5
-	inc bc			; $75f6
-	inc b			; $75f7
-	ld a,b			; $75f8
-	dec b			; $75f9
-	inc a			; $75fa
-	inc bc			; $75fb
-	ld e,b			; $75fc
-	dec b			; $75fd
-	inc a			; $75fe
-	ld (bc),a		; $75ff
-	ld a,b			; $7600
-	dec b			; $7601
-	inc a			; $7602
-	ld bc,$0558		; $7603
-	inc a			; $7606
-	nop			; $7607
-	rst $30			; $7608
-	ld (hl),l		; $7609
+
+
+; The tables below define the guards' patrol patterns.
+; See include/movementscript_commands.s.
+_ambiGuard_tossesLinkOut_scriptTable:
+	.dw @subid00
+	.dw @subid01
+	.dw @subid02
+	.dw @subid03
+	.dw @subid04
+	.dw @subid05
+	.dw @subid06
+	.dw @subid07
+	.dw @subid08
+	.dw @subid09
+	.dw @subid0a
+	.dw @subid0b
+	.dw @subid0c
+
+@subid00:
+	.db SPEED_c0
+	.db DIR_UP
+@@loop:
+	ms_up    $18
+	ms_left  $28
+	ms_down  $58
+	ms_right $68
+	ms_loop  @@loop
+
+@subid01:
+	.db SPEED_c0
+	.db DIR_RIGHT
+@@loop:
+	ms_right $30
+	ms_state 15, $0d
+	ms_right $58
+	ms_wait  30
+	ms_left  $30
+	ms_state 15, $0d
+	ms_left  $08
+	ms_wait  30
+	ms_loop  @@loop
+
+@subid02:
+	.db SPEED_80
+	.db DIR_RIGHT
+@@loop:
+	ms_right $78
+	ms_down  $18
+	ms_wait  60
+	ms_left  $38
+	ms_down  $18
+	ms_wait  60
+	ms_right $58
+	ms_loop  @@loop
+
+@subid03:
+	.db SPEED_80
+	.db DIR_RIGHT
+@@loop:
+	ms_right $78
+	ms_up    $38
+	ms_wait  60
+	ms_left  $18
+	ms_down  $38
+	ms_wait  60
+	ms_right $48
+	ms_loop  @@loop
+
+@subid04:
+	.db SPEED_80
+	.db DIR_DOWN
+@@loop:
+	ms_down  $38
+	ms_right $48
+	ms_wait  60
+	ms_left  $18
+	ms_down  $38
+	ms_wait  60
+	ms_up    $18
+	ms_right $48
+	ms_state 15, $0d
+	ms_wait  40
+	ms_state 15, $0d
+	ms_loop  @@loop
+
+@subid05:
+	.db SPEED_80
+	.db DIR_UP
+@@loop:
+	ms_up    $38
+	ms_state 15, $0d
+	ms_wait  40
+	ms_state 15, $0d
+	ms_left  $38
+	ms_down  $58
+	ms_left  $38
+	ms_wait  60
+	ms_right $68
+	ms_state 15, $0d
+	ms_wait  40
+	ms_state 15, $0d
+	ms_loop  @@loop
+
+@subid06:
+	.db SPEED_80
+	.db DIR_RIGHT
+@@loop:
+	ms_right $38
+	ms_down  $48
+	ms_right $38
+	ms_wait  60
+	ms_down  $68
+	ms_left  $18
+	ms_up    $18
+	ms_loop  @@loop
+
+@subid07:
+	.db SPEED_80
+	.db DIR_UP
+@@loop:
+	ms_up    $18
+	ms_right $88
+	ms_down  $68
+	ms_left  $68
+	ms_up    $48
+	ms_left  $68
+	ms_wait  60
+	ms_loop  @@loop
+
+@subid08:
+	.db SPEED_80
+	.db DIR_LEFT
+@@loop:
+	ms_left  $18
+	ms_state 15, $0d
+	ms_up    $18
+	ms_state 15, $0d
+	ms_right $78
+	ms_state 15, $0d
+	ms_down  $58
+	ms_state 15, $0d
+	ms_left  $48
+	ms_loop  @@loop
+
+@subid09:
+	.db SPEED_80
+	.db DIR_RIGHT
+@@loop:
+	ms_right $78
+	ms_state 15, $0d
+	ms_up    $18
+	ms_state 15, $0d
+	ms_left  $28
+	ms_state 15, $0d
+	ms_down  $58
+	ms_state 15, $0d
+	ms_right $58
+	ms_loop  @@loop
+
+@subid0a:
+	.db SPEED_80
+	.db DIR_DOWN
+@@loop:
+	ms_wait  127
+	ms_loop  @@loop
+
+@subid0b:
+	.db SPEED_80
+	.db DIR_RIGHT
+@@loop:
+	ms_wait  127
+	ms_loop  @@loop
+
+@subid0c:
+	.db SPEED_80
+	.db DIR_LEFT
+@@loop:
+	ms_wait  127
+	ms_loop  @@loop
+
+
+_ambiGuard_attacksLink_scriptTable:
+	.dw @subid80
+	.dw @subid81
+	.dw @subid82
+	.dw @subid83
+	.dw @subid84
+	.dw @subid85
+	.dw @subid86
+	.dw @subid87
+	.dw @subid88
+	.dw @subid89
+	.dw @subid8a
+	.dw @subid8b
+	.dw @subid8c
+
+
+@subid80:
+	.db SPEED_c0
+	.db DIR_UP
+@@loop:
+	ms_up    $18
+	ms_left  $28
+	ms_down  $58
+	ms_right $68
+	ms_loop  @@loop
+
+@subid81:
+	.db SPEED_c0
+	.db DIR_RIGHT
+@@loop:
+	ms_right $30
+	ms_state 15, $0d
+	ms_right $58
+	ms_wait  30
+	ms_left  $30
+	ms_state 15, $0d
+	ms_left  $08
+	ms_wait  30
+	ms_loop  @@loop
+
+@subid82:
+	.db SPEED_80
+	.db DIR_DOWN
+@@loop:
+	ms_down  $88
+	ms_left  $28
+	ms_up    $48
+	ms_state 15, $0d
+	ms_down  $88
+	ms_right $98
+	ms_up    $28
+	ms_left  $28
+	ms_down  $48
+	ms_state 15, $0d
+	ms_up    $28
+	ms_right $98
+	ms_loop  @@loop
+
+@subid83:
+	.db SPEED_80
+	.db DIR_UP
+@@loop:
+	ms_up    $58
+	ms_right $d8
+	ms_up    $28
+	ms_left  $98
+	ms_down  $58
+	ms_right $d8
+	ms_down  $88
+	ms_left  $98
+	ms_up    $78
+	ms_loop  @@loop
+
+@subid84:
+	.db SPEED_80
+	.db DIR_UP
+@@loop:
+	ms_up    $18
+	ms_right $d8
+	ms_down  $88
+	ms_left  $18
+	ms_loop  @@loop
+
+@subid85:
+	.db SPEED_80
+	.db DIR_DOWN
+@@loop:
+	ms_down  $88
+	ms_left  $18
+	ms_up    $18
+	ms_right $d8
+	ms_loop  @@loop
+
+@subid86:
+	.db SPEED_80
+	.db DIR_DOWN
+@@loop:
+	ms_down  $58
+	ms_left  $28
+	ms_up    $28
+	ms_right $68
+	ms_loop  @@loop
+
+@subid87:
+	.db SPEED_80
+	.db DIR_RIGHT
+@@loop:
+	ms_right $c8
+	ms_up    $28
+	ms_left  $88
+	ms_down  $58
+	ms_loop  @@loop
+
+@subid88:
+	.db SPEED_80
+	.db DIR_UP
+@@loop:
+	ms_up    $58
+	ms_left  $58
+	ms_down  $88
+	ms_right $98
+	ms_loop  @@loop
+
+@subid89:
+	.db SPEED_80
+	.db DIR_UP
+@@loop:
+	ms_up    $28
+	ms_left  $38
+	ms_down  $88
+	ms_right $98
+	ms_loop  @@loop
+
+@subid8a:
+	.db SPEED_80
+	.db DIR_DOWN
+@@loop:
+	ms_down  $98
+	ms_right $c8
+	ms_up    $18
+	ms_left  $a8
+	ms_wait  60
+	ms_right $c8
+	ms_down  $98
+	ms_left  $a8
+	ms_up    $18
+	ms_wait  60
+	ms_loop  @@loop
+
+@subid8b:
+	.db SPEED_80
+	.db DIR_UP
+@@loop:
+	ms_up    $18
+	ms_left  $28
+	ms_down  $58
+	ms_right $48
+	ms_down  $98
+	ms_left  $28
+	ms_up    $58
+	ms_right $48
+	ms_loop  @@loop
+
+@subid8c:
+	.db SPEED_80
+	.db DIR_LEFT
+@@loop:
+	ms_left  $78
+	ms_wait  60
+	ms_down  $58
+	ms_wait  60
+	ms_right $78
+	ms_wait  60
+	ms_up    $58
+	ms_wait  60
+	ms_loop  @@loop
+
+
 
 ;;
 ; @addr{760a}
@@ -159798,7 +159983,7 @@ _label_11_053:
 
 _label_11_054:
 	ld hl,bank0e.data_6b22		; $4806
-	call objectFunc_3035		; $4809
+	call objectLoadMovementScript		; $4809
 	ld h,d			; $480c
 	ld l,$c3		; $480d
 	ld b,$01		; $480f
@@ -159843,12 +160028,12 @@ _label_11_056:
 _label_11_057:
 	ld a,(de)		; $484e
 	ld (hl),a		; $484f
-	jp objectFunc_3049		; $4850
+	jp objectRunMovementScript		; $4850
 	ld h,d			; $4853
 	ld l,$c6		; $4854
 	dec (hl)		; $4856
 	ret nz			; $4857
-	jp objectFunc_3049		; $4858
+	jp objectRunMovementScript		; $4858
 
 ;;
 ; @addr{485b}
@@ -159917,69 +160102,101 @@ _label_11_058:
 	ld (hl),$08		; $48b5
 	ret			; $48b7
 
-;;
-; @addr{48b8}
+
+; ==============================================================================
+; PARTID_DETECTION_HELPER
+;
+; Variables (for subid 0, the "controller"):
+;   counter1: Countdown until firing another detection projectile forward
+;   counter2: Countdown until firing another detection projectile in an arbitrary
+;             direction (for close-range detection)
+; ==============================================================================
 partCode0e:
 	jp nz,partDelete		; $48b8
-	ld e,$c2		; $48bb
+	ld e,Part.subid		; $48bb
 	ld a,(de)		; $48bd
-	ld e,$c4		; $48be
+	ld e,Part.state		; $48be
 	rst_jumpTable			; $48c0
-.dw $48c9
-.dw $492d
-.dw $4966
-.dw $4966
+	.dw @subid0
+	.dw @subid1
+	.dw @subid2
+	.dw @subid3
+
+
+; The "controller" (spawns other subids)
+@subid0:
 	ld a,(de)		; $48c9
 	or a			; $48ca
-	jr z,_label_11_060	; $48cb
-	ld a,$00		; $48cd
+	jr z,@subid0_state0	; $48cb
+
+@subid0_state1:
+	ld a,Object.enabled		; $48cd
 	call objectGetRelatedObject1Var		; $48cf
 	ld a,(hl)		; $48d2
 	or a			; $48d3
 	jp z,partDelete		; $48d4
-	ld e,$c9		; $48d7
+
+	; Copy parent's angle and position
+	ld e,Part.angle		; $48d7
 	ld a,l			; $48d9
-	or $09			; $48da
+	or Object.angle			; $48da
 	ld l,a			; $48dc
 	ld a,(hl)		; $48dd
 	ld (de),a		; $48de
 	call objectTakePosition		; $48df
+
+	; Countdown to spawn a "detection projectile" forward
 	call _partDecCounter1IfNonzero		; $48e2
-	jr nz,_label_11_059	; $48e5
-	ld (hl),$0f		; $48e7
-	ld e,$c9		; $48e9
+	jr nz,++		; $48e5
+
+	ld (hl),$0f ; [counter1]
+	ld e,Part.angle		; $48e9
 	ld a,(de)		; $48eb
 	ld b,a			; $48ec
 	ld e,$01		; $48ed
-	call $490b		; $48ef
-_label_11_059:
+	call @spawnCollisionHelper		; $48ef
+++
+	; Countdown to spawn "detection projectiles" to the sides, for nearby detection
 	ld h,d			; $48f2
-	ld l,$c7		; $48f3
+	ld l,Part.counter2		; $48f3
 	dec (hl)		; $48f5
 	ret nz			; $48f6
-	ld (hl),$06		; $48f7
-	ld l,$c3		; $48f9
+
+	ld (hl),$06 ; [counter2]
+
+	ld l,Part.var03		; $48f9
 	ld a,(hl)		; $48fb
 	inc a			; $48fc
 	and $03			; $48fd
 	ld (hl),a		; $48ff
+
 	ld c,a			; $4900
-	ld l,$c9		; $4901
+	ld l,Part.angle		; $4901
 	ld b,(hl)		; $4903
 	ld e,$02		; $4904
-	call $490b		; $4906
+	call @spawnCollisionHelper		; $4906
 	ld e,$03		; $4909
+
+
+;;
+; @param	b	Angle
+; @param	c	var03
+; @param	e	Subid
+; @addr{490b}
+@spawnCollisionHelper:
 	call getFreePartSlot		; $490b
 	ret nz			; $490e
-	ld (hl),$0e		; $490f
+	ld (hl),PARTID_DETECTION_HELPER		; $490f
 	inc l			; $4911
 	ld (hl),e		; $4912
 	inc l			; $4913
 	ld (hl),c		; $4914
+
 	call objectCopyPosition		; $4915
-	ld l,$c9		; $4918
+	ld l,Part.angle		; $4918
 	ld (hl),b		; $491a
-	ld l,$d6		; $491b
+
+	ld l,Part.relatedObj1		; $491b
 	ld e,l			; $491d
 	ld a,(de)		; $491e
 	ldi (hl),a		; $491f
@@ -159987,83 +160204,121 @@ _label_11_059:
 	ld a,(de)		; $4921
 	ld (hl),a		; $4922
 	ret			; $4923
-_label_11_060:
+
+@subid0_state0:
 	ld h,d			; $4924
 	ld l,e			; $4925
-	inc (hl)		; $4926
-	ld l,$c6		; $4927
+	inc (hl) ; [subid]
+
+	ld l,Part.counter1		; $4927
 	inc (hl)		; $4929
 	inc l			; $492a
-	inc (hl)		; $492b
+	inc (hl) ; [counter2]
 	ret			; $492c
+
+
+; This "moves" in a prescribed direction. If it hits Link, it triggers the guard; if it
+; hits a wall, it deletes itself.
+@subid1:
 	ld a,(de)		; $492d
 	or a			; $492e
-	jr z,_label_11_064	; $492f
-_label_11_061:
+	jr z,@subid1_state0	; $492f
+
+
+@subid1_state1:
 	call objectCheckCollidedWithLink_ignoreZ		; $4931
-	jr c,_label_11_062	; $4934
+	jr c,@sawLink			; $4934
+
+	; Move forward, delete self if hit a wall
 	call objectApplyComponentSpeed		; $4936
 	call objectCheckSimpleCollision		; $4939
 	ret z			; $493c
-	jr _label_11_063		; $493d
-_label_11_062:
-	ld a,$3b		; $493f
+	jr @delete		; $493d
+
+@sawLink:
+	ld a,Object.var3b		; $493f
 	call objectGetRelatedObject1Var		; $4941
 	ld (hl),$ff		; $4944
-_label_11_063:
+@delete:
 	jp partDelete		; $4946
-_label_11_064:
+
+
+@subid1_state0:
 	inc a			; $4949
-	ld (de),a		; $494a
-	ld e,$c9		; $494b
+	ld (de),a ; [state]
+
+	; Determine collision radii depending on angle
+	ld e,Part.angle		; $494b
 	ld a,(de)		; $494d
 	add $04			; $494e
 	and $08			; $4950
 	rrca			; $4952
 	rrca			; $4953
-	ld hl,$4962		; $4954
+	ld hl,@collisionRadii		; $4954
 	rst_addAToHl			; $4957
-	ld e,$e6		; $4958
+	ld e,Part.collisionRadiusY		; $4958
 	ldi a,(hl)		; $495a
 	ld (de),a		; $495b
 	inc e			; $495c
 	ld a,(hl)		; $495d
 	ld (de),a		; $495e
-	jp $498a		; $495f
-	ld (bc),a		; $4962
-	ld bc,$0201		; $4963
+
+	jp @initSpeed		; $495f
+
+@collisionRadii:
+	.db $02 $01 ; Up/down
+	.db $01 $02 ; Left/right
+
+
+; Like subid 1, but this only lasts for 4 frames, and it detects Link at various angles
+; relative to the guard (determined by var03). Used for close-range detection in any
+; direction.
+@subid2:
+@subid3:
 	ld a,(de)		; $4966
 	or a			; $4967
-	jr z,_label_11_065	; $4968
+	jr z,@subid2_state0	; $4968
+
+
+@subid2_state1:
 	call _partDecCounter1IfNonzero		; $496a
-	jr nz,_label_11_061	; $496d
-	jr _label_11_063		; $496f
-_label_11_065:
+	jr nz,@subid1_state1	; $496d
+	jr @delete		; $496f
+
+
+@subid2_state0:
 	ld h,d			; $4971
 	ld l,e			; $4972
-	inc (hl)		; $4973
-	ld l,$c6		; $4974
+	inc (hl) ; [state]
+
+	ld l,Part.counter1		; $4974
 	ld (hl),$04		; $4976
-	ld l,$c3		; $4978
+
+	ld l,Part.var03		; $4978
 	ld a,(hl)		; $497a
 	inc a			; $497b
 	add a			; $497c
 	dec l			; $497d
-	bit 0,(hl)		; $497e
-	jr nz,_label_11_066	; $4980
+	bit 0,(hl) ; [subid]
+	jr nz,++		; $4980
 	cpl			; $4982
 	inc a			; $4983
-_label_11_066:
-	ld l,$c9		; $4984
+++
+	ld l,Part.angle		; $4984
 	add (hl)		; $4986
 	and $1f			; $4987
 	ld (hl),a		; $4989
+
+;;
+; @addr{498a}
+@initSpeed:
 	ld h,d			; $498a
-	ld l,$c9		; $498b
+	ld l,Part.angle		; $498b
 	ld c,(hl)		; $498d
-	ld b,$64		; $498e
+	ld b,SPEED_280		; $498e
 	ld a,$04		; $4990
 	jp objectSetComponentSpeedByScaledVelocity		; $4992
+
 
 ;;
 ; @addr{4995}

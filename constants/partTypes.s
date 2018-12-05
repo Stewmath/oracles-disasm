@@ -39,6 +39,17 @@
 .define PARTID_BRIDGE_SPAWNER			$0c
 
 ;;
+; This is used by ENEMYID_AMBI_GUARD to detect Link. This is an "invisible projectile"
+; which, when it hits Link, notifies the guard that Link has been seen. This object should
+; have its "relatedObj1" set to the guard it's working for.
+;
+; @subid_00{"Controller"; spawns other subids as needed.}
+; @subid_01{An "invisible projectile".}
+; @subid_02{An "invisible projectile" that only lasts 4 frames; angle is offset by var03.}
+; @subid_03{Like subid 2, but var03's offset is counterclockwise.}
+.define PARTID_DETECTION_HELPER			$0e
+
+;;
 ; Seed on a seed tree.
 ; @subid{Seed type (0-5)}
 .define PARTID_SEED_ON_TREE			$10

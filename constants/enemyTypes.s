@@ -511,7 +511,11 @@
 .define ENEMYID_DRAGONFLY			$53
 
 ;;
-; Guard in Ambi's palace (kicks you out if he sees you)
+; Guard in Ambi's palace. Each guard has a preset patrol path. If bit 7 of the subid is
+; set, the guard attacks you; otherwise it kicks you out immediately.
+;
+; @subid_00-0c{Throws you out when seen}
+; @subid_80-8c{Attacks you when seen}
 .define ENEMYID_AMBI_GUARD			$54
 
 .define ENEMYID_CANDLE				$55

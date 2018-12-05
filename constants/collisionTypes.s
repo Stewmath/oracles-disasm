@@ -29,6 +29,10 @@
 	COLLISIONTYPE_0f			db ; $0f: Instant death - maybe dimitri?
 	COLLISIONTYPE_10			db ; $10:
 	COLLISIONTYPE_11			db ; $11:
+
+	; Collisions $00-$11 are considered "direct attacks" from Link, for the purpose of
+	; ambi's guards (they notice him right away), while $11-$1f are indirect attacks?
+
 	COLLISIONTYPE_CANE_OF_SOMARIA		db ; $12: Cane of Somaria, other harmless things?
 	COLLISIONTYPE_13			db ; $13:
 	COLLISIONTYPE_14			db ; $14:

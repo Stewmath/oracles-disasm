@@ -79,11 +79,12 @@
 	; Number from $d0 to $df
 	hActiveObject			db	; $ffaf
 
-	; The position enemies try to attack
+	; The position enemies try to attack. Unaffected by scent seeds?
 	hEnemyTargetY			db	; $ffb0
 	hEnemyTargetX			db	; $ffb1
 
-	; $ffb2/b3: Y/X values, also relating to enemies; scent seed's position?
+	; $ffb2/b3: Y/X values, also relating to enemies. This is either Link's or the
+	; scent seed's position.
 	hFFB2				db	; $ffb2
 	hFFB3				db	; $ffb3
 
