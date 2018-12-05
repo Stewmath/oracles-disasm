@@ -593,7 +593,18 @@
 .define ENEMYID_VERAN_POSSESSION_BOSS		$61
 
 ;;
-; This should never be used manually
+; Vine sprout. Each subid has a default position (see data/ages/defaultVinePositions.s);
+; when moved, its position gets stored in "wVinePositions".
+;
+; If the vine is on the screen boundary, it will get "pushed" onto the next tile. Be
+; careful with room layouts because the sprout could end up stuck in a wall.
+;
+; The room the vine is used in will need special code to call the "replaceVineTiles"
+; function from the "applyRoomSpecificTileChanges" function, in order for it to grow
+; properly.
+;
+; @postype{none}
+; @subid_00-05{Valid values}
 .define ENEMYID_VINE_SPROUT			$62
 
 ; Crystals for target carts?

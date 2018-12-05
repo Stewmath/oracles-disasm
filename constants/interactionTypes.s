@@ -1554,13 +1554,12 @@
 ; Not to be confused with INTERACID_DEKU_SCRUB. This is divided into two parts, the scrub
 ; itself (subids $00-$7f) and the bush above it (subid $80).
 ;
-; @subid_00{Sells shield (expensive); subids 2-3 reserved for different shield levels}
+; @subid_00{Sells shield (expensive); subids 1-2 reserved for different shield levels}
 ; @subid_03{Sells shield (moderate); subids 5-6 reserved for different shield levels}
 ; @subid_06{Sells shield (cheap); subids 7-8 reserved for different shield levels}
 ; @subid_09{Sells bombs (missing some data, doesn't work)}
 ; @subid_0a{Sells ember seeds (missing some data)}
 ; @subid_80{The "bush" the scrub hides under; spawned automatically}
-;w
 .define INTERACID_BUSINESS_SCRUB	$ce
 
 ;;

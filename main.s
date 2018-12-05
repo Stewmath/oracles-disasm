@@ -44812,7 +44812,7 @@ initializeVinePositions:
 	jp copyMemoryReverse		; $69e5
 
 @defaultVinePositions:
-	.db $41 $22 $16 $35 $18 $53
+	.include "build/data/defaultVinePositions.s"
 
 ;;
 ; Present, bridge to nuun highlands
@@ -141290,97 +141290,144 @@ _veranPossessionBoss_wasHit:
 	jp playSound		; $7b86
 
 
-;;
-; @addr{7b89}
+; ==============================================================================
+; ENEMYID_VINE_SPROUT
+;
+; Variables:
+;   var31: Tile index underneath the sprout?
+;   var32: Short-form position of vine sprout
+;   var33: Nonzero if the "tile properties" underneath this sprout have been modified
+; ==============================================================================
 enemyCode62:
 	call objectReplaceWithAnimationIfOnHazard		; $7b89
 	ret c			; $7b8c
-	ld e,$84		; $7b8d
+
+	ld e,Enemy.state		; $7b8d
 	ld a,(de)		; $7b8f
 	rst_jumpTable			; $7b90
-.dw $7b9b
-.dw $7bc2
-.dw $7c7c
-.dw $7ca0
-.dw $7cbe
-	ld hl,$d081		; $7b9b
-_label_375:
+	.dw _vineSprout_state0
+	.dw _vineSprout_state1
+	.dw _vineSprout_state_grabbed
+	.dw _vineSprout_state_switchHook
+	.dw _vineSprout_state4
+
+
+; Initialization
+_vineSprout_state0:
+	; Delete self if there is any other vine sprout on-screen already?
+	ldhl FIRST_ENEMY_INDEX, Enemy.id		; $7b9b
+@nextEnemy:
 	ld a,(hl)		; $7b9e
-	cp $62			; $7b9f
-	jr nz,_label_376	; $7ba1
+	cp ENEMYID_VINE_SPROUT			; $7b9f
+	jr nz,++		; $7ba1
 	ld a,d			; $7ba3
 	cp h			; $7ba4
 	jp nz,enemyDelete		; $7ba5
-_label_376:
+++
 	inc h			; $7ba8
 	ld a,h			; $7ba9
-	cp $e0			; $7baa
-	jr c,_label_375	; $7bac
+	cp LAST_ENEMY_INDEX+1			; $7baa
+	jr c,@nextEnemy	; $7bac
+
 	ld h,d			; $7bae
 	ld l,e			; $7baf
-	inc (hl)		; $7bb0
-	ld l,$86		; $7bb1
-	ld (hl),$14		; $7bb3
-	ld l,$90		; $7bb5
-	ld (hl),$1e		; $7bb7
-	call $7d53		; $7bb9
+	inc (hl) ; [state]
+
+	ld l,Enemy.counter1		; $7bb1
+	ld (hl),20		; $7bb3
+
+	ld l,Enemy.speed		; $7bb5
+	ld (hl),SPEED_c0		; $7bb7
+
+	call _vineSprout_getPosition		; $7bb9
 	call objectSetShortPosition		; $7bbc
 	jp objectSetVisiblec2		; $7bbf
+
+
+_vineSprout_state1:
 	ld a,(wLinkInAir)		; $7bc2
 	rlca			; $7bc5
-	jp c,$7c5d		; $7bc6
-	call $7d28		; $7bc9
-	ld e,$b3		; $7bcc
+	jp c,_vineSprout_linkJumpingDownCliff		; $7bc6
+
+	call _vineSprout_checkLinkInSprout		; $7bc9
+	ld e,Enemy.var33		; $7bcc
 	ld a,(de)		; $7bce
-	jp c,$7d14		; $7bcf
+	jp c,_vineSprout_restoreTileAtPosition		; $7bcf
+
 	call objectAddToGrabbableObjectBuffer		; $7bd2
-	call $7cd3		; $7bd5
-	ld hl,$d001		; $7bd8
+	call _vineSprout_updateTileAtPosition		; $7bd5
+
+	; Check various conditions for whether to push the sprout
+	ld hl,w1Link.id		; $7bd8
 	ld a,(hl)		; $7bdb
-	or a			; $7bdc
-	jr nz,_label_377	; $7bdd
-	ld l,$04		; $7bdf
+	cpa SPECIALOBJECTID_LINK			; $7bdc
+	jr nz,@notPushingSprout	; $7bdd
+
+	ld l,<w1Link.state		; $7bdf
 	ld a,(hl)		; $7be1
-	cp $01			; $7be2
-	jr nz,_label_377	; $7be4
-	ld l,$0f		; $7be6
+	cp LINK_STATE_NORMAL			; $7be2
+	jr nz,@notPushingSprout	; $7be4
+
+	; Must not be in midair
+	ld l,<w1Link.zh		; $7be6
 	bit 7,(hl)		; $7be8
-	jr nz,_label_377	; $7bea
+	jr nz,@notPushingSprout	; $7bea
+
+	; Can't be swimming
 	ld a,(wLinkSwimmingState)		; $7bec
 	or a			; $7bef
-	jr nz,_label_377	; $7bf0
+	jr nz,@notPushingSprout	; $7bf0
+
+	; Must be moving
 	ld a,(wLinkAngle)		; $7bf2
 	inc a			; $7bf5
-	jr z,_label_377	; $7bf6
+	jr z,@notPushingSprout	; $7bf6
+
+	; Must not be pressing A or B
 	ld a,(wGameKeysPressed)		; $7bf8
-	and $03			; $7bfb
-	jr nz,_label_377	; $7bfd
+	and BTN_A|BTN_B			; $7bfb
+	jr nz,@notPushingSprout	; $7bfd
+
+	; Must not be holding anything
 	ld a,(wLinkGrabState)		; $7bff
 	or a			; $7c02
-	jr nz,_label_377	; $7c03
+	jr nz,@notPushingSprout	; $7c03
+
+	; Must be close enough
 	ld c,$12		; $7c05
 	call objectCheckLinkWithinDistance		; $7c07
-	jr nc,_label_377	; $7c0a
+	jr nc,@notPushingSprout	; $7c0a
+
+	; Must be aligned properly
 	ld b,$04		; $7c0c
 	call objectCheckCenteredWithLink		; $7c0e
-	jr nc,_label_377	; $7c11
+	jr nc,@notPushingSprout	; $7c11
+
+	; Link must be moving forwards
 	call _ecom_updateCardinalAngleAwayFromTarget		; $7c13
 	add $04			; $7c16
 	and $18			; $7c18
-	ld (de),a		; $7c1a
+	ld (de),a ; [angle]
 	swap a			; $7c1b
 	rlca			; $7c1d
 	ld b,a			; $7c1e
 	ld a,(w1Link.direction)		; $7c1f
 	cp b			; $7c22
-	jr nz,_label_377	; $7c23
+	jr nz,@notPushingSprout	; $7c23
+
+	; All the above must hold for 20 frames
 	call _ecom_decCounter1		; $7c25
 	ret nz			; $7c28
-	ld a,(de)		; $7c29
+
+	; Attempt to push the sprout.
+
+	ld a,(de) ; [angle]
 	rrca			; $7c2a
 	rrca			; $7c2b
-	ld hl,$7c55		; $7c2c
+	ld hl,@pushOffsets		; $7c2c
 	rst_addAToHl			; $7c2f
+
+	; Get destination position
 	call objectGetPosition		; $7c30
 	ldi a,(hl)		; $7c33
 	add b			; $7c34
@@ -141388,186 +141435,275 @@ _label_376:
 	ld a,(hl)		; $7c36
 	add c			; $7c37
 	ld c,a			; $7c38
+
+	; Must not be solid there
 	call getTileCollisionsAtPosition		; $7c39
-	jr nz,_label_377	; $7c3c
+	jr nz,@notPushingSprout	; $7c3c
+
+	; Push the sprout
 	ld h,d			; $7c3e
-	ld l,$84		; $7c3f
+	ld l,Enemy.state		; $7c3f
 	ld (hl),$04		; $7c41
-	ld l,$86		; $7c43
+	ld l,Enemy.counter1		; $7c43
 	ld (hl),$16		; $7c45
 	ld a,SND_MOVEBLOCK		; $7c47
 	call playSound		; $7c49
-	jp $7d14		; $7c4c
-_label_377:
-	ld e,$86		; $7c4f
-	ld a,$14		; $7c51
+	jp _vineSprout_restoreTileAtPosition		; $7c4c
+
+@notPushingSprout:
+	ld e,Enemy.counter1		; $7c4f
+	ld a,20		; $7c51
 	ld (de),a		; $7c53
 	ret			; $7c54
-	ld a,($ff00+R_P1)	; $7c55
-	nop			; $7c57
-	stop			; $7c58
-	stop			; $7c59
-	nop			; $7c5a
-	nop			; $7c5b
-_label_378:
-	.db $f0
 
-	call $7d14		; $7c5d
-	call $7d28		; $7c60
+@pushOffsets:
+	.db $f0 $00 ; DIR_UP
+	.db $00 $10 ; DIR_RIGHT
+	.db $10 $00 ; DIR_DOWN
+	.db $00 $f0 ; DIR_LEFT
+
+
+_vineSprout_linkJumpingDownCliff:
+	call _vineSprout_restoreTileAtPosition		; $7c5d
+	call _vineSprout_checkLinkInSprout		; $7c60
 	ret nc			; $7c63
-	ld l,$0f		; $7c64
+
+	; Check Link is close to ground
+	ld l,SpecialObject.zh		; $7c64
 	ld a,(hl)		; $7c66
 	add $03			; $7c67
 	ret nc			; $7c69
-_label_379:
-	ld b,$06		; $7c6a
+
+_vineSprout_destroy:
+	ld b,INTERACID_ROCKDEBRIS		; $7c6a
 	call objectCreateInteractionWithSubid00		; $7c6c
-	call $7d42		; $7c6f
+
+	call _vineSprout_getDefaultPosition		; $7c6f
 	ld b,a			; $7c72
-	ld a,(de)		; $7c73
+	ld a,(de) ; [subid]
 	ld hl,wVinePositions		; $7c74
 	rst_addAToHl			; $7c77
 	ld (hl),b		; $7c78
+
 	jp enemyDelete		; $7c79
+
+
+_vineSprout_state_grabbed:
 	inc e			; $7c7c
 	ld a,(de)		; $7c7d
 	rst_jumpTable			; $7c7e
-.dw $7c87
-.dw $7c93
-.dw $7c94
-.dw $7c9e
+	.dw @justGrabbed
+	.dw @beingHeld
+	.dw @justReleased
+	.dw @hitGround
+
+@justGrabbed:
 	xor a			; $7c87
 	ld (wLinkGrabState2),a		; $7c88
 	inc a			; $7c8b
 	ld (de),a		; $7c8c
-	call $7d14		; $7c8d
+	call _vineSprout_restoreTileAtPosition		; $7c8d
 	jp objectSetVisiblec1		; $7c90
+
+@beingHeld:
 	ret			; $7c93
+
+@justReleased:
 	ld h,d			; $7c94
-	ld l,$80		; $7c95
-	res 1,(hl)		; $7c97
-	ld l,$8f		; $7c99
+	ld l,Enemy.enabled		; $7c95
+	res 1,(hl) ; Don't persist across rooms anymore
+	ld l,Enemy.zh		; $7c99
 	bit 7,(hl)		; $7c9b
 	ret nz			; $7c9d
-	jr _label_379		; $7c9e
+
+@hitGround:
+	jr _vineSprout_destroy		; $7c9e
+
+
+_vineSprout_state_switchHook:
 	inc e			; $7ca0
 	ld a,(de)		; $7ca1
 	rst_jumpTable			; $7ca2
-.dw $7cab
-.dw $7cb1
-.dw objectCenterOnTile
-.dw $7cb2
-	call $7d14		; $7cab
+	.dw @justLatched
+	.dw @beforeSwitch
+	.dw objectCenterOnTile
+	.dw @released
+
+@justLatched:
+	call _vineSprout_restoreTileAtPosition		; $7cab
 	jp _ecom_incState2		; $7cae
+
+@beforeSwitch:
 	ret			; $7cb1
+
+@released:
 	ld b,$01		; $7cb2
 	call _ecom_fallToGroundAndSetState		; $7cb4
 	ret nz			; $7cb7
 	call objectCenterOnTile		; $7cb8
-	jp $7cd3		; $7cbb
-	ld hl,$d000		; $7cbe
+	jp _vineSprout_updateTileAtPosition		; $7cbb
+
+
+; Being pushed
+_vineSprout_state4:
+	ld hl,w1Link		; $7cbe
 	call preventObjectHFromPassingObjectD		; $7cc1
+
 	call _ecom_decCounter1		; $7cc4
 	jp nz,_ecom_applyVelocityForTopDownEnemyNoHoles		; $7cc7
-	ld (hl),$14		; $7cca
-	ld l,$84		; $7ccc
+
+	; Done pushing
+	ld (hl),20 ; [counter1]
+	ld l,Enemy.state		; $7ccc
 	ld (hl),$01		; $7cce
+
 	call objectCenterOnTile		; $7cd0
-	ld e,$b3		; $7cd3
+
+	; fall through
+
+
+;;
+; Updates tile properties at current position, updates wVinePositions, if var33 is
+; nonzero.
+; @addr{7cd3}
+_vineSprout_updateTileAtPosition:
+	; Return if we've already done this
+	ld e,Enemy.var33		; $7cd3
 	ld a,(de)		; $7cd5
 	or a			; $7cd6
 	ret nz			; $7cd7
+
 	call objectGetTileCollisions		; $7cd8
 	ld (hl),$0f		; $7cdb
-	ld e,$b1		; $7cdd
-	ld h,$cf		; $7cdf
+	ld e,Enemy.var31		; $7cdd
+	ld h,>wRoomLayout		; $7cdf
 	ld a,(hl)		; $7ce1
-	ld (de),a		; $7ce2
+	ld (de),a ; [var31] = tile index
 	inc e			; $7ce3
 	ld a,l			; $7ce4
-	ld (de),a		; $7ce5
-	ld (hl),$00		; $7ce6
+	ld (de),a ; [var32] = tile position
+	ld (hl),TILEINDEX_00		; $7ce6
+
 	inc e			; $7ce8
 	ld a,$01		; $7ce9
-	ld (de),a		; $7ceb
+	ld (de),a ; [var33] = 1
+
+	; Ensure that the position is not on the screen boundary.
+	; BUG: This could push the sprout into a wall? (Probably not possible with the
+	; room layouts of the vanilla game...)
+@fixVerticalBoundary:
 	ld a,l			; $7cec
 	and $f0			; $7ced
-	jr nz,_label_380	; $7cef
+	jr nz,++		; $7cef
 	set 4,l			; $7cf1
-	jr _label_381		; $7cf3
-_label_380:
-	cp $70			; $7cf5
-	jr nz,_label_381	; $7cf7
+	jr @fixHorizontalBoundary			; $7cf3
+++
+	cp (SMALL_ROOM_HEIGHT-1)<<4			; $7cf5
+	jr nz,@fixHorizontalBoundary		; $7cf7
 	res 4,l			; $7cf9
-_label_381:
+
+@fixHorizontalBoundary:
 	ld a,l			; $7cfb
 	and $0f			; $7cfc
-	jr nz,_label_382	; $7cfe
+	jr nz,++		; $7cfe
 	inc l			; $7d00
-	jr _label_383		; $7d01
-_label_382:
-	cp $09			; $7d03
-	jr nz,_label_383	; $7d05
+	jr @setPosition		; $7d01
+++
+	cp SMALL_ROOM_WIDTH-1			; $7d03
+	jr nz,@setPosition	; $7d05
 	dec l			; $7d07
-_label_383:
-	ld e,$82		; $7d08
+
+@setPosition:
+	ld e,Enemy.subid		; $7d08
 	ld a,(de)		; $7d0a
 	ld bc,wVinePositions		; $7d0b
 	call addAToBc		; $7d0e
 	ld a,l			; $7d11
 	ld (bc),a		; $7d12
 	ret			; $7d13
-	ld e,$b3		; $7d14
+
+;;
+; Undoes the changes done previously to the tile at the sprout's current position (the
+; sprout is just moving off, or being destroyed, etc).
+; @addr{7d14}
+_vineSprout_restoreTileAtPosition:
+	; Return if there's nothing to undo
+	ld e,Enemy.var33		; $7d14
 	ld a,(de)		; $7d16
 	or a			; $7d17
 	ret z			; $7d18
+
 	xor a			; $7d19
-	ld (de),a		; $7d1a
+	ld (de),a ; [var33]
+
+	; Restore tile at this position
 	dec e			; $7d1b
-	ld a,(de)		; $7d1c
+	ld a,(de) ; [var32]
 	ld l,a			; $7d1d
+
 	dec e			; $7d1e
-	ld a,(de)		; $7d1f
-	ld h,$cf		; $7d20
+	ld a,(de) ; [var31]
+	ld h,>wRoomLayout		; $7d20
 	ld (hl),a		; $7d22
-	ld h,$ce		; $7d23
+	ld h,>wRoomCollisions		; $7d23
 	ld (hl),$00		; $7d25
 	ret			; $7d27
+
+
+;;
+; @param[out]	cflag	c if Link is in the sprout
+; @addr{7d28}
+_vineSprout_checkLinkInSprout:
 	ld a,(wLinkObjectIndex)		; $7d28
 	ld h,a			; $7d2b
-	ld l,$0b		; $7d2c
-	ld e,$8b		; $7d2e
+	ld l,SpecialObject.yh		; $7d2c
+	ld e,Enemy.yh		; $7d2e
 	ld a,(de)		; $7d30
 	sub (hl)		; $7d31
 	add $06			; $7d32
 	cp $0d			; $7d34
 	ret nc			; $7d36
-	ld l,$0d		; $7d37
-	ld e,$8d		; $7d39
+
+	ld l,SpecialObject.xh		; $7d37
+	ld e,Enemy.xh		; $7d39
 	ld a,(de)		; $7d3b
 	sub (hl)		; $7d3c
 	add $06			; $7d3d
 	cp $0d			; $7d3f
 	ret			; $7d41
-	ld e,$82		; $7d42
+
+;;
+; @param[out]	a	Sprout's default position
+; @param[out]	de	Enemy.subid
+; @addr{7d42}
+_vineSprout_getDefaultPosition:
+	ld e,Enemy.subid		; $7d42
 	ld a,(de)		; $7d44
-	ld bc,$7d4d		; $7d45
+	ld bc,@defaultVinePositions		; $7d45
 	call addAToBc		; $7d48
 	ld a,(bc)		; $7d4b
 	ret			; $7d4c
-	ld b,c			; $7d4d
-	ldi (hl),a		; $7d4e
-	ld d,$35		; $7d4f
-	jr _label_387		; $7d51
-	ld e,$82		; $7d53
+
+@defaultVinePositions:
+	.include "build/data/defaultVinePositions.s"
+
+
+;;
+; @param[out]	c	Sprout's position
+; @addr{7d53}
+_vineSprout_getPosition:
+	ld e,Enemy.subid		; $7d53
 	ld a,(de)		; $7d55
 	ld hl,wVinePositions		; $7d56
 	rst_addAToHl			; $7d59
 	ld c,(hl)		; $7d5a
-	ld b,$cf		; $7d5b
+
+	; Check if the sprout is under a "respawnable tile" (ie. a bush). If so, return to
+	; default position.
+	ld b,>wRoomLayout		; $7d5b
 	ld a,(bc)		; $7d5d
 	ld e,a			; $7d5e
-	ld hl,@data		; $7d5f
+	ld hl,@respawnableTiles		; $7d5f
 -
 	ldi a,(hl)		; $7d62
 	or a			; $7d63
@@ -141575,12 +141711,11 @@ _label_383:
 	cp e			; $7d65
 	jr nz,-			; $7d66
 
-	call $7d42		; $7d68
+	call _vineSprout_getDefaultPosition		; $7d68
 	ld c,a			; $7d6b
 	ret			; $7d6c
 
-; @addr{7d6d}
-@data:
+@respawnableTiles:
 	.db $c0 $c1 $c2 $c3 $c4 $c5 $c6 $c7
 	.db $c8 $c9 $ca $00
 
@@ -141613,7 +141748,6 @@ _label_385:
 	call $7e9f		; $7da1
 _label_386:
 	ld e,$82		; $7da4
-_label_387:
 	ld a,(de)		; $7da6
 	cp $05			; $7da7
 	jr nc,_label_388	; $7da9
@@ -172267,7 +172401,7 @@ interactionLoadTreasureData:
 	ld a,(de)		; $4535
 	jr --			; $4536
 +
-	; var31 = spawn moed
+	; var31 = spawn mode
 	ldi a,(hl)		; $4538
 	ld b,a			; $4539
 	swap a			; $453a

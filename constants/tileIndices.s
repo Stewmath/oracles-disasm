@@ -4,7 +4,7 @@
 
 ; Tiles in normal areas
 
-.define TILEINDEX_00			$00 ; Out-of-bounds tile
+.define TILEINDEX_00			$00 ; Out-of-bounds tile (also used by vine sprout?)
 .define TILEINDEX_UNLIT_TORCH		$08
 .define TILEINDEX_LIT_TORCH		$09
 .define TILEINDEX_MOVING_POT		$10
