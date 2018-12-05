@@ -123,13 +123,18 @@
 ; Also used by ENEMYID_PODOBOO_TOWER, ENEMYID_FIREBALL_SHOOTER
 .define PARTID_GOPONGA_PROJECTILE		$31
 
+;;
+; Flame animation used exclusively by ENEMYID_CANDLE. Expects relatedObj1 to point to its
+; parent.
+.define PARTID_CANDLE_FLAME			$36
+
 ; Ball for the shooting gallery
 .define PARTID_BALL				$38
 
 ; Used by big bang game.
 ; @subid_00{A single bomb?}
 ; @subid_ff{A spawner for bombs?}
-.define PARTID_BIGBANG_BOMB_SPAWNER			$49
+.define PARTID_BIGBANG_BOMB_SPAWNER		$49
 
 ; $45: falling boulder spawner?
 

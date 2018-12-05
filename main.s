@@ -43723,62 +43723,62 @@ applyRoomSpecificTileChanges:
 	call findRoomSpecificData		; $6432
 	ret nc			; $6435
 	rst_jumpTable			; $6436
-.dw tileReplacement_group5Mapf5 ; $00
-.dw tileReplacement_group4Map1b ; $01
-.dw tileReplacement_group2Map7e ; $02
-.dw tileReplacement_group4Map4c ; $03
-.dw tileReplacement_group4Map4e ; $04
-.dw tileReplacement_group4Map59 ; $05
-.dw tileReplacement_group4Map60 ; $06
-.dw tileReplacement_group4Map52 ; $07
-.dw tileReplacement_group0Map38 ; $08
-.dw tileReplacement_group1Map38 ; $09
-.dw tileReplacement_group5Map38 ; $0a
-.dw tileReplacement_group5Map25 ; $0b
-.dw tileReplacement_group5Map43 ; $0c
-.dw tileReplacement_group5Map4c ; $0d
-.dw tileReplacement_group5Map5c ; $0e
-.dw tileReplacement_group5Map4d ; $0f
-.dw tileReplacement_group5Map5d ; $10
-.dw tileReplacement_group7Map4a ; $11
-.dw tileReplacement_group5Map95 ; $12
-.dw tileReplacement_group5Mapc3 ; $13
-.dw tileReplacement_group0Map5c ; $14
-.dw tileReplacement_group2Mapf7 ; $15
-.dw tileReplacement_group0Map73 ; $16
-.dw tileReplacement_group0Map48 ; $17
-.dw tileReplacement_group0Mapac ; $18
-.dw tileReplacement_group0Map2c ; $19
-.dw tileReplacement_group0Map1c ; $1a
-.dw tileReplacement_group0Mapba ; $1b
-.dw tileReplacement_group0Mapaa ; $1c
-.dw tileReplacement_group0Mapcc ; $1d
-.dw tileReplacement_group0Mapbc ; $1e
-.dw tileReplacement_group0Mapda ; $1f
-.dw tileReplacement_group0Mapca ; $20
-.dw tileReplacement_group0Map61 ; $21
-.dw tileReplacement_group0Map51 ; $22
-.dw tileReplacement_group0Map54 ; $23
-.dw tileReplacement_group0Map25 ; $24
-.dw tileReplacement_group0Map3a ; $25
-.dw tileReplacement_group0Map0b ; $26
-.dw tileReplacement_group5Mapb9 ; $27
-.dw tileReplacement_group1Map27 ; $28
-.dw tileReplacement_group5Mapc2 ; $29
-.dw tileReplacement_group5Mape3 ; $2a
-.dw tileReplacement_group2Map90 ; $2b
-.dw tileReplacement_group1Map8c ; $2c
-.dw tileReplacement_group4Mapc7 ; $2d
-.dw tileReplacement_group4Mapc9 ; $2e
-.dw tileReplacement_group2Map9e ; $2f
-.dw tileReplacement_group0Mape0 ; $30
-.dw tileReplacement_group0Mape1 ; $31
-.dw tileReplacement_group0Mape2 ; $32
-.dw tileReplacement_group4Mapea ; $33
-.dw tileReplacement_group1Map58 ; $34
-.dw tileReplacement_group0Map98 ; $35
-.dw tileReplacement_group0Map76 ; $36
-.dw tileReplacement_group0Mapa5 ; $37
+	.dw tileReplacement_group5Mapf5 ; $00
+	.dw tileReplacement_group4Map1b ; $01
+	.dw tileReplacement_group2Map7e ; $02
+	.dw tileReplacement_group4Map4c ; $03
+	.dw tileReplacement_group4Map4e ; $04
+	.dw tileReplacement_group4Map59 ; $05
+	.dw tileReplacement_group4Map60 ; $06
+	.dw tileReplacement_group4Map52 ; $07
+	.dw tileReplacement_group0Map38 ; $08
+	.dw tileReplacement_group1Map38 ; $09
+	.dw tileReplacement_group5Map38 ; $0a
+	.dw tileReplacement_group5Map25 ; $0b
+	.dw tileReplacement_group5Map43 ; $0c
+	.dw tileReplacement_group5Map4c ; $0d
+	.dw tileReplacement_group5Map5c ; $0e
+	.dw tileReplacement_group5Map4d ; $0f
+	.dw tileReplacement_group5Map5d ; $10
+	.dw tileReplacement_group7Map4a ; $11
+	.dw tileReplacement_group5Map95 ; $12
+	.dw tileReplacement_group5Mapc3 ; $13
+	.dw tileReplacement_group0Map5c ; $14
+	.dw tileReplacement_group2Mapf7 ; $15
+	.dw tileReplacement_group0Map73 ; $16
+	.dw tileReplacement_group0Map48 ; $17
+	.dw tileReplacement_group0Mapac ; $18
+	.dw tileReplacement_group0Map2c ; $19
+	.dw tileReplacement_group0Map1c ; $1a
+	.dw tileReplacement_group0Mapba ; $1b
+	.dw tileReplacement_group0Mapaa ; $1c
+	.dw tileReplacement_group0Mapcc ; $1d
+	.dw tileReplacement_group0Mapbc ; $1e
+	.dw tileReplacement_group0Mapda ; $1f
+	.dw tileReplacement_group0Mapca ; $20
+	.dw tileReplacement_group0Map61 ; $21
+	.dw tileReplacement_group0Map51 ; $22
+	.dw tileReplacement_group0Map54 ; $23
+	.dw tileReplacement_group0Map25 ; $24
+	.dw tileReplacement_group0Map3a ; $25
+	.dw tileReplacement_group0Map0b ; $26
+	.dw tileReplacement_group5Mapb9 ; $27
+	.dw tileReplacement_group1Map27 ; $28
+	.dw tileReplacement_group5Mapc2 ; $29
+	.dw tileReplacement_group5Mape3 ; $2a
+	.dw tileReplacement_group2Map90 ; $2b
+	.dw tileReplacement_group1Map8c ; $2c
+	.dw tileReplacement_group4Mapc7 ; $2d
+	.dw tileReplacement_group4Mapc9 ; $2e
+	.dw tileReplacement_group2Map9e ; $2f
+	.dw tileReplacement_group0Mape0 ; $30
+	.dw tileReplacement_group0Mape1 ; $31
+	.dw tileReplacement_group0Mape2 ; $32
+	.dw tileReplacement_group4Mapea ; $33
+	.dw tileReplacement_group1Map58 ; $34
+	.dw tileReplacement_group0Map98 ; $35
+	.dw tileReplacement_group0Map76 ; $36
+	.dw tileReplacement_group0Mapa5 ; $37
 
 ; @addr{$124a7}
 roomTileChangerCodeGroupTable:
@@ -55067,7 +55067,7 @@ _mapleDecideItemToCollect:
 @nextPart1:
 	inc h			; $6ac0
 	ld a,h			; $6ac1
-	cp $e0			; $6ac2
+	cp LAST_PART_INDEX+1			; $6ac2
 	jr c,@partLoop1		; $6ac4
 
 	inc b			; $6ac6
@@ -58852,15 +58852,15 @@ interactWithTileBeforeLink:
 	ld b,a			; $4017
 	and $0f			; $4018
 	rst_jumpTable			; $401a
-.dw _nextToPushableBlock
-.dw _nextToKeyBlock
-.dw _nextToKeyDoor
-.dw _nextToTileWithInfoText
-.dw _nextToChestTile
-.dw _nextToSignTile
-.dw _nextToOverworldKeyhole
-.dw _nextToSomethingStub
-.dw _nextToGhiniSpawner
+	.dw _nextToPushableBlock
+	.dw _nextToKeyBlock
+	.dw _nextToKeyDoor
+	.dw _nextToTileWithInfoText
+	.dw _nextToChestTile
+	.dw _nextToSignTile
+	.dw _nextToOverworldKeyhole
+	.dw _nextToSomethingStub
+	.dw _nextToGhiniSpawner
 
 ;;
 ; @addr{402d}
@@ -119359,131 +119359,131 @@ runScriptCommand:
 	push hl			; $4005
 	and $7f			; $4006
 	rst_jumpTable			; $4008
-.dw _scriptCmd_setState ; 0x80
-.dw _scriptCmd_setState2 ; 0x81
-.dw _scriptCmd_jump2byte ; 0x82
-.dw scriptCmd_loadScript ; 0x83
-.dw _scriptCmd_spawnInteraction ; 0x84
-.dw _scriptCmd_spawnEnemy ; 0x85
-.dw _scriptCmd_showPasswordScreen ; 0x86
-.dw _scriptCmd_jumpTable_memoryAddress ; 0x87
-.dw _scriptCmd_setCoords ; 0x88
-.dw _scriptCmd_setAngle ; 0x89
-.dw _scriptCmd_8a ; 0x8a
-.dw _scriptCmd_setSpeed ; 0x8b
-.dw _scriptCmd_checkCounter2ZeroAndReset ; 0x8c
-.dw _scriptCmd_setCollideRadii ; 0x8d
-.dw _scriptCmd_writeInteractionByte ; 0x8e
-.dw _scriptCmd_loadSprite ; 0x8f
-.dw _scriptCmd_cpLinkX ; 0x90
-.dw _scriptCmd_writeMemory ; 0x91
-.dw _scriptCmd_orMemory ; 0x92
-.dw _scriptCmd_getRandomBits ; 0x93
-.dw _scriptCmd_addinteractionByte ; 0x94
-.dw _scriptCmd_setZSpeed ; 0x95
-.dw _scriptCmd_setAngleAndExtra ; 0x96
-.dw _scriptCmd_runGenericNpc ; 0x97
-.dw _scriptCmd_showText ; 0x98
-.dw _scriptCmd_waitForText ; 0x99
-.dw _scriptCmd_showTextNonExitable ; 0x9a
-.dw _scriptCmd_checkSomething ; 0x9b
-.dw _scriptCmd_setTextID ; 0x9c
-.dw _scriptCmd_showLoadedText ; 0x9d
-.dw _scriptCmd_checkAButton ; 0x9e
-.dw _scriptCmd_showTextDifferentForLinked ; 0x9f
-.dw _scriptCmd_checkCFC0Bit ; 0xa0
-.dw _scriptCmd_checkCFC0Bit ; 0xa1
-.dw _scriptCmd_checkCFC0Bit ; 0xa2
-.dw _scriptCmd_checkCFC0Bit ; 0xa3
-.dw _scriptCmd_checkCFC0Bit ; 0xa4
-.dw _scriptCmd_checkCFC0Bit ; 0xa5
-.dw _scriptCmd_checkCFC0Bit ; 0xa6
-.dw _scriptCmd_checkCFC0Bit ; 0xa7
-.dw _scriptCmd_xorCFC0Bit ; 0xa8
-.dw _scriptCmd_xorCFC0Bit ; 0xa9
-.dw _scriptCmd_xorCFC0Bit ; 0xaa
-.dw _scriptCmd_xorCFC0Bit ; 0xab
-.dw _scriptCmd_xorCFC0Bit ; 0xac
-.dw _scriptCmd_xorCFC0Bit ; 0xad
-.dw _scriptCmd_xorCFC0Bit ; 0xae
-.dw _scriptCmd_xorCFC0Bit ; 0xaf
-.dw _scriptCmd_jumpIfRoomFlagSet ; 0xb0
-.dw _scriptCmd_orRoomFlags ; 0xb1
-.dw _scriptCmd_none ; 0xb2
-.dw _scriptCmd_jumpIfC6xxSet ; 0xb3
-.dw _scriptCmd_writeC6xx ; 0xb4
-.dw _scriptCmd_jumpIfGlobalFlagSet ; 0xb5
-.dw _scriptCmd_setOrUnsetGlobalFlag ; 0xb6
-.dw _scriptCmd_none ; 0xb7
-.dw _scriptCmd_setLinkCantMoveTo91 ; 0xb8
-.dw _scriptCmd_setLinkCantMoveTo00 ; 0xb9
-.dw _scriptCmd_setLinkCantMoveTo11 ; 0xba
-.dw _scriptCmd_disableMenu ; 0xbb
-.dw _scriptCmd_enableMenu ; 0xbc
-.dw _scriptCmd_disableInput ; 0xbd
-.dw _scriptCmd_enableInput ; 0xbe
-.dw _scriptCmd_none ; 0xbf
-.dw _scriptCmd_callScript ; 0xc0
-.dw _scriptCmd_ret ; 0xc1
-.dw _scriptCmd_none ; 0xc2
-.dw _scriptCmd_jumpIfCBA5Eq ; 0xc3
-.dw _scriptCmd_jump ; 0xc4
-.dw _scriptCmd_none ; 0xc5
-.dw _scriptCmd_jumpTable ; 0xc6
-.dw _scriptCmd_jumpIfMemorySet ; 0xc7
-.dw _scriptCmd_jumpIfSomething ; 0xc8
-.dw _scriptCmd_jumpIfNoEnemies ; 0xc9
-.dw _scriptCmd_jumpIfLinkVariableNe ; 0xca
-.dw _scriptCmd_jumpIfMemoryEq ; 0xcb
-.dw _scriptCmd_jumpIfInteractionByteEq ; 0xcc
-.dw _scriptCmd_stopIfItemFlagSet ; 0xcd
-.dw _scriptCmd_stopIfRoomFlag40Set ; 0xce
-.dw _scriptCmd_stopIfRoomFlag80Set ; 0xcf
-.dw _scriptCmd_checkCollidedWithLink_onGround ; 0xd0
-.dw _scriptCmd_checkPaletteFadeDone ; 0xd1
-.dw _scriptCmd_checkNoEnemies ; 0xd2
-.dw _scriptCmd_checkFlagSet ; 0xd3
-.dw _scriptCmd_checkInteractionByteEq ; 0xd4
-.dw _scriptCmd_checkMemoryEq ; 0xd5
-.dw _scriptCmd_checkNotCollidedWithLink_ignoreZ ; 0xd6
-.dw _scriptCmd_setCounter1 ; 0xd7
-.dw _scriptCmd_checkCounter2Zero ; 0xd8
-.dw _scriptCmd_checkHeartDisplayUpdated ; 0xd9
-.dw _scriptCmd_checkRupeeDisplayUpdated ; 0xda
-.dw _scriptCmd_checkCollidedWithLink_ignoreZ ; 0xdb
-.dw _scriptCmd_none ; 0xdc
-.dw _scriptCmd_spawnItem ; 0xdd
-.dw _scriptCmd_spawnItem ; 0xde
-.dw _scriptCmd_df ; 0xdf
-.dw scriptCmd_asmCall ; 0xe0
-.dw scriptCmd_asmCallWithParam ; 0xe1
-.dw _scriptCmd_createPuff ; 0xe2
-.dw _scriptCmd_playSound ; 0xe3
-.dw _scriptCmd_setMusic ; 0xe4
-.dw _scriptCmd_setLinkCantMove ; 0xe5
-.dw _scriptCmd_spawnEnemyHere ; 0xe6
-.dw _scriptCmd_setTile ; 0xe7
-.dw _scriptCmd_setTileHere ; 0xe8
-.dw _scriptCmd_updateLinkLocalRespawnPosition ; 0xe9
-.dw _scriptCmd_shakeScreen ; 0xea
-.dw _scriptCmd_initNpcHitbox ; 0xeb
-.dw _scriptCmd_moveNpcUp ; 0xec
-.dw _scriptCmd_moveNpcRight ; 0xed
-.dw _scriptCmd_moveNpcDown ; 0xee
-.dw _scriptCmd_moveNpcLeft ; 0xef
-.dw _scriptCmd_delay ; 0xf0
-.dw _scriptCmd_delay ; 0xf1
-.dw _scriptCmd_delay ; 0xf2
-.dw _scriptCmd_delay ; 0xf3
-.dw _scriptCmd_delay ; 0xf4
-.dw _scriptCmd_delay ; 0xf5
-.dw _scriptCmd_delay ; 0xf6
-.dw _scriptCmd_delay ; 0xf7
-.dw _scriptCmd_delay ; 0xf8
-.dw _scriptCmd_delay ; 0xf9
-.dw _scriptCmd_delay ; 0xfa
-.dw _scriptCmd_delay ; 0xfb
-.dw _scriptCmd_delay ; 0xfc
+	.dw _scriptCmd_setState ; 0x80
+	.dw _scriptCmd_setState2 ; 0x81
+	.dw _scriptCmd_jump2byte ; 0x82
+	.dw scriptCmd_loadScript ; 0x83
+	.dw _scriptCmd_spawnInteraction ; 0x84
+	.dw _scriptCmd_spawnEnemy ; 0x85
+	.dw _scriptCmd_showPasswordScreen ; 0x86
+	.dw _scriptCmd_jumpTable_memoryAddress ; 0x87
+	.dw _scriptCmd_setCoords ; 0x88
+	.dw _scriptCmd_setAngle ; 0x89
+	.dw _scriptCmd_8a ; 0x8a
+	.dw _scriptCmd_setSpeed ; 0x8b
+	.dw _scriptCmd_checkCounter2ZeroAndReset ; 0x8c
+	.dw _scriptCmd_setCollideRadii ; 0x8d
+	.dw _scriptCmd_writeInteractionByte ; 0x8e
+	.dw _scriptCmd_loadSprite ; 0x8f
+	.dw _scriptCmd_cpLinkX ; 0x90
+	.dw _scriptCmd_writeMemory ; 0x91
+	.dw _scriptCmd_orMemory ; 0x92
+	.dw _scriptCmd_getRandomBits ; 0x93
+	.dw _scriptCmd_addinteractionByte ; 0x94
+	.dw _scriptCmd_setZSpeed ; 0x95
+	.dw _scriptCmd_setAngleAndExtra ; 0x96
+	.dw _scriptCmd_runGenericNpc ; 0x97
+	.dw _scriptCmd_showText ; 0x98
+	.dw _scriptCmd_waitForText ; 0x99
+	.dw _scriptCmd_showTextNonExitable ; 0x9a
+	.dw _scriptCmd_checkSomething ; 0x9b
+	.dw _scriptCmd_setTextID ; 0x9c
+	.dw _scriptCmd_showLoadedText ; 0x9d
+	.dw _scriptCmd_checkAButton ; 0x9e
+	.dw _scriptCmd_showTextDifferentForLinked ; 0x9f
+	.dw _scriptCmd_checkCFC0Bit ; 0xa0
+	.dw _scriptCmd_checkCFC0Bit ; 0xa1
+	.dw _scriptCmd_checkCFC0Bit ; 0xa2
+	.dw _scriptCmd_checkCFC0Bit ; 0xa3
+	.dw _scriptCmd_checkCFC0Bit ; 0xa4
+	.dw _scriptCmd_checkCFC0Bit ; 0xa5
+	.dw _scriptCmd_checkCFC0Bit ; 0xa6
+	.dw _scriptCmd_checkCFC0Bit ; 0xa7
+	.dw _scriptCmd_xorCFC0Bit ; 0xa8
+	.dw _scriptCmd_xorCFC0Bit ; 0xa9
+	.dw _scriptCmd_xorCFC0Bit ; 0xaa
+	.dw _scriptCmd_xorCFC0Bit ; 0xab
+	.dw _scriptCmd_xorCFC0Bit ; 0xac
+	.dw _scriptCmd_xorCFC0Bit ; 0xad
+	.dw _scriptCmd_xorCFC0Bit ; 0xae
+	.dw _scriptCmd_xorCFC0Bit ; 0xaf
+	.dw _scriptCmd_jumpIfRoomFlagSet ; 0xb0
+	.dw _scriptCmd_orRoomFlags ; 0xb1
+	.dw _scriptCmd_none ; 0xb2
+	.dw _scriptCmd_jumpIfC6xxSet ; 0xb3
+	.dw _scriptCmd_writeC6xx ; 0xb4
+	.dw _scriptCmd_jumpIfGlobalFlagSet ; 0xb5
+	.dw _scriptCmd_setOrUnsetGlobalFlag ; 0xb6
+	.dw _scriptCmd_none ; 0xb7
+	.dw _scriptCmd_setLinkCantMoveTo91 ; 0xb8
+	.dw _scriptCmd_setLinkCantMoveTo00 ; 0xb9
+	.dw _scriptCmd_setLinkCantMoveTo11 ; 0xba
+	.dw _scriptCmd_disableMenu ; 0xbb
+	.dw _scriptCmd_enableMenu ; 0xbc
+	.dw _scriptCmd_disableInput ; 0xbd
+	.dw _scriptCmd_enableInput ; 0xbe
+	.dw _scriptCmd_none ; 0xbf
+	.dw _scriptCmd_callScript ; 0xc0
+	.dw _scriptCmd_ret ; 0xc1
+	.dw _scriptCmd_none ; 0xc2
+	.dw _scriptCmd_jumpIfCBA5Eq ; 0xc3
+	.dw _scriptCmd_jump ; 0xc4
+	.dw _scriptCmd_none ; 0xc5
+	.dw _scriptCmd_jumpTable ; 0xc6
+	.dw _scriptCmd_jumpIfMemorySet ; 0xc7
+	.dw _scriptCmd_jumpIfSomething ; 0xc8
+	.dw _scriptCmd_jumpIfNoEnemies ; 0xc9
+	.dw _scriptCmd_jumpIfLinkVariableNe ; 0xca
+	.dw _scriptCmd_jumpIfMemoryEq ; 0xcb
+	.dw _scriptCmd_jumpIfInteractionByteEq ; 0xcc
+	.dw _scriptCmd_stopIfItemFlagSet ; 0xcd
+	.dw _scriptCmd_stopIfRoomFlag40Set ; 0xce
+	.dw _scriptCmd_stopIfRoomFlag80Set ; 0xcf
+	.dw _scriptCmd_checkCollidedWithLink_onGround ; 0xd0
+	.dw _scriptCmd_checkPaletteFadeDone ; 0xd1
+	.dw _scriptCmd_checkNoEnemies ; 0xd2
+	.dw _scriptCmd_checkFlagSet ; 0xd3
+	.dw _scriptCmd_checkInteractionByteEq ; 0xd4
+	.dw _scriptCmd_checkMemoryEq ; 0xd5
+	.dw _scriptCmd_checkNotCollidedWithLink_ignoreZ ; 0xd6
+	.dw _scriptCmd_setCounter1 ; 0xd7
+	.dw _scriptCmd_checkCounter2Zero ; 0xd8
+	.dw _scriptCmd_checkHeartDisplayUpdated ; 0xd9
+	.dw _scriptCmd_checkRupeeDisplayUpdated ; 0xda
+	.dw _scriptCmd_checkCollidedWithLink_ignoreZ ; 0xdb
+	.dw _scriptCmd_none ; 0xdc
+	.dw _scriptCmd_spawnItem ; 0xdd
+	.dw _scriptCmd_spawnItem ; 0xde
+	.dw _scriptCmd_df ; 0xdf
+	.dw scriptCmd_asmCall ; 0xe0
+	.dw scriptCmd_asmCallWithParam ; 0xe1
+	.dw _scriptCmd_createPuff ; 0xe2
+	.dw _scriptCmd_playSound ; 0xe3
+	.dw _scriptCmd_setMusic ; 0xe4
+	.dw _scriptCmd_setLinkCantMove ; 0xe5
+	.dw _scriptCmd_spawnEnemyHere ; 0xe6
+	.dw _scriptCmd_setTile ; 0xe7
+	.dw _scriptCmd_setTileHere ; 0xe8
+	.dw _scriptCmd_updateLinkLocalRespawnPosition ; 0xe9
+	.dw _scriptCmd_shakeScreen ; 0xea
+	.dw _scriptCmd_initNpcHitbox ; 0xeb
+	.dw _scriptCmd_moveNpcUp ; 0xec
+	.dw _scriptCmd_moveNpcRight ; 0xed
+	.dw _scriptCmd_moveNpcDown ; 0xee
+	.dw _scriptCmd_moveNpcLeft ; 0xef
+	.dw _scriptCmd_delay ; 0xf0
+	.dw _scriptCmd_delay ; 0xf1
+	.dw _scriptCmd_delay ; 0xf2
+	.dw _scriptCmd_delay ; 0xf3
+	.dw _scriptCmd_delay ; 0xf4
+	.dw _scriptCmd_delay ; 0xf5
+	.dw _scriptCmd_delay ; 0xf6
+	.dw _scriptCmd_delay ; 0xf7
+	.dw _scriptCmd_delay ; 0xf8
+	.dw _scriptCmd_delay ; 0xf9
+	.dw _scriptCmd_delay ; 0xfa
+	.dw _scriptCmd_delay ; 0xfb
+	.dw _scriptCmd_delay ; 0xfc
 
 ;;
 ; @addr{4103}
@@ -140099,131 +140099,201 @@ _ambiGuard_attacksLink_scriptTable:
 
 
 
-;;
-; @addr{760a}
+; ==============================================================================
+; ENEMYID_CANDLE
+;
+; Variables:
+;   relatedObj1: reference to INTERACID_EXPLOSION while exploding
+; ==============================================================================
 enemyCode55:
 	call _ecom_checkHazards		; $760a
-	jr z,_label_354	; $760d
-	sub $03			; $760f
+	jr z,@normalStatus	; $760d
+	sub ENEMYSTATUS_NO_HEALTH			; $760f
 	ret c			; $7611
-	ld e,$aa		; $7612
+
+	; ENEMYSTATUS_JUST_HIT or ENEMYSTATUS_KNOCKBACK
+	; Check for ember seed collision to light self on fire
+	ld e,Enemy.var2a		; $7612
 	ld a,(de)		; $7614
-	cp $9b			; $7615
-	jr nz,_label_354	; $7617
-	ld e,$84		; $7619
+	cp $80|COLLISIONTYPE_EMBER_SEED			; $7615
+	jr nz,@normalStatus	; $7617
+
+	ld e,Enemy.state		; $7619
 	ld a,(de)		; $761b
 	cp $0a			; $761c
-	jr nc,_label_354	; $761e
+	jr nc,@normalStatus	; $761e
+
 	ld a,$0a		; $7620
 	ld (de),a		; $7622
-_label_354:
-	ld e,$84		; $7623
+
+@normalStatus:
+	ld e,Enemy.state		; $7623
 	ld a,(de)		; $7625
 	rst_jumpTable			; $7626
-.dw $7645
-.dw $764f
-.dw $764f
-.dw $764f
-.dw $764f
-.dw $764f
-.dw $764f
-.dw $764f
-.dw $7650
-.dw $7669
-.dw $767b
-.dw $7691
-.dw $76ac
-.dw $76b5
-.dw $76d5
-	ld e,$86		; $7645
-	ld a,$1e		; $7647
+	.dw _candle_state_uninitialized
+	.dw _candle_state_stub
+	.dw _candle_state_stub
+	.dw _candle_state_stub
+	.dw _candle_state_stub
+	.dw _candle_state_stub
+	.dw _candle_state_stub
+	.dw _candle_state_stub
+	.dw _candle_state8
+	.dw _candle_state9
+	.dw _candle_stateA
+	.dw _candle_stateB
+	.dw _candle_stateC
+	.dw _candle_stateD
+	.dw _candle_stateE
+
+
+_candle_state_uninitialized:
+	ld e,Enemy.counter1		; $7645
+	ld a,30		; $7647
 	ld (de),a		; $7649
-	ld a,$0a		; $764a
+
+	ld a,SPEED_40		; $764a
 	jp _ecom_setSpeedAndState8AndVisible		; $764c
+
+
+_candle_state_stub:
 	ret			; $764f
+
+
+; Standing still for [counter1] frames
+_candle_state8:
 	call _ecom_decCounter1		; $7650
 	ret nz			; $7653
+
 	ld l,e			; $7654
-	inc (hl)		; $7655
-	ld l,$86		; $7656
-	ld (hl),$5a		; $7658
+	inc (hl) ; [state]
+
+	ld l,Enemy.counter1		; $7656
+	ld (hl),90		; $7658
+
+	; Choose random angle
 	call getRandomNumber_noPreserveVars		; $765a
 	and $18			; $765d
 	add $04			; $765f
-	ld e,$89		; $7661
+	ld e,Enemy.angle		; $7661
 	ld (de),a		; $7663
 	ld a,$01		; $7664
 	jp enemySetAnimation		; $7666
+
+
+; Walking for [counter1] frames
+_candle_state9:
 	call _ecom_decCounter1		; $7669
-	jr nz,_label_355	; $766c
-	ld (hl),$1e		; $766e
+	jr nz,++		; $766c
+
+	ld (hl),30 ; [counter1]
 	ld l,e			; $7670
-	dec (hl)		; $7671
+	dec (hl) ; [state]
 	xor a			; $7672
 	call enemySetAnimation		; $7673
-_label_355:
+++
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $7676
-	jr _label_357		; $7679
-	ld b,$36		; $767b
+	jr _candle_animate		; $7679
+
+
+; Just lit on fire
+_candle_stateA:
+	ld b,PARTID_CANDLE_FLAME		; $767b
 	call _ecom_spawnProjectile		; $767d
 	ret nz			; $7680
+
 	call _ecom_incState		; $7681
-	ld l,$86		; $7684
-	ld (hl),$78		; $7686
-	ld l,$90		; $7688
-	ld (hl),$28		; $768a
+
+	ld l,Enemy.counter1		; $7684
+	ld (hl),120		; $7686
+
+	ld l,Enemy.speed		; $7688
+	ld (hl),SPEED_100		; $768a
+
 	ld a,$02		; $768c
 	jp enemySetAnimation		; $768e
+
+
+; Moving slowly at first
+_candle_stateB:
 	call _ecom_decCounter1		; $7691
-	jr nz,_label_356	; $7694
-	ld (hl),$78		; $7696
+	jr nz,_candle_applySpeed		; $7694
+
+	ld (hl),120 ; [counter1]
 	ld l,e			; $7698
-	inc (hl)		; $7699
-	ld l,$90		; $769a
-	ld (hl),$50		; $769c
+	inc (hl) ; [state]
+
+	ld l,Enemy.speed		; $769a
+	ld (hl),SPEED_200		; $769c
 	ld a,$03		; $769e
 	call enemySetAnimation		; $76a0
-_label_356:
+
+_candle_applySpeed:
 	call objectApplySpeed		; $76a3
 	call _ecom_bounceOffWallsAndHoles		; $76a6
-_label_357:
+
+_candle_animate:
 	jp enemyAnimate		; $76a9
+
+
+; Moving faster
+_candle_stateC:
 	call _ecom_decCounter1		; $76ac
-	jr nz,_label_356	; $76af
-	ld (hl),$3c		; $76b1
+	jr nz,_candle_applySpeed	; $76af
+
+	ld (hl),60 ; [counter1]
 	ld l,e			; $76b3
-	inc (hl)		; $76b4
+	inc (hl) ; [state]
+
+
+; Flickering visibility, about to explode
+_candle_stateD:
 	call _ecom_flickerVisibility		; $76b5
 	call _ecom_decCounter1		; $76b8
-	jr nz,_label_356	; $76bb
-	inc (hl)		; $76bd
-	ld b,$56		; $76be
+	jr nz,_candle_applySpeed	; $76bb
+
+	inc (hl) ; [counter1] = 1
+
+	; Create an explosion object; but the collisions are still provided by the candle
+	; object, so this doesn't delete itself yet.
+	ld b,INTERACID_EXPLOSION		; $76be
 	call objectCreateInteractionWithSubid00		; $76c0
 	ret nz			; $76c3
 	ld a,h			; $76c4
 	ld h,d			; $76c5
-	ld l,$97		; $76c6
+	ld l,Enemy.relatedObj1+1		; $76c6
 	ldd (hl),a		; $76c8
-	ld (hl),$40		; $76c9
-	ld l,$84		; $76cb
+	ld (hl),Interaction.start		; $76c9
+
+	ld l,Enemy.state		; $76cb
 	inc (hl)		; $76cd
-	ld l,$a5		; $76ce
-	ld (hl),$04		; $76d0
+
+	ld l,Enemy.collisionReactionSet		; $76ce
+	ld (hl),COLLISIONREACTIONSET_04		; $76d0
+
 	jp objectSetInvisible		; $76d2
-	ld a,$21		; $76d5
+
+
+; Waiting for explosion to end
+_candle_stateE:
+	ld a,Object.animParameter		; $76d5
 	call objectGetRelatedObject1Var		; $76d7
 	ld a,(hl)		; $76da
 	or a			; $76db
 	ret z			; $76dc
+
 	rlca			; $76dd
-	jr c,_label_358	; $76de
-	ld (hl),$00		; $76e0
-	ld l,$a6		; $76e2
+	jr c,@done	; $76de
+
+	; Explosion radius increased
+	ld (hl),$00 ; [child.animParameter]
+	ld l,Enemy.collisionRadiusY		; $76e2
 	ld a,$0c		; $76e4
 	ldi (hl),a		; $76e6
 	ld (hl),a		; $76e7
 	ret			; $76e8
-_label_358:
+
+@done:
 	call markEnemyAsKilledInRoom		; $76e9
 	call decNumEnemies		; $76ec
 	jp enemyDelete		; $76ef
@@ -157065,11 +157135,11 @@ _label_10_299:
 ;;
 ; Called from playWaveSoundAtRandomIntervals in bank 0.
 ;
-; Part of the cutscene where tokays steal your stuff? "SND_WAVE" gets called at random
+; Part of the cutscene where tokays steal your stuff? "SND_WAVE" gets played at random
 ; intervals?
 ;
 ; @param	hl	Place to write a counter to (how many frames until calling this
-;			aagain)
+;			again)
 ; @addr{7328}
 playWaveSoundAtRandomIntervals_body:
 	push hl			; $7328
@@ -165684,44 +165754,57 @@ _label_11_296:
 	ld l,$82		; $69a9
 	ret			; $69ab
 
-;;
-; @addr{69ac}
+
+; ==============================================================================
+; PARTID_CANDLE_FLAME
+; ==============================================================================
 partCode36:
-	ld a,$01		; $69ac
+	ld a,Object.id		; $69ac
 	call objectGetRelatedObject1Var		; $69ae
 	ld a,(hl)		; $69b1
-	cp $55			; $69b2
+	cp ENEMYID_CANDLE			; $69b2
 	jp nz,partDelete		; $69b4
+
 	ld b,h			; $69b7
-	ld e,$c4		; $69b8
+	ld e,Part.state		; $69b8
 	ld a,(de)		; $69ba
 	rst_jumpTable			; $69bb
-.dw $69c2
-.dw $69c8
-.dw $69d9
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+
+@state0:
 	ld h,d			; $69c2
 	ld l,e			; $69c3
-	inc (hl)		; $69c4
+	inc (hl) ; [state]
 	call objectSetVisible81		; $69c5
+
+@state1:
+	; Check parent's speed
 	ld h,b			; $69c8
-	ld l,$90		; $69c9
+	ld l,Enemy.speed		; $69c9
 	ld a,(hl)		; $69cb
-	cp $28			; $69cc
-	jr z,_label_11_297	; $69ce
+	cp SPEED_100			; $69cc
+	jr z,@state2	; $69ce
+
 	ld a,$02		; $69d0
-	ld (de),a		; $69d2
+	ld (de),a ; [state]
+
 	push bc			; $69d3
 	dec a			; $69d4
 	call partSetAnimation		; $69d5
 	pop bc			; $69d8
-_label_11_297:
+
+@state2:
 	ld h,b			; $69d9
-	ld l,$a5		; $69da
+	ld l,Enemy.collisionReactionSet		; $69da
 	ld a,(hl)		; $69dc
-	cp $04			; $69dd
+	cp COLLISIONREACTIONSET_04			; $69dd
 	jp z,partDelete		; $69df
+
 	call objectTakePosition		; $69e2
-	ld e,$cf		; $69e5
+	ld e,Part.zh		; $69e5
 	ld a,$f3		; $69e7
 	ld (de),a		; $69e9
 	jp partAnimate		; $69ea

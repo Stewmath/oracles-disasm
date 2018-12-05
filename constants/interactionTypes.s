@@ -702,7 +702,11 @@
 .define INTERACID_POSTMAN		$55
 
 ;;
-; Explosion animation; no collisions. Used ie. in patch's minigame.
+; Explosion animation; no collisions.
+;
+; This object's animParameter is set to certain values during the animation:\n
+;   $01: When the explosion's radius increases\n
+;   $ff: When the explosion is over
 ;
 ; var03: if set, it has a higher draw priority? (set in patch's minigame)
 .define INTERACID_EXPLOSION		$56
