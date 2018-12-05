@@ -8298,7 +8298,8 @@ objectTakePosition:
 ; @param	b	Y offset
 ; @param	c	X offset
 ; @param[out]	a	Z position
-; @param[out]	de	Address of this object's Z position
+; @param[out]	de	Address of this object's zh variable
+; @param[out]	hl	Address of object h's zh variable
 ; @addr{2277}
 objectTakePositionWithOffset:
 	ldh a,(<hActiveObjectType)	; $2277
@@ -140308,6 +140309,15 @@ enemyCode56:
 
 ; ==============================================================================
 ; ENEMYID_VERAN_POSSESSION_BOSS
+;
+; Variables:
+;   relatedObj1: For subid 2 (veran ghost/human), this is a reference to subid 0 or 1
+;                (nayru/ambi form).
+;   var30: Animation index
+;   var31/var32: Target position when moving
+;   var33: Number of hits remaining
+;   var34: Current pillar index
+;   var35: Bit 0 set if already showed veran's "taunting" text after using switch hook
 ; ==============================================================================
 enemyCode61:
 	jr z,@normalStatus	; $76fa
@@ -140322,126 +140332,177 @@ enemyCode61:
 	jr c,@commonState	; $7705
 	ld a,b			; $7707
 	rst_jumpTable			; $7708
-	.dw $776e
-	.dw $791f
-	.dw $79b3
-	.dw $7adb
+	.dw _veranPossessionBoss_subid0
+	.dw _veranPossessionBoss_subid1
+	.dw _veranPossessionBoss_subid2
+	.dw _veranPossessionBoss_subid3
 
 @commonState:
 	rst_jumpTable			; $7711
-	.dw $7722
-	.dw $776d
-	.dw $776d
-	.dw $7750
-	.dw $776d
-	.dw $776d
-	.dw $776d
-	.dw $776d
+	.dw _veranPossessionBoss_state_uninitialized
+	.dw _veranPossessionBoss_state_stub
+	.dw _veranPossessionBoss_state_stub
+	.dw _veranPossessionBoss_state_switchHook
+	.dw _veranPossessionBoss_state_stub
+	.dw _veranPossessionBoss_state_stub
+	.dw _veranPossessionBoss_state_stub
+	.dw _veranPossessionBoss_state_stub
 
 
+_veranPossessionBoss_state_uninitialized:
 	bit 1,b			; $7722
-	jr nz,_label_361	; $7724
-	ld a,$61		; $7726
+	jr nz,++		; $7724
+	ld a,ENEMYID_VERAN_POSSESSION_BOSS		; $7726
 	ld (wEnemyIDToLoadExtraGfx),a		; $7728
-_label_361:
+++
 	ld a,b			; $772b
 	add a			; $772c
 	add b			; $772d
-	ld e,$b0		; $772e
+	ld e,Enemy.var30		; $772e
 	ld (de),a		; $7730
 	call enemySetAnimation		; $7731
+
 	call objectSetVisible82		; $7734
-	ld a,$50		; $7737
+
+	ld a,SPEED_200		; $7737
 	call _ecom_setSpeedAndState8		; $7739
-	ld l,$82		; $773c
+
+	ld l,Enemy.subid		; $773c
 	bit 1,(hl)		; $773e
 	ret z			; $7740
-	ld l,$9b		; $7741
+
+	; For subids 2-3 only
+	ld l,Enemy.oamFlagsBackup		; $7741
 	ld a,$01		; $7743
-	ldi (hl),a		; $7745
-	ld (hl),a		; $7746
-	ld l,$86		; $7747
+	ldi (hl),a ; [oamFlagsBackup]
+	ld (hl),a  ; [oamFlags]
+
+	ld l,Enemy.counter1		; $7747
 	ld (hl),$0c		; $7749
-	ld l,$90		; $774b
-	ld (hl),$14		; $774d
+
+	ld l,Enemy.speed		; $774b
+	ld (hl),SPEED_80		; $774d
 	ret			; $774f
+
+
+_veranPossessionBoss_state_switchHook:
 	inc e			; $7750
 	ld a,(de)		; $7751
 	rst_jumpTable			; $7752
-.dw $775b
-.dw enemyAnimate
-.dw enemyAnimate
-.dw $7763
+	.dw @substate0
+	.dw enemyAnimate
+	.dw enemyAnimate
+	.dw @substate3
+
+@substate0:
 	ld h,d			; $775b
-	ld l,$a4		; $775c
+	ld l,Enemy.collisionType		; $775c
 	res 7,(hl)		; $775e
 	jp _ecom_incState2		; $7760
+
+@substate3:
 	ld b,$0b		; $7763
 	call _ecom_fallToGroundAndSetState		; $7765
-	ld l,$86		; $7768
-	ld (hl),$28		; $776a
+	ld l,Enemy.counter1		; $7768
+	ld (hl),40		; $776a
 	ret			; $776c
+
+
+_veranPossessionBoss_state_stub:
 	ret			; $776d
+
+
+; Possessed Nayru
+_veranPossessionBoss_subid0:
 	ld a,(de)		; $776e
 	sub $08			; $776f
 	rst_jumpTable			; $7771
-.dw $778c
-.dw $77b5
-.dw $7814
-.dw $783d
-.dw $7883
-.dw $7890
-.dw $78a1
-.dw $78cf
-.dw $78d0
-.dw $78e0
-.dw $78f4
-.dw $7901
-.dw $7911
+	.dw _veranPossessionBoss_nayruAmbi_state8
+	.dw _veranPossessionBoss_nayruAmbi_state9
+	.dw _veranPossessionBoss_nayruAmbi_stateA
+	.dw _veranPossessionBoss_nayruAmbi_stateB
+	.dw _veranPossessionBoss_nayru_stateC
+	.dw _veranPossessionBoss_nayru_stateD
+	.dw _veranPossessionBoss_nayruAmbi_stateE
+	.dw _veranPossessionBoss_nayruAmbi_stateF
+	.dw _veranPossessionBoss_nayruAmbi_state10
+	.dw _veranPossessionBoss_nayruAmbi_state11
+	.dw _veranPossessionBoss_nayruAmbi_state12
+	.dw _veranPossessionBoss_nayruAmbi_state13
+	.dw _veranPossessionBoss_nayru_state14
+
+
+; Initialization
+_veranPossessionBoss_nayruAmbi_state8:
 	call getFreePartSlot		; $778c
 	ret nz			; $778f
-	ld (hl),$07		; $7790
-	ld l,$c3		; $7792
-	ld (hl),$06		; $7794
-	ld l,$d6		; $7796
-	ld a,$80		; $7798
+
+	ld (hl),PARTID_SHADOW		; $7790
+	ld l,Part.var03		; $7792
+	ld (hl),$06 ; Y-offset of shadow relative to self
+
+	ld l,Part.relatedObj1		; $7796
+	ld a,Enemy.start		; $7798
 	ldi (hl),a		; $779a
 	ld (hl),d		; $779b
-	call $78ea		; $779c
-	ld l,$bf		; $779f
+
+	; Go to state 9
+	call _veranPossessionBoss_nayruAmbi_beginMoving		; $779c
+
+	ld l,Enemy.var3f		; $779f
 	set 5,(hl)		; $77a1
-	ld l,$b3		; $77a3
+
+	ld l,Enemy.var33		; $77a3
 	ld (hl),$03		; $77a5
 	inc l			; $77a7
-	dec (hl)		; $77a8
+	dec (hl) ; [var34] = $ff (current pillar index)
+
 	xor a			; $77a9
-	ld ($cfd0),a		; $77aa
+	ld (wTmpcfc0.genericCutscene.cfd0),a		; $77aa
+
 	ld a,MUS_BOSS		; $77ad
 	ld (wActiveMusic),a		; $77af
 	jp playSound		; $77b2
+
+
+; Flickering before moving
+_veranPossessionBoss_nayruAmbi_state9:
 	call _ecom_decCounter1		; $77b5
 	jp nz,_ecom_flickerVisibility		; $77b8
+
 	ld l,e			; $77bb
-	inc (hl)		; $77bc
-	ld l,$8f		; $77bd
-	ld (hl),$fe		; $77bf
+	inc (hl) ; [state]
+
+	ld l,Enemy.zh		; $77bd
+	ld (hl),-2		; $77bf
 	call objectSetInvisible		; $77c1
-_label_364:
+
+	; Choose a position to move to.
+	; First it chooses a pillar randomly, then it chooses the side of the pillar based
+	; on where Link is in relation.
+
+@choosePillar:
 	call getRandomNumber_noPreserveVars		; $77c4
 	and $0e			; $77c7
 	cp $0b			; $77c9
-	jr nc,_label_364	; $77cb
+	jr nc,@choosePillar	; $77cb
+
+	; Pillar must be different from last one
 	ld h,d			; $77cd
-	ld l,$b4		; $77ce
+	ld l,Enemy.var34		; $77ce
 	cp (hl)			; $77d0
-	jr z,_label_364	; $77d1
-	ld (hl),a		; $77d3
-	ld hl,$7800		; $77d4
+	jr z,@choosePillar	; $77d1
+
+	ld (hl),a ; [var34]
+
+	ld hl,@pillarList		; $77d4
 	rst_addAToHl			; $77d7
 	ldi a,(hl)		; $77d8
 	ld b,a			; $77d9
 	ld c,(hl)		; $77da
 	push bc			; $77db
+
+	; Choose the side of the pillar that is furthest from Link
 	ldh a,(<hEnemyTargetY)	; $77dc
 	ldh (<hFF8F),a	; $77de
 	ldh a,(<hEnemyTargetX)	; $77e0
@@ -140451,439 +140512,679 @@ _label_364:
 	and $18			; $77e9
 	rrca			; $77eb
 	rrca			; $77ec
-	ld hl,$780c		; $77ed
+
+	ld hl,@pillarOffsets		; $77ed
 	rst_addAToHl			; $77f0
 	pop bc			; $77f1
 	ldi a,(hl)		; $77f2
 	add b			; $77f3
-	ld e,$b1		; $77f4
-	ld (de),a		; $77f6
+	ld e,Enemy.var31		; $77f4
+	ld (de),a ; [var31]
 	ld a,(hl)		; $77f7
 	add c			; $77f8
 	inc e			; $77f9
-	ld (de),a		; $77fa
+	ld (de),a ; [var32]
+
 	ld a,SND_CIRCLING		; $77fb
 	jp playSound		; $77fd
-	ld e,b			; $7800
-	ld e,b			; $7801
-	ld e,b			; $7802
-	sbc b			; $7803
-	jr c,$38		; $7804
-	jr c,-$48		; $7806
-	ld a,b			; $7808
-	jr c,$78		; $7809
-	cp b			; $780b
-	add sp,$00		; $780c
-	nop			; $780e
-	stop			; $780f
-	stop			; $7810
-	nop			; $7811
-	nop			; $7812
-	ld a,($ff00+$62)	; $7813
-	ld l,$b1		; $7815
+
+@pillarList:
+	.db $58 $58
+	.db $58 $98
+	.db $38 $38
+	.db $38 $b8
+	.db $78 $38
+	.db $78 $b8
+
+@pillarOffsets:
+	.db $e8 $00
+	.db $00 $10
+	.db $10 $00
+	.db $00 $f0
+
+
+; Moving to new position
+_veranPossessionBoss_nayruAmbi_stateA:
+	ld h,d			; $7814
+	ld l,Enemy.var31		; $7815
 	call _ecom_readPositionVars		; $7817
 	sub c			; $781a
 	add $02			; $781b
 	cp $05			; $781d
 	jp nc,_ecom_moveTowardPosition		; $781f
+
 	ldh a,(<hFF8F)	; $7822
 	sub b			; $7824
 	add $02			; $7825
 	cp $05			; $7827
 	jp nc,_ecom_moveTowardPosition		; $7829
-	ld l,$8b		; $782c
+
+	; Reached target position.
+
+	ld l,Enemy.yh		; $782c
 	ld (hl),b		; $782e
-	ld l,$8d		; $782f
+	ld l,Enemy.xh		; $782f
 	ld (hl),c		; $7831
+
 	ld l,e			; $7832
-	inc (hl)		; $7833
-	ld l,$8f		; $7834
+	inc (hl) ; [state]
+
+	ld l,Enemy.zh		; $7834
 	ld (hl),$00		; $7836
-	ld l,$86		; $7838
-	ld (hl),$1e		; $783a
+
+	ld l,Enemy.counter1		; $7838
+	ld (hl),30		; $783a
 	ret			; $783c
+
+
+; Just reached new position
+_veranPossessionBoss_nayruAmbi_stateB:
 	call _ecom_decCounter1		; $783d
 	jp nz,_ecom_flickerVisibility		; $7840
+
 	call getRandomNumber_noPreserveVars		; $7843
 	and $0f			; $7846
 	ld b,a			; $7848
+
 	ld h,d			; $7849
-	ld l,$82		; $784a
+	ld l,Enemy.subid		; $784a
 	ld a,(hl)		; $784c
 	add a			; $784d
 	add a			; $784e
 	add (hl)		; $784f
-	ld l,$b3		; $7850
+	ld l,Enemy.var33		; $7850
 	add (hl)		; $7852
 	dec a			; $7853
-	ld hl,$7879		; $7854
+
+	ld hl,@attackProbabilities		; $7854
 	rst_addAToHl			; $7857
 	ld a,b			; $7858
 	cp (hl)			; $7859
-	jr c,_label_365	; $785a
-	call $78ea		; $785c
-	ld (hl),$1e		; $785f
+	jr c,@beginAttacking			; $785a
+
+	; Move again
+	call _veranPossessionBoss_nayruAmbi_beginMoving		; $785c
+	ld (hl),30		; $785f
 	jp _ecom_flickerVisibility		; $7861
-_label_365:
+
+@beginAttacking:
 	call _ecom_incState		; $7864
-	ld l,$86		; $7867
-	ld (hl),$1e		; $7869
-	ld l,$a4		; $786b
+
+	ld l,Enemy.counter1		; $7867
+	ld (hl),30		; $7869
+
+	ld l,Enemy.collisionType		; $786b
 	set 7,(hl)		; $786d
-	ld l,$b0		; $786f
+
+	ld l,Enemy.var30		; $786f
 	ld a,(hl)		; $7871
 	inc a			; $7872
 	call enemySetAnimation		; $7873
 	jp objectSetVisiblec2		; $7876
-	dec b			; $7879
-	ld a,(bc)		; $787a
-	stop			; $787b
-	stop			; $787c
-	stop			; $787d
-	dec b			; $787e
-	ld b,$08		; $787f
-	ld (wScreenOffsetY),sp		; $7881
-	sbc d			; $7884
-	ld b,e			; $7885
+
+; Each byte is the probability of veran attacking when she has 'n' hits left (ie. 1st byte is
+; for when she has 1 hit left). Higher values mean a higher probability of attacking. If
+; she doesn't attack, she moves again.
+@attackProbabilities:
+	.db $05 $0a $10 $10 $10 ; Nayru
+	.db $05 $06 $08 $08 $08 ; Ambi
+
+
+; Delay before attacking with projectiles. (Nayru only)
+_veranPossessionBoss_nayru_stateC:
+	call _ecom_decCounter1		; $7883
 	ret nz			; $7886
-	ld (hl),$8e		; $7887
+
+	ld (hl),142 ; [counter1]
 	ld l,e			; $7889
-	inc (hl)		; $788a
-	ld b,$37		; $788b
+	inc (hl) ; [state]
+
+	ld b,PARTID_VERAN_PROJECTILE		; $788b
 	jp _ecom_spawnProjectile		; $788d
+
+
+; Attacking with projectiles. (This is only Nayru's state D, but Ambi's state D may call
+; this if it's not spawning spiders instead.)
+_veranPossessionBoss_nayru_stateD:
 	call _ecom_decCounter1		; $7890
 	ret nz			; $7893
-	call $78ea		; $7894
-	ld l,$a4		; $7897
+
+_veranPossessionBoss_doneAttacking:
+	call _veranPossessionBoss_nayruAmbi_beginMoving		; $7894
+
+	ld l,Enemy.collisionType		; $7897
 	res 7,(hl)		; $7899
-	ld l,$b0		; $789b
+
+	ld l,Enemy.var30		; $789b
 	ld a,(hl)		; $789d
 	jp enemySetAnimation		; $789e
+
+
+; Just shot with mystery seeds
+_veranPossessionBoss_nayruAmbi_stateE:
 	call _ecom_decCounter2		; $78a1
 	ret nz			; $78a4
+
+	; Spawn veran ghost form
 	call getFreeEnemySlot_uncounted		; $78a5
 	ret nz			; $78a8
-	ld (hl),$61		; $78a9
+	ld (hl),ENEMYID_VERAN_POSSESSION_BOSS		; $78a9
 	inc l			; $78ab
-	ld (hl),$02		; $78ac
-	ld l,$b3		; $78ae
+	ld (hl),$02 ; [child.subid]
+
+	; [child.var33] = [this.var33] (remaining hits before death)
+	ld l,Enemy.var33		; $78ae
 	ld e,l			; $78b0
 	ld a,(de)		; $78b1
 	ld (hl),a		; $78b2
-	ld l,$96		; $78b3
-	ld a,$80		; $78b5
+
+	ld l,Enemy.relatedObj1		; $78b3
+	ld a,Enemy.start		; $78b5
 	ldi (hl),a		; $78b7
 	ld (hl),d		; $78b8
+
 	ld bc,$fc04		; $78b9
 	call objectCopyPositionWithOffset		; $78bc
+
 	call _ecom_incState		; $78bf
-	ld l,$a4		; $78c2
+
+	ld l,Enemy.collisionType		; $78c2
 	res 7,(hl)		; $78c4
-	ld l,$9b		; $78c6
+
+	ld l,Enemy.oamFlagsBackup		; $78c6
 	ld a,$01		; $78c8
-	ldi (hl),a		; $78ca
-	ld (hl),a		; $78cb
+	ldi (hl),a ; [child.oamFlagsBackup]
+	ld (hl),a  ; [child.oamFlags]
+
 	jp objectSetVisible83		; $78cc
+
+
+; Collapsed (ghost Veran is showing)
+_veranPossessionBoss_nayruAmbi_stateF:
 	ret			; $78cf
+
+
+; Veran just returned to nayru/ambi's body
+_veranPossessionBoss_nayruAmbi_state10:
 	ld h,d			; $78d0
 	ld l,e			; $78d1
-	inc (hl)		; $78d2
-	ld l,$9b		; $78d3
+	inc (hl) ; [state]
+
+	ld l,Enemy.oamFlagsBackup		; $78d3
 	ld a,$06		; $78d5
-	ldi (hl),a		; $78d7
-	ld (hl),a		; $78d8
-	ld l,$86		; $78d9
-	ld (hl),$0f		; $78db
+	ldi (hl),a ; [oamFlagsBackup]
+	ld (hl),a  ; [oamFlags]
+
+	ld l,Enemy.counter1		; $78d9
+	ld (hl),15		; $78db
 	jp objectSetVisible82		; $78dd
+
+
+; Remains collapsed on the floor for a few frames before moving again
+_veranPossessionBoss_nayruAmbi_state11:
 	call _ecom_decCounter1		; $78e0
 	ret nz			; $78e3
-	ld l,$b0		; $78e4
+
+	ld l,Enemy.var30		; $78e4
 	ld a,(hl)		; $78e6
 	call enemySetAnimation		; $78e7
+
+
+_veranPossessionBoss_nayruAmbi_beginMoving:
 	ld h,d			; $78ea
-	ld l,$84		; $78eb
+	ld l,Enemy.state		; $78eb
 	ld (hl),$09		; $78ed
-	ld l,$86		; $78ef
-	ld (hl),$3c		; $78f1
+
+	ld l,Enemy.counter1		; $78ef
+	ld (hl),60		; $78f1
 	ret			; $78f3
+
+
+; Veran was just defeated.
+_veranPossessionBoss_nayruAmbi_state12:
 	ld a,(wTextIsActive)		; $78f4
 	or a			; $78f7
 	ret nz			; $78f8
 	call _ecom_incState		; $78f9
 	ld a,$02		; $78fc
 	jp fadeoutToWhiteWithDelay		; $78fe
+
+
+; Waiting for screen to go white
+_veranPossessionBoss_nayruAmbi_state13:
 	ld a,(wPaletteThread_mode)		; $7901
 	or a			; $7904
 	ret nz			; $7905
+
 	call _ecom_incState		; $7906
 	jpab clearAllItemsAndPutLinkOnGround		; $7909
+
+
+; Delete all objects (including self), resume cutscene with a newly created object
+_veranPossessionBoss_nayru_state14:
 	call clearWramBank1		; $7911
-	ld hl,$d000		; $7914
+
+	ld hl,w1Link.enabled		; $7914
 	ld (hl),$03		; $7917
+
 	call getFreeInteractionSlot		; $7919
-	ld (hl),$6e		; $791c
+	ld (hl),INTERACID_NAYRU_SAVED_CUTSCENE		; $791c
 	ret			; $791e
+
+
+; Possessed Ambi
+_veranPossessionBoss_subid1:
 	ld a,(de)		; $791f
 	sub $08			; $7920
 	rst_jumpTable			; $7922
-.dw $778c
-.dw $77b5
-.dw $7814
-.dw $783d
-.dw $793d
-.dw $7966
-.dw $78a1
-.dw $78cf
-.dw $78d0
-.dw $78e0
-.dw $78f4
-.dw $7901
-.dw $7982
+	.dw _veranPossessionBoss_nayruAmbi_state8
+	.dw _veranPossessionBoss_nayruAmbi_state9
+	.dw _veranPossessionBoss_nayruAmbi_stateA
+	.dw _veranPossessionBoss_nayruAmbi_stateB
+	.dw _veranPossessionBoss_ambi_stateC
+	.dw _veranPossessionBoss_ambi_stateD
+	.dw _veranPossessionBoss_nayruAmbi_stateE
+	.dw _veranPossessionBoss_nayruAmbi_stateF
+	.dw _veranPossessionBoss_nayruAmbi_state10
+	.dw _veranPossessionBoss_nayruAmbi_state11
+	.dw _veranPossessionBoss_nayruAmbi_state12
+	.dw _veranPossessionBoss_nayruAmbi_state13
+	.dw _veranPossessionBoss_ambi_state14
+
+
+; Delay before attacking with projectiles or spawning spiders. (Ambi only)
+_veranPossessionBoss_ambi_stateC:
 	call _ecom_decCounter1		; $793d
 	ret nz			; $7940
-	ld (hl),$8e		; $7941
+
+	ld (hl),142 ; [counter1]
 	ld l,e			; $7943
-	inc (hl)		; $7944
+	inc (hl) ; [state]
+
 	call getRandomNumber_noPreserveVars		; $7945
 	and $0f			; $7948
 	ld b,a			; $794a
-	ld e,$b3		; $794b
+
+	ld e,Enemy.var33		; $794b
 	ld a,(de)		; $794d
 	dec a			; $794e
-	ld hl,$7961		; $794f
+	ld hl,@spiderSpawnProbabilities		; $794f
 	rst_addAToHl			; $7952
 	ld a,b			; $7953
 	cp (hl)			; $7954
+
+	; Set [var03] to 1 if we're spawning spiders, 0 otherwise
 	ld h,d			; $7955
-	ld l,$83		; $7956
+	ld l,Enemy.var03		; $7956
 	ld (hl),$01		; $7958
 	ret nc			; $795a
+
 	dec (hl)		; $795b
-	ld b,$37		; $795c
+	ld b,PARTID_VERAN_PROJECTILE		; $795c
 	jp _ecom_spawnProjectile		; $795e
-	ld ($0a08),sp		; $7961
-	ld a,(bc)		; $7964
-	ld a,(bc)		; $7965
-	ld e,$83		; $7966
+
+; Each byte is the probability of veran spawning spiders when she has 'n' hits left (ie.
+; 1st byte is for when she has 1 hit left). Lower values mean a higher probability of
+; spawning spiders. If she doesn't spawn spiders, she fires projectiles.
+@spiderSpawnProbabilities:
+	.db $08 $08 $0a $0a $0a
+
+
+; Attacking with projectiles or spiders. (Ambi only)
+_veranPossessionBoss_ambi_stateD:
+	; Jump to Nayru's state D if we're firing projectiles
+	ld e,Enemy.var03		; $7966
 	ld a,(de)		; $7968
 	or a			; $7969
-	jp z,$7890		; $796a
+	jp z,_veranPossessionBoss_nayru_stateD		; $796a
+
+	; Spawning spiders
+
 	call _ecom_decCounter1		; $796d
-	jp z,$7894		; $7970
-	ld a,(hl)		; $7973
+	jp z,_veranPossessionBoss_doneAttacking		; $7970
+
+	; Spawn spider every 32 frames
+	ld a,(hl) ; [counter1]
 	and $1f			; $7974
 	ret nz			; $7976
+
 	ld a,(wNumEnemies)		; $7977
 	cp $06			; $797a
 	ret nc			; $797c
-	ld b,$0f		; $797d
+
+	ld b,ENEMYID_VERAN_SPIDER		; $797d
 	jp _ecom_spawnEnemyWithSubid01		; $797f
+
+
+; Ambi-specific cutscene after Veran defeated
+_veranPossessionBoss_ambi_state14:
 	ld a,(wPaletteThread_mode)		; $7982
 	or a			; $7985
 	ret nz			; $7986
+
+	; Deletes all objects, including self
 	call clearWramBank1		; $7987
+
 	ld a,$01		; $798a
 	ld (wNumEnemies),a		; $798c
-	ld hl,$d000		; $798f
+
+	ld hl,w1Link.enabled		; $798f
 	ld (hl),$03		; $7992
-	ld l,$0b		; $7994
+
+	ld l,<w1Link.yh		; $7994
 	ld (hl),$58		; $7996
-	ld l,$0d		; $7998
-_label_366:
+	ld l,<w1Link.xh		; $7998
 	ld (hl),$78		; $799a
+
 	call setCameraFocusedObjectToLink		; $799c
 	call resetCamera		; $799f
+
+	; Spawn subid 3 of this object
 	call getFreeEnemySlot_uncounted		; $79a2
-	ld (hl),$61		; $79a5
+	ld (hl),ENEMYID_VERAN_POSSESSION_BOSS		; $79a5
 	inc l			; $79a7
-	ld (hl),$03		; $79a8
-	ld l,$8b		; $79aa
+	ld (hl),$03 ; [subid]
+
+	ld l,Enemy.yh		; $79aa
 	ld (hl),$48		; $79ac
-	ld l,$8d		; $79ae
+	ld l,Enemy.xh		; $79ae
 	ld (hl),$78		; $79b0
 	ret			; $79b2
+
+
+; Veran emerged in human form
+_veranPossessionBoss_subid2:
 	ld a,(de)		; $79b3
 	sub $08			; $79b4
 	rst_jumpTable			; $79b6
-.dw $79c9
-.dw $79f6
-.dw $7a0a
-.dw $7a24
-.dw $7a40
-.dw $7a68
-.dw $7a92
-.dw $7ab7
-.dw $7ac2
+	.dw _veranPossessionBoss_humanForm_state8
+	.dw _veranPossessionBoss_humanForm_state9
+	.dw _veranPossessionBoss_humanForm_stateA
+	.dw _veranPossessionBoss_humanForm_stateB
+	.dw _veranPossessionBoss_humanForm_stateC
+	.dw _veranPossessionBoss_humanForm_stateD
+	.dw _veranPossessionBoss_humanForm_stateE
+	.dw _veranPossessionBoss_humanForm_stateF
+	.dw _veranPossessionBoss_humanForm_state10
+
+
+; Moving upward just after spawning
+_veranPossessionBoss_humanForm_state8:
 	call objectApplySpeed		; $79c9
 	call _ecom_decCounter1		; $79cc
-	jr nz,_label_367	; $79cf
-	ld (hl),$78		; $79d1
-	ld l,$84		; $79d3
+	jr nz,_veranPossessionBoss_animate	; $79cf
+
+	ld (hl),120 ; [counter1]
+	ld l,Enemy.state		; $79d3
 	inc (hl)		; $79d5
-	ld l,$a4		; $79d6
+
+	ld l,Enemy.collisionType		; $79d6
 	set 7,(hl)		; $79d8
-	ld l,$a5		; $79da
-	ld (hl),$5b		; $79dc
-	ld a,$02		; $79de
+
+	ld l,Enemy.collisionReactionSet		; $79da
+	ld (hl),COLLISIONREACTIONSET_5b		; $79dc
+
+	; If this is Nayru, and we haven't shown veran's taunting text yet, show it.
+	ld a,Object.subid		; $79de
 	call objectGetRelatedObject1Var		; $79e0
 	ld a,(hl)		; $79e3
 	or a			; $79e4
-	jr nz,_label_367	; $79e5
-	ld l,$b5		; $79e7
+	jr nz,_veranPossessionBoss_animate	; $79e5
+
+	ld l,Enemy.var35		; $79e7
 	bit 0,(hl)		; $79e9
-	jr nz,_label_367	; $79eb
-	inc (hl)		; $79ed
-	ld bc,$2f2a		; $79ee
+	jr nz,_veranPossessionBoss_animate	; $79eb
+
+	inc (hl) ; [var35] |= 1
+
+	ld bc,TX_2f2a		; $79ee
 	call showText		; $79f1
-	jr _label_367		; $79f4
+	jr _veranPossessionBoss_animate		; $79f4
+
+
+; Waiting for Link to use switch hook
+_veranPossessionBoss_humanForm_state9:
 	call _ecom_decCounter1		; $79f6
-	jr nz,_label_367	; $79f9
-	ld (hl),$0c		; $79fb
+	jr nz,_veranPossessionBoss_animate	; $79f9
+
+	ld (hl),12 ; [counter1]
 	ld l,e			; $79fd
-	inc (hl)		; $79fe
-	ld l,$89		; $79ff
-	ld (hl),$10		; $7a01
-	ld l,$a4		; $7a03
+	inc (hl) ; [state]
+
+	ld l,Enemy.angle		; $79ff
+	ld (hl),ANGLE_DOWN		; $7a01
+
+	ld l,Enemy.collisionType		; $7a03
 	res 7,(hl)		; $7a05
-_label_367:
+
+_veranPossessionBoss_animate:
 	jp enemyAnimate		; $7a07
+
+
+; Moving down to re-possess her victim
+_veranPossessionBoss_humanForm_stateA:
 	call objectApplySpeed		; $7a0a
 	call _ecom_decCounter1		; $7a0d
-	jr nz,_label_367	; $7a10
-	ld l,$a4		; $7a12
+	jr nz,_veranPossessionBoss_animate	; $7a10
+
+	ld l,Enemy.collisionType		; $7a12
 	res 7,(hl)		; $7a14
-	ld a,$04		; $7a16
+
+_veranPossessionBoss_humanForm_returnToHost:
+	; Send parent to state $10
+	ld a,Object.state		; $7a16
 	call objectGetRelatedObject1Var		; $7a18
 	inc (hl)		; $7a1b
-	ld l,$b3		; $7a1c
+
+	; Update parent's "hits remaining" counter
+	ld l,Enemy.var33		; $7a1c
 	ld e,l			; $7a1e
 	ld a,(de)		; $7a1f
 	ld (hl),a		; $7a20
+
 	jp enemyDelete		; $7a21
+
+
+; Just finished using switch hook on ghost. Flickering between ghost and human forms.
+_veranPossessionBoss_humanForm_stateB:
 	call _ecom_decCounter1		; $7a24
-	jr nz,_label_368	; $7a27
-	ld (hl),$78		; $7a29
-	ld l,$a5		; $7a2b
-	ld (hl),$5c		; $7a2d
+	jr nz,@flickerBetweenForms	; $7a27
+
+	ld (hl),120 ; [counter1]
+
+	ld l,Enemy.collisionReactionSet		; $7a2b
+	ld (hl),COLLISIONREACTIONSET_5c		; $7a2d
+
 	ld l,e			; $7a2f
-	inc (hl)		; $7a30
-	ld l,$a4		; $7a31
+	inc (hl) ; [state]
+
+	ld l,Enemy.collisionType		; $7a31
 	set 7,(hl)		; $7a33
-_label_368:
-	ld a,(hl)		; $7a35
+
+	; NOTE: hl is supposed to be [counter1] for below, which it isn't. It only affects
+	; the animation though, so no big deal...
+
+@flickerBetweenForms:
+	ld a,(hl) ; [counter1]
 	rrca			; $7a36
 	ld a,$09		; $7a37
-	jr c,_label_369	; $7a39
+	jr c,+			; $7a39
 	ld a,$06		; $7a3b
-_label_369:
++
 	jp enemySetAnimation		; $7a3d
+
+
+; Veran is vulnerable to attacks.
+_veranPossessionBoss_humanForm_stateC:
 	call _ecom_decCounter1		; $7a40
-	jr nz,_label_367	; $7a43
+	jr nz,_veranPossessionBoss_animate	; $7a43
+
+	; Time to return to host
+
 	ld l,e			; $7a45
-	inc (hl)		; $7a46
-	ld l,$a4		; $7a47
+	inc (hl) ; [state]
+
+	ld l,Enemy.collisionType		; $7a47
 	res 7,(hl)		; $7a49
-	ld l,$90		; $7a4b
-	ld (hl),$64		; $7a4d
-	ld l,$94		; $7a4f
-	ld a,$80		; $7a51
+
+	ld l,Enemy.speed		; $7a4b
+	ld (hl),SPEED_280		; $7a4d
+
+	ld l,Enemy.speedZ		; $7a4f
+	ld a,<(-$280)		; $7a51
 	ldi (hl),a		; $7a53
-	ld (hl),$fd		; $7a54
+	ld (hl),>(-$280)		; $7a54
+
 	call objectSetVisiblec1		; $7a56
-	ld a,$0b		; $7a59
+
+	; Set target position to be the nayru/ambi's position.
+	; [this.var31] = [parent.yh], [this.var32] = [parent.xh]
+	ld a,Object.yh		; $7a59
 	call objectGetRelatedObject1Var		; $7a5b
-	ld e,$b1		; $7a5e
+	ld e,Enemy.var31		; $7a5e
 	ldi a,(hl)		; $7a60
-	ld (de),a		; $7a61
+	ld (de),a ; [this.var31]
 	inc e			; $7a62
 	inc l			; $7a63
 	ld a,(hl)		; $7a64
-	ld (de),a		; $7a65
-	jr _label_367		; $7a66
+	ld (de),a ; [this.var32]
+
+	jr _veranPossessionBoss_animate		; $7a66
+
+
+; Moving back to nayru/ambi
+_veranPossessionBoss_humanForm_stateD:
 	ld c,$20		; $7a68
 	call objectUpdateSpeedZ_paramC		; $7a6a
-	ld l,$b1		; $7a6d
+
+	ld l,Enemy.var31		; $7a6d
 	call _ecom_readPositionVars		; $7a6f
 	sub c			; $7a72
 	add $02			; $7a73
 	cp $05			; $7a75
 	jp nc,_ecom_moveTowardPosition		; $7a77
+
 	ldh a,(<hFF8F)	; $7a7a
 	sub b			; $7a7c
 	add $02			; $7a7d
 	cp $05			; $7a7f
 	jp nc,_ecom_moveTowardPosition		; $7a81
-	ld l,$8b		; $7a84
+
+	; Reached nayru/ambi.
+
+	ld l,Enemy.yh		; $7a84
 	ld (hl),b		; $7a86
-	ld l,$8d		; $7a87
+	ld l,Enemy.xh		; $7a87
 	ld (hl),c		; $7a89
-	ld e,$8f		; $7a8a
+
+	; Wait until reached ground
+	ld e,Enemy.zh		; $7a8a
 	ld a,(de)		; $7a8c
 	or a			; $7a8d
 	ret nz			; $7a8e
-	jp $7a16		; $7a8f
-	ld e,$ab		; $7a92
+
+	jp _veranPossessionBoss_humanForm_returnToHost		; $7a8f
+
+
+; Health is zero; about to begin cutscene.
+_veranPossessionBoss_humanForm_stateE:
+	ld e,Enemy.invincibilityCounter		; $7a92
 	ld a,(de)		; $7a94
 	or a			; $7a95
 	ret nz			; $7a96
+
 	call checkLinkCollisionsEnabled		; $7a97
 	ret nc			; $7a9a
-	ld bc,$0502		; $7a9b
+
+	ldbc INTERACID_PUFF,$02		; $7a9b
 	call objectCreateInteraction		; $7a9e
 	ret nz			; $7aa1
 	ld a,h			; $7aa2
 	ld h,d			; $7aa3
-	ld l,$99		; $7aa4
+	ld l,Enemy.relatedObj2+1		; $7aa4
 	ldd (hl),a		; $7aa6
-	ld (hl),$40		; $7aa7
-	ld l,$84		; $7aa9
+	ld (hl),Interaction.start		; $7aa7
+
+	ld l,Enemy.state		; $7aa9
 	inc (hl)		; $7aab
-	ld a,$01		; $7aac
+
+	ld a,DISABLE_LINK		; $7aac
 	ld (wDisabledObjects),a		; $7aae
 	ld (wMenuDisabled),a		; $7ab1
+
 	jp objectSetInvisible		; $7ab4
-	ld a,$21		; $7ab7
+
+
+; Waiting for puff to finish its animation
+_veranPossessionBoss_humanForm_stateF:
+	ld a,Object.animParameter		; $7ab7
 	call objectGetRelatedObject2Var		; $7ab9
 	bit 7,(hl)		; $7abc
 	ret z			; $7abe
 	jp _ecom_incState		; $7abf
-	ld a,$04		; $7ac2
+
+
+; Sets nayru/ambi's state to $12, shows text, then deletes self
+_veranPossessionBoss_humanForm_state10:
+	ld a,Object.state		; $7ac2
 	call objectGetRelatedObject1Var		; $7ac4
 	ld (hl),$12		; $7ac7
-	ld l,$82		; $7ac9
+
+	ld l,Enemy.subid		; $7ac9
 	bit 0,(hl)		; $7acb
-	ld bc,$560b		; $7acd
-	jr z,_label_370	; $7ad0
-	ld bc,$5611		; $7ad2
-_label_370:
+	ld bc,TX_560b		; $7acd
+	jr z,+			; $7ad0
+	ld bc,TX_5611		; $7ad2
++
 	call showText		; $7ad5
 	jp enemyDelete		; $7ad8
+
+
+
+; Collapsed Ambi after the fight.
+_veranPossessionBoss_subid3:
 	ld a,(de)		; $7adb
 	cp $08			; $7adc
-	jr nz,_label_371	; $7ade
+	jr nz,@state9	; $7ade
+
+
+; Waiting for palette to fade out
+@state8:
 	ld a,(wPaletteThread_mode)		; $7ae0
 	or a			; $7ae3
 	ret nz			; $7ae4
+
 	call _ecom_incState		; $7ae5
-	ld l,$87		; $7ae8
-	ld (hl),$3c		; $7aea
+
+	ld l,Enemy.counter2		; $7ae8
+	ld (hl),60		; $7aea
+
 	ld a,$05		; $7aec
 	call enemySetAnimation		; $7aee
+
 	jp fadeinFromWhite		; $7af1
-_label_371:
+
+
+; Waiting for palette to fade in; then spawn the real Ambi object and delete self.
+@state9:
 	ld a,(wPaletteThread_mode)		; $7af4
 	or a			; $7af7
 	ret nz			; $7af8
+
 	call _ecom_decCounter2		; $7af9
 	ret nz			; $7afc
+
 	call getFreeInteractionSlot		; $7afd
 	ret nz			; $7b00
-	ld (hl),$4d		; $7b01
+	ld (hl),INTERACID_AMBI		; $7b01
 	inc l			; $7b03
-	ld (hl),$07		; $7b04
+	ld (hl),$07 ; [subid]
+
 	call objectCopyPosition		; $7b06
-	ld a,$01		; $7b09
+
+	ld a,TREE_GFXH_01		; $7b09
 	ld (wLoadedTreeGfxIndex),a		; $7b0b
+
 	jp enemyDelete		; $7b0e
 
 
@@ -140891,74 +141192,103 @@ _label_371:
 ; @addr{7b11}
 _veranPossessionBoss_wasHit:
 	ld h,d			; $7b11
-	ld l,$ad		; $7b12
+	ld l,Enemy.knockbackCounter		; $7b12
 	ld (hl),$00		; $7b14
-	ld e,$82		; $7b16
+
+	ld e,Enemy.subid		; $7b16
 	ld a,(de)		; $7b18
 	cp $02			; $7b19
-	ld l,$aa		; $7b1b
+	ld l,Enemy.var2a		; $7b1b
 	ld a,(hl)		; $7b1d
-	jr z,_label_373	; $7b1e
+	jr z,@subid2	; $7b1e
+
+	; Subid 0 or 1 (possessed Nayru or Ambi)
+
 	res 7,a			; $7b20
-	cp $1a			; $7b22
-	jr z,_label_372	; $7b24
-	sub $04			; $7b26
+	cp COLLISIONTYPE_MYSTERY_SEED			; $7b22
+	jr z,@mysterySeed	; $7b24
+
+	; Direct attacks from Link cause damage to Link, not Veran
+	sub COLLISIONTYPE_L1_SWORD			; $7b26
 	ret c			; $7b28
-	cp $09			; $7b29
+	cp COLLISIONTYPE_SHOVEL - COLLISIONTYPE_L1_SWORD + 1			; $7b29
 	ret nc			; $7b2b
-	ld l,$ab		; $7b2c
-	ld (hl),$e8		; $7b2e
+
+	ld l,Enemy.invincibilityCounter		; $7b2c
+	ld (hl),-24		; $7b2e
 	ld hl,w1Link.invincibilityCounter		; $7b30
-	ld (hl),$28		; $7b33
+	ld (hl),40		; $7b33
+
+	; [w1Link.knockbackAngle] = [this.knockbackAngle] ^ $10
 	inc l			; $7b35
-	ld e,$ac		; $7b36
+	ld e,Enemy.knockbackAngle		; $7b36
 	ld a,(de)		; $7b38
 	xor $10			; $7b39
 	ldi (hl),a		; $7b3b
-	ld (hl),$15		; $7b3c
-	ld l,$25		; $7b3e
-	ld (hl),$f8		; $7b40
+
+	ld (hl),21 ; [w1Link.knockbackCounter]
+
+	ld l,<w1Link.damageToApply		; $7b3e
+	ld (hl),-8		; $7b40
 	ret			; $7b42
-_label_372:
-	ld l,$84		; $7b43
+
+@mysterySeed:
+	ld l,Enemy.state		; $7b43
 	ld (hl),$0e		; $7b45
-	ld l,$87		; $7b47
-	ld (hl),$1e		; $7b49
-	ld l,$a4		; $7b4b
+
+	ld l,Enemy.counter2		; $7b47
+	ld (hl),30		; $7b49
+
+	ld l,Enemy.collisionType		; $7b4b
 	res 7,(hl)		; $7b4d
-	ld l,$b0		; $7b4f
+
+	ld l,Enemy.var30		; $7b4f
 	ld a,(hl)		; $7b51
 	add $02			; $7b52
 	jp enemySetAnimation		; $7b54
-_label_373:
+
+@subid2:
+	; Collisions on emerged Veran (ghost/human form)
+	; Check if a direct attack occurred
 	res 7,a			; $7b57
-	cp $04			; $7b59
+	cp COLLISIONTYPE_L1_SWORD			; $7b59
 	ret c			; $7b5b
-	cp $0c			; $7b5c
+	cp COLLISIONTYPE_EXPERT_PUNCH + 1			; $7b5c
 	ret nc			; $7b5e
-	ld l,$a5		; $7b5f
+
+	ld l,Enemy.collisionReactionSet		; $7b5f
 	ld a,(hl)		; $7b61
-	cp $5b			; $7b62
-	jr nz,_label_374	; $7b64
-	ld l,$ab		; $7b66
-	ld (hl),$f8		; $7b68
+	cp COLLISIONREACTIONSET_5b			; $7b62
+	jr nz,++		; $7b64
+
+	; No effect on ghost form
+	ld l,Enemy.invincibilityCounter		; $7b66
+	ld (hl),-8		; $7b68
 	ret			; $7b6a
-_label_374:
-	ld l,$86		; $7b6b
+++
+	ld l,Enemy.counter1		; $7b6b
 	ld (hl),$08		; $7b6d
-	ld l,$b3		; $7b6f
+	ld l,Enemy.var33		; $7b6f
 	dec (hl)		; $7b71
 	ret nz			; $7b72
-	ld l,$a9		; $7b73
+
+	; Veran has been hit enough times to die now.
+
+	ld l,Enemy.health		; $7b73
 	ld (hl),$80		; $7b75
-	ld l,$a4		; $7b77
+
+	ld l,Enemy.collisionType		; $7b77
 	res 7,(hl)		; $7b79
-	ld l,$84		; $7b7b
+
+	ld l,Enemy.state		; $7b7b
 	ld (hl),$0e		; $7b7d
+
 	ld a,$01		; $7b7f
-	ld ($cfd0),a		; $7b81
+	ld (wTmpcfc0.genericCutscene.cfd0),a		; $7b81
+
 	ld a,SNDCTRL_STOPMUSIC		; $7b84
 	jp playSound		; $7b86
+
 
 ;;
 ; @addr{7b89}
@@ -158798,13 +159128,22 @@ _label_11_004:
 _label_11_005:
 	ld c,$02		; $406f
 	ret			; $4071
+
+
+;;
+; Checks for collisions. Considers "screen boundaries" to be collisions
+;
+; @param[out]	zflag	z if collision occurred
+; @addr{4072}
+_partCommon_checkTileCollisionOrOutOfBounds:
 	call objectGetTileCollisions		; $4072
-	add $01			; $4075
+	add $01 ; Check for SPECIALCOLLISION_SCREEN_BOUNDARY
 	ret z			; $4077
 	call checkTileCollision_allowHoles		; $4078
 	ret c			; $407b
 	or d			; $407c
 	ret			; $407d
+
 	ld h,d			; $407e
 	ld l,$cb		; $407f
 	ld b,(hl)		; $4081
@@ -159791,66 +160130,87 @@ partCode06:
 	ld (de),a		; $4640
 	ret			; $4641
 
-;;
-; @addr{4642}
+
+; ==============================================================================
+; PARTID_SHADOW
+;
+; Variables:
+;   relatedObj1: Object that this shadow is for
+;   var30: ID of relatedObj1 (deletes self if it changes)
+; ==============================================================================
 partCode07:
-	ld e,$c4		; $4642
+	ld e,Part.state		; $4642
 	ld a,(de)		; $4644
 	or a			; $4645
-	call z,$469a		; $4646
-	ld a,$01		; $4649
+	call z,@initialize		; $4646
+
+	; If parent's ID changed, delete self
+	ld a,Object.id		; $4649
 	call objectGetRelatedObject1Var		; $464b
-	ld e,$f0		; $464e
+	ld e,Part.var30		; $464e
 	ld a,(de)		; $4650
 	cp (hl)			; $4651
 	jp nz,partDelete		; $4652
-	ld a,$0b		; $4655
+
+	; Take parent's position, with offset
+	ld a,Object.yh		; $4655
 	call objectGetRelatedObject1Var		; $4657
-	ld e,$c3		; $465a
+	ld e,Part.var03		; $465a
 	ld a,(de)		; $465c
 	ld b,a			; $465d
 	ld c,$00		; $465e
 	call objectTakePositionWithOffset		; $4660
+
 	xor a			; $4663
-	ld (de),a		; $4664
-	ld a,(hl)		; $4665
+	ld (de),a ; [this.zh] = 0
+
+	ld a,(hl) ; [parent.zh]
 	or a			; $4666
 	jp z,objectSetInvisible		; $4667
-	ld e,$da		; $466a
+
+	; Flicker visibility
+	ld e,Part.visible		; $466a
 	ld a,(de)		; $466c
 	xor $80			; $466d
 	ld (de),a		; $466f
-	ld e,$c2		; $4670
+
+	ld e,Part.subid		; $4670
 	ld a,(de)		; $4672
 	add a			; $4673
-	ld bc,$468e		; $4674
+	ld bc,@animationIndices		; $4674
 	call addDoubleIndexToBc		; $4677
-	ld a,(hl)		; $467a
+
+	; Set shadow size based on how close the parent is to the ground
+	ld a,(hl) ; [parent.zh]
 	cp $e0			; $467b
-	jr nc,_label_11_044	; $467d
+	jr nc,@setAnim	; $467d
 	inc bc			; $467f
 	cp $c0			; $4680
-	jr nc,_label_11_044	; $4682
+	jr nc,@setAnim	; $4682
 	inc bc			; $4684
 	cp $a0			; $4685
-	jr nc,_label_11_044	; $4687
+	jr nc,@setAnim	; $4687
 	inc bc			; $4689
-_label_11_044:
+
+@setAnim:
 	ld a,(bc)		; $468a
 	jp partSetAnimation		; $468b
-	ld bc,$0001		; $468e
-	nop			; $4691
-	ld (bc),a		; $4692
-	ld bc,$0001		; $4693
-	inc bc			; $4696
-	ld (bc),a		; $4697
-	ld bc,$3c00		; $4698
-	ld (de),a		; $469b
-	ld a,$01		; $469c
+
+@animationIndices:
+	.db $01 $01 $00 $00 ; Subid 0
+	.db $02 $01 $01 $00 ; Subid 1
+	.db $03 $02 $01 $00 ; Subid 2
+
+@initialize:
+	inc a			; $469a
+	ld (de),a ; [state] = 1
+
+	ld a,Object.id		; $469c
 	call objectGetRelatedObject1Var		; $469e
-	ld e,$f0		; $46a1
+	ld e,Part.var30		; $46a1
 	ld a,(hl)		; $46a3
 	ld (de),a		; $46a4
+
 	jp objectSetVisible83		; $46a5
 
 ;;
@@ -161471,7 +161831,7 @@ _label_11_107:
 	jp objectSetVisible81		; $504d
 	call objectCheckWithinScreenBoundary		; $5050
 	jp nc,partDelete		; $5053
-	call $4072		; $5056
+	call _partCommon_checkTileCollisionOrOutOfBounds		; $5056
 	jr nc,_label_11_108	; $5059
 	jp z,partDelete		; $505b
 	ld e,$c4		; $505e
@@ -161574,7 +161934,7 @@ _label_11_111:
 	call partSetAnimation		; $50f4
 	jp objectSetVisible81		; $50f7
 _label_11_112:
-	call $4072		; $50fa
+	call _partCommon_checkTileCollisionOrOutOfBounds		; $50fa
 	jr nc,_label_11_114	; $50fd
 	jr z,_label_11_115	; $50ff
 	jr _label_11_116		; $5101
@@ -161691,7 +162051,7 @@ _label_11_120:
 	ld e,$c9		; $51af
 	ld (de),a		; $51b1
 	jp objectSetVisible81		; $51b2
-	call $4072		; $51b5
+	call _partCommon_checkTileCollisionOrOutOfBounds		; $51b5
 	jr c,_label_11_122	; $51b8
 	call objectApplySpeed		; $51ba
 	call objectCheckWithinScreenBoundary		; $51bd
@@ -161885,7 +162245,7 @@ _label_11_129:
 	ld l,e			; $52d9
 	inc (hl)		; $52da
 _label_11_130:
-	call $4072		; $52db
+	call _partCommon_checkTileCollisionOrOutOfBounds		; $52db
 	jr nc,_label_11_131	; $52de
 	jr nz,_label_11_133	; $52e0
 	jr _label_11_132		; $52e2
@@ -161969,7 +162329,7 @@ partCode1f:
 	jr z,_label_11_137	; $5359
 	call objectCheckWithinScreenBoundary		; $535b
 	jr nc,_label_11_136	; $535e
-	call $4072		; $5360
+	call _partCommon_checkTileCollisionOrOutOfBounds		; $5360
 	jp nc,objectApplySpeed		; $5363
 _label_11_136:
 	jp partDelete		; $5366
@@ -162618,7 +162978,7 @@ _label_11_160:
 	ld l,e			; $574c
 	inc (hl)		; $574d
 	call $5758		; $574e
-	call $4072		; $5751
+	call _partCommon_checkTileCollisionOrOutOfBounds		; $5751
 	jp c,partDelete		; $5754
 	ret			; $5757
 _label_11_161:
@@ -163187,7 +163547,7 @@ _label_11_178:
 	jr z,_label_11_179	; $5a02
 	call partAnimate		; $5a04
 	call objectApplySpeed		; $5a07
-	call $4072		; $5a0a
+	call _partCommon_checkTileCollisionOrOutOfBounds		; $5a0a
 	ret nz			; $5a0d
 	jp partDelete		; $5a0e
 _label_11_179:
@@ -163231,7 +163591,7 @@ _label_11_180:
 	ld (de),a		; $5a53
 	call partAnimate		; $5a54
 	call objectApplySpeed		; $5a57
-	call $4072		; $5a5a
+	call _partCommon_checkTileCollisionOrOutOfBounds		; $5a5a
 	ret nc			; $5a5d
 	call objectGetAngleTowardEnemyTarget		; $5a5e
 	sub $02			; $5a61
@@ -163303,7 +163663,7 @@ _label_11_185:
 	ld e,$c9		; $5ace
 	ld (de),a		; $5ad0
 	call objectApplySpeed		; $5ad1
-	call $4072		; $5ad4
+	call _partCommon_checkTileCollisionOrOutOfBounds		; $5ad4
 	ret nc			; $5ad7
 _label_11_186:
 	ld b,$09		; $5ad8
@@ -163524,7 +163884,7 @@ _label_11_194:
 	ld b,$50		; $5c23
 	ld a,$02		; $5c25
 	jp objectSetComponentSpeedByScaledVelocity		; $5c27
-	call $4072		; $5c2a
+	call _partCommon_checkTileCollisionOrOutOfBounds		; $5c2a
 	jr nc,_label_11_195	; $5c2d
 	ld b,$56		; $5c2f
 	call objectCreateInteractionWithSubid00		; $5c31
@@ -165828,94 +166188,150 @@ partCode36:
 	ld (de),a		; $69e9
 	jp partAnimate		; $69ea
 
-;;
-; @addr{69ed}
+
+; ==============================================================================
+; PARTID_VERAN_PROJECTILE
+; ==============================================================================
 partCode37:
 	jp nz,partDelete		; $69ed
-	ld e,$c2		; $69f0
+
+	ld e,Part.subid		; $69f0
 	ld a,(de)		; $69f2
 	or a			; $69f3
-	jp nz,$6a50		; $69f4
-	ld a,$24		; $69f7
+	jp nz,_veranProjectile_subid1		; $69f4
+
+
+; The "core" projectile spawner
+_veranProjectile_subid0:
+	ld a,Object.collisionType		; $69f7
 	call objectGetRelatedObject1Var		; $69f9
 	bit 7,(hl)		; $69fc
-	jr z,_label_11_299	; $69fe
-	ld e,$c4		; $6a00
+	jr z,@delete	; $69fe
+
+	ld e,Part.state		; $6a00
 	ld a,(de)		; $6a02
 	rst_jumpTable			; $6a03
-.dw $6a0a
-.dw $6a14
-.dw $6a25
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+
+; Initialization
+@state0:
 	ld h,d			; $6a0a
 	ld l,e			; $6a0b
-	inc (hl)		; $6a0c
-	ld l,$cf		; $6a0d
+	inc (hl) ; [state]
+
+	ld l,Part.zh		; $6a0d
 	ld (hl),$fc		; $6a0f
 	jp objectSetVisible81		; $6a11
+
+
+; Moving upward
+@state1:
 	ld h,d			; $6a14
-	ld l,$cf		; $6a15
+	ld l,Part.zh		; $6a15
 	dec (hl)		; $6a17
+
 	ld a,(hl)		; $6a18
 	cp $f0			; $6a19
-	jr nz,_label_11_298	; $6a1b
+	jr nz,@animate	; $6a1b
+
+	; Moved high enough to go to next state
+
 	ld l,e			; $6a1d
-	inc (hl)		; $6a1e
-	ld l,$c6		; $6a1f
-	ld (hl),$81		; $6a21
-	jr _label_11_298		; $6a23
+	inc (hl) ; [state]
+
+	ld l,Part.counter1		; $6a1f
+	ld (hl),129		; $6a21
+	jr @animate		; $6a23
+
+
+; Firing projectiles every 8 frames until counter1 reaches 0
+@state2:
 	call _partDecCounter1IfNonzero		; $6a25
-	jr z,_label_11_299	; $6a28
+	jr z,@delete	; $6a28
+
 	ld a,(hl)		; $6a2a
 	and $07			; $6a2b
-	jr nz,_label_11_298	; $6a2d
+	jr nz,@animate	; $6a2d
+
+	; Calculate angle in 'b' based on counter1
 	ld a,(hl)		; $6a2f
 	rrca			; $6a30
 	rrca			; $6a31
 	and $1f			; $6a32
 	ld b,a			; $6a34
+
+	; Create a projectile
 	call getFreePartSlot		; $6a35
-	jr nz,_label_11_298	; $6a38
-	ld (hl),$37		; $6a3a
+	jr nz,@animate	; $6a38
+	ld (hl),PARTID_VERAN_PROJECTILE		; $6a3a
 	inc l			; $6a3c
-	inc (hl)		; $6a3d
-	ld l,$c9		; $6a3e
+	inc (hl) ; [subid] = 1
+
+	ld l,Part.angle		; $6a3e
 	ld (hl),b		; $6a40
+
 	call objectCopyPosition		; $6a41
-_label_11_298:
+
+@animate:
 	jp partAnimate		; $6a44
-_label_11_299:
-	ld bc,$0580		; $6a47
+
+@delete:
+	ldbc INTERACID_PUFF,$80		; $6a47
 	call objectCreateInteraction		; $6a4a
 	jp partDelete		; $6a4d
-	ld e,$c4		; $6a50
+
+
+; An individiual projectile
+_veranProjectile_subid1:
+	ld e,Part.state		; $6a50
 	ld a,(de)		; $6a52
 	rst_jumpTable			; $6a53
-.dw $6a5a
-.dw $6a74
-.dw $6a7c
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+
+; Initialization
+@state0:
 	ld h,d			; $6a5a
 	ld l,e			; $6a5b
-	inc (hl)		; $6a5c
-	ld l,$d0		; $6a5d
-	ld (hl),$64		; $6a5f
-	ld l,$e6		; $6a61
+	inc (hl) ; [state]
+
+	ld l,Part.speed		; $6a5d
+	ld (hl),SPEED_280		; $6a5f
+
+	ld l,Part.collisionRadiusY		; $6a61
 	ld a,$04		; $6a63
 	ldi (hl),a		; $6a65
 	ld (hl),a		; $6a66
+
 	call objectSetVisible81		; $6a67
+
 	ld a,SND_VERAN_PROJECTILE		; $6a6a
 	call playSound		; $6a6c
+
 	ld a,$01		; $6a6f
 	jp partSetAnimation		; $6a71
+
+
+; Moving to ground as well as in normal direction
+@state1:
 	ld h,d			; $6a74
-	ld l,$cf		; $6a75
+	ld l,Part.zh		; $6a75
 	inc (hl)		; $6a77
-	jr nz,_label_11_300	; $6a78
+	jr nz,@state2	; $6a78
+
 	ld l,e			; $6a7a
-	inc (hl)		; $6a7b
-_label_11_300:
+	inc (hl) ; [state]
+
+
+; Just moving normally
+@state2:
 	call objectApplySpeed		; $6a7c
-	call $4072		; $6a7f
+	call _partCommon_checkTileCollisionOrOutOfBounds		; $6a7f
 	ret nz			; $6a82
 	jp partDelete		; $6a83
 
@@ -165985,7 +166401,7 @@ _label_11_303:
 	nop			; $6ae6
 	call objectCheckWithinScreenBoundary		; $6ae7
 	jp nc,$6c17		; $6aea
-	call $4072		; $6aed
+	call _partCommon_checkTileCollisionOrOutOfBounds		; $6aed
 	jr nc,_label_11_304	; $6af0
 	call $6b00		; $6af2
 	jr nc,_label_11_304	; $6af5
@@ -166022,7 +166438,7 @@ _label_11_305:
 	jp nc,$6c17		; $6b27
 	ld b,$ff		; $6b2a
 	call $6b5f		; $6b2c
-	call $4072		; $6b2f
+	call _partCommon_checkTileCollisionOrOutOfBounds		; $6b2f
 	jr nc,_label_11_306	; $6b32
 	call $6b00		; $6b34
 	jr nc,_label_11_306	; $6b37
@@ -166031,7 +166447,7 @@ _label_11_305:
 _label_11_306:
 	ld b,$02		; $6b3f
 	call $6b5f		; $6b41
-	call $4072		; $6b44
+	call _partCommon_checkTileCollisionOrOutOfBounds		; $6b44
 	jr nc,_label_11_307	; $6b47
 	call $6b00		; $6b49
 	jr nc,_label_11_307	; $6b4c
@@ -167413,7 +167829,7 @@ _label_11_361:
 _label_11_362:
 	call partAnimate		; $7436
 	call objectApplySpeed		; $7439
-	call $4072		; $743c
+	call _partCommon_checkTileCollisionOrOutOfBounds		; $743c
 	ret nc			; $743f
 	jp partDelete		; $7440
 
@@ -167750,7 +168166,7 @@ _label_11_378:
 	or a			; $7654
 	jr z,_label_11_379	; $7655
 	call objectApplySpeed		; $7657
-	call $4072		; $765a
+	call _partCommon_checkTileCollisionOrOutOfBounds		; $765a
 	jp nz,partAnimate		; $765d
 	jp partDelete		; $7660
 _label_11_379:
@@ -168756,7 +169172,7 @@ _label_11_426:
 	ld (hl),d		; $7cac
 	call objectCopyPosition		; $7cad
 _label_11_427:
-	call $4072		; $7cb0
+	call _partCommon_checkTileCollisionOrOutOfBounds		; $7cb0
 	jp nc,objectApplySpeed		; $7cb3
 _label_11_428:
 	ld h,d			; $7cb6

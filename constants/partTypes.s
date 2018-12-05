@@ -27,6 +27,19 @@
 ;   2: ?
 .define PARTID_06				$06
 
+;;
+; This is a shadow for an object. The shadow copies its parent's position, and gets bigger
+; the closer it is to the ground. This type of shadow is larger than the "default" shadow
+; that appears under Link and other enemies by setting bit 6 of the object's "visible"
+; byte.
+;
+; The "parent" must set the shadow's relatedObj1 to the parent when it is created.
+;
+; @var03{Y-offset relative to parent}
+; @subid_00{Small-size shadow}
+; @subid_01{Medium-size shadow}
+; @subid_02{Large-size shadow}
+.define PARTID_SHADOW				$07
 
 ;;
 ; @subid{Bitmask for wSwitchState?}
@@ -127,6 +140,13 @@
 ; Flame animation used exclusively by ENEMYID_CANDLE. Expects relatedObj1 to point to its
 ; parent.
 .define PARTID_CANDLE_FLAME			$36
+
+;;
+; Used by ENEMYID_VERAN_POSSESSION_BOSS.
+;
+; @subid_00{The "core" which fires the actual projectiles}
+; @subid_01{An actual projectile}
+.define PARTID_VERAN_PROJECTILE			$37
 
 ; Ball for the shooting gallery
 .define PARTID_BALL				$38

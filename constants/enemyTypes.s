@@ -587,8 +587,8 @@
 ;
 ; @subid_00{Nayru}
 ; @subid_01{Ambi}
-; @subid_02{?}
-; @subid_03{?}
+; @subid_02{Veran emerged}
+; @subid_03{Collapsed Ambi in cutscene after the fight}
 ; @palette{PALH_85}
 .define ENEMYID_VERAN_POSSESSION_BOSS		$61
 

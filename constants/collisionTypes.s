@@ -9,6 +9,9 @@
 ; See also:
 ;  constants/collisionEffects.s (list of effects that may occur on collision)
 ;  data/objectCollisionReactionSets.s (defines which collision effects occur when)
+;
+; Be careful about rearranging these; certain enemies check ranges of values, not just
+; specific ones (ie. everything from L1_SWORD to EXPERT_PUNCH).
 
 .enum 0
 	COLLISIONTYPE_LINK			db ; $00: Collision with link, companion
