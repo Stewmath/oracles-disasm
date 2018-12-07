@@ -2760,6 +2760,7 @@ wRoomLayoutEnd: ; $cfc0
 	numTargetsHit: ; $cfde
 		db
 	cfdf:
+	; Nonzero if entered the second room?
 		db
 
 .nextu bigBangGame

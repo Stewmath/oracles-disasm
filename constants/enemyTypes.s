@@ -607,7 +607,12 @@
 ; @subid_00-05{Valid values}
 .define ENEMYID_VINE_SPROUT			$62
 
-; Crystals for target carts?
+;;
+; Crystals for target carts. Positions and movement behaviours are preset, depending on
+; the value of "wTmpcfc0.targetCarts.targetConfiguration".
+;
+; @postype{none}
+; @subid{Index ($00-$0b). Values 5+ are for the second room.}
 .define ENEMYID_TARGET_CART_CRYSTAL		$63
 
 ;;

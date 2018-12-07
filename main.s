@@ -141719,228 +141719,229 @@ _vineSprout_getPosition:
 	.db $c0 $c1 $c2 $c3 $c4 $c5 $c6 $c7
 	.db $c8 $c9 $ca $00
 
-;;
-; @addr{7d79}
+
+; ==============================================================================
+; ENEMYID_TARGET_CART_CRYSTAL
+;
+; Variables:
+;   var03: 0 for no movement, 1 for up/down, 2 for left/right
+; ==============================================================================
 enemyCode63:
-	jr z,+	 		; $7d79
-	ld e,$84		; $7d7b
+	jr z,@normalStatus	 		; $7d79
+
+	; ENEMYSTATUS_JUST_HIT
+	ld e,Enemy.state		; $7d7b
 	ld a,$02		; $7d7d
 	ld (de),a		; $7d7f
-+
-	ld e,$84		; $7d80
+
+@normalStatus:
+	ld e,Enemy.state		; $7d80
 	ld a,(de)		; $7d82
 	rst_jumpTable			; $7d83
-.dw $7d8a
-.dw $7d9b
-.dw $7db5
+	.dw _targetCartCrystal_state0
+	.dw _targetCartCrystal_state1
+	.dw _targetCartCrystal_state2
+
+
+; Initialization
+_targetCartCrystal_state0:
 	ld a,$01		; $7d8a
-	ld (de),a		; $7d8c
-	call $7e24		; $7d8d
-	call $7de2		; $7d90
-	jr z,_label_385	; $7d93
-	call $7e85		; $7d95
-_label_385:
+	ld (de),a ; [state]
+	call _targetCartCrystal_loadPosition		; $7d8d
+	call _targetCartCrystal_loadBehaviour		; $7d90
+	jr z,+			; $7d93
+	call _targetCartCrystal_initSpeed		; $7d95
++
 	jp objectSetVisible80		; $7d98
-	ld e,$83		; $7d9b
+
+
+; Standard update state (update movement if it's a moving type)
+_targetCartCrystal_state1:
+	ld e,Enemy.var03		; $7d9b
 	ld a,(de)		; $7d9d
 	or a			; $7d9e
-	jr z,_label_386	; $7d9f
-	call $7e9f		; $7da1
-_label_386:
-	ld e,$82		; $7da4
+	jr z,+			; $7d9f
+	call _targetCartCrystal_updateMovement		; $7da1
++
+	ld e,Enemy.subid		; $7da4
 	ld a,(de)		; $7da6
 	cp $05			; $7da7
-	jr nc,_label_388	; $7da9
-	ld a,($cfdf)		; $7dab
+	jr nc,++		; $7da9
+	ld a,(wTmpcfc0.targetCarts.cfdf)		; $7dab
 	or a			; $7dae
 	jp nz,enemyDelete		; $7daf
-_label_388:
+++
 	jp enemyAnimate		; $7db2
-	ld hl,$cfde		; $7db5
+
+
+; Target destroyed
+_targetCartCrystal_state2:
+	ld hl,wTmpcfc0.targetCarts.numTargetsHit		; $7db5
 	inc (hl)		; $7db8
-	ld e,$82		; $7db9
+
+	; If in the first room, mark this one as destroyed
+	ld e,Enemy.subid		; $7db9
 	ld a,(de)		; $7dbb
 	cp $05			; $7dbc
-	jr nc,_label_389	; $7dbe
-	ld hl,$cfdd		; $7dc0
+	jr nc,++		; $7dbe
+	ld hl,wTmpcfc0.targetCarts.crystalsHitInFirstRoom		; $7dc0
 	call setFlag		; $7dc3
-_label_389:
+++
 	ld a,SND_GALE_SEED		; $7dc6
 	call playSound		; $7dc8
+
+	; Create the "debris" from destroying it
 	ld a,$04		; $7dcb
-_label_390:
+@spawnNext:
 	ldh (<hFF8B),a	; $7dcd
-	ld bc,$9203		; $7dcf
+	ldbc INTERACID_FALLING_ROCK,$03		; $7dcf
 	call objectCreateInteraction		; $7dd2
-	jr nz,_label_392	; $7dd5
-	ld l,$49		; $7dd7
+	jr nz,@delete	; $7dd5
+	ld l,Interaction.angle		; $7dd7
 	ldh a,(<hFF8B)	; $7dd9
-_label_391:
 	dec a			; $7ddb
 	ld (hl),a		; $7ddc
-	jr nz,_label_390	; $7ddd
-_label_392:
+	jr nz,@spawnNext	; $7ddd
+
+@delete:
 	jp enemyDelete		; $7ddf
-	ld a,($cfd4)		; $7de2
+
+
+
+;;
+; Sets var03 to "behaviour" value (0-2)
+;
+; @param[out]	zflag	z iff [var03] == 0
+; @addr{7de2}
+_targetCartCrystal_loadBehaviour:
+	ld a,(wTmpcfc0.targetCarts.targetConfiguration)		; $7de2
 	swap a			; $7de5
-	ld hl,$7df4		; $7de7
+	ld hl,@behaviourTable		; $7de7
 	rst_addAToHl			; $7dea
-	ld e,$82		; $7deb
-_label_393:
+	ld e,Enemy.subid		; $7deb
 	ld a,(de)		; $7ded
 	rst_addAToHl			; $7dee
 	ld a,(hl)		; $7def
 	inc e			; $7df0
-	ld (de),a		; $7df1
+	ld (de),a ; [var03]
 	or a			; $7df2
 	ret			; $7df3
-	nop			; $7df4
-	nop			; $7df5
-	nop			; $7df6
-	nop			; $7df7
-	nop			; $7df8
-	nop			; $7df9
-	nop			; $7dfa
-	nop			; $7dfb
-	nop			; $7dfc
-	nop			; $7dfd
-	nop			; $7dfe
-_label_394:
-	nop			; $7dff
-	nop			; $7e00
-	nop			; $7e01
-	nop			; $7e02
-	nop			; $7e03
-	nop			; $7e04
-	nop			; $7e05
-	nop			; $7e06
-_label_395:
-	nop			; $7e07
-	ld (bc),a		; $7e08
-	nop			; $7e09
-	nop			; $7e0a
-	nop			; $7e0b
-	nop			; $7e0c
-	ld bc,$0200		; $7e0d
-	nop			; $7e10
-	nop			; $7e11
-	nop			; $7e12
-	nop			; $7e13
-	ld bc,$0200		; $7e14
-	nop			; $7e17
-	nop			; $7e18
-	nop			; $7e19
-	nop			; $7e1a
-	ld (bc),a		; $7e1b
-	ld bc,$0201		; $7e1c
-	ld (bc),a		; $7e1f
-	nop			; $7e20
-	nop			; $7e21
-	nop			; $7e22
-	nop			; $7e23
-	ld a,($cfd4)		; $7e24
-	ld hl,$7e3a		; $7e27
+
+@behaviourTable:
+	.db $00 $00 $00 $00 $00 $00 $00 $00 ; Configuration 0
+	.db $00 $00 $00 $00 $00 $00 $00 $00
+
+	.db $00 $00 $00 $00 $02 $00 $00 $00 ; Configuration 1
+	.db $00 $01 $00 $02 $00 $00 $00 $00
+
+	.db $01 $00 $02 $00 $00 $00 $00 $02 ; Configuration 2
+	.db $01 $01 $02 $02 $00 $00 $00 $00
+
+
+;;
+; Sets Y/X position based on "wTmpcfc0.targetCarts.targetConfiguration" and subid.
+; @addr{7e24}
+_targetCartCrystal_loadPosition:
+	ld a,(wTmpcfc0.targetCarts.targetConfiguration)		; $7e24
+	ld hl,@configurationTable		; $7e27
 	rst_addAToHl			; $7e2a
 	ld a,(hl)		; $7e2b
 	rst_addAToHl			; $7e2c
-	ld e,$82		; $7e2d
+
+	ld e,Enemy.subid		; $7e2d
 	ld a,(de)		; $7e2f
 	rst_addDoubleIndex			; $7e30
 	ldi a,(hl)		; $7e31
-	ld e,$8b		; $7e32
+	ld e,Enemy.yh		; $7e32
 	ld (de),a		; $7e34
-_label_396:
 	ld a,(hl)		; $7e35
-	ld e,$8d		; $7e36
+	ld e,Enemy.xh		; $7e36
 	ld (de),a		; $7e38
 	ret			; $7e39
-	inc bc			; $7e3a
-	ld a,(de)		; $7e3b
-	ld sp,$3818		; $7e3c
-_label_397:
-	ld c,b			; $7e3f
-	ld e,b			; $7e40
-	jr z,_label_391	; $7e41
-	ld c,b			; $7e43
-	ret z			; $7e44
-	jr _label_394		; $7e45
-	ld e,b			; $7e47
-	jr c,$28		; $7e48
-	sbc b			; $7e4a
-	jr z,-$28		; $7e4b
-	ld e,b			; $7e4d
-	ret c			; $7e4e
-	sbc b			; $7e4f
-	ret c			; $7e50
-	sbc b			; $7e51
-	sub b			; $7e52
-	sbc b			; $7e53
-	ld e,b			; $7e54
-	ld c,b			; $7e55
-	jr _label_398		; $7e56
-	jr c,_label_400	; $7e58
-	ld e,b			; $7e5a
-	ld c,b			; $7e5b
-	ld l,b			; $7e5c
-	jr _label_395		; $7e5d
-	jr _label_401		; $7e5f
-	ld e,b			; $7e61
-	ld l,b			; $7e62
-	jr _label_393		; $7e63
-	jr _label_397		; $7e65
-	ld e,b			; $7e67
-	ret c			; $7e68
-	sbc b			; $7e69
-	ret c			; $7e6a
-	sbc b			; $7e6b
-	ld a,b			; $7e6c
-	jr nz,$18		; $7e6d
-	ld c,b			; $7e6f
-_label_398:
-	ld l,b			; $7e70
-	jr $70			; $7e71
-	ld c,b			; $7e73
-	sbc b			; $7e74
-	ld c,b			; $7e75
-	ret z			; $7e76
-	jr z,_label_403	; $7e77
-	ld e,b			; $7e79
-	ld l,b			; $7e7a
-	jr _label_396		; $7e7b
-	ld b,b			; $7e7d
-	ret c			; $7e7e
-	add b			; $7e7f
-	ret c			; $7e80
-	sbc b			; $7e81
-	sub b			; $7e82
-	sbc b			; $7e83
-	ld d,b			; $7e84
+
+
+; Lists positions of the 12 targets for each of the 3 configurations.
+@configurationTable:
+	.db @configuration0 - CADDR
+	.db @configuration1 - CADDR
+	.db @configuration2 - CADDR
+
+@configuration0:
+	.db $18 $38 ; 0 == [subid]
+	.db $48 $58 ; 1 == [subid]
+	.db $28 $98 ; ...
+	.db $48 $c8
+	.db $18 $b8
+	.db $58 $38
+	.db $28 $98
+	.db $28 $d8
+	.db $58 $d8
+	.db $98 $d8
+	.db $98 $90
+	.db $98 $58
+
+@configuration1:
+	.db $48 $18
+	.db $18 $38
+	.db $48 $58
+	.db $48 $68
+	.db $18 $a8
+	.db $18 $48
+	.db $58 $68
+	.db $18 $88
+	.db $18 $d8
+	.db $58 $d8
+	.db $98 $d8
+	.db $98 $78
+
+@configuration2:
+	.db $20 $18
+	.db $48 $68
+	.db $18 $70
+	.db $48 $98
+	.db $48 $c8
+	.db $28 $68
+	.db $58 $68
+	.db $18 $b8
+	.db $40 $d8
+	.db $80 $d8
+	.db $98 $90
+	.db $98 $50
+
+;;
+; @addr{7e85}
+_targetCartCrystal_initSpeed:
 	ld h,d			; $7e85
-	ld l,$90		; $7e86
-	ld (hl),$14		; $7e88
-	ld l,$86		; $7e8a
+	ld l,Enemy.speed		; $7e86
+	ld (hl),SPEED_80		; $7e88
+
+	ld l,Enemy.counter1		; $7e8a
 	ld (hl),$20		; $7e8c
-	ld l,$83		; $7e8e
+
+	ld l,Enemy.var03		; $7e8e
 	ld a,(hl)		; $7e90
 	cp $02			; $7e91
-	jr z,_label_399	; $7e93
-	ld l,$89		; $7e95
-	ld (hl),$00		; $7e97
+	jr z,++		; $7e93
+	ld l,Enemy.angle		; $7e95
+	ld (hl),ANGLE_UP		; $7e97
 	ret			; $7e99
-_label_399:
-	ld l,$89		; $7e9a
-	ld (hl),$18		; $7e9c
+++
+	ld l,Enemy.angle		; $7e9a
+	ld (hl),ANGLE_LEFT		; $7e9c
 	ret			; $7e9e
+
+;;
+; Crystal moves for a bit, switches directions, moves other way.
+; @addr{7e9f}
+_targetCartCrystal_updateMovement:
 	call _ecom_decCounter1		; $7e9f
-_label_400:
-	jr nz,_label_402	; $7ea2
+	jr nz,++		; $7ea2
 	ld (hl),$40		; $7ea4
-	ld l,$89		; $7ea6
+	ld l,Enemy.angle		; $7ea6
 	ld a,(hl)		; $7ea8
-_label_401:
 	xor $10			; $7ea9
 	ld (hl),a		; $7eab
-_label_402:
+++
 	jp objectApplySpeed		; $7eac
 
 label_0e_7eaf:
