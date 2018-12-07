@@ -113795,7 +113795,7 @@ interactionCodea1:
 	.dw _movingPlatform_stateC
 
 @state0To7:
-	ld hl,bank0e.label_0e_7eaf		; $5832
+	ld hl,bank0e.movingSidescrollPlatformScriptTable		; $5832
 	call objectLoadMovementScript		; $5835
 	call interactionInitGraphics		; $5838
 	ld e,Interaction.direction		; $583b
@@ -113920,7 +113920,7 @@ interactionCodea2:
 	.dw _movingPlatform_stateC
 
 @state0To7:
-	ld hl,bank0e.label_0e_7f0b		; $58ec
+	ld hl,bank0e.movingSidescrollConveyorScriptTable		; $58ec
 	call objectLoadMovementScript		; $58ef
 	call interactionInitGraphics		; $58f2
 	ld h,d			; $58f5
@@ -141944,190 +141944,208 @@ _targetCartCrystal_updateMovement:
 ++
 	jp objectApplySpeed		; $7eac
 
-label_0e_7eaf:
-	call $d67e		; $7eaf
-	ld a,(hl)		; $7eb2
-	rst_addDoubleIndex			; $7eb3
-	ld a,(hl)		; $7eb4
-.DB $ec				; $7eb5
-	ld a,(hl)		; $7eb6
-	ld sp,hl		; $7eb7
-	ld a,(hl)		; $7eb8
-	ld (bc),a		; $7eb9
-	ld a,a			; $7eba
-	ld a,(de)		; $7ebb
-	ld a,a			; $7ebc
-	inc hl			; $7ebd
-	ld a,a			; $7ebe
-	inc l			; $7ebf
-	ld a,a			; $7ec0
-	dec (hl)		; $7ec1
-	ld a,a			; $7ec2
-	ld a,$7f		; $7ec3
-	ld b,a			; $7ec5
-	ld a,a			; $7ec6
-	ld d,h			; $7ec7
-	ld a,a			; $7ec8
-	ld e,a			; $7ec9
-	ld a,a			; $7eca
-	ld l,d			; $7ecb
-	ld a,a			; $7ecc
-	inc d			; $7ecd
-	inc b			; $7ece
-	ld (bc),a		; $7ecf
-	ld a,b			; $7ed0
-	inc b			; $7ed1
-	ld e,b			; $7ed2
-	nop			; $7ed3
-	rst $8			; $7ed4
-	ld a,(hl)		; $7ed5
-	inc d			; $7ed6
-	inc b			; $7ed7
-	ld bc,$0328		; $7ed8
-	ld l,b			; $7edb
-	nop			; $7edc
-	ret c			; $7edd
-	ld a,(hl)		; $7ede
-	inc d			; $7edf
-	nop			; $7ee0
-_label_403:
-	ld bc,$0228		; $7ee1
-	ld d,b			; $7ee4
-	inc bc			; $7ee5
-	ld l,b			; $7ee6
-	inc b			; $7ee7
-	jr nc,_label_404	; $7ee8
-_label_404:
-	pop hl			; $7eea
-	ld a,(hl)		; $7eeb
-	inc d			; $7eec
-	nop			; $7eed
-	inc b			; $7eee
-	ld (hl),b		; $7eef
-	ld bc,$0228		; $7ef0
-	sub b			; $7ef3
-	inc bc			; $7ef4
-	adc b			; $7ef5
-	nop			; $7ef6
-	xor $7e			; $7ef7
-	inc d			; $7ef9
-	ld (bc),a		; $7efa
-	ld bc,$0348		; $7efb
-	adc b			; $7efe
-	nop			; $7eff
-	ei			; $7f00
-	ld a,(hl)		; $7f01
-	inc d			; $7f02
-	ld (bc),a		; $7f03
-	inc bc			; $7f04
-	ld a,b			; $7f05
-	ld bc,$0038		; $7f06
-	inc b			; $7f09
-	ld a,a			; $7f0a
 
-label_0e_7f0b:
-	dec c			; $7f0b
-	ld a,a			; $7f0c
-	inc d			; $7f0d
-	ld bc,$5002		; $7f0e
-	inc bc			; $7f11
-	adc b			; $7f12
-	inc b			; $7f13
-	jr c,$01		; $7f14
-	jr c,_label_405	; $7f16
-_label_405:
-	rrca			; $7f18
-	ld a,a			; $7f19
-	inc d			; $7f1a
-	inc b			; $7f1b
-	ld bc,$0338		; $7f1c
-	ld l,b			; $7f1f
-	nop			; $7f20
-	inc e			; $7f21
-	ld a,a			; $7f22
-	inc d			; $7f23
-	inc b			; $7f24
-	inc b			; $7f25
-	adc b			; $7f26
-	ld (bc),a		; $7f27
-	xor b			; $7f28
-	nop			; $7f29
-	dec h			; $7f2a
-	ld a,a			; $7f2b
-	inc d			; $7f2c
-	inc b			; $7f2d
-	ld bc,$0358		; $7f2e
-	sbc b			; $7f31
-	nop			; $7f32
-	ld l,$7f		; $7f33
-	inc d			; $7f35
-	inc b			; $7f36
-	ld bc,$0348		; $7f37
-	sbc b			; $7f3a
-	nop			; $7f3b
-	scf			; $7f3c
-	ld a,a			; $7f3d
-	inc d			; $7f3e
-	ld bc,$3801		; $7f3f
-	inc bc			; $7f42
-	adc b			; $7f43
-	nop			; $7f44
-	ld b,b			; $7f45
-	ld a,a			; $7f46
-	inc d			; $7f47
-	inc bc			; $7f48
-	inc b			; $7f49
-	ld b,b			; $7f4a
-	dec b			; $7f4b
-	ld e,$02		; $7f4c
-	add b			; $7f4e
-	dec b			; $7f4f
-	ld e,$00		; $7f50
-	ld c,c			; $7f52
-	ld a,a			; $7f53
-	inc d			; $7f54
-	nop			; $7f55
-	inc bc			; $7f56
-	ld l,b			; $7f57
-	dec b			; $7f58
-	ld e,$01		; $7f59
-	jr c,_label_406	; $7f5b
-_label_406:
-	ld d,(hl)		; $7f5d
-	ld a,a			; $7f5e
-	inc d			; $7f5f
-	nop			; $7f60
-	inc bc			; $7f61
-	sbc b			; $7f62
-	dec b			; $7f63
-	ld e,$01		; $7f64
-	ld l,b			; $7f66
-	nop			; $7f67
-	ld h,c			; $7f68
-	ld a,a			; $7f69
-	inc d			; $7f6a
-	nop			; $7f6b
-	inc b			; $7f6c
-	jr nc,$05		; $7f6d
-	ld e,$02		; $7f6f
-	and b			; $7f71
-	dec b			; $7f72
-	ld e,$00		; $7f73
-	ld l,h			; $7f75
-	ld a,a			; $7f76
-	nop			; $7f77
-	ld (hl),c		; $7f78
-	ld a,a			; $7f79
-	inc d			; $7f7a
-	nop			; $7f7b
-	inc b			; $7f7c
-	jr nc,$05		; $7f7d
-	ld e,$02		; $7f7f
-	and b			; $7f81
-	dec b			; $7f82
-	ld e,$00		; $7f83
-	ld a,h			; $7f85
-	ld a,a			; $7f86
+; ==============================================================================
+; Data for INTERACID_MOVING_SIDESCROLL_PLATFORM and INTERACID_MOVING_SIDESCROLL_CONVEYOR
+; ==============================================================================
+
+movingSidescrollPlatformScriptTable:
+	.dw _movingSidescrollPlatformScript_subid00
+	.dw _movingSidescrollPlatformScript_subid01
+	.dw _movingSidescrollPlatformScript_subid02
+	.dw _movingSidescrollPlatformScript_subid03
+	.dw _movingSidescrollPlatformScript_subid04
+	.dw _movingSidescrollPlatformScript_subid05
+	.dw _movingSidescrollPlatformScript_subid06
+	.dw _movingSidescrollPlatformScript_subid07
+	.dw _movingSidescrollPlatformScript_subid08
+	.dw _movingSidescrollPlatformScript_subid09
+	.dw _movingSidescrollPlatformScript_subid0a
+	.dw _movingSidescrollPlatformScript_subid0b
+	.dw _movingSidescrollPlatformScript_subid0c
+	.dw _movingSidescrollPlatformScript_subid0d
+	.dw _movingSidescrollPlatformScript_subid0e
+
+
+_movingSidescrollPlatformScript_subid00:
+	.db SPEED_80
+	.db $04
+@@loop:
+	ms_right $78
+	ms_left  $58
+	ms_loop  @@loop
+
+
+_movingSidescrollPlatformScript_subid01:
+	.db SPEED_80
+	.db $04
+@@loop:
+	ms_up    $28
+	ms_down  $68
+	ms_loop  @@loop
+
+
+_movingSidescrollPlatformScript_subid02:
+	.db SPEED_80
+	.db $00
+@@loop:
+	ms_up    $28
+	ms_right $50
+	ms_down  $68
+	ms_left  $30
+	ms_loop  @@loop
+
+_movingSidescrollPlatformScript_subid03:
+
+	.db SPEED_80
+	.db $00
+@@loop:
+	ms_left  $70
+	ms_up    $28
+	ms_right $90
+	ms_down  $88
+	ms_loop  @@loop
+
+
+_movingSidescrollPlatformScript_subid04:
+	.db SPEED_80
+	.db $02
+@@loop:
+	ms_up    $48
+	ms_down  $88
+	ms_loop  @@loop
+
+
+_movingSidescrollPlatformScript_subid05:
+	.db SPEED_80
+	.db $02
+@@loop:
+	ms_down  $78
+	ms_up    $38
+	ms_loop  @@loop
+
+
+
+movingSidescrollConveyorScriptTable: ; INTERACID_MOVING_SIDESCROLL_CONVEYOR
+	.dw @subid00
+
+@subid00:
+	.db SPEED_80
+	.db $01
+@@loop:
+	ms_right $50
+	ms_down  $88
+	ms_left  $38
+	ms_up    $38
+	ms_loop  @@loop
+
+
+
+_movingSidescrollPlatformScript_subid06:
+	.db SPEED_80
+	.db $04
+@@loop:
+	ms_up    $38
+	ms_down  $68
+	ms_loop  @@loop
+
+
+_movingSidescrollPlatformScript_subid07:
+	.db SPEED_80
+	.db $04
+@@loop:
+	ms_left  $88
+	ms_right $a8
+	ms_loop  @@loop
+
+
+_movingSidescrollPlatformScript_subid08:
+	.db SPEED_80
+	.db $04
+@@loop:
+	ms_up    $58
+	ms_down  $98
+	ms_loop  @@loop
+
+
+_movingSidescrollPlatformScript_subid09:
+	.db SPEED_80
+	.db $04
+@@loop:
+	ms_up    $48
+	ms_down  $98
+	ms_loop  @@loop
+
+
+_movingSidescrollPlatformScript_subid0a:
+	.db SPEED_80
+	.db $01
+@@loop:
+	ms_up    $38
+	ms_down  $88
+	ms_loop  @@loop
+
+
+_movingSidescrollPlatformScript_subid0b:
+	.db SPEED_80
+	.db $03
+@@loop:
+	ms_left  $40
+	ms_wait  30
+	ms_right $80
+	ms_wait  30
+	ms_loop  @@loop
+
+
+_movingSidescrollPlatformScript_subid0c:
+	.db SPEED_80
+	.db $00
+@@loop:
+	ms_down  $68
+	ms_wait  30
+	ms_up    $38
+	ms_loop  @@loop
+
+
+_movingSidescrollPlatformScript_subid0d:
+	.db SPEED_80
+	.db $00
+@@loop:
+	ms_down  $98
+	ms_wait  30
+	ms_up    $68
+	ms_loop  @@loop
+
+
+_movingSidescrollPlatformScript_subid0e:
+	.db SPEED_80
+	.db $00
+@@loop:
+	ms_left  $30
+	ms_wait  30
+	ms_right $a0
+	ms_wait  30
+	ms_loop  @@loop
+
+
+
+; Garbage repeated data
+.ifdef BUILD_VANILLA
+
+_fake1:
+	.db $00
+	.dw $7f71
+
+_fake2:
+	.db SPEED_80
+	.db $00
+@@loop:
+	ms_left  $30
+	ms_wait  30
+	ms_right $a0
+	ms_wait  30
+	ms_loop  @@loop
+.endif
 
 .ends
 

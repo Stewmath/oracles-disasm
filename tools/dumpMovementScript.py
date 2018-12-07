@@ -5,12 +5,6 @@ import sys
 from common import *
 from io import StringIO
 
-index = sys.argv[0].rfind('/')
-if index == -1:
-    directory = ''
-else:
-    directory = sys.argv[0][:index+1]
-
 if len(sys.argv) < 3:
     print('Usage: ' + sys.argv[0] + ' romfile tableAddress')
     sys.exit()
@@ -41,10 +35,12 @@ def printHeader(address, output):
     address+=1
 
     assert(speed%5 == 0)
-    assert(direction >= 0 and direction < 4)
 
     print('\t.db SPEED_' + myhex(speed//5*32), file=output)
-    print('\t.db ' + dirStrings[direction], file=output)
+    if direction >= 0 and direction < 4:
+        print('\t.db ' + dirStrings[direction], file=output)
+    else:
+        print('\t.db ' + wlahex(direction, 2), file=output)
     return address
 
 
@@ -116,7 +112,9 @@ for i in range(numPointers):
     address+=2
 
 for index in range(numPointers):
-    assert(address == scriptAddresses[index])
+    if address != scriptAddresses[index]:
+        address = scriptAddresses[index]
+        print('; JUMP to ' + wlahex(address), file=output)
     print('\n@subid' + myhex(index,2) + ':', file=output)
     address = printHeader(address, output)
     labels = []

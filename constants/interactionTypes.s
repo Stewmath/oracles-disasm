@@ -1366,10 +1366,12 @@
 .define INTERACID_FLOATING_IMAGE	$a0
 
 ;;
+; See 'movingSidescrollPlatformScriptTable' for movement patterns of each subid.
 .define INTERACID_MOVING_SIDESCROLL_PLATFORM	$a1
 
 ;;
 ; Similar to above, but the platform has conveyor belts on it.
+; See 'movingSidescrollConveyorScriptTable' for movement patterns of each subid.
 .define INTERACID_MOVING_SIDESCROLL_CONVEYOR	$a2
 
 ;;
