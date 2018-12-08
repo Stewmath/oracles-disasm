@@ -65,7 +65,7 @@ _ecom_updateKnockback_common:
 ; @addr{4033}
 _ecom_updateKnockbackNoSolidity:
 	ld a,$02		; $4033
-	ld e,$ac		; $4035
+	ld e,Enemy.knockbackAngle		; $4035
 	call _ecom_getSideviewAdjacentWallsBitsetGivenAngle		; $4037
 	jr _ecom_updateKnockback_common		; $403a
 
@@ -476,7 +476,7 @@ _ecom_applyGivenVelocityGivenAdjacentWalls:
 	ret			; $41e0
 
 ;;
-; Writes something to hFF8D?
+; Writes something to hFF8D (nonzero if moved at least one pixel?)
 ;
 ; @param	de	Enemy.x or Enemy.y
 ; @param	hl	Speed component (from "getPositionOffsetForVelocity" call)
@@ -1198,7 +1198,7 @@ _ecom_galeSeedEffect:
 	ld a,(de)		; $44a2
 	add (hl)		; $44a3
 	sub b			; $44a4
-	cp $b0			; $44a5
+	cp LARGE_ROOM_HEIGHT<<4			; $44a5
 	ret			; $44a7
 
 @oscillationX:
