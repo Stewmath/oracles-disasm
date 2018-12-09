@@ -52,15 +52,22 @@ _enemyBoss_dead:
 ++
 	jp enemyDelete		; $4531
 
+;;
+; Creates a "large shadow" object and attaches it to the enemy.
+;
+; @param	b	Shadow size (0-2 for small-large)
+; @param	c	Y-offset of shadow relative to self
+; @addr{4534}
+_enemyBoss_spawnShadow:
 	call getFreePartSlot		; $4534
 	ret nz			; $4537
-	ld (hl),$07		; $4538
+	ld (hl),PARTID_SHADOW		; $4538
 	inc l			; $453a
-	ld (hl),b		; $453b
+	ld (hl),b ; [subid]
 	inc l			; $453c
-	ld (hl),c		; $453d
-	ld l,$d6		; $453e
-	ld a,$80		; $4540
+	ld (hl),c ; [var03]
+	ld l,Part.relatedObj1		; $453e
+	ld a,Enemy.start		; $4540
 	ldi (hl),a		; $4542
 	ld (hl),d		; $4543
 	xor a			; $4544

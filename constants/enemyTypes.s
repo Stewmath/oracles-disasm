@@ -373,6 +373,7 @@
 
 ;;
 ; Smaller enemies used in Giant Ghini fight
+; @subid{Value from $01-$03 or $81-$83. If bit 7 is set, the fight hasn't started yet.}
 .define ENEMYID_GIANT_GHINI_CHILD		$3f
 
 ;;

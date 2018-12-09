@@ -2187,7 +2187,7 @@ wInformativeTextsShown: ; $ccd7
 
 wccd8: ; $ccd8
 ; If nonzero, link can't use his sword. Relates to dimitri?
-; Bit 5 set while latched by a gel
+; Bit 5 set while latched by a gel or ages d1 miniboss
 	db
 
 wScentSeedActive: ; $ccd9

@@ -7262,14 +7262,14 @@ pushDirectionData:
 	.db $10 $0f $0e $0d $0c $00 $00 $00
 
 ;;
-; @param	a	Z Acceleration
+; @param	a	Z Acceleration (gravity)
 ; @param[out]	hl	Object.speedZ variable
 ; @param[out]	zflag	Set if resulting position is below or on the ground
 ; @addr{1f45}
 objectUpdateSpeedZ:
 	ld c,a			; $1f45
 ;;
-; @param	c	Z Acceleration
+; @param	c	Z Acceleration (gravity)
 ; @param[out]	hl	Object.speedZ variable
 ; @param[out]	zflag	Set if resulting position is below or on the ground
 ; @addr{1f46}
@@ -11536,7 +11536,7 @@ getFreeEnemySlot_uncounted:
 	jr z,+
 	inc h			; $2e3b
 	ld a,h			; $2e3c
-	cp $e0			; $2e3d
+	cp LAST_ENEMY_INDEX+1			; $2e3d
 	jr c,--
 	or h			; $2e41
 	ret			; $2e42
@@ -138366,156 +138366,211 @@ _bari_updateZPosition:
 
 
 ; ==============================================================================
-; ENEMYID_GIANT_GHINI_CHILD (TODO: Do this along with bosses)
+; ENEMYID_GIANT_GHINI_CHILD
 ; ==============================================================================
 enemyCode3f:
-	jr z,_label_282	; $6d4f
-	sub $03			; $6d51
+	jr z,@normalStatus	; $6d4f
+	sub ENEMYSTATUS_NO_HEALTH			; $6d51
 	ret c			; $6d53
-	jr z,_label_281	; $6d54
+	jr z,@dead	; $6d54
 	dec a			; $6d56
 	jp nz,_ecom_updateKnockbackNoSolidity		; $6d57
-	ld e,$aa		; $6d5a
+
+	; ENEMYSTATUS_JUST_HIT
+
+	ld e,Enemy.var2a		; $6d5a
 	ld a,(de)		; $6d5c
-	cp $80			; $6d5d
-	jr nz,_label_282	; $6d5f
+	cp $80|COLLISIONTYPE_LINK			; $6d5d
+	jr nz,@normalStatus	; $6d5f
+
+	; Attach self to Link
 	ld h,d			; $6d61
-	ld l,$84		; $6d62
+	ld l,Enemy.state		; $6d62
 	ld (hl),$0b		; $6d64
-	ld l,$86		; $6d66
-	ld (hl),$78		; $6d68
-	ld l,$a4		; $6d6a
+
+	ld l,Enemy.counter1		; $6d66
+	ld (hl),120		; $6d68
+
+	ld l,Enemy.collisionType		; $6d6a
 	res 7,(hl)		; $6d6c
-	ld l,$8f		; $6d6e
+
+	ld l,Enemy.zh		; $6d6e
 	ld (hl),$00		; $6d70
-	ld l,$97		; $6d72
+
+	; Signal parent to charge at Link
+	ld l,Enemy.relatedObj1+1		; $6d72
 	ld h,(hl)		; $6d74
-	ld l,$b2		; $6d75
+	ld l,Enemy.var32		; $6d75
 	ld (hl),$01		; $6d77
-	jr _label_282		; $6d79
-_label_281:
-	ld e,$97		; $6d7b
+
+	jr @normalStatus		; $6d79
+
+@dead:
+	; Decrement parent's "child counter" before deleting self
+	ld e,Enemy.relatedObj1+1		; $6d7b
 	ld a,(de)		; $6d7d
 	ld h,a			; $6d7e
-	ld l,$b0		; $6d7f
+	ld l,Enemy.var30		; $6d7f
 	dec (hl)		; $6d81
 	jp enemyDie		; $6d82
-_label_282:
-	ld e,$97		; $6d85
+
+@normalStatus:
+	; Die if parent is dead
+	ld e,Enemy.relatedObj1+1		; $6d85
 	ld a,(de)		; $6d87
 	ld h,a			; $6d88
-	ld l,$a9		; $6d89
+	ld l,Enemy.health		; $6d89
 	ld a,(hl)		; $6d8b
 	or a			; $6d8c
-	jr z,_label_281	; $6d8d
-	ld e,$84		; $6d8f
+	jr z,@dead	; $6d8d
+
+	ld e,Enemy.state		; $6d8f
 	ld a,(de)		; $6d91
 	rst_jumpTable			; $6d92
-.dw $6dae
-.dw $6dad
-.dw $6dad
-.dw $6dad
-.dw $6dad
-.dw $6dad
-.dw $6dad
-.dw $6dad
-.dw $6ddf
-.dw $6df8
-.dw $6e0d
-.dw $6e1f
-.dw $6e6c
+	.dw _giantGhiniChild_state_uninitialized
+	.dw _giantGhiniChild_state_stub
+	.dw _giantGhiniChild_state_stub
+	.dw _giantGhiniChild_state_stub
+	.dw _giantGhiniChild_state_stub
+	.dw _giantGhiniChild_state_stub
+	.dw _giantGhiniChild_state_stub
+	.dw _giantGhiniChild_state_stub
+	.dw _giantGhiniChild_state8
+	.dw _giantGhiniChild_state9
+	.dw _giantGhiniChild_stateA
+	.dw _giantGhiniChild_stateB
+	.dw _giantGhiniChild_stateC
+
+
+_giantGhiniChild_state_stub:
 	ret			; $6dad
-	ld e,$82		; $6dae
+
+
+_giantGhiniChild_state_uninitialized:
+	; Determine spawn offset based on subid
+	ld e,Enemy.subid		; $6dae
 	ld a,(de)		; $6db0
 	and $7f			; $6db1
 	dec a			; $6db3
-	ld hl,$6e86		; $6db4
+	ld hl,_giantGhiniChild_spawnOffsets		; $6db4
 	rst_addDoubleIndex			; $6db7
-	ld e,$8b		; $6db8
+	ld e,Enemy.yh		; $6db8
 	ld a,(de)		; $6dba
 	add (hl)		; $6dbb
 	ld (de),a		; $6dbc
 	inc hl			; $6dbd
-	ld e,$8d		; $6dbe
+	ld e,Enemy.xh		; $6dbe
 	ld a,(de)		; $6dc0
 	add (hl)		; $6dc1
 	ld (de),a		; $6dc2
-	ld a,$1e		; $6dc3
+
+	ld a,SPEED_c0		; $6dc3
 	call _ecom_setSpeedAndState8		; $6dc5
-	ld l,$8f		; $6dc8
+	ld l,Enemy.zh		; $6dc8
 	ld (hl),$fc		; $6dca
-	ld l,$82		; $6dcc
+
+	ld l,Enemy.subid		; $6dcc
 	ld a,(hl)		; $6dce
 	rlca			; $6dcf
 	ret c			; $6dd0
-	ld l,$84		; $6dd1
+
+	ld l,Enemy.state		; $6dd1
 	ld (hl),$09		; $6dd3
-	ld l,$86		; $6dd5
-	ld (hl),$1e		; $6dd7
+	ld l,Enemy.counter1		; $6dd5
+	ld (hl),30		; $6dd7
 	call objectSetVisiblec1		; $6dd9
 	jp objectCreatePuff		; $6ddc
-	ld e,$97		; $6ddf
+
+
+; Waiting for battle to start
+_giantGhiniChild_state8:
+	ld e,Enemy.relatedObj1+1		; $6ddf
 	ld a,(de)		; $6de1
 	ld h,a			; $6de2
-	ld l,$84		; $6de3
+	ld l,Enemy.state		; $6de3
 	ld a,(hl)		; $6de5
 	cp $09			; $6de6
-	jr c,_label_283	; $6de8
-	call $6dfc		; $6dea
+	jr c,@battleNotStartedYet			; $6de8
+
+	call _giantGhiniChild_gotoStateA		; $6dea
 	jp objectSetVisiblec1		; $6ded
-_label_283:
-	ld l,$9a		; $6df0
+
+@battleNotStartedYet:
+	; Enable shadows
+	ld l,Enemy.visible		; $6df0
 	ld e,l			; $6df2
 	ld a,(hl)		; $6df3
 	or $40			; $6df4
 	ld (de),a		; $6df6
 	ret			; $6df7
+
+
+; Just spawned in, will charge after [counter1] frames
+_giantGhiniChild_state9:
 	call _ecom_decCounter1		; $6df8
 	ret nz			; $6dfb
-	ld e,$84		; $6dfc
+
+_giantGhiniChild_gotoStateA:
+	ld e,Enemy.state		; $6dfc
 	ld a,$0a		; $6dfe
 	ld (de),a		; $6e00
-	ld e,$86		; $6e01
+	ld e,Enemy.counter1		; $6e01
 	ld a,$05		; $6e03
 	ld (de),a		; $6e05
+
 	call objectGetAngleTowardLink		; $6e06
-	ld e,$89		; $6e09
+	ld e,Enemy.angle		; $6e09
 	ld (de),a		; $6e0b
 	ret			; $6e0c
+
+
+; Charging at Link
+_giantGhiniChild_stateA:
 	call enemyAnimate		; $6e0d
 	call objectApplySpeed		; $6e10
 	call _ecom_decCounter1		; $6e13
 	ret nz			; $6e16
-	ld (hl),$05		; $6e17
+
+	ld (hl),$05 ; [counter1]
 	call objectGetAngleTowardLink		; $6e19
 	jp objectNudgeAngleTowards		; $6e1c
+
+
+; Attached to Link
+_giantGhiniChild_stateB:
 	call enemyAnimate		; $6e1f
+
 	ld a,(w1Link.yh)		; $6e22
-	ld e,$8b		; $6e25
+	ld e,Enemy.yh		; $6e25
 	ld (de),a		; $6e27
 	ld a,(w1Link.xh)		; $6e28
-	ld e,$8d		; $6e2b
+	ld e,Enemy.xh		; $6e2b
 	ld (de),a		; $6e2d
+
 	call _ecom_decCounter1		; $6e2e
-	jr z,_label_287	; $6e31
+	jr z,@detach	; $6e31
+
+	; Decrement counter more if pressing buttons
 	ld a,(wGameKeysJustPressed)		; $6e33
 	or a			; $6e36
-	jr z,_label_285	; $6e37
+	jr z,++			; $6e37
 	ld a,(hl)		; $6e39
-	sub $03			; $6e3a
-	jr nc,_label_284	; $6e3c
+	sub BTN_A|BTN_B			; $6e3a
+	jr nc,+			; $6e3c
 	ld a,$01		; $6e3e
-_label_284:
++
 	ld (hl),a		; $6e40
-_label_285:
+++
+	; Adjust visibility
 	ld a,(hl)		; $6e41
 	and $03			; $6e42
-	jr nz,_label_286	; $6e44
-	ld l,$9a		; $6e46
+	jr nz,++		; $6e44
+	ld l,Enemy.visible		; $6e46
 	ld a,(hl)		; $6e48
 	xor $80			; $6e49
 	ld (hl),a		; $6e4b
-_label_286:
+++
+	; Make Link slow, disable item use
 	ld hl,$ccd8		; $6e4c
 	set 5,(hl)		; $6e4f
 	ld a,(wFrameCounter)		; $6e51
@@ -138524,35 +138579,46 @@ _label_286:
 	ld hl,wLinkImmobilized		; $6e56
 	set 5,(hl)		; $6e59
 	ret			; $6e5b
-_label_287:
-	ld l,$84		; $6e5c
+
+@detach:
+	ld l,Enemy.state		; $6e5c
 	ld (hl),$0c		; $6e5e
-	ld l,$86		; $6e60
-	ld (hl),$3c		; $6e62
-	ld l,$97		; $6e64
+	ld l,Enemy.counter1		; $6e60
+	ld (hl),60		; $6e62
+
+	; Cancel parent charging (or at least he won't adjust his angle anymore)
+	ld l,Enemy.relatedObj1+1		; $6e64
 	ld h,(hl)		; $6e66
-	ld l,$b2		; $6e67
+	ld l,Enemy.var32		; $6e67
 	ld (hl),$00		; $6e69
 	ret			; $6e6b
+
+
+; Just detached from Link, fading away
+_giantGhiniChild_stateC:
 	call enemyAnimate		; $6e6c
-	ld e,$9a		; $6e6f
+	ld e,Enemy.visible		; $6e6f
 	ld a,(de)		; $6e71
 	xor $80			; $6e72
 	ld (de),a		; $6e74
+
 	call _ecom_decCounter1		; $6e75
 	ret nz			; $6e78
-	ld e,$97		; $6e79
+
+	; Decrement parent's "child counter"
+	ld e,Enemy.relatedObj1+1		; $6e79
 	ld a,(de)		; $6e7b
 	ld h,a			; $6e7c
-	ld l,$b0		; $6e7d
+	ld l,Enemy.var30		; $6e7d
 	dec (hl)		; $6e7f
 	call decNumEnemies		; $6e80
 	jp enemyDelete		; $6e83
-	nop			; $6e86
-	add sp,-$18		; $6e87
-	nop			; $6e89
-	nop			; $6e8a
-	.db $18
+
+
+_giantGhiniChild_spawnOffsets:
+	.db  $00, -$18
+	.db -$18,  $00
+	.db  $00,  $18
 
 
 ; ==============================================================================
@@ -142157,134 +142223,199 @@ _fake2:
 	.include "code/enemyCommon.s"
 	.include "code/enemyBossCommon.s"
 
-;;
-; @addr{4594}
+
+; ==============================================================================
+; ENEMYID_GIANT_GHINI
+;
+; Variables:
+;   var30: Number of children alive
+;   var32: Nonzero to begin charging at Link (written to by ENEMYID_GIANT_GHINI_CHILD)
+;   var33: Counter for Z-axis movement (reverses direction every 16 frames)
+;   var34: The current "vertical half" of the screen it's moving toward
+;   var35: Position the ghini is currently charging toward
+; ==============================================================================
 enemyCode70:
-	jr z,_label_0f_043	; $4594
-	sub $03			; $4596
+	jr z,@normalStatus	; $4594
+	sub ENEMYSTATUS_NO_HEALTH			; $4596
 	ret c			; $4598
-	jr nz,_label_0f_043	; $4599
+	jr nz,@normalStatus	; $4599
 	jp _enemyBoss_dead		; $459b
-_label_0f_043:
-	call $46da		; $459e
-	ld e,$84		; $45a1
+
+@normalStatus:
+	call _giantGhini_updateZPos		; $459e
+	ld e,Enemy.state		; $45a1
 	ld a,(de)		; $45a3
 	rst_jumpTable			; $45a4
-.dw $45bb
-.dw $45de
-.dw $45de
-.dw $45de
-.dw $45de
-.dw $45de
-.dw $45de
-.dw $45de
-.dw $45df
-.dw $464f
-.dw $46a2
-	ld a,$70		; $45bb
+	.dw _giantGhini_state_uninitialized
+	.dw _giantGhini_state_stub
+	.dw _giantGhini_state_stub
+	.dw _giantGhini_state_stub
+	.dw _giantGhini_state_stub
+	.dw _giantGhini_state_stub
+	.dw _giantGhini_state_stub
+	.dw _giantGhini_state_stub
+	.dw _giantGhini_state8
+	.dw _giantGhini_state9
+	.dw _giantGhini_stateA
+
+
+_giantGhini_state_uninitialized:
+	ld a,ENEMYID_GIANT_GHINI		; $45bb
 	ld b,$00		; $45bd
 	call _enemyBoss_initializeRoom		; $45bf
 	call _ecom_setSpeedAndState8		; $45c2
+
 	ld bc,$0040		; $45c5
 	call objectSetSpeedZ		; $45c8
-	ld l,$82		; $45cb
+
+	ld l,Enemy.subid		; $45cb
 	set 7,(hl)		; $45cd
-	ld l,$86		; $45cf
-	ld (hl),$78		; $45d1
-	ld l,$8f		; $45d3
+
+	ld l,Enemy.counter1		; $45cf
+	ld (hl),120		; $45d1
+
+	ld l,Enemy.zh		; $45d3
 	ld (hl),$f8		; $45d5
-	ld l,$b3		; $45d7
+
+	ld l,Enemy.var33		; $45d7
 	ld (hl),$10		; $45d9
-	jp $46f2		; $45db
+	jp _giantGhini_spawnChildren		; $45db
+
+
+_giantGhini_state_stub:
 	ret			; $45de
+
+
+; The ghini is spawning in before the fight starts
+_giantGhini_state8:
 	inc e			; $45df
-	ld a,(de)		; $45e0
+	ld a,(de) ; [state2]
 	rst_jumpTable			; $45e1
-.dw $45e8
-.dw $4601
-.dw $4615
-	ld a,$01		; $45e8
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+
+@substate0:
+	ld a,DISABLE_LINK		; $45e8
 	ld (wDisabledObjects),a		; $45ea
 	ld (wMenuDisabled),a		; $45ed
+
+	; Wait for door to close
 	ld a,($cc93)		; $45f0
 	or a			; $45f3
 	ret nz			; $45f4
-	ld a,$78		; $45f5
-	ld e,$86		; $45f7
+
+	ld a,120		; $45f5
+	ld e,Enemy.counter1		; $45f7
 	ld (de),a		; $45f9
+
 	inc e			; $45fa
-	ld a,$1e		; $45fb
-	ld (de),a		; $45fd
+	ld a,30		; $45fb
+	ld (de),a ; [counter2]
+
 	jp _ecom_incState2		; $45fe
+
+@substate1:
 	call _ecom_decCounter1		; $4601
 	ret nz			; $4604
-	ld (hl),$3c		; $4605
-	ld l,$82		; $4607
+
+	ld (hl),60		; $4605
+
+	ld l,Enemy.subid		; $4607
 	res 7,(hl)		; $4609
+
 	ld b,$01		; $460b
 	ld c,$0c		; $460d
-	call $4534		; $460f
+	call _enemyBoss_spawnShadow		; $460f
 	jp _ecom_incState2		; $4612
-	ld e,$9a		; $4615
+
+@substate2:
+	; Flicker visibility
+	ld e,Enemy.visible		; $4615
 	ld a,(de)		; $4617
 	xor $80			; $4618
 	ld (de),a		; $461a
+
 	call _ecom_decCounter1		; $461b
 	ret nz			; $461e
+
+	; Finally begin the fight
 	call _enemyBoss_beginMiniboss		; $461f
 	call objectSetVisible80		; $4622
+
+_giantGhini_gotoState9:
 	xor a			; $4625
 	call enemySetAnimation		; $4626
-	call $4711		; $4629
+
+	call _giantGhini_getTargetAngle		; $4629
 	ld h,d			; $462c
-	ld e,$89		; $462d
+	ld e,Enemy.angle		; $462d
 	ld (de),a		; $462f
-	ld l,$84		; $4630
+
+	ld l,Enemy.state		; $4630
 	ld (hl),$09		; $4632
-	ld l,$90		; $4634
-	ld (hl),$1e		; $4636
-	ld l,$86		; $4638
+
+	ld l,Enemy.speed		; $4634
+	ld (hl),SPEED_c0		; $4636
+
+	ld l,Enemy.counter1		; $4638
 	ld (hl),$02		; $463a
-	ld l,$b2		; $463c
+
+	ld l,Enemy.var32		; $463c
 	ld (hl),$00		; $463e
+
+_giantGhini_setChildRespawnTimer:
 	call getRandomNumber		; $4640
 	and $03			; $4643
-	ld c,$3c		; $4645
+	ld c,60		; $4645
 	call multiplyAByC		; $4647
-	ld e,$87		; $464a
+	ld e,Enemy.counter2		; $464a
 	ld a,l			; $464c
 	ld (de),a		; $464d
 	ret			; $464e
-	ld e,$b2		; $464f
+
+
+; "Normal" state during battle
+_giantGhini_state9:
+	ld e,Enemy.var32		; $464f
 	ld a,(de)		; $4651
 	or a			; $4652
-	jr nz,_label_0f_045	; $4653
+	jr nz,@beginCharge	; $4653
+
 	call enemyAnimate		; $4655
 	call objectApplySpeed		; $4658
+
+	; Nudge angle toward target every other frame
 	call _ecom_decCounter1		; $465b
-	jr nz,_label_0f_044	; $465e
+	jr nz,++		; $465e
 	ld (hl),$02		; $4660
-	call $4711		; $4662
+	call _giantGhini_getTargetAngle		; $4662
 	call objectNudgeAngleTowards		; $4665
-_label_0f_044:
+++
 	call _ecom_decCounter2		; $4668
 	ret nz			; $466b
-	call $4640		; $466c
-	ld e,$b0		; $466f
+
+	call _giantGhini_setChildRespawnTimer		; $466c
+	ld e,Enemy.var30		; $466f
 	ld a,(de)		; $4671
 	or a			; $4672
 	ret nz			; $4673
 	call getRandomNumber		; $4674
 	and $03			; $4677
-	jp nz,$46f2		; $4679
-_label_0f_045:
+	jp nz,_giantGhini_spawnChildren		; $4679
+
+@beginCharge:
 	ld a,$01		; $467c
 	call enemySetAnimation		; $467e
 	call _ecom_incState		; $4681
-	ld l,$87		; $4684
-	ld (hl),$96		; $4686
-	ld l,$90		; $4688
-	ld (hl),$05		; $468a
+
+	ld l,Enemy.counter2		; $4684
+	ld (hl),150		; $4686
+	ld l,Enemy.speed		; $4688
+	ld (hl),SPEED_20		; $468a
+
+_giantGhini_updateChargeTargetPosition:
+	; Get Link's position, save that as the position we're charging toward
 	ld hl,w1Link.yh		; $468c
 	ldi a,(hl)		; $468f
 	ld b,a			; $4690
@@ -142293,52 +142424,71 @@ _label_0f_045:
 	ld c,a			; $4693
 	call getTileAtPosition		; $4694
 	ld a,l			; $4697
-	ld e,$b5		; $4698
+	ld e,Enemy.var35		; $4698
 	ld (de),a		; $469a
+
 	call objectGetAngleTowardLink		; $469b
-	ld e,$89		; $469e
+	ld e,Enemy.angle		; $469e
 	ld (de),a		; $46a0
 	ret			; $46a1
+
+
+; Charging toward Link
+_giantGhini_stateA:
 	call enemyAnimate		; $46a2
+
+	; Increase speed every 4 frames
 	call _ecom_decCounter2		; $46a5
 	ld a,(hl)		; $46a8
 	and $03			; $46a9
-	jr nz,_label_0f_046	; $46ab
-	ld l,$90		; $46ad
+	jr nz,++		; $46ab
+	ld l,Enemy.speed		; $46ad
 	ld a,(hl)		; $46af
-	cp $78			; $46b0
-	jr z,_label_0f_046	; $46b2
-	add $05			; $46b4
+	cp SPEED_300			; $46b0
+	jr z,++			; $46b2
+	add SPEED_20			; $46b4
 	ld (hl),a		; $46b6
-_label_0f_046:
+++
 	call objectApplySpeed		; $46b7
-	ld e,$b2		; $46ba
+
+	ld e,Enemy.var32		; $46ba
 	ld a,(de)		; $46bc
 	or a			; $46bd
-	call nz,$468c		; $46be
-	ld e,$b5		; $46c1
+	call nz,_giantGhini_updateChargeTargetPosition		; $46be
+
+	ld e,Enemy.var35		; $46c1
 	ld a,(de)		; $46c3
 	call convertShortToLongPosition		; $46c4
-	ld e,$8b		; $46c7
+	ld e,Enemy.yh		; $46c7
 	call objectGetRelativeAngle		; $46c9
-	ld e,$89		; $46cc
+	ld e,Enemy.angle		; $46cc
 	ld (de),a		; $46ce
+
 	call objectGetTileAtPosition		; $46cf
-	ld e,$b5		; $46d2
+	ld e,Enemy.var35		; $46d2
 	ld a,(de)		; $46d4
 	cp l			; $46d5
-	jp z,$4625		; $46d6
+	jp z,_giantGhini_gotoState9		; $46d6
 	ret			; $46d9
+
+
+;;
+; @addr{46da}
+_giantGhini_updateZPos:
 	ld c,$00		; $46da
 	call objectUpdateSpeedZ_paramC		; $46dc
-	ld l,$b3		; $46df
+
+	ld l,Enemy.var33		; $46df
 	ld a,(hl)		; $46e1
 	dec a			; $46e2
 	ld (hl),a		; $46e3
 	ret nz			; $46e4
+
 	ld a,$10		; $46e5
-	ld (hl),a		; $46e7
-	ld l,$94		; $46e8
+	ld (hl),a ; [var33]
+
+	; Invert speedZ
+	ld l,Enemy.speedZ		; $46e8
 	ld a,(hl)		; $46ea
 	cpl			; $46eb
 	inc a			; $46ec
@@ -142347,57 +142497,85 @@ _label_0f_046:
 	cpl			; $46ef
 	ld (hl),a		; $46f0
 	ret			; $46f1
+
+
+;;
+; @addr{46f2}
+_giantGhini_spawnChildren:
 	ld c,$03		; $46f2
-_label_0f_047:
-	ld b,$3f		; $46f4
+@nextChild:
+	ld b,ENEMYID_GIANT_GHINI_CHILD		; $46f4
 	call _ecom_spawnEnemyWithSubid01		; $46f6
 	ret nz			; $46f9
-	ld e,$b0		; $46fa
+
+	ld e,Enemy.var30		; $46fa
 	ld a,(de)		; $46fc
 	inc a			; $46fd
 	ld (de),a		; $46fe
-	ld e,$82		; $46ff
+
+	; [child.subid] = [this.subid] | index
+	ld e,Enemy.subid		; $46ff
 	ld a,(de)		; $4701
 	or c			; $4702
 	ld (hl),a		; $4703
-	ld l,$96		; $4704
-	ld a,$80		; $4706
+
+	ld l,Enemy.relatedObj1		; $4704
+	ld a,Enemy.start		; $4706
 	ldi (hl),a		; $4708
 	ld (hl),d		; $4709
+
 	call objectCopyPosition		; $470a
+
 	dec c			; $470d
-	jr nz,_label_0f_047	; $470e
+	jr nz,@nextChild	; $470e
 	ret			; $4710
-_label_0f_048:
+
+
+;;
+; Decides on a position to move towards, for state 9 ("normal" state). It will target
+; the horizontal center of the screen, with the Y-position one quarter away from the
+; screen boundary (depends which side Link is on). The camera affects the target position.
+;
+; When Link moves beyond the half-screen boundary, the ghini recalculates its angle to
+; face directly away from Link before it slowly moves toward him again.
+;
+; @param[out]	a	angle
+; @addr{4711}
+_giantGhini_getTargetAngle:
 	ldh a,(<hCameraY)	; $4711
 	ld c,a			; $4713
 	ld a,(w1Link.yh)		; $4714
 	sub c			; $4717
-	ld b,$28		; $4718
-	cp $48			; $471a
-	jr nc,_label_0f_049	; $471c
-	ld b,$68		; $471e
-_label_0f_049:
-	ld e,$b4		; $4720
+	ld b,(SCREEN_HEIGHT/4)<<4 + 8		; $4718
+	cp (SCREEN_HEIGHT/2)<<4 + 8			; $471a
+	jr nc,+			; $471c
+	ld b,(SCREEN_HEIGHT*3/4)<<4 + 8		; $471e
++
+	ld e,Enemy.var34		; $4720
 	ld a,(de)		; $4722
 	cp b			; $4723
-	jr z,_label_0f_050	; $4724
+	jr z,++			; $4724
+
+	; Link changed sides on the screen boundary
+
 	ld a,b			; $4726
-	ld (de),a		; $4727
+	ld (de),a ; [var34]
+
 	call objectGetAngleTowardLink		; $4728
 	xor $10			; $472b
-	ld e,$89		; $472d
+	ld e,Enemy.angle		; $472d
 	ld (de),a		; $472f
-	ld e,$86		; $4730
+
+	ld e,Enemy.counter1		; $4730
 	ld a,$0a		; $4732
 	ld (de),a		; $4734
-	jr _label_0f_048		; $4735
-_label_0f_050:
+	jr _giantGhini_getTargetAngle		; $4735
+++
 	ld a,c			; $4737
 	add b			; $4738
 	ld b,a			; $4739
 	ldh a,(<hCameraX)	; $473a
-	add $50			; $473c
+	add (SCREEN_WIDTH/2)<<4			; $473c
 	ld c,a			; $473e
 	jp objectGetRelativeAngle		; $473f
 
@@ -142431,7 +142609,7 @@ _label_0f_051:
 	call _ecom_setSpeedAndState8		; $4770
 	ld b,$01		; $4773
 	ld c,$08		; $4775
-	jp $4534		; $4777
+	jp _enemyBoss_spawnShadow		; $4777
 	ret			; $477a
 	ld e,$85		; $477b
 	ld a,(de)		; $477d
@@ -143236,7 +143414,7 @@ _label_0f_075:
 	or a			; $4d40
 	ret nz			; $4d41
 	ld bc,$0108		; $4d42
-	call $4534		; $4d45
+	call _enemyBoss_spawnShadow		; $4d45
 	ret nz			; $4d48
 	ld h,d			; $4d49
 	ld l,e			; $4d4a
@@ -145734,7 +145912,7 @@ _label_0f_169:
 .dw $5fac
 .dw $5fd7
 	ld bc,$010b		; $5e34
-	call $4534		; $5e37
+	call _enemyBoss_spawnShadow		; $5e37
 	ret nz			; $5e3a
 	call _ecom_incState		; $5e3b
 	ld l,$90		; $5e3e
@@ -146393,7 +146571,7 @@ _label_0f_188:
 .dw $63ce
 .dw $63de
 	ld bc,$0106		; $6288
-	call $4534		; $628b
+	call _enemyBoss_spawnShadow		; $628b
 	ret nz			; $628e
 	ld h,d			; $628f
 	ld l,e			; $6290
@@ -147757,7 +147935,7 @@ _label_0f_232:
 	inc a			; $6bd7
 	ld (wDisabledObjects),a		; $6bd8
 	ld bc,$0104		; $6bdb
-	call $4534		; $6bde
+	call _enemyBoss_spawnShadow		; $6bde
 	ret nz			; $6be1
 	ld h,d			; $6be2
 	ld l,$85		; $6be3
@@ -149925,7 +150103,7 @@ _label_0f_330:
 	ld a,SND_ENEMY_JUMP		; $78cd
 	call playSound		; $78cf
 	ld bc,$0208		; $78d2
-	jp $4534		; $78d5
+	jp _enemyBoss_spawnShadow		; $78d5
 	ld h,d			; $78d8
 	ld l,$8e		; $78d9
 	ld a,(hl)		; $78db
@@ -151065,7 +151243,7 @@ _label_10_045:
 	ldh a,(<hActiveObject)	; $4622
 	ld d,a			; $4624
 	ld bc,$0012		; $4625
-	call $4534		; $4628
+	call _enemyBoss_spawnShadow		; $4628
 	ret nz			; $462b
 	ld a,$3c		; $462c
 	call _ecom_setSpeedAndState8		; $462e
@@ -152796,7 +152974,7 @@ _label_10_118:
 	ldi (hl),a		; $5106
 	ldi (hl),a		; $5107
 	ld bc,$0012		; $5108
-	call $4534		; $510b
+	call _enemyBoss_spawnShadow		; $510b
 	ld e,$98		; $510e
 	ld a,$c0		; $5110
 	ld (de),a		; $5112
@@ -153884,7 +154062,7 @@ _label_10_146:
 	ld (wDisabledObjects),a		; $58a3
 	ld (wMenuDisabled),a		; $58a6
 	ld bc,$0208		; $58a9
-	call $4534		; $58ac
+	call _enemyBoss_spawnShadow		; $58ac
 	ret nz			; $58af
 	call _ecom_incState		; $58b0
 	call checkIsLinkedGame		; $58b3
@@ -156206,7 +156384,7 @@ enemyCode07:
 	call enemySetAnimation		; $67fa
 	ld b,$00		; $67fd
 	ld c,$0c		; $67ff
-	call $4534		; $6801
+	call _enemyBoss_spawnShadow		; $6801
 	jp objectSetVisible81		; $6804
 	ret			; $6807
 	inc e			; $6808
