@@ -142579,337 +142579,477 @@ _giantGhini_getTargetAngle:
 	ld c,a			; $473e
 	jp objectGetRelativeAngle		; $473f
 
-;;
-; @addr{4742}
+
+; ==============================================================================
+; ENEMYID_SWOOP
+;
+; Variables:
+;   var30: Number of frames before swoop begins to stomp
+;   var31: Target stomp position (short-form)
+;   var32/var33: Target stomp position (long-form)
+; ==============================================================================
 enemyCode71:
-	jr z,_label_0f_051	; $4742
-	sub $03			; $4744
+	jr z,@normalStatus	; $4742
+	sub ENEMYSTATUS_NO_HEALTH			; $4744
 	ret c			; $4746
-	jp nz,$474d		; $4747
+	jp nz,@normalStatus		; $4747
 	jp _enemyBoss_dead		; $474a
-_label_0f_051:
-	ld e,$84		; $474d
+
+@normalStatus:
+	ld e,Enemy.state		; $474d
 	ld a,(de)		; $474f
 	rst_jumpTable			; $4750
-.dw $4769
-.dw $477a
-.dw $477a
-.dw $477a
-.dw $477a
-.dw $477a
-.dw $477a
-.dw $477a
-.dw $477b
-.dw $47fe
-.dw $4837
-.dw $4874
-	ld a,$71		; $4769
+	.dw _swoop_state_uninitialized
+	.dw _swoop_state_stub
+	.dw _swoop_state_stub
+	.dw _swoop_state_stub
+	.dw _swoop_state_stub
+	.dw _swoop_state_stub
+	.dw _swoop_state_stub
+	.dw _swoop_state_stub
+	.dw _swoop_state8
+	.dw _swoop_state9
+	.dw _swoop_stateA
+	.dw _swoop_stateB
+
+
+_swoop_state_uninitialized:
+	ld a,ENEMYID_SWOOP		; $4769
 	ld b,$00		; $476b
 	call _enemyBoss_initializeRoom		; $476d
 	call _ecom_setSpeedAndState8		; $4770
 	ld b,$01		; $4773
 	ld c,$08		; $4775
 	jp _enemyBoss_spawnShadow		; $4777
+
+
+_swoop_state_stub:
 	ret			; $477a
-	ld e,$85		; $477b
+
+
+; Spawning in before the fight starts
+_swoop_state8:
+	ld e,Enemy.state2		; $477b
 	ld a,(de)		; $477d
 	rst_jumpTable			; $477e
-.dw $4787
-.dw $47ad
-.dw $47e1
-.dw $47ed
-	ld a,$01		; $4787
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+
+@substate0:
+	ld a,DISABLE_LINK		; $4787
 	ld (wDisabledObjects),a		; $4789
 	ld (wMenuDisabled),a		; $478c
+
+	; Wait for door to close
 	ld a,($cc93)		; $478f
 	or a			; $4792
 	ret nz			; $4793
+
 	call _ecom_incState2		; $4794
 	ld c,$08		; $4797
 	call _ecom_setZAboveScreen		; $4799
-	ld e,$86		; $479c
-	ld a,$3c		; $479e
+
+	ld e,Enemy.counter1		; $479c
+	ld a,60		; $479e
 	ld (de),a		; $47a0
+
 	inc e			; $47a1
 	ld a,$02		; $47a2
-	ld (de),a		; $47a4
+	ld (de),a ; [counter2]
+
 	call objectSetVisible82		; $47a5
 	ld a,$02		; $47a8
 	jp enemySetAnimation		; $47aa
+
+; Falling to ground
+@substate1:
 	ld c,$10		; $47ad
 	call objectUpdateSpeedZ_paramC		; $47af
 	ret nz			; $47b2
-	ld e,$87		; $47b3
+
+	ld e,Enemy.counter2		; $47b3
 	ld a,(de)		; $47b5
 	or a			; $47b6
-	jr z,_label_0f_053	; $47b7
+	jr z,@doneBouncing	; $47b7
+
 	dec a			; $47b9
 	ld (de),a		; $47ba
-	jr nz,_label_0f_052	; $47bb
+	jr nz,++		; $47bb
+
 	ld a,$00		; $47bd
 	call enemySetAnimation		; $47bf
-	jr _label_0f_053		; $47c2
-_label_0f_052:
-	ld bc,$fe80		; $47c4
+	jr @doneBouncing		; $47c2
+++
+	ld bc,-$180		; $47c4
 	call objectSetSpeedZ		; $47c7
 	ld a,$0a		; $47ca
 	call setScreenShakeCounter		; $47cc
 	ld a,SND_DOORCLOSE		; $47cf
 	jp playSound		; $47d1
-_label_0f_053:
+
+@doneBouncing:
 	call _ecom_decCounter1		; $47d4
 	ret nz			; $47d7
-	ld bc,$2f00		; $47d8
+	ld bc,TX_2f00		; $47d8
 	call showText		; $47db
 	jp _ecom_incState2		; $47de
+
+@substate2:
 	call retIfTextIsActive		; $47e1
 	call _enemyBoss_beginMiniboss		; $47e4
 	call _ecom_incState2		; $47e7
-	jp $4937		; $47ea
-	call $47fe		; $47ed
-	ld e,$84		; $47f0
+	jp _swoop_beginFlyingUp		; $47ea
+
+@substate3:
+	call _swoop_state9		; $47ed
+
+	ld e,Enemy.state		; $47f0
 	ld a,(de)		; $47f2
 	cp $0a			; $47f3
 	ret nz			; $47f5
+
 	xor a			; $47f6
 	ld (wDisabledObjects),a		; $47f7
 	ld (wMenuDisabled),a		; $47fa
 	ret			; $47fd
-	call $4999		; $47fe
+
+
+; Flying upward
+_swoop_state9:
+	call _swoop_animate		; $47fe
+
+	; Set Z-speed if just flapped wings
 	ld a,(de)		; $4801
 	or a			; $4802
-	ld bc,$ff00		; $4803
+	ld bc,-$100		; $4803
 	call nz,objectSetSpeedZ		; $4806
+
 	ld c,$08		; $4809
 	call objectUpdateSpeedZ_paramC		; $480b
 	call _ecom_decCounter2		; $480e
 	ret nz			; $4811
+
 	call _ecom_decCounter1		; $4812
-	jp nz,$493b		; $4815
-	ld (hl),$3c		; $4818
+	jp nz,_swoop_flyFurtherUp		; $4815
+
+	ld (hl),60 ; [counter1]
+
 	ld a,$0a		; $481a
-	ld l,$84		; $481c
+	ld l,Enemy.state		; $481c
 	ldi (hl),a		; $481e
-	ld (hl),$00		; $481f
-	call $495e		; $4821
-	ld hl,$49a9		; $4824
+	ld (hl),$00 ; [state2]
+
+	call _swoop_getAngerLevel		; $4821
+	ld hl,_swoop_framesBeforeAttacking		; $4824
 	rst_addAToHl			; $4827
 	ld a,(hl)		; $4828
-	ld e,$b0		; $4829
+	ld e,Enemy.var30		; $4829
 	ld (de),a		; $482b
+
 	call objectGetAngleTowardLink		; $482c
-	ld e,$89		; $482f
+	ld e,Enemy.angle		; $482f
 	ld (de),a		; $4831
+
 	ld a,$00		; $4832
 	jp enemySetAnimation		; $4834
-	call $4999		; $4837
-	call $495e		; $483a
-	ld hl,$49a6		; $483d
+
+
+; Flying around, getting closer to Link before stomping
+_swoop_stateA:
+	call _swoop_animate		; $4837
+	call _swoop_getAngerLevel		; $483a
+
+	ld hl,_swoop_speedVals		; $483d
 	rst_addAToHl			; $4840
 	ld a,(hl)		; $4841
-	ld e,$90		; $4842
+	ld e,Enemy.speed		; $4842
 	ld (de),a		; $4844
-	ld e,$b0		; $4845
+
+	ld e,Enemy.var30		; $4845
 	ld a,(de)		; $4847
 	or a			; $4848
-	jr z,_label_0f_054	; $4849
+	jr z,++			; $4849
 	dec a			; $484b
 	ld (de),a		; $484c
-	jr nz,_label_0f_055	; $484d
-_label_0f_054:
+	jr nz,@updatePosition	; $484d
+++
 	ld c,$30		; $484f
 	call objectCheckLinkWithinDistance		; $4851
-	jr nc,_label_0f_055	; $4854
+	jr nc,@updatePosition	; $4854
+
 	call _ecom_incState		; $4856
 	inc l			; $4859
-	ld (hl),$00		; $485a
-	ld l,$86		; $485c
-	ld (hl),$1e		; $485e
+	ld (hl),$00 ; [state2]
+	ld l,Enemy.counter1		; $485c
+	ld (hl),30		; $485e
 	ret			; $4860
-_label_0f_055:
+
+@updatePosition:
 	call _ecom_decCounter1		; $4861
-	jr nz,_label_0f_056	; $4864
+	jr nz,++		; $4864
 	call objectGetAngleTowardLink		; $4866
-	ld e,$89		; $4869
+	ld e,Enemy.angle		; $4869
 	ld (de),a		; $486b
-	ld e,$86		; $486c
-	ld a,$3c		; $486e
+	ld e,Enemy.counter1		; $486c
+	ld a,60		; $486e
 	ld (de),a		; $4870
-_label_0f_056:
+++
 	jp _ecom_applyVelocityForSideviewEnemy		; $4871
-	ld e,$85		; $4874
+
+
+; Stomping
+_swoop_stateB:
+	ld e,Enemy.state2		; $4874
 	ld a,(de)		; $4876
 	rst_jumpTable			; $4877
-.dw $4880
-.dw $48c8
-.dw $4917
-.dw $4947
-	call $4999		; $4880
-	call $4999		; $4883
+	.dw @substate0
+	.dw @substate1
+	.dw _swoop_stomp_substate2
+	.dw _swoop_stomp_substate3
+
+; Flapping wings quickly, telegraphing stomp is about to begin
+@substate0:
+	call _swoop_animate		; $4880
+	call _swoop_animate		; $4883
 	call _ecom_decCounter1		; $4886
-	jr z,_label_0f_057	; $4889
-	ld a,(hl)		; $488b
+	jr z,@beginStomp	; $4889
+
+	ld a,(hl) ; [counter1]
 	cp $0a			; $488c
 	ret nz			; $488e
+
+	; Decide on target position to stomp at, store in var31
 	ld hl,w1Link.yh		; $488f
 	ldi a,(hl)		; $4892
 	ld b,a			; $4893
 	inc l			; $4894
-	ld c,(hl)		; $4895
+	ld c,(hl) ; [w1Link.xh]
 	call getTileAtPosition		; $4896
 	ld a,l			; $4899
-	ld e,$b1		; $489a
+	ld e,Enemy.var31		; $489a
 	ld (de),a		; $489c
+
+	; Convert to long-form, store in var32/var33
 	call convertShortToLongPosition		; $489d
-	ld e,$b2		; $48a0
+	ld e,Enemy.var32		; $48a0
 	ld a,b			; $48a2
 	and $f0			; $48a3
 	ld (de),a		; $48a5
 	inc e			; $48a6
 	ld a,c			; $48a7
 	ld (de),a		; $48a8
-	ld e,$8b		; $48a9
+
+	; Get angle toward stomp position
+	ld e,Enemy.yh		; $48a9
 	call objectGetRelativeAngle		; $48ab
-	ld e,$89		; $48ae
+	ld e,Enemy.angle		; $48ae
 	ld (de),a		; $48b0
 	ret			; $48b1
-_label_0f_057:
+
+@beginStomp:
 	call _ecom_incState2		; $48b2
-	ld l,$90		; $48b5
-	ld (hl),$50		; $48b7
-	ld l,$a4		; $48b9
+	ld l,Enemy.speed		; $48b5
+	ld (hl),SPEED_200		; $48b7
+
+	ld l,Enemy.collisionType		; $48b9
 	set 7,(hl)		; $48bb
+
 	ld bc,$0000		; $48bd
 	call objectSetSpeedZ		; $48c0
 	ld a,$02		; $48c3
 	jp enemySetAnimation		; $48c5
+
+; Moving toward stomp position while falling to ground
+@substate1:
+	; Get target stomp position
 	ld h,d			; $48c8
-	ld l,$b2		; $48c9
+	ld l,Enemy.var32		; $48c9
 	ldi a,(hl)		; $48cb
 	ld c,(hl)		; $48cc
 	ld b,a			; $48cd
-	ld e,$8b		; $48ce
+
+	; Compare with current position
+	ld e,Enemy.yh		; $48ce
 	ld l,e			; $48d0
 	ldi a,(hl)		; $48d1
 	and $fe			; $48d2
 	cp b			; $48d4
-	jr nz,_label_0f_058	; $48d5
+	jr nz,++		; $48d5
 	inc l			; $48d7
 	ld a,(hl)		; $48d8
 	and $fe			; $48d9
 	cp c			; $48db
-	jr z,_label_0f_059	; $48dc
-_label_0f_058:
+	jr z,+++		; $48dc
+++
+	; Must still move toward target position
 	call objectGetRelativeAngle		; $48de
-	ld e,$89		; $48e1
+	ld e,Enemy.angle		; $48e1
 	ld (de),a		; $48e3
 	call _ecom_applyVelocityForSideviewEnemy		; $48e4
-_label_0f_059:
++++
 	ld c,$10		; $48e7
 	call objectUpdateSpeedZ_paramC		; $48e9
 	ret nz			; $48ec
-	call $496f		; $48ed
+
+	; Hit the ground.
+	call _swoop_hitGround		; $48ed
 	call _ecom_incState2		; $48f0
-	ld e,$a9		; $48f3
+	ld e,Enemy.health		; $48f3
 	ld a,(de)		; $48f5
 	cp $0a			; $48f6
-	jr nc,_label_0f_061	; $48f8
-	inc (hl)		; $48fa
+	jr nc,_swoop_setVisible	; $48f8
+
+	; Health is low; will bounce either 2 or 3 times.
+	inc (hl) ; [state2] = 3
+
+	; [counter1] = number of bounces
 	call getRandomNumber		; $48fb
 	and $01			; $48fe
 	inc a			; $4900
-	ld l,$86		; $4901
+	ld l,Enemy.counter1		; $4901
 	ld (hl),a		; $4903
-	ld l,$90		; $4904
-	ld (hl),$28		; $4906
+
+	ld l,Enemy.speed		; $4904
+	ld (hl),SPEED_100		; $4906
+
 	call objectGetAngleTowardLink		; $4908
-	ld e,$89		; $490b
+	ld e,Enemy.angle		; $490b
 	ld (de),a		; $490d
-_label_0f_060:
-	ld bc,$ff00		; $490e
+
+_swoop_setSpeedZForBounce:
+	ld bc,-$100		; $490e
 	jp objectSetSpeedZ		; $4911
-_label_0f_061:
+
+_swoop_setVisible:
 	jp objectSetVisible82		; $4914
-	call $4999		; $4917
-	ld e,$ab		; $491a
+
+
+; Completed stomp, about to fly back up.
+_swoop_stomp_substate2:
+	call _swoop_animate		; $4917
+
+	; Wait until animation signals to fly up again, or Link attacks
+	ld e,Enemy.invincibilityCounter		; $491a
 	ld a,(de)		; $491c
 	and $7f			; $491d
-	jr nz,_label_0f_062	; $491f
-	ld e,$a1		; $4921
+	jr nz,@flyBackUp		; $491f
+
+	ld e,Enemy.animParameter		; $4921
 	ld a,(de)		; $4923
 	or a			; $4924
 	ret z			; $4925
-_label_0f_062:
+
+@flyBackUp:
 	ld bc,$0000		; $4926
 	call objectSetSpeedZ		; $4929
-	ld l,$84		; $492c
+
+	ld l,Enemy.state		; $492c
 	ld a,$09		; $492e
 	ldi (hl),a		; $4930
-	ld (hl),$00		; $4931
-	ld l,$a4		; $4933
+	ld (hl),$00 ; [state2]
+
+	ld l,Enemy.collisionType		; $4933
 	res 7,(hl)		; $4935
-	ld l,$86		; $4937
-	ld (hl),$03		; $4939
-	ld l,$87		; $493b
-	ld (hl),$30		; $493d
+
+;;
+; @addr{4937}
+_swoop_beginFlyingUp:
+	ld l,Enemy.counter1		; $4937
+	ld (hl),$03 ; 3 flaps before he goes to next state
+
+;;
+; @addr{493b}
+_swoop_flyFurtherUp:
+	ld l,Enemy.counter2		; $493b
+	ld (hl),$30 ; $30 frames per wing flap
 	call objectSetVisible80		; $493f
 	ld a,$03		; $4942
 	jp enemySetAnimation		; $4944
+
+
+; Bouncing
+_swoop_stomp_substate3:
 	call _ecom_applyVelocityForSideviewEnemy		; $4947
 	ld c,$10		; $494a
 	call objectUpdateSpeedZ_paramC		; $494c
 	ret nz			; $494f
-	call $496f		; $4950
+
+	call _swoop_hitGround		; $4950
 	call _ecom_decCounter1		; $4953
-	jr nz,_label_0f_060	; $4956
-	ld l,$85		; $4958
+	jr nz,_swoop_setSpeedZForBounce	; $4956
+
+	ld l,Enemy.state2		; $4958
 	dec (hl)		; $495a
 	jp objectSetVisible82		; $495b
+
+
+;;
+; @param[out]	a	Value from 0-2
+; @addr{495e}
+_swoop_getAngerLevel:
 	ld b,$00		; $495e
-	ld e,$a9		; $4960
+	ld e,Enemy.health		; $4960
 	ld a,(de)		; $4962
 	cp $0a			; $4963
-	jr nc,_label_0f_063	; $4965
+	jr nc,++		; $4965
 	inc b			; $4967
 	cp $06			; $4968
-	jr nc,_label_0f_063	; $496a
+	jr nc,++		; $496a
 	inc b			; $496c
-_label_0f_063:
+++
 	ld a,b			; $496d
 	ret			; $496e
+
+;;
+; @addr{496f}
+_swoop_hitGround:
 	ld a,$30		; $496f
 	call setScreenShakeCounter		; $4971
 	ld a,SND_DOORCLOSE		; $4974
 	call playSound		; $4976
+
+	; Replace tile at this position if it's of the appropriate type, and not solid.
 	ld bc,$0500		; $4979
 	call objectGetRelativeTile		; $497c
 	ld c,l			; $497f
-	ld h,$ce		; $4980
+	ld h,>wRoomCollisions		; $4980
 	ld a,(hl)		; $4982
 	cp $0f			; $4983
 	ret z			; $4985
-	ld h,$cf		; $4986
+
+	ld h,>wRoomLayout		; $4986
 	ld a,(hl)		; $4988
 	cp $a2			; $4989
 	ret z			; $498b
 	cp $48			; $498c
 	ret z			; $498e
+
 	ld a,$48		; $498f
 	call setTile		; $4991
-	ld b,$06		; $4994
+
+	ld b,INTERACID_ROCKDEBRIS		; $4994
 	jp objectCreateInteractionWithSubid00		; $4996
+
+
+;;
+; @param[out]	de	animParameter (if nonzero, just flapped wings)
+; @addr{4999}
+_swoop_animate:
 	call enemyAnimate		; $4999
-	ld e,$a1		; $499c
+	ld e,Enemy.animParameter		; $499c
 	ld a,(de)		; $499e
 	or a			; $499f
 	ret z			; $49a0
 	ld a,SND_JUMP		; $49a1
 	jp playSound		; $49a3
-	inc d			; $49a6
-	jr z,_label_0f_065	; $49a7
-	rst $38			; $49a9
-	sub (hl)		; $49aa
-	inc a			; $49ab
+
+_swoop_speedVals:
+	.db SPEED_80, SPEED_100, SPEED_180
+
+_swoop_framesBeforeAttacking:
+	.db 255, 150, 60
 
 ;;
 ; @addr{49ac}
