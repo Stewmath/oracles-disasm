@@ -144709,123 +144709,177 @@ _armosWarrior_sword_playSlashSound:
 	ld a,SND_SWORDSLASH		; $516d
 	jp playSound		; $516f
 
-;;
-; @addr{5172}
+
+; ==============================================================================
+; ENEMYID_SMASHER
+;
+; Variables (ball, subid 0):
+;   relatedObj1: parent
+;   var30: Counter until the ball respawns
+;
+; Variables (parent, subid 1):
+;   relatedObj1: ball
+;   var30/var31: Target position (directly in front of ball object)
+;   var32: Nonzero if already initialized
+; ==============================================================================
 enemyCode74:
-	jr z,_label_0f_097	; $5172
-	sub $03			; $5174
+	jr z,@normalStatus	; $5172
+	sub ENEMYSTATUS_NO_HEALTH			; $5174
 	ret c			; $5176
-	jr z,_label_0f_095	; $5177
+	jr z,@dead	; $5177
 	dec a			; $5179
-	jr z,_label_0f_097	; $517a
+	jr z,@normalStatus	; $517a
 	jp _ecom_updateKnockback		; $517c
-_label_0f_095:
-	ld e,$82		; $517f
+
+@dead:
+	ld e,Enemy.subid		; $517f
 	ld a,(de)		; $5181
 	or a			; $5182
-	jr nz,_label_0f_096	; $5183
-	call $554e		; $5185
+	jr nz,@mainDead	; $5183
+
+	; Ball dead
+	call _smasher_ball_makeLinkDrop		; $5185
 	call objectCreatePuff		; $5188
 	jp enemyDelete		; $518b
-_label_0f_096:
-	ld e,$a4		; $518e
+
+@mainDead:
+	ld e,Enemy.collisionType		; $518e
 	ld a,(de)		; $5190
 	or a			; $5191
 	call nz,_ecom_killRelatedObj1		; $5192
 	jp _enemyBoss_dead		; $5195
-_label_0f_097:
-	call $552b		; $5198
+
+@normalStatus:
+	call _smasher_ball_updateRespawnTimer		; $5198
 	call _ecom_getSubidAndCpStateTo08		; $519b
-	jr c,_label_0f_098	; $519e
+	jr c,@commonState	; $519e
 	ld a,b			; $51a0
 	or a			; $51a1
-	jp z,$5264		; $51a2
-	jp $5356		; $51a5
-_label_0f_098:
+	jp z,_smasher_ball		; $51a2
+	jp _smasher_parent		; $51a5
+
+@commonState:
 	rst_jumpTable			; $51a8
-.dw $51b9
-.dw $5263
-.dw $5202
-.dw $5263
-.dw $5263
-.dw $5263
-.dw $5263
-.dw $5263
+	.dw _smasher_state_uninitialized
+	.dw _smasher_state_stub
+	.dw _smasher_state_grabbed
+	.dw _smasher_state_stub
+	.dw _smasher_state_stub
+	.dw _smasher_state_stub
+	.dw _smasher_state_stub
+	.dw _smasher_state_stub
+
+
+_smasher_state_uninitialized:
 	ld a,b			; $51b9
 	or a			; $51ba
-	jr nz,_label_0f_100	; $51bb
+	jr nz,@alreadySpawnedParent	; $51bb
+
+@initializeBall:
 	ld b,a			; $51bd
 	ld a,$ff		; $51be
 	call _enemyBoss_initializeRoom		; $51c0
-	ld b,$74		; $51c3
+
+	; Spawn parent
+	ld b,ENEMYID_SMASHER		; $51c3
 	call _ecom_spawnUncountedEnemyWithSubid01		; $51c5
 	ret nz			; $51c8
-	ld l,$80		; $51c9
+
+	; [parent.enabled] = [ball.enabled]
+	ld l,Enemy.enabled		; $51c9
 	ld e,l			; $51cb
 	ld a,(de)		; $51cc
 	ld (hl),a		; $51cd
-	ld l,$96		; $51ce
+
+	; [ball.relatedObj1] = parent
+	; [parent.relatedObj1] = ball
+	ld l,Enemy.relatedObj1		; $51ce
 	ld e,l			; $51d0
-	ld a,$80		; $51d1
+	ld a,Enemy.start		; $51d1
 	ldi (hl),a		; $51d3
 	ld (de),a		; $51d4
 	inc e			; $51d5
 	ld a,h			; $51d6
 	ld (de),a		; $51d7
 	ld (hl),d		; $51d8
+
 	call objectCopyPosition		; $51d9
+
+	; If parent object has a lower index than ball object, swap them
 	ld a,h			; $51dc
 	cp d			; $51dd
-	jr nc,_label_0f_101	; $51de
-	ld l,$82		; $51e0
-	ld (hl),$80		; $51e2
+	jr nc,@initialize	; $51de
+
+	ld l,Enemy.subid		; $51e0
+	ld (hl),$80 ; Change former "parent" to "ball"
 	ld e,l			; $51e4
 	ld a,$01		; $51e5
-	ld (de),a		; $51e7
-_label_0f_100:
+	ld (de),a   ; Change former "ball" (this) to "parent"
+
+@alreadySpawnedParent:
 	dec a			; $51e8
-	jr z,_label_0f_102	; $51e9
-	ld e,$82		; $51eb
+	jr z,@gotoState8	; $51e9
+
+	; Effectively clears bit 7 of parent's subid (should be $80 when it reaches here)
+	ld e,Enemy.subid		; $51eb
 	xor a			; $51ed
 	ld (de),a		; $51ee
-_label_0f_101:
+
+@initialize:
 	ld a,$01		; $51ef
-	call $5516		; $51f1
-	ld l,$8d		; $51f4
+	call _smasher_setOamFlags		; $51f1
+
+	ld l,Enemy.xh		; $51f4
 	ld a,(hl)		; $51f6
 	sub $20			; $51f7
 	ld (hl),a		; $51f9
+
 	ld a,$04		; $51fa
 	call enemySetAnimation		; $51fc
-_label_0f_102:
+
+@gotoState8:
 	jp _ecom_setSpeedAndState8AndVisible		; $51ff
+
+
+_smasher_state_grabbed:
 	inc e			; $5202
-	ld a,(de)		; $5203
+	ld a,(de) ; [state2]
 	rst_jumpTable			; $5204
-.dw $520d
-.dw $5218
-.dw $5219
-.dw $525c
+	.dw @justGrabbed
+	.dw @beingHeld
+	.dw @released
+	.dw @atRest
+
+@justGrabbed:
 	ld h,d			; $520d
 	ld l,e			; $520e
 	inc (hl)		; $520f
-	ld a,$20		; $5210
+	ld a,2<<4		; $5210
 	ld (wLinkGrabState2),a		; $5212
 	jp objectSetVisiblec1		; $5215
+
+@beingHeld:
 	ret			; $5218
+
+@released:
 	call _ecom_bounceOffWallsAndHoles		; $5219
-	jr z,_label_0f_103	; $521c
-	ld e,$89		; $521e
+	jr z,++			; $521c
+
+	; Hit a wall; copy new angle to the "throw item" that's controlling this
+	ld e,Enemy.angle		; $521e
 	ld a,(de)		; $5220
-	ld hl,$dc09		; $5221
+	ld hl,w1ReservedItemC.angle		; $5221
 	ld (hl),a		; $5224
-_label_0f_103:
-	ld a,$2b		; $5225
+++
+	; Return if parent was already hit
+	ld a,Object.invincibilityCounter		; $5225
 	call objectGetRelatedObject1Var		; $5227
 	ld a,(hl)		; $522a
 	or a			; $522b
 	ret nz			; $522c
-	ld l,$8f		; $522d
+
+	; Check if we've collided with parent
+	ld l,Enemy.zh		; $522d
 	ld e,l			; $522f
 	ld a,(de)		; $5230
 	sub (hl)		; $5231
@@ -144834,412 +144888,605 @@ _label_0f_103:
 	ret nc			; $5236
 	call checkObjectsCollided		; $5237
 	ret nc			; $523a
-	ld l,$ab		; $523b
+
+	; We've collided
+
+	ld l,Enemy.invincibilityCounter		; $523b
 	ld (hl),$20		; $523d
-	ld l,$ad		; $523f
+	ld l,Enemy.knockbackCounter		; $523f
 	ld (hl),$10		; $5241
-	ld l,$a9		; $5243
+
+	ld l,Enemy.health		; $5243
 	dec (hl)		; $5245
-	call $551c		; $5246
+
+	; Calculate knockback angle for boss
+	call _smasher_ball_loadPositions		; $5246
 	push hl			; $5249
 	call objectGetRelativeAngleWithTempVars		; $524a
 	pop hl			; $524d
-	ld l,$ac		; $524e
+	ld l,Enemy.knockbackAngle		; $524e
 	ld (hl),a		; $5250
+
+	; Reverse knockback angle for ball
 	xor $10			; $5251
-	ld hl,$dc09		; $5253
+	ld hl,w1ReservedItemC.angle		; $5253
 	ld (hl),a		; $5256
+
 	ld a,SND_BOSS_DAMAGE		; $5257
 	jp playSound		; $5259
+
+@atRest:
 	dec e			; $525c
 	ld a,$08		; $525d
-	ld (de),a		; $525f
+	ld (de),a ; [state] = 8
 	jp objectSetVisiblec2		; $5260
+
+
+_smasher_state_stub:
 	ret			; $5263
+
+
+_smasher_ball:
 	ld a,(de)		; $5264
 	sub $08			; $5265
 	rst_jumpTable			; $5267
-.dw $5278
-.dw $5283
-.dw $5289
-.dw $52bf
-.dw $52c0
-.dw $52e9
-.dw $530d
-.dw $5343
+	.dw _smasher_ball_state8
+	.dw _smasher_ball_state9
+	.dw _smasher_ball_stateA
+	.dw _smasher_ball_stateB
+	.dw _smasher_ball_stateC
+	.dw _smasher_ball_stateD
+	.dw _smasher_ball_stateE
+	.dw _smasher_ball_stateF
+
+
+; Initialization (or just reappeared after disappearing)
+_smasher_ball_state8:
 	ld h,d			; $5278
 	ld l,e			; $5279
-	inc (hl)		; $527a
-	ld l,$a5		; $527b
-	ld (hl),$63		; $527d
-	ld l,$90		; $527f
-	ld (hl),$19		; $5281
+	inc (hl) ; [state]
+
+	ld l,Enemy.collisionReactionSet		; $527b
+	ld (hl),COLLISIONREACTIONSET_63		; $527d
+	ld l,Enemy.speed		; $527f
+	ld (hl),SPEED_a0		; $5281
+
+
+; Lying on ground, waiting for parent or Link to pick it up
+_smasher_ball_state9:
 	call objectAddToGrabbableObjectBuffer		; $5283
 	jp objectPushLinkAwayOnCollision		; $5286
+
+
+; Parent is picking up the ball
+_smasher_ball_stateA:
 	ld h,d			; $5289
-	ld l,$8f		; $528a
+	ld l,Enemy.zh		; $528a
 	ldd a,(hl)		; $528c
 	cp $f4			; $528d
-	jr z,_label_0f_104	; $528f
+	jr z,++			; $528f
+
+	; [ball.z] -= $0080 (moving up)
 	ld a,(hl)		; $5291
-	sub $80			; $5292
+	sub <($0080)			; $5292
 	ldi (hl),a		; $5294
 	ld a,(hl)		; $5295
-	sbc $00			; $5296
+	sbc >($0080)			; $5296
 	ld (hl),a		; $5298
-_label_0f_104:
-	ld a,$0b		; $5299
+++
+	; Move toward parent on Y/X axis
+	ld a,Object.yh		; $5299
 	call objectGetRelatedObject1Var		; $529b
-	call $551c		; $529e
+	call _smasher_ball_loadPositions		; $529e
 	cp c			; $52a1
 	jp nz,_ecom_moveTowardPosition		; $52a2
 	ldh a,(<hFF8F)	; $52a5
 	cp b			; $52a7
 	jp nz,_ecom_moveTowardPosition		; $52a8
-	ld e,$8f		; $52ab
+
+	; Reached parent's Y/X position; wait for Z as well
+	ld e,Enemy.zh		; $52ab
 	ld a,(de)		; $52ad
 	cp $f4			; $52ae
 	ret nz			; $52b0
+
+	; Reached position; go to next state
 	call _ecom_incState		; $52b1
-	ld l,$a4		; $52b4
+
+	ld l,Enemy.collisionType		; $52b4
 	set 7,(hl)		; $52b6
-	ld l,$90		; $52b8
-	ld (hl),$78		; $52ba
+
+	ld l,Enemy.speed		; $52b8
+	ld (hl),SPEED_300		; $52ba
 	jp objectSetVisiblec1		; $52bc
+
+
+; This state is a signal for the parent, which will update the ball's state when it gets
+; released.
+_smasher_ball_stateB:
 	ret			; $52bf
+
+
+; Being thrown
+_smasher_ball_stateC:
 	ld c,$20		; $52c0
 	call objectUpdateSpeedZAndBounce		; $52c2
-	jr c,_label_0f_106	; $52c5
-	jr nz,_label_0f_105	; $52c7
-	ld e,$90		; $52c9
+	jr c,@doneBouncing	; $52c5
+	jr nz,++		; $52c7
+
+	; Hit ground
+	ld e,Enemy.speed		; $52c9
 	ld a,(de)		; $52cb
 	srl a			; $52cc
 	ld (de),a		; $52ce
-	call $52e4		; $52cf
-_label_0f_105:
+	call _smasher_ball_playLandSound		; $52cf
+++
 	call _ecom_bounceOffWallsAndHoles		; $52d2
 	jp objectApplySpeed		; $52d5
-_label_0f_106:
+
+@doneBouncing:
 	ld h,d			; $52d8
-	ld l,$84		; $52d9
+	ld l,Enemy.state		; $52d9
 	ld (hl),$08		; $52db
-	ld l,$a4		; $52dd
+
+	ld l,Enemy.collisionType		; $52dd
 	res 7,(hl)		; $52df
 	call objectSetVisiblec2		; $52e1
+
+_smasher_ball_playLandSound:
 	ld a,SND_BOMB_LAND		; $52e4
 	jp playSound		; $52e6
+
+
+; Disappearing (either after being thrown, or after a time limit)
+_smasher_ball_stateD:
 	call objectCreatePuff		; $52e9
 	ret nz			; $52ec
-	ld a,$04		; $52ed
+
+	; If parent is picking up or throwing the ball, cancel that
+	ld a,Object.state		; $52ed
 	call objectGetRelatedObject1Var		; $52ef
 	ld a,(hl)		; $52f2
 	cp $0b			; $52f3
-_label_0f_107:
-	jr c,_label_0f_108	; $52f5
-	ld (hl),$0d		; $52f7
-	ld l,$9b		; $52f9
+	jr c,++			; $52f5
+	ld (hl),$0d ; [parent.state]
+	ld l,Enemy.oamFlagsBackup		; $52f9
 	ld a,$03		; $52fb
 	ldi (hl),a		; $52fd
 	ld (hl),a		; $52fe
-_label_0f_108:
+++
 	call _ecom_incState		; $52ff
-	ld l,$a4		; $5302
+
+	ld l,Enemy.collisionType		; $5302
 	res 7,(hl)		; $5304
-	ld l,$86		; $5306
-	ld (hl),$3c		; $5308
+
+	ld l,Enemy.counter1		; $5306
+	ld (hl),60		; $5308
 	jp objectSetInvisible		; $530a
+
+
+; Ball is gone, will reappear after [counter1] frames
+_smasher_ball_stateE:
 	call _ecom_decCounter1		; $530d
 	ret nz			; $5310
+
 	ld l,e			; $5311
-	inc (hl)		; $5312
-	ld l,$8f		; $5313
-	ld (hl),$e0		; $5315
-	ld l,$94		; $5317
+	inc (hl) ; [state]
+
+	ld l,Enemy.zh		; $5313
+	ld (hl),-$20		; $5315
+
+	ld l,Enemy.speedZ		; $5317
 	xor a			; $5319
 	ldi (hl),a		; $531a
 	ld (hl),a		; $531b
+
+	; Choose random position to spawn at
 	call getRandomNumber_noPreserveVars		; $531c
 	and $0e			; $531f
-	ld hl,$5333		; $5321
+	ld hl,@spawnPositions		; $5321
 	rst_addAToHl			; $5324
-	ld e,$8b		; $5325
+	ld e,Enemy.yh		; $5325
 	ldi a,(hl)		; $5327
 	ld (de),a		; $5328
-	ld e,$8d		; $5329
+	ld e,Enemy.xh		; $5329
 	ld a,(hl)		; $532b
 	ld (de),a		; $532c
+
 	call objectCreatePuff		; $532d
 	jp objectSetVisiblec1		; $5330
-	jr c,_label_0f_110	; $5333
-	ld a,b			; $5335
-	jr c,$38		; $5336
-	ld a,b			; $5338
-	ld a,b			; $5339
-	ld a,b			; $533a
-	jr c,_label_0f_107	; $533b
-	ld a,b			; $533d
-	cp b			; $533e
-	ld e,b			; $533f
-	ld e,b			; $5340
-	ld e,b			; $5341
-	sbc b			; $5342
+
+@spawnPositions:
+	.db $38 $38
+	.db $78 $38
+	.db $38 $78
+	.db $78 $78
+	.db $38 $b8
+	.db $78 $b8
+	.db $58 $58
+	.db $58 $98
+
+
+; Ball is falling to ground after reappearing
+_smasher_ball_stateF:
 	ld c,$20		; $5343
 	call objectUpdateSpeedZAndBounce		; $5345
-	jr c,_label_0f_109	; $5348
+	jr c,@doneBouncing	; $5348
 	ret nz			; $534a
-	jp $52e4		; $534b
-_label_0f_109:
-	ld e,$84		; $534e
+	jp _smasher_ball_playLandSound		; $534b
+
+@doneBouncing:
+	ld e,Enemy.state		; $534e
 	ld a,$08		; $5350
 	ld (de),a		; $5352
 	jp objectSetVisiblec2		; $5353
+
+
+_smasher_parent:
 	ld a,(de)		; $5356
 	sub $08			; $5357
 	rst_jumpTable			; $5359
-.dw $5366
-.dw $537b
-.dw $53f2
-.dw $545a
-.dw $547f
-.dw $54b6
+	.dw _smasher_parent_state8
+	.dw _smasher_parent_state9
+	.dw _smasher_parent_stateA
+	.dw _smasher_parent_stateB
+	.dw _smasher_parent_stateC
+	.dw _smasher_parent_stateD
+
+
+; Initialization
+_smasher_parent_state8:
 	ld h,d			; $5366
 	ld l,e			; $5367
-	inc (hl)		; $5368
-	ld l,$86		; $5369
+	inc (hl) ; [state]
+
+	ld l,Enemy.counter1		; $5369
 	ld (hl),$01		; $536b
-_label_0f_110:
-	ld l,$90		; $536d
-	ld (hl),$1e		; $536f
-	ld l,$b2		; $5371
+
+	ld l,Enemy.speed		; $536d
+	ld (hl),SPEED_c0		; $536f
+
+	; Don't do below function call if already initialized
+	ld l,Enemy.var32		; $5371
 	bit 0,(hl)		; $5373
-	jr nz,_label_0f_111	; $5375
-	inc (hl)		; $5377
+	jr nz,_smasher_parent_state9	; $5375
+
+	inc (hl) ; [var32]
 	call _enemyBoss_beginMiniboss		; $5378
-_label_0f_111:
-	ld a,$04		; $537b
+
+
+_smasher_parent_state9:
+	ld a,Object.state		; $537b
 	call objectGetRelatedObject1Var		; $537d
 	ld a,(hl)		; $5380
 	cp $09			; $5381
-	jr z,_label_0f_114	; $5383
+	jr z,@moveTowardBall	; $5383
+
+	; Ball unavailable; moving aronund in random angles
+
 	call _ecom_decCounter1		; $5385
-	jr nz,_label_0f_112	; $5388
-	ld (hl),$3c		; $538a
+	jr nz,@updateMovement	; $5388
+
+	; Time to choose a new angle
+	ld (hl),60 ; [counter1]
+
 	call getRandomNumber_noPreserveVars		; $538c
 	and $03			; $538f
-	ld hl,$53ee		; $5391
+	ld hl,@randomAngles		; $5391
 	rst_addAToHl			; $5394
-	ld e,$89		; $5395
+	ld e,Enemy.angle		; $5395
 	ld a,(hl)		; $5397
 	ld (de),a		; $5398
-	call $5506		; $5399
-_label_0f_112:
+	call _smasher_updateDirectionFromAngle		; $5399
+
+@updateMovement:
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $539c
 	ld c,$20		; $539f
 	call objectUpdateSpeedZ_paramC		; $53a1
-	jr nz,_label_0f_113	; $53a4
-	call $5477		; $53a6
-	ld e,$88		; $53a9
+	jr nz,@updateAnim	; $53a4
+
+	call _smasher_hop		; $53a6
+	ld e,Enemy.direction		; $53a9
 	ld a,(de)		; $53ab
 	inc a			; $53ac
 	jp enemySetAnimation		; $53ad
-_label_0f_113:
+
+@updateAnim:
+	; Change animation when he reaches the peak of his hop (speedZ is zero)
 	ldd a,(hl)		; $53b0
 	or (hl)			; $53b1
 	ret nz			; $53b2
-	ld e,$88		; $53b3
+	ld e,Enemy.direction		; $53b3
 	ld a,(de)		; $53b5
 	jp enemySetAnimation		; $53b6
-_label_0f_114:
-	ld l,$8b		; $53b9
-	ld e,$b0		; $53bb
+
+@moveTowardBall:
+	; Copy ball's Y-position to var30 (Y-position to move to)
+	ld l,Enemy.yh		; $53b9
+	ld e,Enemy.var30		; $53bb
 	ldi a,(hl)		; $53bd
 	ld (de),a		; $53be
+
+	; Calculate X-position to move to ($0e pixels to one side of the ball), then store
+	; the value in var31
 	inc l			; $53bf
 	ld e,l			; $53c0
-	ld a,(de)		; $53c1
-	cp (hl)			; $53c2
+	ld a,(de) ; [parent.xh]
+	cp (hl)   ; [ball.xh]
 	ld a,$0e		; $53c3
-	jr nc,_label_0f_115	; $53c5
-	ld a,$f2		; $53c7
-_label_0f_115:
+	jr nc,+			; $53c5
+	ld a,-$0e		; $53c7
++
 	ld c,a			; $53c9
-	add (hl)		; $53ca
+
+	add (hl) ; [ball.xh]
 	ld b,a			; $53cb
 	sub $18			; $53cc
 	cp $c0			; $53ce
-	jr c,_label_0f_116	; $53d0
+	jr c,++			; $53d0
 	ld a,c			; $53d2
 	cpl			; $53d3
 	inc a			; $53d4
 	add a			; $53d5
 	add b			; $53d6
 	ld b,a			; $53d7
-_label_0f_116:
+++
 	ld h,d			; $53d8
-	ld l,$b1		; $53d9
+	ld l,Enemy.var31		; $53d9
 	ld (hl),b		; $53db
-	ld l,$84		; $53dc
+
+	; Goto next state to move toward the ball
+	ld l,Enemy.state		; $53dc
 	inc (hl)		; $53de
-	ld l,$90		; $53df
-	ld (hl),$28		; $53e1
-	ld l,$b0		; $53e3
+
+	ld l,Enemy.speed		; $53df
+	ld (hl),SPEED_100		; $53e1
+
+	ld l,Enemy.var30		; $53e3
 	call _ecom_readPositionVars		; $53e5
-	call $54f8		; $53e8
+	call _smasher_updateAngleTowardPosition		; $53e8
 	jp enemySetAnimation		; $53eb
-	ld b,$0a		; $53ee
-	ld d,$1a		; $53f0
-	ld a,$04		; $53f2
+
+
+@randomAngles: ; When ball is unavailable, smasher move randomly in one of these angles
+	.db $06 $0a $16 $1a
+
+
+; Moving toward ball on the ground
+_smasher_parent_stateA:
+	ld a,Object.state		; $53f2
 	call objectGetRelatedObject1Var		; $53f4
 	ld a,(hl)		; $53f7
 	cp $09			; $53f8
-	jr nz,_label_0f_118	; $53fa
+	jr nz,_smasher_parent_linkPickedUpBall	; $53fa
+
+	; Check if we've reached the target position in front of the ball
 	ld h,d			; $53fc
-	ld l,$b0		; $53fd
+	ld l,Enemy.var30		; $53fd
 	call _ecom_readPositionVars		; $53ff
 	sub c			; $5402
 	add $02			; $5403
 	cp $05			; $5405
-	jr nc,_label_0f_117	; $5407
+	jr nc,@movingTowardBall	; $5407
 	ldh a,(<hFF8F)	; $5409
 	sub b			; $540b
 	add $02			; $540c
 	cp $05			; $540e
-	jr nc,_label_0f_117	; $5410
-	ld l,$84		; $5412
-	inc (hl)		; $5414
-	ld l,$8f		; $5415
+	jr nc,@movingTowardBall	; $5410
+
+	; We've reached the position
+
+	ld l,Enemy.state		; $5412
+	inc (hl) ; [parent.state]
+
+	ld l,Enemy.zh		; $5415
 	ld (hl),$00		; $5417
+
 	ld a,$02		; $5419
-	call $5516		; $541b
-	ld a,$04		; $541e
+	call _smasher_setOamFlags		; $541b
+
+	ld a,Object.state		; $541e
 	call objectGetRelatedObject1Var		; $5420
-	inc (hl)		; $5423
-	ld l,$8d		; $5424
+	inc (hl) ; [ball.state] = $0a
+
+	; Face toward the ball? ('b' is still set to the y-position from before?)
+	ld l,Enemy.xh		; $5424
 	ld c,(hl)		; $5426
-	call $54f8		; $5427
+	call _smasher_updateAngleTowardPosition		; $5427
 	inc a			; $542a
 	jp enemySetAnimation		; $542b
-_label_0f_117:
+
+@movingTowardBall:
 	call _ecom_moveTowardPosition		; $542e
-	ld e,$89		; $5431
+
+	ld e,Enemy.angle		; $5431
 	ld a,(de)		; $5433
-	call $5506		; $5434
+	call _smasher_updateDirectionFromAngle		; $5434
 	call enemySetAnimation		; $5437
+
 	ld c,$20		; $543a
 	call objectUpdateSpeedZ_paramC		; $543c
 	ret nz			; $543f
-	jr _label_0f_119		; $5440
-_label_0f_118:
+	jr _smasher_hop		; $5440
+
+
+_smasher_parent_linkPickedUpBall:
+	; Stop chasing the ball
 	ld h,d			; $5442
-	ld l,$84		; $5443
+	ld l,Enemy.state		; $5443
 	ld (hl),$09		; $5445
-	ld l,$90		; $5447
-	ld (hl),$1e		; $5449
-	ld l,$86		; $544b
-	ld (hl),$3c		; $544d
+
+	ld l,Enemy.speed		; $5447
+	ld (hl),SPEED_c0		; $5449
+
+	ld l,Enemy.counter1		; $544b
+	ld (hl),60		; $544d
+
 	ld a,$03		; $544f
-	call $5516		; $5451
+	call _smasher_setOamFlags		; $5451
+
+	; Run away from Link
 	call _ecom_updateCardinalAngleAwayFromTarget		; $5454
-	jp $5506		; $5457
-	ld a,$04		; $545a
+	jp _smasher_updateDirectionFromAngle		; $5457
+
+
+; About to pick up ball
+_smasher_parent_stateB:
+	ld a,Object.state		; $545a
 	call objectGetRelatedObject1Var		; $545c
 	ld a,(hl)		; $545f
-	cp $02			; $5460
-	jr z,_label_0f_118	; $5462
+	cp ENEMYSTATE_GRABBED			; $5460
+	jr z,_smasher_parent_linkPickedUpBall	; $5462
+
+	; Wait for ball's state to update
 	cp $0b			; $5464
 	ret c			; $5466
+
 	ld a,$03		; $5467
-	call $5516		; $5469
-	ld l,$84		; $546c
+	call _smasher_setOamFlags		; $5469
+
+	ld l,Enemy.state		; $546c
 	inc (hl)		; $546e
-	ld l,$87		; $546f
-	ld (hl),$1e		; $5471
-	ld l,$90		; $5473
-	ld (hl),$0a		; $5475
-_label_0f_119:
-	ld l,$94		; $5477
-	ld a,$40		; $5479
+
+	ld l,Enemy.counter2		; $546f
+	ld (hl),30		; $5471
+
+	ld l,Enemy.speed		; $5473
+	ld (hl),SPEED_40		; $5475
+
+;;
+; @addr{5477}
+_smasher_hop:
+	ld l,Enemy.speedZ		; $5477
+	ld a,<(-$c0)		; $5479
 	ldi (hl),a		; $547b
-	ld (hl),$ff		; $547c
+	ld (hl),>(-$c0)		; $547c
 	ret			; $547e
-	call $5500		; $547f
+
+
+; Just picked up ball; hopping while moving slowly toward Link
+_smasher_parent_stateC:
+	call _smasher_updateAngleTowardLink		; $547f
 	inc a			; $5482
 	call enemySetAnimation		; $5483
+
 	call _ecom_decCounter2		; $5486
+
 	ld c,$20		; $5489
 	call objectUpdateSpeedZ_paramC		; $548b
-	jr z,_label_0f_120	; $548e
+	jr z,@hitGround	; $548e
+
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $5490
-	ld a,$00		; $5493
+
+	; Update ball's position
+	ld a,Object.enabled		; $5493
 	call objectGetRelatedObject1Var		; $5495
 	call objectCopyPosition		; $5498
 	dec l			; $549b
 	ld e,l			; $549c
-	ld a,(de)		; $549d
+	ld a,(de) ; [parent.zh]
 	add $f4			; $549e
-	ld (hl),a		; $54a0
+	ld (hl),a ; [ball.zh]
 	ret			; $54a1
-_label_0f_120:
-	ld e,$87		; $54a2
+
+@hitGround:
+	ld e,Enemy.counter2		; $54a2
 	ld a,(de)		; $54a4
 	or a			; $54a5
-	jp nz,$5477		; $54a6
-	ld a,$fe		; $54a9
+	jp nz,_smasher_hop		; $54a6
+
+	; Done hopping; go to next state to leap into the air
+
+	ld a,>(-$1e0)		; $54a9
 	ldd (hl),a		; $54ab
-	ld (hl),$20		; $54ac
-	ld l,$84		; $54ae
+	ld (hl),<(-$1e0)		; $54ac
+
+	ld l,Enemy.state		; $54ae
 	inc (hl)		; $54b0
+
 	ld a,$02		; $54b1
-	jp $5516		; $54b3
+	jp _smasher_setOamFlags		; $54b3
+
+
+; In midair just before throwing ball
+_smasher_parent_stateD:
 	ld c,$20		; $54b6
 	call objectUpdateSpeedZ_paramC		; $54b8
-	jr nz,_label_0f_121	; $54bb
-	ld l,$84		; $54bd
+	jr nz,@inMidair	; $54bb
+
+	; Hit the ground
+	ld l,Enemy.state		; $54bd
 	ld (hl),$08		; $54bf
 	ret			; $54c1
-_label_0f_121:
-	ld a,$0f		; $54c2
+
+@inMidair:
+	ld a,Object.zh		; $54c2
 	call objectGetRelatedObject1Var		; $54c4
 	ld e,l			; $54c7
 	ld a,(de)		; $54c8
 	add $f4			; $54c9
 	ld (hl),a		; $54cb
-	ld e,$95		; $54cc
+
+	ld e,Enemy.speedZ+1		; $54cc
 	ld a,(de)		; $54ce
 	rlca			; $54cf
-	jr nc,_label_0f_122	; $54d0
-	call $5500		; $54d2
+	jr nc,@movingDown		; $54d0
+
+	; Moving up
+	call _smasher_updateAngleTowardLink		; $54d2
 	inc a			; $54d5
 	jp enemySetAnimation		; $54d6
-_label_0f_122:
+
+@movingDown:
+	; Return if speedZ is nonzero (not at peak of jump)
 	ld b,a			; $54d9
 	dec e			; $54da
 	ld a,(de)		; $54db
 	or b			; $54dc
 	ret nz			; $54dd
-	ld a,$04		; $54de
+
+	; Throw the ball if its state is valid for this
+	ld a,Object.state		; $54de
 	call objectGetRelatedObject1Var		; $54e0
 	ld a,(hl)		; $54e3
 	cp $0b			; $54e4
 	ret nz			; $54e6
-	inc (hl)		; $54e7
-	ld l,$89		; $54e8
+
+	inc (hl) ; [ball.state]
+	ld l,Enemy.angle		; $54e8
 	ld e,l			; $54ea
 	ld a,(de)		; $54eb
 	ld (hl),a		; $54ec
+
 	ld a,$03		; $54ed
-	call $5516		; $54ef
-	ld e,$88		; $54f2
+	call _smasher_setOamFlags		; $54ef
+
+	ld e,Enemy.direction		; $54f2
 	ld a,(de)		; $54f4
 	jp enemySetAnimation		; $54f5
+
+
+;;
+; @param[out]	a	direction value
+; @addr{54f8}
+_smasher_updateAngleTowardPosition:
 	call objectGetRelativeAngleWithTempVars		; $54f8
-	ld e,$89		; $54fb
+	ld e,Enemy.angle		; $54fb
 	ld (de),a		; $54fd
-	jr _label_0f_123		; $54fe
+	jr _smasher_updateDirectionFromAngle			; $54fe
+
+;;
+; @addr{5500}
+_smasher_updateAngleTowardLink:
 	call objectGetAngleTowardEnemyTarget		; $5500
-	ld e,$89		; $5503
+	ld e,Enemy.angle		; $5503
 	ld (de),a		; $5505
-_label_0f_123:
+
+;;
+; @param	a	angle
+; @param[out]	a	direction value
+; @addr{5506}
+_smasher_updateDirectionFromAngle:
 	ld b,a			; $5506
 	and $0f			; $5507
 	ret z			; $5509
@@ -145248,49 +145495,79 @@ _label_0f_123:
 	xor $10			; $550d
 	swap a			; $550f
 	rlca			; $5511
-	ld e,$88		; $5512
+	ld e,Enemy.direction		; $5512
 	ld (de),a		; $5514
 	ret			; $5515
+
+
+;;
+; @param	a	Value for oamFlags
+; @addr{5516}
+_smasher_setOamFlags:
 	ld h,d			; $5516
-	ld l,$9b		; $5517
+	ld l,Enemy.oamFlagsBackup		; $5517
 	ldi (hl),a		; $5519
 	ld (hl),a		; $551a
 	ret			; $551b
-	ld l,$8b		; $551c
+
+;;
+; Loads positions into bc and hFF8E/hFF8F for subsequent call to
+; "objectGetRelativeAngleWithTempVars".
+;
+; @param	h	Parent object
+; @addr{551c}
+_smasher_ball_loadPositions:
+	ld l,Enemy.yh		; $551c
 	ld e,l			; $551e
 	ld a,(de)		; $551f
 	ldh (<hFF8F),a	; $5520
 	ld b,(hl)		; $5522
-	ld l,$8d		; $5523
+	ld l,Enemy.xh		; $5523
 	ld e,l			; $5525
 	ld a,(de)		; $5526
 	ldh (<hFF8E),a	; $5527
 	ld c,(hl)		; $5529
 	ret			; $552a
-	ld e,$82		; $552b
+
+
+;;
+; Updates the ball's "respawn timer" and makes it disappear (goes to state $0d) when it
+; hits zero.
+; @addr{552b}
+_smasher_ball_updateRespawnTimer:
+	; Return if this isn't the ball
+	ld e,Enemy.subid		; $552b
 	ld a,(de)		; $552d
 	or a			; $552e
 	ret nz			; $552f
-	ld e,$84		; $5530
+
+	ld e,Enemy.state		; $5530
 	ld a,(de)		; $5532
 	cp $0d			; $5533
 	ret nc			; $5535
 	ld a,(wFrameCounter)		; $5536
 	rrca			; $5539
 	ret c			; $553a
+
 	ld h,d			; $553b
-	ld l,$b0		; $553c
+	ld l,Enemy.var30		; $553c
 	inc (hl)		; $553e
 	ld a,(hl)		; $553f
-	cp $b4			; $5540
+	cp 180			; $5540
 	ret c			; $5542
+
 	ld (hl),$00		; $5543
-	call $554e		; $5545
-	ld e,$84		; $5548
+	call _smasher_ball_makeLinkDrop		; $5545
+	ld e,Enemy.state		; $5548
 	ld a,$0d		; $554a
 	ld (de),a		; $554c
 	ret			; $554d
-	ld e,$84		; $554e
+
+
+;;
+; @addr{554e}
+_smasher_ball_makeLinkDrop:
+	ld e,Enemy.state		; $554e
 	ld a,(de)		; $5550
 	cp $02			; $5551
 	ret nz			; $5553

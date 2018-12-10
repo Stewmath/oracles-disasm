@@ -655,6 +655,9 @@
 ; @subid_03{Sword}
 .define ENEMYID_ARMOS_WARRIOR			$73
 
+;;
+; @subid_00{Ball (spawns parent)}
+; @subid_01{Parent (smasher himself)}
 .define ENEMYID_SMASHER				$74
 .define ENEMYID_VIRE				$75
 .define ENEMYID_ANGLER_FISH			$76
