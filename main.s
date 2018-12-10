@@ -143053,11 +143053,11 @@ _swoop_framesBeforeAttacking:
 
 
 ; ==============================================================================
-; ENEMYID_DIGDOGGER
+; ENEMYID_SUBTERROR
 ;
 ; Variables:
-;   var30: If nonzero, dirt is created at digdogger's position every 8 frames.
-;   var31: Counter until a new dirt object (PARTID_DIGDOGGER_DIRT) is created.
+;   var30: If nonzero, dirt is created at subterror's position every 8 frames.
+;   var31: Counter until a new dirt object (PARTID_SUBTERROR_DIRT) is created.
 ; ==============================================================================
 enemyCode72:
 	jr z,@normalStatus	; $49ac
@@ -143070,27 +143070,27 @@ enemyCode72:
 	ld e,Enemy.var30		; $49b6
 	ld a,(de)		; $49b8
 	or a			; $49b9
-	call nz,_digdogger_spawnDirtEvery8Frames		; $49ba
+	call nz,_subterror_spawnDirtEvery8Frames		; $49ba
 	ld e,Enemy.state		; $49bd
 	ld a,(de)		; $49bf
 	rst_jumpTable			; $49c0
-	.dw _digdogger_state_uninitialized
-	.dw _digdogger_state_stub
-	.dw _digdogger_state_stub
-	.dw _digdogger_state_stub
-	.dw _digdogger_state_stub
-	.dw _digdogger_state_stub
-	.dw _digdogger_state_stub
-	.dw _digdogger_state_stub
-	.dw _digdogger_state8
-	.dw _digdogger_state9
-	.dw _digdogger_stateA
-	.dw _digdogger_stateB
-	.dw _digdogger_stateC
+	.dw _subterror_state_uninitialized
+	.dw _subterror_state_stub
+	.dw _subterror_state_stub
+	.dw _subterror_state_stub
+	.dw _subterror_state_stub
+	.dw _subterror_state_stub
+	.dw _subterror_state_stub
+	.dw _subterror_state_stub
+	.dw _subterror_state8
+	.dw _subterror_state9
+	.dw _subterror_stateA
+	.dw _subterror_stateB
+	.dw _subterror_stateC
 
 
-_digdogger_state_uninitialized:
-	ld a,ENEMYID_DIGDOGGER		; $49db
+_subterror_state_uninitialized:
+	ld a,ENEMYID_SUBTERROR		; $49db
 	ld b,PALH_be		; $49dd
 	call _enemyBoss_initializeRoom		; $49df
 	call _ecom_setSpeedAndState8		; $49e2
@@ -143110,12 +143110,12 @@ _digdogger_state_uninitialized:
 	ret			; $49f7
 
 
-_digdogger_state_stub:
+_subterror_state_stub:
 	ret			; $49f8
 
 
 ; Cutscene before fight
-_digdogger_state8:
+_subterror_state8:
 	ld e,Enemy.state2		; $49f9
 	ld a,(de)		; $49fb
 	rst_jumpTable			; $49fc
@@ -143165,7 +143165,7 @@ _digdogger_state8:
 	jp setTile		; $4a39
 
 @substate1:
-	call _digdogger_retFromCallerIfAnimationUnfinished		; $4a3c
+	call _subterror_retFromCallerIfAnimationUnfinished		; $4a3c
 
 	ld b,INTERACID_ROCKDEBRIS		; $4a3f
 	call objectCreateInteractionWithSubid00		; $4a41
@@ -143204,7 +143204,7 @@ _digdogger_state8:
 	ld (wMenuDisabled),a		; $4a78
 
 
-_digdogger_digIntoGround:
+_subterror_digIntoGround:
 	ld e,Enemy.state		; $4a7b
 	ld a,$09		; $4a7d
 	ld (de),a		; $4a7f
@@ -143214,11 +143214,11 @@ _digdogger_digIntoGround:
 
 
 ; Digging into ground
-_digdogger_state9:
-	call _digdogger_retFromCallerIfAnimationUnfinished		; $4a85
+_subterror_state9:
+	call _subterror_retFromCallerIfAnimationUnfinished		; $4a85
 
 	; Done digging, about to start moving around
-_digdogger_beginUndergroundMovement:
+_subterror_beginUndergroundMovement:
 	ld h,d			; $4a88
 	ld l,Enemy.state		; $4a89
 	ld (hl),$0a		; $4a8b
@@ -143239,8 +143239,8 @@ _digdogger_beginUndergroundMovement:
 	ld l,Enemy.counter1		; $4a9c
 	ld (hl),60		; $4a9e
 
-	call _digdogger_getAngerLevel		; $4aa0
-	ld hl,_digdogger_timeUntilDrillAttack		; $4aa3
+	call _subterror_getAngerLevel		; $4aa0
+	ld hl,_subterror_timeUntilDrillAttack		; $4aa3
 	rst_addAToHl			; $4aa6
 	ld a,(hl)		; $4aa7
 	ld e,Enemy.counter2		; $4aa8
@@ -143248,11 +143248,11 @@ _digdogger_beginUndergroundMovement:
 
 	ld a,SND_DIG		; $4aab
 	call playSound		; $4aad
-	jp _digdogger_spawnDirt		; $4ab0
+	jp _subterror_spawnDirt		; $4ab0
 
 
 ; Currently in the ground, moving around
-_digdogger_stateA:
+_subterror_stateA:
 	ld e,Enemy.state2		; $4ab3
 	ld a,(de)		; $4ab5
 	rst_jumpTable			; $4ab6
@@ -143286,8 +143286,8 @@ _digdogger_stateA:
 	ld a,30		; $4ad8
 	ld (de),a		; $4ada
 
-	call _digdogger_getAngerLevel		; $4adb
-	ld hl,_digdogger_speedVals		; $4ade
+	call _subterror_getAngerLevel		; $4adb
+	ld hl,_subterror_speedVals		; $4ade
 	rst_addAToHl			; $4ae1
 	ld a,(hl)		; $4ae2
 	ld e,Enemy.speed		; $4ae3
@@ -143295,7 +143295,7 @@ _digdogger_stateA:
 
 	ld a,$0a		; $4ae6
 	call objectSetCollideRadius		; $4ae8
-	jp _digdogger_spawnDirt		; $4aeb
+	jp _subterror_spawnDirt		; $4aeb
 
 ; Moving around until shovel is used or he starts drilling
 @substate1:
@@ -143412,7 +143412,7 @@ _digdogger_stateA:
 
 
 ; Drilling
-_digdogger_stateB:
+_subterror_stateB:
 	ld e,Enemy.state2		; $4b8f
 	ld a,(de)		; $4b91
 	rst_jumpTable			; $4b92
@@ -143449,8 +143449,8 @@ _digdogger_stateB:
 	jp _ecom_incState2		; $4bbd
 
 @substate1:
-	call _digdogger_retFromCallerIfAnimationUnfinished		; $4bc0
-	call _digdogger_beginUndergroundMovement		; $4bc3
+	call _subterror_retFromCallerIfAnimationUnfinished		; $4bc0
+	call _subterror_beginUndergroundMovement		; $4bc3
 	ld e,Enemy.var30		; $4bc6
 	xor a			; $4bc8
 	ld (de),a		; $4bc9
@@ -143458,7 +143458,7 @@ _digdogger_stateB:
 
 
 ; Popping out of ground after shovel was used
-_digdogger_stateC:
+_subterror_stateC:
 	ld e,Enemy.state2		; $4bcb
 	ld a,(de)		; $4bcd
 	rst_jumpTable			; $4bce
@@ -143509,13 +143509,13 @@ _digdogger_stateC:
 
 	call getRandomNumber		; $4c14
 	and $03			; $4c17
-	ld hl,_digdogger_durationAboveGround		; $4c19
+	ld hl,_subterror_durationAboveGround		; $4c19
 	rst_addAToHl			; $4c1c
 	ldi a,(hl)		; $4c1d
 	ld e,Enemy.counter1		; $4c1e
 	ld (de),a		; $4c20
 
-	jp _digdogger_setAnimationFromAngle		; $4c21
+	jp _subterror_setAnimationFromAngle		; $4c21
 
 @substate2:
 	call enemyAnimate		; $4c24
@@ -143528,17 +143528,17 @@ _digdogger_stateC:
 
 	call objectApplySpeed		; $4c30
 	call _ecom_bounceOffWallsAndHoles		; $4c33
-	call nz,_digdogger_setAnimationFromAngle		; $4c36
+	call nz,_subterror_setAnimationFromAngle		; $4c36
 
 	; Dig back into ground when [counter1] reaches 0
 	call _ecom_decCounter1		; $4c39
 	ret nz			; $4c3c
-	jp _digdogger_digIntoGround		; $4c3d
+	jp _subterror_digIntoGround		; $4c3d
 
 
 ;;
 ; @addr{4c40}
-_digdogger_spawnDirtEvery8Frames:
+_subterror_spawnDirtEvery8Frames:
 	inc e			; $4c40
 	ld a,(de) ; [var31]
 	dec a			; $4c42
@@ -143547,14 +143547,14 @@ _digdogger_spawnDirtEvery8Frames:
 
 ;;
 ; @addr{4c45}
-_digdogger_spawnDirt:
+_subterror_spawnDirt:
 	ld e,Enemy.var31		; $4c45
 	ld a,$07		; $4c47
 	ld (de),a ; [var31] = 7
 	dec e			; $4c4a
 	ld (de),a ; [var30] = 7
 
-	ld b,PARTID_DIGDOGGER_DIRT		; $4c4c
+	ld b,PARTID_SUBTERROR_DIRT		; $4c4c
 	call _ecom_spawnProjectile		; $4c4e
 
 	call objectGetTileAtPosition		; $4c51
@@ -143564,7 +143564,7 @@ _digdogger_spawnDirt:
 
 ;;
 ; @addr{4c5a}
-_digdogger_retFromCallerIfAnimationUnfinished:
+_subterror_retFromCallerIfAnimationUnfinished:
 	call enemyAnimate		; $4c5a
 	ld h,d			; $4c5d
 	ld l,Enemy.animParameter		; $4c5e
@@ -143577,7 +143577,7 @@ _digdogger_retFromCallerIfAnimationUnfinished:
 ;;
 ; @param[out]	a	Anger level (0-2)
 ; @addr{4c65}
-_digdogger_getAngerLevel:
+_subterror_getAngerLevel:
 	ld b,$00		; $4c65
 	ld e,Enemy.health		; $4c67
 	ld a,(de)		; $4c69
@@ -143593,7 +143593,7 @@ _digdogger_getAngerLevel:
 
 ;;
 ; @addr{4c76}
-_digdogger_setAnimationFromAngle:
+_subterror_setAnimationFromAngle:
 	ld h,d			; $4c76
 	ld l,Enemy.angle		; $4c77
 	ldd a,(hl)		; $4c79
@@ -143605,13 +143605,13 @@ _digdogger_setAnimationFromAngle:
 	jp enemySetAnimation		; $4c82
 
 
-_digdogger_speedVals: ; Chosen based on "anger level"
+_subterror_speedVals: ; Chosen based on "anger level"
 	.db SPEED_80 SPEED_100 SPEED_180
 
-_digdogger_timeUntilDrillAttack: ; Chosen based on "anger level"
+_subterror_timeUntilDrillAttack: ; Chosen based on "anger level"
 	.db 120 90 60
 
-_digdogger_durationAboveGround: ; Chosen randomly
+_subterror_durationAboveGround: ; Chosen randomly
 	.db 60 90 120 180
 
 

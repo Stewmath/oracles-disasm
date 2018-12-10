@@ -646,7 +646,7 @@
 
 .define ENEMYID_GIANT_GHINI			$70
 .define ENEMYID_SWOOP				$71
-.define ENEMYID_DIGDOGGER			$72
+.define ENEMYID_SUBTERROR			$72
 
 ;;
 ; @subid_00{Spawner (use this)}

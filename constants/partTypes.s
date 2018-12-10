@@ -138,7 +138,7 @@
 
 ;;
 ; @palette(PALH_be}
-.define PARTID_DIGDOGGER_DIRT			$32
+.define PARTID_SUBTERROR_DIRT			$32
 
 ;;
 ; Flame animation used exclusively by ENEMYID_CANDLE. Expects relatedObj1 to point to its
