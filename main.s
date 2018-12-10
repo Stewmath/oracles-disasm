@@ -143614,252 +143614,395 @@ _digdogger_timeUntilDrillAttack: ; Chosen based on "anger level"
 _digdogger_durationAboveGround: ; Chosen randomly
 	.db 60 90 120 180
 
-;;
-; @addr{4c8f}
+
+; ==============================================================================
+; ENEMYID_ARMOS_WARRIOR
+;
+; Variables (for parent only, subid 1):
+;   var30: "Turn" direction (should be 8 or -8)
+;   var31: Shield
+;   var32: Sword
+;
+; Variables (for shield only, subid 2):
+;   relatedObj1: parent
+;   relatedObj2: shield
+;   var30: Animation index (0 or 1)
+;   var31: Animation base (multiple of 2, for broken shield animation)
+;   var32: Hits until destruction
+;
+; Variables (for sword only, subid 3):
+;   relatedObj1: parent
+;   relatedObj2: shield
+;   var30/var31: Target position
+;   var32/var33: Base position (yh and xh are manipulated by the animation to fix their
+;                collision box, so need to be reset to these values each frame)
+;   var34: If nonzero, checks for collision with shield
+; ==============================================================================
 enemyCode73:
-	jr z,_label_0f_074	; $4c8f
-	sub $03			; $4c91
+	jr z,@normalStatus	; $4c8f
+	sub ENEMYSTATUS_NO_HEALTH			; $4c91
 	ret c			; $4c93
-	jr nz,_label_0f_074	; $4c94
-	ld e,$82		; $4c96
+	jr nz,@normalStatus	; $4c94
+
+	; ENEMYSTATUS_DEAD
+
+	ld e,Enemy.subid		; $4c96
 	ld a,(de)		; $4c98
 	dec a			; $4c99
 	jp z,_enemyBoss_dead		; $4c9a
+
 	dec a			; $4c9d
-	jr nz,_label_0f_073	; $4c9e
+	jr nz,@delete	; $4c9e
+
+	; Subid 2 (shield) just destroyed
+
+	; Destroy sword
 	call _ecom_killRelatedObj2		; $4ca0
-	ld a,$04		; $4ca3
+
+	; Set some variables on parent
+	ld a,Object.state		; $4ca3
 	call objectGetRelatedObject1Var		; $4ca5
 	ld (hl),$0d		; $4ca8
-	ld l,$86		; $4caa
-	ld (hl),$5a		; $4cac
-	ld l,$ab		; $4cae
-	ld (hl),$60		; $4cb0
-_label_0f_073:
-	jp enemyDelete		; $4cb2
-_label_0f_074:
-	call _ecom_getSubidAndCpStateTo08		; $4cb5
-	jr nc,_label_0f_075	; $4cb8
-	rst_jumpTable			; $4cba
-.dw $4cd4
-.dw $4ce6
-.dw $4d26
-.dw $4d26
-.dw $4d26
-.dw $4d26
-.dw $4d26
-.dw $4d26
 
-_label_0f_075:
+	ld l,Enemy.counter1		; $4caa
+	ld (hl),90		; $4cac
+
+	ld l,Enemy.invincibilityCounter		; $4cae
+	ld (hl),$60		; $4cb0
+
+@delete:
+	jp enemyDelete		; $4cb2
+
+@normalStatus:
+	call _ecom_getSubidAndCpStateTo08		; $4cb5
+	jr nc,@normalState	; $4cb8
+	rst_jumpTable			; $4cba
+	.dw _armosWarrior_state_uninitialized
+	.dw _armosWarrior_state_spawner
+	.dw _armosWarrior_state_stub
+	.dw _armosWarrior_state_stub
+	.dw _armosWarrior_state_stub
+	.dw _armosWarrior_state_stub
+	.dw _armosWarrior_state_stub
+	.dw _armosWarrior_state_stub
+
+@normalState:
 	dec b			; $4ccb
 	ld a,b			; $4ccc
 	rst_jumpTable			; $4ccd
-.dw $4d27
-.dw $4eb6
-.dw $4f05
+	.dw _armosWarrior_parent
+	.dw _armosWarrior_shield
+	.dw _armosWarrior_sword
+
+
+_armosWarrior_state_uninitialized:
 	ld a,b			; $4cd4
 	or a			; $4cd5
 	jp nz,_ecom_setSpeedAndState8		; $4cd6
+
+	; Spawner only
+
 	inc a			; $4cd9
-	ld (de),a		; $4cda
+	ld (de),a ; [state] = 1
 	ld (wDisabledObjects),a		; $4cdb
 	ld (wMenuDisabled),a		; $4cde
-	ld a,$73		; $4ce1
+
+	ld a,ENEMYID_ARMOS_WARRIOR		; $4ce1
 	jp _enemyBoss_initializeRoom		; $4ce3
+
+
+_armosWarrior_state_spawner:
 	ld b,$03		; $4ce6
 	call checkBEnemySlotsAvailable		; $4ce8
 	ret nz			; $4ceb
+
 	ld c,$0c		; $4cec
 	call _ecom_setZAboveScreen		; $4cee
-	ld b,$73		; $4cf1
+
+	; Spawn parent
+	ld b,ENEMYID_ARMOS_WARRIOR		; $4cf1
 	call _ecom_spawnUncountedEnemyWithSubid01		; $4cf3
 	ld c,h			; $4cf6
+
+	; Spawn shield
 	call _ecom_spawnUncountedEnemyWithSubid01		; $4cf7
-	inc (hl)		; $4cfa
-	ld l,$96		; $4cfb
-	ld a,$80		; $4cfd
+	inc (hl) ; [shield.subid] = 2
+
+	; [shield.relatedObj1] = parent
+	ld l,Enemy.relatedObj1		; $4cfb
+	ld a,Enemy.start		; $4cfd
 	ldi (hl),a		; $4cff
 	ld (hl),c		; $4d00
+
 	call objectCopyPosition		; $4d01
 	push hl			; $4d04
+
+	; Spawn sword
 	call _ecom_spawnUncountedEnemyWithSubid01		; $4d05
-	ld (hl),$03		; $4d08
-	ld l,$96		; $4d0a
-	ld a,$80		; $4d0c
+	ld (hl),$03 ; [sword.subid] = 3
+
+	; [sword.relatedObj1] = parent
+	ld l,Enemy.relatedObj1		; $4d0a
+	ld a,Enemy.start		; $4d0c
 	ldi (hl),a		; $4d0e
 	ld (hl),c		; $4d0f
+
 	call objectCopyPosition		; $4d10
+
+	; [parent.var31] = shield
+	; [parent.var32] = sword
 	ld b,h			; $4d13
 	pop hl			; $4d14
 	ld a,h			; $4d15
 	ld h,c			; $4d16
-	ld l,$b1		; $4d17
+	ld l,Enemy.var31		; $4d17
 	ldi (hl),a		; $4d19
 	ld (hl),b		; $4d1a
+
 	call objectCopyPosition		; $4d1b
-	ld l,$80		; $4d1e
+
+	; Transfer enabled byte to parent
+	ld l,Enemy.enabled		; $4d1e
 	ld e,l			; $4d20
 	ld a,(de)		; $4d21
 	ld (hl),a		; $4d22
+
 	jp enemyDelete		; $4d23
+
+
+_armosWarrior_state_stub:
 	ret			; $4d26
+
+
+_armosWarrior_parent:
 	ld a,(de)		; $4d27
 	sub $08			; $4d28
 	rst_jumpTable			; $4d2a
-.dw $4d3d
-.dw $4d57
-.dw $4dd0
-.dw $4dfa
-.dw $4e13
-.dw $4e2e
-.dw $4e66
-.dw $4e74
-.dw $4e9d
+	.dw _armosWarrior_parent_state8
+	.dw _armosWarrior_parent_state9
+	.dw _armosWarrior_parent_stateA
+	.dw _armosWarrior_parent_stateB
+	.dw _armosWarrior_parent_stateC
+	.dw _armosWarrior_parent_stateD
+	.dw _armosWarrior_parent_stateE
+	.dw _armosWarrior_parent_stateF
+	.dw _armosWarrior_parent_state10
+
+
+; Waiting for door to close
+_armosWarrior_parent_state8:
 	ld a,($cc93)		; $4d3d
 	or a			; $4d40
 	ret nz			; $4d41
-	ld bc,$0108		; $4d42
+
+	ldbc $01,$08		; $4d42
 	call _enemyBoss_spawnShadow		; $4d45
 	ret nz			; $4d48
+
 	ld h,d			; $4d49
 	ld l,e			; $4d4a
-	inc (hl)		; $4d4b
-	ld l,$90		; $4d4c
-	ld (hl),$14		; $4d4e
-	ld l,$a5		; $4d50
-	ld (hl),$60		; $4d52
+	inc (hl) ; [state]
+
+	ld l,Enemy.speed		; $4d4c
+	ld (hl),SPEED_80		; $4d4e
+
+	ld l,Enemy.collisionReactionSet		; $4d50
+	ld (hl),COLLISIONREACTIONSET_60		; $4d52
 	jp objectSetVisible82		; $4d54
+
+
+; Cutscene before fight starts (falling from sky)
+_armosWarrior_parent_state9:
 	inc e			; $4d57
-	ld a,(de)		; $4d58
+	ld a,(de) ; [state2]
 	rst_jumpTable			; $4d59
-.dw $4d64
-.dw $4d84
-.dw $4d90
-.dw $4d9f
-.dw $4dba
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw @substate4
+
+@substate0:
 	ld c,$20		; $4d64
 	call objectUpdateSpeedZ_paramC		; $4d66
 	ret nz			; $4d69
-	ld l,$85		; $4d6a
+
+	; Hit the ground
+
+	ld l,Enemy.state2		; $4d6a
 	inc (hl)		; $4d6c
+
 	inc l			; $4d6d
 	ld a,$1a		; $4d6e
-	ld (hl),a		; $4d70
+	ld (hl),a ; [counter1]
 	ld (wScreenShakeCounterY),a		; $4d71
 	ld (wScreenShakeCounterX),a		; $4d74
-	ld l,$b2		; $4d77
+
+	; [sword.zh] = [parent.zh]
+	ld l,Enemy.var32		; $4d77
 	ld h,(hl)		; $4d79
-	ld l,$8f		; $4d7a
+	ld l,Enemy.zh		; $4d7a
 	ld e,l			; $4d7c
 	ld a,(de)		; $4d7d
 	ld (hl),a		; $4d7e
+
 	ld a,SND_STRONG_POUND		; $4d7f
 	jp playSound		; $4d81
+
+@substate1:
 	call _ecom_decCounter1		; $4d84
 	ret nz			; $4d87
 	ld l,e			; $4d88
-	inc (hl)		; $4d89
-	ld bc,$2f01		; $4d8a
+	inc (hl) ; [state2]
+	ld bc,TX_2f01		; $4d8a
 	jp showText		; $4d8d
+
+@substate2:
 	ld h,d			; $4d90
 	ld l,e			; $4d91
-	inc (hl)		; $4d92
-	ld l,$86		; $4d93
-	ld (hl),$1e		; $4d95
+	inc (hl) ; [state2]
+
+	ld l,Enemy.counter1		; $4d93
+	ld (hl),30		; $4d95
+
 	call _enemyBoss_beginMiniboss		; $4d97
 	ld a,$02		; $4d9a
 	jp enemySetAnimation		; $4d9c
+
+@substate3:
 	call _ecom_decCounter1		; $4d9f
 	ret nz			; $4da2
-	ld (hl),$46		; $4da3
-	ld l,$89		; $4da5
-	ld (hl),$10		; $4da7
+
+	ld (hl),70 ; [counter1]
+	ld l,Enemy.angle		; $4da5
+	ld (hl),ANGLE_DOWN		; $4da7
+
 	ld l,e			; $4da9
-	inc (hl)		; $4daa
-	ld l,$b2		; $4dab
+	inc (hl) ; [state2]
+
+	; [sword.yh] -= 2
+	ld l,Enemy.var32		; $4dab
 	ld h,(hl)		; $4dad
-	ld l,$8b		; $4dae
+	ld l,Enemy.yh		; $4dae
 	ld a,(hl)		; $4db0
 	sub $02			; $4db1
 	ldi (hl),a		; $4db3
+
+	; [sword.xh] -= 1
 	inc l			; $4db4
 	dec (hl)		; $4db5
+
 	xor a			; $4db6
 	jp enemySetAnimation		; $4db7
+
+; Sword moving up, parent moving down
+@substate4:
 	call _ecom_decCounter1		; $4dba
-	jr nz,_label_0f_076	; $4dbd
-	ld l,$84		; $4dbf
+	jr nz,++		; $4dbd
+
+	ld l,Enemy.state		; $4dbf
 	inc (hl)		; $4dc1
-	ld l,$89		; $4dc2
-	ld (hl),$18		; $4dc4
-	ld l,$b0		; $4dc6
+
+	ld l,Enemy.angle		; $4dc2
+	ld (hl),ANGLE_LEFT		; $4dc4
+
+	ld l,Enemy.var30		; $4dc6
 	ld (hl),$08		; $4dc8
-_label_0f_076:
+++
 	call objectApplySpeed		; $4dca
 	jp enemyAnimate		; $4dcd
-	ld e,$b2		; $4dd0
+
+
+; Deciding which direction to move in next
+_armosWarrior_parent_stateA:
+	; If the armos is moving directly toward his sword, reverse direction
+	ld e,Enemy.var32		; $4dd0
 	ld a,(de)		; $4dd2
 	ld h,a			; $4dd3
-	ld l,$8b		; $4dd4
+	ld l,Enemy.yh		; $4dd4
 	ld b,(hl)		; $4dd6
-	ld l,$8d		; $4dd7
+	ld l,Enemy.xh		; $4dd7
 	ld c,(hl)		; $4dd9
 	call objectGetRelativeAngle		; $4dda
 	add $04			; $4ddd
 	and $18			; $4ddf
 	ld b,a			; $4de1
-	ld e,$89		; $4de2
+	ld e,Enemy.angle		; $4de2
 	ld a,(de)		; $4de4
 	cp b			; $4de5
-	jr nz,_label_0f_077	; $4de6
+	jr nz,++		; $4de6
+
+	; Reverse direction
 	xor $10			; $4de8
 	ld (de),a		; $4dea
-	ld e,$b0		; $4deb
+	ld e,Enemy.var30		; $4deb
 	ld a,(de)		; $4ded
 	cpl			; $4dee
 	inc a			; $4def
 	ld (de),a		; $4df0
-_label_0f_077:
+++
 	call _ecom_incState		; $4df1
-	ld l,$86		; $4df4
-	ld (hl),$4b		; $4df6
-	jr _label_0f_079		; $4df8
+	ld l,Enemy.counter1		; $4df4
+	ld (hl),75		; $4df6
+	jr _armosWarrior_parent_animate		; $4df8
+
+
+; Moving in "box" pattern for [counter1] frames
+_armosWarrior_parent_stateB:
 	call _ecom_decCounter1		; $4dfa
-	jr nz,_label_0f_078	; $4dfd
+	jr nz,_armosWarrior_parent_updateBoxMovement		; $4dfd
 	ld l,e			; $4dff
-	dec (hl)		; $4e00
-_label_0f_078:
-	call $50d5		; $4e01
-	jr nz,_label_0f_079	; $4e04
+	dec (hl) ; [state]
+
+_armosWarrior_parent_updateBoxMovement:
+	call _armosWarrior_parent_checkReachedTurningPoint		; $4e01
+	jr nz,_armosWarrior_parent_animate	; $4e04
+
+	; Hit one of the turning points in his movement pattern; turn 90 degrees
 	ld h,d			; $4e06
-	ld l,$b0		; $4e07
-	ld e,$89		; $4e09
+	ld l,Enemy.var30		; $4e07
+	ld e,Enemy.angle		; $4e09
 	ld a,(de)		; $4e0b
 	add (hl)		; $4e0c
 	and $18			; $4e0d
 	ld (de),a		; $4e0f
-_label_0f_079:
+
+_armosWarrior_parent_animate:
 	jp enemyAnimate		; $4e10
+
+
+; Shield just hit
+_armosWarrior_parent_stateC:
 	call enemyAnimate		; $4e13
 	call _ecom_decCounter1		; $4e16
-	jr nz,_label_0f_078	; $4e19
-	ld l,$84		; $4e1b
+	jr nz,_armosWarrior_parent_updateBoxMovement	; $4e19
+
+	ld l,Enemy.state		; $4e1b
 	ld (hl),$0a		; $4e1d
-	ld l,$b1		; $4e1f
+
+	; Set speed based on number of shield hits
+	ld l,Enemy.var31		; $4e1f
 	ld h,(hl)		; $4e21
-	ld l,$b2		; $4e22
+	ld l,Enemy.var32		; $4e22
 	ld a,(hl)		; $4e24
-	ld hl,$5154		; $4e25
+	ld hl,_armosWarrior_parent_speedVals		; $4e25
 	rst_addAToHl			; $4e28
-	ld e,$90		; $4e29
+	ld e,Enemy.speed		; $4e29
 	ld a,(hl)		; $4e2b
 	ld (de),a		; $4e2c
 	ret			; $4e2d
+
+
+; Shield just destroyed
+_armosWarrior_parent_stateD:
 	call _ecom_decCounter1		; $4e2e
-	jr z,_label_0f_080	; $4e31
+	jr z,@gotoNextState	; $4e31
+
+	; Create debris at random offset every 8 frames
 	ld a,(hl)		; $4e33
 	and $07			; $4e34
 	ret nz			; $4e36
+
 	call getRandomNumber_noPreserveVars		; $4e37
 	ld c,a			; $4e3a
 	and $70			; $4e3b
@@ -143871,416 +144014,603 @@ _label_0f_079:
 	ld c,a			; $4e45
 	call getFreeInteractionSlot		; $4e46
 	ret nz			; $4e49
-	ld (hl),$06		; $4e4a
+	ld (hl),INTERACID_ROCKDEBRIS		; $4e4a
 	jp objectCopyPositionWithOffset		; $4e4c
-_label_0f_080:
-	ld (hl),$1e		; $4e4f
+
+@gotoNextState:
+	ld (hl),30 ; [counter1]
 	ld l,e			; $4e51
-	inc (hl)		; $4e52
-	ld l,$a5		; $4e53
-	ld (hl),$44		; $4e55
-	ld l,$90		; $4e57
-	ld (hl),$50		; $4e59
-	ld bc,$2f02		; $4e5b
+	inc (hl) ; [state]
+
+	ld l,Enemy.collisionReactionSet		; $4e53
+	ld (hl),COLLISIONREACTIONSET_44		; $4e55
+
+	ld l,Enemy.speed		; $4e57
+	ld (hl),SPEED_200		; $4e59
+
+	ld bc,TX_2f02		; $4e5b
 	call showText		; $4e5e
+
 	ld a,$01		; $4e61
 	jp enemySetAnimation		; $4e63
+
+
+; Standing still before charging Link
+_armosWarrior_parent_stateE:
 	call enemyAnimate		; $4e66
 	call _ecom_decCounter1		; $4e69
-	jr nz,_label_0f_079	; $4e6c
-	ld l,$84		; $4e6e
+	jr nz,_armosWarrior_parent_animate	; $4e6c
+	ld l,Enemy.state		; $4e6e
 	inc (hl)		; $4e70
 	jp _ecom_updateAngleTowardTarget		; $4e71
+
+
+; Charging
+_armosWarrior_parent_stateF:
 	call enemyAnimate		; $4e74
 	ld a,$01		; $4e77
 	call _ecom_getSideviewAdjacentWallsBitset		; $4e79
 	jp z,objectApplySpeed		; $4e7c
+
+	; Hit wall
+
 	call _ecom_incState		; $4e7f
-	ld l,$89		; $4e82
+	ld l,Enemy.angle		; $4e82
 	ld a,(hl)		; $4e84
 	xor $10			; $4e85
 	ld (hl),a		; $4e87
-	ld l,$94		; $4e88
-	ld a,$80		; $4e8a
+
+	ld l,Enemy.speedZ		; $4e88
+	ld a,<(-$180)		; $4e8a
 	ldi (hl),a		; $4e8c
-	ld (hl),$fe		; $4e8d
-	ld l,$90		; $4e8f
-	ld (hl),$28		; $4e91
-	ld a,$1e		; $4e93
+	ld (hl),>(-$180)		; $4e8d
+
+	ld l,Enemy.speed		; $4e8f
+	ld (hl),SPEED_100		; $4e91
+
+	ld a,30		; $4e93
 	call setScreenShakeCounter		; $4e95
+
 	ld a,SND_STRONG_POUND		; $4e98
 	jp playSound		; $4e9a
+
+
+; Recoiling from hitting wall
+_armosWarrior_parent_state10:
 	call enemyAnimate		; $4e9d
 	ld c,$16		; $4ea0
 	call objectUpdateSpeedZ_paramC		; $4ea2
 	jp nz,objectApplySpeed		; $4ea5
+
+	; Hit ground
+
 	ld h,d			; $4ea8
-	ld l,$84		; $4ea9
+	ld l,Enemy.state		; $4ea9
 	ld (hl),$0e		; $4eab
-	ld l,$90		; $4ead
-	ld (hl),$50		; $4eaf
-	ld l,$86		; $4eb1
-	ld (hl),$3c		; $4eb3
+
+	ld l,Enemy.speed		; $4ead
+	ld (hl),SPEED_200		; $4eaf
+
+	ld l,Enemy.counter1		; $4eb1
+	ld (hl),60		; $4eb3
 	ret			; $4eb5
+
+
+_armosWarrior_shield:
 	ld a,(de)		; $4eb6
 	cp $08			; $4eb7
-	jr z,_label_0f_082	; $4eb9
+	jr z,@state8		; $4eb9
+
+@state9:
+	; Delete self if no hits remaining
 	ld h,d			; $4ebb
-	ld l,$b2		; $4ebc
+	ld l,Enemy.var32		; $4ebc
 	ld a,(hl)		; $4ebe
 	or a			; $4ebf
 	jp z,_ecom_killObjectH		; $4ec0
-	ld a,$21		; $4ec3
+
+	ld a,Object.animParameter		; $4ec3
 	call objectGetRelatedObject1Var		; $4ec5
-	ld e,$b0		; $4ec8
+	ld e,Enemy.var30		; $4ec8
 	ld a,(de)		; $4eca
 	cp (hl)			; $4ecb
-	jr z,_label_0f_081	; $4ecc
+	jr z,++			; $4ecc
+
 	ld a,(hl)		; $4ece
 	ld (de),a		; $4ecf
-	ld e,$b1		; $4ed0
+	ld e,Enemy.var31		; $4ed0
 	ld a,(de)		; $4ed2
 	add (hl)		; $4ed3
 	call enemySetAnimation		; $4ed4
-_label_0f_081:
-	jp $503a		; $4ed7
-_label_0f_082:
+++
+	jp _armosWarrior_shield_updatePosition		; $4ed7
+
+; Uninitialized
+@state8:
 	ld a,($cc93)		; $4eda
 	or a			; $4edd
 	ret nz			; $4ede
+
 	ld h,d			; $4edf
 	ld l,e			; $4ee0
-	inc (hl)		; $4ee1
-	ld l,$a5		; $4ee2
-	ld (hl),$61		; $4ee4
-	ld l,$b2		; $4ee6
+	inc (hl) ; [state]
+
+	ld l,Enemy.collisionReactionSet		; $4ee2
+	ld (hl),COLLISIONREACTIONSET_61		; $4ee4
+
+	ld l,Enemy.var32		; $4ee6
 	ld (hl),$03		; $4ee8
-	ld l,$97		; $4eea
+
+	; [shield.relatedObj2] = sword (parent.var32)
+	ld l,Enemy.relatedObj1+1		; $4eea
 	ld h,(hl)		; $4eec
-	ld l,$b2		; $4eed
-	ld e,$98		; $4eef
-	ld a,$80		; $4ef1
+	ld l,Enemy.var32		; $4eed
+	ld e,Enemy.relatedObj2		; $4eef
+	ld a,Enemy.start		; $4ef1
 	ld (de),a		; $4ef3
 	inc e			; $4ef4
 	ld a,(hl)		; $4ef5
 	ld (de),a		; $4ef6
-	ld e,$b1		; $4ef7
+
+	ld e,Enemy.var31		; $4ef7
 	ld a,$03		; $4ef9
 	ld (de),a		; $4efb
+
 	call enemySetAnimation		; $4efc
-	call $503a		; $4eff
+	call _armosWarrior_shield_updatePosition		; $4eff
 	jp objectSetVisible81		; $4f02
-	ld e,$84		; $4f05
+
+
+_armosWarrior_sword:
+	ld e,Enemy.state		; $4f05
 	ld a,(de)		; $4f07
 	cp $0b			; $4f08
-	call nc,$5167		; $4f0a
-	ld e,$84		; $4f0d
+	call nc,_armosWarrior_sword_playSlashSound		; $4f0a
+
+	ld e,Enemy.state		; $4f0d
 	ld a,(de)		; $4f0f
 	sub $08			; $4f10
 	rst_jumpTable			; $4f12
-.dw $4f1d
-.dw $4f42
-.dw $4f7d
-.dw $4f9c
-.dw $4fe5
+	.dw _armosWarrior_sword_state8
+	.dw _armosWarrior_sword_state9
+	.dw _armosWarrior_sword_stateA
+	.dw _armosWarrior_sword_stateB
+	.dw _armosWarrior_sword_stateC
+
+
+; Waiting for door to close
+_armosWarrior_sword_state8:
 	ld a,($cc93)		; $4f1d
 	or a			; $4f20
 	ret nz			; $4f21
+
 	ld h,d			; $4f22
 	ld l,e			; $4f23
-	inc (hl)		; $4f24
-	ld l,$a5		; $4f25
-	ld (hl),$62		; $4f27
-	ld l,$90		; $4f29
-	ld (hl),$05		; $4f2b
-	call $507a		; $4f2d
-	ld l,$b1		; $4f30
-	ld e,$98		; $4f32
-	ld a,$80		; $4f34
+	inc (hl) ; [state]
+
+	ld l,Enemy.collisionReactionSet		; $4f25
+	ld (hl),COLLISIONREACTIONSET_62		; $4f27
+
+	ld l,Enemy.speed		; $4f29
+	ld (hl),SPEED_20		; $4f2b
+
+	call _armosWarrior_sword_setPositionAsHeld		; $4f2d
+
+	; [sword.relatedObj2] = shield (parent.var31)
+	ld l,Enemy.var31		; $4f30
+	ld e,Enemy.relatedObj2		; $4f32
+	ld a,Enemy.start		; $4f34
 	ld (de),a		; $4f36
 	inc e			; $4f37
 	ld a,(hl)		; $4f38
 	ld (de),a		; $4f39
+
 	ld a,$09		; $4f3a
 	call enemySetAnimation		; $4f3c
 	jp objectSetVisible80		; $4f3f
-	ld a,$05		; $4f42
+
+
+; Waiting for initial cutscene to end, then moving upward before fight starts
+_armosWarrior_sword_state9:
+	ld a,Object.state2		; $4f42
 	call objectGetRelatedObject1Var		; $4f44
 	ld a,(hl)		; $4f47
 	or a			; $4f48
-	jp z,$507a		; $4f49
+	jp z,_armosWarrior_sword_setPositionAsHeld		; $4f49
+
 	sub $03			; $4f4c
 	ret c			; $4f4e
-	jr z,_label_0f_084	; $4f4f
+	jr z,@parentSubstate3	; $4f4f
+
 	dec l			; $4f51
-	ld a,(hl)		; $4f52
+	ld a,(hl) ; [parent.state]
 	cp $0a			; $4f53
-	jr nc,_label_0f_083	; $4f55
-	call $5167		; $4f57
+	jr nc,@gotoStateA	; $4f55
+	call _armosWarrior_sword_playSlashSound		; $4f57
 	jp enemyAnimate		; $4f5a
-_label_0f_083:
+
+@gotoStateA:
 	ld h,d			; $4f5d
-	inc (hl)		; $4f5e
-	ld l,$86		; $4f5f
+	inc (hl) ; [state]
+
+	ld l,Enemy.counter1		; $4f5f
 	ld (hl),$01		; $4f61
-	ld e,$8b		; $4f63
-	ld l,$b2		; $4f65
+
+	; Save position
+	ld e,Enemy.yh		; $4f63
+	ld l,Enemy.var32		; $4f65
 	ld a,(de)		; $4f67
 	ldi (hl),a		; $4f68
-	ld e,$8d		; $4f69
+	ld e,Enemy.xh		; $4f69
 	ld a,(de)		; $4f6b
 	ld (hl),a		; $4f6c
 	ret			; $4f6d
-_label_0f_084:
+
+@parentSubstate3:
 	ld h,d			; $4f6e
-	ld l,$86		; $4f6f
+	ld l,Enemy.counter1		; $4f6f
 	ld a,(hl)		; $4f71
 	inc (hl)		; $4f72
+
 	or a			; $4f73
 	ld a,$0a		; $4f74
 	jp z,enemySetAnimation		; $4f76
-	ld l,$8b		; $4f79
+
+	ld l,Enemy.yh		; $4f79
 	dec (hl)		; $4f7b
 	ret			; $4f7c
+
+
+; Staying still before charging toward Link
+_armosWarrior_sword_stateA:
 	call _ecom_decCounter1		; $4f7d
 	ret nz			; $4f80
+
 	ld l,e			; $4f81
-	inc (hl)		; $4f82
-	ld l,$90		; $4f83
-	ld (hl),$3c		; $4f85
-	ld l,$86		; $4f87
-	ld (hl),$96		; $4f89
-	ld l,$b0		; $4f8b
+	inc (hl) ; [state]
+
+	ld l,Enemy.speed		; $4f83
+	ld (hl),SPEED_180		; $4f85
+
+	ld l,Enemy.counter1		; $4f87
+	ld (hl),150		; $4f89
+
+	; Write target position to var30/var31
+	ld l,Enemy.var30		; $4f8b
 	ldh a,(<hEnemyTargetY)	; $4f8d
 	ldi (hl),a		; $4f8f
 	ldh a,(<hEnemyTargetX)	; $4f90
 	ld (hl),a		; $4f92
+
 	call _ecom_updateAngleTowardTarget		; $4f93
 	call enemyAnimate		; $4f96
-	jp $505a		; $4f99
-	call $5085		; $4f9c
+	jp _armosWarrior_sword_updateCollisionBox		; $4f99
+
+
+; Charging toward target position
+_armosWarrior_sword_stateB:
+	call _armosWarrior_sword_checkCollisionWithShield		; $4f9c
 	ld a,(wFrameCounter)		; $4f9f
 	and $03			; $4fa2
-	jr nz,_label_0f_085	; $4fa4
+	jr nz,++		; $4fa4
+
+	; Update angle toward target position every 4 frames
 	ld h,d			; $4fa6
-	ld l,$b0		; $4fa7
+	ld l,Enemy.var30		; $4fa7
 	call _ecom_readPositionVars		; $4fa9
 	call objectGetRelativeAngleWithTempVars		; $4fac
-	ld e,$89		; $4faf
+	ld e,Enemy.angle		; $4faf
 	ld (de),a		; $4fb1
-_label_0f_085:
-	call $50fc		; $4fb2
-	jr c,_label_0f_086	; $4fb5
-	ld l,$b0		; $4fb7
+++
+	call _armosWarrior_sword_checkWentTooFar		; $4fb2
+	jr c,@beginSlowingDown	; $4fb5
+
+	; If within 28 pixels of target position, start slowing down
+	ld l,Enemy.var30		; $4fb7
 	ld a,(hl)		; $4fb9
 	sub b			; $4fba
-	add $1c			; $4fbb
-	cp $39			; $4fbd
-	jr nc,_label_0f_087	; $4fbf
+	add 28			; $4fbb
+	cp 57			; $4fbd
+	jr nc,@notSlowingDown	; $4fbf
 	inc l			; $4fc1
 	ld a,(hl)		; $4fc2
 	sub c			; $4fc3
-	add $1c			; $4fc4
-	cp $39			; $4fc6
-	jr nc,_label_0f_087	; $4fc8
-_label_0f_086:
-	ld l,$84		; $4fca
+	add 28			; $4fc4
+	cp 57			; $4fc6
+	jr nc,@notSlowingDown	; $4fc8
+
+@beginSlowingDown:
+	ld l,Enemy.state		; $4fca
 	inc (hl)		; $4fcc
-	ld l,$86		; $4fcd
+	ld l,Enemy.counter1		; $4fcd
 	ld (hl),$70		; $4fcf
-_label_0f_087:
+
+@notSlowingDown:
 	call enemyAnimate		; $4fd1
-_label_0f_088:
+
+_armosWarrior_sword_updatePosition:
 	call _ecom_applyVelocityForTopDownEnemy		; $4fd4
+
+	; Save position
 	ld h,d			; $4fd7
-	ld l,$8b		; $4fd8
-	ld e,$b2		; $4fda
+	ld l,Enemy.yh		; $4fd8
+	ld e,Enemy.var32		; $4fda
 	ldi a,(hl)		; $4fdc
 	ld (de),a		; $4fdd
 	inc e			; $4fde
 	inc l			; $4fdf
 	ld a,(hl)		; $4fe0
 	ld (de),a		; $4fe1
-	jp $505a		; $4fe2
-	call $5085		; $4fe5
+
+	jp _armosWarrior_sword_updateCollisionBox		; $4fe2
+
+
+; Slowing down
+_armosWarrior_sword_stateC:
+	call _armosWarrior_sword_checkCollisionWithShield		; $4fe5
 	call _ecom_decCounter1		; $4fe8
-	jr z,_label_0f_090	; $4feb
-	ld a,(hl)		; $4fed
+	jr z,@stoppedMoving	; $4feb
+
+	ld a,(hl) ; [counter1]
 	swap a			; $4fee
 	rrca			; $4ff0
 	and $03			; $4ff1
-	ld hl,$5150		; $4ff3
+	ld hl,_armosWarrior_sword_speedVals		; $4ff3
 	rst_addAToHl			; $4ff6
-	ld e,$90		; $4ff7
+	ld e,Enemy.speed		; $4ff7
 	ld a,(hl)		; $4ff9
 	ld (de),a		; $4ffa
+
+	; Restore position (which was manipulated for shield collision detection)
 	ld h,d			; $4ffb
-	ld l,$8b		; $4ffc
-	ld e,$b2		; $4ffe
+	ld l,Enemy.yh		; $4ffc
+	ld e,Enemy.var32		; $4ffe
 	ld a,(de)		; $5000
 	ldi (hl),a		; $5001
 	inc e			; $5002
 	inc l			; $5003
 	ld a,(de)		; $5004
 	ld (hl),a		; $5005
-	ld e,$86		; $5006
+
+	ld e,Enemy.counter1		; $5006
 	ld a,(de)		; $5008
-	cp $1e			; $5009
-	jr nc,_label_0f_089	; $500b
+	cp 30			; $5009
+	jr nc,+			; $500b
 	rrca			; $500d
-_label_0f_089:
++
 	call nc,enemyAnimate		; $500e
-	jr _label_0f_088		; $5011
-_label_0f_090:
-	ld e,$a1		; $5013
+	jr _armosWarrior_sword_updatePosition		; $5011
+
+@stoppedMoving:
+	ld e,Enemy.animParameter		; $5013
 	ld a,(de)		; $5015
 	cp $07			; $5016
-	jr z,_label_0f_091	; $5018
-	ld (hl),$02		; $501a
+	jr z,@atRest			; $5018
+	ld (hl),$02 ; [counter1]
 	jp enemyAnimate		; $501c
-_label_0f_091:
-	ld l,$84		; $501f
+
+@atRest:
+	ld l,Enemy.state		; $501f
 	ld (hl),$0a		; $5021
-	ld l,$b4		; $5023
+	ld l,Enemy.var34		; $5023
 	ld (hl),$00		; $5025
-	ld a,$32		; $5027
+
+	; Set counter1 (frames to rest) based on number of hits until shield destroyed
+	ld a,Object.var32		; $5027
 	call objectGetRelatedObject2Var		; $5029
 	ld a,(hl)		; $502c
 	swap a			; $502d
 	rlca			; $502f
-	add $1e			; $5030
-	ld e,$86		; $5032
+	add 30			; $5030
+	ld e,Enemy.counter1		; $5032
 	ld (de),a		; $5034
+
 	ld a,$0a		; $5035
 	jp enemySetAnimation		; $5037
-	ld a,$0b		; $503a
+
+
+;;
+; Shield copies parent's position plus an offset
+; @addr{503a}
+_armosWarrior_shield_updatePosition:
+	ld a,Object.yh		; $503a
 	call objectGetRelatedObject1Var		; $503c
-	ldi a,(hl)		; $503f
+	ldi a,(hl) ; [parent.yh]
 	ld b,a			; $5040
 	inc l			; $5041
-	ldi a,(hl)		; $5042
+	ldi a,(hl) ; [parent.xh]
 	ld c,a			; $5043
+
 	inc l			; $5044
 	ld e,l			; $5045
 	ld a,(hl)		; $5046
-	ld (de),a		; $5047
-	ld e,$b0		; $5048
+	ld (de),a ; [shield.zh] = [parent.zh]
+
+	ld e,Enemy.var30		; $5048
 	ld a,(de)		; $504a
-	ld hl,$512c		; $504b
+	ld hl,_armosWarrior_shield_YXOffsets		; $504b
 	rst_addDoubleIndex			; $504e
-	ld e,$8b		; $504f
+	ld e,Enemy.yh		; $504f
 	ldi a,(hl)		; $5051
 	add b			; $5052
 	ld (de),a		; $5053
-	ld e,$8d		; $5054
+	ld e,Enemy.xh		; $5054
 	ld a,(hl)		; $5056
 	add c			; $5057
 	ld (de),a		; $5058
 	ret			; $5059
-	ld e,$a1		; $505a
+
+
+;;
+; Updates collisionRadiusY/X based on animParameter, also adds an offset to Y/X position.
+; @addr{505a}
+_armosWarrior_sword_updateCollisionBox:
+	ld e,Enemy.animParameter		; $505a
 	ld a,(de)		; $505c
 	add a			; $505d
-	ld hl,$5130		; $505e
+	ld hl,_armosWarrior_sword_collisionBoxes		; $505e
 	rst_addDoubleIndex			; $5061
-	ld e,$b2		; $5062
+
+	ld e,Enemy.var32		; $5062
 	ld a,(de)		; $5064
 	add (hl)		; $5065
-	ld e,$8b		; $5066
+	ld e,Enemy.yh		; $5066
 	ld (de),a		; $5068
+
 	inc hl			; $5069
-	ld e,$b3		; $506a
+	ld e,Enemy.var33		; $506a
 	ld a,(de)		; $506c
 	add (hl)		; $506d
-	ld e,$8d		; $506e
+	ld e,Enemy.xh		; $506e
 	ld (de),a		; $5070
 	inc hl			; $5071
-	ld e,$a6		; $5072
+
+	ld e,Enemy.collisionRadiusY		; $5072
 	ldi a,(hl)		; $5074
 	ld (de),a		; $5075
 	inc e			; $5076
 	ld a,(hl)		; $5077
 	ld (de),a		; $5078
 	ret			; $5079
-	ld a,$0b		; $507a
+
+
+;;
+; Sets the sword's position assuming it's being held by the parent.
+; @addr{507a}
+_armosWarrior_sword_setPositionAsHeld:
+	ld a,Object.yh		; $507a
 	call objectGetRelatedObject1Var		; $507c
 	ld bc,$f4fa		; $507f
 	jp objectTakePositionWithOffset		; $5082
-	ld e,$b4		; $5085
+
+;;
+; @addr{5085}
+_armosWarrior_sword_checkCollisionWithShield:
+	ld e,Enemy.var34		; $5085
 	ld a,(de)		; $5087
 	dec a			; $5088
 	ret z			; $5089
-	ld a,$26		; $508a
+
+	; Check if sword and shield collide
+	ld a,Object.collisionRadiusY		; $508a
 	call objectGetRelatedObject2Var		; $508c
-	ld c,$8b		; $508f
-	call $50c7		; $5091
+	ld c,Enemy.yh		; $508f
+	call @checkIntersection		; $5091
 	ret nc			; $5094
-	ld c,$8d		; $5095
+
+	ld c,Enemy.xh		; $5095
 	ld l,$a7		; $5097
-	call $50c7		; $5099
+	call @checkIntersection		; $5099
 	ret nc			; $509c
-	ld e,$b4		; $509d
+
+	; They've collided
+
+	ld e,Enemy.var34		; $509d
 	ld a,$01		; $509f
 	ld (de),a		; $50a1
-	ld l,$ab		; $50a2
+
+	; Set various variables on the shield
+	ld l,Enemy.invincibilityCounter		; $50a2
 	ld (hl),$18		; $50a4
-	ld l,$b2		; $50a6
+
+	; [Hits until destruction]--
+	ld l,Enemy.var32		; $50a6
 	dec (hl)		; $50a8
-	ld l,$b1		; $50a9
+
+	ld l,Enemy.var31		; $50a9
 	ld a,(hl)		; $50ab
 	add $02			; $50ac
 	ld (hl),a		; $50ae
-	ld l,$97		; $50af
+
+	; h = [shield.relatedObj1] = parent
+	ld l,Enemy.relatedObj1+1		; $50af
 	ld h,(hl)		; $50b1
-	ld l,$86		; $50b2
-	ld (hl),$3c		; $50b4
-	ld l,$84		; $50b6
+
+	ld l,Enemy.counter1		; $50b2
+	ld (hl),60		; $50b4
+
+	ld l,Enemy.state		; $50b6
 	ld (hl),$0c		; $50b8
-	ld l,$90		; $50ba
-	ld (hl),$78		; $50bc
-	ld l,$ab		; $50be
+
+	ld l,Enemy.speed		; $50ba
+	ld (hl),SPEED_300		; $50bc
+
+	ld l,Enemy.invincibilityCounter		; $50be
 	ld (hl),$18		; $50c0
+
 	ld a,SND_BOSS_DAMAGE		; $50c2
 	jp playSound		; $50c4
+
+;;
+; Checks for intersection on a position component given two objects.
+; @addr{50c7}
+@checkIntersection:
+	; b = [sword.collisionRadius] + [shield.collisionRadius]
 	ld e,l			; $50c7
 	ld a,(de)		; $50c8
 	add (hl)		; $50c9
 	ld b,a			; $50ca
+
+	; a = [sword.pos] - [shield.pos]
 	ld l,c			; $50cb
 	ld e,l			; $50cc
 	ld a,(de)		; $50cd
 	sub (hl)		; $50ce
+
 	add b			; $50cf
 	sla b			; $50d0
 	inc b			; $50d2
 	cp b			; $50d3
 	ret			; $50d4
+
+
+;;
+; The armos always moves in a "box" pattern in his first phase, this checks if he's
+; reached one of the "corners" of the box where he must turn.
+;
+; @param[out]	zflag	z if hit a turning point
+; @addr{50d5}
+_armosWarrior_parent_checkReachedTurningPoint:
 	ld b,$31		; $50d5
-	ld e,$8b		; $50d7
+	ld e,Enemy.yh		; $50d7
 	ld a,(de)		; $50d9
 	cp $30			; $50da
-	jr c,_label_0f_092	; $50dc
+	jr c,@hitCorner	; $50dc
+
 	ld b,$7f		; $50de
 	cp $80			; $50e0
-	jr nc,_label_0f_092	; $50e2
+	jr nc,@hitCorner	; $50e2
+
 	ld b,$bf		; $50e4
-	ld e,$8d		; $50e6
+	ld e,Enemy.xh		; $50e6
 	ld a,(de)		; $50e8
 	cp $c0			; $50e9
-	jr nc,_label_0f_092	; $50eb
+	jr nc,@hitCorner	; $50eb
+
 	ld b,$31		; $50ed
 	cp $30			; $50ef
-	jr c,_label_0f_092	; $50f1
+	jr c,@hitCorner	; $50f1
+
 	call objectApplySpeed		; $50f3
 	or d			; $50f6
 	ret			; $50f7
-_label_0f_092:
+
+@hitCorner:
 	ld a,b			; $50f8
 	ld (de),a		; $50f9
 	xor a			; $50fa
 	ret			; $50fb
+
+
+;;
+; @param[out]	bc	Position of sword
+; @param[out]	cflag	c if the sword has gone to far and should stop now
+; @addr{50fc}
+_armosWarrior_sword_checkWentTooFar:
+	; Fix position, store it in bc
 	ld h,d			; $50fc
-	ld l,$8b		; $50fd
-	ld e,$b2		; $50ff
+	ld l,Enemy.yh		; $50fd
+	ld e,Enemy.var32		; $50ff
 	ld a,(de)		; $5101
 	ldi (hl),a		; $5102
 	ld b,a			; $5103
@@ -144289,41 +144619,90 @@ _label_0f_092:
 	ld a,(de)		; $5106
 	ld (hl),a		; $5107
 	ld c,a			; $5108
-	ld e,$89		; $5109
+
+	; Read in boundary data based on the angle, determine if the sword has gone past
+	ld e,Enemy.angle		; $5109
 	ld a,(de)		; $510b
 	add $02			; $510c
 	and $1c			; $510e
 	rrca			; $5110
-	ld hl,$5157		; $5111
+	ld hl,_armosWarrior_sword_angleBoundaries		; $5111
 	rst_addAToHl			; $5114
+
 	ldi a,(hl)		; $5115
 	ld e,b			; $5116
-	call $5123		; $5117
-	jr c,_label_0f_093	; $511a
+	call @checkPositionComponent		; $5117
+	jr c,++			; $511a
 	ld e,c			; $511c
 	ld a,(hl)		; $511d
-	call $5123		; $511e
-_label_0f_093:
+	call @checkPositionComponent		; $511e
+++
 	ld h,d			; $5121
 	ret			; $5122
+
+;;
+; @addr{5123}
+@checkPositionComponent:
+	; If bit 0 of the data structure is set, it's an upper / left boundary
 	bit 0,a			; $5123
-	jr nz,_label_0f_094	; $5125
+	jr nz,++		; $5125
 	cp e			; $5127
 	ret			; $5128
-_label_0f_094:
+++
 	cp e			; $5129
 	ccf			; $512a
 	ret			; $512b
 
-.db $fb $03 $fb $07 $fc $00 $08 $03
-.db $fe $fe $06 $06 $00 $fc $03 $08
-.db $02 $fe $06 $06 $04 $ff $08 $03
-.db $02 $02 $06 $06 $01 $04 $03 $08
-.db $fe $02 $06 $06 $0a $14 $28 $32
-.db $3c $32 $28 $51 $fe $51 $98 $fe
-.db $98 $60 $98 $60 $fe $60 $51 $fe
-.db $51 $51 $51
 
+_armosWarrior_shield_YXOffsets:
+	.db $fb $03 ; Frame 0
+	.db $fb $07 ; Frame 1
+
+
+; This is a table of data values for various parts of the sword's animation, which adjusts
+; its collision box.
+;   b0: Y-offset
+;   b1: X-offset
+;   b2: collisionRadiusY
+;   b3: collisionRadiusX
+_armosWarrior_sword_collisionBoxes:
+	.db $fc $00 $08 $03
+	.db $fe $fe $06 $06
+	.db $00 $fc $03 $08
+	.db $02 $fe $06 $06
+	.db $04 $ff $08 $03
+	.db $02 $02 $06 $06
+	.db $01 $04 $03 $08
+	.db $fe $02 $06 $06
+
+
+; Sword decelerates based on these values
+_armosWarrior_sword_speedVals:
+	.db SPEED_40, SPEED_80, SPEED_100, SPEED_140
+
+
+; Parent chooses a speed from here based on how many hits the shield has taken
+_armosWarrior_parent_speedVals:
+	.db SPEED_180, SPEED_140, SPEED_100
+
+
+; For each possible angle the sword can move in, this has Y and X boundaries where it
+; should stop.
+;   b0: Y-boundary. (If bit 0 is set, it's an upper boundary.)
+;   b1: X-boundary. (If bit 0 is set, it's a left boundary.)
+_armosWarrior_sword_angleBoundaries:
+	.db $51 $fe ; Up
+	.db $51 $98 ; Up-right
+	.db $fe $98 ; Right
+	.db $60 $98 ; Down-right
+	.db $60 $fe ; Down
+	.db $60 $51 ; Down-left
+	.db $fe $51 ; Left
+	.db $51 $51 ; Up-left
+
+;;
+; @addr{5167}
+_armosWarrior_sword_playSlashSound:
 	ld a,(wFrameCounter)		; $5167
 	and $0f			; $516a
 	ret nz			; $516c

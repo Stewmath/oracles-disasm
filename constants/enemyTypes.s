@@ -647,7 +647,14 @@
 .define ENEMYID_GIANT_GHINI			$70
 .define ENEMYID_SWOOP				$71
 .define ENEMYID_DIGDOGGER			$72
+
+;;
+; @subid_00{Spawner (use this)}
+; @subid_01{Parent (the actual boss himself)}
+; @subid_02{Shield}
+; @subid_03{Sword}
 .define ENEMYID_ARMOS_WARRIOR			$73
+
 .define ENEMYID_SMASHER				$74
 .define ENEMYID_VIRE				$75
 .define ENEMYID_ANGLER_FISH			$76
