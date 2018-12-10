@@ -143051,223 +143051,322 @@ _swoop_speedVals:
 _swoop_framesBeforeAttacking:
 	.db 255, 150, 60
 
-;;
-; @addr{49ac}
+
+; ==============================================================================
+; ENEMYID_DIGDOGGER
+;
+; Variables:
+;   var30: If nonzero, dirt is created at digdogger's position every 8 frames.
+;   var31: Counter until a new dirt object (PARTID_DIGDOGGER_DIRT) is created.
+; ==============================================================================
 enemyCode72:
-	jr z,_label_0f_064	; $49ac
-	sub $03			; $49ae
+	jr z,@normalStatus	; $49ac
+	sub ENEMYSTATUS_NO_HEALTH			; $49ae
 	ret c			; $49b0
-	jr nz,_label_0f_064	; $49b1
+	jr nz,@normalStatus	; $49b1
 	jp _enemyBoss_dead		; $49b3
-_label_0f_064:
-	ld e,$b0		; $49b6
+
+@normalStatus:
+	ld e,Enemy.var30		; $49b6
 	ld a,(de)		; $49b8
 	or a			; $49b9
-	call nz,$4c40		; $49ba
-	ld e,$84		; $49bd
+	call nz,_digdogger_spawnDirtEvery8Frames		; $49ba
+	ld e,Enemy.state		; $49bd
 	ld a,(de)		; $49bf
 	rst_jumpTable			; $49c0
-.dw $49db
-.dw $49f8
-.dw $49f8
-.dw $49f8
-.dw $49f8
-.dw $49f8
-.dw $49f8
-.dw $49f8
-.dw $49f9
-.dw $4a85
-.dw $4ab3
-.dw $4b8f
-.dw $4bcb
-	ld a,$72		; $49db
-	ld b,$be		; $49dd
+	.dw _digdogger_state_uninitialized
+	.dw _digdogger_state_stub
+	.dw _digdogger_state_stub
+	.dw _digdogger_state_stub
+	.dw _digdogger_state_stub
+	.dw _digdogger_state_stub
+	.dw _digdogger_state_stub
+	.dw _digdogger_state_stub
+	.dw _digdogger_state8
+	.dw _digdogger_state9
+	.dw _digdogger_stateA
+	.dw _digdogger_stateB
+	.dw _digdogger_stateC
+
+
+_digdogger_state_uninitialized:
+	ld a,ENEMYID_DIGDOGGER		; $49db
+	ld b,PALH_be		; $49dd
 	call _enemyBoss_initializeRoom		; $49df
 	call _ecom_setSpeedAndState8		; $49e2
-_label_0f_065:
+
 	ld a,$07		; $49e5
-	ld l,$b1		; $49e7
-	ldd (hl),a		; $49e9
-	ld (hl),a		; $49ea
-	ld l,$90		; $49eb
-	ld (hl),$3c		; $49ed
-	ld l,$89		; $49ef
-	ld (hl),$10		; $49f1
-	ld l,$87		; $49f3
-	ld (hl),$1e		; $49f5
+	ld l,Enemy.var31		; $49e7
+	ldd (hl),a ; [var31] = 7
+	ld (hl),a  ; [var30] = 7
+
+	ld l,Enemy.speed		; $49eb
+	ld (hl),SPEED_180		; $49ed
+	ld l,Enemy.angle		; $49ef
+	ld (hl),ANGLE_DOWN		; $49f1
+
+	ld l,Enemy.counter2		; $49f3
+	ld (hl),30		; $49f5
 	ret			; $49f7
+
+
+_digdogger_state_stub:
 	ret			; $49f8
-	ld e,$85		; $49f9
+
+
+; Cutscene before fight
+_digdogger_state8:
+	ld e,Enemy.state2		; $49f9
 	ld a,(de)		; $49fb
 	rst_jumpTable			; $49fc
-.dw $4a05
-.dw $4a3c
-.dw $4a56
-.dw $4a6e
-	ld a,$01		; $4a05
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+
+@substate0:
+	ld a,DISABLE_LINK		; $4a05
 	ld (wDisabledObjects),a		; $4a07
 	ld (wMenuDisabled),a		; $4a0a
+
+	; Wait for door to close
 	ld a,($cc93)		; $4a0d
 	or a			; $4a10
 	ret nz			; $4a11
+
 	call _ecom_decCounter2		; $4a12
 	ret nz			; $4a15
+
+	; Move further down
 	call objectApplySpeed		; $4a16
-	ld e,$8b		; $4a19
+	ld e,Enemy.yh		; $4a19
 	ld a,(de)		; $4a1b
 	cp $58			; $4a1c
 	ret c			; $4a1e
+
+	; Reached middle of screen, about to pop out
+
 	ld a,SND_DIG		; $4a1f
 	call playSound		; $4a21
+
 	ld a,$06		; $4a24
 	call enemySetAnimation		; $4a26
 	call objectSetVisiblec2		; $4a29
+
 	call _ecom_incState2		; $4a2c
-	ld l,$b0		; $4a2f
+
+	; Disable dirt animation
+	ld l,Enemy.var30		; $4a2f
 	ld (hl),$00		; $4a31
+
 	call objectGetTileAtPosition		; $4a33
 	ld c,l			; $4a36
-	ld a,$4c		; $4a37
+	ld a,TILEINDEX_DUNGEON_DUG_DIRT		; $4a37
 	jp setTile		; $4a39
-	call $4c5a		; $4a3c
-	ld b,$06		; $4a3f
+
+@substate1:
+	call _digdogger_retFromCallerIfAnimationUnfinished		; $4a3c
+
+	ld b,INTERACID_ROCKDEBRIS		; $4a3f
 	call objectCreateInteractionWithSubid00		; $4a41
+
 	call _ecom_incState2		; $4a44
-	ld l,$86		; $4a47
-	ld (hl),$3c		; $4a49
-	ld bc,$fe00		; $4a4b
+
+	ld l,Enemy.counter1		; $4a47
+	ld (hl),60		; $4a49
+
+	ld bc,-$200		; $4a4b
 	call objectSetSpeedZ		; $4a4e
+
 	ld a,$05		; $4a51
 	jp enemySetAnimation		; $4a53
+
+@substate2:
 	ld c,$10		; $4a56
 	call objectUpdateSpeedZ_paramC		; $4a58
 	ret nz			; $4a5b
+
 	ld a,$02		; $4a5c
 	call enemySetAnimation		; $4a5e
 	call _ecom_decCounter1		; $4a61
 	ret nz			; $4a64
-	ld bc,$2f03		; $4a65
+
+	ld bc,TX_2f03		; $4a65
 	call showText		; $4a68
 	jp _ecom_incState2		; $4a6b
+
+@substate3:
 	call retIfTextIsActive		; $4a6e
+
 	call _enemyBoss_beginMiniboss		; $4a71
 	xor a			; $4a74
 	ld (wDisabledObjects),a		; $4a75
 	ld (wMenuDisabled),a		; $4a78
-	ld e,$84		; $4a7b
+
+
+_digdogger_digIntoGround:
+	ld e,Enemy.state		; $4a7b
 	ld a,$09		; $4a7d
 	ld (de),a		; $4a7f
+
 	ld a,$04		; $4a80
 	jp enemySetAnimation		; $4a82
-	call $4c5a		; $4a85
+
+
+; Digging into ground
+_digdogger_state9:
+	call _digdogger_retFromCallerIfAnimationUnfinished		; $4a85
+
+	; Done digging, about to start moving around
+_digdogger_beginUndergroundMovement:
 	ld h,d			; $4a88
-	ld l,$84		; $4a89
+	ld l,Enemy.state		; $4a89
 	ld (hl),$0a		; $4a8b
 	inc l			; $4a8d
 	xor a			; $4a8e
-	ld (hl),a		; $4a8f
+	ld (hl),a ; [state2]
+
 	dec a			; $4a90
-	ld l,$89		; $4a91
-	ld (hl),a		; $4a93
-	ld l,$9a		; $4a94
+	ld l,Enemy.angle		; $4a91
+	ld (hl),a ; [angle] = $ff
+
+	ld l,Enemy.visible		; $4a94
 	res 7,(hl)		; $4a96
-	ld l,$a5		; $4a98
-	ld (hl),$69		; $4a9a
-	ld l,$86		; $4a9c
-	ld (hl),$3c		; $4a9e
-	call $4c65		; $4aa0
-	ld hl,$4c88		; $4aa3
+
+	ld l,Enemy.collisionReactionSet		; $4a98
+	ld (hl),COLLISIONREACTIONSET_69		; $4a9a
+
+	ld l,Enemy.counter1		; $4a9c
+	ld (hl),60		; $4a9e
+
+	call _digdogger_getAngerLevel		; $4aa0
+	ld hl,_digdogger_timeUntilDrillAttack		; $4aa3
 	rst_addAToHl			; $4aa6
 	ld a,(hl)		; $4aa7
-	ld e,$87		; $4aa8
+	ld e,Enemy.counter2		; $4aa8
 	ld (de),a		; $4aaa
+
 	ld a,SND_DIG		; $4aab
 	call playSound		; $4aad
-	jp $4c45		; $4ab0
-	ld e,$85		; $4ab3
+	jp _digdogger_spawnDirt		; $4ab0
+
+
+; Currently in the ground, moving around
+_digdogger_stateA:
+	ld e,Enemy.state2		; $4ab3
 	ld a,(de)		; $4ab5
 	rst_jumpTable			; $4ab6
-.dw $4abd
-.dw $4aee
-.dw $4b82
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+
+; Staying underground for [counter1] frames before moving
+@substate0:
 	call _ecom_decCounter1		; $4abd
 	ret nz			; $4ac0
+
 	call _ecom_incState2		; $4ac1
+
+@resetUndergroundMovement:
+	; Adjust angle toward Link?
 	call objectGetAngleTowardLink		; $4ac4
 	ld c,a			; $4ac7
-	ld e,$89		; $4ac8
+	ld e,Enemy.angle		; $4ac8
 	ld a,(de)		; $4aca
 	xor $10			; $4acb
 	cp c			; $4acd
 	ld a,c			; $4ace
-	jr nz,_label_0f_066	; $4acf
+	jr nz,+			; $4acf
 	add $08			; $4ad1
 	and $1f			; $4ad3
-_label_0f_066:
++
 	ld (de),a		; $4ad5
-	ld e,$86		; $4ad6
-	ld a,$1e		; $4ad8
+
+	ld e,Enemy.counter1		; $4ad6
+	ld a,30		; $4ad8
 	ld (de),a		; $4ada
-	call $4c65		; $4adb
-	ld hl,$4c85		; $4ade
+
+	call _digdogger_getAngerLevel		; $4adb
+	ld hl,_digdogger_speedVals		; $4ade
 	rst_addAToHl			; $4ae1
 	ld a,(hl)		; $4ae2
-	ld e,$90		; $4ae3
+	ld e,Enemy.speed		; $4ae3
 	ld (de),a		; $4ae5
+
 	ld a,$0a		; $4ae6
 	call objectSetCollideRadius		; $4ae8
-	jp $4c45		; $4aeb
-	ld e,$aa		; $4aee
+	jp _digdogger_spawnDirt		; $4aeb
+
+; Moving around until shovel is used or he starts drilling
+@substate1:
+	ld e,Enemy.var2a		; $4aee
 	ld a,(de)		; $4af0
 	sla a			; $4af1
-	jr nc,_label_0f_067	; $4af3
-	cp $18			; $4af5
-	jr nz,_label_0f_067	; $4af7
-	ld bc,$ff00		; $4af9
+	jr nc,@noShovel	; $4af3
+	cp COLLISIONTYPE_SHOVEL<<1			; $4af5
+	jr nz,@noShovel	; $4af7
+
+	; Shovel was used; will now pop out of ground
+
+	ld bc,-$100		; $4af9
 	call objectSetSpeedZ		; $4afc
-	ld l,$90		; $4aff
-	ld (hl),$28		; $4b01
+	ld l,Enemy.speed		; $4aff
+	ld (hl),SPEED_100		; $4b01
+
 	ld a,$0c		; $4b03
-	ld l,$84		; $4b05
+	ld l,Enemy.state		; $4b05
 	ldi (hl),a		; $4b07
 	xor a			; $4b08
-	ld (hl),a		; $4b09
-	ld l,$b0		; $4b0a
-	ld (hl),a		; $4b0c
+	ld (hl),a ; [state2] = 0
+
+	ld l,Enemy.var30		; $4b0a
+	ld (hl),a ; [var30] = 0
+
 	inc a			; $4b0d
-	ld l,$86		; $4b0e
-	ld (hl),a		; $4b10
-	ld l,$9a		; $4b11
+	ld l,Enemy.counter1		; $4b0e
+	ld (hl),a ; [counter1] = 1
+
+	ld l,Enemy.visible		; $4b11
 	set 7,(hl)		; $4b13
+
+	; Bounces away from Link
 	call objectGetAngleTowardLink		; $4b15
 	xor $10			; $4b18
-	ld e,$89		; $4b1a
+	ld e,Enemy.angle		; $4b1a
 	ld (de),a		; $4b1c
+
 	ld a,$06		; $4b1d
 	call objectSetCollideRadius		; $4b1f
 	ld a,$05		; $4b22
 	jp enemySetAnimation		; $4b24
-_label_0f_067:
+
+@noShovel:
 	call objectApplySpeed		; $4b27
 	ld a,$01		; $4b2a
 	call _ecom_getSideviewAdjacentWallsBitset		; $4b2c
-	jr z,_label_0f_068	; $4b2f
+	jr z,++			; $4b2f
+
+	; Hit wall
 	call _ecom_incState2		; $4b31
-	ld l,$86		; $4b34
-	ld (hl),$5a		; $4b36
-	ld l,$9a		; $4b38
+	ld l,Enemy.counter1		; $4b34
+	ld (hl),90		; $4b36
+	ld l,Enemy.visible		; $4b38
 	res 7,(hl)		; $4b3a
-	ld l,$b0		; $4b3c
+	ld l,Enemy.var30		; $4b3c
 	ld (hl),$00		; $4b3e
 	ret			; $4b40
-_label_0f_068:
+++
 	call _ecom_decCounter1		; $4b41
-	call z,$4ac4		; $4b44
+	call z,@resetUndergroundMovement		; $4b44
 	call _ecom_decCounter2		; $4b47
 	ret nz			; $4b4a
+
+	; If Link is close enough, drill him
 	ld c,$18		; $4b4b
 	call objectCheckLinkWithinDistance		; $4b4d
 	ret nc			; $4b50
+
+	; "Transport" to the tile at Link's position
 	ld hl,w1Link.yh		; $4b51
 	ldi a,(hl)		; $4b54
 	inc l			; $4b55
@@ -143276,178 +143375,244 @@ _label_0f_068:
 	call getTileAtPosition		; $4b58
 	ld c,l			; $4b5b
 	call convertShortToLongPosition_paramC		; $4b5c
-	ld e,$8b		; $4b5f
+	ld e,Enemy.yh		; $4b5f
 	ld a,b			; $4b61
 	ld (de),a		; $4b62
-	ld e,$8d		; $4b63
+	ld e,Enemy.xh		; $4b63
 	ld a,c			; $4b65
 	ld (de),a		; $4b66
-	call _ecom_incState		; $4b67
+
+	call _ecom_incState ; [state] = $0b
 	inc l			; $4b6a
 	xor a			; $4b6b
-	ld (hl),a		; $4b6c
-	ld l,$b0		; $4b6d
-	ld (hl),a		; $4b6f
-	ld a,$3c		; $4b70
-	ld l,$86		; $4b72
+	ld (hl),a ; [state2] = 0
+
+	ld l,Enemy.var30		; $4b6d
+	ld (hl),a ; [var30] = 0
+
+	ld a,60		; $4b70
+	ld l,Enemy.counter1		; $4b72
 	ldi (hl),a		; $4b74
 	sra a			; $4b75
-	ld (hl),a		; $4b77
+	ld (hl),a ; [counter2] = 30
+
 	ld a,$06		; $4b78
 	call objectSetCollideRadius		; $4b7a
 	ld a,$06		; $4b7d
 	jp enemySetAnimation		; $4b7f
+
+; Hit a wall; pause before resuming
+@substate2:
 	call _ecom_decCounter2		; $4b82
 	call _ecom_decCounter1		; $4b85
 	ret nz			; $4b88
-	ld l,$85		; $4b89
+	ld l,Enemy.state2		; $4b89
 	dec (hl)		; $4b8b
-	jp $4ac4		; $4b8c
-	ld e,$85		; $4b8f
+	jp @resetUndergroundMovement		; $4b8c
+
+
+; Drilling
+_digdogger_stateB:
+	ld e,Enemy.state2		; $4b8f
 	ld a,(de)		; $4b91
 	rst_jumpTable			; $4b92
-.dw $4b97
-.dw $4bc0
+	.dw @substate0
+	.dw @substate1
+
+@substate0:
 	ld h,d			; $4b97
-	ld l,$87		; $4b98
+	ld l,Enemy.counter2		; $4b98
 	ld a,(hl)		; $4b9a
 	or a			; $4b9b
-	jr z,_label_0f_069	; $4b9c
+	jr z,@drilling	; $4b9c
+
 	dec (hl)		; $4b9e
 	ret nz			; $4b9f
-	ld l,$a5		; $4ba0
-	ld (hl),$5f		; $4ba2
-	ld l,$9a		; $4ba4
+
+	; Just started drilling
+	ld l,Enemy.collisionReactionSet		; $4ba0
+	ld (hl),COLLISIONREACTIONSET_5f		; $4ba2
+	ld l,Enemy.visible		; $4ba4
 	set 7,(hl)		; $4ba6
 	ld a,SND_SHOCK		; $4ba8
 	call playSound		; $4baa
-_label_0f_069:
+
+@drilling:
 	call enemyAnimate		; $4bad
 	call _ecom_decCounter1		; $4bb0
 	ret nz			; $4bb3
-	ld l,$86		; $4bb4
-	ld (hl),$3c		; $4bb6
+
+	ld l,Enemy.counter1		; $4bb4
+	ld (hl),60		; $4bb6
 	ld a,$07		; $4bb8
 	call enemySetAnimation		; $4bba
 	jp _ecom_incState2		; $4bbd
-	call $4c5a		; $4bc0
-	call $4a88		; $4bc3
-	ld e,$b0		; $4bc6
+
+@substate1:
+	call _digdogger_retFromCallerIfAnimationUnfinished		; $4bc0
+	call _digdogger_beginUndergroundMovement		; $4bc3
+	ld e,Enemy.var30		; $4bc6
 	xor a			; $4bc8
 	ld (de),a		; $4bc9
 	ret			; $4bca
-	ld e,$85		; $4bcb
+
+
+; Popping out of ground after shovel was used
+_digdogger_stateC:
+	ld e,Enemy.state2		; $4bcb
 	ld a,(de)		; $4bcd
 	rst_jumpTable			; $4bce
-.dw $4bd5
-.dw $4bf8
-.dw $4c24
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+
+@substate0:
 	call _ecom_applyVelocityForSideviewEnemy		; $4bd5
 	ld c,$10		; $4bd8
 	call objectUpdateSpeedZ_paramC		; $4bda
 	ret nz			; $4bdd
-	ld e,$aa		; $4bde
-	ld (de),a		; $4be0
-	ld e,$a5		; $4be1
-	ld a,$44		; $4be3
+
+	ld e,Enemy.var2a		; $4bde
+	ld (de),a ; [var2a] = 0
+
+	ld e,Enemy.collisionReactionSet		; $4be1
+	ld a,COLLISIONREACTIONSET_44		; $4be3
 	ld (de),a		; $4be5
+
 	call _ecom_decCounter1		; $4be6
-	jr z,_label_0f_070	; $4be9
-	ld l,$86		; $4beb
-	ld (hl),$b4		; $4bed
+	jr z,++			; $4be9
+	ld l,Enemy.counter1		; $4beb
+	ld (hl),180		; $4bed
 	jp _ecom_incState2		; $4bef
-_label_0f_070:
-	ld bc,$ff80		; $4bf2
+++
+	ld bc,-$80		; $4bf2
 	jp objectSetSpeedZ		; $4bf5
-	ld e,$aa		; $4bf8
+
+@substate1:
+	ld e,Enemy.var2a		; $4bf8
 	ld a,(de)		; $4bfa
 	or a			; $4bfb
-	jr nz,_label_0f_071	; $4bfc
+	jr nz,++		; $4bfc
 	call enemyAnimate		; $4bfe
 	call _ecom_decCounter1		; $4c01
 	ret nz			; $4c04
-_label_0f_071:
+++
 	call _ecom_incState2		; $4c05
+
 	call getRandomNumber		; $4c08
 	and $1c			; $4c0b
-	ld l,$89		; $4c0d
+	ld l,Enemy.angle		; $4c0d
 	ld (hl),a		; $4c0f
-	ld l,$90		; $4c10
-	ld (hl),$14		; $4c12
+
+	ld l,Enemy.speed		; $4c10
+	ld (hl),SPEED_80		; $4c12
+
 	call getRandomNumber		; $4c14
 	and $03			; $4c17
-	ld hl,$4c8b		; $4c19
+	ld hl,_digdogger_durationAboveGround		; $4c19
 	rst_addAToHl			; $4c1c
 	ldi a,(hl)		; $4c1d
-	ld e,$86		; $4c1e
+	ld e,Enemy.counter1		; $4c1e
 	ld (de),a		; $4c20
-	jp $4c76		; $4c21
+
+	jp _digdogger_setAnimationFromAngle		; $4c21
+
+@substate2:
 	call enemyAnimate		; $4c24
-	ld e,$a1		; $4c27
+
+	ld e,Enemy.animParameter		; $4c27
 	ld a,(de)		; $4c29
 	or a			; $4c2a
 	ld a,SND_LAND		; $4c2b
 	call nz,playSound		; $4c2d
+
 	call objectApplySpeed		; $4c30
 	call _ecom_bounceOffWallsAndHoles		; $4c33
-	call nz,$4c76		; $4c36
+	call nz,_digdogger_setAnimationFromAngle		; $4c36
+
+	; Dig back into ground when [counter1] reaches 0
 	call _ecom_decCounter1		; $4c39
 	ret nz			; $4c3c
-	jp $4a7b		; $4c3d
+	jp _digdogger_digIntoGround		; $4c3d
+
+
+;;
+; @addr{4c40}
+_digdogger_spawnDirtEvery8Frames:
 	inc e			; $4c40
-	ld a,(de)		; $4c41
+	ld a,(de) ; [var31]
 	dec a			; $4c42
 	ld (de),a		; $4c43
 	ret nz			; $4c44
-	ld e,$b1		; $4c45
+
+;;
+; @addr{4c45}
+_digdogger_spawnDirt:
+	ld e,Enemy.var31		; $4c45
 	ld a,$07		; $4c47
-	ld (de),a		; $4c49
+	ld (de),a ; [var31] = 7
 	dec e			; $4c4a
-	ld (de),a		; $4c4b
-	ld b,$32		; $4c4c
+	ld (de),a ; [var30] = 7
+
+	ld b,PARTID_DIGDOGGER_DIRT		; $4c4c
 	call _ecom_spawnProjectile		; $4c4e
+
 	call objectGetTileAtPosition		; $4c51
 	ld c,l			; $4c54
 	ld a,$ef		; $4c55
 	jp setTile		; $4c57
+
+;;
+; @addr{4c5a}
+_digdogger_retFromCallerIfAnimationUnfinished:
 	call enemyAnimate		; $4c5a
 	ld h,d			; $4c5d
-	ld l,$a1		; $4c5e
+	ld l,Enemy.animParameter		; $4c5e
 	ld a,(hl)		; $4c60
 	or a			; $4c61
 	ret nz			; $4c62
 	pop af			; $4c63
 	ret			; $4c64
+
+;;
+; @param[out]	a	Anger level (0-2)
+; @addr{4c65}
+_digdogger_getAngerLevel:
 	ld b,$00		; $4c65
-	ld e,$a9		; $4c67
+	ld e,Enemy.health		; $4c67
 	ld a,(de)		; $4c69
 	cp $0a			; $4c6a
-	jr nc,_label_0f_072	; $4c6c
+	jr nc,++		; $4c6c
 	inc b			; $4c6e
 	cp $06			; $4c6f
-	jr nc,_label_0f_072	; $4c71
+	jr nc,++		; $4c71
 	inc b			; $4c73
-_label_0f_072:
+++
 	ld a,b			; $4c74
 	ret			; $4c75
+
+;;
+; @addr{4c76}
+_digdogger_setAnimationFromAngle:
 	ld h,d			; $4c76
-	ld l,$89		; $4c77
+	ld l,Enemy.angle		; $4c77
 	ldd a,(hl)		; $4c79
 	add a			; $4c7a
 	swap a			; $4c7b
 	and $03			; $4c7d
-	ld (hl),a		; $4c7f
+	ld (hl),a ; [direction]
 	add $00			; $4c80
 	jp enemySetAnimation		; $4c82
-	inc d			; $4c85
-	jr z,$3c		; $4c86
-	ld a,b			; $4c88
-	ld e,d			; $4c89
-	inc a			; $4c8a
-	inc a			; $4c8b
-	ld e,d			; $4c8c
-	ld a,b			; $4c8d
-	or h			; $4c8e
+
+
+_digdogger_speedVals: ; Chosen based on "anger level"
+	.db SPEED_80 SPEED_100 SPEED_180
+
+_digdogger_timeUntilDrillAttack: ; Chosen based on "anger level"
+	.db 120 90 60
+
+_digdogger_durationAboveGround: ; Chosen randomly
+	.db 60 90 120 180
 
 ;;
 ; @addr{4c8f}

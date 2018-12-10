@@ -137,6 +137,10 @@
 .define PARTID_GOPONGA_PROJECTILE		$31
 
 ;;
+; @palette(PALH_be}
+.define PARTID_DIGDOGGER_DIRT			$32
+
+;;
 ; Flame animation used exclusively by ENEMYID_CANDLE. Expects relatedObj1 to point to its
 ; parent.
 .define PARTID_CANDLE_FLAME			$36
