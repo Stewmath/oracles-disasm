@@ -9036,6 +9036,7 @@ objectCreateInteractionWithSubid00:
 ;
 ; @param	bc	Interaction ID
 ; @param	d	The object to get the position from
+; @param[out]	a	0
 ; @param[out]	hl	The new interaction's 'speed' variable (one past 'zh')
 ; @param[out]	zflag	nz if there wasn't a free slot for the interaction
 ; @addr{24c5}
@@ -145577,128 +145578,182 @@ _smasher_ball_makeLinkDrop:
 	ret nc			; $5558
 	jp dropLinkHeldItem		; $5559
 
-;;
-; @addr{555c}
+
+; ==============================================================================
+; ENEMYID_VIRE
+;
+; Variables (for main form, subid 0):
+;   relatedObj2: INTERACID_PUFF?
+;   var30: Rotation angle?
+;   var32: Used for animations?
+;   var33: Health?
+;   var34: Number of "bat children" alive. Will die when this reaches 0.
+;   var37: Marks whether text has been shown as health goes down
+;   var38: If nonzero, he won't spawn a fairy when defeated?
+;
+; Variables (for bat form, subid 1):
+;   relatedObj1: Reference to main form (subid 0)
+;   var30: Rotation angle?
+;   var35/var36: Target position?
+; ==============================================================================
 enemyCode75:
-	jr z,_label_0f_127	; $555c
-	sub $03			; $555e
+	jr z,@normalStatus	; $555c
+	sub ENEMYSTATUS_NO_HEALTH			; $555e
 	ret c			; $5560
-	jr z,_label_0f_125	; $5561
-	ld e,$82		; $5563
+	jr z,@dead	; $5561
+
+	; ENEMYSTATUS_JUST_HIT
+	ld e,Enemy.subid		; $5563
 	ld a,(de)		; $5565
 	or a			; $5566
-	ld e,$a9		; $5567
+	ld e,Enemy.health		; $5567
 	ld a,(de)		; $5569
-	jr z,_label_0f_124	; $556a
+	jr z,++			; $556a
 	or a			; $556c
 	ret z			; $556d
-	jr _label_0f_127		; $556e
-_label_0f_124:
+	jr @normalStatus		; $556e
+++
 	ld h,d			; $5570
-	ld l,$b3		; $5571
+	ld l,Enemy.var33		; $5571
 	cp (hl)			; $5573
-	jr z,_label_0f_127	; $5574
+	jr z,@normalStatus	; $5574
+
 	ld (hl),a		; $5576
 	or a			; $5577
 	ret z			; $5578
-	ld l,$84		; $5579
+
+	ld l,Enemy.state		; $5579
 	ld (hl),$0e		; $557b
 	inc l			; $557d
 	ld (hl),$00		; $557e
 	ret			; $5580
-_label_0f_125:
-	ld e,$82		; $5581
+
+@dead:
+	ld e,Enemy.subid		; $5581
 	ld a,(de)		; $5583
 	or a			; $5584
-	jr z,_label_0f_126	; $5585
+	jr z,@subid0Dead	; $5585
+
+	; Subid 1 (bat child) death
 	call objectCreatePuff		; $5587
-	ld a,$34		; $558a
+	ld a,Object.var34		; $558a
 	call objectGetRelatedObject1Var		; $558c
 	dec (hl)		; $558f
 	call z,objectCopyPosition		; $5590
 	jp enemyDelete		; $5593
-_label_0f_126:
+
+@subid0Dead:
 	ld h,d			; $5596
-	ld l,$84		; $5597
+	ld l,Enemy.state		; $5597
 	ld a,(hl)		; $5599
 	cp $0f			; $559a
 	jp z,_enemyBoss_dead		; $559c
-	ld (hl),$0f		; $559f
+
+	ld (hl),$0f ; [state]
 	inc l			; $55a1
-	ld (hl),$00		; $55a2
+	ld (hl),$00 ; [state2]
 	inc l			; $55a4
-	ld (hl),$14		; $55a5
-	ld l,$a9		; $55a7
+	ld (hl),20 ; [counter1]
+
+	ld l,Enemy.health		; $55a7
 	ld (hl),$01		; $55a9
-	ld l,$88		; $55ab
+
+	ld l,Enemy.direction		; $55ab
 	xor a			; $55ad
 	ld (hl),a		; $55ae
 	call enemySetAnimation		; $55af
-_label_0f_127:
+
+@normalStatus:
 	call _ecom_getSubidAndCpStateTo08		; $55b2
-	jr c,_label_0f_128	; $55b5
+	jr c,@commonState	; $55b5
+
 	ld a,b			; $55b7
 	or a			; $55b8
-	jp z,$55e6		; $55b9
-	jp $5954		; $55bc
-_label_0f_128:
-	ld e,$84		; $55bf
+	jp z,_vire_mainForm		; $55b9
+	jp _vire_batForm		; $55bc
+
+@commonState:
+	ld e,Enemy.state		; $55bf
 	ld a,(de)		; $55c1
 	rst_jumpTable			; $55c2
-.dw $55d3
-.dw $55e5
-.dw $55e5
-.dw $55e5
-.dw $55e5
-.dw $55e5
-.dw $55e5
-.dw $55e5
-	ld a,$1e		; $55d3
+	.dw _vire_state_uninitialized
+	.dw _vire_state_stub
+	.dw _vire_state_stub
+	.dw _vire_state_stub
+	.dw _vire_state_stub
+	.dw _vire_state_stub
+	.dw _vire_state_stub
+	.dw _vire_state_stub
+
+
+_vire_state_uninitialized:
+	ld a,SPEED_c0		; $55d3
 	call _ecom_setSpeedAndState8		; $55d5
+
 	ld a,b			; $55d8
 	or a			; $55d9
 	ret nz			; $55da
-	ld l,$8f		; $55db
+
+	; "Main" vire only (not bat form)
+	ld l,Enemy.zh		; $55db
 	ld (hl),$fc		; $55dd
-	dec a			; $55df
+
+	dec a ; a = $ff
 	ld b,$00		; $55e0
 	jp _enemyBoss_initializeRoom		; $55e2
+
+
+_vire_state_stub:
 	ret			; $55e5
-	ld e,$88		; $55e6
+
+
+_vire_mainForm:
+	ld e,Enemy.direction		; $55e6
 	ld a,(de)		; $55e8
 	or a			; $55e9
-	jr z,_label_0f_129	; $55ea
+	jr z,@runState	; $55ea
+
 	ld h,d			; $55ec
-	ld l,$b2		; $55ed
+	ld l,Enemy.var32		; $55ed
 	inc (hl)		; $55ef
 	ld a,(hl)		; $55f0
 	cp $18			; $55f1
-	jr c,_label_0f_129	; $55f3
+	jr c,@runState	; $55f3
+
 	xor a			; $55f5
-	ld (hl),a		; $55f6
+	ld (hl),a ; [var32] = 0
+
 	ld l,e			; $55f7
-	ld (hl),a		; $55f8
+	ld (hl),a ; [direction] = 0
 	call enemySetAnimation		; $55f9
-_label_0f_129:
-	ld e,$84		; $55fc
+
+@runState:
+	ld e,Enemy.state		; $55fc
 	ld a,(de)		; $55fe
 	sub $08			; $55ff
 	rst_jumpTable			; $5601
-.dw $5612
-.dw $5693
-.dw $56c7
-.dw $570b
-.dw $577f
-.dw $57c3
-.dw $5846
-.dw $5889
+	.dw _vire_mainForm_state8
+	.dw _vire_mainForm_state9
+	.dw _vire_mainForm_stateA
+	.dw _vire_mainForm_stateB
+	.dw _vire_mainForm_stateC
+	.dw _vire_mainForm_stateD
+	.dw _vire_mainForm_stateE
+	.dw _vire_mainForm_stateF
+
+
+; Mini-cutscene before starting fight
+_vire_mainForm_state8:
 	inc e			; $5612
-	ld a,(de)		; $5613
+	ld a,(de) ; [state2]
 	rst_jumpTable			; $5614
-.dw $561d
-.dw $564b
-.dw $565d
-.dw $5671
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+
+@substate0:
+	; Wait for Link to approach
 	ldh a,(<hEnemyTargetY)	; $561d
 	sub $38			; $561f
 	cp $41			; $5621
@@ -145707,770 +145762,1047 @@ _label_0f_129:
 	sub $50			; $5626
 	cp $51			; $5628
 	ret nc			; $562a
+
+	; Can't be dead...
 	ld a,(wLinkDeathTrigger)		; $562b
 	or a			; $562e
 	ret nz			; $562f
-	ld bc,$0502		; $5630
+
+	ldbc INTERACID_PUFF, $02		; $5630
 	call objectCreateInteraction		; $5633
 	ret nz			; $5636
-	ld e,$99		; $5637
+
+	; [relatedObj2] = INTERACID_PUFF
+	ld e,Enemy.relatedObj2+1		; $5637
 	ld a,h			; $5639
 	ld (de),a		; $563a
 	dec e			; $563b
-	ld a,$40		; $563c
+	ld a,Interaction.start		; $563c
 	ld (de),a		; $563e
-	ld e,$85		; $563f
+
+	ld e,Enemy.state2		; $563f
 	ld a,$01		; $5641
 	ld (de),a		; $5643
-	ld (wDisabledObjects),a		; $5644
+	ld (wDisabledObjects),a ; DISABLE_LINK
 	ld (wDisableLinkCollisionsAndMenu),a		; $5647
 	ret			; $564a
-	ld a,$21		; $564b
+
+@substate1:
+	; Wait for puff to disappear
+	ld a,Object.animParameter		; $564b
 	call objectGetRelatedObject2Var		; $564d
 	bit 7,(hl)		; $5650
 	ret z			; $5652
+
 	ld h,d			; $5653
-	ld l,$85		; $5654
+	ld l,Enemy.state2		; $5654
 	inc (hl)		; $5656
 	inc l			; $5657
-	ld (hl),$08		; $5658
+	ld (hl),$08 ; [counter1]
 	jp objectSetVisiblec1		; $565a
+
+@substate2:
+	; Show text in 8 frames
 	call _ecom_decCounter1		; $565d
 	jp nz,enemyAnimate		; $5660
+
 	ld l,e			; $5663
-	inc (hl)		; $5664
-	ld bc,$2f12		; $5665
+	inc (hl) ; [state2]
+	ld bc,TX_2f12		; $5665
 	call checkIsLinkedGame		; $5668
-	jr z,_label_0f_130	; $566b
-	inc c			; $566d
-_label_0f_130:
+	jr z,+			; $566b
+	inc c ; TX_2f13
++
 	jp showText		; $566e
+
+@substate3:
+	; Disappear
 	call objectCreatePuff		; $5671
 	ret nz			; $5674
+
+	; a == 0
 	ld (wDisabledObjects),a		; $5675
 	ld (wDisableLinkCollisionsAndMenu),a		; $5678
+
 	call _ecom_incState		; $567b
 	inc l			; $567e
-	ldi (hl),a		; $567f
-	ld (hl),$5a		; $5680
-	ld l,$a9		; $5682
+	ldi (hl),a ; [state2] = 0
+	ld (hl),90 ; [counter1]
+
+	ld l,Enemy.health		; $5682
 	ld a,(hl)		; $5684
-	ld l,$b3		; $5685
+	ld l,Enemy.var33		; $5685
 	ld (hl),a		; $5687
+
 	call objectSetInvisible		; $5688
 	ld a,MUS_MINIBOSS		; $568b
 	ld (wActiveMusic),a		; $568d
 	jp playSound		; $5690
+
+
+; Off-screen for [counter1] frames
+_vire_mainForm_state9:
 	call _ecom_decCounter1		; $5693
 	ret nz			; $5696
-	ld e,$a9		; $5697
+
+	; Decide what to do next (health affects probability)
+	ld e,Enemy.health		; $5697
 	ld a,(de)		; $5699
 	ld c,$08		; $569a
 	cp $0a			; $569c
-	jr c,_label_0f_131	; $569e
+	jr c,++			; $569e
 	ld c,$04		; $56a0
 	cp $10			; $56a2
-	jr c,_label_0f_131	; $56a4
+	jr c,++		; $56a4
 	ld c,$00		; $56a6
-_label_0f_131:
+++
 	call getRandomNumber		; $56a8
 	and $07			; $56ab
 	add c			; $56ad
-	ld hl,$56b7		; $56ae
+	ld hl,@behaviourTable		; $56ae
 	rst_addAToHl			; $56b1
+
 	ld a,(hl)		; $56b2
-	ld e,$84		; $56b3
+	ld e,Enemy.state		; $56b3
 	ld (de),a		; $56b5
 	ret			; $56b6
-	ld a,(bc)		; $56b7
-	ld a,(bc)		; $56b8
-	dec bc			; $56b9
-	dec c			; $56ba
-	ld a,(bc)		; $56bb
-	ld a,(bc)		; $56bc
-	ld a,(bc)		; $56bd
-	ld a,(bc)		; $56be
-	dec bc			; $56bf
-	dec bc			; $56c0
-	inc c			; $56c1
-	dec c			; $56c2
-	ld a,(bc)		; $56c3
-	dec bc			; $56c4
-	inc c			; $56c5
-	dec c			; $56c6
+
+; Vire chooses from 8 of these values, starting from index 0, 4, or 8 depending on health
+; (starts from 0 when health is high).
+@behaviourTable:
+	.db $0a $0a $0b $0d $0a $0a $0a $0a
+	.db $0b $0b $0c $0d $0a $0b $0c $0d
+
+
+; Charges across screen
+_vire_mainForm_stateA:
 	inc e			; $56c7
 	ld a,(de)		; $56c8
 	rst_jumpTable			; $56c9
-.dw $56d0
-.dw $56db
-.dw $56f9
-	call $5a45		; $56d0
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+
+@substate0:
+	call _vire_spawnOutsideCamera		; $56d0
 	inc l			; $56d3
-	ld (hl),$14		; $56d4
-	ld l,$90		; $56d6
-	ld (hl),$28		; $56d8
+	ld (hl),20 ; [counter1]
+	ld l,Enemy.speed		; $56d6
+	ld (hl),SPEED_100		; $56d8
 	ret			; $56da
+
+; Moving slowly before charging
+@substate1:
 	call _ecom_decCounter1		; $56db
-	jp nz,$5af9		; $56de
+	jp nz,_vire_mainForm_applySpeedAndAnimate		; $56de
+
+	; Begin charging
 	ld l,e			; $56e1
-	inc (hl)		; $56e2
-	ld l,$90		; $56e3
-	ld (hl),$50		; $56e5
+	inc (hl) ; [state2]
+
+	ld l,Enemy.speed		; $56e3
+	ld (hl),SPEED_200		; $56e5
 	call _ecom_updateAngleTowardTarget		; $56e7
 	call getRandomNumber_noPreserveVars		; $56ea
 	and $03			; $56ed
 	sub $02			; $56ef
 	ld b,a			; $56f1
-	ld e,$89		; $56f2
+	ld e,Enemy.angle		; $56f2
 	ld a,(de)		; $56f4
 	add b			; $56f5
 	and $1f			; $56f6
 	ld (de),a		; $56f8
-	call $5a98		; $56f9
-	jp nc,$5a86		; $56fc
+
+; Charging across screen
+@substate2:
+	call _vire_checkOffScreen		; $56f9
+	jp nc,_vire_mainForm_leftScreen		; $56fc
 	call _ecom_decCounter1		; $56ff
 	ld a,(hl)		; $5702
 	and $1f			; $5703
-	call z,$5b14		; $5705
-	jp $5af9		; $5708
+	call z,_vire_mainForm_fireProjectile		; $5705
+	jp _vire_mainForm_applySpeedAndAnimate		; $5708
+
+
+; Circling Link, runs away if Link gets too close (similar to state D)
+_vire_mainForm_stateB:
 	inc e			; $570b
 	ld a,(de)		; $570c
 	rst_jumpTable			; $570d
-.dw $5716
-.dw $5729
-.dw $574f
-.dw $576b
-	call $5a45		; $5716
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+
+@substate0: ; Also subid 0 for state D
+	call _vire_spawnOutsideCamera		; $5716
 	inc l			; $5719
-	ld (hl),$78		; $571a
+	ld (hl),120 ; [counter1]
 	call getRandomNumber_noPreserveVars		; $571c
 	and $08			; $571f
-	jr nz,_label_0f_132	; $5721
+	jr nz,+			; $5721
 	ld a,$f8		; $5723
-_label_0f_132:
-	ld e,$b0		; $5725
++
+	ld e,Enemy.var30		; $5725
 	ld (de),a		; $5727
 	ret			; $5728
+
+@substate1:
 	ld a,(wFrameCounter)		; $5729
 	and $03			; $572c
-	jr nz,_label_0f_133	; $572e
+	jr nz,++		; $572e
+
 	call _ecom_decCounter1		; $5730
-	jr z,_label_0f_134	; $5733
+	jr z,@beginCharge	; $5733
+
 	ld a,(hl)		; $5735
 	and $1f			; $5736
 	ld b,$01		; $5738
-	call z,$5b1b		; $573a
-_label_0f_133:
-	call $5aff		; $573d
-	jp nc,$5aa4		; $5740
-_label_0f_134:
-	ld l,$85		; $5743
+	call z,_vire_mainForm_fireProjectileWithSubid		; $573a
+++
+	call _vire_mainForm_checkLinkTooClose		; $573d
+	jp nc,_vire_mainForm_circleAroundScreen		; $5740
+
+; Begin charging; initially toward Link, but will run away if he gets too close or Link
+; attacks
+@beginCharge:
+	ld l,Enemy.state2		; $5743
 	inc (hl)		; $5745
-	ld l,$90		; $5746
-	ld (hl),$50		; $5748
+	ld l,Enemy.speed		; $5746
+	ld (hl),SPEED_200		; $5748
 	call _ecom_updateAngleTowardTarget		; $574a
-	jr _label_0f_136		; $574d
-	call $5aff		; $574f
-	jr c,_label_0f_135	; $5752
+	jr @animate		; $574d
+
+; Charging toward Link
+@substate2:
+	call _vire_mainForm_checkLinkTooClose		; $574f
+	jr c,@updateAngleAway			; $5752
 	ld a,(wLinkUsingItem1)		; $5754
 	or a			; $5757
-	jr nz,_label_0f_135	; $5758
-	call $5a98		; $575a
-	jp nc,$5a86		; $575d
-	jp $5af9		; $5760
-_label_0f_135:
+	jr nz,@updateAngleAway		; $5758
+	call _vire_checkOffScreen		; $575a
+	jp nc,_vire_mainForm_leftScreen		; $575d
+	jp _vire_mainForm_applySpeedAndAnimate		; $5760
+
+; Charging away from Link
+@updateAngleAway:
 	ld l,e			; $5763
-	inc (hl)		; $5764
+	inc (hl) ; [state2]
 	call _ecom_updateCardinalAngleAwayFromTarget		; $5765
-_label_0f_136:
+@animate:
 	jp enemyAnimate		; $5768
-	call $5a98		; $576b
-	jp nc,$5a86		; $576e
+
+@substate3:
+	call _vire_checkOffScreen		; $576b
+	jp nc,_vire_mainForm_leftScreen		; $576e
+
 	call _ecom_decCounter1		; $5771
 	ld a,(hl)		; $5774
 	and $1f			; $5775
 	ld b,$01		; $5777
-	call z,$5b1b		; $5779
-	jp $5af9		; $577c
+	call z,_vire_mainForm_fireProjectileWithSubid		; $5779
+	jp _vire_mainForm_applySpeedAndAnimate		; $577c
+
+
+; Vire creeps in from the screen edge to fire one projectile, then runs away
+_vire_mainForm_stateC:
 	inc e			; $577f
 	ld a,(de)		; $5780
 	rst_jumpTable			; $5781
-.dw $578a
-.dw $5795
-.dw $57a6
-.dw $57ba
-	call $5a45		; $578a
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+
+@substate0:
+	call _vire_spawnOutsideCamera		; $578a
 	inc l			; $578d
-	ld (hl),$1c		; $578e
-	ld l,$90		; $5790
-	ld (hl),$28		; $5792
+	ld (hl),28 ; [counter1]
+	ld l,Enemy.speed		; $5790
+	ld (hl),SPEED_100		; $5792
 	ret			; $5794
+
+@substate1:
 	call _ecom_decCounter1		; $5795
-	jp nz,$5af9		; $5798
-	ld (hl),$0c		; $579b
+	jp nz,_vire_mainForm_applySpeedAndAnimate		; $5798
+
+	ld (hl),12 ; [counter1]
 	ld l,e			; $579d
-	inc (hl)		; $579e
+	inc (hl) ; [state2]
+
 	ld b,$03		; $579f
-	call $5b1b		; $57a1
-	jr _label_0f_137		; $57a4
+	call _vire_mainForm_fireProjectileWithSubid		; $57a1
+	jr @animate		; $57a4
+
+@substate2:
 	call _ecom_decCounter1		; $57a6
-	jr nz,_label_0f_137	; $57a9
+	jr nz,@animate	; $57a9
+
 	ld l,e			; $57ab
-	inc (hl)		; $57ac
-	ld l,$89		; $57ad
+	inc (hl) ; [state2]
+
+	ld l,Enemy.angle		; $57ad
 	ld a,(hl)		; $57af
 	xor $10			; $57b0
 	ld (hl),a		; $57b2
-	ld l,$90		; $57b3
-	ld (hl),$50		; $57b5
-_label_0f_137:
+	ld l,Enemy.speed		; $57b3
+	ld (hl),SPEED_200		; $57b5
+
+@animate:
 	jp enemyAnimate		; $57b7
-	call $5a98		; $57ba
-	jp nc,$5a86		; $57bd
-	jp $5af9		; $57c0
+
+@substate3:
+	call _vire_checkOffScreen		; $57ba
+	jp nc,_vire_mainForm_leftScreen		; $57bd
+	jp _vire_mainForm_applySpeedAndAnimate		; $57c0
+
+
+; Circling Link, runs away if Link attempts to attack (similar to state B)
+_vire_mainForm_stateD:
 	inc e			; $57c3
 	ld a,(de)		; $57c4
 	rst_jumpTable			; $57c5
-.dw $5716
-.dw $57d2
-.dw $57f9
-.dw $5817
-.dw $582d
-.dw $583d
+	.dw _vire_mainForm_stateB@substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw @substate4
+	.dw _vire_state_moveOffScreen
+
+@substate1:
 	ld a,(wFrameCounter)		; $57d2
 	and $03			; $57d5
-	jr nz,_label_0f_138	; $57d7
+	jr nz,++		; $57d7
+
 	call _ecom_decCounter1		; $57d9
-	jr z,_label_0f_139	; $57dc
+	jr z,@beginCharge	; $57dc
+
 	ld a,(hl)		; $57de
 	and $1f			; $57df
 	ld b,$01		; $57e1
-	call z,$5b1b		; $57e3
-_label_0f_138:
-	call $5aff		; $57e6
-	jp nc,$5aa4		; $57e9
-_label_0f_139:
-	ld l,$85		; $57ec
+	call z,_vire_mainForm_fireProjectileWithSubid		; $57e3
+++
+	call _vire_mainForm_checkLinkTooClose		; $57e6
+	jp nc,_vire_mainForm_circleAroundScreen		; $57e9
+
+; Begin charging; initially toward Link, but will run away if he gets too close or Link
+; attacks
+@beginCharge:
+	ld l,Enemy.state2		; $57ec
 	inc (hl)		; $57ee
-	ld l,$90		; $57ef
-	ld (hl),$50		; $57f1
+	ld l,Enemy.speed		; $57ef
+	ld (hl),SPEED_200		; $57f1
 	call _ecom_updateAngleTowardTarget		; $57f3
-_label_0f_140:
+@animate:
 	jp enemyAnimate		; $57f6
+
+; Charging toward Link
+@substate2:
 	ld a,(wLinkUsingItem1)		; $57f9
 	or a			; $57fc
-	jr z,_label_0f_141	; $57fd
+	jr z,@moveOffScreen	; $57fd
+
 	ld h,d			; $57ff
 	ld l,e			; $5800
-	inc (hl)		; $5801
+	inc (hl) ; [state2]
 	inc l			; $5802
-	ld (hl),$0c		; $5803
-	ld l,$90		; $5805
-	ld (hl),$78		; $5807
+	ld (hl),12 ; [counter1]
+	ld l,Enemy.speed		; $5805
+	ld (hl),SPEED_300		; $5807
 	call _ecom_updateCardinalAngleAwayFromTarget		; $5809
-	jr _label_0f_140		; $580c
-_label_0f_141:
-	call $5a98		; $580e
-	jp nc,$5a86		; $5811
-	jp $5af9		; $5814
+	jr @animate		; $580c
+
+@moveOffScreen:
+	call _vire_checkOffScreen		; $580e
+	jp nc,_vire_mainForm_leftScreen		; $5811
+	jp _vire_mainForm_applySpeedAndAnimate		; $5814
+
+@substate3:
 	call _ecom_decCounter1		; $5817
-	jp nz,$5af9		; $581a
-	ld (hl),$0c		; $581d
+	jp nz,_vire_mainForm_applySpeedAndAnimate		; $581a
+
+	ld (hl),12 ; [counter1]
 	ld l,e			; $581f
-	inc (hl)		; $5820
-	ld b,$3a		; $5821
+	inc (hl) ; [state2]
+
+	ld b,PARTID_VIRE_PROJECTILE		; $5821
 	call _ecom_spawnProjectile		; $5823
+
 	ld a,SND_SPLASH		; $5826
 	call playSound		; $5828
-	jr _label_0f_140		; $582b
+	jr @animate		; $582b
+
+@substate4:
 	call _ecom_decCounter1		; $582d
-	jr nz,_label_0f_140	; $5830
+	jr nz,@animate	; $5830
+
 	ld l,e			; $5832
-	inc (hl)		; $5833
-	ld l,$90		; $5834
-	ld (hl),$46		; $5836
+	inc (hl) ; [state2]
+
+	ld l,Enemy.speed		; $5834
+	ld (hl),SPEED_1c0		; $5836
+
 	call _ecom_updateCardinalAngleAwayFromTarget		; $5838
-	jr _label_0f_140		; $583b
-	call $5a98		; $583d
-	jp nc,$5a86		; $5840
-	jp $5af9		; $5843
+	jr @animate		; $583b
+
+
+_vire_state_moveOffScreen: ; Used by states D and E
+	call _vire_checkOffScreen		; $583d
+	jp nc,_vire_mainForm_leftScreen		; $5840
+	jp _vire_mainForm_applySpeedAndAnimate		; $5843
+
+
+; Just took damage
+_vire_mainForm_stateE:
 	inc e			; $5846
 	ld a,(de)		; $5847
 	rst_jumpTable			; $5848
-.dw $584f
-.dw $5866
-.dw $583d
+	.dw @substate0
+	.dw @substate1
+	.dw _vire_state_moveOffScreen
+
+@substate0:
 	ld h,d			; $584f
 	ld l,e			; $5850
-	inc (hl)		; $5851
+	inc (hl) ; [state2]
+
 	inc l			; $5852
-	ld (hl),$14		; $5853
-	ld l,$90		; $5855
-	ld (hl),$78		; $5857
+	ld (hl),20 ; [counter1]
+
+	ld l,Enemy.speed		; $5855
+	ld (hl),SPEED_300		; $5857
 	call _ecom_updateCardinalAngleAwayFromTarget		; $5859
-	ld e,$88		; $585c
+
+	ld e,Enemy.direction		; $585c
 	xor a			; $585e
 	ld (de),a		; $585f
-	ld e,$b2		; $5860
+
+	ld e,Enemy.var32		; $5860
 	ld (de),a		; $5862
 	jp enemySetAnimation		; $5863
+
+@substate1:
 	call _ecom_decCounter1		; $5866
 	jp nz,enemyAnimate		; $5869
+
 	ld l,e			; $586c
-	inc (hl)		; $586d
-	ld l,$a9		; $586e
+	inc (hl) ; [state2]
+
+	; Check whether to show text based on current health
+	ld l,Enemy.health		; $586e
 	ld a,(hl)		; $5870
 	cp $10			; $5871
 	ret nc			; $5873
+
 	ld b,$01		; $5874
 	cp $0a			; $5876
-	jr nc,_label_0f_142	; $5878
+	jr nc,+			; $5878
 	inc b			; $587a
-_label_0f_142:
++
 	ld a,b			; $587b
-	ld l,$b7		; $587c
+	ld l,Enemy.var37		; $587c
 	cp (hl)			; $587e
 	ret z			; $587f
+
 	ld (hl),a		; $5880
-	add $13			; $5881
+	add <TX_2f13			; $5881
 	ld c,a			; $5883
-	ld b,$2f		; $5884
+	ld b,>TX_2f00		; $5884
 	jp showText		; $5886
+
+
+; "Main form" died, about to split into bats
+_vire_mainForm_stateF:
 	inc e			; $5889
 	ld a,(de)		; $588a
 	rst_jumpTable			; $588b
-.dw $5898
-.dw $58a4
-.dw $58db
-.dw $58ee
-.dw $58fb
-.dw $5917
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw @substate4
+	.dw @substate5
+
+@substate0:
 	call _ecom_decCounter1		; $5898
 	ret nz			; $589b
 	ld l,e			; $589c
-	inc (hl)		; $589d
-	ld bc,$2f16		; $589e
+	inc (hl) ; [counter1]
+	ld bc,TX_2f16		; $589e
 	jp showText		; $58a1
+
+@substate1:
 	ld b,$02		; $58a4
 	call checkBEnemySlotsAvailable		; $58a6
 	jp nz,enemyAnimate		; $58a9
+
 	ld h,d			; $58ac
-	ld l,$85		; $58ad
+	ld l,Enemy.state2		; $58ad
 	inc (hl)		; $58af
-	ld l,$b4		; $58b0
+
+	ld l,Enemy.var34		; $58b0
 	ld (hl),$02		; $58b2
+
 	call objectSetInvisible		; $58b4
 	call objectCreatePuff		; $58b7
-	ld b,$75		; $58ba
+
+	; Spawn bats
+	ld b,ENEMYID_VIRE		; $58ba
 	call _ecom_spawnUncountedEnemyWithSubid01		; $58bc
-	call $58c6		; $58bf
+	call @initBat		; $58bf
+
 	call _ecom_spawnUncountedEnemyWithSubid01		; $58c2
 	inc a			; $58c5
+
+@initBat:
 	inc l			; $58c6
-	ld (hl),a		; $58c7
+	ld (hl),a ; [var03] = a (0 or 1)
 	rrca			; $58c8
 	swap a			; $58c9
-	jr nz,_label_0f_143	; $58cb
+	jr nz,+			; $58cb
 	ld a,$f8		; $58cd
-_label_0f_143:
-	ld l,$b0		; $58cf
++
+	ld l,Enemy.var30 ; Bat's x-offset relative to vire
 	ld (hl),a		; $58d1
-	ld l,$96		; $58d2
-	ld a,$80		; $58d4
+
+	ld l,Enemy.relatedObj1		; $58d2
+	ld a,Enemy.start		; $58d4
 	ldi (hl),a		; $58d6
 	ld (hl),d		; $58d7
 	jp objectCopyPosition		; $58d8
-	ld e,$b4		; $58db
+
+@substate2:
+	; Wait for "bat children" to be killed
+	ld e,Enemy.var34		; $58db
 	ld a,(de)		; $58dd
 	or a			; $58de
 	jp nz,_ecom_decCounter2		; $58df
+
+	; Vire defeated
 	ld h,d			; $58e2
-	ld l,$85		; $58e3
+	ld l,Enemy.state2		; $58e3
 	inc (hl)		; $58e5
 	inc l			; $58e6
-	ld (hl),$3c		; $58e7
+	ld (hl),60 ; [counter1]
 	ld a,SNDCTRL_STOPMUSIC		; $58e9
 	jp playSound		; $58eb
+
+@substate3:
 	call _ecom_decCounter1		; $58ee
 	jp nz,_ecom_flickerVisibility		; $58f1
-	ld (hl),$10		; $58f4
+
+	ld (hl),$10 ; [counter1]
 	ld l,e			; $58f6
-	inc (hl)		; $58f7
+	inc (hl) ; [state2]
 	jp objectSetVisiblec1		; $58f8
+
+@substate4:
 	call _ecom_decCounter1		; $58fb
 	jp nz,enemyAnimate		; $58fe
+
 	ld l,e			; $5901
-	inc (hl)		; $5902
-	ld l,$89		; $5903
+	inc (hl) ; [state2]
+
+	ld l,Enemy.angle		; $5903
 	ld (hl),$06		; $5905
-	ld l,$90		; $5907
-	ld (hl),$78		; $5909
-	ld bc,$2f17		; $590b
+	ld l,Enemy.speed		; $5907
+	ld (hl),SPEED_300		; $5909
+
+	ld bc,TX_2f17		; $590b
 	call checkIsLinkedGame		; $590e
-	jr z,_label_0f_144	; $5911
-	inc c			; $5913
-_label_0f_144:
+	jr z,+			; $5911
+	inc c ; TX_2f18
++
 	jp showText		; $5914
+
+@substate5:
 	call checkIsLinkedGame		; $5917
-	jr z,_label_0f_145	; $591a
-	ld e,$a9		; $591c
+	jr z,@unlinked	; $591a
+
+@linked:
+	ld e,Enemy.health		; $591c
 	xor a			; $591e
 	ld (de),a		; $591f
 	ret			; $5920
-_label_0f_145:
-	ld e,$b8		; $5921
+
+@unlinked:
+	; Spawn fairy if var38 is 0.
+	ld e,Enemy.var38		; $5921
 	ld a,(de)		; $5923
 	or a			; $5924
-	jr nz,_label_0f_146	; $5925
+	jr nz,++		; $5925
 	inc a			; $5927
 	ld (de),a		; $5928
-	ld b,$01		; $5929
+	ld b,PARTID_ITEM_DROP		; $5929
 	call _ecom_spawnProjectile		; $592b
-_label_0f_146:
+++
 	call enemyAnimate		; $592e
+
 	ld h,d			; $5931
-	ld l,$8e		; $5932
+	ld l,Enemy.z		; $5932
 	ld a,(hl)		; $5934
-	sub $80			; $5935
+	sub <($0080)			; $5935
 	ldi (hl),a		; $5937
 	ld a,(hl)		; $5938
-	sbc $00			; $5939
+	sbc >($0080)			; $5939
 	ld (hl),a		; $593b
-	call $5a98		; $593c
+
+	call _vire_checkOffScreen		; $593c
 	jp c,objectApplySpeed		; $593f
+
+	; Vire is gone; cleanup
 	call markEnemyAsKilledInRoom		; $5942
 	call decNumEnemies		; $5945
 	ld a,(wActiveMusic2)		; $5948
 	ld (wActiveMusic),a		; $594b
 	call playSound		; $594e
 	jp enemyDelete		; $5951
+
+
+_vire_batForm:
 	ld a,(de)		; $5954
 	sub $08			; $5955
 	rst_jumpTable			; $5957
-.dw $5964
-.dw $597f
-.dw $59b2
-.dw $59e1
-.dw $59f4
-.dw $5a26
+	.dw _vire_batForm_state8
+	.dw _vire_batForm_state9
+	.dw _vire_batForm_stateA
+	.dw _vire_batForm_stateB
+	.dw _vire_batForm_stateC
+	.dw _vire_batForm_stateD
+
+
+_vire_batForm_state8:
 	ld h,d			; $5964
 	ld l,e			; $5965
-	inc (hl)		; $5966
-	ld l,$b0		; $5967
+	inc (hl) ; [state]
+
+	ld l,Enemy.var30		; $5967
 	ld a,(hl)		; $5969
 	and $1f			; $596a
-	ld l,$89		; $596c
+	ld l,Enemy.angle		; $596c
 	ld (hl),a		; $596e
-	ld l,$86		; $596f
+
+	ld l,Enemy.counter1		; $596f
 	ld (hl),$10		; $5971
-	ld l,$a9		; $5973
+
+	ld l,Enemy.health		; $5973
 	ld (hl),$01		; $5975
+
 	ld a,$02		; $5977
 	call enemySetAnimation		; $5979
 	jp objectSetVisiblec1		; $597c
+
+
+; Moving upward after charging (or after spawning)
+_vire_batForm_state9:
 	call _ecom_decCounter1		; $597f
-	jr z,_label_0f_148	; $5982
-	ld l,$8f		; $5984
+	jr z,_vire_batForm_gotoStateA	; $5982
+
+	; Move up while zh > -$10
+	ld l,Enemy.zh		; $5984
 	ldd a,(hl)		; $5986
 	cp $f0			; $5987
-	jr c,_label_0f_147	; $5989
+	jr c,++			; $5989
 	ld a,(hl)		; $598b
-	sub $c0			; $598c
+	sub <($00c0)			; $598c
 	ldi (hl),a		; $598e
 	ld a,(hl)		; $598f
-	sbc $00			; $5990
+	sbc >($00c0)			; $5990
 	ld (hl),a		; $5992
-_label_0f_147:
+++
 	call objectApplySpeed		; $5993
-	jr _label_0f_150		; $5996
-_label_0f_148:
+	jr _vire_batForm_animate		; $5996
+
+_vire_batForm_gotoStateA:
 	ld l,e			; $5998
-	ld (hl),$0a		; $5999
-	ld l,$90		; $599b
-	ld (hl),$14		; $599d
-	ld l,$a4		; $599f
+	ld (hl),$0a ; [state]
+
+	ld l,Enemy.speed		; $599b
+	ld (hl),SPEED_80		; $599d
+
+	ld l,Enemy.collisionType		; $599f
 	set 7,(hl)		; $59a1
+
 	call getRandomNumber_noPreserveVars		; $59a3
-	ld e,$86		; $59a6
+	ld e,Enemy.counter1		; $59a6
 	ld (de),a		; $59a8
-	ld a,$07		; $59a9
+
+	; [mainForm.counter2] = 180
+	ld a,Object.counter2		; $59a9
 	call objectGetRelatedObject1Var		; $59ab
-	ld (hl),$b4		; $59ae
-	jr _label_0f_150		; $59b0
-	call $5b59		; $59b2
-	ld a,$07		; $59b5
+	ld (hl),180		; $59ae
+	jr _vire_batForm_animate		; $59b0
+
+
+_vire_batForm_stateA:
+	call _vire_batForm_updateZPos		; $59b2
+
+	ld a,Object.counter2		; $59b5
 	call objectGetRelatedObject1Var		; $59b7
 	ld a,(hl)		; $59ba
 	or a			; $59bb
-	jr nz,_label_0f_149	; $59bc
+	jr nz,++		; $59bc
+
 	call _ecom_incState		; $59be
-	ld l,$86		; $59c1
+	ld l,Enemy.counter1		; $59c1
 	ld (hl),$08		; $59c3
 	ret			; $59c5
-_label_0f_149:
-	call $5b39		; $59c6
+++
+	call _vire_batForm_moveAwayFromLinkIfTooClose		; $59c6
+
 	call objectGetAngleTowardEnemyTarget		; $59c9
 	ld b,a			; $59cc
-	ld e,$b0		; $59cd
+	ld e,Enemy.var30		; $59cd
 	ld a,(de)		; $59cf
 	add b			; $59d0
 	and $1f			; $59d1
-	ld e,$89		; $59d3
+	ld e,Enemy.angle		; $59d3
 	ld (de),a		; $59d5
+
 	ld a,$02		; $59d6
 	call _ecom_getSideviewAdjacentWallsBitset		; $59d8
 	call z,objectApplySpeed		; $59db
-_label_0f_150:
+
+_vire_batForm_animate:
 	jp enemyAnimate		; $59de
+
+
+; About to charge toward Link in [counter1] frames
+_vire_batForm_stateB:
 	call _ecom_decCounter1		; $59e1
 	ret nz			; $59e4
+
 	ld l,e			; $59e5
-	inc (hl)		; $59e6
-	ld l,$90		; $59e7
-	ld (hl),$50		; $59e9
-	ld l,$b5		; $59eb
+	inc (hl) ; [state]
+
+	ld l,Enemy.speed		; $59e7
+	ld (hl),SPEED_200		; $59e9
+
+	ld l,Enemy.var35		; $59eb
 	ldh a,(<hEnemyTargetY)	; $59ed
 	ldi (hl),a		; $59ef
 	ldh a,(<hEnemyTargetX)	; $59f0
 	ld (hl),a		; $59f2
 	ret			; $59f3
+
+
+; Charging toward target position in var35/var36
+_vire_batForm_stateC:
 	ld h,d			; $59f4
-	ld l,$b5		; $59f5
+	ld l,Enemy.var35		; $59f5
 	call _ecom_readPositionVars		; $59f7
 	sub c			; $59fa
 	add $08			; $59fb
 	cp $11			; $59fd
-	jr nc,_label_0f_151	; $59ff
+	jr nc,@notReachedPosition	; $59ff
+
 	ldh a,(<hFF8F)	; $5a01
 	sub b			; $5a03
 	add $08			; $5a04
 	cp $11			; $5a06
-	jr nc,_label_0f_151	; $5a08
-	ld l,$8f		; $5a0a
+	jr nc,@notReachedPosition	; $5a08
+
+	ld l,Enemy.zh		; $5a0a
 	ld a,(hl)		; $5a0c
 	cp $fa			; $5a0d
-	jr c,_label_0f_151	; $5a0f
+	jr c,@notReachedPosition	; $5a0f
+
+	; Reached target position
+
 	ld l,e			; $5a11
-	inc (hl)		; $5a12
-	ld l,$86		; $5a13
-	ld (hl),$14		; $5a15
-	jr _label_0f_150		; $5a17
-_label_0f_151:
-	ld l,$8f		; $5a19
+	inc (hl) ; [state]
+	ld l,Enemy.counter1		; $5a13
+	ld (hl),20		; $5a15
+	jr _vire_batForm_animate		; $5a17
+
+@notReachedPosition:
+	ld l,Enemy.zh		; $5a19
 	ld a,(hl)		; $5a1b
 	cp $fe			; $5a1c
-	jr nc,_label_0f_152	; $5a1e
+	jr nc,+			; $5a1e
 	inc (hl)		; $5a20
-_label_0f_152:
++
 	call _ecom_moveTowardPosition		; $5a21
-	jr _label_0f_150		; $5a24
+	jr _vire_batForm_animate		; $5a24
+
+
+; Moving back up after charging
+_vire_batForm_stateD:
 	call _ecom_decCounter1		; $5a26
-	jp z,$5998		; $5a29
-	ld l,$8f		; $5a2c
+	jp z,_vire_batForm_gotoStateA		; $5a29
+
+	ld l,Enemy.zh		; $5a2c
 	ldd a,(hl)		; $5a2e
 	cp $f0			; $5a2f
-	jr c,_label_0f_153	; $5a31
+	jr c,++			; $5a31
+
 	ld a,(hl)		; $5a33
-	sub $c0			; $5a34
+	sub <($00c0)			; $5a34
 	ldi (hl),a		; $5a36
 	ld a,(hl)		; $5a37
-	sbc $00			; $5a38
+	sbc >($00c0)			; $5a38
 	ld (hl),a		; $5a3a
-_label_0f_153:
+++
 	ld a,$02		; $5a3b
 	call _ecom_getSideviewAdjacentWallsBitset		; $5a3d
 	call z,objectApplySpeed		; $5a40
-	jr _label_0f_150		; $5a43
+	jr _vire_batForm_animate		; $5a43
+
+
+;;
+; Sets Vire's position to just outside the camera (along with corresponding angle), and
+; increments state2.
+;
+; @param[out]	hl	Enemy.state2
+; @addr{5a45}
+_vire_spawnOutsideCamera:
 	call getRandomNumber_noPreserveVars		; $5a45
 	and $07			; $5a48
 	ld b,a			; $5a4a
 	add a			; $5a4b
 	add b			; $5a4c
-	ld hl,$5a6e		; $5a4d
+	ld hl,@spawnPositions		; $5a4d
 	rst_addAToHl			; $5a50
-	ld e,$8b		; $5a51
+
+	ld e,Enemy.yh		; $5a51
 	ldh a,(<hCameraY)	; $5a53
 	add (hl)		; $5a55
 	ld (de),a		; $5a56
 	inc hl			; $5a57
-	ld e,$8d		; $5a58
+	ld e,Enemy.xh		; $5a58
 	ldh a,(<hCameraX)	; $5a5a
 	add (hl)		; $5a5c
 	ld (de),a		; $5a5d
+
 	inc hl			; $5a5e
-	ld e,$89		; $5a5f
+	ld e,Enemy.angle		; $5a5f
 	ld a,(hl)		; $5a61
 	ld (de),a		; $5a62
+
 	ld h,d			; $5a63
-	ld l,$a4		; $5a64
+	ld l,Enemy.collisionType		; $5a64
 	set 7,(hl)		; $5a66
-	ld l,$85		; $5a68
+
+	ld l,Enemy.state2		; $5a68
 	inc (hl)		; $5a6a
 	jp objectSetVisiblec1		; $5a6b
-	ld hl,sp+$10		; $5a6e
-	stop			; $5a70
-	ld hl,sp-$70		; $5a71
-	stop			; $5a73
-	stop			; $5a74
-	ld hl,sp+$08		; $5a75
-	stop			; $5a77
-	xor b			; $5a78
-	jr _label_0f_157		; $5a79
-	ld hl,sp+$08		; $5a7b
-	ld (hl),b		; $5a7d
-	xor b			; $5a7e
-	jr -$78			; $5a7f
-	stop			; $5a81
-	nop			; $5a82
-	adc b			; $5a83
-	sub b			; $5a84
-	nop			; $5a85
+
+; Data format:
+;   b0: y (relative to hCameraY)
+;   b1: x (relative to hCameraX)
+;   b2: angle
+@spawnPositions:
+	.db $f8 $10 $10
+	.db $f8 $90 $10
+	.db $10 $f8 $08
+	.db $10 $a8 $18
+	.db $70 $f8 $08
+	.db $70 $a8 $18
+	.db $88 $10 $00
+	.db $88 $90 $00
+
+;;
+; Vire has left the screen; set state to 9, where he'll wait for 90 frames before
+; attacking again.
+; @addr{5a86}
+_vire_mainForm_leftScreen:
 	ld h,d			; $5a86
-	ld l,$84		; $5a87
+	ld l,Enemy.state		; $5a87
 	ld (hl),$09		; $5a89
 	inc l			; $5a8b
-	ld (hl),$00		; $5a8c
+	ld (hl),$00 ; [state2]
 	inc l			; $5a8e
-	ld (hl),$5a		; $5a8f
-	ld l,$a4		; $5a91
+	ld (hl),90 ; [counter1]
+
+	ld l,Enemy.collisionType		; $5a91
 	res 7,(hl)		; $5a93
 	jp objectSetInvisible		; $5a95
-	ld e,$8b		; $5a98
+
+;;
+; @param[out]	cflag	c if left screen
+; @addr{5a98}
+_vire_checkOffScreen:
+	ld e,Enemy.yh		; $5a98
 	ld a,(de)		; $5a9a
-	cp $b8			; $5a9b
+	cp (LARGE_ROOM_HEIGHT<<4)+8			; $5a9b
 	ret nc			; $5a9d
-	ld e,$8d		; $5a9e
+	ld e,Enemy.xh		; $5a9e
 	ld a,(de)		; $5aa0
-	cp $f0			; $5aa1
+	cp (LARGE_ROOM_WIDTH<<4)			; $5aa1
 	ret			; $5aa3
+
+
+;;
+; @addr{5aa4}
+_vire_mainForm_circleAroundScreen:
 	ldh a,(<hCameraY)	; $5aa4
-	add $44			; $5aa6
+	add (SCREEN_HEIGHT<<3)+4			; $5aa6
 	ld b,a			; $5aa8
 	ldh a,(<hCameraX)	; $5aa9
-	add $50			; $5aab
+	add SCREEN_WIDTH<<3			; $5aab
 	ld c,a			; $5aad
 	push bc			; $5aae
 	call objectGetRelativeAngle		; $5aaf
 	pop bc			; $5ab2
+
 	ld h,a			; $5ab3
-	ld e,$8b		; $5ab4
+	ld e,Enemy.yh		; $5ab4
 	ld a,(de)		; $5ab6
 	sub b			; $5ab7
-	jr nc,_label_0f_154	; $5ab8
+	jr nc,+		; $5ab8
 	cpl			; $5aba
 	inc a			; $5abb
-_label_0f_154:
++
 	ld b,a			; $5abc
 	cp $3e			; $5abd
 	ld a,h			; $5abf
-	jr nc,_label_0f_156	; $5ac0
-	ld e,$8d		; $5ac2
+	jr nc,@setAngleAndSpeed	; $5ac0
+
+	ld e,Enemy.xh		; $5ac2
 	ld a,(de)		; $5ac4
 	sub c			; $5ac5
-	jr nc,_label_0f_155	; $5ac6
+	jr nc,+			; $5ac6
 	cpl			; $5ac8
 	inc a			; $5ac9
-_label_0f_155:
++
 	ld c,a			; $5aca
 	cp $3e			; $5acb
 	ld a,h			; $5acd
-	jr nc,_label_0f_156	; $5ace
+	jr nc,@setAngleAndSpeed	; $5ace
+
 	ld a,b			; $5ad0
 	add c			; $5ad1
 	sub $42			; $5ad2
 	cp $08			; $5ad4
-	jr c,_label_0f_157	; $5ad6
+	jr c,@offsetAngle	; $5ad6
+
 	rlca			; $5ad8
 	ld a,h			; $5ad9
-	jr nc,_label_0f_156	; $5ada
+	jr nc,@setAngleAndSpeed	; $5ada
+
 	xor $10			; $5adc
-_label_0f_156:
+
+@setAngleAndSpeed:
 	push hl			; $5ade
-	ld e,$89		; $5adf
+	ld e,Enemy.angle		; $5adf
 	ld (de),a		; $5ae1
-	ld e,$90		; $5ae2
-	ld a,$0a		; $5ae4
+	ld e,Enemy.speed		; $5ae2
+	ld a,SPEED_40		; $5ae4
 	ld (de),a		; $5ae6
 	call objectApplySpeed		; $5ae7
 	pop hl			; $5aea
-_label_0f_157:
-	ld e,$b0		; $5aeb
+
+@offsetAngle:
+	ld e,Enemy.var30		; $5aeb
 	ld a,(de)		; $5aed
 	add h			; $5aee
 	and $1f			; $5aef
-	ld e,$89		; $5af1
+	ld e,Enemy.angle		; $5af1
 	ld (de),a		; $5af3
-	ld e,$90		; $5af4
-	ld a,$23		; $5af6
+
+	ld e,Enemy.speed		; $5af4
+	ld a,SPEED_e0		; $5af6
 	ld (de),a		; $5af8
+
+
+;;
+; @addr{5af9}
+_vire_mainForm_applySpeedAndAnimate:
 	call objectApplySpeed		; $5af9
 	jp enemyAnimate		; $5afc
+
+;;
+; @param[out]	cflag	c if Link is too close (Vire will flee)
+; @addr{5aff}
+_vire_mainForm_checkLinkTooClose:
 	ld h,d			; $5aff
-	ld l,$8b		; $5b00
+	ld l,Enemy.yh		; $5b00
 	ldh a,(<hEnemyTargetY)	; $5b02
 	sub (hl)		; $5b04
-	add $1e			; $5b05
-	cp $3d			; $5b07
+	add 30			; $5b05
+	cp 61			; $5b07
 	ret nc			; $5b09
-	ld l,$8d		; $5b0a
+	ld l,Enemy.xh		; $5b0a
 	ldh a,(<hEnemyTargetX)	; $5b0c
 	sub (hl)		; $5b0e
-	add $1e			; $5b0f
-	cp $3d			; $5b11
+	add 30			; $5b0f
+	cp 61			; $5b11
 	ret			; $5b13
+
+
+;;
+; @addr{5b14}
+_vire_mainForm_fireProjectile:
 	call getRandomNumber_noPreserveVars		; $5b14
 	and $01			; $5b17
 	inc a			; $5b19
 	ld b,a			; $5b1a
+
+;;
+; @param	b	Subid
+; @addr{5b1b}
+_vire_mainForm_fireProjectileWithSubid:
 	call getFreePartSlot		; $5b1b
 	ret nz			; $5b1e
-	ld (hl),$3a		; $5b1f
+	ld (hl),PARTID_VIRE_PROJECTILE		; $5b1f
 	inc l			; $5b21
-	ld (hl),b		; $5b22
-	ld l,$d7		; $5b23
+	ld (hl),b ; [subid]
+
+	ld l,Part.relatedObj1+1		; $5b23
 	ld (hl),d		; $5b25
 	dec l			; $5b26
-	ld (hl),$80		; $5b27
+	ld (hl),Enemy.start		; $5b27
+
 	call objectCopyPosition		; $5b29
 	ld a,SND_SPLASH		; $5b2c
 	call playSound		; $5b2e
-	ld e,$88		; $5b31
+
+	ld e,Enemy.direction		; $5b31
 	ld a,$01		; $5b33
 	ld (de),a		; $5b35
 	jp enemySetAnimation		; $5b36
+
+;;
+; @addr{5b39}
+_vire_batForm_moveAwayFromLinkIfTooClose:
 	ld h,d			; $5b39
-	ld l,$8b		; $5b3a
+	ld l,Enemy.yh		; $5b3a
 	ldh a,(<hEnemyTargetY)	; $5b3c
 	sub (hl)		; $5b3e
-	add $0c			; $5b3f
-	cp $19			; $5b41
+	add 12			; $5b3f
+	cp 25			; $5b41
 	ret nc			; $5b43
-	ld l,$8d		; $5b44
+	ld l,Enemy.xh		; $5b44
 	ldh a,(<hEnemyTargetX)	; $5b46
 	sub (hl)		; $5b48
-	add $0c			; $5b49
-	cp $19			; $5b4b
+	add 12			; $5b49
+	cp 25			; $5b4b
 	ret nc			; $5b4d
+
 	call objectGetAngleTowardEnemyTarget		; $5b4e
 	xor $10			; $5b51
 	ld c,a			; $5b53
-	ld b,$50		; $5b54
+	ld b,SPEED_200		; $5b54
 	jp _ecom_applyGivenVelocity		; $5b56
+
+
+;;
+; @addr{5b59}
+_vire_batForm_updateZPos:
 	call _ecom_decCounter1		; $5b59
 	ld a,(hl)		; $5b5c
 	and $1c			; $5b5d
 	rrca			; $5b5f
 	rrca			; $5b60
-	ld hl,$5b6a		; $5b61
+	ld hl,@zVals		; $5b61
 	rst_addAToHl			; $5b64
-	ld e,$8f		; $5b65
+	ld e,Enemy.zh		; $5b65
 	ld a,(hl)		; $5b67
 	ld (de),a		; $5b68
 	ret			; $5b69
-	ld a,($ff00+$f1)	; $5b6a
-	ld a,($ff00+$ef)	; $5b6c
-	xor $ed			; $5b6e
-	xor $ef			; $5b70
+
+@zVals:
+	.db $f0 $f1 $f0 $ef $ee $ed $ee $ef
 
 ;;
 ; @addr{5b72}

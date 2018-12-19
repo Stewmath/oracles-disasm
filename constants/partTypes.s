@@ -155,6 +155,10 @@
 ; Ball for the shooting gallery
 .define PARTID_BALL				$38
 
+;;
+; relatedObj2 is ENEMYID_VIRE
+.define PARTID_VIRE_PROJECTILE			$3a
+
 ; Used by big bang game.
 ; @subid_00{A single bomb?}
 ; @subid_ff{A spawner for bombs?}
