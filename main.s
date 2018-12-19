@@ -129262,7 +129262,7 @@ enemyCode1f:
 
 
 ; ==============================================================================
-; ENEMYID_ANGER_FISH_BUBBLE
+; ENEMYID_ANGLER_FISH_BUBBLE
 ; ==============================================================================
 enemyCode26:
 	jr z,@normalStatus	; $6cb7
@@ -146804,315 +146804,437 @@ _vire_batForm_updateZPos:
 @zVals:
 	.db $f0 $f1 $f0 $ef $ee $ed $ee $ef
 
-;;
-; @addr{5b72}
+
+; ==============================================================================
+; ENEMYID_ANGLER_FISH
+;
+; Variables:
+;   relatedObj1: reference to other subid (main <-> antenna)
+; ==============================================================================
 enemyCode76:
-	jr z,_label_0f_160	; $5b72
-	sub $03			; $5b74
+	jr z,@normalStatus	; $5b72
+	sub ENEMYSTATUS_NO_HEALTH			; $5b74
 	ret c			; $5b76
-	jr nz,_label_0f_158	; $5b77
-	ld e,$82		; $5b79
+	jr nz,@justHit	; $5b77
+
+	; ENEMYSTATUS_DEAD
+	ld e,Enemy.subid		; $5b79
 	ld a,(de)		; $5b7b
 	or a			; $5b7c
 	jp z,_enemyBoss_dead		; $5b7d
 	call _ecom_killRelatedObj1		; $5b80
 	jp enemyDelete		; $5b83
-_label_0f_158:
-	ld e,$82		; $5b86
+
+@justHit:
+	ld e,Enemy.subid		; $5b86
 	ld a,(de)		; $5b88
 	or a			; $5b89
-	jr z,_label_0f_159	; $5b8a
-	ld a,$2b		; $5b8c
+	jr z,@fishHit	; $5b8a
+
+@antennaHit:
+	ld a,Object.invincibilityCounter		; $5b8c
 	call objectGetRelatedObject1Var		; $5b8e
 	ld e,l			; $5b91
 	ld a,(de)		; $5b92
 	ld (hl),a		; $5b93
-	jr _label_0f_160		; $5b94
-_label_0f_159:
-	ld e,$aa		; $5b96
+	jr @normalStatus		; $5b94
+
+@fishHit:
+	ld e,Enemy.var2a		; $5b96
 	ld a,(de)		; $5b98
-	cp $9c			; $5b99
-	jr nz,_label_0f_160	; $5b9b
+	cp $80|COLLISIONTYPE_SCENT_SEED			; $5b99
+	jr nz,@normalStatus	; $5b9b
+
 	ld h,d			; $5b9d
-	ld l,$84		; $5b9e
+	ld l,Enemy.state		; $5b9e
 	ld (hl),$0d		; $5ba0
-	ld l,$a4		; $5ba2
+
+	ld l,Enemy.collisionType		; $5ba2
 	res 7,(hl)		; $5ba4
-	ld e,$88		; $5ba6
+
+	ld e,Enemy.direction		; $5ba6
 	ld a,(de)		; $5ba8
 	and $01			; $5ba9
 	add $04			; $5bab
 	ld (de),a		; $5bad
 	call enemySetAnimation		; $5bae
-	ld b,$56		; $5bb1
+
+	ld b,INTERACID_EXPLOSION		; $5bb1
 	call objectCreateInteractionWithSubid00		; $5bb3
-_label_0f_160:
+
+@normalStatus:
 	call _ecom_getSubidAndCpStateTo08		; $5bb6
-	jr c,_label_0f_161	; $5bb9
+	jr c,@commonState	; $5bb9
 	ld a,b			; $5bbb
 	or a			; $5bbc
-	jp z,$5c09		; $5bbd
-	jp $5d32		; $5bc0
-_label_0f_161:
+	jp z,anglerFish_main		; $5bbd
+	jp _anglerFish_antenna		; $5bc0
+
+@commonState:
 	rst_jumpTable			; $5bc3
-.dw $5bd4
-.dw $5c08
-.dw $5c08
-.dw $5c08
-.dw $5c08
-.dw $5c08
-.dw $5c08
-.dw $5c08
+	.dw _anglerFish_state_uninitialized
+	.dw _anglerFish_state_stub
+	.dw _anglerFish_state_stub
+	.dw _anglerFish_state_stub
+	.dw _anglerFish_state_stub
+	.dw _anglerFish_state_stub
+	.dw _anglerFish_state_stub
+	.dw _anglerFish_state_stub
+
+
+_anglerFish_state_uninitialized:
 	ld a,$ff		; $5bd4
 	ld b,$00		; $5bd6
 	call _enemyBoss_initializeRoom		; $5bd8
-	ld e,$82		; $5bdb
+
+	; If bit 7 of subid is set, it's already been initialized
+	ld e,Enemy.subid		; $5bdb
 	ld a,(de)		; $5bdd
 	bit 7,a			; $5bde
 	res 7,a			; $5be0
 	ld (de),a		; $5be2
-	jr nz,_label_0f_162	; $5be3
+	jr nz,@doneInit	; $5be3
+
+	; Subid 1 has no special initialization
 	dec a			; $5be5
-	jr z,_label_0f_162	; $5be6
-	ld b,$76		; $5be8
+	jr z,@doneInit	; $5be6
+
+	; Subid 0 initialization; spawn subid 1, set their relatedObj1 to each other
+	ld b,ENEMYID_ANGLER_FISH		; $5be8
 	call _ecom_spawnUncountedEnemyWithSubid01		; $5bea
 	ret nz			; $5bed
-	ld e,$96		; $5bee
+	ld e,Enemy.relatedObj1		; $5bee
 	ld l,e			; $5bf0
-	ld a,$80		; $5bf1
+	ld a,Enemy.start		; $5bf1
 	ld (de),a		; $5bf3
 	ldi (hl),a		; $5bf4
 	inc e			; $5bf5
 	ld (hl),d		; $5bf6
 	ld a,h			; $5bf7
 	ld (de),a		; $5bf8
+
+	; Make sure subid 0 comes before subid 1, otherwise swap them
 	ld a,h			; $5bf9
 	cp d			; $5bfa
-	jr nc,_label_0f_162	; $5bfb
-	ld l,$82		; $5bfd
+	jr nc,@doneInit	; $5bfb
+	ld l,Enemy.subid		; $5bfd
 	ld (hl),$80		; $5bff
 	ld e,l			; $5c01
 	ld a,$01		; $5c02
 	ld (de),a		; $5c04
-_label_0f_162:
+@doneInit:
 	jp _ecom_setSpeedAndState8		; $5c05
+
+
+_anglerFish_state_stub:
 	ret			; $5c08
+
+
+anglerFish_main:
 	ld a,(de)		; $5c09
 	sub $08			; $5c0a
 	rst_jumpTable			; $5c0c
-.dw $5c1d
-.dw $5c49
-.dw $5c5a
-.dw $5c83
-.dw $5cc1
-.dw $5cef
-.dw $5cfd
-.dw $5d0d
+	.dw anglerFish_main_state8
+	.dw anglerFish_main_state9
+	.dw anglerFish_main_stateA
+	.dw anglerFish_main_stateB
+	.dw anglerFish_main_stateC
+	.dw anglerFish_main_stateD
+	.dw anglerFish_main_stateE
+	.dw anglerFish_main_stateF
+
+
+; Waiting for Link to enter
+anglerFish_main_state8:
 	ld a,(w1Link.state)		; $5c1d
-	cp $0b			; $5c20
+	cp LINK_STATE_FORCE_MOVEMENT			; $5c20
 	ret z			; $5c22
 	call checkLinkVulnerable		; $5c23
 	ret nc			; $5c26
-	ld a,$01		; $5c27
+
+	ld a,DISABLE_LINK		; $5c27
 	ld (wDisabledObjects),a		; $5c29
 	ld (wMenuDisabled),a		; $5c2c
+
 	ld a,$42		; $5c2f
 	ld c,$80		; $5c31
 	call setTile		; $5c33
 	ld a,$52		; $5c36
 	ld c,$90		; $5c38
 	call setTile		; $5c3a
+
 	call _ecom_incState		; $5c3d
-	ld l,$86		; $5c40
-	ld (hl),$1e		; $5c42
+	ld l,Enemy.counter1		; $5c40
+	ld (hl),30		; $5c42
 	ld a,SND_DOORCLOSE		; $5c44
 	jp playSound		; $5c46
+
+
+; Delay before starting fight
+anglerFish_main_state9:
 	call _ecom_decCounter1		; $5c49
 	ret nz			; $5c4c
+
 	ld l,e			; $5c4d
-	inc (hl)		; $5c4e
-	ld l,$89		; $5c4f
-	ld (hl),$18		; $5c51
-	ld l,$90		; $5c53
-	ld (hl),$1e		; $5c55
+	inc (hl) ; [state]
+
+	ld l,Enemy.angle		; $5c4f
+	ld (hl),ANGLE_LEFT		; $5c51
+	ld l,Enemy.speed		; $5c53
+	ld (hl),SPEED_c0		; $5c55
+
 	jp objectSetVisible82		; $5c57
+
+
+; Falling to the ground, then the fight will begin
+anglerFish_main_stateA:
 	ld b,$0c		; $5c5a
 	ld a,$10		; $5c5c
 	call objectUpdateSpeedZ_sidescroll_givenYOffset		; $5c5e
-	jr c,_label_0f_163	; $5c61
-	ld l,$95		; $5c63
+	jr c,@hitGround	; $5c61
+
+	ld l,Enemy.speedZ+1		; $5c63
 	ld a,(hl)		; $5c65
 	cp $02			; $5c66
 	ret c			; $5c68
 	ld (hl),$02		; $5c69
 	ret			; $5c6b
-_label_0f_163:
+
+@hitGround:
 	call _enemyBoss_beginMiniboss		; $5c6c
 	call _ecom_incState		; $5c6f
-	ld l,$87		; $5c72
-	ld (hl),$b4		; $5c74
+
+	ld l,Enemy.counter2		; $5c72
+	ld (hl),180		; $5c74
+
+_anglerFish_bounceOffGround:
 	ld h,d			; $5c76
-	ld l,$94		; $5c77
-	ld a,$e0		; $5c79
+	ld l,Enemy.speedZ		; $5c77
+	ld a,<(-$320)		; $5c79
 	ldi (hl),a		; $5c7b
-	ld (hl),$fc		; $5c7c
+	ld (hl),>(-$320)		; $5c7c
+
 	ld a,SND_POOF		; $5c7e
 	jp playSound		; $5c80
+
+
+; Bouncing around normally
+anglerFish_main_stateB:
 	call _ecom_decCounter2		; $5c83
-	call z,$5d80		; $5c86
-_label_0f_164:
+	call z,anglerFish_main_checkFireProjectile		; $5c86
+
+_anglerFish_updatePosition:
 	ld b,$0c		; $5c89
 	ld a,$10		; $5c8b
 	call objectUpdateSpeedZ_sidescroll_givenYOffset		; $5c8d
-	jr nc,_label_0f_165	; $5c90
-	call $5c76		; $5c92
+	jr nc,_anglerFish_applySpeed	; $5c90
+
+	; Hit ground
+	call _anglerFish_bounceOffGround		; $5c92
+
 	call getRandomNumber_noPreserveVars		; $5c95
 	and $10			; $5c98
 	add $08			; $5c9a
-	ld e,$89		; $5c9c
+	ld e,Enemy.angle		; $5c9c
 	ld (de),a		; $5c9e
+
 	and $10			; $5c9f
 	xor $10			; $5ca1
 	swap a			; $5ca3
 	ld b,a			; $5ca5
-	ld e,$88		; $5ca6
+	ld e,Enemy.direction		; $5ca6
 	ld a,(de)		; $5ca8
 	and $01			; $5ca9
 	cp b			; $5cab
-	call nz,$5cb8		; $5cac
-_label_0f_165:
+	call nz,_anglerFish_updateAnimation		; $5cac
+
+_anglerFish_applySpeed:
 	call objectApplySpeed		; $5caf
 	call _ecom_bounceOffWallsAndHoles		; $5cb2
 	jp z,enemyAnimate		; $5cb5
-	ld e,$88		; $5cb8
+
+_anglerFish_updateAnimation:
+	ld e,Enemy.direction		; $5cb8
 	ld a,(de)		; $5cba
 	xor $01			; $5cbb
 	ld (de),a		; $5cbd
 	jp enemySetAnimation		; $5cbe
-	ld e,$a1		; $5cc1
+
+
+; Firing a projectile
+anglerFish_main_stateC:
+	ld e,Enemy.animParameter		; $5cc1
 	ld a,(de)		; $5cc3
 	inc a			; $5cc4
-	jr z,_label_0f_166	; $5cc5
+	jr z,@doneFiring	; $5cc5
 	dec a			; $5cc7
-	jr z,_label_0f_164	; $5cc8
+	jr z,_anglerFish_updatePosition	; $5cc8
+
+	; Time to spawn the projectile
 	xor a			; $5cca
 	ld (de),a		; $5ccb
 	call getFreeEnemySlot_uncounted		; $5ccc
-	jr nz,_label_0f_164	; $5ccf
-	ld (hl),$26		; $5cd1
-	ld l,$96		; $5cd3
-	ld a,$80		; $5cd5
+	jr nz,_anglerFish_updatePosition	; $5ccf
+
+	ld (hl),ENEMYID_ANGLER_FISH_BUBBLE		; $5cd1
+	ld l,Enemy.relatedObj1		; $5cd3
+	ld a,Enemy.start		; $5cd5
 	ldi (hl),a		; $5cd7
 	ld (hl),d		; $5cd8
+
 	ld a,SND_FALLINHOLE		; $5cd9
 	call playSound		; $5cdb
-	jr _label_0f_164		; $5cde
-_label_0f_166:
+	jr _anglerFish_updatePosition		; $5cde
+
+@doneFiring:
 	ld h,d			; $5ce0
-	ld l,$84		; $5ce1
+	ld l,Enemy.state		; $5ce1
 	dec (hl)		; $5ce3
-	ld l,$88		; $5ce4
+
+	ld l,Enemy.direction		; $5ce4
 	ld a,(hl)		; $5ce6
 	sub $02			; $5ce7
 	ld (hl),a		; $5ce9
 	call enemySetAnimation		; $5cea
-	jr _label_0f_164		; $5ced
+
+	jr _anglerFish_updatePosition		; $5ced
+
+
+; Just hit with a scent seed, falling to ground
+anglerFish_main_stateD:
 	ld a,$20		; $5cef
 	call objectUpdateSpeedZ_sidescroll		; $5cf1
 	ret nc			; $5cf4
+
 	call _ecom_incState		; $5cf5
-	ld l,$86		; $5cf8
-	ld (hl),$96		; $5cfa
+	ld l,Enemy.counter1		; $5cf8
+	ld (hl),150		; $5cfa
 	ret			; $5cfc
+
+
+; Vulnerable for [counter1] frames
+anglerFish_main_stateE:
 	call _ecom_decCounter1		; $5cfd
 	jp nz,enemyAnimate		; $5d00
+
 	ld l,e			; $5d03
-	inc (hl)		; $5d04
-	ld l,$94		; $5d05
-	ld a,$00		; $5d07
+	inc (hl) ; [state]
+
+	ld l,Enemy.speedZ		; $5d05
+	ld a,<(-$400)		; $5d07
 	ldi (hl),a		; $5d09
-	ld (hl),$fc		; $5d0a
+	ld (hl),>(-$400)		; $5d0a
 	ret			; $5d0c
+
+
+; Bouncing back up after being deflated
+anglerFish_main_stateF:
 	ld a,$20		; $5d0d
 	call objectUpdateSpeedZ_sidescroll		; $5d0f
-	ld l,$95		; $5d12
+
+	ld l,Enemy.speedZ+1		; $5d12
 	ld a,(hl)		; $5d14
 	or a			; $5d15
-	jr nz,_label_0f_165	; $5d16
-	ld l,$84		; $5d18
+	jr nz,_anglerFish_applySpeed	; $5d16
+
+	ld l,Enemy.state		; $5d18
 	ld (hl),$0b		; $5d1a
-	ld l,$a4		; $5d1c
+
+	ld l,Enemy.collisionType		; $5d1c
 	set 7,(hl)		; $5d1e
-	ld l,$86		; $5d20
-	ld (hl),$b4		; $5d22
-	ld l,$88		; $5d24
+
+	ld l,Enemy.counter1		; $5d20
+	ld (hl),180		; $5d22
+
+	ld l,Enemy.direction		; $5d24
 	ld a,(hl)		; $5d26
 	sub $04			; $5d27
 	ld (hl),a		; $5d29
 	call enemySetAnimation		; $5d2a
+
 	ld a,SND_POOF		; $5d2d
 	jp playSound		; $5d2f
+
+
+_anglerFish_antenna:
 	ld a,(de)		; $5d32
 	cp $08			; $5d33
-	jr z,_label_0f_167	; $5d35
-	ld a,$08		; $5d37
+	jr z,@state8	; $5d35
+
+@state9:
+	ld a,Object.direction		; $5d37
 	call objectGetRelatedObject1Var		; $5d39
 	ld a,(hl)		; $5d3c
 	push hl			; $5d3d
-	ld hl,$5d58		; $5d3e
+
+	ld hl,@positionOffsets		; $5d3e
 	rst_addDoubleIndex			; $5d41
 	ldi a,(hl)		; $5d42
 	ld b,a			; $5d43
 	ld c,(hl)		; $5d44
+
 	pop hl			; $5d45
 	call objectTakePositionWithOffset		; $5d46
-	ld l,$ab		; $5d49
+	ld l,Enemy.invincibilityCounter		; $5d49
 	ld a,(hl)		; $5d4b
 	or a			; $5d4c
 	jp nz,objectSetInvisible		; $5d4d
+
 	ld a,(wFrameCounter)		; $5d50
 	rrca			; $5d53
 	ret c			; $5d54
 	jp _ecom_flickerVisibility		; $5d55
-	ld a,($ff00+$f6)	; $5d58
-	ld a,($ff00+$0a)	; $5d5a
-	ld a,($ff00+$f6)	; $5d5c
-	ld a,($ff00+$0a)	; $5d5e
-.DB $fc				; $5d60
-	rst $30			; $5d61
-.DB $fc				; $5d62
-	add hl,bc		; $5d63
-_label_0f_167:
+
+@positionOffsets:
+	.db $f0 $f6
+	.db $f0 $0a
+	.db $f0 $f6
+	.db $f0 $0a
+	.db $fc $f7
+	.db $fc $09
+
+@state8:
 	ld h,d			; $5d64
 	ld l,e			; $5d65
-	inc (hl)		; $5d66
-	ld l,$a5		; $5d67
-	ld (hl),$47		; $5d69
-	ld l,$a6		; $5d6b
+	inc (hl) ; [state]
+
+	ld l,Enemy.collisionReactionSet		; $5d67
+	ld (hl),COLLISIONREACTIONSET_47		; $5d69
+
+	ld l,Enemy.collisionRadiusY		; $5d6b
 	ld a,$03		; $5d6d
 	ldi (hl),a		; $5d6f
 	ld (hl),a		; $5d70
-	ld l,$9d		; $5d71
+
+	ld l,Enemy.oamTileIndexBase		; $5d71
 	ld (hl),$1e		; $5d73
-	ld l,$9b		; $5d75
+
+	ld l,Enemy.oamFlagsBackup		; $5d75
 	ld a,$0d		; $5d77
 	ldi (hl),a		; $5d79
 	ld (hl),a		; $5d7a
+
 	ld a,$06		; $5d7b
 	jp enemySetAnimation		; $5d7d
-	ld e,$8b		; $5d80
+
+;;
+; Changes state to $0c if conditions are appropriate to fire a projectile.
+; @addr{5d80}
+anglerFish_main_checkFireProjectile:
+	ld e,Enemy.yh		; $5d80
 	ld a,(de)		; $5d82
 	cp $5c			; $5d83
 	ret nc			; $5d85
-	ld e,$8d		; $5d86
+	ld e,Enemy.xh		; $5d86
 	ld a,(de)		; $5d88
 	sub $38			; $5d89
 	cp $70			; $5d8b
 	ret nc			; $5d8d
-	ld (hl),$b4		; $5d8e
-	ld l,$84		; $5d90
+
+	ld (hl),180		; $5d8e
+	ld l,Enemy.state		; $5d90
 	inc (hl)		; $5d92
-	ld l,$88		; $5d93
+	ld l,Enemy.direction		; $5d93
 	ld a,(hl)		; $5d95
 	add $02			; $5d96
 	ld (hl),a		; $5d98

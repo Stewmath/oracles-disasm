@@ -212,7 +212,7 @@
 
 ;;
 ; This object automatically deletes itself if [relatedObj1.id] != ENEMYID_ANGLER_FISH.
-.define ENEMYID_ANGER_FISH_BUBBLE		$26
+.define ENEMYID_ANGLER_FISH_BUBBLE		$26
 
 ;;
 ; Deku scrub that shoots seeds at you. His "bush" graphic (ENEMYID_BUSH_OR_ROCK) only
@@ -665,6 +665,9 @@
 ; @subid_01{Bat form}
 .define ENEMYID_VIRE				$75
 
+;;
+; @subid_00{The fish}
+; @subid_01{His antenna (weak point)}
 .define ENEMYID_ANGLER_FISH			$76
 .define ENEMYID_BLUE_STALFOS			$77
 
