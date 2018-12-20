@@ -669,6 +669,13 @@
 ; @subid_00{The fish}
 ; @subid_01{His antenna (weak point)}
 .define ENEMYID_ANGLER_FISH			$76
+
+
+;;
+; @subid_00{Spawner (use this)}
+; @subid_01{Main object}
+; @subid_02{Sickle hitbox}
+; @subid_03{"Afterimage" visible when moving}
 .define ENEMYID_BLUE_STALFOS			$77
 
 

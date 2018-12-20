@@ -1,5 +1,7 @@
 ; There are a handful of cases where these are hardcoded (ie. when an enemy's
 ; vulnerability changes from an action, such as with spiked beetles).
+;
+; TODO: are these the same for enemies and parts?
 
 .enum 0
 	COLLISIONREACTIONSET_00		db

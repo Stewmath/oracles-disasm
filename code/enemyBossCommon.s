@@ -57,6 +57,7 @@ _enemyBoss_dead:
 ;
 ; @param	b	Shadow size (0-2 for small-large)
 ; @param	c	Y-offset of shadow relative to self
+; @param[out]	zflag	z on success
 ; @addr{4534}
 _enemyBoss_spawnShadow:
 	call getFreePartSlot		; $4534

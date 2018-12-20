@@ -147240,423 +147240,592 @@ anglerFish_main_checkFireProjectile:
 	ld (hl),a		; $5d98
 	jp enemySetAnimation		; $5d99
 
-;;
-; @addr{5d9c}
+
+; ==============================================================================
+; ENEMYID_BLUE_STALFOS
+;
+; Variables (for subid 1, "main" enemy):
+;   var30/var31: Destination position while moving
+;   var32: Projectile pattern index; number from 0-7 which cycles through ball types.
+;          (Used by PARTID_BLUE_STALFOS_PROJECTILE.)
+;
+; Variables (for subid 3, the afterimage):
+;   var30/var31: Y/X position?
+;   var32: Index in position differenc buffer?
+;   var33-var3a: Position difference buffer?
+; ==============================================================================
 enemyCode77:
-	jr z,_label_0f_168	; $5d9c
-	sub $03			; $5d9e
+	jr z,@normalStatus	; $5d9c
+	sub ENEMYSTATUS_NO_HEALTH			; $5d9e
 	ret c			; $5da0
 	jp z,_enemyBoss_dead		; $5da1
 	dec a			; $5da4
-	jr nz,_label_0f_168	; $5da5
-_label_0f_168:
-	call _ecom_getSubidAndCpStateTo08		; $5da7
-	jr nc,_label_0f_169	; $5daa
-	rst_jumpTable			; $5dac
-.dw $5dc6
-.dw $5ddd
-.dw $5e0f
-.dw $5e0f
-.dw $5e0f
-.dw $5e0f
-.dw $5e0f
-.dw $5e0f
+	jr nz,@normalStatus	; $5da5
 
-_label_0f_169:
+@normalStatus:
+	call _ecom_getSubidAndCpStateTo08		; $5da7
+	jr nc,@normalState	; $5daa
+	rst_jumpTable			; $5dac
+	.dw _blueStalfos_state_uninitialized
+	.dw _blueStalfos_state_spawner
+	.dw _blueStalfos_state_stub
+	.dw _blueStalfos_state_stub
+	.dw _blueStalfos_state_stub
+	.dw _blueStalfos_state_stub
+	.dw _blueStalfos_state_stub
+	.dw _blueStalfos_state_stub
+
+@normalState:
 	dec b			; $5dbd
 	ld a,b			; $5dbe
 	rst_jumpTable			; $5dbf
-.dw $5e10
-.dw $5ff1
-.dw $6067
+	.dw _blueStalfos_subid1
+	.dw _blueStalfos_subid2
+	.dw _blueStalfos_subid3
+
+
+_blueStalfos_state_uninitialized:
 	ld a,b			; $5dc6
 	sub $02			; $5dc7
 	call c,objectSetVisible82		; $5dc9
 	ld a,b			; $5dcc
 	or a			; $5dcd
 	jp nz,_ecom_setSpeedAndState8		; $5dce
+
+	; Spawner (subid 0) only
 	call _ecom_incState		; $5dd1
-	ld l,$8f		; $5dd4
+	ld l,Enemy.zh		; $5dd4
 	ld (hl),$ff		; $5dd6
-	ld a,$77		; $5dd8
+	ld a,ENEMYID_BLUE_STALFOS		; $5dd8
 	jp _enemyBoss_initializeRoom		; $5dda
+
+
+_blueStalfos_state_spawner:
 	ld b,$03		; $5ddd
 	call checkBEnemySlotsAvailable		; $5ddf
 	ret nz			; $5de2
-	ld b,$77		; $5de3
+
+	; Spawn subid 1
+	ld b,ENEMYID_BLUE_STALFOS		; $5de3
 	call _ecom_spawnUncountedEnemyWithSubid01		; $5de5
 	call objectCopyPosition		; $5de8
-	ld l,$80		; $5deb
+	ld l,Enemy.enabled		; $5deb
 	ld e,l			; $5ded
 	ld a,(de)		; $5dee
 	ld (hl),a		; $5def
+
+	; Spawn subid 2
 	ld c,h			; $5df0
 	call _ecom_spawnUncountedEnemyWithSubid01		; $5df1
 	inc (hl)		; $5df4
-	ld l,$96		; $5df5
-	ld a,$80		; $5df7
+
+	; [subid2.relatedObj1] = subid1
+	ld l,Enemy.relatedObj1		; $5df5
+	ld a,Enemy.start		; $5df7
 	ldi (hl),a		; $5df9
 	ld (hl),c		; $5dfa
+
 	call objectCopyPosition		; $5dfb
+
+	; Spawn subid 3
 	call _ecom_spawnUncountedEnemyWithSubid01		; $5dfe
 	ld (hl),$03		; $5e01
-	ld l,$96		; $5e03
-	ld a,$80		; $5e05
+
+	; [subid3.relatedObj1] = subid1
+	ld l,Enemy.relatedObj1		; $5e03
+	ld a,Enemy.start		; $5e05
 	ldi (hl),a		; $5e07
 	ld (hl),c		; $5e08
+
 	call objectCopyPosition		; $5e09
+
 	jp enemyDelete		; $5e0c
+
+
+_blueStalfos_state_stub:
 	ret			; $5e0f
+
+
+_blueStalfos_subid1:
 	ld a,(de)		; $5e10
 	sub $08			; $5e11
 	rst_jumpTable			; $5e13
-.dw $5e34
-.dw $5e47
-.dw $5e70
-.dw $5e99
-.dw $5ea3
-.dw $5ed6
-.dw $5ee9
-.dw $5ef7
-.dw $5f0f
-.dw $5f1d
-.dw $5f3b
-.dw $5f5b
-.dw $5f70
-.dw $5f96
-.dw $5fac
-.dw $5fd7
+	.dw _blueStalfos_main_state08
+	.dw _blueStalfos_main_state09
+	.dw _blueStalfos_main_state0a
+	.dw _blueStalfos_main_state0b
+	.dw _blueStalfos_main_state0c
+	.dw _blueStalfos_main_state0d
+	.dw _blueStalfos_main_state0e
+	.dw _blueStalfos_main_state0f
+	.dw _blueStalfos_main_state10
+	.dw _blueStalfos_main_state11
+	.dw _blueStalfos_main_state12
+	.dw _blueStalfos_main_state13
+	.dw _blueStalfos_main_state14
+	.dw _blueStalfos_main_state15
+	.dw _blueStalfos_main_state16
+	.dw _blueStalfos_main_state17
+
+
+_blueStalfos_main_state08:
 	ld bc,$010b		; $5e34
 	call _enemyBoss_spawnShadow		; $5e37
 	ret nz			; $5e3a
+
 	call _ecom_incState		; $5e3b
-	ld l,$90		; $5e3e
-	ld (hl),$50		; $5e40
-	ld l,$89		; $5e42
-	ld (hl),$10		; $5e44
+
+	ld l,Enemy.speed		; $5e3e
+	ld (hl),SPEED_200		; $5e40
+	ld l,Enemy.angle		; $5e42
+	ld (hl),ANGLE_DOWN		; $5e44
 	ret			; $5e46
+
+
+; Moving down before fight starts
+_blueStalfos_main_state09:
 	call objectApplySpeed		; $5e47
-	ld e,$8b		; $5e4a
+	ld e,Enemy.yh		; $5e4a
 	ld a,(de)		; $5e4c
 	cp $58			; $5e4d
-	jr nz,_label_0f_171	; $5e4f
+	jr nz,_blueStalfos_main_animate	; $5e4f
+
+	; Fight starts now
 	call _ecom_incState		; $5e51
-	ld l,$86		; $5e54
+
+	ld l,Enemy.counter1		; $5e54
 	ld (hl),$40		; $5e56
-	ld l,$90		; $5e58
-	ld (hl),$05		; $5e5a
+	ld l,Enemy.speed		; $5e58
+	ld (hl),SPEED_20		; $5e5a
+
 	ld a,MUS_MINIBOSS		; $5e5c
 	ld (wActiveMusic),a		; $5e5e
 	call playSound		; $5e61
+
 	ld e,$0f		; $5e64
 	ld bc,$3030		; $5e66
 	call _ecom_randomBitwiseAndBCE		; $5e69
 	ld a,e			; $5e6c
-	jp $6102		; $5e6d
+	jp _blueStalfos_main_moveToQuadrant		; $5e6d
+
+
+; Moving to position in var30/var31
+_blueStalfos_main_state0a:
 	ld h,d			; $5e70
-	ld l,$b0		; $5e71
+	ld l,Enemy.var30		; $5e71
 	call _ecom_readPositionVars		; $5e73
 	sub c			; $5e76
 	add $04			; $5e77
 	cp $09			; $5e79
-	jr nc,_label_0f_170	; $5e7b
+	jr nc,@moveToPosition	; $5e7b
+
 	ldh a,(<hFF8F)	; $5e7d
 	sub b			; $5e7f
 	add $04			; $5e80
 	cp $09			; $5e82
-	jr nc,_label_0f_170	; $5e84
+	jr nc,@moveToPosition	; $5e84
+
+	; Reached target position
 	ld h,d			; $5e86
-	ld l,$84		; $5e87
+	ld l,Enemy.state		; $5e87
 	ld (hl),$0b		; $5e89
-	ld l,$86		; $5e8b
+	ld l,Enemy.counter1		; $5e8b
 	ld (hl),$10		; $5e8d
-	jr _label_0f_171		; $5e8f
-_label_0f_170:
-	call $6153		; $5e91
+	jr _blueStalfos_main_animate		; $5e8f
+
+@moveToPosition:
+	call _blueStalfos_main_accelerate		; $5e91
 	call _ecom_moveTowardPosition		; $5e94
-	jr _label_0f_171		; $5e97
+	jr _blueStalfos_main_animate		; $5e97
+
+
+; Reached position, standing still for [counter1] frames
+_blueStalfos_main_state0b:
 	call _ecom_decCounter1		; $5e99
-	jr nz,_label_0f_171	; $5e9c
+	jr nz,_blueStalfos_main_animate	; $5e9c
+
 	ld l,e			; $5e9e
-	inc (hl)		; $5e9f
-_label_0f_171:
+	inc (hl) ; [state]
+
+_blueStalfos_main_animate:
 	jp enemyAnimate		; $5ea0
-	ld e,$8b		; $5ea3
+
+
+; Decide which attack to do
+_blueStalfos_main_state0c:
+	ld e,Enemy.yh		; $5ea3
 	ld a,(de)		; $5ea5
 	add $10			; $5ea6
 	ld b,a			; $5ea8
-	ld e,$8d		; $5ea9
+	ld e,Enemy.xh		; $5ea9
 	ld a,(de)		; $5eab
 	add $04			; $5eac
 	ld c,a			; $5eae
+
+	; If Link is close enough, use the sickle on him
 	ldh a,(<hEnemyTargetY)	; $5eaf
 	sub b			; $5eb1
 	add $14			; $5eb2
 	cp $29			; $5eb4
-	jr nc,_label_0f_172	; $5eb6
+	jr nc,@projectileAttack	; $5eb6
 	ldh a,(<hEnemyTargetX)	; $5eb8
 	sub c			; $5eba
 	add $12			; $5ebb
 	cp $25			; $5ebd
-	jp c,$5f66		; $5ebf
-_label_0f_172:
-	ld b,$3d		; $5ec2
+	jp c,_blueStalfos_main_beginSickleAttack		; $5ebf
+
+@projectileAttack:
+	ld b,PARTID_BLUE_STALFOS_PROJECTILE		; $5ec2
 	call _ecom_spawnProjectile		; $5ec4
 	ret nz			; $5ec7
 	ld h,d			; $5ec8
-	ld l,$86		; $5ec9
-	ld (hl),$78		; $5ecb
-	ld l,$84		; $5ecd
+	ld l,Enemy.counter1		; $5ec9
+	ld (hl),120		; $5ecb
+	ld l,Enemy.state		; $5ecd
 	ld (hl),$0e		; $5ecf
 	ld a,$02		; $5ed1
 	jp enemySetAnimation		; $5ed3
+
+
+; Sickle attack
+_blueStalfos_main_state0d:
 	call enemyAnimate		; $5ed6
-	ld e,$a1		; $5ed9
+	ld e,Enemy.animParameter		; $5ed9
 	ld a,(de)		; $5edb
 	inc a			; $5edc
-	jr z,_label_0f_173	; $5edd
+	jr z,_blueStalfos_main_finishedAttack	; $5edd
+
 	dec a			; $5edf
 	ret nz			; $5ee0
+
 	ld a,$08		; $5ee1
-	ld (de),a		; $5ee3
+	ld (de),a ; [animParameter]
+
 	ld a,SND_SWORDSPIN		; $5ee4
 	jp playSound		; $5ee6
+
+
+; Charging a projectile
+_blueStalfos_main_state0e:
 	call _ecom_decCounter1		; $5ee9
-	jr nz,_label_0f_171	; $5eec
-	ld (hl),$3c		; $5eee
+	jr nz,_blueStalfos_main_animate	; $5eec
+
+	ld (hl),60		; $5eee
 	ld l,e			; $5ef0
-	inc (hl)		; $5ef1
+	inc (hl) ; [state]
 	ld a,$03		; $5ef2
 	jp enemySetAnimation		; $5ef4
+
+
+; Just fired projectile
+_blueStalfos_main_state0f:
 	call _ecom_decCounter1		; $5ef7
 	ret nz			; $5efa
-_label_0f_173:
+
+_blueStalfos_main_finishedAttack:
 	ld h,d			; $5efb
-	ld l,$84		; $5efc
+	ld l,Enemy.state		; $5efc
 	ld (hl),$0a		; $5efe
-	ld l,$86		; $5f00
+	ld l,Enemy.counter1		; $5f00
 	ld (hl),$40		; $5f02
-	ld l,$90		; $5f04
-	ld (hl),$05		; $5f06
+	ld l,Enemy.speed		; $5f04
+	ld (hl),SPEED_20		; $5f06
 	xor a			; $5f08
 	call enemySetAnimation		; $5f09
-	jp $60e2		; $5f0c
+	jp _blueStalfos_main_decideNextPosition		; $5f0c
+
+
+; Link just turned into a baby; about to turn transparent warp to top of room
+_blueStalfos_main_state10:
 	call _ecom_decCounter1		; $5f0f
-	jr nz,_label_0f_171	; $5f12
-	ld (hl),$10		; $5f14
+	jr nz,_blueStalfos_main_animate	; $5f12
+
+	ld (hl),$10 ; [counter1]
 	ld l,e			; $5f16
-	inc (hl)		; $5f17
-	ld l,$a4		; $5f18
+	inc (hl) ; [state]
+	ld l,Enemy.collisionType		; $5f18
 	res 7,(hl)		; $5f1a
 	ret			; $5f1c
+
+
+; Now transparent; waiting for [counter1] frames before warping
+_blueStalfos_main_state11:
 	call _ecom_decCounter1		; $5f1d
 	jp nz,_ecom_flickerVisibility		; $5f20
-	ld (hl),$08		; $5f23
+
+	ld (hl),$08 ; [counter1]
 	ld l,e			; $5f25
-	inc (hl)		; $5f26
-	ld l,$a4		; $5f27
+	inc (hl) ; [state]
+	ld l,Enemy.collisionType		; $5f27
 	set 7,(hl)		; $5f29
-	ld l,$8b		; $5f2b
+
+	ld l,Enemy.yh		; $5f2b
 	ld (hl),$0c		; $5f2d
-	ld l,$8d		; $5f2f
+	ld l,Enemy.xh		; $5f2f
 	ldh a,(<hEnemyTargetX)	; $5f31
 	ld (hl),a		; $5f33
+
 	xor a			; $5f34
 	call enemySetAnimation		; $5f35
 	jp objectSetInvisible		; $5f38
+
+
+; Just warped to top of room; standing in place
+_blueStalfos_main_state12:
 	call _ecom_decCounter1		; $5f3b
 	jp nz,_ecom_flickerVisibility		; $5f3e
-	ld l,$89		; $5f41
+
+	ld l,Enemy.angle		; $5f41
 	ld (hl),$10		; $5f43
+
 	ld l,e			; $5f45
-	inc (hl)		; $5f46
+	inc (hl) ; [state]
+
 	call getRandomNumber_noPreserveVars		; $5f47
 	and $03			; $5f4a
-	ld hl,$5f57		; $5f4c
+	ld hl,@speedTable		; $5f4c
 	rst_addAToHl			; $5f4f
-	ld e,$90		; $5f50
+	ld e,Enemy.speed		; $5f50
 	ld a,(hl)		; $5f52
 	ld (de),a		; $5f53
+
 	jp objectSetVisible82		; $5f54
-	inc a			; $5f57
-	ld b,(hl)		; $5f58
-	ld d,b			; $5f59
-	ld a,b			; $5f5a
+
+@speedTable:
+	.db SPEED_180, SPEED_1c0, SPEED_200, SPEED_300
+
+
+; Moving down toward baby Link before attacking with sickle
+_blueStalfos_main_state13:
 	ld h,d			; $5f5b
-	ld l,$8b		; $5f5c
+	ld l,Enemy.yh		; $5f5c
 	ldh a,(<hEnemyTargetY)	; $5f5e
 	sub (hl)		; $5f60
 	cp $18			; $5f61
 	jp nc,objectApplySpeed		; $5f63
-	ld e,$84		; $5f66
+
+_blueStalfos_main_beginSickleAttack:
+	ld e,Enemy.state		; $5f66
 	ld a,$0d		; $5f68
 	ld (de),a		; $5f6a
 	ld a,$01		; $5f6b
 	jp enemySetAnimation		; $5f6d
-	call $6183		; $5f70
+
+
+; Just hit by PARTID_BLUE_STALFOS_PROJECTILE; turning into a small bat
+_blueStalfos_main_state14:
+	call _blueStalfos_createPuff		; $5f70
 	ret nz			; $5f73
-	ld l,$84		; $5f74
+
+	ld l,Enemy.state		; $5f74
 	inc (hl)		; $5f76
-	ld l,$a6		; $5f77
+	ld l,Enemy.collisionRadiusY		; $5f77
 	ld (hl),$02		; $5f79
 	inc l			; $5f7b
 	ld (hl),$06		; $5f7c
-	ld l,$86		; $5f7e
+
+	ld l,Enemy.counter1		; $5f7e
 	ld (hl),$f0		; $5f80
 	inc l			; $5f82
-	ld (hl),$00		; $5f83
-	ld l,$90		; $5f85
-	ld (hl),$1e		; $5f87
+	ld (hl),$00 ; [counter2]
+
+	ld l,Enemy.speed		; $5f85
+	ld (hl),SPEED_c0		; $5f87
+
 	call objectSetInvisible		; $5f89
+
 	ld a,SND_SCENT_SEED		; $5f8c
 	call playSound		; $5f8e
+
 	ld a,$04		; $5f91
 	jp enemySetAnimation		; $5f93
-	ld a,$21		; $5f96
+
+
+; Transforming into bat
+_blueStalfos_main_state15:
+	ld a,Object.animParameter		; $5f96
 	call objectGetRelatedObject2Var		; $5f98
 	bit 7,(hl)		; $5f9b
 	ret nz			; $5f9d
+
 	call _ecom_incState		; $5f9e
-	ld l,$a5		; $5fa1
-	ld (hl),$65		; $5fa3
-	ld l,$8f		; $5fa5
+
+	ld l,Enemy.collisionReactionSet		; $5fa1
+	ld (hl),COLLISIONREACTIONSET_65		; $5fa3
+
+	ld l,Enemy.zh		; $5fa5
 	ld (hl),$00		; $5fa7
+
 	jp objectSetVisiblec2		; $5fa9
+
+
+; Flying around as a bat
+_blueStalfos_main_state16:
 	call _ecom_decCounter1		; $5fac
-	jr nz,_label_0f_174	; $5faf
-	inc (hl)		; $5fb1
-	call $6183		; $5fb2
+	jr nz,@flyAround	; $5faf
+
+	; Time to transform back into stalfos
+
+	inc (hl) ; [counter1] = 1
+	call _blueStalfos_createPuff		; $5fb2
 	ret nz			; $5fb5
-	ld l,$84		; $5fb6
+
+	ld l,Enemy.state		; $5fb6
 	inc (hl)		; $5fb8
-	ld l,$a5		; $5fb9
-	ld (hl),$48		; $5fbb
-	ld l,$8f		; $5fbd
+
+	ld l,Enemy.collisionReactionSet		; $5fb9
+	ld (hl),COLLISIONREACTIONSET_48		; $5fbb
+	ld l,Enemy.zh		; $5fbd
 	ld (hl),$ff		; $5fbf
 	jp objectSetInvisible		; $5fc1
-_label_0f_174:
+
+@flyAround:
 	call _ecom_decCounter2		; $5fc4
-	jr nz,_label_0f_175	; $5fc7
-	ld (hl),$1e		; $5fc9
+	jr nz,++		; $5fc7
+	ld (hl),30 ; [counter2]
 	call _ecom_setRandomAngle		; $5fcb
-_label_0f_175:
+++
 	call _ecom_bounceOffWallsAndHoles		; $5fce
 	call objectApplySpeed		; $5fd1
 	jp enemyAnimate		; $5fd4
-	ld a,$21		; $5fd7
+
+
+; Transforming back into stalfos
+_blueStalfos_main_state17:
+	ld a,Object.animParameter		; $5fd7
 	call objectGetRelatedObject2Var		; $5fd9
 	bit 7,(hl)		; $5fdc
 	ret nz			; $5fde
-	ld e,$a6		; $5fdf
+
+	ld e,Enemy.collisionRadiusY		; $5fdf
 	ld a,$08		; $5fe1
 	ld (de),a		; $5fe3
 	inc e			; $5fe4
 	ld (de),a		; $5fe5
-	call $5efb		; $5fe6
+
+	call _blueStalfos_main_finishedAttack		; $5fe6
 	ld a,SND_SCENT_SEED		; $5fe9
 	call playSound		; $5feb
 	jp objectSetVisible82		; $5fee
+
+
+; Hitbox for the sickle (invisible)
+_blueStalfos_subid2:
 	ld a,(de)		; $5ff1
 	sub $08			; $5ff2
-	jr z,_label_0f_177	; $5ff4
-	ld a,$01		; $5ff6
+	jr z,_blueStalfos_initSubid2Or3	; $5ff4
+
+@state9:
+	ld a,Object.id		; $5ff6
 	call objectGetRelatedObject1Var		; $5ff8
 	ld a,(hl)		; $5ffb
-	cp $77			; $5ffc
+	cp ENEMYID_BLUE_STALFOS			; $5ffc
 	jp nz,enemyDelete		; $5ffe
-	ld l,$a4		; $6001
+
+	; [this.collisionType] = [subid0.collisionType]
+	ld l,Enemy.collisionType		; $6001
 	ld e,l			; $6003
 	ld a,(hl)		; $6004
 	ld (de),a		; $6005
-	ld l,$a1		; $6006
+
+	; Set collision and hitbox based on [subid0.animParameter]
+	ld l,Enemy.animParameter		; $6006
 	ld a,(hl)		; $6008
 	cp $ff			; $6009
-	jr nz,_label_0f_176	; $600b
+	jr nz,+			; $600b
 	ld a,$0c		; $600d
-_label_0f_176:
-	ld bc,$6033		; $600f
++
+	ld bc,@positionAndHitboxTable		; $600f
 	call addAToBc		; $6012
-	ld l,$8b		; $6015
+
+	ld l,Enemy.yh		; $6015
 	ld e,l			; $6017
 	ld a,(bc)		; $6018
 	add (hl)		; $6019
 	ld (de),a		; $601a
+
 	inc bc			; $601b
-	ld l,$8d		; $601c
+	ld l,Enemy.xh		; $601c
 	ld e,l			; $601e
 	ld a,(bc)		; $601f
 	add (hl)		; $6020
 	ld (de),a		; $6021
+
 	inc bc			; $6022
-	ld e,$a6		; $6023
+	ld e,Enemy.collisionRadiusY		; $6023
 	ld a,(bc)		; $6025
 	ld (de),a		; $6026
+
 	inc bc			; $6027
 	inc e			; $6028
 	ld a,(bc)		; $6029
 	ld (de),a		; $602a
+
+	; If collision size is 0, disable collisions
 	or a			; $602b
 	ret nz			; $602c
 	ld h,d			; $602d
-	ld l,$a4		; $602e
+	ld l,Enemy.collisionType		; $602e
 	res 7,(hl)		; $6030
 	ret			; $6032
-	inc b			; $6033
-	dec c			; $6034
-	ld ($f003),sp		; $6035
-	inc b			; $6038
-	inc bc			; $6039
-	ld a,(bc)		; $603a
-	inc c			; $603b
-	ld b,$14		; $603c
-	inc c			; $603e
-	inc d			; $603f
-.DB $fc				; $6040
-	inc b			; $6041
-	ld a,(bc)		; $6042
-.DB $f4				; $6043
-	ld c,$04		; $6044
-	ld b,$f6		; $6046
-	inc c			; $6048
-	inc b			; $6049
-	ld b,$f4		; $604a
-	ld a,(bc)		; $604c
-	inc b			; $604d
-	ld b,$f2		; $604e
-	inc c			; $6050
-	inc b			; $6051
-	ld b,$00		; $6052
-	nop			; $6054
-	nop			; $6055
-	nop			; $6056
-_label_0f_177:
+
+; Data format:
+;   b0: Y offset
+;   b1: X offset
+;   b2: collisionRadiusY
+;   b3: collisionRadiusX
+@positionAndHitboxTable:
+	.db $04 $0d $08 $03
+	.db $f0 $04 $03 $0a
+	.db $0c $06 $14 $0c
+	.db $14 $fc $04 $0a
+	.db $f4 $0e $04 $06
+	.db $f6 $0c $04 $06
+	.db $f4 $0a $04 $06
+	.db $f2 $0c $04 $06
+	.db $00 $00 $00 $00
+
+
+_blueStalfos_initSubid2Or3:
 	ld h,d			; $6057
 	ld l,e			; $6058
-	inc (hl)		; $6059
-	ld l,$a5		; $605a
-	ld (hl),$66		; $605c
-	ld a,$0f		; $605e
+	inc (hl) ; [state]
+
+	ld l,Enemy.collisionReactionSet		; $605a
+	ld (hl),COLLISIONREACTIONSET_66		; $605c
+
+	ld a,Object.zh		; $605e
 	call objectGetRelatedObject1Var		; $6060
 	ld e,l			; $6063
 	ld a,(hl)		; $6064
 	ld (de),a		; $6065
 	ret			; $6066
+
+
+; "Afterimage" of blue stalfos visible while moving
+_blueStalfos_subid3:
 	ld a,(de)		; $6067
 	sub $08			; $6068
-	jr z,_label_0f_178	; $606a
-	ld a,$01		; $606c
+	jr z,@state8	; $606a
+
+@state9:
+	ld a,Object.id		; $606c
 	call objectGetRelatedObject1Var		; $606e
 	ld a,(hl)		; $6071
-	cp $77			; $6072
+	cp ENEMYID_BLUE_STALFOS			; $6072
 	jp nz,enemyDelete		; $6074
-	ld l,$84		; $6077
+
+	ld l,Enemy.state		; $6077
 	ld a,(hl)		; $6079
 	cp $12			; $607a
-	jp z,$6164		; $607c
+	jp z,_blueStalfos_afterImage_resetPositionVars		; $607c
+
 	cp $14			; $607f
 	call nc,objectSetVisible82		; $6081
-	ld l,$8b		; $6084
-	ld e,$b0		; $6086
+
+	; Calculate Y-diff, update var30 (last frame's Y-position)
+	ld l,Enemy.yh		; $6084
+	ld e,Enemy.var30		; $6086
 	ld a,(de)		; $6088
 	ld b,a			; $6089
 	ld a,(hl)		; $608a
@@ -147667,6 +147836,8 @@ _label_0f_177:
 	ld c,a			; $6092
 	ldi a,(hl)		; $6093
 	ld (de),a		; $6094
+
+	; Calculate X-diff, update var31 (last frame's Y-position)
 	inc l			; $6095
 	inc e			; $6096
 	ld a,(de)		; $6097
@@ -147679,25 +147850,33 @@ _label_0f_177:
 	ld c,a			; $60a0
 	ld a,(hl)		; $60a1
 	ld (de),a		; $60a2
-	ld e,$b2		; $60a3
+
+	; Write position difference to offset buffer
+	ld e,Enemy.var32		; $60a3
 	ld a,(de)		; $60a5
-	add $b3			; $60a6
+	add Enemy.var33			; $60a6
 	ld e,a			; $60a8
 	ld a,c			; $60a9
 	ld (de),a		; $60aa
-	ld e,$b2		; $60ab
+
+	; Increment index in offset buffer
+	ld e,Enemy.var32		; $60ab
 	ld a,(de)		; $60ad
 	inc a			; $60ae
 	and $07			; $60af
 	ld (de),a		; $60b1
-	add $b3			; $60b2
+
+	; Don't draw if difference is 0
+	add Enemy.var33			; $60b2
 	ld e,a			; $60b4
 	ld a,(de)		; $60b5
 	cp $88			; $60b6
 	ld b,a			; $60b8
 	jp z,objectSetInvisible		; $60b9
+
+	; Update position based on offset, draw afterimage
 	ld h,d			; $60bc
-	ld l,$8b		; $60bd
+	ld l,Enemy.yh		; $60bd
 	and $f0			; $60bf
 	swap a			; $60c1
 	sub $08			; $60c3
@@ -147709,44 +147888,62 @@ _label_0f_177:
 	sub $08			; $60cb
 	add (hl)		; $60cd
 	ld (hl),a		; $60ce
+
 	jp _ecom_flickerVisibility		; $60cf
-_label_0f_178:
-	call $6057		; $60d2
-	call $6164		; $60d5
-	ld l,$a4		; $60d8
+
+@state8:
+	call _blueStalfos_initSubid2Or3		; $60d2
+	call _blueStalfos_afterImage_resetPositionVars		; $60d5
+	ld l,Enemy.collisionType		; $60d8
 	res 7,(hl)		; $60da
 	call objectSetVisible83		; $60dc
 	jp objectSetInvisible		; $60df
+
+
+;;
+; Decides the next position for the blue stalfos. It will always choose a different
+; quadrant of the screen from the one it's in already.
+; @addr{60e2}
+_blueStalfos_main_decideNextPosition:
 	ld e,$03		; $60e2
 	ld bc,$3030		; $60e4
 	call _ecom_randomBitwiseAndBCE		; $60e7
+
 	ld h,e			; $60ea
 	ld l,$00		; $60eb
-	ld e,$8b		; $60ed
+	ld e,Enemy.yh		; $60ed
 	ld a,(de)		; $60ef
-	cp $58			; $60f0
-	jr c,_label_0f_179	; $60f2
+	cp (LARGE_ROOM_HEIGHT<<4)/2			; $60f0
+	jr c,+			; $60f2
 	ld l,$02		; $60f4
-_label_0f_179:
-	ld e,$8d		; $60f6
++
+	ld e,Enemy.xh		; $60f6
 	ld a,(de)		; $60f8
-	cp $78			; $60f9
-	jr c,_label_0f_180	; $60fb
+	cp (LARGE_ROOM_WIDTH<<4)/2			; $60f9
+	jr c,+			; $60fb
 	inc l			; $60fd
-_label_0f_180:
++
 	ld a,l			; $60fe
 	add a			; $60ff
 	add a			; $6100
 	add h			; $6101
-	ld hl,$613b		; $6102
+
+
+;;
+; @param	a	Position index to use
+; @param	bc	Offset to be added to target position
+; @addr{6102}
+_blueStalfos_main_moveToQuadrant:
+	ld hl,@quadrantList		; $6102
 	rst_addAToHl			; $6105
-	call $6127		; $6106
+	call @getLinkQuadrant		; $6106
 	cp (hl)			; $6109
-	jr z,_label_0f_181	; $610a
+	jr z,@moveToLinksPosition	; $610a
+
 	ld a,(hl)		; $610c
-	ld hl,$614b		; $610d
+	ld hl,@targetPositions		; $610d
 	rst_addAToHl			; $6110
-	ld e,$b0		; $6111
+	ld e,Enemy.var30		; $6111
 	ldi a,(hl)		; $6113
 	add b			; $6114
 	ld (de),a		; $6115
@@ -147755,8 +147952,9 @@ _label_0f_180:
 	add c			; $6118
 	ld (de),a		; $6119
 	ret			; $611a
-_label_0f_181:
-	ld e,$b0		; $611b
+
+@moveToLinksPosition:
+	ld e,Enemy.var30		; $611b
 	ldh a,(<hEnemyTargetY)	; $611d
 	sub $14			; $611f
 	ld (de),a		; $6121
@@ -147764,61 +147962,86 @@ _label_0f_181:
 	ldh a,(<hEnemyTargetX)	; $6123
 	ld (de),a		; $6125
 	ret			; $6126
+
+;;
+; @param[out]	a	The quadrant of the screen Link is in.
+;			(0/2/4/6 for up/left, up/right, down/left, down/right)
+; @addr{6127}
+@getLinkQuadrant:
 	ld e,$00		; $6127
 	ldh a,(<hEnemyTargetY)	; $6129
-	cp $58			; $612b
-	jr c,_label_0f_182	; $612d
+	cp (LARGE_ROOM_HEIGHT<<4)/2			; $612b
+	jr c,+			; $612d
 	ld e,$02		; $612f
-_label_0f_182:
++
 	ldh a,(<hEnemyTargetX)	; $6131
-	cp $78			; $6133
-	jr c,_label_0f_183	; $6135
+	cp (LARGE_ROOM_WIDTH<<4)/2			; $6133
+	jr c,+			; $6135
 	inc e			; $6137
-_label_0f_183:
++
 	ld a,e			; $6138
 	add a			; $6139
 	ret			; $613a
-.dw $0402
-.dw $0406
-.dw $0600
-.dw $0604
-.dw $0200
-.dw $0206
-.dw $0200
-.dw $0004
-.dw $3828
-.dw $8828
-.dw $3868
-.dw $8868
-	ld e,$86		; $6153
+
+@quadrantList:
+	.db $02 $04 $06 $04 ; Currently in TL quadrant
+	.db $00 $06 $04 $06 ; Currently in TR quadrant
+	.db $00 $02 $06 $02 ; Currently in BL quadrant
+	.db $00 $02 $04 $00 ; Currently in BR quadrant
+
+@targetPositions:
+	.dw $3828
+	.dw $8828
+	.dw $3868
+	.dw $8868
+
+
+;;
+; @addr{6153}
+_blueStalfos_main_accelerate:
+	ld e,Enemy.counter1		; $6153
 	ld a,(de)		; $6155
 	or a			; $6156
 	ret z			; $6157
+
 	dec a			; $6158
 	ld (de),a		; $6159
+
 	and $03			; $615a
 	ret nz			; $615c
-	ld e,$90		; $615d
+
+	ld e,Enemy.speed		; $615d
 	ld a,(de)		; $615f
-	add $05			; $6160
+	add SPEED_20			; $6160
 	ld (de),a		; $6162
 	ret			; $6163
-	ld l,$8b		; $6164
+
+
+;;
+; @addr{6164}
+_blueStalfos_afterImage_resetPositionVars:
+	; [this.position] = [parent.position]
+	; (Also copy position to var30/var31)
+	ld l,Enemy.yh		; $6164
 	ld e,l			; $6166
 	ldi a,(hl)		; $6167
 	ld (de),a		; $6168
-	ld e,$b0		; $6169
+	ld e,Enemy.var30		; $6169
+
 	ld (de),a		; $616b
 	inc l			; $616c
 	ld e,l			; $616d
 	ld a,(hl)		; $616e
 	ld (de),a		; $616f
-	ld e,$b1		; $6170
+	ld e,Enemy.var31		; $6170
 	ld (de),a		; $6172
+
 	ld h,d			; $6173
-	ld l,$b2		; $6174
+	ld l,Enemy.var32		; $6174
 	xor a			; $6176
 	ldi (hl),a		; $6177
+
+	; Initialize "position offset" buffer
 	ld a,$88		; $6178
 	ldi (hl),a		; $617a
 	ldi (hl),a		; $617b
@@ -147829,14 +148052,19 @@ _label_0f_183:
 	ldi (hl),a		; $6180
 	ld (hl),a		; $6181
 	ret			; $6182
-	ld bc,$0502		; $6183
+
+;;
+; @addr{6183}
+_blueStalfos_createPuff:
+	ldbc INTERACID_PUFF,$02		; $6183
 	call objectCreateInteraction		; $6186
 	ret nz			; $6189
+
 	ld a,h			; $618a
 	ld h,d			; $618b
-	ld l,$99		; $618c
+	ld l,Enemy.relatedObj2+1		; $618c
 	ldd (hl),a		; $618e
-	ld (hl),$40		; $618f
+	ld (hl),Interaction.start		; $618f
 	ret			; $6191
 
 ;;
@@ -160810,22 +161038,20 @@ func_11_4000:
 	add (hl)		; $4015
 	ld c,a			; $4016
 	jp getTileCollisionsAtPosition		; $4017
-	ei			; $401a
-	nop			; $401b
-	ei			; $401c
-	inc b			; $401d
-	nop			; $401e
-	inc b			; $401f
-	inc b			; $4020
-	inc b			; $4021
-	inc b			; $4022
-	nop			; $4023
-	inc b			; $4024
-	ei			; $4025
-	nop			; $4026
-	ei			; $4027
-	ei			; $4028
-	ei			; $4029
+
+
+; Position offsets used by specific angle values to check when it should be considered
+; "off-screen".
+_partCommon_anglePositionOffsets:
+	.db $fb $00 ; Up
+	.db $fb $04 ; Up/right
+	.db $00 $04 ; Right
+	.db $04 $04 ; Down/right
+	.db $04 $00 ; Down
+	.db $04 $fb ; Down/left
+	.db $00 $fb ; Left
+	.db $fb $fb ; Up/left
+
 	call $4003		; $402a
 	ret z			; $402d
 	jr _label_11_000		; $402e
@@ -160836,8 +161062,9 @@ _label_11_000:
 	ret c			; $4036
 	dec a			; $4037
 	jp checkGivenCollision_allowHoles		; $4038
+
 	ld h,d			; $403b
-	ld l,$c4		; $403c
+	ld l,Part.state		; $403c
 	ld a,(hl)		; $403e
 	or a			; $403f
 	jr z,_label_11_003	; $4040
@@ -160861,6 +161088,7 @@ _label_11_002:
 	jr z,_label_11_005	; $4057
 	ld c,$00		; $4059
 	ret			; $405b
+
 _label_11_003:
 	callab bank3f.partLoadGraphicsAndProperties		; $405c
 	ld e,$fe		; $4064
@@ -160890,26 +161118,35 @@ _partCommon_checkTileCollisionOrOutOfBounds:
 	or d			; $407c
 	ret			; $407d
 
+;;
+; @param[out]	zflag	z if out of bounds
+; @addr{407e}
+_partCommon_checkOutOfBounds:
 	ld h,d			; $407e
-	ld l,$cb		; $407f
+	ld l,Part.yh		; $407f
 	ld b,(hl)		; $4081
-	ld l,$cd		; $4082
+	ld l,Part.xh		; $4082
 	ld c,(hl)		; $4084
-	call $4099		; $4085
+
+	call @roundAngleToDiagonal		; $4085
 	ld a,e			; $4088
 	rrca			; $4089
-	ld hl,$401a		; $408a
+	ld hl,_partCommon_anglePositionOffsets		; $408a
 	rst_addAToHl			; $408d
+
 	ldi a,(hl)		; $408e
 	add b			; $408f
 	ld b,a			; $4090
 	ld a,(hl)		; $4091
 	add c			; $4092
 	ld c,a			; $4093
+
 	call getTileCollisionsAtPosition		; $4094
 	inc a			; $4097
 	ret			; $4098
-	ld l,$c9		; $4099
+
+@roundAngleToDiagonal:
+	ld l,Part.angle		; $4099
 	ld a,(hl)		; $409b
 	ld e,a			; $409c
 	and $07			; $409d
@@ -163710,7 +163947,7 @@ _label_11_112:
 	inc (hl)		; $512c
 	jr _label_11_112		; $512d
 _label_11_113:
-	call $407e		; $512f
+	call _partCommon_checkOutOfBounds		; $512f
 	jr z,_label_11_115	; $5132
 _label_11_114:
 	jp objectApplySpeed		; $5134
@@ -165248,7 +165485,7 @@ _label_11_173:
 	set 7,(hl)		; $59b6
 _label_11_174:
 	call objectApplySpeed		; $59b8
-	call $407e		; $59bb
+	call _partCommon_checkOutOfBounds		; $59bb
 	jr z,_label_11_177	; $59be
 _label_11_175:
 	jp partAnimate		; $59c0
@@ -165691,7 +165928,7 @@ partCode52:
 	call playSound		; $5c8e
 	ld a,$02		; $5c91
 	call partSetAnimation		; $5c93
-	call $407e		; $5c96
+	call _partCommon_checkOutOfBounds		; $5c96
 	jp z,partDelete		; $5c99
 	call objectApplySpeed		; $5c9c
 _label_11_198:
@@ -166034,7 +166271,7 @@ updateParts:
 +
 	inc d			; $5e83
 	ld a,d			; $5e84
-	cp $e0			; $5e85
+	cp LAST_PART_INDEX+1			; $5e85
 	jr c,-			; $5e87
 	ret			; $5e89
 
@@ -166743,7 +166980,7 @@ partCode2d:
 	ld a,(de)		; $62b4
 	or a			; $62b5
 	jr z,_label_11_242	; $62b6
-	call $407e		; $62b8
+	call _partCommon_checkOutOfBounds		; $62b8
 	jr z,_label_11_244	; $62bb
 	call objectApplySpeed		; $62bd
 	jp partAnimate		; $62c0
@@ -167073,7 +167310,7 @@ _label_11_257:
 	call objectGetAngleTowardEnemyTarget		; $64a8
 	call objectNudgeAngleTowards		; $64ab
 _label_11_258:
-	call $407e		; $64ae
+	call _partCommon_checkOutOfBounds		; $64ae
 	jr z,_label_11_261	; $64b1
 	call objectApplySpeed		; $64b3
 _label_11_259:
@@ -168435,7 +168672,7 @@ partCode3a:
 	or a			; $6ce8
 	jr z,_label_11_319	; $6ce9
 _label_11_318:
-	call $407e		; $6ceb
+	call _partCommon_checkOutOfBounds		; $6ceb
 	jp z,partDelete		; $6cee
 	call objectApplySpeed		; $6cf1
 	jp partAnimate		; $6cf4
@@ -168783,7 +169020,7 @@ partCode3c:
 	ld a,(de)		; $6f31
 	or a			; $6f32
 	jr z,_label_11_334	; $6f33
-	call $407e		; $6f35
+	call _partCommon_checkOutOfBounds		; $6f35
 	jp z,partDelete		; $6f38
 	call _partDecCounter1IfNonzero		; $6f3b
 	jr nz,_label_11_333	; $6f3e
@@ -168819,229 +169056,337 @@ _label_11_334:
 	ld a,SND_BEAM		; $6f6a
 	jp playSound		; $6f6c
 
-;;
-; @addr{6f6f}
+
+; ==============================================================================
+; PARTID_BLUE_STALFOS_PROJECTILE
+;
+; Variables:
+;   var03: 0 for reflectable ball type, 1 otherwise
+;   relatedObj1: Instance of ENEMYID_BLUE_STALFOS
+; ==============================================================================
 partCode3d:
-	jr z,_label_11_335	; $6f6f
+	jr z,@normalStatus	; $6f6f
+
 	ld h,d			; $6f71
-	ld l,$c2		; $6f72
+	ld l,Part.subid		; $6f72
 	ldi a,(hl)		; $6f74
 	or (hl)			; $6f75
-	jr nz,_label_11_335	; $6f76
-	ld l,$ea		; $6f78
+	jr nz,@normalStatus	; $6f76
+
+	; Check if hit Link
+	ld l,Part.var2a		; $6f78
 	ld a,(hl)		; $6f7a
 	res 7,a			; $6f7b
-	or a			; $6f7d
-	jp z,$70e3		; $6f7e
-	sub $04			; $6f81
-	cp $05			; $6f83
-	jr nc,_label_11_335	; $6f85
-	ld l,$c4		; $6f87
+	or a ; COLLISIONTYPE_LINK
+	jp z,_blueStalfosProjectile_hitLink		; $6f7e
+
+	; Check if hit Link's sword
+	sub COLLISIONTYPE_L1_SWORD			; $6f81
+	cp COLLISIONTYPE_SWORDSPIN - COLLISIONTYPE_L1_SWORD + 1			; $6f83
+	jr nc,@normalStatus	; $6f85
+
+	; Reflect the ball if not already reflected
+	ld l,Part.state		; $6f87
 	ld a,(hl)		; $6f89
 	cp $04			; $6f8a
-	jr nc,_label_11_335	; $6f8c
+	jr nc,@normalStatus	; $6f8c
+
 	ld (hl),$04		; $6f8e
-	ld l,$d0		; $6f90
-	ld (hl),$50		; $6f92
+	ld l,Part.speed		; $6f90
+	ld (hl),SPEED_200		; $6f92
 	ld a,SND_UNKNOWN3		; $6f94
 	call playSound		; $6f96
-_label_11_335:
-	ld e,$c2		; $6f99
+
+@normalStatus:
+	ld e,Part.subid		; $6f99
 	ld a,(de)		; $6f9b
 	rst_jumpTable			; $6f9c
-.dw $6fa1
-.dw $7052
-	ld e,$c4		; $6fa1
+	.dw _blueStalfosProjectile_subid0
+	.dw _blueStalfosProjectile_subid1
+
+
+_blueStalfosProjectile_subid0:
+	ld e,Part.state		; $6fa1
 	ld a,(de)		; $6fa3
 	rst_jumpTable			; $6fa4
-.dw $6fb3
-.dw $6fea
-.dw $7019
-.dw $7026
-.dw $702b
-.dw $7039
-.dw $7041
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+	.dw @state5
+	.dw @state6
+
+; Initialization, deciding which ball type this should be
+@state0:
 	ld h,d			; $6fb3
 	ld l,e			; $6fb4
-	inc (hl)		; $6fb5
-	ld l,$c6		; $6fb6
-	ld (hl),$28		; $6fb8
-	ld l,$cb		; $6fba
+	inc (hl) ; [state]
+
+	ld l,Part.counter1		; $6fb6
+	ld (hl),40		; $6fb8
+
+	ld l,Part.yh		; $6fba
 	ld a,(hl)		; $6fbc
 	sub $18			; $6fbd
 	ld (hl),a		; $6fbf
-	ld l,$d0		; $6fc0
-	ld (hl),$3c		; $6fc2
+
+	ld l,Part.speed		; $6fc0
+	ld (hl),SPEED_180		; $6fc2
+
 	push hl			; $6fc4
-	ld a,$32		; $6fc5
+	ld a,Object.var32		; $6fc5
 	call objectGetRelatedObject1Var		; $6fc7
 	ld a,(hl)		; $6fca
 	inc a			; $6fcb
 	and $07			; $6fcc
 	ld (hl),a		; $6fce
-	ld hl,$6fe9		; $6fcf
+
+	ld hl,@ballPatterns		; $6fcf
 	call checkFlag		; $6fd2
 	pop hl			; $6fd5
-	jr z,_label_11_336	; $6fd6
-	ld (hl),$50		; $6fd8
-	ld l,$e5		; $6fda
-	ld (hl),$04		; $6fdc
-	ld l,$c3		; $6fde
+	jr z,++			; $6fd6
+
+	; Non-reflectable ball
+	ld (hl),SPEED_200		; $6fd8
+	ld l,Part.collisionReactionSet		; $6fda
+	ld (hl),COLLISIONREACTIONSET_04		; $6fdc
+	ld l,Part.var03		; $6fde
 	inc (hl)		; $6fe0
-_label_11_336:
+++
 	ld a,SND_CHARGE		; $6fe1
 	call playSound		; $6fe3
 	jp objectSetVisible81		; $6fe6
-	xor l			; $6fe9
+
+; A bit being 0 means the ball will be reflectable. Cycles through the next bit every time
+; a projectile is created.
+@ballPatterns:
+	.db %10101101
+
+
+; Charging
+@state1:
 	call _partDecCounter1IfNonzero		; $6fea
-	jr nz,_label_11_338	; $6fed
-	ld (hl),$28		; $6fef
+	jr nz,@animate	; $6fed
+
+	ld (hl),40 ; [counter1]
 	inc l			; $6ff1
-	inc (hl)		; $6ff2
+	inc (hl) ; [counter2]
 	ld a,(hl)		; $6ff3
 	cp $03			; $6ff4
 	jp c,partSetAnimation		; $6ff6
-	ld (hl),$14		; $6ff9
+
+	; Done charging
+	ld (hl),20 ; [counter2]
 	dec l			; $6ffb
-	ld (hl),$00		; $6ffc
+	ld (hl),$00 ; [counter1]
+
 	ld l,e			; $6ffe
-	inc (hl)		; $6fff
-	ld l,$e4		; $7000
+	inc (hl) ; [state]
+
+	ld l,Part.collisionType		; $7000
 	set 7,(hl)		; $7002
+
 	call objectGetAngleTowardEnemyTarget		; $7004
-	ld e,$c9		; $7007
+	ld e,Part.angle		; $7007
 	ld (de),a		; $7009
-	ld e,$c3		; $700a
+
+	ld e,Part.var03		; $700a
 	ld a,(de)		; $700c
 	add $02			; $700d
 	call partSetAnimation		; $700f
 	ld a,SND_BEAM1		; $7012
 	call playSound		; $7014
-	jr _label_11_338		; $7017
+	jr @animate		; $7017
+
+
+; Ball is moving (either version)
+@state2:
 	ld h,d			; $7019
-	ld l,$c7		; $701a
+	ld l,Part.counter2		; $701a
 	dec (hl)		; $701c
-	jr nz,_label_11_337	; $701d
+	jr nz,+			; $701d
 	ld l,e			; $701f
-	inc (hl)		; $7020
-_label_11_337:
-	call $7084		; $7021
-	jr _label_11_340		; $7024
-	call $7084		; $7026
-	jr _label_11_339		; $7029
+	inc (hl) ; [state]
++
+	call _blueStalfosProjectile_checkShouldExplode		; $7021
+	jr _blueStalfosProjectile_applySpeed		; $7024
+
+
+; Ball is moving (baby ball only)
+@state3:
+	call _blueStalfosProjectile_checkShouldExplode		; $7026
+	jr _blueStalfosProjectile_applySpeedAndDeleteIfOffScreen		; $7029
+
+
+; Ball was just reflected (baby ball only)
+@state4:
 	ld h,d			; $702b
 	ld l,e			; $702c
-	inc (hl)		; $702d
+	inc (hl) ; [state]
+
 	call objectGetAngleTowardEnemyTarget		; $702e
 	xor $10			; $7031
-	ld e,$c9		; $7033
+	ld e,Part.angle		; $7033
 	ld (de),a		; $7035
-_label_11_338:
+@animate:
 	jp partAnimate		; $7036
-	call $70a7		; $7039
+
+
+; Ball is moving after being reflected (baby ball only)
+@state5:
+	call _blueStalfosProjectile_checkCollidedWithStalfos		; $7039
 	jp c,partDelete		; $703c
-	jr _label_11_339		; $703f
+	jr _blueStalfosProjectile_applySpeedAndDeleteIfOffScreen		; $703f
+
+
+; Splits into 6 smaller projectiles (subid 1)
+@state6:
 	ld b,$06		; $7041
 	call checkBPartSlotsAvailable		; $7043
 	ret nz			; $7046
-	call $70b9		; $7047
+	call _blueStalfosProjectile_explode		; $7047
 	ld a,SND_BEAM		; $704a
 	call playSound		; $704c
 	jp partDelete		; $704f
-	ld e,$c4		; $7052
+
+
+; Smaller projectile created from the explosion of the larger one
+_blueStalfosProjectile_subid1:
+	ld e,Part.state		; $7052
 	ld a,(de)		; $7054
 	or a			; $7055
-	jr z,_label_11_341	; $7056
-_label_11_339:
-	call $407e		; $7058
+	jr z,_blueStalfosProjectile_subid1_uninitialized	; $7056
+
+_blueStalfosProjectile_applySpeedAndDeleteIfOffScreen:
+	call _partCommon_checkOutOfBounds		; $7058
 	jp z,partDelete		; $705b
-_label_11_340:
+
+_blueStalfosProjectile_applySpeed:
 	call objectApplySpeed		; $705e
 	jp partAnimate		; $7061
-_label_11_341:
+
+
+_blueStalfosProjectile_subid1_uninitialized:
 	ld h,d			; $7064
 	ld l,e			; $7065
-	inc (hl)		; $7066
-	ld l,$e4		; $7067
+	inc (hl) ; [state]
+
+	ld l,Part.collisionType		; $7067
 	set 7,(hl)		; $7069
-	ld l,$e5		; $706b
-	ld (hl),$04		; $706d
-	ld l,$d0		; $706f
-	ld (hl),$46		; $7071
-	ld l,$e8		; $7073
-	ld (hl),$fc		; $7075
-	ld l,$e6		; $7077
+	ld l,Part.collisionReactionSet		; $706b
+	ld (hl),COLLISIONREACTIONSET_04		; $706d
+
+	ld l,Part.speed		; $706f
+	ld (hl),SPEED_1c0		; $7071
+
+	ld l,Part.damage		; $7073
+	ld (hl),-4		; $7075
+
+	ld l,Part.collisionRadiusY		; $7077
 	ld a,$02		; $7079
 	ldi (hl),a		; $707b
 	ld (hl),a		; $707c
-	add a			; $707d
+
+	add a ; a = 4
 	call partSetAnimation		; $707e
 	jp objectSetVisible81		; $7081
+
+
+;;
+; Explodes the projectile (sets state to 6) if it's the correct type and is close to Link.
+; Returns from caller if so.
+; @addr{7084}
+_blueStalfosProjectile_checkShouldExplode:
 	ld a,(wFrameCounter)		; $7084
 	and $07			; $7087
 	ret nz			; $7089
+
 	call _partDecCounter1IfNonzero		; $708a
 	ret nz			; $708d
+
 	ld c,$28		; $708e
 	call objectCheckLinkWithinDistance		; $7090
 	ret nc			; $7093
+
 	ld h,d			; $7094
-	ld l,$c6		; $7095
+	ld l,Part.counter1		; $7095
 	dec (hl)		; $7097
-	ld e,$c3		; $7098
+	ld e,Part.var03		; $7098
 	ld a,(de)		; $709a
 	or a			; $709b
 	ret z			; $709c
-	pop bc			; $709d
-	ld l,$e4		; $709e
+
+	pop bc ; Discard return address
+
+	ld l,Part.collisionType		; $709e
 	res 7,(hl)		; $70a0
-	ld l,$c4		; $70a2
+	ld l,Part.state		; $70a2
 	ld (hl),$06		; $70a4
 	ret			; $70a6
-	ld a,$00		; $70a7
+
+
+;;
+; @param[out]	cflag	c on collision
+; @addr{70a7}
+_blueStalfosProjectile_checkCollidedWithStalfos:
+	ld a,Object.enabled		; $70a7
 	call objectGetRelatedObject1Var		; $70a9
 	call checkObjectsCollided		; $70ac
 	ret nc			; $70af
-	ld l,$ab		; $70b0
-	ld (hl),$1e		; $70b2
-	ld l,$84		; $70b4
+
+	ld l,Enemy.invincibilityCounter		; $70b0
+	ld (hl),30		; $70b2
+	ld l,Enemy.state		; $70b4
 	ld (hl),$14		; $70b6
 	ret			; $70b8
+
+
+;;
+; Explodes into six parts
+; @addr{70b9}
+_blueStalfosProjectile_explode:
 	ld c,$06		; $70b9
-_label_11_342:
+@next:
 	call getFreePartSlot		; $70bb
-	ld (hl),$3d		; $70be
+	ld (hl),PARTID_BLUE_STALFOS_PROJECTILE		; $70be
 	inc l			; $70c0
-	inc (hl)		; $70c1
+	inc (hl) ; [subid] = 1
+
 	call objectCopyPosition		; $70c2
-	ld l,$d6		; $70c5
+
+	; Copy ENEMYID_BLUE_STALFOS reference to new projectile
+	ld l,Part.relatedObj1		; $70c5
 	ld e,l			; $70c7
 	ld a,(de)		; $70c8
 	ldi (hl),a		; $70c9
 	ld e,l			; $70ca
 	ld a,(de)		; $70cb
 	ld (hl),a		; $70cc
+
+	; Set angle
 	ld b,h			; $70cd
 	ld a,c			; $70ce
-	ld hl,$70dc		; $70cf
+	ld hl,@angleVals		; $70cf
 	rst_addAToHl			; $70d2
 	ld a,(hl)		; $70d3
 	ld h,b			; $70d4
-	ld l,$c9		; $70d5
+	ld l,Part.angle		; $70d5
 	ld (hl),a		; $70d7
+
 	dec c			; $70d8
-	jr nz,_label_11_342	; $70d9
+	jr nz,@next	; $70d9
 	ret			; $70db
-	nop			; $70dc
-	nop			; $70dd
-	dec b			; $70de
-	dec bc			; $70df
-	stop			; $70e0
-	dec d			; $70e1
-	dec de			; $70e2
-	ld a,$04		; $70e3
+
+@angleVals:
+	.db $00 $00 $05 $0b $10 $15 $1b
+
+_blueStalfosProjectile_hitLink:
+	; [blueStalfos.state] = $10
+	ld a,Object.state		; $70e3
 	call objectGetRelatedObject1Var		; $70e5
 	ld (hl),$10		; $70e8
+
 	jp partDelete		; $70ea
 
 ;;
@@ -169621,7 +169966,7 @@ _label_11_364:
 	call objectNudgeAngleTowards		; $7482
 _label_11_365:
 	call objectApplySpeed		; $7485
-	call $407e		; $7488
+	call _partCommon_checkOutOfBounds		; $7488
 	jp nz,partAnimate		; $748b
 	jr _label_11_368		; $748e
 _label_11_366:
