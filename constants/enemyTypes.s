@@ -683,6 +683,11 @@
 ; Bosses
 ; ================================================================================
 
+;;
+; @subid_00{Spawner (use this)}
+; @subid_01{Body}
+; @subid_02{Ghost}
+; @subid_03{Head}
 .define ENEMYID_PUMPKIN_HEAD			$78
 .define ENEMYID_HEAD_THWOMP			$79
 .define ENEMYID_SHADOW_HAG			$7a

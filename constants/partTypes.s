@@ -163,6 +163,8 @@
 ; Subid: ?
 .define PARTID_BLUE_STALFOS_PROJECTILE		$3d
 
+.define PARTID_PUMPKIN_HEAD_PROJECTILE		$42
+
 ; Used by big bang game.
 ; @subid_00{A single bomb?}
 ; @subid_ff{A spawner for bombs?}
