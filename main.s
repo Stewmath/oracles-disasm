@@ -148876,7 +148876,7 @@ _pumpkinHead_ghost_state17:
 	; Reached head.
 
 	; Check [head.state] to see if it's being held
-	ld a,Enemy.relatedObj2+1		; $6546
+	ld a,Object.relatedObj2+1		; $6546
 	call objectGetRelatedObject1Var		; $6548
 	ld h,(hl)		; $654b
 	ld l,Enemy.state		; $654c
