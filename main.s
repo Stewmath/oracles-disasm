@@ -24225,6 +24225,14 @@ _menuStateFadeIntoMenu:
 	call nz,playSound		; $506f
 	ld a,$02		; $5072
 	call setMusicVolume		; $5074
+
+	ld a,(wRingMenu_mode)
+	bit 7,a
+	jr z,++
+	and $7f
+	ld (wRingMenu_mode),a
+	ret
+++
 ;;
 ; @addr{5077}
 _saveGraphicsOnEnterMenu:
@@ -25690,6 +25698,8 @@ _inventoryMenuState1:
 ; @addr{56dd}
 @checkEquipRing:
 	ld a,(wInventorySubmenu1CursorPos)		; $56dd
+	cp $0f
+	jr z,@openRingMenu
 	sub $10			; $56e0
 	ret c			; $56e2
 
@@ -25719,6 +25729,13 @@ _inventoryMenuState1:
 	ld (wActiveRing),a		; $56f3
 	ld a,SND_SELECTITEM	; $56f6
 	jp playSound		; $56f8
+
+@openRingMenu:
+	ld a,$81
+	ld (wRingMenu_mode),a
+	ld a,$04
+	call openMenu
+	ret
 
 ;;
 ; Main code for last item screen (essences, heart pieces, s&q option)
