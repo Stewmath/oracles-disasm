@@ -89173,8 +89173,9 @@ interactionCode60:
 
 	ld c,a			; $4c64
 	ld b,>TX_0000		; $4c65
-	call showText		; $4c67
+	call @ringTextFunc
 
+@showedText:
 	; Determine textbox position (after showText call...?)
 	ldh a,(<hCameraY)	; $4c6a
 	ld b,a			; $4c6c
@@ -89197,6 +89198,22 @@ interactionCode60:
 	call getThisRoomFlags		; $4c82
 	set ROOMFLAG_BIT_ITEM,(hl)		; $4c85
 	ret			; $4c87
+
+@ringTextFunc:
+	ld e,Interaction.var30
+	ld a,(de)
+	cp TREASURE_RING
+	jr nz,@showText
+
+	ld e,Interaction.var34
+	ld a,(de)
+	add $40
+	ld (wTextSubstitutions+2),a
+	ld bc,TX_301c
+
+@showText:
+	call showText
+	ret
 
 ;;
 ; @param[out]	cflag	Set if Link's touched this object so he should collect it
