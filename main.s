@@ -30659,6 +30659,8 @@ _mapMenu_dungeonEntranceText:
 
 
 ;;
+; This is either the "ring appraisal" or "ring list" menu.
+; If "wRingMenu_mode" is 0, it's the appraisal menu; otherwise it's the ring list.
 ; @addr{6d36}
 _runRingMenu:
 	; Clear OAM, but always leave the first 4 slots reserved for status bar items.

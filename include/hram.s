@@ -71,8 +71,8 @@
 	hSprPaletteSources			db	; $ffa9
 
 	; These are each 16 bits? (not subpixel format)
-	hCameraY			dw	; $ffaa
-	hCameraX			dw	; $ffac
+	hCameraY			dw	; $ffaa/$ffa8
+	hCameraX			dw	; $ffac/$ffaa
 
 	; Either $00, $40, $80, or $c0
 	hActiveObjectType		db	; $ffae
