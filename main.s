@@ -30680,6 +30680,13 @@ _mapMenu_dungeonEntranceText:
 ; If "wRingMenu_mode" is 0, it's the appraisal menu; otherwise it's the ring list.
 ; @addr{6d36}
 _runRingMenu:
+	; Clear screen scroll variables (needed for textbox to work)
+	xor a
+	ld (wScreenOffsetX),a
+	ld (wScreenOffsetY),a
+	ldh (<hCameraX),a
+	ldh (<hCameraY),a
+
 	; Clear OAM, but always leave the first 4 slots reserved for status bar items.
 	call clearOam		; $6d36
 	ld a,$10		; $6d39
