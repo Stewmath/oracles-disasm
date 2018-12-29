@@ -87643,7 +87643,7 @@ _shopItemState3:
 	ld c,a			; $443f
 	or a			; $4440
 	ld b,>TX_0000		; $4441
-	jp nz,showText		; $4443
+;	jp nz,showText		; $4443
 	ret			; $4446
 
 ;;
@@ -87871,7 +87871,7 @@ _shopItemTextTable:
 	/* $02 */ .db <TX_004b
 	/* $03 */ .db <TX_001f
 	/* $04 */ .db <TX_004d
-	/* $05 */ .db <TX_0054
+	/* $05 */ .db $00
 	/* $06 */ .db <TX_004b
 	/* $07 */ .db <TX_006d
 	/* $08 */ .db <TX_004b
@@ -87881,8 +87881,8 @@ _shopItemTextTable:
 	/* $0c */ .db $00
 	/* $0d */ .db <TX_003b
 	/* $0e */ .db <TX_004b
-	/* $0f */ .db <TX_0054
-	/* $10 */ .db <TX_0054
+	/* $0f */ .db $00
+	/* $10 */ .db $00
 	/* $11 */ .db <TX_0020
 	/* $12 */ .db <TX_0021
 	/* $13 */ .db <TX_004b
@@ -89173,9 +89173,8 @@ interactionCode60:
 
 	ld c,a			; $4c64
 	ld b,>TX_0000		; $4c65
-	call @ringTextFunc
+	call showText		; $4c67
 
-@showedText:
 	; Determine textbox position (after showText call...?)
 	ldh a,(<hCameraY)	; $4c6a
 	ld b,a			; $4c6c
@@ -89198,22 +89197,6 @@ interactionCode60:
 	call getThisRoomFlags		; $4c82
 	set ROOMFLAG_BIT_ITEM,(hl)		; $4c85
 	ret			; $4c87
-
-@ringTextFunc:
-	ld e,Interaction.var30
-	ld a,(de)
-	cp TREASURE_RING
-	jr nz,@showText
-
-	ld e,Interaction.var34
-	ld a,(de)
-	add $40
-	ld (wTextSubstitutions+2),a
-	ld bc,TX_301c
-
-@showText:
-	call showText
-	ret
 
 ;;
 ; @param[out]	cflag	Set if Link's touched this object so he should collect it
@@ -179768,6 +179751,8 @@ giveTreasure_body:
 	ldh (<hFF8B),a	; $44cb
 	push bc			; $44cd
 
+@notRing:
+
 	; Check if adding this item requires the removal of another item.
 	ld hl,@itemsToRemoveTable		; $44ce
 	call @findItemInTable		; $44d1
@@ -180093,11 +180078,15 @@ giveTreasure_body:
 	ld hl,wRingsObtained
 	ld a,c
 	call setFlag
-	ld hl,wNumRingsAppraised
-	inc (hl)
+
+	ld a,c
+	add $40
+	ld (wTextSubstitutions+2),a
+	ld bc,TX_301c
+	call showText
 	ret
 
-.rept 9
+.rept 1
 	nop
 .endr
 
