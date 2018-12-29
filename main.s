@@ -180071,26 +180071,18 @@ giveTreasure_body:
 @seedSatchelCapacities:
 	.db $20 $50 $99
 
-; Add a ring to the unappraised ring list.
+; Add a ring to the ring list.
 @mode9:
-	; Setting bit 6 means the ring is unappraised
-	set 6,c			; $4614
-	call realignUnappraisedRings		; $4616
+	ld hl,wRingsObtained
+	ld a,c
+	call setFlag
+	ld hl,wNumRingsAppraised
+	inc (hl)
+	ret
 
-	; Check that there are less than 64 unappraised rings (checking aginst a bcd
-	; number)
-	cp $64			; $4619
-	jr c,+			; $461b
-
-	; If there are already 64 unappraised rings, remove one duplicate ring and
-	; re-align the list.
-	call @removeOneDuplicateRing		; $461d
-	call realignUnappraisedRings		; $4620
-+
-	; Add the ring to the end of the list
-	ld a,c			; $4623
-	ld (wUnappraisedRingsEnd-1),a		; $4624
-	jr realignUnappraisedRings		; $4627
+.rept 9
+	nop
+.endr
 
 ;;
 ; Decides on one ring to remove by counting all of the unappraised rings and finding the
