@@ -110600,6 +110600,11 @@ interactionCodeb6:
 	rst_addAToHl			; $45b7
 	ld c,(hl)		; $45b8
 	ld b,>TX_3500		; $45b9
+
+	ld a,c
+	cp <TX_3504
+	ret z
+
 	jp showText		; $45bb
 
 ; Text to show upon getting each respective item
