@@ -55369,7 +55369,7 @@ _mapleCheckLinkCanDropItem:
 	ret			; $6bf1
 
 @seed:
-	; For the purpose of "checkTreasureObtained", the treasure index will be very
+	; BUG: For the purpose of "checkTreasureObtained", the treasure index will be very
 	; wrong.
 	;   Ember seed:   TREASURE_SWORD
 	;   Scent seed:   TREASURE_BOOMERANG

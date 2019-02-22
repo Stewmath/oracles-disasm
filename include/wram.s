@@ -702,9 +702,9 @@ wSatchelSelectedSeeds: ; $c6c4/$c6be
 wShooterSelectedSeeds: ; $c6c5/$c6bf
 ; Can also be slingshot selected seeds for seasons
 	db
-wRingBoxContents: ; $c6c6
+wRingBoxContents: ; $c6c6/$c6c0
 	dsb 5
-wActiveRing: ; $c6cb
+wActiveRing: ; $c6cb/$c6c5
 ; When bit 6 is set, the ring is disabled?
 	db
 wRingBoxLevel: ; $c6cc
