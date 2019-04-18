@@ -152,16 +152,34 @@
 ; @subid_01{An actual projectile}
 .define PARTID_VERAN_PROJECTILE			$37
 
+;;
 ; Ball for the shooting gallery
 .define PARTID_BALL				$38
+
+;;
+; Projectile used by head thwomp?
+.define PARTID_HEAD_THWOMP_FIREBALL		$39
 
 ;;
 ; relatedObj2 is ENEMYID_VIRE
 .define PARTID_VIRE_PROJECTILE			$3a
 
 ;;
+; Used by head thwomp (purple face)
+.define PARTID_3b				$3b
+
+;;
+; Used by head thwomp
+.define PARTID_3c				$3c
+
+;;
 ; Subid: ?
 .define PARTID_BLUE_STALFOS_PROJECTILE		$3d
+
+;;
+; Used with bomb drop with head thwomp?
+; relatedObj1 is a reference to a PARTID_ITEM_DROP instance.
+.define PARTID_40				$40
 
 .define PARTID_PUMPKIN_HEAD_PROJECTILE		$42
 

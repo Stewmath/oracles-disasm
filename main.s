@@ -15255,7 +15255,7 @@ getFreePartSlot:
 	jr z,++
 	inc h			; $3e95
 	ld a,h			; $3e96
-	cp $e0			; $3e97
+	cp LAST_PART_INDEX+1			; $3e97
 	jr c,--
 	or h			; $3e9b
 	ret			; $3e9c
@@ -149394,425 +149394,611 @@ _pumpkinHead_noHealth:
 	call objectCreatePuff		; $67ad
 	jp objectSetInvisible		; $67b0
 
-;;
-; @addr{67b3}
+
+; ==============================================================================
+; ENEMYID_HEAD_THWOMP
+;
+; Variables:
+;   direction: Current animation. Even numbers are face colors; odd numbers are
+;              transitions.
+;   var30: "Spin counter" used when bomb is thrown into head
+;   var31: Which head the thwomp will settle on after throwing bomb in?
+;   var32: Bit 0 triggers the effect of a bomb being thrown into head thwomp.
+;   var33: ?
+;   var34: Counter which determines when head thwomp starts shooting fireballs / bombs
+; ==============================================================================
 enemyCode79:
-	jr z,_label_0f_207	; $67b3
-	sub $03			; $67b5
+	jr z,@normalStatus	; $67b3
+	sub ENEMYSTATUS_NO_HEALTH			; $67b5
 	ret c			; $67b7
 	jp z,_enemyBoss_dead		; $67b8
-_label_0f_207:
-	ld e,$84		; $67bb
+
+@normalStatus:
+	ld e,Enemy.state		; $67bb
 	ld a,(de)		; $67bd
 	rst_jumpTable			; $67be
-.dw $67e3
-.dw $67f7
-.dw $67f7
-.dw $67f7
-.dw $67f7
-.dw $67f7
-.dw $67f7
-.dw $67f7
-.dw $67f8
-.dw $681e
-.dw $6851
-.dw $685d
-.dw $68c5
-.dw $68d6
-.dw $690a
-.dw $698b
-.dw $6a0a
-.dw $6a69
-	ld a,$79		; $67e3
-	ld b,$81		; $67e5
+	.dw _headThwomp_state_uninitialized
+	.dw _headThwomp_state_stub
+	.dw _headThwomp_state_stub
+	.dw _headThwomp_state_stub
+	.dw _headThwomp_state_stub
+	.dw _headThwomp_state_stub
+	.dw _headThwomp_state_stub
+	.dw _headThwomp_state_stub
+	.dw _headThwomp_state8
+	.dw _headThwomp_state9
+	.dw _headThwomp_stateA
+	.dw _headThwomp_stateB
+	.dw _headThwomp_stateC
+	.dw _headThwomp_stateD
+	.dw _headThwomp_stateE
+	.dw _headThwomp_stateF
+	.dw _headThwomp_state10
+	.dw _headThwomp_state11
+
+
+_headThwomp_state_uninitialized:
+	ld a,ENEMYID_HEAD_THWOMP		; $67e3
+	ld b,PALH_81		; $67e5
 	call _enemyBoss_initializeRoom		; $67e7
+
 	call _ecom_setSpeedAndState8		; $67ea
-	ld l,$86		; $67ed
-	ld (hl),$12		; $67ef
-	call $6a78		; $67f1
+	ld l,Enemy.counter1		; $67ed
+	ld (hl),18		; $67ef
+
+	call _headThwomp_setSolidTilesAroundSelf		; $67f1
 	jp objectSetVisible80		; $67f4
+
+
+_headThwomp_state_stub:
 	ret			; $67f7
+
+
+; Waiting for Link to move up for fight to start
+_headThwomp_state8:
 	ld a,(w1Link.yh)		; $67f8
 	cp $9c			; $67fb
 	ret nc			; $67fd
+
 	ld c,$a4		; $67fe
 	ld a,$3d		; $6800
 	call setTile		; $6802
+
 	ld a,SND_DOORCLOSE		; $6805
 	call playSound		; $6807
+
 	ld a,$98		; $680a
 	ld (wLinkLocalRespawnY),a		; $680c
 	ld a,$48		; $680f
 	ld (wLinkLocalRespawnX),a		; $6811
+
 	call _ecom_incState		; $6814
-	ld l,$b4		; $6817
+
+	ld l,Enemy.var34		; $6817
 	ld (hl),$f0		; $6819
+
 	call _enemyBoss_beginBoss		; $681b
-	call $6ab0		; $681e
+
+
+; Spinning normally
+_headThwomp_state9:
+	call _headThwomp_checkBombThrownIntoHead		; $681e
 	ret nz			; $6821
-	call $6b2b		; $6822
+
+	call _headThwomp_checkShootProjectile		; $6822
+
+	; Update rotation
 	call _ecom_decCounter1		; $6825
 	ret nz			; $6828
-	ld e,$a9		; $6829
+
+	ld e,Enemy.health		; $6829
 	ld a,(de)		; $682b
 	dec a			; $682c
-	ld bc,$6849		; $682d
+	ld bc,@rotationSpeeds		; $682d
 	call addDoubleIndexToBc		; $6830
-	ld e,$88		; $6833
+
+	ld e,Enemy.direction		; $6833
 	ld a,(de)		; $6835
 	inc a			; $6836
 	and $07			; $6837
 	ld (de),a		; $6839
 	rrca			; $683a
-	jr nc,_label_0f_208	; $683b
+	jr nc,+			; $683b
 	inc bc			; $683d
-_label_0f_208:
++
 	ld a,(bc)		; $683e
 	ld (hl),a		; $683f
 	ld a,SND_CLINK2		; $6840
 	call c,playSound		; $6842
 	ld a,(de)		; $6845
 	jp enemySetAnimation		; $6846
-	ld de,$1407		; $6849
-	ld ($0a17),sp		; $684c
-	ld a,(de)		; $684f
-	dec bc			; $6850
+
+@rotationSpeeds:
+	.db $11 $07 ; $01 == [health]
+	.db $14 $08 ; $02
+	.db $17 $0a ; $03
+	.db $1a $0b ; $04
+
+
+; Bomb just thrown into head thwomp
+_headThwomp_stateA:
 	call _ecom_decCounter1		; $6851
 	jp nz,enemyAnimate		; $6854
+
 	ld l,e			; $6857
-	inc (hl)		; $6858
+	inc (hl) ; [state]
 	inc l			; $6859
-	ld (hl),$00		; $685a
+	ld (hl),$00 ; [state2]
 	ret			; $685c
+
+
+; Spinning after bomb was thrown into head
+_headThwomp_stateB:
 	inc e			; $685d
-	ld a,(de)		; $685e
+	ld a,(de) ; [state2]
 	rst_jumpTable			; $685f
-.dw $6868
-.dw $686e
-.dw $6882
-.dw $68a8
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+
+@substate0:
 	ld h,d			; $6868
 	ld l,e			; $6869
-	inc (hl)		; $686a
+	inc (hl) ; [state2]
 	inc l			; $686b
-	ld (hl),$3c		; $686c
+	ld (hl),60 ; [counter1]
+
+; Spinning at max speed
+@substate1:
 	call _ecom_decCounter1		; $686e
 	ld b,$08		; $6871
-	jp nz,$6a9b		; $6873
+	jp nz,_headThwomp_rotate		; $6873
+
 	ld l,e			; $6876
-	inc (hl)		; $6877
+	inc (hl) ; [state2]
 	inc l			; $6878
-	ld (hl),$01		; $6879
+	ld (hl),$01 ; [counter1]
 	inc l			; $687b
-	ld (hl),$02		; $687c
-	ld l,$b0		; $687e
+	ld (hl),$02 ; [counter2]
+
+	ld l,Enemy.var30		; $687e
 	ld (hl),$01		; $6880
+
+; Slower spinning
+@substate2:
 	call _ecom_decCounter1		; $6882
 	ret nz			; $6885
+
 	inc l			; $6886
-	dec (hl)		; $6887
-	jr nz,_label_0f_209	; $6888
+	dec (hl) ; [counter2]
+	jr nz,++		; $6888
+
 	ld (hl),$02		; $688a
-	ld l,$b0		; $688c
+	ld l,Enemy.var30		; $688c
 	inc (hl)		; $688e
 	ld a,(hl)		; $688f
 	cp $12			; $6890
-	jr nc,_label_0f_210	; $6892
-_label_0f_209:
-	ld l,$b0		; $6894
+	jr nc,@startSlowestSpinning	; $6892
+++
+	ld l,Enemy.var30		; $6894
 	ld a,(hl)		; $6896
-	ld l,$86		; $6897
+	ld l,Enemy.counter1		; $6897
 	ld (hl),a		; $6899
 	ld b,$08		; $689a
-	jp $6a9b		; $689c
-_label_0f_210:
-	ld l,$86		; $689f
+	jp _headThwomp_rotate		; $689c
+
+@startSlowestSpinning:
+	ld l,Enemy.counter1		; $689f
 	ld (hl),$01		; $68a1
 	inc l			; $68a3
-	ld (hl),$06		; $68a4
+	ld (hl),$06 ; [counter2]
 	ld l,e			; $68a6
-	inc (hl)		; $68a7
+	inc (hl) ; [state2]
+
+; Slowest spinning; will stop when it reaches the target head
+@substate3:
 	call _ecom_decCounter1		; $68a8
 	ret nz			; $68ab
+
 	inc l			; $68ac
-	ld a,(hl)		; $68ad
+	ld a,(hl) ; [counter2]
 	add $0c			; $68ae
-	ldd (hl),a		; $68b0
-	ld (hl),a		; $68b1
-	ld l,$88		; $68b2
+	ldd (hl),a ; [counter2]
+	ld (hl),a  ; [counter1]
+
+	; Continue rotating if head color is wrong
+	ld l,Enemy.direction		; $68b2
 	ld a,(hl)		; $68b4
-	ld l,$b1		; $68b5
+	ld l,Enemy.var31		; $68b5
 	cp (hl)			; $68b7
 	ld b,$08		; $68b8
-	jp nz,$6a9b		; $68ba
-	ld l,$84		; $68bd
+	jp nz,_headThwomp_rotate		; $68ba
+
+	ld l,Enemy.state		; $68bd
 	inc (hl)		; $68bf
-	ld l,$86		; $68c0
+	ld l,Enemy.counter1		; $68c0
 	ld (hl),$10		; $68c2
 	ret			; $68c4
+
+
+; Just reached the target head color
+_headThwomp_stateC:
 	call _ecom_decCounter1		; $68c5
 	ret nz			; $68c8
-	ld l,$88		; $68c9
+
+	; Set state to number from $0d-$10 based on head color
+	ld l,Enemy.direction		; $68c9
 	ld a,(hl)		; $68cb
 	srl a			; $68cc
 	inc a			; $68ce
-	ld l,e			; $68cf
+	ld l,e ; [state]
 	add (hl)		; $68d0
 	ld (hl),a		; $68d1
+
 	inc l			; $68d2
-	ld (hl),$00		; $68d3
+	ld (hl),$00 ; [state2]
 	ret			; $68d5
+
+
+; Green face (shoots fireballs)
+_headThwomp_stateD:
 	inc e			; $68d6
-	ld a,(de)		; $68d7
+	ld a,(de) ; [state2]
 	or a			; $68d8
-	jr nz,_label_0f_211	; $68d9
+	jr nz,@substate1	; $68d9
+
+@substate0:
 	ld h,d			; $68db
 	ld l,e			; $68dc
-	inc (hl)		; $68dd
+	inc (hl) ; [state2]
+
 	inc l			; $68de
-	ld (hl),$f0		; $68df
-	ld hl,$ce47		; $68e1
+	ld (hl),$f0 ; [counter1]
+
+	ld hl,wRoomCollisions+$47		; $68e1
 	ld (hl),$00		; $68e4
 	ret			; $68e6
-_label_0f_211:
-	call $6ab0		; $68e7
+
+@substate1:
+	call _headThwomp_checkBombThrownIntoHead		; $68e7
 	ret nz			; $68ea
+
 	call _ecom_decCounter1		; $68eb
-	jr z,_label_0f_212	; $68ee
+	jr z,@resumeSpinning	; $68ee
+
 	ld a,(hl)		; $68f0
-	cp $d2			; $68f1
+	cp 210			; $68f1
 	call nc,enemyAnimate		; $68f3
+
 	ld e,$c6		; $68f6
 	ld a,(hl)		; $68f8
 	and $1f			; $68f9
 	ret nz			; $68fb
-	ld b,$39		; $68fc
+	ld b,PARTID_HEAD_THWOMP_FIREBALL		; $68fc
 	jp _ecom_spawnProjectile		; $68fe
-_label_0f_212:
-	ld l,$84		; $6901
+
+@resumeSpinning:
+	ld l,Enemy.state		; $6901
 	ld (hl),$11		; $6903
-	ld l,$86		; $6905
+	ld l,Enemy.counter1		; $6905
 	ld (hl),$01		; $6907
 	ret			; $6909
+
+
+; Blue face (fires circular projectiles)
+_headThwomp_stateE:
 	inc e			; $690a
 	ld a,(de)		; $690b
 	rst_jumpTable			; $690c
-.dw $6915
-.dw $692f
-.dw $695b
-.dw $6966
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+
+@substate0:
 	ld h,d			; $6915
 	ld l,e			; $6916
-	inc (hl)		; $6917
+	inc (hl) ; [state2]
+
 	inc l			; $6918
 	ld a,$08		; $6919
-	ldi (hl),a		; $691b
-	ld (hl),a		; $691c
+	ldi (hl),a ; [counter1]
+	ld (hl),a  ; [counter2] (number of times to fire)
+
 	call getRandomNumber_noPreserveVars		; $691d
 	and $02			; $6920
-	jr nz,_label_0f_213	; $6922
+	jr nz,+			; $6922
 	ld a,$fe		; $6924
-_label_0f_213:
-	ld e,$b3		; $6926
++
+	ld e,Enemy.var33		; $6926
 	ld (de),a		; $6928
-	ld hl,$ce47		; $6929
+	ld hl,wRoomCollisions+$47		; $6929
 	ld (hl),$00		; $692c
 	ret			; $692e
-	call $6ab0		; $692f
+
+; Waiting a moment before starting to fire
+@substate1:
+	call _headThwomp_checkBombThrownIntoHead		; $692f
 	ret nz			; $6932
 	call _ecom_decCounter1		; $6933
 	jp nz,enemyAnimate		; $6936
-	ld (hl),$08		; $6939
-	ld l,$85		; $693b
+
+	ld (hl),$08 ; [counter1]
+	ld l,Enemy.state2		; $693b
 	inc (hl)		; $693d
-	ld hl,$ce47		; $693e
+
+	ld hl,wRoomCollisions+$47		; $693e
 	ld (hl),$03		; $6941
+
 	call getFreePartSlot		; $6943
-	jr nz,_label_0f_214	; $6946
-	ld (hl),$3c		; $6948
+	jr nz,++		; $6946
+	ld (hl),PARTID_3c		; $6948
 	inc l			; $694a
-	ld e,$b3		; $694b
+	ld e,Enemy.var33		; $694b
 	ld a,(de)		; $694d
-	ld (hl),a		; $694e
+	ld (hl),a ; [part.subid]
 	ld bc,$f800		; $694f
 	call objectCopyPositionWithOffset		; $6952
-_label_0f_214:
-	ld e,$88		; $6955
+++
+	ld e,Enemy.direction		; $6955
 	ld a,(de)		; $6957
 	jp enemySetAnimation		; $6958
+
+; Cooldown after firing
+@substate2:
 	call _ecom_decCounter1		; $695b
 	jp nz,enemyAnimate		; $695e
-	ld (hl),$1e		; $6961
+
+	ld (hl),30 ; [counter1]
 	ld l,e			; $6963
-	inc (hl)		; $6964
+	inc (hl) ; [state2]
 	ret			; $6965
+
+; Cooldown after firing; checks whether to fire again or return to normal state
+@substate3:
 	call _ecom_decCounter1		; $6966
 	ret nz			; $6969
+
 	inc l			; $696a
-	dec (hl)		; $696b
-	jr z,_label_0f_215	; $696c
+	dec (hl) ; [counter2]
+	jr z,@resumeSpinning	; $696c
+
+	; Fire again
 	ld l,e			; $696e
-	ld (hl),$01		; $696f
+	ld (hl),$01 ; [state2]
 	ld a,$08		; $6971
-	jr _label_0f_216		; $6973
-_label_0f_215:
-	ld l,$84		; $6975
+	jr ++			; $6973
+
+@resumeSpinning:
+	ld l,Enemy.state		; $6975
 	ld (hl),$11		; $6977
+
 	ld a,$10		; $6979
-_label_0f_216:
-	ld l,$86		; $697b
+++
+	ld l,Enemy.counter1		; $697b
 	ld (hl),a		; $697d
-	ld hl,$ce47		; $697e
+
+	ld hl,wRoomCollisions+$47		; $697e
 	ld (hl),$00		; $6981
-	ld e,$88		; $6983
+	ld e,Enemy.direction		; $6983
 	ld a,(de)		; $6985
 	add $08			; $6986
 	jp enemySetAnimation		; $6988
+
+
+; Purple face (stomps the ground)
+_headThwomp_stateF:
 	inc e			; $698b
-	ld a,(de)		; $698c
+	ld a,(de) ; [state2]
 	rst_jumpTable			; $698d
-.dw $6998
-.dw $69a4
-.dw $69c0
-.dw $69d6
-.dw $69e7
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw @substate4
+
+@substate0:
 	ld h,d			; $6998
 	ld l,e			; $6999
-	inc (hl)		; $699a
-	ld l,$94		; $699b
+	inc (hl) ; [state2]
+
+	ld l,Enemy.speedZ		; $699b
 	xor a			; $699d
 	ldi (hl),a		; $699e
 	ld (hl),$02		; $699f
-	jp $6a8e		; $69a1
+	jp _headThwomp_unsetSolidTilesAroundSelf		; $69a1
+
+; Falling
+@substate1:
 	ld a,$20		; $69a4
 	call objectUpdateSpeedZ_sidescroll		; $69a6
-	ld e,$8b		; $69a9
+
+	ld e,Enemy.yh		; $69a9
 	ld a,(de)		; $69ab
 	cp $90			; $69ac
 	ret c			; $69ae
+
 	ld h,d			; $69af
-	ld l,$85		; $69b0
+	ld l,Enemy.state2		; $69b0
 	inc (hl)		; $69b2
+
 	inc l			; $69b3
-	ld (hl),$78		; $69b4
-	ld a,$3c		; $69b6
+	ld (hl),120 ; [counter1]
+
+@poundGround: ; Also used by death code
+	ld a,60		; $69b6
 	ld (wScreenShakeCounterY),a		; $69b8
+
 	ld a,SND_STRONG_POUND		; $69bb
 	jp playSound		; $69bd
+
+; Resting on ground
+@substate2:
 	call _ecom_decCounter1		; $69c0
-	jr z,_label_0f_217	; $69c3
-	ld a,(hl)		; $69c5
-	cp $1e			; $69c6
+	jr z,@beginMovingUp	; $69c3
+
+	ld a,(hl) ; [counter1]
+	cp 30			; $69c6
 	ret c			; $69c8
+
+	; Spawn falling rocks every 16 frames
 	and $0f			; $69c9
 	ret nz			; $69cb
 	call getFreePartSlot		; $69cc
 	ret nz			; $69cf
-	ld (hl),$3b		; $69d0
+	ld (hl),PARTID_3b		; $69d0
 	ret			; $69d2
-_label_0f_217:
+
+@beginMovingUp:
 	ld l,e			; $69d3
-	inc (hl)		; $69d4
+	inc (hl) ; [state2]
 	ret			; $69d5
+
+; Moving back up
+@substate3:
 	ld h,d			; $69d6
-	ld l,$8a		; $69d7
+	ld l,Enemy.y		; $69d7
 	ld a,(hl)		; $69d9
-	sub $80			; $69da
+	sub <($0080)			; $69da
 	ldi (hl),a		; $69dc
 	ld a,(hl)		; $69dd
-	sbc $00			; $69de
+	sbc >($0080)			; $69de
 	ld (hl),a		; $69e0
+
 	cp $56			; $69e1
 	ret nz			; $69e3
 	ld l,e			; $69e4
-	inc (hl)		; $69e5
+	inc (hl) ; [state2]
 	ret			; $69e6
+
+; Reached original position
+@substate4:
+	; Don't set tile solidity as long as Link is within 16 pixels (wouldn't want him
+	; to get stuck)
 	ld h,d			; $69e7
-	ld l,$8b		; $69e8
+	ld l,Enemy.yh		; $69e8
 	ld a,(w1Link.yh)		; $69ea
 	sub (hl)		; $69ed
 	add $10			; $69ee
 	cp $21			; $69f0
-	jr nc,_label_0f_218	; $69f2
-	ld l,$8d		; $69f4
+	jr nc,@setSolidity	; $69f2
+
+	ld l,Enemy.xh		; $69f4
 	ld a,(w1Link.xh)		; $69f6
 	sub (hl)		; $69f9
 	add $10			; $69fa
 	cp $21			; $69fc
 	ret c			; $69fe
-_label_0f_218:
-	ld l,$84		; $69ff
+
+@setSolidity:
+	ld l,Enemy.state		; $69ff
 	ld (hl),$11		; $6a01
-	ld l,$86		; $6a03
+	ld l,Enemy.counter1		; $6a03
 	ld (hl),$10		; $6a05
-	jp $6a78		; $6a07
+	jp _headThwomp_setSolidTilesAroundSelf		; $6a07
+
+
+; Red face (takes damage)
+_headThwomp_state10:
 	inc e			; $6a0a
-	ld a,(de)		; $6a0b
+	ld a,(de) ; [state2]
 	or a			; $6a0c
-	jr nz,_label_0f_220	; $6a0d
+	jr nz,@substate1	; $6a0d
+
+@substate0:
 	ld h,d			; $6a0f
 	ld l,e			; $6a10
-	inc (hl)		; $6a11
+	inc (hl) ; [state2]
+
 	inc l			; $6a12
-	ld (hl),$78		; $6a13
-	ld l,$ab		; $6a15
+	ld (hl),120 ; [counter1]
+
+	ld l,Enemy.invincibilityCounter		; $6a15
 	ld (hl),$18		; $6a17
-	ld l,$a9		; $6a19
+
+	ld l,Enemy.health		; $6a19
 	dec (hl)		; $6a1b
-	jr nz,_label_0f_219	; $6a1c
+	jr nz,++		; $6a1c
+
+	; He's dead
 	dec (hl)		; $6a1e
-	call $6a8e		; $6a1f
-	ld a,$01		; $6a22
+	call _headThwomp_unsetSolidTilesAroundSelf		; $6a1f
+	ld a,TREE_GFXH_01		; $6a22
 	ld (wLoadedTreeGfxIndex),a		; $6a24
-_label_0f_219:
-	ld e,$a9		; $6a27
+++
+	ld e,Enemy.health		; $6a27
 	ld a,(de)		; $6a29
 	inc a			; $6a2a
-	call nz,$6b1c		; $6a2b
+	call nz,_headThwomp_dropHeart		; $6a2b
+
 	ld a,$10		; $6a2e
 	call enemySetAnimation		; $6a30
 	ld a,SND_BOSS_DAMAGE		; $6a33
 	jp playSound		; $6a35
-_label_0f_220:
+
+@substate1:
 	call _ecom_decCounter1		; $6a38
-	jr z,_label_0f_221	; $6a3b
-	ld e,$a9		; $6a3d
+	jr z,@resumeSpinning	; $6a3b
+
+	; Run below code only if he's dead
+	ld e,Enemy.health		; $6a3d
 	ld a,(de)		; $6a3f
 	inc a			; $6a40
 	ret nz			; $6a41
+
 	ld (hl),$ff		; $6a42
+
 	ld a,$20		; $6a44
 	call objectUpdateSpeedZ_sidescroll		; $6a46
-	ld e,$8b		; $6a49
+
+	ld e,Enemy.yh		; $6a49
 	ld a,(de)		; $6a4b
 	cp $90			; $6a4c
 	ret c			; $6a4e
+
+	; Trigger generic "boss death" code by setting health to 0 for real
 	ld h,d			; $6a4f
-	ld l,$a9		; $6a50
+	ld l,Enemy.health		; $6a50
 	ld (hl),$00		; $6a52
-	jp $69b6		; $6a54
-_label_0f_221:
-	ld l,$84		; $6a57
+	jp _headThwomp_stateF@poundGround		; $6a54
+
+@resumeSpinning:
+	ld l,Enemy.state		; $6a57
 	ld (hl),$11		; $6a59
-	ld l,$86		; $6a5b
+
+	ld l,Enemy.counter1		; $6a5b
 	ld (hl),$10		; $6a5d
-	ld hl,$ce47		; $6a5f
+
+	ld hl,wRoomCollisions+$47		; $6a5f
 	ld (hl),$00		; $6a62
+
 	ld a,$0e		; $6a64
 	jp enemySetAnimation		; $6a66
+
+
+_headThwomp_state11:
 	call _ecom_decCounter1		; $6a69
 	jp nz,enemyAnimate		; $6a6c
-	inc (hl)		; $6a6f
+
+	inc (hl) ; [counter1]
 	ld l,e			; $6a70
-	ld (hl),$09		; $6a71
-	ld l,$b4		; $6a73
+	ld (hl),$09 ; [state]
+
+	ld l,Enemy.var34		; $6a73
 	ld (hl),$f0		; $6a75
 	ret			; $6a77
-	ld hl,$ce46		; $6a78
+
+
+;;
+; @addr{6a78}
+_headThwomp_setSolidTilesAroundSelf:
+	ld hl,wRoomCollisions+$46		; $6a78
 	ld (hl),$01		; $6a7b
 	inc l			; $6a7d
 	inc l			; $6a7e
 	ld (hl),$02		; $6a7f
+
 	ld a,l			; $6a81
 	add $0e			; $6a82
 	ld l,a			; $6a84
@@ -149822,7 +150008,11 @@ _label_0f_221:
 	inc l			; $6a8a
 	ld (hl),$0a		; $6a8b
 	ret			; $6a8d
-	ld hl,$ce46		; $6a8e
+
+;;
+; @addr{6a8e}
+_headThwomp_unsetSolidTilesAroundSelf:
+	ld hl,wRoomCollisions+$46		; $6a8e
 	xor a			; $6a91
 	ldi (hl),a		; $6a92
 	ldi (hl),a		; $6a93
@@ -149832,128 +150022,179 @@ _label_0f_221:
 	ldi (hl),a		; $6a98
 	ld (hl),a		; $6a99
 	ret			; $6a9a
-	ld e,$88		; $6a9b
+
+
+;;
+; @param	b	Animation base
+; @addr{6a9b}
+_headThwomp_rotate:
+	ld e,Enemy.direction		; $6a9b
 	ld a,(de)		; $6a9d
 	inc a			; $6a9e
 	and $07			; $6a9f
 	ld (de),a		; $6aa1
+
 	add b			; $6aa2
 	call enemySetAnimation		; $6aa3
-	ld e,$88		; $6aa6
+
+	ld e,Enemy.direction		; $6aa6
 	ld a,(de)		; $6aa8
 	rrca			; $6aa9
 	ret c			; $6aaa
 	ld a,SND_CLINK2		; $6aab
 	jp playSound		; $6aad
-	ld hl,$d700		; $6ab0
-_label_0f_222:
-	ld l,$01		; $6ab3
+
+
+;;
+; If a bomb is thrown into head thwomp, this sets the state to $0a.
+;
+; @param[out]	zflag	z if no bomb entered head thwomp
+; @addr{6ab0}
+_headThwomp_checkBombThrownIntoHead:
+	ldhl FIRST_DYNAMIC_ITEM_INDEX,Item.start		; $6ab0
+@itemLoop:
+	ld l,Item.id		; $6ab3
 	ld a,(hl)		; $6ab5
-	cp $03			; $6ab6
-	jr nz,_label_0f_224	; $6ab8
-	ld l,$04		; $6aba
+	cp ITEMID_BOMB			; $6ab6
+	jr nz,@nextItem	; $6ab8
+
+	ld l,Item.state		; $6aba
 	ldi a,(hl)		; $6abc
 	dec a			; $6abd
-	jr z,_label_0f_223	; $6abe
+	jr z,@isNonExplodingBomb	; $6abe
 	ld a,(hl)		; $6ac0
 	cp $02			; $6ac1
-	jr c,_label_0f_224	; $6ac3
-_label_0f_223:
-	ld l,$0b		; $6ac5
+	jr c,@nextItem	; $6ac3
+
+@isNonExplodingBomb:
+	; Check if bomb is in the right position to enter thwomp
+	ld l,Item.yh		; $6ac5
 	ldi a,(hl)		; $6ac7
 	sub $50			; $6ac8
 	add $0c			; $6aca
 	cp $19			; $6acc
-	jr nc,_label_0f_224	; $6ace
+	jr nc,@nextItem	; $6ace
 	inc l			; $6ad0
 	ld a,(hl)		; $6ad1
 	sub $78			; $6ad2
 	add $0c			; $6ad4
 	cp $19			; $6ad6
-	jr c,_label_0f_225	; $6ad8
-_label_0f_224:
+	jr c,@bombEnteredThwomp	; $6ad8
+
+@nextItem:
 	inc h			; $6ada
 	ld a,h			; $6adb
-	cp $dc			; $6adc
-	jr c,_label_0f_222	; $6ade
-	ld e,$b2		; $6ae0
+	cp LAST_DYNAMIC_ITEM_INDEX+1			; $6adc
+	jr c,@itemLoop		; $6ade
+
+	ld e,Enemy.var32		; $6ae0
 	ld a,(de)		; $6ae2
 	rrca			; $6ae3
-	jr c,_label_0f_226	; $6ae4
+	jr c,@triggerBombEffect	; $6ae4
+
 	xor a			; $6ae6
 	ret			; $6ae7
-_label_0f_225:
-	ld l,$2f		; $6ae8
+
+@bombEnteredThwomp:
+	ld l,Item.var2f		; $6ae8
 	set 5,(hl)		; $6aea
-_label_0f_226:
+
+@triggerBombEffect:
 	ld h,d			; $6aec
-	ld l,$b2		; $6aed
+	ld l,Enemy.var32		; $6aed
 	set 0,(hl)		; $6aef
-	ld e,$88		; $6af1
+
+	ld e,Enemy.direction		; $6af1
 	ld a,(de)		; $6af3
 	bit 0,a			; $6af4
-	jr nz,_label_0f_227	; $6af6
-	ld l,$b1		; $6af8
+	jr nz,@betweenTwoHeads	; $6af6
+
+	ld l,Enemy.var31		; $6af8
 	ld (hl),a		; $6afa
-	ld l,$b2		; $6afb
+
+	ld l,Enemy.var32		; $6afb
 	ld (hl),$00		; $6afd
-	ld l,$84		; $6aff
+
+	ld l,Enemy.state		; $6aff
 	ld (hl),$0a		; $6b01
-	ld l,$86		; $6b03
+
+	ld l,Enemy.counter1		; $6b03
 	ld (hl),$06		; $6b05
+
 	call enemySetAnimation		; $6b07
-	ld hl,$ce47		; $6b0a
+
+	ld hl,wRoomCollisions+$47		; $6b0a
 	ld (hl),$03		; $6b0d
 	or d			; $6b0f
 	ret			; $6b10
-_label_0f_227:
+
+@betweenTwoHeads:
 	call _ecom_decCounter1		; $6b11
 	ret nz			; $6b14
+
 	ld b,$00		; $6b15
-	call $6a9b		; $6b17
-	jr _label_0f_226		; $6b1a
+	call _headThwomp_rotate		; $6b17
+	jr @triggerBombEffect		; $6b1a
+
+;;
+; @addr{6b1c}
+_headThwomp_dropHeart:
 	call getFreePartSlot		; $6b1c
 	ret nz			; $6b1f
-	ld (hl),$01		; $6b20
+	ld (hl),PARTID_ITEM_DROP		; $6b20
 	inc l			; $6b22
-	ld (hl),$01		; $6b23
+	ld (hl),ITEM_DROP_HEART		; $6b23
 	ld bc,$1400		; $6b25
 	jp objectCopyPositionWithOffset		; $6b28
+
+;;
+; @addr{6b2b}
+_headThwomp_checkShootProjectile:
 	ld a,(wFrameCounter)		; $6b2b
 	rrca			; $6b2e
 	ret c			; $6b2f
+
 	ld h,d			; $6b30
-	ld l,$b4		; $6b31
+	ld l,Enemy.var34		; $6b31
 	dec (hl)		; $6b33
-	jr nz,_label_0f_228	; $6b34
+	jr nz,+			; $6b34
 	ld (hl),$f0		; $6b36
-_label_0f_228:
++
 	ld a,(hl)		; $6b38
-	cp $5a			; $6b39
+	cp 90			; $6b39
 	ret nc			; $6b3b
 	and $0f			; $6b3c
 	ret nz			; $6b3e
+
 	call getRandomNumber_noPreserveVars		; $6b3f
 	and $07			; $6b42
-	jr z,_label_0f_229	; $6b44
-	ld b,$39		; $6b46
+	jr z,@dropBomb			; $6b44
+
+	ld b,PARTID_HEAD_THWOMP_FIREBALL		; $6b46
 	jp _ecom_spawnProjectile		; $6b48
-_label_0f_229:
+
+@dropBomb:
 	ld b,$02		; $6b4b
 	call checkBPartSlotsAvailable		; $6b4d
 	ret nz			; $6b50
+
+	; Spawn bomb drop
 	call getFreePartSlot		; $6b51
-	ld (hl),$01		; $6b54
+	ld (hl),PARTID_ITEM_DROP		; $6b54
 	inc l			; $6b56
-	ld (hl),$04		; $6b57
+	ld (hl),ITEM_DROP_BOMBS		; $6b57
 	call objectCopyPosition		; $6b59
+
+	; Spawn bomb drop "physics" object?
 	ld b,h			; $6b5c
 	call getFreePartSlot		; $6b5d
-	ld (hl),$40		; $6b60
-	ld l,$d6		; $6b62
-	ld a,$c0		; $6b64
+	ld (hl),PARTID_40		; $6b60
+
+	ld l,Part.relatedObj1		; $6b62
+	ld a,Part.start		; $6b64
 	ldi (hl),a		; $6b66
 	ld (hl),b		; $6b67
+
 	jp objectCopyPosition		; $6b68
 
 ;;

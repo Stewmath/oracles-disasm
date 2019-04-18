@@ -462,7 +462,7 @@
 	; Bombs:
 	;  Bit 7: Resets animation? (used by maple)
 	;  Bit 6: Set while being held, thrown, or exploding?
-	;  Bit 5: Deletes the bomb? (used by maple)
+	;  Bit 5: Deletes the bomb? (used by maple, head thwomp)
 	;  Bit 4: Triggers explosion?
 	;
 	; ITEMID_18:
