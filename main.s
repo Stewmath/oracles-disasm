@@ -138625,72 +138625,98 @@ _giantGhiniChild_spawnOffsets:
 
 
 ; ==============================================================================
-; ENEMYID_SHADOW_HAG_CHILD (TODO: Do this along with bosses)
+; ENEMYID_SHADOW_HAG_BUG
+;
+; Variables:
+;   counter2: Lifetime counter
 ; ==============================================================================
 enemyCode42:
 	jr z,++			; $6e8c
-	sub $03			; $6e8e
+	sub ENEMYSTATUS_NO_HEALTH			; $6e8e
 	ret c			; $6e90
-	jr z,_label_288	; $6e91
+	jr z,@dead	; $6e91
+
 	dec a			; $6e93
 	jp nz,_ecom_updateKnockbackNoSolidity		; $6e94
 	ret			; $6e97
-_label_288:
-	ld a,$30		; $6e98
+
+@dead:
+	; Decrement parent object's "bug count"
+	ld a,Object.var30		; $6e98
 	call objectGetRelatedObject1Var		; $6e9a
 	dec (hl)		; $6e9d
 	jp enemyDie_uncounted		; $6e9e
 ++
-	ld e,$84		; $6ea1
+	ld e,Enemy.state		; $6ea1
 	ld a,(de)		; $6ea3
 	rst_jumpTable			; $6ea4
-.dw $6eb9
-.dw $6ed7
-.dw $6ed7
-.dw $6ed7
-.dw $6ed7
-.dw $6ed0
-.dw $6ed7
-.dw $6ed7
+	.dw _shadowHagBug_state_uninitialized
+	.dw _shadowHagBug_state_stub
+	.dw _shadowHagBug_state_stub
+	.dw _shadowHagBug_state_stub
+	.dw _shadowHagBug_state_stub
+	.dw _shadowHagBug_state_galeSeed
+	.dw _shadowHagBug_state_stub
+	.dw _shadowHagBug_state_stub
+	.dw _shadowHagBug_state8
+	.dw _shadowHagBug_state9
 
-_label_289:
-	ret c			; $6eb5
-	ld l,(hl)		; $6eb6
-	ld ($3e6e),a		; $6eb7
-	rrca			; $6eba
+
+_shadowHagBug_state_uninitialized:
+	ld a,SPEED_60		; $6eb9
 	call _ecom_setSpeedAndState8		; $6ebb
-	ld l,$94		; $6ebe
-	ld a,$20		; $6ec0
+
+	ld l,Enemy.speedZ		; $6ebe
+	ld a,<(-$e0)		; $6ec0
 	ldi (hl),a		; $6ec2
-	ld (hl),$ff		; $6ec3
+	ld (hl),>(-$e0)		; $6ec3
+
 	call getRandomNumber_noPreserveVars		; $6ec5
 	and $1f			; $6ec8
-	ld e,$89		; $6eca
+	ld e,Enemy.angle		; $6eca
 	ld (de),a		; $6ecc
 	jp objectSetVisible82		; $6ecd
+
+
+_shadowHagBug_state_galeSeed:
 	call _ecom_galeSeedEffect		; $6ed0
 	ret c			; $6ed3
 	jp enemyDelete		; $6ed4
+
+
+_shadowHagBug_state_stub:
 	ret			; $6ed7
+
+
+_shadowHagBug_state8:
 	ld c,$12		; $6ed8
 	call objectUpdateSpeedZ_paramC		; $6eda
-	jr nz,_label_290	; $6edd
-	ld l,$84		; $6edf
+	jr nz,_shadowHagBug_applySpeedAndAnimate	; $6edd
+
+	ld l,Enemy.state		; $6edf
 	inc (hl)		; $6ee1
+
 	call getRandomNumber		; $6ee2
-	ld l,$86		; $6ee5
+	ld l,Enemy.counter1		; $6ee5
 	ldi (hl),a		; $6ee7
-	ld (hl),$b4		; $6ee8
+	ld (hl),180 ; [counter2]
+
+
+_shadowHagBug_state9:
 	call _ecom_decCounter2		; $6eea
-	jr z,_label_291	; $6eed
+	jr z,_shadowHagBug_delete	; $6eed
+
 	ld a,(hl)		; $6eef
-	cp $1e			; $6ef0
+	cp 30			; $6ef0
 	call c,_ecom_flickerVisibility		; $6ef2
+
 	dec l			; $6ef5
-	dec (hl)		; $6ef6
+	dec (hl) ; [counter1]
 	ld a,(hl)		; $6ef7
 	and $07			; $6ef8
-	jr nz,_label_290	; $6efa
+	jr nz,_shadowHagBug_applySpeedAndAnimate	; $6efa
+
+	; Choose a random position within link's 16x16 square
 	ld bc,$0f0f		; $6efc
 	call _ecom_randomBitwiseAndBCE		; $6eff
 	ldh a,(<hEnemyTargetY)	; $6f02
@@ -138701,19 +138727,24 @@ _label_289:
 	add c			; $6f0a
 	sub $08			; $6f0b
 	ld c,a			; $6f0d
-	ld e,$8b		; $6f0e
+
+	; Nudge angle toward chosen position
+	ld e,Enemy.yh		; $6f0e
 	ld a,(de)		; $6f10
 	ldh (<hFF8F),a	; $6f11
-	ld e,$8d		; $6f13
+	ld e,Enemy.xh		; $6f13
 	ld a,(de)		; $6f15
 	ldh (<hFF8E),a	; $6f16
 	call objectGetRelativeAngleWithTempVars		; $6f18
 	call objectNudgeAngleTowards		; $6f1b
-_label_290:
+
+_shadowHagBug_applySpeedAndAnimate:
 	call objectApplySpeed		; $6f1e
 	jp enemyAnimate		; $6f21
-_label_291:
-	ld a,$30		; $6f24
+
+_shadowHagBug_delete:
+	; Decrement parent's "bug count"
+	ld a,Object.var30		; $6f24
 	call objectGetRelatedObject1Var		; $6f26
 	dec (hl)		; $6f29
 	jp enemyDelete		; $6f2a
@@ -150221,7 +150252,7 @@ enemyCode7a:
 @killNext:
 	ld l,Enemy.id		; $6b7b
 	ld a,(hl)		; $6b7d
-	cp ENEMYID_SHADOW_HAG_CHILD			; $6b7e
+	cp ENEMYID_SHADOW_HAG_BUG			; $6b7e
 	call z,_ecom_killObjectH		; $6b80
 	inc h			; $6b83
 	ld a,h			; $6b84
@@ -150495,7 +150526,7 @@ _shadowHag_stateD:
 	ret nc			; $6cdd
 
 	; Spawn bug
-	ld b,ENEMYID_SHADOW_HAG_CHILD		; $6cde
+	ld b,ENEMYID_SHADOW_HAG_BUG		; $6cde
 	call _ecom_spawnUncountedEnemyWithSubid01		; $6ce0
 	ret nz			; $6ce3
 
@@ -170629,82 +170660,112 @@ _label_11_356:
 .DB $fc				; $7335
 	and b			; $7336
 .DB $fc				; $7337
-;;
-; @addr{7338}
+
+
+; ==============================================================================
+; PARTID_SHADOW_HAG_SHADOW
+; ==============================================================================
 partCode41:
-	ld e,$c4		; $7338
+	ld e,Part.state		; $7338
 	ld a,(de)		; $733a
 	rst_jumpTable			; $733b
-.dw $7344
-.dw $7364
-.dw $7382
-.dw partDelete
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw partDelete
+
+; Initialization
+@state0:
 	ld h,d			; $7344
 	ld l,e			; $7345
-	inc (hl)		; $7346
-	ld l,$c6		; $7347
+	inc (hl) ; [state]
+
+	ld l,Part.counter1		; $7347
 	ld (hl),$08		; $7349
-	ld l,$d0		; $734b
-	ld (hl),$28		; $734d
-	ld e,$c9		; $734f
+
+	ld l,Part.speed		; $734b
+	ld (hl),SPEED_100		; $734d
+
+	ld e,Part.angle		; $734f
 	ld a,(de)		; $7351
-	ld hl,$7360		; $7352
+	ld hl,@angles		; $7352
 	rst_addAToHl			; $7355
 	ld a,(hl)		; $7356
 	ld (de),a		; $7357
+
 	call objectSetVisible82		; $7358
 	ld a,$01		; $735b
 	jp partSetAnimation		; $735d
-	inc b			; $7360
-	inc c			; $7361
-	inc d			; $7362
-	inc e			; $7363
-	ld a,$06		; $7364
+
+@angles:
+	.db $04 $0c $14 $1c
+
+
+; Shadows chasing Link
+@state1:
+	; If [shadowHag.counter1] == $ff, the shadows should converge to her position.
+	ld a,Object.counter1		; $7364
 	call objectGetRelatedObject1Var		; $7366
 	ld a,(hl)		; $7369
 	inc a			; $736a
-	jr nz,_label_11_357	; $736b
-	ld e,$c4		; $736d
+	jr nz,++		; $736b
+
+	ld e,Part.state		; $736d
 	ld a,$02		; $736f
 	ld (de),a		; $7371
-_label_11_357:
+++
 	call _partDecCounter1IfNonzero		; $7372
-	jr nz,_label_11_358	; $7375
+	jr nz,++		; $7375
+
 	ld (hl),$08		; $7377
 	call objectGetAngleTowardEnemyTarget		; $7379
 	call objectNudgeAngleTowards		; $737c
-_label_11_358:
+++
 	jp objectApplySpeed		; $737f
-	ld a,$0b		; $7382
+
+
+; Shadows converging back to shadow hag
+@state2:
+	ld a,Object.yh		; $7382
 	call objectGetRelatedObject1Var		; $7384
 	ld b,(hl)		; $7387
-	ld l,$8d		; $7388
+	ld l,Enemy.xh		; $7388
 	ld c,(hl)		; $738a
-	ld e,$cb		; $738b
+
+	ld e,Part.yh		; $738b
 	ld a,(de)		; $738d
 	ldh (<hFF8F),a	; $738e
-	ld e,$cd		; $7390
+	ld e,Part.xh		; $7390
 	ld a,(de)		; $7392
 	ldh (<hFF8E),a	; $7393
+
+	; Check if already close enough
 	sub c			; $7395
 	add $04			; $7396
 	cp $09			; $7398
-	jr nc,_label_11_359	; $739a
+	jr nc,@updateAngleAndApplySpeed	; $739a
 	ldh a,(<hFF8F)	; $739c
 	sub b			; $739e
 	add $04			; $739f
 	cp $09			; $73a1
-	jr nc,_label_11_359	; $73a3
-	ld l,$87		; $73a5
+	jr nc,@updateAngleAndApplySpeed	; $73a3
+
+	; We're close enough.
+
+	; [shadowHag.counter2]--
+	ld l,Enemy.counter2		; $73a5
 	dec (hl)		; $73a7
-	ld l,$9a		; $73a8
+	; [shadowHag.visible] = true
+	ld l,Enemy.visible		; $73a8
 	set 7,(hl)		; $73aa
-	ld e,$c4		; $73ac
+
+	ld e,Part.state		; $73ac
 	ld a,$03		; $73ae
 	ld (de),a		; $73b0
-_label_11_359:
+
+@updateAngleAndApplySpeed:
 	call objectGetRelativeAngleWithTempVars		; $73b1
-	ld e,$c9		; $73b4
+	ld e,Part.angle		; $73b4
 	ld (de),a		; $73b6
 	jp objectApplySpeed		; $73b7
 

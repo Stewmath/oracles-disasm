@@ -398,7 +398,7 @@
 
 ;;
 ; Smaller enemies used in shadow hag fight
-.define ENEMYID_SHADOW_HAG_CHILD		$42
+.define ENEMYID_SHADOW_HAG_BUG			$42
 
 ;;
 ; ENEMYID_ZOL splits into ENEMYID_GEL's after being attacked.
