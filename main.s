@@ -1052,7 +1052,7 @@ initializeVramMap1:
 	jp clearMemoryBc		; $0508
 
 ;;
-; @param	a	Palette index to load
+; @param	a	Palette header to load (see data/[ages|seasons]/paletteHeaders.s)
 ; @addr{050b}
 loadPaletteHeader:
 	push de			; $050b
@@ -150197,83 +150197,109 @@ _headThwomp_checkShootProjectile:
 
 	jp objectCopyPosition		; $6b68
 
-;;
-; @addr{6b6b}
+
+; ==============================================================================
+; ENEMYID_SHADOW_HAG
+;
+; Variables:
+;   counter2: Number of times to spawn bugs before shadows separate
+;   var30: Number of bugs on-screen
+;   var31: Set if the hag couldn't spawn because Link was in a bad position
+; ==============================================================================
 enemyCode7a:
-	jr z,_label_0f_232	; $6b6b
-	sub $03			; $6b6d
+	jr z,@normalStatus	; $6b6b
+	sub ENEMYSTATUS_NO_HEALTH			; $6b6d
 	ret c			; $6b6f
-	jr nz,_label_0f_232	; $6b70
-	ld e,$a4		; $6b72
+	jr nz,@normalStatus	; $6b70
+
+	; Dead. Delete all "children" objects.
+	ld e,Enemy.collisionType		; $6b72
 	ld a,(de)		; $6b74
 	or a			; $6b75
-	jr z,_label_0f_231	; $6b76
-	ld hl,$d080		; $6b78
-_label_0f_230:
-	ld l,$81		; $6b7b
+	jr z,@dead	; $6b76
+	ldhl FIRST_ENEMY_INDEX, Enemy.start		; $6b78
+@killNext:
+	ld l,Enemy.id		; $6b7b
 	ld a,(hl)		; $6b7d
-	cp $42			; $6b7e
+	cp ENEMYID_SHADOW_HAG_CHILD			; $6b7e
 	call z,_ecom_killObjectH		; $6b80
 	inc h			; $6b83
 	ld a,h			; $6b84
-	cp $e0			; $6b85
-	jr c,_label_0f_230	; $6b87
-_label_0f_231:
+	cp LAST_ENEMY_INDEX+1			; $6b85
+	jr c,@killNext	; $6b87
+@dead:
 	jp _enemyBoss_dead		; $6b89
-_label_0f_232:
-	ld e,$84		; $6b8c
+
+@normalStatus:
+	ld e,Enemy.state		; $6b8c
 	ld a,(de)		; $6b8e
 	rst_jumpTable			; $6b8f
-.dw $6bb8
-.dw $6bc4
-.dw $6bc4
-.dw $6bc4
-.dw $6bc4
-.dw $6bc4
-.dw $6bc4
-.dw $6bc4
-.dw $6bc5
-.dw $6c3d
-.dw $6c6f
-.dw $6c95
-.dw $6cc0
-.dw $6ccc
-.dw $6cfa
-.dw $6d17
-.dw $6d40
-.dw $6d64
-.dw $6d75
-.dw $6dac
-	ld a,$7a		; $6bb8
+	.dw _shadowHag_state_uninitialized
+	.dw _shadowHag_state_stub
+	.dw _shadowHag_state_stub
+	.dw _shadowHag_state_stub
+	.dw _shadowHag_state_stub
+	.dw _shadowHag_state_stub
+	.dw _shadowHag_state_stub
+	.dw _shadowHag_state_stub
+	.dw _shadowHag_state8
+	.dw _shadowHag_state9
+	.dw _shadowHag_stateA
+	.dw _shadowHag_stateB
+	.dw _shadowHag_stateC
+	.dw _shadowHag_stateD
+	.dw _shadowHag_stateE
+	.dw _shadowHag_stateF
+	.dw _shadowHag_state10
+	.dw _shadowHag_state11
+	.dw _shadowHag_state12
+	.dw _shadowHag_state13
+
+_shadowHag_state_uninitialized:
+	ld a,ENEMYID_SHADOW_HAG		; $6bb8
 	ld b,$00		; $6bba
 	call _enemyBoss_initializeRoom		; $6bbc
-	ld a,$14		; $6bbf
+	ld a,SPEED_80		; $6bbf
 	jp _ecom_setSpeedAndState8		; $6bc1
+
+
+_shadowHag_state_stub:
 	ret			; $6bc4
+
+
+_shadowHag_state8:
 	inc e			; $6bc5
 	ld a,(de)		; $6bc6
 	rst_jumpTable			; $6bc7
-.dw $6bd2
-.dw $6bfa
-.dw $6c13
-.dw $6c20
-.dw $6c2f
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw @substate4
+
+; Wait for door to close, then begin cutscene
+@substate0:
 	ld a,($cc93)		; $6bd2
 	or a			; $6bd5
 	ret nz			; $6bd6
+
 	inc a			; $6bd7
 	ld (wDisabledObjects),a		; $6bd8
+
 	ld bc,$0104		; $6bdb
 	call _enemyBoss_spawnShadow		; $6bde
 	ret nz			; $6be1
+
 	ld h,d			; $6be2
-	ld l,$85		; $6be3
+	ld l,Enemy.state2		; $6be3
 	inc (hl)		; $6be5
-	ld l,$89		; $6be6
+	ld l,Enemy.angle		; $6be6
 	ld (hl),$18		; $6be8
-	ld l,$8f		; $6bea
+	ld l,Enemy.zh		; $6bea
 	ld (hl),$ff		; $6bec
-	ld l,$8b		; $6bee
+
+	; Set position to Link's position
+	ld l,Enemy.yh		; $6bee
 	ldh a,(<hEnemyTargetY)	; $6bf0
 	add $04			; $6bf2
 	ldi (hl),a		; $6bf4
@@ -150281,335 +150307,498 @@ _label_0f_232:
 	ldh a,(<hEnemyTargetX)	; $6bf6
 	ld (hl),a		; $6bf8
 	ret			; $6bf9
-	ld e,$8d		; $6bfa
+
+; Moving left to center of room
+@substate1:
+	ld e,Enemy.xh		; $6bfa
 	ld a,(de)		; $6bfc
-	cp $78			; $6bfd
+	cp ((LARGE_ROOM_WIDTH/2)<<4)+8			; $6bfd
 	jp nc,objectApplySpeed		; $6bff
-	call $6db4		; $6c02
+
+	call _shadowHag_beginEmergingFromShadow		; $6c02
 	ld h,d			; $6c05
-	ld l,$85		; $6c06
+	ld l,Enemy.state2		; $6c06
 	inc (hl)		; $6c08
+
 	inc l			; $6c09
-	ld (hl),$10		; $6c0a
-	ld l,$8f		; $6c0c
+	ld (hl),$10 ; [counter1]
+
+	ld l,Enemy.zh		; $6c0c
 	ld (hl),$00		; $6c0e
 	jp _ecom_killRelatedObj2		; $6c10
-	call $6dc3		; $6c13
+
+; Emerging from shadow
+@substate2:
+	call _shadowHag_updateEmergingFromShadow		; $6c13
 	ret nz			; $6c16
-	ld e,$85		; $6c17
+
+	ld e,Enemy.state2		; $6c17
 	ld a,$03		; $6c19
 	ld (de),a		; $6c1b
 	dec a			; $6c1c
 	jp enemySetAnimation		; $6c1d
+
+; Delay before showing textbox
+@substate3:
 	call _ecom_decCounter1		; $6c20
-	jr nz,_label_0f_233	; $6c23
+	jr nz,@animate	; $6c23
+
 	ld (hl),$08		; $6c25
 	ld l,e			; $6c27
 	inc (hl)		; $6c28
-	ld bc,$2f2b		; $6c29
+	ld bc,TX_2f2b		; $6c29
 	jp showText		; $6c2c
+
+@substate4:
 	call _ecom_decCounter1		; $6c2f
-	jr nz,_label_0f_233	; $6c32
-	call $6df3		; $6c34
+	jr nz,@animate	; $6c32
+	call _shadowHag_beginReturningToGround		; $6c34
 	call _enemyBoss_beginBoss		; $6c37
-_label_0f_233:
+@animate:
 	jp enemyAnimate		; $6c3a
+
+
+; Currently in the ground, showing eyes
+_shadowHag_state9:
 	call _ecom_decCounter2		; $6c3d
-	jp nz,$6dd7		; $6c40
+	jp nz,shadowHag_updateReturningToGround		; $6c40
+
 	dec l			; $6c43
 	ld a,(hl)		; $6c44
 	or a			; $6c45
-	jr z,_label_0f_235	; $6c46
+	jr z,@spawnShadows			; $6c46
+
 	dec (hl)		; $6c48
-_label_0f_234:
 	jp _ecom_flickerVisibility		; $6c49
-_label_0f_235:
+
+@spawnShadows:
 	ld b,$04		; $6c4c
 	call checkBPartSlotsAvailable		; $6c4e
 	ret nz			; $6c51
-	ld bc,$4104		; $6c52
-_label_0f_236:
+
+	ldbc PARTID_SHADOW_HAG_SHADOW,$04		; $6c52
+--
 	call _ecom_spawnProjectile		; $6c55
 	dec c			; $6c58
-	ld l,$c9		; $6c59
+	ld l,Part.angle		; $6c59
 	ld (hl),c		; $6c5b
-	jr nz,_label_0f_236	; $6c5c
+	jr nz,--		; $6c5c
+
+	; Go to state A
 	call _ecom_incState		; $6c5e
-	ld l,$86		; $6c61
-	ld (hl),$96		; $6c63
+	ld l,Enemy.counter1		; $6c61
+	ld (hl),150		; $6c63
 	inc l			; $6c65
-	ld (hl),$04		; $6c66
-	ld l,$a4		; $6c68
+	ld (hl),$04 ; [counter2]
+
+	ld l,Enemy.collisionType		; $6c68
 	res 7,(hl)		; $6c6a
 	jp objectSetInvisible		; $6c6c
+
+
+; Shadows chasing Link
+_shadowHag_stateA:
 	ld a,(wFrameCounter)		; $6c6f
 	rrca			; $6c72
 	ret c			; $6c73
 	call _ecom_decCounter1		; $6c74
 	ret nz			; $6c77
-	dec (hl)		; $6c78
+
+	; Time for shadows to reconverge.
+
+	dec (hl) ; [counter1] = $ff
 	ld l,e			; $6c79
-	inc (hl)		; $6c7a
+	inc (hl) ; [state] = $0b
+
 	call getRandomNumber_noPreserveVars		; $6c7b
 	and $06			; $6c7e
-	ld hl,$6c8d		; $6c80
+	ld hl,@targetPositions		; $6c80
 	rst_addAToHl			; $6c83
-	ld e,$8b		; $6c84
+	ld e,Enemy.yh		; $6c84
 	ldi a,(hl)		; $6c86
 	ld (de),a		; $6c87
-	ld e,$8d		; $6c88
+	ld e,Enemy.xh		; $6c88
 	ld a,(hl)		; $6c8a
 	ld (de),a		; $6c8b
 	ret			; $6c8c
-	jr c,_label_0f_238	; $6c8d
-	jr c,_label_0f_234	; $6c8f
-	ld a,b			; $6c91
-	ld c,b			; $6c92
-	ld a,b			; $6c93
-	cp b			; $6c94
-	ld e,$87		; $6c95
+
+; When the shadows reconverge, one of these positions is chosen randomly.
+@targetPositions:
+	.db $38 $48
+	.db $38 $b8
+	.db $78 $48
+	.db $78 $b8
+
+
+; Shadows reconverging to target position
+_shadowHag_stateB:
+	ld e,Enemy.counter2		; $6c95
 	ld a,(de)		; $6c97
 	or a			; $6c98
 	ret nz			; $6c99
+
+	; All shadows have now returned.
+
+	; Decide how many times to spawn bugs before shadows separate again
 	call getRandomNumber_noPreserveVars		; $6c9a
 	and $01			; $6c9d
 	add $02			; $6c9f
-	ld e,$87		; $6ca1
+	ld e,Enemy.counter2		; $6ca1
 	ld (de),a		; $6ca3
+
+_shadowHag_initStateC:
 	ld h,d			; $6ca4
-	ld l,$84		; $6ca5
+	ld l,Enemy.state		; $6ca5
 	ld (hl),$0c		; $6ca7
-	ld l,$86		; $6ca9
-	ld (hl),$1e		; $6cab
-	ld l,$a4		; $6cad
-	ld (hl),$a9		; $6caf
-	ld l,$a6		; $6cb1
+	ld l,Enemy.counter1		; $6ca9
+	ld (hl),30		; $6cab
+
+	ld l,Enemy.collisionType		; $6cad
+	ld (hl),$80|ENEMYID_PODOBOO		; $6caf
+
+	ld l,Enemy.collisionRadiusY		; $6cb1
 	ld (hl),$03		; $6cb3
 	inc l			; $6cb5
 	ld (hl),$05		; $6cb6
+
 	call objectSetVisible83		; $6cb8
 	ld a,$04		; $6cbb
 	jp enemySetAnimation		; $6cbd
+
+
+; Delay before spawning bugs
+_shadowHag_stateC:
 	call _ecom_decCounter1		; $6cc0
-	jr nz,_label_0f_237	; $6cc3
+	jr nz,++		; $6cc3
 	ld (hl),$41		; $6cc5
 	ld l,e			; $6cc7
 	inc (hl)		; $6cc8
-_label_0f_237:
+++
 	jp enemyAnimate		; $6cc9
+
+
+; Spawning bugs
+_shadowHag_stateD:
 	call enemyAnimate		; $6ccc
 	call _ecom_decCounter1		; $6ccf
-	jr z,_label_0f_239	; $6cd2
+	jr z,@doneSpawningBugs	; $6cd2
+
+	; Spawn bug every 16 frames
 	ld a,(hl)		; $6cd4
 	and $0f			; $6cd5
-_label_0f_238:
 	ret nz			; $6cd7
-	ld e,$b0		; $6cd8
+
+	; Maximum of 7 at a time
+	ld e,Enemy.var30		; $6cd8
 	ld a,(de)		; $6cda
 	cp $07			; $6cdb
 	ret nc			; $6cdd
-	ld b,$42		; $6cde
+
+	; Spawn bug
+	ld b,ENEMYID_SHADOW_HAG_CHILD		; $6cde
 	call _ecom_spawnUncountedEnemyWithSubid01		; $6ce0
 	ret nz			; $6ce3
-	ld l,$96		; $6ce4
-	ld a,$80		; $6ce6
+
+	; [child.relatedObj1] = this
+	ld l,Enemy.relatedObj1		; $6ce4
+	ld a,Enemy.start		; $6ce6
 	ldi (hl),a		; $6ce8
 	ld (hl),d		; $6ce9
+
+	; [child.position] = [this.position]
 	call objectCopyPosition		; $6cea
+
 	ld h,d			; $6ced
-	ld l,$b0		; $6cee
+	ld l,Enemy.var30		; $6cee
 	inc (hl)		; $6cf0
 	ret			; $6cf1
-_label_0f_239:
+
+@doneSpawningBugs:
 	call _ecom_incState		; $6cf2
-	ld l,$86		; $6cf5
-	ld (hl),$1e		; $6cf7
+	ld l,Enemy.counter1		; $6cf5
+	ld (hl),30		; $6cf7
 	ret			; $6cf9
+
+
+; Done spawning bugs; delay before the hag herself spawns in
+_shadowHag_stateE:
 	call _ecom_decCounter1		; $6cfa
 	jp nz,_ecom_flickerVisibility		; $6cfd
-	ld e,$b1		; $6d00
+
+	ld e,Enemy.var31		; $6d00
 	ld a,(de)		; $6d02
 	or a			; $6d03
-	ld a,$5a		; $6d04
-	jr z,_label_0f_240	; $6d06
+	ld a,90		; $6d04
+	jr z,++			; $6d06
 	xor a			; $6d08
 	ld (de),a		; $6d09
-	ld a,$96		; $6d0a
-_label_0f_240:
-	ld (hl),a		; $6d0c
-	ld l,$84		; $6d0d
+	ld a,150		; $6d0a
+++
+	ld (hl),a ; [counter1] = a
+
+	ld l,Enemy.state		; $6d0d
 	inc (hl)		; $6d0f
-	ld l,$a4		; $6d10
+	ld l,Enemy.collisionType		; $6d10
 	res 7,(hl)		; $6d12
 	jp objectSetInvisible		; $6d14
+
+
+; Waiting for Link to be in a position where the hag can spawn behind him
+_shadowHag_stateF:
 	call _ecom_decCounter1		; $6d17
-	jr z,_label_0f_241	; $6d1a
-	call $6e0f		; $6d1c
+	jr z,@couldntSpawn	; $6d1a
+
+	call _shadowHag_chooseSpawnPosition		; $6d1c
 	ret nz			; $6d1f
-	ld e,$8b		; $6d20
+	ld e,Enemy.yh		; $6d20
 	ld a,b			; $6d22
 	ld (de),a		; $6d23
-	ld e,$8d		; $6d24
+	ld e,Enemy.xh		; $6d24
 	ld a,c			; $6d26
 	ld (de),a		; $6d27
-	call $6db4		; $6d28
+	call _shadowHag_beginEmergingFromShadow		; $6d28
 	jp _ecom_incState		; $6d2b
-_label_0f_241:
-	ld e,$b1		; $6d2e
+
+@couldntSpawn:
+	ld e,Enemy.var31		; $6d2e
 	ld a,$01		; $6d30
 	ld (de),a		; $6d32
+
 	inc l			; $6d33
-	dec (hl)		; $6d34
-	jp nz,$6ca4		; $6d35
-	call $6df3		; $6d38
+	dec (hl) ; [counter2]--
+	jp nz,_shadowHag_initStateC		; $6d35
+
+	call _shadowHag_beginReturningToGround		; $6d38
 	ld a,$04		; $6d3b
 	jp enemySetAnimation		; $6d3d
-	call $6dc3		; $6d40
+
+
+; Spawning out of ground to attack Link
+_shadowHag_state10:
+	call _shadowHag_updateEmergingFromShadow		; $6d40
 	ret nz			; $6d43
+
 	call _ecom_incState		; $6d44
-	ld l,$a4		; $6d47
-	ld (hl),$fa		; $6d49
-	ld l,$90		; $6d4b
-	ld (hl),$3c		; $6d4d
-	ld l,$86		; $6d4f
-	ld (hl),$1e		; $6d51
-	ld l,$88		; $6d53
+
+	ld l,Enemy.collisionType		; $6d47
+	ld (hl),$80|ENEMYID_SHADOW_HAG		; $6d49
+
+	ld l,Enemy.speed		; $6d4b
+	ld (hl),SPEED_180		; $6d4d
+	ld l,Enemy.counter1		; $6d4f
+	ld (hl),30		; $6d51
+	ld l,Enemy.direction		; $6d53
 	ld (hl),$ff		; $6d55
-	ld l,$a6		; $6d57
+
+	ld l,Enemy.collisionRadiusY		; $6d57
 	ld (hl),$0c		; $6d59
 	inc l			; $6d5b
 	ld (hl),$08		; $6d5c
+
 	call _ecom_updateCardinalAngleTowardTarget		; $6d5e
 	jp _ecom_updateAnimationFromAngle		; $6d61
-	call $6e3f		; $6d64
-	jr z,_label_0f_243	; $6d67
+
+
+; Delay before charging at Link
+_shadowHag_state11:
+	call _shadowHag_checkLinkLookedAtHag		; $6d64
+	jr z,_shadowHag_doneCharging	; $6d67
+
 	call _ecom_decCounter1		; $6d69
 	ret nz			; $6d6c
-	ld (hl),$3c		; $6d6d
-	ld l,$84		; $6d6f
+	ld (hl),60		; $6d6d
+
+	ld l,Enemy.state		; $6d6f
 	inc (hl)		; $6d71
-_label_0f_242:
+
+_shadowHag_animate:
 	jp enemyAnimate		; $6d72
-	call $6e3f		; $6d75
-	jr z,_label_0f_243	; $6d78
+
+
+; Charging at Link
+_shadowHag_state12:
+	call _shadowHag_checkLinkLookedAtHag		; $6d75
+	jr z,_shadowHag_doneCharging	; $6d78
+
 	call _ecom_decCounter1		; $6d7a
-	jr z,_label_0f_243	; $6d7d
-	ld e,$8b		; $6d7f
+	jr z,_shadowHag_doneCharging	; $6d7d
+
+	ld e,Enemy.yh		; $6d7f
 	ld a,(de)		; $6d81
 	sub $12			; $6d82
-	cp $7e			; $6d84
-	jr nc,_label_0f_243	; $6d86
-	ld e,$8d		; $6d88
+	cp (LARGE_ROOM_HEIGHT<<4)-$32			; $6d84
+	jr nc,_shadowHag_doneCharging	; $6d86
+
+	ld e,Enemy.xh		; $6d88
 	ld a,(de)		; $6d8a
 	sub $18			; $6d8b
-	cp $c0			; $6d8d
-	jr nc,_label_0f_243	; $6d8f
+	cp (LARGE_ROOM_WIDTH<<4)-$30			; $6d8d
+	jr nc,_shadowHag_doneCharging	; $6d8f
 	call objectApplySpeed		; $6d91
-	jr _label_0f_242		; $6d94
-_label_0f_243:
+	jr _shadowHag_animate		; $6d94
+
+
+_shadowHag_doneCharging:
 	call _ecom_decCounter2		; $6d96
-	jp z,$6df3		; $6d99
-	ld l,$86		; $6d9c
-	ld (hl),$1e		; $6d9e
-	ld l,$84		; $6da0
+	jp z,_shadowHag_beginReturningToGround		; $6d99
+
+	ld l,Enemy.counter1		; $6d9c
+	ld (hl),30		; $6d9e
+
+	ld l,Enemy.state		; $6da0
 	inc (hl)		; $6da2
-	ld l,$a4		; $6da3
-	ld (hl),$a9		; $6da5
+
+	ld l,Enemy.collisionType		; $6da3
+	ld (hl),$80|ENEMYID_PODOBOO		; $6da5
 	ld a,$06		; $6da7
 	jp enemySetAnimation		; $6da9
+
+
+; Delay before spawning bugs again
+_shadowHag_state13:
 	call _ecom_decCounter1		; $6dac
-	jr nz,_label_0f_244	; $6daf
-	jp $6ca4		; $6db1
+	jr nz,shadowHag_updateReturningToGround	; $6daf
+	jp _shadowHag_initStateC		; $6db1
+
+
+;;
+; @addr{6db4}
+_shadowHag_beginEmergingFromShadow:
 	ld a,$05		; $6db4
 	call enemySetAnimation		; $6db6
 	call objectSetVisible82		; $6db9
-	ld e,$8b		; $6dbc
+	ld e,Enemy.yh		; $6dbc
 	ld a,(de)		; $6dbe
 	sub $04			; $6dbf
 	ld (de),a		; $6dc1
 	ret			; $6dc2
+
+;;
+; @param[out]	zflag	z if done emerging? (animParameter was $ff)
+; @addr{6dc3}
+_shadowHag_updateEmergingFromShadow:
 	call enemyAnimate		; $6dc3
-	ld e,$a1		; $6dc6
+	ld e,Enemy.animParameter		; $6dc6
 	ld a,(de)		; $6dc8
 	inc a			; $6dc9
 	ret z			; $6dca
+
+	; If [animParameter] == 1, y -= 8? (To center the hitbox maybe?)
 	sub $02			; $6dcb
 	ret nz			; $6dcd
 	ld (de),a		; $6dce
-	ld e,$8b		; $6dcf
+
+	ld e,Enemy.yh		; $6dcf
 	ld a,(de)		; $6dd1
 	sub $08			; $6dd2
 	ld (de),a		; $6dd4
 	or d			; $6dd5
 	ret			; $6dd6
-_label_0f_244:
+
+;;
+; @addr{6dd7}
+shadowHag_updateReturningToGround:
 	call enemyAnimate		; $6dd7
-	ld e,$a1		; $6dda
+
+	ld e,Enemy.animParameter		; $6dda
 	ld a,(de)		; $6ddc
 	or a			; $6ddd
 	ret z			; $6dde
 	bit 7,a			; $6ddf
 	ret nz			; $6de1
+
 	dec a			; $6de2
-	ld hl,$6df1		; $6de3
+	ld hl,@yOffsets		; $6de3
 	rst_addAToHl			; $6de6
-	ld e,$8b		; $6de7
+
+	ld e,Enemy.yh		; $6de7
 	ld a,(de)		; $6de9
 	add (hl)		; $6dea
 	ld (de),a		; $6deb
-	ld e,$a1		; $6dec
+
+	ld e,Enemy.animParameter		; $6dec
 	xor a			; $6dee
 	ld (de),a		; $6def
 	ret			; $6df0
-	ld ($6204),sp		; $6df1
-	ld l,$84		; $6df4
+
+@yOffsets:
+	.db $08 $04
+
+;;
+; Sets state to 9 & initializes stuff
+; @addr{6df3}
+_shadowHag_beginReturningToGround:
+	ld h,d			; $6df3
+	ld l,Enemy.state		; $6df4
 	ld (hl),$09		; $6df6
-	ld l,$86		; $6df8
-	ld (hl),$5a		; $6dfa
+
+	ld l,Enemy.counter1		; $6df8
+	ld (hl),90		; $6dfa
 	inc l			; $6dfc
-	ld (hl),$1e		; $6dfd
-	ld l,$a4		; $6dff
-	ld (hl),$a9		; $6e01
-	ld l,$a6		; $6e03
+	ld (hl),30 ; [counter2]
+
+	; Make hag invincible
+	ld l,Enemy.collisionType		; $6dff
+	ld (hl),$80|ENEMYID_PODOBOO		; $6e01
+
+	ld l,Enemy.collisionRadiusY		; $6e03
 	ld (hl),$03		; $6e05
 	inc l			; $6e07
 	ld (hl),$05		; $6e08
+
 	ld a,$06		; $6e0a
 	jp enemySetAnimation		; $6e0c
+
+;;
+; Chooses position to spawn at for charge attack based on Link's facing direction.
+;
+; @param[out]	bc	Spawn position
+; @param[out]	zflag	nz if Link is too close to the wall to spawn in
+; @addr{6e0f}
+_shadowHag_chooseSpawnPosition:
 	ld a,(w1Link.direction)		; $6e0f
-	ld hl,$6e37		; $6e12
+	ld hl,@spawnOffsets		; $6e12
 	rst_addDoubleIndex			; $6e15
+
 	ld a,(w1Link.yh)		; $6e16
 	add (hl)		; $6e19
 	ld b,a			; $6e1a
 	sub $1c			; $6e1b
 	cp $80			; $6e1d
-	jr nc,_label_0f_246	; $6e1f
+	jr nc,@invalid		; $6e1f
+
 	inc hl			; $6e21
 	ld a,(w1Link.xh)		; $6e22
 	ld e,a			; $6e25
 	add (hl)		; $6e26
 	ld c,a			; $6e27
 	cp $f0			; $6e28
-	jr nc,_label_0f_246	; $6e2a
+	jr nc,@invalid		; $6e2a
+
 	sub e			; $6e2c
-	jr nc,_label_0f_245	; $6e2d
+	jr nc,++		; $6e2d
 	cpl			; $6e2f
 	inc a			; $6e30
-_label_0f_245:
+++
 	rlca			; $6e31
 	jp nc,getTileCollisionsAtPosition		; $6e32
-_label_0f_246:
+
+@invalid:
 	or d			; $6e35
 	ret			; $6e36
-	ld b,b			; $6e37
-	nop			; $6e38
-	ld ($c0c0),sp		; $6e39
-	nop			; $6e3c
-	ld (wTmpVramBuffer),sp		; $6e3d
-	sub h			; $6e40
-	ld e,$c6		; $6e41
-	inc d			; $6e43
+
+@spawnOffsets:
+	.db $40 $00
+	.db $08 $c0
+	.db $c0 $00
+	.db $08 $40
+
+;;
+; @param[out]	zflag	z if Link looked at the hag
+; @addr{6e3f}
+_shadowHag_checkLinkLookedAtHag:
+	call objectGetAngleTowardEnemyTarget		; $6e3f
+	add $14			; $6e42
 	and $18			; $6e44
 	swap a			; $6e46
 	rlca			; $6e48

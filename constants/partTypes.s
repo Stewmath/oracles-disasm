@@ -181,6 +181,8 @@
 ; relatedObj1 is a reference to a PARTID_ITEM_DROP instance.
 .define PARTID_40				$40
 
+.define PARTID_SHADOW_HAG_SHADOW			$41
+
 .define PARTID_PUMPKIN_HEAD_PROJECTILE		$42
 
 ; Used by big bang game.

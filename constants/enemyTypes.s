@@ -233,9 +233,14 @@
 
 ;;
 ; Lava enemy in sidescrolling areas.
+;
+; Note that this object's "collisionType" value is used by certain other objects when they
+; enter invincible states (armos and shadow hag).
+;
 ; @subid_00{The podoboo itself}
 ; @subid_01{Small flames that only act as decoration?}
 .define ENEMYID_PODOBOO				$29
+
 
 ;;
 ; @subid_00{Green, doesn't move}
