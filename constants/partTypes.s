@@ -185,10 +185,17 @@
 
 .define PARTID_PUMPKIN_HEAD_PROJECTILE		$42
 
+;;
 ; Used by big bang game.
 ; @subid_00{A single bomb?}
 ; @subid_ff{A spawner for bombs?}
 .define PARTID_BIGBANG_BOMB_SPAWNER		$49
+
+;;
+; Projectile used by smog boss.
+; @subid_00{Projectile from small smog}
+; @subid_01{Projectile from large smog}
+.define PARTID_SMOG_PROJECTILE			$4a
 
 ; $45: falling boulder spawner?
 

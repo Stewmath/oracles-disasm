@@ -4526,6 +4526,8 @@ setTileInRoomLayoutBuffer:
 ; Gets the type of tile at the object's position plus bc (b=y, c=x).
 ;
 ; @param	bc	Offset to add to object's position
+; @param[out]	a	The tile at position bc
+; @param[out]	hl	The tile's address in wRoomLayout
 ; @addr{1435}
 objectGetRelativeTile:
 	ldh a,(<hActiveObjectType)	; $1435
@@ -81653,7 +81655,7 @@ interactionCode33:
 	call getFreeEnemySlot		; $633a
 	ld (hl),ENEMYID_SMOG		; $633d
 
-	; Increment subid, which acts as the "enemy index" to spawn
+	; Increment this.subid, which acts as the "enemy index" to spawn
 	ld b,h			; $633f
 	ld e,Interaction.subid		; $6340
 	ld a,(de)		; $6342
@@ -151341,393 +151343,552 @@ _eyesoar_chooseNewAngle:
 @angleVals:
 	.db $08 $00 $10 $18
 
-;;
-; @addr{7085}
+
+; ==============================================================================
+; ENEMYID_SMOG
+;
+; Variables:
+;   var03: Phase of fight (0-3)
+;   counter2: Stops movement temporarily (when sword collision occurs)
+;   var30: "Adjacent walls bitset" (bitset of solid walls around smog, similar to the
+;          variable used for special objects)
+;   var31: Position of the tile it's "hugging"
+;   var32: Number of frames to wait for a wall before disappearing and respawning
+;   var33: Original value of "direction" (for subid 2 respawning)
+;   var34/var35: Original Y/X position (for subid 2 respawning)
+;   var36: Counter until "fire projectile" animation will begin
+; ==============================================================================
 enemyCode7c:
-	jr z,_label_0f_269	; $7085
-	sub $03			; $7087
+	jr z,@normalStatus	; $7085
+	sub ENEMYSTATUS_NO_HEALTH			; $7087
 	ret c			; $7089
-	jr nz,_label_0f_269	; $708a
+	jr nz,@normalStatus	; $708a
 	jp _enemyBoss_dead		; $708c
-_label_0f_269:
-	ld e,$84		; $708f
+
+@normalStatus:
+	ld e,Enemy.state		; $708f
 	ld a,(de)		; $7091
 	rst_jumpTable			; $7092
-.dw $70a5
-.dw $7147
-.dw $7147
-.dw $7147
-.dw $7147
-.dw $7147
-.dw $7147
-.dw $7147
-.dw $7148
-	ld e,$82		; $70a5
+	.dw _smog_state_uninitialized
+	.dw _smog_state_stub
+	.dw _smog_state_stub
+	.dw _smog_state_stub
+	.dw _smog_state_stub
+	.dw _smog_state_stub
+	.dw _smog_state_stub
+	.dw _smog_state_stub
+	.dw _smog_state8
+
+
+_smog_state_uninitialized:
+	ld e,Enemy.subid		; $70a5
 	ld a,(de)		; $70a7
 	and $0f			; $70a8
 	rst_jumpTable			; $70aa
-.dw $70b9
-.dw $70c8
-.dw $70d1
-.dw $70ec
-.dw $710b
-.dw $712a
-.dw $712a
-	ld bc,$2f26		; $70b9
+	.dw @subid0Init
+	.dw @subid1Init
+	.dw @subid2Init
+	.dw @subid3Init
+	.dw @subid4Init
+	.dw @subid5Init
+	.dw @subid6Init
+
+@subid0Init:
+	ld bc,TX_2f26		; $70b9
 	call showText		; $70bc
-	ld e,$87		; $70bf
-	ld a,$3c		; $70c1
+	ld e,Enemy.counter2		; $70bf
+	ld a,60		; $70c1
 	ld (de),a		; $70c3
 	ld a,$04		; $70c4
-	jr _label_0f_272		; $70c6
-	ld e,$87		; $70c8
-	ld a,$78		; $70ca
+	jr @setAnimationAndCommonInit		; $70c6
+
+@subid1Init:
+	ld e,Enemy.counter2		; $70c8
+	ld a,120		; $70ca
 	ld (de),a		; $70cc
 	ld a,$00		; $70cd
-	jr _label_0f_272		; $70cf
+	jr @setAnimationAndCommonInit		; $70cf
+
+@subid2Init:
 	call _enemyBoss_beginBoss		; $70d1
+
 	ld h,d			; $70d4
-	ld e,$88		; $70d5
-	ld l,$b3		; $70d7
+	ld e,Enemy.direction		; $70d5
+	ld l,Enemy.var33		; $70d7
 	ld a,(de)		; $70d9
 	ldi (hl),a		; $70da
-	ld e,$8b		; $70db
+
+	ld e,Enemy.yh		; $70db
 	ld a,(de)		; $70dd
 	ldi (hl),a		; $70de
-	ld e,$8d		; $70df
+	ld e,Enemy.xh		; $70df
 	ld a,(de)		; $70e1
 	ld (hl),a		; $70e2
+
 	ld a,$04		; $70e3
-	call $7139		; $70e5
+	call @initCollisions		; $70e5
 	ld a,$00		; $70e8
-	jr _label_0f_272		; $70ea
+	jr @setAnimationAndCommonInit		; $70ea
+
+@subid3Init:
 	call _ecom_decCounter2		; $70ec
-	ld l,$a4		; $70ef
+
+	ld l,Enemy.collisionType		; $70ef
 	res 7,(hl)		; $70f1
 	ret nz			; $70f3
 	set 7,(hl)		; $70f4
+
 	ld a,(wNumEnemies)		; $70f6
 	cp $02			; $70f9
-	jr z,_label_0f_271	; $70fb
-	ld e,$47		; $70fd
-	ld a,$3c		; $70ff
+	jr z,@subid4Init	; $70fb
+
+	; BUG?
+	ld e,Interaction.counter2		; $70fd
+	ld a,60		; $70ff
 	ld (de),a		; $7101
 	ld a,$06		; $7102
-	call $7139		; $7104
+	call @initCollisions		; $7104
+
 	ld a,$02		; $7107
-	jr _label_0f_272		; $7109
-_label_0f_271:
+	jr @setAnimationAndCommonInit		; $7109
+
+@subid4Init:
 	ld a,$04		; $710b
-	ld (de),a		; $710d
-	ld a,$a3		; $710e
+	ld (de),a ; [subid] = 4
+
+	ld a,TILEINDEX_DUNGEON_a3		; $710e
 	ld c,$11		; $7110
 	call setTile		; $7112
+
 	ld a,$04		; $7115
-_label_0f_272:
+
+@setAnimationAndCommonInit:
 	call enemySetAnimation		; $7117
-	call $73b3		; $711a
-	ld e,$82		; $711d
+	call _smog_setCounterToFireProjectile		; $711a
+	ld e,Enemy.subid		; $711d
 	ld a,(de)		; $711f
 	and $0f			; $7120
-	ld hl,$7142		; $7122
+	ld hl,@subidSpeedTable		; $7122
 	rst_addAToHl			; $7125
 	ld a,(hl)		; $7126
 	jp _ecom_setSpeedAndState8AndVisible		; $7127
-	ld a,$7c		; $712a
+
+@subid5Init:
+@subid6Init:
+	ld a,ENEMYID_SMOG		; $712a
 	ld b,$00		; $712c
 	call _enemyBoss_initializeRoom		; $712e
 	call _ecom_setSpeedAndState8		; $7131
-	ld l,$a4		; $7134
+	ld l,Enemy.collisionType		; $7134
 	res 7,(hl)		; $7136
 	ret			; $7138
+
+;;
+; @param	a	Collision radius
+; @addr{7139}
+@initCollisions:
 	call objectSetCollideRadius		; $7139
-	ld l,$a5		; $713c
-	ld a,$07		; $713e
+	ld l,Enemy.collisionReactionSet		; $713c
+	ld a,COLLISIONREACTIONSET_07		; $713e
 	ld (hl),a		; $7140
 	ret			; $7141
-	nop			; $7142
-	nop			; $7143
-	inc hl			; $7144
-	inc d			; $7145
-	ld a,(bc)		; $7146
+
+@subidSpeedTable:
+	.db SPEED_00
+	.db SPEED_00
+	.db SPEED_e0
+	.db SPEED_80
+	.db SPEED_40
+
+
+_smog_state_stub:
 	ret			; $7147
-	ld e,$82		; $7148
+
+
+_smog_state8:
+	ld e,Enemy.subid		; $7148
 	ld a,(de)		; $714a
 	and $0f			; $714b
 	rst_jumpTable			; $714d
-.dw $715c
-.dw $7184
-.dw $7194
-.dw $7194
-.dw $726a
-.dw $72f6
-.dw $718b
+	.dw _smog_state8_subid0
+	.dw _smog_state8_subid1
+	.dw _smog_state8_subid2
+	.dw _smog_state8_subid3
+	.dw _smog_state8_subid4
+	.dw _smog_state8_subid5
+	.dw _smog_deleteSelf
+
+; Splitting into two?
+_smog_state8_subid0:
 	call retIfTextIsActive		; $715c
 	call enemyAnimate		; $715f
 	call _ecom_decCounter2		; $7162
 	ret nz			; $7165
+
 	call getFreeEnemySlot		; $7166
-	ld (hl),$7c		; $7169
+	ld (hl),ENEMYID_SMOG		; $7169
 	inc l			; $716b
-	ld (hl),$01		; $716c
+	ld (hl),$01 ; [child.subid]
 	ld bc,$00f0		; $716e
 	call objectCopyPositionWithOffset		; $7171
+
 	call getFreeEnemySlot		; $7174
-	ld (hl),$7c		; $7177
+	ld (hl),ENEMYID_SMOG		; $7177
 	inc l			; $7179
-	ld (hl),$01		; $717a
+	ld (hl),$01 ; [child.subid]
 	ld bc,$0010		; $717c
 	call objectCopyPositionWithOffset		; $717f
-	jr _label_0f_273		; $7182
+	jr _smog_deleteSelf		; $7182
+
+_smog_state8_subid1:
 	call enemyAnimate		; $7184
 	call _ecom_decCounter2		; $7187
 	ret nz			; $718a
-_label_0f_273:
+
+_smog_deleteSelf:
 	call objectCreatePuff		; $718b
 	call decNumEnemies		; $718e
 	jp enemyDelete		; $7191
-	ld e,$aa		; $7194
+
+
+; Small or medium-sized smog
+_smog_state8_subid2:
+_smog_state8_subid3:
+	ld e,Enemy.var2a		; $7194
 	ld a,(de)		; $7196
 	bit 7,a			; $7197
-	jr z,_label_0f_274	; $7199
+	jr z,@noCollision	; $7199
+
 	and $7f			; $719b
-	cp $04			; $719d
-	jr c,_label_0f_274	; $719f
-	cp $0a			; $71a1
-	jr nc,_label_0f_274	; $71a3
-	ld e,$87		; $71a5
-	ld a,$1e		; $71a7
+	cp COLLISIONTYPE_L1_SWORD			; $719d
+	jr c,@noCollision	; $719f
+	cp COLLISIONTYPE_SWORD_HELD+1			; $71a1
+	jr nc,@noCollision	; $71a3
+
+	; If sword collision occurred, stop movement briefly?
+	ld e,Enemy.counter2		; $71a5
+	ld a,30		; $71a7
 	ld (de),a		; $71a9
-_label_0f_274:
+
+@noCollision:
 	call _ecom_decCounter2		; $71aa
 	jp nz,enemyAnimate		; $71ad
+
 	call getThisRoomFlags		; $71b0
-	bit 6,a			; $71b3
-	jr nz,_label_0f_273	; $71b5
+	bit ROOMFLAG_BIT_40,a			; $71b3
+	jr nz,_smog_deleteSelf	; $71b5
+
 	call enemyAnimate		; $71b7
-	ld e,$a1		; $71ba
+
+	; If animParameter is nonzero, shoot projectile
+	ld e,Enemy.animParameter		; $71ba
 	ld a,(de)		; $71bc
 	or a			; $71bd
-	jr z,_label_0f_275	; $71be
-	ld e,$82		; $71c0
+	jr z,@doneShootingProjectile	; $71be
+
+	ld e,Enemy.subid		; $71c0
 	ld a,(de)		; $71c2
 	and $0f			; $71c3
 	add a			; $71c5
-	add $fc			; $71c6
+	add -4			; $71c6
 	call enemySetAnimation		; $71c8
-	call $73b3		; $71cb
-	ld b,$4a		; $71ce
+	call _smog_setCounterToFireProjectile		; $71cb
+	ld b,PARTID_SMOG_PROJECTILE		; $71ce
 	call _ecom_spawnProjectile		; $71d0
 	call objectCopyPosition		; $71d3
-_label_0f_275:
-	call $73a6		; $71d6
-	jr z,_label_0f_276	; $71d9
-	ld e,$82		; $71db
+
+@doneShootingProjectile:
+	call _smog_decCounterToFireProjectile		; $71d6
+	jr z,@runSubstate	; $71d9
+
+	ld e,Enemy.subid		; $71db
 	ld a,(de)		; $71dd
 	and $0f			; $71de
 	add a			; $71e0
-	add $fd			; $71e1
+	add -3			; $71e1
 	call enemySetAnimation		; $71e3
-_label_0f_276:
-	ld e,$85		; $71e6
+
+@runSubstate:
+	ld e,Enemy.state2		; $71e6
 	ld a,(de)		; $71e8
 	rst_jumpTable			; $71e9
-.dw $71f0
-.dw $7212
-.dw $725b
-	call $735c		; $71f0
-	call $7309		; $71f3
-	jr nz,_label_0f_278	; $71f6
-	ld l,$b2		; $71f8
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+
+; Just spawned, or need to redetermine what direction to move in based on surrounding
+; walls
+@substate0:
+	call _smog_applySpeed		; $71f0
+	call _smog_checkHuggingWall		; $71f3
+	jr nz,@checkHitWall	; $71f6
+
+	ld l,Enemy.var32		; $71f8
 	ld (hl),$10		; $71fa
-_label_0f_277:
-	ld e,$89		; $71fc
+
+@gotoState1:
+	; Update direction based on angle
+	ld e,Enemy.angle		; $71fc
 	ld a,(de)		; $71fe
 	add a			; $71ff
 	swap a			; $7200
 	dec e			; $7202
 	ld (de),a		; $7203
-	ld e,$85		; $7204
+
+	; Go to substate 1
+	ld e,Enemy.state2		; $7204
 	ld a,$01		; $7206
 	ld (de),a		; $7208
-	jp $735c		; $7209
-_label_0f_278:
-	call $72f7		; $720c
-	jr nz,_label_0f_280	; $720f
+	jp _smog_applySpeed		; $7209
+
+@checkHitWall:
+	call _smog_checkHitWall		; $720c
+	jr nz,@hitWall	; $720f
 	ret			; $7211
-	call $735c		; $7212
-	call $7309		; $7215
-	jr nz,_label_0f_282	; $7218
-	ld l,$82		; $721a
+
+@substate1:
+	call _smog_applySpeed		; $7212
+	call _smog_checkHuggingWall		; $7215
+	jr nz,@notHuggingWall	; $7218
+
+	; The wall being hugged disappeared.
+
+	; Check if this is a small or medium smog.
+	ld l,Enemy.subid		; $721a
 	ld a,(hl)		; $721c
 	and $0f			; $721d
 	cp $02			; $721f
-	jr nz,_label_0f_279	; $7221
-	ld l,$b2		; $7223
+	jr nz,@mediumSmog	; $7221
+
+	; It's a small smog. Decrement counter before respawning
+	ld l,Enemy.var32		; $7223
 	dec (hl)		; $7225
-	jr nz,_label_0f_277	; $7226
+	jr nz,@gotoState1	; $7226
+
+	; Respawn
 	call objectCreatePuff		; $7228
 	ld h,d			; $722b
-	ld l,$b3		; $722c
-	ld e,$88		; $722e
+	ld l,Enemy.var33		; $722c
+	ld e,Enemy.direction		; $722e
 	ldi a,(hl)		; $7230
 	ld (de),a		; $7231
-	ld e,$8b		; $7232
+	ld e,Enemy.yh		; $7232
 	ldi a,(hl)		; $7234
 	ld (de),a		; $7235
-	ld e,$8d		; $7236
+	ld e,Enemy.xh		; $7236
 	ld a,(hl)		; $7238
 	ld (de),a		; $7239
 	call objectCreatePuff		; $723a
-	jr _label_0f_282		; $723d
-_label_0f_279:
-	call $72f7		; $723f
+	jr @notHuggingWall		; $723d
+
+@mediumSmog:
+	; Just keep moving forward until we hit a wall
+	call _smog_checkHitWall		; $723f
 	ret z			; $7242
-_label_0f_280:
+
+@hitWall:
+	; Rotate direction clockwise or counterclockwise
 	ld b,$01		; $7243
-	ld e,$82		; $7245
+	ld e,Enemy.subid		; $7245
 	ld a,(de)		; $7247
 	bit 7,a			; $7248
-	jr z,_label_0f_281	; $724a
+	jr z,+			; $724a
 	ld b,$ff		; $724c
-_label_0f_281:
-	ld e,$88		; $724e
++
+	ld e,Enemy.direction		; $724e
 	ld a,(de)		; $7250
 	sub b			; $7251
 	and $03			; $7252
 	ld (de),a		; $7254
-	ld e,$85		; $7255
+	ld e,Enemy.state2		; $7255
 	ld a,$02		; $7257
 	ld (de),a		; $7259
 	ret			; $725a
-	call $7367		; $725b
-	call $72f7		; $725e
-	jr nz,_label_0f_280	; $7261
-_label_0f_282:
-	ld e,$85		; $7263
+
+; Moving normally along wall
+@substate2:
+	call _smog_updateAdjacentWallsBitset		; $725b
+	call _smog_checkHitWall		; $725e
+	jr nz,@hitWall	; $7261
+
+@notHuggingWall:
+	ld e,Enemy.state2		; $7263
 	xor a			; $7265
 	ld (de),a		; $7266
-	jp $735c		; $7267
-	ld e,$aa		; $726a
+	jp _smog_applySpeed		; $7267
+
+
+; Large smog (can be attacked)
+_smog_state8_subid4:
+	ld e,Enemy.var2a		; $726a
 	ld a,(de)		; $726c
-	cp $a0			; $726d
-	jr nz,_label_0f_283	; $726f
+	cp $80|COLLISIONTYPE_ELECTRIC_SHOCK			; $726d
+	jr nz,++		; $726f
+
+	; Link attacked the boss and got shocked.
 	ld a,$03		; $7271
-	ld e,$85		; $7273
+	ld e,Enemy.state2		; $7273
 	ld (de),a		; $7275
-	ld a,$46		; $7276
-	ld e,$87		; $7278
+	ld a,70		; $7276
+	ld e,Enemy.counter2		; $7278
 	ld (de),a		; $727a
-_label_0f_283:
+++
 	call enemyAnimate		; $727b
-	ld e,$85		; $727e
+	ld e,Enemy.state2		; $727e
 	ld a,(de)		; $7280
 	rst_jumpTable			; $7281
-.dw $728a
-.dw $7299
-.dw $72a6
-.dw $72eb
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+
+@substate0:
 	ld a,$01		; $728a
-	ld (de),a		; $728c
+	ld (de),a ; [state2] = 1
 	dec a			; $728d
-	ld e,$90		; $728e
+	ld e,Enemy.speed		; $728e
 	ld (de),a		; $7290
+
 	call _ecom_updateAngleTowardTarget		; $7291
-	ld e,$86		; $7294
-	ld a,$14		; $7296
+
+	ld e,Enemy.counter1		; $7294
+	ld a,20		; $7296
 	ld (de),a		; $7298
-	call $72b2		; $7299
+
+; Speeding up
+@substate1:
+	call @func_72b2		; $7299
 	ret nz			; $729c
-	add $05			; $729d
+
+	add SPEED_20			; $729d
 	ld (hl),a		; $729f
-	cp $1e			; $72a0
+	cp SPEED_c0			; $72a0
 	ret nz			; $72a2
+
 	jp _ecom_incState2		; $72a3
-	call $72b2		; $72a6
+
+; Slowing down
+@substate2:
+	call @func_72b2		; $72a6
 	ret nz			; $72a9
-	sub $05			; $72aa
+
+	sub SPEED_20			; $72aa
 	ld (hl),a		; $72ac
 	ret nz			; $72ad
-	ld l,$85		; $72ae
-	ld (hl),a		; $72b0
+
+	ld l,Enemy.state2		; $72ae
+	ld (hl),a ; [state2] = 0
 	ret			; $72b1
-	ld e,$a1		; $72b2
+
+;;
+; @param[out]	zflag	z if counter1 reached 0 (should update speed)
+; @addr{72b2}
+@func_72b2:
+	ld e,Enemy.animParameter		; $72b2
 	ld a,(de)		; $72b4
 	or a			; $72b5
-	jr z,_label_0f_285	; $72b6
+	jr z,@parameter0	; $72b6
+
 	dec a			; $72b8
-	jr nz,_label_0f_284	; $72b9
+	jr nz,@parameter1	; $72b9
+
 	ld a,$04		; $72bb
 	call enemySetAnimation		; $72bd
-	jp $73b3		; $72c0
-_label_0f_284:
-	ld b,$4a		; $72c3
+	jp _smog_setCounterToFireProjectile		; $72c0
+
+@parameter1:
+	ld b,PARTID_SMOG_PROJECTILE		; $72c3
 	call _ecom_spawnProjectile		; $72c5
-	ld l,$c2		; $72c8
+	ld l,Part.subid		; $72c8
 	inc (hl)		; $72ca
 	ld bc,$0800		; $72cb
 	jp objectCopyPositionWithOffset		; $72ce
-_label_0f_285:
-	call $73a6		; $72d1
-	jr z,_label_0f_286	; $72d4
+
+@parameter0:
+	call _smog_decCounterToFireProjectile		; $72d1
+	jr z,++			; $72d4
 	ld a,$05		; $72d6
 	call enemySetAnimation		; $72d8
-_label_0f_286:
+++
 	call objectApplySpeed		; $72db
 	call _ecom_bounceOffScreenBoundary		; $72de
 	call _ecom_decCounter1		; $72e1
 	ret nz			; $72e4
-	ld (hl),$14		; $72e5
-	ld l,$90		; $72e7
+
+	ld (hl),20		; $72e5
+	ld l,Enemy.speed		; $72e7
 	ld a,(hl)		; $72e9
 	ret			; $72ea
+
+; Stop while Link is shocked
+@substate3:
 	call _ecom_decCounter2		; $72eb
 	ret nz			; $72ee
 	xor a			; $72ef
 	ld (de),a		; $72f0
-	ld l,$a4		; $72f1
+	ld l,Enemy.collisionType		; $72f1
 	set 7,(hl)		; $72f3
 	ret			; $72f5
+
+
+_smog_state8_subid5:
 	ret			; $72f6
-	ld e,$88		; $72f7
+
+
+;;
+; @param[out]	zflag	nz if hit a wall
+; @addr{72f7}
+_smog_checkHitWall:
+	ld e,Enemy.direction		; $72f7
 	ld a,(de)		; $72f9
 	swap a			; $72fa
 	rrca			; $72fc
 	inc e			; $72fd
 	ld (de),a		; $72fe
-	jr _label_0f_288		; $72ff
-	ld a,($ff00+R_P1)	; $7301
-	nop			; $7303
-	stop			; $7304
-	stop			; $7305
-	nop			; $7306
-	nop			; $7307
-	ld a,($ff00+R_TMA)	; $7308
-	rst $38			; $730a
-	ld e,$82		; $730b
+	jr _smog_checkAdjacentWallsBitset		; $72ff
+
+_smog_positionOffsets:
+	.db $f0 $00
+	.db $00 $10
+	.db $10 $00
+	.db $00 $f0
+
+;;
+; @param[out]	zflag	nz if hugging a wall
+; @addr{7309}
+_smog_checkHuggingWall:
+	ld b,$ff		; $7309
+	ld e,Enemy.subid		; $730b
 	ld a,(de)		; $730d
 	bit 7,a			; $730e
-	jr z,_label_0f_287	; $7310
+	jr z,+			; $7310
 	ld b,$01		; $7312
-_label_0f_287:
-	ld e,$88		; $7314
++
+	; Get direction clockwise or counterclockwise from current direction
+	ld e,Enemy.direction		; $7314
 	ld a,(de)		; $7316
 	sub b			; $7317
 	and $03			; $7318
 	ld c,a			; $731a
+
+	; Set "angle" value perpendicular to "direction" value
 	swap a			; $731b
 	rrca			; $731d
 	inc e			; $731e
 	ld (de),a		; $731f
+
+	; Get position offset in direction smog is moving in
 	ld a,c			; $7320
-	ld hl,$7301		; $7321
+	ld hl,_smog_positionOffsets		; $7321
 	rst_addDoubleIndex			; $7324
 	ldi a,(hl)		; $7325
 	ld c,(hl)		; $7326
 	ld b,a			; $7327
+
+	; Put the position of the next tile in var31
 	call objectGetRelativeTile		; $7328
-	ld h,$ce		; $732b
-	ld e,$b1		; $732d
+	ld h,>wRoomCollisions		; $732b
+	ld e,Enemy.var31		; $732d
 	ld a,l			; $732f
 	and $0f			; $7330
 	ld c,a			; $7332
@@ -151736,50 +151897,72 @@ _label_0f_287:
 	and $0f			; $7336
 	add c			; $7338
 	ld (de),a		; $7339
-_label_0f_288:
+
+;;
+; Checks if there is a wall in the direction of the "angle" variable. (Angle could be
+; facing forward, or in the direction of the wall being hugged, depending when this is
+; called.)
+;
+; @param[out]	zflag	nz if a wall exists
+; @addr{733a}
+_smog_checkAdjacentWallsBitset:
 	ld h,d			; $733a
-	ld l,$89		; $733b
+	ld l,Enemy.angle		; $733b
 	ld a,(hl)		; $733d
 	bit 3,a			; $733e
-	jr z,_label_0f_290	; $7340
-	ld l,$b0		; $7342
+	jr z,@upOrDown	; $7340
+
+@leftOrRight:
+	ld l,Enemy.var30		; $7342
 	ld b,(hl)		; $7344
 	bit 4,a			; $7345
 	ld a,$03		; $7347
-	jr z,_label_0f_289	; $7349
+	jr z,+			; $7349
 	ld a,$0c		; $734b
-_label_0f_289:
++
 	and b			; $734d
 	ret			; $734e
-_label_0f_290:
-	ld l,$b0		; $734f
+
+@upOrDown:
+	ld l,Enemy.var30		; $734f
 	ld c,(hl)		; $7351
 	bit 4,a			; $7352
 	ld a,$30		; $7354
-	jr nz,_label_0f_291	; $7356
+	jr nz,+		; $7356
 	ld a,$c0		; $7358
-_label_0f_291:
++
 	and c			; $735a
 	ret			; $735b
-	ld e,$88		; $735c
+
+;;
+; Applies speed and updates "adjacentWallsBitset"
+; @addr{735c}
+_smog_applySpeed:
+	; Update angle based on direction
+	ld e,Enemy.direction		; $735c
 	ld a,(de)		; $735e
 	swap a			; $735f
 	rrca			; $7361
 	inc e			; $7362
 	ld (de),a		; $7363
 	call objectApplySpeed		; $7364
-	ld e,$b0		; $7367
+
+_smog_updateAdjacentWallsBitset:
+	; Clear collision value of wall being hugged?
+	ld e,Enemy.var30		; $7367
 	xor a			; $7369
 	ld (de),a		; $736a
+
+	; Update each bit of adjacent walls bitset
 	ld h,d			; $736b
-	ld l,$8b		; $736c
+	ld l,Enemy.yh		; $736c
 	ld b,(hl)		; $736e
-	ld l,$8d		; $736f
+	ld l,Enemy.xh		; $736f
 	ld c,(hl)		; $7371
 	ld a,$01		; $7372
 	ldh (<hFF8B),a	; $7374
-	ld hl,$7396		; $7376
-_label_0f_292:
+	ld hl,@offsetTable		; $7376
+@loop:
 	ldi a,(hl)		; $7379
 	add b			; $737a
 	ld b,a			; $737b
@@ -151788,52 +151971,67 @@ _label_0f_292:
 	ld c,a			; $737e
 	push hl			; $737f
 	call getTileAtPosition		; $7380
-	ld h,$ce		; $7383
+	ld h,>wRoomCollisions		; $7383
 	ld a,(hl)		; $7385
 	or a			; $7386
-	jr z,_label_0f_293	; $7387
+	jr z,+			; $7387
 	scf			; $7389
-_label_0f_293:
++
 	pop hl			; $738a
 	ldh a,(<hFF8B)	; $738b
 	rla			; $738d
 	ldh (<hFF8B),a	; $738e
-	jr nc,_label_0f_292	; $7390
-	ld e,$b0		; $7392
+	jr nc,@loop	; $7390
+
+	ld e,Enemy.var30		; $7392
 	ld (de),a		; $7394
 	ret			; $7395
-	rst $30			; $7396
-	ld hl,sp+$00		; $7397
-	rrca			; $7399
-	ld de,$00f1		; $739a
-	rrca			; $739d
-	ld a,($ff00+$f0)	; $739e
-	rrca			; $73a0
-	nop			; $73a1
-	pop af			; $73a2
-	ld de,$000f		; $73a3
-	ld e,$b6		; $73a6
+
+@offsetTable:
+	.db $f7 $f8
+	.db $00 $0f
+	.db $11 $f1
+	.db $00 $0f
+	.db $f0 $f0
+	.db $0f $00
+	.db $f1 $11
+	.db $0f $00
+
+;;
+; @param[out]	zflag	nz if smog should begin "firing projectile" animation
+; @addr{73a6}
+_smog_decCounterToFireProjectile:
+	ld e,Enemy.var36		; $73a6
 	ld a,(de)		; $73a8
 	or a			; $73a9
 	ret z			; $73aa
+
 	dec a			; $73ab
 	ld (de),a		; $73ac
-	jr nz,_label_0f_294	; $73ad
+	jr nz,@zflag		; $73ad
+
 	or d			; $73af
 	ret			; $73b0
-_label_0f_294:
+@zflag:
 	xor a			; $73b1
 	ret			; $73b2
-	ld e,$82		; $73b3
+
+
+;;
+; For given values of subid and var03, this reads one of four randomly chosen values and
+; puts that value into var36 (counter until next projectile is fired).
+; @addr{73b3}
+_smog_setCounterToFireProjectile:
+	ld e,Enemy.subid		; $73b3
 	ld a,(de)		; $73b5
 	and $0f			; $73b6
 	sub $02			; $73b8
-	ld hl,$73d0		; $73ba
+	ld hl,@table		; $73ba
 	rst_addAToHl			; $73bd
 	ld a,(hl)		; $73be
 	rst_addAToHl			; $73bf
 	inc e			; $73c0
-	ld a,(de)		; $73c1
+	ld a,(de) ; [var03]
 	rst_addAToHl			; $73c2
 	ld a,(hl)		; $73c3
 	rst_addAToHl			; $73c4
@@ -151841,65 +152039,58 @@ _label_0f_294:
 	and $03			; $73c8
 	rst_addAToHl			; $73ca
 	ld a,(hl)		; $73cb
-	ld e,$b6		; $73cc
+	ld e,Enemy.var36		; $73cc
 	ld (de),a		; $73ce
 	ret			; $73cf
-	inc bc			; $73d0
-	ld b,$09		; $73d1
-	inc c			; $73d3
-	rrca			; $73d4
-	ld (de),a		; $73d5
-	dec d			; $73d6
-	jr _label_0f_295		; $73d7
-	ld e,$21		; $73d9
-	inc h			; $73db
-	daa			; $73dc
-	ldi a,(hl)		; $73dd
-	dec l			; $73de
-	ld a,b			; $73df
-	ld a,($ff00+R_IE)	; $73e0
-	rst $38			; $73e2
-	ld a,b			; $73e3
-	ld a,b			; $73e4
-	or h			; $73e5
-	ld a,($ff00+$50)	; $73e6
-	ld d,b			; $73e8
-	ld h,h			; $73e9
-	ld a,b			; $73ea
-	ldd (hl),a		; $73eb
-	ldd (hl),a		; $73ec
-	inc a			; $73ed
-	ld d,b			; $73ee
-	nop			; $73ef
-	nop			; $73f0
-	nop			; $73f1
-	nop			; $73f2
-	ld d,b			; $73f3
-_label_0f_295:
-	ld a,b			; $73f4
-	sub (hl)		; $73f5
-	or h			; $73f6
-	ldd (hl),a		; $73f7
-	ld d,b			; $73f8
-	sub (hl)		; $73f9
-	or h			; $73fa
-	ldd (hl),a		; $73fb
-	ld d,b			; $73fc
-	ld h,h			; $73fd
-	sub (hl)		; $73fe
-	ld e,d			; $73ff
-	ld a,b			; $7400
-	ld h,h			; $7401
-	sub (hl)		; $7402
-	ld e,$28		; $7403
-	ldd (hl),a		; $7405
-	inc a			; $7406
-	inc d			; $7407
-	ld e,$32		; $7408
-	inc a			; $740a
-	inc d			; $740b
-	ld e,$28		; $740c
-	ldd (hl),a		; $740e
+
+@table:
+        .db @subid2 - CADDR
+        .db @subid3 - CADDR
+        .db @subid4 - CADDR
+
+@subid2:
+	.db @subid2_0 - CADDR
+	.db @subid2_1 - CADDR
+	.db @subid2_2 - CADDR
+	.db @subid2_3 - CADDR
+@subid3:
+	.db @subid3_0 - CADDR
+	.db @subid3_1 - CADDR
+	.db @subid3_2 - CADDR
+	.db @subid3_3 - CADDR
+@subid4:
+	.db @subid4_0 - CADDR
+	.db @subid4_1 - CADDR
+	.db @subid4_2 - CADDR
+	.db @subid4_3 - CADDR
+
+@subid2_0:
+	.db $78 $f0 $ff $ff
+@subid2_1:
+	.db $78 $78 $b4 $f0
+@subid2_2:
+	.db $50 $50 $64 $78
+@subid2_3:
+	.db $32 $32 $3c $50
+
+@subid3_0:
+	.db $00 $00 $00 $00
+@subid3_1:
+	.db $50 $78 $96 $b4
+@subid3_2:
+	.db $32 $50 $96 $b4
+@subid3_3:
+	.db $32 $50 $64 $96
+
+@subid4_0:
+	.db $5a $78 $64 $96
+@subid4_1:
+	.db $1e $28 $32 $3c
+@subid4_2:
+	.db $14 $1e $32 $3c
+@subid4_3:
+	.db $14 $1e $28 $32
+
 
 ;;
 ; @addr{740f}
@@ -161925,20 +162116,22 @@ _label_10_341:
 .ORG 0
 
 ;;
+; @param[out]	zflag	nz if there's a tile collision in the direction this part is
+;			moving
 ; @addr{4000}
-func_11_4000:
-	ld e,$c9		; $4000
+_partCommon_getTileCollisionInFront:
+	ld e,Part.angle		; $4000
 	ld a,(de)		; $4002
 	add $02			; $4003
 	and $1c			; $4005
 	rrca			; $4007
-	ld hl,$401a		; $4008
+	ld hl,_partCommon_anglePositionOffsets		; $4008
 	rst_addAToHl			; $400b
-	ld e,$cb		; $400c
+	ld e,Part.yh		; $400c
 	ld a,(de)		; $400e
 	add (hl)		; $400f
 	ld b,a			; $4010
-	ld e,$cd		; $4011
+	ld e,Part.xh		; $4011
 	inc hl			; $4013
 	ld a,(de)		; $4014
 	add (hl)		; $4015
@@ -161961,7 +162154,7 @@ _partCommon_anglePositionOffsets:
 	call $4003		; $402a
 	ret z			; $402d
 	jr _label_11_000		; $402e
-	call func_11_4000		; $4030
+	call _partCommon_getTileCollisionInFront		; $4030
 	ret z			; $4033
 _label_11_000:
 	add $01			; $4034
@@ -162574,7 +162767,7 @@ _label_11_028:
 	ld l,$c7		; $43c0
 	dec (hl)		; $43c2
 	jr z,_label_11_029	; $43c3
-	call func_11_4000		; $43c5
+	call _partCommon_getTileCollisionInFront		; $43c5
 	inc a			; $43c8
 	jp nz,objectApplySpeed		; $43c9
 _label_11_029:
@@ -167826,7 +168019,7 @@ _label_11_238:
 	call objectCreatePuff		; $6250
 	jp partDelete		; $6253
 _label_11_239:
-	call func_11_4000		; $6256
+	call _partCommon_getTileCollisionInFront		; $6256
 	jr nz,_label_11_240	; $6259
 	call objectApplySpeed		; $625b
 	jp partAnimate		; $625e
@@ -168889,7 +169082,7 @@ _label_11_290:
 	ld l,$cd		; $68de
 	ld (hl),c		; $68e0
 	ret			; $68e1
-	call func_11_4000		; $68e2
+	call _partCommon_getTileCollisionInFront		; $68e2
 	jr nz,_label_11_292	; $68e5
 	call objectApplySpeed		; $68e7
 	call _partDecCounter1IfNonzero		; $68ea
@@ -171768,79 +171961,111 @@ _label_11_408:
 	nop			; $79e1
 	ld bc,$ff00		; $79e2
 
-;;
-; @addr{79e5}
+
+; ==============================================================================
+; PARTID_SMOG_PROJECTILE
+; ==============================================================================
 partCode4a:
-	ld e,$c4		; $79e5
+	ld e,Part.state		; $79e5
 	ld a,(de)		; $79e7
 	rst_jumpTable			; $79e8
-.dw $79ef
-.dw $7a21
-.dw $7a54
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
 	ld a,$01		; $79ef
-	ld (de),a		; $79f1
+	ld (de),a ; [state] = 1
+
 	call objectSetVisible81		; $79f2
+
 	call objectGetAngleTowardLink		; $79f5
-	ld e,$c9		; $79f8
+	ld e,Part.angle		; $79f8
 	ld (de),a		; $79fa
 	ld c,a			; $79fb
-	ld a,$1e		; $79fc
-	ld e,$d0		; $79fe
+
+	ld a,SPEED_c0		; $79fc
+	ld e,Part.speed		; $79fe
 	ld (de),a		; $7a00
-	ld e,$c2		; $7a01
+
+	; Check if this is a projectile from a large smog or a small smog
+	ld e,Part.subid		; $7a01
 	ld a,(de)		; $7a03
 	or a			; $7a04
-	jr z,_label_11_409	; $7a05
-	ld a,$28		; $7a07
-	ld e,$d0		; $7a09
+	jr z,@setAnimation	; $7a05
+
+	; If from a large smog, change some properties
+	ld a,SPEED_100		; $7a07
+	ld e,Part.speed		; $7a09
 	ld (de),a		; $7a0b
+
 	ld a,$05		; $7a0c
-	ld e,$dc		; $7a0e
+	ld e,Part.oamFlags		; $7a0e
 	ld (de),a		; $7a10
-	ld e,$e5		; $7a11
-	ld a,$04		; $7a13
+
+	ld e,Part.collisionReactionSet		; $7a11
+	ld a,COLLISIONREACTIONSET_04		; $7a13
 	ld (de),a		; $7a15
+
 	ld a,c			; $7a16
 	call convertAngleToDirection		; $7a17
 	and $01			; $7a1a
 	add $02			; $7a1c
-_label_11_409:
+
+@setAnimation:
 	call partSetAnimation		; $7a1e
+
+@state1:
+	; Delete self if boss defeated
 	call getThisRoomFlags		; $7a21
 	bit 6,a			; $7a24
-	jr nz,_label_11_412	; $7a26
+	jr nz,@delete	; $7a26
+
 	ld a,(wNumEnemies)		; $7a28
 	dec a			; $7a2b
-	jr z,_label_11_412	; $7a2c
+	jr z,@delete	; $7a2c
+
 	call objectCheckWithinScreenBoundary		; $7a2e
-	jr nc,_label_11_412	; $7a31
+	jr nc,@delete	; $7a31
+
 	call objectApplySpeed		; $7a33
-	ld e,$c2		; $7a36
+
+	; If large smog's projectile, return (it passes through everything)
+	ld e,Part.subid		; $7a36
 	ld a,(de)		; $7a38
 	or a			; $7a39
 	ret nz			; $7a3a
-	ld e,$ea		; $7a3b
+
+	; Check for collision with items
+	ld e,Part.var2a		; $7a3b
 	ld a,(de)		; $7a3d
 	or a			; $7a3e
-	jr nz,_label_11_410	; $7a3f
-	call func_11_4000		; $7a41
-	jr z,_label_11_411	; $7a44
-_label_11_410:
+	jr nz,@beginDestroyAnimation	; $7a3f
+
+	; Check for collision with wall
+	call _partCommon_getTileCollisionInFront		; $7a41
+	jr z,@state2	; $7a44
+
+@beginDestroyAnimation:
 	ld h,d			; $7a46
-	ld l,$e4		; $7a47
+	ld l,Part.collisionType		; $7a47
 	res 7,(hl)		; $7a49
+
 	ld a,$02		; $7a4b
-	ld l,$c4		; $7a4d
+	ld l,Part.state		; $7a4d
 	ld (hl),a		; $7a4f
+
 	dec a			; $7a50
 	call partSetAnimation		; $7a51
-_label_11_411:
+
+
+@state2:
 	call partAnimate		; $7a54
-	ld e,$e1		; $7a57
+	ld e,Part.animParameter		; $7a57
 	ld a,(de)		; $7a59
 	or a			; $7a5a
 	ret z			; $7a5b
-_label_11_412:
+@delete:
 	jp partDelete		; $7a5c
 
 ;;

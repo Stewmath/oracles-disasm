@@ -705,6 +705,20 @@
 ; @subid_00{Spawner; spawns subid 1 and 4 children}
 ; @subid_01{The main part of the boss}
 .define ENEMYID_EYESOAR				$7b
+
+;;
+; Spawned by INTERACID_SMOG.
+;
+; Bit 7 of subid determines if moving clockwise or counterclockwise.
+;
+; @subid_00{Just starting the fight, shows text}
+; @subid_01{Child from cutscene before fight starts}
+; @subid_02{Small smog}
+; @subid_03{Medium smog}
+; @subid_04{Large smog}
+; @subid_05{?}
+; @subid_06{Immediately dies?}
+; @var03{Phase of fight (from 0-3; affects projectile fire frequency)}
 .define ENEMYID_SMOG				$7c
 .define ENEMYID_OCTOGON				$7d
 .define ENEMYID_PLASMARINE			$7e
