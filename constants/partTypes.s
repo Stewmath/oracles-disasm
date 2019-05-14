@@ -186,6 +186,9 @@
 .define PARTID_PUMPKIN_HEAD_PROJECTILE		$42
 
 ;;
+.define PARTID_PLASMARINE_PROJECTILE		$43
+
+;;
 ; Projectile used by Octogon when Link is below water and Octogon is above
 ; @subid_00{The large projectile (before splitting)}
 ; @subid_01{Smaller, split projectile}

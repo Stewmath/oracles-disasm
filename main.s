@@ -153395,72 +153395,99 @@ _octogon_getClosestTargetPositionIndex:
 	inc e			; $7a5a
 	ret			; $7a5b
 
-;;
-; @addr{7a5c}
+; ==============================================================================
+; ENEMYID_PLASMARINE
+;
+; Variables:
+;   counter2: Number of times to do shock attack before firing projectiles
+;   var30/var31: Target position?
+;   var32: Color?
+;   var33: ?
+;   var34: Number of projectiles to fire in one attack
+; ==============================================================================
 enemyCode7e:
-	jr z,_label_0f_338	; $7a5c
-	sub $03			; $7a5e
+	jr z,@normalStatus	; $7a5c
+
+	sub ENEMYSTATUS_NO_HEALTH			; $7a5e
 	ret c			; $7a60
 	jp z,_enemyBoss_dead		; $7a61
-	ld e,$a5		; $7a64
+
+	; Hit by something
+	ld e,Enemy.collisionReactionSet		; $7a64
 	ld a,(de)		; $7a66
-	cp $68			; $7a67
-	jr z,_label_0f_338	; $7a69
-	ld e,$aa		; $7a6b
+	cp COLLISIONREACTIONSET_68			; $7a67
+	jr z,@normalStatus	; $7a69
+
+	ld e,Enemy.var2a		; $7a6b
 	ld a,(de)		; $7a6d
 	res 7,a			; $7a6e
-	cp $04			; $7a70
-	call nc,$7ae0		; $7a72
-_label_0f_338:
-	ld e,$84		; $7a75
+	cp COLLISIONTYPE_L1_SWORD			; $7a70
+	call nc,_plasmarine_state_switchHook@swapColor		; $7a72
+
+@normalStatus:
+	ld e,Enemy.state		; $7a75
 	ld a,(de)		; $7a77
 	rst_jumpTable			; $7a78
-.dw $7a99
-.dw $7afa
-.dw $7afa
-.dw $7abf
-.dw $7afa
-.dw $7afa
-.dw $7afa
-.dw $7afa
-.dw $7afb
-.dw $7b20
-.dw $7b37
-.dw $7b58
-.dw $7b65
-.dw $7ba7
-.dw $7be6
-.dw $7c1a
-	ld a,$64		; $7a99
+	.dw _plasmarine_state_uninitialized
+	.dw _plasmarine_state_stub
+	.dw _plasmarine_state_stub
+	.dw _plasmarine_state_switchHook
+	.dw _plasmarine_state_stub
+	.dw _plasmarine_state_stub
+	.dw _plasmarine_state_stub
+	.dw _plasmarine_state_stub
+	.dw _plasmarine_state8
+	.dw _plasmarine_state9
+	.dw _plasmarine_stateA
+	.dw _plasmarine_stateB
+	.dw _plasmarine_stateC
+	.dw _plasmarine_stateD
+	.dw _plasmarine_stateE
+	.dw _plasmarine_stateF
+
+
+_plasmarine_state_uninitialized:
+	ld a,SPEED_280		; $7a99
 	call _ecom_setSpeedAndState8		; $7a9b
-	ld l,$89		; $7a9e
+	ld l,Enemy.angle		; $7a9e
 	ld (hl),$08		; $7aa0
-	ld l,$86		; $7aa2
+
+	ld l,Enemy.counter1		; $7aa2
 	ld (hl),$04		; $7aa4
-	ld l,$b0		; $7aa6
+
+	ld l,Enemy.var30		; $7aa6
 	ld (hl),$58		; $7aa8
 	inc l			; $7aaa
 	ld (hl),$78		; $7aab
+
 	ld a,$01		; $7aad
 	ld (wMenuDisabled),a		; $7aaf
 	ld (wDisabledObjects),a		; $7ab2
-	ld a,$7e		; $7ab5
+
+	ld a,ENEMYID_PLASMARINE		; $7ab5
 	ld b,$00		; $7ab7
 	call _enemyBoss_initializeRoom		; $7ab9
 	jp objectSetVisible83		; $7abc
+
+
+_plasmarine_state_switchHook:
 	inc e			; $7abf
 	ld a,(de)		; $7ac0
 	rst_jumpTable			; $7ac1
-.dw $7aca
-.dw $7aec
-.dw $7ad4
-.dw $7aed
+	.dw @justLatched
+	.dw @beforeSwitch
+	.dw @afterSwitch
+	.dw @released
+
+@justLatched:
 	xor a			; $7aca
-	ld e,$b3		; $7acb
+	ld e,Enemy.var33		; $7acb
 	ld (de),a		; $7acd
 	call enemySetAnimation		; $7ace
 	jp _ecom_incState2		; $7ad1
-	ld e,$b3		; $7ad4
+
+@afterSwitch:
+	ld e,Enemy.var33		; $7ad4
 	ld a,(de)		; $7ad6
 	or a			; $7ad7
 	ret nz			; $7ad8
@@ -153468,212 +153495,300 @@ _label_0f_338:
 	ld (de),a		; $7ada
 	ld a,SND_MYSTERY_SEED		; $7adb
 	call playSound		; $7add
+
+
+; This is called from outside "plasmarine_state_switchHook" (ie. when sword slash occurs).
+@swapColor:
 	ld h,d			; $7ae0
-	ld l,$b2		; $7ae1
+	ld l,Enemy.var32		; $7ae1
 	ld a,(hl)		; $7ae3
 	xor $01			; $7ae4
 	ld (hl),a		; $7ae6
 	inc a			; $7ae7
-	ld l,$9b		; $7ae8
+	ld l,Enemy.oamFlagsBackup		; $7ae8
 	ldi (hl),a		; $7aea
 	ld (hl),a		; $7aeb
+
+
+@beforeSwitch:
 	ret			; $7aec
+
+
+@released:
 	ld b,$0a		; $7aed
 	call _ecom_fallToGroundAndSetState		; $7aef
 	ret nz			; $7af2
-	ld l,$86		; $7af3
-	ld (hl),$3c		; $7af5
-	jp $7c32		; $7af7
+	ld l,Enemy.counter1		; $7af3
+	ld (hl),60		; $7af5
+	jp _plasmarine_decideNumberOfShockAttacks		; $7af7
+
+
+_plasmarine_state_stub:
 	ret			; $7afa
-	call $7c3c		; $7afb
-	jr c,_label_0f_340	; $7afe
+
+
+; Moving toward centre of room before starting fight
+_plasmarine_state8:
+	call _plasmarine_checkCloseToTargetPosition		; $7afb
+	jr c,@reachedTarget	; $7afe
+
 	call _ecom_decCounter1		; $7b00
-	jr nz,_label_0f_339	; $7b03
+	jr nz,++		; $7b03
 	ld (hl),$04		; $7b05
 	call objectGetRelativeAngleWithTempVars		; $7b07
 	call objectNudgeAngleTowards		; $7b0a
-_label_0f_339:
+++
 	call objectApplySpeed		; $7b0d
-	jr _label_0f_341		; $7b10
-_label_0f_340:
+	jr _plasmarine_animate		; $7b10
+
+@reachedTarget:
 	ld l,e			; $7b12
-	inc (hl)		; $7b13
-	ld l,$86		; $7b14
-	ld (hl),$3c		; $7b16
-	ld l,$8b		; $7b18
+	inc (hl) ; [state] = 9
+
+	ld l,Enemy.counter1		; $7b14
+	ld (hl),60		; $7b16
+	ld l,Enemy.yh		; $7b18
 	ld (hl),b		; $7b1a
-	ld l,$8d		; $7b1b
+	ld l,Enemy.xh		; $7b1b
 	ld (hl),c		; $7b1d
-	jr _label_0f_341		; $7b1e
+	jr _plasmarine_animate		; $7b1e
+
+
+; 60 frame delay before starting fight
+_plasmarine_state9:
 	call _ecom_decCounter1		; $7b20
-	jr nz,_label_0f_341	; $7b23
-	ld (hl),$3c		; $7b25
+	jr nz,_plasmarine_animate	; $7b23
+
+	ld (hl),60 ; [counter1]
 	ld l,e			; $7b27
-	inc (hl)		; $7b28
-	ld l,$a4		; $7b29
+	inc (hl) ; [state] = $0a
+
+	ld l,Enemy.collisionType		; $7b29
 	set 7,(hl)		; $7b2b
-	call $7c32		; $7b2d
+
+	call _plasmarine_decideNumberOfShockAttacks		; $7b2d
 	call _enemyBoss_beginBoss		; $7b30
 	xor a			; $7b33
 	jp enemySetAnimation		; $7b34
+
+
+; Standing in place before charging
+_plasmarine_stateA:
 	call _ecom_decCounter1		; $7b37
-	jr nz,_label_0f_341	; $7b3a
-	inc (hl)		; $7b3c
-	ld l,$a1		; $7b3d
+	jr nz,_plasmarine_animate	; $7b3a
+
+	inc (hl) ; [counter1] = 1
+
+	ld l,Enemy.animParameter		; $7b3d
 	bit 0,(hl)		; $7b3f
-	jr z,_label_0f_341	; $7b41
-	ld l,$86		; $7b43
+	jr z,_plasmarine_animate	; $7b41
+
+	; Initialize stuff for state $0b (charge at Link)
+	ld l,Enemy.counter1		; $7b43
 	ld (hl),$0c		; $7b45
 	ld l,e			; $7b47
-	inc (hl)		; $7b48
-	ld l,$90		; $7b49
-	ld (hl),$78		; $7b4b
-	ld l,$b0		; $7b4d
+	inc (hl) ; [state] = $0b
+	ld l,Enemy.speed		; $7b49
+	ld (hl),SPEED_300		; $7b4b
+
+	ld l,Enemy.var30		; $7b4d
 	ldh a,(<hEnemyTargetY)	; $7b4f
 	ldi (hl),a		; $7b51
 	ldh a,(<hEnemyTargetX)	; $7b52
 	ld (hl),a		; $7b54
-_label_0f_341:
+
+_plasmarine_animate:
 	jp enemyAnimate		; $7b55
+
+
+; Charging toward Link
+_plasmarine_stateB:
 	call _ecom_decCounter1		; $7b58
-	jr nz,_label_0f_342	; $7b5b
+	jr nz,++		; $7b5b
 	ld l,e			; $7b5d
-	inc (hl)		; $7b5e
-_label_0f_342:
-	ld l,$90		; $7b5f
+	inc (hl) ; [state] = $0c
+++
+	ld l,Enemy.speed		; $7b5f
 	ld a,(hl)		; $7b61
-	sub $05			; $7b62
+	sub SPEED_20			; $7b62
 	ld (hl),a		; $7b64
-	call $7c3c		; $7b65
+	; Fall through
+
+_plasmarine_stateC:
+	call _plasmarine_checkCloseToTargetPosition		; $7b65
 	jp nc,_ecom_moveTowardPosition		; $7b68
-	ld l,$87		; $7b6b
+
+	; Reached target position.
+	ld l,Enemy.counter2		; $7b6b
 	dec (hl)		; $7b6d
 	ld l,e			; $7b6e
-	jr z,_label_0f_343	; $7b6f
-	ld (hl),$0d		; $7b71
-	ld l,$86		; $7b73
-	ld (hl),$41		; $7b75
-	ld l,$a8		; $7b77
-	ld (hl),$f8		; $7b79
-	ld l,$b2		; $7b7b
+	jr z,@fireProjectiles	; $7b6f
+
+	; Do shock attack (state $0d)
+	ld (hl),$0d ; [state]
+	ld l,Enemy.counter1		; $7b73
+	ld (hl),65		; $7b75
+
+	ld l,Enemy.damage		; $7b77
+	ld (hl),-8		; $7b79
+
+	ld l,Enemy.var32		; $7b7b
 	ld a,(hl)		; $7b7d
 	add $04			; $7b7e
-	ld l,$9b		; $7b80
+	ld l,Enemy.oamFlagsBackup		; $7b80
 	ldi (hl),a		; $7b82
 	ld (hl),a		; $7b83
-	ld l,$a5		; $7b84
-	ld (hl),$68		; $7b86
+
+	ld l,Enemy.collisionReactionSet		; $7b84
+	ld (hl),COLLISIONREACTIONSET_68		; $7b86
 	ld a,$02		; $7b88
 	jp enemySetAnimation		; $7b8a
-_label_0f_343:
-	ld (hl),$0e		; $7b8d
-	ld l,$a9		; $7b8f
+
+@fireProjectiles:
+	ld (hl),$0e ; [state]
+	ld l,Enemy.health		; $7b8f
 	ld a,(hl)		; $7b91
 	dec a			; $7b92
-	ld hl,$7ba0		; $7b93
+	ld hl,@numProjectilesToFire		; $7b93
 	rst_addAToHl			; $7b96
-	ld e,$b4		; $7b97
+	ld e,Enemy.var34		; $7b97
 	ld a,(hl)		; $7b99
 	ld (de),a		; $7b9a
+
 	ld a,$01		; $7b9b
 	jp enemySetAnimation		; $7b9d
-	inc bc			; $7ba0
-	inc bc			; $7ba1
-	ld (bc),a		; $7ba2
-	ld (bc),a		; $7ba3
-	ld (bc),a		; $7ba4
-	ld bc,$cd01		; $7ba5
-	sbc d			; $7ba8
-	ld b,e			; $7ba9
-	jr z,_label_0f_345	; $7baa
+
+; Takes health value as index, returns number of projectiles to fire in one attack
+@numProjectilesToFire:
+	.db $03 $03 $02 $02 $02 $01 $01
+
+
+; Shock attack
+_plasmarine_stateD:
+	call _ecom_decCounter1		; $7ba7
+	jr z,@doneAttack	; $7baa
+
 	ld a,(hl)		; $7bac
 	and $0f			; $7bad
 	ld a,SND_SHOCK		; $7baf
 	call z,playSound		; $7bb1
-	ld e,$a1		; $7bb4
+
+	; Update oamFlags based on animParameter
+	ld e,Enemy.animParameter		; $7bb4
 	ld a,(de)		; $7bb6
 	or a			; $7bb7
 	ld b,$04		; $7bb8
-	jr z,_label_0f_344	; $7bba
+	jr z,+			; $7bba
 	ld b,$01		; $7bbc
-_label_0f_344:
-	ld e,$b2		; $7bbe
++
+	ld e,Enemy.var32		; $7bbe
 	ld a,(de)		; $7bc0
 	add b			; $7bc1
 	ld h,d			; $7bc2
-	ld l,$9b		; $7bc3
+	ld l,Enemy.oamFlagsBackup		; $7bc3
 	ldi (hl),a		; $7bc5
 	ld (hl),a		; $7bc6
-	jr _label_0f_341		; $7bc7
-_label_0f_345:
-	ld (hl),$3c		; $7bc9
+	jr _plasmarine_animate		; $7bc7
+
+@doneAttack:
+	ld (hl),60 ; [counter1]
 	ld l,e			; $7bcb
-	ld (hl),$0a		; $7bcc
-	ld l,$a4		; $7bce
+	ld (hl),$0a ; [state]
+
+	ld l,Enemy.collisionType		; $7bce
 	set 7,(hl)		; $7bd0
-	ld l,$a8		; $7bd2
-	ld (hl),$fc		; $7bd4
-	ld l,$b2		; $7bd6
+
+	ld l,Enemy.damage		; $7bd2
+	ld (hl),-4		; $7bd4
+
+	ld l,Enemy.var32		; $7bd6
 	ld a,(hl)		; $7bd8
 	inc a			; $7bd9
-	ld l,$9b		; $7bda
+	ld l,Enemy.oamFlagsBackup		; $7bda
 	ldi (hl),a		; $7bdc
 	ld (hl),a		; $7bdd
-	ld l,$a5		; $7bde
-	ld (hl),$4f		; $7be0
+
+	ld l,Enemy.collisionReactionSet		; $7bde
+	ld (hl),COLLISIONREACTIONSET_4f		; $7be0
 	xor a			; $7be2
 	jp enemySetAnimation		; $7be3
+
+
+; Firing projectiles
+_plasmarine_stateE:
 	call enemyAnimate		; $7be6
-	ld e,$a1		; $7be9
+	ld e,Enemy.animParameter		; $7be9
 	ld a,(de)		; $7beb
 	dec a			; $7bec
-	jr z,_label_0f_346	; $7bed
+	jr z,@fire	; $7bed
+
 	inc a			; $7bef
 	ret z			; $7bf0
+
 	call _ecom_incState		; $7bf1
-	ld l,$86		; $7bf4
-	ld (hl),$3c		; $7bf6
+	ld l,Enemy.counter1		; $7bf4
+	ld (hl),60		; $7bf6
 	xor a			; $7bf8
 	jp enemySetAnimation		; $7bf9
-_label_0f_346:
-	ld (de),a		; $7bfc
+
+@fire:
+	ld (de),a ; [animParameter] = 0
+
 	call getFreePartSlot		; $7bfd
 	ret nz			; $7c00
-	ld (hl),$43		; $7c01
+	ld (hl),PARTID_PLASMARINE_PROJECTILE		; $7c01
 	inc l			; $7c03
-	ld e,$9c		; $7c04
+	ld e,Enemy.oamFlags		; $7c04
 	ld a,(de)		; $7c06
 	dec a			; $7c07
-	ld (hl),a		; $7c08
-	ld l,$d7		; $7c09
+	ld (hl),a ; [projectile.var03]
+
+	ld l,Part.relatedObj1+1		; $7c09
 	ld (hl),d		; $7c0b
 	dec l			; $7c0c
-	ld (hl),$80		; $7c0d
+	ld (hl),Enemy.start		; $7c0d
+
 	ld bc,$ec00		; $7c0f
 	call objectCopyPositionWithOffset		; $7c12
 	ld a,SND_VERAN_FAIRY_ATTACK		; $7c15
 	jp playSound		; $7c17
+
+
+; Decides whether to return to state $0e (fire another projectile) or charge at Link again
+_plasmarine_stateF:
 	call _ecom_decCounter1		; $7c1a
 	jp nz,enemyAnimate		; $7c1d
-	ld l,$b4		; $7c20
+
+	ld l,Enemy.var34		; $7c20
 	dec (hl)		; $7c22
 	ld l,e			; $7c23
-	jr z,_label_0f_347	; $7c24
-	dec (hl)		; $7c26
+	jr z,@chargeAtLink	; $7c24
+
+	dec (hl) ; [state] = $0e
 	ld a,$01		; $7c27
 	jp enemySetAnimation		; $7c29
-_label_0f_347:
+
+@chargeAtLink:
 	ld (hl),$0a		; $7c2c
-	ld l,$86		; $7c2e
-	ld (hl),$1e		; $7c30
+	ld l,Enemy.counter1		; $7c2e
+	ld (hl),30		; $7c30
+
+;;
+; @addr{7c32}
+_plasmarine_decideNumberOfShockAttacks:
 	call getRandomNumber_noPreserveVars		; $7c32
 	and $01			; $7c35
 	inc a			; $7c37
-	ld e,$87		; $7c38
+	ld e,Enemy.counter2		; $7c38
 	ld (de),a		; $7c3a
 	ret			; $7c3b
+
+;;
+; @param[out]	cflag	c if close enough to target position
+; @addr{7c3c}
+_plasmarine_checkCloseToTargetPosition:
 	ld h,d			; $7c3c
-	ld l,$b0		; $7c3d
+	ld l,Enemy.var30		; $7c3d
 	call _ecom_readPositionVars		; $7c3f
 	sub c			; $7c42
 	add $04			; $7c43
@@ -153684,20 +153799,10 @@ _label_0f_347:
 	add $04			; $7c4b
 	cp $09			; $7c4d
 	ret			; $7c4f
-.DB $ec				; $7c50
-.DB $ec				; $7c51
-.DB $ec				; $7c52
-	inc d			; $7c53
-	inc d			; $7c54
-	inc d			; $7c55
-	inc d			; $7c56
-.DB $ec				; $7c57
-	nop			; $7c58
-	add sp,-$18		; $7c59
-	nop			; $7c5b
-	nop			; $7c5c
-	jr _label_0f_348		; $7c5d
-	nop			; $7c5f
+
+; TODO: what is this? Unused data?
+.db $ec $ec $ec $14 $14 $14 $14 $ec
+.db $00 $e8 $e8 $00 $00 $18 $18 $00
 
 ;;
 ; @addr{7c60}
