@@ -186,6 +186,10 @@
 .define PARTID_PUMPKIN_HEAD_PROJECTILE		$42
 
 ;;
+; Projectile used by Octogon when Link is below water and Octogon is above
+.define PARTID_OCTOGON_DEPTH_CHARGE		$48
+
+;;
 ; Used by big bang game.
 ; @subid_00{A single bomb?}
 ; @subid_ff{A spawner for bombs?}
@@ -200,6 +204,8 @@
 ; $45: falling boulder spawner?
 
 .define PARTID_BLUE_ENERGY_BEAD			$53 ; Used by "createEnergySwirl" functions
+
+.define PARTID_OCTOGON_BUBBLE			$55
 
 ; The stone that's pushed at the start of the game. This only applies after it's moved;
 ; before it's moved, the stone is handled by INTERACID_TRIFOCE_STONE instead.

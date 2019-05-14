@@ -1199,8 +1199,8 @@
 .define INTERACID_CLOAKED_TWINROVA	$8d
 
 ;;
-; A splash animation?
-.define INTERACID_8e			$8e
+; A splash animation (used by ENEMYID_OCTOGON)
+.define INTERACID_OCTOGON_SPLASH			$8e
 
 ;;
 ; An ember seed that goes up for a bit, then disappears after falling a bit. Only used in

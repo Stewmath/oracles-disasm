@@ -2862,11 +2862,25 @@ wRoomLayoutEnd: ; $cfc0
 	state: ; $cfc0
 		db
 
-.nextu octogonBoss
+.nextu octogonBoss ; Persistent variables for octogon boss
 
 	filler: ; $cfc0
 		dsb $10
-	cfd0:  ; $cfd0
+	loadedExtraGfx:  ; $cfd0
+		db
+	var03: ; $cfd1
+		db
+	direction: ; $cfd2
+		db
+	health: ; $cfd3
+		db
+	y: ; $cfd4
+		db
+	x: ; $cfd5
+		db
+	var30: ; $cfd6
+		db
+	posNeedsFixing: ; $cfd7
 		db
 
 .nextu patchMinigame

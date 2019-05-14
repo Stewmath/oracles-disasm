@@ -90,6 +90,12 @@ _enemyBoss_initializeRoom:
 	or a			; $454e
 	call nz,loadPaletteHeader		; $454f
 
+	; Fall through
+
+;;
+; Stops music, forces Link to walk into the room.
+; @addr{4552}
+_enemyBoss_initializeRoomWithoutExtraGfx:
 	ld a,SNDCTRL_STOPMUSIC		; $4552
 	call playSound		; $4554
 

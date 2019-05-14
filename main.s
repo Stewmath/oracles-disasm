@@ -106279,7 +106279,7 @@ interactionCode8d:
 
 
 ; ==============================================================================
-; INTERACID_8e
+; INTERACID_OCTOGON_SPLASH
 ; ==============================================================================
 interactionCode8e:
 	ld e,Interaction.state		; $6c39
@@ -107198,19 +107198,19 @@ _miscPuzzles_subid0e:
 
 ; Octogon boss initialization (in the room just before the boss)
 _miscPuzzles_subid0f:
-	ld hl,wTmpcfc0.octogonBoss.cfd0		; $7123
+	ld hl,wTmpcfc0.octogonBoss.loadedExtraGfx		; $7123
 	xor a			; $7126
 	ldi (hl),a		; $7127
-	ldi (hl),a		; $7128
+	ldi (hl),a ; [var03] = 0
 	dec a			; $7129
-	ldi (hl),a		; $712a
-	ld (hl),$28		; $712b
+	ldi (hl),a ; [direction] = $ff
+	ld (hl),$28 ; [health]
 	inc l			; $712d
-	ld (hl),$28		; $712e
+	ld (hl),$28 ; [y]
 	inc l			; $7130
-	ld (hl),$78		; $7131
+	ld (hl),$78 ; [x]
 	inc l			; $7133
-	ld (hl),a		; $7134
+	ld (hl),a ; [var30] = $ff
 	jp interactionDelete		; $7135
 
 
@@ -137725,7 +137725,7 @@ _label_266:
 	ld e,Enemy.yh		; $6a6f
 	ld a,(de)		; $6a71
 	ldh (<hFF8F),a	; $6a72
-	ld e,$8d		; $6a74
+	ld e,Enemy.xh		; $6a74
 	ld a,(de)		; $6a76
 	ldh (<hFF8E),a	; $6a77
 	sub c			; $6a79
@@ -152092,292 +152092,381 @@ _smog_setCounterToFireProjectile:
 	.db $14 $1e $28 $32
 
 
-;;
-; @addr{740f}
+; ==============================================================================
+; ENEMYID_OCTOGON
+;
+; Variables:
+;   var03: Where it actually is? (0 = above water, 1 = below water)
+;   counter2: Counter until it moves above or below the water?
+;   relatedObj1: Reference to other instance of ENEMYID_OCTOGON?
+;   var30: Index in "target position list"?
+;   var31/var32: Target position to move to
+;   var33/var34: Original Y/X position when this screen was entered
+;   var35: Counter for animation purposes?
+;   var36: Counter which, when 0 is reached, invokes a change of state (ie. fire at link
+;          instead of moving around)
+;   var37: Health value from when octogon appeared here (used to decide when to surface or
+;          not)
+; ==============================================================================
 enemyCode7d:
-	jr z,_label_0f_298	; $740f
-	sub $03			; $7411
+	jr z,@normalStatus	; $740f
+	sub ENEMYSTATUS_NO_HEALTH			; $7411
 	ret c			; $7413
-	jr nz,_label_0f_296	; $7414
-	ld e,$82		; $7416
+	jr nz,@justHit	; $7414
+
+	; Dead
+	ld e,Enemy.subid		; $7416
 	ld a,(de)		; $7418
 	cp $02			; $7419
 	jp z,enemyDelete		; $741b
-	ld e,$a4		; $741e
+
+	ld e,Enemy.collisionType		; $741e
 	ld a,(de)		; $7420
 	or a			; $7421
 	call nz,_ecom_killRelatedObj1		; $7422
 	jp _enemyBoss_dead		; $7425
-_label_0f_296:
-	ld a,$2b		; $7428
+
+@justHit:
+	ld a,Object.invincibilityCounter		; $7428
 	call objectGetRelatedObject1Var		; $742a
 	ld e,l			; $742d
 	ld a,(de)		; $742e
 	ld (hl),a		; $742f
-	ld e,$82		; $7430
+
+	ld e,Enemy.subid		; $7430
 	ld a,(de)		; $7432
 	cp $02			; $7433
-	jr z,_label_0f_298	; $7435
+	jr z,@normalStatus	; $7435
+
+	; Check if enough damage has been dealt to rise above or below the water
 	ld h,d			; $7437
-	ld l,$a9		; $7438
-	ld e,$b7		; $743a
+	ld l,Enemy.health		; $7438
+	ld e,Enemy.var37		; $743a
 	ld a,(de)		; $743c
 	sub (hl)		; $743d
 	cp $0a			; $743e
-	jr c,_label_0f_297	; $7440
-	ld l,$87		; $7442
+	jr c,+			; $7440
+	ld l,Enemy.counter2		; $7442
 	ld (hl),$01		; $7444
-_label_0f_297:
-	ld e,$a9		; $7446
++
+	ld e,Enemy.health		; $7446
 	ld a,(de)		; $7448
 	or a			; $7449
-	jr nz,_label_0f_298	; $744a
-	ld hl,$ca2d		; $744c
+	jr nz,@normalStatus	; $744a
+
+	; Health just reached 0
+	ld hl,wGroup5Flags+$2d		; $744c
 	set 7,(hl)		; $744f
 	ld l,$36		; $7451
 	set 7,(hl)		; $7453
-	ld a,$2e		; $7455
+	ld a,MUS_BOSS		; $7455
 	ld (wActiveMusic),a		; $7457
 	ret			; $745a
-_label_0f_298:
-	call $74a5		; $745b
+
+@normalStatus:
+	call @doJumpTable		; $745b
+
 	ld h,d			; $745e
-	ld l,$b4		; $745f
-	ld e,$8d		; $7461
+	ld l,Enemy.var34		; $745f
+	ld e,Enemy.xh		; $7461
 	ld a,(de)		; $7463
 	ldd (hl),a		; $7464
-	ld e,$8b		; $7465
+	ld e,Enemy.yh		; $7465
 	ld a,(de)		; $7467
 	ld (hl),a		; $7468
-	ld l,$88		; $7469
+	ld l,Enemy.direction		; $7469
 	ld a,(hl)		; $746b
 	cp $10			; $746c
-	jr c,_label_0f_299	; $746e
+	jr c,+			; $746e
 	ld a,$08		; $7470
-_label_0f_299:
++
 	and $0c			; $7472
 	rrca			; $7474
-	ld hl,$749d		; $7475
+	ld hl,@offsetData		; $7475
 	rst_addAToHl			; $7478
+
+	; Add offsets to Y/X position
 	ld a,(de)		; $7479
 	add (hl)		; $747a
 	ld (de),a		; $747b
-	ld e,$8d		; $747c
+	ld e,Enemy.xh		; $747c
 	inc hl			; $747e
 	ld a,(de)		; $747f
 	add (hl)		; $7480
 	ld (de),a		; $7481
-	ld hl,$cfd1		; $7482
-	ld e,$83		; $7485
+
+	; Store some persistent variables?
+
+	ld hl,wTmpcfc0.octogonBoss.var03		; $7482
+	ld e,Enemy.var03		; $7485
 	ld a,(de)		; $7487
 	ldi (hl),a		; $7488
-	ld e,$88		; $7489
+
+	ld e,Enemy.direction		; $7489
 	ld a,(de)		; $748b
-	ldi (hl),a		; $748c
-	ld e,$a9		; $748d
+	ldi (hl),a ; [wTmpcfc0.octogonBoss.direction]
+
+	ld e,Enemy.health		; $748d
 	ld a,(de)		; $748f
-	ldi (hl),a		; $7490
-	ld e,$b3		; $7491
+	ldi (hl),a ; [wTmpcfc0.octogonBoss.health]
+
+	ld e,Enemy.var33		; $7491
 	ld a,(de)		; $7493
-	ldi (hl),a		; $7494
+	ldi (hl),a ; [wTmpcfc0.octogonBoss.var33]
 	inc e			; $7495
-	ld a,(de)		; $7496
-	ldi (hl),a		; $7497
-	ld e,$b0		; $7498
+	ld a,(de) ; [var34]
+	ldi (hl),a ; [wTmpcfc0.octogonBoss.var34]
+
+	ld e,Enemy.var30		; $7498
 	ld a,(de)		; $749a
-	ld (hl),a		; $749b
+	ld (hl),a ; [wTmpcfc0.octogonBoss.var30]
 	ret			; $749c
-	ld hl,sp+$00		; $749d
-	nop			; $749f
-	ld ($0008),sp		; $74a0
-	nop			; $74a3
-	ld hl,sp+$1e		; $74a4
-	add h			; $74a6
+
+@offsetData:
+	.db $f8 $00
+	.db $00 $08
+	.db $08 $00
+	.db $00 $f8
+
+@doJumpTable:
+	ld e,Enemy.state	; $74a5
 	ld a,(de)		; $74a7
 	cp $08			; $74a8
-	ld e,$82		; $74aa
-	jr c,_label_0f_300	; $74ac
+	ld e,Enemy.subid		; $74aa
+	jr c,@state8OrLess	; $74ac
+
 	ld a,(de)		; $74ae
 	rst_jumpTable			; $74af
-.dw $75a9
-.dw $7795
-.dw $78fe
+	.dw _octogon_subid0
+	.dw _octogon_subid1
+	.dw _octogon_subid2
 
-_label_0f_300:
+
+@state8OrLess:
 	rst_jumpTable			; $74b6
-.dw $74c7
-.dw $75a8
-.dw $75a8
-.dw $75a8
-.dw $75a8
-.dw $75a8
-.dw $75a8
-.dw $75a8
-	ld e,$82		; $74c7
+	.dw _octogon_state_uninitialized
+	.dw _octogon_state_stub
+	.dw _octogon_state_stub
+	.dw _octogon_state_stub
+	.dw _octogon_state_stub
+	.dw _octogon_state_stub
+	.dw _octogon_state_stub
+	.dw _octogon_state_stub
+
+
+_octogon_state_uninitialized:
+	ld e,Enemy.subid		; $74c7
 	ld a,(de)		; $74c9
 	cp $02			; $74ca
-	jr nz,_label_0f_301	; $74cc
-	ld e,$a5		; $74ce
-	ld a,$67		; $74d0
+	jr nz,@notSubid2	; $74cc
+
+	ld e,Enemy.collisionReactionSet		; $74ce
+	ld a,COLLISIONREACTIONSET_67		; $74d0
 	ld (de),a		; $74d2
 	jp _ecom_setSpeedAndState8		; $74d3
-_label_0f_301:
-	ld a,$7d		; $74d6
+
+@notSubid2:
+	ld a,ENEMYID_OCTOGON		; $74d6
 	ld (wEnemyIDToLoadExtraGfx),a		; $74d8
 	ld a,PALH_88		; $74db
 	call loadPaletteHeader		; $74dd
-	ld hl,$cfd0		; $74e0
+
+	ld hl,wTmpcfc0.octogonBoss.loadedExtraGfx		; $74e0
 	ld a,(hl)		; $74e3
 	or a			; $74e4
-	jr nz,_label_0f_302	; $74e5
+	jr nz,++		; $74e5
 	inc (hl)		; $74e7
-	call $4552		; $74e8
-_label_0f_302:
+	call _enemyBoss_initializeRoomWithoutExtraGfx		; $74e8
+++
+	; Create "child" with subid 2? They will reference each other with relatedObj2.
 	call getFreeEnemySlot_uncounted		; $74eb
 	ret nz			; $74ee
-	ld (hl),$7d		; $74ef
+	ld (hl),ENEMYID_OCTOGON		; $74ef
 	inc l			; $74f1
-	ld (hl),$02		; $74f2
-	ld l,$96		; $74f4
+	ld (hl),$02 ; [child.subid]
+	ld l,Enemy.relatedObj1		; $74f4
 	ld e,l			; $74f6
-	ld a,$80		; $74f7
+	ld a,Enemy.start		; $74f7
 	ld (de),a		; $74f9
 	ldi (hl),a		; $74fa
 	inc e			; $74fb
 	ld a,h			; $74fc
 	ld (de),a		; $74fd
 	ld (hl),d		; $74fe
-	ld a,$28		; $74ff
+
+	ld a,SPEED_100		; $74ff
 	call _ecom_setSpeedAndState8		; $7501
-	ld l,$b5		; $7504
-	ld (hl),$0c		; $7506
+
+	ld l,Enemy.var35		; $7504
+	ld (hl),$0c ; [this.var35]
 	inc l			; $7508
-	ld (hl),$78		; $7509
-	ld l,$82		; $750b
+	ld (hl),120 ; [var36]
+
+	ld l,Enemy.subid		; $750b
 	ld a,(hl)		; $750d
 	add a			; $750e
 	ld b,a			; $750f
 	call objectSetVisible83		; $7510
-	ld hl,$cfd6		; $7513
-	ld e,$b0		; $7516
+
+	; Load persistent variables
+
+	ld hl,wTmpcfc0.octogonBoss.var30		; $7513
+	ld e,Enemy.var30		; $7516
 	ldd a,(hl)		; $7518
 	ld (de),a		; $7519
-	ld e,$8d		; $751a
+	ld e,Enemy.xh		; $751a
 	ldd a,(hl)		; $751c
 	ld (de),a		; $751d
-	ld e,$8b		; $751e
+	ld e,Enemy.yh		; $751e
 	ldd a,(hl)		; $7520
 	ld (de),a		; $7521
-	ld e,$a9		; $7522
+	ld e,Enemy.health		; $7522
 	ldd a,(hl)		; $7524
 	ld (de),a		; $7525
-	ld e,$b7		; $7526
+	ld e,Enemy.var37		; $7526
 	ld (de),a		; $7528
-	ld e,$88		; $7529
+	ld e,Enemy.direction		; $7529
 	ldd a,(hl)		; $752b
 	ld (de),a		; $752c
-	ld e,$83		; $752d
+	ld e,Enemy.var03		; $752d
 	ld a,(hl)		; $752f
 	ld (de),a		; $7530
+
 	add b			; $7531
 	rst_jumpTable			; $7532
-.dw $753b
-.dw $7558
-.dw $755e
-.dw $7570
-	call $7967		; $753b
+	.dw @subid0_0
+	.dw @subid0_1
+	.dw @subid1_0
+	.dw @subid1_1
+
+@subid0_0:
+	call _octogon_fixPositionAboveWater		; $753b
+
 	ld h,d			; $753e
-	ld l,$87		; $753f
-	ld (hl),$78		; $7541
-	ld l,$b0		; $7543
+	ld l,Enemy.counter2		; $753f
+	ld (hl),120		; $7541
+
+	ld l,Enemy.var30		; $7543
 	ld a,(hl)		; $7545
 	inc a			; $7546
-	jp z,$7637		; $7547
-	call $763d		; $754a
+	jp z,_octogon_chooseRandomTargetPosition		; $7547
+
+	call _octogon_loadTargetPosition		; $754a
 	ret z			; $754d
 	dec hl			; $754e
 	dec hl			; $754f
 	dec hl			; $7550
 	ld a,(hl)		; $7551
-	ld e,$88		; $7552
+	ld e,Enemy.direction		; $7552
 	ld (de),a		; $7554
 	jp enemySetAnimation		; $7555
-	call $7967		; $7558
-	jp $7758		; $755b
+
+@subid0_1:
+	call _octogon_fixPositionAboveWater		; $7558
+	jp _octogon_loadNormalSubmergedAnimation		; $755b
+
+@subid1_0:
 	ld h,d			; $755e
-	ld l,$a4		; $755f
+	ld l,Enemy.collisionType		; $755f
 	res 7,(hl)		; $7561
-	ld a,$00		; $7563
+
+	; Delete child object (subid 2)
+	ld a,Object.start		; $7563
 	call objectGetRelatedObject1Var		; $7565
 	ld b,$40		; $7568
 	call clearMemory		; $756a
+
 	jp objectSetInvisible		; $756d
+
+@subid1_1:
 	ld a,$01		; $7570
-	ld ($cfd7),a		; $7572
+	ld (wTmpcfc0.octogonBoss.posNeedsFixing),a		; $7572
+
 	ld h,d			; $7575
-	ld l,$9b		; $7576
+	ld l,Enemy.oamFlagsBackup		; $7576
 	ld a,$06		; $7578
 	ldi (hl),a		; $757a
 	ld (hl),a		; $757b
-	ld l,$86		; $757c
-	ld (hl),$5a		; $757e
+
+	ld l,Enemy.counter1		; $757c
+	ld (hl),90		; $757e
 	inc l			; $7580
-	ld (hl),$96		; $7581
-	ld l,$b1		; $7583
+	ld (hl),150 ; [counter2]
+
+	ld l,Enemy.var31		; $7583
 	ldh a,(<hEnemyTargetY)	; $7585
 	ldi (hl),a		; $7587
 	ldh a,(<hEnemyTargetX)	; $7588
 	ld (hl),a		; $758a
+
 	call _ecom_updateAngleTowardTarget		; $758b
 	add $04			; $758e
 	and $18			; $7590
 	rrca			; $7592
-	ld e,$88		; $7593
+	ld e,Enemy.direction		; $7593
 	ld (de),a		; $7595
 	call enemySetAnimation		; $7596
+
 	call getFreeInteractionSlot		; $7599
 	ret nz			; $759c
-	ld (hl),$91		; $759d
+	ld (hl),INTERACID_BUBBLE		; $759d
 	inc l			; $759f
-	inc (hl)		; $75a0
-	ld l,$56		; $75a1
-	ld a,$80		; $75a3
+	inc (hl) ; [bubble.subid] = 1
+	ld l,Interaction.relatedObj1		; $75a1
+	ld a,Enemy.start		; $75a3
 	ldi (hl),a		; $75a5
 	ld (hl),d		; $75a6
 	ret			; $75a7
+
+
+_octogon_state_stub:
 	ret			; $75a8
+
+
+_octogon_subid0:
+	; Initialize Y/X position
 	ld h,d			; $75a9
-	ld l,$b3		; $75aa
-	ld e,$8b		; $75ac
+	ld l,Enemy.var33		; $75aa
+	ld e,Enemy.yh		; $75ac
 	ldi a,(hl)		; $75ae
 	ld (de),a		; $75af
-	ld e,$8d		; $75b0
+	ld e,Enemy.xh		; $75b0
 	ld a,(hl)		; $75b2
 	ld (de),a		; $75b3
-	ld e,$83		; $75b4
+
+	; Check if submerged
+	ld e,Enemy.var03		; $75b4
 	ld a,(de)		; $75b6
 	or a			; $75b7
-	ld e,$84		; $75b8
+	ld e,Enemy.state		; $75b8
 	ld a,(de)		; $75ba
-	jp nz,$7703		; $75bb
+	jp nz,_octogon_subid0BelowWater		; $75bb
+
 	sub $08			; $75be
 	rst_jumpTable			; $75c0
-.dw $75d5
-.dw $75ea
-.dw $7628
-.dw $76bc
-.dw $76c0
-.dw $76d4
-.dw $76e5
-.dw $76bc
-.dw $76f7
-.dw $76fb
+	.dw _octogon_subid0AboveWater_state8
+	.dw _octogon_subid0AboveWater_state9
+	.dw _octogon_subid0AboveWater_stateA
+	.dw _octogon_subid0AboveWater_stateB
+	.dw _octogon_subid0AboveWater_stateC
+	.dw _octogon_subid0AboveWater_stateD
+	.dw _octogon_subid0AboveWater_stateE
+	.dw _octogon_subid0AboveWater_stateF
+	.dw _octogon_subid0AboveWater_state10
+	.dw _octogon_subid0AboveWater_state11
+
+
+_octogon_subid0AboveWater_state8:
+	; Wait for shutters to close
 	ld a,($cc93)		; $75d5
 	or a			; $75d8
 	ret nz			; $75d9
+
 	ld h,d			; $75da
 	ld l,e			; $75db
-	inc (hl)		; $75dc
+	inc (hl) ; [state] = 9
+
+	; Initialize music if necessary
 	ld hl,wActiveMusic		; $75dd
 	ld a,(hl)		; $75e0
 	or a			; $75e1
@@ -152385,391 +152474,505 @@ _label_0f_302:
 	ld (hl),$00		; $75e3
 	ld a,MUS_BOSS		; $75e5
 	jp playSound		; $75e7
-	call $7a02		; $75ea
+
+
+; Moving normally around the room
+_octogon_subid0AboveWater_state9:
+	call _octogon_decVar36IfNonzero		; $75ea
+
+	; Submerge into water after set amount of time
 	ld a,(wFrameCounter)		; $75ed
 	and $03			; $75f0
-	jr nz,_label_0f_303	; $75f2
-	ld l,$87		; $75f4
+	jr nz,++		; $75f2
+	ld l,Enemy.counter2		; $75f4
 	dec (hl)		; $75f6
-	jp z,$7931		; $75f7
-_label_0f_303:
+	jp z,_octogon_subid0_submergeIntoWater		; $75f7
+++
+	; Check if lined up to fire at Link.
+	; BUG: Should set 'b', not 'c'? (b happens to be $0f here, so it works out ok.)
 	ld c,$08		; $75fa
 	call objectCheckCenteredWithLink		; $75fc
-	jp nc,$7802		; $75ff
+	jp nc,_octogon_updateMovementAndAnimation		; $75ff
+
+	; If enough time has passed, begin firing at Link.
 	ld h,d			; $7602
-	ld l,$b6		; $7603
+	ld l,Enemy.var36		; $7603
 	ld a,(hl)		; $7605
 	or a			; $7606
-	jp nz,$7802		; $7607
-	ld (hl),$78		; $760a
+	jp nz,_octogon_updateMovementAndAnimation		; $7607
+
+	ld (hl),120 ; [var36]
+
+	; Begin turning toward Link to fire.
 	call objectGetAngleTowardEnemyTarget		; $760c
 	add $14			; $760f
 	and $18			; $7611
 	ld b,a			; $7613
-	ld e,$88		; $7614
+	ld e,Enemy.direction		; $7614
 	ld a,(de)		; $7616
 	and $0c			; $7617
 	add a			; $7619
 	cp b			; $761a
-	jp nz,$7802		; $761b
+	jp nz,_octogon_updateMovementAndAnimation		; $761b
+
 	ld h,d			; $761e
-	ld l,$84		; $761f
+	ld l,Enemy.state		; $761f
 	ld (hl),$0b		; $7621
-	ld l,$86		; $7623
+
+	ld l,Enemy.counter1		; $7623
 	ld (hl),$08		; $7625
 	ret			; $7627
-_label_0f_304:
+
+
+_octogon_subid0AboveWater_stateA:
+_octogon_subid0_pauseMovement:
 	call _ecom_decCounter1		; $7628
 	ret nz			; $762b
+
 	ld l,e			; $762c
-	dec (hl)		; $762d
-_label_0f_305:
-	ld l,$b0		; $762e
+	dec (hl) ; [state]--
+
+	ld l,Enemy.var30		; $762e
 	ld a,(hl)		; $7630
 	inc a			; $7631
 	ld (hl),a		; $7632
+
 	and $07			; $7633
-	jr nz,_label_0f_306	; $7635
+	jr nz,_octogon_loadTargetPosition	; $7635
+
+
+;;
+; @addr{7637}
+_octogon_chooseRandomTargetPosition:
 	call getRandomNumber		; $7637
 	and $18			; $763a
 	ld (hl),a		; $763c
-_label_0f_306:
+
+;;
+; @param	hl	Pointer to index for a table
+; @param[out]	hl	Pointer to some data
+; @param[out]	zflag	z if animation changed
+; @addr{763d}
+_octogon_loadTargetPosition:
 	ld a,(hl)		; $763d
 	add a			; $763e
 	add (hl)		; $763f
-	ld hl,$765c		; $7640
+	ld hl,@targetPositionList		; $7640
 	rst_addAToHl			; $7643
-	ld e,$b1		; $7644
+	ld e,Enemy.var31		; $7644
 	ldi a,(hl)		; $7646
 	ld (de),a		; $7647
 	inc e			; $7648
 	ldi a,(hl)		; $7649
-	ld (de),a		; $764a
-	ld e,$83		; $764b
+	ld (de),a ; [var32]
+	ld e,Enemy.var03		; $764b
 	ld a,(de)		; $764d
 	or a			; $764e
 	ret nz			; $764f
+
 	ld a,(hl)		; $7650
 	bit 7,a			; $7651
 	ret nz			; $7653
-	ld e,$88		; $7654
+
+	ld e,Enemy.direction		; $7654
 	ld (de),a		; $7656
 	call enemySetAnimation		; $7657
 	xor a			; $765a
 	ret			; $765b
-	jr z,_label_0f_311	; $765c
-_label_0f_307:
-	nop			; $765e
-	ld e,b			; $765f
-	jr nc,_label_0f_308	; $7660
-	adc b			; $7662
-	jr c,-$01		; $7663
-	adc b			; $7665
-	ld a,b			; $7666
-	ld ($b888),sp		; $7667
-	rst $38			; $766a
-	ld e,b			; $766b
-	ret nz			; $766c
-	inc b			; $766d
-_label_0f_308:
-	jr z,_label_0f_304	; $766e
-_label_0f_309:
-	rst $38			; $7670
-	jr z,_label_0f_318	; $7671
-	nop			; $7673
-	jr z,_label_0f_305	; $7674
-	nop			; $7676
-	ld e,b			; $7677
-	ret nz			; $7678
-	inc b			; $7679
-	adc b			; $767a
-	cp b			; $767b
-	rst $38			; $767c
-	adc b			; $767d
-	ld a,b			; $767e
-	ld ($3888),sp		; $767f
-	rst $38			; $7682
-	ld e,b			; $7683
-	jr nc,_label_0f_310	; $7684
-	jr z,_label_0f_314	; $7686
-	rst $38			; $7688
-	jr z,_label_0f_319	; $7689
-	nop			; $768b
-	jr z,_label_0f_316	; $768c
-	nop			; $768e
-	ld e,b			; $768f
-	jr nc,_label_0f_312	; $7690
-_label_0f_310:
-	adc b			; $7692
-	jr c,-$01		; $7693
-	adc b			; $7695
-_label_0f_311:
-	ld a,b			; $7696
-	ld ($3888),sp		; $7697
-	rst $38			; $769a
-	ld e,b			; $769b
-	jr nc,_label_0f_313	; $769c
-_label_0f_312:
-	jr z,_label_0f_317	; $769e
-	rst $38			; $76a0
-	jr z,_label_0f_320	; $76a1
-	nop			; $76a3
-	jr z,_label_0f_307	; $76a4
-	nop			; $76a6
-	ld e,b			; $76a7
-	ret nz			; $76a8
-	inc b			; $76a9
-_label_0f_313:
-	adc b			; $76aa
-	cp b			; $76ab
-	rst $38			; $76ac
-	adc b			; $76ad
-	ld a,b			; $76ae
-	ld ($b888),sp		; $76af
-	rst $38			; $76b2
-	ld e,b			; $76b3
-	ret nz			; $76b4
-	inc b			; $76b5
-	jr z,_label_0f_309	; $76b6
-	rst $38			; $76b8
-	jr z,$78		; $76b9
-	nop			; $76bb
+
+; data format: target position (2 bytes), animation
+@targetPositionList:
+	.db $28 $38 $00
+	.db $58 $30 $0c
+	.db $88 $38 $ff
+	.db $88 $78 $08
+	.db $88 $b8 $ff
+	.db $58 $c0 $04
+	.db $28 $b8 $ff
+	.db $28 $78 $00
+
+	.db $28 $b8 $00
+	.db $58 $c0 $04
+	.db $88 $b8 $ff
+	.db $88 $78 $08
+	.db $88 $38 $ff
+	.db $58 $30 $0c
+	.db $28 $38 $ff
+	.db $28 $78 $00
+
+	.db $28 $38 $00
+	.db $58 $30 $0c
+	.db $88 $38 $ff
+	.db $88 $78 $08
+	.db $88 $38 $ff
+	.db $58 $30 $0c
+	.db $28 $38 $ff
+	.db $28 $78 $00
+
+	.db $28 $b8 $00
+	.db $58 $c0 $04
+	.db $88 $b8 $ff
+	.db $88 $78 $08
+	.db $88 $b8 $ff
+	.db $58 $c0 $04
+	.db $28 $b8 $ff
+	.db $28 $78 $00
+
+
+; Turning around to fire projectile (or just after doing so)?
+_octogon_subid0AboveWater_stateB:
+_octogon_subid0AboveWater_stateF:
 	ld b,$06		; $76bc
-	jr _label_0f_315		; $76be
-_label_0f_314:
+	jr _octogon_subid0AboveWater_turningAround	; $76be
+
+
+; Turning around?
+_octogon_subid0AboveWater_stateC:
 	ld b,$18		; $76c0
-_label_0f_315:
+
+_octogon_subid0AboveWater_turningAround:
 	call _ecom_decCounter1		; $76c2
 	ret nz			; $76c5
-_label_0f_316:
+
 	ld (hl),b		; $76c6
 	ld l,e			; $76c7
-	inc (hl)		; $76c8
-	ld l,$88		; $76c9
+	inc (hl) ; [state]++
+
+	ld l,Enemy.direction		; $76c9
 	ld a,(hl)		; $76cb
 	add $04			; $76cc
 	and $0c			; $76ce
 	ld (hl),a		; $76d0
 	jp enemySetAnimation		; $76d1
+
+
+; About to fire projectile?
+_octogon_subid0AboveWater_stateD:
 	call _ecom_decCounter1		; $76d4
 	ret nz			; $76d7
-_label_0f_317:
+
 	ld (hl),$08		; $76d8
+
 	ld l,e			; $76da
-	inc (hl)		; $76db
-	ld l,$88		; $76dc
+	inc (hl) ; [state] = $0e
+
+	ld l,Enemy.direction		; $76dc
 	ld a,(hl)		; $76de
 	add $02			; $76df
 	ld (hl),a		; $76e1
 	jp enemySetAnimation		; $76e2
+
+
+; Firing projectile
+_octogon_subid0AboveWater_stateE:
 	call _ecom_decCounter1		; $76e5
 	ret nz			; $76e8
-	ld (hl),$28		; $76e9
-_label_0f_318:
+
+	ld (hl),40		; $76e9
 	ld l,e			; $76eb
-	inc (hl)		; $76ec
-	ld l,$88		; $76ed
+	inc (hl) ; [state] = $0f
+	ld l,Enemy.direction		; $76ed
 	inc (hl)		; $76ef
 	ld a,(hl)		; $76f0
 	call enemySetAnimation		; $76f1
-	jp $79d7		; $76f4
+	jp _octogon_fireOctorokProjectile		; $76f4
+
+
+; Turning around after firing projectile?
+_octogon_subid0AboveWater_state10:
 	ld b,$0c		; $76f7
-	jr _label_0f_315		; $76f9
+	jr _octogon_subid0AboveWater_turningAround		; $76f9
+
+
+; Delay before resuming normal movement
+_octogon_subid0AboveWater_state11:
 	call _ecom_decCounter1		; $76fb
 	ret nz			; $76fe
 	ld l,e			; $76ff
-	ld (hl),$09		; $7700
+	ld (hl),$09 ; [state]
 	ret			; $7702
-_label_0f_319:
+
+
+; Octogon code where octogon itself is below water, and link is above water
+_octogon_subid0BelowWater:
 	sub $08			; $7703
 	rst_jumpTable			; $7705
-.dw $7712
-.dw $773c
-.dw $7742
-.dw $7760
-.dw $777c
-.dw $778a
+	.dw _octogon_subid0BelowWater_state8
+	.dw _octogon_subid0BelowWater_state9
+	.dw _octogon_subid0BelowWater_stateA
+	.dw _octogon_subid0BelowWater_stateB
+	.dw _octogon_subid0BelowWater_stateC
+	.dw _octogon_subid0BelowWater_stateD
+
+
+; Swimming normally
+_octogon_subid0BelowWater_state8:
 	call enemyAnimate		; $7712
-	ld e,$a1		; $7715
+
+	; Check whether to play swimming sound
+	ld e,Enemy.animParameter		; $7715
 	ld a,(de)		; $7717
 	or a			; $7718
-	jr nz,_label_0f_321	; $7719
-_label_0f_320:
+	jr nz,++		; $7719
 	inc a			; $771b
 	ld (de),a		; $771c
 	ld a,SND_LINK_SWIM		; $771d
 	call playSound		; $771f
-_label_0f_321:
-	call $7a02		; $7722
-	jp nz,$7a0a		; $7725
-	ld (hl),$5a		; $7728
+++
+	call _octogon_decVar36IfNonzero		; $7722
+	jp nz,_octogon_moveTowardTargetPosition		; $7725
+
+	; Reached target position
+	ld (hl),90 ; [var36]
 	call getRandomNumber		; $772a
 	cp $50			; $772d
-	jp nc,$7a0a		; $772f
-	ld l,$84		; $7732
+	jp nc,_octogon_moveTowardTargetPosition		; $772f
+
+	; Random chance of going to state $0a (firing projectile)
+	ld l,Enemy.state		; $7732
 	ld (hl),$0a		; $7734
-	ld l,$86		; $7736
-	ld (hl),$3c		; $7738
-	jr _label_0f_324		; $773a
-	call $7628		; $773c
-_label_0f_322:
+	ld l,Enemy.counter1		; $7736
+	ld (hl),60		; $7738
+	jr _octogon_loadNormalSubmergedAnimation		; $773a
+
+
+; Waiting in place before moving again
+_octogon_subid0BelowWater_state9:
+	call _octogon_subid0_pauseMovement		; $773c
+_octogon_animate:
 	jp enemyAnimate		; $773f
+
+
+; Delay before firing projectile
+_octogon_subid0BelowWater_stateA:
 	call _ecom_decCounter1		; $7742
-	jr z,_label_0f_323	; $7745
+	jr z,@beginFiring	; $7745
+
 	ld a,(hl)		; $7747
 	and $07			; $7748
 	ret nz			; $774a
-	ld l,$88		; $774b
+	ld l,Enemy.direction		; $774b
 	ld a,(hl)		; $774d
 	xor $01			; $774e
 	ld (hl),a		; $7750
 	jp enemySetAnimation		; $7751
-_label_0f_323:
+
+@beginFiring:
 	ld (hl),$08		; $7754
 	ld l,e			; $7756
-	inc (hl)		; $7757
-_label_0f_324:
-	ld e,$88		; $7758
+	inc (hl) ; [state] = $0b
+
+_octogon_loadNormalSubmergedAnimation:
+	ld e,Enemy.direction		; $7758
 	ld a,$12		; $775a
 	ld (de),a		; $775c
 	jp enemySetAnimation		; $775d
+
+
+; Firing projectile
+_octogon_subid0BelowWater_stateB:
 	call _ecom_decCounter1		; $7760
-	jr z,_label_0f_325	; $7763
+	jr z,@fireProjectile	; $7763
+
 	ld a,(hl)		; $7765
 	cp $06			; $7766
 	ret nz			; $7768
-	ld l,$88		; $7769
+
+	ld l,Enemy.direction		; $7769
 	ld a,$14		; $776b
 	ld (hl),a		; $776d
 	jp enemySetAnimation		; $776e
-_label_0f_325:
-	ld (hl),$3c		; $7771
+
+@fireProjectile:
+	ld (hl),60 ; [counter1]
 	ld l,e			; $7773
-	inc (hl)		; $7774
-	ld b,$48		; $7775
+	inc (hl) ; [state] = $0c
+	ld b,PARTID_OCTOGON_DEPTH_CHARGE		; $7775
 	call _ecom_spawnProjectile		; $7777
-	jr _label_0f_324		; $777a
+	jr _octogon_loadNormalSubmergedAnimation		; $777a
+
+
+; Delay before moving again
+_octogon_subid0BelowWater_stateC:
 	call _ecom_decCounter1		; $777c
-	jr nz,_label_0f_322	; $777f
-	ld l,$b6		; $7781
-	ld (hl),$5a		; $7783
+	jr nz,_octogon_animate	; $777f
+
+	ld l,Enemy.var36		; $7781
+	ld (hl),90		; $7783
+
 	ld l,e			; $7785
-	ld (hl),$08		; $7786
-	jr _label_0f_322		; $7788
+	ld (hl),$08 ; [state]
+
+	jr _octogon_animate		; $7788
+
+
+; Just submerged into water
+_octogon_subid0BelowWater_stateD:
 	call _ecom_decCounter1		; $778a
 	ret nz			; $778d
-	ld (hl),$1e		; $778e
+	ld (hl),30		; $778e
+
 	ld l,e			; $7790
-	ld (hl),$08		; $7791
-	jr _label_0f_324		; $7793
+	ld (hl),$08 ; [state]
+
+	jr _octogon_loadNormalSubmergedAnimation		; $7793
+
+
+; Link is below water
+_octogon_subid1:
 	ld h,d			; $7795
-	ld l,$b3		; $7796
-	ld e,$8b		; $7798
+	ld l,Enemy.var33		; $7796
+	ld e,Enemy.yh		; $7798
 	ldi a,(hl)		; $779a
 	ld (de),a		; $779b
-	ld e,$8d		; $779c
+	ld e,Enemy.xh		; $779c
 	ld a,(hl)		; $779e
 	ld (de),a		; $779f
-	ld e,$83		; $77a0
+
+	ld e,Enemy.var03		; $77a0
 	ld a,(de)		; $77a2
 	or a			; $77a3
-	ld e,$84		; $77a4
+	ld e,Enemy.state		; $77a4
 	ld a,(de)		; $77a6
-	jp z,$78ab		; $77a7
+	jp z,_octogon_subid1_aboveWater		; $77a7
+
 	sub $08			; $77aa
 	rst_jumpTable			; $77ac
-.dw $77b7
-.dw $7834
-.dw $786a
-.dw $787f
-.dw $789b
-	call $7a02		; $77b7
-	jr nz,_label_0f_326	; $77ba
-	ld (hl),$5a		; $77bc
+	.dw _octogon_subid1_belowWater_state8
+	.dw _octogon_subid1_belowWater_state9
+	.dw _octogon_subid1_belowWater_stateA
+	.dw _octogon_subid1_belowWater_stateB
+	.dw _octogon_subid1_belowWater_stateC
+
+
+; Normal movement (moving toward some target position decided already)
+_octogon_subid1_belowWater_state8:
+	call _octogon_decVar36IfNonzero		; $77b7
+	jr nz,@normalMovement	; $77ba
+
+	; var36 reached 0
+	ld (hl),90		; $77bc
+
+	; 50% chance to do check below...
 	call getRandomNumber		; $77be
 	rrca			; $77c1
-	jr nc,_label_0f_326	; $77c2
+	jr nc,@normalMovement	; $77c2
+
+	; If the direction toward Link has not changed...
 	call objectGetAngleTowardEnemyTarget		; $77c4
 	add $04			; $77c7
 	and $18			; $77c9
 	ld b,a			; $77cb
-	ld e,$89		; $77cc
+	ld e,Enemy.angle		; $77cc
 	ld a,(de)		; $77ce
 	add $04			; $77cf
 	and $18			; $77d1
 	cp b			; $77d3
 	ld h,d			; $77d4
-	jr nz,_label_0f_326	; $77d5
-	ld l,$84		; $77d7
+	jr nz,@normalMovement	; $77d5
+
+	; Go to state $0b (fire bubble projectile)
+	ld l,Enemy.state		; $77d7
 	ld (hl),$0b		; $77d9
-	ld l,$86		; $77db
+	ld l,Enemy.counter1		; $77db
 	ld (hl),$08		; $77dd
-	ld l,$88		; $77df
+	ld l,Enemy.direction		; $77df
 	ld a,(hl)		; $77e1
 	and $0c			; $77e2
 	add $02			; $77e4
 	ld (hl),a		; $77e6
 	jp enemySetAnimation		; $77e7
-_label_0f_326:
+
+@normalMovement:
+	; Will rise above water when counter2 reaches 0
 	ld a,(wFrameCounter)		; $77ea
 	and $03			; $77ed
-	jr nz,_label_0f_327	; $77ef
-	ld l,$87		; $77f1
+	jr nz,++		; $77ef
+	ld l,Enemy.counter2		; $77f1
 	dec (hl)		; $77f3
-	jp z,$794e		; $77f4
-_label_0f_327:
+	jp z,_octogon_beginRisingAboveWater		; $77f4
+++
 	call _ecom_decCounter1		; $77f7
-	jr nz,_label_0f_328	; $77fa
-	ld (hl),$3c		; $77fc
-	ld l,$84		; $77fe
-	inc (hl)		; $7800
+	jr nz,_octogon_updateMovementAndAnimation	; $77fa
+
+	ld (hl),60 ; [counter1]
+
+	ld l,Enemy.state		; $77fe
+	inc (hl) ; [state] = 9
 	ret			; $7801
-_label_0f_328:
-	call $7a0a		; $7802
+
+;;
+; Moves toward target position and updates animation + sound effects accordingly
+; @addr{7802}
+_octogon_updateMovementAndAnimation:
+	call _octogon_moveTowardTargetPosition		; $7802
+
 	ld h,d			; $7805
-	ld l,$b5		; $7806
+	ld l,Enemy.var35		; $7806
 	dec (hl)		; $7808
 	ret nz			; $7809
+
 	ld (hl),$0c		; $780a
-	ld l,$88		; $780c
+
+	ld l,Enemy.direction		; $780c
 	ld a,(hl)		; $780e
 	xor $01			; $780f
 	ld (hl),a		; $7811
 	call enemySetAnimation		; $7812
-	ld e,$82		; $7815
+
+	ld e,Enemy.subid		; $7815
 	ld a,(de)		; $7817
 	or a			; $7818
 	ld a,SND_LINK_SWIM		; $7819
 	jp nz,playSound		; $781b
+
+	; Above-water only (subid 0)
+
+;;
+; @addr{781e}
+_octogon_doSplashAnimation:
 	ld a,SND_SWORDSPIN		; $781e
 	call playSound		; $7820
+
+	; Splash animation
 	call getFreeInteractionSlot		; $7823
 	ret nz			; $7826
-	ld (hl),$8e		; $7827
-	ld e,$88		; $7829
+	ld (hl),INTERACID_OCTOGON_SPLASH		; $7827
+	ld e,Enemy.direction		; $7829
 	ld a,(de)		; $782b
 	and $0c			; $782c
-	ld l,$48		; $782e
+	ld l,Interaction.direction		; $782e
 	ld (hl),a		; $7830
 	jp objectCopyPosition		; $7831
+
+
+; Waiting in place until counter1 reaches 0, then will charge at Link.
+_octogon_subid1_belowWater_state9:
 	call _ecom_decCounter1		; $7834
 	ret nz			; $7837
-	ld (hl),$0c		; $7838
+
+	ld (hl),$0c ; [counter1]
+
 	ld l,e			; $783a
-	inc (hl)		; $783b
-	ld l,$b1		; $783c
+	inc (hl) ; [state] = $0a
+
+	; Save Link's current position as target position to charge at
+	ld l,Enemy.var31		; $783c
 	ldh a,(<hEnemyTargetY)	; $783e
 	ldi (hl),a		; $7840
 	ldh a,(<hEnemyTargetX)	; $7841
 	ld (hl),a		; $7843
+
+	; Do some weird math to decide animation
 	call _ecom_updateAngleTowardTarget		; $7844
 	ld h,d			; $7847
-	ld l,$88		; $7848
+	ld l,Enemy.direction		; $7848
 	ld a,(hl)		; $784a
 	and $0c			; $784b
 	add a			; $784d
 	ld b,a			; $784e
-	ld e,$89		; $784f
+
+	ld e,Enemy.angle		; $784f
 	ld a,(de)		; $7851
 	sub b			; $7852
 	and $1f			; $7853
@@ -152777,111 +152980,162 @@ _label_0f_328:
 	sub $04			; $7856
 	cp $18			; $7858
 	ret nc			; $785a
+
 	bit 4,b			; $785b
 	ld a,$04		; $785d
-	jr z,_label_0f_329	; $785f
+	jr z,+			; $785f
 	ld a,$0c		; $7861
-_label_0f_329:
++
 	add (hl)		; $7863
 	and $0c			; $7864
 	ld (hl),a		; $7866
 	jp enemySetAnimation		; $7867
+
+
+; Waiting for a split second before charging
+_octogon_subid1_belowWater_stateA:
 	call _ecom_decCounter1		; $786a
 	ret nz			; $786d
-	ld (hl),$5a		; $786e
+
+	ld (hl),90		; $786e
+
 	ld l,e			; $7870
-	ld (hl),$08		; $7871
-	ld l,$89		; $7873
+	ld (hl),$08 ; [state]
+
+	ld l,Enemy.angle		; $7873
 	ldd a,(hl)		; $7875
 	add $04			; $7876
 	and $18			; $7878
 	rrca			; $787a
 	ld (hl),a		; $787b
 	jp enemySetAnimation		; $787c
+
+
+; Delay before firing bubble
+_octogon_subid1_belowWater_stateB:
 	call _ecom_decCounter1		; $787f
 	ret nz			; $7882
-	ld (hl),$3c		; $7883
+
+	ld (hl),60		; $7883
+
 	ld l,e			; $7885
-	inc (hl)		; $7886
-	ld l,$88		; $7887
+	inc (hl) ; [state] = $0c
+
+	ld l,Enemy.direction		; $7887
 	inc (hl)		; $7889
 	ld a,(hl)		; $788a
 	call enemySetAnimation		; $788b
+
 	call getFreePartSlot		; $788e
-	jr nz,_label_0f_330	; $7891
-	ld (hl),$55		; $7893
-	call $79dd		; $7895
-_label_0f_330:
-	jp $781e		; $7898
+	jr nz,++		; $7891
+	ld (hl),PARTID_OCTOGON_BUBBLE		; $7893
+	call _octogon_initializeProjectile		; $7895
+++
+	jp _octogon_doSplashAnimation		; $7898
+
+
+; Delay after firing bubble
+_octogon_subid1_belowWater_stateC:
 	call _ecom_decCounter1		; $789b
 	ret nz			; $789e
+
 	ld l,e			; $789f
-	ld (hl),$08		; $78a0
-	ld l,$88		; $78a2
+	ld (hl),$08 ; [state]
+
+	ld l,Enemy.direction		; $78a2
 	ld a,(hl)		; $78a4
 	and $0c			; $78a5
 	ld (hl),a		; $78a7
 	jp enemySetAnimation		; $78a8
+
+
+; Octogon is above water, but Link is below water
+_octogon_subid1_aboveWater:
 	sub $08			; $78ab
 	rst_jumpTable			; $78ad
-.dw $78b4
-.dw $78bf
-.dw $78d8
+	.dw @state8
+	.dw @state9
+	.dw @stateA
+
+@state8:
 	call _ecom_decCounter1		; $78b4
 	ret nz			; $78b7
-	ld (hl),$78		; $78b8
-	ld b,$48		; $78ba
+	ld (hl),120		; $78b8
+	ld b,PARTID_OCTOGON_DEPTH_CHARGE		; $78ba
 	jp _ecom_spawnProjectile		; $78bc
+
+
+; States $09-$0a used while moving to surface
+@state9:
 	call _ecom_decCounter1		; $78bf
 	ret nz			; $78c2
+
 	ld l,e			; $78c3
-	inc (hl)		; $78c4
-	ld l,$88		; $78c5
+	inc (hl) ; [state] = $0a
+
+	ld l,Enemy.direction		; $78c5
 	ld a,$11		; $78c7
 	ld (hl),a		; $78c9
 	call enemySetAnimation		; $78ca
+
 	ld a,SND_ENEMY_JUMP		; $78cd
 	call playSound		; $78cf
+
 	ld bc,$0208		; $78d2
 	jp _enemyBoss_spawnShadow		; $78d5
+
+@stateA:
 	ld h,d			; $78d8
-	ld l,$8e		; $78d9
+	ld l,Enemy.z		; $78d9
 	ld a,(hl)		; $78db
-	sub $c0			; $78dc
+	sub <($00c0)			; $78dc
 	ldi (hl),a		; $78de
 	ld a,(hl)		; $78df
-	sbc $00			; $78e0
+	sbc >($00c0)			; $78e0
 	ld (hl),a		; $78e2
+
 	cp $d0			; $78e3
 	ret nc			; $78e5
+
 	cp $c0			; $78e6
 	jp nz,_ecom_flickerVisibility		; $78e8
+
 	ld (hl),$00		; $78eb
+
 	ld l,e			; $78ed
-	ld (hl),$08		; $78ee
-	ld l,$a4		; $78f0
+	ld (hl),$08 ; [state] = 8
+
+	ld l,Enemy.collisionType		; $78f0
 	res 7,(hl)		; $78f2
-	ld l,$86		; $78f4
-	ld (hl),$3c		; $78f6
+
+	ld l,Enemy.counter1		; $78f4
+	ld (hl),60		; $78f6
+
 	call objectSetInvisible		; $78f8
 	jp _ecom_killRelatedObj1		; $78fb
-	ld a,$08		; $78fe
+
+
+; Invisible collision box for the shell
+_octogon_subid2:
+	ld a,Object.direction		; $78fe
 	call objectGetRelatedObject1Var		; $7900
 	ld a,(hl)		; $7903
 	cp $10			; $7904
-	jr c,_label_0f_331	; $7906
+	jr c,+			; $7906
 	ld a,$08		; $7908
-_label_0f_331:
++
 	and $0c			; $790a
 	push hl			; $790c
-	ld hl,$7921		; $790d
+	ld hl,@data		; $790d
 	rst_addAToHl			; $7910
-	ld e,$a6		; $7911
+
+	ld e,Enemy.collisionRadiusY		; $7911
 	ldi a,(hl)		; $7913
 	ld (de),a		; $7914
 	inc e			; $7915
 	ldi a,(hl)		; $7916
 	ld (de),a		; $7917
+
 	ldi a,(hl)		; $7918
 	ld c,(hl)		; $7919
 	ld b,a			; $791a
@@ -152889,204 +153143,251 @@ _label_0f_331:
 	call objectTakePositionWithOffset		; $791c
 	pop hl			; $791f
 	ret			; $7920
-	ld b,$0a		; $7921
-	ld c,$00		; $7923
-	ld a,(bc)		; $7925
-	ld b,$00		; $7926
-	ld a,($ff00+c)		; $7928
-	ld b,$0a		; $7929
-	ld a,($ff00+c)		; $792b
-	nop			; $792c
-	ld a,(bc)		; $792d
-	ld b,$00		; $792e
-	ld c,$62		; $7930
-	ld l,$84		; $7932
+
+; Data format: collisionRadiusY, collisionRadiusX, Y position, X position
+@data:
+	.db $06 $0a $0e $00
+	.db $0a $06 $00 $f2
+	.db $06 $0a $f2 $00
+	.db $0a $06 $00 $0e
+
+
+;;
+; @addr{7931}
+_octogon_subid0_submergeIntoWater:
+	ld h,d			; $7931
+	ld l,Enemy.state		; $7932
 	ld (hl),$0d		; $7934
-	ld l,$a4		; $7936
+	ld l,Enemy.collisionType		; $7936
 	res 7,(hl)		; $7938
-	ld l,$83		; $793a
+	ld l,Enemy.var03		; $793a
 	ld (hl),$01		; $793c
-	ld l,$86		; $793e
+	ld l,Enemy.counter1		; $793e
 	ld (hl),$10		; $7940
-	ld l,$b6		; $7942
-	ld (hl),$5a		; $7944
-	ld l,$88		; $7946
+	ld l,Enemy.var36		; $7942
+	ld (hl),90		; $7944
+	ld l,Enemy.direction		; $7946
 	ld a,$15		; $7948
 	ld (hl),a		; $794a
 	jp enemySetAnimation		; $794b
+
+
+;;
+; @addr{794e}
+_octogon_beginRisingAboveWater:
 	ld h,d			; $794e
-	ld l,$84		; $794f
+	ld l,Enemy.state		; $794f
 	ld (hl),$09		; $7951
-	ld l,$83		; $7953
+	ld l,Enemy.var03		; $7953
 	ld (hl),$00		; $7955
-	ld l,$86		; $7957
-	ld (hl),$1e		; $7959
-	ld l,$b6		; $795b
-	ld (hl),$5a		; $795d
-	ld l,$88		; $795f
+
+	ld l,Enemy.counter1		; $7957
+	ld (hl),30		; $7959
+
+	ld l,Enemy.var36		; $795b
+	ld (hl),90		; $795d
+
+	ld l,Enemy.direction		; $795f
 	ld a,$10		; $7961
 	ld (hl),a		; $7963
 	jp enemySetAnimation		; $7964
-	ld a,($cfd7)		; $7967
+
+
+;;
+; Takes current position, fixes it to the closest valid spot above water, and decides
+; a value for var30 (target position index).
+; @addr{7967}
+_octogon_fixPositionAboveWater:
+	ld a,(wTmpcfc0.octogonBoss.posNeedsFixing)		; $7967
 	or a			; $796a
 	ret z			; $796b
+
 	xor a			; $796c
-	ld ($cfd7),a		; $796d
+	ld (wTmpcfc0.octogonBoss.posNeedsFixing),a		; $796d
+
 	ld h,d			; $7970
-	ld l,$8b		; $7971
+	ld l,Enemy.yh		; $7971
 	ldi a,(hl)		; $7973
-_label_0f_332:
 	ld b,a			; $7974
 	inc l			; $7975
 	ld c,(hl)		; $7976
-	call $7a2e		; $7977
+	call _octogon_getClosestTargetPositionIndex		; $7977
 	ld l,e			; $797a
+
 	ld a,(w1Link.yh)		; $797b
 	ld b,a			; $797e
 	ld a,(w1Link.xh)		; $797f
 	ld c,a			; $7982
-	call $7a2e		; $7983
+	call _octogon_getClosestTargetPositionIndex		; $7983
+
+	; BUG: supposed to compare 'l' against 'e', not 'a'. As a result octogon may not
+	; move out of the way properly if Link surfaces in the same position.
+	; (In effect, it only matters when they're both around centre-bottom, and maybe
+	; one other spot?)
 	cp l			; $7986
 	ld a,l			; $7987
-	jr nz,_label_0f_333	; $7988
-	ld hl,$79ce		; $798a
+	jr nz,++		; $7988
+	ld hl,@linkCompensationIndices		; $798a
 	rst_addAToHl			; $798d
 	ld a,(hl)		; $798e
-_label_0f_333:
+++
 	add a			; $798f
-	ld hl,$79aa		; $7990
+	ld hl,@data		; $7990
 	rst_addDoubleIndex			; $7993
-	ld e,$8b		; $7994
+	ld e,Enemy.yh		; $7994
 	ldi a,(hl)		; $7996
 	ld (de),a		; $7997
-	ld e,$8d		; $7998
+	ld e,Enemy.xh		; $7998
 	ldi a,(hl)		; $799a
 	ld (de),a		; $799b
-	ld e,$b0		; $799c
+	ld e,Enemy.var30		; $799c
 	ld a,(hl)		; $799e
 	ld (de),a		; $799f
+
 	ld h,d			; $79a0
 	ld l,e			; $79a1
 	bit 7,a			; $79a2
-	jp nz,$7637		; $79a4
-	jp $763d		; $79a7
-	jr z,$30		; $79aa
-	ld bc,$2800		; $79ac
-	ld a,b			; $79af
-	rst $38			; $79b0
-	nop			; $79b1
-	jr z,_label_0f_332	; $79b2
-	add hl,bc		; $79b4
-	nop			; $79b5
-	ld e,b			; $79b6
-	jr nc,_label_0f_334	; $79b7
-	nop			; $79b9
-	nop			; $79ba
-_label_0f_334:
-	nop			; $79bb
-	rst $38			; $79bc
-	nop			; $79bd
-	ld e,b			; $79be
-	ret nz			; $79bf
-	ld a,(bc)		; $79c0
-	nop			; $79c1
-	adc b			; $79c2
-	jr nc,$0d		; $79c3
-	nop			; $79c5
-	adc b			; $79c6
-	ld a,b			; $79c7
-	inc c			; $79c8
-	nop			; $79c9
-	adc b			; $79ca
-	ret nz			; $79cb
-	dec b			; $79cc
-	nop			; $79cd
-	ld bc,$0100		; $79ce
-	ld b,$00		; $79d1
-	ld ($0803),sp		; $79d3
-	dec b			; $79d6
+	jp nz,_octogon_chooseRandomTargetPosition		; $79a4
+	jp _octogon_loadTargetPosition		; $79a7
+
+; Data format: Y, X, var30 (target position index), unused
+@data:
+	.db $28 $30 $01 $00
+	.db $28 $78 $ff $00
+	.db $28 $c0 $09 $00
+	.db $58 $30 $02 $00
+	.db $00 $00 $ff $00
+	.db $58 $c0 $0a $00
+	.db $88 $30 $0d $00
+	.db $88 $78 $0c $00
+	.db $88 $c0 $05 $00
+
+; Corresponding index from this table is used if Link would have surfaced on top of
+; octogon.
+@linkCompensationIndices:
+	.db $01 $00 $01 $06 $00 $08 $03 $08 $05
+
+;;
+; @addr{79d7}
+_octogon_fireOctorokProjectile:
 	call getFreePartSlot		; $79d7
 	ret nz			; $79da
-	ld (hl),$18		; $79db
-	ld e,$88		; $79dd
+	ld (hl),PARTID_OCTOROK_PROJECTILE		; $79db
+
+;;
+; @param	h	Projectile (could be PARTID_OCTOROK_PROJECTILE or
+;			PARTID_OCTOGON_BUBBLE)
+; @addr{79dd}
+_octogon_initializeProjectile:
+	ld e,Enemy.direction		; $79dd
 	ld a,(de)		; $79df
 	and $0c			; $79e0
 	ld b,a			; $79e2
 	add a			; $79e3
-	ld l,$c9		; $79e4
+	ld l,Part.angle		; $79e4
 	ld (hl),a		; $79e6
+
 	ld a,b			; $79e7
 	rrca			; $79e8
 	push hl			; $79e9
-	ld hl,$79fa		; $79ea
+	ld hl,@positionOffsets		; $79ea
 	rst_addAToHl			; $79ed
 	ldi a,(hl)		; $79ee
 	ld b,a			; $79ef
 	ld c,(hl)		; $79f0
+
 	pop hl			; $79f1
 	call objectCopyPositionWithOffset		; $79f2
 	ld a,SND_STRIKE		; $79f5
 	jp playSound		; $79f7
-	ld a,($ff00+R_P1)	; $79fa
-	nop			; $79fc
-	stop			; $79fd
-	stop			; $79fe
-	nop			; $79ff
-	nop			; $7a00
-	ld a,($ff00+$62)	; $7a01
-	ld l,$b6		; $7a03
+
+@positionOffsets:
+	.db $f0 $00
+	.db $00 $10
+	.db $10 $00
+	.db $00 $f0
+
+;;
+; @addr{7a02}
+_octogon_decVar36IfNonzero:
+	ld h,d			; $7a02
+	ld l,Enemy.var36		; $7a03
 	ld a,(hl)		; $7a05
 	or a			; $7a06
 	ret z			; $7a07
 	dec (hl)		; $7a08
 	ret			; $7a09
+
+;;
+; Moves toward position stored in var31/var32. Increments state and sets counter1 to 30
+; when it reaches that position.
+; @addr{7a0a}
+_octogon_moveTowardTargetPosition:
 	ld h,d			; $7a0a
-	ld l,$b1		; $7a0b
+	ld l,Enemy.var31		; $7a0b
 	call _ecom_readPositionVars		; $7a0d
 	sub c			; $7a10
 	inc a			; $7a11
 	cp $03			; $7a12
 	jp nc,_ecom_moveTowardPosition		; $7a14
+
 	ldh a,(<hFF8F)	; $7a17
 	sub b			; $7a19
 	inc a			; $7a1a
 	cp $03			; $7a1b
 	jp nc,_ecom_moveTowardPosition		; $7a1d
-	ld l,$8b		; $7a20
+
+	ld l,Enemy.yh		; $7a20
 	ld (hl),b		; $7a22
-	ld l,$8d		; $7a23
+	ld l,Enemy.xh		; $7a23
 	ld (hl),c		; $7a25
-	ld l,$84		; $7a26
+	ld l,Enemy.state		; $7a26
 	inc (hl)		; $7a28
-	ld l,$86		; $7a29
-	ld (hl),$1e		; $7a2b
+	ld l,Enemy.counter1		; $7a29
+	ld (hl),30		; $7a2b
 	ret			; $7a2d
+
+
+;;
+; Given a position, this determines the "target position index" (value for var30) which
+; that position most closely corresponds to.
+;
+; @param	bc	Position
+; @param[out]	a
+; @param[out]	e
+; @addr{7a2e}
+_octogon_getClosestTargetPositionIndex:
 	ld e,$00		; $7a2e
+
+@checkY:
 	ld a,b			; $7a30
 	cp $40			; $7a31
-	jr c,_label_0f_335	; $7a33
+	jr c,@checkX	; $7a33
 	ld e,$03		; $7a35
 	cp $70			; $7a37
-	jr c,_label_0f_335	; $7a39
+	jr c,@checkX	; $7a39
+
 	ld e,$06		; $7a3b
-_label_0f_335:
+@checkX:
 	ld a,c			; $7a3d
 	cp $50			; $7a3e
-	jr c,_label_0f_336	; $7a40
+	jr c,++		; $7a40
 	inc e			; $7a42
 	cp $a0			; $7a43
-	jr c,_label_0f_336	; $7a45
+	jr c,++		; $7a45
+
 	inc e			; $7a47
-_label_0f_336:
+++
 	ld a,e			; $7a48
 	cp $04			; $7a49
 	ret nz			; $7a4b
+
 	ld e,$00		; $7a4c
 	ld a,b			; $7a4e
 	cp $58			; $7a4f
-	jr c,_label_0f_337	; $7a51
+	jr c,+			; $7a51
 	ld e,$06		; $7a53
-_label_0f_337:
++
 	ld a,c			; $7a55
 	cp $78			; $7a56
 	ret c			; $7a58

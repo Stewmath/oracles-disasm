@@ -720,7 +720,13 @@
 ; @subid_06{Immediately dies?}
 ; @var03{Phase of fight (from 0-3; affects projectile fire frequency)}
 .define ENEMYID_SMOG				$7c
+
+;;
+; @subid_00{Above water}
+; @subid_01{Below water}
+; @subid_02{Invisible collision box for the shell}
 .define ENEMYID_OCTOGON				$7d
+
 .define ENEMYID_PLASMARINE			$7e
 .define ENEMYID_KING_MOBLIN			$7f
 
