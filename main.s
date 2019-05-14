@@ -153401,7 +153401,7 @@ _octogon_getClosestTargetPositionIndex:
 ; Variables:
 ;   counter2: Number of times to do shock attack before firing projectiles
 ;   var30/var31: Target position?
-;   var32: Color?
+;   var32: Color (0 for blue, 1 for red)
 ;   var33: ?
 ;   var34: Number of projectiles to fire in one attack
 ; ==============================================================================
@@ -171459,95 +171459,123 @@ _label_11_362:
 	ret nc			; $743f
 	jp partDelete		; $7440
 
-;;
-; @addr{7443}
+
+; ==============================================================================
+; PARTID_PLASMARINE_PROJECTILE
+; ==============================================================================
 partCode43:
-	jr nz,_label_11_368	; $7443
-	ld a,$01		; $7445
+	jr nz,@delete	; $7443
+
+	ld a,Object.id		; $7445
 	call objectGetRelatedObject1Var		; $7447
 	ld a,(hl)		; $744a
-	cp $7e			; $744b
-	jr nz,_label_11_368	; $744d
-	ld e,$c4		; $744f
+	cp ENEMYID_PLASMARINE			; $744b
+	jr nz,@delete	; $744d
+
+	ld e,Part.state		; $744f
 	ld a,(de)		; $7451
 	or a			; $7452
-	jr z,_label_11_369	; $7453
-	ld l,$b2		; $7455
-	ld e,$c2		; $7457
+	jr z,@state0	; $7453
+
+@state1:
+	; If projectile's color is different from plasmarine's color...
+	ld l,Enemy.var32		; $7455
+	ld e,Part.subid		; $7457
 	ld a,(de)		; $7459
 	cp (hl)			; $745a
-	jr z,_label_11_363	; $745b
+	jr z,@noCollision		; $745b
+
+	; Check for collision.
 	call checkObjectsCollided		; $745d
-	jr c,_label_11_366	; $7460
-_label_11_363:
+	jr c,@collidedWithPlasmarine	; $7460
+
+@noCollision:
 	ld a,(wFrameCounter)		; $7462
 	rrca			; $7465
-	jr c,_label_11_365	; $7466
+	jr c,@updateMovement	; $7466
+
 	call _partDecCounter1IfNonzero		; $7468
 	jp z,partDelete		; $746b
+
+	; Flicker visibility for 30 frames or less remaining
 	ld a,(hl)		; $746e
-	cp $1e			; $746f
-	jr nc,_label_11_364	; $7471
-	ld e,$da		; $7473
+	cp 30			; $746f
+	jr nc,++		; $7471
+	ld e,Part.visible		; $7473
 	ld a,(de)		; $7475
 	xor $80			; $7476
 	ld (de),a		; $7478
-_label_11_364:
+++
+	; Slowly home in on Link
 	inc l			; $7479
-	dec (hl)		; $747a
-	jr nz,_label_11_365	; $747b
+	dec (hl) ; [this.counter2]--
+	jr nz,@updateMovement	; $747b
 	ld (hl),$10		; $747d
 	call objectGetAngleTowardEnemyTarget		; $747f
 	call objectNudgeAngleTowards		; $7482
-_label_11_365:
+
+@updateMovement:
 	call objectApplySpeed		; $7485
 	call _partCommon_checkOutOfBounds		; $7488
 	jp nz,partAnimate		; $748b
-	jr _label_11_368		; $748e
-_label_11_366:
-	ld l,$ab		; $7490
+	jr @delete		; $748e
+
+@collidedWithPlasmarine:
+	ld l,Enemy.invincibilityCounter		; $7490
 	ld a,(hl)		; $7492
 	or a			; $7493
-	jr nz,_label_11_363	; $7494
-	ld (hl),$18		; $7496
-	ld l,$a9		; $7498
+	jr nz,@noCollision	; $7494
+
+	ld (hl),24
+	ld l,Enemy.health		; $7498
 	dec (hl)		; $749a
-	jr nz,_label_11_367	; $749b
-	ld l,$a4		; $749d
+	jr nz,++		; $749b
+
+	; Plasmarine is dead
+	ld l,Enemy.collisionType		; $749d
 	res 7,(hl)		; $749f
-_label_11_367:
+++
 	ld a,SND_BOSS_DAMAGE		; $74a1
 	call playSound		; $74a3
-_label_11_368:
+@delete:
 	jp partDelete		; $74a6
-_label_11_369:
-	ld l,$a9		; $74a9
+
+
+@state0:
+	ld l,Enemy.health		; $74a9
 	ld a,(hl)		; $74ab
 	cp $03			; $74ac
-	ld a,$14		; $74ae
-	jr nc,_label_11_370	; $74b0
-	ld a,$23		; $74b2
-_label_11_370:
+	ld a,SPEED_80		; $74ae
+	jr nc,+			; $74b0
+	ld a,SPEED_e0		; $74b2
++
 	ld h,d			; $74b4
 	ld l,e			; $74b5
-	inc (hl)		; $74b6
-	ld l,$d0		; $74b7
+	inc (hl) ; [state] = 1
+
+	ld l,Part.speed		; $74b7
 	ld (hl),a		; $74b9
-	ld l,$c6		; $74ba
-	ld (hl),$96		; $74bc
+
+	ld l,Part.counter1		; $74ba
+	ld (hl),150 ; [counter1] (lifetime counter)
 	inc l			; $74be
-	ld (hl),$08		; $74bf
-	ld l,$c2		; $74c1
+	ld (hl),$08 ; [counter2]
+
+	; Set color & animation
+	ld l,Part.subid		; $74c1
 	ld a,(hl)		; $74c3
 	inc a			; $74c4
-	ld l,$dc		; $74c5
+	ld l,Part.oamFlags		; $74c5
 	ldd (hl),a		; $74c7
 	ld (hl),a		; $74c8
 	dec a			; $74c9
 	call partSetAnimation		; $74ca
+
+	; Move toward Link
 	call objectGetAngleTowardEnemyTarget		; $74cd
-	ld e,$c9		; $74d0
+	ld e,Part.angle		; $74d0
 	ld (de),a		; $74d2
+
 	jp objectSetVisible82		; $74d3
 
 ;;

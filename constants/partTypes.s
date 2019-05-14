@@ -186,6 +186,8 @@
 .define PARTID_PUMPKIN_HEAD_PROJECTILE		$42
 
 ;;
+; @subid_00{Blue}
+; @subid_01{Red}
 .define PARTID_PLASMARINE_PROJECTILE		$43
 
 ;;
