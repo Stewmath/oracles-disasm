@@ -171669,152 +171669,213 @@ partCode47:
 	ld (de),a		; $7640
 	ret			; $7641
 
-;;
-; @addr{7642}
+
+; ==============================================================================
+; PARTID_OCTOGON_DEPTH_CHARGE
+;
+; Variables:
+;   var30: gravity
+; ==============================================================================
 partCode48:
-	jr z,_label_11_378	; $7642
-	ld e,$c2		; $7644
+	jr z,@normalStatus	; $7642
+
+	; For subid 1 only, delete self on collision with anything?
+	ld e,Part.subid		; $7644
 	ld a,(de)		; $7646
 	or a			; $7647
 	jp nz,partDelete		; $7648
-_label_11_378:
-	ld e,$c2		; $764b
+
+@normalStatus:
+	ld e,Part.subid		; $764b
 	ld a,(de)		; $764d
 	or a			; $764e
-	ld e,$c4		; $764f
-	jr z,_label_11_380	; $7651
+	ld e,Part.state		; $764f
+	jr z,_octogonDepthCharge_subid0	; $7651
+
+
+; Small (split) projectile
+_octogonDepthCharge_subid1:
 	ld a,(de)		; $7653
 	or a			; $7654
-	jr z,_label_11_379	; $7655
+	jr z,@state0	; $7655
+
+@state1:
 	call objectApplySpeed		; $7657
 	call _partCommon_checkTileCollisionOrOutOfBounds		; $765a
 	jp nz,partAnimate		; $765d
 	jp partDelete		; $7660
-_label_11_379:
+
+@state0:
 	ld h,d			; $7663
 	ld l,e			; $7664
-	inc (hl)		; $7665
-	ld l,$e6		; $7666
+	inc (hl) ; [state] = 1
+
+	ld l,Part.collisionRadiusY		; $7666
 	ld a,$02		; $7668
 	ldi (hl),a		; $766a
 	ld (hl),a		; $766b
-	ld l,$d0		; $766c
-	ld (hl),$3c		; $766e
+
+	ld l,Part.speed		; $766c
+	ld (hl),SPEED_180		; $766e
 	ld a,$01		; $7670
 	call partSetAnimation		; $7672
 	jp objectSetVisible82		; $7675
-_label_11_380:
+
+
+; Large projectile, before being split into 4 smaller ones (subid 1)
+_octogonDepthCharge_subid0:
 	ld a,(de)		; $7678
 	rst_jumpTable			; $7679
-.dw $7682
-.dw $76cd
-.dw $76fa
-.dw $7707
-	ld a,$1a		; $7682
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+
+@state0:
+	ld a,Object.visible		; $7682
 	call objectGetRelatedObject1Var		; $7684
 	ld a,(hl)		; $7687
+
 	ld h,d			; $7688
-	ld l,$c4		; $7689
+	ld l,Part.state		; $7689
 	inc (hl)		; $768b
+
 	rlca			; $768c
-	jr c,_label_11_381	; $768d
-	inc (hl)		; $768f
-	ld l,$c6		; $7690
+	jr c,@aboveWater		; $768d
+
+@belowWater:
+	inc (hl) ; [state] = 2 (skips the "moving up" part)
+	ld l,Part.counter1		; $7690
 	inc (hl)		; $7692
-	ld l,$cf		; $7693
+
+	ld l,Part.zh		; $7693
 	ld (hl),$b8		; $7695
-	ld l,$f0		; $7697
+	ld l,Part.var30		; $7697
 	ld (hl),$10		; $7699
+
+	; Choose random position to spawn at
 	call getRandomNumber_noPreserveVars		; $769b
 	and $06			; $769e
-	ld hl,$76b3		; $76a0
+	ld hl,@positionCandidates		; $76a0
 	rst_addAToHl			; $76a3
-	ld e,$cb		; $76a4
+	ld e,Part.yh		; $76a4
 	ldi a,(hl)		; $76a6
 	ld (de),a		; $76a7
-	ld e,$cd		; $76a8
+	ld e,Part.xh		; $76a8
 	ld a,(hl)		; $76aa
 	ld (de),a		; $76ab
+
 	ld a,SND_SPLASH		; $76ac
 	call playSound		; $76ae
-	jr _label_11_382		; $76b1
-	jr c,_label_11_385	; $76b3
-	jr c,-$58		; $76b5
-	ld a,b			; $76b7
-	ld c,b			; $76b8
-	ld a,b			; $76b9
-	xor b			; $76ba
-_label_11_381:
-	ld l,$f0		; $76bb
+	jr @setVisible81		; $76b1
+
+@positionCandidates:
+	.db $38 $48
+	.db $38 $a8
+	.db $78 $48
+	.db $78 $a8
+
+@aboveWater:
+	; Is shot up before coming back down
+	ld l,Part.var30		; $76bb
 	ld (hl),$20		; $76bd
-	ld l,$cb		; $76bf
+
+	ld l,Part.yh		; $76bf
 	ld a,(hl)		; $76c1
 	sub $10			; $76c2
 	ld (hl),a		; $76c4
+
 	ld a,SND_SCENT_SEED		; $76c5
 	call playSound		; $76c7
-_label_11_382:
+
+@setVisible81:
 	jp objectSetVisible81		; $76ca
+
+
+; Above water: being shot up
+@state1:
 	ld h,d			; $76cd
-	ld l,$cf		; $76ce
+	ld l,Part.zh		; $76ce
 	dec (hl)		; $76d0
 	dec (hl)		; $76d1
+
 	ld a,(hl)		; $76d2
 	cp $d0			; $76d3
-	jr nc,_label_11_384	; $76d5
+	jr nc,@animate	; $76d5
+
 	cp $b8			; $76d7
-	jr nc,_label_11_383	; $76d9
+	jr nc,@flickerVisibility	; $76d9
+
 	ld l,e			; $76db
-	inc (hl)		; $76dc
-	ld l,$c6		; $76dd
-	ld (hl),$1e		; $76df
-	ld l,$e4		; $76e1
+	inc (hl) ; [state] = 2
+
+	ld l,Part.counter1		; $76dd
+	ld (hl),30		; $76df
+
+	ld l,Part.collisionType		; $76e1
 	res 7,(hl)		; $76e3
-	ld l,$cb		; $76e5
+
+	ld l,Part.yh		; $76e5
 	ldh a,(<hEnemyTargetY)	; $76e7
 	ldi (hl),a		; $76e9
 	inc l			; $76ea
 	ldh a,(<hEnemyTargetX)	; $76eb
 	ld (hl),a		; $76ed
+
 	jp objectSetInvisible		; $76ee
-_label_11_383:
-	ld l,$da		; $76f1
+
+@flickerVisibility:
+	ld l,Part.visible		; $76f1
 	ld a,(hl)		; $76f3
 	xor $80			; $76f4
 	ld (hl),a		; $76f6
-_label_11_384:
+
+@animate:
 	jp partAnimate		; $76f7
+
+
+; Delay before falling to ground
+@state2:
 	call _partDecCounter1IfNonzero		; $76fa
-_label_11_385:
 	ret nz			; $76fd
+
 	ld l,e			; $76fe
-	inc (hl)		; $76ff
-	ld l,$e4		; $7700
+	inc (hl) ; [state] = 3
+
+	ld l,Part.collisionType		; $7700
 	set 7,(hl)		; $7702
 	jp objectSetVisiblec1		; $7704
-	ld e,$f0		; $7707
+
+
+; Falling to ground
+@state3:
+	ld e,Part.var30		; $7707
 	ld a,(de)		; $7709
 	call objectUpdateSpeedZ		; $770a
-	jr nz,_label_11_384	; $770d
+	jr nz,@animate	; $770d
+
+	; Hit ground; split into four, then delete self.
 	call getRandomNumber_noPreserveVars		; $770f
 	and $04			; $7712
 	ld b,a			; $7714
 	ld c,$04		; $7715
-_label_11_386:
+
+@spawnNext:
 	call getFreePartSlot		; $7717
-	jr nz,_label_11_387	; $771a
-	ld (hl),$48		; $771c
+	jr nz,++		; $771a
+	ld (hl),PARTID_OCTOGON_DEPTH_CHARGE		; $771c
 	inc l			; $771e
-	inc (hl)		; $771f
-	ld l,$c9		; $7720
+	inc (hl) ; [subid] = 1
+	ld l,Part.angle		; $7720
 	ld (hl),b		; $7722
 	call objectCopyPosition		; $7723
 	ld a,b			; $7726
 	add $08			; $7727
 	ld b,a			; $7729
-_label_11_387:
+++
 	dec c			; $772a
-	jr nz,_label_11_386	; $772b
+	jr nz,@spawnNext	; $772b
+
 	ld a,SND_UNKNOWN3		; $772d
 	call playSound		; $772f
 	jp partDelete		; $7732
@@ -172487,82 +172548,117 @@ _label_11_416:
 _label_11_417:
 	jp partDelete		; $7b1c
 
-;;
-; @addr{7b1f}
+
+; ==============================================================================
+; PARTID_OCTOGON_BUBBLE
+; ==============================================================================
 partCode55:
-	jr z,_label_11_418	; $7b1f
-	ld e,$ea		; $7b21
+	jr z,@normalStatus	; $7b1f
+
+	; Collision occured with something. Check if it was Link.
+	ld e,Part.var2a		; $7b21
 	ld a,(de)		; $7b23
-	cp $80			; $7b24
-	jp nz,$7b9d		; $7b26
+	cp $80|COLLISIONTYPE_LINK			; $7b24
+	jp nz,@gotoState2		; $7b26
+
 	call checkLinkVulnerable		; $7b29
-	jr nc,_label_11_418	; $7b2c
+	jr nc,@normalStatus	; $7b2c
+
+	; Immobilize Link
 	ld hl,wLinkForceState		; $7b2e
-	ld a,$14		; $7b31
+	ld a,LINK_STATE_COLLAPSED		; $7b31
 	ldi (hl),a		; $7b33
-	ld (hl),$01		; $7b34
+	ld (hl),$01 ; [$cc50]
+
 	ld h,d			; $7b36
-	ld l,$c4		; $7b37
+	ld l,Part.state		; $7b37
 	ld (hl),$03		; $7b39
-	ld l,$cf		; $7b3b
+
+	ld l,Part.zh		; $7b3b
 	ld (hl),$00		; $7b3d
-	ld l,$e4		; $7b3f
+
+	ld l,Part.collisionType		; $7b3f
 	res 7,(hl)		; $7b41
 	call objectSetVisible81		; $7b43
-_label_11_418:
-	ld e,$c4		; $7b46
+
+@normalStatus:
+	ld e,Part.state		; $7b46
 	ld a,(de)		; $7b48
 	rst_jumpTable			; $7b49
-.dw $7b52
-.dw $7b60
-.dw $7b7f
-.dw $7b8a
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+
+
+; Uninitialized
+@state0:
 	ld h,d			; $7b52
 	ld l,e			; $7b53
-	inc (hl)		; $7b54
-	ld l,$d0		; $7b55
-	ld (hl),$14		; $7b57
-	ld l,$c6		; $7b59
-	ld (hl),$b4		; $7b5b
+	inc (hl) ; [state] = 1
+
+	ld l,Part.speed		; $7b55
+	ld (hl),SPEED_80		; $7b57
+
+	ld l,Part.counter1		; $7b59
+	ld (hl),180		; $7b5b
 	jp objectSetVisible82		; $7b5d
+
+
+; Moving forward
+@state1:
 	call _partDecCounter1IfNonzero		; $7b60
-	jr z,_label_11_420	; $7b63
+	jr z,@gotoState2	; $7b63
+
 	ld a,(wFrameCounter)		; $7b65
 	and $18			; $7b68
 	rlca			; $7b6a
 	swap a			; $7b6b
-	ld hl,$7b7b		; $7b6d
+	ld hl,@zPositions		; $7b6d
 	rst_addAToHl			; $7b70
-	ld e,$cf		; $7b71
+	ld e,Part.zh		; $7b71
 	ld a,(hl)		; $7b73
 	ld (de),a		; $7b74
 	call objectApplySpeed		; $7b75
-_label_11_419:
+@animate:
 	jp partAnimate		; $7b78
-	rst $38			; $7b7b
-	cp $ff			; $7b7c
-	nop			; $7b7e
+
+@zPositions:
+	.db $ff $fe $ff $00
+
+
+; Stopped in place, waiting for signal from animation to delete self
+@state2:
 	call partAnimate		; $7b7f
-	ld e,$e1		; $7b82
+	ld e,Part.animParameter		; $7b82
 	ld a,(de)		; $7b84
 	inc a			; $7b85
 	ret nz			; $7b86
 	jp partDelete		; $7b87
-	ld hl,$d000		; $7b8a
+
+
+; Collided with Link
+@state3:
+	ld hl,w1Link		; $7b8a
 	call objectTakePosition		; $7b8d
+
 	ld a,(wLinkForceState)		; $7b90
-	cp $14			; $7b93
+	cp LINK_STATE_COLLAPSED			; $7b93
 	ret z			; $7b95
-	ld l,$04		; $7b96
+
+	ld l,<w1Link.state		; $7b96
 	ldi a,(hl)		; $7b98
-	cp $14			; $7b99
-	jr z,_label_11_419	; $7b9b
-_label_11_420:
+	cp LINK_STATE_COLLAPSED			; $7b99
+	jr z,@animate	; $7b9b
+
+@gotoState2:
 	ld h,d			; $7b9d
-	ld l,$c4		; $7b9e
+	ld l,Part.state		; $7b9e
 	ld (hl),$02		; $7ba0
-	ld l,$e4		; $7ba2
+
+	ld l,Part.collisionType		; $7ba2
 	res 7,(hl)		; $7ba4
+
 	ld a,$01		; $7ba6
 	jp partSetAnimation		; $7ba8
 

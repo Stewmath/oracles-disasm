@@ -187,6 +187,8 @@
 
 ;;
 ; Projectile used by Octogon when Link is below water and Octogon is above
+; @subid_00{The large projectile (before splitting)}
+; @subid_01{Smaller, split projectile}
 .define PARTID_OCTOGON_DEPTH_CHARGE		$48
 
 ;;

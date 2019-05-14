@@ -53,6 +53,8 @@
 	; Link is a stone until counter1 reaches 0
 	LINK_STATE_STONE			db ; $13
 
-	; Link is in his "defeated" pose until counter1 reaches 0
+	; Link is in his "defeated" pose until counter1 reaches 0.
+	; If $cc50 is nonzero, he does his "walk" animation instead (ie. when trapped by
+	; octogon's bubble underwater).
 	LINK_STATE_COLLAPSED			db ; $14
 .ENDE
