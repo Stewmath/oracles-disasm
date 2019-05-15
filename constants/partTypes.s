@@ -177,6 +177,11 @@
 .define PARTID_BLUE_STALFOS_PROJECTILE		$3d
 
 ;;
+; @subid_00{Normal}
+; @subid_01{Has no special case for reducing speed when thrown onto king moblin's platform}
+.define PARTID_KING_MOBLIN_BOMB			$3f
+
+;;
 ; Used with bomb drop with head thwomp?
 ; relatedObj1 is a reference to a PARTID_ITEM_DROP instance.
 .define PARTID_40				$40
@@ -189,6 +194,10 @@
 ; @subid_00{Blue}
 ; @subid_01{Red}
 .define PARTID_PLASMARINE_PROJECTILE		$43
+
+;;
+; Bomb used by PARTID_KING_MOBLIN_MINION.
+.define PARTID_BOMB				$47
 
 ;;
 ; Projectile used by Octogon when Link is below water and Octogon is above

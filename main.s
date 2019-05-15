@@ -140403,7 +140403,7 @@ _candle_stateE:
 
 
 ; ==============================================================================
-; ENEMYID_56
+; ENEMYID_KING_MOBLIN_MINION
 ; ==============================================================================
 enemyCode56:
 	jpab bank10.enemyCode56_body		; $76f2
@@ -153804,494 +153804,642 @@ _plasmarine_checkCloseToTargetPosition:
 .db $ec $ec $ec $14 $14 $14 $14 $ec
 .db $00 $e8 $e8 $00 $00 $18 $18 $00
 
-;;
-; @addr{7c60}
+
+; ==============================================================================
+; ENEMYID_KING_MOBLIN
+;
+; Variables:
+;   counter2: ?
+;   relatedObj2: Instance of PARTID_KING_MOBLIN_BOMB
+;   var30/var31: Object indices for two ENEMYID_KING_MOBLIN_MINION instances
+;   var32: Target x-position to walk toward to grab bomb
+;   var33: Signal from ENEMYID_KING_MOBLIN_MINION to trigger warp to the outside
+; ==============================================================================
 enemyCode7f:
-	jr z,_label_0f_350	; $7c60
-	sub $03			; $7c62
+	jr z,@normalStatus	; $7c60
+	sub ENEMYSTATUS_NO_HEALTH			; $7c62
 	ret c			; $7c64
-	jr z,_label_0f_349	; $7c65
-	ld e,$aa		; $7c67
+	jr z,@dead	; $7c65
+
+	; Collision occurred
+
+	ld e,Enemy.var2a		; $7c67
 	ld a,(de)		; $7c69
-	cp $98			; $7c6a
-	jr nz,_label_0f_350	; $7c6c
+	cp $80|COLLISIONTYPE_BOMB			; $7c6a
+	jr nz,@normalStatus	; $7c6c
+
 	ld a,SND_BOSS_DAMAGE		; $7c6e
 	call playSound		; $7c70
-	ld e,$a9		; $7c73
+
+	; Determine speed based on health
+	ld e,Enemy.health		; $7c73
 	ld a,(de)		; $7c75
 	dec a			; $7c76
-_label_0f_348:
-	ld hl,$7c81		; $7c77
+	ld hl,@speeds		; $7c77
 	rst_addAToHl			; $7c7a
-	ld e,$90		; $7c7b
+	ld e,Enemy.speed		; $7c7b
 	ld a,(hl)		; $7c7d
 	ld (de),a		; $7c7e
-	jr _label_0f_350		; $7c7f
-	ld b,(hl)		; $7c81
-	ld b,(hl)		; $7c82
-	ldd (hl),a		; $7c83
-	ldd (hl),a		; $7c84
-	ld e,$1e		; $7c85
-_label_0f_349:
+
+	jr @normalStatus		; $7c7f
+
+; Indexed by current health value
+@speeds:
+	.db SPEED_1c0, SPEED_1c0
+	.db SPEED_140, SPEED_140
+	.db SPEED_0c0, SPEED_0c0
+
+@dead:
 	call checkLinkCollisionsEnabled		; $7c87
 	ret nc			; $7c8a
+
 	ld a,$01		; $7c8b
 	ld (wDisabledObjects),a		; $7c8d
 	ld (wMenuDisabled),a		; $7c90
+
 	ld h,d			; $7c93
-	ld l,$a4		; $7c94
+	ld l,Enemy.collisionType		; $7c94
 	res 7,(hl)		; $7c96
-	ld l,$a9		; $7c98
-	ld (hl),a		; $7c9a
-	ld l,$84		; $7c9b
+
+	ld l,Enemy.health		; $7c98
+	ld (hl),a ; [health] = $01
+
+	ld l,Enemy.state		; $7c9b
 	ld (hl),$12		; $7c9d
-	ld l,$89		; $7c9f
+
+	ld l,Enemy.angle		; $7c9f
 	ld (hl),$00		; $7ca1
-	ld l,$90		; $7ca3
-	ld (hl),$78		; $7ca5
-	ld l,$ab		; $7ca7
+	ld l,Enemy.speed		; $7ca3
+	ld (hl),SPEED_300		; $7ca5
+
+	ld l,Enemy.invincibilityCounter		; $7ca7
 	ld (hl),$00		; $7ca9
+
 	ld a,$06		; $7cab
 	call enemySetAnimation		; $7cad
-_label_0f_350:
-	ld e,$ab		; $7cb0
+
+@normalStatus:
+	ld e,Enemy.invincibilityCounter		; $7cb0
 	ld a,(de)		; $7cb2
 	or a			; $7cb3
 	ret nz			; $7cb4
-	ld e,$84		; $7cb5
+
+	ld e,Enemy.state		; $7cb5
 	ld a,(de)		; $7cb7
 	rst_jumpTable			; $7cb8
-.dw $7ce5
-.dw $7d2b
-.dw $7d2b
-.dw $7d2b
-.dw $7d2b
-.dw $7d2b
-.dw $7d2b
-.dw $7d2b
-.dw $7d2c
-.dw $7d6f
-.dw $7d84
-.dw $7d9c
-.dw $7dc1
-.dw $7df3
-.dw $7e2c
-.dw $7e37
-.dw $7e88
-.dw $7ea4
-.dw $7ebb
-.dw $7edb
-.dw $7eef
-.dw $7f12
-	ld a,$7f		; $7ce5
+	.dw _kingMoblin_state_uninitialized
+	.dw _kingMoblin_state_stub
+	.dw _kingMoblin_state_stub
+	.dw _kingMoblin_state_stub
+	.dw _kingMoblin_state_stub
+	.dw _kingMoblin_state_stub
+	.dw _kingMoblin_state_stub
+	.dw _kingMoblin_state_stub
+	.dw _kingMoblin_state8
+	.dw _kingMoblin_state9
+	.dw _kingMoblin_stateA
+	.dw _kingMoblin_stateB
+	.dw _kingMoblin_stateC
+	.dw _kingMoblin_stateD
+	.dw _kingMoblin_stateE
+	.dw _kingMoblin_stateF
+	.dw _kingMoblin_state10
+	.dw _kingMoblin_state11
+	.dw _kingMoblin_state12
+	.dw _kingMoblin_state13
+	.dw _kingMoblin_state14
+	.dw _kingMoblin_state15
+
+
+_kingMoblin_state_uninitialized:
+	ld a,ENEMYID_KING_MOBLIN		; $7ce5
 	ld (wEnemyIDToLoadExtraGfx),a		; $7ce7
+
 	ld a,PALH_8c		; $7cea
 	call loadPaletteHeader		; $7cec
+
 	ld a,SNDCTRL_STOPMUSIC		; $7cef
 	call playSound		; $7cf1
+
 	xor a			; $7cf4
 	ld (wDisableLinkCollisionsAndMenu),a		; $7cf5
 	dec a			; $7cf8
 	ld (wActiveMusic),a		; $7cf9
+
 	ld b,$02		; $7cfc
 	call checkBEnemySlotsAvailable		; $7cfe
 	ret nz			; $7d01
-	call $7d1e		; $7d02
-	ld e,$b0		; $7d05
+
+	call @spawnMinion		; $7d02
+	ld e,Enemy.var30		; $7d05
 	ld (de),a		; $7d07
-	call $7d1e		; $7d08
-	ld l,$82		; $7d0b
+
+	call @spawnMinion		; $7d08
+	ld l,Enemy.subid		; $7d0b
 	inc (hl)		; $7d0d
-	ld e,$b1		; $7d0e
+	ld e,Enemy.var31		; $7d0e
 	ld (de),a		; $7d10
-	ld a,$1e		; $7d11
+	ld a,SPEED_c0		; $7d11
 	call _ecom_setSpeedAndState8		; $7d13
 	call objectSetVisible83		; $7d16
 	ld a,$02		; $7d19
 	jp enemySetAnimation		; $7d1b
+
+;;
+; @param[out]	a,h	Object index
+; @addr{7d1e}
+@spawnMinion:
 	call getFreeEnemySlot_uncounted		; $7d1e
-	ld (hl),$56		; $7d21
-	ld l,$96		; $7d23
-	ld a,$80		; $7d25
+	ld (hl),ENEMYID_KING_MOBLIN_MINION		; $7d21
+	ld l,Enemy.relatedObj1		; $7d23
+	ld a,Enemy.start		; $7d25
 	ldi (hl),a		; $7d27
 	ld (hl),d		; $7d28
 	ld a,h			; $7d29
 	ret			; $7d2a
+
+
+_kingMoblin_state_stub:
 	ret			; $7d2b
+
+
+; Waiting for Link to move in to start the fight
+_kingMoblin_state8:
 	ld hl,w1Link.xh		; $7d2c
 	ld a,(hl)		; $7d2f
 	sub $40			; $7d30
 	cp $20			; $7d32
-	jr nc,_label_0f_352	; $7d34
-	ld l,$0f		; $7d36
+	jr nc,_kingMoblin_animate	; $7d34
+
+	ld l,<w1Link.zh		; $7d36
 	ld a,(hl)		; $7d38
 	or a			; $7d39
-	jr nz,_label_0f_352	; $7d3a
-	ld l,$08		; $7d3c
-	ld (hl),$00		; $7d3e
+	jr nz,_kingMoblin_animate	; $7d3a
+
+	ld l,<w1Link.direction		; $7d3c
+	ld (hl),DIR_UP		; $7d3e
+
 	call checkLinkVulnerable		; $7d40
 	ret nc			; $7d43
+
 	call clearAllParentItems		; $7d44
 	ld a,$01		; $7d47
 	ld (wDisabledObjects),a		; $7d49
 	ld (wMenuDisabled),a		; $7d4c
+
+	; Make stairs disappear
 	ld c,$61		; $7d4f
-	ld a,$a0		; $7d51
+	ld a,TILEINDEX_STANDARD_FLOOR		; $7d51
 	call setTile		; $7d53
+
+	; Poof at stairs
 	call getFreeInteractionSlot		; $7d56
-	jr nz,_label_0f_351	; $7d59
-	ld (hl),$05		; $7d5b
-	ld l,$4b		; $7d5d
-	ld (hl),$68		; $7d5f
-	ld l,$4d		; $7d61
+	jr nz,++		; $7d59
+	ld (hl),INTERACID_PUFF		; $7d5b
+	ld l,Interaction.yh		; $7d5d
+	ld (hl),$68	; $7d5f
+	ld l,Interaction.xh		; $7d61
 	ld (hl),$18		; $7d63
-_label_0f_351:
+++
 	call _ecom_incState		; $7d65
-	ld l,$86		; $7d68
+	ld l,Enemy.counter1		; $7d68
 	ld (hl),$18		; $7d6a
-_label_0f_352:
+
+_kingMoblin_animate:
 	jp enemyAnimate		; $7d6c
+
+
+; Delay before showing text
+_kingMoblin_state9:
 	call _ecom_decCounter1		; $7d6f
-	jr nz,_label_0f_352	; $7d72
+	jr nz,_kingMoblin_animate	; $7d72
+
 	ld l,e			; $7d74
-	inc (hl)		; $7d75
+	inc (hl) ; [state] = $0a
+
 	call checkIsLinkedGame		; $7d76
-	ld bc,$2f19		; $7d79
-	jr z,_label_0f_353	; $7d7c
-	ld bc,$2f1a		; $7d7e
-_label_0f_353:
+	ld bc,TX_2f19		; $7d79
+	jr z,+			; $7d7c
+	ld bc,TX_2f1a		; $7d7e
++
 	jp showText		; $7d81
+
+
+; Starting fight
+_kingMoblin_stateA:
 	ld h,d			; $7d84
 	ld l,e			; $7d85
-	inc (hl)		; $7d86
-	ld l,$87		; $7d87
-	ld (hl),$1e		; $7d89
-	ld l,$b0		; $7d8b
+	inc (hl) ; [state] = $0b
+
+	ld l,Enemy.counter2		; $7d87
+	ld (hl),30		; $7d89
+
+	ld l,Enemy.var30		; $7d8b
 	ld b,(hl)		; $7d8d
 	ld c,e			; $7d8e
 	ld a,$02		; $7d8f
-	ld (bc),a		; $7d91
+	ld (bc),a ; [minion1.state] = $02
 	inc l			; $7d92
 	ld b,(hl)		; $7d93
-	ld (bc),a		; $7d94
+	ld (bc),a ; [minion2.state] = $02
+
 	call _enemyBoss_beginBoss		; $7d95
 	xor a			; $7d98
 	jp enemySetAnimation		; $7d99
+
+
+; Facing backwards while picking up a bomb
+_kingMoblin_stateB:
 	call _ecom_decCounter2		; $7d9c
-	jr nz,_label_0f_352	; $7d9f
-	ld b,$3f		; $7da1
+	jr nz,_kingMoblin_animate	; $7d9f
+
+	ld b,PARTID_KING_MOBLIN_BOMB		; $7da1
 	call _ecom_spawnProjectile		; $7da3
 	ret nz			; $7da6
+
 	call _ecom_incState		; $7da7
-	ld e,$a9		; $7daa
+
+_kingMoblin_initBombPickupAnimation:
+	ld e,Enemy.health		; $7daa
 	ld a,(de)		; $7dac
 	dec a			; $7dad
-	ld hl,$7dbb		; $7dae
+	ld hl,@counter2Vals		; $7dae
 	rst_addAToHl			; $7db1
-	ld e,$87		; $7db2
+	ld e,Enemy.counter2		; $7db2
 	ld a,(hl)		; $7db4
 	ld (de),a		; $7db5
+
 	ld a,$04		; $7db6
 	jp enemySetAnimation		; $7db8
-	ld a,(bc)		; $7dbb
-	inc d			; $7dbc
-	inc e			; $7dbd
-	dec l			; $7dbe
-	dec l			; $7dbf
-	dec l			; $7dc0
-	call $7f5c		; $7dc1
+
+@counter2Vals:
+	.db 10 20 28 45 45 45
+
+
+; Will raise bomb over head in [counter2] frames?
+_kingMoblin_stateC:
+	call _kingMoblin_checkMoveToCentre		; $7dc1
 	ret nz			; $7dc4
+
 	call _ecom_decCounter2		; $7dc5
 	ret nz			; $7dc8
-	ld l,$84		; $7dc9
-	inc (hl)		; $7dcb
-	ld l,$a9		; $7dcc
+
+	ld l,Enemy.state		; $7dc9
+	inc (hl) ; [state] = $0d
+
+	; Set counter2 based on health
+	ld l,Enemy.health		; $7dcc
 	ld a,(hl)		; $7dce
 	dec a			; $7dcf
-	ld hl,$7ded		; $7dd0
+	ld hl,@counter2Vals		; $7dd0
 	rst_addAToHl			; $7dd3
-	ld e,$87		; $7dd4
+	ld e,Enemy.counter2		; $7dd4
 	ld a,(hl)		; $7dd6
 	ld (de),a		; $7dd7
-	ld a,$04		; $7dd8
+
+	; Update bomb's position if it hasn't exploded
+	ld a,Object.state		; $7dd8
 	call objectGetRelatedObject2Var		; $7dda
 	ld a,(hl)		; $7ddd
 	cp $05			; $7dde
-	jr z,_label_0f_354	; $7de0
+	jr z,+			; $7de0
 	ld bc,$f0f2		; $7de2
 	call objectCopyPositionWithOffset		; $7de5
-_label_0f_354:
++
 	ld a,$02		; $7de8
 	jp enemySetAnimation		; $7dea
-	dec b			; $7ded
-	ld a,(bc)		; $7dee
-	inc c			; $7def
-	rrca			; $7df0
-	rrca			; $7df1
-	rrca			; $7df2
-	call $7f5c		; $7df3
+
+; Indexed by [health]-1
+@counter2Vals:
+	.db 5, 10, 12, 15, 15, 15
+
+
+; Delay before throwing bomb
+_kingMoblin_stateD:
+	call _kingMoblin_checkMoveToCentre		; $7df3
 	ret nz			; $7df6
+
 	call _ecom_decCounter2		; $7df7
 	ret nz			; $7dfa
-	ld (hl),$1e		; $7dfb
-	ld l,$84		; $7dfd
-	inc (hl)		; $7dff
+
+	ld (hl),30		; $7dfb
+	ld l,Enemy.state		; $7dfd
+	inc (hl) ; [state] = $0e
+
+	; Decide angle of bomb's movement based on link's position
 	call objectGetAngleTowardEnemyTarget		; $7e00
 	ld b,a			; $7e03
 	sub $0c			; $7e04
 	cp $07			; $7e06
-	jr c,_label_0f_355	; $7e08
+	jr c,++			; $7e08
+
 	ld b,$0c		; $7e0a
 	rlca			; $7e0c
-	jr c,_label_0f_355	; $7e0d
+	jr c,++			; $7e0d
+
 	ld b,$13		; $7e0f
-_label_0f_355:
-	ld a,$04		; $7e11
+++
+	ld a,Object.state		; $7e11
 	call objectGetRelatedObject2Var		; $7e13
 	ld a,(hl)		; $7e16
 	cp $05			; $7e17
-	jr z,_label_0f_356	; $7e19
-	ld (hl),$03		; $7e1b
-	ld l,$c9		; $7e1d
+	jr z,++			; $7e19
+
+	; Throw bomb
+	ld (hl),$03 ; [bomb.state] = $03
+	ld l,Part.angle		; $7e1d
 	ld (hl),b		; $7e1f
-	ld l,$d4		; $7e20
-	ld (hl),$80		; $7e22
+	ld l,Part.speedZ		; $7e20
+	ld (hl),<(-$180)		; $7e22
 	inc l			; $7e24
-	ld (hl),$fe		; $7e25
-_label_0f_356:
+	ld (hl),>(-$180)		; $7e25
+++
 	ld a,$05		; $7e27
 	jp enemySetAnimation		; $7e29
+
+
+; Delay after throwing bomb
+_kingMoblin_stateE:
 	call _ecom_decCounter2		; $7e2c
 	ret nz			; $7e2f
 	ld l,e			; $7e30
-	inc (hl)		; $7e31
+	inc (hl) ; [state] = $0f
 	ld a,$02		; $7e32
 	jp enemySetAnimation		; $7e34
-	ld a,$01		; $7e37
+
+
+; Waiting for something to do
+_kingMoblin_stateF:
+	ld a,Object.id		; $7e37
 	call objectGetRelatedObject2Var		; $7e39
 	ld a,(hl)		; $7e3c
-	cp $3f			; $7e3d
-	jp nz,$7f65		; $7e3f
-	ld l,$c4		; $7e42
+	cp PARTID_KING_MOBLIN_BOMB			; $7e3d
+	jp nz,_kingMoblin_moveToCentre		; $7e3f
+
+	; Do several checks to see if king moblin can pick up the bomb.
+
+	; Is the state ok?
+	ld l,Part.state		; $7e42
 	ld a,(hl)		; $7e44
 	cp $04			; $7e45
-	jr nz,_label_0f_360	; $7e47
-	ld l,$cb		; $7e49
+	jr nz,_kingMoblin_animate2	; $7e47
+
+	; Is it above the ledge?
+	ld l,Part.yh		; $7e49
 	ldi a,(hl)		; $7e4b
 	cp $36			; $7e4c
-	jr nc,_label_0f_360	; $7e4e
+	jr nc,_kingMoblin_animate2	; $7e4e
+
+	; Is it reachable on the x axis?
 	inc l			; $7e50
-	ld a,(hl)		; $7e51
+	ld a,(hl) ; [bomb.xh]
 	sub $30			; $7e52
 	cp $41			; $7e54
-	jr nc,_label_0f_360	; $7e56
-	ld e,$8d		; $7e58
+	jr nc,_kingMoblin_animate2	; $7e56
+
+	; Bomb can be grabbed.
+
+	; Is the bomb close enough to grab without walking?
+	ld e,Enemy.xh		; $7e58
 	ld a,(de)		; $7e5a
 	ld b,a			; $7e5b
 	sub (hl)		; $7e5c
 	add $08			; $7e5d
 	cp $11			; $7e5f
-	jr c,_label_0f_357	; $7e61
+	jr c,_kingMoblin_grabBomb			; $7e61
+
+	; No; must move toward it
 	ld a,(hl)		; $7e63
 	cp b			; $7e64
 	ld h,d			; $7e65
-	ld l,$b2		; $7e66
+	ld l,Enemy.var32		; $7e66
 	ld (hl),a		; $7e68
-	ld b,$11		; $7e69
-	jp $7f7c		; $7e6b
-_label_0f_357:
-	ld a,$04		; $7e6e
+	ld b,$11 ; state $11
+	jp _kingMoblin_setAngleStateAndAnimation		; $7e6b
+
+_kingMoblin_grabBomb:
+	ld a,Object.state		; $7e6e
 	call objectGetRelatedObject2Var		; $7e70
 	ld a,(hl)		; $7e73
 	cp $05			; $7e74
-	jr z,_label_0f_358	; $7e76
+	jr z,++			; $7e76
 	ld (hl),$01		; $7e78
 	ld bc,$0800		; $7e7a
 	call objectCopyPositionWithOffset		; $7e7d
-_label_0f_358:
+++
 	ld h,d			; $7e80
-	ld l,$84		; $7e81
+	ld l,Enemy.state		; $7e81
 	ld (hl),$0c		; $7e83
-	jp $7daa		; $7e85
-	ld e,$8d		; $7e88
+	jp _kingMoblin_initBombPickupAnimation		; $7e85
+
+
+; Moving to centre of screen
+_kingMoblin_state10:
+	ld e,Enemy.xh		; $7e88
 	ld a,(de)		; $7e8a
 	sub $4e			; $7e8b
 	cp $05			; $7e8d
-	jr nc,_label_0f_359	; $7e8f
+	jr nc,++		; $7e8f
+
 	ld h,d			; $7e91
-	ld l,$84		; $7e92
+	ld l,Enemy.state		; $7e92
 	ld (hl),$0b		; $7e94
-	ld l,$87		; $7e96
-	ld (hl),$1e		; $7e98
+	ld l,Enemy.counter2		; $7e96
+	ld (hl),30		; $7e98
 	xor a			; $7e9a
 	jp enemySetAnimation		; $7e9b
-_label_0f_359:
+++
 	call objectApplySpeed		; $7e9e
-_label_0f_360:
+
+_kingMoblin_animate2:
 	jp enemyAnimate		; $7ea1
-	call $7f5c		; $7ea4
+
+
+; Moving toward bomb
+_kingMoblin_state11:
+	call _kingMoblin_checkMoveToCentre		; $7ea4
 	ret nz			; $7ea7
+
 	call objectApplySpeed		; $7ea8
 	ld h,d			; $7eab
-	ld l,$8d		; $7eac
-	ld e,$b2		; $7eae
+	ld l,Enemy.xh		; $7eac
+	ld e,Enemy.var32		; $7eae
 	ld a,(de)		; $7eb0
 	sub (hl)		; $7eb1
 	add $08			; $7eb2
 	cp $11			; $7eb4
-	jr c,_label_0f_357	; $7eb6
+	jr c,_kingMoblin_grabBomb	; $7eb6
 	jp enemyAnimate		; $7eb8
+
+
+; Just died
+_kingMoblin_state12:
 	call objectApplySpeed		; $7ebb
-	ld e,$8b		; $7ebe
+	ld e,Enemy.yh		; $7ebe
 	ld a,(de)		; $7ec0
 	cp $0c			; $7ec1
 	ret nc			; $7ec3
+
 	call _ecom_incState		; $7ec4
-	ld l,$89		; $7ec7
+
+	ld l,Enemy.angle		; $7ec7
 	ld (hl),$10		; $7ec9
-	ld l,$90		; $7ecb
-	ld (hl),$14		; $7ecd
-	ld l,$94		; $7ecf
-	ld a,$a0		; $7ed1
+	ld l,Enemy.speed		; $7ecb
+	ld (hl),SPEED_80		; $7ecd
+
+	ld l,Enemy.speedZ		; $7ecf
+	ld a,<(-$160)		; $7ed1
 	ldi (hl),a		; $7ed3
-	ld (hl),$fe		; $7ed4
-	ld a,$3c		; $7ed6
+	ld (hl),>(-$160)		; $7ed4
+
+	ld a,60		; $7ed6
 	jp setScreenShakeCounter		; $7ed8
+
+
+; Falling to ground
+_kingMoblin_state13:
 	ld c,$20		; $7edb
 	call objectUpdateSpeedZAndBounce		; $7edd
 	jp nc,objectApplySpeed		; $7ee0
+
 	call _ecom_incState		; $7ee3
-	ld l,$86		; $7ee6
-	ld (hl),$96		; $7ee8
-	ld l,$8b		; $7eea
+	ld l,Enemy.counter1		; $7ee6
+	ld (hl),150		; $7ee8
+	ld l,Enemy.yh		; $7eea
 	ld (hl),$20		; $7eec
 	ret			; $7eee
-	ld e,$b3		; $7eef
+
+
+; Wait for signal from ENEMYID_KING_MOBLIN_MINION to go to state $15?
+_kingMoblin_state14:
+	ld e,Enemy.var33		; $7eef
 	ld a,(de)		; $7ef1
 	or a			; $7ef2
-	jr nz,_label_0f_361	; $7ef3
+	jr nz,@gotoState15	; $7ef3
+
 	ld a,(wFrameCounter)		; $7ef5
 	rrca			; $7ef8
 	ret c			; $7ef9
+
 	call _ecom_decCounter1		; $7efa
 	ret nz			; $7efd
-	ld l,$84		; $7efe
+
+	ld l,Enemy.state		; $7efe
 	ld (hl),$0b		; $7f00
-	ld l,$87		; $7f02
-	ld (hl),$1e		; $7f04
+	ld l,Enemy.counter2		; $7f02
+	ld (hl),30		; $7f04
 	xor a			; $7f06
 	jp enemySetAnimation		; $7f07
-_label_0f_361:
+
+@gotoState15:
 	call _ecom_incState		; $7f0a
-	ld l,$87		; $7f0d
-	ld (hl),$62		; $7f0f
+	ld l,Enemy.counter2		; $7f0d
+	ld (hl),98		; $7f0f
 	ret			; $7f11
+
+
+; All bombs at top of screen explode, then initiates warp outside
+_kingMoblin_state15:
 	call _ecom_decCounter2		; $7f12
-	jr z,_label_0f_362	; $7f15
+	jr z,@warpOutside	; $7f15
+
+	; Explosion every 32 frames
 	ld a,(hl)		; $7f17
 	dec a			; $7f18
 	and $1f			; $7f19
 	ret nz			; $7f1b
+
 	ld a,(hl)		; $7f1c
 	and $60			; $7f1d
 	rrca			; $7f1f
 	swap a			; $7f20
-	ld hl,$7f53		; $7f22
+	ld hl,@explosionPositions		; $7f22
 	rst_addAToHl			; $7f25
+
 	ld c,(hl)		; $7f26
 	ld b,$08		; $7f27
 	call getFreeInteractionSlot		; $7f29
 	ret nz			; $7f2c
-	ld (hl),$56		; $7f2d
-	ld l,$4b		; $7f2f
+	ld (hl),INTERACID_EXPLOSION		; $7f2d
+	ld l,Interaction.yh		; $7f2f
 	ld (hl),b		; $7f31
-	ld l,$4d		; $7f32
+	ld l,Interaction.xh		; $7f32
 	ld (hl),c		; $7f34
+
 	call getTileAtPosition		; $7f35
 	ld c,l			; $7f38
 	ld a,$a1		; $7f39
 	jp setTile		; $7f3b
-_label_0f_362:
-	ld hl,$c709		; $7f3e
+
+@warpOutside:
+	ld hl,wPresentRoomFlags+$09		; $7f3e
 	set 0,(hl)		; $7f41
+
 	ld a,GLOBALFLAG_MOBLINS_KEEP_DESTROYED		; $7f43
 	call setGlobalFlag		; $7f45
 	ld a,GLOBALFLAG_16		; $7f48
 	call setGlobalFlag		; $7f4a
-	ld hl,$7f57		; $7f4d
+
+	ld hl,@warpDest		; $7f4d
 	jp setWarpDestVariables		; $7f50
-	ld l,b			; $7f53
-	jr c,_label_0f_366	; $7f54
-	ld c,b			; $7f56
-	add b			; $7f57
-	add hl,bc		; $7f58
-	nop			; $7f59
-	ld b,l			; $7f5a
-	inc bc			; $7f5b
-	ld a,$01		; $7f5c
+
+@explosionPositions:
+	.db $68 $38 $58 $48
+
+@warpDest:
+	.db $80 $09 $00 $45 $03
+
+
+;;
+; Updates state and angle values to move king moblin to centre of screen, if there is no
+; bomb on screen. Sets state to $10 while moving, $0b when reached centre.
+;
+; @param[out]	zflag	nz if state changed
+; @addr{7f5c}
+_kingMoblin_checkMoveToCentre:
+	ld a,Object.id		; $7f5c
 	call objectGetRelatedObject2Var		; $7f5e
 	ld a,(hl)		; $7f61
-	cp $3f			; $7f62
+	cp PARTID_KING_MOBLIN_BOMB			; $7f62
 	ret z			; $7f64
+
+;;
+; @addr{7f65}
+_kingMoblin_moveToCentre:
 	ld h,d			; $7f65
-	ld l,$8d		; $7f66
+	ld l,Enemy.xh		; $7f66
 	ld a,(hl)		; $7f68
 	sub $4e			; $7f69
 	cp $05			; $7f6b
-	jr nc,_label_0f_363	; $7f6d
-	ld l,$87		; $7f6f
-	ld (hl),$1e		; $7f71
+	jr nc,@moveTowardCentre	; $7f6d
+
+	; Reached centre
+	ld l,Enemy.counter2		; $7f6f
+	ld (hl),30		; $7f71
 	ld b,$0b		; $7f73
 	xor a			; $7f75
-	jr _label_0f_365		; $7f76
-_label_0f_363:
+	jr _kingMoblin_setStateAndAnimation		; $7f76
+
+@moveTowardCentre:
 	cp $b0			; $7f78
 	ld b,$10		; $7f7a
-	ld a,$08		; $7f7c
-	jr nc,_label_0f_364	; $7f7e
-	ld a,$18		; $7f80
-_label_0f_364:
-	ld e,$89		; $7f82
+
+_kingMoblin_setAngleStateAndAnimation:
+	ld a,ANGLE_RIGHT		; $7f7c
+	jr nc,+			; $7f7e
+	ld a,ANGLE_LEFT		; $7f80
++
+	ld e,Enemy.angle		; $7f82
 	ld (de),a		; $7f84
 	swap a			; $7f85
 	rlca			; $7f87
-_label_0f_365:
-	ld l,$84		; $7f88
+
+_kingMoblin_setStateAndAnimation:
+	ld l,Enemy.state		; $7f88
 	ld (hl),b		; $7f8a
 	call enemySetAnimation		; $7f8b
 	or d			; $7f8e
 	ret			; $7f8f
-	nop			; $7f90
-	nop			; $7f91
-	nop			; $7f92
-	nop			; $7f93
-	nop			; $7f94
-	nop			; $7f95
-	nop			; $7f96
-	nop			; $7f97
-	nop			; $7f98
-	nop			; $7f99
-	nop			; $7f9a
-	nop			; $7f9b
-	nop			; $7f9c
-	nop			; $7f9d
-	nop			; $7f9e
-	nop			; $7f9f
-	nop			; $7fa0
-	nop			; $7fa1
-	nop			; $7fa2
-	nop			; $7fa3
-	nop			; $7fa4
-	nop			; $7fa5
-	nop			; $7fa6
-	nop			; $7fa7
-	nop			; $7fa8
-	nop			; $7fa9
-	nop			; $7faa
-	nop			; $7fab
-	nop			; $7fac
-	nop			; $7fad
-_label_0f_366:
 
 .ends
 
@@ -160176,183 +160324,272 @@ _label_10_264:
 
 
 ; ==============================================================================
-; ENEMYID_56
+; ENEMYID_KING_MOBLIN_MINION
+;
+; Variables:
+;   relatedObj1: Instance of ENEMYID_KING_MOBLIN
+;   relatedObj2: Instance of PARTID_BOMB (smaller bomb thrown by this object)
 ; ==============================================================================
 enemyCode56_body:
 	ld e,Enemy.state		; $6c8e
 	ld a,(de)		; $6c90
 	rst_jumpTable			; $6c91
-	.dw $6ca8
+	.dw _kingMoblinMinion_state0
 	.dw enemyAnimate
-	.dw $6cd7
-	.dw $6ce4
-	.dw $6cf7
-	.dw $6d12
-	.dw $6d33
-	.dw $6d3f
-	.dw $6d70
-	.dw $6d8e
-	.dw $6da2
+	.dw _kingMoblinMinion_state2
+	.dw _kingMoblinMinion_state3
+	.dw _kingMoblinMinion_state4
+	.dw _kingMoblinMinion_state5
+	.dw _kingMoblinMinion_state6
+	.dw _kingMoblinMinion_state7
+	.dw _kingMoblinMinion_state8
+	.dw _kingMoblinMinion_state9
+	.dw _kingMoblinMinion_stateA
 
+
+_kingMoblinMinion_state0:
 	ld h,d			; $6ca8
 	ld l,e			; $6ca9
-	inc (hl)		; $6caa
-	ld l,$90		; $6cab
-	ld (hl),$50		; $6cad
-	ld e,$82		; $6caf
+	inc (hl) ; [state] = 1
+
+	ld l,Enemy.speed		; $6cab
+	ld (hl),SPEED_200		; $6cad
+
+	ld e,Enemy.subid		; $6caf
 	ld a,(de)		; $6cb1
 	add a			; $6cb2
-	ld hl,$6ccf		; $6cb3
+	ld hl,@data		; $6cb3
 	rst_addDoubleIndex			; $6cb6
-	ld e,$86		; $6cb7
+
+	ld e,Enemy.counter1		; $6cb7
 	ldi a,(hl)		; $6cb9
 	ld (de),a		; $6cba
-	ld e,$88		; $6cbb
+	ld e,Enemy.direction		; $6cbb
 	ldi a,(hl)		; $6cbd
-_label_10_265:
 	ld (de),a		; $6cbe
-	ld e,$8b		; $6cbf
+	ld e,Enemy.yh		; $6cbf
 	ldi a,(hl)		; $6cc1
 	ld (de),a		; $6cc2
-	ld e,$8d		; $6cc3
+	ld e,Enemy.xh		; $6cc3
 	ld a,(hl)		; $6cc5
 	ld (de),a		; $6cc6
+
 	ld a,$02		; $6cc7
 	call enemySetAnimation		; $6cc9
 	jp objectSetVisiblec2		; $6ccc
-	ld e,$03		; $6ccf
-	ld ($9618),sp		; $6cd1
-	ld bc,$8808		; $6cd4
+
+; Data format: counter1, direction, yh, xh
+@data:
+	.db  30, $03, $08, $18
+	.db 150, $01, $08, $88
+
+
+
+; Fight just started
+_kingMoblinMinion_state2:
 	ld h,d			; $6cd7
 	ld l,e			; $6cd8
-	inc (hl)		; $6cd9
-	ld l,$87		; $6cda
+	inc (hl) ; [state] = 3
+
+	ld l,Enemy.counter2		; $6cda
 	ld (hl),$0c		; $6cdc
-	ld e,$88		; $6cde
+	ld e,Enemy.direction		; $6cde
 	ld a,(de)		; $6ce0
 	jp enemySetAnimation		; $6ce1
+
+
+; Delay before spawning bomb
+_kingMoblinMinion_state3:
 	call _ecom_decCounter2		; $6ce4
-	jr nz,_label_10_267	; $6ce7
-	ld b,$47		; $6ce9
+	jr nz,_kingMoblinMinion_animate	; $6ce7
+
+	ld b,PARTID_BOMB		; $6ce9
 	call _ecom_spawnProjectile		; $6ceb
 	ret nz			; $6cee
+
 	call _ecom_incState		; $6cef
+
 	ld a,$02		; $6cf2
 	jp enemySetAnimation		; $6cf4
+
+
+; Holding bomb for a bit
+_kingMoblinMinion_state4:
 	call _ecom_decCounter1		; $6cf7
 	ld l,e			; $6cfa
-	jr z,_label_10_266	; $6cfb
+	jr z,@jump	; $6cfb
+
 	ld a,(wScreenShakeCounterY)		; $6cfd
 	or a			; $6d00
-	jr z,_label_10_267	; $6d01
-	ld (hl),$07		; $6d03
-	jr _label_10_267		; $6d05
-_label_10_266:
-	inc (hl)		; $6d07
-	ld l,$94		; $6d08
-	ld a,$80		; $6d0a
+	jr z,_kingMoblinMinion_animate	; $6d01
+
+	ld (hl),$07 ; [counter1]
+	jr _kingMoblinMinion_animate		; $6d05
+
+@jump:
+	inc (hl) ; [state] = 5
+	ld l,Enemy.speedZ		; $6d08
+	ld a,<(-$180)		; $6d0a
 	ldi (hl),a		; $6d0c
-	ld (hl),$fe		; $6d0d
-_label_10_267:
+	ld (hl),>(-$180)		; $6d0d
+
+_kingMoblinMinion_animate:
 	jp enemyAnimate		; $6d0f
+
+
+; Jumping in air
+_kingMoblinMinion_state5:
 	ld c,$20		; $6d12
 	call objectUpdateSpeedZ_paramC		; $6d14
-	jr z,_label_10_268	; $6d17
+	jr z,@landed	; $6d17
+
+	; Check for the peak of the jump
 	ldd a,(hl)		; $6d19
 	or (hl)			; $6d1a
 	ret nz			; $6d1b
+
 	call objectGetAngleTowardEnemyTarget		; $6d1c
 	ld b,a			; $6d1f
-	ld a,$04		; $6d20
+
+	; [bomb.state]++
+	ld a,Object.state		; $6d20
 	call objectGetRelatedObject2Var		; $6d22
 	inc (hl)		; $6d25
-	ld l,$c9		; $6d26
+
+	; Set bomb to move toward Link
+	ld l,Part.angle		; $6d26
 	ld (hl),b		; $6d28
 	ret			; $6d29
-_label_10_268:
-	ld l,$84		; $6d2a
-	inc (hl)		; $6d2c
-	ld l,$86		; $6d2d
+
+@landed:
+	ld l,Enemy.state		; $6d2a
+	inc (hl) ; [state] = 6
+
+	ld l,Enemy.counter1		; $6d2d
 	ld (hl),$10		; $6d2f
-	jr _label_10_267		; $6d31
+	jr _kingMoblinMinion_animate		; $6d31
+
+
+; Delay before pulling out next bomb
+_kingMoblinMinion_state6:
 	call _ecom_decCounter1		; $6d33
-	jr nz,_label_10_267	; $6d36
-	ld (hl),$c8		; $6d38
+	jr nz,_kingMoblinMinion_animate	; $6d36
+
+	ld (hl),200 ; [counter1]
 	ld l,e			; $6d3a
-	ld (hl),$02		; $6d3b
-	jr _label_10_267		; $6d3d
+	ld (hl),$02 ; [state]
+
+	jr _kingMoblinMinion_animate		; $6d3d
+
+
+; ENEMYID_KING_MOBLIN sets this object's state to 7 when defeated.
+_kingMoblinMinion_state7:
 	ld h,d			; $6d3f
 	ld l,e			; $6d40
-	inc (hl)		; $6d41
-	ld l,$86		; $6d42
-	ld (hl),$18		; $6d44
-	ld l,$82		; $6d46
+	inc (hl) ; [state] = 8
+
+	ld l,Enemy.counter1		; $6d42
+	ld (hl),24		; $6d44
+
+	; Calculate animation, store it in 'c'
+	ld l,Enemy.subid		; $6d46
 	ld a,(hl)		; $6d48
 	add a			; $6d49
 	inc a			; $6d4a
 	ld c,a			; $6d4b
+
+	; Get angle to throw bomb at
 	ld a,(hl)		; $6d4c
-	ld hl,$6d6e		; $6d4d
+	ld hl,@subidBombThrowAngles		; $6d4d
 	rst_addAToHl			; $6d50
 	ld b,(hl)		; $6d51
-	ld a,$04		; $6d52
+
+	ld a,Object.state		; $6d52
 	call objectGetRelatedObject2Var		; $6d54
 	inc (hl)		; $6d57
-	ld l,$c9		; $6d58
+
+	ld l,Part.angle		; $6d58
 	ld (hl),b		; $6d5a
-	ld l,$d0		; $6d5b
-	ld (hl),$37		; $6d5d
-	ld l,$d4		; $6d5f
-	ld a,$00		; $6d61
+
+	ld l,Part.speed		; $6d5b
+	ld (hl),SPEED_160		; $6d5d
+
+	ld l,Part.speedZ		; $6d5f
+	ld a,<(-$100)		; $6d61
 	ldi (hl),a		; $6d63
-	ld (hl),$ff		; $6d64
-	ld l,$da		; $6d66
+	ld (hl),>(-$100)		; $6d64
+
+	ld l,Part.visible		; $6d66
 	ld (hl),$81		; $6d68
+
 	ld a,c			; $6d6a
 	jp enemySetAnimation		; $6d6b
-	ld a,(bc)		; $6d6e
-	ld d,$cd		; $6d6f
-	sbc d			; $6d71
-	ld b,e			; $6d72
+
+@subidBombThrowAngles:
+	.db $0a $16
+
+
+; Delay before hopping
+_kingMoblinMinion_state8:
+	call _ecom_decCounter1		; $6d70
 	ret nz			; $6d73
+
 	ld l,e			; $6d74
-	inc (hl)		; $6d75
-	ld l,$94		; $6d76
-	ld a,$c0		; $6d78
+	inc (hl) ; [state] = 9
+
+	ld l,Enemy.speedZ		; $6d76
+	ld a,<(-$140)		; $6d78
 	ldi (hl),a		; $6d7a
-	ld (hl),$fe		; $6d7b
-	ld l,$82		; $6d7d
+	ld (hl),>(-$140)		; $6d7b
+
+	ld l,Enemy.subid		; $6d7d
 	bit 0,(hl)		; $6d7f
 	ld c,$f4		; $6d81
-	jr z,_label_10_269	; $6d83
+	jr z,+			; $6d83
 	ld c,$0c		; $6d85
-_label_10_269:
++
 	ld b,$f8		; $6d87
-	ld a,$1e		; $6d89
+	ld a,30		; $6d89
 	call objectCreateExclamationMark		; $6d8b
+
+
+; Waiting to land on ground
+_kingMoblinMinion_state9:
 	ld c,$20		; $6d8e
 	call objectUpdateSpeedZ_paramC		; $6d90
 	ret nz			; $6d93
-	ld l,$84		; $6d94
-	inc (hl)		; $6d96
-	ld l,$86		; $6d97
-	ld (hl),$0c		; $6d99
+
+	ld l,Enemy.state		; $6d94
+	inc (hl) ; [state] = $0a
+
+	ld l,Enemy.counter1		; $6d97
+	ld (hl),12		; $6d99
 	inc l			; $6d9b
-	ld (hl),$08		; $6d9c
+	ld (hl),$08 ; [counter2]
+
 	xor a			; $6d9e
 	jp enemySetAnimation		; $6d9f
+
+
+; Running away
+_kingMoblinMinion_stateA:
 	call _ecom_decCounter2		; $6da2
-	jr nz,_label_10_270	; $6da5
+	jr nz,@animate	; $6da5
+
 	call _ecom_decCounter1		; $6da7
-	jr z,_label_10_271	; $6daa
+	jr z,@delete	; $6daa
+
 	call objectApplySpeed		; $6dac
-_label_10_270:
+@animate:
 	jp enemyAnimate		; $6daf
-_label_10_271:
-	ld a,$33		; $6db2
+
+@delete:
+	; Write to var33 on ENEMYID_KING_MOBLIN to request the screen transition to begin
+	ld a,Object.var33		; $6db2
 	call objectGetRelatedObject1Var		; $6db4
 	ld (hl),$01		; $6db7
 	jp enemyDelete		; $6db9
+
 	ld e,$c2		; $6dbc
 	ld a,(de)		; $6dbe
 	ld hl,@table		; $6dbf
@@ -170970,86 +171207,114 @@ _label_11_347:
 	ld (hl),$01		; $7150
 	ret			; $7152
 
-;;
-; @addr{7153}
+
+; ==============================================================================
+; PARTID_KING_MOBLIN_BOMB
+;
+; Variables:
+;   relatedObj1: Instance of ENEMYID_KING_MOBLIN
+;   var30: If nonzero, damage has been applied to Link
+;   var31: Number of red flashes before it explodes
+; ==============================================================================
 partCode3f:
-	ld e,$c4		; $7153
+	ld e,Part.state		; $7153
 	ld a,(de)		; $7155
 	rst_jumpTable			; $7156
-.dw $7169
-.dw $719f
-.dw $71df
-.dw $7224
-.dw $7240
-.dw $7247
-.dw $725f
-.dw $7281
-.dw $7287
+	.dw _kingMoblinBomb_state0
+	.dw _kingMoblinBomb_state1
+	.dw _kingMoblinBomb_state2
+	.dw _kingMoblinBomb_state3
+	.dw _kingMoblinBomb_state4
+	.dw _kingMoblinBomb_state5
+	.dw _kingMoblinBomb_state6
+	.dw _kingMoblinBomb_state7
+	.dw _kingMoblinBomb_state8
+
+
+_kingMoblinBomb_state0:
 	ld h,d			; $7169
 	ld l,e			; $716a
-	inc (hl)		; $716b
-	ld l,$d0		; $716c
-	ld (hl),$55		; $716e
-	ld l,$cb		; $7170
+	inc (hl) ; [state] = 1
+
+	ld l,Part.speed		; $716c
+	ld (hl),SPEED_220		; $716e
+
+	ld l,Part.yh		; $7170
 	ld a,(hl)		; $7172
 	add $08			; $7173
 	ld (hl),a		; $7175
+
 	call getRandomNumber_noPreserveVars		; $7176
 	and $03			; $7179
-	ld hl,$7195		; $717b
+	ld hl,@counter1Values		; $717b
 	rst_addAToHl			; $717e
-	ld e,$c6		; $717f
+	ld e,Part.counter1		; $717f
 	ld a,(hl)		; $7181
 	ld (de),a		; $7182
-	ld a,$29		; $7183
+
+	ld a,Object.health		; $7183
 	call objectGetRelatedObject1Var		; $7185
 	ld a,(hl)		; $7188
 	dec a			; $7189
-	ld hl,$7199		; $718a
+	ld hl,@numRedFlashes		; $718a
 	rst_addAToHl			; $718d
-	ld e,$f1		; $718e
+	ld e,Part.var31		; $718e
 	ld a,(hl)		; $7190
 	ld (de),a		; $7191
+
 	jp objectSetVisiblec2		; $7192
-	ld a,b			; $7195
-	add a			; $7196
-	and b			; $7197
-	or h			; $7198
-	ld b,$07		; $7199
-	ld ($0a09),sp		; $719b
-	inc c			; $719e
-	ld e,$c6		; $719f
+
+@counter1Values: ; One of these is chosen randomly.
+	.db 120, 135, 160, 180
+
+@numRedFlashes: ; Indexed by [kingMoblin.health] - 1.
+	.db $06 $07 $08 $09 $0a $0c
+
+
+; Bomb isn't doing anything except waiting to explode.
+; This state's code is called by other states (2-4).
+_kingMoblinBomb_state1:
+	ld e,Part.counter1		; $719f
 	ld a,(de)		; $71a1
 	or a			; $71a2
-	jr z,_label_11_348	; $71a3
+	jr z,++			; $71a3
 	ld a,(wFrameCounter)		; $71a5
 	rrca			; $71a8
 	ret c			; $71a9
-_label_11_348:
+++
 	call _partDecCounter1IfNonzero		; $71aa
 	ret nz			; $71ad
-	ld l,$e1		; $71ae
+
+	ld l,Part.animParameter		; $71ae
 	bit 0,(hl)		; $71b0
-	jr z,_label_11_349	; $71b2
+	jr z,@animate	; $71b2
+
 	ld (hl),$00		; $71b4
-	ld l,$c7		; $71b6
+	ld l,Part.counter2		; $71b6
 	inc (hl)		; $71b8
+
 	ld a,(hl)		; $71b9
-	ld l,$f1		; $71ba
+	ld l,Part.var31		; $71ba
 	cp (hl)			; $71bc
-	jr nc,_label_11_350	; $71bd
-_label_11_349:
+	jr nc,_kingMoblinBomb_explode	; $71bd
+
+@animate:
 	jp partAnimate		; $71bf
+
+	; Unused code snippet?
 	or d			; $71c2
 	ret			; $71c3
-_label_11_350:
-	ld l,$c4		; $71c4
+
+_kingMoblinBomb_explode:
+	ld l,Part.state		; $71c4
 	ld (hl),$05		; $71c6
-	ld l,$db		; $71c8
+
+	ld l,Part.oamFlagsBackup		; $71c8
 	ld a,$0a		; $71ca
 	ldi (hl),a		; $71cc
 	ldi (hl),a		; $71cd
-	ld (hl),$0c		; $71ce
+	ld (hl),$0c ; [oamTileIndexBase]
+
 	ld a,$01		; $71d0
 	call partSetAnimation		; $71d2
 	call objectSetVisible82		; $71d5
@@ -171057,147 +171322,218 @@ _label_11_350:
 	call playSound		; $71da
 	xor a			; $71dd
 	ret			; $71de
+
+
+; Being held by Link
+_kingMoblinBomb_state2:
 	inc e			; $71df
 	ld a,(de)		; $71e0
 	rst_jumpTable			; $71e1
-.dw $71ea
-.dw $71f4
-.dw $71fb
-.dw $721a
+	.dw @justGrabbed
+	.dw @beingHeld
+	.dw @released
+	.dw @atRest
+
+@justGrabbed:
 	ld a,$01		; $71ea
-	ld (de),a		; $71ec
+	ld (de),a ; [state2] = 1
 	xor a			; $71ed
 	ld (wLinkGrabState2),a		; $71ee
 	call objectSetVisiblec1		; $71f1
-_label_11_351:
-	call $719f		; $71f4
+
+@beingHeld:
+	call _kingMoblinBomb_state1		; $71f4
 	ret nz			; $71f7
 	jp dropLinkHeldItem		; $71f8
-	ld e,$cb		; $71fb
+
+@released:
+	; Drastically reduce speed when Y < $30 (on moblin's platform), Z = 0,
+	; and subid = 0.
+	ld e,Part.yh		; $71fb
 	ld a,(de)		; $71fd
 	cp $30			; $71fe
-	jr nc,_label_11_351	; $7200
+	jr nc,@beingHeld	; $7200
+
 	ld h,d			; $7202
-	ld l,$cf		; $7203
-	ld e,$c2		; $7205
+	ld l,Part.zh		; $7203
+	ld e,Part.subid		; $7205
 	ld a,(de)		; $7207
 	or (hl)			; $7208
-	jr nz,_label_11_351	; $7209
-	ld hl,$dc15		; $720b
+	jr nz,@beingHeld	; $7209
+
+	; Reduce speed
+	ld hl,w1ReservedItemC.speedZ+1		; $720b
 	sra (hl)		; $720e
 	dec l			; $7210
 	rr (hl)			; $7211
-	ld l,$10		; $7213
-	ld (hl),$0a		; $7215
-	jp $719f		; $7217
-	ld e,$c4		; $721a
+	ld l,Item.speed		; $7213
+	ld (hl),SPEED_40		; $7215
+
+	jp _kingMoblinBomb_state1		; $7217
+
+@atRest:
+	ld e,Part.state		; $721a
 	ld a,$04		; $721c
 	ld (de),a		; $721e
+
 	call objectSetVisiblec2		; $721f
-	jr _label_11_353		; $7222
-	call $719f		; $7224
+	jr _kingMoblinBomb_state4		; $7222
+
+
+; Being thrown. (King moblin sets the state to this.)
+_kingMoblinBomb_state3:
+	call _kingMoblinBomb_state1		; $7224
 	ret z			; $7227
+
 	ld c,$20		; $7228
 	call objectUpdateSpeedZAndBounce		; $722a
-	jr c,_label_11_352	; $722d
+	jr c,@doneBouncing	; $722d
+
 	ld a,SND_BOMB_LAND		; $722f
 	call z,playSound		; $7231
 	jp objectApplySpeed		; $7234
-_label_11_352:
+
+@doneBouncing:
 	ld a,SND_BOMB_LAND		; $7237
 	call playSound		; $7239
 	ld h,d			; $723c
-	ld l,$c4		; $723d
-	inc (hl)		; $723f
-_label_11_353:
-	call $719f		; $7240
+	ld l,Part.state		; $723d
+	inc (hl) ; [state] = 4
+
+
+; Waiting to be picked up (by link or king moblin)
+_kingMoblinBomb_state4:
+	call _kingMoblinBomb_state1		; $7240
 	ret z			; $7243
 	jp objectAddToGrabbableObjectBuffer		; $7244
+
+
+; Exploding
+_kingMoblinBomb_state5:
 	ld h,d			; $7247
-	ld l,$e1		; $7248
+	ld l,Part.animParameter		; $7248
 	ld a,(hl)		; $724a
 	inc a			; $724b
 	jp z,partDelete		; $724c
+
 	dec a			; $724f
-	jr z,_label_11_354	; $7250
-	ld l,$e6		; $7252
+	jr z,@animate	; $7250
+
+	ld l,Part.collisionRadiusY		; $7252
 	ldi (hl),a		; $7254
 	ld (hl),a		; $7255
-	call $7293		; $7256
-	call $72bb		; $7259
-_label_11_354:
+	call _kingMoblinBomb_checkCollisionWithLink		; $7256
+	call _kingMoblinBomb_checkCollisionWithKingMoblin		; $7259
+@animate:
 	jp partAnimate		; $725c
-	ld bc,$fdc0		; $725f
+
+
+; States 6-8 might be unused? Bomb is chucked way upward, then explodes on the ground.
+_kingMoblinBomb_state6:
+	ld bc,-$240		; $725f
 	call objectSetSpeedZ		; $7262
+
 	ld l,e			; $7265
-	inc (hl)		; $7266
-	ld l,$d0		; $7267
-	ld (hl),$1e		; $7269
-	ld l,$c6		; $726b
+	inc (hl) ; [state] = 7
+
+	ld l,Part.speed		; $7267
+	ld (hl),SPEED_c0		; $7269
+
+	ld l,Part.counter1		; $726b
 	ld (hl),$07		; $726d
-	ld a,$0d		; $726f
+
+	; Decide angle to throw at based on king moblin's position
+	ld a,Object.xh		; $726f
 	call objectGetRelatedObject1Var		; $7271
 	ld a,(hl)		; $7274
 	cp $50			; $7275
 	ld a,$07		; $7277
-	jr c,_label_11_355	; $7279
+	jr c,+			; $7279
 	ld a,$19		; $727b
-_label_11_355:
-	ld e,$c9		; $727d
++
+	ld e,Part.angle		; $727d
 	ld (de),a		; $727f
 	ret			; $7280
+
+
+_kingMoblinBomb_state7:
 	call _partDecCounter1IfNonzero		; $7281
 	ret nz			; $7284
+
 	ld l,e			; $7285
-	inc (hl)		; $7286
+	inc (hl) ; [state] = 8
+
+
+_kingMoblinBomb_state8:
 	ld c,$20		; $7287
 	call objectUpdateSpeedZAndBounce		; $7289
 	jp nc,objectApplySpeed		; $728c
+
 	ld h,d			; $728f
-	jp $71c4		; $7290
-	ld e,$f0		; $7293
+	jp _kingMoblinBomb_explode		; $7290
+
+;;
+; @addr{7293}
+_kingMoblinBomb_checkCollisionWithLink:
+	ld e,Part.var30		; $7293
 	ld a,(de)		; $7295
 	or a			; $7296
 	ret nz			; $7297
+
 	call checkLinkVulnerable		; $7298
 	ret nc			; $729b
+
 	call objectCheckCollidedWithLink_ignoreZ		; $729c
 	ret nc			; $729f
+
 	call objectGetAngleTowardEnemyTarget		; $72a0
-	ld hl,$d02d		; $72a3
+
+	ld hl,w1Link.knockbackCounter		; $72a3
 	ld (hl),$10		; $72a6
 	dec l			; $72a8
-	ldd (hl),a		; $72a9
-	ld (hl),$14		; $72aa
+	ldd (hl),a ; [w1Link.knockbackAngle]
+	ld (hl),20 ; [w1Link.invincibilityCounter]
 	dec l			; $72ac
-	ld (hl),$01		; $72ad
-	ld e,$e8		; $72af
-	ld l,$25		; $72b1
+	ld (hl),$01 ; [w1Link.var2a] (TODO: what does this mean?)
+
+	ld e,Part.damage		; $72af
+	ld l,<w1Link.damageToApply		; $72b1
 	ld a,(de)		; $72b3
 	ld (hl),a		; $72b4
-	ld e,$f0		; $72b5
+
+	ld e,Part.var30		; $72b5
 	ld a,$01		; $72b7
 	ld (de),a		; $72b9
 	ret			; $72ba
-	ld e,$d7		; $72bb
+
+;;
+; @addr{72bb}
+_kingMoblinBomb_checkCollisionWithKingMoblin:
+	ld e,Part.relatedObj1+1		; $72bb
 	ld a,(de)		; $72bd
 	or a			; $72be
 	ret z			; $72bf
-	ld a,$24		; $72c0
+
+	; Check king moblin's collisions are enabled
+	ld a,Object.collisionType		; $72c0
 	call objectGetRelatedObject1Var		; $72c2
 	bit 7,(hl)		; $72c5
 	ret z			; $72c7
-	ld l,$ab		; $72c8
+
+	ld l,Enemy.invincibilityCounter		; $72c8
 	ld a,(hl)		; $72ca
 	or a			; $72cb
 	ret nz			; $72cc
+
 	call checkObjectsCollided		; $72cd
 	ret nc			; $72d0
-	ld l,$aa		; $72d1
-	ld (hl),$98		; $72d3
-	ld l,$ab		; $72d5
-	ld (hl),$1e		; $72d7
-	ld l,$a9		; $72d9
+
+	ld l,Enemy.var2a		; $72d1
+	ld (hl),$80|COLLISIONTYPE_BOMB		; $72d3
+	ld l,Enemy.invincibilityCounter		; $72d5
+	ld (hl),30		; $72d7
+
+	ld l,Enemy.health		; $72d9
 	dec (hl)		; $72db
 	ret			; $72dc
 
@@ -171749,54 +172085,79 @@ _label_11_377:
 	ld (de),a		; $75e3
 	ret			; $75e4
 
-;;
-; @addr{75e5}
+
+; ==============================================================================
+; PARTID_BOMB
+; ==============================================================================
 partCode47:
-	ld e,$c4		; $75e5
+	ld e,Part.state		; $75e5
 	ld a,(de)		; $75e7
 	rst_jumpTable			; $75e8
-.dw $75f1
-.dw $7602
-.dw $760a
-.dw $7631
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+
+@state0:
 	ld h,d			; $75f1
 	ld l,e			; $75f2
-	inc (hl)		; $75f3
-	ld l,$d0		; $75f4
-	ld (hl),$50		; $75f6
-	ld l,$d4		; $75f8
-	ld a,$80		; $75fa
+	inc (hl) ; [state] = 1
+
+	ld l,Part.speed		; $75f4
+	ld (hl),SPEED_200		; $75f6
+
+	ld l,Part.speedZ		; $75f8
+	ld a,<(-$280)		; $75fa
 	ldi (hl),a		; $75fc
-	ld (hl),$fd		; $75fd
+	ld (hl),>(-$280)		; $75fd
+
 	call objectSetVisiblec1		; $75ff
+
+; Waiting to be thrown
+@state1:
 	ld a,$00		; $7602
 	call objectGetRelatedObject1Var		; $7604
 	jp objectTakePosition		; $7607
+
+; Being thrown
+@state2:
 	call objectApplySpeed		; $760a
 	ld c,$20		; $760d
 	call objectUpdateSpeedZ_paramC		; $760f
 	jp nz,partAnimate		; $7612
-	ld l,$c4		; $7615
-	inc (hl)		; $7617
-	ld l,$e4		; $7618
+
+	; Landed on ground; time to explode
+
+	ld l,Part.state		; $7615
+	inc (hl) ; [state] = 4
+
+	ld l,Part.collisionType		; $7618
 	set 7,(hl)		; $761a
-	ld l,$db		; $761c
+
+	ld l,Part.oamFlagsBackup		; $761c
 	ld a,$0a		; $761e
 	ldi (hl),a		; $7620
 	ldi (hl),a		; $7621
-	ld (hl),$0c		; $7622
+	ld (hl),$0c ; [oamTileIndexBase]
+
 	ld a,$01		; $7624
 	call partSetAnimation		; $7626
+
 	ld a,SND_EXPLOSION		; $7629
 	call playSound		; $762b
+
 	jp objectSetVisible83		; $762e
+
+; Exploding
+@state3:
 	call partAnimate		; $7631
-	ld e,$e1		; $7634
+	ld e,Part.animParameter		; $7634
 	ld a,(de)		; $7636
 	inc a			; $7637
 	jp z,partDelete		; $7638
+
 	dec a			; $763b
-	ld e,$e6		; $763c
+	ld e,Part.collisionRadiusY		; $763c
 	ld (de),a		; $763e
 	inc e			; $763f
 	ld (de),a		; $7640

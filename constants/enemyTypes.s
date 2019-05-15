@@ -528,7 +528,9 @@
 
 ;;
 ; "Decorative" moblins that don't do anything? Subids 0-3 have various positions?
-.define ENEMYID_56				$56
+; @subid_00{Left side}
+; @subid_01{Right side}
+.define ENEMYID_KING_MOBLIN_MINION		$56
 
 ;;
 .define ENEMYID_STUB_57				$57
@@ -699,6 +701,7 @@
 ; @palette{PALH_81}
 .define ENEMYID_HEAD_THWOMP			$79
 
+;;
 .define ENEMYID_SHADOW_HAG			$7a
 
 ;;
@@ -727,7 +730,10 @@
 ; @subid_02{Invisible collision box for the shell}
 .define ENEMYID_OCTOGON				$7d
 
+;;
 .define ENEMYID_PLASMARINE			$7e
+
+;;
 .define ENEMYID_KING_MOBLIN			$7f
 
 ; Also ramrock with ID 7.
