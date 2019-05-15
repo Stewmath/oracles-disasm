@@ -314,6 +314,7 @@
 	animMode		db ; $30
 
 	; "Base" for frame index, not accounting for direction. Also used by parent items.
+	; This value comes directly from the animation (specialObjectAnimationData.s).
 	var31			db ; $31
 
 	; Frame index, accounting for direction.

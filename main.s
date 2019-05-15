@@ -62818,6 +62818,8 @@ _parentItemCode_feather:
 	.dw @state1
 
 @state0:
+
+.ifdef ROM_AGES
 	call _isLinkUnderwater		; $52fb
 	jr nz,@deleteParent	; $52fe
 
@@ -62825,6 +62827,7 @@ _parentItemCode_feather:
 	ld a,(w1ParentItem2.id)		; $5300
 	cp ITEMID_SWITCH_HOOK			; $5303
 	jr z,@deleteParent	; $5305
+.endif
 
 	; No jumping in minecarts / on companions
 	ld a,(wLinkObjectIndex)		; $5307
@@ -62870,7 +62873,15 @@ _parentItemCode_feather:
 	ld (hl),b		; $5342
 
 	ld a,$01		; $5343
-	ld a,$01		; $5345
+
+.ifdef ROM_SEASONS
+	ld a,(wFeatherLevel)
+	cp $02
+	ld a,$41
+	jr z,++
+.endif
+	ld a,$01		; $5183
+++
 	ld (wLinkInAir),a		; $5347
 	jr nz,@deleteParent	; $534a
 
@@ -62883,7 +62894,45 @@ _parentItemCode_feather:
 	jp _clearParentItem		; $5352
 
 @state1:
+
+.ifdef ROM_AGES
 	jp _clearParentItem		; $5355
+.else
+	ld a,(wLinkInAir)
+	bit 5,a
+	jr nz,@deleteParent
+
+	call _parentItemCheckButtonPressed
+	jr z,@deleteParent
+
+	ld hl,w1Link.speedZ
+	ldi a,(hl)
+	ld h,(hl)
+	bit 7,h
+	ret nz
+
+	ld l,a
+	ld bc,$0100
+	call compareHlToBc
+	inc a
+	ret z
+
+	ld hl,w1Link.speedZ
+	ld (hl),<(-$80)
+	inc l
+	ld (hl),>(-$80)
+
+	push de
+	ld d,h
+	ld a,LINK_ANIM_MODE_ROCS_CAPE
+	call specialObjectSetAnimation
+	pop de
+	ld hl,wLinkInAir
+	set 5,(hl)
+	ld a,SND_THROW
+	call playSound
+	jp _clearParentItem
+.endif
 
 
 ;;
