@@ -217,6 +217,13 @@
 ; @subid_01{Projectile from large smog}
 .define PARTID_SMOG_PROJECTILE			$4a
 
+;;
+; Used by ENEMYID_MERGED_TWINROVA
+.define PARTID_TWINROVA_FLAME			$4c
+
+;;
+.define PARTID_TWINROVA_SNOWBALL		$4e
+
 ; $45: falling boulder spawner?
 
 .define PARTID_BLUE_ENERGY_BEAD			$53 ; Used by "createEnergySwirl" functions

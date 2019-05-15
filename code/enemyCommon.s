@@ -1056,6 +1056,7 @@ _ecom_flickerVisibility:
 
 ;;
 ; @param[out]	a	State
+; @param[out]	b	Subid
 ; @param[out]	cflag	c if state < 8
 ; @addr{4426}
 _ecom_getSubidAndCpStateTo08:

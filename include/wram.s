@@ -2089,8 +2089,12 @@ wcca7: ; $cca7
 	db
 wcca8: ; $cca8
 	db
-wcca9: ; $cca9
-; $cca9: relates to ganon/twinrova fight somehow
+wTwinrovaTileReplacementMode: ; $cca9
+; 0: Do nothing
+; 1: Fill room with lava
+; 2: Fill room with ice
+; 3: ?
+; 4+: Use "seizure tiles" (when controls are reversed in ganon fight)
 	db
 wccaa: ; $ccaa
 	db

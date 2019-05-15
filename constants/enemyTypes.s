@@ -113,6 +113,8 @@
 .define ENEMYID_BUBBLE				$15
 
 ;;
+; Simliar to ENEMYID_PODOBOO, this enemy's collisions are sometimes borrowed by other
+; objects (ie. ENEMYID_MERGED_TWINROVA).
 .define ENEMYID_BEAMOS				$16
 
 ;;
@@ -574,7 +576,7 @@
 .define ENEMYID_TWINROVA_ICE			$5d
 
 ;;
-; Bat enemy that merged Twinrova spawns during the fight?
+; Bat enemy that merged Twinrova spawns during the fight
 .define ENEMYID_TWINROVA_BAT			$5e
 
 ;;
