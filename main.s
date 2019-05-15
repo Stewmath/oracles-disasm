@@ -137478,9 +137478,10 @@ enemyCode5a:
 ; ==============================================================================
 enemyCode5d:
 	jr z,@normalStatus	; $690f
-	sub $03			; $6911
+	sub ENEMYSTATUS_NO_HEALTH			; $6911
 	ret c			; $6913
 
+	; Hit something
 	ld e,Enemy.var2a		; $6914
 	ld a,(de)		; $6916
 	cp $80|COLLISIONTYPE_LINK			; $6917
@@ -167583,56 +167584,80 @@ _label_11_182:
 	call objectCreatePuff		; $5a80
 	jp partDelete		; $5a83
 
-;;
-; @addr{5a86}
+
+; ==============================================================================
+; PARTID_TWINROVA_SNOWBALL
+; ==============================================================================
 partCode4e:
-	jr z,_label_11_183	; $5a86
-	ld e,$ea		; $5a88
+	jr z,@normalStatus	; $5a86
+
+	; Hit something
+	ld e,Part.var2a		; $5a88
 	ld a,(de)		; $5a8a
-	cp $83			; $5a8b
-	jr z,_label_11_186	; $5a8d
+	cp $80|COLLISIONTYPE_L3_SHIELD			; $5a8b
+	jr z,@destroy	; $5a8d
+
 	res 7,a			; $5a8f
-	sub $05			; $5a91
-	cp $04			; $5a93
-	jp c,$5ad8		; $5a95
-_label_11_183:
-	ld e,$c4		; $5a98
+	sub COLLISIONTYPE_L2_SWORD			; $5a91
+	cp COLLISIONTYPE_SWORDSPIN - COLLISIONTYPE_L2_SWORD + 1			; $5a93
+	jp c,@destroy		; $5a95
+
+@normalStatus:
+	ld e,Part.state		; $5a98
 	ld a,(de)		; $5a9a
 	rst_jumpTable			; $5a9b
-.dw $5aa2
-.dw $5ab5
-.dw $5ad1
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
 	ld h,d			; $5aa2
 	ld l,e			; $5aa3
-	inc (hl)		; $5aa4
-	ld l,$c6		; $5aa5
-	ld (hl),$1e		; $5aa7
-	ld l,$d0		; $5aa9
-	ld (hl),$5a		; $5aab
+	inc (hl) ; [state] = 1
+
+	ld l,Part.counter1		; $5aa5
+	ld (hl),30		; $5aa7
+
+	ld l,Part.speed		; $5aa9
+	ld (hl),SPEED_240		; $5aab
+
 	ld a,SND_TELEPORT		; $5aad
 	call playSound		; $5aaf
 	jp objectSetVisible82		; $5ab2
+
+
+; Spawning in, not moving yet
+@state1:
 	call _partDecCounter1IfNonzero		; $5ab5
-	jr z,_label_11_185	; $5ab8
-	ld l,$e1		; $5aba
+	jr z,@beginMoving	; $5ab8
+
+	ld l,Part.animParameter		; $5aba
 	bit 0,(hl)		; $5abc
-	jr z,_label_11_184	; $5abe
+	jr z,@animate	; $5abe
+
 	ld (hl),$00		; $5ac0
-	ld l,$e4		; $5ac2
+	ld l,Part.collisionType		; $5ac2
 	set 7,(hl)		; $5ac4
-_label_11_184:
+@animate:
 	jp partAnimate		; $5ac6
-_label_11_185:
+
+@beginMoving:
 	ld l,e			; $5ac9
-	inc (hl)		; $5aca
+	inc (hl) ; [state] = 2
+
 	call objectGetAngleTowardEnemyTarget		; $5acb
-	ld e,$c9		; $5ace
+	ld e,Part.angle		; $5ace
 	ld (de),a		; $5ad0
+
+
+; Moving toward Link
+@state2:
 	call objectApplySpeed		; $5ad1
 	call _partCommon_checkTileCollisionOrOutOfBounds		; $5ad4
 	ret nc			; $5ad7
-_label_11_186:
-	ld b,$09		; $5ad8
+
+@destroy:
+	ld b,INTERACID_SNOWDEBRIS		; $5ad8
 	call objectCreateInteractionWithSubid00		; $5ada
 	jp partDelete		; $5add
 
