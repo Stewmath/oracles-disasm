@@ -59858,7 +59858,7 @@ specialObjectNextAnimationFrame:
 	ret			; $4450
 
 
-	.include "data/specialObjectAnimationPointers.s"
+	.include "build/data/specialObjectAnimationPointers.s"
 
 ;;
 ; @addr{44c9}
@@ -64319,7 +64319,7 @@ specialObjectCode_raft:
 	ret			; $59b0
 
 
-	.include "data/specialObjectAnimationData.s"
+	.include "build/data/specialObjectAnimationData.s"
 
 
 ;;
@@ -175880,7 +175880,7 @@ underWaterSurfaceData_7e53:
 .BANK $13 SLOT 1
 .ORG 0
 
-	.include "data/specialObjectOamData.s"
+	.include "build/data/specialObjectOamData.s"
 	.include "data/itemOamData.s"
 	.include "data/enemyOamData.s"
 

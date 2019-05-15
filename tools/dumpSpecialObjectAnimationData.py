@@ -111,13 +111,20 @@ def dumpAnimations(objectType):
                     outFile.write(objectType + myhex(i,2) + 'AnimationDataPointers:\n')
 
         if address in animationDataList:
-            if currentAnimationDataStart == -1:
+            # Special case: if there's empty animation data (something else comes after),
+            # just print the label and ignore it otherwise
+            if (address in graphicsPointerList
+                    or address in animationPointerList
+                    or address in oamDataPointerList):
+                outFile.write('\n')
+                outFile.write('animationData' + myhex(address) + ':\n')
+            elif currentAnimationDataStart == -1:
                 dataType = 'animationData'
                 outFile.write('\n')
                 outFile.write('animationData' + myhex(address) + ':\n')
                 currentAnimationDataStart = address
             else:
-                currentAnimationDataStart = -1
+                currentAnimationDataStart = -1 # Indicate "first pass"
 
         if address in animationLoopPointList and address not in animationDataList:
             if currentAnimationDataStart == -1:
