@@ -96,6 +96,10 @@ _enemyBoss_initializeRoom:
 ; Stops music, forces Link to walk into the room.
 ; @addr{4552}
 _enemyBoss_initializeRoomWithoutExtraGfx:
+.ifdef ROM_SEASONS
+	ldh a,(<hActiveObject)	; $4571
+	ld d,a			; $4573
+.endif
 	ld a,SNDCTRL_STOPMUSIC		; $4552
 	call playSound		; $4554
 
@@ -104,7 +108,7 @@ _enemyBoss_initializeRoomWithoutExtraGfx:
 	dec a			; $455b
 	ld (wActiveMusic),a		; $455c
 
-	ld hl,$cc93		; $455f
+	ld hl,wcc93		; $455f
 	set 7,(hl)		; $4562
 
 	ld a,(wScrollMode)		; $4564
@@ -113,7 +117,12 @@ _enemyBoss_initializeRoomWithoutExtraGfx:
 
 	ld a,LINK_STATE_FORCE_MOVEMENT		; $456a
 	ld (wLinkForceState),a		; $456c
+
+.ifdef ROM_AGES
 	ld a,$16		; $456f
+.else; ROM_SEASONS
+	ld a,$1a
+.endif
 	ld (wLinkStateParameter),a		; $4571
 
 	ld hl,w1Link.direction		; $4574
@@ -123,6 +132,9 @@ _enemyBoss_initializeRoomWithoutExtraGfx:
 	rrca			; $457d
 	ld (hl),a		; $457e
 	ret			; $457f
+
+
+.ifdef ROM_AGES
 
 ;;
 ; Plays miniboss music, enables controls.
@@ -143,3 +155,6 @@ _enemyBoss_beginBoss:
 	ld a,b			; $458d
 	ld (wActiveMusic),a		; $458e
 	jp playSound		; $4591
+
+
+.endif ; ROM_AGES

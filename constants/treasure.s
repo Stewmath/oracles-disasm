@@ -160,6 +160,7 @@
 
 
 
+.ifdef ROM_AGES
 ; Treasure "subids" for INTERACID_TREASURE (corresponds to data/treasureObjectData.s)
 
 .enum TREASURE_NONE<<8 ; $00
@@ -596,3 +597,5 @@
 .enum TREASURE_5f<<8 ; $5f
 	TREASURE_5f_SUBID_00		db
 .ende
+
+.endif ; ROM_AGES

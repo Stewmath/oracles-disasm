@@ -191,6 +191,9 @@ _enemyConveyorTilesTable:
 	.dw @collisions4
 	.dw @collisions5
 
+
+.ifdef ROM_AGES
+
 @collisions2:
 @collisions5:
 	.db $54, ANGLE_UP
@@ -202,6 +205,22 @@ _enemyConveyorTilesTable:
 @collisions3:
 @collisions4:
 	.db $00
+
+.else; ROM_SEASONS
+
+@collisions4:
+	.db $54, ANGLE_UP
+	.db $55, ANGLE_RIGHT
+	.db $56, ANGLE_DOWN
+	.db $57, ANGLE_LEFT
+@collisions0:
+@collisions1:
+@collisions2:
+@collisions3:
+@collisions5:
+	.db $00
+
+.endif
 
 
 _ecom_makeSplashAndDelete:
@@ -1099,6 +1118,38 @@ _ecom_readPositionVars:
 	ld a,(hl)		; $4442
 	ldh (<hFF8E),a	; $4443
 	ret			; $4445
+
+.ifdef ROM_SEASONS
+
+;;
+; Moves toward Link?
+; @param	a
+; @param[out]	zflag
+_ecom_seasonsFunc_4446:
+	ld b,a			; $4446
+	ld a,($cc79) ; TODO: figure out what this corresponds to in ages (if anything)
+	or a			; $444a
+	ld a,b			; $444b
+	jp z,_ecom_checkHazards		; $444c
+
+	ld h,d			; $444f
+	ld l,Enemy.var3f		; $4450
+	res 1,(hl)		; $4452
+
+	ld l,Enemy.collisionType		; $4454
+	set 7,(hl)		; $4456
+
+	push af			; $4458
+	call objectGetLinkRelativeAngle		; $4459
+	ld c,a			; $445c
+	ld b,SPEED_80		; $445d
+	call _ecom_applyGivenVelocity		; $445f
+
+	pop af			; $4462
+	or a			; $4463
+	ret			; $4464
+
+.endif
 
 ;;
 ; Set the enemy's Z position such that it's just above the screen.

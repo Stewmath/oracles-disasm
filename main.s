@@ -28409,7 +28409,7 @@ _mapMenu_loadPopupData:
 	ld a,(wMapMenu.mode)		; $616d
 	rrca			; $6170
 	jr nc,+			; $6171
-	ldde OVERWORD_MAP_POPUP_SHIFT_INDEX_Y<<4, OVERWORD_MAP_POPUP_SHIFT_INDEX_X
+	ldde SUBROSIA_MAP_POPUP_SHIFT_INDEX_Y<<4, SUBROSIA_MAP_POPUP_SHIFT_INDEX_X
 +
 .endif
 	; b/c: position at which to place the popup (may change according to d/e)

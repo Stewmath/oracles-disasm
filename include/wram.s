@@ -1470,19 +1470,21 @@ wMenuDisabled: ; $cc02/$cc02
 wCutsceneState: ; $cc03
 	db
 
-wCutsceneTrigger: ; $cc04
+wCutsceneTrigger: ; $cc04/$cc04
 ; Gets copied to wCutsceneIndex. So, writing a value here triggers a cutscene.
 ; (See constants/cutsceneIndices.s)
 	db
 
+.ifdef ROM_AGES
 wcc05: ; $cc05
 ; bit 0: if unset, prevents the room's object data from loading
 ; bit 1: if unset, prevents object pointers from loading
 ; bit 2: if unset, prevents remembered Companions from loading
 ; bit 3: if unset, prevents Maple from loading
 	db
+.endif
 
-wLoadedObjectGfxIndex: ; $cc06
+wLoadedObjectGfxIndex: ; $cc06/$cc05
 ; An index for wLoadedObjectGfx. Keeps track of where to add the next thing to be
 ; loaded?
 	db
@@ -1490,21 +1492,21 @@ wLoadedObjectGfxIndex: ; $cc06
 wcc07: ; $cc07
 	db
 
-wLoadedObjectGfx: ; $cc08
+wLoadedObjectGfx: ; $cc08/$cc07
 ; This is a data structure related to used sprites. Each entry is 2 bytes, and
 ; corresponds to an object gfx header loaded into vram at its corresponding position.
 ; Eg. Entry $cc08/09 is loaded at $8000, $cc0a/0b is loaded at $8200.
 ; Byte 0 is the index of the object gfx header (see objectGfxHeaders.s).
 ; Byte 1 is whether these graphics are currently in use?
 	dsb $10
-wLoadedObjectGfxEnd: ; $cc18
+wLoadedObjectGfxEnd: ; $cc18/$cc17
 	.db
 
-wLoadedTreeGfxIndex: ; $cc18
+wLoadedTreeGfxIndex: ; $cc18/$cc17
 ; This (along with wLoadedTreeGfxActive) is the same structure as the above buffer, but
 ; only for trees.
 	db
-wLoadedTreeGfxActive: ; $cc19
+wLoadedTreeGfxActive: ; $cc19/$cc18
 	db
 
 wcc1a: ; $cc1a
@@ -1513,12 +1515,12 @@ wcc1a: ; $cc1a
 ; These are uncompressed gfx header indices.
 ; They're used for loading graphics for certain items (sword, cane, switch hook,
 ; boomerang... not bombs, seeds).
-wLoadedItemGraphic1: ; $cc1b
+wLoadedItemGraphic1: ; $cc1b/$cc1a
 	db
-wLoadedItemGraphic2: ; $cc1c
+wLoadedItemGraphic2: ; $cc1c/$cc1b
 	db
 
-wEnemyIDToLoadExtraGfx: ; $cc1d
+wEnemyIDToLoadExtraGfx: ; $cc1d/$cc1c
 ; An enemy can write its ID byte here to request that "extra graphics" get loaded for it.
 ; It will continue loading subsequent object gfx headers until the "stop" bit is encountered.
 ; Can't use this at the same time as "wInteractionIDToLoadExtraGraphics"?
@@ -1532,12 +1534,18 @@ wcc1f: ; $cc1f
 wcc20: ; $cc20
 	db
 
+.ifdef ROM_SEASONS
+; TODO: Figure out what's here. (It might be at $cc1f instead of $cc21.)
+seasonsCC21:
+	dsb $1d
+.endif
+
 ; Point to respawn after falling in hole or w/e
-wLinkLocalRespawnY: ; $cc21
+wLinkLocalRespawnY: ; $cc21/$cc3d
 	db
-wLinkLocalRespawnX: ; $cc22
+wLinkLocalRespawnX: ; $cc22/$cc3e
 	db
-wLinkLocalRespawnDir: ; $cc23
+wLinkLocalRespawnDir: ; $cc23/$cc3f
 	db
 
 
@@ -1796,7 +1804,7 @@ wLinkGrabState2: ; $cc5b
 ; cc5c-cce9 treated as a block: cleared when loading a room through "whiteout" transition
 
 
-wLinkInAir: ; $cc5c
+wLinkInAir: ; $cc5c/$cc77
 ; Bit 7: lock link's movement direction, prevent jumping. (Jumping down a cliff, using
 ;        gale seed, jumping into bed in Nayru's house, etc...)
 ; Bit 5: If set, Link's gravity is reduced
@@ -1865,11 +1873,13 @@ wLinkClimbingVine: ; $cc68
 ; Set to $ff when link climbs certain ladders. Forces him to face upwards.
 	db
 
+.ifdef ROM_AGES
 wLinkRaisedFloorOffset: ; $cc69
 ; This shifts the Y position at which link is drawn.
 ; Used by the raisable platforms in various dungeons.
 ; If nonzero, Link is allowed to walk on raised floors.
 	db
+.endif
 
 wPushingAgainstTileCounter: ; $cc6a
 ; Keeps track of how many frames Link has been pushing against a tile, ie. for push
@@ -1927,7 +1937,7 @@ wcc85: ; $cc85
 ; Relates to maple?
 	db
 
-wRoomEdgeY: ; $cc86
+wRoomEdgeY: ; $cc86/$cca0
 	db
 wRoomEdgeX: ; $cc87
 	db
@@ -1957,7 +1967,7 @@ wDisabledObjects: ; $cc8a
 wcc8b: ; $cc8b
 ; Bit 0 set if items aren't being updated?
 	db
-wLinkCanPassNpcs: ; $cc8c
+wLinkCanPassNpcs: ; $cc8c/$cca6
 ; When nonzero, Link can pass through objects.
 ; Set when in a miniboss portal, using gale seeds, in a timewarp.
 	db
@@ -2055,7 +2065,7 @@ wLastActiveTileType: ; $cc9d
 ; In sidescroll sections, however, this keeps track of the tile underneath Link instead.
 	db
 
-wIsTileSlippery: ; $cc9e
+wIsTileSlippery: ; $cc9e/$ccb9
 ; Bit 6 is set if Link is on a slippery tile.
 	db
 
@@ -2098,6 +2108,10 @@ wTwinrovaTileReplacementMode: ; $cca9
 	db
 wccaa: ; $ccaa
 	db
+
+
+.ifdef ROM_AGES
+
 wLever1PullDistance: ; $ccab
 ; Number of pixels out a lever has been pulled. Bit 7 set when fully pulled.
 	db
@@ -2111,6 +2125,9 @@ wRotatingCubeColor: ; $ccad
 	db
 wRotatingCubePos: ; $ccae
 	db
+
+.endif
+
 
 wccaf: ; $ccaf/$ccc6
 ; Tile index being poked or slashed at?
@@ -2138,7 +2155,7 @@ wAButtonSensitiveObjectList: ; $ccb3/$ccca
 wAButtonSensitiveObjectListEnd: ; $ccd3
 	.db
 
-wInShop: ; $ccd3
+wInShop: ; $ccd3/$ccea
 ; When this is nonzero, it prevents Link from using items.
 ; Bit 1: Set while in a shop.
 ; Bit 2: Requests the tilemap for the items on display to be updated.
@@ -2194,7 +2211,7 @@ wccd8: ; $ccd8
 ; Bit 5 set while latched by a gel or ages d1 miniboss
 	db
 
-wScentSeedActive: ; $ccd9
+wScentSeedActive: ; $ccd9/$ccf0
 ; Nonzero while scent seed is active?
 	db
 
