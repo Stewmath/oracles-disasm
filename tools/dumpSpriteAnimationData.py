@@ -35,7 +35,7 @@ class AnimationData:
 
 
 def dumpAnimations(objectType):
-    outFile = open('data/' + objectType + 'Animations.s', 'w')
+    outFile = open(dataDir + objectType + 'Animations.s', 'w')
 
     animationDataList = []
 
@@ -167,15 +167,16 @@ def dumpAnimations(objectType):
 
     # Now dump the OAM data
 
-    outFile = open("data/" + objectType + "OamData.s", 'w')
+    outFile = open(dataDir + objectType + "OamData.s", 'w')
 
     oamAddressList = sorted(oamAddressList)
 
     address = oamAddressList[0]
     endAddress = oamAddressList[len(oamAddressList)-1]+1
 
-    # There's has a blank entry at the start of the enemy oam data for some reason
-    if objectType == 'enemy':
+    # There's has a blank entry at the start of the enemy oam data for some reason (ages
+    # only)
+    if objectType == 'enemy' and romIsAges(rom):
         address-=1
 
     while address < endAddress:
@@ -198,58 +199,119 @@ def dumpAnimations(objectType):
     outFile.close()
 
 
-# Constants for interactions
-oamDataBaseBank = 0x14
+if romIsAges(rom):
+    dataDir = 'data/ages/'
 
-animationBank = 0x16
-animationDataTable = 0x59855
-oamTableStart = 0x59a23
-numAnimationIndices = (oamTableStart - animationDataTable)/2
-animationPointersStart = 0x59bf1
-animationDataStart = 0x5a083
-oamDataStart = 0x5adfc
-oamDataEnd = 0x5b668
+    # Constants for interactions
+    oamDataBaseBank = 0x14
 
-dumpAnimations('interaction')
+    animationBank = 0x16
+    animationDataTable = 0x59855
+    oamTableStart = 0x59a23
+    numAnimationIndices = (oamTableStart - animationDataTable)/2
+    animationPointersStart = oamTableStart + numAnimationIndices*2
+    animationDataStart = 0x5a083
+    oamDataStart = 0x5adfc
+    oamDataEnd = 0x5b668
 
-# Constants for parts
-oamDataBaseBank = 0x14
+    dumpAnimations('interaction')
 
-animationBank = 0x16
-animationDataTable = 0x5b668
-oamTableStart = 0x5b71e
-numAnimationIndices = (oamTableStart - animationDataTable)/2
-animationPointersStart = 0x5b7d4
-animationDataStart = 0x5b8c0
-oamDataStart = 0x5bc04
-oamDataEnd = 0x5be02
+    # Constants for parts
+    oamDataBaseBank = 0x14
 
-dumpAnimations('part')
+    animationBank = 0x16
+    animationDataTable = 0x5b668
+    oamTableStart = 0x5b71e
+    numAnimationIndices = (oamTableStart - animationDataTable)/2
+    animationPointersStart = oamTableStart + numAnimationIndices*2
+    animationDataStart = 0x5b8c0
+    oamDataStart = 0x5bc04
+    oamDataEnd = 0x5be02
 
-# Constants for enemies
-oamDataBaseBank = 0x13
+    dumpAnimations('part')
 
-animationBank = 0x0d
-animationDataTable = 0x36d5c
-oamTableStart = 0x36e5c
-numAnimationIndices = (oamTableStart - animationDataTable)/2
-animationPointersStart = oamTableStart + numAnimationIndices*2
-animationDataStart = 0x37200
-oamDataStart = 0x379ff
-oamDataEnd = 0x37ea9
+    # Constants for enemies
+    oamDataBaseBank = 0x13
 
-dumpAnimations('enemy')
+    animationBank = 0x0d
+    animationDataTable = 0x36d5c
+    oamTableStart = 0x36e5c
+    numAnimationIndices = (oamTableStart - animationDataTable)/2
+    animationPointersStart = oamTableStart + numAnimationIndices*2
+    animationDataStart = 0x37200
+    oamDataStart = 0x379ff
+    oamDataEnd = 0x37ea9
 
-# Constants for items
-oamDataBaseBank = 0x13
+    dumpAnimations('enemy')
 
-animationBank = 0x07
-animationDataTable = 0x1e663
-oamTableStart = 0x1e6c3
-numAnimationIndices = (oamTableStart - animationDataTable)/2
-animationPointersStart = oamTableStart + numAnimationIndices*2
-animationDataStart = 0x1e777
-oamDataStart = 0x1e8bc
-oamDataEnd = 0x1e9a2
+    # Constants for items
+    oamDataBaseBank = 0x13
 
-dumpAnimations('item')
+    animationBank = 0x07
+    animationDataTable = 0x1e663
+    oamTableStart = 0x1e6c3
+    numAnimationIndices = (oamTableStart - animationDataTable)/2
+    animationPointersStart = oamTableStart + numAnimationIndices*2
+    animationDataStart = 0x1e777
+    oamDataStart = 0x1e8bc
+    oamDataEnd = 0x1e9a2
+
+    dumpAnimations('item')
+else:
+    dataDir = 'data/seasons/'
+
+    # Constants for interactions
+    oamDataBaseBank = 0x13
+
+    animationBank = 0x14
+    animationDataTable = 0x51325
+    oamTableStart = 0x514f5
+    numAnimationIndices = (oamTableStart - animationDataTable)/2
+    animationPointersStart = oamTableStart + numAnimationIndices*2
+    animationDataStart = bankedAddress(animationBank, read16(rom, animationPointersStart))
+    oamDataStart = bankedAddress(animationBank, read16(rom, oamTableStart))
+    oamDataEnd = 0x52fc9
+
+    dumpAnimations('interaction')
+
+    # Constants for parts
+    oamDataBaseBank = 0x13
+
+    animationBank = 0x15
+    animationDataTable = 0x5718f
+    oamTableStart = 0x57237
+    numAnimationIndices = (oamTableStart - animationDataTable)/2
+    animationPointersStart = oamTableStart + numAnimationIndices*2
+    animationDataStart = bankedAddress(animationBank, read16(rom, animationPointersStart))
+    oamDataStart = bankedAddress(animationBank, read16(rom, oamTableStart))
+    oamDataEnd = 0x5792d
+
+    dumpAnimations('part')
+
+    # Constants for enemies
+    oamDataBaseBank = 0x12
+
+    animationBank = 0x0c
+    animationDataTable = 0x32df7
+    oamTableStart = 0x32ef7
+    numAnimationIndices = (oamTableStart - animationDataTable)/2
+    animationPointersStart = oamTableStart + numAnimationIndices*2
+    animationDataStart = 0x332a5
+    oamDataStart = bankedAddress(animationBank, read16(rom, oamTableStart))
+    oamDataEnd = 0x33ea0
+
+    dumpAnimations('enemy')
+
+    # Constants for items
+    oamDataBaseBank = 0x12
+
+    animationBank = 0x07
+    animationDataTable = 0x1e401
+    oamTableStart = 0x1e461
+    numAnimationIndices = (oamTableStart - animationDataTable)/2
+    animationPointersStart = oamTableStart + numAnimationIndices*2
+    animationDataStart = bankedAddress(animationBank, read16(rom, animationPointersStart))
+    oamDataStart = bankedAddress(animationBank, read16(rom, oamTableStart))
+    oamDataEnd = 0x1e740
+
+    dumpAnimations('item')

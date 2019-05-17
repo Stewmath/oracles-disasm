@@ -75057,7 +75057,7 @@ itemCode1a:
 
 
 	.include "data/itemAttributes.s"
-	.include "data/itemAnimations.s"
+	.include "build/data/itemAnimations.s"
 
 .ends
 
@@ -129447,7 +129447,7 @@ enemyCode2b:
 .ends
 
  m_section_superfree Enemy_Animations
-	.include "data/enemyAnimations.s"
+	.include "build/data/enemyAnimations.s"
 .ends
 
 
@@ -175881,8 +175881,8 @@ underWaterSurfaceData_7e53:
 .ORG 0
 
 	.include "build/data/specialObjectOamData.s"
-	.include "data/itemOamData.s"
-	.include "data/enemyOamData.s"
+	.include "build/data/itemOamData.s"
+	.include "build/data/enemyOamData.s"
 
 .BANK $14 SLOT 1
 .ORG 0
@@ -175963,8 +175963,8 @@ puddleAnimationFrames:
 
 .ends
 
-.include "data/interactionOamData.s"
-.include "data/partOamData.s"
+.include "build/data/interactionOamData.s"
+.include "build/data/partOamData.s"
 
 
 .include "code/bank15.s"
@@ -177320,8 +177320,8 @@ loadD6ChangingFloorPatternToBigBuffer:
 
 .ends
 
-.include "data/interactionAnimations.s"
-.include "data/partAnimations.s"
+.include "build/data/interactionAnimations.s"
+.include "build/data/partAnimations.s"
 
 .BANK $17 SLOT 1 ; Seasons: should be bank $16
 .ORG 0
