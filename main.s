@@ -75066,9 +75066,9 @@ itemCode1a:
  ; "Enemy_Part_Collisions".
  m_section_free "Bank_7_Data" namespace "bank7"
 
-	.include "data/enemyCollisionTypes.s"
-	.include "data/partCollisionTypes.s"
-	.include "data/objectCollisionReactionSets.s"
+	.include "build/data/enemyCollisionTypes.s"
+	.include "build/data/partCollisionTypes.s"
+	.include "build/data/objectCollisionReactionSets.s"
 
 	; Garbage data follows (repeats of collision reaction sets)
 

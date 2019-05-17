@@ -1,14 +1,4 @@
-; Technically, this table is indexed by Part.collisionType.
-;
-; But, Part.collisionType seems to always be the same as Part.id (bits 0-6, anyway). So
-; the indices here can be considered equivalent to the Part ID.
-
-; Each 4 bytes here is a bitset which determines which collision types the Part will
-; respond to. If a bit is unset, it won't do anything when it collides with an object with
-; that collisionType.
-
-; Note: the bits are reversed to make it easier to look at (ie. collisionType 0 is at the
-; far left)
+; See notes in data/ages/enemyCollisionTypes.s.
 
 ; @addr{6ba2}
 partCollisionTypes:
