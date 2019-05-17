@@ -271,7 +271,6 @@ enemy5cAnimations:
 enemy65Animations:
 enemy66Animations:
 enemy67Animations:
-enemy68Animations:
 enemy69Animations:
 enemy6aAnimations:
 enemy6bAnimations:
@@ -1803,7 +1802,6 @@ enemy5cOamDataPointers: ; 0x379ff
 enemy65OamDataPointers: ; 0x379ff
 enemy66OamDataPointers: ; 0x379ff
 enemy67OamDataPointers: ; 0x379ff
-enemy68OamDataPointers: ; 0x379ff
 enemy69OamDataPointers: ; 0x379ff
 enemy6aOamDataPointers: ; 0x379ff
 enemy6bOamDataPointers: ; 0x379ff
@@ -2579,3 +2577,1002 @@ enemy7fOamDataPointers: ; 0x37e93
 	.dw enemyOamData4f08f
 	.dw enemyOamData4f0b4
 	.dw enemyOamData4fa06
+
+
+
+; Seasons bosses
+
+enemy68Animations:
+	.dw enemyAnimation3340b
+	.dw enemyAnimation337fd
+	.dw enemyAnimation33805
+	.dw enemyAnimation3380d
+	.dw enemyAnimation33819
+	.dw enemyAnimation33694
+	.dw enemyAnimation33821
+	.dw enemyAnimation33835
+	.dw enemyAnimation3383d
+
+enemy68OamDataPointers:
+	.dw enemyOamData4b714
+	.dw enemyOamData4b5ff
+	.dw enemyOamData4b634
+	.dw enemyOamData4b669
+	.dw enemyOamData4ba07
+	.dw enemyOamData4b7d3
+	.dw enemyOamData4b814
+	.dw enemyOamData49243
+	.dw enemyOamData49248
+	.dw enemyOamData4924d
+	.dw enemyOamData49252
+	.dw enemyOamData49257
+	.dw enemyOamData4925c
+
+
+
+; Seasons animations
+enemyAnimation332a5:
+	.db $04 $06 $00
+	.db $04 $08 $00
+	m_AnimationLoop enemyAnimation332a5
+
+enemyAnimation332ad:
+	.db $04 $0e $00
+	.db $04 $10 $00
+	m_AnimationLoop enemyAnimation332ad
+
+enemyAnimation332b5:
+	.db $04 $0a $00
+	.db $04 $0c $00
+	m_AnimationLoop enemyAnimation332b5
+
+enemyAnimation332bd:
+	.db $7f $12 $00
+	m_AnimationLoop enemyAnimation332bd
+
+enemyAnimation332c2:
+	.db $04 $14 $00
+	.db $04 $16 $00
+	m_AnimationLoop enemyAnimation332c2
+
+enemyAnimation332ca:
+	.db $04 $18 $00
+	.db $04 $1a $00
+	m_AnimationLoop enemyAnimation332ca
+
+enemyAnimation332d2:
+	.db $7f $1c $00
+	m_AnimationLoop enemyAnimation332d2
+
+enemyAnimation332d7:
+	.db $18 $00 $00
+	.db $18 $02 $00
+	m_AnimationLoop enemyAnimation332d7
+
+enemyAnimation332df:
+	.db $10 $06 $00
+	.db $10 $08 $00
+	m_AnimationLoop enemyAnimation332df
+
+enemyAnimation332e7:
+	.db $0c $28 $00
+	.db $0c $2a $00
+	m_AnimationLoop enemyAnimation332e7
+
+enemyAnimation332ef:
+	.db $0c $2c $00
+	.db $0c $2e $00
+	m_AnimationLoop enemyAnimation332ef
+
+enemyAnimation332f7:
+	.db $0c $30 $00
+	.db $0c $32 $00
+	m_AnimationLoop enemyAnimation332f7
+
+enemyAnimation332ff:
+	.db $0c $34 $00
+	.db $0c $36 $00
+	m_AnimationLoop enemyAnimation332ff
+
+enemyAnimation33307:
+	.db $0c $00 $00
+	.db $0c $02 $00
+	m_AnimationLoop enemyAnimation33307
+
+enemyAnimation3330f:
+	.db $0c $04 $00
+	.db $0c $06 $00
+	m_AnimationLoop enemyAnimation3330f
+
+enemyAnimation33317:
+	.db $0c $08 $00
+	.db $0c $0a $00
+	m_AnimationLoop enemyAnimation33317
+
+enemyAnimation3331f:
+	.db $0c $0c $00
+	.db $0c $0e $00
+	m_AnimationLoop enemyAnimation3331f
+
+enemyAnimation33327:
+	.db $07 $12 $00
+	.db $07 $14 $00
+	.db $0f $10 $00
+	.db $07 $12 $01
+	.db $07 $14 $00
+	.db $7f $14 $ff
+enemyAnimation33339:
+	.db $07 $18 $00
+	.db $07 $1a $00
+	.db $0f $16 $00
+	.db $07 $18 $01
+	.db $07 $1a $00
+	.db $7f $1a $ff
+enemyAnimation3334b:
+	.db $1e $1c $00
+	.db $08 $1e $00
+	.db $08 $1c $00
+	.db $0c $1e $00
+	.db $7f $1e $ff
+enemyAnimation3335a:
+	.db $1e $20 $00
+	.db $08 $22 $00
+	.db $08 $20 $00
+	.db $0c $22 $00
+	.db $7f $22 $ff
+enemyAnimation33369:
+	.db $10 $26 $00
+	.db $7f $26 $ff
+enemyAnimation3336f:
+	.db $08 $0a $00
+	.db $08 $0c $00
+	.db $08 $0e $00
+	.db $0c $10 $00
+	.db $7f $10 $ff
+enemyAnimation3337e:
+	.db $10 $12 $00
+	.db $10 $14 $00
+	m_AnimationLoop enemyAnimation3337e
+
+enemyAnimation33386:
+	.db $10 $16 $00
+	.db $10 $18 $00
+	m_AnimationLoop enemyAnimation33386
+
+enemyAnimation3338e:
+	.db $04 $02 $00
+	.db $04 $04 $00
+	.db $04 $06 $00
+	.db $04 $08 $00
+	m_AnimationLoop enemyAnimation3338e
+
+enemyAnimation3339c:
+	.db $7f $20 $00
+enemyAnimation3339f:
+	.db $7f $22 $00
+enemyAnimation333a2:
+	.db $7f $24 $00
+enemyAnimation333a5:
+	.db $7f $26 $00
+enemyAnimation333a8:
+	.db $7f $28 $00
+enemyAnimation333ab:
+	.db $7f $2a $00
+enemyAnimation333ae:
+	.db $7f $2c $00
+enemyAnimation333b1:
+	.db $18 $06 $00
+	.db $18 $08 $00
+	m_AnimationLoop enemyAnimation333b1
+
+enemyAnimation333b9:
+	.db $10 $0a $00
+	.db $10 $0c $00
+	m_AnimationLoop enemyAnimation333b9
+
+enemyAnimation333c1:
+	.db $04 $00 $00
+	.db $04 $02 $00
+	m_AnimationLoop enemyAnimation333c1
+
+enemyAnimation333c9:
+	.db $30 $04 $00
+	.db $08 $06 $00
+	.db $20 $06 $01
+	.db $08 $04 $00
+	.db $10 $04 $ff
+enemyAnimation333d8:
+	.db $1e $20 $00
+enemyAnimation333db:
+	.db $08 $00 $00
+	.db $08 $02 $00
+	m_AnimationLoop enemyAnimation333db
+
+enemyAnimation333e3:
+	.db $08 $04 $00
+	.db $08 $06 $00
+	m_AnimationLoop enemyAnimation333e3
+
+enemyAnimation333eb:
+	.db $08 $08 $00
+	.db $08 $0a $00
+	m_AnimationLoop enemyAnimation333eb
+
+enemyAnimation333f3:
+	.db $08 $0c $00
+	.db $08 $0e $00
+	m_AnimationLoop enemyAnimation333f3
+
+enemyAnimation333fb:
+	.db $0c $00 $00
+	.db $0c $02 $01
+	m_AnimationLoop enemyAnimation333fb
+
+enemyAnimation33403:
+	.db $0c $04 $00
+	.db $0c $06 $01
+	m_AnimationLoop enemyAnimation33403
+
+enemyAnimation3340b:
+	.db $0c $08 $00
+	.db $0c $0a $01
+	m_AnimationLoop enemyAnimation3340b
+
+enemyAnimation33413:
+	.db $0c $0c $00
+	.db $0c $0e $01
+	m_AnimationLoop enemyAnimation33413
+
+enemyAnimation3341b:
+	.db $12 $00 $00
+	.db $01 $02 $ff
+	.db $08 $02 $00
+enemyAnimation33424:
+	.db $08 $04 $01
+	.db $08 $06 $00
+	m_AnimationLoop enemyAnimation33424
+
+enemyAnimation3342c:
+	.db $08 $02 $00
+	.db $01 $00 $ff
+	.db $0f $00 $00
+	.db $7f $00 $01
+enemyAnimation33438:
+	.db $10 $00 $00
+	.db $10 $02 $01
+	m_AnimationLoop enemyAnimation33438
+
+enemyAnimation33440:
+	.db $10 $04 $00
+	.db $10 $06 $01
+	m_AnimationLoop enemyAnimation33440
+
+enemyAnimation33448:
+	.db $10 $08 $00
+	.db $10 $0a $01
+	m_AnimationLoop enemyAnimation33448
+
+enemyAnimation33450:
+	.db $10 $0c $00
+	.db $10 $0e $01
+	m_AnimationLoop enemyAnimation33450
+
+enemyAnimation33458:
+	.db $08 $04 $00
+	.db $08 $10 $00
+	m_AnimationLoop enemyAnimation33458
+
+enemyAnimation33460:
+	.db $08 $0c $00
+	.db $08 $12 $00
+	m_AnimationLoop enemyAnimation33460
+
+enemyAnimation33468:
+	.db $06 $00 $00
+	.db $06 $06 $00
+	.db $06 $00 $00
+	.db $06 $06 $00
+	.db $06 $00 $00
+	.db $05 $06 $00
+	.db $05 $00 $00
+	.db $05 $06 $00
+enemyAnimation33480:
+	.db $7f $00 $00
+	m_AnimationLoop enemyAnimation33480
+
+enemyAnimation33485:
+	.db $7f $02 $00
+	m_AnimationLoop enemyAnimation33485
+
+enemyAnimation3348a:
+	.db $08 $10 $00
+	.db $08 $12 $00
+	m_AnimationLoop enemyAnimation3348a
+
+enemyAnimation33492:
+	.db $02 $00 $00
+	.db $02 $02 $00
+	m_AnimationLoop enemyAnimation33492
+
+enemyAnimation3349a:
+	.db $7f $04 $00
+	m_AnimationLoop enemyAnimation3349a
+
+enemyAnimation3349f:
+	.db $7f $06 $00
+	m_AnimationLoop enemyAnimation3349f
+
+enemyAnimation334a4:
+	.db $7f $08 $00
+	m_AnimationLoop enemyAnimation334a4
+
+enemyAnimation334a9:
+	.db $7f $0a $00
+	m_AnimationLoop enemyAnimation334a9
+
+enemyAnimation334ae:
+	.db $7f $0c $00
+	m_AnimationLoop enemyAnimation334ae
+
+enemyAnimation334b3:
+	.db $04 $04 $00
+	.db $04 $06 $00
+	.db $04 $08 $00
+	m_AnimationLoop enemyAnimation334b3
+
+enemyAnimation334be:
+	.db $06 $00 $00
+	.db $0c $02 $00
+	.db $06 $00 $00
+	.db $0c $04 $00
+	m_AnimationLoop enemyAnimation334be
+
+enemyAnimation334cc:
+	.db $0c $06 $00
+	.db $0c $08 $00
+	m_AnimationLoop enemyAnimation334cc
+
+enemyAnimation334d4:
+	.db $06 $0a $00
+	.db $0c $0c $00
+	.db $06 $0a $00
+	.db $0c $0e $00
+	m_AnimationLoop enemyAnimation334d4
+
+enemyAnimation334e2:
+	.db $06 $00 $00
+	.db $06 $02 $00
+	m_AnimationLoop enemyAnimation334e2
+
+enemyAnimation334ea:
+	.db $7f $14 $00
+	m_AnimationLoop enemyAnimation334ea
+
+enemyAnimation334ef:
+	.db $18 $00 $00
+	.db $18 $02 $01
+	m_AnimationLoop enemyAnimation334ef
+
+enemyAnimation334f7:
+	.db $0a $04 $00
+	.db $08 $06 $00
+	.db $09 $08 $00
+	m_AnimationLoop enemyAnimation334f7
+
+enemyAnimation33502:
+	.db $20 $00 $00
+	.db $20 $02 $00
+	m_AnimationLoop enemyAnimation33502
+
+enemyAnimation3350a:
+	.db $3c $04 $00
+	.db $0c $08 $01
+	.db $10 $04 $00
+	.db $0c $08 $01
+	.db $3c $04 $00
+	.db $7f $04 $ff
+enemyAnimation3351c:
+	.db $3c $04 $00
+	.db $0c $0c $01
+	.db $10 $04 $00
+	.db $0c $0c $01
+	.db $3c $04 $00
+	.db $7f $04 $ff
+enemyAnimation3352e:
+	.db $3c $10 $00
+	.db $0c $12 $01
+	.db $10 $10 $00
+	.db $0c $12 $01
+	.db $3c $10 $00
+	.db $7f $10 $ff
+enemyAnimation33540:
+	.db $3c $06 $00
+	.db $0c $0e $01
+	.db $10 $06 $00
+	.db $0c $0e $01
+	.db $3c $06 $00
+	.db $7f $06 $ff
+enemyAnimation33552:
+	.db $3c $06 $00
+	.db $0c $0a $01
+	.db $10 $06 $00
+	.db $0c $0a $01
+	.db $3c $06 $00
+	.db $7f $06 $ff
+enemyAnimation33564:
+	.db $14 $00 $00
+	.db $7f $00 $ff
+enemyAnimation3356a:
+	.db $10 $14 $00
+	.db $10 $16 $00
+	m_AnimationLoop enemyAnimation3356a
+
+enemyAnimation33572:
+	.db $02 $00 $00
+	.db $02 $02 $00
+	.db $02 $04 $00
+	m_AnimationLoop enemyAnimation33572
+
+enemyAnimation3357d:
+	.db $0a $06 $00
+	.db $02 $06 $01
+	.db $0a $08 $00
+	.db $7f $08 $ff
+enemyAnimation33589:
+	.db $02 $0a $00
+	.db $02 $0c $00
+	.db $02 $0e $00
+	m_AnimationLoop enemyAnimation33589
+
+enemyAnimation33594:
+	.db $0a $10 $00
+	.db $02 $10 $01
+	.db $0a $12 $00
+	.db $7f $12 $ff
+enemyAnimation335a0:
+	.db $04 $00 $03
+	.db $04 $02 $06
+	.db $04 $04 $09
+	.db $04 $06 $0c
+	.db $04 $08 $0f
+@loop:
+	.db $08 $0a $00
+	.db $08 $08 $00
+	.db $08 $0c $00
+	.db $08 $08 $00
+	m_AnimationLoop @loop
+
+enemyAnimation335bd:
+	.db $04 $08 $0f
+	.db $04 $06 $0c
+	.db $04 $04 $09
+	.db $04 $02 $06
+	.db $04 $00 $03
+	.db $7f $00 $ff
+enemyAnimation335cf:
+	.db $0f $00 $00
+	.db $01 $00 $01
+	.db $10 $02 $ff
+	m_AnimationLoop enemyAnimation335cf
+
+enemyAnimation335da:
+	.db $04 $04 $00
+	.db $04 $06 $00
+	m_AnimationLoop enemyAnimation335da
+
+enemyAnimation335e2:
+	.db $10 $04 $00
+	.db $10 $00 $00
+	.db $7f $02 $01
+enemyAnimation335eb:
+	.db $08 $02 $00
+	.db $10 $00 $00
+	.db $10 $04 $00
+	.db $7f $04 $01
+enemyAnimation335f7:
+	.db $18 $02 $00
+	.db $0c $00 $00
+	m_AnimationLoop enemyAnimation335f7
+
+enemyAnimation335ff:
+	.db $04 $06 $00
+	.db $04 $08 $00
+	m_AnimationLoop enemyAnimation335ff
+
+enemyAnimation33607:
+	.db $0a $00 $00
+	.db $0a $02 $00
+	.db $7f $02 $01
+enemyAnimation33610:
+	.db $10 $04 $00
+	.db $10 $06 $00
+	.db $7f $06 $01
+enemyAnimation33619:
+	.db $10 $0e $00
+	.db $10 $10 $00
+	m_AnimationLoop enemyAnimation33619
+
+enemyAnimation33621:
+	.db $02 $08 $00
+	.db $10 $0c $01
+enemyAnimation33627:
+	.db $0a $02 $02
+	.db $0a $00 $00
+	.db $7f $00 $03
+enemyAnimation33630:
+	.db $02 $0e $00
+	.db $10 $12 $01
+enemyAnimation33636:
+	.db $0a $06 $02
+	.db $0a $04 $00
+	.db $7f $04 $03
+enemyAnimation3363f:
+	.db $04 $04 $00
+	.db $04 $08 $00
+	.db $03 $06 $00
+	m_AnimationLoop enemyAnimation3363f
+
+enemyAnimation3364a:
+	.db $08 $02 $00
+	.db $08 $10 $00
+	.db $08 $12 $01
+	.db $08 $10 $00
+	.db $08 $0c $00
+	.db $7f $0c $02
+enemyAnimation3365c:
+	.db $7f $06 $00
+	m_AnimationLoop enemyAnimation3365c
+
+enemyAnimation33661:
+	.db $08 $0a $00
+	.db $08 $10 $00
+	.db $08 $12 $00
+	.db $08 $10 $01
+	.db $08 $04 $00
+	.db $7f $04 $02
+enemyAnimation33673:
+	.db $7f $0e $00
+	m_AnimationLoop enemyAnimation33673
+
+enemyAnimation33678:
+	.db $04 $06 $00
+	.db $04 $08 $00
+	.db $04 $0a $00
+	.db $04 $0c $00
+	m_AnimationLoop enemyAnimation33678
+
+enemyAnimation33686:
+	.db $04 $00 $00
+	.db $04 $04 $00
+	m_AnimationLoop enemyAnimation33686
+
+enemyAnimation3368e:
+	.db $24 $00 $00
+	.db $7f $00 $01
+enemyAnimation33694:
+	.db $7f $0e $00
+	m_AnimationLoop enemyAnimation33694
+
+enemyAnimation33699:
+	.db $7f $10 $00
+	m_AnimationLoop enemyAnimation33699
+
+enemyAnimation3369e:
+	.db $08 $14 $00
+	.db $08 $16 $00
+	m_AnimationLoop enemyAnimation3369e
+
+enemyAnimation336a6:
+	.db $08 $18 $00
+	.db $08 $1a $00
+	m_AnimationLoop enemyAnimation336a6
+
+enemyAnimation336ae:
+	.db $08 $1c $00
+	.db $08 $1e $00
+	m_AnimationLoop enemyAnimation336ae
+
+enemyAnimation336b6:
+	.db $01 $02 $01
+	.db $01 $00 $00
+	m_AnimationLoop enemyAnimation336b6
+
+enemyAnimation336be:
+	.db $01 $06 $01
+	.db $01 $04 $00
+	m_AnimationLoop enemyAnimation336be
+
+enemyAnimation336c6:
+	.db $08 $08 $04
+	.db $08 $0c $06
+	.db $08 $00 $00
+	.db $08 $04 $02
+	m_AnimationLoop enemyAnimation336c6
+
+enemyAnimation336d4:
+	.db $7f $16 $00
+	m_AnimationLoop enemyAnimation336d4
+
+enemyAnimation336d9:
+	.db $5a $00 $00
+	.db $0a $02 $01
+	.db $0a $04 $02
+	.db $3c $06 $03
+	.db $0a $04 $04
+	.db $0a $02 $05
+	m_AnimationLoop enemyAnimation336d9
+
+enemyAnimation336ed:
+	.db $04 $08 $03
+	.db $04 $0a $03
+	.db $1e $00 $80
+	.db $28 $0c $7f
+	.db $27 $00 $ff
+enemyAnimation336fc:
+	.db $08 $00 $00
+	.db $08 $02 $00
+	.db $08 $04 $00
+	.db $08 $06 $00
+	m_AnimationLoop enemyAnimation336fc
+
+enemyAnimation3370a:
+	.db $04 $00 $00
+@loop:
+	.db $7f $02 $00
+	m_AnimationLoop @loop
+
+enemyAnimation33712:
+	.db $08 $00 $00
+	.db $08 $02 $00
+	.db $08 $04 $00
+@loop:
+	.db $5a $0a $01
+	.db $04 $08 $00
+	.db $04 $06 $00
+	.db $04 $08 $00
+	m_AnimationLoop @loop
+
+enemyAnimation33729:
+	.db $04 $0c $00
+	.db $04 $0e $00
+	.db $10 $10 $00
+	.db $04 $12 $00
+	.db $20 $14 $01
+	m_AnimationLoop enemyAnimation33729
+
+enemyAnimation3373a:
+	.db $08 $04 $00
+	.db $08 $02 $00
+	.db $08 $00 $00
+	.db $7f $00 $ff
+enemyAnimation33746:
+	.db $10 $04 $00
+	.db $3c $06 $00
+	.db $1e $08 $00
+	.db $1e $0a $01
+	.db $3c $06 $00
+	.db $7f $06 $ff
+enemyAnimation33758:
+	.db $10 $0c $00
+	.db $10 $0e $00
+	m_AnimationLoop enemyAnimation33758
+
+enemyAnimation33760:
+	.db $06 $10 $00
+	.db $06 $12 $00
+	m_AnimationLoop enemyAnimation33760
+
+enemyAnimation33768:
+	.db $1e $14 $00
+	.db $7f $10 $ff
+enemyAnimation3376e:
+	.db $18 $08 $00
+	.db $18 $0a $01
+	m_AnimationLoop enemyAnimation3376e
+
+enemyAnimation33776:
+	.db $7f $18 $00
+	m_AnimationLoop enemyAnimation33776
+
+enemyAnimation3377b:
+	.db $7f $1a $00
+	m_AnimationLoop enemyAnimation3377b
+
+enemyAnimation33780:
+	.db $7f $1e $01
+	m_AnimationLoop enemyAnimation33780
+
+enemyAnimation33785:
+	.db $03 $04 $00
+	.db $03 $06 $00
+	.db $03 $08 $00
+	.db $03 $0a $00
+	m_AnimationLoop enemyAnimation33785
+
+enemyAnimation33793:
+	.db $03 $0c $00
+	.db $03 $0e $00
+	.db $03 $10 $00
+	.db $03 $12 $00
+	m_AnimationLoop enemyAnimation33793
+
+enemyAnimation337a1:
+	.db $03 $14 $00
+	.db $03 $16 $02
+	.db $03 $18 $04
+	.db $03 $1a $06
+	m_AnimationLoop enemyAnimation337a1
+
+enemyAnimation337af:
+	.db $10 $1c $00
+	.db $10 $1e $00
+	.db $10 $20 $00
+	.db $10 $22 $00
+	m_AnimationLoop enemyAnimation337af
+
+enemyAnimation337bd:
+	.db $10 $24 $00
+	.db $10 $26 $00
+	.db $10 $28 $00
+	.db $10 $2a $00
+	m_AnimationLoop enemyAnimation337bd
+
+enemyAnimation337cb:
+	.db $19 $04 $00
+	.db $07 $10 $00
+	.db $07 $12 $00
+	.db $0a $14 $00
+	.db $0f $16 $01
+	.db $7f $16 $ff
+enemyAnimation337dd:
+	.db $19 $0c $00
+	.db $07 $18 $00
+	.db $07 $1a $00
+	.db $0a $1c $00
+	.db $0f $1e $01
+	.db $7f $1e $ff
+enemyAnimation337ef:
+	.db $0a $00 $00
+	.db $0a $02 $00
+	.db $0a $04 $00
+	.db $0a $06 $00
+	m_AnimationLoop enemyAnimation337ef
+
+enemyAnimation337fd:
+	.db $14 $00 $02
+	.db $14 $02 $03
+	m_AnimationLoop enemyAnimation337fd
+
+enemyAnimation33805:
+	.db $0c $00 $02
+	.db $0c $02 $03
+	m_AnimationLoop enemyAnimation33805
+
+enemyAnimation3380d:
+	.db $14 $00 $04
+	.db $14 $04 $05
+	.db $14 $06 $06
+	.db $7f $06 $ff
+enemyAnimation33819:
+	.db $1e $00 $07
+@loop:
+	.db $7f $0c $08
+	m_AnimationLoop @loop
+
+enemyAnimation33821:
+	.db $08 $10 $00
+	.db $08 $0e $00
+	.db $04 $10 $00
+	.db $04 $12 $00
+@loop:
+	.db $08 $14 $00
+	.db $08 $12 $00
+	m_AnimationLoop @loop
+
+enemyAnimation33835:
+	.db $08 $10 $00
+	.db $08 $0e $00
+	m_AnimationLoop enemyAnimation33835
+
+enemyAnimation3383d:
+	.db $10 $18 $00
+	.db $10 $16 $00
+	m_AnimationLoop enemyAnimation3383d
+
+enemyAnimation33845:
+	.db $10 $1e $00
+	.db $10 $20 $00
+	m_AnimationLoop enemyAnimation33845
+
+enemyAnimation3384d:
+	.db $78 $24 $01
+	.db $1e $22 $00
+	.db $0c $24 $02
+	.db $08 $22 $00
+	.db $0c $24 $02
+	.db $7f $24 $ff
+enemyAnimation3385f:
+	.db $7f $1e $00
+enemyAnimation33862:
+	.db $78 $06 $01
+	.db $1e $04 $00
+	.db $0c $06 $02
+	.db $08 $04 $00
+	.db $0c $06 $02
+	.db $7f $06 $ff
+enemyAnimation33874:
+	.db $78 $1a $01
+	.db $1e $18 $00
+	.db $0c $1a $02
+	.db $08 $18 $00
+	.db $0c $1a $02
+	.db $7f $1a $ff
+enemyAnimation33886:
+	.db $10 $0a $00
+	.db $10 $0c $00
+	m_AnimationLoop enemyAnimation33886
+
+enemyAnimation3388e:
+	.db $78 $10 $01
+	.db $1e $0e $00
+	.db $0c $10 $02
+	.db $08 $0e $00
+	.db $0c $10 $02
+	.db $7f $10 $ff
+enemyAnimation338a0:
+	.db $0c $0a $00
+	.db $0c $08 $00
+enemyAnimation338a6:
+	.db $0c $06 $80
+	.db $0c $02 $80
+	.db $0c $04 $80
+	m_AnimationLoop enemyAnimation338a6
+
+enemyAnimation338b1:
+	.db $0c $0e $00
+	.db $0c $08 $00
+enemyAnimation338b7:
+	.db $0c $02 $80
+	.db $0c $06 $80
+	.db $0c $04 $80
+	m_AnimationLoop enemyAnimation338b7
+
+enemyAnimation338c2:
+	.db $0c $02 $80
+	.db $0c $08 $00
+enemyAnimation338c8:
+	.db $0c $0e $00
+	.db $0c $0a $00
+	.db $0c $0c $00
+	m_AnimationLoop enemyAnimation338c8
+
+enemyAnimation338d3:
+	.db $0c $06 $80
+	.db $0c $08 $00
+enemyAnimation338d9:
+	.db $0c $0a $00
+	.db $0c $0e $00
+	.db $0c $0c $00
+	m_AnimationLoop enemyAnimation338d9
+
+enemyAnimation338e4:
+	.db $0c $04 $80
+	.db $06 $10 $00
+	.db $18 $10 $80
+	.db $03 $02 $00
+	.db $0a $02 $01
+	.db $0a $04 $02
+	.db $0a $06 $82
+	.db $7f $06 $ff
+enemyAnimation338fc:
+	.db $10 $06 $00
+	.db $08 $10 $00
+	.db $12 $02 $00
+	.db $08 $10 $00
+	.db $12 $02 $00
+	.db $08 $10 $00
+	.db $03 $02 $00
+	.db $7f $02 $ff
+enemyAnimation33914:
+	.db $08 $02 $80
+	.db $0c $12 $00
+	.db $0c $14 $80
+	.db $0a $16 $80
+	.db $2d $18 $01
+	.db $0a $16 $80
+	.db $3c $02 $80
+	.db $7f $02 $ff
+enemyAnimation3392c:
+	.db $10 $1a $00
+	.db $10 $1c $00
+	m_AnimationLoop enemyAnimation3392c
+
+enemyAnimation33934:
+	.db $07 $1a $00
+	.db $05 $1e $02
+	.db $06 $1e $04
+	.db $18 $20 $06
+	.db $03 $22 $03
+	.db $06 $1c $08
+	.db $0f $1c $08
+	.db $0f $1c $08
+	.db $7f $1c $ff
+enemyAnimation3394f:
+	.db $08 $1a $00
+	.db $08 $1e $01
+	.db $08 $28 $02
+	.db $02 $1e $01
+	.db $10 $1e $13
+	.db $08 $28 $02
+	.db $02 $1e $01
+	.db $10 $1e $13
+	.db $08 $28 $02
+	.db $02 $1e $15
+	.db $01 $1a $04
+	.db $7f $1a $ff
+enemyAnimation33973:
+	.db $06 $1a $00
+	.db $06 $26 $00
+	.db $06 $28 $00
+	.db $06 $1e $00
+	.db $06 $1a $00
+	.db $06 $26 $00
+	.db $06 $28 $00
+	.db $06 $1e $00
+	.db $7f $1e $80
+enemyAnimation3398e:
+	.db $08 $08 $00
+	.db $08 $00 $00
+	m_AnimationLoop enemyAnimation3398e
+
+enemyAnimation33996:
+	.db $10 $00 $00
+	.db $10 $02 $02
+	.db $10 $00 $00
+	.db $10 $04 $04
+	m_AnimationLoop enemyAnimation33996
+
+enemyAnimation339a4:
+	.db $04 $0e $00
+	.db $04 $10 $00
+	.db $04 $0e $00
+	.db $04 $12 $00
+	m_AnimationLoop enemyAnimation339a4
+
+enemyAnimation339b2:
+	.db $4b $04 $01
+enemyAnimation339b5:
+	.db $10 $00 $00
+	.db $10 $02 $00
+	m_AnimationLoop enemyAnimation339b5
+
+enemyAnimation339bd:
+	.db $08 $06 $00
+	.db $08 $08 $01
+	m_AnimationLoop enemyAnimation339bd
+
+enemyAnimation339c5:
+	.db $0c $00 $00
+	.db $0c $0a $00
+	m_AnimationLoop enemyAnimation339c5
+
+enemyAnimation339cd:
+	.db $06 $0c $00
+	.db $06 $0e $00
+	.db $06 $10 $01
+	.db $06 $0e $00
+	.db $06 $10 $01
+	.db $06 $0e $00
+	.db $06 $10 $01
+	.db $06 $0e $00
+	.db $06 $10 $01
+@loop:
+	.db $7f $0c $00
+	m_AnimationLoop @loop
+
+enemyAnimation339ed:
+	.db $18 $10 $00
+	.db $08 $12 $01
+	.db $04 $14 $02
+	.db $1e $16 $03
+	.db $7f $16 $ff

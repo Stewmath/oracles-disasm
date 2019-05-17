@@ -596,3 +596,9 @@
 	m_GfxData gfx_0e2a57 ; $0e2a57
 	m_GfxData gfx_0e2aa2 ; $0e2aa2
 	m_GfxData gfx_0e2ad7 ; $0e2ad7
+
+	m_GfxData gfx_aquamentus_1
+	m_GfxData gfx_aquamentus_2
+	m_GfxData gfx_aquamentus_3
+	m_GfxData gfx_aquamentus_4
+	m_GfxData gfx_aquamentus_5

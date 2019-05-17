@@ -639,7 +639,9 @@
 ; Enemies $00-$07, and $68-$7f, count as bosses. (These ID ranges are checked in
 ; enemyBossCommon.s.)
 
-.define ENEMYID_STUB_68				$68
+
+; Enemies 68-6f are the seasons bosses.
+.define ENEMYID_AQUAMENTUS			$68
 .define ENEMYID_STUB_69				$69
 .define ENEMYID_STUB_6a				$6a
 .define ENEMYID_STUB_6b				$6b

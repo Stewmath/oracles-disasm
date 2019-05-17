@@ -1,6 +1,3 @@
-; TODO: Figure out where the overlap is between ages and seasons
-
-.ifdef ROM_AGES
 
 .define PALH_00 $00
 .define PALH_01 $01
@@ -206,7 +203,7 @@
 .define PALH_c9 $c9
 .define PALH_ca $ca
 
-.else; ROM_SEASONS
+
 
 .define SEASONS_PALH_00 $00
 .define SEASONS_PALH_01 $01
@@ -398,5 +395,3 @@
 .define SEASONS_PALH_bb $bb
 .define SEASONS_PALH_bc $bc
 .define SEASONS_PALH_bd $bd
-
-.endif

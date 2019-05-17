@@ -1051,6 +1051,25 @@ initializeVramMap1:
 	ld bc,$0400		; $0505
 	jp clearMemoryBc		; $0508
 
+
+;;
+; @param	a	Seasons palette header to load
+loadSeasonsPaletteHeader:
+	push de
+	ld l,a
+	ld a,($ff00+R_SVBK)
+	ld c,a
+	ldh a,(<hRomBank)
+	ld b,a
+	push bc
+	ld a,$02
+	ld ($ff00+R_SVBK),a
+	ld a,:seasonsPaletteHeaderTable
+	setrombank
+	ld a,l
+	ld hl,seasonsPaletteHeaderTable
+	jr +++
+
 ;;
 ; @param	a	Palette header to load (see data/[ages|seasons]/paletteHeaders.s)
 ; @addr{050b}
@@ -1068,6 +1087,7 @@ loadPaletteHeader:
 	setrombank		; $051a
 	ld a,l			; $051f
 	ld hl,paletteHeaderTable
++++
 	rst_addDoubleIndex			; $0523
 	ldi a,(hl)		; $0524
 	ld h,(hl)		; $0525
@@ -9510,8 +9530,8 @@ _interactionNextAnimationFrame:
 	ld (de),a		; $2671
 	inc e			; $2672
 	ldi a,(hl)		; $2673
-	and $3f			; $2674
-	or $40			; $2676
+	;and $3f			; $2674
+	;or $40			; $2676
 	ld (de),a		; $2678
 
 	pop af			; $2679
@@ -10128,7 +10148,7 @@ _enemyNextAnimationFrame:
 	ld (de),a		; $286e
 	inc e			; $286f
 	ldi a,(hl)		; $2870
-	and $3f			; $2871
+	;and $3f			; $2871
 	ld (de),a		; $2873
 
 	pop af			; $2874
@@ -10472,8 +10492,8 @@ _partNextAnimationFrame:
 	ld (de),a		; $29c8
 	inc e			; $29c9
 	ldi a,(hl)		; $29ca
-	and $3f			; $29cb
-	or $40			; $29cd
+	;and $3f			; $29cb
+	;or $40			; $29cd
 	ld (de),a		; $29cf
 
 	ld a,$11		; $29d0
@@ -11750,7 +11770,10 @@ updateEnemy:
 	ld b,$0f		; $2f0d
 	cp $70			; $2f0f
 	jr nc,++			; $2f11
-	dec b			; $2f13
+	ld b,:seasonsBoss.enemyCode68
+	cp $68
+	jr nc,++
+	ld b,$0e
 	cp $30			; $2f14
 	jr nc,++			; $2f16
 	dec b			; $2f18
@@ -11904,7 +11927,7 @@ enemyCodeTable:
 	.dw enemyCodeNil       ; 0x65
 	.dw enemyCodeNil       ; 0x66
 	.dw enemyCodeNil       ; 0x67
-	.dw enemyCodeNil       ; 0x68
+	.dw seasonsBoss.enemyCode68       ; 0x68
 	.dw enemyCodeNil       ; 0x69
 	.dw enemyCodeNil       ; 0x6a
 	.dw enemyCodeNil       ; 0x6b
@@ -20984,7 +21007,9 @@ _warpTileTable:
 
  m_section_superfree "Bank_1_Data_2"
 
-	.include "build/data/paletteHeaders.s"
+	.include "data/ages/paletteHeaders.s"
+	.include "data/seasons/paletteHeaders.s"
+
 	.include "build/data/uncmpGfxHeaders.s"
 	.include "build/data/gfxHeaders.s"
 	.include "build/data/tilesetHeaders.s"
@@ -59970,7 +59995,7 @@ _getSpecialObjectGraphicsFrame:
 	ld (de),a		; $4538
 	inc e			; $4539
 	ldi a,(hl)		; $453a
-	and $3f			; $453b
+	;and $3f			; $453b
 	ld (de),a		; $453d
 
 	; Bytes 1-2: address of graphics
@@ -68846,7 +68871,7 @@ _itemNextAnimationFrame:
 	ld (de),a		; $4a1b
 	inc e			; $4a1c
 	ldi a,(hl)		; $4a1d
-	and $3f			; $4a1e
+	;and $3f			; $4a1e
 	ld (de),a		; $4a20
 	ret			; $4a21
 
@@ -175880,13 +175905,6 @@ underWaterSurfaceData_7e53:
 .BANK $13 SLOT 1
 .ORG 0
 
-	.define BASE_OAM_DATA_BANK $13
-	.export BASE_OAM_DATA_BANK
-
-	.include "build/data/specialObjectOamData.s"
-	.include "data/itemOamData.s"
-	.include "build/data/enemyOamData.s"
-
 .BANK $14 SLOT 1
 .ORG 0
 
@@ -175965,9 +175983,6 @@ puddleAnimationFrames:
 	.dw _puddleAnimationFrame3
 
 .ends
-
-.include "build/data/interactionOamData.s"
-.include "build/data/partOamData.s"
 
 
 .include "code/bank15.s"
@@ -177329,9 +177344,13 @@ loadD6ChangingFloorPatternToBigBuffer:
 .BANK $17 SLOT 1 ; Seasons: should be bank $16
 .ORG 0
 
-	.include "build/data/paletteData.s"
+	.include "data/ages/paletteData.s"
+	.include "data/seasons/paletteData.s"
+
+ m_section_superfree "CollisionsAndRoomLayout"
 	.include "build/data/tilesetCollisions.s"
 	.include "build/data/smallRoomLayoutTables.s"
+ .ends
 
 
 .ifdef ROM_AGES
@@ -189031,3 +189050,864 @@ func_7cf8:
 .endif
 
 .ends
+
+
+
+; Moved OAM data to extra banks.
+; Abusing slots to use the upper 2 bits of the address as a bank offset.
+
+.BANK $40 SLOT 0
+.ORG $0
+
+	.define BASE_OAM_DATA_BANK $40
+	.export BASE_OAM_DATA_BANK
+
+	.include "build/data/specialObjectOamData.s"
+	.include "data/itemOamData.s"
+	.include "data/ages/enemyOamData.s"
+
+.BANK $41 SLOT 1
+.ORG $0
+
+	.include "data/seasons/enemyOamData.s"
+
+.BANK $42 SLOT 4
+.ORG $0
+	.include "build/data/interactionOamData.s"
+	.include "build/data/partOamData.s"
+
+
+
+.BANK $43 SLOT 1
+.ORGA $4000
+
+ m_section_free Seasons_Bosses NAMESPACE seasonsBoss
+
+.include "code/enemyCommon.s"
+.include "code/enemyBossCommon.s"
+
+; ==============================================================================
+; ENEMYID_AQUAMENTUS
+;
+; Variables (subid 1, main body):
+;   var31: Affects collision box?
+;   var32/var33: Target position?
+;   var34: Reference to subid 2 (sprites only)
+;   var35: Reference to subid 3 (the horn)
+;   var36: Counter for playing footstep sound
+;   var37: ?
+;
+; Variables (subid 2, sprites only):
+;   relatedObj1: Reference to subid 1 (main body)
+;   relatedObj2: Reference to subid 3 (horn)
+;   var30: Current animation
+;
+; Variables (subid 3, horn):
+;   relatedObj2: Reference to subid 2 (sprites)
+;   var30: Current animation
+; ==============================================================================
+
+; TODO: Fix these
+.define SND_DODONGO_OPEN_MOUTH SND_TINGLE
+.define PARTID_AQUAMENTUS_PROJECTILE $00
+
+enemyCode68:
+	jr z,@normalStatus	; $634e
+	sub ENEMYSTATUS_NO_HEALTH			; $6350
+	ret c			; $6352
+	dec a			; $6353
+	jr z,@justHit	; $6354
+	dec a			; $6356
+	jr z,@normalStatus	; $6357
+
+	; Dead
+	ld e,Enemy.subid		; $6359
+	ld a,(de)		; $635b
+	sub $02			; $635c
+	jp z,_enemyBoss_dead		; $635e
+	dec a			; $6361
+	jp nz,enemyDelete		; $6362
+	call _ecom_killRelatedObj1		; $6365
+	call _ecom_killRelatedObj2		; $6368
+	jp enemyDie_uncounted_withoutItemDrop		; $636b
+
+@justHit:
+	ld e,Enemy.subid		; $636e
+	ld a,(de)		; $6370
+	sub $03			; $6371
+	jr nz,@normalStatus	; $6373
+
+	ld a,Object.invincibilityCounter		; $6375
+	call objectGetRelatedObject2Var		; $6377
+	ld e,l			; $637a
+	ld a,(de)		; $637b
+	ld (hl),a		; $637c
+
+@normalStatus:
+	call _ecom_getSubidAndCpStateTo08		; $637d
+	jr nc,@state8OrHigher	; $6380
+	rst_jumpTable			; $6382
+	.dw _aquamentus_state_uninitialized
+	.dw _aquamentus_state_spawner
+	.dw _aquamentus_state_stub
+	.dw _aquamentus_state_stub
+	.dw _aquamentus_state_stub
+	.dw _aquamentus_state_stub
+	.dw _aquamentus_state_stub
+	.dw _aquamentus_state_stub
+
+@state8OrHigher
+	dec b			; $6393
+	ld a,b			; $6394
+	rst_jumpTable			; $6395
+	.dw _aquamentus_subid1
+	.dw _aquamentus_subid2
+	.dw _aquamentus_subid3
+
+
+_aquamentus_state_uninitialized:
+	ld c,$20		; $639c
+	call _ecom_setZAboveScreen		; $639e
+
+	; Check subid
+	ld a,b			; $63a1
+	or a			; $63a2
+	jp nz,_ecom_setSpeedAndState8		; $63a3
+
+	; Subid is 0; go to state 1
+	ld l,e			; $63a6
+	inc (hl) ; [state] = 1
+
+	ld a,SEASONS_PALH_80
+	call loadSeasonsPaletteHeader
+
+	ld a,ENEMYID_AQUAMENTUS		; $63a8
+	ld b,0
+	jp _enemyBoss_initializeRoom		; $63ac
+
+
+_aquamentus_state_spawner:
+	ld a,(wcc93)		; $63af
+	or a			; $63b2
+	ret nz			; $63b3
+
+	ld b,$03		; $63b4
+	call checkBEnemySlotsAvailable		; $63b6
+	ret nz			; $63b9
+
+	ld b,ENEMYID_AQUAMENTUS		; $63ba
+	call _ecom_spawnUncountedEnemyWithSubid01		; $63bc
+	ld c,h			; $63bf
+
+	call _ecom_spawnUncountedEnemyWithSubid01		; $63c0
+	inc (hl) ; [child.subid] = 2
+	call _aquamentus_initializeChildObject		; $63c4
+
+	push hl			; $63c7
+	call _ecom_spawnUncountedEnemyWithSubid01		; $63c8
+	ld (hl),$03 ; [child.subid] = 3
+	call _aquamentus_initializeChildObject		; $63cd
+
+	ld e,h			; $63d0
+	pop hl			; $63d1
+	ld a,h			; $63d2
+	ld h,c			; $63d3
+	ld l,Enemy.var34		; $63d4
+	ldi (hl),a ; [body.var34] = subid2
+	ld (hl),e  ; [body.var35] = horn
+	call objectCopyPosition		; $63d8
+	jp enemyDelete		; $63db
+
+
+_aquamentus_state_stub:
+	ret			; $63de
+
+
+; Body hitbox + general logic
+_aquamentus_subid1:
+	ld a,(de)		; $63df
+	sub $08			; $63e0
+	rst_jumpTable			; $63e2
+	.dw _aquamentus_body_state8
+	.dw _aquamentus_body_state9
+	.dw _aquamentus_body_stateA
+	.dw _aquamentus_body_stateB
+	.dw _aquamentus_body_stateC
+	.dw _aquamentus_body_stateD
+	.dw _aquamentus_body_stateE
+	.dw _aquamentus_body_stateF
+
+; Initialization
+_aquamentus_body_state8:
+	ld bc,$020c		; $63f3
+	call _enemyBoss_spawnShadow		; $63f6
+	ret nz			; $63f9
+
+	ld h,d			; $63fa
+	ld l,Enemy.state		; $63fb
+	inc (hl)		; $63fd
+
+	ld l,Enemy.collisionReactionSet		; $63fe
+	ld (hl),SE_COLLISIONREACTIONSET_5d		; $6400
+
+	ld l,Enemy.var32		; $6402
+	ld a,$50		; $6404
+	ldi (hl),a  ; [var32]
+	ld (hl),$c0 ; [var33]
+
+	ld l,Enemy.var31		; $6409
+	ld (hl),$01		; $640b
+	ld l,Enemy.counter1		; $640d
+	ld (hl),90		; $640f
+	ret			; $6411
+
+
+; Lowering down
+_aquamentus_body_state9:
+	ld e,Enemy.zh		; $6412
+	ld a,(de)		; $6414
+	cp $f4			; $6415
+	jr nc,@doneLowering	; $6417
+
+	; Lower aquamentus based on his current height
+	and $f0			; $6419
+	swap a			; $641b
+	ld hl,_aquamentus_fallingSpeeds		; $641d
+	rst_addAToHl			; $6420
+	dec e			; $6421
+	ld a,(de)		; $6422
+	add (hl)		; $6423
+	ld (de),a		; $6424
+	inc e			; $6425
+	ld a,(de)		; $6426
+	adc $00			; $6427
+	ld (de),a		; $6429
+	jp _aquamentus_playHoverSoundEvery32Frames		; $642a
+
+@doneLowering:
+	ld h,d			; $642d
+	ld l,Enemy.state		; $642e
+	inc (hl) ; [state] = $0a
+
+	ld l,Enemy.var31		; $6431
+	ld (hl),$02		; $6433
+	ret			; $6435
+
+
+; Hovering in place before landing
+_aquamentus_body_stateA:
+	call _ecom_decCounter1		; $6436
+	jp nz,_aquamentus_playHoverSoundEvery32Frames		; $6439
+
+	; Time to land on the ground
+
+	ld (hl),60		; $643c
+	ld l,Enemy.zh		; $643e
+	ld (hl),$00		; $6440
+
+	ld l,e			; $6442
+	inc (hl) ; [state] = $0b
+
+	ld l,Enemy.var31		; $6444
+	ld (hl),$04		; $6446
+
+	; Check whether to play boss music?
+	ld l,Enemy.var37		; $6448
+	bit 0,(hl)		; $644a
+	jr nz,++		; $644c
+	inc (hl)		; $644e
+	ld a,MUS_BOSS		; $644f
+	ld (wActiveMusic),a		; $6451
+	call playSound		; $6454
+++
+	ld a,$20		; $6457
+
+;;
+; @addr{6459}
+_aquamentus_body_pound:
+	call setScreenShakeCounter		; $6459
+	ld a,SND_STRONG_POUND		; $645c
+	jp playSound		; $645e
+
+
+; Standing in place
+_aquamentus_body_stateB:
+	call _ecom_decCounter1		; $6461
+	ret nz			; $6464
+	ld (hl),150		; $6465
+	inc l			; $6467
+	ld (hl),$04 ; [counter2]
+
+	ld l,Enemy.var36		; $646a
+	ld (hl),$18		; $646c
+	jp _aquamentus_decideNextAttack		; $646e
+
+
+; Moving forward
+_aquamentus_body_stateC:
+	call _aquamentus_body_playFootstepSoundEvery24Frames		; $6471
+	call _aquamentus_body_6694		; $6474
+	call _ecom_decCounter1		; $6477
+	jr nz,@applySpeed	; $647a
+
+	inc l			; $647c
+	ldd a,(hl) ; [counter2]
+	ld bc,_aquamentus_projectileFireDelayCounters		; $647e
+	call addAToBc		; $6481
+	ld a,(bc)		; $6484
+	ldi (hl),a ; [counter1]
+	dec (hl)   ; [counter2]--
+	jr nz,@fireProjectiles	; $6487
+
+	ld l,Enemy.state		; $6489
+	inc (hl) ; [state] = $0d
+
+	ld l,Enemy.var31		; $648c
+	ld (hl),$08		; $648e
+	ld l,Enemy.speed		; $6490
+	ld (hl),SPEED_80		; $6492
+	ret			; $6494
+
+@fireProjectiles:
+	call _aquamentus_body_chooseRandomLeftwardAngle		; $6495
+	call _aquamentus_fireProjectiles		; $6498
+@applySpeed:
+	jp objectApplySpeed		; $649b
+
+
+; Walking back to original position
+_aquamentus_body_stateD:
+	call _aquamentus_body_playFootstepSoundEvery18Frames		; $649e
+	call _aquamentus_body_6694		; $64a1
+	call _aquamentus_body_checkReachedTargetPosition		; $64a4
+	jr c,@gotoStateB	; $64a7
+
+	call _ecom_decCounter1		; $64a9
+	call z,_aquamentus_fireProjectiles		; $64ac
+	jp _ecom_moveTowardPosition		; $64af
+
+@gotoStateB:
+	ld l,Enemy.counter1		; $64b2
+	ld (hl),30		; $64b4
+	ld l,Enemy.state		; $64b6
+	ld (hl),$0b		; $64b8
+	ld l,Enemy.var31		; $64ba
+	ld (hl),$04		; $64bc
+	ret			; $64be
+
+
+; Charge attack
+_aquamentus_body_stateE:
+	call _ecom_decCounter2		; $64bf
+	ret nz			; $64c2
+
+	ld e,Enemy.xh		; $64c3
+	ld a,(de)		; $64c5
+	cp $1c			; $64c6
+	jr c,@onLeftSide	; $64c8
+
+	; Begin charge
+
+	ld a,(wFrameCounter)		; $64ca
+	and $1f			; $64cd
+	ld a,SND_SWORDSPIN		; $64cf
+	call z,playSound		; $64d1
+	ld a,(wFrameCounter)		; $64d4
+	and $07			; $64d7
+	jr nz,@applySpeed	; $64d9
+
+	call getFreeInteractionSlot		; $64db
+	jr nz,@applySpeed	; $64de
+
+	; Create dust
+	ld (hl),INTERACID_FALLDOWNHOLE		; $64e0
+	inc l			; $64e2
+	inc (hl) ; [subid] = 1
+	ld bc,$1010		; $64e4
+	call objectCopyPositionWithOffset		; $64e7
+
+@applySpeed:
+	jp objectApplySpeed		; $64ea
+
+@onLeftSide:
+	call _ecom_decCounter1		; $64ed
+	dec (hl)		; $64f0
+	jr z,@gotoStateF	; $64f1
+
+	; Play "pound" sound effect when he reaches the wall
+	ld a,(hl)		; $64f3
+	cp 148			; $64f4
+	ret nz			; $64f6
+	ld a,70		; $64f7
+	jp _aquamentus_body_pound		; $64f9
+
+@gotoStateF:
+	ld (hl),240 ; [counter1]
+	inc l			; $64fe
+	ld (hl),60 ; [counter2]
+
+	ld l,Enemy.state		; $6501
+	inc (hl) ; [state] = $0f
+
+	ld l,Enemy.zh		; $6504
+	ld (hl),$f8		; $6506
+
+	ld l,Enemy.var31		; $6508
+	ld (hl),$01		; $650a
+
+	ld l,Enemy.angle		; $650c
+	ld (hl),$08		; $650e
+	ld l,Enemy.speed		; $6510
+	ld (hl),SPEED_c0		; $6512
+	ret			; $6514
+
+
+_aquamentus_body_stateF:
+	call _aquamentus_playHoverSoundEvery32Frames		; $6515
+	call _ecom_decCounter2		; $6518
+	jr z,@moveBack	; $651b
+
+	; Rising up
+	ld l,Enemy.zh		; $651d
+	ld a,(hl)		; $651f
+	cp $e8			; $6520
+	ret c			; $6522
+	ld b,$80		; $6523
+	jp _aquamentus_body_subZ		; $6525
+
+@moveBack:
+	call _ecom_decCounter1		; $6528
+	jr z,@lowerDown	; $652b
+
+	; Moving back to original position (and maybe still rising up)
+	ld a,(hl) ; [counter1]
+	cp 210			; $652e
+	ld b,$c0		; $6530
+	call nc,_aquamentus_body_subZ		; $6532
+	call _aquamentus_body_checkReachedTargetPosition		; $6535
+	ret c			; $6538
+	jp _ecom_moveTowardPosition		; $6539
+
+@lowerDown:
+	ld l,Enemy.state		; $653c
+	ld (hl),$09		; $653e
+	ld l,Enemy.counter1		; $6540
+	ld (hl),30		; $6542
+	ret			; $6544
+
+
+; All sprites except horn
+_aquamentus_subid2:
+	ld a,(de) ; [state]
+	sub $08			; $6546
+	jr z,@state8	; $6548
+
+@state9:
+	ld a,Object.var31		; $654a
+	call objectGetRelatedObject1Var		; $654c
+	ld b,(hl)		; $654f
+
+	; Copy main body's position
+	ld a,d			; $6550
+	ld d,h			; $6551
+	ld h,a			; $6552
+	call objectCopyPosition		; $6553
+	ld d,h			; $6556
+
+	ld a,b			; $6557
+	call getHighestSetBit		; $6558
+	jr nc,_aquamentus_animate	; $655b
+
+	ld hl,_aquamentus_animations		; $655d
+	rst_addAToHl			; $6560
+	ld e,Enemy.var30		; $6561
+	ld a,(de)		; $6563
+	cp (hl)			; $6564
+	jr z,_aquamentus_animate	; $6565
+
+	ld a,(hl)		; $6567
+	ld (de),a		; $6568
+	jp enemySetAnimation		; $6569
+
+@state8:
+	ld h,d			; $656c
+	ld l,Enemy.state		; $656d
+	inc (hl) ; [state] = 9
+
+	ld l,Enemy.collisionType		; $6570
+	res 7,(hl)		; $6572
+
+	; Copy parent's horn reference to relatedObj2
+	ld l,Enemy.relatedObj1+1		; $6574
+	ld h,(hl)		; $6576
+	ld l,Enemy.var35		; $6577
+	ld e,Enemy.relatedObj2+1		; $6579
+	ld a,(hl)		; $657b
+	ld (de),a		; $657c
+	jp objectSetVisible81		; $657d
+
+
+; Horn & horn hitbox
+_aquamentus_subid3:
+	ld a,(de)		; $6580
+	sub $08			; $6581
+	jr z,_aquamentus_subid3_state8	; $6583
+
+
+_aquamentus_subid3_state9:
+	; Only draw the horn if the main sprite is also visible
+	ld a,Object.visible		; $6585
+	call objectGetRelatedObject2Var		; $6587
+	ld e,l			; $658a
+	ld a,(hl)		; $658b
+	and $80			; $658c
+	ld b,a			; $658e
+	ld a,(de)		; $658f
+	and $7f			; $6590
+	or b			; $6592
+	ld (de),a		; $6593
+
+	call _aquamentus_horn_updateAnimation		; $6594
+
+	; Get parent's position
+	ld a,Object.yh		; $6597
+	call objectGetRelatedObject1Var		; $6599
+	ld b,(hl)		; $659c
+	ld l,Enemy.xh		; $659d
+	ld c,(hl)		; $659f
+
+	; [horn.zh] = [body.zh] - 7
+	ld l,Enemy.zh		; $65a0
+	ld e,l			; $65a2
+	ld a,(hl)		; $65a3
+	sub $07			; $65a4
+	ld (de),a		; $65a6
+
+	; Y/X offsets for horn vary based on subid 2's animParameter
+	ld l,Enemy.var34		; $65a7
+	ld h,(hl)		; $65a9
+	ld l,Enemy.animParameter		; $65aa
+	ld a,(hl)		; $65ac
+	cp $09			; $65ad
+	jr c,+			; $65af
+	ld a,$05		; $65b1
++
+	ld hl,_aquamentus_hornXYOffsets		; $65b3
+	rst_addDoubleIndex			; $65b6
+	ld e,Enemy.yh		; $65b7
+	ldi a,(hl)		; $65b9
+	add b			; $65ba
+	ld (de),a		; $65bb
+
+	ld e,Enemy.xh		; $65bc
+	ld a,(hl)		; $65be
+	add c			; $65bf
+	ld (de),a		; $65c0
+
+_aquamentus_animate:
+	jp enemyAnimate		; $65c1
+
+
+_aquamentus_subid3_state8:
+	ld h,d			; $65c4
+	ld l,e			; $65c5
+	inc (hl) ; [state] = 9
+
+	ld l,Enemy.collisionRadiusY		; $65c7
+	ld (hl),$06		; $65c9
+	inc l			; $65cb
+	ld (hl),$03		; $65cc
+
+	; Copy parent's subid2 reference to relatedObj2
+	ld l,Enemy.relatedObj1+1		; $65ce
+	ld h,(hl)		; $65d0
+	ld l,Enemy.var34		; $65d1
+	ld e,Enemy.relatedObj2+1		; $65d3
+	ld a,(hl)		; $65d5
+	ld (de),a		; $65d6
+	jp objectSetVisible81		; $65d7
+
+
+;;
+; @param	h	Child object
+; @addr{65da}
+_aquamentus_initializeChildObject:
+	ld l,Enemy.relatedObj1		; $65da
+	ld a,Enemy.start		; $65dc
+	ldi (hl),a		; $65de
+	ld (hl),c		; $65df
+	inc l			; $65e0
+	ld (hl),a		; $65e1
+	jp objectCopyPosition		; $65e2
+
+;;
+; Chooses whether to charge (state $0e) or move forward (state $0c)
+; @addr{65e5}
+_aquamentus_decideNextAttack:
+	ld e,Enemy.xh		; $65e5
+	ld a,(de)		; $65e7
+	ld b,a			; $65e8
+	ldh a,(<hEnemyTargetX)	; $65e9
+	cp b			; $65eb
+	ld a,$0c		; $65ec
+	jr nc,@setState	; $65ee
+
+	call getRandomNumber_noPreserveVars		; $65f0
+	and $07			; $65f3
+	ld c,a			; $65f5
+	ldh a,(<hEnemyTargetX)	; $65f6
+	rlca			; $65f8
+	rlca			; $65f9
+	and $03			; $65fa
+	ld hl,_aquamentus_chargeProbabilities		; $65fc
+	rst_addAToHl			; $65ff
+	ld a,c			; $6600
+	call checkFlag		; $6601
+	ld a,$0c		; $6604
+	jr z,@setState	; $6606
+	ld a,$0e		; $6608
+
+@setState:
+	ld e,Enemy.state		; $660a
+	ld (de),a		; $660c
+	cp $0c			; $660d
+	jr z,@initializeMovement	; $660f
+
+	; Initialize charge attack
+	call _aquamentus_body_calculateAngleForCharge		; $6611
+	ld e,Enemy.counter2		; $6614
+	ld a,30		; $6616
+	ld (de),a		; $6618
+
+	ld a,$20		; $6619
+	ld e,SPEED_1c0		; $661b
+
+@setVar31AndSpeed:
+	ld h,d			; $661d
+	ld l,Enemy.var31		; $661e
+	ld (hl),a		; $6620
+	ld l,Enemy.speed		; $6621
+	ld (hl),e		; $6623
+
+	ld e,Enemy.var31		; $6624
+	ld a,(de)		; $6626
+	call getHighestSetBit		; $6627
+	ret nc			; $662a
+
+	ld hl,_aquamentus_collisionBoxSizes		; $662b
+	rst_addDoubleIndex			; $662e
+	ld e,Enemy.collisionRadiusY		; $662f
+	ldi a,(hl)		; $6631
+	ld (de),a		; $6632
+	inc e			; $6633
+	ld a,(hl)		; $6634
+	ld (de),a		; $6635
+	ret			; $6636
+
+@initializeMovement:
+	call _aquamentus_body_chooseRandomLeftwardAngle		; $6637
+	ld a,$04		; $663a
+	ld e,SPEED_40		; $663c
+	jr @setVar31AndSpeed		; $663e
+
+
+;;
+; @addr{6640}
+_aquamentus_body_chooseRandomLeftwardAngle:
+	call getRandomNumber_noPreserveVars		; $6640
+	and $07			; $6643
+	cp $07			; $6645
+	jr nz,+			; $6647
+	ld a,$03		; $6649
++
+	add $15			; $664b
+	ld e,Enemy.angle		; $664d
+	ld (de),a		; $664f
+	ret			; $6650
+
+;;
+; Sets angle to move left, slightly up or down, depending on Link's position
+; @addr{6651}
+_aquamentus_body_calculateAngleForCharge:
+	ld b,$02		; $6651
+	ldh a,(<hEnemyTargetY)	; $6653
+	cp $48			; $6655
+	jr c,@setAngle	; $6657
+	dec b			; $6659
+	cp $68			; $665a
+	jr c,@setAngle	; $665c
+	dec b			; $665e
+
+@setAngle:
+	ld a,$17		; $665f
+	add b			; $6661
+	ld e,Enemy.angle		; $6662
+	ld (de),a		; $6664
+	ret			; $6665
+
+;;
+; @param[out]	cflag	c if within 2 pixels of target position
+; @addr{6666}
+_aquamentus_body_checkReachedTargetPosition:
+	ld h,d			; $6666
+	ld l,Enemy.var32		; $6667
+	call _ecom_readPositionVars		; $6669
+	sub c			; $666c
+	add $02			; $666d
+	cp $05			; $666f
+	ret nc			; $6671
+	ldh a,(<hFF8F)	; $6672
+	sub b			; $6674
+	add $02			; $6675
+	cp $05			; $6677
+	ret			; $6679
+
+;;
+; @param	b	Amount to subtract z value by (subpixels)
+; @addr{667a}
+_aquamentus_body_subZ:
+	ld e,Enemy.z		; $667a
+	ld a,(de)		; $667c
+	sub b			; $667d
+	ld (de),a		; $667e
+	inc e			; $667f
+	ld a,(de)		; $6680
+	sbc $00			; $6681
+	ld (de),a		; $6683
+	ret			; $6684
+
+;;
+; @addr{6685}
+_aquamentus_fireProjectiles:
+	ld e,Enemy.var31		; $6685
+	ld a,$10		; $6687
+	ld (de),a		; $6689
+	ld a,SND_DODONGO_OPEN_MOUTH		; $668a
+	call playSound		; $668c
+	ld b,PARTID_AQUAMENTUS_PROJECTILE		; $668f
+	jp _ecom_spawnProjectile		; $6691
+
+;;
+; @addr{6694}
+_aquamentus_body_6694:
+	ld e,Enemy.var34		; $6694
+	ld a,(de)		; $6696
+	ld h,a			; $6697
+	ld l,Enemy.animParameter		; $6698
+	ld a,(hl)		; $669a
+	inc a			; $669b
+	ret nz			; $669c
+
+	ld e,Enemy.state		; $669d
+	ld a,(de)		; $669f
+	cp $0c			; $66a0
+	ld a,$04		; $66a2
+	jr z,+			; $66a4
+	add a			; $66a6
++
+	ld e,Enemy.var31		; $66a7
+	ld (de),a		; $66a9
+	ret			; $66aa
+
+
+;;
+; @addr{66ab}
+_aquamentus_playHoverSoundEvery32Frames:
+	ld a,(wFrameCounter)		; $66ab
+	and $1f			; $66ae
+	ret nz			; $66b0
+
+	ld a,SND_AQUAMENTUS_HOVER		; $66b1
+	jr _aquamentus_playSound		; $66b3
+
+;;
+; @addr{66b5}
+_aquamentus_body_playFootstepSoundEvery18Frames:
+	ld a,$12		; $66b5
+	jr ++		; $66b7
+
+;;
+; @addr{66b9}
+_aquamentus_body_playFootstepSoundEvery24Frames:
+	ld a,$18		; $66b9
+++
+	ld h,d			; $66bb
+	ld l,Enemy.var36		; $66bc
+	dec (hl)		; $66be
+	ret nz			; $66bf
+
+	ld (hl),a		; $66c0
+	ld a,SND_ROLLER		; $66c1
+
+_aquamentus_playSound:
+	jp playSound		; $66c3
+
+;;
+; @addr{66c6}
+_aquamentus_horn_updateAnimation:
+	ld a,Object.var34		; $66c6
+	call objectGetRelatedObject1Var		; $66c8
+	ld h,(hl)		; $66cb
+
+	ld l,Enemy.animParameter		; $66cc
+	ld a,(hl)		; $66ce
+	inc a			; $66cf
+	ld hl,@animations		; $66d0
+	rst_addAToHl			; $66d3
+
+	ld a,(hl)		; $66d4
+	ld h,d			; $66d5
+	ld l,Enemy.var30		; $66d6
+	cp (hl)			; $66d8
+	ret z			; $66d9
+
+	ld (hl),a		; $66da
+	jp enemySetAnimation		; $66db
+
+@animations:
+	.db $06 $05 $05 $05 $05 $06 $06 $06
+	.db $07 $08
+
+_aquamentus_projectileFireDelayCounters:
+	.db 0, 100, 60, 180, 180
+
+
+; Each byte corresponds to one horizontal quarter of the screen. Aquamentus will charge if
+; a randomly chosen bit from that byte is set. (Doesn't apply if Link is behind
+; aquamentus.)
+_aquamentus_chargeProbabilities:
+	.db $03 $31 $13 $33
+
+
+_aquamentus_collisionBoxSizes:
+	.db $16 $08
+	.db $16 $08
+	.db $0a $0d
+	.db $0a $0d
+	.db $0a $0d
+	.db $0c $14
+
+_aquamentus_animations:
+	.db $00 $00 $01 $02 $03 $04
+
+
+; Each byte is a z value to add depending on aquamentus's current height.
+_aquamentus_fallingSpeeds:
+	.db $00 $f0 $f0 $f0 $f0 $f0 $f0 $e0
+	.db $e0 $e0 $e0 $c0 $c0 $a0 $60 $30
+
+_aquamentus_hornXYOffsets:
+	.db $d8 $f4
+	.db $d7 $f4
+	.db $e8 $f2
+	.db $e7 $f2
+	.db $e8 $f2
+	.db $e8 $f8
+	.db $e5 $f4
+	.db $e8 $f2
+	.db $0f $e8
+
+
+
+
+ .ends

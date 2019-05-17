@@ -223,3 +223,9 @@ objectGfxHeaderTable:
 	/* $dd */ m_ObjectGfxHeader gfx_twinrova_8 $00
 	/* $de */ m_ObjectGfxHeader gfx_twinrova_9 $00
 	/* $df */ m_ObjectGfxHeader gfx_twinrovamerged_2 $80
+
+	/* $e0 */ m_ObjectGfxHeader gfx_aquamentus_1 $00
+	/* $e1 */ m_ObjectGfxHeader gfx_aquamentus_2 $00
+	/* $e2 */ m_ObjectGfxHeader gfx_aquamentus_3 $00
+	/* $e3 */ m_ObjectGfxHeader gfx_aquamentus_4 $00
+	/* $e4 */ m_ObjectGfxHeader gfx_aquamentus_5 $80

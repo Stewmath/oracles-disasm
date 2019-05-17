@@ -118,7 +118,7 @@ enemyData:
 	/* 0x65 */ m_EnemyData $00 $00 $00 $00
 	/* 0x66 */ m_EnemyData $00 $00 $00 $00
 	/* 0x67 */ m_EnemyData $00 $00 $00 $00
-	/* 0x68 */ m_EnemyData $00 $00 $00 $00
+	/* 0x68 */ m_EnemyData $e0 $fd $24 $00
 	/* 0x69 */ m_EnemyData $00 $00 $00 $00
 	/* 0x6a */ m_EnemyData $00 $00 $00 $00
 	/* 0x6b */ m_EnemyData $00 $00 $00 $00

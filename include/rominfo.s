@@ -7,6 +7,10 @@
 	SLOTSIZE $1000
 	SLOT 2 $c000
 	SLOT 3 $d000
+
+	SLOTSIZE $4000
+	SLOT 4 $8000
+	SLOT 5 $c000
 .endme
 
 .banksize $4000

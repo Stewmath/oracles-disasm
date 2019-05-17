@@ -1010,7 +1010,7 @@ objectData4770:
 	obj_EndPointer
 
 objectData477d:
-	obj_SpecificEnemy $00 $7800 $58 $78
+	obj_SpecificEnemy $00 $6800 $58 $78
 	obj_EndPointer
 
 objectData4784:
