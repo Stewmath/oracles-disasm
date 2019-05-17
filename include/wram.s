@@ -2010,7 +2010,7 @@ wcc92: ; $cc92
 ; Bit 2 set on conveyors?
 	db
 
-wcc93: ; $cc93
+wcc93: ; $cc93/$ccad
 ; "Status" of door shutters?
 	db
 

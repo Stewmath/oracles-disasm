@@ -1,4 +1,5 @@
 
+;0w"ayet;llllll"oyegT:%s/ld \(.*\)$ff00+$o/ldh \1<agtj
 .enum $ff80
 	hOamFunc			dsb $a	; $ff80
 
@@ -41,7 +42,7 @@
 
 	; This is a counter for how many times the LCD interrupt has been triggered this
 	; frame (used when hLcdInterruptBehaviour is 2 or higher).
-	hLcdInterruptCounter				db	; $ff9c
+	hLcdInterruptCounter		db	; $ff9c
 
 	; Copied to hLcdInterruptBehaviour at vblank, to avoid anomolies mid-frame.
 	hNextLcdInterruptBehaviour	db	; $ff9d
@@ -82,8 +83,8 @@
 	hActiveObject			db	; $ffaf
 
 	; The position enemies try to attack. Unaffected by scent seeds?
-	hEnemyTargetY			db	; $ffb0
-	hEnemyTargetX			db	; $ffb1
+	hEnemyTargetY			db	; $ffb0/$ffae
+	hEnemyTargetX			db	; $ffb1/$ffaf
 
 	; $ffb2/b3: Y/X values, also relating to enemies. This is either Link's or the
 	; scent seed's position.
@@ -107,7 +108,7 @@
 	hIntroInputsEnabled		db	; $ffb9
 
 	; Tentative name
-	hSerialInterruptBehaviour	db	; $ffba
+	hSerialInterruptBehaviour	db	; $ffba/$ffb8
 	; Serial interrupt sets to 1 if a byte has been read
 	hSerialRead			db	; $ffbb
 	; Value of byte from R_SB
@@ -117,8 +118,10 @@
 
 	hFFBE				db	; $ffbe
 	hFFBF				db	; $ffbf
+.ende
 
-	; Everything after this point might be just for music?
+.enum $ffc0
+	; Marker for end of "normal" hram, beginning of music stuff
 	hramEnd			 	.db	; $ffc0
 
 	; =====================================================================
@@ -138,5 +141,4 @@
 	hSoundChannelAddresses			dsw 8	; $ffe2
 
 	hSoundData3				db	; $fff2
-
 .ende

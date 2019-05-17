@@ -692,6 +692,8 @@
 ; Bosses
 ; ================================================================================
 
+.ifdef ROM_AGES
+
 ;;
 ; @subid_00{Spawner (use this)}
 ; @subid_01{Body}
@@ -741,3 +743,15 @@
 ; Also ramrock with ID 7.
 
 ; Can't have enemies with ID beyond $80, for various reasons.
+
+
+.else; ROM_SEASONS
+
+;;
+; @subid_00{Spawner {use this})
+; @subid_01{Body hitbox + general logic}
+; @subid_02{All sprites except horn}
+; @subid_03{Horn & horn hitbox}
+.define ENEMYID_AQUAMENTUS			$78
+
+.endif ; ROM_SEASONS

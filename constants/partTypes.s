@@ -233,3 +233,14 @@
 ; The stone that's pushed at the start of the game. This only applies after it's moved;
 ; before it's moved, the stone is handled by INTERACID_TRIFOCE_STONE instead.
 .define PARTID_TRIFORCE_STONE			$5a
+
+
+
+; TODO: Separate ages/seasons stuff properly.
+
+.ifdef ROM_SEASONS
+
+;;
+.define PARTID_AQUAMENTUS_PROJECTILE		$40
+
+.endif
