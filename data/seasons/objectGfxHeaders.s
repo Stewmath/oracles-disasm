@@ -162,11 +162,11 @@ objectGfxHeaderTable: ; $fdafb
 	/* $a0 */ m_ObjectGfxHeader gfx_0abf5f $00
 	/* $a1 */ m_ObjectGfxHeader gfx_0ac12d $00
 	/* $a2 */ m_ObjectGfxHeader gfx_0ac2b3 $80
-	/* $a3 */ m_ObjectGfxHeader gfx_0ac4b2 $00
-	/* $a4 */ m_ObjectGfxHeader gfx_0ac673 $00
-	/* $a5 */ m_ObjectGfxHeader gfx_0ac851 $00
-	/* $a6 */ m_ObjectGfxHeader gfx_0ac9f7 $00
-	/* $a7 */ m_ObjectGfxHeader gfx_0acb98 $80
+	/* $a3 */ m_ObjectGfxHeader gfx_aquamentus_1 $00
+	/* $a4 */ m_ObjectGfxHeader gfx_aquamentus_2 $00
+	/* $a5 */ m_ObjectGfxHeader gfx_aquamentus_3 $00
+	/* $a6 */ m_ObjectGfxHeader gfx_aquamentus_4 $00
+	/* $a7 */ m_ObjectGfxHeader gfx_aquamentus_5 $80
 	/* $a8 */ m_ObjectGfxHeader gfx_0acd63 $00
 	/* $a9 */ m_ObjectGfxHeader gfx_0acf05 $00
 	/* $aa */ m_ObjectGfxHeader gfx_0ad0ce $00

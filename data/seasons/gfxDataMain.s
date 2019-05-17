@@ -165,11 +165,11 @@
 	m_GfxData gfx_0ac12d ; $0ac12d
 	m_GfxData gfx_0ac2b3 ; $0ac2b3
 	m_GfxData gfx_vire ; $0ac3cd
-	m_GfxData gfx_0ac4b2 ; $0ac4b2
-	m_GfxData gfx_0ac673 ; $0ac673
-	m_GfxData gfx_0ac851 ; $0ac851
-	m_GfxData gfx_0ac9f7 ; $0ac9f7
-	m_GfxData gfx_0acb98 ; $0acb98
+	m_GfxData gfx_aquamentus_1 ; $0ac4b2
+	m_GfxData gfx_aquamentus_2 ; $0ac673
+	m_GfxData gfx_aquamentus_3 ; $0ac851
+	m_GfxData gfx_aquamentus_4 ; $0ac9f7
+	m_GfxData gfx_aquamentus_5 ; $0acb98
 	m_GfxData gfx_0acd63 ; $0acd63
 	m_GfxData gfx_0acf05 ; $0acf05
 	m_GfxData gfx_0ad0ce ; $0ad0ce
