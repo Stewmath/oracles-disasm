@@ -75057,7 +75057,7 @@ itemCode1a:
 
 
 	.include "build/data/itemAttributes.s"
-	.include "build/data/itemAnimations.s"
+	.include "data/itemAnimations.s"
 
 .ends
 
@@ -175881,7 +175881,7 @@ underWaterSurfaceData_7e53:
 .ORG 0
 
 	.include "build/data/specialObjectOamData.s"
-	.include "build/data/itemOamData.s"
+	.include "data/itemOamData.s"
 	.include "build/data/enemyOamData.s"
 
 .BANK $14 SLOT 1
