@@ -13,7 +13,6 @@
 ; 2/3: Either a pointer to subID-specific data, or 2 values which apply to all
 ; subIDs. See below for what those 2 bytes do.
 
-; @addr{$fdd4b}
 enemyData:
 	/* 0x00 */ m_EnemyData $00 $00 $00 $00
 	/* 0x01 */ m_EnemyData $db $08 $34 $00
@@ -232,7 +231,6 @@ enemy73SubidData:
 ; 2: value for Enemy.damage (how much damage it deals)
 ; 3: value for Enemy.health
 
-; @addr{$fdfb9}
 extraEnemyData:
 	.db $00 $00 $00 $7f ; 0x00
 	.db $06 $06 $00 $7f ; 0x01

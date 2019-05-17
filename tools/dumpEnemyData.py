@@ -16,12 +16,24 @@ if len(sys.argv) < 2:
 romFile = open(sys.argv[1], 'rb')
 rom = bytearray(romFile.read())
 
-dataAddress = bankedAddress(0x3f, 0x5d4b)
-dataBank = 0x3f
-sizePerEntry = 4
-numObjects = 0x80
+if romIsAges(rom):
+    dataAddress = bankedAddress(0x3f, 0x5d4b)
+    dataBank = 0x3f
+    sizePerEntry = 4
+    numObjects = 0x80
+    
+    extraDataAddress = bankedAddress(0x3f, 0x5fb9)
+elif romIsSeasons(rom):
+    dataAddress = bankedAddress(0x3f, 0x5d71)
+    dataBank = 0x3f
+    sizePerEntry = 4
+    numObjects = 0x80
+    
+    extraDataAddress = bankedAddress(0x3f, 0x5ff3)
+else:
+    print("Unrecognized rom.")
+    sys.exit()
 
-extraDataAddress = bankedAddress(0x3f, 0x5fb9)
 # This will be calculated
 numExtraDataIndices = 0
 

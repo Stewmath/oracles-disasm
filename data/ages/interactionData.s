@@ -22,7 +22,7 @@
 	.endif
 .endm
 
-; @addr{$fe426}
+
 interactionData:
 	/* $00 */ m_InteractionData $00 $00 $80
 	/* $01 */ m_InteractionData $00 $00 $80
@@ -805,6 +805,3 @@ interactionddSubidData:
 interactiondfSubidData:
 	m_InteractionData $26 $00 $04
 	m_InteractionData $24 $80 $12
-
-; End at $fec09
-

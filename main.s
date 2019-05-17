@@ -75056,7 +75056,7 @@ itemCode1a:
 	ret			; $65b2
 
 
-	.include "data/itemAttributes.s"
+	.include "build/data/itemAttributes.s"
 	.include "build/data/itemAnimations.s"
 
 .ends
@@ -186368,10 +186368,10 @@ linkOnHorseFacingCameraSprite:
 .include "build/data/objectGfxHeaders.s"
 .include "build/data/treeGfxHeaders.s"
 
-.include "data/enemyData.s"
-.include "data/partData.s"
-.include "data/itemData.s"
-.include "data/interactionData.s"
+.include "build/data/enemyData.s"
+.include "build/data/partData.s"
+.include "build/data/itemData.s"
+.include "build/data/interactionData.s"
 
 
 ; The table below outlines what should happen when Link obtains an item (ie. whether to

@@ -8,7 +8,6 @@
 ; b6: Part.oamFlags
 ; b7: nothing
 
-; @addr{60cd}
 partData:
 	.db $00 $00 $00 $00 $40 $0c $03 $00 ; $00
 	.db $78 $01 $44 $00 $01 $00 $08 $00 ; $01

@@ -16,12 +16,24 @@ if len(sys.argv) < 2:
 romFile = open(sys.argv[1], 'rb')
 rom = bytearray(romFile.read())
 
-dataAddress = bankedAddress(0x3f, 0x6426)
-dataBank = 0x3f
-sizePerEntry = 3
-numObjects = 0xe7
 
-extraDataAddress = bankedAddress(0x3f, 0x5fb9)
+if romIsAges(rom):
+    dataAddress = bankedAddress(0x3f, 0x6426)
+    dataBank = 0x3f
+    sizePerEntry = 3
+    numObjects = 0xe7
+
+#    extraDataAddress = bankedAddress(0x3f, 0x5fb9)
+    
+elif romIsSeasons(rom):
+    dataAddress = bankedAddress(0x3f, 0x6424)
+    dataBank = 0x3f
+    sizePerEntry = 3
+    numObjects = 0xe8
+else:
+    print("Unrecognized rom.")
+    sys.exit()
+    
 # This will be calculated
 numExtraDataIndices = 0
 
@@ -90,7 +102,7 @@ for addr in sorted(subidDataAddresses):
                 + ' ' + wlahex(b2,2)
                 + '\n')
 
-        # Opposite from dumpEnemyData.s, interactions stop when bit 7 of the
+        # Opposite from dumpEnemyData.py, interactions stop when bit 7 of the
         # continue bit IS set.
         if continueBit == 0x80:
             break
