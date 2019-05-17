@@ -10,19 +10,21 @@ execfile(directory + 'common.py')
 
 if len(sys.argv) < 2:
     print 'Usage: ' + sys.argv[0] + ' romfile'
-    print 'Output goes to files: data/{item|interaction|enemy|part}Animations.s, data/{item|interaction|enemy|part}OamData.s'
+    print 'Output goes to files: data/{game}/{item|interaction|enemy|part}Animations.s, data/{game}{item|interaction|enemy|part}OamData.s'
     sys.exit()
 
 romFile = open(sys.argv[1], 'rb')
 rom = bytearray(romFile.read())
 
+
+def getAnimName(address, objectType):
+    return objectType + 'Animation' + myhex(address)
+
+
 class AnimationData:
-    def __init__(self, address, name=None):
+    def __init__(self, address, objectType):
         self.address = address
-        if name is None:
-            self.name = 'animationData' + myhex(address)
-        else:
-            self.name = name
+        self.name = getAnimName(address, objectType)
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -44,15 +46,14 @@ def dumpAnimations(objectType):
 
     oamAddressList = []
 
-    outFile.write(objectType + 'AnimationTable: ; ' + hex(animationDataTable) + '\n')
+    outFile.write(objectType + 'AnimationTable:\n')
     for i in range(numAnimationIndices):
         pointer = read16(rom, animationDataTable+i*2)
         if pointer < 0x4000 or pointer >= 0x8000:
             print 'Invalid pointer at ' + hex(address)
         pointerAddress = bankedAddress(animationBank, pointer)
         animationPointerList.append(bankedAddress(animationBank, pointer))
-        outFile.write('\t.dw ' + objectType + myhex(i, 2) + 'Animation')
-        outFile.write(' ; ' + hex(pointerAddress))
+        outFile.write('\t.dw ' + objectType + myhex(i, 2) + 'Animations')
         outFile.write('\n')
     outFile.write('\n')
 
@@ -65,7 +66,6 @@ def dumpAnimations(objectType):
         if pointer < 0x4000 or pointer >= 0x8000:
             print 'Invalid pointer at ' + hex(address)
             outFile.write(' ; INVALID POINTER')
-        outFile.write(' ; ' + hex(pointerAddress))
         outFile.write('\n')
     outFile.write('\n')
 
@@ -74,11 +74,11 @@ def dumpAnimations(objectType):
     while address < animationDataStart:
         for j in range(numAnimationIndices):
             if animationPointerList[j] == address:
-                name = objectType + myhex(j,2) + 'Animation'
+                name = objectType + myhex(j,2) + 'Animations'
                 outFile.write(name + ':\n')
 
         pointer = read16(rom, address)
-        animationData = AnimationData(bankedAddress(animationBank, pointer))
+        animationData = AnimationData(bankedAddress(animationBank, pointer), objectType)
         if not animationData in animationDataList:
             animationDataList.append(animationData)
         else:
@@ -89,11 +89,11 @@ def dumpAnimations(objectType):
         if pointer < 0x4000 or pointer >= 0x8000:
             print 'Invalid pointer at ' + hex(address)
             outFile.write(' ; INVALID POINTER')
-        outFile.write(' ; ' + hex(address))
         outFile.write('\n')
         address+=2
 
     address = animationDataStart
+    animationLoopPointers = []
     animationEndPointers = []
 
     # Find all the addresses that tell it to loop back
@@ -102,8 +102,9 @@ def dumpAnimations(objectType):
         address+=1
         if counter == 0xff:
             pointer = bankedAddress(animationBank, address + read16BE(rom,address-1))
-            animationEndPointers.append(pointer)
+            animationLoopPointers.append(pointer)
             address+=1
+            animationEndPointers.append(address)
             continue
 
         address+=1
@@ -115,17 +116,31 @@ def dumpAnimations(objectType):
     # Same as last loop except actually print stuff instead of finding pointers
     while address < oamDataStart:
         hasLabel = False
+        unreferenced = True
         for animationData in animationDataList:
             if address == animationData.address:
-                outFile.write(animationData.name + ': ; ' + hex(address) + '\n')
                 hasLabel = True
+                unreferenced = False
                 dataLabel = animationData.name
 
-        if address in animationEndPointers:
+        if address in animationEndPointers and not hasLabel:
+            # Unreferenced data
+            hasLabel = True
+            dataLabel = getAnimName(address, objectType)
+
+        if hasLabel:
+            outFile.write(dataLabel + ':')
+            if unreferenced:
+                outFile.write(' ; Unused')
+            outFile.write('\n')
+
+        if address in animationLoopPointers:
             if hasLabel:
                 loopLabel = dataLabel
             else:
-                loopLabel = 'animationLoop' + myhex(address,4)
+                # Making the assumption that all loops are local. (There's one special
+                # case in seasons where this assumption fails.)
+                loopLabel = '@loop'
                 outFile.write(loopLabel + ':\n')
         counter = rom[address]
         if counter == 0xff:
@@ -161,7 +176,7 @@ def dumpAnimations(objectType):
 
         oamAddress = bankedAddress(oamDataBaseBank, pointer)
         oamAddressList.append(oamAddress)
-        outFile.write('\t.dw oamData' + myhex(oamAddress) + '\n')
+        outFile.write('\t.dw ' + objectType + 'OamData' + myhex(oamAddress) + '\n')
 
     outFile.close()
 
@@ -180,9 +195,10 @@ def dumpAnimations(objectType):
         address-=1
 
     while address < endAddress:
+        outFile.write(objectType + 'OamData' + myhex(address) + ':')
         if not address in oamAddressList:
-            outFile.write('; WARNING: unreferenced data\n')
-        outFile.write('oamData' + myhex(address) + ':\n')
+            outFile.write(' ; Unused')
+        outFile.write('\n')
         count = rom[address]
         outFile.write('\t.db ' + wlahex(count,2) + '\n')
         address+=1
@@ -204,7 +220,6 @@ if romIsAges(rom):
 
     # Constants for interactions
     oamDataBaseBank = 0x14
-
     animationBank = 0x16
     animationDataTable = 0x59855
     oamTableStart = 0x59a23
@@ -218,7 +233,6 @@ if romIsAges(rom):
 
     # Constants for parts
     oamDataBaseBank = 0x14
-
     animationBank = 0x16
     animationDataTable = 0x5b668
     oamTableStart = 0x5b71e
@@ -232,7 +246,6 @@ if romIsAges(rom):
 
     # Constants for enemies
     oamDataBaseBank = 0x13
-
     animationBank = 0x0d
     animationDataTable = 0x36d5c
     oamTableStart = 0x36e5c
@@ -246,7 +259,6 @@ if romIsAges(rom):
 
     # Constants for items
     oamDataBaseBank = 0x13
-
     animationBank = 0x07
     animationDataTable = 0x1e663
     oamTableStart = 0x1e6c3
@@ -262,7 +274,6 @@ else:
 
     # Constants for interactions
     oamDataBaseBank = 0x13
-
     animationBank = 0x14
     animationDataTable = 0x51325
     oamTableStart = 0x514f5
@@ -276,7 +287,6 @@ else:
 
     # Constants for parts
     oamDataBaseBank = 0x13
-
     animationBank = 0x15
     animationDataTable = 0x5718f
     oamTableStart = 0x57237
@@ -290,7 +300,6 @@ else:
 
     # Constants for enemies
     oamDataBaseBank = 0x12
-
     animationBank = 0x0c
     animationDataTable = 0x32df7
     oamTableStart = 0x32ef7
@@ -304,7 +313,6 @@ else:
 
     # Constants for items
     oamDataBaseBank = 0x12
-
     animationBank = 0x07
     animationDataTable = 0x1e401
     oamTableStart = 0x1e461

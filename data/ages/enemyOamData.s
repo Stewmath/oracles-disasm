@@ -1,1215 +1,1214 @@
-; WARNING: unreferenced data
-oamData4d1d9:
+enemyOamData4d1d9: ; Unused
 	.db $00
 
-oamData4d1da:
+enemyOamData4d1da:
 	.db $01
 	.db $08 $04 $00 $00
 
-oamData4d1df:
+enemyOamData4d1df:
 	.db $01
 	.db $08 $04 $02 $00
 
-oamData4d1e4:
+enemyOamData4d1e4:
 	.db $01
 	.db $08 $04 $04 $00
 
-oamData4d1e9:
+enemyOamData4d1e9:
 	.db $01
 	.db $0c $04 $00 $00
 
-oamData4d1ee:
+enemyOamData4d1ee:
 	.db $01
 	.db $08 $04 $00 $40
 
-oamData4d1f3:
+enemyOamData4d1f3:
 	.db $01
 	.db $08 $04 $00 $20
 
-oamData4d1f8:
+enemyOamData4d1f8:
 	.db $01
 	.db $08 $05 $00 $00
 
-oamData4d1fd:
+enemyOamData4d1fd:
 	.db $01
 	.db $06 $02 $00 $00
 
-oamData4d202:
+enemyOamData4d202:
 	.db $01
 	.db $0a $06 $00 $00
 
-oamData4d207:
+enemyOamData4d207:
 	.db $01
 	.db $06 $06 $00 $00
 
-oamData4d20c:
+enemyOamData4d20c:
 	.db $01
 	.db $0a $02 $00 $00
 
-oamData4d211:
+enemyOamData4d211:
 	.db $01
 	.db $08 $04 $04 $40
 
-oamData4d216:
+enemyOamData4d216:
 	.db $01
 	.db $08 $04 $06 $00
 
-oamData4d21b:
+enemyOamData4d21b:
 	.db $01
 	.db $08 $04 $06 $20
 
-oamData4d220:
+enemyOamData4d220:
 	.db $01
 	.db $08 $04 $08 $00
 
-oamData4d225:
+enemyOamData4d225:
 	.db $01
 	.db $08 $04 $08 $20
 
-oamData4d22a:
+enemyOamData4d22a:
 	.db $01
 	.db $08 $04 $0a $00
 
-oamData4d22f:
+enemyOamData4d22f:
 	.db $01
 	.db $08 $04 $0c $00
 
-oamData4d234:
+enemyOamData4d234:
 	.db $01
 	.db $07 $04 $00 $40
 
-oamData4d239:
+enemyOamData4d239:
 	.db $01
 	.db $07 $04 $00 $60
 
-oamData4d23e:
+enemyOamData4d23e:
 	.db $02
 	.db $08 $00 $6e $00
 	.db $08 $08 $6e $20
 
-oamData4d247:
+enemyOamData4d247:
 	.db $02
 	.db $08 $08 $04 $60
 	.db $08 $00 $06 $60
 
-oamData4d250:
+enemyOamData4d250:
 	.db $02
 	.db $08 $08 $08 $60
 	.db $08 $00 $0a $60
 
-oamData4d259:
+enemyOamData4d259:
 	.db $02
 	.db $08 $08 $0c $60
 	.db $08 $00 $0e $60
 
-oamData4d262:
+enemyOamData4d262:
 	.db $02
 	.db $08 $00 $10 $40
 	.db $08 $08 $12 $40
 
-oamData4d26b:
+enemyOamData4d26b:
 	.db $02
 	.db $08 $08 $10 $60
 	.db $08 $00 $12 $60
 
-oamData4d274:
+enemyOamData4d274:
 	.db $02
 	.db $08 $00 $14 $00
 	.db $08 $08 $16 $00
 
-oamData4d27d:
+enemyOamData4d27d:
 	.db $02
 	.db $08 $00 $10 $00
 	.db $08 $08 $12 $00
 
-oamData4d286:
+enemyOamData4d286:
 	.db $02
 	.db $08 $08 $10 $20
 	.db $08 $00 $12 $20
 
-oamData4d28f:
+enemyOamData4d28f:
 	.db $02
 	.db $08 $00 $18 $00
 	.db $08 $08 $1a $00
 
-oamData4d298:
+enemyOamData4d298:
 	.db $02
 	.db $08 $00 $04 $40
 	.db $08 $08 $06 $40
 
-oamData4d2a1:
+enemyOamData4d2a1:
 	.db $02
 	.db $08 $00 $0c $40
 	.db $08 $08 $0e $40
 
-oamData4d2aa:
+enemyOamData4d2aa:
 	.db $02
 	.db $07 $01 $00 $00
 	.db $07 $09 $02 $00
 
-oamData4d2b3:
+enemyOamData4d2b3:
 	.db $02
 	.db $09 $02 $00 $00
 	.db $09 $0a $02 $00
 
-oamData4d2bc:
+enemyOamData4d2bc:
 	.db $02
 	.db $0a $01 $00 $00
 	.db $0a $09 $02 $00
 
-oamData4d2c5:
+enemyOamData4d2c5:
 	.db $02
 	.db $07 $07 $00 $20
 	.db $07 $ff $02 $20
 
-oamData4d2ce:
+enemyOamData4d2ce:
 	.db $02
 	.db $09 $06 $00 $20
 	.db $09 $fe $02 $20
 
-oamData4d2d7:
+enemyOamData4d2d7:
 	.db $02
 	.db $0a $07 $00 $20
 	.db $0a $ff $02 $20
 
-oamData4d2e0:
+enemyOamData4d2e0:
 	.db $02
 	.db $0a $07 $14 $20
 	.db $0a $ff $16 $20
 
-oamData4d2e9:
+enemyOamData4d2e9:
 	.db $02
 	.db $09 $02 $14 $00
 	.db $09 $0a $16 $00
 
-oamData4d2f2:
+enemyOamData4d2f2:
 	.db $02
 	.db $fc $04 $1c $04
 	.db $0c $04 $1e $04
 
-oamData4d2fb:
+enemyOamData4d2fb:
 	.db $02
 	.db $fc $04 $1c $24
 	.db $0c $04 $1e $24
 
-oamData4d304:
+enemyOamData4d304:
 	.db $02
 	.db $08 $00 $00 $00
 	.db $08 $08 $00 $60
 
-oamData4d30d:
+enemyOamData4d30d:
 	.db $02
 	.db $08 $00 $00 $40
 	.db $08 $08 $00 $20
 
-oamData4d316:
+enemyOamData4d316:
 	.db $02
 	.db $08 $00 $00 $00
 	.db $08 $08 $02 $00
 
-oamData4d31f:
+enemyOamData4d31f:
 	.db $02
 	.db $08 $00 $04 $00
 	.db $08 $08 $06 $00
 
-oamData4d328:
+enemyOamData4d328:
 	.db $02
 	.db $08 $00 $08 $00
 	.db $08 $08 $0a $00
 
-oamData4d331:
+enemyOamData4d331:
 	.db $02
 	.db $08 $00 $0c $00
 	.db $08 $08 $0e $00
 
-oamData4d33a:
+enemyOamData4d33a:
 	.db $02
 	.db $08 $00 $02 $20
 	.db $08 $08 $00 $20
 
-oamData4d343:
+enemyOamData4d343:
 	.db $02
 	.db $08 $00 $06 $20
 	.db $08 $08 $04 $20
 
-oamData4d34c:
+enemyOamData4d34c:
 	.db $02
 	.db $08 $00 $0a $20
 	.db $08 $08 $08 $20
 
-oamData4d355:
+enemyOamData4d355:
 	.db $02
 	.db $08 $00 $0e $20
 	.db $08 $08 $0c $20
 
-oamData4d35e:
+enemyOamData4d35e:
 	.db $02
 	.db $08 $00 $00 $00
 	.db $08 $08 $00 $20
 
-oamData4d367:
+enemyOamData4d367:
 	.db $02
 	.db $08 $00 $02 $00
 	.db $08 $08 $02 $20
 
-oamData4d370:
+enemyOamData4d370:
 	.db $02
 	.db $08 $00 $04 $00
 	.db $08 $08 $04 $20
 
-oamData4d379:
+enemyOamData4d379:
 	.db $02
 	.db $08 $00 $06 $00
 	.db $08 $08 $06 $20
 
-oamData4d382:
+enemyOamData4d382:
 	.db $02
 	.db $08 $00 $00 $40
 	.db $08 $08 $00 $60
 
-oamData4d38b:
+enemyOamData4d38b:
 	.db $02
 	.db $08 $00 $02 $40
 	.db $08 $08 $02 $60
 
-oamData4d394:
+enemyOamData4d394:
 	.db $02
 	.db $08 $00 $00 $00
 	.db $08 $08 $04 $00
 
-oamData4d39d:
+enemyOamData4d39d:
 	.db $02
 	.db $08 $00 $04 $20
 	.db $08 $08 $00 $20
 
-oamData4d3a6:
+enemyOamData4d3a6:
 	.db $02
 	.db $08 $00 $00 $05
 	.db $08 $08 $00 $25
 
-oamData4d3af:
+enemyOamData4d3af:
 	.db $02
 	.db $08 $00 $04 $20
 	.db $08 $08 $02 $20
 
-oamData4d3b8:
+enemyOamData4d3b8:
 	.db $02
 	.db $08 $00 $04 $20
 	.db $08 $08 $06 $20
 
-oamData4d3c1:
+enemyOamData4d3c1:
 	.db $02
 	.db $08 $00 $0c $00
 	.db $08 $08 $0c $20
 
-oamData4d3ca:
+enemyOamData4d3ca:
 	.db $02
 	.db $08 $00 $06 $00
 	.db $08 $08 $04 $00
 
-oamData4d3d3:
+enemyOamData4d3d3:
 	.db $02
 	.db $08 $00 $02 $00
 	.db $08 $08 $04 $00
 
-oamData4d3dc:
+enemyOamData4d3dc:
 	.db $02
 	.db $08 $00 $06 $00
 	.db $08 $08 $08 $00
 
-oamData4d3e5:
+enemyOamData4d3e5:
 	.db $02
 	.db $08 $00 $08 $20
 	.db $08 $08 $06 $20
 
-oamData4d3ee:
+enemyOamData4d3ee:
 	.db $02
 	.db $08 $00 $0a $00
 	.db $08 $08 $0a $20
 
-oamData4d3f7:
+enemyOamData4d3f7:
 	.db $02
 	.db $08 $00 $12 $20
 	.db $08 $08 $10 $20
 
-oamData4d400:
+enemyOamData4d400:
 	.db $02
 	.db $08 $01 $06 $20
 	.db $08 $09 $04 $20
 
-oamData4d409:
+enemyOamData4d409:
 	.db $02
 	.db $08 $01 $0a $20
 	.db $08 $09 $08 $20
 
-oamData4d412:
+enemyOamData4d412:
 	.db $02
 	.db $08 $00 $0c $00
 	.db $08 $08 $0a $00
 
-oamData4d41b:
+enemyOamData4d41b:
 	.db $02
 	.db $08 $01 $0a $20
 	.db $08 $09 $0c $20
 
-oamData4d424:
+enemyOamData4d424:
 	.db $02
 	.db $08 $00 $0e $00
 	.db $08 $08 $0e $20
 
-oamData4d42d:
+enemyOamData4d42d:
 	.db $02
 	.db $08 $00 $10 $00
 	.db $08 $08 $10 $20
 
-oamData4d436:
+enemyOamData4d436:
 	.db $02
 	.db $08 $00 $00 $01
 	.db $08 $08 $00 $21
 
-oamData4d43f:
+enemyOamData4d43f:
 	.db $02
 	.db $08 $00 $00 $07
 	.db $08 $08 $00 $27
 
-oamData4d448:
+enemyOamData4d448:
 	.db $02
 	.db $08 $00 $00 $41
 	.db $08 $08 $00 $61
 
-oamData4d451:
+enemyOamData4d451:
 	.db $02
 	.db $08 $00 $00 $47
 	.db $08 $08 $00 $67
 
-oamData4d45a:
+enemyOamData4d45a:
 	.db $02
 	.db $08 $ff $02 $00
 	.db $08 $07 $02 $20
 
-oamData4d463:
+enemyOamData4d463:
 	.db $02
 	.db $08 $01 $02 $00
 	.db $08 $09 $02 $20
 
-oamData4d46c:
+enemyOamData4d46c:
 	.db $02
 	.db $08 $00 $1e $20
 	.db $08 $08 $1c $20
 
-oamData4d475:
+enemyOamData4d475:
 	.db $02
 	.db $08 $00 $16 $20
 	.db $08 $08 $14 $20
 
-oamData4d47e:
+enemyOamData4d47e:
 	.db $02
 	.db $08 $00 $08 $00
 	.db $08 $08 $08 $20
 
-oamData4d487:
+enemyOamData4d487:
 	.db $02
 	.db $08 $00 $04 $05
 	.db $08 $08 $04 $25
 
-oamData4d490:
+enemyOamData4d490:
 	.db $02
 	.db $08 $00 $02 $40
 	.db $08 $08 $02 $60
 
-oamData4d499:
+enemyOamData4d499:
 	.db $02
 	.db $08 $00 $0a $60
 	.db $08 $08 $08 $60
 
-oamData4d4a2:
+enemyOamData4d4a2:
 	.db $02
 	.db $08 $00 $08 $40
 	.db $08 $08 $0a $40
 
-oamData4d4ab:
+enemyOamData4d4ab:
 	.db $02
 	.db $08 $00 $08 $60
 	.db $08 $08 $06 $60
 
-oamData4d4b4:
+enemyOamData4d4b4:
 	.db $02
 	.db $08 $00 $06 $40
 	.db $08 $08 $08 $40
 
-oamData4d4bd:
+enemyOamData4d4bd:
 	.db $02
 	.db $02 $04 $40 $00
 	.db $12 $04 $42 $00
 
-oamData4d4c6:
+enemyOamData4d4c6:
 	.db $02
 	.db $02 $04 $44 $00
 	.db $12 $04 $46 $00
 
-oamData4d4cf:
+enemyOamData4d4cf:
 	.db $02
 	.db $08 $00 $20 $00
 	.db $08 $08 $20 $20
 
-oamData4d4d8:
+enemyOamData4d4d8:
 	.db $02
 	.db $08 $00 $22 $00
 	.db $08 $08 $22 $20
 
-oamData4d4e1:
+enemyOamData4d4e1:
 	.db $02
 	.db $08 $00 $2a $00
 	.db $08 $08 $2c $00
 
-oamData4d4ea:
+enemyOamData4d4ea:
 	.db $02
 	.db $08 $00 $2e $00
 	.db $08 $08 $30 $00
 
-oamData4d4f3:
+enemyOamData4d4f3:
 	.db $02
 	.db $08 $00 $32 $00
 	.db $08 $08 $34 $00
 
-oamData4d4fc:
+enemyOamData4d4fc:
 	.db $02
 	.db $08 $00 $36 $00
 	.db $08 $08 $38 $00
 
-oamData4d505:
+enemyOamData4d505:
 	.db $02
 	.db $08 $00 $3a $00
 	.db $08 $08 $3c $00
 
-oamData4d50e:
+enemyOamData4d50e:
 	.db $02
 	.db $08 $00 $4e $00
 	.db $08 $08 $4e $20
 
-oamData4d517:
+enemyOamData4d517:
 	.db $02
 	.db $08 $00 $46 $00
 	.db $08 $08 $48 $00
 
-oamData4d520:
+enemyOamData4d520:
 	.db $02
 	.db $08 $00 $52 $00
 	.db $08 $08 $54 $00
 
-oamData4d529:
+enemyOamData4d529:
 	.db $02
 	.db $08 $08 $4a $20
 	.db $08 $00 $4c $20
 
-oamData4d532:
+enemyOamData4d532:
 	.db $02
 	.db $08 $08 $4e $20
 	.db $08 $00 $50 $20
 
-oamData4d53b:
+enemyOamData4d53b:
 	.db $02
 	.db $08 $00 $4a $00
 	.db $08 $08 $4c $00
 
-oamData4d544:
+enemyOamData4d544:
 	.db $02
 	.db $08 $00 $4e $00
 	.db $08 $08 $50 $00
 
-oamData4d54d:
+enemyOamData4d54d:
 	.db $02
 	.db $04 $00 $00 $00
 	.db $04 $08 $00 $20
 
-oamData4d556:
+enemyOamData4d556:
 	.db $02
 	.db $08 $00 $02 $00
 	.db $08 $08 $02 $20
 
-oamData4d55f:
+enemyOamData4d55f:
 	.db $02
 	.db $08 $00 $0c $20
 	.db $08 $08 $0a $20
 
-oamData4d568:
+enemyOamData4d568:
 	.db $02
 	.db $08 $00 $0a $00
 	.db $08 $08 $0c $00
 
-oamData4d571:
+enemyOamData4d571:
 	.db $02
 	.db $08 $01 $00 $00
 	.db $08 $07 $00 $20
 
-oamData4d57a:
+enemyOamData4d57a:
 	.db $03
 	.db $08 $fc $0c $20
 	.db $08 $04 $0a $20
 	.db $08 $0c $08 $20
 
-oamData4d587:
+enemyOamData4d587:
 	.db $03
 	.db $08 $fc $12 $20
 	.db $08 $04 $10 $20
 	.db $08 $0c $0e $20
 
-oamData4d594:
+enemyOamData4d594:
 	.db $03
 	.db $08 $fc $08 $00
 	.db $08 $04 $0a $00
 	.db $08 $0c $0c $00
 
-oamData4d5a1:
+enemyOamData4d5a1:
 	.db $03
 	.db $08 $fc $0e $00
 	.db $08 $04 $10 $00
 	.db $08 $0c $12 $00
 
-oamData4d5ae:
+enemyOamData4d5ae:
 	.db $03
 	.db $08 $fc $18 $20
 	.db $08 $04 $16 $20
 	.db $08 $0c $14 $20
 
-oamData4d5bb:
+enemyOamData4d5bb:
 	.db $03
 	.db $08 $fc $14 $00
 	.db $08 $04 $16 $00
 	.db $08 $0c $18 $00
 
-oamData4d5c8:
+enemyOamData4d5c8:
 	.db $03
 	.db $08 $00 $12 $00
 	.db $08 $08 $14 $00
 	.db $f8 $04 $16 $05
 
-oamData4d5d5:
+enemyOamData4d5d5:
 	.db $03
 	.db $08 $00 $14 $20
 	.db $08 $08 $12 $20
 	.db $f8 $04 $16 $25
 
-oamData4d5e2:
+enemyOamData4d5e2:
 	.db $03
 	.db $08 $00 $04 $00
 	.db $08 $08 $06 $00
 	.db $00 $08 $14 $00
 
-oamData4d5ef:
+enemyOamData4d5ef:
 	.db $03
 	.db $08 $00 $06 $20
 	.db $08 $08 $04 $20
 	.db $fe $08 $14 $00
 
-oamData4d5fc:
+enemyOamData4d5fc:
 	.db $03
 	.db $0f $00 $14 $40
 	.db $08 $00 $00 $00
 	.db $08 $08 $02 $00
 
-oamData4d609:
+enemyOamData4d609:
 	.db $03
 	.db $11 $00 $14 $40
 	.db $08 $00 $02 $20
 	.db $08 $08 $00 $20
 
-oamData4d616:
+enemyOamData4d616:
 	.db $03
 	.db $0d $01 $1a $00
 	.db $08 $08 $10 $20
 	.db $08 $00 $12 $20
 
-oamData4d623:
+enemyOamData4d623:
 	.db $03
 	.db $0d $02 $1a $00
 	.db $08 $08 $14 $20
 	.db $08 $00 $16 $20
 
-oamData4d630:
+enemyOamData4d630:
 	.db $03
 	.db $0d $ff $1a $00
 	.db $08 $00 $00 $00
 	.db $08 $08 $02 $00
 
-oamData4d63d:
+enemyOamData4d63d:
 	.db $03
 	.db $0c $ff $1a $00
 	.db $08 $00 $04 $00
 	.db $08 $08 $06 $00
 
-oamData4d64a:
+enemyOamData4d64a:
 	.db $03
 	.db $08 $05 $18 $00
 	.db $08 $00 $10 $00
 	.db $08 $08 $12 $00
 
-oamData4d657:
+enemyOamData4d657:
 	.db $03
 	.db $08 $04 $18 $00
 	.db $08 $00 $14 $00
 	.db $08 $08 $16 $00
 
-oamData4d664:
+enemyOamData4d664:
 	.db $03
 	.db $08 $00 $08 $00
 	.db $08 $08 $0a $00
 	.db $08 $10 $0c $00
 
-oamData4d671:
+enemyOamData4d671:
 	.db $03
 	.db $08 $00 $18 $00
 	.db $08 $08 $1a $00
 	.db $08 $10 $1c $00
 
-oamData4d67e:
+enemyOamData4d67e:
 	.db $03
 	.db $04 $04 $48 $00
 	.db $14 $04 $46 $00
 	.db $04 $0c $4a $00
 
-oamData4d68b:
+enemyOamData4d68b:
 	.db $03
 	.db $04 $fc $54 $00
 	.db $04 $04 $56 $00
 	.db $04 $0c $58 $00
 
-oamData4d698:
+enemyOamData4d698:
 	.db $03
 	.db $08 $00 $5c $00
 	.db $08 $08 $5e $00
 	.db $08 $f8 $5a $00
 
-oamData4d6a5:
+enemyOamData4d6a5:
 	.db $03
 	.db $fc $04 $46 $60
 	.db $0c $04 $48 $60
 	.db $0c $fc $4a $60
 
-oamData4d6b2:
+enemyOamData4d6b2:
 	.db $03
 	.db $0c $fc $58 $60
 	.db $0c $04 $56 $60
 	.db $0c $0c $54 $60
 
-oamData4d6bf:
+enemyOamData4d6bf:
 	.db $03
 	.db $08 $00 $5e $60
 	.db $08 $08 $5c $60
 	.db $08 $10 $5a $60
 
-oamData4d6cc:
+enemyOamData4d6cc:
 	.db $03
 	.db $08 $fc $08 $00
 	.db $08 $04 $0a $00
 	.db $08 $0c $08 $20
 
-oamData4d6d9:
+enemyOamData4d6d9:
 	.db $03
 	.db $08 $fc $0c $00
 	.db $08 $04 $0e $00
 	.db $08 $0c $0c $20
 
-oamData4d6e6:
+enemyOamData4d6e6:
 	.db $03
 	.db $08 $0c $10 $20
 	.db $08 $04 $12 $20
 	.db $08 $fc $14 $20
 
-oamData4d6f3:
+enemyOamData4d6f3:
 	.db $03
 	.db $08 $0c $16 $20
 	.db $08 $04 $18 $20
 	.db $08 $fc $1a $20
 
-oamData4d700:
+enemyOamData4d700:
 	.db $03
 	.db $08 $fc $00 $00
 	.db $08 $04 $02 $00
 	.db $08 $0c $00 $20
 
-oamData4d70d:
+enemyOamData4d70d:
 	.db $03
 	.db $08 $fc $04 $00
 	.db $08 $04 $06 $00
 	.db $08 $0c $04 $20
 
-oamData4d71a:
+enemyOamData4d71a:
 	.db $03
 	.db $08 $fc $10 $00
 	.db $08 $04 $12 $00
 	.db $08 $0c $14 $00
 
-oamData4d727:
+enemyOamData4d727:
 	.db $03
 	.db $08 $fc $16 $00
 	.db $08 $04 $18 $00
 	.db $08 $0c $1a $00
 
-oamData4d734:
+enemyOamData4d734:
 	.db $03
 	.db $08 $fc $1c $00
 	.db $08 $04 $1e $00
 	.db $08 $0c $1c $20
 
-oamData4d741:
+enemyOamData4d741:
 	.db $03
 	.db $08 $fc $24 $00
 	.db $08 $04 $26 $00
 	.db $08 $0c $28 $00
 
-oamData4d74e:
+enemyOamData4d74e:
 	.db $03
 	.db $08 $fc $46 $00
 	.db $08 $04 $48 $00
 	.db $08 $0c $4a $00
 
-oamData4d75b:
+enemyOamData4d75b:
 	.db $03
 	.db $08 $fc $18 $00
 	.db $08 $04 $1a $00
 	.db $08 $0c $1c $00
 
-oamData4d768:
+enemyOamData4d768:
 	.db $03
 	.db $08 $fc $18 $00
 	.db $08 $04 $1a $00
 	.db $08 $0c $1e $00
 
-oamData4d775:
+enemyOamData4d775:
 	.db $03
 	.db $08 $0c $18 $20
 	.db $08 $04 $1a $20
 	.db $08 $fc $1c $20
 
-oamData4d782:
+enemyOamData4d782:
 	.db $03
 	.db $08 $0c $18 $20
 	.db $08 $04 $1a $20
 	.db $08 $fc $1e $20
 
-oamData4d78f:
+enemyOamData4d78f:
 	.db $03
 	.db $08 $fc $4a $00
 	.db $08 $04 $4c $00
 	.db $08 $0c $4a $20
 
-oamData4d79c:
+enemyOamData4d79c:
 	.db $03
 	.db $07 $fc $3a $00
 	.db $07 $04 $3c $00
 	.db $07 $0c $3a $20
 
-oamData4d7a9:
+enemyOamData4d7a9:
 	.db $03
 	.db $08 $fc $00 $00
 	.db $09 $04 $02 $00
 	.db $08 $0c $00 $20
 
-oamData4d7b6:
+enemyOamData4d7b6:
 	.db $03
 	.db $07 $fc $04 $00
 	.db $08 $04 $02 $00
 	.db $07 $0c $04 $20
 
-oamData4d7c3:
+enemyOamData4d7c3:
 	.db $03
 	.db $08 $fc $06 $00
 	.db $09 $04 $08 $00
 	.db $08 $0c $06 $20
 
-oamData4d7d0:
+enemyOamData4d7d0:
 	.db $03
 	.db $08 $fc $0e $00
 	.db $09 $04 $10 $00
 	.db $08 $0c $0e $20
 
-oamData4d7dd:
+enemyOamData4d7dd:
 	.db $04
 	.db $fc $00 $34 $05
 	.db $fc $08 $36 $05
 	.db $07 $00 $70 $05
 	.db $07 $08 $70 $25
 
-oamData4d7ee:
+enemyOamData4d7ee:
 	.db $04
 	.db $02 $00 $48 $00
 	.db $02 $08 $4a $00
 	.db $12 $00 $4c $00
 	.db $12 $08 $4e $00
 
-oamData4d7ff:
+enemyOamData4d7ff:
 	.db $04
 	.db $02 $00 $4a $20
 	.db $02 $08 $48 $20
 	.db $12 $00 $4e $20
 	.db $12 $08 $4c $20
 
-oamData4d810:
+enemyOamData4d810:
 	.db $04
 	.db $02 $00 $22 $20
 	.db $02 $08 $20 $20
 	.db $12 $00 $24 $20
 	.db $11 $06 $38 $20
 
-oamData4d821:
+enemyOamData4d821:
 	.db $04
 	.db $02 $00 $28 $20
 	.db $02 $08 $26 $20
 	.db $12 $00 $2a $20
 	.db $11 $06 $38 $20
 
-oamData4d832:
+enemyOamData4d832:
 	.db $04
 	.db $02 $00 $40 $00
 	.db $02 $08 $42 $00
 	.db $12 $00 $44 $00
 	.db $12 $08 $46 $00
 
-oamData4d843:
+enemyOamData4d843:
 	.db $04
 	.db $02 $00 $42 $20
 	.db $02 $08 $40 $20
 	.db $12 $00 $46 $20
 	.db $12 $08 $44 $20
 
-oamData4d854:
+enemyOamData4d854:
 	.db $04
 	.db $02 $00 $20 $00
 	.db $02 $08 $22 $00
 	.db $11 $02 $38 $00
 	.db $12 $08 $24 $00
 
-oamData4d865:
+enemyOamData4d865:
 	.db $04
 	.db $02 $00 $26 $00
 	.db $02 $08 $28 $00
 	.db $11 $02 $38 $00
 	.db $12 $08 $2a $00
 
-oamData4d876:
+enemyOamData4d876:
 	.db $04
 	.db $02 $00 $2e $20
 	.db $02 $08 $2c $20
 	.db $12 $00 $32 $20
 	.db $12 $08 $30 $20
 
-oamData4d887:
+enemyOamData4d887:
 	.db $04
 	.db $02 $00 $36 $20
 	.db $02 $08 $34 $20
 	.db $12 $00 $3a $20
 	.db $12 $08 $38 $20
 
-oamData4d898:
+enemyOamData4d898:
 	.db $04
 	.db $02 $00 $3e $20
 	.db $02 $08 $3c $20
 	.db $12 $00 $3a $20
 	.db $12 $08 $38 $20
 
-oamData4d8a9:
+enemyOamData4d8a9:
 	.db $04
 	.db $02 $00 $2c $00
 	.db $02 $08 $2e $00
 	.db $12 $00 $30 $00
 	.db $12 $08 $32 $00
 
-oamData4d8ba:
+enemyOamData4d8ba:
 	.db $04
 	.db $02 $00 $34 $00
 	.db $02 $08 $36 $00
 	.db $12 $00 $38 $00
 	.db $12 $08 $3a $00
 
-oamData4d8cb:
+enemyOamData4d8cb:
 	.db $04
 	.db $02 $00 $3c $00
 	.db $02 $08 $3e $00
 	.db $12 $00 $38 $00
 	.db $12 $08 $3a $00
 
-oamData4d8dc:
+enemyOamData4d8dc:
 	.db $04
 	.db $02 $00 $6c $00
 	.db $02 $08 $6e $00
 	.db $12 $00 $4c $00
 	.db $12 $08 $4e $00
 
-oamData4d8ed:
+enemyOamData4d8ed:
 	.db $04
 	.db $02 $00 $6e $20
 	.db $02 $08 $6c $20
 	.db $12 $00 $4e $20
 	.db $12 $08 $4c $20
 
-oamData4d8fe:
+enemyOamData4d8fe:
 	.db $04
 	.db $02 $00 $62 $20
 	.db $02 $08 $60 $20
 	.db $12 $00 $24 $20
 	.db $11 $06 $38 $20
 
-oamData4d90f:
+enemyOamData4d90f:
 	.db $04
 	.db $02 $00 $66 $20
 	.db $02 $08 $64 $20
 	.db $12 $00 $2a $20
 	.db $11 $06 $38 $20
 
-oamData4d920:
+enemyOamData4d920:
 	.db $04
 	.db $02 $00 $68 $00
 	.db $02 $08 $6a $00
 	.db $12 $00 $44 $00
 	.db $12 $08 $46 $00
 
-oamData4d931:
+enemyOamData4d931:
 	.db $04
 	.db $02 $00 $6a $20
 	.db $02 $08 $68 $20
 	.db $12 $00 $46 $20
 	.db $12 $08 $44 $20
 
-oamData4d942:
+enemyOamData4d942:
 	.db $04
 	.db $02 $00 $60 $00
 	.db $02 $08 $62 $00
 	.db $11 $02 $38 $00
 	.db $12 $08 $24 $00
 
-oamData4d953:
+enemyOamData4d953:
 	.db $04
 	.db $02 $00 $64 $00
 	.db $02 $08 $66 $00
 	.db $11 $02 $38 $00
 	.db $12 $08 $2a $00
 
-oamData4d964:
+enemyOamData4d964:
 	.db $04
 	.db $08 $f8 $04 $00
 	.db $08 $00 $06 $00
 	.db $08 $08 $06 $20
 	.db $08 $10 $04 $20
 
-oamData4d975:
+enemyOamData4d975:
 	.db $04
 	.db $08 $08 $12 $20
 	.db $08 $10 $10 $20
 	.db $08 $00 $0a $20
 	.db $08 $08 $08 $20
 
-oamData4d986:
+enemyOamData4d986:
 	.db $04
 	.db $08 $0a $12 $20
 	.db $08 $12 $10 $20
 	.db $08 $00 $0e $20
 	.db $08 $08 $0c $20
 
-oamData4d997:
+enemyOamData4d997:
 	.db $04
 	.db $08 $00 $08 $00
 	.db $08 $08 $0a $00
 	.db $08 $f8 $10 $00
 	.db $08 $00 $12 $00
 
-oamData4d9a8:
+enemyOamData4d9a8:
 	.db $04
 	.db $08 $00 $0c $00
 	.db $08 $08 $0e $00
 	.db $08 $f6 $10 $00
 	.db $08 $fe $12 $00
 
-oamData4d9b9:
+enemyOamData4d9b9:
 	.db $04
 	.db $08 $00 $0e $00
 	.db $08 $08 $10 $00
 	.db $f8 $00 $12 $00
 	.db $f8 $08 $12 $20
 
-oamData4d9ca:
+enemyOamData4d9ca:
 	.db $04
 	.db $08 $00 $10 $20
 	.db $08 $08 $0e $20
 	.db $f8 $00 $12 $00
 	.db $f8 $08 $12 $20
 
-oamData4d9db:
+enemyOamData4d9db:
 	.db $04
 	.db $08 $00 $14 $00
 	.db $08 $08 $14 $20
 	.db $f8 $00 $16 $00
 	.db $f8 $08 $16 $20
 
-oamData4d9ec:
+enemyOamData4d9ec:
 	.db $04
 	.db $0c $00 $60 $00
 	.db $0c $08 $60 $20
 	.db $fc $00 $62 $00
 	.db $fc $08 $62 $20
 
-oamData4d9fd:
+enemyOamData4d9fd:
 	.db $04
 	.db $0c $00 $60 $00
 	.db $0c $08 $60 $20
 	.db $fc $00 $64 $00
 	.db $fc $08 $64 $20
 
-oamData4da0e:
+enemyOamData4da0e:
 	.db $04
 	.db $0c $00 $60 $00
 	.db $0c $08 $60 $20
 	.db $fc $00 $66 $00
 	.db $fc $08 $66 $20
 
-oamData4da1f:
+enemyOamData4da1f:
 	.db $04
 	.db $0c $00 $60 $00
 	.db $0c $08 $60 $20
 	.db $fc $00 $68 $00
 	.db $fc $08 $68 $20
 
-oamData4da30:
+enemyOamData4da30:
 	.db $04
 	.db $02 $00 $16 $00
 	.db $02 $08 $18 $00
 	.db $12 $00 $1a $00
 	.db $12 $08 $1c $00
 
-oamData4da41:
+enemyOamData4da41:
 	.db $04
 	.db $02 $00 $18 $20
 	.db $02 $08 $16 $20
 	.db $12 $00 $1c $20
 	.db $12 $08 $1a $20
 
-oamData4da52:
+enemyOamData4da52:
 	.db $04
 	.db $02 $00 $20 $00
 	.db $02 $08 $22 $00
 	.db $12 $00 $24 $00
 	.db $12 $08 $26 $00
 
-oamData4da63:
+enemyOamData4da63:
 	.db $04
 	.db $02 $00 $28 $00
 	.db $02 $08 $2a $00
 	.db $12 $00 $2c $00
 	.db $12 $08 $2e $00
 
-oamData4da74:
+enemyOamData4da74:
 	.db $04
 	.db $02 $00 $30 $00
 	.db $02 $08 $32 $00
 	.db $12 $00 $34 $00
 	.db $12 $08 $36 $00
 
-oamData4da85:
+enemyOamData4da85:
 	.db $04
 	.db $02 $00 $38 $00
 	.db $02 $08 $3a $00
 	.db $12 $00 $3c $00
 	.db $12 $08 $3e $00
 
-oamData4da96:
+enemyOamData4da96:
 	.db $04
 	.db $08 $00 $50 $00
 	.db $08 $08 $52 $00
 	.db $f8 $00 $4c $00
 	.db $f8 $08 $4e $00
 
-oamData4daa7:
+enemyOamData4daa7:
 	.db $04
 	.db $08 $00 $52 $60
 	.db $08 $08 $50 $60
 	.db $18 $00 $4e $60
 	.db $18 $08 $4c $60
 
-oamData4dab8:
+enemyOamData4dab8:
 	.db $04
 	.db $08 $fc $00 $00
 	.db $08 $04 $02 $00
 	.db $08 $0c $04 $00
 	.db $f8 $0c $0c $00
 
-oamData4dac9:
+enemyOamData4dac9:
 	.db $04
 	.db $08 $fc $06 $00
 	.db $08 $04 $08 $00
 	.db $08 $0c $0a $00
 	.db $f8 $0f $0c $00
 
-oamData4dada:
+enemyOamData4dada:
 	.db $04
 	.db $08 $fc $04 $20
 	.db $08 $04 $02 $20
 	.db $08 $0c $00 $20
 	.db $f8 $fc $0c $20
 
-oamData4daeb:
+enemyOamData4daeb:
 	.db $04
 	.db $08 $fc $0a $20
 	.db $08 $04 $08 $20
 	.db $08 $0c $06 $20
 	.db $f8 $f9 $0c $20
 
-oamData4dafc:
+enemyOamData4dafc:
 	.db $04
 	.db $f9 $04 $04 $00
 	.db $08 $fc $36 $00
 	.db $08 $04 $38 $00
 	.db $08 $0c $36 $20
 
-oamData4db0d:
+enemyOamData4db0d:
 	.db $04
 	.db $f9 $06 $04 $00
 	.db $08 $0f $16 $20
 	.db $08 $07 $18 $20
 	.db $08 $ff $1a $20
 
-oamData4db1e:
+enemyOamData4db1e:
 	.db $04
 	.db $fa $08 $04 $00
 	.db $0a $12 $1c $20
 	.db $0a $0a $1e $20
 	.db $0a $02 $20 $20
 
-oamData4db2f:
+enemyOamData4db2f:
 	.db $04
 	.db $08 $fc $00 $00
 	.db $08 $04 $02 $00
 	.db $08 $0c $00 $20
 	.db $f8 $04 $04 $00
 
-oamData4db40:
+enemyOamData4db40:
 	.db $04
 	.db $0a $fc $06 $00
 	.db $0a $04 $08 $00
 	.db $0a $0c $06 $20
 	.db $fa $04 $04 $00
 
-oamData4db51:
+enemyOamData4db51:
 	.db $04
 	.db $f9 $02 $04 $00
 	.db $08 $f9 $16 $00
 	.db $08 $01 $18 $00
 	.db $08 $09 $1a $00
 
-oamData4db62:
+enemyOamData4db62:
 	.db $04
 	.db $fa $00 $04 $00
 	.db $0a $f6 $1c $00
 	.db $0a $fe $1e $00
 	.db $0a $06 $20 $00
 
-oamData4db73:
+enemyOamData4db73:
 	.db $04
 	.db $fc $04 $04 $00
 	.db $08 $fc $42 $00
 	.db $08 $04 $44 $00
 	.db $08 $0c $42 $20
 
-oamData4db84:
+enemyOamData4db84:
 	.db $05
 	.db $00 $fc $00 $00
 	.db $00 $04 $02 $00
@@ -1217,7 +1216,7 @@ oamData4db84:
 	.db $10 $00 $04 $00
 	.db $10 $08 $04 $20
 
-oamData4db99:
+enemyOamData4db99:
 	.db $05
 	.db $01 $fc $00 $00
 	.db $01 $04 $02 $00
@@ -1225,7 +1224,7 @@ oamData4db99:
 	.db $11 $00 $04 $00
 	.db $11 $08 $04 $20
 
-oamData4dbae:
+enemyOamData4dbae:
 	.db $05
 	.db $02 $fc $00 $00
 	.db $02 $04 $02 $00
@@ -1233,7 +1232,7 @@ oamData4dbae:
 	.db $12 $00 $04 $00
 	.db $12 $08 $04 $20
 
-oamData4dbc3:
+enemyOamData4dbc3:
 	.db $05
 	.db $01 $fc $00 $00
 	.db $01 $04 $02 $00
@@ -1241,7 +1240,7 @@ oamData4dbc3:
 	.db $11 $00 $04 $00
 	.db $11 $08 $04 $20
 
-oamData4dbd8:
+enemyOamData4dbd8:
 	.db $05
 	.db $00 $fc $06 $00
 	.db $00 $04 $08 $00
@@ -1249,7 +1248,7 @@ oamData4dbd8:
 	.db $10 $00 $04 $00
 	.db $10 $08 $04 $20
 
-oamData4dbed:
+enemyOamData4dbed:
 	.db $05
 	.db $00 $fc $0a $00
 	.db $00 $04 $0c $00
@@ -1257,7 +1256,7 @@ oamData4dbed:
 	.db $10 $00 $04 $00
 	.db $10 $08 $04 $20
 
-oamData4dc02:
+enemyOamData4dc02:
 	.db $05
 	.db $10 $00 $04 $00
 	.db $10 $08 $04 $20
@@ -1265,7 +1264,7 @@ oamData4dc02:
 	.db $00 $0c $0e $20
 	.db $00 $04 $10 $00
 
-oamData4dc17:
+enemyOamData4dc17:
 	.db $05
 	.db $00 $fc $12 $00
 	.db $00 $04 $14 $00
@@ -1273,7 +1272,7 @@ oamData4dc17:
 	.db $10 $00 $04 $00
 	.db $10 $08 $04 $20
 
-oamData4dc2c:
+enemyOamData4dc2c:
 	.db $05
 	.db $03 $00 $00 $00
 	.db $03 $08 $00 $20
@@ -1281,7 +1280,7 @@ oamData4dc2c:
 	.db $0a $08 $02 $20
 	.db $0f $04 $04 $00
 
-oamData4dc41:
+enemyOamData4dc41:
 	.db $05
 	.db $08 $10 $22 $20
 	.db $08 $08 $24 $20
@@ -1289,7 +1288,7 @@ oamData4dc41:
 	.db $f8 $01 $2c $00
 	.db $f8 $09 $2c $20
 
-oamData4dc56:
+enemyOamData4dc56:
 	.db $05
 	.db $08 $08 $28 $20
 	.db $08 $00 $2a $20
@@ -1297,7 +1296,7 @@ oamData4dc56:
 	.db $f8 $00 $2c $00
 	.db $f8 $08 $2c $20
 
-oamData4dc6b:
+enemyOamData4dc6b:
 	.db $05
 	.db $08 $f8 $22 $00
 	.db $08 $00 $24 $00
@@ -1305,7 +1304,7 @@ oamData4dc6b:
 	.db $f8 $07 $2c $20
 	.db $f8 $ff $2c $00
 
-oamData4dc80:
+enemyOamData4dc80:
 	.db $05
 	.db $08 $00 $28 $00
 	.db $08 $08 $2a $00
@@ -1313,7 +1312,7 @@ oamData4dc80:
 	.db $f8 $08 $2c $20
 	.db $f8 $00 $2c $00
 
-oamData4dc95:
+enemyOamData4dc95:
 	.db $06
 	.db $04 $04 $0a $00
 	.db $0c $fc $0c $00
@@ -1322,7 +1321,7 @@ oamData4dc95:
 	.db $fc $fc $00 $00
 	.db $fc $0a $16 $00
 
-oamData4dcae:
+enemyOamData4dcae:
 	.db $06
 	.db $04 $04 $0a $20
 	.db $0c $0c $0c $20
@@ -1331,7 +1330,7 @@ oamData4dcae:
 	.db $fc $0c $00 $20
 	.db $fc $fe $16 $20
 
-oamData4dcc7:
+enemyOamData4dcc7:
 	.db $06
 	.db $0c $0e $12 $20
 	.db $04 $06 $14 $20
@@ -1340,7 +1339,7 @@ oamData4dcc7:
 	.db $fc $fe $16 $20
 	.db $fc $0e $00 $20
 
-oamData4dce0:
+enemyOamData4dce0:
 	.db $06
 	.db $05 $06 $14 $20
 	.db $14 $06 $1c $20
@@ -1349,7 +1348,7 @@ oamData4dce0:
 	.db $0d $0e $12 $20
 	.db $fd $0e $00 $20
 
-oamData4dcf9:
+enemyOamData4dcf9:
 	.db $06
 	.db $04 $04 $02 $00
 	.db $fc $fc $00 $00
@@ -1358,7 +1357,7 @@ oamData4dcf9:
 	.db $0c $0c $08 $00
 	.db $fc $0a $16 $00
 
-oamData4dd12:
+enemyOamData4dd12:
 	.db $06
 	.db $04 $04 $02 $20
 	.db $fc $0c $00 $20
@@ -1367,7 +1366,7 @@ oamData4dd12:
 	.db $0c $fc $08 $20
 	.db $fc $fe $16 $20
 
-oamData4dd2b:
+enemyOamData4dd2b:
 	.db $06
 	.db $0c $fa $12 $00
 	.db $04 $02 $14 $00
@@ -1376,7 +1375,7 @@ oamData4dd2b:
 	.db $fc $0a $16 $00
 	.db $fc $fa $00 $00
 
-oamData4dd44:
+enemyOamData4dd44:
 	.db $06
 	.db $05 $02 $14 $00
 	.db $14 $02 $1c $00
@@ -1385,7 +1384,7 @@ oamData4dd44:
 	.db $0d $fa $12 $00
 	.db $fd $fa $00 $00
 
-oamData4dd5d:
+enemyOamData4dd5d:
 	.db $06
 	.db $fc $fc $20 $00
 	.db $04 $04 $22 $00
@@ -1394,7 +1393,7 @@ oamData4dd5d:
 	.db $14 $04 $28 $00
 	.db $0c $0c $2a $00
 
-oamData4dd76:
+enemyOamData4dd76:
 	.db $06
 	.db $00 $fc $54 $20
 	.db $00 $04 $52 $20
@@ -1403,7 +1402,7 @@ oamData4dd76:
 	.db $10 $04 $58 $20
 	.db $10 $0c $56 $20
 
-oamData4dd8f:
+enemyOamData4dd8f:
 	.db $06
 	.db $00 $fc $54 $20
 	.db $00 $04 $5c $20
@@ -1412,7 +1411,7 @@ oamData4dd8f:
 	.db $10 $04 $58 $20
 	.db $10 $0c $56 $20
 
-oamData4dda8:
+enemyOamData4dda8:
 	.db $06
 	.db $00 $fc $50 $00
 	.db $00 $04 $52 $00
@@ -1421,7 +1420,7 @@ oamData4dda8:
 	.db $10 $04 $58 $00
 	.db $10 $0c $5a $00
 
-oamData4ddc1:
+enemyOamData4ddc1:
 	.db $06
 	.db $00 $fc $50 $00
 	.db $00 $04 $5c $00
@@ -1430,7 +1429,7 @@ oamData4ddc1:
 	.db $10 $04 $58 $00
 	.db $10 $0c $5a $00
 
-oamData4ddda:
+enemyOamData4ddda:
 	.db $06
 	.db $02 $00 $00 $00
 	.db $02 $08 $00 $20
@@ -1439,7 +1438,7 @@ oamData4ddda:
 	.db $0e $04 $04 $00
 	.db $11 $04 $04 $00
 
-oamData4ddf3:
+enemyOamData4ddf3:
 	.db $06
 	.db $ff $00 $00 $00
 	.db $ff $08 $00 $20
@@ -1448,7 +1447,7 @@ oamData4ddf3:
 	.db $0f $04 $04 $00
 	.db $14 $04 $04 $00
 
-oamData4de0c:
+enemyOamData4de0c:
 	.db $06
 	.db $fd $00 $00 $00
 	.db $fd $08 $00 $20
@@ -1457,7 +1456,7 @@ oamData4de0c:
 	.db $10 $04 $04 $00
 	.db $16 $04 $04 $00
 
-oamData4de25:
+enemyOamData4de25:
 	.db $06
 	.db $fd $01 $00 $00
 	.db $fd $09 $00 $20
@@ -1466,7 +1465,7 @@ oamData4de25:
 	.db $10 $05 $04 $00
 	.db $16 $04 $04 $00
 
-oamData4de3e:
+enemyOamData4de3e:
 	.db $06
 	.db $fd $ff $00 $00
 	.db $fd $07 $00 $20
@@ -1475,7 +1474,7 @@ oamData4de3e:
 	.db $10 $03 $04 $00
 	.db $16 $04 $04 $00
 
-oamData4de57:
+enemyOamData4de57:
 	.db $06
 	.db $f8 $fa $00 $00
 	.db $f8 $02 $02 $00
@@ -1484,7 +1483,7 @@ oamData4de57:
 	.db $08 $02 $08 $00
 	.db $08 $0a $0a $00
 
-oamData4de70:
+enemyOamData4de70:
 	.db $06
 	.db $f8 $fa $00 $00
 	.db $f8 $02 $02 $00
@@ -1493,7 +1492,7 @@ oamData4de70:
 	.db $08 $02 $08 $00
 	.db $08 $0a $0e $00
 
-oamData4de89:
+enemyOamData4de89:
 	.db $06
 	.db $04 $04 $2a $00
 	.db $0c $fc $2c $00
@@ -1502,7 +1501,7 @@ oamData4de89:
 	.db $fc $fc $20 $00
 	.db $fc $0a $36 $00
 
-oamData4dea2:
+enemyOamData4dea2:
 	.db $06
 	.db $04 $04 $2a $20
 	.db $0c $0c $2c $20
@@ -1511,7 +1510,7 @@ oamData4dea2:
 	.db $fc $0c $20 $20
 	.db $fc $fe $36 $20
 
-oamData4debb:
+enemyOamData4debb:
 	.db $06
 	.db $0c $0e $32 $20
 	.db $04 $06 $34 $20
@@ -1520,7 +1519,7 @@ oamData4debb:
 	.db $fc $fe $36 $20
 	.db $fc $0e $20 $20
 
-oamData4ded4:
+enemyOamData4ded4:
 	.db $06
 	.db $05 $06 $34 $20
 	.db $14 $06 $3c $20
@@ -1529,7 +1528,7 @@ oamData4ded4:
 	.db $0d $0e $32 $20
 	.db $fd $0e $20 $20
 
-oamData4deed:
+enemyOamData4deed:
 	.db $06
 	.db $04 $04 $22 $00
 	.db $fc $fc $20 $00
@@ -1538,7 +1537,7 @@ oamData4deed:
 	.db $0c $0c $28 $00
 	.db $fc $0a $36 $00
 
-oamData4df06:
+enemyOamData4df06:
 	.db $06
 	.db $04 $04 $22 $20
 	.db $fc $0c $20 $20
@@ -1547,7 +1546,7 @@ oamData4df06:
 	.db $0c $fc $28 $20
 	.db $fc $fe $36 $20
 
-oamData4df1f:
+enemyOamData4df1f:
 	.db $06
 	.db $0c $fa $32 $00
 	.db $04 $02 $34 $00
@@ -1556,7 +1555,7 @@ oamData4df1f:
 	.db $fc $0a $36 $00
 	.db $fc $fa $20 $00
 
-oamData4df38:
+enemyOamData4df38:
 	.db $06
 	.db $05 $02 $34 $00
 	.db $14 $02 $3c $00
@@ -1565,7 +1564,7 @@ oamData4df38:
 	.db $0d $fa $32 $00
 	.db $fd $fa $20 $00
 
-oamData4df51:
+enemyOamData4df51:
 	.db $06
 	.db $01 $f8 $00 $00
 	.db $05 $00 $02 $00
@@ -1574,7 +1573,7 @@ oamData4df51:
 	.db $15 $00 $04 $00
 	.db $15 $08 $04 $20
 
-oamData4df6a:
+enemyOamData4df6a:
 	.db $06
 	.db $04 $00 $02 $00
 	.db $04 $08 $02 $20
@@ -1583,7 +1582,7 @@ oamData4df6a:
 	.db $06 $f8 $06 $00
 	.db $06 $10 $06 $20
 
-oamData4df83:
+enemyOamData4df83:
 	.db $06
 	.db $04 $04 $12 $00
 	.db $fb $fc $10 $00
@@ -1592,7 +1591,7 @@ oamData4df83:
 	.db $0b $0c $14 $20
 	.db $14 $04 $16 $00
 
-oamData4df9c:
+enemyOamData4df9c:
 	.db $06
 	.db $fe $fc $00 $00
 	.db $fe $04 $02 $00
@@ -1601,7 +1600,7 @@ oamData4df9c:
 	.db $0e $04 $08 $00
 	.db $0e $0c $0a $00
 
-oamData4dfb5:
+enemyOamData4dfb5:
 	.db $06
 	.db $fe $fc $04 $20
 	.db $fe $04 $02 $20
@@ -1610,7 +1609,7 @@ oamData4dfb5:
 	.db $0e $04 $08 $20
 	.db $0e $0c $06 $20
 
-oamData4dfce:
+enemyOamData4dfce:
 	.db $06
 	.db $10 $00 $16 $00
 	.db $10 $08 $18 $00
@@ -1619,7 +1618,7 @@ oamData4dfce:
 	.db $00 $08 $14 $20
 	.db $0c $f8 $0a $00
 
-oamData4dfe7:
+enemyOamData4dfe7:
 	.db $06
 	.db $10 $07 $16 $20
 	.db $10 $ff $18 $20
@@ -1628,7 +1627,7 @@ oamData4dfe7:
 	.db $00 $ff $14 $00
 	.db $0c $0f $0a $20
 
-oamData4e000:
+enemyOamData4e000:
 	.db $06
 	.db $00 $00 $0c $00
 	.db $00 $08 $0c $20
@@ -1637,7 +1636,7 @@ oamData4e000:
 	.db $0c $f8 $0a $00
 	.db $0e $10 $0e $00
 
-oamData4e019:
+enemyOamData4e019:
 	.db $06
 	.db $00 $07 $0c $20
 	.db $00 $ff $0c $00
@@ -1646,7 +1645,7 @@ oamData4e019:
 	.db $0c $0f $0a $20
 	.db $0e $f7 $0e $20
 
-oamData4e032:
+enemyOamData4e032:
 	.db $06
 	.db $00 $00 $06 $00
 	.db $00 $08 $06 $20
@@ -1655,7 +1654,7 @@ oamData4e032:
 	.db $08 $f8 $04 $00
 	.db $08 $10 $04 $20
 
-oamData4e04b:
+enemyOamData4e04b:
 	.db $06
 	.db $00 $fc $08 $00
 	.db $00 $04 $0a $00
@@ -1664,7 +1663,7 @@ oamData4e04b:
 	.db $00 $0c $08 $20
 	.db $10 $0c $0c $20
 
-oamData4e064:
+enemyOamData4e064:
 	.db $06
 	.db $0f $fc $0c $00
 	.db $0f $04 $0e $00
@@ -1673,7 +1672,7 @@ oamData4e064:
 	.db $01 $04 $0a $00
 	.db $01 $0c $08 $20
 
-oamData4e07d:
+enemyOamData4e07d:
 	.db $06
 	.db $0f $fd $0c $00
 	.db $01 $fd $08 $00
@@ -1682,7 +1681,7 @@ oamData4e07d:
 	.db $0f $04 $0e $00
 	.db $01 $04 $0a $00
 
-oamData4e096:
+enemyOamData4e096:
 	.db $06
 	.db $10 $fd $0c $00
 	.db $10 $0b $0c $20
@@ -1691,7 +1690,7 @@ oamData4e096:
 	.db $00 $0b $08 $20
 	.db $00 $04 $0a $00
 
-oamData4e0af:
+enemyOamData4e0af:
 	.db $06
 	.db $00 $fc $10 $00
 	.db $00 $04 $12 $00
@@ -1700,7 +1699,7 @@ oamData4e0af:
 	.db $00 $0c $10 $20
 	.db $10 $0c $14 $20
 
-oamData4e0c8:
+enemyOamData4e0c8:
 	.db $06
 	.db $00 $fc $18 $00
 	.db $00 $04 $1a $00
@@ -1709,7 +1708,7 @@ oamData4e0c8:
 	.db $00 $0c $18 $20
 	.db $10 $0c $1c $20
 
-oamData4e0e1:
+enemyOamData4e0e1:
 	.db $06
 	.db $fd $00 $00 $00
 	.db $fd $08 $00 $20
@@ -1718,7 +1717,7 @@ oamData4e0e1:
 	.db $0d $10 $02 $20
 	.db $0d $08 $04 $20
 
-oamData4e0fa:
+enemyOamData4e0fa:
 	.db $06
 	.db $00 $00 $06 $00
 	.db $00 $08 $06 $20
@@ -1727,7 +1726,7 @@ oamData4e0fa:
 	.db $10 $10 $08 $20
 	.db $10 $08 $0a $20
 
-oamData4e113:
+enemyOamData4e113:
 	.db $06
 	.db $01 $00 $32 $00
 	.db $01 $08 $32 $20
@@ -1736,7 +1735,7 @@ oamData4e113:
 	.db $0f $10 $08 $20
 	.db $0f $08 $0a $20
 
-oamData4e12c:
+enemyOamData4e12c:
 	.db $06
 	.db $fd $00 $00 $00
 	.db $fd $08 $00 $20
@@ -1745,7 +1744,7 @@ oamData4e12c:
 	.db $0d $10 $14 $20
 	.db $0d $08 $16 $20
 
-oamData4e145:
+enemyOamData4e145:
 	.db $07
 	.db $00 $fc $00 $00
 	.db $00 $04 $02 $00
@@ -1755,7 +1754,7 @@ oamData4e145:
 	.db $11 $f8 $16 $00
 	.db $11 $10 $16 $20
 
-oamData4e162:
+enemyOamData4e162:
 	.db $07
 	.db $02 $fc $00 $00
 	.db $02 $04 $02 $00
@@ -1765,7 +1764,7 @@ oamData4e162:
 	.db $10 $f7 $16 $00
 	.db $10 $11 $16 $20
 
-oamData4e17f:
+enemyOamData4e17f:
 	.db $07
 	.db $02 $fc $00 $00
 	.db $02 $04 $02 $00
@@ -1775,7 +1774,7 @@ oamData4e17f:
 	.db $11 $f6 $16 $00
 	.db $11 $12 $16 $20
 
-oamData4e19c:
+enemyOamData4e19c:
 	.db $07
 	.db $01 $fc $00 $00
 	.db $01 $04 $02 $00
@@ -1785,7 +1784,7 @@ oamData4e19c:
 	.db $12 $f7 $16 $00
 	.db $12 $11 $16 $20
 
-oamData4e1b9:
+enemyOamData4e1b9:
 	.db $07
 	.db $fe $f4 $0c $00
 	.db $fe $fc $0e $00
@@ -1795,7 +1794,7 @@ oamData4e1b9:
 	.db $0e $04 $08 $00
 	.db $0e $0c $0a $00
 
-oamData4e1d6:
+enemyOamData4e1d6:
 	.db $07
 	.db $fc $fb $00 $00
 	.db $fe $03 $02 $00
@@ -1805,7 +1804,7 @@ oamData4e1d6:
 	.db $0e $0b $0a $00
 	.db $08 $13 $0c $00
 
-oamData4e1f3:
+enemyOamData4e1f3:
 	.db $07
 	.db $fc $fb $00 $00
 	.db $fe $03 $02 $00
@@ -1815,7 +1814,7 @@ oamData4e1f3:
 	.db $0e $0b $10 $00
 	.db $08 $13 $12 $00
 
-oamData4e210:
+enemyOamData4e210:
 	.db $07
 	.db $fc $fb $00 $00
 	.db $fe $03 $02 $00
@@ -1825,7 +1824,7 @@ oamData4e210:
 	.db $08 $11 $0c $00
 	.db $0b $fb $14 $00
 
-oamData4e22d:
+enemyOamData4e22d:
 	.db $07
 	.db $fc $fb $00 $00
 	.db $fe $03 $02 $00
@@ -1835,7 +1834,7 @@ oamData4e22d:
 	.db $08 $13 $12 $00
 	.db $0c $fb $16 $00
 
-oamData4e24a:
+enemyOamData4e24a:
 	.db $07
 	.db $fc $0d $00 $20
 	.db $fe $05 $02 $20
@@ -1845,7 +1844,7 @@ oamData4e24a:
 	.db $0e $fd $0a $20
 	.db $08 $f5 $0c $20
 
-oamData4e267:
+enemyOamData4e267:
 	.db $07
 	.db $fc $0d $00 $20
 	.db $fe $05 $02 $20
@@ -1855,7 +1854,7 @@ oamData4e267:
 	.db $0e $fd $10 $20
 	.db $08 $f5 $12 $20
 
-oamData4e284:
+enemyOamData4e284:
 	.db $07
 	.db $fc $0d $00 $20
 	.db $fe $05 $02 $20
@@ -1865,7 +1864,7 @@ oamData4e284:
 	.db $08 $f7 $0c $20
 	.db $0b $0d $14 $20
 
-oamData4e2a1:
+enemyOamData4e2a1:
 	.db $07
 	.db $fc $0d $00 $20
 	.db $fe $05 $02 $20
@@ -1875,7 +1874,7 @@ oamData4e2a1:
 	.db $08 $f5 $12 $20
 	.db $0c $0d $16 $20
 
-oamData4e2be:
+enemyOamData4e2be:
 	.db $07
 	.db $08 $f8 $2e $00
 	.db $08 $00 $30 $00
@@ -1885,7 +1884,7 @@ oamData4e2be:
 	.db $f8 $0c $3e $20
 	.db $f8 $fc $3e $00
 
-oamData4e2db:
+enemyOamData4e2db:
 	.db $07
 	.db $08 $11 $2e $20
 	.db $08 $09 $30 $20
@@ -1895,7 +1894,7 @@ oamData4e2db:
 	.db $f8 $fd $3e $00
 	.db $f8 $0d $3e $20
 
-oamData4e2f8:
+enemyOamData4e2f8:
 	.db $07
 	.db $08 $11 $0a $20
 	.db $08 $09 $0c $20
@@ -1905,7 +1904,7 @@ oamData4e2f8:
 	.db $f8 $04 $14 $20
 	.db $f8 $fc $12 $00
 
-oamData4e315:
+enemyOamData4e315:
 	.db $07
 	.db $08 $f8 $0a $00
 	.db $08 $00 $0c $00
@@ -1915,7 +1914,7 @@ oamData4e315:
 	.db $f8 $05 $14 $00
 	.db $f8 $0d $12 $20
 
-oamData4e332:
+enemyOamData4e332:
 	.db $07
 	.db $09 $13 $1c $20
 	.db $08 $0b $1e $20
@@ -1925,7 +1924,7 @@ oamData4e332:
 	.db $10 $fb $28 $20
 	.db $18 $0b $24 $20
 
-oamData4e34f:
+enemyOamData4e34f:
 	.db $07
 	.db $01 $04 $20 $20
 	.db $01 $fc $22 $20
@@ -1935,7 +1934,7 @@ oamData4e34f:
 	.db $10 $fb $32 $20
 	.db $18 $0b $2e $20
 
-oamData4e36c:
+enemyOamData4e36c:
 	.db $07
 	.db $09 $f5 $1c $00
 	.db $08 $fd $1e $00
@@ -1945,7 +1944,7 @@ oamData4e36c:
 	.db $10 $0d $28 $00
 	.db $18 $fd $24 $00
 
-oamData4e389:
+enemyOamData4e389:
 	.db $07
 	.db $01 $04 $20 $00
 	.db $01 $0c $22 $00
@@ -1955,7 +1954,7 @@ oamData4e389:
 	.db $10 $0d $32 $00
 	.db $18 $fd $2e $00
 
-oamData4e3a6:
+enemyOamData4e3a6:
 	.db $08
 	.db $10 $f8 $04 $00
 	.db $10 $00 $06 $00
@@ -1966,7 +1965,7 @@ oamData4e3a6:
 	.db $00 $10 $00 $20
 	.db $00 $08 $02 $20
 
-oamData4e3c7:
+enemyOamData4e3c7:
 	.db $08
 	.db $10 $f8 $0e $00
 	.db $10 $00 $10 $00
@@ -1977,7 +1976,7 @@ oamData4e3c7:
 	.db $00 $10 $0a $20
 	.db $00 $08 $0c $20
 
-oamData4e3e8:
+enemyOamData4e3e8:
 	.db $08
 	.db $00 $00 $14 $00
 	.db $00 $08 $14 $20
@@ -1988,7 +1987,7 @@ oamData4e3e8:
 	.db $10 $f8 $04 $00
 	.db $10 $10 $04 $20
 
-oamData4e409:
+enemyOamData4e409:
 	.db $08
 	.db $00 $00 $14 $00
 	.db $00 $08 $14 $20
@@ -1999,7 +1998,7 @@ oamData4e409:
 	.db $10 $00 $18 $00
 	.db $10 $08 $18 $20
 
-oamData4e42a:
+enemyOamData4e42a:
 	.db $08
 	.db $00 $00 $1c $00
 	.db $00 $08 $1c $20
@@ -2010,7 +2009,7 @@ oamData4e42a:
 	.db $10 $00 $1a $00
 	.db $10 $08 $1a $20
 
-oamData4e44b:
+enemyOamData4e44b:
 	.db $08
 	.db $00 $f8 $6a $00
 	.db $00 $00 $6c $00
@@ -2021,7 +2020,7 @@ oamData4e44b:
 	.db $10 $08 $6c $60
 	.db $10 $10 $6a $60
 
-oamData4e46c:
+enemyOamData4e46c:
 	.db $08
 	.db $00 $f8 $66 $00
 	.db $00 $00 $68 $00
@@ -2032,7 +2031,7 @@ oamData4e46c:
 	.db $10 $08 $68 $60
 	.db $10 $10 $66 $60
 
-oamData4e48d:
+enemyOamData4e48d:
 	.db $08
 	.db $00 $f8 $62 $00
 	.db $00 $00 $64 $00
@@ -2043,7 +2042,7 @@ oamData4e48d:
 	.db $10 $08 $64 $60
 	.db $10 $10 $62 $60
 
-oamData4e4ae:
+enemyOamData4e4ae:
 	.db $08
 	.db $00 $f8 $68 $05
 	.db $00 $00 $6a $05
@@ -2054,7 +2053,7 @@ oamData4e4ae:
 	.db $10 $10 $68 $65
 	.db $10 $08 $6a $65
 
-oamData4e4cf:
+enemyOamData4e4cf:
 	.db $08
 	.db $00 $f8 $64 $05
 	.db $00 $00 $66 $05
@@ -2065,7 +2064,7 @@ oamData4e4cf:
 	.db $10 $10 $64 $65
 	.db $10 $08 $66 $65
 
-oamData4e4f0:
+enemyOamData4e4f0:
 	.db $08
 	.db $00 $f8 $00 $02
 	.db $00 $00 $02 $02
@@ -2076,7 +2075,7 @@ oamData4e4f0:
 	.db $10 $08 $0c $01
 	.db $10 $10 $0e $01
 
-oamData4e511:
+enemyOamData4e511:
 	.db $08
 	.db $00 $f8 $20 $00
 	.db $00 $00 $22 $00
@@ -2087,7 +2086,7 @@ oamData4e511:
 	.db $10 $08 $44 $00
 	.db $10 $10 $46 $00
 
-oamData4e532:
+enemyOamData4e532:
 	.db $08
 	.db $00 $00 $24 $20
 	.db $00 $f8 $26 $20
@@ -2098,7 +2097,7 @@ oamData4e532:
 	.db $10 $10 $48 $20
 	.db $10 $08 $4a $20
 
-oamData4e553:
+enemyOamData4e553:
 	.db $08
 	.db $00 $f8 $10 $02
 	.db $00 $00 $12 $02
@@ -2109,7 +2108,7 @@ oamData4e553:
 	.db $10 $08 $1c $01
 	.db $10 $10 $1e $01
 
-oamData4e574:
+enemyOamData4e574:
 	.db $08
 	.db $04 $f8 $70 $02
 	.db $04 $00 $72 $02
@@ -2120,7 +2119,7 @@ oamData4e574:
 	.db $14 $08 $7c $01
 	.db $14 $10 $7e $01
 
-oamData4e595:
+enemyOamData4e595:
 	.db $08
 	.db $f8 $10 $40 $20
 	.db $00 $00 $42 $00
@@ -2131,7 +2130,7 @@ oamData4e595:
 	.db $10 $00 $48 $00
 	.db $10 $08 $4a $00
 
-oamData4e5b6:
+enemyOamData4e5b6:
 	.db $08
 	.db $f9 $f8 $4c $00
 	.db $09 $f8 $4e $00
@@ -2142,7 +2141,7 @@ oamData4e5b6:
 	.db $0f $00 $48 $00
 	.db $0f $08 $4a $00
 
-oamData4e5d7:
+enemyOamData4e5d7:
 	.db $08
 	.db $00 $10 $50 $20
 	.db $00 $00 $52 $00
@@ -2153,7 +2152,7 @@ oamData4e5d7:
 	.db $10 $f8 $56 $00
 	.db $10 $00 $58 $00
 
-oamData4e5f8:
+enemyOamData4e5f8:
 	.db $08
 	.db $ff $00 $52 $00
 	.db $ff $08 $54 $00
@@ -2164,7 +2163,7 @@ oamData4e5f8:
 	.db $ff $10 $5a $20
 	.db $0f $10 $5c $20
 
-oamData4e619:
+enemyOamData4e619:
 	.db $08
 	.db $00 $f8 $00 $00
 	.db $00 $00 $02 $00
@@ -2175,7 +2174,7 @@ oamData4e619:
 	.db $10 $08 $06 $20
 	.db $10 $10 $04 $20
 
-oamData4e63a:
+enemyOamData4e63a:
 	.db $08
 	.db $00 $f8 $00 $00
 	.db $00 $00 $04 $00
@@ -2186,7 +2185,7 @@ oamData4e63a:
 	.db $10 $08 $14 $20
 	.db $10 $10 $10 $20
 
-oamData4e65b:
+enemyOamData4e65b:
 	.db $08
 	.db $00 $f8 $00 $00
 	.db $00 $00 $0e $00
@@ -2197,7 +2196,7 @@ oamData4e65b:
 	.db $10 $08 $14 $20
 	.db $10 $10 $10 $20
 
-oamData4e67c:
+enemyOamData4e67c:
 	.db $08
 	.db $00 $f8 $00 $00
 	.db $00 $00 $0e $00
@@ -2208,7 +2207,7 @@ oamData4e67c:
 	.db $10 $08 $14 $20
 	.db $10 $10 $10 $20
 
-oamData4e69d:
+enemyOamData4e69d:
 	.db $08
 	.db $00 $f8 $00 $00
 	.db $00 $00 $0e $00
@@ -2219,7 +2218,7 @@ oamData4e69d:
 	.db $10 $08 $16 $20
 	.db $10 $10 $10 $20
 
-oamData4e6be:
+enemyOamData4e6be:
 	.db $08
 	.db $00 $f8 $00 $00
 	.db $00 $00 $0c $00
@@ -2230,7 +2229,7 @@ oamData4e6be:
 	.db $10 $08 $18 $20
 	.db $10 $10 $10 $20
 
-oamData4e6df:
+enemyOamData4e6df:
 	.db $08
 	.db $00 $f8 $00 $00
 	.db $00 $00 $0a $00
@@ -2241,7 +2240,7 @@ oamData4e6df:
 	.db $10 $08 $14 $20
 	.db $10 $10 $10 $20
 
-oamData4e700:
+enemyOamData4e700:
 	.db $08
 	.db $00 $f8 $00 $00
 	.db $00 $00 $08 $00
@@ -2252,7 +2251,7 @@ oamData4e700:
 	.db $10 $08 $14 $20
 	.db $10 $10 $10 $20
 
-oamData4e721:
+enemyOamData4e721:
 	.db $08
 	.db $00 $f8 $00 $00
 	.db $00 $00 $06 $00
@@ -2263,7 +2262,7 @@ oamData4e721:
 	.db $10 $08 $14 $20
 	.db $10 $10 $10 $20
 
-oamData4e742:
+enemyOamData4e742:
 	.db $08
 	.db $00 $f8 $00 $00
 	.db $00 $00 $02 $00
@@ -2274,7 +2273,7 @@ oamData4e742:
 	.db $10 $08 $12 $20
 	.db $10 $10 $10 $20
 
-oamData4e763:
+enemyOamData4e763:
 	.db $08
 	.db $f8 $f8 $00 $00
 	.db $f8 $00 $02 $00
@@ -2285,7 +2284,7 @@ oamData4e763:
 	.db $08 $08 $0c $00
 	.db $08 $10 $0e $00
 
-oamData4e784:
+enemyOamData4e784:
 	.db $08
 	.db $f8 $f8 $10 $00
 	.db $f8 $00 $12 $00
@@ -2296,7 +2295,7 @@ oamData4e784:
 	.db $08 $08 $1c $00
 	.db $08 $10 $1e $00
 
-oamData4e7a5:
+enemyOamData4e7a5:
 	.db $08
 	.db $f8 $f8 $06 $20
 	.db $f8 $00 $04 $20
@@ -2307,7 +2306,7 @@ oamData4e7a5:
 	.db $08 $08 $0a $20
 	.db $08 $10 $08 $20
 
-oamData4e7c6:
+enemyOamData4e7c6:
 	.db $08
 	.db $f8 $f8 $16 $20
 	.db $f8 $00 $14 $20
@@ -2318,7 +2317,7 @@ oamData4e7c6:
 	.db $08 $08 $1a $20
 	.db $08 $10 $18 $20
 
-oamData4e7e7:
+enemyOamData4e7e7:
 	.db $08
 	.db $00 $f8 $0a $00
 	.db $00 $00 $0c $00
@@ -2329,7 +2328,7 @@ oamData4e7e7:
 	.db $10 $08 $12 $00
 	.db $10 $10 $14 $00
 
-oamData4e808:
+enemyOamData4e808:
 	.db $08
 	.db $00 $f8 $16 $00
 	.db $00 $00 $18 $00
@@ -2340,7 +2339,7 @@ oamData4e808:
 	.db $10 $08 $1c $00
 	.db $10 $10 $1e $00
 
-oamData4e829:
+enemyOamData4e829:
 	.db $08
 	.db $00 $f8 $20 $00
 	.db $00 $00 $22 $00
@@ -2351,7 +2350,7 @@ oamData4e829:
 	.db $10 $08 $28 $00
 	.db $10 $10 $2a $00
 
-oamData4e84a:
+enemyOamData4e84a:
 	.db $08
 	.db $00 $f8 $2c $00
 	.db $00 $00 $2e $00
@@ -2362,7 +2361,7 @@ oamData4e84a:
 	.db $10 $08 $34 $00
 	.db $10 $10 $36 $00
 
-oamData4e86b:
+enemyOamData4e86b:
 	.db $08
 	.db $04 $00 $0a $00
 	.db $04 $08 $0a $20
@@ -2373,7 +2372,7 @@ oamData4e86b:
 	.db $14 $00 $0e $00
 	.db $14 $08 $0e $20
 
-oamData4e88c:
+enemyOamData4e88c:
 	.db $08
 	.db $04 $04 $12 $00
 	.db $fb $fc $10 $00
@@ -2384,7 +2383,7 @@ oamData4e88c:
 	.db $12 $00 $20 $03
 	.db $12 $08 $20 $23
 
-oamData4e8ad:
+enemyOamData4e8ad:
 	.db $08
 	.db $00 $f8 $20 $00
 	.db $00 $00 $22 $00
@@ -2395,7 +2394,7 @@ oamData4e8ad:
 	.db $10 $10 $24 $20
 	.db $10 $08 $26 $20
 
-oamData4e8ce:
+enemyOamData4e8ce:
 	.db $08
 	.db $00 $f9 $20 $00
 	.db $00 $01 $22 $00
@@ -2406,7 +2405,7 @@ oamData4e8ce:
 	.db $10 $0f $24 $20
 	.db $10 $07 $26 $20
 
-oamData4e8ef:
+enemyOamData4e8ef:
 	.db $08
 	.db $0f $f9 $24 $00
 	.db $0f $01 $26 $00
@@ -2417,7 +2416,7 @@ oamData4e8ef:
 	.db $01 $0f $20 $20
 	.db $01 $07 $22 $20
 
-oamData4e910:
+enemyOamData4e910:
 	.db $08
 	.db $01 $fa $20 $00
 	.db $0f $01 $26 $00
@@ -2428,7 +2427,7 @@ oamData4e910:
 	.db $01 $07 $22 $20
 	.db $0f $0e $24 $20
 
-oamData4e931:
+enemyOamData4e931:
 	.db $08
 	.db $10 $fa $24 $00
 	.db $10 $01 $26 $00
@@ -2439,7 +2438,7 @@ oamData4e931:
 	.db $00 $0e $20 $20
 	.db $00 $07 $22 $20
 
-oamData4e952:
+enemyOamData4e952:
 	.db $08
 	.db $10 $f9 $24 $00
 	.db $10 $01 $26 $00
@@ -2450,7 +2449,7 @@ oamData4e952:
 	.db $00 $0f $20 $20
 	.db $00 $07 $22 $20
 
-oamData4e973:
+enemyOamData4e973:
 	.db $08
 	.db $00 $f8 $28 $00
 	.db $00 $00 $2a $00
@@ -2461,7 +2460,7 @@ oamData4e973:
 	.db $10 $10 $2c $20
 	.db $10 $08 $2e $20
 
-oamData4e994:
+enemyOamData4e994:
 	.db $08
 	.db $00 $f8 $30 $00
 	.db $00 $00 $32 $00
@@ -2472,7 +2471,7 @@ oamData4e994:
 	.db $10 $10 $34 $20
 	.db $10 $08 $36 $20
 
-oamData4e9b5:
+enemyOamData4e9b5:
 	.db $08
 	.db $18 $f8 $00 $40
 	.db $18 $00 $02 $40
@@ -2483,7 +2482,7 @@ oamData4e9b5:
 	.db $08 $10 $04 $60
 	.db $08 $08 $06 $60
 
-oamData4e9d6:
+enemyOamData4e9d6:
 	.db $08
 	.db $17 $f8 $00 $40
 	.db $17 $00 $02 $40
@@ -2494,7 +2493,7 @@ oamData4e9d6:
 	.db $07 $10 $08 $60
 	.db $07 $08 $0a $60
 
-oamData4e9f7:
+enemyOamData4e9f7:
 	.db $08
 	.db $08 $f8 $0c $40
 	.db $08 $00 $0e $40
@@ -2505,7 +2504,7 @@ oamData4e9f7:
 	.db $08 $10 $0c $60
 	.db $08 $08 $0e $60
 
-oamData4ea18:
+enemyOamData4ea18:
 	.db $08
 	.db $0a $f8 $10 $40
 	.db $19 $f8 $00 $40
@@ -2516,7 +2515,7 @@ oamData4ea18:
 	.db $19 $08 $02 $60
 	.db $09 $08 $12 $60
 
-oamData4ea39:
+enemyOamData4ea39:
 	.db $08
 	.db $00 $f8 $14 $20
 	.db $00 $f0 $16 $20
@@ -2527,7 +2526,7 @@ oamData4ea39:
 	.db $10 $00 $1a $60
 	.db $10 $f0 $16 $60
 
-oamData4ea5a:
+enemyOamData4ea5a:
 	.db $08
 	.db $00 $f9 $14 $20
 	.db $00 $f1 $16 $20
@@ -2538,7 +2537,7 @@ oamData4ea5a:
 	.db $10 $09 $1c $60
 	.db $10 $01 $1e $60
 
-oamData4ea7b:
+enemyOamData4ea7b:
 	.db $08
 	.db $00 $f8 $14 $20
 	.db $00 $f0 $16 $20
@@ -2549,7 +2548,7 @@ oamData4ea7b:
 	.db $10 $08 $20 $60
 	.db $10 $00 $22 $60
 
-oamData4ea9c:
+enemyOamData4ea9c:
 	.db $08
 	.db $00 $07 $24 $20
 	.db $00 $ff $26 $20
@@ -2560,7 +2559,7 @@ oamData4ea9c:
 	.db $10 $f7 $28 $60
 	.db $10 $ef $16 $60
 
-oamData4eabd:
+enemyOamData4eabd:
 	.db $08
 	.db $f8 $f8 $00 $00
 	.db $f8 $00 $02 $00
@@ -2571,7 +2570,7 @@ oamData4eabd:
 	.db $08 $10 $04 $20
 	.db $08 $08 $06 $20
 
-oamData4eade:
+enemyOamData4eade:
 	.db $08
 	.db $f9 $f8 $00 $00
 	.db $f9 $00 $02 $00
@@ -2582,7 +2581,7 @@ oamData4eade:
 	.db $09 $10 $08 $20
 	.db $09 $08 $0a $20
 
-oamData4eaff:
+enemyOamData4eaff:
 	.db $08
 	.db $08 $f8 $0c $00
 	.db $08 $00 $0e $00
@@ -2593,7 +2592,7 @@ oamData4eaff:
 	.db $08 $10 $0c $20
 	.db $08 $08 $0e $20
 
-oamData4eb20:
+enemyOamData4eb20:
 	.db $08
 	.db $06 $f8 $10 $00
 	.db $f7 $f8 $00 $00
@@ -2604,7 +2603,7 @@ oamData4eb20:
 	.db $f7 $08 $02 $20
 	.db $07 $08 $12 $20
 
-oamData4eb41:
+enemyOamData4eb41:
 	.db $08
 	.db $00 $10 $14 $00
 	.db $00 $18 $16 $00
@@ -2615,7 +2614,7 @@ oamData4eb41:
 	.db $10 $08 $1a $40
 	.db $10 $18 $16 $40
 
-oamData4eb62:
+enemyOamData4eb62:
 	.db $08
 	.db $00 $0f $14 $00
 	.db $00 $17 $16 $00
@@ -2626,7 +2625,7 @@ oamData4eb62:
 	.db $10 $ff $1c $40
 	.db $10 $07 $1e $40
 
-oamData4eb83:
+enemyOamData4eb83:
 	.db $08
 	.db $00 $10 $14 $00
 	.db $00 $18 $16 $00
@@ -2637,7 +2636,7 @@ oamData4eb83:
 	.db $10 $00 $20 $40
 	.db $10 $08 $22 $40
 
-oamData4eba4:
+enemyOamData4eba4:
 	.db $08
 	.db $00 $01 $24 $00
 	.db $00 $09 $26 $00
@@ -2648,7 +2647,7 @@ oamData4eba4:
 	.db $10 $11 $28 $40
 	.db $10 $19 $16 $40
 
-oamData4ebc5:
+enemyOamData4ebc5:
 	.db $08
 	.db $07 $f8 $2a $00
 	.db $07 $10 $2a $20
@@ -2659,7 +2658,7 @@ oamData4ebc5:
 	.db $08 $00 $0e $00
 	.db $08 $08 $0e $20
 
-oamData4ebe6:
+enemyOamData4ebe6:
 	.db $08
 	.db $08 $f8 $34 $00
 	.db $0a $00 $36 $00
@@ -2670,7 +2669,7 @@ oamData4ebe6:
 	.db $fa $10 $00 $20
 	.db $fa $08 $02 $20
 
-oamData4ec07:
+enemyOamData4ec07:
 	.db $08
 	.db $fc $f8 $00 $00
 	.db $fc $00 $02 $00
@@ -2681,7 +2680,7 @@ oamData4ec07:
 	.db $0a $08 $3a $20
 	.db $0a $10 $38 $20
 
-oamData4ec28:
+enemyOamData4ec28:
 	.db $08
 	.db $fb $f8 $00 $00
 	.db $fb $00 $02 $00
@@ -2692,7 +2691,7 @@ oamData4ec28:
 	.db $0b $10 $3c $20
 	.db $0b $08 $3e $20
 
-oamData4ec49:
+enemyOamData4ec49:
 	.db $08
 	.db $fc $f8 $40 $00
 	.db $fc $00 $42 $00
@@ -2703,7 +2702,7 @@ oamData4ec49:
 	.db $0c $10 $44 $20
 	.db $0c $08 $46 $20
 
-oamData4ec6a:
+enemyOamData4ec6a:
 	.db $08
 	.db $f6 $f8 $48 $00
 	.db $f6 $00 $4a $00
@@ -2714,7 +2713,7 @@ oamData4ec6a:
 	.db $06 $10 $4c $20
 	.db $06 $08 $4e $20
 
-oamData4ec8b:
+enemyOamData4ec8b:
 	.db $08
 	.db $00 $f8 $0c $00
 	.db $00 $00 $0e $00
@@ -2725,7 +2724,7 @@ oamData4ec8b:
 	.db $10 $10 $10 $20
 	.db $10 $08 $12 $20
 
-oamData4ecac:
+enemyOamData4ecac:
 	.db $08
 	.db $00 $f8 $20 $00
 	.db $00 $00 $22 $00
@@ -2736,7 +2735,7 @@ oamData4ecac:
 	.db $10 $10 $24 $20
 	.db $10 $08 $26 $20
 
-oamData4eccd:
+enemyOamData4eccd:
 	.db $09
 	.db $fd $0e $34 $20
 	.db $fd $06 $36 $20
@@ -2748,7 +2747,7 @@ oamData4eccd:
 	.db $fe $0f $4e $20
 	.db $0e $17 $50 $20
 
-oamData4ecf2:
+enemyOamData4ecf2:
 	.db $09
 	.db $fd $0e $34 $20
 	.db $fd $06 $36 $20
@@ -2760,7 +2759,7 @@ oamData4ecf2:
 	.db $fe $0f $4e $25
 	.db $0e $17 $50 $25
 
-oamData4ed17:
+enemyOamData4ed17:
 	.db $09
 	.db $f4 $01 $58 $05
 	.db $f4 $09 $5a $05
@@ -2772,7 +2771,7 @@ oamData4ed17:
 	.db $14 $10 $60 $25
 	.db $14 $08 $62 $25
 
-oamData4ed3c:
+enemyOamData4ed3c:
 	.db $09
 	.db $f4 $00 $40 $05
 	.db $f4 $08 $42 $05
@@ -2784,7 +2783,7 @@ oamData4ed3c:
 	.db $14 $0e $48 $25
 	.db $14 $06 $4a $25
 
-oamData4ed61:
+enemyOamData4ed61:
 	.db $09
 	.db $14 $f5 $38 $00
 	.db $14 $fd $3a $00
@@ -2796,7 +2795,7 @@ oamData4ed61:
 	.db $10 $00 $04 $00
 	.db $10 $08 $04 $20
 
-oamData4ed86:
+enemyOamData4ed86:
 	.db $09
 	.db $15 $f4 $38 $00
 	.db $15 $fc $3a $00
@@ -2808,7 +2807,7 @@ oamData4ed86:
 	.db $11 $00 $04 $00
 	.db $11 $08 $04 $20
 
-oamData4edab:
+enemyOamData4edab:
 	.db $09
 	.db $16 $f5 $38 $00
 	.db $16 $fd $3a $00
@@ -2820,7 +2819,7 @@ oamData4edab:
 	.db $12 $00 $04 $00
 	.db $12 $08 $04 $20
 
-oamData4edd0:
+enemyOamData4edd0:
 	.db $09
 	.db $15 $12 $38 $20
 	.db $15 $0a $3a $20
@@ -2832,7 +2831,7 @@ oamData4edd0:
 	.db $11 $00 $04 $00
 	.db $11 $08 $04 $20
 
-oamData4edf5:
+enemyOamData4edf5:
 	.db $09
 	.db $ff $fc $00 $00
 	.db $ff $04 $02 $00
@@ -2844,7 +2843,7 @@ oamData4edf5:
 	.db $12 $18 $34 $20
 	.db $12 $10 $36 $20
 
-oamData4ee1a:
+enemyOamData4ee1a:
 	.db $09
 	.db $15 $f9 $38 $00
 	.db $15 $01 $3a $00
@@ -2856,7 +2855,7 @@ oamData4ee1a:
 	.db $11 $00 $04 $00
 	.db $11 $08 $04 $20
 
-oamData4ee3f:
+enemyOamData4ee3f:
 	.db $09
 	.db $15 $f7 $38 $00
 	.db $15 $ff $3a $00
@@ -2868,7 +2867,7 @@ oamData4ee3f:
 	.db $12 $00 $04 $00
 	.db $12 $08 $04 $20
 
-oamData4ee64:
+enemyOamData4ee64:
 	.db $09
 	.db $15 $13 $38 $20
 	.db $15 $0b $3a $20
@@ -2880,7 +2879,7 @@ oamData4ee64:
 	.db $12 $00 $04 $00
 	.db $12 $08 $04 $20
 
-oamData4ee89:
+enemyOamData4ee89:
 	.db $09
 	.db $04 $04 $12 $00
 	.db $fb $fc $10 $00
@@ -2892,7 +2891,7 @@ oamData4ee89:
 	.db $11 $04 $24 $03
 	.db $11 $0c $22 $23
 
-oamData4eeae:
+enemyOamData4eeae:
 	.db $09
 	.db $f4 $01 $16 $00
 	.db $f4 $09 $18 $00
@@ -2904,7 +2903,7 @@ oamData4eeae:
 	.db $14 $05 $12 $00
 	.db $14 $0d $14 $00
 
-oamData4eed3:
+enemyOamData4eed3:
 	.db $09
 	.db $04 $fc $22 $00
 	.db $04 $04 $24 $00
@@ -2916,7 +2915,7 @@ oamData4eed3:
 	.db $24 $00 $30 $00
 	.db $24 $08 $32 $00
 
-oamData4eef8:
+enemyOamData4eef8:
 	.db $09
 	.db $fc $0e $44 $00
 	.db $fc $16 $46 $00
@@ -2928,7 +2927,7 @@ oamData4eef8:
 	.db $14 $04 $12 $00
 	.db $14 $0c $14 $00
 
-oamData4ef1d:
+enemyOamData4ef1d:
 	.db $09
 	.db $fe $0c $44 $00
 	.db $fe $14 $46 $00
@@ -2940,7 +2939,7 @@ oamData4ef1d:
 	.db $14 $04 $12 $00
 	.db $14 $0c $14 $00
 
-oamData4ef42:
+enemyOamData4ef42:
 	.db $09
 	.db $fc $0a $44 $00
 	.db $fc $12 $46 $00
@@ -2952,7 +2951,7 @@ oamData4ef42:
 	.db $14 $04 $12 $00
 	.db $14 $0c $14 $00
 
-oamData4ef67:
+enemyOamData4ef67:
 	.db $09
 	.db $fa $0c $44 $00
 	.db $fa $14 $46 $00
@@ -2964,7 +2963,7 @@ oamData4ef67:
 	.db $14 $04 $12 $00
 	.db $14 $0c $14 $00
 
-oamData4ef8c:
+enemyOamData4ef8c:
 	.db $09
 	.db $fc $0e $44 $00
 	.db $fc $16 $46 $00
@@ -2976,7 +2975,7 @@ oamData4ef8c:
 	.db $14 $04 $12 $00
 	.db $14 $0c $14 $00
 
-oamData4efb1:
+enemyOamData4efb1:
 	.db $09
 	.db $00 $f7 $10 $00
 	.db $00 $ff $12 $00
@@ -2988,7 +2987,7 @@ oamData4efb1:
 	.db $10 $0f $1e $00
 	.db $f9 $04 $42 $05
 
-oamData4efd6:
+enemyOamData4efd6:
 	.db $09
 	.db $00 $f9 $16 $20
 	.db $00 $01 $14 $20
@@ -3000,7 +2999,7 @@ oamData4efd6:
 	.db $10 $11 $18 $20
 	.db $f9 $04 $42 $25
 
-oamData4effb:
+enemyOamData4effb:
 	.db $09
 	.db $f8 $08 $3e $25
 	.db $10 $10 $3c $25
@@ -3012,7 +3011,7 @@ oamData4effb:
 	.db $10 $04 $28 $20
 	.db $10 $0c $26 $20
 
-oamData4f020:
+enemyOamData4f020:
 	.db $09
 	.db $f9 $08 $3e $25
 	.db $12 $10 $3c $25
@@ -3024,7 +3023,7 @@ oamData4f020:
 	.db $10 $04 $36 $20
 	.db $10 $0c $34 $20
 
-oamData4f045:
+enemyOamData4f045:
 	.db $09
 	.db $f8 $00 $3e $05
 	.db $10 $f8 $3c $05
@@ -3036,7 +3035,7 @@ oamData4f045:
 	.db $10 $0c $2a $00
 	.db $10 $14 $2c $00
 
-oamData4f06a:
+enemyOamData4f06a:
 	.db $09
 	.db $f9 $00 $3e $05
 	.db $12 $f8 $3c $05
@@ -3048,7 +3047,7 @@ oamData4f06a:
 	.db $10 $0c $38 $00
 	.db $10 $14 $3a $00
 
-oamData4f08f:
+enemyOamData4f08f:
 	.db $09
 	.db $fa $04 $42 $05
 	.db $00 $f8 $60 $00
@@ -3060,7 +3059,7 @@ oamData4f08f:
 	.db $10 $08 $66 $20
 	.db $10 $10 $64 $20
 
-oamData4f0b4:
+enemyOamData4f0b4:
 	.db $09
 	.db $fb $05 $42 $05
 	.db $00 $f8 $68 $00
@@ -3072,7 +3071,7 @@ oamData4f0b4:
 	.db $10 $08 $74 $00
 	.db $10 $10 $76 $00
 
-oamData4f0d9:
+enemyOamData4f0d9:
 	.db $0a
 	.db $fd $fa $34 $00
 	.db $fd $02 $36 $00
@@ -3085,7 +3084,7 @@ oamData4f0d9:
 	.db $0c $f0 $30 $00
 	.db $0c $f8 $32 $00
 
-oamData4f102:
+enemyOamData4f102:
 	.db $0a
 	.db $fd $fa $34 $00
 	.db $fd $02 $36 $00
@@ -3098,7 +3097,7 @@ oamData4f102:
 	.db $0c $f0 $30 $07
 	.db $0c $f8 $32 $07
 
-oamData4f12b:
+enemyOamData4f12b:
 	.db $0a
 	.db $f3 $ff $8a $00
 	.db $f3 $07 $8c $00
@@ -3111,7 +3110,7 @@ oamData4f12b:
 	.db $03 $f3 $86 $00
 	.db $03 $fb $88 $00
 
-oamData4f154:
+enemyOamData4f154:
 	.db $0a
 	.db $f3 $ff $8a $00
 	.db $f3 $07 $8c $00
@@ -3124,7 +3123,7 @@ oamData4f154:
 	.db $03 $f3 $86 $07
 	.db $03 $fb $88 $07
 
-oamData4f17d:
+enemyOamData4f17d:
 	.db $0a
 	.db $f3 $09 $8a $20
 	.db $f3 $01 $8c $20
@@ -3137,7 +3136,7 @@ oamData4f17d:
 	.db $03 $14 $9a $20
 	.db $03 $0c $9c $20
 
-oamData4f1a6:
+enemyOamData4f1a6:
 	.db $0a
 	.db $00 $f0 $20 $03
 	.db $00 $f8 $22 $03
@@ -3150,7 +3149,7 @@ oamData4f1a6:
 	.db $10 $08 $30 $00
 	.db $10 $10 $32 $00
 
-oamData4f1cf:
+enemyOamData4f1cf:
 	.db $0a
 	.db $f4 $00 $34 $05
 	.db $f4 $08 $36 $05
@@ -3163,7 +3162,7 @@ oamData4f1cf:
 	.db $14 $0e $3c $25
 	.db $14 $06 $3e $25
 
-oamData4f1f8:
+enemyOamData4f1f8:
 	.db $0a
 	.db $f4 $00 $4c $05
 	.db $f4 $08 $4e $05
@@ -3176,7 +3175,7 @@ oamData4f1f8:
 	.db $14 $10 $54 $25
 	.db $14 $08 $56 $25
 
-oamData4f221:
+enemyOamData4f221:
 	.db $0a
 	.db $04 $04 $12 $00
 	.db $fb $fc $10 $00
@@ -3189,7 +3188,7 @@ oamData4f221:
 	.db $11 $10 $26 $23
 	.db $11 $08 $28 $23
 
-oamData4f24a:
+enemyOamData4f24a:
 	.db $0a
 	.db $04 $04 $12 $00
 	.db $fb $fc $10 $00
@@ -3202,7 +3201,7 @@ oamData4f24a:
 	.db $11 $10 $2a $23
 	.db $11 $08 $2c $23
 
-oamData4f273:
+enemyOamData4f273:
 	.db $0a
 	.db $f6 $f8 $00 $00
 	.db $f6 $00 $02 $00
@@ -3215,7 +3214,7 @@ oamData4f273:
 	.db $16 $04 $32 $00
 	.db $16 $0c $30 $20
 
-oamData4f29c:
+enemyOamData4f29c:
 	.db $0a
 	.db $f4 $00 $28 $00
 	.db $f4 $08 $28 $20
@@ -3228,7 +3227,7 @@ oamData4f29c:
 	.db $14 $10 $2e $20
 	.db $14 $08 $30 $20
 
-oamData4f2c5:
+enemyOamData4f2c5:
 	.db $0a
 	.db $f9 $03 $42 $05
 	.db $10 $02 $40 $05
@@ -3241,7 +3240,7 @@ oamData4f2c5:
 	.db $10 $07 $0c $00
 	.db $10 $0f $0e $00
 
-oamData4f2ee:
+enemyOamData4f2ee:
 	.db $0a
 	.db $f9 $05 $42 $25
 	.db $10 $06 $40 $25
@@ -3254,7 +3253,7 @@ oamData4f2ee:
 	.db $10 $09 $0a $20
 	.db $10 $11 $08 $20
 
-oamData4f317:
+enemyOamData4f317:
 	.db $0b
 	.db $f3 $fb $5a $00
 	.db $f3 $03 $5c $00
@@ -3268,7 +3267,7 @@ oamData4f317:
 	.db $09 $f4 $7e $00
 	.db $09 $fc $9e $00
 
-oamData4f344:
+enemyOamData4f344:
 	.db $0b
 	.db $f3 $fb $5a $00
 	.db $f3 $03 $5c $00
@@ -3282,7 +3281,7 @@ oamData4f344:
 	.db $09 $f4 $7e $07
 	.db $09 $fc $9e $07
 
-oamData4f371:
+enemyOamData4f371:
 	.db $0b
 	.db $f3 $0d $5a $20
 	.db $f3 $05 $5c $20
@@ -3296,7 +3295,7 @@ oamData4f371:
 	.db $03 $15 $76 $20
 	.db $03 $0d $78 $20
 
-oamData4f39e:
+enemyOamData4f39e:
 	.db $0b
 	.db $f3 $0d $5a $20
 	.db $f3 $05 $5c $20
@@ -3310,7 +3309,7 @@ oamData4f39e:
 	.db $03 $15 $76 $25
 	.db $03 $0d $78 $25
 
-oamData4f3cb:
+enemyOamData4f3cb:
 	.db $0b
 	.db $14 $fc $08 $00
 	.db $14 $04 $0a $00
@@ -3324,7 +3323,7 @@ oamData4f3cb:
 	.db $14 $04 $12 $00
 	.db $14 $0c $14 $00
 
-oamData4f3f8:
+enemyOamData4f3f8:
 	.db $0b
 	.db $14 $fc $08 $00
 	.db $14 $04 $0a $00
@@ -3338,7 +3337,7 @@ oamData4f3f8:
 	.db $14 $04 $12 $20
 	.db $14 $0c $10 $20
 
-oamData4f425:
+enemyOamData4f425:
 	.db $0c
 	.db $03 $f0 $40 $00
 	.db $03 $f8 $42 $00
@@ -3353,7 +3352,7 @@ oamData4f425:
 	.db $13 $18 $44 $20
 	.db $13 $10 $46 $20
 
-oamData4f456:
+enemyOamData4f456:
 	.db $0c
 	.db $f5 $f8 $0c $03
 	.db $f5 $00 $0e $03
@@ -3368,7 +3367,7 @@ oamData4f456:
 	.db $15 $10 $1c $20
 	.db $15 $08 $1e $20
 
-oamData4f487:
+enemyOamData4f487:
 	.db $0c
 	.db $f5 $f8 $10 $03
 	.db $f5 $00 $12 $03
@@ -3383,7 +3382,7 @@ oamData4f487:
 	.db $15 $10 $1c $20
 	.db $15 $08 $1e $20
 
-oamData4f4b8:
+enemyOamData4f4b8:
 	.db $0c
 	.db $f5 $f8 $0c $03
 	.db $f5 $00 $0e $03
@@ -3398,7 +3397,7 @@ oamData4f4b8:
 	.db $15 $10 $24 $21
 	.db $15 $08 $26 $21
 
-oamData4f4e9:
+enemyOamData4f4e9:
 	.db $0c
 	.db $f5 $f8 $10 $03
 	.db $f5 $00 $12 $03
@@ -3413,7 +3412,7 @@ oamData4f4e9:
 	.db $15 $10 $24 $21
 	.db $15 $08 $26 $21
 
-oamData4f51a:
+enemyOamData4f51a:
 	.db $0c
 	.db $f5 $f8 $0c $03
 	.db $f5 $00 $0e $03
@@ -3428,7 +3427,7 @@ oamData4f51a:
 	.db $15 $08 $2c $26
 	.db $15 $10 $1c $26
 
-oamData4f54b:
+enemyOamData4f54b:
 	.db $0c
 	.db $f5 $f8 $10 $03
 	.db $f5 $00 $12 $03
@@ -3443,7 +3442,7 @@ oamData4f54b:
 	.db $15 $08 $2c $26
 	.db $15 $10 $1c $26
 
-oamData4f57c:
+enemyOamData4f57c:
 	.db $0c
 	.db $f5 $f8 $0c $03
 	.db $f5 $00 $0e $03
@@ -3458,7 +3457,7 @@ oamData4f57c:
 	.db $15 $10 $32 $22
 	.db $15 $08 $34 $22
 
-oamData4f5ad:
+enemyOamData4f5ad:
 	.db $0c
 	.db $f5 $f8 $10 $03
 	.db $f5 $00 $12 $03
@@ -3473,7 +3472,7 @@ oamData4f5ad:
 	.db $15 $10 $32 $22
 	.db $15 $08 $34 $22
 
-oamData4f5de:
+enemyOamData4f5de:
 	.db $0c
 	.db $f5 $f8 $10 $03
 	.db $f5 $00 $12 $03
@@ -3488,7 +3487,7 @@ oamData4f5de:
 	.db $15 $00 $36 $02
 	.db $15 $08 $36 $22
 
-oamData4f60f:
+enemyOamData4f60f:
 	.db $0c
 	.db $f5 $f8 $14 $03
 	.db $f5 $00 $16 $03
@@ -3503,7 +3502,7 @@ oamData4f60f:
 	.db $15 $10 $3c $20
 	.db $15 $08 $3e $20
 
-oamData4f640:
+enemyOamData4f640:
 	.db $0c
 	.db $f5 $f8 $14 $03
 	.db $f5 $00 $16 $03
@@ -3518,7 +3517,7 @@ oamData4f640:
 	.db $15 $10 $3c $21
 	.db $15 $08 $3e $21
 
-oamData4f671:
+enemyOamData4f671:
 	.db $0c
 	.db $f5 $f8 $14 $03
 	.db $f5 $00 $16 $03
@@ -3533,7 +3532,7 @@ oamData4f671:
 	.db $15 $10 $3c $26
 	.db $15 $08 $3e $26
 
-oamData4f6a2:
+enemyOamData4f6a2:
 	.db $0c
 	.db $f5 $f8 $14 $03
 	.db $f5 $00 $16 $03
@@ -3548,7 +3547,7 @@ oamData4f6a2:
 	.db $15 $10 $3c $22
 	.db $15 $08 $3e $22
 
-oamData4f6d3:
+enemyOamData4f6d3:
 	.db $0d
 	.db $04 $fc $22 $00
 	.db $04 $04 $24 $00
@@ -3564,7 +3563,7 @@ oamData4f6d3:
 	.db $2c $04 $38 $00
 	.db $2c $0c $3a $00
 
-oamData4f708:
+enemyOamData4f708:
 	.db $0d
 	.db $f5 $f4 $00 $03
 	.db $f5 $fc $02 $03
@@ -3580,7 +3579,7 @@ oamData4f708:
 	.db $15 $10 $1c $20
 	.db $15 $08 $1e $20
 
-oamData4f73d:
+enemyOamData4f73d:
 	.db $0d
 	.db $f5 $f4 $06 $03
 	.db $f5 $fc $08 $03
@@ -3596,7 +3595,7 @@ oamData4f73d:
 	.db $15 $10 $3c $20
 	.db $15 $08 $3e $20
 
-oamData4f772:
+enemyOamData4f772:
 	.db $0d
 	.db $f5 $f4 $00 $03
 	.db $f5 $fc $02 $03
@@ -3612,7 +3611,7 @@ oamData4f772:
 	.db $15 $10 $24 $21
 	.db $15 $08 $26 $21
 
-oamData4f7a7:
+enemyOamData4f7a7:
 	.db $0d
 	.db $f5 $f4 $06 $03
 	.db $f5 $fc $08 $03
@@ -3628,7 +3627,7 @@ oamData4f7a7:
 	.db $15 $10 $3c $21
 	.db $15 $08 $3e $21
 
-oamData4f7dc:
+enemyOamData4f7dc:
 	.db $0d
 	.db $f5 $f4 $00 $03
 	.db $f5 $fc $02 $03
@@ -3644,7 +3643,7 @@ oamData4f7dc:
 	.db $15 $08 $2c $26
 	.db $15 $10 $1c $26
 
-oamData4f811:
+enemyOamData4f811:
 	.db $0d
 	.db $05 $f8 $38 $02
 	.db $05 $00 $3a $02
@@ -3660,7 +3659,7 @@ oamData4f811:
 	.db $f5 $14 $06 $23
 	.db $f5 $0c $08 $23
 
-oamData4f846:
+enemyOamData4f846:
 	.db $0d
 	.db $05 $f8 $2e $02
 	.db $05 $00 $30 $02
@@ -3676,7 +3675,7 @@ oamData4f846:
 	.db $f5 $14 $00 $23
 	.db $f5 $0c $02 $23
 
-oamData4f87b:
+enemyOamData4f87b:
 	.db $0d
 	.db $05 $f8 $38 $00
 	.db $05 $00 $3a $00
@@ -3692,7 +3691,7 @@ oamData4f87b:
 	.db $f5 $14 $06 $23
 	.db $f5 $0c $08 $23
 
-oamData4f8b0:
+enemyOamData4f8b0:
 	.db $0e
 	.db $fc $00 $20 $00
 	.db $0c $00 $22 $00
@@ -3709,7 +3708,7 @@ oamData4f8b0:
 	.db $0c $18 $32 $00
 	.db $1c $18 $34 $00
 
-oamData4f8e9:
+enemyOamData4f8e9:
 	.db $0e
 	.db $fd $00 $20 $00
 	.db $0d $00 $22 $00
@@ -3726,7 +3725,7 @@ oamData4f8e9:
 	.db $14 $18 $3c $20
 	.db $14 $10 $3e $20
 
-oamData4f922:
+enemyOamData4f922:
 	.db $0e
 	.db $fc $08 $20 $20
 	.db $0c $08 $22 $20
@@ -3743,7 +3742,7 @@ oamData4f922:
 	.db $0a $f0 $32 $20
 	.db $1a $f0 $34 $20
 
-oamData4f95b:
+enemyOamData4f95b:
 	.db $0e
 	.db $f4 $f8 $4c $00
 	.db $f4 $00 $4e $00
@@ -3760,7 +3759,7 @@ oamData4f95b:
 	.db $14 $08 $56 $20
 	.db $fc $18 $5e $20
 
-oamData4f994:
+enemyOamData4f994:
 	.db $0e
 	.db $03 $f8 $58 $00
 	.db $03 $00 $5a $00
@@ -3777,7 +3776,7 @@ oamData4f994:
 	.db $13 $00 $56 $00
 	.db $13 $08 $56 $20
 
-oamData4f9cd:
+enemyOamData4f9cd:
 	.db $0e
 	.db $f8 $f8 $40 $00
 	.db $f8 $00 $42 $00
@@ -3794,7 +3793,7 @@ oamData4f9cd:
 	.db $18 $08 $42 $60
 	.db $18 $10 $40 $60
 
-oamData4fa06:
+enemyOamData4fa06:
 	.db $0f
 	.db $f0 $f4 $4e $06
 	.db $f0 $fc $50 $06
@@ -3812,7 +3811,7 @@ oamData4fa06:
 	.db $10 $0c $5c $26
 	.db $10 $14 $5a $26
 
-oamData4fa43:
+enemyOamData4fa43:
 	.db $10
 	.db $fc $fa $40 $00
 	.db $fc $02 $42 $00
@@ -3831,7 +3830,7 @@ oamData4fa43:
 	.db $1c $0b $5c $00
 	.db $1c $13 $5e $00
 
-oamData4fa84:
+enemyOamData4fa84:
 	.db $10
 	.db $fc $0e $40 $20
 	.db $fc $06 $42 $20
@@ -3850,7 +3849,7 @@ oamData4fa84:
 	.db $1c $fd $5c $20
 	.db $1c $f5 $5e $20
 
-oamData4fac5:
+enemyOamData4fac5:
 	.db $11
 	.db $f4 $11 $2a $00
 	.db $f4 $19 $2c $00
@@ -3870,7 +3869,7 @@ oamData4fac5:
 	.db $f4 $00 $28 $00
 	.db $04 $18 $2e $00
 
-oamData4fb0a:
+enemyOamData4fb0a:
 	.db $12
 	.db $f8 $f4 $00 $07
 	.db $f8 $fc $02 $07
@@ -3891,7 +3890,7 @@ oamData4fb0a:
 	.db $18 $0b $1c $07
 	.db $18 $13 $1e $07
 
-oamData4fb53:
+enemyOamData4fb53:
 	.db $12
 	.db $f8 $f4 $00 $00
 	.db $f8 $fc $02 $00
@@ -3912,7 +3911,7 @@ oamData4fb53:
 	.db $18 $0c $1c $00
 	.db $18 $14 $1e $00
 
-oamData4fb9c:
+enemyOamData4fb9c:
 	.db $12
 	.db $f8 $14 $00 $20
 	.db $f8 $0c $02 $20
@@ -3933,7 +3932,7 @@ oamData4fb9c:
 	.db $18 $fc $1c $20
 	.db $18 $f4 $1e $20
 
-oamData4fbe5:
+enemyOamData4fbe5:
 	.db $12
 	.db $f8 $f4 $72 $00
 	.db $f8 $fc $74 $00
@@ -3954,7 +3953,7 @@ oamData4fbe5:
 	.db $18 $0f $82 $20
 	.db $18 $07 $84 $20
 
-oamData4fc2e:
+enemyOamData4fc2e:
 	.db $12
 	.db $f8 $f0 $40 $00
 	.db $f8 $f8 $42 $00
@@ -3975,7 +3974,7 @@ oamData4fc2e:
 	.db $18 $0f $4e $20
 	.db $18 $07 $50 $20
 
-oamData4fc77:
+enemyOamData4fc77:
 	.db $12
 	.db $f8 $f0 $4a $00
 	.db $f8 $f8 $4c $00
@@ -3996,7 +3995,7 @@ oamData4fc77:
 	.db $18 $10 $4c $60
 	.db $18 $18 $4a $60
 
-oamData4fcc0:
+enemyOamData4fcc0:
 	.db $13
 	.db $e4 $f1 $40 $00
 	.db $e4 $f9 $42 $00
@@ -4018,7 +4017,7 @@ oamData4fcc0:
 	.db $14 $18 $22 $00
 	.db $14 $20 $24 $00
 
-oamData4fd0d:
+enemyOamData4fd0d:
 	.db $13
 	.db $f4 $f0 $40 $00
 	.db $f4 $f8 $42 $00
@@ -4040,7 +4039,7 @@ oamData4fd0d:
 	.db $04 $18 $3a $00
 	.db $14 $18 $3c $00
 
-oamData4fd5a:
+enemyOamData4fd5a:
 	.db $13
 	.db $e4 $17 $40 $20
 	.db $e4 $0f $42 $20
@@ -4062,7 +4061,7 @@ oamData4fd5a:
 	.db $14 $f0 $22 $20
 	.db $14 $e8 $24 $20
 
-oamData4fda7:
+enemyOamData4fda7:
 	.db $13
 	.db $f4 $18 $40 $20
 	.db $f4 $10 $42 $20
@@ -4084,7 +4083,7 @@ oamData4fda7:
 	.db $04 $f0 $3a $20
 	.db $14 $f0 $3c $20
 
-oamData4fdf4:
+enemyOamData4fdf4:
 	.db $14
 	.db $f0 $fa $40 $00
 	.db $f8 $02 $42 $00
@@ -4107,7 +4106,7 @@ oamData4fdf4:
 	.db $20 $f2 $34 $00
 	.db $20 $fa $36 $00
 
-oamData4fe45:
+enemyOamData4fe45:
 	.db $15
 	.db $f8 $ec $86 $00
 	.db $f8 $f4 $88 $00
@@ -4131,7 +4130,7 @@ oamData4fe45:
 	.db $18 $13 $98 $20
 	.db $18 $0b $9a $20
 
-oamData4fe9a:
+enemyOamData4fe9a:
 	.db $15
 	.db $f8 $ec $40 $00
 	.db $f8 $f4 $42 $00

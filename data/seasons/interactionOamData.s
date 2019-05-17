@@ -1,2601 +1,2596 @@
-oamData4c067:
+interactionOamData4c067:
 	.db $00
 
-oamData4c068:
+interactionOamData4c068:
 	.db $01
 	.db $fc $00 $16 $00
 
-oamData4c06d:
+interactionOamData4c06d:
 	.db $01
 	.db $0b $f8 $18 $40
 
-oamData4c072:
+interactionOamData4c072:
 	.db $01
 	.db $15 $08 $16 $20
 
-oamData4c077:
+interactionOamData4c077:
 	.db $01
 	.db $05 $11 $18 $00
 
-oamData4c07c:
+interactionOamData4c07c:
 	.db $01
 	.db $fc $08 $16 $20
 
-oamData4c081:
+interactionOamData4c081:
 	.db $01
 	.db $0b $11 $18 $40
 
-oamData4c086:
+interactionOamData4c086:
 	.db $01
 	.db $15 $00 $16 $00
 
-oamData4c08b:
+interactionOamData4c08b:
 	.db $01
 	.db $05 $f8 $18 $00
 
-oamData4c090:
+interactionOamData4c090:
 	.db $01
 	.db $08 $04 $06 $00
 
-; WARNING: unreferenced data
-oamData4c095:
+interactionOamData4c095: ; Unused
 	.db $01
 	.db $06 $05 $10 $00
 
-oamData4c09a:
+interactionOamData4c09a:
 	.db $01
 	.db $08 $04 $00 $00
 
-oamData4c09f:
+interactionOamData4c09f:
 	.db $01
 	.db $08 $04 $00 $20
 
-oamData4c0a4:
+interactionOamData4c0a4:
 	.db $01
 	.db $08 $04 $02 $00
 
-oamData4c0a9:
+interactionOamData4c0a9:
 	.db $01
 	.db $08 $04 $04 $00
 
-oamData4c0ae:
+interactionOamData4c0ae:
 	.db $01
 	.db $08 $04 $06 $00
 
-oamData4c0b3:
+interactionOamData4c0b3:
 	.db $01
 	.db $0d $04 $00 $00
 
-oamData4c0b8:
+interactionOamData4c0b8:
 	.db $01
 	.db $0d $04 $00 $07
 
-oamData4c0bd:
+interactionOamData4c0bd:
 	.db $01
 	.db $06 $04 $00 $00
 
-oamData4c0c2:
+interactionOamData4c0c2:
 	.db $01
 	.db $07 $05 $00 $00
 
-oamData4c0c7:
+interactionOamData4c0c7:
 	.db $01
 	.db $08 $06 $00 $00
 
-oamData4c0cc:
+interactionOamData4c0cc:
 	.db $01
 	.db $09 $05 $00 $00
 
-oamData4c0d1:
+interactionOamData4c0d1:
 	.db $01
 	.db $0a $04 $00 $00
 
-oamData4c0d6:
+interactionOamData4c0d6:
 	.db $01
 	.db $09 $03 $00 $00
 
-oamData4c0db:
+interactionOamData4c0db:
 	.db $01
 	.db $08 $02 $00 $00
 
-oamData4c0e0:
+interactionOamData4c0e0:
 	.db $01
 	.db $07 $03 $00 $00
 
-oamData4c0e5:
+interactionOamData4c0e5:
 	.db $01
 	.db $08 $04 $08 $00
 
-oamData4c0ea:
+interactionOamData4c0ea:
 	.db $01
 	.db $08 $04 $0a $00
 
-oamData4c0ef:
+interactionOamData4c0ef:
 	.db $01
 	.db $08 $04 $0c $00
 
-oamData4c0f4:
+interactionOamData4c0f4:
 	.db $01
 	.db $08 $04 $0c $20
 
-oamData4c0f9:
+interactionOamData4c0f9:
 	.db $01
 	.db $fa $ff $00 $00
 
-oamData4c0fe:
+interactionOamData4c0fe:
 	.db $01
 	.db $f8 $fe $00 $00
 
-oamData4c103:
+interactionOamData4c103:
 	.db $01
 	.db $fa $09 $00 $00
 
-oamData4c108:
+interactionOamData4c108:
 	.db $01
 	.db $f8 $0a $00 $00
 
-oamData4c10d:
+interactionOamData4c10d:
 	.db $01
 	.db $08 $00 $00 $00
 
-oamData4c112:
+interactionOamData4c112:
 	.db $01
 	.db $0b $04 $00 $00
 
-oamData4c117:
+interactionOamData4c117:
 	.db $01
 	.db $0b $03 $02 $00
 
-oamData4c11c:
+interactionOamData4c11c:
 	.db $01
 	.db $0a $03 $04 $00
 
-oamData4c121:
+interactionOamData4c121:
 	.db $01
 	.db $0b $04 $00 $20
 
-oamData4c126:
+interactionOamData4c126:
 	.db $01
 	.db $0b $05 $02 $20
 
-oamData4c12b:
+interactionOamData4c12b:
 	.db $01
 	.db $0a $05 $04 $20
 
-oamData4c130:
+interactionOamData4c130:
 	.db $02
 	.db $08 $00 $00 $00
 	.db $08 $08 $02 $00
 
-oamData4c139:
+interactionOamData4c139:
 	.db $02
 	.db $08 $00 $04 $00
 	.db $08 $08 $06 $00
 
-oamData4c142:
+interactionOamData4c142:
 	.db $02
 	.db $08 $00 $08 $00
 	.db $08 $08 $0a $00
 
-oamData4c14b:
+interactionOamData4c14b:
 	.db $02
 	.db $08 $00 $0c $00
 	.db $08 $08 $0e $00
 
-oamData4c154:
+interactionOamData4c154:
 	.db $02
 	.db $08 $00 $10 $00
 	.db $08 $08 $12 $00
 
-oamData4c15d:
+interactionOamData4c15d:
 	.db $02
 	.db $08 $00 $12 $20
 	.db $08 $08 $10 $20
 
-oamData4c166:
+interactionOamData4c166:
 	.db $02
 	.db $08 $00 $12 $00
 	.db $08 $08 $14 $00
 
-oamData4c16f:
+interactionOamData4c16f:
 	.db $02
 	.db $08 $00 $14 $00
 	.db $08 $08 $16 $00
 
-oamData4c178:
+interactionOamData4c178:
 	.db $02
 	.db $08 $00 $16 $20
 	.db $08 $08 $14 $20
 
-oamData4c181:
+interactionOamData4c181:
 	.db $02
 	.db $0a $00 $00 $00
 	.db $0a $08 $00 $20
 
-oamData4c18a:
+interactionOamData4c18a:
 	.db $02
 	.db $08 $fe $00 $00
 	.db $08 $0a $00 $20
 
-oamData4c193:
+interactionOamData4c193:
 	.db $02
 	.db $06 $fc $00 $00
 	.db $06 $0c $00 $20
 
-oamData4c19c:
+interactionOamData4c19c:
 	.db $02
 	.db $06 $03 $00 $00
 	.db $06 $05 $00 $00
 
-oamData4c1a5:
+interactionOamData4c1a5:
 	.db $02
 	.db $05 $02 $00 $01
 	.db $05 $06 $00 $01
 
-oamData4c1ae:
+interactionOamData4c1ae:
 	.db $02
 	.db $04 $01 $00 $07
 	.db $04 $07 $00 $07
 
-oamData4c1b7:
+interactionOamData4c1b7:
 	.db $02
 	.db $03 $00 $00 $00
 	.db $03 $08 $00 $00
 
-oamData4c1c0:
+interactionOamData4c1c0:
 	.db $02
 	.db $02 $ff $00 $01
 	.db $02 $09 $00 $01
 
-oamData4c1c9:
+interactionOamData4c1c9:
 	.db $02
 	.db $03 $fe $00 $07
 	.db $03 $0a $00 $07
 
-oamData4c1d2:
+interactionOamData4c1d2:
 	.db $02
 	.db $04 $fd $00 $00
 	.db $04 $0b $00 $00
 
-oamData4c1db:
+interactionOamData4c1db:
 	.db $02
 	.db $05 $fc $00 $01
 	.db $05 $0c $00 $01
 
-oamData4c1e4:
+interactionOamData4c1e4:
 	.db $02
 	.db $06 $fb $00 $07
 	.db $06 $0d $00 $07
 
-oamData4c1ed:
+interactionOamData4c1ed:
 	.db $02
 	.db $08 $fa $00 $00
 	.db $08 $0e $00 $00
 
-oamData4c1f6:
+interactionOamData4c1f6:
 	.db $02
 	.db $08 $00 $04 $00
 	.db $08 $08 $04 $20
 
-oamData4c1ff:
+interactionOamData4c1ff:
 	.db $02
 	.db $0a $00 $00 $00
 	.db $0a $08 $02 $00
 
-oamData4c208:
+interactionOamData4c208:
 	.db $02
 	.db $08 $00 $08 $00
 	.db $08 $08 $08 $60
 
-oamData4c211:
+interactionOamData4c211:
 	.db $02
 	.db $08 $00 $00 $00
 	.db $08 $08 $00 $20
 
-oamData4c21a:
+interactionOamData4c21a:
 	.db $02
 	.db $08 $00 $02 $00
 	.db $08 $08 $02 $20
 
-oamData4c223:
+interactionOamData4c223:
 	.db $02
 	.db $08 $00 $32 $20
 	.db $08 $08 $30 $20
 
-oamData4c22c:
+interactionOamData4c22c:
 	.db $02
 	.db $08 $00 $30 $00
 	.db $08 $08 $32 $00
 
-oamData4c235:
+interactionOamData4c235:
 	.db $02
 	.db $08 $00 $0e $00
 	.db $08 $08 $0e $60
 
-oamData4c23e:
+interactionOamData4c23e:
 	.db $02
 	.db $08 $00 $10 $00
 	.db $08 $08 $10 $60
 
-oamData4c247:
+interactionOamData4c247:
 	.db $02
 	.db $08 $08 $0e $20
 	.db $08 $00 $0e $40
 
-oamData4c250:
+interactionOamData4c250:
 	.db $02
 	.db $08 $08 $10 $20
 	.db $08 $00 $10 $40
 
-oamData4c259:
+interactionOamData4c259:
 	.db $02
 	.db $08 $00 $00 $00
 	.db $08 $08 $00 $20
 
-oamData4c262:
+interactionOamData4c262:
 	.db $02
 	.db $08 $00 $02 $00
 	.db $08 $08 $02 $20
 
-oamData4c26b:
+interactionOamData4c26b:
 	.db $02
 	.db $08 $00 $02 $20
 	.db $08 $08 $00 $20
 
-oamData4c274:
+interactionOamData4c274:
 	.db $02
 	.db $08 $00 $06 $20
 	.db $08 $08 $04 $20
 
-oamData4c27d:
+interactionOamData4c27d:
 	.db $02
 	.db $08 $00 $0e $03
 	.db $08 $08 $10 $03
 
-oamData4c286:
+interactionOamData4c286:
 	.db $02
 	.db $08 $01 $0e $03
 	.db $08 $09 $10 $03
 
-oamData4c28f:
+interactionOamData4c28f:
 	.db $02
 	.db $08 $00 $12 $03
 	.db $08 $08 $14 $03
 
-oamData4c298:
+interactionOamData4c298:
 	.db $02
 	.db $08 $00 $10 $23
 	.db $08 $08 $0e $23
 
-oamData4c2a1:
+interactionOamData4c2a1:
 	.db $02
 	.db $08 $ff $10 $23
 	.db $08 $07 $0e $23
 
-oamData4c2aa:
+interactionOamData4c2aa:
 	.db $02
 	.db $08 $00 $14 $23
 	.db $08 $08 $12 $23
 
-oamData4c2b3:
+interactionOamData4c2b3:
 	.db $02
 	.db $08 $00 $0a $20
 	.db $08 $08 $08 $20
 
-oamData4c2bc:
+interactionOamData4c2bc:
 	.db $02
 	.db $08 $00 $0e $20
 	.db $08 $08 $0c $20
 
-oamData4c2c5:
+interactionOamData4c2c5:
 	.db $02
 	.db $08 $00 $06 $00
 	.db $08 $08 $06 $60
 
-oamData4c2ce:
+interactionOamData4c2ce:
 	.db $02
 	.db $08 $00 $06 $40
 	.db $08 $08 $06 $20
 
-oamData4c2d7:
+interactionOamData4c2d7:
 	.db $02
 	.db $08 $00 $18 $00
 	.db $08 $08 $16 $00
 
-oamData4c2e0:
+interactionOamData4c2e0:
 	.db $02
 	.db $08 $08 $14 $20
 	.db $08 $00 $16 $20
 
-oamData4c2e9:
+interactionOamData4c2e9:
 	.db $02
 	.db $08 $08 $1a $20
 	.db $08 $00 $1c $20
 
-oamData4c2f2:
+interactionOamData4c2f2:
 	.db $02
 	.db $08 $00 $08 $06
 	.db $08 $08 $08 $26
 
-oamData4c2fb:
+interactionOamData4c2fb:
 	.db $02
 	.db $08 $00 $04 $20
 	.db $08 $08 $00 $20
 
-oamData4c304:
+interactionOamData4c304:
 	.db $02
 	.db $08 $00 $00 $00
 	.db $08 $08 $04 $00
 
-oamData4c30d:
+interactionOamData4c30d:
 	.db $02
 	.db $08 $00 $00 $40
 	.db $08 $08 $00 $60
 
-oamData4c316:
+interactionOamData4c316:
 	.db $02
 	.db $08 $00 $0a $23
 	.db $08 $08 $08 $23
 
-oamData4c31f:
+interactionOamData4c31f:
 	.db $02
 	.db $08 $00 $0e $23
 	.db $08 $08 $0c $23
 
-oamData4c328:
+interactionOamData4c328:
 	.db $02
 	.db $08 $00 $1a $04
 	.db $08 $08 $1a $24
 
-oamData4c331:
+interactionOamData4c331:
 	.db $02
 	.db $08 $00 $1a $05
 	.db $08 $08 $1a $25
 
-oamData4c33a:
+interactionOamData4c33a:
 	.db $02
 	.db $08 $00 $00 $00
 	.db $08 $08 $00 $60
 
-oamData4c343:
+interactionOamData4c343:
 	.db $02
 	.db $08 $00 $00 $40
 	.db $08 $08 $00 $20
 
-oamData4c34c:
+interactionOamData4c34c:
 	.db $02
 	.db $08 $00 $0c $00
 	.db $08 $08 $0c $20
 
-oamData4c355:
+interactionOamData4c355:
 	.db $02
 	.db $08 $00 $0c $07
 	.db $08 $08 $0c $27
 
-oamData4c35e:
+interactionOamData4c35e:
 	.db $02
 	.db $08 $00 $00 $00
 	.db $08 $08 $00 $60
 
-oamData4c367:
+interactionOamData4c367:
 	.db $02
 	.db $08 $00 $02 $00
 	.db $08 $08 $02 $60
 
-oamData4c370:
+interactionOamData4c370:
 	.db $02
 	.db $08 $00 $04 $00
 	.db $08 $08 $04 $60
 
-oamData4c379:
+interactionOamData4c379:
 	.db $02
 	.db $08 $00 $06 $00
 	.db $08 $08 $06 $60
 
-oamData4c382:
+interactionOamData4c382:
 	.db $02
 	.db $08 $00 $06 $00
 	.db $08 $08 $08 $00
 
-oamData4c38b:
+interactionOamData4c38b:
 	.db $02
 	.db $08 $00 $02 $00
 	.db $08 $08 $04 $00
 
-oamData4c394:
+interactionOamData4c394:
 	.db $02
 	.db $08 $00 $06 $00
 	.db $08 $08 $06 $60
 
-oamData4c39d:
+interactionOamData4c39d:
 	.db $02
 	.db $08 $00 $02 $40
 	.db $08 $08 $02 $60
 
-oamData4c3a6:
+interactionOamData4c3a6:
 	.db $02
 	.db $08 $fe $04 $00
 	.db $08 $06 $06 $00
 
-oamData4c3af:
+interactionOamData4c3af:
 	.db $02
 	.db $08 $fe $08 $00
 	.db $08 $06 $06 $00
 
-oamData4c3b8:
+interactionOamData4c3b8:
 	.db $02
 	.db $08 $08 $12 $20
 	.db $08 $00 $14 $20
 
-oamData4c3c1:
+interactionOamData4c3c1:
 	.db $02
 	.db $08 $00 $00 $00
 	.db $0a $08 $00 $20
 
-oamData4c3ca:
+interactionOamData4c3ca:
 	.db $02
 	.db $08 $04 $00 $20
 	.db $0e $08 $00 $20
 
-oamData4c3d3:
+interactionOamData4c3d3:
 	.db $02
 	.db $0a $00 $00 $00
 	.db $08 $08 $00 $20
 
-oamData4c3dc:
+interactionOamData4c3dc:
 	.db $02
 	.db $08 $06 $00 $00
 	.db $0e $08 $00 $00
 
-oamData4c3e5:
+interactionOamData4c3e5:
 	.db $02
 	.db $fc $00 $16 $00
 	.db $f6 $0b $16 $00
 
-oamData4c3ee:
+interactionOamData4c3ee:
 	.db $02
 	.db $fc $08 $16 $00
 	.db $f6 $fd $16 $00
 
-oamData4c3f7:
+interactionOamData4c3f7:
 	.db $02
 	.db $08 $00 $0e $00
 	.db $08 $08 $0e $20
 
-oamData4c400:
+interactionOamData4c400:
 	.db $02
 	.db $08 $ff $04 $00
 	.db $08 $07 $06 $00
 
-oamData4c409:
+interactionOamData4c409:
 	.db $02
 	.db $08 $08 $00 $20
 	.db $08 $00 $02 $20
 
-oamData4c412:
+interactionOamData4c412:
 	.db $02
 	.db $08 $09 $04 $20
 	.db $08 $01 $06 $20
 
-oamData4c41b:
+interactionOamData4c41b:
 	.db $02
 	.db $08 $09 $0c $20
 	.db $08 $01 $0e $20
 
-oamData4c424:
+interactionOamData4c424:
 	.db $02
 	.db $08 $00 $18 $03
 	.db $08 $08 $1a $03
 
-oamData4c42d:
+interactionOamData4c42d:
 	.db $03
 	.db $0d $03 $1c $02
 	.db $08 $00 $00 $01
 	.db $08 $08 $02 $01
 
-oamData4c43a:
+interactionOamData4c43a:
 	.db $03
 	.db $0d $02 $1e $02
 	.db $08 $00 $04 $01
 	.db $08 $08 $06 $01
 
-oamData4c447:
+interactionOamData4c447:
 	.db $03
 	.db $09 $fe $12 $03
 	.db $08 $00 $14 $00
 	.db $08 $08 $16 $00
 
-oamData4c454:
+interactionOamData4c454:
 	.db $03
 	.db $07 $fb $12 $03
 	.db $08 $00 $14 $00
 	.db $08 $08 $16 $00
 
-oamData4c461:
+interactionOamData4c461:
 	.db $03
 	.db $09 $fe $12 $03
 	.db $08 $00 $18 $02
 	.db $08 $08 $1a $02
 
-oamData4c46e:
+interactionOamData4c46e:
 	.db $03
 	.db $07 $fb $12 $03
 	.db $08 $00 $18 $02
 	.db $08 $08 $1a $02
 
-oamData4c47b:
+interactionOamData4c47b:
 	.db $03
 	.db $08 $00 $00 $02
 	.db $08 $08 $02 $02
 	.db $f8 $05 $04 $02
 
-oamData4c488:
+interactionOamData4c488:
 	.db $03
 	.db $08 $00 $1a $02
 	.db $08 $08 $1c $02
 	.db $f9 $05 $04 $02
 
-oamData4c495:
+interactionOamData4c495:
 	.db $03
 	.db $09 $0a $12 $23
 	.db $08 $00 $16 $20
 	.db $08 $08 $14 $20
 
-oamData4c4a2:
+interactionOamData4c4a2:
 	.db $03
 	.db $07 $0d $12 $23
 	.db $08 $00 $16 $20
 	.db $08 $08 $14 $20
 
-oamData4c4af:
+interactionOamData4c4af:
 	.db $03
 	.db $0d $05 $1c $22
 	.db $08 $08 $00 $21
 	.db $08 $00 $02 $21
 
-oamData4c4bc:
+interactionOamData4c4bc:
 	.db $03
 	.db $0d $05 $1e $22
 	.db $08 $08 $04 $21
 	.db $08 $00 $06 $21
 
-oamData4c4c9:
+interactionOamData4c4c9:
 	.db $03
 	.db $08 $f8 $00 $00
 	.db $08 $00 $02 $00
 	.db $08 $08 $04 $00
 
-oamData4c4d6:
+interactionOamData4c4d6:
 	.db $03
 	.db $08 $f8 $00 $01
 	.db $08 $00 $02 $03
 	.db $08 $08 $04 $03
 
-oamData4c4e3:
+interactionOamData4c4e3:
 	.db $03
 	.db $08 $f8 $06 $00
 	.db $08 $00 $08 $00
 	.db $08 $08 $0a $00
 
-oamData4c4f0:
+interactionOamData4c4f0:
 	.db $03
 	.db $08 $f8 $06 $01
 	.db $08 $00 $08 $03
 	.db $08 $08 $0a $03
 
-oamData4c4fd:
+interactionOamData4c4fd:
 	.db $03
 	.db $08 $f8 $0c $00
 	.db $08 $00 $0e $00
 	.db $08 $08 $10 $00
 
-oamData4c50a:
+interactionOamData4c50a:
 	.db $03
 	.db $08 $00 $04 $20
 	.db $08 $08 $02 $20
 	.db $08 $10 $00 $20
 
-oamData4c517:
+interactionOamData4c517:
 	.db $03
 	.db $08 $00 $04 $23
 	.db $08 $08 $02 $23
 	.db $08 $10 $00 $21
 
-oamData4c524:
+interactionOamData4c524:
 	.db $03
 	.db $08 $00 $0a $20
 	.db $08 $08 $08 $20
 	.db $08 $10 $06 $20
 
-oamData4c531:
+interactionOamData4c531:
 	.db $03
 	.db $08 $00 $0a $23
 	.db $08 $08 $08 $23
 	.db $08 $10 $06 $21
 
-oamData4c53e:
+interactionOamData4c53e:
 	.db $03
 	.db $08 $00 $0a $01
 	.db $08 $08 $0c $01
 	.db $f9 $04 $0e $01
 
-oamData4c54b:
+interactionOamData4c54b:
 	.db $03
 	.db $08 $08 $0a $21
 	.db $08 $00 $0c $21
 	.db $f9 $04 $0e $21
 
-oamData4c558:
+interactionOamData4c558:
 	.db $03
 	.db $08 $ff $00 $01
 	.db $08 $07 $02 $01
 	.db $fa $03 $0e $01
 
-oamData4c565:
+interactionOamData4c565:
 	.db $04
 	.db $08 $f8 $04 $01
 	.db $08 $00 $06 $01
 	.db $08 $08 $08 $01
 	.db $fa $04 $0e $01
 
-oamData4c576:
+interactionOamData4c576:
 	.db $03
 	.db $08 $00 $10 $01
 	.db $08 $08 $12 $01
 	.db $fa $04 $0e $01
 
-oamData4c583:
+interactionOamData4c583:
 	.db $03
 	.db $08 $ff $14 $01
 	.db $08 $07 $16 $01
 	.db $f9 $04 $0e $01
 
-oamData4c590:
+interactionOamData4c590:
 	.db $03
 	.db $08 $08 $10 $21
 	.db $08 $00 $12 $21
 	.db $fa $04 $0e $21
 
-oamData4c59d:
+interactionOamData4c59d:
 	.db $03
 	.db $08 $09 $14 $21
 	.db $08 $01 $16 $21
 	.db $f9 $04 $0e $21
 
-oamData4c5aa:
+interactionOamData4c5aa:
 	.db $03
 	.db $10 $00 $14 $00
 	.db $00 $08 $16 $00
 	.db $10 $08 $18 $00
 
-oamData4c5b7:
+interactionOamData4c5b7:
 	.db $03
 	.db $10 $08 $14 $20
 	.db $00 $00 $16 $20
 	.db $10 $00 $18 $20
 
-oamData4c5c4:
+interactionOamData4c5c4:
 	.db $03
 	.db $08 $00 $10 $02
 	.db $08 $08 $12 $02
 	.db $f8 $04 $14 $02
 
-oamData4c5d1:
+interactionOamData4c5d1:
 	.db $03
 	.db $08 $08 $10 $22
 	.db $08 $00 $12 $22
 	.db $f8 $04 $14 $22
 
-oamData4c5de:
+interactionOamData4c5de:
 	.db $03
 	.db $08 $00 $16 $00
 	.db $08 $08 $18 $00
 	.db $f9 $04 $1a $00
 
-oamData4c5eb:
+interactionOamData4c5eb:
 	.db $03
 	.db $08 $08 $16 $20
 	.db $08 $00 $18 $20
 	.db $f9 $04 $1a $20
 
-oamData4c5f8:
+interactionOamData4c5f8:
 	.db $03
 	.db $08 $ff $0c $00
 	.db $08 $07 $0e $00
 	.db $fa $03 $1a $00
 
-oamData4c605:
+interactionOamData4c605:
 	.db $03
 	.db $08 $00 $06 $00
 	.db $08 $08 $08 $00
 	.db $f8 $05 $00 $00
 
-oamData4c612:
+interactionOamData4c612:
 	.db $03
 	.db $08 $00 $08 $20
 	.db $08 $08 $06 $20
 	.db $f8 $03 $00 $00
 
-oamData4c61f:
+interactionOamData4c61f:
 	.db $03
 	.db $08 $00 $0a $00
 	.db $08 $08 $0c $00
 	.db $f8 $03 $02 $00
 
-oamData4c62c:
+interactionOamData4c62c:
 	.db $03
 	.db $08 $00 $0c $20
 	.db $08 $08 $0a $20
 	.db $f8 $05 $02 $00
 
-oamData4c639:
+interactionOamData4c639:
 	.db $03
 	.db $08 $00 $0e $00
 	.db $08 $08 $10 $00
 	.db $f8 $07 $04 $00
 
-oamData4c646:
+interactionOamData4c646:
 	.db $03
 	.db $08 $00 $12 $00
 	.db $08 $08 $14 $00
 	.db $f8 $06 $04 $00
 
-oamData4c653:
+interactionOamData4c653:
 	.db $03
 	.db $08 $00 $10 $20
 	.db $08 $08 $0e $20
 	.db $f8 $01 $04 $20
 
-oamData4c660:
+interactionOamData4c660:
 	.db $03
 	.db $08 $00 $14 $20
 	.db $08 $08 $12 $20
 	.db $f8 $02 $04 $20
 
-oamData4c66d:
+interactionOamData4c66d:
 	.db $03
 	.db $08 $00 $00 $00
 	.db $08 $08 $02 $00
 	.db $f9 $07 $10 $00
 
-oamData4c67a:
+interactionOamData4c67a:
 	.db $03
 	.db $08 $00 $02 $20
 	.db $08 $08 $00 $20
 	.db $f9 $01 $10 $00
 
-oamData4c687:
+interactionOamData4c687:
 	.db $03
 	.db $08 $00 $04 $00
 	.db $08 $08 $06 $00
 	.db $fa $02 $10 $00
 
-oamData4c694:
+interactionOamData4c694:
 	.db $03
 	.db $08 $00 $06 $20
 	.db $08 $08 $04 $20
 	.db $fa $06 $10 $20
 
-oamData4c6a1:
+interactionOamData4c6a1:
 	.db $03
 	.db $08 $00 $08 $00
 	.db $08 $08 $0a $00
 	.db $f9 $07 $10 $00
 
-oamData4c6ae:
+interactionOamData4c6ae:
 	.db $03
 	.db $08 $00 $0c $00
 	.db $08 $08 $0e $00
 	.db $f8 $07 $10 $00
 
-oamData4c6bb:
+interactionOamData4c6bb:
 	.db $03
 	.db $08 $00 $0a $20
 	.db $08 $08 $08 $20
 	.db $f9 $01 $10 $20
 
-oamData4c6c8:
+interactionOamData4c6c8:
 	.db $03
 	.db $08 $00 $0e $20
 	.db $08 $08 $0c $20
 	.db $f8 $01 $10 $20
 
-oamData4c6d5:
+interactionOamData4c6d5:
 	.db $03
 	.db $fb $04 $10 $05
 	.db $08 $00 $00 $03
 	.db $08 $08 $02 $03
 
-oamData4c6e2:
+interactionOamData4c6e2:
 	.db $03
 	.db $fb $05 $10 $25
 	.db $08 $09 $00 $23
 	.db $08 $01 $02 $23
 
-oamData4c6ef:
+interactionOamData4c6ef:
 	.db $03
 	.db $08 $00 $04 $03
 	.db $08 $08 $06 $03
 	.db $fb $04 $10 $05
 
-oamData4c6fc:
+interactionOamData4c6fc:
 	.db $03
 	.db $08 $09 $04 $23
 	.db $08 $01 $06 $23
 	.db $fb $05 $10 $25
 
-oamData4c709:
+interactionOamData4c709:
 	.db $03
 	.db $fb $02 $12 $05
 	.db $08 $00 $08 $03
 	.db $08 $08 $0a $03
 
-oamData4c716:
+interactionOamData4c716:
 	.db $03
 	.db $fc $02 $12 $05
 	.db $08 $00 $0c $03
 	.db $08 $08 $0e $03
 
-oamData4c723:
+interactionOamData4c723:
 	.db $03
 	.db $fb $06 $12 $25
 	.db $08 $08 $08 $23
 	.db $08 $00 $0a $23
 
-oamData4c730:
+interactionOamData4c730:
 	.db $03
 	.db $fc $06 $12 $25
 	.db $08 $08 $0c $23
 	.db $08 $00 $0e $23
 
-oamData4c73d:
+interactionOamData4c73d:
 	.db $03
 	.db $08 $00 $2a $03
 	.db $08 $08 $2e $03
 	.db $fd $ff $14 $05
 
-oamData4c74a:
+interactionOamData4c74a:
 	.db $03
 	.db $08 $08 $2e $03
 	.db $08 $00 $2c $03
 	.db $fd $ff $14 $05
 
-oamData4c757:
+interactionOamData4c757:
 	.db $03
 	.db $fa $05 $10 $05
 	.db $08 $00 $30 $03
 	.db $08 $08 $32 $03
 
-oamData4c764:
+interactionOamData4c764:
 	.db $03
 	.db $fb $04 $12 $05
 	.db $08 $00 $16 $03
 	.db $08 $08 $18 $03
 
-oamData4c771:
+interactionOamData4c771:
 	.db $03
 	.db $fc $08 $12 $05
 	.db $08 $00 $1a $03
 	.db $08 $08 $1c $03
 
-oamData4c77e:
+interactionOamData4c77e:
 	.db $03
 	.db $fb $04 $10 $05
 	.db $08 $00 $20 $03
 	.db $08 $08 $22 $03
 
-oamData4c78b:
+interactionOamData4c78b:
 	.db $03
 	.db $01 $0d $28 $05
 	.db $08 $00 $24 $03
 	.db $08 $08 $26 $03
 
-oamData4c798:
+interactionOamData4c798:
 	.db $03
 	.db $08 $00 $08 $00
 	.db $08 $08 $0a $00
 	.db $08 $f8 $2a $04
 
-oamData4c7a5:
+interactionOamData4c7a5:
 	.db $03
 	.db $08 $00 $0a $20
 	.db $08 $08 $08 $20
 	.db $08 $10 $2a $24
 
-oamData4c7b2:
+interactionOamData4c7b2:
 	.db $03
 	.db $02 $08 $04 $20
 	.db $08 $00 $06 $00
 	.db $08 $08 $08 $00
 
-oamData4c7bf:
+interactionOamData4c7bf:
 	.db $03
 	.db $02 $06 $04 $20
 	.db $08 $00 $08 $20
 	.db $08 $08 $06 $20
 
-oamData4c7cc:
+interactionOamData4c7cc:
 	.db $03
 	.db $03 $ff $04 $00
 	.db $08 $00 $0c $20
 	.db $08 $08 $0a $20
 
-oamData4c7d9:
+interactionOamData4c7d9:
 	.db $03
 	.db $04 $ff $04 $00
 	.db $08 $00 $10 $20
 	.db $08 $08 $0e $20
 
-oamData4c7e6:
+interactionOamData4c7e6:
 	.db $03
 	.db $00 $00 $04 $00
 	.db $08 $00 $00 $00
 	.db $08 $08 $02 $00
 
-oamData4c7f3:
+interactionOamData4c7f3:
 	.db $03
 	.db $00 $ff $04 $00
 	.db $08 $00 $02 $20
 	.db $08 $08 $00 $20
 
-oamData4c800:
+interactionOamData4c800:
 	.db $03
 	.db $03 $09 $04 $20
 	.db $08 $00 $0a $00
 	.db $08 $08 $0c $00
 
-oamData4c80d:
+interactionOamData4c80d:
 	.db $03
 	.db $04 $09 $04 $20
 	.db $08 $00 $0e $00
 	.db $08 $08 $10 $00
 
-oamData4c81a:
+interactionOamData4c81a:
 	.db $03
 	.db $0c $0a $18 $05
 	.db $08 $00 $00 $03
 	.db $08 $08 $02 $03
 
-oamData4c827:
+interactionOamData4c827:
 	.db $03
 	.db $08 $00 $02 $23
 	.db $08 $08 $00 $23
 	.db $0c $09 $18 $25
 
-oamData4c834:
+interactionOamData4c834:
 	.db $03
 	.db $0c $fe $18 $05
 	.db $08 $00 $04 $03
 	.db $08 $08 $06 $03
 
-oamData4c841:
+interactionOamData4c841:
 	.db $03
 	.db $08 $00 $06 $23
 	.db $08 $08 $04 $23
 	.db $0c $fe $18 $25
 
-oamData4c84e:
+interactionOamData4c84e:
 	.db $03
 	.db $0c $06 $18 $05
 	.db $08 $00 $08 $03
 	.db $08 $08 $0a $03
 
-oamData4c85b:
+interactionOamData4c85b:
 	.db $03
 	.db $0b $06 $18 $05
 	.db $08 $00 $0c $03
 	.db $08 $08 $0e $03
 
-oamData4c868:
+interactionOamData4c868:
 	.db $03
 	.db $08 $fc $00 $00
 	.db $08 $04 $02 $00
 	.db $08 $0c $00 $20
 
-oamData4c875:
+interactionOamData4c875:
 	.db $03
 	.db $08 $fc $04 $00
 	.db $08 $04 $06 $00
 	.db $08 $0c $04 $20
 
-oamData4c882:
+interactionOamData4c882:
 	.db $03
 	.db $08 $fc $08 $00
 	.db $08 $04 $0a $00
 	.db $08 $0c $08 $20
 
-oamData4c88f:
+interactionOamData4c88f:
 	.db $03
 	.db $08 $fc $0c $00
 	.db $08 $04 $0e $00
 	.db $08 $0c $0c $20
 
-oamData4c89c:
+interactionOamData4c89c:
 	.db $03
 	.db $0c $08 $00 $40
 	.db $0c $00 $00 $40
 	.db $08 $04 $00 $40
 
-oamData4c8a9:
+interactionOamData4c8a9:
 	.db $03
 	.db $0c $08 $00 $00
 	.db $0c $00 $00 $00
 	.db $08 $04 $00 $00
 
-oamData4c8b6:
+interactionOamData4c8b6:
 	.db $03
 	.db $08 $00 $1e $02
 	.db $08 $08 $20 $02
 	.db $f8 $03 $22 $02
 
-oamData4c8c3:
+interactionOamData4c8c3:
 	.db $03
 	.db $08 $08 $1e $22
 	.db $08 $00 $20 $22
 	.db $f8 $05 $22 $22
 
-oamData4c8d0:
+interactionOamData4c8d0:
 	.db $03
 	.db $08 $08 $24 $22
 	.db $08 $00 $26 $22
 	.db $07 $fb $2c $22
 
-oamData4c8dd:
+interactionOamData4c8dd:
 	.db $03
 	.db $08 $08 $28 $22
 	.db $08 $00 $2a $22
 	.db $08 $fc $2c $22
 
-oamData4c8ea:
+interactionOamData4c8ea:
 	.db $03
 	.db $08 $00 $00 $02
 	.db $08 $08 $02 $02
 	.db $f8 $05 $04 $02
 
-oamData4c8f7:
+interactionOamData4c8f7:
 	.db $03
 	.db $08 $08 $00 $22
 	.db $08 $00 $02 $22
 	.db $f8 $03 $04 $22
 
-oamData4c904:
+interactionOamData4c904:
 	.db $03
 	.db $08 $00 $24 $02
 	.db $08 $08 $26 $02
 	.db $07 $0d $2c $02
 
-oamData4c911:
+interactionOamData4c911:
 	.db $03
 	.db $08 $00 $28 $02
 	.db $08 $08 $2a $02
 	.db $08 $0c $2c $02
 
-oamData4c91e:
+interactionOamData4c91e:
 	.db $03
 	.db $08 $00 $1a $02
 	.db $08 $08 $1c $02
 	.db $f9 $05 $04 $02
 
-oamData4c92b:
+interactionOamData4c92b:
 	.db $03
 	.db $08 $08 $04 $22
 	.db $08 $00 $06 $22
 	.db $07 $fb $0c $22
 
-oamData4c938:
+interactionOamData4c938:
 	.db $03
 	.db $08 $08 $08 $22
 	.db $08 $00 $0a $22
 	.db $08 $fc $0c $22
 
-oamData4c945:
+interactionOamData4c945:
 	.db $03
 	.db $08 $fd $10 $20
 	.db $08 $08 $08 $20
 	.db $08 $00 $0a $20
 
-oamData4c952:
+interactionOamData4c952:
 	.db $03
 	.db $08 $0d $20 $21
 	.db $08 $08 $12 $20
 	.db $08 $00 $14 $20
 
-oamData4c95f:
+interactionOamData4c95f:
 	.db $03
 	.db $08 $00 $3a $02
 	.db $08 $08 $3c $02
 	.db $07 $0e $2c $02
 
-oamData4c96c:
+interactionOamData4c96c:
 	.db $03
 	.db $08 $08 $26 $02
 	.db $08 $00 $38 $02
 	.db $07 $0d $2c $02
 
-oamData4c979:
+interactionOamData4c979:
 	.db $03
 	.db $f8 $03 $00 $00
 	.db $08 $00 $02 $00
 	.db $08 $08 $04 $00
 
-oamData4c986:
+interactionOamData4c986:
 	.db $03
 	.db $f8 $05 $00 $20
 	.db $08 $08 $02 $20
 	.db $08 $00 $04 $20
 
-oamData4c993:
+interactionOamData4c993:
 	.db $03
 	.db $08 $fc $00 $00
 	.db $08 $04 $02 $00
 	.db $08 $0c $04 $00
 
-oamData4c9a0:
+interactionOamData4c9a0:
 	.db $03
 	.db $08 $fc $00 $40
 	.db $08 $04 $02 $40
 	.db $08 $0c $04 $40
 
-oamData4c9ad:
+interactionOamData4c9ad:
 	.db $03
 	.db $08 $fc $00 $03
 	.db $08 $04 $06 $03
 	.db $08 $0c $08 $03
 
-oamData4c9ba:
+interactionOamData4c9ba:
 	.db $03
 	.db $08 $0c $00 $23
 	.db $08 $04 $06 $23
 	.db $08 $fc $08 $23
 
-oamData4c9c7:
+interactionOamData4c9c7:
 	.db $03
 	.db $f0 $05 $00 $00
 	.db $00 $00 $0c $00
 	.db $00 $08 $0e $00
 
-oamData4c9d4:
+interactionOamData4c9d4:
 	.db $03
 	.db $f0 $04 $02 $00
 	.db $00 $00 $10 $00
 	.db $00 $08 $12 $00
 
-oamData4c9e1:
+interactionOamData4c9e1:
 	.db $03
 	.db $f0 $04 $08 $00
 	.db $00 $00 $18 $00
 	.db $00 $08 $1a $00
 
-oamData4c9ee:
+interactionOamData4c9ee:
 	.db $03
 	.db $f0 $04 $0a $00
 	.db $00 $00 $1c $00
 	.db $00 $08 $1e $00
 
-oamData4c9fb:
+interactionOamData4c9fb:
 	.db $03
 	.db $01 $0a $0c $01
 	.db $00 $00 $00 $02
 	.db $00 $08 $02 $02
 
-oamData4ca08:
+interactionOamData4ca08:
 	.db $03
 	.db $00 $0a $0c $01
 	.db $00 $08 $00 $22
 	.db $00 $00 $02 $22
 
-oamData4ca15:
+interactionOamData4ca15:
 	.db $03
 	.db $01 $02 $0c $01
 	.db $00 $00 $04 $02
 	.db $00 $08 $06 $02
 
-oamData4ca22:
+interactionOamData4ca22:
 	.db $03
 	.db $00 $02 $0c $01
 	.db $00 $00 $08 $02
 	.db $00 $08 $0a $02
 
-oamData4ca2f:
+interactionOamData4ca2f:
 	.db $03
 	.db $00 $08 $04 $22
 	.db $00 $00 $06 $22
 	.db $fe $06 $0c $21
 
-oamData4ca3c:
+interactionOamData4ca3c:
 	.db $03
 	.db $00 $08 $08 $22
 	.db $00 $00 $0a $22
 	.db $fd $06 $0c $21
 
-oamData4ca49:
+interactionOamData4ca49:
 	.db $03
 	.db $08 $00 $04 $00
 	.db $08 $08 $06 $00
 	.db $00 $08 $14 $00
 
-oamData4ca56:
+interactionOamData4ca56:
 	.db $03
 	.db $08 $00 $06 $20
 	.db $08 $08 $04 $20
 	.db $fe $08 $14 $00
 
-oamData4ca63:
+interactionOamData4ca63:
 	.db $03
 	.db $0f $00 $14 $40
 	.db $08 $00 $00 $00
 	.db $08 $08 $02 $00
 
-oamData4ca70:
+interactionOamData4ca70:
 	.db $03
 	.db $11 $00 $14 $40
 	.db $08 $00 $02 $20
 	.db $08 $08 $00 $20
 
-oamData4ca7d:
+interactionOamData4ca7d:
 	.db $03
 	.db $f8 $05 $18 $00
 	.db $08 $00 $0c $00
 	.db $08 $08 $0e $00
 
-oamData4ca8a:
+interactionOamData4ca8a:
 	.db $03
 	.db $f9 $05 $18 $00
 	.db $08 $00 $10 $00
 	.db $08 $08 $12 $00
 
-oamData4ca97:
+interactionOamData4ca97:
 	.db $03
 	.db $f8 $03 $18 $20
 	.db $08 $08 $0c $20
 	.db $08 $00 $0e $20
 
-oamData4caa4:
+interactionOamData4caa4:
 	.db $03
 	.db $08 $08 $10 $20
 	.db $08 $00 $12 $20
 	.db $f9 $03 $18 $20
 
-oamData4cab1:
+interactionOamData4cab1:
 	.db $03
 	.db $08 $00 $10 $01
 	.db $08 $08 $12 $01
 	.db $07 $fc $18 $05
 
-oamData4cabe:
+interactionOamData4cabe:
 	.db $03
 	.db $08 $00 $14 $01
 	.db $08 $08 $16 $01
 	.db $08 $fc $18 $05
 
-oamData4cacb:
+interactionOamData4cacb:
 	.db $03
 	.db $07 $04 $18 $05
 	.db $08 $00 $00 $01
 	.db $08 $08 $02 $01
 
-oamData4cad8:
+interactionOamData4cad8:
 	.db $03
 	.db $08 $08 $10 $21
 	.db $08 $00 $12 $21
 	.db $07 $0c $18 $25
 
-oamData4cae5:
+interactionOamData4cae5:
 	.db $03
 	.db $08 $00 $00 $00
 	.db $08 $08 $02 $00
 	.db $f8 $08 $08 $00
 
-oamData4caf2:
+interactionOamData4caf2:
 	.db $03
 	.db $08 $00 $04 $00
 	.db $08 $08 $06 $00
 	.db $f9 $07 $08 $00
 
-oamData4caff:
+interactionOamData4caff:
 	.db $03
 	.db $08 $08 $00 $20
 	.db $08 $00 $02 $20
 	.db $f8 $00 $08 $20
 
-oamData4cb0c:
+interactionOamData4cb0c:
 	.db $03
 	.db $08 $08 $04 $20
 	.db $08 $00 $06 $20
 	.db $f9 $01 $08 $20
 
-oamData4cb19:
+interactionOamData4cb19:
 	.db $03
 	.db $08 $fc $00 $00
 	.db $08 $04 $02 $00
 	.db $08 $0c $00 $20
 
-oamData4cb26:
+interactionOamData4cb26:
 	.db $03
 	.db $08 $fc $04 $00
 	.db $08 $04 $06 $00
 	.db $08 $0c $04 $20
 
-oamData4cb33:
+interactionOamData4cb33:
 	.db $03
 	.db $08 $fc $08 $00
 	.db $08 $04 $0a $00
 	.db $08 $0c $08 $20
 
-oamData4cb40:
+interactionOamData4cb40:
 	.db $03
 	.db $0f $04 $06 $04
 	.db $0f $00 $02 $07
 	.db $0f $08 $04 $07
 
-oamData4cb4d:
+interactionOamData4cb4d:
 	.db $03
 	.db $08 $f8 $0a $20
 	.db $08 $00 $08 $20
 	.db $08 $08 $06 $20
 
-oamData4cb5a:
+interactionOamData4cb5a:
 	.db $03
 	.db $08 $f8 $10 $20
 	.db $08 $00 $0e $20
 	.db $08 $08 $0c $20
 
-oamData4cb67:
+interactionOamData4cb67:
 	.db $03
 	.db $08 $fe $00 $00
 	.db $08 $06 $02 $00
 	.db $08 $0e $04 $00
 
-oamData4cb74:
+interactionOamData4cb74:
 	.db $03
 	.db $08 $fa $04 $20
 	.db $08 $02 $02 $20
 	.db $08 $0a $00 $20
 
-oamData4cb81:
+interactionOamData4cb81:
 	.db $03
 	.db $08 $00 $06 $00
 	.db $08 $08 $08 $00
 	.db $08 $10 $0a $00
 
-oamData4cb8e:
+interactionOamData4cb8e:
 	.db $03
 	.db $08 $00 $0c $00
 	.db $08 $08 $0e $00
 	.db $08 $10 $10 $00
 
-oamData4cb9b:
+interactionOamData4cb9b:
 	.db $04
 	.db $04 $fc $00 $00
 	.db $05 $04 $00 $60
 	.db $07 $06 $00 $00
 	.db $03 $0a $00 $20
 
-oamData4cbac:
+interactionOamData4cbac:
 	.db $04
 	.db $03 $ff $00 $00
 	.db $03 $04 $00 $60
 	.db $0a $06 $00 $00
 	.db $04 $07 $00 $20
 
-oamData4cbbd:
+interactionOamData4cbbd:
 	.db $04
 	.db $02 $00 $00 $20
 	.db $02 $02 $00 $60
 	.db $06 $04 $00 $20
 	.db $0c $07 $00 $20
 
-oamData4cbce:
+interactionOamData4cbce:
 	.db $04
 	.db $00 $01 $00 $20
 	.db $0e $01 $00 $60
 	.db $06 $05 $00 $20
 	.db $0e $07 $00 $20
 
-oamData4cbdf:
+interactionOamData4cbdf:
 	.db $04
 	.db $ff $00 $00 $20
 	.db $0e $fe $00 $60
 	.db $0a $08 $00 $20
 	.db $10 $09 $00 $20
 
-oamData4cbf0:
+interactionOamData4cbf0:
 	.db $04
 	.db $fe $ff $00 $00
 	.db $0e $fa $00 $40
 	.db $0a $09 $00 $20
 	.db $11 $0a $00 $00
 
-oamData4cc01:
+interactionOamData4cc01:
 	.db $04
 	.db $fd $fe $00 $00
 	.db $0d $f9 $00 $40
 	.db $0a $0c $00 $00
 	.db $13 $0b $00 $00
 
-oamData4cc12:
+interactionOamData4cc12:
 	.db $04
 	.db $fc $fd $00 $00
 	.db $0b $f7 $00 $40
 	.db $0b $0d $00 $00
 	.db $11 $0c $00 $00
 
-oamData4cc23:
+interactionOamData4cc23:
 	.db $04
 	.db $04 $fc $00 $00
 	.db $05 $04 $00 $62
 	.db $07 $06 $00 $00
 	.db $03 $0a $00 $22
 
-oamData4cc34:
+interactionOamData4cc34:
 	.db $04
 	.db $03 $ff $00 $00
 	.db $03 $04 $00 $62
 	.db $0a $06 $00 $00
 	.db $04 $07 $00 $22
 
-oamData4cc45:
+interactionOamData4cc45:
 	.db $04
 	.db $04 $00 $00 $62
 	.db $06 $04 $00 $22
 	.db $02 $00 $00 $20
 	.db $0c $07 $00 $20
 
-oamData4cc56:
+interactionOamData4cc56:
 	.db $04
 	.db $00 $01 $00 $20
 	.db $0a $fe $00 $62
 	.db $06 $05 $00 $22
 	.db $0e $07 $00 $20
 
-oamData4cc67:
+interactionOamData4cc67:
 	.db $04
 	.db $ff $00 $00 $20
 	.db $0d $fd $00 $62
 	.db $0a $08 $00 $22
 	.db $10 $09 $00 $20
 
-oamData4cc78:
+interactionOamData4cc78:
 	.db $04
 	.db $fe $ff $00 $00
 	.db $0e $fa $00 $42
 	.db $0a $09 $00 $22
 	.db $11 $0a $00 $00
 
-oamData4cc89:
+interactionOamData4cc89:
 	.db $04
 	.db $fd $fe $00 $00
 	.db $0d $f9 $00 $42
 	.db $0a $0c $00 $02
 	.db $13 $0b $00 $00
 
-oamData4cc9a:
+interactionOamData4cc9a:
 	.db $04
 	.db $fc $fd $00 $00
 	.db $0b $f7 $00 $42
 	.db $0b $0d $00 $02
 	.db $11 $0c $00 $00
 
-oamData4ccab:
+interactionOamData4ccab:
 	.db $04
 	.db $04 $ff $00 $00
 	.db $03 $08 $00 $00
 	.db $0d $fd $00 $00
 	.db $0c $07 $00 $00
 
-oamData4ccbc:
+interactionOamData4ccbc:
 	.db $04
 	.db $02 $fd $00 $00
 	.db $01 $0a $00 $00
 	.db $0d $fc $00 $00
 	.db $0c $09 $00 $00
 
-oamData4cccd:
+interactionOamData4cccd:
 	.db $04
 	.db $01 $fc $00 $00
 	.db $00 $0c $00 $00
 	.db $0e $fa $00 $00
 	.db $0d $0b $00 $00
 
-oamData4ccde:
+interactionOamData4ccde:
 	.db $04
 	.db $03 $fa $00 $00
 	.db $02 $0e $00 $00
 	.db $10 $f8 $00 $00
 	.db $0f $0d $00 $00
 
-oamData4ccef:
+interactionOamData4ccef:
 	.db $04
 	.db $0e $fc $08 $01
 	.db $0e $04 $08 $21
 	.db $02 $04 $08 $01
 	.db $02 $0c $08 $21
 
-oamData4cd00:
+interactionOamData4cd00:
 	.db $04
 	.db $0e $fc $08 $00
 	.db $0e $04 $08 $20
 	.db $02 $04 $08 $00
 	.db $02 $0c $08 $20
 
-oamData4cd11:
+interactionOamData4cd11:
 	.db $04
 	.db $00 $f8 $00 $00
 	.db $00 $00 $00 $20
 	.db $10 $08 $00 $00
 	.db $10 $10 $00 $20
 
-oamData4cd22:
+interactionOamData4cd22:
 	.db $04
 	.db $00 $f8 $00 $00
 	.db $00 $00 $00 $20
 	.db $10 $08 $00 $00
 	.db $10 $10 $00 $20
 
-oamData4cd33:
+interactionOamData4cd33:
 	.db $04
 	.db $08 $fc $0e $00
 	.db $00 $04 $0e $00
 	.db $10 $04 $0e $00
 	.db $08 $0c $0e $00
 
-oamData4cd44:
+interactionOamData4cd44:
 	.db $04
 	.db $01 $01 $00 $02
 	.db $01 $07 $00 $22
 	.db $0f $01 $00 $42
 	.db $0f $07 $00 $62
 
-oamData4cd55:
+interactionOamData4cd55:
 	.db $04
 	.db $00 $00 $00 $01
 	.db $00 $08 $00 $21
 	.db $10 $00 $00 $41
 	.db $10 $08 $00 $61
 
-oamData4cd66:
+interactionOamData4cd66:
 	.db $04
 	.db $f6 $00 $08 $06
 	.db $04 $00 $06 $05
 	.db $f6 $08 $08 $26
 	.db $04 $08 $06 $25
 
-oamData4cd77:
+interactionOamData4cd77:
 	.db $04
 	.db $fa $00 $08 $06
 	.db $08 $00 $06 $05
 	.db $fa $08 $08 $26
 	.db $08 $08 $06 $25
 
-oamData4cd88:
+interactionOamData4cd88:
 	.db $04
 	.db $02 $00 $08 $06
 	.db $08 $00 $02 $05
 	.db $02 $08 $08 $26
 	.db $08 $08 $02 $25
 
-oamData4cd99:
+interactionOamData4cd99:
 	.db $04
 	.db $fe $00 $08 $06
 	.db $fe $08 $08 $26
 	.db $08 $00 $04 $05
 	.db $08 $08 $04 $25
 
-oamData4cdaa:
+interactionOamData4cdaa:
 	.db $04
 	.db $fa $00 $0a $06
 	.db $08 $00 $06 $05
 	.db $fa $08 $0a $26
 	.db $08 $08 $06 $25
 
-oamData4cdbb:
+interactionOamData4cdbb:
 	.db $04
 	.db $f6 $00 $0a $06
 	.db $04 $00 $06 $05
 	.db $f6 $08 $0a $26
 	.db $04 $08 $06 $25
 
-oamData4cdcc:
+interactionOamData4cdcc:
 	.db $04
 	.db $f8 $00 $00 $03
 	.db $f8 $08 $02 $03
 	.db $08 $00 $04 $02
 	.db $08 $08 $06 $02
 
-oamData4cddd:
+interactionOamData4cddd:
 	.db $04
 	.db $f8 $00 $08 $03
 	.db $f8 $08 $0a $03
 	.db $08 $00 $0c $02
 	.db $08 $08 $0e $02
 
-oamData4cdee:
+interactionOamData4cdee:
 	.db $04
 	.db $f8 $00 $02 $23
 	.db $f8 $08 $00 $23
 	.db $08 $00 $06 $22
 	.db $08 $08 $04 $22
 
-oamData4cdff:
+interactionOamData4cdff:
 	.db $04
 	.db $08 $fe $0a $03
 	.db $08 $06 $0c $03
 	.db $08 $0e $0e $03
 	.db $f8 $04 $08 $03
 
-oamData4ce10:
+interactionOamData4ce10:
 	.db $04
 	.db $08 $06 $0c $03
 	.db $08 $0e $0e $03
 	.db $f8 $04 $08 $03
 	.db $08 $fe $10 $03
 
-oamData4ce21:
+interactionOamData4ce21:
 	.db $04
 	.db $00 $00 $06 $02
 	.db $00 $08 $08 $02
 	.db $10 $00 $0a $02
 	.db $10 $08 $0c $02
 
-oamData4ce32:
+interactionOamData4ce32:
 	.db $04
 	.db $05 $00 $0e $02
 	.db $05 $08 $10 $02
 	.db $05 $10 $12 $02
 	.db $15 $06 $14 $02
 
-oamData4ce43:
+interactionOamData4ce43:
 	.db $04
 	.db $00 $00 $16 $02
 	.db $00 $08 $18 $02
 	.db $10 $08 $0a $22
 	.db $10 $00 $0c $22
 
-oamData4ce54:
+interactionOamData4ce54:
 	.db $04
 	.db $05 $08 $0e $22
 	.db $05 $00 $10 $22
 	.db $05 $f8 $12 $22
 	.db $15 $02 $14 $22
 
-oamData4ce65:
+interactionOamData4ce65:
 	.db $04
 	.db $00 $00 $20 $04
 	.db $00 $08 $22 $04
 	.db $10 $00 $24 $04
 	.db $10 $08 $26 $04
 
-oamData4ce76:
+interactionOamData4ce76:
 	.db $04
 	.db $00 $00 $28 $04
 	.db $00 $08 $2a $04
 	.db $10 $00 $2c $04
 	.db $10 $08 $2e $04
 
-oamData4ce87:
+interactionOamData4ce87:
 	.db $04
 	.db $00 $00 $30 $04
 	.db $00 $08 $32 $04
 	.db $10 $00 $34 $04
 	.db $10 $08 $36 $04
 
-oamData4ce98:
+interactionOamData4ce98:
 	.db $04
 	.db $00 $00 $32 $24
 	.db $00 $08 $30 $24
 	.db $10 $00 $36 $24
 	.db $10 $08 $34 $24
 
-oamData4cea9:
+interactionOamData4cea9:
 	.db $04
 	.db $00 $00 $2a $24
 	.db $00 $08 $28 $24
 	.db $10 $00 $2e $24
 	.db $10 $08 $2c $24
 
-oamData4ceba:
+interactionOamData4ceba:
 	.db $04
 	.db $09 $ff $0a $01
 	.db $08 $fc $00 $03
 	.db $08 $04 $02 $03
 	.db $08 $0c $04 $03
 
-oamData4cecb:
+interactionOamData4cecb:
 	.db $04
 	.db $09 $ff $0c $01
 	.db $08 $fc $00 $03
 	.db $08 $04 $06 $03
 	.db $08 $0c $08 $03
 
-oamData4cedc:
+interactionOamData4cedc:
 	.db $04
 	.db $09 $09 $0a $21
 	.db $08 $0c $00 $23
 	.db $08 $04 $02 $23
 	.db $08 $fc $04 $23
 
-oamData4ceed:
+interactionOamData4ceed:
 	.db $04
 	.db $09 $09 $0c $21
 	.db $08 $0c $00 $23
 	.db $08 $04 $06 $23
 	.db $08 $fc $08 $23
 
-oamData4cefe:
+interactionOamData4cefe:
 	.db $04
 	.db $00 $00 $00 $00
 	.db $00 $08 $02 $00
 	.db $10 $00 $08 $00
 	.db $10 $08 $08 $20
 
-oamData4cf0f:
+interactionOamData4cf0f:
 	.db $04
 	.db $00 $00 $02 $20
 	.db $00 $08 $00 $20
 	.db $10 $00 $08 $00
 	.db $10 $08 $08 $20
 
-oamData4cf20:
+interactionOamData4cf20:
 	.db $04
 	.db $00 $00 $04 $00
 	.db $00 $08 $06 $00
 	.db $10 $00 $08 $00
 	.db $10 $08 $08 $20
 
-oamData4cf31:
+interactionOamData4cf31:
 	.db $04
 	.db $00 $00 $06 $20
 	.db $00 $08 $04 $20
 	.db $10 $00 $08 $00
 	.db $10 $08 $08 $20
 
-oamData4cf42:
+interactionOamData4cf42:
 	.db $04
 	.db $00 $00 $06 $00
 	.db $00 $08 $08 $00
 	.db $10 $00 $08 $00
 	.db $10 $08 $08 $20
 
-oamData4cf53:
+interactionOamData4cf53:
 	.db $04
 	.db $00 $00 $0a $00
 	.db $00 $08 $0c $00
 	.db $10 $00 $08 $00
 	.db $10 $08 $08 $20
 
-oamData4cf64:
+interactionOamData4cf64:
 	.db $04
 	.db $08 $f8 $00 $00
 	.db $08 $00 $02 $00
 	.db $08 $08 $04 $00
 	.db $08 $10 $06 $00
 
-oamData4cf75:
+interactionOamData4cf75:
 	.db $04
 	.db $08 $f8 $06 $20
 	.db $08 $00 $04 $20
 	.db $08 $08 $02 $20
 	.db $08 $10 $00 $20
 
-oamData4cf86:
+interactionOamData4cf86:
 	.db $04
 	.db $08 $f8 $00 $00
 	.db $08 $00 $02 $00
 	.db $08 $08 $02 $20
 	.db $08 $10 $00 $20
 
-; WARNING: unreferenced data
-oamData4cf97:
+interactionOamData4cf97: ; Unused
 	.db $04
 	.db $0c $00 $00 $00
 	.db $0c $08 $00 $20
 	.db $08 $f7 $02 $00
 	.db $08 $ff $02 $20
 
-; WARNING: unreferenced data
-oamData4cfa8:
+interactionOamData4cfa8: ; Unused
 	.db $04
 	.db $0b $03 $00 $00
 	.db $0b $0b $00 $20
 	.db $0a $fa $02 $00
 	.db $0a $02 $02 $20
 
-; WARNING: unreferenced data
-oamData4cfb9:
+interactionOamData4cfb9: ; Unused
 	.db $04
 	.db $0a $06 $00 $00
 	.db $0a $0e $00 $20
 	.db $0b $fd $02 $00
 	.db $0b $05 $02 $20
 
-; WARNING: unreferenced data
-oamData4cfca:
+interactionOamData4cfca: ; Unused
 	.db $04
 	.db $08 $09 $00 $00
 	.db $08 $11 $00 $20
 	.db $0c $00 $02 $00
 	.db $0c $08 $02 $20
 
-oamData4cfdb:
+interactionOamData4cfdb:
 	.db $04
 	.db $fd $01 $16 $22
 	.db $fd $09 $14 $22
 	.db $08 $00 $0a $23
 	.db $08 $08 $08 $23
 
-oamData4cfec:
+interactionOamData4cfec:
 	.db $04
 	.db $fc $00 $16 $22
 	.db $fc $08 $14 $22
 	.db $08 $00 $0e $23
 	.db $08 $08 $0c $23
 
-oamData4cffd:
+interactionOamData4cffd:
 	.db $04
 	.db $08 $00 $00 $00
 	.db $08 $08 $02 $00
 	.db $f8 $00 $04 $00
 	.db $f8 $08 $06 $00
 
-oamData4d00e:
+interactionOamData4d00e:
 	.db $04
 	.db $08 $00 $00 $00
 	.db $08 $08 $02 $00
 	.db $f7 $01 $06 $20
 	.db $f7 $09 $04 $20
 
-oamData4d01f:
+interactionOamData4d01f:
 	.db $04
 	.db $08 $00 $0c $00
 	.db $08 $08 $0e $00
 	.db $f8 $03 $2c $04
 	.db $08 $f8 $28 $04
 
-oamData4d030:
+interactionOamData4d030:
 	.db $04
 	.db $08 $00 $08 $00
 	.db $08 $08 $0a $00
 	.db $08 $f8 $2a $04
 	.db $08 $f0 $2e $05
 
-oamData4d041:
+interactionOamData4d041:
 	.db $04
 	.db $08 $00 $0e $20
 	.db $08 $08 $0c $20
 	.db $f8 $05 $2c $24
 	.db $08 $10 $28 $24
 
-oamData4d052:
+interactionOamData4d052:
 	.db $04
 	.db $08 $00 $0a $20
 	.db $08 $08 $08 $20
 	.db $08 $10 $2a $24
 	.db $08 $18 $2e $25
 
-oamData4d063:
+interactionOamData4d063:
 	.db $04
 	.db $08 $00 $00 $00
 	.db $08 $08 $02 $00
 	.db $18 $00 $0a $00
 	.db $18 $08 $0c $00
 
-oamData4d074:
+interactionOamData4d074:
 	.db $04
 	.db $08 $00 $00 $00
 	.db $08 $08 $04 $00
 	.db $18 $00 $0a $00
 	.db $18 $08 $0c $00
 
-oamData4d085:
+interactionOamData4d085:
 	.db $04
 	.db $08 $00 $06 $00
 	.db $08 $08 $08 $00
 	.db $18 $00 $0a $00
 	.db $18 $08 $0c $00
 
-oamData4d096:
+interactionOamData4d096:
 	.db $04
 	.db $08 $00 $02 $20
 	.db $08 $08 $00 $20
 	.db $18 $00 $0c $20
 	.db $18 $08 $0a $20
 
-oamData4d0a7:
+interactionOamData4d0a7:
 	.db $04
 	.db $08 $00 $04 $20
 	.db $08 $08 $00 $20
 	.db $18 $00 $0c $20
 	.db $18 $08 $0a $20
 
-oamData4d0b8:
+interactionOamData4d0b8:
 	.db $04
 	.db $08 $00 $08 $20
 	.db $08 $08 $06 $20
 	.db $18 $00 $0c $20
 	.db $18 $08 $0a $20
 
-oamData4d0c9:
+interactionOamData4d0c9:
 	.db $04
 	.db $f8 $00 $14 $00
 	.db $f8 $08 $16 $00
 	.db $08 $00 $18 $00
 	.db $08 $08 $1a $00
 
-oamData4d0da:
+interactionOamData4d0da:
 	.db $04
 	.db $f8 $00 $16 $20
 	.db $f8 $08 $14 $20
 	.db $08 $00 $1a $20
 	.db $08 $08 $18 $20
 
-oamData4d0eb:
+interactionOamData4d0eb:
 	.db $04
 	.db $f8 $08 $00 $20
 	.db $f8 $00 $02 $20
 	.db $08 $08 $04 $20
 	.db $08 $00 $06 $20
 
-oamData4d0fc:
+interactionOamData4d0fc:
 	.db $04
 	.db $f8 $08 $08 $20
 	.db $f8 $00 $0a $20
 	.db $08 $08 $0c $20
 	.db $08 $00 $0e $20
 
-oamData4d10d:
+interactionOamData4d10d:
 	.db $04
 	.db $f8 $00 $00 $00
 	.db $f8 $08 $02 $00
 	.db $08 $00 $04 $00
 	.db $08 $08 $06 $00
 
-oamData4d11e:
+interactionOamData4d11e:
 	.db $04
 	.db $f8 $00 $08 $00
 	.db $f8 $08 $0a $00
 	.db $08 $00 $0c $00
 	.db $08 $08 $0e $00
 
-oamData4d12f:
+interactionOamData4d12f:
 	.db $04
 	.db $08 $00 $1a $00
 	.db $08 $08 $1c $00
 	.db $fe $f7 $10 $00
 	.db $fe $ff $12 $00
 
-oamData4d140:
+interactionOamData4d140:
 	.db $04
 	.db $08 $08 $1a $20
 	.db $08 $00 $1c $20
 	.db $fe $11 $10 $20
 	.db $fe $09 $12 $20
 
-oamData4d151:
+interactionOamData4d151:
 	.db $04
 	.db $06 $00 $08 $06
 	.db $08 $00 $00 $05
 	.db $06 $08 $08 $26
 	.db $08 $08 $00 $25
 
-oamData4d162:
+interactionOamData4d162:
 	.db $04
 	.db $fd $00 $00 $05
 	.db $fd $08 $00 $25
 	.db $0d $00 $04 $04
 	.db $0d $08 $06 $04
 
-oamData4d173:
+interactionOamData4d173:
 	.db $04
 	.db $fd $00 $00 $05
 	.db $fd $08 $00 $25
 	.db $0d $00 $04 $05
 	.db $0d $08 $06 $05
 
-oamData4d184:
+interactionOamData4d184:
 	.db $04
 	.db $00 $00 $34 $03
 	.db $00 $08 $36 $03
 	.db $08 $00 $00 $00
 	.db $08 $08 $02 $00
 
-oamData4d195:
+interactionOamData4d195:
 	.db $04
 	.db $00 $08 $34 $23
 	.db $00 $00 $36 $23
 	.db $08 $08 $00 $20
 	.db $08 $00 $02 $20
 
-oamData4d1a6:
+interactionOamData4d1a6:
 	.db $04
 	.db $02 $00 $38 $03
 	.db $02 $08 $3a $03
 	.db $08 $00 $04 $00
 	.db $08 $08 $06 $00
 
-oamData4d1b7:
+interactionOamData4d1b7:
 	.db $04
 	.db $02 $08 $38 $23
 	.db $02 $00 $3a $23
 	.db $08 $08 $04 $20
 	.db $08 $00 $06 $20
 
-oamData4d1c8:
+interactionOamData4d1c8:
 	.db $04
 	.db $02 $ff $3c $03
 	.db $02 $07 $3e $03
 	.db $08 $00 $08 $00
 	.db $08 $08 $0a $00
 
-oamData4d1d9:
+interactionOamData4d1d9:
 	.db $04
 	.db $01 $00 $3c $03
 	.db $01 $08 $3e $03
 	.db $08 $00 $0c $00
 	.db $08 $08 $0e $00
 
-oamData4d1ea:
+interactionOamData4d1ea:
 	.db $04
 	.db $02 $09 $3c $23
 	.db $02 $01 $3e $23
 	.db $08 $08 $08 $20
 	.db $08 $00 $0a $20
 
-oamData4d1fb:
+interactionOamData4d1fb:
 	.db $04
 	.db $01 $08 $3c $23
 	.db $01 $00 $3e $23
 	.db $08 $08 $0c $20
 	.db $08 $00 $0e $20
 
-oamData4d20c:
+interactionOamData4d20c:
 	.db $04
 	.db $00 $00 $00 $05
 	.db $10 $00 $02 $04
 	.db $00 $08 $00 $25
 	.db $10 $08 $02 $24
 
-oamData4d21d:
+interactionOamData4d21d:
 	.db $04
 	.db $09 $00 $74 $03
 	.db $09 $08 $76 $03
 	.db $19 $00 $78 $03
 	.db $19 $08 $7a $03
 
-oamData4d22e:
+interactionOamData4d22e:
 	.db $04
 	.db $09 $00 $7c $03
 	.db $09 $08 $7e $03
 	.db $19 $00 $00 $0b
 	.db $19 $08 $02 $0b
 
-oamData4d23f:
+interactionOamData4d23f:
 	.db $04
 	.db $09 $00 $04 $0b
 	.db $09 $08 $06 $0b
 	.db $19 $00 $08 $0b
 	.db $19 $08 $0a $0b
 
-oamData4d250:
+interactionOamData4d250:
 	.db $04
 	.db $09 $00 $0c $0b
 	.db $09 $08 $0e $0b
 	.db $19 $00 $10 $0b
 	.db $19 $08 $12 $0b
 
-oamData4d261:
+interactionOamData4d261:
 	.db $04
 	.db $0b $00 $14 $0b
 	.db $0b $08 $16 $0b
 	.db $1b $00 $18 $0b
 	.db $1b $08 $1a $0b
 
-oamData4d272:
+interactionOamData4d272:
 	.db $04
 	.db $00 $00 $00 $00
 	.db $10 $00 $00 $00
 	.db $00 $08 $00 $20
 	.db $10 $08 $00 $20
 
-oamData4d283:
+interactionOamData4d283:
 	.db $04
 	.db $08 $f8 $00 $00
 	.db $08 $00 $00 $20
 	.db $08 $08 $00 $00
 	.db $08 $10 $00 $20
 
-oamData4d294:
+interactionOamData4d294:
 	.db $04
 	.db $ff $fe $0a $01
 	.db $ff $06 $0c $01
 	.db $08 $00 $1a $04
 	.db $08 $08 $1a $24
 
-oamData4d2a5:
+interactionOamData4d2a5:
 	.db $04
 	.db $ff $0a $0a $21
 	.db $ff $02 $0c $21
 	.db $08 $00 $1a $04
 	.db $08 $08 $1a $24
 
-oamData4d2b6:
+interactionOamData4d2b6:
 	.db $04
 	.db $fe $fb $0e $01
 	.db $fe $03 $10 $01
 	.db $08 $00 $1a $04
 	.db $08 $08 $1a $24
 
-oamData4d2c7:
+interactionOamData4d2c7:
 	.db $04
 	.db $fe $fd $12 $01
 	.db $fe $05 $14 $01
 	.db $08 $00 $1a $04
 	.db $08 $08 $1a $24
 
-oamData4d2d8:
+interactionOamData4d2d8:
 	.db $04
 	.db $fe $fd $16 $01
 	.db $fe $05 $18 $01
 	.db $08 $00 $1a $04
 	.db $08 $08 $1a $24
 
-oamData4d2e9:
+interactionOamData4d2e9:
 	.db $04
 	.db $ff $0a $0a $22
 	.db $ff $02 $0c $22
 	.db $08 $00 $1a $05
 	.db $08 $08 $1a $25
 
-oamData4d2fa:
+interactionOamData4d2fa:
 	.db $04
 	.db $ff $fe $0a $02
 	.db $ff $06 $0c $02
 	.db $08 $00 $1a $05
 	.db $08 $08 $1a $25
 
-oamData4d30b:
+interactionOamData4d30b:
 	.db $04
 	.db $fe $0d $0e $22
 	.db $fe $05 $10 $22
 	.db $08 $00 $1a $05
 	.db $08 $08 $1a $25
 
-oamData4d31c:
+interactionOamData4d31c:
 	.db $04
 	.db $fe $0b $12 $22
 	.db $fe $03 $14 $22
 	.db $08 $00 $1a $05
 	.db $08 $08 $1a $25
 
-oamData4d32d:
+interactionOamData4d32d:
 	.db $04
 	.db $fe $0b $16 $22
 	.db $fe $03 $18 $22
 	.db $08 $00 $1a $05
 	.db $08 $08 $1a $25
 
-oamData4d33e:
+interactionOamData4d33e:
 	.db $04
 	.db $08 $f8 $00 $00
 	.db $08 $00 $02 $00
 	.db $08 $08 $00 $00
 	.db $08 $10 $02 $00
 
-oamData4d34f:
+interactionOamData4d34f:
 	.db $04
 	.db $08 $f8 $00 $00
 	.db $08 $00 $02 $00
 	.db $08 $08 $04 $00
 	.db $08 $10 $06 $00
 
-oamData4d360:
+interactionOamData4d360:
 	.db $04
 	.db $08 $f8 $08 $00
 	.db $08 $00 $0a $00
 	.db $08 $08 $0a $60
 	.db $08 $10 $08 $60
 
-oamData4d371:
+interactionOamData4d371:
 	.db $04
 	.db $08 $f8 $0c $00
 	.db $08 $00 $0e $00
 	.db $08 $08 $0e $60
 	.db $08 $10 $0c $60
 
-oamData4d382:
+interactionOamData4d382:
 	.db $04
 	.db $08 $f8 $10 $00
 	.db $08 $00 $12 $00
 	.db $08 $08 $12 $60
 	.db $08 $10 $10 $60
 
-oamData4d393:
+interactionOamData4d393:
 	.db $04
 	.db $00 $00 $40 $04
 	.db $00 $08 $42 $04
 	.db $10 $00 $44 $04
 	.db $10 $08 $46 $04
 
-oamData4d3a4:
+interactionOamData4d3a4:
 	.db $04
 	.db $00 $00 $48 $04
 	.db $00 $08 $4a $04
 	.db $10 $00 $4c $04
 	.db $10 $08 $4e $04
 
-oamData4d3b5:
+interactionOamData4d3b5:
 	.db $04
 	.db $00 $00 $50 $04
 	.db $00 $08 $52 $04
 	.db $10 $00 $54 $04
 	.db $10 $08 $56 $04
 
-oamData4d3c6:
+interactionOamData4d3c6:
 	.db $04
 	.db $00 $08 $50 $24
 	.db $00 $00 $52 $24
 	.db $10 $08 $54 $24
 	.db $10 $00 $56 $24
 
-oamData4d3d7:
+interactionOamData4d3d7:
 	.db $04
 	.db $00 $08 $48 $24
 	.db $00 $00 $4a $24
 	.db $10 $08 $4c $24
 	.db $10 $00 $4e $24
 
-oamData4d3e8:
+interactionOamData4d3e8:
 	.db $04
 	.db $00 $00 $06 $02
 	.db $00 $08 $08 $02
 	.db $10 $00 $0a $02
 	.db $10 $08 $0c $02
 
-oamData4d3f9:
+interactionOamData4d3f9:
 	.db $04
 	.db $00 $00 $06 $00
 	.db $00 $08 $08 $00
 	.db $10 $00 $0a $00
 	.db $10 $08 $0c $00
 
-oamData4d40a:
+interactionOamData4d40a:
 	.db $04
 	.db $00 $08 $06 $20
 	.db $00 $00 $08 $20
 	.db $10 $08 $0a $20
 	.db $10 $00 $0c $20
 
-oamData4d41b:
+interactionOamData4d41b:
 	.db $04
 	.db $00 $08 $3e $21
 	.db $08 $08 $26 $02
 	.db $08 $00 $38 $02
 	.db $07 $0d $2c $02
 
-oamData4d42c:
+interactionOamData4d42c:
 	.db $04
 	.db $04 $08 $3e $21
 	.db $08 $08 $26 $02
 	.db $08 $00 $38 $02
 	.db $07 $0d $2c $02
 
-oamData4d43d:
+interactionOamData4d43d:
 	.db $04
 	.db $06 $08 $3e $21
 	.db $08 $08 $26 $02
 	.db $08 $00 $38 $02
 	.db $07 $0d $2c $02
 
-oamData4d44e:
+interactionOamData4d44e:
 	.db $04
 	.db $07 $08 $3e $21
 	.db $08 $08 $26 $02
 	.db $08 $00 $38 $02
 	.db $07 $0d $2c $02
 
-oamData4d45f:
+interactionOamData4d45f:
 	.db $04
 	.db $00 $00 $1a $00
 	.db $00 $08 $1a $20
 	.db $08 $f8 $18 $00
 	.db $08 $10 $18 $20
 
-oamData4d470:
+interactionOamData4d470:
 	.db $04
 	.db $08 $00 $00 $00
 	.db $08 $08 $00 $00
 	.db $08 $00 $02 $06
 	.db $08 $08 $02 $06
 
-oamData4d481:
+interactionOamData4d481:
 	.db $04
 	.db $f0 $00 $04 $00
 	.db $f0 $08 $06 $00
 	.db $00 $00 $14 $00
 	.db $00 $08 $16 $00
 
-oamData4d492:
+interactionOamData4d492:
 	.db $04
 	.db $f8 $00 $40 $00
 	.db $f8 $08 $42 $00
 	.db $08 $08 $04 $00
 	.db $06 $01 $18 $00
 
-oamData4d4a3:
+interactionOamData4d4a3:
 	.db $04
 	.db $f8 $00 $44 $00
 	.db $f8 $08 $46 $00
 	.db $08 $08 $0a $00
 	.db $06 $01 $18 $00
 
-oamData4d4b4:
+interactionOamData4d4b4:
 	.db $04
 	.db $f8 $08 $40 $20
 	.db $f8 $00 $42 $20
 	.db $08 $00 $04 $20
 	.db $06 $07 $18 $20
 
-oamData4d4c5:
+interactionOamData4d4c5:
 	.db $04
 	.db $f8 $08 $44 $20
 	.db $f8 $00 $46 $20
 	.db $08 $00 $0a $20
 	.db $06 $07 $18 $20
 
-oamData4d4d6:
+interactionOamData4d4d6:
 	.db $04
 	.db $f6 $00 $48 $00
 	.db $f6 $08 $4a $00
 	.db $06 $00 $24 $00
 	.db $06 $08 $26 $00
 
-oamData4d4e7:
+interactionOamData4d4e7:
 	.db $04
 	.db $f6 $08 $48 $20
 	.db $f6 $00 $4a $20
 	.db $06 $08 $24 $20
 	.db $06 $00 $26 $20
 
-oamData4d4f8:
+interactionOamData4d4f8:
 	.db $04
 	.db $f6 $00 $4c $00
 	.db $f6 $08 $4e $00
 	.db $06 $00 $2c $00
 	.db $06 $08 $2e $00
 
-oamData4d509:
+interactionOamData4d509:
 	.db $04
 	.db $f6 $08 $4c $20
 	.db $f6 $00 $4e $20
 	.db $06 $08 $2c $20
 	.db $06 $00 $2e $20
 
-oamData4d51a:
+interactionOamData4d51a:
 	.db $04
 	.db $f8 $08 $80 $20
 	.db $f8 $00 $82 $20
 	.db $08 $08 $84 $20
 	.db $08 $00 $86 $20
 
-oamData4d52b:
+interactionOamData4d52b:
 	.db $04
 	.db $f8 $08 $88 $20
 	.db $f8 $00 $8a $20
 	.db $08 $08 $8c $20
 	.db $08 $00 $8e $20
 
-oamData4d53c:
+interactionOamData4d53c:
 	.db $04
 	.db $f8 $00 $80 $00
 	.db $f8 $08 $82 $00
 	.db $08 $00 $84 $00
 	.db $08 $08 $86 $00
 
-oamData4d54d:
+interactionOamData4d54d:
 	.db $04
 	.db $f8 $00 $88 $00
 	.db $f8 $08 $8a $00
 	.db $08 $00 $8c $00
 	.db $08 $08 $8e $00
 
-oamData4d55e:
+interactionOamData4d55e:
 	.db $04
 	.db $08 $08 $12 $20
 	.db $08 $10 $10 $20
 	.db $08 $00 $0a $20
 	.db $08 $08 $08 $20
 
-oamData4d56f:
+interactionOamData4d56f:
 	.db $04
 	.db $08 $0a $12 $20
 	.db $08 $12 $10 $20
 	.db $08 $00 $0e $20
 	.db $08 $08 $0c $20
 
-oamData4d580:
+interactionOamData4d580:
 	.db $04
 	.db $08 $00 $08 $00
 	.db $08 $08 $0a $00
 	.db $08 $f8 $10 $00
 	.db $08 $00 $12 $00
 
-oamData4d591:
+interactionOamData4d591:
 	.db $04
 	.db $08 $00 $0c $00
 	.db $08 $08 $0e $00
 	.db $08 $f6 $10 $00
 	.db $08 $fe $12 $00
 
-oamData4d5a2:
+interactionOamData4d5a2:
 	.db $04
 	.db $0c $02 $08 $00
 	.db $0c $0a $0a $00
 	.db $08 $00 $00 $02
 	.db $08 $08 $02 $02
 
-oamData4d5b3:
+interactionOamData4d5b3:
 	.db $04
 	.db $0d $02 $08 $00
 	.db $0d $0a $0a $00
 	.db $08 $00 $04 $02
 	.db $08 $08 $06 $02
 
-oamData4d5c4:
+interactionOamData4d5c4:
 	.db $04
 	.db $0c $06 $08 $20
 	.db $0c $fe $0a $20
 	.db $08 $08 $00 $22
 	.db $08 $00 $02 $22
 
-oamData4d5d5:
+interactionOamData4d5d5:
 	.db $04
 	.db $0d $06 $08 $20
 	.db $0d $fe $0a $20
 	.db $08 $08 $04 $22
 	.db $08 $00 $06 $22
 
-oamData4d5e6:
+interactionOamData4d5e6:
 	.db $04
 	.db $08 $f8 $10 $00
 	.db $08 $00 $12 $00
 	.db $08 $08 $14 $00
 	.db $fa $04 $1a $00
 
-oamData4d5f7:
+interactionOamData4d5f7:
 	.db $04
 	.db $f8 $00 $14 $00
 	.db $f8 $08 $14 $20
 	.db $08 $00 $04 $00
 	.db $08 $08 $06 $00
 
-oamData4d608:
+interactionOamData4d608:
 	.db $04
 	.db $f8 $08 $14 $20
 	.db $f8 $00 $14 $00
 	.db $08 $08 $04 $20
 	.db $08 $00 $06 $20
 
-oamData4d619:
+interactionOamData4d619:
 	.db $04
 	.db $f8 $00 $16 $00
 	.db $f8 $08 $16 $20
 	.db $08 $00 $08 $00
 	.db $08 $08 $0a $00
 
-oamData4d62a:
+interactionOamData4d62a:
 	.db $04
 	.db $f8 $08 $16 $20
 	.db $f8 $00 $16 $00
 	.db $08 $08 $08 $20
 	.db $08 $00 $0a $20
 
-oamData4d63b:
+interactionOamData4d63b:
 	.db $04
 	.db $08 $00 $0c $04
 	.db $08 $08 $0c $24
 	.db $08 $00 $08 $07
 	.db $08 $08 $0a $07
 
-oamData4d64c:
+interactionOamData4d64c:
 	.db $05
 	.db $f0 $fc $00 $00
 	.db $f0 $04 $02 $00
@@ -2603,7 +2598,7 @@ oamData4d64c:
 	.db $00 $00 $06 $00
 	.db $00 $08 $08 $00
 
-oamData4d661:
+interactionOamData4d661:
 	.db $05
 	.db $f0 $fc $04 $20
 	.db $f0 $04 $02 $20
@@ -2611,7 +2606,7 @@ oamData4d661:
 	.db $00 $00 $08 $20
 	.db $00 $08 $06 $20
 
-oamData4d676:
+interactionOamData4d676:
 	.db $05
 	.db $f8 $f8 $0e $04
 	.db $00 $00 $10 $02
@@ -2619,7 +2614,7 @@ oamData4d676:
 	.db $f0 $07 $14 $02
 	.db $f8 $10 $16 $04
 
-oamData4d68b:
+interactionOamData4d68b:
 	.db $05
 	.db $f8 $10 $0e $24
 	.db $00 $08 $10 $22
@@ -2627,7 +2622,7 @@ oamData4d68b:
 	.db $f0 $01 $14 $22
 	.db $f8 $f8 $16 $24
 
-oamData4d6a0:
+interactionOamData4d6a0:
 	.db $05
 	.db $fd $00 $10 $02
 	.db $fd $08 $12 $02
@@ -2635,7 +2630,7 @@ oamData4d6a0:
 	.db $08 $00 $00 $03
 	.db $08 $08 $02 $03
 
-oamData4d6b5:
+interactionOamData4d6b5:
 	.db $05
 	.db $fd $08 $10 $22
 	.db $fd $00 $12 $22
@@ -2643,7 +2638,7 @@ oamData4d6b5:
 	.db $08 $08 $00 $23
 	.db $0c $09 $18 $25
 
-oamData4d6ca:
+interactionOamData4d6ca:
 	.db $05
 	.db $0c $fe $18 $05
 	.db $08 $00 $04 $03
@@ -2651,7 +2646,7 @@ oamData4d6ca:
 	.db $fd $01 $10 $02
 	.db $fd $09 $12 $02
 
-oamData4d6df:
+interactionOamData4d6df:
 	.db $05
 	.db $08 $00 $06 $23
 	.db $08 $08 $04 $23
@@ -2659,7 +2654,7 @@ oamData4d6df:
 	.db $fd $08 $10 $22
 	.db $0c $fe $18 $25
 
-oamData4d6f4:
+interactionOamData4d6f4:
 	.db $05
 	.db $0c $06 $18 $05
 	.db $fd $ff $14 $02
@@ -2667,7 +2662,7 @@ oamData4d6f4:
 	.db $08 $00 $08 $03
 	.db $08 $08 $0a $03
 
-oamData4d709:
+interactionOamData4d709:
 	.db $05
 	.db $0b $06 $18 $05
 	.db $fc $00 $14 $02
@@ -2675,7 +2670,7 @@ oamData4d709:
 	.db $08 $00 $0c $03
 	.db $08 $08 $0e $03
 
-oamData4d71e:
+interactionOamData4d71e:
 	.db $05
 	.db $09 $fb $1a $04
 	.db $08 $00 $00 $00
@@ -2683,7 +2678,7 @@ oamData4d71e:
 	.db $07 $0d $1a $24
 	.db $f8 $08 $1c $01
 
-oamData4d733:
+interactionOamData4d733:
 	.db $05
 	.db $09 $fa $1a $04
 	.db $08 $00 $02 $20
@@ -2691,7 +2686,7 @@ oamData4d733:
 	.db $07 $0c $1a $24
 	.db $f8 $08 $1e $01
 
-oamData4d748:
+interactionOamData4d748:
 	.db $05
 	.db $09 $fa $1a $04
 	.db $08 $00 $04 $00
@@ -2699,7 +2694,7 @@ oamData4d748:
 	.db $07 $0c $1a $24
 	.db $f8 $00 $1c $21
 
-oamData4d75d:
+interactionOamData4d75d:
 	.db $05
 	.db $09 $fb $1a $04
 	.db $08 $00 $06 $20
@@ -2707,7 +2702,7 @@ oamData4d75d:
 	.db $07 $0d $1a $24
 	.db $f8 $00 $1e $21
 
-oamData4d772:
+interactionOamData4d772:
 	.db $05
 	.db $08 $f9 $1a $04
 	.db $08 $00 $08 $00
@@ -2715,7 +2710,7 @@ oamData4d772:
 	.db $08 $0b $1a $24
 	.db $f8 $08 $1c $01
 
-oamData4d787:
+interactionOamData4d787:
 	.db $05
 	.db $07 $fa $1a $04
 	.db $08 $00 $0c $00
@@ -2723,7 +2718,7 @@ oamData4d787:
 	.db $07 $0c $1a $24
 	.db $f8 $08 $1e $01
 
-oamData4d79c:
+interactionOamData4d79c:
 	.db $05
 	.db $08 $0f $1a $24
 	.db $08 $00 $0a $20
@@ -2731,7 +2726,7 @@ oamData4d79c:
 	.db $08 $fd $1a $04
 	.db $f8 $00 $1c $21
 
-oamData4d7b1:
+interactionOamData4d7b1:
 	.db $05
 	.db $07 $0e $1a $24
 	.db $08 $00 $0e $20
@@ -2739,7 +2734,7 @@ oamData4d7b1:
 	.db $07 $fc $1a $04
 	.db $f8 $00 $1e $21
 
-oamData4d7c6:
+interactionOamData4d7c6:
 	.db $05
 	.db $11 $fa $08 $00
 	.db $f8 $00 $00 $00
@@ -2747,7 +2742,7 @@ oamData4d7c6:
 	.db $08 $00 $04 $00
 	.db $08 $08 $06 $00
 
-oamData4d7db:
+interactionOamData4d7db:
 	.db $05
 	.db $12 $fb $08 $00
 	.db $f8 $00 $02 $20
@@ -2755,7 +2750,7 @@ oamData4d7db:
 	.db $08 $00 $06 $20
 	.db $08 $08 $04 $20
 
-oamData4d7f0:
+interactionOamData4d7f0:
 	.db $05
 	.db $08 $f0 $1e $04
 	.db $08 $f8 $20 $04
@@ -2763,7 +2758,7 @@ oamData4d7f0:
 	.db $08 $08 $24 $04
 	.db $08 $10 $26 $04
 
-oamData4d805:
+interactionOamData4d805:
 	.db $05
 	.db $f4 $05 $00 $03
 	.db $04 $fd $02 $01
@@ -2771,7 +2766,7 @@ oamData4d805:
 	.db $08 $fe $06 $00
 	.db $08 $06 $08 $00
 
-oamData4d81a:
+interactionOamData4d81a:
 	.db $05
 	.db $f4 $04 $00 $03
 	.db $04 $fc $02 $01
@@ -2779,7 +2774,7 @@ oamData4d81a:
 	.db $08 $fe $06 $00
 	.db $08 $06 $08 $00
 
-oamData4d82f:
+interactionOamData4d82f:
 	.db $05
 	.db $f4 $03 $00 $23
 	.db $04 $0b $02 $21
@@ -2787,7 +2782,7 @@ oamData4d82f:
 	.db $08 $0a $06 $20
 	.db $08 $02 $08 $20
 
-oamData4d844:
+interactionOamData4d844:
 	.db $05
 	.db $f4 $04 $00 $23
 	.db $04 $0c $02 $21
@@ -2795,7 +2790,7 @@ oamData4d844:
 	.db $08 $0a $06 $20
 	.db $08 $02 $08 $20
 
-oamData4d859:
+interactionOamData4d859:
 	.db $05
 	.db $0a $f8 $10 $04
 	.db $0a $00 $10 $24
@@ -2803,7 +2798,7 @@ oamData4d859:
 	.db $08 $02 $0c $00
 	.db $08 $0a $0e $00
 
-oamData4d86e:
+interactionOamData4d86e:
 	.db $05
 	.db $0a $f0 $10 $04
 	.db $0a $f8 $10 $24
@@ -2811,7 +2806,7 @@ oamData4d86e:
 	.db $08 $08 $0a $00
 	.db $07 $f9 $10 $04
 
-oamData4d883:
+interactionOamData4d883:
 	.db $05
 	.db $0a $e7 $10 $04
 	.db $0a $ef $10 $24
@@ -2819,7 +2814,7 @@ oamData4d883:
 	.db $08 $07 $0a $00
 	.db $07 $f8 $10 $04
 
-oamData4d898:
+interactionOamData4d898:
 	.db $05
 	.db $0c $c9 $40 $01
 	.db $0c $db $42 $01
@@ -2827,7 +2822,7 @@ oamData4d898:
 	.db $0c $fe $46 $01
 	.db $0c $10 $48 $01
 
-oamData4d8ad:
+interactionOamData4d8ad:
 	.db $05
 	.db $10 $dd $14 $00
 	.db $10 $e5 $30 $00
@@ -2835,14 +2830,14 @@ oamData4d8ad:
 	.db $10 $f5 $1e $00
 	.db $10 $fb $10 $00
 
-oamData4d8c2:
+interactionOamData4d8c2:
 	.db $04
 	.db $ff $00 $34 $03
 	.db $ff $08 $36 $03
 	.db $08 $00 $32 $20
 	.db $08 $08 $30 $20
 
-oamData4d8d3:
+interactionOamData4d8d3:
 	.db $05
 	.db $0b $ff $1a $01
 	.db $05 $09 $1c $05
@@ -2850,7 +2845,7 @@ oamData4d8d3:
 	.db $08 $08 $18 $02
 	.db $f9 $05 $1e $02
 
-oamData4d8e8:
+interactionOamData4d8e8:
 	.db $05
 	.db $04 $0a $1c $25
 	.db $0b $ff $1a $21
@@ -2858,7 +2853,7 @@ oamData4d8e8:
 	.db $08 $00 $18 $22
 	.db $f9 $03 $1e $22
 
-oamData4d8fd:
+interactionOamData4d8fd:
 	.db $05
 	.db $05 $ff $1c $25
 	.db $0b $09 $1a $21
@@ -2866,7 +2861,7 @@ oamData4d8fd:
 	.db $08 $00 $18 $22
 	.db $f9 $03 $1e $22
 
-oamData4d912:
+interactionOamData4d912:
 	.db $05
 	.db $0b $09 $1a $01
 	.db $04 $fe $1c $05
@@ -2874,7 +2869,7 @@ oamData4d912:
 	.db $08 $08 $18 $02
 	.db $f9 $05 $1e $02
 
-oamData4d927:
+interactionOamData4d927:
 	.db $06
 	.db $08 $f0 $0a $00
 	.db $08 $18 $0a $20
@@ -2883,7 +2878,7 @@ oamData4d927:
 	.db $08 $f8 $0c $00
 	.db $08 $10 $0c $00
 
-oamData4d940:
+interactionOamData4d940:
 	.db $06
 	.db $00 $fc $00 $00
 	.db $00 $04 $02 $00
@@ -2892,7 +2887,7 @@ oamData4d940:
 	.db $10 $04 $08 $00
 	.db $10 $0c $0a $00
 
-oamData4d959:
+interactionOamData4d959:
 	.db $06
 	.db $08 $00 $06 $00
 	.db $08 $08 $06 $60
@@ -2901,7 +2896,7 @@ oamData4d959:
 	.db $08 $0c $00 $00
 	.db $08 $fc $00 $00
 
-oamData4d972:
+interactionOamData4d972:
 	.db $06
 	.db $08 $00 $06 $40
 	.db $08 $08 $06 $20
@@ -2910,7 +2905,7 @@ oamData4d972:
 	.db $0e $fe $00 $00
 	.db $02 $0a $00 $00
 
-oamData4d98b:
+interactionOamData4d98b:
 	.db $06
 	.db $08 $f8 $02 $00
 	.db $08 $00 $04 $00
@@ -2919,7 +2914,7 @@ oamData4d98b:
 	.db $f8 $00 $00 $00
 	.db $f8 $08 $00 $20
 
-oamData4d9a4:
+interactionOamData4d9a4:
 	.db $06
 	.db $08 $f8 $00 $03
 	.db $08 $00 $02 $03
@@ -2928,7 +2923,7 @@ oamData4d9a4:
 	.db $08 $08 $06 $01
 	.db $08 $10 $08 $01
 
-oamData4d9bd:
+interactionOamData4d9bd:
 	.db $06
 	.db $08 $f8 $00 $03
 	.db $08 $00 $02 $03
@@ -2937,8 +2932,7 @@ oamData4d9bd:
 	.db $08 $08 $0c $01
 	.db $08 $10 $08 $01
 
-; WARNING: unreferenced data
-oamData4d9d6:
+interactionOamData4d9d6: ; Unused
 	.db $06
 	.db $08 $f0 $00 $00
 	.db $08 $f8 $02 $00
@@ -2947,8 +2941,7 @@ oamData4d9d6:
 	.db $08 $00 $06 $00
 	.db $08 $08 $08 $00
 
-; WARNING: unreferenced data
-oamData4d9ef:
+interactionOamData4d9ef: ; Unused
 	.db $06
 	.db $08 $f0 $00 $00
 	.db $08 $f8 $02 $00
@@ -2957,7 +2950,7 @@ oamData4d9ef:
 	.db $08 $00 $0c $00
 	.db $08 $08 $08 $00
 
-oamData4da08:
+interactionOamData4da08:
 	.db $06
 	.db $08 $00 $04 $00
 	.db $08 $08 $06 $00
@@ -2966,7 +2959,7 @@ oamData4da08:
 	.db $03 $fc $10 $04
 	.db $03 $04 $10 $24
 
-oamData4da21:
+interactionOamData4da21:
 	.db $06
 	.db $08 $00 $06 $20
 	.db $08 $08 $04 $20
@@ -2975,7 +2968,7 @@ oamData4da21:
 	.db $03 $fc $10 $04
 	.db $03 $04 $10 $24
 
-oamData4da3a:
+interactionOamData4da3a:
 	.db $06
 	.db $0a $05 $10 $04
 	.db $0a $0d $10 $24
@@ -2984,7 +2977,7 @@ oamData4da3a:
 	.db $09 $0b $10 $04
 	.db $09 $13 $10 $24
 
-oamData4da53:
+interactionOamData4da53:
 	.db $06
 	.db $0a $04 $10 $04
 	.db $0a $0c $10 $24
@@ -2993,7 +2986,7 @@ oamData4da53:
 	.db $09 $0b $10 $04
 	.db $09 $13 $10 $24
 
-oamData4da6c:
+interactionOamData4da6c:
 	.db $06
 	.db $0c $04 $10 $04
 	.db $0c $0c $10 $24
@@ -3002,7 +2995,7 @@ oamData4da6c:
 	.db $08 $00 $00 $00
 	.db $08 $08 $02 $00
 
-oamData4da85:
+interactionOamData4da85:
 	.db $06
 	.db $0c $04 $10 $04
 	.db $0c $0c $10 $24
@@ -3011,7 +3004,7 @@ oamData4da85:
 	.db $08 $00 $02 $20
 	.db $08 $08 $00 $20
 
-oamData4da9e:
+interactionOamData4da9e:
 	.db $06
 	.db $09 $fc $10 $04
 	.db $09 $04 $10 $24
@@ -3020,7 +3013,7 @@ oamData4da9e:
 	.db $0a $f9 $10 $04
 	.db $0a $01 $10 $24
 
-oamData4dab7:
+interactionOamData4dab7:
 	.db $06
 	.db $09 $fc $10 $04
 	.db $09 $04 $10 $24
@@ -3029,7 +3022,7 @@ oamData4dab7:
 	.db $0a $fa $10 $04
 	.db $0a $02 $10 $24
 
-oamData4dad0:
+interactionOamData4dad0:
 	.db $06
 	.db $08 $f9 $08 $00
 	.db $00 $0a $08 $60
@@ -3038,7 +3031,7 @@ oamData4dad0:
 	.db $00 $02 $08 $00
 	.db $0c $0d $08 $60
 
-oamData4dae9:
+interactionOamData4dae9:
 	.db $06
 	.db $09 $00 $2c $09
 	.db $09 $08 $2e $09
@@ -3047,7 +3040,7 @@ oamData4dae9:
 	.db $19 $00 $26 $0a
 	.db $19 $08 $28 $0a
 
-oamData4db02:
+interactionOamData4db02:
 	.db $06
 	.db $09 $00 $1e $0a
 	.db $09 $08 $1e $2a
@@ -3056,7 +3049,7 @@ oamData4db02:
 	.db $09 $00 $30 $09
 	.db $09 $08 $32 $09
 
-oamData4db1b:
+interactionOamData4db1b:
 	.db $06
 	.db $19 $00 $42 $0a
 	.db $19 $08 $44 $0a
@@ -3065,7 +3058,7 @@ oamData4db1b:
 	.db $09 $00 $34 $09
 	.db $09 $08 $36 $09
 
-oamData4db34:
+interactionOamData4db34:
 	.db $06
 	.db $09 $00 $22 $0a
 	.db $09 $08 $22 $2a
@@ -3074,7 +3067,7 @@ oamData4db34:
 	.db $19 $00 $46 $0a
 	.db $19 $08 $48 $0a
 
-oamData4db4d:
+interactionOamData4db4d:
 	.db $06
 	.db $0b $00 $24 $0a
 	.db $0b $08 $24 $2a
@@ -3083,7 +3076,7 @@ oamData4db4d:
 	.db $1b $00 $4a $0a
 	.db $1b $08 $4c $0a
 
-oamData4db66:
+interactionOamData4db66:
 	.db $06
 	.db $f8 $00 $00 $00
 	.db $08 $00 $00 $00
@@ -3092,7 +3085,7 @@ oamData4db66:
 	.db $08 $08 $00 $20
 	.db $18 $08 $00 $20
 
-oamData4db7f:
+interactionOamData4db7f:
 	.db $06
 	.db $08 $f0 $00 $00
 	.db $08 $f8 $00 $20
@@ -3101,7 +3094,7 @@ oamData4db7f:
 	.db $08 $10 $00 $00
 	.db $08 $18 $00 $20
 
-oamData4db98:
+interactionOamData4db98:
 	.db $06
 	.db $04 $fc $00 $00
 	.db $04 $04 $02 $00
@@ -3110,7 +3103,7 @@ oamData4db98:
 	.db $0c $04 $02 $40
 	.db $0c $0c $00 $60
 
-oamData4dbb1:
+interactionOamData4dbb1:
 	.db $06
 	.db $10 $10 $0a $20
 	.db $10 $08 $0c $20
@@ -3119,7 +3112,7 @@ oamData4dbb1:
 	.db $00 $00 $0e $00
 	.db $00 $08 $0e $20
 
-oamData4dbca:
+interactionOamData4dbca:
 	.db $06
 	.db $10 $10 $0a $20
 	.db $10 $08 $0c $20
@@ -3128,7 +3121,7 @@ oamData4dbca:
 	.db $00 $00 $10 $00
 	.db $00 $08 $10 $20
 
-oamData4dbe3:
+interactionOamData4dbe3:
 	.db $06
 	.db $0f $0f $0a $20
 	.db $0f $07 $0c $20
@@ -3137,7 +3130,7 @@ oamData4dbe3:
 	.db $00 $00 $12 $00
 	.db $00 $08 $12 $20
 
-oamData4dbfc:
+interactionOamData4dbfc:
 	.db $06
 	.db $10 $0f $0a $20
 	.db $10 $07 $0c $20
@@ -3146,7 +3139,7 @@ oamData4dbfc:
 	.db $00 $00 $10 $00
 	.db $00 $08 $10 $20
 
-oamData4dc15:
+interactionOamData4dc15:
 	.db $06
 	.db $10 $0f $0a $20
 	.db $10 $07 $0c $20
@@ -3155,7 +3148,7 @@ oamData4dc15:
 	.db $00 $00 $10 $00
 	.db $00 $08 $10 $20
 
-oamData4dc2e:
+interactionOamData4dc2e:
 	.db $06
 	.db $10 $f8 $0a $00
 	.db $10 $00 $0c $00
@@ -3164,7 +3157,7 @@ oamData4dc2e:
 	.db $00 $00 $10 $00
 	.db $00 $08 $10 $20
 
-oamData4dc47:
+interactionOamData4dc47:
 	.db $06
 	.db $10 $0f $0a $20
 	.db $10 $07 $0c $20
@@ -3173,7 +3166,7 @@ oamData4dc47:
 	.db $00 $00 $0e $00
 	.db $00 $08 $0e $20
 
-oamData4dc60:
+interactionOamData4dc60:
 	.db $06
 	.db $08 $f0 $00 $00
 	.db $08 $f8 $02 $00
@@ -3182,7 +3175,7 @@ oamData4dc60:
 	.db $08 $10 $00 $00
 	.db $08 $18 $02 $00
 
-oamData4dc79:
+interactionOamData4dc79:
 	.db $06
 	.db $f8 $00 $00 $00
 	.db $f8 $08 $02 $00
@@ -3191,7 +3184,7 @@ oamData4dc79:
 	.db $18 $00 $00 $00
 	.db $18 $08 $02 $00
 
-oamData4dc92:
+interactionOamData4dc92:
 	.db $06
 	.db $00 $fc $02 $01
 	.db $00 $04 $04 $01
@@ -3200,7 +3193,7 @@ oamData4dc92:
 	.db $10 $04 $04 $41
 	.db $10 $0c $02 $61
 
-oamData4dcab:
+interactionOamData4dcab:
 	.db $06
 	.db $10 $d8 $18 $00
 	.db $10 $de $10 $00
@@ -3209,7 +3202,7 @@ oamData4dcab:
 	.db $10 $f3 $02 $00
 	.db $10 $fb $08 $00
 
-oamData4dcc4:
+interactionOamData4dcc4:
 	.db $06
 	.db $10 $d8 $00 $00
 	.db $10 $e0 $24 $00
@@ -3218,7 +3211,7 @@ oamData4dcc4:
 	.db $10 $f7 $36 $00
 	.db $10 $fe $1a $00
 
-oamData4dcdd:
+interactionOamData4dcdd:
 	.db $0a
 	.db $10 $c8 $40 $01
 	.db $10 $d0 $42 $01
@@ -3231,7 +3224,7 @@ oamData4dcdd:
 	.db $10 $08 $50 $01
 	.db $10 $10 $52 $01
 
-oamData4dd06:
+interactionOamData4dd06:
 	.db $0a
 	.db $10 $c8 $40 $01
 	.db $10 $d0 $42 $01
@@ -3244,7 +3237,7 @@ oamData4dd06:
 	.db $10 $08 $50 $01
 	.db $10 $10 $52 $01
 
-oamData4dd2f:
+interactionOamData4dd2f:
 	.db $06
 	.db $10 $d9 $18 $00
 	.db $10 $e1 $38 $00
@@ -3253,7 +3246,7 @@ oamData4dd2f:
 	.db $10 $f9 $14 $00
 	.db $10 $ff $10 $00
 
-oamData4dd48:
+interactionOamData4dd48:
 	.db $06
 	.db $10 $d8 $30 $00
 	.db $10 $e0 $1c $00
@@ -3262,7 +3255,7 @@ oamData4dd48:
 	.db $10 $f8 $1e $00
 	.db $10 $00 $1c $00
 
-oamData4dd61:
+interactionOamData4dd61:
 	.db $06
 	.db $f8 $fa $00 $00
 	.db $f8 $02 $02 $00
@@ -3271,7 +3264,7 @@ oamData4dd61:
 	.db $08 $02 $08 $00
 	.db $08 $0a $0a $00
 
-oamData4dd7a:
+interactionOamData4dd7a:
 	.db $06
 	.db $f8 $fa $00 $00
 	.db $f8 $02 $02 $00
@@ -3280,7 +3273,7 @@ oamData4dd7a:
 	.db $08 $02 $08 $00
 	.db $08 $0a $0e $00
 
-oamData4dd93:
+interactionOamData4dd93:
 	.db $07
 	.db $f0 $fc $40 $00
 	.db $f0 $04 $42 $00
@@ -3290,7 +3283,7 @@ oamData4dd93:
 	.db $00 $0b $4a $00
 	.db $00 $13 $4c $00
 
-oamData4ddb0:
+interactionOamData4ddb0:
 	.db $07
 	.db $f0 $fc $4e $00
 	.db $f0 $04 $50 $00
@@ -3300,7 +3293,7 @@ oamData4ddb0:
 	.db $00 $0b $58 $00
 	.db $00 $13 $5a $00
 
-oamData4ddcd:
+interactionOamData4ddcd:
 	.db $08
 	.db $0c $c8 $40 $01
 	.db $0c $d1 $42 $01
@@ -3311,7 +3304,7 @@ oamData4ddcd:
 	.db $0c $02 $4a $01
 	.db $0c $0d $60 $01
 
-oamData4ddee:
+interactionOamData4ddee:
 	.db $07
 	.db $fb $14 $68 $05
 	.db $01 $06 $64 $03
@@ -3321,7 +3314,7 @@ oamData4ddee:
 	.db $06 $00 $24 $02
 	.db $06 $08 $26 $02
 
-oamData4de0b:
+interactionOamData4de0b:
 	.db $07
 	.db $fb $14 $68 $05
 	.db $01 $06 $64 $03
@@ -3331,7 +3324,7 @@ oamData4de0b:
 	.db $06 $08 $24 $22
 	.db $06 $00 $26 $22
 
-oamData4de28:
+interactionOamData4de28:
 	.db $07
 	.db $18 $f0 $00 $06
 	.db $20 $f8 $02 $06
@@ -3341,7 +3334,7 @@ oamData4de28:
 	.db $10 $00 $0a $07
 	.db $10 $08 $0c $07
 
-oamData4de45:
+interactionOamData4de45:
 	.db $08
 	.db $fd $f5 $00 $00
 	.db $fd $fd $02 $00
@@ -3352,7 +3345,7 @@ oamData4de45:
 	.db $13 $13 $00 $60
 	.db $13 $0b $02 $60
 
-oamData4de66:
+interactionOamData4de66:
 	.db $08
 	.db $00 $f8 $00 $00
 	.db $00 $00 $00 $20
@@ -3363,7 +3356,7 @@ oamData4de66:
 	.db $10 $08 $00 $00
 	.db $10 $10 $00 $20
 
-oamData4de87:
+interactionOamData4de87:
 	.db $08
 	.db $00 $f8 $00 $00
 	.db $00 $00 $02 $00
@@ -3374,7 +3367,7 @@ oamData4de87:
 	.db $10 $08 $02 $60
 	.db $10 $10 $00 $60
 
-oamData4dea8:
+interactionOamData4dea8:
 	.db $08
 	.db $01 $f9 $00 $01
 	.db $01 $01 $02 $01
@@ -3385,7 +3378,7 @@ oamData4dea8:
 	.db $11 $07 $02 $61
 	.db $11 $0f $00 $61
 
-oamData4dec9:
+interactionOamData4dec9:
 	.db $08
 	.db $00 $f8 $00 $00
 	.db $00 $00 $02 $00
@@ -3396,7 +3389,7 @@ oamData4dec9:
 	.db $10 $08 $02 $60
 	.db $10 $10 $00 $60
 
-oamData4deea:
+interactionOamData4deea:
 	.db $08
 	.db $00 $f8 $08 $00
 	.db $00 $00 $0a $00
@@ -3407,7 +3400,7 @@ oamData4deea:
 	.db $10 $08 $0a $60
 	.db $10 $10 $08 $60
 
-oamData4df0b:
+interactionOamData4df0b:
 	.db $08
 	.db $00 $f8 $10 $00
 	.db $00 $00 $12 $00
@@ -3418,7 +3411,7 @@ oamData4df0b:
 	.db $10 $08 $12 $60
 	.db $10 $10 $10 $60
 
-oamData4df2c:
+interactionOamData4df2c:
 	.db $08
 	.db $08 $e0 $04 $00
 	.db $08 $e8 $06 $00
@@ -3429,7 +3422,7 @@ oamData4df2c:
 	.db $00 $30 $00 $20
 	.db $00 $28 $02 $20
 
-oamData4df4d:
+interactionOamData4df4d:
 	.db $08
 	.db $08 $e0 $0c $00
 	.db $08 $e8 $0e $00
@@ -3440,7 +3433,7 @@ oamData4df4d:
 	.db $00 $30 $08 $20
 	.db $00 $28 $0a $20
 
-oamData4df6e:
+interactionOamData4df6e:
 	.db $08
 	.db $f4 $00 $0a $06
 	.db $02 $00 $06 $05
@@ -3451,7 +3444,7 @@ oamData4df6e:
 	.db $f4 $08 $0a $26
 	.db $02 $08 $06 $25
 
-oamData4df8f:
+interactionOamData4df8f:
 	.db $08
 	.db $00 $fb $08 $00
 	.db $03 $11 $08 $60
@@ -3462,7 +3455,7 @@ oamData4df8f:
 	.db $0d $ff $08 $60
 	.db $10 $05 $08 $00
 
-oamData4dfb0:
+interactionOamData4dfb0:
 	.db $08
 	.db $fe $0f $0a $20
 	.db $0e $11 $0a $20
@@ -3473,7 +3466,7 @@ oamData4dfb0:
 	.db $00 $f6 $0a $40
 	.db $10 $f8 $0a $40
 
-oamData4dfd1:
+interactionOamData4dfd1:
 	.db $08
 	.db $11 $fd $0c $40
 	.db $06 $f8 $0c $40
@@ -3484,7 +3477,7 @@ oamData4dfd1:
 	.db $0b $10 $0c $20
 	.db $ff $0b $0c $20
 
-oamData4dff2:
+interactionOamData4dff2:
 	.db $08
 	.db $01 $fa $02 $02
 	.db $01 $01 $04 $02
@@ -3495,7 +3488,7 @@ oamData4dff2:
 	.db $0f $0e $02 $62
 	.db $0f $07 $04 $62
 
-oamData4e013:
+interactionOamData4e013:
 	.db $08
 	.db $00 $f8 $02 $02
 	.db $00 $00 $04 $02
@@ -3506,7 +3499,7 @@ oamData4e013:
 	.db $10 $10 $02 $62
 	.db $10 $08 $04 $62
 
-oamData4e034:
+interactionOamData4e034:
 	.db $08
 	.db $00 $f8 $02 $02
 	.db $00 $00 $04 $02
@@ -3517,7 +3510,7 @@ oamData4e034:
 	.db $10 $10 $02 $62
 	.db $10 $08 $04 $62
 
-oamData4e055:
+interactionOamData4e055:
 	.db $08
 	.db $04 $00 $1a $04
 	.db $04 $08 $1c $04
@@ -3528,7 +3521,7 @@ oamData4e055:
 	.db $f8 $0c $10 $21
 	.db $08 $0c $14 $21
 
-oamData4e076:
+interactionOamData4e076:
 	.db $08
 	.db $04 $08 $1a $24
 	.db $04 $00 $1c $24
@@ -3539,7 +3532,7 @@ oamData4e076:
 	.db $f8 $0c $10 $21
 	.db $08 $0c $14 $21
 
-oamData4e097:
+interactionOamData4e097:
 	.db $08
 	.db $04 $00 $18 $04
 	.db $04 $08 $18 $24
@@ -3550,7 +3543,7 @@ oamData4e097:
 	.db $f8 $0c $10 $21
 	.db $08 $0c $14 $21
 
-oamData4e0b8:
+interactionOamData4e0b8:
 	.db $08
 	.db $02 $fa $0c $00
 	.db $02 $02 $0c $20
@@ -3561,7 +3554,7 @@ oamData4e0b8:
 	.db $0a $06 $0c $00
 	.db $0a $0e $0c $20
 
-oamData4e0d9:
+interactionOamData4e0d9:
 	.db $08
 	.db $00 $f8 $0e $00
 	.db $00 $00 $0e $20
@@ -3572,7 +3565,7 @@ oamData4e0d9:
 	.db $10 $08 $0e $00
 	.db $10 $10 $0e $20
 
-oamData4e0fa:
+interactionOamData4e0fa:
 	.db $08
 	.db $f0 $f8 $20 $00
 	.db $f0 $00 $22 $00
@@ -3583,7 +3576,7 @@ oamData4e0fa:
 	.db $00 $08 $2c $00
 	.db $00 $10 $2e $00
 
-oamData4e11b:
+interactionOamData4e11b:
 	.db $08
 	.db $f0 $11 $20 $20
 	.db $f0 $09 $22 $20
@@ -3594,7 +3587,7 @@ oamData4e11b:
 	.db $00 $01 $2c $20
 	.db $00 $f9 $2e $20
 
-oamData4e13c:
+interactionOamData4e13c:
 	.db $08
 	.db $f0 $f8 $30 $00
 	.db $f0 $00 $32 $00
@@ -3605,7 +3598,7 @@ oamData4e13c:
 	.db $00 $08 $3c $00
 	.db $00 $10 $3e $00
 
-oamData4e15d:
+interactionOamData4e15d:
 	.db $08
 	.db $f0 $12 $30 $20
 	.db $f0 $0a $32 $20
@@ -3616,7 +3609,7 @@ oamData4e15d:
 	.db $00 $02 $3c $20
 	.db $00 $fa $3e $20
 
-oamData4e17e:
+interactionOamData4e17e:
 	.db $08
 	.db $00 $f8 $00 $00
 	.db $00 $00 $02 $00
@@ -3627,7 +3620,7 @@ oamData4e17e:
 	.db $10 $08 $0c $00
 	.db $10 $10 $0e $00
 
-oamData4e19f:
+interactionOamData4e19f:
 	.db $08
 	.db $00 $10 $00 $20
 	.db $00 $08 $02 $20
@@ -3638,7 +3631,7 @@ oamData4e19f:
 	.db $10 $00 $0c $20
 	.db $10 $f8 $0e $20
 
-oamData4e1c0:
+interactionOamData4e1c0:
 	.db $08
 	.db $00 $f8 $10 $00
 	.db $00 $00 $12 $00
@@ -3649,7 +3642,7 @@ oamData4e1c0:
 	.db $10 $08 $1c $00
 	.db $10 $10 $1e $00
 
-oamData4e1e1:
+interactionOamData4e1e1:
 	.db $08
 	.db $00 $10 $10 $20
 	.db $00 $08 $12 $20
@@ -3660,7 +3653,7 @@ oamData4e1e1:
 	.db $10 $00 $1c $20
 	.db $10 $f8 $1e $20
 
-oamData4e202:
+interactionOamData4e202:
 	.db $08
 	.db $10 $d0 $30 $00
 	.db $10 $d8 $1c $00
@@ -3671,7 +3664,7 @@ oamData4e202:
 	.db $10 $08 $00 $00
 	.db $10 $e0 $34 $00
 
-oamData4e223:
+interactionOamData4e223:
 	.db $08
 	.db $10 $d0 $08 $00
 	.db $10 $d8 $06 $00
@@ -3682,7 +3675,7 @@ oamData4e223:
 	.db $10 $ff $06 $00
 	.db $10 $07 $00 $00
 
-oamData4e244:
+interactionOamData4e244:
 	.db $08
 	.db $10 $d3 $30 $00
 	.db $10 $db $1c $00
@@ -3693,7 +3686,7 @@ oamData4e244:
 	.db $10 $fd $10 $00
 	.db $10 $05 $18 $00
 
-oamData4e265:
+interactionOamData4e265:
 	.db $08
 	.db $10 $d1 $24 $00
 	.db $10 $d9 $0e $00
@@ -3704,7 +3697,7 @@ oamData4e265:
 	.db $10 $f8 $00 $00
 	.db $10 $ff $1a $00
 
-oamData4e286:
+interactionOamData4e286:
 	.db $08
 	.db $10 $d0 $14 $00
 	.db $10 $d6 $10 $00
@@ -3715,7 +3708,7 @@ oamData4e286:
 	.db $10 $fa $1a $00
 	.db $10 $00 $10 $00
 
-oamData4e2a7:
+interactionOamData4e2a7:
 	.db $08
 	.db $10 $d1 $18 $00
 	.db $10 $d9 $38 $00
@@ -3726,7 +3719,7 @@ oamData4e2a7:
 	.db $10 $01 $0e $00
 	.db $10 $07 $10 $00
 
-oamData4e2c8:
+interactionOamData4e2c8:
 	.db $08
 	.db $f8 $e0 $00 $04
 	.db $f8 $e8 $02 $04
@@ -3737,7 +3730,7 @@ oamData4e2c8:
 	.db $f8 $10 $0c $04
 	.db $f8 $18 $0e $04
 
-oamData4e2e9:
+interactionOamData4e2e9:
 	.db $09
 	.db $f0 $00 $00 $07
 	.db $f0 $08 $02 $07
@@ -3749,7 +3742,7 @@ oamData4e2e9:
 	.db $30 $f8 $0c $07
 	.db $f0 $80 $0e $07
 
-oamData4e30e:
+interactionOamData4e30e:
 	.db $09
 	.db $f0 $08 $00 $27
 	.db $f0 $00 $02 $27
@@ -3761,7 +3754,7 @@ oamData4e30e:
 	.db $30 $10 $0c $27
 	.db $f0 $88 $0e $27
 
-oamData4e333:
+interactionOamData4e333:
 	.db $09
 	.db $f8 $07 $1e $25
 	.db $10 $10 $1c $25
@@ -3773,7 +3766,7 @@ oamData4e333:
 	.db $10 $fc $0a $20
 	.db $10 $f4 $0c $20
 
-oamData4e358:
+interactionOamData4e358:
 	.db $09
 	.db $12 $11 $1c $25
 	.db $f9 $08 $1e $25
@@ -3785,7 +3778,7 @@ oamData4e358:
 	.db $10 $fd $18 $20
 	.db $10 $f5 $1a $20
 
-oamData4e37d:
+interactionOamData4e37d:
 	.db $09
 	.db $00 $f7 $10 $00
 	.db $00 $ff $12 $00
@@ -3797,7 +3790,7 @@ oamData4e37d:
 	.db $10 $0f $1e $00
 	.db $f9 $04 $42 $05
 
-oamData4e3a2:
+interactionOamData4e3a2:
 	.db $09
 	.db $00 $f9 $16 $20
 	.db $00 $01 $14 $20
@@ -3809,7 +3802,7 @@ oamData4e3a2:
 	.db $10 $11 $18 $20
 	.db $f9 $04 $42 $25
 
-oamData4e3c7:
+interactionOamData4e3c7:
 	.db $09
 	.db $10 $ce $00 $00
 	.db $10 $d4 $34 $00
@@ -3821,7 +3814,7 @@ oamData4e3c7:
 	.db $10 $fe $0e $00
 	.db $10 $04 $10 $00
 
-oamData4e3ec:
+interactionOamData4e3ec:
 	.db $0a
 	.db $f0 $f8 $00 $06
 	.db $00 $f8 $02 $06
@@ -3834,7 +3827,7 @@ oamData4e3ec:
 	.db $f0 $08 $06 $26
 	.db $00 $08 $08 $26
 
-oamData4e415:
+interactionOamData4e415:
 	.db $0a
 	.db $f0 $f8 $00 $06
 	.db $00 $f8 $02 $06
@@ -3847,7 +3840,7 @@ oamData4e415:
 	.db $f0 $10 $0c $06
 	.db $00 $10 $0e $06
 
-oamData4e43e:
+interactionOamData4e43e:
 	.db $0a
 	.db $f0 $11 $00 $26
 	.db $00 $11 $02 $26
@@ -3860,7 +3853,7 @@ oamData4e43e:
 	.db $f0 $f9 $0c $26
 	.db $00 $f9 $0e $26
 
-oamData4e467:
+interactionOamData4e467:
 	.db $0a
 	.db $f9 $fd $20 $00
 	.db $00 $04 $08 $03
@@ -3873,7 +3866,7 @@ oamData4e467:
 	.db $f0 $14 $18 $23
 	.db $f0 $0c $1a $23
 
-oamData4e490:
+interactionOamData4e490:
 	.db $0a
 	.db $f8 $fd $20 $00
 	.db $ff $04 $08 $03
@@ -3886,7 +3879,7 @@ oamData4e490:
 	.db $f0 $14 $18 $23
 	.db $f0 $0c $1a $23
 
-oamData4e4b9:
+interactionOamData4e4b9:
 	.db $0a
 	.db $10 $c8 $4c $00
 	.db $10 $d0 $4e $00
@@ -3899,7 +3892,7 @@ oamData4e4b9:
 	.db $10 $08 $5c $00
 	.db $10 $10 $5e $00
 
-oamData4e4e2:
+interactionOamData4e4e2:
 	.db $0a
 	.db $20 $dc $24 $00
 	.db $20 $e4 $28 $00
@@ -3912,7 +3905,7 @@ oamData4e4e2:
 	.db $20 $ec $38 $00
 	.db $20 $0c $16 $00
 
-oamData4e50b:
+interactionOamData4e50b:
 	.db $0a
 	.db $0c $c8 $60 $01
 	.db $0c $d0 $62 $01
@@ -3925,7 +3918,7 @@ oamData4e50b:
 	.db $0c $08 $70 $01
 	.db $0c $10 $72 $01
 
-oamData4e534:
+interactionOamData4e534:
 	.db $0a
 	.db $10 $ca $30 $00
 	.db $10 $d0 $34 $00
@@ -3938,7 +3931,7 @@ oamData4e534:
 	.db $10 $08 $2c $00
 	.db $10 $10 $00 $00
 
-oamData4e55d:
+interactionOamData4e55d:
 	.db $0a
 	.db $00 $f8 $02 $06
 	.db $10 $08 $08 $26
@@ -3951,7 +3944,7 @@ oamData4e55d:
 	.db $00 $08 $1a $26
 	.db $00 $00 $04 $06
 
-oamData4e586:
+interactionOamData4e586:
 	.db $0a
 	.db $00 $11 $02 $26
 	.db $10 $01 $08 $06
@@ -3964,7 +3957,7 @@ oamData4e586:
 	.db $00 $01 $1a $06
 	.db $00 $09 $04 $26
 
-oamData4e5af:
+interactionOamData4e5af:
 	.db $0a
 	.db $f0 $00 $00 $06
 	.db $10 $00 $08 $06
@@ -3977,7 +3970,7 @@ oamData4e5af:
 	.db $f0 $08 $00 $26
 	.db $00 $08 $1a $26
 
-oamData4e5d8:
+interactionOamData4e5d8:
 	.db $0a
 	.db $f9 $03 $42 $05
 	.db $10 $02 $40 $05
@@ -3990,7 +3983,7 @@ oamData4e5d8:
 	.db $10 $07 $0c $00
 	.db $10 $0f $0e $00
 
-oamData4e601:
+interactionOamData4e601:
 	.db $0a
 	.db $f9 $05 $42 $25
 	.db $10 $06 $40 $25
@@ -4003,7 +3996,7 @@ oamData4e601:
 	.db $10 $09 $0a $20
 	.db $10 $11 $08 $20
 
-oamData4e62a:
+interactionOamData4e62a:
 	.db $0b
 	.db $f3 $00 $00 $05
 	.db $f3 $08 $02 $05
@@ -4017,7 +4010,7 @@ oamData4e62a:
 	.db $f0 $08 $16 $06
 	.db $e0 $02 $10 $06
 
-oamData4e657:
+interactionOamData4e657:
 	.db $0b
 	.db $10 $cb $30 $00
 	.db $10 $d2 $34 $00
@@ -4031,7 +4024,7 @@ oamData4e657:
 	.db $20 $08 $10 $00
 	.db $20 $f2 $32 $00
 
-oamData4e684:
+interactionOamData4e684:
 	.db $0b
 	.db $10 $c8 $18 $00
 	.db $20 $c8 $40 $00
@@ -4045,7 +4038,7 @@ oamData4e684:
 	.db $20 $08 $50 $00
 	.db $20 $10 $52 $00
 
-oamData4e6b1:
+interactionOamData4e6b1:
 	.db $0b
 	.db $10 $c8 $3a $00
 	.db $20 $10 $3a $00
@@ -4059,7 +4052,7 @@ oamData4e6b1:
 	.db $20 $ff $1a $00
 	.db $20 $07 $06 $00
 
-oamData4e6de:
+interactionOamData4e6de:
 	.db $0c
 	.db $08 $d1 $44 $01
 	.db $08 $df $4a $01
@@ -4074,7 +4067,7 @@ oamData4e6de:
 	.db $18 $f8 $56 $01
 	.db $18 $11 $58 $01
 
-oamData4e70f:
+interactionOamData4e70f:
 	.db $0b
 	.db $f2 $0c $0e $00
 	.db $02 $0c $10 $00
@@ -4088,7 +4081,7 @@ oamData4e70f:
 	.db $06 $fc $00 $00
 	.db $f6 $fc $1a $00
 
-oamData4e73c:
+interactionOamData4e73c:
 	.db $0b
 	.db $f2 $fc $0e $20
 	.db $02 $fc $10 $20
@@ -4102,7 +4095,7 @@ oamData4e73c:
 	.db $06 $0c $00 $20
 	.db $f6 $0c $1a $20
 
-oamData4e769:
+interactionOamData4e769:
 	.db $0c
 	.db $0e $f0 $04 $00
 	.db $0e $f8 $06 $00
@@ -4117,7 +4110,7 @@ oamData4e769:
 	.db $13 $00 $14 $00
 	.db $fd $08 $14 $60
 
-oamData4e79a:
+interactionOamData4e79a:
 	.db $0c
 	.db $02 $f0 $04 $40
 	.db $02 $f8 $06 $40
@@ -4132,7 +4125,7 @@ oamData4e79a:
 	.db $fd $00 $14 $40
 	.db $13 $08 $14 $20
 
-oamData4e7cb:
+interactionOamData4e7cb:
 	.db $0c
 	.db $f8 $f8 $00 $00
 	.db $f8 $00 $02 $00
@@ -4147,7 +4140,7 @@ oamData4e7cb:
 	.db $18 $08 $00 $00
 	.db $18 $10 $02 $00
 
-oamData4e7fc:
+interactionOamData4e7fc:
 	.db $0c
 	.db $01 $f3 $06 $02
 	.db $01 $fa $08 $02
@@ -4162,7 +4155,7 @@ oamData4e7fc:
 	.db $0f $0e $08 $62
 	.db $0f $07 $0a $62
 
-oamData4e82d:
+interactionOamData4e82d:
 	.db $0c
 	.db $00 $f0 $06 $02
 	.db $00 $f8 $08 $02
@@ -4177,7 +4170,7 @@ oamData4e82d:
 	.db $10 $10 $08 $62
 	.db $10 $08 $0a $62
 
-oamData4e85e:
+interactionOamData4e85e:
 	.db $0c
 	.db $ff $ed $06 $02
 	.db $ff $f6 $08 $02
@@ -4192,7 +4185,7 @@ oamData4e85e:
 	.db $11 $12 $08 $62
 	.db $11 $09 $0a $62
 
-oamData4e88f:
+interactionOamData4e88f:
 	.db $0c
 	.db $f8 $fd $20 $00
 	.db $ff $04 $08 $03
@@ -4207,7 +4200,7 @@ oamData4e88f:
 	.db $f3 $14 $26 $23
 	.db $f3 $0c $28 $23
 
-oamData4e8c0:
+interactionOamData4e8c0:
 	.db $0d
 	.db $4d $25 $12 $00
 	.db $4d $2d $14 $00
@@ -4223,7 +4216,7 @@ oamData4e8c0:
 	.db $3a $f6 $02 $00
 	.db $3d $e6 $18 $00
 
-oamData4e8f5:
+interactionOamData4e8f5:
 	.db $0d
 	.db $f8 $fd $20 $00
 	.db $ff $04 $08 $03
@@ -4239,7 +4232,7 @@ oamData4e8f5:
 	.db $08 $04 $0e $03
 	.db $08 $fc $0c $03
 
-oamData4e92a:
+interactionOamData4e92a:
 	.db $0d
 	.db $f8 $fd $20 $00
 	.db $ff $04 $08 $03
@@ -4255,7 +4248,7 @@ oamData4e92a:
 	.db $08 $04 $12 $03
 	.db $08 $0c $10 $23
 
-oamData4e95f:
+interactionOamData4e95f:
 	.db $0d
 	.db $f8 $fd $20 $00
 	.db $ff $04 $08 $03
@@ -4271,7 +4264,7 @@ oamData4e95f:
 	.db $f0 $14 $1c $23
 	.db $f0 $0c $1e $23
 
-oamData4e994:
+interactionOamData4e994:
 	.db $0d
 	.db $f8 $fd $20 $00
 	.db $ff $04 $08 $03
@@ -4287,7 +4280,7 @@ oamData4e994:
 	.db $08 $04 $12 $03
 	.db $08 $0c $10 $23
 
-oamData4e9c9:
+interactionOamData4e9c9:
 	.db $0d
 	.db $10 $c8 $24 $00
 	.db $10 $d0 $0e $00
@@ -4303,7 +4296,7 @@ oamData4e9c9:
 	.db $20 $04 $14 $00
 	.db $20 $0a $10 $00
 
-oamData4e9fe:
+interactionOamData4e9fe:
 	.db $0e
 	.db $ef $08 $06 $05
 	.db $f4 $10 $08 $05
@@ -4320,7 +4313,7 @@ oamData4e9fe:
 	.db $e0 $0e $22 $06
 	.db $f1 $f8 $20 $06
 
-oamData4ea37:
+interactionOamData4ea37:
 	.db $0e
 	.db $ef $08 $06 $05
 	.db $f4 $10 $08 $05
@@ -4337,7 +4330,7 @@ oamData4ea37:
 	.db $f0 $00 $34 $06
 	.db $f0 $08 $36 $06
 
-oamData4ea70:
+interactionOamData4ea70:
 	.db $0e
 	.db $ef $08 $06 $05
 	.db $f4 $10 $08 $05
@@ -4354,7 +4347,7 @@ oamData4ea70:
 	.db $f0 $00 $44 $06
 	.db $f0 $08 $46 $06
 
-oamData4eaa9:
+interactionOamData4eaa9:
 	.db $0e
 	.db $f8 $f8 $0c $04
 	.db $f8 $00 $0e $04
@@ -4371,7 +4364,7 @@ oamData4eaa9:
 	.db $18 $10 $0c $64
 	.db $18 $08 $0e $64
 
-oamData4eae2:
+interactionOamData4eae2:
 	.db $0e
 	.db $f8 $f8 $0c $05
 	.db $f8 $00 $0e $05
@@ -4388,7 +4381,7 @@ oamData4eae2:
 	.db $18 $10 $0c $65
 	.db $18 $08 $0e $65
 
-oamData4eb1b:
+interactionOamData4eb1b:
 	.db $0e
 	.db $10 $c8 $24 $00
 	.db $10 $d0 $0e $00
@@ -4405,7 +4398,7 @@ oamData4eb1b:
 	.db $20 $05 $18 $00
 	.db $20 $0d $00 $00
 
-oamData4eb54:
+interactionOamData4eb54:
 	.db $0f
 	.db $ef $08 $06 $05
 	.db $f4 $10 $08 $05
@@ -4423,7 +4416,7 @@ oamData4eb54:
 	.db $f4 $f8 $3e $06
 	.db $00 $00 $40 $06
 
-oamData4eb91:
+interactionOamData4eb91:
 	.db $0f
 	.db $08 $00 $06 $01
 	.db $08 $08 $08 $02
@@ -4441,7 +4434,7 @@ oamData4eb91:
 	.db $08 $f8 $04 $03
 	.db $28 $e0 $18 $01
 
-oamData4ebce:
+interactionOamData4ebce:
 	.db $10
 	.db $01 $f3 $06 $02
 	.db $01 $fa $08 $02
@@ -4460,7 +4453,7 @@ oamData4ebce:
 	.db $0f $01 $00 $42
 	.db $0f $07 $00 $62
 
-oamData4ec0f:
+interactionOamData4ec0f:
 	.db $10
 	.db $00 $f0 $06 $02
 	.db $00 $f8 $08 $02
@@ -4479,7 +4472,7 @@ oamData4ec0f:
 	.db $10 $08 $0a $62
 	.db $10 $08 $00 $61
 
-oamData4ec50:
+interactionOamData4ec50:
 	.db $0e
 	.db $08 $f5 $52 $04
 	.db $08 $fd $54 $04
@@ -4496,7 +4489,7 @@ oamData4ec50:
 	.db $18 $2d $6a $04
 	.db $18 $35 $6c $04
 
-oamData4ec89:
+interactionOamData4ec89:
 	.db $12
 	.db $15 $f8 $00 $06
 	.db $15 $00 $02 $06
@@ -4517,7 +4510,7 @@ oamData4ec89:
 	.db $23 $13 $4e $28
 	.db $23 $0b $50 $28
 
-oamData4ecd2:
+interactionOamData4ecd2:
 	.db $12
 	.db $15 $f8 $08 $06
 	.db $15 $00 $0a $06
@@ -4538,7 +4531,7 @@ oamData4ecd2:
 	.db $22 $13 $4e $28
 	.db $22 $0b $50 $28
 
-oamData4ed1b:
+interactionOamData4ed1b:
 	.db $12
 	.db $14 $f8 $10 $06
 	.db $14 $00 $12 $06
@@ -4559,7 +4552,7 @@ oamData4ed1b:
 	.db $22 $13 $4e $28
 	.db $22 $0b $50 $28
 
-oamData4ed64:
+interactionOamData4ed64:
 	.db $12
 	.db $17 $f8 $18 $06
 	.db $17 $00 $1a $06
@@ -4580,7 +4573,7 @@ oamData4ed64:
 	.db $25 $13 $4e $28
 	.db $25 $0b $50 $28
 
-oamData4edad:
+interactionOamData4edad:
 	.db $12
 	.db $17 $f8 $20 $06
 	.db $17 $00 $22 $06
@@ -4601,7 +4594,7 @@ oamData4edad:
 	.db $26 $13 $4e $28
 	.db $26 $0b $50 $28
 
-oamData4edf6:
+interactionOamData4edf6:
 	.db $12
 	.db $f8 $f0 $00 $05
 	.db $f8 $f8 $02 $05
@@ -4622,7 +4615,7 @@ oamData4edf6:
 	.db $18 $08 $04 $65
 	.db $08 $08 $0a $05
 
-oamData4ee3f:
+interactionOamData4ee3f:
 	.db $14
 	.db $01 $fa $02 $02
 	.db $01 $01 $04 $02
@@ -4645,7 +4638,7 @@ oamData4ee3f:
 	.db $10 $12 $08 $62
 	.db $10 $09 $0a $62
 
-oamData4ee90:
+interactionOamData4ee90:
 	.db $22
 	.db $05 $07 $28 $06
 	.db $05 $0f $2a $06
@@ -4682,7 +4675,7 @@ oamData4ee90:
 	.db $29 $0d $70 $00
 	.db $29 $15 $72 $00
 
-oamData4ef19:
+interactionOamData4ef19:
 	.db $23
 	.db $05 $07 $34 $06
 	.db $05 $0f $36 $06
@@ -4720,7 +4713,7 @@ oamData4ef19:
 	.db $10 $0d $7a $08
 	.db $10 $15 $7c $08
 
-oamData4efa6:
+interactionOamData4efa6:
 	.db $23
 	.db $05 $07 $40 $06
 	.db $05 $0f $42 $06
@@ -4758,7 +4751,7 @@ oamData4efa6:
 	.db $10 $0d $7a $08
 	.db $10 $15 $7c $08
 
-oamData4f033:
+interactionOamData4f033:
 	.db $23
 	.db $05 $07 $4c $06
 	.db $05 $0f $4e $06
@@ -4796,7 +4789,7 @@ oamData4f033:
 	.db $10 $12 $74 $28
 	.db $10 $0a $76 $28
 
-oamData4f0c0:
+interactionOamData4f0c0:
 	.db $22
 	.db $08 $07 $58 $06
 	.db $08 $0f $5a $06
@@ -4833,28 +4826,28 @@ oamData4f0c0:
 	.db $12 $12 $72 $28
 	.db $12 $0a $74 $28
 
-oamData4f149:
+interactionOamData4f149:
 	.db $04
 	.db $00 $00 $00 $00
 	.db $00 $08 $02 $00
 	.db $10 $00 $00 $00
 	.db $10 $08 $02 $00
 
-oamData4f15a:
+interactionOamData4f15a:
 	.db $04
 	.db $00 $00 $04 $00
 	.db $00 $08 $06 $00
 	.db $10 $00 $04 $00
 	.db $10 $08 $06 $00
 
-oamData4f16b:
+interactionOamData4f16b:
 	.db $04
 	.db $00 $00 $08 $00
 	.db $00 $08 $08 $20
 	.db $10 $00 $08 $00
 	.db $10 $08 $08 $20
 
-oamData4f17c:
+interactionOamData4f17c:
 	.db $06
 	.db $f8 $00 $00 $00
 	.db $f8 $08 $02 $00
@@ -4863,7 +4856,7 @@ oamData4f17c:
 	.db $18 $00 $00 $00
 	.db $18 $08 $02 $00
 
-oamData4f195:
+interactionOamData4f195:
 	.db $06
 	.db $f8 $00 $04 $00
 	.db $f8 $08 $06 $00
@@ -4872,7 +4865,7 @@ oamData4f195:
 	.db $18 $00 $04 $00
 	.db $18 $08 $06 $00
 
-oamData4f1ae:
+interactionOamData4f1ae:
 	.db $06
 	.db $f8 $00 $08 $00
 	.db $f8 $08 $08 $20
@@ -4881,7 +4874,7 @@ oamData4f1ae:
 	.db $18 $00 $08 $00
 	.db $18 $08 $08 $20
 
-oamData4f1c7:
+interactionOamData4f1c7:
 	.db $08
 	.db $f0 $00 $00 $00
 	.db $f0 $08 $02 $00
@@ -4892,7 +4885,7 @@ oamData4f1c7:
 	.db $20 $00 $00 $00
 	.db $20 $08 $02 $00
 
-oamData4f1e8:
+interactionOamData4f1e8:
 	.db $08
 	.db $f0 $00 $04 $00
 	.db $f0 $08 $06 $00
@@ -4903,7 +4896,7 @@ oamData4f1e8:
 	.db $20 $00 $04 $00
 	.db $20 $08 $06 $00
 
-oamData4f209:
+interactionOamData4f209:
 	.db $08
 	.db $f0 $00 $08 $00
 	.db $f0 $08 $08 $20
@@ -4914,123 +4907,123 @@ oamData4f209:
 	.db $20 $00 $08 $00
 	.db $20 $08 $08 $20
 
-oamData4f22a:
+interactionOamData4f22a:
 	.db $04
 	.db $01 $05 $14 $05
 	.db $08 $fd $00 $03
 	.db $08 $05 $02 $03
 	.db $08 $0c $00 $23
 
-oamData4f23b:
+interactionOamData4f23b:
 	.db $04
 	.db $02 $05 $14 $05
 	.db $08 $fd $04 $03
 	.db $08 $05 $06 $03
 	.db $08 $0c $04 $23
 
-oamData4f24c:
+interactionOamData4f24c:
 	.db $04
 	.db $02 $05 $14 $05
 	.db $0a $fd $00 $03
 	.db $0a $05 $02 $03
 	.db $0a $0c $00 $23
 
-oamData4f25d:
+interactionOamData4f25d:
 	.db $04
 	.db $02 $05 $14 $05
 	.db $08 $fd $08 $03
 	.db $08 $05 $0a $03
 	.db $08 $0c $08 $23
 
-oamData4f26e:
+interactionOamData4f26e:
 	.db $02
 	.db $05 $00 $0c $03
 	.db $05 $08 $0c $23
 
-oamData4f277:
+interactionOamData4f277:
 	.db $02
 	.db $06 $00 $0c $03
 	.db $06 $08 $0c $23
 
-oamData4f280:
+interactionOamData4f280:
 	.db $04
 	.db $07 $fb $0e $03
 	.db $07 $03 $10 $03
 	.db $07 $0d $0e $23
 	.db $07 $05 $10 $23
 
-oamData4f291:
+interactionOamData4f291:
 	.db $02
 	.db $03 $01 $12 $03
 	.db $03 $07 $12 $23
 
-oamData4f29a:
+interactionOamData4f29a:
 	.db $02
 	.db $04 $00 $12 $03
 	.db $04 $08 $12 $23
 
-oamData4f2a3:
+interactionOamData4f2a3:
 	.db $04
 	.db $02 $05 $14 $05
 	.db $07 $fd $08 $03
 	.db $07 $05 $0a $03
 	.db $07 $0c $08 $23
 
-oamData4f2b4:
+interactionOamData4f2b4:
 	.db $04
 	.db $01 $05 $14 $05
 	.db $08 $fd $00 $03
 	.db $08 $05 $02 $03
 	.db $08 $0c $00 $23
 
-oamData4f2c5:
+interactionOamData4f2c5:
 	.db $04
 	.db $02 $05 $14 $05
 	.db $08 $fd $04 $03
 	.db $08 $05 $06 $03
 	.db $08 $0c $04 $23
 
-oamData4f2d6:
+interactionOamData4f2d6:
 	.db $04
 	.db $03 $05 $14 $05
 	.db $0a $fd $00 $03
 	.db $0a $05 $02 $03
 	.db $0a $0c $00 $23
 
-oamData4f2e7:
+interactionOamData4f2e7:
 	.db $03
 	.db $00 $06 $00 $00
 	.db $10 $08 $0a $00
 	.db $10 $00 $0a $20
 
-oamData4f2f4:
+interactionOamData4f2f4:
 	.db $04
 	.db $10 $08 $0a $00
 	.db $10 $00 $0a $20
 	.db $00 $06 $02 $00
 	.db $00 $0e $04 $00
 
-oamData4f305:
+interactionOamData4f305:
 	.db $04
 	.db $10 $08 $0a $00
 	.db $10 $00 $0a $20
 	.db $00 $06 $06 $00
 	.db $00 $0e $08 $00
 
-oamData4f316:
+interactionOamData4f316:
 	.db $03
 	.db $00 $04 $0c $00
 	.db $10 $00 $0e $00
 	.db $10 $08 $0e $20
 
-oamData4f323:
+interactionOamData4f323:
 	.db $04
 	.db $10 $f8 $10 $00
 	.db $05 $00 $12 $00
 	.db $f8 $08 $14 $00
 	.db $f0 $10 $16 $00
 
-oamData4f334:
+interactionOamData4f334:
 	.db $04
 	.db $10 $10 $10 $20
 	.db $05 $08 $12 $20

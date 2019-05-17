@@ -434,10 +434,8 @@
 
 ; Used in interactionAnimations.s, partAnimations, etc.
 .macro m_AnimationLoop
-
-animationLoopLabel\@:
-	dwbe \1-animationLoopLabel\@-1
-
+	.db (\1-CADDR)>>8
+	.db (\1-CADDR)&$ff
 .endm
 
 

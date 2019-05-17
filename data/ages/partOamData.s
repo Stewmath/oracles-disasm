@@ -1,573 +1,573 @@
-oamData531de:
+partOamData531de:
 	.db $01
 	.db $08 $04 $00 $00
 
-oamData531e3:
+partOamData531e3:
 	.db $01
 	.db $0b $04 $00 $00
 
-oamData531e8:
+partOamData531e8:
 	.db $01
 	.db $08 $04 $00 $01
 
-oamData531ed:
+partOamData531ed:
 	.db $01
 	.db $08 $04 $00 $05
 
-oamData531f2:
+partOamData531f2:
 	.db $01
 	.db $08 $04 $00 $07
 
-oamData531f7:
+partOamData531f7:
 	.db $01
 	.db $08 $04 $00 $20
 
-oamData531fc:
+partOamData531fc:
 	.db $01
 	.db $08 $04 $02 $00
 
-oamData53201:
+partOamData53201:
 	.db $01
 	.db $08 $04 $02 $40
 
-oamData53206:
+partOamData53206:
 	.db $01
 	.db $08 $04 $04 $00
 
-oamData5320b:
+partOamData5320b:
 	.db $01
 	.db $08 $04 $04 $40
 
-oamData53210:
+partOamData53210:
 	.db $01
 	.db $08 $04 $06 $00
 
-oamData53215:
+partOamData53215:
 	.db $01
 	.db $08 $04 $06 $40
 
-oamData5321a:
+partOamData5321a:
 	.db $01
 	.db $08 $04 $08 $00
 
-oamData5321f:
+partOamData5321f:
 	.db $01
 	.db $08 $04 $0a $00
 
-oamData53224:
+partOamData53224:
 	.db $01
 	.db $08 $04 $0c $00
 
-oamData53229:
+partOamData53229:
 	.db $01
 	.db $08 $04 $0c $20
 
-oamData5322e:
+partOamData5322e:
 	.db $01
 	.db $08 $04 $1a $00
 
-oamData53233:
+partOamData53233:
 	.db $02
 	.db $08 $00 $00 $00
 	.db $08 $08 $00 $20
 
-oamData5323c:
+partOamData5323c:
 	.db $02
 	.db $08 $00 $00 $01
 	.db $08 $08 $00 $21
 
-oamData53245:
+partOamData53245:
 	.db $02
 	.db $08 $00 $00 $05
 	.db $08 $08 $00 $25
 
-oamData5324e:
+partOamData5324e:
 	.db $02
 	.db $08 $00 $00 $07
 	.db $08 $08 $00 $27
 
-oamData53257:
+partOamData53257:
 	.db $02
 	.db $08 $00 $00 $00
 	.db $08 $08 $00 $60
 
-oamData53260:
+partOamData53260:
 	.db $02
 	.db $08 $00 $00 $40
 	.db $08 $08 $00 $20
 
-oamData53269:
+partOamData53269:
 	.db $02
 	.db $f8 $06 $00 $00
 	.db $f8 $0e $00 $20
 
-oamData53272:
+partOamData53272:
 	.db $02
 	.db $08 $00 $02 $00
 	.db $08 $08 $02 $20
 
-oamData5327b:
+partOamData5327b:
 	.db $02
 	.db $08 $00 $02 $01
 	.db $08 $08 $02 $21
 
-oamData53284:
+partOamData53284:
 	.db $02
 	.db $08 $00 $02 $07
 	.db $08 $08 $02 $27
 
-oamData5328d:
+partOamData5328d:
 	.db $02
 	.db $08 $00 $02 $40
 	.db $08 $08 $02 $60
 
-oamData53296:
+partOamData53296:
 	.db $02
 	.db $08 $00 $04 $05
 	.db $08 $08 $04 $25
 
-oamData5329f:
+partOamData5329f:
 	.db $02
 	.db $08 $00 $06 $05
 	.db $08 $08 $06 $25
 
-oamData532a8:
+partOamData532a8:
 	.db $02
 	.db $08 $00 $02 $00
 	.db $08 $08 $02 $60
 
-oamData532b1:
+partOamData532b1:
 	.db $02
 	.db $08 $00 $02 $40
 	.db $08 $08 $02 $20
 
-oamData532ba:
+partOamData532ba:
 	.db $02
 	.db $08 $00 $04 $00
 	.db $08 $08 $04 $20
 
-oamData532c3:
+partOamData532c3:
 	.db $02
 	.db $08 $00 $04 $01
 	.db $08 $08 $04 $21
 
-oamData532cc:
+partOamData532cc:
 	.db $02
 	.db $08 $00 $04 $07
 	.db $08 $08 $04 $27
 
-oamData532d5:
+partOamData532d5:
 	.db $02
 	.db $08 $00 $04 $40
 	.db $08 $08 $04 $60
 
-oamData532de:
+partOamData532de:
 	.db $02
 	.db $08 $00 $04 $00
 	.db $08 $08 $04 $60
 
-oamData532e7:
+partOamData532e7:
 	.db $02
 	.db $08 $01 $04 $00
 	.db $08 $07 $04 $60
 
-oamData532f0:
+partOamData532f0:
 	.db $02
 	.db $08 $00 $06 $00
 	.db $08 $08 $06 $20
 
-oamData532f9:
+partOamData532f9:
 	.db $02
 	.db $08 $00 $06 $01
 	.db $08 $08 $06 $21
 
-oamData53302:
+partOamData53302:
 	.db $02
 	.db $08 $00 $06 $07
 	.db $08 $08 $06 $27
 
-oamData5330b:
+partOamData5330b:
 	.db $02
 	.db $08 $00 $06 $40
 	.db $08 $08 $06 $60
 
-oamData53314:
+partOamData53314:
 	.db $02
 	.db $08 $00 $06 $00
 	.db $08 $08 $06 $60
 
-oamData5331d:
+partOamData5331d:
 	.db $02
 	.db $08 $01 $06 $00
 	.db $08 $07 $06 $60
 
-oamData53326:
+partOamData53326:
 	.db $02
 	.db $08 $01 $0e $00
 	.db $08 $07 $10 $00
 
-oamData5332f:
+partOamData5332f:
 	.db $02
 	.db $08 $00 $08 $00
 	.db $08 $08 $08 $20
 
-oamData53338:
+partOamData53338:
 	.db $02
 	.db $08 $00 $08 $01
 	.db $08 $08 $08 $21
 
-oamData53341:
+partOamData53341:
 	.db $02
 	.db $08 $00 $08 $07
 	.db $08 $08 $08 $27
 
-oamData5334a:
+partOamData5334a:
 	.db $02
 	.db $08 $00 $0c $00
 	.db $08 $08 $0c $20
 
-oamData53353:
+partOamData53353:
 	.db $02
 	.db $08 $00 $0c $07
 	.db $08 $08 $0c $27
 
-oamData5335c:
+partOamData5335c:
 	.db $02
 	.db $08 $00 $0e $00
 	.db $08 $08 $0e $20
 
-oamData53365:
+partOamData53365:
 	.db $02
 	.db $08 $00 $00 $00
 	.db $08 $08 $02 $00
 
-oamData5336e:
+partOamData5336e:
 	.db $02
 	.db $08 $00 $00 $03
 	.db $08 $08 $02 $03
 
-oamData53377:
+partOamData53377:
 	.db $02
 	.db $08 $00 $02 $20
 	.db $08 $08 $00 $20
 
-oamData53380:
+partOamData53380:
 	.db $02
 	.db $f8 $04 $02 $00
 	.db $08 $04 $00 $00
 
-oamData53389:
+partOamData53389:
 	.db $02
 	.db $08 $00 $04 $00
 	.db $08 $08 $06 $00
 
-oamData53392:
+partOamData53392:
 	.db $02
 	.db $08 $00 $06 $20
 	.db $08 $08 $04 $20
 
-oamData5339b:
+partOamData5339b:
 	.db $02
 	.db $08 $00 $02 $60
 	.db $08 $08 $00 $60
 
-oamData533a4:
+partOamData533a4:
 	.db $02
 	.db $08 $00 $06 $60
 	.db $08 $08 $04 $60
 
-oamData533ad:
+partOamData533ad:
 	.db $02
 	.db $08 $00 $00 $40
 	.db $08 $08 $02 $40
 
-oamData533b6:
+partOamData533b6:
 	.db $02
 	.db $08 $00 $04 $40
 	.db $08 $08 $06 $40
 
-oamData533bf:
+partOamData533bf:
 	.db $02
 	.db $08 $00 $00 $00
 	.db $08 $08 $00 $00
 
-oamData533c8:
+partOamData533c8:
 	.db $02
 	.db $08 $00 $1c $00
 	.db $08 $08 $1c $20
 
-oamData533d1:
+partOamData533d1:
 	.db $02
 	.db $08 $00 $08 $00
 	.db $08 $08 $0a $00
 
-oamData533da:
+partOamData533da:
 	.db $02
 	.db $08 $00 $0c $00
 	.db $08 $08 $0e $00
 
-oamData533e3:
+partOamData533e3:
 	.db $02
 	.db $08 $00 $10 $00
 	.db $08 $08 $12 $00
 
-oamData533ec:
+partOamData533ec:
 	.db $02
 	.db $08 $00 $02 $00
 	.db $08 $08 $02 $60
 
-oamData533f5:
+partOamData533f5:
 	.db $02
 	.db $08 $00 $02 $01
 	.db $08 $08 $02 $61
 
-oamData533fe:
+partOamData533fe:
 	.db $02
 	.db $08 $00 $02 $40
 	.db $08 $08 $02 $20
 
-oamData53407:
+partOamData53407:
 	.db $02
 	.db $08 $00 $02 $41
 	.db $08 $08 $02 $21
 
-oamData53410:
+partOamData53410:
 	.db $02
 	.db $08 $00 $06 $01
 	.db $08 $08 $06 $21
 
-oamData53419:
+partOamData53419:
 	.db $02
 	.db $08 $00 $0a $00
 	.db $08 $08 $0a $20
 
-oamData53422:
+partOamData53422:
 	.db $02
 	.db $08 $00 $0a $01
 	.db $08 $08 $0a $21
 
-oamData5342b:
+partOamData5342b:
 	.db $02
 	.db $08 $00 $0e $00
 	.db $08 $08 $0e $60
 
-oamData53434:
+partOamData53434:
 	.db $02
 	.db $08 $00 $10 $00
 	.db $08 $08 $10 $60
 
-oamData5343d:
+partOamData5343d:
 	.db $02
 	.db $08 $08 $0e $20
 	.db $08 $00 $0e $40
 
-oamData53446:
+partOamData53446:
 	.db $02
 	.db $08 $08 $10 $20
 	.db $08 $00 $10 $40
 
-oamData5344f:
+partOamData5344f:
 	.db $02
 	.db $08 $00 $06 $40
 	.db $08 $08 $06 $20
 
-oamData53458:
+partOamData53458:
 	.db $03
 	.db $08 $fc $04 $00
 	.db $08 $04 $06 $00
 	.db $08 $0c $04 $20
 
-oamData53465:
+partOamData53465:
 	.db $03
 	.db $08 $fc $02 $00
 	.db $08 $04 $04 $00
 	.db $08 $0c $02 $20
 
-oamData53472:
+partOamData53472:
 	.db $03
 	.db $e8 $04 $04 $00
 	.db $f8 $04 $02 $00
 	.db $08 $04 $00 $00
 
-oamData5347f:
+partOamData5347f:
 	.db $03
 	.db $08 $fc $0c $00
 	.db $08 $04 $0e $00
 	.db $08 $0c $0c $20
 
-oamData5348c:
+partOamData5348c:
 	.db $03
 	.db $01 $f8 $00 $01
 	.db $01 $00 $02 $01
 	.db $01 $08 $04 $01
 
-oamData53499:
+partOamData53499:
 	.db $03
 	.db $01 $10 $00 $21
 	.db $01 $08 $02 $21
 	.db $01 $00 $04 $21
 
-oamData534a6:
+partOamData534a6:
 	.db $03
 	.db $08 $fc $00 $00
 	.db $08 $04 $02 $00
 	.db $08 $0c $04 $00
 
-oamData534b3:
+partOamData534b3:
 	.db $04
 	.db $0e $fc $0c $00
 	.db $0e $04 $0c $20
 	.db $02 $04 $0c $00
 	.db $02 $0c $0c $20
 
-oamData534c4:
+partOamData534c4:
 	.db $04
 	.db $0e $fc $0c $01
 	.db $0e $04 $0c $21
 	.db $02 $04 $0c $01
 	.db $02 $0c $0c $21
 
-oamData534d5:
+partOamData534d5:
 	.db $04
 	.db $00 $f8 $04 $03
 	.db $00 $00 $04 $23
 	.db $10 $08 $04 $03
 	.db $10 $10 $04 $23
 
-oamData534e6:
+partOamData534e6:
 	.db $04
 	.db $08 $f8 $04 $00
 	.db $08 $00 $06 $00
 	.db $08 $08 $06 $20
 	.db $08 $10 $04 $20
 
-oamData534f7:
+partOamData534f7:
 	.db $04
 	.db $06 $01 $00 $00
 	.db $05 $06 $00 $00
 	.db $0b $ff $00 $00
 	.db $0a $05 $00 $00
 
-oamData53508:
+partOamData53508:
 	.db $04
 	.db $04 $ff $00 $01
 	.db $03 $08 $00 $01
 	.db $0d $fd $00 $01
 	.db $0c $07 $00 $01
 
-oamData53519:
+partOamData53519:
 	.db $04
 	.db $02 $fd $00 $07
 	.db $01 $0a $00 $07
 	.db $0d $fc $00 $07
 	.db $0c $09 $00 $07
 
-oamData5352a:
+partOamData5352a:
 	.db $04
 	.db $01 $fc $00 $00
 	.db $00 $0c $00 $00
 	.db $0e $fa $00 $00
 	.db $0d $0b $00 $00
 
-oamData5353b:
+partOamData5353b:
 	.db $04
 	.db $03 $fa $00 $01
 	.db $02 $0e $00 $01
 	.db $10 $f8 $00 $01
 	.db $0f $0d $00 $01
 
-oamData5354c:
+partOamData5354c:
 	.db $04
 	.db $d8 $04 $02 $00
 	.db $e8 $04 $04 $00
 	.db $f8 $04 $02 $00
 	.db $08 $04 $00 $00
 
-oamData5355d:
+partOamData5355d:
 	.db $04
 	.db $e8 $04 $00 $40
 	.db $f8 $04 $02 $00
 	.db $08 $00 $06 $00
 	.db $08 $08 $06 $20
 
-oamData5356e:
+partOamData5356e:
 	.db $04
 	.db $f8 $04 $00 $40
 	.db $08 $fc $08 $00
 	.db $08 $04 $0a $00
 	.db $08 $0c $08 $20
 
-oamData5357f:
+partOamData5357f:
 	.db $04
 	.db $04 $ff $00 $00
 	.db $03 $08 $00 $00
 	.db $0d $fd $00 $00
 	.db $0c $07 $00 $00
 
-oamData53590:
+partOamData53590:
 	.db $04
 	.db $02 $fd $00 $00
 	.db $01 $0a $00 $00
 	.db $0d $fc $00 $00
 	.db $0c $09 $00 $00
 
-oamData535a1:
+partOamData535a1:
 	.db $04
 	.db $03 $fa $00 $00
 	.db $02 $0e $00 $00
 	.db $10 $f8 $00 $00
 	.db $0f $0d $00 $00
 
-oamData535b2:
+partOamData535b2:
 	.db $04
 	.db $f0 $f0 $02 $00
 	.db $f0 $20 $02 $00
 	.db $20 $f0 $02 $00
 	.db $20 $20 $02 $00
 
-oamData535c3:
+partOamData535c3:
 	.db $04
 	.db $f6 $f6 $02 $00
 	.db $f6 $1a $02 $00
 	.db $1a $f6 $02 $00
 	.db $1a $1a $02 $00
 
-oamData535d4:
+partOamData535d4:
 	.db $04
 	.db $fc $fc $02 $00
 	.db $fc $14 $02 $00
 	.db $14 $fc $02 $00
 	.db $14 $14 $02 $00
 
-oamData535e5:
+partOamData535e5:
 	.db $04
 	.db $02 $02 $02 $00
 	.db $02 $0e $02 $00
 	.db $0e $02 $02 $00
 	.db $0e $0e $02 $00
 
-oamData535f6:
+partOamData535f6:
 	.db $04
 	.db $00 $fe $0a $00
 	.db $10 $fe $0c $00
 	.db $00 $0a $0a $20
 	.db $10 $0a $0c $20
 
-oamData53607:
+partOamData53607:
 	.db $04
 	.db $00 $fa $0a $00
 	.db $10 $fa $0c $00
 	.db $00 $0e $0a $20
 	.db $10 $0e $0c $20
 
-oamData53618:
+partOamData53618:
 	.db $04
 	.db $00 $f6 $0a $00
 	.db $10 $f6 $0c $00
 	.db $00 $12 $0a $20
 	.db $10 $12 $0c $20
 
-oamData53629:
+partOamData53629:
 	.db $05
 	.db $c8 $04 $00 $40
 	.db $d8 $04 $02 $00
@@ -575,7 +575,7 @@ oamData53629:
 	.db $f8 $04 $02 $00
 	.db $08 $04 $00 $00
 
-oamData5363e:
+partOamData5363e:
 	.db $05
 	.db $d8 $04 $00 $40
 	.db $e8 $04 $02 $00
@@ -583,7 +583,7 @@ oamData5363e:
 	.db $08 $00 $06 $00
 	.db $08 $08 $06 $20
 
-oamData53653:
+partOamData53653:
 	.db $06
 	.db $08 $00 $0c $00
 	.db $08 $08 $0c $20
@@ -592,7 +592,7 @@ oamData53653:
 	.db $00 $08 $0e $00
 	.db $00 $10 $0e $20
 
-oamData5366c:
+partOamData5366c:
 	.db $06
 	.db $08 $00 $04 $00
 	.db $08 $08 $04 $20
@@ -601,7 +601,7 @@ oamData5366c:
 	.db $00 $08 $06 $00
 	.db $00 $10 $06 $20
 
-oamData53685:
+partOamData53685:
 	.db $06
 	.db $fe $fc $04 $00
 	.db $fe $04 $06 $00
@@ -610,7 +610,7 @@ oamData53685:
 	.db $0c $04 $06 $00
 	.db $0c $0c $08 $00
 
-oamData5369e:
+partOamData5369e:
 	.db $06
 	.db $fc $fc $04 $00
 	.db $fc $04 $06 $00
@@ -619,7 +619,7 @@ oamData5369e:
 	.db $0e $04 $06 $00
 	.db $0e $0c $08 $00
 
-oamData536b7:
+partOamData536b7:
 	.db $06
 	.db $fa $fc $04 $00
 	.db $fa $04 $06 $00
@@ -628,7 +628,7 @@ oamData536b7:
 	.db $10 $04 $06 $00
 	.db $10 $0c $08 $00
 
-oamData536d0:
+partOamData536d0:
 	.db $06
 	.db $fe $fc $08 $20
 	.db $fe $04 $06 $20
@@ -637,7 +637,7 @@ oamData536d0:
 	.db $0c $04 $06 $20
 	.db $0c $0c $04 $20
 
-oamData536e9:
+partOamData536e9:
 	.db $06
 	.db $fc $fc $08 $20
 	.db $fc $04 $06 $20
@@ -646,7 +646,7 @@ oamData536e9:
 	.db $0e $04 $06 $20
 	.db $0e $0c $04 $20
 
-oamData53702:
+partOamData53702:
 	.db $06
 	.db $fa $fc $08 $20
 	.db $fa $04 $06 $20
@@ -655,7 +655,7 @@ oamData53702:
 	.db $10 $04 $06 $20
 	.db $10 $0c $04 $20
 
-oamData5371b:
+partOamData5371b:
 	.db $06
 	.db $00 $fc $06 $00
 	.db $00 $04 $08 $00
@@ -664,7 +664,7 @@ oamData5371b:
 	.db $10 $04 $08 $40
 	.db $10 $0c $06 $60
 
-oamData53734:
+partOamData53734:
 	.db $06
 	.db $00 $fc $06 $01
 	.db $00 $04 $08 $01
@@ -673,7 +673,7 @@ oamData53734:
 	.db $10 $04 $08 $41
 	.db $10 $0c $06 $61
 
-oamData5374d:
+partOamData5374d:
 	.db $06
 	.db $00 $fc $00 $00
 	.db $00 $04 $02 $00
@@ -682,7 +682,7 @@ oamData5374d:
 	.db $00 $0c $00 $20
 	.db $10 $0c $04 $20
 
-oamData53766:
+partOamData53766:
 	.db $06
 	.db $00 $fd $00 $00
 	.db $00 $04 $02 $00
@@ -691,7 +691,7 @@ oamData53766:
 	.db $00 $0b $00 $20
 	.db $10 $0b $04 $20
 
-oamData5377f:
+partOamData5377f:
 	.db $06
 	.db $01 $fd $00 $00
 	.db $01 $04 $02 $00
@@ -700,7 +700,7 @@ oamData5377f:
 	.db $01 $0b $00 $20
 	.db $0f $0b $04 $20
 
-oamData53798:
+partOamData53798:
 	.db $06
 	.db $01 $fc $00 $00
 	.db $01 $04 $02 $00
@@ -709,7 +709,7 @@ oamData53798:
 	.db $01 $0c $00 $20
 	.db $0f $0c $04 $20
 
-oamData537b1:
+partOamData537b1:
 	.db $08
 	.db $10 $f8 $0c $00
 	.db $10 $00 $0c $20
@@ -720,7 +720,7 @@ oamData537b1:
 	.db $10 $08 $0e $00
 	.db $10 $10 $0e $20
 
-oamData537d2:
+partOamData537d2:
 	.db $08
 	.db $00 $f8 $00 $00
 	.db $00 $00 $02 $00
@@ -731,7 +731,7 @@ oamData537d2:
 	.db $10 $08 $02 $60
 	.db $10 $10 $00 $60
 
-oamData537f3:
+partOamData537f3:
 	.db $08
 	.db $fc $f4 $00 $00
 	.db $fc $fc $02 $00
@@ -742,7 +742,7 @@ oamData537f3:
 	.db $14 $0c $02 $60
 	.db $14 $14 $00 $60
 
-oamData53814:
+partOamData53814:
 	.db $08
 	.db $fc $f4 $04 $00
 	.db $fc $fc $04 $20
@@ -753,7 +753,7 @@ oamData53814:
 	.db $14 $0c $04 $00
 	.db $14 $14 $04 $20
 
-oamData53835:
+partOamData53835:
 	.db $08
 	.db $10 $f8 $04 $00
 	.db $10 $00 $04 $20
@@ -764,7 +764,7 @@ oamData53835:
 	.db $10 $08 $06 $00
 	.db $10 $10 $06 $20
 
-oamData53856:
+partOamData53856:
 	.db $08
 	.db $02 $fa $0c $00
 	.db $02 $02 $0c $20
@@ -775,7 +775,7 @@ oamData53856:
 	.db $0a $06 $0c $00
 	.db $0a $0e $0c $20
 
-oamData53877:
+partOamData53877:
 	.db $08
 	.db $00 $f8 $00 $00
 	.db $00 $00 $02 $00
@@ -786,7 +786,7 @@ oamData53877:
 	.db $10 $08 $02 $60
 	.db $10 $10 $00 $60
 
-oamData53898:
+partOamData53898:
 	.db $08
 	.db $00 $f8 $0e $00
 	.db $00 $00 $0e $20
@@ -797,7 +797,7 @@ oamData53898:
 	.db $10 $08 $0e $00
 	.db $10 $10 $0e $20
 
-oamData538b9:
+partOamData538b9:
 	.db $0b
 	.db $ec $fa $06 $01
 	.db $ec $02 $08 $01
@@ -811,7 +811,7 @@ oamData538b9:
 	.db $2c $ff $18 $01
 	.db $2c $07 $1a $01
 
-oamData538e6:
+partOamData538e6:
 	.db $0b
 	.db $ec $0e $06 $21
 	.db $ec $06 $08 $21
@@ -825,7 +825,7 @@ oamData538e6:
 	.db $2c $09 $18 $21
 	.db $2c $01 $1a $21
 
-oamData53913:
+partOamData53913:
 	.db $08
 	.db $f0 $e8 $00 $00
 	.db $f0 $f0 $00 $60
@@ -836,7 +836,7 @@ oamData53913:
 	.db $20 $18 $00 $00
 	.db $20 $20 $00 $60
 
-oamData53934:
+partOamData53934:
 	.db $08
 	.db $f6 $ee $02 $00
 	.db $f6 $f6 $02 $60
@@ -847,7 +847,7 @@ oamData53934:
 	.db $1a $12 $02 $00
 	.db $1a $1a $02 $60
 
-oamData53955:
+partOamData53955:
 	.db $08
 	.db $fc $f4 $00 $00
 	.db $fc $fc $00 $60
@@ -858,7 +858,7 @@ oamData53955:
 	.db $14 $0c $00 $00
 	.db $14 $14 $00 $60
 
-oamData53976:
+partOamData53976:
 	.db $08
 	.db $02 $fa $02 $00
 	.db $02 $02 $02 $60
@@ -869,7 +869,7 @@ oamData53976:
 	.db $0e $06 $02 $00
 	.db $0e $0e $02 $60
 
-oamData53997:
+partOamData53997:
 	.db $08
 	.db $00 $f8 $08 $00
 	.db $00 $00 $0a $00
@@ -880,7 +880,7 @@ oamData53997:
 	.db $0f $0f $08 $60
 	.db $0f $07 $0a $60
 
-oamData539b8:
+partOamData539b8:
 	.db $08
 	.db $00 $f8 $0c $00
 	.db $00 $00 $0e $00
@@ -891,7 +891,7 @@ oamData539b8:
 	.db $0f $0f $0c $60
 	.db $0f $07 $0e $60
 
-oamData539d9:
+partOamData539d9:
 	.db $0c
 	.db $00 $f8 $0c $00
 	.db $00 $00 $0c $20
@@ -906,7 +906,7 @@ oamData539d9:
 	.db $18 $00 $0e $00
 	.db $18 $08 $0e $20
 
-oamData53a0a:
+partOamData53a0a:
 	.db $0c
 	.db $00 $f8 $04 $00
 	.db $00 $00 $04 $20
@@ -921,7 +921,7 @@ oamData53a0a:
 	.db $18 $00 $06 $00
 	.db $18 $08 $06 $20
 
-oamData53a3b:
+partOamData53a3b:
 	.db $10
 	.db $f8 $00 $0c $00
 	.db $f8 $08 $0c $20
@@ -940,7 +940,7 @@ oamData53a3b:
 	.db $14 $0c $0e $00
 	.db $14 $14 $0e $20
 
-oamData53a7c:
+partOamData53a7c:
 	.db $10
 	.db $f8 $00 $04 $00
 	.db $f8 $08 $04 $20
