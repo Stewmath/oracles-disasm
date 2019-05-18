@@ -3172,7 +3172,7 @@ drawAllSpritesUnconditionally:
 	and $c0			; $0e84
 	rlca			; $0e86
 	rlca			; $0e87
-	add $13			; $0e88
+	add BASE_OAM_DATA_BANK			; $0e88
 	setrombank		; $0e8a
 	set 6,h			; $0e8f
 	res 7,h			; $0e91
@@ -175879,6 +175879,9 @@ underWaterSurfaceData_7e53:
 
 .BANK $13 SLOT 1
 .ORG 0
+
+	.define BASE_OAM_DATA_BANK $13
+	.export BASE_OAM_DATA_BANK
 
 	.include "build/data/specialObjectOamData.s"
 	.include "data/itemOamData.s"
