@@ -1663,7 +1663,7 @@ wDungeonMapData: ; $cc3d
 ; 8 bytes of dungeonData copied to here
 	.db
 
-wDungeonFlagsAddressH: ; $cc3d
+wDungeonFlagsAddressH: ; $cc3d/$cc59
 ; The high byte of the dungeon flags (wGroup4Flags/wGroup5Flags)
 	db
 wDungeonWallmasterDestRoom: ; $cc3e

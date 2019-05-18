@@ -247,7 +247,19 @@
 .ifdef ROM_SEASONS
 
 ;;
+; TODO: Is this the same as PARTID_GOPONGA_PROJECTILE?
+; @subid_80{Normal}
+; @subid_81{Low health}
+.define PARTID_MOTHULA_PROJECTILE_1		$31
+
+;;
 .define PARTID_AQUAMENTUS_PROJECTILE		$40
+
 .define PARTID_DODONGO_FIREBALL			$41
+
+;;
+; @subid_80{Normal}
+; @subid_81{Low health}
+.define PARTID_MOTHULA_PROJECTILE_2		$42
 
 .endif

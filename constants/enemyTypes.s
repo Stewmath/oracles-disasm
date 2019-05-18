@@ -752,6 +752,11 @@
 .else; ROM_SEASONS
 
 ;;
+; @subid_80{}
+; @subid_81{}
+.define ENEMYID_MOTHULA_CHILD			$47
+
+;;
 ; @subid_00{Spawner {use this})
 ; @subid_01{Body hitbox + general logic}
 ; @subid_02{All sprites except horn}
