@@ -12,6 +12,10 @@
 ;;
 ; See also INTERACID_VERAN_CUTSCENE_FACE (triggers cutscene for this)
 .define ENEMYID_VERAN_FINAL_FORM		$02
+
+;;
+; @subid_00{Red twinrova}
+; @subid_01{Blue twinrova}
 .define ENEMYID_TWINROVA			$03
 .define ENEMYID_GANON				$04
 .define ENEMYID_05				$05
