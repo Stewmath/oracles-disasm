@@ -1153,12 +1153,12 @@ enemyAnimation335a0:
 	.db $04 $04 $09
 	.db $04 $06 $0c
 	.db $04 $08 $0f
-@loop:
+@enemyAnimation335a0Loop:
 	.db $08 $0a $00
 	.db $08 $08 $00
 	.db $08 $0c $00
 	.db $08 $08 $00
-	m_AnimationLoop @loop
+	m_AnimationLoop @enemyAnimation335a0Loop
 
 enemyAnimation335bd:
 	.db $04 $08 $0f
@@ -1335,20 +1335,20 @@ enemyAnimation336fc:
 
 enemyAnimation3370a:
 	.db $04 $00 $00
-@loop:
+@enemyAnimation3370aLoop:
 	.db $7f $02 $00
-	m_AnimationLoop @loop
+	m_AnimationLoop @enemyAnimation3370aLoop
 
 enemyAnimation33712:
 	.db $08 $00 $00
 	.db $08 $02 $00
 	.db $08 $04 $00
-@loop:
+@enemyAnimation33712Loop:
 	.db $5a $0a $01
 	.db $04 $08 $00
 	.db $04 $06 $00
 	.db $04 $08 $00
-	m_AnimationLoop @loop
+	m_AnimationLoop @enemyAnimation33712Loop
 
 enemyAnimation33729:
 	.db $04 $0c $00
@@ -1473,19 +1473,19 @@ enemyAnimation3380d:
 	.db $7f $06 $ff
 enemyAnimation33819:
 	.db $1e $00 $07
-@loop:
+@enemyAnimation33819Loop:
 	.db $7f $0c $08
-	m_AnimationLoop @loop
+	m_AnimationLoop @enemyAnimation33819Loop
 
 enemyAnimation33821:
 	.db $08 $10 $00
 	.db $08 $0e $00
 	.db $04 $10 $00
 	.db $04 $12 $00
-@loop:
+@enemyAnimation33821Loop:
 	.db $08 $14 $00
 	.db $08 $12 $00
-	m_AnimationLoop @loop
+	m_AnimationLoop @enemyAnimation33821Loop
 
 enemyAnimation33835:
 	.db $08 $10 $00
@@ -1684,9 +1684,9 @@ enemyAnimation339cd:
 	.db $06 $10 $01
 	.db $06 $0e $00
 	.db $06 $10 $01
-@loop:
+@enemyAnimation339cdLoop:
 	.db $7f $0c $00
-	m_AnimationLoop @loop
+	m_AnimationLoop @enemyAnimation339cdLoop
 
 enemyAnimation339ed:
 	.db $18 $10 $00

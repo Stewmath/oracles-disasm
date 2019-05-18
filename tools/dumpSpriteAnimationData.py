@@ -140,7 +140,7 @@ def dumpAnimations(objectType):
             else:
                 # Making the assumption that all loops are local. (There's one special
                 # case in seasons where this assumption fails.)
-                loopLabel = '@loop'
+                loopLabel = '@' + dataLabel + 'Loop'
                 outFile.write(loopLabel + ':\n')
         counter = rom[address]
         if counter == 0xff:

@@ -1503,9 +1503,9 @@ interactionAnimation5a295:
 interactionAnimation5a29e:
 	.db $02 $00 $00
 	.db $10 $04 $01
-@loop:
+@interactionAnimation5a29eLoop:
 	.db $7f $04 $ff
-	m_AnimationLoop @loop
+	m_AnimationLoop @interactionAnimation5a29eLoop
 
 interactionAnimation5a2a9:
 	.db $0f $00 $00
@@ -1808,36 +1808,36 @@ interactionAnimation5a4aa:
 	.db $05 $18 $81
 	.db $05 $1c $82
 	.db $05 $18 $83
-@loop:
+@interactionAnimation5a4aaLoop:
 	.db $7f $00 $84
-	m_AnimationLoop @loop
+	m_AnimationLoop @interactionAnimation5a4aaLoop
 
 interactionAnimation5a4bb:
 	.db $08 $26 $8f
 	.db $05 $28 $90
 	.db $05 $2a $91
 	.db $05 $28 $92
-@loop:
+@interactionAnimation5a4bbLoop:
 	.db $7f $08 $93
-	m_AnimationLoop @loop
+	m_AnimationLoop @interactionAnimation5a4bbLoop
 
 interactionAnimation5a4cc:
 	.db $08 $18 $85
 	.db $05 $16 $86
 	.db $05 $1e $87
 	.db $05 $18 $88
-@loop:
+@interactionAnimation5a4ccLoop:
 	.db $7f $04 $89
-	m_AnimationLoop @loop
+	m_AnimationLoop @interactionAnimation5a4ccLoop
 
 interactionAnimation5a4dd:
 	.db $08 $12 $8a
 	.db $05 $10 $8b
 	.db $05 $22 $8c
 	.db $05 $10 $8d
-@loop:
+@interactionAnimation5a4ddLoop:
 	.db $7f $0c $8e
-	m_AnimationLoop @loop
+	m_AnimationLoop @interactionAnimation5a4ddLoop
 
 interactionAnimation5a4ee:
 	.db $05 $08 $00
@@ -1849,9 +1849,9 @@ interactionAnimation5a4ee:
 	.db $05 $00 $00
 	.db $05 $0c $00
 	.db $0a $08 $00
-@loop:
+@interactionAnimation5a4eeLoop:
 	.db $7f $24 $00
-	m_AnimationLoop @loop
+	m_AnimationLoop @interactionAnimation5a4eeLoop
 
 interactionAnimation5a50e:
 	.db $03 $2a $91
@@ -1866,9 +1866,9 @@ interactionAnimation5a50e:
 
 interactionAnimation5a528:
 	.db $04 $0c $00
-@loop:
+@interactionAnimation5a528Loop:
 	.db $7f $0e $00
-	m_AnimationLoop @loop
+	m_AnimationLoop @interactionAnimation5a528Loop
 
 interactionAnimation5a530:
 	.db $0a $1a $00
@@ -1892,18 +1892,18 @@ interactionAnimation5a556:
 	.db $08 $12 $00
 	.db $08 $10 $00
 	.db $32 $12 $00
-@loop:
+@interactionAnimation5a556Loop:
 	.db $7f $14 $ff
-	m_AnimationLoop @loop
+	m_AnimationLoop @interactionAnimation5a556Loop
 
 interactionAnimation5a56d:
 	.db $94 $0c $00
 	.db $0f $16 $00
 	.db $1e $0c $00
 	.db $06 $04 $00
-@loop:
+@interactionAnimation5a56dLoop:
 	.db $7f $18 $ff
-	m_AnimationLoop @loop
+	m_AnimationLoop @interactionAnimation5a56dLoop
 
 interactionAnimation5a57e:
 	.db $0a $04 $00
@@ -1928,9 +1928,9 @@ interactionAnimation5a596:
 
 interactionAnimation5a59e:
 	.db $0a $04 $00
-@loop:
+@interactionAnimation5a59eLoop:
 	.db $80 $06 $00
-	m_AnimationLoop @loop
+	m_AnimationLoop @interactionAnimation5a59eLoop
 
 interactionAnimation5a5a6:
 	.db $10 $04 $00
@@ -2075,9 +2075,9 @@ interactionAnimation5a692:
 	.db $08 $08 $00
 	.db $50 $0e $00
 	.db $0a $18 $00
-@loop:
+@interactionAnimation5a692Loop:
 	.db $7f $10 $01
-	m_AnimationLoop @loop
+	m_AnimationLoop @interactionAnimation5a692Loop
 
 interactionAnimation5a6a0:
 	.db $10 $04 $00
@@ -2125,18 +2125,18 @@ interactionAnimation5a6f1:
 	.db $09 $06 $00
 	.db $09 $08 $00
 	.db $08 $0a $00
-@loop:
+@interactionAnimation5a6f1Loop:
 	.db $01 $0a $ff
-	m_AnimationLoop @loop
+	m_AnimationLoop @interactionAnimation5a6f1Loop
 
 interactionAnimation5a702:
 	.db $03 $0c $00
 	.db $03 $0e $00
 	.db $03 $10 $00
 	.db $02 $12 $00
-@loop:
+@interactionAnimation5a702Loop:
 	.db $01 $12 $ff
-	m_AnimationLoop @loop
+	m_AnimationLoop @interactionAnimation5a702Loop
 
 interactionAnimation5a713:
 	.db $0c $10 $00
@@ -2235,17 +2235,17 @@ interactionAnimation5a7a1:
 interactionAnimation5a7a9:
 	.db $04 $04 $02
 	.db $04 $14 $01
-@loop:
+@interactionAnimation5a7a9Loop:
 	.db $10 $18 $03
 	.db $10 $1a $04
-	m_AnimationLoop @loop
+	m_AnimationLoop @interactionAnimation5a7a9Loop
 
 interactionAnimation5a7b7:
 	.db $3c $06 $00
 	.db $01 $08 $01
-@loop:
+@interactionAnimation5a7b7Loop:
 	.db $7f $08 $80
-	m_AnimationLoop @loop
+	m_AnimationLoop @interactionAnimation5a7b7Loop
 
 interactionAnimation5a7c2:
 	.db $1e $00 $00
@@ -2258,18 +2258,18 @@ interactionAnimation5a7d0:
 	.db $18 $08 $00
 	.db $04 $10 $00
 	.db $22 $12 $00
-@loop:
+@interactionAnimation5a7d0Loop:
 	.db $01 $12 $ff
-	m_AnimationLoop @loop
+	m_AnimationLoop @interactionAnimation5a7d0Loop
 
 interactionAnimation5a7de:
 	.db $7f $18 $00
-@loop:
+@interactionAnimation5a7deLoop:
 	.db $1e $0c $00
 	.db $10 $0e $00
 	.db $10 $0c $00
 	.db $32 $0e $00
-	m_AnimationLoop @loop
+	m_AnimationLoop @interactionAnimation5a7deLoop
 
 interactionAnimation5a7ef: ; Unused
 	.db $32 $10 $00
@@ -2308,15 +2308,15 @@ interactionAnimation5a826:
 
 interactionAnimation5a82e:
 	.db $08 $0c $00
-@loop:
+@interactionAnimation5a82eLoop:
 	.db $7f $10 $00
-	m_AnimationLoop @loop
+	m_AnimationLoop @interactionAnimation5a82eLoop
 
 interactionAnimation5a836:
 	.db $06 $04 $00
-@loop:
+@interactionAnimation5a836Loop:
 	.db $7f $06 $01
-	m_AnimationLoop @loop
+	m_AnimationLoop @interactionAnimation5a836Loop
 
 interactionAnimation5a83e:
 	.db $20 $00 $00
@@ -2584,9 +2584,9 @@ interactionAnimation5aa38:
 	.db $02 $2a $00
 	.db $02 $2c $00
 	.db $06 $2e $00
-@loop:
+@interactionAnimation5aa38Loop:
 	.db $7f $30 $00
-	m_AnimationLoop @loop
+	m_AnimationLoop @interactionAnimation5aa38Loop
 
 interactionAnimation5aa52:
 	.db $02 $32 $00
@@ -2595,13 +2595,13 @@ interactionAnimation5aa52:
 
 interactionAnimation5aa5a:
 	.db $0a $08 $00
-@loop:
+@interactionAnimation5aa5aLoop:
 	.db $07 $00 $00
 	.db $07 $02 $00
 	.db $07 $04 $00
 	.db $06 $06 $00
 	.db $01 $06 $ff
-	m_AnimationLoop @loop
+	m_AnimationLoop @interactionAnimation5aa5aLoop
 
 interactionAnimation5aa6e:
 	.db $10 $36 $00
@@ -2614,11 +2614,11 @@ interactionAnimation5aa7c:
 	.db $02 $00 $00
 	.db $02 $02 $00
 	.db $02 $04 $00
-@loop:
+@interactionAnimation5aa7cLoop:
 	.db $02 $06 $00
 	.db $02 $08 $00
 	.db $02 $0a $00
-	m_AnimationLoop @loop
+	m_AnimationLoop @interactionAnimation5aa7cLoop
 
 interactionAnimation5aa90:
 	.db $04 $00 $00
@@ -2651,17 +2651,17 @@ interactionAnimation5aabf:
 	.db $03 $10 $00
 	.db $07 $14 $00
 	.db $08 $16 $00
-@loop:
+@interactionAnimation5aabfLoop:
 	.db $08 $18 $00
-	m_AnimationLoop @loop
+	m_AnimationLoop @interactionAnimation5aabfLoop
 
 interactionAnimation5aad3:
 	.db $1e $0c $00
 	.db $12 $0e $00
-@loop:
+@interactionAnimation5aad3Loop:
 	.db $01 $10 $00
 	.db $01 $12 $00
-	m_AnimationLoop @loop
+	m_AnimationLoop @interactionAnimation5aad3Loop
 
 interactionAnimation5aae1:
 	.db $b4 $00 $00
@@ -2694,10 +2694,10 @@ interactionAnimation5ab11:
 interactionAnimation5ab19:
 	.db $04 $12 $00
 	.db $04 $14 $00
-@loop:
+@interactionAnimation5ab19Loop:
 	.db $04 $12 $00
 	.db $14 $14 $00
-	m_AnimationLoop @loop
+	m_AnimationLoop @interactionAnimation5ab19Loop
 
 interactionAnimation5ab27:
 	.db $0c $00 $00
@@ -2727,17 +2727,17 @@ interactionAnimation5ab3f:
 
 interactionAnimation5ab59:
 	.db $01 $08 $00
-@loop:
+@interactionAnimation5ab59Loop:
 	.db $10 $0a $00
 	.db $10 $0c $00
-	m_AnimationLoop @loop
+	m_AnimationLoop @interactionAnimation5ab59Loop
 
 interactionAnimation5ab64:
 	.db $08 $0e $00
-@loop:
+@interactionAnimation5ab64Loop:
 	.db $08 $10 $00
 	.db $08 $12 $00
-	m_AnimationLoop @loop
+	m_AnimationLoop @interactionAnimation5ab64Loop
 
 interactionAnimation5ab6f:
 	.db $08 $10 $00
@@ -2747,9 +2747,9 @@ interactionAnimation5ab78:
 	.db $08 $10 $00
 	.db $08 $0e $00
 	.db $08 $0a $00
-@loop:
+@interactionAnimation5ab78Loop:
 	.db $01 $08 $00
-	m_AnimationLoop @loop
+	m_AnimationLoop @interactionAnimation5ab78Loop
 
 interactionAnimation5ab86:
 	.db $7f $04 $00
@@ -2757,17 +2757,17 @@ interactionAnimation5ab86:
 
 interactionAnimation5ab8b:
 	.db $01 $14 $00
-@loop:
+@interactionAnimation5ab8bLoop:
 	.db $10 $16 $00
 	.db $10 $18 $00
-	m_AnimationLoop @loop
+	m_AnimationLoop @interactionAnimation5ab8bLoop
 
 interactionAnimation5ab96:
 	.db $08 $1a $00
-@loop:
+@interactionAnimation5ab96Loop:
 	.db $08 $1c $00
 	.db $08 $1e $00
-	m_AnimationLoop @loop
+	m_AnimationLoop @interactionAnimation5ab96Loop
 
 interactionAnimation5aba1:
 	.db $08 $1c $00
@@ -2791,11 +2791,11 @@ interactionAnimation5abc5:
 	.db $7f $0e $ff
 interactionAnimation5abce:
 	.db $02 $00 $00
-@loop:
+@interactionAnimation5abceLoop:
 	.db $02 $1e $00
 	.db $02 $20 $00
 	.db $02 $22 $00
-	m_AnimationLoop @loop
+	m_AnimationLoop @interactionAnimation5abceLoop
 
 interactionAnimation5abdc:
 	.db $04 $00 $00
@@ -2842,18 +2842,18 @@ interactionAnimation5ac1d:
 	.db $28 $08 $00
 	.db $08 $04 $00
 	.db $78 $00 $00
-@loop:
+@interactionAnimation5ac1dLoop:
 	.db $7f $00 $ff
-	m_AnimationLoop @loop
+	m_AnimationLoop @interactionAnimation5ac1dLoop
 
 interactionAnimation5ac2e:
 	.db $14 $0c $00
 	.db $28 $08 $00
 	.db $08 $0c $00
 	.db $78 $00 $00
-@loop:
+@interactionAnimation5ac2eLoop:
 	.db $7f $00 $ff
-	m_AnimationLoop @loop
+	m_AnimationLoop @interactionAnimation5ac2eLoop
 
 interactionAnimation5ac3f:
 	.db $18 $00 $00
@@ -2866,9 +2866,9 @@ interactionAnimation5ac4d: ; Unused
 	.db $08 $06 $00
 	.db $14 $10 $00
 	.db $08 $12 $01
-@loop:
+@interactionAnimation5ac4dLoop:
 	.db $7f $14 $00
-	m_AnimationLoop @loop
+	m_AnimationLoop @interactionAnimation5ac4dLoop
 
 interactionAnimation5ac5b:
 	.db $02 $08 $00
@@ -2903,23 +2903,23 @@ interactionAnimation5ac86:
 
 interactionAnimation5ac94:
 	.db $c8 $0c $00
-@loop:
+@interactionAnimation5ac94Loop:
 	.db $0a $00 $00
 	.db $14 $0c $00
 	.db $0a $02 $00
 	.db $14 $0c $00
-	m_AnimationLoop @loop
+	m_AnimationLoop @interactionAnimation5ac94Loop
 
 interactionAnimation5aca5:
 	.db $c8 $0c $00
-@loop:
+@interactionAnimation5aca5Loop:
 	.db $0a $0c $00
 	.db $0a $04 $00
 	.db $0a $06 $00
 	.db $0a $0c $00
 	.db $0a $08 $00
 	.db $0a $0a $00
-	m_AnimationLoop @loop
+	m_AnimationLoop @interactionAnimation5aca5Loop
 
 interactionAnimation5acbc:
 	.db $20 $04 $00
@@ -2950,9 +2950,9 @@ interactionAnimation5acea:
 
 interactionAnimation5acf2:
 	.db $14 $02 $01
-@loop:
+@interactionAnimation5acf2Loop:
 	.db $7f $00 $00
-	m_AnimationLoop @loop
+	m_AnimationLoop @interactionAnimation5acf2Loop
 
 interactionAnimation5acfa:
 	.db $10 $06 $02
@@ -3037,10 +3037,10 @@ interactionAnimation5ad89:
 	.db $01 $10 $00
 	.db $01 $12 $00
 	.db $01 $10 $00
-@loop:
+@interactionAnimation5ad89Loop:
 	.db $01 $12 $00
 	.db $01 $10 $ff
-	m_AnimationLoop @loop
+	m_AnimationLoop @interactionAnimation5ad89Loop
 
 interactionAnimation5adb2:
 	.db $01 $14 $00
