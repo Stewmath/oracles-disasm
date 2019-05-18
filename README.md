@@ -14,7 +14,7 @@ Seasons doesn't work yet.
 # Required tools to build
 
 * Python 2
-* [WLA-DX](https://github.com/vhelin/wla-dx) (a recent build)
+* [WLA-DX](https://github.com/Drenn1/wla-dx/tree/unions) (must use my "unions" branch for now)
 * [Cygwin](http://cygwin.com/install.html) (Only required for windows users)
 
 ## Tools needed to generate documentation
