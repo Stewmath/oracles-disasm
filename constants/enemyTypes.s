@@ -754,4 +754,12 @@
 ; @subid_03{Horn & horn hitbox}
 .define ENEMYID_AQUAMENTUS			$78
 
+.define ENEMYID_DODONGO				$79
+.define ENEMYID_MOTHULA				$7a
+.define ENEMYID_GOHMA				$7b
+.define ENEMYID_DIGDOGGER			$7c
+.define ENEMYID_MANHANDLA			$7d
+.define ENEMYID_POE_SISTER			$7e
+.define ENEMYID_MEDUSA_HEAD			$7f
+
 .endif ; ROM_SEASONS

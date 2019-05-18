@@ -242,5 +242,6 @@
 
 ;;
 .define PARTID_AQUAMENTUS_PROJECTILE		$40
+.define PARTID_DODONGO_FIREBALL			$41
 
 .endif

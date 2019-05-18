@@ -58,6 +58,8 @@
 .define TILEINDEX_WATERFALL_BOTTOM	$fe
 .define TILEINDEX_WATERFALL		$ff
 
+.define TILEINDEX_RESPAWNING_BUSH_CUT	$02 ; dungeons, indoor areas
+.define TILEINDEX_RESPAWNING_BUSH_READY	$04 ; dungeons, indoor areas
 .define TILEINDEX_BUTTON		$0c ; dungeons, indoor areas
 .define TILEINDEX_PRESSED_BUTTON	$0d ; dungeons, indoor areas
 .define TILEINDEX_RAISABLE_FLOOR_1	$0e ; collision modes 1,2,5
@@ -77,6 +79,7 @@
 .define TILEINDEX_WEST_STAIRS		$51 ; dungeons, indoors only
 .define TILEINDEX_NORTH_STAIRS		$52 ; dungeons, indoors only
 .define TILEINDEX_EAST_STAIRS		$53 ; dungeons, indoors only
+.define TILEINDEX_SPIKES		$60 ; dungeons, indoors only
 .define TILEINDEX_VERTICAL_BRIDGE	$6a ; dungeons only
 .define TILEINDEX_HORIZONTAL_BRIDGE	$6d ; dungeons only
 .define TILEINDEX_STANDARD_FLOOR	$a0 ; Keyblocks and such will turn into this tile

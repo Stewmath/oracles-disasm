@@ -1793,7 +1793,7 @@ wLinkGrabState: ; $cc5a/$cc75
 ;  $83 when holding something
 	db
 
-wLinkGrabState2: ; $cc5b
+wLinkGrabState2: ; $cc5b/$cc76
 ; bit 7: set when pulling a lever?
 ; bits 4-6: weight of object (0-4 or 0-5?). (See _itemWeights.)
 ; bits 0-3: should equal 0, 4, or 8; determines where the grabbed object is placed
@@ -1834,7 +1834,7 @@ wLinkTurningDisabled: ; $cc60
 ; When this is nonzero, Link's facing direction is locked (ie. using a sword).
 	db
 
-wLinkImmobilized: ; $cc61
+wLinkImmobilized: ; $cc61/$cc7c
 ; Set when link is using an item which immobilizes him. Each bit corresponds to
 ; a different item.
 ; Bit 4: Set when Link is falling down a hole
