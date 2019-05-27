@@ -763,8 +763,17 @@
 ; @subid_03{Horn & horn hitbox}
 .define ENEMYID_AQUAMENTUS			$78
 
+;;
 .define ENEMYID_DODONGO				$79
+
+;;
 .define ENEMYID_MOTHULA				$7a
+
+;;
+; @subid_00{Spawner (use this)}
+; @subid_01{Main body}
+; @subid_02{Claw}
+; @subid_03{?}
 .define ENEMYID_GOHMA				$7b
 .define ENEMYID_DIGDOGGER			$7c
 .define ENEMYID_MANHANDLA			$7d
