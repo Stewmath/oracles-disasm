@@ -6,7 +6,7 @@ specialObject08GfxPointers:
 	m_SpecialObjectGfxPointer $01 gfx_link $0080 $04
 	m_SpecialObjectGfxPointer $00 gfx_link $0200 $04
 	m_SpecialObjectGfxPointer $00 gfx_link $0080 $04
-	m_SpecialObjectGfxPointer $04 gfx_link $03e0 $02
+	m_SpecialObjectGfxPointer $00 gfx_link $0360 $04 ; Collapsed
 	m_SpecialObjectGfxPointer $00 gfx_link $0da0 $04
 	m_SpecialObjectGfxPointer $04 gfx_link $0de0 $02
 	m_SpecialObjectGfxPointer $01 gfx_link $0da0 $04
@@ -46,18 +46,18 @@ specialObject08GfxPointers:
 	m_SpecialObjectGfxPointer $00 gfx_link $1b40 $04
 	m_SpecialObjectGfxPointer $01 gfx_link $1b00 $04
 	m_SpecialObjectGfxPointer $01 gfx_link $1b40 $04
-	m_SpecialObjectGfxPointer $00 gfx_link $1180 $04
-	m_SpecialObjectGfxPointer $0b gfx_link $11c0 $04
-	m_SpecialObjectGfxPointer $01 gfx_link $1180 $04
-	m_SpecialObjectGfxPointer $09 gfx_link $11c0 $04
+	m_SpecialObjectGfxPointer $00 gfx_link $1180 $04 ; Flute 1 (44)
+	m_SpecialObjectGfxPointer $0b gfx_link $11c0 $04 ; Flute 2
+	m_SpecialObjectGfxPointer $01 gfx_link $1180 $04 ; Flute 3
+	m_SpecialObjectGfxPointer $09 gfx_link $11c0 $04 ; Flute 4
 	m_SpecialObjectGfxPointer $00 gfx_link $0000 $04
 	m_SpecialObjectGfxPointer $05 gfx_link $09e0 $02
 	m_SpecialObjectGfxPointer $2d gfx_link $0ce0 $04
 	m_SpecialObjectGfxPointer $04 gfx_link $03c0 $02
-	m_SpecialObjectGfxPointer $2e gfx_link $0300 $06
-	m_SpecialObjectGfxPointer $2e gfx_link $0360 $04
-	m_SpecialObjectGfxPointer $2f gfx_link $0300 $06
-	m_SpecialObjectGfxPointer $2f gfx_link $0360 $04
+	m_SpecialObjectGfxPointer $00 gfx_link $0300 $04 ; Singing 1 (52)
+	m_SpecialObjectGfxPointer $01 gfx_link $0300 $04 ; Singing 2
+	m_SpecialObjectGfxPointer $04 gfx_link $0340 $02 ; Singing 3
+	m_SpecialObjectGfxPointer $ff gfx_link $0000 $01 ; Unused
 	m_SpecialObjectGfxPointer $00 gfx_link $1040 $04
 	m_SpecialObjectGfxPointer $00 gfx_link $1000 $04
 	m_SpecialObjectGfxPointer $01 gfx_link $02c0 $04
@@ -92,7 +92,7 @@ specialObject08GfxPointers:
 	m_SpecialObjectGfxPointer $00 gfx_link $0080 $04
 	m_SpecialObjectGfxPointer $04 gfx_link $0800 $02
 	m_SpecialObjectGfxPointer $01 gfx_link $0840 $04
-	m_SpecialObjectGfxPointer $04 gfx_link $0820 $02
+	m_SpecialObjectGfxPointer $00 gfx_link $1180 $04 ; Minecart facing down (1)
 	m_SpecialObjectGfxPointer $00 gfx_link $0840 $04
 	m_SpecialObjectGfxPointer $00 gfx_link $0040 $04
 	m_SpecialObjectGfxPointer $01 gfx_link $01c0 $04
@@ -100,11 +100,11 @@ specialObject08GfxPointers:
 	m_SpecialObjectGfxPointer $00 gfx_link $01c0 $04
 	m_SpecialObjectGfxPointer $00 gfx_link $1940 $04
 	m_SpecialObjectGfxPointer $01 gfx_link $19c0 $04
-	m_SpecialObjectGfxPointer $04 gfx_link $03a0 $02
+	m_SpecialObjectGfxPointer $00 gfx_link $11c0 $04 ; Minecart, holding, facing down (1)
 	m_SpecialObjectGfxPointer $00 gfx_link $19c0 $04
-	m_SpecialObjectGfxPointer $00 gfx_link $0a00 $04
+	m_SpecialObjectGfxPointer $04 gfx_link $0a00 $02
 	m_SpecialObjectGfxPointer $01 gfx_link $0b00 $04
-	m_SpecialObjectGfxPointer $04 gfx_link $0aa0 $02
+	m_SpecialObjectGfxPointer $00 gfx_link $0a40 $04
 	m_SpecialObjectGfxPointer $00 gfx_link $0b00 $04
 	m_SpecialObjectGfxPointer $00 gfx_link $0400 $04
 	m_SpecialObjectGfxPointer $00 gfx_link $0500 $04
@@ -136,7 +136,7 @@ specialObject08GfxPointers:
 	m_SpecialObjectGfxPointer $00 gfx_link $00c0 $04
 	m_SpecialObjectGfxPointer $04 gfx_link $0800 $02
 	m_SpecialObjectGfxPointer $01 gfx_link $0840 $04
-	m_SpecialObjectGfxPointer $04 gfx_link $0820 $02
+	m_SpecialObjectGfxPointer $00 gfx_link $1180 $04 ; Minecart facing down (2)
 	m_SpecialObjectGfxPointer $00 gfx_link $0840 $04
 	m_SpecialObjectGfxPointer $01 gfx_link $0040 $04
 	m_SpecialObjectGfxPointer $01 gfx_link $1140 $04
@@ -144,11 +144,11 @@ specialObject08GfxPointers:
 	m_SpecialObjectGfxPointer $00 gfx_link $1140 $04
 	m_SpecialObjectGfxPointer $00 gfx_link $1940 $04
 	m_SpecialObjectGfxPointer $01 gfx_link $19c0 $04
-	m_SpecialObjectGfxPointer $04 gfx_link $03a0 $02
+	m_SpecialObjectGfxPointer $00 gfx_link $11c0 $04 ; Minecart, holding, facing down (2)
 	m_SpecialObjectGfxPointer $00 gfx_link $19c0 $04
-	m_SpecialObjectGfxPointer $00 gfx_link $0a40 $04
+	m_SpecialObjectGfxPointer $04 gfx_link $0a20 $02
 	m_SpecialObjectGfxPointer $01 gfx_link $0b40 $04
-	m_SpecialObjectGfxPointer $04 gfx_link $0ac0 $02
+	m_SpecialObjectGfxPointer $00 gfx_link $0aa0 $04
 	m_SpecialObjectGfxPointer $00 gfx_link $0b40 $04
 	m_SpecialObjectGfxPointer $00 gfx_link $0440 $04
 	m_SpecialObjectGfxPointer $00 gfx_link $0540 $04
@@ -222,9 +222,9 @@ specialObject08GfxPointers:
 	m_SpecialObjectGfxPointer $11 gfx_link $0f00 $04
 	m_SpecialObjectGfxPointer $12 gfx_link $0ea0 $02
 	m_SpecialObjectGfxPointer $10 gfx_link $0f00 $04
-	m_SpecialObjectGfxPointer $00 gfx_link $0a40 $04
+	m_SpecialObjectGfxPointer $04 gfx_link $0a20 $02
 	m_SpecialObjectGfxPointer $01 gfx_link $0b80 $04
-	m_SpecialObjectGfxPointer $04 gfx_link $0ac0 $02
+	m_SpecialObjectGfxPointer $00 gfx_link $0aa0 $04
 	m_SpecialObjectGfxPointer $00 gfx_link $0b80 $04
 	m_SpecialObjectGfxPointer $0c gfx_link $0a80 $02
 	m_SpecialObjectGfxPointer $0d gfx_link $0bc0 $04
@@ -662,34 +662,54 @@ animationData19f84:
 	.db $7f $fc $ff
 
 animationData19f90:
-	.db $23 $2c $00
-	.db $3c $2d $00
-	.db $23 $2c $40
-	.db $23 $2e $01
-	.db $3c $2f $01
-	.db $1e $2e $01
+.rept 2
+	.db 40 $34 $00
+	.db 12 $36 $01
+	.db 40 $35 $01
+	.db 12 $36 $00
+.endr
+	.db 40 $34 $00
+	.db 7 $36 $01
+	
 	.db $7f $2e $ff
+
+	; Total frames: 255
+;	.db $23 $2c $00
+;	.db $3c $2d $00
+;	.db $23 $2c $40
+;	.db $23 $2e $01
+;	.db $3c $2f $01
+;	.db $1e $2e $01
+;	.db $7f $2e $ff
 
 animationData19fa5:
 	.db $7f $07 $ff
 	m_AnimationLoop animationData19fa5
 
 animationData19faa:
-	.db $14 $34 $00
-	.db $14 $35 $00
-	.db $0c $34 $00
-	.db $14 $36 $01
-	.db $14 $37 $01
-	.db $0c $36 $01
-	.db $14 $34 $00
-	.db $14 $35 $00
-	.db $0c $34 $00
-	.db $14 $36 $01
-	.db $14 $37 $01
-	.db $0c $36 $01
-	.db $14 $36 $01
-	.db $14 $37 $01
-	.db $0c $36 $01
+.rept 2
+	.db 40 $34 $00
+	.db 12 $36 $01
+	.db 40 $35 $01
+	.db 12 $36 $00
+.endr
+	.db 40 $34 $00
+	.db 12 $36 $01
+;	.db $14 $34 $00
+;	.db $14 $35 $00
+;	.db $0c $34 $00
+;	.db $14 $36 $01
+;	.db $14 $37 $01
+;	.db $0c $36 $01
+;	.db $14 $34 $00
+;	.db $14 $35 $00
+;	.db $0c $34 $00
+;	.db $14 $36 $01
+;	.db $14 $37 $01
+;	.db $0c $36 $01
+;	.db $14 $36 $01
+;	.db $14 $37 $01
+;	.db $0c $36 $01
 	.db $01 $36 $81
 	.db $7f $1c $ff
 
