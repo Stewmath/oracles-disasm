@@ -210,9 +210,9 @@ specialObject08GfxPointers:
 	m_SpecialObjectGfxPointer $11 gfx_link $0f00 $04
 	m_SpecialObjectGfxPointer $12 gfx_link $0ea0 $02
 	m_SpecialObjectGfxPointer $10 gfx_link $0f00 $04
-	m_SpecialObjectGfxPointer $00 gfx_link $0a40 $04
+	m_SpecialObjectGfxPointer $04 gfx_link $0a20 $02
 	m_SpecialObjectGfxPointer $01 gfx_link $0b80 $04
-	m_SpecialObjectGfxPointer $04 gfx_link $0ac0 $02
+	m_SpecialObjectGfxPointer $00 gfx_link $0aa0 $04
 	m_SpecialObjectGfxPointer $00 gfx_link $0b80 $04
 	m_SpecialObjectGfxPointer $0c gfx_link $0a80 $02
 	m_SpecialObjectGfxPointer $0d gfx_link $0bc0 $04
@@ -647,6 +647,14 @@ animationData19ceb:
 
 animationData19cf7: ; Flute
 
+	.db 60 $34 $00
+	.db 30 $36 $01
+	.db 60 $35 $01
+	.db 30 $36 $00
+	.db 60 $34 $00
+	.db 15 $36 $01
+	.db $7f $2e $ff
+; Better version, but takes too much space
 ;.rept 2
 ;	.db 40 $34 $00
 ;	.db 12 $36 $01
@@ -657,13 +665,17 @@ animationData19cf7: ; Flute
 ;	.db 7 $36 $01
 ;	
 ;	.db $7f $2e $ff
-	.db $23 $2c $00
-	.db $3c $2d $00
-	.db $23 $2c $40
-	.db $23 $2e $01
-	.db $3c $2f $01
-	.db $1e $2e $01
-	.db $7f $2e $ff
+
+; Original animation
+;	.db $23 $2c $00
+;	.db $3c $2d $00
+;	.db $23 $2c $40
+;	.db $23 $2e $01
+;	.db $3c $2f $01
+;	.db $1e $2e $01
+;	.db $7f $2e $ff
+;	
+; Total frames: 255
 
 animationData19d0c:
 	.db $06 $b4 $44

@@ -146,9 +146,9 @@ specialObject08GfxPointers:
 	m_SpecialObjectGfxPointer $01 gfx_link $19c0 $04
 	m_SpecialObjectGfxPointer $00 gfx_link $11c0 $04 ; Minecart, holding, facing down (2)
 	m_SpecialObjectGfxPointer $00 gfx_link $19c0 $04
-	m_SpecialObjectGfxPointer $04 gfx_link $0a20 $02
+	m_SpecialObjectGfxPointer $04 gfx_link $0a20 $02 ; Grabbing (?)
 	m_SpecialObjectGfxPointer $01 gfx_link $0b40 $04
-	m_SpecialObjectGfxPointer $00 gfx_link $0aa0 $04
+	m_SpecialObjectGfxPointer $00 gfx_link $0aa0 $04 ; Grabbing (?)
 	m_SpecialObjectGfxPointer $00 gfx_link $0b40 $04
 	m_SpecialObjectGfxPointer $00 gfx_link $0440 $04
 	m_SpecialObjectGfxPointer $00 gfx_link $0540 $04
@@ -222,9 +222,9 @@ specialObject08GfxPointers:
 	m_SpecialObjectGfxPointer $11 gfx_link $0f00 $04
 	m_SpecialObjectGfxPointer $12 gfx_link $0ea0 $02
 	m_SpecialObjectGfxPointer $10 gfx_link $0f00 $04
-	m_SpecialObjectGfxPointer $04 gfx_link $0a20 $02
+	m_SpecialObjectGfxPointer $04 gfx_link $0a20 $02 ; Grabbing (?)
 	m_SpecialObjectGfxPointer $01 gfx_link $0b80 $04
-	m_SpecialObjectGfxPointer $00 gfx_link $0aa0 $04
+	m_SpecialObjectGfxPointer $00 gfx_link $0aa0 $04 ; Grabbing (?)
 	m_SpecialObjectGfxPointer $00 gfx_link $0b80 $04
 	m_SpecialObjectGfxPointer $0c gfx_link $0a80 $02
 	m_SpecialObjectGfxPointer $0d gfx_link $0bc0 $04
