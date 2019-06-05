@@ -20,21 +20,38 @@ romFile = open(sys.argv[1], 'rb')
 rom = bytearray(romFile.read())
 
 
-graphicsAddresses = [
-        (0x68000, 'gfx_link'),
-        (0x6a2e0, 'gfx_dungeon_sprites'),
-        (0x6a4e0, 'gfx_subrosian'),
-        (0x6a6e0, 'gfx_link_retro'),
-        (0x6a7e0, 'gfx_octorok_leever_tektite_zora'),
-        (0x6a9e0, 'gfx_moblin'),
-        (0x6ab40, 'gfx_ballandchain_likelike'),
-        (0x6aca0, 'gfx_link_baby'),
-        (0x6c000, 'gfx_ricky'),
-        (0x6d220, 'gfx_dimitri'),
-        (0x6de20, 'gfx_moosh'),
-        (0x6ea20, 'gfx_maple'),
-        (0x6f620, 'gfx_raft'), # Ages-only
-        ]
+if romIsAges(rom):
+    graphicsAddresses = [
+            (0x68000, 'gfx_link'),
+            (0x6a2e0, 'gfx_dungeon_sprites'),
+            (0x6a4e0, 'gfx_subrosian'),
+            (0x6a6e0, 'gfx_link_retro'),
+            (0x6a7e0, 'gfx_octorok_leever_tektite_zora'),
+            (0x6a9e0, 'gfx_moblin'),
+            (0x6ab40, 'gfx_ballandchain_likelike'),
+            (0x6aca0, 'gfx_link_baby'),
+            (0x6c000, 'gfx_ricky'),
+            (0x6d220, 'gfx_dimitri'),
+            (0x6de20, 'gfx_moosh'),
+            (0x6ea20, 'gfx_maple'),
+            (0x6f620, 'gfx_raft'), # Ages-only
+            ]
+elif romIsSeasons(rom):
+    graphicsAddresses = [
+            (0x68000, 'gfx_link'),
+            (0x6a2e0, 'gfx_dungeon_sprites'),
+            (0x6a480, 'gfx_subrosian'),
+            (0x6a680, 'gfx_link_retro'),
+            (0x6a780, 'gfx_octorok_leever_tektite_zora'),
+            (0x6a980, 'gfx_moblin'),
+            (0x6aae0, 'gfx_ballandchain_likelike'),
+            (0x6ac40, 'gfx_link_baby'),
+            (0x6c000, 'gfx_ricky'),
+            (0x6d220, 'gfx_dimitri'),
+            (0x6de20, 'gfx_moosh'),
+            (0x6ea20, 'gfx_maple'),
+            ]
+
 
 def dumpAnimations(objectType):
     outFile = open("data/" + objectType + "AnimationPointers.s",'w')

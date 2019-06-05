@@ -820,14 +820,14 @@ specialObject09OamDataPointers:
 	.dw oamData481f3
 
 specialObject02GfxPointers:
-	m_SpecialObjectGfxPointer $00 gfx_ballandchain_likelike $0140 $04
-	m_SpecialObjectGfxPointer $01 gfx_link_baby $0020 $04
-	m_SpecialObjectGfxPointer $00 gfx_ballandchain_likelike $0100 $04
-	m_SpecialObjectGfxPointer $00 gfx_link_baby $0020 $04
-	m_SpecialObjectGfxPointer $01 gfx_ballandchain_likelike $0140 $04
-	m_SpecialObjectGfxPointer $01 gfx_link_baby $0060 $04
-	m_SpecialObjectGfxPointer $01 gfx_ballandchain_likelike $0100 $04
-	m_SpecialObjectGfxPointer $00 gfx_link_baby $0060 $04
+	m_SpecialObjectGfxPointer $00 gfx_link_baby $0040 $04
+	m_SpecialObjectGfxPointer $01 gfx_link_baby $0080 $04
+	m_SpecialObjectGfxPointer $00 gfx_link_baby $0000 $04
+	m_SpecialObjectGfxPointer $00 gfx_link_baby $0080 $04
+	m_SpecialObjectGfxPointer $01 gfx_link_baby $0040 $04
+	m_SpecialObjectGfxPointer $01 gfx_link_baby $00c0 $04
+	m_SpecialObjectGfxPointer $01 gfx_link_baby $0000 $04
+	m_SpecialObjectGfxPointer $00 gfx_link_baby $00c0 $04
 
 specialObject02AnimationDataPointers:
 	.dw animationData19e18
@@ -840,54 +840,54 @@ animationLoop19e1b:
 	m_AnimationLoop animationLoop19e1b
 
 specialObject03GfxPointers:
-	m_SpecialObjectGfxPointer $00 gfx_dungeon_sprites $01e0 $04
-	m_SpecialObjectGfxPointer $01 gfx_subrosian $0060 $04
-	m_SpecialObjectGfxPointer $00 gfx_dungeon_sprites $01a0 $04
-	m_SpecialObjectGfxPointer $00 gfx_subrosian $0060 $04
-	m_SpecialObjectGfxPointer $01 gfx_dungeon_sprites $01e0 $04
-	m_SpecialObjectGfxPointer $01 gfx_subrosian $0020 $04
-	m_SpecialObjectGfxPointer $01 gfx_dungeon_sprites $01a0 $04
-	m_SpecialObjectGfxPointer $00 gfx_subrosian $0020 $04
+	m_SpecialObjectGfxPointer $00 gfx_subrosian $0040 $04
+	m_SpecialObjectGfxPointer $01 gfx_subrosian $00c0 $04
+	m_SpecialObjectGfxPointer $00 gfx_subrosian $0000 $04
+	m_SpecialObjectGfxPointer $00 gfx_subrosian $00c0 $04
+	m_SpecialObjectGfxPointer $01 gfx_subrosian $0040 $04
+	m_SpecialObjectGfxPointer $01 gfx_subrosian $0080 $04
+	m_SpecialObjectGfxPointer $01 gfx_subrosian $0000 $04
+	m_SpecialObjectGfxPointer $00 gfx_subrosian $0080 $04
 
 specialObject04GfxPointers:
-	m_SpecialObjectGfxPointer $00 gfx_subrosian $01e0 $04
-	m_SpecialObjectGfxPointer $01 gfx_link_retro $0020 $04
-	m_SpecialObjectGfxPointer $00 gfx_subrosian $01a0 $04
-	m_SpecialObjectGfxPointer $00 gfx_link_retro $0020 $04
-	m_SpecialObjectGfxPointer $01 gfx_subrosian $01e0 $04
-	m_SpecialObjectGfxPointer $01 gfx_link_retro $0060 $04
-	m_SpecialObjectGfxPointer $01 gfx_subrosian $01a0 $04
-	m_SpecialObjectGfxPointer $00 gfx_link_retro $0060 $04
+	m_SpecialObjectGfxPointer $00 gfx_link_retro $0040 $04
+	m_SpecialObjectGfxPointer $01 gfx_link_retro $0080 $04
+	m_SpecialObjectGfxPointer $00 gfx_link_retro $0000 $04
+	m_SpecialObjectGfxPointer $00 gfx_link_retro $0080 $04
+	m_SpecialObjectGfxPointer $01 gfx_link_retro $0040 $04
+	m_SpecialObjectGfxPointer $01 gfx_link_retro $00c0 $04
+	m_SpecialObjectGfxPointer $01 gfx_link_retro $0000 $04
+	m_SpecialObjectGfxPointer $00 gfx_link_retro $00c0 $04
 
 specialObject05GfxPointers:
-	m_SpecialObjectGfxPointer $05 gfx_link_retro $00a0 $04
-	m_SpecialObjectGfxPointer $01 gfx_link_retro $00e0 $04
-	m_SpecialObjectGfxPointer $04 gfx_link_retro $00a0 $04
-	m_SpecialObjectGfxPointer $00 gfx_link_retro $00e0 $04
-	m_SpecialObjectGfxPointer $05 gfx_link_retro $00c0 $04
-	m_SpecialObjectGfxPointer $01 gfx_octorok_leever_tektite_zora $0020 $04
-	m_SpecialObjectGfxPointer $04 gfx_link_retro $00c0 $04
-	m_SpecialObjectGfxPointer $00 gfx_octorok_leever_tektite_zora $0020 $04
+	m_SpecialObjectGfxPointer $05 gfx_octorok_leever_tektite_zora $0000 $04
+	m_SpecialObjectGfxPointer $01 gfx_octorok_leever_tektite_zora $0040 $04
+	m_SpecialObjectGfxPointer $04 gfx_octorok_leever_tektite_zora $0000 $04
+	m_SpecialObjectGfxPointer $00 gfx_octorok_leever_tektite_zora $0040 $04
+	m_SpecialObjectGfxPointer $05 gfx_octorok_leever_tektite_zora $0020 $04
+	m_SpecialObjectGfxPointer $01 gfx_octorok_leever_tektite_zora $0080 $04
+	m_SpecialObjectGfxPointer $04 gfx_octorok_leever_tektite_zora $0020 $04
+	m_SpecialObjectGfxPointer $00 gfx_octorok_leever_tektite_zora $0080 $04
 
 specialObject06GfxPointers:
-	m_SpecialObjectGfxPointer $00 gfx_octorok_leever_tektite_zora $01e0 $04
-	m_SpecialObjectGfxPointer $01 gfx_moblin $0020 $04
-	m_SpecialObjectGfxPointer $00 gfx_octorok_leever_tektite_zora $01a0 $04
-	m_SpecialObjectGfxPointer $00 gfx_moblin $0020 $04
-	m_SpecialObjectGfxPointer $01 gfx_octorok_leever_tektite_zora $01e0 $04
-	m_SpecialObjectGfxPointer $01 gfx_moblin $0060 $04
-	m_SpecialObjectGfxPointer $01 gfx_octorok_leever_tektite_zora $01a0 $04
-	m_SpecialObjectGfxPointer $00 gfx_moblin $0060 $04
+	m_SpecialObjectGfxPointer $00 gfx_moblin $0040 $04
+	m_SpecialObjectGfxPointer $01 gfx_moblin $0080 $04
+	m_SpecialObjectGfxPointer $00 gfx_moblin $0000 $04
+	m_SpecialObjectGfxPointer $00 gfx_moblin $0080 $04
+	m_SpecialObjectGfxPointer $01 gfx_moblin $0040 $04
+	m_SpecialObjectGfxPointer $01 gfx_moblin $00c0 $04
+	m_SpecialObjectGfxPointer $01 gfx_moblin $0000 $04
+	m_SpecialObjectGfxPointer $00 gfx_moblin $00c0 $04
 
 specialObject07GfxPointers:
-	m_SpecialObjectGfxPointer $04 gfx_ballandchain_likelike $0060 $04
-	m_SpecialObjectGfxPointer $04 gfx_ballandchain_likelike $0060 $04
-	m_SpecialObjectGfxPointer $04 gfx_ballandchain_likelike $0060 $04
-	m_SpecialObjectGfxPointer $04 gfx_ballandchain_likelike $0060 $04
-	m_SpecialObjectGfxPointer $04 gfx_ballandchain_likelike $0080 $04
-	m_SpecialObjectGfxPointer $04 gfx_ballandchain_likelike $0080 $04
-	m_SpecialObjectGfxPointer $04 gfx_ballandchain_likelike $0080 $04
-	m_SpecialObjectGfxPointer $04 gfx_ballandchain_likelike $0080 $04
+	m_SpecialObjectGfxPointer $04 gfx_ballandchain_likelike $00c0 $04
+	m_SpecialObjectGfxPointer $04 gfx_ballandchain_likelike $00c0 $04
+	m_SpecialObjectGfxPointer $04 gfx_ballandchain_likelike $00c0 $04
+	m_SpecialObjectGfxPointer $04 gfx_ballandchain_likelike $00c0 $04
+	m_SpecialObjectGfxPointer $04 gfx_ballandchain_likelike $00e0 $04
+	m_SpecialObjectGfxPointer $04 gfx_ballandchain_likelike $00e0 $04
+	m_SpecialObjectGfxPointer $04 gfx_ballandchain_likelike $00e0 $04
+	m_SpecialObjectGfxPointer $04 gfx_ballandchain_likelike $00e0 $04
 
 specialObject03AnimationDataPointers:
 specialObject04AnimationDataPointers:
@@ -932,6 +932,7 @@ specialObject0aOamDataPointers:
 
 specialObject13GfxPointers:
 specialObject13AnimationDataPointers:
+
 specialObject13OamDataPointers:
 
 specialObject09GfxPointers:
