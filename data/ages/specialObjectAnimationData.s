@@ -6,7 +6,7 @@ specialObject08GfxPointers:
 	m_SpecialObjectGfxPointer $01 gfx_link $0080 $04
 	m_SpecialObjectGfxPointer $00 gfx_link $0200 $04
 	m_SpecialObjectGfxPointer $00 gfx_link $0080 $04
-	m_SpecialObjectGfxPointer $00 gfx_link $0360 $04 ; Collapsed
+	m_SpecialObjectGfxPointer $00 gfx_link $03a0 $04 ; Collapsed
 	m_SpecialObjectGfxPointer $00 gfx_link $0da0 $04
 	m_SpecialObjectGfxPointer $04 gfx_link $0de0 $02
 	m_SpecialObjectGfxPointer $01 gfx_link $0da0 $04
@@ -53,10 +53,10 @@ specialObject08GfxPointers:
 	m_SpecialObjectGfxPointer $00 gfx_link $0000 $04
 	m_SpecialObjectGfxPointer $05 gfx_link $09e0 $02
 	m_SpecialObjectGfxPointer $2d gfx_link $0ce0 $04
-	m_SpecialObjectGfxPointer $04 gfx_link $03c0 $02
+	m_SpecialObjectGfxPointer $04 gfx_link $18e0 $02 ; Squished vertically
 	m_SpecialObjectGfxPointer $00 gfx_link $0300 $04 ; Singing 1 (52)
 	m_SpecialObjectGfxPointer $01 gfx_link $0300 $04 ; Singing 2
-	m_SpecialObjectGfxPointer $04 gfx_link $0340 $02 ; Singing 3
+	m_SpecialObjectGfxPointer $00 gfx_link $0360 $04 ; Singing 3
 	m_SpecialObjectGfxPointer $ff gfx_link $0000 $01 ; Unused
 	m_SpecialObjectGfxPointer $00 gfx_link $1040 $04
 	m_SpecialObjectGfxPointer $00 gfx_link $1000 $04
