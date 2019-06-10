@@ -90,7 +90,7 @@ specialObject08GfxPointers:
 	m_SpecialObjectGfxPointer $01 gfx_link $0080 $04
 	m_SpecialObjectGfxPointer $00 gfx_link $0200 $04
 	m_SpecialObjectGfxPointer $00 gfx_link $0080 $04
-	m_SpecialObjectGfxPointer $04 gfx_link $0800 $02
+	m_SpecialObjectGfxPointer $04 gfx_link $03e0 $02 ; Minecart facing up
 	m_SpecialObjectGfxPointer $01 gfx_link $0840 $04
 	m_SpecialObjectGfxPointer $00 gfx_link $1180 $04 ; Minecart facing down (1)
 	m_SpecialObjectGfxPointer $00 gfx_link $0840 $04
@@ -134,7 +134,7 @@ specialObject08GfxPointers:
 	m_SpecialObjectGfxPointer $01 gfx_link $00c0 $04
 	m_SpecialObjectGfxPointer $01 gfx_link $0200 $04
 	m_SpecialObjectGfxPointer $00 gfx_link $00c0 $04
-	m_SpecialObjectGfxPointer $04 gfx_link $0800 $02
+	m_SpecialObjectGfxPointer $04 gfx_link $03e0 $02 ; Minecart facing up
 	m_SpecialObjectGfxPointer $01 gfx_link $0840 $04
 	m_SpecialObjectGfxPointer $00 gfx_link $1180 $04 ; Minecart facing down (2)
 	m_SpecialObjectGfxPointer $00 gfx_link $0840 $04
