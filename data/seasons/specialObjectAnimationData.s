@@ -646,7 +646,6 @@ animationData19ceb:
 	.db $7f $f4 $ff
 
 animationData19cf7: ; Flute
-
 	.db 60 $34 $00
 	.db 30 $36 $01
 	.db 60 $35 $01
@@ -663,7 +662,7 @@ animationData19cf7: ; Flute
 ;.endr
 ;	.db 40 $34 $00
 ;	.db 7 $36 $01
-;	
+;
 ;	.db $7f $2e $ff
 
 ; Original animation
@@ -674,7 +673,7 @@ animationData19cf7: ; Flute
 ;	.db $3c $2f $01
 ;	.db $1e $2e $01
 ;	.db $7f $2e $ff
-;	
+;
 ; Total frames: 255
 
 animationData19d0c:

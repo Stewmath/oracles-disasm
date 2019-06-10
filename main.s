@@ -46423,16 +46423,16 @@ specialObjectSetOamVariables:
 ; 2 bytes for each SpecialObject id: oamTileIndexBase, oamFlags (palette).
 ; @addr{420d}
 @data:
-	.db $70 $0b ; 0x00 (Link)
-	.db $70 $0b ; 0x01
-	.db $70 $0b ; 0x02
-	.db $70 $0b ; 0x03
-	.db $70 $0b ; 0x04
-	.db $70 $0b ; 0x05
-	.db $70 $0b ; 0x06
-	.db $70 $0b ; 0x07
-	.db $70 $0b ; 0x08
-	.db $70 $0b ; 0x09
+	.db $70 $08 ; 0x00 (Link)
+	.db $70 $08 ; 0x01
+	.db $70 $08 ; 0x02
+	.db $70 $08 ; 0x03
+	.db $70 $08 ; 0x04
+	.db $70 $08 ; 0x05
+	.db $70 $08 ; 0x06
+	.db $70 $08 ; 0x07
+	.db $70 $08 ; 0x08
+	.db $70 $08 ; 0x09
 	.db $60 $0c ; 0x0a (Minecart)
 	.db $60 $0b ; 0x0b
 	.db $60 $0a ; 0x0c

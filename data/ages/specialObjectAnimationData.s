@@ -661,19 +661,27 @@ animationData19f84:
 	.db $0f $fc $00
 	.db $7f $fc $ff
 
-animationData19f90:
-.rept 2
-	.db 40 $34 $00
-	.db 12 $36 $01
-	.db 40 $35 $01
-	.db 12 $36 $00
-.endr
-	.db 40 $34 $00
-	.db 7 $36 $01
-	
+animationData19f90: ; Flute
+	.db 60 $34 $00
+	.db 30 $36 $01
+	.db 60 $35 $01
+	.db 30 $36 $00
+	.db 60 $34 $00
+	.db 15 $36 $01
 	.db $7f $2e $ff
+; Better version, but takes too much space
+;.rept 2
+;	.db 40 $34 $00
+;	.db 12 $36 $01
+;	.db 40 $35 $01
+;	.db 12 $36 $00
+;.endr
+;	.db 40 $34 $00
+;	.db 7 $36 $01
+;
+;	.db $7f $2e $ff
 
-	; Total frames: 255
+; Original animation
 ;	.db $23 $2c $00
 ;	.db $3c $2d $00
 ;	.db $23 $2c $40
@@ -681,12 +689,14 @@ animationData19f90:
 ;	.db $3c $2f $01
 ;	.db $1e $2e $01
 ;	.db $7f $2e $ff
+;
+; Total frames: 255
 
 animationData19fa5:
 	.db $7f $07 $ff
 	m_AnimationLoop animationData19fa5
 
-animationData19faa:
+animationData19faa: ; Harp
 .rept 2
 	.db 40 $34 $00
 	.db 12 $36 $01
@@ -695,23 +705,33 @@ animationData19faa:
 .endr
 	.db 40 $34 $00
 	.db 12 $36 $01
-;	.db $14 $34 $00
-;	.db $14 $35 $00
-;	.db $0c $34 $00
-;	.db $14 $36 $01
-;	.db $14 $37 $01
-;	.db $0c $36 $01
-;	.db $14 $34 $00
-;	.db $14 $35 $00
-;	.db $0c $34 $00
-;	.db $14 $36 $01
-;	.db $14 $37 $01
-;	.db $0c $36 $01
-;	.db $14 $36 $01
-;	.db $14 $37 $01
-;	.db $0c $36 $01
 	.db $01 $36 $81
 	.db $7f $1c $ff
+
+.rept 5 ; Padding
+	.db $00 $00 $00
+.endr
+
+; Original animation
+;	.db $14 $34 $00
+;	.db $14 $35 $00
+;	.db $0c $34 $00
+;	.db $14 $36 $01
+;	.db $14 $37 $01
+;	.db $0c $36 $01
+;	.db $14 $34 $00
+;	.db $14 $35 $00
+;	.db $0c $34 $00
+;	.db $14 $36 $01
+;	.db $14 $37 $01
+;	.db $0c $36 $01
+;	.db $14 $36 $01
+;	.db $14 $37 $01
+;	.db $0c $36 $01
+;	.db $01 $36 $81
+;	.db $7f $1c $ff
+;
+; Total frames: 260
 
 animationData19fdd:
 	.db $06 $b4 $44
