@@ -1825,7 +1825,7 @@ wcc5e: ; $cc5e
 ; If bit 6 is set, Link ignores holes.
 	db
 
-wLinkUsingItem1: ; $cc5f
+wLinkUsingItem1: ; $cc5f/$cc7a
 ; This is a bitset of special item objects ($d2-$d6) which are being used?
 	db
 

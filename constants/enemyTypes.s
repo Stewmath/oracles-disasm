@@ -772,8 +772,8 @@
 ;;
 ; @subid_00{Spawner (use this)}
 ; @subid_01{Main body}
-; @subid_02{Claw}
-; @subid_03{?}
+; @subid_02{Body hitbox?}
+; @subid_03{Claw}
 .define ENEMYID_GOHMA				$7b
 .define ENEMYID_DIGDOGGER			$7c
 .define ENEMYID_MANHANDLA			$7d
