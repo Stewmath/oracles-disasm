@@ -205,12 +205,12 @@ paletteHeader04: ; $641e
 paletteHeader05: ; $6421
 	m_PaletteHeaderBg  0 1 paletteData4830 $80
 	m_PaletteHeaderBg  2 5 paletteData5db8 $80
-	m_PaletteHeaderSpr 0 4 paletteData4840 $80
+	m_PaletteHeaderSpr 0 4 standardSpritePaletteData $80
 	m_PaletteHeaderSpr 4 3 paletteData5d98 $00
 paletteHeader06: ; $642d
 	m_PaletteHeaderBg  0 1 paletteData4830 $80
 	m_PaletteHeaderBg  2 5 paletteData5de0 $80
-	m_PaletteHeaderSpr 0 4 paletteData4840 $80
+	m_PaletteHeaderSpr 0 4 standardSpritePaletteData $80
 	m_PaletteHeaderSpr 4 3 paletteData5d98 $00
 paletteHeader07: ; $6439
 	m_PaletteHeaderBg  0 8 paletteData4098 $80
@@ -220,14 +220,14 @@ paletteHeader08: ; $643f
 	m_PaletteHeaderSpr 0 8 paletteData4158 $00
 paletteHeader09: ; $6445
 	m_PaletteHeaderBg  2 4 paletteData4198 $80
-	m_PaletteHeaderSpr 0 6 paletteData4840 $00
+	m_PaletteHeaderSpr 0 6 standardSpritePaletteData $00
 paletteHeader0a: ; $644b
 	m_PaletteHeaderBg  0 2 paletteData4830 $80
-	m_PaletteHeaderBg  2 6 paletteData4840 $80
-	m_PaletteHeaderSpr 0 6 paletteData4840 $80
+	m_PaletteHeaderBg  2 6 standardSpritePaletteData $80
+	m_PaletteHeaderSpr 0 6 standardSpritePaletteData $80
 	m_PaletteHeaderSpr 7 1 paletteData5e48 $00
 paletteHeader0b: ; $6457
-	m_PaletteHeaderSpr 0 4 paletteData4840 $80
+	m_PaletteHeaderSpr 0 4 standardSpritePaletteData $80
 	m_PaletteHeaderSpr 2 1 paletteData4468 $80
 	m_PaletteHeaderSpr 4 3 paletteData46f8 $00
 paletteHeader0c: ; $6460
@@ -239,7 +239,7 @@ paletteHeader0e: ; $6469
 	m_PaletteHeaderBg  1 1 paletteData4870 $00
 paletteHeader0f: ; $646c
 	m_PaletteHeaderBg  0 1 paletteData4830 $80
-	m_PaletteHeaderSpr 0 6 paletteData4840 $00
+	m_PaletteHeaderSpr 0 6 standardSpritePaletteData $00
 paletteHeader10: ; $6472
 	m_PaletteHeaderBg  2 6 paletteData49b0 $00
 paletteHeader11: ; $6475
@@ -502,7 +502,7 @@ paletteHeader90: ; $65f2
 paletteHeader91: ; $65f8
 	m_PaletteHeaderBg  0 1 paletteData4830 $80
 	m_PaletteHeaderBg  2 6 paletteData56a0 $80
-	m_PaletteHeaderSpr 0 6 paletteData4840 $80
+	m_PaletteHeaderSpr 0 6 standardSpritePaletteData $80
 	m_PaletteHeaderSpr 6 1 paletteData4468 $00
 paletteHeader92: ; $6604
 	m_PaletteHeaderBg  0 8 paletteData4278 $80

@@ -1366,7 +1366,7 @@ paletteData4830:
 	m_RGB16 $00 $03 $09
 	m_RGB16 $1f $1f $1f
 
-paletteData4840:
+standardSpritePaletteData:
 	m_RGB16 $1f $1f $1f
 	m_RGB16 $00 $00 $00
 	m_RGB16 $02 $15 $08
