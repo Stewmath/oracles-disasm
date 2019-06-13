@@ -59954,9 +59954,8 @@ _getSpecialObjectGraphicsFrame:
 	add hl,bc		; $4527
 
 	; Byte 0
-	ldi a,(hl)		; $4528
-	push hl			; $4529
-	add a			; $452a
+	jp getSpecialObjectGraphicsFrame_hook1
+getSpecialObjectGraphicsFrame_hook1_ret:
 	ld c,a			; $452b
 	ld a,e			; $452c
 	ld hl,specialObjectOamDataTable		; $452d
@@ -59984,8 +59983,8 @@ _getSpecialObjectGraphicsFrame:
 	; Bit 0: bank select
 	ld a,l			; $4544
 	and $01			; $4545
-	add :gfx_link		; $4547
-	ld c,a			; $4549
+	jp getSpecialObjectGraphicsFrame_hook2
+getSpecialObjectGraphicsFrame_hook2_ret:
 
 	; Bits 1-4: size (divided by 16)
 	ld a,l			; $454a
@@ -66445,6 +66444,26 @@ _fake_specialObjectLoadAnimationFrameToBuffer:
 	ld de,w6SpecialObjectGfxBuffer|(:w6SpecialObjectGfxBuffer)		; $7a2b
 	jp $3f31		; $7a2e
 .endif
+
+getSpecialObjectGraphicsFrame_hook1:
+	ldi a,(hl)		; $4528
+	push af
+	push hl			; $4529
+	add a			; $452a
+	jp getSpecialObjectGraphicsFrame_hook1_ret
+
+getSpecialObjectGraphicsFrame_hook2:
+	ld c,a
+	pop af
+	and $80
+	ld a,$40
+	jr nz,+
+	ld a,:gfx_dungeon_sprites
++
+	add c
+	ld c,a
+	jp getSpecialObjectGraphicsFrame_hook2_ret
+
 
 .ends
 
@@ -178254,6 +178273,7 @@ loadD6ChangingFloorPatternToBigBuffer:
 .ORG 0
 
 
+.ORGA $62e0
  m_section_free "Gfx_1a" ALIGN $20
 	.include "data/gfxDataBank1a.s"
 .ends
@@ -189351,3 +189371,9 @@ func_7cf8:
 .endif
 
 .ends
+
+
+.BANK $40
+.ORGA $4000
+
+	m_GfxDataSimple gfx_link

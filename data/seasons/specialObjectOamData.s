@@ -59,7 +59,7 @@ oamData4805b:
 oamData48064:
 	.db $02
 	.db $0a $00 $00 $00
-	.db $0a $08 $00 $20
+	.db $0a $08 $02 $00
 
 oamData4806d:
 	.db $02
@@ -69,7 +69,7 @@ oamData4806d:
 oamData48076:
 	.db $02
 	.db $07 $00 $00 $00
-	.db $07 $08 $00 $20
+	.db $07 $08 $02 $00
 
 oamData4807f:
 	.db $02
@@ -89,7 +89,7 @@ oamData48091:
 oamData4809a:
 	.db $02
 	.db $0c $00 $00 $00
-	.db $0c $08 $00 $20
+	.db $0c $08 $02 $00
 
 oamData480a3:
 	.db $12

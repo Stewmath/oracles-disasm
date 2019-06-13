@@ -452,7 +452,12 @@
 		.db \1
 		.dw \2
 	.ELSE
-		.db \1
-		.dw \2+\3 | \4 | (:\2 - :gfxDataBank1a)
+		.if \1 >= $80
+			.db \1
+			.dw \2+\3 | \4 | (:\2 - :gfx_link)
+		.else
+			.db \1
+			.dw \2+\3 | \4 | (:\2 - :gfxDataBank1a)
+		.endif
 	.ENDIF
 .endm
