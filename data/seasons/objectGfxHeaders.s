@@ -19,8 +19,8 @@ objectGfxHeaderTable: ; $fdafb
 	/* $11 */ m_ObjectGfxHeader gfx_zelda_1 $00
 	/* $12 */ m_ObjectGfxHeader gfx_zelda_2 $80
 	/* $13 */ m_ObjectGfxHeader gfx_din_1 $00
-	/* $14 */ m_ObjectGfxHeader gfx_0a7b60 $00
-	/* $15 */ m_ObjectGfxHeader gfx_0a7807 $80
+	/* $14 */ m_ObjectGfxHeader gfx_din_2 $00
+	/* $15 */ m_ObjectGfxHeader gfx_din_crystal $80
 	/* $16 */ m_ObjectGfxHeader gfx_ganon_1 $00
 	/* $17 */ m_ObjectGfxHeader gfx_ganon_2 $00
 	/* $18 */ m_ObjectGfxHeader gfx_twinrova_sacrifice $00
@@ -48,13 +48,13 @@ objectGfxHeaderTable: ; $fdafb
 	/* $2e */ m_ObjectGfxHeader gfx_link $00 $1c00
 	/* $2f */ m_ObjectGfxHeader gfx_link $00 $1a00
 	/* $30 */ m_ObjectGfxHeader gfx_vire $00
-	/* $31 */ m_ObjectGfxHeader gfx_0a43d9 $00
-	/* $32 */ m_ObjectGfxHeader gfx_0a455c $00
-	/* $33 */ m_ObjectGfxHeader gfx_0a46db $00
-	/* $34 */ m_ObjectGfxHeader gfx_0a487a $00
-	/* $35 */ m_ObjectGfxHeader gfx_0a4a42 $00
-	/* $36 */ m_ObjectGfxHeader gfx_0a4bdf $00
-	/* $37 */ m_ObjectGfxHeader gfx_0a4db1 $00
+	/* $31 */ m_ObjectGfxHeader gfx_boy $00
+	/* $32 */ m_ObjectGfxHeader gfx_sokra_masterdiver $00
+	/* $33 */ m_ObjectGfxHeader gfx_shopkeeper_dekuscrub $00
+	/* $34 */ m_ObjectGfxHeader gfx_talon_oldman $00
+	/* $35 */ m_ObjectGfxHeader gfx_oldshopkeeper_gardener_villager $00
+	/* $36 */ m_ObjectGfxHeader gfx_mittens_malon $00
+	/* $37 */ m_ObjectGfxHeader gfx_mrs_ruul_villagers $00
 	/* $38 */ m_ObjectGfxHeader gfx_0a4f56 $00
 	/* $39 */ m_ObjectGfxHeader gfx_0a4ff0 $00
 	/* $3a */ m_ObjectGfxHeader gfx_0a5159 $00
