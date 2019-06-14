@@ -57,8 +57,8 @@ objectGfxHeaderTable:
 	/* $37 */ m_ObjectGfxHeader gfx_veran_human $00
 	/* $38 */ m_ObjectGfxHeader gfx_veranbeetleandwing $00
 	/* $39 */ m_ObjectGfxHeader gfx_twinrova_5 $00
-	/* $3a */ m_ObjectGfxHeader gfx_link $00 $1c00
-	/* $3b */ m_ObjectGfxHeader gfx_link $00 $1a00
+	/* $3a */ m_ObjectGfxHeader gfx_link_oldspot $00 $1c00
+	/* $3b */ m_ObjectGfxHeader gfx_link_oldspot $00 $1a00
 	/* $3c */ m_ObjectGfxHeader gfx_vire $00
 	/* $3d */ m_ObjectGfxHeader gfx_0cb5d9 $00
 	/* $3e */ m_ObjectGfxHeader gfx_kids $00

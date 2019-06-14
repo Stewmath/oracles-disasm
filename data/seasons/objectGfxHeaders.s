@@ -45,8 +45,8 @@ objectGfxHeaderTable: ; $fdafb
 	/* $2b */ m_ObjectGfxHeader gfx_zelda_2 $00
 	/* $2c */ m_ObjectGfxHeader gfx_twinrova_4 $80
 	/* $2d */ m_ObjectGfxHeader gfx_twinrova_5 $00
-	/* $2e */ m_ObjectGfxHeader gfx_link $00 $1c00
-	/* $2f */ m_ObjectGfxHeader gfx_link $00 $1a00
+	/* $2e */ m_ObjectGfxHeader gfx_link_oldspot $00 $1c00
+	/* $2f */ m_ObjectGfxHeader gfx_link_oldspot $00 $1a00
 	/* $30 */ m_ObjectGfxHeader gfx_vire $00
 	/* $31 */ m_ObjectGfxHeader gfx_boy $00
 	/* $32 */ m_ObjectGfxHeader gfx_sokra_masterdiver $00

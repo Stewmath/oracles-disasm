@@ -178273,7 +178273,6 @@ loadD6ChangingFloorPatternToBigBuffer:
 .ORG 0
 
 
-.ORGA $62e0
  m_section_free "Gfx_1a" ALIGN $20
 	.include "data/gfxDataBank1a.s"
 .ends

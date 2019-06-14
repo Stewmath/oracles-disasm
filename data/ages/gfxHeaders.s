@@ -821,7 +821,7 @@ gfxHeader9f:
 	m_GfxHeader map_titlescreen_scroll_1 $9c00 $3f|$80
 	m_GfxHeader flg_titlescreen_scroll_1 $9c01 $3f
 gfxHeadera0:
-	m_GfxHeader gfx_link $8000 $1f|$80 $200
+	m_GfxHeader gfx_link_oldspot $8000 $1f|$80 $200
 	m_GfxHeader gfx_rod_of_seasons $81a0 $03|$80
 	m_GfxHeader gfx_hud $9000 $1f|$80
 	m_GfxHeader gfx_hud $9001 $1f|$80

@@ -110,6 +110,9 @@ ifeq ($(BUILD_VANILLA),true)
 	@-md5sum -c $*.md5
 endif
 
+gfx/gfx_link_oldspot.bin: gfx/gfx_link.bin
+	tools/copyLinkGfx.py
+
 build/main.o: $(GFXFILES) $(ROOMLAYOUTFILES) $(COLLISIONFILES) $(MAPPINGINDICESFILES) $(GAMEDATAFILES)
 build/main.o: build/textData.s build/textDefines.s
 build/main.o: code/*.s code/$(GAME)/*.s constants/*.s data/*.s include/*.s objects/*.s scripts/*.s audio/*.s audio/*.bin

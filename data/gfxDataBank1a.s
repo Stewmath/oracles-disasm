@@ -1,5 +1,5 @@
 gfxDataBank1a:
-;	m_GfxDataSimple gfx_link			; $068000
+	m_GfxDataSimple gfx_link_oldspot		; $068000
 	m_GfxDataSimple gfx_dungeon_sprites		; $06a2e0
 	m_GfxDataSimple gfx_subrosian			; $06a4e0
 	m_GfxDataSimple gfx_link_retro			; $06a6e0
