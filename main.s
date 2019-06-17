@@ -25611,7 +25611,7 @@ _inventoryMenuState1:
 	ld a,(wInventorySubmenu0CursorPos)		; $5680
 	add <wInventoryStorage			; $5683
 	ld l,a			; $5685
-	ld b,$0c		; $5686
+	ld b,ITEMID_BIGGORON_SWORD		; $5686
 	ld a,(hl)		; $5688
 	cp b			; $5689
 	jr z,@@equipBiggoron	; $568a
