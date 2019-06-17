@@ -32,7 +32,7 @@
 .else
 	MUS_HORON_VILLAGE         db ; $0a
 	MUS_HIDE_AND_SEEK         db ; $0b
-	MUS_SUNKEN_CITY           db ; $0b
+	MUS_SUNKEN_CITY           db ; $0c
 .endif
 
 	MUS_ESSENCE_ROOM          db ; $0d

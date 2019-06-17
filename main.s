@@ -89168,7 +89168,7 @@ interactionCode60:
 	ld b,a			; $4c39
 
 	; If this is ore chunks, double the value if wearing an appropriate ring?
-	cp TREASURE_37			; $4c3a
+	cp TREASURE_ORE_CHUNKS			; $4c3a
 	jr nz,++		; $4c3c
 
 	ld a,GOLD_JOY_RING		; $4c3e
@@ -187008,7 +187008,7 @@ treasureCollectionBehaviourTable:
 	.db $00
 	.db SND_NONE
 
-	; TREASURE_37 (0x37)
+	; TREASURE_ORE_CHUNKS (0x37)
 	.db $00
 	.db $00
 	.db SND_NONE
@@ -187369,7 +187369,7 @@ treasureDisplayData2:
 	.db TREASURE_GASHA_SEED 	$25 $01 $00 $00 $01 <TX_0916 ; TREASURE_GASHA_SEED (0x34)
 	.db $00				$00 $00 $00 $00 $ff <TX_0900 ; TREASURE_35 (0x35)
 	.db TREASURE_MAKU_SEED		$00 $00 $00 $00 $ff <TX_0915 ; TREASURE_MAKU_SEED (0x36)
-	.db $00				$00 $00 $00 $00 $ff <TX_0900 ; TREASURE_37 (0x37)
+	.db $00				$00 $00 $00 $00 $ff <TX_0900 ; TREASURE_ORE_CHUNKS (0x37)
 	.db $00				$00 $00 $00 $00 $ff <TX_0900 ; TREASURE_38 (0x38)
 	.db $00				$00 $00 $00 $00 $ff <TX_0900 ; TREASURE_39 (0x39)
 	.db $00				$00 $00 $00 $00 $ff <TX_0900 ; TREASURE_3a (0x3a)

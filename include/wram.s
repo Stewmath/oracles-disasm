@@ -589,15 +589,15 @@ wDungeonSmallKeys: ; $c672
 
 wDungeonBossKeys: ; $c682
 ; Bitset of boss keys obtained
-	dsb NUM_DUNGEONS/8
+	dsb NUM_DUNGEONS_DIV_8
 
 wDungeonCompasses: ; $c684/$c67c
 ; Bitset of compasses obtained
-	dsb NUM_DUNGEONS/8
+	dsb NUM_DUNGEONS_DIV_8
 
 wDungeonMaps: ; $c686
 ; Bitset of maps obtained
-	dsb NUM_DUNGEONS/8
+	dsb NUM_DUNGEONS_DIV_8
 
 wInventoryB: ; $c688/$c680
 	db
@@ -626,9 +626,9 @@ wNumOreChunks: ; $c6a7
 	dw
 .endif
 
-wShieldLevel: ; $c6af
+wShieldLevel: ; $c6af/$c6a9
 	db
-wNumBombs: ; $c6b0
+wNumBombs: ; $c6b0/$c6aa
 	db
 wMaxBombs: ; $c6b1
 	db
@@ -687,6 +687,9 @@ wEssencesObtained: ; $c6bf
 	db
 wTradeItem: ; $c6c0
 	db
+
+.ifdef ROM_AGES
+
 wc6c1: ; $c6c1
 	db
 wTuniNutState: ; $c6c2
@@ -697,6 +700,13 @@ wTuniNutState: ; $c6c2
 wNumSlates: ; $c6c3
 ; Slates used only in ages dungeon 8
 	db
+
+.else; ROM_SEASONS
+
+wPirateBellState: ; -/$c6bd
+	db
+.endif
+
 wSatchelSelectedSeeds: ; $c6c4/$c6be
 	db
 wShooterSelectedSeeds: ; $c6c5/$c6bf
@@ -707,7 +717,7 @@ wRingBoxContents: ; $c6c6/$c6c0
 wActiveRing: ; $c6cb/$c6c5
 ; When bit 6 is set, the ring is disabled?
 	db
-wRingBoxLevel: ; $c6cc
+wRingBoxLevel: ; $c6cc/$c6c6
 	db
 wNumUnappraisedRingsBcd: ; $c6cd
 	db
