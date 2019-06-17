@@ -44,8 +44,6 @@ CMP_MODE = $(NO_PRECMP_FILE)
 endif
 
 
-OBJS = build/main.o
-
 GFXFILES = $(wildcard gfx/*.bin)
 GFXFILES += $(wildcard gfx/$(GAME)/*.bin)
 GFXFILES += $(wildcard gfx_compressible/*.bin)
@@ -103,18 +101,18 @@ seasons:
 	@ROM_SEASONS=1 $(MAKE) seasons.gbc
 
 
-%.gbc: build/main.o linkfile
-	$(LD) -S linkfile $@
+$(GAME).gbc: build/$(GAME).o $(GAME)_linkfile
+	$(LD) -S $(GAME)_linkfile $@
 
 ifeq ($(BUILD_VANILLA),true)
-	@-md5sum -c $*.md5
+	@-md5sum -c $(GAME).md5
 endif
 
-build/main.o: $(GFXFILES) $(ROOMLAYOUTFILES) $(COLLISIONFILES) $(MAPPINGINDICESFILES) $(GAMEDATAFILES)
-build/main.o: build/textData.s build/textDefines.s
-build/main.o: code/*.s code/$(GAME)/*.s constants/*.s data/*.s include/*.s objects/*.s scripts/*.s audio/*.s audio/*.bin
-build/main.o: build/tilesets/tileMappingTable.bin build/tilesets/tileMappingIndexData.bin build/tilesets/tileMappingAttributeData.bin
-build/main.o: rooms/$(GAME)/*.bin
+build/$(GAME).o: $(GFXFILES) $(ROOMLAYOUTFILES) $(COLLISIONFILES) $(MAPPINGINDICESFILES) $(GAMEDATAFILES)
+build/$(GAME).o: build/textData.s build/textDefines.s
+build/$(GAME).o: code/*.s code/$(GAME)/*.s constants/*.s data/*.s include/*.s objects/*.s scripts/*.s audio/*.s audio/*.bin
+build/$(GAME).o: build/tilesets/tileMappingTable.bin build/tilesets/tileMappingIndexData.bin build/tilesets/tileMappingAttributeData.bin
+build/$(GAME).o: rooms/$(GAME)/*.bin
 
 $(MAPPINGINDICESFILES): build/tilesets/mappingsDictionary.bin
 $(COLLISIONFILES): build/tilesets/collisionsDictionary.bin
@@ -122,10 +120,6 @@ $(COLLISIONFILES): build/tilesets/collisionsDictionary.bin
 
 build/%.o: %.s Makefile | build
 	$(CC) -o $@ $(CFLAGS) $<
-	
-linkfile: $(OBJS)
-	@echo "[objects]" > linkfile
-	@echo "$(OBJS)" | sed 's/ /\n/g' >> linkfile
 
 build/rooms/%.cmp: rooms/$(GAME)/small/%.bin $(CMP_MODE) | build/rooms
 	@echo "Compressing $< to $@..."
@@ -263,11 +257,6 @@ build/tilesets: | build
 	mkdir build/tilesets
 build/doc: | build
 	mkdir build/doc
-
-
-force:
-	$(MAKE) build/main.o --always-make
-	$(MAKE)
 
 clean:
 	-rm -R build_ages/ build_seasons/ doc/ ages.gbc seasons.gbc
