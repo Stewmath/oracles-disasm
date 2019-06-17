@@ -12976,7 +12976,7 @@ updateAllObjects:
 
 	call loadLinkAndCompanionAnimationFrame		; $34b9
 
-	callfrombank0 itemCode.updateItems2		; $34c3
+	callfrombank0 itemCode.updateItemsPost		; $34c3
 	callfrombank0 bank1.checkUpdateFollowingLinkObject		; $34cd
 	callfrombank0 updateCamera		; $34d7
 	callfrombank0 updateChangedTileQueue		; $34e1
@@ -13030,7 +13030,7 @@ func_3539:
 	callfrombank0 updateParts		; $355a
 	callfrombank0 updateInteractions		; $356b
 .ifdef ROM_AGES
-	callfrombank0 itemCode.updateItems2		; $356e
+	callfrombank0 itemCode.updateItemsPost		; $356e
 	callfrombank0 loadLinkAndCompanionAnimationFrame		; $3578
 .endif
 	callfrombank0 updateAnimations
@@ -68608,7 +68608,7 @@ updateItems:
 ; before it starts calling the update code.
 ;
 ; @addr{491a}
-updateItems2:
+updateItemsPost:
 	lda Item.start			; $491a
 	ldh (<hActiveObjectType),a	; $491b
 	ld d,FIRST_ITEM_INDEX		; $491d
@@ -68618,66 +68618,66 @@ updateItems2:
 	ld e,Item.enabled		; $4922
 	ld a,(de)		; $4924
 	or a			; $4925
-	call nz,_updateItem_2		; $4926
+	call nz,_updateItemPost		; $4926
 	inc d			; $4929
 	ld a,d			; $492a
 	cp $e0			; $492b
 	jr c,@itemLoop		; $492d
 
-itemCodeNil_2:
+itemCodeNilPost:
 	ret			; $492f
 
 ;;
 ; @addr{4930}
-_updateItem_2:
+_updateItemPost:
 	ld e,$01		; $4930
 	ld a,(de)		; $4932
 	rst_jumpTable			; $4933
 
-	.dw itemCode00_2	; 0x00
-	.dw itemCodeNil_2	; 0x01
-	.dw itemCode02_2	; 0x02
-	.dw itemCodeNil_2	; 0x03
-	.dw itemCode04_2	; 0x04
-	.dw itemCode05_2	; 0x05
-	.dw itemCodeNil_2	; 0x06
-	.dw itemCode07_2	; 0x07
-	.dw itemCode08_2	; 0x08
-	.dw itemCodeNil_2	; 0x09
-	.dw itemCode0a_2	; 0x0a
-	.dw itemCode0b_2	; 0x0b
-	.dw itemCode0c_2	; 0x0c
-	.dw itemCodeNil_2	; 0x0d
-	.dw itemCodeNil_2	; 0x0e
-	.dw itemCode0f_2	; 0x0f
-	.dw itemCodeNil_2	; 0x10
-	.dw itemCodeNil_2	; 0x11
-	.dw itemCodeNil_2	; 0x12
-	.dw itemCode13_2	; 0x13
-	.dw itemCodeNil_2	; 0x14
-	.dw itemCodeNil_2	; 0x15
-	.dw itemCodeNil_2	; 0x16
-	.dw itemCodeNil_2	; 0x17
-	.dw itemCodeNil_2	; 0x18
-	.dw itemCodeNil_2	; 0x19
-	.dw itemCodeNil_2	; 0x1a
-	.dw itemCodeNil_2	; 0x1b
-	.dw itemCodeNil_2	; 0x1c
-	.dw itemCode1d_2	; 0x1d
-	.dw itemCode1e_2	; 0x1e
-	.dw itemCodeNil_2	; 0x1f
-	.dw itemCodeNil_2	; 0x20
-	.dw itemCodeNil_2	; 0x21
-	.dw itemCodeNil_2	; 0x22
-	.dw itemCodeNil_2	; 0x23
-	.dw itemCodeNil_2	; 0x24
-	.dw itemCodeNil_2	; 0x25
-	.dw itemCodeNil_2	; 0x26
-	.dw itemCodeNil_2	; 0x27
-	.dw itemCodeNil_2	; 0x28
-	.dw itemCodeNil_2	; 0x29
-	.dw itemCodeNil_2	; 0x2a
-	.dw itemCodeNil_2	; 0x2b
+	.dw itemCode00Post	; 0x00
+	.dw itemCodeNilPost	; 0x01
+	.dw itemCode02Post	; 0x02
+	.dw itemCodeNilPost	; 0x03
+	.dw itemCode04Post	; 0x04
+	.dw itemCode05Post	; 0x05
+	.dw itemCodeNilPost	; 0x06
+	.dw itemCode07Post	; 0x07
+	.dw itemCode08Post	; 0x08
+	.dw itemCodeNilPost	; 0x09
+	.dw itemCode0aPost	; 0x0a
+	.dw itemCode0bPost	; 0x0b
+	.dw itemCode0cPost	; 0x0c
+	.dw itemCodeNilPost	; 0x0d
+	.dw itemCodeNilPost	; 0x0e
+	.dw itemCode0fPost	; 0x0f
+	.dw itemCodeNilPost	; 0x10
+	.dw itemCodeNilPost	; 0x11
+	.dw itemCodeNilPost	; 0x12
+	.dw itemCode13Post	; 0x13
+	.dw itemCodeNilPost	; 0x14
+	.dw itemCodeNilPost	; 0x15
+	.dw itemCodeNilPost	; 0x16
+	.dw itemCodeNilPost	; 0x17
+	.dw itemCodeNilPost	; 0x18
+	.dw itemCodeNilPost	; 0x19
+	.dw itemCodeNilPost	; 0x1a
+	.dw itemCodeNilPost	; 0x1b
+	.dw itemCodeNilPost	; 0x1c
+	.dw itemCode1dPost	; 0x1d
+	.dw itemCode1ePost	; 0x1e
+	.dw itemCodeNilPost	; 0x1f
+	.dw itemCodeNilPost	; 0x20
+	.dw itemCodeNilPost	; 0x21
+	.dw itemCodeNilPost	; 0x22
+	.dw itemCodeNilPost	; 0x23
+	.dw itemCodeNilPost	; 0x24
+	.dw itemCodeNilPost	; 0x25
+	.dw itemCodeNilPost	; 0x26
+	.dw itemCodeNilPost	; 0x27
+	.dw itemCodeNilPost	; 0x28
+	.dw itemCodeNilPost	; 0x29
+	.dw itemCodeNilPost	; 0x2a
+	.dw itemCodeNilPost	; 0x2b
 
 ;;
 ; @addr{498c}
@@ -72031,7 +72031,7 @@ _itemCheckWithinRangeOfLink:
 ;
 ; ITEMID_SWITCH_HOOK_CHAIN
 ; @addr{5791}
-itemCode0b_2:
+itemCode0bPost:
 	ld a,(w1WeaponItem.id)		; $5791
 	cp ITEMID_SWITCH_HOOK			; $5794
 	jp nz,itemDelete		; $5796
@@ -72119,7 +72119,7 @@ itemCode0b:
 ;;
 ; ITEMID_SWITCH_HOOK
 ; @addr{57f2}
-itemCode0a_2:
+itemCode0aPost:
 	call _cpRelatedObject1ID		; $57f2
 	ret z			; $57f5
 
@@ -72852,7 +72852,7 @@ itemCode29:
 ;;
 ; ITEMID_SHOOTER
 ; @addr{5b6a}
-itemCode0f_2:
+itemCode0fPost:
 	call _cpRelatedObject1ID		; $5b6a
 	jp nz,itemDelete		; $5b6d
 
@@ -73482,7 +73482,7 @@ itemCode1d:
 ;;
 ; ITEMID_MINECART_COLLISION
 ; @addr{5e6a}
-itemCode1d_2:
+itemCode1dPost:
 	ld hl,w1Companion.id		; $5e6a
 	ld a,(hl)		; $5e6d
 	cp SPECIALOBJECTID_MINECART			; $5e6e
@@ -73909,7 +73909,7 @@ _updateBiggoronSwordAnimation:
 ; ITEMID_MAGNET_GLOVES
 ;
 ; @addr{6057}
-itemCode08_2:
+itemCode08Post:
 	call _cpRelatedObject1ID		; $6057
 	jp nz,itemDelete		; $605a
 
@@ -73928,7 +73928,7 @@ itemCode08_2:
 ; ITEMID_SLINGSHOT
 ;
 ; @addr{6072}
-itemCode13_2:
+itemCode13Post:
 	call _cpRelatedObject1ID		; $6072
 	jp nz,itemDelete		; $6075
 
@@ -73943,7 +73943,7 @@ itemCode13_2:
 ; ITEMID_FOOLS_ORE
 ;
 ; @addr{6087}
-itemCode1e_2:
+itemCode1ePost:
 	call _cpRelatedObject1ID		; $6087
 	jp nz,itemDelete		; $608a
 
@@ -73963,8 +73963,8 @@ itemCode1e_2:
 ; ITEMID_PUNCH
 ;
 ; @addr{60a0}
-itemCode00_2:
-itemCode02_2:
+itemCode00Post:
+itemCode02Post:
 	ld a,(w1Link.direction)		; $60a0
 	add $18			; $60a3
 	ld hl,_swordArcData		; $60a5
@@ -73974,7 +73974,7 @@ itemCode02_2:
 ; ITEMID_BIGGORON_SWORD
 ;
 ; @addr{60aa}
-itemCode0c_2:
+itemCode0cPost:
 	call _cpRelatedObject1ID		; $60aa
 	jp nz,itemDelete		; $60ad
 
@@ -73991,9 +73991,9 @@ itemCode0c_2:
 ; ITEMID_ROD_OF_SEASONS
 ;
 ; @addr{60bf}
-itemCode04_2:
-itemCode05_2:
-itemCode07_2:
+itemCode04Post:
+itemCode05Post:
+itemCode07Post:
 	call _cpRelatedObject1ID		; $60bf
 	jp nz,itemDelete		; $60c2
 
