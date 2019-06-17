@@ -1,6 +1,4 @@
-
-;0w"ayet;llllll"oyegT:%s/ld \(.*\)$ff00+$o/ldh \1<agtj
-.enum $ff80
+.enum $ff80 export
 	hOamFunc			dsb $a	; $ff80
 
 	; General-purpose variables
@@ -120,7 +118,7 @@
 	hFFBF				db	; $ffbf
 .ende
 
-.enum $ffc0
+.enum $ffc0 export
 	; Marker for end of "normal" hram, beginning of music stuff
 	hramEnd			 	.db	; $ffc0
 

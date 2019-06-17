@@ -44,6 +44,8 @@ CMP_MODE = $(NO_PRECMP_FILE)
 endif
 
 
+OBJS = build/$(GAME).o build/audio.o
+
 GFXFILES = $(wildcard gfx/*.bin)
 GFXFILES += $(wildcard gfx/$(GAME)/*.bin)
 GFXFILES += $(wildcard gfx_compressible/*.bin)
@@ -101,8 +103,8 @@ seasons:
 	@ROM_SEASONS=1 $(MAKE) seasons.gbc
 
 
-$(GAME).gbc: build/$(GAME).o $(GAME)_linkfile
-	$(LD) -S $(GAME)_linkfile $@
+$(GAME).gbc: build/$(GAME).o build/linkfile
+	$(LD) -S build/linkfile $@
 
 ifeq ($(BUILD_VANILLA),true)
 	@-md5sum -c $(GAME).md5
@@ -118,8 +120,15 @@ $(MAPPINGINDICESFILES): build/tilesets/mappingsDictionary.bin
 $(COLLISIONFILES): build/tilesets/collisionsDictionary.bin
 
 
-build/%.o: %.s Makefile | build
+build/$(GAME).o: $(GAME).s Makefile | build
 	$(CC) -o $@ $(CFLAGS) $<
+
+build/%.o: code/%.s Makefile | build
+	$(CC) -o $@ $(CFLAGS) $<
+
+build/linkfile: $(OBJS)
+	@echo "[objects]" > $@
+	@echo "$(OBJS)" | sed 's/ /\n/g' >> $@
 
 build/rooms/%.cmp: rooms/$(GAME)/small/%.bin $(CMP_MODE) | build/rooms
 	@echo "Compressing $< to $@..."

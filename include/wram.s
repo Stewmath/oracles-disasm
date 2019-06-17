@@ -3,7 +3,7 @@
 ; When 2 addresses are listed (ie. $c6b9/$c6b5), the first address is for ages, the second
 ; is for seasons. If only one is listed, assume it's for ages.
 
-.enum $c000
+.enum $c000 export
 
 wMusicReadFunction: ; $c000
 ; Function copied to RAM to read a byte from another bank.
@@ -122,7 +122,7 @@ wChannelVolumes: ; $c07d
 
 .ende
 
-.enum $c0a0
+.enum $c0a0 export
 
 wMusicQueue: ; $c0a0
 	dsb $10
@@ -184,7 +184,7 @@ wThreadStateBuffer: ; $c2e0
 .define wPaletteThread_fadeOffset	wThreadStateBuffer + $1f ; $c2ff
 
 
-.enum $c300
+.enum $c300 export
 
 wBigBuffer: ; $c300
 ; General purpose $100 byte buffer. This has several, mutually exclusive uses:
@@ -308,7 +308,7 @@ wPuddleAnimationPointer: ; $c4ba
 .ende
 
 
-.enum $c4c0
+.enum $c4c0 export
 
 wTerrainEffectsBuffer: ; $c4c0
 ; This might only be used for drawing objects' shadows, though in theory it could also be
@@ -332,7 +332,7 @@ wc540:
 ; Everything from this point ($c5b0) up to $caff goes into the save data ($550 bytes).
 ; ========================================================================================
 
-.enum $c5b0
+.enum $c5b0 export
 
 wFileStart: ; $c5b0
 ; Start of file data (same address as checksum)
@@ -352,7 +352,7 @@ wSavefileString: ; $c5b2
 .ende
 
 
-.enum $c5c0
+.enum $c5c0 export
 
 wUnappraisedRings: ; $c5c0
 ; List of unappraised rings. each byte always seems to have bit 6 set, indicating that the
@@ -839,7 +839,7 @@ wSecretType: ; $c6fe
 .define wSeedsAndHarpSongsObtained	wObtainedTreasureFlags+TREASURE_EMBER_SEEDS/8
 
 
-.enum $c700
+.enum $c700 export
 
 ; Flags shared for above water and underwater
 wPresentRoomFlags: ; $c700
@@ -2583,7 +2583,7 @@ wcde4: ; $cde4
 .define wStaticObjects.size	$40
 
 
-.enum $ce00
+.enum $ce00 export
 
 wRoomCollisions: ; $ce00
 ; $10 bytes larger than it needs to be?
@@ -2602,11 +2602,11 @@ wTmpcec0: ; $cec0
 ; * Functions which apply an object's speed ($cec0-$cec3)
 ; * Unpacking secrets
 
-.enum $cec0
+.enum $cec0 export
 	wEnemyPlacement: instanceof EnemyPlacementStruct
 .ende
 
-.enum $cee0
+.enum $cee0 export
 	wShootingGalleryTileLayoutsToShow: ; $cee0
 	; This consists of the numbers 0-9. As the game progresses, a number is read from
 	; a random position in this buffer, then the buffer is decreased in size by one
@@ -2617,7 +2617,7 @@ wTmpcec0: ; $cec0
 		dsb 10
 .ende
 
-.enum $cee0
+.enum $cee0 export
 	wWizzrobePositionReservations: ; $cee0
 	; Each 2 bytes are the position and object index of a wizzrobe. Keeps track of
 	; their positions so multiple red wizzrobes don't spawn on top of each other.
@@ -2626,7 +2626,7 @@ wTmpcec0: ; $cec0
 .ende
 
 
-.enum $cf00
+.enum $cf00 export
 
 wRoomLayout: ; $cf00
 ; $10 bytes larger than it needs to be; the row below the last row is reserved and filled
@@ -2992,7 +2992,7 @@ wRoomLayoutEnd: ; $cfc0
 ; including link and his companions.
 ; ========================================================================================
 
-.ENUM $d000
+.ENUM $d000 export
 	w1Link:			instanceof SpecialObjectStruct
 	; This is used for:
 	; * Items from treasure chests
@@ -3000,32 +3000,32 @@ wRoomLayoutEnd: ; $cfc0
 	w1ReservedInteraction0:	instanceof InteractionStruct
 .ENDE
 
-.ENUM $d100
+.ENUM $d100 export
 	w1Companion:		instanceof SpecialObjectStruct
 	w1ReservedInteraction1:	instanceof InteractionStruct
 .ENDE
 
-.ENUM $d200
+.ENUM $d200 export
 	; Used for stuff Link holds?
 	w1ParentItem2:		instanceof ItemStruct
 .ENDE
-.ENUM $d300
+.ENUM $d300 export
 	; Used for projectiles like w1ParentItem4?
 	w1ParentItem3:		instanceof ItemStruct
 .ENDE
-.ENUM $d400
+.ENUM $d400 export
 	; Used for projectiles like w1ParentItem3?
 	w1ParentItem4:		instanceof ItemStruct
 .ENDE
-.ENUM $d500
+.ENUM $d500 export
 	; Used for flute, harp, shield?
 	w1ParentItem5:		instanceof ItemStruct
 .ENDE
-.ENUM $d600
+.ENUM $d600 export
 	w1WeaponItem:		instanceof ItemStruct
 .ENDE
 
-.ENUM $dc00
+.ENUM $dc00 export
 	; The item that Link is holding / throwing. Even if Link is holding some other
 	; object like an enemy or Dimitri, this object still exists as ITEMID_BRACELET,
 	; or at least it does while the object is being thrown. This invisible object will
@@ -3034,13 +3034,13 @@ wRoomLayoutEnd: ; $cfc0
 	w1ReservedItemC:	instanceof ItemStruct
 .ENDE
 
-.ENUM $de00
+.ENUM $de00 export
 	; Doesn't have collisions? (comes after LAST_STANDARD_ITEM_INDEX)
 	; Used to store positions for switch hook (ITEMID_SWITCH_HOOK_HELPER).
 	w1ReservedItemE:	instanceof ItemStruct
 .ENDE
 
-.ENUM $df00
+.ENUM $df00 export
 	; Used for puffs at Link's feet while using pegasus seeds
 	w1ReservedItemF:	instanceof ItemStruct
 .ENDE
