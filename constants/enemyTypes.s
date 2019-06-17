@@ -422,8 +422,13 @@
 ; @subid_04{Body part (1/4th extended)}
 .define ENEMYID_PINCER				$45
 
-;;
-.define ENEMYID_STUB_46				$46
+
+.ifdef ROM_AGES
+	;;
+	.define ENEMYID_STUB_46			$46
+.else; ROM_SEASONS
+	.define ENEMYID_GOHMA_GEL		$46
+.endif
 
 ;;
 ; Enemies in floor-tile-changing puzzles in Ages only.
