@@ -178210,7 +178210,7 @@ loadD6ChangingFloorPatternToBigBuffer:
 .ORG 0
 
  m_section_superfree "Gfx_19_1" ALIGN $10
-	.include "data/gfxDataBank19_1.s"
+	.include "data/ages/gfxDataBank19_1.s"
 .ends
 
  m_section_superfree "Tile_mappings"
@@ -178218,7 +178218,7 @@ loadD6ChangingFloorPatternToBigBuffer:
 .ends
 
  m_section_superfree "Gfx_19_2" ALIGN $10
-	.include "data/gfxDataBank19_2.s"
+	.include "data/ages/gfxDataBank19_2.s"
 .ends
 
 
