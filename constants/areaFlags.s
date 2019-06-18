@@ -4,7 +4,7 @@
 .define AREAFLAG_SUBROSIA	$80
 .define AREAFLAG_UNDERWATER	$40
 .define AREAFLAG_SIDESCROLL	$20
-.define AREAFLAG_10		$10 ; Might prevent minimap updating?
+.define AREAFLAG_10		$10 ; Might prevent minimap updating? (ages only)
 .define AREAFLAG_DUNGEON	$08
 .define AREAFLAG_INDOORS	$04
 .define AREAFLAG_MAKU		$02

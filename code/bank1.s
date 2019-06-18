@@ -321,6 +321,7 @@ _screenTransitionState2:
 	ret z			; $4196
 +
 .ifdef ROM_AGES
+	; Ages only: forbid looping around the overworld map in any direction, except up.
 	ld a,(wAreaFlags)		; $4197
 	and AREAFLAG_OUTDOORS			; $419a
 	jr z,@doneBoundaryChecks	; $419c
@@ -340,7 +341,7 @@ _screenTransitionState2:
 	cp (OVERWORLD_HEIGHT-1)*16			; $41ad
 	jr c,+			; $41af
 	ld a,c			; $41b1
-	cp $02			; $41b2
+	cp DIR_DOWN			; $41b2
 	ret z			; $41b4
 +
 	; Check leftmost map boundary
@@ -352,14 +353,17 @@ _screenTransitionState2:
 	ret z			; $41bd
 
 @doneBoundaryChecks:
+	; Skip hazard checks if underwater
 	ld a,(wAreaFlags)		; $41be
 	and AREAFLAG_UNDERWATER			; $41c1
 	jr nz,@startTransition	; $41c3
 
-	; Check if on a conveyor? (Or on the raft, apparently?)
+	; Also skip checks if on a conveyor? (Or on the raft, apparently?)
 	ld a,(wcc92)		; $41c5
 	and $08			; $41c8
 	jr nz,@startTransition	; $41ca
+
+.endif ; ROM_AGES
 
 	; Return if Link is over a hole/lava, or over water without flippers?
 	call checkLinkIsOverHazard		; $41cc
@@ -367,16 +371,6 @@ _screenTransitionState2:
 	call c,@checkCanTransitionOverWater		; $41d0
 	and $03			; $41d3
 	ret nz			; $41d5
-
-.else ; ROM_SEASONS
-
-	call checkLinkIsOverHazard		; $4197
-	rrca			; $419a
-	call c,@checkCanTransitionOverWater		; $419b
-	and $03			; $419e
-	ret nz			; $41a0
-
-.endif
 
 
 @startTransition:
@@ -389,7 +383,7 @@ _screenTransitionState2:
 	ret			; $41e4
 
 ;;
-; @param[out]	a	One of bits 0/1 set if Link is ok to transition over water?
+; @param[out]	a	One of bits 0/1 set if Link is forbidden to transition over water.
 ; @addr{41e5}
 @checkCanTransitionOverWater:
 	; Return false if Link is riding something? (apparently code execution doesn't
@@ -650,7 +644,7 @@ checkDarkenRoom:
 	ret z			; $4316
 
 .ifdef ROM_SEASONS
-
+	; Hardcoded check for snake's remains entrance
 	ld a,(wActiveGroup)		; $42d5
 	cp $04			; $42d8
 	jr nz,++			; $42da
@@ -732,7 +726,7 @@ _screenTransitionState5Substate0:
 	ld a,(wAreaFlags)		; $4369
 	and AREAFLAG_OUTDOORS			; $436c
 	call nz,checkAndApplyPaletteFadeTransition		; $436e
-.else
+.else; ROM_SEASONS
 	ld a,(wActiveGroup)
 	or a
 	call z,checkAndApplyPaletteFadeTransition
@@ -1877,6 +1871,7 @@ applyPaletteFadeTransitionData:
 	jp startFadeBetweenTwoPalettes
 
 
+; TODO
 seasonsData_01_4845:
 	.db $b0 $49 $e0 $49 $10 $4a $40 $4a
 	.db $70 $4a $a0 $4a $d0 $4a $00 $4b
@@ -2241,6 +2236,7 @@ playCompassSoundIfKeyInRoom:
 	ret nz			; $4a6f
 
 .ifdef ROM_SEASONS
+	; Hardcoded to play compass sound in d5 boss key room
 	ld a,(wActiveGroup)
 	cp $06
 	jr nz,+
@@ -3621,13 +3617,6 @@ _initializeGame:
 	ld a,$ff		; $5a22
 	ld (wActiveMusic),a		; $5a24
 	ld (wcc05),a		; $5a27
-	ld a,GLOBALFLAG_PREGAME_INTRO_DONE	; $5a2a
-	call checkGlobalFlag		; $5a2c
-	jr nz,_func_5a60	; $5a2f
-
-	ld a,GLOBALFLAG_3d		; $5a31
-	call checkGlobalFlag		; $5a33
-	jr nz,@summonLinkCutscene		; $5a36
 
 .else ; ROM_SEASONS
 
@@ -3638,13 +3627,15 @@ _initializeGame:
 
 	ld a,$ff		; $5868
 	ld (wActiveMusic),a		; $586a
-	ld a,GLOBALFLAG_S_PREGAME_INTRO_DONE		; $586d
-	call checkGlobalFlag		; $586f
-	jr nz,_func_5a60	; $5872
-	ld a,GLOBALFLAG_S_2a		; $5874
-	call checkGlobalFlag		; $5876
-	jr nz,@summonLinkCutscene		; $5879
 .endif
+
+	ld a,GLOBALFLAG_PREGAME_INTRO_DONE	; $5a2a
+	call checkGlobalFlag		; $5a2c
+	jr nz,_func_5a60	; $5a2f
+
+	ld a,GLOBALFLAG_3d		; $5a31
+	call checkGlobalFlag		; $5a33
+	jr nz,@summonLinkCutscene		; $5a36
 
 	ld a,$02		; $5a38
 	ld (wGameState),a		; $5a3a
@@ -3771,36 +3762,6 @@ _func_5abc:
 	.dw cutscene20
 	.dw cutscene21
 .endif
-
-
-; Seasons cutscene addresses
-;
-;	.dw $5953 ; 0x00
-;	.dw $5980 ; 0x01
-;	.dw $59e6 ; 0x02
-;	.dw $59e7 ; 0x03
-;	.dw $5a79 ; 0x04
-;	.dw $5a9d ; 0x05
-;	.dw $5bd2 ; 0x06
-;	.dw $5bd7 ; 0x07
-;	.dw $5be2 ; 0x08
-;	.dw $5bea ; 0x09
-;	.dw $5c02 ; 0x0a
-;	.dw $5c07 ; 0x0b
-;	.dw $5c11 ; 0x0c
-;	.dw $5c1b ; 0x0d
-;	.dw $5c23 ; 0x0e
-;	.dw $5bfa ; 0x0f
-;	.dw $5c31 ; 0x10
-;	.dw $5c37 ; 0x11
-;	.dw $5c3d ; 0x12
-;	.dw $5b4e ; 0x13
-;	.dw $613a ; 0x14
-;	.dw $4b8b ; 0x15
-;	.dw $5c43 ; 0x16
-;	.dw $4a93 ; 0x17
-;	.dw $4cb1 ; 0x18
-;	.dw $4cb5 ; 0x19
 
 
 ;;
@@ -4232,7 +4193,7 @@ cutscene13:
 	ret nz
 	ld a,(wWarpTransition2)
 	or a
-	jp nz,$5c85
+	jp nz,func_5e0e
 
 	call seasonsFunc_331b
 	call seasonsFunc_34a0
@@ -4240,7 +4201,7 @@ cutscene13:
 	ld a,(wCutsceneTrigger)
 	or a
 	jp z,checkEnemyAndPartCollisionsIfTextInactive
-	jp $5cb4
+	jp func_5e3d
 
 .endif
 
@@ -5622,13 +5583,6 @@ _warpTileTable:
 
 	.include "code/seasons/onoxCastleEssenceCutscene.s"
 
-	; Placeholder labels
-	checkInitUnderwaterWaves:
-	checkDisableUnderwaterWaves:
-	checkSolidObjectAtWarpDestPos:
-	clearSolidObjectPositions:
-	checkLinkCanStandOnTile:
-
 .endif ; ROM_SEASONS
 
 .ENDS
@@ -5820,7 +5774,7 @@ _seasonsFunc_7e09:
 	jr z,+			; $7e15
 	and $0f			; $7e17
 +
-	ld hl,$7e50		; $7e19
+	ld hl,_data_7e50		; $7e19
 	rst_addAToHl			; $7e1c
 	ld a,(hl)		; $7e1d
 
