@@ -319,7 +319,7 @@ _doorController_minecart:
 	.dw _doorController_closeDoorWhenLinkNotTouching ; Minecart track (door is open)
 
 
-; Subids $08-$0f:
+; Subids $0c-$0f:
 ;   Minecart door; opens when a minecart collides with it
 
 ; Subid $0c
