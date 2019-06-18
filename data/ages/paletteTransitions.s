@@ -4,7 +4,7 @@
 ; Note: although this data has entries for groups 4-7, it only gets checked when
 ; AREAFLAG_OUTDOORS is set.
 ;
-; Data format:
+; Data format: (differs in seasons)
 ; b0: direction (or $ff to end)
 ; b1: room index
 ; w2: source palette

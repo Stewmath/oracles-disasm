@@ -1709,6 +1709,11 @@ checkAndApplyPaletteFadeTransition:
 	call c,applyPaletteFadeTransitionData		; $4808
 	ret			; $480b
 
+
+; "getPaletteFadeTransitionData" and "applyPaletteFadeTransitionData" functions have
+; differing implementations in ages and seasons.
+.ifdef ROM_AGES
+
 ;;
 ; Check if a room has a smooth palette transition (ie. entrance to Yoll Graveyard).
 ;
@@ -1716,8 +1721,6 @@ checkAndApplyPaletteFadeTransition:
 ; @param[out]	hl	Address of palette fade data (if it has one)
 ; @addr{480c}
 getPaletteFadeTransitionData:
-
-.ifdef ROM_AGES
 	; Don't do a transition in symmetry city if the tuni nut was fixed
 	call checkSymmetryCityPaletteTransition		; $480c
 	ret nc			; $480f
@@ -1752,50 +1755,10 @@ getPaletteFadeTransitionData:
 	scf			; $4832
 	ret			; $4833
 
-.else ; ROM_SEASONS
-
-	ld a,(wActiveGroup)		; $47dd
-	ld b,a			; $47e0
-	rrca			; $47e1
-	and $7f			; $47e2
-	ret nz			; $47e4
-	ld a,b			; $47e5
-	ld hl,seasonsData_01_4875		; $47e6
-	rst $18			; $47e9
-	ldi a,(hl)		; $47ea
-	ld h,(hl)		; $47eb
-	ld l,a			; $47ec
-	ld a,(wActiveRoom)		; $47ed
-	ld b,a			; $47f0
---
-	ldi a,(hl)		; $47f1
-	ld c,a			; $47f2
-	ld a,(hl)		; $47f3
-	cp $ff			; $47f4
-	ret z			; $47f6
-	ld a,(wScreenTransitionDirection)		; $47f7
-	cp (hl)			; $47fa
-	jr nz,+			; $47fb
-	ld a,c			; $47fd
-	cp b			; $47fe
-	jr z,++			; $47ff
-+
-	inc hl			; $4801
-	inc hl			; $4802
-	inc hl			; $4803
-	jr --			; $4804
-++
-	scf			; $4806
-	ret			; $4807
-
-.endif
-
 ;;
 ; @param	hl	Address of palette fade transition data (starting at byte 2)
 ; @addr{4834}
 applyPaletteFadeTransitionData:
-
-.ifdef ROM_AGES
 	ld a,(wLoadedAreaPalette)		; $4834
 	ld b,a			; $4837
 	ld a,(wAreaPalette)		; $4838
@@ -1828,73 +1791,6 @@ applyPaletteFadeTransitionData:
 	ld (wLoadedAreaPalette),a		; $485c
 	jp startFadeBetweenTwoPalettes		; $485f
 
-.else ; ROM_SEASONS
-
-	inc hl
-	ld a,:w2ColorComponentBuffer1
-	ld ($ff00+R_SVBK),a
-	ldi a,(hl)
-	push hl
-	swap a
-	rrca
-
-	ld hl,seasonsData_01_4845
-	rst_addAToHl
-	ld a,(wRoomStateModifier)
-	rst_addDoubleIndex
-	ldi a,(hl)
-	ld h,(hl)
-	ld l,a
-	ld de,w2ColorComponentBuffer1
-	call extractColorComponents
-
-	pop hl
-	ld a,(hl)
-	swap a
-	rrca
-
-	ld hl,seasonsData_01_4845
-	rst $10
-	ld a,(wRoomStateModifier)
-	rst $18
-	ldi a,(hl)
-	ld h,(hl)
-	ld l,a
-	ld de,w2ColorComponentBuffer2
-	call extractColorComponents
-
-	ld a,$00
-	ld ($ff00+R_SVBK),a
-
-	ld a,$ff
-	ld (wLoadedAreaPalette),a
-	jp startFadeBetweenTwoPalettes
-
-
-; TODO
-seasonsData_01_4845:
-	.db $b0 $49 $e0 $49 $10 $4a $40 $4a
-	.db $70 $4a $a0 $4a $d0 $4a $00 $4b
-	.db $a0 $4d $d0 $4d $00 $4e $30 $4e
-	.db $20 $4f $50 $4f $80 $4f $b0 $4f
-	.db $a0 $50 $d0 $50 $00 $51 $30 $51
-	.db $60 $51 $90 $51 $c0 $51 $f0 $51
-
-
-; Season's "paletteTransitionData"?
-seasonsData_01_4875:
-	.db $79 $48 $9b $48 $e0 $00 $00 $03
-	.db $f0 $02 $03 $00 $63 $00 $01 $02
-	.db $73 $02 $02 $01 $83 $00 $00 $01
-	.db $93 $02 $01 $00 $23 $00 $04 $05
-	.db $33 $02 $05 $04 $00 $ff $00 $ff
-
-
-.endif ; ROM_SEASONS
-
-
-.ifdef ROM_AGES
-
 ;;
 ; @param[out]	cflag	Set if the game should transition the palette between the symmetry
 ;			city exits (this gets unset when the tuni nut is replaced).
@@ -1925,9 +1821,98 @@ checkSymmetryCityPaletteTransition:
 	ret			; $4885
 
 
-.include "data/paletteTransitions.s"
+.else ; ROM_SEASONS
 
-.endif ; ROM_AGES
+;;
+; Check if a room has a smooth palette transition (ie. entrance to Yoll Graveyard).
+;
+; @param[out]	cflag	Set if the active room has palette transition data
+; @param[out]	hl	Address of palette fade data (if it has one)
+; @addr{480c}
+getPaletteFadeTransitionData:
+	ld a,(wActiveGroup)		; $47dd
+	ld b,a			; $47e0
+	rrca			; $47e1
+	and $7f			; $47e2
+	ret nz			; $47e4
+
+	ld a,b			; $47e5
+	ld hl,paletteTransitionIndexData		; $47e6
+	rst_addDoubleIndex			; $47e9
+	ldi a,(hl)		; $47ea
+	ld h,(hl)		; $47eb
+	ld l,a			; $47ec
+	ld a,(wActiveRoom)		; $47ed
+	ld b,a			; $47f0
+--
+	ldi a,(hl)		; $47f1
+	ld c,a			; $47f2
+	ld a,(hl)		; $47f3
+	cp $ff			; $47f4
+	ret z			; $47f6
+	ld a,(wScreenTransitionDirection)		; $47f7
+	cp (hl)			; $47fa
+	jr nz,+			; $47fb
+	ld a,c			; $47fd
+	cp b			; $47fe
+	jr z,++			; $47ff
++
+	inc hl			; $4801
+	inc hl			; $4802
+	inc hl			; $4803
+	jr --			; $4804
+++
+	scf			; $4806
+	ret			; $4807
+
+;;
+; @param	hl	Address of palette fade transition data (starting at byte 1)
+; @addr{4834}
+applyPaletteFadeTransitionData:
+	inc hl
+	ld a,:w2ColorComponentBuffer1
+	ld ($ff00+R_SVBK),a
+	ldi a,(hl)
+	push hl
+	swap a
+	rrca
+
+	ld hl,paletteTransitionSeasonData
+	rst_addAToHl
+	ld a,(wRoomStateModifier)
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	ld de,w2ColorComponentBuffer1
+	call extractColorComponents
+
+	pop hl
+	ld a,(hl)
+	swap a
+	rrca
+
+	ld hl,paletteTransitionSeasonData
+	rst_addAToHl
+	ld a,(wRoomStateModifier)
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	ld de,w2ColorComponentBuffer2
+	call extractColorComponents
+
+	ld a,$00
+	ld ($ff00+R_SVBK),a
+
+	ld a,$ff
+	ld (wLoadedAreaPalette),a
+	jp startFadeBetweenTwoPalettes
+
+.endif ; ROM_SEASONS
+
+.include "build/data/paletteTransitions.s"
+
 
 ;;
 ; Used by Impa, Rosa when following Link.
