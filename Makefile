@@ -103,7 +103,7 @@ seasons:
 	@ROM_SEASONS=1 $(MAKE) seasons.gbc
 
 
-$(GAME).gbc: build/$(GAME).o build/linkfile
+$(GAME).gbc: $(OBJS) build/linkfile
 	$(LD) -S build/linkfile $@
 
 ifeq ($(BUILD_VANILLA),true)
@@ -112,9 +112,11 @@ endif
 
 build/$(GAME).o: $(GFXFILES) $(ROOMLAYOUTFILES) $(COLLISIONFILES) $(MAPPINGINDICESFILES) $(GAMEDATAFILES)
 build/$(GAME).o: build/textData.s build/textDefines.s
-build/$(GAME).o: code/*.s code/$(GAME)/*.s constants/*.s data/*.s include/*.s objects/*.s scripts/*.s audio/*.s audio/*.bin
+build/$(GAME).o: code/*.s code/$(GAME)/*.s data/*.s objects/*.s scripts/*.s
 build/$(GAME).o: build/tilesets/tileMappingTable.bin build/tilesets/tileMappingIndexData.bin build/tilesets/tileMappingAttributeData.bin
 build/$(GAME).o: rooms/$(GAME)/*.bin
+
+build/audio.o: audio/$(GAME)/*.s audio/$(GAME)/*.bin
 
 $(MAPPINGINDICESFILES): build/tilesets/mappingsDictionary.bin
 $(COLLISIONFILES): build/tilesets/collisionsDictionary.bin
@@ -123,7 +125,7 @@ $(COLLISIONFILES): build/tilesets/collisionsDictionary.bin
 build/$(GAME).o: $(GAME).s Makefile | build
 	$(CC) -o $@ $(CFLAGS) $<
 
-build/%.o: code/%.s Makefile | build
+build/%.o: code/%.s include/*.s constants/*.s Makefile | build
 	$(CC) -o $@ $(CFLAGS) $<
 
 build/linkfile: $(OBJS)

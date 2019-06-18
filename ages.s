@@ -1,7 +1,7 @@
-; The main file containing all the code in the game.
-;;
+; Main file for Oracle of Ages, US version
 
 .include "include/rominfo.s"
+.include "include/emptyfill.s"
 .include "include/constants.s"
 .include "include/structs.s"
 .include "include/wram.s"
@@ -42804,19 +42804,19 @@ groupMusicPointerTable: ; 495c
 	.dw group7Music
 
 group0Music:
-	.incbin "audio/group0IDs.bin"
+	.incbin "audio/ages/group0IDs.bin"
 group1Music:
-	.incbin "audio/group1IDs.bin"
+	.incbin "audio/ages/group1IDs.bin"
 group2Music:
-	.incbin "audio/group2IDs.bin"
+	.incbin "audio/ages/group2IDs.bin"
 group3Music:
-	.incbin "audio/group3IDs.bin"
+	.incbin "audio/ages/group3IDs.bin"
 group4Music:
 group6Music:
-	.incbin "audio/group4IDs.bin"
+	.incbin "audio/ages/group4IDs.bin"
 group5Music:
 group7Music:
-	.incbin "audio/group5IDs.bin"
+	.incbin "audio/ages/group5IDs.bin"
 
 
 ; Format:
