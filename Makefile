@@ -110,6 +110,9 @@ ifeq ($(BUILD_VANILLA),true)
 	@-md5sum -c $(GAME).md5
 endif
 
+$(MAPPINGINDICESFILES): build/tilesets/mappingsDictionary.bin
+$(COLLISIONFILES): build/tilesets/collisionsDictionary.bin
+
 build/$(GAME).o: $(GFXFILES) $(ROOMLAYOUTFILES) $(COLLISIONFILES) $(MAPPINGINDICESFILES) $(GAMEDATAFILES)
 build/$(GAME).o: build/textData.s build/textDefines.s
 build/$(GAME).o: code/*.s code/$(GAME)/*.s data/*.s objects/*.s scripts/*.s
@@ -117,15 +120,12 @@ build/$(GAME).o: build/tilesets/tileMappingTable.bin build/tilesets/tileMappingI
 build/$(GAME).o: rooms/$(GAME)/*.bin
 
 build/audio.o: audio/$(GAME)/*.s audio/$(GAME)/*.bin
-
-$(MAPPINGINDICESFILES): build/tilesets/mappingsDictionary.bin
-$(COLLISIONFILES): build/tilesets/collisionsDictionary.bin
-
+build/*.o: include/*.s constants/*.s Makefile
 
 build/$(GAME).o: $(GAME).s Makefile | build
 	$(CC) -o $@ $(CFLAGS) $<
 
-build/%.o: code/%.s include/*.s constants/*.s Makefile | build
+build/%.o: code/%.s | build
 	$(CC) -o $@ $(CFLAGS) $<
 
 build/linkfile: $(OBJS)

@@ -1420,8 +1420,15 @@
 ; @subid_01{Right side of house}
 .define INTERACID_BIPIN_BLOSSOM_FAMILY_SPAWNER	$ac
 
+
+.ifdef ROM_AGES
 ;;
 .define INTERACID_ZELDA				$ad
+
+.else; ROM_SEASONS
+
+.define INTERACID_ZELDA				$44 ; TODO: organize this better
+.endif
 
 ;;
 ; Used for the credits text in between the mini-cutscenes.

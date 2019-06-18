@@ -43,7 +43,7 @@
 	hLcdInterruptCounter		db	; $ff9c
 
 	; Copied to hLcdInterruptBehaviour at vblank, to avoid anomolies mid-frame.
-	hNextLcdInterruptBehaviour	db	; $ff9d
+	hNextLcdInterruptBehaviour	db	; $ff9d/$ff9b
 
 	hActiveThread			db	; $ff9e
 

@@ -1539,15 +1539,15 @@ wInteractionIDToLoadExtraGfx: ; $cc1e
 ; Same as above, but for interactions.
 	db
 
-wcc1f: ; $cc1f
-	db
-wcc20: ; $cc20
-	db
+.ende
 
-.ifdef ROM_SEASONS
-; TODO: Figure out what's here. (It might be at $cc1f instead of $cc21.)
-seasonsCC21:
-	dsb $1d
+; Ages: $cc1f-$cc20 unused.
+; Seasons: $cc1f-$cc3c are occupied by data which, in ages, is at $cdc0.
+
+.ifdef ROM_AGES
+	.enum $cc21 export
+.else
+	.enum $cc3d export
 .endif
 
 ; Point to respawn after falling in hole or w/e
@@ -2095,7 +2095,7 @@ wcca2: ; $cca2
 ; When a nonzero value is written here, dormant armos statues with subid 0 begin moving?
 	db
 
-wChestContentsOverride: ; $cca3
+wChestContentsOverride: ; $cca3/$ccbd
 ; 2 bytes. When set, this overrides the contents of a chest.
 ; Used for farore's secrets, maybe also the chest minigame?
 	dw
@@ -2109,14 +2109,20 @@ wcca7: ; $cca7
 	db
 wcca8: ; $cca8
 	db
-wTwinrovaTileReplacementMode: ; $cca9
+
+.ifdef ROM_SEASONS ; TODO: figure out what this is, where it goes
+wUnknown: ; -/$ccc3
+	db
+.endif
+
+wTwinrovaTileReplacementMode: ; $cca9/$ccc4
 ; 0: Do nothing
 ; 1: Fill room with lava
 ; 2: Fill room with ice
 ; 3: ?
 ; 4+: Use "seizure tiles" (when controls are reversed in ganon fight)
 	db
-wccaa: ; $ccaa
+wccaa: ; $ccaa/$ccc5
 	db
 
 
@@ -2146,8 +2152,10 @@ wccb0: ; $ccb0/$ccc7
 ; Tile position being poked or slashed at?
 	db
 
+.ifdef ROM_AGES
 wccb1: ; $ccb1
 	db
+.endif
 
 wDisableWarps: ; $ccb2
 ; Not sure what purpose this is for
@@ -2234,9 +2242,11 @@ wIsLinkBeingShocked: ; $ccdb
 wLinkShockCounter: ; $ccdc
 	db
 
+.ifdef ROM_AGES
 wSwitchHookState: ; $ccdd
 ; Used when swapping with the switch hook
 	db
+.endif
 
 wccde: ; $ccde
 	db
@@ -2248,6 +2258,8 @@ wChangedTileQueueTail: ; $cce0
 	db
 
 wcce1: ; $cce1
+; This is used as a marker; all memory from "wDisabledObjects" to here is cleared in one
+; spot (not including wcce1).
 	db
 wcce2: ; $cce2
 	db
@@ -2267,7 +2279,7 @@ wLinkPathIndex: ; $cce6
 
 wFollowingLinkObjectType: ; $cce7/$ccfd
 	db
-wFollowingLinkObject: ; $cce8
+wFollowingLinkObject: ; $cce8/$ccfe
 	db
 
 wcce9: ; $cce9
@@ -2474,61 +2486,80 @@ wTmpVramBuffer: ; $cd40
 ; Used temporarily for vram transfers, dma, etc.
 	dsb $40
 
-wStaticObjects: ; $cd80
-; Note: this is $40 bytes, but Seasons will actually read $80 bytes in the
-; "findFreeStaticObjectSlot" function?
-	dsb $40
 
-wEnemiesKilledList: ; $cdc0
+; Size of this differs between games.
+.ifdef ROM_AGES
+wStaticObjects: ; $cd80
+	dsb $40
+.else
+wStaticObjects: ; $cd80
+	dsb $80
+.endif
+
+.ende
+
+; Data here occupies different spots in ages and seasons.
+; TODO: organize this better?
+
+.ifdef ROM_AGES
+	.enum $cdc0 export
+.else; ROM_SEASONS
+	.enum $cc1f export
+.endif
+
+wEnemiesKilledList: ; $cdc0/$cc1f
 ; This remembers the enemies that have been killed in the last 8 visited rooms.
 ; 8 groups of 2 bytes:
 ;   b0: room index
 ;   b1: bitset of enemies killed (copied to wKilledEnemiesBitset when screen is loaded)
 	dsb $10
 
-wEnemiesKilledListTail: ; $cdd0
+wEnemiesKilledListTail: ; $cdd0/$cc2f
 ; This is the first available unused position in wEnemiesKilledList.
 	db
 
-wNumEnemies: ; $cdd1
+wNumEnemies: ; $cdd1/$cc30
 ; Number of enemies on the screen. When this reaches 0, certain events trigger. Not all
 ; enemies count for this.
 	db
 
-wToggleBlocksState: ; $cdd2
+wToggleBlocksState: ; $cdd2/$cc31
 ; State of the blocks that are toggled by the orbs.
 ; Persists between rooms within a dungeon.
 	db
 
-wSwitchState: ; $cdd3
+wSwitchState: ; $cdd3/$cc32
 ; Each bit keeps track of whether a certain switch has been hit.
 ; Persists between rooms within a dungeon.
 	db
 
-wSpinnerState: ; $cdd4
+wSpinnerState: ; $cdd4/$cc33
 ; Used by INTERACID_SPINNER.
 ; Each bit holds the state of one spinner (0 for blue, 1 for red).
 ; Persists between rooms within a dungeon.
 	db
 
-wLinkDeathTrigger: ; $cdd5
+wLinkDeathTrigger: ; $cdd5/$cc34
 ; Write anything here to make link die
 	db
-wGameOverScreenTrigger: ; $cdd6
+wGameOverScreenTrigger: ; $cdd6/$cc35
 ; Write anything here to open the Game Over screen
 	db
 
-wcdd7: ; $cdd7
+wcdd7: ; $cdd7/$cc36
 	db
-wDimitriHitNpc: ; $cdd8
+wDimitriHitNpc: ; $cdd8/$cc37
 ; Nonzero if Dimitri hits an npc while being thrown.
 	db
 wcdd9: ; $cdd9
 	db
 
-wIsMaplePresent: ; $cdda
+wIsMaplePresent: ; $cdda/$cc3a
 ; Nonzero while maple is on the screen.
 	db
+
+
+.ifdef ROM_AGES
 
 wcddb: ; $cddb
 ; Scratch variable for scripts?
@@ -2578,9 +2609,8 @@ wcde4: ; $cde4
 
 ; $cde5-$ceff unused?
 
+.endif ; ROM_AGES
 .ende
-
-.define wStaticObjects.size	$40
 
 
 .enum $ce00 export
@@ -3096,11 +3126,16 @@ w2WaveScrollValues:		dsb $80	; $d800/$d800
 
 w2Filler7:			dsb $80
 
-; Tree refill data also used for child and an event in room $2f7
-w2SeedTreeRefillData:		dsb NUM_SEED_TREES*8 ; $d900/3:dfc0
-
 .ifdef ROM_SEASONS
-w2Filler9:			dsb $40
+
+w2Filler9:			dsb $80
+
+.else; ROM_AGES
+
+; Tree refill data also used for child and an event in room $2f7.
+; Located elsewhere in seasons.
+wxSeedTreeRefillData:		dsb NUM_SEED_TREES*8 ; 2:d900/3:dfc0
+
 .endif
 
 ; Bitset of positions where objects (mostly npcs) are residing. When one of these bits is
@@ -3176,7 +3211,12 @@ w3TileMappingIndices:	dsb $200	; $dc00
 
 w3Filler2:		dsb $100
 
-w3RoomLayoutBuffer:	dsb $100	; $df00
+w3RoomLayoutBuffer:	dsb $c0	; $df00
+
+.ifdef ROM_SEASONS
+; Located elsewhere in ages
+wxSeedTreeRefillData:		dsb NUM_SEED_TREES*8 ; 2:d900/3:dfc0
+.endif
 
 .ENDS
 
