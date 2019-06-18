@@ -178206,41 +178206,20 @@ loadD6ChangingFloorPatternToBigBuffer:
 .ends
 
 
-.ifdef ROM_SEASONS
-
-	.BANK $18
-	.ORGA $6400
-
-.SECTION Gfx_Bank18 OVERWRITE ; This is an overwrite section until the above data is moved
-
-	m_GfxDataSimple gfx_animations_1 ; ???
-	m_GfxDataSimple gfx_animations_2 ; Quicksand + water at the beach?
-	m_GfxDataSimple gfx_animations_3 ; Standard stuff?
-	m_GfxDataSimple gfx_063940
-	m_GfxDataSimple gfx_credits_sprites_2
-.ENDS
-
-.endif
-
-
 .BANK $19 SLOT 1
 .ORG 0
 
-.ifdef ROM_AGES
  m_section_superfree "Gfx_19_1" ALIGN $10
 	.include "data/gfxDataBank19_1.s"
 .ends
-.endif
 
  m_section_superfree "Tile_mappings"
 	.include "build/data/tilesetMappings.s"
 .ends
 
-.ifdef ROM_AGES
  m_section_superfree "Gfx_19_2" ALIGN $10
 	.include "data/gfxDataBank19_2.s"
 .ends
-.endif
 
 
 .BANK $1a SLOT 1
