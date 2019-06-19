@@ -198,14 +198,3 @@ objectGfxHeaderTable: ; $fdafb
 	/* $c4 */ m_ObjectGfxHeader gfx_twinrova_8 $00
 	/* $c5 */ m_ObjectGfxHeader gfx_twinrova_9 $00
 	/* $c6 */ m_ObjectGfxHeader gfx_twinrovamerged_2 $80
-	/* $c7 */ m_ObjectGfxHeader gfx_capcom_nintendo $00
-	/* $c8 */ m_ObjectGfxHeader gfx_0e3baf $00
-	/* $c9 */ m_ObjectGfxHeader gfx_0e3ca0 $00
-	/* $ca */ m_ObjectGfxHeader gfx_0a0fa0 $00
-	/* $cb */ m_ObjectGfxHeader gfx_grass_tuft $00
-	/* $cc */ m_ObjectGfxHeader gfx_sand $00
-	/* $cd */ m_ObjectGfxHeader gfx_path $00
-	/* $ce */ m_ObjectGfxHeader gfx_scent_tree $00
-	/* $cf */ m_ObjectGfxHeader gfx_pegasus_tree $00
-	/* $d0 */ m_ObjectGfxHeader gfx_gale_tree $00
-	/* $d1 */ m_ObjectGfxHeader gfx_mystery_tree $00
