@@ -480,6 +480,8 @@ wMinimapDungeonMapPosition: ; $c63c
 wMinimapDungeonFloor: ; $c63d
 	db
 
+.ifdef ROM_AGES
+
 wPortalGroup: ; $c63e
 ; This is set to $ff at the beginning of the game, indicating there's no portal.
 	db
@@ -487,6 +489,8 @@ wPortalRoom: ; $c63f
 	db
 wPortalPos: ; $c640
 	db
+
+.endif
 
 wMapleKillCounter: ; $c641/$c63e
 ; Maple appears when this reaches 30 (15 with Maple's ring).
@@ -557,7 +561,7 @@ wc64a: ; $c64a
 wc64b: ; $c64b
 	db
 
-wGashaSpotFlags	 ; $c64c
+wGashaSpotFlags	 ; $c64c/$c649
 ; Bit 0 is set if you've harvested at least one gasha nut before. The first gasha nut
 ; always gives you a "class 1" ring (one of the weak, common ones).
 ; Bit 1 is set if you've obtained the heart piece from one of the gasha spots.
@@ -569,25 +573,30 @@ wGashaSpotKillCounters: ; $c64f
 ; 16 bytes (1 byte for each spot)
 	dsb NUM_GASHA_SPOTS
 
-wGashaMaturity: ; $c65f
+wGashaMaturity: ; $c65f/$c65c
 ; When this value is 300 or higher, you get the best prizes from gasha trees; otherwise,
 ; the prizes get progressively worse.
 ; Many things increase this (digging, getting essence, screen transitions), and it gets
 ; decreased by 200 when a gasha nut is harvested.
 	dw
 
+.ifdef ROM_AGES
 wc661: ; $c661
 	db
+.else
+ws_c65d: ; TODO: figure out what this is
+	dsb 4
+.endif
 
-wDungeonVisitedFloors: ; $c662
+wDungeonVisitedFloors: ; $c662/$c662
 ; 1 byte per dungeon ($10 total). Each byte is a bitset of visited floors for a particular dungeon.
 	dsb NUM_DUNGEONS
 
-wDungeonSmallKeys: ; $c672
+wDungeonSmallKeys: ; $c672/$c66e
 ; 1 byte per dungeon.
 	dsb NUM_DUNGEONS
 
-wDungeonBossKeys: ; $c682
+wDungeonBossKeys: ; $c682/$c67a
 ; Bitset of boss keys obtained
 	dsb NUM_DUNGEONS_DIV_8
 
@@ -595,7 +604,7 @@ wDungeonCompasses: ; $c684/$c67c
 ; Bitset of compasses obtained
 	dsb NUM_DUNGEONS_DIV_8
 
-wDungeonMaps: ; $c686
+wDungeonMaps: ; $c686/$c67e
 ; Bitset of maps obtained
 	dsb NUM_DUNGEONS_DIV_8
 
@@ -752,7 +761,7 @@ wc6e2: ; $c6e2
 wChildStage8Response: ; $c6e3
 ; This is the response to the child's question or request at stage 8.
 	db
-wChildPersonality: ; $c6e4
+wChildPersonality: ; $c6e4/$c6de
 ; When [wChildStage] >= 4, he starts developing a personality.
 ; For stages 4-6:
 ;   0: Hyperactive
@@ -769,10 +778,13 @@ wc6e5: ; $c6e5
 
 .ifdef ROM_SEASONS
 
-; Not exactly sure where this goes; somewhere between globalFlags and makuText below.
+ws_c6e0: ; TODO: figure out what this is
+	db
 wInsertedJewels: ; -/$c6e1
 ; Bitset of jewels inserted into tarm ruins entrance.
 	db
+ws_c6e2: ; TODO: figure out what this is
+	dsb 3
 
 .endif
 
@@ -780,6 +792,9 @@ wInsertedJewels: ; -/$c6e1
 wMakuMapTextPresent: ; $c6e6/$c6e5
 ; Low byte of text index (05XX) of text to show when selecting maku tree on map
 	db
+
+.ifdef ROM_AGES
+
 wMakuMapTextPast: ; $c6e7
 	db
 
@@ -814,7 +829,9 @@ wPirateShipAngle: ; $c6ef
 wc6f0: ; $c6f0
 	dsb $b
 
-wShortSecretIndex: ; $c6fb
+.endif ; ROM_AGES
+
+wShortSecretIndex: ; $c6fb/$c6e6
 ; bits 0-3: index of a small secret?
 ; bits 4-5: indicates the game it's for, and whether it's a return secret or not?
 ; Also used as a placeholder in the "giveTreasure" function?
@@ -2553,6 +2570,11 @@ wDimitriHitNpc: ; $cdd8/$cc37
 	db
 wcdd9: ; $cdd9
 	db
+
+.ifdef ROM_SEASONS
+ws_cc39: ; TODO: figure out what this is
+	db
+.endif
 
 wIsMaplePresent: ; $cdda/$cc3a
 ; Nonzero while maple is on the screen.

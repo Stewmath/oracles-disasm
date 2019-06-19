@@ -1,5 +1,5 @@
- .BANK $01 SLOT 1
- .ORG 0
+.BANK $01 SLOT 1
+.ORG 0
 
  m_section_free "Bank_1_Code_1" NAMESPACE "bank1"
 
@@ -4296,7 +4296,7 @@ checkPlayAreaMusic:
 
 .ifdef ROM_SEASONS
 	; Override subrosia music if on a date with Rosa
-	ld a,GLOBALFLAG_S_0b
+	ld a,GLOBALFLAG_DATING_ROSA
 	call checkGlobalFlag
 	jr z,+
 

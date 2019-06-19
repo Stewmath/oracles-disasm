@@ -105,7 +105,7 @@
 
 .else; ROM_SEASONS
 
-	GLOBALFLAG_S_0b				db ; $0b: Set if on a date with Rosa?
+	GLOBALFLAG_DATING_ROSA			db ; $0b
 	GLOBALFLAG_S_0c				db ; $0c
 	GLOBALFLAG_S_0d				db ; $0d
 	GLOBALFLAG_S_0e				db ; $0e
@@ -134,7 +134,7 @@
 	GLOBALFLAG_S_25				db ; $25
 	GLOBALFLAG_S_26				db ; $26
 	GLOBALFLAG_S_27				db ; $27
-	GLOBALFLAG_S_28				db ; $28
+	GLOBALFLAG_FINISHEDGAME			db ; $28
 	GLOBALFLAG_S_29				db ; $29
 	GLOBALFLAG_3d				db ; $2a: same as GLOBALFLAG_3d from ages?
 	GLOBALFLAG_S_2b				db ; $2b
@@ -143,7 +143,7 @@
 	GLOBALFLAG_S_2e				db ; $2e
 	GLOBALFLAG_S_2f				db ; $2f
 	GLOBALFLAG_S_30				db ; $30: game beaten / season always spring?
-	GLOBALFLAG_S_31				db ; $31
+	GLOBALFLAG_RING_SECRET_GENERATED	db ; $31
 	GLOBALFLAG_S_32				db ; $32
 	GLOBALFLAG_S_33				db ; $33
 	GLOBALFLAG_S_34				db ; $34

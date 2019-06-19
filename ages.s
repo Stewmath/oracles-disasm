@@ -12012,10 +12012,10 @@ initializeRoom:
 	ldh a,(<hRomBank)
 	push af
 
-	call              refreshObjectGfx
-	callfrombank0 $10 $5ea0
-	call              $5ed0
-	call              $5f86
+	call          refreshObjectGfx
+	callfrombank0 bank10.loadRememberedCompanion
+	call          bank10.checkAndSpawnMaple
+	call          bank10.updateRosaDateStatus
 	callfrombank0 $11 $58b5
 	callfrombank0 $15 $4e35
 
@@ -34687,7 +34687,7 @@ _specialObjectCode_maple:
 ; @addr{638d}
 _mapleState0:
 	xor a			; $638d
-	ld ($cc85),a		; $638e
+	ld (wcc85),a		; $638e
 	call specialObjectSetOamVariables		; $6391
 
 	; Set 'c' to be the amount of variation in maple's path (higher the more she's
@@ -155748,14 +155748,14 @@ _checkSkipPointer:
 	bit 1,a			; $568d
 	ret z			; $568f
 
-	ld a,($cc85)		; $5690
+	ld a,(wcc85)		; $5690
 	bit 7,a			; $5693
 	jr z,++
 
 	and $03			; $5697
 	ld b,a			; $5699
 	xor a			; $569a
-	ld ($cc85),a		; $569b
+	ld (wcc85),a		; $569b
 	ld a,(wScreenTransitionDirection)		; $569e
 	cp b			; $56a1
 	ret z			; $56a2

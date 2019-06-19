@@ -868,10 +868,17 @@
 ; @subid_80{Flute call for companion}
 .define INTERACID_COMPANION_SPAWNER	$67
 
+
+.ifdef ROM_AGES
 ;;
 ; @subid_00{Gives you the shovel on tokay island, linked only}
 ; @subid_01{Rosa at goron dance, linked only}
 .define INTERACID_ROSA			$68
+
+.else; ROM_SEASONS
+
+.define INTERACID_ROSA			$31
+.endif
 
 ;;
 ; @subid_00{Rafton in left part of house}
