@@ -10127,10 +10127,7 @@ loadAnimationData:
 roomTileChangesAfterLoad02:
 	ldh a,(<hRomBank)	; $364f
 	push af			; $3651
-	ld a,$09		; $3652
-	ldh (<hRomBank),a	; $3654
-	ld ($2222),a		; $3656
-	call $53f0		; $3659
+	callfrombank0 roomTileChangesAfterLoad02_body
 	pop af			; $365c
 	ldh (<hRomBank),a	; $365d
 	ld ($2222),a		; $365f
@@ -63840,6 +63837,11 @@ _label_09_089:
 	dec b			; $53ec
 	jr nz,_label_09_089	; $53ed
 	ret			; $53ef
+
+;;
+; $02: D6 wall-closing room
+; @addr{53f0}
+roomTileChangesAfterLoad02_body:
 	call $537e		; $53f0
 	call $53c7		; $53f3
 	ld hl,$d800		; $53f6

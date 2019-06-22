@@ -493,12 +493,10 @@ _roomTileChangesAfterLoad08:
 
 @sproutLayout:
 	.db $01 $01
-
 	.db TILEINDEX_SOFT_SOIL_PLANTED $00
 
 @treeLayout:
 	.db $02 $02
-
 	.db $4e $0f $4f $0f
 	.db $5e $0f $5f $0f
 

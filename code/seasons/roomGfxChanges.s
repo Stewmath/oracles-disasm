@@ -80,12 +80,12 @@ applyRoomSpecificTileChangesAfterGfxLoad:
 ; Values:
 ; $00: Pirate ship bow (at beach)
 ; $01: Pirate ship middle (at beach)
-; $02: D6 wall-closing room
+; $02: D6 wall-closing rooms
 ; $03: Din's troupe screen
 ; $04: Used in shops (loads price graphics, sets wInShop to be nonzero)
 ; $05: King Moblin's house (not moblin's keey)
-; $06: Blaino's gym (draws gloves on roof?)
-; $07: Vasu's shop (draws ring sign?)
+; $06: Blaino's gym (draws gloves on roof)
+; $07: Vasu's shop (draws ring sign)
 ; $08: Gasha spot (draws the tree or the plant if something has been planted)
 ; $09: Load scent tree graphics (north horon)
 ; $0a: Load pegasus tree graphics (spool swamp)
@@ -93,7 +93,7 @@ applyRoomSpecificTileChangesAfterGfxLoad:
 ; $0c: Load gale tree graphics (sunken city)
 ; $0d: Load mystery tree graphics (woods of winter)
 ; $0e: West of din's troupe: create wagon
-; $0f: Maku tree entrance & one screen south?
+; $0f: Maku tree entrance & one screen south: forbid digging up enemies
 
 @group0:
         .db $98 $03
@@ -144,8 +144,6 @@ applyRoomSpecificTileChangesAfterGfxLoad:
 @group7:
         .db $00
 
-
-.BANK $04 ; TODO: delete thin
 
 ;;
 ; $09: Load scent tree graphics (north horon)
@@ -493,94 +491,96 @@ _roomTileChangesAfterLoad05:
 	.db $83 $26 $86 $26 $87 $06 $84 $06
 	.db $85 $06 $85 $26 $84 $26 $87 $26
 
+;;
+; $06: Blaino's gym (draws gloves on roof)
+; @addr{69d6}
 _roomTileChangesAfterLoad06:
-	ld a,$01		; $69d6
+	ld a,TREE_GFXH_01		; $69d6
 	call loadTreeGfx		; $69d8
-	ld hl,$69e1		; $69db
+	ld hl,@rect		; $69db
 	jp drawRectangleToVramTiles		; $69de
-	ld c,e			; $69e1
-	ret c			; $69e2
-	inc bc			; $69e3
-	inc b			; $69e4
-	jr nz,_label_04_307	; $69e5
-_label_04_307:
-	ld hl,$2200		; $69e7
-	nop			; $69ea
-	inc hl			; $69eb
-	nop			; $69ec
-	inc h			; $69ed
-	nop			; $69ee
-	dec h			; $69ef
-	nop			; $69f0
-	ld h,$00		; $69f1
-	daa			; $69f3
-	nop			; $69f4
-	jr z,_label_04_308	; $69f5
-_label_04_308:
-	add hl,hl		; $69f7
-	nop			; $69f8
-	ldi a,(hl)		; $69f9
-	nop			; $69fa
-	dec hl			; $69fb
-	nop			; $69fc
 
+@rect:
+	.dw w3VramTiles+$4b
+	.db $03 $04
+	.db $20 $00 $21 $00 $22 $00
+	.db $23 $00 $24 $00 $25 $00
+	.db $26 $00 $27 $00 $28 $00
+	.db $29 $00 $2a $00 $2b $00
+
+;;
+; $07: Vasu's shop (draws ring sign)
+; @addr{69fd}
 _roomTileChangesAfterLoad07:
 	ld a,$01		; $69fd
 	call loadTreeGfx		; $69ff
-	ld hl,$6a0e		; $6a02
+	ld hl,_vasuSignRect		; $6a02
 	call drawRectangleToVramTiles		; $6a05
 
+	; Fall through (forbid digging up enemies on vasu screen)
+
+;;
+; $0f: Maku tree entrance & one screen south: forbid digging up enemies
+; @addr{6a08}
 _roomTileChangesAfterLoad0f:
 	ld a,$01		; $6a08
-	ld ($ccf4),a		; $6a0a
+	ld (wDiggingUpEnemiesForbidden),a		; $6a0a
 	ret			; $6a0d
-	jp z,$02d8		; $6a0e
-	ld (bc),a		; $6a11
-	inc l			; $6a12
-	nop			; $6a13
-	dec l			; $6a14
-	nop			; $6a15
-	ld l,$00		; $6a16
-	cpl			; $6a18
-	nop			; $6a19
 
+
+_vasuSignRect:
+	.dw w3VramTiles+$ca
+	.db $02 $02
+	.db $2c $00 $2d $00
+	.db $2e $00 $2f $00
+
+
+;;
+; $08: Gasha spot (draws the tree or the plant if something has been planted)
 _roomTileChangesAfterLoad08:
-	ld a,($cc4c)		; $6a1a
-	call $66cc		; $6a1d
+	; Return if a gasha seed is not planted in this room.
+	ld a,(wActiveRoom)		; $6a1a
+	call getIndexOfGashaSpotInRoom_body		; $6a1d
 	ret z			; $6a20
-	ld a,$e0		; $6a21
+	; 'c' now contains the gasha spot index.
+
+	ld a,TILEINDEX_SOFT_SOIL		; $6a21
 	call findTileInRoom		; $6a23
 	ret nz			; $6a26
+
 	ld e,l			; $6a27
-	ld d,$cf		; $6a28
+	ld d,>wRoomLayout		; $6a28
+
+	; Check if at least 20 enemies have been killed
 	ld a,c			; $6a2a
-	ld hl,$c64c		; $6a2b
+	ld hl,wGashaSpotKillCounters		; $6a2b
 	rst_addAToHl			; $6a2e
 	ld a,(hl)		; $6a2f
-	cp $14			; $6a30
-	jr c,_label_04_309	; $6a32
+	cp 20			; $6a30
+	jr c,+			; $6a32
+
+	; If so, load the tree graphics
 	ld a,e			; $6a34
 	sub $10			; $6a35
 	ld e,a			; $6a37
-	ld hl,$6a4a		; $6a38
-	jr _label_04_310		; $6a3b
-_label_04_309:
-	ld hl,$6a46		; $6a3d
-_label_04_310:
+	ld hl,@treeLayout		; $6a38
+	jr ++			; $6a3b
++
+	ld hl,@sproutLayout		; $6a3d
+++
 	call copyRectangleToRoomLayoutAndCollisions_paramDe		; $6a40
-	jp $6ae4		; $6a43
-	ld bc,$f501		; $6a46
-	nop			; $6a49
-	ld (bc),a		; $6a4a
-	ld (bc),a		; $6a4b
-	ld (hl),l		; $6a4c
-	rrca			; $6a4d
-	halt			; $6a4e
-	rrca			; $6a4f
-	add l			; $6a50
-	rrca			; $6a51
-	add (hl)		; $6a52
-	rrca			; $6a53
+
+	; Regenerate graphics after modifying wRoomLayout
+	jp generateW3VramTilesAndAttributes		; $6a43
+
+@sproutLayout:
+	.db $01 $01
+	.db TILEINDEX_SOFT_SOIL_PLANTED $00
+
+@treeLayout:
+	.db $02 $02
+	.db $75 $0f $76 $0f
+	.db $85 $0f $86 $0f
 
 ;;
 ; This function is used by "drawRectangleToVramTiles".
