@@ -2265,7 +2265,7 @@ wSwitchHookState: ; $ccdd
 	db
 .endif
 
-wccde: ; $ccde
+wDiggingUpEnemiesForbidden: ; $ccde/$ccf4
 	db
 
 ; Indices for w2ChangedTileQueue

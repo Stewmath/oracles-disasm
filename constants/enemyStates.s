@@ -24,3 +24,10 @@
 	ENEMYSTATUS_JUST_HIT		db ; $04
 	ENEMYSTATUS_KNOCKBACK		db ; $05
 .ende
+
+; Maybe put this part stuff into its own file later?
+.enum 0
+	PARTSTATUS_NORMAL	db
+	PARTSTATUS_01		db
+	PARTSTATUS_02		db
+.ende

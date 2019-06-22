@@ -841,7 +841,7 @@ getRandomNumber:
 ;;
 ; Same as above, except it doesn't preserve bc and hl. It's a little faster I guess?
 ;
-; @param[out]	a	Random number
+; @param[out]	a,c	Random number
 ; @param[out]	hl	Intermediate calculation (sometimes also used as random values?)
 ; @addr{0453}
 getRandomNumber_noPreserveVars:
@@ -72450,7 +72450,7 @@ interactionCode48:
 	jp nz,interactionDelete		; $5840
 
 	ld a,$01		; $5843
-	ld ($ccde),a		; $5845
+	ld (wDiggingUpEnemiesForbidden),a		; $5845
 	jp _tokayLoadScript		; $5848
 
 
@@ -84072,7 +84072,7 @@ _companionScript_subid00:
 
 	ld a,$01		; $5958
 	ld (wDisableScreenTransitions),a		; $595a
-	ld ($ccde),a		; $595d
+	ld (wDiggingUpEnemiesForbidden),a		; $595d
 	ld hl,companionScript_subid00Script		; $5960
 	jp interactionSetScript		; $5963
 
@@ -89913,7 +89913,7 @@ _patch_subid01:
 	ldi (hl),a ; [wTmpcfc0.patchMinigame.failedGame]
 	ld (hl),a  ; [wTmpcfc0.patchMinigame.screenFadedOut]
 	inc a			; $7969
-	ld ($ccde),a		; $796a
+	ld (wDiggingUpEnemiesForbidden),a		; $796a
 	ld hl,patch_downstairsScript		; $796d
 	jp interactionSetScript		; $7970
 
@@ -143209,7 +143209,7 @@ _label_10_307:
 	and $80			; $7541
 	jp nz,interactionDelete		; $7543
 	ld a,d			; $7546
-	ld ($ccde),a		; $7547
+	ld (wDiggingUpEnemiesForbidden),a		; $7547
 	call objectGetTileAtPosition		; $754a
 	cp $3a			; $754d
 	ret nz			; $754f
@@ -144717,80 +144717,92 @@ _partDecCounter1IfNonzero:
 	inc (hl)		; $4111
 	ret			; $4112
 
-;;
-; @addr{4113}
+; ==============================================================================
+; PARTID_ITEM_DROP
+; ==============================================================================
 partCode01:
-	jr z,_label_11_006	; $4113
-	cp $02			; $4115
+	jr z,@normalStatus	; $4113
+	cp PARTSTATUS_02			; $4115
 	jp z,$4216		; $4117
-	ld e,$c4		; $411a
+
+	ld e,Part.state		; $411a
 	ld a,$03		; $411c
 	ld (de),a		; $411e
-_label_11_006:
+
+@normalStatus:
 	call $420c		; $411f
-	ld e,$c4		; $4122
+	ld e,Part.state		; $4122
 	ld a,(de)		; $4124
 	rst_jumpTable			; $4125
-.dw $412e
-.dw $417b
-.dw $41b4
-.dw $41d9
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+
+@state0:
 	ld a,(wIsMaplePresent)		; $412e
 	or a			; $4131
 	jp nz,partDelete		; $4132
-	ld e,$c2		; $4135
+
+	ld e,Part.subid		; $4135
 	ld a,(de)		; $4137
-	cp $0f			; $4138
-	jr nz,_label_11_007	; $413a
+	cp ITEM_DROP_100_RUPEES_OR_ENEMY			; $4138
+	jr nz,@normalItem	; $413a
+
 	call getRandomNumber_noPreserveVars		; $413c
 	cp $e0			; $413f
-	jp c,$4309		; $4141
-_label_11_007:
+	jp c,@spawnEnemy		; $4141
+
+@normalItem:
 	call $428e		; $4144
+
 	ld h,d			; $4147
-	ld l,$d4		; $4148
-	ld a,$a0		; $414a
+	ld l,Part.speedZ		; $4148
+	ld a,<(-$160)		; $414a
 	ldi (hl),a		; $414c
-	ld (hl),$fe		; $414d
+	ld (hl),>(-$160)	; $414d
+
 	ld l,$c4		; $414f
 	inc (hl)		; $4151
 	ld a,(wAreaFlags)		; $4152
 	and $20			; $4155
-	jr z,_label_11_008	; $4157
+	jr z,@label_11_008	; $4157
 	inc (hl)		; $4159
 	ld l,$e4		; $415a
 	set 7,(hl)		; $415c
 	ld l,$c6		; $415e
 	ld (hl),$f0		; $4160
 	call objectCheckIsOnHazard		; $4162
-	jr nc,_label_11_008	; $4165
+	jr nc,@label_11_008	; $4165
 	rrca			; $4167
-	jr nc,_label_11_008	; $4168
+	jr nc,@label_11_008	; $4168
 	ld e,$f4		; $416a
 	ld a,$01		; $416c
 	ld (de),a		; $416e
-_label_11_008:
+@label_11_008:
 	ld e,$c2		; $416f
 	ld a,(de)		; $4171
 	call $42e8		; $4172
 	ld e,$c2		; $4175
 	ld a,(de)		; $4177
 	jp partSetAnimation		; $4178
+
+@state1:
 	call $4030		; $417b
 	call nc,$4302		; $417e
 	ld c,$20		; $4181
 	call objectUpdateSpeedZAndBounce		; $4183
-	jr c,_label_11_009	; $4186
+	jr c,@label_11_009	; $4186
 	call $4365		; $4188
-	jr nc,_label_11_010	; $418b
-_label_11_009:
+	jr nc,@label_11_010	; $418b
+@label_11_009:
 	ld h,d			; $418d
 	ld l,$c4		; $418e
 	inc (hl)		; $4190
 	ld l,$c6		; $4191
 	ld (hl),$f0		; $4193
 	call objectSetVisiblec3		; $4195
-_label_11_010:
+@label_11_010:
 	call $4386		; $4198
 	ret c			; $419b
 	ld e,$cf		; $419c
@@ -144805,6 +144817,8 @@ _label_11_010:
 	ld c,a			; $41ae
 	ld b,$14		; $41af
 	jp $441e		; $41b1
+
+@state2:
 	call $4332		; $41b4
 	call $4401		; $41b7
 	jp c,$41cc		; $41ba
@@ -144813,7 +144827,7 @@ _label_11_010:
 	ld e,$c2		; $41c3
 	ld a,(de)		; $41c5
 	or a			; $41c6
-	jr nz,_label_11_010	; $41c7
+	jr nz,@label_11_010	; $41c7
 	jp $43bf		; $41c9
 	ld h,d			; $41cc
 	ld l,$f1		; $41cd
@@ -144824,6 +144838,8 @@ _label_11_010:
 	inc l			; $41d4
 	ld (hl),c		; $41d5
 	jp partDelete		; $41d6
+
+@state3:
 	ld e,$c5		; $41d9
 	ld a,(de)		; $41db
 	or a			; $41dc
@@ -144834,12 +144850,12 @@ _label_11_010:
 	call objectGetRelatedObject1Var		; $41e8
 	ldi a,(hl)		; $41eb
 	or a			; $41ec
-	jr z,_label_11_011	; $41ed
+	jr z,@label_11_011	; $41ed
 	ld e,$f0		; $41ef
 	ld a,(de)		; $41f1
 	cp (hl)			; $41f2
 	jp z,objectTakePosition		; $41f3
-_label_11_011:
+@label_11_011:
 	jp partDelete		; $41f6
 	ld h,d			; $41f9
 	ld l,e			; $41fa
@@ -144852,6 +144868,7 @@ _label_11_011:
 	ld e,$f0		; $4206
 	ld (de),a		; $4208
 	jp objectSetVisible80		; $4209
+
 	ld e,$e4		; $420c
 	ld a,(de)		; $420e
 	rlca			; $420f
@@ -144861,7 +144878,7 @@ _label_11_011:
 	pop hl			; $4215
 	ld a,(wLinkDeathTrigger)		; $4216
 	or a			; $4219
-	jr nz,_label_11_014	; $421a
+	jr nz,@label_11_014	; $421a
 	ld e,$c2		; $421c
 	ld a,(de)		; $421e
 	add a			; $421f
@@ -144869,29 +144886,29 @@ _label_11_011:
 	rst_addDoubleIndex			; $4223
 	ldi a,(hl)		; $4224
 	or a			; $4225
-	jr z,_label_11_014	; $4226
+	jr z,@label_11_014	; $4226
 	ld b,a			; $4228
 	ld a,$26		; $4229
 	call cpActiveRing		; $422b
 	ldi a,(hl)		; $422e
-	jr z,_label_11_012	; $422f
+	jr z,@label_11_012	; $422f
 	or a			; $4231
-	jr z,_label_11_013	; $4232
+	jr z,@label_11_013	; $4232
 	call cpActiveRing		; $4234
-	jr nz,_label_11_013	; $4237
-_label_11_012:
+	jr nz,@label_11_013	; $4237
+@label_11_012:
 	inc hl			; $4239
-_label_11_013:
+@label_11_013:
 	ld c,(hl)		; $423a
 	ld a,b			; $423b
 	call giveTreasure		; $423c
 	ld e,$c2		; $423f
 	ld a,(de)		; $4241
 	cp $0e			; $4242
-	jr nz,_label_11_014	; $4244
+	jr nz,@label_11_014	; $4244
 	call getThisRoomFlags		; $4246
 	set 5,(hl)		; $4249
-_label_11_014:
+@label_11_014:
 	jp partDelete		; $424b
 	add hl,hl		; $424e
 	dec h			; $424f
@@ -144942,7 +144959,7 @@ _label_11_014:
 	daa			; $4287
 	dec bc			; $4288
 	inc c			; $4289
-	jr z,_label_11_015	; $428a
+	jr z,@label_11_015	; $428a
 	inc c			; $428c
 	dec c			; $428d
 	ld e,$c2		; $428e
@@ -144972,12 +144989,12 @@ _label_11_014:
 	ld (de),a		; $42ad
 	ld (bc),a		; $42ae
 	inc d			; $42af
-_label_11_015:
+@label_11_015:
 	inc bc			; $42b0
 	ld d,$01		; $42b1
-	jr _label_11_016		; $42b3
+	jr @label_11_016		; $42b3
 	ld a,(de)		; $42b5
-_label_11_016:
+@label_11_016:
 	nop			; $42b6
 	inc e			; $42b7
 	nop			; $42b8
@@ -144994,14 +145011,14 @@ _label_11_016:
 	ld l,$f3		; $42ca
 	ld a,(hl)		; $42cc
 	or a			; $42cd
-	jr z,_label_11_017	; $42ce
+	jr z,@label_11_017	; $42ce
 	dec (hl)		; $42d0
 	ret nz			; $42d1
 	ld l,$e4		; $42d2
 	set 7,(hl)		; $42d4
-_label_11_017:
+@label_11_017:
 	call _partDecCounter1IfNonzero		; $42d6
-	jr z,_label_11_018	; $42d9
+	jr z,@label_11_018	; $42d9
 	ld a,(hl)		; $42db
 	cp $3c			; $42dc
 	ret nc			; $42de
@@ -145010,12 +145027,12 @@ _label_11_017:
 	xor $80			; $42e2
 	ld (hl),a		; $42e4
 	ret			; $42e5
-_label_11_018:
+@label_11_018:
 	scf			; $42e6
 	ret			; $42e7
 	ld h,d			; $42e8
 	or a			; $42e9
-	jr z,_label_11_019	; $42ea
+	jr z,@label_11_019	; $42ea
 	ld e,$c3		; $42ec
 	ld a,(de)		; $42ee
 	rrca			; $42ef
@@ -145023,7 +145040,7 @@ _label_11_018:
 	ld l,$d0		; $42f1
 	ld (hl),$19		; $42f3
 	ret			; $42f5
-_label_11_019:
+@label_11_019:
 	ld l,$cf		; $42f6
 	ld a,(hl)		; $42f8
 	ld (hl),$00		; $42f9
@@ -145034,33 +145051,34 @@ _label_11_019:
 	call objectCheckTileCollision_allowHoles		; $4302
 	ret c			; $4305
 	jp objectApplySpeed		; $4306
+
+@spawnEnemy:
 	ld c,a			; $4309
-	ld a,($ccde)		; $430a
+	ld a,(wDiggingUpEnemiesForbidden)		; $430a
 	or a			; $430d
-	jr nz,_label_11_020	; $430e
+	jr nz,@delete	; $430e
+
 	ld a,c			; $4310
 	and $07			; $4311
-	ld hl,$432a		; $4313
+	ld hl,@enemiesToSpawn		; $4313
 	rst_addAToHl			; $4316
 	ld b,(hl)		; $4317
 	call getFreeEnemySlot		; $4318
-	jr nz,_label_11_020	; $431b
+	jr nz,@delete	; $431b
+
 	ld (hl),b		; $431d
 	call objectCopyPosition		; $431e
-	ld e,$c3		; $4321
+	ld e,Part.var03		; $4321
 	ld a,(de)		; $4323
-	ld l,$82		; $4324
+	ld l,Enemy.subid		; $4324
 	ld (hl),a		; $4326
-_label_11_020:
+@delete:
 	jp partDelete		; $4327
-	stop			; $432a
-	stop			; $432b
-	stop			; $432c
-	ld d,c			; $432d
-	ld d,c			; $432e
-	ld d,c			; $432f
-	ld d,c			; $4330
-	ld d,c			; $4331
+
+@enemiesToSpawn:
+	.db ENEMYID_ROPE,   ENEMYID_ROPE,   ENEMYID_ROPE,   ENEMYID_BEETLE
+	.db ENEMYID_BEETLE, ENEMYID_BEETLE, ENEMYID_BEETLE, ENEMYID_BEETLE
+
 	ld a,(wAreaFlags)		; $4332
 	and $20			; $4335
 	ret z			; $4337
@@ -145070,24 +145088,24 @@ _label_11_020:
 	ret z			; $433c
 	ld a,$20		; $433d
 	call objectUpdateSpeedZ_sidescroll		; $433f
-	jr c,_label_11_022	; $4342
+	jr c,@label_11_022	; $4342
 	ld e,$f4		; $4344
 	ld a,(de)		; $4346
 	rrca			; $4347
-	jr nc,_label_11_022	; $4348
+	jr nc,@label_11_022	; $4348
 	ld b,$01		; $434a
 	ld a,(hl)		; $434c
 	bit 7,a			; $434d
-	jr z,_label_11_021	; $434f
+	jr z,@label_11_021	; $434f
 	ld b,$ff		; $4351
 	inc a			; $4353
-_label_11_021:
+@label_11_021:
 	cp $01			; $4354
 	ret c			; $4356
 	ld (hl),b		; $4357
 	dec l			; $4358
 	ld (hl),$00		; $4359
-_label_11_022:
+@label_11_022:
 	ld e,$cb		; $435b
 	ld a,(de)		; $435d
 	cp $b0			; $435e
@@ -145097,7 +145115,7 @@ _label_11_022:
 	ld e,$c2		; $4365
 	ld a,(de)		; $4367
 	or a			; $4368
-	jr z,_label_11_023	; $4369
+	jr z,@label_11_023	; $4369
 	ld e,$d5		; $436b
 	ld a,(de)		; $436d
 	and $80			; $436e
@@ -145106,7 +145124,7 @@ _label_11_022:
 	ld l,$e4		; $4372
 	set 7,(hl)		; $4374
 	ret			; $4376
-_label_11_023:
+@label_11_023:
 	ld e,$cf		; $4377
 	ld a,(de)		; $4379
 	cp $fa			; $437a
@@ -145118,50 +145136,50 @@ _label_11_023:
 	ld (hl),$05		; $4383
 	ret			; $4385
 	call objectCheckIsOnHazard		; $4386
-	jr c,_label_11_024	; $4389
+	jr c,@label_11_024	; $4389
 	ld e,$f4		; $438b
 	ld a,(de)		; $438d
 	rrca			; $438e
 	ret nc			; $438f
 	ld b,$03		; $4390
 	xor a			; $4392
-	jr _label_11_028		; $4393
-_label_11_024:
+	jr @label_11_028		; $4393
+@label_11_024:
 	rrca			; $4395
-	jr c,_label_11_027	; $4396
+	jr c,@label_11_027	; $4396
 	rrca			; $4398
 	ld b,$04		; $4399
-	jr nc,_label_11_025	; $439b
+	jr nc,@label_11_025	; $439b
 	call objectCreateFallingDownHoleInteraction		; $439d
-	jr _label_11_026		; $43a0
-_label_11_025:
+	jr @label_11_026		; $43a0
+@label_11_025:
 	call objectCreateInteractionWithSubid00		; $43a2
-_label_11_026:
+@label_11_026:
 	call partDelete		; $43a5
 	scf			; $43a8
 	ret			; $43a9
-_label_11_027:
+@label_11_027:
 	ld b,$03		; $43aa
 	ld a,(wAreaFlags)		; $43ac
 	and $20			; $43af
-	jr z,_label_11_025	; $43b1
+	jr z,@label_11_025	; $43b1
 	ld e,$f4		; $43b3
 	ld a,(de)		; $43b5
 	rrca			; $43b6
 	ccf			; $43b7
 	ret nc			; $43b8
 	ld a,$01		; $43b9
-_label_11_028:
+@label_11_028:
 	ld (de),a		; $43bb
 	jp objectCreateInteractionWithSubid00		; $43bc
 	ld h,d			; $43bf
 	ld l,$c7		; $43c0
 	dec (hl)		; $43c2
-	jr z,_label_11_029	; $43c3
+	jr z,@label_11_029	; $43c3
 	call _partCommon_getTileCollisionInFront		; $43c5
 	inc a			; $43c8
 	jp nz,objectApplySpeed		; $43c9
-_label_11_029:
+@label_11_029:
 	call getRandomNumber_noPreserveVars		; $43cc
 	and $3e			; $43cf
 	add $08			; $43d1
@@ -145185,9 +145203,9 @@ _label_11_029:
 	ld l,$db		; $43f1
 	ld a,(hl)		; $43f3
 	res 5,a			; $43f4
-	jr nz,_label_11_030	; $43f6
+	jr nz,@label_11_030	; $43f6
 	set 5,a			; $43f8
-_label_11_030:
+@label_11_030:
 	ldi (hl),a		; $43fa
 	ld (hl),a		; $43fb
 	ret			; $43fc
@@ -145223,23 +145241,10 @@ _label_11_030:
 	call objectApplyGivenSpeed		; $4427
 	scf			; $442a
 	ret			; $442b
-	ld b,b			; $442c
-	ld b,h			; $442d
-	ld b,b			; $442e
-	ld b,h			; $442f
-	jr c,_label_11_033	; $4430
-	ld b,b			; $4432
-	ld b,h			; $4433
-	ld b,b			; $4434
-	ld b,h			; $4435
-	jr c,$44		; $4436
-	ld d,h			; $4438
-	nop			; $4439
-	ld d,l			; $443a
-	ld ($1056),sp		; $443b
-	ld d,a			; $443e
-	jr _label_11_031		; $443f
-_label_11_031:
+	.db $40 $44 $40 $44 $38 $44 $40 $44
+	.db $40 $44 $38 $44 $54 $00 $55 $08
+	.db $56 $10 $57 $18 $00
+
 ;;
 ; @addr{4441}
 partCode02:
@@ -145274,7 +145279,6 @@ _label_11_032:
 	ld e,$ed		; $4472
 	ld a,(de)		; $4474
 	rlca			; $4475
-_label_11_033:
 	ld a,$01		; $4476
 	call c,partSetAnimation		; $4478
 	jp objectSetVisible82		; $447b
@@ -156326,7 +156330,7 @@ _roomSpecificCode3: ; 58f5
 	inc l			; $590c
 	ld (hl),$0a		; $590d
 	ld a,$01		; $590f
-	ld ($ccde),a		; $5911
+	ld (wDiggingUpEnemiesForbidden),a		; $5911
 	ret			; $5914
 
 ;;
