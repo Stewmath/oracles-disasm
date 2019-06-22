@@ -537,16 +537,16 @@ gfxHeader52: ; $70cc
 	m_GfxHeader gfx_0bb14f $9c00 $18|$80
 	m_GfxHeader gfx_0bb1ce $9c01 $18
 gfxHeader53: ; $70d8
-	m_GfxHeader gfx_0bb1f0 $9c00 $33|$80
-	m_GfxHeader gfx_0bb2e7 $9c01 $33|$80
+	m_GfxHeader map_pirate_ship_body $9c00 $33|$80
+	m_GfxHeader flg_pirate_ship_body $9c01 $33|$80
 gfxHeader56: ; $70e4
-	m_GfxHeader gfx_0bb1f0 $d002 $33|$80
-	m_GfxHeader gfx_0bb2e7 $d402 $33
+	m_GfxHeader map_pirate_ship_body $d002 $33|$80
+	m_GfxHeader flg_pirate_ship_body $d402 $33
 gfxHeader54: ; $70f0
 	m_GfxHeader gfx_0bb028 $d802 $13
 gfxHeader55: ; $70f6
-	m_GfxHeader gfx_0bb33e $d002 $13|$80
-	m_GfxHeader gfx_0bb3ad $d402 $13
+	m_GfxHeader map_pirate_ship_bow $d002 $13|$80
+	m_GfxHeader flg_pirate_ship_bow $d402 $13
 gfxHeader57: ; $7102
 gfxHeader58: ; $7102
 gfxHeader59: ; $7102

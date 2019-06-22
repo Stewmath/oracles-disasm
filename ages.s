@@ -5054,11 +5054,16 @@ reloadObjectGfx:
 	ret			; $1643
 
 ;;
+; Forces an object gfx header to be loaded into slot 4 (address 0:8800). Handy way to load
+; extra graphics, but uses up object slots. Used by the pirate ship and various things in
+; seasons, but apparently unused in ages.
+;
+; @param	e	Object gfx header (minus 1)
 ; @addr{1644}
-func_1644:
+loadObjectGfxHeaderToSlot4:
 	ldh a,(<hRomBank)	; $1644
 	push af			; $1646
-	callfrombank0 bank3f.func_41ec		; $1647
+	callfrombank0 bank3f.loadObjectGfxHeaderToSlot4_body		; $1647
 	pop af			; $1651
 	setrombank		; $1652
 	ret			; $1657
@@ -14159,7 +14164,7 @@ generateVramTilesWithRoomChanges:
 .ifdef ROM_AGES
 	callab        bank2.applyRoomSpecificTileChangesAfterGfxLoad		; $3a5f
 .else
-	call        bank2.applyRoomSpecificTileChangesAfterGfxLoad
+	call        applyRoomSpecificTileChangesAfterGfxLoad
 .endif
 
 	pop bc			; $3a67
@@ -21918,7 +21923,7 @@ _label_03_152:
 
 _label_03_153:
 	ld bc,bank2.rectangleData_02_7de1		; $71c5
-	callab bank2.copyRectangleFromVramTilesToAddress_paramBc		; $71c8
+	callab bank2.copyRectangleFromTmpGfxBuffer_paramBc		; $71c8
 	ld a,$3c		; $71d0
 	call loadUncompressedGfxHeader		; $71d2
 	ld a,SND_DOORCLOSE		; $71d5
@@ -159864,8 +159869,13 @@ refreshObjectGfx_body:
 	jp _incLoadedObjectGfxIndex		; $41e9
 
 ;;
+; Forces an object gfx header to be loaded into slot 4 (address 0:8800). Handy way to load
+; extra graphics, but uses up object slots. Used by the pirate ship and various things in
+; seasons, but apparently unused in ages.
+;
+; @param	e	Object gfx header (minus 1)
 ; @addr{41ec}
-func_41ec:
+loadObjectGfxHeaderToSlot4_body:
 	push de			; $41ec
 	call refreshObjectGfx_body		; $41ed
 	pop de			; $41f0
@@ -160104,6 +160114,8 @@ _insertIndexIntoLoadedObjectGfx:
 	cp <wLoadedTreeGfxActive		; $42d0
 	jr nc,++		; $42d2
 
+	; First, remove any references to it if it's already loaded (to prevent
+	; redundancy)
 	push hl			; $42d4
 	ld hl,wLoadedObjectGfx		; $42d5
 -

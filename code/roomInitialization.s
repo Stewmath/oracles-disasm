@@ -858,4 +858,24 @@ createSeaEffectsPartIfApplicable:
 	.db $00
 
 
+;;
+; @addr{7a3a}
+func_02_7a3a:
+	ld a,($cddd)		; $7a3a
+	or a			; $7a3d
+	ret z			; $7a3e
+	dec a			; $7a3f
+	jr z,+			; $7a40
+
+	ld ($cddd),a		; $7a42
+	ret			; $7a45
++
+	call getFreeInteractionSlot		; $7a46
+	ret nz			; $7a49
+
+	ld (hl),INTERACID_TIMEPORTAL		; $7a4a
+	ld a,(wPortalPos)		; $7a4c
+	ld l,Interaction.yh		; $7a4f
+	jp setShortPosition		; $7a51
+
 .endif ; ROM_AGES

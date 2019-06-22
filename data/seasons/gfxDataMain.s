@@ -286,18 +286,18 @@
 	m_GfxData gfx_0ba6e7 ; $0ba6e7
 	m_GfxData gfx_0ba8be ; $0ba8be
 	m_GfxData gfx_0baaa4 ; $0baaa4
-	m_GfxData gfx_0baca4 ; $0baca4
-	m_GfxData gfx_0bae0d ; $0bae0d
-	m_GfxData gfx_0baf8b ; $0baf8b
+	m_GfxData gfx_pirate_ship_tiles_1 ; $0baca4
+	m_GfxData gfx_pirate_ship_tiles_2 ; $0bae0d
+	m_GfxData gfx_pirate_ship_tiles_3 ; $0baf8b
 	m_GfxData gfx_0bb028 ; $0bb028
 	m_GfxData gfx_0bb0a9 ; $0bb0a9
 	m_GfxData gfx_0bb129 ; $0bb129
 	m_GfxData gfx_0bb14f ; $0bb14f
 	m_GfxData gfx_0bb1ce ; $0bb1ce
-	m_GfxData gfx_0bb1f0 ; $0bb1f0
-	m_GfxData gfx_0bb2e7 ; $0bb2e7
-	m_GfxData gfx_0bb33e ; $0bb33e
-	m_GfxData gfx_0bb3ad ; $0bb3ad
+	m_GfxData map_pirate_ship_body ; $0bb1f0
+	m_GfxData flg_pirate_ship_body ; $0bb2e7
+	m_GfxData map_pirate_ship_bow ; $0bb33e
+	m_GfxData flg_pirate_ship_bow ; $0bb3ad
 	m_GfxData gfx_0bb3eb ; $0bb3eb
 	m_GfxData gfx_0bb679 ; $0bb679
 	m_GfxData gfx_0bb91c ; $0bb91c

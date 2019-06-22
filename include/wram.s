@@ -3140,7 +3140,7 @@ wRoomLayoutEnd: ; $cfc0
 .RAMSECTION "RAM 2" BANK 2 SLOT 3
 
 ; $d000 used as part of the routine for redrawing the collapsed d2 cave in the present
-w2Filler1:			dsb $0800
+w2TmpGfxBuffer:			dsb $0800
 
 ; This is a list of values for scrollX or scrollY registers to make the screen turn all
 ; wavy (ie. in underwater areas).

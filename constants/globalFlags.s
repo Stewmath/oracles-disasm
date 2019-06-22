@@ -17,7 +17,7 @@
 
 	GLOBALFLAG_OBTAINED_RING_BOX		db ; $08
 	GLOBALFLAG_APPRAISED_HUNDREDTH_RING	db ; $09
-	GLOBALFLAG_INTRO_DONE			db ; $0a
+	GLOBALFLAG_INTRO_DONE			db ; $0a: Once set, start/select are usable
 
 .ifdef ROM_AGES
 
@@ -116,8 +116,8 @@
 	GLOBALFLAG_S_13				db ; $13
 	GLOBALFLAG_S_14				db ; $14
 	GLOBALFLAG_S_15				db ; $15
-	GLOBALFLAG_S_16				db ; $16: Moblin's keep destroyed?
-	GLOBALFLAG_S_17				db ; $17: Pirate ship moved
+	GLOBALFLAG_MOBLINS_KEEP_DESTROYED	db ; $16
+	GLOBALFLAG_PIRATE_SHIP_DOCKED		db ; $17: Pirate ship moved
 	GLOBALFLAG_S_18				db ; $18: Met maku tree?
 	GLOBALFLAG_S_19				db ; $19
 	GLOBALFLAG_S_1a				db ; $1a

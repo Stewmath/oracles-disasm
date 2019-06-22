@@ -1,8 +1,8 @@
 objectGfxHeaderTable: ; $fdafb
 	/* $00 */ m_ObjectGfxHeader gfx_capcom_nintendo $00
-	/* $01 */ m_ObjectGfxHeader gfx_0baca4 $00
-	/* $02 */ m_ObjectGfxHeader gfx_0bae0d $00
-	/* $03 */ m_ObjectGfxHeader gfx_0baf8b $80
+	/* $01 */ m_ObjectGfxHeader gfx_pirate_ship_tiles_1 $00
+	/* $02 */ m_ObjectGfxHeader gfx_pirate_ship_tiles_2 $00
+	/* $03 */ m_ObjectGfxHeader gfx_pirate_ship_tiles_3 $80
 	/* $04 */ m_ObjectGfxHeader gfx_0a74a7 $00
 	/* $05 */ m_ObjectGfxHeader gfx_0a75dd $00
 	/* $06 */ m_ObjectGfxHeader gfx_0a775e $80

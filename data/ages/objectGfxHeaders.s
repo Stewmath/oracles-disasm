@@ -8,7 +8,7 @@ objectGfxHeaderTable:
 	/* $06 */ m_ObjectGfxHeader gfx_capcom_nintendo $00
 	/* $07 */ m_ObjectGfxHeader gfx_capcom_nintendo $00
 	/* $08 */ m_ObjectGfxHeader gfx_capcom_nintendo $00
-	/* $09 */ m_ObjectGfxHeader gfx_kingmoblinsad $00
+	/* $09 */ m_ObjectGfxHeader gfx_kingmoblin_1 $00
 	/* $0a */ m_ObjectGfxHeader gfx_kingmoblin_2 $00
 	/* $0b */ m_ObjectGfxHeader gfx_kingmoblin_3 $00
 	/* $0c */ m_ObjectGfxHeader gfx_kingmoblin_4 $80
@@ -171,7 +171,7 @@ objectGfxHeaderTable:
 	/* $a9 */ m_ObjectGfxHeader gfx_kingmoblin_2 $00
 	/* $aa */ m_ObjectGfxHeader gfx_kingmoblin_3 $00
 	/* $ab */ m_ObjectGfxHeader gfx_kingmoblin_4 $00
-	/* $ac */ m_ObjectGfxHeader gfx_kingmoblin_1 $80
+	/* $ac */ m_ObjectGfxHeader gfx_kingmoblin_5 $80
 	/* $ad */ m_ObjectGfxHeader gfx_giantghini_2 $00
 	/* $ae */ m_ObjectGfxHeader gfx_giantghini $80
 	/* $af */ m_ObjectGfxHeader gfx_swoop $00
