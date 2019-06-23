@@ -10265,11 +10265,11 @@ loadUniqueGfxHeader:
 	ld b,a			; $3718
 	ldh a,(<hRomBank)	; $3719
 	push af			; $371b
-	ld a,$04		; $371c
+	ld a,:uniqueGfxHeaderTable		; $371c
 	ldh (<hRomBank),a	; $371e
 	ld ($2222),a		; $3720
 	ld a,b			; $3723
-	ld hl,$595e		; $3724
+	ld hl,uniqueGfxHeaderTable		; $3724
 	rst_addDoubleIndex			; $3727
 	ldi a,(hl)		; $3728
 	ld ($cd10),a		; $3729
@@ -10337,11 +10337,11 @@ uniqueGfxFunc_380b:
 	ld b,a			; $379c
 	ldh a,(<hRomBank)	; $379d
 	push af			; $379f
-	ld a,$04		; $37a0
+	ld a,:uniqueGfxHeaderTable		; $37a0
 	ldh (<hRomBank),a	; $37a2
 	ld ($2222),a		; $37a4
 	ld a,b			; $37a7
-	ld hl,$595e		; $37a8
+	ld hl,uniqueGfxHeaderTable		; $37a8
 	rst_addDoubleIndex			; $37ab
 	ldi a,(hl)		; $37ac
 	ld h,(hl)		; $37ad
@@ -10353,13 +10353,13 @@ uniqueGfxFunc_380b:
 	ret			; $37b8
 
 loadAreaUniqueGfx:
-	ld a,$04		; $37b9
+	ld a,:uniqueGfxHeaderTable		; $37b9
 	ldh (<hRomBank),a	; $37bb
 	ld ($2222),a		; $37bd
 	ld a,($cd20)		; $37c0
 	and $7f			; $37c3
 	ret z			; $37c5
-	ld hl,$595e		; $37c6
+	ld hl,uniqueGfxHeaderTable		; $37c6
 	rst_addDoubleIndex			; $37c9
 	ldi a,(hl)		; $37ca
 	ld h,(hl)		; $37cb
@@ -10485,13 +10485,13 @@ loadRoomLayout:
 	ld hl,$cf00		; $3894
 	ld b,$c0		; $3897
 	call clearMemory		; $3899
-	ld a,$04		; $389c
+	ld a,:roomLayoutGroupTable		; $389c
 	ldh (<hRomBank),a	; $389e
 	ld ($2222),a		; $38a0
 	ld a,($cd24)		; $38a3
 	add a			; $38a6
 	add a			; $38a7
-	ld hl,$4c4c		; $38a8
+	ld hl,roomLayoutGroupTable		; $38a8
 	rst_addDoubleIndex			; $38ab
 	ldi a,(hl)		; $38ac
 	ld b,a			; $38ad
@@ -20784,49 +20784,46 @@ group7Music:
 	.incbin "audio/seasons/group5IDs.bin"
 
 
-	ld bc,$0616		; $4c4c
-	ld (hl),b		; $4c4f
-	ld hl,$4e04		; $4c50
-	nop			; $4c53
-	ld bc,$0616		; $4c54
-	ld (hl),d		; $4c57
-	ldi (hl),a		; $4c58
-	inc d			; $4c59
-	ld c,e			; $4c5a
-	nop			; $4c5b
-	ld bc,$0616		; $4c5c
-	ld (hl),h		; $4c5f
-	inc hl			; $4c60
-	inc b			; $4c61
-	ld c,c			; $4c62
-	nop			; $4c63
-	ld bc,$0616		; $4c64
-	halt			; $4c67
-	inc h			; $4c68
-	ld h,c			; $4c69
-	ld b,l			; $4c6a
-	nop			; $4c6b
-	ld bc,$0616		; $4c6c
-	ld a,b			; $4c6f
-	dec h			; $4c70
-	ld e,c			; $4c71
-	ld b,d			; $4c72
-	nop			; $4c73
-	nop			; $4c74
-	jr _label_04_112		; $4c75
-_label_04_112:
-	ld b,b			; $4c77
-	dec h			; $4c78
-	and a			; $4c79
-	ld a,d			; $4c7a
-	nop			; $4c7b
-	nop			; $4c7c
-	jr _label_04_113		; $4c7d
-_label_04_113:
-	ld d,d			; $4c7f
-	ld h,$93		; $4c80
-	ld a,d			; $4c82
-	nop			; $4c83
+; Format:
+; First byte indicates whether it's a dungeon or not (and consequently what compression it uses)
+; 3 byte pointer to a table containing relative offsets for room data for each sector on the map
+; 3 byte pointer to the base offset of the actual layout data
+roomLayoutGroupTable: ; $4c4c
+	.db $01
+	3BytePointer roomLayoutGroup0Table
+	3BytePointer room0000
+	.db $00
+
+	.db $01
+	3BytePointer roomLayoutGroup1Table
+	3BytePointer room0100
+	.db $00
+
+	.db $01
+	3BytePointer roomLayoutGroup2Table
+	3BytePointer room0200
+	.db $00
+
+	.db $01
+	3BytePointer roomLayoutGroup3Table
+	3BytePointer room0300
+	.db $00
+
+	.db $01
+	3BytePointer roomLayoutGroup4Table
+	3BytePointer room0400
+	.db $00
+
+	.db $00
+	3BytePointer roomLayoutGroup5Table
+	3BytePointer room0500
+	.db $00
+
+	.db $00
+	3BytePointer roomLayoutGroup6Table
+	3BytePointer room0600
+	.db $00
+
 	rst $38			; $4c84
 	sbc h			; $4c85
 	ld c,a			; $4c86
@@ -23170,305 +23167,11 @@ _label_04_186:
 	ld b,(hl)		; $5823
 	pop hl			; $5824
 	jp queueDmaTransfer		; $5825
-	ld l,l			; $5828
-	ld h,c			; $5829
-	ld d,d			; $582a
-	sub (hl)		; $582b
-	ld bc,$6e1f		; $582c
-	ld c,d			; $582f
-	sub b			; $5830
-	sub (hl)		; $5831
-	ld bc,$ae1f		; $5832
-	ld c,h			; $5835
-	ldd (hl),a		; $5836
-	sub (hl)		; $5837
-	ld bc,$2c1f		; $5838
-	ld l,d			; $583b
-	or l			; $583c
-	sub (hl)		; $583d
-	ld bc,$6e1f		; $583e
-	ld c,(hl)		; $5841
-	add hl,hl		; $5842
-	sub (hl)		; $5843
-	ld bc,$6e1f		; $5844
-	ld c,a			; $5847
-	rst $8			; $5848
-	sub (hl)		; $5849
-	ld bc,$ae1f		; $584a
-	ld d,c			; $584d
-	add h			; $584e
-	sub (hl)		; $584f
-	ld bc,$ee1f		; $5850
-	ld d,e			; $5853
-	ld l,b			; $5854
-	sub (hl)		; $5855
-	ld bc,$009f		; $5856
-	ld d,l			; $5859
-	xor (hl)		; $585a
-	ld d,h			; $585b
-	and e			; $585c
-	sub (hl)		; $585d
-	ld bc,$6e1f		; $585e
-	ld d,(hl)		; $5861
-	ld h,h			; $5862
-	sub (hl)		; $5863
-	ld bc,$ae1f		; $5864
-	ld e,d			; $5867
-.DB $d3				; $5868
-	sub (hl)		; $5869
-	ld bc,$ae1f		; $586a
-	ld e,h			; $586d
-	or a			; $586e
-	sub (hl)		; $586f
-	ld bc,$ee1f		; $5870
-	ld e,(hl)		; $5873
-	or l			; $5874
-	sub (hl)		; $5875
-	ld bc,$ee1f		; $5876
-	ld h,b			; $5879
-	rla			; $587a
-	sub (hl)		; $587b
-	ld bc,$6e1f		; $587c
-	ld h,c			; $587f
-	ld d,h			; $5880
-	sub (hl)		; $5881
-	ld bc,$ae1f		; $5882
-	ld h,e			; $5885
-	ld (hl),$96		; $5886
-	ld bc,$ae1f		; $5888
-	ld h,l			; $588b
-	inc hl			; $588c
-	sub (hl)		; $588d
-	ld bc,$ae1f		; $588e
-	ld h,(hl)		; $5891
-	rst $20			; $5892
-	sub (hl)		; $5893
-	ld bc,$189f		; $5894
-	ld h,a			; $5897
-	ld b,b			; $5898
-	adc b			; $5899
-	pop bc			; $589a
-	inc bc			; $589b
-	xor (hl)		; $589c
-	ld l,b			; $589d
-	cp (hl)			; $589e
-	sub (hl)		; $589f
-	ld bc,$189f		; $58a0
-	ld h,a			; $58a3
-	ld b,b			; $58a4
-	adc b			; $58a5
-	pop bc			; $58a6
-	inc bc			; $58a7
-	ld l,$6a		; $58a8
-	and h			; $58aa
-	sub (hl)		; $58ab
-	ld bc,$6d1f		; $58ac
-	ld a,b			; $58af
-.DB $e4				; $58b0
-	sub (hl)		; $58b1
-	ld bc,$ae1f		; $58b2
-	ld b,l			; $58b5
-	rra			; $58b6
-	sub d			; $58b7
-	ld bc,$6ebf		; $58b8
-	ld c,b			; $58bb
-	jp $0196		; $58bc
-	rra			; $58bf
-	ld l,(hl)		; $58c0
-	halt			; $58c1
-	ld a,c			; $58c2
-	adc e			; $58c3
-	ld bc,$aeaf		; $58c4
-	ld a,c			; $58c7
-	inc e			; $58c8
-	adc (hl)		; $58c9
-	ld bc,$ae9f		; $58ca
-	ld a,d			; $58cd
-.DB $e4				; $58ce
-	sub b			; $58cf
-	ld bc,$eebf		; $58d0
-	ld a,(hl)		; $58d3
-	ld e,d			; $58d4
-	sub h			; $58d5
-	ld bc,$af3f		; $58d6
-	ld b,c			; $58d9
-	adc c			; $58da
-	adc e			; $58db
-	ld bc,$afaf		; $58dc
-	ld b,h			; $58df
-	ld h,(hl)		; $58e0
-	adc (hl)		; $58e1
-	ld bc,$6f9f		; $58e2
-	ld b,(hl)		; $58e5
-	ld b,a			; $58e6
-	sub b			; $58e7
-	ld bc,$af9f		; $58e8
-	ld c,b			; $58eb
-	dec e			; $58ec
-	sub l			; $58ed
-	or c			; $58ee
-	inc h			; $58ef
-	ld l,a			; $58f0
-	ld c,d			; $58f1
-	ld c,b			; $58f2
-	sub h			; $58f3
-	ld b,c			; $58f4
-	dec sp			; $58f5
-	ld l,a			; $58f6
-	ld c,l			; $58f7
-	xor d			; $58f8
-	sub h			; $58f9
-	pop bc			; $58fa
-	inc sp			; $58fb
-	ld l,a			; $58fc
-	ld d,b			; $58fd
-	ld d,b			; $58fe
-	sub h			; $58ff
-	add c			; $5900
-	scf			; $5901
-	ld l,a			; $5902
-	ld d,e			; $5903
-	daa			; $5904
-	sub h			; $5905
-	ld bc,$6f9f		; $5906
-	ld d,h			; $5909
-	ld d,l			; $590a
-	sub (hl)		; $590b
-	ld bc,$ac1f		; $590c
-	ld (hl),h		; $590f
-	ld de,$418c		; $5910
-	cp e			; $5913
-	xor h			; $5914
-	ld (hl),a		; $5915
-	dec a			; $5916
-	sub b			; $5917
-	ld bc,$acbf		; $5918
-	ld a,e			; $591b
-	inc bc			; $591c
-	sub h			; $591d
-	ld bc,$00bf		; $591e
-	ld d,d			; $5921
-	xor h			; $5922
-	ld a,(hl)		; $5923
-	adc a			; $5924
-	adc a			; $5925
-	ld bc,$6c87		; $5926
-	ld a,(hl)		; $5929
-	call nc,$0190		; $592a
-	cp a			; $592d
-	ld l,l			; $592e
-	ld b,c			; $592f
-	or (hl)			; $5930
-	sub h			; $5931
-	ld bc,$00bf		; $5932
-	ld d,d			; $5935
-	jr _label_04_187		; $5936
-	ld b,b			; $5938
-	adc b			; $5939
-	add c			; $593a
-	rlca			; $593b
-.DB $ec				; $593c
-	ld h,h			; $593d
-	pop hl			; $593e
-	sub (hl)		; $593f
-	ld bc,$ec1f		; $5940
-	ld h,(hl)		; $5943
-	ld b,(hl)		; $5944
-	sub (hl)		; $5945
-	ld bc,$ec1b		; $5946
-	ld h,a			; $5949
-	and l			; $594a
-	sub (hl)		; $594b
-	ld bc,$ec1b		; $594c
-	ld l,c			; $594f
-	ld de,$0196		; $5950
-	dec de			; $5953
-	nop			; $5954
-	ld c,b			; $5955
-	nop			; $5956
-	ld c,(hl)		; $5957
-	nop			; $5958
-	ld c,a			; $5959
-	nop			; $595a
-	ld b,a			; $595b
-	nop			; $595c
-	ld c,l			; $595d
-	jr z,_label_04_188	; $595e
-	jr z,_label_04_189	; $5960
-	ld l,$58		; $5962
-	inc (hl)		; $5964
-	ld e,b			; $5965
-	ldd a,(hl)		; $5966
-	ld e,b			; $5967
-	ld b,b			; $5968
-	ld e,b			; $5969
-	ld b,(hl)		; $596a
-	ld e,b			; $596b
-	ld c,h			; $596c
-	ld e,b			; $596d
-	ld d,d			; $596e
-	ld e,b			; $596f
-	ld e,d			; $5970
-	ld e,b			; $5971
-	ld h,b			; $5972
-	ld e,b			; $5973
-	ld h,(hl)		; $5974
-	ld e,b			; $5975
-	ld l,h			; $5976
-	ld e,b			; $5977
-	ld (hl),d		; $5978
-	ld e,b			; $5979
-	ld a,b			; $597a
-	ld e,b			; $597b
-	ld a,(hl)		; $597c
-	ld e,b			; $597d
-	add h			; $597e
-	ld e,b			; $597f
-	adc d			; $5980
-	ld e,b			; $5981
-	sub b			; $5982
-	ld e,b			; $5983
-	sbc h			; $5984
-	ld e,b			; $5985
-	xor b			; $5986
-	ld e,b			; $5987
-	xor (hl)		; $5988
-	ld e,b			; $5989
-	or h			; $598a
-	ld e,b			; $598b
-	ret nz			; $598c
-	ld e,b			; $598d
-	ret c			; $598e
-	ld e,b			; $598f
-	ld a,($ff00+$58)	; $5990
-	or $58			; $5992
-.DB $fc				; $5994
-	ld e,b			; $5995
-	ld (bc),a		; $5996
-	ld e,c			; $5997
-	ld c,$59		; $5998
-	ldi (hl),a		; $599a
-	ld e,c			; $599b
-_label_04_187:
-	ld (hl),$59		; $599c
-	inc a			; $599e
-	ld e,c			; $599f
-	ld b,d			; $59a0
-	ld e,c			; $59a1
-	ld c,b			; $59a2
-	ld e,c			; $59a3
-	ld c,(hl)		; $59a4
-	ld e,c			; $59a5
-	ld d,h			; $59a6
-	ld e,c			; $59a7
-	ld d,(hl)		; $59a8
-	ld e,c			; $59a9
-	ld e,b			; $59aa
-	ld e,c			; $59ab
-	ld e,d			; $59ac
-	ld e,c			; $59ad
-	ld e,h			; $59ae
-	ld e,c			; $59af
+
+
+	.include "data/seasons/uniqueGfxHeaders.s"
+	.include "data/seasons/uniqueGfxHeaderPointers.s"
+
 	and $59			; $59b0
 .DB $eb				; $59b2
 	ld e,c			; $59b3
@@ -162562,7 +162265,7 @@ _label_15_310:
 .BANK $16 SLOT 1
 .ORG 0
 
-	.include "data/seasons/paletteData.s"
+	.include "build/data/paletteData.s"
 	.include "build/data/tilesetCollisions.s"
 	.include "build/data/smallRoomLayoutTables.s"
 
