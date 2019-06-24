@@ -10974,419 +10974,238 @@ _label_00_397:
 	jp hl			; $3b5f
 
 interactionCodeTable:
-	nop			; $3b60
-	ld b,b			; $3b61
-	nop			; $3b62
-	ld b,b			; $3b63
-	nop			; $3b64
-	ld b,b			; $3b65
-	nop			; $3b66
-	ld b,b			; $3b67
-	nop			; $3b68
-	ld b,b			; $3b69
-	nop			; $3b6a
-	ld b,b			; $3b6b
-	nop			; $3b6c
-	ld b,b			; $3b6d
-	nop			; $3b6e
-	ld b,b			; $3b6f
-	nop			; $3b70
-	ld b,b			; $3b71
-	nop			; $3b72
-	ld b,b			; $3b73
-	nop			; $3b74
-	ld b,b			; $3b75
-	nop			; $3b76
-	ld b,b			; $3b77
-	nop			; $3b78
-	ld b,b			; $3b79
-	reti			; $3b7a
-	ldd a,(hl)		; $3b7b
-	reti			; $3b7c
-	ldd a,(hl)		; $3b7d
-	and b			; $3b7e
-	ld b,b			; $3b7f
-	stop			; $3b80
-	ld b,c			; $3b81
-	ld b,a			; $3b82
-	ld b,c			; $3b83
-	ld c,a			; $3b84
-	ld b,c			; $3b85
-	ld a,(hl)		; $3b86
-	ld b,d			; $3b87
-	pop hl			; $3b88
-	ld b,d			; $3b89
-	jr c,$51		; $3b8a
-	dec sp			; $3b8c
-	ld b,h			; $3b8d
-.DB $e3				; $3b8e
-	ld b,h			; $3b8f
-	ld c,b			; $3b90
-	ld b,l			; $3b91
-	reti			; $3b92
-	ldd a,(hl)		; $3b93
-	reti			; $3b94
-	ldd a,(hl)		; $3b95
-	reti			; $3b96
-	ldd a,(hl)		; $3b97
-	ld a,(hl)		; $3b98
-	ld b,l			; $3b99
-	and b			; $3b9a
-	ld b,l			; $3b9b
-	daa			; $3b9c
-	ld b,(hl)		; $3b9d
-	ld l,h			; $3b9e
-	ld d,c			; $3b9f
-	call nc,$c352		; $3ba0
-	ld d,e			; $3ba3
-	add sp,$54		; $3ba4
-	ld h,l			; $3ba6
-	ld d,(hl)		; $3ba7
-	or l			; $3ba8
-	ld d,(hl)		; $3ba9
-	ld c,$5a		; $3baa
-	ld c,$5a		; $3bac
-.DB $fc				; $3bae
-	ld e,d			; $3baf
-.DB $eb				; $3bb0
-	ld e,e			; $3bb1
-	or l			; $3bb2
-	ld d,(hl)		; $3bb3
-	sbc e			; $3bb4
-	ld e,h			; $3bb5
-	cpl			; $3bb6
-	ld e,(hl)		; $3bb7
-	or l			; $3bb8
-	ld d,(hl)		; $3bb9
-	or l			; $3bba
-	ld d,(hl)		; $3bbb
-	sbc d			; $3bbc
-	ld e,(hl)		; $3bbd
-	or l			; $3bbe
-	ld d,(hl)		; $3bbf
-	adc b			; $3bc0
-	ld e,a			; $3bc1
-	call $1660		; $3bc2
-	ld h,e			; $3bc5
-	or l			; $3bc6
-	ld d,(hl)		; $3bc7
-	ld a,c			; $3bc8
-	ld h,e			; $3bc9
-	sub d			; $3bca
-	ld h,e			; $3bcb
-	or l			; $3bcc
-	ld d,(hl)		; $3bcd
-	or l			; $3bce
-	ld d,(hl)		; $3bcf
-	or l			; $3bd0
-	ld d,(hl)		; $3bd1
-	or l			; $3bd2
-	ld d,(hl)		; $3bd3
-	or l			; $3bd4
-	ld d,(hl)		; $3bd5
-	cp $66			; $3bd6
-	or l			; $3bd8
-	ld d,(hl)		; $3bd9
-	or l			; $3bda
-	ld d,(hl)		; $3bdb
-	jr z,_label_00_398	; $3bdc
-	or l			; $3bde
-	ld d,(hl)		; $3bdf
-	dec e			; $3be0
-	ld l,e			; $3be1
-	dec e			; $3be2
-	ld l,e			; $3be3
-.DB $dd				; $3be4
-	ld l,h			; $3be5
-	jr $6d			; $3be6
-.DB $ec				; $3be8
-	ld l,l			; $3be9
-	or a			; $3bea
-	ld l,(hl)		; $3beb
-	or b			; $3bec
-	ld b,a			; $3bed
-	pop bc			; $3bee
-	ld c,d			; $3bef
-	ld e,c			; $3bf0
-	ld l,a			; $3bf1
-	ld (hl),l		; $3bf2
-	ld (hl),b		; $3bf3
-	ld e,d			; $3bf4
-	ld c,l			; $3bf5
-	bit 6,c			; $3bf6
-	add b			; $3bf8
-	ld (hl),d		; $3bf9
-	ld l,(hl)		; $3bfa
-	ld (hl),e		; $3bfb
-	jr _label_00_399		; $3bfc
-	jr nz,_label_00_400	; $3bfe
-	ld h,h			; $3c00
-	ld c,a			; $3c01
-	dec a			; $3c02
-	ld a,d			; $3c03
-	dec b			; $3c04
-	ld a,e			; $3c05
-	ldi a,(hl)		; $3c06
-	ld a,e			; $3c07
-	call c,$2b7b		; $3c08
-	ld a,h			; $3c0b
-	dec d			; $3c0c
-	ld d,c			; $3c0d
-	ldi (hl),a		; $3c0e
-	ld a,l			; $3c0f
-	sbc a			; $3c10
-	ld a,l			; $3c11
-	ld c,e			; $3c12
-	ld a,(hl)		; $3c13
-	sub b			; $3c14
-	ld a,(hl)		; $3c15
-	dec h			; $3c16
-	ld a,a			; $3c17
-	ld l,(hl)		; $3c18
-	ld a,a			; $3c19
-	sbc e			; $3c1a
-	ld a,a			; $3c1b
-	adc $4b			; $3c1c
-	inc b			; $3c1e
-	ld c,l			; $3c1f
-	nop			; $3c20
-	ld b,b			; $3c21
-	reti			; $3c22
-	ldd a,(hl)		; $3c23
-	ld c,(hl)		; $3c24
-	ld c,a			; $3c25
-	add c			; $3c26
-	ld d,b			; $3c27
-.DB $eb				; $3c28
-	ld d,b			; $3c29
-	ld h,b			; $3c2a
-	ld d,c			; $3c2b
-	ld l,h			; $3c2c
-	ld d,l			; $3c2d
-	call z,$0456		; $3c2e
-	ld e,b			; $3c31
-	dec e			; $3c32
-	ld e,c			; $3c33
-	and $5b			; $3c34
-	xor $60			; $3c36
-	add l			; $3c38
-	ld h,a			; $3c39
-	adc l			; $3c3a
-	ld h,a			; $3c3b
-	ldi (hl),a		; $3c3c
-	ld l,e			; $3c3d
-	ld b,b			; $3c3e
-	ld b,e			; $3c3f
-	ldd a,(hl)		; $3c40
-	ld l,h			; $3c41
-	adc (hl)		; $3c42
-	ld l,h			; $3c43
-	adc h			; $3c44
-	ld l,a			; $3c45
-_label_00_398:
-	ld e,a			; $3c46
-	ld (hl),b		; $3c47
-	push hl			; $3c48
-	ld (hl),c		; $3c49
-	sbc c			; $3c4a
-	ld (hl),d		; $3c4b
-	ld h,$73		; $3c4c
-	sbc b			; $3c4e
-	ld (hl),h		; $3c4f
-	ld d,$44		; $3c50
-	ld a,b			; $3c52
-	ld b,h			; $3c53
-	jr z,$45		; $3c54
-	ld a,($ff00+c)		; $3c56
-	ld (hl),h		; $3c57
-	ld a,($bf75)		; $3c58
-	ld b,(hl)		; $3c5b
-	ld h,l			; $3c5c
-	ld c,b			; $3c5d
-	xor l			; $3c5e
-	ld c,c			; $3c5f
-.DB $eb				; $3c60
-	halt			; $3c61
-	dec l			; $3c62
-	ld (hl),a		; $3c63
-	or d			; $3c64
-	ld a,c			; $3c65
-	cp d			; $3c66
-	ld a,d			; $3c67
-	ld h,c			; $3c68
-	ld a,e			; $3c69
-	rra			; $3c6a
-	ld a,h			; $3c6b
-	ld d,a			; $3c6c
-	ld a,h			; $3c6d
-	inc d			; $3c6e
-	ld a,l			; $3c6f
-	ld h,$7e		; $3c70
-	nop			; $3c72
-_label_00_399:
-	ld b,b			; $3c73
-	jp c,$da4b		; $3c74
-_label_00_400:
-	ld c,e			; $3c77
-	ld l,d			; $3c78
-	ld c,h			; $3c79
-	jp c,$294b		; $3c7a
-	ld c,a			; $3c7d
-	ld e,b			; $3c7e
-	ld c,a			; $3c7f
-	sub c			; $3c80
-	ld c,a			; $3c81
-	rst $20			; $3c82
-	ld b,c			; $3c83
-	ccf			; $3c84
-	ld d,d			; $3c85
-	ld e,a			; $3c86
-	ld d,d			; $3c87
-	ld b,(hl)		; $3c88
-	ld d,e			; $3c89
-	ld hl,$c554		; $3c8a
-	ld d,l			; $3c8d
-.DB $e4				; $3c8e
-	ld d,a			; $3c8f
-	xor b			; $3c90
-	ld b,d			; $3c91
-	ld d,b			; $3c92
-	ld e,b			; $3c93
-	adc e			; $3c94
-	ld e,b			; $3c95
-	ld (de),a		; $3c96
-	ld e,e			; $3c97
-.DB $ec				; $3c98
-	ld e,e			; $3c99
-	ld l,$5d		; $3c9a
-	ld ($ff00+c),a		; $3c9c
-	ld e,(hl)		; $3c9d
-	ld a,($ff00+$42)	; $3c9e
-	dec a			; $3ca0
-	ld b,e			; $3ca1
-	ld (hl),l		; $3ca2
-	ld h,b			; $3ca3
-	add hl,hl		; $3ca4
-	ld h,c			; $3ca5
-	sub $61			; $3ca6
-	ld ($4063),a		; $3ca8
-	ld h,h			; $3cab
-	dec e			; $3cac
-	ld h,a			; $3cad
-	ld l,a			; $3cae
-	ld h,a			; $3caf
-	rst $20			; $3cb0
-	ld h,a			; $3cb1
-	or l			; $3cb2
-	ld l,b			; $3cb3
-	ld b,e			; $3cb4
-	ld l,c			; $3cb5
-	ld l,a			; $3cb6
-	ld l,c			; $3cb7
-	and b			; $3cb8
-	ld b,e			; $3cb9
-	add hl,sp		; $3cba
-	ld l,d			; $3cbb
-	di			; $3cbc
-	ld l,d			; $3cbd
-	ld e,d			; $3cbe
-	ld l,l			; $3cbf
-	di			; $3cc0
-	ld l,l			; $3cc1
-	ld l,h			; $3cc2
-	ld l,(hl)		; $3cc3
-	ld a,(hl)		; $3cc4
-	ld l,(hl)		; $3cc5
-	adc c			; $3cc6
-	ld l,a			; $3cc7
-	ldi a,(hl)		; $3cc8
-	ld (hl),b		; $3cc9
-	add hl,hl		; $3cca
-	ld (hl),e		; $3ccb
-	sbc l			; $3ccc
-	ld b,(hl)		; $3ccd
-	inc h			; $3cce
-	ld c,e			; $3ccf
-	and (hl)		; $3cd0
-	ld (hl),e		; $3cd1
-	inc a			; $3cd2
-	ld (hl),h		; $3cd3
-	add d			; $3cd4
-	ld (hl),l		; $3cd5
-	cp c			; $3cd6
-	ld (hl),l		; $3cd7
-	pop af			; $3cd8
-	ld (hl),a		; $3cd9
-	pop af			; $3cda
-	ld (hl),a		; $3cdb
-	pop af			; $3cdc
-	ld (hl),a		; $3cdd
-	rlca			; $3cde
-	ld a,c			; $3cdf
-	dec (hl)		; $3ce0
-	ld c,e			; $3ce1
-	ld h,d			; $3ce2
-	ld a,c			; $3ce3
-	sbc $79			; $3ce4
-	ei			; $3ce6
-	ld a,c			; $3ce7
-	ldd (hl),a		; $3ce8
-	ld a,d			; $3ce9
-	or h			; $3cea
-	ld a,d			; $3ceb
-	ld d,c			; $3cec
-	ld a,e			; $3ced
-	adc c			; $3cee
-	ld c,e			; $3cef
-	add h			; $3cf0
-	ld a,b			; $3cf1
-	ld ($4578),a		; $3cf2
-	ld a,c			; $3cf5
-	cp l			; $3cf6
-	ld a,d			; $3cf7
-	dec e			; $3cf8
-	ld a,l			; $3cf9
-	rst $8			; $3cfa
-	ld a,l			; $3cfb
-	nop			; $3cfc
-	ld (hl),h		; $3cfd
-	rst $8			; $3cfe
-	ld (hl),l		; $3cff
-	ld hl,sp+$75		; $3d00
-.DB $dd				; $3d02
-	halt			; $3d03
-	rst $30			; $3d04
-	halt			; $3d05
-	ld l,h			; $3d06
-	ld (hl),a		; $3d07
-	ld hl,$8978		; $3d08
-	ld a,(hl)		; $3d0b
-	daa			; $3d0c
-	ld a,a			; $3d0d
-	sbc d			; $3d0e
-	ld a,a			; $3d0f
-	jp nc,$c465		; $3d10
-	ld c,c			; $3d13
-	xor h			; $3d14
-	ld c,e			; $3d15
-	cp $65			; $3d16
-	ld l,c			; $3d18
-	ld h,(hl)		; $3d19
-	sub h			; $3d1a
-	ld l,d			; $3d1b
-	rst_addDoubleIndex			; $3d1c
-	ld l,d			; $3d1d
-	ld ($066c),a		; $3d1e
-	ld c,h			; $3d21
-	call c,$5c6d		; $3d22
-	ld c,h			; $3d25
-	jr z,$6e		; $3d26
-	ld ($566e),a		; $3d28
-	ld c,l			; $3d2b
-	ld e,(hl)		; $3d2c
-	ld l,a			; $3d2d
-	ld h,(hl)		; $3d2e
-	ld (hl),c		; $3d2f
+	.dw interactionCode00
+	.dw interactionCode01
+	.dw interactionCode02
+	.dw interactionCode03
+	.dw interactionCode04
+	.dw interactionCode05
+	.dw interactionCode06
+	.dw interactionCode07
+	.dw interactionCode08
+	.dw interactionCode09
+	.dw interactionCode0a
+	.dw interactionCode0b
+	.dw interactionCode0c
+	.dw interactionDelete
+	.dw interactionDelete
+	.dw interactionCode0f
+	.dw interactionCode10
+	.dw interactionCode11
+	.dw interactionCode12
+	.dw interactionCode13
+	.dw interactionCode14
+	.dw interactionCode15
+	.dw interactionCode16
+	.dw interactionCode17
+	.dw interactionCode18
+	.dw interactionDelete
+	.dw interactionDelete
+	.dw interactionDelete
+	.dw interactionCode1c
+	.dw interactionCode1d
+	.dw interactionCode1e
+	.dw interactionCode1f
+	.dw interactionCode20
+	.dw interactionCode21
+	.dw interactionCode22
+	.dw interactionCode23
+	.dw interactionCode24
+	.dw interactionCode25
+	.dw interactionCode26
+	.dw interactionCode27
+	.dw interactionCode28
+	.dw interactionCode29
+	.dw interactionCode2a
+	.dw interactionCode2b
+	.dw interactionCode2c
+	.dw interactionCode2d
+	.dw interactionCode2e
+	.dw interactionCode2f
+	.dw interactionCode30
+	.dw interactionCode31
+	.dw interactionCode32
+	.dw interactionCode33
+	.dw interactionCode34
+	.dw interactionCode35
+	.dw interactionCode36
+	.dw interactionCode37
+	.dw interactionCode38
+	.dw interactionCode39
+	.dw interactionCode3a
+	.dw interactionCode3b
+	.dw interactionCode3c
+	.dw interactionCode3d
+	.dw interactionCode3e
+	.dw interactionCode3f
+	.dw interactionCode40
+	.dw interactionCode41
+	.dw interactionCode42
+	.dw interactionCode43
+	.dw interactionCode44
+	.dw interactionCode45
+	.dw interactionCode46
+	.dw interactionCode47
+	.dw interactionCode48
+	.dw interactionCode49
+	.dw interactionCode4a
+	.dw interactionCode4b
+	.dw interactionCode4c
+	.dw interactionCode4d
+	.dw interactionCode4e
+	.dw interactionCode4f
+	.dw interactionCode50
+	.dw interactionCode51
+	.dw interactionCode52
+	.dw interactionCode53
+	.dw interactionCode54
+	.dw interactionCode55
+	.dw interactionCode56
+	.dw interactionCode57
+	.dw interactionCode58
+	.dw interactionCode59
+	.dw interactionCode5a
+	.dw interactionCode5b
+	.dw interactionCode5c
+	.dw interactionCode5d
+	.dw interactionCode5e
+	.dw interactionCode5f
+	.dw interactionCode60
+	.dw interactionDelete
+	.dw interactionCode62
+	.dw interactionCode63
+	.dw interactionCode64
+	.dw interactionCode65
+	.dw interactionCode66
+	.dw interactionCode67
+	.dw interactionCode68
+	.dw interactionCode69
+	.dw interactionCode6a
+	.dw interactionCode6b
+	.dw interactionCode6c
+	.dw interactionCode6d
+	.dw interactionCode6e
+	.dw interactionCode6f
+	.dw interactionCode70
+	.dw interactionCode71
+	.dw interactionCode72
+	.dw interactionCode73
+	.dw interactionCode74
+	.dw interactionCode75
+	.dw interactionCode76
+	.dw interactionCode77
+	.dw interactionCode78
+	.dw interactionCode79
+	.dw interactionCode7a
+	.dw interactionCode7b
+	.dw interactionCode7c
+	.dw interactionCode7d
+	.dw interactionCode7e
+	.dw interactionCode7f
+	.dw interactionCode80
+	.dw interactionCode81
+	.dw interactionCode82
+	.dw interactionCode83
+	.dw interactionCode84
+	.dw interactionCode85
+	.dw interactionCode86
+	.dw interactionCode87
+	.dw interactionCode88
+	.dw interactionCode89
+	.dw interactionCode8a
+	.dw interactionCode8b
+	.dw interactionCode8c
+	.dw interactionCode8d
+	.dw interactionCode8e
+	.dw interactionCode8f
+	.dw interactionCode90
+	.dw interactionCode91
+	.dw interactionCode92
+	.dw interactionCode93
+	.dw interactionCode94
+	.dw interactionCode95
+	.dw interactionCode96
+	.dw interactionCode97
+	.dw interactionCode98
+	.dw interactionCode99
+	.dw interactionCode9a
+	.dw interactionCode9b
+	.dw interactionCode9c
+	.dw interactionCode9d
+	.dw interactionCode9e
+	.dw interactionCode9f
+	.dw interactionCodea0
+	.dw interactionCodea1
+	.dw interactionCodea2
+	.dw interactionCodea3
+	.dw interactionCodea4
+	.dw interactionCodea5
+	.dw interactionCodea6
+	.dw interactionCodea7
+	.dw interactionCodea8
+	.dw interactionCodea9
+	.dw interactionCodeaa
+	.dw interactionCodeab
+	.dw interactionCodeac
+	.dw interactionCodead
+	.dw interactionCodeae
+	.dw interactionCodeaf
+	.dw interactionCodeb0
+	.dw interactionCodeb1
+	.dw interactionCodeb2
+	.dw interactionCodeb3
+	.dw interactionCodeb4
+	.dw interactionCodeb5
+	.dw interactionCodeb6
+	.dw interactionCodeb7
+	.dw interactionCodeb8
+	.dw interactionCodeb9
+	.dw interactionCodeba
+	.dw interactionCodebb
+	.dw interactionCodebc
+	.dw interactionCodebd
+	.dw interactionCodebe
+	.dw interactionCodebf
+	.dw interactionCodec0
+	.dw interactionCodec1
+	.dw interactionCodec2
+	.dw interactionCodec3
+	.dw interactionCodec4
+	.dw interactionCodec5
+	.dw interactionCodec6
+	.dw interactionCodec7
+	.dw interactionCodec8
+	.dw interactionCodec9
+	.dw interactionCodeca
+	.dw interactionCodecb
+	.dw interactionCodecc
+	.dw interactionCodecd
+	.dw interactionCodece
+	.dw interactionCodecf
+	.dw interactionCoded0
+	.dw interactionCoded1
+	.dw interactionCoded2
+	.dw interactionCoded3
+	.dw interactionCoded4
+	.dw interactionCoded5
+	.dw interactionCoded6
+	.dw interactionCoded7
+	.dw interactionCoded8
+	.dw interactionCoded9
+	.dw interactionCodeda
+	.dw interactionCodedb
+	.dw interactionCodedc
+	.dw interactionCodedd
+	.dw interactionCodede
+	.dw interactionCodedf
+	.dw interactionCodee0
+	.dw interactionCodee1
+	.dw interactionCodee2
+	.dw interactionCodee3
+	.dw interactionCodee4
+	.dw interactionCodee5
+	.dw interactionCodee6
+	.dw interactionCodee7
 
 seasonsFunc_3d30:
 	ld a,(wFrameCounter)		; $3d30
@@ -49374,6 +49193,19 @@ _label_07_277:
 .BANK $08 SLOT 1
 .ORG 0
 
+interactionCode00:
+interactionCode01:
+interactionCode02:
+interactionCode03:
+interactionCode04:
+interactionCode05:
+interactionCode06:
+interactionCode07:
+interactionCode08:
+interactionCode09:
+interactionCode0a:
+interactionCode0b:
+interactionCode0c:
 	ld e,$44		; $4000
 	ld a,(de)		; $4002
 	rst_jumpTable			; $4003
@@ -49475,6 +49307,8 @@ _label_08_002:
 	inc e			; $409d
 	ld (de),a		; $409e
 	ret			; $409f
+
+interactionCode0f:
 	ld e,$44		; $40a0
 	ld a,(de)		; $40a2
 	rst_jumpTable			; $40a3
@@ -49543,6 +49377,8 @@ _label_08_005:
 	jr z,_label_08_005	; $410b
 _label_08_006:
 	jp interactionDelete		; $410d
+
+interactionCode10:
 	ld e,$44		; $4110
 	ld a,(de)		; $4112
 	rst_jumpTable			; $4113
@@ -49567,9 +49403,13 @@ _label_08_006:
 	call objectSetCollideRadii		; $413e
 	call interactionRunScript		; $4141
 	jp interactionUpdateAnimCounter		; $4144
+
+interactionCode11:
 	ld hl,$59b7		; $4147
 	ld e,$3f		; $414a
 	jp interBankCall		; $414c
+
+interactionCode12:
 	ld e,$42		; $414f
 	ld a,(de)		; $4151
 	rst_jumpTable			; $4152
@@ -49739,6 +49579,8 @@ _label_08_011:
 	ld (de),a		; $4279
 	ret			; $427a
 	jp interactionDelete		; $427b
+
+interactionCode13:
 	call interactionDeleteAndRetIfEnabled02		; $427e
 	call returnIfScrollMode01Unset		; $4281
 	ld e,$44		; $4284
@@ -49804,6 +49646,8 @@ _label_08_011:
 	xor a			; $42da
 	ld ($cc30),a		; $42db
 	jp interactionDelete		; $42de
+
+interactionCode14:
 	ld e,$44		; $42e1
 	ld a,(de)		; $42e3
 	rst_jumpTable			; $42e4
@@ -50006,6 +49850,8 @@ _label_08_018:
 	cpl			; $4438
 	ld (bc),a		; $4439
 	nop			; $443a
+
+interactionCode16:
 	ld e,$44		; $443b
 	ld a,(de)		; $443d
 	rst_jumpTable			; $443e
@@ -50097,6 +49943,8 @@ _label_08_020:
 	ld (hl),a		; $44dc
 	call objectCopyPosition		; $44dd
 	jp objectDeleteRelatedObj1AsStaticObject		; $44e0
+
+interactionCode17:
 	ld e,$44		; $44e3
 	ld a,(de)		; $44e5
 	rst_jumpTable			; $44e6
@@ -50159,6 +50007,8 @@ _label_08_020:
 	halt			; $4543
 	ld bc,$0177		; $4544
 	nop			; $4547
+
+interactionCode18:
 	ld e,$44		; $4548
 	ld a,(de)		; $454a
 	rst_jumpTable			; $454b
@@ -50187,6 +50037,8 @@ _label_08_020:
 	call interactionDecCounter1		; $4577
 	ret nz			; $457a
 	jp interactionDelete		; $457b
+
+interactionCode1c:
 	call checkInteractionState		; $457e
 	jp nz,interactionRunScript		; $4581
 	ld a,$28		; $4584
@@ -50200,6 +50052,8 @@ _label_08_021:
 	ld hl,$4685		; $4597
 	call interactionSetScript		; $459a
 	jp interactionIncState		; $459d
+
+interactionCode1d:
 	ld e,$44		; $45a0
 	ld a,(de)		; $45a2
 	rst_jumpTable			; $45a3
@@ -50286,6 +50140,8 @@ _label_08_024:
 	ld bc,$0501		; $461e
 	ld bc,$0101		; $4621
 	ld bc,$0101		; $4624
+
+interactionCode1e:
 	call interactionDeleteAndRetIfEnabled02		; $4627
 	call returnIfScrollMode01Unset		; $462a
 	ld e,$44		; $462d
@@ -50552,6 +50408,8 @@ _label_08_027:
 	call loadUncompressedGfxHeader		; $47ab
 	pop de			; $47ae
 	ret			; $47af
+
+interactionCode46:
 	call $479a		; $47b0
 	call $47b9		; $47b3
 	jp npcAnimate_staticDirection		; $47b6
@@ -51009,6 +50867,8 @@ _label_08_054:
 	ld c,b			; $4abe
 	ld a,b			; $4abf
 	ld e,b			; $4ac0
+
+interactionCode47:
 	ld e,$44		; $4ac1
 	ld a,(de)		; $4ac3
 	rst_jumpTable			; $4ac4
@@ -51464,6 +51324,8 @@ _label_08_069:
 _label_08_070:
 	jr nz,_label_08_071	; $4d57
 	ld c,e			; $4d59
+
+interactionCode4a:
 	ld e,$44		; $4d5a
 	ld a,(de)		; $4d5c
 	rst_jumpTable			; $4d5d
@@ -51786,6 +51648,8 @@ _label_08_085:
 	inc l			; $4f61
 	ld (hl),d		; $4f62
 	ret			; $4f63
+
+interactionCode50:
 	ld e,$44		; $4f64
 	ld a,(de)		; $4f66
 	rst_jumpTable			; $4f67
@@ -52022,6 +51886,8 @@ _label_08_092:
 	nop			; $5110
 	ld bc,$0102		; $5111
 	nop			; $5114
+
+interactionCode56:
 	call checkInteractionState		; $5115
 	jr z,_label_08_093	; $5118
 	ld e,$61		; $511a
@@ -52040,6 +51906,8 @@ _label_08_093:
 	rrca			; $5131
 	jp c,objectSetVisible81		; $5132
 	jp objectSetVisible82		; $5135
+
+interactionCode15:
 	ld a,($cc02)		; $5138
 	ld b,a			; $513b
 	ld a,($cc34)		; $513c
@@ -52067,6 +51935,8 @@ _label_08_094:
 	ld ($c4ad),a		; $5166
 _label_08_095:
 	jp interactionDelete		; $5169
+
+interactionCode1f:
 	ld e,$42		; $516c
 	ld a,(de)		; $516e
 	rst_jumpTable			; $516f
@@ -52288,6 +52158,8 @@ _label_08_102:
 	inc l			; $52cf
 	ld (hl),$29		; $52d0
 	jr _label_08_101		; $52d2
+
+interactionCode20:
 	call interactionDeleteAndRetIfEnabled02		; $52d4
 	ld e,$44		; $52d7
 	ld a,(de)		; $52d9
@@ -52484,8 +52356,10 @@ _label_08_103:
 	ld c,l			; $53be
 	rst_addDoubleIndex			; $53bf
 	ld c,l			; $53c0
-	call nc,$1e4d		; $53c1
-	ld b,h			; $53c4
+	.db $d4 $4d
+
+interactionCode21:
+	ld e,$44		; $53c3
 	ld a,(de)		; $53c5
 	rst_jumpTable			; $53c6
 	pop de			; $53c7
@@ -52660,6 +52534,8 @@ _label_08_109:
 	ret			; $54e3
 	nop			; $54e4
 	ld bc,$0000		; $54e5
+
+interactionCode22:
 	ld e,$44		; $54e8
 	ld a,(de)		; $54ea
 	rst_jumpTable			; $54eb
@@ -52893,6 +52769,8 @@ _label_08_121:
 	ld c,l			; $5660
 	ld a,($874d)		; $5661
 	ld c,(hl)		; $5664
+
+interactionCode23:
 	ld e,$45		; $5665
 	ld a,(de)		; $5667
 	rst_jumpTable			; $5668
@@ -52953,6 +52831,21 @@ _label_08_125:
 	ld c,(hl)		; $56b2
 	and l			; $56b3
 	ld c,(hl)		; $56b4
+
+interactionCode24:
+interactionCode29:
+interactionCode2c:
+interactionCode2d:
+interactionCode2f:
+interactionCode33:
+interactionCode36:
+interactionCode37:
+interactionCode38:
+interactionCode39:
+interactionCode3a:
+interactionCode3c:
+interactionCode3d:
+interactionCode3f:
 	ld e,$44		; $56b5
 	ld a,(de)		; $56b7
 	rst_jumpTable			; $56b8
@@ -53571,6 +53464,9 @@ _label_08_149:
 	ld d,c			; $5a0b
 	pop af			; $5a0c
 	ld d,c			; $5a0d
+
+interactionCode25:
+interactionCode26:
 	ld e,$44		; $5a0e
 	ld a,(de)		; $5a10
 	rst_jumpTable			; $5a11
@@ -53692,6 +53588,8 @@ _label_08_153:
 	ld ($cceb),a		; $5af4
 	ld a,$02		; $5af7
 	jp interactionSetAnimation		; $5af9
+
+interactionCode27:
 	ld e,$44		; $5afc
 	ld a,(de)		; $5afe
 	rst_jumpTable			; $5aff
@@ -53813,6 +53711,8 @@ _label_08_159:
 	call z,seasonsFunc_3d30		; $5be2
 	call npcAnimate_staticDirection		; $5be5
 	jp interactionRunScript		; $5be8
+
+interactionCode28:
 	ld e,$44		; $5beb
 	ld a,(de)		; $5bed
 	rst_jumpTable			; $5bee
@@ -53933,6 +53833,8 @@ _label_08_159:
 	ld d,e			; $5c98
 	sub e			; $5c99
 	ld d,e			; $5c9a
+
+interactionCode2a:
 	call checkInteractionState		; $5c9b
 	jr nz,_label_08_163	; $5c9e
 	ld a,$01		; $5ca0
@@ -54145,6 +54047,8 @@ _label_08_166:
 	sub b			; $5e2c
 	cp c			; $5e2d
 	ret			; $5e2e
+
+interactionCode2b:
 	ld e,$44		; $5e2f
 	ld a,(de)		; $5e31
 	rst_jumpTable			; $5e32
@@ -54211,6 +54115,8 @@ _label_08_166:
 	ld d,l			; $5e95
 	jp $d555		; $5e96
 	ld d,l			; $5e99
+
+interactionCode2e:
 	ld e,$44		; $5e9a
 	ld a,(de)		; $5e9c
 	rst_jumpTable			; $5e9d
@@ -54343,14 +54249,11 @@ _label_08_174:
 	ld e,$43		; $5f7a
 	ld (de),a		; $5f7c
 	ret			; $5f7d
-	rst $20			; $5f7e
-	ld d,l			; $5f7f
-	ld ($ea55),a		; $5f80
-	ld d,l			; $5f83
-	push af			; $5f84
-	ld d,l			; $5f85
-	ld ($1e55),a		; $5f86
-	ld b,h			; $5f89
+	.db $e7 $55 $ea $55 $ea $55 $f5 $55
+	.db $ea $55
+
+interactionCode30:
+	ld e,$44		; $5f88
 	ld a,(de)		; $5f8a
 	rst_jumpTable			; $5f8b
 	sbc b			; $5f8c
@@ -54558,6 +54461,8 @@ _label_08_180:
 	ld d,a			; $60ca
 	cp l			; $60cb
 	ld d,a			; $60cc
+
+interactionCode31:
 	ld e,$42		; $60cd
 	ld a,(de)		; $60cf
 	rst_jumpTable			; $60d0
@@ -54901,6 +54806,8 @@ _label_08_191:
 	ld a,$0e		; $630f
 	call setGlobalFlag		; $6311
 	jr _label_08_190		; $6314
+
+interactionCode32:
 	ld e,$44		; $6316
 	ld a,(de)		; $6318
 	rst_jumpTable			; $6319
@@ -54963,6 +54870,8 @@ _label_08_194:
 	ld e,b			; $6376
 	ld h,c			; $6377
 	ld e,b			; $6378
+
+interactionCode34:
 	call checkInteractionState		; $6379
 	jr nz,_label_08_195	; $637c
 	ld a,$01		; $637e
@@ -54976,6 +54885,8 @@ _label_08_195:
 	ret nz			; $638c
 	ld a,$50		; $638d
 	jp playSound		; $638f
+
+interactionCode35:
 	ld e,$44		; $6392
 	ld a,(de)		; $6394
 	rst_jumpTable			; $6395
@@ -55566,6 +55477,8 @@ _label_08_221:
 	ld e,b			; $66fb
 	ld a,d			; $66fc
 	ld e,b			; $66fd
+
+interactionCode3b:
 	call checkInteractionState		; $66fe
 	jr nz,_label_08_225	; $6701
 	ld a,$01		; $6703
@@ -55741,6 +55654,8 @@ _label_08_231:
 	ld a,($ff00+c)		; $6824
 	ld e,e			; $6825
 	jr z,$5c		; $6826
+
+interactionCode3e:
 	call checkInteractionState		; $6828
 	jp nz,$68f5		; $682b
 	ld a,$01		; $682e
@@ -56186,6 +56101,9 @@ _label_08_251:
 	jp hl			; $6b19
 	ld e,h			; $6b1a
 	and $5c			; $6b1b
+
+interactionCode40:
+interactionCode41:
 	ld e,$44		; $6b1d
 	ld a,(de)		; $6b1f
 	rst_jumpTable			; $6b20
@@ -56480,6 +56398,8 @@ _label_08_268:
 	ld e,(hl)		; $6cda
 	push hl			; $6cdb
 	ld e,(hl)		; $6cdc
+
+interactionCode42:
 	ld e,$44		; $6cdd
 	ld a,(de)		; $6cdf
 	rst_jumpTable			; $6ce0
@@ -56514,6 +56434,8 @@ _label_08_269:
 	ld e,a			; $6d15
 	rra			; $6d16
 	ld e,a			; $6d17
+
+interactionCode43:
 	call $479a		; $6d18
 	call $6d21		; $6d1b
 	jp npcAnimate_staticDirection		; $6d1e
@@ -56639,6 +56561,8 @@ _label_08_280:
 	ld a,$01		; $6de8
 	ld (de),a		; $6dea
 	ret			; $6deb
+
+interactionCode44:
 	ld e,$44		; $6dec
 	ld a,(de)		; $6dee
 	rst_jumpTable			; $6def
@@ -56759,6 +56683,8 @@ _label_08_288:
 	ld h,b			; $6eb4
 	ld d,(hl)		; $6eb5
 	ld h,b			; $6eb6
+
+interactionCode45:
 	ld e,$44		; $6eb7
 	ld a,(de)		; $6eb9
 	rst_jumpTable			; $6eba
@@ -56841,6 +56767,8 @@ _label_08_292:
 _label_08_293:
 	ld (de),a		; $6f55
 	jp interactionSetAnimation		; $6f56
+
+interactionCode48:
 	ld e,$44		; $6f59
 	ld a,(de)		; $6f5b
 	rst_jumpTable			; $6f5c
@@ -57029,6 +56957,8 @@ _label_08_296:
 	rla			; $7071
 	ld d,$78		; $7072
 	rst $38			; $7074
+
+interactionCode49:
 	call $707b		; $7075
 	jp $7089		; $7078
 	ld e,$44		; $707b
@@ -57217,6 +57147,8 @@ _label_08_300:
 	ld a,$01		; $71c5
 	ld (hl),a		; $71c7
 	jp interactionSetAnimation		; $71c8
+
+interactionCode4b:
 	ld e,$44		; $71cb
 	ld a,(de)		; $71cd
 	rst_jumpTable			; $71ce
@@ -57304,28 +57236,13 @@ _label_08_300:
 	call interactionDecCounter1		; $7257
 	jp z,interactionDelete		; $725a
 	jp interactionUpdateAnimCounter		; $725d
-	ret nz			; $7260
-	cp $a0			; $7261
-	cp $a0			; $7263
-	cp $80			; $7265
-	cp $05			; $7267
-	ld a,(bc)		; $7269
-	ld a,(bc)		; $726a
-	inc d			; $726b
-	dec c			; $726c
-	ld c,$0f		; $726d
-	stop			; $726f
-	nop			; $7270
-	ld bc,$0302		; $7271
-	inc b			; $7274
-	dec b			; $7275
-	ld b,$07		; $7276
-	ld bc,$0302		; $7278
-	dec b			; $727b
-	ld b,$07		; $727c
-	ld (bc),a		; $727e
-	ld b,$1e		; $727f
-	ld b,d			; $7281
+.db $c0 $fe $a0 $fe $a0 $fe $80 $fe
+.db $05 $0a $0a $14 $0d $0e $0f $10
+.db $00 $01 $02 $03 $04 $05 $06 $07
+.db $01 $02 $03 $05 $06 $07 $02 $06
+
+interactionCode4c:
+	ld e,Interaction.subid	; $7280
 	ld a,(de)		; $7282
 	rst_jumpTable			; $7283
 	cp b			; $7284
@@ -57447,6 +57364,8 @@ _label_08_306:
 	ld a,$77		; $7366
 	call playSound		; $7368
 	jp interactionDelete		; $736b
+
+interactionCode4d:
 	ld e,$42		; $736e
 	ld a,(de)		; $7370
 	rst_jumpTable			; $7371
@@ -57681,6 +57600,8 @@ _label_08_312:
 	ret z			; $7511
 	call objectCreatePuff		; $7512
 	jp interactionDelete		; $7515
+
+interactionCode4e:
 	ld e,$44		; $7518
 	ld a,(de)		; $751a
 	rst_jumpTable			; $751b
@@ -57975,6 +57896,8 @@ _label_08_321:
 	ld h,c			; $771d
 	ld c,d			; $771e
 	ld h,c			; $771f
+
+interactionCode4f:
 	ld e,$44		; $7720
 	ld a,(de)		; $7722
 	rst_jumpTable			; $7723
@@ -58456,6 +58379,8 @@ _label_08_340:
 	call interactionUpdateAnimCounter		; $7a34
 	call $7a00		; $7a37
 	jp interactionRunScript		; $7a3a
+
+interactionCode51:
 	call checkInteractionState		; $7a3d
 	jr z,_label_08_343	; $7a40
 	ld a,(wFrameCounter)		; $7a42
@@ -58597,6 +58522,8 @@ _label_08_344:
 	nop			; $7b02
 	rst $38			; $7b03
 	rst $38			; $7b04
+
+interactionCode52:
 	ld e,$44		; $7b05
 	ld a,(de)		; $7b07
 	rst_jumpTable			; $7b08
@@ -58615,6 +58542,8 @@ _label_08_344:
 	jp interactionSetScript		; $7b21
 	call interactionUpdateAnimCounter		; $7b24
 	jp interactionRunScript		; $7b27
+
+interactionCode53:
 	ld e,$42		; $7b2a
 	ld a,(de)		; $7b2c
 	rst_jumpTable			; $7b2d
@@ -58718,6 +58647,8 @@ _label_08_346:
 	ld l,$45		; $7bd7
 	ld (hl),$01		; $7bd9
 	ret			; $7bdb
+
+interactionCode54:
 	ld e,$44		; $7bdc
 	ld a,(de)		; $7bde
 	rst_jumpTable			; $7bdf
@@ -58764,6 +58695,8 @@ _label_08_346:
 	ld a,$02		; $7c25
 	ld (de),a		; $7c27
 	jp objectReplaceWithAnimationIfOnHazard		; $7c28
+
+interactionCode55:
 	ld e,$42		; $7c2b
 	ld a,(de)		; $7c2d
 	rst_jumpTable			; $7c2e
@@ -58890,6 +58823,8 @@ _label_08_349:
 	jp interactionDelete		; $7d19
 	ld a,($c6bb)		; $7d1c
 	jp getNumSetBits		; $7d1f
+
+interactionCode57:
 	ld e,$44		; $7d22
 	ld a,(de)		; $7d24
 	rst_jumpTable			; $7d25
@@ -58955,6 +58890,8 @@ _label_08_351:
 _label_08_352:
 	call objectPreventLinkFromPassing		; $7d99
 	jp objectSetPriorityRelativeToLink_withTerrainEffects		; $7d9c
+
+interactionCode58:
 	ld e,$44		; $7d9f
 	ld a,(de)		; $7da1
 	rst_jumpTable			; $7da2
@@ -59053,6 +58990,8 @@ _label_08_356:
 	ld l,$77		; $7e46
 	ld (hl),$78		; $7e48
 	ret			; $7e4a
+
+interactionCode59:
 	ld e,$44		; $7e4b
 	ld a,(de)		; $7e4d
 	rst_jumpTable			; $7e4e
@@ -59085,6 +59024,8 @@ _label_08_357:
 	call interactionRunScript		; $7e89
 	jp c,interactionDelete		; $7e8c
 	ret			; $7e8f
+
+interactionCode5a:
 	ld e,$44		; $7e90
 	ld a,(de)		; $7e92
 	rst_jumpTable			; $7e93
@@ -59163,6 +59104,8 @@ _label_08_358:
 	sub $22			; $7f20
 	cp $5c			; $7f22
 	ret			; $7f24
+
+interactionCode5b:
 	ld e,$44		; $7f25
 	ld a,(de)		; $7f27
 	rst_jumpTable			; $7f28
@@ -59203,6 +59146,8 @@ _label_08_358:
 	ld a,$3d		; $7f68
 	jp playSound		; $7f6a
 	ret			; $7f6d
+
+interactionCode5c:
 	ld e,$44		; $7f6e
 	ld a,(de)		; $7f70
 	rst_jumpTable			; $7f71
@@ -59225,6 +59170,8 @@ _label_08_358:
 	jp z,npcAnimate_followLink		; $7f92
 	call interactionUpdateAnimCounter		; $7f95
 	jp objectSetPriorityRelativeToLink_withTerrainEffects		; $7f98
+
+interactionCode5d:
 	ld e,$44		; $7f9b
 	ld a,(de)		; $7f9d
 	rst_jumpTable			; $7f9e
@@ -59248,6 +59195,7 @@ _label_08_358:
 .BANK $09 SLOT 1
 .ORG 0
 
+interactionCode60:
 	ld e,$44		; $4000
 	ld a,(de)		; $4002
 	rst_jumpTable			; $4003
@@ -59706,6 +59654,8 @@ _label_09_016:
 _label_09_017:
 	xor a			; $433e
 	ret			; $433f
+
+interactionCode6f:
 	ld e,$42		; $4340
 	ld a,(de)		; $4342
 	rst_jumpTable			; $4343
@@ -59814,6 +59764,8 @@ _label_09_018:
 	jp interactionRunScript		; $440d
 	call objectSetInvisible		; $4410
 	jp interactionRunScript		; $4413
+
+interactionCode78:
 	ld e,$44		; $4416
 	ld a,(de)		; $4418
 	rst_jumpTable			; $4419
@@ -59896,6 +59848,8 @@ _label_09_019:
 	ld e,d			; $4475
 	ld e,h			; $4476
 	ld e,c			; $4477
+
+interactionCode79:
 	ld e,$44		; $4478
 	ld a,(de)		; $447a
 	rst_jumpTable			; $447b
@@ -59997,6 +59951,8 @@ _label_09_023:
 	ld c,a			; $4522
 	call updateLinkPositionGivenVelocity		; $4523
 	jr _label_09_023		; $4526
+
+interactionCode7a:
 	call retIfTextIsActive		; $4528
 	ld e,$44		; $452b
 	ld a,(de)		; $452d
@@ -60239,6 +60195,8 @@ _label_09_036:
 	cp $01			; $46b9
 	ret nz			; $46bb
 	jp objectPreventLinkFromPassing		; $46bc
+
+interactionCode7d:
 	ld e,$42		; $46bf
 	ld a,(de)		; $46c1
 	rst_jumpTable			; $46c2
@@ -60505,8 +60463,10 @@ _label_09_042:
 	ld (bc),a		; $485f
 	or $08			; $4860
 	ld hl,sp+$0a		; $4862
-	cp $1e			; $4864
-	ld b,d			; $4866
+	.db $fe
+
+interactionCode7e:
+	ld e,$42		; $4865
 	ld a,(de)		; $4867
 	rst_jumpTable			; $4868
 	ld l,a			; $4869
@@ -60695,6 +60655,8 @@ _label_09_046:
 	ld d,a			; $49aa
 	inc (hl)		; $49ab
 	rla			; $49ac
+
+interactionCode7f:
 	ld a,($cc34)		; $49ad
 	or a			; $49b0
 	ret nz			; $49b1
@@ -60991,6 +60953,8 @@ _label_09_049:
 	ld a,$00		; $4bc6
 	call objectGetRelatedObject1Var		; $4bc8
 	jp objectTakePosition		; $4bcb
+
+interactionCode5e:
 	call returnIfScrollMode01Unset		; $4bce
 	ld e,$44		; $4bd1
 	ld a,(de)		; $4bd3
@@ -61166,6 +61130,8 @@ _label_09_054:
 	ld l,$0f		; $4cfe
 	ld e,$31		; $4d00
 	jr _label_09_054		; $4d02
+
+interactionCode5f:
 	ld e,$42		; $4d04
 	ld a,(de)		; $4d06
 	cp $06			; $4d07
@@ -61515,6 +61481,8 @@ _label_09_069:
 	ld hl,sp+$0f		; $4f48
 	ld hl,sp+$0f		; $4f4a
 	ld hl,sp+$03		; $4f4c
+
+interactionCode62:
 	ld e,$42		; $4f4e
 	ld a,(de)		; $4f50
 	rst_jumpTable			; $4f51
@@ -61689,6 +61657,8 @@ _label_09_073:
 	ld a,$3c		; $507d
 	ld (de),a		; $507f
 	ret			; $5080
+
+interactionCode63:
 	ld e,$44		; $5081
 	ld a,(de)		; $5083
 	rst_jumpTable			; $5084
@@ -61750,6 +61720,8 @@ _label_09_074:
 	ld (de),a		; $50e6
 	ld ($ccc0),a		; $50e7
 	ret			; $50ea
+
+interactionCode64:
 	ld e,$44		; $50eb
 	ld a,(de)		; $50ed
 	rst_jumpTable			; $50ee
@@ -61820,6 +61792,8 @@ _label_09_075:
 	ld a,$05		; $515c
 	ld (de),a		; $515e
 	ret			; $515f
+
+interactionCode65:
 	call returnIfScrollMode01Unset		; $5160
 	call $5258		; $5163
 	jp nz,interactionDelete		; $5166
@@ -62417,6 +62391,8 @@ _label_09_092:
 	reti			; $5569
 	ld h,b			; $556a
 	reti			; $556b
+
+interactionCode66:
 	ld e,$42		; $556c
 	ld a,(de)		; $556e
 	rst_jumpTable			; $556f
@@ -62617,6 +62593,8 @@ _label_09_102:
 	ld l,$49		; $56c8
 	ld (hl),e		; $56ca
 	ret			; $56cb
+
+interactionCode67:
 	ld e,$44		; $56cc
 	ld a,(de)		; $56ce
 	rst_jumpTable			; $56cf
@@ -62828,6 +62806,8 @@ _label_09_105:
 	and $0f			; $5800
 	or b			; $5802
 	ret			; $5803
+
+interactionCode68:
 	ld e,$44		; $5804
 	ld a,(de)		; $5806
 	rst_jumpTable			; $5807
@@ -62979,6 +62959,8 @@ _label_09_112:
 	ld a,b			; $5918
 	ld ($cc66),a		; $5919
 	ret			; $591c
+
+interactionCode69:
 	ld e,$42		; $591d
 	ld a,(de)		; $591f
 	rst_jumpTable			; $5920
@@ -63471,6 +63453,8 @@ _label_09_121:
 	daa			; $5be2
 	ld h,$24		; $5be3
 	nop			; $5be5
+
+interactionCode6a:
 	ld e,$42		; $5be6
 	ld a,(de)		; $5be8
 	rst_jumpTable			; $5be9
@@ -64217,6 +64201,8 @@ _label_09_151:
 	jr nc,_label_09_152	; $60e8
 	ld ($5830),sp		; $60ea
 	add hl,bc		; $60ed
+
+interactionCode6b:
 	ld e,$42		; $60ee
 	ld a,(de)		; $60f0
 	rst_jumpTable			; $60f1
@@ -65080,6 +65066,8 @@ _label_09_182:
 	ld hl,$6662		; $677c
 	call interactionSetScript		; $677f
 	jp interactionIncState		; $6782
+
+interactionCode6c:
 	ld e,$42		; $6785
 	ld a,(de)		; $6787
 	rst_jumpTable			; $6788
@@ -65087,6 +65075,8 @@ _label_09_182:
 	ld h,a			; $678a
 	ld (hl),c		; $678b
 	ld l,b			; $678c
+
+interactionCode6d:
 	ld e,$42		; $678d
 	ld a,(de)		; $678f
 	rst_jumpTable			; $6790
@@ -65610,6 +65600,8 @@ _label_09_201:
 	xor a			; $6b1b
 	ld ($cfc0),a		; $6b1c
 	jp interactionDelete		; $6b1f
+
+interactionCode6e:
 	ld e,$42		; $6b22
 	ld a,(de)		; $6b24
 	rst_jumpTable			; $6b25
@@ -65766,6 +65758,8 @@ _label_09_205:
 	ld a,$11		; $6c32
 	call unsetGlobalFlag		; $6c34
 	jp interactionDelete		; $6c37
+
+interactionCode70:
 	ld e,$42		; $6c3a
 	ld a,(de)		; $6c3c
 	or a			; $6c3d
@@ -65809,6 +65803,8 @@ _label_09_210:
 _label_09_211:
 	ld a,$25		; $6c89
 	jp unsetGlobalFlag		; $6c8b
+
+interactionCode71:
 	ld a,($cc34)		; $6c8e
 	or a			; $6c91
 	jr z,_label_09_212	; $6c92
@@ -66225,6 +66221,8 @@ _label_09_220:
 	xor a			; $6f87
 	ld (de),a		; $6f88
 	jp interactionInitGraphics		; $6f89
+
+interactionCode72:
 	ld e,$42		; $6f8c
 	ld a,(de)		; $6f8e
 	or a			; $6f8f
@@ -66348,6 +66346,8 @@ _label_09_227:
 	ld a,$ff		; $705b
 	ld (de),a		; $705d
 	ret			; $705e
+
+interactionCode73:
 	ld h,d			; $705f
 	ld l,$42		; $7060
 	ldi a,(hl)		; $7062
@@ -66581,6 +66581,8 @@ _label_09_241:
 	ld l,a			; $71e2
 	dec a			; $71e3
 	ld l,a			; $71e4
+
+interactionCode74:
 	ld e,$42		; $71e5
 	ld a,(de)		; $71e7
 	rst_jumpTable			; $71e8
@@ -66689,6 +66691,8 @@ _label_09_243:
 	call checkGlobalFlag		; $7290
 	jp nz,interactionDelete		; $7293
 	jp $7208		; $7296
+
+interactionCode75:
 	ld e,$44		; $7299
 	ld a,(de)		; $729b
 	rst_jumpTable			; $729c
@@ -66769,6 +66773,8 @@ _label_09_245:
 	or a			; $7321
 	ret z			; $7322
 	jp objectApplySpeed		; $7323
+
+interactionCode76:
 	ld e,$44		; $7326
 	ld a,(de)		; $7328
 	rst_jumpTable			; $7329
@@ -66985,6 +66991,8 @@ _label_09_252:
 	ld (bc),a		; $7495
 	ld (bc),a		; $7496
 	nop			; $7497
+
+interactionCode77:
 	ld e,$44		; $7498
 	ld a,(de)		; $749a
 	rst_jumpTable			; $749b
@@ -67042,6 +67050,8 @@ _label_09_256:
 	ld e,$4d		; $74ee
 	ld (de),a		; $74f0
 	ret			; $74f1
+
+interactionCode7b:
 	ld h,d			; $74f2
 	ld l,$46		; $74f3
 _label_09_257:
@@ -67201,6 +67211,8 @@ _label_09_262:
 	ret nz			; $75f7
 	scf			; $75f8
 	ret			; $75f9
+
+interactionCode7c:
 	call objectSetPriorityRelativeToLink		; $75fa
 	ld e,$44		; $75fd
 	ld a,(de)		; $75ff
@@ -67336,6 +67348,8 @@ _label_09_267:
 	dec h			; $76e7
 	ld (hl),$00		; $76e8
 	ret			; $76ea
+
+interactionCode80:
 	call checkInteractionState		; $76eb
 	jr nz,_label_09_268	; $76ee
 	ld a,$01		; $76f0
@@ -67381,6 +67395,8 @@ _label_09_268:
 	ld (hl),b		; $772a
 	ld d,e			; $772b
 	ld (hl),b		; $772c
+
+interactionCode81:
 	ld e,$44		; $772d
 	ld a,(de)		; $772f
 	rst_jumpTable			; $7730
@@ -67811,6 +67827,8 @@ _label_09_286:
 	adc $70			; $79ae
 	push de			; $79b0
 	ld (hl),b		; $79b1
+
+interactionCode82:
 	call checkInteractionState		; $79b2
 	jr nz,_label_09_287	; $79b5
 	ld a,$01		; $79b7
@@ -67947,6 +67965,8 @@ _label_09_290:
 _label_09_291:
 	ld b,$fe		; $7ab5
 	jp objectCopyPositionWithOffset		; $7ab7
+
+interactionCode83:
 	call checkInteractionState		; $7aba
 	jr nz,_label_09_293	; $7abd
 	ld a,$01		; $7abf
@@ -68047,6 +68067,8 @@ _label_09_293:
 	cp $20			; $7b5c
 	cp $c0			; $7b5e
 .DB $fd				; $7b60
+
+interactionCode84:
 	call checkInteractionState		; $7b61
 	jr nz,_label_09_294	; $7b64
 	call interactionInitGraphics		; $7b66
@@ -68157,6 +68179,8 @@ _label_09_298:
 	call objectGetRelatedObject1Var		; $7c17
 	call objectTakePosition		; $7c1a
 	jr _label_09_295		; $7c1d
+
+interactionCode85:
 	ld e,$44		; $7c1f
 	ld a,(de)		; $7c21
 	rst_jumpTable			; $7c22
@@ -68191,6 +68215,8 @@ _label_09_299:
 	ret z			; $7c52
 	ld (hl),a		; $7c53
 	jp setMusicVolume		; $7c54
+
+interactionCode86:
 	call checkInteractionState		; $7c57
 	jr nz,_label_09_300	; $7c5a
 	ld a,$01		; $7c5c
@@ -68324,6 +68350,8 @@ _label_09_302:
 	ld l,b			; $7d11
 	add c			; $7d12
 	add b			; $7d13
+
+interactionCode87:
 	ld e,$44		; $7d14
 	ld a,(de)		; $7d16
 	rst_jumpTable			; $7d17
@@ -68475,6 +68503,8 @@ _label_09_318:
 	ld l,$4d		; $7e22
 	ld (hl),a		; $7e24
 	ret			; $7e25
+
+interactionCode88:
 	call checkInteractionState		; $7e26
 	jr nz,_label_09_321	; $7e29
 	ld a,($c4ab)		; $7e2b
@@ -68662,6 +68692,7 @@ _label_09_328:
 .BANK $0a SLOT 1
 .ORG 0
 
+interactionCode89:
 	ld a,($cba0)		; $4000
 	or a			; $4003
 	jr nz,_label_0a_000	; $4004
@@ -68937,6 +68968,8 @@ _label_0a_007:
 	inc e			; $41e4
 	ld (de),a		; $41e5
 	ret			; $41e6
+
+interactionCode91:
 	ld e,$42		; $41e7
 	ld a,(de)		; $41e9
 	or a			; $41ea
@@ -69042,6 +69075,8 @@ _label_0a_012:
 	call lookupCollisionTable		; $42a3
 	ccf			; $42a6
 	ret			; $42a7
+
+interactionCode98:
 	ld e,$44		; $42a8
 	ld a,(de)		; $42aa
 	rst_jumpTable			; $42ab
@@ -69083,6 +69118,8 @@ _label_0a_015:
 	ld l,a			; $42ed
 	ld (hl),c		; $42ee
 	ret			; $42ef
+
+interactionCode9f:
 	ld e,$44		; $42f0
 	ld a,(de)		; $42f2
 	rst_jumpTable			; $42f3
@@ -69125,6 +69162,8 @@ _label_0a_015:
 	ldh a,(<hFF8B)	; $4337
 	ld (hl),a		; $4339
 	jp objectCopyPositionWithOffset		; $433a
+
+interactionCodea0:
 	ld e,$44		; $433d
 	ld a,(de)		; $433f
 	rst_jumpTable			; $4340
@@ -69184,6 +69223,8 @@ _label_0a_017:
 	nop			; $439b
 	ld bc,$0102		; $439c
 	nop			; $439f
+
+interactionCodeac:
 	ld a,$28		; $43a0
 	call checkGlobalFlag		; $43a2
 	jp nz,interactionDelete		; $43a5
@@ -69806,6 +69847,8 @@ _label_0a_067:
 	nop			; $4699
 	jr c,_label_0a_074	; $469a
 	nop			; $469c
+
+interactionCodeb6:
 	ld e,$44		; $469d
 	ld a,(de)		; $469f
 	rst_jumpTable			; $46a0
@@ -70615,6 +70658,8 @@ _label_0a_102:
 _label_0a_103:
 	ld a,$3d		; $4b21
 	dec a			; $4b23
+
+interactionCodeb7:
 	ld e,$44		; $4b24
 	ld a,(de)		; $4b26
 _label_0a_104:
@@ -70629,6 +70674,8 @@ _label_0a_105:
 _label_0a_106:
 	call interactionInitGraphics		; $4b2f
 	jp objectSetVisible82		; $4b32
+
+interactionCodec0:
 	ld e,$44		; $4b35
 	ld a,(de)		; $4b37
 	rst_jumpTable			; $4b38
@@ -70682,6 +70729,8 @@ _label_0a_107:
 	dec b			; $4b86
 	nop			; $4b87
 	ei			; $4b88
+
+interactionCodec7:
 	ld e,$42		; $4b89
 	ld a,(de)		; $4b8b
 	ld c,a			; $4b8c
@@ -70735,6 +70784,10 @@ _label_0a_109:
 	dec a			; $4bd5
 	jp z,getFreeInteractionSlot		; $4bd6
 	ret			; $4bd9
+
+interactionCode8a:
+interactionCode8b:
+interactionCode8d:
 	call checkInteractionState		; $4bda
 	jr nz,_label_0a_114	; $4bdd
 	ld a,$01		; $4bdf
@@ -70820,6 +70873,8 @@ _label_0a_114:
 	ld (hl),e		; $4c67
 	inc e			; $4c68
 	ld (hl),e		; $4c69
+
+interactionCode8c:
 	ld e,$42		; $4c6a
 	ld a,(de)		; $4c6c
 	bit 7,a			; $4c6d
@@ -71252,6 +71307,8 @@ _label_0a_128:
 	ld l,$50		; $4f24
 	ld (hl),$0f		; $4f26
 	ret			; $4f28
+
+interactionCode8e:
 	ld e,$44		; $4f29
 	ld a,(de)		; $4f2b
 	rst_jumpTable			; $4f2c
@@ -71277,6 +71334,8 @@ _label_0a_128:
 	or a			; $4f53
 	jp nz,objectSetInvisible		; $4f54
 	ret			; $4f57
+
+interactionCode8f:
 	ld e,$44		; $4f58
 	ld a,(de)		; $4f5a
 	rst_jumpTable			; $4f5b
@@ -71307,6 +71366,8 @@ _label_0a_129:
 	ret c			; $4f8e
 	inc (hl)		; $4f8f
 	ret			; $4f90
+
+interactionCode90:
 	ld e,$44		; $4f91
 	ld a,(de)		; $4f93
 	rst_jumpTable			; $4f94
@@ -71709,6 +71770,8 @@ _label_0a_140:
 	ld (hl),e		; $523c
 	xor d			; $523d
 	ld (hl),e		; $523e
+
+interactionCode92:
 	call checkInteractionState		; $523f
 	ret nz			; $5242
 	inc a			; $5243
@@ -71729,6 +71792,8 @@ _label_0a_140:
 	inc (hl)		; $525c
 	ld l,h			; $525d
 	ld a,h			; $525e
+
+interactionCode93:
 	ld e,$42		; $525f
 	ld a,(de)		; $5261
 	rst_jumpTable			; $5262
@@ -71863,6 +71928,8 @@ _label_0a_143:
 	ldi (hl),a		; $5343
 	ld (hl),d		; $5344
 	ret			; $5345
+
+interactionCode94:
 	ld e,$44		; $5346
 	ld a,(de)		; $5348
 	rst_jumpTable			; $5349
@@ -71970,6 +72037,8 @@ _label_0a_145:
 	ld a,$02		; $5419
 	ld ($d105),a		; $541b
 	jp interactionDelete		; $541e
+
+interactionCode95:
 	ld e,$44		; $5421
 	ld a,(de)		; $5423
 	rst_jumpTable			; $5424
@@ -72206,6 +72275,8 @@ _label_0a_153:
 	ld (hl),e		; $55c2
 	cp a			; $55c3
 	ld (hl),e		; $55c4
+
+interactionCode96:
 	ld e,$44		; $55c5
 	ld a,(de)		; $55c7
 	rst_jumpTable			; $55c8
@@ -72515,6 +72586,8 @@ _label_0a_164:
 	ld (hl),h		; $57e1
 	ld l,c			; $57e2
 	ld (hl),h		; $57e3
+
+interactionCode97:
 	ld e,$44		; $57e4
 	ld a,(de)		; $57e6
 	rst_jumpTable			; $57e7
@@ -72575,6 +72648,8 @@ _label_0a_166:
 	call objectUpdateSpeedZ_paramC		; $5847
 	jp nz,objectApplySpeed		; $584a
 	jp interactionDelete		; $584d
+
+interactionCode99:
 	call checkInteractionState		; $5850
 	jr nz,_label_0a_167	; $5853
 	inc a			; $5855
@@ -72614,6 +72689,8 @@ _label_0a_167:
 	ld (hl),h		; $5888
 	adc b			; $5889
 	ld (hl),h		; $588a
+
+interactionCode9a:
 	ld e,$44		; $588b
 	ld a,(de)		; $588d
 	rst_jumpTable			; $588e
@@ -73053,6 +73130,8 @@ _label_0a_178:
 	nop			; $5b0e
 	jr c,_label_0a_181	; $5b0f
 	rst $38			; $5b11
+
+interactionCode9b:
 	ld e,$44		; $5b12
 	ld a,(de)		; $5b14
 	rst_jumpTable			; $5b15
@@ -73168,6 +73247,8 @@ _label_0a_182:
 	xor a			; $5be5
 	ld ($c6a2),a		; $5be6
 	jp interactionDelete		; $5be9
+
+interactionCode9c:
 	ld e,$44		; $5bec
 	ld a,(de)		; $5bee
 	rst_jumpTable			; $5bef
@@ -73339,6 +73420,8 @@ _label_0a_186:
 	call objectSetVisible83		; $5d26
 	ld a,$00		; $5d29
 	jp interactionSetAnimation		; $5d2b
+
+interactionCode9d:
 	ld e,$44		; $5d2e
 	ld a,(de)		; $5d30
 	rst_jumpTable			; $5d31
@@ -73571,6 +73654,8 @@ _label_0a_197:
 	ld (hl),l		; $5edf
 	ld d,e			; $5ee0
 	ld (hl),l		; $5ee1
+
+interactionCode9e:
 	ld e,$44		; $5ee2
 	ld a,(de)		; $5ee4
 	rst_jumpTable			; $5ee5
@@ -73822,6 +73907,8 @@ _label_0a_212:
 	ret nz			; $606f
 	ld a,$02		; $6070
 	jp setScreenShakeCounter		; $6072
+
+interactionCodea1:
 	call $6358		; $6075
 	call $607e		; $6078
 	jp $624c		; $607b
@@ -73931,6 +74018,8 @@ _label_0a_217:
 	call interactionDecCounter1		; $6122
 	ret nz			; $6125
 	jp $63d5		; $6126
+
+interactionCodea2:
 	call interactionUpdateAnimCounter		; $6129
 	call $6358		; $612c
 	call nz,$638d		; $612f
@@ -74027,15 +74116,11 @@ _label_0a_220:
 	ld c,a			; $61c1
 	ld b,(hl)		; $61c2
 	jp updateLinkPositionGivenVelocity		; $61c3
-	ld ($1814),sp		; $61c6
-	inc d			; $61c9
-	ld ($1828),sp		; $61ca
-	rrca			; $61cd
-	ld ($1814),sp		; $61ce
-	inc d			; $61d1
-	ld ($180f),sp		; $61d2
-	jr z,$1e		; $61d5
-	ld b,h			; $61d7
+	.db $08 $14 $18 $14 $08 $28 $18 $0f
+	.db $08 $14 $18 $14 $08 $0f $18 $28
+
+interactionCodea3:
+	ld e,$44		; $61d6
 	ld a,(de)		; $61d8
 	cp $03			; $61d9
 	jr z,_label_0a_221	; $61db
@@ -74372,6 +74457,8 @@ _label_0a_235:
 	ld a,(de)		; $63e5
 	ld ($d00c),a		; $63e6
 	ret			; $63e9
+
+interactionCodea4:
 	ld e,$44		; $63ea
 	ld a,(de)		; $63ec
 	rst_jumpTable			; $63ed
@@ -74417,6 +74504,8 @@ _label_0a_239:
 	ld e,$7f		; $643c
 	ld (de),a		; $643e
 	ret			; $643f
+
+interactionCodea5:
 	ld e,$44		; $6440
 	ld a,(de)		; $6442
 	rst_jumpTable			; $6443
@@ -74806,6 +74895,8 @@ _label_0a_246:
 	ld h,d			; $6716
 	ld bc,$ff00		; $6717
 	jp objectSetSpeedZ		; $671a
+
+interactionCodea6:
 	ld e,$44		; $671d
 	ld a,(de)		; $671f
 	rst_jumpTable			; $6720
@@ -74853,6 +74944,8 @@ _label_0a_248:
 	jr nc,_label_0a_247	; $6769
 	res 7,(hl)		; $676b
 	jr _label_0a_247		; $676d
+
+interactionCodea7:
 	ld e,$44		; $676f
 	ld a,(de)		; $6771
 	rst_jumpTable			; $6772
@@ -74921,6 +75014,8 @@ _label_0a_250:
 	ret nz			; $67e1
 	ld a,$03		; $67e2
 	jp interactionSetAnimation		; $67e4
+
+interactionCodea8:
 	ld e,$42		; $67e7
 	ld a,(de)		; $67e9
 	and $0f			; $67ea
@@ -75050,6 +75145,8 @@ _label_0a_255:
 	nop			; $68b2
 	rst $38			; $68b3
 	rst $38			; $68b4
+
+interactionCodea9:
 	ld e,$44		; $68b5
 	ld a,(de)		; $68b7
 	rst_jumpTable			; $68b8
@@ -75134,6 +75231,8 @@ _label_0a_256:
 	ret nz			; $693f
 _label_0a_257:
 	jp objectApplySpeed		; $6940
+
+interactionCodeaa:
 	ld e,$44		; $6943
 	ld a,(de)		; $6945
 	rst_jumpTable			; $6946
@@ -75155,14 +75254,10 @@ _label_0a_257:
 	jp objectSetVisible82		; $695e
 	call interactionUpdateAnimCounter		; $6961
 	jp interactionRunScript		; $6964
-	sbc a			; $6967
-	halt			; $6968
-	xor l			; $6969
-	halt			; $696a
-	or a			; $696b
-	halt			; $696c
-	call c,$1e76		; $696d
-	ld b,h			; $6970
+	.db $9f $76 $ad $76 $b7 $76 $dc $76
+
+interactionCodeab:
+	ld e,$44		; $696f
 	ld a,(de)		; $6971
 	rst_jumpTable			; $6972
 	ld (hl),a		; $6973
@@ -75285,6 +75380,8 @@ _label_0a_261:
 	ld (hl),a		; $6a36
 	sub b			; $6a37
 	ld (hl),a		; $6a38
+
+interactionCodead:
 	ld e,$44		; $6a39
 	ld a,(de)		; $6a3b
 	rst_jumpTable			; $6a3c
@@ -75383,6 +75480,8 @@ _label_0a_263:
 	ret nz			; $6aec
 	ld bc,$ff40		; $6aed
 	jp objectSetSpeedZ		; $6af0
+
+interactionCodeae:
 	ld e,$44		; $6af3
 	ld a,(de)		; $6af5
 	rst_jumpTable			; $6af6
@@ -75819,6 +75918,8 @@ _label_0a_290:
 	rst $38			; $6d57
 	ld e,b			; $6d58
 	rst $38			; $6d59
+
+interactionCodeaf:
 	ld e,$44		; $6d5a
 	ld a,(de)		; $6d5c
 	rst_jumpTable			; $6d5d
@@ -75916,6 +76017,8 @@ _label_0a_296:
 	ld h,b			; $6dee
 	ld bc,$01a0		; $6def
 	rst $38			; $6df2
+
+interactionCodeb0:
 	ld e,$44		; $6df3
 	ld a,(de)		; $6df5
 	rst_jumpTable			; $6df6
@@ -75997,6 +76100,8 @@ _label_0a_298:
 	rrca			; $6e65
 	jp c,objectSetVisible		; $6e66
 	jp objectSetInvisible		; $6e69
+
+interactionCodeb1:
 	ld e,$44		; $6e6c
 	ld a,(de)		; $6e6e
 	rst_jumpTable			; $6e6f
@@ -76014,6 +76119,8 @@ _label_0a_298:
 	ld l,a			; $6e7b
 	dec sp			; $6e7c
 	ld l,a			; $6e7d
+
+interactionCodeb2:
 	ld e,$44		; $6e7e
 	ld a,(de)		; $6e80
 	rst_jumpTable			; $6e81
@@ -76165,6 +76272,8 @@ _label_0a_301:
 	ld a,c			; $6f86
 	and b			; $6f87
 	ld a,c			; $6f88
+
+interactionCodeb3:
 	ld e,$44		; $6f89
 	ld a,(de)		; $6f8b
 	rst_jumpTable			; $6f8c
@@ -76247,6 +76356,8 @@ _label_0a_302:
 	ld a,d			; $7027
 	inc a			; $7028
 	ld a,d			; $7029
+
+interactionCodeb4:
 	ld e,$44		; $702a
 	ld a,(de)		; $702c
 	rst_jumpTable			; $702d
@@ -76742,6 +76853,8 @@ _label_0a_320:
 	dec l			; $7325
 	jr z,$29		; $7326
 	ld b,b			; $7328
+
+interactionCodeb5:
 	ld e,$44		; $7329
 	ld a,(de)		; $732b
 	rst_jumpTable			; $732c
@@ -76808,6 +76921,8 @@ _label_0a_324:
 	ld ($cca4),a		; $739d
 	ld ($cc02),a		; $73a0
 	jp interactionDelete		; $73a3
+
+interactionCodeb8:
 	ld e,$44		; $73a6
 	ld a,(de)		; $73a8
 	rst_jumpTable			; $73a9
@@ -76897,6 +77012,8 @@ _label_0a_332:
 	ld a,d			; $7439
 	ld a,a			; $743a
 	ld a,d			; $743b
+
+interactionCodeb9:
 	ld e,$44		; $743c
 	ld a,(de)		; $743e
 	rst_jumpTable			; $743f
@@ -77117,6 +77234,8 @@ _label_0a_337:
 	ret z			; $757e
 _label_0a_338:
 	jp interactionUpdateAnimCounter		; $757f
+
+interactionCodeba:
 	ld e,$42		; $7582
 	ld a,(de)		; $7584
 	rst_jumpTable			; $7585
@@ -77150,6 +77269,8 @@ _label_0a_338:
 	call interactionRunScript		; $75b0
 	jp c,interactionDelete		; $75b3
 	jp $7886		; $75b6
+
+interactionCodebb:
 	ld e,$42		; $75b9
 	ld a,(de)		; $75bb
 	rst_jumpTable			; $75bc
@@ -77466,6 +77587,10 @@ _label_0a_344:
 _label_0a_345:
 	ld bc,$ff20		; $77eb
 	jp objectSetSpeedZ		; $77ee
+
+interactionCodebc:
+interactionCodebd:
+interactionCodebe:
 	ld e,$42		; $77f1
 	ld a,(de)		; $77f3
 	rst_jumpTable			; $77f4
@@ -77641,6 +77766,8 @@ _label_0a_347:
 	ld a,d			; $7904
 	jp hl			; $7905
 	ld a,d			; $7906
+
+interactionCodebf:
 	ld e,$44		; $7907
 	ld a,(de)		; $7909
 	rst_jumpTable			; $790a
@@ -77692,6 +77819,8 @@ _label_0a_349:
 	bit 1,a			; $795c
 	jp nz,interactionDelete		; $795e
 	ret			; $7961
+
+interactionCodec1:
 	ld e,$44		; $7962
 	ld a,(de)		; $7964
 	rst_jumpTable			; $7965
@@ -77759,6 +77888,8 @@ _label_0a_350:
 	ld (hl),$06		; $79d6
 	ld bc,$8405		; $79d8
 	jp objectCreateInteraction		; $79db
+
+interactionCodec2:
 	ld e,$44		; $79de
 	ld a,(de)		; $79e0
 	rst_jumpTable			; $79e1
@@ -77773,6 +77904,8 @@ _label_0a_350:
 	jp npcAnimate_staticDirection		; $79f2
 	call interactionRunScript		; $79f5
 	jp npcAnimate_staticDirection		; $79f8
+
+interactionCodec3:
 	ld e,$44		; $79fb
 	ld a,(de)		; $79fd
 	rst_jumpTable			; $79fe
@@ -77798,6 +77931,8 @@ _label_0a_351:
 	ld hl,$7aff		; $7a29
 	call interactionSetScript		; $7a2c
 	jp interactionRunScript		; $7a2f
+
+interactionCodec4:
 	call $7a68		; $7a32
 	ld a,$00		; $7a35
 	jr nz,_label_0a_352	; $7a37
@@ -77884,6 +78019,8 @@ _label_0a_355:
 	jr nc,_label_0a_355	; $7aaf
 	ld (bc),a		; $7ab1
 	jr nc,_label_0a_356	; $7ab2
+
+interactionCodec5:
 	ld e,$44		; $7ab4
 	ld a,(de)		; $7ab6
 	rst_jumpTable			; $7ab7
@@ -77992,6 +78129,8 @@ _label_0a_358:
 	ld a,h			; $7b4e
 	ld (de),a		; $7b4f
 	ret			; $7b50
+
+interactionCodec6:
 	ld e,$44		; $7b51
 	ld a,(de)		; $7b53
 	rst_jumpTable			; $7b54
@@ -124997,6 +125136,8 @@ _label_0f_291:
 	rrca			; $73fd
 	rrca			; $73fe
 	rrca			; $73ff
+
+interactionCodece:
 	ld e,$44		; $7400
 	ld a,(de)		; $7402
 	rst_jumpTable			; $7403
@@ -125277,6 +125418,8 @@ _label_0f_311:
 	nop			; $75ca
 	nop			; $75cb
 	ld bc,begin		; $75cc
+
+interactionCodecf:
 	ld e,$44		; $75cf
 	ld a,(de)		; $75d1
 	rst_jumpTable			; $75d2
@@ -125305,6 +125448,8 @@ _label_0f_312:
 	ld b,b			; $75f2
 	jr c,_label_0f_310	; $75f3
 	jp interactionUpdateAnimCounter		; $75f5
+
+interactionCoded0:
 	ld e,$44		; $75f8
 	ld a,(de)		; $75fa
 	rst_jumpTable			; $75fb
@@ -125454,6 +125599,8 @@ _label_0f_320:
 	inc b			; $76da
 	dec b			; $76db
 	inc b			; $76dc
+
+interactionCoded1:
 	ld e,$44		; $76dd
 	ld a,(de)		; $76df
 	rst_jumpTable			; $76e0
@@ -125471,6 +125618,8 @@ _label_0f_321:
 	ld hl,$4b17		; $76f1
 _label_0f_322:
 	jp interactionSetScript		; $76f4
+
+interactionCoded2:
 	ld e,$44		; $76f7
 	ld a,(de)		; $76f9
 	rst_jumpTable			; $76fa
@@ -125553,6 +125702,8 @@ _label_0f_324:
 	adc (hl)		; $7769
 	ld (de),a		; $776a
 	ret			; $776b
+
+interactionCoded3:
 	ld e,$44		; $776c
 	ld a,(de)		; $776e
 	rst_jumpTable			; $776f
@@ -125677,6 +125828,8 @@ _label_0f_328:
 _label_0f_329:
 	ld a,h			; $781f
 	rla			; $7820
+
+interactionCoded4:
 	ld e,$44		; $7821
 	ld a,(de)		; $7823
 	rst_jumpTable			; $7824
@@ -125746,6 +125899,8 @@ _label_0f_332:
 	ld a,(hl)		; $7881
 	ld (de),a		; $7882
 	ret			; $7883
+
+interactionCodec8:
 	ld e,$44		; $7884
 	ld a,(de)		; $7886
 	rst_jumpTable			; $7887
@@ -125806,6 +125961,8 @@ _label_0f_333:
 	ld e,$78		; $78e6
 	ld (de),a		; $78e8
 	ret			; $78e9
+
+interactionCodec9:
 	ld e,$44		; $78ea
 	ld a,(de)		; $78ec
 	rst_jumpTable			; $78ed
@@ -125857,6 +126014,8 @@ _label_0f_335:
 	ld l,$77		; $793e
 	ld (hl),$00		; $7940
 	jp interactionDelete		; $7942
+
+interactionCodeca:
 	ld e,$44		; $7945
 	ld a,(de)		; $7947
 	rst_jumpTable			; $7948
@@ -126084,6 +126243,8 @@ _label_0f_348:
 _label_0f_349:
 	ld a,$01		; $7ab9
 	jr _label_0f_348		; $7abb
+
+interactionCodecb:
 	ld e,$44		; $7abd
 	ld a,(de)		; $7abf
 	rst_jumpTable			; $7ac0
@@ -126462,6 +126623,8 @@ _label_0f_359:
 	ld h,h			; $7d19
 	jr nc,$64		; $7d1a
 	ld (hl),b		; $7d1c
+
+interactionCodecc:
 	ld e,$44		; $7d1d
 	ld a,(de)		; $7d1f
 	rst_jumpTable			; $7d20
@@ -126563,6 +126726,8 @@ _label_0f_367:
 	ld a,l			; $7dcc
 	nop			; $7dcd
 	ld a,l			; $7dce
+
+interactionCodecd:
 	ld e,$44		; $7dcf
 	ld a,(de)		; $7dd1
 	rst_jumpTable			; $7dd2
@@ -126659,6 +126824,8 @@ _label_0f_371:
 	call interactionRunScript		; $7e82
 	jp c,interactionDelete		; $7e85
 	ret			; $7e88
+
+interactionCoded5:
 	ld e,$44		; $7e89
 	ld a,(de)		; $7e8b
 	rst_jumpTable			; $7e8c
@@ -126744,6 +126911,8 @@ _label_0f_374:
 	nop			; $7f22
 	ld bc,$0102		; $7f23
 	nop			; $7f26
+
+interactionCoded6:
 	ld e,$44		; $7f27
 	ld a,(de)		; $7f29
 	rst_jumpTable			; $7f2a
@@ -126805,6 +126974,8 @@ _label_0f_376:
 	inc (hl)		; $7f94
 	ld a,$01		; $7f95
 	jp interactionSetAnimation		; $7f97
+
+interactionCoded7:
 	jp interactionDelete		; $7f9a
 
 .ends
@@ -154597,6 +154768,8 @@ _label_15_078:
 	ld ($c614),a		; $49bc
 	ld a,$28		; $49bf
 	jp setGlobalFlag		; $49c1
+
+interactionCoded9:
 	ld e,$44		; $49c4
 	ld a,(de)		; $49c6
 	rst_jumpTable			; $49c7
@@ -154866,6 +155039,8 @@ _label_15_087:
 	call setGlobalFlag		; $4ba4
 	ld a,$2c		; $4ba7
 	jp unsetGlobalFlag		; $4ba9
+
+interactionCodeda:
 	ld e,$44		; $4bac
 	ld a,(de)		; $4bae
 	rst_jumpTable			; $4baf
@@ -154919,6 +155094,8 @@ _label_15_090:
 	cp $e0			; $4bff
 	jr c,_label_15_089	; $4c01
 	jp interactionDelete		; $4c03
+
+interactionCodee0:
 	ld e,$44		; $4c06
 	ld a,(de)		; $4c08
 	rst_jumpTable			; $4c09
@@ -154974,6 +155151,8 @@ _label_15_091:
 	dec (hl)		; $4c57
 	ret nz			; $4c58
 	jp interactionDelete		; $4c59
+
+interactionCodee2:
 	ld e,$42		; $4c5c
 	ld a,(de)		; $4c5e
 	rst_jumpTable			; $4c5f
@@ -155124,6 +155303,8 @@ _label_15_100:
 	ld e,$46		; $4d52
 	ld (de),a		; $4d54
 	ret			; $4d55
+
+interactionCodee5:
 	ld a,($cba0)		; $4d56
 	or a			; $4d59
 	jr nz,_label_15_101	; $4d5a
@@ -159255,6 +159436,8 @@ _label_15_267:
 	ret			; $65ce
 	jr nz,$50		; $65cf
 	sbc c			; $65d1
+
+interactionCoded8:
 	ld e,$44		; $65d2
 	ld a,(de)		; $65d4
 	rst_jumpTable			; $65d5
@@ -159273,6 +159456,8 @@ _label_15_267:
 	call interactionSetScript		; $65f5
 	call interactionRunScript		; $65f8
 	jp npcAnimate_staticDirection		; $65fb
+
+interactionCodedb:
 	ld e,$44		; $65fe
 	ld a,(de)		; $6600
 	rst_jumpTable			; $6601
@@ -159332,6 +159517,8 @@ _label_15_268:
 	or a			; $6662
 	jp z,npcAnimate_followLink		; $6663
 	jp npcAnimate_staticDirection		; $6666
+
+interactionCodedc:
 	ld e,$42		; $6669
 	ld a,(de)		; $666b
 	rst_jumpTable			; $666c
@@ -159953,6 +160140,8 @@ _label_15_288:
 	dec l			; $6a8e
 	jr nz,_label_15_286	; $6a8f
 	jp interactionDelete		; $6a91
+
+interactionCodedd:
 	ld e,$44		; $6a94
 	ld a,(de)		; $6a96
 	or a			; $6a97
@@ -159988,6 +160177,8 @@ _label_15_290:
 	ret			; $6ad8
 	ld bc,$0700		; $6ad9
 	jp giveRingToLink		; $6adc
+
+interactionCodede:
 	ld e,$42		; $6adf
 	ld a,(de)		; $6ae1
 	rst_jumpTable			; $6ae2
@@ -160279,6 +160470,8 @@ _label_15_291:
 	nop			; $6ce5
 	ld bc,$0102		; $6ce6
 	nop			; $6ce9
+
+interactionCodedf:
 	ld e,$44		; $6cea
 	ld a,(de)		; $6cec
 	rst_jumpTable			; $6ced
@@ -160416,6 +160609,8 @@ _label_15_295:
 	ld hl,$cfdf		; $6dd6
 	ld (hl),$01		; $6dd9
 	ret			; $6ddb
+
+interactionCodee1:
 	ld e,$44		; $6ddc
 	ld a,(de)		; $6dde
 	rst_jumpTable			; $6ddf
@@ -160458,6 +160653,8 @@ _label_15_296:
 _label_15_297:
 	set 3,(hl)		; $6e25
 	ret			; $6e27
+
+interactionCodee3:
 	ld e,$44		; $6e28
 	ld a,(de)		; $6e2a
 	rst_jumpTable			; $6e2b
@@ -160555,6 +160752,8 @@ _label_15_302:
 	ld e,a			; $6ee5
 	ld h,d			; $6ee6
 	jp $1fd3		; $6ee7
+
+interactionCodee4:
 	call checkInteractionState		; $6eea
 	jr z,_label_15_303	; $6eed
 	call interactionRunScript		; $6eef
@@ -160615,6 +160814,8 @@ _label_15_305:
 	ld a,$01		; $6f58
 	ld ($cfd0),a		; $6f5a
 	ret			; $6f5d
+
+interactionCodee6:
 	ld e,$44		; $6f5e
 	ld a,(de)		; $6f60
 	rst_jumpTable			; $6f61
@@ -160914,6 +161115,8 @@ _label_15_308:
 	adc b			; $7163
 	ld a,b			; $7164
 	adc b			; $7165
+
+interactionCodee7:
 	ld e,$44		; $7166
 	ld a,(de)		; $7168
 _label_15_309:
