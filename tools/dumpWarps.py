@@ -16,11 +16,16 @@ romFile = open(sys.argv[1], 'rb')
 rom = bytearray(romFile.read())
 
 # Constants
-
-warpTable = 0x1359E # Takes group as an index
-warpBank = 4
-
-warpDestTable = 0x12F5B
+if romIsAges(rom):
+    warpBank = 4
+    warpDestTable = 0x12F5B
+    warpSourceTable = 0x1359E # Takes group as an index
+    dataDir = 'data/ages/'
+else:
+    warpBank = 4
+    warpDestTable = 0x12d4e
+    warpSourceTable = 0x13457
+    dataDir = 'data/seasons/'
 
 
 # Keeps track of whether pointers are uniquely used. Only for printing warning
@@ -68,7 +73,7 @@ class WarpData:
 
 
 
-outFile = open("data/warpData.s",'w')
+outFile = open(dataDir + "warpData.s",'w')
 
 # Warp destinations
 
@@ -79,7 +84,7 @@ for group in range(8):
     warpDestAddresses.append(address)
     outFile.write("\t.dw group" + str(group) + "WarpDestTable\n")
 outFile.write("\n")
-warpDestAddresses.append(warpTable)
+warpDestAddresses.append(warpSourceTable)
 
 outFile.write("; Format: map YX unknown\n\n")
 
@@ -105,10 +110,10 @@ for group in range(8):
 groupStartPositions = []
 
 # Print table
-outFile.write("warpSourcesTable: ; " + wlahex(warpTable) + "\n")
+outFile.write("warpSourcesTable: ; " + wlahex(warpSourceTable) + "\n")
 
 for group in range(8):
-    groupStartPositions.append(bankedAddress(warpBank,read16(rom,warpTable+group*2)))
+    groupStartPositions.append(bankedAddress(warpBank,read16(rom,warpSourceTable+group*2)))
     outFile.write("\t.dw group" + str(group) + "WarpSources\n")
 
 groupStartPositions.append(0x100000)
@@ -117,7 +122,7 @@ outFile.write("\n")
 for group in range(8):
 #     print "Group " + str(group)
 
-    address = read16(rom,warpTable+group*2)
+    address = read16(rom,warpSourceTable+group*2)
     address = bankedAddress(warpBank,address)
 
 #     print "Start at " + hex(address)

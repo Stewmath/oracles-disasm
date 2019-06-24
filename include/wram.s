@@ -773,7 +773,7 @@ wChildPersonality: ; $c6e4/$c6de
 ;   2: Arborist
 ;   3: Singer
 	db
-wc6e5: ; $c6e5
+wc6e5: ; $c6e5/$c6df
 	db
 
 .ifdef ROM_SEASONS
@@ -2175,11 +2175,11 @@ wccb1: ; $ccb1
 .endif
 
 wDisableWarps: ; $ccb2
-; Not sure what purpose this is for
+; Not sure what purpose this is for. (Might be ages-exclusive?)
 	db
 
 .ifdef ROM_SEASONS
-wInBoxingMatch: ; $ccc9
+wInBoxingMatch: ; -/$ccc9
 	db
 .endif
 
