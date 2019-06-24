@@ -52159,31 +52159,36 @@ _label_08_102:
 	ld (hl),$29		; $52d0
 	jr _label_08_101		; $52d2
 
+
+; ==============================================================================
+; INTERACID_DUNGEON_SCRIPT
+; ==============================================================================
 interactionCode20:
 	call interactionDeleteAndRetIfEnabled02		; $52d4
-	ld e,$44		; $52d7
+	ld e,Interaction.state		; $52d7
 	ld a,(de)		; $52d9
 	rst_jumpTable			; $52da
-	pop hl			; $52db
-	ld d,d			; $52dc
-	ld a,(bc)		; $52dd
-	ld d,e			; $52de
-	rlca			; $52df
-	ld d,e			; $52e0
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
 	ld a,$01		; $52e1
 	ld (de),a		; $52e3
 	xor a			; $52e4
 	ld ($cfc1),a		; $52e5
 	ld ($cfc2),a		; $52e8
-	ld a,($cc55)		; $52eb
+
+	ld a,(wDungeonIndex)		; $52eb
 	cp $ff			; $52ee
 	jp z,interactionDelete		; $52f0
-	ld hl,$5311		; $52f3
+
+	ld hl,@scriptTable		; $52f3
 	rst_addDoubleIndex			; $52f6
 	ldi a,(hl)		; $52f7
 	ld h,(hl)		; $52f8
 	ld l,a			; $52f9
-	ld e,$42		; $52fa
+	ld e,Interaction.subid		; $52fa
 	ld a,(de)		; $52fc
 	rst_addDoubleIndex			; $52fd
 	ldi a,(hl)		; $52fe
@@ -52191,172 +52196,128 @@ interactionCode20:
 	ld l,a			; $5300
 	call interactionSetScript		; $5301
 	jp interactionRunScript		; $5304
+
+@state2:
 	call objectPreventLinkFromPassing		; $5307
+
+@state1:
 	call interactionRunScript		; $530a
 	ret nc			; $530d
 	jp interactionDelete		; $530e
-	add hl,hl		; $5311
-	ld d,e			; $5312
-	dec l			; $5313
-	ld d,e			; $5314
-	dec (hl)		; $5315
-	ld d,e			; $5316
-	dec sp			; $5317
-	ld d,e			; $5318
-	ld b,l			; $5319
-	ld d,e			; $531a
-	ld d,l			; $531b
-	ld d,e			; $531c
-	ld e,l			; $531d
-	ld d,e			; $531e
-	ld a,e			; $531f
-	ld d,e			; $5320
-	sbc c			; $5321
-	ld d,e			; $5322
-	or c			; $5323
-	ld d,e			; $5324
-	or l			; $5325
-	ld d,e			; $5326
-	or l			; $5327
-	ld d,e			; $5328
-	ld (hl),a		; $5329
-	ld c,e			; $532a
-	ld a,b			; $532b
-	ld c,e			; $532c
-	ld l,c			; $532d
-	ld c,e			; $532e
-	ld a,b			; $532f
-	ld c,e			; $5330
-	ld a,b			; $5331
-	ld c,e			; $5332
-	add h			; $5333
-	ld c,e			; $5334
-	sub a			; $5335
-	ld c,e			; $5336
-	ld l,c			; $5337
-	ld c,e			; $5338
-	and (hl)		; $5339
-	ld c,e			; $533a
-	cp c			; $533b
-	ld c,e			; $533c
-	call nz,$ca4b		; $533d
-	ld c,e			; $5340
-	reti			; $5341
-	ld c,e			; $5342
-	add sp,$4b		; $5343
-.DB $ec				; $5345
-	ld c,e			; $5346
-	ei			; $5347
-	ld c,e			; $5348
-	ei			; $5349
-	ld c,e			; $534a
-	add hl,bc		; $534b
-	ld c,h			; $534c
-	add h			; $534d
-	ld c,e			; $534e
-	ld l,c			; $534f
-	ld c,e			; $5350
-	ld c,$4c		; $5351
-	rla			; $5353
-	ld c,h			; $5354
-	jr nz,_label_08_103	; $5355
-	dec h			; $5357
-	ld c,h			; $5358
-	ld l,c			; $5359
-	ld c,e			; $535a
-	add h			; $535b
-	ld c,e			; $535c
-	dec hl			; $535d
-	ld c,h			; $535e
-	inc (hl)		; $535f
-	ld c,h			; $5360
-	ld b,a			; $5361
-	ld c,h			; $5362
-	ld d,b			; $5363
-	ld c,h			; $5364
-	ld e,b			; $5365
-	ld c,h			; $5366
-	ld h,e			; $5367
-	ld c,h			; $5368
-	ld l,e			; $5369
-	ld c,h			; $536a
-	ld l,c			; $536b
-	ld c,e			; $536c
-	ld l,a			; $536d
-	ld c,h			; $536e
-	sub b			; $536f
-	ld c,h			; $5370
-	sub h			; $5371
-	ld c,h			; $5372
-	and l			; $5373
-	ld c,h			; $5374
-	or l			; $5375
-	ld c,h			; $5376
-	ret nz			; $5377
-	ld c,h			; $5378
-	rst $8			; $5379
-	ld c,h			; $537a
-	and $4c			; $537b
-	ld a,($ff00+c)		; $537d
-	ld c,h			; $537e
-	ld l,c			; $537f
-	ld c,e			; $5380
-	add h			; $5381
-	ld c,e			; $5382
-	dec b			; $5383
-	ld c,l			; $5384
-	ld (de),a		; $5385
-	ld c,l			; $5386
-	ld d,$4d		; $5387
-	jr z,$4d		; $5389
-	inc l			; $538b
-	ld c,l			; $538c
-	jr nc,$4d		; $538d
-	ld b,h			; $538f
-	ld c,l			; $5390
-	ld d,e			; $5391
-	ld c,l			; $5392
-	add sp,$4c		; $5393
-.DB $d3				; $5395
-	ld c,h			; $5396
-	call c,$5b4c		; $5397
-	ld c,l			; $539a
-	ld h,h			; $539b
-	ld c,l			; $539c
-	ld l,l			; $539d
-	ld c,l			; $539e
-	dec hl			; $539f
-	ld c,h			; $53a0
-	ld a,d			; $53a1
-	ld c,l			; $53a2
-_label_08_103:
-	adc h			; $53a3
-	ld c,l			; $53a4
-	sub (hl)		; $53a5
-	ld c,l			; $53a6
-	ld l,c			; $53a7
-	ld c,e			; $53a8
-	add h			; $53a9
-	ld c,e			; $53aa
-	xor e			; $53ab
-	ld c,l			; $53ac
-	or h			; $53ad
-	ld c,l			; $53ae
-	cp e			; $53af
-	ld c,l			; $53b0
-	jp nz,$c94d		; $53b1
-	ld c,l			; $53b4
-	dec hl			; $53b5
-	ld c,h			; $53b6
-	ld a,b			; $53b7
-	ld c,e			; $53b8
-	call $164d		; $53b9
-	ld c,l			; $53bc
-.DB $db				; $53bd
-	ld c,l			; $53be
-	rst_addDoubleIndex			; $53bf
-	ld c,l			; $53c0
-	.db $d4 $4d
+
+@scriptTable:
+	.dw @dungeon0
+	.dw @dungeon1
+	.dw @dungeon2
+	.dw @dungeon3
+	.dw @dungeon4
+	.dw @dungeon5
+	.dw @dungeon6
+	.dw @dungeon7
+	.dw @dungeon8
+	.dw @dungeon9
+	.dw @dungeonA
+	.dw @dungeonB
+
+@dungeon0:
+	.dw $4b77
+	.dw $4b78
+
+@dungeon1:
+	.dw $4b69
+	.dw $4b78
+	.dw $4b78
+	.dw $4b84
+
+@dungeon2:
+	.dw $4b97
+	.dw $4b69
+	.dw $4ba6
+
+@dungeon3:
+	.dw $4bb9
+	.dw $4bc4
+	.dw $4bca
+	.dw $4bd9
+	.dw $4be8
+
+@dungeon4:
+	.dw $4bec
+	.dw $4bfb
+	.dw $4bfb
+	.dw $4c09
+	.dw $4b84
+	.dw $4b69
+	.dw $4c0e
+	.dw $4c17
+
+@dungeon5:
+	.dw $4c20
+	.dw $4c25
+	.dw $4b69
+	.dw $4b84
+
+@dungeon6:
+	.dw $4c2b
+	.dw $4c34
+	.dw $4c47
+	.dw $4c50
+	.dw $4c58
+	.dw $4c63
+	.dw $4c6b
+	.dw $4b69
+	.dw $4c6f
+	.dw $4c90
+	.dw $4c94
+	.dw $4ca5
+	.dw $4cb5
+	.dw $4cc0
+	.dw $4ccf
+
+@dungeon7:
+	.dw $4ce6
+	.dw $4cf2
+	.dw $4b69
+	.dw $4b84
+	.dw $4d05
+	.dw $4d12
+	.dw $4d16
+	.dw $4d28
+	.dw $4d2c
+	.dw $4d30
+	.dw $4d44
+	.dw $4d53
+	.dw $4ce8
+	.dw $4cd3
+	.dw $4cdc
+
+@dungeon8:
+	.dw $4d5b
+	.dw $4d64
+	.dw $4d6d
+	.dw $4c2b
+	.dw $4d7a
+	.dw $4d8c
+	.dw $4d96
+	.dw $4b69
+	.dw $4b84
+	.dw $4dab
+	.dw $4db4
+	.dw $4dbb
+
+@dungeon9:
+	.dw $4dc2
+	.dw $4dc9
+
+@dungeonA:
+@dungeonB:
+	.dw $4c2b
+	.dw $4b78
+	.dw $4dcd
+	.dw $4d16
+	.dw $4ddb
+	.dw $4ddf
+	.dw $4dd4
 
 interactionCode21:
 	ld e,$44		; $53c3
