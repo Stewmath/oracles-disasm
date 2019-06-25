@@ -27,11 +27,13 @@ ifdef FORCE_SECTIONS
 	DEFINES += -D FORCE_SECTIONS
 endif
 ifdef ROM_SEASONS
-	DEFINES += -D ROM_SEASONS
+	DEFINES += -D ROM_SEASONS -D FORCE_SECTIONS # TODO: remove force_sections later
 	GAME = seasons
+	TEXT_INSERT_ADDRESS = 0x71c00
 else # ROM_AGES
 	DEFINES += -D ROM_AGES
 	GAME = ages
+	TEXT_INSERT_ADDRESS = 0x74000
 endif
 
 CFLAGS += $(DEFINES)
@@ -238,6 +240,9 @@ build/rooms/room04%.cmp: rooms/$(GAME)/large/room04%.bin $(CMP_MODE) | build/roo
 build/rooms/room05%.cmp: rooms/$(GAME)/large/room05%.bin $(CMP_MODE) | build/rooms
 	@echo "Compressing $< to $@..."
 	@$(PYTHON) tools/compressRoomLayout.py $< $@ -d rooms/$(GAME)/dictionary5.bin
+build/rooms/room06%.cmp: rooms/$(GAME)/large/room06%.bin $(CMP_MODE) | build/rooms
+	@echo "Compressing $< to $@..."
+	@$(PYTHON) tools/compressRoomLayout.py $< $@ -d rooms/$(GAME)/dictionary6.bin
 
 # Compress graphics (from either game)
 build/gfx/%.cmp: gfx_compressible/%.bin $(CMP_MODE) | build/gfx
@@ -251,7 +256,7 @@ build/gfx/%.cmp: gfx_compressible/$(GAME)/%.bin $(CMP_MODE) | build/gfx
 
 build/textData.s: text/$(GAME)/text.txt text/$(GAME)/dict.txt tools/parseText.py $(CMP_MODE) | build
 	@echo "Compressing text..."
-	@$(PYTHON) tools/parseText.py text/$(GAME)/dict.txt $< $@ $$((0x74000)) $$((0x2c))
+	@$(PYTHON) tools/parseText.py text/$(GAME)/dict.txt $< $@ $$(($(TEXT_INSERT_ADDRESS))) $$((0x2c))
 
 build/textDefines.s: build/textData.s
 

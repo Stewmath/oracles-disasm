@@ -150724,11 +150724,13 @@ _label_3f_117:
 	ld h,(hl)		; $4e9c
 	ld l,a			; $4e9d
 	jp $4e2f		; $4e9e
+
+_initTextboxStuff:
 	ld a,($c62a)		; $4ea1
 	ld b,a			; $4ea4
 	add a			; $4ea5
 	add b			; $4ea6
-	ld hl,$5012		; $4ea7
+	ld hl,textTableTable		; $4ea7
 	rst_addAToHl			; $4eaa
 	ldi a,(hl)		; $4eab
 	ld ($d0f0),a		; $4eac
@@ -150860,6 +150862,8 @@ _label_3f_125:
 	ld bc,$00c0		; $4f83
 	ld h,b			; $4f86
 	nop			; $4f87
+
+_getTextAddress:
 	push de			; $4f88
 	ld a,($d0f0)		; $4f89
 	ld l,a			; $4f8c
@@ -150880,9 +150884,10 @@ _label_3f_125:
 	ld c,a			; $4fa7
 	call readByteFromW7TextTableBank		; $4fa8
 	ld b,a			; $4fab
+
 	ld a,($c62a)		; $4fac
 	add a			; $4faf
-	ld hl,$4fe2		; $4fb0
+	ld hl,textOffset1Table		; $4fb0
 	rst_addDoubleIndex			; $4fb3
 	ldi a,(hl)		; $4fb4
 	ld e,a			; $4fb5
@@ -150890,11 +150895,11 @@ _label_3f_125:
 	ld h,(hl)		; $4fb7
 	ld l,a			; $4fb8
 	ld a,($cba3)		; $4fb9
-	cp $2c			; $4fbc
+	cp TEXT_OFFSET_SPLIT_INDEX			; $4fbc
 	jr c,_label_3f_126	; $4fbe
 	ld a,($c62a)		; $4fc0
 	add a			; $4fc3
-	ld hl,$4ffa		; $4fc4
+	ld hl,textOffset2Table		; $4fc4
 	rst_addDoubleIndex			; $4fc7
 	ldi a,(hl)		; $4fc8
 	ld e,a			; $4fc9
@@ -150917,72 +150922,56 @@ _label_3f_127:
 	set 6,h			; $4fde
 	pop de			; $4fe0
 	ret			; $4fe1
-	inc e			; $4fe2
-	add d			; $4fe3
-	inc sp			; $4fe4
-	nop			; $4fe5
-	inc e			; $4fe6
-	add d			; $4fe7
-	inc sp			; $4fe8
-	nop			; $4fe9
-	inc e			; $4fea
-	add d			; $4feb
-	inc sp			; $4fec
-	nop			; $4fed
-	inc e			; $4fee
-	add d			; $4fef
-	inc sp			; $4ff0
-	nop			; $4ff1
-	inc e			; $4ff2
-	add d			; $4ff3
-	inc sp			; $4ff4
-	nop			; $4ff5
-	inc e			; $4ff6
-	add d			; $4ff7
-	inc sp			; $4ff8
-	nop			; $4ff9
-	rra			; $4ffa
-	cp h			; $4ffb
-	rlca			; $4ffc
-	nop			; $4ffd
-	rra			; $4ffe
-	cp h			; $4fff
-	rlca			; $5000
-	nop			; $5001
-	rra			; $5002
-	add d			; $5003
-	inc sp			; $5004
-	nop			; $5005
-	rra			; $5006
-	add d			; $5007
-	inc sp			; $5008
-	nop			; $5009
-	rra			; $500a
-	add d			; $500b
-	inc sp			; $500c
-	nop			; $500d
-	rra			; $500e
-	add d			; $500f
-	inc sp			; $5010
-	nop			; $5011
-	nop			; $5012
-	ld e,h			; $5013
-	inc e			; $5014
-	nop			; $5015
-	ld e,h			; $5016
-	inc e			; $5017
-	nop			; $5018
-	ld e,h			; $5019
-	inc e			; $501a
-	nop			; $501b
-	ld e,h			; $501c
-	inc e			; $501d
-	nop			; $501e
-	ld e,h			; $501f
-	inc e			; $5020
-	nop			; $5021
-	ld e,h			; $5022
-	inc e			; $5023
+
+textOffset1Table: ; $0fb3
+	.db :TEXT_OFFSET_1
+	.dw TEXT_OFFSET_1&$3fff
+	.db 0
+	.db :TEXT_OFFSET_1
+	.dw TEXT_OFFSET_1&$3fff
+	.db 0
+	.db :TEXT_OFFSET_1
+	.dw TEXT_OFFSET_1&$3fff
+	.db 0
+	.db :TEXT_OFFSET_1
+	.dw TEXT_OFFSET_1&$3fff
+	.db 0
+	.db :TEXT_OFFSET_1
+	.dw TEXT_OFFSET_1&$3fff
+	.db 0
+	.db :TEXT_OFFSET_1
+	.dw TEXT_OFFSET_1&$3fff
+	.db 0
+
+textOffset2Table: ; $0fcb
+	.db :TEXT_OFFSET_2
+	.dw TEXT_OFFSET_2&$3fff
+	.db 0
+	.db :TEXT_OFFSET_2
+	.dw TEXT_OFFSET_2&$3fff
+	.db 0
+; These seem to be corrupted. Only the first entry is used anyway, though.
+	.db :TEXT_OFFSET_2
+	.dw TEXT_OFFSET_1&$3fff
+	.db 0
+	.db :TEXT_OFFSET_2
+	.dw TEXT_OFFSET_1&$3fff
+	.db 0
+	.db :TEXT_OFFSET_2
+	.dw TEXT_OFFSET_1&$3fff
+	.db 0
+	.db :TEXT_OFFSET_2
+	.dw TEXT_OFFSET_1&$3fff
+	.db 0
+
+textTableTable:
+	Pointer3Byte textTableENG
+	Pointer3Byte textTableENG
+	Pointer3Byte textTableENG
+	Pointer3Byte textTableENG
+	Pointer3Byte textTableENG
+	Pointer3Byte textTableENG
+
 _label_3f_128:
 	push de			; $5024
 	call $4f88		; $5025
