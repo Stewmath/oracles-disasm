@@ -100196,7 +100196,7 @@ func_7fa1:
 .ORG 0
 
 	.include "code/scripting.s"
-	.include "scripts/scripts.s"
+	.include "scripts/ages/scripts.s"
 
 
 .BANK $0d SLOT 1

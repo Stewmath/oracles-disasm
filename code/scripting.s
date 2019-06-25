@@ -78,7 +78,7 @@ runScriptCommand:
 	.dw _scriptCmd_ret ; 0xc1
 	.dw _scriptCmd_none ; 0xc2
 	.dw _scriptCmd_jumpIfCBA5Eq ; 0xc3
-	.dw _scriptCmd_jump ; 0xc4
+	.dw _scriptCmd_jumpRandom ; 0xc4
 	.dw _scriptCmd_none ; 0xc5
 	.dw _scriptCmd_jumpTable ; 0xc6
 	.dw _scriptCmd_jumpIfMemorySet ; 0xc7
@@ -179,10 +179,18 @@ _scriptCmd_showPasswordScreen:
 	swap a			; $4125
 	and $03			; $4127
 	rst_jumpTable			; $4129
+
+.ifdef ROM_AGES
 	.dw @askForSecret
 	.dw @generateSecret
 	.dw @generateSecret
 	.dw @askForSecret
+.else; ROM_SEASONS
+	.dw @generateSecret
+	.dw @askForSecret
+	.dw @askForSecret
+	.dw @generateSecret
+.endif
 
 ;;
 ; @addr{4132}
@@ -301,6 +309,8 @@ _scriptCmd_setState2:
 ; This is for all commands under $80.
 ; @addr{419d}
 _scriptCmd_jump2byte:
+
+.ifdef ROM_AGES
 	ld a,h			; $419d
 	cp $80			; $419e
 	jr c,++			; $41a0
@@ -322,6 +332,7 @@ _scriptCmd_jump2byte:
 	ld h,>wBigBuffer	; $41b2
 	ret			; $41b4
 ++
+.endif
 	ldi a,(hl)		; $41b5
 	ld l,(hl)		; $41b6
 	ld h,a			; $41b7
@@ -1041,10 +1052,21 @@ _scriptCmd_jumpIfCBA5Eq:
 	jr z,--			; $44b9
 	jp scriptFunc_add3ToHl_scf		; $44bb
 
-_scriptCmd_jump:
+_scriptCmd_jumpRandom:
+.ifdef ROM_AGES
 	pop hl			; $44be
 	inc hl			; $44bf
 	jp scriptFunc_jump_scf		; $44c0
+
+.else; ROM_SEASONS
+	pop hl			; $44a6
+	inc hl			; $44a7
+	call getRandomNumber		; $44a8
+	and $01			; $44ab
+	add a			; $44ad
+	rst_addAToHl			; $44ae
+	jp scriptFunc_jump_scf		; $44af
+.endif
 
 _scriptCmd_jumpTable:
 	pop hl			; $44c3
@@ -1252,10 +1274,12 @@ _scriptCmd_setOrUnsetGlobalFlag:
 	ret			; $459a
 
 _scriptCmd_initNpcHitbox:
+.ifdef ROM_AGES
 	ld e,Interaction.collisionRadiusY	; $459b
 	ld a,(de)		; $459d
 	or a			; $459e
 	jr nz,+			; $459f
+.endif
 
 	ld a,$06		; $45a1
 	call objectSetCollideRadius		; $45a3
@@ -1310,4 +1334,3 @@ _scriptCmd_delay:
 ; @addr{45e2}
 @delayLengths:
 	.db 1 4 8 10 15 20 30 40 60 90 120 180 240
-

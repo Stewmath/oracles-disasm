@@ -72,30 +72,18 @@
 	.endif
 .ENDM
 
-; Asks for a 5-letter secret.
+; Does one of two things, depending on which game this is, and whether the secret is to be
+; told in this game, or received from this game.
 ;
-; param1:	The index of the secret to ask for (see wShortSecretIndex).
-;		If $ff, it accepts any secret (used with farore).
-.MACRO askforsecret
-	.if \1 >= $10
-	.if \1 < $ff
-		.PRINTT "SCRIPT ERROR: argument to 'askforsecret' out of range.\n"
-		.FAIL
-	.endif
-	.endif
+; A: Asks for a specific 5-letter secret.
+;
+; B: Generates a 5-letter secret, which can later be printed through a textbox. (The text
+; can use the "\secret1" command to print it.)
+;
+; param1:	The index of the secret (see wShortSecretIndex).
+;		If $ff, it asks for and accepts any valid secret (used with farore).
+.MACRO generateoraskforsecret
 	.db $86 \1
-.ENDM
-
-; Generates a 5-letter secret, which can later be printed through a textbox. (The text can
-; use the "\secret1" command to print it.)
-;
-; param1:	The index of the secret to generate (see wShortSecretIndex).
-.MACRO generatesecret
-	.if \1 >= $10
-		.PRINTT "SCRIPT ERROR: argument to 'generatesecret' out of range.\n"
-		.FAIL
-	.endif
-	.db $86 (\1|$10)
 .ENDM
 
 ; Uses the given memory address as an index for a jump table immediately after the
@@ -498,14 +486,19 @@
 	.dw \2
 .ENDM
 
-; Jump to the specified address unconditionally.
-; The only advantage of this over jump2byte is it can jump to ram, but that's dubious...
-; The actual game doesn't use it.
+; Takes two addresses, and randomly chooses one to jump to.
+; DOESN'T WORK IN AGES. Rather, it just jumps to the first address, but is never used
+; anyway?
 ;
-; param1:	Address to jump to.
-.MACRO jumpalways
+; param1:	First choice of address to jump to.
+; param2:	Second choice.
+.MACRO jumprandom
+	.ifdef ROM_AGES
+		.PRINTT "Can't use 'jumprandom' script opcode in ages."
+		.FAIL
+	.endif
 	.db $c4
-	.dw \1
+	.dw \1 \2
 .ENDM
 
 ; $C5: no command
