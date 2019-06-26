@@ -52220,104 +52220,104 @@ interactionCode20:
 	.dw @dungeonB
 
 @dungeon0:
-	.dw $4b77
-	.dw $4b78
+	.dw script4b77
+	.dw script4b78
 
 @dungeon1:
-	.dw $4b69
-	.dw $4b78
-	.dw $4b78
-	.dw $4b84
+	.dw script4b69
+	.dw script4b78
+	.dw script4b78
+	.dw script4b84
 
 @dungeon2:
-	.dw $4b97
-	.dw $4b69
-	.dw $4ba6
+	.dw script4b97
+	.dw script4b69
+	.dw script4ba6
 
 @dungeon3:
-	.dw $4bb9
-	.dw $4bc4
-	.dw $4bca
-	.dw $4bd9
-	.dw $4be8
+	.dw script4bb9
+	.dw script4bc4
+	.dw script4bca
+	.dw script4bd9
+	.dw script4be8
 
 @dungeon4:
-	.dw $4bec
-	.dw $4bfb
-	.dw $4bfb
-	.dw $4c09
-	.dw $4b84
-	.dw $4b69
-	.dw $4c0e
-	.dw $4c17
+	.dw script4bec
+	.dw script4bfb
+	.dw script4bfb
+	.dw script4c09
+	.dw script4b84
+	.dw script4b69
+	.dw script4c0e
+	.dw script4c17
 
 @dungeon5:
-	.dw $4c20
-	.dw $4c25
-	.dw $4b69
-	.dw $4b84
+	.dw script4c20
+	.dw script4c25
+	.dw script4b69
+	.dw script4b84
 
 @dungeon6:
-	.dw $4c2b
-	.dw $4c34
-	.dw $4c47
-	.dw $4c50
-	.dw $4c58
-	.dw $4c63
-	.dw $4c6b
-	.dw $4b69
-	.dw $4c6f
-	.dw $4c90
-	.dw $4c94
-	.dw $4ca5
-	.dw $4cb5
-	.dw $4cc0
-	.dw $4ccf
+	.dw script4c2b
+	.dw script4c34
+	.dw script4c47
+	.dw script4c50
+	.dw script4c58
+	.dw script4c63
+	.dw script4c6b
+	.dw script4b69
+	.dw script4c6f
+	.dw script4c90
+	.dw script4c94
+	.dw script4ca5
+	.dw script4cb5
+	.dw script4cc0
+	.dw script4ccf
 
 @dungeon7:
-	.dw $4ce6
-	.dw $4cf2
-	.dw $4b69
-	.dw $4b84
-	.dw $4d05
-	.dw $4d12
-	.dw $4d16
-	.dw $4d28
-	.dw $4d2c
-	.dw $4d30
-	.dw $4d44
-	.dw $4d53
-	.dw $4ce8
-	.dw $4cd3
-	.dw $4cdc
+	.dw script4ce6
+	.dw script4cf2
+	.dw script4b69
+	.dw script4b84
+	.dw script4d05
+	.dw script4d12
+	.dw script4d16
+	.dw script4d28
+	.dw script4d2c
+	.dw script4d30
+	.dw script4d44
+	.dw script4d53
+	.dw script4ce8
+	.dw script4cd3
+	.dw script4cdc
 
 @dungeon8:
-	.dw $4d5b
-	.dw $4d64
-	.dw $4d6d
-	.dw $4c2b
-	.dw $4d7a
-	.dw $4d8c
-	.dw $4d96
-	.dw $4b69
-	.dw $4b84
-	.dw $4dab
-	.dw $4db4
-	.dw $4dbb
+	.dw script4d5b
+	.dw script4d64
+	.dw script4d6d
+	.dw script4c2b
+	.dw script4d7a
+	.dw script4d8c
+	.dw script4d96
+	.dw script4b69
+	.dw script4b84
+	.dw script4dab
+	.dw script4db4
+	.dw script4dbb
 
 @dungeon9:
-	.dw $4dc2
-	.dw $4dc9
+	.dw script4dc2
+	.dw script4dc9
 
 @dungeonA:
 @dungeonB:
-	.dw $4c2b
-	.dw $4b78
-	.dw $4dcd
-	.dw $4d16
-	.dw $4ddb
-	.dw $4ddf
-	.dw $4dd4
+	.dw script4c2b
+	.dw script4b78
+	.dw script4dcd
+	.dw script4d16
+	.dw script4ddb
+	.dw script4ddf
+	.dw script4dd4
 
 interactionCode21:
 	ld e,$44		; $53c3

@@ -2012,7 +2012,7 @@ wEnteredWarpPosition: ; $cc8e
 ; This is set to $ff when the above does not apply.
 	db
 
-wNumTorchesLit: ; $cc8f
+wNumTorchesLit: ; $cc8f/$cca9
 	db
 
 wcc90: ; $cc90

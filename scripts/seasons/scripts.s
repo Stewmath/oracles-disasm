@@ -825,6 +825,7 @@ script4b69:
 	spawninteraction $7e00 $00 $00
 script4b73:
 	writememory $cbca $00
+script4b77:
 	scriptend
 script4b78:
 	stopifitemflagset
@@ -1058,6 +1059,7 @@ script4ce2:
 	scriptend
 script4ce6:
 	setangle $01
+script4ce8:
 	jumpifroomflagset $40 script4cfe
 	checkmemoryeq $ccba $01
 	jump2byte script4cfa
