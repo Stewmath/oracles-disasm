@@ -2411,12 +2411,12 @@ _fileSelectDrawLink:
 @sprites1:
 	.db $02
 	.db $4e $58 $00 $00
-	.db $4e $60 $02 $00
+	.db $4e $60 $00 $20
 
 @sprites2:
 	.db $02
-	.db $4e $58 $02 $20
-	.db $4e $60 $00 $20
+	.db $4e $58 $02 $00
+	.db $4e $60 $02 $20
 
 @sprites3:
 	.db $04
@@ -2447,15 +2447,15 @@ _fileSelectDrawLink:
 @sprites7:
 	.db $05
 	.db $4e $58 $00 $00
-	.db $4e $60 $02 $00
+	.db $4e $60 $00 $20
 	.db $4e $68 $00 $0a
 	.db $4e $70 $02 $0a
 	.db $3e $6d $04 $0a
 
 @sprites8:
 	.db $05
-	.db $4e $58 $02 $20
-	.db $4e $60 $00 $20
+	.db $4e $58 $02 $00
+	.db $4e $60 $02 $20
 	.db $4e $68 $02 $2a
 	.db $4e $70 $00 $2a
 	.db $3e $6b $04 $2a
@@ -2463,14 +2463,14 @@ _fileSelectDrawLink:
 @sprites9:
 	.db $04
 	.db $4e $58 $00 $00
-	.db $4e $60 $02 $00
+	.db $4e $60 $00 $20
 	.db $4e $68 $06 $09
 	.db $4e $70 $08 $09
 
 @spritesa:
 	.db $04
-	.db $4e $58 $02 $20
-	.db $4e $60 $00 $20
+	.db $4e $58 $02 $00
+	.db $4e $60 $02 $20
 	.db $4e $68 $08 $29
 	.db $4e $70 $06 $29
 
