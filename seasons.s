@@ -11495,6 +11495,21 @@ _label_00_408:
 	ret			; $3ec7
 
 
+getSomariaBlockIndex:
+	ld a,(wActiveCollisions)
+	ld b,$3f ; Overworld
+	or a
+	ret z
+
+	dec a ; Subrosia
+	ld b,$ba
+	ret z
+
+	; Indoors (3), Dungeon (4), Sidescrolling (5)
+	ld b,$f9
+	ret
+
+
 .BANK $01 SLOT 1
 .ORG 0
 
@@ -37385,7 +37400,7 @@ _label_05_451:
 	ld a,c			; $400b
 	ldh (<hFF8D),a	; $400c
 	ld hl,$43a3		; $400e
-	call lookupCollisionTable_paramE		; $4011
+	call interactableTilesHook		; $4011
 	jp nc,$41dd		; $4014
 	ld b,a			; $4017
 	and $0f			; $4018
@@ -37541,6 +37556,9 @@ _label_06_010:
 	pop af			; $410b
 	xor a			; $410c
 	ret			; $410d
+
+
+_nextToPushableBlock:
 	call $4314		; $410e
 	jp z,$41dd		; $4111
 	call $41e3		; $4114
@@ -37565,7 +37583,9 @@ _label_06_012:
 _label_06_013:
 	call $4389		; $4136
 	jr nc,_label_06_014	; $4139
-	ld hl,$d140		; $413b
+
+	jp _nextToPushableBlockHook
+_nextToPushableBlockHook_ret:
 	ld a,(hl)		; $413e
 	or a			; $413f
 	jr nz,_label_06_014	; $4140
@@ -38548,6 +38568,9 @@ _label_06_068:
 	ld (de),a		; $4711
 _label_06_069:
 	ret			; $4712
+
+
+tryToBreakTile_body:
 	ld a,b			; $4713
 	and $f0			; $4714
 	or $08			; $4716
@@ -38562,7 +38585,7 @@ _label_06_069:
 	ld a,l			; $4727
 	ldh (<hFF93),a	; $4728
 	ld hl,$75c0		; $472a
-	call lookupCollisionTable_paramE		; $472d
+	call _breakableTileCollisionTableHook		; $472d
 	ret nc			; $4730
 	ld e,a			; $4731
 	add a			; $4732
@@ -43350,6 +43373,59 @@ _parentItemCode_somaria:
 	jp nc,_specialObjectAnimate		; $4b7c
 	jp _clearParentItem		; $4b7f
 
+
+; Override interactableTilesTable to make cane of somaria block pushable
+interactableTilesHook:
+	call getSomariaBlockIndex
+	ld a,b
+	cp e
+	jr z,@somaria
+	call lookupCollisionTable_paramE
+	ret
+
+@somaria:
+	ld a,$80
+	scf
+	ret
+
+; Special-case code for pushing cane of somaria
+_nextToPushableBlockHook:
+	call getSomariaBlockIndex
+	ldh a,(<hFF8B)	; $4141
+	cp b
+	jr z,@somariaBlock	; $4145
+
+	ld hl,w1ReservedInteraction1.enabled
+	jp _nextToPushableBlockHook_ret
+
+	; For the somaria block, use its dedicated object to move it around.
+@somariaBlock:
+	ld c,ITEMID_18		; $417e
+	call findItemWithID		; $4180
+	jp nz,_label_06_014		; $4183
+
+	ld l,Item.var2f		; $4185
+	set 0,(hl)		; $4187
+	ld a,(wLinkPushingDirection)		; $4189
+	ld l,Item.direction		; $418c
+	ld (hl),a		; $418e
+	jp _label_06_014			; $418f
+
+
+
+; Override breakableTileCollisionTable to make cane block breakable
+_breakableTileCollisionTableHook:
+	call getSomariaBlockIndex
+	ld a,b
+	cp e
+	jr z,@somaria
+	call lookupCollisionTable_paramE
+	ret
+
+@somaria:
+	ld a,$32
+	scf
+	ret
 
 .BANK $07 SLOT 1
 .ORG 0
@@ -49576,9 +49652,11 @@ itemCode18:
 	ld e,Item.var32		; $5de5
 	ld a,(de)		; $5de7
 	ld l,a			; $5de8
+
+	call getSomariaBlockIndex
 	ld h,>wRoomLayout		; $5de9
 	ld a,(hl)		; $5deb
-	cp TILEINDEX_SOMARIA_BLOCK			; $5dec
+	cp b
 	ret nz			; $5dee
 
 	ld h,>wRoomCollisions		; $5def
@@ -49654,8 +49732,10 @@ itemCode18:
 	jr c,++			; $5e3d
 
 	; Overwrite the tile with the somaria block
+	call getSomariaBlockIndex
+	ld a,b
 	ld b,(hl)		; $5e3f
-	ld (hl),TILEINDEX_SOMARIA_BLOCK		; $5e40
+	ld (hl),a		; $5e40
 	ld h,>wRoomCollisions		; $5e42
 	ld (hl),$0f		; $5e44
 
@@ -49686,6 +49766,7 @@ _updateSwingableItemAnimationHook: ; Fix to prevent cane from breaking bushes
 	cp $07 ; Rod
 	jp z,_label_07_220
 	jp _updateSwingableItemAnimation_hookReturn
+
 
 
 .BANK $08 SLOT 1
