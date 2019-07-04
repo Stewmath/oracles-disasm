@@ -38016,6 +38016,8 @@ _label_06_033:
 	ld b,$00		; $440d
 	ld a,($d001)		; $440f
 	jr _label_06_034		; $4412
+
+_specialObjectAnimate:
 	ld h,d			; $4414
 	ld l,$20		; $4415
 	dec (hl)		; $4417
@@ -39124,9 +39126,6 @@ _label_06_096:
 	jp nc,$4414		; $4a9b
 	jp _clearParentItem		; $4a9e
 
-
-_parentItemCode_somaria:
-	; Nothing here
 
 _parentItemCode_switchHook:
 	; Nothing here
@@ -40361,6 +40360,8 @@ _label_06_148:
 	jr c,_label_06_147	; $52de
 	xor a			; $52e0
 	ret			; $52e1
+
+_parentItemLoadAnimationAndIncState:
 	call $53af		; $52e2
 	call $53c2		; $52e5
 	ld e,$04		; $52e8
@@ -40405,10 +40406,14 @@ _label_06_150:
 	call $532f		; $5328
 	ret nc			; $532b
 	jp _clearParentItem		; $532c
+
+itemCreateChild:
 	ld c,$00		; $532f
 	ld h,d			; $5331
 	ld l,$01		; $5332
 	ld b,(hl)		; $5334
+
+itemCreateChildWithID:
 	ld h,d			; $5335
 	ld l,$19		; $5336
 	ldd a,(hl)		; $5338
@@ -40787,7 +40792,7 @@ _itemUsageParameterTable:
 	.db $05 <wGameKeysPressed       ; ITEMID_SHIELD
 	.db $03 <wGameKeysJustPressed   ; ITEMID_PUNCH
 	.db $23 <wGameKeysJustPressed   ; ITEMID_BOMB
-	.db $00 <wGameKeysJustPressed   ; ITEMID_CANE_OF_SOMARIA
+	.db $03 <wGameKeysJustPressed	; ITEMID_CANE_OF_SOMARIA
 	.db $63 <wGameKeysJustPressed   ; ITEMID_SWORD
 	.db $02 <wGameKeysJustPressed   ; ITEMID_BOOMERANG
 	.db $33 <wGameKeysJustPressed   ; ITEMID_ROD_OF_SEASONS
@@ -43324,6 +43329,28 @@ _label_06_279:
 	nop			; $77d1
 	ld b,$01		; $77d2
 
+
+_parentItemCode_somaria:
+	ld e,Item.state		; $4b67
+	ld a,(de)		; $4b69
+	rst_jumpTable			; $4b6a
+	.dw @state0
+	.dw @state1
+
+@state0:
+	call updateLinkDirectionFromAngle		; $4b6f
+	call _parentItemLoadAnimationAndIncState		; $4b72
+	jp itemCreateChild		; $4b75
+
+@state1:
+	; Delete self when animation is finished
+	ld e,Item.animParameter		; $4b78
+	ld a,(de)		; $4b7a
+	rlca			; $4b7b
+	jp nc,_specialObjectAnimate		; $4b7c
+	jp _clearParentItem		; $4b7f
+
+
 .BANK $07 SLOT 1
 .ORG 0
 
@@ -44788,7 +44815,7 @@ _label_07_060:
 	.dw itemDelete ; 0x01
 	.dw itemCode02 ; 0x02
 	.dw itemCode03 ; 0x03
-	.dw itemDelete ; 0x04
+	.dw itemCode04 ; 0x04
 	.dw itemCode05 ; 0x05
 	.dw itemCode06 ; 0x06
 	.dw itemCode07 ; 0x07
@@ -44808,7 +44835,7 @@ _label_07_060:
 	.dw itemCode15 ; 0x15
 	.dw itemCode16 ; 0x16
 	.dw itemDelete ; 0x17
-	.dw itemDelete ; 0x18
+	.dw itemCode18 ; 0x18
 	.dw itemDelete ; 0x19
 	.dw itemCode1a ; 0x1a
 	.dw itemDelete ; 0x1b
@@ -44935,10 +44962,13 @@ _itemLoadAttributesAndGraphics:
 	ld hl,$4422		; $49a2
 	ld e,$3f		; $49a5
 	jp interBankCall		; $49a7
+
 	ld e,$3c		; $49aa
 	ld a,$ff		; $49ac
 	ld (de),a		; $49ae
 	ret			; $49af
+
+_itemUpdateDamageToApply:
 	ld h,d			; $49b0
 	ld l,$25		; $49b1
 	ld a,(hl)		; $49b3
@@ -44952,6 +44982,8 @@ _itemLoadAttributesAndGraphics:
 	dec a			; $49be
 	inc a			; $49bf
 	ret			; $49c0
+
+itemAnimate:
 	ld h,d			; $49c1
 	ld l,$20		; $49c2
 	dec (hl)		; $49c4
@@ -45056,6 +45088,8 @@ _label_07_064:
 	add (hl)		; $4a34
 	ld (de),a		; $4a35
 	ret			; $4a36
+
+_itemMergeZPositionIfSidescrollingArea:
 	ld h,d			; $4a37
 	ld a,($cc50)		; $4a38
 	and $20			; $4a3b
@@ -45217,6 +45251,8 @@ _label_07_076:
 	set 6,(hl)		; $4b21
 _label_07_077:
 	ret			; $4b23
+
+_itemUpdateThrowingVerticallyAndCheckHazards:
 	call $4a8d		; $4b24
 	jr c,_label_07_079	; $4b27
 	ld a,($cc50)		; $4b29
@@ -48115,11 +48151,17 @@ _label_07_218:
 	ld bc,$0781		; $5d45
 	call objectCreateInteraction		; $5d48
 	jp itemDelete		; $5d4b
-	ld l,$21		; $5d4e
-	cp $07			; $5d50
+
+
+_updateSwingableItemAnimation:
+	jp _updateSwingableItemAnimationHook
+	nop
 	jr z,_label_07_220	; $5d52
+
+_updateSwingableItemAnimation_hookReturn:
 	bit 6,(hl)		; $5d54
 	jr z,_label_07_220	; $5d56
+
 	res 6,(hl)		; $5d58
 	ld a,(hl)		; $5d5a
 	and $1f			; $5d5b
@@ -48132,6 +48174,7 @@ _label_07_219:
 	push hl			; $5d67
 	call $5f12		; $5d68
 	pop hl			; $5d6b
+
 _label_07_220:
 	ld c,$10		; $5d6c
 	ld a,(hl)		; $5d6e
@@ -48157,6 +48200,8 @@ _label_07_221:
 	ld a,(hl)		; $5d8c
 	and $07			; $5d8d
 	jp $49ca		; $5d8f
+
+
 	ld (bc),a		; $5d92
 	ld b,c			; $5d93
 	add b			; $5d94
@@ -48811,6 +48856,8 @@ _label_07_253:
 	ld h,d			; $6136
 	ld l,$05		; $6137
 	ret			; $6139
+
+_bombUpdateThrowingLaterally:
 	ld h,d			; $613a
 	ld l,$3b		; $613b
 	bit 0,(hl)		; $613d
@@ -49188,6 +49235,457 @@ _label_07_277:
 	.include "data/seasons/partCollisionTypes.s"
 	.include "data/seasons/objectCollisionReactionSets.s"
 
+
+;;
+; ITEMID_CANE_OF_SOMARIA
+; @addr{5c49}
+itemCode04:
+	call _itemTransferKnockbackToLink		; $5c49
+	ld e,Item.state		; $5c4c
+	ld a,(de)		; $5c4e
+	rst_jumpTable			; $5c4f
+
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
+	ld a,UNCMP_GFXH_37		; $5c56
+	call loadWeaponGfx		; $5c58
+	call _loadAttributesAndGraphicsAndIncState		; $5c5b
+
+	ld a,SND_SWORDSLASH		; $5c5e
+	call playSound		; $5c60
+
+	xor a			; $5c63
+	call itemSetAnimation		; $5c64
+	jp objectSetVisible82		; $5c67
+
+@state1:
+	; Wait for a particular part of the swing animation
+	ld a,(w1ParentItem2.animParameter)		; $5c6a
+	cp $06			; $5c6d
+	ret nz			; $5c6f
+
+	call itemIncState		; $5c70
+
+	ld c,ITEMID_18		; $5c73
+	call findItemWithID		; $5c75
+	jr nz,+			; $5c78
+
+	; Set var2f of any previous instance of ITEMID_18 (triggers deletion?)
+	ld l,Item.var2f		; $5c7a
+	set 5,(hl)		; $5c7c
++
+	; Get in bc the place to try to make a block
+	ld a,(w1Link.direction)		; $5c7e
+	ld hl,@somariaCreationOffsets		; $5c81
+	rst_addDoubleIndex			; $5c84
+	ld a,(w1Link.yh)		; $5c85
+	add (hl)		; $5c88
+	ld b,a			; $5c89
+	inc hl			; $5c8a
+	ld a,(w1Link.xh)		; $5c8b
+	add (hl)		; $5c8e
+	ld c,a			; $5c8f
+
+	call getFreeItemSlot		; $5c90
+	ret nz			; $5c93
+	inc (hl)		; $5c94
+	inc l			; $5c95
+	ld (hl),ITEMID_18		; $5c96
+
+	; Set Y/X of the new item as calculated earlier, and copy Link's Z position
+	ld l,Item.yh		; $5c98
+	ld (hl),b		; $5c9a
+	ld a,(w1Link.zh)		; $5c9b
+	ld l,Item.zh		; $5c9e
+	ldd (hl),a		; $5ca0
+	dec l			; $5ca1
+	ld (hl),c		; $5ca2
+
+@state2:
+	ret			; $5ca3
+
+; Offsets relative to link's position to try to create a somaria block?
+@somariaCreationOffsets:
+	.dw $00ec ; DIR_UP
+	.dw $1300 ; DIR_RIGHT
+	.dw $0013 ; DIR_DOWN
+	.dw $ec00 ; DIR_LEFT
+
+
+;;
+; ITEMID_18 (somaria block object)
+; @addr{5cac}
+itemCode18:
+	ld e,Item.state		; $5cac
+	ld a,(de)		; $5cae
+	rst_jumpTable			; $5caf
+
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+
+
+; State 0: initialization
+@state0:
+	call _itemMergeZPositionIfSidescrollingArea		; $5cba
+	call @alignOnTile		; $5cbd
+	call _itemLoadAttributesAndGraphics		; $5cc0
+	xor a			; $5cc3
+	call itemSetAnimation		; $5cc4
+	call itemIncState		; $5cc7
+	ld a,SND_MYSTERY_SEED		; $5cca
+	call playSound		; $5ccc
+	jp objectSetVisible83		; $5ccf
+
+
+; State 1: phasing in
+@state1:
+	call @checkBlockCanAppear		; $5cd2
+	call z,@pushLinkAway		; $5cd5
+
+	; Wait for phase-in animation to complete
+	call itemAnimate		; $5cd8
+	ld e,Item.animParameter		; $5cdb
+	ld a,(de)		; $5cdd
+	or a			; $5cde
+	ret z			; $5cdf
+
+	; Animation done
+
+	ld h,d			; $5ce0
+	ld l,Item.oamFlagsBackup		; $5ce1
+	ld a,$0d		; $5ce3
+	ldi (hl),a		; $5ce5
+	ldi (hl),a		; $5ce6
+
+	; Item.oamTileIndexBase
+	ld (hl),$36		; $5ce7
+
+	; Enable collisions with enemies?
+	ld l,Item.collisionType		; $5ce9
+	set 7,(hl)		; $5ceb
+
+@checkCreateBlock:
+	call @checkBlockCanAppear		; $5ced
+	jr nz,@deleteSelfWithPuff	; $5cf0
+	call @createBlockIfNotOnHazard		; $5cf2
+	jr nz,@deleteSelfWithPuff	; $5cf5
+
+	; Note: a = 0 here
+
+	ld h,d			; $5cf7
+	ld l,Item.zh		; $5cf8
+	ld (hl),a		; $5cfa
+
+	; Set [state]=3, [state2]=0
+	ld l,Item.state2		; $5cfb
+	ldd (hl),a		; $5cfd
+	ld (hl),$03		; $5cfe
+
+	ld l,Item.collisionRadiusY		; $5d00
+	ld a,$04		; $5d02
+	ldi (hl),a		; $5d04
+	ldi (hl),a		; $5d05
+
+	ld l,Item.var2f		; $5d06
+	ld a,(hl)		; $5d08
+	and $f0			; $5d09
+	ld (hl),a		; $5d0b
+
+	ld a,$01		; $5d0c
+	jp itemSetAnimation		; $5d0e
+
+
+; State 4: block being pushed
+@state4:
+	ld e,Item.state2		; $5d11
+	ld a,(de)		; $5d13
+	rst_jumpTable			; $5d14
+
+	.dw @state4Substate0
+	.dw @state4Substate1
+
+@state4Substate0:
+	call itemIncState2		; $5d19
+	call itemUpdateAngle		; $5d1c
+
+	; Set speed & counter1 based on bracelet level (TODO: uncomment if power glove
+	; implemented)
+	ldbc SPEED_80, $20		; $5d1f
+.ifdef ROM_AGES
+	ld a,(wBraceletLevel)		; $5d22
+	cp $02			; $5d25
+	jr nz,+			; $5d27
+	ldbc SPEED_c0, $15		; $5d29
+.endif
++
+	ld l,Item.speed		; $5d2c
+	ld (hl),b		; $5d2e
+	ld l,Item.counter1		; $5d2f
+	ld (hl),c		; $5d31
+
+	ld a,SND_MOVEBLOCK		; $5d32
+	call playSound		; $5d34
+	call @removeBlock		; $5d37
+
+@state4Substate1:
+	call _itemUpdateDamageToApply		; $5d3a
+	jr c,@deleteSelfWithPuff	; $5d3d
+	call @checkDeletionTrigger		; $5d3f
+	jr nz,@deleteSelfWithPuff	; $5d42
+
+	call objectApplySpeed		; $5d44
+	call @pushLinkAway		; $5d47
+	call itemDecCounter1		; $5d4a
+
+	ld l,Item.collisionRadiusY		; $5d4d
+	ld a,$04		; $5d4f
+	ldi (hl),a		; $5d51
+	ld (hl),a		; $5d52
+
+	; Return if counter1 is not 0
+	ret nz			; $5d53
+
+	jr @checkCreateBlock		; $5d54
+
+
+@removeBlockAndDeleteSelfWithPuff:
+	call @removeBlock		; $5d56
+@deleteSelfWithPuff:
+	ld h,d			; $5d59
+	ld l,Item.var2f		; $5d5a
+	bit 4,(hl)		; $5d5c
+	call z,objectCreatePuff		; $5d5e
+@deleteSelf:
+	jp itemDelete		; $5d61
+
+
+; State 2: being picked up / thrown
+@state2:
+	ld e,Item.state2		; $5d64
+	ld a,(de)		; $5d66
+	rst_jumpTable			; $5d67
+
+	.dw @state2Substate0
+	.dw @state2Substate1
+	.dw @state2Substate2
+	.dw @state2Substate3
+
+; Substate 0: just picked up
+@state2Substate0:
+	call itemIncState2		; $5d70
+	call @removeBlock		; $5d73
+	call objectSetVisiblec1		; $5d76
+	ld a,$02		; $5d79
+	jp itemSetAnimation		; $5d7b
+
+; Substate 1: being lifted
+@state2Substate1:
+	call _itemUpdateDamageToApply		; $5d7e
+	ret nc			; $5d81
+	call dropLinkHeldItem		; $5d82
+	jr @deleteSelfWithPuff		; $5d85
+
+; Substate 2/3: being thrown
+@state2Substate2:
+@state2Substate3:
+	call objectCheckWithinRoomBoundary		; $5d87
+	jr nc,@deleteSelf	; $5d8a
+
+	call _bombUpdateThrowingLaterally		; $5d8c
+	call @checkDeletionTrigger		; $5d8f
+	jr nz,@deleteSelfWithPuff	; $5d92
+
+	; var39 = gravity
+	ld l,Item.var39		; $5d94
+	ld c,(hl)		; $5d96
+	call _itemUpdateThrowingVerticallyAndCheckHazards		; $5d97
+	jr c,@deleteSelf	; $5d9a
+
+	ret z			; $5d9c
+	jr @deleteSelfWithPuff		; $5d9d
+
+
+; State 3: block is just sitting around
+@state3:
+	call @checkBlockInPlace		; $5d9f
+	jr nz,@deleteSelfWithPuff	; $5da2
+
+	; Check if health went below 0
+	call _itemUpdateDamageToApply		; $5da4
+	jr c,@removeBlockAndDeleteSelfWithPuff	; $5da7
+
+	; Check bit 5 of var2f (set when another somaria block is being created)
+	call @checkDeletionTrigger		; $5da9
+	jr nz,@removeBlockAndDeleteSelfWithPuff	; $5dac
+
+	; If Link somehow ends up on this tile, delete the block
+	ld a,(wActiveTilePos)		; $5dae
+	ld l,Item.var32		; $5db1
+	cp (hl)			; $5db3
+	jr z,@removeBlockAndDeleteSelfWithPuff	; $5db4
+
+	; If in a sidescrolling area, check that the tile below is solid
+	ld a,(wAreaFlags)		; $5db6
+	and AREAFLAG_SIDESCROLL			; $5db9
+	jr z,++			; $5dbb
+
+	ld a,(hl)		; $5dbd
+	add $10			; $5dbe
+	ld c,a			; $5dc0
+	ld b,>wRoomCollisions		; $5dc1
+	ld a,(bc)		; $5dc3
+	cp $0f			; $5dc4
+	jr nz,@removeBlockAndDeleteSelfWithPuff	; $5dc6
+++
+	ld l,Item.var2f		; $5dc8
+	bit 0,(hl)		; $5dca
+	jp z,objectAddToGrabbableObjectBuffer		; $5dcc
+
+	; Link pushed on the block
+	ld a,$04		; $5dcf
+	jp itemSetState		; $5dd1
+
+;;
+; @param[out]	zflag	Unset if slated for deletion
+; @addr{5dd4}
+@checkDeletionTrigger:
+	ld h,d			; $5dd4
+	ld l,Item.var2f		; $5dd5
+	bit 5,(hl)		; $5dd7
+	ret			; $5dd9
+
+;;
+; @addr{5dda}
+@pushLinkAway:
+	ld e,Item.collisionRadiusY		; $5dda
+	ld a,$07		; $5ddc
+	ld (de),a		; $5dde
+	ld hl,w1Link		; $5ddf
+	jp preventObjectHFromPassingObjectD		; $5de2
+
+;;
+; @param[out]	zflag	Set if the cane of somaria block is present, and is solid?
+; @addr{5de5}
+@checkBlockInPlace:
+	ld e,Item.var32		; $5de5
+	ld a,(de)		; $5de7
+	ld l,a			; $5de8
+	ld h,>wRoomLayout		; $5de9
+	ld a,(hl)		; $5deb
+	cp TILEINDEX_SOMARIA_BLOCK			; $5dec
+	ret nz			; $5dee
+
+	ld h,>wRoomCollisions		; $5def
+	ld a,(hl)		; $5df1
+	cp $0f			; $5df2
+	ret			; $5df4
+
+;;
+; @addr{5df5}
+@removeBlock:
+	call @checkBlockInPlace		; $5df5
+	ret nz			; $5df8
+
+	; Restore tile
+	ld e,Item.var32		; $5df9
+	ld a,(de)		; $5dfb
+	call getTileIndexFromRoomLayoutBuffer		; $5dfc
+	jp setTile		; $5dff
+
+;;
+; @param[out]	zflag	Set if the block can appear at this position
+; @addr{5e02}
+@checkBlockCanAppear:
+	; Disallow cane of somaria usage if in patch's minigame room
+	ld a,(wActiveGroup)		; $5e02
+	cp $05			; $5e05
+	jr nz,+			; $5e07
+	ld a,(wActiveRoom)		; $5e09
+	cp $e8			; $5e0c
+	jr z,@@disallow		; $5e0e
++
+	; Must be close to the ground
+	ld e,Item.zh		; $5e10
+	ld a,(de)		; $5e12
+	dec a			; $5e13
+	cp $fc			; $5e14
+	jr c,@@disallow		; $5e16
+
+	; Can't be in a wall
+	call objectGetTileCollisions		; $5e18
+	ret nz			; $5e1b
+
+	; If underwater, never allow it
+	ld a,(wAreaFlags)		; $5e1c
+	bit AREAFLAG_BIT_UNDERWATER,a			; $5e1f
+	ret nz			; $5e21
+
+	; If in a sidescrolling area, check for floor underneath
+	and AREAFLAG_SIDESCROLL			; $5e22
+	ret z			; $5e24
+
+	ld a,l			; $5e25
+	add $10			; $5e26
+	ld l,a			; $5e28
+	ld a,(hl)		; $5e29
+	cp $0f			; $5e2a
+	ret			; $5e2c
+
+@@disallow:
+	or d			; $5e2d
+	ret			; $5e2e
+
+;;
+; @param[out]	zflag	Set on success
+; @addr{5e2f}
+@createBlockIfNotOnHazard:
+	call @alignOnTile		; $5e2f
+	call objectGetTileAtPosition		; $5e32
+	push hl			; $5e35
+	ld hl,hazardCollisionTable		; $5e36
+	call lookupCollisionTable		; $5e39
+	pop hl			; $5e3c
+	jr c,++			; $5e3d
+
+	; Overwrite the tile with the somaria block
+	ld b,(hl)		; $5e3f
+	ld (hl),TILEINDEX_SOMARIA_BLOCK		; $5e40
+	ld h,>wRoomCollisions		; $5e42
+	ld (hl),$0f		; $5e44
+
+	; Save the old value of the tile to w3RoomLayoutBuffer
+	ld e,Item.var32		; $5e46
+	ld a,l			; $5e48
+	ld (de),a		; $5e49
+	ld c,a			; $5e4a
+	call setTileInRoomLayoutBuffer		; $5e4b
+	xor a			; $5e4e
+	ret			; $5e4f
+++
+	or d			; $5e50
+	ret			; $5e51
+
+@alignOnTile:
+	call objectCenterOnTile		; $5e52
+	ld l,Item.yh		; $5e55
+	dec (hl)		; $5e57
+	dec (hl)		; $5e58
+	ret			; $5e59
+
+
+_updateSwingableItemAnimationHook: ; Fix to prevent cane from breaking bushes
+	ld l,$21
+	cp $04 ; Cane
+	jp z,_label_07_220
+	cp $07 ; Rod
+	jp z,_label_07_220
+	jp _updateSwingableItemAnimation_hookReturn
 
 
 .BANK $08 SLOT 1

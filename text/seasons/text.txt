@@ -1066,6 +1066,15 @@ seasons!
 \start
 GOAL!!!
 \end
+
+\name(TX_00_GETCANE)
+\start
+You got the
+\col(1)Cane of Somaria\col(0)!
+Use it to create
+blocks.
+\end
+
 \nextgroup
 
 \name(TX_0100)
@@ -3163,6 +3172,15 @@ fall.
 The season is
 winter.
 \end
+\next
+
+\name(TX_09_CANEDESC)
+\start
+Cane of Somaria
+Used to create
+blocks.
+\end
+
 \nextgroup
 
 \name(TX_0a00)
