@@ -43420,16 +43420,19 @@ _nextToPushableBlockHook:
 
 ; Override breakableTileCollisionTable to make cane block breakable
 _breakableTileCollisionTableHook:
+	push bc
 	call getSomariaBlockIndex
 	ld a,b
 	cp e
 	jr z,@somaria
 	call lookupCollisionTable_paramE
+	pop bc
 	ret
 
 @somaria:
 	pop hl
 	ld hl,caneBreakableTileData
+	pop bc
 	jp _tryToBreakTileHookBypass
 
 .macro m_BreakableTileData
