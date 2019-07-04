@@ -11495,6 +11495,8 @@ _label_00_408:
 	ret			; $3ec7
 
 
+; Should have an unused tile index for cane of somaria block. Using a different index
+; depending on the area type.
 getSomariaBlockIndex:
 	ld a,(wActiveCollisions)
 	ld b,$3f ; Overworld
@@ -38593,6 +38595,8 @@ tryToBreakTile_body:
 	rst_addDoubleIndex			; $4736
 	ld a,e			; $4737
 	rst_addAToHl			; $4738
+
+_tryToBreakTileHookBypass:
 	ldh a,(<hFF8F)	; $4739
 	ld e,a			; $473b
 	and $1f			; $473c
@@ -38632,8 +38636,9 @@ _label_06_070:
 _label_06_071:
 	call setTile		; $4774
 _label_06_072:
-	ldh a,(<hFF92)	; $4777
-	cp $f2			; $4779
+	jp tryToBreakTileHook2
+	nop
+tryToBreakTileHook2_ret:
 	ld hl,$c626		; $477b
 	call z,incHlRefWithCap		; $477e
 	ldh a,(<hFF8E)	; $4781
@@ -43423,9 +43428,63 @@ _breakableTileCollisionTableHook:
 	ret
 
 @somaria:
-	ld a,$32
-	scf
-	ret
+	pop hl
+	ld hl,caneBreakableTileData
+	jp _tryToBreakTileHookBypass
+
+.macro m_BreakableTileData
+	.if \3 > $f
+	.fail
+	.endif
+	.if \4 > $f
+	.fail
+	.endif
+
+	.db \1 \2
+	.db \3 | (\4<<4)
+	.db \5 \6
+.endm
+
+; Extra "entry" for _breakableTileModes
+caneBreakableTileData:
+	m_BreakableTileData %00111110 %10000000 %1011 $0 $1f $00 ; $32
+
+
+; Check for special-case behaviour when breaking with cane
+tryToBreakTileHook2:
+	call getSomariaBlockIndex
+	ldh a,(<hFF92)
+	cp b
+	jr z,@somariaBlock
+	cp $f2
+	jp tryToBreakTileHook2_ret
+
+
+@somariaBlock:
+	ld c,ITEMID_18		; $47ea
+	call findItemWithID		; $47ec
+	jp nz,_label_06_075		; $47ef
+
+	call @deleteSomariaBlock		; $47f1
+	call findItemWithID_startingAfterH		; $47f4
+	jp nz,_label_06_075		; $47f7
+
+	call @deleteSomariaBlock		; $47f9
+	jp _label_06_075		; $47fc
+
+;;
+; @param	h	Somaria block to slate for deletion
+; @addr{47fe}
+@deleteSomariaBlock:
+	ld l,Item.state		; $47fe
+	ld a,(hl)		; $4800
+	cp $03			; $4801
+	ret nz			; $4803
+
+	ld l,Item.var2f		; $4804
+	set 5,(hl)		; $4806
+	ret			; $4808
+
 
 .BANK $07 SLOT 1
 .ORG 0
