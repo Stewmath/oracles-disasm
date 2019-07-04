@@ -1,3 +1,36 @@
+; Data format:
+; b0: Treasure to apply this to
+; b1: Address of "level" or similar variable, used as an index in a sub-table below
+; b2: Which sub-table below to use
+; @addr{6d41}
+treasureDisplayData1:
+	.db TREASURE_SEED_SATCHEL	<wSatchelSelectedSeeds $01
+	.db TREASURE_SWORD		<wSwordLevel           $02
+	.db TREASURE_SHIELD		<wShieldLevel          $03
+	.db TREASURE_BRACELET		<wBraceletLevel        $04
+	.db TREASURE_TRADEITEM		<wTradeItem            $05
+	.db TREASURE_FLUTE		<wFluteIcon            $06
+	.db TREASURE_SHOOTER		<wShooterSelectedSeeds $07
+	.db TREASURE_HARP		<wSelectedHarpSong     $08
+	.db TREASURE_TUNI_NUT		<wTuniNutState         $09
+	.db TREASURE_SWITCH_HOOK	<wSwitchHookLevel      $0a
+	.db $00				$00                    $00
+
+; @addr{6d62}
+treasureDisplayData2:
+	.dw @standardData
+	.dw @satchelData
+	.dw @swordData    - 7
+	.dw @shieldData   - 7
+	.dw @braceletData - 7
+	.dw @tradeData
+	.dw @fluteData
+	.dw @shooterData
+	.dw @harpData
+	.dw @tuniNutData
+	.dw @switchHookData-7
+
+
 ; The parts marked as "filler" in this table aren't actually used, since they have their
 ; respective tables for each level of the item.
 ;
