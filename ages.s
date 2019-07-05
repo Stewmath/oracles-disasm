@@ -103016,7 +103016,7 @@ enemyCode14:
 	ld (hl),$0b		; $5210
 
 	ld l,Enemy.collisionReactionSet		; $5212
-	ld (hl),COLLISIONREACTIONSET_51		; $5214
+	ld (hl),COLLISIONREACTIONSET_SPIKED_BEETLE_FLIPPED		; $5214
 
 	ld l,Enemy.counter1		; $5216
 	ld (hl),180		; $5218
@@ -103141,7 +103141,7 @@ enemyCode14:
 	ld (hl),SPEED_c0		; $52bb
 
 	ld l,Enemy.collisionReactionSet		; $52bd
-	ld (hl),COLLISIONREACTIONSET_18		; $52bf
+	ld (hl),COLLISIONREACTIONSET_SPIKED_BEETLE		; $52bf
 	ld l,Enemy.xh		; $52c1
 	inc (hl)		; $52c3
 	ld bc,-$180		; $52c4
@@ -104571,7 +104571,7 @@ _armos_subid00_stateA:
 	call _ecom_decCounter1		; $596d
 	jp nz,_ecom_flickerVisibility		; $5970
 
-	ld a,COLLISIONREACTIONSET_1e		; $5973
+	ld a,COLLISIONREACTIONSET_ACTIVE_RED_ARMOS		; $5973
 
 ;;
 ; @param	a	Collision reaction set
@@ -104671,7 +104671,7 @@ _armos_subid01_state8:
 _armos_subid01_stateA:
 	call _ecom_decCounter1		; $59d9
 	jp nz,_ecom_flickerVisibility		; $59dc
-	ld a,COLLISIONREACTIONSET_54		; $59df
+	ld a,COLLISIONREACTIONSET_ACTIVE_BLUE_ARMOS		; $59df
 	jp _armos_beginMoving		; $59e1
 
 
@@ -104900,7 +104900,7 @@ _fish_subid00:
 	ld l,e			; $5ae1
 	inc (hl)		; $5ae2
 	ld l,Enemy.collisionReactionSet		; $5ae3
-	ld (hl),COLLISIONREACTIONSET_14		; $5ae5
+	ld (hl),COLLISIONREACTIONSET_SWITCHHOOK_DAMAGE_ENEMY		; $5ae5
 	ld l,Enemy.zh		; $5ae7
 	ld (hl),$00		; $5ae9
 
@@ -104943,7 +104943,7 @@ _fish_subid00:
 _fish_enterWater:
 	ld h,d			; $5b1d
 	ld l,Enemy.collisionReactionSet		; $5b1e
-	ld (hl),COLLISIONREACTIONSET_04		; $5b20
+	ld (hl),COLLISIONREACTIONSET_PODOBOO		; $5b20
 	ld l,Enemy.zh		; $5b22
 	ld (hl),$02		; $5b24
 
@@ -105900,7 +105900,7 @@ enemyCode25:
 	add $04			; $5f80
 	ld (hl),a		; $5f82
 	ld l,Enemy.collisionReactionSet		; $5f83
-	ld (hl),COLLISIONREACTIONSET_57		; $5f85
+	ld (hl),COLLISIONREACTIONSET_BIG_GOPONGA_FLOWER		; $5f85
 ++
 	call _ecom_setSpeedAndState8		; $5f87
 	jp objectSetVisible83		; $5f8a
@@ -108504,7 +108504,7 @@ _ironMask_state_uninitialized:
 
 	; Subid 1 only
 	ld l,Enemy.collisionReactionSet		; $6b43
-	ld (hl),COLLISIONREACTIONSET_53		; $6b45
+	ld (hl),COLLISIONREACTIONSET_UNMASKED_IRON_MASK		; $6b45
 	ld l,Enemy.knockbackCounter		; $6b47
 	ld (hl),$10		; $6b49
 	ld l,Enemy.invincibilityCounter		; $6b4b
@@ -108531,7 +108531,7 @@ _ironMask_state_switchHook:
 
 	ld e,Enemy.collisionReactionSet		; $6b65
 	ld a,(de)		; $6b67
-	cp COLLISIONREACTIONSET_53			; $6b68
+	cp COLLISIONREACTIONSET_UNMASKED_IRON_MASK			; $6b68
 	jr z,@dontRemoveMask	; $6b6a
 
 	ld b,ENEMYID_IRON_MASK		; $6b6c
@@ -108578,7 +108578,7 @@ _ironMask_state_switchHook:
 
 	ld e,Enemy.collisionReactionSet		; $6b9e
 	ld a,(de)		; $6ba0
-	cp COLLISIONREACTIONSET_1d			; $6ba1
+	cp COLLISIONREACTIONSET_IRON_MASK			; $6ba1
 	jp nz,_ecom_fallToGroundAndSetState8		; $6ba3
 
 	ld b,$0a		; $6ba6
@@ -108653,10 +108653,10 @@ _ironMask_updateCollisionsFromLinkRelativeAngle:
 	cp $09			; $6bf9
 	ld l,Enemy.collisionReactionSet		; $6bfb
 	jr c,++			; $6bfd
-	ld (hl),COLLISIONREACTIONSET_1d		; $6bff
+	ld (hl),COLLISIONREACTIONSET_IRON_MASK		; $6bff
 	ret			; $6c01
 ++
-	ld (hl),COLLISIONREACTIONSET_53		; $6c02
+	ld (hl),COLLISIONREACTIONSET_UNMASKED_IRON_MASK		; $6c02
 	ret			; $6c04
 
 
@@ -112914,7 +112914,7 @@ _swordEnemy_updateCollisionReactionSet:
 	jr nz,++		; $5741
 
 	call _swordEnemy_checkIgnoreCollision		; $5743
-	ld a,COLLISIONREACTIONSET_55		; $5746
+	ld a,COLLISIONREACTIONSET_STALFOS_BLOCKED_WITH_SWORD		; $5746
 	ld b,$00		; $5748
 	jr nz,@setVars	; $574a
 ++
@@ -112922,9 +112922,9 @@ _swordEnemy_updateCollisionReactionSet:
 	ld e,Enemy.id		; $574d
 	ld a,(de)		; $574f
 	cp ENEMYID_SWORD_SHROUDED_STALFOS			; $5750
-	ld a,COLLISIONREACTIONSET_11		; $5752
+	ld a,COLLISIONREACTIONSET_BURNABLE_ENEMY		; $5752
 	jr nz,@setVars	; $5754
-	ld a,COLLISIONREACTIONSET_11		; $5756
+	ld a,COLLISIONREACTIONSET_BURNABLE_ENEMY		; $5756
 
 @setVars:
 	ld e,Enemy.collisionReactionSet		; $5758
@@ -112946,11 +112946,11 @@ _swordDarknut_updateCollisionReactionSet:
 	jr nz,++		; $5766
 
 	call _swordEnemy_checkIgnoreCollision		; $5768
-	ld a,COLLISIONREACTIONSET_56		; $576b
+	ld a,COLLISIONREACTIONSET_DARKNUT_BLOCKED_WITH_SWORD		; $576b
 	ld b,$00		; $576d
 	jr nz,@setVars	; $576f
 ++
-	ld a,COLLISIONREACTIONSET_20		; $5771
+	ld a,COLLISIONREACTIONSET_DARKNUT		; $5771
 	inc b			; $5773
 
 @setVars:
@@ -113012,7 +113012,7 @@ enemyCode3e:
 	; ENEMYSTATUS_KNOCKBACK
 	ld e,Enemy.collisionReactionSet		; $57af
 	ld a,(de)		; $57b1
-	cp COLLISIONREACTIONSET_58			; $57b2
+	cp COLLISIONREACTIONSET_PEAHAT			; $57b2
 	ret nz			; $57b4
 
 @normalStatus:
@@ -113139,9 +113139,9 @@ _peahat_updateCollisionReactionSet:
 	ld e,Enemy.zh		; $5849
 	ld a,(de)		; $584b
 	or a			; $584c
-	ld a,COLLISIONREACTIONSET_2e		; $584d
+	ld a,COLLISIONREACTIONSET_PEAHAT_VULNERABLE		; $584d
 	jr z,+			; $584f
-	ld a,COLLISIONREACTIONSET_58		; $5851
+	ld a,COLLISIONREACTIONSET_PEAHAT		; $5851
 +
 	ld e,Enemy.collisionReactionSet		; $5853
 	ld (de),a		; $5855
@@ -116673,10 +116673,10 @@ enemyCode58:
 
 
 @collisionAndTileData:
-	.db COLLISIONREACTIONSET_40, TILEINDEX_OVERWORLD_BUSH ; Subid 0
-	.db COLLISIONREACTIONSET_40, TILEINDEX_DUNGEON_BUSH   ; Subid 1
-	.db COLLISIONREACTIONSET_52, TILEINDEX_DUNGEON_POT    ; Subid 2
-	.db COLLISIONREACTIONSET_52, TILEINDEX_OVERWORLD_ROCK ; Subid 3
+	.db COLLISIONREACTIONSET_BUSH, TILEINDEX_OVERWORLD_BUSH ; Subid 0
+	.db COLLISIONREACTIONSET_BUSH, TILEINDEX_DUNGEON_BUSH   ; Subid 1
+	.db COLLISIONREACTIONSET_ROCK,           TILEINDEX_DUNGEON_POT    ; Subid 2
+	.db COLLISIONREACTIONSET_ROCK,           TILEINDEX_OVERWORLD_ROCK ; Subid 3
 
 
 
@@ -116836,7 +116836,7 @@ enemyCode58:
 	cp ENEMYID_DEKU_SCRUB			; $6856
 	ret nz			; $6858
 	ld e,Enemy.collisionReactionSet		; $6859
-	ld a,COLLISIONREACTIONSET_52		; $685b
+	ld a,COLLISIONREACTIONSET_ROCK		; $685b
 	ld (de),a		; $685d
 	ret			; $685e
 
@@ -117634,7 +117634,7 @@ enemyCode3c:
 
 	ld e,Enemy.collisionReactionSet		; $6c07
 	ld a,(de)		; $6c09
-	cp COLLISIONREACTIONSET_59			; $6c0a
+	cp COLLISIONREACTIONSET_BARI_ELECTRIC_SHOCK			; $6c0a
 	jr z,@normalStatus	; $6c0c
 
 	; FIXME: This checks if collisionType is strictly less than L3 shield, which is
@@ -117733,7 +117733,7 @@ _bari_subid0_state8:
 	inc (hl) ; [state]
 
 	ld l,Enemy.collisionReactionSet		; $6c80
-	ld (hl),COLLISIONREACTIONSET_59		; $6c82
+	ld (hl),COLLISIONREACTIONSET_BARI_ELECTRIC_SHOCK		; $6c82
 
 	ld a,$01		; $6c84
 	jp enemySetAnimation		; $6c86
@@ -117771,7 +117771,7 @@ _bari_state9:
 	dec (hl) ; [state] = 8
 
 	ld l,Enemy.collisionReactionSet		; $6cb1
-	ld (hl),COLLISIONREACTIONSET_2d		; $6cb3
+	ld (hl),COLLISIONREACTIONSET_BARI		; $6cb3
 
 	dec l			; $6cb5
 	set 7,(hl) ; [collisionType]
@@ -118315,7 +118315,7 @@ enemyCode47:
 	; Ignore all attacks if color matches floor
 	ld e,Enemy.collisionReactionSet		; $6f45
 	ld a,(de)		; $6f47
-	cp COLLISIONREACTIONSET_6e			; $6f48
+	cp COLLISIONREACTIONSET_COLOR_CHANGING_GEL			; $6f48
 	jr nz,@normalStatus	; $6f4a
 
 	; Only allow switch hook and sword attacks to kill the gel
@@ -118360,7 +118360,7 @@ _colorChangingGel_state_uninitialized:
 	ld (hl),$00 ; [counter2]
 
 	ld l,Enemy.collisionReactionSet		; $6f89
-	ld (hl),COLLISIONREACTIONSET_6e		; $6f8b
+	ld (hl),COLLISIONREACTIONSET_COLOR_CHANGING_GEL		; $6f8b
 
 	ld l,Enemy.var3f		; $6f8d
 	set 5,(hl)		; $6f8f
@@ -118546,9 +118546,9 @@ _colorChangingGel_updateColor:
 
 	call @lookupFloorColor		; $7058
 	cp (hl)			; $705b
-	ld b,COLLISIONREACTIONSET_6e		; $705c
+	ld b,COLLISIONREACTIONSET_COLOR_CHANGING_GEL		; $705c
 	jr z,+			; $705e
-	ld b,COLLISIONREACTIONSET_35		; $7060
+	ld b,COLLISIONREACTIONSET_GOHMA_GEL		; $7060
 +
 	ld l,Enemy.collisionReactionSet		; $7062
 	ld (hl),b		; $7064
@@ -118909,7 +118909,7 @@ _ambiGuard_attacksLink_state10:
 	ld l,Enemy.speed		; $7207
 	ld (hl),SPEED_180		; $7209
 	ld l,Enemy.collisionReactionSet		; $720b
-	ld (hl),COLLISIONREACTIONSET_3d		; $720d
+	ld (hl),COLLISIONREACTIONSET_AMBI_GUARD_CHASING_LINK		; $720d
 
 ;;
 ; @addr{720f}
@@ -119904,7 +119904,7 @@ _candle_stateD:
 	inc (hl)		; $76cd
 
 	ld l,Enemy.collisionReactionSet		; $76ce
-	ld (hl),COLLISIONREACTIONSET_04		; $76d0
+	ld (hl),COLLISIONREACTIONSET_PODOBOO		; $76d0
 
 	jp objectSetInvisible		; $76d2
 
@@ -120556,7 +120556,7 @@ _veranPossessionBoss_humanForm_state8:
 	set 7,(hl)		; $79d8
 
 	ld l,Enemy.collisionReactionSet		; $79da
-	ld (hl),COLLISIONREACTIONSET_5b		; $79dc
+	ld (hl),COLLISIONREACTIONSET_VERAN_GHOST		; $79dc
 
 	; If this is Nayru, and we haven't shown veran's taunting text yet, show it.
 	ld a,Object.subid		; $79de
@@ -120627,7 +120627,7 @@ _veranPossessionBoss_humanForm_stateB:
 	ld (hl),120 ; [counter1]
 
 	ld l,Enemy.collisionReactionSet		; $7a2b
-	ld (hl),COLLISIONREACTIONSET_5c		; $7a2d
+	ld (hl),COLLISIONREACTIONSET_VERAN_HUMAN		; $7a2d
 
 	ld l,e			; $7a2f
 	inc (hl) ; [state]
@@ -120892,7 +120892,7 @@ _veranPossessionBoss_wasHit:
 
 	ld l,Enemy.collisionReactionSet		; $7b5f
 	ld a,(hl)		; $7b61
-	cp COLLISIONREACTIONSET_5b			; $7b62
+	cp COLLISIONREACTIONSET_VERAN_GHOST			; $7b62
 	jr nz,++		; $7b64
 
 	; No effect on ghost form
@@ -122802,7 +122802,7 @@ _subterror_beginUndergroundMovement:
 	res 7,(hl)		; $4a96
 
 	ld l,Enemy.collisionReactionSet		; $4a98
-	ld (hl),COLLISIONREACTIONSET_69		; $4a9a
+	ld (hl),COLLISIONREACTIONSET_SUBTERROR_UNDERGROUND		; $4a9a
 
 	ld l,Enemy.counter1		; $4a9c
 	ld (hl),60		; $4a9e
@@ -122999,7 +122999,7 @@ _subterror_stateB:
 
 	; Just started drilling
 	ld l,Enemy.collisionReactionSet		; $4ba0
-	ld (hl),COLLISIONREACTIONSET_5f		; $4ba2
+	ld (hl),COLLISIONREACTIONSET_SUBTERROR_DRILLING		; $4ba2
 	ld l,Enemy.visible		; $4ba4
 	set 7,(hl)		; $4ba6
 	ld a,SND_SHOCK		; $4ba8
@@ -123044,7 +123044,7 @@ _subterror_stateC:
 	ld (de),a ; [var2a] = 0
 
 	ld e,Enemy.collisionReactionSet		; $4be1
-	ld a,COLLISIONREACTIONSET_44		; $4be3
+	ld a,COLLISIONREACTIONSET_STANDARD_MINIBOSS		; $4be3
 	ld (de),a		; $4be5
 
 	call _ecom_decCounter1		; $4be6
@@ -123375,7 +123375,7 @@ _armosWarrior_parent_state8:
 	ld (hl),SPEED_80		; $4d4e
 
 	ld l,Enemy.collisionReactionSet		; $4d50
-	ld (hl),COLLISIONREACTIONSET_60		; $4d52
+	ld (hl),COLLISIONREACTIONSET_ARMOS_WARRIOR_PROTECTED		; $4d52
 	jp objectSetVisible82		; $4d54
 
 
@@ -123591,7 +123591,7 @@ _armosWarrior_parent_stateD:
 	inc (hl) ; [state]
 
 	ld l,Enemy.collisionReactionSet		; $4e53
-	ld (hl),COLLISIONREACTIONSET_44		; $4e55
+	ld (hl),COLLISIONREACTIONSET_STANDARD_MINIBOSS		; $4e55
 
 	ld l,Enemy.speed		; $4e57
 	ld (hl),SPEED_200		; $4e59
@@ -123704,7 +123704,7 @@ _armosWarrior_shield:
 	inc (hl) ; [state]
 
 	ld l,Enemy.collisionReactionSet		; $4ee2
-	ld (hl),COLLISIONREACTIONSET_61		; $4ee4
+	ld (hl),COLLISIONREACTIONSET_ARMOS_WARRIOR_SHIELD		; $4ee4
 
 	ld l,Enemy.var32		; $4ee6
 	ld (hl),$03		; $4ee8
@@ -123757,7 +123757,7 @@ _armosWarrior_sword_state8:
 	inc (hl) ; [state]
 
 	ld l,Enemy.collisionReactionSet		; $4f25
-	ld (hl),COLLISIONREACTIONSET_62		; $4f27
+	ld (hl),COLLISIONREACTIONSET_ARMOS_WARRIOR_SWORD		; $4f27
 
 	ld l,Enemy.speed		; $4f29
 	ld (hl),SPEED_20		; $4f2b
@@ -124515,7 +124515,7 @@ _smasher_ball_state8:
 	inc (hl) ; [state]
 
 	ld l,Enemy.collisionReactionSet		; $527b
-	ld (hl),COLLISIONREACTIONSET_63		; $527d
+	ld (hl),COLLISIONREACTIONSET_SMASHER_BALL		; $527d
 	ld l,Enemy.speed		; $527f
 	ld (hl),SPEED_a0		; $5281
 
@@ -126766,7 +126766,7 @@ _anglerFish_antenna:
 	inc (hl) ; [state]
 
 	ld l,Enemy.collisionReactionSet		; $5d67
-	ld (hl),COLLISIONREACTIONSET_47		; $5d69
+	ld (hl),COLLISIONREACTIONSET_ANGLER_FISH_ANTENNA		; $5d69
 
 	ld l,Enemy.collisionRadiusY		; $5d6b
 	ld a,$03		; $5d6d
@@ -127218,7 +127218,7 @@ _blueStalfos_main_state15:
 	call _ecom_incState		; $5f9e
 
 	ld l,Enemy.collisionReactionSet		; $5fa1
-	ld (hl),COLLISIONREACTIONSET_65		; $5fa3
+	ld (hl),COLLISIONREACTIONSET_BLUE_STALFOS_BAT		; $5fa3
 
 	ld l,Enemy.zh		; $5fa5
 	ld (hl),$00		; $5fa7
@@ -127241,7 +127241,7 @@ _blueStalfos_main_state16:
 	inc (hl)		; $5fb8
 
 	ld l,Enemy.collisionReactionSet		; $5fb9
-	ld (hl),COLLISIONREACTIONSET_48		; $5fbb
+	ld (hl),COLLISIONREACTIONSET_BLUE_STALFOS		; $5fbb
 	ld l,Enemy.zh		; $5fbd
 	ld (hl),$ff		; $5fbf
 	jp objectSetInvisible		; $5fc1
@@ -127359,7 +127359,7 @@ _blueStalfos_initSubid2Or3:
 	inc (hl) ; [state]
 
 	ld l,Enemy.collisionReactionSet		; $605a
-	ld (hl),COLLISIONREACTIONSET_66		; $605c
+	ld (hl),COLLISIONREACTIONSET_BLUE_STALFOS_SICKLE		; $605c
 
 	ld a,Object.zh		; $605e
 	call objectGetRelatedObject1Var		; $6060
@@ -128176,7 +128176,7 @@ _pumpkinHead_ghost_state08:
 	inc (hl) ; [state]
 
 	ld l,Enemy.collisionReactionSet		; $6413
-	ld (hl),COLLISIONREACTIONSET_5e		; $6415
+	ld (hl),COLLISIONREACTIONSET_PUMPKIN_HEAD_GHOST		; $6415
 
 	ld l,Enemy.oamFlags		; $6417
 	ld a,$05		; $6419
@@ -128496,7 +128496,7 @@ _pumpkinHead_head_state08:
 	ld (hl),$ff		; $658b
 
 	ld l,Enemy.collisionReactionSet		; $658d
-	ld (hl),COLLISIONREACTIONSET_5d		; $658f
+	ld (hl),COLLISIONREACTIONSET_PUMPKIN_HEAD_HEAD		; $658f
 
 	ld l,Enemy.collisionRadiusY		; $6591
 	ld (hl),$06		; $6593
@@ -130541,7 +130541,7 @@ _eyesoar_state_switchHook:
 	ld (hl),a		; $6ef8
 
 	ld l,Enemy.collisionReactionSet		; $6ef9
-	ld (hl),COLLISIONREACTIONSET_4c		; $6efb
+	ld (hl),COLLISIONREACTIONSET_EYESOAR_VULNERABLE		; $6efb
 	ld l,Enemy.counter1		; $6efd
 	ld (hl),150		; $6eff
 	ld l,Enemy.direction		; $6f01
@@ -130687,7 +130687,7 @@ _eyesoar_stateC:
 	inc (hl) ; [state]
 
 	ld l,Enemy.collisionReactionSet		; $6fa7
-	ld (hl),COLLISIONREACTIONSET_6d		; $6fa9
+	ld (hl),COLLISIONREACTIONSET_EYESOAR		; $6fa9
 
 	xor a			; $6fab
 	call enemySetAnimation		; $6fac
@@ -131021,7 +131021,7 @@ _smog_state_uninitialized:
 @initCollisions:
 	call objectSetCollideRadius		; $7139
 	ld l,Enemy.collisionReactionSet		; $713c
-	ld a,COLLISIONREACTIONSET_07		; $713e
+	ld a,COLLISIONREACTIONSET_PROJECTILE_WITH_RING_MOD		; $713e
 	ld (hl),a		; $7140
 	ret			; $7141
 
@@ -131793,7 +131793,7 @@ _octogon_state_uninitialized:
 	jr nz,@notSubid2	; $74cc
 
 	ld e,Enemy.collisionReactionSet		; $74ce
-	ld a,COLLISIONREACTIONSET_67		; $74d0
+	ld a,COLLISIONREACTIONSET_OCTOGON_SHELL		; $74d0
 	ld (de),a		; $74d2
 	jp _ecom_setSpeedAndState8		; $74d3
 
@@ -132947,7 +132947,7 @@ enemyCode7e:
 	; Hit by something
 	ld e,Enemy.collisionReactionSet		; $7a64
 	ld a,(de)		; $7a66
-	cp COLLISIONREACTIONSET_68			; $7a67
+	cp COLLISIONREACTIONSET_PLASMARINE_SHOCK			; $7a67
 	jr z,@normalStatus	; $7a69
 
 	ld e,Enemy.var2a		; $7a6b
@@ -133172,7 +133172,7 @@ _plasmarine_stateC:
 	ld (hl),a		; $7b83
 
 	ld l,Enemy.collisionReactionSet		; $7b84
-	ld (hl),COLLISIONREACTIONSET_68		; $7b86
+	ld (hl),COLLISIONREACTIONSET_PLASMARINE_SHOCK		; $7b86
 	ld a,$02		; $7b88
 	jp enemySetAnimation		; $7b8a
 
@@ -133241,7 +133241,7 @@ _plasmarine_stateD:
 	ld (hl),a		; $7bdd
 
 	ld l,Enemy.collisionReactionSet		; $7bde
-	ld (hl),COLLISIONREACTIONSET_4f		; $7be0
+	ld (hl),COLLISIONREACTIONSET_PLASMARINE		; $7be0
 	xor a			; $7be2
 	jp enemySetAnimation		; $7be3
 
@@ -150025,7 +150025,7 @@ partCode36:
 	ld h,b			; $69d9
 	ld l,Enemy.collisionReactionSet		; $69da
 	ld a,(hl)		; $69dc
-	cp COLLISIONREACTIONSET_04			; $69dd
+	cp COLLISIONREACTIONSET_PODOBOO			; $69dd
 	jp z,partDelete		; $69df
 
 	call objectTakePosition		; $69e2
@@ -151013,7 +151013,7 @@ _blueStalfosProjectile_subid0:
 	; Non-reflectable ball
 	ld (hl),SPEED_200		; $6fd8
 	ld l,Part.collisionReactionSet		; $6fda
-	ld (hl),COLLISIONREACTIONSET_04		; $6fdc
+	ld (hl),COLLISIONREACTIONSET_PODOBOO		; $6fdc
 	ld l,Part.var03		; $6fde
 	inc (hl)		; $6fe0
 ++
@@ -151138,7 +151138,7 @@ _blueStalfosProjectile_subid1_uninitialized:
 	ld l,Part.collisionType		; $7067
 	set 7,(hl)		; $7069
 	ld l,Part.collisionReactionSet		; $706b
-	ld (hl),COLLISIONREACTIONSET_04		; $706d
+	ld (hl),COLLISIONREACTIONSET_PODOBOO		; $706d
 
 	ld l,Part.speed		; $706f
 	ld (hl),SPEED_1c0		; $7071
@@ -152981,7 +152981,7 @@ partCode4a:
 	ld (de),a		; $7a10
 
 	ld e,Part.collisionReactionSet		; $7a11
-	ld a,COLLISIONREACTIONSET_04		; $7a13
+	ld a,COLLISIONREACTIONSET_PODOBOO		; $7a13
 	ld (de),a		; $7a15
 
 	ld a,c			; $7a16
