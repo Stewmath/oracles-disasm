@@ -5782,6 +5782,7 @@ objectGetAngleTowardEnemyTarget:
 	jr _label_00_248		; $1e58
 
 objectGetLinkRelativeAngle:
+objectGetAngleTowardLink:
 	ld a,($d00b)		; $1e5a
 	ld b,a			; $1e5d
 	ld a,($d00d)		; $1e5e
@@ -32342,6 +32343,8 @@ _label_05_206:
 	ld e,$33		; $5d70
 	ld (de),a		; $5d72
 	ret			; $5d73
+
+checkPositionSurroundedByWalls:
 	call $5d85		; $5d74
 _label_05_207:
 	ld b,$80		; $5d77
@@ -32353,6 +32356,8 @@ _label_05_207:
 	rl b			; $5d80
 	jr nz,_label_05_207	; $5d82
 	ret			; $5d84
+
+calculateAdjacentWallsBitset:
 	ld a,$01		; $5d85
 	ldh (<hFF8B),a	; $5d87
 	ld hl,$5da9		; $5d89
@@ -38674,6 +38679,8 @@ _label_06_075:
 	pop de			; $47b8
 	scf			; $47b9
 	ret			; $47ba
+
+itemMakeInteractionForBreakableTile:
 	ld h,d			; $47bb
 	ld l,$0b		; $47bc
 	ldi a,(hl)		; $47be
@@ -39006,7 +39013,7 @@ _parentItemUpdate:
 	.dw _parentItemCode_rodOfSeasons        ; ITEMID_ROD_OF_SEASONS
 	.dw _parentItemCode_magnetGloves        ; ITEMID_MAGNET_GLOVES
 	.dw _clearParentItem                    ; ITEMID_SWITCH_HOOK_HELPER
-	.dw _parentItemCode_sword               ; ITEMID_SWITCH_HOOK
+	.dw _parentItemCode_switchHook          ; ITEMID_SWITCH_HOOK
 	.dw _clearParentItem                    ; ITEMID_SWITCH_HOOK_CHAIN
 	.dw _parentItemCode_biggoronSword       ; ITEMID_BIGGORON_SWORD
 	.dw _parentItemCode_bombchu             ; ITEMID_BOMBCHUS
@@ -39154,9 +39161,6 @@ _label_06_096:
 	jp nc,$4414		; $4a9b
 	jp _clearParentItem		; $4a9e
 
-
-_parentItemCode_switchHook:
-	; Nothing here
 
 _parentItemCode_sword:
 	call $53f0		; $4aa1
@@ -40630,10 +40634,13 @@ _label_06_156:
 	ldi a,(hl)		; $541f
 	or (hl)			; $5420
 	ret			; $5421
+
+_isLinkInHole:
 	ld a,($ccb6)		; $5422
 	dec a			; $5425
 	cp $02			; $5426
 	ret			; $5428
+
 	ld a,(wLinkGrabState2)		; $5429
 	ld b,a			; $542c
 	rlca			; $542d
@@ -40826,7 +40833,7 @@ _itemUsageParameterTable:
 	.db $33 <wGameKeysJustPressed   ; ITEMID_ROD_OF_SEASONS
 	.db $53 <wGameKeysJustPressed   ; ITEMID_MAGNET_GLOVES
 	.db $00 <wGameKeysJustPressed   ; ITEMID_SWITCH_HOOK_HELPER
-	.db $00 <wGameKeysJustPressed   ; ITEMID_SWITCH_HOOK
+	.db $73 <wGameKeysJustPressed   ; ITEMID_SWITCH_HOOK
 	.db $00 <wGameKeysJustPressed   ; ITEMID_SWITCH_HOOK_CHAIN
 	.db $73 <wGameKeysJustPressed   ; ITEMID_BIGGORON_SWORD
 	.db $02 <wGameKeysJustPressed   ; ITEMID_BOMBCHUS
@@ -43489,6 +43496,67 @@ tryToBreakTileHook2:
 	ret			; $4808
 
 
+
+
+; SWITCH HOOK
+
+_parentItemCode_switchHook:
+	ld e,Item.state		; $4b16
+	ld a,(de)		; $4b18
+	rst_jumpTable			; $4b19
+	.dw @state0
+	.dw @state1
+
+@state0:
+	ld a,(wLinkObjectIndex)		; $4b1e
+	rrca			; $4b21
+	jp c,_clearParentItem		; $4b22
+	ld a,(wLinkInAir)		; $4b25
+	or a			; $4b28
+	jp nz,_clearParentItem		; $4b29
+	call _isLinkInHole		; $4b2c
+	jp c,_clearParentItem		; $4b2f
+
+	call updateLinkDirectionFromAngle		; $4b32
+	call clearVariousLinkVariables		; $4b35
+
+	; Disable pressing the switch hook button again (set item priority to maximum)
+	ld h,d			; $4b38
+	ld l,Item.enabled		; $4b39
+	ld (hl),$ff		; $4b3b
+
+	call _parentItemLoadAnimationAndIncState		; $4b3d
+	call itemCreateChild		; $4b40
+
+	ret
+	; If underwater, use a different animation (N/A for seasons)
+	;call _isLinkUnderwater		; $4b43
+	;ret z			; $4b46
+	;ld a,LINK_ANIM_MODE_2e		; $4b47
+	;jp specialObjectSetAnimationWithLinkData		; $4b49
+
+@state1:
+	ld a,(w1WeaponItem.var2f)		; $4b4c
+	or a			; $4b4f
+	jp z,_clearParentItem		; $4b50
+
+	ld (wDisallowMountingCompanion),a		; $4b53
+	call clearVariousLinkVariables		; $4b56
+
+	; Cancel the switch hook usage if experiencing knockback?
+	ld hl,w1Link.var2a		; $4b59
+	ld a,(hl)		; $4b5c
+	ld l,<w1Link.knockbackCounter		; $4b5d
+	or (hl)			; $4b5f
+	ret z			; $4b60
+
+	; Cancel switch hook usage?
+	ld hl,w1WeaponItem.var2f		; $4b61
+	set 5,(hl)		; $4b64
+	ret			; $4b66
+
+
+
 .BANK $07 SLOT 1
 .ORG 0
 
@@ -44958,9 +45026,9 @@ _label_07_060:
 	.dw itemCode06 ; 0x06
 	.dw itemCode07 ; 0x07
 	.dw itemCode08 ; 0x08
-	.dw itemDelete ; 0x09
-	.dw itemDelete ; 0x0a
-	.dw itemDelete ; 0x0b
+	.dw itemCode09 ; 0x09
+	.dw itemCode0a ; 0x0a
+	.dw itemCode0b ; 0x0b
 	.dw itemCode0c ; 0x0c
 	.dw itemCode0d ; 0x0d
 	.dw itemDelete ; 0x0e
@@ -45028,8 +45096,8 @@ _updateItemPost:
 	.dw itemCode07Post  ; 0x07
 	.dw itemCode08Post  ; 0x08
 	.dw itemCodeNilPost ; 0x09
-	.dw itemDelete      ; 0x0a
-	.dw itemDelete      ; 0x0b
+	.dw itemCode0aPost  ; 0x0a
+	.dw itemCode0bPost   ; 0x0b
 	.dw itemCode0cPost  ; 0x0c
 	.dw itemCodeNilPost ; 0x0d
 	.dw itemCodeNilPost ; 0x0e
@@ -45205,6 +45273,8 @@ _label_07_064:
 	dec l			; $4a1b
 	ld (hl),b		; $4a1c
 	ret			; $4a1d
+
+_applyOffsetTableHL:
 	ld e,$08		; $4a1e
 	ld a,(de)		; $4a20
 	ld e,a			; $4a21
@@ -45432,16 +45502,24 @@ _label_07_082:
 	call objectCreateFallingDownHoleInteraction		; $4b64
 	scf			; $4b67
 	ret			; $4b68
+
+_objectCreateClinkInteraction:
 	ld b,$07		; $4b69
 	jp objectCreateInteractionWithSubid00		; $4b6b
+
+_cpRelatedObject1ID:
 	ld a,$01		; $4b6e
 	call objectGetRelatedObject1Var		; $4b70
 	ld e,$01		; $4b73
 	ld a,(de)		; $4b75
 	cp (hl)			; $4b76
 	ret			; $4b77
+
+_itemCheckCanPassSolidTileAt:
 	call getTileAtPosition		; $4b78
 	jr _label_07_083		; $4b7b
+
+_itemCheckCanPassSolidTile:
 	call objectGetTileAtPosition		; $4b7d
 _label_07_083:
 	ld e,a			; $4b80
@@ -47165,6 +47243,8 @@ _label_07_165:
 	ret z			; $563c
 	ld a,$07		; $563d
 	jp itemTryToBreakTile		; $563f
+
+_itemCheckWithinRangeOfLink:
 	ld hl,$d00b		; $5642
 	ld e,$0b		; $5645
 	ld a,(de)		; $5647
@@ -48810,6 +48890,8 @@ _label_07_241:
 	ld bc,$0105		; $600a
 	ld b,$01		; $600d
 	nop			; $600f
+
+_itemMimicBgTile:
 	call getTileMappingData		; $6010
 	push bc			; $6013
 	ld h,d			; $6014
@@ -49828,6 +49910,728 @@ _updateSwingableItemAnimationHook: ; Fix to prevent cane from breaking bushes
 	cp $07 ; Rod
 	jp z,_label_07_220
 	jp _updateSwingableItemAnimation_hookReturn
+
+
+
+; SWITCH HOOK
+
+;;
+; The chain on the switch hook; cycles between 3 intermediate positions
+;
+; ITEMID_SWITCH_HOOK_CHAIN
+; @addr{5791}
+itemCode0bPost:
+	ld a,(w1WeaponItem.id)		; $5791
+	cp ITEMID_SWITCH_HOOK			; $5794
+	jp nz,itemDelete		; $5796
+
+	ld a,(w1WeaponItem.var2f)		; $5799
+	bit 4,a			; $579c
+	jp nz,itemDelete		; $579e
+
+	; Copy Z position
+	ld h,d			; $57a1
+	ld a,(w1WeaponItem.zh)		; $57a2
+	ld l,Item.zh		; $57a5
+	ld (hl),a		; $57a7
+
+	; Cycle through the 3 positions
+	ld l,Item.counter1		; $57a8
+	dec (hl)		; $57aa
+	jr nz,+			; $57ab
+	ld (hl),$03		; $57ad
++
+	ld e,(hl)		; $57af
+
+	; Set Y position
+	push de			; $57b0
+	ld b,$03		; $57b1
+	ld hl,w1WeaponItem.yh		; $57b3
+	call @setPositionComponent		; $57b6
+
+	; Set X position
+	pop de			; $57b9
+	ld b,$00		; $57ba
+	ld hl,w1WeaponItem.xh		; $57bc
+
+; @param	b	Offset to add to position
+; @param	e	Index, or which position to place this at (1-3)
+; @param	hl	X or Y position variable
+@setPositionComponent:
+	ld a,(hl)		; $57bf
+	cp $f8			; $57c0
+	jr c,+			; $57c2
+	xor a			; $57c4
++
+	; Calculate: c = ([Switch hook pos] - [Link pos]) / 4
+	ld h,>w1Link		; $57c5
+	sub (hl)		; $57c7
+	ld c,a			; $57c8
+	ld a,$00		; $57c9
+	sbc a			; $57cb
+	rra			; $57cc
+	rr c			; $57cd
+	rra			; $57cf
+	rr c			; $57d0
+
+	; Calculate: a = c * e
+	xor a			; $57d2
+-
+	add c			; $57d3
+	dec e			; $57d4
+	jr nz,-			; $57d5
+
+	; Add this to the current position (plus offset 'b')
+	add (hl)		; $57d7
+	add b			; $57d8
+	ld h,d			; $57d9
+	ldi (hl),a		; $57da
+	ret			; $57db
+
+;;
+; ITEMID_SWITCH_HOOK_CHAIN
+; @addr{57dc}
+itemCode0b:
+	ld e,Item.state		; $57dc
+	ld a,(de)		; $57de
+	or a			; $57df
+	ret nz			; $57e0
+
+	call _itemLoadAttributesAndGraphics		; $57e1
+	call itemIncState		; $57e4
+	ld l,Item.counter1		; $57e7
+	ld (hl),$03		; $57e9
+	xor a			; $57eb
+	call itemSetAnimation		; $57ec
+	jp objectSetVisible83		; $57ef
+
+;;
+; ITEMID_SWITCH_HOOK
+; @addr{57f2}
+itemCode0aPost:
+	call _cpRelatedObject1ID		; $57f2
+	ret z			; $57f5
+
+	ld a,(wSwitchHookState)		; $57f6
+	or a			; $57f9
+	jp z,itemDelete		; $57fa
+
+	jp _func_5902		; $57fd
+
+;;
+; ITEMID_SWITCH_HOOK
+; @addr{5800}
+itemCode0a:
+	ld a,$08		; $5800
+	ld (wDisableRingTransformations),a		; $5802
+	ld a,$80		; $5805
+	ld (wcc92),a		; $5807
+	ld e,Item.state		; $580a
+	ld a,(de)		; $580c
+	rst_jumpTable			; $580d
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw _switchHookState3
+
+@state0:
+	ld a,UNCMP_GFXH_1f		; $5816
+	call loadWeaponGfx		; $5818
+
+	ld hl,@offsetsTable		; $581b
+	call _applyOffsetTableHL		; $581e
+
+	call objectSetVisible82		; $5821
+	call _loadAttributesAndGraphicsAndIncState		; $5824
+
+	; Depending on the switch hook's level, set speed (b) and # frames to extend (c)
+	ldbc SPEED_200,$29		; $5827
+	ld a,(wSwitchHookLevel)		; $582a
+	dec a			; $582d
+	jr z,+			; $582e
+	ldbc SPEED_300,$26		; $5830
++
+	ld h,d			; $5833
+	ld l,Item.speed		; $5834
+	ld (hl),b		; $5836
+	ld l,Item.counter1		; $5837
+	ld (hl),c		; $5839
+
+	ld l,Item.var2f		; $583a
+	ld (hl),$01		; $583c
+	call itemUpdateAngle		; $583e
+
+	; Set animation based on Item.direction
+	ld a,(hl)		; $5841
+	add $02			; $5842
+	jp itemSetAnimation		; $5844
+
+; Offsets to make the switch hook centered with link
+@offsetsTable:
+	.db $01 $00 $00 ; DIR_UP
+	.db $03 $01 $00 ; DIR_RIGHT
+	.db $01 $00 $00 ; DIR_DOWN
+	.db $03 $ff $00 ; DIR_LEFT
+
+; State 1: extending the hook
+@state1:
+	; When var2a is nonzero, a collision has occured?
+	ld e,Item.var2a		; $5853
+	ld a,(de)		; $5855
+	or a			; $5856
+	jr z,+			; $5857
+
+	; If bit 5 is set, the switch hook can exchange with the object
+	bit 5,a			; $5859
+	jr nz,@goToState3	; $585b
+
+	; Otherwise, it will be pulled back
+	jr @startRetracting		; $585d
++
+	; Cancel the switch hook when you take damage
+	ld h,d			; $585f
+	ld l,Item.var2f		; $5860
+	bit 5,(hl)		; $5862
+	jp nz,itemDelete		; $5864
+
+	call itemDecCounter1		; $5867
+	jr z,@startRetracting	; $586a
+
+	call objectCheckWithinRoomBoundary		; $586c
+	jr nc,@startRetracting	; $586f
+
+	; Check if collided with a tile
+	call objectCheckTileCollision_allowHoles		; $5871
+	jr nc,@noCollisionWithTile	; $5874
+
+	; There is a collision, but check for exceptions (tiles that items can pass by)
+	call _itemCheckCanPassSolidTile		; $5876
+	jr nz,@collisionWithTile	; $5879
+
+@noCollisionWithTile:
+	; Bit 3 of var2f remembers whether a "chain" item has been created
+	ld e,Item.var2f		; $587b
+	ld a,(de)		; $587d
+	bit 3,a			; $587e
+	jr nz,++		; $5880
+
+	call getFreeItemSlot		; $5882
+	jr nz,++		; $5885
+
+	inc a			; $5887
+	ldi (hl),a		; $5888
+	ld (hl),ITEMID_SWITCH_HOOK_CHAIN		; $5889
+
+	; Remember to not create the item again
+	ld h,d			; $588b
+	ld l,Item.var2f		; $588c
+	set 3,(hl)		; $588e
+++
+	call _updateSwitchHookSound		; $5890
+	jp objectApplySpeed		; $5893
+
+@collisionWithTile:
+	call _objectCreateClinkInteraction		; $5896
+
+	; Check if the tile is breakable (oring with $80 makes it perform only a check,
+	; not the breakage itself).
+	ld a,$80 | BREAKABLETILESOURCE_SWITCH_HOOK		; $5899
+	call itemTryToBreakTile		; $589b
+	; Retract if not breakable by the switch hook
+	jr nc,@startRetracting	; $589e
+
+	; Hooked onto a tile that can be swapped with
+	ld e,Item.subid		; $58a0
+	ld a,$01		; $58a2
+	ld (de),a		; $58a4
+
+@goToState3:
+	ld a,$03		; $58a5
+	call itemSetState		; $58a7
+
+	; Disable collisions with objects?
+	ld l,Item.collisionType		; $58aa
+	res 7,(hl)		; $58ac
+
+	ld a,$ff		; $58ae
+	ld (wDisableLinkCollisionsAndMenu),a		; $58b0
+
+	ld a,$01		; $58b3
+	ld (wSwitchHookState),a		; $58b5
+
+	jp resetLinkInvincibility		; $58b8
+
+@label_07_185:
+	xor a			; $58bb
+	ld (wDisableLinkCollisionsAndMenu),a		; $58bc
+	ld (wSwitchHookState),a		; $58bf
+
+@startRetracting:
+	ld h,d			; $58c2
+
+	; Disable collisions with objects?
+	ld l,Item.collisionType		; $58c3
+	res 7,(hl)		; $58c5
+
+	ld a,$02		; $58c7
+	jp itemSetState		; $58c9
+
+; State 2: retracting the hook
+@state2:
+	ld e,Item.state2		; $58cc
+	ld a,(de)		; $58ce
+	or a			; $58cf
+	jr nz,@fullyRetracted		; $58d0
+
+	; The counter is just for keeping track of the sound?
+	call itemDecCounter1		; $58d2
+	call _updateSwitchHookSound		; $58d5
+
+	; Update angle based on position of link
+	call objectGetAngleTowardLink		; $58d8
+	ld e,Item.angle		; $58db
+	ld (de),a		; $58dd
+
+	call objectApplySpeed		; $58de
+
+	; Check if within 8 pixels of link
+	ld bc,$1008		; $58e1
+	call _itemCheckWithinRangeOfLink		; $58e4
+	ret nc			; $58e7
+
+	; Item has reached Link
+
+	call itemIncState2		; $58e8
+
+	; Set Item.counter1 to $03
+	inc l			; $58eb
+	ld (hl),$03		; $58ec
+
+	ld l,Item.var2f		; $58ee
+	set 4,(hl)		; $58f0
+	jp objectSetInvisible		; $58f2
+
+@fullyRetracted:
+	ld hl,w1Link.yh		; $58f5
+	call objectTakePosition		; $58f8
+	call itemDecCounter1		; $58fb
+	ret nz			; $58fe
+	jp itemDelete		; $58ff
+
+;;
+; Swap with an object?
+; @addr{5902}
+_func_5902:
+	call _checkRelatedObject2States		; $5902
+	jr nc,++		; $5905
+	jr z,++			; $5907
+
+	ld a,Object.state2		; $5909
+	call objectGetRelatedObject2Var		; $590b
+	ld (hl),$03		; $590e
+++
+	xor a			; $5910
+	ld (wDisableLinkCollisionsAndMenu),a		; $5911
+	ld (wSwitchHookState),a		; $5914
+	jp itemDelete		; $5917
+
+; State 3: grabbed something switchable
+; Uses w1ReservedItemE as ITEMID_SWITCH_HOOK_HELPER to hold the positions for link and the
+; object temporarily.
+_switchHookState3:
+	ld e,Item.state2		; $591a
+	ld a,(de)		; $591c
+	rst_jumpTable			; $591d
+	.dw @s3subState0
+	.dw @s3subState1
+	.dw @s3subState2
+	.dw @s3subState3
+
+; Substate 0: grabbed an object/tile, doing the cling animation for several frames
+@s3subState0:
+	ld h,d			; $5926
+
+	; Check if deletion was requested?
+	ld l,Item.var2f		; $5927
+	bit 5,(hl)		; $5929
+	jp nz,_func_5902		; $592b
+
+	; Wait until the animation writes bit 7 to animParameter
+	ld l,Item.animParameter		; $592e
+	bit 7,(hl)		; $5930
+	jp z,itemAnimate		; $5932
+
+	; At this point the animation is finished, now link and the hooked object/tile
+	; will rise and swap
+
+	call _checkRelatedObject2States		; $5935
+	jr nc,itemCode0a@label_07_185	; $5938
+	; Jump if an object collision, not a tile collision
+	jr nz,@@objectCollision		; $593a
+
+	; Tile collision
+
+	; Break the tile underneath whatever was latched on to
+	ld a,BREAKABLETILESOURCE_SWITCH_HOOK		; $593c
+	call itemTryToBreakTile		; $593e
+	jp nc,itemCode0a@label_07_185		; $5941
+
+	ld h,d			; $5944
+	ld l,Item.var03		; $5945
+	ldh a,(<hFF8E)	; $5947
+	ld (hl),a		; $5949
+
+	ld l,Item.var3c		; $594a
+	ldh a,(<hFF93)	; $594c
+	ldi (hl),a		; $594e
+	ldh a,(<hFF92)	; $594f
+	ld (hl),a		; $5951
+
+	; Imitate the tile that was grabbed
+	call _itemMimicBgTile		; $5952
+
+	ld h,d			; $5955
+	ld l,Item.var3c		; $5956
+	ld c,(hl)		; $5958
+	call objectSetShortPosition		; $5959
+	call objectSetVisiblec2		; $595c
+	jr +++			; $595f
+
+@@objectCollision:
+	ld a,(w1ReservedInteraction1.id)		; $5961
+	cp INTERACID_PUSHBLOCK			; $5964
+	jr z,++			; $5966
+
+	; Get the object being switched with's yx in bc
+	ld a,Object.yh		; $5968
+	call objectGetRelatedObject2Var		; $596a
+	ldi a,(hl)		; $596d
+	inc l			; $596e
+	ld c,(hl)		; $596f
+	ld b,a			; $5970
+
+	callab checkPositionSurroundedByWalls		; $5971
+	rl b			; $5979
+	jr c,++			; $597b
+
+	ld a,Object.yh		; $597d
+	call objectGetRelatedObject2Var		; $597f
+	call objectTakePosition		; $5982
+	call objectSetInvisible		; $5985
++++
+	ld a,$02		; $5988
+	ld (wSwitchHookState),a		; $598a
+.ifdef ROM_AGES
+	ld a,SND_SWITCH2		; $598d
+.else
+	ld a,$8e
+.endif
+	call playSound		; $598f
+
+	call itemIncState2		; $5992
+
+	ld l,Item.zh		; $5995
+	ld (hl),$00		; $5997
+	ld l,Item.var2f		; $5999
+	set 1,(hl)		; $599b
+
+	; Use w1ReservedItemE to keep copies of xyz positions
+	ld hl,w1ReservedItemE		; $599d
+	ld a,$01		; $59a0
+	ldi (hl),a		; $59a2
+	ld (hl),ITEMID_SWITCH_HOOK_HELPER		; $59a3
+
+	; Zero Item.state and Item.state2
+	ld l,Item.state		; $59a5
+	xor a			; $59a7
+	ldi (hl),a		; $59a8
+	ldi (hl),a		; $59a9
+
+	call objectCopyPosition		; $59aa
+	jp resetLinkInvincibility		; $59ad
+++
+	ld a,Object.state2		; $59b0
+	call objectGetRelatedObject2Var		; $59b2
+	ld (hl),$03		; $59b5
+	jp itemCode0a@label_07_185		; $59b7
+
+
+; Substate 1: Link and the object are rising for several frames
+@s3subState1:
+	ld h,d			; $59ba
+	ld l,Item.zh		; $59bb
+	dec (hl)		; $59bd
+	ld a,(hl)		; $59be
+	cp $f1			; $59bf
+	call c,itemIncState2		; $59c1
+	jr @updateOtherPositions		; $59c4
+
+; Substate 2: Link and the object swap positions
+@s3subState2:
+	push de			; $59c6
+
+	; Swap Link and Hook's xyz (at least, the copies in w1ReservedItemE)
+	ld hl,w1ReservedItemE.var36		; $59c7
+	ld de,w1ReservedItemE.var30		; $59ca
+	ld b,$06		; $59cd
+--
+	ld a,(de)		; $59cf
+	ld c,(hl)		; $59d0
+	ldi (hl),a		; $59d1
+	ld a,c			; $59d2
+	ld (de),a		; $59d3
+	inc e			; $59d4
+	dec b			; $59d5
+	jr nz,--		; $59d6
+
+	pop de			; $59d8
+	ld e,Item.subid		; $59d9
+	ld a,(de)		; $59db
+	or a			; $59dc
+	; Jump if hooked an object, and not a tile
+	jr z,@doneCentering	; $59dd
+
+	; Everything from here to @doneCentering involves centering the hooked tile at
+	; link's position.
+
+	ld a,(w1Link.direction)		; $59df
+	; a *= 3
+	ld l,a			; $59e2
+	add a			; $59e3
+	add l			; $59e4
+
+	ld hl,itemCode0a@offsetsTable		; $59e5
+	rst_addAToHl			; $59e8
+
+	push de			; $59e9
+	ld de,w1ReservedItemE.var31		; $59ea
+	ld a,(de)		; $59ed
+	add (hl)		; $59ee
+	ld (de),a		; $59ef
+
+	inc hl			; $59f0
+	ld e,<w1ReservedItemE.var33		; $59f1
+	ld a,(de)		; $59f3
+	add (hl)		; $59f4
+	ld (de),a		; $59f5
+
+	ld e,<w1ReservedItemE.var31		; $59f6
+	call getShortPositionFromDE		; $59f8
+	pop de			; $59fb
+	ld l,a			; $59fc
+	call _checkCanPlaceDiamondOnTile		; $59fd
+	jr z,++			; $5a00
+
+	ld e,l			; $5a02
+	ld a,(w1Link.direction)		; $5a03
+	ld bc,@data		; $5a06
+	call addAToBc		; $5a09
+	ld a,(bc)		; $5a0c
+	rst_addAToHl			; $5a0d
+	call _checkCanPlaceDiamondOnTile		; $5a0e
+	jr z,++			; $5a11
+	ld l,e			; $5a13
+++
+	ld c,l			; $5a14
+	ld hl,w1ReservedItemE.var31		; $5a15
+	call setShortPosition_paramC		; $5a18
+
+@doneCentering:
+	ld e,Item.y		; $5a1b
+	ld hl,w1ReservedItemE.var30		; $5a1d
+	ld b,$04		; $5a20
+	call copyMemory		; $5a22
+
+	; Reverse link's direction
+	ld hl,w1Link.direction		; $5a25
+	ld a,(hl)		; $5a28
+	xor $02			; $5a29
+	ld (hl),a		; $5a2b
+
+	call itemIncState2		; $5a2c
+	call _checkRelatedObject2States		; $5a2f
+	jr nc,+			; $5a32
+	jr z,+			; $5a34
+	ld (hl),$02		; $5a36
++
+	jr @updateOtherPositions			; $5a38
+
+@data:
+	.db $10 $ff $f0 $01
+
+; Update the positions (mainly z positions) for Link and the object being hooked.
+@updateOtherPositions:
+	; Update other object position if hooked to an enemy
+	call _checkRelatedObject2States		; $5a3e
+	call nz,objectCopyPosition		; $5a41
+
+	; Update the Z position that w1ReservedItemE is keeping track of
+	push de			; $5a44
+	ld e,Item.zh		; $5a45
+	ld a,(de)		; $5a47
+	ld de,w1ReservedItemE.var3b		; $5a48
+	ld (de),a		; $5a4b
+
+	; Update link's position
+	ld hl,w1Link.y		; $5a4c
+	ld e,<w1ReservedItemE.var36		; $5a4f
+	ld b,$06		; $5a51
+	call copyMemoryReverse		; $5a53
+	pop de			; $5a56
+	ret			; $5a57
+
+; Substate 3: Link and the other object are moving back to the ground
+@s3subState3:
+	ld h,d			; $5a58
+
+	; Lower 1 pixel
+	ld l,Item.zh		; $5a59
+	inc (hl)		; $5a5b
+	call @updateOtherPositions		; $5a5c
+
+	; Return if link and the item haven't reached the ground yet
+	ld e,Item.zh		; $5a5f
+	ld a,(de)		; $5a61
+	or a			; $5a62
+	ret nz			; $5a63
+
+	call _checkRelatedObject2States		; $5a64
+	jr nz,@reenableEnemy		; $5a67
+
+	; For tile collisions, check whether to make the interaction which shows it
+	; breaking, or whether to keep the switch hook diamond there
+
+	call objectGetTileCollisions		; $5a69
+	call _checkCanPlaceDiamondOnTile		; $5a6c
+	jr nz,+			; $5a6f
+
+	; If the current block is the switch diamond, do NOT break it
+	ld c,l			; $5a71
+	ld e,Item.var3d		; $5a72
+	ld a,(de)		; $5a74
+	;cp TILEINDEX_SWITCH_DIAMOND			; $5a75
+	jr +			; $5a77
+
+	call setTile		; $5a79
+	jr @delete			; $5a7c
++
+	; Create the bush/pot/etc breakage animation (based on var03)
+	callab itemMakeInteractionForBreakableTile		; $5a7e
+	jr @delete		; $5a86
+
+@reenableEnemy:
+	ld (hl),$03		; $5a88
+@delete:
+	xor a			; $5a8a
+	ld (wSwitchHookState),a		; $5a8b
+	ld (wDisableLinkCollisionsAndMenu),a		; $5a8e
+	jp itemDelete		; $5a91
+
+;;
+; This function is used for the switch hook.
+;
+; @param[out]	hl	Related object 2's state2 variable
+; @param[out]	zflag	Set if latched onto a tile, not an object
+; @param[out]	cflag	Unset if the related object is on state 3, substate 3?
+; @addr{5a94}
+_checkRelatedObject2States:
+	; Jump if latched onto a tile, not an object
+	ld e,Item.subid		; $5a94
+	ld a,(de)		; $5a96
+	dec a			; $5a97
+	jr z,++			; $5a98
+
+	; It might be assuming that there aren't any states above $03, so the carry flag
+	; will always be set when returning here?
+	ld a,Object.state		; $5a9a
+	call objectGetRelatedObject2Var		; $5a9c
+	ldi a,(hl)		; $5a9f
+	cp $03			; $5aa0
+	ret nz			; $5aa2
+
+	ld a,(hl)		; $5aa3
+	cp $03			; $5aa4
+	ret nc			; $5aa6
+
+	or d			; $5aa7
+++
+	scf			; $5aa8
+	ret			; $5aa9
+
+;;
+; Plays the switch hook sound every 4 frames.
+; @addr{5aaa}
+_updateSwitchHookSound:
+	ld e,Item.counter1		; $5aaa
+	ld a,(de)		; $5aac
+	and $03			; $5aad
+	ret z			; $5aaf
+
+	ld a,SND_SWITCH_HOOK		; $5ab0
+	jp playSound		; $5ab2
+
+;;
+; @param l Position to check
+; @param[out] zflag Set if the tile at l has a collision value of 0 (or is the somaria
+; block?)
+; @addr{5ab5}
+_checkCanPlaceDiamondOnTile:
+	ld h,>wRoomCollisions		; $5ab5
+	ld a,(hl)		; $5ab7
+	or a			; $5ab8
+	ret z			; $5ab9
+	ld h,>wRoomLayout		; $5aba
+	ld a,(hl)		; $5abc
+	cp TILEINDEX_SOMARIA_BLOCK			; $5abd
+	ret			; $5abf
+
+
+;;
+; ITEMID_SWITCH_HOOK_HELPER
+; Used with the switch hook in w1ReservedItemE to store position values.
+; @addr{5ac0}
+itemCode09:
+	ld h,d			; $5ac0
+	ld l,Item.var2f		; $5ac1
+	bit 5,(hl)		; $5ac3
+	jr nz,@state2		; $5ac5
+
+	ld e,Item.state		; $5ac7
+	ld a,(de)		; $5ac9
+	rst_jumpTable			; $5aca
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+; Initialization (initial copying of positions)
+@state0:
+	call itemIncState		; $5ad1
+	ld h,d			; $5ad4
+
+	; Copy from Item.y to Item.var30
+	ld l,Item.y		; $5ad5
+	ld e,Item.var30		; $5ad7
+	ld b,$06		; $5ad9
+	call copyMemory		; $5adb
+
+	; Copy from w1Link.y to Item.var36
+	ld hl,w1Link.y		; $5ade
+	ld b,$06		; $5ae1
+	call copyMemory		; $5ae3
+
+	; Set the focused object to this
+	jp setCameraFocusedObject		; $5ae6
+
+; State 1: do nothing until the switch hook is no longer in use, then delete self
+@state1:
+	ld a,(w1WeaponItem.id)		; $5ae9
+	cp ITEMID_SWITCH_HOOK			; $5aec
+	ret z			; $5aee
+
+; State 2: Restore camera to focusing on Link and delete self
+@state2:
+	call setCameraFocusedObjectToLink		; $5aef
+	jp itemDelete		; $5af2
 
 
 

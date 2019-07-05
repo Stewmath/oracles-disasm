@@ -17,7 +17,7 @@ itemAttributes:
 	.db $8c $00 $ff $7e ; $07: ITEMID_ROD_OF_SEASONS
 	.db $12 $00 $00 $00 ; $08: ITEMID_MAGNET_GLOVES
 	.db $12 $00 $00 $00 ; $09: ITEMID_SWITCH_HOOK_HELPER
-	.db $92 $66 $fe $7e ; $0a: ITEMID_SWITCH_HOOK
+	.db $8d $66 $fe $7e ; $0a: ITEMID_SWITCH_HOOK
 	.db $12 $00 $00 $7e ; $0b: ITEMID_SWITCH_HOOK_CHAIN
 	.db $87 $55 $fb $00 ; $0c: ITEMID_BIGGORON_SWORD
 	.db $17 $00 $fc $00 ; $0d: ITEMID_BOMBCHUS

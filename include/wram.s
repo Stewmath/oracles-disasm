@@ -851,6 +851,11 @@ wSecretType: ; $c6fe
 ; 3: 5-letter secret
 	db
 
+.ifdef ROM_SEASONS
+wSwitchHookLevel:
+	db
+.endif
+
 .ende
 
 .define wSeedsAndHarpSongsObtained	wObtainedTreasureFlags+TREASURE_EMBER_SEEDS/8
@@ -2298,6 +2303,14 @@ wFollowingLinkObjectType: ; $cce7/$ccfd
 	db
 wFollowingLinkObject: ; $cce8/$ccfe
 	db
+
+.ifdef ROM_SEASONS
+wSwitchHookState:
+; Used when swapping with the switch hook.
+; (NOTE: May not be cleared since wcce9, below, isn't referenced properly in seasons.
+; Shouldn't be a bit deal.)
+	db
+.endif
 
 wcce9: ; $cce9
 ; This might be a marker for the end of data in the $cc00 block?
