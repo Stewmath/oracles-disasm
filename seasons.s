@@ -45463,6 +45463,8 @@ _itemMergeZPositionIfSidescrollingArea:
 	ld (hl),a		; $4a47
 	or d			; $4a48
 	ret			; $4a49
+
+_itemUpdateSpeedZAndCheckHazards:
 	ld e,$0f		; $4a4a
 	ld a,e			; $4a4c
 	ldh (<hFF8B),a	; $4a4d
@@ -45485,6 +45487,8 @@ _label_07_066:
 	rlca			; $4a68
 	or a			; $4a69
 	ret			; $4a6a
+
+_bombPullTowardPoint:
 	ld h,d			; $4a6b
 	ld l,$0f		; $4a6c
 	and $80			; $4a6e
@@ -45922,140 +45926,154 @@ itemCode21:
 itemCode22:
 itemCode23:
 itemCode24:
-	ld e,$04		; $4cc3
+	ld e,Item.state		; $4cc3
 	ld a,(de)		; $4cc5
 	rst_jumpTable			; $4cc6
-	rst $8			; $4cc7
-	ld c,h			; $4cc8
-	inc a			; $4cc9
-	ld c,l			; $4cca
-	call $7b4e		; $4ccb
-	ld c,(hl)		; $4cce
-	call $497b		; $4ccf
+	.dw @state0
+	.dw _seedItemState1
+	.dw _seedItemState2
+	.dw _seedItemState3
+
+@state0:
+	call _itemLoadAttributesAndGraphics		; $4ccf
 	xor a			; $4cd2
-	call $49ca		; $4cd3
+	call itemSetAnimation		; $4cd3
 	call objectSetVisiblec1		; $4cd6
 	call itemIncState		; $4cd9
 	ld bc,$ffe0		; $4cdc
 	call objectSetSpeedZ		; $4cdf
 	call itemUpdateAngle		; $4ce2
-	ld l,$02		; $4ce5
+
+	ld l,Item.subid		; $4ce5
 	ldd a,(hl)		; $4ce7
 	or a			; $4ce8
-	jr nz,_label_07_093	; $4ce9
-	ldi a,(hl)		; $4ceb
-	cp $23			; $4cec
-	jr nz,_label_07_092	; $4cee
-	ld l,$0f		; $4cf0
+	jr nz,@slingshot	; $4ce9
+
+	; Satchel
+	ldi a,(hl) ; [id]
+	cp ITEMID_GALE_SEED			; $4cec
+	jr nz,++		; $4cee
+
+	; Gale seed
+	ld l,Item.zh		; $4cf0
 	ld a,(hl)		; $4cf2
 	add $f8			; $4cf3
 	ld (hl),a		; $4cf5
-	ld l,$09		; $4cf6
+	ld l,Item.angle		; $4cf6
 	ld (hl),$ff		; $4cf8
 	ret			; $4cfa
-_label_07_092:
-	ld a,$1e		; $4cfb
-	jr _label_07_094		; $4cfd
-_label_07_093:
-	ld hl,$4d2c		; $4cff
+++
+	ld a,SPEED_c0		; $4cfb
+	jr @setSpeed		; $4cfd
+
+@slingshot:
+	ld hl,@slingshotAngleTable-1		; $4cff
 	rst_addAToHl			; $4d02
-	ld e,$09		; $4d03
+	ld e,Item.angle		; $4d03
 	ld a,(de)		; $4d05
 	add (hl)		; $4d06
 	and $1f			; $4d07
 	ld (de),a		; $4d09
-	ld hl,$ccf1		; $4d0a
+
+	ld hl,wIsSeedShooterInUse		; $4d0a
 	inc (hl)		; $4d0d
-	ld a,$78		; $4d0e
-_label_07_094:
-	ld e,$10		; $4d10
+	ld a,SPEED_300		; $4d0e
+
+@setSpeed:
+	ld e,Item.speed		; $4d10
 	ld (de),a		; $4d12
-	ld hl,$4d30		; $4d13
-	call $4a1e		; $4d16
-	ld e,$01		; $4d19
+	ld hl,@seedPositionOffsets		; $4d13
+	call _applyOffsetTableHL		; $4d16
+
+	; If it's a mystery seed, get a random effect
+	ld e,Item.id		; $4d19
 	ld a,(de)		; $4d1b
-	cp $24			; $4d1c
+	cp ITEMID_MYSTERY_SEED			; $4d1c
 	ret nz			; $4d1e
+
 	call getRandomNumber_noPreserveVars		; $4d1f
 	and $03			; $4d22
-	ld e,$03		; $4d24
+	ld e,Item.var03		; $4d24
 	ld (de),a		; $4d26
-	add $9b			; $4d27
-	ld e,$24		; $4d29
+	add $80|ITEMCOLLISION_EMBER_SEED			; $4d27
+	ld e,Item.collisionType		; $4d29
 	ld (de),a		; $4d2b
 	ret			; $4d2c
-	nop			; $4d2d
-	ld (bc),a		; $4d2e
-	cp $fc			; $4d2f
-	nop			; $4d31
-	cp $01			; $4d32
-	inc b			; $4d34
-	cp $05			; $4d35
-	nop			; $4d37
-	cp $01			; $4d38
-	ei			; $4d3a
-	cp $cd			; $4d3b
-	or b			; $4d3d
-	ld c,c			; $4d3e
-	jr nz,_label_07_098	; $4d3f
-	ld e,$02		; $4d41
+
+@slingshotAngleTable:
+	.db $00 $02 $fe
+
+@seedPositionOffsets:
+	.db $fc $00 $fe ; DIR_UP
+	.db $01 $04 $fe ; DIR_RIGHT
+	.db $05 $00 $fe ; DIR_DOWN
+	.db $01 $fb $fe ; DIR_LEFT
+
+
+_seedItemState1:
+	call _itemUpdateDamageToApply		; $4d3c
+	jr nz,@collisionWithEnemy	; $4d3f
+
+	ld e,Item.subid		; $4d41
 	ld a,(de)		; $4d43
 	or a			; $4d44
-	jr z,_label_07_095	; $4d45
-	call $4fdf		; $4d47
-	jr nz,_label_07_097	; $4d4a
+	jr z,@satchelUpdate	; $4d45
+
+@slingshotUpdate:
+	call _slingshotCheckCanPassSolidTile		; $4d47
+	jr nz,@seedCollidedWithWall	; $4d4a
 	call objectCheckWithinScreenBoundary		; $4d4c
 	jp c,objectApplySpeed		; $4d4f
-	jp $4e6a		; $4d52
-_label_07_095:
+	jp _seedItemDelete		; $4d52
+
+@satchelUpdate:
+	; Set speed to 0 if landed in water?
 	ld h,d			; $4d55
-	ld l,$3b		; $4d56
+	ld l,Item.var3b		; $4d56
 	bit 0,(hl)		; $4d58
-	jr z,_label_07_096	; $4d5a
-	ld l,$10		; $4d5c
-	ld (hl),$00		; $4d5e
-_label_07_096:
+	jr z,+			; $4d5a
+	ld l,Item.speed		; $4d5c
+	ld (hl),SPEED_0		; $4d5e
++
 	call objectCheckWithinRoomBoundary		; $4d60
-	jp nc,$4e6a		; $4d63
+	jp nc,_seedItemDelete		; $4d63
+
 	call objectApplySpeed		; $4d66
 	ld c,$1c		; $4d69
-	call $4b24		; $4d6b
-	jp c,$4e6a		; $4d6e
+	call _itemUpdateThrowingVerticallyAndCheckHazards		; $4d6b
+	jp c,_seedItemDelete		; $4d6e
 	ret z			; $4d71
-	ld a,$52		; $4d72
+
+; Landed on ground
+
+	ld a,SND_BOMB_LAND		; $4d72
 	call playSound		; $4d74
-	call $49c1		; $4d77
-	ld e,$01		; $4d7a
+	call itemAnimate		; $4d77
+	ld e,Item.id		; $4d7a
 	ld a,(de)		; $4d7c
-	sub $20			; $4d7d
+	sub ITEMID_EMBER_SEED			; $4d7d
 	rst_jumpTable			; $4d7f
-	or h			; $4d80
-	ld c,l			; $4d81
-	cp d			; $4d82
-	ld c,l			; $4d83
-	ld l,d			; $4d84
-	ld c,(hl)		; $4d85
-	sub $4d			; $4d86
-	dec h			; $4d88
-	ld c,(hl)		; $4d89
-_label_07_097:
-	call $49c1		; $4d8a
-	ld e,$01		; $4d8d
+	.dw @emberStandard
+	.dw @scentLanded
+	.dw _seedItemDelete
+	.dw @galeLanded
+	.dw @mysteryStandard
+
+@seedCollidedWithWall:
+	call itemAnimate		; $4d8a
+	ld e,Item.id		; $4d8d
 	ld a,(de)		; $4d8f
-	sub $20			; $4d90
+	sub ITEMID_EMBER_SEED			; $4d90
 	rst_jumpTable			; $4d92
-	or h			; $4d93
-	ld c,l			; $4d94
-	ret nc			; $4d95
-	ld c,l			; $4d96
-	ret nc			; $4d97
-	ld c,l			; $4d98
-.DB $f4				; $4d99
-	ld c,l			; $4d9a
-	dec h			; $4d9b
-	ld c,(hl)		; $4d9c
-_label_07_098:
-	call $49c1		; $4d9d
+	.dw @emberStandard
+	.dw @scentOrPegasusCollided
+	.dw @scentOrPegasusCollided
+	.dw @galeCollidedWithWall
+	.dw @mysteryStandard
+
+
+@collisionWithEnemy:
+	call itemAnimate		; $4d9d
 	ld e,$24		; $4da0
 	xor a			; $4da2
 	ld (de),a		; $4da3
@@ -46063,86 +46081,119 @@ _label_07_098:
 	ld a,(de)		; $4da6
 	sub $20			; $4da7
 	rst_jumpTable			; $4da9
-	or h			; $4daa
-	ld c,l			; $4dab
-	ret nc			; $4dac
-	ld c,l			; $4dad
-	ret nc			; $4dae
-	ld c,l			; $4daf
-	or h			; $4db0
-	ld c,l			; $4db1
-	ld ($cd4e),sp		; $4db2
-	inc l			; $4db5
-	ld c,(hl)		; $4db6
+	.dw @emberStandard
+	.dw @scentOrPegasusCollided
+	.dw @scentOrPegasusCollided
+	.dw @galeCollidedWithEnemy
+	.dw @mysteryCollidedWithEnemy
+
+
+@emberStandard:
+@galeCollidedWithEnemy:
+	call @initState3		; $4db4
 	jp objectSetVisible82		; $4db7
+
+
+@scentLanded:
 	ld a,$27		; $4dba
-	call $4e34		; $4dbc
+	call @loadGfxVarsWithIndex		; $4dbc
 	ld a,$02		; $4dbf
 	call itemSetState		; $4dc1
-	ld l,$24		; $4dc4
+	ld l,Item.collisionType		; $4dc4
 	res 7,(hl)		; $4dc6
 	ld a,$01		; $4dc8
-	call $49ca		; $4dca
+	call itemSetAnimation		; $4dca
 	jp objectSetVisible83		; $4dcd
-	ld e,$24		; $4dd0
+
+
+@scentOrPegasusCollided:
+	ld e,Item.collisionType		; $4dd0
 	xor a			; $4dd2
 	ld (de),a		; $4dd3
-	jr _label_07_101		; $4dd4
-	call $4def		; $4dd6
+	jr @initState3		; $4dd4
+
+
+@galeLanded:
+	call @breakTileWithGaleSeed		; $4dd6
+
 	ld a,$25		; $4dd9
-	call $4e34		; $4ddb
+	call @loadGfxVarsWithIndex		; $4ddb
 	ld a,$02		; $4dde
 	call itemSetState		; $4de0
-	ld l,$24		; $4de3
+
+	ld l,Item.collisionType		; $4de3
 	xor a			; $4de5
 	ldi (hl),a		; $4de6
+
+	; Set collisionRadiusY/X
 	inc l			; $4de7
 	ld a,$02		; $4de8
 	ldi (hl),a		; $4dea
 	ld (hl),a		; $4deb
+
 	jp objectSetVisible82		; $4dec
-	ld a,$0d		; $4def
+
+
+@breakTileWithGaleSeed:
+	ld a,BREAKABLETILESOURCE_0d		; $4def
 	jp itemTryToBreakTile		; $4df1
-	call $4def		; $4df4
+
+
+@galeCollidedWithWall:
+	call @breakTileWithGaleSeed		; $4df4
 	ld a,$26		; $4df7
-	call $4e34		; $4df9
+	call @loadGfxVarsWithIndex		; $4df9
 	ld a,$03		; $4dfc
 	call itemSetState		; $4dfe
-	ld l,$24		; $4e01
+	ld l,Item.collisionType		; $4e01
 	res 7,(hl)		; $4e03
 	jp objectSetVisible82		; $4e05
+
+
+@mysteryCollidedWithEnemy:
 	ld h,d			; $4e08
-	ld l,$2a		; $4e09
+	ld l,Item.var2a		; $4e09
 	bit 6,(hl)		; $4e0b
-	jr nz,_label_07_100	; $4e0d
-	ld l,$03		; $4e0f
+	jr nz,@mysteryStandard	; $4e0d
+
+	; Change id to be the random type selected
+	ld l,Item.var03		; $4e0f
 	ldd a,(hl)		; $4e11
-	add $20			; $4e12
+	add ITEMID_EMBER_SEED			; $4e12
 	dec l			; $4e14
-_label_07_099:
 	ld (hl),a		; $4e15
-	call $497b		; $4e16
+	call _itemLoadAttributesAndGraphics		; $4e16
 	xor a			; $4e19
-	call $49ca		; $4e1a
+	call itemSetAnimation		; $4e1a
 	ld e,$29		; $4e1d
 	ld a,$ff		; $4e1f
 	ld (de),a		; $4e21
 	jp $4d9d		; $4e22
-_label_07_100:
+
+@mysteryStandard:
 	ld e,$24		; $4e25
 	xor a			; $4e27
 	ld (de),a		; $4e28
 	call objectSetVisible82		; $4e29
-_label_07_101:
-	ld e,$04		; $4e2c
+
+@initState3:
+	ld e,Item.state		; $4e2c
 	ld a,$03		; $4e2e
 	ld (de),a		; $4e30
-	ld e,$01		; $4e31
+
+	ld e,Item.id		; $4e31
 	ld a,(de)		; $4e33
+
+;;
+; @param	a	Index to use for below table (plus $20, since
+;			ITEMID_EMBER_SEED=$20)
+; @addr{4e8a}
+@loadGfxVarsWithIndex:
 	add a			; $4e34
-	ld hl,$4dca		; $4e35
+	ld hl,@data-(ITEMID_EMBER_SEED*4)		; $4e35
 	rst_addDoubleIndex			; $4e38
-	ld e,$1b		; $4e39
+
+	ld e,Item.oamFlagsBackup		; $4e39
 	ldi a,(hl)		; $4e3b
 	ld (de),a		; $4e3c
 	inc e			; $4e3d
@@ -46151,121 +46202,134 @@ _label_07_101:
 	ldi a,(hl)		; $4e40
 	ld (de),a		; $4e41
 	ldi a,(hl)		; $4e42
-	ld e,$06		; $4e43
+	ld e,Item.counter1		; $4e43
 	ld (de),a		; $4e45
 	ld a,(hl)		; $4e46
 	jp playSound		; $4e47
-	ld a,(bc)		; $4e4a
-	ld b,$3a		; $4e4b
-	ld (hl),d		; $4e4d
-	dec bc			; $4e4e
-	stop			; $4e4f
-	inc a			; $4e50
-	ret nc			; $4e51
-	add hl,bc		; $4e52
-	jr _label_07_102		; $4e53
-_label_07_102:
-	ld (hl),d		; $4e55
-	add hl,bc		; $4e56
-	jr z,_label_07_105	; $4e57
-	sub b			; $4e59
-	ld ($0018),sp		; $4e5a
-	ld a,e			; $4e5d
-	add hl,bc		; $4e5e
-	jr z,_label_07_099	; $4e5f
-	sub b			; $4e61
-	add hl,bc		; $4e62
-	jr z,_label_07_104	; $4e63
-	sub b			; $4e65
-	dec bc			; $4e66
-	inc a			; $4e67
-	sub (hl)		; $4e68
-	add l			; $4e69
-	ld e,$02		; $4e6a
+
+; b0: value for Item.oamFlags and oamFlagsBackup
+; b1: value for Item.oamTileIndexBase
+; b2: value for Item.counter1
+; b3: sound effect
+@data:
+	.db $0a $06 $3a SND_LIGHTTORCH
+	.db $0b $10 $3c SND_PIRATE_BELL
+	.db $09 $18 $00 SND_LIGHTTORCH
+	.db $09 $28 $32 SND_GALE_SEED
+	.db $08 $18 $00 SND_MYSTERY_SEED
+
+	.db $09 $28 $b4 SND_GALE_SEED
+	.db $09 $28 $1e SND_GALE_SEED
+	.db $0b $3c $96 SND_SCENT_SEED
+
+;;
+; @addr{4e6a}
+_seedItemDelete:
+	ld e,Item.subid		; $4e6a
 	ld a,(de)		; $4e6c
 	or a			; $4e6d
-	jr z,_label_07_103	; $4e6e
-	ld hl,$ccf1		; $4e70
+	jr z,@delete	; $4e6e
+
+	ld hl,wIsSeedShooterInUse		; $4e70
 	ld a,(hl)		; $4e73
 	or a			; $4e74
-	jr z,_label_07_103	; $4e75
+	jr z,@delete	; $4e75
 	dec (hl)		; $4e77
-_label_07_103:
+@delete:
 	jp itemDelete		; $4e78
-	ld e,$01		; $4e7b
+
+;;
+; State 3: typically occurs when the seed collides with a wall or enemy (instead of the
+; ground)
+; @addr{4e7b}
+_seedItemState3:
+	ld e,Item.id		; $4e7b
 	ld a,(de)		; $4e7d
-	sub $20			; $4e7e
+	sub ITEMID_EMBER_SEED			; $4e7e
 	rst_jumpTable			; $4e80
-	adc e			; $4e81
-	ld c,(hl)		; $4e82
-_label_07_104:
-	cp (hl)			; $4e83
-	ld c,(hl)		; $4e84
-	cp (hl)			; $4e85
-	ld c,(hl)		; $4e86
-	rrca			; $4e87
-	ld c,a			; $4e88
-	cp (hl)			; $4e89
-	ld c,(hl)		; $4e8a
-_label_07_105:
+	.dw _emberSeedBurn
+	.dw _seedUpdateAnimation
+	.dw _seedUpdateAnimation
+	.dw $4f0f
+	.dw _seedUpdateAnimation
+
+_emberSeedBurn:
 	ld h,d			; $4e8b
-	ld l,$06		; $4e8c
+	ld l,Item.counter1		; $4e8c
 	dec (hl)		; $4e8e
-	jr z,_label_07_107	; $4e8f
-	call $49c1		; $4e91
-	call $49b0		; $4e94
-	ld l,$21		; $4e97
+	jr z,@breakTile	; $4e8f
+
+	call itemAnimate		; $4e91
+	call _itemUpdateDamageToApply		; $4e94
+	ld l,Item.animParameter		; $4e97
 	ld b,(hl)		; $4e99
-	jr z,_label_07_106	; $4e9a
-	ld l,$24		; $4e9c
+	jr z,+			; $4e9a
+
+	ld l,Item.collisionType		; $4e9c
 	ld (hl),$00		; $4e9e
 	bit 7,b			; $4ea0
-	jr nz,_label_07_108	; $4ea2
-_label_07_106:
-	ld l,$0e		; $4ea4
+	jr nz,@deleteSelf	; $4ea2
++
+	ld l,Item.z		; $4ea4
 	ldi a,(hl)		; $4ea6
 	or (hl)			; $4ea7
 	ld c,$1c		; $4ea8
 	jp nz,objectUpdateSpeedZ_paramC		; $4eaa
 	bit 6,b			; $4ead
 	ret z			; $4eaf
+
 	call objectCheckTileAtPositionIsWater		; $4eb0
-	jr c,_label_07_108	; $4eb3
+	jr c,@deleteSelf	; $4eb3
 	ret			; $4eb5
-_label_07_107:
-	ld a,$0c		; $4eb6
+
+@breakTile:
+	ld a,BREAKABLETILESOURCE_0c		; $4eb6
 	call itemTryToBreakTile		; $4eb8
-_label_07_108:
-	jp $4e6a		; $4ebb
-	ld e,$24		; $4ebe
+@deleteSelf:
+	jp _seedItemDelete		; $4ebb
+
+
+;;
+; Generic update function for seed states 2/3
+;
+; @addr{4f14}
+_seedUpdateAnimation:
+	ld e,Item.collisionType		; $4ebe
 	xor a			; $4ec0
 	ld (de),a		; $4ec1
-	call $49c1		; $4ec2
-	ld e,$21		; $4ec5
+	call itemAnimate		; $4ec2
+	ld e,Item.animParameter		; $4ec5
 	ld a,(de)		; $4ec7
 	rlca			; $4ec8
 	ret nc			; $4ec9
-	jp $4e6a		; $4eca
-	ld e,$01		; $4ecd
+	jp _seedItemDelete		; $4eca
+
+;;
+; State 2: typically occurs when the seed lands on the ground
+; @addr{4ecd}
+_seedItemState2:
+	ld e,Item.id		; $4ecd
 	ld a,(de)		; $4ecf
-	sub $20			; $4ed0
+	sub ITEMID_EMBER_SEED			; $4ed0
 	rst_jumpTable			; $4ed2
-	adc e			; $4ed3
-	ld c,(hl)		; $4ed4
-.DB $dd				; $4ed5
-	ld c,(hl)		; $4ed6
-	cp (hl)			; $4ed7
-	ld c,(hl)		; $4ed8
-	ld (hl),$4f		; $4ed9
-	cp (hl)			; $4edb
-	ld c,(hl)		; $4edc
+	.dw _emberSeedBurn
+	.dw _scentSeedSmell
+	.dw _seedUpdateAnimation
+	.dw _galeSeedTryToWarpLink
+	.dw _seedUpdateAnimation
+
+;;
+; Scent seed in the "smelling" state that attracts enemies
+;
+; @addr{4edd}
+_scentSeedSmell:
 	ld h,d			; $4edd
 	ld l,$06		; $4ede
 	ld a,(wFrameCounter)		; $4ee0
 	rrca			; $4ee3
 	jr c,_label_07_109	; $4ee4
 	dec (hl)		; $4ee6
-	jp z,$4e6a		; $4ee7
+	jp z,_seedItemDelete		; $4ee7
 _label_07_109:
 	ld a,(hl)		; $4eea
 	cp $1e			; $4eeb
@@ -46283,14 +46347,15 @@ _label_07_110:
 	ldh (<hFFB3),a	; $4efc
 	ld a,$ff		; $4efe
 	ld ($ccf0),a		; $4f00
-	call $49c1		; $4f03
-	call $4a6b		; $4f06
-	jp c,$4e6a		; $4f09
-	jp $4a4a		; $4f0c
-_label_07_111:
-	call $4f23		; $4f0f
+	call itemAnimate		; $4f03
+	call _bombPullTowardPoint		; $4f06
+	jp c,_seedItemDelete		; $4f09
+	jp _itemUpdateSpeedZAndCheckHazards		; $4f0c
+
+_galeSeedUpdateAnimationCounter:
+	call _galeSeedUpdateAnimation		; $4f0f
 	call itemDecCounter1		; $4f12
-	jp z,$4e6a		; $4f15
+	jp z,_seedItemDelete		; $4f15
 	ld a,(hl)		; $4f18
 	cp $14			; $4f19
 	ret nc			; $4f1b
@@ -46299,7 +46364,9 @@ _label_07_111:
 	xor $80			; $4f1f
 	ld (hl),a		; $4f21
 	ret			; $4f22
-	call $49c1		; $4f23
+
+_galeSeedUpdateAnimation:
+	call itemAnimate		; $4f23
 	ld e,$06		; $4f26
 	ld a,(de)		; $4f28
 	and $03			; $4f29
@@ -46312,34 +46379,35 @@ _label_07_111:
 	inc e			; $4f33
 	ld (de),a		; $4f34
 	ret			; $4f35
-	call $4f23		; $4f36
-	ld e,$05		; $4f39
+
+_galeSeedTryToWarpLink:
+	call _galeSeedUpdateAnimation		; $4f36
+	ld e,Item.state2		; $4f39
 	ld a,(de)		; $4f3b
 	rst_jumpTable			; $4f3c
-	ld b,l			; $4f3d
-	ld c,a			; $4f3e
-	sub c			; $4f3f
-	ld c,a			; $4f40
-	and a			; $4f41
-	ld c,a			; $4f42
-	jp nc,$fa4f		; $4f43
-	ld d,b			; $4f46
-	call z,$203d		; $4f47
-	ld b,b			; $4f4a
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+
+@substate0:
+	ld a,($cc50)		; $4f45
+	dec a
+	jr nz,$40
 	ld a,($cc88)		; $4f4b
 	or a			; $4f4e
-	jr nz,_label_07_111	; $4f4f
+	jr nz,_galeSeedUpdateAnimationCounter	; $4f4f
 	ld a,($cc48)		; $4f51
 	rrca			; $4f54
-	jr c,_label_07_111	; $4f55
+	jr c,_galeSeedUpdateAnimationCounter	; $4f55
 	ld a,(wLinkGrabState2)		; $4f57
 	and $f0			; $4f5a
 	cp $40			; $4f5c
-	jr z,_label_07_111	; $4f5e
+	jr z,_galeSeedUpdateAnimationCounter	; $4f5e
 	call checkLinkID0AndControlNormal		; $4f60
-	jr nc,_label_07_111	; $4f63
+	jr nc,_galeSeedUpdateAnimationCounter	; $4f63
 	call objectCheckCollidedWithLink		; $4f65
-	jr nc,_label_07_111	; $4f68
+	jr nc,_galeSeedUpdateAnimationCounter	; $4f68
 	ld hl,$d000		; $4f6a
 	call objectTakePosition		; $4f6d
 	ld e,$07		; $4f70
@@ -46354,39 +46422,45 @@ _label_07_111:
 	ld a,$07		; $4f83
 	ld ($cc6a),a		; $4f85
 	jp objectSetVisible80		; $4f88
-_label_07_112:
+
+@setSubstate3:
 	ld e,$05		; $4f8b
 	ld a,$03		; $4f8d
 	ld (de),a		; $4f8f
 	ret			; $4f90
+
+@substate1:
 	ld a,($cc34)		; $4f91
 	or a			; $4f94
-	jr nz,_label_07_112	; $4f95
+	jr nz,@setSubstate3	; $4f95
 	ld h,d			; $4f97
 	ld l,$07		; $4f98
 	dec (hl)		; $4f9a
-	jr z,_label_07_113	; $4f9b
+	jr z,+			; $4f9b
 	ld a,($cc49)		; $4f9d
 	or a			; $4fa0
-	jr z,_label_07_114	; $4fa1
+	jr z,@flickerAndCopyPositionToLink	; $4fa1
 	ret			; $4fa3
-_label_07_113:
++
 	ld a,$02		; $4fa4
 	ld (de),a		; $4fa6
+
+@substate2:
 	ld h,d			; $4fa7
 	ld l,$0f		; $4fa8
 	dec (hl)		; $4faa
 	dec (hl)		; $4fab
 	bit 7,(hl)		; $4fac
-	jr nz,_label_07_114	; $4fae
+	jr nz,@flickerAndCopyPositionToLink	; $4fae
 	ld a,$02		; $4fb0
 	ld ($d005),a		; $4fb2
 	ld a,$16		; $4fb5
 	ld ($cc04),a		; $4fb7
 	ld a,$05		; $4fba
 	call openMenu		; $4fbc
-	jp $4e6a		; $4fbf
-_label_07_114:
+	jp _seedItemDelete		; $4fbf
+
+@flickerAndCopyPositionToLink:
 	ld e,$1a		; $4fc2
 	ld a,(de)		; $4fc4
 	xor $80			; $4fc5
@@ -46395,20 +46469,28 @@ _label_07_114:
 	ld ($cc78),a		; $4fc9
 	ld hl,$d000		; $4fcc
 	jp objectCopyPosition		; $4fcf
+
+@substate3:
 	call itemDecCounter2		; $4fd2
-	jp z,$4e6a		; $4fd5
+	jp z,_seedItemDelete		; $4fd5
 	ld l,$1a		; $4fd8
 	ld a,(hl)		; $4fda
 	xor $80			; $4fdb
 	ld (hl),a		; $4fdd
 	ret			; $4fde
+
+;;
+; @param[out]	zflag	z if no collision
+; @addr{4fdf}
+_slingshotCheckCanPassSolidTile:
 	call objectCheckTileCollision_allowHoles		; $4fdf
-	jr nc,_label_07_115	; $4fe2
-	call $4b7d		; $4fe4
+	jr nc,++		; $4fe2
+	call _itemCheckCanPassSolidTile		; $4fe4
 	ret			; $4fe7
-_label_07_115:
+++
 	xor a			; $4fe8
 	ret			; $4fe9
+
 
 ; ITEMID_DIMITRI_MOUTH
 itemCode2b:
@@ -46416,7 +46498,7 @@ itemCode2b:
 	ld a,(de)		; $4fec
 	or a			; $4fed
 	jr nz,_label_07_116	; $4fee
-	call $497b		; $4ff0
+	call _itemLoadAttributesAndGraphics		; $4ff0
 	call itemIncState		; $4ff3
 	ld l,$06		; $4ff6
 	ld (hl),$0c		; $4ff8
@@ -46465,7 +46547,7 @@ itemCode0d:
 	and $20			; $5048
 	jr nz,_label_07_119	; $504a
 	ld c,$20		; $504c
-	call $4a4a		; $504e
+	call _itemUpdateSpeedZAndCheckHazards		; $504e
 	ld e,$04		; $5051
 	ld a,(de)		; $5053
 	rst_jumpTable			; $5054
@@ -46485,7 +46567,7 @@ _label_07_119:
 	or a			; $5062
 	jr nz,_label_07_120	; $5063
 	ld c,$18		; $5065
-	call $4b24		; $5067
+	call _itemUpdateThrowingVerticallyAndCheckHazards		; $5067
 	jp c,itemDelete		; $506a
 _label_07_120:
 	ld e,$04		; $506d
@@ -46498,7 +46580,7 @@ _label_07_120:
 	ld d,b			; $5076
 	inc b			; $5077
 	ld d,c			; $5078
-	call $497b		; $5079
+	call _itemLoadAttributesAndGraphics		; $5079
 	call decNumBombchus		; $507c
 	ld h,d			; $507f
 	ld l,$04		; $5080
@@ -46538,7 +46620,7 @@ _label_07_121:
 	call $5117		; $50bc
 	call $4bdf		; $50bf
 _label_07_122:
-	jp $49c1		; $50c2
+	jp itemAnimate		; $50c2
 	ld h,d			; $50c5
 	ld l,$06		; $50c6
 	dec (hl)		; $50c8
@@ -46566,7 +46648,7 @@ _label_07_122:
 	ret z			; $50f5
 	call $5181		; $50f6
 _label_07_123:
-	jp $49c1		; $50f9
+	jp itemAnimate		; $50f9
 	call itemDecCounter1		; $50fc
 	ret nz			; $50ff
 	ld (hl),$0a		; $5100
@@ -46762,7 +46844,7 @@ _label_07_132:
 	jr z,_label_07_133	; $5235
 	inc a			; $5237
 _label_07_133:
-	jp $49ca		; $5238
+	jp itemSetAnimation		; $5238
 	ld a,$0b		; $523b
 	call objectGetRelatedObject2Var		; $523d
 	ld b,(hl)		; $5240
@@ -46967,7 +47049,7 @@ _label_07_142:
 	ld c,$20		; $5368
 	call $53cd		; $536a
 	ret c			; $536d
-	call $4a6b		; $536e
+	call _bombPullTowardPoint		; $536e
 	jp c,itemDelete		; $5371
 	call $4bdf		; $5374
 	jp $5434		; $5377
@@ -47005,7 +47087,7 @@ _label_07_142:
 	jr z,_label_07_143	; $53b1
 	call $6220		; $53b3
 	jr c,_label_07_144	; $53b6
-	call $4a6b		; $53b8
+	call _bombPullTowardPoint		; $53b8
 	jp c,itemDelete		; $53bb
 _label_07_143:
 	jp $5434		; $53be
@@ -47031,7 +47113,7 @@ _label_07_145:
 _label_07_146:
 	pop bc			; $53e2
 	jr nc,_label_07_147	; $53e3
-	call $4b24		; $53e5
+	call _itemUpdateThrowingVerticallyAndCheckHazards		; $53e5
 	ret nc			; $53e8
 	ld bc,$04ef		; $53e9
 	ld a,($cc49)		; $53ec
@@ -47068,14 +47150,14 @@ _label_07_149:
 	ld l,$06		; $5420
 	bit 7,(hl)		; $5422
 	call z,$54db		; $5424
-	jp $49c1		; $5427
+	jp itemAnimate		; $5427
 	ld h,d			; $542a
 	ld l,$04		; $542b
 	ld a,(hl)		; $542d
 	cp $ff			; $542e
 	jr nz,_label_07_150	; $5430
 	jr _label_07_148		; $5432
-	call $49c1		; $5434
+	call itemAnimate		; $5434
 	ld e,$21		; $5437
 	ld a,(de)		; $5439
 	or a			; $543a
@@ -47112,7 +47194,7 @@ _label_07_151:
 	jr z,_label_07_152	; $546b
 	ld a,$06		; $546d
 _label_07_152:
-	call $49ca		; $546f
+	call itemSetAnimation		; $546f
 	call objectSetVisible80		; $5472
 	ld a,$6f		; $5475
 	call playSound		; $5477
@@ -47124,10 +47206,10 @@ _label_07_152:
 	ret nz			; $5481
 	set 7,(hl)		; $5482
 	call decNumBombs		; $5484
-	call $497b		; $5487
+	call _itemLoadAttributesAndGraphics		; $5487
 	call $4a37		; $548a
 	xor a			; $548d
-	call $49ca		; $548e
+	call itemSetAnimation		; $548e
 	jp objectSetVisiblec1		; $5491
 	ld h,d			; $5494
 	ld l,$37		; $5495
@@ -47260,7 +47342,7 @@ itemCode06:
 	ld hl,sp+$55		; $5544
 	inc d			; $5546
 	ld d,(hl)		; $5547
-	call $497b		; $5548
+	call _itemLoadAttributesAndGraphics		; $5548
 	ld e,$02		; $554b
 	ld a,(de)		; $554d
 	add $18			; $554e
@@ -47298,7 +47380,7 @@ _label_07_157:
 _label_07_158:
 	call objectSetVisible82		; $5589
 	xor a			; $558c
-	jp $49ca		; $558d
+	jp itemSetAnimation		; $558d
 	call $5638		; $5590
 	ld e,$2a		; $5593
 	ld a,(de)		; $5595
@@ -47306,7 +47388,7 @@ _label_07_158:
 	jr nz,_label_07_160	; $5597
 	call objectCheckTileCollision_allowHoles		; $5599
 	jr nc,_label_07_159	; $559c
-	call $4b7d		; $559e
+	call _itemCheckCanPassSolidTile		; $559e
 	jr nz,_label_07_162	; $55a1
 _label_07_159:
 	call objectCheckWithinRoomBoundary		; $55a3
@@ -47387,7 +47469,7 @@ _label_07_165:
 	ld (hl),$00		; $562e
 	ld a,$78		; $5630
 	call nz,playSound		; $5632
-	jp $49c1		; $5635
+	jp itemAnimate		; $5635
 	ld e,$02		; $5638
 	ld a,(de)		; $563a
 	or a			; $563b
@@ -47439,9 +47521,9 @@ itemCode2a:
 	call objectTakePositionWithOffset		; $5679
 	sub $02			; $567c
 	ld (de),a		; $567e
-	call $497b		; $567f
+	call _itemLoadAttributesAndGraphics		; $567f
 	xor a			; $5682
-	call $49ca		; $5683
+	call itemSetAnimation		; $5683
 	jp objectSetVisiblec1		; $5686
 	ld a,($ff00+$00)	; $5689
 	nop			; $568b
@@ -47455,7 +47537,7 @@ itemCode2a:
 	and $0f			; $569c
 	cp $0f			; $569e
 	jp z,itemDelete		; $56a0
-	jp $49c1		; $56a3
+	jp itemAnimate		; $56a3
 
 ; ITEMID_29
 itemCode29:
@@ -47480,9 +47562,9 @@ itemCode29:
 	ld l,$31		; $56bf
 	ldd (hl),a		; $56c1
 	ld (hl),b		; $56c2
-	call $497b		; $56c3
+	call _itemLoadAttributesAndGraphics		; $56c3
 	xor a			; $56c6
-	call $49ca		; $56c7
+	call itemSetAnimation		; $56c7
 	call objectSetVisiblec3		; $56ca
 	ld a,($cc49)		; $56cd
 	cp $04			; $56d0
@@ -48076,7 +48158,7 @@ itemCode28:
 	call itemIncState		; $5a92
 	ld l,$06		; $5a95
 	ld (hl),$14		; $5a97
-	call $497b		; $5a99
+	call _itemLoadAttributesAndGraphics		; $5a99
 	jr _label_07_205		; $5a9c
 _label_07_204:
 	call $5aab		; $5a9e
@@ -48165,7 +48247,7 @@ itemCode15:
 	ld a,(de)		; $5b21
 	or a			; $5b22
 	jr nz,_label_07_211	; $5b23
-	call $497b		; $5b25
+	call _itemLoadAttributesAndGraphics		; $5b25
 	call itemIncState		; $5b28
 	ld l,$06		; $5b2b
 	ld (hl),$04		; $5b2d
@@ -48204,7 +48286,7 @@ itemCode07:
 	call playSound		; $5b62
 	ld a,$1c		; $5b65
 	call loadWeaponGfx		; $5b67
-	call $497b		; $5b6a
+	call _itemLoadAttributesAndGraphics		; $5b6a
 	jp objectSetVisible82		; $5b6d
 	ld h,d			; $5b70
 	ld l,$06		; $5b71
@@ -48228,7 +48310,7 @@ itemCode1d:
 	ld a,(de)		; $5b8c
 	or a			; $5b8d
 	ret nz			; $5b8e
-	call $497b		; $5b8f
+	call _itemLoadAttributesAndGraphics		; $5b8f
 	call itemIncState		; $5b92
 	ld l,$00		; $5b95
 	set 1,(hl)		; $5b97
@@ -48298,7 +48380,7 @@ itemCode1e:
 	call loadWeaponGfx		; $5bee
 	call $4974		; $5bf1
 	xor a			; $5bf4
-	call $49ca		; $5bf5
+	call itemSetAnimation		; $5bf5
 	jp objectSetVisible82		; $5bf8
 
 ; ITEMID_BIGGORON_SWORD
@@ -48431,7 +48513,7 @@ itemCode02:
 	or (hl)			; $5cb2
 	ld e,h			; $5cb3
 	sbc $5c			; $5cb4
-	call $497b		; $5cb6
+	call _itemLoadAttributesAndGraphics		; $5cb6
 	ld c,$a6		; $5cb9
 	call itemIncState		; $5cbb
 	ld l,$06		; $5cbe
@@ -48467,8 +48549,8 @@ itemCode27:
 	dec e			; $5ceb
 	ld e,l			; $5cec
 	ld hl,$5d11		; $5ced
-	call $4a1e		; $5cf0
-	call $497b		; $5cf3
+	call _applyOffsetTableHL		; $5cf0
+	call _itemLoadAttributesAndGraphics		; $5cf3
 	call itemIncState		; $5cf6
 	ld l,$10		; $5cf9
 	ld (hl),$78		; $5cfb
@@ -48479,7 +48561,7 @@ itemCode27:
 	rrca			; $5d03
 	ld (hl),a		; $5d04
 	ld a,c			; $5d05
-	call $49ca		; $5d06
+	call itemSetAnimation		; $5d06
 	call objectSetVisible81		; $5d09
 	ld a,$5d		; $5d0c
 	jp playSound		; $5d0e
@@ -48495,12 +48577,12 @@ itemCode27:
 	nop			; $5d1a
 	di			; $5d1b
 	nop			; $5d1c
-	call $49b0		; $5d1d
+	call _itemUpdateDamageToApply		; $5d1d
 	jr nz,_label_07_218	; $5d20
 	call objectApplySpeed		; $5d22
 	call objectCheckTileCollision_allowHoles		; $5d25
 	jr nc,_label_07_216	; $5d28
-	call $4b7d		; $5d2a
+	call _itemCheckCanPassSolidTile		; $5d2a
 	jr nz,_label_07_218	; $5d2d
 _label_07_216:
 	ld a,(wFrameCounter)		; $5d2f
@@ -48568,7 +48650,7 @@ _label_07_221:
 	ld (de),a		; $5d8b
 	ld a,(hl)		; $5d8c
 	and $07			; $5d8d
-	jp $49ca		; $5d8f
+	jp itemSetAnimation		; $5d8f
 
 
 	ld (bc),a		; $5d92
@@ -48621,7 +48703,7 @@ _label_07_224:
 _label_07_225:
 	ld e,$30		; $5dd5
 	ld (de),a		; $5dd7
-	jp $49ca		; $5dd8
+	jp itemSetAnimation		; $5dd8
 
 
 ; ITEMID_MAGNET_GLOVES
@@ -48637,7 +48719,7 @@ itemCode08Post:
 	adc a			; $5def
 	ld e,$30		; $5df0
 	ld (de),a		; $5df2
-	jp $49ca		; $5df3
+	jp itemSetAnimation		; $5df3
 
 
 ; ITEMID_SLINGSHOT
@@ -48649,7 +48731,7 @@ itemCode13Post:
 	ld a,($d008)		; $5e02
 	ld e,$30		; $5e05
 	ld (de),a		; $5e07
-	jp $49ca		; $5e08
+	jp itemSetAnimation		; $5e08
 
 
 ; ITEMID_FOOLS_ORE
@@ -49058,7 +49140,7 @@ _itemMimicBgTile:
 	jr z,_label_07_242	; $6020
 	ld a,$01		; $6022
 _label_07_242:
-	call $49ca		; $6024
+	call itemSetAnimation		; $6024
 	pop af			; $6027
 	and $07			; $6028
 	swap a			; $602a
@@ -49091,7 +49173,7 @@ itemCode16:
 	ld h,b			; $6051
 	xor (hl)		; $6052
 	ld h,b			; $6053
-	call $497b		; $6054
+	call _itemLoadAttributesAndGraphics		; $6054
 	ld h,d			; $6057
 	ld l,$00		; $6058
 	set 1,(hl)		; $605a
@@ -49499,14 +49581,14 @@ itemCode1a:
 	ld h,d			; $62a9
 	rst_addDoubleIndex			; $62aa
 	ld h,d			; $62ab
-	call $497b		; $62ac
+	call _itemLoadAttributesAndGraphics		; $62ac
 	call itemIncState2		; $62af
 	ld hl,$d00b		; $62b2
 	call objectTakePosition		; $62b5
 	xor a			; $62b8
-	call $49ca		; $62b9
+	call itemSetAnimation		; $62b9
 	jp objectSetVisible80		; $62bc
-	call $49c1		; $62bf
+	call itemAnimate		; $62bf
 	call $631b		; $62c2
 	ld a,(hl)		; $62c5
 	inc a			; $62c6
@@ -49560,7 +49642,7 @@ _label_07_275:
 	ld e,$0d		; $6311
 	ld (de),a		; $6313
 	ld a,c			; $6314
-	call $49ca		; $6315
+	call itemSetAnimation		; $6315
 	call objectSetVisible80		; $6318
 	ld h,d			; $631b
 	ld l,$21		; $631c

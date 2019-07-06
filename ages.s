@@ -50471,8 +50471,7 @@ itemCode24:
 	or a			; $4d1a
 	jr nz,@shooter		; $4d1b
 
-; Satchel
-
+	; Satchel
 	ldi a,(hl)		; $4d1d
 	cp ITEMID_GALE_SEED			; $4d1e
 	jr nz,++		; $4d20
@@ -50811,7 +50810,6 @@ _seedItemDelete:
 ;;
 ; State 3: typically occurs when the seed collides with a wall or enemy (instead of the
 ; ground)
-;
 ; @addr{4ed1}
 _seedItemState3:
 	ld e,Item.id		; $4ed1
@@ -50824,8 +50822,6 @@ _seedItemState3:
 	.dw _galeSeedUpdateAnimationAndCounter
 	.dw _seedUpdateAnimation
 
-;;
-; @addr{4ee1}
 _emberSeedBurn:
 	ld h,d			; $4ee1
 	ld l,Item.counter1		; $4ee2
@@ -50883,7 +50879,7 @@ _seedUpdateAnimation:
 _seedItemState2:
 	ld e,Item.id		; $4f23
 	ld a,(de)		; $4f25
-	sub $20			; $4f26
+	sub ITEMID_EMBER_SEED			; $4f26
 	rst_jumpTable			; $4f28
 	.dw _emberSeedBurn
 	.dw _scentSeedSmell
