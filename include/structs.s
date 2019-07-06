@@ -163,7 +163,7 @@
 	animParameter		db ; $21
 	animPointer		dw ; $22
 	collisionType		db ; $24: bit 7: set to enable collisions (for Enemies, Parts)
-	collisionReactionSet	db ; $25
+	enemyCollisionMode	db ; $25
 	collisionRadiusY	db ; $26
 	collisionRadiusX	db ; $27
 	damage			db ; $28
@@ -596,7 +596,7 @@
 	animParameter		db ; $21
 	animPointer		dw ; $22
 	collisionType		db ; $24
-	collisionReactionSet	db ; $25
+	enemyCollisionMode	db ; $25
 	collisionRadiusY	db ; $26
 	collisionRadiusX	db ; $27
 	damage			db ; $28

@@ -1,6 +1,6 @@
-; See notes in data/ages/objectCollisionReactionSets.s.
+; See notes in data/ages/objectCollisionTable.s.
 
-spriteCollisionReactionSets:
+objectCollisionTable:
 	; 0x00
 	.db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00

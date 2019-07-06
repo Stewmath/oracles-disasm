@@ -1,28 +1,37 @@
-; Collisions work by the interaction of the
-; "Object.collisionType" and "Object.collisionReactionSet" variables.
+; The collision system works between two groups of objects: Items and Special Objects (A),
+; and Enemies and Parts (B). We'll simplify these groups to "Items" and "Enemies". Link
+; counts as an "item" (though he's really a "special object"), and enemies' projectiles
+; count as "enemies" (though they're really "parts").
 ;
-; Specifically, a number is read from the below table at address:
-;  [spriteCollisionReactionSets + object1.collisionReactionSet * $20 + object2.collisionType]
+; When an item and an enemy collide, the result is determined by the interaction of the
+; "Item.collisionType" and "Enemy.enemyCollisionMode" variables.
 ;
-; where "object1" is usually an Enemy or a Part, and "object2" is usually an Item or Link.
+; Items have their value for this defined in "data/itemAttributes.s", and enemies / parts
+; have them defined in "data/{game}/{enemy|part}Data.s" (although code can always change
+; it). Bit 7 should be ignored on both values for the purpose of this file (it is
+; a "collision enable" bit).
+;
+; Using these two values, a byte is read from the below table at:
+;  [objectCollisionTable + Enemy.enemyCollisionMode * $20 + Item.collisionType]
 ;
 ; The byte which is read determines what will occur when the 2 objects collide.
-; (See: "constants/collisionEffects.s" for a list of these values,
-;       "_enemyCheckCollisions" for the implementation.
-
-
-; To put the above another way: each $20 bytes corresponds to one CollisionReactionSet,
-; and each of the $20 bytes in one of those sets corresponds to a CollisionType.
+;
+; To put the above another way: each $20 bytes corresponds to one EnemyCollisionMode,
+; and each of the $20 bytes in one of those sets corresponds to an ItemCollisionType.
 ; The value of the byte itself is a CollisionEffect.
-
+;
 ; See also:
-;  constants/collisionEffects.s (each byte's value corresponds to a collisionEffect)
-;  constants/collisionTypes.s   (the $20 bytes in each group correspond to the
-;                               $20 different collisionTypes)
+;  constants/itemCollisionTypes.s  (Values for Item.collisionType)
+;  constants/enemyCollisionModes.s (Values for Enemy.collisionType)
+;  constants/collisionEffects.s    (Each byte's value corresponds to a CollisionEffect)
+;
+;  data/{game}/enemyActiveCollisions.s (Collisions here don't work unless the
+;                                      corresponding bit in this file is set)
+;  data/{game}/partActiveCollisions.s  (Same as above but for part objects)
 
 ; @addr{6d0a}
-spriteCollisionReactionSets:
-	; collisionReactionSet: 0x00
+objectCollisionTable:
+	; enemyCollisionMode: 0x00
 	.db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
 
