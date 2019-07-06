@@ -1,9 +1,9 @@
 ; These are possible values for the "enemyCollisionMode" variable which applies to enemies
 ; as well as parts (despite the name).
 ;
-; For the most part these values are used in the "enemyData" file, but there are several
-; cases where these are hardcoded (ie. when an enemy's vulnerability changes from an
-; action, such as with spiked beetles).
+; For the most part these values are used in the "data/{game}/{enemy|part}Data.s" file,
+; but there are several cases where these are hardcoded (ie. when an enemy's vulnerability
+; changes from an action, such as with spiked beetles).
 
 
 .enum 0
