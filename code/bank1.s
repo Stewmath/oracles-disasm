@@ -5963,6 +5963,6 @@ func_7fb5:
 
 uncmpGfxHeader37: ; $6926
 	m_GfxHeader gfx_cane_of_somaria $8521 $09
-.endif
-
 .ends
+
+.endif
