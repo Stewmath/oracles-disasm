@@ -50321,11 +50321,7 @@ _switchHookState3:
 +++
 	ld a,$02		; $5988
 	ld (wSwitchHookState),a		; $598a
-.ifdef ROM_AGES
 	ld a,SND_SWITCH2		; $598d
-.else
-	ld a,$8e
-.endif
 	call playSound		; $598f
 
 	call itemIncState2		; $5992
@@ -149539,7 +149535,6 @@ _label_15_310:
 .ORG 0
 	.include "data/gfxDataBank1b.s"
 
-
 .BANK $1c SLOT 1
 .ORG 0
 	; The first $e characters of gfx_font are blank, so they aren't
@@ -154201,5 +154196,25 @@ _label_3f_212:
 
 .include "build/data/treasureCollectionBehaviours.s"
 .include "build/data/treasureDisplayData.s"
+
+sounda1Start:
+; @addr{ebada}
+sounda1Channel2:
+	duty $02
+	vol $d
+	env $1 $00
+	cmdf8 $00
+	note $30 $04
+	vol $c
+	note $34 $04
+	vol $d
+	note $38 $04
+	vibrato $51
+	env $1 $01
+	vol $b
+	note $3c $14
+	cmdff
+
+
 
 .ends
