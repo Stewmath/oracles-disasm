@@ -28637,7 +28637,7 @@ _companionCheckCanSpawn:
 	ld (hl),a ; [state] = [var03]+1
 
 	ld l,SpecialObject.collisionType		; $487e
-	ld (hl),$80|COLLISIONTYPE_LINK		; $4880
+	ld (hl),$80|ITEMCOLLISION_LINK		; $4880
 	ret			; $4882
 
 ;;
@@ -33989,7 +33989,7 @@ specialObjectCode_transformedLink:
 	call itemIncState		; $61ec
 
 	ld l,SpecialObject.collisionType		; $61ef
-	ld a, $80 | COLLISIONTYPE_LINK
+	ld a, $80 | ITEMCOLLISION_LINK
 	ldi (hl),a		; $61f3
 
 	inc l			; $61f4
@@ -34198,7 +34198,7 @@ specialObjectCode_linkRidingAnimal:
 	ld l,SpecialObject.state		; $6325
 	inc (hl)		; $6327
 	ld l,SpecialObject.collisionType		; $6328
-	ld a, $80 | COLLISIONTYPE_LINK		; $632a
+	ld a, $80 | ITEMCOLLISION_LINK		; $632a
 	ldi (hl),a		; $632c
 
 	inc l			; $632d
@@ -42288,7 +42288,7 @@ _parentItemCode_sword:
 	inc a			; $4c12
 	ld (w1WeaponItem.state),a		; $4c13
 
-	ld a, $80 | COLLISIONTYPE_SWORD_HELD		; $4c16
+	ld a, $80 | ITEMCOLLISION_SWORD_HELD		; $4c16
 	ld (w1WeaponItem.collisionType),a		; $4c18
 
 	ld l,Item.state		; $4c1b
@@ -44777,7 +44777,7 @@ specialObjectCode_raft:
 	call itemIncState		; $580b
 
 	ld l,SpecialObject.collisionType		; $580e
-	ld a,$80|COLLISIONTYPE_LINK		; $5810
+	ld a,$80|ITEMCOLLISION_LINK		; $5810
 	ldi (hl),a		; $5812
 
 	; collisionRadiusY/X
@@ -47769,7 +47769,7 @@ checkEnemyAndPartCollisions:
 _partCheckCollisions:
 	ld e,Part.collisionType		; $4241
 	ld a,(de)		; $4243
-	ld hl,partCollisionTypes		; $4244
+	ld hl,partActiveCollisions		; $4244
 	ld e,Part.yh		; $4247
 	jr ++			; $4249
 
@@ -47780,7 +47780,7 @@ _partCheckCollisions:
 ; @param d Enemy index
 ; @addr{424b}
 _enemyCheckCollisions:
-	ld hl,enemyCollisionTypes		; $424b
+	ld hl,enemyActiveCollisions		; $424b
 	ld e,Enemy.yh		; $424e
 
 ++
@@ -47839,7 +47839,7 @@ _enemyCheckCollisions:
 
 	ld bc,$0e07		; $428d
 	ldh a,(<hFF90)	; $4290
-	cp COLLISIONTYPE_BOMB			; $4292
+	cp ITEMCOLLISION_BOMB			; $4292
 	jr nz,++		; $4294
 
 	ld l,Item.collisionRadiusY		; $4296
@@ -48013,12 +48013,12 @@ _enemyCheckCollisions:
 	call objectGetRelativeAngleWithTempVars		; $435a
 	ldh (<hFF8A),a	; $435d
 	ldh a,(<hActiveObjectType)	; $435f
-	add Object.collisionReactionSet			; $4361
+	add Object.enemyCollisionMode			; $4361
 	ld e,a			; $4363
 	ld a,(de)		; $4364
 	add a			; $4365
 	call multiplyABy16		; $4366
-	ld hl,spriteCollisionReactionSets		; $4369
+	ld hl,objectCollisionTable		; $4369
 	add hl,bc		; $436c
 	pop bc			; $436d
 	ldh a,(<hFF90)	; $436e
@@ -48092,7 +48092,7 @@ _enemyCheckCollisions:
 
 ; Parameters which get passed to collision code functions:
 ; bc = link / item object (points to the start of the object)
-; de = enemy / part object (points to Object.collisionReactionSet)
+; de = enemy / part object (points to Object.enemyCollisionMode)
 
 ;;
 ; COLLISIONEFFECT_NONE
@@ -48787,7 +48787,7 @@ _collisionEffect36:
 	ldh a,(<hActiveObjectType)	; $4658
 	add Object.var2a			; $465a
 	ld l,a			; $465c
-	ld (hl),$80|COLLISIONTYPE_ELECTRIC_SHOCK		; $465d
+	ld (hl),$80|ITEMCOLLISION_ELECTRIC_SHOCK		; $465d
 
 	add Object.collisionType-Object.var2a			; $465f
 	ld l,a			; $4661
@@ -50528,7 +50528,7 @@ itemCode24:
 	and $03			; $4d5e
 	ld e,Item.var03		; $4d60
 	ld (de),a		; $4d62
-	add $80|COLLISIONTYPE_EMBER_SEED			; $4d63
+	add $80|ITEMCOLLISION_EMBER_SEED			; $4d63
 	ld e,Item.collisionType		; $4d65
 	ld (de),a		; $4d67
 	ret			; $4d68
@@ -54407,22 +54407,22 @@ itemCode05:
 ; b1: base damage
 @swordLevelData:
 	; L-1
-	.db ($80|COLLISIONTYPE_L1_SWORD)
+	.db ($80|ITEMCOLLISION_L1_SWORD)
 	.db (-2)
 
 	; L-2
-	.db ($80|COLLISIONTYPE_L2_SWORD)
+	.db ($80|ITEMCOLLISION_L2_SWORD)
 	.db (-3)
 
 	; L-3
-	.db ($80|COLLISIONTYPE_L3_SWORD)
+	.db ($80|ITEMCOLLISION_L3_SWORD)
 	.db (-5)
 
 
 ; State 4: swordspinning
 @state4:
 	ld e,Item.collisionType		; $5f01
-	ld a, $80 | COLLISIONTYPE_SWORDSPIN		; $5f03
+	ld a, $80 | ITEMCOLLISION_SWORDSPIN		; $5f03
 	ld (de),a		; $5f05
 
 
@@ -55859,11 +55859,11 @@ itemCode1a:
  ; "Enemy_Part_Collisions".
  m_section_free "Bank_7_Data" namespace "bank7"
 
-	.include "build/data/enemyCollisionTypes.s"
-	.include "build/data/partCollisionTypes.s"
-	.include "build/data/objectCollisionReactionSets.s"
+	.include "build/data/enemyActiveCollisions.s"
+	.include "build/data/partActiveCollisions.s"
+	.include "build/data/objectCollisionTable.s"
 
-	; Garbage data follows (repeats of collision reaction sets)
+	; Garbage data follows (repeats of object collision table)
 
 .ifdef BUILD_VANILLA
 	; 0x72
@@ -102584,7 +102584,7 @@ enemyCode12:
 	; If just hit by ember seed, go to state $0a (turn into stalfos)
 	ld e,Enemy.var2a		; $500d
 	ld a,(de)		; $500f
-	cp $80|COLLISIONTYPE_EMBER_SEED			; $5010
+	cp $80|ITEMCOLLISION_EMBER_SEED			; $5010
 	ret nz			; $5012
 
 	ld h,d			; $5013
@@ -102694,7 +102694,7 @@ enemyCode13:
 	ld e,Enemy.var2a		; $508b
 	ld a,(de)		; $508d
 	res 7,a			; $508e
-	sub COLLISIONTYPE_BOOMERANG			; $5090
+	sub ITEMCOLLISION_BOOMERANG			; $5090
 	cp $01			; $5092
 	jr nc,@normalStatus	; $5094
 
@@ -102787,7 +102787,7 @@ enemyCode19:
 	ld e,Enemy.var2a		; $5101
 	ld a,(de)		; $5103
 	res 7,a			; $5104
-	sub COLLISIONTYPE_BOOMERANG			; $5106
+	sub ITEMCOLLISION_BOOMERANG			; $5106
 	cp $01			; $5108
 	jr nc,@normalStatus	; $510a
 
@@ -102993,11 +102993,11 @@ enemyCode14:
 	; Check if the collision was a shovel or shield (enemy will flip over)
 	ld e,Enemy.var2a		; $51f1
 	ld a,(de)		; $51f3
-	cp $80|COLLISIONTYPE_SHOVEL			; $51f4
+	cp $80|ITEMCOLLISION_SHOVEL			; $51f4
 	jr z,++			; $51f6
 	res 7,a			; $51f8
-	sub COLLISIONTYPE_L1_SHIELD			; $51fa
-	cp (COLLISIONTYPE_L3_SHIELD-COLLISIONTYPE_L1_SHIELD)+1
+	sub ITEMCOLLISION_L1_SHIELD			; $51fa
+	cp (ITEMCOLLISION_L3_SHIELD-ITEMCOLLISION_L1_SHIELD)+1
 	jr nc,@normalStatus	; $51fe
 ++
 	; If already flipped, return.
@@ -103015,8 +103015,8 @@ enemyCode14:
 	ld l,Enemy.state		; $520e
 	ld (hl),$0b		; $5210
 
-	ld l,Enemy.collisionReactionSet		; $5212
-	ld (hl),COLLISIONREACTIONSET_SPIKED_BEETLE_FLIPPED		; $5214
+	ld l,Enemy.enemyCollisionMode		; $5212
+	ld (hl),ENEMYCOLLISION_SPIKED_BEETLE_FLIPPED		; $5214
 
 	ld l,Enemy.counter1		; $5216
 	ld (hl),180		; $5218
@@ -103140,8 +103140,8 @@ enemyCode14:
 	ld l,Enemy.speed		; $52b9
 	ld (hl),SPEED_c0		; $52bb
 
-	ld l,Enemy.collisionReactionSet		; $52bd
-	ld (hl),COLLISIONREACTIONSET_SPIKED_BEETLE		; $52bf
+	ld l,Enemy.enemyCollisionMode		; $52bd
+	ld (hl),ENEMYCOLLISION_SPIKED_BEETLE		; $52bf
 	ld l,Enemy.xh		; $52c1
 	inc (hl)		; $52c3
 	ld bc,-$180		; $52c4
@@ -103247,7 +103247,7 @@ enemyCode15:
 	; Check if collided with Link; disable sword if so.
 	ld e,Enemy.var2a		; $533a
 	ld a,(de)		; $533c
-	cp $80|COLLISIONTYPE_LINK			; $533d
+	cp $80|ITEMCOLLISION_LINK			; $533d
 	jr nz,@normalStatus	; $533f
 
 	ld a,WHISP_RING		; $5341
@@ -103889,10 +103889,10 @@ enemyCode18:
 	ld h,d			; $564c
 	ld l,Enemy.var2a		; $564d
 	ld a,(hl)		; $564f
-	cp $80|COLLISIONTYPE_MYSTERY_SEED			; $5650
+	cp $80|ITEMCOLLISION_MYSTERY_SEED			; $5650
 	jr z,@becomeCukeman	; $5652
 
-	cp $80|COLLISIONTYPE_ELECTRIC_SHOCK			; $5654
+	cp $80|ITEMCOLLISION_ELECTRIC_SHOCK			; $5654
 	ret nz			; $5656
 
 	; Link hit the buzzblob, go to state $0a
@@ -104190,7 +104190,7 @@ enemyCode1b:
 	; If Link just hit the enemy, start moving
 	ld e,Enemy.var2a		; $57b9
 	ld a,(de)		; $57bb
-	cp $80|COLLISIONTYPE_LINK			; $57bc
+	cp $80|ITEMCOLLISION_LINK			; $57bc
 	ret nz			; $57be
 
 	ld e,Enemy.state		; $57bf
@@ -104414,7 +104414,7 @@ enemyCode1d:
 	; For subid $80, if Link touches this position, activate the armos.
 	ld e,Enemy.var2a		; $58bb
 	ld a,(de)		; $58bd
-	cp $80|COLLISIONTYPE_LINK			; $58be
+	cp $80|ITEMCOLLISION_LINK			; $58be
 	ret nz			; $58c0
 
 	ld e,Enemy.subid		; $58c1
@@ -104571,10 +104571,10 @@ _armos_subid00_stateA:
 	call _ecom_decCounter1		; $596d
 	jp nz,_ecom_flickerVisibility		; $5970
 
-	ld a,COLLISIONREACTIONSET_ACTIVE_RED_ARMOS		; $5973
+	ld a,ENEMYCOLLISION_ACTIVE_RED_ARMOS		; $5973
 
 ;;
-; @param	a	Collision reaction set
+; @param	a	EnemyCollisionMode
 ; @addr{5975}
 _armos_beginMoving:
 	ld l,e			; $5975
@@ -104585,7 +104585,7 @@ _armos_beginMoving:
 	ld (hl),$80|ENEMYID_ARMOS		; $5979
 
 	inc l			; $597b
-	ldi (hl),a ; Set collisionReactionSet
+	ldi (hl),a ; Set enemyCollisionMode
 
 	; Set collisionRadiusY/X
 	ld a,$06		; $597d
@@ -104671,7 +104671,7 @@ _armos_subid01_state8:
 _armos_subid01_stateA:
 	call _ecom_decCounter1		; $59d9
 	jp nz,_ecom_flickerVisibility		; $59dc
-	ld a,COLLISIONREACTIONSET_ACTIVE_BLUE_ARMOS		; $59df
+	ld a,ENEMYCOLLISION_ACTIVE_BLUE_ARMOS		; $59df
 	jp _armos_beginMoving		; $59e1
 
 
@@ -104899,8 +104899,8 @@ _fish_subid00:
 @leapOutOfWater:
 	ld l,e			; $5ae1
 	inc (hl)		; $5ae2
-	ld l,Enemy.collisionReactionSet		; $5ae3
-	ld (hl),COLLISIONREACTIONSET_SWITCHHOOK_DAMAGE_ENEMY		; $5ae5
+	ld l,Enemy.enemyCollisionMode		; $5ae3
+	ld (hl),ENEMYCOLLISION_SWITCHHOOK_DAMAGE_ENEMY		; $5ae5
 	ld l,Enemy.zh		; $5ae7
 	ld (hl),$00		; $5ae9
 
@@ -104942,8 +104942,8 @@ _fish_subid00:
 ; @addr{5b1d}
 _fish_enterWater:
 	ld h,d			; $5b1d
-	ld l,Enemy.collisionReactionSet		; $5b1e
-	ld (hl),COLLISIONREACTIONSET_PODOBOO		; $5b20
+	ld l,Enemy.enemyCollisionMode		; $5b1e
+	ld (hl),ENEMYCOLLISION_PODOBOO		; $5b20
 	ld l,Enemy.zh		; $5b22
 	ld (hl),$02		; $5b24
 
@@ -105293,7 +105293,7 @@ enemyCode24:
 
 	ld e,Enemy.var2a		; $5ca7
 	ld a,(de)		; $5ca9
-	cp $80|COLLISIONTYPE_LINK			; $5caa
+	cp $80|ITEMCOLLISION_LINK			; $5caa
 	ret nz			; $5cac
 
 	; Just collided with Link. omnomnom
@@ -105899,8 +105899,8 @@ enemyCode25:
 	ld a,(hl)		; $5f7f
 	add $04			; $5f80
 	ld (hl),a		; $5f82
-	ld l,Enemy.collisionReactionSet		; $5f83
-	ld (hl),COLLISIONREACTIONSET_BIG_GOPONGA_FLOWER		; $5f85
+	ld l,Enemy.enemyCollisionMode		; $5f83
+	ld (hl),ENEMYCOLLISION_BIG_GOPONGA_FLOWER		; $5f85
 ++
 	call _ecom_setSpeedAndState8		; $5f87
 	jp objectSetVisible83		; $5f8a
@@ -106263,7 +106263,7 @@ enemyCode28:
 
 	ld e,Enemy.var2a		; $6125
 	ld a,(de)		; $6127
-	cp $80|COLLISIONTYPE_LINK			; $6128
+	cp $80|ITEMCOLLISION_LINK			; $6128
 	ret nz			; $612a
 
 	; Link just touched the hand. If not experiencing knockback, begin warping Link
@@ -107285,7 +107285,7 @@ enemyCode2d:
 	; ENEMYSTATUS_JUST_HIT or ENEMYSTATUS_KNOCKBACK
 	ld e,Enemy.var2a		; $658d
 	ld a,(de)		; $658f
-	cp $80|COLLISIONTYPE_MYSTERY_SEED			; $6590
+	cp $80|ITEMCOLLISION_MYSTERY_SEED			; $6590
 	jp z,enemyDie_uncounted_withoutItemDrop		; $6592
 
 @normalStatus:
@@ -108503,8 +108503,8 @@ _ironMask_state_uninitialized:
 	ret z			; $6b42
 
 	; Subid 1 only
-	ld l,Enemy.collisionReactionSet		; $6b43
-	ld (hl),COLLISIONREACTIONSET_UNMASKED_IRON_MASK		; $6b45
+	ld l,Enemy.enemyCollisionMode		; $6b43
+	ld (hl),ENEMYCOLLISION_UNMASKED_IRON_MASK		; $6b45
 	ld l,Enemy.knockbackCounter		; $6b47
 	ld (hl),$10		; $6b49
 	ld l,Enemy.invincibilityCounter		; $6b4b
@@ -108529,9 +108529,9 @@ _ironMask_state_switchHook:
 	or a			; $6b62
 	jr nz,@dontRemoveMask	; $6b63
 
-	ld e,Enemy.collisionReactionSet		; $6b65
+	ld e,Enemy.enemyCollisionMode		; $6b65
 	ld a,(de)		; $6b67
-	cp COLLISIONREACTIONSET_UNMASKED_IRON_MASK			; $6b68
+	cp ENEMYCOLLISION_UNMASKED_IRON_MASK			; $6b68
 	jr z,@dontRemoveMask	; $6b6a
 
 	ld b,ENEMYID_IRON_MASK		; $6b6c
@@ -108576,9 +108576,9 @@ _ironMask_state_switchHook:
 	or a			; $6b9a
 	jp nz,_ecom_fallToGroundAndSetState8		; $6b9b
 
-	ld e,Enemy.collisionReactionSet		; $6b9e
+	ld e,Enemy.enemyCollisionMode		; $6b9e
 	ld a,(de)		; $6ba0
-	cp COLLISIONREACTIONSET_IRON_MASK			; $6ba1
+	cp ENEMYCOLLISION_IRON_MASK			; $6ba1
 	jp nz,_ecom_fallToGroundAndSetState8		; $6ba3
 
 	ld b,$0a		; $6ba6
@@ -108640,7 +108640,7 @@ _ironMask_subid01:
 
 
 ;;
-; Modifies this object's collisionReactionSet based on if Link is directly behind the iron
+; Modifies this object's enemyCollisionMode based on if Link is directly behind the iron
 ; mask or not.
 ; @addr{6bee}
 _ironMask_updateCollisionsFromLinkRelativeAngle:
@@ -108651,12 +108651,12 @@ _ironMask_updateCollisionsFromLinkRelativeAngle:
 	and $1f			; $6bf5
 	sub $0c			; $6bf7
 	cp $09			; $6bf9
-	ld l,Enemy.collisionReactionSet		; $6bfb
+	ld l,Enemy.enemyCollisionMode		; $6bfb
 	jr c,++			; $6bfd
-	ld (hl),COLLISIONREACTIONSET_IRON_MASK		; $6bff
+	ld (hl),ENEMYCOLLISION_IRON_MASK		; $6bff
 	ret			; $6c01
 ++
-	ld (hl),COLLISIONREACTIONSET_UNMASKED_IRON_MASK		; $6c02
+	ld (hl),ENEMYCOLLISION_UNMASKED_IRON_MASK		; $6c02
 	ret			; $6c04
 
 
@@ -109874,12 +109874,12 @@ enemyCode34:
 	; split in two.
 	ld e,Enemy.var2a		; $4941
 	ld a,(de)		; $4943
-	cp COLLISIONTYPE_LINK|$80			; $4944
+	cp ITEMCOLLISION_LINK|$80			; $4944
 	jr z,@normalStatus	; $4946
 
 	res 7,a			; $4948
-	sub COLLISIONTYPE_L1_SHIELD			; $494a
-	cp COLLISIONTYPE_L3_SHIELD - COLLISIONTYPE_L1_SHIELD + 1			; $494c
+	sub ITEMCOLLISION_L1_SHIELD			; $494a
+	cp ITEMCOLLISION_L3_SHIELD - ITEMCOLLISION_L1_SHIELD + 1			; $494c
 	ret c			; $494e
 
 	ld e,Enemy.state		; $494f
@@ -110274,7 +110274,7 @@ enemyCode35:
 
 	ld e,Enemy.var2a		; $4b12
 	ld a,(de)		; $4b14
-	cp $80|COLLISIONTYPE_LINK			; $4b15
+	cp $80|ITEMCOLLISION_LINK			; $4b15
 	ret nz			; $4b17
 
 	; Grabbed Link
@@ -110852,10 +110852,10 @@ enemyCode36:
 	ld h,d			; $4da6
 	ld l,Enemy.var2a		; $4da7
 	ld a,(hl)		; $4da9
-	cp $80|COLLISIONTYPE_MYSTERY_SEED			; $4daa
+	cp $80|ITEMCOLLISION_MYSTERY_SEED			; $4daa
 	jp z,_cucco_hitWithMysterySeed		; $4dac
 
-	cp $80|COLLISIONTYPE_GALE_SEED			; $4daf
+	cp $80|ITEMCOLLISION_GALE_SEED			; $4daf
 	jp nz,_cucco_attacked		; $4db1
 
 @normalStatus:
@@ -111061,7 +111061,7 @@ enemyCode3b:
 	res 7,a			; $4eb4
 
 	; Check if hit by anything other than Link or shield.
-	cp COLLISIONTYPE_L1_SWORD			; $4eb6
+	cp ITEMCOLLISION_L1_SWORD			; $4eb6
 	jr c,@normalStatus	; $4eb8
 
 	ld h,d			; $4eba
@@ -111632,7 +111632,7 @@ enemyCode39:
 	; ENEMYSTATUS_JUST_HIT
 	ld e,Enemy.var2a		; $515b
 	ld a,(de)		; $515d
-	cp $80|COLLISIONTYPE_LINK			; $515e
+	cp $80|ITEMCOLLISION_LINK			; $515e
 	ret nz			; $5160
 
 	; We collided with Link; if still on fire, transfer that fire to the ground.
@@ -112524,7 +112524,7 @@ _waterTektike_setSpeedFromCounter1:
 ; Shares some code with ENEMYID_SWORD_DARKNUT.
 ;
 ; Variables:
-;   var30: Nonzero if collisionReactionSet was changed to ignore sword damage (due to the
+;   var30: Nonzero if enemyCollisionMode was changed to ignore sword damage (due to the
 ;          enemy's sword blocking it)
 ; ==============================================================================
 enemyCode3d:
@@ -112532,7 +112532,7 @@ enemyCode49:
 enemyCode4a:
 	call _ecom_checkHazards		; $5560
 	call @runState		; $5563
-	jp _swordEnemy_updateCollisionReactionSet		; $5566
+	jp _swordEnemy_updateEnemyCollisionMode		; $5566
 
 @runState:
 	jr z,@normalStatus	; $5569
@@ -112703,7 +112703,7 @@ _swordEnemy_gotoState8:
 enemyCode48:
 	call _ecom_checkHazards		; $563f
 	call @runState		; $5642
-	jp _swordDarknut_updateCollisionReactionSet		; $5645
+	jp _swordDarknut_updateEnemyCollisionMode		; $5645
 
 @runState:
 	jr z,@normalStatus	; $5648
@@ -112712,7 +112712,7 @@ enemyCode48:
 	jr z,@dead	; $564d
 	dec a			; $564f
 	call nz,_ecom_updateKnockbackAndCheckHazards		; $5650
-	jp _swordDarknut_updateCollisionReactionSet		; $5653
+	jp _swordDarknut_updateEnemyCollisionMode		; $5653
 
 @dead:
 	ld e,Enemy.subid		; $5656
@@ -112902,11 +112902,11 @@ _swordEnemy_setChaseCooldown:
 
 
 ;;
-; Updates collisionReactionSet based on Link's angle relative to the enemy. In this way,
+; Updates enemyCollisionMode based on Link's angle relative to the enemy. In this way,
 ; Link's sword doesn't damage the enemy if positioned in such a way that their sword
 ; should block it.
 ; @addr{573b}
-_swordEnemy_updateCollisionReactionSet:
+_swordEnemy_updateEnemyCollisionMode:
 	ld b,$00		; $573b
 	ld e,Enemy.stunCounter		; $573d
 	ld a,(de)		; $573f
@@ -112914,7 +112914,7 @@ _swordEnemy_updateCollisionReactionSet:
 	jr nz,++		; $5741
 
 	call _swordEnemy_checkIgnoreCollision		; $5743
-	ld a,COLLISIONREACTIONSET_STALFOS_BLOCKED_WITH_SWORD		; $5746
+	ld a,ENEMYCOLLISION_STALFOS_BLOCKED_WITH_SWORD		; $5746
 	ld b,$00		; $5748
 	jr nz,@setVars	; $574a
 ++
@@ -112922,12 +112922,12 @@ _swordEnemy_updateCollisionReactionSet:
 	ld e,Enemy.id		; $574d
 	ld a,(de)		; $574f
 	cp ENEMYID_SWORD_SHROUDED_STALFOS			; $5750
-	ld a,COLLISIONREACTIONSET_BURNABLE_ENEMY		; $5752
+	ld a,ENEMYCOLLISION_BURNABLE_ENEMY		; $5752
 	jr nz,@setVars	; $5754
-	ld a,COLLISIONREACTIONSET_BURNABLE_ENEMY		; $5756
+	ld a,ENEMYCOLLISION_BURNABLE_ENEMY		; $5756
 
 @setVars:
-	ld e,Enemy.collisionReactionSet		; $5758
+	ld e,Enemy.enemyCollisionMode		; $5758
 	ld (de),a		; $575a
 
 	ld e,Enemy.var30		; $575b
@@ -112936,9 +112936,9 @@ _swordEnemy_updateCollisionReactionSet:
 	ret			; $575f
 
 ;;
-; Same as above, but with a different collisionReactionSet for the darknut.
+; Same as above, but with a different enemyCollisionMode for the darknut.
 ; @addr{5760}
-_swordDarknut_updateCollisionReactionSet:
+_swordDarknut_updateEnemyCollisionMode:
 	ld b,$00		; $5760
 	ld e,Enemy.stunCounter		; $5762
 	ld a,(de)		; $5764
@@ -112946,15 +112946,15 @@ _swordDarknut_updateCollisionReactionSet:
 	jr nz,++		; $5766
 
 	call _swordEnemy_checkIgnoreCollision		; $5768
-	ld a,COLLISIONREACTIONSET_DARKNUT_BLOCKED_WITH_SWORD		; $576b
+	ld a,ENEMYCOLLISION_DARKNUT_BLOCKED_WITH_SWORD		; $576b
 	ld b,$00		; $576d
 	jr nz,@setVars	; $576f
 ++
-	ld a,COLLISIONREACTIONSET_DARKNUT		; $5771
+	ld a,ENEMYCOLLISION_DARKNUT		; $5771
 	inc b			; $5773
 
 @setVars:
-	ld e,Enemy.collisionReactionSet		; $5774
+	ld e,Enemy.enemyCollisionMode		; $5774
 	ld (de),a		; $5776
 
 	ld e,Enemy.var30		; $5777
@@ -113010,13 +113010,13 @@ enemyCode3e:
 	jp z,enemyDie		; $57ac
 
 	; ENEMYSTATUS_KNOCKBACK
-	ld e,Enemy.collisionReactionSet		; $57af
+	ld e,Enemy.enemyCollisionMode		; $57af
 	ld a,(de)		; $57b1
-	cp COLLISIONREACTIONSET_PEAHAT			; $57b2
+	cp ENEMYCOLLISION_PEAHAT			; $57b2
 	ret nz			; $57b4
 
 @normalStatus:
-	call _peahat_updateCollisionReactionSet		; $57b5
+	call _peahat_updateEnemyCollisionMode		; $57b5
 	ld e,Enemy.state		; $57b8
 	ld a,(de)		; $57ba
 	rst_jumpTable			; $57bb
@@ -113135,15 +113135,15 @@ _peahat_stateB:
 
 ;;
 ; @addr{5849}
-_peahat_updateCollisionReactionSet:
+_peahat_updateEnemyCollisionMode:
 	ld e,Enemy.zh		; $5849
 	ld a,(de)		; $584b
 	or a			; $584c
-	ld a,COLLISIONREACTIONSET_PEAHAT_VULNERABLE		; $584d
+	ld a,ENEMYCOLLISION_PEAHAT_VULNERABLE		; $584d
 	jr z,+			; $584f
-	ld a,COLLISIONREACTIONSET_PEAHAT		; $5851
+	ld a,ENEMYCOLLISION_PEAHAT		; $5851
 +
-	ld e,Enemy.collisionReactionSet		; $5853
+	ld e,Enemy.enemyCollisionMode		; $5853
 	ld (de),a		; $5855
 	ret			; $5856
 
@@ -113240,7 +113240,7 @@ enemyCode40:
 
 	ld e,Enemy.var2a		; $58cd
 	ld a,(de)		; $58cf
-	cp COLLISIONTYPE_LINK|$80			; $58d0
+	cp ITEMCOLLISION_LINK|$80			; $58d0
 	ret z			; $58d2
 
 	; The wizzrobe is knocked out of its normal position; allow other wizzrobes to
@@ -114278,7 +114278,7 @@ enemyCode43:
 	; ENEMYSTATUS_JUST_HIT or ENEMYSTATUS_KNOCKBACK
 	ld e,Enemy.var2a		; $5d4f
 	ld a,(de)		; $5d51
-	cp $80|COLLISIONTYPE_LINK			; $5d52
+	cp $80|ITEMCOLLISION_LINK			; $5d52
 	jr nz,@normalStatus	; $5d54
 
 	; Touched Link; attach self to him.
@@ -115852,7 +115852,7 @@ enemyCode51:
 
 	ld e,Enemy.var2a		; $63f7
 	ld a,(de)		; $63f9
-	cp $80|COLLISIONTYPE_LINK			; $63fa
+	cp $80|ITEMCOLLISION_LINK			; $63fa
 	ret z			; $63fc
 
 	ld h,d			; $63fd
@@ -116653,13 +116653,13 @@ enemyCode58:
 
 
 @state_uninitialized:
-	; Initialize collisionReactionSet and load tile to mimic
+	; Initialize enemyCollisionMode and load tile to mimic
 	ld e,Enemy.subid		; $678e
 	ld a,(de)		; $6790
 	ld hl,@collisionAndTileData		; $6791
 	rst_addDoubleIndex			; $6794
 
-	ld e,Enemy.collisionReactionSet		; $6795
+	ld e,Enemy.enemyCollisionMode		; $6795
 	ldi a,(hl)		; $6797
 	ld (de),a		; $6798
 
@@ -116673,10 +116673,10 @@ enemyCode58:
 
 
 @collisionAndTileData:
-	.db COLLISIONREACTIONSET_BUSH, TILEINDEX_OVERWORLD_BUSH ; Subid 0
-	.db COLLISIONREACTIONSET_BUSH, TILEINDEX_DUNGEON_BUSH   ; Subid 1
-	.db COLLISIONREACTIONSET_ROCK,           TILEINDEX_DUNGEON_POT    ; Subid 2
-	.db COLLISIONREACTIONSET_ROCK,           TILEINDEX_OVERWORLD_ROCK ; Subid 3
+	.db ENEMYCOLLISION_BUSH, TILEINDEX_OVERWORLD_BUSH ; Subid 0
+	.db ENEMYCOLLISION_BUSH, TILEINDEX_DUNGEON_BUSH   ; Subid 1
+	.db ENEMYCOLLISION_ROCK,           TILEINDEX_DUNGEON_POT    ; Subid 2
+	.db ENEMYCOLLISION_ROCK,           TILEINDEX_OVERWORLD_ROCK ; Subid 3
 
 
 
@@ -116835,8 +116835,8 @@ enemyCode58:
 	; Don't allow destruction of bush for deku scrubs
 	cp ENEMYID_DEKU_SCRUB			; $6856
 	ret nz			; $6858
-	ld e,Enemy.collisionReactionSet		; $6859
-	ld a,COLLISIONREACTIONSET_ROCK		; $685b
+	ld e,Enemy.enemyCollisionMode		; $6859
+	ld a,ENEMYCOLLISION_ROCK		; $685b
 	ld (de),a		; $685d
 	ret			; $685e
 
@@ -117015,12 +117015,12 @@ enemyCode5d:
 	; Hit something
 	ld e,Enemy.var2a		; $6914
 	ld a,(de)		; $6916
-	cp $80|COLLISIONTYPE_LINK			; $6917
+	cp $80|ITEMCOLLISION_LINK			; $6917
 	jr z,@normalStatus	; $6919
 
 	res 7,a			; $691b
-	sub COLLISIONTYPE_L2_SHIELD			; $691d
-	cp COLLISIONTYPE_L3_SHIELD-COLLISIONTYPE_L2_SHIELD + 1			; $691f
+	sub ITEMCOLLISION_L2_SHIELD			; $691d
+	cp ITEMCOLLISION_L3_SHIELD-ITEMCOLLISION_L2_SHIELD + 1			; $691f
 	call c,_twinrovaIce_bounceOffShield		; $6921
 	call _ecom_updateCardinalAngleAwayFromTarget		; $6924
 
@@ -117619,7 +117619,7 @@ enemyCode3c:
 
 	ld e,Enemy.var2a		; $6bf5
 	ld a,(de)		; $6bf7
-	cp $80|COLLISIONTYPE_GALE_SEED			; $6bf8
+	cp $80|ITEMCOLLISION_GALE_SEED			; $6bf8
 	jr z,@normalStatus	; $6bfa
 
 	ld e,Enemy.health		; $6bfc
@@ -117632,9 +117632,9 @@ enemyCode3c:
 	or a			; $6c04
 	jr nz,@normalStatus	; $6c05
 
-	ld e,Enemy.collisionReactionSet		; $6c07
+	ld e,Enemy.enemyCollisionMode		; $6c07
 	ld a,(de)		; $6c09
-	cp COLLISIONREACTIONSET_BARI_ELECTRIC_SHOCK			; $6c0a
+	cp ENEMYCOLLISION_BARI_ELECTRIC_SHOCK			; $6c0a
 	jr z,@normalStatus	; $6c0c
 
 	; FIXME: This checks if collisionType is strictly less than L3 shield, which is
@@ -117642,7 +117642,7 @@ enemyCode3c:
 	; shouldn't matter anyway, shields can't be used underwater...
 	ld e,Enemy.var2a		; $6c0e
 	ld a,(de)		; $6c10
-	cp $80|COLLISIONTYPE_L3_SHIELD			; $6c11
+	cp $80|ITEMCOLLISION_L3_SHIELD			; $6c11
 	jr c,@normalStatus	; $6c13
 
 	ld h,d			; $6c15
@@ -117732,8 +117732,8 @@ _bari_subid0_state8:
 	ld l,e			; $6c7e
 	inc (hl) ; [state]
 
-	ld l,Enemy.collisionReactionSet		; $6c80
-	ld (hl),COLLISIONREACTIONSET_BARI_ELECTRIC_SHOCK		; $6c82
+	ld l,Enemy.enemyCollisionMode		; $6c80
+	ld (hl),ENEMYCOLLISION_BARI_ELECTRIC_SHOCK		; $6c82
 
 	ld a,$01		; $6c84
 	jp enemySetAnimation		; $6c86
@@ -117770,8 +117770,8 @@ _bari_state9:
 	ld l,e			; $6caf
 	dec (hl) ; [state] = 8
 
-	ld l,Enemy.collisionReactionSet		; $6cb1
-	ld (hl),COLLISIONREACTIONSET_BARI		; $6cb3
+	ld l,Enemy.enemyCollisionMode		; $6cb1
+	ld (hl),ENEMYCOLLISION_BARI		; $6cb3
 
 	dec l			; $6cb5
 	set 7,(hl) ; [collisionType]
@@ -117917,7 +117917,7 @@ enemyCode3f:
 
 	ld e,Enemy.var2a		; $6d5a
 	ld a,(de)		; $6d5c
-	cp $80|COLLISIONTYPE_LINK			; $6d5d
+	cp $80|ITEMCOLLISION_LINK			; $6d5d
 	jr nz,@normalStatus	; $6d5f
 
 	; Attach self to Link
@@ -118304,7 +118304,7 @@ enemyCode47:
 	ld h,d			; $6f38
 	ld l,Enemy.var2a		; $6f39
 	ld a,(hl)		; $6f3b
-	cp $80|COLLISIONTYPE_MYSTERY_SEED			; $6f3c
+	cp $80|ITEMCOLLISION_MYSTERY_SEED			; $6f3c
 	jr nz,@attacked	; $6f3e
 
 	; Mystery seed hit the gel
@@ -118313,18 +118313,18 @@ enemyCode47:
 
 @attacked:
 	; Ignore all attacks if color matches floor
-	ld e,Enemy.collisionReactionSet		; $6f45
+	ld e,Enemy.enemyCollisionMode		; $6f45
 	ld a,(de)		; $6f47
-	cp COLLISIONREACTIONSET_COLOR_CHANGING_GEL			; $6f48
+	cp ENEMYCOLLISION_COLOR_CHANGING_GEL			; $6f48
 	jr nz,@normalStatus	; $6f4a
 
 	; Only allow switch hook and sword attacks to kill the gel
 	ldi a,(hl)		; $6f4c
 	res 7,a			; $6f4d
-	cp COLLISIONTYPE_SWITCH_HOOK			; $6f4f
+	cp ITEMCOLLISION_SWITCH_HOOK			; $6f4f
 	jr z,@wasDamagingAttack			; $6f51
-	sub COLLISIONTYPE_L1_SWORD			; $6f53
-	cp COLLISIONTYPE_SWORD_HELD-COLLISIONTYPE_L1_SWORD + 1
+	sub ITEMCOLLISION_L1_SWORD			; $6f53
+	cp ITEMCOLLISION_SWORD_HELD-ITEMCOLLISION_L1_SWORD + 1
 	jr nc,@normalStatus	; $6f57
 
 @wasDamagingAttack
@@ -118359,8 +118359,8 @@ _colorChangingGel_state_uninitialized:
 	inc l			; $6f86
 	ld (hl),$00 ; [counter2]
 
-	ld l,Enemy.collisionReactionSet		; $6f89
-	ld (hl),COLLISIONREACTIONSET_COLOR_CHANGING_GEL		; $6f8b
+	ld l,Enemy.enemyCollisionMode		; $6f89
+	ld (hl),ENEMYCOLLISION_COLOR_CHANGING_GEL		; $6f8b
 
 	ld l,Enemy.var3f		; $6f8d
 	set 5,(hl)		; $6f8f
@@ -118535,7 +118535,7 @@ _colorChangingGel_updateColor:
 	ret			; $7051
 
 ;;
-; Sets collisionReactionSet depending on whether the gel's color matches the floor or not.
+; Sets enemyCollisionMode depending on whether the gel's color matches the floor or not.
 ;
 ; @param[out]	zflag	z if immune
 ; @addr{7052}
@@ -118546,11 +118546,11 @@ _colorChangingGel_updateColor:
 
 	call @lookupFloorColor		; $7058
 	cp (hl)			; $705b
-	ld b,COLLISIONREACTIONSET_COLOR_CHANGING_GEL		; $705c
+	ld b,ENEMYCOLLISION_COLOR_CHANGING_GEL		; $705c
 	jr z,+			; $705e
-	ld b,COLLISIONREACTIONSET_GOHMA_GEL		; $7060
+	ld b,ENEMYCOLLISION_GOHMA_GEL		; $7060
 +
-	ld l,Enemy.collisionReactionSet		; $7062
+	ld l,Enemy.enemyCollisionMode		; $7062
 	ld (hl),b		; $7064
 	ret			; $7065
 
@@ -118908,8 +118908,8 @@ _ambiGuard_attacksLink_state10:
 
 	ld l,Enemy.speed		; $7207
 	ld (hl),SPEED_180		; $7209
-	ld l,Enemy.collisionReactionSet		; $720b
-	ld (hl),COLLISIONREACTIONSET_AMBI_GUARD_CHASING_LINK		; $720d
+	ld l,Enemy.enemyCollisionMode		; $720b
+	ld (hl),ENEMYCOLLISION_AMBI_GUARD_CHASING_LINK		; $720d
 
 ;;
 ; @addr{720f}
@@ -119237,10 +119237,10 @@ _ambiGuard_collisionOccured:
 	ld h,d			; $735c
 	ld l,Enemy.var2a		; $735d
 	ld a,(hl)		; $735f
-	cp $80|COLLISIONTYPE_11+1			; $7360
+	cp $80|ITEMCOLLISION_11+1			; $7360
 	jr c,_ambiGuard_directAttackOccurred	; $7362
 
-	cp $80|COLLISIONTYPE_GALE_SEED			; $7364
+	cp $80|ITEMCOLLISION_GALE_SEED			; $7364
 	ret z			; $7366
 
 	; COLLISION_TYPE_SOMARIA_BLOCK or above (indirect attack)
@@ -119750,7 +119750,7 @@ enemyCode55:
 	; Check for ember seed collision to light self on fire
 	ld e,Enemy.var2a		; $7612
 	ld a,(de)		; $7614
-	cp $80|COLLISIONTYPE_EMBER_SEED			; $7615
+	cp $80|ITEMCOLLISION_EMBER_SEED			; $7615
 	jr nz,@normalStatus	; $7617
 
 	ld e,Enemy.state		; $7619
@@ -119903,8 +119903,8 @@ _candle_stateD:
 	ld l,Enemy.state		; $76cb
 	inc (hl)		; $76cd
 
-	ld l,Enemy.collisionReactionSet		; $76ce
-	ld (hl),COLLISIONREACTIONSET_PODOBOO		; $76d0
+	ld l,Enemy.enemyCollisionMode		; $76ce
+	ld (hl),ENEMYCOLLISION_PODOBOO		; $76d0
 
 	jp objectSetInvisible		; $76d2
 
@@ -120555,8 +120555,8 @@ _veranPossessionBoss_humanForm_state8:
 	ld l,Enemy.collisionType		; $79d6
 	set 7,(hl)		; $79d8
 
-	ld l,Enemy.collisionReactionSet		; $79da
-	ld (hl),COLLISIONREACTIONSET_VERAN_GHOST		; $79dc
+	ld l,Enemy.enemyCollisionMode		; $79da
+	ld (hl),ENEMYCOLLISION_VERAN_GHOST		; $79dc
 
 	; If this is Nayru, and we haven't shown veran's taunting text yet, show it.
 	ld a,Object.subid		; $79de
@@ -120626,8 +120626,8 @@ _veranPossessionBoss_humanForm_stateB:
 
 	ld (hl),120 ; [counter1]
 
-	ld l,Enemy.collisionReactionSet		; $7a2b
-	ld (hl),COLLISIONREACTIONSET_VERAN_HUMAN		; $7a2d
+	ld l,Enemy.enemyCollisionMode		; $7a2b
+	ld (hl),ENEMYCOLLISION_VERAN_HUMAN		; $7a2d
 
 	ld l,e			; $7a2f
 	inc (hl) ; [state]
@@ -120839,13 +120839,13 @@ _veranPossessionBoss_wasHit:
 	; Subid 0 or 1 (possessed Nayru or Ambi)
 
 	res 7,a			; $7b20
-	cp COLLISIONTYPE_MYSTERY_SEED			; $7b22
+	cp ITEMCOLLISION_MYSTERY_SEED			; $7b22
 	jr z,@mysterySeed	; $7b24
 
 	; Direct attacks from Link cause damage to Link, not Veran
-	sub COLLISIONTYPE_L1_SWORD			; $7b26
+	sub ITEMCOLLISION_L1_SWORD			; $7b26
 	ret c			; $7b28
-	cp COLLISIONTYPE_SHOVEL - COLLISIONTYPE_L1_SWORD + 1			; $7b29
+	cp ITEMCOLLISION_SHOVEL - ITEMCOLLISION_L1_SWORD + 1			; $7b29
 	ret nc			; $7b2b
 
 	ld l,Enemy.invincibilityCounter		; $7b2c
@@ -120885,14 +120885,14 @@ _veranPossessionBoss_wasHit:
 	; Collisions on emerged Veran (ghost/human form)
 	; Check if a direct attack occurred
 	res 7,a			; $7b57
-	cp COLLISIONTYPE_L1_SWORD			; $7b59
+	cp ITEMCOLLISION_L1_SWORD			; $7b59
 	ret c			; $7b5b
-	cp COLLISIONTYPE_EXPERT_PUNCH + 1			; $7b5c
+	cp ITEMCOLLISION_EXPERT_PUNCH + 1			; $7b5c
 	ret nc			; $7b5e
 
-	ld l,Enemy.collisionReactionSet		; $7b5f
+	ld l,Enemy.enemyCollisionMode		; $7b5f
 	ld a,(hl)		; $7b61
-	cp COLLISIONREACTIONSET_VERAN_GHOST			; $7b62
+	cp ENEMYCOLLISION_VERAN_GHOST			; $7b62
 	jr nz,++		; $7b64
 
 	; No effect on ghost form
@@ -122801,8 +122801,8 @@ _subterror_beginUndergroundMovement:
 	ld l,Enemy.visible		; $4a94
 	res 7,(hl)		; $4a96
 
-	ld l,Enemy.collisionReactionSet		; $4a98
-	ld (hl),COLLISIONREACTIONSET_SUBTERROR_UNDERGROUND		; $4a9a
+	ld l,Enemy.enemyCollisionMode		; $4a98
+	ld (hl),ENEMYCOLLISION_SUBTERROR_UNDERGROUND		; $4a9a
 
 	ld l,Enemy.counter1		; $4a9c
 	ld (hl),60		; $4a9e
@@ -122871,7 +122871,7 @@ _subterror_stateA:
 	ld a,(de)		; $4af0
 	sla a			; $4af1
 	jr nc,@noShovel	; $4af3
-	cp COLLISIONTYPE_SHOVEL<<1			; $4af5
+	cp ITEMCOLLISION_SHOVEL<<1			; $4af5
 	jr nz,@noShovel	; $4af7
 
 	; Shovel was used; will now pop out of ground
@@ -122998,8 +122998,8 @@ _subterror_stateB:
 	ret nz			; $4b9f
 
 	; Just started drilling
-	ld l,Enemy.collisionReactionSet		; $4ba0
-	ld (hl),COLLISIONREACTIONSET_SUBTERROR_DRILLING		; $4ba2
+	ld l,Enemy.enemyCollisionMode		; $4ba0
+	ld (hl),ENEMYCOLLISION_SUBTERROR_DRILLING		; $4ba2
 	ld l,Enemy.visible		; $4ba4
 	set 7,(hl)		; $4ba6
 	ld a,SND_SHOCK		; $4ba8
@@ -123043,8 +123043,8 @@ _subterror_stateC:
 	ld e,Enemy.var2a		; $4bde
 	ld (de),a ; [var2a] = 0
 
-	ld e,Enemy.collisionReactionSet		; $4be1
-	ld a,COLLISIONREACTIONSET_STANDARD_MINIBOSS		; $4be3
+	ld e,Enemy.enemyCollisionMode		; $4be1
+	ld a,ENEMYCOLLISION_STANDARD_MINIBOSS		; $4be3
 	ld (de),a		; $4be5
 
 	call _ecom_decCounter1		; $4be6
@@ -123374,8 +123374,8 @@ _armosWarrior_parent_state8:
 	ld l,Enemy.speed		; $4d4c
 	ld (hl),SPEED_80		; $4d4e
 
-	ld l,Enemy.collisionReactionSet		; $4d50
-	ld (hl),COLLISIONREACTIONSET_ARMOS_WARRIOR_PROTECTED		; $4d52
+	ld l,Enemy.enemyCollisionMode		; $4d50
+	ld (hl),ENEMYCOLLISION_ARMOS_WARRIOR_PROTECTED		; $4d52
 	jp objectSetVisible82		; $4d54
 
 
@@ -123590,8 +123590,8 @@ _armosWarrior_parent_stateD:
 	ld l,e			; $4e51
 	inc (hl) ; [state]
 
-	ld l,Enemy.collisionReactionSet		; $4e53
-	ld (hl),COLLISIONREACTIONSET_STANDARD_MINIBOSS		; $4e55
+	ld l,Enemy.enemyCollisionMode		; $4e53
+	ld (hl),ENEMYCOLLISION_STANDARD_MINIBOSS		; $4e55
 
 	ld l,Enemy.speed		; $4e57
 	ld (hl),SPEED_200		; $4e59
@@ -123703,8 +123703,8 @@ _armosWarrior_shield:
 	ld l,e			; $4ee0
 	inc (hl) ; [state]
 
-	ld l,Enemy.collisionReactionSet		; $4ee2
-	ld (hl),COLLISIONREACTIONSET_ARMOS_WARRIOR_SHIELD		; $4ee4
+	ld l,Enemy.enemyCollisionMode		; $4ee2
+	ld (hl),ENEMYCOLLISION_ARMOS_WARRIOR_SHIELD		; $4ee4
 
 	ld l,Enemy.var32		; $4ee6
 	ld (hl),$03		; $4ee8
@@ -123756,8 +123756,8 @@ _armosWarrior_sword_state8:
 	ld l,e			; $4f23
 	inc (hl) ; [state]
 
-	ld l,Enemy.collisionReactionSet		; $4f25
-	ld (hl),COLLISIONREACTIONSET_ARMOS_WARRIOR_SWORD		; $4f27
+	ld l,Enemy.enemyCollisionMode		; $4f25
+	ld (hl),ENEMYCOLLISION_ARMOS_WARRIOR_SWORD		; $4f27
 
 	ld l,Enemy.speed		; $4f29
 	ld (hl),SPEED_20		; $4f2b
@@ -124514,8 +124514,8 @@ _smasher_ball_state8:
 	ld l,e			; $5279
 	inc (hl) ; [state]
 
-	ld l,Enemy.collisionReactionSet		; $527b
-	ld (hl),COLLISIONREACTIONSET_SMASHER_BALL		; $527d
+	ld l,Enemy.enemyCollisionMode		; $527b
+	ld (hl),ENEMYCOLLISION_SMASHER_BALL		; $527d
 	ld l,Enemy.speed		; $527f
 	ld (hl),SPEED_a0		; $5281
 
@@ -126409,7 +126409,7 @@ enemyCode76:
 @fishHit:
 	ld e,Enemy.var2a		; $5b96
 	ld a,(de)		; $5b98
-	cp $80|COLLISIONTYPE_SCENT_SEED			; $5b99
+	cp $80|ITEMCOLLISION_SCENT_SEED			; $5b99
 	jr nz,@normalStatus	; $5b9b
 
 	ld h,d			; $5b9d
@@ -126765,8 +126765,8 @@ _anglerFish_antenna:
 	ld l,e			; $5d65
 	inc (hl) ; [state]
 
-	ld l,Enemy.collisionReactionSet		; $5d67
-	ld (hl),COLLISIONREACTIONSET_ANGLER_FISH_ANTENNA		; $5d69
+	ld l,Enemy.enemyCollisionMode		; $5d67
+	ld (hl),ENEMYCOLLISION_ANGLER_FISH_ANTENNA		; $5d69
 
 	ld l,Enemy.collisionRadiusY		; $5d6b
 	ld a,$03		; $5d6d
@@ -127217,8 +127217,8 @@ _blueStalfos_main_state15:
 
 	call _ecom_incState		; $5f9e
 
-	ld l,Enemy.collisionReactionSet		; $5fa1
-	ld (hl),COLLISIONREACTIONSET_BLUE_STALFOS_BAT		; $5fa3
+	ld l,Enemy.enemyCollisionMode		; $5fa1
+	ld (hl),ENEMYCOLLISION_BLUE_STALFOS_BAT		; $5fa3
 
 	ld l,Enemy.zh		; $5fa5
 	ld (hl),$00		; $5fa7
@@ -127240,8 +127240,8 @@ _blueStalfos_main_state16:
 	ld l,Enemy.state		; $5fb6
 	inc (hl)		; $5fb8
 
-	ld l,Enemy.collisionReactionSet		; $5fb9
-	ld (hl),COLLISIONREACTIONSET_BLUE_STALFOS		; $5fbb
+	ld l,Enemy.enemyCollisionMode		; $5fb9
+	ld (hl),ENEMYCOLLISION_BLUE_STALFOS		; $5fbb
 	ld l,Enemy.zh		; $5fbd
 	ld (hl),$ff		; $5fbf
 	jp objectSetInvisible		; $5fc1
@@ -127358,8 +127358,8 @@ _blueStalfos_initSubid2Or3:
 	ld l,e			; $6058
 	inc (hl) ; [state]
 
-	ld l,Enemy.collisionReactionSet		; $605a
-	ld (hl),COLLISIONREACTIONSET_BLUE_STALFOS_SICKLE		; $605c
+	ld l,Enemy.enemyCollisionMode		; $605a
+	ld (hl),ENEMYCOLLISION_BLUE_STALFOS_SICKLE		; $605c
 
 	ld a,Object.zh		; $605e
 	call objectGetRelatedObject1Var		; $6060
@@ -128175,8 +128175,8 @@ _pumpkinHead_ghost_state08:
 	ld l,e			; $6411
 	inc (hl) ; [state]
 
-	ld l,Enemy.collisionReactionSet		; $6413
-	ld (hl),COLLISIONREACTIONSET_PUMPKIN_HEAD_GHOST		; $6415
+	ld l,Enemy.enemyCollisionMode		; $6413
+	ld (hl),ENEMYCOLLISION_PUMPKIN_HEAD_GHOST		; $6415
 
 	ld l,Enemy.oamFlags		; $6417
 	ld a,$05		; $6419
@@ -128495,8 +128495,8 @@ _pumpkinHead_head_state08:
 	ld l,Enemy.angle		; $6589
 	ld (hl),$ff		; $658b
 
-	ld l,Enemy.collisionReactionSet		; $658d
-	ld (hl),COLLISIONREACTIONSET_PUMPKIN_HEAD_HEAD		; $658f
+	ld l,Enemy.enemyCollisionMode		; $658d
+	ld (hl),ENEMYCOLLISION_PUMPKIN_HEAD_HEAD		; $658f
 
 	ld l,Enemy.collisionRadiusY		; $6591
 	ld (hl),$06		; $6593
@@ -130408,7 +130408,7 @@ enemyCode7b:
 	ld h,d			; $6e57
 	ld l,Enemy.var2a		; $6e58
 	ld a,(hl)		; $6e5a
-	cp $80|COLLISIONTYPE_MYSTERY_SEED			; $6e5b
+	cp $80|ITEMCOLLISION_MYSTERY_SEED			; $6e5b
 	jr nz,@normalStatus	; $6e5d
 	ld l,Enemy.var3c		; $6e5f
 	ld (hl),$78		; $6e61
@@ -130540,8 +130540,8 @@ _eyesoar_state_switchHook:
 	or $18			; $6ef6
 	ld (hl),a		; $6ef8
 
-	ld l,Enemy.collisionReactionSet		; $6ef9
-	ld (hl),COLLISIONREACTIONSET_EYESOAR_VULNERABLE		; $6efb
+	ld l,Enemy.enemyCollisionMode		; $6ef9
+	ld (hl),ENEMYCOLLISION_EYESOAR_VULNERABLE		; $6efb
 	ld l,Enemy.counter1		; $6efd
 	ld (hl),150		; $6eff
 	ld l,Enemy.direction		; $6f01
@@ -130686,8 +130686,8 @@ _eyesoar_stateC:
 	ld l,e			; $6fa5
 	inc (hl) ; [state]
 
-	ld l,Enemy.collisionReactionSet		; $6fa7
-	ld (hl),COLLISIONREACTIONSET_EYESOAR		; $6fa9
+	ld l,Enemy.enemyCollisionMode		; $6fa7
+	ld (hl),ENEMYCOLLISION_EYESOAR		; $6fa9
 
 	xor a			; $6fab
 	call enemySetAnimation		; $6fac
@@ -131020,8 +131020,8 @@ _smog_state_uninitialized:
 ; @addr{7139}
 @initCollisions:
 	call objectSetCollideRadius		; $7139
-	ld l,Enemy.collisionReactionSet		; $713c
-	ld a,COLLISIONREACTIONSET_PROJECTILE_WITH_RING_MOD		; $713e
+	ld l,Enemy.enemyCollisionMode		; $713c
+	ld a,ENEMYCOLLISION_PROJECTILE_WITH_RING_MOD		; $713e
 	ld (hl),a		; $7140
 	ret			; $7141
 
@@ -131092,9 +131092,9 @@ _smog_state8_subid3:
 	jr z,@noCollision	; $7199
 
 	and $7f			; $719b
-	cp COLLISIONTYPE_L1_SWORD			; $719d
+	cp ITEMCOLLISION_L1_SWORD			; $719d
 	jr c,@noCollision	; $719f
-	cp COLLISIONTYPE_SWORD_HELD+1			; $71a1
+	cp ITEMCOLLISION_SWORD_HELD+1			; $71a1
 	jr nc,@noCollision	; $71a3
 
 	; If sword collision occurred, stop movement briefly?
@@ -131254,7 +131254,7 @@ _smog_state8_subid3:
 _smog_state8_subid4:
 	ld e,Enemy.var2a		; $726a
 	ld a,(de)		; $726c
-	cp $80|COLLISIONTYPE_ELECTRIC_SHOCK			; $726d
+	cp $80|ITEMCOLLISION_ELECTRIC_SHOCK			; $726d
 	jr nz,++		; $726f
 
 	; Link attacked the boss and got shocked.
@@ -131792,8 +131792,8 @@ _octogon_state_uninitialized:
 	cp $02			; $74ca
 	jr nz,@notSubid2	; $74cc
 
-	ld e,Enemy.collisionReactionSet		; $74ce
-	ld a,COLLISIONREACTIONSET_OCTOGON_SHELL		; $74d0
+	ld e,Enemy.enemyCollisionMode		; $74ce
+	ld a,ENEMYCOLLISION_OCTOGON_SHELL		; $74d0
 	ld (de),a		; $74d2
 	jp _ecom_setSpeedAndState8		; $74d3
 
@@ -132945,15 +132945,15 @@ enemyCode7e:
 	jp z,_enemyBoss_dead		; $7a61
 
 	; Hit by something
-	ld e,Enemy.collisionReactionSet		; $7a64
+	ld e,Enemy.enemyCollisionMode		; $7a64
 	ld a,(de)		; $7a66
-	cp COLLISIONREACTIONSET_PLASMARINE_SHOCK			; $7a67
+	cp ENEMYCOLLISION_PLASMARINE_SHOCK			; $7a67
 	jr z,@normalStatus	; $7a69
 
 	ld e,Enemy.var2a		; $7a6b
 	ld a,(de)		; $7a6d
 	res 7,a			; $7a6e
-	cp COLLISIONTYPE_L1_SWORD			; $7a70
+	cp ITEMCOLLISION_L1_SWORD			; $7a70
 	call nc,_plasmarine_state_switchHook@swapColor		; $7a72
 
 @normalStatus:
@@ -133171,8 +133171,8 @@ _plasmarine_stateC:
 	ldi (hl),a		; $7b82
 	ld (hl),a		; $7b83
 
-	ld l,Enemy.collisionReactionSet		; $7b84
-	ld (hl),COLLISIONREACTIONSET_PLASMARINE_SHOCK		; $7b86
+	ld l,Enemy.enemyCollisionMode		; $7b84
+	ld (hl),ENEMYCOLLISION_PLASMARINE_SHOCK		; $7b86
 	ld a,$02		; $7b88
 	jp enemySetAnimation		; $7b8a
 
@@ -133240,8 +133240,8 @@ _plasmarine_stateD:
 	ldi (hl),a		; $7bdc
 	ld (hl),a		; $7bdd
 
-	ld l,Enemy.collisionReactionSet		; $7bde
-	ld (hl),COLLISIONREACTIONSET_PLASMARINE		; $7be0
+	ld l,Enemy.enemyCollisionMode		; $7bde
+	ld (hl),ENEMYCOLLISION_PLASMARINE		; $7be0
 	xor a			; $7be2
 	jp enemySetAnimation		; $7be3
 
@@ -133357,7 +133357,7 @@ enemyCode7f:
 
 	ld e,Enemy.var2a		; $7c67
 	ld a,(de)		; $7c69
-	cp $80|COLLISIONTYPE_BOMB			; $7c6a
+	cp $80|ITEMCOLLISION_BOMB			; $7c6a
 	jr nz,@normalStatus	; $7c6c
 
 	ld a,SND_BOSS_DAMAGE		; $7c6e
@@ -134044,8 +134044,8 @@ enemyCode01:
 	ld e,Enemy.var2a		; $45c3
 	ld a,(de)		; $45c5
 	res 7,a			; $45c6
-	sub COLLISIONTYPE_MYSTERY_SEED			; $45c8
-	cp COLLISIONTYPE_GALE_SEED - COLLISIONTYPE_MYSTERY_SEED + 1
+	sub ITEMCOLLISION_MYSTERY_SEED			; $45c8
+	cp ITEMCOLLISION_GALE_SEED - ITEMCOLLISION_MYSTERY_SEED + 1
 	jr nc,@normalStatus	; $45cc
 
 	ld a,SND_BOSS_DAMAGE		; $45ce
@@ -146788,8 +146788,8 @@ partCode2a:
 	ld e,Part.var2a		; $576b
 	ld a,(de)		; $576d
 	res 7,a			; $576e
-	sub COLLISIONTYPE_L1_SHIELD			; $5770
-	cp COLLISIONTYPE_SWORD_HELD-COLLISIONTYPE_L1_SHIELD + 1
+	sub ITEMCOLLISION_L1_SHIELD			; $5770
+	cp ITEMCOLLISION_SWORD_HELD-ITEMCOLLISION_L1_SHIELD + 1
 	jr nc,@normalStatus	; $5774
 
 	; Make "parent" immune since the ball blocked the attack
@@ -147026,7 +147026,7 @@ _spikedBall_checkCollisionWithItem:
 	bit 7,(hl)		; $5877
 	ret z			; $5879
 	ld a,(hl)		; $587a
-	cp $80|COLLISIONTYPE_LINK			; $587b
+	cp $80|ITEMCOLLISION_LINK			; $587b
 	ret z			; $587d
 
 	ld l,Part.speed+1		; $587e
@@ -147213,10 +147213,10 @@ partCode4d:
 
 	ld e,Part.var2a		; $5931
 	ld a,(de)		; $5933
-	cp $80|COLLISIONTYPE_L3_SHIELD			; $5934
+	cp $80|ITEMCOLLISION_L3_SHIELD			; $5934
 	jp z,partDelete		; $5936
 
-	cp $80|COLLISIONTYPE_LINK			; $5939
+	cp $80|ITEMCOLLISION_LINK			; $5939
 	jr z,@normalStatus	; $593b
 
 	; Gets reflected
@@ -147449,12 +147449,12 @@ partCode4e:
 	; Hit something
 	ld e,Part.var2a		; $5a88
 	ld a,(de)		; $5a8a
-	cp $80|COLLISIONTYPE_L3_SHIELD			; $5a8b
+	cp $80|ITEMCOLLISION_L3_SHIELD			; $5a8b
 	jr z,@destroy	; $5a8d
 
 	res 7,a			; $5a8f
-	sub COLLISIONTYPE_L2_SWORD			; $5a91
-	cp COLLISIONTYPE_SWORDSPIN - COLLISIONTYPE_L2_SWORD + 1			; $5a93
+	sub ITEMCOLLISION_L2_SWORD			; $5a91
+	cp ITEMCOLLISION_SWORDSPIN - ITEMCOLLISION_L2_SWORD + 1			; $5a93
 	jp c,@destroy		; $5a95
 
 @normalStatus:
@@ -150023,9 +150023,9 @@ partCode36:
 
 @state2:
 	ld h,b			; $69d9
-	ld l,Enemy.collisionReactionSet		; $69da
+	ld l,Enemy.enemyCollisionMode		; $69da
 	ld a,(hl)		; $69dc
-	cp COLLISIONREACTIONSET_PODOBOO			; $69dd
+	cp ENEMYCOLLISION_PODOBOO			; $69dd
 	jp z,partDelete		; $69df
 
 	call objectTakePosition		; $69e2
@@ -150940,12 +150940,12 @@ partCode3d:
 	ld l,Part.var2a		; $6f78
 	ld a,(hl)		; $6f7a
 	res 7,a			; $6f7b
-	or a ; COLLISIONTYPE_LINK
+	or a ; ITEMCOLLISION_LINK
 	jp z,_blueStalfosProjectile_hitLink		; $6f7e
 
 	; Check if hit Link's sword
-	sub COLLISIONTYPE_L1_SWORD			; $6f81
-	cp COLLISIONTYPE_SWORDSPIN - COLLISIONTYPE_L1_SWORD + 1			; $6f83
+	sub ITEMCOLLISION_L1_SWORD			; $6f81
+	cp ITEMCOLLISION_SWORDSPIN - ITEMCOLLISION_L1_SWORD + 1			; $6f83
 	jr nc,@normalStatus	; $6f85
 
 	; Reflect the ball if not already reflected
@@ -151012,8 +151012,8 @@ _blueStalfosProjectile_subid0:
 
 	; Non-reflectable ball
 	ld (hl),SPEED_200		; $6fd8
-	ld l,Part.collisionReactionSet		; $6fda
-	ld (hl),COLLISIONREACTIONSET_PODOBOO		; $6fdc
+	ld l,Part.enemyCollisionMode		; $6fda
+	ld (hl),ENEMYCOLLISION_PODOBOO		; $6fdc
 	ld l,Part.var03		; $6fde
 	inc (hl)		; $6fe0
 ++
@@ -151137,8 +151137,8 @@ _blueStalfosProjectile_subid1_uninitialized:
 
 	ld l,Part.collisionType		; $7067
 	set 7,(hl)		; $7069
-	ld l,Part.collisionReactionSet		; $706b
-	ld (hl),COLLISIONREACTIONSET_PODOBOO		; $706d
+	ld l,Part.enemyCollisionMode		; $706b
+	ld (hl),ENEMYCOLLISION_PODOBOO		; $706d
 
 	ld l,Part.speed		; $706f
 	ld (hl),SPEED_1c0		; $7071
@@ -151650,7 +151650,7 @@ _kingMoblinBomb_checkCollisionWithKingMoblin:
 	ret nc			; $72d0
 
 	ld l,Enemy.var2a		; $72d1
-	ld (hl),$80|COLLISIONTYPE_BOMB		; $72d3
+	ld (hl),$80|ITEMCOLLISION_BOMB		; $72d3
 	ld l,Enemy.invincibilityCounter		; $72d5
 	ld (hl),30		; $72d7
 
@@ -152980,8 +152980,8 @@ partCode4a:
 	ld e,Part.oamFlags		; $7a0e
 	ld (de),a		; $7a10
 
-	ld e,Part.collisionReactionSet		; $7a11
-	ld a,COLLISIONREACTIONSET_PODOBOO		; $7a13
+	ld e,Part.enemyCollisionMode		; $7a11
+	ld a,ENEMYCOLLISION_PODOBOO		; $7a13
 	ld (de),a		; $7a15
 
 	ld a,c			; $7a16
@@ -153173,7 +153173,7 @@ partCode55:
 	; Collision occured with something. Check if it was Link.
 	ld e,Part.var2a		; $7b21
 	ld a,(de)		; $7b23
-	cp $80|COLLISIONTYPE_LINK			; $7b24
+	cp $80|ITEMCOLLISION_LINK			; $7b24
 	jp nz,@gotoState2		; $7b26
 
 	call checkLinkVulnerable		; $7b29
@@ -158605,7 +158605,7 @@ enemyLoadGraphicsAndProperties:
 +
 	ld (de),a		; $437d
 
-	; e = Enemy.collisionReactionSet
+	; e = Enemy.enemyCollisionMode
 	inc e			; $437e
 	ldi a,(hl)		; $437f
 	and $7f			; $4380
@@ -158689,7 +158689,7 @@ partLoadGraphicsAndProperties:
 	ld e,Part.collisionType		; $43dc
 	ld (de),a		; $43de
 
-	; e = Part.collisionReactionSet
+	; e = Part.enemyCollisionMode
 	inc e			; $43df
 	ldi a,(hl)		; $43e0
 	and $7f			; $43e1

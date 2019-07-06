@@ -1,6 +1,6 @@
-; See notes in data/ages/enemyCollisionTypes.s.
+; See notes in data/ages/enemyActiveCollisions.s.
 
-partCollisionTypes:
+partActiveCollisions:
 	dbrev %00000000 %00000000 %00000000 %00000000 ; 0x00
 	dbrev %00001111 %11111100 %00000110 %00000000 ; 0x01
 	dbrev %00000000 %00000000 %00000000 %00000000 ; 0x02

@@ -1,6 +1,6 @@
 ; Data format:
 ; b0: object gfx index (see data/objectGfxHeaders.s)
-; b1: Part.collisionReactionSet (bit 7 must be set for collisions to work)
+; b1: Part.enemyCollisionMode (bit 7 must be set for collisions to work)
 ; b2: Part.collisionRadiusY/X
 ; b3: Part.damage
 ; b4: Part.health

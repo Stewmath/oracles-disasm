@@ -43873,7 +43873,7 @@ _label_07_023:
 	ld a,(de)		; $434c
 	add a			; $434d
 	call multiplyABy16		; $434e
-	ld hl,spriteCollisionReactionSets		; $4351
+	ld hl,objectCollisionTable		; $4351
 	add hl,bc		; $4354
 	pop bc			; $4355
 	ldh a,(<hFF90)	; $4356
@@ -49184,9 +49184,9 @@ _label_07_277:
 	.include "data/seasons/itemAttributes.s"
 	.include "data/itemAnimations.s"
 
-	.include "data/seasons/enemyCollisionTypes.s"
-	.include "data/seasons/partCollisionTypes.s"
-	.include "data/seasons/objectCollisionReactionSets.s"
+	.include "data/seasons/enemyActiveCollisions.s"
+	.include "data/seasons/partActiveCollisions.s"
+	.include "data/seasons/objectCollisionTable.s"
 
 
 
@@ -99713,8 +99713,8 @@ _aquamentus_body_state8:
 	ld l,Enemy.state		; $63fb
 	inc (hl)		; $63fd
 
-	ld l,Enemy.collisionReactionSet		; $63fe
-	ld (hl),COLLISIONREACTIONSET_AQUAMENTUS_BODY		; $6400
+	ld l,Enemy.enemyCollisionMode		; $63fe
+	ld (hl),ENEMYCOLLISION_AQUAMENTUS_BODY		; $6400
 
 	ld l,Enemy.var32		; $6402
 	ld a,$50		; $6404
@@ -101680,13 +101680,13 @@ enemyCode7b:
 	ld e,Enemy.var2a		; $6d29
 	ld a,(de)		; $6d2b
 	res 7,a			; $6d2c
-	cp COLLISIONTYPE_L1_SWORD			; $6d2e
+	cp ITEMCOLLISION_L1_SWORD			; $6d2e
 	jr nc,@normalStatus	; $6d30
 
 	; Link or shield collision
-	ld e,Enemy.collisionReactionSet		; $6d32
+	ld e,Enemy.enemyCollisionMode		; $6d32
 	ld a,(de)		; $6d34
-	cp COLLISIONREACTIONSET_GOHMA_CLAW_LUNGING			; $6d35
+	cp ENEMYCOLLISION_GOHMA_CLAW_LUNGING			; $6d35
 	jr nz,@normalStatus	; $6d37
 
 	ld e,Enemy.var30		; $6d39
@@ -101792,8 +101792,8 @@ _gohma_subid1_state8:
 	ld l,Enemy.state		; $6db5
 	inc (hl) ; [state] = 9
 
-	ld l,Enemy.collisionReactionSet		; $6db8
-	ld (hl),COLLISIONREACTIONSET_GOHMA_BODY		; $6dba
+	ld l,Enemy.enemyCollisionMode		; $6db8
+	ld (hl),ENEMYCOLLISION_GOHMA_BODY		; $6dba
 
 	ld l,Enemy.counter1		; $6dbc
 	ld (hl),30		; $6dbe
@@ -102194,8 +102194,8 @@ _gohma_subid3:
 	ld l,Enemy.state		; $6fbf
 	inc (hl)		; $6fc1
 
-	ld l,Enemy.collisionReactionSet		; $6fc2
-	ld (hl),COLLISIONREACTIONSET_GOHMA_CLAW		; $6fc4
+	ld l,Enemy.enemyCollisionMode		; $6fc2
+	ld (hl),ENEMYCOLLISION_GOHMA_CLAW		; $6fc4
 	ld l,Enemy.zh		; $6fc6
 	ld (hl),$00		; $6fc8
 	jp objectSetVisible82		; $6fca
@@ -102232,8 +102232,8 @@ _gohma_subid3:
 	ld h,d			; $6ff3
 	ld l,Enemy.state		; $6ff4
 	ld (hl),$0a		; $6ff6
-	ld l,Enemy.collisionReactionSet		; $6ff8
-	ld (hl),COLLISIONREACTIONSET_GOHMA_CLAW		; $6ffa
+	ld l,Enemy.enemyCollisionMode		; $6ff8
+	ld (hl),ENEMYCOLLISION_GOHMA_CLAW		; $6ffa
 	ld a,$0d		; $6ffc
 	call enemySetAnimation		; $6ffe
 
@@ -102275,8 +102275,8 @@ _gohma_subid3:
 	jr z,++			; $702c
 
 	res 0,(hl)		; $702e
-	ld l,Enemy.collisionReactionSet		; $7030
-	ld (hl),COLLISIONREACTIONSET_GOHMA_CLAW_LUNGING		; $7032
+	ld l,Enemy.enemyCollisionMode		; $7030
+	ld (hl),ENEMYCOLLISION_GOHMA_CLAW_LUNGING		; $7032
 ++
 	call _gohma_claw_updatePositionInLunge		; $7034
 	ld e,Enemy.var30		; $7037

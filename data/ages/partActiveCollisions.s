@@ -1,7 +1,7 @@
-; See notes in data/ages/enemyCollisionTypes.s.
+; See notes in data/ages/enemyActiveCollisions.s.
 
 ; @addr{6ba2}
-partCollisionTypes:
+partActiveCollisions:
 	dbrev %00000000 %00000000 %00000000 %00000000 ; 0x00
 	dbrev %00001111 %11110110 %00000001 %00000000 ; 0x01
 	dbrev %00000000 %00000000 %00000000 %00000000 ; 0x02

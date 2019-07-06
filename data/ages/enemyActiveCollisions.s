@@ -2,15 +2,15 @@
 ; almost always the same as Enemy.id, except in rare cases (ie. ENEMYID_SPINY_BEETLE
 ; borrows ENEMYID_BEAMOS's value when hiding under rock).
 
-; Each 4 bytes here is a bitset which determines which collision types the Enemy will
+; Each 4 bytes here is a bitset which determines which item collisions the Enemy will
 ; respond to. If a bit is unset, it won't do anything when it collides with an object with
-; that collisionType.
+; that item collision. (See constants/itemCollisions.s.)
 
 ; Note: the bits are reversed to make it easier to look at (ie. collisionType 0 is at the
 ; far left)
 
 ; @addr{69a2}
-enemyCollisionTypes:
+enemyActiveCollisions:
 	dbrev %00000000 %00000000 %00000000 %00000000 ; 0x00
 	dbrev %11111111 %11110100 %00000111 %11111110 ; 0x01
 	dbrev %11111111 %11110100 %00000111 %11111110 ; 0x02
