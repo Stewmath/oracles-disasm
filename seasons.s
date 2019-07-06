@@ -43607,6 +43607,8 @@ _parentItemCode_shooter:
 	; Note: here, 'c' = the "behaviour" value from the "_itemUsageParameterTable" for
 	; button B, and this will become the subid for the new item? (The only important
 	; thing is that it's nonzero, to indicate the seed came from the shooter.)
+	; (Overridden here in seasons to be consistent)
+	ld c,$63
 	push bc			; $4ea6
 	ld e,$01		; $4ea7
 	call itemCreateChildWithID		; $4ea9
@@ -45708,6 +45710,8 @@ _label_07_085:
 	ld (hl),a		; $4ba4
 	or d			; $4ba5
 	ret			; $4ba6
+
+_checkTileIsPassableFromDirection:
 	ld hl,$4ca4		; $4ba7
 	call findByteInCollisionTable_paramE		; $4baa
 	jr c,_label_07_089	; $4bad
@@ -45942,14 +45946,15 @@ itemCode24:
 	call itemIncState		; $4cd9
 	ld bc,$ffe0		; $4cdc
 	call objectSetSpeedZ		; $4cdf
-	call itemUpdateAngle		; $4ce2
+	jp seedItemState0Hook
 
 	ld l,Item.subid		; $4ce5
 	ldd a,(hl)		; $4ce7
-	or a			; $4ce8
-	jr nz,@slingshot	; $4ce9
+	or a
+	jr nz,@slingshot
 
 	; Satchel
+@satchel:
 	ldi a,(hl) ; [id]
 	cp ITEMID_GALE_SEED			; $4cec
 	jr nz,++		; $4cee
@@ -46020,7 +46025,8 @@ _seedItemState1:
 	jr z,@satchelUpdate	; $4d45
 
 @slingshotUpdate:
-	call _slingshotCheckCanPassSolidTile		; $4d47
+	jp seedItemState1Hook		; $4d47
+@hookRet:
 	jr nz,@seedCollidedWithWall	; $4d4a
 	call objectCheckWithinScreenBoundary		; $4d4c
 	jp c,objectApplySpeed		; $4d4f
@@ -50913,6 +50919,311 @@ itemCode0fPost:
 ; b2/b3: Y/X offsets relative to Link
 @data:
 	.db $00 $00 $00 $00
+
+
+
+seedItemState0Hook:
+	ld l,Item.var34
+	ld (hl),$03
+	ld l,Item.subid
+	ldd a,(hl)
+	cp $63
+	ld b,a
+	jr z,@shooter
+
+	call itemUpdateAngle
+	ld a,b
+	or a
+	ld l,Item.id
+	jp z,itemCode24@satchel
+	jp itemCode24@slingshot
+
+@shooter:
+	; Seed shooter
+;	ld e,Item.angle		; $4d37
+;	ld a,(de)		; $4d39
+;	rrca			; $4d3a
+;	ld hl,@shooterPositionOffsets		; $4d3b
+;	rst_addAToHl			; $4d3e
+;	ldi a,(hl)		; $4d3f
+;	ld c,(hl)		; $4d40
+;	ld b,a			; $4d41
+;
+;	ld h,d			; $4d42
+;	ld l,Item.zh		; $4d43
+;	ld a,(hl)		; $4d45
+;	add $fe			; $4d46
+;	ld (hl),a		; $4d48
+;
+;	; Since 'd'='h', this will copy its own position and apply the offset
+;	call objectCopyPositionWithOffset		; $4d49
+
+	ld hl,wIsSeedShooterInUse		; $4d4c
+	inc (hl)		; $4d4f
+	ld a,SPEED_300		; $4d50
+
+	jp itemCode24@setSpeed
+
+
+seedItemState1Hook:
+	ld e,Item.subid
+	ld a,(de)
+	cp $63
+	jr z,@shooter
+	call _slingshotCheckCanPassSolidTile
+	jp _seedItemState1@hookRet
+
+@shooter:
+	call _seedItemUpdateBouncing
+	jp nz,_seedItemState1@seedCollidedWithWall
+
+@updatePosition:
+	call objectCheckWithinRoomBoundary
+	jp c,objectApplySpeed
+	jp _seedItemDelete
+
+;;
+; Called for seeds used with seed shooter. Checks for tile collisions and triggers
+; "bounces" when that happens.
+;
+; @param[out]	zflag	Unset when the seed's "effect" should be activated
+; @addr{5035}
+_seedItemUpdateBouncing:
+	call objectGetTileAtPosition		; $5035
+	ld hl,_seedDontBounceTilesTable		; $5038
+	call findByteInCollisionTable		; $503b
+	jr c,@unsetZFlag	; $503e
+
+	ld e,Item.angle		; $5040
+	ld a,(de)		; $5042
+	bit 2,a			; $5043
+	jr z,@movingStraight		; $5045
+
+; Moving diagonal
+
+	call _seedItemCheckDiagonalCollision		; $5047
+
+	; Call this just to update var3c/var3d (tile position / index)?
+	push af			; $504a
+	call _itemCheckCanPassSolidTile		; $504b
+	pop af			; $504e
+
+	jr z,@setZFlag		; $504f
+	jr @bounce		; $5051
+
+@movingStraight:
+	ld e,Item.var33		; $5053
+	xor a			; $5055
+	ld (de),a		; $5056
+	call objectCheckTileCollision_allowHoles		; $5057
+	jr nc,@setZFlag		; $505a
+
+	ld e,Item.var33		; $505c
+	ld a,$03		; $505e
+	ld (de),a		; $5060
+	call _itemCheckCanPassSolidTile		; $5061
+	jr z,@setZFlag		; $5064
+
+@bounce:
+	call _seedItemClearKnockback		; $5066
+
+	; Decrement bounce counter
+	ld h,d			; $5069
+	ld l,Item.var34		; $506a
+	dec (hl)		; $506c
+	jr z,@unsetZFlag	; $506d
+
+	ld l,Item.var33		; $506f
+	ld a,(hl)		; $5071
+	cp $03			; $5072
+	jr z,@reverseBothComponents	; $5074
+
+	; Calculate new angle based on whether it was a vertical or horizontal collision
+	ld c,a			; $5076
+	ld e,Item.angle		; $5077
+	ld a,(de)		; $5079
+	rrca			; $507a
+	rrca			; $507b
+	and $06			; $507c
+	add c			; $507e
+	ld hl,@angleCalcTable-1		; $507f
+	rst_addAToHl			; $5082
+	ld a,(hl)		; $5083
+	ld (de),a		; $5084
+
+@setZFlag:
+	xor a			; $5085
+	ret			; $5086
+
+; Flips both X and Y componets
+@reverseBothComponents:
+	ld l,Item.angle		; $5087
+	ld a,(hl)		; $5089
+	xor $10			; $508a
+	ld (hl),a		; $508c
+	xor a			; $508d
+	ret			; $508e
+
+@unsetZFlag:
+	or d			; $508f
+	ret			; $5090
+
+
+; Used for calculating new angle after bounces
+@angleCalcTable:
+	.db $1c $0c $14 $04 $0c $1c $04 $14
+
+;;
+; Called when a seed is moving in a diagonal direction.
+;
+; Sets var33 such that bits 0 and 1 are set on horizontal and vertical collisions,
+; respectively.
+;
+; @param	a	Angle
+; @param[out]	zflag	Unset if the seed should bounce
+; @addr{5099}
+_seedItemCheckDiagonalCollision:
+	rrca			; $5099
+	and $0c			; $509a
+	ld hl,@collisionOffsets		; $509c
+	rst_addAToHl			; $509f
+	xor a			; $50a0
+	ldh (<hFF8A),a	; $50a1
+
+	; Loop will iterate twice (first for vertical collision, then horizontal).
+	ld e,Item.var33		; $50a3
+	ld a,$40		; $50a5
+	ld (de),a		; $50a7
+
+@nextComponent:
+	ld e,Item.yh		; $50a8
+	ld a,(de)		; $50aa
+	add (hl)		; $50ab
+	ld b,a			; $50ac
+	inc hl			; $50ad
+	ld e,Item.xh		; $50ae
+	ld a,(de)		; $50b0
+	add (hl)		; $50b1
+	ld c,a			; $50b2
+
+	inc hl			; $50b3
+	push hl			; $50b4
+	call checkTileCollisionAt_allowHoles		; $50b5
+	jr nc,@next		; $50b8
+
+; Collision occurred; check whether it should bounce (set carry flag if so)
+
+	call getTileAtPosition		; $50ba
+	ld hl,_seedDontBounceTilesTable		; $50bd
+	call findByteInCollisionTable		; $50c0
+	ccf			; $50c3
+	jr nc,@next	; $50c4
+
+	ld h,d			; $50c6
+	ld l,Item.angle		; $50c7
+	ld b,(hl)		; $50c9
+	call _checkTileIsPassableFromDirection		; $50ca
+	ccf			; $50cd
+	jr c,@next	; $50ce
+	jr z,@next	; $50d0
+
+	; Bounce if the new elevation would be negative
+	ld h,d			; $50d2
+	ld l,Item.var3e		; $50d3
+	add (hl)		; $50d5
+	rlca			; $50d6
+
+@next:
+	; Rotate carry bit into var33
+	ld h,d			; $50d7
+	ld l,Item.var33		; $50d8
+	rl (hl)			; $50da
+	pop hl			; $50dc
+	jr nc,@nextComponent	; $50dd
+
+	ld e,Item.var33		; $50df
+	ld a,(de)		; $50e1
+	or a			; $50e2
+	ret			; $50e3
+
+
+; Offsets from item position to check for collisions at.
+; First 2 bytes are offsets for vertical collisions, next 2 are for horizontal.
+@collisionOffsets:
+	.db $fc $00 $00 $03 ; Up-right
+	.db $03 $00 $00 $03 ; Down-right
+	.db $03 $00 $00 $fc ; Down-left
+	.db $fc $00 $00 $fc ; Up-left
+
+;;
+; @param	h,d	Object
+; @param[out]	zflag	Set if there are still bounces left?
+; @addr{50f4}
+_func_50f4:
+	ld e,Item.angle		; $50f4
+	ld l,Item.knockbackAngle		; $50f6
+	ld a,(de)		; $50f8
+	add (hl)		; $50f9
+	ld hl,_data_5114		; $50fa
+	rst_addAToHl			; $50fd
+	ld c,(hl)		; $50fe
+	ld a,(de)		; $50ff
+	cp c			; $5100
+	jr z,_seedItemClearKnockback	; $5101
+
+	ld h,d			; $5103
+	ld l,Item.var34		; $5104
+	dec (hl)		; $5106
+	jr z,@unsetZFlag	; $5107
+
+	; Set Item.angle
+	ld a,c			; $5109
+	ld (de),a		; $510a
+	xor a			; $510b
+	ret			; $510c
+
+@unsetZFlag:
+	or d			; $510d
+	ret			; $510e
+
+;;
+; @addr{510f}
+_seedItemClearKnockback:
+	ld e,Item.knockbackCounter		; $510f
+	xor a			; $5111
+	ld (de),a		; $5112
+	ret			; $5113
+
+
+_data_5114:
+	.db $00 $08 $10 $18 $1c $04 $0c $14
+	.db $18 $00 $08 $10 $14 $1c $04 $0c
+	.db $10 $18 $00 $08 $0c $14 $1c $04
+	.db $08 $10 $18 $00 $04 $0c $14 $1c
+
+
+; List of tiles which seeds don't bounce off of. (Burnable stuff.)
+_seedDontBounceTilesTable:
+	.dw @collisions0
+	.dw @collisions1
+	.dw @collisions2
+	.dw @collisions3
+	.dw @collisions4
+	.dw @collisions5
+
+@collisions0:
+	.db $ce $cf $c5 $c5 $c6 $c7 $c8 $c9 $ca
+@collisions1:
+@collisions3:
+@collisions4:
+	.db $00
+
+@collisions2:
+@collisions5:
+	.db TILEINDEX_UNLIT_TORCH
+	.db TILEINDEX_LIT_TORCH
+	.db $00
+
 
 .BANK $08 SLOT 1
 .ORG 0
