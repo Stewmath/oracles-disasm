@@ -39552,7 +39552,6 @@ _label_06_113:
 	jp decNumActiveSeeds		; $4d6a
 
 
-_parentItemCode_shooter:
 _parentItemCode_satchel:
 	ld e,$04		; $4d6d
 	ld a,(de)		; $4d6f
@@ -39595,6 +39594,8 @@ _label_06_114:
 	ld (hl),$1a		; $4daf
 _label_06_115:
 	jp _clearParentItem		; $4db1
+
+_clearSelfIfNoSeeds:
 	ld hl,$c6be		; $4db4
 	rst_addAToHl			; $4db7
 	ld a,(hl)		; $4db8
@@ -40838,7 +40839,7 @@ _itemUsageParameterTable:
 	.db $73 <wGameKeysJustPressed   ; ITEMID_BIGGORON_SWORD
 	.db $02 <wGameKeysJustPressed   ; ITEMID_BOMBCHUS
 	.db $05 <wGameKeysJustPressed   ; ITEMID_FLUTE
-	.db $00 <wGameKeysJustPressed   ; ITEMID_SHOOTER
+	.db $43 <wGameKeysJustPressed   ; ITEMID_SHOOTER
 	.db $00 <wGameKeysJustPressed   ; ITEMID_10
 	.db $00 <wGameKeysJustPressed   ; ITEMID_HARP
 	.db $00 <wGameKeysJustPressed   ; ITEMID_12
@@ -43557,6 +43558,156 @@ _parentItemCode_switchHook:
 
 
 
+; SEED SHOOTER
+
+_parentItemCode_shooter:
+	ld e,Item.state		; $4e66
+	ld a,(de)		; $4e68
+	rst_jumpTable			; $4e69
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+; Initialization
+@state0:
+	ld a,$01		; $4e70
+	call _clearSelfIfNoSeeds		; $4e72
+
+	call updateLinkDirectionFromAngle		; $4e75
+	call _parentItemLoadAnimationAndIncState		; $4e78
+	call itemCreateChild		; $4e7b
+	ld a,(wLinkAngle)		; $4e7e
+	bit 7,a			; $4e81
+	jr z,@updateAngleFrom5Bit	; $4e83
+	ld a,(w1Link.direction)		; $4e85
+	add a			; $4e88
+	jr @updateAngle		; $4e89
+
+
+; Waiting for button to be released
+@state1:
+	ld a,$01		; $4e8b
+	call _clearSelfIfNoSeeds		; $4e8d
+	call _parentItemCheckButtonPressed		; $4e90
+	jr nz,@checkUpdateAngle	; $4e93
+
+; Button released
+
+	ld a,(wIsSeedShooterInUse)		; $4e95
+	or a			; $4e98
+	jp nz,_clearParentItem		; $4e99
+
+	ld e,Item.relatedObj2+1		; $4e9c
+	ld a,>w1Link		; $4e9e
+	ld (de),a		; $4ea0
+
+	ld a,$01		; $4ea1
+	call _clearSelfIfNoSeeds		; $4ea3
+
+	; Note: here, 'c' = the "behaviour" value from the "_itemUsageParameterTable" for
+	; button B, and this will become the subid for the new item? (The only important
+	; thing is that it's nonzero, to indicate the seed came from the shooter.)
+	push bc			; $4ea6
+	ld e,$01		; $4ea7
+	call itemCreateChildWithID		; $4ea9
+
+	; Calculate child item's angle?
+	ld e,Item.angle		; $4eac
+	ld a,(de)		; $4eae
+	add a			; $4eaf
+	add a			; $4eb0
+	ld l,Item.angle		; $4eb1
+	ld (hl),a		; $4eb3
+
+	pop bc			; $4eb4
+	ld a,b			; $4eb5
+	call decNumActiveSeeds		; $4eb6
+
+	call itemIncState		; $4eb9
+	ld l,Item.counter2		; $4ebc
+	ld (hl),$0c		; $4ebe
+
+	ld a,SND_SEEDSHOOTER		; $4ec0
+	jp playSound		; $4ec2
+
+
+; Waiting for counter to reach 0 before putting away the seed shooter
+@state2:
+	call itemDecCounter2		; $4ec5
+	ret nz			; $4ec8
+	ld a,(wLinkAngle)		; $4ec9
+	push af			; $4ecc
+	ld l,Item.angle		; $4ecd
+	ld a,(hl)		; $4ecf
+	add a			; $4ed0
+	add a			; $4ed1
+	ld (wLinkAngle),a		; $4ed2
+	call updateLinkDirectionFromAngle		; $4ed5
+	pop af			; $4ed8
+	ld (wLinkAngle),a		; $4ed9
+	jp _clearParentItem		; $4edc
+
+
+; Note: seed shooter's angle is a value from 0-7, instead of $00-$1f like usual
+
+@updateAngleFrom5Bit:
+	rrca			; $4edf
+	rrca			; $4ee0
+	jr @updateAngle		; $4ee1
+
+@checkUpdateAngle:
+	ld a,(wGameKeysJustPressed)		; $4ee3
+	and (BTN_RIGHT|BTN_LEFT|BTN_UP|BTN_DOWN)			; $4ee6
+	jr nz,+			; $4ee8
+	call itemDecCounter2		; $4eea
+	jr nz,@determineBaseAnimation	; $4eed
++
+	ld a,(wLinkAngle)		; $4eef
+	rrca			; $4ef2
+	rrca			; $4ef3
+	jr c,@determineBaseAnimation	; $4ef4
+	ld h,d			; $4ef6
+	ld l,Item.angle		; $4ef7
+	sub (hl)		; $4ef9
+	jr z,@determineBaseAnimation	; $4efa
+
+	bit 2,a			; $4efc
+	ld a,$ff		; $4efe
+	jr nz,+			; $4f00
+	ld a,$01		; $4f02
++
+	add (hl)		; $4f04
+
+@updateAngle:
+	ld h,d			; $4f05
+	ld l,Item.angle		; $4f06
+	and $07			; $4f08
+	ld (hl),a		; $4f0a
+	ld l,Item.counter2		; $4f0b
+	ld (hl),$10		; $4f0d
+
+@determineBaseAnimation:
+.ifdef ROM_AGES
+	call _isLinkUnderwater		; $4f0f
+	ld a,$48		; $4f12
+	jr nz,++		; $4f14
+.endif
+	ld a,(w1Companion.id)		; $4f16
+	cp SPECIALOBJECTID_MINECART			; $4f19
+	ld a,$40		; $4f1b
+	jr z,++			; $4f1d
+	ld a,$38		; $4f1f
+++
+	ld h,d			; $4f21
+	ld l,Item.angle		; $4f22
+	add (hl)		; $4f24
+	ld l,Item.var31		; $4f25
+	ld (hl),a		; $4f27
+	ld l,Item.var3f		; $4f28
+	ld (hl),$04		; $4f2a
+	ret			; $4f2c
+
+
 .BANK $07 SLOT 1
 .ORG 0
 
@@ -45032,7 +45183,7 @@ _label_07_060:
 	.dw itemCode0c ; 0x0c
 	.dw itemCode0d ; 0x0d
 	.dw itemDelete ; 0x0e
-	.dw itemDelete ; 0x0f
+	.dw itemCode0f ; 0x0f
 	.dw itemDelete ; 0x10
 	.dw itemDelete ; 0x11
 	.dw itemDelete ; 0x12
@@ -45097,11 +45248,11 @@ _updateItemPost:
 	.dw itemCode08Post  ; 0x08
 	.dw itemCodeNilPost ; 0x09
 	.dw itemCode0aPost  ; 0x0a
-	.dw itemCode0bPost   ; 0x0b
+	.dw itemCode0bPost  ; 0x0b
 	.dw itemCode0cPost  ; 0x0c
 	.dw itemCodeNilPost ; 0x0d
 	.dw itemCodeNilPost ; 0x0e
-	.dw itemDelete      ; 0x0f
+	.dw itemCode0fPost  ; 0x0f
 	.dw itemCodeNilPost ; 0x10
 	.dw itemCodeNilPost ; 0x11
 	.dw itemCodeNilPost ; 0x12
@@ -48558,6 +48709,8 @@ itemCode07Post:
 _label_07_227:
 	add a			; $5e58
 	rst_addDoubleIndex			; $5e59
+
+_itemInitializeFromLinkPosition:
 	ld e,$26		; $5e5a
 	ldi a,(hl)		; $5e5c
 	ld (de),a		; $5e5d
@@ -50630,6 +50783,54 @@ itemCode09:
 	jp itemDelete		; $5af2
 
 
+; SEED SHOOTER
+
+itemCode0f:
+	ld e,Item.state		; $5b51
+	ld a,(de)		; $5b53
+	rst_jumpTable			; $5b54
+	.dw @state0
+	.dw @state1
+
+@state0:
+	ld a,UNCMP_GFXH_1d		; $5b59
+	call loadWeaponGfx		; $5b5b
+	call _loadAttributesAndGraphicsAndIncState		; $5b5e
+	ld e,Item.var30		; $5b61
+	ld a,$ff		; $5b63
+	ld (de),a		; $5b65
+	jp objectSetVisible81		; $5b66
+
+@state1:
+	ret			; $5b69
+
+
+itemCode0fPost:
+	call _cpRelatedObject1ID		; $5b6a
+	jp nz,itemDelete		; $5b6d
+
+	ld hl,@data		; $5b70
+	call _itemInitializeFromLinkPosition		; $5b73
+
+	; Copy link Z position
+	ld h,d			; $5b76
+	ld a,(w1Link.zh)		; $5b77
+	ld l,Item.zh		; $5b7a
+	ld (hl),a		; $5b7c
+
+	; Check if angle has changed
+	ld l,Item.var30		; $5b7d
+	ld a,(w1ParentItem2.angle)		; $5b7f
+	cp (hl)			; $5b82
+	ld (hl),a		; $5b83
+	ret z			; $5b84
+	jp itemSetAnimation		; $5b85
+
+
+; b0/b1: collisionRadiusY/X
+; b2/b3: Y/X offsets relative to Link
+@data:
+	.db $00 $00 $00 $00
 
 .BANK $08 SLOT 1
 .ORG 0
