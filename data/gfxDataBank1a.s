@@ -23,4 +23,5 @@ gfxDataBank1a:
 	m_GfxDataSimple gfx_slingshot
 	m_GfxDataSimple gfx_magnet_gloves
 	m_GfxDataSimple gfx_cane_of_somaria
+	m_GfxDataSimple gfx_switch_hook
 .endif

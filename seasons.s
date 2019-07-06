@@ -50035,7 +50035,7 @@ itemCode0a:
 	.dw _switchHookState3
 
 @state0:
-	ld a,UNCMP_GFXH_1f		; $5816
+	ld a,UNCMP_GFXH_36		; $5816
 	call loadWeaponGfx		; $5818
 
 	ld hl,@offsetsTable		; $581b

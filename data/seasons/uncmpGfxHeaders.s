@@ -191,5 +191,3 @@ uncmpGfxHeader33: ; $691a
 uncmpGfxHeader34: ; $6920
 uncmpGfxHeader35: ; $6920
 	m_GfxHeaderRam $07 $d800 $8300 $2f
-uncmpGfxHeader36: ; $6926
-	; Invalid destination: $6ac0.
