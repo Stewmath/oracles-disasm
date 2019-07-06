@@ -18730,7 +18730,7 @@ _label_03_090:
 	inc (hl)		; $5764
 	jr nz,_label_03_089	; $5765
 	call clearOam		; $5767
-	ld a,$0a		; $576a
+	ld a,UNCMP_GFXH_0a		; $576a
 	call loadUncompressedGfxHeader		; $576c
 	ld hl,wTmpcbb3		; $576f
 	ld (hl),$1e		; $5772
@@ -21577,7 +21577,7 @@ _label_03_142:
 	ld a,(hl)		; $6f39
 	or a			; $6f3a
 	ret nz			; $6f3b
-	ld a,$34		; $6f3c
+	ld a,UNCMP_GFXH_34		; $6f3c
 	call loadUncompressedGfxHeader		; $6f3e
 	or $01			; $6f41
 	ret			; $6f43
@@ -21924,7 +21924,7 @@ _label_03_152:
 _label_03_153:
 	ld bc,bank2.rectangleData_02_7de1		; $71c5
 	callab bank2.copyRectangleFromTmpGfxBuffer_paramBc		; $71c8
-	ld a,$3c		; $71d0
+	ld a,UNCMP_GFXH_3c		; $71d0
 	call loadUncompressedGfxHeader		; $71d2
 	ld a,SND_DOORCLOSE		; $71d5
 	call playSound		; $71d7
@@ -96608,7 +96608,7 @@ _label_0b_235:
 	dec b			; $64bd
 	jr nz,_label_0b_235	; $64be
 	push de			; $64c0
-	ld a,$09		; $64c1
+	ld a,UNCMP_GFXH_09		; $64c1
 	call loadUncompressedGfxHeader		; $64c3
 	pop de			; $64c6
 	pop af			; $64c7
@@ -96670,7 +96670,7 @@ _label_0b_237:
 	pop bc			; $651d
 	dec b			; $651e
 	jr nz,_label_0b_237	; $651f
-	ld a,$09		; $6521
+	ld a,UNCMP_GFXH_09		; $6521
 	call loadUncompressedGfxHeader		; $6523
 	pop af			; $6526
 	ld ($ff00+R_SVBK),a	; $6527
@@ -136394,7 +136394,7 @@ _label_10_119:
 	ld (hl),$0f		; $51ad
 	ld a,$b1		; $51af
 	call loadGfxHeader		; $51b1
-	ld a,$32		; $51b4
+	ld a,UNCMP_GFXH_32		; $51b4
 	call loadUncompressedGfxHeader		; $51b6
 	ld hl,$cc0a		; $51b9
 	ld (hl),$17		; $51bc
@@ -137093,7 +137093,7 @@ _label_10_131:
 	jp enemyDelete		; $56db
 	push af			; $56de
 	call loadGfxHeader		; $56df
-	ld a,$33		; $56e2
+	ld a,UNCMP_GFXH_33		; $56e2
 	call loadUncompressedGfxHeader		; $56e4
 	pop af			; $56e7
 	sub $b2			; $56e8
@@ -141035,7 +141035,7 @@ _label_10_290:
 	ld (wTmpcbb3),a		; $7176
 	ld a,(wGfxRegs1.SCY)		; $7179
 	ldh (<hCameraY),a	; $717c
-	ld a,$01		; $717e
+	ld a,UNCMP_GFXH_01		; $717e
 	call loadUncompressedGfxHeader		; $7180
 	ld a,PALH_0b		; $7183
 	call loadPaletteHeader		; $7185
@@ -141160,7 +141160,7 @@ _label_10_297:
 	cp $60			; $7270
 	jr nz,_label_10_298	; $7272
 	call clearDynamicInteractions		; $7274
-	ld a,$2c		; $7277
+	ld a,UNCMP_GFXH_2c		; $7277
 	call loadUncompressedGfxHeader		; $7279
 _label_10_298:
 	jp $71fd		; $727c
@@ -141307,7 +141307,7 @@ _label_10_301:
 	call loadGfxHeader		; $7396
 	ld a,PALH_05		; $7399
 	call loadPaletteHeader		; $739b
-	ld a,$2b		; $739e
+	ld a,UNCMP_GFXH_2b		; $739e
 	call loadUncompressedGfxHeader		; $73a0
 	call checkIsLinkedGame		; $73a3
 	ld a,$06		; $73a6

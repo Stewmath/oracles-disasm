@@ -3636,7 +3636,7 @@ reloadTileMap:
 	xor a			; $12bd
 	ld ($cd08),a		; $12be
 	ld ($cd09),a		; $12c1
-	ld a,$10		; $12c4
+	ld a,UNCMP_GFXH_10		; $12c4
 	call loadUncompressedGfxHeader		; $12c6
 	ld a,$01		; $12c9
 	ldh (<hRomBank),a	; $12cb
@@ -3662,7 +3662,7 @@ func_131f:
 	call loadTilesetAndRoomLayout		; $12f4
 	call loadRoomCollisions		; $12f7
 	call generateVramTilesWithRoomChanges		; $12fa
-	ld a,$10		; $12fd
+	ld a,UNCMP_GFXH_10		; $12fd
 	call loadUncompressedGfxHeader		; $12ff
 	ld a,($cd22)		; $1302
 	ld ($cd29),a		; $1305
@@ -4957,7 +4957,7 @@ checkReloadStatusBarGraphics:
 	rrca			; $1a3f
 	ld a,$02		; $1a40
 	jr c,_label_00_215	; $1a42
-	ld a,$03		; $1a44
+	ld a,UNCMP_GFXH_03		; $1a44
 _label_00_215:
 	jp loadUncompressedGfxHeader		; $1a46
 
@@ -12838,7 +12838,7 @@ _label_03_061:
 	ret z			; $5025
 	cp $10			; $5026
 	jr nz,_label_03_063	; $5028
-	ld a,$0d		; $502a
+	ld a,UNCMP_GFXH_0d		; $502a
 	call loadUncompressedGfxHeader		; $502c
 	ld b,$04		; $502f
 _label_03_062:
@@ -12853,7 +12853,7 @@ _label_03_062:
 _label_03_063:
 	cp $b0			; $503f
 	jr nz,_label_03_064	; $5041
-	ld a,$2a		; $5043
+	ld a,UNCMP_GFXH_2a		; $5043
 	call loadUncompressedGfxHeader		; $5045
 _label_03_064:
 	or $01			; $5048
@@ -14374,7 +14374,7 @@ _label_03_129:
 	inc (hl)		; $5abf
 	jr nz,_label_03_127	; $5ac0
 	call clearOam		; $5ac2
-	ld a,$0a		; $5ac5
+	ld a,UNCMP_GFXH_0a		; $5ac5
 	call loadUncompressedGfxHeader		; $5ac7
 	ld hl,$cbb3		; $5aca
 	ld (hl),$1e		; $5acd
@@ -14897,7 +14897,7 @@ _label_03_130:
 	ld a,($cbb4)		; $5f32
 	cp $04			; $5f35
 	jr nz,_label_03_131	; $5f37
-	ld b,$0f		; $5f39
+	ld b,UNCMP_GFXH_0f		; $5f39
 _label_03_131:
 	ld a,b			; $5f3b
 	call loadUncompressedGfxHeader		; $5f3c
@@ -15128,7 +15128,7 @@ _label_03_138:
 	ld ($cbb3),a		; $60e8
 	ld a,($c486)		; $60eb
 	ldh (<hCameraY),a	; $60ee
-	ld a,$01		; $60f0
+	ld a,UNCMP_GFXH_01		; $60f0
 	call loadUncompressedGfxHeader		; $60f2
 	ld a,$0b		; $60f5
 	call loadPaletteHeader		; $60f7
@@ -15247,7 +15247,7 @@ _label_03_145:
 	cp $60			; $61d7
 	jr nz,_label_03_146	; $61d9
 	call clearDynamicInteractions		; $61db
-	ld a,$2c		; $61de
+	ld a,UNCMP_GFXH_2c		; $61de
 	call loadUncompressedGfxHeader		; $61e0
 _label_03_146:
 	jp $616f		; $61e3
@@ -15390,7 +15390,7 @@ _label_03_149:
 	ld ($ff00+$70),a	; $62e8
 	ld a,$97		; $62ea
 	call loadGfxHeader		; $62ec
-	ld a,$2b		; $62ef
+	ld a,UNCMP_GFXH_2b		; $62ef
 	call loadUncompressedGfxHeader		; $62f1
 	ld a,$05		; $62f4
 	call loadPaletteHeader		; $62f6
@@ -18177,7 +18177,7 @@ _label_03_235:
 	jp $7a66		; $772f
 	call retIfTextIsActive		; $7732
 	call disableLcd		; $7735
-	ld a,$0e		; $7738
+	ld a,UNCMP_GFXH_0e		; $7738
 	call loadUncompressedGfxHeader		; $773a
 	ld a,$50		; $773d
 	call playSound		; $773f
@@ -18431,7 +18431,7 @@ _label_03_244:
 	ld a,($cbbb)		; $7938
 	cp $05			; $793b
 	jr nz,_label_03_245	; $793d
-	ld b,$0f		; $793f
+	ld b,UNCMP_GFXH_0f		; $793f
 _label_03_245:
 	ld a,b			; $7941
 	call loadUncompressedGfxHeader		; $7942
@@ -50496,7 +50496,7 @@ _label_08_027:
 	ret z			; $47a5
 	res 2,(hl)		; $47a6
 	push de			; $47a8
-	ld a,$11		; $47a9
+	ld a,UNCMP_GFXH_11		; $47a9
 	call loadUncompressedGfxHeader		; $47ab
 	pop de			; $47ae
 	ret			; $47af
@@ -66800,7 +66800,7 @@ _label_09_244:
 	add $30			; $72f2
 	push de			; $72f4
 	call loadGfxHeader		; $72f5
-	ld a,$0c		; $72f8
+	ld a,UNCMP_GFXH_0c		; $72f8
 	call loadUncompressedGfxHeader		; $72fa
 	pop de			; $72fd
 	ret			; $72fe
@@ -70327,7 +70327,7 @@ _label_0a_091:
 	jr nz,_label_0a_090	; $4949
 	pop af			; $494b
 	ld ($ff00+$70),a	; $494c
-	ld a,$29		; $494e
+	ld a,UNCMP_GFXH_29		; $494e
 	call loadUncompressedGfxHeader		; $4950
 	ldh a,(<hActiveObject)	; $4953
 	ld d,a			; $4955
@@ -75689,7 +75689,7 @@ _label_0a_268:
 	dec b			; $6bd3
 	jr nz,_label_0a_268	; $6bd4
 	push de			; $6bd6
-	ld a,$09		; $6bd7
+	ld a,UNCMP_GFXH_09		; $6bd7
 	call loadUncompressedGfxHeader		; $6bd9
 	pop de			; $6bdc
 	pop af			; $6bdd
@@ -75751,7 +75751,7 @@ _label_0a_270:
 	pop bc			; $6c33
 	dec b			; $6c34
 	jr nz,_label_0a_270	; $6c35
-	ld a,$09		; $6c37
+	ld a,UNCMP_GFXH_09		; $6c37
 	call loadUncompressedGfxHeader		; $6c39
 	pop af			; $6c3c
 	ld ($ff00+$70),a	; $6c3d
@@ -106796,7 +106796,7 @@ _label_0f_117:
 	ld (hl),$0f		; $51bb
 	ld a,$b1		; $51bd
 	call loadGfxHeader		; $51bf
-	ld a,$32		; $51c2
+	ld a,UNCMP_GFXH_32		; $51c2
 	call loadUncompressedGfxHeader		; $51c4
 	ld hl,$cc09		; $51c7
 	ld (hl),$17		; $51ca
@@ -107533,7 +107533,7 @@ _label_0f_128:
 	jp enemyDelete		; $56e9
 	push af			; $56ec
 	call loadGfxHeader		; $56ed
-	ld a,$33		; $56f0
+	ld a,UNCMP_GFXH_33		; $56f0
 	call loadUncompressedGfxHeader		; $56f2
 	pop af			; $56f5
 	sub $b2			; $56f6
@@ -111610,7 +111610,7 @@ _label_0f_268:
 	call fillMemoryBc		; $70fb
 	ld a,$96		; $70fe
 	call loadGfxHeader		; $7100
-	ld a,$30		; $7103
+	ld a,UNCMP_GFXH_30		; $7103
 	jp loadUncompressedGfxHeader		; $7105
 	ld hl,$cfc9		; $7108
 	bit 7,(hl)		; $710b
@@ -111743,7 +111743,7 @@ _label_0f_273:
 	ld hl,$dc02		; $71ee
 	ld c,$20		; $71f1
 	call $72a5		; $71f3
-	ld a,$2e		; $71f6
+	ld a,UNCMP_GFXH_2e		; $71f6
 	jp loadUncompressedGfxHeader		; $71f8
 	ld a,($cfca)		; $71fb
 	sub $06			; $71fe
@@ -111767,7 +111767,7 @@ _label_0f_274:
 	call $7297		; $7221
 	ld hl,$dc02		; $7224
 	call $72dc		; $7227
-	ld a,$2e		; $722a
+	ld a,UNCMP_GFXH_2e		; $722a
 	jp loadUncompressedGfxHeader		; $722c
 	ld a,$03		; $722f
 	ld ($ff00+$70),a	; $7231
@@ -111817,7 +111817,7 @@ _label_0f_275:
 	ld l,a			; $7286
 	ld h,$dd		; $7287
 	call $7325		; $7289
-	ld a,$2f		; $728c
+	ld a,UNCMP_GFXH_2f		; $728c
 	jp loadUncompressedGfxHeader		; $728e
 	rlca			; $7291
 	dec b			; $7292
@@ -150691,7 +150691,7 @@ _label_3f_106:
 _label_3f_107:
 	ld ($cba0),a		; $4dc5
 _label_3f_108:
-	ld a,$17		; $4dc8
+	ld a,UNCMP_GFXH_17		; $4dc8
 	jp loadUncompressedGfxHeader		; $4dca
 	call $55c6		; $4dcd
 	ret nz			; $4dd0
@@ -150757,7 +150757,7 @@ _label_3f_114:
 	ld a,h			; $4e3b
 	ld ($d0d6),a		; $4e3c
 _label_3f_115:
-	ld a,$17		; $4e3f
+	ld a,UNCMP_GFXH_17		; $4e3f
 	jp loadUncompressedGfxHeader		; $4e41
 	call $55c6		; $4e44
 	ret nz			; $4e47
