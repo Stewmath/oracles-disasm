@@ -64,7 +64,7 @@ treasureDisplayData2:
 	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_1c
 	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_MINECART_COLLISION
 	.db TREASURE_FOOLS_ORE          $9a $00 $00 $00 $ff $3f ; TREASURE_FOOLS_ORE
-	.db $00                         $9a $00 $9a $00 $ff $00 ; TREASURE_1f
+	.db $00                         $a5 $05 $00 $00 $ff $00 ; TREASURE_1f
 	.db $20                         $80 $00 $83 $00 $ff $32 ; TREASURE_EMBER_SEEDS
 	.db TREASURE_SCENT_SEEDS        $80 $00 $84 $00 $ff $33 ; TREASURE_SCENT_SEEDS
 	.db TREASURE_PEGASUS_SEEDS      $80 $00 $85 $00 $ff $34 ; TREASURE_PEGASUS_SEEDS
