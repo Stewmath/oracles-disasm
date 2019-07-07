@@ -51229,14 +51229,15 @@ _seedDontBounceTilesTable:
 	.dw @collisions5
 
 @collisions0:
-	.db $ce $cf $c5 $c5 $c6 $c7 $c8 $c9 $ca
+	.db $c3 $c4 $c5 $c6 $c7 $c8 $c9 $ca $cb
+	.db $d8 $d9 $da $e5
 @collisions1:
+@collisions2:
 @collisions3:
-@collisions4:
+@collisions5:
 	.db $00
 
-@collisions2:
-@collisions5:
+@collisions4:
 	.db TILEINDEX_UNLIT_TORCH
 	.db TILEINDEX_LIT_TORCH
 	.db $00
