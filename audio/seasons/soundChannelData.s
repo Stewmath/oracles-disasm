@@ -33615,7 +33615,6 @@ sounda6Channel7:
 .bank $3d slot 1
 .org 0
 sound1bStart:
-sound24Start:
 sound26Start:
 sound27Start:
 sound31Start:
@@ -33623,7 +33622,6 @@ sound38Start:
 sound46Start:
 ; @addr{f4000}
 sound1bChannel6:
-sound24Channel6:
 sound26Channel6:
 sound27Channel6:
 sound31Channel4:
@@ -35854,18 +35852,6 @@ musicf4cbe:
 	vol $4
 	note $26 $07
 	goto musicf4cbe
-	cmdff
-; $f4e97
-; @addr{f4e97}
-sound24Channel1:
-	cmdff
-; $f4e98
-; @addr{f4e98}
-sound24Channel0:
-	cmdff
-; $f4e99
-; @addr{f4e99}
-sound24Channel4:
 	cmdff
 ; $f4e9a
 sound23Start:

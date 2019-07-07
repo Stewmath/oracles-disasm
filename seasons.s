@@ -154815,25 +154815,6 @@ _label_3f_212:
 .include "build/data/treasureCollectionBehaviours.s"
 .include "build/data/treasureDisplayData.s"
 
-sounda1Start:
-; @addr{ebada}
-sounda1Channel2:
-	duty $02
-	vol $d
-	env $1 $00
-	cmdf8 $00
-	note $30 $04
-	vol $c
-	note $34 $04
-	vol $d
-	note $38 $04
-	vibrato $51
-	env $1 $01
-	vol $b
-	note $3c $14
-	cmdff
-
-
 
 .ends
 
@@ -154862,6 +154843,9 @@ sounda1Channel2:
 .BANK $43 SLOT 4
 .ORG 0
 	.include "data/ages/enemyOamData.s"
+
+.SLOT 1
+	.include "code/plando/extraAudio.s"
 
 
 .BANK $44 SLOT 1

@@ -76,7 +76,7 @@
 	MUS_SYMMETRY_PAST         db ; $25
 	MUS_TOKAY_HOUSE           db ; $26
 .else
-	MUS_24                    db ; $24 (blank)
+	MUS_BLACK_TOWER           db ; $24 (blank)
 	MUS_UNUSED_2              db ; $25
 	MUS_SUBROSIAN_SHOP        db ; $26
 .endif

@@ -1306,7 +1306,7 @@ sounda0:
 ; @addr{568b}
 sounda1:
 	.db $a2
-	.dw bank3f.sounda1Channel2
+	.dw sounda1Channel2
 	.db $ff
 ; @addr{5692}
 sounda2:

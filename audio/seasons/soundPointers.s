@@ -160,10 +160,7 @@ _soundPointers:
 	m_soundPointer sound9e ; $e57b5
 	m_soundPointer sound9f ; $e57c2
 	m_soundPointer sounda0 ; $e5687
-
-	.db :bank3f.sounda1Start-$39
-	.dw sounda1
-
+	m_soundPointer sounda1
 	m_soundPointer sounda2 ; $e5692
 	m_soundPointer sounda3 ; $e5696
 	m_soundPointer sounda4 ; $e569a
