@@ -365,3 +365,40 @@ itemOamData4d1d0:
 	.db $fa $fd $02 $25
 	.db $fa $f5 $04 $25
 
+
+
+powderOamDataFrame0:
+	.db $03
+	.db 6, 1, $00, $00
+	.db 4, 3, $00, $00
+	.db 5, 5, $00, $00
+
+powderOamDataFrame1:
+	.db $03
+	.db 7, 1, $00, $00
+	.db 5, 3, $00, $00
+	.db 6,  5, $00, $00
+
+powderOamDataFrame2:
+	.db $03
+	.db 8, 0, $00, $00
+	.db 6, 4, $00, $00
+	.db 7, 6, $00, $00
+
+powderOamDataFrame3:
+	.db $03
+	.db 10, -1, $00, $00
+	.db 8,  4, $00, $00
+	.db 9,  9, $00, $00
+
+powderOamDataFrame4:
+	.db $03
+	.db 12, -2, $00, $00
+	.db 9,  4, $00, $00
+	.db 11, 10, $00, $00
+
+powderOamDataFrame5:
+	.db $03
+	.db 13, -2, $00, $00
+	.db 10,  4, $00, $00
+	.db 12, 10, $00, $00

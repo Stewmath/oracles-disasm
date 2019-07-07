@@ -161,7 +161,6 @@ item1bAnimations:
 item1cAnimations:
 item1dAnimations:
 item1eAnimations:
-item1fAnimations:
 item20Animations:
 	.dw itemAnimation1e818
 item21Animations:
@@ -513,7 +512,6 @@ item17OamDataPointers: ; 0x1e992
 item1bOamDataPointers: ; 0x1e992
 item1cOamDataPointers: ; 0x1e992
 item1dOamDataPointers: ; 0x1e992
-item1fOamDataPointers: ; 0x1e992
 item28OamDataPointers: ; 0x1e992
 item29OamDataPointers: ; 0x1e992
 	.dw itemOamData4cfab
@@ -532,3 +530,25 @@ item2fOamDataPointers: ; 0x1e99a
 	.dw itemOamData4cf40
 	.dw itemOamData4cf40
 	.dw itemOamData4cf40
+
+
+
+item1fAnimations:
+	.dw powderAnimation
+
+powderAnimation:
+	.db $03 $00 $00
+	.db $04 $02 $00
+	.db $04 $04 $00
+	.db $04 $06 $00
+	.db $04 $08 $00
+	.db $02 $0a $00
+	.db $7f $0a $80
+
+item1fOamDataPointers:
+	.dw powderOamDataFrame0
+	.dw powderOamDataFrame1
+	.dw powderOamDataFrame2
+	.dw powderOamDataFrame3
+	.dw powderOamDataFrame4
+	.dw powderOamDataFrame5

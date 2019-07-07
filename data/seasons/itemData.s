@@ -37,7 +37,7 @@ itemData:
 	.db $00 $00 $00 ; $1c: ITEMID_1c
 	.db $00 $00 $00 ; $1d: ITEMID_MINECART_COLLISION
 	.db $00 $52 $08 ; $1e: ITEMID_FOOLS_ORE
-	.db $00 $00 $00 ; $1f: ITEMID_1f
+	.db $00 $16 $09 ; $1f: ITEMID_1f
 	.db $5c $12 $02 ; $20: ITEMID_EMBER_SEED
 	.db $5c $14 $03 ; $21: ITEMID_SCENT_SEED
 	.db $5c $16 $01 ; $22: ITEMID_PEGASUS_SEED

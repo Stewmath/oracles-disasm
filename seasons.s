@@ -38072,6 +38072,8 @@ _label_06_033:
 	ld a,($ff00+c)		; $4405
 	dec b			; $4406
 	nop			; $4407
+
+specialObjectSetAnimationWithLinkData:
 	ld e,$30		; $4408
 	ld (de),a		; $440a
 	add a			; $440b
@@ -39072,7 +39074,7 @@ _parentItemUpdate:
 	.dw _clearParentItem                    ; ITEMID_1c
 	.dw _clearParentItem                    ; ITEMID_MINECART_COLLISION
 	.dw _parentItemCode_foolsOre            ; ITEMID_FOOLS_ORE
-	.dw _clearParentItem                    ; ITEMID_1f
+	.dw _parentItemCode_powder              ; ITEMID_1f
 
 _clearParentItem:
 	call $53a2		; $49e7
@@ -40893,7 +40895,7 @@ _itemUsageParameterTable:
 	.db $00 <wGameKeysJustPressed   ; ITEMID_1c
 	.db $00 <wGameKeysJustPressed   ; ITEMID_MINECART_COLLISION
 	.db $03 <wGameKeysJustPressed   ; ITEMID_FOOLS_ORE
-	.db $00 <wGameKeysJustPressed   ; ITEMID_1f
+	.db $03 <wGameKeysJustPressed   ; ITEMID_1f
 
 
 _linkItemAnimationTable:
@@ -40928,7 +40930,7 @@ _linkItemAnimationTable:
 	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_1c
 	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_MINECART_COLLISION
 	.db $e6  LINK_ANIM_MODE_22	; ITEMID_FOOLS_ORE
-	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_1f
+	.db $d0  LINK_ANIM_MODE_21	; ITEMID_1f
 
 	call $5727		; $5588
 	ld e,$04		; $558b
@@ -43748,6 +43750,9 @@ _parentItemCode_shooter:
 	ret			; $4f2c
 
 
+.include "code/plando/powderParent.s"
+
+
 .BANK $07 SLOT 1
 .ORG 0
 
@@ -44109,13 +44114,13 @@ _label_07_015:
 _partCheckCollisions:
 	ld e,$e4		; $4229
 	ld a,(de)		; $422b
-	ld hl,$6940		; $422c
+	ld hl,partActiveCollisions		; $422c
 	ld e,$cb		; $422f
 	jr ++			; $4231
 
 
 _enemyCheckCollisions:
-	ld hl,$6740		; $4233
+	ld hl,enemyActiveCollisions		; $4233
 	ld e,$8b		; $4236
 ++
 	add a			; $4238
@@ -45239,7 +45244,7 @@ _label_07_060:
 	.dw itemDelete ; 0x1c
 	.dw itemCode1d ; 0x1d
 	.dw itemCode1e ; 0x1e
-	.dw itemDelete ; 0x1f
+	.dw itemCode1f ; 0x1f
 	.dw itemCode20 ; 0x20
 	.dw itemCode21 ; 0x21
 	.dw itemCode22 ; 0x22
@@ -45392,10 +45397,11 @@ itemAnimate:
 itemSetAnimation:
 	add a			; $49ca
 	ld c,a			; $49cb
-	ld b,$00		; $49cc
-	ld e,$01		; $49ce
-	ld a,(de)		; $49d0
-	ld hl,$6401		; $49d1
+	jpab itemSetAnimationHook
+	;ld b,$00		; $49cc
+	;ld e,$01		; $49ce
+	;ld a,(de)		; $49d0
+	;ld hl,itemAnimationTable		; $49d1
 	rst_addDoubleIndex			; $49d4
 	ldi a,(hl)		; $49d5
 	ld h,(hl)		; $49d6
@@ -45403,14 +45409,17 @@ itemSetAnimation:
 	add hl,bc		; $49d8
 
 _itemNextAnimationFrame:
-	ldi a,(hl)		; $49d9
-	ld h,(hl)		; $49da
-	ld l,a			; $49db
-	ldi a,(hl)		; $49dc
-	cp $ff			; $49dd
-	jr nz,_label_07_063	; $49df
-	ld b,a			; $49e1
-	ld c,(hl)		; $49e2
+	ld b,h
+	ld c,l
+	jpab itemNextAnimationFrameHook
+	;ldi a,(hl)		; $49d9
+	;ld h,(hl)		; $49da
+	;ld l,a			; $49db
+	;ldi a,(hl)		; $49dc
+	;cp $ff			; $49dd
+	;jr nz,_label_07_063	; $49df
+	;ld b,a			; $49e1
+	;ld c,(hl)		; $49e2
 	add hl,bc		; $49e3
 	ldi a,(hl)		; $49e4
 _label_07_063:
@@ -45447,6 +45456,8 @@ _label_07_063:
 	nop
 	nop
 	ld (de),a		; $4a08
+
+itemNextAnimationFrameHookRet:
 	ret			; $4a09
 
 _itemTransferKnockbackToLink:
@@ -49730,7 +49741,7 @@ _label_07_277:
 
 
 	.include "data/seasons/itemAttributes.s"
-	.include "data/itemAnimations.s"
+	; itemAnimations moved from here
 
 	.include "data/seasons/enemyActiveCollisions.s"
 	.include "data/seasons/partActiveCollisions.s"
@@ -51241,6 +51252,9 @@ _seedDontBounceTilesTable:
 	.db TILEINDEX_UNLIT_TORCH
 	.db TILEINDEX_LIT_TORCH
 	.db $00
+
+
+.include "code/plando/powder.s"
 
 
 .BANK $08 SLOT 1
@@ -154853,3 +154867,5 @@ sounda1Channel2:
 .BANK $44 SLOT 1
 .ORG 0
 	.include "data/seasons/enemyAnimations.s"
+
+	.include "code/plando/itemAnimations.s"
