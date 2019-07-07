@@ -30,4 +30,7 @@ gfxDataBank1a:
 	m_GfxDataSimple gfx_pumpkinhead
 	m_GfxDataSimple gfx_pumpkinhead_2
 	m_GfxDataSimple gfx_pumpkinhead_3
+
+	; Black tower
+	m_GfxDataSimple gfx_0bd8ee
 .endif

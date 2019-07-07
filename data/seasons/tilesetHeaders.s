@@ -341,7 +341,10 @@ tilesetHeaderGroup35: ; 7d04
 	m_TilesetHeader $00 tilesetMappings35   w3TileMappingIndices $0200 $80
 	m_TilesetHeader $01 tilesetCollisions35 w3TileCollisions     $0100 $00
 
-tilesetHeaderGroup36: ; 7d14
+tilesetHeaderGroup36: ; 7d14 (BLACK TOWER)
+	m_TilesetHeader $00 tilesetMappings36   w3TileMappingIndices $0200 $80
+	m_TilesetHeader $01 tilesetCollisions36 w3TileCollisions     $0100 $00
+
 tilesetHeaderGroup37: ; 7d14
 tilesetHeaderGroup38: ; 7d14
 tilesetHeaderGroup39: ; 7d14

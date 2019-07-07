@@ -608,7 +608,6 @@ gfxHeader6c: ; $71c8
 gfxHeader6d: ; $71da
 	m_GfxHeader gfx_0bffef $8801 $7f|$80
 	m_GfxHeader gfx_0c0644 $9001 $5f
-gfxHeader6e: ; $71e6
 gfxHeader6f: ; $71e6
 gfxHeader70: ; $71e6
 	m_GfxHeader gfx_0b3150 $8801 $2f|$80

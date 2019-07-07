@@ -5969,6 +5969,9 @@ uncmpGfxHeader37:
 
 uncmpGfxHeader38:
 	m_GfxHeader gfx_seed_shooter $8521 $09
+
+gfxHeader6e: ; Black tower
+	m_GfxHeader gfx_0bd8ee $8801 $6f
 .ends
 
 .endif

@@ -275,7 +275,7 @@ areaData: ; 4:4f9c
 	.db PALH_30
 	.db $11 $02 $07
 
-; Area 0x27
+; Area 0x27: BLACK TOWER
 	.db $af $18
 	.db UNIQGFXH_00
 	.db GFXH_6e

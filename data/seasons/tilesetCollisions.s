@@ -103,3 +103,6 @@ tilesetCollisions33: ; 0x5af9a
 	.incbin "build/tilesets/tilesetCollisions33.cmp"
 tilesetCollisions34: ; 0x5afd0
 	.incbin "build/tilesets/tilesetCollisions34.cmp"
+
+tilesetCollisions36: ; BLACK TOWER
+	.incbin "build/tilesets/tilesetCollisionsBT.cmp"

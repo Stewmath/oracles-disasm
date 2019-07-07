@@ -103,3 +103,6 @@ tilesetMappings33: ; 0x67609
 	.incbin "build/tilesets/tilesetMappings33Indices.cmp"
 tilesetMappings34: ; 0x6766d
 	.incbin "build/tilesets/tilesetMappings34Indices.cmp"
+
+tilesetMappings36: ; BLACK TOWER
+	.incbin "build/tilesets/tilesetMappingsBTIndices.cmp"
