@@ -38,7 +38,7 @@ itemAttributes:
 	.db $12 $00 $00 $00 ; $1c: ITEMID_1c
 	.db $84 $66 $f8 $7e ; $1d: ITEMID_MINECART_COLLISION
 	.db $84 $99 $f4 $7e ; $1e: ITEMID_FOOLS_ORE
-	.db $9b $44 $fe $00 ; $1f: ITEMID_1f
+	.db $1b $44 $fe $00 ; $1f: ITEMID_1f
 	.db $9b $44 $fe $00 ; $20: ITEMID_EMBER_SEED
 	.db $9c $44 $fe $00 ; $21: ITEMID_SCENT_SEED
 	.db $9d $44 $ff $00 ; $22: ITEMID_PEGASUS_SEED

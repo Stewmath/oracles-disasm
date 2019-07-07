@@ -6,13 +6,16 @@ _parentItemCode_powder:
 	.dw @state1
 
 @state0:
-	call updateLinkDirectionFromAngle
 	call _parentItemLoadAnimationAndIncState
+
+	call updateLinkDirectionFromAngle
+
+	ld e,2
+	call itemCreateChild
+	jp c,_clearParentItem
 
 	ld a,SND_MAGIC_POWDER
 	call playSound
-
-	call itemCreateChild
 	ret
 
 @state1:
