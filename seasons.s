@@ -1177,11 +1177,13 @@ loadUncompressedGfxHeader:
 	ldh (<hRomBank),a	; $05c0
 	ld ($2222),a		; $05c2
 	ld a,e			; $05c5
-	ld hl,$66d0		; $05c6
+	call loadUncompressedGfxHeaderHook
+
 	rst_addDoubleIndex			; $05c9
 	ldi a,(hl)		; $05ca
 	ld h,(hl)		; $05cb
 	ld l,a			; $05cc
+
 _label_00_044:
 	ldi a,(hl)		; $05cd
 	ld c,a			; $05ce
@@ -11511,6 +11513,20 @@ getSomariaBlockIndex:
 	; Indoors (3), Dungeon (4), Sidescrolling (5)
 	ld b,$f9
 	ret
+
+
+loadUncompressedGfxHeaderHook:
+	cp $38
+	jr c,+
+	sub $38
+	ld hl,@table
+	ret
++
+	ld hl,$66d0		; $05c6
+	ret
+
+@table:
+	.dw uncmpGfxHeader38
 
 
 .BANK $01 SLOT 1
@@ -50881,7 +50897,7 @@ itemCode0f:
 	.dw @state1
 
 @state0:
-	ld a,UNCMP_GFXH_1d		; $5b59
+	ld a,$38		; $5b59
 	call loadWeaponGfx		; $5b5b
 	call _loadAttributesAndGraphicsAndIncState		; $5b5e
 	ld e,Item.var30		; $5b61
@@ -151425,7 +151441,7 @@ _label_3f_075:
 _label_3f_076:
 	push hl			; $4715
 	ld a,e			; $4716
-	ld hl,$6d87		; $4717
+	ld hl,treasureDisplayData2		; $4717
 	rst_addDoubleIndex			; $471a
 	ldi a,(hl)		; $471b
 	ld h,(hl)		; $471c
@@ -151445,7 +151461,7 @@ _label_3f_077:
 	pop de			; $472f
 	ret			; $4730
 	ld d,a			; $4731
-	ld hl,$6d63		; $4732
+	ld hl,treasureDisplayData1		; $4732
 _label_3f_078:
 	ldi a,(hl)		; $4735
 	or a			; $4736

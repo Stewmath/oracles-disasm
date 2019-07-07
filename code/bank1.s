@@ -5961,11 +5961,14 @@ func_7fb5:
 
 .section "Bank_1_Extra"
 
-uncmpGfxHeader36: ; $6926
+uncmpGfxHeader36:
 	m_GfxHeader gfx_switch_hook $8521 $0b
 
-uncmpGfxHeader37: ; $6926
+uncmpGfxHeader37:
 	m_GfxHeader gfx_cane_of_somaria $8521 $09
+
+uncmpGfxHeader38:
+	m_GfxHeader gfx_seed_shooter $8521 $09
 .ends
 
 .endif

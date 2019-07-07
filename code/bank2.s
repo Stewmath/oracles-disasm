@@ -4231,8 +4231,8 @@ _inventoryMenuState1:
 	ld c,$e0		; $5650
 
 .else; ROM_SEASONS
-	cp ITEMID_SLINGSHOT
-	jr nz,@finalizeEquip
+	jp inventoryMenuEquipHook
+	nop
 .endif
 
 @hasSubmenu:
@@ -11376,5 +11376,12 @@ _fake_rectangleData_02_7de1:
 
 .endif ; BUILD_VANILLA
 .endif ; ROM_AGES
+
+inventoryMenuEquipHook:
+	cp ITEMID_SLINGSHOT
+	jp z,_inventoryMenuState1@hasSubmenu
+	cp ITEMID_SHOOTER
+	jp z,_inventoryMenuState1@hasSubmenu
+	jp _inventoryMenuState1@finalizeEquip
 
 .ENDS
