@@ -50956,29 +50956,44 @@ seedItemState0Hook:
 
 @shooter:
 	; Seed shooter
-;	ld e,Item.angle		; $4d37
-;	ld a,(de)		; $4d39
-;	rrca			; $4d3a
-;	ld hl,@shooterPositionOffsets		; $4d3b
-;	rst_addAToHl			; $4d3e
-;	ldi a,(hl)		; $4d3f
-;	ld c,(hl)		; $4d40
-;	ld b,a			; $4d41
-;
-;	ld h,d			; $4d42
-;	ld l,Item.zh		; $4d43
-;	ld a,(hl)		; $4d45
-;	add $fe			; $4d46
-;	ld (hl),a		; $4d48
-;
-;	; Since 'd'='h', this will copy its own position and apply the offset
-;	call objectCopyPositionWithOffset		; $4d49
+	ld e,Item.angle		; $4d37
+	ld a,(de)		; $4d39
+	rrca			; $4d3a
+	ld hl,@shooterPositionOffsets		; $4d3b
+	rst_addAToHl			; $4d3e
+	ldi a,(hl)		; $4d3f
+	ld c,(hl)		; $4d40
+	ld b,a			; $4d41
+
+	ld h,d			; $4d42
+	ld l,Item.zh		; $4d43
+	ld a,(hl)		; $4d45
+	add $fe			; $4d46
+	ld (hl),a		; $4d48
+
+	; Since 'd'='h', this will copy its own position and apply the offset
+	call objectCopyPositionWithOffset		; $4d49
 
 	ld hl,wIsSeedShooterInUse		; $4d4c
 	inc (hl)		; $4d4f
 	ld a,SPEED_300		; $4d50
+	ld e,Item.speed
+	ld (de),a
 
-	jp itemCode24@setSpeed
+	; Just after itemCode24@setSpeed
+	jp $4d19
+
+
+; Y/X offsets for shooter
+@shooterPositionOffsets:
+	.db $f2 $fc ; Up
+	.db $fc $0b ; Up-right
+	.db $05 $0c ; Right
+	.db $09 $0b ; Down-right
+	.db $0d $03 ; Down
+	.db $0a $f8 ; Down-left
+	.db $05 $f3 ; Left
+	.db $f8 $f8 ; Up-left
 
 
 seedItemState1Hook:
@@ -51172,50 +51187,12 @@ _seedItemCheckDiagonalCollision:
 	.db $fc $00 $00 $fc ; Up-left
 
 ;;
-; @param	h,d	Object
-; @param[out]	zflag	Set if there are still bounces left?
-; @addr{50f4}
-_func_50f4:
-	ld e,Item.angle		; $50f4
-	ld l,Item.knockbackAngle		; $50f6
-	ld a,(de)		; $50f8
-	add (hl)		; $50f9
-	ld hl,_data_5114		; $50fa
-	rst_addAToHl			; $50fd
-	ld c,(hl)		; $50fe
-	ld a,(de)		; $50ff
-	cp c			; $5100
-	jr z,_seedItemClearKnockback	; $5101
-
-	ld h,d			; $5103
-	ld l,Item.var34		; $5104
-	dec (hl)		; $5106
-	jr z,@unsetZFlag	; $5107
-
-	; Set Item.angle
-	ld a,c			; $5109
-	ld (de),a		; $510a
-	xor a			; $510b
-	ret			; $510c
-
-@unsetZFlag:
-	or d			; $510d
-	ret			; $510e
-
-;;
 ; @addr{510f}
 _seedItemClearKnockback:
 	ld e,Item.knockbackCounter		; $510f
 	xor a			; $5111
 	ld (de),a		; $5112
 	ret			; $5113
-
-
-_data_5114:
-	.db $00 $08 $10 $18 $1c $04 $0c $14
-	.db $18 $00 $08 $10 $14 $1c $04 $0c
-	.db $10 $18 $00 $08 $0c $14 $1c $04
-	.db $08 $10 $18 $00 $04 $0c $14 $1c
 
 
 ; List of tiles which seeds don't bounce off of. (Burnable stuff.)
