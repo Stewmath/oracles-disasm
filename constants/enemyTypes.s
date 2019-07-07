@@ -785,4 +785,9 @@
 .define ENEMYID_POE_SISTER			$7e
 .define ENEMYID_MEDUSA_HEAD			$7f
 
+
+
+; PLANDO
+.define ENEMYID_PUMPKIN_HEAD			$78
+
 .endif ; ROM_SEASONS

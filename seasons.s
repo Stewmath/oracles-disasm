@@ -2833,7 +2833,7 @@ _label_00_138:
 	and $c0			; $0e4e
 	rlca			; $0e50
 	rlca			; $0e51
-	add $12			; $0e52
+	add BASE_OAM_DATA_BANK			; $0e52
 	ldh (<hRomBank),a	; $0e54
 	ld ($2222),a		; $0e56
 	set 6,h			; $0e59
@@ -7449,8 +7449,12 @@ _label_00_287:
 	ld (de),a		; $260e
 	inc e			; $260f
 	ldi a,(hl)		; $2610
-	and $3f			; $2611
-	or $40			; $2613
+;	and $3f			; $2611
+;	or $40			; $2613
+	nop
+	nop
+	nop
+	nop
 	ld (de),a		; $2615
 	pop af			; $2616
 	ldh (<hRomBank),a	; $2617
@@ -7694,7 +7698,7 @@ enemyAnimate:
 	ret nz			; $2763
 	ldh a,(<hRomBank)	; $2764
 	push af			; $2766
-	ld a,$0c		; $2767
+	ld a,:enemyAnimationTable		; $2767
 	ldh (<hRomBank),a	; $2769
 	ld ($2222),a		; $276b
 	ld l,$a2		; $276e
@@ -7706,12 +7710,12 @@ enemySetAnimation:
 	ld b,$00		; $2774
 	ldh a,(<hRomBank)	; $2776
 	push af			; $2778
-	ld a,$0c		; $2779
+	ld a,:enemyAnimationTable		; $2779
 	ldh (<hRomBank),a	; $277b
 	ld ($2222),a		; $277d
 	ld e,$81		; $2780
 	ld a,(de)		; $2782
-	ld hl,$6df7		; $2783
+	ld hl,enemyAnimationTable		; $2783
 	rst_addDoubleIndex			; $2786
 	ldi a,(hl)		; $2787
 	ld h,(hl)		; $2788
@@ -7747,7 +7751,7 @@ _label_00_295:
 	ld (de),a		; $27a6
 	ld e,$81		; $27a7
 	ld a,(de)		; $27a9
-	ld hl,$6ef7		; $27aa
+	ld hl,enemyOamDataTable		; $27aa
 	rst_addDoubleIndex			; $27ad
 	ldi a,(hl)		; $27ae
 	ld h,(hl)		; $27af
@@ -7758,7 +7762,9 @@ _label_00_295:
 	ld (de),a		; $27b5
 	inc e			; $27b6
 	ldi a,(hl)		; $27b7
-	and $3f			; $27b8
+;	and $3f			; $27b8
+	nop
+	nop
 	ld (de),a		; $27ba
 	pop af			; $27bb
 	ldh (<hRomBank),a	; $27bc
@@ -7997,8 +8003,12 @@ _label_00_310:
 	ld (de),a		; $290f
 	inc e			; $2910
 	ldi a,(hl)		; $2911
-	and $3f			; $2912
-	or $40			; $2914
+;	and $3f			; $2912
+;	or $40			; $2914
+	nop
+	nop
+	nop
+	nop
 	ld (de),a		; $2916
 	ld a,$10		; $2917
 	ldh (<hRomBank),a	; $2919
@@ -9028,8 +9038,8 @@ updateEnemy:
 	ld e,$81		; $2eeb
 	ld a,(de)		; $2eed
 	ld b,$0f		; $2eee
-	cp $08			; $2ef0
-	jr c,_label_00_345	; $2ef2
+	jp updateEnemyHook
+	nop
 	dec b			; $2ef4
 	cp $70			; $2ef5
 	jr nc,_label_00_345	; $2ef7
@@ -11527,6 +11537,16 @@ loadUncompressedGfxHeaderHook:
 
 @table:
 	.dw uncmpGfxHeader38
+
+
+updateEnemyHook:
+	cp $08			; $2ef0
+	jp c,_label_00_345	; $2ef2
+	cp ENEMYID_PUMPKIN_HEAD
+	ld b,:enemyCode78
+	jp z,_label_00_345
+	ld b,$0f
+	jp $2ef4
 
 
 .BANK $01 SLOT 1
@@ -38283,7 +38303,9 @@ _label_06_040:
 	ld (de),a		; $452e
 	inc e			; $452f
 	ldi a,(hl)		; $4530
-	and $3f			; $4531
+;	and $3f			; $4531
+	nop
+	nop
 	ld (de),a		; $4533
 	pop hl			; $4534
 	ldi a,(hl)		; $4535
@@ -45421,7 +45443,9 @@ _label_07_063:
 	ld (de),a		; $4a03
 	inc e			; $4a04
 	ldi a,(hl)		; $4a05
-	and $3f			; $4a06
+;	and $3f			; $4a06
+	nop
+	nop
 	ld (de),a		; $4a08
 	ret			; $4a09
 
@@ -87912,9 +87936,6 @@ _label_0c_306:
 	ret			; $6df3
 	jp enemyDelete		; $6df4
 
-
-	.include "data/seasons/enemyAnimations.s"
-
 .ends
 
 .BANK $0d SLOT 1
@@ -101609,7 +101630,7 @@ _label_0e_224:
 ;   relatedObj2: Reference to subid 2 (sprites)
 ;   var30: Current animation
 ; ==============================================================================
-enemyCode78:
+;enemyCode78: (PLANDO: disabled)
 	jr z,@normalStatus	; $634e
 	sub ENEMYSTATUS_NO_HEALTH			; $6350
 	ret c			; $6352
@@ -138288,9 +138309,7 @@ _label_11_639:
 .ORG 0
 
 
-	.include "data/seasons/specialObjectOamData.s"
-	.include "data/itemOamData.s"
-	.include "data/seasons/enemyOamData.s"
+	; PLANDO: Formerly where oam data was put, this bank is now free.
 
 
 .BANK $13 SLOT 1
@@ -138370,9 +138389,6 @@ puddleAnimationFrames:
 	.dw _puddleAnimationFrame2
 	.dw _puddleAnimationFrame3
 .ends
-
-	.include "data/seasons/interactionOamData.s"
-	.include "data/seasons/partOamData.s"
 
 
 .BANK $14 SLOT 1
@@ -154805,3 +154821,34 @@ sounda1Channel2:
 
 
 .ends
+
+
+.include "code/plando/enemies.s"
+
+
+
+; OAM DATA
+
+.define BASE_OAM_DATA_BANK $41
+.export BASE_OAM_DATA_BANK
+
+
+.BANK $41 SLOT 0
+.ORG 0
+	.include "data/seasons/specialObjectOamData.s"
+	.include "data/itemOamData.s"
+	.include "data/seasons/enemyOamData.s"
+
+.BANK $42 SLOT 1
+.ORG 0
+	.include "data/seasons/interactionOamData.s"
+	.include "data/seasons/partOamData.s"
+
+.BANK $43 SLOT 4
+.ORG 0
+	.include "data/ages/enemyOamData.s"
+
+
+.BANK $44 SLOT 1
+.ORG 0
+	.include "data/seasons/enemyAnimations.s"

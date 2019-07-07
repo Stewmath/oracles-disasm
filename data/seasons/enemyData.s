@@ -131,7 +131,7 @@ enemyData:
 	/* 0x75 */ m_EnemyData $30 $45 $21 $20
 	/* 0x76 */ m_EnemyData $9e $46 $22 $20
 	/* 0x77 */ m_EnemyData $a0 $47 $23 $20
-	/* 0x78 */ m_EnemyData $a3 $c8 $24 $00
+	/* 0x78 */ m_EnemyData $a3 $c8 $24 $30
 	/* 0x79 */ m_EnemyData $a8 $c9 $25 $60
 	/* 0x7a */ m_EnemyData $ad $ca $26 $60
 	/* 0x7b */ m_EnemyData $b0 $cb enemy7bSubidData
@@ -267,7 +267,7 @@ extraEnemyData:
 	.db $06 $06 $fe $12
 	.db $06 $06 $fe $0c
 	.db $0a $0a $f8 $0f
-	.db $04 $04 $fc $14
+	.db $06 $0c $fc $08
 	.db $0c $0c $fc $7f
 	.db $09 $09 $fa $1a
 	.db $06 $03 $fa $1e

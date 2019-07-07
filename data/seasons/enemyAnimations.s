@@ -633,7 +633,7 @@ enemy7eAnimations:
 	.dw enemyAnimation337dd
 enemy77Animations:
 	.dw enemyAnimation337ef
-enemy78Animations:
+enemy78Animations_old: ; PLANDO: not using this
 	.dw enemyAnimation3340b
 	.dw enemyAnimation337fd
 	.dw enemyAnimation33805
@@ -2352,7 +2352,7 @@ enemy77OamDataPointers: ; 0x33db0
 	.dw enemyOamData4a087
 	.dw enemyOamData4a0a0
 
-enemy78OamDataPointers: ; 0x33db8
+enemy78OamDataPointers_old: ; 0x33db8 (PLANDO: not using this)
 	.dw enemyOamData4b714
 	.dw enemyOamData4b5ff
 	.dw enemyOamData4b634
@@ -2483,3 +2483,7 @@ enemy7fOamDataPointers: ; 0x33e8e
 	.dw enemyOamData4b56c
 	.dw enemyOamData4b59d
 	.dw enemyOamData4b5ce
+
+
+; Animations from ages
+.include "code/plando/enemyAnimations.s"

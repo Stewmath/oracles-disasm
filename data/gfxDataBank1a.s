@@ -25,4 +25,9 @@ gfxDataBank1a:
 	m_GfxDataSimple gfx_cane_of_somaria
 	m_GfxDataSimple gfx_switch_hook
 	m_GfxDataSimple gfx_seed_shooter
+
+	; Graphics data for bosses
+	m_GfxDataSimple gfx_pumpkinhead
+	m_GfxDataSimple gfx_pumpkinhead_2
+	m_GfxDataSimple gfx_pumpkinhead_3
 .endif
