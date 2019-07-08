@@ -21,6 +21,7 @@
     - Document some of the esoteric stuff (cmd8, empty text blocks)
     - Change naming scheme so ages and seasons text have distinct names; also make a nice
       way to rename precompressed text
+    - Fix tokay island script (https://github.com/Drenn1/ages-disasm/issues/10)
 
 * QOL stuff (in a different branch):
     * Allow usage of banks $40+ for graphics. Currently not possible due to using only
