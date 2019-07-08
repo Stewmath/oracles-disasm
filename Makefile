@@ -212,25 +212,32 @@ build/textDefines.s: precompressed/$(GAME)/textDefines.s $(CMP_MODE) | build
 
 else
 
-# The parseTilesets script generates all of these files
+# The parseTilesets script generates all of these files.
+# They need dummy rules in their recipes to convince make that they've been changed?
 $(MAPPINGINDICESFILES:.cmp=.bin): build/tilesets/mappingsUpdated
+	@sleep 0
 build/tilesets/mappingsDictionary.bin: build/tilesets/mappingsUpdated
+	@sleep 0
 build/tilesets/tileMappingTable.bin: build/tilesets/mappingsUpdated
+	@sleep 0
 build/tilesets/tileMappingIndexData.bin: build/tilesets/mappingsUpdated
+	@sleep 0
 build/tilesets/tileMappingAttributeData.bin: build/tilesets/mappingsUpdated
+	@sleep 0
 
 # mappingsUpdated is a stub file which is just used as a timestamp from the
 # last time parseTilesets was run.
 build/tilesets/mappingsUpdated: $(wildcard tilesets/$(GAME)/tilesetMappings*.bin) $(CMP_MODE) | build/tilesets
 	@echo "Compressing tileset mappings..."
 	@$(PYTHON) tools/parseTilesets.py $(GAME)
+	@echo "Done compressing tileset mappings."
 	@touch $@
 
 build/tilesets/tilesetMappings%Indices.cmp: build/tilesets/tilesetMappings%Indices.bin build/tilesets/mappingsDictionary.bin $(CMP_MODE) | build/tilesets
 	@echo "Compressing $< to $@..."
 	@$(PYTHON) tools/compressTilesetData.py $< $@ 1 build/tilesets/mappingsDictionary.bin
 
-build/tilesets/tilesetCollisions%.cmp: tilesets/$(GAME)/tilesetCollisions%.bin $(CMP_MODE) | build/tilesets
+build/tilesets/tilesetCollisions%.cmp: tilesets/$(GAME)/tilesetCollisions%.bin build/tilesets/collisionsDictionary.bin $(CMP_MODE) | build/tilesets
 	@echo "Compressing $< to $@..."
 	@$(PYTHON) tools/compressTilesetData.py $< $@ 0 build/tilesets/collisionsDictionary.bin
 
