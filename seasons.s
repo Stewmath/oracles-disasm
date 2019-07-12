@@ -10212,7 +10212,7 @@ func_36f6:
 loadAreaTileset:
 	ld a,($cd23)		; $36b7
 	call loadTileset		; $36ba
-	ld a,$17		; $36bd
+	ld a,:tileMappingTable		; $36bd
 	ldh (<hRomBank),a	; $36bf
 	ld ($2222),a		; $36c1
 	ld a,$03		; $36c4
@@ -10234,7 +10234,7 @@ _label_00_366:
 	ldi a,(hl)		; $36de
 	ld b,a			; $36df
 	push hl			; $36e0
-	ld hl,$4004		; $36e1
+	ld hl,tileMappingTable		; $36e1
 	add hl,bc		; $36e4
 	add hl,bc		; $36e5
 	add hl,bc		; $36e6
@@ -10245,7 +10245,7 @@ _label_00_366:
 	and $0f			; $36ec
 	ld b,a			; $36ee
 	push hl			; $36ef
-	ld hl,$4000		; $36f0
+	ld hl,tileMappingIndexDataPointer		; $36f0
 	ldi a,(hl)		; $36f3
 	ld h,(hl)		; $36f4
 	ld l,a			; $36f5
@@ -10260,7 +10260,7 @@ _label_00_366:
 	and $0f			; $3701
 	ld b,a			; $3703
 	ld c,(hl)		; $3704
-	ld hl,$4002		; $3705
+	ld hl,tileMappingAttributeDataPointer		; $3705
 	ldi a,(hl)		; $3708
 	ld h,(hl)		; $3709
 	ld l,a			; $370a
