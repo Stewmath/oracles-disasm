@@ -53,30 +53,20 @@ _label_00_000:
 	add hl,bc		; $001d
 	pop bc			; $001e
 	ret			; $001f
-	nop			; $0020
-	nop			; $0021
-	nop			; $0022
-	nop			; $0023
-	nop			; $0024
-	nop			; $0025
-	nop			; $0026
-	nop			; $0027
-	nop			; $0028
-	nop			; $0029
-	nop			; $002a
-	nop			; $002b
-	nop			; $002c
-	nop			; $002d
-	nop			; $002e
-	nop			; $002f
-	nop			; $0030
-	nop			; $0031
-	nop			; $0032
-	nop			; $0033
-	nop			; $0034
-	nop			; $0035
-	nop			; $0036
-	nop			; $0037
+
+
+loadAreaTilesetHook:
+	ld a,:tileMappingIndexData
+	setrombank
+
+	call copyMemory
+
+	ld a,:tileMappingTable
+	setrombank
+	ret
+
+
+.ORGA $0038
 	nop			; $0038
 	nop			; $0039
 	nop			; $003a
@@ -11547,17 +11537,6 @@ updateEnemyHook:
 	jp z,_label_00_345
 	ld b,$0f
 	jp $2ef4
-
-
-loadAreaTilesetHook:
-	ld a,:tileMappingIndexData
-	setrombank
-
-	call copyMemory
-
-	ld a,:tileMappingTable
-	setrombank
-	ret
 
 
 .BANK $01 SLOT 1
@@ -119347,6 +119326,8 @@ _label_10_397:
 	.include "objects/seasons/pointers.s"
 	.include "objects/seasons/mainData.s"
 	.include "objects/seasons/helperData2.s"
+
+	.include "objects/seasons/plandoData.s"
 .ends
 
 
