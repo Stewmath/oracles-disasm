@@ -4133,6 +4133,8 @@ group5Mapa6ObjectData: ; 634b
 	obj_End
 
 group5Mapa7ObjectData: ; 634b: Veran fight room
+	obj_DoubleValue $1e12 $a7 $00
+	obj_Part $4f00 $00
 	obj_End
 
 group5Mapa8ObjectData: ; 634b

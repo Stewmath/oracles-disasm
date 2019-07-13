@@ -597,6 +597,8 @@ group5WarpDestTable:
 	m_WarpDest $a8 $52 $04 ; $b3
 	m_WarpDest $1d $77 $04 ; $b4
 	m_WarpDest $17 $57 $04 ; $b5
+	m_WarpDest $a9 $ff $93 ; $b6
+	m_WarpDest $1d $27 $04 ; $b7
 
 group6WarpDestTable:
 	m_WarpDest $01 $02 $f3
@@ -1089,7 +1091,7 @@ warpSource7a7f:
 group5WarpSources: ; $13a87
 	m_StandardWarp $04 $5b $07 $0 $3
 	m_StandardWarp $04 $87 $00 $1 $3
-	m_StandardWarp $04 $97 $08 $0 $3
+	m_StandardWarp $0c $97 $08 $0 $3
 	m_StandardWarp $04 $9d $09 $0 $3
 	m_StandardWarp $00 $37 $17 $5 $2
 	m_StandardWarp $00 $39 $18 $5 $2
@@ -1227,9 +1229,16 @@ group5WarpSources: ; $13a87
 	m_StandardWarp $00 $a8 $b2 $5 $2
 	m_StandardWarp $00 $18 $b3 $5 $2
 	m_StandardWarp $00 $17 $b4 $5 $2
-	m_StandardWarp $80 $1d $b5 $5 $2
+	m_PointerWarp  $40 $1d blackTowerTurretWarps
+	m_StandardWarp $04 $a9 $b7 $5 $3
 
 	m_WarpSourcesEnd
+
+
+blackTowerTurretWarps:
+	m_PointedWarp $00 $77 $b5 $5 $2 ; Staircase
+	m_PointedWarp $80 $28 $b6 $5 $4 ; Doorway
+
 
 warpSource7c9b:
 	m_PointedWarp $00 $97 $56 $0 $2

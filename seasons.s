@@ -22240,7 +22240,7 @@ _label_04_327:
 	ld a,(hl)		; $6c8a
 	and $7f			; $6c8b
 	call multiplyABy8		; $6c8d
-	ld hl,$4c84		; $6c90
+	call getAreaDataHook
 	add hl,bc		; $6c93
 	ld a,(hl)		; $6c94
 	inc a			; $6c95
@@ -22359,6 +22359,19 @@ _label_04_334:
 
 	.include "build/data/warpData.s"
 
+
+getAreaDataHook:
+	ld a,(hl)
+	ld hl,areaData
+	cp $d7
+	ret nz
+	ld hl,areaDataD7
+	ld b,0
+	ld c,0
+	ret
+
+areaDataD7: ; Onox's castle (moved to here)
+	.db $49 $08 $00 $69 $49 $2b $06 $18 ; 0x44
 
 .BANK $05 SLOT 1
 .ORG 0
