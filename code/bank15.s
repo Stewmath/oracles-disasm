@@ -757,7 +757,7 @@ getObjectDataAddress:
 	ret			; $432a
 
 
-	.include "objects/pointers.s"
+	.include "objects/ages/pointers.s"
 
 .ENDS
 

@@ -35,6 +35,7 @@ usedPointers = {}
 
 class WarpData:
     def __init__(self,addr,pointed):
+        self.pointer = None
         self.pointed = pointed
         self.showLabel = True
         self.address = bankedAddress(warpBank, addr)
@@ -119,6 +120,8 @@ for group in range(8):
 groupStartPositions.append(0x100000)
 outFile.write("\n")
 
+warpPointerAddresses = []
+
 for group in range(8):
 #     print "Group " + str(group)
 
@@ -129,12 +132,20 @@ for group in range(8):
     warpDataList = []
     pointedWarpDataList = []
 
+    if romIsSeasons(rom) and group == 0:
+        # Unreferenced data
+        pointedWarpDataList.append(WarpData(0x13653, True))
+
     outFile.write("group" + str(group) + "WarpSources: ; " + wlahex(address) + "\n")
 
     b = rom[address]
 
-    while b != 0xff:
+    while b != 0xff and not address in warpPointerAddresses \
+            and (not romIsSeasons(rom) or address < 0x13e02):
         warpData = WarpData(address,False)
+
+        if warpData.pointer is not None:
+            warpPointerAddresses.append(bankedAddress(warpBank, warpData.pointer))
         address+=4
 
         if warpData.opcode != 0 and warpData.opcode != 1 and warpData.opcode != 2 and warpData.opcode != 4 and warpData.opcode != 8 and warpData.opcode != 0x40:

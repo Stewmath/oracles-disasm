@@ -419,8 +419,10 @@
 	.dw \3
 .endm
 
-.macro m_WarpSourcesEnd
+.macro m_WarpSourcesEnd ; Does nothing in seasons
+.ifdef ROM_AGES
 	.db $ff $00 $00 $00
+.endif
 .endm
 
 ; Args:
