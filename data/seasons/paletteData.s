@@ -5053,3 +5053,35 @@ paletteData5e50:
 	m_RGB16 $0a $0a $0a
 	m_RGB16 $00 $00 $00
 
+
+
+paletteDataBlackTower:
+	m_RGB16 $10 $0c $12
+	m_RGB16 $0c $08 $0e
+	m_RGB16 $08 $04 $0b
+	m_RGB16 $02 $00 $04
+
+	m_RGB16 $0e $0d $11
+	m_RGB16 $0a $09 $0e
+	m_RGB16 $08 $07 $0c
+	m_RGB16 $03 $02 $05
+
+	m_RGB16 $0a $0b $0e
+	m_RGB16 $14 $0b $0c
+	m_RGB16 $0c $08 $07
+	m_RGB16 $05 $01 $00
+
+	m_RGB16 $10 $0c $12
+	m_RGB16 $0a $0b $0e
+	m_RGB16 $07 $05 $0b
+	m_RGB16 $02 $00 $04
+
+	m_RGB16 $12 $10 $17
+	m_RGB16 $10 $0c $16
+	m_RGB16 $0c $06 $13
+	m_RGB16 $19 $00 $05
+
+	m_RGB16 $0c $06 $13
+	m_RGB16 $08 $04 $0f
+	m_RGB16 $05 $02 $0c
+	m_RGB16 $02 $00 $06

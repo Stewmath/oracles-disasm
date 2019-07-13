@@ -415,7 +415,6 @@ paletteHeader65: ; $6571
 paletteHeader66: ; $6574
 	m_PaletteHeaderBg  2 6 paletteData52b0 $00
 paletteHeader67: ; $6577
-paletteHeader68:
 	m_PaletteHeaderBg  2 6 paletteData5a30 $00
 paletteHeader69: ; $657a
 	m_PaletteHeaderBg  2 6 paletteData5a90 $00

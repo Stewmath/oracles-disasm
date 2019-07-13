@@ -5972,6 +5972,9 @@ uncmpGfxHeader38:
 
 gfxHeader6e: ; Black tower
 	m_GfxHeader gfx_0bd8ee $8801 $6f
+
+paletteHeader68: ; Black tower
+	m_PaletteHeaderBg  2 6 paletteDataBlackTower $00
 .ends
 
 .endif
