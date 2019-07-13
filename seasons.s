@@ -10254,7 +10254,7 @@ _label_00_366:
 	add hl,bc		; $36f8
 	add hl,bc		; $36f9
 	ld b,$04		; $36fa
-	call copyMemory		; $36fc
+	call loadAreaTilesetHook
 	pop hl			; $36ff
 	ldi a,(hl)		; $3700
 	and $0f			; $3701
@@ -10733,7 +10733,7 @@ _label_00_385:
 _label_00_386:
 	ldh (<hRomBank),a	; $39ef
 	ld ($2222),a		; $39f1
-	ld b,$b0		; $39f4
+	ld b,$ff		; $39f4
 	ld de,$ce00		; $39f6
 _label_00_387:
 	call readByteSequential		; $39f9
@@ -11547,6 +11547,17 @@ updateEnemyHook:
 	jp z,_label_00_345
 	ld b,$0f
 	jp $2ef4
+
+
+loadAreaTilesetHook:
+	ld a,:tileMappingIndexData
+	setrombank
+
+	call copyMemory
+
+	ld a,:tileMappingTable
+	setrombank
+	ret
 
 
 .BANK $01 SLOT 1
@@ -136112,8 +136123,66 @@ _label_11_639:
 .BANK $12 SLOT 1
 .ORG 0
 
-
-	; PLANDO: Formerly where oam data was put, this bank is now free.
+	; PLANDO: Formerly where oam data was put.
+	; Gfx data moved out of gfxDataMain.s to here, due to space issues
+	m_GfxDataSimple gfx_messagespeed ; $0e0372
+	m_GfxDataSimple gfx_pickafile ; $0e046c
+	m_GfxDataSimple gfx_copywhatwhere ; $0e060f
+	m_GfxDataSimple gfx_quit_2 ; $0e07b7
+	m_GfxDataSimple gfx_newfilescreen ; $0e0832
+	m_GfxDataSimple gfx_savescreen ; $0e0d0c
+	m_GfxDataSimple gfx_gameover ; $0e1176
+	m_GfxDataSimple gfx_secret_thatswrong ; $0e1328
+	m_GfxDataSimple gfx_name ; $0e14bd
+	m_GfxDataSimple gfx_0e1543 ; $0e1543
+	m_GfxDataSimple gfx_herossecret ; $0e16d4
+	m_GfxDataSimple gfx_linking ; $0e1889
+	m_GfxDataSimple gfx_quit ; $0e1a19
+	m_GfxDataSimple gfx_done ; $0e1a97
+	m_GfxDataSimple gfx_error ; $0e1c0e
+	m_GfxDataSimple gfx_0e1e91 ; $0e1d98
+	m_GfxDataSimple gfx_0e1efe ; $0e1e05
+	m_GfxDataSimple gfx_0e1f19 ; $0e1e20
+	m_GfxDataSimple gfx_0e1f98 ; $0e1e9f
+	m_GfxDataSimple gfx_0e1fca ; $0e1ed1
+	m_GfxDataSimple gfx_0e1fff ; $0e1f06
+	m_GfxDataSimple gfx_0e200c ; $0e1f13
+	m_GfxDataSimple gfx_0e205d ; $0e1f64
+	m_GfxDataSimple gfx_0e2076 ; $0e1f7d
+	m_GfxDataSimple gfx_0e20ee ; $0e1ff5
+	m_GfxDataSimple gfx_0e2113 ; $0e201a
+	m_GfxDataSimple gfx_0e21b0 ; $0e20b7
+	m_GfxDataSimple gfx_0e21c8 ; $0e20cf
+	m_GfxDataSimple gfx_0e21ea ; $0e20f1
+	m_GfxDataSimple gfx_0e21ee ; $0e20f5
+	m_GfxDataSimple gfx_0e2260 ; $0e2167
+	m_GfxDataSimple gfx_0e227d ; $0e2184
+	m_GfxDataSimple gfx_0e236d ; $0e2274
+	m_GfxDataSimple gfx_0e2390 ; $0e2297
+	m_GfxDataSimple gfx_0e23c0 ; $0e22c7
+	m_GfxDataSimple gfx_0e23cf ; $0e22d6
+	m_GfxDataSimple gfx_0e23fb ; $0e2302
+	m_GfxDataSimple gfx_0e2409 ; $0e2310
+	m_GfxDataSimple gfx_0e246d ; $0e2374
+	m_GfxDataSimple gfx_0e248d ; $0e2394
+	m_GfxDataSimple gfx_0e24b8 ; $0e23bf
+	m_GfxDataSimple gfx_0e24c9 ; $0e23d0
+	m_GfxDataSimple gfx_0e2589 ; $0e2490
+	m_GfxDataSimple gfx_0e25a4 ; $0e24ab
+	m_GfxDataSimple gfx_0e262f ; $0e2536
+	m_GfxDataSimple gfx_0e264f ; $0e2556
+	m_GfxDataSimple gfx_0e28a8 ; $0e27af
+	m_GfxDataSimple gfx_0e2a57 ; $0e295e
+	m_GfxDataSimple gfx_0e29a9 ; $0e29a9
+	m_GfxDataSimple gfx_0e310a ; $0e310a
+	m_GfxDataSimple gfx_0e3828 ; $0e3828
+	m_GfxDataSimple gfx_0e39dc ; $0e39dc
+	m_GfxDataSimple gfx_0e3aa5 ; $0e3aa5
+	m_GfxDataSimple gfx_0e3b39 ; $0e3b39
+	m_GfxDataSimple gfx_0e2aa2 ; $0e3b65
+	m_GfxDataSimple gfx_0e2ad7 ; $0e3b9a
+	m_GfxDataSimple gfx_0e3baf ; $0e3baf
+	m_GfxDataSimple gfx_0e3ca0 ; $0e3ca0
 
 
 .BANK $13 SLOT 1
@@ -147905,8 +147974,6 @@ _label_15_310:
 
 	tileMappingTable:
 		.incbin "build/tilesets/tileMappingTable.bin"
-	tileMappingIndexData:
-		.incbin "build/tilesets/tileMappingIndexData.bin"
 	tileMappingAttributeData:
 		.incbin "build/tilesets/tileMappingAttributeData.bin"
 .ends
@@ -152642,3 +152709,13 @@ _label_3f_212:
 	.include "data/seasons/enemyAnimations.s"
 
 	.include "code/plando/itemAnimations.s"
+
+.BANK $45 SLOT 1
+.ORG 0
+
+tileMappingIndexData:
+	.incbin "build/tilesets/tileMappingIndexData.bin"
+
+
+.BANK $46 SLOT 1
+.ORG 0

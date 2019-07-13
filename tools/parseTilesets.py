@@ -37,7 +37,7 @@ for filename in fl:
         fileList.append(filename)
 
 # Sort by hex number at end of filename
-fileList = sorted(fileList, key=lambda x:int(x[15:17],16))
+#fileList = sorted(fileList, key=lambda x:int(x[15:17],16))
 dictionaryStrings = {}
 
 tileList = []

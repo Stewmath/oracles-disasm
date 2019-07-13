@@ -1000,3 +1000,4 @@ gfxHeaderb8: ; $7942
 	m_GfxHeader gfx_0e2aa2 $cf00 $0a
 gfxHeaderb9: ; $7948
 	m_GfxHeader gfx_0e2ad7 $cf00 $0a
+

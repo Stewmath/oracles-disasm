@@ -1540,31 +1540,7 @@ room05fc:
 	m_RoomLayoutData room05fa
 	m_RoomLayoutData room05fb
 
-room0613:
-room0614:
-room0615:
-room0616:
-room0617:
-room0618:
-room0619:
-room061a:
-room061b:
-room061c:
-room061d:
-room061e:
-room061f:
 room068f:
-room069f:
-room06a0:
-room06a1:
-room06a2:
-room06a3:
-room06a4:
-room06a5:
-room06a6:
-room06a7:
-room06a8:
-room06a9:
 room06aa:
 room06ab:
 room06ac:
@@ -1610,6 +1586,21 @@ room0610:
 	m_RoomLayoutData room060e
 	m_RoomLayoutData room060f
 	m_RoomLayoutData room0612
+
+	m_RoomLayoutData room0613
+	m_RoomLayoutData room0614
+	m_RoomLayoutData room0615
+	m_RoomLayoutData room0616
+	m_RoomLayoutData room0617
+	m_RoomLayoutData room0618
+	m_RoomLayoutData room0619
+	m_RoomLayoutData room061a
+	m_RoomLayoutData room061b
+	m_RoomLayoutData room061c
+	m_RoomLayoutData room061d
+	m_RoomLayoutData room061e
+	m_RoomLayoutData room061f
+
 	m_RoomLayoutData room0620
 	m_RoomLayoutData room0621
 	m_RoomLayoutData room0622
@@ -1736,6 +1727,19 @@ room0695:
 	m_RoomLayoutData room069c
 	m_RoomLayoutData room069d
 	m_RoomLayoutData room069e
+
+	m_RoomLayoutData room069f
+	m_RoomLayoutData room06a0
+	m_RoomLayoutData room06a1
+	m_RoomLayoutData room06a2
+	m_RoomLayoutData room06a3
+	m_RoomLayoutData room06a4
+	m_RoomLayoutData room06a5
+	m_RoomLayoutData room06a6
+	m_RoomLayoutData room06a7
+	m_RoomLayoutData room06a8
+	m_RoomLayoutData room06a9
+
 	m_RoomLayoutData room06b0
 	m_RoomLayoutData room06b1
 	m_RoomLayoutData room06b2
