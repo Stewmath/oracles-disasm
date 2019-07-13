@@ -26782,7 +26782,7 @@ func_04_6f31:
 
 ; .ORGA $6f5b
 
-.include "data/warpData.s"
+.include "build/data/warpData.s"
 
 
 .ifdef BUILD_VANILLA
