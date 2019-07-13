@@ -64,6 +64,8 @@ for y in range(8):
         destAreas[destRoomIndex] = 0x44
         audioData[destRoomIndex] = 0x24
 
+        print('Mapping room ' + wlahex(srcRoomIndex) + ' to room ' + wlahex(destRoomIndex))
+
 
 f = open('rooms/seasons/dungeonLayouts.bin', 'wb')
 f.write(seasonsDungeonLayout)

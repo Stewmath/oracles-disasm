@@ -590,6 +590,14 @@ group5WarpDestTable:
 	m_WarpDest $f1 $87 $04
 	m_WarpDest $f2 $87 $04
 
+	; PLANDO: Black tower
+	m_WarpDest $a6 $5c $04 ; $b0
+	m_WarpDest $1f $5c $04 ; $b1
+	m_WarpDest $18 $52 $04 ; $b2
+	m_WarpDest $a8 $52 $04 ; $b3
+	m_WarpDest $1d $77 $04 ; $b4
+	m_WarpDest $17 $57 $04 ; $b5
+
 group6WarpDestTable:
 	m_WarpDest $01 $02 $f3
 	m_WarpDest $09 $02 $f3
@@ -1211,7 +1219,16 @@ group5WarpSources: ; $13a87
 	m_StandardWarp $00 $f0 $ad $5 $2
 	m_PointerWarp  $40 $f1 warpSource7cbb
 	m_StandardWarp $00 $f2 $ae $5 $2
-	m_StandardWarp $80 $b6 $7b $0 $4
+	m_StandardWarp $00 $b6 $7b $0 $4
+
+	; PLANDO: Black Tower
+	m_StandardWarp $00 $1f $b0 $5 $2
+	m_StandardWarp $00 $a6 $b1 $5 $2
+	m_StandardWarp $00 $a8 $b2 $5 $2
+	m_StandardWarp $00 $18 $b3 $5 $2
+	m_StandardWarp $00 $17 $b4 $5 $2
+	m_StandardWarp $80 $1d $b5 $5 $2
+
 	m_WarpSourcesEnd
 
 warpSource7c9b:

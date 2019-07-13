@@ -191,31 +191,7 @@ group4MapfdObjectData: ; 634b
 group4MapfeObjectData: ; 634b
 group4MapffObjectData: ; 634b
 group5Map00ObjectData: ; 634b
-group5Map13ObjectData: ; 634b
-group5Map14ObjectData: ; 634b
-group5Map15ObjectData: ; 634b
-group5Map16ObjectData: ; 634b
-group5Map17ObjectData: ; 634b
-group5Map18ObjectData: ; 634b
-group5Map19ObjectData: ; 634b
-group5Map1aObjectData: ; 634b
-group5Map1bObjectData: ; 634b
-group5Map1cObjectData: ; 634b
-group5Map1dObjectData: ; 634b
-group5Map1eObjectData: ; 634b
-group5Map1fObjectData: ; 634b
 group5Map8fObjectData: ; 634b
-group5Map9fObjectData: ; 634b
-group5Mapa0ObjectData: ; 634b
-group5Mapa1ObjectData: ; 634b
-group5Mapa2ObjectData: ; 634b
-group5Mapa3ObjectData: ; 634b
-group5Mapa4ObjectData: ; 634b
-group5Mapa5ObjectData: ; 634b
-group5Mapa6ObjectData: ; 634b
-group5Mapa7ObjectData: ; 634b
-group5Mapa8ObjectData: ; 634b
-group5Mapa9ObjectData: ; 634b
 group5MapaaObjectData: ; 634b
 group5MapabObjectData: ; 634b
 group5MapacObjectData: ; 634b
@@ -3853,11 +3829,6 @@ group5Map96ObjectData: ; 7bc3
 	obj_Pointer objectData572d
 	obj_End
 
-group5Map97ObjectData: ; 7bcc
-	obj_DoubleValue $1200 $88 $78
-	obj_NoValue $2001
-	obj_End
-
 group5Map98ObjectData: ; 7bd5
 	obj_DoubleValue $1e0b $50 $00
 	obj_Pointer objectData5736
@@ -4067,3 +4038,106 @@ group5Map34ObjectData: ; 7dcb
 	obj_DoubleValue $e101 $98 $78
 	obj_End
 
+
+; PLANDO: Black Tower rooms
+
+group5Map97ObjectData: ; 7bcc (Main entrance)
+	obj_DoubleValue $1200 $88 $78
+	obj_NoValue $2001
+	obj_End
+
+group5Map13ObjectData: ; 634b
+	obj_RandomEnemy $40 $4801
+	obj_End
+
+group5Map14ObjectData: ; 634b
+	obj_RandomEnemy $40 $4000
+	obj_End
+
+group5Map15ObjectData: ; 634b
+	obj_RandomEnemy $60 $2101
+	obj_End
+
+group5Map16ObjectData: ; 634b
+	obj_RandomEnemy $40 $4001
+	obj_End
+
+group5Map17ObjectData: ; 634b: 3 doors room
+	obj_End
+
+group5Map18ObjectData: ; 634b
+	obj_RandomEnemy $40 $4800
+	obj_End
+
+group5Map19ObjectData: ; 634b
+	obj_RandomEnemy $80 $3001
+	obj_End
+
+group5Map1aObjectData: ; 634b
+	obj_SpecificEnemy $00 $1000 $88 $28
+	obj_SpecificEnemy     $1000 $98 $28
+	obj_SpecificEnemy     $1000 $88 $b8
+	obj_SpecificEnemy     $1000 $98 $b8
+	obj_SpecificEnemy     $1000 $38 $58
+	obj_SpecificEnemy     $1000 $48 $58
+	obj_End
+
+group5Map1bObjectData: ; 634b
+	obj_RandomEnemy $80 $0902
+	obj_End
+
+group5Map1cObjectData: ; 634b
+	obj_SpecificEnemy $00 $4b00 $68 $a8
+	obj_End
+
+group5Map1dObjectData: ; 634b
+	obj_End
+
+group5Map1eObjectData: ; 634b
+	obj_SpecificEnemy $00 $4b00 $68 $48
+	obj_End
+
+group5Map1fObjectData: ; 634b
+	obj_RandomEnemy $60 $4a01
+	obj_End
+
+group5Map9fObjectData: ; 634b
+	obj_RandomEnemy $c0 $3400
+	obj_End
+
+group5Mapa0ObjectData: ; 634b
+	obj_RandomEnemy $40 $0d01
+	obj_End
+
+group5Mapa1ObjectData: ; 634b: Black tower turret
+	obj_End
+
+group5Mapa2ObjectData: ; 634b
+	obj_RandomEnemy $40 $0d01
+	obj_End
+
+group5Mapa3ObjectData: ; 634b
+	obj_SpecificEnemy $03 $1600 $58 $78
+	obj_End
+
+group5Mapa4ObjectData: ; 634b
+	obj_RandomEnemy $60 $1200
+	obj_End
+
+group5Mapa5ObjectData: ; 634b
+	obj_RandomEnemy $a0 $2400
+	obj_End
+
+group5Mapa6ObjectData: ; 634b
+	obj_RandomEnemy $40 $4900
+	obj_End
+
+group5Mapa7ObjectData: ; 634b: Veran fight room
+	obj_End
+
+group5Mapa8ObjectData: ; 634b
+	obj_RandomEnemy $60 $2100
+	obj_End
+
+group5Mapa9ObjectData: ; 634b: Prior to veran fight room
+	obj_End
