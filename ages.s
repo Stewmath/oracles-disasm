@@ -156419,7 +156419,7 @@ loadStaticObjects_body:
 	jr @next		; $50a5
 
 
-.include "data/staticDungeonObjects.s"
+.include "build/data/staticDungeonObjects.s"
 .include "data/chestData.s"
 .include "data/treasureObjectData.s"
 

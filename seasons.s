@@ -9234,7 +9234,7 @@ loadStaticObjects:
 	ldh (<hRomBank),a	; $3065
 	ld ($2222),a		; $3067
 	push de			; $306a
-	call $4ea4		; $306b
+	call loadStaticObjects_body		; $306b
 	pop de			; $306e
 	pop af			; $306f
 	ldh (<hRomBank),a	; $3070
@@ -123548,9 +123548,11 @@ _label_15_120:
 	ldi (hl),a		; $4ea0
 	ld (hl),d		; $4ea1
 	jr _label_15_117		; $4ea2
+
+loadStaticObjects_body:
 	call clearStaticObjects		; $4ea4
 	ld a,($cc55)		; $4ea7
-	ld hl,$4ec6		; $4eaa
+	ld hl,staticDungeonObjects		; $4eaa
 	rst_addDoubleIndex			; $4ead
 	ldi a,(hl)		; $4eae
 	ld h,(hl)		; $4eaf
@@ -123572,147 +123574,9 @@ _label_15_122:
 	inc e			; $4ec2
 	inc e			; $4ec3
 	jr _label_15_121		; $4ec4
-	sbc $4e			; $4ec6
-	rst_addDoubleIndex			; $4ec8
-	ld c,(hl)		; $4ec9
-	and $4e			; $4eca
-	and $4e			; $4ecc
-	rst $20			; $4ece
-	ld c,(hl)		; $4ecf
-	nop			; $4ed0
-	ld c,a			; $4ed1
-	dec hl			; $4ed2
-	ld c,a			; $4ed3
-	ld b,h			; $4ed4
-	ld c,a			; $4ed5
-	ld c,e			; $4ed6
-	ld c,a			; $4ed7
-	ld h,h			; $4ed8
-	ld c,a			; $4ed9
-	ld h,h			; $4eda
-	ld c,a			; $4edb
-	ld h,l			; $4edc
-	ld c,a			; $4edd
-	rst $38			; $4ede
-	inc bc			; $4edf
-	dec d			; $4ee0
-	ld d,$00		; $4ee1
-	jr z,_label_15_130	; $4ee3
-	rst $38			; $4ee5
-_label_15_123:
-	rst $38			; $4ee6
-	inc bc			; $4ee7
-	ld h,l			; $4ee8
-	ld d,$00		; $4ee9
-	adc b			; $4eeb
-	jr c,_label_15_124	; $4eec
-	ld l,a			; $4eee
-	ld d,$01		; $4eef
-_label_15_124:
-	jr z,_label_15_128	; $4ef1
-	inc bc			; $4ef3
-	ld a,h			; $4ef4
-	ld d,$02		; $4ef5
-	jr c,$38		; $4ef7
-	inc bc			; $4ef9
-	ld a,a			; $4efa
-	ld d,$00		; $4efb
-	ld l,b			; $4efd
-	jr z,-$01		; $4efe
-	inc bc			; $4f00
-	and l			; $4f01
-	ld d,$00		; $4f02
-	jr c,$48		; $4f04
-	inc bc			; $4f06
-	and l			; $4f07
-	ld d,$00		; $4f08
-	ld c,b			; $4f0a
-_label_15_125:
-	ld a,b			; $4f0b
-	inc bc			; $4f0c
-	and c			; $4f0d
-	ld d,$00		; $4f0e
-	ld a,b			; $4f10
-	jr c,_label_15_126	; $4f11
-	adc c			; $4f13
-	ld (de),a		; $4f14
-	dec b			; $4f15
-_label_15_126:
-	jr z,_label_15_120	; $4f16
-	inc bc			; $4f18
-	sub h			; $4f19
-	ld (de),a		; $4f1a
-	dec b			; $4f1b
-	jr _label_15_123		; $4f1c
-	inc bc			; $4f1e
-	sub a			; $4f1f
-	ld (de),a		; $4f20
-	dec b			; $4f21
-	ld a,b			; $4f22
-	ld a,b			; $4f23
-	inc bc			; $4f24
-	sbc d			; $4f25
-	ld h,h			; $4f26
-	nop			; $4f27
-	jr c,_label_15_131	; $4f28
-	rst $38			; $4f2a
-	inc bc			; $4f2b
-	xor e			; $4f2c
-	ld (de),a		; $4f2d
-	dec b			; $4f2e
-	sbc b			; $4f2f
-	jr z,_label_15_127	; $4f30
-	xor h			; $4f32
-	ld (de),a		; $4f33
-	dec b			; $4f34
-_label_15_127:
-	ld c,b			; $4f35
-	sbc b			; $4f36
-	inc bc			; $4f37
-	or (hl)			; $4f38
-	ld (de),a		; $4f39
-	dec b			; $4f3a
-	jr _label_15_129		; $4f3b
-	inc bc			; $4f3d
-	jp nc,$0512		; $4f3e
-	jr z,_label_15_125	; $4f41
-	rst $38			; $4f43
-	inc bc			; $4f44
-	ld b,a			; $4f45
-	ld (de),a		; $4f46
-	dec b			; $4f47
-	ld c,b			; $4f48
-	ld a,b			; $4f49
-	rst $38			; $4f4a
-_label_15_128:
-	inc bc			; $4f4b
-	add h			; $4f4c
-	ld d,$00		; $4f4d
-	ld e,b			; $4f4f
-	jr z,_label_15_129	; $4f50
-	adc b			; $4f52
-	ld d,$00		; $4f53
-_label_15_129:
-	jr c,_label_15_133	; $4f55
-	inc bc			; $4f57
-	ld (hl),l		; $4f58
-	ld (de),a		; $4f59
-	dec b			; $4f5a
-	jr $38			; $4f5b
-_label_15_130:
-	inc bc			; $4f5d
-	adc (hl)		; $4f5e
-	ld (de),a		; $4f5f
-	dec b			; $4f60
-	jr c,$48		; $4f61
-	rst $38			; $4f63
-	rst $38			; $4f64
-	inc bc			; $4f65
-	inc h			; $4f66
-	ld (de),a		; $4f67
-	dec b			; $4f68
-	jr $18			; $4f69
-	rst $38			; $4f6b
+
+	.include "build/data/staticDungeonObjects.s"
+
 	ld a,h			; $4f6c
 	ld c,a			; $4f6d
 	sbc l			; $4f6e
