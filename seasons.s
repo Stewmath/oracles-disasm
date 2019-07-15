@@ -122102,7 +122102,7 @@ interactionLoadTreasureData:
 	ld a,(de)		; $4641
 	ld e,$70		; $4642
 	ld (de),a		; $4644
-	ld hl,$5129		; $4645
+	ld hl,treasureObjectData		; $4645
 _label_15_045:
 	call multiplyABy4		; $4648
 	add hl,bc		; $464b

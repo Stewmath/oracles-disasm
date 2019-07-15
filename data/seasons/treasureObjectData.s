@@ -1,7 +1,7 @@
 ; See data/ages/treasureObjectData.s for documentation
 
 ; @addr{$55129}
-interactionData:
+treasureObjectData:
 	; 0x00
 	.db $00 $00 $ff $00
 
