@@ -15530,7 +15530,7 @@ secretFunctionCaller_body:
 	push de			; $4836
 	ld a,($ff00+R_SVBK)	; $4837
 	push af			; $4839
-	ld a,:w7SecretGenerationBuffer		; $483a
+	ld a,TEXT_BANK		; $483a
 	ld ($ff00+R_SVBK),a	; $483c
 
 	call @jumpTable		; $483e
@@ -141291,7 +141291,7 @@ playWaveSoundAtRandomIntervals_body:
 	ld (wTmpcbba),a		; $7377
 	ld a,($ff00+R_SVBK)	; $737a
 	push af			; $737c
-	ld a,:w7SecretText1		; $737d
+	ld a,TEXT_BANK		; $737d
 	ld ($ff00+R_SVBK),a	; $737f
 	ld hl,w7SecretText1		; $7381
 	ld de,$d800		; $7384
