@@ -1,4 +1,3 @@
-; @addr{$59108}
 chestDataGroupTable:
 	.dw chestGroup0Data
 	.dw chestGroup1Data
@@ -9,7 +8,6 @@ chestDataGroupTable:
 	.dw chestGroup6Data
 	.dw chestGroup7Data
 
-; @addr{$59118}
 chestGroup0Data:
 	.db $49 $51 $28 $04
 	.db $51 $49 $28 $04
@@ -19,11 +17,11 @@ chestGroup0Data:
 	.db $25 $d5 $2d $25
 	.db $12 $63 $34 $01
 	.db $ff
-; @addr{$59135}
+
 chestGroup1Data:
 	.db $43 $6d $2d $27
 	.db $ff
-; @addr{$5913a}
+
 chestGroup2Data:
 	.db $14 $f7 $2d $11
 	.db $16 $f7 $34 $01
@@ -35,7 +33,7 @@ chestGroup2Data:
 	.db $18 $4f $2d $22
 	.db $14 $c0 $34 $01
 	.db $ff
-; @addr{$5915f}
+
 chestGroup3Data:
 	.db $24 $0e $2d $26
 	.db $18 $1f $28 $06
@@ -44,7 +42,7 @@ chestGroup3Data:
 	.db $18 $f9 $2d $20
 	.db $34 $fd $2b $01
 	.db $ff
-; @addr{$59178}
+
 chestGroup4Data:
 	.db $57 $08 $30 $03
 	.db $5a $15 $34 $01
@@ -100,7 +98,7 @@ chestGroup4Data:
 	.db $66 $cc $28 $08
 	.db $57 $cf $30 $03
 	.db $ff
-; @addr{$5924d}
+
 chestGroup5Data:
 	.db $17 $13 $4a $00
 	.db $25 $14 $30 $03
@@ -159,7 +157,6 @@ chestGroup5Data:
 	.db $22 $b8 $2d $19
 	.db $14 $ac $28 $08
 	.db $12 $f7 $2d $1b
-; @addr{$59331}
 chestGroup6Data:
 chestGroup7Data:
 	.db $ff

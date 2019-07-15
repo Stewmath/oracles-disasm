@@ -156420,7 +156420,7 @@ loadStaticObjects_body:
 
 
 .include "build/data/staticDungeonObjects.s"
-.include "data/chestData.s"
+.include "build/data/chestData.s"
 .include "data/treasureObjectData.s"
 
 ;;
