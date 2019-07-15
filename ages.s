@@ -156421,7 +156421,7 @@ loadStaticObjects_body:
 
 .include "build/data/staticDungeonObjects.s"
 .include "build/data/chestData.s"
-.include "data/treasureObjectData.s"
+.include "build/data/treasureObjectData.s"
 
 ;;
 ; Used in the room in present Mermaid's Cave with the changing floor
