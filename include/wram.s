@@ -3469,12 +3469,9 @@ w6SpecialObjectGfxBuffer:	dsb $100	; $d600
 ; When encoding data into a secret, bits are inserted one at a time to the end of this
 ; buffer, causing all existing data to be shifted forward by one bit.
 .define w7SecretGenerationBuffer	$d478
-.define :w7SecretGenerationBuffer	7
 
 ; $d5e0: Used at some point for unknown purpose
 
 .define w7d800			$d800 ; $300 bytes? Secret text gets written here?
-.define :w7d800			7 ; $300 bytes?
 
 ; Manually define the bank number for now
-.define :w7SecretText1	$07

@@ -10784,7 +10784,7 @@ _saveQuitMenu_drawSprites:
 ; @addr{7474}
 _runSecretListMenu:
 	call clearOam		; $7474
-	ld a,:w7d800		; $7477
+	ld a,TEXT_BANK		; $7477
 	ld ($ff00+R_SVBK),a	; $7479
 	call @runState		; $747b
 	jp _secretListMenu_drawCursorSprite		; $747e
