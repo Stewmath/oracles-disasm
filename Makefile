@@ -179,11 +179,6 @@ $(NO_PRECMP_FILE): | build
 	touch $@
 
 
-build/textData.s: precompressed/$(GAME)/textData.s $(CMP_MODE) | build
-	@echo "Copying $< to $@..."
-	@cp $< $@
-
-
 ifeq ($(BUILD_VANILLA),true)
 
 build/tilesets/%.bin: precompressed/tilesets/$(GAME)/%.bin $(CMP_MODE) | build/tilesets
@@ -204,6 +199,10 @@ build/gfx/%.cmp: precompressed/gfx_compressible/%.cmp $(CMP_MODE) | build/gfx
 
 # Precompressed graphics (from a particular game)
 build/gfx/%.cmp: precompressed/gfx_compressible/$(GAME)/%.cmp $(CMP_MODE) | build/gfx
+	@echo "Copying $< to $@..."
+	@cp $< $@
+
+build/textData.s: precompressed/$(GAME)/textData.s $(CMP_MODE) | build
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
@@ -261,6 +260,10 @@ build/gfx/%.cmp: gfx_compressible/%.bin $(CMP_MODE) | build/gfx
 build/gfx/%.cmp: gfx_compressible/$(GAME)/%.bin $(CMP_MODE) | build/gfx
 	@echo "Compressing $< to $@..."
 	@$(PYTHON) tools/compressGfx.py $< $@
+
+build/textData.s: text/$(GAME)/text.txt text/$(GAME)/dict.txt tools/parseText.py $(CMP_MODE) | build
+	@echo "Compressing text..."
+	@$(PYTHON) tools/parseText.py text/$(GAME)/dict.txt $< $@ $$(($(TEXT_INSERT_ADDRESS))) $$((0x2c))
 
 build/textDefines.s: build/textData.s
 
