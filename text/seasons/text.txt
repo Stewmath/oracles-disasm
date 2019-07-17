@@ -1066,6 +1066,7 @@ seasons!
 \start
 GOAL!!!
 \end
+\next
 
 \name(TX_00_GETCANE)
 \start
@@ -1074,7 +1075,32 @@ You got the
 Use it to create
 blocks.
 \end
+\next
 
+\name(TX_00_GETHOOK)
+\start
+You got the
+\col(1)Switch Hook\col(0)!
+Shoot at an
+object to switch
+places with it.
+\end
+\next
+
+\name(TX_00_GETSHOOTER)
+\start
+You got the
+\col(1)Seed Shooter\col(0)!\stop
+Pick your \col(1)seeds\col(0),
+fire, then watch
+them ricochet.
+\end
+\next
+
+\name(TX_00_GETPOWDER)
+\start
+You got some \col(1)Magic Powder\col(0)! Try sprinkling it on a variety of things!
+\end
 \nextgroup
 
 \name(TX_0100)
@@ -5795,17 +5821,9 @@ Woods! Hohhm...
 
 \name(TX_1707)
 \start
-Thank you,
-\Link.\stop
-I, too, received
-part of the
-\col(2)Gift of Time\col(4)!
-I just dreamt of
-\col(3)Spool Swamp\col(4) out
-west. Something
-is afoot there.\stop
-But I can see no
-more... Hohhm...
+\col(1)Rod of Summer\col(0)\stop
+ 150 Rupees
+  \opt()OK \opt()No thanks\cmd8($0f)
 \end
 \next($1722)
 

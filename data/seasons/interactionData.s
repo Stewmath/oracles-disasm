@@ -299,7 +299,6 @@ interaction60SubidData:
 	.db $5d $14 $00
 	.db $5d $14 $10
 	.db $5d $14 $20
-	.db $61 $0a $50 ; $36 (magic powder)
 interaction92SubidData:
 	.db $65 $04 $00
 	.db $65 $06 $20
@@ -373,7 +372,12 @@ interactiondeSubidData:
 	.db $64 $04 $53
 	.db $64 $08 $33
 	.db $64 $0c $13
-	.db $64 $90 $03
+	.db $64 $10 $03
+
+	.db $61 $0a $50 ; $7c (magic powder)
+	.db $60 $1e $40 ; $7d (switch hook)
+	.db $61 $06 $20 ; $7e (cane)
+	.db $61 $88 $30 ; $7f (seed shooter)
 
 interaction7dSubidData:
 	.db $58 $00 $40

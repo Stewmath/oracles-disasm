@@ -19,7 +19,7 @@ treasureObjectData:
 	.db $00
 
 	; 0x04
-	.db $00 $00 $ff $00
+	.db $32, $00, <TX_00_GETCANE, $7e
 
 	; 0x05
 	.db $80
@@ -43,7 +43,7 @@ treasureObjectData:
 	.db $00 $00 $ff $00
 
 	; 0x0a
-	.db $00 $00 $ff $00
+	.db $32, $00, <TX_00_GETHOOK, $7d
 
 	; 0x0b
 	.db $00 $00 $ff $00
@@ -62,7 +62,7 @@ treasureObjectData:
 	.db $0a $0c $3b $23
 
 	; 0x0f
-	.db $00 $00 $ff $00
+	.db $32, $00, <TX_00_GETSHOOTER, $7f
 
 	; 0x10
 	.db $00 $00 $ff $00
@@ -116,7 +116,7 @@ treasureObjectData:
 	.db $00 $00 $ff $00
 
 	; 0x1f
-	.db $32 $00 $ff $36
+	.db $32, $00, <TX_00_GETPOWDER, $7c
 
 	; 0x20
 	.db $80
