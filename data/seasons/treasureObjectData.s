@@ -116,7 +116,7 @@ treasureObjectData:
 	.db $00 $00 $ff $00
 
 	; 0x1f
-	.db $00 $00 $ff $00
+	.db $32 $00 $ff $36
 
 	; 0x20
 	.db $80

@@ -130822,7 +130822,7 @@ _label_3f_042:
 	ldh a,(<hFF8B)	; $447d
 	ld c,a			; $447f
 	ld b,$00		; $4480
-	ld hl,$6c2b		; $4482
+	ld hl,treasureCollectionBehaviourTable		; $4482
 	add hl,bc		; $4485
 	add hl,bc		; $4486
 	add hl,bc		; $4487
@@ -130918,7 +130918,7 @@ _label_3f_050:
 	ldh a,(<hFF8B)	; $4512
 	ld c,a			; $4514
 	ld b,$00		; $4515
-	ld hl,$6c2b		; $4517
+	ld hl,treasureCollectionBehaviourTable		; $4517
 	add hl,bc		; $451a
 	add hl,bc		; $451b
 	add hl,bc		; $451c

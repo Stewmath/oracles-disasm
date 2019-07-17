@@ -299,6 +299,7 @@ interaction60SubidData:
 	.db $5d $14 $00
 	.db $5d $14 $10
 	.db $5d $14 $20
+	.db $61 $0a $50 ; $36 (magic powder)
 interaction92SubidData:
 	.db $65 $04 $00
 	.db $65 $06 $20
