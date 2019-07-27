@@ -1593,7 +1593,7 @@ wRememberedCompanionX: ; $cc28/$cc44
 ; Dunno what the distinction is between these and wKeysPressed, wKeysJustPressed?
 wGameKeysPressed: ; $cc29
 	db
-wGameKeysJustPressed: ; $cc2a
+wGameKeysJustPressed: ; $cc2a/$cc46
 	db
 
 wLinkAngle: ; $cc2b
@@ -1842,7 +1842,7 @@ wLinkInAir: ; $cc5c/$cc77
 
 wLinkSwimmingState: ; $cc5d
 ; Bit 7 is set when Link dives underwater.
-; Bit 6 causes Link to drown.
+; Bit 6 causes Link to drown (it's lava).
 ; Bits 0-3 hold a "state" which remembers whether Link is actually in the water, and
 ; whether he just entered or has been there for a few frames.
 	db
@@ -1982,7 +1982,7 @@ wTextInputResult: ; $cc89
 
 ; Everything from $cc8a-$cce0 is cleared on screen transitions?
 
-wDisabledObjects: ; $cc8a
+wDisabledObjects: ; $cc8a/$cca4
 ; Bit 0 disables link.
 ; Bit 1 disables interactions.
 ; Bit 2 disables enemies.
@@ -2019,7 +2019,7 @@ wcc90: ; $cc90
 ; Disables warp tiles if nonzero?
 	db
 
-wDisableScreenTransitions: ; $cc91
+wDisableScreenTransitions: ; $cc91/$ccab
 ; If nonzero, screen transitions and diving don't work?
 ; Set when:
 ; - An animal companion (not dimitri) is drowning in water?

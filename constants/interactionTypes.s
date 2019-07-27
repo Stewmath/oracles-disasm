@@ -1705,3 +1705,17 @@
 .define INTERACID_RAFT			$e6
 
 ; Nothing beyond $e6.
+
+
+
+; ==============================================================================
+; SEASONS ONLY (TODO: organize this better)
+
+.ifdef ROM_SEASONS
+
+;;
+; @subid_00{Rooster on top of d4}
+; @subid_01{Rooster that leads to spring banana}
+.define INTERACID_FLYING_ROOSTER $8c
+
+.endif

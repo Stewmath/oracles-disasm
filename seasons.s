@@ -5779,19 +5779,20 @@ objectGetAngleTowardEnemyTarget:
 	ld b,a			; $1e54
 	ldh a,(<hEnemyTargetX)	; $1e55
 	ld c,a			; $1e57
-	jr _label_00_248		; $1e58
+	jr objectGetRelativeAngle		; $1e58
 
 objectGetLinkRelativeAngle:
 	ld a,($d00b)		; $1e5a
 	ld b,a			; $1e5d
 	ld a,($d00d)		; $1e5e
 	ld c,a			; $1e61
-_label_00_248:
 
 objectGetRelativeAngle:
 	ldh a,(<hActiveObjectType)	; $1e62
-	or $0b			; $1e64
+	or Object.yh			; $1e64
 	ld e,a			; $1e66
+
+getRelativeAngle:
 	ld a,(de)		; $1e67
 	ldh (<hFF8F),a	; $1e68
 	inc e			; $1e6a
@@ -10848,13 +10849,10 @@ seasonsFunc_3a9c:
 	ld ($cc68),a		; $3aae
 	ret			; $3ab1
 
-seasonsFunc_3ab2:
+checkRoomPackAfterWarp:
 	ldh a,(<hRomBank)	; $3ab2
 	push af			; $3ab4
-	ld a,$01		; $3ab5
-	ldh (<hRomBank),a	; $3ab7
-	ld ($2222),a		; $3ab9
-	call $7e6e		; $3abc
+	callfrombank0 bank1.checkRoomPackAfterWarp_body		; $3abc
 	pop af			; $3abf
 	ldh (<hRomBank),a	; $3ac0
 	ld ($2222),a		; $3ac2
@@ -55515,7 +55513,7 @@ _label_09_054:
 	jr _label_09_054		; $4d02
 
 interactionCode5f:
-	ld e,$42		; $4d04
+	ld e,Interaction.subid		; $4d04
 	ld a,(de)		; $4d06
 	cp $06			; $4d07
 	jr z,_label_09_055	; $4d09
@@ -58577,94 +58575,52 @@ _label_09_151:
 	ld (de),a		; $60dd
 	ld a,(hl)		; $60de
 	jp interactionSetAnimation		; $60df
-	jr nc,_label_09_153	; $60e2
-	rlca			; $60e4
-	jr nc,_label_09_154	; $60e5
-	rlca			; $60e7
-	jr nc,_label_09_152	; $60e8
-	ld ($5830),sp		; $60ea
-	add hl,bc		; $60ed
+.db $30 $58 $07 $30 $58 $07 $30 $38
+.db $08 $30 $58 $09
 
 interactionCode6b:
 	ld e,$42		; $60ee
 	ld a,(de)		; $60f0
 	rst_jumpTable			; $60f1
-	ld b,b			; $60f2
-	ld h,c			; $60f3
-	ld h,c			; $60f4
-	ld h,c			; $60f5
-	sub (hl)		; $60f6
-	ld h,c			; $60f7
-	ld ($ff00+$61),a	; $60f8
-	ld l,(hl)		; $60fa
-	ld h,d			; $60fb
-	and d			; $60fc
-	ld h,d			; $60fd
-	xor b			; $60fe
-	ld h,d			; $60ff
-	rst $8			; $6100
-	ld h,d			; $6101
-	inc sp			; $6102
-	ld h,e			; $6103
-	ld b,l			; $6104
-	ld h,e			; $6105
-	add c			; $6106
-	ld h,e			; $6107
-	sbc (hl)		; $6108
-	ld h,e			; $6109
-	rst_addDoubleIndex			; $610a
-	ld h,e			; $610b
-	dec c			; $610c
-	ld h,h			; $610d
-	daa			; $610e
-	ld h,h			; $610f
-	adc e			; $6110
-	ld h,h			; $6111
-	sub c			; $6112
-	ld h,h			; $6113
-	cp h			; $6114
-	ld h,h			; $6115
-	jr $65			; $6116
-	ld b,l			; $6118
-	ld h,l			; $6119
-	ld e,c			; $611a
-	ld h,l			; $611b
-	ld a,h			; $611c
-	ld h,l			; $611d
-	adc h			; $611e
-	ld h,l			; $611f
-	xor a			; $6120
-	ld h,l			; $6121
-_label_09_152:
-	push af			; $6122
-	ld h,l			; $6123
-	ld ($0e66),sp		; $6124
-	ld h,(hl)		; $6127
-	inc d			; $6128
-	ld h,(hl)		; $6129
-	ld b,h			; $612a
-	ld h,(hl)		; $612b
-	ld d,e			; $612c
-	ld h,(hl)		; $612d
-	ld (hl),a		; $612e
-	ld h,(hl)		; $612f
-	xor d			; $6130
-	ld h,(hl)		; $6131
-	or b			; $6132
-	ld h,(hl)		; $6133
-	or (hl)			; $6134
-	ld h,(hl)		; $6135
-	pop hl			; $6136
-	ld h,(hl)		; $6137
-	rst $28			; $6138
-	ld h,(hl)		; $6139
-	ld a,$67		; $613a
-_label_09_153:
-	ld c,(hl)		; $613c
-	ld h,a			; $613d
-	halt			; $613e
-_label_09_154:
-	ld h,a			; $613f
+	.dw $6140
+	.dw $6161
+	.dw $6196
+	.dw $61e0
+	.dw $626e
+	.dw $62a2
+	.dw $62a8
+	.dw $62cf
+	.dw $6333
+	.dw $6345
+	.dw $6381
+	.dw $639e
+	.dw $63df
+	.dw $640d
+	.dw $6427
+	.dw $648b
+	.dw $6491
+	.dw $64bc
+	.dw interactionCode6bSubid12
+	.dw $6545
+	.dw $6559
+	.dw $657c
+	.dw $658c
+	.dw $65af
+	.dw $65f5
+	.dw $6608
+	.dw $660e
+	.dw $6614
+	.dw $6644
+	.dw $6653
+	.dw $6677
+	.dw $66aa
+	.dw $66b0
+	.dw $66b6
+	.dw $66e1
+	.dw $66ef
+	.dw $673e
+	.dw $674e
+	.dw $6776
 	call checkInteractionState		; $6140
 	jr nz,_label_09_155	; $6143
 	ld a,$01		; $6145
@@ -59161,6 +59117,10 @@ _label_09_168:
 	ld ($cca4),a		; $650f
 	ld ($ccab),a		; $6512
 	jp interactionDelete		; $6515
+
+
+; Cutscene outside onox's castle
+interactionCode6bSubid12:
 	ld a,$1d		; $6518
 	call checkGlobalFlag		; $651a
 	jp nz,interactionDelete		; $651d
@@ -65257,94 +65217,124 @@ _label_0a_114:
 	inc e			; $4c68
 	ld (hl),e		; $4c69
 
+
+; ==============================================================================
+; INTERACID_FLYING_ROOSTER
+;
+; Variables:
+;   var30/var31: Initial position
+;   var32: Y-position necessary to clear the cliff
+;   var33: Counter used along with var34
+;   var34: Direction chicken is hopping in (up or down; when moving back to "base"
+;          position)
+;   var35: X-position at which the "destination" is (Link loses control)
+; ==============================================================================
 interactionCode8c:
-	ld e,$42		; $4c6a
+	ld e,Interaction.subid		; $4c6a
 	ld a,(de)		; $4c6c
 	bit 7,a			; $4c6d
-	jp nz,$4ef7		; $4c6f
-	ld a,($cc34)		; $4c72
+	jp nz,_flyingRooster_subidBit7Set		; $4c6f
+
+	ld a,(wLinkDeathTrigger)		; $4c72
 	or a			; $4c75
 	jp nz,interactionUpdateAnimCounter		; $4c76
-	ld e,$44		; $4c79
+
+	ld e,Interaction.state		; $4c79
 	ld a,(de)		; $4c7b
 	rst_jumpTable			; $4c7c
-	adc e			; $4c7d
-	ld c,h			; $4c7e
-	or a			; $4c7f
-	ld c,h			; $4c80
-	ret			; $4c81
-	ld c,h			; $4c82
-	ld l,a			; $4c83
-	ld c,l			; $4c84
-	rst $30			; $4c85
-	ld c,l			; $4c86
-	ld b,l			; $4c87
-	ld c,(hl)		; $4c88
-	add sp,$4d		; $4c89
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+	.dw @state5
+	.dw @state6
+
+@state0:
 	ld a,$01		; $4c8b
-	ld (de),a		; $4c8d
+	ld (de),a ; [state]
+
 	ld a,$02		; $4c8e
 	call objectSetCollideRadius		; $4c90
-	call $4f21		; $4c93
-	ld e,$4b		; $4c96
-	ld l,$70		; $4c98
+
+	call _flyingRooster_getSubidAndInitSpeed		; $4c93
+
+	; Save initial position into var30/var31
+	ld e,Interaction.yh		; $4c96
+	ld l,Interaction.var30		; $4c98
 	ld a,(de)		; $4c9a
 	ldi (hl),a		; $4c9b
-	ld e,$4d		; $4c9c
+	ld e,Interaction.xh		; $4c9c
 	ld a,(de)		; $4c9e
 	ld (hl),a		; $4c9f
+
 	ld a,c			; $4ca0
-	ld hl,$4cb3		; $4ca1
+	ld hl,@subidData		; $4ca1
 	rst_addDoubleIndex			; $4ca4
 	ldi a,(hl)		; $4ca5
-	ld e,$72		; $4ca6
+	ld e,Interaction.var32		; $4ca6
 	ld (de),a		; $4ca8
-	ld e,$75		; $4ca9
+	ld e,Interaction.var35		; $4ca9
 	ld a,(hl)		; $4cab
 	ld (de),a		; $4cac
 	call interactionInitGraphics		; $4cad
 	jp objectSetVisiblec2		; $4cb0
-	jr _label_0a_115		; $4cb3
-	ld ($cd48),sp		; $4cb5
-	cp b			; $4cb8
-	dec h			; $4cb9
+
+; b0: var32 (?)
+; b1: var35 (Target x-position)
+@subidData:
+	.db $18 $68 ; Subid 0
+	.db $08 $48 ; Subid 1
+
+
+; Waiting for Link to grab
+@state1:
+	call interactionUpdateAnimCounter		; $4cb7
 	call objectAddToGrabbableObjectBuffer		; $4cba
 	ld c,$10		; $4cbd
 	call objectUpdateSpeedZ_paramC		; $4cbf
 	ret nz			; $4cc2
-	ld bc,$ff00		; $4cc3
+	ld bc,-$100		; $4cc3
 	jp objectSetSpeedZ		; $4cc6
+
+
+; "Grabbed" state
+@state2:
 	call interactionUpdateAnimCounter		; $4cc9
-	ld e,$45		; $4ccc
+	ld e,Interaction.state2		; $4ccc
 	ld a,(de)		; $4cce
 	rst_jumpTable			; $4ccf
-	jp c,$e94c		; $4cd0
-	ld c,h			; $4cd3
-	inc c			; $4cd4
-	ld c,l			; $4cd5
-	inc hl			; $4cd6
-	ld c,(hl)		; $4cd7
-	ld b,h			; $4cd8
-	ld c,l			; $4cd9
+	.dw @justGrabbed
+	.dw @state2Substate1
+	.dw @state2Substate2
+	.dw @releaseFromLink
+	.dw @state2Substate4
+
+@justGrabbed:
 	ld a,$01		; $4cda
-	ld (de),a		; $4cdc
-	ld ($ccab),a		; $4cdd
-	ld ($cc02),a		; $4ce0
+	ld (de),a ; [state2]
+	ld (wDisableScreenTransitions),a		; $4cdd
+	ld (wMenuDisabled),a		; $4ce0
 	ld a,$08		; $4ce3
 	ld (wLinkGrabState2),a		; $4ce5
 	ret			; $4ce8
-	ld a,($cc77)		; $4ce9
+
+@state2Substate1:
+	ld a,(wLinkInAir)		; $4ce9
 	or a			; $4cec
 	ret nz			; $4ced
-	ld a,($cc75)		; $4cee
+
+	ld a,(wLinkGrabState)		; $4cee
 	and $07			; $4cf1
 	cp $03			; $4cf3
 	ret nz			; $4cf5
-	ld hl,$d008		; $4cf6
+
+	ld hl,w1Link.direction		; $4cf6
 	ld (hl),$01		; $4cf9
-	ld a,$01		; $4cfb
-	ld ($cca4),a		; $4cfd
-	ld l,$0f		; $4d00
+	ld a,DISABLE_LINK		; $4cfb
+	ld (wDisabledObjects),a		; $4cfd
+
+	ld l,<w1Link.zh		; $4d00
 	ld a,(hl)		; $4d02
 	dec a			; $4d03
 	ld (hl),a		; $4d04
@@ -65353,343 +65343,457 @@ interactionCode8c:
 	ld a,$02		; $4d08
 	ld (de),a		; $4d0a
 	ret			; $4d0b
-	ld e,$70		; $4d0c
+
+
+; Moving toward "base" position before continuing
+@state2Substate2:
+	; Calculate angle toward original position
+	ld e,Interaction.var30		; $4d0c
 	ld a,(de)		; $4d0e
 	ld b,a			; $4d0f
 	inc e			; $4d10
 	ld a,(de)		; $4d11
 	ld c,a			; $4d12
 	push de			; $4d13
-	ld de,$d00b		; $4d14
-	call $1e67		; $4d17
+	ld de,w1Link.yh		; $4d14
+	call getRelativeAngle		; $4d17
 	pop de			; $4d1a
-	ld e,$49		; $4d1b
-_label_0a_115:
+	ld e,Interaction.angle		; $4d1b
 	ld (de),a		; $4d1d
-	call $4e99		; $4d1e
+
+	call _flyingRooster_applySpeedAndUpdatePositions		; $4d1e
+
 	ld h,d			; $4d21
-	ld l,$70		; $4d22
+	ld l,Interaction.var30		; $4d22
 	ldi a,(hl)		; $4d24
 	cp b			; $4d25
 	ret nz			; $4d26
 	ldi a,(hl)		; $4d27
 	cp c			; $4d28
 	ret nz			; $4d29
-	ld l,$40		; $4d2a
+
+	; Reached base position
+	ld l,Interaction.enabled		; $4d2a
 	res 1,(hl)		; $4d2c
-	ld l,$45		; $4d2e
+
+	ld l,Interaction.state2		; $4d2e
 	ld (hl),$04		; $4d30
-	ld e,$42		; $4d32
+
+	ld e,Interaction.subid		; $4d32
 	ld a,(de)		; $4d34
-	ld hl,$4d42		; $4d35
+	ld hl,@angles		; $4d35
 	rst_addAToHl			; $4d38
 	ld a,(hl)		; $4d39
-	ld e,$49		; $4d3a
+	ld e,Interaction.angle		; $4d3a
 	ld (de),a		; $4d3c
 	xor a			; $4d3d
-	ld ($ccab),a		; $4d3e
+	ld (wDisableScreenTransitions),a		; $4d3e
 	ret			; $4d41
-	ld ($1e01),sp		; $4d42
-	ld b,d			; $4d45
+
+@angles:
+	.db $08 $01
+
+
+@state2Substate4:
+	ld e,Interaction.subid		; $4d44
 	ld a,(de)		; $4d46
 	or a			; $4d47
-	jr nz,_label_0a_116	; $4d48
-	call $4e99		; $4d4a
-	ld l,$0d		; $4d4d
+	jr nz,@incState	; $4d48
+
+	; Subid 0 (on top of d4) only: stay in this state until reaching cliff edge.
+	call _flyingRooster_applySpeedAndUpdatePositions		; $4d4a
+	ld l,<w1Link.xh		; $4d4d
 	ldi a,(hl)		; $4d4f
 	cp $30			; $4d50
 	ret c			; $4d52
-	ld l,$0b		; $4d53
+
+	; Reached edge. Re-jig Link's y and z positions to make him "in the air".
+	ld l,<w1Link.yh		; $4d53
 	ld a,(hl)		; $4d55
 	sub $68			; $4d56
-	ld l,$0f		; $4d58
+	ld l,<w1Link.zh		; $4d58
 	add (hl)		; $4d5a
 	ld (hl),a		; $4d5b
 	ld a,$68		; $4d5c
-	ld l,$0b		; $4d5e
+	ld l,<w1Link.yh		; $4d5e
 	ld (hl),a		; $4d60
-	ld l,$1a		; $4d61
+
+	ld l,<w1Link.visible		; $4d61
 	res 6,(hl)		; $4d63
-	ld e,$5a		; $4d65
+
+	ld e,Interaction.visible		; $4d65
 	ld a,(de)		; $4d67
 	res 6,a			; $4d68
 	ld (de),a		; $4d6a
-_label_0a_116:
+
+@incState:
 	call interactionIncState		; $4d6b
 	ret			; $4d6e
+
+
+; The state where Link can adjust the rooster's height.
+@state3:
 	call interactionUpdateAnimCounter		; $4d6f
-	call $4e99		; $4d72
-	ld l,$0b		; $4d75
+	call _flyingRooster_applySpeedAndUpdatePositions		; $4d72
+
+	; Cap y-position?
+	ld l,<w1Link.yh		; $4d75
 	ld a,(hl)		; $4d77
 	cp $58			; $4d78
-	jr nc,_label_0a_117	; $4d7a
+	jr nc,+			; $4d7a
 	inc (hl)		; $4d7c
-_label_0a_117:
-	ld l,$0d		; $4d7d
-	ld e,$75		; $4d7f
++
+	ld l,<w1Link.xh		; $4d7d
+	ld e,Interaction.var35		; $4d7f
 	ld a,(de)		; $4d81
 	cp (hl)			; $4d82
-	jr c,_label_0a_119	; $4d83
-	call $4eb7		; $4d85
-	ld a,($cc46)		; $4d88
-	and $03			; $4d8b
+	jr c,@reachedTargetXPosition	; $4d83
+
+	call _flyingRooster_updateGravityAndCheckCaps		; $4d85
+	ld a,(wGameKeysJustPressed)		; $4d88
+	and (BTN_A|BTN_B)			; $4d8b
 	ret z			; $4d8d
-	ld bc,$ff50		; $4d8e
-	ld e,$42		; $4d91
+
+	; Set z speed based on subid
+	ld bc,-$b0		; $4d8e
+	ld e,Interaction.subid		; $4d91
 	ld a,(de)		; $4d93
 	or a			; $4d94
-	jr z,_label_0a_118	; $4d95
-	ld bc,$ff30		; $4d97
-_label_0a_118:
+	jr z,+			; $4d95
+	ld bc,-$d0		; $4d97
++
 	call objectSetSpeedZ		; $4d9a
-	ld a,$a0		; $4d9d
+	ld a,SND_CHICKEN		; $4d9d
 	call playSound		; $4d9f
 	jp interactionUpdateAnimCounter		; $4da2
-_label_0a_119:
-	call $4eef		; $4da5
-	ld e,$72		; $4da8
+
+@reachedTargetXPosition:
+	call _flyingRooster_getVisualLinkYPosition		; $4da5
+	ld e,Interaction.var32		; $4da8
 	ld a,(de)		; $4daa
 	add $08			; $4dab
 	cp b			; $4dad
-	jr c,_label_0a_120	; $4dae
+	jr c,@notHighEnough	; $4dae
+
+	; High enough
 	ld a,$08		; $4db0
-	ld e,$49		; $4db2
+	ld e,Interaction.angle		; $4db2
 	ld (de),a		; $4db4
 	ld a,$04		; $4db5
-	ld e,$44		; $4db7
+	ld e,Interaction.state		; $4db7
 	ld (de),a		; $4db9
 	ret			; $4dba
-_label_0a_120:
-	ld e,$42		; $4dbb
+
+@notHighEnough:
+	ld e,Interaction.subid		; $4dbb
 	ld a,(de)		; $4dbd
 	or a			; $4dbe
-	jr nz,_label_0a_121	; $4dbf
-	ld a,($cd0d)		; $4dc1
+	jr nz,@gotoState6	; $4dbf
+
+	; Subid 0 only
+	ld a,(wScreenTransitionBoundaryY)		; $4dc1
 	ld b,a			; $4dc4
-	ld l,$0b		; $4dc5
+	ld l,<w1Link.yh		; $4dc5
 	ld a,(hl)		; $4dc7
 	sub b			; $4dc8
-	ld l,$0f		; $4dc9
+
+	ld l,<w1Link.zh		; $4dc9
 	add (hl)		; $4dcb
 	ld (hl),a		; $4dcc
-	ld l,$0b		; $4dcd
+	ld l,<w1Link.yh		; $4dcd
 	ld (hl),b		; $4dcf
+
+	; Create helper object to handle screen transition when Link falls
 	call getFreeInteractionSlot		; $4dd0
-	ld a,$8c		; $4dd3
+	ld a,INTERACID_FLYING_ROOSTER		; $4dd3
 	ldi (hl),a		; $4dd5
 	ld (hl),$80		; $4dd6
-	ld l,$40		; $4dd8
+	ld l,Interaction.enabled		; $4dd8
 	ld a,$03		; $4dda
 	ldi (hl),a		; $4ddc
-_label_0a_121:
-	ld e,$44		; $4ddd
+
+@gotoState6:
+	ld e,Interaction.state		; $4ddd
 	ld a,$06		; $4ddf
 	ld (de),a		; $4de1
-	ld e,$46		; $4de2
-	ld a,$3c		; $4de4
+	ld e,Interaction.counter1		; $4de2
+	ld a,60		; $4de4
 	ld (de),a		; $4de6
 	ret			; $4de7
+
+
+; Cucco stopped in place as it failed to get high enough
+@state6:
 	call interactionUpdateAnimCounter		; $4de8
 	call interactionUpdateAnimCounter		; $4deb
-	ld e,$46		; $4dee
+	ld e,Interaction.counter1		; $4dee
 	ld a,(de)		; $4df0
 	dec a			; $4df1
 	ld (de),a		; $4df2
 	ret nz			; $4df3
-	jp $4e23		; $4df4
+	jp @releaseFromLink		; $4df4
+
+
+; Lost control; moving onto cliff
+@state4:
 	call interactionUpdateAnimCounter		; $4df7
-	call $4e99		; $4dfa
-	ld e,$75		; $4dfd
+	call _flyingRooster_applySpeedAndUpdatePositions		; $4dfa
+	ld e,Interaction.var35		; $4dfd
 	ld a,(de)		; $4dff
 	add $20			; $4e00
-	ld l,$0d		; $4e02
+	ld l,<w1Link.xh		; $4e02
 	cp (hl)			; $4e04
-	jr z,_label_0a_122	; $4e05
+	jr z,@releaseFromLink	; $4e05
+
+	; Still moving toward target position
 	ld a,(hl)		; $4e07
 	and $0f			; $4e08
 	ret nz			; $4e0a
-	call $4eef		; $4e0b
+
+	; Update Link's Y/Z positions
+	call _flyingRooster_getVisualLinkYPosition		; $4e0b
 	add $08			; $4e0e
-	ld l,$0b		; $4e10
+	ld l,<w1Link.yh		; $4e10
 	ld (hl),a		; $4e12
-	ld l,$0f		; $4e13
+	ld l,<w1Link.zh		; $4e13
 	ld a,$f8		; $4e15
 	ld (hl),a		; $4e17
-	ld l,$1a		; $4e18
+
+	ld l,<w1Link.visible		; $4e18
 	set 6,(hl)		; $4e1a
-	ld e,$5a		; $4e1c
+	ld e,Interaction.visible		; $4e1c
 	ld a,(de)		; $4e1e
 	and $bf			; $4e1f
 	ld (de),a		; $4e21
 	ret			; $4e22
-_label_0a_122:
+
+@releaseFromLink:
 	xor a			; $4e23
-	ld ($cca4),a		; $4e24
-	ld ($cc02),a		; $4e27
-	ld hl,$d009		; $4e2a
+	ld (wDisabledObjects),a		; $4e24
+	ld (wMenuDisabled),a		; $4e27
+
+	ld hl,w1Link.angle		; $4e2a
 	ld a,$ff		; $4e2d
 	ld (hl),a		; $4e2f
+
 	ld a,$05		; $4e30
-	ld e,$44		; $4e32
+	ld e,Interaction.state		; $4e32
 	ld (de),a		; $4e34
+
 	ld a,$08		; $4e35
-	ld e,$73		; $4e37
+	ld e,Interaction.var33		; $4e37
 	ld (de),a		; $4e39
+
 	xor a			; $4e3a
 	inc e			; $4e3b
-	ld (de),a		; $4e3c
+	ld (de),a ; [var34]
+
 	ld a,$00		; $4e3d
 	call interactionSetAnimation		; $4e3f
 	jp dropLinkHeldItem		; $4e42
+
+
+@state5:
 	call interactionUpdateAnimCounter		; $4e45
-	ld e,$73		; $4e48
+	ld e,Interaction.var33		; $4e48
 	ld a,(de)		; $4e4a
 	dec a			; $4e4b
 	ld (de),a		; $4e4c
-	jr nz,_label_0a_123	; $4e4d
+	jr nz,@updateHopping	; $4e4d
+
 	ld a,$08		; $4e4f
-	ld (de),a		; $4e51
+	ld (de),a ; [var33]
+
 	inc e			; $4e52
-	ld a,(de)		; $4e53
+	ld a,(de) ; [var34]
 	xor $01			; $4e54
 	ld (de),a		; $4e56
-	jr _label_0a_126		; $4e57
-_label_0a_123:
+	jr @moveTowardBasePosition		; $4e57
+
+@updateHopping:
 	and $01			; $4e59
-	jr nz,_label_0a_126	; $4e5b
-	ld e,$74		; $4e5d
+	jr nz,@moveTowardBasePosition	; $4e5b
+
+	ld e,Interaction.var34		; $4e5d
 	ld a,(de)		; $4e5f
 	or a			; $4e60
-	ld e,$4f		; $4e61
+	ld e,Interaction.zh		; $4e61
 	ld a,(de)		; $4e63
-	jr z,_label_0a_124	; $4e64
+	jr z,@decZ		; $4e64
+
+@incZ:
 	inc a			; $4e66
-	jr _label_0a_125		; $4e67
-_label_0a_124:
+	jr @setZ		; $4e67
+@decZ:
 	dec a			; $4e69
-_label_0a_125:
+@setZ:
 	ld (de),a		; $4e6a
-_label_0a_126:
-	ld e,$70		; $4e6b
+
+@moveTowardBasePosition:
+	ld e,Interaction.var30		; $4e6b
 	ld a,(de)		; $4e6d
 	ld b,a			; $4e6e
 	inc e			; $4e6f
 	ld a,(de)		; $4e70
 	ld c,a			; $4e71
+
 	call objectGetRelativeAngle		; $4e72
-	ld e,$49		; $4e75
+	ld e,Interaction.angle		; $4e75
 	ld (de),a		; $4e77
 	call objectApplySpeed		; $4e78
+
 	ld h,d			; $4e7b
-	ld l,$70		; $4e7c
-	ld e,$4b		; $4e7e
+	ld l,Interaction.var30		; $4e7c
+	ld e,Interaction.yh		; $4e7e
 	ld a,(de)		; $4e80
 	cp (hl)			; $4e81
 	ret nz			; $4e82
+
 	inc l			; $4e83
-	ld e,$4d		; $4e84
+	ld e,Interaction.xh		; $4e84
 	ld a,(de)		; $4e86
 	cp (hl)			; $4e87
 	ret nz			; $4e88
-	ld l,$44		; $4e89
+
+	; Reached base position
+	ld l,Interaction.state		; $4e89
 	ld (hl),$01		; $4e8b
-	ld l,$5a		; $4e8d
+
+	ld l,Interaction.visible		; $4e8d
 	set 6,(hl)		; $4e8f
-	call $4f21		; $4e91
+	call _flyingRooster_getSubidAndInitSpeed		; $4e91
 	ld a,$01		; $4e94
 	jp interactionSetAnimation		; $4e96
-	ld hl,$d00b		; $4e99
-	ld e,$4b		; $4e9c
+
+;;
+; @param[out]	bc	Y/X positions for Link
+; @addr{4e99}
+_flyingRooster_applySpeedAndUpdatePositions:
+	ld hl,w1Link.yh		; $4e99
+	ld e,Interaction.yh		; $4e9c
 	ldi a,(hl)		; $4e9e
 	ld (de),a		; $4e9f
 	inc l			; $4ea0
-	ld e,$4d		; $4ea1
+	ld e,Interaction.xh		; $4ea1
 	ld a,(hl)		; $4ea3
 	ld (de),a		; $4ea4
 	call objectApplySpeed		; $4ea5
-	ld hl,$d00b		; $4ea8
-	ld e,$4b		; $4eab
+
+	ld hl,w1Link.yh		; $4ea8
+	ld e,Interaction.yh		; $4eab
 	ld a,(de)		; $4ead
 	ld b,a			; $4eae
 	ldi (hl),a		; $4eaf
 	inc l			; $4eb0
-	ld e,$4d		; $4eb1
+	ld e,Interaction.xh		; $4eb1
 	ld a,(de)		; $4eb3
 	ld c,a			; $4eb4
 	ld (hl),a		; $4eb5
 	ret			; $4eb6
-	ld l,$0e		; $4eb7
-	ld e,$4e		; $4eb9
+
+;;
+; @addr{4eb7}
+_flyingRooster_updateGravityAndCheckCaps:
+	; [this.z] = [w1Link.z]
+	ld l,<w1Link.z		; $4eb7
+	ld e,Interaction.z		; $4eb9
 	ldi a,(hl)		; $4ebb
 	ld (de),a		; $4ebc
 	inc e			; $4ebd
 	ld a,(hl)		; $4ebe
 	ld (de),a		; $4ebf
+
 	ld c,$20		; $4ec0
 	call objectUpdateSpeedZ_paramC		; $4ec2
-	ld hl,$d00e		; $4ec5
-	ld e,$4e		; $4ec8
+
+	; [w1Link.z] = [this.z]
+	ld hl,w1Link.z		; $4ec5
+	ld e,Interaction.z		; $4ec8
 	ld a,(de)		; $4eca
 	ldi (hl),a		; $4ecb
 	inc e			; $4ecc
 	ld a,(de)		; $4ecd
 	ld (hl),a		; $4ece
-	call $4eef		; $4ecf
-	ld e,$72		; $4ed2
+
+	call _flyingRooster_getVisualLinkYPosition		; $4ecf
+	ld e,Interaction.var32		; $4ed2
 	ld a,(de)		; $4ed4
 	cp b			; $4ed5
-	jr c,_label_0a_127	; $4ed6
+	jr c,@checkBottomCap	; $4ed6
+
+	; Cap z-position at the top
 	sub b			; $4ed8
-	ld l,$0f		; $4ed9
+	ld l,<w1Link.zh		; $4ed9
 	add (hl)		; $4edb
 	ld (hl),a		; $4edc
 	ret			; $4edd
-_label_0a_127:
-	ld l,$0f		; $4ede
+
+@checkBottomCap:
+	ld l,<w1Link.zh		; $4ede
 	ld a,(hl)		; $4ee0
 	cp $f8			; $4ee1
 	ret c			; $4ee3
+
+	; Cap z-position at bottom
 	ld a,$f8		; $4ee4
 	ld (hl),a		; $4ee6
 	xor a			; $4ee7
-	ld e,$54		; $4ee8
+	ld e,Interaction.speedZ		; $4ee8
 	ld (de),a		; $4eea
-	ld e,$55		; $4eeb
+	ld e,Interaction.speedZ+1		; $4eeb
 	ld (de),a		; $4eed
 	ret			; $4eee
-	ld l,$0b		; $4eef
+
+;;
+; @param[out]	a,b	Link's Y-position + Z-position
+; @addr{4eef}
+_flyingRooster_getVisualLinkYPosition:
+	ld l,<w1Link.yh		; $4eef
 	ld a,(hl)		; $4ef1
-	ld l,$0f		; $4ef2
+	ld l,<w1Link.zh		; $4ef2
 	add (hl)		; $4ef4
 	ld b,a			; $4ef5
 	ret			; $4ef6
-	ld hl,$d00f		; $4ef7
-	ld a,($cc4c)		; $4efa
+
+
+; Helper object which handles the screen transition when Link falls down
+_flyingRooster_subidBit7Set:
+	ld hl,w1Link.zh		; $4ef7
+	ld a,(wActiveRoom)		; $4efa
 	and $f0			; $4efd
-	jr nz,_label_0a_128	; $4eff
+	jr nz,@nextScreen	; $4eff
+
 	ld a,(hl)		; $4f01
 	or a			; $4f02
 	ret nz			; $4f03
-	ld l,$0b		; $4f04
+
+	ld l,<w1Link.yh		; $4f04
 	inc (hl)		; $4f06
 	ld a,$80		; $4f07
-	ld ($cc77),a		; $4f09
+	ld (wLinkInAir),a		; $4f09
 	ld a,$82		; $4f0c
-	ld ($cd02),a		; $4f0e
+	ld (wScreenTransitionDirection),a		; $4f0e
 	ret			; $4f11
-_label_0a_128:
-	ld a,($cd00)		; $4f12
+
+@nextScreen:
+	ld a,(wScrollMode)		; $4f12
 	and $0e			; $4f15
 	ret nz			; $4f17
-	ld (hl),$e8		; $4f18
-	ld l,$0b		; $4f1a
+
+	ld (hl),$e8 ; [w1Link.zh]
+	ld l,<w1Link.yh		; $4f1a
 	ld (hl),$28		; $4f1c
 	jp interactionDelete		; $4f1e
-	ld l,$42		; $4f21
+
+;;
+; @addr{4f21}
+_flyingRooster_getSubidAndInitSpeed:
+	ld l,Interaction.subid		; $4f21
 	ld c,(hl)		; $4f23
-	ld l,$50		; $4f24
-	ld (hl),$0f		; $4f26
+	ld l,Interaction.speed		; $4f24
+	ld (hl),SPEED_60		; $4f26
 	ret			; $4f28
+
 
 interactionCode8e:
 	ld e,$44		; $4f29

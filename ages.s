@@ -7163,6 +7163,12 @@ objectGetRelativeAngle:
 	ldh a,(<hActiveObjectType)	; $1ea4
 	or Object.yh			; $1ea6
 	ld e,a			; $1ea8
+
+;;
+; @param	bc	YX position to get the direction toward
+; @param	de	Address of an object's Y position
+; @addr{1ea9}
+getRelativeAngle:
 	ld a,(de)		; $1ea9
 	ldh (<hFF8F),a	; $1eaa
 	inc e			; $1eac

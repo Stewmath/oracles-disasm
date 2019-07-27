@@ -178,7 +178,7 @@ _label_04_033:
 	jr z,_label_04_036	; $4657
 _label_04_035:
 	call loadScreenMusicAndSetRoomPack		; $4659
-	jp seasonsFunc_3ab2		; $465c
+	jp checkRoomPackAfterWarp		; $465c
 _label_04_036:
 	jp loadScreenMusicAndSetRoomPack		; $465f
 .endif

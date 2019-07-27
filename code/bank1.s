@@ -3827,7 +3827,7 @@ cutscene01:
 .ifdef ROM_SEASONS
 	ld a,(wcc4c)
 	or a
-	jp nz,func_5e06
+	jp nz,triggerFadeoutTransition
 .endif
 
 	call getNextActiveRoom		; $5b97
@@ -3843,8 +3843,9 @@ cutscene01:
 	call setObjectsEnabledTo2		; $5bab
 	call loadScreenMusic		; $5bae
 	call loadAreaData		; $5bb1
-	call func_5edd		; $5bb4
-	jp nz,func_5e06		; $5bb7
+
+	call checkRoomPack		; $5bb4
+	jp nz,triggerFadeoutTransition		; $5bb7
 
 .ifdef ROM_SEASONS
 	call checkPlayAreaMusic
@@ -4240,11 +4241,13 @@ checkDisplayEraOrSeasonInfo:
 .endif
 
 ;;
+; Called when a fadeout transition must occur between two screens.
 ; @addr{5e06}
-func_5e06:
+triggerFadeoutTransition:
 	ld a,CUTSCENE_05		; $5e06
 	ld (wCutsceneIndex),a		; $5e08
 	jp fadeoutToWhite		; $5e0b
+
 ;;
 ; @addr{5e0e}
 func_5e0e:
@@ -4458,9 +4461,14 @@ loadDeathRespawnBufferPreset:
 .ifdef ROM_AGES
 
 ;;
+; Checks room packs to see whether "fadeout" transition should occur. In Seasons this
+; also deals with setting the season.
+;
 ; Seasons puts its implementation of this function at the end of the bank.
+;
+; @param[out]	zflag	nz if fadeout transition should occur
 ; @addr{5edd}
-func_5edd:
+checkRoomPack:
 	ld a,(wActiveGroup)		; $5edd
 	cp $02			; $5ee0
 	jr c,+			; $5ee2
@@ -5727,14 +5735,21 @@ func_7b93:
 .ifdef ROM_SEASONS
 
 ;;
-; Deals with determining the season of an area being loaded?
-func_5edd:
+; Checks room packs to see whether "fadeout" transition should occur, and determines
+; what the season for the next room should be. Only called on normal screen transitions
+; (not when warping directly into a screen).
+;
+; Ages's version of this function is higher up.
+;
+; @param[out]	zflag	nz if fadeout transition should occur
+checkRoomPack:
 	ld a,(wActiveGroup)		; $7dec
 	or a			; $7def
 	jr z,+			; $7df0
 	xor a			; $7df2
 	ret			; $7df3
 +
+	; Check for change in room pack
 	ld a,(wRoomPack)		; $7df4
 	ld c,a			; $7df7
 	ld a,(wLoadingRoomPack)		; $7df8
@@ -5742,81 +5757,91 @@ func_5edd:
 	ld a,(wRoomPack)		; $7dfc
 	cp b			; $7dff
 	ret z			; $7e00
+
 	ld c,a			; $7e01
 	ld a,b			; $7e02
 	ld (wRoomPack),a		; $7e03
 	or a			; $7e06
-	jr z,_seasonsFunc_7e09@label_01_254	; $7e07
+	jr z,_setHoronVillageSeason	; $7e07
 
 ;;
-; @param	a
-_seasonsFunc_7e09:
+; @param	a	Room pack value
+_determineSeasonForRoomPack:
 	cp $f0			; $7e09
-	jr nc,_seasonsFunc_7e3c	; $7e0b
+	jr nc,_determineCompanionRegionSeason	; $7e0b
+
 	ld a,GLOBALFLAG_S_30		; $7e0d
 	call checkGlobalFlag		; $7e0f
 	ld a,(wLoadingRoomPack)		; $7e12
 	jr z,+			; $7e15
 	and $0f			; $7e17
 +
-	ld hl,_data_7e50		; $7e19
+	ld hl,_roomPackSeasonTable		; $7e19
 	rst_addAToHl			; $7e1c
 	ld a,(hl)		; $7e1d
 
-@label_01_253:
+;;
+_setSeason:
 	ld (wRoomStateModifier),a		; $7e1e
 	or $01			; $7e21
 	ret			; $7e23
 
+
+	; Unused code snipped?
 	ld a,GLOBALFLAG_S_30		; $7e24
 	call checkGlobalFlag		; $7e26
 	ret z			; $7e29
 	scf			; $7e2a
 	ret			; $7e2b
 
-; Get a random season for horon village?
-@label_01_254:
+;;
+; Set a random season for horon village (unless it's spring).
+_setHoronVillageSeason:
 	ld a,GLOBALFLAG_S_30		; $7e2c
 	call checkGlobalFlag		; $7e2e
 	ld a,$00		; $7e31
-	jr nz,@label_01_253	; $7e33
+	jr nz,_setSeason	; $7e33
 	call getRandomNumber		; $7e35
 	and $03			; $7e38
-	jr @label_01_253		; $7e3a
+	jr _setSeason		; $7e3a
 
 ;;
 ; @param	a
-_seasonsFunc_7e3c:
+_determineCompanionRegionSeason:
 	cp $ff			; $7e3c
-	jr z,@label_01_256	; $7e3e
+	jr z,@companionRegion	; $7e3e
 	ld a,$01		; $7e40
-	jr _seasonsFunc_7e09@label_01_253		; $7e42
+	jr _setSeason		; $7e42
 
-@label_01_256:
+@companionRegion:
 	ld a,(wAnimalCompanion)		; $7e44
-	sub $0a			; $7e47
+	sub SPECIALOBJECTID_RICKY-1			; $7e47
 	and $03			; $7e49
 	ld (wRoomStateModifier),a		; $7e4b
-	jr _seasonsFunc_7e09@label_01_253		; $7e4e
+	jr _setSeason		; $7e4e
 
-_data_7e50:
-	.db $00 $00 $00 $00 $00 $00 $03 $00
-	.db $00 $01 $00 $00 $00 $00 $00 $00
-	.db $03 $02 $01 $02 $00 $01 $03 $02
-	.db $00 $01 $00 $03 $03 $03
+
+_roomPackSeasonTable:
+	.db $00 $00 $00 $00 $00 $00 $03 $00 $00 $01 $00 $00 $00 $00 $00 $00
+	.db $03 $02 $01 $02 $00 $01 $03 $02 $00 $01 $00 $03 $03 $03
 
 ;;
-; @addr{7e6e}
-seasonsFunc_7e6e:
+; Similar to "checkRoomPack" function, but called after a "warp" transition (ie. exited
+; building or subrosia portal).
+checkRoomPackAfterWarp_body:
 	ld a,GLOBALFLAG_S_30		; $7e6e
 	call checkGlobalFlag		; $7e70
 	ld a,(wRoomPack)		; $7e73
-	jp nz,_seasonsFunc_7e09		; $7e76
+	jp nz,_determineSeasonForRoomPack		; $7e76
+
 	cp $f0			; $7e79
-	jp nc,_seasonsFunc_7e3c		; $7e7b
+	jp nc,_determineCompanionRegionSeason		; $7e7b
+
+	; Horon village: don't calculate anything (season stays the same as last area)
 	or a			; $7e7e
 	ret z			; $7e7f
-	ld hl,_data_7e50		; $7e80
+
+	ld hl,_roomPackSeasonTable		; $7e80
 	rst_addAToHl			; $7e83
 	ld a,(hl)		; $7e84
 	ld (wRoomStateModifier),a		; $7e85
