@@ -6434,35 +6434,52 @@ script7319:
 	rungenericnpc $3403
 script731c:
 	scriptend
-script731d:
+
+
+; ==============================================================================
+; INTERACID_OLD_MAN_WITH_JEWEL
+; ==============================================================================
+
+oldManWithJewelScript:
 	initcollisions
-	jumpifroomflagset $40 script7337
-	jumptable_objectbyte $78
-	.dw script7328
-	.dw script732d
-script7328:
+	jumpifroomflagset $40, @alreadyGaveJewel
+	jumptable_objectbyte Interaction.var38
+	.dw @dontHaveEssences
+	.dw @haveEssences
+
+@dontHaveEssences:
 	checkabutton
-	showtextlowindex $01
-	jump2byte script7328
-script732d:
+	showtextlowindex <TX_3601
+	jump2byte @dontHaveEssences
+
+@haveEssences:
 	checkabutton
 	showtextlowindex $02
 	disableinput
-	giveitem $4c00
+	giveitem TREASURE_ROUND_JEWEL, $00
 	orroomflag $40
 	enableinput
-script7337:
+
+@alreadyGaveJewel:
 	checkabutton
-	showtextlowindex $03
-	jump2byte script7337
-script733c:
+	showtextlowindex <TX_3603
+	jump2byte @alreadyGaveJewel
+
+
+; ==============================================================================
+; INTERACID_JEWEL_HELPER
+; ==============================================================================
+
+jewelHelperScript_insertedJewel:
 	wait 60
 	showtext $3600
 	scriptend
-script7341:
+
+jewelHelperScript_insertedAllJewels:
 	wait 60
 	orroomflag $80
 	scriptend
+
 script7345:
 	stopifitemflagset
 	jumptable_memoryaddress $cc01

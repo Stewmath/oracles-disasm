@@ -65822,91 +65822,116 @@ interactionCode8e:
 	jp nz,objectSetInvisible		; $4f54
 	ret			; $4f57
 
+
+; ==============================================================================
+; INTERACID_OLD_MAN_WITH_JEWEL
+;
+; Variables:
+;   var35: $01 if Link has at least 5 essences
+; ==============================================================================
 interactionCode8f:
-	ld e,$44		; $4f58
+	ld e,Interaction.state		; $4f58
 	ld a,(de)		; $4f5a
 	rst_jumpTable			; $4f5b
-	ld h,b			; $4f5c
-	ld c,a			; $4f5d
-	ld a,e			; $4f5e
-	ld c,a			; $4f5f
+	.dw @state0
+	.dw @state1
+
+@state0:
 	ld a,$01		; $4f60
-	ld (de),a		; $4f62
+	ld (de),a ; [state]
 	call interactionInitGraphics		; $4f63
-	ld a,$36		; $4f66
+
+	ld a,>TX_3600		; $4f66
 	call interactionSetHighTextIndex		; $4f68
-	ld hl,$731d		; $4f6b
+
+	ld hl,oldManWithJewelScript		; $4f6b
 	call interactionSetScript		; $4f6e
-	call $4f81		; $4f71
+	call @checkHaveEssences		; $4f71
+
 	ld a,$02		; $4f74
 	call interactionSetAnimation		; $4f76
-	jr _label_0a_129		; $4f79
-_label_0a_129:
+	jr @state1		; $4f79
+
+@state1:
 	call interactionRunScript		; $4f7b
 	jp npcAnimate_followLink		; $4f7e
-	ld a,($c6bb)		; $4f81
+
+@checkHaveEssences:
+	ld a,(wEssencesObtained)		; $4f81
 	call getNumSetBits		; $4f84
 	ld h,d			; $4f87
-	ld l,$78		; $4f88
+	ld l,Interaction.var38		; $4f88
 	cp $05			; $4f8a
 	ld (hl),$00		; $4f8c
 	ret c			; $4f8e
 	inc (hl)		; $4f8f
 	ret			; $4f90
 
+
 interactionCode90:
-	ld e,$44		; $4f91
+	ld e,Interaction.state		; $4f91
 	ld a,(de)		; $4f93
 	rst_jumpTable			; $4f94
-	sbc c			; $4f95
-	ld c,a			; $4f96
-	ldd a,(hl)		; $4f97
-	ld d,b			; $4f98
+	.dw @state0
+	.dw @state1
+
+@state0:
 	ld a,$01		; $4f99
-	ld (de),a		; $4f9b
-	ld e,$42		; $4f9c
+	ld (de),a ; [state]
+
+	; Load script
+	ld e,Interaction.subid		; $4f9c
 	ld a,(de)		; $4f9e
-	ld hl,$522f		; $4f9f
+	ld hl,@scriptTable		; $4f9f
 	rst_addDoubleIndex			; $4fa2
 	ldi a,(hl)		; $4fa3
 	ld h,(hl)		; $4fa4
 	ld l,a			; $4fa5
 	call interactionSetScript		; $4fa6
-	ld e,$42		; $4fa9
+
+	ld e,Interaction.subid		; $4fa9
 	ld a,(de)		; $4fab
 	rst_jumpTable			; $4fac
-	cp l			; $4fad
-	ld c,a			; $4fae
-	ret			; $4faf
-	ld c,a			; $4fb0
-	sbc $4f			; $4fb1
-	sub $4f			; $4fb3
-	call c,$dc4f		; $4fb5
-	ld c,a			; $4fb8
-	push af			; $4fb9
-	ld c,a			; $4fba
-	jr $50			; $4fbb
-	call $51a6		; $4fbd
+	.dw @subid0Init
+	.dw @subid1Init
+	.dw @subid2Init
+	.dw @subid3Init
+	.dw @subid4Init
+	.dw @subid5Init
+	.dw @subid6Init
+	.dw @subid7Init
+
+@subid0Init:
+	call @spawnJewelGraphics		; $4fbd
 	call getThisRoomFlags		; $4fc0
 	bit 7,(hl)		; $4fc3
 	jp nz,interactionDelete		; $4fc5
 	ret			; $4fc8
+
+@subid1Init:
 	call checkIsLinkedGame		; $4fc9
-	jr z,_label_0a_130	; $4fcc
+	jr z,@label_0a_130	; $4fcc
 	ld e,$4b		; $4fce
 	ld a,(de)		; $4fd0
 	sub $08			; $4fd1
 	ld (de),a		; $4fd3
-_label_0a_130:
-	jr _label_0a_133		; $4fd4
+@label_0a_130:
+	jr @state1		; $4fd4
+
+@subid3Init:
 	call interactionRunScript		; $4fd6
 	call interactionRunScript		; $4fd9
-	jr _label_0a_133		; $4fdc
+
+@subid4Init:
+@subid5Init:
+	jr @state1		; $4fdc
+
+@subid2Init:
 	call getThisRoomFlags		; $4fde
 	and $40			; $4fe1
-	jr z,_label_0a_131	; $4fe3
+	jr z,@label_0a_131	; $4fe3
 	ret			; $4fe5
-_label_0a_131:
+@label_0a_131:
 	call getFreePartSlot		; $4fe6
 	ret nz			; $4fe9
 	ld (hl),$06		; $4fea
@@ -65915,22 +65940,26 @@ _label_0a_131:
 	ld l,$cd		; $4ff0
 	ld (hl),$78		; $4ff2
 	ret			; $4ff4
+
+@subid6Init:
 	call getThisRoomFlags		; $4ff5
 	bit 5,(hl)		; $4ff8
 	jp nz,interactionDelete		; $4ffa
 	call checkIsLinkedGame		; $4ffd
-	jr nz,_label_0a_132	; $5000
+	jr nz,@label_0a_132	; $5000
 	ld a,$34		; $5002
 	ld ($ccbd),a		; $5004
 	ld a,$01		; $5007
 	ld ($ccbe),a		; $5009
 	jp interactionDelete		; $500c
-_label_0a_132:
+@label_0a_132:
 	xor a			; $500f
 	ld ($ccbc),a		; $5010
 	inc a			; $5013
 	ld ($ccbb),a		; $5014
 	ret			; $5017
+
+@subid7Init:
 	call checkIsLinkedGame		; $5018
 	jp z,interactionDelete		; $501b
 	call getThisRoomFlags		; $501e
@@ -65946,82 +65975,95 @@ _label_0a_132:
 	inc l			; $5034
 	ld (hl),$01		; $5035
 	jp objectCopyPosition		; $5037
-_label_0a_133:
-	ld e,$42		; $503a
+
+@state1:
+	ld e,Interaction.subid		; $503a
 	ld a,(de)		; $503c
 	rst_jumpTable			; $503d
-	ld d,l			; $503e
-	ld d,b			; $503f
-	ld c,(hl)		; $5040
-	ld d,b			; $5041
-	ld c,(hl)		; $5042
-	ld d,b			; $5043
-	ld c,(hl)		; $5044
-	ld d,b			; $5045
-	ld c,(hl)		; $5046
-	ld d,b			; $5047
-	ld c,(hl)		; $5048
-	ld d,b			; $5049
-	inc a			; $504a
-	ld d,c			; $504b
-	sbc b			; $504c
-	ld d,c			; $504d
+	.dw @subid0State1
+	.dw @runScript
+	.dw @runScript
+	.dw @runScript
+	.dw @runScript
+	.dw @runScript
+	.dw @subid6State1
+	.dw @subid7State1
+
+@runScript:
 	call interactionRunScript		; $504e
 	jp c,interactionDelete		; $5051
 	ret			; $5054
-	ld e,$45		; $5055
+
+@subid0State1:
+	ld e,Interaction.state2		; $5055
 	ld a,(de)		; $5057
 	rst_jumpTable			; $5058
-	ld h,l			; $5059
-	ld d,b			; $505a
-	adc (hl)		; $505b
-	ld d,b			; $505c
-	xor l			; $505d
-	ld d,b			; $505e
-	or h			; $505f
-	ld d,b			; $5060
-.DB $eb				; $5061
-	ld d,b			; $5062
-	add hl,hl		; $5063
-	ld d,c			; $5064
-	call $51bd		; $5065
+	.dw @subid0Substate0
+	.dw @subid0Substate1
+	.dw @subid0Substate2
+	.dw @subid0Substate3
+	.dw @subid0Substate4
+	.dw @subid0Substate5
+
+; Waiting for Link to insert jewels
+@subid0Substate0:
+	call @checkJewelInserted		; $5065
 	ret nc			; $5068
+
 	ld a,(hl)		; $5069
 	call loseTreasure		; $506a
 	ld a,(hl)		; $506d
-	call $51ed		; $506e
-	ld a,$81		; $5071
-	ld ($cca4),a		; $5073
-	ld ($cc02),a		; $5076
-	ld a,$4d		; $5079
+	call @insertJewel		; $506e
+
+	ld a,DISABLE_LINK|DISABLE_ALL_BUT_INTERACTIONS		; $5071
+	ld (wDisabledObjects),a		; $5073
+	ld (wMenuDisabled),a		; $5076
+
+	ld a,SND_SOLVEPUZZLE		; $5079
 	call playSound		; $507b
+
 	call setLinkForceStateToState08		; $507e
 	xor a			; $5081
-	ld ($d008),a		; $5082
+	ld (w1Link.direction),a		; $5082
+
 	call interactionIncState2		; $5085
-	ld hl,$733c		; $5088
+	ld hl,jewelHelperScript_insertedJewel		; $5088
 	call interactionSetScript		; $508b
+
+
+; Just inserted jewel
+@subid0Substate1:
 	call interactionRunScript		; $508e
 	ret nc			; $5091
-	ld a,($c6e1)		; $5092
+
+	ld a,(wInsertedJewels)		; $5092
 	cp $0f			; $5095
-	jr z,_label_0a_134	; $5097
+	jr z,@insertedAllJewels	; $5097
 	xor a			; $5099
-	ld e,$45		; $509a
+	ld e,Interaction.state2		; $509a
 	ld (de),a		; $509c
 	ld ($cc02),a		; $509d
 	ld ($cca4),a		; $50a0
 	ret			; $50a3
-_label_0a_134:
+
+@insertedAllJewels:
 	call interactionIncState2		; $50a4
-	ld hl,$7341		; $50a7
+	ld hl,jewelHelperScript_insertedAllJewels		; $50a7
 	call interactionSetScript		; $50aa
+
+
+; Just inserted final jewel
+@subid0Substate2:
 	call interactionRunScript		; $50ad
 	ret nc			; $50b0
 	jp interactionIncState2		; $50b1
-	ld hl,$5119		; $50b4
+
+
+; Gate opening
+@subid0Substate3:
+	ld hl,@gateOpenTiles		; $50b4
 	ld b,$04		; $50b7
-_label_0a_135:
+---
 	ldi a,(hl)		; $50b9
 	ldh (<hFF8C),a	; $50ba
 	ldi a,(hl)		; $50bc
@@ -66035,25 +66077,34 @@ _label_0a_135:
 	pop bc			; $50c8
 	pop hl			; $50c9
 	dec b			; $50ca
-	jr nz,_label_0a_135	; $50cb
+	jr nz,---		; $50cb
+
 	ldh a,(<hActiveObject)	; $50cd
 	ld d,a			; $50cf
 	call interactionIncState2		; $50d0
-	ld l,$46		; $50d3
-	ld (hl),$1e		; $50d5
+
+	ld l,Interaction.counter1		; $50d3
+	ld (hl),30		; $50d5
+
 	ld a,$00		; $50d7
-	call $51ff		; $50d9
-	ld a,$73		; $50dc
+	call @spawnGatePuffs		; $50d9
+	ld a,SND_KILLENEMY		; $50dc
 	call playSound		; $50de
+
+@shakeScreen:
 	ld a,$06		; $50e1
 	call setScreenShakeCounter		; $50e3
-	ld a,$70		; $50e6
+	ld a,SND_DOORCLOSE		; $50e6
 	jp playSound		; $50e8
+
+
+; Gate opening
+@subid0Substate4:
 	call interactionDecCounter1		; $50eb
 	ret nz			; $50ee
-	ld hl,$5119		; $50ef
+	ld hl,@gateOpenTiles		; $50ef
 	ld b,$04		; $50f2
-_label_0a_136:
+---
 	ldi a,(hl)		; $50f4
 	ld c,a			; $50f5
 	ld a,(hl)		; $50f6
@@ -66066,39 +66117,37 @@ _label_0a_136:
 	inc hl			; $50ff
 	inc hl			; $5100
 	dec b			; $5101
-	jr nz,_label_0a_136	; $5102
-	call $50e1		; $5104
+	jr nz,---		; $5102
+
+	call @shakeScreen		; $5104
 	ld a,$04		; $5107
-	call $51ff		; $5109
-	ld a,$73		; $510c
+	call @spawnGatePuffs		; $5109
+	ld a,SND_KILLENEMY		; $510c
 	call playSound		; $510e
 	call interactionIncState2		; $5111
-	ld l,$46		; $5114
-	ld (hl),$3c		; $5116
+	ld l,Interaction.counter1		; $5114
+	ld (hl),60		; $5116
 	ret			; $5118
-	inc d			; $5119
-	xor l			; $511a
-	and b			; $511b
-	inc bc			; $511c
-	dec d			; $511d
-	xor l			; $511e
-	and b			; $511f
-	ld bc,$ad24		; $5120
-	and c			; $5123
-	inc bc			; $5124
-	dec h			; $5125
-	xor l			; $5126
-	and c			; $5127
-	ld bc,$87cd		; $5128
-	inc hl			; $512b
+
+@gateOpenTiles:
+	.db $14 $ad $a0 $03 $15 $ad $a0 $01
+	.db $24 $ad $a1 $03 $25 $ad $a1 $01
+
+
+; Gates fully opened
+@subid0Substate5:
+	call interactionDecCounter1		; $5129
 	ret nz			; $512c
 	xor a			; $512d
-	ld ($cc02),a		; $512e
-	ld ($cca4),a		; $5131
-	ld a,$4d		; $5134
+	ld (wMenuDisabled),a		; $512e
+	ld (wDisabledObjects),a		; $5131
+	ld a,SND_SOLVEPUZZLE		; $5134
 	call playSound		; $5136
 	jp interactionDelete		; $5139
-	ld e,$45		; $513c
+
+
+@subid6State1:
+	ld e,Interaction.state2		; $513c
 	ld a,(de)		; $513e
 	rst_jumpTable			; $513f
 	ld b,(hl)		; $5140
@@ -66148,42 +66197,56 @@ _label_0a_136:
 	call getThisRoomFlags		; $5190
 	set 5,(hl)		; $5193
 	jp interactionDelete		; $5195
+
+@subid7State1:
 	ld a,$4d		; $5198
 	call checkTreasureObtained		; $519a
 	ret nc			; $519d
 	call getThisRoomFlags		; $519e
 	set 7,(hl)		; $51a1
 	jp interactionDelete		; $51a3
+
+;;
+@spawnJewelGraphics:
 	ld c,$00		; $51a6
-_label_0a_137:
-	ld hl,$c6e1		; $51a8
+@@next:
+	ld hl,wInsertedJewels		; $51a8
 	ld a,c			; $51ab
 	call checkFlag		; $51ac
-	jr z,_label_0a_138	; $51af
+	jr z,++			; $51af
 	push bc			; $51b1
-	call $51f6		; $51b2
+	call @spawnJewelGraphic		; $51b2
 	pop bc			; $51b5
-_label_0a_138:
+++
 	inc c			; $51b6
 	ld a,c			; $51b7
 	cp $04			; $51b8
-	jr c,_label_0a_137	; $51ba
+	jr c,@@next	; $51ba
 	ret			; $51bc
+
+;;
+; @param[out]	hl	Address of treasure index?
+; @param[out]	cflag	c if inserted jewel
+@checkJewelInserted:
 	call checkLinkID0AndControlNormal		; $51bd
 	ret nc			; $51c0
-	ld hl,$d008		; $51c1
+
+	ld hl,w1Link.direction		; $51c1
 	ldi a,(hl)		; $51c4
 	or a			; $51c5
 	ret nz			; $51c6
-	ld l,$0b		; $51c7
+
+	ld l,<w1Link.yh		; $51c7
 	ld a,$36		; $51c9
 	sub (hl)		; $51cb
 	cp $15			; $51cc
 	ret nc			; $51ce
-	ld l,$0d		; $51cf
+
+	ld l,<w1Link.xh		; $51cf
 	ld c,(hl)		; $51d1
-	ld hl,$51e3		; $51d2
-_label_0a_139:
+	ld hl,@jewelPositions-1		; $51d2
+
+@nextJewel:
 	inc hl			; $51d5
 	ldi a,(hl)		; $51d6
 	or a			; $51d7
@@ -66191,94 +66254,107 @@ _label_0a_139:
 	add $01			; $51d9
 	sub c			; $51db
 	cp $03			; $51dc
-	jr nc,_label_0a_139	; $51de
+	jr nc,@nextJewel	; $51de
 	ld a,(hl)		; $51e0
 	jp checkTreasureObtained		; $51e1
-	inc h			; $51e4
-	ld c,h			; $51e5
-	inc (hl)		; $51e6
-	ld c,l			; $51e7
-	ld l,h			; $51e8
-	ld c,(hl)		; $51e9
-	ld a,h			; $51ea
-	ld c,a			; $51eb
-	nop			; $51ec
-	sub $4c			; $51ed
+
+@jewelPositions:
+	.db $24, TREASURE_ROUND_JEWEL
+	.db $34, TREASURE_PYRAMID_JEWEL
+	.db $6c, TREASURE_SQUARE_JEWEL
+	.db $7c, TREASURE_X_SHAPED_JEWEL
+	.db $00
+
+;;
+@insertJewel:
+	sub TREASURE_ROUND_JEWEL			; $51ed
 	ld c,a			; $51ef
-	ld hl,$c6e1		; $51f0
+	ld hl,wInsertedJewels		; $51f0
 	call setFlag		; $51f3
+
+;;
+; @param	c	Jewel index
+@spawnJewelGraphic:
 	call getFreeInteractionSlot		; $51f6
 	ret nz			; $51f9
-	ld (hl),$92		; $51fa
+	ld (hl),INTERACID_JEWEL		; $51fa
 	inc l			; $51fc
 	ld (hl),c		; $51fd
 	ret			; $51fe
-	ld bc,$521f		; $51ff
+
+;;
+; @param	a	Which puffs to spawn (0 or 4)
+@spawnGatePuffs:
+	ld bc,@puffPositions		; $51ff
 	call addDoubleIndexToBc		; $5202
 	ld a,$04		; $5205
-_label_0a_140:
+---
 	ldh (<hFF8B),a	; $5207
 	call getFreeInteractionSlot		; $5209
 	ret nz			; $520c
-	ld (hl),$05		; $520d
-	ld l,$4b		; $520f
+	ld (hl),INTERACID_PUFF		; $520d
+	ld l,Interaction.yh		; $520f
 	ld a,(bc)		; $5211
 	ld (hl),a		; $5212
 	inc bc			; $5213
-	ld l,$4d		; $5214
+	ld l,Interaction.xh		; $5214
 	ld a,(bc)		; $5216
 	ld (hl),a		; $5217
 	inc bc			; $5218
 	ldh a,(<hFF8B)	; $5219
 	dec a			; $521b
-	jr nz,_label_0a_140	; $521c
+	jr nz,---		; $521c
 	ret			; $521e
-	jr $48			; $521f
-	jr $58			; $5221
-	jr z,$48		; $5223
-	jr z,_label_0a_141	; $5225
-	jr $40			; $5227
-	jr $60			; $5229
-	jr z,$40		; $522b
-	jr z,_label_0a_143	; $522d
-	inc a			; $522f
-	ld (hl),e		; $5230
-	ld b,l			; $5231
-	ld (hl),e		; $5232
-	ld e,e			; $5233
-	ld (hl),e		; $5234
-	ld a,(hl)		; $5235
-	ld (hl),e		; $5236
-	add d			; $5237
-	ld (hl),e		; $5238
-	adc d			; $5239
-	ld (hl),e		; $523a
-	xor d			; $523b
-	ld (hl),e		; $523c
-	xor d			; $523d
-	ld (hl),e		; $523e
 
+@puffPositions:
+	.db $18 $48
+	.db $18 $58
+	.db $28 $48
+	.db $28 $58
+	.db $18 $40
+	.db $18 $60
+	.db $28 $40
+	.db $28 $60
+
+@scriptTable:
+	.dw jewelHelperScript_insertedJewel
+	.dw script7345
+	.dw script735b
+	.dw script737e
+	.dw script7382
+	.dw script738a
+	.dw script73aa
+	.dw script73aa
+
+
+; ==============================================================================
+; INTERACID_JEWEL
+; ==============================================================================
 interactionCode92:
 	call checkInteractionState		; $523f
 	ret nz			; $5242
+
+@state0:
 	inc a			; $5243
-	ld (de),a		; $5244
-	ld e,$42		; $5245
+	ld (de),a ; [state] = 1
+
+	ld e,Interaction.subid		; $5245
 	ld a,(de)		; $5247
-	ld hl,$525b		; $5248
+	ld hl,@xPositions		; $5248
 	rst_addAToHl			; $524b
 	ld a,(hl)		; $524c
 	ld h,d			; $524d
-	ld l,$4d		; $524e
+	ld l,Interaction.xh		; $524e
 	ld (hl),a		; $5250
-	ld l,$4b		; $5251
+
+	ld l,Interaction.yh		; $5251
 	ld (hl),$2c		; $5253
 	call interactionInitGraphics		; $5255
 	jp objectSetVisible83		; $5258
-	inc h			; $525b
-	inc (hl)		; $525c
-	ld l,h			; $525d
-	ld a,h			; $525e
+
+@xPositions:
+	.db $24 $34 $6c $7c
+
 
 interactionCode93:
 	ld e,$42		; $525f
@@ -66298,7 +66374,6 @@ interactionCode93:
 	jr z,_label_0a_142	; $5278
 	cp $07			; $527a
 	jp nz,interactionDelete		; $527c
-_label_0a_141:
 	ld a,$01		; $527f
 	call interactionSetAnimation		; $5281
 	ld b,$08		; $5284
@@ -66308,7 +66383,6 @@ _label_0a_142:
 	ld (hl),$84		; $528a
 	inc l			; $528c
 	ld (hl),$04		; $528d
-_label_0a_143:
 	call objectCopyPosition		; $528f
 	ld l,$4b		; $5292
 	ld a,(hl)		; $5294
