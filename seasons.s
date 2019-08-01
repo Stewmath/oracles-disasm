@@ -53077,131 +53077,162 @@ interactionCode54:
 	ld (de),a		; $7c27
 	jp objectReplaceWithAnimationIfOnHazard		; $7c28
 
+
+; ==============================================================================
+; INTERACID_SUBROSIAN_AT_D8
+; ==============================================================================
 interactionCode55:
-	ld e,$42		; $7c2b
+	ld e,Interaction.subid		; $7c2b
 	ld a,(de)		; $7c2d
 	rst_jumpTable			; $7c2e
-	inc sp			; $7c2f
-	ld a,h			; $7c30
-	rst_jumpTable			; $7c31
-	ld a,h			; $7c32
-	ld e,$44		; $7c33
+	.dw _subrosianAtD8_subid0
+	.dw _subrosianAtD8_subid1
+
+_subrosianAtD8_subid0:
+	ld e,Interaction.state		; $7c33
 	ld a,(de)		; $7c35
 	rst_jumpTable			; $7c36
-	dec a			; $7c37
-	ld a,h			; $7c38
-	ld l,h			; $7c39
-	ld a,h			; $7c3a
-	xor (hl)		; $7c3b
-	ld a,h			; $7c3c
-	call $7d1c		; $7c3d
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
+	call _subrosianAtD8_getNumEssences		; $7c3d
 	cp $07			; $7c40
 	jp c,interactionDelete		; $7c42
+
 	call interactionInitGraphics		; $7c45
-	ld hl,$6310		; $7c48
+	ld hl,subrosianAtD8Script		; $7c48
 	call interactionSetScript		; $7c4b
+
 	ld a,$06		; $7c4e
 	call objectSetCollideRadius		; $7c50
-	ld l,$46		; $7c53
-	ld (hl),$3c		; $7c55
-	ld e,$71		; $7c57
+
+	ld l,Interaction.counter1		; $7c53
+	ld (hl),60		; $7c55
+	ld e,Interaction.pressedAButton		; $7c57
 	call objectAddToAButtonSensitiveObjectList		; $7c59
+
 	call getThisRoomFlags		; $7c5c
 	and $40			; $7c5f
 	ld a,$02		; $7c61
-	jr nz,_label_08_347	; $7c63
+	jr nz,+			; $7c63
 	dec a			; $7c65
-_label_08_347:
-	ld e,$44		; $7c66
++
+	ld e,Interaction.state		; $7c66
 	ld (de),a		; $7c68
 	jp objectSetVisiblec2		; $7c69
-	ld e,$45		; $7c6c
+
+; Waiting for Link to throw bomb in
+@state1:
+	ld e,Interaction.state2		; $7c6c
 	ld a,(de)		; $7c6e
 	rst_jumpTable			; $7c6f
-	ld (hl),h		; $7c70
-	ld a,h			; $7c71
-	sbc e			; $7c72
-	ld a,h			; $7c73
+	.dw @substate0
+	.dw @substate1
+
+@substate0:
 	call interactionUpdateAnimCounter		; $7c74
 	call objectPreventLinkFromPassing		; $7c77
 	call objectSetPriorityRelativeToLink_withTerrainEffects		; $7c7a
-	ld e,$71		; $7c7d
+	ld e,Interaction.pressedAButton		; $7c7d
 	ld a,(de)		; $7c7f
 	or a			; $7c80
-	jr nz,_label_08_348	; $7c81
+	jr nz,++		; $7c81
+
 	call interactionDecCounter1		; $7c83
 	ret nz			; $7c86
-	ld l,$45		; $7c87
+	ld l,Interaction.state2		; $7c87
 	inc (hl)		; $7c89
 	call objectSetVisiblec2		; $7c8a
-	ld hl,$62f1		; $7c8d
+	ld hl,subrosianAtD8Script_tossItemIntoHole		; $7c8d
 	jp interactionSetScript		; $7c90
-_label_08_348:
+++
 	xor a			; $7c93
 	ld (de),a		; $7c94
-	ld bc,$3c00		; $7c95
+	ld bc,TX_3c00		; $7c95
 	jp showText		; $7c98
+
+@substate1:
 	call objectPreventLinkFromPassing		; $7c9b
 	call interactionUpdateAnimCounter		; $7c9e
 	call interactionRunScript		; $7ca1
 	ret nc			; $7ca4
+
 	ld h,d			; $7ca5
-	ld l,$46		; $7ca6
-	ld (hl),$3c		; $7ca8
-	ld l,$45		; $7caa
+	ld l,Interaction.counter1		; $7ca6
+	ld (hl),60		; $7ca8
+	ld l,Interaction.state2		; $7caa
 	dec (hl)		; $7cac
 	ret			; $7cad
+
+@state2:
 	ld c,$60		; $7cae
 	call objectUpdateSpeedZ_paramC		; $7cb0
-	jr nz,_label_08_349	; $7cb3
-	ld bc,$fe00		; $7cb5
+	jr nz,++		; $7cb3
+	ld bc,-$200		; $7cb5
 	call objectSetSpeedZ		; $7cb8
-_label_08_349:
+++
 	call objectPreventLinkFromPassing		; $7cbb
 	call interactionUpdateAnimCounter		; $7cbe
 	call objectSetPriorityRelativeToLink_withTerrainEffects		; $7cc1
 	jp interactionRunScript		; $7cc4
-	ld e,$44		; $7cc7
+
+
+_subrosianAtD8_subid1:
+	ld e,Interaction.state		; $7cc7
 	ld a,(de)		; $7cc9
 	rst_jumpTable			; $7cca
-	rst $8			; $7ccb
-	ld a,h			; $7ccc
-	rlca			; $7ccd
-	ld a,l			; $7cce
-	call $7d1c		; $7ccf
+	.dw @state0
+	.dw @state1
+
+@state0:
+	call _subrosianAtD8_getNumEssences		; $7ccf
 	cp $07			; $7cd2
 	jp c,interactionDelete		; $7cd4
+
 	call getThisRoomFlags		; $7cd7
 	and $40			; $7cda
 	jp nz,interactionDelete		; $7cdc
-	ld a,($cca7)		; $7cdf
+
+	ld a,(wLinkPlayingInstrument)		; $7cdf
 	or a			; $7ce2
 	ret nz			; $7ce3
-	ld a,($cfc0)		; $7ce4
+	ld a,(wTmpcfc0.genericCutscene.state)		; $7ce4
 	or a			; $7ce7
 	ret z			; $7ce8
 	call checkLinkVulnerable		; $7ce9
 	ret nc			; $7cec
-	ld a,$01		; $7ced
-	ld ($cca4),a		; $7cef
-	ld ($cc02),a		; $7cf2
-	ld ($ccab),a		; $7cf5
-	ld a,$5a		; $7cf8
+
+	ld a,DISABLE_LINK		; $7ced
+	ld (wDisabledObjects),a		; $7cef
+	ld (wMenuDisabled),a		; $7cf2
+	ld (wDisableScreenTransitions),a		; $7cf5
+	ld a,90		; $7cf8
 	call setScreenShakeCounter		; $7cfa
-	ld e,$44		; $7cfd
+
+	ld e,Interaction.state		; $7cfd
 	ld a,$01		; $7cff
 	ld (de),a		; $7d01
-	ld a,$fb		; $7d02
+
+	ld a,SNDCTRL_MEDIUM_FADEOUT		; $7d02
 	jp playSound		; $7d04
-	ld a,($cd18)		; $7d07
+
+@state1:
+	ld a,(wScreenShakeCounterY)		; $7d07
 	or a			; $7d0a
 	ret nz			; $7d0b
+
 	call getThisRoomFlags		; $7d0c
 	set 6,(hl)		; $7d0f
-	ld a,$0b		; $7d11
-	ld ($cc04),a		; $7d13
+	ld a,CUTSCENE_S_VOLCANO_ERUPTNING		; $7d11
+	ld (wCutsceneTrigger),a		; $7d13
 	call fadeoutToWhite		; $7d16
 	jp interactionDelete		; $7d19
+
+;;
+; @addr{7d1c}
+_subrosianAtD8_getNumEssences:
 	ld a,($c6bb)		; $7d1c
 	jp getNumSetBits		; $7d1f
 

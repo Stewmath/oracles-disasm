@@ -4267,16 +4267,23 @@ script62db:
 	movedown $11
 	setstate $01
 	rungenericnpc $2703
-script62f1:
-	callscript script6303
-	callscript script6303
+
+
+; ==============================================================================
+; INTERACID_SUBROSIAN_AT_D8
+; ==============================================================================
+
+subrosianAtD8Script_tossItemIntoHole:
+	callscript @spin2win
+	callscript @spin2win
 	setspeed SPEED_200
 	applyspeed $04
-	asm15 $5bd8
+	asm15 $5bd8 ; TODO
 	setangle $18
 	applyspeed $04
 	scriptend
-script6303:
+
+@spin2win:
 	setangleandanimation $00
 	wait 4
 	setangleandanimation $18
@@ -4286,17 +4293,21 @@ script6303:
 	setangleandanimation $08
 	wait 4
 	retscript
-script6310:
-	jumpifroomflagset $80 script6322
+
+subrosianAtD8Script:
+	jumpifroomflagset $80, @alreadyBlewUpVolcano
 	orroomflag $80
 	disableinput
-	playsound $4d
-	writememory $d008 $03
+	playsound SND_SOLVEPUZZLE
+	writememory w1Link.direction, $03
 	wait 60
-	showtext $3c01
+	showtext TX_3c01
 	enableinput
-script6322:
-	rungenericnpc $3c01
+
+@alreadyBlewUpVolcano:
+	rungenericnpc TX_3c01
+
+
 script6325:
 	initcollisions
 	jumpifroomflagset $40 script635d

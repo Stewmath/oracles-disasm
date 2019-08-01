@@ -1714,6 +1714,10 @@
 .ifdef ROM_SEASONS
 
 ;;
+; The subrosian trying to blow up the volcano leading to d8
+.define INTERACID_SUBROSIAN_AT_D8 $55
+
+;;
 ; @subid_00{Rooster on top of d4}
 ; @subid_01{Rooster that leads to spring banana}
 .define INTERACID_FLYING_ROOSTER $8c
