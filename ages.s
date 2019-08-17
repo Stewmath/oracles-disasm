@@ -47528,7 +47528,7 @@ _verifyFileAtHl:
 	jr @verifyDone		; $413e
 
 ;;
-; Calculate a checksum over $02a9 bytes (excluding the first 2) for a save file
+; Calculate a checksum over $550 bytes (excluding the first 2) for a save file
 ; @param hl Address to start at
 ; @param[out] de Checksum
 ; @addr{4140}
