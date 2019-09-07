@@ -38095,14 +38095,12 @@ _parentItemCode_shooter:
 
 	ld a,c			; $4000
 	rst_jumpTable			; $4001
-	ld a,(bc)		; $4002
-	ld b,b			; $4003
-	ld d,c			; $4004
-	ld b,b			; $4005
-	ld a,l			; $4006
-	ld b,b			; $4007
-	sub (hl)		; $4008
-	ld b,b			; $4009
+	.dw _initializeFile
+	.dw $4051
+	.dw $407d
+	.dw $4096
+
+_initializeFile_old:
 	ld hl,$4182		; $400a
 	call $416e		; $400d
 	ld hl,$c613		; $4010
@@ -45592,6 +45590,13 @@ _seedDontBounceTilesTable:
 
 
 .include "code/plando/powder.s"
+
+
+_initializeFile:
+	; Set switch hook level on file initialization
+	ld a,2
+	ld (wSwitchHookLevel),a
+	jp _initializeFile_old
 
 
 .BANK $08 SLOT 1
