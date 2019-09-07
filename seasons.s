@@ -10710,17 +10710,21 @@ _label_00_385:
 	dec b			; $39db
 	jr nz,_label_00_383	; $39dc
 	ret			; $39de
+
+@loadLayoutData:
 	push de			; $39df
 	ldh a,(<hFF8C)	; $39e0
+	ld e,a
+-
 	bit 7,h			; $39e2
 	jr z,_label_00_386	; $39e4
 	ld a,h			; $39e6
-	xor $c0			; $39e7
+	sub $40			; $39e7
 	ld h,a			; $39e9
-	ldh a,(<hFF8C)	; $39ea
-	inc a			; $39ec
-	ldh (<hFF8C),a	; $39ed
+	inc e
+	jr -
 _label_00_386:
+	ld a,e
 	ldh (<hRomBank),a	; $39ef
 	ld ($2222),a		; $39f1
 	ld b,$ff		; $39f4
