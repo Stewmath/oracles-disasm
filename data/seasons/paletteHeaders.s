@@ -615,3 +615,9 @@ paletteHeaderbc: ; $66ca
 	m_PaletteHeaderBg  7 1 paletteData5758 $00
 paletteHeaderbd: ; $66cd
 	m_PaletteHeaderBg  1 1 paletteData4880 $00
+
+/*
+; Put this in comments so lynnalab sees it (but this line is actually in bank1.s)
+paletteHeader68: ; Black tower
+	m_PaletteHeaderBg  2 6 paletteDataBlackTower $00
+	*/

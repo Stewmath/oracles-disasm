@@ -1001,3 +1001,8 @@ gfxHeaderb8: ; $7942
 gfxHeaderb9: ; $7948
 	m_GfxHeader gfx_0e2ad7 $cf00 $0a
 
+/*
+; Put this in comments so lynnalab sees it (but this line is actually in bank1.s)
+gfxHeader6e: ; Black tower
+	m_GfxHeader gfx_0bd8ee $8801 $6f
+	*/
