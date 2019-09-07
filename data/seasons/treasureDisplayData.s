@@ -43,7 +43,7 @@ treasureDisplayData2:
 	.db TREASURE_ROD_OF_SEASONS     $98 $02 $00 $00 $02 $41 ; TREASURE_ROD_OF_SEASONS
 	.db $00                         $07 $00 $07 $00 $03 $00 ; (filler) TREASURE_MAGNET_GLOVES
 	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_SWITCH_HOOK_HELPER
-	.db TREASURE_SWITCH_HOOK        $9f $04 $00 $00 $00 $00 ; TREASURE_SWITCH_HOOK
+	.db TREASURE_SWITCH_HOOK        $9f $04 $00 $00 $00 <TX_09_HOOKDESC ; TREASURE_SWITCH_HOOK
 	.db $00                         $00 $02 $00 $00 $ff $00 ; TREASURE_SWITCH_HOOK_CHAIN
 	.db $00                         $a1 $03 $a2 $03 $ff $28 ; TREASURE_BIGGORON_SWORD
 	.db TREASURE_BOMBCHUS           $a0 $05 $00 $00 $01 $29 ; TREASURE_BOMBCHUS

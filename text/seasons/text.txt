@@ -3221,6 +3221,14 @@ Seed Shooter
 Used to bounce
 seeds around.
 \end
+\next
+
+\name(TX_09_HOOKDESC)
+\start
+Switch Hook
+User and target
+trade places.
+\end
 
 \nextgroup
 
