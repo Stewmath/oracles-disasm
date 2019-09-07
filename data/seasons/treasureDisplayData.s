@@ -37,7 +37,7 @@ treasureDisplayData2:
 	.db $00                         $07 $00 $00 $00 $00 $00 ; (filler) TREASURE_SHIELD
 	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_PUNCH
 	.db TREASURE_BOMBS              $9e $04 $00 $00 $01 $26 ; TREASURE_BOMBS
-	.db $00				$a3 $02 $00 $00 $ff $00 ; TREASURE_CANE_OF_SOMARIA (0x04)
+	.db $00				$a3 $02 $00 $00 $ff <TX_09_CANEDESC ; TREASURE_CANE_OF_SOMARIA (0x04)
 	.db $00                         $07 $00 $07 $00 $00 $00 ; (filler) TREASURE_SWORD
 	.db $06                         $07 $00 $07 $00 $00 $00 ; (filler) TREASURE_BOOMERANG
 	.db TREASURE_ROD_OF_SEASONS     $98 $02 $00 $00 $02 $41 ; TREASURE_ROD_OF_SEASONS
@@ -64,7 +64,7 @@ treasureDisplayData2:
 	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_1c
 	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_MINECART_COLLISION
 	.db TREASURE_FOOLS_ORE          $9a $00 $00 $00 $ff $3f ; TREASURE_FOOLS_ORE
-	.db $00                         $a5 $05 $00 $00 $ff $00 ; TREASURE_1f
+	.db TREASURE_1f                 $a5 $05 $00 $00 $ff <TX_09_POWDERDESC ; TREASURE_1f
 	.db $20                         $80 $00 $83 $00 $ff $32 ; TREASURE_EMBER_SEEDS
 	.db TREASURE_SCENT_SEEDS        $80 $00 $84 $00 $ff $33 ; TREASURE_SCENT_SEEDS
 	.db TREASURE_PEGASUS_SEEDS      $80 $00 $85 $00 $ff $34 ; TREASURE_PEGASUS_SEEDS
@@ -145,11 +145,11 @@ treasureDisplayData2:
 	.db TREASURE_MYSTERY_SEEDS      $82 $05 $87 $00 $01 $3d
 
 @shooterData:
-	.db TREASURE_EMBER_SEEDS        $a4 $03 $83 $02 $01 $3c
-	.db TREASURE_SCENT_SEEDS        $a4 $03 $84 $03 $01 $3c
-	.db TREASURE_PEGASUS_SEEDS      $a4 $03 $85 $01 $01 $3c
-	.db TREASURE_GALE_SEEDS         $a4 $03 $86 $01 $01 $3c
-	.db TREASURE_MYSTERY_SEEDS      $a4 $03 $87 $00 $01 $3c
+	.db TREASURE_EMBER_SEEDS        $a4 $03 $83 $02 $01 <TX_09_SHOOTERDESC
+	.db TREASURE_SCENT_SEEDS        $a4 $03 $84 $03 $01 <TX_09_SHOOTERDESC
+	.db TREASURE_PEGASUS_SEEDS      $a4 $03 $85 $01 $01 <TX_09_SHOOTERDESC
+	.db TREASURE_GALE_SEEDS         $a4 $03 $86 $01 $01 <TX_09_SHOOTERDESC
+	.db TREASURE_MYSTERY_SEEDS      $a4 $03 $87 $00 $01 <TX_09_SHOOTERDESC
 
 @swordData:
 	.db TREASURE_SWORD              $90 $00 $00 $00 $00 $23

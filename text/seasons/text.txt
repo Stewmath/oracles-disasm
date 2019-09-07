@@ -3206,6 +3206,21 @@ Cane of Somaria
 Used to create
 blocks.
 \end
+\next
+
+\name(TX_09_POWDERDESC)
+\start
+Magic Powder
+Sprinkle it on a variety of things.
+\end
+\next
+
+\name(TX_09_SHOOTERDESC)
+\start
+Seed Shooter
+Used to bounce
+seeds around.
+\end
 
 \nextgroup
 
