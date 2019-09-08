@@ -282,7 +282,7 @@ interaction60SubidData:
 	.db $5f $04 $50
 	.db $5f $16 $03
 	.db $61 $00 $50
-	.db $61 $02 $33
+	.db $5f $1c $33 ; biggoron's sword (changed for plando)
 	.db $5d $0c $33
 	.db $00 $00 $00
 	.db $5c $04 $00

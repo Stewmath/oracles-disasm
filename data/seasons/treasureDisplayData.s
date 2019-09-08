@@ -47,7 +47,7 @@ treasureDisplayData2:
 	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_SWITCH_HOOK_HELPER
 	.db TREASURE_SWITCH_HOOK        $9f $04 $00 $00 $00 <TX_09_HOOKDESC ; TREASURE_SWITCH_HOOK
 	.db $00                         $00 $02 $00 $00 $ff $00 ; TREASURE_SWITCH_HOOK_CHAIN
-	.db $00                         $a1 $03 $a2 $03 $ff $28 ; TREASURE_BIGGORON_SWORD
+	.db $00                         $8e $03 $8f $03 $ff $28 ; TREASURE_BIGGORON_SWORD
 	.db TREASURE_BOMBCHUS           $a0 $05 $00 $00 $01 $29 ; TREASURE_BOMBCHUS
 	.db $00                         $07 $00 $07 $00 $ff $00 ; (filler) TREASURE_FLUTE
 	.db $00                         $88 $00 $00 $00 $ff $00 ; TREASURE_SHOOTER
