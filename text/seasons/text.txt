@@ -11671,12 +11671,11 @@ almost done...
 
 \name(TX_3900)
 \start
-When the mouth
-opens, attack
-from within.
-Then super-
-human strength
-will prevail.
+Why on earth did you come all the way back here? Let me guess, you already beat
+the seed and you were curious what I'd say?\stop
+Or, don't tell me...\stop
+You came all the way here hoping I'd give you some kind of awesome hint?\stop
+LOL
 \end
 \next
 
@@ -11729,16 +11728,13 @@ unguarded eyes.
 
 \name(TX_390f)
 \start
-Recall the order
-you slay the
-knights in.
+Some crappy flames guard the Magnet Gloves.
 \end
 \next
 
 \name(TX_3910)
 \start
-A silent watch
-may be needed.
+Medusa Head guards the Hyper Slingshot.
 \end
 \next
 
@@ -11766,9 +11762,7 @@ your guide.
 
 \name(TX_3914)
 \start
-Do not forget
-to give me
-Mystery Seeds.
+The trials you will face will require creative thinking, but not obscenely difficult tricks.
 \end
 \next
 
@@ -11781,26 +11775,19 @@ invincible...
 
 \name(TX_3916)
 \start
-The source of
-the curse is
-hidden in
-darkness.
+Gleeok guards the Roc's Cape.
 \end
 \next
 
 \name(TX_3917)
 \start
-Good defense is
-the best offense
-against spikes.
+Mothula guards the Roc's Feather.
 \end
 \next
 
 \name(TX_3918)
 \start
-Jumping up and
-on will send you
-even higher.
+The Magical Boomerang is guarded by a closing wall.
 \end
 \next
 
