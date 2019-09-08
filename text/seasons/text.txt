@@ -5825,27 +5825,7 @@ Hohhm...ZZZ
 
 \name(TX_1704)
 \start
-Hwaaah...
-It's me, the
-\col(3)Maku Tree\col(4).
-Some of the
-\col(2)Fertile Soil\col(4)
-has come to me,
-too. I already
-feel stronger.\stop
-Oh, in my
-dreams, I saw
-the \col(3)Temple of
-Seasons\col(4) in a
-strange land
-I do not know.
-There I saw a
-precious item
-that will aid
-you, \Link.
-That is all I
-can see now...
-Hohm...hmm...
+You got \col(1)Ember Seeds\col(0)! Open your Seed Satchel to use them.
 \end
 \next($171f)
 
@@ -9587,8 +9567,7 @@ Oh, really?
 
 \name(TX_301c)
 \start
-Hmm... I see!
-I call this the
+You got the
 \call($fd)!
 \end
 \next
