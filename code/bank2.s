@@ -6145,9 +6145,12 @@ _subscreen1TreasureData:
 
 	.else; ROM_SEASONS
 
+		; Plando hack: removed spring banana, added mermaid suit
+
 		; Row 1
 		.db TREASURE_MASTERS_PLAQUE	$01 $00
 		.db TREASURE_FLIPPERS		$01 $00
+		.db TREASURE_MERMAID_SUIT	$01 $00
 		.db TREASURE_POTION		$04 $01
 		.db TREASURE_TRADEITEM		$07 $02
 		.db TREASURE_MAKU_SEED		$0a $03
@@ -6170,7 +6173,7 @@ _subscreen1TreasureData:
 		.db TREASURE_STAR_ORE		$61 $0a
 		.db TREASURE_RIBBON		$61 $0a
 		.db TREASURE_STAR_ORE		$61 $0a
-		.db TREASURE_SPRING_BANANA	$61 $0a
+		;.db TREASURE_SPRING_BANANA	$61 $0a
 		.db TREASURE_DRAGON_KEY		$61 $0a
 		.db TREASURE_RED_ORE		$64 $0b
 		.db TREASURE_HARD_ORE		$64 $0b

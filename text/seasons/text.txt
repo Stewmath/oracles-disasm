@@ -1077,6 +1077,18 @@ heavy objects.
 \end
 \next
 
+\name(TX_0074)
+\start
+You got a
+\col(1)Mermaid Suit\col(0)!
+Now you can swim
+in deep waters.
+Press \col($84)\item($00)\col(0) to swim,
+\bbtn to dive and
+\abtn to use items.
+\end
+\next
+
 \name(TX_00_GETCANE)
 \start
 You got the
@@ -3214,6 +3226,14 @@ winter.
 Power Gloves
 Used to lift
 large objects.
+\end
+\next
+
+\name(TX_09_MERMAIDSUITDESC)
+\start
+Mermaid Suit
+The skin of the
+mythical beast.
 \end
 \next
 

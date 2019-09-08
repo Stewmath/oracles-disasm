@@ -378,7 +378,8 @@ interactiondeSubidData:
 	.db $60 $1e $40 ; $7d (switch hook)
 	.db $61 $06 $20 ; $7e (cane)
 	.db $61 $08 $30 ; $7f (seed shooter)
-	.db $61 $8c $50 ; $80 (power glove)
+	.db $61 $0c $50 ; $80 (power glove)
+	.db $5d $96 $43 ; $81 (mermaid suit)
 
 interaction7dSubidData:
 	.db $58 $00 $40

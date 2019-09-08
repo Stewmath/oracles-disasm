@@ -25598,21 +25598,20 @@ _label_05_123:
 	ret nc			; $5624
 	inc (hl)		; $5625
 	ret			; $5626
+
+_linkUpdateSwimming:
 	ld a,($cc78)		; $5627
 	and $0f			; $562a
 	ld hl,$ccaf		; $562c
 	res 4,(hl)		; $562f
 	rst_jumpTable			; $5631
-	sbc d			; $5632
-	ld e,e			; $5633
-	inc a			; $5634
-	ld d,(hl)		; $5635
-	sub c			; $5636
-	ld d,(hl)		; $5637
-	sbc e			; $5638
-	ld d,(hl)		; $5639
-	cp l			; $563a
-	ld d,(hl)		; $563b
+	.dw $5b9a
+	.dw _overworldSwimmingState1
+	.dw _overworldSwimmingState2
+	.dw _overworldSwimmingState3
+	.dw _overworldSwimmingState4
+
+_overworldSwimmingState1:
 	call $4df1		; $563c
 	call $56dc		; $563f
 	ld l,$06		; $5642
@@ -25655,10 +25654,14 @@ _label_05_126:
 	ld hl,$cc78		; $568a
 	set 6,(hl)		; $568d
 	jr _label_05_124		; $568f
+
+_overworldSwimmingState2:
 	call itemDecCounter1		; $5691
 	jp nz,$5c88		; $5694
 	ld hl,$cc78		; $5697
 	inc (hl)		; $569a
+
+_overworldSwimmingState3:
 	call $5774		; $569b
 	call objectSetVisiblec1		; $569e
 	ld h,d			; $56a1
@@ -25671,9 +25674,14 @@ _label_05_126:
 	call objectSetVisiblec3		; $56ae
 _label_05_127:
 	call updateLinkDirectionFromAngle		; $56b1
-	call $5704		; $56b4
+
+;	call $5704		; $56b4
+	jp overworldSwimmingState3Hook
+
 	call $582b		; $56b7
 	jp $5c88		; $56ba
+
+_overworldSwimmingState4:
 	ld a,$80		; $56bd
 	ld ($ccac),a		; $56bf
 	call specialObjectAnimate		; $56c2
@@ -25886,11 +25894,14 @@ _label_05_145:
 _label_05_146:
 	jp specialObjectAnimate		; $5825
 	ld a,($cc47)		; $5828
+
+_func_5933:
 	ld e,a			; $582b
 	ld h,d			; $582c
 	ld l,$09		; $582d
 	bit 7,(hl)		; $582f
 	jr z,_label_05_147	; $5831
+
 	ld (hl),e		; $5833
 	ret			; $5834
 _label_05_147:
@@ -25944,8 +25955,11 @@ _label_05_151:
 	ldi a,(hl)		; $5888
 	cp (hl)			; $5889
 	ret c			; $588a
+
+
 	dec l			; $588b
 	ld (hl),$00		; $588c
+
 	ld l,$09		; $588e
 	ld a,(hl)		; $5890
 	add b			; $5891
@@ -25959,6 +25973,7 @@ _label_05_151:
 	jr z,_label_05_153	; $589b
 	bit 7,a			; $589d
 	jr nz,_label_05_153	; $589f
+
 	cp b			; $58a1
 	jr c,_label_05_152	; $58a2
 	ld a,b			; $58a4
@@ -26432,6 +26447,8 @@ _label_05_187:
 	jp nz,specialObjectSetAnimation		; $5bd9
 	jp specialObjectAnimate		; $5bdc
 	ld c,$00		; $5bdf
+
+updateLinkSpeed_withParam:
 	ld e,$36		; $5be1
 	ld a,(de)		; $5be3
 	cp c			; $5be4
@@ -26439,7 +26456,7 @@ _label_05_187:
 	ld a,c			; $5be7
 	ld (de),a		; $5be8
 	and $7f			; $5be9
-	ld hl,$5c34		; $5beb
+	ld hl,_data_5c34		; $5beb
 	rst_addAToHl			; $5bee
 	ld e,$10		; $5bef
 	ldi a,(hl)		; $5bf1
@@ -26478,7 +26495,7 @@ _label_05_191:
 	add b			; $5c22
 	add c			; $5c23
 	and $7f			; $5c24
-	ld hl,$5c34		; $5c26
+	ld hl,_data_5c34		; $5c26
 	rst_addAToHl			; $5c29
 	ld a,(hl)		; $5c2a
 	ld h,d			; $5c2b
@@ -26488,22 +26505,13 @@ _label_05_191:
 	ret nz			; $5c31
 	ld (hl),a		; $5c32
 	ret			; $5c33
-	jr z,_label_05_192	; $5c34
-_label_05_192:
-	ld e,$14		; $5c36
-	jr z,$2d		; $5c38
-	ld e,$3c		; $5c3a
-	nop			; $5c3c
-	ld b,$28		; $5c3d
-	jr z,_label_05_194	; $5c3f
-	inc a			; $5c41
-	inc a			; $5c42
-	inc a			; $5c43
-	inc d			; $5c44
-	inc bc			; $5c45
-	ld e,$14		; $5c46
-	jr z,_label_05_195	; $5c48
-	ld e,$3c		; $5c4a
+
+; Data here is replaced with data at the end of the bank (for mermaid suit)
+_data_5c34_old:
+	.db $28 $00 $1e $14 $28 $2d $1e $3c
+	.db $00 $06 $28 $28 $28 $3c $3c $3c
+	.db $14 $03 $1e $14 $28 $2d $1e $3c
+
 	ld e,$04		; $5c4c
 	ld a,(de)		; $5c4e
 	cp $02			; $5c4f
@@ -26545,6 +26553,8 @@ _label_05_196:
 	ld e,$09		; $5c83
 	ld a,(de)		; $5c85
 	jr _label_05_197		; $5c86
+
+specialObjectUpdatePosition:
 	ld e,$10		; $5c88
 	ld a,(de)		; $5c8a
 	ld b,a			; $5c8b
@@ -31765,6 +31775,74 @@ _label_05_451:
 	ld a,b			; $7e26
 	call specialObjectSetAnimation		; $7e27
 	jp objectSetVisible80		; $7e2a
+
+
+overworldSwimmingState3Hook:
+	ld a,TREASURE_MERMAID_SUIT
+	call checkTreasureObtained
+	jr nc,+
+
+	; Mermaid suit movement
+	call _linkUpdateMermaidSuitVelocity
+	jp specialObjectUpdatePosition
++
+	call $5704
+	call $582b
+	jp $5c88
+
+
+_linkUpdateMermaidSuitVelocity:
+	ld c,$98
+	call updateLinkSpeed_withParam
+	ld a,(wActiveRing)
+	cp SWIMMERS_RING
+	jr nz,+
+
+	ld e,SpecialObject.speedTmp
+	ld a,SPEED_160
+	ld (de),a
++
+	ld h,d
+	ld a,(wLinkImmobilized)
+	or a
+	jr nz,+
+
+	ld a,(wGameKeysJustPressed)
+	and (BTN_UP | BTN_RIGHT | BTN_DOWN | BTN_LEFT)
+	jr nz,@directionButtonPressed
++
+	ld l,SpecialObject.var3e
+	dec (hl)
+	bit 7,(hl)
+	jr z,++
+
+	ld a,$ff
+	ld (hl),a
+	jp _func_5933
+
+@directionButtonPressed:
+	ld a,SND_SPLASH
+	call playSound
+	ld h,d
+	ld l,SpecialObject.var3e
+	ld (hl),$04
+++
+	ld l,SpecialObject.var12
+	ld (hl),$14
+
+@label_05_159:
+	ld a,(wLinkAngle)
+	jp _func_5933
+
+
+; Data structure for "updateLinkSpeed_withParam" function; has more data in Ages
+; for the mermaid suit, so it was moved here.
+_data_5c34:
+	.db $28 $00 $1e $14 $28 $2d $1e $3c
+	.db $00 $06 $28 $28 $28 $3c $3c $3c
+	.db $14 $03 $1e $14 $28 $2d $1e $3c
+	.db $00 $05 $2d $2d $2d $2d $2d $2d
+
 
 .BANK $06 SLOT 1
 .ORG 0
