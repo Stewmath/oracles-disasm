@@ -11782,14 +11782,13 @@ your guide.
 
 \name(TX_3914)
 \start
-The trials you will face will require creative thinking, but not obscenely difficult tricks.
+If you can enter a dungeon, you can complete it. (Except for D8.)
 \end
 \next
 
 \name(TX_3915)
 \start
-In water, it is
-invincible...
+Supply is limited! Use wisely, but don't fret too much about it.
 \end
 \next
 
@@ -11802,6 +11801,7 @@ Gleeok guards the Roc's Cape.
 \name(TX_3917)
 \start
 Mothula guards the Roc's Feather.
+(No, not the cape.)
 \end
 \next
 
@@ -11813,16 +11813,13 @@ The Magical Boomerang is guarded by a closing wall.
 
 \name(TX_3919)
 \start
-Greater speed
-gives greater
-distance.
+D4 PLACEHOLDER
 \end
 \next
 
 \name(TX_391a)
 \start
-Icy cores make
-piercing blades.
+Wrong way dude.\col($84)\item($0d)\item($0e)\col(0)
 \end
 \next
 
@@ -11840,8 +11837,7 @@ shine blue.
 
 \name(TX_391d)
 \start
-Blue seeds will
-give you speed.
+Be prepared to think outside the box.\col($84)\item($0d)\item($0e)\col(0)
 \end
 \nextgroup
 
