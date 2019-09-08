@@ -10861,7 +10861,7 @@ seasonsFunc_3ab2:
 	ld a,$01		; $3ab5
 	ldh (<hRomBank),a	; $3ab7
 	ld ($2222),a		; $3ab9
-	call $7e6e		; $3abc
+	call bank1.seasonsFunc_7e6e		; $3abc
 	pop af			; $3abf
 	ldh (<hRomBank),a	; $3ac0
 	ld ($2222),a		; $3ac2
