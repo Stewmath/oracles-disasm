@@ -854,6 +854,8 @@ wSecretType: ; $c6fe
 .ifdef ROM_SEASONS
 wSwitchHookLevel:
 	db
+wBraceletLevel:
+	db
 .endif
 
 .ende

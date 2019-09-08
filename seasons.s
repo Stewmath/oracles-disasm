@@ -44264,12 +44264,10 @@ itemCode18:
 	; Set speed & counter1 based on bracelet level (TODO: uncomment if power glove
 	; implemented)
 	ldbc SPEED_80, $20		; $5d1f
-.ifdef ROM_AGES
 	ld a,(wBraceletLevel)		; $5d22
 	cp $02			; $5d25
 	jr nz,+			; $5d27
 	ldbc SPEED_c0, $15		; $5d29
-.endif
 +
 	ld l,Item.speed		; $5d2c
 	ld (hl),b		; $5d2e
@@ -46093,7 +46091,10 @@ _label_08_012:
 	ld a,$01		; $4315
 	call nz,interactionSetAnimation		; $4317
 	ld h,d			; $431a
-	ld bc,$1420		; $431b
+
+	;ld bc,$1420		; $431b
+	call pushblockHook
+
 	ld l,$50		; $431e
 	ld (hl),b		; $4320
 	ld l,$46		; $4321
@@ -55561,6 +55562,17 @@ interactionCode5d:
 	call checkFlag		; $7fb7
 	jp nz,interactionDelete		; $7fba
 	jp objectPreventLinkFromPassing		; $7fbd
+
+
+pushblockHook:
+	; Determine speed to push with (L-2 bracelet pushes faster)
+	ldbc SPEED_80, $20
+	ld a,(wBraceletLevel)
+	cp $02
+	ret nz
+	ldbc SPEED_c0, $15
+	ret
+
 
 .BANK $09 SLOT 1
 .ORG 0
