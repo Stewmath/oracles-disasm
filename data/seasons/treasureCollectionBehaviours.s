@@ -52,8 +52,8 @@ treasureCollectionBehaviourTable:
 	.db SND_NONE
 
 	; TREASURE_SWITCH_HOOK (0x09)
-	.db $00
-	.db $00
+	.db <wSwitchHookLevel
+	.db $08
 	.db SND_GETITEM
 
 	; TREASURE_SWITCH_HOOK_CHAIN (0x0b)
