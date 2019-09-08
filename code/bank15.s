@@ -3496,7 +3496,7 @@ oldManScript_givesShieldUpgrade:
 	initcollisions
 	checkabutton
 	disableinput
-	jumpifglobalflagset GLOBALFLAG_72, @alreadyToldSecret
+	jumpifglobalflagset GLOBALFLAG_DONE_LIBRARY_SECRET, @alreadyToldSecret
 
 	; Ask if Link has a secret to tell
 	showtext TX_3310
@@ -3518,7 +3518,7 @@ oldManScript_givesShieldUpgrade:
 	jump2byte @warpLinkOut
 
 @validSecret:
-	setglobalflag GLOBALFLAG_68
+	setglobalflag GLOBALFLAG_BEGAN_LIBRARY_SECRET
 	showtext TX_3312
 	wait 30
 	callscript scriptFunc_doEnergySwirlCutscene
@@ -3526,7 +3526,7 @@ oldManScript_givesShieldUpgrade:
 	asm15 oldManGiveShieldUpgradeToLink
 	wait 30
 
-	setglobalflag GLOBALFLAG_72
+	setglobalflag GLOBALFLAG_DONE_LIBRARY_SECRET
 	generateoraskforsecret $14
 	showtext TX_3313
 	jump2byte @warpLinkOut
@@ -3678,7 +3678,7 @@ mamamuYanScript:
 	checkabutton
 	disableinput
 	jumpifroomflagset $80, @alreadyBeganSearch
-	jumpifglobalflagset GLOBALFLAG_6a, @alreadyToldSecret
+	jumpifglobalflagset GLOBALFLAG_BEGAN_MAMAMU_SECRET, @alreadyToldSecret
 	showtextlowindex <TX_0b3a
 	wait 30
 
@@ -3697,7 +3697,7 @@ mamamuYanScript:
 	jump2byte @enableInputAndLoop
 
 @validSecret:
-	setglobalflag GLOBALFLAG_6a
+	setglobalflag GLOBALFLAG_BEGAN_MAMAMU_SECRET
 	showtextlowindex <TX_0b3c
 	jump2byte @askedListenToRequest
 

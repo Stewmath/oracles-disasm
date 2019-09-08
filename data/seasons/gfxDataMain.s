@@ -10,19 +10,19 @@
 	m_GfxData gfx_mystery_tree ; $09fb46
 	m_GfxData gfx_common_sprites ; $09fbf2
 	m_GfxData gfx_09ff69 ; $09ff69
-	m_GfxData gfx_0a009d ; $0a009d
-	m_GfxData gfx_0a01b9 ; $0a01b9
+	m_GfxData gfx_quest_items_5 ; $0a009d
+	m_GfxData gfx_map_compass_keys ; $0a01b9
 	m_GfxData gfx_blank ; $0a02d7
 	m_GfxData gfx_rings ; $0a02dd
-	m_GfxData gfx_0a0637 ; $0a0637
-	m_GfxData gfx_0a0786 ; $0a0786
-	m_GfxData gfx_0a08fa ; $0a08fa
-	m_GfxData gfx_0a0a47 ; $0a0a47
-	m_GfxData gfx_0a0c09 ; $0a0c09
-	m_GfxData gfx_0a0d57 ; $0a0d57
+	m_GfxData gfx_item_icons_1_spr ; $0a0637
+	m_GfxData gfx_essences ; $0a0786
+	m_GfxData gfx_quest_items_1 ; $0a08fa
+	m_GfxData gfx_quest_items_2 ; $0a0a47
+	m_GfxData gfx_quest_items_3 ; $0a0c09
+	m_GfxData gfx_quest_items_4 ; $0a0d57
 	m_GfxData gfx_0a0eab ; $0a0eab
-	m_GfxData gfx_0a0fa0 ; $0a0fa0
-	m_GfxData gfx_0a1083 ; $0a1083
+	m_GfxData gfx_inventory_hud_1 ; $0a0fa0
+	m_GfxData gfx_inventory_hud_2 ; $0a1083
 	m_GfxData gfx_save ; $0a1199
 	m_GfxData map_inventory_screen_1 ; $0a11fe
 	m_GfxData flg_inventory_screen_1 ; $0a1215
@@ -36,8 +36,8 @@
 	m_GfxData map_06 ; $0a12af
 	m_GfxData map_inventory_screen_2 ; $0a12bc
 	m_GfxData flg_inventory_screen_2 ; $0a12cf
-	m_GfxData gfx_0a12de ; $0a12de
-	m_GfxData gfx_0a1371 ; $0a1371
+	m_GfxData map_inventory_screen_3 ; $0a12de
+	m_GfxData flg_inventory_screen_3 ; $0a1371
 	m_GfxData gfx_biggoron_sword_icon ; $0a13bc
 	m_GfxData map_16 ; $0a1406
 	m_GfxData map_17 ; $0a1425
@@ -69,7 +69,7 @@
 	m_GfxData gfx_0a3f70 ; $0a3f70
 	m_GfxData gfx_0a40e0 ; $0a40e0
 	m_GfxData gfx_0a41b1 ; $0a41b1
-	m_GfxData gfx_0a42b0 ; $0a42b0
+	m_GfxData gfx_season_symbols ; $0a42b0
 	m_GfxData gfx_boy ; $0a43d9
 	m_GfxData gfx_sokra_masterdiver ; $0a455c
 	m_GfxData gfx_shopkeeper_dekuscrub ; $0a46db

@@ -40,7 +40,7 @@
 	GLOBALFLAG_BEGAN_POSSESSED_NAYRU_FIGHT	db ; $18
 	GLOBALFLAG_BEAT_POSSESSED_NAYRU		db ; $19
 	GLOBALFLAG_MOBLINS_KEEP_DESTROYED	db ; $1a: Moblin's keep destroyed?
-	GLOBALFLAG_1b				db ; $1b
+	GLOBALFLAG_GOT_ISLAND_CHART		db ; $1b
 	GLOBALFLAG_GOT_BOMB_UPGRADE_FROM_FAIRY	db ; $1c
 	GLOBALFLAG_CAN_BUY_FLUTE		db ; $1d
 	GLOBALFLAG_1e				db ; $1e
@@ -48,7 +48,7 @@
 	GLOBALFLAG_TALKED_TO_OCTOROK_FAIRY	db ; $20
 	GLOBALFLAG_PREGAME_INTRO_DONE		db ; $21
 	GLOBALFLAG_TALKED_TO_HEAD_CARPENTER	db ; $22: talked to carpenter first time
-	GLOBALFLAG_GOT_FLUTE			db ; $23
+	GLOBALFLAG_GOT_FLUTE			db ; $23: identified flute from companion
 	GLOBALFLAG_SAVED_COMPANION_FROM_FOREST	db ; $24
 	GLOBALFLAG_SYMMETRY_BRIDGE_BUILT	db ; $25
 	GLOBALFLAG_RAFTON_CHANGED_ROOMS		db ; $26: rafton's in right room, not left
@@ -90,7 +90,7 @@
 	GLOBALFLAG_TALKED_TO_CHEVAL		db ; $43
 	GLOBALFLAG_44				db ; $44: Maple's been met in the past
 	GLOBALFLAG_RALPH_ENTERED_BLACK_TOWER	db ; $45
-	GLOBALFLAG_46				db ; $46
+	GLOBALFLAG_GOT_SATCHEL_UPGRADE		db ; $46
 
 	; Unused?
 	GLOBALFLAG_47				db ; $47
@@ -183,7 +183,7 @@
 	; ==============================================================================
 
 	; Set when corresponding NPC is spoken to; allows Farore to accept the return
-	; secret.
+	; secret in Ages.
 	GLOBALFLAG_50				db ; $50
 	GLOBALFLAG_51				db ; $51
 	GLOBALFLAG_52				db ; $52
@@ -211,29 +211,34 @@
 	; LINKED SEASONS SECRETS
 	; ==============================================================================
 
-	; Set when corresponding NPC is told the secret, to begin the sidequest.
-	GLOBALFLAG_64				db ; $64
-	GLOBALFLAG_65				db ; $65
-	GLOBALFLAG_66				db ; $66
-	GLOBALFLAG_67				db ; $67
-	GLOBALFLAG_68				db ; $68
-	GLOBALFLAG_69				db ; $69
-	GLOBALFLAG_6a				db ; $6a
-	GLOBALFLAG_6b				db ; $6b
-	GLOBALFLAG_6c				db ; $6c: told elder secret
-	GLOBALFLAG_6d				db ; $6d
+	; Set when corresponding NPC is spoken to.
+	; In Seasons, that is the NPC who initiates the quest. The flag must be set for
+	; Farore to accept the return secret from Ages.
+	; In Ages, that is the NPC who eventually gives you the item.
+	GLOBALFLAG_BEGAN_KING_ZORA_SECRET				db ; $64
+	GLOBALFLAG_BEGAN_FAIRY_SECRET				db ; $65
+	GLOBALFLAG_BEGAN_TROY_SECRET				db ; $66
+	GLOBALFLAG_BEGAN_PLEN_SECRET				db ; $67
+	GLOBALFLAG_BEGAN_LIBRARY_SECRET				db ; $68
+	GLOBALFLAG_BEGAN_TOKAY_SECRET				db ; $69
+	GLOBALFLAG_BEGAN_MAMAMU_SECRET				db ; $6a
+	GLOBALFLAG_BEGAN_TINGLE_SECRET				db ; $6b
+	GLOBALFLAG_BEGAN_ELDER_SECRET				db ; $6c
+	GLOBALFLAG_BEGAN_SYMMETRY_SECRET				db ; $6d
 
 	; Set when the sidequest is completed and Link has obtained the item.
-	GLOBALFLAG_6e				db ; $6e
-	GLOBALFLAG_6f				db ; $6f
-	GLOBALFLAG_70				db ; $70
-	GLOBALFLAG_71				db ; $71
-	GLOBALFLAG_72				db ; $72
-	GLOBALFLAG_73				db ; $73
-	GLOBALFLAG_74				db ; $74
-	GLOBALFLAG_75				db ; $75
-	GLOBALFLAG_76				db ; $76: completed elder secret
-	GLOBALFLAG_77				db ; $77
+	; In Seasons, he obtains the item from an NPC.
+	; In Ages, he obtains the item from Farore.
+	GLOBALFLAG_DONE_KING_ZORA_SECRET				db ; $6e
+	GLOBALFLAG_DONE_FAIRY_SECRET				db ; $6f
+	GLOBALFLAG_DONE_TROY_SECRET				db ; $70
+	GLOBALFLAG_DONE_PLEN_SECRET				db ; $71
+	GLOBALFLAG_DONE_LIBRARY_SECRET				db ; $72
+	GLOBALFLAG_DONE_TOKAY_SECRET				db ; $73
+	GLOBALFLAG_DONE_MAMAMU_SECRET				db ; $74
+	GLOBALFLAG_DONE_TINGLE_SECRET				db ; $75
+	GLOBALFLAG_DONE_ELDER_SECRET				db ; $76
+	GLOBALFLAG_DONE_SYMMETRY_SECRET				db ; $77
 
 	; Unused?
 	GLOBALFLAG_78				db ; $78

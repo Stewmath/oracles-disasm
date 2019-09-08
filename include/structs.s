@@ -19,6 +19,7 @@
 	rememberedCompanionGroup	db
 	rememberedCompanionRoom		db
 	linkObjectIndex			db
+	c635				db ; TODO: what is this?
 	rememberedCompanionY		db
 	rememberedCompanionX		db
 .ENDST

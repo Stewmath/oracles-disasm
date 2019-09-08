@@ -457,9 +457,6 @@ wDeathRespawnBuffer: ; $c62b
 ; $0c bytes
 	INSTANCEOF DeathRespawnStruct
 
-wc637: ; $c637
-	db
-
 wLastAnimalMountPointY: ; $c638
 ; Looks like a component is set to $10 or $70 if the animal enters from
 ; a particular side. Not sure what it's used for.
@@ -515,7 +512,7 @@ wBoughtShopItems2: ; $c643
 ; Bit 6: Bought heart piece from hidden shop.
 	db
 
-wMapleState: ; $c644
+wMapleState: ; $c644/$c641
 ; Bits 0-3: Number of maple encounters?
 ; Bit 4:    Set while touching book is being exchanged (unset at end of encounter)
 ; Bit 5:    Set if the touching book has been exchanged (permanently set)
@@ -566,10 +563,10 @@ wGashaSpotFlags	 ; $c64c/$c649
 ; always gives you a "class 1" ring (one of the weak, common ones).
 ; Bit 1 is set if you've obtained the heart piece from one of the gasha spots.
 	db
-wGashaSpotsPlantedBitset ; $c64d
+wGashaSpotsPlantedBitset ; $c64d/$c64a
 ; 2 bytes (1 bit for each spot)
 	dsb NUM_GASHA_SPOTS/8
-wGashaSpotKillCounters: ; $c64f
+wGashaSpotKillCounters: ; $c64f/$c64c
 ; 16 bytes (1 byte for each spot)
 	dsb NUM_GASHA_SPOTS
 
@@ -682,15 +679,15 @@ wFeatherLevel: ; $c6b4
 
 wNumEmberSeeds: ; $c6b9/$c6b5
 	db
-wNumScentSeeds: ; $c6ba
+wNumScentSeeds: ; $c6ba/$c6b6
 	db
 wNumPegasusSeeds: ; $c6bb/$c6b7
 	db
-wNumGaleSeeds: ; $c6bc
+wNumGaleSeeds: ; $c6bc/$c6b8
 	db
 wNumMysterySeeds: ; $c6bd/$c6b9
 	db
-wNumGashaSeeds: ; $c6be
+wNumGashaSeeds: ; $c6be/$c6ba
 	db
 wEssencesObtained: ; $c6bf
 	db
@@ -1600,7 +1597,7 @@ wRememberedCompanionX: ; $cc28/$cc44
 ; Dunno what the distinction is between these and wKeysPressed, wKeysJustPressed?
 wGameKeysPressed: ; $cc29
 	db
-wGameKeysJustPressed: ; $cc2a
+wGameKeysJustPressed: ; $cc2a/$cc46
 	db
 
 wLinkAngle: ; $cc2b
@@ -1849,7 +1846,7 @@ wLinkInAir: ; $cc5c/$cc77
 
 wLinkSwimmingState: ; $cc5d
 ; Bit 7 is set when Link dives underwater.
-; Bit 6 causes Link to drown.
+; Bit 6 causes Link to drown (it's lava).
 ; Bits 0-3 hold a "state" which remembers whether Link is actually in the water, and
 ; whether he just entered or has been there for a few frames.
 	db
@@ -1989,7 +1986,7 @@ wTextInputResult: ; $cc89
 
 ; Everything from $cc8a-$cce0 is cleared on screen transitions?
 
-wDisabledObjects: ; $cc8a
+wDisabledObjects: ; $cc8a/$cca4
 ; Bit 0 disables link.
 ; Bit 1 disables interactions.
 ; Bit 2 disables enemies.
@@ -2006,13 +2003,13 @@ wLinkCanPassNpcs: ; $cc8c/$cca6
 ; Set when in a miniboss portal, using gale seeds, in a timewarp.
 	db
 
-wLinkPlayingInstrument: ; $cc8d
+wLinkPlayingInstrument: ; $cc8d/$cca7
 ; Nonzero while playing an instrument.
 ; Set to $ff when playing flute; otherwise, this is the value of wSelectedHarpSong.
 ; Copied to wLinkRidingObject?
 	db
 
-wEnteredWarpPosition: ; $cc8e
+wEnteredWarpPosition: ; $cc8e/$cca8
 ; After certain warps and when falling down holes, this variable is set to Link's
 ; position. When it is set, the warp on that tile does not function.
 ; This prevents Link from instantly activating a warp tile when he spawns in.
@@ -2026,7 +2023,7 @@ wcc90: ; $cc90
 ; Disables warp tiles if nonzero?
 	db
 
-wDisableScreenTransitions: ; $cc91
+wDisableScreenTransitions: ; $cc91/$ccab
 ; If nonzero, screen transitions and diving don't work?
 ; Set when:
 ; - An animal companion (not dimitri) is drowning in water?

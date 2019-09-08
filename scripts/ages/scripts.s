@@ -1804,8 +1804,8 @@ shootingGalleryScript_goronNpc:
 
 shootingGalleryScript_goronElderNpc:
 	initcollisions
-	jumpifglobalflagset GLOBALFLAG_76 @tellSecret
-	jumpifglobalflagset GLOBALFLAG_6c @alreadyGaveSecret
+	jumpifglobalflagset GLOBALFLAG_DONE_ELDER_SECRET @tellSecret
+	jumpifglobalflagset GLOBALFLAG_BEGAN_ELDER_SECRET @alreadyGaveSecret
 
 @loop:
 	checkabutton
@@ -1827,7 +1827,7 @@ shootingGalleryScript_goronElderNpc:
 	jump2byte @loop
 
 @validSecret:
-	setglobalflag GLOBALFLAG_6c
+	setglobalflag GLOBALFLAG_BEGAN_ELDER_SECRET
 	showtext TX_3132
 	jump2byte @askedToTakeTest
 
@@ -2004,7 +2004,7 @@ shootingGalleryScript_goronElderNpc_gameDone:
 	wait 30
 	giveitem TREASURE_BIGGORON_SWORD $00
 	wait 30
-	setglobalflag GLOBALFLAG_76
+	setglobalflag GLOBALFLAG_DONE_ELDER_SECRET
 	generateoraskforsecret $18
 	showtext TX_313b
 	enableinput
@@ -5114,11 +5114,11 @@ tokayGameManagerScript_present:
 	jumpifroomflagset $40, @endingMinigame
 
 	; Check if the secret quest has been completed
-	jumpifglobalflagset GLOBALFLAG_73, @alreadyGotBombUpgrade
+	jumpifglobalflagset GLOBALFLAG_DONE_TOKAY_SECRET, @alreadyGotBombUpgrade
 
 	; Check if the secret has been told to the tokay (but game hasn't been finished
 	; yet)
-	jumpifglobalflagset GLOBALFLAG_69, @npcLoop_waitingForLinkToPlayMinigame
+	jumpifglobalflagset GLOBALFLAG_BEGAN_TOKAY_SECRET, @npcLoop_waitingForLinkToPlayMinigame
 
 
 ; Waiting for Link to tell the secret
@@ -5147,7 +5147,7 @@ tokayGameManagerScript_present:
 	jump2byte @npcLoop_waitingForSecret
 
 @validSecret:
-	setglobalflag GLOBALFLAG_69
+	setglobalflag GLOBALFLAG_BEGAN_TOKAY_SECRET
 	showtextlowindex <TX_0a47
 	jump2byte @promptToPlayMinigame
 
@@ -5201,7 +5201,7 @@ tokayGameManagerScript_present:
 	giveitem TREASURE_BOMB_UPGRADE, $00
 	wait 30
 
-	setglobalflag GLOBALFLAG_73
+	setglobalflag GLOBALFLAG_DONE_TOKAY_SECRET
 	generateoraskforsecret $15
 	showtextlowindex <TX_0a50
 	enableinput
@@ -5267,7 +5267,7 @@ forestFairyScript_heartContainerSecret:
 @npcLoop:
 	checkabutton
 	disableinput
-	jumpifglobalflagset GLOBALFLAG_6f, @alreadyGaveSecret
+	jumpifglobalflagset GLOBALFLAG_DONE_FAIRY_SECRET, @alreadyGaveSecret
 	showtext TX_1148
 	wait 30
 	jumpiftextoptioneq $00, @askForSecret
@@ -5282,7 +5282,7 @@ forestFairyScript_heartContainerSecret:
 	jump2byte @enableInput
 
 @gaveValidSecret:
-	setglobalflag GLOBALFLAG_65
+	setglobalflag GLOBALFLAG_BEGAN_FAIRY_SECRET
 	showtext $114a
 	wait 30
 
@@ -5290,7 +5290,7 @@ forestFairyScript_heartContainerSecret:
 	wait 30
 
 	generateoraskforsecret $11
-	setglobalflag GLOBALFLAG_6f
+	setglobalflag GLOBALFLAG_DONE_FAIRY_SECRET
 	showtext TX_114c
 	jump2byte @enableInput
 
@@ -9411,7 +9411,7 @@ kingZoraScript_present_afterD7:
 kingZoraScript_present_postGame:
 	checkabutton
 	disableinput
-	jumpifglobalflagset GLOBALFLAG_6e, @alreadyGotUpgrade
+	jumpifglobalflagset GLOBALFLAG_DONE_KING_ZORA_SECRET, @alreadyGotUpgrade
 
 	showtext TX_3435
 	wait 30
@@ -9427,7 +9427,7 @@ kingZoraScript_present_postGame:
 	jump2byte @loop
 
 @gaveCorrectSecret:
-	setglobalflag GLOBALFLAG_64
+	setglobalflag GLOBALFLAG_BEGAN_KING_ZORA_SECRET
 	showtext TX_3437
 	wait 30
 	callscript scriptFunc_doEnergySwirlCutscene
@@ -9435,7 +9435,7 @@ kingZoraScript_present_postGame:
 	callscript @giveSwordUpgrade
 	wait 30
 	generateoraskforsecret $10
-	setglobalflag GLOBALFLAG_6e
+	setglobalflag GLOBALFLAG_DONE_KING_ZORA_SECRET
 	showtext TX_3439
 	jump2byte @loop
 

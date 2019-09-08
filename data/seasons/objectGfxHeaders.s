@@ -84,7 +84,7 @@ objectGfxHeaderTable: ; $fdafb
 	/* $52 */ m_ObjectGfxHeader gfx_0a8188 $00
 	/* $53 */ m_ObjectGfxHeader gfx_0a8358 $00
 	/* $54 */ m_ObjectGfxHeader gfx_0a84f5 $00
-	/* $55 */ m_ObjectGfxHeader gfx_0a42b0 $00
+	/* $55 */ m_ObjectGfxHeader gfx_season_symbols $00
 	/* $56 */ m_ObjectGfxHeader gfx_0a8656 $00
 	/* $57 */ m_ObjectGfxHeader gfx_dungeon_sprites $00
 	/* $58 */ m_ObjectGfxHeader gfx_0a3e42 $00
@@ -92,16 +92,16 @@ objectGfxHeaderTable: ; $fdafb
 	/* $5a */ m_ObjectGfxHeader gfx_0a40e0 $00
 	/* $5b */ m_ObjectGfxHeader gfx_0a41b1 $00
 	/* $5c */ m_ObjectGfxHeader gfx_09ff69 $00
-	/* $5d */ m_ObjectGfxHeader gfx_0a009d $00
-	/* $5e */ m_ObjectGfxHeader gfx_0a01b9 $00
-	/* $5f */ m_ObjectGfxHeader gfx_0a0637 $00
+	/* $5d */ m_ObjectGfxHeader gfx_quest_items_5 $00
+	/* $5e */ m_ObjectGfxHeader gfx_map_compass_keys $00
+	/* $5f */ m_ObjectGfxHeader gfx_item_icons_1_spr $00
 	/* $60 */ m_ObjectGfxHeader gfx_item_icons_2 $00
 	/* $61 */ m_ObjectGfxHeader gfx_item_icons_3 $00
-	/* $62 */ m_ObjectGfxHeader gfx_0a0786 $00
-	/* $63 */ m_ObjectGfxHeader gfx_0a08fa $00
-	/* $64 */ m_ObjectGfxHeader gfx_0a0a47 $00
-	/* $65 */ m_ObjectGfxHeader gfx_0a0c09 $00
-	/* $66 */ m_ObjectGfxHeader gfx_0a0d57 $00
+	/* $62 */ m_ObjectGfxHeader gfx_essences $00
+	/* $63 */ m_ObjectGfxHeader gfx_quest_items_1 $00
+	/* $64 */ m_ObjectGfxHeader gfx_quest_items_2 $00
+	/* $65 */ m_ObjectGfxHeader gfx_quest_items_3 $00
+	/* $66 */ m_ObjectGfxHeader gfx_quest_items_4 $00
 	/* $67 */ m_ObjectGfxHeader gfx_boomerang $00
 	/* $68 */ m_ObjectGfxHeader gfx_obj_intro_tree $00
 	/* $69 */ m_ObjectGfxHeader gfx_obj_intro_clouds $00
