@@ -11719,9 +11719,7 @@ LOL
 
 \name(TX_390e)
 \start
-A guarded body
-watches with
-unguarded eyes.
+Beware deep waters \col($84)\item($0d)\item($0e)\col(0)
 \end
 \next
 
@@ -11739,8 +11737,8 @@ Medusa Head guards the Hyper Slingshot.
 
 \name(TX_3911)
 \start
-The magical ice
-freezes all.
+You got this!
+Go go go \col($84)\item($0d)\item($0e)\col(0)
 \end
 \next
 
@@ -11786,13 +11784,13 @@ Mothula guards the Roc's Feather.
 
 \name(TX_3918)
 \start
-The Magical Boomerang is guarded by a closing wall.
+A closing wall guards the Magical Boomerang.
 \end
 \next
 
 \name(TX_3919)
 \start
-D4 PLACEHOLDER
+Gohma guards the Slingshot.
 \end
 \next
 
@@ -11804,10 +11802,7 @@ Wrong way dude.\col($84)\item($0d)\item($0e)\col(0)
 
 \name(TX_391b)
 \start
-Below me, red.
-My right, red.
-Only I shall
-shine blue.
+The cane and a ring are the keys to dungeon 8.
 \end
 \next
 
