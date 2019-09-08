@@ -6092,15 +6092,11 @@ of \col(3)Sunken City\col(0).
 
 \name(TX_1726)
 \start
-I, too, grow in
-might under the
-\col(2)Soothing Rain\col(4)! \stop
-I had another
-vision just now.
-I saw a lake
-shaped like
-eyeglasses...
-\end
+\col(1)Rod of Autumn\col(0)
+I'll trade for
+\col(1)Star-Shaped Ore\col(0).
+\jump(TX_172b)
+\endwithoutnull
 \next
 
 \name(TX_1727)
@@ -6113,18 +6109,13 @@ dream...
 
 \name(TX_1728)
 \start
-\col(2)Nurturing Warmth\col(4)
-has brought me
-balmy weather,
-too!
-I dreamt of a
-huge waterfall
-in the mountains
-north of \col(3)Sunken
-City\col(4)...
-Something may
-be there...
-\end
+\col(1)Strange Flute\col(0)
+I'll trade for
+\col(1)\number Ore Chunks\col(0)
+and
+\col(1)10 Ember Seeds\col(0).
+\jump(TX_172b)
+\endwithoutnull
 \next
 
 \name(TX_1729)
@@ -6141,30 +6132,17 @@ be there...
 
 \name(TX_172a)
 \start
-\col(2)Nurturing Warmth\col(4)
-has brought me
-strength!
-I saw a dream
-of \Link
-inside vast
-ruins. Perhaps
-an \col(2)essence\col(4) is
-hidden in some.
-\end
+\col(1)Gasha Seed\col(0)
+I'll trade for
+\col(1)\number Ore Chunks\col(0).
+
+\endwithoutnull
 \next
 
 \name(TX_172b)
 \start
-I, too, grow
-mighty under the
-\col(2)Soothing Rain\col(4)!\stop
-I just dreamt
-of \Link
-looking through
-ruins. Perhaps
-one of the
-\col(2)essences\col(4) is
-hidden in some.
+How about it?
+  \opt()Sure \opt()No
 \end
 \next
 
