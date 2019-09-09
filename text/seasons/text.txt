@@ -11719,7 +11719,7 @@ LOL
 
 \name(TX_390e)
 \start
-Beware deep waters \col($84)\item($0d)\item($0e)\col(0)
+The cane and a ring are the keys to dungeon 8.
 \end
 \next
 
@@ -11738,7 +11738,7 @@ Medusa Head guards the Hyper Slingshot.
 \name(TX_3911)
 \start
 You got this!
-Go go go \col($84)\item($0d)\item($0e)\col(0)
+Go go go! \col($84)\item($0d)\item($0e)\col(0)
 \end
 \next
 
@@ -11802,7 +11802,7 @@ Wrong way dude.\col($84)\item($0d)\item($0e)\col(0)
 
 \name(TX_391b)
 \start
-The cane and a ring are the keys to dungeon 8.
+Beware deep waters.\col($84)\item($0d)\item($0e)\col(0)
 \end
 \next
 
