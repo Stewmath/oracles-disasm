@@ -320,14 +320,14 @@ interaction18SubidData:
 	.db $5e $10 $40
 	.db $5e $12 $10
 	.db $66 $12 $0a
+	.db $5d $0c $13 ; $48 (member's card; from plando)
+	.db $65 $14 $33 ; $49 (treasure map; from plando)
+	.db $60 $14 $00 ; $4a (fool's ore; from plando)
 	.db $00 $00 $00
 	.db $00 $00 $00
 	.db $00 $00 $00
-	.db $00 $00 $00
-	.db $00 $00 $00
-	.db $00 $00 $00
-	.db $00 $00 $00
-	.db $00 $00 $00
+	.db $5d $10 $26 ; $4e (rare peach stone; from plando)
+	.db $65 $0c $23 ; $4f (ribbon; from plando)
 	.db $00 $00 $00
 	.db $00 $00 $00
 	.db $00 $00 $00
