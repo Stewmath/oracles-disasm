@@ -526,8 +526,7 @@ dive!
 \name(TX_0032)
 \start
 You got \col(1)Bombchu\col(0)!
-Send them right
-to your enemies!
+Use them to kill Facade!
 \end
 \next
 
@@ -11765,7 +11764,7 @@ If you can enter a dungeon, you can complete it. (Except for D8.)
 
 \name(TX_3915)
 \start
-Supply is limited! Use wisely, but don't fret too much about it.
+A closing wall guards the Magical Boomerang.
 \end
 \next
 
@@ -11784,7 +11783,7 @@ Mothula guards the Roc's Feather.
 
 \name(TX_3918)
 \start
-A closing wall guards the Magical Boomerang.
+The Maku Tree guards the Maku Seed.\col($84)\item($0d)\item($0e)\col(0)
 \end
 \next
 
