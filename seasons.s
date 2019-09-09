@@ -112648,8 +112648,11 @@ _label_10_089:
 	jp objectSetVisible80		; $4cf1
 	jr z,_label_10_090	; $4cf4
 	ld e,$ea		; $4cf6
-	ld a,(de)		; $4cf8
-	cp $9a			; $4cf9
+
+	;ld a,(de)		; $4cf8
+	;cp $9a			; $4cf9
+	call owlCollisionHook
+
 	jr nz,_label_10_090	; $4cfb
 	ld h,d			; $4cfd
 	ld l,$c4		; $4cfe
@@ -119621,6 +119624,15 @@ _label_10_397:
 	ld l,$a4		; $7be9
 	set 7,(hl)		; $7beb
 	ret			; $7bed
+
+
+; Plando: Allow ember seeds to activate owls (hack to make magic powder work)
+owlCollisionHook:
+	ld a,(de)
+	cp $80|ITEMCOLLISION_MYSTERY_SEED
+	ret z
+	cp $80|ITEMCOLLISION_EMBER_SEED
+	ret
 
 .ends
 
