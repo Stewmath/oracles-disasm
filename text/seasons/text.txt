@@ -11669,11 +11669,7 @@ almost done...
 
 \name(TX_3900)
 \start
-Why on earth did you come all the way back here? Let me guess, you already beat
-the seed and you were curious what I'd say?\stop
-Or, don't tell me...\stop
-You came all the way here hoping I'd give you some kind of awesome hint?\stop
-LOL
+Dodongo dislikes smoke.\col($84)\item($0d)\item($0e)\col(0)
 \end
 \next
 
@@ -11764,7 +11760,7 @@ If you can enter a dungeon, you can complete it. (Except for D8.)
 
 \name(TX_3915)
 \start
-A closing wall guards the Magical Boomerang.
+Dungeon 6 holds two boomerangs.
 \end
 \next
 
