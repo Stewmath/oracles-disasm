@@ -11714,7 +11714,7 @@ Dodongo dislikes smoke.\col($84)\item($0d)\item($0e)\col(0)
 
 \name(TX_390e)
 \start
-The cane and a ring are the keys to dungeon 8.
+The cane, the cape, and a ring are the keys to dungeon 8.
 \end
 \next
 
