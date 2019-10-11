@@ -8,7 +8,7 @@ specialObject08GfxPointers:
 	m_SpecialObjectGfxPointer $80 gfx_link $0080 $04
 	m_SpecialObjectGfxPointer $80 gfx_link $0800 $04
 	m_SpecialObjectGfxPointer $80 gfx_link $0da0 $04
-	m_SpecialObjectGfxPointer $84 gfx_link $0de0 $02
+	m_SpecialObjectGfxPointer $84 gfx_link $0840 $04
 	m_SpecialObjectGfxPointer $81 gfx_link $0da0 $04
 	m_SpecialObjectGfxPointer $80 gfx_link $0100 $04
 	m_SpecialObjectGfxPointer $86 gfx_link $0140 $02
