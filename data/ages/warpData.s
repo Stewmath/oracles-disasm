@@ -590,11 +590,11 @@ warpSourcesTable: ; $1359e
 ;
 ; For m_StandardWarp only:
 ;   Byte 2:
-;     Warp Dest Index Along with the Warp Dest Group, this is an index for the
+;     Warp Dest Index. Along with the Warp Dest Group, this is an index for the
 ;     warp destination (above here) to use.
 ;   Param 3: (half-byte)
 ;     Warp Dest Group. Determines the map group to be warped to. Goes with Warp
-;     Dest Room (see above)
+;     Dest Index (see above)
 ;   Param 4: (half-byte)
 ;     Transition source type. See constants/transitions.s.
 ;
