@@ -42,14 +42,13 @@
 
 
 
-; Screen fades out, then back in.
+; Screen fades out.
 .define TRANSITION_SRC_FADEOUT		$2
 
-; Use when link walks walks off the screen. Parameter can be $0 for up, $4 for
-; down.
+; Use when link walks walks off the screen.
 .define TRANSITION_SRC_LEAVESCREEN	$3
 
-; Screen instantly goes white, then uncovers the screen in columns.
+; Screen instantly goes white.
 .define TRANSITION_SRC_INSTANT		$4
 
 ; Does the subrosia transition from seasons.

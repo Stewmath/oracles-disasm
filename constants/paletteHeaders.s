@@ -1,402 +1,391 @@
-; TODO: Figure out where the overlap is between ages and seasons
+; TODO: Fix naming scheme
+
+.enum 0
+	; Common palettes
+	PALH_00:	db ; $00
+	PALH_01:	db ; $01
+	PALH_02:	db ; $02
+	PALH_03:	db ; $03
+	PALH_04:	db ; $04
+	PALH_05:	db ; $05
+	PALH_06:	db ; $06
+	PALH_07:	db ; $07
+	PALH_08:	db ; $08
+	PALH_09:	db ; $09
+	PALH_0a:	db ; $0a
+	PALH_0b:	db ; $0b
+	PALH_0c:	db ; $0c
+	PALH_0d:	db ; $0d
+	PALH_0e:	db ; $0e
+	PALH_0f:	db ; $0f
 
 .ifdef ROM_AGES
 
-.define PALH_00 $00
-.define PALH_01 $01
-.define PALH_02 $02
-.define PALH_03 $03
-.define PALH_04 $04
-.define PALH_05 $05
-.define PALH_06 $06
-.define PALH_07 $07
-.define PALH_08 $08
-.define PALH_09 $09
-.define PALH_0a $0a
-.define PALH_0b $0b
-.define PALH_0c $0c
-.define PALH_0d $0d
-.define PALH_0e $0e
-.define PALH_0f $0f
-.define PALH_10 $10
-.define PALH_11 $11
-.define PALH_12 $12
-.define PALH_13 $13
-.define PALH_14 $14
-.define PALH_15 $15
-.define PALH_16 $16
-.define PALH_17 $17
-.define PALH_18 $18
-.define PALH_19 $19
-.define PALH_1a $1a
-.define PALH_1b $1b
-.define PALH_1c $1c
-.define PALH_1d $1d
-.define PALH_1e $1e
-.define PALH_1f $1f
-.define PALH_20 $20
-.define PALH_21 $21
-.define PALH_22 $22
-.define PALH_23 $23
-.define PALH_24 $24
-.define PALH_25 $25
-.define PALH_26 $26
-.define PALH_27 $27
-.define PALH_28 $28
-.define PALH_29 $29
-.define PALH_2a $2a
-.define PALH_2b $2b
-.define PALH_2c $2c
-.define PALH_2d $2d
-.define PALH_2e $2e
-.define PALH_2f $2f
-.define PALH_30 $30
-.define PALH_31 $31
-.define PALH_32 $32
-.define PALH_33 $33
-.define PALH_SEAWEED_CUT $34
-.define PALH_35 $35
-.define PALH_36 $36
-.define PALH_37 $37
-.define PALH_38 $38
-.define PALH_39 $39
-.define PALH_3a $3a
-.define PALH_3b $3b
-.define PALH_3c $3c
-.define PALH_3d $3d
-.define PALH_3e $3e
-.define PALH_3f $3f
-.define PALH_40 $40
-.define PALH_41 $41
-.define PALH_42 $42
-.define PALH_43 $43
-.define PALH_44 $44
-.define PALH_45 $45
-.define PALH_46 $46
-.define PALH_47 $47
-.define PALH_48 $48
-.define PALH_49 $49
-.define PALH_4a $4a
-.define PALH_4b $4b
-.define PALH_4c $4c
-.define PALH_4d $4d
-.define PALH_4e $4e
-.define PALH_4f $4f
-.define PALH_50 $50
-.define PALH_51 $51
-.define PALH_52 $52
-.define PALH_53 $53
-.define PALH_54 $54
-.define PALH_55 $55
-.define PALH_56 $56
-.define PALH_57 $57
-.define PALH_58 $58
-.define PALH_59 $59
-.define PALH_5a $5a
-.define PALH_5b $5b
-.define PALH_5c $5c
-.define PALH_5d $5d
-.define PALH_5e $5e
-.define PALH_5f $5f
-.define PALH_60 $60
-.define PALH_61 $61
-.define PALH_62 $62
-.define PALH_63 $63
-.define PALH_64 $64
-.define PALH_65 $65
-.define PALH_66 $66
-.define PALH_67 $67
-.define PALH_68 $68
-.define PALH_69 $69
-.define PALH_6a $6a
-.define PALH_6b $6b
-.define PALH_6c $6c
-.define PALH_6d $6d
-.define PALH_6e $6e
-.define PALH_6f $6f
-.define PALH_70 $70
-.define PALH_71 $71
-.define PALH_72 $72
-.define PALH_73 $73
-.define PALH_74 $74
-.define PALH_75 $75
-.define PALH_76 $76
-.define PALH_77 $77
-.define PALH_78 $78
-.define PALH_79 $79
-.define PALH_7a $7a
-.define PALH_7b $7b
-.define PALH_7c $7c
-.define PALH_7d $7d
-.define PALH_7e $7e
-.define PALH_7f $7f
-.define PALH_80 $80
-.define PALH_81 $81
-.define PALH_82 $82
-.define PALH_83 $83
-.define PALH_84 $84
-.define PALH_85 $85
-.define PALH_86 $86
-.define PALH_87 $87
-.define PALH_88 $88
-.define PALH_89 $89
-.define PALH_8a $8a
-.define PALH_8b $8b
-.define PALH_8c $8c
-.define PALH_8d $8d
-.define PALH_8e $8e
-.define PALH_8f $8f
-.define PALH_90 $90
-.define PALH_91 $91
-.define PALH_92 $92
-.define PALH_93 $93
-.define PALH_94 $94
-.define PALH_95 $95
-.define PALH_96 $96
-.define PALH_97 $97
-.define PALH_98 $98
-.define PALH_99 $99
-.define PALH_9a $9a
-.define PALH_9b $9b
-.define PALH_9c $9c
-.define PALH_9d $9d
-.define PALH_9e $9e
-.define PALH_9f $9f
-.define PALH_a0 $a0
-.define PALH_a1 $a1
-.define PALH_a2 $a2
-.define PALH_a3 $a3
-.define PALH_a4 $a4
-.define PALH_a5 $a5
-.define PALH_a6 $a6
-.define PALH_a7 $a7
-.define PALH_a8 $a8
-.define PALH_a9 $a9
-.define PALH_aa $aa
-.define PALH_ab $ab
-.define PALH_ac $ac
-.define PALH_ad $ad
-.define PALH_ae $ae
-.define PALH_af $af
-.define PALH_b0 $b0
-.define PALH_b1 $b1
-.define PALH_b2 $b2
-.define PALH_b3 $b3
-.define PALH_b4 $b4
-.define PALH_b5 $b5
-.define PALH_b6 $b6
-.define PALH_b7 $b7
-.define PALH_b8 $b8
-.define PALH_b9 $b9
-.define PALH_ba $ba
-.define PALH_bb $bb
-.define PALH_bc $bc
-.define PALH_bd $bd
-.define PALH_be $be
-.define PALH_bf $bf
-.define PALH_c0 $c0
-.define PALH_c1 $c1
-.define PALH_c2 $c2
-.define PALH_c3 $c3
-.define PALH_c4 $c4
-.define PALH_c5 $c5
-.define PALH_c6 $c6
-.define PALH_c7 $c7
-.define PALH_c8 $c8
-.define PALH_c9 $c9
-.define PALH_ca $ca
+	PALH_10:	db ; $10
+	PALH_11:	db ; $11
+	PALH_12:	db ; $12
+	PALH_13:	db ; $13
+	PALH_14:	db ; $14
+	PALH_15:	db ; $15
+	PALH_16:	db ; $16
+	PALH_17:	db ; $17
+	PALH_18:	db ; $18
+	PALH_19:	db ; $19
+	PALH_1a:	db ; $1a
+	PALH_1b:	db ; $1b
+	PALH_1c:	db ; $1c
+	PALH_1d:	db ; $1d
+	PALH_1e:	db ; $1e
+	PALH_1f:	db ; $1f
+	PALH_20:	db ; $20
+	PALH_21:	db ; $21
+	PALH_22:	db ; $22
+	PALH_23:	db ; $23
+	PALH_24:	db ; $24
+	PALH_25:	db ; $25
+	PALH_26:	db ; $26
+	PALH_27:	db ; $27
+	PALH_28:	db ; $28
+	PALH_29:	db ; $29
+	PALH_2a:	db ; $2a
+	PALH_2b:	db ; $2b
+	PALH_2c:	db ; $2c
+	PALH_2d:	db ; $2d
+	PALH_2e:	db ; $2e
+	PALH_2f:	db ; $2f
+	PALH_30:	db ; $30
+	PALH_31:	db ; $31
+	PALH_32:	db ; $32
+	PALH_33:	db ; $33
+	PALH_SEAWEED_CUT:	db ; $34
+	PALH_35:	db ; $35
+	PALH_36:	db ; $36
+	PALH_37:	db ; $37
+	PALH_38:	db ; $38
+	PALH_39:	db ; $39
+	PALH_3a:	db ; $3a
+	PALH_3b:	db ; $3b
+	PALH_3c:	db ; $3c
+	PALH_3d:	db ; $3d
+	PALH_3e:	db ; $3e
+	PALH_3f:	db ; $3f
+	PALH_40:	db ; $40
+	PALH_41:	db ; $41
+	PALH_42:	db ; $42
+	PALH_43:	db ; $43
+	PALH_44:	db ; $44
+	PALH_45:	db ; $45
+	PALH_46:	db ; $46
+	PALH_47:	db ; $47
+	PALH_48:	db ; $48
+	PALH_49:	db ; $49
+	PALH_4a:	db ; $4a
+	PALH_4b:	db ; $4b
+	PALH_4c:	db ; $4c
+	PALH_4d:	db ; $4d
+	PALH_4e:	db ; $4e
+	PALH_4f:	db ; $4f
+	PALH_50:	db ; $50
+	PALH_51:	db ; $51
+	PALH_52:	db ; $52
+	PALH_53:	db ; $53
+	PALH_54:	db ; $54
+	PALH_55:	db ; $55
+	PALH_56:	db ; $56
+	PALH_57:	db ; $57
+	PALH_58:	db ; $58
+	PALH_59:	db ; $59
+	PALH_5a:	db ; $5a
+	PALH_5b:	db ; $5b
+	PALH_5c:	db ; $5c
+	PALH_5d:	db ; $5d
+	PALH_5e:	db ; $5e
+	PALH_5f:	db ; $5f
+	PALH_60:	db ; $60
+	PALH_61:	db ; $61
+	PALH_62:	db ; $62
+	PALH_63:	db ; $63
+	PALH_64:	db ; $64
+	PALH_65:	db ; $65
+	PALH_66:	db ; $66
+	PALH_67:	db ; $67
+	PALH_68:	db ; $68
+	PALH_69:	db ; $69
+	PALH_6a:	db ; $6a
+	PALH_6b:	db ; $6b
+	PALH_6c:	db ; $6c
+	PALH_6d:	db ; $6d
+	PALH_6e:	db ; $6e
+	PALH_6f:	db ; $6f
+	PALH_70:	db ; $70
+	PALH_71:	db ; $71
+	PALH_72:	db ; $72
+	PALH_73:	db ; $73
+	PALH_74:	db ; $74
+	PALH_75:	db ; $75
+	PALH_76:	db ; $76
+	PALH_77:	db ; $77
+	PALH_78:	db ; $78
+	PALH_79:	db ; $79
+	PALH_7a:	db ; $7a
+	PALH_7b:	db ; $7b
+	PALH_7c:	db ; $7c
+	PALH_7d:	db ; $7d
+	PALH_7e:	db ; $7e
+	PALH_7f:	db ; $7f
+	PALH_80:	db ; $80
+	PALH_81:	db ; $81
+	PALH_82:	db ; $82
+	PALH_83:	db ; $83
+	PALH_84:	db ; $84
+	PALH_85:	db ; $85
+	PALH_86:	db ; $86
+	PALH_87:	db ; $87
+	PALH_88:	db ; $88
+	PALH_89:	db ; $89
+	PALH_8a:	db ; $8a
+	PALH_8b:	db ; $8b
+	PALH_8c:	db ; $8c
+	PALH_8d:	db ; $8d
+	PALH_8e:	db ; $8e
+	PALH_8f:	db ; $8f
+	PALH_90:	db ; $90
+	PALH_91:	db ; $91
+	PALH_92:	db ; $92
+	PALH_93:	db ; $93
+	PALH_94:	db ; $94
+	PALH_95:	db ; $95
+	PALH_96:	db ; $96
+	PALH_97:	db ; $97
+	PALH_98:	db ; $98
+	PALH_99:	db ; $99
+	PALH_9a:	db ; $9a
+	PALH_9b:	db ; $9b
+	PALH_9c:	db ; $9c
+	PALH_9d:	db ; $9d
+	PALH_9e:	db ; $9e
+	PALH_9f:	db ; $9f
+	PALH_a0:	db ; $a0
+	PALH_a1:	db ; $a1
+	PALH_a2:	db ; $a2
+	PALH_a3:	db ; $a3
+	PALH_a4:	db ; $a4
+	PALH_a5:	db ; $a5
+	PALH_a6:	db ; $a6
+	PALH_a7:	db ; $a7
+	PALH_SECRET_LIST_MENU:	db ; $a8
+	PALH_a9:	db ; $a9
+	PALH_aa:	db ; $aa
+	PALH_ab:	db ; $ab
+	PALH_ac:	db ; $ac
+	PALH_ad:	db ; $ad
+	PALH_ae:	db ; $ae
+	PALH_af:	db ; $af
+	PALH_b0:	db ; $b0
+	PALH_b1:	db ; $b1
+	PALH_b2:	db ; $b2
+	PALH_b3:	db ; $b3
+	PALH_b4:	db ; $b4
+	PALH_b5:	db ; $b5
+	PALH_b6:	db ; $b6
+	PALH_b7:	db ; $b7
+	PALH_b8:	db ; $b8
+	PALH_b9:	db ; $b9
+	PALH_ba:	db ; $ba
+	PALH_bb:	db ; $bb
+	PALH_bc:	db ; $bc
+	PALH_bd:	db ; $bd
+	PALH_be:	db ; $be
+	PALH_bf:	db ; $bf
+	PALH_c0:	db ; $c0
+	PALH_c1:	db ; $c1
+	PALH_c2:	db ; $c2
+	PALH_c3:	db ; $c3
+	PALH_c4:	db ; $c4
+	PALH_c5:	db ; $c5
+	PALH_c6:	db ; $c6
+	PALH_c7:	db ; $c7
+	PALH_c8:	db ; $c8
+	PALH_c9:	db ; $c9
+	PALH_ca:	db ; $ca
 
 .else; ROM_SEASONS
 
-.define SEASONS_PALH_00 $00
-.define SEASONS_PALH_01 $01
-.define SEASONS_PALH_02 $02
-.define SEASONS_PALH_03 $03
-.define SEASONS_PALH_04 $04
-.define SEASONS_PALH_05 $05
-.define SEASONS_PALH_06 $06
-.define SEASONS_PALH_07 $07
-.define SEASONS_PALH_08 $08
-.define SEASONS_PALH_09 $09
-.define SEASONS_PALH_0a $0a
-.define SEASONS_PALH_0b $0b
-.define SEASONS_PALH_0c $0c
-.define SEASONS_PALH_0d $0d
-.define SEASONS_PALH_0e $0e
-.define SEASONS_PALH_0f $0f
-.define SEASONS_PALH_10 $10
-.define SEASONS_PALH_11 $11
-.define SEASONS_PALH_12 $12
-.define SEASONS_PALH_13 $13
-.define SEASONS_PALH_14 $14
-.define SEASONS_PALH_15 $15
-.define SEASONS_PALH_16 $16
-.define SEASONS_PALH_17 $17
-.define SEASONS_PALH_18 $18
-.define SEASONS_PALH_19 $19
-.define SEASONS_PALH_1a $1a
-.define SEASONS_PALH_1b $1b
-.define SEASONS_PALH_1c $1c
-.define SEASONS_PALH_1d $1d
-.define SEASONS_PALH_1e $1e
-.define SEASONS_PALH_1f $1f
-.define SEASONS_PALH_20 $20
-.define SEASONS_PALH_21 $21
-.define SEASONS_PALH_22 $22
-.define SEASONS_PALH_23 $23
-.define SEASONS_PALH_24 $24
-.define SEASONS_PALH_25 $25
-.define SEASONS_PALH_26 $26
-.define SEASONS_PALH_27 $27
-.define SEASONS_PALH_28 $28
-.define SEASONS_PALH_29 $29
-.define SEASONS_PALH_2a $2a
-.define SEASONS_PALH_2b $2b
-.define SEASONS_PALH_2c $2c
-.define SEASONS_PALH_2d $2d
-.define SEASONS_PALH_2e $2e
-.define SEASONS_PALH_2f $2f
-.define SEASONS_PALH_30 $30
-.define SEASONS_PALH_31 $31
-.define SEASONS_PALH_32 $32
-.define SEASONS_PALH_33 $33
-.define SEASONS_PALH_SEAWEED_CUT $34
-.define SEASONS_PALH_35 $35
-.define SEASONS_PALH_36 $36
-.define SEASONS_PALH_37 $37
-.define SEASONS_PALH_38 $38
-.define SEASONS_PALH_39 $39
-.define SEASONS_PALH_3a $3a
-.define SEASONS_PALH_3b $3b
-.define SEASONS_PALH_3c $3c
-.define SEASONS_PALH_3d $3d
-.define SEASONS_PALH_3e $3e
-.define SEASONS_PALH_3f $3f
-.define SEASONS_PALH_40 $40
-.define SEASONS_PALH_41 $41
-.define SEASONS_PALH_42 $42
-.define SEASONS_PALH_43 $43
-.define SEASONS_PALH_44 $44
-.define SEASONS_PALH_45 $45
-.define SEASONS_PALH_46 $46
-.define SEASONS_PALH_47 $47
-.define SEASONS_PALH_48 $48
-.define SEASONS_PALH_49 $49
-.define SEASONS_PALH_4a $4a
-.define SEASONS_PALH_4b $4b
-.define SEASONS_PALH_4c $4c
-.define SEASONS_PALH_4d $4d
-.define SEASONS_PALH_4e $4e
-.define SEASONS_PALH_4f $4f
-.define SEASONS_PALH_50 $50
-.define SEASONS_PALH_51 $51
-.define SEASONS_PALH_52 $52
-.define SEASONS_PALH_53 $53
-.define SEASONS_PALH_54 $54
-.define SEASONS_PALH_55 $55
-.define SEASONS_PALH_56 $56
-.define SEASONS_PALH_57 $57
-.define SEASONS_PALH_58 $58
-.define SEASONS_PALH_59 $59
-.define SEASONS_PALH_5a $5a
-.define SEASONS_PALH_5b $5b
-.define SEASONS_PALH_5c $5c
-.define SEASONS_PALH_5d $5d
-.define SEASONS_PALH_5e $5e
-.define SEASONS_PALH_5f $5f
-.define SEASONS_PALH_60 $60
-.define SEASONS_PALH_61 $61
-.define SEASONS_PALH_62 $62
-.define SEASONS_PALH_63 $63
-.define SEASONS_PALH_64 $64
-.define SEASONS_PALH_65 $65
-.define SEASONS_PALH_66 $66
-.define SEASONS_PALH_67 $67
-.define SEASONS_PALH_68 $68
-.define SEASONS_PALH_69 $69
-.define SEASONS_PALH_6a $6a
-.define SEASONS_PALH_6b $6b
-.define SEASONS_PALH_6c $6c
-.define SEASONS_PALH_6d $6d
-.define SEASONS_PALH_6e $6e
-.define SEASONS_PALH_6f $6f
-.define SEASONS_PALH_70 $70
-.define SEASONS_PALH_71 $71
-.define SEASONS_PALH_72 $72
-.define SEASONS_PALH_73 $73
-.define SEASONS_PALH_74 $74
-.define SEASONS_PALH_75 $75
-.define SEASONS_PALH_76 $76
-.define SEASONS_PALH_77 $77
-.define SEASONS_PALH_78 $78
-.define SEASONS_PALH_79 $79
-.define SEASONS_PALH_7a $7a
-.define SEASONS_PALH_7b $7b
-.define SEASONS_PALH_7c $7c
-.define SEASONS_PALH_7d $7d
-.define SEASONS_PALH_7e $7e
-.define SEASONS_PALH_7f $7f
-.define SEASONS_PALH_80 $80
-.define SEASONS_PALH_81 $81
-.define SEASONS_PALH_82 $82
-.define SEASONS_PALH_83 $83
-.define SEASONS_PALH_84 $84
-.define SEASONS_PALH_85 $85
-.define SEASONS_PALH_86 $86
-.define SEASONS_PALH_87 $87
-.define SEASONS_PALH_88 $88
-.define SEASONS_PALH_89 $89
-.define SEASONS_PALH_8a $8a
-.define SEASONS_PALH_8b $8b
-.define SEASONS_PALH_8c $8c
-.define SEASONS_PALH_8d $8d
-.define SEASONS_PALH_8e $8e
-.define SEASONS_PALH_8f $8f
-.define SEASONS_PALH_90 $90
-.define SEASONS_PALH_91 $91
-.define SEASONS_PALH_92 $92
-.define SEASONS_PALH_93 $93
-.define SEASONS_PALH_94 $94
-.define SEASONS_PALH_95 $95
-.define SEASONS_PALH_96 $96
-.define SEASONS_PALH_97 $97
-.define SEASONS_PALH_98 $98
-.define SEASONS_PALH_99 $99
-.define SEASONS_PALH_9a $9a
-.define SEASONS_PALH_9b $9b
-.define SEASONS_PALH_9c $9c
-.define SEASONS_PALH_9d $9d
-.define SEASONS_PALH_9e $9e
-.define SEASONS_PALH_9f $9f
-.define SEASONS_PALH_a0 $a0
-.define SEASONS_PALH_a1 $a1
-.define SEASONS_PALH_a2 $a2
-.define SEASONS_PALH_a3 $a3
-.define SEASONS_PALH_a4 $a4
-.define SEASONS_PALH_a5 $a5
-.define SEASONS_PALH_a6 $a6
-.define SEASONS_PALH_a7 $a7
-.define SEASONS_PALH_a8 $a8
-.define SEASONS_PALH_a9 $a9
-.define SEASONS_PALH_aa $aa
-.define SEASONS_PALH_ab $ab
-.define SEASONS_PALH_ac $ac
-.define SEASONS_PALH_ad $ad
-.define SEASONS_PALH_ae $ae
-.define SEASONS_PALH_af $af
-.define SEASONS_PALH_b0 $b0
-.define SEASONS_PALH_b1 $b1
-.define SEASONS_PALH_b2 $b2
-.define SEASONS_PALH_b3 $b3
-.define SEASONS_PALH_b4 $b4
-.define SEASONS_PALH_b5 $b5
-.define SEASONS_PALH_b6 $b6
-.define SEASONS_PALH_b7 $b7
-.define SEASONS_PALH_b8 $b8
-.define SEASONS_PALH_b9 $b9
-.define SEASONS_PALH_ba $ba
-.define SEASONS_PALH_bb $bb
-.define SEASONS_PALH_bc $bc
-.define SEASONS_PALH_bd $bd
+	SEASONS_PALH_10:	db ; $10
+	SEASONS_PALH_11:	db ; $11
+	SEASONS_PALH_12:	db ; $12
+	SEASONS_PALH_13:	db ; $13
+	SEASONS_PALH_14:	db ; $14
+	SEASONS_PALH_15:	db ; $15
+	SEASONS_PALH_16:	db ; $16
+	SEASONS_PALH_17:	db ; $17
+	SEASONS_PALH_18:	db ; $18
+	SEASONS_PALH_19:	db ; $19
+	SEASONS_PALH_1a:	db ; $1a
+	SEASONS_PALH_1b:	db ; $1b
+	SEASONS_PALH_1c:	db ; $1c
+	SEASONS_PALH_1d:	db ; $1d
+	SEASONS_PALH_1e:	db ; $1e
+	SEASONS_PALH_1f:	db ; $1f
+	SEASONS_PALH_20:	db ; $20
+	SEASONS_PALH_21:	db ; $21
+	SEASONS_PALH_22:	db ; $22
+	SEASONS_PALH_23:	db ; $23
+	SEASONS_PALH_24:	db ; $24
+	SEASONS_PALH_25:	db ; $25
+	SEASONS_PALH_26:	db ; $26
+	SEASONS_PALH_27:	db ; $27
+	SEASONS_PALH_28:	db ; $28
+	SEASONS_PALH_29:	db ; $29
+	SEASONS_PALH_2a:	db ; $2a
+	SEASONS_PALH_2b:	db ; $2b
+	SEASONS_PALH_2c:	db ; $2c
+	SEASONS_PALH_2d:	db ; $2d
+	SEASONS_PALH_2e:	db ; $2e
+	SEASONS_PALH_2f:	db ; $2f
+	SEASONS_PALH_30:	db ; $30
+	SEASONS_PALH_31:	db ; $31
+	SEASONS_PALH_32:	db ; $32
+	SEASONS_PALH_33:	db ; $33
+	SEASONS_PALH_34:	db ; $34
+	SEASONS_PALH_35:	db ; $35
+	SEASONS_PALH_36:	db ; $36
+	SEASONS_PALH_37:	db ; $37
+	SEASONS_PALH_38:	db ; $38
+	SEASONS_PALH_39:	db ; $39
+	SEASONS_PALH_3a:	db ; $3a
+	SEASONS_PALH_3b:	db ; $3b
+	SEASONS_PALH_3c:	db ; $3c
+	SEASONS_PALH_3d:	db ; $3d
+	SEASONS_PALH_3e:	db ; $3e
+	PALH_SECRET_LIST_MENU:	db ; $3f
+	SEASONS_PALH_40:	db ; $40
+	SEASONS_PALH_41:	db ; $41
+	SEASONS_PALH_42:	db ; $42
+	SEASONS_PALH_43:	db ; $43
+	SEASONS_PALH_44:	db ; $44
+	SEASONS_PALH_45:	db ; $45
+	SEASONS_PALH_46:	db ; $46
+	SEASONS_PALH_47:	db ; $47
+	SEASONS_PALH_48:	db ; $48
+	SEASONS_PALH_49:	db ; $49
+	SEASONS_PALH_4a:	db ; $4a
+	SEASONS_PALH_4b:	db ; $4b
+	SEASONS_PALH_4c:	db ; $4c
+	SEASONS_PALH_4d:	db ; $4d
+	SEASONS_PALH_4e:	db ; $4e
+	SEASONS_PALH_4f:	db ; $4f
+	SEASONS_PALH_50:	db ; $50
+	SEASONS_PALH_51:	db ; $51
+	SEASONS_PALH_52:	db ; $52
+	SEASONS_PALH_53:	db ; $53
+	SEASONS_PALH_54:	db ; $54
+	SEASONS_PALH_55:	db ; $55
+	SEASONS_PALH_56:	db ; $56
+	SEASONS_PALH_57:	db ; $57
+	SEASONS_PALH_58:	db ; $58
+	SEASONS_PALH_59:	db ; $59
+	SEASONS_PALH_5a:	db ; $5a
+	SEASONS_PALH_5b:	db ; $5b
+	SEASONS_PALH_5c:	db ; $5c
+	SEASONS_PALH_5d:	db ; $5d
+	SEASONS_PALH_5e:	db ; $5e
+	SEASONS_PALH_5f:	db ; $5f
+	SEASONS_PALH_60:	db ; $60
+	SEASONS_PALH_61:	db ; $61
+	SEASONS_PALH_62:	db ; $62
+	SEASONS_PALH_63:	db ; $63
+	SEASONS_PALH_64:	db ; $64
+	SEASONS_PALH_65:	db ; $65
+	SEASONS_PALH_66:	db ; $66
+	SEASONS_PALH_67:	db ; $67
+	SEASONS_PALH_68:	db ; $68
+	SEASONS_PALH_69:	db ; $69
+	SEASONS_PALH_6a:	db ; $6a
+	SEASONS_PALH_6b:	db ; $6b
+	SEASONS_PALH_6c:	db ; $6c
+	SEASONS_PALH_6d:	db ; $6d
+	SEASONS_PALH_6e:	db ; $6e
+	SEASONS_PALH_6f:	db ; $6f
+	SEASONS_PALH_70:	db ; $70
+	SEASONS_PALH_71:	db ; $71
+	SEASONS_PALH_72:	db ; $72
+	SEASONS_PALH_73:	db ; $73
+	SEASONS_PALH_74:	db ; $74
+	SEASONS_PALH_75:	db ; $75
+	SEASONS_PALH_76:	db ; $76
+	SEASONS_PALH_77:	db ; $77
+	SEASONS_PALH_78:	db ; $78
+	SEASONS_PALH_79:	db ; $79
+	SEASONS_PALH_7a:	db ; $7a
+	SEASONS_PALH_7b:	db ; $7b
+	SEASONS_PALH_7c:	db ; $7c
+	SEASONS_PALH_7d:	db ; $7d
+	SEASONS_PALH_7e:	db ; $7e
+	SEASONS_PALH_7f:	db ; $7f
+	SEASONS_PALH_80:	db ; $80
+	SEASONS_PALH_81:	db ; $81
+	SEASONS_PALH_82:	db ; $82
+	SEASONS_PALH_83:	db ; $83
+	SEASONS_PALH_84:	db ; $84
+	SEASONS_PALH_85:	db ; $85
+	SEASONS_PALH_86:	db ; $86
+	SEASONS_PALH_87:	db ; $87
+	SEASONS_PALH_88:	db ; $88
+	SEASONS_PALH_89:	db ; $89
+	SEASONS_PALH_8a:	db ; $8a
+	SEASONS_PALH_8b:	db ; $8b
+	SEASONS_PALH_8c:	db ; $8c
+	SEASONS_PALH_8d:	db ; $8d
+	SEASONS_PALH_8e:	db ; $8e
+	SEASONS_PALH_8f:	db ; $8f
+	SEASONS_PALH_90:	db ; $90
+	SEASONS_PALH_91:	db ; $91
+	SEASONS_PALH_92:	db ; $92
+	SEASONS_PALH_93:	db ; $93
+	SEASONS_PALH_94:	db ; $94
+	SEASONS_PALH_95:	db ; $95
+	SEASONS_PALH_96:	db ; $96
+	SEASONS_PALH_97:	db ; $97
+	SEASONS_PALH_98:	db ; $98
+	SEASONS_PALH_99:	db ; $99
+	SEASONS_PALH_9a:	db ; $9a
+	SEASONS_PALH_9b:	db ; $9b
+	SEASONS_PALH_9c:	db ; $9c
+	SEASONS_PALH_9d:	db ; $9d
+	SEASONS_PALH_9e:	db ; $9e
+	SEASONS_PALH_9f:	db ; $9f
+	SEASONS_PALH_a0:	db ; $a0
+	SEASONS_PALH_a1:	db ; $a1
+	SEASONS_PALH_a2:	db ; $a2
+	SEASONS_PALH_a3:	db ; $a3
+	SEASONS_PALH_a4:	db ; $a4
+	SEASONS_PALH_a5:	db ; $a5
+	SEASONS_PALH_a6:	db ; $a6
+	SEASONS_PALH_a7:	db ; $a7
+	SEASONS_PALH_a8:	db ; $a8
+	SEASONS_PALH_a9:	db ; $a9
+	SEASONS_PALH_aa:	db ; $aa
+	SEASONS_PALH_ab:	db ; $ab
+	SEASONS_PALH_ac:	db ; $ac
+	SEASONS_PALH_ad:	db ; $ad
+	SEASONS_PALH_ae:	db ; $ae
+	SEASONS_PALH_af:	db ; $af
+	SEASONS_PALH_b0:	db ; $b0
+	SEASONS_PALH_b1:	db ; $b1
+	SEASONS_PALH_b2:	db ; $b2
+	SEASONS_PALH_b3:	db ; $b3
+	SEASONS_PALH_b4:	db ; $b4
+	SEASONS_PALH_b5:	db ; $b5
+	SEASONS_PALH_b6:	db ; $b6
+	SEASONS_PALH_b7:	db ; $b7
+	SEASONS_PALH_b8:	db ; $b8
+	SEASONS_PALH_b9:	db ; $b9
+	SEASONS_PALH_ba:	db ; $ba
+	SEASONS_PALH_bb:	db ; $bb
+	SEASONS_PALH_bc:	db ; $bc
+	SEASONS_PALH_bd:	db ; $bd
 
 .endif
+
+.ende

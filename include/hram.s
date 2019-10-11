@@ -1,6 +1,4 @@
-
-;0w"ayet;llllll"oyegT:%s/ld \(.*\)$ff00+$o/ldh \1<agtj
-.enum $ff80
+.enum $ff80 export
 	hOamFunc			dsb $a	; $ff80
 
 	; General-purpose variables
@@ -45,7 +43,7 @@
 	hLcdInterruptCounter		db	; $ff9c
 
 	; Copied to hLcdInterruptBehaviour at vblank, to avoid anomolies mid-frame.
-	hNextLcdInterruptBehaviour	db	; $ff9d
+	hNextLcdInterruptBehaviour	db	; $ff9d/$ff9b
 
 	hActiveThread			db	; $ff9e
 
@@ -120,7 +118,7 @@
 	hFFBF				db	; $ffbf
 .ende
 
-.enum $ffc0
+.enum $ffc0 export
 	; Marker for end of "normal" hram, beginning of music stuff
 	hramEnd			 	.db	; $ffc0
 

@@ -65,7 +65,7 @@ cutscene14:
 	ld a,$10		; $618e
 	ld (wGfxRegs2.LYC),a		; $6190
 	ld a,$02		; $6193
-	ldh (<hLcdInterruptBehaviour),a	; $6195
+	ldh (<hNextLcdInterruptBehaviour),a	; $6195
 	xor a			; $6197
 	ld (wTmpcbb7),a		; $6198
 	call @initWaveScrollValues_everyOtherLine		; $619b
@@ -111,7 +111,7 @@ cutscene14:
 	ld a,CUTSCENE_S_03		; $61e5
 	ld (wCutsceneIndex),a		; $61e7
 	ld a,$03		; $61ea
-	ldh (<hLcdInterruptBehaviour),a	; $61ec
+	ldh (<hNextLcdInterruptBehaviour),a	; $61ec
 	ld a,GLOBALFLAG_S_24		; $61ee
 	call setGlobalFlag		; $61f0
 
@@ -176,7 +176,7 @@ cutscene14:
 	ld a,(hl)		; $6255
 	jp nz,@initWaveScrollValues_everyOtherLine		; $6256
 
-	call func_1618		; $6259
+	call refreshObjectGfx		; $6259
 	ld a,LINK_STATE_NORMAL		; $625c
 	ld (wLinkForceState),a		; $625e
 
@@ -186,7 +186,7 @@ cutscene14:
 	ld a,CUTSCENE_S_INGAME		; $6267
 	ld (wCutsceneIndex),a		; $6269
 	ld a,$03		; $626c
-	ldh (<hLcdInterruptBehaviour),a	; $626e
+	ldh (<hNextLcdInterruptBehaviour),a	; $626e
 	ld a,$01		; $6270
 	ld (wScrollMode),a		; $6272
 

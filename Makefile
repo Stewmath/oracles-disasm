@@ -4,6 +4,8 @@
 # copy of the original game.
 BUILD_VANILLA = true
 
+SHELL := /bin/bash
+
 CC = wla-gb
 LD = wlalink
 PYTHON = python2
@@ -25,11 +27,13 @@ ifdef FORCE_SECTIONS
 	DEFINES += -D FORCE_SECTIONS
 endif
 ifdef ROM_SEASONS
-	DEFINES += -D ROM_SEASONS
+	DEFINES += -D ROM_SEASONS -D FORCE_SECTIONS # TODO: remove force_sections later
 	GAME = seasons
+	TEXT_INSERT_ADDRESS = 0x71c00
 else # ROM_AGES
 	DEFINES += -D ROM_AGES
 	GAME = ages
+	TEXT_INSERT_ADDRESS = 0x74000
 endif
 
 CFLAGS += $(DEFINES)
@@ -44,7 +48,7 @@ CMP_MODE = $(NO_PRECMP_FILE)
 endif
 
 
-OBJS = build/main.o
+OBJS = build/$(GAME).o build/audio.o
 
 GFXFILES = $(wildcard gfx/*.bin)
 GFXFILES += $(wildcard gfx/$(GAME)/*.bin)
@@ -84,7 +88,7 @@ endif
 
 all:
 	@$(MAKE) --no-print-directory ages
-#	@$(MAKE) --no-print-directory seasons
+	@$(MAKE) --no-print-directory seasons
 
 ages:
 	@echo '=====Ages====='
@@ -103,32 +107,37 @@ seasons:
 	@ROM_SEASONS=1 $(MAKE) seasons.gbc
 
 
-%.gbc: build/main.o linkfile
-	$(LD) -S linkfile $@
+$(GAME).gbc: $(OBJS) build/linkfile
+	$(LD) -S build/linkfile $@
 
 ifeq ($(BUILD_VANILLA),true)
-	@-md5sum -c $*.md5
+	@-md5sum -c $(GAME).md5
 endif
 
 gfx/gfx_link_oldspot.bin: gfx/gfx_link.bin
 	tools/copyLinkGfx.py
 
-build/main.o: $(GFXFILES) $(ROOMLAYOUTFILES) $(COLLISIONFILES) $(MAPPINGINDICESFILES) $(GAMEDATAFILES)
-build/main.o: build/textData.s build/textDefines.s
-build/main.o: code/*.s code/$(GAME)/*.s constants/*.s data/*.s include/*.s objects/*.s scripts/*.s audio/*.s audio/*.bin
-build/main.o: build/tilesets/tileMappingTable.bin build/tilesets/tileMappingIndexData.bin build/tilesets/tileMappingAttributeData.bin
-build/main.o: rooms/$(GAME)/*.bin
-
 $(MAPPINGINDICESFILES): build/tilesets/mappingsDictionary.bin
 $(COLLISIONFILES): build/tilesets/collisionsDictionary.bin
 
+build/$(GAME).o: $(GFXFILES) $(ROOMLAYOUTFILES) $(COLLISIONFILES) $(MAPPINGINDICESFILES) $(GAMEDATAFILES)
+build/$(GAME).o: build/textData.s build/textDefines.s
+build/$(GAME).o: code/*.s code/$(GAME)/*.s data/*.s objects/*.s objects/$(GAME)/*.s scripts/$(GAME)/*.s
+build/$(GAME).o: build/tilesets/tileMappingTable.bin build/tilesets/tileMappingIndexData.bin build/tilesets/tileMappingAttributeData.bin
+build/$(GAME).o: rooms/$(GAME)/*.bin
 
-build/%.o: %.s Makefile | build
+build/audio.o: audio/$(GAME)/*.s audio/$(GAME)/*.bin
+build/*.o: include/*.s constants/*.s Makefile
+
+build/$(GAME).o: $(GAME).s Makefile | build
 	$(CC) -o $@ $(CFLAGS) $<
-	
-linkfile: $(OBJS)
-	@echo "[objects]" > linkfile
-	@echo "$(OBJS)" | sed 's/ /\n/g' >> linkfile
+
+build/%.o: code/%.s | build
+	$(CC) -o $@ $(CFLAGS) $<
+
+build/linkfile: $(OBJS)
+	@echo "[objects]" > $@
+	@echo "$(OBJS)" | sed 's/ /\n/g' >> $@
 
 build/rooms/%.cmp: rooms/$(GAME)/small/%.bin $(CMP_MODE) | build/rooms
 	@echo "Compressing $< to $@..."
@@ -206,25 +215,32 @@ build/textDefines.s: precompressed/$(GAME)/textDefines.s $(CMP_MODE) | build
 
 else
 
-# The parseTilesets script generates all of these files
+# The parseTilesets script generates all of these files.
+# They need dummy rules in their recipes to convince make that they've been changed?
 $(MAPPINGINDICESFILES:.cmp=.bin): build/tilesets/mappingsUpdated
+	@sleep 0
 build/tilesets/mappingsDictionary.bin: build/tilesets/mappingsUpdated
+	@sleep 0
 build/tilesets/tileMappingTable.bin: build/tilesets/mappingsUpdated
+	@sleep 0
 build/tilesets/tileMappingIndexData.bin: build/tilesets/mappingsUpdated
+	@sleep 0
 build/tilesets/tileMappingAttributeData.bin: build/tilesets/mappingsUpdated
+	@sleep 0
 
 # mappingsUpdated is a stub file which is just used as a timestamp from the
 # last time parseTilesets was run.
 build/tilesets/mappingsUpdated: $(wildcard tilesets/$(GAME)/tilesetMappings*.bin) $(CMP_MODE) | build/tilesets
 	@echo "Compressing tileset mappings..."
 	@$(PYTHON) tools/parseTilesets.py $(GAME)
+	@echo "Done compressing tileset mappings."
 	@touch $@
 
 build/tilesets/tilesetMappings%Indices.cmp: build/tilesets/tilesetMappings%Indices.bin build/tilesets/mappingsDictionary.bin $(CMP_MODE) | build/tilesets
 	@echo "Compressing $< to $@..."
 	@$(PYTHON) tools/compressTilesetData.py $< $@ 1 build/tilesets/mappingsDictionary.bin
 
-build/tilesets/tilesetCollisions%.cmp: tilesets/$(GAME)/tilesetCollisions%.bin $(CMP_MODE) | build/tilesets
+build/tilesets/tilesetCollisions%.cmp: tilesets/$(GAME)/tilesetCollisions%.bin build/tilesets/collisionsDictionary.bin $(CMP_MODE) | build/tilesets
 	@echo "Compressing $< to $@..."
 	@$(PYTHON) tools/compressTilesetData.py $< $@ 0 build/tilesets/collisionsDictionary.bin
 
@@ -234,6 +250,9 @@ build/rooms/room04%.cmp: rooms/$(GAME)/large/room04%.bin $(CMP_MODE) | build/roo
 build/rooms/room05%.cmp: rooms/$(GAME)/large/room05%.bin $(CMP_MODE) | build/rooms
 	@echo "Compressing $< to $@..."
 	@$(PYTHON) tools/compressRoomLayout.py $< $@ -d rooms/$(GAME)/dictionary5.bin
+build/rooms/room06%.cmp: rooms/$(GAME)/large/room06%.bin $(CMP_MODE) | build/rooms
+	@echo "Compressing $< to $@..."
+	@$(PYTHON) tools/compressRoomLayout.py $< $@ -d rooms/$(GAME)/dictionary6.bin
 
 # Compress graphics (from either game)
 build/gfx/%.cmp: gfx_compressible/%.bin $(CMP_MODE) | build/gfx
@@ -247,7 +266,7 @@ build/gfx/%.cmp: gfx_compressible/$(GAME)/%.bin $(CMP_MODE) | build/gfx
 
 build/textData.s: text/$(GAME)/text.txt text/$(GAME)/dict.txt tools/parseText.py $(CMP_MODE) | build
 	@echo "Compressing text..."
-	@$(PYTHON) tools/parseText.py text/$(GAME)/dict.txt $< $@ $$((0x74000)) $$((0x2c))
+	@$(PYTHON) tools/parseText.py text/$(GAME)/dict.txt $< $@ $$(($(TEXT_INSERT_ADDRESS))) $$((0x2c))
 
 build/textDefines.s: build/textData.s
 
@@ -266,11 +285,6 @@ build/tilesets: | build
 	mkdir build/tilesets
 build/doc: | build
 	mkdir build/doc
-
-
-force:
-	$(MAKE) build/main.o --always-make
-	$(MAKE)
 
 clean:
 	-rm -R build_ages/ build_seasons/ doc/ ages.gbc seasons.gbc

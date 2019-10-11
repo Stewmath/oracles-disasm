@@ -3,7 +3,7 @@
 ; When 2 addresses are listed (ie. $c6b9/$c6b5), the first address is for ages, the second
 ; is for seasons. If only one is listed, assume it's for ages.
 
-.enum $c000
+.enum $c000 export
 
 wMusicReadFunction: ; $c000
 ; Function copied to RAM to read a byte from another bank.
@@ -122,7 +122,7 @@ wChannelVolumes: ; $c07d
 
 .ende
 
-.enum $c0a0
+.enum $c0a0 export
 
 wMusicQueue: ; $c0a0
 	dsb $10
@@ -184,7 +184,7 @@ wThreadStateBuffer: ; $c2e0
 .define wPaletteThread_fadeOffset	wThreadStateBuffer + $1f ; $c2ff
 
 
-.enum $c300
+.enum $c300 export
 
 wBigBuffer: ; $c300
 ; General purpose $100 byte buffer. This has several, mutually exclusive uses:
@@ -308,7 +308,7 @@ wPuddleAnimationPointer: ; $c4ba
 .ende
 
 
-.enum $c4c0
+.enum $c4c0 export
 
 wTerrainEffectsBuffer: ; $c4c0
 ; This might only be used for drawing objects' shadows, though in theory it could also be
@@ -332,7 +332,7 @@ wc540:
 ; Everything from this point ($c5b0) up to $caff goes into the save data ($550 bytes).
 ; ========================================================================================
 
-.enum $c5b0
+.enum $c5b0 export
 
 wFileStart: ; $c5b0
 ; Start of file data (same address as checksum)
@@ -352,7 +352,7 @@ wSavefileString: ; $c5b2
 .ende
 
 
-.enum $c5c0
+.enum $c5c0 export
 
 wUnappraisedRings: ; $c5c0
 ; List of unappraised rings. each byte always seems to have bit 6 set, indicating that the
@@ -457,9 +457,6 @@ wDeathRespawnBuffer: ; $c62b
 ; $0c bytes
 	INSTANCEOF DeathRespawnStruct
 
-wc637: ; $c637
-	db
-
 wLastAnimalMountPointY: ; $c638
 ; Looks like a component is set to $10 or $70 if the animal enters from
 ; a particular side. Not sure what it's used for.
@@ -480,6 +477,8 @@ wMinimapDungeonMapPosition: ; $c63c
 wMinimapDungeonFloor: ; $c63d
 	db
 
+.ifdef ROM_AGES
+
 wPortalGroup: ; $c63e
 ; This is set to $ff at the beginning of the game, indicating there's no portal.
 	db
@@ -487,6 +486,8 @@ wPortalRoom: ; $c63f
 	db
 wPortalPos: ; $c640
 	db
+
+.endif
 
 wMapleKillCounter: ; $c641/$c63e
 ; Maple appears when this reaches 30 (15 with Maple's ring).
@@ -511,7 +512,7 @@ wBoughtShopItems2: ; $c643
 ; Bit 6: Bought heart piece from hidden shop.
 	db
 
-wMapleState: ; $c644
+wMapleState: ; $c644/$c641
 ; Bits 0-3: Number of maple encounters?
 ; Bit 4:    Set while touching book is being exchanged (unset at end of encounter)
 ; Bit 5:    Set if the touching book has been exchanged (permanently set)
@@ -557,47 +558,52 @@ wc64a: ; $c64a
 wc64b: ; $c64b
 	db
 
-wGashaSpotFlags	 ; $c64c
+wGashaSpotFlags	 ; $c64c/$c649
 ; Bit 0 is set if you've harvested at least one gasha nut before. The first gasha nut
 ; always gives you a "class 1" ring (one of the weak, common ones).
 ; Bit 1 is set if you've obtained the heart piece from one of the gasha spots.
 	db
-wGashaSpotsPlantedBitset ; $c64d
+wGashaSpotsPlantedBitset ; $c64d/$c64a
 ; 2 bytes (1 bit for each spot)
 	dsb NUM_GASHA_SPOTS/8
-wGashaSpotKillCounters: ; $c64f
+wGashaSpotKillCounters: ; $c64f/$c64c
 ; 16 bytes (1 byte for each spot)
 	dsb NUM_GASHA_SPOTS
 
-wGashaMaturity: ; $c65f
+wGashaMaturity: ; $c65f/$c65c
 ; When this value is 300 or higher, you get the best prizes from gasha trees; otherwise,
 ; the prizes get progressively worse.
 ; Many things increase this (digging, getting essence, screen transitions), and it gets
 ; decreased by 200 when a gasha nut is harvested.
 	dw
 
+.ifdef ROM_AGES
 wc661: ; $c661
 	db
+.else
+ws_c65d: ; TODO: figure out what this is
+	dsb 4
+.endif
 
-wDungeonVisitedFloors: ; $c662
+wDungeonVisitedFloors: ; $c662/$c662
 ; 1 byte per dungeon ($10 total). Each byte is a bitset of visited floors for a particular dungeon.
 	dsb NUM_DUNGEONS
 
-wDungeonSmallKeys: ; $c672
+wDungeonSmallKeys: ; $c672/$c66e
 ; 1 byte per dungeon.
 	dsb NUM_DUNGEONS
 
-wDungeonBossKeys: ; $c682
+wDungeonBossKeys: ; $c682/$c67a
 ; Bitset of boss keys obtained
-	dsb NUM_DUNGEONS/8
+	dsb NUM_DUNGEONS_DIV_8
 
 wDungeonCompasses: ; $c684/$c67c
 ; Bitset of compasses obtained
-	dsb NUM_DUNGEONS/8
+	dsb NUM_DUNGEONS_DIV_8
 
-wDungeonMaps: ; $c686
+wDungeonMaps: ; $c686/$c67e
 ; Bitset of maps obtained
-	dsb NUM_DUNGEONS/8
+	dsb NUM_DUNGEONS_DIV_8
 
 wInventoryB: ; $c688/$c680
 	db
@@ -626,9 +632,9 @@ wNumOreChunks: ; $c6a7
 	dw
 .endif
 
-wShieldLevel: ; $c6af
+wShieldLevel: ; $c6af/$c6a9
 	db
-wNumBombs: ; $c6b0
+wNumBombs: ; $c6b0/$c6aa
 	db
 wMaxBombs: ; $c6b1
 	db
@@ -673,20 +679,23 @@ wFeatherLevel: ; $c6b4
 
 wNumEmberSeeds: ; $c6b9/$c6b5
 	db
-wNumScentSeeds: ; $c6ba
+wNumScentSeeds: ; $c6ba/$c6b6
 	db
 wNumPegasusSeeds: ; $c6bb/$c6b7
 	db
-wNumGaleSeeds: ; $c6bc
+wNumGaleSeeds: ; $c6bc/$c6b8
 	db
 wNumMysterySeeds: ; $c6bd/$c6b9
 	db
-wNumGashaSeeds: ; $c6be
+wNumGashaSeeds: ; $c6be/$c6ba
 	db
 wEssencesObtained: ; $c6bf
 	db
 wTradeItem: ; $c6c0
 	db
+
+.ifdef ROM_AGES
+
 wc6c1: ; $c6c1
 	db
 wTuniNutState: ; $c6c2
@@ -697,6 +706,13 @@ wTuniNutState: ; $c6c2
 wNumSlates: ; $c6c3
 ; Slates used only in ages dungeon 8
 	db
+
+.else; ROM_SEASONS
+
+wPirateBellState: ; -/$c6bd
+	db
+.endif
+
 wSatchelSelectedSeeds: ; $c6c4/$c6be
 	db
 wShooterSelectedSeeds: ; $c6c5/$c6bf
@@ -707,7 +723,7 @@ wRingBoxContents: ; $c6c6/$c6c0
 wActiveRing: ; $c6cb/$c6c5
 ; When bit 6 is set, the ring is disabled?
 	db
-wRingBoxLevel: ; $c6cc
+wRingBoxLevel: ; $c6cc/$c6c6
 	db
 wNumUnappraisedRingsBcd: ; $c6cd
 	db
@@ -742,7 +758,7 @@ wc6e2: ; $c6e2
 wChildStage8Response: ; $c6e3
 ; This is the response to the child's question or request at stage 8.
 	db
-wChildPersonality: ; $c6e4
+wChildPersonality: ; $c6e4/$c6de
 ; When [wChildStage] >= 4, he starts developing a personality.
 ; For stages 4-6:
 ;   0: Hyperactive
@@ -754,15 +770,18 @@ wChildPersonality: ; $c6e4
 ;   2: Arborist
 ;   3: Singer
 	db
-wc6e5: ; $c6e5
+wc6e5: ; $c6e5/$c6df
 	db
 
 .ifdef ROM_SEASONS
 
-; Not exactly sure where this goes; somewhere between globalFlags and makuText below.
+ws_c6e0: ; TODO: figure out what this is
+	db
 wInsertedJewels: ; -/$c6e1
 ; Bitset of jewels inserted into tarm ruins entrance.
 	db
+ws_c6e2: ; TODO: figure out what this is
+	dsb 3
 
 .endif
 
@@ -770,6 +789,9 @@ wInsertedJewels: ; -/$c6e1
 wMakuMapTextPresent: ; $c6e6/$c6e5
 ; Low byte of text index (05XX) of text to show when selecting maku tree on map
 	db
+
+.ifdef ROM_AGES
+
 wMakuMapTextPast: ; $c6e7
 	db
 
@@ -804,7 +826,9 @@ wPirateShipAngle: ; $c6ef
 wc6f0: ; $c6f0
 	dsb $b
 
-wShortSecretIndex: ; $c6fb
+.endif ; ROM_AGES
+
+wShortSecretIndex: ; $c6fb/$c6e6
 ; bits 0-3: index of a small secret?
 ; bits 4-5: indicates the game it's for, and whether it's a return secret or not?
 ; Also used as a placeholder in the "giveTreasure" function?
@@ -829,7 +853,7 @@ wSecretType: ; $c6fe
 .define wSeedsAndHarpSongsObtained	wObtainedTreasureFlags+TREASURE_EMBER_SEEDS/8
 
 
-.enum $c700
+.enum $c700 export
 
 ; Flags shared for above water and underwater
 wPresentRoomFlags: ; $c700
@@ -1529,15 +1553,15 @@ wInteractionIDToLoadExtraGfx: ; $cc1e
 ; Same as above, but for interactions.
 	db
 
-wcc1f: ; $cc1f
-	db
-wcc20: ; $cc20
-	db
+.ende
 
-.ifdef ROM_SEASONS
-; TODO: Figure out what's here. (It might be at $cc1f instead of $cc21.)
-seasonsCC21:
-	dsb $1d
+; Ages: $cc1f-$cc20 unused.
+; Seasons: $cc1f-$cc3c are occupied by data which, in ages, is at $cdc0.
+
+.ifdef ROM_AGES
+	.enum $cc21 export
+.else
+	.enum $cc3d export
 .endif
 
 ; Point to respawn after falling in hole or w/e
@@ -1566,7 +1590,7 @@ wRememberedCompanionX: ; $cc28/$cc44
 ; Dunno what the distinction is between these and wKeysPressed, wKeysJustPressed?
 wGameKeysPressed: ; $cc29
 	db
-wGameKeysJustPressed: ; $cc2a
+wGameKeysJustPressed: ; $cc2a/$cc46
 	db
 
 wLinkAngle: ; $cc2b
@@ -1815,7 +1839,7 @@ wLinkInAir: ; $cc5c/$cc77
 
 wLinkSwimmingState: ; $cc5d
 ; Bit 7 is set when Link dives underwater.
-; Bit 6 causes Link to drown.
+; Bit 6 causes Link to drown (it's lava).
 ; Bits 0-3 hold a "state" which remembers whether Link is actually in the water, and
 ; whether he just entered or has been there for a few frames.
 	db
@@ -1955,7 +1979,7 @@ wTextInputResult: ; $cc89
 
 ; Everything from $cc8a-$cce0 is cleared on screen transitions?
 
-wDisabledObjects: ; $cc8a
+wDisabledObjects: ; $cc8a/$cca4
 ; Bit 0 disables link.
 ; Bit 1 disables interactions.
 ; Bit 2 disables enemies.
@@ -1972,27 +1996,27 @@ wLinkCanPassNpcs: ; $cc8c/$cca6
 ; Set when in a miniboss portal, using gale seeds, in a timewarp.
 	db
 
-wLinkPlayingInstrument: ; $cc8d
+wLinkPlayingInstrument: ; $cc8d/$cca7
 ; Nonzero while playing an instrument.
 ; Set to $ff when playing flute; otherwise, this is the value of wSelectedHarpSong.
 ; Copied to wLinkRidingObject?
 	db
 
-wEnteredWarpPosition: ; $cc8e
+wEnteredWarpPosition: ; $cc8e/$cca8
 ; After certain warps and when falling down holes, this variable is set to Link's
 ; position. When it is set, the warp on that tile does not function.
 ; This prevents Link from instantly activating a warp tile when he spawns in.
 ; This is set to $ff when the above does not apply.
 	db
 
-wNumTorchesLit: ; $cc8f
+wNumTorchesLit: ; $cc8f/$cca9
 	db
 
 wcc90: ; $cc90
 ; Disables warp tiles if nonzero?
 	db
 
-wDisableScreenTransitions: ; $cc91
+wDisableScreenTransitions: ; $cc91/$ccab
 ; If nonzero, screen transitions and diving don't work?
 ; Set when:
 ; - An animal companion (not dimitri) is drowning in water?
@@ -2085,7 +2109,7 @@ wcca2: ; $cca2
 ; When a nonzero value is written here, dormant armos statues with subid 0 begin moving?
 	db
 
-wChestContentsOverride: ; $cca3
+wChestContentsOverride: ; $cca3/$ccbd
 ; 2 bytes. When set, this overrides the contents of a chest.
 ; Used for farore's secrets, maybe also the chest minigame?
 	dw
@@ -2099,14 +2123,20 @@ wcca7: ; $cca7
 	db
 wcca8: ; $cca8
 	db
-wTwinrovaTileReplacementMode: ; $cca9
+
+.ifdef ROM_SEASONS ; TODO: figure out what this is, where it goes
+wUnknown: ; -/$ccc3
+	db
+.endif
+
+wTwinrovaTileReplacementMode: ; $cca9/$ccc4
 ; 0: Do nothing
 ; 1: Fill room with lava
 ; 2: Fill room with ice
 ; 3: ?
 ; 4+: Use "seizure tiles" (when controls are reversed in ganon fight)
 	db
-wccaa: ; $ccaa
+wccaa: ; $ccaa/$ccc5
 	db
 
 
@@ -2136,15 +2166,17 @@ wccb0: ; $ccb0/$ccc7
 ; Tile position being poked or slashed at?
 	db
 
+.ifdef ROM_AGES
 wccb1: ; $ccb1
 	db
+.endif
 
 wDisableWarps: ; $ccb2
-; Not sure what purpose this is for
+; Not sure what purpose this is for. (Might be ages-exclusive?)
 	db
 
 .ifdef ROM_SEASONS
-wInBoxingMatch: ; $ccc9
+wInBoxingMatch: ; -/$ccc9
 	db
 .endif
 
@@ -2224,11 +2256,13 @@ wIsLinkBeingShocked: ; $ccdb
 wLinkShockCounter: ; $ccdc
 	db
 
+.ifdef ROM_AGES
 wSwitchHookState: ; $ccdd
 ; Used when swapping with the switch hook
 	db
+.endif
 
-wccde: ; $ccde
+wDiggingUpEnemiesForbidden: ; $ccde/$ccf4
 	db
 
 ; Indices for w2ChangedTileQueue
@@ -2238,6 +2272,8 @@ wChangedTileQueueTail: ; $cce0
 	db
 
 wcce1: ; $cce1
+; This is used as a marker; all memory from "wDisabledObjects" to here is cleared in one
+; spot (not including wcce1).
 	db
 wcce2: ; $cce2
 	db
@@ -2257,7 +2293,7 @@ wLinkPathIndex: ; $cce6
 
 wFollowingLinkObjectType: ; $cce7/$ccfd
 	db
-wFollowingLinkObject: ; $cce8
+wFollowingLinkObject: ; $cce8/$ccfe
 	db
 
 wcce9: ; $cce9
@@ -2464,61 +2500,85 @@ wTmpVramBuffer: ; $cd40
 ; Used temporarily for vram transfers, dma, etc.
 	dsb $40
 
-wStaticObjects: ; $cd80
-; Note: this is $40 bytes, but Seasons will actually read $80 bytes in the
-; "findFreeStaticObjectSlot" function?
-	dsb $40
 
-wEnemiesKilledList: ; $cdc0
+; Size of this differs between games.
+.ifdef ROM_AGES
+wStaticObjects: ; $cd80
+	dsb $40
+.else
+wStaticObjects: ; $cd80
+	dsb $80
+.endif
+
+.ende
+
+; Data here occupies different spots in ages and seasons.
+; TODO: organize this better?
+
+.ifdef ROM_AGES
+	.enum $cdc0 export
+.else; ROM_SEASONS
+	.enum $cc1f export
+.endif
+
+wEnemiesKilledList: ; $cdc0/$cc1f
 ; This remembers the enemies that have been killed in the last 8 visited rooms.
 ; 8 groups of 2 bytes:
 ;   b0: room index
 ;   b1: bitset of enemies killed (copied to wKilledEnemiesBitset when screen is loaded)
 	dsb $10
 
-wEnemiesKilledListTail: ; $cdd0
+wEnemiesKilledListTail: ; $cdd0/$cc2f
 ; This is the first available unused position in wEnemiesKilledList.
 	db
 
-wNumEnemies: ; $cdd1
+wNumEnemies: ; $cdd1/$cc30
 ; Number of enemies on the screen. When this reaches 0, certain events trigger. Not all
 ; enemies count for this.
 	db
 
-wToggleBlocksState: ; $cdd2
+wToggleBlocksState: ; $cdd2/$cc31
 ; State of the blocks that are toggled by the orbs.
 ; Persists between rooms within a dungeon.
 	db
 
-wSwitchState: ; $cdd3
+wSwitchState: ; $cdd3/$cc32
 ; Each bit keeps track of whether a certain switch has been hit.
 ; Persists between rooms within a dungeon.
 	db
 
-wSpinnerState: ; $cdd4
+wSpinnerState: ; $cdd4/$cc33
 ; Used by INTERACID_SPINNER.
 ; Each bit holds the state of one spinner (0 for blue, 1 for red).
 ; Persists between rooms within a dungeon.
 	db
 
-wLinkDeathTrigger: ; $cdd5
+wLinkDeathTrigger: ; $cdd5/$cc34
 ; Write anything here to make link die
 	db
-wGameOverScreenTrigger: ; $cdd6
+wGameOverScreenTrigger: ; $cdd6/$cc35
 ; Write anything here to open the Game Over screen
 	db
 
-wcdd7: ; $cdd7
+wcdd7: ; $cdd7/$cc36
 	db
-wDimitriHitNpc: ; $cdd8
+wDimitriHitNpc: ; $cdd8/$cc37
 ; Nonzero if Dimitri hits an npc while being thrown.
 	db
 wcdd9: ; $cdd9
 	db
 
-wIsMaplePresent: ; $cdda
+.ifdef ROM_SEASONS
+ws_cc39: ; TODO: figure out what this is
+	db
+.endif
+
+wIsMaplePresent: ; $cdda/$cc3a
 ; Nonzero while maple is on the screen.
 	db
+
+
+.ifdef ROM_AGES
 
 wcddb: ; $cddb
 ; Scratch variable for scripts?
@@ -2568,12 +2628,11 @@ wcde4: ; $cde4
 
 ; $cde5-$ceff unused?
 
+.endif ; ROM_AGES
 .ende
 
-.define wStaticObjects.size	$40
 
-
-.enum $ce00
+.enum $ce00 export
 
 wRoomCollisions: ; $ce00
 ; $10 bytes larger than it needs to be?
@@ -2592,11 +2651,11 @@ wTmpcec0: ; $cec0
 ; * Functions which apply an object's speed ($cec0-$cec3)
 ; * Unpacking secrets
 
-.enum $cec0
+.enum $cec0 export
 	wEnemyPlacement: instanceof EnemyPlacementStruct
 .ende
 
-.enum $cee0
+.enum $cee0 export
 	wShootingGalleryTileLayoutsToShow: ; $cee0
 	; This consists of the numbers 0-9. As the game progresses, a number is read from
 	; a random position in this buffer, then the buffer is decreased in size by one
@@ -2607,7 +2666,7 @@ wTmpcec0: ; $cec0
 		dsb 10
 .ende
 
-.enum $cee0
+.enum $cee0 export
 	wWizzrobePositionReservations: ; $cee0
 	; Each 2 bytes are the position and object index of a wizzrobe. Keeps track of
 	; their positions so multiple red wizzrobes don't spawn on top of each other.
@@ -2616,7 +2675,7 @@ wTmpcec0: ; $cec0
 .ende
 
 
-.enum $cf00
+.enum $cf00 export
 
 wRoomLayout: ; $cf00
 ; $10 bytes larger than it needs to be; the row below the last row is reserved and filled
@@ -2982,7 +3041,7 @@ wRoomLayoutEnd: ; $cfc0
 ; including link and his companions.
 ; ========================================================================================
 
-.ENUM $d000
+.ENUM $d000 export
 	w1Link:			instanceof SpecialObjectStruct
 	; This is used for:
 	; * Items from treasure chests
@@ -2990,32 +3049,32 @@ wRoomLayoutEnd: ; $cfc0
 	w1ReservedInteraction0:	instanceof InteractionStruct
 .ENDE
 
-.ENUM $d100
+.ENUM $d100 export
 	w1Companion:		instanceof SpecialObjectStruct
 	w1ReservedInteraction1:	instanceof InteractionStruct
 .ENDE
 
-.ENUM $d200
+.ENUM $d200 export
 	; Used for stuff Link holds?
 	w1ParentItem2:		instanceof ItemStruct
 .ENDE
-.ENUM $d300
+.ENUM $d300 export
 	; Used for projectiles like w1ParentItem4?
 	w1ParentItem3:		instanceof ItemStruct
 .ENDE
-.ENUM $d400
+.ENUM $d400 export
 	; Used for projectiles like w1ParentItem3?
 	w1ParentItem4:		instanceof ItemStruct
 .ENDE
-.ENUM $d500
+.ENUM $d500 export
 	; Used for flute, harp, shield?
 	w1ParentItem5:		instanceof ItemStruct
 .ENDE
-.ENUM $d600
+.ENUM $d600 export
 	w1WeaponItem:		instanceof ItemStruct
 .ENDE
 
-.ENUM $dc00
+.ENUM $dc00 export
 	; The item that Link is holding / throwing. Even if Link is holding some other
 	; object like an enemy or Dimitri, this object still exists as ITEMID_BRACELET,
 	; or at least it does while the object is being thrown. This invisible object will
@@ -3024,13 +3083,13 @@ wRoomLayoutEnd: ; $cfc0
 	w1ReservedItemC:	instanceof ItemStruct
 .ENDE
 
-.ENUM $de00
+.ENUM $de00 export
 	; Doesn't have collisions? (comes after LAST_STANDARD_ITEM_INDEX)
 	; Used to store positions for switch hook (ITEMID_SWITCH_HOOK_HELPER).
 	w1ReservedItemE:	instanceof ItemStruct
 .ENDE
 
-.ENUM $df00
+.ENUM $df00 export
 	; Used for puffs at Link's feet while using pegasus seeds
 	w1ReservedItemF:	instanceof ItemStruct
 .ENDE
@@ -3078,7 +3137,7 @@ wRoomLayoutEnd: ; $cfc0
 .RAMSECTION "RAM 2" BANK 2 SLOT 3
 
 ; $d000 used as part of the routine for redrawing the collapsed d2 cave in the present
-w2Filler1:			dsb $0800
+w2TmpGfxBuffer:			dsb $0800
 
 ; This is a list of values for scrollX or scrollY registers to make the screen turn all
 ; wavy (ie. in underwater areas).
@@ -3086,11 +3145,16 @@ w2WaveScrollValues:		dsb $80	; $d800/$d800
 
 w2Filler7:			dsb $80
 
-; Tree refill data also used for child and an event in room $2f7
-w2SeedTreeRefillData:		dsb NUM_SEED_TREES*8 ; $d900/3:dfc0
-
 .ifdef ROM_SEASONS
-w2Filler9:			dsb $40
+
+w2Filler9:			dsb $80
+
+.else; ROM_AGES
+
+; Tree refill data also used for child and an event in room $2f7.
+; Located elsewhere in seasons.
+wxSeedTreeRefillData:		dsb NUM_SEED_TREES*8 ; 2:d900/3:dfc0
+
 .endif
 
 ; Bitset of positions where objects (mostly npcs) are residing. When one of these bits is
@@ -3166,7 +3230,12 @@ w3TileMappingIndices:	dsb $200	; $dc00
 
 w3Filler2:		dsb $100
 
-w3RoomLayoutBuffer:	dsb $100	; $df00
+w3RoomLayoutBuffer:	dsb $c0	; $df00
+
+.ifdef ROM_SEASONS
+; Located elsewhere in ages
+wxSeedTreeRefillData:		dsb NUM_SEED_TREES*8 ; 2:d900/3:dfc0
+.endif
 
 .ENDS
 
@@ -3384,12 +3453,9 @@ w6SpecialObjectGfxBuffer:	dsb $100	; $d600
 ; When encoding data into a secret, bits are inserted one at a time to the end of this
 ; buffer, causing all existing data to be shifted forward by one bit.
 .define w7SecretGenerationBuffer	$d478
-.define :w7SecretGenerationBuffer	7
 
 ; $d5e0: Used at some point for unknown purpose
 
 .define w7d800			$d800 ; $300 bytes? Secret text gets written here?
-.define :w7d800			7 ; $300 bytes?
 
 ; Manually define the bank number for now
-.define :w7SecretText1	$07

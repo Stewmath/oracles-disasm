@@ -19,10 +19,12 @@ if romIsSeasons(rom):
     soundBaseBank = 0x39
     soundPointerTable = 0xe57cf
     numSoundIndices = 0xdf
+    outputDir = 'audio/seasons/'
 else:
     soundBaseBank = 0x39
     soundPointerTable = 0xe5748
     numSoundIndices = 0xdf
+    outputDir = 'audio/ages/'
 
 class SoundPointer:
     def __init__(self, index, address, bank, label):
@@ -68,9 +70,11 @@ for i in range(numSoundIndices):
     pointerOutput.write(' ; ' + wlahex(address))
     pointerOutput.write('\n')
 
+# Hardcoded address for unreferenced sound data
 if romIsAges(rom):
-    # Hardcoded address for unreferenced sound data
     soundPointers.append(SoundPointer(-1, 0xe59f2, 0x3b, 'soundUnref'))
+else: # Seasons
+    soundPointers.append(SoundPointer(-1, 0xe5a79, 0x3b, 'soundUnref'))
 
 soundPointers = sorted(soundPointers, key=lambda x:x.address)
 
@@ -250,16 +254,16 @@ for ptr in channelPointers:
     lastAddress = address
 
 pointerOutput.seek(0)
-outFile = open('audio/soundPointers.s', 'w')
+outFile = open(outputDir + 'soundPointers.s', 'w')
 outFile.write(pointerOutput.read())
 outFile.close()
 
 dataOutput.seek(0)
-outFile = open('audio/soundChannelPointers.s', 'w')
+outFile = open(outputDir + 'soundChannelPointers.s', 'w')
 outFile.write(dataOutput.read())
 outFile.close()
 
 chanOut.seek(0)
-outFile = open('audio/soundChannelData.s', 'w')
+outFile = open(outputDir + 'soundChannelData.s', 'w')
 outFile.write(chanOut.read())
 outFile.close()

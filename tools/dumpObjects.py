@@ -13,7 +13,7 @@ else:
 execfile(directory+'common.py')
 
 if len(sys.argv) < 2:
-    print 'Usage: ' + sys.argv[0]
+    print 'Usage: ' + sys.argv[0] + ' rom.gbc'
     print 'Output goes to various files in the "objects/" directory'
     sys.exit()
 
@@ -33,17 +33,29 @@ class ObjectData:
 
 romFile = open(sys.argv[1], 'rb')
 data = bytearray(romFile.read())
+rom = data
 
-pointerFile = open("objects/pointers.s", 'w')
-helperFile = open("objects/helperData.s", 'w')
-helperFile2 = open("objects/helperData2.s", 'w')
-helperFile3 = open("objects/helperData3.s", 'w')
-mainDataFile = open("objects/mainData.s", 'w')
+if romIsAges(rom):
+    gameString = 'ages'
+    dataBank = 0x12
+    pointerBank = 0x15
+
+    groupPointerTable = 0x15*0x4000 + 0x32b
+else:
+    gameString = 'seasons'
+    dataBank = 0x11
+    pointerBank = 0x11
+
+    groupPointerTable = 0x11*0x4000 + 0x1b3b
+
+pointerFile  = open("objects/" + gameString + "/pointers.s", 'w')
+helperFile   = open("objects/" + gameString + "/helperData.s", 'w')
+helperFile2  = open("objects/" + gameString + "/helperData2.s", 'w')
+helperFile3  = open("objects/" + gameString + "/helperData3.s", 'w')
+mainDataFile = open("objects/" + gameString + "/mainData.s", 'w')
 
 objectDataList = list()
 mainObjectDataStr = StringIO.StringIO()
-
-groupPointerTable = 0x15*0x4000 + 0x32b
 
 labelPositions = {}
 
@@ -88,11 +100,13 @@ def parseObjectData(buf, pos, outFile):
             pos+=4
         elif op == 0x03:  # Pointer
             output += 'objectData' + myhex(read16(buf, pos), 4) + '\n'
+            #output += wlahex(read16(buf, pos), 4) + '\n'
             pointer = bankedAddress(0x12, read16(buf, pos))
             labelPositions[pointer] = -1
             pos+=2
         elif op == 0x04:  # Boss object
             output += 'objectData' + myhex(read16(buf, pos), 4) + '\n'
+            #output += wlahex(read16(buf, pos), 4) + '\n'
             pointer = bankedAddress(0x12, read16(buf, pos))
             labelPositions[pointer] = -1
             pos+=2
@@ -165,6 +179,8 @@ for i in xrange(8):
     write = i
     if i > 5:
         write -= 2
+    elif romIsSeasons(rom) and i >= 1 and i < 4:
+        write = 1
     pointerFile.write('\t.dw group' + str(write) + 'ObjectDataTable\n')
 
 pointerFile.write('\n')
@@ -172,12 +188,14 @@ pointerFile.write('\n')
 # Go through each group's object data, store into data structures for
 # later
 for group in xrange(6):
+    if romIsSeasons(rom) and group >= 2 and group <= 3:
+        continue # Groups 2 and 3 don't really exist
 
-    pointerTable = bankedAddress(0x15, read16(data, groupPointerTable + group*2))
+    pointerTable = bankedAddress(pointerBank, read16(data, groupPointerTable + group*2))
 
     pointerFile.write('group' + str(group) + 'ObjectDataTable:\n')
     for map in xrange(0x100):
-        pointer = bankedAddress(0x12, read16(data, pointerTable+map*2))
+        pointer = bankedAddress(dataBank, read16(data, pointerTable+map*2))
 
         objectData = ObjectData()
         objectData.group = group
@@ -196,10 +214,21 @@ for group in xrange(6):
 
 
 # Piece of data not accounted for
-extraData = ObjectData()
-extraData.address = 0x49f9d
-extraData.group = -1
-objectDataList.append(extraData)
+if romIsAges(rom):
+    extraData = ObjectData()
+    extraData.address = 0x49f9d
+    extraData.group = -1
+    objectDataList.append(extraData)
+elif romIsSeasons(rom):
+    extraData = ObjectData()
+    extraData.address = 0x46500
+    extraData.group = -1
+    objectDataList.append(extraData)
+
+    extraData = ObjectData()
+    extraData.address = 0x46bea
+    extraData.group = -1
+    objectDataList.append(extraData)
 
 # Main data for groups
 objectDataList = sorted(
@@ -224,58 +253,88 @@ for objectData in objectDataList:
 helperOut = StringIO.StringIO()
 
 # Search for all data blocks earlier on
-pos = 0x48000
 
-while pos < 0x49482:
-    helperOut.write('objectData' + myhex((pos&0x3fff)+0x4000, 4) + ':\n')
-    pos = parseObjectData(data, pos, helperOut)
+if romIsAges(rom):
+    pos = 0x48000
 
-# Weird table in the middle of everything
-helperOut.write('objectTable1:\n')
-while pos < 0x49492:
-    helperOut.write(
-        '\t.dw objectData' + myhex(read16(data, pos), 4) + '\n')
-    pos+=2
-helperOut.write('\n')
+    while pos < 0x49482:
+        helperOut.write('objectData' + myhex((pos&0x3fff)+0x4000, 4) + ':\n')
+        pos = parseObjectData(data, pos, helperOut)
 
-while pos < 0x495b6:
-    helperOut.write('objectData' + myhex((pos&0x3fff)+0x4000, 4) + ':\n')
-    pos = parseObjectData(data, pos, helperOut)
-# Code is after this
+    # Weird table in the middle of everything
+    helperOut.write('objectTable1:\n')
+    while pos < 0x49492:
+        helperOut.write(
+            '\t.dw objectData' + myhex(read16(data, pos), 4) + '\n')
+        pos+=2
+    helperOut.write('\n')
 
-# After main data is more object data, purpose unknown
-pos = 0x4b6dd
-# First a table of sorts
-helperFile2.write('objectTable2:\n')
-while pos < 0x4b705:
-    helperFile2.write(
-        '.dw ' + 'objectData' + myhex(read16(data, pos), 4) + '\n')
-    pos += 2
-helperFile2.write('\n')
-# Now more object data
-while pos < 0x4b8bd:
-    helperFile2.write(
-        'objectData' + myhex((pos&0x3fff)+0x4000, 4) + ':\n')
-    pos = parseObjectData(data, pos, helperFile2)
-# Another table
-helperFile2.write('objectTable3:\n')
-while pos < 0x4b8c5:
-    helperFile2.write(
-        '.dw ' + 'objectData' + myhex(read16(data, pos), 4) + '\n')
-    pos += 2
-helperFile2.write('\n')
-# Now more object data
-while pos < 0x4b8e4:
-    helperFile2.write(
-        'objectData' + myhex((pos&0x3fff)+0x4000, 4) + ':\n')
-    pos = parseObjectData(data, pos, helperFile2)
+    while pos < 0x495b6:
+        helperOut.write('objectData' + myhex((pos&0x3fff)+0x4000, 4) + ':\n')
+        pos = parseObjectData(data, pos, helperOut)
+    # Code is after this
 
-# One last round of object data
-helperFile3.write('; A few objects stuffed into the very end\n\n')
-pos = 0x4be69
-while pos < 0x4be8f:
-    helperFile3.write('objectData' + myhex(toGbPointer(pos), 4) + ':\n')
-    pos = parseObjectData(data, pos, helperFile3)
+    # After main data is more object data, purpose unknown
+    pos = 0x4b6dd
+    # First a table of sorts
+    helperFile2.write('objectTable2:\n')
+    while pos < 0x4b705:
+        helperFile2.write(
+            '.dw ' + 'objectData' + myhex(read16(data, pos), 4) + '\n')
+        pos += 2
+    helperFile2.write('\n')
+    # Now more object data
+    while pos < 0x4b8bd:
+        helperFile2.write(
+            'objectData' + myhex((pos&0x3fff)+0x4000, 4) + ':\n')
+        pos = parseObjectData(data, pos, helperFile2)
+    # Another table
+    helperFile2.write('objectTable3:\n')
+    while pos < 0x4b8c5:
+        helperFile2.write(
+            '.dw ' + 'objectData' + myhex(read16(data, pos), 4) + '\n')
+        pos += 2
+    helperFile2.write('\n')
+    # Now more object data
+    while pos < 0x4b8e4:
+        helperFile2.write(
+            'objectData' + myhex((pos&0x3fff)+0x4000, 4) + ':\n')
+        pos = parseObjectData(data, pos, helperFile2)
+
+    # One last round of object data
+    helperFile3.write('; A few objects stuffed into the very end\n\n')
+    pos = 0x4be69
+    while pos < 0x4be8f:
+        helperFile3.write('objectData' + myhex(toGbPointer(pos), 4) + ':\n')
+        pos = parseObjectData(data, pos, helperFile3)
+
+else: # Seasons
+    pos = 0x44000
+
+    while pos < 0x45744:
+        helperOut.write('objectData' + myhex((pos&0x3fff)+0x4000, 4) + ':\n')
+        pos = parseObjectData(data, pos, helperOut)
+
+    # Weird table in the middle of everything
+    helperOut.write('objectTable1:\n')
+    while pos < 0x4575e:
+        helperOut.write(
+            '\t.dw objectData' + myhex(read16(data, pos), 4) + '\n')
+        pos+=2
+    helperOut.write('\n')
+
+    while pos < 0x458b5:
+        helperOut.write('objectData' + myhex((pos&0x3fff)+0x4000, 4) + ':\n')
+        pos = parseObjectData(data, pos, helperOut)
+
+    # After main data is more object data
+    pos = 0x47dd9
+    # First a table of sorts
+    while pos < 0x47eb0:
+        helperFile2.write(
+            'objectData' + myhex((pos&0x3fff)+0x4000, 4) + ':\n')
+        pos = parseObjectData(data, pos, helperFile2)
+    helperFile2.write('\n')
 
 # Write output to files (for those which don't write directly to the files)
 

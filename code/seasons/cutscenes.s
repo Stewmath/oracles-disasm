@@ -8,7 +8,7 @@ cutscene07:
 	ld e,$01
 	call seasonsFunc_35b8
 	call updateInteractionsAndDrawAllSprites
-	jp loadScreenMusic
+	jp seasonsFunc_3276
 
 ;;
 cutscene08:
@@ -60,7 +60,7 @@ cutscene0e:
 	jr nz,func_5e0e		; $5c27
 	ld e,$04		; $5c29
 	call seasonsFunc_35b8		; $5c2b
-	jp loadScreenMusic		; $5c2e
+	jp seasonsFunc_3276		; $5c2e
 
 ;;
 cutscene10:

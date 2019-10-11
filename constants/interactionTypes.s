@@ -868,10 +868,17 @@
 ; @subid_80{Flute call for companion}
 .define INTERACID_COMPANION_SPAWNER	$67
 
+
+.ifdef ROM_AGES
 ;;
 ; @subid_00{Gives you the shovel on tokay island, linked only}
 ; @subid_01{Rosa at goron dance, linked only}
 .define INTERACID_ROSA			$68
+
+.else; ROM_SEASONS
+
+.define INTERACID_ROSA			$31
+.endif
 
 ;;
 ; @subid_00{Rafton in left part of house}
@@ -1420,8 +1427,15 @@
 ; @subid_01{Right side of house}
 .define INTERACID_BIPIN_BLOSSOM_FAMILY_SPAWNER	$ac
 
+
+.ifdef ROM_AGES
 ;;
 .define INTERACID_ZELDA				$ad
+
+.else; ROM_SEASONS
+
+.define INTERACID_ZELDA				$44 ; TODO: organize this better
+.endif
 
 ;;
 ; Used for the credits text in between the mini-cutscenes.
@@ -1691,3 +1705,33 @@
 .define INTERACID_RAFT			$e6
 
 ; Nothing beyond $e6.
+
+
+
+; ==============================================================================
+; SEASONS ONLY (TODO: organize this better)
+
+.ifdef ROM_SEASONS
+
+;;
+; The subrosian trying to blow up the volcano leading to d8
+.define INTERACID_SUBROSIAN_AT_D8 $55
+
+;;
+; @subid_00{Rooster on top of d4}
+; @subid_01{Rooster that leads to spring banana}
+.define INTERACID_FLYING_ROOSTER $8c
+
+;;
+.define INTERACID_OLD_MAN_WITH_JEWEL $8f
+
+;;
+; @subid_00{Tarm ruins entrance script (spawn jewels)}
+; @subid_01-07{?}
+.define INTERACID_JEWEL_HELPER $90
+
+;;
+; Jewels in place in tarm ruins (visual only)
+.define INTERACID_JEWEL $92
+
+.endif

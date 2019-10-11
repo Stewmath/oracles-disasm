@@ -16,11 +16,16 @@ romFile = open(sys.argv[1], 'rb')
 rom = bytearray(romFile.read())
 
 # Constants
-
-warpTable = 0x1359E # Takes group as an index
-warpBank = 4
-
-warpDestTable = 0x12F5B
+if romIsAges(rom):
+    warpBank = 4
+    warpDestTable = 0x12F5B
+    warpSourceTable = 0x1359E # Takes group as an index
+    dataDir = 'data/ages/'
+else:
+    warpBank = 4
+    warpDestTable = 0x12d4e
+    warpSourceTable = 0x13457
+    dataDir = 'data/seasons/'
 
 
 # Keeps track of whether pointers are uniquely used. Only for printing warning
@@ -30,6 +35,7 @@ usedPointers = {}
 
 class WarpData:
     def __init__(self,addr,pointed):
+        self.pointer = None
         self.pointed = pointed
         self.showLabel = True
         self.address = bankedAddress(warpBank, addr)
@@ -68,7 +74,7 @@ class WarpData:
 
 
 
-outFile = open("data/warpData.s",'w')
+outFile = open(dataDir + "warpData.s",'w')
 
 # Warp destinations
 
@@ -79,7 +85,7 @@ for group in range(8):
     warpDestAddresses.append(address)
     outFile.write("\t.dw group" + str(group) + "WarpDestTable\n")
 outFile.write("\n")
-warpDestAddresses.append(warpTable)
+warpDestAddresses.append(warpSourceTable)
 
 outFile.write("; Format: map YX unknown\n\n")
 
@@ -105,31 +111,41 @@ for group in range(8):
 groupStartPositions = []
 
 # Print table
-outFile.write("warpSourcesTable: ; " + wlahex(warpTable) + "\n")
+outFile.write("warpSourcesTable: ; " + wlahex(warpSourceTable) + "\n")
 
 for group in range(8):
-    groupStartPositions.append(bankedAddress(warpBank,read16(rom,warpTable+group*2)))
+    groupStartPositions.append(bankedAddress(warpBank,read16(rom,warpSourceTable+group*2)))
     outFile.write("\t.dw group" + str(group) + "WarpSources\n")
 
 groupStartPositions.append(0x100000)
 outFile.write("\n")
 
+warpPointerAddresses = []
+
 for group in range(8):
 #     print "Group " + str(group)
 
-    address = read16(rom,warpTable+group*2)
+    address = read16(rom,warpSourceTable+group*2)
     address = bankedAddress(warpBank,address)
 
 #     print "Start at " + hex(address)
     warpDataList = []
     pointedWarpDataList = []
 
+    if romIsSeasons(rom) and group == 0:
+        # Unreferenced data
+        pointedWarpDataList.append(WarpData(0x13653, True))
+
     outFile.write("group" + str(group) + "WarpSources: ; " + wlahex(address) + "\n")
 
     b = rom[address]
 
-    while b != 0xff:
+    while b != 0xff and not address in warpPointerAddresses \
+            and (not romIsSeasons(rom) or address < 0x13e02):
         warpData = WarpData(address,False)
+
+        if warpData.pointer is not None:
+            warpPointerAddresses.append(bankedAddress(warpBank, warpData.pointer))
         address+=4
 
         if warpData.opcode != 0 and warpData.opcode != 1 and warpData.opcode != 2 and warpData.opcode != 4 and warpData.opcode != 8 and warpData.opcode != 0x40:

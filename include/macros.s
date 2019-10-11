@@ -419,16 +419,20 @@
 	.dw \3
 .endm
 
-.macro m_WarpSourcesEnd
+.macro m_WarpSourcesEnd ; Does nothing in seasons
+.ifdef ROM_AGES
 	.db $ff $00 $00 $00
+.endif
 .endm
 
 ; Args:
 ; 1 - Byte: map
 ; 2 - Byte: YX
-; 3 - Byte: unknown
+; 3 - 4bit: parameter
+; 4 - 4bit: param
 .macro m_WarpDest
-	.db \1 \2 \3
+	.db \1 \2
+	.db (\3<<4) | (\4)
 .endm
 
 

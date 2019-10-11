@@ -757,7 +757,7 @@ getObjectDataAddress:
 	ret			; $432a
 
 
-	.include "objects/pointers.s"
+	.include "objects/ages/pointers.s"
 
 .ENDS
 
@@ -3496,7 +3496,7 @@ oldManScript_givesShieldUpgrade:
 	initcollisions
 	checkabutton
 	disableinput
-	jumpifglobalflagset GLOBALFLAG_72, @alreadyToldSecret
+	jumpifglobalflagset GLOBALFLAG_DONE_LIBRARY_SECRET, @alreadyToldSecret
 
 	; Ask if Link has a secret to tell
 	showtext TX_3310
@@ -3509,7 +3509,7 @@ oldManScript_givesShieldUpgrade:
 	jump2byte @warpLinkOut
 
 @promptForSecret:
-	askforsecret $04
+	generateoraskforsecret $04
 	wait 30
 	jumpifmemoryeq wTextInputResult, $00, @validSecret
 
@@ -3518,7 +3518,7 @@ oldManScript_givesShieldUpgrade:
 	jump2byte @warpLinkOut
 
 @validSecret:
-	setglobalflag GLOBALFLAG_68
+	setglobalflag GLOBALFLAG_BEGAN_LIBRARY_SECRET
 	showtext TX_3312
 	wait 30
 	callscript scriptFunc_doEnergySwirlCutscene
@@ -3526,13 +3526,13 @@ oldManScript_givesShieldUpgrade:
 	asm15 oldManGiveShieldUpgradeToLink
 	wait 30
 
-	setglobalflag GLOBALFLAG_72
-	generatesecret $04
+	setglobalflag GLOBALFLAG_DONE_LIBRARY_SECRET
+	generateoraskforsecret $14
 	showtext TX_3313
 	jump2byte @warpLinkOut
 
 @alreadyToldSecret:
-	generatesecret $04
+	generateoraskforsecret $14
 	showtext TX_3314
 
 @warpLinkOut:
@@ -3678,7 +3678,7 @@ mamamuYanScript:
 	checkabutton
 	disableinput
 	jumpifroomflagset $80, @alreadyBeganSearch
-	jumpifglobalflagset GLOBALFLAG_6a, @alreadyToldSecret
+	jumpifglobalflagset GLOBALFLAG_BEGAN_MAMAMU_SECRET, @alreadyToldSecret
 	showtextlowindex <TX_0b3a
 	wait 30
 
@@ -3688,7 +3688,7 @@ mamamuYanScript:
 	jump2byte @enableInputAndLoop
 
 @promptForSecret:
-	askforsecret $06
+	generateoraskforsecret $06
 	wait 30
 	jumpifmemoryeq wTextInputResult, $00, @validSecret
 
@@ -3697,7 +3697,7 @@ mamamuYanScript:
 	jump2byte @enableInputAndLoop
 
 @validSecret:
-	setglobalflag GLOBALFLAG_6a
+	setglobalflag GLOBALFLAG_BEGAN_MAMAMU_SECRET
 	showtextlowindex <TX_0b3c
 	jump2byte @askedListenToRequest
 
@@ -8743,7 +8743,7 @@ script15_7891:
 	showtextlowindex $25
 	jump2byte script15_78dc
 script15_78a2:
-	askforsecret $09
+	generateoraskforsecret $09
 	wait 30
 	jumpifmemoryeq $cc89 $00 script15_78af
 	showtextlowindex $27
@@ -8772,7 +8772,7 @@ script15_78d3:
 	orroomflag $20
 	setglobalflag $77
 script15_78d8:
-	generatesecret $09
+	generateoraskforsecret $19
 	showtextlowindex $2b
 script15_78dc:
 	enableinput
@@ -8918,7 +8918,7 @@ script15_79ca:
 	enableinput
 	jump2byte script15_79b8
 script15_79dc:
-	askforsecret $02
+	generateoraskforsecret $02
 	wait 30
 	jumpifmemoryeq $cc89 $00 script15_79eb
 	showtext $2c09
@@ -8960,7 +8960,7 @@ script15_7a26:
 	wait 30
 	setglobalflag $70
 script15_7a30:
-	generatesecret $02
+	generateoraskforsecret $12
 	showtext $2c0d
 	enableinput
 	jump2byte script15_79b8
@@ -9095,7 +9095,7 @@ script15_7adb:
 	showtext $3701
 	jump2byte script15_7b11
 script15_7aee:
-	askforsecret $03
+	generateoraskforsecret $03
 	wait 30
 	jumpifmemoryeq $cc89 $00 script15_7afc
 	showtext $3703

@@ -12,12 +12,12 @@
 .endm
 
 seedTreeRefillLocations:
-	m_TreeRefillData $f8 (<w2SeedTreeRefillData+$00)
-	m_TreeRefillData $9e (<w2SeedTreeRefillData+$08)
-	m_TreeRefillData $67 (<w2SeedTreeRefillData+$10)
-	m_TreeRefillData $72 (<w2SeedTreeRefillData+$18)
-	m_TreeRefillData $5f (<w2SeedTreeRefillData+$20)
-	m_TreeRefillData $10 (<w2SeedTreeRefillData+$28)
-	m_TreeRefillData $6f (<w2SeedTreeRefillData+$30) ; king moblin?
-	m_TreeRefillData $f6 (<w2SeedTreeRefillData+$38) ; child
+	m_TreeRefillData $f8 (<wxSeedTreeRefillData+$00)
+	m_TreeRefillData $9e (<wxSeedTreeRefillData+$08)
+	m_TreeRefillData $67 (<wxSeedTreeRefillData+$10)
+	m_TreeRefillData $72 (<wxSeedTreeRefillData+$18)
+	m_TreeRefillData $5f (<wxSeedTreeRefillData+$20)
+	m_TreeRefillData $10 (<wxSeedTreeRefillData+$28)
+	m_TreeRefillData $6f (<wxSeedTreeRefillData+$30) ; king moblin?
+	m_TreeRefillData $f6 (<wxSeedTreeRefillData+$38) ; child
 

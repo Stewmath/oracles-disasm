@@ -64,8 +64,17 @@ for filename in fileList:
     outFile.write(buf)
     outFile.close()
 
-    for i in range(0,256,16):
-        key = bytes(buf[i*2:i*2+2*16])
+    # Some stats on data compression with various values for SIZE - end addresses of
+    # mapping data (in seasons)
+    #
+    # orig: 676d0
+    # 4:    67ca0
+    # 8:    66e58
+    # 16:   66b8d
+    # 32:   67063
+    SIZE = 16
+    for i in range(0,256,SIZE):
+        key = bytes(buf[i*2:i*2+2*SIZE])
         if key not in dictionaryStrings:
             val = 0
         else:
@@ -119,9 +128,8 @@ indexOutFile.close()
 attributeOutFile.close()
 
 
-# dictionary file
-# My generation of the dictionary file doesn't provide nearly as good
-# compression as the stock game, but this at least compresses it enough
+# Generate dictionary file. Every X-byte chunk that's used more than once is put into the
+# dictionary.
 file = open('build/tilesets/mappingsDictionary.bin', 'wb')
 for key in dictionaryStrings.keys():
     val = dictionaryStrings[key]

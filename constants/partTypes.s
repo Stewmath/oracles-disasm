@@ -10,6 +10,12 @@
 ; @subid_07{Pegasus seeds}
 ; @subid_08{Gale seeds}
 ; @subid_09{Mystery seeds}
+; @subid_0a{Unused?}
+; @subid_0b{Unused?}
+; @subid_0c{Blue ore chunk (1)}
+; @subid_0d{Red ore chunk (10)}
+; @subid_0e{Gold ore chunk (50)}
+; @subid_0f{100 rupees (1/8 chance) or an enemy (rope or beetle, 7/8 chance)}
 .define PARTID_ITEM_DROP 			$01
 
 .define PARTID_ENEMY_DESTROYED	 		$02
@@ -114,6 +120,10 @@
 ; Lightning strikes a specified position
 .define PARTID_LIGHTNING			$27
 
+;;
+; Some kind of item?
+.define PARTID_28				$28
+
 .define PARTID_BEAM				$29
 
 ;;
@@ -124,6 +134,7 @@
 ; @subid_03{Part of the chain; 1/4th extended}
 .define PARTID_SPIKED_BALL			$2a
 
+;;
 ; When this object exists, it applies the effects of whirlpool and pollution tiles.
 ; It's a bit weird to put this functionality in an object...
 .define PARTID_SEA_EFFECTS			$2e

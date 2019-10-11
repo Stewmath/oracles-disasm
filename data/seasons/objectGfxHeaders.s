@@ -1,8 +1,8 @@
 objectGfxHeaderTable: ; $fdafb
 	/* $00 */ m_ObjectGfxHeader gfx_capcom_nintendo $00
-	/* $01 */ m_ObjectGfxHeader gfx_0baca4 $00
-	/* $02 */ m_ObjectGfxHeader gfx_0bae0d $00
-	/* $03 */ m_ObjectGfxHeader gfx_0baf8b $80
+	/* $01 */ m_ObjectGfxHeader gfx_pirate_ship_tiles_1 $00
+	/* $02 */ m_ObjectGfxHeader gfx_pirate_ship_tiles_2 $00
+	/* $03 */ m_ObjectGfxHeader gfx_pirate_ship_tiles_3 $80
 	/* $04 */ m_ObjectGfxHeader gfx_0a74a7 $00
 	/* $05 */ m_ObjectGfxHeader gfx_0a75dd $00
 	/* $06 */ m_ObjectGfxHeader gfx_0a775e $80
@@ -84,7 +84,7 @@ objectGfxHeaderTable: ; $fdafb
 	/* $52 */ m_ObjectGfxHeader gfx_0a8188 $00
 	/* $53 */ m_ObjectGfxHeader gfx_0a8358 $00
 	/* $54 */ m_ObjectGfxHeader gfx_0a84f5 $00
-	/* $55 */ m_ObjectGfxHeader gfx_0a42b0 $00
+	/* $55 */ m_ObjectGfxHeader gfx_season_symbols $00
 	/* $56 */ m_ObjectGfxHeader gfx_0a8656 $00
 	/* $57 */ m_ObjectGfxHeader gfx_dungeon_sprites $00
 	/* $58 */ m_ObjectGfxHeader gfx_0a3e42 $00
@@ -92,16 +92,16 @@ objectGfxHeaderTable: ; $fdafb
 	/* $5a */ m_ObjectGfxHeader gfx_0a40e0 $00
 	/* $5b */ m_ObjectGfxHeader gfx_0a41b1 $00
 	/* $5c */ m_ObjectGfxHeader gfx_09ff69 $00
-	/* $5d */ m_ObjectGfxHeader gfx_0a009d $00
-	/* $5e */ m_ObjectGfxHeader gfx_0a01b9 $00
-	/* $5f */ m_ObjectGfxHeader gfx_0a0637 $00
+	/* $5d */ m_ObjectGfxHeader gfx_quest_items_5 $00
+	/* $5e */ m_ObjectGfxHeader gfx_map_compass_keys $00
+	/* $5f */ m_ObjectGfxHeader gfx_item_icons_1_spr $00
 	/* $60 */ m_ObjectGfxHeader gfx_item_icons_2 $00
 	/* $61 */ m_ObjectGfxHeader gfx_item_icons_3 $00
-	/* $62 */ m_ObjectGfxHeader gfx_0a0786 $00
-	/* $63 */ m_ObjectGfxHeader gfx_0a08fa $00
-	/* $64 */ m_ObjectGfxHeader gfx_0a0a47 $00
-	/* $65 */ m_ObjectGfxHeader gfx_0a0c09 $00
-	/* $66 */ m_ObjectGfxHeader gfx_0a0d57 $00
+	/* $62 */ m_ObjectGfxHeader gfx_essences $00
+	/* $63 */ m_ObjectGfxHeader gfx_quest_items_1 $00
+	/* $64 */ m_ObjectGfxHeader gfx_quest_items_2 $00
+	/* $65 */ m_ObjectGfxHeader gfx_quest_items_3 $00
+	/* $66 */ m_ObjectGfxHeader gfx_quest_items_4 $00
 	/* $67 */ m_ObjectGfxHeader gfx_boomerang $00
 	/* $68 */ m_ObjectGfxHeader gfx_obj_intro_tree $00
 	/* $69 */ m_ObjectGfxHeader gfx_obj_intro_clouds $00
@@ -198,14 +198,3 @@ objectGfxHeaderTable: ; $fdafb
 	/* $c4 */ m_ObjectGfxHeader gfx_twinrova_8 $00
 	/* $c5 */ m_ObjectGfxHeader gfx_twinrova_9 $00
 	/* $c6 */ m_ObjectGfxHeader gfx_twinrovamerged_2 $80
-	/* $c7 */ m_ObjectGfxHeader gfx_capcom_nintendo $00
-	/* $c8 */ m_ObjectGfxHeader gfx_0e3baf $00
-	/* $c9 */ m_ObjectGfxHeader gfx_0e3ca0 $00
-	/* $ca */ m_ObjectGfxHeader gfx_0a0fa0 $00
-	/* $cb */ m_ObjectGfxHeader gfx_grass_tuft $00
-	/* $cc */ m_ObjectGfxHeader gfx_sand $00
-	/* $cd */ m_ObjectGfxHeader gfx_path $00
-	/* $ce */ m_ObjectGfxHeader gfx_scent_tree $00
-	/* $cf */ m_ObjectGfxHeader gfx_pegasus_tree $00
-	/* $d0 */ m_ObjectGfxHeader gfx_gale_tree $00
-	/* $d1 */ m_ObjectGfxHeader gfx_mystery_tree $00

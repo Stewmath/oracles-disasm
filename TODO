@@ -19,7 +19,9 @@
       append" feature in wla.
 * Text:
     - Document some of the esoteric stuff (cmd8, empty text blocks)
-
+    - Change naming scheme so ages and seasons text have distinct names; also make a nice
+      way to rename precompressed text
+    - Fix tokay island script (https://github.com/Drenn1/ages-disasm/issues/10)
 
 * QOL stuff (in a different branch):
     * Allow usage of banks $40+ for graphics. Currently not possible due to using only
@@ -58,3 +60,5 @@
         * Add better opcodes. Scripting language kind of sucks. ie:
             * Run assembly in any bank
             * Comparison opcodes
+
+* TODO: Check if getting biggoron's sword with empty item slot causes issues?

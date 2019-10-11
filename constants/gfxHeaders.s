@@ -1,3 +1,6 @@
+; Values are close enough between ages and seasons that it's usually ok to share them?
+; There are some cases where they're different though. TODO: find those.
+
 .DEFINE GFXH_00 $00
 .DEFINE GFXH_01 $01
 .DEFINE GFXH_02 $02
@@ -88,10 +91,10 @@
 .DEFINE GFXH_50 $50
 .DEFINE GFXH_51 $51
 .DEFINE GFXH_52 $52
-.DEFINE GFXH_53 $53
+.DEFINE GFXH_53 $53 ; Similar to PIRATE_SHIP_BODY_TILEMAP?
 .DEFINE GFXH_54 $54
-.DEFINE GFXH_55 $55
-.DEFINE GFXH_56 $56
+.DEFINE GFXH_PIRATE_SHIP_BOW_TILEMAP	$55
+.DEFINE GFXH_PIRATE_SHIP_BODY_TILEMAP	$56
 .DEFINE GFXH_57 $57
 .DEFINE GFXH_58 $58
 .DEFINE GFXH_59 $59

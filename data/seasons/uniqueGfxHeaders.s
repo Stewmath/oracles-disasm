@@ -18,7 +18,7 @@ uniqueGfxHeader07: ; $1184c
 uniqueGfxHeader08: ; $11852
 	m_GfxHeader gfx_0b9368 $9601 $1f|$80
 	.db $00
-	.db PALH_55
+	.db SEASONS_PALH_55
 uniqueGfxHeader09: ; $1185a
 	m_GfxHeader gfx_0b94a3 $9601 $1f
 uniqueGfxHeader0a: ; $11860
@@ -74,13 +74,13 @@ uniqueGfxHeader1d: ; $1190e
 	m_GfxHeader gfx_0b373d $9001 $3f|$80
 	m_GfxHeader gfx_0b3b03 $9401 $3f|$80
 	.db $00
-	.db PALH_52
+	.db SEASONS_PALH_52
 uniqueGfxHeader1e: ; $11922
 	m_GfxHeader gfx_0b3e8f $8f01 $07|$80
 	m_GfxHeader gfx_0b3ed4 $9001 $3f|$80
 	m_GfxHeader gfx_0b41b6 $9401 $3f|$80
 	.db $00
-	.db PALH_52
+	.db SEASONS_PALH_52
 uniqueGfxHeader1f: ; $11936
 	m_GfxHeader gfx_animations_1 $8881 $07 $40
 uniqueGfxHeader20: ; $1193c
@@ -93,16 +93,16 @@ uniqueGfxHeader23: ; $1194e
 	m_GfxHeader gfx_0b2911 $9601 $1b
 uniqueGfxHeader24: ; $11954
 	.db $00
-	.db PALH_48
+	.db SEASONS_PALH_48
 uniqueGfxHeader25: ; $11956
 	.db $00
-	.db PALH_4e
+	.db SEASONS_PALH_4e
 uniqueGfxHeader26: ; $11958
 	.db $00
-	.db PALH_4f
+	.db SEASONS_PALH_4f
 uniqueGfxHeader27: ; $1195a
 	.db $00
-	.db PALH_47
+	.db SEASONS_PALH_47
 uniqueGfxHeader28: ; $1195c
 	.db $00
-	.db PALH_4d
+	.db SEASONS_PALH_4d

@@ -1,6 +1,8 @@
 ; Note: the tiles listed here may not apply for all areas.
 ; TODO: Rename "up/down/left/right" to "north/south/east/west" (the distinction between
 ; "up" and "north" is useful)
+; TODO: Figure out differences between ages and seasons, and categorize better based on
+; area type (outdoors / indoors / cave / dungeon).
 
 ; Tiles in normal areas
 
@@ -10,7 +12,6 @@
 .define TILEINDEX_MOVING_POT		$10
 .define TILEINDEX_HORIZONTAL_BRIDGE_TOP		$1d ; Overworld only
 .define TILEINDEX_HORIZONTAL_BRIDGE_BOTTOM	$1e ; Overworld only
-.define TILEINDEX_GASHA_TREE_TL		$4e
 .define TILEINDEX_CONVEYOR_UP		$54
 .define TILEINDEX_CONVEYOR_RIGHT	$55
 .define TILEINDEX_CONVEYOR_DOWN		$56
@@ -33,7 +34,6 @@
 .define TILEINDEX_OVERWORLD_ROCK	$c0 ; outdoors only
 .define TILEINDEX_OVERWORLD_BUSH	$c5 ; outdoors only
 .define TILEINDEX_STAIRS		$d0 ; overworld only
-.define TILEINDEX_SOFT_SOIL		$d2
 .define TILEINDEX_VINE_TOP		$d4
 .define TILEINDEX_VINE_MIDDLE		$d5
 .define TILEINDEX_VINE_BOTTOM		$d6
@@ -97,11 +97,19 @@
 	.define TILEINDEX_RAISED_FLOOR_2	$28
 	.define TILEINDEX_LOWERED_FLOOR_2	$29
 
+	.define TILEINDEX_GASHA_TREE_TL		$4e
+	.define TILEINDEX_SOFT_SOIL		$d2
+
 	; Fish can swim in any tile from TILEINDEX_PUDDLE to TILEINDEX_FD
 	.define TILEINDEX_PUDDLE		$f9
 	.define TILEINDEX_WATER			$fa
+
 .else ; ROM_SEASONS
 	.define TILEINDEX_STUMP		$20
+
+	.define TILEINDEX_GASHA_TREE_TL		$75
+	.define TILEINDEX_SOFT_SOIL		$e0
+
 	; For seasons, $f8-$f9 count as grass, $fa-$fc count as puddles
 	.define TILEINDEX_PUDDLE	$fa
 	.define TILEINDEX_WATER		$fd

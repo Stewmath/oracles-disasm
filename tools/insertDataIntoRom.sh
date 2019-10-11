@@ -23,12 +23,12 @@ outfile=$1
 
 # Find a label's address from the sym file (not used)
 function getval() {
-	val=$(awk -v name="$1" -F'[: ]' '$3 == name {print "0x"$1"*0x4000+0x"$2}' rom.sym)
+	val=$(awk -v name="$1" -F'[: ]' '$3 == name {print "0x"$1"*0x4000+0x"$2}' ages.sym)
 	val=$(($val-0x4000))
 }
 
 function insert() {
-	dd bs=1 if=rom.gbc of="$outfile" skip=$1 seek=$1 count=$(($2-$1)) conv=notrunc 2>/dev/null
+	dd bs=1 if=ages.gbc of="$outfile" skip=$1 seek=$1 count=$(($2-$1)) conv=notrunc 2>/dev/null
 }
 
 [[ ! -f $outfile ]] \

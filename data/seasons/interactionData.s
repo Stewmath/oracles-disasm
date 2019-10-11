@@ -807,9 +807,3 @@ interactione6SubidData:
 	.db $73 $18 $00
 	.db $60 $10 $21
 	.db $5b $06 $42
-	.db $00 $00 $00
-	.db $a9 $08 $4c
-	.db $08 $00 $00
-	.db $aa $0d $5e
-	.db $00 $00 $4c
-	.db $ac $88 $4c

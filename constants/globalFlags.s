@@ -1,7 +1,7 @@
 ; This many global flags aren't used, but there seems to be this much memory reserved.
 .define NUM_GLOBALFLAGS $80
 
-; Ages globalflags (TODO: wrap in ifdef)
+
 .ENUM $0
 	; First few globalflags are probably the same between games?
 
@@ -17,7 +17,10 @@
 
 	GLOBALFLAG_OBTAINED_RING_BOX		db ; $08
 	GLOBALFLAG_APPRAISED_HUNDREDTH_RING	db ; $09
-	GLOBALFLAG_INTRO_DONE			db ; $0a
+	GLOBALFLAG_INTRO_DONE			db ; $0a: Once set, start/select are usable
+
+.ifdef ROM_AGES
+
 	GLOBALFLAG_0b				db ; $0b: Set when getting bombs from ambi
 	GLOBALFLAG_0c				db ; $0c: Maku tree disappeared?
 	GLOBALFLAG_0d				db ; $0d
@@ -37,7 +40,7 @@
 	GLOBALFLAG_BEGAN_POSSESSED_NAYRU_FIGHT	db ; $18
 	GLOBALFLAG_BEAT_POSSESSED_NAYRU		db ; $19
 	GLOBALFLAG_MOBLINS_KEEP_DESTROYED	db ; $1a: Moblin's keep destroyed?
-	GLOBALFLAG_1b				db ; $1b
+	GLOBALFLAG_GOT_ISLAND_CHART		db ; $1b
 	GLOBALFLAG_GOT_BOMB_UPGRADE_FROM_FAIRY	db ; $1c
 	GLOBALFLAG_CAN_BUY_FLUTE		db ; $1d
 	GLOBALFLAG_1e				db ; $1e
@@ -45,7 +48,7 @@
 	GLOBALFLAG_TALKED_TO_OCTOROK_FAIRY	db ; $20
 	GLOBALFLAG_PREGAME_INTRO_DONE		db ; $21
 	GLOBALFLAG_TALKED_TO_HEAD_CARPENTER	db ; $22: talked to carpenter first time
-	GLOBALFLAG_GOT_FLUTE			db ; $23
+	GLOBALFLAG_GOT_FLUTE			db ; $23: identified flute from companion
 	GLOBALFLAG_SAVED_COMPANION_FROM_FOREST	db ; $24
 	GLOBALFLAG_SYMMETRY_BRIDGE_BUILT	db ; $25
 	GLOBALFLAG_RAFTON_CHANGED_ROOMS		db ; $26: rafton's in right room, not left
@@ -87,7 +90,7 @@
 	GLOBALFLAG_TALKED_TO_CHEVAL		db ; $43
 	GLOBALFLAG_44				db ; $44: Maple's been met in the past
 	GLOBALFLAG_RALPH_ENTERED_BLACK_TOWER	db ; $45
-	GLOBALFLAG_46				db ; $46
+	GLOBALFLAG_GOT_SATCHEL_UPGRADE		db ; $46
 
 	; Unused?
 	GLOBALFLAG_47				db ; $47
@@ -100,89 +103,9 @@
 	GLOBALFLAG_4e				db ; $4e
 	GLOBALFLAG_4f				db ; $4f
 
-	; ==============================================================================
-	; LINKED AGES SECRETS
-	; ==============================================================================
+.else; ROM_SEASONS
 
-	; Set when corresponding NPC is spoken to; allows Farore to accept the return
-	; secret.
-	GLOBALFLAG_50				db ; $50
-	GLOBALFLAG_51				db ; $51
-	GLOBALFLAG_52				db ; $52
-	GLOBALFLAG_53				db ; $53
-	GLOBALFLAG_54				db ; $54
-	GLOBALFLAG_55				db ; $55
-	GLOBALFLAG_56				db ; $56
-	GLOBALFLAG_57				db ; $57
-	GLOBALFLAG_58				db ; $58
-	GLOBALFLAG_59				db ; $59
-
-	; Set when the return secret has been entered.
-	GLOBALFLAG_5a				db ; $5a
-	GLOBALFLAG_5b				db ; $5b
-	GLOBALFLAG_5c				db ; $5c
-	GLOBALFLAG_5d				db ; $5d
-	GLOBALFLAG_5e				db ; $5e
-	GLOBALFLAG_5f				db ; $5f
-	GLOBALFLAG_60				db ; $60
-	GLOBALFLAG_61				db ; $61
-	GLOBALFLAG_62				db ; $62
-	GLOBALFLAG_63				db ; $63
-
-	; ==============================================================================
-	; LINKED SEASONS SECRETS
-	; ==============================================================================
-
-	; Set when corresponding NPC is told the secret, to begin the sidequest.
-	GLOBALFLAG_64				db ; $64
-	GLOBALFLAG_65				db ; $65
-	GLOBALFLAG_66				db ; $66
-	GLOBALFLAG_67				db ; $67
-	GLOBALFLAG_68				db ; $68
-	GLOBALFLAG_69				db ; $69
-	GLOBALFLAG_6a				db ; $6a
-	GLOBALFLAG_6b				db ; $6b
-	GLOBALFLAG_6c				db ; $6c: told elder secret
-	GLOBALFLAG_6d				db ; $6d
-
-	; Set when the sidequest is completed and Link has obtained the item.
-	GLOBALFLAG_6e				db ; $6e
-	GLOBALFLAG_6f				db ; $6f
-	GLOBALFLAG_70				db ; $70
-	GLOBALFLAG_71				db ; $71
-	GLOBALFLAG_72				db ; $72
-	GLOBALFLAG_73				db ; $73
-	GLOBALFLAG_74				db ; $74
-	GLOBALFLAG_75				db ; $75
-	GLOBALFLAG_76				db ; $76: completed elder secret
-	GLOBALFLAG_77				db ; $77
-
-	; Unused?
-	GLOBALFLAG_78				db ; $78
-	GLOBALFLAG_79				db ; $79
-	GLOBALFLAG_7a				db ; $7a
-	GLOBALFLAG_7b				db ; $7b
-	GLOBALFLAG_7c				db ; $7c
-	GLOBALFLAG_7d				db ; $7d
-	GLOBALFLAG_7e				db ; $7e
-	GLOBALFLAG_7f				db ; $7f
-.ENDE
-
-
-; Seasons globalflags
-.ENUM $0
-	GLOBALFLAG_S_00				db ; $00
-	GLOBALFLAG_S_01				db ; $01
-	GLOBALFLAG_S_02				db ; $02
-	GLOBALFLAG_S_03				db ; $03
-	GLOBALFLAG_S_04				db ; $04
-	GLOBALFLAG_S_05				db ; $05
-	GLOBALFLAG_S_06				db ; $06
-	GLOBALFLAG_S_07				db ; $07
-	GLOBALFLAG_S_08				db ; $08
-	GLOBALFLAG_S_09				db ; $09
-	GLOBALFLAG_S_INTRO_DONE			db ; $0a
-	GLOBALFLAG_S_0b				db ; $0b: Set if on a date with Rosa?
+	GLOBALFLAG_DATING_ROSA			db ; $0b
 	GLOBALFLAG_S_0c				db ; $0c
 	GLOBALFLAG_S_0d				db ; $0d
 	GLOBALFLAG_S_0e				db ; $0e
@@ -193,8 +116,8 @@
 	GLOBALFLAG_S_13				db ; $13
 	GLOBALFLAG_S_14				db ; $14
 	GLOBALFLAG_S_15				db ; $15
-	GLOBALFLAG_S_16				db ; $16: Moblin's keep destroyed?
-	GLOBALFLAG_S_17				db ; $17: Pirate ship moved
+	GLOBALFLAG_MOBLINS_KEEP_DESTROYED	db ; $16
+	GLOBALFLAG_PIRATE_SHIP_DOCKED		db ; $17: Pirate ship moved
 	GLOBALFLAG_S_18				db ; $18: Met maku tree?
 	GLOBALFLAG_S_19				db ; $19
 	GLOBALFLAG_S_1a				db ; $1a
@@ -204,23 +127,23 @@
 	GLOBALFLAG_S_1e				db ; $1e
 	GLOBALFLAG_S_1f				db ; $1f
 	GLOBALFLAG_S_20				db ; $20
-	GLOBALFLAG_S_PREGAME_INTRO_DONE		db ; $21
+	GLOBALFLAG_PREGAME_INTRO_DONE		db ; $21
 	GLOBALFLAG_S_22				db ; $22
 	GLOBALFLAG_S_23				db ; $23
 	GLOBALFLAG_S_24				db ; $24: Relates to outside Onox castle
 	GLOBALFLAG_S_25				db ; $25
 	GLOBALFLAG_S_26				db ; $26
 	GLOBALFLAG_S_27				db ; $27
-	GLOBALFLAG_S_28				db ; $28
+	GLOBALFLAG_FINISHEDGAME			db ; $28
 	GLOBALFLAG_S_29				db ; $29
-	GLOBALFLAG_S_2a				db ; $2a: same as GLOBALFLAG_3d?
+	GLOBALFLAG_3d				db ; $2a: same as GLOBALFLAG_3d from ages?
 	GLOBALFLAG_S_2b				db ; $2b
 	GLOBALFLAG_S_2c				db ; $2c
 	GLOBALFLAG_S_2d				db ; $2d
 	GLOBALFLAG_S_2e				db ; $2e
 	GLOBALFLAG_S_2f				db ; $2f
 	GLOBALFLAG_S_30				db ; $30: game beaten / season always spring?
-	GLOBALFLAG_S_31				db ; $31
+	GLOBALFLAG_RING_SECRET_GENERATED	db ; $31
 	GLOBALFLAG_S_32				db ; $32
 	GLOBALFLAG_S_33				db ; $33
 	GLOBALFLAG_S_34				db ; $34
@@ -251,52 +174,79 @@
 	GLOBALFLAG_S_4d				db ; $4d
 	GLOBALFLAG_S_4e				db ; $4e
 	GLOBALFLAG_S_4f				db ; $4f
-	GLOBALFLAG_S_50				db ; $50
-	GLOBALFLAG_S_51				db ; $51
-	GLOBALFLAG_S_52				db ; $52
-	GLOBALFLAG_S_53				db ; $53
-	GLOBALFLAG_S_54				db ; $54
-	GLOBALFLAG_S_55				db ; $55
-	GLOBALFLAG_S_56				db ; $56
-	GLOBALFLAG_S_57				db ; $57
-	GLOBALFLAG_S_58				db ; $58
-	GLOBALFLAG_S_59				db ; $59
-	GLOBALFLAG_S_5a				db ; $5a
-	GLOBALFLAG_S_5b				db ; $5b
-	GLOBALFLAG_S_5c				db ; $5c
-	GLOBALFLAG_S_5d				db ; $5d
-	GLOBALFLAG_S_5e				db ; $5e
-	GLOBALFLAG_S_5f				db ; $5f
-	GLOBALFLAG_S_60				db ; $60
-	GLOBALFLAG_S_61				db ; $61
-	GLOBALFLAG_S_62				db ; $62
-	GLOBALFLAG_S_63				db ; $63
-	GLOBALFLAG_S_64				db ; $64
-	GLOBALFLAG_S_65				db ; $65
-	GLOBALFLAG_S_66				db ; $66
-	GLOBALFLAG_S_67				db ; $67
-	GLOBALFLAG_S_68				db ; $68
-	GLOBALFLAG_S_69				db ; $69
-	GLOBALFLAG_S_6a				db ; $6a
-	GLOBALFLAG_S_6b				db ; $6b
-	GLOBALFLAG_S_6c				db ; $6c
-	GLOBALFLAG_S_6d				db ; $6d
-	GLOBALFLAG_S_6e				db ; $6e
-	GLOBALFLAG_S_6f				db ; $6f
-	GLOBALFLAG_S_70				db ; $70
-	GLOBALFLAG_S_71				db ; $71
-	GLOBALFLAG_S_72				db ; $72
-	GLOBALFLAG_S_73				db ; $73
-	GLOBALFLAG_S_74				db ; $74
-	GLOBALFLAG_S_75				db ; $75
-	GLOBALFLAG_S_76				db ; $76
-	GLOBALFLAG_S_77				db ; $77
-	GLOBALFLAG_S_78				db ; $78
-	GLOBALFLAG_S_79				db ; $79
-	GLOBALFLAG_S_7a				db ; $7a
-	GLOBALFLAG_S_7b				db ; $7b
-	GLOBALFLAG_S_7c				db ; $7c
-	GLOBALFLAG_S_7d				db ; $7d
-	GLOBALFLAG_S_7e				db ; $7e
-	GLOBALFLAG_S_7f				db ; $7f
-.ende
+.endif
+
+	; Both games
+
+	; ==============================================================================
+	; LINKED AGES SECRETS
+	; ==============================================================================
+
+	; Set when corresponding NPC is spoken to; allows Farore to accept the return
+	; secret in Ages.
+	GLOBALFLAG_50				db ; $50
+	GLOBALFLAG_51				db ; $51
+	GLOBALFLAG_52				db ; $52
+	GLOBALFLAG_53				db ; $53
+	GLOBALFLAG_54				db ; $54
+	GLOBALFLAG_55				db ; $55
+	GLOBALFLAG_56				db ; $56
+	GLOBALFLAG_57				db ; $57
+	GLOBALFLAG_58				db ; $58
+	GLOBALFLAG_59				db ; $59
+
+	; Set when the return secret has been entered.
+	GLOBALFLAG_5a				db ; $5a
+	GLOBALFLAG_5b				db ; $5b
+	GLOBALFLAG_5c				db ; $5c
+	GLOBALFLAG_5d				db ; $5d
+	GLOBALFLAG_5e				db ; $5e
+	GLOBALFLAG_5f				db ; $5f
+	GLOBALFLAG_60				db ; $60
+	GLOBALFLAG_61				db ; $61
+	GLOBALFLAG_62				db ; $62
+	GLOBALFLAG_63				db ; $63
+
+	; ==============================================================================
+	; LINKED SEASONS SECRETS
+	; ==============================================================================
+
+	; Set when corresponding NPC is spoken to.
+	; In Seasons, that is the NPC who initiates the quest. The flag must be set for
+	; Farore to accept the return secret from Ages.
+	; In Ages, that is the NPC who eventually gives you the item.
+	GLOBALFLAG_BEGAN_KING_ZORA_SECRET				db ; $64
+	GLOBALFLAG_BEGAN_FAIRY_SECRET				db ; $65
+	GLOBALFLAG_BEGAN_TROY_SECRET				db ; $66
+	GLOBALFLAG_BEGAN_PLEN_SECRET				db ; $67
+	GLOBALFLAG_BEGAN_LIBRARY_SECRET				db ; $68
+	GLOBALFLAG_BEGAN_TOKAY_SECRET				db ; $69
+	GLOBALFLAG_BEGAN_MAMAMU_SECRET				db ; $6a
+	GLOBALFLAG_BEGAN_TINGLE_SECRET				db ; $6b
+	GLOBALFLAG_BEGAN_ELDER_SECRET				db ; $6c
+	GLOBALFLAG_BEGAN_SYMMETRY_SECRET				db ; $6d
+
+	; Set when the sidequest is completed and Link has obtained the item.
+	; In Seasons, he obtains the item from an NPC.
+	; In Ages, he obtains the item from Farore.
+	GLOBALFLAG_DONE_KING_ZORA_SECRET				db ; $6e
+	GLOBALFLAG_DONE_FAIRY_SECRET				db ; $6f
+	GLOBALFLAG_DONE_TROY_SECRET				db ; $70
+	GLOBALFLAG_DONE_PLEN_SECRET				db ; $71
+	GLOBALFLAG_DONE_LIBRARY_SECRET				db ; $72
+	GLOBALFLAG_DONE_TOKAY_SECRET				db ; $73
+	GLOBALFLAG_DONE_MAMAMU_SECRET				db ; $74
+	GLOBALFLAG_DONE_TINGLE_SECRET				db ; $75
+	GLOBALFLAG_DONE_ELDER_SECRET				db ; $76
+	GLOBALFLAG_DONE_SYMMETRY_SECRET				db ; $77
+
+	; Unused?
+	GLOBALFLAG_78				db ; $78
+	GLOBALFLAG_79				db ; $79
+	GLOBALFLAG_7a				db ; $7a
+	GLOBALFLAG_7b				db ; $7b
+	GLOBALFLAG_7c				db ; $7c
+	GLOBALFLAG_7d				db ; $7d
+	GLOBALFLAG_7e				db ; $7e
+	GLOBALFLAG_7f				db ; $7f
+.ENDE

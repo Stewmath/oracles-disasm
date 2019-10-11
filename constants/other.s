@@ -28,6 +28,9 @@
 	.define OVERWORD_MAP_POPUP_SHIFT_INDEX_X	8
 	.define OVERWORD_MAP_POPUP_SHIFT_INDEX_Y	8
 
+	.define NUM_DUNGEONS		$10
+	.define NUM_DUNGEONS_DIV_8	2 ; Above value divided by 8, rounded up
+
 .else; ROM_SEASONS
 	.define OVERWORLD_WIDTH		16
 	.define OVERWORLD_HEIGHT	16
@@ -48,14 +51,15 @@
 
 	.define SUBROSIA_MAP_POPUP_SHIFT_INDEX_X	5
 	.define SUBROSIA_MAP_POPUP_SHIFT_INDEX_Y	4
+
+	.define NUM_DUNGEONS		$0c
+	.define NUM_DUNGEONS_DIV_8	2 ; Above value divided by 8, rounded up
 .endif
 
 ; First 4 map groups are small
 .define NUM_SMALL_GROUPS	$04
 .define NUM_UNIQUE_GROUPS	$06
 .define FIRST_SIDESCROLL_GROUP	$06
-
-.define NUM_DUNGEONS		$10 ; Should be multiple of 8
 
 ; For wScrollMode
 .define SCROLLMODE_01		$01
@@ -86,3 +90,13 @@
 .define DISABLE_COMPANION		$20
 .define DISABLE_40			$40
 .define DISABLE_ALL_BUT_INTERACTIONS	$80
+
+
+; Room indices
+
+.ifdef ROM_AGES
+	.define GANON_ROOM $5f5
+	; TODO: twinrova room
+.else; ROM_SEASONS
+	.define GANON_ROOM $59e
+.endif
