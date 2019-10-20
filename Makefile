@@ -54,6 +54,7 @@ GFXFILES = $(wildcard gfx/*.bin)
 GFXFILES += $(wildcard gfx/$(GAME)/*.bin)
 GFXFILES += $(wildcard gfx_compressible/*.bin)
 GFXFILES += $(wildcard gfx_compressible/$(GAME)/*.bin)
+GFXFILES += gfx/gfx_link_oldspot.bin
 GFXFILES := $(GFXFILES:.bin=.cmp)
 GFXFILES := $(foreach file,$(GFXFILES),build/gfx/$(notdir $(file)))
 
@@ -115,7 +116,7 @@ ifeq ($(BUILD_VANILLA),true)
 endif
 
 gfx/gfx_link_oldspot.bin: gfx/gfx_link.bin
-	tools/copyLinkGfx.py
+	@tools/copyLinkGfx.py
 
 $(MAPPINGINDICESFILES): build/tilesets/mappingsDictionary.bin
 $(COLLISIONFILES): build/tilesets/collisionsDictionary.bin

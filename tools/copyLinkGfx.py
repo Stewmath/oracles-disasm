@@ -16,7 +16,7 @@ gfxFile.close()
 
 gfxOut = bytearray([0] * 0x22e0)
 
-preserveRanges = [(0x200, 0x3a0), (0x1a00, 0x1e00)]
+preserveRanges = [(0x200, 0x3a0), (0x1b80, 0x1dc0)]
 
 for i in range(len(preserveRanges)):
     start = preserveRanges[i][0]
