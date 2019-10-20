@@ -2217,7 +2217,7 @@ playCompassSoundIfKeyInRoom:
 	call checkFlag		; $4a66
 	ret z			; $4a69
 	call getThisRoomFlags		; $4a6a
-	and AREAFLAG_SIDESCROLL		; $4a6d
+	and ROOMFLAG_ITEM		; $4a6d
 	ret nz			; $4a6f
 
 .ifdef ROM_SEASONS
