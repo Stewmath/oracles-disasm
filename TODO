@@ -7,7 +7,10 @@
 * Investigate compression:
     - Each room layout group ("plane") has $4000 bytes for its data (pointers use 14
       bits). Uncompressed small rooms can use up to $5000 bytes. Investigate further.
-        - Large layout groups should have $10000 bytes.
+        - Large layout groups should have $10000 bytes. However, in Seasons this
+	  number is only $8000 bytes? The seasons version of the
+	  "loadRoomLayout" function should be modified to match the ages version
+	  when making rom hacks!
 * Objects:
     - Should be possible to have object ids greater than $ef, not supported yet
       though
