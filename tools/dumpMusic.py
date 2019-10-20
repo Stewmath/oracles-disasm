@@ -43,6 +43,16 @@ class ChannelPointer:
 	self.channelValue = channel>>4
         self.labels = labels
 
+
+noteTable = [ 'c', 'cs', 'd', 'ds', 'e', 'f', 'fs', 'g', 'gs', 'a', 'as', 'b', ]
+
+def byteToNote(b):
+    octave = b // len(noteTable) + 1
+    s = noteTable[b % len(noteTable)] + str(octave)
+    if len(s) < 3:
+        s += ' '
+    return s
+
 soundPointers = []
 channelPointers = []
 
@@ -217,7 +227,7 @@ def parseChannelData(address, channel, chanOut):
         elif b >= 0 and b <= 0x58: # and b >= 0xc
             l = rom[address]
             address+=1
-            chanOut.write('\tnote ' + wlahex(b, 2) + ' ' + wlahex(l,2) + '\n')
+            chanOut.write('\tnote ' + byteToNote(b) + ' ' + wlahex(l,2) + '\n')
         else:
             chanOut.write('\t.db ' + wlahex(b,2) + ' ; ???\n')
     return address

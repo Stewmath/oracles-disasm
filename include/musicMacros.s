@@ -59,6 +59,42 @@
 	a5: db
 	as5: db
 	b5: db
+	c6: db
+	cs6: db
+	d6: db
+	ds6: db
+	e6: db
+	f6: db
+	fs6: db
+	g6: db
+	gs6: db
+	a6: db
+	as6: db
+	b6: db
+	c7: db
+	cs7: db
+	d7: db
+	ds7: db
+	e7: db
+	f7: db
+	fs7: db
+	g7: db
+	gs7: db
+	a7: db
+	as7: db
+	b7: db
+	c8: db
+	cs8: db
+	d8: db
+	ds8: db
+	e8: db
+	f8: db
+	fs8: db
+	g8: db
+	gs8: db
+	a8: db
+	as8: db
+	b8: db
 .ende
 
 .redefine od (-1)
