@@ -39633,7 +39633,7 @@ cliffTilesTable:
 	.include "code/specialObjectAnimationsAndDamage.s"
 	.include "code/breakableTiles.s"
 
-	.include "code/items/parentItemCommon.s"
+	.include "code/items/parentItemUsage.s"
 	.include "code/items/parentItems.s"
 
 ;;
