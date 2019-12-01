@@ -39634,8 +39634,11 @@ cliffTilesTable:
 	.include "code/breakableTiles.s"
 
 	.include "code/items/parentItemUsage.s"
+
 	.include "code/items/shieldParent.s"
+	.include "code/items/otherSwordsParent.s"
 	.include "code/items/parentItems.s"
+
 	.include "code/items/parentItemCommon.s"
 
 
