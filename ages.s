@@ -27469,7 +27469,7 @@ _linkApplyTileTypes:
 	or a			; $4363
 	jr nz,@tileType_normal	; $4364
 
-	ld a,($cc5e)		; $4366
+	ld a,(wcc5e)		; $4366
 	bit 6,a			; $4369
 	jr nz,@tileType_normal	; $436b
 
@@ -31261,7 +31261,7 @@ _linkState10:
 	and $40			; $5554
 	jr nz,++		; $5556
 
-	ld a,($cc5e)		; $5558
+	ld a,(wcc5e)		; $5558
 	bit 6,a			; $555b
 	jr nz,++		; $555d
 
@@ -31300,7 +31300,7 @@ _linkState10:
 	jp specialObjectAnimate		; $5595
 
 @notInAir:
-	ld a,($cc5e)		; $5598
+	ld a,(wcc5e)		; $5598
 	bit 6,a			; $559b
 	jp nz,_animateLinkStanding		; $559d
 
@@ -32250,7 +32250,7 @@ _linkState01_sidescroll:
 	or a			; $5a11
 	jp nz,_linkUpdateSwimming_sidescroll		; $5a12
 
-	ld a,($cc5e)		; $5a15
+	ld a,(wcc5e)		; $5a15
 	bit 6,a			; $5a18
 	jp z,+			; $5a1a
 
@@ -39916,7 +39916,7 @@ _clearAllParentItems:
 	xor a			; $4884
 	ld (wUsingShield),a		; $4885
 	ld ($cc63),a		; $4888
-	ld ($cc5e),a		; $488b
+	ld (wcc5e),a		; $488b
 	pop de			; $488e
 	ret			; $488f
 
@@ -40226,7 +40226,7 @@ _chooseParentItemSlot:
 	pop de			; $49c6
 	ld hl,w1ParentItem2		; $49c7
 	xor a			; $49ca
-	ld ($cc5e),a		; $49cb
+	ld (wcc5e),a		; $49cb
 	ld ($cc63),a		; $49ce
 	ret			; $49d1
 
@@ -42046,7 +42046,7 @@ _parentItemCode_feather:
 
 	ld hl,wLinkSwimmingState		; $5318
 	ldi a,(hl)		; $531b
-	; Check $cc5e as well
+	; Check wcc5e as well
 	or (hl)			; $531c
 	jr nz,@deleteParent	; $531d
 

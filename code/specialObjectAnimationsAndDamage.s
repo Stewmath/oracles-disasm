@@ -142,7 +142,8 @@ loadLinkAndCompanionAnimationFrame_body:
 +
 	jp queueDmaTransfer		; $4509
 
-; @addr{450c}
+; These are animation frame indices; frame indices under the given value don't have link's direction
+; added to them?
 @data:
 	.db $54 ; SPECIALOBJECTID_LINK
 	.db $20
@@ -152,8 +153,12 @@ loadLinkAndCompanionAnimationFrame_body:
 	.db $00
 	.db $00
 	.db $00
-	.db $ff
-	.db $ff
+.ifdef ROM_AGES
+	.db $ff ; SPECIALOBJECTID_LINK_CUTSCENE
+.else; ROM_SEASONS
+	.db $40
+.endif
+	.db $ff ; SPECIALOBJECTID_LINK_RIDING_ANIMAL
 
 ;;
 ; Gets size, address of graphics to load.
@@ -280,6 +285,7 @@ _func_4553:
 ; @param[out]	a	Value written to w1Link.var34
 ; @addr{4589}
 @getLinkWalkingAnimation:
+.ifdef ROM_AGES
 	ld c,$0a		; $4589
 	ld a,(wAreaFlags)		; $458b
 	and AREAFLAG_UNDERWATER			; $458e
@@ -292,6 +298,7 @@ _func_4553:
 	ld a,(w1Link.direction)		; $4598
 	ld (wLinkPushingDirection),a		; $459b
 	jr @animationFound		; $459e
+.endif
 
 @notUnderwater:
 	ld c,$00		; $45a0
@@ -321,7 +328,7 @@ _func_4553:
 	jr nz,@animationFound	; $45bd
 
 	; Check something? (Causes throw / punch animation)
-	ld a,($cc5e)		; $45bf
+	ld a,(wcc5e)		; $45bf
 	or a			; $45c2
 	jr z,+			; $45c3
 
@@ -425,7 +432,11 @@ getTransformedLinkID:
 +
 	; Rings do nothing in sidescrolling, underwater areas
 	ld a,(wAreaFlags)		; $4637
+.ifdef ROM_AGES
 	and AREAFLAG_UNDERWATER | AREAFLAG_SIDESCROLL			; $463a
+.else
+	and AREAFLAG_40 | AREAFLAG_SIDESCROLL
+.endif
 	jr nz,++		; $463c
 
 	; Apparently, you can't be transformed when the menu is disabled
