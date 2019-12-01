@@ -31712,77 +31712,8 @@ _label_05_451:
 
 	.include "code/items/parentItemUsage.s"
 	.include "code/items/shieldParent.s"
+	.include "code/items/otherSwordsParent.s"
 ;	.include "code/items/parentItems.s"
-
-_parentItemCode_rodOfSeasons:
-	call $53f0		; $4a40
-	ld e,$04		; $4a43
-	ld a,(de)		; $4a45
-	rst_jumpTable			; $4a46
-	ld d,(hl)		; $4a47
-	ld c,d			; $4a48
-	sub a			; $4a49
-	ld c,d			; $4a4a
-	; Fall through
-
-
-_parentItemCode_biggoronSword:
-	call $53f0		; $4a4b
-	; Fall through
-
-
-_parentItemCode_foolsOre:
-	ld e,$04		; $4a4e
-	ld a,(de)		; $4a50
-	rst_jumpTable			; $4a51
-	ld e,l			; $4a52
-	ld c,d			; $4a53
-	sub a			; $4a54
-	ld c,d			; $4a55
-	ld a,($ccb6)		; $4a56
-	cp $08			; $4a59
-	jr nz,_label_06_095	; $4a5b
-	ld e,$00		; $4a5d
-	ld a,$ff		; $4a5f
-	ld (de),a		; $4a61
-_label_06_095:
-	call updateLinkDirectionFromAngle		; $4a62
-	call $52e2		; $4a65
-	jp $532f		; $4a68
-
-
-_parentItemCode_punch:
-	ld e,$04		; $4a6b
-	ld a,(de)		; $4a6d
-	rst_jumpTable			; $4a6e
-	ld (hl),e		; $4a6f
-	ld c,d			; $4a70
-	sub a			; $4a71
-	ld c,d			; $4a72
-	ld e,$00		; $4a73
-	ld a,$ff		; $4a75
-	ld (de),a		; $4a77
-	call updateLinkDirectionFromAngle		; $4a78
-	call $52e2		; $4a7b
-	call $532f		; $4a7e
-	ld a,($c6c5)		; $4a81
-	cp $0b			; $4a84
-	ret nz			; $4a86
-	ld l,$02		; $4a87
-	inc (hl)		; $4a89
-	ld c,$34		; $4a8a
-	ld a,($cc48)		; $4a8c
-	rrca			; $4a8f
-	jr nc,_label_06_096	; $4a90
-	inc c			; $4a92
-_label_06_096:
-	ld a,c			; $4a93
-	jp $4408		; $4a94
-	ld e,$21		; $4a97
-	ld a,(de)		; $4a99
-	rlca			; $4a9a
-	jp nc,$4414		; $4a9b
-	jp _clearParentItem		; $4a9e
 
 
 _parentItemCode_somaria:

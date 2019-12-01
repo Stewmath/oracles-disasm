@@ -27379,7 +27379,7 @@ _linkApplyTileTypes:
 	.dw @notSwimming ; TILETYPE_GRASS
 	.dw @notSwimming ; TILETYPE_STAIRS
 	.dw @swimming ; TILETYPE_WATER
-	.dw @tileType_unknown ; TILETYPE_UNKNOWN
+	.dw @tileType_stump ; TILETYPE_STUMP
 	.dw @tileType_conveyor ; TILETYPE_UPCONVEYOR
 	.dw @tileType_conveyor ; TILETYPE_RIGHTCONVEYOR
 	.dw @tileType_conveyor ; TILETYPE_DOWNCONVEYOR
@@ -27421,7 +27421,7 @@ _linkApplyTileTypes:
 	call z,playSound		; $431d
 	jr @tileType_normal		; $4320
 
-@tileType_unknown:
+@tileType_stump:
 	ld h,d			; $4322
 	ld l,SpecialObject.adjacentWallsBitset		; $4323
 	ld (hl),$ff		; $4325
@@ -34151,7 +34151,7 @@ specialObjectCode_transformedLink:
 	or a			; $62d4
 	call z,updateLinkDirectionFromAngle		; $62d5
 	ld a,(wActiveTileType)		; $62d8
-	cp TILETYPE_UNKNOWN			; $62db
+	cp TILETYPE_STUMP			; $62db
 	jr z,@animate			; $62dd
 	ld a,(wLinkImmobilized)		; $62df
 	or a			; $62e2

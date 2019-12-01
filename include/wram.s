@@ -2075,21 +2075,21 @@ wActiveTilePos: ; $cc99
 wActiveTileIndex: ; $cc9a
 	db
 
-wStandingOnTileCounter: ; $cc9b
+wStandingOnTileCounter: ; $cc9b/$ccb5
 ; This counter is used for certain tile types to help implement their behaviours.
 ; Ie. cracked floors use this as a counter until the floor breaks.
 	db
 
-wActiveTileType: ; $cc9c
+wActiveTileType: ; $cc9c/$ccb6
 ; Different values for grass, stairs, water, etc
 	db
 
-wLastActiveTileType: ; $cc9d
+wLastActiveTileType: ; $cc9d/$ccb7
 ; In top-down sections, this seems to remember the tile that Link stood on last frame.
 ; In sidescroll sections, however, this keeps track of the tile underneath Link instead.
 	db
 
-wIsTileSlippery: ; $cc9e/$ccb9
+wIsTileSlippery: ; $cc9e/$ccb8
 ; Bit 6 is set if Link is on a slippery tile.
 	db
 
