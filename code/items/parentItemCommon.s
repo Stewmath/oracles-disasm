@@ -68,6 +68,7 @@ _parentItemLoadAnimationAndIncState:
 	bit 7,b			; $53a3
 	call nz,_setLinkUsingItem1		; $53a5
 
+.ifdef ROM_AGES
 	ld a,(w1Companion.id)		; $53a8
 	cp SPECIALOBJECTID_RAFT			; $53ab
 	ld a,c			; $53ad
@@ -85,6 +86,7 @@ _parentItemLoadAnimationAndIncState:
 
 	ld a,LINK_ANIM_MODE_2d		; $53bc
 	jr @setAnimation		; $53be
+.endif
 
 @notUnderwater:
 	; Check if Link is riding something
@@ -329,11 +331,11 @@ _itemEnableLinkTurning:
 ;;
 ; Unused?
 ;
-; @param d Parent item to add to $cc95
+; @param d Parent item to add to wcc95
 ; @addr{5483}
 _setCc95Bit:
 	call _itemIndexToBit		; $5483
-	ld hl,$cc95		; $5486
+	ld hl,wcc95		; $5486
 	or (hl)			; $5489
 	ld (hl),a		; $548a
 	ret			; $548b
@@ -375,7 +377,7 @@ _andHlWithGameKeysPressed:
 ; @addr{549e}
 _clearParentItemIfCantUseSword:
 	; Check if in a spinner
-	ld a,($cc95)		; $549e
+	ld a,(wcc95)		; $549e
 	rlca			; $54a1
 	jr c,@cantUseSword	; $54a2
 
@@ -383,7 +385,7 @@ _clearParentItemIfCantUseSword:
 	inc a			; $54a7
 	jr z,@cantUseSword	; $54a8
 
-	ld a,($ccd8)		; $54aa
+	ld a,(wccd8)		; $54aa
 	ld b,a			; $54ad
 	ld a,(wSwordDisabledCounter)		; $54ae
 	or b			; $54b1
@@ -398,7 +400,7 @@ _clearParentItemIfCantUseSword:
 @cantUseSword:
 	pop af			; $54bc
 	xor a			; $54bd
-	ld ($cc63),a		; $54be
+	ld (wcc63),a		; $54be
 	jp _clearParentItem		; $54c1
 
 ;;
@@ -412,11 +414,20 @@ _checkLinkOnGround:
 
 	ld hl,wLinkInAir		; $54ca
 	ldi a,(hl)		; $54cd
+
 	; Check wLinkSwimmingState
 	or (hl)			; $54ce
+
+.ifdef ROM_AGES
 	ret nz			; $54cf
 	jr _isLinkUnderwater		; $54d0
 
+.else; ROM_SEASONS
+	ret
+.endif
+
+
+.ifdef ROM_AGES
 ;;
 ; @param[out]	zflag	Set if Link is not in an underwater map
 ; @addr{54d2}
@@ -424,6 +435,7 @@ _isLinkUnderwater:
 	ld a,(w1Link.var2f)		; $54d2
 	bit 7,a			; $54d5
 	ret			; $54d7
+.endif
 
 ;;
 ; @param[out]	cflag	Set if link is currently in a hole.
@@ -513,11 +525,18 @@ updateGrabbedObjectPosition:
 	.db $ef $00 $ef $00 $ef $00 $ef $00
 	.db $f0 $00 $f0 $00 $f0 $00 $f0 $00
 
-	; Weight 2
+	; Weight 2 (TODO: what is this, and why does it differ?)
+.ifdef ROM_AGES
 	.db $f8 $00 $00 $07 $06 $00 $00 $f8
 	.db $fa $00 $f8 $03 $04 $00 $f8 $fc
 	.db $f3 $00 $f2 $00 $f3 $00 $f2 $00
 	.db $f3 $00 $f3 $00 $f3 $00 $f3 $00
+.else; ROM_SEASONS
+	.db $f4 $00 $00 $14 $0c $00 $00 $ec
+	.db $f2 $00 $f2 $10 $f2 $00 $f2 $f0
+	.db $ef $00 $ef $00 $ef $00 $ef $00
+	.db $f0 $00 $f0 $00 $f0 $00 $f0 $00
+.endif
 
 	; Weight 3
 	.db $f4 $00 $00 $14 $0c $00 $00 $ec
