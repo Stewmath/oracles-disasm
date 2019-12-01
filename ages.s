@@ -6738,7 +6738,7 @@ checkLinkCollisionsEnabled:
 	jr nz,@noCarry		; $1d48
 
 	; Check if in a spinner
-	ld a,($cc95)		; $1d4a
+	ld a,(wcc95)		; $1d4a
 	rlca			; $1d4d
 	jr c,@noCarry		; $1d4e
 
@@ -26840,7 +26840,7 @@ updateSpecialObjects:
 	ld (wcc92),a		; $402b
 	ld (wForceLinkPushAnimation),a		; $402e
 
-	ld hl,$cc95		; $4031
+	ld hl,wcc95		; $4031
 	ld a,(hl)		; $4034
 	or $7f			; $4035
 	ld (hl),a		; $4037
@@ -26873,7 +26873,7 @@ updateSpecialObjects:
 	xor a			; $4063
 	ld ($cc67),a		; $4064
 	ld (w1Link.var2a),a		; $4067
-	ld ($ccd8),a		; $406a
+	ld (wccd8),a		; $406a
 
 	ld hl,wInstrumentsDisabledCounter		; $406d
 	ld a,(hl)		; $4070
@@ -29976,7 +29976,7 @@ _linkState08:
 	ld (hl),$00		; $4f31
 	call specialObjectSetAnimation		; $4f33
 +
-	ld a,($cc63)		; $4f36
+	ld a,(wcc63)		; $4f36
 	or a			; $4f39
 	call nz,checkUseItems		; $4f3a
 
@@ -31293,7 +31293,7 @@ _linkState10:
 	bit 7,a			; $5585
 	call z,_linkUpdateVelocity		; $5587
 +
-	ld hl,$cc95		; $558a
+	ld hl,wcc95		; $558a
 	res 4,(hl)		; $558d
 	call _specialObjectSetAngleRelativeToVar38		; $558f
 	call specialObjectUpdatePosition		; $5592
@@ -31379,7 +31379,7 @@ _linkState10:
 	jr @walking		; $5602
 
 @normalMovement:
-	ld a,($cc95)		; $5604
+	ld a,(wcc95)		; $5604
 	ld b,a			; $5607
 
 	ld e,SpecialObject.angle		; $5608
@@ -31539,7 +31539,7 @@ _linkUpdateSwimming:
 	ld a,(wLinkSwimmingState)		; $5698
 	and $0f			; $569b
 
-	ld hl,$cc95		; $569d
+	ld hl,wcc95		; $569d
 	res 4,(hl)		; $56a0
 
 	rst_jumpTable			; $56a2
@@ -31919,7 +31919,7 @@ _linkUpdateSwimming_sidescroll:
 	and $0f			; $585e
 	jr z,@swimmingState0	; $5860
 
-	ld hl,$cc95		; $5862
+	ld hl,wcc95		; $5862
 	res 4,(hl)		; $5865
 
 	rst_jumpTable			; $5867
@@ -32972,7 +32972,7 @@ _linkUpdateKnockback:
 	ld c,a			; $5d7e
 	ld b,SPEED_140		; $5d7f
 
-	ld hl,$cc95		; $5d81
+	ld hl,wcc95		; $5d81
 	res 5,(hl)		; $5d84
 
 	jp specialObjectUpdatePositionGivenVelocity		; $5d86
@@ -34126,7 +34126,7 @@ specialObjectCode_transformedLink:
 	xor a			; $62ad
 	ld (wLinkInAir),a		; $62ae
 ++
-	ld a,($cc95)		; $62b1
+	ld a,(wcc95)		; $62b1
 	ld b,a			; $62b4
 	ld l,SpecialObject.angle		; $62b5
 	ld a,(wLinkAngle)		; $62b7
@@ -65175,12 +65175,12 @@ interactionCode60:
 
 	; Forces spinslash animation
 	ld a,$ff		; $4bfc
-	ld ($cc63),a		; $4bfe
+	ld (wcc63),a		; $4bfe
 	ret			; $4c01
 
 @gm3State2:
 	; Wait for spin to finish
-	ld a,($cc63)		; $4c02
+	ld a,(wcc63)		; $4c02
 	or a			; $4c05
 	ret nz			; $4c06
 
@@ -74825,7 +74825,7 @@ interactionCode7d:
 
 ; State 2: Link just touched the spinner.
 @state2:
-	ld hl,$cc95		; $42fd
+	ld hl,wcc95		; $42fd
 	ld a,(wLinkInAir)		; $4300
 	or a			; $4303
 	jr nz,@revertToState1	; $4304
@@ -74935,7 +74935,7 @@ interactionCode7d:
 	ld (hl),$10		; $4381
 
 	; Reset signal that spinner's being used?
-	ld hl,$cc95		; $4383
+	ld hl,wcc95		; $4383
 	res 7,(hl)		; $4386
 	ret			; $4388
 
@@ -113365,7 +113365,7 @@ _giantGhiniChild_stateB:
 	ld (hl),a		; $6e4b
 ++
 	; Make Link slow, disable item use
-	ld hl,$ccd8		; $6e4c
+	ld hl,wccd8		; $6e4c
 	set 5,(hl)		; $6e4f
 	ld a,(wFrameCounter)		; $6e51
 	rrca			; $6e54
@@ -148978,7 +148978,7 @@ _label_11_439:
 _label_11_440:
 	ld (hl),a		; $7e89
 _label_11_441:
-	ld hl,$ccd8		; $7e8a
+	ld hl,wccd8		; $7e8a
 	set 5,(hl)		; $7e8d
 	ld a,(wFrameCounter)		; $7e8f
 	rrca			; $7e92

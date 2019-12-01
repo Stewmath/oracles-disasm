@@ -1837,7 +1837,7 @@ wLinkInAir: ; $cc5c/$cc77
 ; If nonzero, Link's knockback durations are halved.
 	db
 
-wLinkSwimmingState: ; $cc5d
+wLinkSwimmingState: ; $cc5d/$cc78
 ; Bit 7 is set when Link dives underwater.
 ; Bit 6 causes Link to drown (it's lava).
 ; Bits 0-3 hold a "state" which remembers whether Link is actually in the water, and

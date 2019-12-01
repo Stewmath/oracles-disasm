@@ -24,7 +24,7 @@ _clearAllParentItems:
 
 	xor a			; $4884
 	ld (wUsingShield),a		; $4885
-	ld ($cc63),a		; $4888
+	ld (wcc63),a		; $4888
 	ld (wcc5e),a		; $488b
 	pop de			; $488e
 	ret			; $488f
@@ -84,7 +84,7 @@ checkUseItems:
 	ld a,(hl)		; $48c2
 	and $0f			; $48c3
 	ld (hl),a		; $48c5
-	ld a,($cc63)		; $48c6
+	ld a,(wcc63)		; $48c6
 	rlca			; $48c9
 	jr c,@itemsDisabled	; $48ca
 
@@ -93,14 +93,14 @@ checkUseItems:
 	jp nz,_checkShopInput		; $48d0
 
 	; Set carry flag if in a spinner or bit 7 of wInAir is set.
-	ld a,($cc95)		; $48d3
+	ld a,(wcc95)		; $48d3
 	ld b,a			; $48d6
 	ld a,(wLinkInAir)		; $48d7
 	or b			; $48da
 	rlca			; $48db
 	jr c,@updateParentItems	; $48dc
 
-	ld a,($ccd8)		; $48de
+	ld a,(wccd8)		; $48de
 	ld b,a			; $48e1
 	ld a,(wLinkGrabState)		; $48e2
 	or b			; $48e5
@@ -114,6 +114,7 @@ checkUseItems:
 	bit AREAFLAG_BIT_SIDESCROLL,a			; $48f1
 	jr nz,@sidescroll	; $48f3
 
+.ifdef ROM_AGES
 	bit AREAFLAG_BIT_UNDERWATER,a			; $48f5
 	jr z,@normal		; $48f7
 
@@ -122,6 +123,7 @@ checkUseItems:
 	ldde BTN_A, <wInventoryA		; $48f9
 	call _checkItemUsed		; $48fc
 	jr @updateParentItems		; $48ff
+.endif
 
 	; When in the overworld, only check buttons if not swimming
 @normal:
@@ -134,11 +136,17 @@ checkUseItems:
 @sidescroll:
 	ld a,(wLinkSwimmingState)		; $4909
 	or a			; $490c
+
+.ifdef ROM_AGES
 	jr z,@checkAB	; $490d
 
 	ld hl,w1Link.var2f		; $490f
 	bit 7,(hl)		; $4912
 	jr z,@checkB	; $4914
+
+.else; ROM_SEASONS
+	jr nz,@checkB
+.endif
 
 @checkAB:
 	ldde BTN_A, <wInventoryA		; $4916
@@ -171,7 +179,7 @@ checkUseItems:
 	cp $ff			; $493b
 	jr nz,@updateParentItems	; $493d
 
-	; If [$cc63] == $ff, force Link to do a sword spin animation?
+	; If [wcc63] == $ff, force Link to do a sword spin animation?
 
 	call _clearAllParentItems		; $493f
 
@@ -181,7 +189,7 @@ checkUseItems:
 	call _initializeParentItem		; $494a
 
 	ld a,$80		; $494d
-	ld ($cc63),a		; $494f
+	ld (wcc63),a		; $494f
 	jr @updateParentItems		; $4952
 
 ;;
@@ -197,6 +205,12 @@ _checkItemUsed:
 	or a			; $4958
 	jr nz,@checkItem	; $4959
 
+.ifdef ROM_SEASONS
+	ld a,(wInBoxingMatch)
+	or a
+	jr nz,@forcePunch
+.endif
+
 	; Nothing equipped; return unless Link is wearing a punching ring
 	ld a,(wActiveRing)		; $495b
 	cp EXPERTS_RING			; $495e
@@ -211,6 +225,7 @@ _checkItemUsed:
 	or (hl)			; $4968
 	ret nz			; $4969
 
+@forcePunch:
 	ld a,ITEMID_PUNCH		; $496a
 
 @checkItem:
@@ -336,7 +351,7 @@ _chooseParentItemSlot:
 	ld hl,w1ParentItem2		; $49c7
 	xor a			; $49ca
 	ld (wcc5e),a		; $49cb
-	ld ($cc63),a		; $49ce
+	ld (wcc63),a		; $49ce
 	ret			; $49d1
 
 ;;
@@ -387,7 +402,7 @@ _parentItemUpdate:
 
 	; Unset a bit corresponding to the item's index?
 	call _itemIndexToBit		; $49f5
-	ld hl,$cc95		; $49f8
+	ld hl,wcc95		; $49f8
 	cpl			; $49fb
 	and (hl)		; $49fc
 	ld (hl),a		; $49fd
