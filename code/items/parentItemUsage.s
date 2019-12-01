@@ -416,7 +416,7 @@ _parentItemUpdate:
 	.dw _parentItemCode_shield		; ITEMID_SHIELD
 	.dw _parentItemCode_punch		; ITEMID_PUNCH
 	.dw _parentItemCode_bomb		; ITEMID_BOMB
-	.dw _parentItemCode_somaria		; ITEMID_CANE_OF_SOMARIA
+	.dw _parentItemCode_caneOfSomaria	; ITEMID_CANE_OF_SOMARIA
 	.dw _parentItemCode_sword		; ITEMID_SWORD
 	.dw _parentItemCode_boomerang		; ITEMID_BOOMERANG
 	.dw _parentItemCode_rodOfSeasons	; ITEMID_ROD_OF_SEASONS
@@ -426,10 +426,10 @@ _parentItemUpdate:
 	.dw _clearParentItem			; ITEMID_SWITCH_HOOK_CHAIN
 	.dw _parentItemCode_biggoronSword	; ITEMID_BIGGORON_SWORD
 	.dw _parentItemCode_bombchu		; ITEMID_BOMBCHUS
-	.dw _parentItemCode_flute			; ITEMID_FLUTE
+	.dw _parentItemCode_flute		; ITEMID_FLUTE
 	.dw _parentItemCode_shooter		; ITEMID_SHOOTER
 	.dw _clearParentItem			; ITEMID_10
-	.dw _parentItemCode_harp			; ITEMID_HARP
+	.dw _parentItemCode_harp		; ITEMID_HARP
 	.dw _clearParentItem			; ITEMID_12
 	.dw _parentItemCode_slingshot		; ITEMID_SLINGSHOT
 	.dw _clearParentItem			; ITEMID_14

@@ -31713,14 +31713,10 @@ _label_05_451:
 	.include "code/items/parentItemUsage.s"
 	.include "code/items/shieldParent.s"
 	.include "code/items/otherSwordsParent.s"
+	.include "code/items/switchHookParent.s"
+	.include "code/items/caneOfSomariaParent.s"
 ;	.include "code/items/parentItems.s"
 
-
-_parentItemCode_somaria:
-	; Nothing here
-
-_parentItemCode_switchHook:
-	; Nothing here
 
 _parentItemCode_sword:
 	call $53f0		; $4aa1
