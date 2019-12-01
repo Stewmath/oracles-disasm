@@ -31711,6 +31711,7 @@ _label_05_451:
 	.include "code/breakableTiles.s"
 
 	.include "code/items/parentItemUsage.s"
+
 	.include "code/items/shieldParent.s"
 	.include "code/items/otherSwordsParent.s"
 	.include "code/items/switchHookParent.s"
