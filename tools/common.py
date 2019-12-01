@@ -63,9 +63,9 @@ def wlahexSigned(val, length):
     else:
         return '$'+myhex(val, length)
 
-def wlabin(val, length=1):
+def wlabin(val, length=8):
     out = bin(val)[2:]
-    while len(out) < length*8:
+    while len(out) < length:
         out = '0' + out
     return '%' + out
 

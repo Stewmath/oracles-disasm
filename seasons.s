@@ -31708,172 +31708,9 @@ _label_05_451:
 
 	.include "code/interactableTiles.s"
 	.include "code/specialObjectAnimationsAndDamage.s"
+	.include "code/breakableTiles.s"
 
-	ld a,b			; $4713
-	and $f0			; $4714
-	or $08			; $4716
-	ldh (<hFF90),a	; $4718
-	ld a,c			; $471a
-	and $f0			; $471b
-	or $08			; $471d
-	ldh (<hFF91),a	; $471f
-	call getTileAtPosition		; $4721
-	ldh (<hFF92),a	; $4724
-	ld e,a			; $4726
-	ld a,l			; $4727
-	ldh (<hFF93),a	; $4728
-	ld hl,$75c0		; $472a
-	call lookupCollisionTable_paramE		; $472d
-	ret nc			; $4730
-	ld e,a			; $4731
-	add a			; $4732
-	ld hl,$76e4		; $4733
-	rst_addDoubleIndex			; $4736
-	ld a,e			; $4737
-	rst_addAToHl			; $4738
-	ldh a,(<hFF8F)	; $4739
-	ld e,a			; $473b
-	and $1f			; $473c
-	call checkFlag		; $473e
-	ret z			; $4741
-	rl e			; $4742
-	ret c			; $4744
-	inc hl			; $4745
-	inc hl			; $4746
-	ldi a,(hl)		; $4747
-	swap a			; $4748
-	and $0f			; $474a
-	ldh (<hFF8D),a	; $474c
-	ldi a,(hl)		; $474e
-	ldh (<hFF8E),a	; $474f
-	push de			; $4751
-	ld a,(hl)		; $4752
-	or a			; $4753
-	jr z,_label_06_072	; $4754
-	ld a,($cc49)		; $4756
-	cp $03			; $4759
-	jr c,_label_06_070	; $475b
-	ldh a,(<hFF92)	; $475d
-	cp $10			; $475f
-	jr nz,_label_06_070	; $4761
-	ldh a,(<hFF93)	; $4763
-	push hl			; $4765
-	call getTileIndexFromRoomLayoutBuffer		; $4766
-	pop hl			; $4769
-	jr nc,_label_06_071	; $476a
-_label_06_070:
-	ldh a,(<hFF93)	; $476c
-	ld c,a			; $476e
-	ld b,(hl)		; $476f
-	call setTileInRoomLayoutBuffer		; $4770
-	ld a,(hl)		; $4773
-_label_06_071:
-	call setTile		; $4774
-_label_06_072:
-	ldh a,(<hFF92)	; $4777
-	cp $f2			; $4779
-	ld hl,$c626		; $477b
-	call z,incHlRefWithCap		; $477e
-	ldh a,(<hFF8E)	; $4781
-	rlca			; $4783
-	ldh a,(<hFF92)	; $4784
-	call c,updateRoomFlagsForBrokenTile		; $4786
-	ldh a,(<hFF8E)	; $4789
-	bit 6,a			; $478b
-	ld a,$4d		; $478d
-	call nz,playSound		; $478f
-	ld hl,$ccc5		; $4792
-	ldh a,(<hFF93)	; $4795
-	cp (hl)			; $4797
-	jr nz,_label_06_073	; $4798
-	ld (hl),$ff		; $479a
-	jr _label_06_074		; $479c
-_label_06_073:
-	ldh a,(<hFF8D)	; $479e
-	or a			; $47a0
-	call nz,$47ef		; $47a1
-_label_06_074:
-	ldh a,(<hFF8F)	; $47a4
-	or a			; $47a6
-	jr z,_label_06_075	; $47a7
-	cp $0c			; $47a9
-	jr z,_label_06_075	; $47ab
-	cp $08			; $47ad
-	jr z,_label_06_075	; $47af
-	cp $12			; $47b1
-	ldh a,(<hFF8E)	; $47b3
-	call nz,$47c8		; $47b5
-_label_06_075:
-	pop de			; $47b8
-	scf			; $47b9
-	ret			; $47ba
-	ld h,d			; $47bb
-	ld l,$0b		; $47bc
-	ldi a,(hl)		; $47be
-	ldh (<hFF90),a	; $47bf
-	inc l			; $47c1
-	ldi a,(hl)		; $47c2
-	ldh (<hFF91),a	; $47c3
-	ld l,$03		; $47c5
-	ld a,(hl)		; $47c7
-	and $1f			; $47c8
-	cp $1f			; $47ca
-	ret z			; $47cc
-	ld c,a			; $47cd
-	call getFreeInteractionSlot		; $47ce
-	ret nz			; $47d1
-	ld a,c			; $47d2
-	and $0f			; $47d3
-	ldi (hl),a		; $47d5
-	ld a,c			; $47d6
-	and $10			; $47d7
-	swap a			; $47d9
-	ldi (hl),a		; $47db
-	ld a,($d008)		; $47dc
-	ld l,$48		; $47df
-	ldi (hl),a		; $47e1
-	swap a			; $47e2
-	rrca			; $47e4
-	ldi (hl),a		; $47e5
-	inc l			; $47e6
-	ldh a,(<hFF90)	; $47e7
-	ldi (hl),a		; $47e9
-	inc l			; $47ea
-	ldh a,(<hFF91)	; $47eb
-	ldi (hl),a		; $47ed
-	ret			; $47ee
-	push hl			; $47ef
-	call func_16eb		; $47f0
-	jr z,_label_06_077	; $47f3
-	call getFreePartSlot		; $47f5
-	jr nz,_label_06_077	; $47f8
-	ld (hl),$01		; $47fa
-	inc l			; $47fc
-	ld (hl),c		; $47fd
-	ld l,$cb		; $47fe
-	ldh a,(<hFF90)	; $4800
-	ldi (hl),a		; $4802
-	inc l			; $4803
-	ldh a,(<hFF91)	; $4804
-	ld (hl),a		; $4806
-	ld a,($d008)		; $4807
-	swap a			; $480a
-	rrca			; $480c
-	ld l,$c9		; $480d
-	ld (hl),a		; $480f
-	ld l,$c3		; $4810
-	ld a,c			; $4812
-	cp $0f			; $4813
-	jr nz,_label_06_076	; $4815
-	ld (hl),$02		; $4817
-_label_06_076:
-	ldh a,(<hFF8F)	; $4819
-	cp $06			; $481b
-	jr nz,_label_06_077	; $481d
-	inc (hl)		; $481f
-_label_06_077:
-	pop hl			; $4820
-	ret			; $4821
+
 	ld a,c			; $4822
 	rst_jumpTable			; $4823
 	ldi a,(hl)		; $4824
@@ -35971,428 +35808,227 @@ _label_06_256:
 
 	.include "build/data/signText.s"
 
-	call z,$4375		; $75c0
-	halt			; $75c3
-	call z,$b275		; $75c4
-	halt			; $75c7
-	or d			; $75c8
-	halt			; $75c9
-	pop hl			; $75ca
-	halt			; $75cb
-	ld hl,sp+$00		; $75cc
-	ld a,($ff00+c)		; $75ce
-	dec c			; $75cf
-	call nz,$c501		; $75d0
-	ld (bc),a		; $75d3
-	add $03			; $75d4
-	rst_jumpTable			; $75d6
-	inc b			; $75d7
-	push hl			; $75d8
-	dec b			; $75d9
-	ret c			; $75da
-	ld b,$c3		; $75db
-	ld b,$c8		; $75dd
-	rlca			; $75df
-	ret			; $75e0
-	ld ($09c0),sp		; $75e1
-	pop bc			; $75e4
-	ld a,(bc)		; $75e5
-	jp nz,$e20b		; $75e6
-	inc c			; $75e9
-	reti			; $75ea
-	ld c,$da		; $75eb
-	rrca			; $75ed
-.DB $db				; $75ee
-	stop			; $75ef
-	jp z,$cb11		; $75f0
-	ld (de),a		; $75f3
-	rst_addAToHl			; $75f4
-	inc de			; $75f5
-.DB $e3				; $75f6
-	dec d			; $75f7
-	ld bc,$0414		; $75f8
-	inc d			; $75fb
-	dec b			; $75fc
-	inc d			; $75fd
-	ld b,$14		; $75fe
-	rlca			; $7600
-	inc d			; $7601
-	ld ($0914),sp		; $7602
-	inc d			; $7605
-	ld a,(bc)		; $7606
-	inc d			; $7607
-	dec bc			; $7608
-	inc d			; $7609
-	inc c			; $760a
-	inc d			; $760b
-	dec c			; $760c
-	inc d			; $760d
-	ld c,$14		; $760e
-	rrca			; $7610
-	inc d			; $7611
-	ld de,$1214		; $7612
-	inc d			; $7615
-	inc de			; $7616
-	inc d			; $7617
-	inc d			; $7618
-	inc d			; $7619
-	dec d			; $761a
-	inc d			; $761b
-	ld d,$14		; $761c
-	rla			; $761e
-	inc d			; $761f
-	jr _label_06_259		; $7620
-	add hl,de		; $7622
-	inc d			; $7623
-	ld a,(de)		; $7624
-	inc d			; $7625
-	dec de			; $7626
-	inc d			; $7627
-	inc e			; $7628
-	inc d			; $7629
-	dec e			; $762a
-	inc d			; $762b
-	ld e,$14		; $762c
-	ld c,l			; $762e
-	inc d			; $762f
-	ld c,(hl)		; $7630
-	inc d			; $7631
-	ld e,l			; $7632
-	inc d			; $7633
-	ld e,(hl)		; $7634
-	inc d			; $7635
-_label_06_259:
-	ld e,a			; $7636
-	inc d			; $7637
-	ld l,l			; $7638
-	inc d			; $7639
-	ld l,(hl)		; $763a
-	inc d			; $763b
-	ld l,a			; $763c
-	inc d			; $763d
-	xor a			; $763e
-	inc d			; $763f
-	cp a			; $7640
-	inc d			; $7641
-	nop			; $7642
-	ld hl,sp+$00		; $7643
-	ld sp,hl		; $7645
-	nop			; $7646
-	ld a,($ff00+c)		; $7647
-	dec c			; $7648
-	jp hl			; $7649
-	add hl,bc		; $764a
-	ld bc,$0417		; $764b
-	rla			; $764e
-	dec b			; $764f
-	rla			; $7650
-	ld b,$17		; $7651
-	rlca			; $7653
-	rla			; $7654
-	ld ($0917),sp		; $7655
-	rla			; $7658
-	ld a,(bc)		; $7659
-	rla			; $765a
-	dec bc			; $765b
-	rla			; $765c
-_label_06_260:
-	inc c			; $765d
-	rla			; $765e
-	dec c			; $765f
-	rla			; $7660
-_label_06_261:
-	ld c,$17		; $7661
-	rrca			; $7663
-	rla			; $7664
-	ld de,$1217		; $7665
-	rla			; $7668
-	inc de			; $7669
-	rla			; $766a
-	inc d			; $766b
-	rla			; $766c
-	dec d			; $766d
-	rla			; $766e
-	ld d,$17		; $766f
-	rla			; $7671
-	rla			; $7672
-	jr _label_06_262		; $7673
-	add hl,de		; $7675
-	rla			; $7676
-	ld a,(de)		; $7677
-	rla			; $7678
-	dec de			; $7679
-	rla			; $767a
-	inc e			; $767b
-	rla			; $767c
-	dec e			; $767d
-	rla			; $767e
-	ld e,$17		; $767f
-	rra			; $7681
-	rla			; $7682
-	jr nz,_label_06_263	; $7683
-	ld hl,$2217		; $7685
-	rla			; $7688
-	inc hl			; $7689
-	rla			; $768a
-	inc h			; $768b
-_label_06_262:
-	rla			; $768c
-	dec h			; $768d
-	rla			; $768e
-	ld h,$17		; $768f
-	daa			; $7691
-	rla			; $7692
-	jr z,_label_06_265	; $7693
-	add hl,hl		; $7695
-	rla			; $7696
-	ldi a,(hl)		; $7697
-	rla			; $7698
-	dec hl			; $7699
-	rla			; $769a
-	inc l			; $769b
-_label_06_263:
-	rla			; $769c
-	dec l			; $769d
-	rla			; $769e
-	ld l,$17		; $769f
-	cp b			; $76a1
-_label_06_264:
-	jr _label_06_260		; $76a2
-	jr _label_06_261		; $76a4
-	rla			; $76a6
-	cp h			; $76a7
-	rla			; $76a8
-	cp l			; $76a9
-	rla			; $76aa
-	cp (hl)			; $76ab
-_label_06_265:
-	rla			; $76ac
-	cp a			; $76ad
-	rla			; $76ae
-	cpl			; $76af
-	ld d,$00		; $76b0
-	ld hl,sp+$2d		; $76b2
-	jr nz,_label_06_266	; $76b4
-	ld hl,$221a		; $76b6
-	dec de			; $76b9
-	inc hl			; $76ba
-	inc e			; $76bb
-	rst $28			; $76bc
-	ld l,$11		; $76bd
-	dec e			; $76bf
-	ld (de),a		; $76c0
-	ld e,$10		; $76c1
-	rra			; $76c3
-	inc de			; $76c4
-	jr nz,$1f		; $76c5
-	ld hl,$2230		; $76c7
-	ld sp,$3223		; $76ca
-	inc h			; $76cd
-	inc sp			; $76ce
-_label_06_266:
-	dec h			; $76cf
-	jr c,$26		; $76d0
-	add hl,sp		; $76d2
-	daa			; $76d3
-	ldd a,(hl)		; $76d4
-	jr z,$3b		; $76d5
-	add hl,hl		; $76d7
-	ld d,$2a		; $76d8
-	dec d			; $76da
-	dec hl			; $76db
-	dec hl			; $76dc
-	inc l			; $76dd
-	ldi a,(hl)		; $76de
-	inc l			; $76df
-	nop			; $76e0
-	ld (de),a		; $76e1
-	cpl			; $76e2
-	nop			; $76e3
-	sub (hl)		; $76e4
-	jr nc,_label_06_267	; $76e5
-	stop			; $76e7
-	inc b			; $76e8
-	or a			; $76e9
-	or c			; $76ea
-	ld d,$00		; $76eb
-	inc b			; $76ed
-	or a			; $76ee
-	or c			; $76ef
-	ld b,$c0		; $76f0
-	and $b7			; $76f2
-	or c			; $76f4
-	ld b,$c0		; $76f5
-	ldh (<hIntroInputsEnabled),a	; $76f7
-_label_06_267:
-	or c			; $76f9
-	ld b,$00		; $76fa
-	di			; $76fc
-	or a			; $76fd
-	or c			; $76fe
-	ld b,$00		; $76ff
-	inc b			; $7701
-	or (hl)			; $7702
-	or c			; $7703
-	ld b,(hl)		; $7704
-	ld bc,$f604		; $7705
-	jr nc,_label_06_268	; $7708
-	nop			; $770a
-	inc b			; $770b
-	or $30			; $770c
-	dec bc			; $770e
-	nop			; $770f
-	di			; $7710
-	ld hl,$4000		; $7711
-	ld b,$04		; $7714
-	ld hl,$0000		; $7716
-	add $e7			; $7719
-	ld hl,$0000		; $771b
-	add $e0			; $771e
-	jr nc,_label_06_264	; $7720
-	nop			; $7722
-	add $e8			; $7723
-	xor l			; $7725
-	ld de,$0c70		; $7726
-	inc b			; $7729
-	ld b,b			; $772a
-	add b			; $772b
-	ld b,a			; $772c
-	add hl,de		; $772d
-	inc b			; $772e
-	ld b,b			; $772f
-	add b			; $7730
-	rlca			; $7731
-	add hl,de		; $7732
-	di			; $7733
-	ld (hl),b		; $7734
-	nop			; $7735
-	dec bc			; $7736
-	rra			; $7737
-.DB $fd				; $7738
-	nop			; $7739
-	stop			; $773a
-	ld (hl),b		; $773b
-_label_06_268:
-	rra			; $773c
-	inc b			; $773d
-	nop			; $773e
-	stop			; $773f
-	nop			; $7740
-	rst_addDoubleIndex			; $7741
-	rst $20			; $7742
-	add c			; $7743
-	nop			; $7744
-	add h			; $7745
-	rra			; $7746
-	inc b			; $7747
-	ld b,b			; $7748
-	nop			; $7749
-	sub b			; $774a
-	ld a,(bc)		; $774b
-	pop hl			; $774c
-	ld b,b			; $774d
-	nop			; $774e
-	nop			; $774f
-	jp z,$40e0		; $7750
-	nop			; $7753
-	nop			; $7754
-	ld a,(bc)		; $7755
-	pop hl			; $7756
-	ld b,b			; $7757
-	nop			; $7758
-	and b			; $7759
-	ld a,(bc)		; $775a
-	pop hl			; $775b
-	ld b,b			; $775c
-	nop			; $775d
-	or b			; $775e
-	ld a,(bc)		; $775f
-	pop hl			; $7760
-	or a			; $7761
-	ld sp,$0014		; $7762
-	and b			; $7765
-	or a			; $7766
-	ld sp,$0004		; $7767
-	and b			; $776a
-	or a			; $776b
-	ld sp,$4004		; $776c
-	ld b,l			; $776f
-	or a			; $7770
-	ld sp,$0004		; $7771
-	di			; $7774
-	dec h			; $7775
-	ld bc,$0600		; $7776
-	and b			; $7779
-	dec h			; $777a
-	ld bc,$4600		; $777b
-	ld b,l			; $777e
-	dec h			; $777f
-	ld bc,$0620		; $7780
-	and b			; $7783
-	dec h			; $7784
-	ld bc,$4600		; $7785
-	dec c			; $7788
-	jr nc,_label_06_269	; $7789
-_label_06_269:
-	nop			; $778b
-	ld b,$a0		; $778c
-	jr nc,_label_06_270	; $778e
-_label_06_270:
-	nop			; $7790
-	add $34			; $7791
-	jr nc,_label_06_271	; $7793
-_label_06_271:
-	nop			; $7795
-	add $35			; $7796
-	jr nc,_label_06_272	; $7798
-_label_06_272:
-	nop			; $779a
-	add $36			; $779b
-	jr nc,_label_06_273	; $779d
-_label_06_273:
-	nop			; $779f
-	add $37			; $77a0
-	jr nc,_label_06_274	; $77a2
-_label_06_274:
-	nop			; $77a4
-	add $34			; $77a5
-	jr nc,_label_06_275	; $77a7
-_label_06_275:
-	nop			; $77a9
-	add $35			; $77aa
-	jr nc,_label_06_276	; $77ac
-_label_06_276:
-	nop			; $77ae
-	add $36			; $77af
-	jr nc,_label_06_277	; $77b1
-_label_06_277:
-	nop			; $77b3
-	add $37			; $77b4
-	ccf			; $77b6
-	nop			; $77b7
-	nop			; $77b8
-	ld b,$a0		; $77b9
-	ld hl,$4000		; $77bb
-	ld b,$4c		; $77be
-	ld b,$00		; $77c0
-	nop			; $77c2
-	rlca			; $77c3
-	nop			; $77c4
-	sub (hl)		; $77c5
-	jr nc,_label_06_278	; $77c6
-	stop			; $77c8
-	rst $28			; $77c9
-_label_06_278:
-	ld b,b			; $77ca
-	nop			; $77cb
-	ret nz			; $77cc
-	ld a,(bc)		; $77cd
-	ld c,h			; $77ce
-	jr nc,_label_06_279	; $77cf
-_label_06_279:
-	nop			; $77d1
-	ld b,$01		; $77d2
+_breakableTileCollisionTable:
+        .dw _breakableTileCollision0
+        .dw _breakableTileCollision1
+        .dw _breakableTileCollision2
+        .dw _breakableTileCollision3
+        .dw _breakableTileCollision4
+        .dw _breakableTileCollision5
 
+_breakableTileCollision0:
+_breakableTileCollision2:
+        .db $f8 $00
+        .db $f2 $0d
+        .db $c4 $01
+        .db $c5 $02
+        .db $c6 $03
+        .db $c7 $04
+        .db $e5 $05
+        .db $d8 $06
+        .db $c3 $06
+        .db $c8 $07
+        .db $c9 $08
+        .db $c0 $09
+        .db $c1 $0a
+        .db $c2 $0b
+        .db $e2 $0c
+        .db $d9 $0e
+        .db $da $0f
+        .db $db $10
+        .db $ca $11
+        .db $cb $12
+        .db $d7 $13
+        .db $e3 $15
+        .db $01 $14
+        .db $04 $14
+        .db $05 $14
+        .db $06 $14
+        .db $07 $14
+        .db $08 $14
+        .db $09 $14
+        .db $0a $14
+        .db $0b $14
+        .db $0c $14
+        .db $0d $14
+        .db $0e $14
+        .db $0f $14
+        .db $11 $14
+        .db $12 $14
+        .db $13 $14
+        .db $14 $14
+        .db $15 $14
+        .db $16 $14
+        .db $17 $14
+        .db $18 $14
+        .db $19 $14
+        .db $1a $14
+        .db $1b $14
+        .db $1c $14
+        .db $1d $14
+        .db $1e $14
+        .db $4d $14
+        .db $4e $14
+        .db $5d $14
+        .db $5e $14
+        .db $5f $14
+        .db $6d $14
+        .db $6e $14
+        .db $6f $14
+        .db $af $14
+        .db $bf $14
+        .db $00
+_breakableTileCollision1:
+        .db $f8 $00
+        .db $f9 $00
+        .db $f2 $0d
+        .db $e9 $09
+        .db $01 $17
+        .db $04 $17
+        .db $05 $17
+        .db $06 $17
+        .db $07 $17
+        .db $08 $17
+        .db $09 $17
+        .db $0a $17
+        .db $0b $17
+        .db $0c $17
+        .db $0d $17
+        .db $0e $17
+        .db $0f $17
+        .db $11 $17
+        .db $12 $17
+        .db $13 $17
+        .db $14 $17
+        .db $15 $17
+        .db $16 $17
+        .db $17 $17
+        .db $18 $17
+        .db $19 $17
+        .db $1a $17
+        .db $1b $17
+        .db $1c $17
+        .db $1d $17
+        .db $1e $17
+        .db $1f $17
+        .db $20 $17
+        .db $21 $17
+        .db $22 $17
+        .db $23 $17
+        .db $24 $17
+        .db $25 $17
+        .db $26 $17
+        .db $27 $17
+        .db $28 $17
+        .db $29 $17
+        .db $2a $17
+        .db $2b $17
+        .db $2c $17
+        .db $2d $17
+        .db $2e $17
+        .db $b8 $18
+        .db $b9 $18
+        .db $bb $17
+        .db $bc $17
+        .db $bd $17
+        .db $be $17
+        .db $bf $17
+        .db $2f $16
+        .db $00
+_breakableTileCollision3:
+_breakableTileCollision4:
+        .db $f8 $2d
+        .db $20 $19
+        .db $21 $1a
+        .db $22 $1b
+        .db $23 $1c
+        .db $ef $2e
+        .db $11 $1d
+        .db $12 $1e
+        .db $10 $1f
+        .db $13 $20
+        .db $1f $21
+        .db $30 $22
+        .db $31 $23
+        .db $32 $24
+        .db $33 $25
+        .db $38 $26
+        .db $39 $27
+        .db $3a $28
+        .db $3b $29
+        .db $16 $2a
+        .db $15 $2b
+        .db $2b $2c
+        .db $2a $2c
+        .db $00
+_breakableTileCollision5:
+        .db $12 $2f
+        .db $00
+
+; See ages for documentation on this macro
+.macro m_BreakableTileData
+	.if \3 > $f
+	.fail
+	.endif
+	.if \4 > $f
+	.fail
+	.endif
+
+	.db \1 \2
+	.db \3 | (\4<<4)
+	.db \5 \6
+.endm
+
+; @addr{76e4}
+_breakableTileModes:
+        m_BreakableTileData %10010110 %00110000 %0010 $1 $10 $04 ; $00
+        m_BreakableTileData %10110111 %10110001 %0110 $1 $00 $04 ; $01
+        m_BreakableTileData %10110111 %10110001 %0110 $0 $c0 $e6 ; $02
+        m_BreakableTileData %10110111 %10110001 %0110 $0 $c0 $e0 ; $03
+        m_BreakableTileData %10110111 %10110001 %0110 $0 $00 $f3 ; $04
+        m_BreakableTileData %10110111 %10110001 %0110 $0 $00 $04 ; $05
+        m_BreakableTileData %10110110 %10110001 %0110 $4 $01 $04 ; $06
+        m_BreakableTileData %11110110 %00110000 %0010 $3 $00 $04 ; $07
+        m_BreakableTileData %11110110 %00110000 %1011 $0 $00 $f3 ; $08
+        m_BreakableTileData %00100001 %00000000 %0000 $4 $06 $04 ; $09
+        m_BreakableTileData %00100001 %00000000 %0000 $0 $c6 $e7 ; $0a
+        m_BreakableTileData %00100001 %00000000 %0000 $0 $c6 $e0 ; $0b
+        m_BreakableTileData %00110000 %10000000 %0000 $0 $c6 $e8 ; $0c
+        m_BreakableTileData %10101101 %00010001 %0000 $7 $0c $04 ; $0d
+        m_BreakableTileData %01000000 %10000000 %0111 $4 $19 $04 ; $0e
+        m_BreakableTileData %01000000 %10000000 %0111 $0 $19 $f3 ; $0f
+        m_BreakableTileData %01110000 %00000000 %1011 $0 $1f $fd ; $10
+        m_BreakableTileData %00000000 %00010000 %0000 $7 $1f $04 ; $11
+        m_BreakableTileData %00000000 %00010000 %0000 $0 $df $e7 ; $12
+        m_BreakableTileData %10000001 %00000000 %0100 $8 $1f $04 ; $13
+        m_BreakableTileData %01000000 %00000000 %0000 $9 $0a $e1 ; $14
+        m_BreakableTileData %01000000 %00000000 %0000 $0 $ca $e0 ; $15
+        m_BreakableTileData %01000000 %00000000 %0000 $0 $0a $e1 ; $16
+        m_BreakableTileData %01000000 %00000000 %0000 $a $0a $e1 ; $17
+        m_BreakableTileData %01000000 %00000000 %0000 $b $0a $e1 ; $18
+        m_BreakableTileData %10110111 %00110001 %0100 $1 $00 $a0 ; $19
+        m_BreakableTileData %10110111 %00110001 %0100 $0 $00 $a0 ; $1a
+        m_BreakableTileData %10110111 %00110001 %0100 $0 $40 $45 ; $1b
+        m_BreakableTileData %10110111 %00110001 %0100 $0 $00 $f3 ; $1c
+        m_BreakableTileData %00100101 %00000001 %0000 $0 $06 $a0 ; $1d
+        m_BreakableTileData %00100101 %00000001 %0000 $0 $46 $45 ; $1e
+        m_BreakableTileData %00100101 %00000001 %0000 $2 $06 $a0 ; $1f
+        m_BreakableTileData %00100101 %00000001 %0000 $0 $46 $0d ; $20
+        m_BreakableTileData %00110000 %00000000 %0000 $0 $06 $a0 ; $21
+        m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $34 ; $22
+        m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $35 ; $23
+        m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $36 ; $24
+        m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $37 ; $25
+        m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $34 ; $26
+        m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $35 ; $27
+        m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $36 ; $28
+        m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $37 ; $29
+        m_BreakableTileData %00111111 %00000000 %0000 $0 $06 $a0 ; $2a
+        m_BreakableTileData %00100001 %00000000 %0000 $4 $06 $4c ; $2b
+        m_BreakableTileData %00000110 %00000000 %0000 $0 $07 $00 ; $2c
+        m_BreakableTileData %10010110 %00110000 %0010 $0 $10 $ef ; $2d
+        m_BreakableTileData %01000000 %00000000 %0000 $c $0a $4c ; $2e
+        m_BreakableTileData %00110000 %00000000 %0000 $0 $06 $01 ; $2f
 .ends
 
 

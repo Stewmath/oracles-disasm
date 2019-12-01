@@ -38,14 +38,14 @@ pos = startAddress
 tableAddresses = []
 
 print '; @addr{' + myhex(toGbPointer(startAddress), 4) + '}'
-print prefix + 'GroupTable:'
+print prefix + 'Table:'
 
 for i in range(entries):
     address = bankedAddress(bank, read16(rom, pos))
     tableAddresses.append(address)
     pos += 2
     
-    print '\t.dw ' + prefix + 'Group' + str(i) + 'Data'
+    print '\t.dw ' + prefix + str(i)
 
 print
 
@@ -58,7 +58,7 @@ for i in range(entries):
         for j in range(entries):
             if tableAddresses[j] == address:
 #                 print '; @addr{' +  myhex(toGbPointer(address),4) + '}'
-                print prefix + 'Group' + str(j) + 'Data:'
+                print prefix + str(j) + ':'
 
         while True:
             if terminator >= 0 and rom[pos] == terminator:

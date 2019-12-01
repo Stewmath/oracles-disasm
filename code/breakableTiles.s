@@ -66,6 +66,7 @@ tryToBreakTile_body:
 	or a			; $4774
 	jr z,@doneSettingTile	; $4775
 
+.ifdef ROM_AGES
 	ldh a,(<hFF92)	; $4777
 	cp TILEINDEX_SWITCH_DIAMOND	; $4779
 	jr z,@useOriginalLayout	; $477b
@@ -73,9 +74,14 @@ tryToBreakTile_body:
 	ld a,(wActiveCollisions)		; $477d
 	cp $02			; $4780
 	jr z,@activeCollisions1Or2	; $4782
-
 	cp $01			; $4784
 	jr nz,@useGivenValue	; $4786
+
+.else; ROM_SEASONS
+	ld a,(wActiveGroup)
+	cp $03
+	jr c,@useGivenValue
+.endif
 
 @activeCollisions1Or2:
 	; Check value $10 (a kind of pot). What's the significance?
@@ -98,12 +104,17 @@ tryToBreakTile_body:
 	ld b,(hl)		; $479a
 	call setTileInRoomLayoutBuffer		; $479b
 	ld a,(hl)		; $479e
+
 @setTile:
 	call setTile		; $479f
+
 @doneSettingTile:
 	ldh a,(<hFF92)	; $47a2
+
+.ifdef ROM_AGES
 	cp TILEINDEX_SOMARIA_BLOCK	; $47a4
 	jr z,@somariaBlock	; $47a6
+.endif
 
 	cp TILEINDEX_SIGN	; $47a8
 	ld hl,wTotalSignsDestroyed	; $47aa
@@ -146,6 +157,7 @@ tryToBreakTile_body:
 	scf			; $47e8
 	ret			; $47e9
 
+.ifdef ROM_AGES
 @somariaBlock:
 	ld c,ITEMID_18		; $47ea
 	call findItemWithID		; $47ec
@@ -170,6 +182,7 @@ tryToBreakTile_body:
 	ld l,Item.var2f		; $4804
 	set 5,(hl)		; $4806
 	ret			; $4808
+.endif ; ROM_AGES
 
 ;;
 ; Makes an interaction for a breakable tile at the item's location.
