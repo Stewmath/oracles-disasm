@@ -22,8 +22,8 @@ _parentItemCode_harp:
 	jp nz,_clearParentItem		; $4d91
 
 	ld a,$80		; $4d94
-	ld ($cc95),a		; $4d96
-	ld a,$7e		; $4d99
+	ld (wcc95),a		; $4d96
+	ld a,$ff ~ DISABLE_LINK ~ DISABLE_ALL_BUT_INTERACTIONS		; $4d99
 	ld (wDisabledObjects),a		; $4d9b
 
 	call _parentItemLoadAnimationAndIncState		; $4d9e
@@ -66,6 +66,8 @@ _parentItemCode_harp:
 ++
 	call _specialObjectAnimate		; $4dd8
 	call @getSelectedSongAddr		; $4ddb
+
+.ifdef ROM_AGES
 	ld a,$ff		; $4dde
 	jr z,+			; $4de0
 	ld a,(hl)		; $4de2
@@ -74,6 +76,14 @@ _parentItemCode_harp:
 	ld (wLinkRidingObject),a		; $4de6
 	ld c,$80		; $4de9
 	jr nz,++			; $4deb
+
+.else; ROM_SEASONS
+	ld a,$ff		; $4dde
+	ld (wLinkPlayingInstrument),a
+	ld (wLinkRidingObject),a
+	ld c,$80
+.endif
+
 	ld a,(hl)		; $4ded
 	or a			; $4dee
 	jr nz,++			; $4def
@@ -88,8 +98,11 @@ _parentItemCode_harp:
 
 	ld hl,w1Link.collisionType		; $4df8
 	set 7,(hl)		; $4dfb
+
+.ifdef ROM_AGES
 	call @getSelectedSongAddr		; $4dfd
 	jr nz,@harp		; $4e00
+.endif
 
 	; Flute: try to spawn companion
 	ldbc INTERACID_COMPANION_SPAWNER, $80		; $4e02
@@ -98,8 +111,11 @@ _parentItemCode_harp:
 @clearSelf:
 	xor a			; $4e08
 	ld (wDisabledObjects),a		; $4e09
-	ld ($cc95),a		; $4e0c
+	ld (wcc95),a		; $4e0c
 	jp _clearParentItem		; $4e0f
+
+
+.ifdef ROM_AGES ; Harp code
 
 @tuneEchoesInVain:
 	ld bc,TX_5110		; $4e12
@@ -137,12 +153,15 @@ _parentItemCode_harp:
 	ld a,CUTSCENE_TIMEWARP		; $4e3d
 	ld (wCutsceneTrigger),a		; $4e3f
 
-	ld a,$6d		; $4e42
+	ld a,DISABLE_LINK|DISABLE_ENEMIES|DISABLE_8|DISABLE_COMPANION|DISABLE_40
 	ld (wDisabledObjects),a		; $4e44
 	ld (wDisableLinkCollisionsAndMenu),a		; $4e47
 	ld (wcde0),a		; $4e4a
 	call clearAllItemsAndPutLinkOnGround		; $4e4d
 	jp _specialObjectAnimate		; $4e50
+
+.endif ; ROM_AGES
+
 
 @sfxList:
 	.db SND_CRANEGAME
@@ -164,7 +183,9 @@ _parentItemCode_harp:
 	ld e,Item.id		; $4e5d
 	ld a,(de)		; $4e5f
 	cp ITEMID_FLUTE			; $4e60
+
+.ifdef ROM_AGES
 	ret z			; $4e62
 	ld l,<wSelectedHarpSong		; $4e63
+.endif
 	ret			; $4e65
-
