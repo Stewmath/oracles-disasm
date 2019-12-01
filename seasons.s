@@ -31711,49 +31711,8 @@ _label_05_451:
 	.include "code/breakableTiles.s"
 
 	.include "code/items/parentItemUsage.s"
+	.include "code/items/shieldParent.s"
 ;	.include "code/items/parentItems.s"
-
-_parentItemCode_shield:
-	call $4a25		; $49fc
-	jr nc,_label_06_093	; $49ff
-	call $52d0		; $4a01
-	ret nz			; $4a04
-	ld e,$04		; $4a05
-	ld a,(de)		; $4a07
-	rst_jumpTable			; $4a08
-	dec c			; $4a09
-	ld c,d			; $4a0a
-	dec d			; $4a0b
-	ld c,d			; $4a0c
-	ld a,$01		; $4a0d
-	ld (de),a		; $4a0f
-	ld a,$76		; $4a10
-	call playSound		; $4a12
-	ld a,($c6a9)		; $4a15
-	add $00			; $4a18
-	ld ($cc89),a		; $4a1a
-	ret			; $4a1d
-_label_06_093:
-	xor a			; $4a1e
-	ld ($cc89),a		; $4a1f
-	jp _clearParentItem		; $4a22
-	ld a,($cc78)		; $4a25
-	or a			; $4a28
-	jr nz,_label_06_094	; $4a29
-	ld a,($ccaf)		; $4a2b
-	rlca			; $4a2e
-	jr c,_label_06_094	; $4a2f
-	ld a,($cc48)		; $4a31
-	rrca			; $4a34
-	jr c,_label_06_094	; $4a35
-	call $53e8		; $4a37
-	jr z,_label_06_094	; $4a3a
-	scf			; $4a3c
-	ret			; $4a3d
-_label_06_094:
-	xor a			; $4a3e
-	ret			; $4a3f
-
 
 _parentItemCode_rodOfSeasons:
 	call $53f0		; $4a40
