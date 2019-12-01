@@ -39639,6 +39639,7 @@ cliffTilesTable:
 	.include "code/items/otherSwordsParent.s"
 	.include "code/items/switchHookParent.s"
 	.include "code/items/caneOfSomariaParent.s"
+	.include "code/items/swordParent.s"
 	.include "code/items/parentItems.s"
 
 	.include "code/items/parentItemCommon.s"
