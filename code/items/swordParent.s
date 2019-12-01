@@ -18,7 +18,7 @@ _parentItemCode_sword:
 
 ; Initialization
 @state0:
-	ld hl,$cc63		; $4b97
+	ld hl,wcc63		; $4b97
 	bit 7,(hl)		; $4b9a
 	jr nz,++		; $4b9c
 
@@ -51,7 +51,7 @@ _parentItemCode_sword:
 
 ; Sword being swung
 @state1:
-	ld a,($cc63)		; $4bcb
+	ld a,(wcc63)		; $4bcb
 	rlca			; $4bce
 	jp c,@label_4c8b		; $4bcf
 
@@ -95,7 +95,7 @@ _parentItemCode_sword:
 	jp z,@deleteSelf		; $4c0a
 
 	ld a,$01		; $4c0d
-	ld ($cc63),a		; $4c0f
+	ld (wcc63),a		; $4c0f
 
 	; Set child item to state 2
 	inc a			; $4c12
@@ -187,7 +187,7 @@ _parentItemCode_sword:
 @label_4c8b:
 	ld h,d			; $4c8b
 	ld a,$02		; $4c8c
-	ld ($cc63),a		; $4c8e
+	ld (wcc63),a		; $4c8e
 	ld l,Item.state		; $4c91
 	ld (hl),$04		; $4c93
 	ld a,SPIN_RING		; $4c95
@@ -201,6 +201,7 @@ _parentItemCode_sword:
 	ld l,Item.var3f		; $4ca3
 	ld (hl),$0f		; $4ca5
 
+.ifdef ROM_AGES
 	call _isLinkUnderwater		; $4ca7
 	ld c,LINK_ANIM_MODE_28		; $4caa
 	jr z,+			; $4cac
@@ -208,6 +209,12 @@ _parentItemCode_sword:
 +
 	ld a,(w1Link.direction)		; $4cb0
 	add c			; $4cb3
+
+.else; ROM_SEASONS
+	ld a,(w1Link.direction)
+	add LINK_ANIM_MODE_28
+.endif
+
 	call specialObjectSetAnimationWithLinkData		; $4cb4
 	ld h,d			; $4cb7
 	ld l,Item.animParameter		; $4cb8
@@ -267,7 +274,7 @@ _parentItemCode_sword:
 
 @deleteSelf:
 	xor a			; $4d00
-	ld ($cc63),a		; $4d01
+	ld (wcc63),a		; $4d01
 	jp _clearParentItem		; $4d04
 
 
@@ -305,11 +312,16 @@ _parentItemCode_sword:
 	ld (hl),$05		; $4d2a
 
 	call _itemDisableLinkMovement		; $4d2c
+
+.ifdef ROM_AGES
 	call _isLinkUnderwater		; $4d2f
 	ld a,LINK_ANIM_MODE_1f		; $4d32
 	jr z,+			; $4d34
 	ld a,LINK_ANIM_MODE_2c		; $4d36
 +
+.else; ROM_SEASONS
+	ld a,LINK_ANIM_MODE_1f
+.endif
 	jp specialObjectSetAnimationWithLinkData		; $4d38
 
 @checkCreateSwordBeam:
