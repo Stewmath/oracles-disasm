@@ -34841,6 +34841,27 @@ _breakableTileModes:
         m_BreakableTileData %10010110 %00110000 %0010 $0 $10 $ef ; $2d
         m_BreakableTileData %01000000 %00000000 %0000 $c $0a $4c ; $2e
         m_BreakableTileData %00110000 %00000000 %0000 $0 $06 $01 ; $2f
+
+
+getSpecialObjectGraphicsFrame_hook1:
+	ldi a,(hl)		; $4528
+	push af
+	push hl			; $4529
+	add a			; $452a
+	jp getSpecialObjectGraphicsFrame_hook1_ret
+
+getSpecialObjectGraphicsFrame_hook2:
+	ld c,a
+	pop af
+	and $80
+	ld a,$40
+	jr nz,+
+	ld a,:gfx_dungeon_sprites
++
+	add c
+	ld c,a
+	jp getSpecialObjectGraphicsFrame_hook2_ret
+
 .ends
 
 
@@ -130024,3 +130045,9 @@ _label_3f_212:
 .include "build/data/treasureDisplayData.s"
 
 .ends
+
+
+.BANK $40
+.ORGA $4000
+
+	m_GfxDataSimple gfx_link
