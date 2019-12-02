@@ -855,6 +855,8 @@
 ; @subid_10{Clairvoyant goron who gives you tips.}
 .define INTERACID_GORON			$66
 
+
+.ifdef ROM_AGES
 ;;
 ; Spawns companions in various situations.
 ; For subids other than $80, this is accompanied by an instance of INTERACID_COMPANION_SCRIPTS?
@@ -867,6 +869,11 @@
 ; @subid_05{Cutscene outside forest where you get the flute}
 ; @subid_80{Flute call for companion}
 .define INTERACID_COMPANION_SPAWNER	$67
+
+.else; ROM_SEASONS
+
+.define INTERACID_COMPANION_SPAWNER	$5f
+.endif
 
 
 .ifdef ROM_AGES

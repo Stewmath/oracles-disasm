@@ -109,6 +109,7 @@
 
 	.define TILEINDEX_GASHA_TREE_TL		$75
 	.define TILEINDEX_SOFT_SOIL		$e0
+	.define TILEINDEX_OPEN_CAVE_DOOR	$e8 ; overworld / subrosia
 
 	; For seasons, $f8-$f9 count as grass, $fa-$fc count as puddles
 	.define TILEINDEX_PUDDLE	$fa

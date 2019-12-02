@@ -74,7 +74,11 @@ updateAreaFlagsForIndoorRoomInAltWorld:
 	ret z			; $4050
 
 	ld hl,wAreaFlags		; $4051
+.ifdef ROM_AGES
 	set AREAFLAG_BIT_PAST,(hl)		; $4054
+.else
+	set AREAFLAG_BIT_SUBROSIA,(hl)
+.endif
 	ret			; $4056
 
 

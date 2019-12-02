@@ -41,7 +41,7 @@ while address < endAddress:
     if bytesThisRow == 0:
         output.write('.db ')
     if binaryOutput:
-        outString = wlabin(rom[address])
+        outString = wlabin(rom[address],8)
     else:
         outString = wlahex(rom[address],2)
     if bytesThisRow == bytesPerLine-1:

@@ -1,21 +1,37 @@
 ; Bits for the wAreaFlags variable.
 
-.define AREAFLAG_PAST		$80 ; Past or Subrosia (depending on game)
-.define AREAFLAG_SUBROSIA	$80
-.define AREAFLAG_UNDERWATER	$40
-.define AREAFLAG_SIDESCROLL	$20
-.define AREAFLAG_10		$10 ; Might prevent minimap updating? (ages only)
-.define AREAFLAG_DUNGEON	$08
-.define AREAFLAG_INDOORS	$04
-.define AREAFLAG_MAKU		$02
-.define AREAFLAG_OUTDOORS	$01
+.ifdef ROM_AGES
 
+.define AREAFLAG_PAST		$80 ; Past or Subrosia (depending on game)
 .DEFINE AREAFLAG_BIT_PAST	7
-.DEFINE AREAFLAG_BIT_SUBROSIA	7
+
+.define AREAFLAG_UNDERWATER	$40
 .DEFINE AREAFLAG_BIT_UNDERWATER	6
+
+.else; ROM_SEASONS
+
+.define AREAFLAG_SUBROSIA	$80
+.DEFINE AREAFLAG_BIT_SUBROSIA	7
+
+.define AREAFLAG_40		$40 ; TODO: what does this mean, if anything?
+.DEFINE AREAFLAG_BIT_40		6
+
+.endif
+
+.define AREAFLAG_SIDESCROLL	$20
 .DEFINE AREAFLAG_BIT_SIDESCROLL	5
+
+.define AREAFLAG_10		$10 ; Might prevent minimap updating? (ages only)
 .DEFINE AREAFLAG_BIT_10		4
+
+.define AREAFLAG_DUNGEON	$08
 .DEFINE AREAFLAG_BIT_DUNGEON	3
+
+.define AREAFLAG_INDOORS	$04
 .DEFINE AREAFLAG_BIT_INDOORS	2
+
+.define AREAFLAG_MAKU		$02
 .DEFINE AREAFLAG_BIT_MAKU	1
+
+.define AREAFLAG_OUTDOORS	$01
 .DEFINE AREAFLAG_BIT_OUTDOORS	0

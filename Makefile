@@ -123,7 +123,7 @@ $(COLLISIONFILES): build/tilesets/collisionsDictionary.bin
 
 build/$(GAME).o: $(GFXFILES) $(ROOMLAYOUTFILES) $(COLLISIONFILES) $(MAPPINGINDICESFILES) $(GAMEDATAFILES)
 build/$(GAME).o: build/textData.s build/textDefines.s
-build/$(GAME).o: code/*.s code/$(GAME)/*.s data/*.s objects/*.s objects/$(GAME)/*.s scripts/$(GAME)/*.s
+build/$(GAME).o: code/*.s code/items/*.s code/$(GAME)/*.s data/*.s objects/*.s objects/$(GAME)/*.s scripts/$(GAME)/*.s
 build/$(GAME).o: build/tilesets/tileMappingTable.bin build/tilesets/tileMappingIndexData.bin build/tilesets/tileMappingAttributeData.bin
 build/$(GAME).o: rooms/$(GAME)/*.bin
 

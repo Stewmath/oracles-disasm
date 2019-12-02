@@ -9,9 +9,10 @@
 .define TILETYPE_STAIRS		$06
 .define TILETYPE_WATER		$07
 
-; Causes Link's sword to do a poke on these tiles?
-; Link can't pass through these tiles when transformed?
-.define TILETYPE_UNKNOWN	$08
+; Special properties:
+; - Causes Link's sword to do a poke on these tiles
+; - Link can't pass through these tiles when transformed
+.define TILETYPE_STUMP		$08
 
 .define TILETYPE_UPCONVEYOR	$09
 .define TILETYPE_RIGHTCONVEYOR	$0a
