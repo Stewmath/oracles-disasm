@@ -47,9 +47,9 @@ specialObject08GfxPointers:
 	m_SpecialObjectGfxPointer $81 gfx_link $1b00 $04
 	m_SpecialObjectGfxPointer $81 gfx_link $1b40 $04
 	m_SpecialObjectGfxPointer $80 gfx_link $1180 $04
-	m_SpecialObjectGfxPointer $8b gfx_link $11c0 $04
+	m_SpecialObjectGfxPointer $80 gfx_link $11c0 $04
 	m_SpecialObjectGfxPointer $81 gfx_link $1180 $04
-	m_SpecialObjectGfxPointer $89 gfx_link $11c0 $04
+	m_SpecialObjectGfxPointer $81 gfx_link $11c0 $04
 	m_SpecialObjectGfxPointer $80 gfx_link $0000 $04
 	m_SpecialObjectGfxPointer $82 gfx_link $0ac0 $04
 	m_SpecialObjectGfxPointer $ad gfx_link $0ce0 $04
@@ -665,10 +665,10 @@ animationData19f90:
 	.db $23 $2c $00
 	.db $3c $2d $00
 	.db $23 $2c $40
-	.db $23 $2e $01
 	.db $3c $2f $01
-	.db $1e $2e $01
-	.db $7f $2e $ff
+	.db $23 $2c $01
+	.db $1e $2d $01
+	.db $7f $2c $ff
 
 animationData19fa5:
 	.db $7f $07 $ff
