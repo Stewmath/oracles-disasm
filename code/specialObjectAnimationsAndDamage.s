@@ -211,13 +211,19 @@ getSpecialObjectGraphicsFrame_hook1_ret:
 	ld h,(hl)		; $4540
 	ld l,a			; $4541
 	or h			; $4542
-	ret z			; $4543
+;	ret z			; $4543
+
+	jp getSpecialObjectGraphicsFrame_hook2
+	nop
+	nop
+	nop
+getSpecialObjectGraphicsFrame_hook2_ret:
 
 	; Bit 0: bank select
-	ld a,l			; $4544
-	and $01			; $4545
-	jp getSpecialObjectGraphicsFrame_hook2
-getSpecialObjectGraphicsFrame_hook2_ret:
+;	ld a,l			; $4544
+;	and $01			; $4545
+;	add :gfx_link		; $4547
+	ld c,a			; $4549
 
 	; Bits 1-4: size (divided by 16)
 	ld a,l			; $454a

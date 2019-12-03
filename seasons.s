@@ -34844,23 +34844,23 @@ _breakableTileModes:
 
 
 getSpecialObjectGraphicsFrame_hook1:
-	ldi a,(hl)		; $4528
+	ldi a,(hl)
 	push af
-	push hl			; $4529
-	add a			; $452a
+	push hl
+	add a
 	jp getSpecialObjectGraphicsFrame_hook1_ret
 
 getSpecialObjectGraphicsFrame_hook2:
-	ld c,a
-	pop af
-	and $80
-	ld a,$40
-	jr nz,+
-	ld a,:gfx_dungeon_sprites
-+
-	add c
-	ld c,a
+	pop bc
+	ret z
+	ld a,l
+	and $01
+	add :gfx_dungeon_sprites
+	bit 7,b
+	jp z,getSpecialObjectGraphicsFrame_hook2_ret
+	add $40 - :gfx_dungeon_sprites
 	jp getSpecialObjectGraphicsFrame_hook2_ret
+
 
 .ends
 
