@@ -243,12 +243,24 @@
 
 ; $45: falling boulder spawner?
 
+;;
+; Used by Ganon
+.define PARTID_50				$50
+
+;;
+; Used by Ganon
+.define PARTID_51				$51
+
+;;
+; Used by Ganon
+.define PARTID_52				$52
+
 .define PARTID_BLUE_ENERGY_BEAD			$53 ; Used by "createEnergySwirl" functions
 
 .define PARTID_OCTOGON_BUBBLE			$55
 
 ; The stone that's pushed at the start of the game. This only applies after it's moved;
-; before it's moved, the stone is handled by INTERACID_TRIFOCE_STONE instead.
+; before it's moved, the stone is handled by INTERACID_TRIFORCE_STONE instead.
 .define PARTID_TRIFORCE_STONE			$5a
 
 

@@ -2957,7 +2957,7 @@ _reloadGraphicsOnExitMenu:
 	call loadAreaGraphics		; $5110
 	call reloadTileMap		; $5113
 	call fastFadeinFromWhiteToRoom		; $5116
-	ld a,($cbe3)		; $5119
+	ld a,(wExtraBgPaletteHeader)		; $5119
 	or a			; $511c
 	call nz,loadPaletteHeader		; $511d
 

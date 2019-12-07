@@ -741,7 +741,7 @@ gfxRegisterStates:
 	.db $c7 $00 $00 $c7 $c7 $c7 ; 0x01
 	.db $00 $00 $00 $c7 $c7 $c7
 
-	.db $ef $f0 $00 $8f $8f $0f ; 0x02: Post-d3 cutscene, twinrova fight?
+	.db $ef $f0 $00 $8f $8f $0f ; 0x02: Post-d3 cutscene, twinrova/ganon fight?
 	.db $e7 $00 $00 $c7 $c7 $c7
 
 	.db $ef $f0 $00 $10 $c7 $0f ; 0x03
@@ -131582,99 +131582,119 @@ _twinrova_subid1_targetPositions:
 	.db $28 $b0
 	.db $00
 
-;;
-; @addr{505d}
+; ==============================================================================
+; ENEMYID_GANON
+;
+; Variables:
+;   relatedObj1: ENEMYID_GANON_REVIVAL_CUTSCENE
+;   relatedObj2: PARTID_SHADOW object
+;   var30: Base x-position during teleport
+;   var32: Related to animation for state A?
+;   var35+: Pointer to sequence of attack states to iterate through
+; ==============================================================================
 enemyCode04:
-	jr z,_label_10_118	; $505d
-	sub $03			; $505f
+	jr z,@normalStatus	; $505d
+	sub ENEMYSTATUS_NO_HEALTH			; $505f
 	ret c			; $5061
-	jr nz,_label_10_118	; $5062
+	jr nz,@normalStatus	; $5062
+
+	; Dead
 	call checkLinkVulnerable		; $5064
 	ret nc			; $5067
-_label_10_115:
 	ld h,d			; $5068
-	ld l,$a9		; $5069
+	ld l,Enemy.health		; $5069
 	ld (hl),$40		; $506b
-	ld l,$84		; $506d
+	ld l,Enemy.state		; $506d
 	ld (hl),$0e		; $506f
 	inc l			; $5071
-	ld (hl),$00		; $5072
-_label_10_116:
+	ld (hl),$00 ; [state2]
 	inc l			; $5074
-	ld (hl),$78		; $5075
+	ld (hl),120 ; [counter1]
+
 	ld a,$01		; $5077
 	ld (wDisableLinkCollisionsAndMenu),a		; $5079
+
 	ld a,SND_BOSS_DEAD		; $507c
 	call playSound		; $507e
-_label_10_117:
-	ld a,$b4		; $5081
-	call $56de		; $5083
+
+	ld a,GFXH_b4		; $5081
+	call ganon_loadGfxHeader		; $5083
+
 	ld a,$0e		; $5086
 	call enemySetAnimation		; $5088
+
 	call getThisRoomFlags		; $508b
 	set 7,(hl)		; $508e
-	ld l,$f1		; $5090
+	ld l,<ROOM_5f1		; $5090
 	set 7,(hl)		; $5092
-	ld l,$f5		; $5094
+	ld l,<ROOM_5f5		; $5094
 	set 7,(hl)		; $5096
+
 	ld a,SNDCTRL_STOPMUSIC		; $5098
 	call playSound		; $509a
-	ld bc,$2f0e		; $509d
+	ld bc,TX_2f0e		; $509d
 	jp showText		; $50a0
-_label_10_118:
-	ld e,$84		; $50a3
+
+@normalStatus:
+	ld e,Enemy.state		; $50a3
 	ld a,(de)		; $50a5
 	rst_jumpTable			; $50a6
-.dw $50c5
-.dw $5152
-.dw $5166
-.dw $517f
-.dw $51a1
-.dw $51c9
-.dw $51e8
-.dw $520b
-.dw $5216
-.dw $52b7
-.dw $5354
-.dw $5419
-.dw $551b
-.dw $564d
-.dw $566b
+	.dw _ganon_state_uninitialized
+	.dw _ganon_state1
+	.dw _ganon_state2
+	.dw _ganon_state3
+	.dw _ganon_state4
+	.dw _ganon_state5
+	.dw _ganon_state6
+	.dw _ganon_state7
+	.dw _ganon_state8
+	.dw _ganon_state9
+	.dw _ganon_stateA
+	.dw _ganon_stateB
+	.dw _ganon_stateC
+	.dw _ganon_stateD
+	.dw _ganon_stateE
 
+
+_ganon_state_uninitialized:
 	ld h,d			; $50c5
 	ld l,e			; $50c6
-	inc (hl)		; $50c7
-	ld l,$9d		; $50c8
+	inc (hl) ; [state] = 1
+
+	ld l,Enemy.oamTileIndexBase		; $50c8
 	ld (hl),$00		; $50ca
-	ld l,$8b		; $50cc
+	ld l,Enemy.yh		; $50cc
 	ld (hl),$48		; $50ce
-	ld l,$8d		; $50d0
+	ld l,Enemy.xh		; $50d0
 	ld (hl),$78		; $50d2
-	ld l,$8f		; $50d4
+	ld l,Enemy.zh		; $50d4
 	dec (hl)		; $50d6
+
 	ld hl,w1Link.yh		; $50d7
 	ld (hl),$88		; $50da
-	ld l,$0d		; $50dc
+	ld l,<w1Link.xh		; $50dc
 	ld (hl),$78		; $50de
-	ld l,$08		; $50e0
-	ld (hl),$00		; $50e2
-	ld l,$00		; $50e4
+	ld l,<w1Link.direction		; $50e0
+	ld (hl),DIR_UP		; $50e2
+	ld l,<w1Link.enabled		; $50e4
 	ld (hl),$03		; $50e6
+
+	; Load extra graphics for ganon
 	ld hl,wLoadedObjectGfx		; $50e8
 	ld a,$01		; $50eb
-	ld (hl),$16		; $50ed
+	ld (hl),OBJGFXH_16		; $50ed
 	inc l			; $50ef
 	ldi (hl),a		; $50f0
-	ld (hl),$18		; $50f1
+	ld (hl),OBJGFXH_18		; $50f1
 	inc l			; $50f3
 	ldi (hl),a		; $50f4
-	ld (hl),$19		; $50f5
+	ld (hl),OBJGFXH_19		; $50f5
 	inc l			; $50f7
 	ldi (hl),a		; $50f8
-	ld (hl),$1a		; $50f9
+	ld (hl),OBJGFXH_1a		; $50f9
 	inc l			; $50fb
 	ldi (hl),a		; $50fc
-	ld (hl),$1b		; $50fd
+	ld (hl),OBJGFXH_1b		; $50fd
 	inc l			; $50ff
 	ldi (hl),a		; $5100
 	xor a			; $5101
@@ -131684,69 +131704,92 @@ _label_10_118:
 	ldi (hl),a		; $5105
 	ldi (hl),a		; $5106
 	ldi (hl),a		; $5107
+
+	; Shadow as relatedObj2
 	ld bc,$0012		; $5108
 	call _enemyBoss_spawnShadow		; $510b
-	ld e,$98		; $510e
-	ld a,$c0		; $5110
+	ld e,Enemy.relatedObj2		; $510e
+	ld a,Part.start		; $5110
 	ld (de),a		; $5112
 	inc e			; $5113
 	ld a,h			; $5114
 	ld (de),a		; $5115
+
 	call disableLcd		; $5116
-	ld a,$f5		; $5119
+	ld a,<ROOM_5f5		; $5119
 	ld (wActiveRoom),a		; $511b
 	ld a,$03		; $511e
 	ld (wTwinrovaTileReplacementMode),a		; $5120
+
 	call loadScreenMusicAndSetRoomPack		; $5123
 	call loadAreaData		; $5126
 	call loadAreaGraphics		; $5129
 	call func_131f		; $512c
 	call resetCamera		; $512f
 	call loadCommonGraphics		; $5132
+
 	ld a,PALH_8b		; $5135
 	call loadPaletteHeader		; $5137
-	ld a,$b1		; $513a
-	ld ($cbe3),a		; $513c
-	ld a,$b0		; $513f
+	ld a,PALH_b1		; $513a
+	ld (wExtraBgPaletteHeader),a		; $513c
+	ld a,GFXH_b0		; $513f
 	call loadGfxHeader		; $5141
 	ld a,$02		; $5144
 	call loadGfxRegisterStateIndex		; $5146
+
 	ldh a,(<hActiveObject)	; $5149
 	ld d,a			; $514b
 	call objectSetVisible83		; $514c
+
 	jp fadeinFromWhite		; $514f
+
+
+; Spawning ENEMYID_GANON_REVIVAL_CUTSCENE
+_ganon_state1:
 	call getFreeEnemySlot_uncounted		; $5152
 	ret nz			; $5155
-	ld (hl),$60		; $5156
-	ld l,$96		; $5158
-	ld (hl),$80		; $515a
+	ld (hl),ENEMYID_GANON_REVIVAL_CUTSCENE		; $5156
+	ld l,Enemy.relatedObj1		; $5158
+	ld (hl),Enemy.start		; $515a
 	inc l			; $515c
 	ld (hl),d		; $515d
+
 	call _ecom_incState		; $515e
-	ld l,$87		; $5161
-	ld (hl),$3c		; $5163
+	ld l,Enemy.counter2		; $5161
+	ld (hl),60		; $5163
 	ret			; $5165
-	ld e,$86		; $5166
+
+
+_ganon_state2:
+	; Wait for signal?
+	ld e,Enemy.counter1		; $5166
 	ld a,(de)		; $5168
 	or a			; $5169
 	ret z			; $516a
 	call _ecom_decCounter2		; $516b
 	jp nz,_ecom_flickerVisibility		; $516e
+
 	dec l			; $5171
-	ld (hl),$c1		; $5172
-	ld l,$84		; $5174
+	ld (hl),193 ; [counter1]
+	ld l,Enemy.state		; $5174
 	inc (hl)		; $5176
 	ld a,$0d		; $5177
 	call enemySetAnimation		; $5179
 	jp objectSetVisible83		; $517c
+
+
+; Rumbling while "skull" is on-screen
+_ganon_state3:
 	call _ecom_decCounter1		; $517f
-	jr z,_label_10_119	; $5182
-	ld a,(hl)		; $5184
+	jr z,@nextState	; $5182
+
+	ld a,(hl) ; [counter1]
 	and $3f			; $5185
 	ld a,SND_RUMBLE2		; $5187
 	call z,playSound		; $5189
 	jp enemyAnimate		; $518c
-_label_10_119:
+
+@nextState:
 	ld l,e			; $518f
 	inc (hl)		; $5190
 	ld l,$8f		; $5191
@@ -131756,703 +131799,874 @@ _label_10_119:
 	ld (hl),$02		; $519a
 	ld a,$01		; $519c
 	jp enemySetAnimation		; $519e
-	ld e,$a1		; $51a1
+
+
+; "Ball-like" animation, then ganon himself appears
+_ganon_state4:
+	ld e,Enemy.animParameter		; $51a1
 	ld a,(de)		; $51a3
 	inc a			; $51a4
 	jp nz,enemyAnimate		; $51a5
+
 	call _ecom_incState		; $51a8
-	ld l,$86		; $51ab
-	ld (hl),$0f		; $51ad
-	ld a,$b1		; $51af
+	ld l,Enemy.counter1		; $51ab
+	ld (hl),15		; $51ad
+
+	ld a,GFXH_b1		; $51af
 	call loadGfxHeader		; $51b1
 	ld a,UNCMP_GFXH_32		; $51b4
 	call loadUncompressedGfxHeader		; $51b6
-	ld hl,$cc0a		; $51b9
-	ld (hl),$17		; $51bc
+
+	ld hl,wLoadedObjectGfx+2		; $51b9
+	ld (hl),OBJGFXH_17		; $51bc
 	inc l			; $51be
 	ld (hl),$01		; $51bf
+
 	ldh a,(<hActiveObject)	; $51c1
 	ld d,a			; $51c3
 	ld a,$02		; $51c4
 	jp enemySetAnimation		; $51c6
+
+
+; Brief delay
+_ganon_state5:
 	call _ecom_decCounter1		; $51c9
 	ret nz			; $51cc
-	ld a,$78		; $51cd
-	ld (hl),a		; $51cf
+
+	ld a,120		; $51cd
+	ld (hl),a ; [counter1]
 	ld (wScreenShakeCounterY),a		; $51d0
+
 	ld l,e			; $51d3
-	inc (hl)		; $51d4
+	inc (hl) ; [state] = 6
+
 	ld a,SND_BOSS_DEAD	; $51d5
 	call playSound		; $51d7
+
 	ld a,$03		; $51da
 	call enemySetAnimation		; $51dc
+
 	call showStatusBar		; $51df
 	ldh a,(<hActiveObject)	; $51e2
 	ld d,a			; $51e4
 	jp clearPaletteFadeVariablesAndRefreshPalettes		; $51e5
+
+
+; "Roaring" as fight is about to begin
+_ganon_state6:
 	call _ecom_decCounter1		; $51e8
 	jp nz,enemyAnimate		; $51eb
-	ld (hl),$1e		; $51ee
+
+	ld (hl),30 ; [counter1]		; $51ee
 	ld l,e			; $51f0
-	inc (hl)		; $51f1
-	ld hl,$cc0e		; $51f2
+	inc (hl) ; [state] = 7
+
+	ld hl,wLoadedObjectGfx+6		; $51f2
 	xor a			; $51f5
 	ldi (hl),a		; $51f6
 	ldi (hl),a		; $51f7
 	ldi (hl),a		; $51f8
 	ldi (hl),a		; $51f9
+
 	ld (wDisableLinkCollisionsAndMenu),a		; $51fa
 	ld (wDisabledObjects),a		; $51fd
-	ld bc,$2f0d		; $5200
+
+	ld bc,TX_2f0d		; $5200
 	call showText		; $5203
+
 	ld a,$02		; $5206
 	jp enemySetAnimation		; $5208
+
+
+; Fight begins
+_ganon_state7:
 	ld a,MUS_GANON		; $520b
 	ld (wActiveMusic),a		; $520d
 	call playSound		; $5210
-	jp $5740		; $5213
-	inc e			; $5216
-	ld a,(de)		; $5217
-	rst_jumpTable			; $5218
-.dw $5229
-.dw $5230
-.dw $523e
-.dw $5247
-.dw $525e
-.dw $526b
-.dw $5280
-.dw $52b0
+	jp _ganon_decideNextMove		; $5213
 
-	call $570d		; $5229
-	ld l,$85		; $522c
+
+; 3-projectile attack
+_ganon_state8:
+	inc e			; $5216
+	ld a,(de) ; [state2]
+	rst_jumpTable			; $5218
+	.dw _ganon_state8_substate0
+	.dw _ganon_state8_substate1
+	.dw _ganon_state8_substate2
+	.dw _ganon_state8_substate3
+	.dw _ganon_state8_substate4
+	.dw _ganon_state8_substate5
+	.dw _ganon_state8_substate6
+	.dw _ganon_state8_substate7
+
+; Also used by state D
+_ganon_state8_substate0:
+	call _ganon_updateTeleportVarsAndPlaySound		; $5229
+	ld l,Enemy.state2		; $522c
 	inc (hl)		; $522e
 	ret			; $522f
+
+; Disappearing. Also used by state D
+_ganon_state8_substate1:
 	call _ecom_decCounter1		; $5230
-	jp nz,$56f6		; $5233
+	jp nz,_ganon_updateTeleportAnimationGoingOut		; $5233
 	ld l,e			; $5236
-	inc (hl)		; $5237
-	call $5787		; $5238
+	inc (hl) ; [state2]
+	call _ganon_decideTeleportLocationAndCounter		; $5238
 	jp objectSetInvisible		; $523b
+
+; Delay before reappearing. Also used by state 9, C, D
+_ganon_state8_substate2:
 	call _ecom_decCounter1		; $523e
 	ret nz			; $5241
 	ld l,e			; $5242
-	inc (hl)		; $5243
-	jp $570d		; $5244
+	inc (hl) ; [state2]
+	jp _ganon_updateTeleportVarsAndPlaySound		; $5244
+
+; Reappearing.
+_ganon_state8_substate3:
 	call _ecom_decCounter1		; $5247
-	jp nz,$5722		; $524a
-	ld (hl),$08		; $524d
+	jp nz,_ganon_updateTeleportAnimationComingIn		; $524a
+
+	; Done teleporting, he will become solid again
+	ld (hl),$08 ; [counter1]
 	ld l,e			; $524f
-	inc (hl)		; $5250
-	ld l,$b0		; $5251
+	inc (hl) ; [state2]
+
+	ld l,Enemy.var30		; $5251
 	ld a,(hl)		; $5253
-	ld l,$8d		; $5254
+	ld l,Enemy.xh		; $5254
 	ld (hl),a		; $5256
-	ld l,$a4		; $5257
+
+	ld l,Enemy.collisionType		; $5257
 	set 7,(hl)		; $5259
 	jp objectSetVisible83		; $525b
+
+_ganon_state8_substate4:
 	call _ecom_decCounter1		; $525e
 	ret nz			; $5261
 	ld (hl),$02		; $5262
 	ld l,e			; $5264
-	inc (hl)		; $5265
-	ld a,$b3		; $5266
-	jp $56de		; $5268
+	inc (hl) ; [state2]
+	ld a,GFXH_b3		; $5266
+	jp ganon_loadGfxHeader		; $5268
+
+_ganon_state8_substate5:
 	call _ecom_decCounter1		; $526b
 	ret nz			; $526e
-_label_10_120:
-	ld (hl),$2d		; $526f
+	ld (hl),45		; $526f
 	ld l,e			; $5271
 	inc (hl)		; $5272
 	ld a,$05		; $5273
 	call enemySetAnimation		; $5275
 	call _ecom_updateAngleTowardTarget		; $5278
-	ld bc,$003c		; $527b
-	jr _label_10_122		; $527e
+	ldbc $00,SPEED_180		; $527b
+	jr _ganon_state8_spawnProjectile		; $527e
+
+_ganon_state8_substate6:
 	call _ecom_decCounter1		; $5280
-	jr nz,_label_10_121	; $5283
-	ld (hl),$3c		; $5285
+	jr nz,++		; $5283
+	ld (hl),60		; $5285
 	ld l,e			; $5287
-	inc (hl)		; $5288
+	inc (hl) ; [state2]
 	ld a,$02		; $5289
 	jp enemySetAnimation		; $528b
-_label_10_121:
+++
 	ld a,(hl)		; $528e
 	cp $19			; $528f
 	ret nz			; $5291
-	ld bc,$0264		; $5292
-	call $529b		; $5295
-	ld bc,$fe64		; $5298
-_label_10_122:
-	ld e,$52		; $529b
-	call $57c4		; $529d
+
+	ldbc $02,SPEED_280		; $5292
+	call _ganon_state8_spawnProjectile		; $5295
+
+	ldbc $fe,SPEED_280		; $5298
+
+_ganon_state8_spawnProjectile:
+	ld e,PARTID_52		; $529b
+	call _ganon_spawnPart		; $529d
 	ret nz			; $52a0
-	ld l,$c9		; $52a1
-	ld e,$89		; $52a3
+	ld l,Part.angle		; $52a1
+	ld e,Enemy.angle		; $52a3
 	ld a,(de)		; $52a5
 	add b			; $52a6
 	and $1f			; $52a7
 	ld (hl),a		; $52a9
-	ld l,$d0		; $52aa
+	ld l,Part.speed		; $52aa
 	ld (hl),c		; $52ac
 	jp objectCopyPosition		; $52ad
+
+_ganon_state8_substate7:
 	call _ecom_decCounter1		; $52b0
 	ret nz			; $52b3
-	jp $5728		; $52b4
+	jp _ganon_finishAttack		; $52b4
+
+
+; Projectile attack (4 projectiles turn into 3 smaller ones each)
+_ganon_state9:
 	inc e			; $52b7
 	ld a,(de)		; $52b8
 	rst_jumpTable			; $52b9
-.dw $52ca
-.dw $52d1
-.dw $523e
-.dw $52e6
-.dw $52f7
-.dw $532e
-.dw $5340
-.dw $534d
+	.dw _ganon_state9_substate0
+	.dw _ganon_state9_substate1
+	.dw _ganon_state8_substate2
+	.dw _ganon_state9_substate3
+	.dw _ganon_state9_substate4
+	.dw _ganon_state9_substate5
+	.dw _ganon_state9_substate6
+	.dw _ganon_state9_substate7
 
-	call $570d		; $52ca
-	ld l,$85		; $52cd
+; Also used by state A, B, C
+_ganon_state9_substate0:
+	call _ganon_updateTeleportVarsAndPlaySound		; $52ca
+	ld l,Enemy.state2		; $52cd
 	inc (hl)		; $52cf
 	ret			; $52d0
+
+_ganon_state9_substate1:
 	call _ecom_decCounter1		; $52d1
-	jp nz,$56f6		; $52d4
-	ld (hl),$78		; $52d7
+	jp nz,_ganon_updateTeleportAnimationGoingOut		; $52d4
+	ld (hl),120 ; [counter1]
 	ld l,e			; $52d9
-	inc (hl)		; $52da
-	ld l,$8b		; $52db
+	inc (hl) ; [state2]
+	ld l,Enemy.yh		; $52db
 	ld (hl),$58		; $52dd
-	ld l,$8d		; $52df
+	ld l,Enemy.xh		; $52df
 	ld (hl),$78		; $52e1
 	jp objectSetInvisible		; $52e3
+
+_ganon_state9_substate3:
 	call _ecom_decCounter1		; $52e6
-	jp nz,$5722		; $52e9
-	ld (hl),$08		; $52ec
+	jp nz,_ganon_updateTeleportAnimationComingIn		; $52e9
+	ld (hl),$08 ; [counter1]
 	ld l,e			; $52ee
-	inc (hl)		; $52ef
-	ld l,$a4		; $52f0
+	inc (hl) ; [state2]
+	ld l,Enemy.collisionType		; $52f0
 	set 7,(hl)		; $52f2
 	jp objectSetVisible83		; $52f4
+
+_ganon_state9_substate4:
 	call _ecom_decCounter1		; $52f7
 	ret nz			; $52fa
-	ld (hl),$28		; $52fb
+	ld (hl),40 ; [counter1]
 	ld l,e			; $52fd
-	inc (hl)		; $52fe
-	ld a,$b6		; $52ff
-	call $56de		; $5301
+	inc (hl) ; [state2]
+	ld a,GFXH_b6		; $52ff
+	call ganon_loadGfxHeader		; $5301
 	ld a,$09		; $5304
 	call enemySetAnimation		; $5306
+
 	ld b,$1c		; $5309
-	call $531a		; $530b
+	call @spawnProjectile		; $530b
 	ld b,$14		; $530e
-	call $531a		; $5310
+	call @spawnProjectile		; $5310
 	ld b,$0c		; $5313
-	call $531a		; $5315
+	call @spawnProjectile		; $5315
 	ld b,$04		; $5318
-	ld e,$52		; $531a
-	call $57c4		; $531c
-	ld l,$c2		; $531f
-	inc (hl)		; $5321
-	ld l,$c9		; $5322
+
+@spawnProjectile:
+	ld e,PARTID_52		; $531a
+	call _ganon_spawnPart		; $531c
+	ld l,Part.subid		; $531f
+	inc (hl) ; [subid] = 1
+	ld l,Part.angle		; $5322
 	ld (hl),b		; $5324
-	ld l,$d7		; $5325
+	ld l,Part.relatedObj1+1		; $5325
 	ld (hl),d		; $5327
 	dec l			; $5328
-	ld (hl),$80		; $5329
+	ld (hl),Enemy.start		; $5329
 	jp objectCopyPosition		; $532b
+
+_ganon_state9_substate5:
 	call _ecom_decCounter1		; $532e
 	ret nz			; $5331
-	ld (hl),$28		; $5332
+	ld (hl),40 ; [counter1]
 	ld l,e			; $5334
 	inc (hl)		; $5335
-	ld a,$b2		; $5336
-	call $56de		; $5338
+	ld a,GFXH_b2		; $5336
+	call ganon_loadGfxHeader		; $5338
 	ld a,$07		; $533b
 	jp enemySetAnimation		; $533d
+
+_ganon_state9_substate6:
 	call _ecom_decCounter1		; $5340
 	ret nz			; $5343
-	ld (hl),$50		; $5344
+	ld (hl),80		; $5344
 	ld l,e			; $5346
 	inc (hl)		; $5347
 	ld a,$02		; $5348
 	jp enemySetAnimation		; $534a
+
+_ganon_state9_substate7:
 	call _ecom_decCounter1		; $534d
 	ret nz			; $5350
-	jp $5728		; $5351
-	inc e			; $5354
-	ld a,(de)		; $5355
-	rst_jumpTable			; $5356
-.dw $52ca
-.dw $5367
-.dw $5374
-.dw $53a7
-.dw $53c4
-.dw $53d9
-.dw $53ef
-.dw $540d
+	jp _ganon_finishAttack		; $5351
 
+
+; "Slash" move
+_ganon_stateA:
+	inc e			; $5354
+	ld a,(de) ; [state2]
+	rst_jumpTable			; $5356
+	.dw _ganon_state9_substate0
+	.dw _ganon_stateA_substate1
+	.dw _ganon_stateA_substate2
+	.dw _ganon_stateA_substate3
+	.dw _ganon_stateA_substate4
+	.dw _ganon_stateA_substate5
+	.dw _ganon_stateA_substate6
+	.dw _ganon_stateA_substate7
+
+; Teleporting out
+_ganon_stateA_substate1:
 	call _ecom_decCounter1		; $5367
-	jp nz,$56f6		; $536a
-	ld (hl),$78		; $536d
+	jp nz,_ganon_updateTeleportAnimationGoingOut		; $536a
+
+	ld (hl),120		; $536d
 	ld l,e			; $536f
-	inc (hl)		; $5370
+	inc (hl) ; [state2]
 	jp objectSetInvisible		; $5371
+
+; Delay before reappearing
+_ganon_stateA_substate2:
 	call _ecom_decCounter1		; $5374
 	ret nz			; $5377
+
 	ld l,e			; $5378
-	inc (hl)		; $5379
+	inc (hl) ; [state2]
+
 	ldh a,(<hEnemyTargetX)	; $537a
-	cp $78			; $537c
-	ld bc,$0328		; $537e
-	jr c,_label_10_123	; $5381
-	ld bc,$00d8		; $5383
-_label_10_123:
-	ld l,$b2		; $5386
+	cp (LARGE_ROOM_WIDTH<<4)/2			; $537c
+	ldbc $03,$28		; $537e
+	jr c,+			; $5381
+	ldbc $00,-$28		; $5383
++
+	ld l,Enemy.var32		; $5386
 	ld (hl),b		; $5388
 	add c			; $5389
-	ld l,$8d		; $538a
+	ld l,Enemy.xh		; $538a
 	ldd (hl),a		; $538c
 	ldh a,(<hEnemyTargetY)	; $538d
 	cp $30			; $538f
-	jr c,_label_10_124	; $5391
+	jr c,+			; $5391
 	sub $18			; $5393
-_label_10_124:
++
 	dec l			; $5395
-	ld (hl),a		; $5396
-	ld a,$b2		; $5397
-	call $56de		; $5399
-	ld e,$b2		; $539c
+	ld (hl),a ; [yh]
+
+	ld a,GFXH_b2		; $5397
+	call ganon_loadGfxHeader		; $5399
+	ld e,Enemy.var32		; $539c
 	ld a,(de)		; $539e
 	add $07			; $539f
 	call enemySetAnimation		; $53a1
-	jp $570d		; $53a4
+	jp _ganon_updateTeleportVarsAndPlaySound		; $53a4
+
+_ganon_stateA_substate3:
 	call _ecom_decCounter1		; $53a7
-	jp nz,$5722		; $53aa
+	jp nz,_ganon_updateTeleportAnimationComingIn		; $53aa
 	ld (hl),$02		; $53ad
 	ld l,e			; $53af
-	inc (hl)		; $53b0
-	ld l,$a4		; $53b1
+	inc (hl) ; [state2]
+	ld l,Enemy.collisionType		; $53b1
 	set 7,(hl)		; $53b3
-	ld l,$90		; $53b5
-	ld (hl),$78		; $53b7
+	ld l,Enemy.speed		; $53b5
+	ld (hl),SPEED_300		; $53b7
 	call _ecom_updateAngleTowardTarget		; $53b9
-	ld e,$50		; $53bc
-	call $57c4		; $53be
+	ld e,PARTID_50		; $53bc
+	call _ganon_spawnPart		; $53be
 	jp objectSetVisible83		; $53c1
+
+_ganon_stateA_substate4:
 	call _ecom_decCounter1		; $53c4
 	ret nz			; $53c7
 	ld (hl),$04		; $53c8
 	ld l,e			; $53ca
-	inc (hl)		; $53cb
-	ld a,$b7		; $53cc
-	call $56de		; $53ce
-	ld e,$b2		; $53d1
+	inc (hl) ; [state2]
+	ld a,Enemy.var37		; $53cc
+	call ganon_loadGfxHeader		; $53ce
+	ld e,Enemy.var32		; $53d1
 	ld a,(de)		; $53d3
 	add $08			; $53d4
 	call enemySetAnimation		; $53d6
+
+_ganon_stateA_substate5:
 	call _ecom_decCounter1		; $53d9
-	jr nz,_label_10_125	; $53dc
-	ld (hl),$10		; $53de
+	jr nz,+++		; $53dc
+	ld (hl),16		; $53de
 	ld l,e			; $53e0
-	inc (hl)		; $53e1
-	ld a,$b6		; $53e2
-	call $56de		; $53e4
-	ld e,$b2		; $53e7
+	inc (hl) ; [state2]
+	ld a,GFXH_b6		; $53e2
+	call ganon_loadGfxHeader		; $53e4
+	ld e,Enemy.var32		; $53e7
 	ld a,(de)		; $53e9
 	add $09			; $53ea
 	jp enemySetAnimation		; $53ec
+
+_ganon_stateA_substate6:
 	call _ecom_decCounter1		; $53ef
-	jr nz,_label_10_125	; $53f2
+	jr nz,+++		; $53f2
 	ld l,e			; $53f4
-	inc (hl)		; $53f5
+	inc (hl) ; [state2]
 	inc l			; $53f6
-	ld (hl),$1e		; $53f7
+	ld (hl),30 ; [counter1]
 	ret			; $53f9
-_label_10_125:
-	ld e,$8b		; $53fa
++++
+	ld e,Enemy.yh		; $53fa
 	ld a,(de)		; $53fc
 	sub $18			; $53fd
 	cp $80			; $53ff
 	ret nc			; $5401
-	ld e,$8d		; $5402
+	ld e,Enemy.xh		; $5402
 	ld a,(de)		; $5404
 	sub $18			; $5405
 	cp $c0			; $5407
 	ret nc			; $5409
 	jp objectApplySpeed		; $540a
+
+_ganon_stateA_substate7:
 	call _ecom_decCounter1		; $540d
 	ret nz			; $5410
 	ld a,$02		; $5411
 	call enemySetAnimation		; $5413
-	jp $5728		; $5416
+	jp _ganon_finishAttack		; $5416
+
+
+; The attack with the big exploding ball
+_ganon_stateB:
 	inc e			; $5419
 	ld a,(de)		; $541a
 	rst_jumpTable			; $541b
-.dw $52ca
-.dw $5432
-.dw $543f
-.dw $545a
-.dw $5477
-.dw $548e
-.dw $54b6
-.dw $54db
-.dw $54f2
-.dw $5507
-.dw $5514
+	.dw _ganon_state9_substate0
+	.dw _ganon_stateB_substate1
+	.dw _ganon_stateB_substate2
+	.dw _ganon_stateB_substate3
+	.dw _ganon_stateB_substate4
+	.dw _ganon_stateB_substate5
+	.dw _ganon_stateB_substate6
+	.dw _ganon_stateB_substate7
+	.dw _ganon_stateB_substate8
+	.dw _ganon_stateB_substate9
+	.dw _ganon_stateB_substateA
 
+_ganon_stateB_substate1:
 	call _ecom_decCounter1		; $5432
-	jp nz,$56f6		; $5435
-	ld (hl),$b4		; $5438
+	jp nz,_ganon_updateTeleportAnimationGoingOut		; $5435
+	ld (hl),180		; $5438
 	ld l,e			; $543a
-	inc (hl)		; $543b
+	inc (hl) ; [state2]
 	jp objectSetInvisible		; $543c
+
+_ganon_stateB_substate2:
 	call _ecom_decCounter1		; $543f
 	ret nz			; $5442
 	ld l,e			; $5443
-	inc (hl)		; $5444
-	ld l,$8b		; $5445
+	inc (hl) ; [state2]
+	ld l,Enemy.yh		; $5445
 	ld (hl),$28		; $5447
-	ld l,$8d		; $5449
+	ld l,Enemy.xh		; $5449
 	ld (hl),$78		; $544b
-	ld a,$b2		; $544d
-	call $56de		; $544f
+	ld a,GFXH_b2		; $544d
+	call ganon_loadGfxHeader		; $544f
 	ld a,$04		; $5452
 	call enemySetAnimation		; $5454
-	jp $570d		; $5457
+	jp _ganon_updateTeleportVarsAndPlaySound		; $5457
+
+_ganon_stateB_substate3:
 	call _ecom_decCounter1		; $545a
-	jp nz,$5722		; $545d
-	ld (hl),$40		; $5460
+	jp nz,_ganon_updateTeleportAnimationComingIn		; $545d
+	ld (hl),$40 ; [counter1]
 	ld l,e			; $5462
-	inc (hl)		; $5463
-	ld l,$a4		; $5464
+	inc (hl) ; [state2]
+	ld l,Enemy.collisionType		; $5464
 	set 7,(hl)		; $5466
 	call objectSetVisible83		; $5468
-	ld e,$51		; $546b
-	call $57c4		; $546d
+	ld e,PARTID_51		; $546b
+	call _ganon_spawnPart		; $546d
 	ret nz			; $5470
 	ld bc,$f810		; $5471
 	jp objectCopyPositionWithOffset		; $5474
+
+_ganon_stateB_substate4:
 	call _ecom_decCounter1		; $5477
 	ret nz			; $547a
 	ld l,e			; $547b
-	inc (hl)		; $547c
-	ld l,$94		; $547d
-	ld a,$40		; $547f
+	inc (hl) ; [state2]
+	ld l,Enemy.speedZ		; $547d
+	ld a,<(-$1c0)		; $547f
 	ldi (hl),a		; $5481
-	ld (hl),$fe		; $5482
-	ld a,$b3		; $5484
-	call $56de		; $5486
+	ld (hl),>(-$1c0)		; $5482
+	ld a,GFXH_b3		; $5484
+	call ganon_loadGfxHeader		; $5486
 	ld a,$05		; $5489
 	jp enemySetAnimation		; $548b
+
+_ganon_stateB_substate5:
 	ld c,$20		; $548e
 	call objectUpdateSpeedZ_paramC		; $5490
-	jr z,_label_10_126	; $5493
+	jr z,++			; $5493
 	ldd a,(hl)		; $5495
 	or a			; $5496
 	ret nz			; $5497
 	ld a,(hl)		; $5498
 	cp $c0			; $5499
 	ret nz			; $549b
-	ld a,$b5		; $549c
-	call $56de		; $549e
+	ld a,GFXH_b5		; $549c
+	call ganon_loadGfxHeader		; $549e
 	ld a,$06		; $54a1
 	jp enemySetAnimation		; $54a3
-_label_10_126:
-	ld l,$86		; $54a6
-	ld a,$78		; $54a8
+++
+	ld l,Enemy.counter1		; $54a6
+	ld a,120		; $54a8
 	ld (hl),a		; $54aa
 	ld (wScreenShakeCounterY),a		; $54ab
-	ld l,$85		; $54ae
+	ld l,Enemy.state2		; $54ae
 	inc (hl)		; $54b0
 	ld a,SND_EXPLOSION		; $54b1
 	jp playSound		; $54b3
+
+_ganon_stateB_substate6:
 	call _ecom_decCounter1		; $54b6
-	jr z,_label_10_127	; $54b9
+	jr z,++			; $54b9
 	ld a,(hl)		; $54bb
-	cp $69			; $54bc
+	cp 105			; $54bc
 	ret c			; $54be
 	ld a,(w1Link.zh)		; $54bf
 	rlca			; $54c2
 	ret c			; $54c3
 	ld hl,wLinkForceState		; $54c4
-	ld a,$14		; $54c7
+	ld a,LINK_STATE_COLLAPSED		; $54c7
 	ldi (hl),a		; $54c9
-	ld (hl),$00		; $54ca
+	ld (hl),$00 ; [wcc50]
 	ret			; $54cc
-_label_10_127:
+++
 	ld (hl),$04		; $54cd
 	ld l,e			; $54cf
 	inc (hl)		; $54d0
-	ld a,$b2		; $54d1
-	call $56de		; $54d3
+	ld a,GFXH_b2		; $54d1
+	call ganon_loadGfxHeader		; $54d3
 	ld a,$04		; $54d6
 	jp enemySetAnimation		; $54d8
+
+_ganon_stateB_substate7:
 	call _ecom_decCounter1		; $54db
 	ret nz			; $54de
-	ld (hl),$18		; $54df
+	ld (hl),24 ; [counter1]
 	ld l,e			; $54e1
-	inc (hl)		; $54e2
-	ld e,$51		; $54e3
-	call $57c4		; $54e5
+	inc (hl) ; [state2]
+	ld e,PARTID_51		; $54e3
+	call _ganon_spawnPart		; $54e5
 	ret nz			; $54e8
-	ld l,$c2		; $54e9
+	ld l,Part.subid		; $54e9
 	inc (hl)		; $54eb
 	ld bc,$f810		; $54ec
 	jp objectCopyPositionWithOffset		; $54ef
+
+_ganon_stateB_substate8:
 	call _ecom_decCounter1		; $54f2
 	ret nz			; $54f5
-	ld (hl),$3c		; $54f6
+	ld (hl),60		; $54f6
 	ld l,e			; $54f8
-	inc (hl)		; $54f9
+	inc (hl) ; [state2]
 	call objectCreatePuff		; $54fa
-	ld a,$b3		; $54fd
-	call $56de		; $54ff
+	ld a,GFXH_b3		; $54fd
+	call ganon_loadGfxHeader		; $54ff
 	ld a,$05		; $5502
 	jp enemySetAnimation		; $5504
+
+_ganon_stateB_substate9:
 	call _ecom_decCounter1		; $5507
 	ret nz			; $550a
-	ld (hl),$3c		; $550b
+	ld (hl),60		; $550b
 	ld l,e			; $550d
 	inc (hl)		; $550e
 	ld a,$02		; $550f
 	jp enemySetAnimation		; $5511
+
+_ganon_stateB_substateA:
 	call _ecom_decCounter1		; $5514
 	ret nz			; $5517
-	jp $5728		; $5518
+	jp _ganon_finishAttack		; $5518
+
+
+; Inverted controls
+_ganon_stateC:
 	inc e			; $551b
 	ld a,(de)		; $551c
 	rst_jumpTable			; $551d
-.dw $52ca
-.dw $5534
-.dw $523e
-.dw $5549
-.dw $555f
-.dw $5589
-.dw $5599
-.dw $55bf
-.dw $55f7
-.dw $562d
-.dw $5642
+	.dw _ganon_state9_substate0
+	.dw _ganon_stateC_substate1
+	.dw _ganon_state8_substate2
+	.dw _ganon_stateC_substate3
+	.dw _ganon_stateC_substate4
+	.dw _ganon_stateC_substate5
+	.dw _ganon_stateC_substate6
+	.dw _ganon_stateC_substate7
+	.dw _ganon_stateC_substate8
+	.dw _ganon_stateC_substate9
+	.dw _ganon_stateC_substateA
 
+_ganon_stateC_substate1:
 	call _ecom_decCounter1		; $5534
-	jp nz,$56f6		; $5537
-	ld (hl),$5a		; $553a
+	jp nz,_ganon_updateTeleportAnimationGoingOut		; $5537
+	ld (hl),90 ; [counter1]
 	ld l,e			; $553c
-	inc (hl)		; $553d
-	ld l,$8b		; $553e
+	inc (hl) ; [state2]
+	ld l,Enemy.yh		; $553e
 	ld (hl),$58		; $5540
-	ld l,$8d		; $5542
+	ld l,Enemy.xh		; $5542
 	ld (hl),$78		; $5544
 	jp objectSetInvisible		; $5546
+
+_ganon_stateC_substate3:
 	call _ecom_decCounter1		; $5549
-	jp nz,$5722		; $554c
-	ld (hl),$5a		; $554f
+	jp nz,_ganon_updateTeleportAnimationComingIn		; $554c
+	ld (hl),90 ; [counter1]
 	ld l,e			; $5551
-	inc (hl)		; $5552
-	ld l,$a4		; $5553
+	inc (hl) ; [state2]
+	ld l,Enemy.collisionType		; $5553
 	set 7,(hl)		; $5555
 	call objectSetVisible83		; $5557
 	ld a,SND_FADEOUT		; $555a
 	jp playSound		; $555c
+
+_ganon_stateC_substate4:
 	call _ecom_decCounter1		; $555f
-	jr z,_label_10_128	; $5562
-	ld a,(hl)		; $5564
-	cp $3c			; $5565
+	jr z,@nextSubstate	; $5562
+	ld a,(hl) ; [counter1]
+	cp 60			; $5565
 	ret nc			; $5567
+
 	and $03			; $5568
 	ret nz			; $556a
-	ld l,$9b		; $556b
+	ld l,Enemy.oamFlagsBackup		; $556b
 	ld a,(hl)		; $556d
 	xor $05			; $556e
 	ldi (hl),a		; $5570
 	ld (hl),a		; $5571
 	ret			; $5572
-_label_10_128:
-	ld l,$a9		; $5573
+
+@nextSubstate:
+	ld l,Enemy.health		; $5573
 	ld a,(hl)		; $5575
 	or a			; $5576
 	ret z			; $5577
+
 	ld l,e			; $5578
-	inc (hl)		; $5579
-	ld l,$a4		; $557a
+	inc (hl) ; [state2]
+	ld l,Enemy.collisionType		; $557a
 	res 7,(hl)		; $557c
-	ld l,$9b		; $557e
+	ld l,Enemy.oamFlagsBackup		; $557e
 	ld a,$01		; $5580
 	ldi (hl),a		; $5582
 	ld (hl),a		; $5583
 	ld a,$02		; $5584
 	jp fadeoutToBlackWithDelay		; $5586
+
+_ganon_stateC_substate5:
 	ld a,(wPaletteThread_mode)		; $5589
 	or a			; $558c
 	ret nz			; $558d
 	ld a,$06		; $558e
-	ld (de),a		; $5590
+	ld (de),a ; [state2]
 	ld a,$04		; $5591
-	call $581c		; $5593
-	jp $57d1		; $5596
+	call _ganon_setTileReplacementMode		; $5593
+	jp _ganon_makeRoomBoundarySolid		; $5596
+
+_ganon_stateC_substate6:
 	ld h,d			; $5599
 	ld l,e			; $559a
-	inc (hl)		; $559b
+	inc (hl) ; [state2]
 	inc l			; $559c
-	ld (hl),$3c		; $559d
-	ld l,$a4		; $559f
+	ld (hl),60 ; [counter1]
+
+	ld l,Enemy.collisionType		; $559f
 	set 7,(hl)		; $55a1
-	ld l,$90		; $55a3
-	ld (hl),$14		; $55a5
+	ld l,Enemy.speed		; $55a3
+	ld (hl),SPEED_80		; $55a5
+
 	call getRandomNumber_noPreserveVars		; $55a7
 	and $07			; $55aa
-	ld hl,$55b7		; $55ac
+	ld hl,@counter2Vals		; $55ac
 	rst_addAToHl			; $55af
-	ld e,$87		; $55b0
+	ld e,Enemy.counter2		; $55b0
 	ld a,(hl)		; $55b2
 	ld (de),a		; $55b3
 	jp fadeinFromBlack		; $55b4
-	ldd (hl),a		; $55b7
-	ld d,b			; $55b8
-	ld d,b			; $55b9
-	ld e,d			; $55ba
-	ld e,d			; $55bb
-	ld e,d			; $55bc
-	ld e,d			; $55bd
-	sub (hl)		; $55be
+
+@counter2Vals:
+	.db 50,80,80,90,90,90,90,150
+
+_ganon_stateC_substate7:
 	ld a,$02		; $55bf
 	ld (wUseSimulatedInput),a		; $55c1
 	ld a,(wFrameCounter)		; $55c4
 	and $03			; $55c7
-	jr nz,_label_10_129	; $55c9
+	jr nz,++		; $55c9
 	call _ecom_decCounter2		; $55cb
-	jr nz,_label_10_129	; $55ce
-	ld l,$85		; $55d0
+	jr nz,++		; $55ce
+
+	ld l,Enemy.state2		; $55d0
 	inc (hl)		; $55d2
-	inc (hl)		; $55d3
-	ld l,$a4		; $55d4
+	inc (hl) ; [state2] = 9
+	ld l,Enemy.collisionType		; $55d4
 	res 7,(hl)		; $55d6
 	jp fastFadeoutToWhite		; $55d8
-_label_10_129:
+++
 	call _ecom_decCounter1		; $55db
-	jr nz,_label_10_130	; $55de
+	jr nz,++		; $55de
 	ld l,e			; $55e0
-	inc (hl)		; $55e1
-	ld l,$86		; $55e2
-	ld (hl),$50		; $55e4
-	ld a,$b3		; $55e6
-	jp $56de		; $55e8
-_label_10_130:
+	inc (hl) ; [state2] = 8
+	ld l,Enemy.counter1		; $55e2
+	ld (hl),80		; $55e4
+	ld a,GFXH_b3		; $55e6
+	jp ganon_loadGfxHeader		; $55e8
+++
 	call _ecom_updateAngleTowardTarget		; $55eb
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $55ee
 	call enemyAnimate		; $55f1
-	jp $57fd		; $55f4
+	jp _ganon_updateSeizurePalette		; $55f4
+
+_ganon_stateC_substate8:
 	ld a,$02		; $55f7
 	ld (wUseSimulatedInput),a		; $55f9
-	call $57fd		; $55fc
+	call _ganon_updateSeizurePalette		; $55fc
+
 	ld a,(wFrameCounter)		; $55ff
 	and $03			; $5602
 	call z,_ecom_decCounter2		; $5604
 	call _ecom_decCounter1		; $5607
-	jr z,_label_10_131	; $560a
-	ld a,(hl)		; $560c
-	cp $3c			; $560d
+	jr z,@nextSubstate	; $560a
+
+	ld a,(hl) ; [counter1]
+	cp 60			; $560d
 	ret nz			; $560f
+
 	ld a,$05		; $5610
 	call enemySetAnimation		; $5612
-	ld e,$52		; $5615
-	call $57c4		; $5617
+	ld e,PARTID_52		; $5615
+	call _ganon_spawnPart		; $5617
 	ret nz			; $561a
-	ld l,$c2		; $561b
+	ld l,Part.subid		; $561b
 	ld (hl),$02		; $561d
 	jp objectCopyPosition		; $561f
-_label_10_131:
-	ld l,$85		; $5622
+
+@nextSubstate:
+	ld l,Enemy.state2		; $5622
 	dec (hl)		; $5624
 	inc l			; $5625
-	ld (hl),$3c		; $5626
+	ld (hl),60		; $5626
 	ld a,$02		; $5628
 	jp enemySetAnimation		; $562a
+
+_ganon_stateC_substate9:
 	ld a,(wPaletteThread_mode)		; $562d
 	or a			; $5630
 	ret nz			; $5631
 	ld a,$0a		; $5632
-	ld (de),a		; $5634
+	ld (de),a ; [state2]
 	ld a,$03		; $5635
-	call $581c		; $5637
+	call _ganon_setTileReplacementMode		; $5637
 	ld a,PALH_b1		; $563a
-	ld ($cbe3),a		; $563c
+	ld (wExtraBgPaletteHeader),a		; $563c
 	jp loadPaletteHeader		; $563f
+
+_ganon_stateC_substateA:
 	ld h,d			; $5642
-	ld l,$a4		; $5643
+	ld l,Enemy.collisionType		; $5643
 	set 7,(hl)		; $5645
 	call clearPaletteFadeVariablesAndRefreshPalettes		; $5647
-	jp $5728		; $564a
+	jp _ganon_finishAttack		; $564a
+
+
+; Teleports in an out without doing anything
+_ganon_stateD:
 	inc e			; $564d
 	ld a,(de)		; $564e
 	rst_jumpTable			; $564f
-.dw $5229
-.dw $5230
-.dw $523e
-.dw $565a
-.dw $5728
+	.dw _ganon_state8_substate0
+	.dw _ganon_state8_substate1
+	.dw _ganon_state8_substate2
+	.dw _ganon_stateD_substate3
+	.dw _ganon_finishAttack
 
+_ganon_stateD_substate3:
 	call _ecom_decCounter1		; $565a
-	jp nz,$5722		; $565d
+	jp nz,_ganon_updateTeleportAnimationComingIn		; $565d
 	ld l,e			; $5660
-	inc (hl)		; $5661
-	ld l,$b0		; $5662
+	inc (hl) ; [state2]
+	ld l,Enemy.var30		; $5662
 	ld a,(hl)		; $5664
-	ld l,$8d		; $5665
+	ld l,Enemy.xh		; $5665
 	ld (hl),a		; $5667
 	jp objectSetVisible83		; $5668
-	inc e			; $566b
-	ld a,(de)		; $566c
-	rst_jumpTable			; $566d
-.dw $5676
-.dw $56a5
-.dw $56b7
-.dw $56cb
 
+
+; Just died
+_ganon_stateE:
+	inc e			; $566b
+	ld a,(de) ; [state2]
+	rst_jumpTable			; $566d
+	.dw _ganon_stateE_substate0
+	.dw _ganon_stateE_substate1
+	.dw _ganon_stateE_substate2
+	.dw _ganon_stateE_substate3
+
+_ganon_stateE_substate0:
 	call _ecom_decCounter1		; $5676
 	jp nz,_ecom_flickerVisibility		; $5679
+
 	inc (hl)		; $567c
-	ld e,$04		; $567d
-	call $57c4		; $567f
+	ld e,PARTID_04		; $567d
+	call _ganon_spawnPart		; $567f
 	ret nz			; $5682
-	ld l,$c2		; $5683
-	inc (hl)		; $5685
+	ld l,Part.subid		; $5683
+	inc (hl) ; [subid] = 1
 	call objectCopyPosition		; $5686
-	ld e,$98		; $5689
-	ld a,$c0		; $568b
+	ld e,Enemy.relatedObj2		; $5689
+	ld a,Part.start		; $568b
 	ld (de),a		; $568d
 	inc e			; $568e
 	ld a,h			; $568f
 	ld (de),a		; $5690
 	ld hl,wNumEnemies		; $5691
 	inc (hl)		; $5694
+
 	ld h,d			; $5695
-	ld l,$85		; $5696
+	ld l,Enemy.state2		; $5696
 	inc (hl)		; $5698
-	ld l,$8f		; $5699
+	ld l,Enemy.zh		; $5699
 	ld (hl),$00		; $569b
+
 	call objectSetInvisible		; $569d
 	ld a,SND_BIG_EXPLOSION_2		; $56a0
 	jp playSound		; $56a2
-	ld a,$21		; $56a5
+
+_ganon_stateE_substate1:
+	ld a,Object.animParameter		; $56a5
 	call objectGetRelatedObject2Var		; $56a7
 	bit 7,(hl)		; $56aa
 	ret z			; $56ac
 	ld h,d			; $56ad
-	ld l,$85		; $56ae
+	ld l,Enemy.state2		; $56ae
 	inc (hl)		; $56b0
 	inc l			; $56b1
-	ld (hl),$08		; $56b2
+	ld (hl),$08 ; [counter1]
 	jp fastFadeoutToWhite		; $56b4
+
+_ganon_stateE_substate2:
 	call _ecom_decCounter1		; $56b7
 	ret nz			; $56ba
-	ld (hl),$1e		; $56bb
+	ld (hl),30 ; [counter1]
 	ld l,e			; $56bd
-	inc (hl)		; $56be
+	inc (hl) ; [state2]
 	xor a			; $56bf
-	ld ($cbe3),a		; $56c0
-	call $581c		; $56c3
+	ld (wExtraBgPaletteHeader),a		; $56c0
+	call _ganon_setTileReplacementMode		; $56c3
 	ld a,$02		; $56c6
 	jp fadeinFromWhiteWithDelay		; $56c8
+
+_ganon_stateE_substate3:
 	ld a,(wPaletteThread_mode)		; $56cb
 	or a			; $56ce
 	ret nz			; $56cf
@@ -132462,213 +132676,265 @@ _label_10_131:
 	ld (wDisableLinkCollisionsAndMenu),a		; $56d5
 	call decNumEnemies		; $56d8
 	jp enemyDelete		; $56db
+
+;;
+; @addr{56de}
+ganon_loadGfxHeader:
 	push af			; $56de
 	call loadGfxHeader		; $56df
 	ld a,UNCMP_GFXH_33		; $56e2
 	call loadUncompressedGfxHeader		; $56e4
 	pop af			; $56e7
-	sub $b2			; $56e8
-	add $1e			; $56ea
-	ld hl,$cc0c		; $56ec
+	sub GFXH_b2			; $56e8
+	add OBJGFXH_1e			; $56ea
+	ld hl,wLoadedObjectGfx+4		; $56ec
 	ldi (hl),a		; $56ef
 	ld (hl),$01		; $56f0
 	ldh a,(<hActiveObject)	; $56f2
 	ld d,a			; $56f4
 	ret			; $56f5
+
+;;
+; X-position alternates left & right each frame while teleporting.
+;
+; @param	hl	counter1?
+; @addr{56f6}
+_ganon_updateTeleportAnimationGoingOut:
 	ld a,(hl)		; $56f6
 	and $3e			; $56f7
 	rrca			; $56f9
 	ld b,a			; $56fa
 	ld a,$20		; $56fb
 	sub b			; $56fd
-_label_10_133:
+
+_ganon_updateFlickeringXPosition:
 	bit 1,(hl)		; $56fe
-	jr z,_label_10_134	; $5700
+	jr z,+			; $5700
 	cpl			; $5702
 	inc a			; $5703
-_label_10_134:
-	ld l,$b0		; $5704
++
+	ld l,Enemy.var30		; $5704
 	add (hl)		; $5706
-	ld l,$8d		; $5707
+	ld l,Enemy.xh		; $5707
 	ld (hl),a		; $5709
 	jp _ecom_flickerVisibility		; $570a
+
+;;
+; @addr{570d}
+_ganon_updateTeleportVarsAndPlaySound:
 	ld a,SND_TELEPORT		; $570d
 	call playSound		; $570f
+
 	ld h,d			; $5712
-	ld l,$a4		; $5713
+	ld l,Enemy.collisionType		; $5713
 	res 7,(hl)		; $5715
-	ld l,$86		; $5717
-	ld (hl),$3c		; $5719
-	ld l,$8d		; $571b
+
+	ld l,Enemy.counter1		; $5717
+	ld (hl),60		; $5719
+	ld l,Enemy.xh		; $571b
 	ld a,(hl)		; $571d
-	ld l,$b0		; $571e
+	ld l,Enemy.var30		; $571e
 	ld (hl),a		; $5720
 	ret			; $5721
+
+;;
+; @param	hl	counter1?
+; @addr{5722}
+_ganon_updateTeleportAnimationComingIn:
 	ld a,(hl)		; $5722
 	and $3e			; $5723
 	rrca			; $5725
-	jr _label_10_133		; $5726
+	jr _ganon_updateFlickeringXPosition		; $5726
+
+;;
+; @addr{5728}
+_ganon_finishAttack:
 	ld h,d			; $5728
-	ld l,$b5		; $5729
+	ld l,Enemy.var35		; $5729
 	ldi a,(hl)		; $572b
 	ld h,(hl)		; $572c
 	ld l,a			; $572d
 	ldi a,(hl)		; $572e
 	or a			; $572f
-	jr z,_label_10_136	; $5730
+	jr z,_ganon_decideNextMove	; $5730
+
 _label_10_135:
-	ld e,$84		; $5732
+	ld e,Enemy.state		; $5732
 	ld (de),a		; $5734
 	inc e			; $5735
 	xor a			; $5736
-	ld (de),a		; $5737
-	ld e,$b5		; $5738
+	ld (de),a ; [state2]
+	ld e,Enemy.var35		; $5738
 	ld a,l			; $573a
 	ld (de),a		; $573b
 	inc e			; $573c
 	ld a,h			; $573d
 	ld (de),a		; $573e
 	ret			; $573f
-_label_10_136:
-	ld e,$a9		; $5740
+
+
+;;
+; Sets state to something randomly?
+; @addr{5740}
+_ganon_decideNextMove:
+	ld e,Enemy.health		; $5740
 	ld a,(de)		; $5742
 	cp $41			; $5743
 	ld c,$00		; $5745
-	jr nc,_label_10_137	; $5747
+	jr nc,+			; $5747
 	ld c,$04		; $5749
-_label_10_137:
++
 	call getRandomNumber		; $574b
 	and $03			; $574e
 	add c			; $5750
-	ld hl,$575b		; $5751
+	ld hl,@stateTable		; $5751
 	rst_addDoubleIndex			; $5754
 	ldi a,(hl)		; $5755
 	ld h,(hl)		; $5756
 	ld l,a			; $5757
 	ldi a,(hl)		; $5758
 	jr _label_10_135		; $5759
-	ld l,e			; $575b
-	ld d,a			; $575c
-	ld l,a			; $575d
-	ld d,a			; $575e
-	ld (hl),c		; $575f
-	ld d,a			; $5760
-	halt			; $5761
-_label_10_138:
-	ld d,a			; $5762
-	ld a,c			; $5763
-	ld d,a			; $5764
-	ld a,e			; $5765
-	ld d,a			; $5766
-	add b			; $5767
-	ld d,a			; $5768
-	add l			; $5769
-	ld d,a			; $576a
-	ld ($090a),sp		; $576b
-	nop			; $576e
-	add hl,bc		; $576f
-	nop			; $5770
-	ld a,(bc)		; $5771
-	ld ($0a09),sp		; $5772
-	nop			; $5775
-	ld a,(bc)		; $5776
-	ld ($0c00),sp		; $5777
-	nop			; $577a
-	dec bc			; $577b
-	dec c			; $577c
-	ld ($000a),sp		; $577d
-	dec bc			; $5780
-	inc c			; $5781
-	add hl,bc		; $5782
-	ld a,(bc)		; $5783
-	nop			; $5784
-	dec c			; $5785
-	nop			; $5786
+
+@stateTable:
+	.dw @choice0
+	.dw @choice1
+	.dw @choice2
+	.dw @choice3
+	.dw @choice4
+	.dw @choice5
+	.dw @choice6
+	.dw @choice7
+
+; This is a list of states (attack parts) to iterate through. When it reaches the 0 terminator, it
+; calls the above function again to make a new choice.
+;
+; 0-3 are for Ganon at high health.
+@choice0:
+        .db $08 $0a $09
+	.db $00
+@choice1:
+        .db $09
+	.db $00
+@choice2:
+        .db $0a $08 $09 $0a
+        .db $00
+@choice3:
+        .db $0a $08
+        .db $00
+
+; 4-7 are for Ganon at low health.
+@choice4:
+        .db $0c
+	.db $00
+@choice5:
+        .db $0b $0d $08 $0a
+        .db $00
+@choice6:
+        .db $0b $0c $09 $0a
+        .db $00
+@choice7:
+        .db $0d
+	.db $00
+
+
+;;
+; @addr{5787}
+_ganon_decideTeleportLocationAndCounter:
 	ld bc,$0e0f		; $5787
 	call _ecom_randomBitwiseAndBCE		; $578a
 	ld a,b			; $578d
-	ld hl,$57a4		; $578e
+	ld hl,@teleportTargetTable		; $578e
 	rst_addAToHl			; $5791
-	ld e,$8b		; $5792
+	ld e,Enemy.yh		; $5792
 	ldi a,(hl)		; $5794
 	ld (de),a		; $5795
-	ld e,$8d		; $5796
+	ld e,Enemy.xh		; $5796
 	ld a,(hl)		; $5798
 	ld (de),a		; $5799
+
 	ld a,c			; $579a
-	ld hl,$57b4		; $579b
+	ld hl,@counter1Vals		; $579b
 	rst_addAToHl			; $579e
-	ld e,$86		; $579f
+	ld e,Enemy.counter1		; $579f
 	ld a,(hl)		; $57a1
 	ld (de),a		; $57a2
 	ret			; $57a3
-	jr nc,$38		; $57a4
-	jr nc,$78		; $57a6
-	jr nc,_label_10_138	; $57a8
-	ld e,b			; $57aa
-	ld e,b			; $57ab
-	ld e,b			; $57ac
-	sbc b			; $57ad
-	add b			; $57ae
-	jr c,-$80		; $57af
-	ld a,b			; $57b1
-	add b			; $57b2
-	cp b			; $57b3
-	jr z,$28		; $57b4
-	jr z,$3c		; $57b6
-	inc a			; $57b8
-	inc a			; $57b9
-	inc a			; $57ba
-	inc a			; $57bb
-	inc a			; $57bc
-	ld e,d			; $57bd
-	ld e,d			; $57be
-	ld e,d			; $57bf
-	ld e,d			; $57c0
-	ld e,d			; $57c1
-	ld a,b			; $57c2
-	ld a,b			; $57c3
+
+; List of valid positions to teleport to
+@teleportTargetTable:
+	.db $30 $38
+	.db $30 $78
+	.db $30 $b8
+	.db $58 $58
+	.db $58 $98
+	.db $80 $38
+	.db $80 $78
+	.db $80 $b8
+
+@counter1Vals:
+	.db 40 40 40 60 60 60 60 60
+	.db 60 90 90 90 90 90 120 120
+
+
+;;
+; @param	e	Part ID
+; @addr{57c4}
+_ganon_spawnPart:
 	call getFreePartSlot		; $57c4
 	ret nz			; $57c7
 	ld (hl),e		; $57c8
-	ld l,$d6		; $57c9
-	ld (hl),$80		; $57cb
+	ld l,Part.relatedObj1		; $57c9
+	ld (hl),Enemy.start		; $57cb
 	inc l			; $57cd
 	ld (hl),d		; $57ce
 	xor a			; $57cf
 	ret			; $57d0
-	ld hl,$ce10		; $57d1
-	ld b,$09		; $57d4
-_label_10_139:
+
+;;
+; Sets the boundaries of the room to be solid when "reversed controls" happen; most likely because
+; the wall tiles are removed when in this state, so collisions must be set manually.
+; @addr{57d1}
+_ganon_makeRoomBoundarySolid:
+	ld hl,wRoomCollisions+$10		; $57d1
+	ld b,LARGE_ROOM_HEIGHT-2		; $57d4
+--
 	ld (hl),$0f		; $57d6
 	ld a,l			; $57d8
 	add $10			; $57d9
 	ld l,a			; $57db
 	dec b			; $57dc
-	jr nz,_label_10_139	; $57dd
-	ld l,$1e		; $57df
-	ld b,$09		; $57e1
-_label_10_140:
+	jr nz,--
+
+	ld l,$0f + LARGE_ROOM_WIDTH		; $57df
+	ld b,LARGE_ROOM_HEIGHT-2		; $57e1
+--
 	ld (hl),$0f		; $57e3
 	ld a,l			; $57e5
 	add $10			; $57e6
 	ld l,a			; $57e8
 	dec b			; $57e9
-	jr nz,_label_10_140	; $57ea
+	jr nz,--
+
 	ld l,$00		; $57ec
 	ld a,$0f		; $57ee
-	ld b,a			; $57f0
-_label_10_141:
+	ld b,a ; LARGE_ROOM_WIDTH
+--
 	ldi (hl),a		; $57f1
 	dec b			; $57f2
-	jr nz,_label_10_141	; $57f3
-	ld l,$a0		; $57f5
+	jr nz,--
+
+	ld l,(LARGE_ROOM_HEIGHT-1)<<4		; $57f5
 	ld b,a			; $57f7
-_label_10_142:
+--
 	ldi (hl),a		; $57f8
 	dec b			; $57f9
-	jr nz,_label_10_142	; $57fa
+	jr nz,--		; $57fa
 	ret			; $57fc
+
+;;
+; Updates palettes in reversed-control mode
+; @addr{57fd}
+_ganon_updateSeizurePalette:
 	ld a,(wScrollMode)		; $57fd
 	and $01			; $5800
 	ret z			; $5802
@@ -132683,9 +132949,14 @@ _label_10_142:
 	ld a,(hl)		; $5810
 	inc (hl)		; $5811
 	and $07			; $5812
-	add $b1			; $5814
-	ld ($cbe3),a		; $5816
+	add PALH_b1			; $5814
+	ld (wExtraBgPaletteHeader),a		; $5816
 	jp loadPaletteHeader		; $5819
+
+
+;;
+; @addr{581c}
+_ganon_setTileReplacementMode:
 	ld (wTwinrovaTileReplacementMode),a		; $581c
 	call func_131f		; $581f
 	ldh a,(<hActiveObject)	; $5822

@@ -1411,8 +1411,11 @@ wcbe1: ; $cbe1
 	db
 wcbe2: ; $cbe2
 	db
-wcbe3: ; $cbe3
-; cbe3: palette header index for menus?
+wExtraBgPaletteHeader: ; $cbe3
+; Palette header index to reload upon exiting a menu (separate from normal area
+; palettes).
+; In the ganon fight, this is used to keep track of the palette on the inverted
+; control screen (background palette 7). This may be its only use.
 	db
 wDisplayedHearts: ; $cbe4
 	db

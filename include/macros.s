@@ -47,13 +47,13 @@
 .ENDM
 
 .MACRO ldbc
-	ld bc, (\1<<8) | \2
+	ld bc, ((\1&$ff)<<8) | (\2&$ff)
 .endm
 .MACRO ldde
-	ld de, (\1<<8) | \2
+	ld de, ((\1&$ff)<<8) | (\2&$ff)
 .endm
 .MACRO ldhl
-	ld hl, (\1<<8) | \2
+	ld hl, ((\1&$ff)<<8) | (\2&$ff)
 .endm
 
 .MACRO setrombank
