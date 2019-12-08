@@ -2250,8 +2250,8 @@ wScentSeedActive: ; $ccd9/$ccf0
 ; Nonzero while scent seed is active?
 	db
 
-wIsSeedShooterInUse: ; $ccda
-; Set when there is a seed shooter seed on-screen
+wIsSeedShooterInUse: ; $ccda/$ccf1
+; Set when there is a seed shooter (or slingshot) seed on-screen
 	db
 
 wIsLinkBeingShocked: ; $ccdb

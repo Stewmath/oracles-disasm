@@ -31718,112 +31718,8 @@ _label_05_451:
 	.include "code/items/caneOfSomariaParent.s"
 	.include "code/items/swordParent.s"
 	.include "code/items/harpFluteParent.s"
+	.include "code/items/seedsParent.s"
 ;	.include "code/items/parentItems.s"
-
-
-_parentItemCode_slingshot:
-	ld e,$04		; $4d25
-	ld a,(de)		; $4d27
-	rst_jumpTable			; $4d28
-	dec l			; $4d29
-	ld c,l			; $4d2a
-	rst_jumpTable			; $4d2b
-	ld c,l			; $4d2c
-	ld a,($cc78)		; $4d2d
-	ld b,a			; $4d30
-	ld a,($ccf1)		; $4d31
-	or b			; $4d34
-	jp nz,_clearParentItem		; $4d35
-	call updateLinkDirectionFromAngle		; $4d38
-	ld c,$01		; $4d3b
-	ld a,($c6b3)		; $4d3d
-	cp $02			; $4d40
-	jr nz,_label_06_112	; $4d42
-	ld c,$03		; $4d44
-_label_06_112:
-	call $5383		; $4d46
-	cp c			; $4d49
-	jp c,_clearParentItem		; $4d4a
-	ld a,$01		; $4d4d
-	call $4db4		; $4d4f
-	push bc			; $4d52
-	call $52e2		; $4d53
-	call $532f		; $4d56
-	pop bc			; $4d59
-_label_06_113:
-	ld e,$19		; $4d5a
-	ld a,$d0		; $4d5c
-	ld (de),a		; $4d5e
-	push bc			; $4d5f
-	ld e,$01		; $4d60
-	call $5335		; $4d62
-	pop bc			; $4d65
-	dec c			; $4d66
-	jr nz,_label_06_113	; $4d67
-	ld a,b			; $4d69
-	jp decNumActiveSeeds		; $4d6a
-
-
-_parentItemCode_shooter:
-_parentItemCode_satchel:
-	ld e,$04		; $4d6d
-	ld a,(de)		; $4d6f
-	rst_jumpTable			; $4d70
-	ld (hl),l		; $4d71
-	ld c,l			; $4d72
-	rst_jumpTable			; $4d73
-	ld c,l			; $4d74
-	ld a,($cc78)		; $4d75
-	or a			; $4d78
-	jp nz,_clearParentItem		; $4d79
-	call $4db4		; $4d7c
-	ld a,b			; $4d7f
-	cp $22			; $4d80
-	jr z,_label_06_114	; $4d82
-	push bc			; $4d84
-	call $52e2		; $4d85
-	pop bc			; $4d88
-	push bc			; $4d89
-	ld c,$00		; $4d8a
-	ld e,$01		; $4d8c
-	call $5335		; $4d8e
-	pop bc			; $4d91
-	jp c,_clearParentItem		; $4d92
-	ld a,b			; $4d95
-	jp decNumActiveSeeds		; $4d96
-_label_06_114:
-	ld hl,$cc86		; $4d99
-	ldi a,(hl)		; $4d9c
-	or (hl)			; $4d9d
-	jr nz,_label_06_115	; $4d9e
-	ld a,$03		; $4da0
-	ldd (hl),a		; $4da2
-	ld (hl),$c0		; $4da3
-	ld a,b			; $4da5
-	call decNumActiveSeeds		; $4da6
-	ld hl,$df00		; $4da9
-	ld a,$03		; $4dac
-	ldi (hl),a		; $4dae
-	ld (hl),$1a		; $4daf
-_label_06_115:
-	jp _clearParentItem		; $4db1
-	ld hl,$c6be		; $4db4
-	rst_addAToHl			; $4db7
-	ld a,(hl)		; $4db8
-	ld b,a			; $4db9
-	set 5,b			; $4dba
-	ld hl,$c6b5		; $4dbc
-	rst_addAToHl			; $4dbf
-	ld a,(hl)		; $4dc0
-	or a			; $4dc1
-	ret nz			; $4dc2
-	pop hl			; $4dc3
-	jp _clearParentItem		; $4dc4
-	ld e,$21		; $4dc7
-	ld a,(de)		; $4dc9
-	rlca			; $4dca
-	jp nc,$4414		; $4dcb
-	jp _clearParentItem		; $4dce
 
 
 _parentItemCode_shovel:
@@ -31898,7 +31794,7 @@ _label_06_116:
 	ld a,(de)		; $4e34
 	ld b,a			; $4e35
 	ld e,$01		; $4e36
-	call $5335		; $4e38
+	call itemCreateChildWithID		; $4e38
 	jp c,_clearParentItem		; $4e3b
 	ld a,($cc47)		; $4e3e
 	bit 7,a			; $4e41
@@ -32000,7 +31896,7 @@ _parentItemCode_bomb:
 	jr nz,_label_06_121	; $4ede
 	inc e			; $4ee0
 _label_06_121:
-	call $532f		; $4ee1
+	call itemCreateChild		; $4ee1
 	jp c,_clearParentItem		; $4ee4
 	call $4f13		; $4ee7
 	jp $4fd5		; $4eea
@@ -32449,7 +32345,7 @@ _parentItemCode_magnetGloves:
 	xor a			; $51ea
 	ldi (hl),a		; $51eb
 	ld (hl),$d6		; $51ec
-	call $532f		; $51ee
+	call itemCreateChild		; $51ee
 	call updateLinkDirectionFromAngle		; $51f1
 	call setStatusBarNeedsRefreshBit1		; $51f4
 	ld a,($cc78)		; $51f7

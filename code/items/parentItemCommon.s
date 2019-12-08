@@ -158,6 +158,7 @@ itemCreateChildWithID:
 	scf			; $53eb
 	ret z			; $53ec
 
+	; If relatedObj2 is pointing to something other than Link, this will overwrite that.
 	cp >w1Link			; $53ed
 	call z,_getFreeItemSlotWithObjectCap		; $53ef
 	ret c			; $53f2
@@ -240,11 +241,12 @@ _getFreeItemSlotWithObjectCap:
 	ret			; $5430
 
 ;;
-; Unused?
+; Unused in Ages.
 ;
+; @param[out]	a	Number of available slots
 ; @param[out]	zflag
 ; @addr{5431}
-_func_5431:
+_getNumFreeItemSlots:
 	ldhl FIRST_DYNAMIC_ITEM_INDEX, Item.start		; $5431
 	ld b,$00		; $5434
 --
@@ -429,7 +431,8 @@ _checkLinkOnGround:
 
 .ifdef ROM_AGES
 ;;
-; @param[out]	zflag	Set if Link is not in an underwater map
+; TODO: rename this to the inverse of what it is now
+; @param[out]	zflag	z if Link is not in an underwater map
 ; @addr{54d2}
 _isLinkUnderwater:
 	ld a,(w1Link.var2f)		; $54d2

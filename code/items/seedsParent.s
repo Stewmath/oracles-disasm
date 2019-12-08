@@ -1,9 +1,67 @@
 ;;
-; ITEMID_SHOOTER ($0f)
 ; ITEMID_SLINGSHOT ($13)
+; @snaddr{4d25}
+_parentItemCode_slingshot:
+.ifdef ROM_SEASONS
+	ld e,Item.state		; $4d25
+	ld a,(de)		; $4d27
+	rst_jumpTable			; $4d28
+	.dw @state0
+	.dw _parentItemGenericState1
+
+@state0:
+	ld a,(wLinkSwimmingState)		; $4d2d
+	ld b,a			; $4d30
+	ld a,(wIsSeedShooterInUse)		; $4d31
+	or b			; $4d34
+	jp nz,_clearParentItem		; $4d35
+
+	call updateLinkDirectionFromAngle		; $4d38
+	ld c,$01		; $4d3b
+	ld a,(wSlingshotLevel)		; $4d3d
+	cp $02			; $4d40
+	jr nz,+			; $4d42
+	ld c,$03		; $4d44
++
+	call _getNumFreeItemSlots		; $4d46
+	cp c			; $4d49
+	jp c,_clearParentItem		; $4d4a
+
+	ld a,$01		; $4d4d
+	call _clearSelfIfNoSeeds		; $4d4f
+	; b = seed ID after above call
+	push bc			; $4d52
+	call _parentItemLoadAnimationAndIncState		; $4d53
+
+	; Create the slingshot
+	call itemCreateChild		; $4d56
+	pop bc			; $4d59
+
+	; Create the seeds
+@spawnSeed:
+	; This must be reset after calling "itemCreateChild" to prevent the call from overwriting
+	; the last item it created
+	ld e,Item.relatedObj2+1		; $4d5a
+	ld a,>w1Link		; $4d5c
+	ld (de),a		; $4d5e
+
+	push bc			; $4d5f
+	ld e,$01		; $4d60
+	call itemCreateChildWithID		; $4d62
+	pop bc			; $4d65
+	dec c			; $4d66
+	jr nz,@spawnSeed	; $4d67
+	ld a,b			; $4d69
+	jp decNumActiveSeeds		; $4d6a
+
+.endif ; ROM_SEASONS
+
+
+;;
+; ITEMID_SHOOTER ($0f)
 ; @addr{4e66}
 _parentItemCode_shooter:
-_parentItemCode_slingshot:
+.ifdef ROM_AGES
 	ld e,Item.state		; $4e66
 	ld a,(de)		; $4e68
 	rst_jumpTable			; $4e69
@@ -148,6 +206,9 @@ _parentItemCode_slingshot:
 	ld (hl),$04		; $4f2a
 	ret			; $4f2c
 
+.endif ; ROM_AGES
+
+
 ;;
 ; ITEMID_SEED_SATCHEL ($19)
 ; @addr{4f2d}
@@ -159,11 +220,13 @@ _parentItemCode_satchel:
 	.dw _parentItemGenericState1
 
 @state0:
+.ifdef ROM_AGES
 	ld a,(w1Companion.id)		; $4f35
 	cp SPECIALOBJECTID_RAFT			; $4f38
 	jp z,_clearParentItem		; $4f3a
 	call _isLinkUnderwater		; $4f3d
 	jp nz,_clearParentItem		; $4f40
+.endif
 	ld a,(wLinkSwimmingState)		; $4f43
 	or a			; $4f46
 	jp nz,_clearParentItem		; $4f47
@@ -171,7 +234,7 @@ _parentItemCode_satchel:
 	call _clearSelfIfNoSeeds		; $4f4a
 
 	ld a,b			; $4f4d
-	cp $22			; $4f4e
+	cp ITEMID_PEGASUS_SEED			; $4f4e
 	jr z,@pegasusSeeds	; $4f50
 
 	push bc			; $4f52
@@ -211,7 +274,7 @@ _parentItemCode_satchel:
 ;;
 ; Gets the number of seeds available, or returns from caller if none are available.
 ;
-; @param	a	0 for satchel, 1 for shooter
+; @param	a	0 for satchel, 1 for shooter/slingshot
 ; @param[out]	a	# of seeds of that type
 ; @param[out]	b	Item ID for seed type (value between $20-$24)
 ; @param[out]	hl	Address of "wNum*Seeds" variable

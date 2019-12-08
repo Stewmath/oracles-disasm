@@ -231,7 +231,7 @@
 	var3f			db ; $3f
 .ENDST
 
-; Special objects like link, companions
+; Special objects like link, companions (and sometimes "parent items").
 .STRUCT SpecialObjectStruct
 	start			.db
 
