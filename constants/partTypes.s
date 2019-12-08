@@ -152,6 +152,14 @@
 .define PARTID_SUBTERROR_DIRT			$32
 
 ;;
+; Used by Ramrock (seed form)
+.define PARTID_34				$34
+
+;;
+; Used by Ramrock (bomb form)
+.define PARTID_35				$35
+
+;;
 ; Flame animation used exclusively by ENEMYID_CANDLE. Expects relatedObj1 to point to its
 ; parent.
 .define PARTID_CANDLE_FLAME			$36
@@ -206,6 +214,8 @@
 ; @subid_01{Red}
 .define PARTID_PLASMARINE_PROJECTILE		$43
 
+; $45: falling boulder spawner?
+
 ;;
 ; Bomb used by PARTID_KING_MOBLIN_MINION.
 .define PARTID_BOMB				$47
@@ -241,7 +251,9 @@
 ;;
 .define PARTID_TWINROVA_SNOWBALL		$4e
 
-; $45: falling boulder spawner?
+;;
+; Used by Ramrock (seed form)
+.define PARTID_4f				$4f
 
 ;;
 ; Used by Ganon

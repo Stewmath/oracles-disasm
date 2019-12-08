@@ -17,9 +17,19 @@
 ; @subid_00{Red twinrova}
 ; @subid_01{Blue twinrova}
 .define ENEMYID_TWINROVA			$03
-.define ENEMYID_GANON				$04
-.define ENEMYID_05				$05
 
+;;
+; King of Evil
+.define ENEMYID_GANON				$04
+
+;;
+; Even subids appear on the left, while odd subids are on the right.
+; @subid_00-01{Fists}
+; @subid_02-03{Bomb chompers}
+; @subid_04-05{Grabbable balls}
+.define ENEMYID_RAMROCK_ARMS			$05
+
+;;
 .define ENEMYID_VERAN_HUMAN			$06
 
 ;;
