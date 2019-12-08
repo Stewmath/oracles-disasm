@@ -31719,51 +31719,8 @@ _label_05_451:
 	.include "code/items/swordParent.s"
 	.include "code/items/harpFluteParent.s"
 	.include "code/items/seedsParent.s"
+	.include "code/items/shovelParent.s"
 ;	.include "code/items/parentItems.s"
-
-
-_parentItemCode_shovel:
-	ld e,$04		; $4dd1
-	ld a,(de)		; $4dd3
-	rst_jumpTable			; $4dd4
-	reti			; $4dd5
-	ld c,l			; $4dd6
-	ld ($ff00+c),a		; $4dd7
-	ld c,l			; $4dd8
-	call $5416		; $4dd9
-	jp nz,_clearParentItem		; $4ddc
-	jp $52e2		; $4ddf
-	call $4414		; $4de2
-	ld e,$21		; $4de5
-	ld a,(de)		; $4de7
-	bit 7,a			; $4de8
-	jp nz,_clearParentItem		; $4dea
-	dec a			; $4ded
-	ret nz			; $4dee
-	ld (de),a		; $4def
-	call $5326		; $4df0
-	push hl			; $4df3
-	ld l,$08		; $4df4
-	ld a,(hl)		; $4df6
-	ld hl,$4e07		; $4df7
-	rst_addDoubleIndex			; $4dfa
-	ldi a,(hl)		; $4dfb
-	ld c,(hl)		; $4dfc
-	pop hl			; $4dfd
-	ld l,$0b		; $4dfe
-	add (hl)		; $4e00
-	ldi (hl),a		; $4e01
-	inc l			; $4e02
-	ld a,(hl)		; $4e03
-	add c			; $4e04
-	ldi (hl),a		; $4e05
-	ret			; $4e06
-	ld hl,sp+$00		; $4e07
-	inc b			; $4e09
-	ld b,$07		; $4e0a
-	nop			; $4e0c
-	inc b			; $4e0d
-	ld sp,hl		; $4e0e
 
 
 _parentItemCode_boomerang:

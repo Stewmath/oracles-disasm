@@ -39643,6 +39643,7 @@ cliffTilesTable:
 	.include "code/items/swordParent.s"
 	.include "code/items/harpFluteParent.s"
 	.include "code/items/seedsParent.s"
+	.include "code/items/shovelParent.s"
 	.include "code/items/parentItems.s"
 
 	.include "code/items/parentItemCommon.s"
