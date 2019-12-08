@@ -39642,6 +39642,7 @@ cliffTilesTable:
 	.include "code/items/caneOfSomariaParent.s"
 	.include "code/items/swordParent.s"
 	.include "code/items/harpFluteParent.s"
+	.include "code/items/seedsParent.s"
 	.include "code/items/parentItems.s"
 
 	.include "code/items/parentItemCommon.s"
@@ -43005,7 +43006,7 @@ _initialFileVariables:
 	.db <wPirateShipRoom			$b6
 	.db <wPirateShipY			$48
 	.db <wPirateShipX			$48
-	.db <wPirateShipAngle		$02
+	.db <wPirateShipAngle			$02
 	.db $00
 
 ; Standard game (not linked or hero)
