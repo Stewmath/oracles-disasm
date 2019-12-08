@@ -1596,7 +1596,7 @@ wGameKeysPressed: ; $cc29
 wGameKeysJustPressed: ; $cc2a/$cc46
 	db
 
-wLinkAngle: ; $cc2b
+wLinkAngle: ; $cc2b/$cc47
 ; Same as w1Link.angle? Set to $FF when not moving. Should always be a multiple of
 ; 4 (since d-pad input doesn't allow more fine-grained angles)
 ; This may correspond more to the direction button input than to the Link object in

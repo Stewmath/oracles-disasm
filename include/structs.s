@@ -496,7 +496,6 @@
 
 	; Bombchus: set to 1 when hanging upside-down on a ceiling
 	; Boomerang: the angle which the boomerang is adjusting toward.
-	;            (Leftover magical boomerang code?)
 	; Seeds: bounce counter (seed effect triggers when it reaches 0)
 	var34			db ; $34
 

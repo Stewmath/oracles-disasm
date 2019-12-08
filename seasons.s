@@ -31720,84 +31720,8 @@ _label_05_451:
 	.include "code/items/harpFluteParent.s"
 	.include "code/items/seedsParent.s"
 	.include "code/items/shovelParent.s"
+	.include "code/items/boomerangParent.s"
 ;	.include "code/items/parentItems.s"
-
-
-_parentItemCode_boomerang:
-	ld e,$04		; $4e0f
-	ld a,(de)		; $4e11
-	rst_jumpTable			; $4e12
-	add hl,de		; $4e13
-	ld c,(hl)		; $4e14
-	ld a,a			; $4e15
-	ld c,(hl)		; $4e16
-	ld d,d			; $4e17
-	ld c,(hl)		; $4e18
-	ld a,($cc78)		; $4e19
-	or a			; $4e1c
-	jp nz,_clearParentItem		; $4e1d
-	call $52e2		; $4e20
-	ld a,($c6b1)		; $4e23
-	cp $02			; $4e26
-	ld a,$01		; $4e28
-	jr nz,_label_06_116	; $4e2a
-	inc a			; $4e2c
-_label_06_116:
-	ld e,$04		; $4e2d
-	ld (de),a		; $4e2f
-	dec a			; $4e30
-	ld c,a			; $4e31
-	ld e,$01		; $4e32
-	ld a,(de)		; $4e34
-	ld b,a			; $4e35
-	ld e,$01		; $4e36
-	call itemCreateChildWithID		; $4e38
-	jp c,_clearParentItem		; $4e3b
-	ld a,($cc47)		; $4e3e
-	bit 7,a			; $4e41
-	jr z,_label_06_117	; $4e43
-	ld a,($d008)		; $4e45
-	swap a			; $4e48
-	rrca			; $4e4a
-_label_06_117:
-	ld l,$09		; $4e4b
-	ld (hl),a		; $4e4d
-	ld l,$34		; $4e4e
-	ld (hl),a		; $4e50
-	ret			; $4e51
-	call $53e8		; $4e52
-	jr z,_label_06_120	; $4e55
-	ld a,$17		; $4e57
-	call objectGetRelatedObject2Var		; $4e59
-	ld a,(hl)		; $4e5c
-	cp d			; $4e5d
-	jr nz,_label_06_120	; $4e5e
-	ld a,($cc47)		; $4e60
-	ld c,a			; $4e63
-	ld a,$ff		; $4e64
-	ld ($cc47),a		; $4e66
-	ld a,(wFrameCounter)		; $4e69
-	rrca			; $4e6c
-	jr c,_label_06_118	; $4e6d
-	ld a,c			; $4e6f
-	rlca			; $4e70
-	jr nc,_label_06_119	; $4e71
-_label_06_118:
-	ld l,$09		; $4e73
-	ld c,(hl)		; $4e75
-_label_06_119:
-	ld l,$34		; $4e76
-	ld (hl),c		; $4e78
-	ret			; $4e79
-_label_06_120:
-	ld e,$04		; $4e7a
-	ld a,$01		; $4e7c
-	ld (de),a		; $4e7e
-	ld e,$21		; $4e7f
-	ld a,(de)		; $4e81
-	rlca			; $4e82
-	jp nc,$4414		; $4e83
-	jp _clearParentItem		; $4e86
 
 
 _parentItemCode_bombchu:
