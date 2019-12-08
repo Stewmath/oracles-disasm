@@ -259,6 +259,18 @@
 
 .define PARTID_OCTOGON_BUBBLE			$55
 
+;;
+; Used by ENEMYID_VERAN_FINAL_FORM (spider)
+.define PARTID_56				$56
+
+;;
+; Used by ENEMYID_VERAN_FINAL_FORM
+.define PARTID_57				$57
+
+;;
+; Used by ENEMYID_VERAN_FINAL_FORM (bee)
+.define PARTID_58				$58
+
 ; The stone that's pushed at the start of the game. This only applies after it's moved;
 ; before it's moved, the stone is handled by INTERACID_TRIFORCE_STONE instead.
 .define PARTID_TRIFORCE_STONE			$5a

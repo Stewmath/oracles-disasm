@@ -176,12 +176,11 @@
 .define ENEMYID_PIRANHA				$1e
 
 ;;
-; Something that flies at you then despawns when off-screen. (Missing palette?)
-; TODO: what is this?
+; Used by ENEMYID_VERAN_FINAL_FORM. Flies at you, then despawns when off-screen.
 ; @subid_00{Moves down}
 ; @subid_01{Moves down-left}
 ; @subid_02{Moves up-right}
-.define ENEMYID_1f				$1f
+.define ENEMYID_VERAN_CHILD_BEE			$1f
 
 ;;
 ; The type of moblin you'd see in the Goron area, with white horns, shoots arrows

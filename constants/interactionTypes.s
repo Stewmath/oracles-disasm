@@ -1258,7 +1258,7 @@
 ; @subid_1e{Play "puzzle solved" sound after navigating eyeball puzzle in final dungeon}
 ; @subid_1f{Checks if Link gets stuck in the d5 boss key puzzle, resets the room if so}
 ; @subid_20{Money in sidescrolling room in Hero's Cave}
-; @subid_21{Creates explosions while screen is fading out; used in some cutscene?}
+; @subid_21{Creates explosions while screen is fading out; used after killing veran}
 .define INTERACID_MISC_PUZZLES			$90
 
 ;;

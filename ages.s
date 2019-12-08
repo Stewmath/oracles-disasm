@@ -484,6 +484,7 @@ getLowestSetBit:
 ;
 ; @param	a	Flag to check
 ; @param	hl	Start address of flags
+; @param[out]	a	AND result
 ; @param[out]	zflag	Set if the flag is not set.
 ; @addr{0205}
 checkFlag:
@@ -5780,7 +5781,7 @@ getRoomFlags:
 	ret			; $1991
 
 ;;
-; @param[out]	zflag	Set if unlinked
+; @param[out]	zflag	z if unlinked
 ; @addr{1992}
 checkIsLinkedGame:
 	ld a,(wIsLinkedGame)		; $1992
@@ -104083,7 +104084,7 @@ _ironMask_chooseAmountOfTimeToStand:
 
 
 ; ==============================================================================
-; ENEMYID_1f
+; ENEMYID_VERAN_CHILD_BEE
 ; ==============================================================================
 enemyCode1f:
 	jr z,@normalStatus	; $6c4c
@@ -132968,72 +132969,104 @@ _ganon_setTileReplacementMode:
 enemyCode00:
 	ret			; $5826
 
-;;
-; @addr{5827}
+
+; ==============================================================================
+; ENEMYID_VERAN_FINAL_FORM
+;
+; Variables:
+;   subid: 0 - turtle, 1 - spider, 2 - bee
+;   var03: Attack type (for spider form); 0 - rush, 1 - jump, 2 - grab
+;   var30: Current health for turtle form (saved here while in other forms)
+;   var31: Spider form max health
+;   var32: Bee form max health
+;   var33: Nonzero if turtle form has been attacked (will transform)
+;   var34: Number of times turtle has jumped (when var33 is nonzero)
+;   var35: Used for deciding transformations. Value from 0-7.
+;   var36/var37: Target position to move towards
+;   var38: Used as a signal by "web" objects?
+;   var39: Bee form: quadrant the bee entered the screen from
+; ==============================================================================
 enemyCode02:
-	jr z,_label_10_146	; $5827
-	sub $03			; $5829
+	jr z,@normalStatus	; $5827
+	sub ENEMYSTATUS_NO_HEALTH			; $5829
 	ret c			; $582b
-	jr z,_label_10_145	; $582c
+	jr z,@dead	; $582c
 	dec a			; $582e
-	jr z,_label_10_143	; $582f
+	jr z,@justHit	; $582f
+
+	; ENEMYSTATUS_KNOCKBACK
 	ld c,$20		; $5831
 	call objectUpdateSpeedZ_paramC		; $5833
 	jp _ecom_updateKnockback		; $5836
-_label_10_143:
+
+@justHit:
 	ld h,d			; $5839
-	ld l,$82		; $583a
+	ld l,Enemy.subid		; $583a
 	ld a,(hl)		; $583c
 	or a			; $583d
-	jr nz,_label_10_144	; $583e
-	ld l,$ab		; $5840
+	jr nz,@notTurtleForm	; $583e
+
+	ld l,Enemy.invincibilityCounter		; $5840
 	ld a,(hl)		; $5842
 	or a			; $5843
-	jr z,_label_10_146	; $5844
-	ld l,$b3		; $5846
+	jr z,@normalStatus	; $5844
+
+	; Note that turtle veran's been hit and should transform soon
+	ld l,Enemy.var33		; $5846
 	ld (hl),$01		; $5848
-	jr _label_10_146		; $584a
-_label_10_144:
-	ld l,$ad		; $584c
+	jr @normalStatus		; $584a
+
+@notTurtleForm:
+	ld l,Enemy.knockbackCounter		; $584c
 	ld a,(hl)		; $584e
 	or a			; $584f
-	jr z,_label_10_146	; $5850
-	ld l,$84		; $5852
+	jr z,@normalStatus	; $5850
+
+	; Only spider form takes knockback
+	ld l,Enemy.state		; $5852
 	ld (hl),$03		; $5854
-	ld l,$86		; $5856
-	ld (hl),$69		; $5858
-	ld l,$a5		; $585a
-	ld (hl),$6b		; $585c
+	ld l,Enemy.counter1		; $5856
+	ld (hl),105		; $5858
+	ld l,Enemy.enemyCollisionMode		; $585a
+	ld (hl),ENEMYCOLLISION_VERAN_SPIDER_FORM_VULNERABLE		; $585c
+
 	ld a,(w1Link.state)		; $585e
-	cp $0d			; $5861
-	call z,$5cd3		; $5863
+	cp LINK_STATE_GRABBED			; $5861
+	call z,_veranFinal_grabbingLink		; $5863
+
 	ld a,$06		; $5866
 	jp enemySetAnimation		; $5868
-_label_10_145:
-	call $5f4e		; $586b
-_label_10_146:
-	ld e,$82		; $586e
-	ld a,(de)		; $5870
-	ld e,$84		; $5871
-	rst_jumpTable			; $5873
-.dw $587a
-.dw $5ab4
-.dw $5cdd
 
+@dead:
+	call _veranFinal_dead		; $586b
+
+@normalStatus:
+	ld e,Enemy.subid		; $586e
+	ld a,(de)		; $5870
+	ld e,Enemy.state		; $5871
+	rst_jumpTable			; $5873
+	.dw _veranFinal_turtleForm
+	.dw _veranFinal_spiderForm
+	.dw _veranFinal_beeForm
+
+
+_veranFinal_turtleForm:
 	ld a,(de)		; $587a
 	rst_jumpTable			; $587b
-.dw $5892
-.dw $58cd
-.dw $5917
-.dw $593c
-.dw $5964
-.dw $598f
-.dw $59dc
-.dw $59f9
-.dw $5a06
-.dw $5a25
-.dw $5a47
+	.dw _veranFinal_turtleForm_state0
+	.dw _veranFinal_turtleForm_state1
+	.dw _veranFinal_turtleForm_state2
+	.dw _veranFinal_turtleForm_state3
+	.dw _veranFinal_turtleForm_state4
+	.dw _veranFinal_turtleForm_state5
+	.dw _veranFinal_turtleForm_state6
+	.dw _veranFinal_turtleForm_state7
+	.dw _veranFinal_turtleForm_state8
+	.dw _veranFinal_turtleForm_state9
+	.dw _veranFinal_turtleForm_stateA
 
+
+_veranFinal_turtleForm_state0:
 	ld a,$02		; $5892
 	ld (wEnemyIDToLoadExtraGfx),a		; $5894
 	ld a,PALH_87		; $5897
@@ -133043,43 +133076,54 @@ _label_10_146:
 	ld a,$01		; $58a1
 	ld (wDisabledObjects),a		; $58a3
 	ld (wMenuDisabled),a		; $58a6
+
 	ld bc,$0208		; $58a9
 	call _enemyBoss_spawnShadow		; $58ac
 	ret nz			; $58af
 	call _ecom_incState		; $58b0
+
 	call checkIsLinkedGame		; $58b3
-	ld l,$a9		; $58b6
+	ld l,Enemy.health		; $58b6
 	ld a,(hl)		; $58b8
 	ld bc,$0c18		; $58b9
-	jr nz,_label_10_147	; $58bc
+	jr nz,++		; $58bc
+
+	; Unlinked: less health (for all forms)
 	ld a,$14		; $58be
 	ld (hl),a		; $58c0
 	ld bc,$080f		; $58c1
-_label_10_147:
-	ld l,$b0		; $58c4
+++
+	ld l,Enemy.var30		; $58c4
 	ldi (hl),a		; $58c6
-	ld (hl),b		; $58c7
+	ld (hl),b ; [var31]
 	inc l			; $58c8
-	ld (hl),c		; $58c9
+	ld (hl),c ; [var32]
 	jp objectSetVisible83		; $58ca
-	inc e			; $58cd
-	ld a,(de)		; $58ce
-	rst_jumpTable			; $58cf
-.dw $58d6
-.dw $58e9
-.dw $5900
 
+
+; Showing text before fight starts
+_veranFinal_turtleForm_state1:
+	inc e			; $58cd
+	ld a,(de) ; [state2]
+	rst_jumpTable			; $58cf
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+
+@substate0:
 	ld a,(wPaletteThread_mode)		; $58d6
 	or a			; $58d9
 	ret nz			; $58da
 	ld a,SND_LIGHTNING		; $58db
 	call playSound		; $58dd
-	ld bc,$5614		; $58e0
+	ld bc,TX_5614		; $58e0
 	call showText		; $58e3
 	jp _ecom_incState2		; $58e6
+
+@substate1:
 	ld h,d			; $58e9
 	ld l,e			; $58ea
-	inc (hl)		; $58eb
+	inc (hl) ; [state2]
 	xor a			; $58ec
 	ld (wDisabledObjects),a		; $58ed
 	ld (wMenuDisabled),a		; $58f0
@@ -133088,48 +133132,61 @@ _label_10_147:
 	ld a,MUS_FINAL_BOSS		; $58f8
 	ld (wActiveMusic),a		; $58fa
 	jp playSound		; $58fd
+
+@substate2:
 	call enemyAnimate		; $5900
-	ld e,$a1		; $5903
+	ld e,Enemy.animParameter		; $5903
 	ld a,(de)		; $5905
 	inc a			; $5906
 	ret nz			; $5907
 	call _ecom_incState		; $5908
-	ld l,$86		; $590b
-	ld (hl),$1e		; $590d
-	ld l,$90		; $590f
-	ld (hl),$46		; $5911
+	ld l,Enemy.counter1		; $590b
+	ld (hl),30		; $590d
+	ld l,Enemy.speed		; $590f
+	ld (hl),SPEED_1c0		; $5911
 	inc a			; $5913
 	jp enemySetAnimation		; $5914
-	ld e,$a1		; $5917
+
+
+; About to jump
+_veranFinal_turtleForm_state2:
+	ld e,Enemy.animParameter		; $5917
 	ld a,(de)		; $5919
 	or a			; $591a
 	jp nz,enemyAnimate		; $591b
+
 	call _ecom_decCounter1		; $591e
 	ret nz			; $5921
-	ld l,$84		; $5922
+	ld l,Enemy.state		; $5922
 	inc (hl)		; $5924
-	ld l,$94		; $5925
-	ld (hl),$00		; $5927
+	ld l,Enemy.speedZ		; $5925
+	ld (hl),<(-$400)		; $5927
 	inc l			; $5929
-	ld (hl),$fc		; $592a
+	ld (hl),>(-$400)		; $592a
 	call _ecom_updateAngleTowardTarget		; $592c
 	call objectSetVisible81		; $592f
 	ld a,SND_UNKNOWN4		; $5932
 	call playSound		; $5934
 	ld a,$02		; $5937
 	jp enemySetAnimation		; $5939
+
+
+; Jumping (until starts moving down)
+_veranFinal_turtleForm_state3:
 	ld c,$20		; $593c
 	call objectUpdateSpeedZ_paramC		; $593e
 	ldd a,(hl)		; $5941
 	or (hl)			; $5942
 	jp nz,_ecom_applyVelocityForTopDownEnemyNoHoles		; $5943
+
 	inc l			; $5946
-	inc (hl)		; $5947
-	ld l,$84		; $5948
+	inc (hl) ; [speedZ] = $0100
+
+	ld l,Enemy.state		; $5948
 	inc (hl)		; $594a
-	ld l,$90		; $594b
-	ld (hl),$78		; $594d
-	ld l,$b6		; $594f
+	ld l,Enemy.speed		; $594b
+	ld (hl),SPEED_300		; $594d
+	ld l,Enemy.var36		; $594f
 	ldh a,(<hEnemyTargetY)	; $5951
 	and $f0			; $5953
 	add $08			; $5955
@@ -133137,349 +133194,444 @@ _label_10_147:
 	ldh a,(<hEnemyTargetX)	; $5958
 	and $f0			; $595a
 	add $08			; $595c
-	ld (hl),a		; $595e
+	ld (hl),a ; [var37]
 	ld a,$01		; $595f
 	jp enemySetAnimation		; $5961
+
+
+; Falling and homing in on a position
+_veranFinal_turtleForm_state4:
 	ld c,$10		; $5964
 	call objectUpdateSpeedZ_paramC		; $5966
-	jr z,_label_10_148	; $5969
-	call $601c		; $596b
+	jr z,@nextState	; $5969
+	call _veranFinal_moveTowardTargetPosition		; $596b
 	ret nc			; $596e
-	ld l,$8b		; $596f
+	ld l,Enemy.yh		; $596f
 	ld (hl),b		; $5971
-	ld l,$8d		; $5972
+	ld l,Enemy.xh		; $5972
 	ld (hl),c		; $5974
 	ret			; $5975
-_label_10_148:
+
+@nextState:
 	ld a,$10		; $5976
 	call setScreenShakeCounter		; $5978
 	call _ecom_incState		; $597b
-	ld l,$86		; $597e
+	ld l,Enemy.counter1		; $597e
 	ld (hl),$0c		; $5980
 	call objectSetVisible83		; $5982
 	ld a,SND_POOF		; $5985
 	call playSound		; $5987
-	ld b,$57		; $598a
+	ld b,PARTID_57		; $598a
 	jp _ecom_spawnProjectile		; $598c
+
+
+; Landed
+_veranFinal_turtleForm_state5:
 	call _ecom_decCounter1		; $598f
 	ret nz			; $5992
-	ld l,$90		; $5993
-	ld (hl),$46		; $5995
-	ld l,$b3		; $5997
+
+	ld l,Enemy.speed		; $5993
+	ld (hl),SPEED_1c0		; $5995
+	ld l,Enemy.var33		; $5997
 	bit 0,(hl)		; $5999
-	ld l,$b4		; $599b
-	jr z,_label_10_149	; $599d
+	ld l,Enemy.var34		; $599b
+	jr z,+			; $599d
 	inc (hl)		; $599f
-_label_10_149:
++
 	ld a,(hl)		; $59a0
-	ld bc,$59d7		; $59a1
+	ld bc,@transformProbabilities		; $59a1
 	call addAToBc		; $59a4
 	ld a,(bc)		; $59a7
 	ld b,a			; $59a8
 	inc a			; $59a9
 	ld l,e			; $59aa
-	jr z,_label_10_150	; $59ab
+	jr z,++			; $59ab
+
 	call getRandomNumber		; $59ad
 	and b			; $59b0
-	jp z,$5eba		; $59b1
-	ld e,$b3		; $59b4
+	jp z,_veranFinal_transformToBeeOrSpider		; $59b1
+
+	ld e,Enemy.var33		; $59b4
 	ld a,(de)		; $59b6
 	rrca			; $59b7
-	jr c,_label_10_151	; $59b8
-_label_10_150:
+	jr c,@jumpAgain		; $59b8
+++
 	call getRandomNumber		; $59ba
-	cp $5a			; $59bd
-	jr nc,_label_10_151	; $59bf
-	inc (hl)		; $59c1
-	ld l,$86		; $59c2
+	cp 90			; $59bd
+	jr nc,@jumpAgain		; $59bf
+
+	; Open face
+	inc (hl) ; [state2] = $06
+	ld l,Enemy.counter1		; $59c2
 	ld (hl),$08		; $59c4
 	ld a,SND_GORON		; $59c6
 	call playSound		; $59c8
 	ld a,$04		; $59cb
 	jp enemySetAnimation		; $59cd
-_label_10_151:
-	ld (hl),$02		; $59d0
-	ld l,$86		; $59d2
-	ld (hl),$1e		; $59d4
+
+@jumpAgain
+	ld (hl),$02 ; [state]
+	ld l,Enemy.counter1		; $59d2
+	ld (hl),30		; $59d4
 	ret			; $59d6
-	rst $38			; $59d7
-	inc bc			; $59d8
-	inc bc			; $59d9
-	ld bc,wScrollMode		; $59da
-	jr $28			; $59dd
+
+@transformProbabilities:
+	.db $ff $03 $03 $01 $00
+
+
+; Face is opening
+_veranFinal_turtleForm_state6:
+	call enemyAnimate		; $59dc
 	ld h,d			; $59df
-	ld l,$a1		; $59e0
+	ld l,Enemy.animParameter		; $59e0
 	bit 7,(hl)		; $59e2
-	jr nz,_label_10_152	; $59e4
+	jr nz,@nextState	; $59e4
 	bit 0,(hl)		; $59e6
 	ret z			; $59e8
-	ld l,$a5		; $59e9
-	ld (hl),$09		; $59eb
+	ld l,Enemy.enemyCollisionMode		; $59e9
+	ld (hl),ENEMYCOLLISION_VERAN_TURTLE_FORM_VULNERABLE		; $59eb
 	ret			; $59ed
-_label_10_152:
-	ld l,$84		; $59ee
+
+@nextState:
+	ld l,Enemy.state		; $59ee
 	inc (hl)		; $59f0
-	ld l,$86		; $59f1
-	ld (hl),$5a		; $59f3
+	ld l,Enemy.counter1		; $59f1
+	ld (hl),90		; $59f3
 	xor a			; $59f5
 	jp enemySetAnimation		; $59f6
+
+
+_veranFinal_turtleForm_state7:
 	call _ecom_decCounter1		; $59f9
 	jp nz,enemyAnimate		; $59fc
 	ld l,e			; $59ff
-	inc (hl)		; $5a00
+	inc (hl) ; [state]
 	ld a,$03		; $5a01
 	jp enemySetAnimation		; $5a03
+
+
+_veranFinal_turtleForm_state8:
 	call enemyAnimate		; $5a06
 	ld h,d			; $5a09
-	ld l,$a1		; $5a0a
+	ld l,Enemy.animParameter		; $5a0a
 	bit 7,(hl)		; $5a0c
-	jr nz,_label_10_153	; $5a0e
+	jr nz,@nextState	; $5a0e
 	bit 0,(hl)		; $5a10
 	ret z			; $5a12
-	ld l,$a5		; $5a13
-	ld (hl),$6a		; $5a15
+	ld l,Enemy.enemyCollisionMode		; $5a13
+	ld (hl),ENEMYCOLLISION_VERAN_TURTLE_FORM		; $5a15
 	ret			; $5a17
-_label_10_153:
-	ld l,$84		; $5a18
+
+@nextState:
+	ld l,Enemy.state		; $5a18
 	ld (hl),$02		; $5a1a
-	ld l,$86		; $5a1c
-	ld (hl),$1e		; $5a1e
+	ld l,Enemy.counter1		; $5a1c
+	ld (hl),30		; $5a1e
 	ld a,$01		; $5a20
 	jp enemySetAnimation		; $5a22
+
+
+; Just transformed back from being a spider or bee
+_veranFinal_turtleForm_state9:
 	call enemyAnimate		; $5a25
-	ld e,$a1		; $5a28
+	ld e,Enemy.animParameter		; $5a28
 	ld a,(de)		; $5a2a
 	inc a			; $5a2b
 	ret nz			; $5a2c
+
 	ld h,d			; $5a2d
-	ld l,$b3		; $5a2e
-	ldi (hl),a		; $5a30
-	ld (hl),a		; $5a31
-	ld l,$84		; $5a32
+	ld l,Enemy.var33		; $5a2e
+	ldi (hl),a ; [var33] = 0
+	ld (hl),a  ; [var34] = 0
+
+	ld l,Enemy.state		; $5a32
 	dec (hl)		; $5a34
-	ld l,$a4		; $5a35
-	ld (hl),$82		; $5a37
+	ld l,Enemy.collisionType		; $5a35
+	ld (hl),$80|ENEMYID_VERAN_FINAL_FORM
 	inc l			; $5a39
-	ld (hl),$09		; $5a3a
-	ld l,$9b		; $5a3c
+	ld (hl),ENEMYCOLLISION_VERAN_TURTLE_FORM_VULNERABLE ; [enemyCollisionType]
+
+	ld l,Enemy.oamFlagsBackup		; $5a3c
 	ld a,$06		; $5a3e
 	ldi (hl),a		; $5a40
 	ld (hl),a		; $5a41
 	ld a,$03		; $5a42
 	jp enemySetAnimation		; $5a44
+
+
+; Dead
+_veranFinal_turtleForm_stateA:
 	inc e			; $5a47
 	ld a,(de)		; $5a48
 	rst_jumpTable			; $5a49
-.dw $5a52
-.dw $5a7a
-.dw $5a91
-.dw $5a9f
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
 
-	ld e,$ab		; $5a52
+@substate0:
+	ld e,Enemy.invincibilityCounter		; $5a52
 	ld a,(de)		; $5a54
 	or a			; $5a55
 	ret nz			; $5a56
 	call checkLinkVulnerable		; $5a57
 	ret nc			; $5a5a
+
 	ld a,$01		; $5a5b
 	ld (wMenuDisabled),a		; $5a5d
 	ld (wDisabledObjects),a		; $5a60
+
 	call dropLinkHeldItem		; $5a63
 	call clearAllParentItems		; $5a66
 	call _ecom_incState2		; $5a69
+
 	call checkIsLinkedGame		; $5a6c
-	ld bc,$5615		; $5a6f
-	jr z,_label_10_154	; $5a72
-	ld bc,$5616		; $5a74
-_label_10_154:
+	ld bc,TX_5615		; $5a6f
+	jr z,+			; $5a72
+	ld bc,TX_5616		; $5a74
++
 	jp showText		; $5a77
+
+@substate1:
 	ld a,(wTextIsActive)		; $5a7a
 	or a			; $5a7d
 	ret nz			; $5a7e
 	call _ecom_incState2		; $5a7f
-	ld l,$87		; $5a82
-	ld (hl),$28		; $5a84
-	ld l,$8b		; $5a86
+	ld l,Enemy.counter2		; $5a82
+	ld (hl),40		; $5a84
+	ld l,Enemy.yh		; $5a86
 	ld b,(hl)		; $5a88
-	ld l,$8d		; $5a89
+	ld l,Enemy.xh		; $5a89
 	ld c,(hl)		; $5a8b
 	ld a,$ff		; $5a8c
 	jp createEnergySwirlGoingOut		; $5a8e
+
+@substate2:
 	call _ecom_decCounter2		; $5a91
 	ret nz			; $5a94
 	ldbc INTERACID_MISC_PUZZLES, $21		; $5a95
 	call objectCreateInteraction		; $5a98
 	ret nz			; $5a9b
 	jp _ecom_incState2		; $5a9c
+
+@substate3:
 	ld a,(wPaletteThread_mode)		; $5a9f
 	or a			; $5aa2
 	ret nz			; $5aa3
-	ld hl,$c9fc		; $5aa4
+	ld hl,wGroup4Flags+(<ROOM_4fc)		; $5aa4
 	set 7,(hl)		; $5aa7
-	ld a,$09		; $5aa9
+	ld a,CUTSCENE_BLACK_TOWER_ESCAPE		; $5aa9
 	ld (wCutsceneTrigger),a		; $5aab
 	call incMakuTreeState		; $5aae
 	jp enemyDelete		; $5ab1
+
+
+_veranFinal_spiderForm:
 	ld a,(de)		; $5ab4
 	rst_jumpTable			; $5ab5
-.dw $5ac0
-.dw $5ac1
-.dw $5afc
-.dw $5b15
-.dw $5b39
+	.dw _veranFinal_spiderOrBeeForm_state0
+	.dw _veranFinal_spiderForm_state1
+	.dw _veranFinal_spiderForm_state2
+	.dw _veranFinal_spiderForm_state3
+	.dw _veranFinal_spiderForm_state4
 
+
+_veranFinal_spiderOrBeeForm_state0:
 	ret			; $5ac0
+
+
+_veranFinal_spiderForm_state1:
 	call enemyAnimate		; $5ac1
-	ld e,$a1		; $5ac4
+	ld e,Enemy.animParameter		; $5ac4
 	ld a,(de)		; $5ac6
 	inc a			; $5ac7
 	ret nz			; $5ac8
+
 	ld bc,$1010		; $5ac9
-	ld e,$6c		; $5acc
-	ld l,$b1		; $5ace
-	call $5d12		; $5ad0
+	ld e,ENEMYCOLLISION_VERAN_SPIDER_FORM		; $5acc
+	ld l,Enemy.var31		; $5ace
+	call _veranFinal_initializeForm		; $5ad0
 	ld a,$05		; $5ad3
 	call enemySetAnimation		; $5ad5
-_label_10_155:
-	ld e,$87		; $5ad8
-	ld a,$78		; $5ada
+
+_veranFinal_spiderForm_setCounter2AndInitState2:
+	ld e,Enemy.counter2		; $5ad8
+	ld a,120		; $5ada
 	ld (de),a		; $5adc
-_label_10_156:
+
+_veranFinal_spiderForm_initState2:
 	ld h,d			; $5add
-	ld l,$84		; $5ade
+	ld l,Enemy.state		; $5ade
 	ld (hl),$02		; $5ae0
-	ld l,$90		; $5ae2
-	ld (hl),$1e		; $5ae4
+	ld l,Enemy.speed		; $5ae2
+	ld (hl),SPEED_c0		; $5ae4
+
 	call getRandomNumber_noPreserveVars		; $5ae6
 	and $03			; $5ae9
-	ld hl,$5af8		; $5aeb
+	ld hl,@counter1Vals		; $5aeb
 	rst_addAToHl			; $5aee
-	ld e,$86		; $5aef
+	ld e,Enemy.counter1		; $5aef
 	ld a,(hl)		; $5af1
 	ld (de),a		; $5af2
-	call $5f8f		; $5af3
-	jr _label_10_158		; $5af6
-	inc a			; $5af8
-	ld d,b			; $5af9
-	ld h,h			; $5afa
-	ld a,b			; $5afb
+	call _veranFinal_spiderForm_decideAngle		; $5af3
+	jr _veranFinal_spiderForm_animate		; $5af6
+
+@counter1Vals:
+	.db 60,80,100,120
+
+
+_veranFinal_spiderForm_state2:
 	call _ecom_decCounter2		; $5afc
-	jr nz,_label_10_157	; $5aff
-	ld (hl),$78		; $5b01
-	call $5f11		; $5b03
+	jr nz,++		; $5aff
+	ld (hl),120		; $5b01
+	call _veranFinal_spiderForm_decideWhetherToAttack		; $5b03
 	ret c			; $5b06
-_label_10_157:
+++
 	call _ecom_decCounter1		; $5b07
-	jr z,_label_10_156	; $5b0a
+	jr z,_veranFinal_spiderForm_initState2	; $5b0a
+
+_veranFinal_spiderForm_updateMovement:
 	call _ecom_bounceOffWallsAndHoles		; $5b0c
 	call objectApplySpeed		; $5b0f
-_label_10_158:
+
+_veranFinal_spiderForm_animate:
 	jp enemyAnimate		; $5b12
-	ld e,$8f		; $5b15
+
+
+_veranFinal_spiderForm_state3:
+	ld e,Enemy.zh		; $5b15
 	ld a,(de)		; $5b17
 	rlca			; $5b18
 	ld c,$20		; $5b19
 	jp c,objectUpdateSpeedZ_paramC		; $5b1b
+
 	call _ecom_decCounter1		; $5b1e
-	jr z,_label_10_159	; $5b21
+	jr z,@gotoState2	; $5b21
+
 	ld a,(hl)		; $5b23
 	rrca			; $5b24
 	ret c			; $5b25
-	ld l,$8f		; $5b26
+	ld l,Enemy.zh		; $5b26
 	ld a,(hl)		; $5b28
 	xor $02			; $5b29
 	ld (hl),a		; $5b2b
 	ret			; $5b2c
-_label_10_159:
-	ld l,$8f		; $5b2d
+
+@gotoState2:
+	ld l,Enemy.zh		; $5b2d
 	ld (hl),$00		; $5b2f
 	call objectSetVisible83		; $5b31
-	call $5c16		; $5b34
-	jr _label_10_156		; $5b37
-	ld e,$83		; $5b39
-	ld a,(de)		; $5b3b
-	ld e,$85		; $5b3c
-	rst_jumpTable			; $5b3e
-.dw $5b45
-.dw $5b68
-.dw $5bfa
+	call _veranFinal_spiderForm_resetCollisionData		; $5b34
+	jr _veranFinal_spiderForm_initState2		; $5b37
 
+
+; Doing an attack
+_veranFinal_spiderForm_state4:
+	ld e,Enemy.var03		; $5b39
+	ld a,(de)		; $5b3b
+	ld e,Enemy.state2		; $5b3c
+	rst_jumpTable			; $5b3e
+	.dw _veranFinal_spiderForm_rushAttack
+	.dw _veranFinal_spiderForm_jumpAttack
+	.dw _veranFinal_spiderForm_webAttack
+
+
+; Rush toward Link for 1 second
+_veranFinal_spiderForm_rushAttack:
 	ld a,(de)		; $5b45
 	or a			; $5b46
-	jr z,_label_10_160	; $5b47
+	jr z,@substate0	; $5b47
+
+@substate1:
 	call _ecom_decCounter1		; $5b49
-	jr z,_label_10_155	; $5b4c
-	call $5b0c		; $5b4e
+	jr z,_veranFinal_spiderForm_setCounter2AndInitState2	; $5b4c
+	call _veranFinal_spiderForm_updateMovement		; $5b4e
 	jp enemyAnimate		; $5b51
-_label_10_160:
+
+@substate0:
 	call _ecom_incState2		; $5b54
 	inc l			; $5b57
-	ld (hl),$3c		; $5b58
-	ld l,$90		; $5b5a
-	ld (hl),$3c		; $5b5c
+	ld (hl),60 ; [counter1]
+	ld l,Enemy.speed		; $5b5a
+	ld (hl),SPEED_180		; $5b5c
+
 	call _ecom_updateAngleTowardTarget		; $5b5e
 	and $18			; $5b61
 	add $04			; $5b63
 	ld (de),a		; $5b65
-	jr _label_10_158		; $5b66
+	jr _veranFinal_spiderForm_animate		; $5b66
+
+
+; Jumps up and crashes back down onto the ground
+_veranFinal_spiderForm_jumpAttack:
 	ld a,(de)		; $5b68
 	rst_jumpTable			; $5b69
-.dw $5b74
-.dw $5b87
-.dw $5bb6
-.dw $5bda
-.dw $5bf3
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw @substate4
 
-	ld b,$56		; $5b74
+@substate0:
+	ld b,PARTID_56		; $5b74
 	call _ecom_spawnProjectile		; $5b76
 	ret nz			; $5b79
 	call _ecom_incState2		; $5b7a
-	ld l,$b8		; $5b7d
+	ld l,Enemy.var38		; $5b7d
 	ld (hl),$00		; $5b7f
-	call $5c2d		; $5b81
+	call _veranFinal_spiderForm_setVulnerableCollisionData		; $5b81
 	jp objectSetVisible81		; $5b84
-	ld e,$b8		; $5b87
+
+@substate1:
+	; Wait for signal from child object?
+	ld e,Enemy.var38		; $5b87
 	ld a,(de)		; $5b89
 	or a			; $5b8a
 	ret z			; $5b8b
+
 	ld h,d			; $5b8c
-	ld l,$8f		; $5b8d
+	ld l,Enemy.zh		; $5b8d
 	ld a,(hl)		; $5b8f
 	sub $03			; $5b90
 	ld (hl),a		; $5b92
 	bit 7,a			; $5b93
-	jr z,_label_10_161	; $5b95
+	jr z,++			; $5b95
+
 	cp $e0			; $5b97
 	ret nc			; $5b99
+
 	ldh a,(<hCameraY)	; $5b9a
 	ld b,a			; $5b9c
 	ld a,(hl)		; $5b9d
-	ld l,$8b		; $5b9e
+	ld l,Enemy.yh		; $5b9e
 	add (hl)		; $5ba0
 	sub b			; $5ba1
 	cp $b0			; $5ba2
 	ret c			; $5ba4
-_label_10_161:
-	ld l,$85		; $5ba5
+++
+	ld l,Enemy.state2		; $5ba5
 	inc (hl)		; $5ba7
 	inc l			; $5ba8
-	ld (hl),$5a		; $5ba9
-	ld l,$a4		; $5bab
+	ld (hl),90 ; [counter1]
+	ld l,Enemy.collisionType		; $5bab
 	res 7,(hl)		; $5bad
-	ld l,$8f		; $5baf
+	ld l,Enemy.zh		; $5baf
 	ld (hl),$00		; $5bb1
 	jp objectSetInvisible		; $5bb3
+
+@substate2:
 	call _ecom_decCounter1		; $5bb6
 	ret nz			; $5bb9
 	ld l,e			; $5bba
-	inc (hl)		; $5bbb
-	ld l,$a4		; $5bbc
+	inc (hl) ; [state2]
+	ld l,Enemy.collisionType		; $5bbc
 	set 7,(hl)		; $5bbe
-	ld l,$94		; $5bc0
+	ld l,Enemy.speedZ		; $5bc0
 	xor a			; $5bc2
 	ldi (hl),a		; $5bc3
 	ld (hl),$01		; $5bc4
-	ld l,$8b		; $5bc6
+
+	ld l,Enemy.yh		; $5bc6
 	ldh a,(<hEnemyTargetY)	; $5bc8
 	ldi (hl),a		; $5bca
 	inc l			; $5bcb
@@ -133487,111 +133639,150 @@ _label_10_161:
 	ld (hl),a		; $5bce
 	ld c,$08		; $5bcf
 	call _ecom_setZAboveScreen		; $5bd1
-	call $5c16		; $5bd4
+	call _veranFinal_spiderForm_resetCollisionData		; $5bd4
 	jp objectSetVisible81		; $5bd7
+
+@substate3:
 	ld c,$20		; $5bda
 	call objectUpdateSpeedZ_paramC		; $5bdc
 	ret nz			; $5bdf
-	ld l,$85		; $5be0
+
+	; Landed
+	ld l,Enemy.state2		; $5be0
 	inc (hl)		; $5be2
 	inc l			; $5be3
-	ld (hl),$78		; $5be4
+	ld (hl),120 ; [counter1]
 	ld a,SND_STRONG_POUND		; $5be6
 	call playSound		; $5be8
-	ld a,$5a		; $5beb
+	ld a,90		; $5beb
 	call setScreenShakeCounter		; $5bed
 	jp objectSetVisible83		; $5bf0
+
+@substate4:
 	call _ecom_decCounter1		; $5bf3
 	ret nz			; $5bf6
-	jp $5ad8		; $5bf7
+	jp _veranFinal_spiderForm_setCounter2AndInitState2		; $5bf7
+
+
+; Shoots out web to try and catch Link
+_veranFinal_spiderForm_webAttack:
 	ld a,(de)		; $5bfa
 	rst_jumpTable			; $5bfb
-.dw $5c0c
-.dw $5c24
-.dw $5c3b
-.dw $5c50
-.dw $5c76
-.dw $5c9b
-.dw $5cac
-.dw $5cc8
+	.dw _veranFinal_spiderForm_webAttack_substate0
+	.dw _veranFinal_spiderForm_webAttack_substate1
+	.dw _veranFinal_spiderForm_webAttack_substate2
+	.dw _veranFinal_spiderForm_webAttack_substate3
+	.dw _veranFinal_spiderForm_webAttack_substate4
+	.dw _veranFinal_spiderForm_webAttack_substate5
+	.dw _veranFinal_spiderForm_webAttack_substate6
+	.dw _veranFinal_spiderForm_webAttack_substate7
 
+
+_veranFinal_spiderForm_webAttack_substate0:
 	ld h,d			; $5c0c
 	ld l,e			; $5c0d
-	inc (hl)		; $5c0e
+	inc (hl) ; [state2]
 	inc l			; $5c0f
-	ld (hl),$1e		; $5c10
-	ld l,$b8		; $5c12
+	ld (hl),30 ; [counter1]
+	ld l,Enemy.var38		; $5c12
 	ld (hl),$00		; $5c14
-_label_10_162:
+
+_veranFinal_spiderForm_resetCollisionData:
 	ld h,d			; $5c16
-	ld l,$a5		; $5c17
-	ld (hl),$6c		; $5c19
-	ld l,$a6		; $5c1b
+	ld l,Enemy.enemyCollisionMode		; $5c17
+	ld (hl),ENEMYCOLLISION_VERAN_SPIDER_FORM		; $5c19
+	ld l,Enemy.collisionRadiusY		; $5c1b
 	ld (hl),$10		; $5c1d
 	ld a,$05		; $5c1f
 	jp enemySetAnimation		; $5c21
+
+
+_veranFinal_spiderForm_webAttack_substate1:
 	call _ecom_decCounter1		; $5c24
 	ret nz			; $5c27
 	inc l			; $5c28
-	ld (hl),$08		; $5c29
+	ld (hl),$08 ; [counter2]
 	ld l,e			; $5c2b
-	inc (hl)		; $5c2c
+	inc (hl) ; [state2]
+
+_veranFinal_spiderForm_setVulnerableCollisionData:
 	ld h,d			; $5c2d
-	ld l,$a5		; $5c2e
-	ld (hl),$6b		; $5c30
-	ld l,$a6		; $5c32
+	ld l,Enemy.enemyCollisionMode		; $5c2e
+	ld (hl),ENEMYCOLLISION_VERAN_SPIDER_FORM_VULNERABLE		; $5c30
+	ld l,Enemy.collisionRadiusY		; $5c32
 	ld (hl),$08		; $5c34
 	ld a,$06		; $5c36
 	jp enemySetAnimation		; $5c38
+
+
+_veranFinal_spiderForm_webAttack_substate2:
 	call _ecom_decCounter2		; $5c3b
 	ret nz			; $5c3e
-	ld b,$56		; $5c3f
+
+	ld b,PARTID_56		; $5c3f
 	call _ecom_spawnProjectile		; $5c41
 	ret nz			; $5c44
-	ld l,$c2		; $5c45
-	inc (hl)		; $5c47
+	ld l,Part.subid		; $5c45
+	inc (hl) ; [subid] = 1
 	call _ecom_incState2		; $5c48
 	inc l			; $5c4b
-	ld (hl),$5a		; $5c4c
-	jr _label_10_162		; $5c4e
-	ld e,$b8		; $5c50
+	ld (hl),90 ; [counter1]
+	jr _veranFinal_spiderForm_resetCollisionData		; $5c4e
+
+
+; Web coming back?
+_veranFinal_spiderForm_webAttack_substate3:
+	ld e,Enemy.var38		; $5c50
 	ld a,(de)		; $5c52
 	or a			; $5c53
 	ret z			; $5c54
+
 	call _ecom_decCounter1		; $5c55
 	ret nz			; $5c58
+
 	ld a,(w1Link.state)		; $5c59
-	cp $0d			; $5c5c
-	jp nz,$5ad8		; $5c5e
+	cp LINK_STATE_GRABBED			; $5c5c
+	jp nz,_veranFinal_spiderForm_setCounter2AndInitState2		; $5c5e
+
+	; Grabbed
 	call _ecom_incState2		; $5c61
 	inc l			; $5c64
 	ld (hl),$10		; $5c65
 	ld a,$06		; $5c67
 	call enemySetAnimation		; $5c69
 	ld b,$f8		; $5c6c
-_label_10_163:
-	ld hl,$d000		; $5c6e
+
+_veranFinal_spiderForm_webAttack_updateLinkPosition:
+	ld hl,w1Link		; $5c6e
 	ld c,$00		; $5c71
 	jp objectCopyPositionWithOffset		; $5c73
+
+
+_veranFinal_spiderForm_webAttack_substate4:
 	call _ecom_decCounter1		; $5c76
 	ret nz			; $5c79
-	ld (hl),$04		; $5c7a
+
+	ld (hl),$04 ; [counter1]
 	ld l,e			; $5c7c
-	inc (hl)		; $5c7d
+	inc (hl) ; [state2]
 	ld a,$05		; $5c7e
 	call enemySetAnimation		; $5c80
 	ld a,$04		; $5c83
 	call setScreenShakeCounter		; $5c85
 	ld b,$14		; $5c88
-	call $5c6e		; $5c8a
-	ld bc,$fa08		; $5c8d
-_label_10_164:
-	ld l,$25		; $5c90
+	call _veranFinal_spiderForm_webAttack_updateLinkPosition		; $5c8a
+	ldbc -6,$08		; $5c8d
+
+_veranFinal_spiderForm_webAttack_applyDamageToLink:
+	ld l,<w1Link.damageToApply		; $5c90
 	ld (hl),b		; $5c92
-	ld l,$2b		; $5c93
+	ld l,<w1Link.invincibilityCounter		; $5c93
 	ld (hl),c		; $5c95
 	ld a,SND_STRONG_POUND		; $5c96
 	jp playSound		; $5c98
+
+
+_veranFinal_spiderForm_webAttack_substate5:
 	call _ecom_decCounter1		; $5c9b
 	ret nz			; $5c9e
 	ld (hl),$08		; $5c9f
@@ -133600,7 +133791,10 @@ _label_10_164:
 	ld a,$06		; $5ca3
 	call enemySetAnimation		; $5ca5
 	ld b,$f6		; $5ca8
-	jr _label_10_163		; $5caa
+	jr _veranFinal_spiderForm_webAttack_updateLinkPosition		; $5caa
+
+
+_veranFinal_spiderForm_webAttack_substate6:
 	call _ecom_decCounter1		; $5cac
 	ret nz			; $5caf
 	ld (hl),$0f		; $5cb0
@@ -133611,228 +133805,306 @@ _label_10_164:
 	ld a,$14		; $5cb9
 	call setScreenShakeCounter		; $5cbb
 	ld b,$14		; $5cbe
-	call $5c6e		; $5cc0
-	ld bc,$f618		; $5cc3
-	jr _label_10_164		; $5cc6
+	call _veranFinal_spiderForm_webAttack_updateLinkPosition		; $5cc0
+	ldbc -10,$18		; $5cc3
+	jr _veranFinal_spiderForm_webAttack_applyDamageToLink		; $5cc6
+
+
+_veranFinal_spiderForm_webAttack_substate7:
 	call _ecom_decCounter1		; $5cc8
 	ret nz			; $5ccb
-	ld l,$a4		; $5ccc
+	ld l,Enemy.collisionType		; $5ccc
 	set 7,(hl)		; $5cce
-	call $5ad8		; $5cd0
-	ld hl,$d005		; $5cd3
+	call _veranFinal_spiderForm_setCounter2AndInitState2		; $5cd0
+
+
+_veranFinal_grabbingLink:
+	ld hl,w1Link.state2		; $5cd3
 	ld (hl),$02		; $5cd6
-	ld l,$24		; $5cd8
+	ld l,<w1Link.collisionType		; $5cd8
 	set 7,(hl)		; $5cda
 	ret			; $5cdc
+
+
+_veranFinal_beeForm:
 	ld a,(de)		; $5cdd
 	rst_jumpTable			; $5cde
-.dw $5ac0
-.dw $5cf7
-.dw $5d29
-.dw $5d52
-.dw $5d7d
-.dw $5da3
-.dw $5dca
-.dw $5df4
-.dw $5e2f
-.dw $5e43
-.dw $5e4f
-.dw $5e82
+	.dw _veranFinal_spiderOrBeeForm_state0
+	.dw _veranFinal_beeForm_state1
+	.dw _veranFinal_beeForm_state2
+	.dw _veranFinal_beeForm_state3
+	.dw _veranFinal_beeForm_state4
+	.dw _veranFinal_beeForm_state5
+	.dw _veranFinal_beeForm_state6
+	.dw _veranFinal_beeForm_state7
+	.dw _veranFinal_beeForm_state8
+	.dw _veranFinal_beeForm_state9
+	.dw _veranFinal_beeForm_stateA
+	.dw _veranFinal_beeForm_stateB
 
+
+_veranFinal_beeForm_state1:
 	call enemyAnimate		; $5cf7
-	ld e,$a1		; $5cfa
+	ld e,Enemy.animParameter		; $5cfa
 	ld a,(de)		; $5cfc
 	inc a			; $5cfd
 	ret nz			; $5cfe
 	ld a,$07		; $5cff
 	call enemySetAnimation		; $5d01
 	call _ecom_incState		; $5d04
-	ld l,$90		; $5d07
-	ld (hl),$50		; $5d09
+	ld l,Enemy.speed		; $5d07
+	ld (hl),SPEED_200		; $5d09
 	ld bc,$100c		; $5d0b
-	ld e,$6b		; $5d0e
-	ld l,$b2		; $5d10
+	ld e,ENEMYCOLLISION_VERAN_SPIDER_FORM_VULNERABLE		; $5d0e
+	ld l,Enemy.var32		; $5d10
+
+
+;;
+; @param	bc	collisionRadiusY/X
+; @param	e	enemyCollisionMode
+; @param	l	Pointer to health value
+; @addr{5d12}
+_veranFinal_initializeForm:
 	ld h,d			; $5d12
 	ld a,(hl)		; $5d13
-	ld l,$a9		; $5d14
+	ld l,Enemy.health		; $5d14
 	ld (hl),a		; $5d16
-	ld l,$a4		; $5d17
-	ld (hl),$82		; $5d19
+
+	ld l,Enemy.collisionType		; $5d17
+	ld (hl),$80|ENEMYID_VERAN_FINAL_FORM
 	inc l			; $5d1b
 	ld (hl),e		; $5d1c
-	ld l,$a6		; $5d1d
+
+	ld l,Enemy.collisionRadiusY		; $5d1d
 	ld (hl),b		; $5d1f
 	inc l			; $5d20
 	ld (hl),c		; $5d21
-	ld l,$9b		; $5d22
+
+	ld l,Enemy.oamFlagsBackup		; $5d22
 	ld a,$06		; $5d24
 	ldi (hl),a		; $5d26
 	ld (hl),a		; $5d27
 	ret			; $5d28
-	ld e,$8b		; $5d29
+
+
+_veranFinal_beeForm_state2:
+	ld e,Enemy.yh		; $5d29
 	ld a,(de)		; $5d2b
 	ldh (<hFF8F),a	; $5d2c
-	ld e,$8d		; $5d2e
+	ld e,Enemy.xh		; $5d2e
 	ld a,(de)		; $5d30
 	ldh (<hFF8E),a	; $5d31
-	ld bc,$5878		; $5d33
+	ldbc LARGE_ROOM_HEIGHT<<3, LARGE_ROOM_WIDTH<<3		; $5d33
 	sub c			; $5d36
 	add $02			; $5d37
 	cp $05			; $5d39
-	jr nc,_label_10_165	; $5d3b
+	jr nc,@updateMovement	; $5d3b
 	ldh a,(<hFF8F)	; $5d3d
 	sub b			; $5d3f
 	add $02			; $5d40
 	cp $05			; $5d42
-	jr nc,_label_10_165	; $5d44
+	jr nc,@updateMovement	; $5d44
+
+	; In middle of room
 	call _ecom_incState		; $5d46
-	jp $5fd2		; $5d49
-_label_10_165:
+	jp _veranFinal_beeForm_chooseRandomTargetPosition		; $5d49
+
+@updateMovement:
 	call _ecom_moveTowardPosition		; $5d4c
-_label_10_166:
+
+_veranFinal_beeForm_animate:
 	jp enemyAnimate		; $5d4f
-	call $601c		; $5d52
-	jr nc,_label_10_166	; $5d55
-	ld l,$8b		; $5d57
+
+
+_veranFinal_beeForm_state3:
+	call _veranFinal_moveTowardTargetPosition		; $5d52
+	jr nc,_veranFinal_beeForm_animate	; $5d55
+
+	ld l,Enemy.yh		; $5d57
 	ld (hl),b		; $5d59
-	ld l,$8d		; $5d5a
+	ld l,Enemy.xh		; $5d5a
 	ld (hl),c		; $5d5c
-	call $5fe5		; $5d5d
+	call _veranFinal_beeForm_nextTargetPosition		; $5d5d
 	call _ecom_decCounter2		; $5d60
-	jr nz,_label_10_166	; $5d63
-	ld l,$84		; $5d65
+	jr nz,_veranFinal_beeForm_animate	; $5d63
+
+	; Time to move off screen
+	ld l,Enemy.state		; $5d65
 	inc (hl)		; $5d67
-	ld l,$86		; $5d68
+	ld l,Enemy.counter1		; $5d68
 	ld (hl),$01		; $5d6a
-	ld l,$8d		; $5d6c
+	ld l,Enemy.xh		; $5d6c
 	bit 7,(hl)		; $5d6e
 	ld a,$00		; $5d70
-	jr nz,_label_10_167	; $5d72
+	jr nz,+			; $5d72
 	ld a,$f0		; $5d74
-_label_10_167:
-	ld l,$b7		; $5d76
++
+	ld l,Enemy.var37		; $5d76
 	ldd (hl),a		; $5d78
 	ld (hl),$e0		; $5d79
-	jr _label_10_166		; $5d7b
+	jr _veranFinal_beeForm_animate		; $5d7b
+
+
+; Moving off screen
+_veranFinal_beeForm_state4:
 	call _ecom_decCounter1		; $5d7d
-	jr nz,_label_10_168	; $5d80
-	ld (hl),$06		; $5d82
-	ld l,$b6		; $5d84
+	jr nz,++		; $5d80
+
+	ld (hl),$06 ; [counter1]
+	ld l,Enemy.var36		; $5d84
 	call _ecom_readPositionVars		; $5d86
 	call objectGetRelativeAngleWithTempVars		; $5d89
 	call objectNudgeAngleTowards		; $5d8c
-_label_10_168:
+++
 	call objectApplySpeed		; $5d8f
-	ld e,$8b		; $5d92
+	ld e,Enemy.yh		; $5d92
 	ld a,(de)		; $5d94
-	cp $c0			; $5d95
-	jr c,_label_10_166	; $5d97
+	cp (LARGE_ROOM_HEIGHT+1)<<4			; $5d95
+	jr c,_veranFinal_beeForm_animate	; $5d97
+
+	; Off screen
 	call _ecom_incState		; $5d99
-	ld l,$86		; $5d9c
-	ld (hl),$1e		; $5d9e
+	ld l,Enemy.counter1		; $5d9c
+	ld (hl),30		; $5d9e
 	jp objectSetInvisible		; $5da0
+
+
+; About to re-emerge on screen
+_veranFinal_beeForm_state5:
 	call _ecom_decCounter1		; $5da3
 	ret nz			; $5da6
-	ld (hl),$0f		; $5da7
+
+	ld (hl),$0f ; [counter1]
 	ld l,e			; $5da9
-	inc (hl)		; $5daa
-	ld l,$8b		; $5dab
+	inc (hl) ; [state]
+	ld l,Enemy.yh		; $5dab
 	ld (hl),$20		; $5dad
+
 	call getRandomNumber		; $5daf
 	and $10			; $5db2
-	ld bc,$08e8		; $5db4
-	jr z,_label_10_169	; $5db7
+	ldbc $08,$e8		; $5db4
+	jr z,++			; $5db7
 	ld b,c			; $5db9
 	ld c,$08		; $5dba
-_label_10_169:
+++
 	add $08			; $5dbc
-	ld l,$89		; $5dbe
+	ld l,Enemy.angle		; $5dbe
 	ld (hl),a		; $5dc0
-	ld l,$8d		; $5dc1
+	ld l,Enemy.xh		; $5dc1
 	ld (hl),b		; $5dc3
-	ld l,$b7		; $5dc4
+	ld l,Enemy.var37		; $5dc4
 	ld (hl),c		; $5dc6
 	jp objectSetVisible83		; $5dc7
+
+
+; Moving horizontally across screen while attacking
+_veranFinal_beeForm_state6:
 	call _ecom_decCounter1		; $5dca
-	jr nz,_label_10_170	; $5dcd
-	ld (hl),$0f		; $5dcf
-	ld b,$58		; $5dd1
+	jr nz,++		; $5dcd
+	ld (hl),$0f ; [counter1]
+	ld b,PARTID_58		; $5dd1
 	call _ecom_spawnProjectile		; $5dd3
-_label_10_170:
+++
 	call objectApplySpeed		; $5dd6
-	ld e,$8d		; $5dd9
+	ld e,Enemy.xh		; $5dd9
 	ld a,(de)		; $5ddb
 	ld h,d			; $5ddc
-	ld l,$b7		; $5ddd
+	ld l,Enemy.var37		; $5ddd
 	sub (hl)		; $5ddf
 	inc a			; $5de0
 	cp $03			; $5de1
 	jp nc,enemyAnimate		; $5de3
+
+	; Reached other side
 	call _ecom_incState		; $5de6
-	ld l,$86		; $5de9
-	ld (hl),$3c		; $5deb
-	ld l,$a4		; $5ded
+	ld l,Enemy.counter1		; $5de9
+	ld (hl),60		; $5deb
+	ld l,Enemy.collisionType		; $5ded
 	res 7,(hl)		; $5def
 	jp objectSetInvisible		; $5df1
+
+
+; About to re-emerge from some corner of the screen
+_veranFinal_beeForm_state7:
 	call _ecom_decCounter1		; $5df4
 	ret nz			; $5df7
-	call $6036		; $5df8
-_label_10_171:
+
+	; Choose which corner to emerge from (not the current one)
+	call _veranFinal_getQuadrant		; $5df8
+--
 	call getRandomNumber		; $5dfb
 	ld c,a			; $5dfe
 	and $03			; $5dff
 	cp b			; $5e01
-	jr z,_label_10_171	; $5e02
-	ld e,$b9		; $5e04
+	jr z,--			; $5e02
+
+	ld e,Enemy.var39		; $5e04
 	ld (de),a		; $5e06
 	add a			; $5e07
-	ld hl,$5eaa		; $5e08
+	ld hl,_veranFinal_beeForm_screenCornerEntrances		; $5e08
 	rst_addDoubleIndex			; $5e0b
-	ld e,$b6		; $5e0c
+	ld e,Enemy.var36		; $5e0c
 	ldi a,(hl)		; $5e0e
 	ld (de),a		; $5e0f
 	inc e			; $5e10
 	ldi a,(hl)		; $5e11
 	ld (de),a		; $5e12
-	ld e,$8b		; $5e13
+
+	ld e,Enemy.yh		; $5e13
 	ldi a,(hl)		; $5e15
 	ld (de),a		; $5e16
-	ld e,$8d		; $5e17
+	ld e,Enemy.xh		; $5e17
 	ld a,(hl)		; $5e19
 	ld (de),a		; $5e1a
+
 	ld a,c			; $5e1b
 	and $30			; $5e1c
 	swap a			; $5e1e
 	add $02			; $5e20
-	ld e,$87		; $5e22
+	ld e,Enemy.counter2		; $5e22
 	ld (de),a		; $5e24
+
 	call _ecom_incState		; $5e25
-	ld l,$a4		; $5e28
+	ld l,Enemy.collisionType		; $5e28
 	set 7,(hl)		; $5e2a
 	jp objectSetVisible83		; $5e2c
-	call $601c		; $5e2f
-	jr nc,_label_10_172	; $5e32
-	ld l,$8b		; $5e34
+
+
+_veranFinal_beeForm_state8:
+	call _veranFinal_moveTowardTargetPosition		; $5e2f
+	jr nc,_veranFinal_beeForm_animate2	; $5e32
+	ld l,Enemy.yh		; $5e34
 	ld (hl),b		; $5e36
-	ld l,$8d		; $5e37
+	ld l,Enemy.xh		; $5e37
 	ld (hl),c		; $5e39
-	ld l,$84		; $5e3a
+	ld l,Enemy.state		; $5e3a
 	inc (hl)		; $5e3c
-	ld l,$86		; $5e3d
-	ld (hl),$1e		; $5e3f
-	jr _label_10_172		; $5e41
+	ld l,Enemy.counter1		; $5e3d
+	ld (hl),30		; $5e3f
+	jr _veranFinal_beeForm_animate2		; $5e41
+
+
+_veranFinal_beeForm_state9:
 	call _ecom_decCounter1		; $5e43
-	jr nz,_label_10_172	; $5e46
-	ld (hl),$19		; $5e48
+	jr nz,_veranFinal_beeForm_animate2	; $5e46
+	ld (hl),25 ; [counter1]
 	ld l,e			; $5e4a
-	inc (hl)		; $5e4b
-_label_10_172:
+	inc (hl) ; [state2]
+
+_veranFinal_beeForm_animate2:
 	jp enemyAnimate		; $5e4c
+
+
+; Shooting out bees
+_veranFinal_beeForm_stateA:
 	call _ecom_decCounter1		; $5e4f
 	jr z,_label_10_173	; $5e52
-	ld a,(hl)		; $5e54
+
+	ld a,(hl) ; [counter1]
 	and $07			; $5e55
-	jr nz,_label_10_172	; $5e57
+	jr nz,_veranFinal_beeForm_animate2	; $5e57
+
+	; Spawn child bee
 	ld a,(hl)		; $5e59
 	and $18			; $5e5a
 	swap a			; $5e5c
@@ -133840,330 +134112,373 @@ _label_10_172:
 	dec a			; $5e5f
 	ld b,a			; $5e60
 	call getFreeEnemySlot		; $5e61
-	jr nz,_label_10_172	; $5e64
-	ld (hl),$1f		; $5e66
+	jr nz,_veranFinal_beeForm_animate2	; $5e64
+
+	ld (hl),ENEMYID_VERAN_CHILD_BEE		; $5e66
 	inc l			; $5e68
-	ld (hl),b		; $5e69
+	ld (hl),b ; [child.subid]
 	call objectCopyPosition		; $5e6a
 	ld a,SND_BEAM1		; $5e6d
 	call playSound		; $5e6f
-	jr _label_10_172		; $5e72
+	jr _veranFinal_beeForm_animate2		; $5e72
+
 _label_10_173:
-	ld (hl),$14		; $5e74
+	ld (hl),20 ; [counter1]
 	inc l			; $5e76
-	dec (hl)		; $5e77
+	dec (hl) ; [counter2]
 	ld l,e			; $5e78
-	jr z,_label_10_174	; $5e79
-	inc (hl)		; $5e7b
-	jr _label_10_172		; $5e7c
-_label_10_174:
-	ld (hl),$02		; $5e7e
-	jr _label_10_172		; $5e80
+	jr z,+			; $5e79
+	inc (hl) ; [state] = $0b
+	jr _veranFinal_beeForm_animate2		; $5e7c
++
+	ld (hl),$02 ; [state] = $02
+	jr _veranFinal_beeForm_animate2		; $5e80
+
+
+_veranFinal_beeForm_stateB:
 	call _ecom_decCounter1		; $5e82
-	jr nz,_label_10_172	; $5e85
+	jr nz,_veranFinal_beeForm_animate2	; $5e85
+
 	ld l,e			; $5e87
-	ld (hl),$08		; $5e88
-	call $6036		; $5e8a
-_label_10_175:
+	ld (hl),$08 ; [state]
+
+	call _veranFinal_getQuadrant		; $5e8a
+@chooseQuadrant:
 	call getRandomNumber		; $5e8d
 	and $03			; $5e90
 	cp b			; $5e92
-	jr z,_label_10_175	; $5e93
+	jr z,@chooseQuadrant	; $5e93
 	ld h,d			; $5e95
-	ld l,$b9		; $5e96
+	ld l,Enemy.var39		; $5e96
 	cp (hl)			; $5e98
-	jr z,_label_10_175	; $5e99
-	ld (hl),a		; $5e9b
+	jr z,@chooseQuadrant	; $5e99
+
+	ld (hl),a ; [var39]
 	add a			; $5e9c
-	ld hl,$5eaa		; $5e9d
+	ld hl,_veranFinal_beeForm_screenCornerEntrances		; $5e9d
 	rst_addDoubleIndex			; $5ea0
-	ld e,$b6		; $5ea1
+	ld e,Enemy.var36		; $5ea1
 	ldi a,(hl)		; $5ea3
 	ld (de),a		; $5ea4
 	inc e			; $5ea5
 	ld a,(hl)		; $5ea6
 	ld (de),a		; $5ea7
-	jr _label_10_172		; $5ea8
-	inc l			; $5eaa
-	inc a			; $5eab
-	nop			; $5eac
-	nop			; $5ead
-	inc l			; $5eae
-	or h			; $5eaf
-	nop			; $5eb0
-	ld a,($ff00+$84)	; $5eb1
-	inc a			; $5eb3
-	or b			; $5eb4
-	nop			; $5eb5
-	add h			; $5eb6
-	or h			; $5eb7
-	or b			; $5eb8
-	ld a,($ff00+$36)	; $5eb9
-	ld bc,$a42e		; $5ebb
-	ld (hl),$96		; $5ebe
-	ld l,$a9		; $5ec0
+	jr _veranFinal_beeForm_animate2		; $5ea8
+
+
+_veranFinal_beeForm_screenCornerEntrances:
+	.db $2c $3c $00 $00
+	.db $2c $b4 $00 $f0
+	.db $84 $3c $b0 $00
+	.db $84 $b4 $b0 $f0
+
+
+;;
+; @param	hl	Enemy.state
+; @addr{5eba}
+_veranFinal_transformToBeeOrSpider:
+	ld (hl),$01		; $5eba
+	ld l,Enemy.collisionType		; $5ebc
+	ld (hl),$80|ENEMYID_BEAMOS		; $5ebe
+
+	ld l,Enemy.health		; $5ec0
 	ld a,(hl)		; $5ec2
-	ld l,$b0		; $5ec3
+	ld l,Enemy.var30		; $5ec3
 	ld (hl),a		; $5ec5
-	ld l,$9b		; $5ec6
+
+	ld l,Enemy.oamFlagsBackup		; $5ec6
 	ld a,$07		; $5ec8
 	ldi (hl),a		; $5eca
 	ld (hl),a		; $5ecb
+
 	call getRandomNumber_noPreserveVars		; $5ecc
 	and $03			; $5ecf
 	ld b,a			; $5ed1
-	ld e,$b5		; $5ed2
+	ld e,Enemy.var35		; $5ed2
 	ld a,(de)		; $5ed4
 	ld c,a			; $5ed5
 	inc a			; $5ed6
 	and $07			; $5ed7
 	ld (de),a		; $5ed9
+
 	ld a,c			; $5eda
 	add a			; $5edb
 	add a			; $5edc
 	add b			; $5edd
-	ld hl,$5ef6		; $5ede
+	ld hl,@transformSequence		; $5ede
 	call checkFlag		; $5ee1
-	jr z,_label_10_176	; $5ee4
+	jr z,+			; $5ee4
 	ld a,$01		; $5ee6
-_label_10_176:
++
 	inc a			; $5ee8
-	ld e,$82		; $5ee9
+	ld e,Enemy.subid		; $5ee9
 	ld (de),a		; $5eeb
 	add $09			; $5eec
 	call enemySetAnimation		; $5eee
 	ld a,SND_TRANSFORM		; $5ef1
 	jp playSound		; $5ef3
-	inc bc			; $5ef6
-	ld a,a			; $5ef7
-	scf			; $5ef8
-	ld a,($ff00+$78)	; $5ef9
+
+; Each 4 bits is a set of possible values (0=spider, 1=bee).
+; [var35] determines which set of 4 bits is randomly chosen from.
+; So, for instance, veran always turns into a spider in round 2 due to the 4 '0's?
+@transformSequence:
+	dbrev %11000000 %11111110 %11101100 %00001111
+
+
+;;
+; @param	b	Distance
+; @param[out]	cflag	c if Link is within 'b' pixels of self
+; @addr{5efa}
+_veranFinal_spiderForm_checkLinkWithinDistance:
+	ld a,b			; $5efa
 	add a			; $5efb
 	inc a			; $5efc
 	ld c,a			; $5efd
 	ld a,(w1Link.yh)		; $5efe
 	ld h,d			; $5f01
-	ld l,$8b		; $5f02
+	ld l,Enemy.yh		; $5f02
 	sub (hl)		; $5f04
 	add b			; $5f05
 	cp c			; $5f06
 	ret nc			; $5f07
 	ld a,(w1Link.xh)		; $5f08
-	ld l,$8d		; $5f0b
+	ld l,Enemy.xh		; $5f0b
 	sub (hl)		; $5f0d
 	add b			; $5f0e
 	cp c			; $5f0f
 	ret			; $5f10
+
+
+;;
+; @param[out]	cflag	c if will do an attack (state changed to 4)
+; @addr{5f11}
+_veranFinal_spiderForm_decideWhetherToAttack:
 	call objectGetAngleTowardLink		; $5f11
 	ld e,a			; $5f14
+
+@considerRushAttack:
 	ld b,$60		; $5f15
-	call $5efa		; $5f17
-	jr nc,_label_10_177	; $5f1a
+	call _veranFinal_spiderForm_checkLinkWithinDistance		; $5f17
+	jr nc,@considerJumpAttack	; $5f1a
+
+	; BUG: is this supposed to 'ld a,e' first? This would check that Link is at a relatively
+	; diagonal angle. Instead, this seems to compare their difference in x-positions modulo 8.
 	and $07			; $5f1c
 	sub $03			; $5f1e
 	cp $03			; $5f20
 	ld a,$00		; $5f22
-	jr c,_label_10_179	; $5f24
-_label_10_177:
+	jr c,@doAttack	; $5f24
+
+@considerJumpAttack:
 	ld b,$50		; $5f26
-	call $5efa		; $5f28
-	jr c,_label_10_178	; $5f2b
+	call _veranFinal_spiderForm_checkLinkWithinDistance		; $5f28
+	jr c,@considerGrabAttack	; $5f2b
+
+	; Check that Link is diagonal relative to the spider.
+	; That shouldn't really matter for this attack, though...
 	ld a,e			; $5f2d
 	and $07			; $5f2e
 	sub $03			; $5f30
 	cp $03			; $5f32
 	ccf			; $5f34
 	ld a,$01		; $5f35
-	jr c,_label_10_179	; $5f37
-_label_10_178:
+	jr c,@doAttack	; $5f37
+
+@considerGrabAttack:
+	; Check that Link is below the spider
 	ld a,e			; $5f39
 	sub $0c			; $5f3a
 	cp $09			; $5f3c
 	ret nc			; $5f3e
+
+	; Grab attack
 	ld a,$02		; $5f3f
-_label_10_179:
-	ld e,$83		; $5f41
+
+@doAttack:
+	ld e,Enemy.var03		; $5f41
 	ld (de),a		; $5f43
 	ld h,d			; $5f44
-	ld l,$84		; $5f45
+	ld l,Enemy.state		; $5f45
 	ld (hl),$04		; $5f47
 	inc l			; $5f49
-	ld (hl),$00		; $5f4a
+	ld (hl),$00 ; [state2]
 	scf			; $5f4c
 	ret			; $5f4d
-	ld e,$82		; $5f4e
+
+
+;;
+; @addr{5f4e}
+_veranFinal_dead:
+	ld e,Enemy.subid		; $5f4e
 	ld a,(de)		; $5f50
 	or a			; $5f51
-	jr nz,_label_10_180	; $5f52
+	jr nz,@transformed	; $5f52
+
+	; Not transformed; dead for real
 	ld h,d			; $5f54
-	ld l,$84		; $5f55
+	ld l,Enemy.state		; $5f55
 	ld (hl),$0a		; $5f57
 	inc l			; $5f59
 	ld (hl),$00		; $5f5a
-	ld l,$a9		; $5f5c
+	ld l,Enemy.health		; $5f5c
 	inc (hl)		; $5f5e
 	ld a,SNDCTRL_STOPMUSIC		; $5f5f
 	jp playSound		; $5f61
-_label_10_180:
+
+@transformed:
 	ld b,a			; $5f64
 	ld h,d			; $5f65
 	ld l,e			; $5f66
-	ld (hl),$00		; $5f67
-	ld l,$84		; $5f69
+	ld (hl),$00 ; [subid]
+	ld l,Enemy.state		; $5f69
 	ld (hl),$09		; $5f6b
-	ld l,$b0		; $5f6d
+
+	; Restore turtle health
+	ld l,Enemy.var30		; $5f6d
 	ld a,(hl)		; $5f6f
-	ld l,$a9		; $5f70
+	ld l,Enemy.health		; $5f70
 	ld (hl),a		; $5f72
-	ld l,$a4		; $5f73
-	ld (hl),$96		; $5f75
-	ld l,$a6		; $5f77
+
+	ld l,Enemy.collisionType		; $5f73
+	ld (hl),$80|ENEMYID_BEAMOS		; $5f75
+
+	ld l,Enemy.collisionRadiusY		; $5f77
 	ld (hl),$08		; $5f79
 	inc l			; $5f7b
-	ld (hl),$0a		; $5f7c
-_label_10_181:
-	ld l,$9b		; $5f7e
+	ld (hl),$0a ; [collisionRadiusX]
+
+	ld l,Enemy.oamFlagsBackup		; $5f7e
 	ld a,$07		; $5f80
 	ldi (hl),a		; $5f82
 	ld (hl),a		; $5f83
-	ld a,b			; $5f84
+
+	ld a,b ; [subid]
 	add $07			; $5f85
 	call enemySetAnimation		; $5f87
 	ld a,SND_TRANSFORM		; $5f8a
 	jp playSound		; $5f8c
+
+
+_veranFinal_spiderForm_decideAngle:
 	ld b,$00		; $5f8f
-	ld e,$8b		; $5f91
+	ld e,Enemy.yh		; $5f91
 	ld a,(de)		; $5f93
-	cp $58			; $5f94
-	jr c,_label_10_182	; $5f96
+	cp (LARGE_ROOM_HEIGHT<<4)/2
+	jr c,+			; $5f96
 	ld b,$10		; $5f98
-_label_10_182:
-	ld e,$8d		; $5f9a
++
+	ld e,Enemy.xh		; $5f9a
 	ld a,(de)		; $5f9c
-	cp $78			; $5f9d
-	jr c,_label_10_183	; $5f9f
+	cp (LARGE_ROOM_WIDTH<<4)/2
+	jr c,+			; $5f9f
 	set 3,b			; $5fa1
-_label_10_183:
++
 	call getRandomNumber		; $5fa3
 	and $07			; $5fa6
 	add b			; $5fa8
-_label_10_184:
-	ld hl,$5fb2		; $5fa9
+	ld hl,@angles		; $5fa9
 	rst_addAToHl			; $5fac
-	ld e,$89		; $5fad
+	ld e,Enemy.angle		; $5fad
 	ld a,(hl)		; $5faf
 	ld (de),a		; $5fb0
 	ret			; $5fb1
-	inc b			; $5fb2
-	inc b			; $5fb3
-	inc c			; $5fb4
-	inc c			; $5fb5
-	inc c			; $5fb6
-	inc d			; $5fb7
-	inc d			; $5fb8
-	inc e			; $5fb9
-_label_10_185:
-	inc b			; $5fba
-	inc c			; $5fbb
-	inc c			; $5fbc
-	inc d			; $5fbd
-	inc d			; $5fbe
-	inc d			; $5fbf
-	inc e			; $5fc0
-	inc e			; $5fc1
-	inc b			; $5fc2
-	inc b			; $5fc3
-	inc b			; $5fc4
-	inc c			; $5fc5
-	inc c			; $5fc6
-	inc d			; $5fc7
-	inc e			; $5fc8
-	inc e			; $5fc9
-	inc b			; $5fca
-	inc b			; $5fcb
-_label_10_186:
-	inc c			; $5fcc
-	inc d			; $5fcd
-	inc d			; $5fce
-	inc e			; $5fcf
-	inc e			; $5fd0
-	inc e			; $5fd1
+
+@angles:
+	.db $04 $04 $0c $0c $0c $14 $14 $1c
+	.db $04 $0c $0c $14 $14 $14 $1c $1c
+	.db $04 $04 $04 $0c $0c $14 $1c $1c
+	.db $04 $04 $0c $14 $14 $1c $1c $1c
+
+;;
+; @addr{5fd2}
+_veranFinal_beeForm_chooseRandomTargetPosition:
 	ld bc,$0801		; $5fd2
 	call _ecom_randomBitwiseAndBCE		; $5fd5
-	ld e,$86		; $5fd8
+	ld e,Enemy.counter1		; $5fd8
 	ld a,b			; $5fda
 	ld (de),a		; $5fdb
+
 	ld a,c			; $5fdc
-	ld hl,$5ffa		; $5fdd
+	ld hl,_veranFinal_beeForm_counter2Vals		; $5fdd
 	rst_addAToHl			; $5fe0
-	ld e,$87		; $5fe1
+	ld e,Enemy.counter2		; $5fe1
 	ld a,(hl)		; $5fe3
 	ld (de),a		; $5fe4
-	ld e,$86		; $5fe5
+
+;;
+; @addr{5fe5}
+_veranFinal_beeForm_nextTargetPosition:
+	ld e,Enemy.counter1		; $5fe5
 	ld a,(de)		; $5fe7
 	ld b,a			; $5fe8
 	inc a			; $5fe9
 	and $0f			; $5fea
 	ld (de),a		; $5fec
 	ld a,b			; $5fed
-	ld hl,$5ffc		; $5fee
+	ld hl,_veranFinal_beeForm_targetPositions		; $5fee
 	rst_addDoubleIndex			; $5ff1
-	ld e,$b6		; $5ff2
+	ld e,Enemy.var36		; $5ff2
 	ldi a,(hl)		; $5ff4
 	ld (de),a		; $5ff5
 	inc e			; $5ff6
 	ld a,(hl)		; $5ff7
-	ld (de),a		; $5ff8
+	ld (de),a ; [var37]
 	ret			; $5ff9
-	inc d			; $5ffa
-	inc h			; $5ffb
-	jr c,_label_10_181	; $5ffc
-	jr nz,-$70		; $5ffe
-	jr nz,_label_10_185	; $6000
-	jr c,_label_10_186	; $6002
-	ld a,b			; $6004
-	ret z			; $6005
-	sub b			; $6006
-	cp b			; $6007
-	sub b			; $6008
-	sub b			; $6009
-	ld a,b			; $600a
-	add b			; $600b
-	jr c,_label_10_192	; $600c
-	jr nz,_label_10_191	; $600e
-	jr nz,_label_10_190	; $6010
-	jr c,_label_10_188	; $6012
-	ld a,b			; $6014
-	jr z,-$70		; $6015
-	jr c,_label_10_184	; $6017
-	ld h,b			; $6019
-	ld a,b			; $601a
-	ld (hl),b		; $601b
+
+_veranFinal_beeForm_counter2Vals:
+	.db $14 $24
+
+_veranFinal_beeForm_targetPositions:
+	.db $38 $80
+	.db $20 $90
+	.db $20 $b8
+	.db $38 $c8
+	.db $78 $c8
+	.db $90 $b8
+	.db $90 $90
+	.db $78 $80
+	.db $38 $70
+	.db $20 $60
+	.db $20 $38
+	.db $38 $28
+	.db $78 $28
+	.db $90 $38
+	.db $90 $60
+	.db $78 $70
+
+
+;;
+; @addr{601c}
+_veranFinal_moveTowardTargetPosition:
 	ld h,d			; $601c
-	ld l,$b6		; $601d
+	ld l,Enemy.var36		; $601d
 	call _ecom_readPositionVars		; $601f
 	sub c			; $6022
 	add $02			; $6023
 	cp $05			; $6025
-	jr nc,_label_10_187	; $6027
+	jr nc,++		; $6027
 	ldh a,(<hFF8F)	; $6029
 	sub b			; $602b
 	add $02			; $602c
 	cp $05			; $602e
 	ret c			; $6030
-_label_10_187:
+++
 	call _ecom_moveTowardPosition		; $6031
 	or d			; $6034
 	ret			; $6035
+
+;;
+; @param[out]	b	Value from 0-3 corresponding to screen quadrant
+; @addr{6036}
+_veranFinal_getQuadrant:
 	ld b,$00		; $6036
 	ldh a,(<hEnemyTargetY)	; $6038
-	cp $58			; $603a
-_label_10_188:
-	jr c,_label_10_189	; $603c
+	cp LARGE_ROOM_HEIGHT*16/2			; $603a
+	jr c,+			; $603c
 	ld b,$02		; $603e
-_label_10_189:
++
 	ldh a,(<hEnemyTargetX)	; $6040
-	cp $78			; $6042
+	cp LARGE_ROOM_WIDTH*16/2			; $6042
 	ret c			; $6044
 	inc b			; $6045
 	ret			; $6046

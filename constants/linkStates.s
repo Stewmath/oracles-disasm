@@ -35,7 +35,7 @@
 	; Plays the boss death sound effect?
 	LINK_STATE_GRABBED_BY_WALLMASTER	db ; $0c
 
-	; Grabbed by Likelike, Gohma (seasons), Veran spider form (ages)?
+	; Grabbed by Likelike, Gohma (seasons), Veran spider form (ages)
 	LINK_STATE_GRABBED			db ; $0d
 
 	; This state might be used in Seasons when opening d4?

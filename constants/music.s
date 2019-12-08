@@ -181,7 +181,7 @@
 	SND_TEXT                db ; $66
 	SND_BOSS_DEAD           db ; $67
 	SND_UNKNOWN3            db ; $68 ; I can't remember what this is but it sounds familiar
-	SND_UNKNOWN4            db ; $69
+	SND_UNKNOWN4            db ; $69 ; Veran turtle form jumping?
 	SND_SLASH               db ; $6a ; Not a sword slash, idk really
 	SND_SWORDSPIN           db ; $6b
 	SND_OPENCHEST           db ; $6c
