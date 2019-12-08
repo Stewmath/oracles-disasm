@@ -1,3 +1,5 @@
+; (TODO: update with changes to constants/ages/enemyCollisionModes.s)
+;
 ; The collision system works between two groups of objects: Items and Special Objects (A),
 ; and Enemies and Parts (B). We'll simplify these groups to "Items" and "Enemies". Link
 ; counts as an "item" (though he's really a "special object"), and enemies' projectiles
@@ -399,7 +401,7 @@ objectCollisionTable:
 	.db $02 $00 $00 $00 $1c $1c $1c $1c $00 $1c $00 $00 $00 $2e $1c $00
 	.db $00 $00 $00 $00 $00 $2d $1c $1c $00 $20 $20 $20 $20 $20 $20 $00
 
-	; ENEMYCOLLISION_VERAN_HUMAN (0x5c)
+	; ENEMYCOLLISION_VERAN_FAIRY (0x5c)
 	.db $02 $06 $05 $05 $21 $21 $21 $21 $21 $21 $21 $21 $00 $1c $1c $00
 	.db $00 $00 $00 $00 $00 $2d $21 $1c $21 $21 $20 $20 $21 $20 $20 $00
 

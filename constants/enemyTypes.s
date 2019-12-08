@@ -30,7 +30,7 @@
 .define ENEMYID_RAMROCK_ARMS			$05
 
 ;;
-.define ENEMYID_VERAN_HUMAN			$06
+.define ENEMYID_VERAN_FAIRY			$06
 
 ;;
 ; @palette{PALH_83}

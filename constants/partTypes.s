@@ -135,9 +135,17 @@
 .define PARTID_SPIKED_BALL			$2a
 
 ;;
+; Used by ENEMYID_VERAN_FAIRY
+.define PARTID_2d				$2d
+
+;;
 ; When this object exists, it applies the effects of whirlpool and pollution tiles.
 ; It's a bit weird to put this functionality in an object...
 .define PARTID_SEA_EFFECTS			$2e
+
+;;
+; Turns Link intoa baby
+.define PARTID_BABY_BALL			$2f
 
 ;;
 ; Decorative heart when Great Fairy is healing Link
@@ -165,7 +173,7 @@
 .define PARTID_CANDLE_FLAME			$36
 
 ;;
-; Used by ENEMYID_VERAN_POSSESSION_BOSS.
+; Used by ENEMYID_VERAN_POSSESSION_BOSS, ENEMYID_VERAN_FAIRY.
 ;
 ; @subid_00{The "core" which fires the actual projectiles}
 ; @subid_01{An actual projectile}

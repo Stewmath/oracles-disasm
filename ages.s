@@ -65703,7 +65703,7 @@ _runVeranGhostSubid2:
 @substate2:
 	call getFreeEnemySlot		; $4e59
 	ret nz			; $4e5c
-	ld (hl),ENEMYID_VERAN_HUMAN		; $4e5d
+	ld (hl),ENEMYID_VERAN_FAIRY		; $4e5d
 	call objectCopyPosition		; $4e5f
 	ld e,Interaction.relatedObj2		; $4e62
 	ld a,Enemy.start		; $4e64
@@ -115995,7 +115995,7 @@ _veranPossessionBoss_humanForm_stateB:
 	ld (hl),120 ; [counter1]
 
 	ld l,Enemy.enemyCollisionMode		; $7a2b
-	ld (hl),ENEMYCOLLISION_VERAN_HUMAN		; $7a2d
+	ld (hl),ENEMYCOLLISION_VERAN_FAIRY		; $7a2d
 
 	ld l,e			; $7a2f
 	inc (hl) ; [state]
@@ -135212,124 +135212,168 @@ _enemy05_subid4And5XPositions:
 _enemy05_subid4And5Angles:
 	.db $08 $18
 
-;;
-; @addr{640d}
+
+; ==============================================================================
+; ENEMYID_VERAN_FAIRY
+;
+; Variables:
+;   var03: Attack index
+;   var30: Movement pattern index (0-3)
+;   var31/var32: Pointer to movement pattern
+;   var33/var34: Target position to move to
+;   var35: Number from 0-2 based on health (lower means more health)
+;   var36: ?
+;   var38: Timer to stay still after doing a movement pattern
+; ==============================================================================
 enemyCode06:
-	jr z,_label_10_215	; $640d
-	sub $03			; $640f
+	jr z,@normalStatus	; $640d
+	sub ENEMYSTATUS_NO_HEALTH			; $640f
 	ret c			; $6411
-	jr nz,_label_10_214	; $6412
-	ld e,$ab		; $6414
+	jr nz,@justHit	; $6412
+
+	; No health
+	ld e,Enemy.invincibilityCounter		; $6414
 	ld a,(de)		; $6416
 	ret nz			; $6417
 	call checkLinkCollisionsEnabled		; $6418
 	ret nc			; $641b
-	ld a,$01		; $641c
+
+	ld a,DISABLE_LINK		; $641c
 	ld (wDisabledObjects),a		; $641e
 	ld (wMenuDisabled),a		; $6421
 	ld h,d			; $6424
-	ld l,$a9		; $6425
+	ld l,Enemy.health		; $6425
 	inc (hl)		; $6427
-	ld l,$84		; $6428
+	ld l,Enemy.state		; $6428
 	ld (hl),$05		; $642a
 	inc l			; $642c
-	ld (hl),$00		; $642d
-	ld l,$86		; $642f
-	ld (hl),$3c		; $6431
-	jr _label_10_215		; $6433
-_label_10_214:
-	call $66d9		; $6435
-	ld hl,$6695		; $6438
+	ld (hl),$00 ; [state2]
+	ld l,Enemy.counter1		; $642f
+	ld (hl),60		; $6431
+	jr @normalStatus		; $6433
+
+@justHit:
+	call _veranFairy_updateVar35BasedOnHealth		; $6435
+	ld hl,_veranFairy_speedTable		; $6438
 	rst_addAToHl			; $643b
-	ld e,$90		; $643c
+	ld e,Enemy.speed		; $643c
 	ld a,(hl)		; $643e
 	ld (de),a		; $643f
-_label_10_215:
-	ld e,$84		; $6440
+
+@normalStatus:
+	ld e,Enemy.state		; $6440
 	ld a,(de)		; $6442
 	rst_jumpTable			; $6443
-.dw $6450
-.dw $646b
-.dw $6556
-.dw $6597
-.dw $65dc
-.dw $65e7
+	.dw _veranFairy_state0
+	.dw _veranFairy_state1
+	.dw _veranFairy_state2
+	.dw _veranFairy_state3
+	.dw _veranFairy_state4
+	.dw _veranFairy_state5
 
-	ld a,$06		; $6450
+_veranFairy_state0:
+	ld a,ENEMYID_VERAN_FAIRY		; $6450
 	ld (wEnemyIDToLoadExtraGfx),a		; $6452
 	call _ecom_incState		; $6455
-	ld l,$86		; $6458
-	ld (hl),$3c		; $645a
-	ld l,$90		; $645c
-	ld (hl),$32		; $645e
-	ld l,$b0		; $6460
+	ld l,Enemy.counter1		; $6458
+	ld (hl),60		; $645a
+	ld l,Enemy.speed		; $645c
+	ld (hl),SPEED_140		; $645e
+	ld l,Enemy.var30		; $6460
 	dec (hl)		; $6462
 	ld a,$02		; $6463
 	call enemySetAnimation		; $6465
 	jp objectSetVisible82		; $6468
+
+; Cutscene just prior to fairy form
+_veranFairy_state1:
 	inc e			; $646b
 	ld a,(de)		; $646c
 	rst_jumpTable			; $646d
-.dw $6488
-.dw $6495
-.dw $64a1
-.dw $64ad
-.dw $64c2
-.dw $64c6
-.dw $64ca
-.dw $64ce
-.dw $64d2
-.dw $64e0
-.dw $6502
-.dw $653a
-.dw $654b
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw @substate4
+	.dw @substate5
+	.dw @substate6
+	.dw @substate7
+	.dw @substate8
+	.dw @substate9
+	.dw @substateA
+	.dw @substateB
+	.dw @substateC
+
+@substate0:
 	call _ecom_decCounter1		; $6488
 	jp nz,_ecom_flickerVisibility		; $648b
 	ld (hl),$08		; $648e
 	ld l,e			; $6490
-	inc (hl)		; $6491
+	inc (hl) ; [state2]
 	jp objectSetVisible83		; $6492
+
+@substate1:
 	call _ecom_decCounter1		; $6495
 	ret nz			; $6498
 	ld l,e			; $6499
-	inc (hl)		; $649a
-	ld bc,$560f		; $649b
+	inc (hl) ; [state2]
+	ld bc,TX_560f		; $649b
 	jp showText		; $649e
+
+@substate2:
 	call _ecom_incState2		; $64a1
-	ld l,$86		; $64a4
-	ld (hl),$1e		; $64a6
+	ld l,Enemy.counter1		; $64a4
+	ld (hl),30		; $64a6
 	ld a,$04		; $64a8
 	jp enemySetAnimation		; $64aa
+
+@substate3:
 	ld c,$33		; $64ad
-_label_10_216:
+
+@strikeLightningAfterCountdown:
 	call _ecom_decCounter1		; $64af
 	ret nz			; $64b2
-	ld (hl),$0a		; $64b3
+	ld (hl),10 ; [counter1]
 	ld l,e			; $64b5
-	inc (hl)		; $64b6
+	inc (hl) ; [state2]
+
+@strikeLightning:
 	call getFreePartSlot		; $64b7
 	ret nz			; $64ba
-	ld (hl),$27		; $64bb
-	ld l,$cb		; $64bd
+	ld (hl),PARTID_LIGHTNING		; $64bb
+	ld l,Part.yh		; $64bd
 	jp setShortPosition_paramC		; $64bf
+
+@substate4:
 	ld c,$7b		; $64c2
-	jr _label_10_216		; $64c4
+	jr @strikeLightningAfterCountdown		; $64c4
+
+@substate5:
 	ld c,$55		; $64c6
-	jr _label_10_216		; $64c8
+	jr @strikeLightningAfterCountdown		; $64c8
+
+@substate6:
 	ld c,$3b		; $64ca
-	jr _label_10_216		; $64cc
+	jr @strikeLightningAfterCountdown		; $64cc
+
+@substate7:
 	ld c,$73		; $64ce
-	jr _label_10_216		; $64d0
+	jr @strikeLightningAfterCountdown		; $64d0
+
+@substate8:
 	call _ecom_decCounter1		; $64d2
 	ret nz			; $64d5
 	ld l,e			; $64d6
-	inc (hl)		; $64d7
+	inc (hl) ; [state2]
 	ld c,$59		; $64d8
-	call $64b7		; $64da
+	call @strikeLightning		; $64da
 	jp fadeoutToWhite		; $64dd
+
+; Remove pillar tiles
+@substate9:
 	ld b,$0c		; $64e0
-	ld hl,$64f6		; $64e2
-_label_10_217:
+	ld hl,@pillarPositions		; $64e2
+@loop
 	push bc			; $64e5
 	ldi a,(hl)		; $64e6
 	ld c,a			; $64e7
@@ -135339,53 +135383,53 @@ _label_10_217:
 	pop hl			; $64ee
 	pop bc			; $64ef
 	dec b			; $64f0
-	jr nz,_label_10_217	; $64f1
+	jr nz,@loop	; $64f1
 	jp _ecom_incState2		; $64f3
-	inc hl			; $64f6
-	inc sp			; $64f7
-	ld h,e			; $64f8
-	ld (hl),e		; $64f9
-	ld b,l			; $64fa
-	ld d,l			; $64fb
-	ld c,c			; $64fc
-	ld e,c			; $64fd
-	dec hl			; $64fe
-	dec sp			; $64ff
-	ld l,e			; $6500
-	ld a,e			; $6501
+
+@pillarPositions:
+	.db $23 $33 $63 $73 $45 $55 $49 $59
+	.db $2b $3b $6b $7b
+
+; Spawn mimics
+@substateA:
 	ld b,$04		; $6502
-	ld hl,$6536		; $6504
-_label_10_218:
+	ld hl,@mimicPositions		; $6504
+
+@nextMimic:
 	ldi a,(hl)		; $6507
 	ld c,a			; $6508
 	push hl			; $6509
 	call getFreeEnemySlot		; $650a
-	jr nz,_label_10_219	; $650d
-	ld (hl),$64		; $650f
-	ld l,$8b		; $6511
+	jr nz,++		; $650d
+	ld (hl),ENEMYID_LINK_MIMIC		; $650f
+	ld l,Enemy.yh		; $6511
 	call setShortPosition_paramC		; $6513
-_label_10_219:
+++
 	pop hl			; $6516
 	dec b			; $6517
-	jr nz,_label_10_218	; $6518
+	jr nz,@nextMimic	; $6518
+
 	call _ecom_incState2		; $651a
-	ld l,$86		; $651d
-	ld (hl),$1e		; $651f
-	ld l,$9b		; $6521
+	ld l,Enemy.counter1		; $651d
+	ld (hl),30		; $651f
+
+	ld l,Enemy.oamFlagsBackup		; $6521
 	xor a			; $6523
 	ldi (hl),a		; $6524
 	ld (hl),a		; $6525
-	ld l,$8f		; $6526
+
+	ld l,Enemy.zh		; $6526
 	dec (hl)		; $6528
 	call objectSetVisible83		; $6529
 	ld a,$05		; $652c
 	call enemySetAnimation		; $652e
 	ld a,$04		; $6531
 	jp fadeinFromWhiteWithDelay		; $6533
-	inc sp			; $6536
-	ld (hl),e		; $6537
-	dec sp			; $6538
-	ld a,e			; $6539
+
+@mimicPositions:
+	.db $33 $73 $3b $7b
+
+@substateB:
 	ld a,(wPaletteThread_mode)		; $653a
 	or a			; $653d
 	ret nz			; $653e
@@ -135393,129 +135437,161 @@ _label_10_219:
 	ret nz			; $6542
 	ld l,e			; $6543
 	inc (hl)		; $6544
-	ld bc,$5610		; $6545
+	ld bc,TX_5610		; $6545
 	jp showText		; $6548
+
+@substateC:
 	ld h,d			; $654b
-	ld l,$84		; $654c
+	ld l,Enemy.state		; $654c
 	inc (hl)		; $654e
-	ld l,$87		; $654f
-	ld (hl),$78		; $6551
+	ld l,Enemy.counter2		; $654f
+	ld (hl),120		; $6551
 	jp _enemyBoss_beginBoss		; $6553
+
+
+; Choosing a movement pattern and attack
+_veranFairy_state2:
 	call getRandomNumber_noPreserveVars		; $6556
 	and $07			; $6559
 	ld b,a			; $655b
-	ld e,$b5		; $655c
+	ld e,Enemy.var35		; $655c
 	ld a,(de)		; $655e
 	swap a			; $655f
 	rrca			; $6561
 	add b			; $6562
-	ld hl,$667d		; $6563
+	ld hl,_veranFairy_attackTable		; $6563
 	rst_addAToHl			; $6566
-	ld e,$83		; $6567
+	ld e,Enemy.var03		; $6567
 	ld a,(hl)		; $6569
 	ld (de),a		; $656a
+
 	call _ecom_incState		; $656b
-	ld l,$b8		; $656e
-	ld (hl),$3c		; $6570
-	ld l,$b6		; $6572
+	ld l,Enemy.var38		; $656e
+	ld (hl),60		; $6570
+	ld l,Enemy.var36		; $6572
 	ld (hl),$00		; $6574
-_label_10_220:
+--
 	call getRandomNumber		; $6576
 	and $03			; $6579
-	ld l,$b0		; $657b
+	ld l,Enemy.var30		; $657b
 	cp (hl)			; $657d
-	jr z,_label_10_220	; $657e
+	jr z,--			; $657e
 	ld (hl),a		; $6580
-	ld hl,$664b		; $6581
+
+	ld hl,_veranFairy_movementPatternTable		; $6581
 	rst_addDoubleIndex			; $6584
 	ldi a,(hl)		; $6585
 	ld h,(hl)		; $6586
 	ld l,a			; $6587
-	ld e,$b3		; $6588
+	ld e,Enemy.var33		; $6588
 	ldi a,(hl)		; $658a
 	ld (de),a		; $658b
 	inc e			; $658c
-	ldi a,(hl)		; $658d
+	ldi a,(hl) ; [var34]
 	ld (de),a		; $658e
-	ld e,$b1		; $658f
+
+_veranFairy_saveMovementPatternPointer:
+	ld e,Enemy.var31		; $658f
 	ld a,l			; $6591
 	ld (de),a		; $6592
 	inc e			; $6593
 	ld a,h			; $6594
 	ld (de),a		; $6595
 	ret			; $6596
-	call $66ed		; $6597
+
+
+; Moving and attacking
+_veranFairy_state3:
+	call _veranFairy_66ed		; $6597
+
 	ld h,d			; $659a
-	ld l,$b3		; $659b
+	ld l,Enemy.var33		; $659b
 	call _ecom_readPositionVars		; $659d
 	sub c			; $65a0
 	add $02			; $65a1
 	cp $05			; $65a3
-	jr nc,_label_10_222	; $65a5
+	jr nc,@updateMovement	; $65a5
 	ldh a,(<hFF8F)	; $65a7
 	sub b			; $65a9
 	add $02			; $65aa
 	cp $05			; $65ac
-	jr nc,_label_10_222	; $65ae
-	ld l,$8b		; $65b0
+	jr nc,@updateMovement	; $65ae
+
+	; Reached target position
+	ld l,Enemy.yh		; $65b0
 	ld (hl),b		; $65b2
-	ld l,$8d		; $65b3
+	ld l,Enemy.xh		; $65b3
 	ld (hl),c		; $65b5
-	call $6698		; $65b6
+	call _veranFairy_checkLoopAroundScreen		; $65b6
+
+	; Get next target position
 	ld h,d			; $65b9
-	ld l,$b1		; $65ba
+	ld l,Enemy.var31		; $65ba
 	ldi a,(hl)		; $65bc
 	ld h,(hl)		; $65bd
 	ld l,a			; $65be
 	ldi a,(hl)		; $65bf
 	or a			; $65c0
-	jr nz,_label_10_221	; $65c1
+	jr nz,++			; $65c1
 	ld a,$05		; $65c3
 	call enemySetAnimation		; $65c5
 	jp _ecom_incState		; $65c8
-_label_10_221:
-	ld e,$b3		; $65cb
+++
+	ld e,Enemy.var33		; $65cb
 	ld (de),a		; $65cd
 	ld b,a			; $65ce
 	inc e			; $65cf
 	ldi a,(hl)		; $65d0
-	ld (de),a		; $65d1
+	ld (de),a ; [var34]
 	ld c,a			; $65d2
-	call $658f		; $65d3
-_label_10_222:
+	call _veranFairy_saveMovementPatternPointer		; $65d3
+@updateMovement:
 	call _ecom_moveTowardPosition		; $65d6
-_label_10_223:
+_veranFairy_animate:
 	jp enemyAnimate		; $65d9
+
+
+_veranFairy_state4:
 	ld h,d			; $65dc
-	ld l,$b8		; $65dd
+	ld l,Enemy.var38		; $65dd
 	dec (hl)		; $65df
-	jr nz,_label_10_223	; $65e0
+	jr nz,_veranFairy_animate	; $65e0
 	ld l,e			; $65e2
-	ld (hl),$02		; $65e3
-	jr _label_10_223		; $65e5
+	ld (hl),$02 ; [state]
+	jr _veranFairy_animate		; $65e5
+
+
+; Dead
+_veranFairy_state5:
 	inc e			; $65e7
 	ld a,(de)		; $65e8
 	rst_jumpTable			; $65e9
-.dw $65f0
-.dw $65fb
-.dw $6608
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
 
+@substate0:
 	call _ecom_decCounter1		; $65f0
 	jp nz,_ecom_flickerVisibility		; $65f3
 	ld l,e			; $65f6
 	inc (hl)		; $65f7
 	jp objectSetVisible82		; $65f8
+
+@substate1:
 	call _ecom_incState2		; $65fb
-	ld l,$87		; $65fe
-	ld (hl),$41		; $6600
-	ld bc,$5612		; $6602
+	ld l,Enemy.counter2		; $65fe
+	ld (hl),65		; $6600
+	ld bc,TX_5612		; $6602
 	jp showText		; $6605
+
+@substate2:
 	call _ecom_decCounter2		; $6608
-	jr z,_label_10_224	; $660b
-	ld a,(hl)		; $660d
+	jr z,@triggerCutscene	; $660b
+
+	ld a,(hl) ; [counter2]
 	and $0f			; $660e
 	ret nz			; $6610
-	ld a,(hl)		; $6611
+	ld a,(hl) ; [counter2]
 	and $f0			; $6612
 	swap a			; $6614
 	dec a			; $6616
@@ -135523,283 +135599,302 @@ _label_10_223:
 	dec a			; $6618
 	call z,fadeoutToWhite		; $6619
 	pop af			; $661c
-	ld hl,$6643		; $661d
+	ld hl,@explosionPositions		; $661d
 	rst_addDoubleIndex			; $6620
 	ldi a,(hl)		; $6621
 	ld c,(hl)		; $6622
 	ld b,a			; $6623
 	call getFreeInteractionSlot		; $6624
 	ret nz			; $6627
-	ld (hl),$56		; $6628
-	ld l,$43		; $662a
-	inc (hl)		; $662c
+	ld (hl),INTERACID_EXPLOSION		; $6628
+	ld l,Interaction.var03		; $662a
+	inc (hl) ; [explosion.var03] = $01
 	jp objectCopyPositionWithOffset		; $662d
-_label_10_224:
+
+@triggerCutscene:
 	ld a,(wPaletteThread_mode)		; $6630
 	or a			; $6633
 	ret nz			; $6634
 	call clearAllParentItems		; $6635
 	call dropLinkHeldItem		; $6638
-	ld a,$1f		; $663b
+	ld a,CUTSCENE_BLACK_TOWER_ESCAPE_ATTEMPT		; $663b
 	ld (wCutsceneTrigger),a		; $663d
 	jp enemyDelete		; $6640
-	ld a,($ff00+$f0)	; $6643
-	stop			; $6645
-	ld ($04f8),sp		; $6646
-	ld ($53f8),sp		; $6649
-	ld h,(hl)		; $664c
-	ld e,h			; $664d
-	ld h,(hl)		; $664e
-	ld h,a			; $664f
-	ld h,(hl)		; $6650
-	ld (hl),d		; $6651
-	ld h,(hl)		; $6652
-	nop			; $6653
-	ld a,b			; $6654
-	nop			; $6655
-	rst $30			; $6656
-	ret nz			; $6657
-	ld ($ff00+$58),a	; $6658
-	ld a,b			; $665a
-	nop			; $665b
-	nop			; $665c
-	rst $30			; $665d
-	ld e,b			; $665e
-	ld a,b			; $665f
-	ld e,b			; $6660
-	rst $30			; $6661
-_label_10_225:
-	ret nz			; $6662
-	rst $30			; $6663
-	ld e,b			; $6664
-	ld a,b			; $6665
-	nop			; $6666
-	ld e,b			; $6667
-	rst $30			; $6668
-	jr nc,_label_10_225	; $6669
-	ret nz			; $666b
-	jr c,-$40		; $666c
-	cp b			; $666e
-	ld e,b			; $666f
-	ld a,b			; $6670
-	nop			; $6671
-	nop			; $6672
-	rst $30			; $6673
-	ret nz			; $6674
-	rst $30			; $6675
-	stop			; $6676
-	rst $30			; $6677
-	sub b			; $6678
-	rst $30			; $6679
-	ld e,b			; $667a
-	ld a,b			; $667b
-	nop			; $667c
-	nop			; $667d
-	nop			; $667e
-	nop			; $667f
-	nop			; $6680
-	nop			; $6681
-	nop			; $6682
-	ld bc,$0001		; $6683
-	nop			; $6686
-	nop			; $6687
-	nop			; $6688
-	nop			; $6689
-	ld bc,$0201		; $668a
-	nop			; $668d
-	nop			; $668e
-	ld bc,$0101		; $668f
-	ld (bc),a		; $6692
-	ld (bc),a		; $6693
-	ld (bc),a		; $6694
-	ldd (hl),a		; $6695
-	ld b,(hl)		; $6696
-	ld d,b			; $6697
+
+@explosionPositions:
+	.db $f0 $f0
+	.db $10 $08
+	.db $f8 $04
+	.db $08 $f8
+
+
+; BUG(?): $00 acts as a terminator, but it's also used as a position value, meaning one movement
+; pattern stops early? (Doesn't apply if $00 is in the first row.)
+_veranFairy_movementPatternTable:
+	.dw @pattern0
+	.dw @pattern1
+	.dw @pattern2
+	.dw @pattern3
+
+@pattern0:
+	.db $00 $78
+	.db $00 $f7 ; Terminates early here?
+	.db $c0 $e0
+	.db $58 $78
+	.db $00
+@pattern1:
+	.db $00 $f7
+	.db $58 $78
+	.db $58 $f7
+	.db $c0 $f7
+	.db $58 $78
+	.db $00
+@pattern2:
+	.db $58 $f7
+	.db $30 $f7
+	.db $c0 $38
+	.db $c0 $b8
+	.db $58 $78
+	.db $00
+@pattern3:
+	.db $00 $f7
+	.db $c0 $f7
+	.db $10 $f7
+	.db $90 $f7
+	.db $58 $78
+	.db $00
+
+
+_veranFairy_attackTable:
+	.db $00 $00 $00 $00 $00 $00 $01 $01 ; High health
+	.db $00 $00 $00 $00 $00 $01 $01 $02 ; Mid health
+	.db $00 $00 $01 $01 $01 $02 $02 $02 ; Low health
+
+
+_veranFairy_speedTable:
+	.db SPEED_140, SPEED_1c0, SPEED_200
+
+;;
+; @addr{6698}
+_veranFairy_checkLoopAroundScreen:
 	call objectGetShortPosition		; $6698
 	ld e,a			; $669b
-	ld hl,$66b4		; $669c
+	ld hl,@data1		; $669c
 	call lookupKey		; $669f
 	ret nc			; $66a2
-	ld hl,$66c9		; $66a3
+
+	ld hl,@data2		; $66a3
 	rst_addAToHl			; $66a6
-	ld e,$8b		; $66a7
+	ld e,Enemy.yh		; $66a7
 	ldi a,(hl)		; $66a9
 	ld (de),a		; $66aa
 	ldh (<hFF8F),a	; $66ab
-	ld e,$8d		; $66ad
+	ld e,Enemy.xh		; $66ad
 	ld a,(hl)		; $66af
 	ld (de),a		; $66b0
 	ldh (<hFF8E),a	; $66b1
 	ret			; $66b3
-	rlca			; $66b4
-	nop			; $66b5
-	rrca			; $66b6
-	ld (bc),a		; $66b7
-	rra			; $66b8
-	inc b			; $66b9
-	ccf			; $66ba
-	ld b,$5f		; $66bb
-	ld ($0a9f),sp		; $66bd
-	jp $cb0c		; $66c0
-	ld a,(bc)		; $66c3
-	adc $0e			; $66c4
-	rst $8			; $66c6
-	nop			; $66c7
-	nop			; $66c8
-	ret nz			; $66c9
-	nop			; $66ca
-	nop			; $66cb
-	nop			; $66cc
-	sub b			; $66cd
-	nop			; $66ce
-	nop			; $66cf
-	jr c,$30		; $66d0
-	nop			; $66d2
-	ld e,b			; $66d3
-	nop			; $66d4
-	nop			; $66d5
-	cp b			; $66d6
-	ret nz			; $66d7
-	ld a,b			; $66d8
+
+@data1:
+	.db $07 $00
+	.db $0f $02
+	.db $1f $04
+	.db $3f $06
+	.db $5f $08
+	.db $9f $0a
+	.db $c3 $0c
+	.db $cb $0a
+	.db $ce $0e
+	.db $cf $00
+	.db $00
+
+@data2:
+	.db $c0 $00
+	.db $00 $00
+	.db $90 $00
+	.db $00 $38
+	.db $30 $00
+	.db $58 $00
+	.db $00 $b8
+	.db $c0 $78
+
+;;
+; @param[out]	a	Value written to var35
+; @addr{66d9}
+_veranFairy_updateVar35BasedOnHealth:
 	ld b,$00		; $66d9
-	ld e,$a9		; $66db
+	ld e,Enemy.health		; $66db
 	ld a,(de)		; $66dd
-	cp $14			; $66de
-	jr nc,_label_10_226	; $66e0
+	cp 20			; $66de
+	jr nc,++		; $66e0
 	inc b			; $66e2
-	cp $0a			; $66e3
-	jr nc,_label_10_226	; $66e5
+	cp 10			; $66e3
+	jr nc,++		; $66e5
 	inc b			; $66e7
-_label_10_226:
-	ld e,$b5		; $66e8
+++
+	ld e,Enemy.var35		; $66e8
 	ld a,b			; $66ea
 	ld (de),a		; $66eb
 	ret			; $66ec
+
+;;
+; @addr{66ed}
+_veranFairy_66ed:
 	call _ecom_decCounter2		; $66ed
 	ret nz			; $66f0
-	ld e,$83		; $66f1
+	ld e,Enemy.var03		; $66f1
 	ld a,(de)		; $66f3
 	rst_jumpTable			; $66f4
-.dw $66fb
-.dw $674d
-.dw $6790
+	.dw attack0
+	.dw attack1
+	.dw attack2
 
-	ld e,$b6		; $66fb
+; Shooting occasional projectiles
+attack0:
+	ld e,Enemy.var36		; $66fb
 	ld a,(de)		; $66fd
 	or a			; $66fe
-	jr nz,_label_10_227	; $66ff
+	jr nz,@label_10_227	; $66ff
+
 	call getRandomNumber_noPreserveVars		; $6701
 	and $0f			; $6704
 	ld b,a			; $6706
 	ld h,d			; $6707
-	ld l,$b5		; $6708
+	ld l,Enemy.var35		; $6708
 	ld a,(hl)		; $670a
 	add a			; $670b
 	add $08			; $670c
 	cp b			; $670e
-	ld l,$87		; $670f
-	ld (hl),$3c		; $6711
+	ld l,Enemy.counter2		; $670f
+	ld (hl),60		; $6711
 	ret nc			; $6713
+
 	xor a			; $6714
 	ldd (hl),a		; $6715
 	inc a			; $6716
 	ld (hl),a		; $6717
-	ld l,$b6		; $6718
+	ld l,Enemy.var36		; $6718
 	ld (hl),a		; $671a
-	ld l,$b7		; $671b
+	ld l,Enemy.var37		; $671b
 	ld (hl),$04		; $671d
-_label_10_227:
+
+@label_10_227:
 	call _ecom_decCounter1		; $671f
-	jr z,_label_10_228	; $6722
+	jr z,@label_10_228	; $6722
 	ld a,(hl)		; $6724
 	cp $0e			; $6725
 	ret nz			; $6727
 	ld a,$05		; $6728
 	jp enemySetAnimation		; $672a
-_label_10_228:
-	call $67be		; $672d
+
+@label_10_228:
+	call _veranFairy_checkWithinBoundary		; $672d
 	ret nc			; $6730
-	ld l,$b7		; $6731
+	ld l,Enemy.var37		; $6731
 	dec (hl)		; $6733
-	jr z,_label_10_229	; $6734
-	ld l,$86		; $6736
-	ld (hl),$1e		; $6738
-	ld b,$2d		; $673a
+	jr z,@label_10_229	; $6734
+
+	ld l,Enemy.counter1		; $6736
+	ld (hl),30		; $6738
+
+	ld b,PARTID_2d		; $673a
 	call _ecom_spawnProjectile		; $673c
 	ld a,$06		; $673f
 	jp enemySetAnimation		; $6741
-_label_10_229:
-	ld l,$87		; $6744
-	ld (hl),$5a		; $6746
-	ld l,$b6		; $6748
+
+@label_10_229:
+	ld l,Enemy.counter2		; $6744
+	ld (hl),90		; $6746
+	ld l,Enemy.var36		; $6748
 	ld (hl),$00		; $674a
 	ret			; $674c
-	ld e,$b6		; $674d
+
+; Circular projectile attack
+attack1:
+	ld e,Enemy.var36		; $674d
 	ld a,(de)		; $674f
 	or a			; $6750
-	jr nz,_label_10_230	; $6751
-	call $67be		; $6753
+	jr nz,@label_10_230	; $6751
+
+	call _veranFairy_checkWithinBoundary		; $6753
 	ret nc			; $6756
+
 	call getRandomNumber_noPreserveVars		; $6757
 	and $0f			; $675a
 	ld b,a			; $675c
 	ld h,d			; $675d
-	ld l,$b5		; $675e
+	ld l,Enemy.var35		; $675e
 	ld a,(hl)		; $6760
 	add a			; $6761
 	add $06			; $6762
 	cp b			; $6764
-	ld l,$87		; $6765
-	ld (hl),$5a		; $6767
+	ld l,Enemy.counter2		; $6765
+	ld (hl),90		; $6767
 	ret nc			; $6769
-	ld (hl),$00		; $676a
+
+	ld (hl),$00 ; [counter2]
 	dec l			; $676c
-	ld (hl),$b4		; $676d
-	ld l,$b6		; $676f
+	ld (hl),180 ; [counter1]
+	ld l,Enemy.var36		; $676f
 	ld (hl),$01		; $6771
-	ld b,$37		; $6773
+
+	ld b,PARTID_VERAN_PROJECTILE		; $6773
 	call _ecom_spawnProjectile		; $6775
 	ld a,$06		; $6778
 	call enemySetAnimation		; $677a
-_label_10_230:
+
+@label_10_230:
 	pop hl			; $677d
 	call _ecom_decCounter1		; $677e
 	jp nz,enemyAnimate		; $6781
+
 	inc l			; $6784
-	ld (hl),$78		; $6785
-	ld l,$b6		; $6787
+	ld (hl),120 ; [counter2]
+	ld l,Enemy.var36		; $6787
 	ld (hl),$00		; $6789
 	ld a,$05		; $678b
 	jp enemySetAnimation		; $678d
+
+; Baby ball attack
+attack2:
 	ld h,d			; $6790
-	ld l,$b6		; $6791
+	ld l,Enemy.var36		; $6791
 	bit 0,(hl)		; $6793
-	jr nz,_label_10_231	; $6795
-	call $67be		; $6797
+	jr nz,@label_10_231	; $6795
+
+	call _veranFairy_checkWithinBoundary		; $6797
 	ret nc			; $679a
+
 	ld (hl),$01		; $679b
-	ld l,$86		; $679d
-	ld (hl),$1e		; $679f
-	ld b,$2f		; $67a1
+	ld l,Enemy.counter1		; $679d
+	ld (hl),30		; $679f
+	ld b,PARTID_BABY_BALL		; $67a1
 	call _ecom_spawnProjectile		; $67a3
 	ld a,$06		; $67a6
 	call enemySetAnimation		; $67a8
-_label_10_231:
+
+@label_10_231:
 	pop hl			; $67ab
 	call _ecom_decCounter1		; $67ac
 	jp nz,enemyAnimate		; $67af
+
 	inc l			; $67b2
 	ld (hl),$f0		; $67b3
-	ld l,$b6		; $67b5
+	ld l,Enemy.var36		; $67b5
 	ld (hl),$00		; $67b7
 	ld a,$05		; $67b9
 	jp enemySetAnimation		; $67bb
-	ld e,$8b		; $67be
+
+;;
+; @param[out]	cflag	nc if veran is outside the room boundary
+; @addr{67be}
+_veranFairy_checkWithinBoundary:
+	ld e,Enemy.yh		; $67be
 	ld a,(de)		; $67c0
 	sub $10			; $67c1
 	cp $90			; $67c3
 	ret nc			; $67c5
-	ld e,$8d		; $67c6
+	ld e,Enemy.xh		; $67c6
 	ld a,(de)		; $67c8
 	sub $10			; $67c9
 	cp $d0			; $67cb
