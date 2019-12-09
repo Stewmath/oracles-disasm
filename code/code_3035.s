@@ -46,10 +46,10 @@ incCbc2:
 ;;
 ; @param	e
 ; @addr{306c}
-func_306c:
+endgameCutsceneHandler:
 	ldh a,(<hRomBank)	; $306c
 	push af			; $306e
-	callfrombank0 func_03_5414		; $306f
+	callfrombank0 endgameCutsceneHandler_body		; $306f
 	pop af			; $3079
 	setrombank		; $307a
 	ret			; $307f
@@ -115,12 +115,6 @@ playWaveSoundAtRandomIntervals:
 	pop af			; $30d1
 	setrombank		; $30d2
 	ret			; $30d7
-
-.else ; ROM_SEASONS
-
-; Placeholder labels
-disableLcdAndLoadRoom:
-playWaveSoundAtRandomIntervals:
 
 .endif
 

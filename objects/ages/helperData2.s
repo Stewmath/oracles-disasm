@@ -1,24 +1,24 @@
 objectTable2:
-.dw objectData7705
-.dw objectData7717
-.dw objectData771b
-.dw objectData7725
-.dw objectData7733
-.dw objectData7741
-.dw objectData774b
-.dw objectData7733
-.dw objectData5462
-.dw objectData5470
-.dw objectData5416
-.dw objectData55a2
-.dw objectData543c
-.dw objectData774f
-.dw objectData7761
-.dw objectData7765
-.dw objectData776f
-.dw objectData5492
-.dw objectData777c
-.dw objectData7792
+	.dw objectData7705
+	.dw objectData7717
+	.dw objectData771b
+	.dw objectData7725
+	.dw objectData7733
+	.dw objectData7741
+	.dw objectData774b
+	.dw objectData7733
+	.dw objectData5462
+	.dw objectData5470
+	.dw blackTowerEscape_ambiAndGuards
+	.dw objectData55a2
+	.dw objectData543c
+	.dw objectData774f
+	.dw objectData7761
+	.dw objectData7765
+	.dw objectData776f
+	.dw objectData5492
+	.dw objectData777c
+	.dw objectData7792
 
 objectData7705:
 	obj_DoubleValue $3a00 $42 $78

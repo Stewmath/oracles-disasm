@@ -742,7 +742,7 @@ gfxRegisterStates:
 	.db $c7 $00 $00 $c7 $c7 $c7 ; 0x01
 	.db $00 $00 $00 $c7 $c7 $c7
 
-	.db $ef $f0 $00 $8f $8f $0f ; 0x02: Post-d3 cutscene, twinrova/ganon fight?
+	.db $ef $f0 $00 $8f $8f $0f ; 0x02: Post-d3 cutscene, twinrova/ganon fight, CUTSCENE_BLACK_TOWER_ESCAPE
 	.db $e7 $00 $00 $c7 $c7 $c7
 
 	.db $ef $f0 $00 $10 $c7 $0f ; 0x03
@@ -16511,7 +16511,7 @@ _cutscene19_state7:
 	call _decTmpcbb4		; $4c71
 	ret nz			; $4c74
 
-	ld (hl),$78		; $4c75
+	ld (hl),120		; $4c75
 	ld a,SND_BOSS_DEAD		; $4c77
 	call playSound		; $4c79
 	jp _incCutsceneState		; $4c7c
@@ -16543,7 +16543,7 @@ _cutscene19_state9:
 	ret nz			; $4ca2
 
 	call clearScreenVariablesAndWramBank1		; $4ca3
-	ld a,$01		; $4ca6
+	ld a,CUTSCENE_INGAME		; $4ca6
 	ld (wCutsceneIndex),a		; $4ca8
 	ld a,$01		; $4cab
 	ld (wScrollMode),a		; $4cad
@@ -16617,7 +16617,7 @@ _intro_runStage:
 ; @addr{4d03}
 _intro_gotoTitlescreen:
 	call clearPaletteFadeVariables		; $4d03
-	call _intro_clearObjects		; $4d06
+	call _cutscene_clearObjects		; $4d06
 	ld hl,wIntroVar		; $4d09
 	xor a			; $4d0c
 	ldd (hl),a		; $4d0d
@@ -18228,7 +18228,7 @@ _seasonsFunc_03_5367:
 
 ;;
 ; @addr{5403}
-_intro_clearObjects:
+_cutscene_clearObjects:
 	call clearDynamicInteractions		; $5403
 	call clearLinkObject		; $5406
 	jp refreshObjectGfx		; $5409
@@ -18343,7 +18343,7 @@ introTempleSprites:
 ;
 ; @param	e
 ; @addr{5414}
-func_03_5414:
+endgameCutsceneHandler_body:
 	ld hl,wCutsceneState		; $5414
 	bit 0,(hl)		; $5417
 	jr nz,_label_03_084	; $5419
@@ -18354,16 +18354,21 @@ func_03_5414:
 _label_03_084:
 	ld a,e			; $5424
 	rst_jumpTable			; $5425
-.dw $5449
-.dw $5e10
-.dw $5b64
-.dw $5854
+	.dw _endgameCutsceneHandler_09
+	.dw _endgameCutsceneHandler_0a
+	.dw _endgameCutsceneHandler_0f
+	.dw _endgameCutsceneHandler_20
 
-	ld a,$02		; $542e
+;;
+; @addr{542e}
+_clearFadingPalettes:
+	; Clear w2FadingBgPalettes and w2FadingSprPalettes
+	ld a,:w2FadingBgPalettes		; $542e
 	ld ($ff00+R_SVBK),a	; $5430
-	ld hl,$df80		; $5432
+	ld hl,w2FadingBgPalettes		; $5432
 	ld b,$80		; $5435
 	call clearMemory		; $5437
+
 	xor a			; $543a
 	ld ($ff00+R_SVBK),a	; $543b
 	dec a			; $543d
@@ -18373,74 +18378,95 @@ _label_03_084:
 	ldh (<hBgPaletteSources),a	; $5444
 	ldh (<hDirtyBgPalettes),a	; $5446
 	ret			; $5448
-	ld de,$cbc1		; $5449
+
+
+;;
+; CUTSCENE_BLACK_TOWER_ESCAPE
+; @addr{5449}
+_endgameCutsceneHandler_09:
+	ld de,wGenericCutscene.cbc1		; $5449
 	ld a,(de)		; $544c
 	rst_jumpTable			; $544d
-.dw $5452
-.dw $56e0
+	.dw _endgameCutsceneHandler_09_state0
+	.dw _endgameCutsceneHandler_09_state1
 
+_endgameCutsceneHandler_09_state0:
 	call updateStatusBar		; $5452
-	call $545b		; $5455
+	call @runStates		; $5455
 	jp updateAllObjects		; $5458
-	ld de,$cbc2		; $545b
+
+@runStates:
+	ld de,wGenericCutscene.cbc2		; $545b
 	ld a,(de)		; $545e
 	rst_jumpTable			; $545f
-.dw $548c
-.dw $54c7
-.dw $54d4
-.dw $54f1
-.dw $5500
-.dw $550d
-.dw $5549
-.dw $5551
-.dw $5569
-.dw $5575
-.dw $559e
-.dw $55c3
-.dw $55d4
-.dw $55e8
-.dw $55ff
-.dw $561e
-.dw $5644
-.dw $5661
-.dw $568e
-.dw $56ad
-.dw $56bf
-.dw $56d1
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+	.dw @state5
+	.dw @state6
+	.dw @state7
+	.dw @state8
+	.dw @state9
+	.dw @stateA
+	.dw @stateB
+	.dw @stateC
+	.dw @stateD
+	.dw @stateE
+	.dw @stateF
+	.dw @state10
+	.dw @state11
+	.dw @state12
+	.dw @state13
+	.dw @state14
+	.dw @state15
 
+@state0:
 	ld a,(wPaletteThread_mode)		; $548c
 	or a			; $548f
 	ret nz			; $5490
-	call $608e		; $5491
+	call _cutscene_clearCFC0ToCFDF		; $5491
 	call incCbc2		; $5494
-	ld bc,$0176		; $5497
+
+	; Outside black tower
+	ld bc,ROOM_176		; $5497
 	call disableLcdAndLoadRoom		; $549a
 	call resetCamera		; $549d
+
 	ld a,SNDCTRL_FAST_FADEOUT		; $54a0
 	call playSound		; $54a2
 	call clearAllParentItems		; $54a5
 	call dropLinkHeldItem		; $54a8
-	ld hl,objectData.objectData540c		; $54ab
+
+	ld hl,objectData.blackTowerEscape_nayruAndRalph		; $54ab
 	call parseGivenObjectData		; $54ae
-	ld hl,wTmpcbb3		; $54b1
-	ld (hl),$3c		; $54b4
-	ld hl,$60ce		; $54b6
-	call $60be		; $54b9
+	ld hl,wGenericCutscene.cbb3		; $54b1
+	ld (hl),60		; $54b4
+
+	ld hl,_blackTowerEscapeCutscene_doorBlockReplacement		; $54b6
+	call _cutscene_replaceListOfTiles		; $54b9
+
 	call refreshObjectGfx		; $54bc
 	ld a,$02		; $54bf
 	call loadGfxRegisterStateIndex		; $54c1
 	jp fadeinFromWhiteToRoom		; $54c4
-	call $6070		; $54c7
+
+@state1:
+	call _cutscene_decCBB3IfNotFadingOut		; $54c7
 	ret nz			; $54ca
-	ld (hl),$78		; $54cb
-	ld l,$b6		; $54cd
+	ld (hl),120		; $54cb
+	ld l,<wGenericCutscene.cbb6		; $54cd
 	ld (hl),$10		; $54cf
 	jp incCbc2		; $54d1
+
+@state2:
 	call decCbb3		; $54d4
-	jr nz,_label_03_085	; $54d7
-	ld (hl),$3c		; $54d9
+	jr nz,@updateExplosionSoundsAndScreenShake	; $54d7
+	ld (hl),60		; $54d9
 	jp incCbc2		; $54db
-_label_03_085:
+
+@updateExplosionSoundsAndScreenShake:
 	ld hl,wTmpcbb6		; $54de
 	dec (hl)		; $54e1
 	ret nz			; $54e2
@@ -18451,211 +18477,279 @@ _label_03_085:
 	call setScreenShakeCounter		; $54ec
 	xor a			; $54ef
 	ret			; $54f0
+
+@state3:
 	call decCbb3		; $54f1
 	ret nz			; $54f4
-	ld (hl),$1e		; $54f5
-	ld bc,$1d0a		; $54f7
+	ld (hl),30		; $54f5
+	ld bc,TX_1d0a		; $54f7
 	call showText		; $54fa
 	jp incCbc2		; $54fd
-	call $6068		; $5500
+
+@state4:
+	call _cutscene_decCBB3IfTextNotActive		; $5500
 	ret nz			; $5503
-	ld (hl),$78		; $5504
-	ld l,$b6		; $5506
+	ld (hl),120		; $5504
+	ld l,<wGenericCutscene.cbb6		; $5506
 	ld (hl),$10		; $5508
 	jp incCbc2		; $550a
+
+@state5:
 	call decCbb3		; $550d
-	jr nz,_label_03_086	; $5510
-	ld (hl),$28		; $5512
+	jr nz,@explosions	; $5510
+
+	ld (hl),40		; $5512
 	call incCbc2		; $5514
-	ld hl,$d000		; $5517
+
+	ld hl,w1Link.enabled		; $5517
 	ld (hl),$03		; $551a
-	ld l,$0b		; $551c
+	ld l,<w1Link.yh		; $551c
 	ld (hl),$48		; $551e
-	ld l,$0d		; $5520
+	ld l,<w1Link.xh		; $5520
 	ld (hl),$50		; $5522
-	ld l,$08		; $5524
-	ld (hl),$02		; $5526
-	ld hl,simulatedInput70d2		; $5528
-	ld a,:simulatedInput70d2		; $552b
+	ld l,<w1Link.direction		; $5524
+	ld (hl),DIR_DOWN		; $5526
+
+	ld hl,blackTowerEscape_simulatedInput1		; $5528
+	ld a,:blackTowerEscape_simulatedInput1		; $552b
 	call setSimulatedInputAddress		; $552d
-	ld hl,$60d7		; $5530
-	jp $60be		; $5533
-_label_03_086:
-	call $54de		; $5536
+
+	ld hl,_blackTowerEscapeCutscene_doorOpenReplacement		; $5530
+	jp _cutscene_replaceListOfTiles		; $5533
+
+@explosions:
+	call @updateExplosionSoundsAndScreenShake		; $5536
 	ret nz			; $5539
 	call getFreeInteractionSlot		; $553a
 	ret nz			; $553d
-	ld (hl),$99		; $553e
+	ld (hl),INTERACID_EXPLOSION_WITH_DEBRIS		; $553e
 	inc l			; $5540
 	inc l			; $5541
-	inc (hl)		; $5542
+	inc (hl) ; [var03] = $01
 	ld a,$01		; $5543
-	ld ($cfd0),a		; $5545
+	ld (wTmpcfc0.genericCutscene.cfd0),a		; $5545
 	ret			; $5548
+
+@state6:
 	call decCbb3		; $5549
-	jr nz,_label_03_086	; $554c
+	jr nz,@explosions	; $554c
 	jp incCbc2		; $554e
-	ld a,($cfd0)		; $5551
+
+@state7:
+	; Wait for signal from an object?
+	ld a,(wTmpcfc0.genericCutscene.cfd0)		; $5551
 	cp $04			; $5554
 	ret nz			; $5556
+
 	call incCbc2		; $5557
 	xor a			; $555a
 	ld (wDisabledObjects),a		; $555b
 	ld (wScrollMode),a		; $555e
-	ld hl,$70d5		; $5561
-	ld a,$10		; $5564
+
+	ld hl,blackTowerEscape_simulatedInput2		; $5561
+	ld a,:blackTowerEscape_simulatedInput2		; $5564
 	jp setSimulatedInputAddress		; $5566
-	ld a,($cfd0)		; $5569
+
+@state8:
+	ld a,(wTmpcfc0.genericCutscene.cfd0)		; $5569
 	cp $05			; $556c
 	ret nz			; $556e
 	call incCbc2		; $556f
 	jp fadeoutToWhite		; $5572
+
+@state9:
 	ld a,(wPaletteThread_mode)		; $5575
 	or a			; $5578
 	ret nz			; $5579
+
 	call incCbc2		; $557a
-	ld bc,$0165		; $557d
+
+	ld bc,ROOM_165		; $557d
 	call disableLcdAndLoadRoom		; $5580
+
 	call resetCamera		; $5583
 	ld a,MUS_DISASTER		; $5586
 	call playSound		; $5588
+
 	ld a,$02		; $558b
 	call loadGfxRegisterStateIndex		; $558d
-	ld hl,objectData.objectData5416		; $5590
+
+	ld hl,objectData.blackTowerEscape_ambiAndGuards		; $5590
 	call parseGivenObjectData		; $5593
+
 	ld hl,wTmpcbb3		; $5596
-	ld (hl),$1e		; $5599
+	ld (hl),30		; $5599
 	jp fadeinFromWhiteToRoom		; $559b
-	call $6070		; $559e
+
+@stateA:
+	call _cutscene_decCBB3IfNotFadingOut		; $559e
 	ret nz			; $55a1
+
 	call incCbc2		; $55a2
-	ld hl,$d000		; $55a5
+
+	ld hl,w1Link.enabled		; $55a5
 	ld (hl),$03		; $55a8
-	ld l,$0b		; $55aa
+	ld l,<w1Link.yh		; $55aa
 	ld (hl),$88		; $55ac
-	ld l,$0d		; $55ae
+	ld l,<w1Link.xh		; $55ae
 	ld (hl),$50		; $55b0
-	ld l,$08		; $55b2
-	ld (hl),$00		; $55b4
-	ld hl,simulatedInput70dd		; $55b6
-	ld a,:simulatedInput70dd		; $55b9
+	ld l,<w1Link.direction		; $55b2
+	ld (hl),DIR_UP		; $55b4
+
+	ld hl,blackTowerEscape_simulatedInput3		; $55b6
+	ld a,:blackTowerEscape_simulatedInput3		; $55b9
 	call setSimulatedInputAddress		; $55bb
 	xor a			; $55be
 	ld (wScrollMode),a		; $55bf
 	ret			; $55c2
-	ld a,($cfd0)		; $55c3
+
+@stateB:
+	ld a,(wTmpcfc0.genericCutscene.cfd0)		; $55c3
 	cp $06			; $55c6
 	ret nz			; $55c8
 	call incCbc2		; $55c9
-	ld hl,simulatedInput70ee		; $55cc
-	ld a,:simulatedInput70ee		; $55cf
+	ld hl,blackTowerEscape_simulatedInput4		; $55cc
+	ld a,:blackTowerEscape_simulatedInput4		; $55cf
 	jp setSimulatedInputAddress		; $55d1
-	ld a,($cfd0)		; $55d4
+
+@stateC:
+	ld a,(wTmpcfc0.genericCutscene.cfd0)		; $55d4
 	cp $0a			; $55d7
 	ret nz			; $55d9
 	call incCbc2		; $55da
-	ld hl,$cfde		; $55dd
+
+	; TODO: what is this?
+	ld hl,wTmpcfc0.genericCutscene.cfde		; $55dd
 	ld (hl),$08		; $55e0
 	inc l			; $55e2
 	ld (hl),$00		; $55e3
+
 	jp fadeoutToWhite		; $55e5
+
+@stateD:
 	ld a,(wPaletteThread_mode)		; $55e8
 	or a			; $55eb
 	ret nz			; $55ec
 	call incCbc2		; $55ed
-	call $64c5		; $55f0
+	call _cutscene_loadObjectSetAndFadein		; $55f0
 	xor a			; $55f3
-	ld ($cfd1),a		; $55f4
-	ld ($cfdf),a		; $55f7
+	ld (wTmpcfc0.genericCutscene.cfd1),a		; $55f4
+	ld (wTmpcfc0.genericCutscene.cfdf),a		; $55f7
 	ld a,$02		; $55fa
 	jp loadGfxRegisterStateIndex		; $55fc
+
+@stateE:
 	ld a,(wPaletteThread_mode)		; $55ff
 	or a			; $5602
 	ret nz			; $5603
-	ld hl,$cfdf		; $5604
+	ld hl,wTmpcfc0.genericCutscene.cfdf		; $5604
 	ld a,(hl)		; $5607
 	cp $ff			; $5608
 	ret nz			; $560a
 	xor a			; $560b
-	ldd (hl),a		; $560c
-	inc (hl)		; $560d
+
+	ldd (hl),a ; wTmpcfc0.genericCutscene.cfdf
+	inc (hl) ; wTmpcfc0.genericCutscene.cfde
 	ld a,(hl)		; $560e
 	cp $0a			; $560f
 	ld a,$0d		; $5611
-	jr nz,_label_03_087	; $5613
+	jr nz,+			; $5613
 	ld a,$0f		; $5615
-_label_03_087:
-	ld hl,$cbc2		; $5617
++
+	ld hl,wGenericCutscene.cbc2		; $5617
 	ld (hl),a		; $561a
 	jp fadeoutToWhite		; $561b
+
+@stateF:
 	ld a,(wPaletteThread_mode)		; $561e
 	or a			; $5621
 	ret nz			; $5622
+
 	call incCbc2		; $5623
-	call $64c5		; $5626
-	ld hl,$d000		; $5629
+	call _cutscene_loadObjectSetAndFadein		; $5626
+
+	ld hl,w1Link.enabled		; $5629
 	ld (hl),$03		; $562c
-	ld l,$0b		; $562e
+	ld l,<w1Link.yh		; $562e
 	ld (hl),$48		; $5630
-	ld l,$0d		; $5632
+	ld l,<w1Link.xh		; $5632
 	ld (hl),$60		; $5634
-	ld l,$08		; $5636
-	ld (hl),$00		; $5638
+	ld l,<w1Link.direction		; $5636
+
+	ld (hl),DIR_UP		; $5638
 	ld a,$0b		; $563a
-	ld ($cfd0),a		; $563c
+	ld (wTmpcfc0.genericCutscene.cfd0),a		; $563c
 	ld a,$02		; $563f
 	jp loadGfxRegisterStateIndex		; $5641
+
+@state10:
 	call checkIsLinkedGame		; $5644
-	jr nz,_label_03_088	; $5647
-	ld a,($cfd0)		; $5649
+	jr nz,@@linked	; $5647
+
+	ld a,(wTmpcfc0.genericCutscene.cfd0)		; $5649
 	cp $10			; $564c
 	ret nz			; $564e
 	call incCbc2		; $564f
 	jp fadeoutToWhite		; $5652
-_label_03_088:
-	ld a,($cfd0)		; $5655
+
+@@linked:
+	ld a,(wTmpcfc0.genericCutscene.cfd0)		; $5655
 	cp $12			; $5658
 	ret nz			; $565a
-	ld hl,$cbc2		; $565b
+	ld hl,wGenericCutscene.cbc2		; $565b
 	ld (hl),$14		; $565e
 	ret			; $5660
+
+@state11:
 	ld a,(wPaletteThread_mode)		; $5661
 	or a			; $5664
 	ret nz			; $5665
+
 	call incCbc2		; $5666
 	ld hl,wTmpcbb3		; $5669
-	ld (hl),$3c		; $566c
+	ld (hl),60		; $566c
+
 	ld a,$ff		; $566e
 	ld (wAreaAnimation),a		; $5670
 	call disableLcd		; $5673
-	ld a,$2b		; $5676
+
+	ld a,GFXH_2b		; $5676
 	call loadGfxHeader		; $5678
 	ld a,PALH_9d		; $567b
 	call loadPaletteHeader		; $567d
-	call _intro_clearObjects		; $5680
-	call $60b0		; $5683
+
+	call _cutscene_clearObjects		; $5680
+	call _cutscene_resetOamWithSomething2		; $5683
 	ld a,$04		; $5686
 	call loadGfxRegisterStateIndex		; $5688
 	jp fadeinFromWhite		; $568b
-	call $60b0		; $568e
-	call $6070		; $5691
+
+@state12:
+	call _cutscene_resetOamWithSomething2		; $568e
+	call _cutscene_decCBB3IfNotFadingOut		; $5691
 	ret nz			; $5694
+
 	call incCbc2		; $5695
 	ld hl,wMenuDisabled		; $5698
 	ld (hl),$01		; $569b
 	ld hl,wTmpcbb3		; $569d
-	ld (hl),$3c		; $56a0
-	ld bc,$1312		; $56a2
+	ld (hl),60		; $56a0
+
+	ld bc,TX_1312		; $56a2
 	ld a,TEXTBOXFLAG_NOCOLORS	; $56a5
 	ld (wTextboxFlags),a		; $56a7
 	jp showText		; $56aa
-	call $60b0		; $56ad
-	call $6068		; $56b0
+
+@state13:
+	call _cutscene_resetOamWithSomething2		; $56ad
+	call _cutscene_decCBB3IfTextNotActive		; $56b0
 	ret nz			; $56b3
-	call $6086		; $56b4
+	call cutscene_clearTmpCBB3		; $56b4
 	ld a,$01		; $56b7
-	ld ($cbc1),a		; $56b9
+	ld (wGenericCutscene.cbc1),a		; $56b9
 	jp fadeoutToWhite		; $56bc
+
+@state14:
 	ld a,(wTextIsActive)		; $56bf
 	rlca			; $56c2
 	ret nc			; $56c3
@@ -18665,16 +18759,22 @@ _label_03_088:
 	call incCbc2		; $56c9
 	ld a,$04		; $56cc
 	jp fadeoutToWhiteWithDelay		; $56ce
+
+@state15:
 	ld a,(wPaletteThread_mode)		; $56d1
 	or a			; $56d4
 	ret nz			; $56d5
 	xor a			; $56d6
 	ld (wTextIsActive),a		; $56d7
-	ld a,$12		; $56da
+	ld a,CUTSCENE_ZELDA_KIDNAPPED		; $56da
 	ld (wCutsceneTrigger),a		; $56dc
 	ret			; $56df
+
+
+_endgameCutsceneHandler_09_state1:
 	call $56e6		; $56e0
 	jp updateAllObjects		; $56e3
+
 	ld de,$cbc2		; $56e6
 	ld a,(de)		; $56e9
 	rst_jumpTable			; $56ea
@@ -18689,7 +18789,7 @@ _label_03_088:
 .dw $57d2
 .dw $5828
 
-	call $60b0		; $56ff
+	call _cutscene_resetOamWithSomething2		; $56ff
 	ld a,(wPaletteThread_mode)		; $5702
 	or a			; $5705
 	ret nz			; $5706
@@ -18711,13 +18811,13 @@ _label_03_088:
 	ld (wTextboxFlags),a		; $572e
 	ld a,$3c		; $5731
 	ld bc,$280b		; $5733
-	call $6070		; $5736
+	call _cutscene_decCBB3IfNotFadingOut		; $5736
 	ret nz			; $5739
 	call incCbc2		; $573a
 	ld a,e			; $573d
 	ld (wTmpcbb3),a		; $573e
 	jp showText		; $5741
-	call $6068		; $5744
+	call _cutscene_decCBB3IfTextNotActive		; $5744
 	ret nz			; $5747
 	call incCbc2		; $5748
 	ld hl,wTmpcbb5		; $574b
@@ -18771,7 +18871,7 @@ _label_03_090:
 	call $56a5		; $57b5
 	jp incCbc2		; $57b8
 	call $5783		; $57bb
-	call $6068		; $57be
+	call _cutscene_decCBB3IfTextNotActive		; $57be
 	ret nz			; $57c1
 	xor a			; $57c2
 	ld (wOpenedMenuType),a		; $57c3
@@ -18818,7 +18918,7 @@ _label_03_090:
 	ret nz			; $582b
 	ld a,$0a		; $582c
 	ld (wCutsceneIndex),a		; $582e
-	call $6086		; $5831
+	call cutscene_clearTmpCBB3		; $5831
 	ld hl,wRoomLayout		; $5834
 	ld bc,$00c0		; $5837
 	call clearMemoryBc		; $583a
@@ -18831,6 +18931,11 @@ _label_03_090:
 	ld (hl),$3c		; $584d
 	ld a,$03		; $584f
 	jp fadeoutToBlackWithDelay		; $5851
+
+;;
+; CUTSCENE_FLAME_OF_DESPAIR
+; @addr{5854}
+_endgameCutsceneHandler_20:
 	call $585a		; $5854
 	jp updateAllObjects		; $5857
 	ld de,$cbc1		; $585a
@@ -18862,13 +18967,13 @@ _label_03_090:
 
 	ld a,$0b		; $588d
 	ld ($cfde),a		; $588f
-	call $64c5		; $5892
+	call _cutscene_loadObjectSetAndFadein		; $5892
 	call hideStatusBar		; $5895
 	ld a,PALH_ac		; $5898
 	call loadPaletteHeader		; $589a
 	xor a			; $589d
 	ld (wPaletteThread_mode),a		; $589e
-	call $542e		; $58a1
+	call _clearFadingPalettes		; $58a1
 	ld hl,wTmpcbb3		; $58a4
 	ld (hl),$1e		; $58a7
 	ld a,$13		; $58a9
@@ -18891,7 +18996,7 @@ _label_03_091:
 	ld (wTextboxFlags),a		; $58cd
 	ld bc,$2825		; $58d0
 	jp showText		; $58d3
-	call $6068		; $58d6
+	call _cutscene_decCBB3IfTextNotActive		; $58d6
 	ret nz			; $58d9
 	call incCbc1		; $58da
 	ld a,$20		; $58dd
@@ -18900,7 +19005,7 @@ _label_03_091:
 	xor a			; $58e3
 	ld (hl),a		; $58e4
 	ret			; $58e5
-	call $6070		; $58e6
+	call _cutscene_decCBB3IfNotFadingOut		; $58e6
 	ret nz			; $58e9
 	ld hl,wTmpcbb3		; $58ea
 	ld (hl),$20		; $58ed
@@ -18958,7 +19063,7 @@ _label_03_094:
 	ld e,$28		; $594e
 	ld bc,$2827		; $5950
 _label_03_095:
-	call $6068		; $5953
+	call _cutscene_decCBB3IfTextNotActive		; $5953
 	ret nz			; $5956
 	call incCbc1		; $5957
 	ld hl,wTmpcbb3		; $595a
@@ -18969,7 +19074,7 @@ _label_03_095:
 	ld bc,$2828		; $5966
 	jr _label_03_095		; $5969
 	ld e,$b4		; $596b
-	call $6068		; $596d
+	call _cutscene_decCBB3IfTextNotActive		; $596d
 	ret nz			; $5970
 	call incCbc1		; $5971
 	ld hl,wTmpcbb3		; $5974
@@ -19020,7 +19125,7 @@ _label_03_095:
 	call incCbc1		; $59c9
 	ld a,$0c		; $59cc
 	ld ($cfde),a		; $59ce
-	call $64c5		; $59d1
+	call _cutscene_loadObjectSetAndFadein		; $59d1
 	ld hl,$d000		; $59d4
 	ld (hl),$03		; $59d7
 	ld l,$0b		; $59d9
@@ -19032,7 +19137,7 @@ _label_03_095:
 	ld a,$81		; $59e5
 	ld (wDisabledObjects),a		; $59e7
 	ld (wMenuDisabled),a		; $59ea
-	call $608e		; $59ed
+	call _cutscene_clearCFC0ToCFDF		; $59ed
 	call showStatusBar		; $59f0
 	ld a,SNDCTRL_STOPSFX		; $59f3
 	call playSound		; $59f5
@@ -19072,7 +19177,7 @@ _label_03_095:
 	ld hl,wTmpcbb3		; $5a49
 	ld (hl),$3c		; $5a4c
 	jp fadeoutToWhite		; $5a4e
-	call $6070		; $5a51
+	call _cutscene_decCBB3IfNotFadingOut		; $5a51
 	ret nz			; $5a54
 	call incCbc1		; $5a55
 	call disableLcd		; $5a58
@@ -19118,7 +19223,7 @@ _label_03_096:
 	ld (wScrollMode),a		; $5ab0
 	ld bc,$1d1a		; $5ab3
 	jp showText		; $5ab6
-	call $6068		; $5ab9
+	call _cutscene_decCBB3IfTextNotActive		; $5ab9
 	ret nz			; $5abc
 	call incCbc1		; $5abd
 	ld b,$04		; $5ac0
@@ -19135,7 +19240,7 @@ _label_03_096:
 	ld e,$1e		; $5ad9
 	ld bc,$1d1b		; $5adb
 	jp $6078		; $5ade
-	call $6068		; $5ae1
+	call _cutscene_decCBB3IfTextNotActive		; $5ae1
 	ret nz			; $5ae4
 	call incCbc1		; $5ae5
 	ld b,$12		; $5ae8
@@ -19162,7 +19267,7 @@ _label_03_096:
 	ld (wDirtyFadeBgPalettes),a		; $5b1c
 	ld (wFadeBgPaletteSources),a		; $5b1f
 	jp incCbc1		; $5b22
-	call $6070		; $5b25
+	call _cutscene_decCBB3IfNotFadingOut		; $5b25
 	ret nz			; $5b28
 	call incCbc1		; $5b29
 	call clearDynamicInteractions		; $5b2c
@@ -19191,6 +19296,12 @@ _label_03_096:
 	rrca			; $5b61
 	ld d,a			; $5b62
 	inc bc			; $5b63
+
+
+;;
+; CUTSCENE_ROOM_OF_RITES_COLLAPSE
+; @addr{5b64}
+_endgameCutsceneHandler_0f:
 	ld de,$cbc1		; $5b64
 	ld a,(de)		; $5b67
 	rst_jumpTable			; $5b68
@@ -19262,7 +19373,7 @@ _label_03_096:
 	ld (hl),$3c		; $5bf5
 	ld bc,$3d0e		; $5bf7
 	jp showText		; $5bfa
-	call $6068		; $5bfd
+	call _cutscene_decCBB3IfTextNotActive		; $5bfd
 	ret nz			; $5c00
 	call incCbc2		; $5c01
 	ld a,MUS_DISASTER		; $5c04
@@ -19291,7 +19402,7 @@ _label_03_096:
 	ld (hl),$3c		; $5c3e
 	ld bc,$3d0f		; $5c40
 	jp showText		; $5c43
-	call $6068		; $5c46
+	call _cutscene_decCBB3IfTextNotActive		; $5c46
 	ret nz			; $5c49
 	call incCbc2		; $5c4a
 	ld hl,wTmpcbb3		; $5c4d
@@ -19368,7 +19479,7 @@ _label_03_096:
 	call incCbc2		; $5cea
 	ld a,$11		; $5ced
 	ld ($cfde),a		; $5cef
-	call $64c5		; $5cf2
+	call _cutscene_loadObjectSetAndFadein		; $5cf2
 	ld a,$04		; $5cf5
 	ld b,$02		; $5cf7
 	call $6056		; $5cf9
@@ -19380,7 +19491,7 @@ _label_03_096:
 	ld (hl),$3c		; $5d09
 	ld a,$02		; $5d0b
 	jp loadGfxRegisterStateIndex		; $5d0d
-	call $6070		; $5d10
+	call _cutscene_decCBB3IfNotFadingOut		; $5d10
 	ret nz			; $5d13
 	call incCbc2		; $5d14
 	ld a,$3c		; $5d17
@@ -19406,7 +19517,7 @@ _label_03_096:
 	ld ($cfc0),a		; $5d46
 	ld a,$03		; $5d49
 	jp fadeinFromWhiteWithDelay		; $5d4b
-	call $6070		; $5d4e
+	call _cutscene_decCBB3IfNotFadingOut		; $5d4e
 	ret nz			; $5d51
 	call refreshObjectGfx		; $5d52
 	ld a,$04		; $5d55
@@ -19455,23 +19566,23 @@ _label_03_096:
 	ld (hl),$f0		; $5dbd
 	ld a,$04		; $5dbf
 	call loadGfxRegisterStateIndex		; $5dc1
-	call $60a6		; $5dc4
+	call _cutscene_resetOamWithSomething1		; $5dc4
 	ld a,$03		; $5dc7
 	jp fadeinFromWhiteWithDelay		; $5dc9
-	call $60a6		; $5dcc
-	call $6070		; $5dcf
+	call _cutscene_resetOamWithSomething1		; $5dcc
+	call _cutscene_decCBB3IfNotFadingOut		; $5dcf
 	ret nz			; $5dd2
 	call incCbc2		; $5dd3
 	ld hl,wTmpcbb3		; $5dd6
 	ld (hl),$10		; $5dd9
 	ld a,$03		; $5ddb
 	jp fadeoutToBlackWithDelay		; $5ddd
-	call $60a6		; $5de0
-	call $6070		; $5de3
+	call _cutscene_resetOamWithSomething1		; $5de0
+	call _cutscene_decCBB3IfNotFadingOut		; $5de3
 	ret nz			; $5de6
 	ld a,$0a		; $5de7
 	ld (wCutsceneIndex),a		; $5de9
-	call $6086		; $5dec
+	call cutscene_clearTmpCBB3		; $5dec
 	ld hl,wRoomLayout		; $5def
 	ld bc,$00c0		; $5df2
 	call clearMemoryBc		; $5df5
@@ -19485,6 +19596,11 @@ _label_03_096:
 	ld (hl),$3c		; $5e09
 	ld a,SNDCTRL_MEDIUM_FADEOUT		; $5e0b
 	jp playSound		; $5e0d
+
+;;
+; CUTSCENE_CREDITS
+; @addr{5e10}
+_endgameCutsceneHandler_0a:
 	call $5e16		; $5e10
 	jp func_3539		; $5e13
 	ld de,$cbc1		; $5e16
@@ -19502,7 +19618,7 @@ _label_03_096:
 .dw $5e4d
 .dw $5e69
 
-	call $6070		; $5e2e
+	call _cutscene_decCBB3IfNotFadingOut		; $5e2e
 	ret nz			; $5e31
 	call func_60e0		; $5e32
 	call incCbc2		; $5e35
@@ -19565,7 +19681,7 @@ _label_03_097:
 	ldh (<hOamTail),a	; $5ead
 	ld a,($cfde)		; $5eaf
 	ld c,a			; $5eb2
-	call $608e		; $5eb3
+	call _cutscene_clearCFC0ToCFDF		; $5eb3
 	ld a,c			; $5eb6
 	ld ($cfde),a		; $5eb7
 	cp $04			; $5eba
@@ -19713,8 +19829,8 @@ _label_03_102:
 	ld ($cbc2),a		; $5fc2
 	jr _label_03_104		; $5fc5
 _label_03_103:
-	call $6086		; $5fc7
-	call $608e		; $5fca
+	call cutscene_clearTmpCBB3		; $5fc7
+	call _cutscene_clearCFC0ToCFDF		; $5fca
 	ld a,$02		; $5fcd
 	ld ($cbc1),a		; $5fcf
 _label_03_104:
@@ -19790,32 +19906,52 @@ _label_03_108:
 _label_03_109:
 	call $603a		; $6056
 	jp reloadObjectGfx		; $6059
-	call $6068		; $605c
+	call _cutscene_decCBB3IfTextNotActive		; $605c
 	ret nz			; $605f
 	call incCbc2		; $6060
 	ld hl,wTmpcbb3		; $6063
 	ld (hl),e		; $6066
 	ret			; $6067
+
+;;
+; @addr{6068}
+_cutscene_decCBB3IfTextNotActive:
 	ld a,(wTextIsActive)		; $6068
 	or a			; $606b
 	ret nz			; $606c
 	jp decCbb3		; $606d
+
+;;
+; @addr{6070}
+_cutscene_decCBB3IfNotFadingOut:
 	ld a,(wPaletteThread_mode)		; $6070
 	or a			; $6073
 	ret nz			; $6074
 	jp decCbb3		; $6075
-	call $6070		; $6078
+
+
+	call _cutscene_decCBB3IfNotFadingOut		; $6078
 	ret nz			; $607b
 	call incCbc1		; $607c
 	ld a,e			; $607f
 	ld (wTmpcbb3),a		; $6080
 	jp showText		; $6083
+
+;;
+; @addr{6086}
+cutscene_clearTmpCBB3:
 	ld hl,wTmpcbb3		; $6086
 	ld b,$10		; $6089
 	jp clearMemory		; $608b
+
+;;
+; @addr{608e}
+_cutscene_clearCFC0ToCFDF:
 	ld b,$20		; $608e
 	ld hl,$cfc0		; $6090
 	jp clearMemory		; $6093
+
+
 	ld a,$04		; $6096
 	call setScreenShakeCounter		; $6098
 	ld a,(wFrameCounter)		; $609b
@@ -19823,20 +19959,34 @@ _label_03_109:
 	ld a,SND_RUMBLE2		; $60a0
 	jp z,playSound		; $60a2
 	ret			; $60a5
+
+
+;;
+; @addr{60a6}
+_cutscene_resetOamWithSomething1:
 	ld hl,$4f73		; $60a6
 	ld e,$16		; $60a9
 	ld bc,$3038		; $60ab
-	jr _label_03_110		; $60ae
+	jr ++			; $60ae
+
+;;
+; @addr{60b0}
+_cutscene_resetOamWithSomething2:
 	ld hl,$4e37		; $60b0
 	ld e,$16		; $60b3
 	ld bc,$3038		; $60b5
-_label_03_110:
+++
 	xor a			; $60b8
 	ldh (<hOamTail),a	; $60b9
 	jp addSpritesFromBankToOam_withOffset		; $60bb
+
+;;
+; @param	hl	List of tiles (see below for example of format)
+; @addr{60be}
+_cutscene_replaceListOfTiles:
 	ld b,(hl)		; $60be
 	inc hl			; $60bf
-_label_03_111:
+@loop:
 	ld c,(hl)		; $60c0
 	inc hl			; $60c1
 	ldi a,(hl)		; $60c2
@@ -19846,26 +19996,22 @@ _label_03_111:
 	pop hl			; $60c8
 	pop bc			; $60c9
 	dec b			; $60ca
-	jr nz,_label_03_111	; $60cb
+	jr nz,@loop	; $60cb
 	ret			; $60cd
-	inc b			; $60ce
-	ld b,h			; $60cf
-	add e			; $60d0
-	ld b,l			; $60d1
-	add e			; $60d2
-	ld d,h			; $60d3
-	add e			; $60d4
-	ld d,l			; $60d5
-	add e			; $60d6
-	inc b			; $60d7
-	ld b,h			; $60d8
-	rst_addDoubleIndex			; $60d9
-	ld b,l			; $60da
-	.db $ed			; $60db
-	ld d,h			; $60dc
-	add b			; $60dd
-	ld d,l			; $60de
-	add b			; $60df
+
+_blackTowerEscapeCutscene_doorBlockReplacement:
+	.db $04     ; # of entries
+	.db $44 $83 ; Position, New Tile Value
+	.db $45 $83
+	.db $54 $83
+	.db $55 $83
+
+_blackTowerEscapeCutscene_doorOpenReplacement:
+	.db $04 
+	.db $44 $df
+	.db $45 $ed
+	.db $54 $80
+	.db $55 $80
 
 ;;
 ; @addr{60e0}
@@ -20299,7 +20445,7 @@ _label_03_117:
 	ld hl,wTmpcbb3		; $643b
 	ld (hl),$3c		; $643e
 	jp fadeoutToWhite		; $6440
-	call $6070		; $6443
+	call _cutscene_decCBB3IfNotFadingOut		; $6443
 	ret nz			; $6446
 	call $6f8c		; $6447
 	ld a,$15		; $644a
@@ -20345,7 +20491,7 @@ _label_03_117:
 	call $6f8c		; $649c
 	ld bc,$5607		; $649f
 	jp showText		; $64a2
-	call $6068		; $64a5
+	call _cutscene_decCBB3IfTextNotActive		; $64a5
 	ret nz			; $64a8
 	call $6f8c		; $64a9
 	xor a			; $64ac
@@ -20357,21 +20503,26 @@ _label_03_117:
 	or a			; $64b8
 	ret nz			; $64b9
 	call $6f8c		; $64ba
-	call $64c5		; $64bd
+	call _cutscene_loadObjectSetAndFadein		; $64bd
 	ld a,$02		; $64c0
 	jp loadGfxRegisterStateIndex		; $64c2
-	ld hl,$cfde		; $64c5
+
+;;
+; @addr{64c5}
+_cutscene_loadObjectSetAndFadein:
+	ld hl,wTmpcfc0.genericCutscene.cfde		; $64c5
 	ld a,(hl)		; $64c8
 	push af			; $64c9
-	call $6fd6		; $64ca
+	call _cutscene_getObjectSetIndexAndSomething		; $64ca
 	pop af			; $64cd
 	ld b,a			; $64ce
 	call getEntryFromObjectTable2		; $64cf
 	call parseGivenObjectData		; $64d2
 	call refreshObjectGfx		; $64d5
 	xor a			; $64d8
-	ld ($cfd1),a		; $64d9
+	ld (wTmpcfc0.genericCutscene.cfd1),a		; $64d9
 	jp fadeinFromWhite		; $64dc
+
 	ld a,(wPaletteThread_mode)		; $64df
 	or a			; $64e2
 	ret nz			; $64e3
@@ -20395,7 +20546,7 @@ _label_03_118:
 	or a			; $6501
 	ret nz			; $6502
 	call $6f8c		; $6503
-	call $64c5		; $6506
+	call _cutscene_loadObjectSetAndFadein		; $6506
 	ld a,PALH_99		; $6509
 	call loadPaletteHeader		; $650b
 	ld a,$08		; $650e
@@ -20804,7 +20955,7 @@ _label_03_123:
 	or a			; $6872
 	ret nz			; $6873
 	call $6f8c		; $6874
-	call $64c5		; $6877
+	call _cutscene_loadObjectSetAndFadein		; $6877
 	ld a,$02		; $687a
 	jp loadGfxRegisterStateIndex		; $687c
 	ld a,(wPaletteThread_mode)		; $687f
@@ -20832,7 +20983,7 @@ _label_03_124:
 	or a			; $68a6
 	ret nz			; $68a7
 	call $6f8c		; $68a8
-	call $64c5		; $68ab
+	call _cutscene_loadObjectSetAndFadein		; $68ab
 	call $6838		; $68ae
 	ld a,$01		; $68b1
 	ld (wDisabledObjects),a		; $68b3
@@ -21033,7 +21184,7 @@ _label_03_134:
 	call $6f8c		; $6a5b
 	ld a,$10		; $6a5e
 	ld ($cfde),a		; $6a60
-	ld hl,$64c5		; $6a63
+	ld hl,_cutscene_loadObjectSetAndFadein		; $6a63
 	ld e,$03		; $6a66
 	call interBankCall		; $6a68
 	call showStatusBar		; $6a6b
@@ -21079,7 +21230,7 @@ _label_03_134:
 	or a			; $6ac6
 	ret nz			; $6ac7
 	call $6f8c		; $6ac8
-	call $64c5		; $6acb
+	call _cutscene_loadObjectSetAndFadein		; $6acb
 	ld a,$02		; $6ace
 	jp loadGfxRegisterStateIndex		; $6ad0
 	ld a,(wPaletteThread_mode)		; $6ad3
@@ -21193,7 +21344,7 @@ _label_03_136:
 	ld a,$02		; $6bb8
 	ld ($cfc0),a		; $6bba
 	jp showText		; $6bbd
-	call $6068		; $6bc0
+	call _cutscene_decCBB3IfTextNotActive		; $6bc0
 	ret nz			; $6bc3
 	ld a,SNDCTRL_STOPMUSIC		; $6bc4
 	call playSound		; $6bc6
@@ -21240,7 +21391,7 @@ _label_03_139:
 	ret z			; $6c24
 	ld a,$12		; $6c25
 	ld ($cfde),a		; $6c27
-	call $64c5		; $6c2a
+	call _cutscene_loadObjectSetAndFadein		; $6c2a
 	call showStatusBar		; $6c2d
 	call $6f8c		; $6c30
 	ld a,MUS_ZELDA_SAVED		; $6c33
@@ -21263,7 +21414,7 @@ _label_03_139:
 	ret z			; $6c5c
 	ld hl,$cfde		; $6c5d
 	inc (hl)		; $6c60
-	call $64c5		; $6c61
+	call _cutscene_loadObjectSetAndFadein		; $6c61
 	ld hl,$d000		; $6c64
 	ld (hl),$03		; $6c67
 	ld l,$0b		; $6c69
@@ -21381,7 +21532,7 @@ _label_03_140:
 	ldh (<hCameraY),a	; $6d6c
 	ld a,$00		; $6d6e
 	ld (wScrollMode),a		; $6d70
-	jp $542e		; $6d73
+	jp _clearFadingPalettes		; $6d73
 	ld e,$96		; $6d76
 _label_03_141:
 	call decCbb3		; $6d78
@@ -21659,6 +21810,13 @@ _label_03_143:
 	ld (wGfxRegs1.LYC),a		; $6fcf
 	ld (wGfxRegs2.SCY),a		; $6fd2
 	ret			; $6fd5
+
+;;
+; @param	a	Index?
+; @param[out]	b	Index for "objectTable2"?
+; @param[out]	c
+; @addr{6fd6}
+_cutscene_getObjectSetIndexAndSomething:
 	ld hl,$6fe3		; $6fd6
 	rst_addDoubleIndex			; $6fd9
 	ld b,(hl)		; $6fda
@@ -21666,41 +21824,33 @@ _label_03_143:
 	ld c,(hl)		; $6fdc
 	call disableLcdAndLoadRoom		; $6fdd
 	jp resetCamera		; $6fe0
-	nop			; $6fe3
-	sbc b			; $6fe4
-	nop			; $6fe5
-	ld e,d			; $6fe6
-	ld (bc),a		; $6fe7
-	ld c,$00		; $6fe8
-	add hl,sp		; $6fea
-	nop			; $6feb
-	add hl,sp		; $6fec
-	ld (bc),a		; $6fed
-	ld c,$00		; $6fee
-	ld e,d			; $6ff0
-	nop			; $6ff1
-	jr c,_label_03_144	; $6ff2
-	ld c,c			; $6ff4
-_label_03_144:
-	ld bc,$0184		; $6ff5
-	ld h,l			; $6ff8
-	dec b			; $6ff9
-	pop af			; $6ffa
-	ld bc,$0165		; $6ffb
-	ld c,c			; $6ffe
-	ld bc,$0484		; $6fff
-	or $05			; $7002
-	pop af			; $7004
-	nop			; $7005
-	jr c,_label_03_145	; $7006
-	ld c,c			; $7008
-_label_03_145:
-	nop			; $7009
-	jr c,_label_03_148	; $700a
-	or h			; $700c
-	swap l			; $700d
+
+@data:
+	.db $00 $98
+	.db $00 $5a
+	.db $02 $0e
+	.db $00 $39
+	.db $00 $39
+	.db $02 $0e
+	.db $00 $5a
+	.db $00 $38
+	.db $01 $49
+	.db $01 $84
+	.db $01 $65
+	.db $05 $f1
+	.db $01 $65
+	.db $01 $49
+	.db $01 $84
+	.db $04 $f6
+	.db $05 $f1
+	.db $00 $38
+	.db $01 $49
+	.db $00 $38
+
+	ld hl,$cbb4		; $700b
+	dec (hl)		; $700e
 	ret nz			; $700f
-	ld (hl),$1e		; $7010
+	ld (hl),30		; $7010
 	ret			; $7012
 _label_03_146:
 	ld hl,wCutsceneState		; $7013
@@ -22813,7 +22963,7 @@ _label_03_174:
 _label_03_175:
 	ld a,SNDCTRL_STOPMUSIC		; $78ce
 	call playSound		; $78d0
-	call $542e		; $78d3
+	call _clearFadingPalettes		; $78d3
 	ld a,$bf		; $78d6
 	ldh (<hSprPaletteSources),a	; $78d8
 	ldh (<hDirtySprPalettes),a	; $78da
@@ -137320,13 +137470,19 @@ templeIntro_simulatedInput:
 	dwb   12  BTN_UP
 	.dw $ffff
 
-simulatedInput70d2:
+; Exiting tower
+blackTowerEscape_simulatedInput1:
 	dwb  96 $00
+	; Fall though
+
+; Leaving screen
+blackTowerEscape_simulatedInput2:
 	dwb  33 BTN_DOWN
 	dwb 256 $00
 	.dw $ffff
 
-simulatedInput70dd:
+; Walking up to ambi's guards
+blackTowerEscape_simulatedInput3:
 	dwb  48 BTN_UP
 	dwb   4 $00
 	dwb  16 BTN_RIGHT
@@ -137334,7 +137490,8 @@ simulatedInput70dd:
 	dwb 256 $00
 	.dw $ffff
 
-simulatedInput70ee:
+; Same room as above
+blackTowerEscape_simulatedInput4:
 	dwb  16 BTN_UP
 	dwb 256 $00
 	.dw $ffff
@@ -137391,9 +137548,7 @@ simulatedInput70ee:
 	ret nz			; $715c
 	call checkIsLinkedGame		; $715d
 	jr nz,_label_10_290	; $7160
-	ld hl,$6086		; $7162
-	ld e,$03		; $7165
-	call interBankCall		; $7167
+	callab cutscene_clearTmpCBB3		; $7162
 	ld a,$03		; $716a
 	ld ($cbc1),a		; $716c
 	ld a,$04		; $716f
@@ -137535,9 +137690,7 @@ _label_10_298:
 	call $71fd		; $727f
 	call decCbb3		; $7282
 	ret nz			; $7285
-	ld hl,$6086		; $7286
-	ld e,$03		; $7289
-	call interBankCall		; $728b
+	callab cutscene_clearTmpCBB3		; $7286
 	ld a,$03		; $728e
 	ld ($cbc1),a		; $7290
 	ld a,$04		; $7293

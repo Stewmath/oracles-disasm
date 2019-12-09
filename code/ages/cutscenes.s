@@ -37,7 +37,7 @@ cutscene09:
 
 	ld e,$00		; $5d81
 ---
-	call func_306c		; $5d83
+	call endgameCutsceneHandler		; $5d83
 	ld a,(wWarpTransition2)		; $5d86
 	or a			; $5d89
 	ret z			; $5d8a
@@ -48,12 +48,12 @@ cutscene09:
 cutscene0f:
 	call func_1613		; $5d8e
 	ld e,$02		; $5d91
-	jp func_306c		; $5d93
+	jp endgameCutsceneHandler		; $5d93
 ;;
 ; @addr{5d96}
 cutscene0a:
 	ld e,$01		; $5d96
-	jp func_306c		; $5d98
+	jp endgameCutsceneHandler		; $5d98
 ;;
 ; @addr{5d9b}
 cutscene20:

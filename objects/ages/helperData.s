@@ -2521,12 +2521,12 @@ objectData53f5:
 	obj_SpecificEnemy     $3102 $18 $78
 	obj_EndPointer
 
-objectData540c:
+blackTowerEscape_nayruAndRalph:
 	obj_DoubleValue $3603 $68 $48
 	obj_DoubleValue $3705 $68 $58
 	obj_End
 
-objectData5416:
+blackTowerEscape_ambiAndGuards:
 	obj_DoubleValue $3604 $98 $50
 	obj_DoubleValue $3706 $b8 $50
 	obj_DoubleValue $4d01 $38 $50

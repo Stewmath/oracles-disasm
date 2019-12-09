@@ -2917,6 +2917,7 @@ wRoomLayoutEnd: ; $cfc0
 	filler1:
 		dsb $0f
 	cfd0: ; $cfd0
+	; Acts as a synchronization thing, ie. between objects?
 		db
 	cfd1: ; $cfd1
 		db
@@ -2929,6 +2930,8 @@ wRoomLayoutEnd: ; $cfc0
 	filler3:
 		dsb 7
 	cfde: ; $cfde
+		db
+	cfdf: ; $cfdf
 		db
 
 .nextu introCutscene
