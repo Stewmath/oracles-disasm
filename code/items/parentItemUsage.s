@@ -25,7 +25,7 @@ _clearAllParentItems:
 	xor a			; $4884
 	ld (wUsingShield),a		; $4885
 	ld (wcc63),a		; $4888
-	ld (wcc5e),a		; $488b
+	ld (wMagnetGloveState),a		; $488b
 	pop de			; $488e
 	ret			; $488f
 
@@ -350,7 +350,7 @@ _chooseParentItemSlot:
 	pop de			; $49c6
 	ld hl,w1ParentItem2		; $49c7
 	xor a			; $49ca
-	ld (wcc5e),a		; $49cb
+	ld (wMagnetGloveState),a		; $49cb
 	ld (wcc63),a		; $49ce
 	ret			; $49d1
 

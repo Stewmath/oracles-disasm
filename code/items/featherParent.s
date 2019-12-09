@@ -35,7 +35,7 @@ _parentItemCode_feather:
 
 	ld hl,wLinkSwimmingState		; $5318
 	ldi a,(hl)		; $531b
-	; Check wcc5e as well
+	; Check wMagnetGloveState as well
 	or (hl)			; $531c
 	jr nz,@deleteParent	; $531d
 

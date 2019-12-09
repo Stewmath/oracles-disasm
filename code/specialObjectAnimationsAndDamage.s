@@ -327,8 +327,8 @@ _func_4553:
 	or a			; $45bc
 	jr nz,@animationFound	; $45bd
 
-	; Check something? (Causes throw / punch animation)
-	ld a,(wcc5e)		; $45bf
+	; Check if using magnet gloves
+	ld a,(wMagnetGloveState)		; $45bf
 	or a			; $45c2
 	jr z,+			; $45c3
 

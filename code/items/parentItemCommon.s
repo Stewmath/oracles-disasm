@@ -1,4 +1,17 @@
 ;;
+; Unused function (in both ages and seasons)
+; @addr{5358}
+_func_5358:
+	call _checkNoOtherParentItemsInUse		; $5358
+--
+	push hl			; $535b
+	call nz,_clearParentItemH		; $535c
+	pop hl			; $535f
+	call _checkNoOtherParentItemsInUse@nextItem		; $5360
+	jr nz,--		; $5363
+	ret			; $5365
+
+;;
 ; @param	d	The current parent item
 ; @param[out]	zflag	Set if there are no other parent item slots in use
 ; @addr{5366}

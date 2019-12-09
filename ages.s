@@ -27470,7 +27470,7 @@ _linkApplyTileTypes:
 	or a			; $4363
 	jr nz,@tileType_normal	; $4364
 
-	ld a,(wcc5e)		; $4366
+	ld a,(wMagnetGloveState)		; $4366
 	bit 6,a			; $4369
 	jr nz,@tileType_normal	; $436b
 
@@ -31262,7 +31262,7 @@ _linkState10:
 	and $40			; $5554
 	jr nz,++		; $5556
 
-	ld a,(wcc5e)		; $5558
+	ld a,(wMagnetGloveState)		; $5558
 	bit 6,a			; $555b
 	jr nz,++		; $555d
 
@@ -31301,7 +31301,7 @@ _linkState10:
 	jp specialObjectAnimate		; $5595
 
 @notInAir:
-	ld a,(wcc5e)		; $5598
+	ld a,(wMagnetGloveState)		; $5598
 	bit 6,a			; $559b
 	jp nz,_animateLinkStanding		; $559d
 
@@ -32251,7 +32251,7 @@ _linkState01_sidescroll:
 	or a			; $5a11
 	jp nz,_linkUpdateSwimming_sidescroll		; $5a12
 
-	ld a,(wcc5e)		; $5a15
+	ld a,(wMagnetGloveState)		; $5a15
 	bit 6,a			; $5a18
 	jp z,+			; $5a1a
 
@@ -39647,7 +39647,7 @@ cliffTilesTable:
 	.include "code/items/boomerangParent.s"
 	.include "code/items/bombsBraceletParent.s"
 	.include "code/items/featherParent.s"
-	.include "code/items/parentItems.s"
+	.include "code/items/magnetGloveParent.s"
 
 	.include "code/items/parentItemCommon.s"
 

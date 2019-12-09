@@ -1847,9 +1847,9 @@ wLinkSwimmingState: ; $cc5d/$cc78
 ; whether he just entered or has been there for a few frames.
 	db
 
-wcc5e: ; $cc5e
-; Makes Link get stuck in a "punching" / using item animation?
-; If bit 6 is set, Link ignores holes.
+wMagnetGloveState: ; $cc5e/$cc79
+; Bit 6: Set while latched onto something (ignore holes, etc).
+; Bit 1: Set based on glove's polarity.
 	db
 
 wLinkUsingItem1: ; $cc5f/$cc7a
@@ -1896,7 +1896,7 @@ wcc67: ; $cc67
 ; Used with dimitri?
 	db
 
-wLinkClimbingVine: ; $cc68
+wLinkClimbingVine: ; $cc68/$cc83
 ; Set to $ff when link climbs certain ladders. Forces him to face upwards.
 	db
 
