@@ -9,14 +9,15 @@ _parentItemCode_bombchu:
 	.dw _parentItemGenericState1
 
 @state0:
+.ifdef ROM_AGES
 	; Must be above water
 	call _isLinkUnderwater		; $5036
 	jp nz,_clearParentItem		; $5039
-
 	; Can't be on raft
 	ld a,(w1Companion.id)		; $503c
 	cp SPECIALOBJECTID_RAFT			; $503f
 	jp z,_clearParentItem		; $5041
+.endif
 
 	; Can't be swimming
 	ld a,(wLinkSwimmingState)		; $5044
@@ -49,13 +50,14 @@ _parentItemCode_bomb:
 	.dw _parentItemCode_bracelet@state4
 
 @state0:
+.ifdef ROM_AGES
 	call _isLinkUnderwater		; $5068
 	jp nz,_clearParentItem		; $506b
-
 	; If Link is riding something other than a raft, don't allow usage of bombs
 	ld a,(w1Companion.id)		; $506e
 	cp SPECIALOBJECTID_RAFT			; $5071
 	jr z,+			; $5073
+.endif
 	ld a,(wLinkObjectIndex)		; $5075
 	rrca			; $5078
 	jp c,_clearParentItem		; $5079
@@ -167,6 +169,13 @@ _parentItemCode_bracelet:
 @state0:
 	call _checkLinkOnGround		; $50f6
 	jp nz,_clearParentItem		; $50f9
+
+.ifdef ROM_SEASONS
+	ld a,(wActiveTileType)
+	cp TILETYPE_STUMP
+	jp z,_clearParentItem
+.endif
+
 	ld a,(w1ReservedItemC.enabled)		; $50fc
 	or a			; $50ff
 	jp nz,_clearParentItem		; $5100
@@ -345,7 +354,7 @@ _parentItemCode_bracelet:
 	ld a,(wLinkInAir)		; $51fa
 	rlca			; $51fd
 	ret c			; $51fe
-	ld a,($cc67)		; $51ff
+	ld a,(wcc67)		; $51ff
 	or a			; $5202
 	ret nz			; $5203
 	ld a,(w1Link.var2a)		; $5204
@@ -430,11 +439,15 @@ _parentItemCode_bracelet:
 	ld l,Item.var3f		; $5267
 	ld (hl),$0f		; $5269
 
-	; Load animation depending on whether Link's riding a minecart
 	ld c,LINK_ANIM_MODE_THROW		; $526b
+
+.ifdef ROM_AGES ; TODO: why does only ages check this?
+	; Load animation depending on whether Link's riding a minecart
 	ld a,(w1Companion.id)		; $526d
 	cp SPECIALOBJECTID_MINECART			; $5270
 	jr nz,+			; $5272
+.endif
+
 	ld a,(wLinkObjectIndex)		; $5274
 	rrca			; $5277
 	jr nc,+			; $5278

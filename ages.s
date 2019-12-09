@@ -26872,7 +26872,7 @@ updateSpecialObjects:
 	ld (hl),a		; $4062
 
 	xor a			; $4063
-	ld ($cc67),a		; $4064
+	ld (wcc67),a		; $4064
 	ld (w1Link.var2a),a		; $4067
 	ld (wccd8),a		; $406a
 
@@ -37892,11 +37892,11 @@ _dimitriState2Substate1:
 	jp dropLinkHeldItem		; $7496
 
 @update:
-	; Check whether to prevent Link from throwing dimitri (write nonzero to $cc67)
+	; Check whether to prevent Link from throwing dimitri (write nonzero to wcc67)
 	call _companionCalculateAdjacentWallsBitset		; $7499
 	call _specialObjectCheckMovingTowardWall		; $749c
 	ret z			; $749f
-	ld ($cc67),a		; $74a0
+	ld (wcc67),a		; $74a0
 	ret			; $74a3
 
 ;;
