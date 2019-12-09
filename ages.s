@@ -39645,6 +39645,7 @@ cliffTilesTable:
 	.include "code/items/seedsParent.s"
 	.include "code/items/shovelParent.s"
 	.include "code/items/boomerangParent.s"
+	.include "code/items/bombsBraceletParent.s"
 	.include "code/items/parentItems.s"
 
 	.include "code/items/parentItemCommon.s"
