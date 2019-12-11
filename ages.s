@@ -18387,10 +18387,11 @@ _endgameCutsceneHandler_09:
 	ld de,wGenericCutscene.cbc1		; $5449
 	ld a,(de)		; $544c
 	rst_jumpTable			; $544d
-	.dw _endgameCutsceneHandler_09_state0
-	.dw _endgameCutsceneHandler_09_state1
+	.dw _endgameCutsceneHandler_09_stage0
+	.dw _endgameCutsceneHandler_09_stage1
 
-_endgameCutsceneHandler_09_state0:
+
+_endgameCutsceneHandler_09_stage0:
 	call updateStatusBar		; $5452
 	call @runStates		; $5455
 	jp updateAllObjects		; $5458
@@ -18736,6 +18737,8 @@ _endgameCutsceneHandler_09_state0:
 	ld (hl),60		; $56a0
 
 	ld bc,TX_1312		; $56a2
+
+@showTextDuringTwinrovaCutscene:
 	ld a,TEXTBOXFLAG_NOCOLORS	; $56a5
 	ld (wTextboxFlags),a		; $56a7
 	jp showText		; $56aa
@@ -18771,106 +18774,133 @@ _endgameCutsceneHandler_09_state0:
 	ret			; $56df
 
 
-_endgameCutsceneHandler_09_state1:
-	call $56e6		; $56e0
+; Twinrova appears just before credits
+_endgameCutsceneHandler_09_stage1:
+	call @runStates		; $56e0
 	jp updateAllObjects		; $56e3
 
-	ld de,$cbc2		; $56e6
+@runStates:
+	ld de,wGenericCutscene.cbc2		; $56e6
 	ld a,(de)		; $56e9
 	rst_jumpTable			; $56ea
-.dw $56ff
-.dw $572c
-.dw $5744
-.dw $5761
-.dw $5777
-.dw $578a
-.dw $57a6
-.dw $57bb
-.dw $57d2
-.dw $5828
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+	.dw @state5
+	.dw @state6
+	.dw @state7
+	.dw @state8
+	.dw @state9
 
+@state0:
 	call _cutscene_resetOamWithSomething2		; $56ff
 	ld a,(wPaletteThread_mode)		; $5702
 	or a			; $5705
 	ret nz			; $5706
+
 	call incCbc2		; $5707
 	ld hl,wTmpcbb3		; $570a
-	ld (hl),$3c		; $570d
+	ld (hl),60		; $570d
+
 	call disableLcd		; $570f
 	call clearOam		; $5712
-	ld a,$2c		; $5715
+	ld a,GFXH_2c		; $5715
 	call loadGfxHeader		; $5717
 	ld a,PALH_9e		; $571a
 	call loadPaletteHeader		; $571c
 	ld a,$04		; $571f
 	call loadGfxRegisterStateIndex		; $5721
+
 	ld a,MUS_DISASTER		; $5724
 	call playSound		; $5726
 	jp fadeinFromWhite		; $5729
+
+@state1:
 	ld a,TEXTBOXFLAG_NOCOLORS	; $572c
 	ld (wTextboxFlags),a		; $572e
-	ld a,$3c		; $5731
-	ld bc,$280b		; $5733
+	ld a,60		; $5731
+	ld bc,TX_280b		; $5733
 	call _cutscene_decCBB3IfNotFadingOut		; $5736
 	ret nz			; $5739
 	call incCbc2		; $573a
 	ld a,e			; $573d
 	ld (wTmpcbb3),a		; $573e
 	jp showText		; $5741
+
+@state2:
 	call _cutscene_decCBB3IfTextNotActive		; $5744
 	ret nz			; $5747
 	call incCbc2		; $5748
+
 	ld hl,wTmpcbb5		; $574b
 	ld (hl),$d0		; $574e
-_label_03_089:
-	ld hl,$4d05		; $5750
-	ld e,$16		; $5753
-_label_03_090:
+
+@loadCertainOamData1:
+	ld hl,bank16.oamData_4d05		; $5750
+	ld e,:bank16.oamData_4d05		; $5753
+
+@loadOamData:
 	ld b,$30		; $5755
 	push de			; $5757
 	ld de,wTmpcbb5		; $5758
 	ld a,(de)		; $575b
 	pop de			; $575c
 	ld c,a			; $575d
-	jp $60b8		; $575e
+	jp _cutscene_resetOamWithData		; $575e
+
+@state3:
 	ld hl,wTmpcbb5		; $5761
 	inc (hl)		; $5764
-	jr nz,_label_03_089	; $5765
+	jr nz,@loadCertainOamData1	; $5765
 	call clearOam		; $5767
 	ld a,UNCMP_GFXH_0a		; $576a
 	call loadUncompressedGfxHeader		; $576c
 	ld hl,wTmpcbb3		; $576f
-	ld (hl),$1e		; $5772
+	ld (hl),30		; $5772
 	jp incCbc2		; $5774
+
+@state4:
 	call decCbb3		; $5777
 	ret nz			; $577a
 	call incCbc2		; $577b
 	ld hl,wTmpcbb5		; $577e
 	ld (hl),$d0		; $5781
-	ld hl,$4d9e		; $5783
-	ld e,$16		; $5786
-	jr _label_03_090		; $5788
-	call $5783		; $578a
+
+@loadCertainOamData2:
+	ld hl,bank16.oamData_4d9e		; $5783
+	ld e,:bank16.oamData_4d9e		; $5786
+	jr @loadOamData		; $5788
+
+@state5:
+	call @loadCertainOamData2		; $578a
 	ld hl,wTmpcbb5		; $578d
 	dec (hl)		; $5790
 	ld a,(hl)		; $5791
 	sub $a0			; $5792
 	ret nz			; $5794
-	ld (wScreenOffsetY),a		; $5795
-	ld (wScreenOffsetX),a		; $5798
-	ld a,$1e		; $579b
+
+	ld (wScreenOffsetY),a ; 0
+	ld (wScreenOffsetX),a
+
+	ld a,30		; $579b
 	ld (wTmpcbb3),a		; $579d
-	ld (wOpenedMenuType),a		; $57a0
+	ld (wOpenedMenuType),a ; TODO: ???
 	jp incCbc2		; $57a3
-	call $5783		; $57a6
+
+@state6:
+	call @loadCertainOamData2		; $57a6
 	call decCbb3		; $57a9
 	ret nz			; $57ac
 	ld hl,wTmpcbb3		; $57ad
-	ld (hl),$14		; $57b0
-	ld bc,$280c		; $57b2
-	call $56a5		; $57b5
+	ld (hl),20		; $57b0
+	ld bc,TX_280c		; $57b2
+	call _endgameCutsceneHandler_09_stage0@showTextDuringTwinrovaCutscene		; $57b5
 	jp incCbc2		; $57b8
-	call $5783		; $57bb
+
+@state7:
+	call @loadCertainOamData2		; $57bb
 	call _cutscene_decCBB3IfTextNotActive		; $57be
 	ret nz			; $57c1
 	xor a			; $57c2
@@ -18880,14 +18910,20 @@ _label_03_090:
 	ld a,SND_LIGHTNING		; $57ca
 	call playSound		; $57cc
 	jp incCbc2		; $57cf
-	call $5783		; $57d2
+
+@state8:
+	call @loadCertainOamData2		; $57d2
 	ld hl,wTmpcbb3		; $57d5
 	ld b,$02		; $57d8
 	call flashScreen		; $57da
 	ret z			; $57dd
+
+	; Time to load twinrova's face graphics?
+
 	call incCbc2		; $57de
 	ld hl,wTmpcbb3		; $57e1
-	ld (hl),$1e		; $57e4
+	ld (hl),30		; $57e4
+
 	call disableLcd		; $57e6
 	call clearOam		; $57e9
 	xor a			; $57ec
@@ -18895,17 +18931,20 @@ _label_03_090:
 	ld hl,$8000		; $57ef
 	ld bc,$2000		; $57f2
 	call clearMemoryBc		; $57f5
+
 	xor a			; $57f8
 	ld ($ff00+R_VBK),a	; $57f9
 	ld hl,$9c00		; $57fb
 	ld bc,$0400		; $57fe
 	call clearMemoryBc		; $5801
+
 	ld a,$01		; $5804
 	ld ($ff00+R_VBK),a	; $5806
 	ld hl,$9c00		; $5808
 	ld bc,$0400		; $580b
 	call clearMemoryBc		; $580e
-	ld a,$2d		; $5811
+
+	ld a,GFXH_2d		; $5811
 	call loadGfxHeader		; $5813
 	ld a,PALH_9c		; $5816
 	call loadPaletteHeader		; $5818
@@ -18914,9 +18953,11 @@ _label_03_090:
 	ld a,SND_LIGHTNING		; $5820
 	call playSound		; $5822
 	jp clearPaletteFadeVariablesAndRefreshPalettes		; $5825
+
+@state9:
 	call decCbb3		; $5828
 	ret nz			; $582b
-	ld a,$0a		; $582c
+	ld a,CUTSCENE_CREDITS		; $582c
 	ld (wCutsceneIndex),a		; $582e
 	call cutscene_clearTmpCBB3		; $5831
 	ld hl,wRoomLayout		; $5834
@@ -18928,7 +18969,7 @@ _label_03_090:
 	ldh (<hCameraY),a	; $5846
 	ldh (<hCameraX),a	; $5848
 	ld hl,wTmpcbb3		; $584a
-	ld (hl),$3c		; $584d
+	ld (hl),60		; $584d
 	ld a,$03		; $584f
 	jp fadeoutToBlackWithDelay		; $5851
 
@@ -19967,7 +20008,7 @@ _cutscene_resetOamWithSomething1:
 	ld hl,$4f73		; $60a6
 	ld e,$16		; $60a9
 	ld bc,$3038		; $60ab
-	jr ++			; $60ae
+	jr _cutscene_resetOamWithData			; $60ae
 
 ;;
 ; @addr{60b0}
@@ -19975,7 +20016,12 @@ _cutscene_resetOamWithSomething2:
 	ld hl,$4e37		; $60b0
 	ld e,$16		; $60b3
 	ld bc,$3038		; $60b5
-++
+
+;;
+; @param	bc	Sprite offset
+; @param	hl	OAM data to load
+; @addr{60b8}
+_cutscene_resetOamWithData:
 	xor a			; $60b8
 	ldh (<hOamTail),a	; $60b9
 	jp addSpritesFromBankToOam_withOffset		; $60bb
@@ -152456,352 +152502,786 @@ interactionLoadTreasureData:
 	ld (de),a		; $4554
 	ret			; $4555
 
-; @addr{4556}
+
+; Tons of OAM data here. TODO: account for all address references.
 data_4556:
-	.db $78 $45 $b9 $45 $26 $46 $97 $46
-	.db $b2 $49 $f8 $48 $59 $49 $5a $4b
-	.db $fb $4b $64 $4c $14 $47 $1b $4a
-	.db $98 $4a $25 $4b $79 $47 $da $47
-	.db $77 $48 $10 $ab $e0 $40 $01 $ab
-	.db $ea $42 $01 $ab $f4 $44 $01 $ab
-	.db $fe $46 $01 $ab $1c $48 $01 $ab
-	.db $08 $4c $01 $ab $12 $4e $01 $ab
-	.db $27 $56 $01 $d0 $e9 $0a $00 $d0
-	.db $f1 $16 $00 $d0 $f9 $00 $00 $d0
-	.db $01 $0c $00 $d0 $09 $24 $00 $d0
-	.db $11 $0e $00 $d0 $17 $10 $00 $d0
-	.db $1d $1e $00 $1b $a8 $e9 $4a $01
-	.db $a8 $f2 $4c $01 $a8 $fc $4e $01
-	.db $a8 $04 $4c $01 $a8 $16 $50 $01
-	.db $a8 $20 $52 $01 $a8 $29 $4e $01
-	.db $b8 $ee $6a $01 $b8 $f8 $6c $01
-	.db $b8 $01 $6e $01 $b8 $09 $70 $01
-	.db $b8 $13 $72 $01 $b8 $1c $74 $01
-	.db $a8 $e0 $42 $01 $a8 $0e $42 $01
-	.db $d0 $dc $30 $00 $d0 $e4 $28 $00
-	.db $d0 $ec $24 $00 $d0 $f4 $28 $00
-	.db $d0 $fc $14 $00 $d0 $04 $08 $00
-	.db $e0 $04 $1a $00 $e0 $0c $00 $00
-	.db $e0 $14 $14 $00 $e0 $1c $00 $00
-	.db $e0 $23 $1a $00 $e0 $2b $1c $00
-	.db $1c $a8 $e0 $52 $01 $a8 $e8 $54
-	.db $01 $a8 $fa $50 $01 $a8 $04 $56
-	.db $01 $a8 $0d $4e $01 $a8 $1e $4c
-	.db $01 $a8 $28 $58 $01 $b8 $ee $6a
-	.db $01 $b8 $f8 $6c $01 $b8 $01 $6e
-	.db $01 $b8 $09 $70 $01 $b8 $13 $72
-	.db $01 $b8 $1c $74 $01 $a8 $f1 $48
-	.db $01 $a8 $15 $48 $01 $d0 $f4 $00
-	.db $00 $d0 $fc $28 $00 $d0 $04 $0c
-	.db $00 $d0 $0c $08 $00 $d0 $13 $1a
-	.db $00 $f0 $e9 $30 $00 $f0 $f1 $34
-	.db $00 $f0 $f9 $26 $00 $f0 $00 $00
-	.db $00 $f0 $07 $1a $00 $f0 $0f $00
-	.db $00 $f0 $17 $14 $00 $f0 $1f $00
-	.db $00 $1f $d2 $f9 $0e $00 $d2 $01
-	.db $1c $00 $d2 $09 $26 $00 $d2 $11
-	.db $26 $00 $d2 $18 $00 $00 $06 $f4
-	.db $26 $00 $06 $fc $08 $00 $06 $04
-	.db $32 $00 $06 $0c $28 $00 $06 $14
-	.db $14 $00 $06 $1c $00 $00 $d2 $f0
-	.db $70 $08 $06 $ec $70 $08 $ec $ec
-	.db $72 $08 $ec $f6 $30 $00 $ec $fe
-	.db $00 $00 $ec $06 $18 $00 $ec $0e
-	.db $00 $00 $ec $16 $06 $00 $ec $1e
-	.db $00 $00 $a8 $03 $5a $01 $a8 $0b
-	.db $52 $01 $a8 $14 $4e $01 $b0 $ee
-	.db $5c $01 $a8 $f3 $40 $01 $b0 $fb
-	.db $60 $01 $b8 $18 $6e $01 $b8 $ff
-	.db $6e $01 $b8 $f7 $70 $01 $b8 $07
-	.db $64 $01 $b8 $0f $68 $01 $19 $b0
-	.db $e8 $4c $09 $b0 $f0 $4e $09 $b0
-	.db $f8 $50 $09 $b0 $00 $52 $09 $b0
-	.db $08 $54 $09 $b0 $10 $56 $09 $b0
-	.db $18 $58 $09 $b0 $20 $5a $09 $d0
-	.db $ed $00 $00 $d0 $f5 $30 $00 $d0
-	.db $fd $00 $00 $d0 $05 $1a $00 $d0
-	.db $0d $00 $00 $d0 $15 $0c $00 $d0
-	.db $1d $10 $00 $ea $f4 $18 $00 $ea
-	.db $fc $10 $00 $ea $04 $16 $00 $ea
-	.db $0c $14 $00 $ea $14 $30 $00 $04
-	.db $f4 $10 $00 $04 $fc $32 $00 $04
-	.db $04 $28 $00 $04 $0c $18 $00 $04
-	.db $14 $10 $00 $18 $ac $e0 $5a $01
-	.db $ac $ea $4e $01 $ac $f5 $56 $01
-	.db $ac $ff $54 $01 $ac $1e $52 $01
-	.db $ac $29 $4e $01 $b4 $0a $60 $01
-	.db $ac $14 $42 $01 $d0 $d0 $1a $00
-	.db $d0 $d8 $1c $00 $d0 $e0 $22 $00
-	.db $d0 $e6 $10 $00 $d0 $ec $26 $00
-	.db $d0 $f3 $00 $00 $d0 $fb $14 $00
-	.db $e0 $03 $0a $00 $e0 $0b $28 $00
-	.db $e0 $12 $1a $00 $e0 $1b $00 $00
-	.db $e0 $23 $18 $00 $e0 $29 $10 $00
-	.db $e0 $2f $32 $00 $e0 $37 $28 $00
-	.db $d0 $03 $00 $00 $27 $d0 $d4 $24
-	.db $00 $d0 $dc $0e $00 $d0 $e2 $10
-	.db $00 $d0 $e8 $0c $00 $d0 $f0 $08
-	.db $00 $d0 $f8 $22 $00 $d0 $00 $28
-	.db $00 $e0 $00 $18 $00 $e0 $0c $30
-	.db $00 $e0 $06 $10 $00 $e0 $13 $00
-	.db $00 $e0 $1b $18 $00 $e0 $23 $1c
-	.db $00 $e0 $2b $26 $00 $e0 $33 $1c
-	.db $00 $f8 $d7 $30 $00 $f8 $df $1c
-	.db $00 $f8 $e7 $24 $00 $f8 $ef $0e
-	.db $00 $f8 $f5 $10 $00 $f8 $fb $14
-	.db $00 $f8 $01 $10 $00 $08 $01 $1c
-	.db $00 $08 $09 $14 $00 $08 $11 $00
-	.db $00 $08 $19 $18 $00 $08 $21 $1c
-	.db $00 $08 $29 $26 $00 $08 $31 $1c
-	.db $00 $b0 $e0 $12 $09 $b0 $e8 $14
-	.db $09 $b0 $f0 $16 $09 $b0 $f8 $18
-	.db $09 $b0 $00 $1a $09 $b0 $08 $1c
-	.db $09 $b0 $10 $1e $09 $b0 $18 $20
-	.db $09 $b0 $20 $22 $09 $b0 $28 $24
-	.db $09 $20 $a8 $df $52 $01 $b0 $e8
-	.db $7e $01 $a8 $f1 $52 $01 $a8 $0c
-	.db $50 $01 $a8 $1f $5c $01 $a8 $29
-	.db $52 $01 $b8 $fe $6a $01 $b8 $1b
-	.db $6c $01 $a8 $fa $42 $01 $b0 $04
-	.db $60 $01 $a8 $16 $48 $01 $b8 $08
-	.db $60 $01 $d0 $d5 $0e $00 $d0 $db
-	.db $10 $00 $d0 $e1 $22 $00 $d0 $e9
-	.db $1c $00 $d0 $f1 $24 $00 $d0 $f9
-	.db $0e $00 $d0 $ff $10 $00 $e0 $ff
-	.db $30 $00 $e0 $06 $00 $00 $e0 $0e
-	.db $18 $00 $e0 $16 $00 $00 $e0 $1e
-	.db $28 $00 $e0 $26 $04 $00 $e0 $2e
-	.db $0e $00 $e0 $34 $10 $00 $b8 $e3
-	.db $62 $01 $b8 $ec $68 $01 $b8 $f6
-	.db $64 $01 $b8 $11 $66 $01 $b8 $24
-	.db $68 $01 $18 $d8 $ec $14 $00 $d8
-	.db $f4 $34 $00 $d8 $fc $14 $00 $d8
-	.db $04 $1c $00 $d8 $0c $1a $00 $d8
-	.db $14 $06 $00 $d8 $1c $1c $00 $a8
-	.db $e0 $38 $09 $a8 $e8 $3a $09 $a8
-	.db $f0 $3c $09 $a8 $f8 $3e $09 $b0
-	.db $00 $40 $09 $b0 $08 $42 $09 $a8
-	.db $10 $44 $09 $a8 $18 $46 $09 $a8
-	.db $20 $48 $09 $a8 $28 $4a $09 $c0
-	.db $ec $7a $01 $c0 $f4 $6a $01 $b8
-	.db $fc $5c $01 $c0 $04 $70 $01 $c0
-	.db $0c $6e $01 $c0 $14 $6c $01 $c0
-	.db $1c $68 $01 $16 $a8 $ec $5a $01
-	.db $a8 $f4 $58 $01 $a8 $fc $4c $01
-	.db $a8 $04 $46 $01 $a8 $0c $46 $01
-	.db $a8 $14 $44 $01 $a8 $1c $4e $01
-	.db $b8 $ec $6e $01 $b8 $f4 $60 $01
-	.db $b8 $fc $62 $01 $b8 $04 $62 $01
-	.db $b8 $0c $64 $01 $b8 $14 $68 $01
-	.db $b8 $1c $76 $01 $d0 $e8 $1a $00
-	.db $d0 $f0 $1c $00 $d0 $f8 $24 $00
-	.db $d0 $00 $08 $00 $d0 $08 $26 $00
-	.db $d0 $10 $00 $00 $d0 $18 $14 $00
-	.db $d0 $20 $08 $00 $1a $d0 $e8 $18
-	.db $00 $d0 $f0 $34 $00 $d0 $f8 $1a
-	.db $00 $d0 $00 $00 $00 $d0 $08 $22
-	.db $00 $d0 $10 $10 $00 $d0 $18 $26
-	.db $00 $d0 $20 $00 $00 $e8 $e8 $14
-	.db $00 $e8 $f0 $34 $00 $e8 $f8 $18
-	.db $00 $e8 $00 $10 $00 $e8 $08 $32
-	.db $00 $e8 $10 $28 $00 $e8 $18 $14
-	.db $00 $e8 $20 $10 $00 $00 $ec $30
-	.db $00 $00 $f3 $00 $00 $00 $fb $18
-	.db $00 $00 $03 $00 $00 $00 $0b $24
-	.db $00 $00 $13 $0e $00 $00 $19 $10
-	.db $00 $00 $1f $26 $00 $00 $25 $00
-	.db $00 $00 $e4 $72 $08 $1f $b4 $f8
-	.db $08 $00 $b4 $00 $0c $00 $b4 $08
-	.db $28 $00 $b4 $10 $04 $00 $b4 $18
-	.db $0e $00 $b4 $20 $10 $00 $b4 $f0
-	.db $34 $00 $b4 $e8 $18 $00 $ce $d8
-	.db $18 $00 $ce $e0 $10 $00 $ce $e7
-	.db $1a $00 $ce $f0 $1c $00 $ce $f8
-	.db $22 $00 $ce $00 $28 $00 $de $00
-	.db $00 $00 $de $08 $22 $00 $de $10
-	.db $00 $00 $de $18 $14 $00 $de $20
-	.db $00 $00 $de $28 $2c $00 $de $30
-	.db $00 $00 $f4 $e4 $18 $00 $f4 $ec
-	.db $10 $00 $f4 $f4 $14 $00 $f4 $fc
-	.db $08 $00 $04 $fc $0a $00 $04 $04
-	.db $28 $00 $04 $0c $14 $00 $04 $14
-	.db $28 $00 $04 $1c $06 $00 $04 $24
-	.db $00 $00 $23 $cc $e8 $1c $00 $cc
-	.db $f0 $22 $00 $cc $f8 $10 $00 $cc
-	.db $00 $0c $00 $cc $08 $10 $00 $cc
-	.db $10 $1a $00 $cc $18 $00 $00 $cc
-	.db $20 $16 $00 $f4 $f4 $24 $00 $f4
-	.db $04 $1e $00 $f4 $fc $28 $00 $f4
-	.db $0c $08 $00 $f4 $14 $22 $00 $04
-	.db $e2 $18 $00 $04 $f2 $22 $00 $04
-	.db $ea $00 $00 $04 $fa $10 $00 $04
-	.db $02 $1c $00 $04 $0e $04 $00 $04
-	.db $16 $16 $00 $04 $1e $28 $00 $04
-	.db $26 $02 $00 $dc $de $5c $08 $dc
-	.db $e6 $5e $08 $dc $ee $60 $08 $dc
-	.db $f6 $62 $08 $dc $fe $64 $08 $dc
-	.db $06 $66 $08 $dc $0e $68 $08 $dc
-	.db $16 $6a $08 $dc $1e $6c $08 $dc
-	.db $26 $6e $08 $b4 $fc $00 $00 $b4
-	.db $04 $02 $00 $b4 $0c $28 $00 $0d
-	.db $b8 $fc $1a $00 $b8 $04 $1c $00
-	.db $b8 $0c $00 $00 $c8 $dd $06 $00
-	.db $c8 $e5 $08 $00 $c8 $ed $02 $00
-	.db $c8 $f5 $28 $00 $c8 $fd $0c $00
-	.db $c8 $0c $24 $00 $c8 $14 $26 $00
-	.db $c8 $1c $00 $00 $c8 $24 $0a $00
-	.db $c8 $2c $0a $00 $28 $b0 $e0 $c0
-	.db $09 $b0 $e8 $c2 $09 $b0 $f0 $c4
-	.db $09 $b0 $f8 $c6 $09 $b0 $00 $c8
-	.db $09 $b0 $08 $ca $09 $b0 $10 $cc
-	.db $09 $b0 $18 $ce $09 $b0 $20 $d0
-	.db $09 $b0 $28 $d2 $09 $ce $e0 $d4
-	.db $09 $ce $e8 $d6 $09 $ce $f0 $d8
-	.db $09 $ce $f8 $da $09 $ce $00 $dc
-	.db $09 $ce $08 $de $09 $ce $10 $e0
-	.db $09 $ce $18 $e2 $09 $ce $20 $e4
-	.db $09 $de $e0 $e6 $09 $de $e8 $e8
-	.db $09 $de $f0 $ea $09 $de $f8 $ec
-	.db $09 $de $00 $ee $09 $de $08 $f0
-	.db $09 $de $10 $f2 $09 $de $18 $f4
-	.db $09 $de $20 $f6 $09 $de $28 $f8
-	.db $09 $ce $28 $f8 $09 $f8 $e5 $02
-	.db $00 $f8 $ed $10 $00 $f8 $f5 $16
-	.db $00 $f8 $fd $16 $00 $08 $fd $26
-	.db $00 $08 $05 $22 $00 $08 $0d $10
-	.db $00 $08 $15 $1a $00 $08 $1d $08
-	.db $00 $08 $24 $1a $00 $1a $a8 $f8
-	.db $50 $01 $a8 $00 $52 $01 $b0 $08
-	.db $7e $01 $a8 $10 $50 $01 $b8 $ec
-	.db $6c $01 $b8 $f4 $6a $01 $b8 $fc
-	.db $70 $01 $b8 $04 $76 $01 $b8 $0c
-	.db $64 $01 $b8 $1c $6e $01 $b8 $14
-	.db $68 $01 $d8 $d8 $26 $00 $d8 $e0
-	.db $08 $00 $d8 $e8 $22 $00 $d8 $f0
-	.db $08 $00 $d8 $f8 $24 $00 $d8 $00
-	.db $00 $00 $e8 $fa $16 $00 $e8 $01
-	.db $10 $00 $e8 $08 $16 $00 $e8 $10
-	.db $16 $00 $e8 $18 $30 $00 $e8 $20
-	.db $0c $00 $e8 $28 $22 $00 $e8 $30
-	.db $08 $00 $e8 $37 $1a $00 $28 $a8
-	.db $e0 $e6 $09 $a8 $e8 $e8 $09 $a8
-	.db $f0 $ea $09 $a8 $f8 $ec $09 $a8
-	.db $10 $f2 $09 $a8 $18 $f4 $09 $a8
-	.db $20 $f6 $09 $a8 $28 $f8 $09 $a8
-	.db $00 $fa $09 $a8 $08 $fc $09 $b8
-	.db $e8 $7a $01 $b8 $f0 $74 $01 $b8
-	.db $f8 $7a $01 $b8 $00 $72 $01 $b8
-	.db $08 $6c $01 $b8 $20 $74 $01 $b8
-	.db $28 $76 $01 $d0 $dc $16 $00 $d0
-	.db $e4 $08 $00 $d0 $ec $24 $00 $d0
-	.db $f4 $16 $00 $d0 $fc $10 $00 $d0
-	.db $04 $08 $00 $d0 $14 $24 $00 $d0
-	.db $1c $2c $00 $d0 $24 $00 $00 $d0
-	.db $2c $1a $00 $f0 $dc $12 $00 $f0
-	.db $e4 $08 $00 $f0 $ec $0a $00 $f0
-	.db $f4 $0a $00 $f0 $04 $18 $00 $f0
-	.db $0c $10 $00 $f0 $14 $16 $00 $f0
-	.db $1c $16 $00 $f0 $24 $08 $00 $f0
-	.db $2c $22 $00 $b8 $18 $6c $01 $b8
-	.db $10 $fe $09 $b8 $e0 $fe $09 $26
-	.db $e0 $10 $02 $01 $e0 $18 $04 $01
-	.db $e0 $20 $06 $01 $e0 $28 $08 $01
-	.db $f0 $08 $14 $01 $f0 $10 $16 $01
-	.db $f0 $18 $18 $01 $f0 $20 $1a $01
-	.db $f0 $28 $1c $01 $00 $08 $28 $01
-	.db $00 $10 $2a $01 $00 $18 $2c $01
-	.db $00 $20 $2e $01 $00 $28 $30 $01
-	.db $10 $08 $3a $01 $10 $10 $3c $01
-	.db $10 $18 $3e $01 $10 $20 $40 $01
-	.db $10 $28 $42 $01 $20 $08 $00 $01
-	.db $20 $10 $0a $01 $20 $18 $0c $01
-	.db $20 $20 $0e $01 $20 $28 $10 $01
-	.db $30 $08 $1e $01 $30 $10 $20 $01
-	.db $30 $18 $22 $01 $30 $20 $24 $01
-	.db $30 $28 $26 $01 $40 $08 $32 $01
-	.db $40 $10 $34 $01 $40 $18 $36 $01
-	.db $50 $08 $44 $01 $50 $10 $46 $01
-	.db $50 $18 $48 $01 $40 $20 $38 $01
-	.db $60 $08 $00 $01 $60 $10 $12 $01
-	.db $26 $e0 $f8 $02 $21 $e0 $f0 $04
-	.db $21 $e0 $e8 $06 $21 $e0 $e0 $08
-	.db $21 $f0 $00 $14 $21 $f0 $f8 $16
-	.db $21 $f0 $f0 $18 $21 $f0 $e8 $1a
-	.db $21 $f0 $e0 $1c $21 $00 $00 $28
-	.db $21 $00 $f8 $2a $21 $00 $f0 $2c
-	.db $21 $00 $e8 $2e $21 $00 $e0 $30
-	.db $21 $10 $00 $3a $21 $10 $f8 $3c
-	.db $21 $10 $f0 $3e $21 $10 $e8 $40
-	.db $21 $10 $e0 $42 $21 $20 $00 $00
-	.db $21 $20 $f8 $0a $21 $20 $f0 $0c
-	.db $21 $20 $e8 $0e $21 $20 $e0 $10
-	.db $21 $30 $00 $1e $21 $30 $f8 $20
-	.db $21 $30 $f0 $22 $21 $30 $e8 $24
-	.db $21 $30 $e0 $26 $21 $40 $00 $32
-	.db $21 $40 $f8 $34 $21 $40 $f0 $36
-	.db $21 $50 $00 $44 $21 $50 $f8 $46
-	.db $21 $50 $f0 $48 $21 $40 $e8 $38
-	.db $21 $60 $00 $00 $21 $60 $f8 $12
-	.db $21 $28 $44 $21 $00 $00 $44 $29
-	.db $02 $00 $54 $29 $04 $00 $34 $1b
-	.db $06 $00 $50 $d9 $08 $00 $08 $e0
-	.db $0a $00 $30 $d8 $0c $01 $20 $d1
-	.db $0e $00 $fb $ee $10 $02 $fb $f6
-	.db $12 $02 $0b $e6 $14 $02 $0b $ee
-	.db $16 $02 $1b $e6 $18 $02 $1b $ee
-	.db $1a $02 $00 $48 $1c $01 $58 $40
-	.db $1e $00 $10 $58 $22 $01 $00 $50
-	.db $20 $01 $38 $50 $24 $01 $28 $50
-	.db $26 $03 $28 $58 $28 $03 $16 $4a
-	.db $2a $04 $16 $52 $2c $04 $e8 $d0
-	.db $2e $01 $f8 $d0 $30 $04 $f8 $d8
-	.db $32 $04 $00 $da $34 $02 $e8 $e5
-	.db $36 $01 $20 $0f $38 $04 $20 $20
-	.db $3a $04 $db $38 $40 $07 $db $40
-	.db $42 $07 $e8 $35 $44 $07 $e8 $3d
-	.db $46 $07 $fc $30 $48 $07 $f8 $38
-	.db $4a $07 $00 $40 $4c $07 $18 $38
-	.db $4e $07 $10 $40 $50 $07 $20 $40
-	.db $52 $07 $12 $10 $08 $00 $0c $10
-	.db $10 $02 $0c $10 $18 $04 $0c $20
-	.db $08 $0c $0c $20 $10 $0e $0c $20
-	.db $18 $10 $0c $31 $23 $06 $0d $31
-	.db $2b $08 $0d $31 $3b $06 $2d $31
-	.db $33 $08 $2d $41 $23 $06 $4d $41
-	.db $2b $08 $4d $41 $3b $06 $6d $41
-	.db $33 $08 $6d $2c $1d $0a $0d $2c
-	.db $25 $0a $2d $4c $3a $0a $0d $4c
-	.db $42 $0a $2d $0d $38 $d3 $02 $03
-	.db $32 $f8 $0c $01 $f8 $d8 $10 $07
-	.db $f8 $e0 $12 $07 $f8 $e8 $14 $07
-	.db $f7 $f7 $16 $07 $22 $f8 $1a $03
-	.db $1a $00 $1c $03 $11 $e2 $1e $00
-	.db $11 $ea $20 $00 $01 $ea $22 $00
-	.db $11 $f2 $26 $00 $01 $f2 $24 $00
-	.db $07 $60 $f8 $00 $02 $48 $d3 $04
-	.db $03 $40 $e0 $06 $07 $40 $e8 $08
-	.db $07 $40 $f0 $0a $07 $42 $f8 $0e
-	.db $01 $68 $e0 $18 $02 $1e $e8 $e8
-	.db $00 $06 $e8 $f0 $02 $06 $f8 $e0
-	.db $04 $06 $00 $d8 $06 $06 $08 $e8
-	.db $08 $06 $08 $f0 $0a $06 $f8 $f6
-	.db $0c $06 $10 $e0 $0e $06 $18 $e8
-	.db $10 $07 $18 $da $12 $04 $18 $e2
-	.db $14 $04 $08 $d0 $16 $06 $40 $d8
-	.db $18 $06 $30 $f8 $1a $04 $28 $d3
-	.db $1c $00 $f0 $f8 $1e $00 $48 $f8
-	.db $20 $04 $36 $f5 $22 $04 $58 $00
-	.db $24 $05 $3b $18 $26 $05 $3b $20
-	.db $28 $05 $38 $3c $2a $03 $14 $38
-	.db $2c $05 $28 $48 $2e $00 $30 $51
-	.db $30 $00 $30 $60 $32 $00 $28 $68
-	.db $34 $04 $f8 $40 $36 $00 $00 $48
-	.db $38 $00 $00 $50 $3a $05 $0a $48
-	.db $4d $88 $05 $48 $55 $8a $05 $47
-	.db $45 $84 $03 $47 $4d $86 $03 $39
-	.db $4e $90 $03 $43 $59 $8c $03 $39
-	.db $46 $8e $03 $3b $3c $92 $03 $49
-	.db $4c $80 $02 $49 $54 $82 $02
+	.dw @data0
+	.dw @data1
+	.dw @data2
+	.dw @data3
+	.dw @data4
+	.dw @data5
+	.dw @data6
+	.dw @data7
+	.dw @data8
+	.dw @data9
+	.dw @dataA
+	.dw @dataB
+	.dw @dataC
+	.dw @dataD
+	.dw @dataE
+	.dw @dataF
+	.dw @data10
+
+
+@data0:
+	.db $10
+	.db $ab $e0 $40 $01
+	.db $ab $ea $42 $01
+	.db $ab $f4 $44 $01
+	.db $ab $fe $46 $01
+	.db $ab $1c $48 $01
+	.db $ab $08 $4c $01
+	.db $ab $12 $4e $01
+	.db $ab $27 $56 $01
+	.db $d0 $e9 $0a $00
+	.db $d0 $f1 $16 $00
+	.db $d0 $f9 $00 $00
+	.db $d0 $01 $0c $00
+	.db $d0 $09 $24 $00
+	.db $d0 $11 $0e $00
+	.db $d0 $17 $10 $00
+	.db $d0 $1d $1e $00
+
+@data1:
+	.db $1b
+	.db $a8 $e9 $4a $01
+	.db $a8 $f2 $4c $01
+	.db $a8 $fc $4e $01
+	.db $a8 $04 $4c $01
+	.db $a8 $16 $50 $01
+	.db $a8 $20 $52 $01
+	.db $a8 $29 $4e $01
+	.db $b8 $ee $6a $01
+	.db $b8 $f8 $6c $01
+	.db $b8 $01 $6e $01
+	.db $b8 $09 $70 $01
+	.db $b8 $13 $72 $01
+	.db $b8 $1c $74 $01
+	.db $a8 $e0 $42 $01
+	.db $a8 $0e $42 $01
+	.db $d0 $dc $30 $00
+	.db $d0 $e4 $28 $00
+	.db $d0 $ec $24 $00
+	.db $d0 $f4 $28 $00
+	.db $d0 $fc $14 $00
+	.db $d0 $04 $08 $00
+	.db $e0 $04 $1a $00
+	.db $e0 $0c $00 $00
+	.db $e0 $14 $14 $00
+	.db $e0 $1c $00 $00
+	.db $e0 $23 $1a $00
+	.db $e0 $2b $1c $00
+
+@data2:
+	.db $1c
+	.db $a8 $e0 $52 $01
+	.db $a8 $e8 $54 $01
+	.db $a8 $fa $50 $01
+	.db $a8 $04 $56 $01
+	.db $a8 $0d $4e $01
+	.db $a8 $1e $4c $01
+	.db $a8 $28 $58 $01
+	.db $b8 $ee $6a $01
+	.db $b8 $f8 $6c $01
+	.db $b8 $01 $6e $01
+	.db $b8 $09 $70 $01
+	.db $b8 $13 $72 $01
+	.db $b8 $1c $74 $01
+	.db $a8 $f1 $48 $01
+	.db $a8 $15 $48 $01
+	.db $d0 $f4 $00 $00
+	.db $d0 $fc $28 $00
+	.db $d0 $04 $0c $00
+	.db $d0 $0c $08 $00
+	.db $d0 $13 $1a $00
+	.db $f0 $e9 $30 $00
+	.db $f0 $f1 $34 $00
+	.db $f0 $f9 $26 $00
+	.db $f0 $00 $00 $00
+	.db $f0 $07 $1a $00
+	.db $f0 $0f $00 $00
+	.db $f0 $17 $14 $00
+	.db $f0 $1f $00 $00
+
+@data3:
+	.db $1f
+	.db $d2 $f9 $0e $00
+	.db $d2 $01 $1c $00
+	.db $d2 $09 $26 $00
+	.db $d2 $11 $26 $00
+	.db $d2 $18 $00 $00
+	.db $06 $f4 $26 $00
+	.db $06 $fc $08 $00
+	.db $06 $04 $32 $00
+	.db $06 $0c $28 $00
+	.db $06 $14 $14 $00
+	.db $06 $1c $00 $00
+	.db $d2 $f0 $70 $08
+	.db $06 $ec $70 $08
+	.db $ec $ec $72 $08
+	.db $ec $f6 $30 $00
+	.db $ec $fe $00 $00
+	.db $ec $06 $18 $00
+	.db $ec $0e $00 $00
+	.db $ec $16 $06 $00
+	.db $ec $1e $00 $00
+	.db $a8 $03 $5a $01
+	.db $a8 $0b $52 $01
+	.db $a8 $14 $4e $01
+	.db $b0 $ee $5c $01
+	.db $a8 $f3 $40 $01
+	.db $b0 $fb $60 $01
+	.db $b8 $18 $6e $01
+	.db $b8 $ff $6e $01
+	.db $b8 $f7 $70 $01
+	.db $b8 $07 $64 $01
+	.db $b8 $0f $68 $01
+
+@dataA:
+	.db $19
+	.db $b0 $e8 $4c $09
+	.db $b0 $f0 $4e $09
+	.db $b0 $f8 $50 $09
+	.db $b0 $00 $52 $09
+	.db $b0 $08 $54 $09
+	.db $b0 $10 $56 $09
+	.db $b0 $18 $58 $09
+	.db $b0 $20 $5a $09
+	.db $d0 $ed $00 $00
+	.db $d0 $f5 $30 $00
+	.db $d0 $fd $00 $00
+	.db $d0 $05 $1a $00
+	.db $d0 $0d $00 $00
+	.db $d0 $15 $0c $00
+	.db $d0 $1d $10 $00
+	.db $ea $f4 $18 $00
+	.db $ea $fc $10 $00
+	.db $ea $04 $16 $00
+	.db $ea $0c $14 $00
+	.db $ea $14 $30 $00
+	.db $04 $f4 $10 $00
+	.db $04 $fc $32 $00
+	.db $04 $04 $28 $00
+	.db $04 $0c $18 $00
+	.db $04 $14 $10 $00
+
+@dataE:
+	.db $18
+	.db $ac $e0 $5a $01
+	.db $ac $ea $4e $01
+	.db $ac $f5 $56 $01
+	.db $ac $ff $54 $01
+	.db $ac $1e $52 $01
+	.db $ac $29 $4e $01
+	.db $b4 $0a $60 $01
+	.db $ac $14 $42 $01
+	.db $d0 $d0 $1a $00
+	.db $d0 $d8 $1c $00
+	.db $d0 $e0 $22 $00
+	.db $d0 $e6 $10 $00
+	.db $d0 $ec $26 $00
+	.db $d0 $f3 $00 $00
+	.db $d0 $fb $14 $00
+	.db $e0 $03 $0a $00
+	.db $e0 $0b $28 $00
+	.db $e0 $12 $1a $00
+	.db $e0 $1b $00 $00
+	.db $e0 $23 $18 $00
+	.db $e0 $29 $10 $00
+	.db $e0 $2f $32 $00
+	.db $e0 $37 $28 $00
+	.db $d0 $03 $00 $00
+
+@dataF:
+	.db $27
+	.db $d0 $d4 $24 $00
+	.db $d0 $dc $0e $00
+	.db $d0 $e2 $10 $00
+	.db $d0 $e8 $0c $00
+	.db $d0 $f0 $08 $00
+	.db $d0 $f8 $22 $00
+	.db $d0 $00 $28 $00
+	.db $e0 $00 $18 $00
+	.db $e0 $0c $30 $00
+	.db $e0 $06 $10 $00
+	.db $e0 $13 $00 $00
+	.db $e0 $1b $18 $00
+	.db $e0 $23 $1c $00
+	.db $e0 $2b $26 $00
+	.db $e0 $33 $1c $00
+	.db $f8 $d7 $30 $00
+	.db $f8 $df $1c $00
+	.db $f8 $e7 $24 $00
+	.db $f8 $ef $0e $00
+	.db $f8 $f5 $10 $00
+	.db $f8 $fb $14 $00
+	.db $f8 $01 $10 $00
+	.db $08 $01 $1c $00
+	.db $08 $09 $14 $00
+	.db $08 $11 $00 $00
+	.db $08 $19 $18 $00
+	.db $08 $21 $1c $00
+	.db $08 $29 $26 $00
+	.db $08 $31 $1c $00
+	.db $b0 $e0 $12 $09
+	.db $b0 $e8 $14 $09
+	.db $b0 $f0 $16 $09
+	.db $b0 $f8 $18 $09
+	.db $b0 $00 $1a $09
+	.db $b0 $08 $1c $09
+	.db $b0 $10 $1e $09
+	.db $b0 $18 $20 $09
+	.db $b0 $20 $22 $09
+	.db $b0 $28 $24 $09
+
+@data10:
+	.db $20
+	.db $a8 $df $52 $01
+	.db $b0 $e8 $7e $01
+	.db $a8 $f1 $52 $01
+	.db $a8 $0c $50 $01
+	.db $a8 $1f $5c $01
+	.db $a8 $29 $52 $01
+	.db $b8 $fe $6a $01
+	.db $b8 $1b $6c $01
+	.db $a8 $fa $42 $01
+	.db $b0 $04 $60 $01
+	.db $a8 $16 $48 $01
+	.db $b8 $08 $60 $01
+	.db $d0 $d5 $0e $00
+	.db $d0 $db $10 $00
+	.db $d0 $e1 $22 $00
+	.db $d0 $e9 $1c $00
+	.db $d0 $f1 $24 $00
+	.db $d0 $f9 $0e $00
+	.db $d0 $ff $10 $00
+	.db $e0 $ff $30 $00
+	.db $e0 $06 $00 $00
+	.db $e0 $0e $18 $00
+	.db $e0 $16 $00 $00
+	.db $e0 $1e $28 $00
+	.db $e0 $26 $04 $00
+	.db $e0 $2e $0e $00
+	.db $e0 $34 $10 $00
+	.db $b8 $e3 $62 $01
+	.db $b8 $ec $68 $01
+	.db $b8 $f6 $64 $01
+	.db $b8 $11 $66 $01
+	.db $b8 $24 $68 $01
+
+@data5:
+	.db $18
+	.db $d8 $ec $14 $00
+	.db $d8 $f4 $34 $00
+	.db $d8 $fc $14 $00
+	.db $d8 $04 $1c $00
+	.db $d8 $0c $1a $00
+	.db $d8 $14 $06 $00
+	.db $d8 $1c $1c $00
+	.db $a8 $e0 $38 $09
+	.db $a8 $e8 $3a $09
+	.db $a8 $f0 $3c $09
+	.db $a8 $f8 $3e $09
+	.db $b0 $00 $40 $09
+	.db $b0 $08 $42 $09
+	.db $a8 $10 $44 $09
+	.db $a8 $18 $46 $09
+	.db $a8 $20 $48 $09
+	.db $a8 $28 $4a $09
+	.db $c0 $ec $7a $01
+	.db $c0 $f4 $6a $01
+	.db $b8 $fc $5c $01
+	.db $c0 $04 $70 $01
+	.db $c0 $0c $6e $01
+	.db $c0 $14 $6c $01
+	.db $c0 $1c $68 $01
+
+@data6:
+	.db $16
+	.db $a8 $ec $5a $01
+	.db $a8 $f4 $58 $01
+	.db $a8 $fc $4c $01
+	.db $a8 $04 $46 $01
+	.db $a8 $0c $46 $01
+	.db $a8 $14 $44 $01
+	.db $a8 $1c $4e $01
+	.db $b8 $ec $6e $01
+	.db $b8 $f4 $60 $01
+	.db $b8 $fc $62 $01
+	.db $b8 $04 $62 $01
+	.db $b8 $0c $64 $01
+	.db $b8 $14 $68 $01
+	.db $b8 $1c $76 $01
+	.db $d0 $e8 $1a $00
+	.db $d0 $f0 $1c $00
+	.db $d0 $f8 $24 $00
+	.db $d0 $00 $08 $00
+	.db $d0 $08 $26 $00
+	.db $d0 $10 $00 $00
+	.db $d0 $18 $14 $00
+	.db $d0 $20 $08 $00
+
+@data4:
+	.db $1a
+	.db $d0 $e8 $18 $00
+	.db $d0 $f0 $34 $00
+	.db $d0 $f8 $1a $00
+	.db $d0 $00 $00 $00
+	.db $d0 $08 $22 $00
+	.db $d0 $10 $10 $00
+	.db $d0 $18 $26 $00
+	.db $d0 $20 $00 $00
+	.db $e8 $e8 $14 $00
+	.db $e8 $f0 $34 $00
+	.db $e8 $f8 $18 $00
+	.db $e8 $00 $10 $00
+	.db $e8 $08 $32 $00
+	.db $e8 $10 $28 $00
+	.db $e8 $18 $14 $00
+	.db $e8 $20 $10 $00
+	.db $00 $ec $30 $00
+	.db $00 $f3 $00 $00
+	.db $00 $fb $18 $00
+	.db $00 $03 $00 $00
+	.db $00 $0b $24 $00
+	.db $00 $13 $0e $00
+	.db $00 $19 $10 $00
+	.db $00 $1f $26 $00
+	.db $00 $25 $00 $00
+	.db $00 $e4 $72 $08
+
+@dataB:
+	.db $1f
+	.db $b4 $f8 $08 $00
+	.db $b4 $00 $0c $00
+	.db $b4 $08 $28 $00
+	.db $b4 $10 $04 $00
+	.db $b4 $18 $0e $00
+	.db $b4 $20 $10 $00
+	.db $b4 $f0 $34 $00
+	.db $b4 $e8 $18 $00
+	.db $ce $d8 $18 $00
+	.db $ce $e0 $10 $00
+	.db $ce $e7 $1a $00
+	.db $ce $f0 $1c $00
+	.db $ce $f8 $22 $00
+	.db $ce $00 $28 $00
+	.db $de $00 $00 $00
+	.db $de $08 $22 $00
+	.db $de $10 $00 $00
+	.db $de $18 $14 $00
+	.db $de $20 $00 $00
+	.db $de $28 $2c $00
+	.db $de $30 $00 $00
+	.db $f4 $e4 $18 $00
+	.db $f4 $ec $10 $00
+	.db $f4 $f4 $14 $00
+	.db $f4 $fc $08 $00
+	.db $04 $fc $0a $00
+	.db $04 $04 $28 $00
+	.db $04 $0c $14 $00
+	.db $04 $14 $28 $00
+	.db $04 $1c $06 $00
+	.db $04 $24 $00 $00
+
+@dataC:
+	.db $23
+	.db $cc $e8 $1c $00
+	.db $cc $f0 $22 $00
+	.db $cc $f8 $10 $00
+	.db $cc $00 $0c $00
+	.db $cc $08 $10 $00
+	.db $cc $10 $1a $00
+	.db $cc $18 $00 $00
+	.db $cc $20 $16 $00
+	.db $f4 $f4 $24 $00
+	.db $f4 $04 $1e $00
+	.db $f4 $fc $28 $00
+	.db $f4 $0c $08 $00
+	.db $f4 $14 $22 $00
+	.db $04 $e2 $18 $00
+	.db $04 $f2 $22 $00
+	.db $04 $ea $00 $00
+	.db $04 $fa $10 $00
+	.db $04 $02 $1c $00
+	.db $04 $0e $04 $00
+	.db $04 $16 $16 $00
+	.db $04 $1e $28 $00
+	.db $04 $26 $02 $00
+	.db $dc $de $5c $08
+	.db $dc $e6 $5e $08
+	.db $dc $ee $60 $08
+	.db $dc $f6 $62 $08
+	.db $dc $fe $64 $08
+	.db $dc $06 $66 $08
+	.db $dc $0e $68 $08
+	.db $dc $16 $6a $08
+	.db $dc $1e $6c $08
+	.db $dc $26 $6e $08
+	.db $b4 $fc $00 $00
+	.db $b4 $04 $02 $00
+	.db $b4 $0c $28 $00
+
+@dataD:
+	.db $0d
+	.db $b8 $fc $1a $00
+	.db $b8 $04 $1c $00
+	.db $b8 $0c $00 $00
+	.db $c8 $dd $06 $00
+	.db $c8 $e5 $08 $00
+	.db $c8 $ed $02 $00
+	.db $c8 $f5 $28 $00
+	.db $c8 $fd $0c $00
+	.db $c8 $0c $24 $00
+	.db $c8 $14 $26 $00
+	.db $c8 $1c $00 $00
+	.db $c8 $24 $0a $00
+	.db $c8 $2c $0a $00
+
+@data7:
+	.db $28
+	.db $b0 $e0 $c0 $09
+	.db $b0 $e8 $c2 $09
+	.db $b0 $f0 $c4 $09
+	.db $b0 $f8 $c6 $09
+	.db $b0 $00 $c8 $09
+	.db $b0 $08 $ca $09
+	.db $b0 $10 $cc $09
+	.db $b0 $18 $ce $09
+	.db $b0 $20 $d0 $09
+	.db $b0 $28 $d2 $09
+	.db $ce $e0 $d4 $09
+	.db $ce $e8 $d6 $09
+	.db $ce $f0 $d8 $09
+	.db $ce $f8 $da $09
+	.db $ce $00 $dc $09
+	.db $ce $08 $de $09
+	.db $ce $10 $e0 $09
+	.db $ce $18 $e2 $09
+	.db $ce $20 $e4 $09
+	.db $de $e0 $e6 $09
+	.db $de $e8 $e8 $09
+	.db $de $f0 $ea $09
+	.db $de $f8 $ec $09
+	.db $de $00 $ee $09
+	.db $de $08 $f0 $09
+	.db $de $10 $f2 $09
+	.db $de $18 $f4 $09
+	.db $de $20 $f6 $09
+	.db $de $28 $f8 $09
+	.db $ce $28 $f8 $09
+	.db $f8 $e5 $02 $00
+	.db $f8 $ed $10 $00
+	.db $f8 $f5 $16 $00
+	.db $f8 $fd $16 $00
+	.db $08 $fd $26 $00
+	.db $08 $05 $22 $00
+	.db $08 $0d $10 $00
+	.db $08 $15 $1a $00
+	.db $08 $1d $08 $00
+	.db $08 $24 $1a $00
+
+@data8:
+	.db $1a
+	.db $a8 $f8 $50 $01
+	.db $a8 $00 $52 $01
+	.db $b0 $08 $7e $01
+	.db $a8 $10 $50 $01
+	.db $b8 $ec $6c $01
+	.db $b8 $f4 $6a $01
+	.db $b8 $fc $70 $01
+	.db $b8 $04 $76 $01
+	.db $b8 $0c $64 $01
+	.db $b8 $1c $6e $01
+	.db $b8 $14 $68 $01
+	.db $d8 $d8 $26 $00
+	.db $d8 $e0 $08 $00
+	.db $d8 $e8 $22 $00
+	.db $d8 $f0 $08 $00
+	.db $d8 $f8 $24 $00
+	.db $d8 $00 $00 $00
+	.db $e8 $fa $16 $00
+	.db $e8 $01 $10 $00
+	.db $e8 $08 $16 $00
+	.db $e8 $10 $16 $00
+	.db $e8 $18 $30 $00
+	.db $e8 $20 $0c $00
+	.db $e8 $28 $22 $00
+	.db $e8 $30 $08 $00
+	.db $e8 $37 $1a $00
+
+@data9:
+	.db $28
+	.db $a8 $e0 $e6 $09
+	.db $a8 $e8 $e8 $09
+	.db $a8 $f0 $ea $09
+	.db $a8 $f8 $ec $09
+	.db $a8 $10 $f2 $09
+	.db $a8 $18 $f4 $09
+	.db $a8 $20 $f6 $09
+	.db $a8 $28 $f8 $09
+	.db $a8 $00 $fa $09
+	.db $a8 $08 $fc $09
+	.db $b8 $e8 $7a $01
+	.db $b8 $f0 $74 $01
+	.db $b8 $f8 $7a $01
+	.db $b8 $00 $72 $01
+	.db $b8 $08 $6c $01
+	.db $b8 $20 $74 $01
+	.db $b8 $28 $76 $01
+	.db $d0 $dc $16 $00
+	.db $d0 $e4 $08 $00
+	.db $d0 $ec $24 $00
+	.db $d0 $f4 $16 $00
+	.db $d0 $fc $10 $00
+	.db $d0 $04 $08 $00
+	.db $d0 $14 $24 $00
+	.db $d0 $1c $2c $00
+	.db $d0 $24 $00 $00
+	.db $d0 $2c $1a $00
+	.db $f0 $dc $12 $00
+	.db $f0 $e4 $08 $00
+	.db $f0 $ec $0a $00
+	.db $f0 $f4 $0a $00
+	.db $f0 $04 $18 $00
+	.db $f0 $0c $10 $00
+	.db $f0 $14 $16 $00
+	.db $f0 $1c $16 $00
+	.db $f0 $24 $08 $00
+	.db $f0 $2c $22 $00
+	.db $b8 $18 $6c $01
+	.db $b8 $10 $fe $09
+	.db $b8 $e0 $fe $09
+
+
+; Used in CUTSCENE_BLACK_TOWER_ESCAPE
+; @addr{4d05}
+oamData_4d05:
+	.db $26
+	.db $e0 $10 $02 $01
+	.db $e0 $18 $04 $01
+	.db $e0 $20 $06 $01
+	.db $e0 $28 $08 $01
+	.db $f0 $08 $14 $01
+	.db $f0 $10 $16 $01
+	.db $f0 $18 $18 $01
+	.db $f0 $20 $1a $01
+	.db $f0 $28 $1c $01
+	.db $00 $08 $28 $01
+	.db $00 $10 $2a $01
+	.db $00 $18 $2c $01
+	.db $00 $20 $2e $01
+	.db $00 $28 $30 $01
+	.db $10 $08 $3a $01
+	.db $10 $10 $3c $01
+	.db $10 $18 $3e $01
+	.db $10 $20 $40 $01
+	.db $10 $28 $42 $01
+	.db $20 $08 $00 $01
+	.db $20 $10 $0a $01
+	.db $20 $18 $0c $01
+	.db $20 $20 $0e $01
+	.db $20 $28 $10 $01
+	.db $30 $08 $1e $01
+	.db $30 $10 $20 $01
+	.db $30 $18 $22 $01
+	.db $30 $20 $24 $01
+	.db $30 $28 $26 $01
+	.db $40 $08 $32 $01
+	.db $40 $10 $34 $01
+	.db $40 $18 $36 $01
+	.db $50 $08 $44 $01
+	.db $50 $10 $46 $01
+	.db $50 $18 $48 $01
+	.db $40 $20 $38 $01
+	.db $60 $08 $00 $01
+	.db $60 $10 $12 $01
+
+; Used by CUTSCENE_BLACK_TOWER_ESCAPE
+; @addr{4d9e}
+oamData_4d9e:
+	.db $26
+	.db $e0 $f8 $02 $21
+	.db $e0 $f0 $04 $21
+	.db $e0 $e8 $06 $21
+	.db $e0 $e0 $08 $21
+	.db $f0 $00 $14 $21
+	.db $f0 $f8 $16 $21
+	.db $f0 $f0 $18 $21
+	.db $f0 $e8 $1a $21
+	.db $f0 $e0 $1c $21
+	.db $00 $00 $28 $21
+	.db $00 $f8 $2a $21
+	.db $00 $f0 $2c $21
+	.db $00 $e8 $2e $21
+	.db $00 $e0 $30 $21
+	.db $10 $00 $3a $21
+	.db $10 $f8 $3c $21
+	.db $10 $f0 $3e $21
+	.db $10 $e8 $40 $21
+	.db $10 $e0 $42 $21
+	.db $20 $00 $00 $21
+	.db $20 $f8 $0a $21
+	.db $20 $f0 $0c $21
+	.db $20 $e8 $0e $21
+	.db $20 $e0 $10 $21
+	.db $30 $00 $1e $21
+	.db $30 $f8 $20 $21
+	.db $30 $f0 $22 $21
+	.db $30 $e8 $24 $21
+	.db $30 $e0 $26 $21
+	.db $40 $00 $32 $21
+	.db $40 $f8 $34 $21
+	.db $40 $f0 $36 $21
+	.db $50 $00 $44 $21
+	.db $50 $f8 $46 $21
+	.db $50 $f0 $48 $21
+	.db $40 $e8 $38 $21
+	.db $60 $00 $00 $21
+	.db $60 $f8 $12 $21
+
+; @addr{4e37}
+_oamData_4e37:
+	.db $28
+	.db $44 $21 $00 $00
+	.db $44 $29 $02 $00
+	.db $54 $29 $04 $00
+	.db $34 $1b $06 $00
+	.db $50 $d9 $08 $00
+	.db $08 $e0 $0a $00
+	.db $30 $d8 $0c $01
+	.db $20 $d1 $0e $00
+	.db $fb $ee $10 $02
+	.db $fb $f6 $12 $02
+	.db $0b $e6 $14 $02
+	.db $0b $ee $16 $02
+	.db $1b $e6 $18 $02
+	.db $1b $ee $1a $02
+	.db $00 $48 $1c $01
+	.db $58 $40 $1e $00
+	.db $10 $58 $22 $01
+	.db $00 $50 $20 $01
+	.db $38 $50 $24 $01
+	.db $28 $50 $26 $03
+	.db $28 $58 $28 $03
+	.db $16 $4a $2a $04
+	.db $16 $52 $2c $04
+	.db $e8 $d0 $2e $01
+	.db $f8 $d0 $30 $04
+	.db $f8 $d8 $32 $04
+	.db $00 $da $34 $02
+	.db $e8 $e5 $36 $01
+	.db $20 $0f $38 $04
+	.db $20 $20 $3a $04
+	.db $db $38 $40 $07
+	.db $db $40 $42 $07
+	.db $e8 $35 $44 $07
+	.db $e8 $3d $46 $07
+	.db $fc $30 $48 $07
+	.db $f8 $38 $4a $07
+	.db $00 $40 $4c $07
+	.db $18 $38 $4e $07
+	.db $10 $40 $50 $07
+	.db $20 $40 $52 $07
+
+; @addr{4ed8}
+_oamData_4ed8:
+	.db $12
+	.db $10 $08 $00 $0c
+	.db $10 $10 $02 $0c
+	.db $10 $18 $04 $0c
+	.db $20 $08 $0c $0c
+	.db $20 $10 $0e $0c
+	.db $20 $18 $10 $0c
+	.db $31 $23 $06 $0d
+	.db $31 $2b $08 $0d
+	.db $31 $3b $06 $2d
+	.db $31 $33 $08 $2d
+	.db $41 $23 $06 $4d
+	.db $41 $2b $08 $4d
+	.db $41 $3b $06 $6d
+	.db $41 $33 $08 $6d
+	.db $2c $1d $0a $0d
+	.db $2c $25 $0a $2d
+	.db $4c $3a $0a $0d
+	.db $4c $42 $0a $2d
+
+; @addr{4f21}
+_oamData_4f21:
+	.db $0d
+	.db $38 $d3 $02 $03
+	.db $32 $f8 $0c $01
+	.db $f8 $d8 $10 $07
+	.db $f8 $e0 $12 $07
+	.db $f8 $e8 $14 $07
+	.db $f7 $f7 $16 $07
+	.db $22 $f8 $1a $03
+	.db $1a $00 $1c $03
+	.db $11 $e2 $1e $00
+	.db $11 $ea $20 $00
+	.db $01 $ea $22 $00
+	.db $11 $f2 $26 $00
+	.db $01 $f2 $24 $00
+
+; @addr{4f56}
+_oamData_4f56:
+	.db $07
+	.db $60 $f8 $00 $02
+	.db $48 $d3 $04 $03
+	.db $40 $e0 $06 $07
+	.db $40 $e8 $08 $07
+	.db $40 $f0 $0a $07
+	.db $42 $f8 $0e $01
+	.db $68 $e0 $18 $02
+
+; @addr{4f73}
+_oamData_4f73:
+	.db $1e
+	.db $e8 $e8 $00 $06
+	.db $e8 $f0 $02 $06
+	.db $f8 $e0 $04 $06
+	.db $00 $d8 $06 $06
+	.db $08 $e8 $08 $06
+	.db $08 $f0 $0a $06
+	.db $f8 $f6 $0c $06
+	.db $10 $e0 $0e $06
+	.db $18 $e8 $10 $07
+	.db $18 $da $12 $04
+	.db $18 $e2 $14 $04
+	.db $08 $d0 $16 $06
+	.db $40 $d8 $18 $06
+	.db $30 $f8 $1a $04
+	.db $28 $d3 $1c $00
+	.db $f0 $f8 $1e $00
+	.db $48 $f8 $20 $04
+	.db $36 $f5 $22 $04
+	.db $58 $00 $24 $05
+	.db $3b $18 $26 $05
+	.db $3b $20 $28 $05
+	.db $38 $3c $2a $03
+	.db $14 $38 $2c $05
+	.db $28 $48 $2e $00
+	.db $30 $51 $30 $00
+	.db $30 $60 $32 $00
+	.db $28 $68 $34 $04
+	.db $f8 $40 $36 $00
+	.db $00 $48 $38 $00
+	.db $00 $50 $3a $05
+
+; @addr{4fec}
+_oamData_4fec:
+	.db $0a
+	.db $48 $4d $88 $05
+	.db $48 $55 $8a $05
+	.db $47 $45 $84 $03
+	.db $47 $4d $86 $03
+	.db $39 $4e $90 $03
+	.db $43 $59 $8c $03
+	.db $39 $46 $8e $03
+	.db $3b $3c $92 $03
+	.db $49 $4c $80 $02
+	.db $49 $54 $82 $02
 
 ;;
 ; Reads the static object buffer and creates the objects for the room.
