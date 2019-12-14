@@ -28,6 +28,6 @@
 ; Maybe put this part stuff into its own file later?
 .enum 0
 	PARTSTATUS_NORMAL	db
-	PARTSTATUS_01		db
-	PARTSTATUS_02		db
+	PARTSTATUS_JUST_HIT	db
+	PARTSTATUS_DEAD		db
 .ende

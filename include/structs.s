@@ -213,6 +213,7 @@
 	var3d			db ; $3d
 
 	; Enemy/part: on collision with Link/item, var3e is written to collidee's var2a
+	; Parts set this to $08 upon initialization?
 	var3e			db ; $3e
 
 	; Enemies:

@@ -139378,6 +139378,13 @@ _label_10_341:
 _partCommon_getTileCollisionInFront:
 	ld e,Part.angle		; $4000
 	ld a,(de)		; $4002
+
+;;
+; @param	a	Angle
+; @param[out]	bc	Position
+; @param[out]	zflag	nz if there's a tile collision in that direction
+; @addr{4003}
+_partCommon_getTileCollisionAtAngle:
 	add $02			; $4003
 	and $1c			; $4005
 	rrca			; $4007
@@ -139407,60 +139414,77 @@ _partCommon_anglePositionOffsets:
 	.db $00 $fb ; Left
 	.db $fb $fb ; Up/left
 
-	call $4003		; $402a
+;;
+; @param	a	Angle
+; @param[out]	zflag
+; @addr{402a}
+_partCommon_getTileCollisionAtAngle_allowHoles:
+	call _partCommon_getTileCollisionAtAngle		; $402a
 	ret z			; $402d
-	jr _label_11_000		; $402e
+	jr +++			; $402e
+
+;;
+; @addr{4030}
+_partCommon_getTileCollisionInFront_allowHoles:
 	call _partCommon_getTileCollisionInFront		; $4030
 	ret z			; $4033
-_label_11_000:
++++
 	add $01			; $4034
-	ret c			; $4036
+	ret c ; Check for SPECIALCOLLISION_SCREEN_BOUNDARY
 	dec a			; $4037
 	jp checkGivenCollision_allowHoles		; $4038
 
+;;
+; Analagous to the "enemyStandardUpdate" function.
+; @addr{403b}
+_partCommon_standardUpdate:
 	ld h,d			; $403b
 	ld l,Part.state		; $403c
 	ld a,(hl)		; $403e
 	or a			; $403f
-	jr z,_label_11_003	; $4040
-	ld l,$eb		; $4042
+	jr z,@uninitialized	; $4040
+
+	ld l,Part.invincibilityCounter		; $4042
 	ld a,(hl)		; $4044
 	or a			; $4045
-	jr z,_label_11_002	; $4046
+	jr z,@doneUpdatingInvincibility	; $4046
 	rlca			; $4048
-	jr nc,_label_11_001	; $4049
+	jr nc,++		; $4049
 	inc (hl)		; $404b
-	jr _label_11_002		; $404c
-_label_11_001:
+	jr @doneUpdatingInvincibility		; $404c
+++
 	dec (hl)		; $404e
-_label_11_002:
+
+@doneUpdatingInvincibility:
 	dec l			; $404f
-	bit 7,(hl)		; $4050
-	jr nz,_label_11_004	; $4052
+	bit 7,(hl) ; [Part.var2a]
+	jr nz,@collision	; $4052
 	dec l			; $4054
-	ld a,(hl)		; $4055
+	ld a,(hl) ; [Part.health]
 	or a			; $4056
-	jr z,_label_11_005	; $4057
-	ld c,$00		; $4059
+	jr z,@dead	; $4057
+	ld c,PARTSTATUS_NORMAL		; $4059
 	ret			; $405b
 
-_label_11_003:
+@uninitialized:
 	callab bank3f.partLoadGraphicsAndProperties		; $405c
-	ld e,$fe		; $4064
-	ld a,$08		; $4066
+	ld e,Part.var3e		; $4064
+	ld a,$08 ; TODO: what's this
 	ld (de),a		; $4068
-	ld c,$00		; $4069
+	ld c,PARTSTATUS_NORMAL		; $4069
 	ret			; $406b
-_label_11_004:
-	ld c,$01		; $406c
+
+@collision:
+	ld c,PARTSTATUS_JUST_HIT		; $406c
 	ret			; $406e
-_label_11_005:
-	ld c,$02		; $406f
+
+@dead:
+	ld c,PARTSTATUS_DEAD		; $406f
 	ret			; $4071
 
 
 ;;
-; Checks for collisions. Considers "screen boundaries" to be collisions
+; Checks for collisions. Considers "screen boundaries" to be collisions.
 ;
 ; @param[out]	zflag	z if collision occurred
 ; @addr{4072}
@@ -139524,70 +139548,90 @@ _partDecCounter1IfNonzero:
 	dec (hl)		; $40ad
 	ret			; $40ae
 
+;;
+; Reverses direction & bounces upward when collisions are enabled?
+; @addr{40af}
+_partCommon_bounceWhenCollisionsEnabled:
 	ld h,d			; $40af
-	ld l,$e4		; $40b0
+	ld l,Part.collisionType		; $40b0
 	bit 7,(hl)		; $40b2
 	ret z			; $40b4
+
 	res 7,(hl)		; $40b5
+
 	call partSetAnimation		; $40b7
-	ld bc,$ff20		; $40ba
+	ld bc,-$e0		; $40ba
 	call objectSetSpeedZ		; $40bd
-	ld l,$c6		; $40c0
+
+	ld l,Part.counter1		; $40c0
 	ld (hl),$20		; $40c2
-	ld l,$d0		; $40c4
-	ld (hl),$0a		; $40c6
-	ld l,$c9		; $40c8
+	ld l,Part.speed		; $40c4
+	ld (hl),SPEED_40		; $40c6
+	ld l,Part.angle		; $40c8
 	ld a,(hl)		; $40ca
 	xor $10			; $40cb
 	ld (hl),a		; $40cd
 	ret			; $40ce
+
+;;
+; @addr{40cf}
+_partCommon_updateSpeedAndDeleteWhenCounter1Is0:
 	call _partDecCounter1IfNonzero		; $40cf
 	jp z,partDelete		; $40d2
 	ld c,$0e		; $40d5
 	call objectUpdateSpeedZ_paramC		; $40d7
 	call partAnimate		; $40da
 	jp objectApplySpeed		; $40dd
-	ld e,$c9		; $40e0
+
+;;
+; @addr{40e0}
+_partCommon_setPositionOffsetAndRadiusFromAngle:
+	ld e,Part.angle		; $40e0
 	ld a,(de)		; $40e2
 	add $04			; $40e3
 	and $18			; $40e5
 	rrca			; $40e7
-	ld hl,$40fe		; $40e8
+	ld hl,@data		; $40e8
 	rst_addAToHl			; $40eb
-	ld e,$cb		; $40ec
+
+	ld e,Part.yh		; $40ec
 	ldi a,(hl)		; $40ee
 	add b			; $40ef
 	ld (de),a		; $40f0
-	ld e,$cd		; $40f1
+	ld e,Part.xh		; $40f1
 	ldi a,(hl)		; $40f3
 	add c			; $40f4
 	ld (de),a		; $40f5
-	ld e,$e6		; $40f6
+	ld e,Part.collisionRadiusY		; $40f6
 	ldi a,(hl)		; $40f8
 	ld (de),a		; $40f9
 	inc e			; $40fa
 	ld a,(hl)		; $40fb
-	ld (de),a		; $40fc
+	ld (de),a ; Part.collisionRadiusX
 	ret			; $40fd
-	ld hl,sp-$05		; $40fe
-	ld b,$03		; $4100
-	ld (bc),a		; $4102
-	ld ($0603),sp		; $4103
-	ld ($0605),sp		; $4106
-	inc bc			; $4109
-	ld (bc),a		; $410a
-	ld hl,sp+$03		; $410b
-	ld b,$62		; $410d
-	ld l,$c5		; $410f
+
+; Data format: Y offset, X offset, collisionRadiusY, collisionRadiusX
+@data:
+	.db $f8 $fb $06 $03 ; DIR_UP
+	.db $02 $08 $03 $06 ; DIR_RIGHT
+	.db $08 $05 $06 $03 ; DIR_DOWN
+	.db $02 $f8 $03 $06 ; DIR_LEFT
+
+;;
+; @addr{410e}
+_partCommon_incState2:
+	ld h,d			; $410e
+	ld l,Part.state2		; $410f
 	inc (hl)		; $4111
 	ret			; $4112
+
 
 ; ==============================================================================
 ; PARTID_ITEM_DROP
 ; ==============================================================================
 partCode01:
 	jr z,@normalStatus	; $4113
-	cp PARTSTATUS_02			; $4115
+	cp PARTSTATUS_DEAD			; $4115
 	jp z,$4216		; $4117
 
 	ld e,Part.state		; $411a
@@ -139653,7 +139697,7 @@ partCode01:
 	jp partSetAnimation		; $4178
 
 @state1:
-	call $4030		; $417b
+	call _partCommon_getTileCollisionInFront_allowHoles		; $417b
 	call nc,$4302		; $417e
 	ld c,$20		; $4181
 	call objectUpdateSpeedZAndBounce		; $4183
@@ -140099,7 +140143,7 @@ partCode01:
 	ret			; $441d
 	push bc			; $441e
 	ld a,c			; $441f
-	call $402a		; $4420
+	call _partCommon_getTileCollisionAtAngle_allowHoles		; $4420
 	pop bc			; $4423
 	ret c			; $4424
 	ld e,$c9		; $4425
@@ -142164,7 +142208,7 @@ _label_11_107:
 .dw $5046
 .dw $5050
 .dw $5066
-.dw $40cf
+.dw _partCommon_updateSpeedAndDeleteWhenCounter1Is0
 	ld h,d			; $5046
 	ld l,e			; $5047
 	inc (hl)		; $5048
@@ -142184,7 +142228,7 @@ _label_11_108:
 	ld a,$03		; $5066
 	ld (de),a		; $5068
 	xor a			; $5069
-	jp $40af		; $506a
+	jp _partCommon_bounceWhenCollisionsEnabled		; $506a
 
 ;;
 ; @addr{506d}
@@ -142258,7 +142302,7 @@ _label_11_111:
 	rst_jumpTable			; $50d7
 .dw $50de
 .dw $50fa
-.dw $40cf
+.dw _partCommon_updateSpeedAndDeleteWhenCounter1Is0
 	ld h,d			; $50de
 	ld l,e			; $50df
 	inc (hl)		; $50e0
@@ -142268,7 +142312,7 @@ _label_11_111:
 	ld b,(hl)		; $50e7
 	ld l,$cd		; $50e8
 	ld c,(hl)		; $50ea
-	call $40e0		; $50eb
+	call _partCommon_setPositionOffsetAndRadiusFromAngle		; $50eb
 	ld e,$c9		; $50ee
 	ld a,(de)		; $50f0
 	swap a			; $50f1
@@ -142323,7 +142367,7 @@ _label_11_117:
 	ld e,$c4		; $5144
 	ld (de),a		; $5146
 	ld a,$04		; $5147
-	jp $40af		; $5149
+	jp _partCommon_bounceWhenCollisionsEnabled		; $5149
 
 ;;
 ; @addr{514c}
@@ -142360,7 +142404,7 @@ _label_11_119:
 	ld b,(hl)		; $517d
 	ld l,$cd		; $517e
 	ld c,(hl)		; $5180
-	call $40e0		; $5181
+	call _partCommon_setPositionOffsetAndRadiusFromAngle		; $5181
 	ld e,$c9		; $5184
 	ld a,(de)		; $5186
 	swap a			; $5187
@@ -142416,7 +142460,7 @@ _label_11_123:
 	ld a,$02		; $51df
 	ld (de),a		; $51e1
 	xor a			; $51e2
-	jp $40af		; $51e3
+	jp _partCommon_bounceWhenCollisionsEnabled		; $51e3
 
 ;;
 ; @addr{51e6}
@@ -142570,7 +142614,7 @@ _label_11_129:
 .dw $52d4
 .dw $52db
 .dw $52ec
-.dw $40cf
+.dw _partCommon_updateSpeedAndDeleteWhenCounter1Is0
 .dw $52f1
 	ld h,d			; $52c1
 	ld l,e			; $52c2
@@ -142604,7 +142648,7 @@ _label_11_133:
 	ld a,$04		; $52f6
 	ld (de),a		; $52f8
 	xor a			; $52f9
-	jp $40af		; $52fa
+	jp _partCommon_bounceWhenCollisionsEnabled		; $52fa
 	ld e,$c9		; $52fd
 	ld a,(de)		; $52ff
 	bit 2,a			; $5300
@@ -144704,7 +144748,7 @@ updateParts:
 ;;
 ; @addr{5e8a}
 _func_11_5e8a:
-	call $403b		; $5e8a
+	call _partCommon_standardUpdate		; $5e8a
 
 	; hl = partCodeTable + [Part.id] * 2
 	ld e,Part.id		; $5e8d
@@ -151756,7 +151800,7 @@ _label_16_001:
 .dw $420d
 .dw $421e
 .dw $4143
-.dw $410e
+.dw _partCommon_incState2
 	call $41dc		; $4043
 	cp $80			; $4046
 	ret z			; $4048
