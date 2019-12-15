@@ -1123,7 +1123,8 @@
 ; @subid_02{Gold/silver bombs (depends on var03)}
 .define INTERACID_BOMB_UPGRADE_FAIRY	$83
 
-;; TODO: Label these subids
+;;
+; TODO: Label these subids
 ; @subid_00{A tiny sparkle that disappears in an instant.}
 ; @subid_01{}
 ; @subid_02{Used by INTERACID_MAKUCONFETTI?}
@@ -1135,11 +1136,11 @@
 ; @subid_08{?}
 ; @subid_09{}
 ; @subid_0a{}
-; @subid_0b{}
+; @subid_0b{Used by INTERACID_MAKU_SEED (but in an unused function?)}
 ; @subid_0c{}
 ; @subid_0d{}
 ; @subid_0e{Used by bomb upgrade fairy}
-; @subid_0f{}
+; @subid_0f{Used by INTERACID_MAKU_SEED}
 .define INTERACID_SPARKLE		$84
 
 ;;

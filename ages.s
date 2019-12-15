@@ -91155,91 +91155,117 @@ interactionCodea5:
 	or d			; $5d2f
 	ret			; $5d30
 
+
+; ==============================================================================
+; INTERACID_MAKU_SEED
+;
+; Variables:
+;   var38: ?
+; ==============================================================================
 interactionCodea6:
-	ld e,$44		; $5d31
+	ld e,Interaction.state		; $5d31
 	ld a,(de)		; $5d33
 	rst_jumpTable			; $5d34
-.dw $5d39
-.dw $5d60
+	.dw @state0
+	.dw @state1
+
+@state0:
 	call interactionIncState		; $5d39
 	ld a,PALH_ab		; $5d3c
 	call loadPaletteHeader		; $5d3e
 	call interactionInitGraphics		; $5d41
+
 	ld hl,w1Link.yh		; $5d44
 	ld b,(hl)		; $5d47
-	ld l,$0d		; $5d48
+	ld l,<w1Link.xh		; $5d48
 	ld c,(hl)		; $5d4a
 	call interactionSetPosition		; $5d4b
-	ld l,$4f		; $5d4e
+	ld l,Interaction.zh		; $5d4e
 	ld (hl),$8b		; $5d50
+
 	ld a,(wFrameCounter)		; $5d52
 	cpl			; $5d55
 	inc a			; $5d56
-	ld e,$78		; $5d57
+	ld e,Interaction.var38		; $5d57
 	ld (de),a		; $5d59
 	call objectSetVisible82		; $5d5a
-	call $5dbd		; $5d5d
+	call @createSparkle		; $5d5d
+
+@state1:
 	ld h,d			; $5d60
-	ld l,$4f		; $5d61
+	ld l,Interaction.zh		; $5d61
 	ldd a,(hl)		; $5d63
 	cp $f3			; $5d64
-	jr c,_label_0b_199	; $5d66
+	jr c,++			; $5d66
 	ld a,$01		; $5d68
-	ld ($cfc0),a		; $5d6a
+	ld (wTmpcfc0.genericCutscene.state),a		; $5d6a
 	jp interactionDelete		; $5d6d
-_label_0b_199:
+++
 	ld bc,$0080		; $5d70
 	ld a,c			; $5d73
-	add (hl)		; $5d74
+	add (hl) ; [zh]
 	ldi (hl),a		; $5d75
 	ld a,b			; $5d76
 	adc (hl)		; $5d77
 	ld (hl),a		; $5d78
+
 	ld a,(wFrameCounter)		; $5d79
-	ld l,$78		; $5d7c
+	ld l,Interaction.var38		; $5d7c
 	add (hl)		; $5d7e
 	and $3f			; $5d7f
 	ld a,SND_MAGIC_POWDER		; $5d81
 	call z,playSound		; $5d83
 	ret			; $5d86
-	ld bc,$840b		; $5d87
+
+;;
+; Unused function?
+; @addr{5d87}
+@func_5d87:
+	ldbc INTERACID_SPARKLE,$0b		; $5d87
 	call objectCreateInteraction		; $5d8a
 	ret nz			; $5d8d
-	ld l,$46		; $5d8e
+	ld l,Interaction.counter1		; $5d8e
 	ld (hl),$c2		; $5d90
 	call objectCopyPosition		; $5d92
+
 	call getRandomNumber		; $5d95
 	and $07			; $5d98
 	add a			; $5d9a
-	ld bc,$5dad		; $5d9b
+	ld bc,@offsets		; $5d9b
 	call addAToBc		; $5d9e
 	ld a,(bc)		; $5da1
-	ld l,$4b		; $5da2
+	ld l,Interaction.yh		; $5da2
 	add (hl)		; $5da4
 	ld (hl),a		; $5da5
 	inc bc			; $5da6
 	ld a,(bc)		; $5da7
-	ld l,$4d		; $5da8
+	ld l,Interaction.xh		; $5da8
 	add (hl)		; $5daa
 	ld (hl),a		; $5dab
 	ret			; $5dac
-	stop			; $5dad
-	ld (bc),a		; $5dae
-	stop			; $5daf
-	cp $08			; $5db0
-	dec b			; $5db2
-	ld ($0cfb),sp		; $5db3
-	ld ($f80c),sp		; $5db6
-	ld b,$0b		; $5db9
-	ld b,$f5		; $5dbb
-	ld bc,$840f		; $5dbd
+
+@offsets:
+	.db $10 $02
+	.db $10 $fe
+	.db $08 $05
+	.db $08 $fb
+	.db $0c $08
+	.db $0c $f8
+	.db $06 $0b
+	.db $06 $f5
+
+;;
+; @addr{5dbd}
+@createSparkle:
+	ldbc INTERACID_SPARKLE,$0f		; $5dbd
 	call objectCreateInteraction		; $5dc0
 	ret nz			; $5dc3
-	ld l,$56		; $5dc4
-	ld a,$40		; $5dc6
+	ld l,Interaction.relatedObj1		; $5dc4
+	ld a,Interaction.start		; $5dc6
 	ldi (hl),a		; $5dc8
 	ld (hl),d		; $5dc9
 	ret			; $5dca
+
 
 interactionCodea7:
 	ld e,$44		; $5dcb
