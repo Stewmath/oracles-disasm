@@ -155515,13 +155515,13 @@ giveTreasure_body:
 +
 	pop bc			; $44dd
 	ld a,b			; $44de
-	call @func_4501		; $44df
+	call @giveTreasure		; $44df
 
 	; Check if adding this item requires adding another item.
 	push af			; $44e2
 	ld hl,@extraItemsToAddTable		; $44e3
 	call @findItemInTable		; $44e6
-	call nz,@func_4501		; $44e9
+	call nz,@giveTreasure		; $44e9
 
 	pop bc			; $44ec
 	pop de			; $44ed
@@ -155557,10 +155557,10 @@ giveTreasure_body:
 ; @param	a	Item being added
 ; @param	c	Parameter
 ; @addr{4501}
-@func_4501:
+@giveTreasure:
 	ldh (<hFF8B),a	; $4501
 	call _checkIncreaseGashaMaturityForGettingTreasure		; $4503
-	call $46b6		; $4506
+	call addTreasureToInventory		; $4506
 
 	ld hl,wObtainedTreasureFlags		; $4509
 	ldh a,(<hFF8B)	; $450c
@@ -155997,54 +155997,69 @@ getNumUnappraisedRings:
 	ret			; $46b5
 
 ;;
+; @param	hFF8B	Treasure index
 ; @addr{46b6}
-_func_46b6:
+addTreasureToInventory:
 	ldh a,(<hFF8B)	; $46b6
-	cp $20			; $46b8
+	cp NUM_INVENTORY_ITEMS			; $46b8
 	ret nc			; $46ba
+
 	push bc			; $46bb
-	call $46dc		; $46bc
+	call @addToInventory		; $46bc
 	pop bc			; $46bf
 	ret nc			; $46c0
 	jp z,setStatusBarNeedsRefreshBit1		; $46c1
+
+	; Do something weird with biggoron's sword...
 	push bc			; $46c4
 	cpl			; $46c5
-	add $88			; $46c6
+	add <wInventoryB			; $46c6
 	ld l,a			; $46c8
 	ldh a,(<hFF8B)	; $46c9
 	ld c,a			; $46cb
-	cp $0c			; $46cc
+	cp TREASURE_BIGGORON_SWORD			; $46cc
 	jr nz,+			; $46ce
 
 	ld a,(hl)		; $46d0
 	ld (hl),c		; $46d1
-	call $46dc		; $46d2
+	call @addToInventory		; $46d2
 +
 	ld hl,wStatusBarNeedsRefresh		; $46d5
 	set 0,(hl)		; $46d8
 	pop bc			; $46da
 	ret			; $46db
 
+;;
+; @param	a	Item to add
+; @param[out]	a	Index of the inventory slot it went into
+; @param[out]	zflag	z if already had the item
+; @addr{46dc}
+@addToInventory:
 	ld c,a			; $46dc
 	ld hl,wInventoryB		; $46dd
-	ld b,$12		; $46e0
-_label_3f_073:
+
+	; Check if link has the item already
+	ld b,INVENTORY_CAPACITY+2		; $46e0
+@nextItem:
 	ldi a,(hl)		; $46e2
 	cp c			; $46e3
-	jr z,_label_3f_075	; $46e4
+	jr z,@assignItem	; $46e4
 	dec b			; $46e6
-	jr nz,_label_3f_073	; $46e7
+	jr nz,@nextItem	; $46e7
+
+	; Find the first available slot
 	dec b			; $46e9
-	ld l,$88		; $46ea
-_label_3f_074:
+	ld l,<wInventoryB		; $46ea
+--
 	ldi a,(hl)		; $46ec
 	or a			; $46ed
-	jr nz,_label_3f_074	; $46ee
-_label_3f_075:
+	jr nz,--		; $46ee
+
+@assignItem:
 	dec l			; $46f0
 	ld (hl),c		; $46f1
 	ld a,l			; $46f2
-	sub $8a			; $46f3
+	sub <wInventoryStorage			; $46f3
 	bit 7,b			; $46f5
 	ret			; $46f7
 
