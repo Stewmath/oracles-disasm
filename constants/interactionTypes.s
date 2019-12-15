@@ -1414,6 +1414,7 @@
 
 ;;
 ; Relates to bipin & blossom's child?
+;
 ; @subid_00{?}
 ; @subid_01{?}
 ; @subid_02{?}
@@ -1432,6 +1433,10 @@
 
 ;;
 ; A flame used for the twinrova cutscenes (changes color based on parameters?)
+;
+; @subid_00-02{?}
+; @subid_03-05{?}
+; @subid_06-09{?}
 .define INTERACID_TWINROVA_FLAME		$a9
 
 ;;

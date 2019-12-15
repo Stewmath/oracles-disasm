@@ -91511,62 +91511,70 @@ interactionCodea8:
 	.dw $ffff
 
 
+; ==============================================================================
+; INTERACID_TWINROVA_FLAME
+; ==============================================================================
 interactionCodea9:
-	ld e,$44		; $5f4e
+	ld e,Interaction.state		; $5f4e
 	ld a,(de)		; $5f50
 	rst_jumpTable			; $5f51
-.dw $5f58
-.dw interactionAnimate
-.dw $5fa3
+	.dw @state0
+	.dw interactionAnimate
+	.dw @state2
+
+@state0:
 	ld a,$01		; $5f58
-	ld (de),a		; $5f5a
-	ld e,$42		; $5f5b
+	ld (de),a ; [state]
+
+	ld e,Interaction.subid		; $5f5b
 	ld a,(de)		; $5f5d
 	cp $06			; $5f5e
 	call nc,interactionIncState		; $5f60
+
 	call interactionInitGraphics		; $5f63
 	call interactionSetAlwaysUpdateBit		; $5f66
-	ld l,$42		; $5f69
+
+	ld l,Interaction.subid		; $5f69
 	ld a,(hl)		; $5f6b
 	ld b,a			; $5f6c
 	cp $03			; $5f6d
-	jr c,_label_0b_207	; $5f6f
+	jr c,++			; $5f6f
 	call getThisRoomFlags		; $5f71
 	and $80			; $5f74
 	jp nz,interactionDelete		; $5f76
-	ld a,(de)		; $5f79
-_label_0b_207:
+
+	ld a,(de) ; [subid]
+++
 	and $03			; $5f7a
 	add a			; $5f7c
 	add a			; $5f7d
 	add a			; $5f7e
-	ld l,$60		; $5f7f
+	ld l,Interaction.animCounter ; BUG(?): Won't point to the object after "getThisRoomFlags" call?
 	add (hl)		; $5f81
 	ld (hl),a		; $5f82
 	ld a,b			; $5f83
-	ld hl,$5f91		; $5f84
+	ld hl,@positions		; $5f84
 	rst_addDoubleIndex			; $5f87
 	ldi a,(hl)		; $5f88
 	ld c,(hl)		; $5f89
 	ld b,a			; $5f8a
 	call interactionSetPosition		; $5f8b
 	jp objectSetVisiblec2		; $5f8e
-	ld b,b			; $5f91
-	xor b			; $5f92
-	ld b,b			; $5f93
-	ld c,b			; $5f94
-	stop			; $5f95
-	ld a,b			; $5f96
-	ld d,b			; $5f97
-	xor b			; $5f98
-	ld d,b			; $5f99
-	ld c,b			; $5f9a
-	jr nz,_label_0b_208	; $5f9b
-	ld d,b			; $5f9d
-	xor b			; $5f9e
-	ld d,b			; $5f9f
-	ld c,b			; $5fa0
-	jr nz,_label_0b_209	; $5fa1
+
+@positions:
+	.db $40 $a8
+	.db $40 $48
+	.db $10 $78
+
+	.db $50 $a8
+	.db $50 $48
+	.db $20 $78
+
+	.db $50 $a8
+	.db $50 $48
+	.db $20 $78
+
+@state2:
 	call interactionAnimate		; $5fa3
 	ld a,(wFrameCounter)		; $5fa6
 	rrca			; $5fa9
