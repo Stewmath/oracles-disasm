@@ -1414,12 +1414,20 @@
 
 ;;
 ; Relates to bipin & blossom's child?
-; @subid_00{}
-; @subid_01{}
-; @subid_02{}
+; @subid_00{?}
+; @subid_01{?}
+; @subid_02{?}
 .define INTERACID_a7				$a7
 
 ;;
+; Responsible for controlling various credits cutscenes? High nibble of subid seems to be an index
+; corresponding to the animal.
+;
+; @subid_00{Ricky?}
+; @subid_01{Dimitri?}
+; @subid_02{Moosh?}
+; @subid_03{Maple?}
+; @subid_04{Responsible for credits cutscenes such as link showing ralph swordplay, among others?}
 .define INTERACID_a8				$a8
 
 ;;

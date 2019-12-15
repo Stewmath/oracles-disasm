@@ -91350,165 +91350,166 @@ interactionCodea7:
 	jp interactionSetAnimation		; $5e40
 
 
+; ==============================================================================
+; INTERACID_a8
+; ==============================================================================
 interactionCodea8:
-	ld e,$42		; $5e43
+	ld e,Interaction.subid		; $5e43
 	ld a,(de)		; $5e45
 	and $0f			; $5e46
 	rst_jumpTable			; $5e48
-.dw $5e53
-.dw $5e53
-.dw $5e53
-.dw $5e53
-.dw $5e6d
+	.dw @subid0
+	.dw @subid1
+	.dw @subid2
+	.dw @subid3
+	.dw @subid4
+
+@subid0:
+@subid1:
+@subid2:
+@subid3:
 	ld a,(de)		; $5e53
 	and $0f			; $5e54
-	add $0f			; $5e56
+	add SPECIALOBJECTID_RICKY_CUTSCENE			; $5e56
 	ld b,a			; $5e58
 	ld a,(de)		; $5e59
 	swap a			; $5e5a
 	and $0f			; $5e5c
-	ld hl,$d100		; $5e5e
+	ld hl,w1Companion.enabled		; $5e5e
 	ld (hl),$01		; $5e61
 	inc l			; $5e63
-	ld (hl),b		; $5e64
+	ld (hl),b ; [w1Companion.id]
 	inc l			; $5e65
-	ld (hl),a		; $5e66
+	ld (hl),a ; [w1Companion.subid]
 	call objectCopyPosition		; $5e67
 	jp interactionDelete		; $5e6a
-	ld hl,$d000		; $5e6d
+
+@subid4:
+	ld hl,w1Link.enabled		; $5e6d
 	ld (hl),$03		; $5e70
 	call objectCopyPosition		; $5e72
-	call $5e7b		; $5e75
+	call @handleSubidHighNibble		; $5e75
 	jp interactionDelete		; $5e78
-	ld e,$42		; $5e7b
+
+@handleSubidHighNibble:
+	ld e,Interaction.subid		; $5e7b
 	ld a,(de)		; $5e7d
 	swap a			; $5e7e
 	and $0f			; $5e80
 	ld b,a			; $5e82
 	rst_jumpTable			; $5e83
-.dw $5ec7
-.dw $5ec2
-.dw $5e92
-.dw $5e92
-.dw $5e92
-.dw $5e9b
-.dw $5ebd
+	.dw @thing0
+	.dw @thing1
+	.dw @thing2
+	.dw @thing3
+	.dw @thing4
+	.dw @thing5
+	.dw @thing6
+
+@thing2:
+@thing3:
+@thing4:
 	ld a,b			; $5e92
-	ld hl,$d001		; $5e93
-	ld (hl),$08		; $5e96
+
+@initLinkInCutscene:
+	ld hl,w1Link.id		; $5e93
+	ld (hl),SPECIALOBJECTID_LINK_CUTSCENE		; $5e96
 	inc l			; $5e98
 	ld (hl),a		; $5e99
 	ret			; $5e9a
+
+@thing5:
 	ld a,d			; $5e9b
 	ld (wLinkObjectIndex),a		; $5e9c
 	ld hl,wActiveRing		; $5e9f
-	ld (hl),$3d		; $5ea2
+	ld (hl),FIST_RING		; $5ea2
 	xor a			; $5ea4
-	ld l,$88		; $5ea5
+	ld l,<wInventoryB		; $5ea5
 	ldi (hl),a		; $5ea7
 	ld (hl),a		; $5ea8
-	ld hl,$5eea		; $5ea9
-	ld a,$0b		; $5eac
-_label_0b_202:
+
+	ld hl,@simulatedInput_5eea		; $5ea9
+	ld a,:@simulatedInput_5eea		; $5eac
+
+@beginSimulatedInput:
 	push de			; $5eae
 	call setSimulatedInputAddress		; $5eaf
 	pop de			; $5eb2
 	xor a			; $5eb3
 	ld (wDisabledObjects),a		; $5eb4
-	ld hl,$d001		; $5eb7
-	ld (hl),$00		; $5eba
+	ld hl,w1Link.id		; $5eb7
+	ld (hl),SPECIALOBJECTID_LINK		; $5eba
 	ret			; $5ebc
+
+@thing6:
 	ld a,$09		; $5ebd
-	jp $5e93		; $5ebf
+	jp @initLinkInCutscene		; $5ebf
+
+@thing1:
 	ld a,$0a		; $5ec2
-	jp $5e93		; $5ec4
+	jp @initLinkInCutscene		; $5ec4
+
+@thing0:
 	ld hl,w1Link.direction		; $5ec7
-	ld (hl),$02		; $5eca
+	ld (hl),DIR_DOWN		; $5eca
 	ld a,h			; $5ecc
 	ld (wLinkObjectIndex),a		; $5ecd
 	ld hl,wInventoryB		; $5ed0
-	ld (hl),$05		; $5ed3
+	ld (hl),ITEMID_SWORD		; $5ed3
 	inc l			; $5ed5
-	ld (hl),$00		; $5ed6
-	ld hl,$5f2b		; $5ed8
-	ld a,$0b		; $5edb
-	jr _label_0b_202		; $5edd
-	inc a			; $5edf
-	nop			; $5ee0
-	nop			; $5ee1
-	jr nz,_label_0b_203	; $5ee2
-_label_0b_203:
-	add b			; $5ee4
-	jr nc,_label_0b_204	; $5ee5
-_label_0b_204:
-	nop			; $5ee7
-	rst $38			; $5ee8
-	rst $38			; $5ee9
-	ld a,h			; $5eea
-	nop			; $5eeb
-	nop			; $5eec
-	ld bc,$2000		; $5eed
-	ld l,$00		; $5ef0
-	nop			; $5ef2
-	ld bc,$8000		; $5ef3
-	ld l,$00		; $5ef6
-	nop			; $5ef8
-	ld bc,$1000		; $5ef9
-	ld l,$00		; $5efc
-	nop			; $5efe
-	ld bc,$4000		; $5eff
-	ld l,$00		; $5f02
-	nop			; $5f04
-	ld bc,$2000		; $5f05
-	ld l,$00		; $5f08
-	nop			; $5f0a
-	ld bc,$8000		; $5f0b
-	ld l,b			; $5f0e
-	nop			; $5f0f
-	nop			; $5f10
-	ld bc,$4000		; $5f11
-	jr c,_label_0b_205	; $5f14
-_label_0b_205:
-	nop			; $5f16
-	ld bc,$1000		; $5f17
-	ret nc			; $5f1a
-	ld bc,$0100		; $5f1b
-	nop			; $5f1e
-	jr nz,-$60		; $5f1f
-	nop			; $5f21
-	nop			; $5f22
-	ld bc,$0100		; $5f23
-	jr nc,_label_0b_206	; $5f26
-_label_0b_206:
-	nop			; $5f28
-	rst $38			; $5f29
-	rst $38			; $5f2a
-	inc a			; $5f2b
-	nop			; $5f2c
-	nop			; $5f2d
-	ld bc,$2000		; $5f2e
-	ldd a,(hl)		; $5f31
-	nop			; $5f32
-	ld (bc),a		; $5f33
-	inc a			; $5f34
-	nop			; $5f35
-	nop			; $5f36
-	ld bc,$1200		; $5f37
-	inc d			; $5f3a
-	nop			; $5f3b
-	nop			; $5f3c
-	ld bc,$8000		; $5f3d
-	ld a,b			; $5f40
-	nop			; $5f41
-	ld (bc),a		; $5f42
-	ldd (hl),a		; $5f43
-	nop			; $5f44
-	nop			; $5f45
-	ld bc,$1000		; $5f46
-	ld e,$00		; $5f49
-	nop			; $5f4b
-	rst $38			; $5f4c
-	rst $38			; $5f4d
+	ld (hl),$00 ; [wInventoryA]
+	ld hl,@linkSwordDemonstrationInput		; $5ed8
+	ld a,:@linkSwordDemonstrationInput		; $5edb
+	jr @beginSimulatedInput		; $5edd
+
+
+; Unused? (address $5edf)
+@unusedInputData:
+	dwb 60 $00
+	dwb 32 BTN_DOWN
+	dwb 48 $00
+	.dw $ffff
+
+
+@simulatedInput_5eea:
+	dwb 124 $00
+	dwb 1   BTN_LEFT
+	dwb 46  $00
+	dwb 1   BTN_DOWN
+	dwb 46  $00
+	dwb 1   BTN_RIGHT
+	dwb 46  $00
+	dwb 1   BTN_UP
+	dwb 46  $00
+	dwb 1   BTN_LEFT
+	dwb 46  $00
+	dwb 1   BTN_DOWN
+	dwb 104 $00
+	dwb 1   BTN_UP
+	dwb 56  $00
+	dwb 1   BTN_RIGHT
+	dwb 464 $00
+	dwb 1   BTN_LEFT
+	dwb 160 $00
+	dwb 1   BTN_A
+	dwb 48  $00
+	.dw $ffff 
+
+; Demonstrating sword to Ralph in credits
+@linkSwordDemonstrationInput:
+	dwb 60  $00
+	dwb 1   BTN_LEFT
+	dwb 58  BTN_B
+	dwb 60  $00
+	dwb 1   BTN_RIGHT|BTN_B
+	dwb 20  $00
+	dwb 1   BTN_DOWN
+	dwb 120 BTN_B
+	dwb 50  $00
+	dwb 1   BTN_RIGHT
+	dwb 30  $00
+	.dw $ffff
+
 
 interactionCodea9:
 	ld e,$44		; $5f4e
