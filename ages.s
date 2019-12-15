@@ -92475,103 +92475,121 @@ _horizontalCreditsText_scriptTable:
 	.db $58 $ff
 
 
+; ==============================================================================
+; INTERACID_CREDITS_TEXT_VERTICAL
+;
+; Variables:
+;   var30/var31: 16-bit counter?
+; ==============================================================================
 interactionCodeaf:
-	ld e,$44		; $6644
+	ld e,Interaction.state		; $6644
 	ld a,(de)		; $6646
 	rst_jumpTable			; $6647
-.dw $664c
-.dw $6661
+	.dw @state0
+	.dw @state1
+
+@state0:
 	ld a,$01		; $664c
-	ld (de),a		; $664e
-	ld e,$42		; $664f
+	ld (de),a ; [state]
+	ld e,Interaction.subid		; $664f
 	ld a,(de)		; $6651
 	or a			; $6652
-	jr nz,_label_0b_256	; $6653
-	ld hl,$66bc		; $6655
-	jp $669e		; $6658
-_label_0b_256:
+	jr nz,+			; $6653
+	ld hl,@data_66bc		; $6655
+	jp @storeVar30Value		; $6658
++
 	ld h,d			; $665b
-	ld l,$50		; $665c
-	ld (hl),$14		; $665e
+	ld l,Interaction.speed		; $665c
+	ld (hl),SPEED_80		; $665e
 	ret			; $6660
-	ld e,$42		; $6661
+
+@state1:
+	ld e,Interaction.subid		; $6661
 	ld a,(de)		; $6663
 	or a			; $6664
-	jr nz,_label_0b_258	; $6665
+	jr nz,@subid1	; $6665
+
 	ld a,(wPaletteThread_mode)		; $6667
 	or a			; $666a
 	ret nz			; $666b
+
 	ld h,d			; $666c
-	ld l,$70		; $666d
+	ld l,Interaction.var30		; $666d
 	call decHlRef16WithCap		; $666f
 	ret nz			; $6672
-	call $6683		; $6673
-	ld e,$70		; $6676
+
+	call @spawnChild		; $6673
+	ld e,Interaction.var30		; $6676
 	ld a,(de)		; $6678
 	inc a			; $6679
 	ret nz			; $667a
-	ld hl,$cfdf		; $667b
+
+	ld hl,wTmpcfc0.genericCutscene.cfdf		; $667b
 	ld (hl),$ff		; $667e
 	jp interactionDelete		; $6680
+
+@spawnChild:
 	call getFreeInteractionSlot		; $6683
-	jr nz,_label_0b_257	; $6686
-	ld (hl),$af		; $6688
+	jr nz,++		; $6686
+	ld (hl),INTERACID_CREDITS_TEXT_VERTICAL		; $6688
 	inc l			; $668a
-	ld (hl),$01		; $668b
+	ld (hl),$01 ; [child.subid] = 1
 	inc l			; $668d
-	ld e,$46		; $668e
+	ld e,Interaction.counter1		; $668e
 	ld a,(de)		; $6690
-	ld (hl),a		; $6691
+	ld (hl),a ; [child.var03]
 	call objectCopyPosition		; $6692
-_label_0b_257:
+++
 	ld h,d			; $6695
-	ld l,$46		; $6696
+	ld l,Interaction.counter1		; $6696
 	inc (hl)		; $6698
 	ld a,(hl)		; $6699
-	ld hl,$66bc		; $669a
+	ld hl,@data_66bc		; $669a
 	rst_addDoubleIndex			; $669d
+
+@storeVar30Value:
 	ldi a,(hl)		; $669e
-	ld e,$70		; $669f
+	ld e,Interaction.var30		; $669f
 	ld (de),a		; $66a1
 	inc e			; $66a2
 	ldi a,(hl)		; $66a3
 	ld (de),a		; $66a4
 	ret			; $66a5
-_label_0b_258:
+
+@subid1:
 	ld a,(wPaletteThread_mode)		; $66a6
 	or a			; $66a9
 	ret nz			; $66aa
 	call objectApplySpeed		; $66ab
 	ld h,d			; $66ae
-	ld l,$4b		; $66af
+	ld l,Interaction.yh		; $66af
 	ldi a,(hl)		; $66b1
 	ld b,a			; $66b2
 	or a			; $66b3
 	jp z,interactionDelete		; $66b4
 	inc l			; $66b7
-	ld c,(hl)		; $66b8
+	ld c,(hl) ; [xh]
 	jp interactionFunc_3e6d		; $66b9
-	jr nz,_label_0b_259	; $66bc
-_label_0b_259:
-	ld ($ff00+R_P1),a	; $66be
-	jr nz,_label_0b_260	; $66c0
-	stop			; $66c2
-_label_0b_260:
-	ld bc,$00f0		; $66c3
-	ld h,b			; $66c6
-	ld bc,$00f0		; $66c7
-	jr nz,_label_0b_261	; $66ca
-	ld (hl),b		; $66cc
-_label_0b_261:
-	ld bc,$0150		; $66cd
-	ld h,b			; $66d0
-	ld bc,$0140		; $66d1
-	ld b,b			; $66d4
-	ld bc,$0160		; $66d5
-	stop			; $66d8
-	ld bc,$0160		; $66d9
-	and b			; $66dc
-	.db $01 $ff		; $66dd
+
+@data_66bc:
+	.dw $0020
+	.dw $00e0
+	.dw $0120
+	.dw $0110
+	.dw $00f0
+	.dw $0160
+	.dw $00f0
+	.dw $0120
+	.dw $0170
+	.dw $0150
+	.dw $0160
+	.dw $0140
+	.dw $0140
+	.dw $0160
+	.dw $0110
+	.dw $0160
+	.dw $01a0
+	.db $ff
 
 interactionCodeb0:
 	ld e,$44		; $66df

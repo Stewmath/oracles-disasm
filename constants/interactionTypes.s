@@ -1453,6 +1453,8 @@
 
 ;;
 ; Used for the credits after the cutscenes.
+; @subid_00{?}
+; @subid_01{?}
 .define INTERACID_CREDITS_TEXT_VERTICAL		$af
 
 ;;
