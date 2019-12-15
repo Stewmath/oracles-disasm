@@ -1414,6 +1414,9 @@
 
 ;;
 ; Relates to bipin & blossom's child?
+; @subid_00{}
+; @subid_01{}
+; @subid_02{}
 .define INTERACID_a7				$a7
 
 ;;
@@ -1431,7 +1434,7 @@
 
 ;;
 ; Decides which objects need to be spawned in the bipin/blossom family.
-; @subid_00{Left side of house.}
+; @subid_00{Left side of house}
 ; @subid_01{Right side of house}
 .define INTERACID_BIPIN_BLOSSOM_FAMILY_SPAWNER	$ac
 

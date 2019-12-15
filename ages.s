@@ -91267,71 +91267,88 @@ interactionCodea6:
 	ret			; $5dca
 
 
+; ==============================================================================
+; INTERACID_a7
+; ==============================================================================
 interactionCodea7:
-	ld e,$44		; $5dcb
+	ld e,Interaction.state		; $5dcb
 	ld a,(de)		; $5dcd
 	rst_jumpTable			; $5dce
-.dw $5dd3
-.dw $5e10
+	.dw @state0
+	.dw @state1
+
+@state0:
 	ld a,$01		; $5dd3
-	ld (de),a		; $5dd5
+	ld (de),a ; [state]
 	call interactionInitGraphics		; $5dd6
 	call objectSetVisible82		; $5dd9
-	ld e,$42		; $5ddc
+
+	ld e,Interaction.subid		; $5ddc
 	ld a,(de)		; $5dde
 	cp $02			; $5ddf
 	ret nz			; $5de1
+
 	ld a,(wChildStage)		; $5de2
 	cp $04			; $5de5
 	ret c			; $5de7
+
 	ld a,$04		; $5de8
 	call interactionSetAnimation		; $5dea
 	call getFreeInteractionSlot		; $5ded
 	ret nz			; $5df0
-	ld (hl),$35		; $5df1
+	ld (hl),INTERACID_CHILD		; $5df1
 	inc l			; $5df3
 	ld a,(wChildStage)		; $5df4
 	ld b,$00		; $5df7
 	cp $07			; $5df9
-	jr c,_label_0b_200	; $5dfb
+	jr c,+			; $5dfb
 	ld b,$03		; $5dfd
-_label_0b_200:
++
 	ld a,(wChildPersonality)		; $5dff
 	add b			; $5e02
-	ldi (hl),a		; $5e03
+	ldi (hl),a ; [child.subid]
 	add $16			; $5e04
 	ld (hl),a		; $5e06
-	ld l,$4b		; $5e07
+	ld l,Interaction.yh		; $5e07
 	ld (hl),$38		; $5e09
 	inc l			; $5e0b
 	inc l			; $5e0c
 	ld (hl),$28		; $5e0d
 	ret			; $5e0f
-	ld e,$45		; $5e10
+
+@state1:
+	ld e,Interaction.state2		; $5e10
 	ld a,(de)		; $5e12
 	rst_jumpTable			; $5e13
-.dw $5e1a
-.dw $5e2c
-.dw $5e3a
-	ld a,($cfc0)		; $5e1a
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+
+@substate0:
+	ld a,(wTmpcfc0.genericCutscene.state)		; $5e1a
 	or a			; $5e1d
-	jr z,_label_0b_201	; $5e1e
+	jr z,++			; $5e1e
 	call interactionIncState2		; $5e20
-	ld bc,$ff00		; $5e23
+	ld bc,-$100		; $5e23
 	call objectSetSpeedZ		; $5e26
-_label_0b_201:
+++
 	jp interactionAnimate		; $5e29
+
+@substate1:
 	ld c,$20		; $5e2c
 	call objectUpdateSpeedZ_paramC		; $5e2e
 	ret nz			; $5e31
 	call interactionIncState2		; $5e32
-	ld l,$46		; $5e35
-	ld (hl),$0a		; $5e37
+	ld l,Interaction.counter1		; $5e35
+	ld (hl),10		; $5e37
 	ret			; $5e39
+
+@substate2:
 	call interactionDecCounter1		; $5e3a
 	ret nz			; $5e3d
 	ld a,$03		; $5e3e
 	jp interactionSetAnimation		; $5e40
+
 
 interactionCodea8:
 	ld e,$42		; $5e43
