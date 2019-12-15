@@ -1,3 +1,9 @@
+# This plando/hack
+
+This is part of a plando hack which puts Ages items in Seasons. See the corresponding [branch in the
+randomizer](https://github.com/Drenn1/oracles-randomizer/tree/drenn-seasons-plando-2019) for the
+full picture.
+
 # About
 
 This is intended to be a full disassembly of Oracle of Ages and Seasons for the Gameboy
