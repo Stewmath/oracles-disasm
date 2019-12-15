@@ -3220,7 +3220,7 @@ w2FadingSprPalettes:	dsb $40		; $dfc0
 w3TileMappingData:	dsb $800	; $d000
 
 ; Room tiles in a format which can be written straight to vram. Each row is $20 bytes.
-; TODO: Rename this to "w3TileMap" or something
+; TODO: Contrast with w4TileMap
 w3VramTiles:		dsb $100	; $d800
 
 w3Filler1:		dsb $200

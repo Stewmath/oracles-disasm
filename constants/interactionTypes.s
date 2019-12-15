@@ -1446,6 +1446,9 @@
 
 ;;
 ; Used for the credits text in between the mini-cutscenes.
+; @subid_00{Enter from right}
+; @subid_01{Enter from left)
+; @var03{?}
 .define INTERACID_CREDITS_TEXT_HORIZONTAL	$ae
 
 ;;

@@ -92036,202 +92036,248 @@ _label_0b_230:
 	.dw script7d17
 	.dw stubScript
 
+
+; ==============================================================================
+; INTERACID_CREDITS_TEXT_HORIZONTAL
+;
+; Variables:
+;   var03: ?
+;   var30: ?
+;   var31: ?
+;   var32: ?
+;   var33: ?
+; ==============================================================================
 interactionCodeae:
-	ld e,$44		; $63dd
+	ld e,Interaction.state		; $63dd
 	ld a,(de)		; $63df
 	rst_jumpTable			; $63e0
-.dw $63e5
-.dw $6434
+	.dw @state0
+	.dw @state1
+
+@state0:
 	ld a,$01		; $63e5
-	ld (de),a		; $63e7
-	ld e,$43		; $63e8
+	ld (de),a ; [state]
+	ld e,Interaction.var03		; $63e8
 	ld a,(de)		; $63ea
 	or a			; $63eb
-	jr nz,_label_0b_231	; $63ec
+	jr nz,@var03Nonzero	; $63ec
+
 	ld h,d			; $63ee
-	ld l,$42		; $63ef
+	ld l,Interaction.subid		; $63ef
 	ld a,(hl)		; $63f1
-	ld hl,$65c1		; $63f2
+	ld hl,_horizontalCreditsText_scriptTable		; $63f2
 	rst_addDoubleIndex			; $63f5
 	ldi a,(hl)		; $63f6
 	ld h,(hl)		; $63f7
 	ld l,a			; $63f8
-	call $6559		; $63f9
-	ld e,$42		; $63fc
+	call _creditsTextHorizontal_6559		; $63f9
+
+	ld e,Interaction.subid		; $63fc
 	ld a,(de)		; $63fe
-	ld hl,$65b1		; $63ff
+	ld hl,_horizontalCreditsText_65b1		; $63ff
 	rst_addDoubleIndex			; $6402
 	ldi a,(hl)		; $6403
-	ld e,$72		; $6404
+	ld e,Interaction.var32		; $6404
 	ld (de),a		; $6406
 	ldi a,(hl)		; $6407
-	ld e,$47		; $6408
+	ld e,Interaction.counter2		; $6408
 	ld (de),a		; $640a
 	ret			; $640b
-_label_0b_231:
+
+@var03Nonzero:
 	call interactionInitGraphics		; $640c
 	ld h,d			; $640f
-	ld l,$70		; $6410
+	ld l,Interaction.var30		; $6410
 	ld (hl),$14		; $6412
-	ld l,$50		; $6414
-	ld (hl),$50		; $6416
-	ld l,$47		; $6418
+	ld l,Interaction.speed		; $6414
+	ld (hl),SPEED_200		; $6416
+
+	ld l,Interaction.counter2		; $6418
 	ld a,(hl)		; $641a
 	call interactionSetAnimation		; $641b
+
 	ld h,d			; $641e
-	ld l,$42		; $641f
+	ld l,Interaction.subid		; $641f
 	ld a,(hl)		; $6421
 	or a			; $6422
 	ld bc,$f018		; $6423
-	jr z,_label_0b_232	; $6426
+	jr z,+			; $6426
 	ld bc,$0008		; $6428
-_label_0b_232:
-	ld l,$4d		; $642b
++
+	ld l,Interaction.xh		; $642b
 	ld (hl),b		; $642d
-	ld l,$49		; $642e
+	ld l,Interaction.angle		; $642e
 	ld (hl),c		; $6430
 	jp objectSetVisible82		; $6431
+
+@state1:
 	ld a,$01		; $6434
-	ld (de),a		; $6436
-	ld e,$43		; $6437
+	ld (de),a ; [state]
+	ld e,Interaction.var03		; $6437
 	ld a,(de)		; $6439
 	or a			; $643a
-	jp nz,$657b		; $643b
+	jp nz,_horizontalCreditsText_var03Nonzero		; $643b
+
 	ld a,(wPaletteThread_mode)		; $643e
 	or a			; $6441
 	ret nz			; $6442
-	ld e,$45		; $6443
+	ld e,Interaction.state2		; $6443
 	ld a,(de)		; $6445
 	rst_jumpTable			; $6446
-.dw $644d
-.dw $646c
-.dw $652b
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+
+@substate0:
 	ld h,d			; $644d
-	ld l,$70		; $644e
+	ld l,Interaction.var30		; $644e
 	call decHlRef16WithCap		; $6450
 	ret nz			; $6453
-	call $6537		; $6454
-	ld e,$70		; $6457
+	call _creditsTextHorizontal_6537		; $6454
+
+@func_6457:
+	ld e,Interaction.var30		; $6457
 	ld a,(de)		; $6459
 	rlca			; $645a
 	ret nc			; $645b
+
 	ld b,$01		; $645c
 	rlca			; $645e
-	jr nc,_label_0b_233	; $645f
+	jr nc,+			; $645f
 	ld b,$02		; $6461
-_label_0b_233:
++
 	ld h,d			; $6463
-	ld l,$46		; $6464
-	ld (hl),$b4		; $6466
-	ld l,$45		; $6468
+	ld l,Interaction.counter1		; $6464
+	ld (hl),180		; $6466
+	ld l,Interaction.state2		; $6468
 	ld (hl),b		; $646a
 	ret			; $646b
-	ld e,$73		; $646c
+
+@substate1:
+	ld e,Interaction.var33		; $646c
 	ld a,(de)		; $646e
 	rst_jumpTable			; $646f
-.dw $6478
-.dw $6481
-.dw $64cf
-.dw $64db
+	.dw @subsubstate0
+	.dw @subsubstate1
+	.dw @subsubstate2
+	.dw @subsubstate3
+
+@subsubstate0:
 	call interactionDecCounter1		; $6478
 	ret nz			; $647b
 	ld h,d			; $647c
-	ld l,$73		; $647d
+	ld l,Interaction.var33		; $647d
 	inc (hl)		; $647f
 	ret			; $6480
+
+@subsubstate1:
 	ld a,(wFrameCounter)		; $6481
 	and $03			; $6484
 	ret nz			; $6486
+
 	ld h,d			; $6487
-	ld l,$46		; $6488
+	ld l,Interaction.counter1		; $6488
 	ld a,(hl)		; $648a
 	cp $10			; $648b
-	jr nz,_label_0b_234	; $648d
-	ld l,$73		; $648f
+	jr nz,@label_0b_234	; $648d
+
+	ld l,Interaction.var33		; $648f
 	inc (hl)		; $6491
-	ld l,$58		; $6492
+
+	ld l,Interaction.scriptPtr		; $6492
 	ld a,(hl)		; $6494
 	sub $03			; $6495
 	ldi (hl),a		; $6497
 	ld a,(hl)		; $6498
 	sbc $00			; $6499
 	ld (hl),a		; $649b
-	call $6554		; $649c
+
+	call _creditsTextHorizontal_6554		; $649c
 	ld h,d			; $649f
-	ld l,$46		; $64a0
-	ld (hl),$1e		; $64a2
+	ld l,Interaction.counter1		; $64a0
+	ld (hl),30		; $64a2
 	ret			; $64a4
-_label_0b_234:
+
+@label_0b_234:
 	ld a,($ff00+R_SVBK)	; $64a5
 	push af			; $64a7
-	ld l,$46		; $64a8
+	ld l,Interaction.counter1		; $64a8
 	ld a,(hl)		; $64aa
 	ld b,a			; $64ab
-	ld a,$04		; $64ac
+	ld a,:w4TileMap		; $64ac
 	ld ($ff00+R_SVBK),a	; $64ae
 	ld a,b			; $64b0
-	ld hl,$d000		; $64b1
+	ld hl,w4TileMap		; $64b1
 	rst_addDoubleIndex			; $64b4
 	ld b,$30		; $64b5
-_label_0b_235:
+@loop:
 	xor a			; $64b7
 	ldi (hl),a		; $64b8
 	ld (hl),a		; $64b9
 	ld a,$1f		; $64ba
 	rst_addAToHl			; $64bc
 	dec b			; $64bd
-	jr nz,_label_0b_235	; $64be
+	jr nz,@loop	; $64be
+
 	push de			; $64c0
 	ld a,UNCMP_GFXH_09		; $64c1
 	call loadUncompressedGfxHeader		; $64c3
 	pop de			; $64c6
 	pop af			; $64c7
 	ld ($ff00+R_SVBK),a	; $64c8
+
 	ld h,d			; $64ca
-	ld l,$46		; $64cb
+	ld l,Interaction.counter1		; $64cb
 	inc (hl)		; $64cd
 	ret			; $64ce
+
+@subsubstate2:
 	call interactionDecCounter1		; $64cf
 	ret nz			; $64d2
-	ld l,$73		; $64d3
+	ld l,Interaction.var33		; $64d3
 	inc (hl)		; $64d5
-	ld l,$46		; $64d6
+	ld l,Interaction.counter1		; $64d6
 	ld (hl),$10		; $64d8
 	ret			; $64da
+
+@subsubstate3:
 	ld a,(wFrameCounter)		; $64db
 	and $03			; $64de
 	ret nz			; $64e0
 	call interactionDecCounter1		; $64e1
-	jr nz,_label_0b_236	; $64e4
+	jr nz,@label_0b_236	; $64e4
+
 	xor a			; $64e6
-	ld l,$45		; $64e7
+	ld l,Interaction.state2		; $64e7
 	ld (hl),a		; $64e9
-	ld l,$73		; $64ea
+	ld l,Interaction.var33		; $64ea
 	ld (hl),a		; $64ec
-	jp $6457		; $64ed
-_label_0b_236:
+	jp @func_6457		; $64ed
+
+@label_0b_236:
 	push de			; $64f0
 	ld a,($ff00+R_SVBK)	; $64f1
 	push af			; $64f3
-	ld a,(hl)		; $64f4
+	ld a,(hl) ; [counter1]
 	ld b,a			; $64f5
+
 	ld a,b			; $64f6
-	ld hl,$d000		; $64f7
+	ld hl,w4TileMap		; $64f7
 	rst_addDoubleIndex			; $64fa
 	ld a,b			; $64fb
-	ld de,$d800		; $64fc
+	ld de,w3VramTiles		; $64fc
 	call addDoubleIndexToDe		; $64ff
 	ld b,$30		; $6502
-_label_0b_237:
+@tileLoop:
 	push bc			; $6504
-	ld a,$03		; $6505
+	ld a,:w3VramTiles		; $6505
 	ld ($ff00+R_SVBK),a	; $6507
 	ld a,(de)		; $6509
 	ld b,a			; $650a
 	inc de			; $650b
 	ld a,(de)		; $650c
 	ld c,a			; $650d
-	ld a,$04		; $650e
+	ld a,:w4TileMap		; $650e
 	ld ($ff00+R_SVBK),a	; $6510
 	ld (hl),b		; $6512
 	inc hl			; $6513
@@ -92243,229 +92289,191 @@ _label_0b_237:
 	call addAToDe		; $651a
 	pop bc			; $651d
 	dec b			; $651e
-	jr nz,_label_0b_237	; $651f
+	jr nz,@tileLoop	; $651f
+
 	ld a,UNCMP_GFXH_09		; $6521
 	call loadUncompressedGfxHeader		; $6523
 	pop af			; $6526
 	ld ($ff00+R_SVBK),a	; $6527
 	pop de			; $6529
 	ret			; $652a
+
+@substate2:
 	call interactionDecCounter1		; $652b
 	ret nz			; $652e
-	ld hl,$cfdf		; $652f
+	ld hl,wTmpcfc0.genericCutscene.cfdf		; $652f
 	ld (hl),$ff		; $6532
 	jp interactionDelete		; $6534
+
+;;
+; @addr{6537}
+_creditsTextHorizontal_6537:
 	call getFreeInteractionSlot		; $6537
-	jr nz,_label_0b_238	; $653a
-	ld (hl),$ae		; $653c
+	jr nz,++		; $653a
+	ld (hl),INTERACID_CREDITS_TEXT_HORIZONTAL		; $653c
 	inc l			; $653e
-	ld e,$72		; $653f
+	ld e,Interaction.var32		; $653f
 	ld a,(de)		; $6541
-	ldi (hl),a		; $6542
-	ld (hl),$01		; $6543
-	ld l,$46		; $6545
+	ldi (hl),a  ; [child.subid]
+	ld (hl),$01 ; [child.var03]
+
+	ld l,Interaction.counter1		; $6545
 	ld e,l			; $6547
 	ld a,(de)		; $6548
 	inc e			; $6549
 	ldi (hl),a		; $654a
-	ld a,(de)		; $654b
+	ld a,(de) ; [counter2]
 	ld (hl),a		; $654c
 	call objectCopyPosition		; $654d
-_label_0b_238:
+++
 	ld h,d			; $6550
-	ld l,$47		; $6551
+	ld l,Interaction.counter2		; $6551
 	inc (hl)		; $6553
-	ld l,$58		; $6554
+
+;;
+; @addr{6554}
+_creditsTextHorizontal_6554:
+	ld l,Interaction.scriptPtr		; $6554
 	ldi a,(hl)		; $6556
 	ld h,(hl)		; $6557
 	ld l,a			; $6558
+
+;;
+; @param	hl	Script pointer
+; @addr{6559}
+_creditsTextHorizontal_6559:
 	ldi a,(hl)		; $6559
-	ld e,$70		; $655a
+	ld e,Interaction.var30		; $655a
 	ld (de),a		; $655c
+
 	inc e			; $655d
 	ldi a,(hl)		; $655e
-	ld (de),a		; $655f
+	ld (de),a ; [var31]
+
 	ldi a,(hl)		; $6560
-	ld e,$46		; $6561
+	ld e,Interaction.counter1		; $6561
 	ld (de),a		; $6563
+
 	ldi a,(hl)		; $6564
-	ld e,$4b		; $6565
+	ld e,Interaction.yh		; $6565
 	ld (de),a		; $6567
-	ld e,$58		; $6568
+
+	ld e,Interaction.scriptPtr		; $6568
 	ld a,l			; $656a
 	ld (de),a		; $656b
 	inc e			; $656c
 	ld a,h			; $656d
 	ld (de),a		; $656e
-	ld e,$71		; $656f
+
+	ld e,Interaction.var31		; $656f
 	ld a,(de)		; $6571
 	or a			; $6572
 	ret nz			; $6573
+
 	dec e			; $6574
-	ld a,(de)		; $6575
+	ld a,(de) ; [var30]
 	or a			; $6576
 	ret nz			; $6577
-	jp $6537		; $6578
+	jp _creditsTextHorizontal_6537		; $6578
+
+;;
+; @addr{657b}
+_horizontalCreditsText_var03Nonzero:
 	ld a,(wPaletteThread_mode)		; $657b
 	or a			; $657e
 	ret nz			; $657f
-	ld e,$45		; $6580
+	ld e,Interaction.state2		; $6580
 	ld a,(de)		; $6582
 	rst_jumpTable			; $6583
-.dw $6588
-.dw $65a5
+	.dw @substate0
+	.dw @substate1
+
+@substate0:
 	ld h,d			; $6588
-	ld l,$70		; $6589
+	ld l,Interaction.var30		; $6589
 	dec (hl)		; $658b
-	jr nz,_label_0b_240	; $658c
+	jr nz,@applySpeed	; $658c
+
 	call interactionIncState2		; $658e
 	ld b,$a0		; $6591
-	ld l,$42		; $6593
+	ld l,Interaction.subid		; $6593
 	ld a,(hl)		; $6595
 	or a			; $6596
-	jr z,_label_0b_239	; $6597
+	jr z,+			; $6597
 	ld b,$50		; $6599
-_label_0b_239:
-	ld l,$4d		; $659b
++
+	ld l,Interaction.xh		; $659b
 	ld (hl),b		; $659d
 	ret			; $659e
-_label_0b_240:
+
+@applySpeed:
 	call objectApplySpeed		; $659f
 	jp objectApplySpeed		; $65a2
-	ld e,$46		; $65a5
+
+@substate1:
+	ld e,Interaction.counter1		; $65a5
 	ld a,(de)		; $65a7
 	inc a			; $65a8
 	ret z			; $65a9
 	call interactionDecCounter1		; $65aa
 	jp z,interactionDelete		; $65ad
 	ret			; $65b0
-	nop			; $65b1
-	nop			; $65b2
-	ld bc,$0004		; $65b3
-	dec bc			; $65b6
-	ld bc,$0013		; $65b7
-	nop			; $65ba
-	ld bc,$0004		; $65bb
-	dec bc			; $65be
-	ld bc,$d113		; $65bf
-	ld h,l			; $65c2
-	ld ($ff00+c),a		; $65c3
-	ld h,l			; $65c4
-	nop			; $65c5
-	ld h,(hl)		; $65c6
-	ldi (hl),a		; $65c7
-	ld h,(hl)		; $65c8
-	pop de			; $65c9
-	ld h,l			; $65ca
-	ld ($ff00+c),a		; $65cb
-	ld h,l			; $65cc
-	nop			; $65cd
-	ld h,(hl)		; $65ce
-	ldi (hl),a		; $65cf
-	ld h,(hl)		; $65d0
-	jr nz,_label_0b_241	; $65d1
-_label_0b_241:
-	rst $38			; $65d3
-	ld hl,sp+$30		; $65d4
-	nop			; $65d6
-	ld a,($ff00+R_NR23)	; $65d7
-	jr nz,_label_0b_242	; $65d9
-_label_0b_242:
-	ld a,($ff00+$38)	; $65db
-	jr nz,_label_0b_243	; $65dd
-_label_0b_243:
-	ld a,($ff00+$50)	; $65df
-	rst $38			; $65e1
-	jr nz,_label_0b_244	; $65e2
-_label_0b_244:
-	rst $38			; $65e4
-	ld hl,sp+$20		; $65e5
-	nop			; $65e7
-	ld hl,sp+$18		; $65e8
-	stop			; $65ea
-	nop			; $65eb
-	add sp,$38		; $65ec
-	stop			; $65ee
-	nop			; $65ef
-	ret c			; $65f0
-	ld e,b			; $65f1
-	add b			; $65f2
-	nop			; $65f3
-	nop			; $65f4
-	rst $38			; $65f5
-	stop			; $65f6
-	nop			; $65f7
-	nop			; $65f8
-	rst $38			; $65f9
-	jr z,_label_0b_245	; $65fa
-_label_0b_245:
-	nop			; $65fc
-	rst $38			; $65fd
-	ld d,b			; $65fe
-	rst $38			; $65ff
-	jr nz,_label_0b_246	; $6600
-_label_0b_246:
-	cp $f8			; $6602
-	stop			; $6604
-	nop			; $6605
-	add sp,$18		; $6606
-	ld a,(bc)		; $6608
-	nop			; $6609
-	ret c			; $660a
-	jr c,_label_0b_247	; $660b
-	nop			; $660d
-	ret z			; $660e
-	ld e,b			; $660f
-	add b			; $6610
-	nop			; $6611
-	nop			; $6612
-	rst $38			; $6613
-	ld hl,sp+$00		; $6614
-	nop			; $6616
-_label_0b_247:
-	rst $38			; $6617
-	jr _label_0b_248		; $6618
-_label_0b_248:
-	nop			; $661a
-	rst $38			; $661b
-	jr c,_label_0b_249	; $661c
-_label_0b_249:
-	nop			; $661e
-	rst $38			; $661f
-	ld e,b			; $6620
-	rst $38			; $6621
-	jr nz,_label_0b_250	; $6622
-_label_0b_250:
-	ld hl,sp-$08		; $6624
-	jr nz,_label_0b_251	; $6626
-_label_0b_251:
-	ret c			; $6628
-	jr _label_0b_252		; $6629
-_label_0b_252:
-	nop			; $662b
-	ret c			; $662c
-	jr c,_label_0b_253	; $662d
-_label_0b_253:
-	nop			; $662f
-	ret c			; $6630
-	ld e,b			; $6631
-	add b			; $6632
-	nop			; $6633
-	nop			; $6634
-	rst $38			; $6635
-	ld hl,sp+$00		; $6636
-	nop			; $6638
-	rst $38			; $6639
-	jr _label_0b_254		; $663a
-_label_0b_254:
-	nop			; $663c
-	rst $38			; $663d
-	jr c,_label_0b_255	; $663e
-_label_0b_255:
-	nop			; $6640
-	rst $38			; $6641
-	ld e,b			; $6642
-	rst $38			; $6643
+
+_horizontalCreditsText_65b1:
+	.db $00 $00 $01 $04 $00 $0b $01 $13
+	.db $00 $00 $01 $04 $00 $0b $01 $13
+
+
+; Custom script format? TODO: figure this out
+_horizontalCreditsText_scriptTable:
+	.dw @script0
+	.dw @script1
+	.dw @script2
+	.dw @script3
+	.dw @script0
+	.dw @script1
+	.dw @script2
+	.dw @script3
+
+@script0:
+	.db $20 $00 $ff $f8
+	.db $30 $00 $f0 $18
+	.db $20 $00 $f0 $38
+	.db $20 $00 $f0 $50
+	.db $ff
+
+@script1:
+	.db $20 $00 $ff $f8
+	.db $20 $00 $f8 $18
+	.db $10 $00 $e8 $38
+	.db $10 $00 $d8 $58
+	.db $80 $00 $00 $ff
+	.db $10 $00 $00 $ff
+	.db $28 $00 $00 $ff
+	.db $50 $ff
+
+@script2:
+	.db $20 $00 $fe $f8
+	.db $10 $00 $e8 $18
+	.db $0a $00 $d8 $38
+	.db $0a $00 $c8 $58
+	.db $80 $00 $00 $ff
+	.db $f8 $00 $00 $ff
+	.db $18 $00 $00 $ff
+	.db $38 $00 $00 $ff
+	.db $58 $ff
+
+@script3:
+	.db $20 $00 $f8 $f8
+	.db $20 $00 $d8 $18
+	.db $00 $00 $d8 $38
+	.db $00 $00 $d8 $58
+	.db $80 $00 $00 $ff
+	.db $f8 $00 $00 $ff
+	.db $18 $00 $00 $ff
+	.db $38 $00 $00 $ff
+	.db $58 $ff
+
 
 interactionCodeaf:
 	ld e,$44		; $6644
