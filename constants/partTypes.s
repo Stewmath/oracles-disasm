@@ -1,5 +1,6 @@
 ;;
 ; Subids correspond to "constants/itemDrops.s".
+; @var03{Nonzero if came from the ground?}
 ; @subid_00{Fairy}
 ; @subid_01{Heart}
 ; @subid_02{1 Rupee}

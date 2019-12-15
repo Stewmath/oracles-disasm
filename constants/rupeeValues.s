@@ -3,6 +3,8 @@
 ; * getRupeeValue
 ; * cpRupeeValue
 ; * removeRupeeValue
+;
+; Seems to apply to ore chunks also.
 
 
 .enum 0

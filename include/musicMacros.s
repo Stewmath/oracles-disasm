@@ -282,7 +282,9 @@
 	.db $f8 \1
 .endm
 
-; f9: sets wChannelVibratos
+; f9: sets wChannelVibratos.
+; Upper nibble is time to wait until vibrato starts.
+; Lower nibble is intensity of vibrato.
 .macro vibrato
 	.db $f9 \1
 .endm

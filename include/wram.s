@@ -2425,7 +2425,7 @@ wcd1a:
 	dsb 5
 
 wObjectTileIndex: ; $cd1f
-; This is set when calling "objectCheckIsOverPit". Might be ages-exclusive?
+; This is set when calling "objectCheckIsOverHazard". Might be ages-exclusive?
 	db
 
 wAreaUniqueGfx: ; $cd20

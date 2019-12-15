@@ -139424,6 +139424,7 @@ _partCommon_getTileCollisionAtAngle_allowHoles:
 	jr +++			; $402e
 
 ;;
+; @param[out]	cflag	c if there's a collision
 ; @addr{4030}
 _partCommon_getTileCollisionInFront_allowHoles:
 	call _partCommon_getTileCollisionInFront		; $4030
@@ -139628,18 +139629,26 @@ _partCommon_incState2:
 
 ; ==============================================================================
 ; PARTID_ITEM_DROP
+;
+; Variables:
+;   relatedObj1: ?
+;   var30: ID of relatedObj1
+;   var31/var32: Position to move towards?
+;   var33: Counter until collisions are enabled (fairy only)
+;   var34: Set to $01 when it hits water in a sidescrolling area
 ; ==============================================================================
 partCode01:
 	jr z,@normalStatus	; $4113
 	cp PARTSTATUS_DEAD			; $4115
-	jp z,$4216		; $4117
+	jp z,@linkCollectedItem		; $4117
 
+	; PARTSTATUS_JUST_HIT
 	ld e,Part.state		; $411a
 	ld a,$03		; $411c
 	ld (de),a		; $411e
 
 @normalStatus:
-	call $420c		; $411f
+	call @checkCollidedWithLink		; $411f
 	ld e,Part.state		; $4122
 	ld a,(de)		; $4124
 	rst_jumpTable			; $4125
@@ -139660,10 +139669,10 @@ partCode01:
 
 	call getRandomNumber_noPreserveVars		; $413c
 	cp $e0			; $413f
-	jp c,@spawnEnemy		; $4141
+	jp c,_itemDrop_spawnEnemy		; $4141
 
 @normalItem:
-	call $428e		; $4144
+	call _itemDrop_initGfx		; $4144
 
 	ld h,d			; $4147
 	ld l,Part.speedZ		; $4148
@@ -139671,297 +139680,323 @@ partCode01:
 	ldi (hl),a		; $414c
 	ld (hl),>(-$160)	; $414d
 
-	ld l,$c4		; $414f
-	inc (hl)		; $4151
+	ld l,Part.state		; $414f
+	inc (hl) ; [state] = 1
+
 	ld a,(wAreaFlags)		; $4152
-	and $20			; $4155
+	and AREAFLAG_SIDESCROLL			; $4155
 	jr z,@label_11_008	; $4157
-	inc (hl)		; $4159
-	ld l,$e4		; $415a
+
+	; Sidescrolling only
+	inc (hl) ; [state] = 2
+	ld l,Part.collisionType		; $415a
 	set 7,(hl)		; $415c
-	ld l,$c6		; $415e
-	ld (hl),$f0		; $4160
+	ld l,Part.counter1		; $415e
+	ld (hl),240		; $4160
 	call objectCheckIsOnHazard		; $4162
 	jr nc,@label_11_008	; $4165
 	rrca			; $4167
 	jr nc,@label_11_008	; $4168
-	ld e,$f4		; $416a
+
+	; On water
+	ld e,Part.var34		; $416a
 	ld a,$01		; $416c
 	ld (de),a		; $416e
+
+	; Back to common code for either sidescrolling or normal rooms
 @label_11_008:
-	ld e,$c2		; $416f
+	ld e,Part.subid		; $416f
 	ld a,(de)		; $4171
-	call $42e8		; $4172
-	ld e,$c2		; $4175
+	call _itemDrop_initSpeed		; $4172
+	ld e,Part.subid		; $4175
 	ld a,(de)		; $4177
 	jp partSetAnimation		; $4178
 
 @state1:
 	call _partCommon_getTileCollisionInFront_allowHoles		; $417b
-	call nc,$4302		; $417e
+	call nc,_itemDrop_updateSpeed		; $417e
 	ld c,$20		; $4181
 	call objectUpdateSpeedZAndBounce		; $4183
-	jr c,@label_11_009	; $4186
-	call $4365		; $4188
+	jr c,@doneBouncing			; $4186
+	call _itemDrop_checkHitGround		; $4188
 	jr nc,@label_11_010	; $418b
-@label_11_009:
+
+@doneBouncing:
 	ld h,d			; $418d
-	ld l,$c4		; $418e
-	inc (hl)		; $4190
-	ld l,$c6		; $4191
-	ld (hl),$f0		; $4193
+	ld l,Part.state		; $418e
+	inc (hl) ; [state] = 2
+	ld l,Part.counter1		; $4191
+	ld (hl),240		; $4193
 	call objectSetVisiblec3		; $4195
+
 @label_11_010:
-	call $4386		; $4198
+	call _itemDrop_checkOnHazard		; $4198
 	ret c			; $419b
-	ld e,$cf		; $419c
+	ld e,Part.zh		; $419c
 	ld a,(de)		; $419e
 	rlca			; $419f
 	ret c			; $41a0
+
+	; On solid ground; check for conveyor tiles
 	ld bc,$0500		; $41a1
 	call objectGetRelativeTile		; $41a4
-	ld hl,$442c		; $41a7
+	ld hl,_itemDrop_conveyorTilesTable		; $41a7
 	call lookupCollisionTable		; $41aa
 	ret nc			; $41ad
 	ld c,a			; $41ae
-	ld b,$14		; $41af
-	jp $441e		; $41b1
+	ld b,SPEED_80		; $41af
+	jp _itemDrop_applySpeed		; $41b1
 
+; Item has stopped bouncing; waiting to be picked up
 @state2:
-	call $4332		; $41b4
-	call $4401		; $41b7
-	jp c,$41cc		; $41ba
-	call $42c3		; $41bd
+	call _itemDrop_checkSidescrollingConditions		; $41b4
+	call _itemDrop_moveTowardPoint		; $41b7
+	jp c,@reachedPoint		; $41ba
+	call _itemDrop_countdownToDisappear		; $41bd
 	jp c,partDelete		; $41c0
-	ld e,$c2		; $41c3
+	ld e,Part.subid		; $41c3
 	ld a,(de)		; $41c5
-	or a			; $41c6
+	or a ; ITEM_DROP_FAIRY
 	jr nz,@label_11_010	; $41c7
-	jp $43bf		; $41c9
+	jp _itemDrop_updateFairyMovement		; $41c9
+
+@reachedPoint:
 	ld h,d			; $41cc
-	ld l,$f1		; $41cd
+	ld l,Part.var31		; $41cd
 	ldi a,(hl)		; $41cf
 	ld c,(hl)		; $41d0
-	ld l,$cb		; $41d1
+	ld l,Part.yh		; $41d1
 	ldi (hl),a		; $41d3
 	inc l			; $41d4
-	ld (hl),c		; $41d5
+	ld (hl),c ; [xh]
 	jp partDelete		; $41d6
 
+
+; Triggered by PARTSTATUS_JUST_HIT (ie. from a weapon or Link?)
 @state3:
-	ld e,$c5		; $41d9
+	ld e,Part.state2		; $41d9
 	ld a,(de)		; $41db
 	or a			; $41dc
-	call z,$41f9		; $41dd
+	call z,@getRelatedObj1ID		; $41dd
 	call objectCheckCollidedWithLink_ignoreZ		; $41e0
-	jp c,$4216		; $41e3
-	ld a,$00		; $41e6
+	jp c,@linkCollectedItem		; $41e3
+
+	ld a,Object.enabled		; $41e6
 	call objectGetRelatedObject1Var		; $41e8
 	ldi a,(hl)		; $41eb
 	or a			; $41ec
-	jr z,@label_11_011	; $41ed
-	ld e,$f0		; $41ef
+	jr z,++			; $41ed
+	ld e,Part.var30		; $41ef
 	ld a,(de)		; $41f1
 	cp (hl)			; $41f2
 	jp z,objectTakePosition		; $41f3
-@label_11_011:
+++
 	jp partDelete		; $41f6
+
+@getRelatedObj1ID:
 	ld h,d			; $41f9
 	ld l,e			; $41fa
-	inc (hl)		; $41fb
-	ld l,$cf		; $41fc
+	inc (hl) ; [state2]
+	ld l,Part.zh		; $41fc
 	ld (hl),$00		; $41fe
-	ld a,$01		; $4200
+	ld a,Object.id		; $4200
 	call objectGetRelatedObject1Var		; $4202
 	ld a,(hl)		; $4205
-	ld e,$f0		; $4206
+	ld e,Part.var30		; $4206
 	ld (de),a		; $4208
 	jp objectSetVisible80		; $4209
 
-	ld e,$e4		; $420c
+
+@checkCollidedWithLink:
+	ld e,Part.collisionType		; $420c
 	ld a,(de)		; $420e
 	rlca			; $420f
 	ret nc			; $4210
 	call objectCheckCollidedWithLink		; $4211
 	ret nc			; $4214
-	pop hl			; $4215
+
+	pop hl ; Return from caller (about to delete self)
+
+@linkCollectedItem:
 	ld a,(wLinkDeathTrigger)		; $4216
 	or a			; $4219
-	jr nz,@label_11_014	; $421a
-	ld e,$c2		; $421c
+	jr nz,@deleteSelf	; $421a
+
+	ld e,Part.subid		; $421c
 	ld a,(de)		; $421e
 	add a			; $421f
-	ld hl,$424e		; $4220
+	ld hl,@itemDropTreasureTable		; $4220
 	rst_addDoubleIndex			; $4223
+
 	ldi a,(hl)		; $4224
 	or a			; $4225
-	jr z,@label_11_014	; $4226
+	jr z,@deleteSelf	; $4226
+
 	ld b,a			; $4228
-	ld a,$26		; $4229
+	ld a,GOLD_JOY_RING		; $4229
 	call cpActiveRing		; $422b
 	ldi a,(hl)		; $422e
-	jr z,@label_11_012	; $422f
+	jr z,@doubleDrop	; $422f
+
 	or a			; $4231
-	jr z,@label_11_013	; $4232
+	jr z,@giveDrop	; $4232
 	call cpActiveRing		; $4234
-	jr nz,@label_11_013	; $4237
-@label_11_012:
+	jr nz,@giveDrop	; $4237
+
+@doubleDrop:
 	inc hl			; $4239
-@label_11_013:
+@giveDrop:
 	ld c,(hl)		; $423a
 	ld a,b			; $423b
 	call giveTreasure		; $423c
-	ld e,$c2		; $423f
+	ld e,Part.subid		; $423f
 	ld a,(de)		; $4241
-	cp $0e			; $4242
-	jr nz,@label_11_014	; $4244
+	cp ITEM_DROP_50_ORE_CHUNKS			; $4242
+	jr nz,@deleteSelf	; $4244
 	call getThisRoomFlags		; $4246
 	set 5,(hl)		; $4249
-@label_11_014:
+@deleteSelf:
 	jp partDelete		; $424b
-	add hl,hl		; $424e
-	dec h			; $424f
-	jr $30			; $4250
-	add hl,hl		; $4252
-	dec h			; $4253
-	inc b			; $4254
-	ld ($2428),sp		; $4255
-	ld bc,$2802		; $4258
-	inc h			; $425b
-	inc bc			; $425c
-	inc b			; $425d
-	inc bc			; $425e
-	nop			; $425f
-	inc b			; $4260
-	ld ($0020),sp		; $4261
-	dec b			; $4264
-	ld a,(bc)		; $4265
-	ld hl,$0500		; $4266
-	ld a,(bc)		; $4269
-	ldi (hl),a		; $426a
-	nop			; $426b
-	dec b			; $426c
-	ld a,(bc)		; $426d
-	inc hl			; $426e
-	nop			; $426f
-	dec b			; $4270
-	ld a,(bc)		; $4271
-	inc h			; $4272
-	nop			; $4273
-	dec b			; $4274
-	ld a,(bc)		; $4275
-	nop			; $4276
-	nop			; $4277
-	nop			; $4278
-	nop			; $4279
-	nop			; $427a
-	nop			; $427b
-	nop			; $427c
-	nop			; $427d
-	scf			; $427e
-	daa			; $427f
-	ld bc,$3702		; $4280
-	daa			; $4283
-	inc b			; $4284
-	dec b			; $4285
-	scf			; $4286
-	daa			; $4287
-	dec bc			; $4288
-	inc c			; $4289
-	jr z,@label_11_015	; $428a
-	inc c			; $428c
-	dec c			; $428d
-	ld e,$c2		; $428e
+
+
+; Data format:
+;   b0: Treasure to give
+;   b1: Ring to check for (in addition to gold joy ring)
+;   b2: Amount to give without ring
+;   b3: Amount to give with ring
+@itemDropTreasureTable:
+	.db TREASURE_HEART_REFILL,  BLUE_JOY_RING,  $18, $30 ; ITEM_DROP_FAIRY
+	.db TREASURE_HEART_REFILL,  BLUE_JOY_RING,  $04, $08 ; ITEM_DROP_HEART
+	.db TREASURE_RUPEES,        RED_JOY_RING,   RUPEEVAL_1, RUPEEVAL_2  ; ITEM_DROP_1_RUPEE
+	.db TREASURE_RUPEES,        RED_JOY_RING,   RUPEEVAL_5, RUPEEVAL_10 ; ITEM_DROP_5_RUPEES
+	.db TREASURE_BOMBS,         $00,            $04, $08 ; ITEM_DROP_BOMBS
+	.db TREASURE_EMBER_SEEDS,   $00,            $05, $0a ; ITEM_DROP_EMBER_SEEDS
+	.db TREASURE_SCENT_SEEDS,   $00,            $05, $0a ; ITEM_DROP_SCENT_SEEDS
+	.db TREASURE_PEGASUS_SEEDS, $00,            $05, $0a ; ITEM_DROP_PEGASUS_SEEDS
+	.db TREASURE_GALE_SEEDS,    $00,            $05, $0a ; ITEM_DROP_GALE_SEEDS
+	.db TREASURE_MYSTERY_SEEDS, $00,            $05, $0a ; ITEM_DROP_MYSTERY_SEEDS
+	.db $00,                    $00,            $00, $00 ; ITEM_DROP_0a
+	.db $00,                    $00,            $00, $00 ; ITEM_DROP_0b
+	.db TREASURE_ORE_CHUNKS,    GREEN_JOY_RING, RUPEEVAL_1,   RUPEEVAL_2   ; ITEM_DROP_1_ORE_CHUNK
+	.db TREASURE_ORE_CHUNKS,    GREEN_JOY_RING, RUPEEVAL_10,  RUPEEVAL_20  ; ITEM_DROP_10_ORE_CHUNKS
+	.db TREASURE_ORE_CHUNKS,    GREEN_JOY_RING, RUPEEVAL_50,  RUPEEVAL_100 ; ITEM_DROP_50_ORE_CHUNKS
+	.db TREASURE_RUPEES,        RED_JOY_RING,   RUPEEVAL_100, RUPEEVAL_200 ; ITEM_DROP_100_RUPEES_OR_ENEMY
+
+
+;;
+; @addr{428e}
+_itemDrop_initGfx:
+	ld e,Part.subid		; $428e
 	ld a,(de)		; $4290
-	ld hl,$42a3		; $4291
+	ld hl,@spriteData		; $4291
 	rst_addDoubleIndex			; $4294
-	ld e,$dd		; $4295
+	ld e,Part.oamTileIndexBase		; $4295
 	ld a,(de)		; $4297
 	add (hl)		; $4298
 	ld (de),a		; $4299
 	inc hl			; $429a
 	dec e			; $429b
 	ld a,(hl)		; $429c
-	ld (de),a		; $429d
+	ld (de),a ; [Part.oamFlags]
 	dec e			; $429e
-	ld (de),a		; $429f
+	ld (de),a ; [Part.oamFlagsBackup]
 	jp objectSetVisiblec1		; $42a0
-	nop			; $42a3
-	ld (bc),a		; $42a4
-	ld (bc),a		; $42a5
-	dec b			; $42a6
-	inc b			; $42a7
-	nop			; $42a8
-	ld b,$05		; $42a9
-	stop			; $42ab
-	inc b			; $42ac
-	ld (de),a		; $42ad
-	ld (bc),a		; $42ae
-	inc d			; $42af
-@label_11_015:
-	inc bc			; $42b0
-	ld d,$01		; $42b1
-	jr @label_11_016		; $42b3
-	ld a,(de)		; $42b5
-@label_11_016:
-	nop			; $42b6
-	inc e			; $42b7
-	nop			; $42b8
-	ld e,$00		; $42b9
-	inc c			; $42bb
-	ld bc,$020c		; $42bc
-	inc c			; $42bf
-	inc bc			; $42c0
-	ld ($fa04),sp		; $42c1
-	nop			; $42c4
-	call z,$0faa		; $42c5
+
+
+; Data format:
+;   b0: Offset relative to oamTileIndexBase
+;   b1: OAM flags
+@spriteData:
+	.db $00 $02 ; ITEM_DROP_FAIRY
+	.db $02 $05 ; ITEM_DROP_HEART
+	.db $04 $00 ; ITEM_DROP_1_RUPEE
+	.db $06 $05 ; ITEM_DROP_5_RUPEES
+	.db $10 $04 ; ITEM_DROP_BOMBS
+	.db $12 $02 ; ITEM_DROP_EMBER_SEEDS
+	.db $14 $03 ; ITEM_DROP_SCENT_SEEDS
+	.db $16 $01 ; ITEM_DROP_PEGASUS_SEEDS
+	.db $18 $01 ; ITEM_DROP_GALE_SEEDS
+	.db $1a $00 ; ITEM_DROP_MYSTERY_SEEDS
+	.db $1c $00 ; ITEM_DROP_0a
+	.db $1e $00 ; ITEM_DROP_0b
+	.db $0c $01 ; ITEM_DROP_1_ORE_CHUNK
+	.db $0c $02 ; ITEM_DROP_10_ORE_CHUNKS
+	.db $0c $03 ; ITEM_DROP_50_ORE_CHUNKS
+	.db $08 $04 ; ITEM_DROP_100_RUPEES_OR_ENEMY
+
+
+;;
+; @param[out]	cflag	c if time to disappear
+; @addr{42c3}
+_itemDrop_countdownToDisappear:
+	ld a,(wFrameCounter)		; $42c3
+	xor d			; $42c6
+	rrca			; $42c7
 	ret nc			; $42c8
+
 	ld h,d			; $42c9
-	ld l,$f3		; $42ca
+	ld l,Part.var33		; $42ca
 	ld a,(hl)		; $42cc
 	or a			; $42cd
-	jr z,@label_11_017	; $42ce
+	jr z,++			; $42ce
+
+	; Fairy only: countdown until collisions are enabled
 	dec (hl)		; $42d0
 	ret nz			; $42d1
-	ld l,$e4		; $42d2
+	ld l,Part.collisionType		; $42d2
 	set 7,(hl)		; $42d4
-@label_11_017:
+++
 	call _partDecCounter1IfNonzero		; $42d6
-	jr z,@label_11_018	; $42d9
+	jr z,@disappear	; $42d9
+
+	; Flickering
 	ld a,(hl)		; $42db
-	cp $3c			; $42dc
+	cp 60			; $42dc
 	ret nc			; $42de
-	ld l,$da		; $42df
+	ld l,Part.visible		; $42df
 	ld a,(hl)		; $42e1
 	xor $80			; $42e2
 	ld (hl),a		; $42e4
 	ret			; $42e5
-@label_11_018:
+
+@disappear:
 	scf			; $42e6
 	ret			; $42e7
+
+;;
+; @param	a	Subid
+; @addr{42e8}
+_itemDrop_initSpeed:
 	ld h,d			; $42e8
 	or a			; $42e9
-	jr z,@label_11_019	; $42ea
-	ld e,$c3		; $42ec
-	ld a,(de)		; $42ee
+	jr z,@fairy	; $42ea
+	ld e,Part.var03		; $42ec
+	ld a,(de) ; Check if dug up from shovel?
 	rrca			; $42ef
 	ret nc			; $42f0
-	ld l,$d0		; $42f1
-	ld (hl),$19		; $42f3
+	ld l,Part.speed		; $42f1
+	ld (hl),SPEED_a0		; $42f3
 	ret			; $42f5
-@label_11_019:
-	ld l,$cf		; $42f6
+
+@fairy:
+	ld l,Part.zh		; $42f6
 	ld a,(hl)		; $42f8
 	ld (hl),$00		; $42f9
-	ld l,$cb		; $42fb
+	ld l,Part.yh		; $42fb
 	add (hl)		; $42fd
 	ld (hl),a		; $42fe
-	jp $43cc		; $42ff
+	jp _itemDrop_chooseRandomFairyMovement		; $42ff
+
+;;
+; @addr{4302}
+_itemDrop_updateSpeed:
 	call objectCheckTileCollision_allowHoles		; $4302
 	ret c			; $4305
 	jp objectApplySpeed		; $4306
 
-@spawnEnemy:
+;;
+; @addr{4309}
+_itemDrop_spawnEnemy:
 	ld c,a			; $4309
 	ld a,(wDiggingUpEnemiesForbidden)		; $430a
 	or a			; $430d
@@ -139988,171 +140023,246 @@ partCode01:
 	.db ENEMYID_ROPE,   ENEMYID_ROPE,   ENEMYID_ROPE,   ENEMYID_BEETLE
 	.db ENEMYID_BEETLE, ENEMYID_BEETLE, ENEMYID_BEETLE, ENEMYID_BEETLE
 
+;;
+; Delete and return from caller if it goes out of bounds in a sidescrolling room
+; @addr{4332}
+_itemDrop_checkSidescrollingConditions:
 	ld a,(wAreaFlags)		; $4332
-	and $20			; $4335
+	and AREAFLAG_SIDESCROLL			; $4335
 	ret z			; $4337
-	ld e,$c2		; $4338
+	ld e,Part.subid		; $4338
 	ld a,(de)		; $433a
 	or a			; $433b
-	ret z			; $433c
+	ret z ; Return if it's ITEM_DROP_FAIRY
+
 	ld a,$20		; $433d
 	call objectUpdateSpeedZ_sidescroll		; $433f
-	jr c,@label_11_022	; $4342
-	ld e,$f4		; $4344
+	jr c,@checkY	; $4342
+
+	ld e,Part.var34		; $4344
 	ld a,(de)		; $4346
 	rrca			; $4347
-	jr nc,@label_11_022	; $4348
+	jr nc,@checkY	; $4348
+
+	; Hit water; fix speedZ to a specific value?
 	ld b,$01		; $434a
-	ld a,(hl)		; $434c
+	ld a,(hl) ; [speedZ+1]
 	bit 7,a			; $434d
-	jr z,@label_11_021	; $434f
+	jr z,+			; $434f
 	ld b,$ff		; $4351
 	inc a			; $4353
-@label_11_021:
++
 	cp $01			; $4354
 	ret c			; $4356
-	ld (hl),b		; $4357
+	ld (hl),b ; [speedZ+1]
 	dec l			; $4358
-	ld (hl),$00		; $4359
-@label_11_022:
-	ld e,$cb		; $435b
+	ld (hl),$00 ; [speedZ]
+
+@checkY:
+	ld e,Part.yh		; $435b
 	ld a,(de)		; $435d
 	cp $b0			; $435e
 	ret c			; $4360
 	pop hl			; $4361
 	jp partDelete		; $4362
-	ld e,$c2		; $4365
+
+;;
+; Enables collisions once the item comes to rest
+;
+; @param[out]	cflag	c if it's a fairy and some condition is met?
+; @addr{4365}
+_itemDrop_checkHitGround:
+	ld e,Part.subid		; $4365
 	ld a,(de)		; $4367
 	or a			; $4368
-	jr z,@label_11_023	; $4369
-	ld e,$d5		; $436b
+	jr z,@fairy	; $4369
+
+	ld e,Part.speedZ+1		; $436b
 	ld a,(de)		; $436d
 	and $80			; $436e
 	ret nz			; $4370
 	ld h,d			; $4371
-	ld l,$e4		; $4372
+	ld l,Part.collisionType		; $4372
 	set 7,(hl)		; $4374
 	ret			; $4376
-@label_11_023:
-	ld e,$cf		; $4377
+
+@fairy:
+	ld e,Part.zh		; $4377
 	ld a,(de)		; $4379
 	cp $fa			; $437a
 	ret nc			; $437c
 	ld h,d			; $437d
 	ld l,e			; $437e
-	ld (hl),$fa		; $437f
-	ld l,$f3		; $4381
+	ld (hl),$fa ; [Part.zh]
+	ld l,Part.var33		; $4381
 	ld (hl),$05		; $4383
 	ret			; $4385
+
+;;
+; @param[out]	cflag	c if it's over a hazard (and deleted itself)
+; @addr{4386}
+_itemDrop_checkOnHazard:
 	call objectCheckIsOnHazard		; $4386
-	jr c,@label_11_024	; $4389
-	ld e,$f4		; $438b
+	jr c,@onHazard	; $4389
+
+	ld e,Part.var34		; $438b
 	ld a,(de)		; $438d
 	rrca			; $438e
 	ret nc			; $438f
-	ld b,$03		; $4390
+
+	ld b,INTERACID_SPLASH		; $4390
 	xor a			; $4392
-	jr @label_11_028		; $4393
-@label_11_024:
+	jr @onWaterSidescrolling		; $4393
+
+@onHazard:
 	rrca			; $4395
-	jr c,@label_11_027	; $4396
+	jr c,@onWater	; $4396
 	rrca			; $4398
-	ld b,$04		; $4399
-	jr nc,@label_11_025	; $439b
+	ld b,INTERACID_LAVASPLASH		; $4399
+	jr nc,@replaceWithAnimation	; $439b
+
 	call objectCreateFallingDownHoleInteraction		; $439d
-	jr @label_11_026		; $43a0
-@label_11_025:
+	jr @delete		; $43a0
+
+@replaceWithAnimation:
 	call objectCreateInteractionWithSubid00		; $43a2
-@label_11_026:
+@delete:
 	call partDelete		; $43a5
 	scf			; $43a8
 	ret			; $43a9
-@label_11_027:
-	ld b,$03		; $43aa
+
+@onWater:
+	ld b,INTERACID_SPLASH		; $43aa
 	ld a,(wAreaFlags)		; $43ac
-	and $20			; $43af
-	jr z,@label_11_025	; $43b1
-	ld e,$f4		; $43b3
+	and AREAFLAG_SIDESCROLL			; $43af
+	jr z,@replaceWithAnimation	; $43b1
+
+	ld e,Part.var34		; $43b3
 	ld a,(de)		; $43b5
 	rrca			; $43b6
 	ccf			; $43b7
 	ret nc			; $43b8
+
 	ld a,$01		; $43b9
-@label_11_028:
-	ld (de),a		; $43bb
+
+@onWaterSidescrolling:
+	ld (de),a ; [var34]
 	jp objectCreateInteractionWithSubid00		; $43bc
+
+;;
+; @addr{43bf}
+_itemDrop_updateFairyMovement:
 	ld h,d			; $43bf
-	ld l,$c7		; $43c0
+	ld l,Part.counter2		; $43c0
 	dec (hl)		; $43c2
-	jr z,@label_11_029	; $43c3
+	jr z,_itemDrop_chooseRandomFairyMovement	; $43c3
 	call _partCommon_getTileCollisionInFront		; $43c5
 	inc a			; $43c8
 	jp nz,objectApplySpeed		; $43c9
-@label_11_029:
+
+;;
+; Initializes speed, counter2, and angle randomly.
+; @addr{43cc}
+_itemDrop_chooseRandomFairyMovement:
 	call getRandomNumber_noPreserveVars		; $43cc
 	and $3e			; $43cf
 	add $08			; $43d1
-	ld e,$c7		; $43d3
+	ld e,Part.counter2		; $43d3
 	ld (de),a		; $43d5
+
 	call getRandomNumber_noPreserveVars		; $43d6
 	and $03			; $43d9
-	ld hl,$43fd		; $43db
+	ld hl,@speedTable		; $43db
 	rst_addAToHl			; $43de
-	ld e,$d0		; $43df
+	ld e,Part.speed		; $43df
 	ld a,(hl)		; $43e1
 	ld (de),a		; $43e2
+
 	call getRandomNumber_noPreserveVars		; $43e3
 	and $1e			; $43e6
 	ld h,d			; $43e8
-	ld l,$c9		; $43e9
+	ld l,Part.angle		; $43e9
 	ld (hl),a		; $43eb
 	and $0f			; $43ec
 	ret z			; $43ee
+
 	bit 4,(hl)		; $43ef
-	ld l,$db		; $43f1
+	ld l,Part.oamFlagsBackup		; $43f1
 	ld a,(hl)		; $43f3
 	res 5,a			; $43f4
-	jr nz,@label_11_030	; $43f6
+	jr nz,+			; $43f6
 	set 5,a			; $43f8
-@label_11_030:
++
 	ldi (hl),a		; $43fa
 	ld (hl),a		; $43fb
 	ret			; $43fc
-	ld a,(bc)		; $43fd
-	inc d			; $43fe
-	ld e,$28		; $43ff
-	ld l,$f1		; $4401
+
+@speedTable:
+	.db SPEED_40, SPEED_80, SPEED_c0, SPEED_100
+
+;;
+; Moves toward position stored in var31/var32 if it's not there already?
+;
+; @param[out]	cflag	c if reached target position
+; @addr{4401}
+_itemDrop_moveTowardPoint:
+	ld l,Part.var31		; $4401
 	ld h,d			; $4403
 	xor a			; $4404
-	ld b,(hl)		; $4405
+	ld b,(hl) ; [var31]
 	ldi (hl),a		; $4406
-	ld c,(hl)		; $4407
+	ld c,(hl) ; [var32]
 	ldi (hl),a		; $4408
 	or b			; $4409
 	ret z			; $440a
+
 	push bc			; $440b
 	call objectCheckContainsPoint		; $440c
 	pop bc			; $440f
 	ret c			; $4410
+
 	call objectGetRelativeAngle		; $4411
 	ld c,a			; $4414
-	ld b,$0a		; $4415
-	ld e,$c9		; $4417
+	ld b,SPEED_40		; $4415
+	ld e,Part.angle		; $4417
 	call objectApplyGivenSpeed		; $4419
 	xor a			; $441c
 	ret			; $441d
+
+;;
+; @param	b	Speed
+; @param	c	Angle
+; @addr{441e}
+_itemDrop_applySpeed:
 	push bc			; $441e
 	ld a,c			; $441f
 	call _partCommon_getTileCollisionAtAngle_allowHoles		; $4420
 	pop bc			; $4423
 	ret c			; $4424
-	ld e,$c9		; $4425
+	ld e,Part.angle		; $4425
 	call objectApplyGivenSpeed		; $4427
 	scf			; $442a
 	ret			; $442b
-	.db $40 $44 $40 $44 $38 $44 $40 $44
-	.db $40 $44 $38 $44 $54 $00 $55 $08
-	.db $56 $10 $57 $18 $00
+
+_itemDrop_conveyorTilesTable:
+	.dw @collisions0
+	.dw @collisions1
+	.dw @collisions2
+	.dw @collisions3
+	.dw @collisions4
+	.dw @collisions5
+
+@collisions2:
+@collisions5:
+	.db TILEINDEX_CONVEYOR_UP    $00
+	.db TILEINDEX_CONVEYOR_RIGHT $08
+	.db TILEINDEX_CONVEYOR_DOWN  $10
+	.db TILEINDEX_CONVEYOR_LEFT  $18
+@collisions0:
+@collisions1:
+@collisions3:
+@collisions4:
+	.db $00
 
 ;;
 ; @addr{4441}
