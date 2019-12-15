@@ -1440,6 +1440,9 @@
 .define INTERACID_TWINROVA_FLAME		$a9
 
 ;;
+; @subid_00{?}
+; @subid_01{?}
+; @subid_02{?}
 .define INTERACID_DIN				$aa
 
 ;;

@@ -91581,84 +91581,112 @@ interactionCodea9:
 	jp c,objectSetVisible		; $5faa
 	jp objectSetInvisible		; $5fad
 
+
+; ==============================================================================
+; INTERACID_DIN
+; ==============================================================================
 interactionCodeaa:
-	ld e,$44		; $5fb0
+	ld e,Interaction.state		; $5fb0
 	ld a,(de)		; $5fb2
 	rst_jumpTable			; $5fb3
-.dw $5fb8
-.dw $5fd5
+	.dw @state0
+	.dw @state1
+
+@state0:
 	ld a,$01		; $5fb8
-	ld (de),a		; $5fba
+	ld (de),a ; [state]
 	call interactionInitGraphics		; $5fbb
 	call objectSetVisible82		; $5fbe
-	ld e,$42		; $5fc1
+	ld e,Interaction.subid		; $5fc1
 	ld a,(de)		; $5fc3
 	rst_jumpTable			; $5fc4
-.dw $5fcb
-.dw $5fcb
-.dw $5fcc
+	.dw @initSubid0
+	.dw @initSubid1
+	.dw @initSubid2
+
+@initSubid0:
+@initSubid1:
 	ret			; $5fcb
+
+@initSubid2:
 	call interactionSetAlwaysUpdateBit		; $5fcc
 	ld bc,$4830		; $5fcf
 	jp interactionSetPosition		; $5fd2
-	ld e,$42		; $5fd5
+
+
+@state1:
+	ld e,Interaction.subid		; $5fd5
 	ld a,(de)		; $5fd7
 	rst_jumpTable			; $5fd8
-.dw $5fdf
-.dw interactionAnimate
-.dw interactionAnimate
-	call $5fec		; $5fdf
-	ld e,$4f		; $5fe2
+	.dw @runSubid0
+	.dw interactionAnimate
+	.dw interactionAnimate
+
+@runSubid0:
+	call @runSubid0Substates		; $5fdf
+	ld e,Interaction.zh		; $5fe2
 	ld a,(de)		; $5fe4
 	or a			; $5fe5
 	jp nz,objectSetVisiblec2		; $5fe6
 	jp objectSetVisible82		; $5fe9
-	ld e,$45		; $5fec
+
+@runSubid0Substates:
+	ld e,Interaction.state2		; $5fec
 	ld a,(de)		; $5fee
 	rst_jumpTable			; $5fef
-.dw $5ffa
-.dw $6012
-.dw $6026
-.dw $603b
-.dw interactionAnimate
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw interactionAnimate
+
+@substate0:
 	call interactionAnimate		; $5ffa
-	ld a,($cfc0)		; $5ffd
+	ld a,(wTmpcfc0.genericCutscene.state)		; $5ffd
 	cp $04			; $6000
 	ret nz			; $6002
 	call interactionIncState2		; $6003
-	ld l,$46		; $6006
-	ld (hl),$78		; $6008
+	ld l,Interaction.counter1		; $6006
+	ld (hl),120		; $6008
 	ld a,$05		; $600a
 	call interactionSetAnimation		; $600c
-	jp $6061		; $600f
+	jp @beginJump		; $600f
+
+@substate1:
 	call interactionDecCounter1		; $6012
-_label_0b_208:
-	jp nz,$605a		; $6015
+	jp nz,@updateSpeedZ		; $6015
 	call interactionIncState2		; $6018
-_label_0b_209:
 	xor a			; $601b
-	ld l,$4f		; $601c
+	ld l,Interaction.zh		; $601c
 	ld (hl),a		; $601e
-	ld l,$46		; $601f
-	ld (hl),$1e		; $6021
+	ld l,Interaction.counter1		; $601f
+	ld (hl),30		; $6021
 	jp interactionAnimate		; $6023
+
+@substate2:
 	call interactionDecCounter1		; $6026
-	jr nz,_label_0b_210	; $6029
+	jr nz,++		; $6029
 	call interactionIncState2		; $602b
-	ld l,$46		; $602e
-	ld (hl),$3c		; $6030
-	ld bc,$3d09		; $6032
+	ld l,Interaction.counter1		; $602e
+	ld (hl),60		; $6030
+	ld bc,TX_3d09		; $6032
 	call showText		; $6035
-_label_0b_210:
+++
 	jp interactionAnimate		; $6038
+
+@substate3:
 	call interactionDecCounter1IfTextNotActive		; $603b
-	jr nz,_label_0b_211	; $603e
+	jr nz,++		; $603e
 	call interactionIncState2		; $6040
-	ld hl,$cfc0		; $6043
+	ld hl,wTmpcfc0.genericCutscene.state		; $6043
 	ld (hl),$05		; $6046
-_label_0b_211:
+++
 	jp interactionAnimate		; $6048
-	ld e,$42		; $604b
+
+
+; Scripts unused?
+@loadScript:
+	ld e,Interaction.subid		; $604b
 	ld a,(de)		; $604d
 	ld hl,@scriptTable		; $604e
 	rst_addDoubleIndex			; $6051
@@ -91667,16 +91695,20 @@ _label_0b_211:
 	ld l,a			; $6054
 	jp interactionSetScript		; $6055
 
-; @addr{6058}
 @scriptTable:
-	.dw script7bdd
+	.dw dinScript
 
+
+@updateSpeedZ:
 	ld c,$20		; $605a
 	call objectUpdateSpeedZ_paramC		; $605c
 	ret nz			; $605f
 	ld h,d			; $6060
-	ld bc,$ff00		; $6061
+
+@beginJump:
+	ld bc,-$100		; $6061
 	jp objectSetSpeedZ		; $6064
+
 
 interactionCodeab:
 	ld e,$42		; $6067

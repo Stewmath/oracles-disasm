@@ -9569,18 +9569,20 @@ tokkeyScriptFunc_hopAcrossDesk:
 	retscript
 
 
-script7bdd:
+; Unused?
+dinScript:
 	setanimation $05
-	setcollisionradii $08 $04
+	setcollisionradii $08, $04
 	makeabuttonsensitive
 	checkabutton
 	setdisabledobjectsto11
 	setanimation $06
 	wait 220
-	showtext $3d05
+	showtext TX_3d05
 	wait 60
-	writememory wCutsceneTrigger $0f
+	writememory wCutsceneTrigger, CUTSCENE_ROOM_OF_RITES_COLLAPSE
 	scriptend
+
 script7bf2:
 	wait 60
 	setanimation $03
