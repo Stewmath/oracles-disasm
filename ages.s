@@ -90975,105 +90975,132 @@ _sidescrollPlatform_updateLinkSubpixels:
 	ld (w1Link.x),a		; $5c0d
 	ret			; $5c10
 
+
+; ==============================================================================
+; INTERACID_TOUCHING_BOOK
+; ==============================================================================
 interactionCodea5:
-	ld e,$44		; $5c11
+	ld e,Interaction.state		; $5c11
 	ld a,(de)		; $5c13
 	rst_jumpTable			; $5c14
-.dw $5c27
-.dw $5c5e
-.dw $5c69
-.dw $5c83
-.dw $5ca2
-.dw $5cba
-.dw $5cd0
-.dw $5cde
-.dw $5cf5
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+	.dw @state5
+	.dw @state6
+	.dw @state7
+	.dw @state8
+
+@state0:
 	ld a,$01		; $5c27
 	ld (wMenuDisabled),a		; $5c29
-	ld hl,$d02d		; $5c2c
+	ld hl,w1Link.knockbackCounter		; $5c2c
 	ld a,(hl)		; $5c2f
 	or a			; $5c30
 	ret nz			; $5c31
+
 	ld a,$01		; $5c32
-	ld (de),a		; $5c34
+	ld (de),a ; [state]
+
 	call objectTakePosition		; $5c35
 	ld bc,$3850		; $5c38
 	call objectGetRelativeAngle		; $5c3b
 	and $1c			; $5c3e
-	ld e,$49		; $5c40
+	ld e,Interaction.angle		; $5c40
 	ld (de),a		; $5c42
-	ld bc,$ff00		; $5c43
+
+	ld bc,-$100		; $5c43
 	call objectSetSpeedZ		; $5c46
-	ld l,$50		; $5c49
-	ld (hl),$28		; $5c4b
+
+	ld l,Interaction.speed		; $5c49
+	ld (hl),SPEED_100		; $5c4b
+
 	call interactionInitGraphics		; $5c4d
 	call interactionSetAlwaysUpdateBit		; $5c50
-	ld a,($d01a)		; $5c53
-	ld e,$5a		; $5c56
+
+	ld a,(w1Link.visible)		; $5c53
+	ld e,Interaction.visible		; $5c56
 	ld (de),a		; $5c58
+
 	ld a,SND_GAINHEART		; $5c59
 	jp playSound		; $5c5b
+
+@state1:
 	ld c,$20		; $5c5e
 	call objectUpdateSpeedZ_paramC		; $5c60
 	jp nz,objectApplySpeed		; $5c63
 	jp interactionIncState		; $5c66
-	call $5d0e		; $5c69
+
+@state2:
+	call @updateMapleAngle		; $5c69
 	ret nz			; $5c6c
 	ld a,$ff		; $5c6d
-	ld ($d109),a		; $5c6f
+	ld (w1Companion.angle),a		; $5c6f
 	call interactionIncState		; $5c72
 	call objectSetInvisible		; $5c75
 	ld a,SND_GETSEED		; $5c78
 	call playSound		; $5c7a
-	ld bc,$070e		; $5c7d
+	ld bc,TX_070e		; $5c7d
 	jp showText		; $5c80
+
+@state3:
 	call retIfTextIsActive		; $5c83
 	ld hl,w1Link.xh		; $5c86
 	ldd a,(hl)		; $5c89
 	ld b,$f0		; $5c8a
 	cp $58			; $5c8c
-	jr nc,_label_0b_196	; $5c8e
+	jr nc,+			; $5c8e
 	ld b,$10		; $5c90
-_label_0b_196:
++
 	add b			; $5c92
-	ld e,$4d		; $5c93
+	ld e,Interaction.xh		; $5c93
 	ld (de),a		; $5c95
 	dec l			; $5c96
-	ld a,(hl)		; $5c97
-	ld e,$4b		; $5c98
+	ld a,(hl) ; [w1Link.yh]
+	ld e,Interaction.yh		; $5c98
 	ld (de),a		; $5c9a
 	xor a			; $5c9b
-	ld ($d109),a		; $5c9c
+	ld (w1Companion.angle),a		; $5c9c
 	jp interactionIncState		; $5c9f
-	call $5d0e		; $5ca2
+
+@state4:
+	call @updateMapleAngle		; $5ca2
 	ret nz			; $5ca5
-	ld hl,$d109		; $5ca6
+	ld hl,w1Companion.angle		; $5ca6
 	ld a,$ff		; $5ca9
 	ldd (hl),a		; $5cab
-	ld a,(hl)		; $5cac
+	ld a,(hl) ; [w1Companion.direction]
 	xor $02			; $5cad
 	dec h			; $5caf
-	ld (hl),a		; $5cb0
+	ld (hl),a ; [w1Link.direction]
 	call interactionIncState		; $5cb1
-	ld bc,$070f		; $5cb4
+	ld bc,TX_070f		; $5cb4
 	jp showText		; $5cb7
+
+@state5:
 	call retIfTextIsActive		; $5cba
-	ld a,($d108)		; $5cbd
+	ld a,(w1Companion.direction)		; $5cbd
 	xor $02			; $5cc0
 	set 7,a			; $5cc2
-	ld ($d108),a		; $5cc4
+	ld (w1Companion.direction),a		; $5cc4
 	call interactionIncState		; $5cc7
-	ld bc,$0710		; $5cca
+	ld bc,TX_0710		; $5cca
 	jp showText		; $5ccd
+
+@state6:
 	call retIfTextIsActive		; $5cd0
-	ld a,($d108)		; $5cd3
+	ld a,(w1Companion.direction)		; $5cd3
 	res 7,a			; $5cd6
-	ld ($d108),a		; $5cd8
+	ld (w1Companion.direction),a		; $5cd8
 	jp interactionIncState		; $5cdb
-	ld bc,$4109		; $5cde
+
+@state7:
+	ldbc TREASURE_TRADEITEM, TRADEITEM_MAGIC_OAR		; $5cde
 	call createTreasure		; $5ce1
 	ret nz			; $5ce4
-	ld e,$46		; $5ce5
+	ld e,Interaction.counter1		; $5ce5
 	ld a,$02		; $5ce7
 	ld (de),a		; $5ce9
 	push de			; $5cea
@@ -91081,40 +91108,50 @@ _label_0b_196:
 	call objectCopyPosition_rawAddress		; $5cee
 	pop de			; $5cf1
 	jp interactionIncState		; $5cf2
-	ld e,$46		; $5cf5
+
+@state8:
+	ld e,Interaction.counter1		; $5cf5
 	ld a,(de)		; $5cf7
 	or a			; $5cf8
-	jr z,_label_0b_197	; $5cf9
+	jr z,++			; $5cf9
 	dec a			; $5cfb
 	ld (de),a		; $5cfc
 	ret			; $5cfd
-_label_0b_197:
+++
 	call retIfTextIsActive		; $5cfe
-	ld a,$01		; $5d01
+
+	ld a,DISABLE_LINK		; $5d01
 	ld (wDisabledObjects),a		; $5d03
+
 	ld a,$02		; $5d06
-	ld ($d105),a		; $5d08
+	ld (w1Companion.state2),a		; $5d08
 	jp interactionDelete		; $5d0b
-	ld hl,$d10b		; $5d0e
+
+;;
+; @param[out]	zflag	z if reached touching book
+; @addr{5d0e}
+@updateMapleAngle:
+	ld hl,w1Companion.yh		; $5d0e
 	ldi a,(hl)		; $5d11
 	ld b,a			; $5d12
 	inc l			; $5d13
 	ld c,(hl)		; $5d14
+
 	ld a,(wMapleState)		; $5d15
 	and $20			; $5d18
-	jr z,_label_0b_198	; $5d1a
-	ld e,$4b		; $5d1c
+	jr z,++			; $5d1a
+	ld e,Interaction.yh		; $5d1c
 	ld a,(de)		; $5d1e
 	cp b			; $5d1f
-	jr nz,_label_0b_198	; $5d20
-	ld e,$4d		; $5d22
+	jr nz,++		; $5d20
+	ld e,Interaction.xh		; $5d22
 	ld a,(de)		; $5d24
 	cp c			; $5d25
 	ret z			; $5d26
-_label_0b_198:
+++
 	call objectGetRelativeAngle		; $5d27
 	xor $10			; $5d2a
-	ld ($d109),a		; $5d2c
+	ld (w1Companion.angle),a		; $5d2c
 	or d			; $5d2f
 	ret			; $5d30
 
