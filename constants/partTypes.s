@@ -19,7 +19,10 @@
 ; @subid_0f{100 rupees (1/8 chance) or an enemy (rope or beetle, 7/8 chance)}
 .define PARTID_ITEM_DROP 			$01
 
+;;
+; "Poof" that appears when you kill an enemy
 .define PARTID_ENEMY_DESTROYED	 		$02
+
 .define PARTID_ORB				$03 ; Orb that toggles raisable blocks
 
 ;;

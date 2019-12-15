@@ -231,10 +231,11 @@ _makeInteractionForBreakableTile:
 	ret			; $483c
 
 ;;
+; @param	a	Item drop type?
 ; @addr{483d}
 func_483d:
 	push hl			; $483d
-	call func_16eb		; $483e
+	call decideItemDrop		; $483e
 	jr z,@done		; $4841
 
 	call getFreePartSlot		; $4843

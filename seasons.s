@@ -4332,7 +4332,7 @@ loadTreasureDisplayData:
 	ld ($2222),a		; $16b6
 	ret			; $16b9
 
-func_16eb:
+decideItemDrop:
 	ld c,a			; $16ba
 	ldh a,(<hRomBank)	; $16bb
 	push af			; $16bd
@@ -105622,7 +105622,7 @@ _label_10_039:
 	rlca			; $44b8
 	jp c,partDelete		; $44b9
 	xor a			; $44bc
-	call func_16eb		; $44bd
+	call decideItemDrop		; $44bd
 	jp z,partDelete		; $44c0
 	ld b,$01		; $44c3
 	jp objectReplaceWithID		; $44c5
@@ -105698,7 +105698,7 @@ _label_10_041:
 	or a			; $4539
 	jr z,_label_10_042	; $453a
 	xor a			; $453c
-	call func_16eb		; $453d
+	call decideItemDrop		; $453d
 	jr z,_label_10_042	; $4540
 	ld b,$01		; $4542
 	jp objectReplaceWithID		; $4544

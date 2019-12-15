@@ -5177,14 +5177,15 @@ loadTreasureDisplayData:
 	ret			; $16ea
 
 ;;
-; @param[out]	c
-; @param[out]	zflag
+; @param	a
+; @param[out]	a,c	Subid for PARTID_ITEM_DROP (see constants/itemDrops.s)
+; @param[out]	zflag	z if there is no item drop
 ; @addr{16eb}
-func_16eb:
+decideItemDrop:
 	ld c,a			; $16eb
 	ldh a,(<hRomBank)	; $16ec
 	push af			; $16ee
-	callfrombank0 bank3f.func_4744	; $16ef
+	callfrombank0 bank3f.decideItemDrop_body	; $16ef
 	pop af			; $16f9
 	setrombank		; $16fa
 	ld a,c			; $16ff
@@ -5197,14 +5198,14 @@ func_16eb:
 ; @param	a	Item drop index (see constants/itemDrops.s)
 ; @param[out]	zflag	z if item cannot spawn (Link doesn't have it)
 ; @addr{1703}
-checkItemDropUnavailable:
+checkItemDropAvailable:
 	ld c,a			; $1703
 	ldh a,(<hRomBank)	; $1704
 	push af			; $1706
-	ld a,:bank3f.checkItemDropUnavailable_body		; $1707
+	ld a,:bank3f.checkItemDropAvailable_body		; $1707
 	setrombank		; $1709
 	ld a,c			; $170e
-	call bank3f.checkItemDropUnavailable_body		; $170f
+	call bank3f.checkItemDropAvailable_body		; $170f
 	pop af			; $1712
 	setrombank		; $1713
 	ld a,c			; $1718
@@ -112442,7 +112443,7 @@ enemyCode59:
 	; Delete self if Link can't get the item drop yet (ie. doesn't have bombs)
 	ld e,Enemy.subid		; $6876
 	ld a,(de)		; $6878
-	call checkItemDropUnavailable		; $6879
+	call checkItemDropAvailable		; $6879
 	jp z,enemyDelete		; $687c
 
 	call getFreePartSlot		; $687f
@@ -140264,44 +140265,52 @@ _itemDrop_conveyorTilesTable:
 @collisions4:
 	.db $00
 
-;;
-; @addr{4441}
+
+; ==============================================================================
+; PARTID_ENEMY_DESTROYED
+; ==============================================================================
 partCode02:
-	ld e,$c4		; $4441
+	ld e,Part.state		; $4441
 	ld a,(de)		; $4443
 	or a			; $4444
-	call z,$4470		; $4445
+	call z,@initialize		; $4445
 	call partAnimate		; $4448
 	ld a,(wFrameCounter)		; $444b
 	rrca			; $444e
-	jr c,_label_11_032	; $444f
-	ld e,$dc		; $4451
+	jr c,++			; $444f
+	ld e,Part.oamFlags		; $4451
 	ld a,(de)		; $4453
 	xor $01			; $4454
 	ld (de),a		; $4456
-_label_11_032:
-	ld e,$e1		; $4457
+++
+	ld e,Part.animParameter		; $4457
 	ld a,(de)		; $4459
 	or a			; $445a
 	ret z			; $445b
-	call $447e		; $445c
-	ld a,(de)		; $445f
+
+	call @decCounter2		; $445c
+	ld a,(de) ; [counter2]
 	rlca			; $4460
 	jp c,partDelete		; $4461
+
 	xor a			; $4464
-	call func_16eb		; $4465
+	call decideItemDrop		; $4465
 	jp z,partDelete		; $4468
-	ld b,$01		; $446b
+	ld b,PARTID_ITEM_DROP		; $446b
 	jp objectReplaceWithID		; $446d
+
+@initialize:
 	inc a			; $4470
-	ld (de),a		; $4471
-	ld e,$ed		; $4472
+	ld (de),a ; [state] = 1
+	ld e,Part.knockbackCounter		; $4472
 	ld a,(de)		; $4474
 	rlca			; $4475
 	ld a,$01		; $4476
 	call c,partSetAnimation		; $4478
 	jp objectSetVisible82		; $447b
-	ld e,$c7		; $447e
+
+@decCounter2:
+	ld e,Part.counter2		; $447e
 	ld a,(de)		; $4480
 	rrca			; $4481
 	ret nc			; $4482
@@ -140373,7 +140382,7 @@ partCode04:
 	or a			; $44e1
 	jr z,_label_11_036	; $44e2
 	xor a			; $44e4
-	call func_16eb		; $44e5
+	call decideItemDrop		; $44e5
 	jr z,_label_11_036	; $44e8
 	ld b,$01		; $44ea
 	jp objectReplaceWithID		; $44ec
@@ -156130,34 +156139,37 @@ loadTreasureDisplayData:
 	ret			; $4743
 
 ;;
-; Might be related to item drops from enemies?
+; Decides what an enemy will drop.
 ;
 ; @param	c
-; @param[out]	c
-; @param[out]	zflag
+; @param[out]	c	Subid for PARTID_ITEM_DROP (see constants/itemDrops.s) or $ff if no item
+;			should drop
 ; @addr{4744}
-func_4744:
+decideItemDrop_body:
 	ld a,c			; $4744
 	or a			; $4745
 	set 7,a			; $4746
 	jr nz,+			; $4748
 
+	; If parameter == 0, assume it's an enemy; use the enemy's for the drop table. (Assumes that
+	; 'd' points to an instance of PARTID_ENEMY_DESTROYED or PARTID_04, whose subid refers to
+	; the enemy that was killed? TODO: verify.)
 	ldh a,(<hActiveObjectType)	; $474a
 	add Object.subid			; $474c
 	ld e,a			; $474e
 	ld a,(de)		; $474f
 +
-	ld hl,$4a46		; $4750
+	ld hl,itemDropTables		; $4750
 	rst_addAToHl			; $4753
 	ld a,(hl)		; $4754
 	ld c,a			; $4755
 	cp $ff			; $4756
-	jr z,checkItemDropUnavailable_body@done		; $4758
+	jr z,checkItemDropAvailable_body@done		; $4758
 
 	swap a			; $475a
 	rrca			; $475c
 	and $07			; $475d
-	ld hl,$47fe		; $475f
+	ld hl,_itemDropProbabilityTable		; $475f
 	rst_addDoubleIndex			; $4762
 	ldi a,(hl)		; $4763
 	ld h,(hl)		; $4764
@@ -156165,11 +156177,11 @@ func_4744:
 	call getRandomNumber		; $4766
 	and $3f			; $4769
 	call checkFlag		; $476b
-	jr z,checkItemDropUnavailable_body@done		; $476e
+	jr z,checkItemDropAvailable_body@done		; $476e
 
 	ld a,c			; $4770
 	and $1f			; $4771
-	ld hl,$47be		; $4773
+	ld hl,_itemDropSetTable		; $4773
 	rst_addDoubleIndex			; $4776
 	ldi a,(hl)		; $4777
 	ld h,(hl)		; $4778
@@ -156184,9 +156196,9 @@ func_4744:
 ; Checks whether an item drop of a given type can spawn.
 ;
 ; @param	c	Item drop index (see constants/itemDrops.s)
-; @param[out]	c	$ff if item cannot spawn (Link doesn't have it)
+; @param[out]	c	$ff if item cannot spawn (Link doesn't have it), otherwise the item itself
 ; @addr{4782}
-checkItemDropUnavailable_body:
+checkItemDropAvailable_body:
 	ld a,c			; $4782
 	ld hl,_itemDropAvailabilityTable		; $4783
 	rst_addDoubleIndex			; $4786
@@ -156200,6 +156212,7 @@ checkItemDropUnavailable_body:
 @done:
 	ld c,$ff		; $478f
 	ret			; $4791
+
 
 ; Rings are divided into "tiers" (called "classes" in TourianTourist's ring guide). These
 ; tiers are mostly used by gasha spots, each of which can give rings from a set tier list.
@@ -156230,31 +156243,25 @@ ringTierTable:
 @tier4:
 	.db GREEN_RING		RANG_RING_L2
 
-	ld b,(hl)		; $47be
-	ld c,b			; $47bf
-	ld h,(hl)		; $47c0
-	ld c,b			; $47c1
-	add (hl)		; $47c2
-	ld c,b			; $47c3
-	and (hl)		; $47c4
-	ld c,b			; $47c5
-	add $48			; $47c6
-	and $48			; $47c8
-	ld b,$49		; $47ca
-	ld h,$49		; $47cc
-	ld b,(hl)		; $47ce
-	ld c,c			; $47cf
-	ld h,(hl)		; $47d0
-	ld c,c			; $47d1
-_label_3f_085:
-	add (hl)		; $47d2
-	ld c,c			; $47d3
-	and (hl)		; $47d4
-	ld c,c			; $47d5
-	add $49			; $47d6
-	and $49			; $47d8
-	ld b,$4a		; $47da
-	ld h,$4a		; $47dc
+
+; @addr{47be}
+_itemDropSetTable:
+	.dw _itemDropSet0
+	.dw _itemDropSet1
+	.dw _itemDropSet2
+	.dw _itemDropSet3
+	.dw _itemDropSet4
+	.dw _itemDropSet5
+	.dw _itemDropSet6
+	.dw _itemDropSet7
+	.dw _itemDropSet8
+	.dw _itemDropSet9
+	.dw _itemDropSetA
+	.dw _itemDropSetB
+	.dw _itemDropSetC
+	.dw _itemDropSetD
+	.dw _itemDropSetE
+	.dw _itemDropSetF
 
 
 ; Each row corresponds to an item drop (see constants/itemDrops.s).
@@ -156273,569 +156280,172 @@ _itemDropAvailabilityTable:
 	.db (<wObtainedTreasureFlags+TREASURE_PEGASUS_SEEDS/8), 1<<(TREASURE_PEGASUS_SEEDS&7)
 	.db (<wObtainedTreasureFlags+TREASURE_GALE_SEEDS/8)   , 1<<(TREASURE_GALE_SEEDS&7)
 	.db (<wObtainedTreasureFlags+TREASURE_MYSTERY_SEEDS/8), 1<<(TREASURE_MYSTERY_SEEDS&7)
+	.db <wLinkNameNullTerminator, $00 ; ITEM_DROP_0a
+	.db <wLinkNameNullTerminator, $00 ; ITEM_DROP_0b
+	.db <wLinkNameNullTerminator, $00 ; ITEM_DROP_1_ORE_CHUNK
+	.db <wLinkNameNullTerminator, $00 ; ITEM_DROP_10_ORE_CHUNKS
+	.db <wLinkNameNullTerminator, $00 ; ITEM_DROP_50_ORE_CHUNKS
+	.db <wc608, $ff                   ; ITEM_DROP_100_RUPEES_OR_ENEMY
 
-	rlca			; $47f2
-	nop			; $47f3
-	rlca			; $47f4
-	nop			; $47f5
-	rlca			; $47f6
-	nop			; $47f7
-	rlca			; $47f8
-	nop			; $47f9
-	rlca			; $47fa
-	nop			; $47fb
-	ld ($0eff),sp		; $47fc
-	ld c,b			; $47ff
-	ld c,$48		; $4800
-	ld d,$48		; $4802
-	ld e,$48		; $4804
-	ld h,$48		; $4806
-	ld l,$48		; $4808
-	ld (hl),$48		; $480a
-	ld a,$48		; $480c
-	ld ($0000),sp		; $480e
-.db $20 $80 $00 $00 $10 $08 $10 $08
-.db $20 $80
-	ld bc,$1080		; $481b
-	ld ($0950),sp		; $481e
-	inc h			; $4821
-	adc b			; $4822
-	add c			; $4823
-	or b			; $4824
-	ld (de),a		; $4825
-	ld c,c			; $4826
-	ld d,b			; $4827
-	ld c,c			; $4828
-	inc h			; $4829
-	adc b			; $482a
-	sbc c			; $482b
-	or d			; $482c
-	jp nc,$e3b2		; $482d
-	xor d			; $4830
-	call z,$8f81		; $4831
-	add $6c			; $4834
-	cp d			; $4836
-	rst $38			; $4837
-	ld ($bddd),a		; $4838
-	cp a			; $483b
-	sub $ed			; $483c
-	rst $38			; $483e
-	rst $38			; $483f
-	rst $38			; $4840
-	rst $38			; $4841
-	rst $38			; $4842
-	rst $38			; $4843
-	rst $38			; $4844
-	rst $38			; $4845
-	ld bc,$0101		; $4846
-	ld bc,$0101		; $4849
-	ld bc,$0101		; $484c
-	ld bc,$0101		; $484f
-	ld bc,$0101		; $4852
-	ld bc,$0101		; $4855
-	ld bc,$0101		; $4858
-	ld bc,$0101		; $485b
-	ld bc,$0101		; $485e
-	ld bc,$0101		; $4861
-	ld bc,$0101		; $4864
-	ld bc,$0101		; $4867
-	ld bc,$0101		; $486a
-	ld bc,$0101		; $486d
-	ld bc,$0201		; $4870
-	ld (bc),a		; $4873
-	ld (bc),a		; $4874
-	ld (bc),a		; $4875
-	ld (bc),a		; $4876
-	ld (bc),a		; $4877
-	ld (bc),a		; $4878
-	inc bc			; $4879
-	inc bc			; $487a
-	nop			; $487b
-	ld bc,$0602		; $487c
-	ld b,$06		; $487f
-	ld b,$05		; $4881
-	dec b			; $4883
-	add hl,bc		; $4884
-	dec b			; $4885
-	ld bc,$0101		; $4886
-	ld bc,$0101		; $4889
-	ld bc,$0101		; $488c
-	ld bc,$0101		; $488f
-	ld bc,$0101		; $4892
-	ld bc,$0807		; $4895
-	add hl,bc		; $4898
-	rlca			; $4899
-	ld b,$05		; $489a
-	dec b			; $489c
-	dec b			; $489d
-	ld b,$06		; $489e
-	rlca			; $48a0
-	rlca			; $48a1
-	ld ($0908),sp		; $48a2
-	dec b			; $48a5
-	rrca			; $48a6
-	rrca			; $48a7
-	rrca			; $48a8
-	ld bc,$0101		; $48a9
-	ld bc,$0101		; $48ac
-	ld bc,$0101		; $48af
-	ld (bc),a		; $48b2
-	ld (bc),a		; $48b3
-	ld (bc),a		; $48b4
-	ld (bc),a		; $48b5
-	ld (bc),a		; $48b6
-	ld (bc),a		; $48b7
-	ld (bc),a		; $48b8
-	ld (bc),a		; $48b9
-	ld (bc),a		; $48ba
-	ld (bc),a		; $48bb
-	ld (bc),a		; $48bc
-	ld bc,$0302		; $48bd
-	inc bc			; $48c0
-	inc bc			; $48c1
-	inc bc			; $48c2
-	ld (bc),a		; $48c3
-	nop			; $48c4
-	nop			; $48c5
-	inc b			; $48c6
-	inc b			; $48c7
-	inc b			; $48c8
-	inc b			; $48c9
-	inc b			; $48ca
-	inc b			; $48cb
-	inc b			; $48cc
-	inc b			; $48cd
-	inc b			; $48ce
-	inc b			; $48cf
-	inc b			; $48d0
-	inc b			; $48d1
-	inc b			; $48d2
-	inc b			; $48d3
-	inc b			; $48d4
-	inc b			; $48d5
-	inc b			; $48d6
-	inc b			; $48d7
-	inc b			; $48d8
-	inc b			; $48d9
-	inc b			; $48da
-	inc b			; $48db
-	inc b			; $48dc
-	inc b			; $48dd
-	inc b			; $48de
-	inc b			; $48df
-	inc b			; $48e0
-	inc b			; $48e1
-	inc b			; $48e2
-	inc b			; $48e3
-	inc b			; $48e4
-	inc b			; $48e5
-	dec b			; $48e6
-	dec b			; $48e7
-	dec b			; $48e8
-	dec b			; $48e9
-	dec b			; $48ea
-	dec b			; $48eb
-	ld b,$06		; $48ec
-	ld b,$06		; $48ee
-	ld b,$07		; $48f0
-	rlca			; $48f2
-	rlca			; $48f3
-	rlca			; $48f4
-	rlca			; $48f5
-	rlca			; $48f6
-	ld ($0808),sp		; $48f7
-	ld ($0908),sp		; $48fa
-	add hl,bc		; $48fd
-	add hl,bc		; $48fe
-	add hl,bc		; $48ff
-	add hl,bc		; $4900
-	dec b			; $4901
-	ld b,$07		; $4902
-	ld ($0109),sp		; $4904
-	ld bc,$0101		; $4907
-	ld bc,$0101		; $490a
-	ld bc,$0101		; $490d
-	ld (bc),a		; $4910
-	ld (bc),a		; $4911
-	ld (bc),a		; $4912
-	ld (bc),a		; $4913
-	ld (bc),a		; $4914
-	ld (bc),a		; $4915
-	ld (bc),a		; $4916
-	ld (bc),a		; $4917
-	ld (bc),a		; $4918
-	inc bc			; $4919
-	inc bc			; $491a
-	nop			; $491b
-	inc b			; $491c
-	inc b			; $491d
-	inc b			; $491e
-	inc b			; $491f
-	inc b			; $4920
-	inc b			; $4921
-	inc b			; $4922
-	inc b			; $4923
-	inc b			; $4924
-	inc b			; $4925
-	ld bc,$0101		; $4926
-	ld bc,$0101		; $4929
-	ld bc,$0202		; $492c
-	ld (bc),a		; $492f
-	ld (bc),a		; $4930
-	inc bc			; $4931
-	inc bc			; $4932
-	inc bc			; $4933
-	inc bc			; $4934
-	nop			; $4935
-	inc b			; $4936
-	inc b			; $4937
-	inc b			; $4938
-	inc b			; $4939
-	inc b			; $493a
-	inc b			; $493b
-	inc b			; $493c
-	inc b			; $493d
-	add hl,bc		; $493e
-	ld ($0707),sp		; $493f
-	ld b,$06		; $4942
-	dec b			; $4944
-	dec b			; $4945
-	ld bc,$0101		; $4946
-	ld bc,$0101		; $4949
-	ld bc,$0101		; $494c
-	ld bc,$0101		; $494f
-	ld bc,$0201		; $4952
-	ld (bc),a		; $4955
-	ld (bc),a		; $4956
-	ld (bc),a		; $4957
-	inc bc			; $4958
-	inc bc			; $4959
-	nop			; $495a
-	inc b			; $495b
-	inc b			; $495c
-	inc b			; $495d
-	inc b			; $495e
-	add hl,bc		; $495f
-	ld ($0607),sp		; $4960
-	dec b			; $4963
-	dec b			; $4964
-	rlca			; $4965
-	rrca			; $4966
-	rrca			; $4967
-	ld bc,$0101		; $4968
-	ld bc,$0101		; $496b
-	ld bc,$0101		; $496e
-	ld bc,$0202		; $4971
-	ld (bc),a		; $4974
-	ld (bc),a		; $4975
-	ld (bc),a		; $4976
-	ld (bc),a		; $4977
-	ld (bc),a		; $4978
-	inc bc			; $4979
-	inc bc			; $497a
-	nop			; $497b
-	ld bc,$0602		; $497c
-	ld b,$06		; $497f
-	ld b,$05		; $4981
-	dec b			; $4983
-	add hl,bc		; $4984
-	add hl,bc		; $4985
-	ld bc,$0101		; $4986
-	ld bc,$0101		; $4989
-	ld (bc),a		; $498c
-	ld (bc),a		; $498d
-	ld (bc),a		; $498e
-	ld (bc),a		; $498f
-	ld (bc),a		; $4990
-	inc bc			; $4991
-	inc bc			; $4992
-	inc bc			; $4993
-	nop			; $4994
-	inc b			; $4995
-	inc b			; $4996
-	inc b			; $4997
-	inc b			; $4998
-	inc b			; $4999
-	inc b			; $499a
-	inc b			; $499b
-	inc b			; $499c
-	inc b			; $499d
-	inc b			; $499e
-	add hl,bc		; $499f
-	ld ($0707),sp		; $49a0
-	ld b,$05		; $49a3
-	ld b,$01		; $49a5
-	ld bc,$0101		; $49a7
-	ld (bc),a		; $49aa
-	ld (bc),a		; $49ab
-	ld (bc),a		; $49ac
-	ld (bc),a		; $49ad
-	ld (bc),a		; $49ae
-	inc bc			; $49af
-	inc bc			; $49b0
-	inc bc			; $49b1
-	nop			; $49b2
-	inc b			; $49b3
-	inc b			; $49b4
-	inc b			; $49b5
-	inc b			; $49b6
-	add hl,bc		; $49b7
-	add hl,bc		; $49b8
-	ld ($0808),sp		; $49b9
-	rlca			; $49bc
-	rlca			; $49bd
-	rlca			; $49be
-	ld b,$06		; $49bf
-	ld b,$09		; $49c1
-	dec b			; $49c3
-	dec b			; $49c4
-	dec b			; $49c5
-	ld bc,$0101		; $49c6
-	ld bc,$0202		; $49c9
-	ld (bc),a		; $49cc
-	ld (bc),a		; $49cd
-	ld (bc),a		; $49ce
-	ld (bc),a		; $49cf
-	inc bc			; $49d0
-	inc bc			; $49d1
-	inc bc			; $49d2
-	inc bc			; $49d3
-	inc bc			; $49d4
-	inc bc			; $49d5
-	inc b			; $49d6
-	inc b			; $49d7
-	inc b			; $49d8
-	inc b			; $49d9
-	inc b			; $49da
-	inc b			; $49db
-	inc b			; $49dc
-	inc b			; $49dd
-	inc b			; $49de
-	inc b			; $49df
-	inc b			; $49e0
-	inc b			; $49e1
-	inc b			; $49e2
-	inc b			; $49e3
-	inc b			; $49e4
-	inc b			; $49e5
-	ld (bc),a		; $49e6
-	ld (bc),a		; $49e7
-	ld (bc),a		; $49e8
-	ld (bc),a		; $49e9
-	ld (bc),a		; $49ea
-	ld (bc),a		; $49eb
-	ld (bc),a		; $49ec
-	ld (bc),a		; $49ed
-	ld (bc),a		; $49ee
-	ld (bc),a		; $49ef
-	inc bc			; $49f0
-	inc bc			; $49f1
-	inc bc			; $49f2
-	inc bc			; $49f3
-	inc bc			; $49f4
-	inc bc			; $49f5
-	add hl,bc		; $49f6
-	add hl,bc		; $49f7
-	ld ($0808),sp		; $49f8
-	rlca			; $49fb
-	rlca			; $49fc
-	rlca			; $49fd
-	ld b,$06		; $49fe
-	ld b,$05		; $4a00
-	dec b			; $4a02
-	dec b			; $4a03
-	add hl,bc		; $4a04
-	dec b			; $4a05
-	ld bc,$0101		; $4a06
-	ld bc,$0101		; $4a09
-	ld bc,$0101		; $4a0c
-	ld bc,$0101		; $4a0f
-	ld bc,$0101		; $4a12
-	ld (bc),a		; $4a15
-	ld bc,$0202		; $4a16
-	ld (bc),a		; $4a19
-	ld (bc),a		; $4a1a
-	ld (bc),a		; $4a1b
-	ld (bc),a		; $4a1c
-	ld (bc),a		; $4a1d
-	ld (bc),a		; $4a1e
-	ld (bc),a		; $4a1f
-	ld (bc),a		; $4a20
-	ld (bc),a		; $4a21
-	inc bc			; $4a22
-	inc bc			; $4a23
-	inc bc			; $4a24
-	inc bc			; $4a25
-	nop			; $4a26
-	nop			; $4a27
-	nop			; $4a28
-	nop			; $4a29
-	nop			; $4a2a
-	nop			; $4a2b
-	nop			; $4a2c
-	nop			; $4a2d
-	nop			; $4a2e
-	nop			; $4a2f
-	nop			; $4a30
-	nop			; $4a31
-	nop			; $4a32
-	nop			; $4a33
-	nop			; $4a34
-	nop			; $4a35
-	nop			; $4a36
-	nop			; $4a37
-	nop			; $4a38
-	nop			; $4a39
-	nop			; $4a3a
-	nop			; $4a3b
-	nop			; $4a3c
-	nop			; $4a3d
-	nop			; $4a3e
-	nop			; $4a3f
-	nop			; $4a40
-	nop			; $4a41
-	nop			; $4a42
-	nop			; $4a43
-	nop			; $4a44
-	nop			; $4a45
-	rst $38			; $4a46
-	rst $28			; $4a47
-	rst $38			; $4a48
-	rst $38			; $4a49
-	rst $38			; $4a4a
-	rst $38			; $4a4b
-	rst $38			; $4a4c
-	rst $38			; $4a4d
-	and (hl)		; $4a4e
-	adc (hl)		; $4a4f
-	add (hl)		; $4a50
-	pop bc			; $4a51
-	xor h			; $4a52
-	add (hl)		; $4a53
-	rst $38			; $4a54
-	add l			; $4a55
-	add c			; $4a56
-	rst $38			; $4a57
-	adc (hl)		; $4a58
-	rst $28			; $4a59
-	adc (hl)		; $4a5a
-	ret nz			; $4a5b
-	rst $38			; $4a5c
-	ld h,b			; $4a5d
-	and l			; $4a5e
-	xor $8e			; $4a5f
-	res 0,b			; $4a61
-	rst_jumpTable			; $4a63
-	adc (hl)		; $4a64
-	adc (hl)		; $4a65
-	xor h			; $4a66
-	adc b			; $4a67
-	ld b,a			; $4a68
-	and h			; $4a69
-	ld b,d			; $4a6a
-	jp nz,$ff47		; $4a6b
-	xor (hl)		; $4a6e
-	rst $38			; $4a6f
-	rst $38			; $4a70
-	rst $38			; $4a71
-	ld h,b			; $4a72
-	rst $38			; $4a73
-	rst $38			; $4a74
-	rst $38			; $4a75
-	add c			; $4a76
-	adc (hl)		; $4a77
-	xor (hl)		; $4a78
-	rst $38			; $4a79
-	rst $38			; $4a7a
-	xor (hl)		; $4a7b
-	rst $38			; $4a7c
-	rst $38			; $4a7d
-	rst $38			; $4a7e
-	ld h,c			; $4a7f
-	rst $38			; $4a80
-	rst $38			; $4a81
-	ld h,b			; $4a82
-	xor d			; $4a83
-	and d			; $4a84
-	rst $38			; $4a85
-	adc (hl)		; $4a86
-	ld l,l			; $4a87
-	add l			; $4a88
-	adc (hl)		; $4a89
-	rst $38			; $4a8a
-	adc l			; $4a8b
-	add d			; $4a8c
-	and b			; $4a8d
-	add a			; $4a8e
-	adc b			; $4a8f
-	xor h			; $4a90
-	and b			; $4a91
-	ld h,h			; $4a92
-	rst $38			; $4a93
-	daa			; $4a94
-	res 4,l			; $4a95
-	adc h			; $4a97
-	ld h,a			; $4a98
-	rst $38			; $4a99
-	rst $38			; $4a9a
-	adc (hl)		; $4a9b
-	rst $38			; $4a9c
-	rst $38			; $4a9d
-	rst $38			; $4a9e
-	rst $38			; $4a9f
-	rst $38			; $4aa0
-	rst $38			; $4aa1
-	rst $38			; $4aa2
-	rst $38			; $4aa3
-	and d			; $4aa4
-	rst $38			; $4aa5
-	rst $38			; $4aa6
-	rst $38			; $4aa7
-	rst $38			; $4aa8
-	rst $38			; $4aa9
-	ld ($ff00+R_IE),a	; $4aaa
-	rst $38			; $4aac
-	rst $38			; $4aad
-	rst $38			; $4aae
-	rst $38			; $4aaf
-	rst $38			; $4ab0
-	rst $38			; $4ab1
-	rst $38			; $4ab2
-	rst $38			; $4ab3
-	rst $38			; $4ab4
-	rst $38			; $4ab5
-	rst $28			; $4ab6
-	rst $28			; $4ab7
-	rst $28			; $4ab8
-	rst $28			; $4ab9
-	rst $28			; $4aba
-	rst $28			; $4abb
-	rst $28			; $4abc
-	rst $28			; $4abd
-	rst $38			; $4abe
-	rst $38			; $4abf
-	rst $38			; $4ac0
-	rst $38			; $4ac1
-	rst $38			; $4ac2
-	rst $38			; $4ac3
-	rst $38			; $4ac4
-	rst $38			; $4ac5
-	rst $38			; $4ac6
-	ld b,c			; $4ac7
-	add a			; $4ac8
-	ld h,l			; $4ac9
-	add (hl)		; $4aca
-	adc (hl)		; $4acb
-	and a			; $4acc
-	xor (hl)		; $4acd
-	and b			; $4ace
-	ld h,e			; $4acf
-	ld l,c			; $4ad0
-	and l			; $4ad1
-	ld l,(hl)		; $4ad2
-	rst $38			; $4ad3
-	rst $38			; $4ad4
-	rst $38			; $4ad5
+
+; Each entry in this table is a bitset. A random bit is chosen. If the bit is 0, no item drops.
+; @addr{47fe}
+_itemDropProbabilityTable:
+	.dw @probability0
+	.dw @probability1
+	.dw @probability2
+	.dw @probability3
+	.dw @probability4
+	.dw @probability5
+	.dw @probability6
+	.dw @probability7
+
+@probability0:
+@probability1:
+	.db $08 $00 $00 $20 $80 $00 $00 $10
+
+@probability2:
+	.db $08 $10 $08 $20 $80 $01 $80 $10
+
+@probability3:
+	.db $08 $50 $09 $24 $88 $81 $b0 $12
+
+@probability4:
+	.db $49 $50 $49 $24 $88 $99 $b2 $d2
+
+@probability5:
+	.db $b2 $e3 $aa $cc $81 $8f $c6 $6c
+
+@probability6:
+	.db $ba $ff $ea $dd $bd $bf $d6 $ed
+
+@probability7:
+	.db $ff $ff $ff $ff $ff $ff $ff $ff
+
+
+
+; See constants/itemDrops.s for what these values are
+_itemDropSet0:
+	.db $01 $01 $01 $01 $01 $01 $01 $01
+	.db $01 $01 $01 $01 $01 $01 $01 $01
+	.db $01 $01 $01 $01 $01 $01 $01 $01
+	.db $01 $01 $01 $01 $01 $01 $01 $01
+
+_itemDropSet1:
+	.db $01 $01 $01 $01 $01 $01 $01 $01
+	.db $01 $01 $01 $01 $02 $02 $02 $02
+	.db $02 $02 $02 $03 $03 $00 $01 $02
+	.db $06 $06 $06 $06 $05 $05 $09 $05
+
+_itemDropSet2:
+	.db $01 $01 $01 $01 $01 $01 $01 $01
+	.db $01 $01 $01 $01 $01 $01 $01 $01
+	.db $07 $08 $09 $07 $06 $05 $05 $05
+	.db $06 $06 $07 $07 $08 $08 $09 $05
+
+_itemDropSet3:
+	.db $0f $0f $0f $01 $01 $01 $01 $01
+	.db $01 $01 $01 $01 $02 $02 $02 $02
+	.db $02 $02 $02 $02 $02 $02 $02 $01
+	.db $02 $03 $03 $03 $03 $02 $00 $00
+
+_itemDropSet4:
+	.db $04 $04 $04 $04 $04 $04 $04 $04
+	.db $04 $04 $04 $04 $04 $04 $04 $04
+	.db $04 $04 $04 $04 $04 $04 $04 $04
+	.db $04 $04 $04 $04 $04 $04 $04 $04
+
+_itemDropSet5:
+	.db $05 $05 $05 $05 $05 $05 $06 $06
+	.db $06 $06 $06 $07 $07 $07 $07 $07
+	.db $07 $08 $08 $08 $08 $08 $09 $09
+	.db $09 $09 $09 $05 $06 $07 $08 $09
+
+_itemDropSet6:
+	.db $01 $01 $01 $01 $01 $01 $01 $01
+	.db $01 $01 $02 $02 $02 $02 $02 $02
+	.db $02 $02 $02 $03 $03 $00 $04 $04
+	.db $04 $04 $04 $04 $04 $04 $04 $04
+
+_itemDropSet7:
+	.db $01 $01 $01 $01 $01 $01 $01 $02
+	.db $02 $02 $02 $03 $03 $03 $03 $00
+	.db $04 $04 $04 $04 $04 $04 $04 $04
+	.db $09 $08 $07 $07 $06 $06 $05 $05
+
+_itemDropSet8:
+	.db $01 $01 $01 $01 $01 $01 $01 $01
+	.db $01 $01 $01 $01 $01 $01 $02 $02
+	.db $02 $02 $03 $03 $00 $04 $04 $04
+	.db $04 $09 $08 $07 $06 $05 $05 $07
+
+_itemDropSet9:
+	.db $0f $0f $01 $01 $01 $01 $01 $01
+	.db $01 $01 $01 $01 $02 $02 $02 $02
+	.db $02 $02 $02 $03 $03 $00 $01 $02
+	.db $06 $06 $06 $06 $05 $05 $09 $09
+
+_itemDropSetA:
+	.db $01 $01 $01 $01 $01 $01 $02 $02
+	.db $02 $02 $02 $03 $03 $03 $00 $04
+	.db $04 $04 $04 $04 $04 $04 $04 $04
+	.db $04 $09 $08 $07 $07 $06 $05 $06
+
+_itemDropSetB:
+	.db $01 $01 $01 $01 $02 $02 $02 $02
+	.db $02 $03 $03 $03 $00 $04 $04 $04
+	.db $04 $09 $09 $08 $08 $08 $07 $07
+	.db $07 $06 $06 $06 $09 $05 $05 $05
+
+_itemDropSetC:
+	.db $01 $01 $01 $01 $02 $02 $02 $02
+	.db $02 $02 $03 $03 $03 $03 $03 $03
+	.db $04 $04 $04 $04 $04 $04 $04 $04
+	.db $04 $04 $04 $04 $04 $04 $04 $04
+
+_itemDropSetD:
+	.db $02 $02 $02 $02 $02 $02 $02 $02
+	.db $02 $02 $03 $03 $03 $03 $03 $03
+	.db $09 $09 $08 $08 $08 $07 $07 $07
+	.db $06 $06 $06 $05 $05 $05 $09 $05
+
+_itemDropSetE:
+	.db $01 $01 $01 $01 $01 $01 $01 $01
+	.db $01 $01 $01 $01 $01 $01 $01 $02
+	.db $01 $02 $02 $02 $02 $02 $02 $02
+	.db $02 $02 $02 $02 $03 $03 $03 $03
+
+_itemDropSetF:
+	.db $00 $00 $00 $00 $00 $00 $00 $00
+	.db $00 $00 $00 $00 $00 $00 $00 $00
+	.db $00 $00 $00 $00 $00 $00 $00 $00
+	.db $00 $00 $00 $00 $00 $00 $00 $00
+
+
+; Data format (per byte):
+;   Bits 0-2: Index for _itemDropProbabilityTable
+;   Bits 3-7: Index for _itemDropSetTable
+; Or it can be $ff for no item drop.
+; @addr{4a46}
+itemDropTables:
+	.db $ff $ef $ff $ff $ff $ff $ff $ff
+	.db $a6 $8e $86 $c1 $ac $86 $ff $85
+	.db $81 $ff $8e $ef $8e $c0 $ff $60
+	.db $a5 $ee $8e $cb $80 $c7 $8e $8e
+	.db $ac $88 $47 $a4 $42 $c2 $47 $ff
+	.db $ae $ff $ff $ff $60 $ff $ff $ff
+	.db $81 $8e $ae $ff $ff $ae $ff $ff
+	.db $ff $61 $ff $ff $60 $aa $a2 $ff
+	.db $8e $6d $85 $8e $ff $8d $82 $a0
+	.db $87 $88 $ac $a0 $64 $ff $27 $cb
+	.db $a5 $8c $67 $ff $ff $8e $ff $ff
+	.db $ff $ff $ff $ff $ff $ff $a2 $ff
+	.db $ff $ff $ff $ff $e0 $ff $ff $ff
+	.db $ff $ff $ff $ff $ff $ff $ff $ff
+	.db $ef $ef $ef $ef $ef $ef $ef $ef
+	.db $ff $ff $ff $ff $ff $ff $ff $ff
+	.db $ff $41 $87 $65 $86 $8e $a7 $ae
+	.db $a0 $63 $69 $a5 $6e $ff $ff $ff
 
 ;;
 ; @param	a	Treasure index

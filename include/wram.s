@@ -385,7 +385,11 @@ wGameID: ; $c600
 
 wLinkName: ; $c602
 ; 6 bytes, null terminated
-	dsb 6
+	dsb 5
+
+wLinkNameNullTerminator:
+; This is read by unrelated things (item drop table) as a value which is assumed to always be 0.
+	db
 
 wc608: ; $c608
 ; This is always 1. Used as a dummy value in various places?
