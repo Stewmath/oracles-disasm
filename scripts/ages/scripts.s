@@ -9754,8 +9754,15 @@ script7d17:
 	checkcfc0bit 7
 	asm15 scriptHlp.createExclamationMark $1e
 	scriptend
-script7d34:
-	loadscript scriptHlp.script15_77de
+
+
+; ==============================================================================$08
+; INTERACID_TWINROVA_IN_CUTSCENE
+; ==============================================================================$08
+twinrovaInCutsceneScript:
+	loadscript scriptHlp.twinrovaInCutsceneScript_body
+
+
 script7d38:
 	checkabutton
 	jumpifitemobtained $55 script7d41

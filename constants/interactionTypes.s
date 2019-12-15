@@ -1459,6 +1459,10 @@
 
 ;;
 ; Twinrova in a cutscene where they're watching the flames?
+; @subid_00{Blue twinrova?}
+; @subid_01{Red twinrova?}
+; @subid_02{Blue twinrova?}
+; @subid_03{Red twinrova?}
 .define INTERACID_TWINROVA_IN_CUTSCENE		$b0
 
 ;;

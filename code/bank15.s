@@ -8621,11 +8621,16 @@ script15_77b3:
 	wait 120
 	writememory $cfdf $ff
 	scriptend
-script15_77de:
+
+
+; ==============================================================================$08
+; INTERACID_TWINROVA_IN_CUTSCENE
+; ==============================================================================$08
+twinrovaInCutsceneScript_body:
 	wait 120
-	showtextlowindex $09
+	showtextlowindex <TX_2809
 	wait 30
-	showtextlowindex $0a
+	showtextlowindex <TX_280a
 	wait 30
 	scriptend
 

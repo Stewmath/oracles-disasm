@@ -92591,74 +92591,102 @@ interactionCodeaf:
 	.dw $01a0
 	.db $ff
 
+
+; ==============================================================================
+; INTERACID_TWINROVA_IN_CUTSCENE
+; ==============================================================================
 interactionCodeb0:
-	ld e,$44		; $66df
+	ld e,Interaction.state		; $66df
 	ld a,(de)		; $66e1
 	rst_jumpTable			; $66e2
-.dw $66e7
-.dw $6724
+	.dw _twinrovaInCutscene_state0
+	.dw _twinrovaInCutscene_state1
+
+
+_twinrovaInCutscene_state0:
 	ld a,$01		; $66e7
-	ld (de),a		; $66e9
+	ld (de),a ; [state]
 	call interactionInitGraphics		; $66ea
 	call objectSetVisiblec2		; $66ed
-	ld a,$28		; $66f0
+	ld a,>TX_2800		; $66f0
 	call interactionSetHighTextIndex		; $66f2
-	ld e,$42		; $66f5
+	ld e,Interaction.subid		; $66f5
 	ld a,(de)		; $66f7
 	rst_jumpTable			; $66f8
-.dw $6701
-.dw $6708
-.dw $6713
-.dw $6717
+	.dw @subid0
+	.dw @subid1
+	.dw @subid2
+	.dw @subid3
+
+@subid0:
 	ld a,$01		; $6701
-	call $670a		; $6703
-	jr _label_0b_264		; $6706
+	call @commonInit1		; $6703
+	jr _twinrovaInCutscene_loadScript		; $6706
+
+@subid1:
 	ld a,$02		; $6708
-	ld e,$5c		; $670a
+
+@commonInit1:
+	ld e,Interaction.oamFlags		; $670a
 	ld (de),a		; $670c
-	ld e,$42		; $670d
+	ld e,Interaction.subid		; $670d
 	ld a,(de)		; $670f
 	jp interactionSetAnimation		; $6710
+
+
+@subid2:
 	ld a,$01		; $6713
-	jr _label_0b_262		; $6715
+	jr @commonInit2		; $6715
+
+@subid3:
 	ld a,$01		; $6717
 	call interactionSetAnimation		; $6719
 	ld a,$02		; $671c
-_label_0b_262:
-	ld e,$5c		; $671e
+
+@commonInit2:
+	ld e,Interaction.oamFlags		; $671e
 	ld (de),a		; $6720
 	jp interactionSetAlwaysUpdateBit		; $6721
-	ld e,$42		; $6724
+
+
+_twinrovaInCutscene_state1:
+	ld e,Interaction.subid		; $6724
 	ld a,(de)		; $6726
 	rst_jumpTable			; $6727
-.dw $6730
-.dw interactionAnimate
-.dw interactionAnimate
-.dw interactionAnimate
+	.dw @subid0
+	.dw interactionAnimate
+	.dw interactionAnimate
+	.dw interactionAnimate
+
+@subid0:
 	call checkInteractionState2		; $6730
-	jr nz,_label_0b_263	; $6733
+	jr nz,@substate1	; $6733
+
+@substate0:
 	call interactionAnimate		; $6735
 	call interactionRunScript		; $6738
 	ret nc			; $673b
 	ld a,SND_LIGHTNING		; $673c
 	call playSound		; $673e
 	xor a			; $6741
-	ld (wTmpcbb3),a		; $6742
+	ld (wGenericCutscene.cbb3),a		; $6742
 	dec a			; $6745
-	ld (wTmpcbba),a		; $6746
+	ld (wGenericCutscene.cbba),a		; $6746
 	jp interactionIncState2		; $6749
-_label_0b_263:
-	ld hl,wTmpcbb3		; $674c
+
+@substate1:
+	ld hl,wGenericCutscene.cbb3		; $674c
 	ld b,$02		; $674f
 	call flashScreen		; $6751
 	ret z			; $6754
 	ld a,$02		; $6755
-	ld ($cbb8),a		; $6757
-	ld a,$08		; $675a
+	ld (wGenericCutscene.cbb8),a		; $6757
+	ld a,CUTSCENE_BLACK_TOWER_EXPLANATION		; $675a
 	ld (wCutsceneTrigger),a		; $675c
 	ret			; $675f
-_label_0b_264:
-	ld e,$42		; $6760
+
+_twinrovaInCutscene_loadScript:
+	ld e,Interaction.subid		; $6760
 	ld a,(de)		; $6762
 	ld hl,@scriptTable		; $6763
 	rst_addDoubleIndex			; $6766
@@ -92668,7 +92696,7 @@ _label_0b_264:
 	jp interactionSetScript		; $676a
 
 @scriptTable:
-	.dw script7d34
+	.dw twinrovaInCutsceneScript
 	.dw stubScript
 
 
