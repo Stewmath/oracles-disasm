@@ -1780,7 +1780,10 @@
 ; @subid_01{Red snake help book}
 .define INTERACID_RING_HELP_BOOK	$e5
 
-; Subid: value from 0-2
+;;
+; @subid_00{Raft on Tokay island (only when Dimitri is gone)}
+; @subid_01{Raft outside Rafton's house}
+; @subid_02{Raft created when SPECIALOBJECTID_RAFT is dismounted}
 .define INTERACID_RAFT			$e6
 
 ; Nothing beyond $e6.

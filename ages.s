@@ -139719,21 +139719,25 @@ _label_10_339:
 	ld bc,$ff40		; $7e4b
 	jp objectSetSpeedZ		; $7e4e
 
+
+; ==============================================================================
+; INTERACID_RAFT
+; ==============================================================================
 interactionCodee6:
-	ld e,$44		; $7e51
+	ld e,Interaction.state		; $7e51
 	ld a,(de)		; $7e53
 	rst_jumpTable			; $7e54
-.dw @state0
-.dw @state1
-.dw interactionDelete
+	.dw @state0
+	.dw @state1
+	.dw interactionDelete
 
 @state0:
-	ld e,$42		; $7e5b
+	ld e,Interaction.subid		; $7e5b
 	ld a,(de)		; $7e5d
 	rst_jumpTable			; $7e5e
-.dw @subid0
-.dw @subid1
-.dw @subid2
+	.dw @subid0
+	.dw @subid1
+	.dw @subid2
 
 @subid0:
 	ld a,(wDimitriState)		; $7e65
@@ -139768,7 +139772,7 @@ interactionCodee6:
 	pop de			; $7e8d
 	call interactionInitGraphics		; $7e8e
 	call interactionIncState		; $7e91
-	ld e,$48		; $7e94
+	ld e,Interaction.direction		; $7e94
 	ld a,(de)		; $7e96
 	and $01			; $7e97
 	call interactionSetAnimation		; $7e99
@@ -139777,49 +139781,62 @@ interactionCodee6:
 @state1:
 	call interactionAnimate		; $7e9f
 	ld a,$09		; $7ea2
-	call $7ee5		; $7ea4
+	call @checkLinkWithinRange		; $7ea4
 	ret nc			; $7ea7
+
 	ld a,(wLinkInAir)		; $7ea8
 	or a			; $7eab
-	jr z,_label_10_340	; $7eac
+	jr z,@mountedRaft	; $7eac
+
 	ld hl,w1Link.zh		; $7eae
 	ld a,(hl)		; $7eb1
 	cp $fd			; $7eb2
 	ret c			; $7eb4
-	ld l,$15		; $7eb5
+
+	ld l,<w1Link.speedZ+1		; $7eb5
 	bit 7,(hl)		; $7eb7
 	ret nz			; $7eb9
-_label_10_340:
+
+@mountedRaft:
+	; Moving onto raft?
 	ld a,d			; $7eba
 	ld (wLinkRidingObject),a		; $7ebb
 	ld a,$05		; $7ebe
 	ld (wInstrumentsDisabledCounter),a		; $7ec0
-	call $7ee5		; $7ec3
+	call @checkLinkWithinRange		; $7ec3
 	ret nc			; $7ec6
-	ld a,($d001)		; $7ec7
+
+	ld a,(w1Link.id)		; $7ec7
 	or a			; $7eca
-	jr z,_label_10_341	; $7ecb
-	xor a			; $7ecd
+	jr z,++			; $7ecb
+	xor a ; SPECIALOBJECTID_LINK
 	call setLinkIDOverride		; $7ece
-_label_10_341:
-	ld hl,$d100		; $7ed1
+++
+	ld hl,w1Companion.enabled		; $7ed1
 	ld (hl),$03		; $7ed4
 	inc l			; $7ed6
-	ld (hl),$13		; $7ed7
-	ld e,$48		; $7ed9
-	ld l,$08		; $7edb
+	ld (hl),SPECIALOBJECTID_RAFT		; $7ed7
+	ld e,Interaction.direction		; $7ed9
+	ld l,<w1Link.direction		; $7edb
 	ld a,(de)		; $7edd
 	ldi (hl),a		; $7ede
 	call objectCopyPosition		; $7edf
 	jp interactionIncState		; $7ee2
+
+
+;;
+; @param	a	Collision radius
+; @addr{7ee5}
+@checkLinkWithinRange:
 	call objectSetCollideRadius		; $7ee5
 	ld hl,w1Link.yh		; $7ee8
 	ldi a,(hl)		; $7eeb
 	add $05			; $7eec
 	ld b,a			; $7eee
 	inc l			; $7eef
-	ld c,(hl)		; $7ef0
+	ld c,(hl) ; [w1Link.xh]
 	jp interactionCheckContainsPoint		; $7ef1
+
 
 .BANK $11 SLOT 1
 .ORG 0
