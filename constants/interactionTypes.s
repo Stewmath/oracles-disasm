@@ -1769,8 +1769,8 @@
 .define INTERACID_STATUE_EYEBALL	$e2
 
 ;;
-; Another bird?
-.define INTERACID_e3			$e3
+; @subid{Value from 0-9}
+.define INTERACID_KNOW_IT_ALL_BIRD	$e3
 
 ;;
 .define INTERACID_STUB_e4		$e4

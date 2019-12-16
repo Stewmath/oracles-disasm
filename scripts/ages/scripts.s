@@ -10179,22 +10179,28 @@ script7f62:
 	playsound $4d
 	enableinput
 	scriptend
-script7f75:
-	setcollisionradii $08 $08
+
+
+; ==============================================================================
+; INTERACID_KNOW_IT_ALL_BIRD
+; ==============================================================================
+knowItAllBirdScript:
+	setcollisionradii $08, $08
 	makeabuttonsensitive
-script7f79:
+@loop:
 	checkabutton
 	setdisabledobjectsto91
-	cplinkx $48
-	writeobjectbyte $77 $01
+	cplinkx Interaction.direction
+	writeobjectbyte Interaction.var37, $01 ; Signal to start spazzing out
 	showloadedtext
-	jumpiftextoptioneq $01 script7f8d
+	jumpiftextoptioneq $01, @doneTalking
+
 	wait 30
-	addobjectbyte $72 $0a
+	addobjectbyte Interaction.textID, $0a
 	showloadedtext
-	addobjectbyte $72 $f6
-script7f8d:
+	addobjectbyte Interaction.textID, -$0a
+
+@doneTalking:
 	enableallobjects
 	writeobjectbyte $77 $00
-	jump2byte script7f79
-
+	jump2byte @loop

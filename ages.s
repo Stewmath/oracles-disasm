@@ -139629,6 +139629,14 @@ _label_10_336:
 	call playSound		; $7da2
 	jp interactionIncState		; $7da5
 
+
+; ==============================================================================
+; INTERACID_KNOW_IT_ALL_BIRD
+;
+; Variables:
+;   var36: Counter until bird should turn around?
+;   var37: Set while being talked to (signal to change animation)
+; ==============================================================================
 interactionCodee3:
 	call checkInteractionState		; $7da8
 	jr nz,@state1		; $7dab
@@ -139637,86 +139645,109 @@ interactionCodee3:
 	ld a,$01		; $7dad
 	ld (de),a		; $7daf
 	call interactionInitGraphics		; $7db0
-	ld hl,script7f75		; $7db3
+	ld hl,knowItAllBirdScript		; $7db3
 	call interactionSetScript		; $7db6
+
 	call getRandomNumber_noPreserveVars		; $7db9
 	and $01			; $7dbc
-	ld e,$48		; $7dbe
+	ld e,Interaction.direction		; $7dbe
 	ld (de),a		; $7dc0
 	call interactionSetAnimation		; $7dc1
 	call interactionSetAlwaysUpdateBit		; $7dc4
-	ld l,$76		; $7dc7
-	ld (hl),$1e		; $7dc9
-	call $7e4b		; $7dcb
-	ld l,$42		; $7dce
+
+	ld l,Interaction.var36		; $7dc7
+	ld (hl),30		; $7dc9
+
+	call @beginJump		; $7dcb
+	ld l,Interaction.subid		; $7dce
 	ld a,(hl)		; $7dd0
-	ld l,$72		; $7dd1
+	ld l,Interaction.textID		; $7dd1
 	ld (hl),a		; $7dd3
-	ld hl,$7de4		; $7dd4
+
+	ld hl,@oamFlagsTable		; $7dd4
 	rst_addAToHl			; $7dd7
 	ld a,(hl)		; $7dd8
-	ld e,$5c		; $7dd9
+	ld e,Interaction.oamFlags		; $7dd9
 	ld (de),a		; $7ddb
-	ld a,$32		; $7ddc
+	ld a,>TX_3200		; $7ddc
 	call interactionSetHighTextIndex		; $7dde
 	jp objectSetVisible82		; $7de1
-	.db $00 $01 $02 $03 $02 $03 $01 $00
-	.db $00 $01
+
+@oamFlagsTable:
+	.db $00 $01 $02 $03 $02 $03 $01 $00 $00 $01
 
 @state1:
 	call interactionRunScript		; $7dee
 	call checkInteractionState2		; $7df1
-	jr nz,_label_10_339	; $7df4
-	ld e,$77		; $7df6
+	jr nz,@substate1	; $7df4
+
+@substate0:
+	ld e,Interaction.var37		; $7df6
 	ld a,(de)		; $7df8
 	or a			; $7df9
-	jr z,_label_10_337	; $7dfa
+	jr z,@label_10_337	; $7dfa
+
+	; Being talked to
 	call interactionIncState2		; $7dfc
-	ld l,$48		; $7dff
+	ld l,Interaction.direction		; $7dff
 	ld a,(hl)		; $7e01
 	add $02			; $7e02
 	jp interactionSetAnimation		; $7e04
-_label_10_337:
-	call $7e3f		; $7e07
-	jr nz,_label_10_338	; $7e0a
-	ld l,$76		; $7e0c
-	ld (hl),$1e		; $7e0e
+
+@label_10_337:
+	; Not being talked to; looks left and right
+	call @decVar36		; $7e07
+	jr nz,@animate	; $7e0a
+	ld l,Interaction.var36		; $7e0c
+	ld (hl),30		; $7e0e
 	call getRandomNumber		; $7e10
 	and $07			; $7e13
-	jr nz,_label_10_338	; $7e15
-	ld l,$48		; $7e17
+	jr nz,@animate	; $7e15
+	ld l,Interaction.direction		; $7e17
 	ld a,(hl)		; $7e19
 	xor $01			; $7e1a
 	ld (hl),a		; $7e1c
 	jp interactionSetAnimation		; $7e1d
-_label_10_338:
+
+@animate:
 	jp interactionAnimateAsNpc		; $7e20
-_label_10_339:
+
+@substate1:
 	call interactionAnimate		; $7e23
 	ld h,d			; $7e26
-	ld l,$77		; $7e27
+	ld l,Interaction.var37		; $7e27
 	ld a,(hl)		; $7e29
 	or a			; $7e2a
-	jp nz,$7e44		; $7e2b
-	ld l,$76		; $7e2e
-	ld (hl),$3c		; $7e30
-	ld l,$45		; $7e32
+	jp nz,@updateSpeedZ		; $7e2b
+
+	ld l,Interaction.var36		; $7e2e
+	ld (hl),60		; $7e30
+
+	; a == 0 here
+	ld l,Interaction.state2		; $7e32
 	ld (hl),a		; $7e34
-	ld l,$4e		; $7e35
+	ld l,Interaction.z		; $7e35
 	ldi (hl),a		; $7e37
 	ld (hl),a		; $7e38
-	ld l,$48		; $7e39
+
+	ld l,Interaction.direction		; $7e39
 	ld a,(hl)		; $7e3b
 	jp interactionSetAnimation		; $7e3c
+
+@decVar36:
 	ld h,d			; $7e3f
-	ld l,$76		; $7e40
+	ld l,Interaction.var36		; $7e40
 	dec (hl)		; $7e42
 	ret			; $7e43
+
+@updateSpeedZ:
 	ld c,$20		; $7e44
 	call objectUpdateSpeedZ_paramC		; $7e46
 	ret nz			; $7e49
 	ld h,d			; $7e4a
-	ld bc,$ff40		; $7e4b
+
+@beginJump:
+	ld bc,-$c0		; $7e4b
 	jp objectSetSpeedZ		; $7e4e
 
 
