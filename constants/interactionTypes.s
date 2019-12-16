@@ -1132,7 +1132,7 @@
 ; @subid_04{A big, red-and-blue orb that's probably used with the maku seed or something?}
 ; @subid_05{}
 ; @subid_06{Glowing orb behind Link in the intro cutscene, on the triforce screen}
-; @subid_07{?}
+; @subid_07{Used by tuni nut while being placed}
 ; @subid_08{?}
 ; @subid_09{}
 ; @subid_0a{}

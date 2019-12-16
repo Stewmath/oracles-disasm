@@ -92963,9 +92963,12 @@ _twinrovaInCutscene_loadScript:
 	.dw stubScript
 
 
+; ==============================================================================
+; INTERACID_TUNI_NUT
+; ==============================================================================
 interactionCodeb1:
-	ld hl,$7b60		; $6771
-	ld e,$3f		; $6774
+	ld hl,bank3f.interactionCodeb1_body		; $6771
+	ld e,:bank3f.interactionCodeb1_body		; $6774
 	jp interBankCall		; $6776
 
 interactionCodeb2:
@@ -161795,158 +161798,217 @@ _rabbitSubid2YPositions:
 _rabbitSubid2SpawnDelays:
 	.db $1e $3c $50 $78
 
-	ld e,$44		; $7b60
+
+; ==============================================================================
+; INTERACID_TUNI_NUT
+; ==============================================================================
+interactionCodeb1_body:
+	ld e,Interaction.state		; $7b60
 	ld a,(de)		; $7b62
 	rst_jumpTable			; $7b63
-.dw $7b6e
-.dw $7ba1
-.dw $7be4
-.dw $7c0b
-.dw objectPreventLinkFromPassing
+	.dw _tuniNut_state0
+	.dw _tuniNut_state1
+	.dw _tuniNut_state2
+	.dw _tuniNut_state3
+	.dw objectPreventLinkFromPassing
+
+
+_tuniNut_state0:
 	call interactionInitGraphics		; $7b6e
 	ld a,GLOBALFLAG_TUNI_NUT_PLACED		; $7b71
 	call checkGlobalFlag		; $7b73
-	jr nz,_label_3f_371	; $7b76
+	jr nz,_tuniNut_gotoState4	; $7b76
+
 	ld a,TREASURE_TUNI_NUT		; $7b78
 	call checkTreasureObtained		; $7b7a
-	jr nc,_label_3f_370	; $7b7d
+	jr nc,@delete	; $7b7d
 	cp $02			; $7b7f
-	jr nz,_label_3f_370	; $7b81
+	jr nz,@delete	; $7b81
+
 	ld bc,$0810		; $7b83
 	call objectSetCollideRadii		; $7b86
 	jp interactionIncState		; $7b89
-_label_3f_370:
+
+@delete:
 	jp interactionDelete		; $7b8c
-_label_3f_371:
+
+
+_tuniNut_gotoState4:
 	ld bc,$1878		; $7b8f
 	call interactionSetPosition		; $7b92
-	ld l,$44		; $7b95
+	ld l,Interaction.state		; $7b95
 	ld (hl),$04		; $7b97
 	ld a,$06		; $7b99
 	call objectSetCollideRadius		; $7b9b
 	jp objectSetVisible82		; $7b9e
+
+
+; Waiting for Link to walk up to the object (currently invisible, acting as a cutscene trigger)
+_tuniNut_state1:
 	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $7ba1
 	ret nc			; $7ba4
 	call checkLinkCollisionsEnabled		; $7ba5
 	ret nc			; $7ba8
+
 	push de			; $7ba9
 	call clearAllItemsAndPutLinkOnGround		; $7baa
 	pop de			; $7bad
-	ld a,$01		; $7bae
+
+	ld a,DISABLE_LINK		; $7bae
 	ld (wDisabledObjects),a		; $7bb0
 	ld (wMenuDisabled),a		; $7bb3
+
 	ld a,(w1Link.xh)		; $7bb6
-	sub $78			; $7bb9
-	jr z,_label_3f_374	; $7bbb
-	jr c,_label_3f_372	; $7bbd
-	ld b,$03		; $7bbf
-	jr _label_3f_373		; $7bc1
-_label_3f_372:
+	sub LARGE_ROOM_WIDTH<<3			; $7bb9
+	jr z,@perfectlyCentered	; $7bbb
+	jr c,@leftSide	; $7bbd
+
+	; Right side
+	ld b,DIR_LEFT		; $7bbf
+	jr @moveToCenter		; $7bc1
+
+@leftSide:
 	cpl			; $7bc3
 	inc a			; $7bc4
-	ld b,$01		; $7bc5
-_label_3f_373:
+	ld b,DIR_RIGHT		; $7bc5
+
+@moveToCenter:
 	ld (wLinkStateParameter),a		; $7bc7
-	ld e,$46		; $7bca
+	ld e,Interaction.counter1		; $7bca
 	ld (de),a		; $7bcc
 	ld a,b			; $7bcd
 	ld (w1Link.direction),a		; $7bce
 	swap a			; $7bd1
 	rrca			; $7bd3
-	ld ($d009),a		; $7bd4
+	ld (w1Link.angle),a		; $7bd4
 	ld a,LINK_STATE_FORCE_MOVEMENT		; $7bd7
 	ld (wLinkForceState),a		; $7bd9
 	jp interactionIncState		; $7bdc
-_label_3f_374:
+
+@perfectlyCentered:
 	call interactionIncState		; $7bdf
-	jr _label_3f_375		; $7be2
+	jr _tuniNut_beginMovingIntoPlace		; $7be2
+
+
+_tuniNut_state2:
 	call interactionDecCounter1		; $7be4
 	ret nz			; $7be7
-_label_3f_375:
+
+_tuniNut_beginMovingIntoPlace:
 	xor a			; $7be8
 	ld (w1Link.direction),a		; $7be9
-	ld e,$46		; $7bec
-	ld a,$3c		; $7bee
+
+	ld e,Interaction.counter1		; $7bec
+	ld a,60		; $7bee
 	ld (de),a		; $7bf0
-	ld bc,$8407		; $7bf1
+
+	ldbc INTERACID_SPARKLE, $07		; $7bf1
 	call objectCreateInteraction		; $7bf4
-	ld l,$56		; $7bf7
+	ld l,Interaction.relatedObj1		; $7bf7
 	ld a,e			; $7bf9
 	ldi (hl),a		; $7bfa
 	ld a,d			; $7bfb
 	ld (hl),a		; $7bfc
+
 	call darkenRoomLightly		; $7bfd
 	ld a,SNDCTRL_STOPMUSIC		; $7c00
 	call playSound		; $7c02
 	call objectSetVisiblec0		; $7c05
 	jp interactionIncState		; $7c08
-	ld e,$45		; $7c0b
+
+
+_tuniNut_state3:
+	ld e,Interaction.state2		; $7c0b
 	ld a,(de)		; $7c0d
 	rst_jumpTable			; $7c0e
-.dw $7c1b
-.dw $7c24
-.dw $7c37
-.dw $7c4c
-.dw $7c64
-.dw $7c6e
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw @substate4
+	.dw @substate5
+
+@substate0:
 	call interactionDecCounter1		; $7c1b
 	ret nz			; $7c1e
 	ld (hl),$10		; $7c1f
 	jp interactionIncState2		; $7c21
+
+@substate1:
 	ld a,(wFrameCounter)		; $7c24
 	rrca			; $7c27
 	ret c			; $7c28
 	ld h,d			; $7c29
-	ld l,$4f		; $7c2a
+	ld l,Interaction.zh		; $7c2a
 	dec (hl)		; $7c2c
 	call interactionDecCounter1		; $7c2d
 	ret nz			; $7c30
 	call objectCenterOnTile		; $7c31
 	jp interactionIncState2		; $7c34
-	ld b,$0a		; $7c37
+
+@substate2:
+	ld b,SPEED_40		; $7c37
 	ld c,$00		; $7c39
-	ld e,$49		; $7c3b
+	ld e,Interaction.angle		; $7c3b
 	call objectApplyGivenSpeed		; $7c3d
-	ld e,$4b		; $7c40
+	ld e,Interaction.yh		; $7c40
 	ld a,(de)		; $7c42
 	cp $18			; $7c43
 	ret nc			; $7c45
 	call objectCenterOnTile		; $7c46
 	jp interactionIncState2		; $7c49
+
+@substate3:
 	ld c,$20		; $7c4c
 	call objectUpdateSpeedZ_paramC		; $7c4e
 	ret nz			; $7c51
 	ld a,SND_DROPESSENCE		; $7c52
 	call playSound		; $7c54
-	ld e,$46		; $7c57
-	ld a,$5a		; $7c59
+	ld e,Interaction.counter1		; $7c57
+	ld a,90		; $7c59
 	ld (de),a		; $7c5b
 	ld a,SND_SOLVEPUZZLE_2		; $7c5c
 	call playSound		; $7c5e
 	jp interactionIncState2		; $7c61
+
+@substate4:
 	call interactionDecCounter1		; $7c64
 	ret nz			; $7c67
 	call brightenRoom		; $7c68
 	jp interactionIncState2		; $7c6b
+
+@substate5:
 	ld a,(wPaletteThread_mode)		; $7c6e
 	or a			; $7c71
 	ret nz			; $7c72
+
 	ld a,GLOBALFLAG_TUNI_NUT_PLACED		; $7c73
 	call setGlobalFlag		; $7c75
-	ld a,$4c		; $7c78
+
+	ld a,TREASURE_TUNI_NUT		; $7c78
 	call loseTreasure		; $7c7a
-	call $7c95		; $7c7d
+
+	call @setSymmetryVillageRoomFlags		; $7c7d
+
 	xor a			; $7c80
 	ld (wDisabledObjects),a		; $7c81
 	ld (wMenuDisabled),a		; $7c84
-	ld hl,$cfc0		; $7c87
+
+	ld hl,wTmpcfc0.genericCutscene.state		; $7c87
 	set 0,(hl)		; $7c8a
+
 	ld a,(wActiveMusic)		; $7c8c
 	call playSound		; $7c8f
-	jp $7b8f		; $7c92
-	ld hl,$c702		; $7c95
-	call $7c9d		; $7c98
+	jp _tuniNut_gotoState4		; $7c92
+
+;;
+; Sets the room flags so present symmetry village is nice and cheerful now
+; @addr{7c95}
+@setSymmetryVillageRoomFlags:
+	ld hl,wPresentRoomFlags+$02		; $7c95
+	call @setRow		; $7c98
 	ld l,$12		; $7c9b
+@setRow:
 	set 0,(hl)		; $7c9d
 	inc l			; $7c9f
 	set 0,(hl)		; $7ca0
@@ -161954,6 +162016,7 @@ _label_3f_375:
 	set 0,(hl)		; $7ca3
 	inc l			; $7ca5
 	ret			; $7ca6
+
 
 .ifdef BUILD_VANILLA
 
