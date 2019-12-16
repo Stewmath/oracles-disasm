@@ -139331,45 +139331,65 @@ _label_10_325:
 	inc a			; $7b66
 	ret			; $7b67
 
+; ==============================================================================
+; INTERACID_TIMEPORTAL
+;
+; Variables:
+;   var03: Short-form position
+; ==============================================================================
 interactionCodede:
 	ld a,$02		; $7b68
-	ld ($cddd),a		; $7b6a
+	ld (wcddd),a		; $7b6a
 	ld a,(wMenuDisabled)		; $7b6d
 	or a			; $7b70
 	jp nz,objectSetInvisible		; $7b71
+
 	call objectSetVisible		; $7b74
-	ld e,$44		; $7b77
+	ld e,Interaction.state		; $7b77
 	ld a,(de)		; $7b79
 	rst_jumpTable			; $7b7a
-.dw $7b81
-.dw $7ba6
-.dw $7bae
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
+	; Delete self if a timeportal exists already.
+	; BUG: This only checks for timeportals in object slots before the current one. This makes
+	; it possible to "stack" timeportals.
 	ld c,INTERACID_TIMEPORTAL		; $7b81
 	call objectFindSameTypeObjectWithID		; $7b83
 	ld a,h			; $7b86
 	cp d			; $7b87
 	jp nz,interactionDelete		; $7b88
+
 	ld a,$03		; $7b8b
 	call objectSetCollideRadius		; $7b8d
 	call objectGetShortPosition		; $7b90
 	ld c,a			; $7b93
+
 	call interactionIncState		; $7b94
-	ld l,$43		; $7b97
+
+	ld l,Interaction.var03		; $7b97
 	ld (hl),c		; $7b99
 	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $7b9a
 	call nc,interactionIncState		; $7b9d
 	call interactionInitGraphics		; $7ba0
 	jp objectSetVisible83		; $7ba3
+
+@state1:
 	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $7ba6
 	jp nc,interactionIncState		; $7ba9
-	jr _label_10_326		; $7bac
-	ld e,$43		; $7bae
+	jr _timeportal_updatePalette		; $7bac
+
+@state2:
+	ld e,Interaction.var03		; $7bae
 	ld a,(de)		; $7bb0
 	ld b,a			; $7bb1
 	ld a,(wPortalPos)		; $7bb2
 	cp b			; $7bb5
 	jp nz,interactionDelete		; $7bb6
-	call $7bff		; $7bb9
+
+	call _timeportal_updatePalette		; $7bb9
 	ld a,(wLinkObjectIndex)		; $7bbc
 	rrca			; $7bbf
 	ret c			; $7bc0
@@ -139377,8 +139397,12 @@ interactionCodede:
 	ret nc			; $7bc4
 	call checkLinkCollisionsEnabled		; $7bc5
 	ret nc			; $7bc8
+
+	; Link touched the portal
 	ld a,$ff		; $7bc9
 	ld (wPortalGroup),a		; $7bcb
+
+	; Fall through
 
 ;;
 ; Also called by INTERACID_TIMEPORTAL_SPAWNER.
@@ -139407,16 +139431,18 @@ interactionBeginTimewarp:
 	call restartSound		; $7bf9
 	jp interactionDelete		; $7bfc
 
-_label_10_326:
+;;
+; @addr{7bff}
+_timeportal_updatePalette:
 	ld a,(wFrameCounter)		; $7bff
 	and $01			; $7c02
-	jr nz,_label_10_327	; $7c04
-	ld e,$5c		; $7c06
+	jr nz,@animate	; $7c04
+	ld e,Interaction.oamFlags		; $7c06
 	ld a,(de)		; $7c08
 	inc a			; $7c09
 	and $0b			; $7c0a
 	ld (de),a		; $7c0c
-_label_10_327:
+@animate:
 	jp interactionAnimate		; $7c0d
 
 

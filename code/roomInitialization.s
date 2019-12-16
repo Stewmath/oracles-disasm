@@ -744,7 +744,7 @@ _checkEnemyPlacedAtPosition:
 ; @addr{79be}
 _checkSpawnTimeportalInteraction:
 	xor a			; $79be
-	ld ($cddd),a		; $79bf
+	ld (wcddd),a		; $79bf
 
 	; Check [wPortalGroup]=[wActiveGroup], [wPortalRoom]=[wActiveRoom].
 	ld hl,wPortalGroup		; $79c2
@@ -763,7 +763,7 @@ _checkSpawnTimeportalInteraction:
 
 	ld (hl),INTERACID_TIMEPORTAL		; $79d6
 	ld a,$01		; $79d8
-	ld ($cddd),a		; $79da
+	ld (wcddd),a		; $79da
 	ld l,Interaction.yh		; $79dd
 	jp setShortPosition_paramC		; $79df
 
@@ -861,13 +861,13 @@ createSeaEffectsPartIfApplicable:
 ;;
 ; @addr{7a3a}
 func_02_7a3a:
-	ld a,($cddd)		; $7a3a
+	ld a,(wcddd)		; $7a3a
 	or a			; $7a3d
 	ret z			; $7a3e
 	dec a			; $7a3f
 	jr z,+			; $7a40
 
-	ld ($cddd),a		; $7a42
+	ld (wcddd),a		; $7a42
 	ret			; $7a45
 +
 	call getFreeInteractionSlot		; $7a46
