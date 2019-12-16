@@ -1762,6 +1762,15 @@
 
 ;;
 ; Creates a time portal when the Tune of Echoes is played.
+;
+; If Bit 7 of subid is set, the portal is always open.
+;
+; If Bit 6 of subid is set, bit 1 of the room flags is set upon entering the
+; portal the first time. The portal will subsequently remain open.
+;
+; @subid_00{Ordinary portal}
+; @subid_01{First portal to past, starts active until maku tree saved}
+; @subid_02{First portal to present, activates upon getting satchel}
 .define INTERACID_TIMEPORTAL_SPAWNER	$e1
 
 ;;

@@ -139379,14 +139379,21 @@ interactionCodede:
 	ret nc			; $7bc8
 	ld a,$ff		; $7bc9
 	ld (wPortalGroup),a		; $7bcb
+
+;;
+; Also called by INTERACID_TIMEPORTAL_SPAWNER.
+; @addr{7bce}
+interactionBeginTimewarp:
 	call resetLinkInvincibility		; $7bce
-	ld hl,$d000		; $7bd1
+	ld hl,w1Link		; $7bd1
 	call objectCopyPosition		; $7bd4
-	ld l,$08		; $7bd7
-	ld (hl),$02		; $7bd9
-	ld a,$81		; $7bdb
+	ld l,<w1Link.direction		; $7bd7
+	ld (hl),DIR_DOWN		; $7bd9
+
+	ld a,DISABLE_ALL_BUT_INTERACTIONS | DISABLE_LINK
 	ld (wDisabledObjects),a		; $7bdd
 	ld (wDisableLinkCollisionsAndMenu),a		; $7be0
+
 	call objectGetTileAtPosition		; $7be3
 	ld (wActiveTileIndex),a		; $7be6
 	ld a,l			; $7be9
@@ -139394,10 +139401,12 @@ interactionCodede:
 	inc a			; $7bed
 	ld (wLinkTimeWarpTile),a		; $7bee
 	ld (wcde0),a		; $7bf1
-	ld a,$1b		; $7bf4
+
+	ld a,CUTSCENE_TIMEWARP		; $7bf4
 	ld (wCutsceneTrigger),a		; $7bf6
 	call restartSound		; $7bf9
 	jp interactionDelete		; $7bfc
+
 _label_10_326:
 	ld a,(wFrameCounter)		; $7bff
 	and $01			; $7c02
@@ -139543,19 +139552,29 @@ _label_10_332:
 	ld (hl),$01		; $7cff
 	ret			; $7d01
 
+
+; ==============================================================================
+; INTERACID_TIMEPORTAL_SPAWNER
+; ==============================================================================
 interactionCodee1:
-	ld e,$44		; $7d02
+	ld e,Interaction.state		; $7d02
 	ld a,(de)		; $7d04
 	rst_jumpTable			; $7d05
-.dw $7d3d
-.dw $7d88
-.dw $7d96
-.dw $7d0e
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+
+; Portal is active
+@state3:
 	call objectSetVisible83		; $7d0e
 	ld b,$01		; $7d11
 	call objectFlickerVisibility		; $7d13
 	call interactionAnimate		; $7d16
-	call $7d90		; $7d19
+
+	call @markSpotDiscovered		; $7d19
+
+	; Wait for Link to touch the portal
 	ld a,(wLinkObjectIndex)		; $7d1c
 	rrca			; $7d1f
 	ret c			; $7d20
@@ -139563,63 +139582,85 @@ interactionCodee1:
 	ret nc			; $7d24
 	call checkLinkCollisionsEnabled		; $7d25
 	ret nc			; $7d28
-	ld e,$42		; $7d29
+
+	; Link touched the portal
+	ld e,Interaction.subid		; $7d29
 	ld a,(de)		; $7d2b
 	bit 6,a			; $7d2c
-	jr z,_label_10_333	; $7d2e
+	jr z,++			; $7d2e
 	call getThisRoomFlags		; $7d30
 	set 1,(hl)		; $7d33
-_label_10_333:
-	ld hl,$7bce		; $7d35
-	ld e,$10		; $7d38
+++
+	ld hl,interactionBeginTimewarp		; $7d35
+	ld e,:interactionBeginTimewarp		; $7d38
 	jp interBankCall		; $7d3a
-	ld e,$42		; $7d3d
+	; Above call will delete this object
+
+@state0:
+	ld e,Interaction.subid		; $7d3d
 	ld a,(de)		; $7d3f
 	and $0f			; $7d40
 	rst_jumpTable			; $7d42
-.dw $7d5e
-.dw $7d49
-.dw $7d52
+	.dw @commonInit
+	.dw @subid1Init
+	.dw @subid2Init
+
+@subid1Init:
 	ld a,GLOBALFLAG_MAKU_TREE_SAVED		; $7d49
 	call checkGlobalFlag		; $7d4b
-	jr nz,_label_10_335	; $7d4e
-	jr _label_10_334		; $7d50
+	jr nz,@commonInit	; $7d4e
+	jr @setSubidBit7		; $7d50
+
+@subid2Init:
 	ld a,TREASURE_SEED_SATCHEL		; $7d52
 	call checkTreasureObtained		; $7d54
-	jr c,_label_10_335	; $7d57
-_label_10_334:
+	jr c,@commonInit	; $7d57
+
+@setSubidBit7:
 	ld h,d			; $7d59
-	ld l,$42		; $7d5a
+	ld l,Interaction.subid		; $7d5a
 	set 7,(hl)		; $7d5c
-_label_10_335:
+
+@commonInit:
+	; If the portal tile is hidden, don't allow activation yet
 	call objectGetTileAtPosition		; $7d5e
-	cp $d7			; $7d61
+	cp TILEINDEX_PORTAL_SPOT			; $7d61
 	ret nz			; $7d63
+
 	call interactionInitGraphics		; $7d64
 	call interactionSetAlwaysUpdateBit		; $7d67
 	ld a,$02		; $7d6a
 	call objectSetCollideRadius		; $7d6c
-	ld l,$42		; $7d6f
+
+	ld l,Interaction.subid		; $7d6f
 	ld b,(hl)		; $7d71
 	bit 6,b			; $7d72
-	jr z,_label_10_336	; $7d74
+	jr z,@nextState	; $7d74
+
 	call getThisRoomFlags		; $7d76
 	and $02			; $7d79
-	jr nz,_label_10_336	; $7d7b
+	jr nz,@nextState	; $7d7b
+
 	set 7,b			; $7d7d
-_label_10_336:
+@nextState:
 	call interactionIncState		; $7d7f
 	bit 7,b			; $7d82
 	ret z			; $7d84
 	ld (hl),$03		; $7d85
 	ret			; $7d87
+
+@state1:
 	ld a,(wLinkPlayingInstrument)		; $7d88
 	dec a			; $7d8b
 	ret nz			; $7d8c
 	call interactionIncState		; $7d8d
+
+@markSpotDiscovered:
 	call getThisRoomFlags		; $7d90
-	set 3,(hl)		; $7d93
+	set ROOMFLAG_BIT_PORTALSPOT_DISCOVERED,(hl)		; $7d93
 	ret			; $7d95
+
+@state2:
 	ld a,(wLinkPlayingInstrument)		; $7d96
 	or a			; $7d99
 	ret nz			; $7d9a
