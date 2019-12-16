@@ -139419,136 +139419,169 @@ _label_10_326:
 _label_10_327:
 	jp interactionAnimate		; $7c0d
 
+
+; ==============================================================================
+; INTERACID_NAYRU_RALPH_CREDITS
+; ==============================================================================
 interactionCodedf:
-	ld e,$44		; $7c10
+	ld e,Interaction.state		; $7c10
 	ld a,(de)		; $7c12
 	rst_jumpTable			; $7c13
-.dw $7c18
-.dw $7c35
+	.dw @state0
+	.dw @state1
+
+@state0:
 	ld a,$01		; $7c18
 	ld (de),a		; $7c1a
 	call interactionInitGraphics		; $7c1b
+
 	ld h,d			; $7c1e
-	ld l,$50		; $7c1f
-	ld (hl),$14		; $7c21
-	ld l,$49		; $7c23
+	ld l,Interaction.speed		; $7c1f
+	ld (hl),SPEED_80		; $7c21
+	ld l,Interaction.angle		; $7c23
 	ld (hl),$18		; $7c25
-	ld l,$46		; $7c27
-	ld (hl),$3c		; $7c29
-	ld l,$42		; $7c2b
+
+	ld l,Interaction.counter1		; $7c27
+	ld (hl),60		; $7c29
+	ld l,Interaction.subid		; $7c2b
 	ld a,(hl)		; $7c2d
 	or a			; $7c2e
 	jp z,objectSetVisiblec2		; $7c2f
 	jp objectSetVisiblec0		; $7c32
-	ld e,$45		; $7c35
+
+@state1:
+	ld e,Interaction.state2		; $7c35
 	ld a,(de)		; $7c37
 	rst_jumpTable			; $7c38
-.dw $7c47
-.dw $7c4e
-.dw $7c68
-.dw $7c7d
-.dw $7ccd
-.dw $7ce4
-.dw $7cf2
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw @substate4
+	.dw @substate5
+	.dw @substate6
+
+@substate0:
 	call interactionDecCounter1		; $7c47
 	ret nz			; $7c4a
 	call interactionIncState2		; $7c4b
+
+@substate1:
 	call interactionAnimate		; $7c4e
 	call objectApplySpeed		; $7c51
-	cp $68			; $7c54
+	cp $68 ; [xh]
 	ret nz			; $7c56
+
 	call interactionIncState2		; $7c57
-	ld l,$46		; $7c5a
-	ld (hl),$b4		; $7c5c
-	ld l,$42		; $7c5e
+	ld l,Interaction.counter1		; $7c5a
+	ld (hl),180		; $7c5c
+
+	ld l,Interaction.subid		; $7c5e
 	ld a,(hl)		; $7c60
 	or a			; $7c61
 	ret nz			; $7c62
 	ld a,$05		; $7c63
 	jp interactionSetAnimation		; $7c65
+
+@substate2:
 	call interactionDecCounter1		; $7c68
 	ret nz			; $7c6b
-	ld hl,$cfd0		; $7c6c
+	ld hl,wTmpcfc0.genericCutscene.cfd0		; $7c6c
 	ld (hl),$01		; $7c6f
 	call interactionIncState2		; $7c71
-	ld l,$46		; $7c74
+	ld l,Interaction.counter1		; $7c74
 	ld (hl),$04		; $7c76
 	inc l			; $7c78
-	ld (hl),$01		; $7c79
-	jr _label_10_331		; $7c7b
+	ld (hl),$01 ; [counter2]
+	jr @setRandomVar38		; $7c7b
+
+@substate3:
 	ld h,d			; $7c7d
-	ld l,$46		; $7c7e
+	ld l,Interaction.counter1		; $7c7e
 	call decHlRef16WithCap		; $7c80
-	jr nz,_label_10_330	; $7c83
+	jr nz,@label_10_330	; $7c83
+
 	call interactionIncState2		; $7c85
-	ld l,$46		; $7c88
-	ld (hl),$64		; $7c8a
-	ld b,$14		; $7c8c
+	ld l,Interaction.counter1		; $7c88
+	ld (hl),100		; $7c8a
+
+	ld b,SPEED_80 ; Nayru
 	ld c,$04		; $7c8e
-	ld l,$42		; $7c90
-_label_10_328:
+	ld l,Interaction.subid		; $7c90
 	ld a,(hl)		; $7c92
 	or a			; $7c93
-	jr z,_label_10_329	; $7c94
-	ld b,$3c		; $7c96
+	jr z,++			; $7c94
+	ld b,SPEED_180 ; Ralph
 	ld c,$02		; $7c98
-_label_10_329:
-	ld l,$50		; $7c9a
+++
+	ld l,Interaction.speed		; $7c9a
 	ld (hl),b		; $7c9c
 	ld a,c			; $7c9d
 	call interactionSetAnimation		; $7c9e
-	ld hl,$cfd0		; $7ca1
+	ld hl,wTmpcfc0.genericCutscene.cfd0		; $7ca1
 	ld (hl),$02		; $7ca4
 	ret			; $7ca6
-_label_10_330:
-	ld l,$42		; $7ca7
+
+@label_10_330:
+	ld l,Interaction.subid		; $7ca7
 	ld a,(hl)		; $7ca9
 	or a			; $7caa
 	call z,interactionAnimate		; $7cab
-	ld l,$78		; $7cae
+
+	ld l,Interaction.var38		; $7cae
 	dec (hl)		; $7cb0
 	ret nz			; $7cb1
-	ld l,$48		; $7cb2
+
+	ld l,Interaction.direction		; $7cb2
 	ld a,(hl)		; $7cb4
 	xor $01			; $7cb5
 	ld (hl),a		; $7cb7
-	ld e,$42		; $7cb8
+
+	ld e,Interaction.subid		; $7cb8
 	ld a,(de)		; $7cba
 	add a			; $7cbb
 	add (hl)		; $7cbc
 	call interactionSetAnimation		; $7cbd
-_label_10_331:
+
+@setRandomVar38:
 	call getRandomNumber_noPreserveVars		; $7cc0
 	and $03			; $7cc3
 	swap a			; $7cc5
 	add $20			; $7cc7
-	ld e,$78		; $7cc9
+	ld e,Interaction.var38		; $7cc9
 	ld (de),a		; $7ccb
 	ret			; $7ccc
+
+@substate4:
 	call interactionDecCounter1		; $7ccd
 	ret nz			; $7cd0
-	ld b,$78		; $7cd1
-	ld e,$42		; $7cd3
+
+	ld b,120		; $7cd1
+	ld e,Interaction.subid		; $7cd3
 	ld a,(de)		; $7cd5
 	or a			; $7cd6
-	jr nz,_label_10_332	; $7cd7
-	ld b,$a0		; $7cd9
-_label_10_332:
-	ld (hl),b		; $7cdb
-	ld hl,$cfd0		; $7cdc
+	jr nz,+			; $7cd7
+	ld b,160		; $7cd9
++
+	ld (hl),b ; [counter1]
+	ld hl,wTmpcfc0.genericCutscene.cfd0		; $7cdc
 	ld (hl),$03		; $7cdf
 	jp interactionIncState2		; $7ce1
+
+@substate5:
 	call interactionDecCounter1		; $7ce4
 	ret nz			; $7ce7
-	ld (hl),$3c		; $7ce8
-	ld hl,$cfd0		; $7cea
+	ld (hl),60 ; [counter1]
+	ld hl,wTmpcfc0.genericCutscene.cfd0		; $7cea
 	ld (hl),$04		; $7ced
 	jp interactionIncState2		; $7cef
+
+@substate6:
 	call interactionAnimate		; $7cf2
 	call objectApplySpeed		; $7cf5
 	call interactionDecCounter1		; $7cf8
 	ret nz			; $7cfb
-	ld hl,$cfdf		; $7cfc
+	ld hl,wTmpcfc0.genericCutscene.cfdf		; $7cfc
 	ld (hl),$01		; $7cff
 	ret			; $7d01
 
