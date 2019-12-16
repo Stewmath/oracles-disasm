@@ -9703,86 +9703,125 @@ zoraSubid11And12Script:
 	scriptend
 
 
-script7c86:
+; ==============================================================================
+; INTERACID_ZELDA
+; ==============================================================================
+
+; In room of rites, waiting to be rescued by talking to her
+zeldaSubid00Script:
 	setanimation $05
-	setcollisionradii $08 $04
+	setcollisionradii $08,$04
 	makeabuttonsensitive
 	checkabutton
+
 	setdisabledobjectsto11
 	setanimation $06
 	wait 220
-	showtext $3d05
+	showtext TX_3d05
 	wait 60
-	writememory wCutsceneTrigger $0f
+	writememory wCutsceneTrigger, CUTSCENE_ROOM_OF_RITES_COLLAPSE
 	scriptend
-script7c9b:
-	loadscript scriptHlp.script15_775b
-script7c9f:
-	loadscript scriptHlp.script15_7781
-script7ca3:
-	loadscript scriptHlp.script15_7793
-script7ca7:
-	checkmemoryeq $cfd0 $01
+
+
+zeldaSubid01Script:
+	loadscript scriptHlp.zeldaSubid01Script_body
+
+
+zeldaSubid02Script:
+	loadscript scriptHlp.zeldaSubid02Script_body
+
+
+zeldaSubid03Script:
+	loadscript scriptHlp.zeldaSubid03Script_body
+
+
+zeldaSubid04Script:
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $01
 	setanimation $03
 	applyspeed $11
-	checkmemoryeq $cfd0 $02
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $02
+
 	setanimation $03
-	checkmemoryeq $cfd0 $03
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $03
+
 	setanimation $02
-	checkmemoryeq $cfd0 $05
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $05
+
 	setanimation $03
-	checkmemoryeq $cfd0 $07
-	writememory $d008 $01
-	showtext $0607
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $07
+
+	writememory w1Link.direction, DIR_RIGHT
+	showtext TX_0607
 	wait 30
-	writememory $cfd0 $08
+
+	writememory wTmpcfc0.genericCutscene.cfd0, $08
 	wait 45
-	writememory $d008 $01
+
+	writememory w1Link.direction, DIR_RIGHT
 	moveup $11
-	writememory $d008 $00
+
+	writememory w1Link.direction, DIR_UP
 	moveleft $11
 	moveup $41
 	scriptend
-script7ce2:
-	loadscript scriptHlp.script15_77b3
-script7ce6:
-	checkmemoryeq $cfd0 $01
+
+
+zeldaSubid05Script:
+	loadscript scriptHlp.zeldaSubid05Script_body
+
+
+zeldaSubid06Script:
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $01
+
 	setspeed SPEED_100
 	moveup $24
 	moveleft $08
 	setanimation $00
-	writememory $cfd0 $02
-	checkmemoryeq $cfd0 $03
+	writememory wTmpcfc0.genericCutscene.cfd0, $02
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $03
+
 	setanimation $01
-	writememory $cfd0 $04
-	checkmemoryeq $cfd0 $06
+	writememory wTmpcfc0.genericCutscene.cfd0, $04
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $06
+
 	setanimation $00
-	checkmemoryeq $cfd0 $08
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $08
+
 	moveup $38
 	wait 30
 	movedown $08
 	wait 30
-	showtext $0608
+
+	showtext TX_0608
+
 	moveup $48
 	enableinput
 	scriptend
-script7d17:
+
+
+zeldaSubid09Script:
 	checkcfc0bit 0
-	asm15 scriptHlp.createExclamationMark $1e
+	asm15 scriptHlp.createExclamationMark, 30
 	wait 120
+
 	xorcfc0bit 1
 	checkcfc0bit 5
+
 	setspeed SPEED_080
 	setangle $00
 	applyspeed $31
 	checkcfc0bit 6
+
 	setanimation $03
 	wait 15
+
 	setanimation $01
 	wait 15
+
 	setanimation $02
 	checkcfc0bit 7
-	asm15 scriptHlp.createExclamationMark $1e
+
+	asm15 scriptHlp.createExclamationMark, 30
 	scriptend
 
 

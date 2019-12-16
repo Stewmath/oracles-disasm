@@ -1485,6 +1485,17 @@
 
 .ifdef ROM_AGES
 ;;
+; @subid_00{Zelda in room of rites}
+; @subid_01{}
+; @subid_02{}
+; @subid_03{Zelda in vire minigame}
+; @subid_04{In village after getting maku seed, before entering tower}
+; @subid_05{}
+; @subid_06{Zelda in cutscene after being rescued from vire}
+; @subid_07{In Nayru's house after saving her from vire}
+; @subid_08{Zelda standing outside black tower after reveal about ralph?}
+; @subid_09{}
+; @subid_0a{}
 .define INTERACID_ZELDA				$ad
 
 .else; ROM_SEASONS

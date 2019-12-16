@@ -8586,6 +8586,14 @@ zora_setLinkDirectionLeft:
 	ld (w1Link.direction),a		; $7735
 	ret			; $7738
 
+
+; ==============================================================================
+; INTERACID_ZELDA
+; ==============================================================================
+
+;;
+; @addr{7739}
+zelda_warpOutOfVireMinigame:
 	ld a,SNDCTRL_STOPMUSIC		; $7739
 	call playSound		; $773b
 	xor a			; $773e
@@ -8593,81 +8601,108 @@ zora_setLinkDirectionLeft:
 	ld (wMenuDisabled),a		; $7742
 	ld a,GLOBALFLAG_ZELDA_SAVED_FROM_VIRE		; $7745
 	call setGlobalFlag		; $7747
-	ld hl,$7750		; $774a
+	ld hl,@warpDest		; $774a
 	jp setWarpDestVariables		; $774d
-	add b			; $7750
-	ld h,l			; $7751
-	nop			; $7752
-	add l			; $7753
-	inc bc			; $7754
-_label_15_219:
+
+@warpDest:
+	.db $80 $65 $00 $85 $03
+
+;;
+; @addr{7755}
+zelda_giveBlueJoyRing:
 	ldbc BLUE_JOY_RING, $00		; $7755
 	jp giveRingToLink		; $7758
 
-; @addr{775b}
-script15_775b:
+
+zeldaSubid01Script_body:
 	asm15 objectSetInvisible
-	checkmemoryeq $cfc0 $01
+	checkmemoryeq wTmpcfc0.genericCutscene.state, $01
+
 	asm15 objectSetVisible82
-	checkmemoryeq $cfc0 $06
+	checkmemoryeq wTmpcfc0.genericCutscene.state, $06
+
 	setanimation $03
 	wait 8
-	writememory $cfc0 $07
-	showtext $3d0c
+
+	writememory wTmpcfc0.genericCutscene.state, $07
+	showtext TX_3d0c
 	wait 10
+
 	setanimation $07
 	setangle $18
 	setspeed SPEED_020
 	applyspeed $1e
-	writememory $cfc0 $08
+
+	writememory wTmpcfc0.genericCutscene.state, $08
 	scriptend
-script15_7781:
+
+
+zeldaSubid02Script_body:
 	wait 180
 	setspeed SPEED_080
 	moveleft $c0
-	writeobjectbyte $79 $01
+
+	writeobjectbyte Interaction.var39, $01
 	wait 120
+
 	setanimation $00
 	wait 150
-	writememory $cfdf $01
+
+	writememory wTmpcfc0.genericCutscene.cfdf, $01
 	scriptend
-script15_7793:
-	checkobjectbyteeq $45 $01
+
+
+zeldaSubid03Script_body:
+	checkobjectbyteeq Interaction.state2, $01
 	wait 30
+
 	setspeed SPEED_100
 	moveright $19
 	wait 4
+
 	moveup $10
 	wait 4
+
 	moveright $0d
 	wait 8
-	setmusic $38
-	showtext $0601
-	asm15 $7755
+
+	setmusic MUS_ZELDA_SAVED
+	showtext TX_0601
+	asm15 zelda_giveBlueJoyRing
 	wait 30
-	showtext $0602
+
+	showtext TX_0602
 	wait 30
-	asm15 $7739
+
+	asm15 zelda_warpOutOfVireMinigame
 	scriptend
-script15_77b3:
+
+
+zeldaSubid05Script_body:
 	checkpalettefadedone
 	wait 60
+
 	setspeed SPEED_080
 	movedown $61
 	wait 60
-	asm15 createExclamationMark $28
+
+	asm15 createExclamationMark, 40
 	setanimation $08
 	wait 60
+
 	setspeed SPEED_100
-	writememory $cfd1 $01
+	writememory wTmpcfc0.genericCutscene.cfd1, $01
 	movedown $31
 	wait 6
-	writememory $cfd1 $02
+
+	writememory wTmpcfc0.genericCutscene.cfd1, $02
 	setanimation $03
-	checkmemoryeq $cfd1 $03
-	showtext $0600
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd1, $03
+
+	showtext TX_0600
 	wait 120
-	writememory $cfdf $ff
+
+	writememory wTmpcfc0.genericCutscene.cfdf, $ff
 	scriptend
 
 

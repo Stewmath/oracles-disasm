@@ -92106,130 +92106,178 @@ _zora_textIndices:
 	.db <TX_3428, <TX_3428, <TX_3429, <TX_3429 ; 9
 
 
+; ==============================================================================
+; INTERACID_ZELDA
+; ==============================================================================
 interactionCodead:
-	ld e,$44		; $62a9
+	ld e,Interaction.state		; $62a9
 	ld a,(de)		; $62ab
 	rst_jumpTable			; $62ac
-.dw $62b1
-.dw $6381
+	.dw _zelda_state0
+	.dw _zelda_state1
+
+_zelda_state0:
 	ld a,$01		; $62b1
-	ld (de),a		; $62b3
+	ld (de),a ; [state]
 	call interactionInitGraphics		; $62b4
 	call objectSetVisiblec2		; $62b7
-	ld e,$42		; $62ba
+
+	ld e,Interaction.subid		; $62ba
 	ld a,(de)		; $62bc
 	rst_jumpTable			; $62bd
-.dw $6360
-.dw $637e
-.dw $637e
-.dw $62f6
-.dw $62d4
-.dw $637b
-.dw $637e
-.dw $6304
-.dw $632c
-.dw $637e
-.dw $6346
+	.dw @initSubid00
+	.dw @commonInit
+	.dw @commonInit
+	.dw @initSubid03
+	.dw @initSubid04
+	.dw @commonInitWithExtraGraphics
+	.dw @commonInit
+	.dw @initSubid07
+	.dw @initSubid08
+	.dw @commonInit
+	.dw @initSubid0a
+
+@initSubid04:
 	call checkIsLinkedGame		; $62d4
 	jp z,interactionDeleteAndUnmarkSolidPosition		; $62d7
+
 	ld a,TREASURE_MAKU_SEED		; $62da
 	call checkTreasureObtained		; $62dc
 	jp nc,interactionDeleteAndUnmarkSolidPosition		; $62df
+
 	ld a,GLOBALFLAG_PRE_BLACK_TOWER_CUTSCENE_DONE		; $62e2
 	call checkGlobalFlag		; $62e4
 	jp nz,interactionDeleteAndUnmarkSolidPosition		; $62e7
+
 	ld h,d			; $62ea
-	ld l,$50		; $62eb
-	ld (hl),$28		; $62ed
-	ld l,$49		; $62ef
+	ld l,Interaction.speed		; $62eb
+	ld (hl),SPEED_100		; $62ed
+	ld l,Interaction.angle		; $62ef
 	ld (hl),$08		; $62f1
-	jp $637e		; $62f3
+	jp @commonInit		; $62f3
+
+@initSubid03:
 	ld bc,$4820		; $62f6
 	call interactionSetPosition		; $62f9
 	ld a,$01		; $62fc
 	call interactionSetAnimation		; $62fe
-	jp $637e		; $6301
+	jp @commonInit		; $6301
+
+@initSubid07:
 	ld a,GLOBALFLAG_GOT_RING_FROM_ZELDA		; $6304
 	call checkGlobalFlag		; $6306
 	jp z,interactionDeleteAndUnmarkSolidPosition		; $6309
+
 	ld a,TREASURE_MAKU_SEED		; $630c
 	call checkTreasureObtained		; $630e
 	jp c,interactionDeleteAndUnmarkSolidPosition		; $6311
+
 	ld a,GLOBALFLAG_SAVED_NAYRU		; $6314
 	call checkGlobalFlag		; $6316
-	ld a,$06		; $6319
-	jr nz,_label_0b_229	; $631b
-	ld a,$05		; $631d
-_label_0b_229:
-	ld e,$72		; $631f
+	ld a,<TX_0606		; $6319
+	jr nz,@actAsGenericNpc			; $631b
+	ld a,<TX_0605		; $631d
+
+@actAsGenericNpc:
+	ld e,Interaction.textID		; $631f
 	ld (de),a		; $6321
 	inc e			; $6322
-	ld a,$06		; $6323
+	ld a,>TX_0600		; $6323
 	ld (de),a		; $6325
 	ld hl,genericNpcScript		; $6326
 	jp interactionSetScript		; $6329
+
+@initSubid08:
 	call checkIsLinkedGame		; $632c
 	jp z,interactionDeleteAndUnmarkSolidPosition		; $632f
+
 	ld a,GLOBALFLAG_PRE_BLACK_TOWER_CUTSCENE_DONE		; $6332
 	call checkGlobalFlag		; $6334
 	jp z,interactionDeleteAndUnmarkSolidPosition		; $6337
+
 	ld a,GLOBALFLAG_FLAME_OF_DESPAIR_LIT		; $633a
 	call checkGlobalFlag		; $633c
 	jp nz,interactionDeleteAndUnmarkSolidPosition		; $633f
-	ld a,$0b		; $6342
-	jr _label_0b_229		; $6344
+
+	ld a,<TX_060b		; $6342
+	jr @actAsGenericNpc		; $6344
+
+@initSubid0a:
 	call checkIsLinkedGame		; $6346
 	jp z,interactionDeleteAndUnmarkSolidPosition		; $6349
+
 	ld a,TREASURE_MAKU_SEED		; $634c
 	call checkTreasureObtained		; $634e
 	jp nc,interactionDeleteAndUnmarkSolidPosition		; $6351
+
 	ld a,GLOBALFLAG_PRE_BLACK_TOWER_CUTSCENE_DONE		; $6354
 	call checkGlobalFlag		; $6356
 	jp nz,interactionDeleteAndUnmarkSolidPosition		; $6359
-	ld a,$0a		; $635c
-	jr _label_0b_229		; $635e
+
+	ld a,<TX_060a		; $635c
+	jr @actAsGenericNpc		; $635e
+
+@initSubid00:
 	call getThisRoomFlags		; $6360
 	bit 7,a			; $6363
-	jr z,_label_0b_230	; $6365
+	jr z,@commonInitWithExtraGraphics	; $6365
 	ld a,$01		; $6367
 	ld (wDisableScreenTransitions),a		; $6369
 	ld a,(wActiveMusic)		; $636c
 	or a			; $636f
-	jr z,_label_0b_230	; $6370
+	jr z,@commonInitWithExtraGraphics	; $6370
 	xor a			; $6372
 	ld (wActiveMusic),a		; $6373
 	ld a,MUS_ZELDA_SAVED		; $6376
 	call playSound		; $6378
-_label_0b_230:
+
+@commonInitWithExtraGraphics:
 	call interactionLoadExtraGraphics		; $637b
+
+@commonInit:
 	call $63ba		; $637e
+
+
+_zelda_state1:
 	ld e,$42		; $6381
 	ld a,(de)		; $6383
 	rst_jumpTable			; $6384
-.dw $639b
-.dw $639b
-.dw $63a1
-.dw $639b
-.dw $63ab
-.dw $639b
-.dw $639b
-.dw $63b4
-.dw $63b4
-.dw $639b
-.dw $63b4
+	.dw @animateAndRunScript
+	.dw @animateAndRunScript
+	.dw @runSubid2
+	.dw @animateAndRunScript
+	.dw @runSubid4
+	.dw @animateAndRunScript
+	.dw @animateAndRunScript
+	.dw @faceLinkAndRunScript
+	.dw @faceLinkAndRunScript
+	.dw @animateAndRunScript
+	.dw @faceLinkAndRunScript
+
+@animateAndRunScript:
 	call interactionAnimate		; $639b
 	jp interactionRunScript		; $639e
-	ld e,$79		; $63a1
+
+@runSubid2:
+	ld e,Interaction.var39		; $63a1
 	ld a,(de)		; $63a3
 	or a			; $63a4
 	call z,interactionAnimate		; $63a5
 	jp interactionRunScript		; $63a8
+
+@runSubid4:
 	call interactionRunScript		; $63ab
 	jp nc,interactionAnimateBasedOnSpeed		; $63ae
 	jp interactionDeleteAndUnmarkSolidPosition		; $63b1
+
+@faceLinkAndRunScript:
 	call interactionRunScript		; $63b4
 	jp npcFaceLinkAndAnimate		; $63b7
-	ld e,$42		; $63ba
+
+;;
+; @addr{63ba}
+_zelda_loadScript:
+	ld e,Interaction.subid		; $63ba
 	ld a,(de)		; $63bc
 	ld hl,@scriptTable		; $63bd
 	rst_addDoubleIndex			; $63c0
@@ -92238,18 +92286,17 @@ _label_0b_230:
 	ld l,a			; $63c3
 	jp interactionSetScript		; $63c4
 
-; @addr{63c7}
 @scriptTable:
-	.dw script7c86
-	.dw script7c9b
-	.dw script7c9f
-	.dw script7ca3
-	.dw script7ca7
-	.dw script7ce2
-	.dw script7ce6
+	.dw zeldaSubid00Script
+	.dw zeldaSubid01Script
+	.dw zeldaSubid02Script
+	.dw zeldaSubid03Script
+	.dw zeldaSubid04Script
+	.dw zeldaSubid05Script
+	.dw zeldaSubid06Script
 	.dw stubScript
 	.dw stubScript
-	.dw script7d17
+	.dw zeldaSubid09Script
 	.dw stubScript
 
 
