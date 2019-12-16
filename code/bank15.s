@@ -8492,52 +8492,100 @@ tokkayScript_justHeardTune_body:
 	setstate $01
 	jump2byte tokkeyScript_alreadyTaughtTune
 
+
+; ==============================================================================
+; INTERACID_ZORA
+; ==============================================================================
+;;
+; @addr{76de}
+zora_createExclamationMark:
 	ld bc,$f200		; $76de
-	ld a,$1e		; $76e1
+	ld a,30		; $76e1
 	jp objectCreateExclamationMark		; $76e3
-	ld bc,$ff00		; $76e6
+
+;;
+; @addr{76e6}
+zora_beginJump:
+	ld bc,-$100		; $76e6
 	jp objectSetSpeedZ		; $76e9
+
+;;
+; @addr{76ec}
+zora_makeLinkFaceDown:
 	ld a,$02		; $76ec
 	ld (w1Link.direction),a		; $76ee
 	jp clearAllParentItems		; $76f1
+
+;;
+; @addr{76f4}
+zora_moveToLinksXPosition:
 	ld a,(w1Link.xh)		; $76f4
 	ld b,a			; $76f7
-	ld e,$4d		; $76f8
+	ld e,Interaction.xh		; $76f8
 	ld a,(de)		; $76fa
 	sub b			; $76fb
-	ld e,$47		; $76fc
+	ld e,Interaction.counter2		; $76fc
 	ld (de),a		; $76fe
 	ret			; $76ff
+
+;;
+; Zora subid 10 waits for Link to move down before starting cutscene
+; @addr{7700}
+zora_waitForLinkToMoveDown:
 	ld a,(w1Link.yh)		; $7700
 	cp $18			; $7703
 	ld a,$01		; $7705
-	jr nc,_label_15_216	; $7707
+	jr nc,+			; $7707
 	dec a			; $7709
-_label_15_216:
-	ld ($cfc1),a		; $770a
++
+	ld (wTmpcfc0.genericCutscene.cfc1),a		; $770a
 	ret			; $770d
+
+;;
+; @addr{770e}
+zora_checkIsLinkedGame:
 	call checkIsLinkedGame		; $770e
 	ld a,$01		; $7711
-	jr nz,_label_15_217	; $7713
+	jr nz,+			; $7713
 	dec a			; $7715
-_label_15_217:
-	ld ($cfc1),a		; $7716
++
+	ld (wTmpcfc0.genericCutscene.cfc1),a		; $7716
 	ret			; $7719
+
+;;
+; @addr{771a}
+zora_createExclamationMarkToTheRight:
 	ld a,SND_CLINK		; $771a
 	call playSound		; $771c
 	ld a,$2d		; $771f
 	ld bc,$f808		; $7721
 	jp objectCreateExclamationMark		; $7724
+
+;;
+; @addr{7727}
+zora_setLinkDirectionUp:
 	ld a,$00		; $7727
-	jr _label_15_218		; $7729
+	jr ++		; $7729
+;;
+; @addr{772b}
+zora_setLinkDirectionRight:
 	ld a,$01		; $772b
-	jr _label_15_218		; $772d
+	jr ++		; $772d
+;;
+; Unused
+; @addr{772f}
+zora_setLinkDirectionDown:
 	ld a,$02		; $772f
-	jr _label_15_218		; $7731
+	jr ++		; $7731
+;;
+; Unused
+; @addr{7733}
+zora_setLinkDirectionLeft:
 	ld a,$03		; $7733
-_label_15_218:
+++
 	ld (w1Link.direction),a		; $7735
 	ret			; $7738
+
 	ld a,SNDCTRL_STOPMUSIC		; $7739
 	call playSound		; $773b
 	xor a			; $773e

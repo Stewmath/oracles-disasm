@@ -2918,8 +2918,10 @@ wRoomLayoutEnd: ; $cfc0
 
 	state: ; $cfc0
 		db
+	cfc1:
+		db
 	filler1:
-		dsb $0f
+		dsb $0e
 	cfd0: ; $cfd0
 	; Acts as a synchronization thing, ie. between objects?
 		db

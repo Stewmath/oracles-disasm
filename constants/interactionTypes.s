@@ -1446,6 +1446,34 @@
 .define INTERACID_DIN				$aa
 
 ;;
+; @subid_00{?}
+; @subid_01{?}
+; @subid_02{?}
+; @subid_03{?}
+; @subid_04{?}
+; @subid_05{Present zora palace, top-right}
+; @subid_06{Present zora palace, middle-left}
+; @subid_07{Present zora palace, bottom-right}
+; @subid_08{?}
+; @subid_09{?}
+; @subid_0a{?}
+; @subid_0b{?}
+; @subid_0c{?}
+; @subid_0d{?}
+; @subid_0e{Zora studying in library}
+; @subid_0f{?}
+; @subid_10{Gives zora scale to Link after beating jabu}
+; @subid_11{Guards sea of storms entrance (past/unlinked)}
+; @subid_12{Guards sea of storms entrance (present/linked)}
+; @subid_13{?}
+; @subid_14{?}
+; @subid_15{?}
+; @subid_16{?}
+; @subid_17{?}
+; @subid_18{?}
+; @subid_19{?}
+; @subid_1a{?}
+; @subid_1b{?}
 .define INTERACID_ZORA				$ab
 
 ;;

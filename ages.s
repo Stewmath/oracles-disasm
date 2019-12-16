@@ -91710,189 +91710,239 @@ interactionCodeaa:
 	jp objectSetSpeedZ		; $6064
 
 
+; ==============================================================================
+; INTERACID_ZORA
+;
+; Variables:
+;   var03: ?
+;   var38: ?
+; ==============================================================================
 interactionCodeab:
-	ld e,$42		; $6067
+	ld e,Interaction.subid		; $6067
 	ld a,(de)		; $6069
 	rst_jumpTable			; $606a
-.dw $60a3
-.dw $60a3
-.dw $60a3
-.dw $60a3
-.dw $60a3
-.dw $60a3
-.dw $60a3
-.dw $60a3
-.dw $60a3
-.dw $60a3
-.dw $6110
-.dw $6110
-.dw $60e4
-.dw $60e4
-.dw $61f8
-.dw $60a3
-.dw $6186
-.dw $6186
-.dw $6186
-.dw $6228
-.dw $6228
-.dw $6228
-.dw $6228
-.dw $6228
-.dw $6228
-.dw $6228
-.dw $6228
-.dw $6228
+	.dw _zora_subid00
+	.dw _zora_subid01
+	.dw _zora_subid02
+	.dw _zora_subid03
+	.dw _zora_subid04
+	.dw _zora_subid05
+	.dw _zora_subid06
+	.dw _zora_subid07
+	.dw _zora_subid08
+	.dw _zora_subid09
+	.dw _zora_subid0A
+	.dw _zora_subid0B
+	.dw _zora_subid0C
+	.dw _zora_subid0D
+	.dw _zora_subid0E
+	.dw _zora_subid0F
+	.dw _zora_subid10
+	.dw _zora_subid11
+	.dw _zora_subid12
+	.dw _zora_subid13
+	.dw _zora_subid14
+	.dw _zora_subid15
+	.dw _zora_subid16
+	.dw _zora_subid17
+	.dw _zora_subid18
+	.dw _zora_subid19
+	.dw _zora_subid1A
+	.dw _zora_subid1B
+
+
+_zora_subid00:
+_zora_subid01:
+_zora_subid02:
+_zora_subid03:
+_zora_subid04:
+_zora_subid05:
+_zora_subid06:
+_zora_subid07:
+_zora_subid08:
+_zora_subid09:
+_zora_subid0F:
 	call checkInteractionState		; $60a3
-	jr z,_label_0b_212	; $60a6
-	call $6267		; $60a8
-	ld e,$42		; $60ab
+	jr z,@state0	; $60a6
+
+@state1:
+	call _zora_getWorldState		; $60a8
+	ld e,Interaction.subid		; $60ab
 	ld a,(de)		; $60ad
 	add a			; $60ae
 	add a			; $60af
 	add b			; $60b0
-	ld hl,_data_0b_6281		; $60b1
+	ld hl,_zora_textIndices		; $60b1
 	rst_addAToHl			; $60b4
-	ld e,$72		; $60b5
+	ld e,Interaction.textID		; $60b5
 	ld a,(hl)		; $60b7
 	ld (de),a		; $60b8
 	call interactionRunScript		; $60b9
 	jp npcFaceLinkAndAnimate		; $60bc
-_label_0b_212:
-	call $6267		; $60bf
+
+@state0:
+	call _zora_getWorldState		; $60bf
 	ld a,b			; $60c2
 	or a			; $60c3
-	ld e,$42		; $60c4
+	ld e,Interaction.subid		; $60c4
 	ld a,(de)		; $60c6
-	jr nz,_label_0b_213	; $60c7
+	jr nz,++		; $60c7
 	cp $06			; $60c9
 	jp nc,interactionDelete		; $60cb
-_label_0b_213:
+++
 	ld hl,genericNpcScript		; $60ce
-_label_0b_214:
+
+_zora_commonInitWithScript:
 	call interactionSetScript		; $60d1
+
+_zora_commonInit:
 	call interactionInitGraphics		; $60d4
 	call interactionSetAlwaysUpdateBit		; $60d7
 	call interactionIncState		; $60da
-	ld l,$73		; $60dd
-	ld (hl),$34		; $60df
+	ld l,Interaction.textID+1		; $60dd
+	ld (hl),>TX_3400		; $60df
 	jp objectSetVisiblec2		; $60e1
+
+
+_zora_subid0C:
+_zora_subid0D:
 	call checkInteractionState		; $60e4
-	jr z,_label_0b_217	; $60e7
+	jr z,@state0	; $60e7
+
+@state1:
 	ld c,$20		; $60e9
 	call objectUpdateSpeedZ_paramC		; $60eb
 	ret nz			; $60ee
 	call interactionRunScript		; $60ef
-	jr nc,_label_0b_216	; $60f2
-	ld hl,$cfc0		; $60f4
-_label_0b_215:
+	jr nc,++	; $60f2
+	ld hl,wTmpcfc0.genericCutscene.state		; $60f4
 	set 7,(hl)		; $60f7
-_label_0b_216:
+++
 	jp interactionAnimate		; $60f9
-_label_0b_217:
-	ld e,$50		; $60fc
-	ld a,$3c		; $60fe
+
+@state0:
+	ld e,Interaction.speed		; $60fc
+	ld a,SPEED_180		; $60fe
 	ld (de),a		; $6100
-_label_0b_218:
-	ld e,$42		; $6101
-_label_0b_219:
+	ld e,Interaction.subid		; $6101
 	ld a,(de)		; $6103
 	cp $0c			; $6104
-	ld hl,script7bf2		; $6106
-	jr z,_label_0b_214	; $6109
-	ld hl,script7c0a		; $610b
-	jr _label_0b_214		; $610e
-	ld e,$44		; $6110
+	ld hl,zoraSubid0cScript		; $6106
+	jr z,_zora_commonInitWithScript	; $6109
+	ld hl,zoraSubid0dScript		; $610b
+	jr _zora_commonInitWithScript		; $610e
+
+
+_zora_subid0A:
+_zora_subid0B:
+	ld e,Interaction.state		; $6110
 	ld a,(de)		; $6112
 	rst_jumpTable			; $6113
-.dw $611c
-.dw $612d
-.dw $6138
-.dw $616e
-	call $60d4		; $611c
-	ld l,$46		; $611f
-	ld (hl),$1e		; $6121
-	ld l,$42		; $6123
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+
+@state0:
+	call _zora_commonInit		; $611c
+	ld l,Interaction.counter1		; $611f
+	ld (hl),30		; $6121
+	ld l,Interaction.subid		; $6123
 	ldi a,(hl)		; $6125
 	sub $0a			; $6126
 	swap a			; $6128
 	rrca			; $612a
-	ld (hl),a		; $612b
+	ld (hl),a ; [var03]
 	ret			; $612c
+
+@state1:
 	call interactionDecCounter1		; $612d
 	ret nz			; $6130
-	ld (hl),$78		; $6131
+	ld (hl),120 ; [counter1]
 	inc l			; $6133
-	inc (hl)		; $6134
+	inc (hl) ; [counter2]
 	jp interactionIncState		; $6135
+
+@state2:
 	call interactionDecCounter1		; $6138
-	jr nz,_label_0b_220	; $613b
-	ld (hl),$5a		; $613d
+	jr nz,++		; $613b
+	ld (hl),90		; $613d
 	ld a,$02		; $613f
 	call interactionSetAnimation		; $6141
 	jp interactionIncState		; $6144
-_label_0b_220:
+++
 	inc l			; $6147
-	dec (hl)		; $6148
+	dec (hl) ; [counter2]
 	ret nz			; $6149
-	ld (hl),$14		; $614a
-	ld l,$78		; $614c
+
+	ld (hl),20		; $614a
+
+	ld l,Interaction.var38		; $614c
 	ld a,(hl)		; $614e
 	inc a			; $614f
 	and $07			; $6150
 	ld (hl),a		; $6152
-	ld l,$43		; $6153
+
+	ld l,Interaction.var03		; $6153
 	add (hl)		; $6155
-	ld hl,$615e		; $6156
+	ld hl,@animationTable		; $6156
 	rst_addAToHl			; $6159
 	ld a,(hl)		; $615a
 	jp interactionSetAnimation		; $615b
-	nop			; $615e
-	inc bc			; $615f
-	ld bc,$0002		; $6160
-	ld bc,$0203		; $6163
-	inc bc			; $6166
-	ld bc,$0003		; $6167
-	inc bc			; $616a
-	ld (bc),a		; $616b
-	nop			; $616c
-	ld bc,$cccd		; $616d
-	inc hl			; $6170
-	jr nz,_label_0b_221	; $6171
-	ld hl,$cfc0		; $6173
+
+@animationTable:
+	.db $00 $03 $01 $02 $00 $01 $03 $02
+	.db $03 $01 $03 $00 $03 $02 $00 $01
+
+@state3:
+	call interactionDecCounter1		; $616e
+	jr nz,++		; $6171
+	ld hl,wTmpcfc0.genericCutscene.state		; $6173
 	set 7,(hl)		; $6176
-_label_0b_221:
+++
 	ld c,$20		; $6178
 	call objectUpdateSpeedZ_paramC		; $617a
 	ret nz			; $617d
-	ld l,$54		; $617e
-	ld a,$80		; $6180
+	ld l,Interaction.speedZ		; $617e
+	ld a,<(-$180)		; $6180
 	ldi (hl),a		; $6182
-	ld (hl),$fe		; $6183
+	ld (hl),>(-$180)		; $6183
 	ret			; $6185
-	ld e,$44		; $6186
+
+
+_zora_subid10:
+_zora_subid11:
+_zora_subid12:
+	ld e,Interaction.state		; $6186
 	ld a,(de)		; $6188
 	rst_jumpTable			; $6189
-.dw $6190
-.dw $61e6
-.dw $61ef
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
 	call interactionInitGraphics		; $6190
 	call objectSetVisible82		; $6193
 	call interactionIncState		; $6196
-	ld e,$42		; $6199
+
+	ld e,Interaction.subid		; $6199
 	ld a,(de)		; $619b
 	sub $10			; $619c
 	ld b,a			; $619e
-	ld hl,scriptTable61e0		; $619f
+	ld hl,@scriptTable		; $619f
 	rst_addDoubleIndex			; $61a2
 	ldi a,(hl)		; $61a3
 	ld h,(hl)		; $61a4
 	ld l,a			; $61a5
 	call interactionSetScript		; $61a6
+
 	ld a,b			; $61a9
 	rst_jumpTable			; $61aa
-.dw $61b1
-.dw $61c9
-.dw $61d1
+	.dw @subid10
+	.dw @subid11
+	.dw @subid12
+
+@subid10:
 	call getThisRoomFlags		; $61b1
 	and $20			; $61b4
 	jp nz,interactionDelete		; $61b6
@@ -91902,114 +91952,159 @@ _label_0b_221:
 	ld a,$03		; $61c1
 	call interactionSetAnimation		; $61c3
 	jp interactionIncState		; $61c6
+
+@subid11:
 	call checkIsLinkedGame		; $61c9
 	jp nz,interactionDelete		; $61cc
-	jr _label_0b_222		; $61cf
+	jr @deleteIfFlagSet		; $61cf
+
+@subid12:
 	call checkIsLinkedGame		; $61d1
 	jp z,interactionDelete		; $61d4
-_label_0b_222:
+
+@deleteIfFlagSet:
 	call getThisRoomFlags		; $61d7
 	and $40			; $61da
 	jp nz,interactionDelete		; $61dc
 	ret			; $61df
 
-; @addr{61e0}
-scriptTable61e0:
-	.dw script7c29
-	.dw script7c4e
-	.dw script7c4e
+@scriptTable:
+	.dw zoraSubid10Script
+	.dw zoraSubid11And12Script
+	.dw zoraSubid11And12Script
 
+@state1:
 	call interactionRunScript		; $61e6
 	jp c,interactionDelete		; $61e9
 	jp npcFaceLinkAndAnimate		; $61ec
+
+@state2:
 	call interactionRunScript		; $61ef
 	jp c,interactionDelete		; $61f2
 	jp interactionAnimate		; $61f5
+
+
+_zora_subid0E:
 	call checkInteractionState		; $61f8
-	jr z,_label_0b_223	; $61fb
+	jr z,@state0	; $61fb
+
+@state1:
 	call interactionRunScript		; $61fd
 	jp interactionAnimateAsNpc		; $6200
-_label_0b_223:
+
+@state0:
 	call interactionInitGraphics		; $6203
 	call interactionIncState		; $6206
-	ld l,$73		; $6209
-	ld (hl),$34		; $620b
+	ld l,Interaction.textID+1		; $6209
+	ld (hl),>TX_3400		; $620b
 	ld a,GLOBALFLAG_WATER_POLLUTION_FIXED		; $620d
 	call checkGlobalFlag		; $620f
-	ld a,$33		; $6212
-	jr z,_label_0b_224	; $6214
-	ld a,$34		; $6216
-_label_0b_224:
-	ld e,$72		; $6218
+	ld a,<TX_3433		; $6212
+	jr z,+			; $6214
+	ld a,<TX_3434		; $6216
++
+	ld e,Interaction.textID		; $6218
 	ld (de),a		; $621a
 	xor a			; $621b
 	call interactionSetAnimation		; $621c
 	call objectSetVisiblec2		; $621f
-	ld hl,script7c21		; $6222
+	ld hl,zoraSubid0eScript		; $6222
 	jp interactionSetScript		; $6225
+
+
+_zora_subid13:
+_zora_subid14:
+_zora_subid15:
+_zora_subid16:
+_zora_subid17:
+_zora_subid18:
+_zora_subid19:
+_zora_subid1A:
+_zora_subid1B:
 	call checkInteractionState		; $6228
-	jr z,_label_0b_225	; $622b
+	jr z,@state0	; $622b
+
+@state1:
 	call interactionRunScript		; $622d
 	jp npcFaceLinkAndAnimate		; $6230
-_label_0b_225:
-	call $60d4		; $6233
+
+@state0:
+	call _zora_commonInit		; $6233
 	ld a,GLOBALFLAG_WATER_POLLUTION_FIXED		; $6236
 	call checkGlobalFlag		; $6238
 	ld b,$00		; $623b
-	jr z,_label_0b_226	; $623d
+	jr z,+			; $623d
 	inc b			; $623f
-_label_0b_226:
-	ld e,$42		; $6240
++
+	ld e,Interaction.subid		; $6240
 	ld a,(de)		; $6242
 	sub $13			; $6243
 	add a			; $6245
 	add b			; $6246
-	ld hl,$6255		; $6247
+	ld hl,@textTable		; $6247
 	rst_addAToHl			; $624a
-	ld e,$72		; $624b
+	ld e,Interaction.textID		; $624b
 	ld a,(hl)		; $624d
 	ld (de),a		; $624e
 	ld hl,genericNpcScript		; $624f
 	jp interactionSetScript		; $6252
-	ld b,a			; $6255
-	ld c,b			; $6256
-	ld c,c			; $6257
-	ld c,d			; $6258
-	ld c,e			; $6259
-	ld c,h			; $625a
-	ld b,(hl)		; $625b
-	ld b,(hl)		; $625c
-	ld b,b			; $625d
-	ld b,c			; $625e
-	ld b,d			; $625f
-	ld b,e			; $6260
-	ld b,h			; $6261
-	ld b,l			; $6262
-	ld c,l			; $6263
-	ld c,l			; $6264
-	ld c,(hl)		; $6265
-	ld c,(hl)		; $6266
+
+
+; Table of text to show before/after water pollution is fixed for each zora
+@textTable:
+	.db <TX_3447, <TX_3448 ; $13 == [subid]
+	.db <TX_3449, <TX_344a ; $14
+	.db <TX_344b, <TX_344c ; $15
+	.db <TX_3446, <TX_3446 ; $16
+	.db <TX_3440, <TX_3441 ; $17
+	.db <TX_3442, <TX_3443 ; $18
+	.db <TX_3444, <TX_3445 ; $19
+	.db <TX_344d, <TX_344d ; $1a
+	.db <TX_344e, <TX_344e ; $1b
+
+;;
+; @param[out]	b	0 if king zora is uncured;
+;			1 if he's cured;
+;			2 if pollution is fixed;
+;			3 if beat Jabu (except it's bugged and this doesn't happen)
+; @addr{6267}
+_zora_getWorldState:
 	ld a,GLOBALFLAG_KING_ZORA_CURED		; $6267
 	call checkGlobalFlag		; $6269
 	ld b,$00		; $626c
 	ret z			; $626e
+
 	ld a,GLOBALFLAG_WATER_POLLUTION_FIXED		; $626f
 	call checkGlobalFlag		; $6271
 	ld b,$01		; $6274
 	ret z			; $6276
+
 	ld a,(wEssencesObtained)		; $6277
 	bit 6,a			; $627a
 	ld b,$02		; $627c
 	ret nc			; $627e
+	; BUG: this should be "ret z"
+
 	inc b			; $627f
 	ret			; $6280
 
-_data_0b_6281:
-	.db $10 $11 $12 $12 $13 $14 $14 $14
-	.db $15 $16 $16 $16 $17 $18 $19 $19
-	.db $1a $1b $1b $1b $20 $21 $22 $23
-	.db $24 $24 $24 $24 $25 $25 $26 $26
-	.db $27 $27 $27 $27 $28 $28 $29 $29
+
+; Text 0: Before healing king
+; Text 1: After healing king
+; Text 2: After fixing pollution
+; Text 3: After beating jabu (bugged to never have this text read)
+_zora_textIndices:
+	.db <TX_3410, <TX_3411, <TX_3412, <TX_3412 ; 0 == [subid]
+	.db <TX_3413, <TX_3414, <TX_3414, <TX_3414 ; 1
+	.db <TX_3415, <TX_3416, <TX_3416, <TX_3416 ; 2
+	.db <TX_3417, <TX_3418, <TX_3419, <TX_3419 ; 3
+	.db <TX_341a, <TX_341b, <TX_341b, <TX_341b ; 4
+	.db <TX_3420, <TX_3421, <TX_3422, <TX_3423 ; 5
+	.db <TX_3424, <TX_3424, <TX_3424, <TX_3424 ; 6
+	.db <TX_3425, <TX_3425, <TX_3426, <TX_3426 ; 7
+	.db <TX_3427, <TX_3427, <TX_3427, <TX_3427 ; 8
+	.db <TX_3428, <TX_3428, <TX_3429, <TX_3429 ; 9
+
 
 interactionCodead:
 	ld e,$44		; $62a9

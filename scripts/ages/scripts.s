@@ -9569,6 +9569,9 @@ tokkeyScriptFunc_hopAcrossDesk:
 	retscript
 
 
+; ==============================================================================
+; INTERACID_DIN
+; ==============================================================================
 ; Unused?
 dinScript:
 	setanimation $05
@@ -9583,98 +9586,123 @@ dinScript:
 	writememory wCutsceneTrigger, CUTSCENE_ROOM_OF_RITES_COLLAPSE
 	scriptend
 
-script7bf2:
+
+; ==============================================================================
+; INTERACID_ZORA
+; ==============================================================================
+
+zoraSubid0cScript:
 	wait 60
 	setanimation $03
 	wait 30
 	setanimation $01
 	wait 30
-	asm15 $76de
+	asm15 scriptHlp.zora_createExclamationMark
 	setanimation $02
 	wait 20
-	asm15 $76e6
+	asm15 scriptHlp.zora_beginJump
 	wait 8
 	movedown $11
 	moveright $17
-script7c07:
+
+zoraScript_end:
 	wait 30
 	xorcfc0bit 7
 	scriptend
-script7c0a:
+
+zoraSubid0dScript:
 	wait 60
 	setanimation $01
 	wait 30
 	setanimation $03
 	wait 30
-	asm15 $76de
+	asm15 scriptHlp.zora_createExclamationMark
 	setanimation $02
 	wait 20
-	asm15 $76e6
+	asm15 scriptHlp.zora_beginJump
 	wait 8
 	moveup $11
 	moveleft $17
-	jump2byte script7c07
-script7c21:
+	jump2byte zoraScript_end
+
+
+; Zora studying in library
+zoraSubid0eScript:
 	initcollisions
-script7c22:
+@loop:
 	checkabutton
 	turntofacelink
 	showloadedtext
 	setanimation $00
-	jump2byte script7c22
-script7c29:
-	asm15 $7700
-	jumptable_memoryaddress $cfc1
-	.dw script7c29
-	.dw script7c33
-script7c33:
+	jump2byte @loop
+
+
+; Gives zora scale to Link
+zoraSubid10Script:
+	asm15 scriptHlp.zora_waitForLinkToMoveDown
+	jumptable_memoryaddress wTmpcfc0.genericCutscene.cfc1
+	.dw zoraSubid10Script
+	.dw @linkMovedDown
+
+@linkMovedDown:
 	disableinput
-	asm15 $76ec
+	asm15 scriptHlp.zora_makeLinkFaceDown
 	wait 30
+
 	setspeed SPEED_100
 	setangle $18
-	asm15 $76f4
+	asm15 scriptHlp.zora_moveToLinksXPosition
 	wait 1
+
 	moveup $20
 	wait 30
-	showtext $3430
+	showtext TX_3430
 	wait 30
-	giveitem $4e00
+
+	giveitem TREASURE_ZORA_SCALE_SUBID_00
 	movedown $80
 	enableinput
 	scriptend
-script7c4e:
+
+
+; Guarding entrance to sea of storms
+zoraSubid11And12Script:
 	initcollisions
-	jumpifitemobtained $4e script7c56
-	rungenericnpc $3431
-script7c56:
+	jumpifitemobtained TREASURE_ZORA_SCALE, @gotScale
+	rungenericnpc TX_3431
+
+@gotScale:
 	checkabutton
 	disableinput
-	showtext $3431
+	showtext TX_3431
 	wait 30
-	asm15 $771a
+	asm15 scriptHlp.zora_createExclamationMarkToTheRight
 	wait 60
-	showtext $3432
+	showtext TX_3432
 	wait 30
 	incstate
 	setspeed SPEED_200
-	asm15 $770e
-	jumptable_memoryaddress $cfc1
-	.dw script7c72
-	.dw script7c7b
-script7c72:
+	asm15 scriptHlp.zora_checkIsLinkedGame
+	jumptable_memoryaddress wTmpcfc0.genericCutscene.cfc1
+	.dw @unlinked
+	.dw @linked
+
+@unlinked:
 	moveleft $18
-	asm15 $7727
+	asm15 scriptHlp.zora_setLinkDirectionUp
 	moveup $30
-	jump2byte script7c82
-script7c7b:
+	jump2byte @end
+
+@linked:
 	movedown $10
-	asm15 $772b
+	asm15 scriptHlp.zora_setLinkDirectionRight
 	moveright $40
-script7c82:
+@end:
 	orroomflag $40
 	enableinput
 	scriptend
+
+
 script7c86:
 	setanimation $05
 	setcollisionradii $08 $04
