@@ -109,10 +109,8 @@ seasons:
 
 $(GAME).gbc: $(OBJS) build/linkfile
 	$(LD) -S build/linkfile $@
+	@-tools/verify-checksum.sh $(GAME)
 
-ifeq ($(BUILD_VANILLA),true)
-	@-md5sum -c $(GAME).md5
-endif
 
 $(MAPPINGINDICESFILES): build/tilesets/mappingsDictionary.bin
 $(COLLISIONFILES): build/tilesets/collisionsDictionary.bin
