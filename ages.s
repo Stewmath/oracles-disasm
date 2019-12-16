@@ -92235,7 +92235,7 @@ _zelda_state0:
 	call interactionLoadExtraGraphics		; $637b
 
 @commonInit:
-	call $63ba		; $637e
+	call _zelda_loadScript		; $637e
 
 
 _zelda_state1:
