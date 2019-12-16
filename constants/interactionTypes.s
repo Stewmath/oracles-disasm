@@ -1528,7 +1528,8 @@
 .define INTERACID_TUNI_NUT			$b1
 
 ;;
-.define INTERACID_b2				$b2
+; Shakes the screen and spawns rocks from a volcano
+.define INTERACID_VOLCANO_HANDLER		$b2
 
 ;;
 ; Spawns the harp of ages in Nayru's house, and manages the cutscene that ensues?

@@ -77,6 +77,9 @@
 ; @subid{Seed type (0-5)}
 .define PARTID_SEED_ON_TREE			$10
 
+;;
+.define PARTID_VOLCANO_ROCK			$11
+
 .define PARTID_FLAME	 			$12
 
 ; Not sure if this applies to item drops outside of maple scramble?

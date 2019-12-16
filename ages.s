@@ -92971,24 +92971,31 @@ interactionCodeb1:
 	ld e,:bank3f.interactionCodeb1_body		; $6774
 	jp interBankCall		; $6776
 
+
+; ==============================================================================
+; INTERACID_VOLCANO_HANDLER
+; ==============================================================================
 interactionCodeb2:
 	call checkInteractionState		; $6779
-	jr z,_label_0b_267	; $677c
+	jr z,@state0	; $677c
+
+@state1:
 	ld a,(wFrameCounter)		; $677e
 	and $0f			; $6781
 	ld a,SND_RUMBLE		; $6783
 	call z,playSound		; $6785
+
 	ld a,(wScreenShakeCounterY)		; $6788
 	or a			; $678b
-	jr nz,_label_0b_266	; $678c
+	jr nz,++		; $678c
 	ld a,(wScreenShakeCounterX)		; $678e
-_label_0b_265:
 	or a			; $6791
-	call z,$67c0		; $6792
-_label_0b_266:
+	call z,@runScript		; $6792
+++
 	call interactionDecCounter1		; $6795
 	ret nz			; $6798
-	call $67e1		; $6799
+	call @setRandomCounter1		; $6799
+
 	ld c,$0f		; $679c
 	call getRandomNumber		; $679e
 	and c			; $67a1
@@ -92998,52 +93005,68 @@ _label_0b_266:
 	ld c,a			; $67a6
 	call getFreePartSlot		; $67a7
 	ret nz			; $67aa
-	ld (hl),$11		; $67ab
+	ld (hl),PARTID_VOLCANO_ROCK		; $67ab
 	inc l			; $67ad
-	ld (hl),$01		; $67ae
+	ld (hl),$01 ; [subid]
 	ld b,$00		; $67b0
 	jp objectCopyPositionWithOffset		; $67b2
-_label_0b_267:
+
+@state0:
 	inc a			; $67b5
 	ld (de),a		; $67b6
 	ld (wScreenShakeMagnitude),a		; $67b7
-	ld hl,miniScript67ee		; $67ba
+	ld hl,@script		; $67ba
 	jp interactionSetMiniScript		; $67bd
-_label_0b_268:
+
+@runScript:
 	call interactionGetMiniScript		; $67c0
 	ldi a,(hl)		; $67c3
 	cp $ff			; $67c4
-	jr nz,_label_0b_269	; $67c6
-	ld hl,miniScript67ee		; $67c8
+	jr nz,@handleOpcode	; $67c6
+	ld hl,@script		; $67c8
 	call interactionSetMiniScript		; $67cb
-	jr _label_0b_268		; $67ce
-_label_0b_269:
+	jr @runScript		; $67ce
+
+@handleOpcode:
 	ld (wScreenShakeCounterY),a		; $67d0
 	ldi a,(hl)		; $67d3
 	ld (wScreenShakeCounterX),a		; $67d4
-	ld e,$70		; $67d7
+
+	ld e,Interaction.var30		; $67d7
 	ldi a,(hl)		; $67d9
 	ld (de),a		; $67da
 	inc e			; $67db
 	ldi a,(hl)		; $67dc
 	ld (de),a		; $67dd
+
 	call interactionSetMiniScript		; $67de
+
+@setRandomCounter1:
 	call getRandomNumber_noPreserveVars		; $67e1
 	ld h,d			; $67e4
-	ld l,$70		; $67e5
+	ld l,Interaction.var30		; $67e5
 	and (hl)		; $67e7
 	inc l			; $67e8
 	add (hl)		; $67e9
-	ld l,$46		; $67ea
+	ld l,Interaction.counter1		; $67ea
 	ld (hl),a		; $67ec
 	ret			; $67ed
 
-; @addr{67ee}
-miniScript67ee:
-	.db $00 $1e $00 $ff $1e $00 $00 $ff
-	.db $b4 $b4 $0f $08 $3c $3c $1f $10
-	.db $1e $00 $00 $ff $00 $78 $00 $ff
-	.db $0f $0f $00 $ff $ff
+
+; "Script" format per line:
+;   b0: wScreenShakeCounterY
+;   b1: wScreenShakeCounterX
+;   b2: ANDed with a random number and added to...
+;   b3: Base value for counter1 (time until a rock spawns)
+@script:
+	.db 0  , 30 , $00, $ff
+	.db 30 , 0  , $00, $ff
+	.db 180, 180, $0f, $08
+	.db 60 , 60 , $1f, $10
+	.db 30 , 0  , $00, $ff
+	.db 0  , 120, $00, $ff
+	.db 15 , 15 , $00, $ff
+	.db $ff
 
 interactionCodeb3:
 	ld e,$44		; $680b
