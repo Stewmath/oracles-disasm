@@ -1137,7 +1137,7 @@
 ; @subid_09{}
 ; @subid_0a{}
 ; @subid_0b{Used by INTERACID_MAKU_SEED (but in an unused function?)}
-; @subid_0c{}
+; @subid_0c{Used by harp of ages in nayru's house}
 ; @subid_0d{}
 ; @subid_0e{Used by bomb upgrade fairy}
 ; @subid_0f{Used by INTERACID_MAKU_SEED}

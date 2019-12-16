@@ -93068,67 +93068,97 @@ interactionCodeb2:
 	.db 15 , 15 , $00, $ff
 	.db $ff
 
+
+; ==============================================================================
+; INTERACID_HARP_OF_AGES_SPAWNER
+; ==============================================================================
 interactionCodeb3:
-	ld e,$44		; $680b
+	ld e,Interaction.state		; $680b
 	ld a,(de)		; $680d
 	rst_jumpTable			; $680e
-.dw $6819
-.dw $684d
-.dw $6863
-.dw $686f
-.dw $689e
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+
+@state0:
 	call getThisRoomFlags		; $6819
-	bit 5,(hl)		; $681c
-	jp nz,interactionDelete		; $681e
+	bit ROOMFLAG_BIT_ITEM,(hl)		; $681c
+	jp nz,interactionDelete ; Already got harp
+
 	xor a			; $6821
-	ld ($cfc0),a		; $6822
+	ld (wTmpcfc0.genericCutscene.state),a		; $6822
+
 	call getFreeInteractionSlot		; $6825
 	ret nz			; $6828
 	ld (hl),INTERACID_TREASURE		; $6829
 	inc l			; $682b
 	ld (hl),TREASURE_HARP		; $682c
-	ld l,$4b		; $682e
+
+	ld l,Interaction.yh		; $682e
 	ld (hl),$38		; $6830
-	ld l,$4d		; $6832
+	ld l,Interaction.xh		; $6832
 	ld (hl),$58		; $6834
 	ld b,h			; $6836
+
+	; Spawn a sparkle object attached to the harp of ages object we just spawned
 	call getFreeInteractionSlot		; $6837
-	jr nz,_label_0b_270	; $683a
-	ld (hl),$84		; $683c
+	jr nz,@incState	; $683a
+	ld (hl),INTERACID_SPARKLE		; $683c
 	inc l			; $683e
-	ld (hl),$0c		; $683f
-	ld l,$56		; $6841
-	ld a,$40		; $6843
+	ld (hl),$0c ; [subid]
+	ld l,Interaction.relatedObj1		; $6841
+	ld a,Interaction.start		; $6843
 	ldi (hl),a		; $6845
 	ld (hl),b		; $6846
-_label_0b_270:
+
+@incState:
 	call interactionSetAlwaysUpdateBit		; $6847
 	jp interactionIncState		; $684a
+
+
+@state1:
 	call getThisRoomFlags		; $684d
-	bit 5,(hl)		; $6850
+	bit ROOMFLAG_BIT_ITEM,(hl)		; $6850
 	ret z			; $6852
+
+	; Got harp; start cutscene
 	ld a,SNDCTRL_STOPMUSIC		; $6853
 	call playSound		; $6855
-	ld a,$80		; $6858
+
+	ld a,DISABLE_ALL_BUT_INTERACTIONS		; $6858
 	ld (wDisabledObjects),a		; $685a
 	ld (wMenuDisabled),a		; $685d
+
 	call interactionIncState		; $6860
+
+
+@state2:
 	ld a,(wTextIsActive)		; $6863
 	or a			; $6866
 	ret z			; $6867
+
 	xor a			; $6868
 	ld (w1Link.direction),a		; $6869
 	jp interactionIncState		; $686c
+
+
+@state3:
 	ld a,(wTextIsActive)		; $686f
 	or a			; $6872
 	ret nz			; $6873
-	ld hl,$cfc0		; $6874
+
+	ld hl,wTmpcfc0.genericCutscene.state		; $6874
 	set 0,(hl)		; $6877
 	call interactionIncState		; $6879
-	ld l,$46		; $687c
-	ld (hl),$28		; $687e
+
+	ld l,Interaction.counter1		; $687c
+	ld (hl),40		; $687e
+
 	ld a,$02		; $6880
 	call fadeoutToBlackWithDelay		; $6882
+
 	ld a,$ff		; $6885
 	ld (wDirtyFadeBgPalettes),a		; $6887
 	ld (wFadeBgPaletteSources),a		; $688a
@@ -93136,22 +93166,28 @@ _label_0b_270:
 	ld (wDirtyFadeSprPalettes),a		; $688f
 	ld a,$fe		; $6892
 	ld (wFadeSprPaletteSources),a		; $6894
+
 	call hideStatusBar		; $6897
 	ldh a,(<hActiveObject)	; $689a
 	ld d,a			; $689c
 	ret			; $689d
+
+@state4:
 	ld a,(wPaletteThread_mode)		; $689e
 	or a			; $68a1
 	ret nz			; $68a2
 	call interactionDecCounter1		; $68a3
 	ret nz			; $68a6
-	inc (hl)		; $68a7
+
+	inc (hl) ; [counter1] = 1
+
 	call getFreeInteractionSlot		; $68a8
 	ret nz			; $68ab
-	ld (hl),$36		; $68ac
+	ld (hl),INTERACID_NAYRU		; $68ac
 	inc l			; $68ae
-	ld (hl),$07		; $68af
+	ld (hl),$07 ; [subid]
 	call objectCopyPosition		; $68b1
+
 	jp interactionDelete		; $68b4
 
 interactionCodeb4:
