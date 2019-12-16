@@ -9832,16 +9832,21 @@ twinrovaInCutsceneScript:
 	loadscript scriptHlp.twinrovaInCutsceneScript_body
 
 
-script7d38:
+; ==============================================================================
+; INTERACID_BOOK_OF_SEALS_PODIUM
+; ==============================================================================
+bookOfSealsPodiumScript:
 	checkabutton
-	jumpifitemobtained $55 script7d41
-	showtextlowindex $11
-	jump2byte script7d38
-script7d41:
-	showtextlowindex $12
-	jumpiftextoptioneq $01 script7d38
+	jumpifitemobtained TREASURE_BOOK_OF_SEALS, @askToPlaceBook
+	showtextlowindex <TX_1211
+	jump2byte bookOfSealsPodiumScript
+
+@askToPlaceBook:
+	showtextlowindex <TX_1212
+	jumpiftextoptioneq $01, bookOfSealsPodiumScript
 	orroomflag $40
 	scriptend
+
 script7d4a:
 	showtext $2f27
 	wait 4

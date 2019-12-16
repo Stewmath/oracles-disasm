@@ -1537,7 +1537,10 @@
 
 ;;
 ; Book in eyeglasses library?
-.define INTERACID_LIBRARY_BOOK			$b4
+;
+; @subid_00{The podium with the missing book (also spawns the other subids)}
+; @subid_01-05{Other podiums}
+.define INTERACID_BOOK_OF_SEALS_PODIUM	$b4
 
 ;;
 ; Energy thing that appears when you enter the final dungeon for the first time

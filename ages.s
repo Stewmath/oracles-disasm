@@ -93190,192 +93190,239 @@ interactionCodeb3:
 
 	jp interactionDelete		; $68b4
 
+
+; ==============================================================================
+; INTERACID_BOOK_OF_SEALS_PODIUM
+;
+; Variables:
+;   var03: Tile index to replace path with?
+; ==============================================================================
 interactionCodeb4:
-	ld e,$44		; $68b7
+	ld e,Interaction.state		; $68b7
 	ld a,(de)		; $68b9
 	rst_jumpTable			; $68ba
-.dw $68c5
-.dw $68f9
-.dw $6938
-.dw $6951
-.dw $6996
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+
+@state0:
 	ld a,$01		; $68c5
-	ld (de),a		; $68c7
+	ld (de),a ; [state]
+
 	ld a,$06		; $68c8
 	call objectSetCollideRadius		; $68ca
 	call interactionInitGraphics		; $68cd
 	call interactionSetAlwaysUpdateBit		; $68d0
-	ld a,$12		; $68d3
+
+	ld a,>TX_1200		; $68d3
 	call interactionSetHighTextIndex		; $68d5
-	ld e,$71		; $68d8
+
+	ld e,Interaction.pressedAButton		; $68d8
 	call objectAddToAButtonSensitiveObjectList		; $68da
-	ld e,$42		; $68dd
+
+	ld e,Interaction.subid		; $68dd
 	ld a,(de)		; $68df
 	or a			; $68e0
 	ret nz			; $68e1
-	ld hl,$cfd0		; $68e2
+
+	; Subid 0
+	ld hl,wTmpcfc0.genericCutscene.cfd0		; $68e2
 	ld b,$10		; $68e5
 	call z,clearMemory		; $68e7
 	call getThisRoomFlags		; $68ea
 	bit 6,a			; $68ed
 	ret nz			; $68ef
 	call interactionIncState		; $68f0
-	ld hl,script7d38		; $68f3
+	ld hl,bookOfSealsPodiumScript		; $68f3
 	jp interactionSetScript		; $68f6
+
+@state1:
 	inc e			; $68f9
-	ld a,(de)		; $68fa
+	ld a,(de) ; [state2]
 	or a			; $68fb
-	call z,$69e0		; $68fc
+	call z,@spawnAllPodiums		; $68fc
 	call objectSetPriorityRelativeToLink_withTerrainEffects		; $68ff
-	ld e,$71		; $6902
+	ld e,Interaction.pressedAButton		; $6902
 	ld a,(de)		; $6904
 	or a			; $6905
 	ret z			; $6906
-_label_0b_271:
+
+@activatedBook:
 	ld a,$01		; $6907
 	call interactionSetAnimation		; $6909
-	call $69ce		; $690c
+	call @func_69ce		; $690c
 	ld a,c			; $690f
-	ld ($cfd0),a		; $6910
-	ld hl,$6932		; $6913
+	ld (wTmpcfc0.genericCutscene.cfd0),a		; $6910
+
+	ld hl,@textTable		; $6913
 	rst_addAToHl			; $6916
 	ld c,(hl)		; $6917
-	ld b,$12		; $6918
+	ld b,>TX_1200		; $6918
 	call showText		; $691a
-	ld a,$81		; $691d
+
+	ld a,DISABLE_ALL_BUT_INTERACTIONS | DISABLE_LINK		; $691d
 	ld (wMenuDisabled),a		; $691f
 	ld (wDisabledObjects),a		; $6922
+
 	ld h,d			; $6925
-	ld l,$43		; $6926
+	ld l,Interaction.var03		; $6926
 	ld a,$d3		; $6928
-_label_0b_272:
 	ldi (hl),a		; $692a
 	ld a,$03		; $692b
-	ldi (hl),a		; $692d
+	ldi (hl),a ; [state]
 	inc l			; $692e
-	ld (hl),$02		; $692f
+	ld (hl),$02 ; [state2]
 	ret			; $6931
-	dec bc			; $6932
-	inc c			; $6933
-	dec c			; $6934
-	ld c,$0f		; $6935
-	stop			; $6937
+
+@textTable:
+	.db <TX_120b, <TX_120c, <TX_120d, <TX_120e, <TX_120f, <TX_1210
+
+@state2:
 	inc e			; $6938
-	ld a,(de)		; $6939
+	ld a,(de) ; [state2]
 	or a			; $693a
-	call z,$69e0		; $693b
+	call z,@spawnAllPodiums		; $693b
 	call interactionRunScript		; $693e
 	ret nc			; $6941
+
+	; Placed book on podium
 	call objectSetPriorityRelativeToLink_withTerrainEffects		; $6942
 	ld a,SND_SOLVEPUZZLE		; $6945
 	call playSound		; $6947
 	ld a,TREASURE_BOOK_OF_SEALS		; $694a
 	call loseTreasure		; $694c
-	jr _label_0b_271		; $694f
+	jr @activatedBook		; $694f
+
+@state3:
 	call retIfTextIsActive		; $6951
-	call $6964		; $6954
+	call @replaceTiles		; $6954
 	ld a,(wDisabledObjects)		; $6957
 	or a			; $695a
 	ret nz			; $695b
-	ld e,$43		; $695c
+	ld e,Interaction.var03		; $695c
 	ld a,$f4		; $695e
 	ld (de),a		; $6960
-	jp $69ce		; $6961
-	ld a,$81		; $6964
+	jp @func_69ce		; $6961
+
+;;
+; @addr{6964}
+@replaceTiles:
+	ld a,DISABLE_ALL_BUT_INTERACTIONS | DISABLE_LINK		; $6964
 	ld (wDisabledObjects),a		; $6966
 	call interactionDecCounter1		; $6969
 	ret nz			; $696c
-	ld (hl),$02		; $696d
-	ld l,$58		; $696f
+	ld (hl),$02 ; [counter1]
+	ld l,Interaction.scriptPtr		; $696f
 	ldi a,(hl)		; $6971
 	ld h,(hl)		; $6972
 	ld l,a			; $6973
+
 	ldi a,(hl)		; $6974
 	or a			; $6975
-	jr z,_label_0b_273	; $6976
+	jr z,@label_0b_273	; $6976
+
 	ld c,a			; $6978
-	ld e,$43		; $6979
+	ld e,Interaction.var03		; $6979
 	ld a,(de)		; $697b
 	push hl			; $697c
 	call setTile		; $697d
 	pop hl			; $6980
 	ret z			; $6981
-	ld e,$58		; $6982
+	ld e,Interaction.scriptPtr		; $6982
 	ld a,l			; $6984
 	ld (de),a		; $6985
 	inc e			; $6986
 	ld a,h			; $6987
 	ld (de),a		; $6988
 	ret			; $6989
-_label_0b_273:
+
+@label_0b_273:
+	; a == 0 here
 	ld (wDisabledObjects),a		; $698a
 	ld (wMenuDisabled),a		; $698d
-	ld e,$71		; $6990
+	ld e,Interaction.pressedAButton		; $6990
 	ld (de),a		; $6992
 	jp interactionIncState		; $6993
+
+
+@state4:
 	call objectSetPriorityRelativeToLink_withTerrainEffects		; $6996
-	ld e,$71		; $6999
+	ld e,Interaction.pressedAButton		; $6999
 	ld a,(de)		; $699b
 	or a			; $699c
-	jr z,_label_0b_274	; $699d
+	jr z,++			; $699d
+
 	xor a			; $699f
 	ld (de),a		; $69a0
-	ld e,$42		; $69a1
+	ld e,Interaction.subid		; $69a1
 	ld a,(de)		; $69a3
-	ld hl,$6932		; $69a4
+	ld hl,@textTable		; $69a4
 	rst_addAToHl			; $69a7
 	ld c,(hl)		; $69a8
-	ld b,$12		; $69a9
+	ld b,>TX_1200		; $69a9
 	jp showText		; $69ab
-_label_0b_274:
-	ld hl,$cfd0		; $69ae
-	ld e,$42		; $69b1
+++
+	ld hl,wTmpcfc0.genericCutscene.cfd0		; $69ae
+	ld e,Interaction.subid		; $69b1
 	ld a,(de)		; $69b3
 	cp (hl)			; $69b4
 	ret z			; $69b5
+
 	call retIfTextIsActive		; $69b6
-	call $6964		; $69b9
+	call @replaceTiles		; $69b9
 	ld a,(wDisabledObjects)		; $69bc
 	or a			; $69bf
 	ret nz			; $69c0
+
 	call interactionSetAnimation		; $69c1
-	ld e,$44		; $69c4
+	ld e,Interaction.state		; $69c4
 	ld a,$01		; $69c6
 	ld (de),a		; $69c8
-	ld e,$71		; $69c9
+	ld e,Interaction.pressedAButton		; $69c9
 	xor a			; $69cb
 	ld (de),a		; $69cc
 	ret			; $69cd
-	ld e,$42		; $69ce
+
+;;
+; @param[out]	c	Subid
+; @addr{69ce}
+@func_69ce:
+	ld e,Interaction.subid		; $69ce
 	ld a,(de)		; $69d0
 	ld c,a			; $69d1
-	ld hl,_data_0b_6a05		; $69d2
+	ld hl,@bookPathLists		; $69d2
 	rst_addAToHl			; $69d5
 	ld a,(hl)		; $69d6
 	rst_addAToHl			; $69d7
-	ld e,$58		; $69d8
+	ld e,Interaction.scriptPtr		; $69d8
 	ld a,l			; $69da
 	ld (de),a		; $69db
 	inc e			; $69dc
 	ld a,h			; $69dd
 	ld (de),a		; $69de
 	ret			; $69df
+
+@spawnAllPodiums:
 	call returnIfScrollMode01Unset		; $69e0
 	ld a,$01		; $69e3
 	ld (de),a		; $69e5
-	ld e,$42		; $69e6
+	ld e,Interaction.subid		; $69e6
 	ld a,(de)		; $69e8
 	or a			; $69e9
 	ret nz			; $69ea
-	ld bc,$6a3a		; $69eb
+
+	ld bc,@podiumPositions		; $69eb
 	ld e,$05		; $69ee
-_label_0b_275:
+
+@next:
 	call getFreeInteractionSlot		; $69f0
 	ret nz			; $69f3
-	ld (hl),$b4		; $69f4
+	ld (hl),INTERACID_BOOK_OF_SEALS_PODIUM		; $69f4
 	inc l			; $69f6
-	ld (hl),e		; $69f7
-	ld l,$4b		; $69f8
+	ld (hl),e ; [subid]
+	ld l,Interaction.yh		; $69f8
 	ld a,(bc)		; $69fa
 	ldi (hl),a		; $69fb
 	inc l			; $69fc
@@ -93384,18 +93431,44 @@ _label_0b_275:
 	ld (hl),a		; $69ff
 	inc bc			; $6a00
 	dec e			; $6a01
-	jr nz,_label_0b_275	; $6a02
+	jr nz,@next	; $6a02
 	ret			; $6a04
 
-_data_0b_6a05:
-	.db $06 $0c $12 $17 $1e $26 $99 $9a
-	.db $9b $8b $7b $7c $00 $6d $5d $5c
-	.db $4c $3c $3d $00 $2c $2b $1b $1a
-	.db $19 $00 $28 $27 $26 $25 $15 $14
-	.db $13 $00 $22 $23 $33 $43 $42 $41
-	.db $51 $61 $00 $72 $82 $83 $84 $74
-	.db $75 $65 $66 $67 $00 $84 $18 $14
-	.db $18 $14 $78 $14 $d8 $84 $d8
+
+; List of tiles to become solid for each book
+@bookPathLists:
+        .db @subid0 - CADDR
+        .db @subid1 - CADDR
+        .db @subid2 - CADDR
+        .db @subid3 - CADDR
+        .db @subid4 - CADDR
+        .db @subid5 - CADDR
+@subid0:
+        .db $99 $9a $9b $8b $7b $7c
+	.db $00
+@subid1:
+        .db $6d $5d $5c $4c $3c $3d
+	.db $00
+@subid2:
+        .db $2c $2b $1b $1a $19
+        .db $00
+@subid3:
+        .db $28 $27 $26 $25 $15 $14 $13
+	.db $00
+@subid4:
+        .db $22 $23 $33 $43 $42 $41 $51 $61
+	.db $00
+@subid5:
+        .db $72 $82 $83 $84 $74 $75 $65 $66 $67
+        .db $00
+
+@podiumPositions:
+	.db $84 $18
+	.db $14 $18
+	.db $14 $78
+	.db $14 $d8
+	.db $84 $d8
+
 
 interactionCodeb5:
 	ld e,$44		; $6a44
