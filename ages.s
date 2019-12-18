@@ -139120,216 +139120,276 @@ _label_10_322:
 	ld (hl),a		; $79f8
 	ret			; $79f9
 
+
+; ==============================================================================
+; INTERACID_TIMEWARP
+;
+; Variables:
+;   var03: ?
+;   relatedObj2: ?
+; ==============================================================================
 interactionCodedd:
-	ld e,$42		; $79fa
+	ld e,Interaction.subid		; $79fa
 	ld a,(de)		; $79fc
 	rst_jumpTable			; $79fd
-.dw $7a08
-.dw $7ab6
-.dw $7adc
-.dw $7b1a
-.dw $7b54
-	ld e,$44		; $7a08
+	.dw _timewarp_subid0
+	.dw _timewarp_subid1
+	.dw _timewarp_subid2
+	.dw _timewarp_subid3
+	.dw _timewarp_subid4
+
+_timewarp_subid0:
+	ld e,Interaction.state		; $7a08
 	ld a,(de)		; $7a0a
 	rst_jumpTable			; $7a0b
-.dw $7a14
-.dw $7a28
-.dw $7a50
-.dw $7aaf
+	.dw _timewarp_common_state0
+	.dw _timewarp_subid0_state1
+	.dw _timewarp_subid0_state2
+	.dw _timewarp_animateUntilFinished
+
+
+_timewarp_common_state0:
 	call interactionInitGraphics		; $7a14
 	call interactionIncState		; $7a17
-	ld l,$4b		; $7a1a
+
+	ld l,Interaction.yh		; $7a1a
 	ldh a,(<hEnemyTargetY)	; $7a1c
 	add $08			; $7a1e
 	ldi (hl),a		; $7a20
 	inc l			; $7a21
 	ldh a,(<hEnemyTargetX)	; $7a22
 	ld (hl),a		; $7a24
+
 	jp objectSetVisible83		; $7a25
-	call $7b60		; $7a28
+
+
+_timewarp_subid0_state1:
+	call _timewarp_animate		; $7a28
 	jp z,interactionIncState		; $7a2b
 	dec a			; $7a2e
-	jr nz,_label_10_323	; $7a2f
+	jr nz,+			; $7a2f
 	ret			; $7a31
-_label_10_323:
++
 	xor a			; $7a32
-	ld (de),a		; $7a33
+	ld (de),a ; [animParameter]
+
 	ld b,$03		; $7a34
+
+;;
+; @param	b	Subid of INTERACID_TIMEWARP object to spawn
+; @addr{7a36}
+_timewarp_spawnChild:
 	call getFreeInteractionSlot		; $7a36
 	ret nz			; $7a39
-	ld (hl),$dd		; $7a3a
+	ld (hl),INTERACID_TIMEWARP		; $7a3a
 	inc l			; $7a3c
-	ld (hl),b		; $7a3d
+	ld (hl),b ; [subid]
 	inc l			; $7a3e
 	ld e,l			; $7a3f
-	ld a,(de)		; $7a40
+	ld a,(de) ; [var03]
 	ld (hl),a		; $7a41
-	ld e,$58		; $7a42
-	ld a,$40		; $7a44
+	ld e,Interaction.relatedObj2		; $7a42
+	ld a,Interaction.start		; $7a44
 	ld (de),a		; $7a46
 	inc e			; $7a47
 	ld a,h			; $7a48
 	ld (de),a		; $7a49
 	ld bc,$f800		; $7a4a
 	jp objectCopyPositionWithOffset		; $7a4d
+
+
+_timewarp_subid0_state2:
 	call interactionDecCounter1		; $7a50
-	jr z,_label_10_324	; $7a53
-	ld a,(hl)		; $7a55
-	cp $24			; $7a56
+	jr z,@counterReached0	; $7a53
+
+	ld a,(hl) ; [counter1]
+	cp 36			; $7a56
 	ret c			; $7a58
 	and $07			; $7a59
 	ret nz			; $7a5b
 	ld a,(hl)		; $7a5c
 	and $38			; $7a5d
 	rrca			; $7a5f
-	ld hl,$7a8f		; $7a60
+	ld hl,@data		; $7a60
 	rst_addAToHl			; $7a63
 	ldi a,(hl)		; $7a64
 	ld b,a			; $7a65
 	ldi a,(hl)		; $7a66
 	ld c,a			; $7a67
 	ld e,(hl)		; $7a68
+
 	call getFreePartSlot		; $7a69
 	ret nz			; $7a6c
-	ld (hl),$2b		; $7a6d
+	ld (hl),PARTID_2b		; $7a6d
 	inc l			; $7a6f
-	ld (hl),e		; $7a70
-	ld e,$59		; $7a71
+	ld (hl),e ; [subid]
+
+	ld e,Interaction.relatedObj2+1		; $7a71
 	ld a,(de)		; $7a73
-	ld l,$d7		; $7a74
+	ld l,Part.relatedObj1+1		; $7a74
 	ldd (hl),a		; $7a76
-	ld (hl),$40		; $7a77
-	ld l,$d0		; $7a79
+	ld (hl),Interaction.start		; $7a77
+
+	ld l,Part.speed		; $7a79
 	ld (hl),b		; $7a7b
+
 	ld b,$00		; $7a7c
 	jp objectCopyPositionWithOffset		; $7a7e
-_label_10_324:
+
+@counterReached0:
 	ld a,$01		; $7a81
 	call interactionSetAnimation		; $7a83
-	ld a,$04		; $7a86
+	ld a,Object.state		; $7a86
 	call objectGetRelatedObject2Var		; $7a88
 	inc (hl)		; $7a8b
 	jp interactionIncState		; $7a8c
-	ld h,h			; $7a8f
-.DB $fc				; $7a90
-	nop			; $7a91
-	nop			; $7a92
-	ld l,(hl)		; $7a93
-	add hl,bc		; $7a94
-	inc bc			; $7a95
-	nop			; $7a96
-	ld e,d			; $7a97
-	rst $30			; $7a98
-	ld (bc),a		; $7a99
-	nop			; $7a9a
-	ld l,(hl)		; $7a9b
-	inc b			; $7a9c
-	ld bc,$5a00		; $7a9d
-.DB $fc				; $7aa0
-	nop			; $7aa1
-	nop			; $7aa2
-	ld h,h			; $7aa3
-	inc b			; $7aa4
-	ld bc,$6e00		; $7aa5
-	rst $30			; $7aa8
-	ld (bc),a		; $7aa9
-	nop			; $7aaa
-	ld e,d			; $7aab
-	add hl,bc		; $7aac
-	inc bc			; $7aad
-	nop			; $7aae
-	call $7b60		; $7aaf
+
+; Data format:
+;   b0: speed
+;   b1: x-offset
+;   b2: subid
+;   b3: unused
+@data:
+	.db SPEED_280, $fc, $00, $00
+	.db SPEED_2c0, $09, $03, $00
+	.db SPEED_240, $f7, $02, $00
+	.db SPEED_2c0, $04, $01, $00
+	.db SPEED_240, $fc, $00, $00
+	.db SPEED_280, $04, $01, $00
+	.db SPEED_2c0, $f7, $02, $00
+	.db SPEED_240, $09, $03, $00
+
+
+_timewarp_animateUntilFinished:
+	call _timewarp_animate		; $7aaf
 	ret nz			; $7ab2
 	jp interactionDelete		; $7ab3
-	ld e,$44		; $7ab6
+
+
+_timewarp_subid1:
+	ld e,Interaction.state		; $7ab6
 	ld a,(de)		; $7ab8
 	rst_jumpTable			; $7ab9
-.dw $7a14
-.dw $7ac0
-.dw $7aaf
-	call $7b60		; $7ac0
-	jr z,_label_10_325	; $7ac3
+	.dw _timewarp_common_state0
+	.dw _timewarp_subid1_state1
+	.dw _timewarp_animateUntilFinished ; TODO
+
+
+_timewarp_subid1_state1:
+	call _timewarp_animate		; $7ac0
+	jr z,++			; $7ac3
 	dec a			; $7ac5
 	ret z			; $7ac6
+
 	xor a			; $7ac7
-	ld (de),a		; $7ac8
+	ld (de),a ; [animParameter
 	ld b,$04		; $7ac9
-	jp $7a36		; $7acb
-_label_10_325:
-	ld a,$04		; $7ace
+	jp _timewarp_spawnChild		; $7acb
+++
+	ld a,Object.state		; $7ace
 	call objectGetRelatedObject2Var		; $7ad0
 	inc (hl)		; $7ad3
 	call interactionIncState		; $7ad4
 	ld a,$01		; $7ad7
 	jp interactionSetAnimation		; $7ad9
-	ld e,$44		; $7adc
+
+_timewarp_subid2:
+	ld e,Interaction.state		; $7adc
 	ld a,(de)		; $7ade
 	rst_jumpTable			; $7adf
-.dw $7ae6
-.dw $7af7
-.dw $7afe
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
 	call interactionInitGraphics		; $7ae6
 	call interactionIncState		; $7ae9
-	ld l,$51		; $7aec
+
+	ld l,Interaction.speedTmp		; $7aec
 	ld (hl),$fc		; $7aee
-	ld l,$46		; $7af0
+	ld l,Interaction.counter1		; $7af0
 	ld (hl),$06		; $7af2
 	jp objectSetVisible81		; $7af4
-	call $7b60		; $7af7
+
+@state1:
+	call _timewarp_animate		; $7af7
 	ret nz			; $7afa
 	jp interactionIncState		; $7afb
+
+@state2:
 	call objectApplyComponentSpeed		; $7afe
-	ld e,$4b		; $7b01
+	ld e,Interaction.yh		; $7b01
 	ld a,(de)		; $7b03
 	cp $f0			; $7b04
 	jp nc,interactionDelete		; $7b06
 	call interactionDecCounter1		; $7b09
 	ret nz			; $7b0c
 	ld (hl),$06		; $7b0d
-	ld bc,$8401		; $7b0f
+	ldbc INTERACID_SPARKLE, $01		; $7b0f
 	call objectCreateInteraction		; $7b12
 	ret nz			; $7b15
-	ld l,$43		; $7b16
+	ld l,Interaction.var03		; $7b16
 	inc (hl)		; $7b18
 	ret			; $7b19
-	ld e,$44		; $7b1a
+
+
+_timewarp_subid3:
+	ld e,Interaction.state		; $7b1a
 	ld a,(de)		; $7b1c
 	rst_jumpTable			; $7b1d
-.dw $7b28
-.dw $7b39
-.dw interactionAnimate
-.dw $7b45
-.dw $7b4d
-	ld e,$43		; $7b28
+	.dw _itemwarp_subid3Or4_state0
+	.dw _timewarp_subid3_state1
+	.dw interactionAnimate
+	.dw _timewarp_subid3Or4_state3
+	.dw _timewarp_subid3Or4_state4
+
+_itemwarp_subid3Or4_state0:
+	ld e,Interaction.var03		; $7b28
 	ld a,(de)		; $7b2a
 	add $c0			; $7b2b
 	call loadPaletteHeader		; $7b2d
 	call interactionInitGraphics		; $7b30
 	call interactionIncState		; $7b33
 	jp objectSetVisible82		; $7b36
-	call $7b60		; $7b39
+
+_timewarp_subid3_state1:
+	call _timewarp_animate		; $7b39
 	ret nz			; $7b3c
 	ld a,$03		; $7b3d
 	call interactionSetAnimation		; $7b3f
 	jp interactionIncState		; $7b42
+
+_timewarp_subid3Or4_state3:
 	call interactionIncState		; $7b45
 	ld a,$04		; $7b48
 	jp interactionSetAnimation		; $7b4a
-	call $7b60		; $7b4d
+
+_timewarp_subid3Or4_state4:
+	call _timewarp_animate		; $7b4d
 	ret nz			; $7b50
 	jp interactionDelete		; $7b51
-	ld e,$44		; $7b54
+
+
+_timewarp_subid4:
+	ld e,Interaction.state		; $7b54
 	ld a,(de)		; $7b56
 	rst_jumpTable			; $7b57
-.dw $7b28
-.dw interactionAnimate
-.dw $7b45
-.dw $7b4d
+	.dw _itemwarp_subid3Or4_state0
+	.dw interactionAnimate
+	.dw _timewarp_subid3Or4_state3 ; Actually state 2...
+	.dw _timewarp_subid3Or4_state4 ; Actually state 3...
+
+
+;;
+; @param[out]	a	[Interaction.animParameter]+1
+; @addr{7b60}
+_timewarp_animate:
 	call interactionAnimate		; $7b60
-	ld e,$61		; $7b63
+	ld e,Interaction.animParameter		; $7b63
 	ld a,(de)		; $7b65
 	inc a			; $7b66
 	ret			; $7b67
+
 
 ; ==============================================================================
 ; INTERACID_TIMEPORTAL

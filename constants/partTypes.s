@@ -142,6 +142,10 @@
 .define PARTID_SPIKED_BALL			$2a
 
 ;;
+; Used by INTERACID_TIMEWARP
+.define PARTID_2b				$2b
+
+;;
 ; Used by ENEMYID_VERAN_FAIRY
 .define PARTID_2d				$2d
 

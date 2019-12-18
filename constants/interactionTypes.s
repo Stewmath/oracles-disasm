@@ -1126,7 +1126,7 @@
 ;;
 ; TODO: Label these subids
 ; @subid_00{A tiny sparkle that disappears in an instant.}
-; @subid_01{}
+; @subid_01{Used by INTERACID_TIMEWARP}
 ; @subid_02{Used by INTERACID_MAKUCONFETTI?}
 ; @subid_03{}
 ; @subid_04{A big, red-and-blue orb that's probably used with the maku seed or something?}
@@ -1737,11 +1737,16 @@
 ;;
 .define INTERACID_dc			$dc
 
+;;
 ; The warp animation that occurs when entering a time portal.
-; SubID: 0: Initiating a warp (entered a portal from the source screen)
-;        1: Completing a warp (warping in to the destination screen)
+; @subid_00{Initiating a warp (entered a portal from the source screen)}
+; @subid_01{Completing a warp (warping in to the destination screen)}
+; @subid_02{?}
+; @subid_03{?}
+; @subid_04{?}
 .define INTERACID_TIMEWARP		$dd
 
+;;
 ; A time portal created with the Tune of Currents or Tune of Ages.
 ; (TODO: wrap in ifdef)
 .define INTERACID_TIMEPORTAL		$de
