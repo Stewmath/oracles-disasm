@@ -897,7 +897,7 @@
 .define INTERACID_CHEVAL		$6a
 
 ;;
-; Many miscellaneous things here, categorized by subid.
+; Many miscellaneous things here, categorized by subid. See also INTERACID_MISCELLANEOUS_2.
 ;
 ; @subid_00{Handles showing Impa's "Help" text when Link's about to screen transition}
 ; @subid_01{Spawns nayru, ralph, animals before she's possessed}
@@ -922,7 +922,7 @@
 ; @subid_14{Goron bomb statue (right)}
 ; @subid_15{Stone statue of Link that appears only after finishing game}
 ; @subid_16{A flame that appears for [counter1] frames.}
-.define INTERACID_MISCELLANEOUS		$6b
+.define INTERACID_MISCELLANEOUS_1		$6b
 
 ;;
 ; Spots where fairies are hiding in the hide-and-seek minigame.
@@ -1223,8 +1223,7 @@
 .define INTERACID_TOKAY_CUTSCENE_EMBER_SEED	$8f
 
 ;;
-; Miscellaneous stuff, mostly puzzle solutions. Similar in purpose to
-; INTERACID_DUNGEON_EVENTS?
+; Miscellaneous stuff, mostly puzzle solutions. Similar in purpose to INTERACID_DUNGEON_EVENTS?
 ;
 ; @subid_00{Boss key puzzle in D6}
 ; @subid_01{Underwater switch hook puzzle in past d6}
@@ -1735,17 +1734,19 @@
 .define INTERACID_db			$db
 
 ;;
+; Miscellaneous stuff. See also INTERACID_MISCELLANEOUS_1.
+;
 ; @subid_00{Graveyard key spawner}
-; @subid_01{TODO: possibly the cutscene opening jabu-jabu?}
+; @subid_01{Graveyard gate opening cutscene}
 ; @subid_02{Initiates cutscene where present d2 collapses}
-; @subid_03{?}
-; @subid_04{Related to subid 3?}
+; @subid_03{Reveals portal spot under bush in symmetry (left side)}
+; @subid_04{Reveals portal spot under bush in symmetry (right side)}
 ; @subid_05{Makes screen shake before tuni nut is restored}
 ; @subid_06{Makes volcanoes erupt before tuni nut is restored (spawns INTERACID_VOLCANO_HANLDER)}
 ; @subid_07{Heart piece spawner}
 ; @subid_08{
-;   Replaces a tile at a position with a given value. The effect is permanently disabled once that
-;   tile is destroyed, by writing to room flags.
+;   Replaces a tile at a position with a given value when destroyed. The effect is permanently
+;   disabled once that tile is destroyed, by writing to room flags.
 ;   X is bitmask for room flags, var03 is the tile index to put at "Y".
 ;   @postype{short}}
 ; @subid_09{Animates jabu-jabu}
@@ -1757,14 +1758,15 @@
 ; @subid_0f{Shows text upon entering a room (only used for sea of no return entrance and black tower
 ;           turret)}
 ; @subid_10{Black tower entrance handler: warps Link to different variants of black tower.}
-; @subid_11{?}
-; @subid_12{Bridge handler for something?}
-; @subid_13{?}
-; @subid_14{Spawns portal to final dungeon from maku tree?}
-; @subid_15{?}
-; @subid_16{?}
-; @subid_17{?}
-.define INTERACID_dc			$dc
+; @subid_11{Gives D6 Past boss key when you get D6 Present boss key}
+; @subid_12{Bridge handler for cave leading to Tingle}
+; @subid_13{Makes lava-waterfall an d4 entrance behave like lava instead of just a wall, so that the
+;           fireballs "sink" into it instead of exploding like on land.}
+; @subid_14{Spawns portal to final dungeon from maku tree}
+; @subid_15{Sets present sea of storms chest contents (changes if linked)}
+; @subid_16{Sets past sea of storms chest contents (changes if linked)}
+; @subid_17{Forces Link to be squished when he's in a wall (used in ages d5 BK room)}
+.define INTERACID_MISCELLANEOUS_2	$dc
 
 ;;
 ; The warp animation that occurs when entering a time portal.

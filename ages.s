@@ -52364,7 +52364,7 @@ interactionCode14:
 	ld l,Interaction.angle		; $447d
 	ld a,(hl)		; $447f
 	or $80			; $4480
-	ld ($cca6),a		; $4482
+	ld (wBlockPushAngle),a		; $4482
 
 	call @replaceTileUnderneathBlock		; $4485
 	call objectSetVisible82		; $4488
@@ -77016,7 +77016,7 @@ interactionCode68:
 	; Spawn shovel object
 	call getFreeInteractionSlot		; $4cac
 	ret nz			; $4caf
-	ld (hl),INTERACID_MISCELLANEOUS		; $4cb0
+	ld (hl),INTERACID_MISCELLANEOUS_1		; $4cb0
 	inc l			; $4cb2
 	ld (hl),$09		; $4cb3
 	ld l,Interaction.relatedObj1+1		; $4cb5
@@ -77260,7 +77260,7 @@ interactionCode6a:
 
 
 ; ==============================================================================
-; INTERACID_MISCELLANEOUS
+; INTERACID_MISCELLANEOUS_1
 ; ==============================================================================
 interactionCode6b:
 	ld e,Interaction.subid		; $4df4
@@ -94395,7 +94395,7 @@ _label_0b_311:
 	ld l,$4b		; $70a9
 	call setShortPosition		; $70ab
 	ld l,$49		; $70ae
-	ld a,($cca6)		; $70b0
+	ld a,(wBlockPushAngle)		; $70b0
 _label_0b_312:
 	and $1f			; $70b3
 	ld (hl),a		; $70b5
@@ -138432,7 +138432,7 @@ _label_10_306:
 
 
 ; ==============================================================================
-; INTERACID_dc
+; INTERACID_MISCELLANEOUS_2
 ; ==============================================================================
 interactionCodedc:
 	ld e,Interaction.subid		; $7481
@@ -138464,6 +138464,7 @@ interactionCodedc:
 	.dw _interactiondc_subid17
 
 
+; Heart piece spawner
 _interactiondc_subid07:
 	call getThisRoomFlags		; $74b5
 	and ROOMFLAG_ITEM			; $74b8
@@ -138474,6 +138475,7 @@ _interactiondc_subid07:
 	jp interactionDelete		; $74c6
 
 
+; Replaces a tile at a position with a given value when destroyed
 _interactiondc_subid08:
 	call checkInteractionState		; $74c9
 	jr z,@state0	; $74cc
@@ -138515,6 +138517,7 @@ _interactiondc_subid08:
 	jp interactionIncState		; $74fa
 
 
+; Graveyard key spawner
 _interactiondc_subid00:
 	call getThisRoomFlags		; $74fd
 	and ROOMFLAG_ITEM			; $7500
@@ -138528,18 +138531,20 @@ _interactiondc_subid00:
 	jp interactionDelete		; $7514
 
 
+; Graveyard gate opening cutscene
 _interactiondc_subid01:
 	call checkInteractionState		; $7517
 	jp nz,interactionRunScript		; $751a
 	call getThisRoomFlags		; $751d
 	and $80			; $7520
 	jp nz,interactionDelete		; $7522
-	ld hl,script7f62		; $7525
+	ld hl,interactiondcSubid01Script		; $7525
 	call interactionSetScript		; $7528
 	call interactionSetAlwaysUpdateBit		; $752b
 	jp interactionIncState		; $752e
 
 
+; Initiates cutscene where present d2 collapses
 _interactiondc_subid02:
 	ld e,Interaction.state		; $7531
 	ld a,(de)		; $7533
@@ -138558,11 +138563,11 @@ _interactiondc_subid02:
 	ld (wDiggingUpEnemiesForbidden),a		; $7547
 
 	call objectGetTileAtPosition		; $754a
-	cp $3a ; TODO: all "setTile" calls here
+	cp TILEINDEX_OVERWORLD_STANDARD_GROUND
 	ret nz			; $754f
 
 	ld c,l			; $7550
-	ld a,$1c		; $7551
+	ld a,TILEINDEX_OVERWORLD_DUG_DIRT		; $7551
 	call setTile		; $7553
 	jp interactionIncState		; $7556
 
@@ -138618,6 +138623,7 @@ _interactiondc_subid02:
 	jp interactionDelete		; $75ad
 
 
+; Reveals portal spot under bush in symmetry (left side)
 _interactiondc_subid03:
 	call checkInteractionState		; $75b0
 	jr nz,_interactiondc_subid3And4_state1	; $75b3
@@ -138633,24 +138639,29 @@ _interactiondc_subid03:
 
 _interactiondc_subid3And4_state1:
 	call objectGetTileAtPosition		; $75c5
-	cp $3a			; $75c8
+	cp TILEINDEX_OVERWORLD_STANDARD_GROUND			; $75c8
 	ret nz			; $75ca
-	ld a,$d7		; $75cb
+	ld a,TILEINDEX_PORTAL_SPOT		; $75cb
 	ld c,l			; $75cd
 	call setTile		; $75ce
+
 	call getThisRoomFlags		; $75d1
 	ld e,Interaction.var03		; $75d4
 	ld a,(de)		; $75d6
 	or (hl)			; $75d7
 	ld (hl),a		; $75d8
+
 	ld a,SND_SOLVEPUZZLE		; $75d9
 	call playSound		; $75db
 	jp interactionDelete		; $75de
 
 
+; Reveals portal spot under bush in symmetry (right side)
 _interactiondc_subid04:
 	call checkInteractionState		; $75e1
 	jr nz,_interactiondc_subid3And4_state1	; $75e4
+
+@state0:
 	call getThisRoomFlags		; $75e6
 	and $04			; $75e9
 	jp nz,interactionDelete		; $75eb
@@ -138660,6 +138671,7 @@ _interactiondc_subid04:
 	jp interactionIncState		; $75f3
 
 
+; Makes screen shake before tuni nut is restored
 _interactiondc_subid05:
 	ld e,Interaction.state		; $75f6
 	ld a,(de)		; $75f8
@@ -138722,6 +138734,7 @@ _interactiondc_subid05:
 	jp interactionDecCounter1		; $7656
 
 
+; Makes volcanoes erupt before tuni nut is restored (spawns INTERACID_VOLCANO_HANLDER)
 _interactiondc_subid06:
 	ld a,GLOBALFLAG_TUNI_NUT_PLACED		; $7659
 	call checkGlobalFlag		; $765b
@@ -138732,6 +138745,7 @@ _interactiondc_subid06:
 	jp interactionDelete		; $7666
 
 
+; Animates jabu-jabu
 _interactiondc_subid09:
 	ld e,Interaction.state		; $7669
 	ld a,(de)		; $766b
@@ -138889,6 +138903,7 @@ _interactiondc_subid09:
 	.db $00
 
 
+; Initiates jabu opening his mouth cutscene
 _interactiondc_subid0A:
 	call checkInteractionState		; $7741
 	jr z,@state0	; $7744
@@ -138915,6 +138930,7 @@ _interactiondc_subid0A:
 	jp interactionIncState		; $776a
 
 
+; Handles floor falling in King Moblin's castle
 _interactiondc_subid0B:
 	ld e,Interaction.state		; $776d
 	ld a,(de)		; $776f
@@ -138986,6 +139002,7 @@ _interactiondc_subid0B:
 	.db $18 $17 $16 $00
 
 
+; Bridge handler in Rolling Ridge past (subid 0c) and present (subid 0d)
 _interactiondc_subid0C:
 _interactiondc_subid0D:
 	call checkInteractionState		; $77ee
@@ -139029,6 +139046,7 @@ _interactiondc_subid0D:
 	jp interactionIncState		; $782d
 
 
+; Puzzle at entrance to sea of no return (ancient tomb)
 _interactiondc_subid0E:
 	ld e,Interaction.state		; $7830
 	ld a,(de)		; $7832
@@ -139101,6 +139119,7 @@ _interactiondc_subid0E:
 	jp interactionDelete		; $78aa
 
 
+; Shows text upon entering a room (only used for sea of no return entrance and black tower turret)
 _interactiondc_subid0F:
 	call checkInteractionState		; $78ad
 	jr z,@state0	; $78b0
@@ -139128,6 +139147,7 @@ _interactiondc_subid0F:
 	jp interactionIncState		; $78de
 
 
+; Black tower entrance handler: warps Link to different variants of black tower.
 _interactiondc_subid10:
 	ld e,Interaction.state		; $78e1
 	ld a,(de)		; $78e3
@@ -139178,8 +139198,8 @@ _interactiondc_subid10:
 	.db $84 $f3 $93 $ff $01
 
 
-; Unused? Gives boss key for D6 past?
-@giveBossKey:
+; Gives D6 Past boss key when you get D6 Present boss key
+_interactiondc_subid11:
 	call getThisRoomFlags		; $7931
 	and ROOMFLAG_ITEM			; $7934
 	ret z			; $7936
@@ -139188,6 +139208,7 @@ _interactiondc_subid10:
 	jp setFlag		; $793c
 
 
+; Bridge handler for cave leading to Tingle
 _interactiondc_subid12:
 	call getThisRoomFlags		; $793f
 	and $40			; $7942
@@ -139215,9 +139236,11 @@ _interactiondc_subid12:
 	jp interactionDelete		; $7968
 
 
+; Makes lava-waterfall an d4 entrance behave like lava instead of just a wall, so that the fireballs
+; "sink" into it instead of exploding like on land.
 _interactiondc_subid13:
 	call returnIfScrollMode01Unset		; $796b
-	ld a,$e4 ; TODO
+	ld a,TILEINDEX_LAVA_1 ; TODO
 	ld hl,wRoomLayout+$14		; $7970
 	ldi (hl),a		; $7973
 	ld (hl),a		; $7974
@@ -139230,6 +139253,7 @@ _interactiondc_subid13:
 	jp interactionDelete		; $797d
 
 
+; Spawns portal to final dungeon from maku tree
 _interactiondc_subid14:
 	call objectGetTileAtPosition		; $7980
 	cp $dc ; TODO
@@ -139240,6 +139264,8 @@ _interactiondc_subid14:
 	jp interactionDelete		; $798c
 
 
+
+; Sets present sea of storms chest contents (changes if linked)
 _interactiondc_subid15:
 	call checkInteractionState		; $798f
 	jr z,_interactiondc_subid15And16_state0	; $7992
@@ -139247,10 +139273,10 @@ _interactiondc_subid15:
 @state1:
 	call checkIsLinkedGame		; $7994
 	ld a,$01		; $7997
-	jr nz,_label_10_321			; $7999
+	jr nz,_interactiondc_subid15And16_setChestContents			; $7999
 	dec a			; $799b
 
-_label_10_321:
+_interactiondc_subid15And16_setChestContents:
 	ld hl,@chestContents		; $799c
 	rst_addDoubleIndex			; $799f
 	ldi a,(hl)		; $79a0
@@ -139265,24 +139291,28 @@ _label_10_321:
 
 _interactiondc_subid15And16_state0:
 	call getThisRoomFlags		; $79af
-	and $20			; $79b2
+	and ROOMFLAG_ITEM			; $79b2
 	jp nz,interactionDelete		; $79b4
 	jp interactionIncState		; $79b7
 
 
+; Sets past sea of storms chest contents (changes if linked)
 _interactiondc_subid16:
 	call checkInteractionState		; $79ba
 	jr z,_interactiondc_subid15And16_state0	; $79bd
 	call checkIsLinkedGame		; $79bf
 	ld a,$00		; $79c2
-	jr nz,_label_10_321	; $79c4
+	jr nz,_interactiondc_subid15And16_setChestContents	; $79c4
 	inc a			; $79c6
-	jr _label_10_321		; $79c7
+	jr _interactiondc_subid15And16_setChestContents		; $79c7
 
 
+; Forces Link to be squished when he's in a wall (used in ages d5 BK room)
 _interactiondc_subid17:
 	call checkInteractionState		; $79c9
 	jp z,interactionIncState		; $79cc
+
+@state1:
 	ld a,(w1Link.yh)		; $79cf
 	ld b,a			; $79d2
 	ld a,(w1Link.xh)		; $79d3
@@ -139290,19 +139320,22 @@ _interactiondc_subid17:
 	callab bank5.checkPositionSurroundedByWalls		; $79d7
 	rl b			; $79df
 	ret nc			; $79e1
+
 	ld a,(w1Link.state)		; $79e2
-	cp $01			; $79e5
+	cp LINK_STATE_NORMAL			; $79e5
 	ret nz			; $79e7
+
 	ld hl,wLinkForceState		; $79e8
 	ld a,(hl)		; $79eb
 	or a			; $79ec
 	ret nz			; $79ed
-	ld a,$11		; $79ee
+
+	ld a,LINK_STATE_SQUISHED		; $79ee
 	ldi (hl),a		; $79f0
-	ld a,($cca6)		; $79f1
+	ld a,(wBlockPushAngle)		; $79f1
 	and $08			; $79f4
 	xor $08			; $79f6
-	ld (hl),a		; $79f8
+	ld (hl),a ; [wcc50]
 	ret			; $79f9
 
 
@@ -150387,9 +150420,6 @@ _label_11_402:
 	ld a,b			; $792e
 	add b			; $792f
 	ld d,b			; $7930
-
-
-_interactiondc_subid11:
 	add b			; $7931
 	jr z,_label_11_396	; $7932
 	nop			; $7934

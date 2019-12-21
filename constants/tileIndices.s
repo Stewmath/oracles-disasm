@@ -11,8 +11,10 @@
 .define TILEINDEX_UNLIT_TORCH		$08
 .define TILEINDEX_LIT_TORCH		$09
 .define TILEINDEX_MOVING_POT		$10
+.define TILEINDEX_OVERWORLD_DUG_DIRT	$1c ; Overworld only
 .define TILEINDEX_HORIZONTAL_BRIDGE_TOP		$1d ; Overworld only
 .define TILEINDEX_HORIZONTAL_BRIDGE_BOTTOM	$1e ; Overworld only
+.define TILEINDEX_OVERWORLD_STANDARD_GROUND	$3a ; Overworld only
 .define TILEINDEX_WARP_HOLE		$48 ; Dungeons/indoors; activates a warp to another room
 .define TILEINDEX_CONVEYOR_UP		$54
 .define TILEINDEX_CONVEYOR_RIGHT	$55
@@ -48,6 +50,7 @@
 .define TILEINDEX_CURRENT_DOWN		$e1
 .define TILEINDEX_CURRENT_LEFT		$e2
 .define TILEINDEX_CURRENT_RIGHT		$e3
+.define TILEINDEX_LAVA_1		$e4 ; overworld only
 .define TILEINDEX_WHIRLPOOL		$e9
 .define TILEINDEX_DUNGEON_DOOR_1	$ee ; overworld only
 .define TILEINDEX_DUNGEON_DOOR_2	$ef ; overworld only

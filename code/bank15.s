@@ -6289,7 +6289,7 @@ cheval_setTalkedGlobalflag:
 
 
 ; ==============================================================================
-; INTERACID_MISCELLANEOUS
+; INTERACID_MISCELLANEOUS_1
 ; ==============================================================================
 
 ;;
@@ -9262,11 +9262,11 @@ _label_15_231:
 	ld h,e			; $7b72
 
 ; ==============================================================================
-; INTERACID_dc
+; INTERACID_MISCELLANEOUS_2
 ; ==============================================================================
 ;;
 ; @addr{7b73}
-interactiondc_7b73:
+interactiondc_removeGraveyardGateTiles1:
 	ld a,$0a		; $7b73
 	call setScreenShakeCounter		; $7b75
 	ld a,$3a		; $7b78
@@ -9295,7 +9295,7 @@ interactiondc_7b73:
 
 ;;
 ; @addr{7bb1}
-interactiondc_7bb1:
+interactiondc_removeGraveyardGateTiles2:
 	ld a,$0a		; $7bb1
 	call setScreenShakeCounter		; $7bb3
 	ld a,$3a		; $7bb6

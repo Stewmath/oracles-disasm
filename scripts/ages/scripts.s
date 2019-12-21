@@ -7812,7 +7812,7 @@ cheval_subid00Script:
 
 
 ; ==============================================================================
-; INTERACID_MISCELLANEOUS
+; INTERACID_MISCELLANEOUS_1
 ; ==============================================================================
 
 script71a3:
@@ -8787,7 +8787,7 @@ makuSprout_subid01Script:
 	jumpifglobalflagset GLOBALFLAG_MAKU_TREE_SAVED, @alreadySaved
 
 	; Maku tree not saved yet. Spawn the moblins attacking her
-	spawninteraction INTERACID_MISCELLANEOUS, $04, $40, $50
+	spawninteraction INTERACID_MISCELLANEOUS_1, $04, $40, $50
 	setanimation $02
 	setcollisionradii $08, $08
 	checkmemoryeq wTmpcfc0.genericCutscene.state, $09
@@ -10170,15 +10170,17 @@ script7f5d:
 
 
 ; ==============================================================================
-; INTERACID_dc
+; INTERACID_MISCELLANEOUS_2
 ; ==============================================================================
-script7f62:
+
+; Graveyard gate opening cutscene
+interactiondcSubid01Script:
 	checkcfc0bit 0
 	setmusic SNDCTRL_STOPMUSIC
 	wait 60
-	asm15 scriptHlp.interactiondc_7b73
+	asm15 scriptHlp.interactiondc_removeGraveyardGateTiles1
 	wait 45
-	asm15 scriptHlp.interactiondc_7bb1
+	asm15 scriptHlp.interactiondc_removeGraveyardGateTiles2
 	wait 60
 	resetmusic
 	playsound SND_SOLVEPUZZLE

@@ -2123,7 +2123,7 @@ wChestContentsOverride: ; $cca3/$ccbd
 
 wcca5: ; $cca5
 	db
-wcca6: ; $cca6
+wBlockPushAngle: ; $cca6
 ; The angle a block is being pushed toward? bit 7 does something?
 	db
 wcca7: ; $cca7
