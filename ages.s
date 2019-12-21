@@ -93551,216 +93551,296 @@ interactionCodeb5:
 	ld (wUseSimulatedInput),a		; $6ab9
 	jp interactionDelete		; $6abc
 
+
+; ==============================================================================
+; INTERACID_VIRE
+;
+; Variables:
+;   relatedObj1: Zelda object (for vire subid 2 only)
+;   var38: If nonzero, the script is run (subids 0 and 1 only)
+; ==============================================================================
 interactionCodeb8:
-	ld e,$42		; $6abf
+	ld e,Interaction.subid		; $6abf
 	ld a,(de)		; $6ac1
 	rst_jumpTable			; $6ac2
-.dw $6ac9
-.dw $6b0a
-.dw $6b88
+	.dw _vire_subid0
+	.dw _vire_subid1
+	.dw _vire_subid2
+
+
+; Vire at black tower entrance
+_vire_subid0:
 	call checkInteractionState		; $6ac9
-	jr z,_label_0b_280	; $6acc
-	ld e,$78		; $6ace
+	jr z,@state0	; $6acc
+
+@state1:
+	ld e,Interaction.var38		; $6ace
 	ld a,(de)		; $6ad0
 	or a			; $6ad1
-	jr nz,_label_0b_278	; $6ad2
-	call $6c33		; $6ad4
-	jr nc,_label_0b_279	; $6ad7
+	jr nz,@runScript	; $6ad2
+
+	call _vire_disableObjectsIfLinkIsReady		; $6ad4
+	jr nc,@animate	; $6ad7
 	xor a			; $6ad9
 	ld (w1Link.direction),a		; $6ada
-_label_0b_278:
+
+@runScript:
 	call interactionRunScript		; $6add
-	jp c,$6c4f		; $6ae0
-_label_0b_279:
+	jp c,_vire_deleteAndReturnControl		; $6ae0
+@animate:
 	jp interactionAnimate		; $6ae3
-_label_0b_280:
+
+@state0:
 	call getThisRoomFlags		; $6ae6
 	bit 6,(hl)		; $6ae9
 	jp nz,interactionDelete		; $6aeb
+
 	ld a,MUS_GREAT_MOBLIN		; $6aee
 	call playSound		; $6af0
-	ld hl,script7d4a		; $6af3
-_label_0b_281:
+	ld hl,vireSubid0Script		; $6af3
+
+_vire_setScript:
 	call interactionSetScript		; $6af6
 	call interactionInitGraphics		; $6af9
 	call interactionIncState		; $6afc
-	ld l,$50		; $6aff
-	ld (hl),$50		; $6b01
+
+	ld l,Interaction.speed		; $6aff
+	ld (hl),SPEED_200		; $6b01
+
 	xor a			; $6b03
-	ld ($cfd0),a		; $6b04
+	ld (wTmpcfc0.genericCutscene.cfd0),a		; $6b04
 	jp objectSetVisiblec2		; $6b07
-	ld e,$44		; $6b0a
+
+
+; Vire in donkey kong minigame (lower level)
+_vire_subid1:
+	ld e,Interaction.state		; $6b0a
 	ld a,(de)		; $6b0c
 	rst_jumpTable			; $6b0d
-.dw $6b14
-.dw $6b31
-.dw $6b5b
-	ld a,($cae7)		; $6b14
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
+	ld a,(wGroup5Flags+(<ROOM_5e7))		; $6b14
 	bit 6,a			; $6b17
 	jp nz,interactionDelete		; $6b19
+
 	call getThisRoomFlags		; $6b1c
 	bit 6,(hl)		; $6b1f
-	ld hl,script7d57		; $6b21
-	jr z,_label_0b_281	; $6b24
+	ld hl,vireSubid1Script		; $6b21
+	jr z,_vire_setScript	; $6b24
+
 	ld a,(wActiveMusic)		; $6b26
 	or a			; $6b29
 	ld a,MUS_MINIBOSS		; $6b2a
 	call nz,playSound		; $6b2c
-	jr _label_0b_283		; $6b2f
-	ld e,$78		; $6b31
+	jr @gotoState2		; $6b2f
+
+@state1:
+	ld e,Interaction.var38		; $6b31
 	ld a,(de)		; $6b33
 	or a			; $6b34
-	jr nz,_label_0b_282	; $6b35
+	jr nz,@runScript	; $6b35
+
 	ld a,(w1Link.yh)		; $6b37
 	cp $9b			; $6b3a
 	jp nc,interactionAnimate		; $6b3c
-	call $6c33		; $6b3f
+
+	call _vire_disableObjectsIfLinkIsReady		; $6b3f
 	jp nc,interactionAnimate		; $6b42
-_label_0b_282:
+
+@runScript:
 	call interactionRunScript		; $6b45
 	jp nc,interactionAnimate		; $6b48
 	call objectSetInvisible		; $6b4b
-	call $6c52		; $6b4e
-_label_0b_283:
+	call _vire_returnControl		; $6b4e
+
+@gotoState2:
 	ld h,d			; $6b51
-	ld l,$44		; $6b52
+	ld l,Interaction.state		; $6b52
 	ld (hl),$02		; $6b54
-	ld l,$46		; $6b56
+	ld l,Interaction.counter1		; $6b56
 	ld (hl),$08		; $6b58
 	ret			; $6b5a
+
+@state2:
 	call interactionDecCounter1		; $6b5b
 	ret nz			; $6b5e
+
 	ld hl,w1Link.yh		; $6b5f
 	ldi a,(hl)		; $6b62
 	cp $10			; $6b63
-	jr nc,_label_0b_284	; $6b65
+	jr nc,@spawnFireball	; $6b65
+
 	inc l			; $6b67
-	ld a,(hl)		; $6b68
+	ld a,(hl) ; [w1Link.xh]
 	cp $a0			; $6b69
-	jr nc,_label_0b_285	; $6b6b
-_label_0b_284:
+	jr nc,_vire_setRandomCounter1	; $6b6b
+
+@spawnFireball:
 	call getFreePartSlot		; $6b6d
-	jr nz,_label_0b_285	; $6b70
-	ld (hl),$2c		; $6b72
+	jr nz,_vire_setRandomCounter1	; $6b70
+	ld (hl),PARTID_2c		; $6b72
 	inc l			; $6b74
-	inc (hl)		; $6b75
-_label_0b_285:
+	inc (hl) ; [subid] = 1
+
+_vire_setRandomCounter1:
 	call getRandomNumber_noPreserveVars		; $6b76
 	and $03			; $6b79
-	ld hl,$6b84		; $6b7b
+	ld hl,@counter1Vals		; $6b7b
 	rst_addAToHl			; $6b7e
-	ld e,$46		; $6b7f
+	ld e,Interaction.counter1		; $6b7f
 	ld a,(hl)		; $6b81
 	ld (de),a		; $6b82
 	ret			; $6b83
-	ld a,b			; $6b84
-	and b			; $6b85
-	ret z			; $6b86
-	ld a,($ff00+R_NR34)	; $6b87
-	ld b,h			; $6b89
+
+@counter1Vals:
+	.db 120, 160, 200, 240
+
+
+; Vire in donkey kong minigame (upper level)
+_vire_subid2:
+	ld e,Interaction.state		; $6b88
 	ld a,(de)		; $6b8a
 	rst_jumpTable			; $6b8b
-.dw $6b94
-.dw $6bb6
-.dw $6c0c
-.dw $6c25
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+
+@state0:
 	call getThisRoomFlags		; $6b94
 	bit 6,(hl)		; $6b97
 	jp nz,interactionDelete		; $6b99
-	ld bc,$ad03		; $6b9c
+
+	ldbc INTERACID_ZELDA, $03		; $6b9c
 	call objectCreateInteraction		; $6b9f
 	ret nz			; $6ba2
-	ld e,$56		; $6ba3
-	ld a,$40		; $6ba5
+
+	ld e,Interaction.relatedObj1		; $6ba3
+	ld a,Interaction.start		; $6ba5
 	ld (de),a		; $6ba7
 	inc e			; $6ba8
 	ld a,h			; $6ba9
 	ld (de),a		; $6baa
-	ld hl,$7d6a		; $6bab
-	call $6af6		; $6bae
-	ld l,$46		; $6bb1
+
+	ld hl,vireSubid2Script		; $6bab
+	call _vire_setScript		; $6bae
+	ld l,Interaction.counter1		; $6bb1
 	ld (hl),$08		; $6bb3
 	ret			; $6bb5
+
+@state1:
 	ld hl,w1Link.yh		; $6bb6
 	ldi a,(hl)		; $6bb9
 	cp $40			; $6bba
-	jr nc,_label_0b_286	; $6bbc
+	jr nc,@gameStillGoing	; $6bbc
 	inc l			; $6bbe
-	ld a,(hl)		; $6bbf
+	ld a,(hl) ; [w1Link.xh]
 	cp $58			; $6bc0
-	jr nc,_label_0b_286	; $6bc2
-	call $6c33		; $6bc4
-	jr nc,_label_0b_286	; $6bc7
-	ld a,$01		; $6bc9
+	jr nc,@gameStillGoing	; $6bc2
+
+	call _vire_disableObjectsIfLinkIsReady		; $6bc4
+	jr nc,@gameStillGoing	; $6bc7
+
+	; Link reached the top
+	ld a,DISABLE_LINK		; $6bc9
 	ld (wDisabledObjects),a		; $6bcb
-	ld ($cfd0),a		; $6bce
-	ld a,$03		; $6bd1
+	ld (wTmpcfc0.genericCutscene.cfd0),a		; $6bce
+	ld a,DIR_LEFT		; $6bd1
 	ld (w1Link.direction),a		; $6bd3
 	jp interactionIncState		; $6bd6
-_label_0b_286:
+
+@gameStillGoing:
 	ld h,d			; $6bd9
-	ld l,$47		; $6bda
+	ld l,Interaction.counter2		; $6bda
 	ld a,(hl)		; $6bdc
 	or a			; $6bdd
-	jr z,_label_0b_287	; $6bde
-	dec (hl)		; $6be0
-	jr nz,_label_0b_287	; $6be1
-	ld e,$48		; $6be3
+	jr z,++	; $6bde
+	dec (hl) ; [counter2]
+	jr nz,++	; $6be1
+
+	ld e,Interaction.direction		; $6be3
 	xor a			; $6be5
 	ld (de),a		; $6be6
 	call interactionSetAnimation		; $6be7
-_label_0b_287:
+++
 	call interactionDecCounter1		; $6bea
-	jr nz,_label_0b_289	; $6bed
+	jr nz,@animate	; $6bed
+
 	call getFreePartSlot		; $6bef
-	jr nz,_label_0b_288	; $6bf2
-	ld (hl),$2c		; $6bf4
+	jr nz,++		; $6bf2
+	ld (hl),PARTID_2c		; $6bf4
 	call objectCopyPosition		; $6bf6
-	ld e,$48		; $6bf9
+	ld e,Interaction.direction		; $6bf9
 	ld a,$01		; $6bfb
 	ld (de),a		; $6bfd
 	call interactionSetAnimation		; $6bfe
-	ld e,$47		; $6c01
+	ld e,Interaction.counter2		; $6c01
 	ld a,$18		; $6c03
 	ld (de),a		; $6c05
-_label_0b_288:
-	call $6b76		; $6c06
-_label_0b_289:
+++
+	call _vire_setRandomCounter1		; $6c06
+@animate:
 	jp interactionAnimate		; $6c09
+
+; Fight ended
+@state2:
 	call interactionIncState		; $6c0c
-	ld l,$46		; $6c0f
+	ld l,Interaction.counter1		; $6c0f
 	xor a			; $6c11
 	ldi (hl),a		; $6c12
-	ld (hl),a		; $6c13
-	ld e,$48		; $6c14
+	ld (hl),a ; [counter2]
+	ld e,Interaction.direction		; $6c14
 	ld a,(de)		; $6c16
 	dec a			; $6c17
 	call z,interactionSetAnimation		; $6c18
-	ld a,$80		; $6c1b
+	ld a,DISABLE_ALL_BUT_INTERACTIONS		; $6c1b
 	ld (wDisabledObjects),a		; $6c1d
 	ld a,SNDCTRL_STOPMUSIC		; $6c20
 	call playSound		; $6c22
+
+@state3:
 	call interactionRunScript		; $6c25
-	jr nc,_label_0b_289	; $6c28
-	ld a,$05		; $6c2a
+	jr nc,@animate	; $6c28
+
+	; Increment Zelda's state
+	ld a,Object.state2		; $6c2a
 	call objectGetRelatedObject1Var		; $6c2c
 	inc (hl)		; $6c2f
+
 	jp interactionDelete		; $6c30
+
+;;
+; @param[out]	cflag	c if successfully disabled objects
+; @addr{6c33}
+_vire_disableObjectsIfLinkIsReady:
 	ld a,(wLinkInAir)		; $6c33
 	or a			; $6c36
 	ret nz			; $6c37
 	call checkLinkVulnerable		; $6c38
 	ret nc			; $6c3b
-	ld a,$80		; $6c3c
+
+	ld a,DISABLE_ALL_BUT_INTERACTIONS		; $6c3c
 	ld (wDisabledObjects),a		; $6c3e
 	ld (wMenuDisabled),a		; $6c41
-	ld e,$78		; $6c44
+	ld e,Interaction.var38		; $6c44
 	ld (de),a		; $6c46
+
 	call clearAllParentItems		; $6c47
 	call dropLinkHeldItem		; $6c4a
 	scf			; $6c4d
 	ret			; $6c4e
+
+;;
+; @addr{6c4f}
+_vire_deleteAndReturnControl:
 	call interactionDelete		; $6c4f
+
+;;
+; @addr{6c52}
+_vire_returnControl:
 	xor a			; $6c52
 	ld (wDisabledObjects),a		; $6c53
 	ld (wMenuDisabled),a		; $6c56

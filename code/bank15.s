@@ -8717,10 +8717,16 @@ twinrovaInCutsceneScript_body:
 	wait 30
 	scriptend
 
+
+; ==============================================================================
+; INTERACID_VIRE
+; ==============================================================================
+vire_activateMusic:
 	xor a			; $77e6
 	ld (wActiveMusic),a		; $77e7
 	ld a,MUS_MINIBOSS		; $77ea
 	jp playSound		; $77ec
+
 	ld a,TREASURE_TUNI_NUT		; $77ef
 	call checkTreasureObtained		; $77f1
 	ld b,$00		; $77f4

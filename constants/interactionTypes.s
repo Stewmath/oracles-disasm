@@ -1559,6 +1559,10 @@
 
 ;;
 ; Actual enemy vire is spawned later?
+;
+; @subid_00{Vire at black tower entrance}
+; @subid_01{Vire in donkey kong minigame (lower level)}
+; @subid_02{Vire in donkey kong minigame (upper level)}
 .define INTERACID_VIRE			$b8
 
 ;;

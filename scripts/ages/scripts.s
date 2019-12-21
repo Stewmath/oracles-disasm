@@ -9847,34 +9847,45 @@ bookOfSealsPodiumScript:
 	orroomflag $40
 	scriptend
 
-script7d4a:
-	showtext $2f27
+
+; ==============================================================================
+; INTERACID_VIRE
+; ==============================================================================
+
+; Vire at black tower entrance
+vireSubid0Script:
+	showtext TX_2f27
 	wait 4
 	applyspeed $19
 	wait 16
 	orroomflag $40
 	resetmusic
 	scriptend
-script7d57:
+
+; Vire in donkey kong minigame (lower level)
+vireSubid1Script:
 	setangle $10
 	applyspeed $21
 	wait 8
-	showtext $2f28
+	showtext TX_2f28
 	wait 8
-	asm15 $77e6
+	asm15 scriptHlp.vire_activateMusic
 	setangle $00
 	applyspeed $21
 	orroomflag $40
 	scriptend
-script7d6a:
-	settileat $34 $01
-	asm15 playSound $70
+
+; Vire in donkey kong minigame (upper level); after being beaten
+vireSubid2Script:
+	settileat $34, $01
+	asm15 playSound, SND_DOORCLOSE
 	wait 30
-	showtext $2f29
+	showtext TX_2f29
 	wait 4
 	applyspeed $11
 	orroomflag $40
 	scriptend
+
 script7d7b:
 	setspeed SPEED_080
 	wait 180

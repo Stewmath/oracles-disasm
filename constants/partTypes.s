@@ -147,6 +147,10 @@
 .define PARTID_2b				$2b
 
 ;;
+; Used by INTERACID_VIRE
+.define PARTID_2c				$2c
+
+;;
 ; Used by ENEMYID_VERAN_FAIRY
 .define PARTID_2d				$2d
 
