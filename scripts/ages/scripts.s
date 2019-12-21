@@ -10167,16 +10167,21 @@ script7f5d:
 	asm15 $7b2f
 	enableinput
 	scriptend
+
+
+; ==============================================================================
+; INTERACID_dc
+; ==============================================================================
 script7f62:
 	checkcfc0bit 0
-	setmusic $f0
+	setmusic SNDCTRL_STOPMUSIC
 	wait 60
-	asm15 $7b73
+	asm15 scriptHlp.interactiondc_7b73
 	wait 45
-	asm15 $7bb1
+	asm15 scriptHlp.interactiondc_7bb1
 	wait 60
 	resetmusic
-	playsound $4d
+	playsound SND_SOLVEPUZZLE
 	enableinput
 	scriptend
 

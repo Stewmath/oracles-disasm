@@ -1735,6 +1735,35 @@
 .define INTERACID_db			$db
 
 ;;
+; @subid_00{Graveyard key spawner}
+; @subid_01{TODO: possibly the cutscene opening jabu-jabu?}
+; @subid_02{Initiates cutscene where present d2 collapses}
+; @subid_03{?}
+; @subid_04{Related to subid 3?}
+; @subid_05{Makes screen shake before tuni nut is restored}
+; @subid_06{Makes volcanoes erupt before tuni nut is restored (spawns INTERACID_VOLCANO_HANLDER)}
+; @subid_07{Heart piece spawner}
+; @subid_08{
+;   Replaces a tile at a position with a given value. The effect is permanently disabled once that
+;   tile is destroyed, by writing to room flags.
+;   X is bitmask for room flags, var03 is the tile index to put at "Y".
+;   @postype{short}}
+; @subid_09{Animates jabu-jabu}
+; @subid_0a{Initiates jabu opening his mouth cutscene}
+; @subid_0b{Handles floor falling in King Moblin's castle}
+; @subid_0c{Bridge handler in Rolling Ridge past}
+; @subid_0d{Bridge handler in Rolling Ridge present}
+; @subid_0e{Puzzle at entrance to sea of no return (ancient tomb)}
+; @subid_0f{Shows text upon entering a room (only used for sea of no return entrance and black tower
+;           turret)}
+; @subid_10{Black tower entrance handler: warps Link to different variants of black tower.}
+; @subid_11{?}
+; @subid_12{Bridge handler for something?}
+; @subid_13{?}
+; @subid_14{Spawns portal to final dungeon from maku tree?}
+; @subid_15{?}
+; @subid_16{?}
+; @subid_17{?}
 .define INTERACID_dc			$dc
 
 ;;

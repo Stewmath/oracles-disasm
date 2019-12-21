@@ -7,11 +7,13 @@
 ; Tiles in normal areas
 
 .define TILEINDEX_00			$00 ; Out-of-bounds tile (also used by vine sprout?)
+.define TILEINDEX_GRAVE_STATIONARY	$02 ; Overworld only
 .define TILEINDEX_UNLIT_TORCH		$08
 .define TILEINDEX_LIT_TORCH		$09
 .define TILEINDEX_MOVING_POT		$10
 .define TILEINDEX_HORIZONTAL_BRIDGE_TOP		$1d ; Overworld only
 .define TILEINDEX_HORIZONTAL_BRIDGE_BOTTOM	$1e ; Overworld only
+.define TILEINDEX_WARP_HOLE		$48 ; Dungeons/indoors; activates a warp to another room
 .define TILEINDEX_CONVEYOR_UP		$54
 .define TILEINDEX_CONVEYOR_RIGHT	$55
 .define TILEINDEX_CONVEYOR_DOWN		$56

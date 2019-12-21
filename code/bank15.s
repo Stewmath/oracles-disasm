@@ -9260,6 +9260,13 @@ _label_15_231:
 	ld h,$28		; $7b6f
 	ld b,e			; $7b71
 	ld h,e			; $7b72
+
+; ==============================================================================
+; INTERACID_dc
+; ==============================================================================
+;;
+; @addr{7b73}
+interactiondc_7b73:
 	ld a,$0a		; $7b73
 	call setScreenShakeCounter		; $7b75
 	ld a,$3a		; $7b78
@@ -9268,27 +9275,27 @@ _label_15_231:
 	ld a,$3a		; $7b7f
 	ld c,$44		; $7b81
 	call setTile		; $7b83
-	ld hl,$7ba1		; $7b86
-	call $7bde		; $7b89
-	call $7bde		; $7b8c
-	call $7bde		; $7b8f
-	call $7bde		; $7b92
+
+	ld hl,@interleavedTiles		; $7b86
+	call _interactiondc_7bde		; $7b89
+	call _interactiondc_7bde		; $7b8c
+	call _interactiondc_7bde		; $7b8f
+	call _interactiondc_7bde		; $7b92
+
 	ld bc,$4840		; $7b95
-	call $7bee		; $7b98
+	call _interactiondc_spawnPuff		; $7b98
 	ld bc,$4850		; $7b9b
-	jp $7bee		; $7b9e
-	inc sp			; $7ba1
-	ldd a,(hl)		; $7ba2
-	adc c			; $7ba3
-	ld bc,$3a35		; $7ba4
-	adc c			; $7ba7
-	inc bc			; $7ba8
-	ld b,e			; $7ba9
-	sbc b			; $7baa
-.DB $ec				; $7bab
-	ld bc,$9a45		; $7bac
-.DB $ec				; $7baf
-	inc bc			; $7bb0
+	jp _interactiondc_spawnPuff		; $7b9e
+
+@interleavedTiles:
+	.db $33 $3a $89 $01
+	.db $35 $3a $89 $03
+	.db $43 $98 $ec $01
+	.db $45 $9a $ec $03
+
+;;
+; @addr{7bb1}
+interactiondc_7bb1:
 	ld a,$0a		; $7bb1
 	call setScreenShakeCounter		; $7bb3
 	ld a,$3a		; $7bb6
@@ -9304,9 +9311,13 @@ _label_15_231:
 	ld c,$45		; $7bcd
 	call setTile		; $7bcf
 	ld bc,$4830		; $7bd2
-	call $7bee		; $7bd5
+	call _interactiondc_spawnPuff		; $7bd5
 	ld bc,$4860		; $7bd8
-	jp $7bee		; $7bdb
+	jp _interactiondc_spawnPuff		; $7bdb
+
+;;
+; @addr{7bde}
+_interactiondc_7bde:
 	ldi a,(hl)		; $7bde
 	ldh (<hFF8C),a	; $7bdf
 	ldi a,(hl)		; $7be1
@@ -9318,12 +9329,16 @@ _label_15_231:
 	call setInterleavedTile		; $7be9
 	pop hl			; $7bec
 	ret			; $7bed
+
+;;
+; @addr{7bee}
+_interactiondc_spawnPuff:
 	call getFreeInteractionSlot		; $7bee
 	ret nz			; $7bf1
-	ld (hl),$05		; $7bf2
-	ld l,$4b		; $7bf4
+	ld (hl),INTERACID_PUFF		; $7bf2
+	ld l,Interaction.yh		; $7bf4
 	ld (hl),b		; $7bf6
-	ld l,$4d		; $7bf7
+	ld l,Interaction.xh		; $7bf7
 	ld (hl),c		; $7bf9
 	ret			; $7bfa
 

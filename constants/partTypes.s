@@ -30,6 +30,10 @@
 ; @subid{ID of enemy being killed}
 .define PARTID_04				$04
 
+;;
+; @subid{Bitmask for wSwitchState?}
+.define PARTID_SWITCH				$05
+
 ; Makes a torch lightable.
 ; Subid:
 ;   0: Once lit, it stays lit.
@@ -52,9 +56,6 @@
 .define PARTID_SHADOW				$07
 
 ;;
-; @subid{Bitmask for wSwitchState?}
-.define PARTID_SWITCH				$05
-
 ; Spawns a bridge.
 ; counter2: Length of the bridge (measured in 8x8 tiles)
 ; angle: direction it should spawn in (value from 0-3)
