@@ -93470,58 +93470,78 @@ interactionCodeb4:
 	.db $84 $d8
 
 
+; ==============================================================================
+; INTERACID_FINAL_DUNGEON_ENERGY
+; ==============================================================================
 interactionCodeb5:
-	ld e,$44		; $6a44
+	ld e,Interaction.state		; $6a44
 	ld a,(de)		; $6a46
 	rst_jumpTable			; $6a47
-.dw $6a4c
-.dw $6a6b
+	.dw @state0
+	.dw @state1
+
+@state0:
 	ld a,$01		; $6a4c
-	ld (de),a		; $6a4e
+	ld (de),a ; [state]
+
 	call getThisRoomFlags		; $6a4f
 	bit 6,a			; $6a52
 	jp nz,interactionDelete		; $6a54
-	set 6,(hl)		; $6a57
+
+	set 6,(hl) ; [room flags]
 	call setDeathRespawnPoint		; $6a59
 	xor a			; $6a5c
 	ld (wTextIsActive),a		; $6a5d
-	ld a,$78		; $6a60
-	ld e,$46		; $6a62
+
+	ld a,120		; $6a60
+	ld e,Interaction.counter1		; $6a62
 	ld (de),a		; $6a64
+
 	ld bc,$5878		; $6a65
 	jp createEnergySwirlGoingIn		; $6a68
-	ld e,$45		; $6a6b
+
+@state1:
+	ld e,Interaction.state2		; $6a6b
 	ld a,(de)		; $6a6d
 	rst_jumpTable			; $6a6e
-.dw $6a75
-.dw $6a8b
-.dw $6aad
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+
+@substate0:
 	call interactionDecCounter1		; $6a75
 	ret nz			; $6a78
+
 	call interactionIncState2		; $6a79
-	ld l,$46		; $6a7c
+
+	ld l,Interaction.counter1		; $6a7c
 	ld (hl),$08		; $6a7e
-	ld hl,wTmpcbb3		; $6a80
+
+	ld hl,wGenericCutscene.cbb3		; $6a80
 	ld (hl),$00		; $6a83
-	ld hl,wTmpcbba		; $6a85
+	ld hl,wGenericCutscene.cbba		; $6a85
 	ld (hl),$ff		; $6a88
 	ret			; $6a8a
-	ld e,$46		; $6a8b
+
+@substate1:
+	ld e,Interaction.counter1		; $6a8b
 	ld a,(de)		; $6a8d
 	or a			; $6a8e
-	jr nz,_label_0b_277	; $6a8f
+	jr nz,++		; $6a8f
 	call setLinkForceStateToState08		; $6a91
-	ld hl,$d01a		; $6a94
+	ld hl,w1Link.visible		; $6a94
 	set 7,(hl)		; $6a97
-_label_0b_277:
+++
 	call interactionDecCounter1		; $6a99
-	ld hl,wTmpcbb3		; $6a9c
+	ld hl,wGenericCutscene.cbb3		; $6a9c
 	ld b,$01		; $6a9f
 	call flashScreen		; $6aa1
 	ret z			; $6aa4
 	call interactionIncState2		; $6aa5
 	ld a,$03		; $6aa8
 	jp fadeinFromWhiteWithDelay		; $6aaa
+
+@substate2:
 	ld a,(wPaletteThread_mode)		; $6aad
 	or a			; $6ab0
 	ret nz			; $6ab1
