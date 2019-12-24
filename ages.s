@@ -93846,179 +93846,260 @@ _vire_returnControl:
 	ld (wMenuDisabled),a		; $6c56
 	ret			; $6c59
 
+
+; ==============================================================================
+; INTERACID_HORON_DOG
+;
+; Variables:
+;   subid: Used as a sort of "state" variable?
+;   var36: Target x-position
+;   var37: ?
+; ==============================================================================
 interactionCodeb9:
-	ld e,$44		; $6c5a
+	ld e,Interaction.state		; $6c5a
 	ld a,(de)		; $6c5c
 	rst_jumpTable			; $6c5d
-.dw $6c62
-.dw $6d17
+	.dw @state0
+	.dw @state1
+
+@state0:
 	ld a,$01		; $6c62
 	ld (de),a		; $6c64
 	call interactionInitGraphics		; $6c65
 	call objectSetVisiblec2		; $6c68
 	call objectSetInvisible		; $6c6b
-	ld e,$42		; $6c6e
+
+	ld e,Interaction.subid		; $6c6e
 	ld a,(de)		; $6c70
 	ld b,a			; $6c71
-	ld hl,_data_0b_6ce9		; $6c72
+	ld hl,@counter1Vals		; $6c72
 	rst_addAToHl			; $6c75
 	ld a,(hl)		; $6c76
-	ld e,$46		; $6c77
+	ld e,Interaction.counter1		; $6c77
 	ld (de),a		; $6c79
+
 	ld a,b			; $6c7a
-	ld hl,$6cf1		; $6c7b
+	ld hl,@positions		; $6c7b
 	rst_addDoubleIndex			; $6c7e
 	ld b,(hl)		; $6c7f
 	inc hl			; $6c80
 	ld a,(hl)		; $6c81
 	ld c,a			; $6c82
-	ld e,$76		; $6c83
+	ld e,Interaction.var36		; $6c83
 	ld (de),a		; $6c85
+
 	call objectGetRelativeAngle		; $6c86
-	ld e,$49		; $6c89
+	ld e,Interaction.angle		; $6c89
 	ld (de),a		; $6c8b
-	ld e,$50		; $6c8c
-	ld a,$28		; $6c8e
+	ld e,Interaction.speed		; $6c8c
+	ld a,SPEED_100		; $6c8e
 	ld (de),a		; $6c90
-	ld e,$42		; $6c91
+
+	ld e,Interaction.subid		; $6c91
 	ld a,(de)		; $6c93
 	rst_jumpTable			; $6c94
-.dw $6ca5
-.dw $6cb2
-.dw $6cb2
-.dw $6cbf
-.dw $6cca
-.dw $6cca
-.dw $6cca
-.dw $6ce3
-	ld e,$49		; $6ca5
+	.dw @subid0Init
+	.dw @jump
+	.dw @jump
+	.dw @subid3Init
+	.dw @subid4Init
+	.dw @subid5Init
+	.dw @subid6Init
+	.dw @subid7Init
+
+@subid0Init:
+	ld e,Interaction.angle		; $6ca5
 	ld a,$04		; $6ca7
 	ld (de),a		; $6ca9
 	ld h,d			; $6caa
-	ld l,$46		; $6cab
+	ld l,Interaction.counter1		; $6cab
 	ld (hl),$e0		; $6cad
 	inc hl			; $6caf
-	ld (hl),$01		; $6cb0
-	ld e,$42		; $6cb2
+	ld (hl),$01 ; [counter2]
+
+@jump:
+	ld e,Interaction.subid		; $6cb2
 	ld a,(de)		; $6cb4
-	ld hl,$6d01		; $6cb5
+	ld hl,@speedZVals		; $6cb5
 	rst_addDoubleIndex			; $6cb8
 	ld c,(hl)		; $6cb9
 	inc hl			; $6cba
 	ld b,(hl)		; $6cbb
 	jp objectSetSpeedZ		; $6cbc
-	call $6cb2		; $6cbf
-	ld e,$50		; $6cc2
-	ld a,$3c		; $6cc4
+
+@subid3Init:
+	call @jump		; $6cbf
+	ld e,Interaction.speed		; $6cc2
+	ld a,SPEED_180		; $6cc4
 	ld (de),a		; $6cc6
-	jp $6cd2		; $6cc7
-	call $6cb2		; $6cca
-	ld e,$50		; $6ccd
-	ld a,$0a		; $6ccf
+	jp @setZPosition		; $6cc7
+
+@subid4Init:
+@subid5Init:
+@subid6Init:
+	call @jump		; $6cca
+	ld e,Interaction.speed		; $6ccd
+	ld a,SPEED_40		; $6ccf
 	ld (de),a		; $6cd1
-	ld e,$42		; $6cd2
+
+@setZPosition:
+	ld e,Interaction.subid		; $6cd2
 	ld a,(de)		; $6cd4
 	sub $03			; $6cd5
-	ld hl,$6d0f		; $6cd7
+	ld hl,@zPositions		; $6cd7
 	rst_addDoubleIndex			; $6cda
-	ld e,$4f		; $6cdb
+	ld e,Interaction.zh		; $6cdb
 	ldi a,(hl)		; $6cdd
 	ld (de),a		; $6cde
 	dec e			; $6cdf
 	ld a,(hl)		; $6ce0
 	ld (de),a		; $6ce1
 	ret			; $6ce2
-	ld hl,script7d7b		; $6ce3
+
+@subid7Init:
+	ld hl,horonDogScript		; $6ce3
 	jp interactionSetScript		; $6ce6
 
-; @addr{6ce9}
-_data_0b_6ce9:
-	.db $e6 $5a $78 $be $c8 $d2 $dc $fa
-	.db $58 $38 $48 $40 $4c $60 $48 $78
-	.db $1a $2c $10 $38 $0a $44 $18 $a0
-	.db $40 $ff $e0 $fe $00 $ff $c0 $ff
-	.db $36 $00 $36 $00 $36 $00 $e8 $ff
-	.db $c8 $ff $c8 $ff $c8 $ff
 
-	ld e,$45		; $6d17
+@counter1Vals:
+	.db 230, 90, 120, 190, 200, 210, 220, 250
+
+@positions:
+	.db $58 $38
+	.db $48 $40
+	.db $4c $60
+	.db $48 $78
+	.db $1a $2c
+	.db $10 $38
+	.db $0a $44
+	.db $18 $a0
+
+@speedZVals:
+	.dw $ff40
+	.dw $fee0
+	.dw $ff00
+	.dw $ffc0
+	.dw $0036
+	.dw $0036
+	.dw $0036
+
+@zPositions:
+	.dw $ffe8 ; 3 == [subid]
+	.dw $ffc8 ; 4
+	.dw $ffc8 ; 5
+	.dw $ffc8 ; 6
+
+@state1:
+	ld e,Interaction.state2		; $6d17
 	ld a,(de)		; $6d19
 	rst_jumpTable			; $6d1a
-.dw $6d21
-.dw $6d2b
-.dw $6d7c
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+
+@substate0:
 	call interactionDecCounter1		; $6d21
 	ret nz			; $6d24
 	call objectSetVisible		; $6d25
 	jp interactionIncState2		; $6d28
+
+
+@substate1:
 	call interactionAnimate		; $6d2b
 	call objectApplySpeed		; $6d2e
+
 	ld h,d			; $6d31
-	ld l,$4d		; $6d32
+	ld l,Interaction.xh		; $6d32
 	ld a,(hl)		; $6d34
-	ld l,$76		; $6d35
+	ld l,Interaction.var36		; $6d35
 	cp (hl)			; $6d37
-	jr nz,_label_0b_292	; $6d38
+	jr nz,@reachedTargetXPosition	; $6d38
+
 	call interactionIncState2		; $6d3a
-	ld l,$4f		; $6d3d
+	ld l,Interaction.zh		; $6d3d
 	ld (hl),$00		; $6d3f
-	ld l,$42		; $6d41
+	ld l,Interaction.subid		; $6d41
 	ld a,(hl)		; $6d43
 	add a			; $6d44
 	inc a			; $6d45
 	jp interactionSetAnimation		; $6d46
-_label_0b_292:
-	ld e,$42		; $6d49
+
+@reachedTargetXPosition:
+	ld e,Interaction.subid		; $6d49
 	ld a,(de)		; $6d4b
 	rst_jumpTable			; $6d4c
-.dw $6d5d
-.dw $6d5d
-.dw $6d5d
-.dw $6d68
-.dw $6d78
-.dw $6d78
-.dw $6d78
-.dw $6d77
+	.dw @subid0
+	.dw @subid1
+	.dw @subid2
+	.dw @subid3
+	.dw @subid4
+	.dw @subid5
+	.dw @subid6
+	.dw @subid7
+
+@subid0:
+@subid1:
+@subid2:
 	ld c,$20		; $6d5d
 	call objectUpdateSpeedZ_paramC		; $6d5f
 	ret nz			; $6d62
-	ld e,$42		; $6d63
-	jp $6cb2		; $6d65
+	ld e,Interaction.subid		; $6d63
+	jp @jump		; $6d65
+
+@subid3:
 	ld c,$10		; $6d68
-_label_0b_293:
-	ld e,$77		; $6d6a
+
+@label_0b_293:
+	ld e,Interaction.var37		; $6d6a
 	ld a,(de)		; $6d6c
 	or a			; $6d6d
 	ret nz			; $6d6e
 	call objectUpdateSpeedZ_paramC		; $6d6f
 	ret nz			; $6d72
+
 	ld h,d			; $6d73
-	ld l,$77		; $6d74
+	ld l,Interaction.var37		; $6d74
 	inc (hl)		; $6d76
+
+@subid7:
 	ret			; $6d77
+
+@subid4:
+@subid5:
+@subid6:
 	ld c,$01		; $6d78
-	jr _label_0b_293		; $6d7a
-	ld e,$42		; $6d7c
+	jr @label_0b_293		; $6d7a
+
+
+@substate2:
+	ld e,Interaction.subid		; $6d7c
 	ld a,(de)		; $6d7e
 	or a			; $6d7f
-	jr nz,_label_0b_294	; $6d80
+	jr nz,@substate2_subidNot0	; $6d80
+
+@substate2_subid0:
 	ld b,a			; $6d82
 	ld h,d			; $6d83
-	ld l,$46		; $6d84
+	ld l,Interaction.counter1		; $6d84
 	call decHlRef16WithCap		; $6d86
-	jr nz,_label_0b_295	; $6d89
-	ld hl,$cfdf		; $6d8b
+	jr nz,@animate	; $6d89
+	ld hl,wTmpcfc0.genericCutscene.cfdf		; $6d8b
 	ld (hl),$01		; $6d8e
 	ret			; $6d90
-_label_0b_294:
+
+@substate2_subidNot0:
 	cp $07			; $6d91
-	jr nz,_label_0b_295	; $6d93
+	jr nz,@animate	; $6d93
+
 	call interactionRunScript		; $6d95
-	ld e,$47		; $6d98
+	ld e,Interaction.counter2		; $6d98
 	ld a,(de)		; $6d9a
 	or a			; $6d9b
 	ret z			; $6d9c
-_label_0b_295:
+
+@animate:
 	jp interactionAnimate		; $6d9d
+
 
 interactionCodeba:
 	call checkInteractionState		; $6da0

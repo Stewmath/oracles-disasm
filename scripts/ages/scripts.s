@@ -9886,17 +9886,22 @@ vireSubid2Script:
 	orroomflag $40
 	scriptend
 
-script7d7b:
+
+; ==============================================================================
+; INTERACID_HORON_DOG
+; ==============================================================================
+horonDogScript:
 	setspeed SPEED_080
 	wait 180
-script7d7e:
+@loop:
 	setangle $18
 	applyspeed $18
 	wait 6
 	setangle $08
 	applyspeed $14
 	wait 120
-	jump2byte script7d7e
+	jump2byte @loop
+
 script7d8b:
 	rungenericnpc $5711
 script7d8e:

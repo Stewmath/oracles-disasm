@@ -1566,7 +1566,7 @@
 .define INTERACID_VIRE			$b8
 
 ;;
-; Dog in Horon Village.
+; Dog in Horon Village (unused in Ages)
 .define INTERACID_HORON_DOG		$b9
 
 ;;
