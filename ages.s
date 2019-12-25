@@ -94101,33 +94101,47 @@ interactionCodeb9:
 	jp interactionAnimate		; $6d9d
 
 
+; ==============================================================================
+; INTERACID_CHILD_JABU
+; ==============================================================================
 interactionCodeba:
 	call checkInteractionState		; $6da0
-	jr nz,_label_0b_296	; $6da3
+	jr nz,@state0	; $6da3
+
+@state1:
 	call interactionInitGraphics		; $6da5
 	call interactionSetAlwaysUpdateBit		; $6da8
 	call interactionIncState		; $6dab
 	ld bc,$0e06		; $6dae
 	call objectSetCollideRadii		; $6db1
-	ld hl,script7d8b		; $6db4
+	ld hl,childJabuScript		; $6db4
 	call interactionSetScript		; $6db7
 	jp objectSetVisible82		; $6dba
-_label_0b_296:
+
+@state0:
 	call interactionAnimateAsNpc		; $6dbd
 	jp interactionRunScript		; $6dc0
 
+
+; ==============================================================================
+; INTERACID_HUMAN_VERAN
+; ==============================================================================
 interactionCodebb:
-	ld e,$44		; $6dc3
+	ld e,Interaction.state		; $6dc3
 	ld a,(de)		; $6dc5
 	rst_jumpTable			; $6dc6
-.dw $6dcb
-.dw $6dda
-	call interactionIncState	; $6dda
+	.dw @state0
+	.dw @state1
+
+@state0:
+	call interactionIncState	; $6dcb
 	call interactionInitGraphics		; $6dce
-	ld hl,script7d90		; $6dd1
+	ld hl,humanVeranScript		; $6dd1
 	call interactionSetScript		; $6dd4
 	jp objectSetVisible82		; $6dd7
-	ld a,$1a		; $6dda
+
+@state1:
+	ld a,Object.visible		; $6dda
 	call objectGetRelatedObject1Var		; $6ddc
 	ld a,(hl)		; $6ddf
 	xor $80			; $6de0

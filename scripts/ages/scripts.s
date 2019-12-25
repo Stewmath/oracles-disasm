@@ -9902,21 +9902,33 @@ horonDogScript:
 	wait 120
 	jump2byte @loop
 
-script7d8b:
-	rungenericnpc $5711
+
+; ==============================================================================
+; INTERACID_CHILD_JABU
+; ==============================================================================
+childJabuScript:
+	rungenericnpc TX_5711
+
+; Unused?
 script7d8e:
-	jump2byte script7d8b
-script7d90:
+	jump2byte childJabuScript
+
+
+; ==============================================================================
+; INTERACID_HUMAN_VERAN
+; ==============================================================================
+humanVeranScript:
 	wait 240
 	setanimation $01
 	wait 30
-	showtext $5601
+	showtext TX_5601
 	wait 30
 	setanimation $00
 	wait 60
-	writememory $cfd1 $02
+	writememory wTmpcfc0.genericCutscene.cfd1, $02
 	wait 180
 	scriptend
+
 script7da1:
 	rungenericnpclowindex $0c
 script7da3:

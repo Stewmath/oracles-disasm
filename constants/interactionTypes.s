@@ -1574,6 +1574,7 @@
 .define INTERACID_CHILD_JABU		$ba
 
 ;;
+; Veran in the intro cutscene
 .define INTERACID_HUMAN_VERAN		$bb
 
 ;;
