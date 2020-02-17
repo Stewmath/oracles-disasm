@@ -162860,6 +162860,31 @@ expandedTilesetTable:
 	3BytePointer gfx_tileset64
 	3BytePointer gfx_tileset65
 	3BytePointer gfx_tileset66
+	3BytePointer gfx_tileset67
+	3BytePointer gfx_tileset68
+	3BytePointer gfx_tileset69
+	3BytePointer gfx_tileset6a
+	3BytePointer gfx_tileset6b
+	3BytePointer gfx_tileset6c
+	3BytePointer gfx_tileset6d
+	3BytePointer gfx_tileset6e
+	3BytePointer gfx_tileset6f
+	3BytePointer gfx_tileset70
+	3BytePointer gfx_tileset71
+	3BytePointer gfx_tileset72
+	3BytePointer gfx_tileset73
+	3BytePointer gfx_tileset74
+	3BytePointer gfx_tileset75
+	3BytePointer gfx_tileset76
+	3BytePointer gfx_tileset77
+	3BytePointer gfx_tileset78
+	3BytePointer gfx_tileset79
+	3BytePointer gfx_tileset7a
+	3BytePointer gfx_tileset7b
+	3BytePointer gfx_tileset7c
+	3BytePointer gfx_tileset7d
+	3BytePointer gfx_tileset7e
+	3BytePointer gfx_tileset7f
 
 .BANK $41 SLOT 1
 .ORG 0
@@ -162973,3 +162998,28 @@ expandedTilesetTable:
 	m_GfxData gfx_tileset64
 	m_GfxData gfx_tileset65
 	m_GfxData gfx_tileset66
+	m_GfxData gfx_tileset67
+	m_GfxData gfx_tileset68
+	m_GfxData gfx_tileset69
+	m_GfxData gfx_tileset6a
+	m_GfxData gfx_tileset6b
+	m_GfxData gfx_tileset6c
+	m_GfxData gfx_tileset6d
+	m_GfxData gfx_tileset6e
+	m_GfxData gfx_tileset6f
+	m_GfxData gfx_tileset70
+	m_GfxData gfx_tileset71
+	m_GfxData gfx_tileset72
+	m_GfxData gfx_tileset73
+	m_GfxData gfx_tileset74
+	m_GfxData gfx_tileset75
+	m_GfxData gfx_tileset76
+	m_GfxData gfx_tileset77
+	m_GfxData gfx_tileset78
+	m_GfxData gfx_tileset79
+	m_GfxData gfx_tileset7a
+	m_GfxData gfx_tileset7b
+	m_GfxData gfx_tileset7c
+	m_GfxData gfx_tileset7d
+	m_GfxData gfx_tileset7e
+	m_GfxData gfx_tileset7f
