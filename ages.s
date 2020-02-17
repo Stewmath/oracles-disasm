@@ -4304,8 +4304,11 @@ func_131f:
 ++
 	ld a,(wAreaPalette)		; $1361
 	ld (wLoadedAreaPalette),a		; $1364
-	ld a,(wAreaUniqueGfx)		; $1367
-	ld (wLoadedAreaUniqueGfx),a		; $136a
+
+	; Removed for expanded-tilesets branch
+	;ld a,(wAreaUniqueGfx)		; $1367
+	;ld (wLoadedAreaUniqueGfx),a		; $136a
+
 	pop af			; $136d
 	setrombank		; $136e
 	ret			; $1373
@@ -13472,113 +13475,56 @@ func_36f6:
 ; End result: w3TileMappingData is loaded with the tile indices and attributes for all
 ; tiles in the tileset.
 ;
+; This function has been rewritten for the expanded-tilesets patch.
+;
 ; @addr{3712}
 loadAreaTileset:
 	ld a,(wAreaTileset)		; $3712
-	call loadTileset		; $3715
-	ld a,:tileMappingTable
-	setrombank		; $371a
+	call loadTileset ; TODO: remove this call
 
 	ld a,:w3TileMappingData
-	ld ($ff00+R_SVBK),a	; $3721
-	ld hl,w3TileMappingIndices
+	ldh (<R_SVBK),a
+	ld a,:expandedTilesetMappingTable
+	setrombank
+
+	ld a,(wAreaIndex)
+	and $7f
+	ld b,a
+	add a
+	add b
+	ld hl,expandedTilesetMappingTable
+	rst_addAToHl
+	ldi a,(hl)
+	ld c,a
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	ld a,c
+	setrombank
 	ld de,w3TileMappingData
-	ld b,$00		; $3729
--
-	push bc			; $372b
-	call @helper		; $372c
-	pop bc			; $372f
-	dec b			; $3730
-	jr nz,-
+	ld bc,$0800
+	call copyMemoryBc
 
 .ifdef ROM_SEASONS
 	xor a
-	ld ($ff00+R_SVBK),a
+	ldh (<R_SVBK),a
 	ret
 
-.else ; ROM_AGES
-	jpab func_04_6e63		; $3733
+.else; ROM_AGES
+	jpab func_04_6e63
 .endif
-
-;;
-; @addr{373b}
-@helper:
-	; bc = tile mapping index
-	ldi a,(hl)		; $373b
-	ld c,a			; $373c
-	ldi a,(hl)		; $373d
-	ld b,a			; $373e
-
-	; Get address of pointers to tile indices / attributes
-	push hl			; $373f
-	ld hl, tileMappingTable
-	add hl,bc		; $3743
-	add hl,bc		; $3744
-	add hl,bc		; $3745
-
-	; Load tile indices
-	ldi a,(hl)		; $3746
-	ld c,a			; $3747
-	ld a,(hl)		; $3748
-	swap a			; $3749
-	and $0f			; $374b
-	ld b,a			; $374d
-	push hl			; $374e
-	ld hl,tileMappingIndexDataPointer
-	ldi a,(hl)		; $3752
-	ld h,(hl)		; $3753
-	ld l,a			; $3754
-	add hl,bc		; $3755
-	add hl,bc		; $3756
-	add hl,bc		; $3757
-	add hl,bc		; $3758
-	ld b,$04		; $3759
-	call copyMemory		; $375b
-
-	; Load tile attributes
-	pop hl			; $375e
-	ldi a,(hl)		; $375f
-	and $0f			; $3760
-	ld b,a			; $3762
-	ld c,(hl)		; $3763
-	ld hl,tileMappingAttributeDataPointer
-	ldi a,(hl)		; $3767
-	ld h,(hl)		; $3768
-	ld l,a			; $3769
-	add hl,bc		; $376a
-	add hl,bc		; $376b
-	add hl,bc		; $376c
-	add hl,bc		; $376d
-	ld b,$04		; $376e
-	call copyMemory		; $3770
-
-	pop hl			; $3773
-	ret			; $3774
 
 
 ;;
 ; Loads the address of unique header gfx (a&$7f) into wUniqueGfxHeaderAddress.
 ;
+; Function removed for expanded-tilesets branch.
+;
 ; @param	a	Unique gfx header (see constants/uniqueGfxHeaders.s).
 ;			Bit 7 is ignored.
 ; @addr{3775}
 loadUniqueGfxHeader:
-	and $7f			; $3775
-	ld b,a			; $3777
-	ldh a,(<hRomBank)	; $3778
-	push af			; $377a
-	ld a,:uniqueGfxHeaderTable	; $377b
-	setrombank		; $377d
-	ld a,b			; $3782
-	ld hl,uniqueGfxHeaderTable		; $3783
-	rst_addDoubleIndex			; $3786
-	ldi a,(hl)		; $3787
-	ld (wUniqueGfxHeaderAddress),a		; $3788
-	ld a,(hl)		; $378b
-	ld (wUniqueGfxHeaderAddress+1),a		; $378c
-	pop af			; $378f
-	setrombank		; $3790
-	ret			; $3795
+	jp panic
 
 ;;
 ; Load all graphics based on wArea variables.
@@ -13600,8 +13546,10 @@ loadAreaGraphics:
 	callab        bank2.checkLoadPastSignAndChestGfx		; $37ba
 .endif
 
-	ld a,(wAreaUniqueGfx)		; $37c2
-	ld (wLoadedAreaUniqueGfx),a		; $37c5
+	; Removed for expanded-tilesets branch
+	;ld a,(wAreaUniqueGfx)		; $37c2
+	;ld (wLoadedAreaUniqueGfx),a		; $37c5
+
 	ld a,(wAreaPalette)		; $37c8
 	ld (wLoadedAreaPalette),a		; $37cb
 	ld a,(wAreaAnimation)		; $37ce
@@ -13624,10 +13572,7 @@ loadAreaGraphics:
 ; @param[out]	cflag			Set if there are more entries to load.
 ; @addr{37db}
 updateAreaUniqueGfx:
-	; TODO: check if the area ID has actually changed?
-	call loadAreaGfx
-	xor a ; Clear carry
-	ret			; $380a
+	jp panic
 
 ;;
 ; Load just the first entry of a unique gfx header?
@@ -13637,7 +13582,7 @@ updateAreaUniqueGfx:
 ; @param	a	Unique gfx header index
 ; @addr{380b}
 uniqueGfxFunc_380b:
-	ret			; $3827
+	jp panic
 
 ;;
 ; The "loadAreaUniqueGfx" function has been replaced with a function that reloads all
@@ -13648,23 +13593,14 @@ loadAreaGfx:
 	push af
 
 	; Get area index (annoyingly it's not stored in ram anywhere)
-	callfrombank0 getAdjustedRoomGroup
-	ld hl,roomAreasGroupTable
-	rst_addDoubleIndex
-	ldi a,(hl)
-	ld h,(hl)
-	ld l,a
-	ld a,(wActiveRoom)
-	rst_addAToHl
-	ld a,(hl)
+	ld a,(wAreaIndex)
 	and $7f
-
-	ld hl,expandedTilesetTable
+	ld hl,expandedTilesetGfxTable
 	ld b,a
 	add a
 	add b
 	rst_addAToHl
-	ld a,:expandedTilesetTable
+	ld a,:expandedTilesetGfxTable
 	setrombank
 
 	; Get address of expanded tileset graphics
@@ -15275,6 +15211,9 @@ func_3ed0:
 func_3ee4:
 
 .endif
+
+
+.include "code/debug.s"
 
 
 .ENDS
@@ -26625,7 +26564,7 @@ loadAreaData_body:
 	ld (wActiveCollisions),a		; $6dbf
 
 	ld b,$06		; $6dc2
-	ld de,wAreaUniqueGfx		; $6dc4
+	ld de,wAreaIndex		; $6dc4
 @copyloop:
 	ldi a,(hl)		; $6dc7
 	ld (de),a		; $6dc8
@@ -26633,13 +26572,10 @@ loadAreaData_body:
 	dec b			; $6dca
 	jr nz,@copyloop
 
-	ld e,wAreaUniqueGfx&$ff
-	ld a,(de)		; $6dcf
-	ld b,a			; $6dd0
-	ldh a,(<hFF8B)	; $6dd1
-	or b			; $6dd3
-	ld (de),a		; $6dd4
-	ret			; $6dd5
+	ldh a,(<hFF8D)
+	ld e,<wAreaIndex
+	ld (de),a
+	ret
 
 ;;
 ; Returns the group to load the room layout from, accounting for bit 0 of the room flag
@@ -155183,6 +155119,7 @@ loadD6ChangingFloorPatternToBigBuffer:
 
  m_section_superfree Tile_Mappings
 
+	; TODO: delete all of this
 	tileMappingIndexDataPointer:
 		.dw tileMappingIndexData
 	tileMappingAttributeDataPointer:
@@ -155214,7 +155151,7 @@ loadD6ChangingFloorPatternToBigBuffer:
 .ends
 
  m_section_superfree "Tile_mappings"
-	.include "build/data/tilesetMappings.s"
+	;.include "build/data/tilesetMappings.s"
 .ends
 
  m_section_superfree "Gfx_19_2" ALIGN $10
@@ -162756,7 +162693,7 @@ func_7cf8:
 .BANK $40 SLOT 1
 .ORG 0
 
-expandedTilesetTable:
+expandedTilesetGfxTable:
 	3BytePointer gfx_tileset00
 	3BytePointer gfx_tileset01
 	3BytePointer gfx_tileset02
@@ -162885,6 +162822,138 @@ expandedTilesetTable:
 	3BytePointer gfx_tileset7d
 	3BytePointer gfx_tileset7e
 	3BytePointer gfx_tileset7f
+
+
+expandedTilesetMappingTable:
+	3BytePointer tilesetMappings00
+	3BytePointer tilesetMappings01
+	3BytePointer tilesetMappings02
+	3BytePointer tilesetMappings03
+	3BytePointer tilesetMappings04
+	3BytePointer tilesetMappings05
+	3BytePointer tilesetMappings06
+	3BytePointer tilesetMappings07
+	3BytePointer tilesetMappings08
+	3BytePointer tilesetMappings09
+	3BytePointer tilesetMappings0a
+	3BytePointer tilesetMappings0b
+	3BytePointer tilesetMappings0c
+	3BytePointer tilesetMappings0d
+	3BytePointer tilesetMappings0e
+	3BytePointer tilesetMappings0f
+	3BytePointer tilesetMappings10
+	3BytePointer tilesetMappings11
+	3BytePointer tilesetMappings12
+	3BytePointer tilesetMappings13
+	3BytePointer tilesetMappings14
+	3BytePointer tilesetMappings15
+	3BytePointer tilesetMappings16
+	3BytePointer tilesetMappings17
+	3BytePointer tilesetMappings18
+	3BytePointer tilesetMappings19
+	3BytePointer tilesetMappings1a
+	3BytePointer tilesetMappings1b
+	3BytePointer tilesetMappings1c
+	3BytePointer tilesetMappings1d
+	3BytePointer tilesetMappings1e
+	3BytePointer tilesetMappings1f
+	3BytePointer tilesetMappings20
+	3BytePointer tilesetMappings21
+	3BytePointer tilesetMappings22
+	3BytePointer tilesetMappings23
+	3BytePointer tilesetMappings24
+	3BytePointer tilesetMappings25
+	3BytePointer tilesetMappings26
+	3BytePointer tilesetMappings27
+	3BytePointer tilesetMappings28
+	3BytePointer tilesetMappings29
+	3BytePointer tilesetMappings2a
+	3BytePointer tilesetMappings2b
+	3BytePointer tilesetMappings2c
+	3BytePointer tilesetMappings2d
+	3BytePointer tilesetMappings2e
+	3BytePointer tilesetMappings2f
+	3BytePointer tilesetMappings30
+	3BytePointer tilesetMappings31
+	3BytePointer tilesetMappings32
+	3BytePointer tilesetMappings33
+	3BytePointer tilesetMappings34
+	3BytePointer tilesetMappings35
+	3BytePointer tilesetMappings36
+	3BytePointer tilesetMappings37
+	3BytePointer tilesetMappings38
+	3BytePointer tilesetMappings39
+	3BytePointer tilesetMappings3a
+	3BytePointer tilesetMappings3b
+	3BytePointer tilesetMappings3c
+	3BytePointer tilesetMappings3d
+	3BytePointer tilesetMappings3e
+	3BytePointer tilesetMappings3f
+	3BytePointer tilesetMappings40
+	3BytePointer tilesetMappings41
+	3BytePointer tilesetMappings42
+	3BytePointer tilesetMappings43
+	3BytePointer tilesetMappings44
+	3BytePointer tilesetMappings45
+	3BytePointer tilesetMappings46
+	3BytePointer tilesetMappings47
+	3BytePointer tilesetMappings48
+	3BytePointer tilesetMappings49
+	3BytePointer tilesetMappings4a
+	3BytePointer tilesetMappings4b
+	3BytePointer tilesetMappings4c
+	3BytePointer tilesetMappings4d
+	3BytePointer tilesetMappings4e
+	3BytePointer tilesetMappings4f
+	3BytePointer tilesetMappings50
+	3BytePointer tilesetMappings51
+	3BytePointer tilesetMappings52
+	3BytePointer tilesetMappings53
+	3BytePointer tilesetMappings54
+	3BytePointer tilesetMappings55
+	3BytePointer tilesetMappings56
+	3BytePointer tilesetMappings57
+	3BytePointer tilesetMappings58
+	3BytePointer tilesetMappings59
+	3BytePointer tilesetMappings5a
+	3BytePointer tilesetMappings5b
+	3BytePointer tilesetMappings5c
+	3BytePointer tilesetMappings5d
+	3BytePointer tilesetMappings5e
+	3BytePointer tilesetMappings5f
+	3BytePointer tilesetMappings60
+	3BytePointer tilesetMappings61
+	3BytePointer tilesetMappings62
+	3BytePointer tilesetMappings63
+	3BytePointer tilesetMappings64
+	3BytePointer tilesetMappings65
+	3BytePointer tilesetMappings66
+	3BytePointer tilesetMappings67
+	3BytePointer tilesetMappings68
+	3BytePointer tilesetMappings69
+	3BytePointer tilesetMappings6a
+	3BytePointer tilesetMappings6b
+	3BytePointer tilesetMappings6c
+	3BytePointer tilesetMappings6d
+	3BytePointer tilesetMappings6e
+	3BytePointer tilesetMappings6f
+	3BytePointer tilesetMappings70
+	3BytePointer tilesetMappings71
+	3BytePointer tilesetMappings72
+	3BytePointer tilesetMappings73
+	3BytePointer tilesetMappings74
+	3BytePointer tilesetMappings75
+	3BytePointer tilesetMappings76
+	3BytePointer tilesetMappings77
+	3BytePointer tilesetMappings78
+	3BytePointer tilesetMappings79
+	3BytePointer tilesetMappings7a
+	3BytePointer tilesetMappings7b
+	3BytePointer tilesetMappings7c
+	3BytePointer tilesetMappings7d
+	3BytePointer tilesetMappings7e
+	3BytePointer tilesetMappings7f
+
 
 .BANK $41 SLOT 1
 .ORG 0
@@ -163023,3 +163092,323 @@ expandedTilesetTable:
 	m_GfxData gfx_tileset7d
 	m_GfxData gfx_tileset7e
 	m_GfxData gfx_tileset7f
+
+.BANK $70 SLOT 1
+.ORG 0
+
+tilesetMappings00:
+	.incbin "tilesets/ages/tilesetMappings00.bin"
+tilesetMappings01:
+	.incbin "tilesets/ages/tilesetMappings01.bin"
+tilesetMappings02:
+	.incbin "tilesets/ages/tilesetMappings02.bin"
+tilesetMappings03:
+	.incbin "tilesets/ages/tilesetMappings03.bin"
+tilesetMappings04:
+	.incbin "tilesets/ages/tilesetMappings04.bin"
+tilesetMappings05:
+	.incbin "tilesets/ages/tilesetMappings05.bin"
+tilesetMappings06:
+	.incbin "tilesets/ages/tilesetMappings06.bin"
+tilesetMappings07:
+	.incbin "tilesets/ages/tilesetMappings07.bin"
+
+.BANK $71 SLOT 1
+.ORG 0
+
+tilesetMappings08:
+	.incbin "tilesets/ages/tilesetMappings08.bin"
+tilesetMappings09:
+	.incbin "tilesets/ages/tilesetMappings09.bin"
+tilesetMappings0a:
+	.incbin "tilesets/ages/tilesetMappings0a.bin"
+tilesetMappings0b:
+	.incbin "tilesets/ages/tilesetMappings0b.bin"
+tilesetMappings0c:
+	.incbin "tilesets/ages/tilesetMappings0c.bin"
+tilesetMappings0d:
+	.incbin "tilesets/ages/tilesetMappings0d.bin"
+tilesetMappings0e:
+	.incbin "tilesets/ages/tilesetMappings0e.bin"
+tilesetMappings0f:
+	.incbin "tilesets/ages/tilesetMappings0f.bin"
+
+.BANK $72 SLOT 1
+.ORG 0
+
+tilesetMappings10:
+	.incbin "tilesets/ages/tilesetMappings10.bin"
+tilesetMappings11:
+	.incbin "tilesets/ages/tilesetMappings11.bin"
+tilesetMappings12:
+	.incbin "tilesets/ages/tilesetMappings12.bin"
+tilesetMappings13:
+	.incbin "tilesets/ages/tilesetMappings13.bin"
+tilesetMappings14:
+	.incbin "tilesets/ages/tilesetMappings14.bin"
+tilesetMappings15:
+	.incbin "tilesets/ages/tilesetMappings15.bin"
+tilesetMappings16:
+	.incbin "tilesets/ages/tilesetMappings16.bin"
+tilesetMappings17:
+	.incbin "tilesets/ages/tilesetMappings17.bin"
+
+.BANK $73 SLOT 1
+.ORG 0
+
+tilesetMappings18:
+	.incbin "tilesets/ages/tilesetMappings18.bin"
+tilesetMappings19:
+	.incbin "tilesets/ages/tilesetMappings19.bin"
+tilesetMappings1a:
+	.incbin "tilesets/ages/tilesetMappings1a.bin"
+tilesetMappings1b:
+	.incbin "tilesets/ages/tilesetMappings1b.bin"
+tilesetMappings1c:
+	.incbin "tilesets/ages/tilesetMappings1c.bin"
+tilesetMappings1d:
+	.incbin "tilesets/ages/tilesetMappings1d.bin"
+tilesetMappings1e:
+	.incbin "tilesets/ages/tilesetMappings1e.bin"
+tilesetMappings1f:
+	.incbin "tilesets/ages/tilesetMappings1f.bin"
+
+.BANK $74 SLOT 1
+.ORG 0
+
+tilesetMappings20:
+	.incbin "tilesets/ages/tilesetMappings20.bin"
+tilesetMappings21:
+	.incbin "tilesets/ages/tilesetMappings21.bin"
+tilesetMappings22:
+	.incbin "tilesets/ages/tilesetMappings22.bin"
+tilesetMappings23:
+	.incbin "tilesets/ages/tilesetMappings23.bin"
+tilesetMappings24:
+	.incbin "tilesets/ages/tilesetMappings24.bin"
+tilesetMappings25:
+	.incbin "tilesets/ages/tilesetMappings25.bin"
+tilesetMappings26:
+	.incbin "tilesets/ages/tilesetMappings26.bin"
+tilesetMappings27:
+	.incbin "tilesets/ages/tilesetMappings27.bin"
+
+.BANK $75 SLOT 1
+.ORG 0
+
+tilesetMappings28:
+	.incbin "tilesets/ages/tilesetMappings28.bin"
+tilesetMappings29:
+	.incbin "tilesets/ages/tilesetMappings29.bin"
+tilesetMappings2a:
+	.incbin "tilesets/ages/tilesetMappings2a.bin"
+tilesetMappings2b:
+	.incbin "tilesets/ages/tilesetMappings2b.bin"
+tilesetMappings2c:
+	.incbin "tilesets/ages/tilesetMappings2c.bin"
+tilesetMappings2d:
+	.incbin "tilesets/ages/tilesetMappings2d.bin"
+tilesetMappings2e:
+	.incbin "tilesets/ages/tilesetMappings2e.bin"
+tilesetMappings2f:
+	.incbin "tilesets/ages/tilesetMappings2f.bin"
+
+.BANK $76 SLOT 1
+.ORG 0
+
+tilesetMappings30:
+	.incbin "tilesets/ages/tilesetMappings30.bin"
+tilesetMappings31:
+	.incbin "tilesets/ages/tilesetMappings31.bin"
+tilesetMappings32:
+	.incbin "tilesets/ages/tilesetMappings32.bin"
+tilesetMappings33:
+	.incbin "tilesets/ages/tilesetMappings33.bin"
+tilesetMappings34:
+	.incbin "tilesets/ages/tilesetMappings34.bin"
+tilesetMappings35:
+	.incbin "tilesets/ages/tilesetMappings35.bin"
+tilesetMappings36:
+	.incbin "tilesets/ages/tilesetMappings36.bin"
+tilesetMappings37:
+	.incbin "tilesets/ages/tilesetMappings37.bin"
+
+.BANK $77 SLOT 1
+.ORG 0
+
+tilesetMappings38:
+	.incbin "tilesets/ages/tilesetMappings38.bin"
+tilesetMappings39:
+	.incbin "tilesets/ages/tilesetMappings39.bin"
+tilesetMappings3a:
+	.incbin "tilesets/ages/tilesetMappings3a.bin"
+tilesetMappings3b:
+	.incbin "tilesets/ages/tilesetMappings3b.bin"
+tilesetMappings3c:
+	.incbin "tilesets/ages/tilesetMappings3c.bin"
+tilesetMappings3d:
+	.incbin "tilesets/ages/tilesetMappings3d.bin"
+tilesetMappings3e:
+	.incbin "tilesets/ages/tilesetMappings3e.bin"
+tilesetMappings3f:
+	.incbin "tilesets/ages/tilesetMappings3f.bin"
+
+.BANK $78 SLOT 1
+.ORG 0
+
+tilesetMappings40:
+	.incbin "tilesets/ages/tilesetMappings40.bin"
+tilesetMappings41:
+	.incbin "tilesets/ages/tilesetMappings41.bin"
+tilesetMappings42:
+	.incbin "tilesets/ages/tilesetMappings42.bin"
+tilesetMappings43:
+	.incbin "tilesets/ages/tilesetMappings43.bin"
+tilesetMappings44:
+	.incbin "tilesets/ages/tilesetMappings44.bin"
+tilesetMappings45:
+	.incbin "tilesets/ages/tilesetMappings45.bin"
+tilesetMappings46:
+	.incbin "tilesets/ages/tilesetMappings46.bin"
+tilesetMappings47:
+	.incbin "tilesets/ages/tilesetMappings47.bin"
+
+.BANK $79 SLOT 1
+.ORG 0
+
+tilesetMappings48:
+	.incbin "tilesets/ages/tilesetMappings48.bin"
+tilesetMappings49:
+	.incbin "tilesets/ages/tilesetMappings49.bin"
+tilesetMappings4a:
+	.incbin "tilesets/ages/tilesetMappings4a.bin"
+tilesetMappings4b:
+	.incbin "tilesets/ages/tilesetMappings4b.bin"
+tilesetMappings4c:
+	.incbin "tilesets/ages/tilesetMappings4c.bin"
+tilesetMappings4d:
+	.incbin "tilesets/ages/tilesetMappings4d.bin"
+tilesetMappings4e:
+	.incbin "tilesets/ages/tilesetMappings4e.bin"
+tilesetMappings4f:
+	.incbin "tilesets/ages/tilesetMappings4f.bin"
+
+.BANK $7a SLOT 1
+.ORG 0
+
+tilesetMappings50:
+	.incbin "tilesets/ages/tilesetMappings50.bin"
+tilesetMappings51:
+	.incbin "tilesets/ages/tilesetMappings51.bin"
+tilesetMappings52:
+	.incbin "tilesets/ages/tilesetMappings52.bin"
+tilesetMappings53:
+	.incbin "tilesets/ages/tilesetMappings53.bin"
+tilesetMappings54:
+	.incbin "tilesets/ages/tilesetMappings54.bin"
+tilesetMappings55:
+	.incbin "tilesets/ages/tilesetMappings55.bin"
+tilesetMappings56:
+	.incbin "tilesets/ages/tilesetMappings56.bin"
+tilesetMappings57:
+	.incbin "tilesets/ages/tilesetMappings57.bin"
+
+.BANK $7b SLOT 1
+.ORG 0
+
+tilesetMappings58:
+	.incbin "tilesets/ages/tilesetMappings58.bin"
+tilesetMappings59:
+	.incbin "tilesets/ages/tilesetMappings59.bin"
+tilesetMappings5a:
+	.incbin "tilesets/ages/tilesetMappings5a.bin"
+tilesetMappings5b:
+	.incbin "tilesets/ages/tilesetMappings5b.bin"
+tilesetMappings5c:
+	.incbin "tilesets/ages/tilesetMappings5c.bin"
+tilesetMappings5d:
+	.incbin "tilesets/ages/tilesetMappings5d.bin"
+tilesetMappings5e:
+	.incbin "tilesets/ages/tilesetMappings5e.bin"
+tilesetMappings5f:
+	.incbin "tilesets/ages/tilesetMappings5f.bin"
+
+.BANK $7c SLOT 1
+.ORG 0
+
+tilesetMappings60:
+	.incbin "tilesets/ages/tilesetMappings60.bin"
+tilesetMappings61:
+	.incbin "tilesets/ages/tilesetMappings61.bin"
+tilesetMappings62:
+	.incbin "tilesets/ages/tilesetMappings62.bin"
+tilesetMappings63:
+	.incbin "tilesets/ages/tilesetMappings63.bin"
+tilesetMappings64:
+	.incbin "tilesets/ages/tilesetMappings64.bin"
+tilesetMappings65:
+	.incbin "tilesets/ages/tilesetMappings65.bin"
+tilesetMappings66:
+	.incbin "tilesets/ages/tilesetMappings66.bin"
+ tilesetMappings67:
+	.incbin "tilesets/ages/tilesetMappings67.bin"
+
+.BANK $7d SLOT 1
+.ORG 0
+
+tilesetMappings68:
+	.incbin "tilesets/ages/tilesetMappings68.bin"
+tilesetMappings69:
+	.incbin "tilesets/ages/tilesetMappings69.bin"
+tilesetMappings6a:
+	.incbin "tilesets/ages/tilesetMappings6a.bin"
+tilesetMappings6b:
+	.incbin "tilesets/ages/tilesetMappings6b.bin"
+tilesetMappings6c:
+	.incbin "tilesets/ages/tilesetMappings6c.bin"
+tilesetMappings6d:
+	.incbin "tilesets/ages/tilesetMappings6d.bin"
+tilesetMappings6e:
+	.incbin "tilesets/ages/tilesetMappings6e.bin"
+tilesetMappings6f:
+	.incbin "tilesets/ages/tilesetMappings6f.bin"
+
+.BANK $7e SLOT 1
+.ORG 0
+
+tilesetMappings70:
+	.incbin "tilesets/ages/tilesetMappings70.bin"
+tilesetMappings71:
+	.incbin "tilesets/ages/tilesetMappings71.bin"
+tilesetMappings72:
+	.incbin "tilesets/ages/tilesetMappings72.bin"
+tilesetMappings73:
+	.incbin "tilesets/ages/tilesetMappings73.bin"
+tilesetMappings74:
+	.incbin "tilesets/ages/tilesetMappings74.bin"
+tilesetMappings75:
+	.incbin "tilesets/ages/tilesetMappings75.bin"
+tilesetMappings76:
+	.incbin "tilesets/ages/tilesetMappings76.bin"
+tilesetMappings77:
+	.incbin "tilesets/ages/tilesetMappings77.bin"
+
+.BANK $7f SLOT 1
+.ORG 0
+
+tilesetMappings78:
+	.incbin "tilesets/ages/tilesetMappings78.bin"
+tilesetMappings79:
+	.incbin "tilesets/ages/tilesetMappings79.bin"
+tilesetMappings7a:
+	.incbin "tilesets/ages/tilesetMappings7a.bin"
+tilesetMappings7b:
+	.incbin "tilesets/ages/tilesetMappings7b.bin"
+tilesetMappings7c:
+	.incbin "tilesets/ages/tilesetMappings7c.bin"
+tilesetMappings7d:
+	.incbin "tilesets/ages/tilesetMappings7d.bin"
+tilesetMappings7e:
+	.incbin "tilesets/ages/tilesetMappings7e.bin"
+tilesetMappings7f:
+	.incbin "tilesets/ages/tilesetMappings7f.bin"

@@ -608,16 +608,18 @@ _screenTransitionState3:
 	call loadAreaAnimation		; $42eb
 	call checkDarkenRoom		; $42ee
 
-	; Decide whether to proceed to state 4 or 5
+	; Modified for the expanded-tilesets patch.
+	; Originally decided to go to state 4 if bit 7 of "wUniqueGfx" was unset (signal to reload
+	; before screen transition instead of after).
+	; Now, if necessary, graphics are loaded in a single function call and state 4 is always
+	; skipped.
 	ld b,$05		; $42f1
-	ld a,(wAreaUniqueGfx)		; $42f3
+	ld a,(wAreaIndex)		; $42f3
 	bit 7,a			; $42f6
 	jr nz,+
-	or a			; $42fa
-	jr z,+
 
-	call loadUniqueGfxHeader		; $42fd
-	ld b,$04		; $4300
+	call loadAreaGfx		; $42fd
+	ld b,$05		; $4300
 +
 	ld hl,wScreenTransitionState		; $4302
 	ld a,b			; $4305
@@ -684,25 +686,11 @@ checkBrightenRoom:
 ;;
 ; State 4: reload unique gfx / palettes, then proceed to state 5?
 ;
+; Deleted for expanded-tilesets patch.
+;
 ; @addr{433a}
 _screenTransitionState4:
-	call updateAreaUniqueGfx		; $433a
-	ret c			; $433d
-
-	ld a,(wAreaUniqueGfx)		; $433e
-	ld (wLoadedAreaUniqueGfx),a		; $4341
-	xor a			; $4344
-	ld (wAreaUniqueGfx),a		; $4345
-
-	call func_47fc		; $4348
-	call nc,updateAreaPalette		; $434b
-	ld hl,wScreenTransitionState		; $434e
-	ld a,$05		; $4351
-	ldi (hl),a		; $4353
-	xor a			; $4354
-	ld (hl),a		; $4355
-	ld (wScreenTransitionState3),a		; $4356
-	ret			; $4359
+	jp panic
 
 ;;
 ; State 5: Scrolling between 2 screens
@@ -1123,26 +1111,18 @@ _screenTransitionState5Substate2:
 	ld hl,wScreenTransitionState3		; $454c
 	inc (hl)		; $454f
 
-	; Go to state 4 if wAreaUniqueGfx is nonzero, otherwise go to state 5
-	ld a,(wAreaUniqueGfx)		; $4550
-	or a			; $4553
-	jp nz,loadUniqueGfxHeader		; $4554
-	inc (hl)		; $4557
-	ret			; $4558
+	; Modified for expanded-tilesets patch: originally skipped state 4 only if there was no
+	; "unique gfx" to load; now, it always skips state 4.
+	inc (hl)
+	ld a,(wAreaIndex)
+	and $80
+	call nz,loadAreaGfx
+	ret
 
 ;;
 ; @addr{4559}
 @state4:
-	; Load one entry from the unique gfx per frame
-	call updateAreaUniqueGfx		; $4559
-	ret c			; $455c
-
-	; Finished loading unique gfx
-
-	ld a,(wAreaUniqueGfx)		; $455d
-	ld (wLoadedAreaUniqueGfx),a		; $4560
-	xor a			; $4563
-	ld (wAreaUniqueGfx),a		; $4564
+	jp panic
 ;;
 ; @addr{4567}
 @state5:
@@ -1328,26 +1308,18 @@ _screenTransitionState5Substate1:
 	ld hl,wScreenTransitionState3		; $463f
 	inc (hl)		; $4642
 
-	; Go to state 4 if wAreaUniqueGfx is nonzero, otherwise go to state 5
-	ld a,(wAreaUniqueGfx)		; $4643
-	or a			; $4646
-	jp nz,loadUniqueGfxHeader		; $4647
-	inc (hl)		; $464a
-	ret			; $464b
+	; Modified for expanded-tilesets patch: originally skipped state 4 only if there was no
+	; "unique gfx" to load; now, it always skips state 4.
+	inc (hl)
+	ld a,(wAreaIndex)
+	and $80
+	call nz,loadAreaGfx
+	ret
 
 ;;
 ; @addr{464c}
 @state4:
-	; Load one entry from the unique gfx per frame
-	call updateAreaUniqueGfx		; $464c
-	ret c			; $464f
-
-	; Finished loading unique gfx
-
-	ld a,(wAreaUniqueGfx)		; $4650
-	ld (wLoadedAreaUniqueGfx),a		; $4653
-	xor a			; $4656
-	ld (wAreaUniqueGfx),a		; $4657
+	jp panic
 ;;
 ; @addr{465a}
 @state5:
