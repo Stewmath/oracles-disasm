@@ -35,15 +35,17 @@ for tileset in range(0,NUM_AREAS):
     outFile.close()
 
 # Dump tilemaps.
-# For some reason, tilemaps 0x1b and 0x2b differ in a ZOLE rom (all zeroes) compared to the
-# disassembly. (Possibly they are unused by any existing areas and thus not picked up?)
+# ZOLE's tilemaps aren't actually fully separated by area ID, for some reason. So we do this
+# ourselves.
+# ZOLE also has no support for collision mappings. That's a TODO.
 tilemapAddr = 0x201000
-for i in range(0,NUM_TILEMAPS):
+for area in range(0,NUM_AREAS):
+    tileset = rom[areaData + area*8 + 5]
+    tilemapAddr = 0x201000 + tileset * 0x800
     tilemapData = rom[tilemapAddr:tilemapAddr+0x800]
-    outFile = open('tilesets/' + game + '/tilesetMappings' + myhex(i, 2) + '.bin', 'wb')
+    outFile = open('tilesets/' + game + '/tilesetMappings' + myhex(area, 2) + '.bin', 'wb')
     outFile.write(tilemapData)
     outFile.close()
-    tilemapAddr += 0x800
 
 # Dump room layouts. The way these are stored is unchanged in the disassembly, but ZOLE expanded
 # them. Useful for porting ZOLE projects to the disassembly.
