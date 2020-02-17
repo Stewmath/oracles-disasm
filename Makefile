@@ -4,6 +4,9 @@
 # copy of the original game.
 BUILD_VANILLA = true
 
+# Sets the default target. Can be "ages", "seasons", or "all" (both).
+.DEFAULT_GOAL = all
+
 SHELL := /bin/bash
 
 CC = wla-gb
