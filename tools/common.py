@@ -34,9 +34,9 @@ def myhex(val, length=1):
     return out
 
 def romIsSeasons(rom):
-    return rom[0x134:0x13d] == "ZELDA DIN"
+    return rom[0x134:0x13d].decode() == "ZELDA DIN"
 def romIsAges(rom):
-    return rom[0x134:0x13f] == "ZELDA NAYRU"
+    return rom[0x134:0x13f].decode() == "ZELDA NAYRU"
 def getRomRegion(rom):
     c = chr(rom[0x142])
     if c == 'P': return "EU"

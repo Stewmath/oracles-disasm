@@ -8,7 +8,7 @@ build_seasons_v/
 build_ages_e/
 build_seasons_e/
 doc/
-LynnaLab/Log.txt*
+LynnaLab/Logs/
 *.sav
 *.gbc
 *.sn*

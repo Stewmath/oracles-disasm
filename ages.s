@@ -1166,6 +1166,7 @@ loadPaletteHeader:
 ; @param	de	(dest address) | (vram or wram bank)
 ; @param	hl	src address
 ; @param[out]	cflag	Set if the lcd is on (data can't be copied immediately)
+; @trashes{hl}
 ; @addr{058a}
 queueDmaTransfer:
 	ld a,($ff00+R_LCDC)	; $058a
