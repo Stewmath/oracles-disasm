@@ -2,10 +2,10 @@
 # "precompressed" folder, and sections will be marked with "FORCE" instead of
 # "FREE" or "SUPERFREE". This is all to make sure the rom builds as an exact
 # copy of the original game.
-BUILD_VANILLA = true
+BUILD_VANILLA = false
 
 # Sets the default target. Can be "ages", "seasons", or "all" (both).
-.DEFAULT_GOAL = all
+.DEFAULT_GOAL = ages
 
 SHELL := /bin/bash
 

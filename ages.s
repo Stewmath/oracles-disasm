@@ -13588,12 +13588,11 @@ loadAreaGraphics:
 	ldh a,(<hRomBank)	; $3796
 	push af			; $3798
 
-	ld a,(wAreaGfx)		; $3799
-	call loadGfxHeader		; $379c
 	ld a,(wAreaPalette)		; $379f
 	call loadPaletteHeader		; $37a2
 
-	call          loadAreaUniqueGfx		; $37a5
+	call          loadAreaGfx		; $37a5
+
 	callfrombank0 initializeAnimations	; $37a8
 
 .ifdef ROM_AGES
@@ -13618,144 +13617,83 @@ loadAreaGraphics:
 ; This should be called repeatedly (once per frame, to avoid overloading vblank) until all
 ; entries in the header are read.
 ;
+; This function has been rewritten (mostly deleted) for the expanded-tilesets patch. It just reloads
+; everything.
+;
 ; @param	wUniqueGfxHeaderAddress	Where to read the header from (will be updated)
 ; @param[out]	cflag			Set if there are more entries to load.
 ; @addr{37db}
 updateAreaUniqueGfx:
-	ld a,(wAreaUniqueGfx)		; $37db
-	or a			; $37de
-	ret z			; $37df
-
-	ld b,a			; $37e0
-	ld a,(wLoadedAreaUniqueGfx)		; $37e1
-	cp b			; $37e4
-	ret z			; $37e5
-
-	ldh a,(<hRomBank)	; $37e6
-	push af			; $37e8
-
-	ld hl,wUniqueGfxHeaderAddress		; $37e9
-	ldi a,(hl)		; $37ec
-	ld h,(hl)		; $37ed
-	ld l,a			; $37ee
-	ld a,:uniqueGfxHeadersStart
-	setrombank		; $37f1
-	call loadUniqueGfxHeaderEntry		; $37f6
-	ld c,a			; $37f9
-	ld a,l			; $37fa
-	ld (wUniqueGfxHeaderAddress),a		; $37fb
-	ld a,h			; $37fe
-	ld (wUniqueGfxHeaderAddress+1),a		; $37ff
-
-	pop af			; $3802
-	setrombank		; $3803
-	ld a,c			; $3808
-	add a			; $3809
+	; TODO: check if the area ID has actually changed?
+	call loadAreaGfx
+	xor a ; Clear carry
 	ret			; $380a
 
 ;;
 ; Load just the first entry of a unique gfx header?
 ;
-; Unused?
+; Unused? (In any case it's been deleted for the "expanded-tileset" patch.
 ;
 ; @param	a	Unique gfx header index
 ; @addr{380b}
 uniqueGfxFunc_380b:
-	ld b,a			; $380b
-	ldh a,(<hRomBank)	; $380c
-	push af			; $380e
-
-	ld a,:uniqueGfxHeadersStart
-	setrombank		; $3811
-	ld a,b			; $3816
-	ld hl,uniqueGfxHeaderTable		; $3817
-	rst_addDoubleIndex			; $381a
-	ldi a,(hl)		; $381b
-	ld h,(hl)		; $381c
-	ld l,a			; $381d
-	call loadUniqueGfxHeaderEntry		; $381e
-
-	pop af			; $3821
-	setrombank		; $3822
 	ret			; $3827
 
 ;;
+; The "loadAreaUniqueGfx" function has been replaced with a function that reloads all
+; graphics, for the expanded-tilesets patch.
 ; @addr{3828}
-loadAreaUniqueGfx:
-	ld a,:uniqueGfxHeaderTable	; $3828
-	setrombank		; $382a
-	ld a,(wAreaUniqueGfx)		; $382f
-	and $7f			; $3832
-	ret z			; $3834
+loadAreaGfx:
+	ldh a,(<hRomBank)
+	push af
 
-	ld hl,uniqueGfxHeaderTable		; $3835
-	rst_addDoubleIndex			; $3838
-	ldi a,(hl)		; $3839
-	ld h,(hl)		; $383a
-	ld l,a			; $383b
--
-	call loadUniqueGfxHeaderEntry		; $383c
-	add a			; $383f
-	jr c,-
-	ret			; $3842
+	; Get area index (annoyingly it's not stored in ram anywhere)
+	callfrombank0 getAdjustedRoomGroup
+	ld hl,roomAreasGroupTable
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	ld a,(wActiveRoom)
+	rst_addAToHl
+	ld a,(hl)
+	and $7f
 
-;;
-; Loads a single gfx header entry at hl. This should be called multiple times until all
-; entries are read.
-;
-; If the first byte (bank+mode) is zero, it loads a palette instead.
-;
-; @param[out]	a	Last byte of the entry (bit 7 set if there's another entry)
-; @addr{3843}
-loadUniqueGfxHeaderEntry:
-	ldi a,(hl)		; $3843
-	or a			; $3844
-	jr z,@loadPaletteIndex
+	ld hl,expandedTilesetTable
+	ld b,a
+	add a
+	add b
+	rst_addAToHl
+	ld a,:expandedTilesetTable
+	setrombank
 
-	ld c,a			; $3847
-	ldh (<hFF8C),a	; $3848
-	ldi a,(hl)		; $384a
-	ld b,a			; $384b
-	ldi a,(hl)		; $384c
-	ld c,a			; $384d
-	ldi a,(hl)		; $384e
-	ld d,a			; $384f
-	ldi a,(hl)		; $3850
-	ld e,a			; $3851
-	ld a,(hl)		; $3852
-	and $7f			; $3853
-	ldh (<hFF8D),a	; $3855
-	push hl			; $3857
-	push de			; $3858
-	ld l,c			; $3859
-	ld h,b			; $385a
-	ld b,a			; $385b
-	ldh a,(<hFF8C)	; $385c
-	ld c,a			; $385e
-	ld de,$d807		; $385f
-	call decompressGraphics		; $3862
-	pop de			; $3865
-	ld hl,$d800		; $3866
-	ld c,$07		; $3869
-	ldh a,(<hFF8D)	; $386b
-	ld b,a			; $386d
-	call queueDmaTransfer		; $386e
-	pop hl			; $3871
-	ld a,$00		; $3872
-	ld ($ff00+R_SVBK),a	; $3874
-	ld a,:uniqueGfxHeaderTable	; $3876
-	setrombank		; $3878
-	ldi a,(hl)		; $387d
-	ret			; $387e
+	; Get address of expanded tileset graphics
+	ldi a,(hl)
+	ld c,a
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
 
-@loadPaletteIndex:
-	push hl			; $387f
-	ld a,(hl)		; $3880
-	and $7f			; $3881
-	call loadPaletteHeader		; $3883
-	pop hl			; $3886
-	ldi a,(hl)		; $3887
-	ret			; $3888
+	; Maximum length of a DMA transfer is $7f(?), so we do two DMA transfers.
+	ld de,$8801
+	ld b,$7f
+	push hl
+	call queueDmaTransfer
+
+	pop hl
+	ld a,h
+	add $08
+	ld h,a
+	ld d,$90
+	call queueDmaTransfer
+
+	; If LCD is on, wait 1 frame before returning. Otherwise there are issues due to the fact
+	; that we're going to use tons of vblank time (ie. palettes don't get updated properly).
+	call c,resumeThreadNextFrame
+
+	pop af
+	setrombank
+	ret
 
 ;;
 ; @addr{3889}
@@ -162810,3 +162748,228 @@ func_7cf8:
 .endif
 
 .ends
+
+
+
+; Expanded GFX data for tilesets is stored past here. (expanded-tilesets branch)
+
+.BANK $40 SLOT 1
+.ORG 0
+
+expandedTilesetTable:
+	3BytePointer gfx_tileset00
+	3BytePointer gfx_tileset01
+	3BytePointer gfx_tileset02
+	3BytePointer gfx_tileset03
+	3BytePointer gfx_tileset04
+	3BytePointer gfx_tileset05
+	3BytePointer gfx_tileset06
+	3BytePointer gfx_tileset07
+	3BytePointer gfx_tileset08
+	3BytePointer gfx_tileset09
+	3BytePointer gfx_tileset0a
+	3BytePointer gfx_tileset0b
+	3BytePointer gfx_tileset0c
+	3BytePointer gfx_tileset0d
+	3BytePointer gfx_tileset0e
+	3BytePointer gfx_tileset0f
+	3BytePointer gfx_tileset10
+	3BytePointer gfx_tileset11
+	3BytePointer gfx_tileset12
+	3BytePointer gfx_tileset13
+	3BytePointer gfx_tileset14
+	3BytePointer gfx_tileset15
+	3BytePointer gfx_tileset16
+	3BytePointer gfx_tileset17
+	3BytePointer gfx_tileset18
+	3BytePointer gfx_tileset19
+	3BytePointer gfx_tileset1a
+	3BytePointer gfx_tileset1b
+	3BytePointer gfx_tileset1c
+	3BytePointer gfx_tileset1d
+	3BytePointer gfx_tileset1e
+	3BytePointer gfx_tileset1f
+	3BytePointer gfx_tileset20
+	3BytePointer gfx_tileset21
+	3BytePointer gfx_tileset22
+	3BytePointer gfx_tileset23
+	3BytePointer gfx_tileset24
+	3BytePointer gfx_tileset25
+	3BytePointer gfx_tileset26
+	3BytePointer gfx_tileset27
+	3BytePointer gfx_tileset28
+	3BytePointer gfx_tileset29
+	3BytePointer gfx_tileset2a
+	3BytePointer gfx_tileset2b
+	3BytePointer gfx_tileset2c
+	3BytePointer gfx_tileset2d
+	3BytePointer gfx_tileset2e
+	3BytePointer gfx_tileset2f
+	3BytePointer gfx_tileset30
+	3BytePointer gfx_tileset31
+	3BytePointer gfx_tileset32
+	3BytePointer gfx_tileset33
+	3BytePointer gfx_tileset34
+	3BytePointer gfx_tileset35
+	3BytePointer gfx_tileset36
+	3BytePointer gfx_tileset37
+	3BytePointer gfx_tileset38
+	3BytePointer gfx_tileset39
+	3BytePointer gfx_tileset3a
+	3BytePointer gfx_tileset3b
+	3BytePointer gfx_tileset3c
+	3BytePointer gfx_tileset3d
+	3BytePointer gfx_tileset3e
+	3BytePointer gfx_tileset3f
+	3BytePointer gfx_tileset40
+	3BytePointer gfx_tileset41
+	3BytePointer gfx_tileset42
+	3BytePointer gfx_tileset43
+	3BytePointer gfx_tileset44
+	3BytePointer gfx_tileset45
+	3BytePointer gfx_tileset46
+	3BytePointer gfx_tileset47
+	3BytePointer gfx_tileset48
+	3BytePointer gfx_tileset49
+	3BytePointer gfx_tileset4a
+	3BytePointer gfx_tileset4b
+	3BytePointer gfx_tileset4c
+	3BytePointer gfx_tileset4d
+	3BytePointer gfx_tileset4e
+	3BytePointer gfx_tileset4f
+	3BytePointer gfx_tileset50
+	3BytePointer gfx_tileset51
+	3BytePointer gfx_tileset52
+	3BytePointer gfx_tileset53
+	3BytePointer gfx_tileset54
+	3BytePointer gfx_tileset55
+	3BytePointer gfx_tileset56
+	3BytePointer gfx_tileset57
+	3BytePointer gfx_tileset58
+	3BytePointer gfx_tileset59
+	3BytePointer gfx_tileset5a
+	3BytePointer gfx_tileset5b
+	3BytePointer gfx_tileset5c
+	3BytePointer gfx_tileset5d
+	3BytePointer gfx_tileset5e
+	3BytePointer gfx_tileset5f
+	3BytePointer gfx_tileset60
+	3BytePointer gfx_tileset61
+	3BytePointer gfx_tileset62
+	3BytePointer gfx_tileset63
+	3BytePointer gfx_tileset64
+	3BytePointer gfx_tileset65
+	3BytePointer gfx_tileset66
+
+.BANK $41 SLOT 1
+.ORG 0
+
+.redefine DATA_ADDR $4000
+.redefine DATA_BANK $41
+
+	; For simplicity I'm using the "m_GfxData" macro, which crosses banks.
+	; But since each tileset is exactly 0x1000 bytes (and is uncompressed) I don't need to deal
+	; with bank crossing.
+	m_GfxData gfx_tileset00
+	m_GfxData gfx_tileset01
+	m_GfxData gfx_tileset02
+	m_GfxData gfx_tileset03
+	m_GfxData gfx_tileset04
+	m_GfxData gfx_tileset05
+	m_GfxData gfx_tileset06
+	m_GfxData gfx_tileset07
+	m_GfxData gfx_tileset08
+	m_GfxData gfx_tileset09
+	m_GfxData gfx_tileset0a
+	m_GfxData gfx_tileset0b
+	m_GfxData gfx_tileset0c
+	m_GfxData gfx_tileset0d
+	m_GfxData gfx_tileset0e
+	m_GfxData gfx_tileset0f
+	m_GfxData gfx_tileset10
+	m_GfxData gfx_tileset11
+	m_GfxData gfx_tileset12
+	m_GfxData gfx_tileset13
+	m_GfxData gfx_tileset14
+	m_GfxData gfx_tileset15
+	m_GfxData gfx_tileset16
+	m_GfxData gfx_tileset17
+	m_GfxData gfx_tileset18
+	m_GfxData gfx_tileset19
+	m_GfxData gfx_tileset1a
+	m_GfxData gfx_tileset1b
+	m_GfxData gfx_tileset1c
+	m_GfxData gfx_tileset1d
+	m_GfxData gfx_tileset1e
+	m_GfxData gfx_tileset1f
+	m_GfxData gfx_tileset20
+	m_GfxData gfx_tileset21
+	m_GfxData gfx_tileset22
+	m_GfxData gfx_tileset23
+	m_GfxData gfx_tileset24
+	m_GfxData gfx_tileset25
+	m_GfxData gfx_tileset26
+	m_GfxData gfx_tileset27
+	m_GfxData gfx_tileset28
+	m_GfxData gfx_tileset29
+	m_GfxData gfx_tileset2a
+	m_GfxData gfx_tileset2b
+	m_GfxData gfx_tileset2c
+	m_GfxData gfx_tileset2d
+	m_GfxData gfx_tileset2e
+	m_GfxData gfx_tileset2f
+	m_GfxData gfx_tileset30
+	m_GfxData gfx_tileset31
+	m_GfxData gfx_tileset32
+	m_GfxData gfx_tileset33
+	m_GfxData gfx_tileset34
+	m_GfxData gfx_tileset35
+	m_GfxData gfx_tileset36
+	m_GfxData gfx_tileset37
+	m_GfxData gfx_tileset38
+	m_GfxData gfx_tileset39
+	m_GfxData gfx_tileset3a
+	m_GfxData gfx_tileset3b
+	m_GfxData gfx_tileset3c
+	m_GfxData gfx_tileset3d
+	m_GfxData gfx_tileset3e
+	m_GfxData gfx_tileset3f
+	m_GfxData gfx_tileset40
+	m_GfxData gfx_tileset41
+	m_GfxData gfx_tileset42
+	m_GfxData gfx_tileset43
+	m_GfxData gfx_tileset44
+	m_GfxData gfx_tileset45
+	m_GfxData gfx_tileset46
+	m_GfxData gfx_tileset47
+	m_GfxData gfx_tileset48
+	m_GfxData gfx_tileset49
+	m_GfxData gfx_tileset4a
+	m_GfxData gfx_tileset4b
+	m_GfxData gfx_tileset4c
+	m_GfxData gfx_tileset4d
+	m_GfxData gfx_tileset4e
+	m_GfxData gfx_tileset4f
+	m_GfxData gfx_tileset50
+	m_GfxData gfx_tileset51
+	m_GfxData gfx_tileset52
+	m_GfxData gfx_tileset53
+	m_GfxData gfx_tileset54
+	m_GfxData gfx_tileset55
+	m_GfxData gfx_tileset56
+	m_GfxData gfx_tileset57
+	m_GfxData gfx_tileset58
+	m_GfxData gfx_tileset59
+	m_GfxData gfx_tileset5a
+	m_GfxData gfx_tileset5b
+	m_GfxData gfx_tileset5c
+	m_GfxData gfx_tileset5d
+	m_GfxData gfx_tileset5e
+	m_GfxData gfx_tileset5f
+	m_GfxData gfx_tileset60
+	m_GfxData gfx_tileset61
+	m_GfxData gfx_tileset62
+	m_GfxData gfx_tileset63
+	m_GfxData gfx_tileset64
+	m_GfxData gfx_tileset65
+	m_GfxData gfx_tileset66

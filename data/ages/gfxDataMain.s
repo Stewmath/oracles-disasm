@@ -237,96 +237,16 @@
 	m_GfxData gfx_grass_tuft ; $0b753b
 	m_GfxData gfx_sand ; $0b755d
 	m_GfxData gfx_path ; $0b7588
-	m_GfxData gfx_0b759d ; $0b759d
-	m_GfxData gfx_0b779a ; $0b779a
-	m_GfxData gfx_0b7df4 ; $0b7df4
-	m_GfxData gfx_0b8283 ; $0b8283
-	m_GfxData gfx_0b8837 ; $0b8837
-	m_GfxData gfx_0b8cc7 ; $0b8cc7
-	m_GfxData gfx_0b91b3 ; $0b91b3
-	m_GfxData gfx_0b9330 ; $0b9330
-	m_GfxData gfx_0b94e2 ; $0b94e2
-	m_GfxData gfx_0b95a7 ; $0b95a7
-	m_GfxData gfx_0b967c ; $0b967c
-	m_GfxData gfx_0b9879 ; $0b9879
-	m_GfxData gfx_0b9965 ; $0b9965
-	m_GfxData gfx_0b9a3f ; $0b9a3f
-	m_GfxData gfx_0b9b9a ; $0b9b9a
-	m_GfxData gfx_0b9c5f ; $0b9c5f
-	m_GfxData gfx_0b9de6 ; $0b9de6
-	m_GfxData gfx_0b9f82 ; $0b9f82
-	m_GfxData gfx_0b9fce ; $0b9fce
-	m_GfxData gfx_0ba19f ; $0ba19f
-	m_GfxData gfx_0ba37c ; $0ba37c
-	m_GfxData gfx_0ba3f5 ; $0ba3f5
-	m_GfxData gfx_0ba5c8 ; $0ba5c8
-	m_GfxData gfx_0ba7c8 ; $0ba7c8
-	m_GfxData gfx_0ba8c6 ; $0ba8c6
-	m_GfxData gfx_0baaa2 ; $0baaa2
-	m_GfxData gfx_0bac95 ; $0bac95
-	m_GfxData gfx_0bad77 ; $0bad77
-	m_GfxData gfx_0bad92 ; $0bad92
-	m_GfxData gfx_0baf82 ; $0baf82
-	m_GfxData gfx_0bb080 ; $0bb080
-	m_GfxData gfx_0bb087 ; $0bb087
-	m_GfxData gfx_0bb0cf ; $0bb0cf
-	m_GfxData gfx_0bb1cd ; $0bb1cd
-	m_GfxData gfx_0bb26f ; $0bb26f
-	m_GfxData gfx_0bb43d ; $0bb43d
-	m_GfxData gfx_0bb442 ; $0bb442
-	m_GfxData gfx_0bb5cd ; $0bb5cd
-	m_GfxData gfx_0bb786 ; $0bb786
-	m_GfxData gfx_0bb884 ; $0bb884
-	m_GfxData gfx_0bba42 ; $0bba42
-	m_GfxData gfx_0bbbf7 ; $0bbbf7
-	m_GfxData gfx_0bbcf5 ; $0bbcf5
-	m_GfxData gfx_0bbe97 ; $0bbe97
-	m_GfxData gfx_0bc029 ; $0bc029
-	m_GfxData gfx_0bc02e ; $0bc02e
-	m_GfxData gfx_0bc035 ; $0bc035
-	m_GfxData gfx_0bc0f7 ; $0bc0f7
-	m_GfxData gfx_0bc1ae ; $0bc1ae
-	m_GfxData gfx_0bc666 ; $0bc666
-	m_GfxData gfx_0bcb51 ; $0bcb51
-	m_GfxData gfx_0bcd33 ; $0bcd33
-	m_GfxData gfx_0bcf33 ; $0bcf33
-	m_GfxData gfx_0bd033 ; $0bd033
-	m_GfxData gfx_0bd1cf ; $0bd1cf
-	m_GfxData gfx_0bd351 ; $0bd351
-	m_GfxData gfx_0bd438 ; $0bd438
-	m_GfxData gfx_0bd56a ; $0bd56a
-	m_GfxData gfx_0bd592 ; $0bd592
-	m_GfxData gfx_0bd597 ; $0bd597
-	m_GfxData gfx_0bd6a5 ; $0bd6a5
-	m_GfxData gfx_0bd829 ; $0bd829
-	m_GfxData gfx_0bd8ee ; $0bd8ee
-	m_GfxData gfx_0bde39 ; $0bde39
-	m_GfxData gfx_0be4b9 ; $0be4b9
-	m_GfxData gfx_0be7fe ; $0be7fe
-	m_GfxData gfx_0beb71 ; $0beb71
-	m_GfxData gfx_0bed86 ; $0bed86
-	m_GfxData gfx_0bef5d ; $0bef5d
-	m_GfxData gfx_0bf139 ; $0bf139
-	m_GfxData gfx_0bf350 ; $0bf350
-	m_GfxData gfx_0bf514 ; $0bf514
-	m_GfxData gfx_0bf7c0 ; $0bf7c0
-	m_GfxData gfx_0bf9ad ; $0bf9ad
-	m_GfxData gfx_0bfc9b ; $0bfc9b
-	m_GfxData gfx_0bfcc5 ; $0bfcc5
-	m_GfxData gfx_tileset_room_of_rites ; $0bff4b
-	m_GfxData gfx_0c0321 ; $0c0321
-	m_GfxData gfx_0c093a ; $0c093a
-	m_GfxData gfx_0c0ddf ; $0c0ddf
-	m_GfxData gfx_0c1445 ; $0c1445
-	m_GfxData gfx_0c19b7 ; $0c19b7
-	m_GfxData gfx_0c1a6b ; $0c1a6b
-	m_GfxData gfx_0c1f05 ; $0c1f05
-	m_GfxData gfx_0c241d ; $0c241d
-	m_GfxData gfx_0c2611 ; $0c2611
-	m_GfxData gfx_0c2722 ; $0c2722
-	m_GfxData gfx_0c2961 ; $0c2961
-	m_GfxData gfx_0c2d31 ; $0c2d31
-	m_GfxData gfx_0c2d71 ; $0c2d71
+
+	; Deleted tileset graphics for tileset expansion patch (except these ones which are used for
+	; other things too)
+	m_GfxData gfx_0b8283
+	m_GfxData gfx_0b8837
+	m_GfxData gfx_0bd8ee
+	m_GfxData gfx_0bde39
+	m_GfxData gfx_0be4b9
+	m_GfxData gfx_0be7fe
+
 	m_GfxData gfx_dmg_text ; $0c2dec
 	m_GfxData gfx_dmg_gametitle ; $0c2ec8
 	m_GfxData map_dmg_message ; $0c312b

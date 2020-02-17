@@ -424,30 +424,12 @@ gfxHeader3e:
 	m_GfxHeader gfx_sand $dc57 $03
 gfxHeader3f:
 	m_GfxHeader gfx_path $dc57 $03
+
+; These gfx headers removed for the tileset expansion patch
 gfxHeader40:
-	m_GfxHeader gfx_0b8283 $8801 $5f|$80
-	m_GfxHeader gfx_0b8837 $8e01 $4f|$80
-	m_GfxHeader gfx_0b91b3 $9301 $1f|$80
-	m_GfxHeader gfx_0b9330 $9501 $1f|$80
-	m_GfxHeader gfx_0b94e2 $9701 $0f
 gfxHeader41:
-	m_GfxHeader gfx_0b8283 $8801 $5f|$80
-	m_GfxHeader gfx_0b8cc7 $8e01 $4f|$80
-	m_GfxHeader gfx_0b91b3 $9301 $1f|$80
-	m_GfxHeader gfx_0b9330 $9501 $1f|$80
-	m_GfxHeader gfx_0b94e2 $9701 $0f
 gfxHeader42:
-	m_GfxHeader gfx_0b8283 $8801 $5f|$80
-	m_GfxHeader gfx_0bc1ae $8e01 $4f|$80
-	m_GfxHeader gfx_0bcb51 $9301 $1f|$80
-	m_GfxHeader gfx_0bcd33 $9501 $1f|$80
-	m_GfxHeader gfx_0bcf33 $9701 $0f
 gfxHeader43:
-	m_GfxHeader gfx_0b8283 $8801 $5f|$80
-	m_GfxHeader gfx_0bc666 $8e01 $4f|$80
-	m_GfxHeader gfx_0bcb51 $9301 $1f|$80
-	m_GfxHeader gfx_0bcd33 $9501 $1f|$80
-	m_GfxHeader gfx_0bcf33 $9701 $0f
 gfxHeader44:
 	m_GfxHeader gfx_seaweed_cut $8001 $01
 gfxHeader45:
@@ -481,108 +463,46 @@ gfxHeader5c:
 gfxHeader5d:
 gfxHeader5e:
 gfxHeader5f:
+
+; These gfx headers removed for the tileset expansion patch
 gfxHeader60:
-	m_GfxHeader gfx_0bde39 $8801 $7f|$80
-	m_GfxHeader gfx_0be4b9 $9001 $3f|$80
-	m_GfxHeader gfx_0be7fe $9401 $3f
 gfxHeader61:
-	m_GfxHeader gfx_0bde39 $8801 $7f|$80
-	m_GfxHeader gfx_0be4b9 $9001 $3f|$80
-	m_GfxHeader gfx_0beb71 $9401 $25
 gfxHeader62:
-	m_GfxHeader gfx_0bde39 $8801 $7f|$80
-	m_GfxHeader gfx_0be4b9 $9001 $3f|$80
-	m_GfxHeader gfx_0bed86 $9401 $23
 gfxHeader63:
-	m_GfxHeader gfx_0bde39 $8801 $7f|$80
-	m_GfxHeader gfx_0be4b9 $9001 $3f|$80
-	m_GfxHeader gfx_0bef5d $9401 $21
 gfxHeader64:
-	m_GfxHeader gfx_0bde39 $8801 $7f|$80
-	m_GfxHeader gfx_0be4b9 $9001 $3f|$80
-	m_GfxHeader gfx_0bf139 $9401 $29
 gfxHeader65:
-	m_GfxHeader gfx_0bde39 $8801 $7f|$80
-	m_GfxHeader gfx_0be4b9 $9001 $3f|$80
-	m_GfxHeader gfx_0bf350 $9401 $26
 gfxHeader66:
-	m_GfxHeader gfx_0bde39 $8801 $7f|$80
-	m_GfxHeader gfx_0be4b9 $9001 $3f|$80
-	m_GfxHeader gfx_0bf514 $9401 $2f
 gfxHeader67:
-	m_GfxHeader gfx_0bde39 $8801 $7f|$80
-	m_GfxHeader gfx_0be4b9 $9001 $3f|$80
-	m_GfxHeader gfx_0bf7c0 $9401 $32
 gfxHeader68:
-	m_GfxHeader gfx_0bde39 $8801 $7f|$80
-	m_GfxHeader gfx_0be4b9 $9001 $3f|$80
-	m_GfxHeader gfx_0bf9ad $9401 $3f|$80
-	m_GfxHeader gfx_0bfc9b $90c1 $03
 gfxHeader69:
-	m_GfxHeader gfx_0bde39 $8801 $7f|$80
-	m_GfxHeader gfx_0be4b9 $9001 $3f|$80
-	m_GfxHeader gfx_0bfcc5 $9401 $3f
 gfxHeader6a:
-	m_GfxHeader gfx_0bde39 $8801 $7f|$80
-	m_GfxHeader gfx_0be4b9 $9001 $3f|$80
-	m_GfxHeader gfx_tileset_room_of_rites $9401 $3f
 gfxHeader6b:
 gfxHeader6c:
 gfxHeader6d:
-	m_GfxHeader gfx_0c0321 $8801 $7f|$80
-	m_GfxHeader gfx_0c093a $9001 $7f
+
 gfxHeader6e:
 	m_GfxHeader gfx_0bd8ee $8801 $6f
 gfxHeader6f:
 	m_GfxHeader gfx_common_sprites $d006 $4d
+
+; These gfx headers removed for the tileset expansion patch
 gfxHeader70:
-	m_GfxHeader gfx_0b759d $8801 $2f|$80
-	m_GfxHeader gfx_0b779a $8b01 $6f
 gfxHeader71:
-	m_GfxHeader gfx_0b759d $8801 $2f|$80
-	m_GfxHeader gfx_0b7df4 $8b01 $4f
 gfxHeader72:
-	m_GfxHeader gfx_067e91 $d002 $23|$80
-	m_GfxHeader gfx_067eab $d402 $23
 gfxHeader73:
-	m_GfxHeader gfx_067ec0 $d002 $17|$80
-	m_GfxHeader gfx_067ed5 $d402 $17
 gfxHeader74:
-	m_GfxHeader gfx_067ee5 $d8e3 $07|$80
-	m_GfxHeader gfx_067f7f $dce3 $07
 gfxHeader75:
-	m_GfxHeader gfx_067f2e $d8e3 $07|$80
-	m_GfxHeader gfx_067fa5 $dce3 $07
 gfxHeader76:
 gfxHeader77:
 gfxHeader78:
 gfxHeader79:
 gfxHeader7a:
 gfxHeader7b:
-	m_GfxHeader gfx_0c0ddf $8801 $7f|$80
-	m_GfxHeader gfx_0c1445 $9001 $7f
 gfxHeader7c:
-	m_GfxHeader gfx_0bde39 $8801 $7f|$80
-	m_GfxHeader gfx_0c19b7 $8801 $0f|$80
-	m_GfxHeader gfx_0c1a6b $8b01 $4f|$80
-	m_GfxHeader gfx_0c1f05 $9001 $5f|$80
-	m_GfxHeader gfx_0c241d $9601 $1f
 gfxHeader7d:
-	m_GfxHeader gfx_0bde39 $8801 $7f|$80
-	m_GfxHeader gfx_0c19b7 $8801 $0f|$80
-	m_GfxHeader gfx_0c1a6b $8b01 $4f|$80
-	m_GfxHeader gfx_0c1f05 $9001 $5f|$80
-	m_GfxHeader gfx_0c2611 $9601 $1f
 gfxHeader7e:
-	m_GfxHeader gfx_0bde39 $8801 $7f|$80
-	m_GfxHeader gfx_0be4b9 $9001 $3f|$80
-	m_GfxHeader gfx_0c2722 $9401 $3f
 gfxHeader7f:
-	m_GfxHeader gfx_0bde39 $8801 $7f|$80
-	m_GfxHeader gfx_0be4b9 $9001 $3f|$80
-	m_GfxHeader gfx_0c2961 $9401 $3f|$80
-	m_GfxHeader gfx_0c2d31 $8b01 $03|$80
-	m_GfxHeader gfx_0c2d71 $9181 $07
+
 gfxHeader80:
 	m_GfxHeader gfx_0ce700 $d004 $0f|$80
 	m_GfxHeader gfx_0ce731 $d404 $0f|$80
