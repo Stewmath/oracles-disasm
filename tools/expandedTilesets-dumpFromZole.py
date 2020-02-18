@@ -1,4 +1,4 @@
-import sys
+import sys, os
 from common import *
 
 if len(sys.argv) < 2:
@@ -40,12 +40,27 @@ for tileset in range(0,NUM_AREAS):
 # ZOLE also has no support for collision mappings. That's a TODO.
 tilemapAddr = 0x201000
 for area in range(0,NUM_AREAS):
-    tileset = rom[areaData + area*8 + 5]
-    tilemapAddr = 0x201000 + tileset * 0x800
+    tilemap = rom[areaData + area*8 + 5]
+    tilemapAddr = 0x201000 + tilemap * 0x800
     tilemapData = rom[tilemapAddr:tilemapAddr+0x800]
     outFile = open('tilesets/' + game + '/tilesetMappings' + myhex(area, 2) + '.bin', 'wb')
     outFile.write(tilemapData)
     outFile.close()
+
+# Dump collisions.
+# ZOLE actually has no support for this, so as a shortcut, we just use copies of files we've already
+# dumped from other dumper scripts.
+#for area in range(0,NUM_AREAS):
+#    tilemap = rom[areaData + area*8 + 5]
+#    path = 'tilesets/%s/' % game
+#    if game == 'ages': # Hardcoded stuff: some indices don't have their own files
+#        if tilemap == 0x20:
+#            tilemap = 0x1b
+#        elif tilemap == 0x32:
+#            tilemap = 0x2b
+#    origFile = path + 'tilesetCollisions-Orig%s.bin' % myhex(tilemap, 2)
+#    targetFile = path + 'tilesetCollisions%s.bin' % myhex(area, 2)
+#    os.system('cp %s %s' % (origFile, targetFile))
 
 # Dump room layouts. The way these are stored is unchanged in the disassembly, but ZOLE expanded
 # them. Useful for porting ZOLE projects to the disassembly.

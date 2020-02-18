@@ -65,14 +65,6 @@ ROOMLAYOUTFILES += $(wildcard rooms/$(GAME)/large/*.bin)
 ROOMLAYOUTFILES := $(ROOMLAYOUTFILES:.bin=.cmp)
 ROOMLAYOUTFILES := $(foreach file,$(ROOMLAYOUTFILES),build/rooms/$(notdir $(file)))
 
-COLLISIONFILES = $(wildcard tilesets/$(GAME)/tilesetCollisions*.bin)
-COLLISIONFILES := $(COLLISIONFILES:.bin=.cmp)
-COLLISIONFILES := $(foreach file,$(COLLISIONFILES),build/tilesets/$(notdir $(file)))
-
-MAPPINGINDICESFILES = $(wildcard tilesets/$(GAME)/tilesetMappings*.bin)
-MAPPINGINDICESFILES := $(foreach file,$(MAPPINGINDICESFILES),build/tilesets/$(notdir $(file)))
-MAPPINGINDICESFILES := $(MAPPINGINDICESFILES:.bin=Indices.cmp)
-
 # Game-specific data files
 GAMEDATAFILES = $(wildcard data/$(GAME)/*.s)
 GAMEDATAFILES := $(foreach file,$(GAMEDATAFILES),build/data/$(notdir $(file)))
@@ -115,13 +107,9 @@ $(GAME).gbc: $(OBJS) build/linkfile
 	@-tools/verify-checksum.sh $(GAME)
 
 
-$(MAPPINGINDICESFILES): build/tilesets/mappingsDictionary.bin
-$(COLLISIONFILES): build/tilesets/collisionsDictionary.bin
-
-build/$(GAME).o: $(GFXFILES) $(ROOMLAYOUTFILES) $(COLLISIONFILES) $(MAPPINGINDICESFILES) $(GAMEDATAFILES)
+build/$(GAME).o: $(GFXFILES) $(ROOMLAYOUTFILES) $(GAMEDATAFILES)
 build/$(GAME).o: build/textData.s build/textDefines.s
 build/$(GAME).o: code/*.s code/items/*.s code/$(GAME)/*.s data/*.s objects/*.s objects/$(GAME)/*.s scripts/$(GAME)/*.s
-build/$(GAME).o: build/tilesets/tileMappingTable.bin build/tilesets/tileMappingIndexData.bin build/tilesets/tileMappingAttributeData.bin
 build/$(GAME).o: rooms/$(GAME)/*.bin
 
 build/audio.o: audio/$(GAME)/*.s audio/$(GAME)/*.bin
@@ -153,10 +141,6 @@ build/gfx/%.cmp: gfx/$(GAME)/%.bin | build/gfx
 	@dd if=/dev/zero bs=1 count=1 of=$@ 2>/dev/null
 	@cat $< >> $@
 
-build/tilesets/collisionsDictionary.bin: precompressed/tilesets/$(GAME)/collisionsDictionary.bin | build/tilesets
-	@echo "Copying $< to $@..."
-	@cp $< $@
-
 # Data folder: copied from game-specific directory into a constant directory, so that the
 # game's code knows where to look
 build/data/%.s: data/$(GAME)/%.s | build/data
@@ -182,13 +166,6 @@ $(NO_PRECMP_FILE): | build
 
 ifeq ($(BUILD_VANILLA),true)
 
-build/tilesets/%.bin: precompressed/tilesets/$(GAME)/%.bin $(CMP_MODE) | build/tilesets
-	@echo "Copying $< to $@..."
-	@cp $< $@
-build/tilesets/%.cmp: precompressed/tilesets/$(GAME)/%.cmp $(CMP_MODE) | build/tilesets
-	@echo "Copying $< to $@..."
-	@cp $< $@
-
 build/rooms/room%.cmp: precompressed/$(GAME)/rooms/room%.cmp $(CMP_MODE) | build/rooms
 	@echo "Copying $< to $@..."
 	@cp $< $@
@@ -212,35 +189,6 @@ build/textDefines.s: precompressed/$(GAME)/textDefines.s $(CMP_MODE) | build
 	@cp $< $@
 
 else
-
-# The parseTilesets script generates all of these files.
-# They need dummy rules in their recipes to convince make that they've been changed?
-$(MAPPINGINDICESFILES:.cmp=.bin): build/tilesets/mappingsUpdated
-	@sleep 0
-build/tilesets/mappingsDictionary.bin: build/tilesets/mappingsUpdated
-	@sleep 0
-build/tilesets/tileMappingTable.bin: build/tilesets/mappingsUpdated
-	@sleep 0
-build/tilesets/tileMappingIndexData.bin: build/tilesets/mappingsUpdated
-	@sleep 0
-build/tilesets/tileMappingAttributeData.bin: build/tilesets/mappingsUpdated
-	@sleep 0
-
-# mappingsUpdated is a stub file which is just used as a timestamp from the
-# last time parseTilesets was run.
-build/tilesets/mappingsUpdated: $(wildcard tilesets/$(GAME)/tilesetMappings*.bin) $(CMP_MODE) | build/tilesets
-	@echo "Compressing tileset mappings..."
-	@$(PYTHON) tools/parseTilesets.py $(GAME)
-	@echo "Done compressing tileset mappings."
-	@touch $@
-
-build/tilesets/tilesetMappings%Indices.cmp: build/tilesets/tilesetMappings%Indices.bin build/tilesets/mappingsDictionary.bin $(CMP_MODE) | build/tilesets
-	@echo "Compressing $< to $@..."
-	@$(PYTHON) tools/compressTilesetData.py $< $@ 1 build/tilesets/mappingsDictionary.bin
-
-build/tilesets/tilesetCollisions%.cmp: tilesets/$(GAME)/tilesetCollisions%.bin build/tilesets/collisionsDictionary.bin $(CMP_MODE) | build/tilesets
-	@echo "Compressing $< to $@..."
-	@$(PYTHON) tools/compressTilesetData.py $< $@ 0 build/tilesets/collisionsDictionary.bin
 
 build/rooms/room04%.cmp: rooms/$(GAME)/large/room04%.bin $(CMP_MODE) | build/rooms
 	@echo "Compressing $< to $@..."
@@ -279,8 +227,6 @@ build/rooms: | build
 	mkdir build/rooms
 build/debug: | build
 	mkdir build/debug
-build/tilesets: | build
-	mkdir build/tilesets
 build/doc: | build
 	mkdir build/doc
 

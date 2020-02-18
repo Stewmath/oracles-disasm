@@ -5558,7 +5558,9 @@ _warpTileTable:
 	.include "build/data/paletteHeaders.s"
 	.include "build/data/uncmpGfxHeaders.s"
 	.include "build/data/gfxHeaders.s"
-	.include "build/data/tilesetHeaders.s"
+
+	; Removed for expanded-tilesets patch
+	;.include "build/data/tilesetHeaders.s"
 
 .ends
 
