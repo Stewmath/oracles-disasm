@@ -9,4 +9,4 @@
 # On certain oracles-disasm branches, all of that complexity has been removed,
 # and each area simply has its own data for all of this. This uses more space in
 # the rom.
-ExpandedTilesets: false
+ExpandedTilesets: true
