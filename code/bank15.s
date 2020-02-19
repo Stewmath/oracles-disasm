@@ -7322,6 +7322,8 @@ makuTree_showTextAndUpdateMapText:
 makuTree_showText:
 	call _makuTree_modifyTextIndexForLinked		; $7091
 	jr _label_15_203		; $7094
+
+; TODO: ?
 	ld c,a			; $7096
 
 ;;
