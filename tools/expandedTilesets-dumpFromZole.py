@@ -15,10 +15,10 @@ if len(sys.argv) < 3:
     print('\nExample: "%s rom.gbc -g -t" dumps tileset graphics and mappings from rom.gbc.' % sys.argv[0])
     print('\nOther things:\
             \n\tWarps: Use tools/dumpWarps.py.\
-            \n\tObjects: Use tools/dumpObjects.py.')
+            \n\tObjects: Use tools/dumpObjects.py.\
+            \n\tPalettes: Use tools/dumpPalettes.py.')
     print('\nStuff from ZOLE that\'s not (yet) dumped by this script:\
             \n\t- Chests\
-            \n\t- Palettes\
             \n\t- Miniboss portal warps\
             \n\t- Link\'s start location\
             \n\t- Area flags\
