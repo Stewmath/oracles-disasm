@@ -87,7 +87,16 @@ for group in range(8):
 outFile.write("\n")
 warpDestAddresses.append(warpSourceTable)
 
-outFile.write("; Format: map YX unknown\n\n")
+outFile.write('\
+; Explanation:\n\
+;\n\
+; Byte 0: Room index to warp to. (Group is implicitly known from which table\n\
+;   it\'s in.)\n\
+; Byte 1: Y/X position to spawn at.\n\
+; Param 2: Parameter. What this does depends on the transition type? (ie. walk\n\
+;   in from top or bottom of screen?)\n\
+; Param 3: Transition dest type (see constants/transitions.s).\n\
+\n')
 
 for group in range(8):
     outFile.write("group" + str(group) + "WarpDestTable:\n")
@@ -95,10 +104,11 @@ for group in range(8):
     while address < warpDestAddresses[group+1]:
         b1 = rom[address]
         b2 = rom[address+1]
-        b3 = rom[address+2]
+        p3 = rom[address+2]>>4
+        p4 = rom[address+2]&0xf
 
         outFile.write("\tm_WarpDest " + wlahex(b1,2) + " " + wlahex(b2,2)
-                + " " + wlahex(b3,2) + "\n")
+                + " " + wlahex(p3,1) + " " + wlahex(p4,1) + "\n")
 
         address+=3
     outFile.write("\n")
@@ -111,7 +121,7 @@ for group in range(8):
 groupStartPositions = []
 
 # Print table
-outFile.write("warpSourcesTable: ; " + wlahex(warpSourceTable) + "\n")
+outFile.write("\nwarpSourcesTable: ; " + wlahex(warpSourceTable) + "\n")
 
 for group in range(8):
     groupStartPositions.append(bankedAddress(warpBank,read16(rom,warpSourceTable+group*2)))

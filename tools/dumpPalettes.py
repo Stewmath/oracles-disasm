@@ -64,6 +64,14 @@ headerStartAddressDict = {}
 headerAddressDict = {}
 paletteAddressDict = {}
 
+def getPaletteName(pointer):
+    if romIsAges(rom) and pointer == 0x48f0:
+        return 'standardSpritePaletteData'
+    elif romIsSeasons(rom) and pointer == 0x4840:
+        return 'standardSpritePaletteData'
+    else:
+        return 'paletteData' + myhex(pointer, 4)
+
 for i in range(numPaletteHeaders):
     header = PaletteHeader(i)
     paletteHeaders.append(header)
@@ -99,7 +107,7 @@ for i in range(numPaletteHeaders):
         headerEntry.numPalettes = numPalettes
         # There's 1 entry which points to ram instead of rom
         if headerEntry.pointer < 0x8000:
-            headerEntry.label = 'paletteData' + myhex(headerEntry.pointer, 4)
+            headerEntry.label = getPaletteName(headerEntry.pointer)
 
             if headerEntry.pointer < paletteDataStart:
                 paletteDataStart = headerEntry.pointer
@@ -160,7 +168,7 @@ outFile.write('paletteDataStart:\n\n')
 addr = paletteDataStart
 while addr < paletteDataEnd:
     if toGbPointer(addr) in paletteAddressDict:
-        outFile.write('paletteData' + myhex(toGbPointer(addr), 4) + ':\n')
+        outFile.write(getPaletteName(toGbPointer(addr)) + ':\n')
     for i in range(4):
         word = read16(rom, addr+i*2)
         red = word&0x1f
