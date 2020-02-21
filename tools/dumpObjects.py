@@ -13,8 +13,8 @@ else:
 execfile(directory+'common.py')
 
 if len(sys.argv) < 2:
-    print 'Usage: ' + sys.argv[0] + ' rom.gbc'
-    print 'Output goes to various files in the "objects/" directory'
+    print('Usage: ' + sys.argv[0] + ' rom.gbc')
+    print('Output goes to various files in the "objects/" directory')
     sys.exit()
 
 
@@ -35,18 +35,33 @@ romFile = open(sys.argv[1], 'rb')
 data = bytearray(romFile.read())
 rom = data
 
+extraInteractionBankPatch = False
+
 if romIsAges(rom):
     gameString = 'ages'
     dataBank = 0x12
     pointerBank = 0x15
 
     groupPointerTable = 0x15*0x4000 + 0x32b
+
+    extraInteractionBank = 0xfa
+    if rom[0x54328] == 0xc3:
+        extraInteractionBankPatch = True
 else:
     gameString = 'seasons'
     dataBank = 0x11
     pointerBank = 0x11
 
     groupPointerTable = 0x11*0x4000 + 0x1b3b
+
+    extraInteractionBank = 0x7f
+    if rom[0x458dc] == 0xcd:
+        extraInteractionBankPatch = True
+
+
+if extraInteractionBankPatch:
+    print('INFO: "Extra Interaction Bank" patch from ZOLE detected. This is supported.')
+
 
 pointerFile  = open("objects/" + gameString + "/pointers.s", 'w')
 helperFile   = open("objects/" + gameString + "/helperData.s", 'w')
@@ -80,7 +95,7 @@ def parseObjectData(buf, pos, outFile):
                     intData.address = 0
 
         op = data[pos]
-        if (op < 0xf0):
+        if op < 0xf0 and lastOpcode != -1:
             op = lastOpcode
             fresh = 0
         else:
@@ -138,7 +153,7 @@ def parseObjectData(buf, pos, outFile):
             output += wlahex(buf[pos+4], 2) + ' '
             output += wlahex(buf[pos+5], 2) + '\n'
             pos+=6
-        elif op == 0x0a:  # Unknown
+        elif op == 0x0a:  # Item Drop
             if fresh == 1:
                 output += wlahex(buf[pos], 2) + ' '
                 pos+=1
@@ -147,11 +162,11 @@ def parseObjectData(buf, pos, outFile):
             output += wlahex(buf[pos], 2) + ' '
             output += wlahex(buf[pos+1], 2) + '\n'
             pos+=2
-        elif op == 0x0:  # Unknown
+        elif op == 0x0:  # Conditional
             output += wlahex(buf[pos], 2) + '\n'
             pos+=1
         else:
-            print "UNKNOWN OP " + hex(op) + " at " + hex(pos)
+            print("UNKNOWN OP " + hex(op) + " at " + hex(pos))
             pos+=1
 
         lastOpcode = op
@@ -195,7 +210,13 @@ for group in xrange(6):
 
     pointerFile.write('group' + str(group) + 'ObjectDataTable:\n')
     for map in xrange(0x100):
-        pointer = bankedAddress(dataBank, read16(data, pointerTable+map*2))
+        rawPointer = read16(data, pointerTable+map*2)
+        if rawPointer & 0xc000 == 0xc000:
+            if not extraInteractionBankPatch:
+                print('WARNING: "extraInteractionBank" seems to be used, but the rom isn\'t patched for it?')
+            pointer = bankedAddress(extraInteractionBank, rawPointer)
+        else:
+            pointer = bankedAddress(dataBank, rawPointer)
 
         objectData = ObjectData()
         objectData.group = group
@@ -243,10 +264,14 @@ for objectData in objectDataList:
                     mainObjectDataStr.write(
                         'objectData' + myhex((address&0x3fff)+0x4000, 4) + ':\n')
                 else:
+                    if extraInteractionBankPatch:
+                        addrString = myhex(address/0x4000,2) + ':' + myhex((address&0x3fff)+0x4000, 4)
+                    else:
+                        addrString = myhex((address&0x3fff)+0x4000, 4)
                     mainObjectDataStr.write('group' +
                                                  str(data2.group) +
                                                  'Map' + myhex(data2.map, 2) + 'ObjectData: ; ' +
-                                                 myhex((address&0x3fff)+0x4000, 4) + '\n')
+                                                 addrString + '\n')
                 data2.address = 0
         parseObjectData(data, address, mainObjectDataStr)
 
