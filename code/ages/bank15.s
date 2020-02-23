@@ -3477,7 +3477,7 @@ oldManWarpLinkToLibrary:
 	jp playSound		; $5d42
 
 @warpDest:
-	.db $85 $ec $00 $17 $03
+	m_HardcodedWarpA ROOM_AGES_5ec, $00, $17, $03
 
 ;;
 ; @addr{5d4a}
@@ -6792,7 +6792,7 @@ companionScript_warpOutOfForest:
 	jp setWarpDestVariables		; $6de3
 
 @outOfForestWarp:
-	.db $80 $63 $00 $56 $03
+	m_HardcodedWarpA ROOM_AGES_063, $00, $56, $03
 
 ;;
 ; @addr{6deb}
@@ -8155,10 +8155,10 @@ patch_upstairsRepairTuniNutScript:
 	initcollisions
 @npcLoop:
 	checkabutton
-	jumpifmemoryset wPastRoomFlags+(<ROOM_1be), $06, @alreadyMetPatch
+	jumpifmemoryset wPastRoomFlags+(<ROOM_AGES_1be), $06, @alreadyMetPatch
 
 	; First meeting
-	ormemory wPastRoomFlags+(<ROOM_1be), $06
+	ormemory wPastRoomFlags+(<ROOM_AGES_1be), $06
 	showtextnonexitable TX_5800
 	jump2byte ++
 
@@ -8607,7 +8607,7 @@ zelda_warpOutOfVireMinigame:
 	jp setWarpDestVariables		; $774d
 
 @warpDest:
-	.db $80 $65 $00 $85 $03
+	m_HardcodedWarpA ROOM_AGES_065, $00, $85, $03
 
 ;;
 ; @addr{7755}
@@ -8924,18 +8924,18 @@ script15_7925:
 script15_792e:
 	rungenericnpclowindex $0a
 
-	ld hl,$793e		; $7930
+	ld hl,@unlinkedWarp		; $7930
 	call checkIsLinkedGame		; $7933
-	jr z,_label_15_227	; $7936
-	ld hl,$7943		; $7938
-_label_15_227:
+	jr z,+			; $7936
+	ld hl,@linkedWarp		; $7938
++
 	jp setWarpDestVariables		; $793b
-	add c			; $793e
-	rst_addAToHl			; $793f
-	ld bc,$0345		; $7940
-	add b			; $7943
-	ret z			; $7944
-	ld bc,$0352		; $7945
+
+@unlinkedWarp:
+	m_HardcodedWarpA ROOM_AGES_1d7, $01, $45, $03
+
+@linkedWarp:
+	m_HardcodedWarpA ROOM_AGES_0c8, $01, $52, $03
 
 ; @addr{7948}
 script15_7948:

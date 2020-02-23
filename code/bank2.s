@@ -6354,7 +6354,7 @@ _galeSeedMenu_state2:
 	ld a,(wMapMenu.warpIndex)		; $5fb1
 	call _getTreeWarpDataIndex		; $5fb4
 	ldi a,(hl)		; $5fb7
-	ld (wWarpDestIndex),a		; $5fb8
+	ld (wWarpDestRoom),a		; $5fb8
 	ldi a,(hl)		; $5fbb
 	ld (wWarpDestPos),a		; $5fbc
 	ld a,$05		; $5fbf

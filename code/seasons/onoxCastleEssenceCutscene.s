@@ -102,7 +102,7 @@ cutscene14:
 	ld a,$80		; $61d2
 	ld (wWarpDestGroup),a		; $61d4
 	ld a,$33		; $61d7
-	ld (wWarpDestIndex),a		; $61d9
+	ld (wWarpDestRoom),a		; $61d9
 	ld a,$0c		; $61dc
 	ld (wWarpTransition),a		; $61de
 	xor a			; $61e1

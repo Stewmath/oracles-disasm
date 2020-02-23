@@ -1,1548 +1,4128 @@
+; Constants for every room exist in this file.
 ; This may seem pointless, but it can be useful for grep'ing specific rooms to see if
-; their room flags are modified from somewhere. Also, they could be renamed later...
+; their room flags are modified from somewhere.
+; Also, they could be renamed later (a few have been already).
 
-.enum 0
+.ifdef ROM_AGES
+	.enum 0
 
-ROOM_000	db
-ROOM_001	db
-ROOM_002	db
-ROOM_003	db
-ROOM_004	db
-ROOM_005	db
-ROOM_006	db
-ROOM_007	db
-ROOM_008	db
-ROOM_009	db
-ROOM_00a	db
-ROOM_00b	db
-ROOM_00c	db
-ROOM_00d	db
-ROOM_00e	db
-ROOM_00f	db
-ROOM_010	db
-ROOM_011	db
-ROOM_012	db
-ROOM_013	db
-ROOM_014	db
-ROOM_015	db
-ROOM_016	db
-ROOM_017	db
-ROOM_018	db
-ROOM_019	db
-ROOM_01a	db
-ROOM_01b	db
-ROOM_01c	db
-ROOM_01d	db
-ROOM_01e	db
-ROOM_01f	db
-ROOM_020	db
-ROOM_021	db
-ROOM_022	db
-ROOM_023	db
-ROOM_024	db
-ROOM_025	db
-ROOM_026	db
-ROOM_027	db
-ROOM_028	db
-ROOM_029	db
-ROOM_02a	db
-ROOM_02b	db
-ROOM_02c	db
-ROOM_02d	db
-ROOM_02e	db
-ROOM_02f	db
-ROOM_030	db
-ROOM_031	db
-ROOM_032	db
-ROOM_033	db
-ROOM_034	db
-ROOM_035	db
-ROOM_036	db
-ROOM_037	db
-ROOM_038	db
-ROOM_039	db
-ROOM_03a	db
-ROOM_03b	db
-ROOM_03c	db
-ROOM_03d	db
-ROOM_03e	db
-ROOM_03f	db
-ROOM_040	db
-ROOM_041	db
-ROOM_042	db
-ROOM_043	db
-ROOM_044	db
-ROOM_045	db
-ROOM_046	db
-ROOM_047	db
-ROOM_048	db
-ROOM_049	db
-ROOM_04a	db
-ROOM_04b	db
-ROOM_04c	db
-ROOM_04d	db
-ROOM_04e	db
-ROOM_04f	db
-ROOM_050	db
-ROOM_051	db
-ROOM_052	db
-ROOM_053	db
-ROOM_054	db
-ROOM_055	db
-ROOM_056	db
-ROOM_057	db
-ROOM_058	db
-ROOM_059	db
-ROOM_05a	db
-ROOM_05b	db
-ROOM_05c	db
-ROOM_05d	db
-ROOM_05e	db
-ROOM_05f	db
-ROOM_060	db
-ROOM_061	db
-ROOM_062	db
-ROOM_063	db
-ROOM_064	db
-ROOM_065	db
-ROOM_066	db
-ROOM_067	db
-ROOM_068	db
-ROOM_069	db
-ROOM_06a	db
-ROOM_06b	db
-ROOM_06c	db
-ROOM_06d	db
-ROOM_06e	db
-ROOM_06f	db
-ROOM_070	db
-ROOM_071	db
-ROOM_072	db
-ROOM_073	db
-ROOM_074	db
-ROOM_075	db
-ROOM_076	db
-ROOM_077	db
-ROOM_078	db
-ROOM_079	db
-ROOM_07a	db
-ROOM_07b	db
-ROOM_07c	db
-ROOM_07d	db
-ROOM_07e	db
-ROOM_07f	db
-ROOM_080	db
-ROOM_081	db
-ROOM_082	db
-ROOM_083	db
-ROOM_084	db
-ROOM_085	db
-ROOM_086	db
-ROOM_087	db
-ROOM_088	db
-ROOM_089	db
-ROOM_08a	db
-ROOM_08b	db
-ROOM_08c	db
-ROOM_08d	db
-ROOM_08e	db
-ROOM_08f	db
-ROOM_090	db
-ROOM_091	db
-ROOM_092	db
-ROOM_093	db
-ROOM_094	db
-ROOM_095	db
-ROOM_096	db
-ROOM_097	db
-ROOM_098	db
-ROOM_099	db
-ROOM_09a	db
-ROOM_09b	db
-ROOM_09c	db
-ROOM_09d	db
-ROOM_09e	db
-ROOM_09f	db
-ROOM_0a0	db
-ROOM_0a1	db
-ROOM_0a2	db
-ROOM_0a3	db
-ROOM_0a4	db
-ROOM_0a5	db
-ROOM_0a6	db
-ROOM_0a7	db
-ROOM_0a8	db
-ROOM_0a9	db
-ROOM_0aa	db
-ROOM_0ab	db
-ROOM_0ac	db
-ROOM_0ad	db
-ROOM_0ae	db
-ROOM_0af	db
-ROOM_0b0	db
-ROOM_0b1	db
-ROOM_0b2	db
-ROOM_0b3	db
-ROOM_0b4	db
-ROOM_0b5	db
-ROOM_0b6	db
-ROOM_0b7	db
-ROOM_0b8	db
-ROOM_0b9	db
-ROOM_0ba	db
-ROOM_0bb	db
-ROOM_0bc	db
-ROOM_0bd	db
-ROOM_0be	db
-ROOM_0bf	db
-ROOM_0c0	db
-ROOM_0c1	db
-ROOM_0c2	db
-ROOM_0c3	db
-ROOM_0c4	db
-ROOM_0c5	db
-ROOM_0c6	db
-ROOM_0c7	db
-ROOM_0c8	db
-ROOM_0c9	db
-ROOM_0ca	db
-ROOM_0cb	db
-ROOM_0cc	db
-ROOM_0cd	db
-ROOM_0ce	db
-ROOM_0cf	db
-ROOM_0d0	db
-ROOM_0d1	db
-ROOM_0d2	db
-ROOM_0d3	db
-ROOM_0d4	db
-ROOM_0d5	db
-ROOM_0d6	db
-ROOM_0d7	db
-ROOM_0d8	db
-ROOM_0d9	db
-ROOM_0da	db
-ROOM_0db	db
-ROOM_0dc	db
-ROOM_0dd	db
-ROOM_0de	db
-ROOM_0df	db
-ROOM_0e0	db
-ROOM_0e1	db
-ROOM_0e2	db
-ROOM_0e3	db
-ROOM_0e4	db
-ROOM_0e5	db
-ROOM_0e6	db
-ROOM_0e7	db
-ROOM_0e8	db
-ROOM_0e9	db
-ROOM_0ea	db
-ROOM_0eb	db
-ROOM_0ec	db
-ROOM_0ed	db
-ROOM_0ee	db
-ROOM_0ef	db
-ROOM_0f0	db
-ROOM_0f1	db
-ROOM_0f2	db
-ROOM_0f3	db
-ROOM_0f4	db
-ROOM_0f5	db
-ROOM_0f6	db
-ROOM_0f7	db
-ROOM_0f8	db
-ROOM_0f9	db
-ROOM_0fa	db
-ROOM_0fb	db
-ROOM_0fc	db
-ROOM_0fd	db
-ROOM_0fe	db
-ROOM_0ff	db
+	ROOM_AGES_000		db
+	ROOM_AGES_001		db
+	ROOM_AGES_002		db
+	ROOM_AGES_003		db
+	ROOM_AGES_004		db
+	ROOM_AGES_005		db
+	ROOM_AGES_006		db
+	ROOM_AGES_007		db
+	ROOM_AGES_008		db
+	ROOM_AGES_009		db
+	ROOM_AGES_00a		db
+	ROOM_AGES_00b		db
+	ROOM_AGES_00c		db
+	ROOM_AGES_00d		db
+	ROOM_AGES_00e		db
+	ROOM_AGES_00f		db
+	ROOM_AGES_010		db
+	ROOM_AGES_011		db
+	ROOM_AGES_012		db
+	ROOM_AGES_013		db
+	ROOM_AGES_014		db
+	ROOM_AGES_015		db
+	ROOM_AGES_016		db
+	ROOM_AGES_017		db
+	ROOM_AGES_018		db
+	ROOM_AGES_019		db
+	ROOM_AGES_01a		db
+	ROOM_AGES_01b		db
+	ROOM_AGES_01c		db
+	ROOM_AGES_01d		db
+	ROOM_AGES_01e		db
+	ROOM_AGES_01f		db
+	ROOM_AGES_020		db
+	ROOM_AGES_021		db
+	ROOM_AGES_022		db
+	ROOM_AGES_023		db
+	ROOM_AGES_024		db
+	ROOM_AGES_025		db
+	ROOM_AGES_026		db
+	ROOM_AGES_027		db
+	ROOM_AGES_028		db
+	ROOM_AGES_029		db
+	ROOM_AGES_02a		db
+	ROOM_AGES_02b		db
+	ROOM_AGES_02c		db
+	ROOM_AGES_02d		db
+	ROOM_AGES_02e		db
+	ROOM_AGES_02f		db
+	ROOM_AGES_030		db
+	ROOM_AGES_031		db
+	ROOM_AGES_032		db
+	ROOM_AGES_033		db
+	ROOM_AGES_034		db
+	ROOM_AGES_035		db
+	ROOM_AGES_036		db
+	ROOM_AGES_037		db
+	ROOM_AGES_038		db
+	ROOM_AGES_039		db
+	ROOM_AGES_03a		db
+	ROOM_AGES_03b		db
+	ROOM_AGES_03c		db
+	ROOM_AGES_03d		db
+	ROOM_AGES_03e		db
+	ROOM_AGES_03f		db
+	ROOM_AGES_040		db
+	ROOM_AGES_041		db
+	ROOM_AGES_042		db
+	ROOM_AGES_043		db
+	ROOM_AGES_044		db
+	ROOM_AGES_045		db
+	ROOM_AGES_046		db
+	ROOM_AGES_047		db
+	ROOM_AGES_048		db
+	ROOM_AGES_049		db
+	ROOM_AGES_04a		db
+	ROOM_AGES_04b		db
+	ROOM_AGES_04c		db
+	ROOM_AGES_04d		db
+	ROOM_AGES_04e		db
+	ROOM_AGES_04f		db
+	ROOM_AGES_050		db
+	ROOM_AGES_051		db
+	ROOM_AGES_052		db
+	ROOM_AGES_053		db
+	ROOM_AGES_054		db
+	ROOM_AGES_055		db
+	ROOM_AGES_056		db
+	ROOM_AGES_057		db
+	ROOM_AGES_058		db
+	ROOM_AGES_059		db
+	ROOM_AGES_05a		db
+	ROOM_AGES_05b		db
+	ROOM_AGES_05c		db
+	ROOM_AGES_05d		db
+	ROOM_AGES_05e		db
+	ROOM_AGES_05f		db
+	ROOM_AGES_060		db
+	ROOM_AGES_061		db
+	ROOM_AGES_062		db
+	ROOM_AGES_063		db
+	ROOM_AGES_064		db
+	ROOM_AGES_065		db
+	ROOM_AGES_066		db
+	ROOM_AGES_067		db
+	ROOM_AGES_068		db
+	ROOM_AGES_069		db
+	ROOM_AGES_06a		db
+	ROOM_AGES_06b		db
+	ROOM_AGES_06c		db
+	ROOM_AGES_06d		db
+	ROOM_AGES_06e		db
+	ROOM_AGES_06f		db
+	ROOM_AGES_070		db
+	ROOM_AGES_071		db
+	ROOM_AGES_072		db
+	ROOM_AGES_073		db
+	ROOM_AGES_074		db
+	ROOM_AGES_075		db
+	ROOM_AGES_076		db
+	ROOM_AGES_077		db
+	ROOM_AGES_078		db
+	ROOM_AGES_079		db
+	ROOM_AGES_07a		db
+	ROOM_AGES_07b		db
+	ROOM_AGES_07c		db
+	ROOM_AGES_07d		db
+	ROOM_AGES_07e		db
+	ROOM_AGES_07f		db
+	ROOM_AGES_080		db
+	ROOM_AGES_081		db
+	ROOM_AGES_082		db
+	ROOM_AGES_083		db
+	ROOM_AGES_084		db
+	ROOM_AGES_085		db
+	ROOM_AGES_086		db
+	ROOM_AGES_087		db
+	ROOM_AGES_088		db
+	ROOM_AGES_089		db
+	ROOM_AGES_08a		db
+	ROOM_AGES_08b		db
+	ROOM_AGES_08c		db
+	ROOM_AGES_08d		db
+	ROOM_AGES_08e		db
+	ROOM_AGES_08f		db
+	ROOM_AGES_090		db
+	ROOM_AGES_091		db
+	ROOM_AGES_092		db
+	ROOM_AGES_093		db
+	ROOM_AGES_094		db
+	ROOM_AGES_095		db
+	ROOM_AGES_096		db
+	ROOM_AGES_097		db
+	ROOM_AGES_098		db
+	ROOM_AGES_099		db
+	ROOM_AGES_09a		db
+	ROOM_AGES_09b		db
+	ROOM_AGES_09c		db
+	ROOM_AGES_09d		db
+	ROOM_AGES_09e		db
+	ROOM_AGES_09f		db
+	ROOM_AGES_0a0		db
+	ROOM_AGES_0a1		db
+	ROOM_AGES_0a2		db
+	ROOM_AGES_0a3		db
+	ROOM_AGES_0a4		db
+	ROOM_AGES_0a5		db
+	ROOM_AGES_0a6		db
+	ROOM_AGES_0a7		db
+	ROOM_AGES_0a8		db
+	ROOM_AGES_0a9		db
+	ROOM_AGES_0aa		db
+	ROOM_AGES_0ab		db
+	ROOM_AGES_0ac		db
+	ROOM_AGES_0ad		db
+	ROOM_AGES_0ae		db
+	ROOM_AGES_0af		db
+	ROOM_AGES_0b0		db
+	ROOM_AGES_0b1		db
+	ROOM_AGES_0b2		db
+	ROOM_AGES_0b3		db
+	ROOM_AGES_0b4		db
+	ROOM_AGES_0b5		db
+	ROOM_AGES_0b6		db
+	ROOM_AGES_0b7		db
+	ROOM_AGES_0b8		db
+	ROOM_AGES_0b9		db
+	ROOM_AGES_0ba		db
+	ROOM_AGES_0bb		db
+	ROOM_AGES_0bc		db
+	ROOM_AGES_0bd		db
+	ROOM_AGES_0be		db
+	ROOM_AGES_0bf		db
+	ROOM_AGES_0c0		db
+	ROOM_AGES_0c1		db
+	ROOM_AGES_0c2		db
+	ROOM_AGES_0c3		db
+	ROOM_AGES_0c4		db
+	ROOM_AGES_0c5		db
+	ROOM_AGES_0c6		db
+	ROOM_AGES_0c7		db
+	ROOM_AGES_0c8		db
+	ROOM_AGES_0c9		db
+	ROOM_AGES_0ca		db
+	ROOM_AGES_0cb		db
+	ROOM_AGES_0cc		db
+	ROOM_AGES_0cd		db
+	ROOM_AGES_0ce		db
+	ROOM_AGES_0cf		db
+	ROOM_AGES_0d0		db
+	ROOM_AGES_0d1		db
+	ROOM_AGES_0d2		db
+	ROOM_AGES_0d3		db
+	ROOM_AGES_0d4		db
+	ROOM_AGES_0d5		db
+	ROOM_AGES_0d6		db
+	ROOM_AGES_0d7		db
+	ROOM_AGES_0d8		db
+	ROOM_AGES_0d9		db
+	ROOM_AGES_0da		db
+	ROOM_AGES_0db		db
+	ROOM_AGES_0dc		db
+	ROOM_AGES_0dd		db
+	ROOM_AGES_0de		db
+	ROOM_AGES_0df		db
+	ROOM_AGES_0e0		db
+	ROOM_AGES_0e1		db
+	ROOM_AGES_0e2		db
+	ROOM_AGES_0e3		db
+	ROOM_AGES_0e4		db
+	ROOM_AGES_0e5		db
+	ROOM_AGES_0e6		db
+	ROOM_AGES_0e7		db
+	ROOM_AGES_0e8		db
+	ROOM_AGES_0e9		db
+	ROOM_AGES_0ea		db
+	ROOM_AGES_0eb		db
+	ROOM_AGES_0ec		db
+	ROOM_AGES_0ed		db
+	ROOM_AGES_0ee		db
+	ROOM_AGES_0ef		db
+	ROOM_AGES_0f0		db
+	ROOM_AGES_0f1		db
+	ROOM_AGES_0f2		db
+	ROOM_AGES_0f3		db
+	ROOM_AGES_0f4		db
+	ROOM_AGES_0f5		db
+	ROOM_AGES_0f6		db
+	ROOM_AGES_0f7		db
+	ROOM_AGES_0f8		db
+	ROOM_AGES_0f9		db
+	ROOM_AGES_0fa		db
+	ROOM_AGES_0fb		db
+	ROOM_AGES_0fc		db
+	ROOM_AGES_0fd		db
+	ROOM_AGES_0fe		db
+	ROOM_AGES_0ff		db
 
-ROOM_100	db
-ROOM_101	db
-ROOM_102	db
-ROOM_103	db
-ROOM_104	db
-ROOM_105	db
-ROOM_106	db
-ROOM_107	db
-ROOM_108	db
-ROOM_109	db
-ROOM_10a	db
-ROOM_10b	db
-ROOM_10c	db
-ROOM_10d	db
-ROOM_10e	db
-ROOM_10f	db
-ROOM_110	db
-ROOM_111	db
-ROOM_112	db
-ROOM_113	db
-ROOM_114	db
-ROOM_115	db
-ROOM_116	db
-ROOM_117	db
-ROOM_118	db
-ROOM_119	db
-ROOM_11a	db
-ROOM_11b	db
-ROOM_11c	db
-ROOM_11d	db
-ROOM_11e	db
-ROOM_11f	db
-ROOM_120	db
-ROOM_121	db
-ROOM_122	db
-ROOM_123	db
-ROOM_124	db
-ROOM_125	db
-ROOM_126	db
-ROOM_127	db
-ROOM_128	db
-ROOM_129	db
-ROOM_12a	db
-ROOM_12b	db
-ROOM_12c	db
-ROOM_12d	db
-ROOM_12e	db
-ROOM_12f	db
-ROOM_130	db
-ROOM_131	db
-ROOM_132	db
-ROOM_133	db
-ROOM_134	db
-ROOM_135	db
-ROOM_136	db
-ROOM_137	db
-ROOM_138	db
-ROOM_139	db
-ROOM_13a	db
-ROOM_13b	db
-ROOM_13c	db
-ROOM_13d	db
-ROOM_13e	db
-ROOM_13f	db
-ROOM_140	db
-ROOM_141	db
-ROOM_142	db
-ROOM_143	db
-ROOM_144	db
-ROOM_145	db
-ROOM_146	db
-ROOM_147	db
-ROOM_148	db
-ROOM_149	db
-ROOM_14a	db
-ROOM_14b	db
-ROOM_14c	db
-ROOM_14d	db
-ROOM_14e	db
-ROOM_14f	db
-ROOM_150	db
-ROOM_151	db
-ROOM_152	db
-ROOM_153	db
-ROOM_154	db
-ROOM_155	db
-ROOM_156	db
-ROOM_157	db
-ROOM_158	db
-ROOM_159	db
-ROOM_15a	db
-ROOM_15b	db
-ROOM_15c	db
-ROOM_15d	db
-ROOM_15e	db
-ROOM_15f	db
-ROOM_160	db
-ROOM_161	db
-ROOM_162	db
-ROOM_163	db
-ROOM_164	db
-ROOM_165	db
-ROOM_166	db
-ROOM_167	db
-ROOM_168	db
-ROOM_169	db
-ROOM_16a	db
-ROOM_16b	db
-ROOM_16c	db
-ROOM_16d	db
-ROOM_16e	db
-ROOM_16f	db
-ROOM_170	db
-ROOM_171	db
-ROOM_172	db
-ROOM_173	db
-ROOM_174	db
-ROOM_175	db
-ROOM_176	db
-ROOM_177	db
-ROOM_178	db
-ROOM_179	db
-ROOM_17a	db
-ROOM_17b	db
-ROOM_17c	db
-ROOM_17d	db
-ROOM_17e	db
-ROOM_17f	db
-ROOM_180	db
-ROOM_181	db
-ROOM_182	db
-ROOM_183	db
-ROOM_184	db
-ROOM_185	db
-ROOM_186	db
-ROOM_187	db
-ROOM_188	db
-ROOM_189	db
-ROOM_18a	db
-ROOM_18b	db
-ROOM_18c	db
-ROOM_18d	db
-ROOM_18e	db
-ROOM_18f	db
-ROOM_190	db
-ROOM_191	db
-ROOM_192	db
-ROOM_193	db
-ROOM_194	db
-ROOM_195	db
-ROOM_196	db
-ROOM_197	db
-ROOM_198	db
-ROOM_199	db
-ROOM_19a	db
-ROOM_19b	db
-ROOM_19c	db
-ROOM_19d	db
-ROOM_19e	db
-ROOM_19f	db
-ROOM_1a0	db
-ROOM_1a1	db
-ROOM_1a2	db
-ROOM_1a3	db
-ROOM_1a4	db
-ROOM_1a5	db
-ROOM_1a6	db
-ROOM_1a7	db
-ROOM_1a8	db
-ROOM_1a9	db
-ROOM_1aa	db
-ROOM_1ab	db
-ROOM_1ac	db
-ROOM_1ad	db
-ROOM_1ae	db
-ROOM_1af	db
-ROOM_1b0	db
-ROOM_1b1	db
-ROOM_1b2	db
-ROOM_1b3	db
-ROOM_1b4	db
-ROOM_1b5	db
-ROOM_1b6	db
-ROOM_1b7	db
-ROOM_1b8	db
-ROOM_1b9	db
-ROOM_1ba	db
-ROOM_1bb	db
-ROOM_1bc	db
-ROOM_1bd	db
-ROOM_1be	db
-ROOM_1bf	db
-ROOM_1c0	db
-ROOM_1c1	db
-ROOM_1c2	db
-ROOM_1c3	db
-ROOM_1c4	db
-ROOM_1c5	db
-ROOM_1c6	db
-ROOM_1c7	db
-ROOM_1c8	db
-ROOM_1c9	db
-ROOM_1ca	db
-ROOM_1cb	db
-ROOM_1cc	db
-ROOM_1cd	db
-ROOM_1ce	db
-ROOM_1cf	db
-ROOM_1d0	db
-ROOM_1d1	db
-ROOM_1d2	db
-ROOM_1d3	db
-ROOM_1d4	db
-ROOM_1d5	db
-ROOM_1d6	db
-ROOM_1d7	db
-ROOM_1d8	db
-ROOM_1d9	db
-ROOM_1da	db
-ROOM_1db	db
-ROOM_1dc	db
-ROOM_1dd	db
-ROOM_1de	db
-ROOM_1df	db
-ROOM_1e0	db
-ROOM_1e1	db
-ROOM_1e2	db
-ROOM_1e3	db
-ROOM_1e4	db
-ROOM_1e5	db
-ROOM_1e6	db
-ROOM_1e7	db
-ROOM_1e8	db
-ROOM_1e9	db
-ROOM_1ea	db
-ROOM_1eb	db
-ROOM_1ec	db
-ROOM_1ed	db
-ROOM_1ee	db
-ROOM_1ef	db
-ROOM_1f0	db
-ROOM_1f1	db
-ROOM_1f2	db
-ROOM_1f3	db
-ROOM_1f4	db
-ROOM_1f5	db
-ROOM_1f6	db
-ROOM_1f7	db
-ROOM_1f8	db
-ROOM_1f9	db
-ROOM_1fa	db
-ROOM_1fb	db
-ROOM_1fc	db
-ROOM_1fd	db
-ROOM_1fe	db
-ROOM_1ff	db
+	ROOM_AGES_100		db
+	ROOM_AGES_101		db
+	ROOM_AGES_102		db
+	ROOM_AGES_103		db
+	ROOM_AGES_104		db
+	ROOM_AGES_105		db
+	ROOM_AGES_106		db
+	ROOM_AGES_107		db
+	ROOM_AGES_108		db
+	ROOM_AGES_109		db
+	ROOM_AGES_10a		db
+	ROOM_AGES_10b		db
+	ROOM_AGES_10c		db
+	ROOM_AGES_10d		db
+	ROOM_AGES_10e		db
+	ROOM_AGES_10f		db
+	ROOM_AGES_110		db
+	ROOM_AGES_111		db
+	ROOM_AGES_112		db
+	ROOM_AGES_113		db
+	ROOM_AGES_114		db
+	ROOM_AGES_115		db
+	ROOM_AGES_116		db
+	ROOM_AGES_117		db
+	ROOM_AGES_118		db
+	ROOM_AGES_119		db
+	ROOM_AGES_11a		db
+	ROOM_AGES_11b		db
+	ROOM_AGES_11c		db
+	ROOM_AGES_11d		db
+	ROOM_AGES_11e		db
+	ROOM_AGES_11f		db
+	ROOM_AGES_120		db
+	ROOM_AGES_121		db
+	ROOM_AGES_122		db
+	ROOM_AGES_123		db
+	ROOM_AGES_124		db
+	ROOM_AGES_125		db
+	ROOM_AGES_126		db
+	ROOM_AGES_127		db
+	ROOM_AGES_128		db
+	ROOM_AGES_129		db
+	ROOM_AGES_12a		db
+	ROOM_AGES_12b		db
+	ROOM_AGES_12c		db
+	ROOM_AGES_12d		db
+	ROOM_AGES_12e		db
+	ROOM_AGES_12f		db
+	ROOM_AGES_130		db
+	ROOM_AGES_131		db
+	ROOM_AGES_132		db
+	ROOM_AGES_133		db
+	ROOM_AGES_134		db
+	ROOM_AGES_135		db
+	ROOM_AGES_136		db
+	ROOM_AGES_137		db
+	ROOM_AGES_138		db
+	ROOM_AGES_139		db
+	ROOM_AGES_13a		db
+	ROOM_AGES_13b		db
+	ROOM_AGES_13c		db
+	ROOM_AGES_13d		db
+	ROOM_AGES_13e		db
+	ROOM_AGES_13f		db
+	ROOM_AGES_140		db
+	ROOM_AGES_141		db
+	ROOM_AGES_142		db
+	ROOM_AGES_143		db
+	ROOM_AGES_144		db
+	ROOM_AGES_145		db
+	ROOM_AGES_146		db
+	ROOM_AGES_147		db
+	ROOM_AGES_148		db
+	ROOM_AGES_149		db
+	ROOM_AGES_14a		db
+	ROOM_AGES_14b		db
+	ROOM_AGES_14c		db
+	ROOM_AGES_14d		db
+	ROOM_AGES_14e		db
+	ROOM_AGES_14f		db
+	ROOM_AGES_150		db
+	ROOM_AGES_151		db
+	ROOM_AGES_152		db
+	ROOM_AGES_153		db
+	ROOM_AGES_154		db
+	ROOM_AGES_155		db
+	ROOM_AGES_156		db
+	ROOM_AGES_157		db
+	ROOM_AGES_158		db
+	ROOM_AGES_159		db
+	ROOM_AGES_15a		db
+	ROOM_AGES_15b		db
+	ROOM_AGES_15c		db
+	ROOM_AGES_15d		db
+	ROOM_AGES_15e		db
+	ROOM_AGES_15f		db
+	ROOM_AGES_160		db
+	ROOM_AGES_161		db
+	ROOM_AGES_162		db
+	ROOM_AGES_163		db
+	ROOM_AGES_164		db
+	ROOM_AGES_165		db
+	ROOM_AGES_166		db
+	ROOM_AGES_167		db
+	ROOM_AGES_168		db
+	ROOM_AGES_169		db
+	ROOM_AGES_16a		db
+	ROOM_AGES_16b		db
+	ROOM_AGES_16c		db
+	ROOM_AGES_16d		db
+	ROOM_AGES_16e		db
+	ROOM_AGES_16f		db
+	ROOM_AGES_170		db
+	ROOM_AGES_171		db
+	ROOM_AGES_172		db
+	ROOM_AGES_173		db
+	ROOM_AGES_174		db
+	ROOM_AGES_175		db
+	ROOM_AGES_176		db
+	ROOM_AGES_177		db
+	ROOM_AGES_178		db
+	ROOM_AGES_179		db
+	ROOM_AGES_17a		db
+	ROOM_AGES_17b		db
+	ROOM_AGES_17c		db
+	ROOM_AGES_17d		db
+	ROOM_AGES_17e		db
+	ROOM_AGES_17f		db
+	ROOM_AGES_180		db
+	ROOM_AGES_181		db
+	ROOM_AGES_182		db
+	ROOM_AGES_183		db
+	ROOM_AGES_184		db
+	ROOM_AGES_185		db
+	ROOM_AGES_186		db
+	ROOM_AGES_187		db
+	ROOM_AGES_188		db
+	ROOM_AGES_189		db
+	ROOM_AGES_18a		db
+	ROOM_AGES_18b		db
+	ROOM_AGES_18c		db
+	ROOM_AGES_18d		db
+	ROOM_AGES_18e		db
+	ROOM_AGES_18f		db
+	ROOM_AGES_190		db
+	ROOM_AGES_191		db
+	ROOM_AGES_192		db
+	ROOM_AGES_193		db
+	ROOM_AGES_194		db
+	ROOM_AGES_195		db
+	ROOM_AGES_196		db
+	ROOM_AGES_197		db
+	ROOM_AGES_198		db
+	ROOM_AGES_199		db
+	ROOM_AGES_19a		db
+	ROOM_AGES_19b		db
+	ROOM_AGES_19c		db
+	ROOM_AGES_19d		db
+	ROOM_AGES_19e		db
+	ROOM_AGES_19f		db
+	ROOM_AGES_1a0		db
+	ROOM_AGES_1a1		db
+	ROOM_AGES_1a2		db
+	ROOM_AGES_1a3		db
+	ROOM_AGES_1a4		db
+	ROOM_AGES_1a5		db
+	ROOM_AGES_1a6		db
+	ROOM_AGES_1a7		db
+	ROOM_AGES_1a8		db
+	ROOM_AGES_1a9		db
+	ROOM_AGES_1aa		db
+	ROOM_AGES_1ab		db
+	ROOM_AGES_1ac		db
+	ROOM_AGES_1ad		db
+	ROOM_AGES_1ae		db
+	ROOM_AGES_1af		db
+	ROOM_AGES_1b0		db
+	ROOM_AGES_1b1		db
+	ROOM_AGES_1b2		db
+	ROOM_AGES_1b3		db
+	ROOM_AGES_1b4		db
+	ROOM_AGES_1b5		db
+	ROOM_AGES_1b6		db
+	ROOM_AGES_1b7		db
+	ROOM_AGES_1b8		db
+	ROOM_AGES_1b9		db
+	ROOM_AGES_1ba		db
+	ROOM_AGES_1bb		db
+	ROOM_AGES_1bc		db
+	ROOM_AGES_1bd		db
+	ROOM_AGES_1be		db
+	ROOM_AGES_1bf		db
+	ROOM_AGES_1c0		db
+	ROOM_AGES_1c1		db
+	ROOM_AGES_1c2		db
+	ROOM_AGES_1c3		db
+	ROOM_AGES_1c4		db
+	ROOM_AGES_1c5		db
+	ROOM_AGES_1c6		db
+	ROOM_AGES_1c7		db
+	ROOM_AGES_1c8		db
+	ROOM_AGES_1c9		db
+	ROOM_AGES_1ca		db
+	ROOM_AGES_1cb		db
+	ROOM_AGES_1cc		db
+	ROOM_AGES_1cd		db
+	ROOM_AGES_1ce		db
+	ROOM_AGES_1cf		db
+	ROOM_AGES_1d0		db
+	ROOM_AGES_1d1		db
+	ROOM_AGES_1d2		db
+	ROOM_AGES_1d3		db
+	ROOM_AGES_1d4		db
+	ROOM_AGES_1d5		db
+	ROOM_AGES_1d6		db
+	ROOM_AGES_1d7		db
+	ROOM_AGES_1d8		db
+	ROOM_AGES_1d9		db
+	ROOM_AGES_1da		db
+	ROOM_AGES_1db		db
+	ROOM_AGES_1dc		db
+	ROOM_AGES_1dd		db
+	ROOM_AGES_1de		db
+	ROOM_AGES_1df		db
+	ROOM_AGES_1e0		db
+	ROOM_AGES_1e1		db
+	ROOM_AGES_1e2		db
+	ROOM_AGES_1e3		db
+	ROOM_AGES_1e4		db
+	ROOM_AGES_1e5		db
+	ROOM_AGES_1e6		db
+	ROOM_AGES_1e7		db
+	ROOM_AGES_1e8		db
+	ROOM_AGES_1e9		db
+	ROOM_AGES_1ea		db
+	ROOM_AGES_1eb		db
+	ROOM_AGES_1ec		db
+	ROOM_AGES_1ed		db
+	ROOM_AGES_1ee		db
+	ROOM_AGES_1ef		db
+	ROOM_AGES_1f0		db
+	ROOM_AGES_1f1		db
+	ROOM_AGES_1f2		db
+	ROOM_AGES_1f3		db
+	ROOM_AGES_1f4		db
+	ROOM_AGES_1f5		db
+	ROOM_AGES_1f6		db
+	ROOM_AGES_1f7		db
+	ROOM_AGES_1f8		db
+	ROOM_AGES_1f9		db
+	ROOM_AGES_1fa		db
+	ROOM_AGES_1fb		db
+	ROOM_AGES_1fc		db
+	ROOM_AGES_1fd		db
+	ROOM_AGES_1fe		db
+	ROOM_AGES_1ff		db
 
-ROOM_200	db
-ROOM_201	db
-ROOM_202	db
-ROOM_203	db
-ROOM_204	db
-ROOM_205	db
-ROOM_206	db
-ROOM_207	db
-ROOM_208	db
-ROOM_209	db
-ROOM_20a	db
-ROOM_20b	db
-ROOM_20c	db
-ROOM_20d	db
-ROOM_20e	db
-ROOM_20f	db
-ROOM_210	db
-ROOM_211	db
-ROOM_212	db
-ROOM_213	db
-ROOM_214	db
-ROOM_215	db
-ROOM_216	db
-ROOM_217	db
-ROOM_218	db
-ROOM_219	db
-ROOM_21a	db
-ROOM_21b	db
-ROOM_21c	db
-ROOM_21d	db
-ROOM_21e	db
-ROOM_21f	db
-ROOM_220	db
-ROOM_221	db
-ROOM_222	db
-ROOM_223	db
-ROOM_224	db
-ROOM_225	db
-ROOM_226	db
-ROOM_227	db
-ROOM_228	db
-ROOM_229	db
-ROOM_22a	db
-ROOM_22b	db
-ROOM_22c	db
-ROOM_22d	db
-ROOM_22e	db
-ROOM_22f	db
-ROOM_230	db
-ROOM_231	db
-ROOM_232	db
-ROOM_233	db
-ROOM_234	db
-ROOM_235	db
-ROOM_236	db
-ROOM_237	db
-ROOM_238	db
-ROOM_239	db
-ROOM_23a	db
-ROOM_23b	db
-ROOM_23c	db
-ROOM_23d	db
-ROOM_23e	db
-ROOM_23f	db
-ROOM_240	db
-ROOM_241	db
-ROOM_242	db
-ROOM_243	db
-ROOM_244	db
-ROOM_245	db
-ROOM_246	db
-ROOM_247	db
-ROOM_248	db
-ROOM_249	db
-ROOM_24a	db
-ROOM_24b	db
-ROOM_24c	db
-ROOM_24d	db
-ROOM_24e	db
-ROOM_24f	db
-ROOM_250	db
-ROOM_251	db
-ROOM_252	db
-ROOM_253	db
-ROOM_254	db
-ROOM_255	db
-ROOM_256	db
-ROOM_257	db
-ROOM_258	db
-ROOM_259	db
-ROOM_25a	db
-ROOM_25b	db
-ROOM_25c	db
-ROOM_25d	db
-ROOM_25e	db
-ROOM_25f	db
-ROOM_260	db
-ROOM_261	db
-ROOM_262	db
-ROOM_263	db
-ROOM_264	db
-ROOM_265	db
-ROOM_266	db
-ROOM_267	db
-ROOM_268	db
-ROOM_269	db
-ROOM_26a	db
-ROOM_26b	db
-ROOM_26c	db
-ROOM_26d	db
-ROOM_26e	db
-ROOM_26f	db
-ROOM_270	db
-ROOM_271	db
-ROOM_272	db
-ROOM_273	db
-ROOM_274	db
-ROOM_275	db
-ROOM_276	db
-ROOM_277	db
-ROOM_278	db
-ROOM_279	db
-ROOM_27a	db
-ROOM_27b	db
-ROOM_27c	db
-ROOM_27d	db
-ROOM_27e	db
-ROOM_27f	db
-ROOM_280	db
-ROOM_281	db
-ROOM_282	db
-ROOM_283	db
-ROOM_284	db
-ROOM_285	db
-ROOM_286	db
-ROOM_287	db
-ROOM_288	db
-ROOM_289	db
-ROOM_28a	db
-ROOM_28b	db
-ROOM_28c	db
-ROOM_28d	db
-ROOM_28e	db
-ROOM_28f	db
-ROOM_290	db
-ROOM_291	db
-ROOM_292	db
-ROOM_293	db
-ROOM_294	db
-ROOM_295	db
-ROOM_296	db
-ROOM_297	db
-ROOM_298	db
-ROOM_299	db
-ROOM_29a	db
-ROOM_29b	db
-ROOM_29c	db
-ROOM_29d	db
-ROOM_29e	db
-ROOM_29f	db
-ROOM_2a0	db
-ROOM_2a1	db
-ROOM_2a2	db
-ROOM_2a3	db
-ROOM_2a4	db
-ROOM_2a5	db
-ROOM_2a6	db
-ROOM_2a7	db
-ROOM_2a8	db
-ROOM_2a9	db
-ROOM_2aa	db
-ROOM_2ab	db
-ROOM_2ac	db
-ROOM_2ad	db
-ROOM_2ae	db
-ROOM_2af	db
-ROOM_2b0	db
-ROOM_2b1	db
-ROOM_2b2	db
-ROOM_2b3	db
-ROOM_2b4	db
-ROOM_2b5	db
-ROOM_2b6	db
-ROOM_2b7	db
-ROOM_2b8	db
-ROOM_2b9	db
-ROOM_2ba	db
-ROOM_2bb	db
-ROOM_2bc	db
-ROOM_2bd	db
-ROOM_2be	db
-ROOM_2bf	db
-ROOM_2c0	db
-ROOM_2c1	db
-ROOM_2c2	db
-ROOM_2c3	db
-ROOM_2c4	db
-ROOM_2c5	db
-ROOM_2c6	db
-ROOM_2c7	db
-ROOM_2c8	db
-ROOM_2c9	db
-ROOM_2ca	db
-ROOM_2cb	db
-ROOM_2cc	db
-ROOM_2cd	db
-ROOM_2ce	db
-ROOM_2cf	db
-ROOM_2d0	db
-ROOM_2d1	db
-ROOM_2d2	db
-ROOM_2d3	db
-ROOM_2d4	db
-ROOM_2d5	db
-ROOM_2d6	db
-ROOM_2d7	db
-ROOM_2d8	db
-ROOM_2d9	db
-ROOM_2da	db
-ROOM_2db	db
-ROOM_2dc	db
-ROOM_2dd	db
-ROOM_2de	db
-ROOM_2df	db
-ROOM_2e0	db
-ROOM_2e1	db
-ROOM_2e2	db
-ROOM_2e3	db
-ROOM_2e4	db
-ROOM_2e5	db
-ROOM_2e6	db
-ROOM_2e7	db
-ROOM_2e8	db
-ROOM_2e9	db
-ROOM_2ea	db
-ROOM_2eb	db
-ROOM_2ec	db
-ROOM_2ed	db
-ROOM_2ee	db
-ROOM_2ef	db
-ROOM_2f0	db
-ROOM_2f1	db
-ROOM_2f2	db
-ROOM_2f3	db
-ROOM_2f4	db
-ROOM_2f5	db
-ROOM_2f6	db
-ROOM_2f7	db
-ROOM_2f8	db
-ROOM_2f9	db
-ROOM_2fa	db
-ROOM_2fb	db
-ROOM_2fc	db
-ROOM_2fd	db
-ROOM_2fe	db
-ROOM_2ff	db
+	ROOM_AGES_200		db
+	ROOM_AGES_201		db
+	ROOM_AGES_202		db
+	ROOM_AGES_203		db
+	ROOM_AGES_204		db
+	ROOM_AGES_205		db
+	ROOM_AGES_206		db
+	ROOM_AGES_207		db
+	ROOM_AGES_208		db
+	ROOM_AGES_209		db
+	ROOM_AGES_20a		db
+	ROOM_AGES_20b		db
+	ROOM_AGES_20c		db
+	ROOM_AGES_20d		db
+	ROOM_AGES_20e		db
+	ROOM_AGES_20f		db
+	ROOM_AGES_210		db
+	ROOM_AGES_211		db
+	ROOM_AGES_212		db
+	ROOM_AGES_213		db
+	ROOM_AGES_214		db
+	ROOM_AGES_215		db
+	ROOM_AGES_216		db
+	ROOM_AGES_217		db
+	ROOM_AGES_218		db
+	ROOM_AGES_219		db
+	ROOM_AGES_21a		db
+	ROOM_AGES_21b		db
+	ROOM_AGES_21c		db
+	ROOM_AGES_21d		db
+	ROOM_AGES_21e		db
+	ROOM_AGES_21f		db
+	ROOM_AGES_220		db
+	ROOM_AGES_221		db
+	ROOM_AGES_222		db
+	ROOM_AGES_223		db
+	ROOM_AGES_224		db
+	ROOM_AGES_225		db
+	ROOM_AGES_226		db
+	ROOM_AGES_227		db
+	ROOM_AGES_228		db
+	ROOM_AGES_229		db
+	ROOM_AGES_22a		db
+	ROOM_AGES_22b		db
+	ROOM_AGES_22c		db
+	ROOM_AGES_22d		db
+	ROOM_AGES_22e		db
+	ROOM_AGES_22f		db
+	ROOM_AGES_230		db
+	ROOM_AGES_231		db
+	ROOM_AGES_232		db
+	ROOM_AGES_233		db
+	ROOM_AGES_234		db
+	ROOM_AGES_235		db
+	ROOM_AGES_236		db
+	ROOM_AGES_237		db
+	ROOM_AGES_238		db
+	ROOM_AGES_239		db
+	ROOM_AGES_23a		db
+	ROOM_AGES_23b		db
+	ROOM_AGES_23c		db
+	ROOM_AGES_23d		db
+	ROOM_AGES_23e		db
+	ROOM_AGES_23f		db
+	ROOM_AGES_240		db
+	ROOM_AGES_241		db
+	ROOM_AGES_242		db
+	ROOM_AGES_243		db
+	ROOM_AGES_244		db
+	ROOM_AGES_245		db
+	ROOM_AGES_246		db
+	ROOM_AGES_247		db
+	ROOM_AGES_248		db
+	ROOM_AGES_249		db
+	ROOM_AGES_24a		db
+	ROOM_AGES_24b		db
+	ROOM_AGES_24c		db
+	ROOM_AGES_24d		db
+	ROOM_AGES_24e		db
+	ROOM_AGES_24f		db
+	ROOM_AGES_250		db
+	ROOM_AGES_251		db
+	ROOM_AGES_252		db
+	ROOM_AGES_253		db
+	ROOM_AGES_254		db
+	ROOM_AGES_255		db
+	ROOM_AGES_256		db
+	ROOM_AGES_257		db
+	ROOM_AGES_258		db
+	ROOM_AGES_259		db
+	ROOM_AGES_25a		db
+	ROOM_AGES_25b		db
+	ROOM_AGES_25c		db
+	ROOM_AGES_25d		db
+	ROOM_AGES_25e		db
+	ROOM_AGES_25f		db
+	ROOM_AGES_260		db
+	ROOM_AGES_261		db
+	ROOM_AGES_262		db
+	ROOM_AGES_263		db
+	ROOM_AGES_264		db
+	ROOM_AGES_265		db
+	ROOM_AGES_266		db
+	ROOM_AGES_267		db
+	ROOM_AGES_268		db
+	ROOM_AGES_269		db
+	ROOM_AGES_26a		db
+	ROOM_AGES_26b		db
+	ROOM_AGES_26c		db
+	ROOM_AGES_26d		db
+	ROOM_AGES_26e		db
+	ROOM_AGES_26f		db
+	ROOM_AGES_270		db
+	ROOM_AGES_271		db
+	ROOM_AGES_272		db
+	ROOM_AGES_273		db
+	ROOM_AGES_274		db
+	ROOM_AGES_275		db
+	ROOM_AGES_276		db
+	ROOM_AGES_277		db
+	ROOM_AGES_278		db
+	ROOM_AGES_279		db
+	ROOM_AGES_27a		db
+	ROOM_AGES_27b		db
+	ROOM_AGES_27c		db
+	ROOM_AGES_27d		db
+	ROOM_AGES_27e		db
+	ROOM_AGES_27f		db
+	ROOM_AGES_280		db
+	ROOM_AGES_281		db
+	ROOM_AGES_282		db
+	ROOM_AGES_283		db
+	ROOM_AGES_284		db
+	ROOM_AGES_285		db
+	ROOM_AGES_286		db
+	ROOM_AGES_287		db
+	ROOM_AGES_288		db
+	ROOM_AGES_289		db
+	ROOM_AGES_28a		db
+	ROOM_AGES_28b		db
+	ROOM_AGES_28c		db
+	ROOM_AGES_28d		db
+	ROOM_AGES_28e		db
+	ROOM_AGES_28f		db
+	ROOM_AGES_290		db
+	ROOM_AGES_291		db
+	ROOM_AGES_292		db
+	ROOM_AGES_293		db
+	ROOM_AGES_294		db
+	ROOM_AGES_295		db
+	ROOM_AGES_296		db
+	ROOM_AGES_297		db
+	ROOM_AGES_298		db
+	ROOM_AGES_299		db
+	ROOM_AGES_29a		db
+	ROOM_AGES_29b		db
+	ROOM_AGES_29c		db
+	ROOM_AGES_29d		db
+	ROOM_AGES_29e		db
+	ROOM_AGES_29f		db
+	ROOM_AGES_2a0		db
+	ROOM_AGES_2a1		db
+	ROOM_AGES_2a2		db
+	ROOM_AGES_2a3		db
+	ROOM_AGES_2a4		db
+	ROOM_AGES_2a5		db
+	ROOM_AGES_2a6		db
+	ROOM_AGES_2a7		db
+	ROOM_AGES_2a8		db
+	ROOM_AGES_2a9		db
+	ROOM_AGES_2aa		db
+	ROOM_AGES_2ab		db
+	ROOM_AGES_2ac		db
+	ROOM_AGES_2ad		db
+	ROOM_AGES_2ae		db
+	ROOM_AGES_2af		db
+	ROOM_AGES_2b0		db
+	ROOM_AGES_2b1		db
+	ROOM_AGES_2b2		db
+	ROOM_AGES_2b3		db
+	ROOM_AGES_2b4		db
+	ROOM_AGES_2b5		db
+	ROOM_AGES_2b6		db
+	ROOM_AGES_2b7		db
+	ROOM_AGES_2b8		db
+	ROOM_AGES_2b9		db
+	ROOM_AGES_2ba		db
+	ROOM_AGES_2bb		db
+	ROOM_AGES_2bc		db
+	ROOM_AGES_2bd		db
+	ROOM_AGES_2be		db
+	ROOM_AGES_2bf		db
+	ROOM_AGES_2c0		db
+	ROOM_AGES_2c1		db
+	ROOM_AGES_2c2		db
+	ROOM_AGES_2c3		db
+	ROOM_AGES_2c4		db
+	ROOM_AGES_2c5		db
+	ROOM_AGES_2c6		db
+	ROOM_AGES_2c7		db
+	ROOM_AGES_2c8		db
+	ROOM_AGES_2c9		db
+	ROOM_AGES_2ca		db
+	ROOM_AGES_2cb		db
+	ROOM_AGES_2cc		db
+	ROOM_AGES_2cd		db
+	ROOM_AGES_2ce		db
+	ROOM_AGES_2cf		db
+	ROOM_AGES_2d0		db
+	ROOM_AGES_2d1		db
+	ROOM_AGES_2d2		db
+	ROOM_AGES_2d3		db
+	ROOM_AGES_2d4		db
+	ROOM_AGES_2d5		db
+	ROOM_AGES_2d6		db
+	ROOM_AGES_2d7		db
+	ROOM_AGES_2d8		db
+	ROOM_AGES_2d9		db
+	ROOM_AGES_2da		db
+	ROOM_AGES_2db		db
+	ROOM_AGES_2dc		db
+	ROOM_AGES_2dd		db
+	ROOM_AGES_2de		db
+	ROOM_AGES_2df		db
+	ROOM_AGES_2e0		db
+	ROOM_AGES_2e1		db
+	ROOM_AGES_2e2		db
+	ROOM_AGES_2e3		db
+	ROOM_AGES_2e4		db
+	ROOM_AGES_2e5		db
+	ROOM_AGES_2e6		db
+	ROOM_AGES_2e7		db
+	ROOM_AGES_2e8		db
+	ROOM_AGES_2e9		db
+	ROOM_AGES_2ea		db
+	ROOM_AGES_2eb		db
+	ROOM_AGES_2ec		db
+	ROOM_AGES_2ed		db
+	ROOM_AGES_2ee		db
+	ROOM_AGES_2ef		db
+	ROOM_AGES_2f0		db
+	ROOM_AGES_2f1		db
+	ROOM_AGES_2f2		db
+	ROOM_AGES_2f3		db
+	ROOM_AGES_2f4		db
+	ROOM_AGES_2f5		db
+	ROOM_AGES_2f6		db
+	ROOM_AGES_2f7		db
+	ROOM_AGES_2f8		db
+	ROOM_AGES_2f9		db
+	ROOM_AGES_2fa		db
+	ROOM_AGES_2fb		db
+	ROOM_AGES_2fc		db
+	ROOM_AGES_2fd		db
+	ROOM_AGES_2fe		db
+	ROOM_AGES_2ff		db
 
-ROOM_300	db
-ROOM_301	db
-ROOM_302	db
-ROOM_303	db
-ROOM_304	db
-ROOM_305	db
-ROOM_306	db
-ROOM_307	db
-ROOM_308	db
-ROOM_309	db
-ROOM_30a	db
-ROOM_30b	db
-ROOM_30c	db
-ROOM_30d	db
-ROOM_30e	db
-ROOM_30f	db
-ROOM_310	db
-ROOM_311	db
-ROOM_312	db
-ROOM_313	db
-ROOM_314	db
-ROOM_315	db
-ROOM_316	db
-ROOM_317	db
-ROOM_318	db
-ROOM_319	db
-ROOM_31a	db
-ROOM_31b	db
-ROOM_31c	db
-ROOM_31d	db
-ROOM_31e	db
-ROOM_31f	db
-ROOM_320	db
-ROOM_321	db
-ROOM_322	db
-ROOM_323	db
-ROOM_324	db
-ROOM_325	db
-ROOM_326	db
-ROOM_327	db
-ROOM_328	db
-ROOM_329	db
-ROOM_32a	db
-ROOM_32b	db
-ROOM_32c	db
-ROOM_32d	db
-ROOM_32e	db
-ROOM_32f	db
-ROOM_330	db
-ROOM_331	db
-ROOM_332	db
-ROOM_333	db
-ROOM_334	db
-ROOM_335	db
-ROOM_336	db
-ROOM_337	db
-ROOM_338	db
-ROOM_339	db
-ROOM_33a	db
-ROOM_33b	db
-ROOM_33c	db
-ROOM_33d	db
-ROOM_33e	db
-ROOM_33f	db
-ROOM_340	db
-ROOM_341	db
-ROOM_342	db
-ROOM_343	db
-ROOM_344	db
-ROOM_345	db
-ROOM_346	db
-ROOM_347	db
-ROOM_348	db
-ROOM_349	db
-ROOM_34a	db
-ROOM_34b	db
-ROOM_34c	db
-ROOM_34d	db
-ROOM_34e	db
-ROOM_34f	db
-ROOM_350	db
-ROOM_351	db
-ROOM_352	db
-ROOM_353	db
-ROOM_354	db
-ROOM_355	db
-ROOM_356	db
-ROOM_357	db
-ROOM_358	db
-ROOM_359	db
-ROOM_35a	db
-ROOM_35b	db
-ROOM_35c	db
-ROOM_35d	db
-ROOM_35e	db
-ROOM_35f	db
-ROOM_360	db
-ROOM_361	db
-ROOM_362	db
-ROOM_363	db
-ROOM_364	db
-ROOM_365	db
-ROOM_366	db
-ROOM_367	db
-ROOM_368	db
-ROOM_369	db
-ROOM_36a	db
-ROOM_36b	db
-ROOM_36c	db
-ROOM_36d	db
-ROOM_36e	db
-ROOM_36f	db
-ROOM_370	db
-ROOM_371	db
-ROOM_372	db
-ROOM_373	db
-ROOM_374	db
-ROOM_375	db
-ROOM_376	db
-ROOM_377	db
-ROOM_378	db
-ROOM_379	db
-ROOM_37a	db
-ROOM_37b	db
-ROOM_37c	db
-ROOM_37d	db
-ROOM_37e	db
-ROOM_37f	db
-ROOM_380	db
-ROOM_381	db
-ROOM_382	db
-ROOM_383	db
-ROOM_384	db
-ROOM_385	db
-ROOM_386	db
-ROOM_387	db
-ROOM_388	db
-ROOM_389	db
-ROOM_38a	db
-ROOM_38b	db
-ROOM_38c	db
-ROOM_38d	db
-ROOM_38e	db
-ROOM_38f	db
-ROOM_390	db
-ROOM_391	db
-ROOM_392	db
-ROOM_393	db
-ROOM_394	db
-ROOM_395	db
-ROOM_396	db
-ROOM_397	db
-ROOM_398	db
-ROOM_399	db
-ROOM_39a	db
-ROOM_39b	db
-ROOM_39c	db
-ROOM_39d	db
-ROOM_39e	db
-ROOM_39f	db
-ROOM_3a0	db
-ROOM_3a1	db
-ROOM_3a2	db
-ROOM_3a3	db
-ROOM_3a4	db
-ROOM_3a5	db
-ROOM_3a6	db
-ROOM_3a7	db
-ROOM_3a8	db
-ROOM_3a9	db
-ROOM_3aa	db
-ROOM_3ab	db
-ROOM_3ac	db
-ROOM_3ad	db
-ROOM_3ae	db
-ROOM_3af	db
-ROOM_3b0	db
-ROOM_3b1	db
-ROOM_3b2	db
-ROOM_3b3	db
-ROOM_3b4	db
-ROOM_3b5	db
-ROOM_3b6	db
-ROOM_3b7	db
-ROOM_3b8	db
-ROOM_3b9	db
-ROOM_3ba	db
-ROOM_3bb	db
-ROOM_3bc	db
-ROOM_3bd	db
-ROOM_3be	db
-ROOM_3bf	db
-ROOM_3c0	db
-ROOM_3c1	db
-ROOM_3c2	db
-ROOM_3c3	db
-ROOM_3c4	db
-ROOM_3c5	db
-ROOM_3c6	db
-ROOM_3c7	db
-ROOM_3c8	db
-ROOM_3c9	db
-ROOM_3ca	db
-ROOM_3cb	db
-ROOM_3cc	db
-ROOM_3cd	db
-ROOM_3ce	db
-ROOM_3cf	db
-ROOM_3d0	db
-ROOM_3d1	db
-ROOM_3d2	db
-ROOM_3d3	db
-ROOM_3d4	db
-ROOM_3d5	db
-ROOM_3d6	db
-ROOM_3d7	db
-ROOM_3d8	db
-ROOM_3d9	db
-ROOM_3da	db
-ROOM_3db	db
-ROOM_3dc	db
-ROOM_3dd	db
-ROOM_3de	db
-ROOM_3df	db
-ROOM_3e0	db
-ROOM_3e1	db
-ROOM_3e2	db
-ROOM_3e3	db
-ROOM_3e4	db
-ROOM_3e5	db
-ROOM_3e6	db
-ROOM_3e7	db
-ROOM_3e8	db
-ROOM_3e9	db
-ROOM_3ea	db
-ROOM_3eb	db
-ROOM_3ec	db
-ROOM_3ed	db
-ROOM_3ee	db
-ROOM_3ef	db
-ROOM_3f0	db
-ROOM_3f1	db
-ROOM_3f2	db
-ROOM_3f3	db
-ROOM_3f4	db
-ROOM_3f5	db
-ROOM_3f6	db
-ROOM_3f7	db
-ROOM_3f8	db
-ROOM_3f9	db
-ROOM_3fa	db
-ROOM_3fb	db
-ROOM_3fc	db
-ROOM_3fd	db
-ROOM_3fe	db
-ROOM_3ff	db
+	ROOM_AGES_300		db
+	ROOM_AGES_301		db
+	ROOM_AGES_302		db
+	ROOM_AGES_303		db
+	ROOM_AGES_304		db
+	ROOM_AGES_305		db
+	ROOM_AGES_306		db
+	ROOM_AGES_307		db
+	ROOM_AGES_308		db
+	ROOM_AGES_309		db
+	ROOM_AGES_30a		db
+	ROOM_AGES_30b		db
+	ROOM_AGES_30c		db
+	ROOM_AGES_30d		db
+	ROOM_AGES_30e		db
+	ROOM_AGES_30f		db
+	ROOM_AGES_310		db
+	ROOM_AGES_311		db
+	ROOM_AGES_312		db
+	ROOM_AGES_313		db
+	ROOM_AGES_314		db
+	ROOM_AGES_315		db
+	ROOM_AGES_316		db
+	ROOM_AGES_317		db
+	ROOM_AGES_318		db
+	ROOM_AGES_319		db
+	ROOM_AGES_31a		db
+	ROOM_AGES_31b		db
+	ROOM_AGES_31c		db
+	ROOM_AGES_31d		db
+	ROOM_AGES_31e		db
+	ROOM_AGES_31f		db
+	ROOM_AGES_320		db
+	ROOM_AGES_321		db
+	ROOM_AGES_322		db
+	ROOM_AGES_323		db
+	ROOM_AGES_324		db
+	ROOM_AGES_325		db
+	ROOM_AGES_326		db
+	ROOM_AGES_327		db
+	ROOM_AGES_328		db
+	ROOM_AGES_329		db
+	ROOM_AGES_32a		db
+	ROOM_AGES_32b		db
+	ROOM_AGES_32c		db
+	ROOM_AGES_32d		db
+	ROOM_AGES_32e		db
+	ROOM_AGES_32f		db
+	ROOM_AGES_330		db
+	ROOM_AGES_331		db
+	ROOM_AGES_332		db
+	ROOM_AGES_333		db
+	ROOM_AGES_334		db
+	ROOM_AGES_335		db
+	ROOM_AGES_336		db
+	ROOM_AGES_337		db
+	ROOM_AGES_338		db
+	ROOM_AGES_339		db
+	ROOM_AGES_33a		db
+	ROOM_AGES_33b		db
+	ROOM_AGES_33c		db
+	ROOM_AGES_33d		db
+	ROOM_AGES_33e		db
+	ROOM_AGES_33f		db
+	ROOM_AGES_340		db
+	ROOM_AGES_341		db
+	ROOM_AGES_342		db
+	ROOM_AGES_343		db
+	ROOM_AGES_344		db
+	ROOM_AGES_345		db
+	ROOM_AGES_346		db
+	ROOM_AGES_347		db
+	ROOM_AGES_348		db
+	ROOM_AGES_349		db
+	ROOM_AGES_34a		db
+	ROOM_AGES_34b		db
+	ROOM_AGES_34c		db
+	ROOM_AGES_34d		db
+	ROOM_AGES_34e		db
+	ROOM_AGES_34f		db
+	ROOM_AGES_350		db
+	ROOM_AGES_351		db
+	ROOM_AGES_352		db
+	ROOM_AGES_353		db
+	ROOM_AGES_354		db
+	ROOM_AGES_355		db
+	ROOM_AGES_356		db
+	ROOM_AGES_357		db
+	ROOM_AGES_358		db
+	ROOM_AGES_359		db
+	ROOM_AGES_35a		db
+	ROOM_AGES_35b		db
+	ROOM_AGES_35c		db
+	ROOM_AGES_35d		db
+	ROOM_AGES_35e		db
+	ROOM_AGES_35f		db
+	ROOM_AGES_360		db
+	ROOM_AGES_361		db
+	ROOM_AGES_362		db
+	ROOM_AGES_363		db
+	ROOM_AGES_364		db
+	ROOM_AGES_365		db
+	ROOM_AGES_366		db
+	ROOM_AGES_367		db
+	ROOM_AGES_368		db
+	ROOM_AGES_369		db
+	ROOM_AGES_36a		db
+	ROOM_AGES_36b		db
+	ROOM_AGES_36c		db
+	ROOM_AGES_36d		db
+	ROOM_AGES_36e		db
+	ROOM_AGES_36f		db
+	ROOM_AGES_370		db
+	ROOM_AGES_371		db
+	ROOM_AGES_372		db
+	ROOM_AGES_373		db
+	ROOM_AGES_374		db
+	ROOM_AGES_375		db
+	ROOM_AGES_376		db
+	ROOM_AGES_377		db
+	ROOM_AGES_378		db
+	ROOM_AGES_379		db
+	ROOM_AGES_37a		db
+	ROOM_AGES_37b		db
+	ROOM_AGES_37c		db
+	ROOM_AGES_37d		db
+	ROOM_AGES_37e		db
+	ROOM_AGES_37f		db
+	ROOM_AGES_380		db
+	ROOM_AGES_381		db
+	ROOM_AGES_382		db
+	ROOM_AGES_383		db
+	ROOM_AGES_384		db
+	ROOM_AGES_385		db
+	ROOM_AGES_386		db
+	ROOM_AGES_387		db
+	ROOM_AGES_388		db
+	ROOM_AGES_389		db
+	ROOM_AGES_38a		db
+	ROOM_AGES_38b		db
+	ROOM_AGES_38c		db
+	ROOM_AGES_38d		db
+	ROOM_AGES_38e		db
+	ROOM_AGES_38f		db
+	ROOM_AGES_390		db
+	ROOM_AGES_391		db
+	ROOM_AGES_392		db
+	ROOM_AGES_393		db
+	ROOM_AGES_394		db
+	ROOM_AGES_395		db
+	ROOM_AGES_396		db
+	ROOM_AGES_397		db
+	ROOM_AGES_398		db
+	ROOM_AGES_399		db
+	ROOM_AGES_39a		db
+	ROOM_AGES_39b		db
+	ROOM_AGES_39c		db
+	ROOM_AGES_39d		db
+	ROOM_AGES_39e		db
+	ROOM_AGES_39f		db
+	ROOM_AGES_3a0		db
+	ROOM_AGES_3a1		db
+	ROOM_AGES_3a2		db
+	ROOM_AGES_3a3		db
+	ROOM_AGES_3a4		db
+	ROOM_AGES_3a5		db
+	ROOM_AGES_3a6		db
+	ROOM_AGES_3a7		db
+	ROOM_AGES_3a8		db
+	ROOM_AGES_3a9		db
+	ROOM_AGES_3aa		db
+	ROOM_AGES_3ab		db
+	ROOM_AGES_3ac		db
+	ROOM_AGES_3ad		db
+	ROOM_AGES_3ae		db
+	ROOM_AGES_3af		db
+	ROOM_AGES_3b0		db
+	ROOM_AGES_3b1		db
+	ROOM_AGES_3b2		db
+	ROOM_AGES_3b3		db
+	ROOM_AGES_3b4		db
+	ROOM_AGES_3b5		db
+	ROOM_AGES_3b6		db
+	ROOM_AGES_3b7		db
+	ROOM_AGES_3b8		db
+	ROOM_AGES_3b9		db
+	ROOM_AGES_3ba		db
+	ROOM_AGES_3bb		db
+	ROOM_AGES_3bc		db
+	ROOM_AGES_3bd		db
+	ROOM_AGES_3be		db
+	ROOM_AGES_3bf		db
+	ROOM_AGES_3c0		db
+	ROOM_AGES_3c1		db
+	ROOM_AGES_3c2		db
+	ROOM_AGES_3c3		db
+	ROOM_AGES_3c4		db
+	ROOM_AGES_3c5		db
+	ROOM_AGES_3c6		db
+	ROOM_AGES_3c7		db
+	ROOM_AGES_3c8		db
+	ROOM_AGES_3c9		db
+	ROOM_AGES_3ca		db
+	ROOM_AGES_3cb		db
+	ROOM_AGES_3cc		db
+	ROOM_AGES_3cd		db
+	ROOM_AGES_3ce		db
+	ROOM_AGES_3cf		db
+	ROOM_AGES_3d0		db
+	ROOM_AGES_3d1		db
+	ROOM_AGES_3d2		db
+	ROOM_AGES_3d3		db
+	ROOM_AGES_3d4		db
+	ROOM_AGES_3d5		db
+	ROOM_AGES_3d6		db
+	ROOM_AGES_3d7		db
+	ROOM_AGES_3d8		db
+	ROOM_AGES_3d9		db
+	ROOM_AGES_3da		db
+	ROOM_AGES_3db		db
+	ROOM_AGES_3dc		db
+	ROOM_AGES_3dd		db
+	ROOM_AGES_3de		db
+	ROOM_AGES_3df		db
+	ROOM_AGES_3e0		db
+	ROOM_AGES_3e1		db
+	ROOM_AGES_3e2		db
+	ROOM_AGES_3e3		db
+	ROOM_AGES_3e4		db
+	ROOM_AGES_3e5		db
+	ROOM_AGES_3e6		db
+	ROOM_AGES_3e7		db
+	ROOM_AGES_3e8		db
+	ROOM_AGES_3e9		db
+	ROOM_AGES_3ea		db
+	ROOM_AGES_3eb		db
+	ROOM_AGES_3ec		db
+	ROOM_AGES_3ed		db
+	ROOM_AGES_3ee		db
+	ROOM_AGES_3ef		db
+	ROOM_AGES_3f0		db
+	ROOM_AGES_3f1		db
+	ROOM_AGES_3f2		db
+	ROOM_AGES_3f3		db
+	ROOM_AGES_3f4		db
+	ROOM_AGES_3f5		db
+	ROOM_AGES_3f6		db
+	ROOM_AGES_3f7		db
+	ROOM_AGES_3f8		db
+	ROOM_AGES_3f9		db
+	ROOM_AGES_3fa		db
+	ROOM_AGES_3fb		db
+	ROOM_AGES_3fc		db
+	ROOM_AGES_3fd		db
+	ROOM_AGES_3fe		db
+	ROOM_AGES_3ff		db
 
-ROOM_400	db
-ROOM_401	db
-ROOM_402	db
-ROOM_403	db
-ROOM_404	db
-ROOM_405	db
-ROOM_406	db
-ROOM_407	db
-ROOM_408	db
-ROOM_409	db
-ROOM_40a	db
-ROOM_40b	db
-ROOM_40c	db
-ROOM_40d	db
-ROOM_40e	db
-ROOM_40f	db
-ROOM_410	db
-ROOM_411	db
-ROOM_412	db
-ROOM_413	db
-ROOM_414	db
-ROOM_415	db
-ROOM_416	db
-ROOM_417	db
-ROOM_418	db
-ROOM_419	db
-ROOM_41a	db
-ROOM_41b	db
-ROOM_41c	db
-ROOM_41d	db
-ROOM_41e	db
-ROOM_41f	db
-ROOM_420	db
-ROOM_421	db
-ROOM_422	db
-ROOM_423	db
-ROOM_424	db
-ROOM_425	db
-ROOM_426	db
-ROOM_427	db
-ROOM_428	db
-ROOM_429	db
-ROOM_42a	db
-ROOM_42b	db
-ROOM_42c	db
-ROOM_42d	db
-ROOM_42e	db
-ROOM_42f	db
-ROOM_430	db
-ROOM_431	db
-ROOM_432	db
-ROOM_433	db
-ROOM_434	db
-ROOM_435	db
-ROOM_436	db
-ROOM_437	db
-ROOM_438	db
-ROOM_439	db
-ROOM_43a	db
-ROOM_43b	db
-ROOM_43c	db
-ROOM_43d	db
-ROOM_43e	db
-ROOM_43f	db
-ROOM_440	db
-ROOM_441	db
-ROOM_442	db
-ROOM_443	db
-ROOM_444	db
-ROOM_445	db
-ROOM_446	db
-ROOM_447	db
-ROOM_448	db
-ROOM_449	db
-ROOM_44a	db
-ROOM_44b	db
-ROOM_44c	db
-ROOM_44d	db
-ROOM_44e	db
-ROOM_44f	db
-ROOM_450	db
-ROOM_451	db
-ROOM_452	db
-ROOM_453	db
-ROOM_454	db
-ROOM_455	db
-ROOM_456	db
-ROOM_457	db
-ROOM_458	db
-ROOM_459	db
-ROOM_45a	db
-ROOM_45b	db
-ROOM_45c	db
-ROOM_45d	db
-ROOM_45e	db
-ROOM_45f	db
-ROOM_460	db
-ROOM_461	db
-ROOM_462	db
-ROOM_463	db
-ROOM_464	db
-ROOM_465	db
-ROOM_466	db
-ROOM_467	db
-ROOM_468	db
-ROOM_469	db
-ROOM_46a	db
-ROOM_46b	db
-ROOM_46c	db
-ROOM_46d	db
-ROOM_46e	db
-ROOM_46f	db
-ROOM_470	db
-ROOM_471	db
-ROOM_472	db
-ROOM_473	db
-ROOM_474	db
-ROOM_475	db
-ROOM_476	db
-ROOM_477	db
-ROOM_478	db
-ROOM_479	db
-ROOM_47a	db
-ROOM_47b	db
-ROOM_47c	db
-ROOM_47d	db
-ROOM_47e	db
-ROOM_47f	db
-ROOM_480	db
-ROOM_481	db
-ROOM_482	db
-ROOM_483	db
-ROOM_484	db
-ROOM_485	db
-ROOM_486	db
-ROOM_487	db
-ROOM_488	db
-ROOM_489	db
-ROOM_48a	db
-ROOM_48b	db
-ROOM_48c	db
-ROOM_48d	db
-ROOM_48e	db
-ROOM_48f	db
-ROOM_490	db
-ROOM_491	db
-ROOM_492	db
-ROOM_493	db
-ROOM_494	db
-ROOM_495	db
-ROOM_496	db
-ROOM_497	db
-ROOM_498	db
-ROOM_499	db
-ROOM_49a	db
-ROOM_49b	db
-ROOM_49c	db
-ROOM_49d	db
-ROOM_49e	db
-ROOM_49f	db
-ROOM_4a0	db
-ROOM_4a1	db
-ROOM_4a2	db
-ROOM_4a3	db
-ROOM_4a4	db
-ROOM_4a5	db
-ROOM_4a6	db
-ROOM_4a7	db
-ROOM_4a8	db
-ROOM_4a9	db
-ROOM_4aa	db
-ROOM_4ab	db
-ROOM_4ac	db
-ROOM_4ad	db
-ROOM_4ae	db
-ROOM_4af	db
-ROOM_4b0	db
-ROOM_4b1	db
-ROOM_4b2	db
-ROOM_4b3	db
-ROOM_4b4	db
-ROOM_4b5	db
-ROOM_4b6	db
-ROOM_4b7	db
-ROOM_4b8	db
-ROOM_4b9	db
-ROOM_4ba	db
-ROOM_4bb	db
-ROOM_4bc	db
-ROOM_4bd	db
-ROOM_4be	db
-ROOM_4bf	db
-ROOM_4c0	db
-ROOM_4c1	db
-ROOM_4c2	db
-ROOM_4c3	db
-ROOM_4c4	db
-ROOM_4c5	db
-ROOM_4c6	db
-ROOM_4c7	db
-ROOM_4c8	db
-ROOM_4c9	db
-ROOM_4ca	db
-ROOM_4cb	db
-ROOM_4cc	db
-ROOM_4cd	db
-ROOM_4ce	db
-ROOM_4cf	db
-ROOM_4d0	db
-ROOM_4d1	db
-ROOM_4d2	db
-ROOM_4d3	db
-ROOM_4d4	db
-ROOM_4d5	db
-ROOM_4d6	db
-ROOM_4d7	db
-ROOM_4d8	db
-ROOM_4d9	db
-ROOM_4da	db
-ROOM_4db	db
-ROOM_4dc	db
-ROOM_4dd	db
-ROOM_4de	db
-ROOM_4df	db
-ROOM_4e0	db
-ROOM_4e1	db
-ROOM_4e2	db
-ROOM_4e3	db
-ROOM_4e4	db
-ROOM_4e5	db
-ROOM_4e6	db
-ROOM_4e7	db
-ROOM_4e8	db
-ROOM_4e9	db
-ROOM_4ea	db
-ROOM_4eb	db
-ROOM_4ec	db
-ROOM_4ed	db
-ROOM_4ee	db
-ROOM_4ef	db
-ROOM_4f0	db
-ROOM_4f1	db
-ROOM_4f2	db
-ROOM_4f3	db
-ROOM_4f4	db
-ROOM_4f5	db
-ROOM_4f6	db
-ROOM_4f7	db
-ROOM_4f8	db
-ROOM_4f9	db
-ROOM_4fa	db
-ROOM_4fb	db
-ROOM_4fc	db
-ROOM_4fd	db
-ROOM_4fe	db
-ROOM_4ff	db
+	ROOM_AGES_400		db
+	ROOM_AGES_401		db
+	ROOM_AGES_402		db
+	ROOM_AGES_403		db
+	ROOM_AGES_404		db
+	ROOM_AGES_405		db
+	ROOM_AGES_406		db
+	ROOM_AGES_407		db
+	ROOM_AGES_408		db
+	ROOM_AGES_409		db
+	ROOM_AGES_40a		db
+	ROOM_AGES_40b		db
+	ROOM_AGES_40c		db
+	ROOM_AGES_40d		db
+	ROOM_AGES_40e		db
+	ROOM_AGES_40f		db
+	ROOM_AGES_410		db
+	ROOM_AGES_411		db
+	ROOM_AGES_412		db
+	ROOM_AGES_413		db
+	ROOM_AGES_414		db
+	ROOM_AGES_415		db
+	ROOM_AGES_416		db
+	ROOM_AGES_417		db
+	ROOM_AGES_418		db
+	ROOM_AGES_419		db
+	ROOM_AGES_41a		db
+	ROOM_AGES_41b		db
+	ROOM_AGES_41c		db
+	ROOM_AGES_41d		db
+	ROOM_AGES_41e		db
+	ROOM_AGES_41f		db
+	ROOM_AGES_420		db
+	ROOM_AGES_421		db
+	ROOM_AGES_422		db
+	ROOM_AGES_423		db
+	ROOM_AGES_424		db
+	ROOM_AGES_425		db
+	ROOM_AGES_426		db
+	ROOM_AGES_427		db
+	ROOM_AGES_428		db
+	ROOM_AGES_429		db
+	ROOM_AGES_42a		db
+	ROOM_AGES_42b		db
+	ROOM_AGES_42c		db
+	ROOM_AGES_42d		db
+	ROOM_AGES_42e		db
+	ROOM_AGES_42f		db
+	ROOM_AGES_430		db
+	ROOM_AGES_431		db
+	ROOM_AGES_432		db
+	ROOM_AGES_433		db
+	ROOM_AGES_434		db
+	ROOM_AGES_435		db
+	ROOM_AGES_436		db
+	ROOM_AGES_437		db
+	ROOM_AGES_438		db
+	ROOM_AGES_439		db
+	ROOM_AGES_43a		db
+	ROOM_AGES_43b		db
+	ROOM_AGES_43c		db
+	ROOM_AGES_43d		db
+	ROOM_AGES_43e		db
+	ROOM_AGES_43f		db
+	ROOM_AGES_440		db
+	ROOM_AGES_441		db
+	ROOM_AGES_442		db
+	ROOM_AGES_443		db
+	ROOM_AGES_444		db
+	ROOM_AGES_445		db
+	ROOM_AGES_446		db
+	ROOM_AGES_447		db
+	ROOM_AGES_448		db
+	ROOM_AGES_449		db
+	ROOM_AGES_44a		db
+	ROOM_AGES_44b		db
+	ROOM_AGES_44c		db
+	ROOM_AGES_44d		db
+	ROOM_AGES_44e		db
+	ROOM_AGES_44f		db
+	ROOM_AGES_450		db
+	ROOM_AGES_451		db
+	ROOM_AGES_452		db
+	ROOM_AGES_453		db
+	ROOM_AGES_454		db
+	ROOM_AGES_455		db
+	ROOM_AGES_456		db
+	ROOM_AGES_457		db
+	ROOM_AGES_458		db
+	ROOM_AGES_459		db
+	ROOM_AGES_45a		db
+	ROOM_AGES_45b		db
+	ROOM_AGES_45c		db
+	ROOM_AGES_45d		db
+	ROOM_AGES_45e		db
+	ROOM_AGES_45f		db
+	ROOM_AGES_460		db
+	ROOM_AGES_461		db
+	ROOM_AGES_462		db
+	ROOM_AGES_463		db
+	ROOM_AGES_464		db
+	ROOM_AGES_465		db
+	ROOM_AGES_466		db
+	ROOM_AGES_467		db
+	ROOM_AGES_468		db
+	ROOM_AGES_469		db
+	ROOM_AGES_46a		db
+	ROOM_AGES_46b		db
+	ROOM_AGES_46c		db
+	ROOM_AGES_46d		db
+	ROOM_AGES_46e		db
+	ROOM_AGES_46f		db
+	ROOM_AGES_470		db
+	ROOM_AGES_471		db
+	ROOM_AGES_472		db
+	ROOM_AGES_473		db
+	ROOM_AGES_474		db
+	ROOM_AGES_475		db
+	ROOM_AGES_476		db
+	ROOM_AGES_477		db
+	ROOM_AGES_478		db
+	ROOM_AGES_479		db
+	ROOM_AGES_47a		db
+	ROOM_AGES_47b		db
+	ROOM_AGES_47c		db
+	ROOM_AGES_47d		db
+	ROOM_AGES_47e		db
+	ROOM_AGES_47f		db
+	ROOM_AGES_480		db
+	ROOM_AGES_481		db
+	ROOM_AGES_482		db
+	ROOM_AGES_483		db
+	ROOM_AGES_484		db
+	ROOM_AGES_485		db
+	ROOM_AGES_486		db
+	ROOM_AGES_487		db
+	ROOM_AGES_488		db
+	ROOM_AGES_489		db
+	ROOM_AGES_48a		db
+	ROOM_AGES_48b		db
+	ROOM_AGES_48c		db
+	ROOM_AGES_48d		db
+	ROOM_AGES_48e		db
+	ROOM_AGES_48f		db
+	ROOM_AGES_490		db
+	ROOM_AGES_491		db
+	ROOM_AGES_492		db
+	ROOM_AGES_493		db
+	ROOM_AGES_494		db
+	ROOM_AGES_495		db
+	ROOM_AGES_496		db
+	ROOM_AGES_497		db
+	ROOM_AGES_498		db
+	ROOM_AGES_499		db
+	ROOM_AGES_49a		db
+	ROOM_AGES_49b		db
+	ROOM_AGES_49c		db
+	ROOM_AGES_49d		db
+	ROOM_AGES_49e		db
+	ROOM_AGES_49f		db
+	ROOM_AGES_4a0		db
+	ROOM_AGES_4a1		db
+	ROOM_AGES_4a2		db
+	ROOM_AGES_4a3		db
+	ROOM_AGES_4a4		db
+	ROOM_AGES_4a5		db
+	ROOM_AGES_4a6		db
+	ROOM_AGES_4a7		db
+	ROOM_AGES_4a8		db
+	ROOM_AGES_4a9		db
+	ROOM_AGES_4aa		db
+	ROOM_AGES_4ab		db
+	ROOM_AGES_4ac		db
+	ROOM_AGES_4ad		db
+	ROOM_AGES_4ae		db
+	ROOM_AGES_4af		db
+	ROOM_AGES_4b0		db
+	ROOM_AGES_4b1		db
+	ROOM_AGES_4b2		db
+	ROOM_AGES_4b3		db
+	ROOM_AGES_4b4		db
+	ROOM_AGES_4b5		db
+	ROOM_AGES_4b6		db
+	ROOM_AGES_4b7		db
+	ROOM_AGES_4b8		db
+	ROOM_AGES_4b9		db
+	ROOM_AGES_4ba		db
+	ROOM_AGES_4bb		db
+	ROOM_AGES_4bc		db
+	ROOM_AGES_4bd		db
+	ROOM_AGES_4be		db
+	ROOM_AGES_4bf		db
+	ROOM_AGES_4c0		db
+	ROOM_AGES_4c1		db
+	ROOM_AGES_4c2		db
+	ROOM_AGES_4c3		db
+	ROOM_AGES_4c4		db
+	ROOM_AGES_4c5		db
+	ROOM_AGES_4c6		db
+	ROOM_AGES_4c7		db
+	ROOM_AGES_4c8		db
+	ROOM_AGES_4c9		db
+	ROOM_AGES_4ca		db
+	ROOM_AGES_4cb		db
+	ROOM_AGES_4cc		db
+	ROOM_AGES_4cd		db
+	ROOM_AGES_4ce		db
+	ROOM_AGES_4cf		db
+	ROOM_AGES_4d0		db
+	ROOM_AGES_4d1		db
+	ROOM_AGES_4d2		db
+	ROOM_AGES_4d3		db
+	ROOM_AGES_4d4		db
+	ROOM_AGES_4d5		db
+	ROOM_AGES_4d6		db
+	ROOM_AGES_4d7		db
+	ROOM_AGES_4d8		db
+	ROOM_AGES_4d9		db
+	ROOM_AGES_4da		db
+	ROOM_AGES_4db		db
+	ROOM_AGES_4dc		db
+	ROOM_AGES_4dd		db
+	ROOM_AGES_4de		db
+	ROOM_AGES_4df		db
+	ROOM_AGES_4e0		db
+	ROOM_AGES_4e1		db
+	ROOM_AGES_4e2		db
+	ROOM_AGES_4e3		db
+	ROOM_AGES_4e4		db
+	ROOM_AGES_4e5		db
+	ROOM_AGES_4e6		db
+	ROOM_AGES_4e7		db
+	ROOM_AGES_4e8		db
+	ROOM_AGES_4e9		db
+	ROOM_AGES_4ea		db
+	ROOM_AGES_4eb		db
+	ROOM_AGES_4ec		db
+	ROOM_AGES_4ed		db
+	ROOM_AGES_4ee		db
+	ROOM_AGES_4ef		db
+	ROOM_AGES_4f0		db
+	ROOM_AGES_4f1		db
+	ROOM_AGES_4f2		db
+	ROOM_AGES_4f3		db
+	ROOM_AGES_4f4		db
+	ROOM_AGES_4f5		db
+	ROOM_AGES_4f6		db
+	ROOM_AGES_4f7		db
+	ROOM_AGES_4f8		db
+	ROOM_AGES_4f9		db
+	ROOM_AGES_4fa		db
+	ROOM_AGES_4fb		db
+	ROOM_AGES_4fc		db
+	ROOM_AGES_4fd		db
+	ROOM_AGES_4fe		db
+	ROOM_AGES_4ff		db
 
-ROOM_500	db
-ROOM_501	db
-ROOM_502	db
-ROOM_503	db
-ROOM_504	db
-ROOM_505	db
-ROOM_506	db
-ROOM_507	db
-ROOM_508	db
-ROOM_509	db
-ROOM_50a	db
-ROOM_50b	db
-ROOM_50c	db
-ROOM_50d	db
-ROOM_50e	db
-ROOM_50f	db
-ROOM_510	db
-ROOM_511	db
-ROOM_512	db
-ROOM_513	db
-ROOM_514	db
-ROOM_515	db
-ROOM_516	db
-ROOM_517	db
-ROOM_518	db
-ROOM_519	db
-ROOM_51a	db
-ROOM_51b	db
-ROOM_51c	db
-ROOM_51d	db
-ROOM_51e	db
-ROOM_51f	db
-ROOM_520	db
-ROOM_521	db
-ROOM_522	db
-ROOM_523	db
-ROOM_524	db
-ROOM_525	db
-ROOM_526	db
-ROOM_527	db
-ROOM_528	db
-ROOM_529	db
-ROOM_52a	db
-ROOM_52b	db
-ROOM_52c	db
-ROOM_52d	db
-ROOM_52e	db
-ROOM_52f	db
-ROOM_530	db
-ROOM_531	db
-ROOM_532	db
-ROOM_533	db
-ROOM_534	db
-ROOM_535	db
-ROOM_536	db
-ROOM_537	db
-ROOM_538	db
-ROOM_539	db
-ROOM_53a	db
-ROOM_53b	db
-ROOM_53c	db
-ROOM_53d	db
-ROOM_53e	db
-ROOM_53f	db
-ROOM_540	db
-ROOM_541	db
-ROOM_542	db
-ROOM_543	db
-ROOM_544	db
-ROOM_545	db
-ROOM_546	db
-ROOM_547	db
-ROOM_548	db
-ROOM_549	db
-ROOM_54a	db
-ROOM_54b	db
-ROOM_54c	db
-ROOM_54d	db
-ROOM_54e	db
-ROOM_54f	db
-ROOM_550	db
-ROOM_551	db
-ROOM_552	db
-ROOM_553	db
-ROOM_554	db
-ROOM_555	db
-ROOM_556	db
-ROOM_557	db
-ROOM_558	db
-ROOM_559	db
-ROOM_55a	db
-ROOM_55b	db
-ROOM_55c	db
-ROOM_55d	db
-ROOM_55e	db
-ROOM_55f	db
-ROOM_560	db
-ROOM_561	db
-ROOM_562	db
-ROOM_563	db
-ROOM_564	db
-ROOM_565	db
-ROOM_566	db
-ROOM_567	db
-ROOM_568	db
-ROOM_569	db
-ROOM_56a	db
-ROOM_56b	db
-ROOM_56c	db
-ROOM_56d	db
-ROOM_56e	db
-ROOM_56f	db
-ROOM_570	db
-ROOM_571	db
-ROOM_572	db
-ROOM_573	db
-ROOM_574	db
-ROOM_575	db
-ROOM_576	db
-ROOM_577	db
-ROOM_578	db
-ROOM_579	db
-ROOM_57a	db
-ROOM_57b	db
-ROOM_57c	db
-ROOM_57d	db
-ROOM_57e	db
-ROOM_57f	db
-ROOM_580	db
-ROOM_581	db
-ROOM_582	db
-ROOM_583	db
-ROOM_584	db
-ROOM_585	db
-ROOM_586	db
-ROOM_587	db
-ROOM_588	db
-ROOM_589	db
-ROOM_58a	db
-ROOM_58b	db
-ROOM_58c	db
-ROOM_58d	db
-ROOM_58e	db
-ROOM_58f	db
-ROOM_590	db
-ROOM_591	db
-ROOM_592	db
-ROOM_593	db
-ROOM_594	db
-ROOM_595	db
-ROOM_596	db
-ROOM_597	db
-ROOM_598	db
-ROOM_599	db
-ROOM_59a	db
-ROOM_59b	db
-ROOM_59c	db
-ROOM_59d	db
-ROOM_59e	db
-ROOM_59f	db
-ROOM_5a0	db
-ROOM_5a1	db
-ROOM_5a2	db
-ROOM_5a3	db
-ROOM_5a4	db
-ROOM_5a5	db
-ROOM_5a6	db
-ROOM_5a7	db
-ROOM_5a8	db
-ROOM_5a9	db
-ROOM_5aa	db
-ROOM_5ab	db
-ROOM_5ac	db
-ROOM_5ad	db
-ROOM_5ae	db
-ROOM_5af	db
-ROOM_5b0	db
-ROOM_5b1	db
-ROOM_5b2	db
-ROOM_5b3	db
-ROOM_5b4	db
-ROOM_5b5	db
-ROOM_5b6	db
-ROOM_5b7	db
-ROOM_5b8	db
-ROOM_5b9	db
-ROOM_5ba	db
-ROOM_5bb	db
-ROOM_5bc	db
-ROOM_5bd	db
-ROOM_5be	db
-ROOM_5bf	db
-ROOM_5c0	db
-ROOM_5c1	db
-ROOM_5c2	db
-ROOM_5c3	db
-ROOM_5c4	db
-ROOM_5c5	db
-ROOM_5c6	db
-ROOM_5c7	db
-ROOM_5c8	db
-ROOM_5c9	db
-ROOM_5ca	db
-ROOM_5cb	db
-ROOM_5cc	db
-ROOM_5cd	db
-ROOM_5ce	db
-ROOM_5cf	db
-ROOM_5d0	db
-ROOM_5d1	db
-ROOM_5d2	db
-ROOM_5d3	db
-ROOM_5d4	db
-ROOM_5d5	db
-ROOM_5d6	db
-ROOM_5d7	db
-ROOM_5d8	db
-ROOM_5d9	db
-ROOM_5da	db
-ROOM_5db	db
-ROOM_5dc	db
-ROOM_5dd	db
-ROOM_5de	db
-ROOM_5df	db
-ROOM_5e0	db
-ROOM_5e1	db
-ROOM_5e2	db
-ROOM_5e3	db
-ROOM_5e4	db
-ROOM_5e5	db
-ROOM_5e6	db
-ROOM_5e7	db
-ROOM_5e8	db
-ROOM_5e9	db
-ROOM_5ea	db
-ROOM_5eb	db
-ROOM_5ec	db
-ROOM_5ed	db
-ROOM_5ee	db
-ROOM_5ef	db
-ROOM_5f0	db
-ROOM_5f1	db
-ROOM_5f2	db
-ROOM_5f3	db
-ROOM_5f4	db
-ROOM_5f5	db
-ROOM_5f6	db
-ROOM_5f7	db
-ROOM_5f8	db
-ROOM_5f9	db
-ROOM_5fa	db
-ROOM_5fb	db
-ROOM_5fc	db
-ROOM_5fd	db
-ROOM_5fe	db
-ROOM_5ff	db
+	ROOM_AGES_500		db
+	ROOM_AGES_501		db
+	ROOM_AGES_502		db
+	ROOM_AGES_503		db
+	ROOM_AGES_504		db
+	ROOM_AGES_505		db
+	ROOM_AGES_506		db
+	ROOM_AGES_507		db
+	ROOM_AGES_508		db
+	ROOM_AGES_509		db
+	ROOM_AGES_50a		db
+	ROOM_AGES_50b		db
+	ROOM_AGES_50c		db
+	ROOM_AGES_50d		db
+	ROOM_AGES_50e		db
+	ROOM_AGES_50f		db
+	ROOM_AGES_510		db
+	ROOM_AGES_511		db
+	ROOM_AGES_512		db
+	ROOM_AGES_513		db
+	ROOM_AGES_514		db
+	ROOM_AGES_515		db
+	ROOM_AGES_516		db
+	ROOM_AGES_517		db
+	ROOM_AGES_518		db
+	ROOM_AGES_519		db
+	ROOM_AGES_51a		db
+	ROOM_AGES_51b		db
+	ROOM_AGES_51c		db
+	ROOM_AGES_51d		db
+	ROOM_AGES_51e		db
+	ROOM_AGES_51f		db
+	ROOM_AGES_520		db
+	ROOM_AGES_521		db
+	ROOM_AGES_522		db
+	ROOM_AGES_523		db
+	ROOM_AGES_524		db
+	ROOM_AGES_525		db
+	ROOM_AGES_526		db
+	ROOM_AGES_527		db
+	ROOM_AGES_528		db
+	ROOM_AGES_529		db
+	ROOM_AGES_52a		db
+	ROOM_AGES_52b		db
+	ROOM_AGES_52c		db
+	ROOM_AGES_52d		db
+	ROOM_AGES_52e		db
+	ROOM_AGES_52f		db
+	ROOM_AGES_530		db
+	ROOM_AGES_531		db
+	ROOM_AGES_532		db
+	ROOM_AGES_533		db
+	ROOM_AGES_534		db
+	ROOM_AGES_535		db
+	ROOM_AGES_536		db
+	ROOM_AGES_537		db
+	ROOM_AGES_538		db
+	ROOM_AGES_539		db
+	ROOM_AGES_53a		db
+	ROOM_AGES_53b		db
+	ROOM_AGES_53c		db
+	ROOM_AGES_53d		db
+	ROOM_AGES_53e		db
+	ROOM_AGES_53f		db
+	ROOM_AGES_540		db
+	ROOM_AGES_541		db
+	ROOM_AGES_542		db
+	ROOM_AGES_543		db
+	ROOM_AGES_544		db
+	ROOM_AGES_545		db
+	ROOM_AGES_546		db
+	ROOM_AGES_547		db
+	ROOM_AGES_548		db
+	ROOM_AGES_549		db
+	ROOM_AGES_54a		db
+	ROOM_AGES_54b		db
+	ROOM_AGES_54c		db
+	ROOM_AGES_54d		db
+	ROOM_AGES_54e		db
+	ROOM_AGES_54f		db
+	ROOM_AGES_550		db
+	ROOM_AGES_551		db
+	ROOM_AGES_552		db
+	ROOM_AGES_553		db
+	ROOM_AGES_554		db
+	ROOM_AGES_555		db
+	ROOM_AGES_556		db
+	ROOM_AGES_557		db
+	ROOM_AGES_558		db
+	ROOM_AGES_559		db
+	ROOM_AGES_55a		db
+	ROOM_AGES_55b		db
+	ROOM_AGES_55c		db
+	ROOM_AGES_55d		db
+	ROOM_AGES_55e		db
+	ROOM_AGES_55f		db
+	ROOM_AGES_560		db
+	ROOM_AGES_561		db
+	ROOM_AGES_562		db
+	ROOM_AGES_563		db
+	ROOM_AGES_564		db
+	ROOM_AGES_565		db
+	ROOM_AGES_566		db
+	ROOM_AGES_567		db
+	ROOM_AGES_568		db
+	ROOM_AGES_569		db
+	ROOM_AGES_56a		db
+	ROOM_AGES_56b		db
+	ROOM_AGES_56c		db
+	ROOM_AGES_56d		db
+	ROOM_AGES_56e		db
+	ROOM_AGES_56f		db
+	ROOM_AGES_570		db
+	ROOM_AGES_571		db
+	ROOM_AGES_572		db
+	ROOM_AGES_573		db
+	ROOM_AGES_574		db
+	ROOM_AGES_575		db
+	ROOM_AGES_576		db
+	ROOM_AGES_577		db
+	ROOM_AGES_578		db
+	ROOM_AGES_579		db
+	ROOM_AGES_57a		db
+	ROOM_AGES_57b		db
+	ROOM_AGES_57c		db
+	ROOM_AGES_57d		db
+	ROOM_AGES_57e		db
+	ROOM_AGES_57f		db
+	ROOM_AGES_580		db
+	ROOM_AGES_581		db
+	ROOM_AGES_582		db
+	ROOM_AGES_583		db
+	ROOM_AGES_584		db
+	ROOM_AGES_585		db
+	ROOM_AGES_586		db
+	ROOM_AGES_587		db
+	ROOM_AGES_588		db
+	ROOM_AGES_589		db
+	ROOM_AGES_58a		db
+	ROOM_AGES_58b		db
+	ROOM_AGES_58c		db
+	ROOM_AGES_58d		db
+	ROOM_AGES_58e		db
+	ROOM_AGES_58f		db
+	ROOM_AGES_590		db
+	ROOM_AGES_591		db
+	ROOM_AGES_592		db
+	ROOM_AGES_593		db
+	ROOM_AGES_594		db
+	ROOM_AGES_595		db
+	ROOM_AGES_596		db
+	ROOM_AGES_597		db
+	ROOM_AGES_598		db
+	ROOM_AGES_599		db
+	ROOM_AGES_59a		db
+	ROOM_AGES_59b		db
+	ROOM_AGES_59c		db
+	ROOM_AGES_59d		db
+	ROOM_AGES_59e		db
+	ROOM_AGES_59f		db
+	ROOM_AGES_5a0		db
+	ROOM_AGES_5a1		db
+	ROOM_AGES_5a2		db
+	ROOM_AGES_5a3		db
+	ROOM_AGES_5a4		db
+	ROOM_AGES_5a5		db
+	ROOM_AGES_5a6		db
+	ROOM_AGES_5a7		db
+	ROOM_AGES_5a8		db
+	ROOM_AGES_5a9		db
+	ROOM_AGES_5aa		db
+	ROOM_AGES_5ab		db
+	ROOM_AGES_5ac		db
+	ROOM_AGES_5ad		db
+	ROOM_AGES_5ae		db
+	ROOM_AGES_5af		db
+	ROOM_AGES_5b0		db
+	ROOM_AGES_5b1		db
+	ROOM_AGES_5b2		db
+	ROOM_AGES_5b3		db
+	ROOM_AGES_5b4		db
+	ROOM_AGES_5b5		db
+	ROOM_AGES_5b6		db
+	ROOM_AGES_5b7		db
+	ROOM_AGES_5b8		db
+	ROOM_AGES_5b9		db
+	ROOM_AGES_5ba		db
+	ROOM_AGES_5bb		db
+	ROOM_AGES_5bc		db
+	ROOM_AGES_5bd		db
+	ROOM_AGES_5be		db
+	ROOM_AGES_5bf		db
+	ROOM_AGES_5c0		db
+	ROOM_AGES_5c1		db
+	ROOM_AGES_5c2		db
+	ROOM_AGES_5c3		db
+	ROOM_AGES_5c4		db
+	ROOM_AGES_5c5		db
+	ROOM_AGES_5c6		db
+	ROOM_AGES_5c7		db
+	ROOM_AGES_5c8		db
+	ROOM_AGES_5c9		db
+	ROOM_AGES_5ca		db
+	ROOM_AGES_5cb		db
+	ROOM_AGES_5cc		db
+	ROOM_AGES_5cd		db
+	ROOM_AGES_5ce		db
+	ROOM_AGES_5cf		db
+	ROOM_AGES_5d0		db
+	ROOM_AGES_5d1		db
+	ROOM_AGES_5d2		db
+	ROOM_AGES_5d3		db
+	ROOM_AGES_5d4		db
+	ROOM_AGES_5d5		db
+	ROOM_AGES_5d6		db
+	ROOM_AGES_5d7		db
+	ROOM_AGES_5d8		db
+	ROOM_AGES_5d9		db
+	ROOM_AGES_5da		db
+	ROOM_AGES_5db		db
+	ROOM_AGES_5dc		db
+	ROOM_AGES_5dd		db
+	ROOM_AGES_5de		db
+	ROOM_AGES_5df		db
+	ROOM_AGES_5e0		db
+	ROOM_AGES_5e1		db
+	ROOM_AGES_5e2		db
+	ROOM_AGES_5e3		db
+	ROOM_AGES_5e4		db
+	ROOM_AGES_5e5		db
+	ROOM_AGES_5e6		db
+	ROOM_AGES_5e7		db
+	ROOM_AGES_5e8		db
+	ROOM_AGES_5e9		db
+	ROOM_AGES_5ea		db
+	ROOM_AGES_5eb		db
+	ROOM_AGES_5ec		db
+	ROOM_AGES_5ed		db
+	ROOM_AGES_5ee		db
+	ROOM_AGES_5ef		db
+	ROOM_AGES_5f0		db
+	ROOM_AGES_5f1		db
+	ROOM_AGES_5f2		db
+	ROOM_AGES_5f3		db
+	ROOM_AGES_5f4		db
+	ROOM_TWINROVA_FIGHT	db
+	ROOM_AGES_5f6		db
+	ROOM_AGES_5f7		db
+	ROOM_AGES_5f8		db
+	ROOM_AGES_5f9		db
+	ROOM_AGES_5fa		db
+	ROOM_AGES_5fb		db
+	ROOM_AGES_5fc		db
+	ROOM_AGES_5fd		db
+	ROOM_AGES_5fe		db
+	ROOM_AGES_5ff		db
 
-.ende
+	ROOM_AGES_600		db
+	ROOM_AGES_601		db
+	ROOM_AGES_602		db
+	ROOM_AGES_603		db
+	ROOM_AGES_604		db
+	ROOM_AGES_605		db
+	ROOM_AGES_606		db
+	ROOM_AGES_607		db
+	ROOM_AGES_608		db
+	ROOM_AGES_609		db
+	ROOM_AGES_60a		db
+	ROOM_AGES_60b		db
+	ROOM_AGES_60c		db
+	ROOM_AGES_60d		db
+	ROOM_AGES_60e		db
+	ROOM_AGES_60f		db
+	ROOM_AGES_610		db
+	ROOM_AGES_611		db
+	ROOM_AGES_612		db
+	ROOM_AGES_613		db
+	ROOM_AGES_614		db
+	ROOM_AGES_615		db
+	ROOM_AGES_616		db
+	ROOM_AGES_617		db
+	ROOM_AGES_618		db
+	ROOM_AGES_619		db
+	ROOM_AGES_61a		db
+	ROOM_AGES_61b		db
+	ROOM_AGES_61c		db
+	ROOM_AGES_61d		db
+	ROOM_AGES_61e		db
+	ROOM_AGES_61f		db
+	ROOM_AGES_620		db
+	ROOM_AGES_621		db
+	ROOM_AGES_622		db
+	ROOM_AGES_623		db
+	ROOM_AGES_624		db
+	ROOM_AGES_625		db
+	ROOM_AGES_626		db
+	ROOM_AGES_627		db
+	ROOM_AGES_628		db
+	ROOM_AGES_629		db
+	ROOM_AGES_62a		db
+	ROOM_AGES_62b		db
+	ROOM_AGES_62c		db
+	ROOM_AGES_62d		db
+	ROOM_AGES_62e		db
+	ROOM_AGES_62f		db
+	ROOM_AGES_630		db
+	ROOM_AGES_631		db
+	ROOM_AGES_632		db
+	ROOM_AGES_633		db
+	ROOM_AGES_634		db
+	ROOM_AGES_635		db
+	ROOM_AGES_636		db
+	ROOM_AGES_637		db
+	ROOM_AGES_638		db
+	ROOM_AGES_639		db
+	ROOM_AGES_63a		db
+	ROOM_AGES_63b		db
+	ROOM_AGES_63c		db
+	ROOM_AGES_63d		db
+	ROOM_AGES_63e		db
+	ROOM_AGES_63f		db
+	ROOM_AGES_640		db
+	ROOM_AGES_641		db
+	ROOM_AGES_642		db
+	ROOM_AGES_643		db
+	ROOM_AGES_644		db
+	ROOM_AGES_645		db
+	ROOM_AGES_646		db
+	ROOM_AGES_647		db
+	ROOM_AGES_648		db
+	ROOM_AGES_649		db
+	ROOM_AGES_64a		db
+	ROOM_AGES_64b		db
+	ROOM_AGES_64c		db
+	ROOM_AGES_64d		db
+	ROOM_AGES_64e		db
+	ROOM_AGES_64f		db
+	ROOM_AGES_650		db
+	ROOM_AGES_651		db
+	ROOM_AGES_652		db
+	ROOM_AGES_653		db
+	ROOM_AGES_654		db
+	ROOM_AGES_655		db
+	ROOM_AGES_656		db
+	ROOM_AGES_657		db
+	ROOM_AGES_658		db
+	ROOM_AGES_659		db
+	ROOM_AGES_65a		db
+	ROOM_AGES_65b		db
+	ROOM_AGES_65c		db
+	ROOM_AGES_65d		db
+	ROOM_AGES_65e		db
+	ROOM_AGES_65f		db
+	ROOM_AGES_660		db
+	ROOM_AGES_661		db
+	ROOM_AGES_662		db
+	ROOM_AGES_663		db
+	ROOM_AGES_664		db
+	ROOM_AGES_665		db
+	ROOM_AGES_666		db
+	ROOM_AGES_667		db
+	ROOM_AGES_668		db
+	ROOM_AGES_669		db
+	ROOM_AGES_66a		db
+	ROOM_AGES_66b		db
+	ROOM_AGES_66c		db
+	ROOM_AGES_66d		db
+	ROOM_AGES_66e		db
+	ROOM_AGES_66f		db
+	ROOM_AGES_670		db
+	ROOM_AGES_671		db
+	ROOM_AGES_672		db
+	ROOM_AGES_673		db
+	ROOM_AGES_674		db
+	ROOM_AGES_675		db
+	ROOM_AGES_676		db
+	ROOM_AGES_677		db
+	ROOM_AGES_678		db
+	ROOM_AGES_679		db
+	ROOM_AGES_67a		db
+	ROOM_AGES_67b		db
+	ROOM_AGES_67c		db
+	ROOM_AGES_67d		db
+	ROOM_AGES_67e		db
+	ROOM_AGES_67f		db
+	ROOM_AGES_680		db
+	ROOM_AGES_681		db
+	ROOM_AGES_682		db
+	ROOM_AGES_683		db
+	ROOM_AGES_684		db
+	ROOM_AGES_685		db
+	ROOM_AGES_686		db
+	ROOM_AGES_687		db
+	ROOM_AGES_688		db
+	ROOM_AGES_689		db
+	ROOM_AGES_68a		db
+	ROOM_AGES_68b		db
+	ROOM_AGES_68c		db
+	ROOM_AGES_68d		db
+	ROOM_AGES_68e		db
+	ROOM_AGES_68f		db
+	ROOM_AGES_690		db
+	ROOM_AGES_691		db
+	ROOM_AGES_692		db
+	ROOM_AGES_693		db
+	ROOM_AGES_694		db
+	ROOM_AGES_695		db
+	ROOM_AGES_696		db
+	ROOM_AGES_697		db
+	ROOM_AGES_698		db
+	ROOM_AGES_699		db
+	ROOM_AGES_69a		db
+	ROOM_AGES_69b		db
+	ROOM_AGES_69c		db
+	ROOM_AGES_69d		db
+	ROOM_AGES_69e		db
+	ROOM_AGES_69f		db
+	ROOM_AGES_6a0		db
+	ROOM_AGES_6a1		db
+	ROOM_AGES_6a2		db
+	ROOM_AGES_6a3		db
+	ROOM_AGES_6a4		db
+	ROOM_AGES_6a5		db
+	ROOM_AGES_6a6		db
+	ROOM_AGES_6a7		db
+	ROOM_AGES_6a8		db
+	ROOM_AGES_6a9		db
+	ROOM_AGES_6aa		db
+	ROOM_AGES_6ab		db
+	ROOM_AGES_6ac		db
+	ROOM_AGES_6ad		db
+	ROOM_AGES_6ae		db
+	ROOM_AGES_6af		db
+	ROOM_AGES_6b0		db
+	ROOM_AGES_6b1		db
+	ROOM_AGES_6b2		db
+	ROOM_AGES_6b3		db
+	ROOM_AGES_6b4		db
+	ROOM_AGES_6b5		db
+	ROOM_AGES_6b6		db
+	ROOM_AGES_6b7		db
+	ROOM_AGES_6b8		db
+	ROOM_AGES_6b9		db
+	ROOM_AGES_6ba		db
+	ROOM_AGES_6bb		db
+	ROOM_AGES_6bc		db
+	ROOM_AGES_6bd		db
+	ROOM_AGES_6be		db
+	ROOM_AGES_6bf		db
+	ROOM_AGES_6c0		db
+	ROOM_AGES_6c1		db
+	ROOM_AGES_6c2		db
+	ROOM_AGES_6c3		db
+	ROOM_AGES_6c4		db
+	ROOM_AGES_6c5		db
+	ROOM_AGES_6c6		db
+	ROOM_AGES_6c7		db
+	ROOM_AGES_6c8		db
+	ROOM_AGES_6c9		db
+	ROOM_AGES_6ca		db
+	ROOM_AGES_6cb		db
+	ROOM_AGES_6cc		db
+	ROOM_AGES_6cd		db
+	ROOM_AGES_6ce		db
+	ROOM_AGES_6cf		db
+	ROOM_AGES_6d0		db
+	ROOM_AGES_6d1		db
+	ROOM_AGES_6d2		db
+	ROOM_AGES_6d3		db
+	ROOM_AGES_6d4		db
+	ROOM_AGES_6d5		db
+	ROOM_AGES_6d6		db
+	ROOM_AGES_6d7		db
+	ROOM_AGES_6d8		db
+	ROOM_AGES_6d9		db
+	ROOM_AGES_6da		db
+	ROOM_AGES_6db		db
+	ROOM_AGES_6dc		db
+	ROOM_AGES_6dd		db
+	ROOM_AGES_6de		db
+	ROOM_AGES_6df		db
+	ROOM_AGES_6e0		db
+	ROOM_AGES_6e1		db
+	ROOM_AGES_6e2		db
+	ROOM_AGES_6e3		db
+	ROOM_AGES_6e4		db
+	ROOM_AGES_6e5		db
+	ROOM_AGES_6e6		db
+	ROOM_AGES_6e7		db
+	ROOM_AGES_6e8		db
+	ROOM_AGES_6e9		db
+	ROOM_AGES_6ea		db
+	ROOM_AGES_6eb		db
+	ROOM_AGES_6ec		db
+	ROOM_AGES_6ed		db
+	ROOM_AGES_6ee		db
+	ROOM_AGES_6ef		db
+	ROOM_AGES_6f0		db
+	ROOM_AGES_6f1		db
+	ROOM_AGES_6f2		db
+	ROOM_AGES_6f3		db
+	ROOM_AGES_6f4		db
+	ROOM_AGES_6f5		db
+	ROOM_AGES_6f6		db
+	ROOM_AGES_6f7		db
+	ROOM_AGES_6f8		db
+	ROOM_AGES_6f9		db
+	ROOM_AGES_6fa		db
+	ROOM_AGES_6fb		db
+	ROOM_AGES_6fc		db
+	ROOM_AGES_6fd		db
+	ROOM_AGES_6fe		db
+	ROOM_AGES_6ff		db
+
+	ROOM_AGES_700		db
+	ROOM_AGES_701		db
+	ROOM_AGES_702		db
+	ROOM_AGES_703		db
+	ROOM_AGES_704		db
+	ROOM_AGES_705		db
+	ROOM_AGES_706		db
+	ROOM_AGES_707		db
+	ROOM_AGES_708		db
+	ROOM_AGES_709		db
+	ROOM_AGES_70a		db
+	ROOM_AGES_70b		db
+	ROOM_AGES_70c		db
+	ROOM_AGES_70d		db
+	ROOM_AGES_70e		db
+	ROOM_AGES_70f		db
+	ROOM_AGES_710		db
+	ROOM_AGES_711		db
+	ROOM_AGES_712		db
+	ROOM_AGES_713		db
+	ROOM_AGES_714		db
+	ROOM_AGES_715		db
+	ROOM_AGES_716		db
+	ROOM_AGES_717		db
+	ROOM_AGES_718		db
+	ROOM_AGES_719		db
+	ROOM_AGES_71a		db
+	ROOM_AGES_71b		db
+	ROOM_AGES_71c		db
+	ROOM_AGES_71d		db
+	ROOM_AGES_71e		db
+	ROOM_AGES_71f		db
+	ROOM_AGES_720		db
+	ROOM_AGES_721		db
+	ROOM_AGES_722		db
+	ROOM_AGES_723		db
+	ROOM_AGES_724		db
+	ROOM_AGES_725		db
+	ROOM_AGES_726		db
+	ROOM_AGES_727		db
+	ROOM_AGES_728		db
+	ROOM_AGES_729		db
+	ROOM_AGES_72a		db
+	ROOM_AGES_72b		db
+	ROOM_AGES_72c		db
+	ROOM_AGES_72d		db
+	ROOM_AGES_72e		db
+	ROOM_AGES_72f		db
+	ROOM_AGES_730		db
+	ROOM_AGES_731		db
+	ROOM_AGES_732		db
+	ROOM_AGES_733		db
+	ROOM_AGES_734		db
+	ROOM_AGES_735		db
+	ROOM_AGES_736		db
+	ROOM_AGES_737		db
+	ROOM_AGES_738		db
+	ROOM_AGES_739		db
+	ROOM_AGES_73a		db
+	ROOM_AGES_73b		db
+	ROOM_AGES_73c		db
+	ROOM_AGES_73d		db
+	ROOM_AGES_73e		db
+	ROOM_AGES_73f		db
+	ROOM_AGES_740		db
+	ROOM_AGES_741		db
+	ROOM_AGES_742		db
+	ROOM_AGES_743		db
+	ROOM_AGES_744		db
+	ROOM_AGES_745		db
+	ROOM_AGES_746		db
+	ROOM_AGES_747		db
+	ROOM_AGES_748		db
+	ROOM_AGES_749		db
+	ROOM_AGES_74a		db
+	ROOM_AGES_74b		db
+	ROOM_AGES_74c		db
+	ROOM_AGES_74d		db
+	ROOM_AGES_74e		db
+	ROOM_AGES_74f		db
+	ROOM_AGES_750		db
+	ROOM_AGES_751		db
+	ROOM_AGES_752		db
+	ROOM_AGES_753		db
+	ROOM_AGES_754		db
+	ROOM_AGES_755		db
+	ROOM_AGES_756		db
+	ROOM_AGES_757		db
+	ROOM_AGES_758		db
+	ROOM_AGES_759		db
+	ROOM_AGES_75a		db
+	ROOM_AGES_75b		db
+	ROOM_AGES_75c		db
+	ROOM_AGES_75d		db
+	ROOM_AGES_75e		db
+	ROOM_AGES_75f		db
+	ROOM_AGES_760		db
+	ROOM_AGES_761		db
+	ROOM_AGES_762		db
+	ROOM_AGES_763		db
+	ROOM_AGES_764		db
+	ROOM_AGES_765		db
+	ROOM_AGES_766		db
+	ROOM_AGES_767		db
+	ROOM_AGES_768		db
+	ROOM_AGES_769		db
+	ROOM_AGES_76a		db
+	ROOM_AGES_76b		db
+	ROOM_AGES_76c		db
+	ROOM_AGES_76d		db
+	ROOM_AGES_76e		db
+	ROOM_AGES_76f		db
+	ROOM_AGES_770		db
+	ROOM_AGES_771		db
+	ROOM_AGES_772		db
+	ROOM_AGES_773		db
+	ROOM_AGES_774		db
+	ROOM_AGES_775		db
+	ROOM_AGES_776		db
+	ROOM_AGES_777		db
+	ROOM_AGES_778		db
+	ROOM_AGES_779		db
+	ROOM_AGES_77a		db
+	ROOM_AGES_77b		db
+	ROOM_AGES_77c		db
+	ROOM_AGES_77d		db
+	ROOM_AGES_77e		db
+	ROOM_AGES_77f		db
+	ROOM_AGES_780		db
+	ROOM_AGES_781		db
+	ROOM_AGES_782		db
+	ROOM_AGES_783		db
+	ROOM_AGES_784		db
+	ROOM_AGES_785		db
+	ROOM_AGES_786		db
+	ROOM_AGES_787		db
+	ROOM_AGES_788		db
+	ROOM_AGES_789		db
+	ROOM_AGES_78a		db
+	ROOM_AGES_78b		db
+	ROOM_AGES_78c		db
+	ROOM_AGES_78d		db
+	ROOM_AGES_78e		db
+	ROOM_AGES_78f		db
+	ROOM_AGES_790		db
+	ROOM_AGES_791		db
+	ROOM_AGES_792		db
+	ROOM_AGES_793		db
+	ROOM_AGES_794		db
+	ROOM_AGES_795		db
+	ROOM_AGES_796		db
+	ROOM_AGES_797		db
+	ROOM_AGES_798		db
+	ROOM_AGES_799		db
+	ROOM_AGES_79a		db
+	ROOM_AGES_79b		db
+	ROOM_AGES_79c		db
+	ROOM_AGES_79d		db
+	ROOM_AGES_79e		db
+	ROOM_AGES_79f		db
+	ROOM_AGES_7a0		db
+	ROOM_AGES_7a1		db
+	ROOM_AGES_7a2		db
+	ROOM_AGES_7a3		db
+	ROOM_AGES_7a4		db
+	ROOM_AGES_7a5		db
+	ROOM_AGES_7a6		db
+	ROOM_AGES_7a7		db
+	ROOM_AGES_7a8		db
+	ROOM_AGES_7a9		db
+	ROOM_AGES_7aa		db
+	ROOM_AGES_7ab		db
+	ROOM_AGES_7ac		db
+	ROOM_AGES_7ad		db
+	ROOM_AGES_7ae		db
+	ROOM_AGES_7af		db
+	ROOM_AGES_7b0		db
+	ROOM_AGES_7b1		db
+	ROOM_AGES_7b2		db
+	ROOM_AGES_7b3		db
+	ROOM_AGES_7b4		db
+	ROOM_AGES_7b5		db
+	ROOM_AGES_7b6		db
+	ROOM_AGES_7b7		db
+	ROOM_AGES_7b8		db
+	ROOM_AGES_7b9		db
+	ROOM_AGES_7ba		db
+	ROOM_AGES_7bb		db
+	ROOM_AGES_7bc		db
+	ROOM_AGES_7bd		db
+	ROOM_AGES_7be		db
+	ROOM_AGES_7bf		db
+	ROOM_AGES_7c0		db
+	ROOM_AGES_7c1		db
+	ROOM_AGES_7c2		db
+	ROOM_AGES_7c3		db
+	ROOM_AGES_7c4		db
+	ROOM_AGES_7c5		db
+	ROOM_AGES_7c6		db
+	ROOM_AGES_7c7		db
+	ROOM_AGES_7c8		db
+	ROOM_AGES_7c9		db
+	ROOM_AGES_7ca		db
+	ROOM_AGES_7cb		db
+	ROOM_AGES_7cc		db
+	ROOM_AGES_7cd		db
+	ROOM_AGES_7ce		db
+	ROOM_AGES_7cf		db
+	ROOM_AGES_7d0		db
+	ROOM_AGES_7d1		db
+	ROOM_AGES_7d2		db
+	ROOM_AGES_7d3		db
+	ROOM_AGES_7d4		db
+	ROOM_AGES_7d5		db
+	ROOM_AGES_7d6		db
+	ROOM_AGES_7d7		db
+	ROOM_AGES_7d8		db
+	ROOM_AGES_7d9		db
+	ROOM_AGES_7da		db
+	ROOM_AGES_7db		db
+	ROOM_AGES_7dc		db
+	ROOM_AGES_7dd		db
+	ROOM_AGES_7de		db
+	ROOM_AGES_7df		db
+	ROOM_AGES_7e0		db
+	ROOM_AGES_7e1		db
+	ROOM_AGES_7e2		db
+	ROOM_AGES_7e3		db
+	ROOM_AGES_7e4		db
+	ROOM_AGES_7e5		db
+	ROOM_AGES_7e6		db
+	ROOM_AGES_7e7		db
+	ROOM_AGES_7e8		db
+	ROOM_AGES_7e9		db
+	ROOM_AGES_7ea		db
+	ROOM_AGES_7eb		db
+	ROOM_AGES_7ec		db
+	ROOM_AGES_7ed		db
+	ROOM_AGES_7ee		db
+	ROOM_AGES_7ef		db
+	ROOM_AGES_7f0		db
+	ROOM_AGES_7f1		db
+	ROOM_AGES_7f2		db
+	ROOM_AGES_7f3		db
+	ROOM_AGES_7f4		db
+	ROOM_AGES_7f5		db
+	ROOM_AGES_7f6		db
+	ROOM_AGES_7f7		db
+	ROOM_AGES_7f8		db
+	ROOM_AGES_7f9		db
+	ROOM_AGES_7fa		db
+	ROOM_AGES_7fb		db
+	ROOM_AGES_7fc		db
+	ROOM_AGES_7fd		db
+	ROOM_AGES_7fe		db
+	ROOM_AGES_7ff		db
+
+	.ende
+
+.else; ROM_SEASONS
+
+	.enum 0
+
+	ROOM_SEASONS_000	db
+	ROOM_SEASONS_001	db
+	ROOM_SEASONS_002	db
+	ROOM_SEASONS_003	db
+	ROOM_SEASONS_004	db
+	ROOM_SEASONS_005	db
+	ROOM_SEASONS_006	db
+	ROOM_SEASONS_007	db
+	ROOM_SEASONS_008	db
+	ROOM_SEASONS_009	db
+	ROOM_SEASONS_00a	db
+	ROOM_SEASONS_00b	db
+	ROOM_SEASONS_00c	db
+	ROOM_SEASONS_00d	db
+	ROOM_SEASONS_00e	db
+	ROOM_SEASONS_00f	db
+	ROOM_SEASONS_010	db
+	ROOM_SEASONS_011	db
+	ROOM_SEASONS_012	db
+	ROOM_SEASONS_013	db
+	ROOM_SEASONS_014	db
+	ROOM_SEASONS_015	db
+	ROOM_SEASONS_016	db
+	ROOM_SEASONS_017	db
+	ROOM_SEASONS_018	db
+	ROOM_SEASONS_019	db
+	ROOM_SEASONS_01a	db
+	ROOM_SEASONS_01b	db
+	ROOM_SEASONS_01c	db
+	ROOM_SEASONS_01d	db
+	ROOM_SEASONS_01e	db
+	ROOM_SEASONS_01f	db
+	ROOM_SEASONS_020	db
+	ROOM_SEASONS_021	db
+	ROOM_SEASONS_022	db
+	ROOM_SEASONS_023	db
+	ROOM_SEASONS_024	db
+	ROOM_SEASONS_025	db
+	ROOM_SEASONS_026	db
+	ROOM_SEASONS_027	db
+	ROOM_SEASONS_028	db
+	ROOM_SEASONS_029	db
+	ROOM_SEASONS_02a	db
+	ROOM_SEASONS_02b	db
+	ROOM_SEASONS_02c	db
+	ROOM_SEASONS_02d	db
+	ROOM_SEASONS_02e	db
+	ROOM_SEASONS_02f	db
+	ROOM_SEASONS_030	db
+	ROOM_SEASONS_031	db
+	ROOM_SEASONS_032	db
+	ROOM_SEASONS_033	db
+	ROOM_SEASONS_034	db
+	ROOM_SEASONS_035	db
+	ROOM_SEASONS_036	db
+	ROOM_SEASONS_037	db
+	ROOM_SEASONS_038	db
+	ROOM_SEASONS_039	db
+	ROOM_SEASONS_03a	db
+	ROOM_SEASONS_03b	db
+	ROOM_SEASONS_03c	db
+	ROOM_SEASONS_03d	db
+	ROOM_SEASONS_03e	db
+	ROOM_SEASONS_03f	db
+	ROOM_SEASONS_040	db
+	ROOM_SEASONS_041	db
+	ROOM_SEASONS_042	db
+	ROOM_SEASONS_043	db
+	ROOM_SEASONS_044	db
+	ROOM_SEASONS_045	db
+	ROOM_SEASONS_046	db
+	ROOM_SEASONS_047	db
+	ROOM_SEASONS_048	db
+	ROOM_SEASONS_049	db
+	ROOM_SEASONS_04a	db
+	ROOM_SEASONS_04b	db
+	ROOM_SEASONS_04c	db
+	ROOM_SEASONS_04d	db
+	ROOM_SEASONS_04e	db
+	ROOM_SEASONS_04f	db
+	ROOM_SEASONS_050	db
+	ROOM_SEASONS_051	db
+	ROOM_SEASONS_052	db
+	ROOM_SEASONS_053	db
+	ROOM_SEASONS_054	db
+	ROOM_SEASONS_055	db
+	ROOM_SEASONS_056	db
+	ROOM_SEASONS_057	db
+	ROOM_SEASONS_058	db
+	ROOM_SEASONS_059	db
+	ROOM_SEASONS_05a	db
+	ROOM_SEASONS_05b	db
+	ROOM_SEASONS_05c	db
+	ROOM_SEASONS_05d	db
+	ROOM_SEASONS_05e	db
+	ROOM_SEASONS_05f	db
+	ROOM_SEASONS_060	db
+	ROOM_SEASONS_061	db
+	ROOM_SEASONS_062	db
+	ROOM_SEASONS_063	db
+	ROOM_SEASONS_064	db
+	ROOM_SEASONS_065	db
+	ROOM_SEASONS_066	db
+	ROOM_SEASONS_067	db
+	ROOM_SEASONS_068	db
+	ROOM_SEASONS_069	db
+	ROOM_SEASONS_06a	db
+	ROOM_SEASONS_06b	db
+	ROOM_SEASONS_06c	db
+	ROOM_SEASONS_06d	db
+	ROOM_SEASONS_06e	db
+	ROOM_SEASONS_06f	db
+	ROOM_SEASONS_070	db
+	ROOM_SEASONS_071	db
+	ROOM_SEASONS_072	db
+	ROOM_SEASONS_073	db
+	ROOM_SEASONS_074	db
+	ROOM_SEASONS_075	db
+	ROOM_SEASONS_076	db
+	ROOM_SEASONS_077	db
+	ROOM_SEASONS_078	db
+	ROOM_SEASONS_079	db
+	ROOM_SEASONS_07a	db
+	ROOM_SEASONS_07b	db
+	ROOM_SEASONS_07c	db
+	ROOM_SEASONS_07d	db
+	ROOM_SEASONS_07e	db
+	ROOM_SEASONS_07f	db
+	ROOM_SEASONS_080	db
+	ROOM_SEASONS_081	db
+	ROOM_SEASONS_082	db
+	ROOM_SEASONS_083	db
+	ROOM_SEASONS_084	db
+	ROOM_SEASONS_085	db
+	ROOM_SEASONS_086	db
+	ROOM_SEASONS_087	db
+	ROOM_SEASONS_088	db
+	ROOM_SEASONS_089	db
+	ROOM_SEASONS_08a	db
+	ROOM_SEASONS_08b	db
+	ROOM_SEASONS_08c	db
+	ROOM_SEASONS_08d	db
+	ROOM_SEASONS_08e	db
+	ROOM_SEASONS_08f	db
+	ROOM_SEASONS_090	db
+	ROOM_SEASONS_091	db
+	ROOM_SEASONS_092	db
+	ROOM_SEASONS_093	db
+	ROOM_SEASONS_094	db
+	ROOM_SEASONS_095	db
+	ROOM_SEASONS_096	db
+	ROOM_SEASONS_097	db
+	ROOM_SEASONS_098	db
+	ROOM_SEASONS_099	db
+	ROOM_SEASONS_09a	db
+	ROOM_SEASONS_09b	db
+	ROOM_SEASONS_09c	db
+	ROOM_SEASONS_09d	db
+	ROOM_SEASONS_09e	db
+	ROOM_SEASONS_09f	db
+	ROOM_SEASONS_0a0	db
+	ROOM_SEASONS_0a1	db
+	ROOM_SEASONS_0a2	db
+	ROOM_SEASONS_0a3	db
+	ROOM_SEASONS_0a4	db
+	ROOM_SEASONS_0a5	db
+	ROOM_SEASONS_0a6	db
+	ROOM_SEASONS_0a7	db
+	ROOM_SEASONS_0a8	db
+	ROOM_SEASONS_0a9	db
+	ROOM_SEASONS_0aa	db
+	ROOM_SEASONS_0ab	db
+	ROOM_SEASONS_0ac	db
+	ROOM_SEASONS_0ad	db
+	ROOM_SEASONS_0ae	db
+	ROOM_SEASONS_0af	db
+	ROOM_SEASONS_0b0	db
+	ROOM_SEASONS_0b1	db
+	ROOM_SEASONS_0b2	db
+	ROOM_SEASONS_0b3	db
+	ROOM_SEASONS_0b4	db
+	ROOM_SEASONS_0b5	db
+	ROOM_SEASONS_0b6	db
+	ROOM_SEASONS_0b7	db
+	ROOM_SEASONS_0b8	db
+	ROOM_SEASONS_0b9	db
+	ROOM_SEASONS_0ba	db
+	ROOM_SEASONS_0bb	db
+	ROOM_SEASONS_0bc	db
+	ROOM_SEASONS_0bd	db
+	ROOM_SEASONS_0be	db
+	ROOM_SEASONS_0bf	db
+	ROOM_SEASONS_0c0	db
+	ROOM_SEASONS_0c1	db
+	ROOM_SEASONS_0c2	db
+	ROOM_SEASONS_0c3	db
+	ROOM_SEASONS_0c4	db
+	ROOM_SEASONS_0c5	db
+	ROOM_SEASONS_0c6	db
+	ROOM_SEASONS_0c7	db
+	ROOM_SEASONS_0c8	db
+	ROOM_SEASONS_0c9	db
+	ROOM_SEASONS_0ca	db
+	ROOM_SEASONS_0cb	db
+	ROOM_SEASONS_0cc	db
+	ROOM_SEASONS_0cd	db
+	ROOM_SEASONS_0ce	db
+	ROOM_SEASONS_0cf	db
+	ROOM_SEASONS_0d0	db
+	ROOM_SEASONS_0d1	db
+	ROOM_SEASONS_0d2	db
+	ROOM_SEASONS_0d3	db
+	ROOM_SEASONS_0d4	db
+	ROOM_SEASONS_0d5	db
+	ROOM_SEASONS_0d6	db
+	ROOM_SEASONS_0d7	db
+	ROOM_SEASONS_0d8	db
+	ROOM_SEASONS_0d9	db
+	ROOM_SEASONS_0da	db
+	ROOM_SEASONS_0db	db
+	ROOM_SEASONS_0dc	db
+	ROOM_SEASONS_0dd	db
+	ROOM_SEASONS_0de	db
+	ROOM_SEASONS_0df	db
+	ROOM_SEASONS_0e0	db
+	ROOM_SEASONS_0e1	db
+	ROOM_SEASONS_0e2	db
+	ROOM_SEASONS_0e3	db
+	ROOM_SEASONS_0e4	db
+	ROOM_SEASONS_0e5	db
+	ROOM_SEASONS_0e6	db
+	ROOM_SEASONS_0e7	db
+	ROOM_SEASONS_0e8	db
+	ROOM_SEASONS_0e9	db
+	ROOM_SEASONS_0ea	db
+	ROOM_SEASONS_0eb	db
+	ROOM_SEASONS_0ec	db
+	ROOM_SEASONS_0ed	db
+	ROOM_SEASONS_0ee	db
+	ROOM_SEASONS_0ef	db
+	ROOM_SEASONS_0f0	db
+	ROOM_SEASONS_0f1	db
+	ROOM_SEASONS_0f2	db
+	ROOM_SEASONS_0f3	db
+	ROOM_SEASONS_0f4	db
+	ROOM_SEASONS_0f5	db
+	ROOM_SEASONS_0f6	db
+	ROOM_SEASONS_0f7	db
+	ROOM_SEASONS_0f8	db
+	ROOM_SEASONS_0f9	db
+	ROOM_SEASONS_0fa	db
+	ROOM_SEASONS_0fb	db
+	ROOM_SEASONS_0fc	db
+	ROOM_SEASONS_0fd	db
+	ROOM_SEASONS_0fe	db
+	ROOM_SEASONS_0ff	db
+
+	ROOM_SEASONS_100	db
+	ROOM_SEASONS_101	db
+	ROOM_SEASONS_102	db
+	ROOM_SEASONS_103	db
+	ROOM_SEASONS_104	db
+	ROOM_SEASONS_105	db
+	ROOM_SEASONS_106	db
+	ROOM_SEASONS_107	db
+	ROOM_SEASONS_108	db
+	ROOM_SEASONS_109	db
+	ROOM_SEASONS_10a	db
+	ROOM_SEASONS_10b	db
+	ROOM_SEASONS_10c	db
+	ROOM_SEASONS_10d	db
+	ROOM_SEASONS_10e	db
+	ROOM_SEASONS_10f	db
+	ROOM_SEASONS_110	db
+	ROOM_SEASONS_111	db
+	ROOM_SEASONS_112	db
+	ROOM_SEASONS_113	db
+	ROOM_SEASONS_114	db
+	ROOM_SEASONS_115	db
+	ROOM_SEASONS_116	db
+	ROOM_SEASONS_117	db
+	ROOM_SEASONS_118	db
+	ROOM_SEASONS_119	db
+	ROOM_SEASONS_11a	db
+	ROOM_SEASONS_11b	db
+	ROOM_SEASONS_11c	db
+	ROOM_SEASONS_11d	db
+	ROOM_SEASONS_11e	db
+	ROOM_SEASONS_11f	db
+	ROOM_SEASONS_120	db
+	ROOM_SEASONS_121	db
+	ROOM_SEASONS_122	db
+	ROOM_SEASONS_123	db
+	ROOM_SEASONS_124	db
+	ROOM_SEASONS_125	db
+	ROOM_SEASONS_126	db
+	ROOM_SEASONS_127	db
+	ROOM_SEASONS_128	db
+	ROOM_SEASONS_129	db
+	ROOM_SEASONS_12a	db
+	ROOM_SEASONS_12b	db
+	ROOM_SEASONS_12c	db
+	ROOM_SEASONS_12d	db
+	ROOM_SEASONS_12e	db
+	ROOM_SEASONS_12f	db
+	ROOM_SEASONS_130	db
+	ROOM_SEASONS_131	db
+	ROOM_SEASONS_132	db
+	ROOM_SEASONS_133	db
+	ROOM_SEASONS_134	db
+	ROOM_SEASONS_135	db
+	ROOM_SEASONS_136	db
+	ROOM_SEASONS_137	db
+	ROOM_SEASONS_138	db
+	ROOM_SEASONS_139	db
+	ROOM_SEASONS_13a	db
+	ROOM_SEASONS_13b	db
+	ROOM_SEASONS_13c	db
+	ROOM_SEASONS_13d	db
+	ROOM_SEASONS_13e	db
+	ROOM_SEASONS_13f	db
+	ROOM_SEASONS_140	db
+	ROOM_SEASONS_141	db
+	ROOM_SEASONS_142	db
+	ROOM_SEASONS_143	db
+	ROOM_SEASONS_144	db
+	ROOM_SEASONS_145	db
+	ROOM_SEASONS_146	db
+	ROOM_SEASONS_147	db
+	ROOM_SEASONS_148	db
+	ROOM_SEASONS_149	db
+	ROOM_SEASONS_14a	db
+	ROOM_SEASONS_14b	db
+	ROOM_SEASONS_14c	db
+	ROOM_SEASONS_14d	db
+	ROOM_SEASONS_14e	db
+	ROOM_SEASONS_14f	db
+	ROOM_SEASONS_150	db
+	ROOM_SEASONS_151	db
+	ROOM_SEASONS_152	db
+	ROOM_SEASONS_153	db
+	ROOM_SEASONS_154	db
+	ROOM_SEASONS_155	db
+	ROOM_SEASONS_156	db
+	ROOM_SEASONS_157	db
+	ROOM_SEASONS_158	db
+	ROOM_SEASONS_159	db
+	ROOM_SEASONS_15a	db
+	ROOM_SEASONS_15b	db
+	ROOM_SEASONS_15c	db
+	ROOM_SEASONS_15d	db
+	ROOM_SEASONS_15e	db
+	ROOM_SEASONS_15f	db
+	ROOM_SEASONS_160	db
+	ROOM_SEASONS_161	db
+	ROOM_SEASONS_162	db
+	ROOM_SEASONS_163	db
+	ROOM_SEASONS_164	db
+	ROOM_SEASONS_165	db
+	ROOM_SEASONS_166	db
+	ROOM_SEASONS_167	db
+	ROOM_SEASONS_168	db
+	ROOM_SEASONS_169	db
+	ROOM_SEASONS_16a	db
+	ROOM_SEASONS_16b	db
+	ROOM_SEASONS_16c	db
+	ROOM_SEASONS_16d	db
+	ROOM_SEASONS_16e	db
+	ROOM_SEASONS_16f	db
+	ROOM_SEASONS_170	db
+	ROOM_SEASONS_171	db
+	ROOM_SEASONS_172	db
+	ROOM_SEASONS_173	db
+	ROOM_SEASONS_174	db
+	ROOM_SEASONS_175	db
+	ROOM_SEASONS_176	db
+	ROOM_SEASONS_177	db
+	ROOM_SEASONS_178	db
+	ROOM_SEASONS_179	db
+	ROOM_SEASONS_17a	db
+	ROOM_SEASONS_17b	db
+	ROOM_SEASONS_17c	db
+	ROOM_SEASONS_17d	db
+	ROOM_SEASONS_17e	db
+	ROOM_SEASONS_17f	db
+	ROOM_SEASONS_180	db
+	ROOM_SEASONS_181	db
+	ROOM_SEASONS_182	db
+	ROOM_SEASONS_183	db
+	ROOM_SEASONS_184	db
+	ROOM_SEASONS_185	db
+	ROOM_SEASONS_186	db
+	ROOM_SEASONS_187	db
+	ROOM_SEASONS_188	db
+	ROOM_SEASONS_189	db
+	ROOM_SEASONS_18a	db
+	ROOM_SEASONS_18b	db
+	ROOM_SEASONS_18c	db
+	ROOM_SEASONS_18d	db
+	ROOM_SEASONS_18e	db
+	ROOM_SEASONS_18f	db
+	ROOM_SEASONS_190	db
+	ROOM_SEASONS_191	db
+	ROOM_SEASONS_192	db
+	ROOM_SEASONS_193	db
+	ROOM_SEASONS_194	db
+	ROOM_SEASONS_195	db
+	ROOM_SEASONS_196	db
+	ROOM_SEASONS_197	db
+	ROOM_SEASONS_198	db
+	ROOM_SEASONS_199	db
+	ROOM_SEASONS_19a	db
+	ROOM_SEASONS_19b	db
+	ROOM_SEASONS_19c	db
+	ROOM_SEASONS_19d	db
+	ROOM_SEASONS_19e	db
+	ROOM_SEASONS_19f	db
+	ROOM_SEASONS_1a0	db
+	ROOM_SEASONS_1a1	db
+	ROOM_SEASONS_1a2	db
+	ROOM_SEASONS_1a3	db
+	ROOM_SEASONS_1a4	db
+	ROOM_SEASONS_1a5	db
+	ROOM_SEASONS_1a6	db
+	ROOM_SEASONS_1a7	db
+	ROOM_SEASONS_1a8	db
+	ROOM_SEASONS_1a9	db
+	ROOM_SEASONS_1aa	db
+	ROOM_SEASONS_1ab	db
+	ROOM_SEASONS_1ac	db
+	ROOM_SEASONS_1ad	db
+	ROOM_SEASONS_1ae	db
+	ROOM_SEASONS_1af	db
+	ROOM_SEASONS_1b0	db
+	ROOM_SEASONS_1b1	db
+	ROOM_SEASONS_1b2	db
+	ROOM_SEASONS_1b3	db
+	ROOM_SEASONS_1b4	db
+	ROOM_SEASONS_1b5	db
+	ROOM_SEASONS_1b6	db
+	ROOM_SEASONS_1b7	db
+	ROOM_SEASONS_1b8	db
+	ROOM_SEASONS_1b9	db
+	ROOM_SEASONS_1ba	db
+	ROOM_SEASONS_1bb	db
+	ROOM_SEASONS_1bc	db
+	ROOM_SEASONS_1bd	db
+	ROOM_SEASONS_1be	db
+	ROOM_SEASONS_1bf	db
+	ROOM_SEASONS_1c0	db
+	ROOM_SEASONS_1c1	db
+	ROOM_SEASONS_1c2	db
+	ROOM_SEASONS_1c3	db
+	ROOM_SEASONS_1c4	db
+	ROOM_SEASONS_1c5	db
+	ROOM_SEASONS_1c6	db
+	ROOM_SEASONS_1c7	db
+	ROOM_SEASONS_1c8	db
+	ROOM_SEASONS_1c9	db
+	ROOM_SEASONS_1ca	db
+	ROOM_SEASONS_1cb	db
+	ROOM_SEASONS_1cc	db
+	ROOM_SEASONS_1cd	db
+	ROOM_SEASONS_1ce	db
+	ROOM_SEASONS_1cf	db
+	ROOM_SEASONS_1d0	db
+	ROOM_SEASONS_1d1	db
+	ROOM_SEASONS_1d2	db
+	ROOM_SEASONS_1d3	db
+	ROOM_SEASONS_1d4	db
+	ROOM_SEASONS_1d5	db
+	ROOM_SEASONS_1d6	db
+	ROOM_SEASONS_1d7	db
+	ROOM_SEASONS_1d8	db
+	ROOM_SEASONS_1d9	db
+	ROOM_SEASONS_1da	db
+	ROOM_SEASONS_1db	db
+	ROOM_SEASONS_1dc	db
+	ROOM_SEASONS_1dd	db
+	ROOM_SEASONS_1de	db
+	ROOM_SEASONS_1df	db
+	ROOM_SEASONS_1e0	db
+	ROOM_SEASONS_1e1	db
+	ROOM_SEASONS_1e2	db
+	ROOM_SEASONS_1e3	db
+	ROOM_SEASONS_1e4	db
+	ROOM_SEASONS_1e5	db
+	ROOM_SEASONS_1e6	db
+	ROOM_SEASONS_1e7	db
+	ROOM_SEASONS_1e8	db
+	ROOM_SEASONS_1e9	db
+	ROOM_SEASONS_1ea	db
+	ROOM_SEASONS_1eb	db
+	ROOM_SEASONS_1ec	db
+	ROOM_SEASONS_1ed	db
+	ROOM_SEASONS_1ee	db
+	ROOM_SEASONS_1ef	db
+	ROOM_SEASONS_1f0	db
+	ROOM_SEASONS_1f1	db
+	ROOM_SEASONS_1f2	db
+	ROOM_SEASONS_1f3	db
+	ROOM_SEASONS_1f4	db
+	ROOM_SEASONS_1f5	db
+	ROOM_SEASONS_1f6	db
+	ROOM_SEASONS_1f7	db
+	ROOM_SEASONS_1f8	db
+	ROOM_SEASONS_1f9	db
+	ROOM_SEASONS_1fa	db
+	ROOM_SEASONS_1fb	db
+	ROOM_SEASONS_1fc	db
+	ROOM_SEASONS_1fd	db
+	ROOM_SEASONS_1fe	db
+	ROOM_SEASONS_1ff	db
+
+	ROOM_SEASONS_200	db
+	ROOM_SEASONS_201	db
+	ROOM_SEASONS_202	db
+	ROOM_SEASONS_203	db
+	ROOM_SEASONS_204	db
+	ROOM_SEASONS_205	db
+	ROOM_SEASONS_206	db
+	ROOM_SEASONS_207	db
+	ROOM_SEASONS_208	db
+	ROOM_SEASONS_209	db
+	ROOM_SEASONS_20a	db
+	ROOM_SEASONS_20b	db
+	ROOM_SEASONS_20c	db
+	ROOM_SEASONS_20d	db
+	ROOM_SEASONS_20e	db
+	ROOM_SEASONS_20f	db
+	ROOM_SEASONS_210	db
+	ROOM_SEASONS_211	db
+	ROOM_SEASONS_212	db
+	ROOM_SEASONS_213	db
+	ROOM_SEASONS_214	db
+	ROOM_SEASONS_215	db
+	ROOM_SEASONS_216	db
+	ROOM_SEASONS_217	db
+	ROOM_SEASONS_218	db
+	ROOM_SEASONS_219	db
+	ROOM_SEASONS_21a	db
+	ROOM_SEASONS_21b	db
+	ROOM_SEASONS_21c	db
+	ROOM_SEASONS_21d	db
+	ROOM_SEASONS_21e	db
+	ROOM_SEASONS_21f	db
+	ROOM_SEASONS_220	db
+	ROOM_SEASONS_221	db
+	ROOM_SEASONS_222	db
+	ROOM_SEASONS_223	db
+	ROOM_SEASONS_224	db
+	ROOM_SEASONS_225	db
+	ROOM_SEASONS_226	db
+	ROOM_SEASONS_227	db
+	ROOM_SEASONS_228	db
+	ROOM_SEASONS_229	db
+	ROOM_SEASONS_22a	db
+	ROOM_SEASONS_22b	db
+	ROOM_SEASONS_22c	db
+	ROOM_SEASONS_22d	db
+	ROOM_SEASONS_22e	db
+	ROOM_SEASONS_22f	db
+	ROOM_SEASONS_230	db
+	ROOM_SEASONS_231	db
+	ROOM_SEASONS_232	db
+	ROOM_SEASONS_233	db
+	ROOM_SEASONS_234	db
+	ROOM_SEASONS_235	db
+	ROOM_SEASONS_236	db
+	ROOM_SEASONS_237	db
+	ROOM_SEASONS_238	db
+	ROOM_SEASONS_239	db
+	ROOM_SEASONS_23a	db
+	ROOM_SEASONS_23b	db
+	ROOM_SEASONS_23c	db
+	ROOM_SEASONS_23d	db
+	ROOM_SEASONS_23e	db
+	ROOM_SEASONS_23f	db
+	ROOM_SEASONS_240	db
+	ROOM_SEASONS_241	db
+	ROOM_SEASONS_242	db
+	ROOM_SEASONS_243	db
+	ROOM_SEASONS_244	db
+	ROOM_SEASONS_245	db
+	ROOM_SEASONS_246	db
+	ROOM_SEASONS_247	db
+	ROOM_SEASONS_248	db
+	ROOM_SEASONS_249	db
+	ROOM_SEASONS_24a	db
+	ROOM_SEASONS_24b	db
+	ROOM_SEASONS_24c	db
+	ROOM_SEASONS_24d	db
+	ROOM_SEASONS_24e	db
+	ROOM_SEASONS_24f	db
+	ROOM_SEASONS_250	db
+	ROOM_SEASONS_251	db
+	ROOM_SEASONS_252	db
+	ROOM_SEASONS_253	db
+	ROOM_SEASONS_254	db
+	ROOM_SEASONS_255	db
+	ROOM_SEASONS_256	db
+	ROOM_SEASONS_257	db
+	ROOM_SEASONS_258	db
+	ROOM_SEASONS_259	db
+	ROOM_SEASONS_25a	db
+	ROOM_SEASONS_25b	db
+	ROOM_SEASONS_25c	db
+	ROOM_SEASONS_25d	db
+	ROOM_SEASONS_25e	db
+	ROOM_SEASONS_25f	db
+	ROOM_SEASONS_260	db
+	ROOM_SEASONS_261	db
+	ROOM_SEASONS_262	db
+	ROOM_SEASONS_263	db
+	ROOM_SEASONS_264	db
+	ROOM_SEASONS_265	db
+	ROOM_SEASONS_266	db
+	ROOM_SEASONS_267	db
+	ROOM_SEASONS_268	db
+	ROOM_SEASONS_269	db
+	ROOM_SEASONS_26a	db
+	ROOM_SEASONS_26b	db
+	ROOM_SEASONS_26c	db
+	ROOM_SEASONS_26d	db
+	ROOM_SEASONS_26e	db
+	ROOM_SEASONS_26f	db
+	ROOM_SEASONS_270	db
+	ROOM_SEASONS_271	db
+	ROOM_SEASONS_272	db
+	ROOM_SEASONS_273	db
+	ROOM_SEASONS_274	db
+	ROOM_SEASONS_275	db
+	ROOM_SEASONS_276	db
+	ROOM_SEASONS_277	db
+	ROOM_SEASONS_278	db
+	ROOM_SEASONS_279	db
+	ROOM_SEASONS_27a	db
+	ROOM_SEASONS_27b	db
+	ROOM_SEASONS_27c	db
+	ROOM_SEASONS_27d	db
+	ROOM_SEASONS_27e	db
+	ROOM_SEASONS_27f	db
+	ROOM_SEASONS_280	db
+	ROOM_SEASONS_281	db
+	ROOM_SEASONS_282	db
+	ROOM_SEASONS_283	db
+	ROOM_SEASONS_284	db
+	ROOM_SEASONS_285	db
+	ROOM_SEASONS_286	db
+	ROOM_SEASONS_287	db
+	ROOM_SEASONS_288	db
+	ROOM_SEASONS_289	db
+	ROOM_SEASONS_28a	db
+	ROOM_SEASONS_28b	db
+	ROOM_SEASONS_28c	db
+	ROOM_SEASONS_28d	db
+	ROOM_SEASONS_28e	db
+	ROOM_SEASONS_28f	db
+	ROOM_SEASONS_290	db
+	ROOM_SEASONS_291	db
+	ROOM_SEASONS_292	db
+	ROOM_SEASONS_293	db
+	ROOM_SEASONS_294	db
+	ROOM_SEASONS_295	db
+	ROOM_SEASONS_296	db
+	ROOM_SEASONS_297	db
+	ROOM_SEASONS_298	db
+	ROOM_SEASONS_299	db
+	ROOM_SEASONS_29a	db
+	ROOM_SEASONS_29b	db
+	ROOM_SEASONS_29c	db
+	ROOM_SEASONS_29d	db
+	ROOM_SEASONS_29e	db
+	ROOM_SEASONS_29f	db
+	ROOM_SEASONS_2a0	db
+	ROOM_SEASONS_2a1	db
+	ROOM_SEASONS_2a2	db
+	ROOM_SEASONS_2a3	db
+	ROOM_SEASONS_2a4	db
+	ROOM_SEASONS_2a5	db
+	ROOM_SEASONS_2a6	db
+	ROOM_SEASONS_2a7	db
+	ROOM_SEASONS_2a8	db
+	ROOM_SEASONS_2a9	db
+	ROOM_SEASONS_2aa	db
+	ROOM_SEASONS_2ab	db
+	ROOM_SEASONS_2ac	db
+	ROOM_SEASONS_2ad	db
+	ROOM_SEASONS_2ae	db
+	ROOM_SEASONS_2af	db
+	ROOM_SEASONS_2b0	db
+	ROOM_SEASONS_2b1	db
+	ROOM_SEASONS_2b2	db
+	ROOM_SEASONS_2b3	db
+	ROOM_SEASONS_2b4	db
+	ROOM_SEASONS_2b5	db
+	ROOM_SEASONS_2b6	db
+	ROOM_SEASONS_2b7	db
+	ROOM_SEASONS_2b8	db
+	ROOM_SEASONS_2b9	db
+	ROOM_SEASONS_2ba	db
+	ROOM_SEASONS_2bb	db
+	ROOM_SEASONS_2bc	db
+	ROOM_SEASONS_2bd	db
+	ROOM_SEASONS_2be	db
+	ROOM_SEASONS_2bf	db
+	ROOM_SEASONS_2c0	db
+	ROOM_SEASONS_2c1	db
+	ROOM_SEASONS_2c2	db
+	ROOM_SEASONS_2c3	db
+	ROOM_SEASONS_2c4	db
+	ROOM_SEASONS_2c5	db
+	ROOM_SEASONS_2c6	db
+	ROOM_SEASONS_2c7	db
+	ROOM_SEASONS_2c8	db
+	ROOM_SEASONS_2c9	db
+	ROOM_SEASONS_2ca	db
+	ROOM_SEASONS_2cb	db
+	ROOM_SEASONS_2cc	db
+	ROOM_SEASONS_2cd	db
+	ROOM_SEASONS_2ce	db
+	ROOM_SEASONS_2cf	db
+	ROOM_SEASONS_2d0	db
+	ROOM_SEASONS_2d1	db
+	ROOM_SEASONS_2d2	db
+	ROOM_SEASONS_2d3	db
+	ROOM_SEASONS_2d4	db
+	ROOM_SEASONS_2d5	db
+	ROOM_SEASONS_2d6	db
+	ROOM_SEASONS_2d7	db
+	ROOM_SEASONS_2d8	db
+	ROOM_SEASONS_2d9	db
+	ROOM_SEASONS_2da	db
+	ROOM_SEASONS_2db	db
+	ROOM_SEASONS_2dc	db
+	ROOM_SEASONS_2dd	db
+	ROOM_SEASONS_2de	db
+	ROOM_SEASONS_2df	db
+	ROOM_SEASONS_2e0	db
+	ROOM_SEASONS_2e1	db
+	ROOM_SEASONS_2e2	db
+	ROOM_SEASONS_2e3	db
+	ROOM_SEASONS_2e4	db
+	ROOM_SEASONS_2e5	db
+	ROOM_SEASONS_2e6	db
+	ROOM_SEASONS_2e7	db
+	ROOM_SEASONS_2e8	db
+	ROOM_SEASONS_2e9	db
+	ROOM_SEASONS_2ea	db
+	ROOM_SEASONS_2eb	db
+	ROOM_SEASONS_2ec	db
+	ROOM_SEASONS_2ed	db
+	ROOM_SEASONS_2ee	db
+	ROOM_SEASONS_2ef	db
+	ROOM_SEASONS_2f0	db
+	ROOM_SEASONS_2f1	db
+	ROOM_SEASONS_2f2	db
+	ROOM_SEASONS_2f3	db
+	ROOM_SEASONS_2f4	db
+	ROOM_SEASONS_2f5	db
+	ROOM_SEASONS_2f6	db
+	ROOM_SEASONS_2f7	db
+	ROOM_SEASONS_2f8	db
+	ROOM_SEASONS_2f9	db
+	ROOM_SEASONS_2fa	db
+	ROOM_SEASONS_2fb	db
+	ROOM_SEASONS_2fc	db
+	ROOM_SEASONS_2fd	db
+	ROOM_SEASONS_2fe	db
+	ROOM_SEASONS_2ff	db
+
+	ROOM_SEASONS_300	db
+	ROOM_SEASONS_301	db
+	ROOM_SEASONS_302	db
+	ROOM_SEASONS_303	db
+	ROOM_SEASONS_304	db
+	ROOM_SEASONS_305	db
+	ROOM_SEASONS_306	db
+	ROOM_SEASONS_307	db
+	ROOM_SEASONS_308	db
+	ROOM_SEASONS_309	db
+	ROOM_SEASONS_30a	db
+	ROOM_SEASONS_30b	db
+	ROOM_SEASONS_30c	db
+	ROOM_SEASONS_30d	db
+	ROOM_SEASONS_30e	db
+	ROOM_SEASONS_30f	db
+	ROOM_SEASONS_310	db
+	ROOM_SEASONS_311	db
+	ROOM_SEASONS_312	db
+	ROOM_SEASONS_313	db
+	ROOM_SEASONS_314	db
+	ROOM_SEASONS_315	db
+	ROOM_SEASONS_316	db
+	ROOM_SEASONS_317	db
+	ROOM_SEASONS_318	db
+	ROOM_SEASONS_319	db
+	ROOM_SEASONS_31a	db
+	ROOM_SEASONS_31b	db
+	ROOM_SEASONS_31c	db
+	ROOM_SEASONS_31d	db
+	ROOM_SEASONS_31e	db
+	ROOM_SEASONS_31f	db
+	ROOM_SEASONS_320	db
+	ROOM_SEASONS_321	db
+	ROOM_SEASONS_322	db
+	ROOM_SEASONS_323	db
+	ROOM_SEASONS_324	db
+	ROOM_SEASONS_325	db
+	ROOM_SEASONS_326	db
+	ROOM_SEASONS_327	db
+	ROOM_SEASONS_328	db
+	ROOM_SEASONS_329	db
+	ROOM_SEASONS_32a	db
+	ROOM_SEASONS_32b	db
+	ROOM_SEASONS_32c	db
+	ROOM_SEASONS_32d	db
+	ROOM_SEASONS_32e	db
+	ROOM_SEASONS_32f	db
+	ROOM_SEASONS_330	db
+	ROOM_SEASONS_331	db
+	ROOM_SEASONS_332	db
+	ROOM_SEASONS_333	db
+	ROOM_SEASONS_334	db
+	ROOM_SEASONS_335	db
+	ROOM_SEASONS_336	db
+	ROOM_SEASONS_337	db
+	ROOM_SEASONS_338	db
+	ROOM_SEASONS_339	db
+	ROOM_SEASONS_33a	db
+	ROOM_SEASONS_33b	db
+	ROOM_SEASONS_33c	db
+	ROOM_SEASONS_33d	db
+	ROOM_SEASONS_33e	db
+	ROOM_SEASONS_33f	db
+	ROOM_SEASONS_340	db
+	ROOM_SEASONS_341	db
+	ROOM_SEASONS_342	db
+	ROOM_SEASONS_343	db
+	ROOM_SEASONS_344	db
+	ROOM_SEASONS_345	db
+	ROOM_SEASONS_346	db
+	ROOM_SEASONS_347	db
+	ROOM_SEASONS_348	db
+	ROOM_SEASONS_349	db
+	ROOM_SEASONS_34a	db
+	ROOM_SEASONS_34b	db
+	ROOM_SEASONS_34c	db
+	ROOM_SEASONS_34d	db
+	ROOM_SEASONS_34e	db
+	ROOM_SEASONS_34f	db
+	ROOM_SEASONS_350	db
+	ROOM_SEASONS_351	db
+	ROOM_SEASONS_352	db
+	ROOM_SEASONS_353	db
+	ROOM_SEASONS_354	db
+	ROOM_SEASONS_355	db
+	ROOM_SEASONS_356	db
+	ROOM_SEASONS_357	db
+	ROOM_SEASONS_358	db
+	ROOM_SEASONS_359	db
+	ROOM_SEASONS_35a	db
+	ROOM_SEASONS_35b	db
+	ROOM_SEASONS_35c	db
+	ROOM_SEASONS_35d	db
+	ROOM_SEASONS_35e	db
+	ROOM_SEASONS_35f	db
+	ROOM_SEASONS_360	db
+	ROOM_SEASONS_361	db
+	ROOM_SEASONS_362	db
+	ROOM_SEASONS_363	db
+	ROOM_SEASONS_364	db
+	ROOM_SEASONS_365	db
+	ROOM_SEASONS_366	db
+	ROOM_SEASONS_367	db
+	ROOM_SEASONS_368	db
+	ROOM_SEASONS_369	db
+	ROOM_SEASONS_36a	db
+	ROOM_SEASONS_36b	db
+	ROOM_SEASONS_36c	db
+	ROOM_SEASONS_36d	db
+	ROOM_SEASONS_36e	db
+	ROOM_SEASONS_36f	db
+	ROOM_SEASONS_370	db
+	ROOM_SEASONS_371	db
+	ROOM_SEASONS_372	db
+	ROOM_SEASONS_373	db
+	ROOM_SEASONS_374	db
+	ROOM_SEASONS_375	db
+	ROOM_SEASONS_376	db
+	ROOM_SEASONS_377	db
+	ROOM_SEASONS_378	db
+	ROOM_SEASONS_379	db
+	ROOM_SEASONS_37a	db
+	ROOM_SEASONS_37b	db
+	ROOM_SEASONS_37c	db
+	ROOM_SEASONS_37d	db
+	ROOM_SEASONS_37e	db
+	ROOM_SEASONS_37f	db
+	ROOM_SEASONS_380	db
+	ROOM_SEASONS_381	db
+	ROOM_SEASONS_382	db
+	ROOM_SEASONS_383	db
+	ROOM_SEASONS_384	db
+	ROOM_SEASONS_385	db
+	ROOM_SEASONS_386	db
+	ROOM_SEASONS_387	db
+	ROOM_SEASONS_388	db
+	ROOM_SEASONS_389	db
+	ROOM_SEASONS_38a	db
+	ROOM_SEASONS_38b	db
+	ROOM_SEASONS_38c	db
+	ROOM_SEASONS_38d	db
+	ROOM_SEASONS_38e	db
+	ROOM_SEASONS_38f	db
+	ROOM_SEASONS_390	db
+	ROOM_SEASONS_391	db
+	ROOM_SEASONS_392	db
+	ROOM_SEASONS_393	db
+	ROOM_SEASONS_394	db
+	ROOM_SEASONS_395	db
+	ROOM_SEASONS_396	db
+	ROOM_SEASONS_397	db
+	ROOM_SEASONS_398	db
+	ROOM_SEASONS_399	db
+	ROOM_SEASONS_39a	db
+	ROOM_SEASONS_39b	db
+	ROOM_SEASONS_39c	db
+	ROOM_SEASONS_39d	db
+	ROOM_SEASONS_39e	db
+	ROOM_SEASONS_39f	db
+	ROOM_SEASONS_3a0	db
+	ROOM_SEASONS_3a1	db
+	ROOM_SEASONS_3a2	db
+	ROOM_SEASONS_3a3	db
+	ROOM_SEASONS_3a4	db
+	ROOM_SEASONS_3a5	db
+	ROOM_SEASONS_3a6	db
+	ROOM_SEASONS_3a7	db
+	ROOM_SEASONS_3a8	db
+	ROOM_SEASONS_3a9	db
+	ROOM_SEASONS_3aa	db
+	ROOM_SEASONS_3ab	db
+	ROOM_SEASONS_3ac	db
+	ROOM_SEASONS_3ad	db
+	ROOM_SEASONS_3ae	db
+	ROOM_SEASONS_3af	db
+	ROOM_SEASONS_3b0	db
+	ROOM_SEASONS_3b1	db
+	ROOM_SEASONS_3b2	db
+	ROOM_SEASONS_3b3	db
+	ROOM_SEASONS_3b4	db
+	ROOM_SEASONS_3b5	db
+	ROOM_SEASONS_3b6	db
+	ROOM_SEASONS_3b7	db
+	ROOM_SEASONS_3b8	db
+	ROOM_SEASONS_3b9	db
+	ROOM_SEASONS_3ba	db
+	ROOM_SEASONS_3bb	db
+	ROOM_SEASONS_3bc	db
+	ROOM_SEASONS_3bd	db
+	ROOM_SEASONS_3be	db
+	ROOM_SEASONS_3bf	db
+	ROOM_SEASONS_3c0	db
+	ROOM_SEASONS_3c1	db
+	ROOM_SEASONS_3c2	db
+	ROOM_SEASONS_3c3	db
+	ROOM_SEASONS_3c4	db
+	ROOM_SEASONS_3c5	db
+	ROOM_SEASONS_3c6	db
+	ROOM_SEASONS_3c7	db
+	ROOM_SEASONS_3c8	db
+	ROOM_SEASONS_3c9	db
+	ROOM_SEASONS_3ca	db
+	ROOM_SEASONS_3cb	db
+	ROOM_SEASONS_3cc	db
+	ROOM_SEASONS_3cd	db
+	ROOM_SEASONS_3ce	db
+	ROOM_SEASONS_3cf	db
+	ROOM_SEASONS_3d0	db
+	ROOM_SEASONS_3d1	db
+	ROOM_SEASONS_3d2	db
+	ROOM_SEASONS_3d3	db
+	ROOM_SEASONS_3d4	db
+	ROOM_SEASONS_3d5	db
+	ROOM_SEASONS_3d6	db
+	ROOM_SEASONS_3d7	db
+	ROOM_SEASONS_3d8	db
+	ROOM_SEASONS_3d9	db
+	ROOM_SEASONS_3da	db
+	ROOM_SEASONS_3db	db
+	ROOM_SEASONS_3dc	db
+	ROOM_SEASONS_3dd	db
+	ROOM_SEASONS_3de	db
+	ROOM_SEASONS_3df	db
+	ROOM_SEASONS_3e0	db
+	ROOM_SEASONS_3e1	db
+	ROOM_SEASONS_3e2	db
+	ROOM_SEASONS_3e3	db
+	ROOM_SEASONS_3e4	db
+	ROOM_SEASONS_3e5	db
+	ROOM_SEASONS_3e6	db
+	ROOM_SEASONS_3e7	db
+	ROOM_SEASONS_3e8	db
+	ROOM_SEASONS_3e9	db
+	ROOM_SEASONS_3ea	db
+	ROOM_SEASONS_3eb	db
+	ROOM_SEASONS_3ec	db
+	ROOM_SEASONS_3ed	db
+	ROOM_SEASONS_3ee	db
+	ROOM_SEASONS_3ef	db
+	ROOM_SEASONS_3f0	db
+	ROOM_SEASONS_3f1	db
+	ROOM_SEASONS_3f2	db
+	ROOM_SEASONS_3f3	db
+	ROOM_SEASONS_3f4	db
+	ROOM_SEASONS_3f5	db
+	ROOM_SEASONS_3f6	db
+	ROOM_SEASONS_3f7	db
+	ROOM_SEASONS_3f8	db
+	ROOM_SEASONS_3f9	db
+	ROOM_SEASONS_3fa	db
+	ROOM_SEASONS_3fb	db
+	ROOM_SEASONS_3fc	db
+	ROOM_SEASONS_3fd	db
+	ROOM_SEASONS_3fe	db
+	ROOM_SEASONS_3ff	db
+
+	ROOM_SEASONS_400	db
+	ROOM_SEASONS_401	db
+	ROOM_SEASONS_402	db
+	ROOM_SEASONS_403	db
+	ROOM_SEASONS_404	db
+	ROOM_SEASONS_405	db
+	ROOM_SEASONS_406	db
+	ROOM_SEASONS_407	db
+	ROOM_SEASONS_408	db
+	ROOM_SEASONS_409	db
+	ROOM_SEASONS_40a	db
+	ROOM_SEASONS_40b	db
+	ROOM_SEASONS_40c	db
+	ROOM_SEASONS_40d	db
+	ROOM_SEASONS_40e	db
+	ROOM_SEASONS_40f	db
+	ROOM_SEASONS_410	db
+	ROOM_SEASONS_411	db
+	ROOM_SEASONS_412	db
+	ROOM_SEASONS_413	db
+	ROOM_SEASONS_414	db
+	ROOM_SEASONS_415	db
+	ROOM_SEASONS_416	db
+	ROOM_SEASONS_417	db
+	ROOM_SEASONS_418	db
+	ROOM_SEASONS_419	db
+	ROOM_SEASONS_41a	db
+	ROOM_SEASONS_41b	db
+	ROOM_SEASONS_41c	db
+	ROOM_SEASONS_41d	db
+	ROOM_SEASONS_41e	db
+	ROOM_SEASONS_41f	db
+	ROOM_SEASONS_420	db
+	ROOM_SEASONS_421	db
+	ROOM_SEASONS_422	db
+	ROOM_SEASONS_423	db
+	ROOM_SEASONS_424	db
+	ROOM_SEASONS_425	db
+	ROOM_SEASONS_426	db
+	ROOM_SEASONS_427	db
+	ROOM_SEASONS_428	db
+	ROOM_SEASONS_429	db
+	ROOM_SEASONS_42a	db
+	ROOM_SEASONS_42b	db
+	ROOM_SEASONS_42c	db
+	ROOM_SEASONS_42d	db
+	ROOM_SEASONS_42e	db
+	ROOM_SEASONS_42f	db
+	ROOM_SEASONS_430	db
+	ROOM_SEASONS_431	db
+	ROOM_SEASONS_432	db
+	ROOM_SEASONS_433	db
+	ROOM_SEASONS_434	db
+	ROOM_SEASONS_435	db
+	ROOM_SEASONS_436	db
+	ROOM_SEASONS_437	db
+	ROOM_SEASONS_438	db
+	ROOM_SEASONS_439	db
+	ROOM_SEASONS_43a	db
+	ROOM_SEASONS_43b	db
+	ROOM_SEASONS_43c	db
+	ROOM_SEASONS_43d	db
+	ROOM_SEASONS_43e	db
+	ROOM_SEASONS_43f	db
+	ROOM_SEASONS_440	db
+	ROOM_SEASONS_441	db
+	ROOM_SEASONS_442	db
+	ROOM_SEASONS_443	db
+	ROOM_SEASONS_444	db
+	ROOM_SEASONS_445	db
+	ROOM_SEASONS_446	db
+	ROOM_SEASONS_447	db
+	ROOM_SEASONS_448	db
+	ROOM_SEASONS_449	db
+	ROOM_SEASONS_44a	db
+	ROOM_SEASONS_44b	db
+	ROOM_SEASONS_44c	db
+	ROOM_SEASONS_44d	db
+	ROOM_SEASONS_44e	db
+	ROOM_SEASONS_44f	db
+	ROOM_SEASONS_450	db
+	ROOM_SEASONS_451	db
+	ROOM_SEASONS_452	db
+	ROOM_SEASONS_453	db
+	ROOM_SEASONS_454	db
+	ROOM_SEASONS_455	db
+	ROOM_SEASONS_456	db
+	ROOM_SEASONS_457	db
+	ROOM_SEASONS_458	db
+	ROOM_SEASONS_459	db
+	ROOM_SEASONS_45a	db
+	ROOM_SEASONS_45b	db
+	ROOM_SEASONS_45c	db
+	ROOM_SEASONS_45d	db
+	ROOM_SEASONS_45e	db
+	ROOM_SEASONS_45f	db
+	ROOM_SEASONS_460	db
+	ROOM_SEASONS_461	db
+	ROOM_SEASONS_462	db
+	ROOM_SEASONS_463	db
+	ROOM_SEASONS_464	db
+	ROOM_SEASONS_465	db
+	ROOM_SEASONS_466	db
+	ROOM_SEASONS_467	db
+	ROOM_SEASONS_468	db
+	ROOM_SEASONS_469	db
+	ROOM_SEASONS_46a	db
+	ROOM_SEASONS_46b	db
+	ROOM_SEASONS_46c	db
+	ROOM_SEASONS_46d	db
+	ROOM_SEASONS_46e	db
+	ROOM_SEASONS_46f	db
+	ROOM_SEASONS_470	db
+	ROOM_SEASONS_471	db
+	ROOM_SEASONS_472	db
+	ROOM_SEASONS_473	db
+	ROOM_SEASONS_474	db
+	ROOM_SEASONS_475	db
+	ROOM_SEASONS_476	db
+	ROOM_SEASONS_477	db
+	ROOM_SEASONS_478	db
+	ROOM_SEASONS_479	db
+	ROOM_SEASONS_47a	db
+	ROOM_SEASONS_47b	db
+	ROOM_SEASONS_47c	db
+	ROOM_SEASONS_47d	db
+	ROOM_SEASONS_47e	db
+	ROOM_SEASONS_47f	db
+	ROOM_SEASONS_480	db
+	ROOM_SEASONS_481	db
+	ROOM_SEASONS_482	db
+	ROOM_SEASONS_483	db
+	ROOM_SEASONS_484	db
+	ROOM_SEASONS_485	db
+	ROOM_SEASONS_486	db
+	ROOM_SEASONS_487	db
+	ROOM_SEASONS_488	db
+	ROOM_SEASONS_489	db
+	ROOM_SEASONS_48a	db
+	ROOM_SEASONS_48b	db
+	ROOM_SEASONS_48c	db
+	ROOM_SEASONS_48d	db
+	ROOM_SEASONS_48e	db
+	ROOM_SEASONS_48f	db
+	ROOM_SEASONS_490	db
+	ROOM_SEASONS_491	db
+	ROOM_SEASONS_492	db
+	ROOM_SEASONS_493	db
+	ROOM_SEASONS_494	db
+	ROOM_SEASONS_495	db
+	ROOM_SEASONS_496	db
+	ROOM_SEASONS_497	db
+	ROOM_SEASONS_498	db
+	ROOM_SEASONS_499	db
+	ROOM_SEASONS_49a	db
+	ROOM_SEASONS_49b	db
+	ROOM_SEASONS_49c	db
+	ROOM_SEASONS_49d	db
+	ROOM_SEASONS_49e	db
+	ROOM_SEASONS_49f	db
+	ROOM_SEASONS_4a0	db
+	ROOM_SEASONS_4a1	db
+	ROOM_SEASONS_4a2	db
+	ROOM_SEASONS_4a3	db
+	ROOM_SEASONS_4a4	db
+	ROOM_SEASONS_4a5	db
+	ROOM_SEASONS_4a6	db
+	ROOM_SEASONS_4a7	db
+	ROOM_SEASONS_4a8	db
+	ROOM_SEASONS_4a9	db
+	ROOM_SEASONS_4aa	db
+	ROOM_SEASONS_4ab	db
+	ROOM_SEASONS_4ac	db
+	ROOM_SEASONS_4ad	db
+	ROOM_SEASONS_4ae	db
+	ROOM_SEASONS_4af	db
+	ROOM_SEASONS_4b0	db
+	ROOM_SEASONS_4b1	db
+	ROOM_SEASONS_4b2	db
+	ROOM_SEASONS_4b3	db
+	ROOM_SEASONS_4b4	db
+	ROOM_SEASONS_4b5	db
+	ROOM_SEASONS_4b6	db
+	ROOM_SEASONS_4b7	db
+	ROOM_SEASONS_4b8	db
+	ROOM_SEASONS_4b9	db
+	ROOM_SEASONS_4ba	db
+	ROOM_SEASONS_4bb	db
+	ROOM_SEASONS_4bc	db
+	ROOM_SEASONS_4bd	db
+	ROOM_SEASONS_4be	db
+	ROOM_SEASONS_4bf	db
+	ROOM_SEASONS_4c0	db
+	ROOM_SEASONS_4c1	db
+	ROOM_SEASONS_4c2	db
+	ROOM_SEASONS_4c3	db
+	ROOM_SEASONS_4c4	db
+	ROOM_SEASONS_4c5	db
+	ROOM_SEASONS_4c6	db
+	ROOM_SEASONS_4c7	db
+	ROOM_SEASONS_4c8	db
+	ROOM_SEASONS_4c9	db
+	ROOM_SEASONS_4ca	db
+	ROOM_SEASONS_4cb	db
+	ROOM_SEASONS_4cc	db
+	ROOM_SEASONS_4cd	db
+	ROOM_SEASONS_4ce	db
+	ROOM_SEASONS_4cf	db
+	ROOM_SEASONS_4d0	db
+	ROOM_SEASONS_4d1	db
+	ROOM_SEASONS_4d2	db
+	ROOM_SEASONS_4d3	db
+	ROOM_SEASONS_4d4	db
+	ROOM_SEASONS_4d5	db
+	ROOM_SEASONS_4d6	db
+	ROOM_SEASONS_4d7	db
+	ROOM_SEASONS_4d8	db
+	ROOM_SEASONS_4d9	db
+	ROOM_SEASONS_4da	db
+	ROOM_SEASONS_4db	db
+	ROOM_SEASONS_4dc	db
+	ROOM_SEASONS_4dd	db
+	ROOM_SEASONS_4de	db
+	ROOM_SEASONS_4df	db
+	ROOM_SEASONS_4e0	db
+	ROOM_SEASONS_4e1	db
+	ROOM_SEASONS_4e2	db
+	ROOM_SEASONS_4e3	db
+	ROOM_SEASONS_4e4	db
+	ROOM_SEASONS_4e5	db
+	ROOM_SEASONS_4e6	db
+	ROOM_SEASONS_4e7	db
+	ROOM_SEASONS_4e8	db
+	ROOM_SEASONS_4e9	db
+	ROOM_SEASONS_4ea	db
+	ROOM_SEASONS_4eb	db
+	ROOM_SEASONS_4ec	db
+	ROOM_SEASONS_4ed	db
+	ROOM_SEASONS_4ee	db
+	ROOM_SEASONS_4ef	db
+	ROOM_SEASONS_4f0	db
+	ROOM_SEASONS_4f1	db
+	ROOM_SEASONS_4f2	db
+	ROOM_SEASONS_4f3	db
+	ROOM_SEASONS_4f4	db
+	ROOM_SEASONS_4f5	db
+	ROOM_SEASONS_4f6	db
+	ROOM_SEASONS_4f7	db
+	ROOM_SEASONS_4f8	db
+	ROOM_SEASONS_4f9	db
+	ROOM_SEASONS_4fa	db
+	ROOM_SEASONS_4fb	db
+	ROOM_SEASONS_4fc	db
+	ROOM_SEASONS_4fd	db
+	ROOM_SEASONS_4fe	db
+	ROOM_SEASONS_4ff	db
+
+	ROOM_SEASONS_500	db
+	ROOM_SEASONS_501	db
+	ROOM_SEASONS_502	db
+	ROOM_SEASONS_503	db
+	ROOM_SEASONS_504	db
+	ROOM_SEASONS_505	db
+	ROOM_SEASONS_506	db
+	ROOM_SEASONS_507	db
+	ROOM_SEASONS_508	db
+	ROOM_SEASONS_509	db
+	ROOM_SEASONS_50a	db
+	ROOM_SEASONS_50b	db
+	ROOM_SEASONS_50c	db
+	ROOM_SEASONS_50d	db
+	ROOM_SEASONS_50e	db
+	ROOM_SEASONS_50f	db
+	ROOM_SEASONS_510	db
+	ROOM_SEASONS_511	db
+	ROOM_SEASONS_512	db
+	ROOM_SEASONS_513	db
+	ROOM_SEASONS_514	db
+	ROOM_SEASONS_515	db
+	ROOM_SEASONS_516	db
+	ROOM_SEASONS_517	db
+	ROOM_SEASONS_518	db
+	ROOM_SEASONS_519	db
+	ROOM_SEASONS_51a	db
+	ROOM_SEASONS_51b	db
+	ROOM_SEASONS_51c	db
+	ROOM_SEASONS_51d	db
+	ROOM_SEASONS_51e	db
+	ROOM_SEASONS_51f	db
+	ROOM_SEASONS_520	db
+	ROOM_SEASONS_521	db
+	ROOM_SEASONS_522	db
+	ROOM_SEASONS_523	db
+	ROOM_SEASONS_524	db
+	ROOM_SEASONS_525	db
+	ROOM_SEASONS_526	db
+	ROOM_SEASONS_527	db
+	ROOM_SEASONS_528	db
+	ROOM_SEASONS_529	db
+	ROOM_SEASONS_52a	db
+	ROOM_SEASONS_52b	db
+	ROOM_SEASONS_52c	db
+	ROOM_SEASONS_52d	db
+	ROOM_SEASONS_52e	db
+	ROOM_SEASONS_52f	db
+	ROOM_SEASONS_530	db
+	ROOM_SEASONS_531	db
+	ROOM_SEASONS_532	db
+	ROOM_SEASONS_533	db
+	ROOM_SEASONS_534	db
+	ROOM_SEASONS_535	db
+	ROOM_SEASONS_536	db
+	ROOM_SEASONS_537	db
+	ROOM_SEASONS_538	db
+	ROOM_SEASONS_539	db
+	ROOM_SEASONS_53a	db
+	ROOM_SEASONS_53b	db
+	ROOM_SEASONS_53c	db
+	ROOM_SEASONS_53d	db
+	ROOM_SEASONS_53e	db
+	ROOM_SEASONS_53f	db
+	ROOM_SEASONS_540	db
+	ROOM_SEASONS_541	db
+	ROOM_SEASONS_542	db
+	ROOM_SEASONS_543	db
+	ROOM_SEASONS_544	db
+	ROOM_SEASONS_545	db
+	ROOM_SEASONS_546	db
+	ROOM_SEASONS_547	db
+	ROOM_SEASONS_548	db
+	ROOM_SEASONS_549	db
+	ROOM_SEASONS_54a	db
+	ROOM_SEASONS_54b	db
+	ROOM_SEASONS_54c	db
+	ROOM_SEASONS_54d	db
+	ROOM_SEASONS_54e	db
+	ROOM_SEASONS_54f	db
+	ROOM_SEASONS_550	db
+	ROOM_SEASONS_551	db
+	ROOM_SEASONS_552	db
+	ROOM_SEASONS_553	db
+	ROOM_SEASONS_554	db
+	ROOM_SEASONS_555	db
+	ROOM_SEASONS_556	db
+	ROOM_SEASONS_557	db
+	ROOM_SEASONS_558	db
+	ROOM_SEASONS_559	db
+	ROOM_SEASONS_55a	db
+	ROOM_SEASONS_55b	db
+	ROOM_SEASONS_55c	db
+	ROOM_SEASONS_55d	db
+	ROOM_SEASONS_55e	db
+	ROOM_SEASONS_55f	db
+	ROOM_SEASONS_560	db
+	ROOM_SEASONS_561	db
+	ROOM_SEASONS_562	db
+	ROOM_SEASONS_563	db
+	ROOM_SEASONS_564	db
+	ROOM_SEASONS_565	db
+	ROOM_SEASONS_566	db
+	ROOM_SEASONS_567	db
+	ROOM_SEASONS_568	db
+	ROOM_SEASONS_569	db
+	ROOM_SEASONS_56a	db
+	ROOM_SEASONS_56b	db
+	ROOM_SEASONS_56c	db
+	ROOM_SEASONS_56d	db
+	ROOM_SEASONS_56e	db
+	ROOM_SEASONS_56f	db
+	ROOM_SEASONS_570	db
+	ROOM_SEASONS_571	db
+	ROOM_SEASONS_572	db
+	ROOM_SEASONS_573	db
+	ROOM_SEASONS_574	db
+	ROOM_SEASONS_575	db
+	ROOM_SEASONS_576	db
+	ROOM_SEASONS_577	db
+	ROOM_SEASONS_578	db
+	ROOM_SEASONS_579	db
+	ROOM_SEASONS_57a	db
+	ROOM_SEASONS_57b	db
+	ROOM_SEASONS_57c	db
+	ROOM_SEASONS_57d	db
+	ROOM_SEASONS_57e	db
+	ROOM_SEASONS_57f	db
+	ROOM_SEASONS_580	db
+	ROOM_SEASONS_581	db
+	ROOM_SEASONS_582	db
+	ROOM_SEASONS_583	db
+	ROOM_SEASONS_584	db
+	ROOM_SEASONS_585	db
+	ROOM_SEASONS_586	db
+	ROOM_SEASONS_587	db
+	ROOM_SEASONS_588	db
+	ROOM_SEASONS_589	db
+	ROOM_SEASONS_58a	db
+	ROOM_SEASONS_58b	db
+	ROOM_SEASONS_58c	db
+	ROOM_SEASONS_58d	db
+	ROOM_SEASONS_58e	db
+	ROOM_SEASONS_58f	db
+	ROOM_SEASONS_590	db
+	ROOM_SEASONS_591	db
+	ROOM_SEASONS_592	db
+	ROOM_SEASONS_593	db
+	ROOM_SEASONS_594	db
+	ROOM_SEASONS_595	db
+	ROOM_SEASONS_596	db
+	ROOM_SEASONS_597	db
+	ROOM_SEASONS_598	db
+	ROOM_SEASONS_599	db
+	ROOM_SEASONS_59a	db
+	ROOM_SEASONS_59b	db
+	ROOM_SEASONS_59c	db
+	ROOM_SEASONS_59d	db
+	ROOM_TWINROVA_FIGHT	db
+	ROOM_SEASONS_59f	db
+	ROOM_SEASONS_5a0	db
+	ROOM_SEASONS_5a1	db
+	ROOM_SEASONS_5a2	db
+	ROOM_SEASONS_5a3	db
+	ROOM_SEASONS_5a4	db
+	ROOM_SEASONS_5a5	db
+	ROOM_SEASONS_5a6	db
+	ROOM_SEASONS_5a7	db
+	ROOM_SEASONS_5a8	db
+	ROOM_SEASONS_5a9	db
+	ROOM_SEASONS_5aa	db
+	ROOM_SEASONS_5ab	db
+	ROOM_SEASONS_5ac	db
+	ROOM_SEASONS_5ad	db
+	ROOM_SEASONS_5ae	db
+	ROOM_SEASONS_5af	db
+	ROOM_SEASONS_5b0	db
+	ROOM_SEASONS_5b1	db
+	ROOM_SEASONS_5b2	db
+	ROOM_SEASONS_5b3	db
+	ROOM_SEASONS_5b4	db
+	ROOM_SEASONS_5b5	db
+	ROOM_SEASONS_5b6	db
+	ROOM_SEASONS_5b7	db
+	ROOM_SEASONS_5b8	db
+	ROOM_SEASONS_5b9	db
+	ROOM_SEASONS_5ba	db
+	ROOM_SEASONS_5bb	db
+	ROOM_SEASONS_5bc	db
+	ROOM_SEASONS_5bd	db
+	ROOM_SEASONS_5be	db
+	ROOM_SEASONS_5bf	db
+	ROOM_SEASONS_5c0	db
+	ROOM_SEASONS_5c1	db
+	ROOM_SEASONS_5c2	db
+	ROOM_SEASONS_5c3	db
+	ROOM_SEASONS_5c4	db
+	ROOM_SEASONS_5c5	db
+	ROOM_SEASONS_5c6	db
+	ROOM_SEASONS_5c7	db
+	ROOM_SEASONS_5c8	db
+	ROOM_SEASONS_5c9	db
+	ROOM_SEASONS_5ca	db
+	ROOM_SEASONS_5cb	db
+	ROOM_SEASONS_5cc	db
+	ROOM_SEASONS_5cd	db
+	ROOM_SEASONS_5ce	db
+	ROOM_SEASONS_5cf	db
+	ROOM_SEASONS_5d0	db
+	ROOM_SEASONS_5d1	db
+	ROOM_SEASONS_5d2	db
+	ROOM_SEASONS_5d3	db
+	ROOM_SEASONS_5d4	db
+	ROOM_SEASONS_5d5	db
+	ROOM_SEASONS_5d6	db
+	ROOM_SEASONS_5d7	db
+	ROOM_SEASONS_5d8	db
+	ROOM_SEASONS_5d9	db
+	ROOM_SEASONS_5da	db
+	ROOM_SEASONS_5db	db
+	ROOM_SEASONS_5dc	db
+	ROOM_SEASONS_5dd	db
+	ROOM_SEASONS_5de	db
+	ROOM_SEASONS_5df	db
+	ROOM_SEASONS_5e0	db
+	ROOM_SEASONS_5e1	db
+	ROOM_SEASONS_5e2	db
+	ROOM_SEASONS_5e3	db
+	ROOM_SEASONS_5e4	db
+	ROOM_SEASONS_5e5	db
+	ROOM_SEASONS_5e6	db
+	ROOM_SEASONS_5e7	db
+	ROOM_SEASONS_5e8	db
+	ROOM_SEASONS_5e9	db
+	ROOM_SEASONS_5ea	db
+	ROOM_SEASONS_5eb	db
+	ROOM_SEASONS_5ec	db
+	ROOM_SEASONS_5ed	db
+	ROOM_SEASONS_5ee	db
+	ROOM_SEASONS_5ef	db
+	ROOM_SEASONS_5f0	db
+	ROOM_SEASONS_5f1	db
+	ROOM_SEASONS_5f2	db
+	ROOM_SEASONS_5f3	db
+	ROOM_SEASONS_5f4	db
+	ROOM_SEASONS_5f5	db
+	ROOM_SEASONS_5f6	db
+	ROOM_SEASONS_5f7	db
+	ROOM_SEASONS_5f8	db
+	ROOM_SEASONS_5f9	db
+	ROOM_SEASONS_5fa	db
+	ROOM_SEASONS_5fb	db
+	ROOM_SEASONS_5fc	db
+	ROOM_SEASONS_5fd	db
+	ROOM_SEASONS_5fe	db
+	ROOM_SEASONS_5ff	db
+
+	ROOM_SEASONS_600	db
+	ROOM_SEASONS_601	db
+	ROOM_SEASONS_602	db
+	ROOM_SEASONS_603	db
+	ROOM_SEASONS_604	db
+	ROOM_SEASONS_605	db
+	ROOM_SEASONS_606	db
+	ROOM_SEASONS_607	db
+	ROOM_SEASONS_608	db
+	ROOM_SEASONS_609	db
+	ROOM_SEASONS_60a	db
+	ROOM_SEASONS_60b	db
+	ROOM_SEASONS_60c	db
+	ROOM_SEASONS_60d	db
+	ROOM_SEASONS_60e	db
+	ROOM_SEASONS_60f	db
+	ROOM_SEASONS_610	db
+	ROOM_SEASONS_611	db
+	ROOM_SEASONS_612	db
+	ROOM_SEASONS_613	db
+	ROOM_SEASONS_614	db
+	ROOM_SEASONS_615	db
+	ROOM_SEASONS_616	db
+	ROOM_SEASONS_617	db
+	ROOM_SEASONS_618	db
+	ROOM_SEASONS_619	db
+	ROOM_SEASONS_61a	db
+	ROOM_SEASONS_61b	db
+	ROOM_SEASONS_61c	db
+	ROOM_SEASONS_61d	db
+	ROOM_SEASONS_61e	db
+	ROOM_SEASONS_61f	db
+	ROOM_SEASONS_620	db
+	ROOM_SEASONS_621	db
+	ROOM_SEASONS_622	db
+	ROOM_SEASONS_623	db
+	ROOM_SEASONS_624	db
+	ROOM_SEASONS_625	db
+	ROOM_SEASONS_626	db
+	ROOM_SEASONS_627	db
+	ROOM_SEASONS_628	db
+	ROOM_SEASONS_629	db
+	ROOM_SEASONS_62a	db
+	ROOM_SEASONS_62b	db
+	ROOM_SEASONS_62c	db
+	ROOM_SEASONS_62d	db
+	ROOM_SEASONS_62e	db
+	ROOM_SEASONS_62f	db
+	ROOM_SEASONS_630	db
+	ROOM_SEASONS_631	db
+	ROOM_SEASONS_632	db
+	ROOM_SEASONS_633	db
+	ROOM_SEASONS_634	db
+	ROOM_SEASONS_635	db
+	ROOM_SEASONS_636	db
+	ROOM_SEASONS_637	db
+	ROOM_SEASONS_638	db
+	ROOM_SEASONS_639	db
+	ROOM_SEASONS_63a	db
+	ROOM_SEASONS_63b	db
+	ROOM_SEASONS_63c	db
+	ROOM_SEASONS_63d	db
+	ROOM_SEASONS_63e	db
+	ROOM_SEASONS_63f	db
+	ROOM_SEASONS_640	db
+	ROOM_SEASONS_641	db
+	ROOM_SEASONS_642	db
+	ROOM_SEASONS_643	db
+	ROOM_SEASONS_644	db
+	ROOM_SEASONS_645	db
+	ROOM_SEASONS_646	db
+	ROOM_SEASONS_647	db
+	ROOM_SEASONS_648	db
+	ROOM_SEASONS_649	db
+	ROOM_SEASONS_64a	db
+	ROOM_SEASONS_64b	db
+	ROOM_SEASONS_64c	db
+	ROOM_SEASONS_64d	db
+	ROOM_SEASONS_64e	db
+	ROOM_SEASONS_64f	db
+	ROOM_SEASONS_650	db
+	ROOM_SEASONS_651	db
+	ROOM_SEASONS_652	db
+	ROOM_SEASONS_653	db
+	ROOM_SEASONS_654	db
+	ROOM_SEASONS_655	db
+	ROOM_SEASONS_656	db
+	ROOM_SEASONS_657	db
+	ROOM_SEASONS_658	db
+	ROOM_SEASONS_659	db
+	ROOM_SEASONS_65a	db
+	ROOM_SEASONS_65b	db
+	ROOM_SEASONS_65c	db
+	ROOM_SEASONS_65d	db
+	ROOM_SEASONS_65e	db
+	ROOM_SEASONS_65f	db
+	ROOM_SEASONS_660	db
+	ROOM_SEASONS_661	db
+	ROOM_SEASONS_662	db
+	ROOM_SEASONS_663	db
+	ROOM_SEASONS_664	db
+	ROOM_SEASONS_665	db
+	ROOM_SEASONS_666	db
+	ROOM_SEASONS_667	db
+	ROOM_SEASONS_668	db
+	ROOM_SEASONS_669	db
+	ROOM_SEASONS_66a	db
+	ROOM_SEASONS_66b	db
+	ROOM_SEASONS_66c	db
+	ROOM_SEASONS_66d	db
+	ROOM_SEASONS_66e	db
+	ROOM_SEASONS_66f	db
+	ROOM_SEASONS_670	db
+	ROOM_SEASONS_671	db
+	ROOM_SEASONS_672	db
+	ROOM_SEASONS_673	db
+	ROOM_SEASONS_674	db
+	ROOM_SEASONS_675	db
+	ROOM_SEASONS_676	db
+	ROOM_SEASONS_677	db
+	ROOM_SEASONS_678	db
+	ROOM_SEASONS_679	db
+	ROOM_SEASONS_67a	db
+	ROOM_SEASONS_67b	db
+	ROOM_SEASONS_67c	db
+	ROOM_SEASONS_67d	db
+	ROOM_SEASONS_67e	db
+	ROOM_SEASONS_67f	db
+	ROOM_SEASONS_680	db
+	ROOM_SEASONS_681	db
+	ROOM_SEASONS_682	db
+	ROOM_SEASONS_683	db
+	ROOM_SEASONS_684	db
+	ROOM_SEASONS_685	db
+	ROOM_SEASONS_686	db
+	ROOM_SEASONS_687	db
+	ROOM_SEASONS_688	db
+	ROOM_SEASONS_689	db
+	ROOM_SEASONS_68a	db
+	ROOM_SEASONS_68b	db
+	ROOM_SEASONS_68c	db
+	ROOM_SEASONS_68d	db
+	ROOM_SEASONS_68e	db
+	ROOM_SEASONS_68f	db
+	ROOM_SEASONS_690	db
+	ROOM_SEASONS_691	db
+	ROOM_SEASONS_692	db
+	ROOM_SEASONS_693	db
+	ROOM_SEASONS_694	db
+	ROOM_SEASONS_695	db
+	ROOM_SEASONS_696	db
+	ROOM_SEASONS_697	db
+	ROOM_SEASONS_698	db
+	ROOM_SEASONS_699	db
+	ROOM_SEASONS_69a	db
+	ROOM_SEASONS_69b	db
+	ROOM_SEASONS_69c	db
+	ROOM_SEASONS_69d	db
+	ROOM_SEASONS_69e	db
+	ROOM_SEASONS_69f	db
+	ROOM_SEASONS_6a0	db
+	ROOM_SEASONS_6a1	db
+	ROOM_SEASONS_6a2	db
+	ROOM_SEASONS_6a3	db
+	ROOM_SEASONS_6a4	db
+	ROOM_SEASONS_6a5	db
+	ROOM_SEASONS_6a6	db
+	ROOM_SEASONS_6a7	db
+	ROOM_SEASONS_6a8	db
+	ROOM_SEASONS_6a9	db
+	ROOM_SEASONS_6aa	db
+	ROOM_SEASONS_6ab	db
+	ROOM_SEASONS_6ac	db
+	ROOM_SEASONS_6ad	db
+	ROOM_SEASONS_6ae	db
+	ROOM_SEASONS_6af	db
+	ROOM_SEASONS_6b0	db
+	ROOM_SEASONS_6b1	db
+	ROOM_SEASONS_6b2	db
+	ROOM_SEASONS_6b3	db
+	ROOM_SEASONS_6b4	db
+	ROOM_SEASONS_6b5	db
+	ROOM_SEASONS_6b6	db
+	ROOM_SEASONS_6b7	db
+	ROOM_SEASONS_6b8	db
+	ROOM_SEASONS_6b9	db
+	ROOM_SEASONS_6ba	db
+	ROOM_SEASONS_6bb	db
+	ROOM_SEASONS_6bc	db
+	ROOM_SEASONS_6bd	db
+	ROOM_SEASONS_6be	db
+	ROOM_SEASONS_6bf	db
+	ROOM_SEASONS_6c0	db
+	ROOM_SEASONS_6c1	db
+	ROOM_SEASONS_6c2	db
+	ROOM_SEASONS_6c3	db
+	ROOM_SEASONS_6c4	db
+	ROOM_SEASONS_6c5	db
+	ROOM_SEASONS_6c6	db
+	ROOM_SEASONS_6c7	db
+	ROOM_SEASONS_6c8	db
+	ROOM_SEASONS_6c9	db
+	ROOM_SEASONS_6ca	db
+	ROOM_SEASONS_6cb	db
+	ROOM_SEASONS_6cc	db
+	ROOM_SEASONS_6cd	db
+	ROOM_SEASONS_6ce	db
+	ROOM_SEASONS_6cf	db
+	ROOM_SEASONS_6d0	db
+	ROOM_SEASONS_6d1	db
+	ROOM_SEASONS_6d2	db
+	ROOM_SEASONS_6d3	db
+	ROOM_SEASONS_6d4	db
+	ROOM_SEASONS_6d5	db
+	ROOM_SEASONS_6d6	db
+	ROOM_SEASONS_6d7	db
+	ROOM_SEASONS_6d8	db
+	ROOM_SEASONS_6d9	db
+	ROOM_SEASONS_6da	db
+	ROOM_SEASONS_6db	db
+	ROOM_SEASONS_6dc	db
+	ROOM_SEASONS_6dd	db
+	ROOM_SEASONS_6de	db
+	ROOM_SEASONS_6df	db
+	ROOM_SEASONS_6e0	db
+	ROOM_SEASONS_6e1	db
+	ROOM_SEASONS_6e2	db
+	ROOM_SEASONS_6e3	db
+	ROOM_SEASONS_6e4	db
+	ROOM_SEASONS_6e5	db
+	ROOM_SEASONS_6e6	db
+	ROOM_SEASONS_6e7	db
+	ROOM_SEASONS_6e8	db
+	ROOM_SEASONS_6e9	db
+	ROOM_SEASONS_6ea	db
+	ROOM_SEASONS_6eb	db
+	ROOM_SEASONS_6ec	db
+	ROOM_SEASONS_6ed	db
+	ROOM_SEASONS_6ee	db
+	ROOM_SEASONS_6ef	db
+	ROOM_SEASONS_6f0	db
+	ROOM_SEASONS_6f1	db
+	ROOM_SEASONS_6f2	db
+	ROOM_SEASONS_6f3	db
+	ROOM_SEASONS_6f4	db
+	ROOM_SEASONS_6f5	db
+	ROOM_SEASONS_6f6	db
+	ROOM_SEASONS_6f7	db
+	ROOM_SEASONS_6f8	db
+	ROOM_SEASONS_6f9	db
+	ROOM_SEASONS_6fa	db
+	ROOM_SEASONS_6fb	db
+	ROOM_SEASONS_6fc	db
+	ROOM_SEASONS_6fd	db
+	ROOM_SEASONS_6fe	db
+	ROOM_SEASONS_6ff	db
+
+	ROOM_SEASONS_700	db
+	ROOM_SEASONS_701	db
+	ROOM_SEASONS_702	db
+	ROOM_SEASONS_703	db
+	ROOM_SEASONS_704	db
+	ROOM_SEASONS_705	db
+	ROOM_SEASONS_706	db
+	ROOM_SEASONS_707	db
+	ROOM_SEASONS_708	db
+	ROOM_SEASONS_709	db
+	ROOM_SEASONS_70a	db
+	ROOM_SEASONS_70b	db
+	ROOM_SEASONS_70c	db
+	ROOM_SEASONS_70d	db
+	ROOM_SEASONS_70e	db
+	ROOM_SEASONS_70f	db
+	ROOM_SEASONS_710	db
+	ROOM_SEASONS_711	db
+	ROOM_SEASONS_712	db
+	ROOM_SEASONS_713	db
+	ROOM_SEASONS_714	db
+	ROOM_SEASONS_715	db
+	ROOM_SEASONS_716	db
+	ROOM_SEASONS_717	db
+	ROOM_SEASONS_718	db
+	ROOM_SEASONS_719	db
+	ROOM_SEASONS_71a	db
+	ROOM_SEASONS_71b	db
+	ROOM_SEASONS_71c	db
+	ROOM_SEASONS_71d	db
+	ROOM_SEASONS_71e	db
+	ROOM_SEASONS_71f	db
+	ROOM_SEASONS_720	db
+	ROOM_SEASONS_721	db
+	ROOM_SEASONS_722	db
+	ROOM_SEASONS_723	db
+	ROOM_SEASONS_724	db
+	ROOM_SEASONS_725	db
+	ROOM_SEASONS_726	db
+	ROOM_SEASONS_727	db
+	ROOM_SEASONS_728	db
+	ROOM_SEASONS_729	db
+	ROOM_SEASONS_72a	db
+	ROOM_SEASONS_72b	db
+	ROOM_SEASONS_72c	db
+	ROOM_SEASONS_72d	db
+	ROOM_SEASONS_72e	db
+	ROOM_SEASONS_72f	db
+	ROOM_SEASONS_730	db
+	ROOM_SEASONS_731	db
+	ROOM_SEASONS_732	db
+	ROOM_SEASONS_733	db
+	ROOM_SEASONS_734	db
+	ROOM_SEASONS_735	db
+	ROOM_SEASONS_736	db
+	ROOM_SEASONS_737	db
+	ROOM_SEASONS_738	db
+	ROOM_SEASONS_739	db
+	ROOM_SEASONS_73a	db
+	ROOM_SEASONS_73b	db
+	ROOM_SEASONS_73c	db
+	ROOM_SEASONS_73d	db
+	ROOM_SEASONS_73e	db
+	ROOM_SEASONS_73f	db
+	ROOM_SEASONS_740	db
+	ROOM_SEASONS_741	db
+	ROOM_SEASONS_742	db
+	ROOM_SEASONS_743	db
+	ROOM_SEASONS_744	db
+	ROOM_SEASONS_745	db
+	ROOM_SEASONS_746	db
+	ROOM_SEASONS_747	db
+	ROOM_SEASONS_748	db
+	ROOM_SEASONS_749	db
+	ROOM_SEASONS_74a	db
+	ROOM_SEASONS_74b	db
+	ROOM_SEASONS_74c	db
+	ROOM_SEASONS_74d	db
+	ROOM_SEASONS_74e	db
+	ROOM_SEASONS_74f	db
+	ROOM_SEASONS_750	db
+	ROOM_SEASONS_751	db
+	ROOM_SEASONS_752	db
+	ROOM_SEASONS_753	db
+	ROOM_SEASONS_754	db
+	ROOM_SEASONS_755	db
+	ROOM_SEASONS_756	db
+	ROOM_SEASONS_757	db
+	ROOM_SEASONS_758	db
+	ROOM_SEASONS_759	db
+	ROOM_SEASONS_75a	db
+	ROOM_SEASONS_75b	db
+	ROOM_SEASONS_75c	db
+	ROOM_SEASONS_75d	db
+	ROOM_SEASONS_75e	db
+	ROOM_SEASONS_75f	db
+	ROOM_SEASONS_760	db
+	ROOM_SEASONS_761	db
+	ROOM_SEASONS_762	db
+	ROOM_SEASONS_763	db
+	ROOM_SEASONS_764	db
+	ROOM_SEASONS_765	db
+	ROOM_SEASONS_766	db
+	ROOM_SEASONS_767	db
+	ROOM_SEASONS_768	db
+	ROOM_SEASONS_769	db
+	ROOM_SEASONS_76a	db
+	ROOM_SEASONS_76b	db
+	ROOM_SEASONS_76c	db
+	ROOM_SEASONS_76d	db
+	ROOM_SEASONS_76e	db
+	ROOM_SEASONS_76f	db
+	ROOM_SEASONS_770	db
+	ROOM_SEASONS_771	db
+	ROOM_SEASONS_772	db
+	ROOM_SEASONS_773	db
+	ROOM_SEASONS_774	db
+	ROOM_SEASONS_775	db
+	ROOM_SEASONS_776	db
+	ROOM_SEASONS_777	db
+	ROOM_SEASONS_778	db
+	ROOM_SEASONS_779	db
+	ROOM_SEASONS_77a	db
+	ROOM_SEASONS_77b	db
+	ROOM_SEASONS_77c	db
+	ROOM_SEASONS_77d	db
+	ROOM_SEASONS_77e	db
+	ROOM_SEASONS_77f	db
+	ROOM_SEASONS_780	db
+	ROOM_SEASONS_781	db
+	ROOM_SEASONS_782	db
+	ROOM_SEASONS_783	db
+	ROOM_SEASONS_784	db
+	ROOM_SEASONS_785	db
+	ROOM_SEASONS_786	db
+	ROOM_SEASONS_787	db
+	ROOM_SEASONS_788	db
+	ROOM_SEASONS_789	db
+	ROOM_SEASONS_78a	db
+	ROOM_SEASONS_78b	db
+	ROOM_SEASONS_78c	db
+	ROOM_SEASONS_78d	db
+	ROOM_SEASONS_78e	db
+	ROOM_SEASONS_78f	db
+	ROOM_SEASONS_790	db
+	ROOM_SEASONS_791	db
+	ROOM_SEASONS_792	db
+	ROOM_SEASONS_793	db
+	ROOM_SEASONS_794	db
+	ROOM_SEASONS_795	db
+	ROOM_SEASONS_796	db
+	ROOM_SEASONS_797	db
+	ROOM_SEASONS_798	db
+	ROOM_SEASONS_799	db
+	ROOM_SEASONS_79a	db
+	ROOM_SEASONS_79b	db
+	ROOM_SEASONS_79c	db
+	ROOM_SEASONS_79d	db
+	ROOM_SEASONS_79e	db
+	ROOM_SEASONS_79f	db
+	ROOM_SEASONS_7a0	db
+	ROOM_SEASONS_7a1	db
+	ROOM_SEASONS_7a2	db
+	ROOM_SEASONS_7a3	db
+	ROOM_SEASONS_7a4	db
+	ROOM_SEASONS_7a5	db
+	ROOM_SEASONS_7a6	db
+	ROOM_SEASONS_7a7	db
+	ROOM_SEASONS_7a8	db
+	ROOM_SEASONS_7a9	db
+	ROOM_SEASONS_7aa	db
+	ROOM_SEASONS_7ab	db
+	ROOM_SEASONS_7ac	db
+	ROOM_SEASONS_7ad	db
+	ROOM_SEASONS_7ae	db
+	ROOM_SEASONS_7af	db
+	ROOM_SEASONS_7b0	db
+	ROOM_SEASONS_7b1	db
+	ROOM_SEASONS_7b2	db
+	ROOM_SEASONS_7b3	db
+	ROOM_SEASONS_7b4	db
+	ROOM_SEASONS_7b5	db
+	ROOM_SEASONS_7b6	db
+	ROOM_SEASONS_7b7	db
+	ROOM_SEASONS_7b8	db
+	ROOM_SEASONS_7b9	db
+	ROOM_SEASONS_7ba	db
+	ROOM_SEASONS_7bb	db
+	ROOM_SEASONS_7bc	db
+	ROOM_SEASONS_7bd	db
+	ROOM_SEASONS_7be	db
+	ROOM_SEASONS_7bf	db
+	ROOM_SEASONS_7c0	db
+	ROOM_SEASONS_7c1	db
+	ROOM_SEASONS_7c2	db
+	ROOM_SEASONS_7c3	db
+	ROOM_SEASONS_7c4	db
+	ROOM_SEASONS_7c5	db
+	ROOM_SEASONS_7c6	db
+	ROOM_SEASONS_7c7	db
+	ROOM_SEASONS_7c8	db
+	ROOM_SEASONS_7c9	db
+	ROOM_SEASONS_7ca	db
+	ROOM_SEASONS_7cb	db
+	ROOM_SEASONS_7cc	db
+	ROOM_SEASONS_7cd	db
+	ROOM_SEASONS_7ce	db
+	ROOM_SEASONS_7cf	db
+	ROOM_SEASONS_7d0	db
+	ROOM_SEASONS_7d1	db
+	ROOM_SEASONS_7d2	db
+	ROOM_SEASONS_7d3	db
+	ROOM_SEASONS_7d4	db
+	ROOM_SEASONS_7d5	db
+	ROOM_SEASONS_7d6	db
+	ROOM_SEASONS_7d7	db
+	ROOM_SEASONS_7d8	db
+	ROOM_SEASONS_7d9	db
+	ROOM_SEASONS_7da	db
+	ROOM_SEASONS_7db	db
+	ROOM_SEASONS_7dc	db
+	ROOM_SEASONS_7dd	db
+	ROOM_SEASONS_7de	db
+	ROOM_SEASONS_7df	db
+	ROOM_SEASONS_7e0	db
+	ROOM_SEASONS_7e1	db
+	ROOM_SEASONS_7e2	db
+	ROOM_SEASONS_7e3	db
+	ROOM_SEASONS_7e4	db
+	ROOM_SEASONS_7e5	db
+	ROOM_SEASONS_7e6	db
+	ROOM_SEASONS_7e7	db
+	ROOM_SEASONS_7e8	db
+	ROOM_SEASONS_7e9	db
+	ROOM_SEASONS_7ea	db
+	ROOM_SEASONS_7eb	db
+	ROOM_SEASONS_7ec	db
+	ROOM_SEASONS_7ed	db
+	ROOM_SEASONS_7ee	db
+	ROOM_SEASONS_7ef	db
+	ROOM_SEASONS_7f0	db
+	ROOM_SEASONS_7f1	db
+	ROOM_SEASONS_7f2	db
+	ROOM_SEASONS_7f3	db
+	ROOM_SEASONS_7f4	db
+	ROOM_SEASONS_7f5	db
+	ROOM_SEASONS_7f6	db
+	ROOM_SEASONS_7f7	db
+	ROOM_SEASONS_7f8	db
+	ROOM_SEASONS_7f9	db
+	ROOM_SEASONS_7fa	db
+	ROOM_SEASONS_7fb	db
+	ROOM_SEASONS_7fc	db
+	ROOM_SEASONS_7fd	db
+	ROOM_SEASONS_7fe	db
+	ROOM_SEASONS_7ff	db
+
+	.ende
+.endif
