@@ -108,7 +108,7 @@ applyWarpDest_b04:
 	ldi a,(hl)		; $45e1
 	ld h,(hl)		; $45e2
 	ld l,a			; $45e3
-	ld a,(wWarpDestIndex)		; $45e4
+	ld a,(wWarpDestRoom)		; $45e4
 	ld b,a			; $45e7
 	ld a,(wc6e5)		; $45e8
 	add b			; $45eb
@@ -121,7 +121,7 @@ _label_04_032:
 	ldi a,(hl)		; $45db
 	ld h,(hl)		; $45dc
 	ld l,a			; $45dd
-	ld a,(wWarpDestIndex)		; $45de
+	ld a,(wWarpDestRoom)		; $45de
 _label_04_033:
 	ld c,a			; $45e1
 	ld b,$00		; $45e2
@@ -129,7 +129,7 @@ _label_04_033:
 	add hl,bc		; $45e5
 	add hl,bc		; $45e6
 	ldi a,(hl)		; $45e7
-	ld (wWarpDestIndex),a		; $45e8
+	ld (wWarpDestRoom),a		; $45e8
 	ldi a,(hl)		; $45eb
 	ld (wWarpDestPos),a		; $45ec
 	ldi a,(hl)		; $45ef
@@ -143,7 +143,7 @@ _label_04_033:
 	ld a,(wWarpDestGroup)		; $45ff
 	and $07			; $4602
 	ld (wActiveGroup),a		; $4604
-	ld a,(wWarpDestIndex)		; $4607
+	ld a,(wWarpDestRoom)		; $4607
 	ld (wActiveRoom),a		; $460a
 	ld hl,w1Link.enabled	; $460d
 	ld (hl),$03		; $4610
@@ -184,7 +184,7 @@ _label_04_036:
 .endif
 
 ;;
-; Sets wWarpDestIndex, wWarpDestGroup, wWarpDestTransition with suitable warp data. If no
+; Sets wWarpDestRoom, wWarpDestGroup, wWarpDestTransition with suitable warp data. If no
 ; good warp data is found, it defaults to warping to itself (the current position).
 ;
 ; This only handles tile-based warps, not screen-edge warps.
@@ -258,7 +258,7 @@ findWarpSourceAndDest:
 @foundWarpSource:
 	inc hl			; $4665
 	ldi a,(hl)		; $4666
-	ld (wWarpDestIndex),a		; $4667
+	ld (wWarpDestRoom),a		; $4667
 	ldi a,(hl)		; $466a
 	ld b,a			; $466b
 	swap a			; $466c
@@ -290,7 +290,7 @@ findWarpSourceAndDest:
 	add b			; $468d
 	ld (wDungeonFloor),a		; $468e
 	call getActiveRoomFromDungeonMapPosition		; $4691
-	ld (wWarpDestIndex),a		; $4694
+	ld (wWarpDestRoom),a		; $4694
 	ldh a,(<hFF8D)	; $4697
 	ld (wWarpDestPos),a		; $4699
 	ld a,(wActiveGroup)		; $469c
@@ -381,7 +381,7 @@ findScreenEdgeWarpSource:
 
 @foundWarpSource:
 	ldi a,(hl)		; $4708
-	ld (wWarpDestIndex),a		; $4709
+	ld (wWarpDestRoom),a		; $4709
 	ldi a,(hl)		; $470c
 	ld b,a			; $470d
 	swap a			; $470e

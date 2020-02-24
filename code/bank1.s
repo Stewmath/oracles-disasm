@@ -2282,7 +2282,7 @@ initiateFallDownHoleWarp:
 	ld (wDungeonFloor),a		; $4ad6
 
 	call getActiveRoomFromDungeonMapPosition		; $4ad9
-	ld (wWarpDestIndex),a		; $4adc
+	ld (wWarpDestRoom),a		; $4adc
 
 	call objectGetShortPosition		; $4adf
 	ld (wWarpDestPos),a		; $4ae2
@@ -2425,17 +2425,8 @@ cutscene17:
 	jp playSound		; $4bd1
 
 
-.ifdef ROM_AGES
-
 @warpDestVariables:
-	.db $85 $f5 $05 $77 $00
-
-.else; ROM_SEASONS
-
-@warpDestVariables:
-	.db $85 $9e $05 $77 $00
-
-.endif
+	m_HardcodedWarpA ROOM_TWINROVA_FIGHT, $05, $77, $00
 
 ;;
 ; Calls initWaveScrollValues, then sets every other line to have a normal scroll value.
@@ -3957,7 +3948,7 @@ cutscene04:
 	ld a,(wWarpDestGroup)		; $5c94
 	and $07			; $5c97
 	ld (wActiveGroup),a		; $5c99
-	ld a,(wWarpDestIndex)		; $5c9c
+	ld a,(wWarpDestRoom)		; $5c9c
 	ld (wActiveRoom),a		; $5c9f
 	ld a,(wLinkObjectIndex)		; $5ca2
 	ld h,a			; $5ca5

@@ -1731,8 +1731,8 @@ wWarpDestGroup: ; $cc47/$cc63
 ; Like wActiveGroup, except among other things, bit 7 can be set. Dunno what
 ; that means.
 	db
-wWarpDestIndex: ; $cc48/$cc64
-; This first holds the warp destination index, then the room index.
+wWarpDestRoom: ; $cc48/$cc64
+; This first holds the warp destination index, then (later) the room index.
 	db
 wWarpTransition: ; $cc49/$cc65
 ; Bits 0-3 are the half-byte given in WarpDest or StandardWarp macros.

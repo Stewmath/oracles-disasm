@@ -464,3 +464,23 @@
 		.dw \2+\3 | \4 | (:\2 - :gfxDataBank1a)
 	.ENDIF
 .endm
+
+
+; Defines 5 bytes loaded by the "setWarpDestVariables" function. Generally that function will
+; initiate a warp somewhere.
+;
+; TODO: Figure out what bit 7 of the group index does (and hence why we need 2 of these)
+;
+; Arg 1: Warp destination (see constants/rooms.s)
+; Arg 2: wWarpTransition
+; Arg 3: wWarpDestPos
+; Arg 4: wWarpTransition2
+.macro m_HardcodedWarpA
+	.db $80|(\1>>8), \1&$ff
+	.db \2, \3, \4
+.endm
+
+.macro m_HardcodedWarpB
+	.db \1>>8, \1&$ff
+	.db \2, \3, \4
+.endm

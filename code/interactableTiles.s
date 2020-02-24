@@ -539,16 +539,16 @@ _nextToOverworldKeyhole:
 ; b0: room index
 ; b1: Item needed to unlock the room (see constants/treasure.s)
 @group0:
-	.db <ROOM_05c TREASURE_GRAVEYARD_KEY
-	.db <ROOM_00a TREASURE_CROWN_KEY
-	.db <ROOM_0a5 TREASURE_LIBRARY_KEY ; unused since the present library doesn't have a keyhole
+	.db <ROOM_AGES_05c TREASURE_GRAVEYARD_KEY
+	.db <ROOM_AGES_00a TREASURE_CROWN_KEY
+	.db <ROOM_AGES_0a5 TREASURE_LIBRARY_KEY ; unused since the present library doesn't have a keyhole
 	.db $00
 @group1:
-	.db <ROOM_10e TREASURE_MERMAID_KEY
-	.db <ROOM_1a5 TREASURE_LIBRARY_KEY
+	.db <ROOM_AGES_10e TREASURE_MERMAID_KEY
+	.db <ROOM_AGES_1a5 TREASURE_LIBRARY_KEY
 	.db $00
 @group3:
-	.db <ROOM_30f TREASURE_OLD_MERMAID_KEY
+	.db <ROOM_AGES_30f TREASURE_OLD_MERMAID_KEY
 	.db $00
 
 @group2:
@@ -562,9 +562,9 @@ _nextToOverworldKeyhole:
 	.dw @group0
 
 @group0:
-        .db <ROOM_096 TREASURE_GNARLED_KEY
-	.db <ROOM_081 TREASURE_FLOODGATE_KEY
-	.db <ROOM_00d TREASURE_DRAGON_KEY
+	.db <ROOM_SEASONS_096 TREASURE_GNARLED_KEY
+	.db <ROOM_SEASONS_081 TREASURE_FLOODGATE_KEY
+	.db <ROOM_SEASONS_00d TREASURE_DRAGON_KEY
 	.db $00
 
 .endif ; ROM_SEASONS

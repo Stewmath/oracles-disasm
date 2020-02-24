@@ -18152,7 +18152,7 @@ _endgameCutsceneHandler_09_stage0:
 	call incCbc2		; $5494
 
 	; Outside black tower
-	ld bc,ROOM_176		; $5497
+	ld bc,ROOM_AGES_176		; $5497
 	call disableLcdAndLoadRoom		; $549a
 	call resetCamera		; $549d
 
@@ -18286,7 +18286,7 @@ _endgameCutsceneHandler_09_stage0:
 
 	call incCbc2		; $557a
 
-	ld bc,ROOM_165		; $557d
+	ld bc,ROOM_AGES_165		; $557d
 	call disableLcdAndLoadRoom		; $5580
 
 	call resetCamera		; $5583
@@ -19051,13 +19051,11 @@ _label_03_096:
 	ld (wActiveMusic),a		; $5b51
 	ld a,SNDCTRL_FAST_FADEOUT		; $5b54
 	call playSound		; $5b56
-	ld hl,$5b5f		; $5b59
+	ld hl,@warpDest		; $5b59
 	jp setWarpDestVariables		; $5b5c
-	add l			; $5b5f
-.DB $f4				; $5b60
-	rrca			; $5b61
-	ld d,a			; $5b62
-	inc bc			; $5b63
+
+@warpDest:
+	m_HardcodedWarpA ROOM_AGES_5f4, $0f, $57, $03
 
 
 ;;
@@ -20362,7 +20360,7 @@ _label_03_118:
 	jp updateAllObjects		; $6567
 	ld a,($cfc0)		; $656a
 	or a			; $656d
-	jr z,_label_03_119	; $656e
+	jr z,@label_03_119	; $656e
 	ld a,SND_FADEOUT		; $6570
 	call playSound		; $6572
 	xor a			; $6575
@@ -20376,9 +20374,9 @@ _label_03_118:
 	ld (wUseSimulatedInput),a		; $6587
 	inc a			; $658a
 	ld (wDisabledObjects),a		; $658b
-	ld hl,$65aa		; $658e
+	ld hl,@warpDest		; $658e
 	jp setWarpDestVariables		; $6591
-_label_03_119:
+@label_03_119:
 	ld a,(wFrameCounter)		; $6594
 	and $07			; $6597
 	ret nz			; $6599
@@ -20391,10 +20389,10 @@ _label_03_119:
 	rst_addAToHl			; $65a5
 	ld a,(hl)		; $65a6
 	jp loadPaletteHeader		; $65a7
-	add b			; $65aa
-	jr c,_label_03_120	; $65ab
-	ld b,l			; $65ad
-	add e			; $65ae
+
+@warpDest:
+	m_HardcodedWarpA ROOM_AGES_038, $0c, $45, $83
+
 	sbc d			; $65af
 	call nz,$c58f		; $65b0
 	call $65b9		; $65b3
@@ -20587,7 +20585,7 @@ _label_03_123:
 .dw $6747
 .dw $6768
 
-	ld hl,$6772		; $6747
+	ld hl,@warpDest1		; $6747
 	call setWarpDestVariables		; $674a
 	ld a,($cfd3)		; $674d
 	ld (wWarpDestPos),a		; $6750
@@ -20601,17 +20599,15 @@ _label_03_123:
 	jp playSound		; $6765
 	xor a			; $6768
 	ld (wLinkStateParameter),a		; $6769
-	ld hl,$6777		; $676c
+	ld hl,@warpDest2		; $676c
 	jp setWarpDestVariables		; $676f
-	add c			; $6772
-	add (hl)		; $6773
-	inc c			; $6774
-	ld (hl),l		; $6775
-	inc bc			; $6776
-	add h			; $6777
-	or $0f			; $6778
-	ld b,a			; $677a
-	inc bc			; $677b
+
+@warpDest1:
+	m_HardcodedWarpA ROOM_AGES_186, $0c, $75, $03
+
+@warpDest2:
+	m_HardcodedWarpA ROOM_AGES_4f6, $0f, $47, $03
+
 	call $6785		; $677c
 	call updateStatusBar		; $677f
 	jp updateAllObjects		; $6782
@@ -22287,7 +22283,7 @@ func_03_7493:
 	ret nz			; $752c
 	call getThisRoomFlags		; $752d
 	ld a,(wTmpcbbb)		; $7530
-	ld (wWarpDestIndex),a		; $7533
+	ld (wWarpDestRoom),a		; $7533
 	ld l,a			; $7536
 	set 7,(hl)		; $7537
 	ld a,$81		; $7539
@@ -22800,15 +22796,16 @@ _func_03_78e1:
 	ret nz			; $7963
 	xor a			; $7964
 	ld (wMenuDisabled),a		; $7965
-	ld hl,$7978		; $7968
+	ld hl,@warpDest		; $7968
 	call setWarpDestVariables		; $796b
 	ld a,$00		; $796e
 	ld (wcc50),a		; $7970
 	ld a,PALH_0f		; $7973
 	jp loadPaletteHeader		; $7975
-	add h			; $7978
-	ld ($870c),a		; $7979
-	add e			; $797c
+
+@warpDest:
+	m_HardcodedWarpA ROOM_AGES_4ea, $0c, $87, $83
+
 	call $7983		; $797d
 	jp updateStatusBar		; $7980
 	ld a,(wTmpcbb3)		; $7983
@@ -23422,13 +23419,12 @@ _label_03_188:
 	ld (wActiveMusic),a		; $7e2e
 	inc a			; $7e31
 	ld (wCutsceneIndex),a		; $7e32
-	ld hl,$7e3b		; $7e35
+	ld hl,@warpDest		; $7e35
 	jp setWarpDestVariables		; $7e38
-	add l			; $7e3b
-	rst_addAToHl			; $7e3c
-	dec b			; $7e3d
-	ld (hl),a		; $7e3e
-	inc bc			; $7e3f
+
+@warpDest:
+	m_HardcodedWarpA ROOM_AGES_5d7, $05, $77, $03
+
 	ld a,(wScreenShakeCounterY)		; $7e40
 	and $0f			; $7e43
 	ld a,SND_RUMBLE		; $7e45
@@ -29811,7 +29807,7 @@ _warpTransition6:
 	or $80			; $4ed3
 	ldi (hl),a		; $4ed5
 
-	; wWarpDestIndex
+	; wWarpDestRoom
 	ld a,(wActiveRoom)		; $4ed6
 	ldi (hl),a		; $4ed9
 
@@ -30419,7 +30415,7 @@ _checkForUnderwaterTransition:
 	jr @initializeWarp		; $51cd
 
 @initializeWarp:
-	ld (wWarpDestIndex),a		; $51cf
+	ld (wWarpDestRoom),a		; $51cf
 
 	ld a,(wActiveGroup)		; $51d2
 	add c			; $51d5
@@ -30477,7 +30473,7 @@ _linkState0c:
 	or $80			; $5217
 	ldi (hl),a		; $5219
 
-	; wWarpDestIndex
+	; wWarpDestRoom
 	ld a,(wDungeonWallmasterDestRoom)		; $521a
 	ldi (hl),a		; $521d
 
@@ -51478,8 +51474,8 @@ interactionCode0f:
 
 ; @addr{4146}
 @specialHoleRooms:
-	.dw ROOM_5e8 ; Patch's room
-	.dw ROOM_23e ; Toilet room
+	.dw ROOM_AGES_5e8 ; Patch's room
+	.dw ROOM_AGES_23e ; Toilet room
 	.db $00
 
 ;;
@@ -53458,7 +53454,7 @@ interactionCode1f:
 	ld hl,@@warpData		; $4b45
 	rst_addDoubleIndex			; $4b48
 	ldi a,(hl)		; $4b49
-	ld (wWarpDestIndex),a		; $4b4a
+	ld (wWarpDestRoom),a		; $4b4a
 	ld a,(hl)		; $4b4d
 	ld (wWarpDestPos),a		; $4b4e
 	ld a,$87		; $4b51
@@ -53526,7 +53522,7 @@ interactionCode1f:
 	jp setWarpDestVariables		; $4bb4
 
 @@warpDestVariables:
-	.db $85 $b8 $00 $93 $03
+	m_HardcodedWarpA ROOM_AGES_5b8, $00, $93, $03
 
 
 ; Subid 2: a warp in a cave in a waterfall
@@ -53556,7 +53552,7 @@ interactionCode1f:
 	jp interactionDelete		; $4be1
 
 @@warpDestVariables:
-	.db $00 $37 $0e $22 $03
+	m_HardcodedWarpB ROOM_AGES_037, $0e, $22, $03
 
 @@initialize:
 	call interactionIncState		; $4be9
@@ -55379,7 +55375,7 @@ interactionCode2d:
 	jp interactionIncState		; $55c7
 
 @warpDestVariables:
-	.db $84 $d4 $0c $67 $03
+	m_HardcodedWarpA ROOM_AGES_4d4, $0c, $67, $03
 
 
 ; ==============================================================================
@@ -66077,7 +66073,7 @@ _soldierSubid0a:
 	jp setWarpDestVariables		; $513f
 
 @warpDest:
-	.db $81 $46 $00 $34 $03
+	m_HardcodedWarpA ROOM_AGES_146, $00, $34, $03
 
 
 ; Red soldier that brings you to Ambi (just standing there after taking you)
@@ -70007,7 +70003,7 @@ interactionCode52:
 	jp setWarpDestVariables		; $662a
 
 @warpDest:
-	.db $85 $ec $00 $17 $03
+	m_HardcodedWarpA ROOM_AGES_5ec, $00, $17, $03
 
 
 ; Generic NPCs in the past library
@@ -70338,7 +70334,7 @@ _dog_subid01:
 	jp playSound		; $67fa
 
 @warpDest:
-	.db $82 $e7 $00 $25 $83
+	m_HardcodedWarpA ROOM_AGES_2e7, $00, $25, $83
 
 @substate2:
 	ret			; $6802
@@ -75264,7 +75260,7 @@ interactionCode7e:
 	ld b,c			; $44fc
 +
 	ld a,b			; $44fd
-	ldi (hl),a  ; [wWarpDestIndex] = b
+	ldi (hl),a  ; [wWarpDestRoom] = b
 	lda TRANSITION_DEST_0			; $44ff
 	ldi (hl),a  ; [wWarpTransition] = TRANSITION_DEST_0
 	ld (hl),$57 ; [wWarpDestPos] = $57
@@ -75351,7 +75347,7 @@ interactionCode7e:
 	ld hl,@herosCaveWarps		; $4572
 	rst_addDoubleIndex			; $4575
 	ldi a,(hl)		; $4576
-	ld (wWarpDestIndex),a		; $4577
+	ld (wWarpDestRoom),a		; $4577
 	ldi a,(hl)		; $457a
 	ld (wWarpDestPos),a		; $457b
 	ld a,$85		; $457e
@@ -75364,7 +75360,7 @@ interactionCode7e:
 
 
 ; Each row corresponds to a value for bits 0-3 of "X" (later var03).
-; First byte is "wWarpDestIndex" (room index), second is "wWarpDestPos".
+; First byte is "wWarpDestRoom" (room index), second is "wWarpDestPos".
 @herosCaveWarps:
 	.db $c2 $11
 	.db $c3 $2c
@@ -75681,7 +75677,7 @@ _interaction7f_subid00:
 	ldi a,(hl)		; $4733
 	ld (wWarpDestGroup),a		; $4734
 	ldi a,(hl)		; $4737
-	ld (wWarpDestIndex),a		; $4738
+	ld (wWarpDestRoom),a		; $4738
 	ldi a,(hl)		; $473b
 	ld (wWarpDestPos),a		; $473c
 	ld a,(hl)		; $473f
@@ -75696,8 +75692,8 @@ _interaction7f_subid00:
 
 
 ; Each row is warp data for getting an essence.
-;   b0: wWarpDestGroup (group)
-;   b1: wWarpDestIndex (room)
+;   b0: wWarpDestGroup
+;   b1: wWarpDestRoom
 ;   b2: wWarpDestPos
 ;   b3: wWarpTransition
 @essenceWarps:
@@ -78000,7 +77996,7 @@ _fairyHidingMinigame_subid01:
 	jp interactionDelete		; $539b
 
 @warpDestination:
-	.db $80 $82 $00 $64 $03
+	m_HardcodedWarpA ROOM_AGES_082, $00, $64, $03
 
 
 ; Checks for Link leaving the hide-and-seek area
@@ -78816,10 +78812,10 @@ interactionCode70:
 	jp setWarpDestVariables		; $5828
 
 @@pastWarpDest:
-	.db $82 $de $00 $57 $03
+	m_HardcodedWarpA ROOM_AGES_2de, $00, $57, $03
 
 @@presentWarpDest:
-	.db $82 $e5 $00 $57 $03
+	m_HardcodedWarpA ROOM_AGES_2e5, $00, $57, $03
 
 
 @checkSpawnNextTokay:
@@ -82897,7 +82893,7 @@ _miscPuzzles_subid07:
 
 	; Set bit 6 in the present version of this room
 	call getThisRoomFlags		; $6ebd
-	ld l,<ROOM_525		; $6ec0
+	ld l,<ROOM_AGES_525		; $6ec0
 	set 6,(hl)		; $6ec2
 	jp interactionDelete		; $6ec4
 
@@ -82998,7 +82994,7 @@ _miscPuzzles_subid08:
 	call getThisRoomFlags		; $6f4b
 	bit ROOMFLAG_BIT_KEYDOOR_UP,(hl)		; $6f4e
 	ret z			; $6f50
-	ld l,<ROOM_519		; $6f51
+	ld l,<ROOM_AGES_519		; $6f51
 	set ROOMFLAG_BIT_KEYDOOR_UP,(hl)		; $6f53
 	jp interactionDelete		; $6f55
 
@@ -83010,7 +83006,7 @@ _miscPuzzles_subid09:
 	call getThisRoomFlags		; $6f5b
 	bit ROOMFLAG_BIT_KEYDOOR_RIGHT,(hl)		; $6f5e
 	ret z			; $6f60
-	ld l,<ROOM_526		; $6f61
+	ld l,<ROOM_AGES_526		; $6f61
 	set ROOMFLAG_BIT_KEYDOOR_RIGHT,(hl)		; $6f63
 	jp interactionDelete		; $6f65
 
@@ -83146,7 +83142,7 @@ _miscPuzzles_subid0b:
 
 	call getThisRoomFlags		; $701b
 	set ROOMFLAG_BIT_80,(hl)		; $701e
-	ld l,<ROOM_54d		; $7020
+	ld l,<ROOM_AGES_54d		; $7020
 	set ROOMFLAG_BIT_80,(hl)		; $7022
 	ld e,Interaction.counter1		; $7024
 	ld a,$08		; $7026
@@ -83484,7 +83480,7 @@ _miscPuzzles_subid16:
 	jp interactionDelete		; $7201
 
 @warpDestData:
-	.db $80 $48 $01 $28 $03
+	m_HardcodedWarpA ROOM_AGES_048, $01, $28, $03
 
 
 
@@ -83492,7 +83488,7 @@ _miscPuzzles_subid16:
 _miscPuzzles_subid17:
 	call getThisRoomFlags		; $7209
 	push hl			; $720c
-	ld l,<ROOM_4c9		; $720d
+	ld l,<ROOM_AGES_4c9		; $720d
 	bit ROOMFLAG_BIT_ITEM,(hl)		; $720f
 	pop hl			; $7211
 	jr z,+			; $7212
@@ -83774,7 +83770,7 @@ _miscPuzzles_subid1f:
 	jp setWarpDestVariables		; $738a
 
 @warpDest:
-	.db $84 $9b $00 $12 $03
+	m_HardcodedWarpA ROOM_AGES_49b, $00, $12, $03
 
 
 
@@ -87769,9 +87765,9 @@ interactionCoded0:
 	ret			; $4c17
 
 @rooms:
-	.db <ROOM_036
-	.db <ROOM_037
-	.db <ROOM_027
+	.db <ROOM_AGES_036
+	.db <ROOM_AGES_037
+	.db <ROOM_AGES_027
 
 @xRanges:
 	.db $40 $70
@@ -88859,7 +88855,7 @@ interactionCode9a:
 @initSubid03:
 @initSubid04:
 	ld a,(wActiveRoom)		; $51b8
-	cp <ROOM_025			; $51bb
+	cp <ROOM_AGES_025			; $51bb
 	jr z,@@inBridgeRoom	; $51bd
 
 	ld a,(de)		; $51bf
@@ -89000,7 +88996,7 @@ interactionCode9a:
 	jr @delete2		; $52a2
 
 @warpDest:
-	.db $80 $25 $00 $48 $03
+	m_HardcodedWarpA ROOM_AGES_025, $00, $48, $03
 
 
 @loadScript:
@@ -89201,7 +89197,7 @@ interactionCode9b:
 	jp setWarpDestVariables		; $53df
 
 @tokayWarpDest:
-	.db $81 $aa $00 $42 $03
+	m_HardcodedWarpA ROOM_AGES_1aa, $00, $42, $03
 
 @oscillateY:
 	ld a,(wFrameCounter)		; $53e7
@@ -89884,20 +89880,20 @@ interactionCode9e:
 ; @addr{57e5}
 @swapRoomLayouts:
 	call getThisRoomFlags		; $57e5
-	ld l,<ROOM_140		; $57e8
+	ld l,<ROOM_AGES_140		; $57e8
 	call @@xor		; $57ea
 	call @@xor		; $57ed
 	call @@xor		; $57f0
-	ld l,<ROOM_150		; $57f3
+	ld l,<ROOM_AGES_150		; $57f3
 	call @@xor		; $57f5
 	call @@xor		; $57f8
 	call @@xor		; $57fb
 	dec h			; $57fe
-	ld l,<ROOM_040		; $57ff
+	ld l,<ROOM_AGES_040		; $57ff
 	call @@xor		; $5801
 	call @@xor		; $5804
 	call @@xor		; $5807
-	ld l,<ROOM_050		; $580a
+	ld l,<ROOM_AGES_050		; $580a
 	call @@xor		; $580c
 	call @@xor		; $580f
 
@@ -93339,7 +93335,7 @@ _vire_subid1:
 	.dw @state2
 
 @state0:
-	ld a,(wGroup5Flags+(<ROOM_5e7))		; $6b14
+	ld a,(wGroup5Flags+(<ROOM_AGES_5e7))		; $6b14
 	bit 6,a			; $6b17
 	jp nz,interactionDelete		; $6b19
 
@@ -94520,18 +94516,18 @@ interactionCodec2:
 	ld (de),a		; $7281
 	call nz,interactionSetAnimation		; $7282
 	call objectCheckCollidedWithLink_notDead		; $7285
-	jr nc,_label_0b_317	; $7288
+	jr nc,@label_0b_317	; $7288
 	call checkLinkVulnerable		; $728a
-	jr nc,_label_0b_317	; $728d
-	ld hl,$729b		; $728f
+	jr nc,@label_0b_317	; $728d
+	ld hl,@warpDest		; $728f
 	call setWarpDestVariables		; $7292
 	jp interactionIncState		; $7295
-_label_0b_317:
+@label_0b_317:
 	jp interactionAnimate		; $7298
-	add l			; $729b
-	ld hl,sp+$01		; $729c
-	ld d,(hl)		; $729e
-	inc bc			; $729f
+
+@warpDest:
+	m_HardcodedWarpA ROOM_AGES_5f8, $01, $56, $03
+
 	ld e,$44		; $72a0
 	ld a,(de)		; $72a2
 	rst_jumpTable			; $72a3
@@ -129819,7 +129815,7 @@ _kingMoblin_state15:
 	.db $68 $38 $58 $48
 
 @warpDest:
-	.db $80 $09 $00 $45 $03
+	m_HardcodedWarpA ROOM_AGES_009, $00, $45, $03
 
 
 ;;
@@ -132158,9 +132154,9 @@ enemyCode04:
 
 	call getThisRoomFlags		; $508b
 	set 7,(hl)		; $508e
-	ld l,<ROOM_5f1		; $5090
+	ld l,<ROOM_AGES_5f1		; $5090
 	set 7,(hl)		; $5092
-	ld l,<ROOM_5f5		; $5094
+	ld l,<ROOM_TWINROVA_FIGHT		; $5094
 	set 7,(hl)		; $5096
 
 	ld a,SNDCTRL_STOPMUSIC		; $5098
@@ -132249,7 +132245,7 @@ _ganon_state_uninitialized:
 	ld (de),a		; $5115
 
 	call disableLcd		; $5116
-	ld a,<ROOM_5f5		; $5119
+	ld a,<ROOM_TWINROVA_FIGHT		; $5119
 	ld (wActiveRoom),a		; $511b
 	ld a,$03		; $511e
 	ld (wTwinrovaTileReplacementMode),a		; $5120
@@ -133950,7 +133946,7 @@ _veranFinal_turtleForm_stateA:
 	ld a,(wPaletteThread_mode)		; $5a9f
 	or a			; $5aa2
 	ret nz			; $5aa3
-	ld hl,wGroup4Flags+(<ROOM_4fc)		; $5aa4
+	ld hl,wGroup4Flags+(<ROOM_AGES_4fc)		; $5aa4
 	set 7,(hl)		; $5aa7
 	ld a,CUTSCENE_BLACK_TOWER_ESCAPE		; $5aa9
 	ld (wCutsceneTrigger),a		; $5aab
@@ -139070,10 +139066,10 @@ _interactiondc_subid10:
 	jp interactionDelete		; $7924
 
 @warp1:
-	.db $84 $e7 $93 $ff $01
+	m_HardcodedWarpA ROOM_AGES_4e7, $93, $ff, $01
 
 @warp2:
-	.db $84 $f3 $93 $ff $01
+	m_HardcodedWarpA ROOM_AGES_4f3, $93, $ff, $01
 
 
 ; Gives D6 Past boss key when you get D6 Present boss key
@@ -152627,7 +152623,7 @@ puddleAnimationFrames:
 .include "build/data/partOamData.s"
 
 
-.include "code/bank15.s"
+.include "code/ages/bank15.s"
 
 
 .BANK $16 SLOT 1

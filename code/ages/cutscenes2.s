@@ -192,7 +192,7 @@ warpToMoblinKeepUnderground:
 	jp setWarpDestVariables		; $7d95
 
 @warpDestVars:
-	.db $87 $01 $00 $03 $03 
+	m_HardcodedWarpA ROOM_AGES_701, $00, $03, $03
 
 ;;
 ; @addr{7d9d}
