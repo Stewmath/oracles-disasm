@@ -1818,7 +1818,13 @@
 .define INTERACID_TIMEPORTAL_SPAWNER	$e1
 
 ;;
-; Eyeball that looks at Link
+; Eyeball that looks at Link. (Note, spawners aren't designed to work in small rooms?)
+;
+; @subid_00{Like subid 2 but the eye extends a but further}
+; @subid_01{Spawner for subid 2; spawns eyeballs at each corresponding statue position}
+; @subid_02{Normal eyeball looking at Link}
+; @subid_03{Spawner for subid 4 (final dungeon eyeball puzzle)}
+; @subid_04{Final dungeon eyeballs (looking away from direction to go)}
 .define INTERACID_STATUE_EYEBALL	$e2
 
 ;;

@@ -2121,7 +2121,8 @@ wChestContentsOverride: ; $cca3/$ccbd
 ; Used for farore's secrets, maybe also the chest minigame?
 	dw
 
-wcca5: ; $cca5
+wEyePuzzleCorrectDirection: ; $cca5
+; Correct direction to move in for the scrambled rooms in the final dungeon
 	db
 wBlockPushAngle: ; $cca6
 ; The angle a block is being pushed toward? bit 7 does something?

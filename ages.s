@@ -138009,94 +138009,136 @@ interactionCodee0:
 	ret nz			; $6f4f
 	jp interactionDelete		; $6f50
 
+
+; ==============================================================================
+; INTERACID_STATUE_EYEBALL
+; ==============================================================================
 interactionCodee2:
-	ld e,$42		; $6f53
+	ld e,Interaction.subid		; $6f53
 	ld a,(de)		; $6f55
 	rst_jumpTable			; $6f56
-.dw $6f61
-.dw $6fcc
-.dw $6f7b
-.dw $6ff3
-.dw $700f
+	.dw @subid0
+	.dw @subid1
+	.dw @subid2
+	.dw @subid3
+	.dw @subid4
+
+@subid0:
 	call checkInteractionState		; $6f61
-	jr z,_label_10_272	; $6f64
+	jr z,@state0Common	; $6f64
+
+	; State 1
 	ld a,(wScrollMode)		; $6f66
 	and $01			; $6f69
 	ret z			; $6f6b
-	call $6fb0		; $6f6c
+	call @getDirectionToFace		; $6f6c
 	jp interactionSetAnimation		; $6f6f
-_label_10_272:
+
+; Used by subid 0, 2, and 4
+@state0Common:
 	ld a,$01		; $6f72
 	ld (de),a		; $6f74
 	call interactionInitGraphics		; $6f75
 	jp objectSetVisible83		; $6f78
+
+@subid2:
 	call checkInteractionState		; $6f7b
-	jr z,_label_10_272	; $6f7e
+	jr z,@state0Common	; $6f7e
+
+	; State 1
 	ld a,(wScrollMode)		; $6f80
 	and $01			; $6f83
 	ret z			; $6f85
-	call $6fad		; $6f86
-	ld hl,$6f9d		; $6f89
+
+	call @centerOnTileAndGetDirectionToFace		; $6f86
+
+@offsetPositionTowardLookingDirection:
+	ld hl,@lowPositionValues		; $6f89
 	rst_addDoubleIndex			; $6f8c
-	ld e,$4b		; $6f8d
+	ld e,Interaction.yh		; $6f8d
 	ld a,(de)		; $6f8f
 	and $f0			; $6f90
 	or (hl)			; $6f92
 	ld (de),a		; $6f93
 	inc hl			; $6f94
-	ld e,$4d		; $6f95
+	ld e,Interaction.xh		; $6f95
 	ld a,(de)		; $6f97
 	and $f0			; $6f98
 	or (hl)			; $6f9a
 	ld (de),a		; $6f9b
 	ret			; $6f9c
-	dec b			; $6f9d
-	ld ($0905),sp		; $6f9e
-	ld b,$09		; $6fa1
-	rlca			; $6fa3
-	add hl,bc		; $6fa4
-	rlca			; $6fa5
-	ld ($0707),sp		; $6fa6
-	ld b,$07		; $6fa9
-	dec b			; $6fab
-	rlca			; $6fac
+
+; Values for the lower 4 bits of the Y/X position, based on the direction it's facing. For subid
+; 2 and 4 only (they are offset further in the direction they're looking).
+@lowPositionValues:
+	.db $05 $08
+	.db $05 $09
+	.db $06 $09
+	.db $07 $09
+	.db $07 $08
+	.db $07 $07
+	.db $06 $07
+	.db $05 $07
+
+;;
+; @addr{6fad}
+@centerOnTileAndGetDirectionToFace:
 	call objectCenterOnTile		; $6fad
+
+;;
+; Gets the direction the angle should face, as a number from 0-7. (This isn't a standard direction
+; or angle value.)
+;
+; @param[out]	a	Direction (0-7)
+; @addr{6fb0}
+@getDirectionToFace:
 	call objectGetAngleTowardLink		; $6fb0
 	ld b,a			; $6fb3
 	and $07			; $6fb4
-	jr z,_label_10_273	; $6fb6
+	jr z,@@returnValue	; $6fb6
 	cp $01			; $6fb8
-	jr z,_label_10_273	; $6fba
+	jr z,@@returnValue	; $6fba
 	cp $07			; $6fbc
-	jr z,_label_10_273	; $6fbe
+	jr z,@@returnValue	; $6fbe
 	ld a,b			; $6fc0
 	and $fc			; $6fc1
 	or $04			; $6fc3
 	ld b,a			; $6fc5
-_label_10_273:
+@@returnValue:
 	ld a,b			; $6fc6
 	rrca			; $6fc7
 	rrca			; $6fc8
 	and $07			; $6fc9
 	ret			; $6fcb
-	ld e,$02		; $6fcc
-_label_10_274:
-	ld bc,$cfae		; $6fce
-_label_10_275:
+
+
+; Spawner for subid 2
+@subid1:
+	ld e,$02 ; subid
+
+@spawnChildren:
+	ld bc,wRoomLayout + LARGE_ROOM_WIDTH-1 + (LARGE_ROOM_HEIGHT-1)*16
+--
 	ld a,(bc)		; $6fd1
-	cp $ee			; $6fd2
-	call z,$6fdd		; $6fd4
+	cp TILEINDEX_EYE_STATUE			; $6fd2
+	call z,@spawnChild		; $6fd4
 	dec c			; $6fd7
-	jr nz,_label_10_275	; $6fd8
+	jr nz,--		; $6fd8
 	jp interactionDelete		; $6fda
+
+;;
+; @param	c	position
+; @param	e	subid
+; @addr{6fdd}
+@spawnChild:
 	call getFreeInteractionSlot		; $6fdd
 	ret nz			; $6fe0
-	ld (hl),$e2		; $6fe1
+	ld (hl),INTERACID_STATUE_EYEBALL		; $6fe1
 	inc l			; $6fe3
-	ld (hl),e		; $6fe4
+	ld (hl),e ; [subid]
 	push bc			; $6fe5
 	call convertShortToLongPosition_paramC		; $6fe6
-	ld l,$4b		; $6fe9
+	ld l,Interaction.yh		; $6fe9
 	dec b			; $6feb
 	dec b			; $6fec
 	ld (hl),b		; $6fed
@@ -138105,53 +138147,74 @@ _label_10_275:
 	ld (hl),c		; $6ff0
 	pop bc			; $6ff1
 	ret			; $6ff2
+
+
+; Spawner for subid 4
+@subid3:
 	call returnIfScrollMode01Unset		; $6ff3
 	ld a,(wEyePuzzleTransitionCounter)		; $6ff6
 	cp $06			; $6ff9
 	ld a,$00		; $6ffb
-	jr nc,_label_10_277	; $6ffd
-_label_10_276:
+	jr nc,++		; $6ffd
+
+	; Choose random direction to go
+--
 	call getRandomNumber		; $6fff
 	and $03			; $7002
 	cp $02			; $7004
-	jr z,_label_10_276	; $7006
-_label_10_277:
-	ld (wcca5),a		; $7008
+	jr z,--			; $7006
+++
+	ld (wEyePuzzleCorrectDirection),a		; $7008
 	ld e,$04		; $700b
-	jr _label_10_274		; $700d
-	ld e,$44		; $700f
+	jr @spawnChildren		; $700d
+
+
+@subid4:
+	ld e,Interaction.state		; $700f
 	ld a,(de)		; $7011
 	rst_jumpTable			; $7012
-.dw $6f72
-.dw $7019
-.dw objectSetVisible83
+	.dw @state0Common
+	.dw @@state1
+	.dw objectSetVisible83
+
+@@state1:
 	call checkInteractionState2	; $7019
-	jr z,_label_10_280	; $701c
+	jr z,@substate0	; $701c
+
 	call interactionDecCounter1		; $701e
-	jr nz,_label_10_279	; $7021
+	jr nz,@eyeSpinning	; $7021
+
+	; Eye is done spinning.
 	call interactionIncState		; $7023
-	ld a,(wcca5)		; $7026
+	ld a,(wEyePuzzleCorrectDirection)		; $7026
 	ld b,a			; $7029
-_label_10_278:
+
+	; Abuse the frame counter to get a random direction to face? (I guess this is so that all of
+	; the eyes are guaranteed to point in various different directions? But this screws up the
+	; frame counter value. I don't like it.)
+--
 	ld hl,wFrameCounter		; $702a
 	inc (hl)		; $702d
 	ld a,(hl)		; $702e
 	and $03			; $702f
 	cp b			; $7031
-	jr z,_label_10_278	; $7032
+	jr z,--			; $7032
+
 	add a			; $7034
-	jp $6f89		; $7035
-_label_10_279:
+	jp @offsetPositionTowardLookingDirection		; $7035
+
+@eyeSpinning:
 	ld a,(wFrameCounter)		; $7038
 	and $03			; $703b
 	ret nz			; $703d
 	call getRandomNumber		; $703e
 	and $07			; $7041
-	jp $6f89		; $7043
-_label_10_280:
-	ld a,$3c		; $7046
-	ld (de),a		; $7048
-	ld e,$46		; $7049
+	jp @offsetPositionTowardLookingDirection		; $7043
+
+@substate0:
+	ld a,60		; $7046
+	ld (de),a ; [state2] = nonzero
+	ld e,Interaction.counter1		; $7049
 	ld (de),a		; $704b
 	ret			; $704c
 

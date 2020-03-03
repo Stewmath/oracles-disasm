@@ -4878,9 +4878,9 @@ screenTransitionEyePuzzle:
 	ld a,(wScreenTransitionDirection)		; $5feb
 	and $03			; $5fee
 	ld b,a			; $5ff0
-	ld a,(wcca5)		; $5ff1
+	ld a,(wEyePuzzleCorrectDirection)		; $5ff1
 	cp b			; $5ff4
-	jr z, +
+	jr z,+
 	call clearEyePuzzleVars		; $5ff7
 	jr ++
 +

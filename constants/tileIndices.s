@@ -54,6 +54,7 @@
 .define TILEINDEX_WHIRLPOOL		$e9
 .define TILEINDEX_DUNGEON_DOOR_1	$ee ; overworld only
 .define TILEINDEX_DUNGEON_DOOR_2	$ef ; overworld only
+.define TILEINDEX_EYE_STATUE		$ee ; dungeon only (eyeballs spawn on these)
 .define TILEINDEX_CHEST_OPENED		$f0
 .define TILEINDEX_CHEST			$f1
 .define TILEINDEX_SIGN			$f2
