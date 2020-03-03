@@ -1103,33 +1103,46 @@ gameCompleteDialogScript:
 	writememory wTmpcfc0.genericCutscene.cfde, $01
 	scriptend
 
-script4b31:
-	writememory $cba0 $01
-script4b35:
+; ==============================================================================
+; INTERACID_RING_HELP_BOOK
+; ==============================================================================
+
+ringHelpBookSubid1Reset:
+	writememory wTextIsActive, $01
+
+ringHelpBookSubid1Script:
 	checkabutton
-	showtextnonexitablelowindex $19
-	jumpiftextoptioneq $01 script4b31
-	showtextlowindex $1a
-	jump2byte script4b35
-script4b40:
-	writememory $cba0 $01
-script4b44:
+	showtextnonexitablelowindex <TX_3019
+	jumpiftextoptioneq $01, ringHelpBookSubid1Reset
+	showtextlowindex <TX_301a
+	jump2byte ringHelpBookSubid1Script
+
+
+ringHelpBookSubid0Reset:
+	writememory wTextIsActive, $01
+
+ringHelpBookSubid0Script:
 	checkabutton
 	showtextnonexitablelowindex $20
-	jumpiftextoptioneq $01 script4b40
-script4b4b:
-	showtextnonexitablelowindex $25
-	jumpiftextoptioneq $01 script4b5d
-	jumpiftextoptioneq $02 script4b40
-	showtextnonexitablelowindex $3d
-	jumpiftextoptioneq $01 script4b40
-	jump2byte script4b4b
-script4b5d:
-	showtextnonexitablelowindex $26
-	jumpiftextoptioneq $01 script4b40
-	jump2byte script4b4b
+	jumpiftextoptioneq $01, ringHelpBookSubid0Reset
+
+@showAgain:
+	showtextnonexitablelowindex <TX_3025
+	jumpiftextoptioneq $01, @option1
+@option0:
+	jumpiftextoptioneq $02, ringHelpBookSubid0Reset
+	showtextnonexitablelowindex <TX_303d
+	jumpiftextoptioneq $01, ringHelpBookSubid0Reset
+	jump2byte @showAgain
+@option1:
+	showtextnonexitablelowindex <TX_3026
+	jumpiftextoptioneq $01, ringHelpBookSubid0Reset
+	jump2byte @showAgain
 
 
+; ==============================================================================
+; INTERACID_DUNGEON_SCRIPT
+; ==============================================================================
 .include "scripts/ages/dungeonScripts.s"
 
 

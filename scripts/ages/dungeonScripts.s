@@ -1,3 +1,5 @@
+; These are a bunch of scripts used by INTERACID_DUNGEON_SCRIPT.
+
 dungeonScript_spawnChestOnTriggerBit0:
 	stopifitemflagset
 	checkflagset $00 wActiveTriggers

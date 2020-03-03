@@ -138155,44 +138155,62 @@ _label_10_280:
 	ld (de),a		; $704b
 	ret			; $704c
 
+
+; ==============================================================================
+; INTERACID_RING_HELP_BOOK
+; ==============================================================================
 interactionCodee5:
 	ld a,(wTextIsActive)		; $704d
 	or a			; $7050
-	jr nz,_label_10_281	; $7051
+	jr nz,@doneTextFlagSetup	; $7051
+
 	ld a,$02		; $7053
 	ld (wTextboxPosition),a		; $7055
 	ld a,TEXTBOXFLAG_DONTCHECKPOSITION		; $7058
 	ld (wTextboxFlags),a		; $705a
-_label_10_281:
-	call $7063		; $705d
+@doneTextFlagSetup:
+
+	call @runState		; $705d
 	jp objectSetPriorityRelativeToLink_withTerrainEffects		; $7060
-	ld e,$44		; $7063
+
+@runState:
+	ld e,Interaction.state		; $7063
 	ld a,(de)		; $7065
 	rst_jumpTable			; $7066
-.dw $706b
-.dw $7097
+	.dw @state0
+	.dw @state1
+
+@state0:
 	call interactionInitGraphics		; $706b
-	ld a,$30		; $706e
+	ld a,>TX_3000		; $706e
 	call interactionSetHighTextIndex		; $7070
 	call interactionSetAlwaysUpdateBit		; $7073
 	call interactionIncState		; $7076
 	ld a,$06		; $7079
 	call objectSetCollideRadius		; $707b
-	ld e,$42		; $707e
+
+	ld e,Interaction.subid		; $707e
 	ld a,(de)		; $7080
-	ld hl,script4b44		; $7081
+	ld hl,ringHelpBookSubid0Script		; $7081
 	or a			; $7084
-	jr z,_label_10_282	; $7085
-	ld e,$5c		; $7087
+	jr z,++			; $7085
+
+	ld e,Interaction.oamFlags		; $7087
 	ld a,(de)		; $7089
 	inc a			; $708a
 	ld (de),a		; $708b
-	ld hl,script4b35		; $708c
-_label_10_282:
+	ld hl,ringHelpBookSubid1Script		; $708c
+++
 	call interactionSetScript		; $708f
-	ld e,$71		; $7092
+	ld e,Interaction.pressedAButton		; $7092
 	jp objectAddToAButtonSensitiveObjectList		; $7094
+
+@state1:
 	jp interactionRunScript		; $7097
+
+
+; ==============================================================================
+
 
 ; Input values for the intro cutscene in the temple
 templeIntro_simulatedInput:
