@@ -1578,8 +1578,11 @@
 .define INTERACID_HUMAN_VERAN		$bb
 
 ;;
-; Twinrova again?
-.define INTERACID_bc			$bc
+; Twinrova again? TODO: better name.
+;
+; @subid_00-01{?}
+; @subid_02-03{?}
+.define INTERACID_TWINROVA_3		$bc
 
 ;;
 .define INTERACID_bd			$bd

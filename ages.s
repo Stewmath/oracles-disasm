@@ -94150,10 +94150,12 @@ interactionCodebb:
 
 
 ; ==============================================================================
-; INTERACID_bc
+; INTERACID_TWINROVA_3
 ;
 ; Variables:
-;   var3f: ?
+;   var3c: A target position index for the data in var3e/var3f.
+;   var3d: # of values in the position list (var3c must stop here).
+;   var3e/var3f: A pointer to a list of target positions.
 ; ==============================================================================
 interactionCodebc:
 	ld e,Interaction.state		; $6deb
@@ -94173,36 +94175,37 @@ interactionCodebc:
 
 @initSubid0:
 @initSubid1:
-	call $6e33		; $6dff
-	ld l,$4f		; $6e02
+	call @commonInit		; $6dff
+	ld l,Interaction.zh		; $6e02
 	ld (hl),$fb		; $6e04
-	ld l,$42		; $6e06
+	ld l,Interaction.subid		; $6e06
 	ld a,(hl)		; $6e08
-	call $6fd7		; $6e09
+	call @readPositionTable		; $6e09
 	jp @state1		; $6e0c
 
 @initSubid2:
-	call $6e33		; $6e0f
-	ld l,$4f		; $6e12
+	call @commonInit		; $6e0f
+	ld l,Interaction.zh		; $6e12
 	ld (hl),$f0		; $6e14
 	ld a,$02		; $6e16
-	call $6fd7		; $6e18
+	call @readPositionTable		; $6e18
 	ld a,$04		; $6e1b
 	call interactionSetAnimation		; $6e1d
 	jp @state1		; $6e20
 
 @initSubid3:
-	call $6e33		; $6e23
+	call @commonInit		; $6e23
 	ld a,$02		; $6e26
-	call $6fd7		; $6e28
+	call @readPositionTable		; $6e28
 	ld a,$01		; $6e2b
 	call interactionSetAnimation		; $6e2d
 	jp @state1		; $6e30
 
+@commonInit:
 	call interactionInitGraphics		; $6e33
 	call objectSetVisiblec0		; $6e36
 	call interactionSetAlwaysUpdateBit		; $6e39
-	call $6f2f		; $6e3c
+	call @loadOamFlags		; $6e3c
 	call interactionIncState		; $6e3f
 	ld l,Interaction.speed		; $6e42
 	ld (hl),SPEED_200		; $6e44
@@ -94234,105 +94237,118 @@ interactionCodebc:
 	.dw @subid0Substate4
 
 @subid0Substate0:
-	call $6f5f		; $6e69
-	call $6f91		; $6e6c
-	call $6f7b		; $6e6f
-	call c,$6fa3		; $6e72
-	jp nc,$6f2c		; $6e75
+	call @moveTowardTargetPosition		; $6e69
+	call @updateAnimationIndex		; $6e6c
+
+	call @checkReachedTargetPosition		; $6e6f
+	call c,@nextTargetPosition		; $6e72
+	jp nc,@animate		; $6e75
+
+	; Exhausted position list
 	ld h,d			; $6e78
-	ld l,$45		; $6e79
+	ld l,Interaction.state2		; $6e79
 	ld (hl),$01		; $6e7b
-	ld l,$47		; $6e7d
-	ld (hl),$28		; $6e7f
-	ld l,$42		; $6e81
+	ld l,Interaction.counter2		; $6e7d
+	ld (hl),40		; $6e7f
+
+	ld l,Interaction.subid		; $6e81
 	ld a,(hl)		; $6e83
 	or a			; $6e84
-	jr nz,@label_0b_297	; $6e85
+	jr nz,+			; $6e85
+
 	ld a,$00		; $6e87
-	jr @label_0b_299		; $6e89
-@label_0b_297:
+	jr +++			; $6e89
++
 	cp $01			; $6e8b
-	jr nz,@label_0b_298	; $6e8d
+	jr nz,++		; $6e8d
+
 	ld a,$01		; $6e8f
-	jr @label_0b_299		; $6e91
-@label_0b_298:
+	jr +++			; $6e91
+++
 	ld a,$02		; $6e93
-@label_0b_299:
++++
 	call interactionSetAnimation		; $6e95
-	jp $6f2c		; $6e98
+	jp @animate		; $6e98
 
 @subid0Substate1:
-	call $6f3f		; $6e9b
-	call $6f2c		; $6e9e
+	call @updateFloating		; $6e9b
+	call @animate		; $6e9e
 	call interactionDecCounter2		; $6ea1
 	ret nz			; $6ea4
-	ld l,$45		; $6ea5
+
+	ld l,Interaction.state2		; $6ea5
 	inc (hl)		; $6ea7
-	ld l,$47		; $6ea8
-	ld (hl),$28		; $6eaa
+	ld l,Interaction.counter2		; $6ea8
+	ld (hl),40		; $6eaa
+
+@func_6eac:
 	ld hl,wTmpcfc0.genericCutscene.cfc6		; $6eac
 	inc (hl)		; $6eaf
 	ld a,(hl)		; $6eb0
 	cp $02			; $6eb1
 	ret nz			; $6eb3
 	ld (hl),$00		; $6eb4
-	ld hl,$cfc0		; $6eb6
+	ld hl,wTmpcfc0.genericCutscene.state		; $6eb6
 	set 0,(hl)		; $6eb9
 	ret			; $6ebb
 
 @subid0Substate2:
-	call $6f3f		; $6ebc
-	call $6f2c		; $6ebf
-	ld a,($cfc0)		; $6ec2
+	call @updateFloating		; $6ebc
+	call @animate		; $6ebf
+	ld a,(wTmpcfc0.genericCutscene.state)		; $6ec2
 	bit 0,a			; $6ec5
 	ret nz			; $6ec7
 	call interactionDecCounter2		; $6ec8
 	ret nz			; $6ecb
-	ld l,$45		; $6ecc
+
+	ld l,Interaction.state2		; $6ecc
 	inc (hl)		; $6ece
-	ld l,$48		; $6ecf
+	ld l,Interaction.direction		; $6ecf
 	ld (hl),$ff		; $6ed1
-	ld l,$42		; $6ed3
+	ld l,Interaction.subid		; $6ed3
 	ld a,(hl)		; $6ed5
 	add $04			; $6ed6
-	jp $6fd7		; $6ed8
+	jp @readPositionTable		; $6ed8
 
 @subid0Substate3:
-	call $6f5f		; $6edb
-	call $6f7b		; $6ede
-	call c,$6fa3		; $6ee1
-	jr c,@label_0b_301	; $6ee4
-	call $6f5f		; $6ee6
-	ld e,$42		; $6ee9
+	call @moveTowardTargetPosition		; $6edb
+	call @checkReachedTargetPosition		; $6ede
+	call c,@nextTargetPosition		; $6ee1
+	jr c,@@looped	; $6ee4
+
+	call @moveTowardTargetPosition		; $6ee6
+	ld e,Interaction.subid		; $6ee9
 	ld a,(de)		; $6eeb
 	cp $02			; $6eec
-	call nz,$6f91		; $6eee
-	call $6f7b		; $6ef1
-	call c,$6fa3		; $6ef4
-	jr nc,@label_0b_304	; $6ef7
-@label_0b_301:
-	ld e,$42		; $6ef9
+	call nz,@updateAnimationIndex		; $6eee
+	call @checkReachedTargetPosition		; $6ef1
+	call c,@nextTargetPosition		; $6ef4
+	jr nc,@animate	; $6ef7
+
+@@looped:
+	ld e,Interaction.subid		; $6ef9
 	ld a,(de)		; $6efb
 	cp $02			; $6efc
-	jr c,@label_0b_302	; $6efe
-	call $6eac		; $6f00
+	jr c,++			; $6efe
+
+	call @func_6eac		; $6f00
 	jp interactionDelete		; $6f03
-@label_0b_302:
-	call $6eac		; $6f06
+++
+	call @func_6eac		; $6f06
 	ld h,d			; $6f09
-	ld l,$45		; $6f0a
+	ld l,Interaction.state2		; $6f0a
 	inc (hl)		; $6f0c
 	ret			; $6f0d
 
 @subid0Substate4:
-	jp $6f2c		; $6f0e
+	jp @animate		; $6f0e
 
 
 @subid2State1:
 	call checkInteractionState2		; $6f11
-	jr nz,@label_0b_303	; $6f14
-	call $6f3f		; $6f16
-	call $6f2c		; $6f19
+	jr nz,++		; $6f14
+	call @updateFloating		; $6f16
+	call @animate		; $6f19
 	ld a,(wTmpcfc0.genericCutscene.state)		; $6f1c
 	bit 0,a			; $6f1f
 	ret z			; $6f21
@@ -94340,22 +94356,29 @@ interactionCodebc:
 	ld l,Interaction.direction		; $6f25
 	ld (hl),$ff		; $6f27
 	ret			; $6f29
-
-@label_0b_303:
+++
 	jr @subid0Substate3		; $6f2a
 
-@label_0b_304:
+@animate:
 	jp interactionAnimate		; $6f2c
-	ld e,$42		; $6f2f
+
+@loadOamFlags:
+	ld e,Interaction.subid		; $6f2f
 	ld a,(de)		; $6f31
-	ld hl,$6f3b		; $6f32
+	ld hl,@oamFlags		; $6f32
 	rst_addAToHl			; $6f35
 	ld a,(hl)		; $6f36
-	ld e,$5c		; $6f37
+	ld e,Interaction.oamFlags		; $6f37
 	ld (de),a		; $6f39
 	ret			; $6f3a
-	ld (bc),a		; $6f3b
-	ld bc,$0100		; $6f3c
+
+@oamFlags:
+	.db $02 $01 $00 $01
+
+;;
+; Updates z values to "float" up and down?
+; @addr{6f3f}
+@updateFloating:
 	ld a,(wFrameCounter)		; $6f3f
 	and $07			; $6f42
 	ret nz			; $6f44
@@ -94363,99 +94386,124 @@ interactionCodebc:
 	and $38			; $6f48
 	swap a			; $6f4a
 	rlca			; $6f4c
-	ld hl,$6f57		; $6f4d
+	ld hl,@zValues		; $6f4d
 	rst_addAToHl			; $6f50
-	ld e,$4f		; $6f51
+	ld e,Interaction.zh		; $6f51
 	ld a,(de)		; $6f53
 	add (hl)		; $6f54
 	ld (de),a		; $6f55
 	ret			; $6f56
-	rst $38			; $6f57
-	cp $ff			; $6f58
-	nop			; $6f5a
-	ld bc,$0102		; $6f5b
-	nop			; $6f5e
+
+@zValues:
+	.db $ff $fe $ff $00 $01 $02 $01 $00
+
+;;
+; @addr{6f5f}
+@moveTowardTargetPosition:
 	ld h,d			; $6f5f
-	ld l,$7c		; $6f60
+	ld l,Interaction.var3c		; $6f60
 	ld a,(hl)		; $6f62
 	add a			; $6f63
 	ld b,a			; $6f64
-	ld e,$7f		; $6f65
+
+	ld e,Interaction.var3f		; $6f65
 	ld a,(de)		; $6f67
 	ld l,a			; $6f68
-	ld e,$7e		; $6f69
+	ld e,Interaction.var3e		; $6f69
 	ld a,(de)		; $6f6b
 	ld h,a			; $6f6c
+
 	ld a,b			; $6f6d
 	rst_addAToHl			; $6f6e
 	ld b,(hl)		; $6f6f
 	inc hl			; $6f70
 	ld c,(hl)		; $6f71
 	call objectGetRelativeAngle		; $6f72
-	ld e,$49		; $6f75
+	ld e,Interaction.angle		; $6f75
 	ld (de),a		; $6f77
 	jp objectApplySpeed		; $6f78
-	call $6fc4		; $6f7b
-	ld l,$4b		; $6f7e
+
+;;
+; @param	bc	Pointer to position data (Y, X values)
+; @param[out]	cflag	c if reached target position
+; @addr{6f7b}
+@checkReachedTargetPosition:
+	call @getCurrentPositionPointer		; $6f7b
+	ld l,Interaction.yh		; $6f7e
 	ld a,(bc)		; $6f80
 	sub (hl)		; $6f81
 	add $01			; $6f82
 	cp $05			; $6f84
 	ret nc			; $6f86
 	inc bc			; $6f87
-	ld l,$4d		; $6f88
+	ld l,Interaction.xh		; $6f88
 	ld a,(bc)		; $6f8a
 	sub (hl)		; $6f8b
 	add $01			; $6f8c
-@label_0b_305:
 	cp $05			; $6f8e
 	ret			; $6f90
+
+;;
+; @addr{6f91}
+@updateAnimationIndex:
 	ld h,d			; $6f91
-	ld l,$49		; $6f92
+	ld l,Interaction.angle		; $6f92
 	ld a,(hl)		; $6f94
 	swap a			; $6f95
 	and $01			; $6f97
 	xor $01			; $6f99
-	ld l,$48		; $6f9b
+	ld l,Interaction.direction		; $6f9b
 	cp (hl)			; $6f9d
 	ret z			; $6f9e
 	ld (hl),a		; $6f9f
 	jp interactionSetAnimation		; $6fa0
-	call $6fb3		; $6fa3
+
+;;
+; @param[out]	cflag	c if we've exhausted the position list and we're looping
+; @addr{6fa3}
+@nextTargetPosition:
+	call @@setPositionToPointerData		; $6fa3
 	ld h,d			; $6fa6
-	ld l,$7d		; $6fa7
+	ld l,Interaction.var3d		; $6fa7
 	ld a,(hl)		; $6fa9
-	ld l,$7c		; $6faa
+	ld l,Interaction.var3c		; $6faa
 	inc (hl)		; $6fac
 	cp (hl)			; $6fad
 	ret nc			; $6fae
 	ld (hl),$00		; $6faf
 	scf			; $6fb1
 	ret			; $6fb2
-	call $6fc4		; $6fb3
-@label_0b_306:
-	ld l,$4a		; $6fb6
+
+;;
+; @addr{6fb3}
+@@setPositionToPointerData:
+	call @getCurrentPositionPointer		; $6fb3
+	ld l,Interaction.y		; $6fb6
 	xor a			; $6fb8
 	ldi (hl),a		; $6fb9
 	ld a,(bc)		; $6fba
 	ld (hl),a		; $6fbb
 	inc bc			; $6fbc
-	ld l,$4c		; $6fbd
+	ld l,Interaction.x		; $6fbd
 	xor a			; $6fbf
 	ldi (hl),a		; $6fc0
 	ld a,(bc)		; $6fc1
 	ld (hl),a		; $6fc2
 	ret			; $6fc3
+
+;;
+; @param[out]	bc	Pointer to position data
+; @addr{6fc4}
+@getCurrentPositionPointer:
 	ld h,d			; $6fc4
-	ld l,$7c		; $6fc5
+	ld l,Interaction.var3c		; $6fc5
 	ld a,(hl)		; $6fc7
-@label_0b_307:
 	add a			; $6fc8
 	push af			; $6fc9
-	ld e,$7f		; $6fca
+	ld e,Interaction.var3f		; $6fca
 	ld a,(de)		; $6fcc
 	ld c,a			; $6fcd
-	ld e,$7e		; $6fce
+	ld e,Interaction.var3e		; $6fce
 	ld a,(de)		; $6fd0
 	ld b,a			; $6fd1
 	pop af			; $6fd2
@@ -94463,9 +94511,11 @@ interactionCodebc:
 	ret			; $6fd6
 
 ;;
-; @param	a
+; Read values for var3f, var3e, var3d based on parameter
+;
+; @param	a	Index for table
 ; @addr{6fd7}
-@func_67d7:
+@readPositionTable:
 	add a			; $6fd7
 	ld hl,@table		; $6fd8
 	rst_addDoubleIndex			; $6fdb
@@ -94481,39 +94531,78 @@ interactionCodebc:
 	ret			; $6fe8
 
 @table:
-	.db $29 $70 $0b $00
-	.db $41 $70 $0b $00
-	.db $01 $70 $09 $00
-	.db $15 $70 $09 $00
-	.db $59 $70 $04 $00
-	.db $63 $70 $04 $00
-	.db $54 $18 $58 $0e
-	.db $60 $08 $68 $0c
-	.db $72 $18 $78 $28
-	.db $80 $48 $88 $68
-	.db $90 $80 $a0 $a0
-	.db $54 $88 $58 $92
-	.db $60 $98 $68 $94
-	.db $72 $88 $78 $78
-	.db $80 $58 $88 $38
-	.db $90 $20 $a0 $00
-	.db $01 $40 $29 $18
-	.db $39 $10 $45 $0c
-	.db $51 $10 $61 $18
-	.db $71 $28 $77 $38
-	.db $79 $48 $77 $58
-	.db $71 $68 $61 $78
-	.db $01 $60 $29 $88
-	.db $39 $90 $45 $94
-	.db $51 $90 $61 $88
-	.db $71 $78 $77 $68
-	.db $79 $58 $77 $48
-	.db $71 $38 $61 $28
-	.db $5d $90 $4d $98
-	.db $39 $90 $2d $78
-	.db $29 $60 $5d $10
-	.db $4d $08 $39 $10
-	.db $2d $28 $29 $40
+	dwbb @positions0, $0b, $00
+	dwbb @positions1, $0b, $00
+	dwbb @positions2, $09, $00
+	dwbb @positions3, $09, $00
+	dwbb @positions4, $04, $00
+	dwbb @positions5, $04, $00
+
+@positions2:
+	.db $54 $18
+	.db $58 $0e
+	.db $60 $08
+	.db $68 $0c
+	.db $72 $18
+	.db $78 $28
+	.db $80 $48
+	.db $88 $68
+	.db $90 $80
+	.db $a0 $a0
+
+@positions3:
+	.db $54 $88
+	.db $58 $92
+	.db $60 $98
+	.db $68 $94
+	.db $72 $88
+	.db $78 $78
+	.db $80 $58
+	.db $88 $38
+	.db $90 $20
+	.db $a0 $00
+
+@positions0:
+	.db $01 $40
+	.db $29 $18
+	.db $39 $10
+	.db $45 $0c
+	.db $51 $10
+	.db $61 $18
+	.db $71 $28
+	.db $77 $38
+	.db $79 $48
+	.db $77 $58
+	.db $71 $68
+	.db $61 $78
+
+@positions1:
+	.db $01 $60
+	.db $29 $88
+	.db $39 $90
+	.db $45 $94
+	.db $51 $90
+	.db $61 $88
+	.db $71 $78
+	.db $77 $68
+	.db $79 $58
+	.db $77 $48
+	.db $71 $38
+	.db $61 $28
+
+@positions4:
+	.db $5d $90
+	.db $4d $98
+	.db $39 $90
+	.db $2d $78
+	.db $29 $60
+
+@positions5:
+	.db $5d $10
+	.db $4d $08
+	.db $39 $10
+	.db $2d $28
+	.db $29 $40
 
 interactionCodebd:
 	ld e,$44		; $706d
