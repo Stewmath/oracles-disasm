@@ -9226,18 +9226,28 @@ _label_15_231:
 	ld a,b			; $7b2a
 	ld ($cfc1),a		; $7b2b
 	ret			; $7b2e
+
+
+; ==============================================================================
+; INTERACID_SLATE_SLOT
+; ==============================================================================
+slateSlot_placeSlate:
 	ld a,SND_DOORCLOSE		; $7b2f
 	call playSound		; $7b31
+
+	; Set this tile to a "filled slate"  tile
 	call objectGetTileAtPosition		; $7b34
 	ld c,l			; $7b37
-	ld e,$42		; $7b38
+	ld e,Interaction.subid		; $7b38
 	ld a,(de)		; $7b3a
 	ld b,a			; $7b3b
-	ld a,$d4		; $7b3c
+	ld a,TILEINDEX_FILLED_SLATE_1		; $7b3c
 	add b			; $7b3e
 	call setTile		; $7b3f
+
+	; Mark room flag
 	call getThisRoomFlags		; $7b42
-	ld e,$42		; $7b45
+	ld e,Interaction.subid		; $7b45
 	ld a,(de)		; $7b47
 	ld bc,bitTable		; $7b48
 	add c			; $7b4b
@@ -9245,29 +9255,32 @@ _label_15_231:
 	ld a,(bc)		; $7b4d
 	or (hl)			; $7b4e
 	ld (hl),a		; $7b4f
-	ld hl,$c6c3		; $7b50
+
+	; Decrement # slates
+	ld hl,wNumSlates		; $7b50
 	dec (hl)		; $7b53
-	ld e,$42		; $7b54
+
+	; Light torches
+	ld e,Interaction.subid		; $7b54
 	ld a,(de)		; $7b56
-	ld hl,$7b6b		; $7b57
+	ld hl,@torchPositions		; $7b57
 	rst_addDoubleIndex			; $7b5a
 	ldi a,(hl)		; $7b5b
 	ld c,a			; $7b5c
-	ld a,$09		; $7b5d
+	ld a,TILEINDEX_LIT_TORCH		; $7b5d
 	push hl			; $7b5f
 	call setTile		; $7b60
 	pop hl			; $7b63
 	ld a,(hl)		; $7b64
 	ld c,a			; $7b65
-	ld a,$09		; $7b66
+	ld a,TILEINDEX_LIT_TORCH		; $7b66
 	jp setTile		; $7b68
-	add (hl)		; $7b6b
-	adc b			; $7b6c
-	ld c,e			; $7b6d
-	ld l,e			; $7b6e
-	ld h,$28		; $7b6f
-	ld b,e			; $7b71
-	ld h,e			; $7b72
+
+@torchPositions:
+	.db $86 $88 ; 0 == [subid]
+	.db $4b $6b ; 1
+	.db $26 $28 ; 2
+	.db $43 $63 ; 3
 
 ; ==============================================================================
 ; INTERACID_MISCELLANEOUS_2

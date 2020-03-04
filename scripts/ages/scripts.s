@@ -10202,10 +10202,15 @@ script7f4b:
 	writeobjectbyte $7e $00
 	jump2byte linkedGameNpcScript
 
-script7f5a:
-	rungenericnpc $5111
-script7f5d:
-	asm15 $7b2f
+
+; ==============================================================================
+; INTERACID_SLATE_SLOT
+; ==============================================================================
+slateSlotScript:
+	rungenericnpc TX_5111
+
+slateSlotScript_placeSlate:
+	asm15 scriptHlp.slateSlot_placeSlate
 	enableinput
 	scriptend
 

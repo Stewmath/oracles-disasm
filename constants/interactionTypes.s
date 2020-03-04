@@ -1739,7 +1739,10 @@
 .define INTERACID_ZELDA_APPROACH_TRIGGER	$da
 
 ;;
-.define INTERACID_db			$db
+; Slot to place a slate in for ages d8.
+;
+; @subid{Value from 0-3, corresponds to room flag bits 0-3}
+.define INTERACID_SLATE_SLOT			$db
 
 ;;
 ; Miscellaneous stuff. See also INTERACID_MISCELLANEOUS_1.

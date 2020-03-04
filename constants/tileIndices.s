@@ -54,7 +54,6 @@
 .define TILEINDEX_WHIRLPOOL		$e9
 .define TILEINDEX_DUNGEON_DOOR_1	$ee ; overworld only
 .define TILEINDEX_DUNGEON_DOOR_2	$ef ; overworld only
-.define TILEINDEX_EYE_STATUE		$ee ; dungeon only (eyeballs spawn on these)
 .define TILEINDEX_CHEST_OPENED		$f0
 .define TILEINDEX_CHEST			$f1
 .define TILEINDEX_SIGN			$f2
@@ -94,7 +93,11 @@
 .define TILEINDEX_RED_TOGGLE_FLOOR	$ad ; dungeons only
 .define TILEINDEX_YELLOW_TOGGLE_FLOOR	$ae ; dungeons only
 .define TILEINDEX_BLUE_TOGGLE_FLOOR	$af ; dungeons only
+.define TILEINDEX_EYE_STATUE		$ee ; dungeon only (eyeballs spawn on these)
 .define TILEINDEX_BLANK_HOLE		$f4 ; dungeons / indoors only
+
+; $d4-$d7 are filled slate tiles in ages D8
+.define TILEINDEX_FILLED_SLATE_1	$d4
 
 .define TILEINDEX_INDOOR_DOOR		$af ; indoors only
 

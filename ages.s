@@ -96396,14 +96396,23 @@ miniScript7ef0:
 	.db $00 $1b $1d $00 $00
 
 
+; ==============================================================================
+; INTERACID_SLATE_SLOT
+;
+; Variables:
+;   var3f: Counter to push against this object until the slate will be placed
+; ==============================================================================
 interactionCodedb:
-	ld e,$44		; $7f3d
+	ld e,Interaction.state		; $7f3d
 	ld a,(de)		; $7f3f
 	rst_jumpTable			; $7f40
-.dw $7f47
-.dw $7f60
-.dw $7f9a
-	ld e,$42		; $7f47
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
+	; Check if slate already placed
+	ld e,Interaction.subid		; $7f47
 	ld a,(de)		; $7f49
 	ld bc,bitTable		; $7f4a
 	add c			; $7f4d
@@ -96412,41 +96421,55 @@ interactionCodedb:
 	ld a,(bc)		; $7f52
 	and (hl)		; $7f53
 	jp nz,interactionDelete		; $7f54
-	ld hl,script7f5a		; $7f57
+
+	ld hl,slateSlotScript		; $7f57
 	call interactionSetScript		; $7f5a
 	jp interactionIncState		; $7f5d
+
+@state1:
 	call objectCheckCollidedWithLink_notDead		; $7f60
-	call nc,$7f7e		; $7f63
+	call nc,@resetCounter		; $7f63
 	call objectCheckLinkPushingAgainstCenter		; $7f66
-	call nc,$7f7e		; $7f69
+	call nc,@resetCounter		; $7f69
+
 	ld h,d			; $7f6c
-	ld l,$7f		; $7f6d
+	ld l,Interaction.var3f		; $7f6d
 	dec (hl)		; $7f6f
-	jr nz,_label_0b_360	; $7f70
+	jr nz,@state2	; $7f70
+
+	; Time to place the slate, if available
 	ld a,(wNumSlates)		; $7f72
 	or a			; $7f75
-	jr nz,_label_0b_359	; $7f76
-	ld bc,$5111		; $7f78
+	jr nz,@placeSlate	; $7f76
+
+	; Not enough slates
+	ld bc,TX_5111		; $7f78
 	call showText		; $7f7b
-_label_0b_358:
-	ld e,$7f		; $7f7e
+
+@resetCounter:
+	ld e,Interaction.var3f		; $7f7e
 	ld a,$0a		; $7f80
 	ld (de),a		; $7f82
 	ret			; $7f83
-_label_0b_359:
+
+@placeSlate:
 	call checkLinkVulnerable		; $7f84
-	jr nc,_label_0b_358	; $7f87
-	ld a,$81		; $7f89
+	jr nc,@resetCounter	; $7f87
+
+	ld a,DISABLE_ALL_BUT_INTERACTIONS | DISABLE_LINK		; $7f89
 	ld (wDisabledObjects),a		; $7f8b
 	ld (wMenuDisabled),a		; $7f8e
-	ld hl,script7f5d		; $7f91
+
+	ld hl,slateSlotScript_placeSlate		; $7f91
 	call interactionSetScript		; $7f94
 	call interactionIncState		; $7f97
-_label_0b_360:
+
+@state2:
 	call interactionRunScript		; $7f9a
 	ret nc			; $7f9d
 	jp interactionDelete		; $7f9e
 
+; ==============================================================================
 
 .ifdef BUILD_VANILLA
 
@@ -96460,6 +96483,7 @@ func_7fa1:
 	jp $3b5c		; $7fa5
 
 .endif
+
 
 .BANK $0c SLOT 1
 .ORG 0
