@@ -1802,6 +1802,8 @@
 
 ;;
 ; Blurb that displays the season/era at the top of the screen when entering an area.
+; @subid_00{Present (but this is set by its own code)}
+; @subid_01{Past (but this is set by its own code)}
 .define INTERACID_ERA_OR_SEASON_INFO	$e0
 
 ;;

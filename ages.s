@@ -137958,30 +137958,39 @@ _kingMoblinMinion_stateA:
 
 .ORGA $6f00
 
+; ==============================================================================
+; INTERACID_ERA_OR_SEASON_INFO
+; ==============================================================================
 interactionCodee0:
-	ld e,$44		; $6f00
+	ld e,Interaction.state		; $6f00
 	ld a,(de)		; $6f02
 	rst_jumpTable			; $6f03
-.dw $6f0c
-.dw $6f29
-.dw $6f3a
-.dw $6f45
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+
+@state0:
 	ld a,$01		; $6f0c
-	ld (de),a		; $6f0e
+	ld (de),a ; [state]
+
 	ld a,(wAreaFlags)		; $6f0f
-	and $80			; $6f12
+	and AREAFLAG_PAST			; $6f12
 	rlca			; $6f14
-	ld e,$42		; $6f15
+	ld e,Interaction.subid		; $6f15
 	ld (de),a		; $6f17
+
 	call interactionInitGraphics		; $6f18
 	call interactionSetAlwaysUpdateBit		; $6f1b
-	ld l,$4b		; $6f1e
+	ld l,Interaction.yh		; $6f1e
 	ld (hl),$0a		; $6f20
-	ld l,$4d		; $6f22
+	ld l,Interaction.xh		; $6f22
 	ld (hl),$b0		; $6f24
 	jp objectSetVisible80		; $6f26
+
+@state1:
 	ld h,d			; $6f29
-	ld l,$4d		; $6f2a
+	ld l,Interaction.xh		; $6f2a
 	ld a,(hl)		; $6f2c
 	sub $04			; $6f2d
 	ld (hl),a		; $6f2f
@@ -137989,22 +137998,26 @@ interactionCodee0:
 	ret nz			; $6f32
 	ld l,e			; $6f33
 	inc (hl)		; $6f34
-	ld l,$46		; $6f35
-	ld (hl),$28		; $6f37
+	ld l,Interaction.counter1		; $6f35
+	ld (hl),40		; $6f37
 	ret			; $6f39
+
+@state2:
 	call interactionDecCounter1		; $6f3a
 	ret nz			; $6f3d
 	ld l,e			; $6f3e
 	inc (hl)		; $6f3f
-	ld l,$46		; $6f40
+	ld l,Interaction.counter1		; $6f40
 	ld (hl),$06		; $6f42
 	ret			; $6f44
+
+@state3:
 	ld h,d			; $6f45
-	ld l,$4d		; $6f46
+	ld l,Interaction.xh		; $6f46
 	ld a,(hl)		; $6f48
 	sub $06			; $6f49
 	ld (hl),a		; $6f4b
-	ld l,$46		; $6f4c
+	ld l,Interaction.counter1		; $6f4c
 	dec (hl)		; $6f4e
 	ret nz			; $6f4f
 	jp interactionDelete		; $6f50
@@ -138104,6 +138117,7 @@ interactionCodee2:
 	and $fc			; $6fc1
 	or $04			; $6fc3
 	ld b,a			; $6fc5
+
 @@returnValue:
 	ld a,b			; $6fc6
 	rrca			; $6fc7
