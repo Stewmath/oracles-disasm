@@ -1726,7 +1726,15 @@
 .define INTERACID_d7			$d7
 
 ;;
-.define INTERACID_d8			$d8
+; Handles events in rooms where pulling a lever fills lava with walkable terrain.
+;
+; @subid_00{D4, 1st lava-filler room}
+; @subid_01{D4, 2 rooms before boss key}
+; @subid_02{D4, 1 room before boss key}
+; @subid_03{D8, lava room with keyblock}
+; @subid_04{D8, other lava room}
+; @subid_05{Hero's Cave lava room}
+.define INTERACID_LEVER_LAVA_FILLER	$d8
 
 ;;
 ; @subid{The index of the secret (value of "wShortSecretIndex"?). This either creates

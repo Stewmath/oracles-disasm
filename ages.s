@@ -4947,7 +4947,7 @@ loadRoomCollisions:
 ;;
 ; @param	a	Tile to find in the room
 ; @param[out]	hl	Address of the tile in wRoomLayout (if it was found)
-; @param[out]	zflag	Set if the tile was found.
+; @param[out]	zflag	z if the tile was found.
 ; @addr{15cc}
 findTileInRoom:
 	ld h,>wRoomLayout	; $15cc
@@ -4957,7 +4957,7 @@ findTileInRoom:
 ; @param	a	Value to search for
 ; @param	hl	Address to start the search at (end when 'l' reaches 0)
 ; @param[out]	hl	Address of the value (if it was found)
-; @param[out]	zflag	Set if the value was found.
+; @param[out]	zflag	z if the value was found.
 ; @addr{15d0}
 backwardsSearch:
 	cp (hl)			; $15d0
@@ -14281,6 +14281,8 @@ setTile:
 	or h			; $3ac4
 	ret			; $3ac5
 
+
+.ifdef ROM_AGES
 ;;
 ; Calls "setTile" and "setTileInRoomLayoutBuffer".
 ;
@@ -14288,8 +14290,6 @@ setTile:
 ; @param	c	Position of tile to change
 ; @addr{3ac6}
 setTileInAllBuffers:
-
-.ifdef ROM_AGES
 	ld e,a			; $3ac6
 	ld b,a			; $3ac7
 	call setTileInRoomLayoutBuffer		; $3ac8
@@ -96175,62 +96175,88 @@ _label_0b_349:
 	ld bc,$0102		; $7c61
 	nop			; $7c64
 
+
+; ==============================================================================
+; INTERACID_LEVER_LAVA_FILLER
+;
+; Variables:
+;   counter2: Number of frames between two lava tiles being filled. Effectively this sets the
+;             "speed" of the lava filler (lower is faster).
+; ==============================================================================
 interactionCoded8:
-	ld e,$44		; $7c65
+	ld e,Interaction.state		; $7c65
 	ld a,(de)		; $7c67
 	rst_jumpTable			; $7c68
-.dw $7c73
-.dw $7c89
-.dw $7ce6
-.dw $7d07
-.dw $7d1a
-	ld e,$42		; $7c73
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+
+@state0:
+	ld e,Interaction.subid		; $7c73
 	ld a,(de)		; $7c75
-	ld hl,$7c81		; $7c76
+	ld hl,@counter2Vals		; $7c76
 	rst_addAToHl			; $7c79
 	ld a,(hl)		; $7c7a
-	ld e,$47		; $7c7b
+	ld e,Interaction.counter2		; $7c7b
 	ld (de),a		; $7c7d
 	jp interactionIncState		; $7c7e
-	inc b			; $7c81
-	ld b,$06		; $7c82
-	ld b,$06		; $7c84
-	ld b,$06		; $7c86
-	ld b,$fa		; $7c88
-	xor e			; $7c8a
-	call z,$7fcb		; $7c8b
+
+@counter2Vals:
+	.db $04 $06 $06 $06 $06 $06 $06 $06
+
+
+; Waiting for lever to be pulled
+@state1:
+	ld a,(wLever1PullDistance)		; $7c89
+	bit 7,a			; $7c8c
 	ret z			; $7c8e
+
+	; Lever has been pulled all the way.
+
 	call interactionIncState		; $7c8f
-	ld l,$46		; $7c92
-	ld (hl),$1e		; $7c94
+	ld l,Interaction.counter1		; $7c92
+	ld (hl),30		; $7c94
+
 	ld a,SND_SOLVEPUZZLE		; $7c96
 	call playSound		; $7c98
-	call $7cd9		; $7c9b
+
+	call @loadScriptForSubid		; $7c9b
+
+@toggleLavaSource:
 	ld b,$06		; $7c9e
-	ld a,$c3		; $7ca0
+	ld a,TILEINDEX_LAVA_SOURCE_UP_LEFT		; $7ca0
 	call findTileInRoom		; $7ca2
-	jr z,_label_0b_350	; $7ca5
-	ld a,$c6		; $7ca7
+	jr z,@setOrUnsetLavaSource	; $7ca5
+
+	ld a,TILEINDEX_LAVA_SOURCE_DOWN_LEFT		; $7ca7
 	call findTileInRoom		; $7ca9
-	jr z,_label_0b_350	; $7cac
+	jr z,@setOrUnsetLavaSource	; $7cac
+
 	ld b,$fa		; $7cae
-	ld a,$c9		; $7cb0
+	ld a,TILEINDEX_LAVA_SOURCE_UP_LEFT_EMPTY		; $7cb0
 	call findTileInRoom		; $7cb2
-	jr z,_label_0b_350	; $7cb5
-	ld a,$cc		; $7cb7
+	jr z,@setOrUnsetLavaSource	; $7cb5
+
+	ld a,TILEINDEX_LAVA_SOURCE_DOWN_LEFT_EMPTY		; $7cb7
 	call findTileInRoom		; $7cb9
-_label_0b_350:
+
+; Turns the lava source "on" or "off", visually (by adding or subtracting 6 from the tile index).
+@setOrUnsetLavaSource:
 	ld a,b			; $7cbc
 	ldh (<hFF8D),a	; $7cbd
-	call $7cce		; $7cbf
-_label_0b_351:
+	call @updateTile		; $7cbf
+--
 	inc l			; $7cc2
 	ld a,(hl)		; $7cc3
-	sub $c3			; $7cc4
+	sub TILEINDEX_LAVA_SOURCE_UP_LEFT			; $7cc4
 	cp $0c			; $7cc6
 	ret nc			; $7cc8
-	call $7cce		; $7cc9
-	jr _label_0b_351		; $7ccc
+	call @updateTile		; $7cc9
+	jr --			; $7ccc
+
+@updateTile:
 	ldh a,(<hFF8D)	; $7cce
 	ld b,(hl)		; $7cd0
 	add b			; $7cd1
@@ -96239,161 +96265,302 @@ _label_0b_351:
 	call setTile		; $7cd4
 	pop hl			; $7cd7
 	ret			; $7cd8
-	ld e,$42		; $7cd9
+
+@loadScriptForSubid:
+	ld e,Interaction.subid		; $7cd9
 	ld a,(de)		; $7cdb
-	ld hl,miniScriptTable7d4a		; $7cdc
+	ld hl,@scriptTable		; $7cdc
 	rst_addDoubleIndex			; $7cdf
 	ldi a,(hl)		; $7ce0
 	ld h,(hl)		; $7ce1
 	ld l,a			; $7ce2
 	jp interactionSetMiniScript		; $7ce3
+
+
+; Floor is being filled
+@state2:
 	call interactionDecCounter1		; $7ce6
 	ret nz			; $7ce9
+
+	; Fill next group of tiles
 	inc l			; $7cea
-	ldd a,(hl)		; $7ceb
-	ld (hl),a		; $7cec
+	ldd a,(hl)
+	ld (hl),a  ; [counter1] = [counter2]
 	call interactionGetMiniScript		; $7ced
 	ldi a,(hl)		; $7cf0
 	or a			; $7cf1
 	jp z,interactionIncState		; $7cf2
-_label_0b_352:
+
+--
 	ld c,a			; $7cf5
-	ld a,$01		; $7cf6
+	ld a,TILEINDEX_DRIED_LAVA		; $7cf6
 	push hl			; $7cf8
 	call setTileInAllBuffers		; $7cf9
 	pop hl			; $7cfc
 	ldi a,(hl)		; $7cfd
 	or a			; $7cfe
-	jr nz,_label_0b_352	; $7cff
+	jr nz,--		; $7cff
+
 	call interactionSetMiniScript		; $7d01
-	jp $7d45		; $7d04
+	jp @playRumbleSound		; $7d04
+
+
+; Tiles have been filled. Waiting for lever to revert to starting position.
+@state3:
 	ld a,(wLever1PullDistance)		; $7d07
 	or a			; $7d0a
 	ret nz			; $7d0b
+
 	call interactionIncState		; $7d0c
-	call $7cd9		; $7d0f
-	call $7c9e		; $7d12
+	call @loadScriptForSubid		; $7d0f
+	call @toggleLavaSource		; $7d12
 	ld a,SND_DOORCLOSE		; $7d15
 	jp playSound		; $7d17
+
+
+; Tiles are being filled with lava again.
+@state4:
 	call interactionDecCounter1		; $7d1a
 	ret nz			; $7d1d
 	inc l			; $7d1e
 	ldd a,(hl)		; $7d1f
-	ld (hl),a		; $7d20
+	ld (hl),a  ; [counter1] = [counter2]
 	call interactionGetMiniScript		; $7d21
 	ldi a,(hl)		; $7d24
 	or a			; $7d25
-	jr nz,_label_0b_353	; $7d26
-	ld e,$44		; $7d28
+	jr nz,@fillNextGroupWithLava	; $7d26
+
+	; Done filling the lava back.
+	ld e,Interaction.state		; $7d28
 	ld a,$01		; $7d2a
 	ld (de),a		; $7d2c
 	ret			; $7d2d
-_label_0b_353:
+
+@fillNextGroupWithLava:
 	ld c,a			; $7d2e
+
+	; Random lava tile
 	call getRandomNumber		; $7d2f
 	and $03			; $7d32
-	add $61			; $7d34
+	add TILEINDEX_DUNGEON_LAVA_1			; $7d34
+
 	push hl			; $7d36
 	call setTileInAllBuffers		; $7d37
 	pop hl			; $7d3a
 	ldi a,(hl)		; $7d3b
 	or a			; $7d3c
-	jr nz,_label_0b_353	; $7d3d
+	jr nz,@fillNextGroupWithLava	; $7d3d
+
 	call interactionSetMiniScript		; $7d3f
-	jp $7d45		; $7d42
+	jp @playRumbleSound		; $7d42
+
+@playRumbleSound:
 	ld a,SND_RUMBLE2		; $7d45
 	jp playSound		; $7d47
 
-; @addr{7d4a}
-miniScriptTable7d4a:
-	.dw miniScript7d56
-	.dw miniScript7da9
-	.dw miniScript7dff
-	.dw miniScript7e3a
-	.dw miniScript7e7c
-	.dw miniScript7ef0
 
-; @addr{7d56}
-miniScript7d56:
-	.db $2a $00 $2b $00 $29 $00 $3b $00
-	.db $39 $00 $4b $00 $4a $00 $49 $00
-	.db $5b $00 $5a $00 $59 $00 $6b $00
-	.db $6a $00 $7b $00 $8b $00 $7a $00
-	.db $8a $00 $9a $00 $69 $00 $99 $00
-	.db $89 $00 $79 $00 $98 $00 $88 $00
-	.db $97 $00 $78 $00 $96 $00 $88 $00
-	.db $87 $00 $95 $00 $86 $00 $85 $00
-	.db $77 $00 $76 $00 $75 $00 $66 $00
-	.db $65 $00 $56 $00 $55 $00 $45 $00
-	.db $35 $00 $00
+; "Script" format:
+;   A string of bytes, ending with "$00", is a list of tile positions to fill with lava on a frame.
+;   The data following the "$00" bytes will be read on a later frame. The gap between frames depends
+;   on the value of [counter2].
+;   If data starts with "$00", the list is done being read.
+@scriptTable:
+	.dw @subid0Script
+	.dw @subid1Script
+	.dw @subid2Script
+	.dw @subid3Script
+	.dw @subid4Script
+	.dw @subid5Script
 
-; @addr{7da9}
-miniScript7da9:
-	.db $77 $78 $79 $00 $7a $69 $68 $67
-	.db $66 $76 $00 $6a $65 $75 $00 $64
-	.db $74 $00 $84 $85 $00 $94 $95 $00
-	.db $83 $93 $00 $82 $92 $00 $81 $91
-	.db $00 $71 $72 $00 $61 $62 $00 $51
-	.db $52 $00 $41 $42 $00 $31 $32 $00
-	.db $21 $22 $00 $11 $12 $00 $13 $23
-	.db $00 $14 $24 $00 $34 $00 $44 $00
-	.db $35 $45 $00 $36 $00 $46 $00 $47
-	.db $26 $00 $16 $27 $48 $00 $28 $38
-	.db $49 $00 $29 $39 $00 $00
+; D4, 1st lava-filler room
+@subid0Script:
+	.db $2a $00
+	.db $2b $00
+	.db $29 $00
+	.db $3b $00
+	.db $39 $00
+	.db $4b $00
+	.db $4a $00
+	.db $49 $00
+	.db $5b $00
+	.db $5a $00
+	.db $59 $00
+	.db $6b $00
+	.db $6a $00
+	.db $7b $00
+	.db $8b $00
+	.db $7a $00
+	.db $8a $00
+	.db $9a $00
+	.db $69 $00
+	.db $99 $00
+	.db $89 $00
+	.db $79 $00
+	.db $98 $00
+	.db $88 $00
+	.db $97 $00
+	.db $78 $00
+	.db $96 $00
+	.db $88 $00
+	.db $87 $00
+	.db $95 $00
+	.db $86 $00
+	.db $85 $00
+	.db $77 $00
+	.db $76 $00
+	.db $75 $00
+	.db $66 $00
+	.db $65 $00
+	.db $56 $00
+	.db $55 $00
+	.db $45 $00
+	.db $35 $00
+	.db $00
 
-; @addr{7dff}
-miniScript7dff:
-	.db $37 $38 $39 $00 $47 $48 $49 $00
-	.db $58 $59 $00 $68 $00 $67 $00 $77
-	.db $00 $87 $00 $96 $00 $85 $00 $75
-	.db $00 $55 $64 $00 $56 $00 $73 $45
-	.db $00 $83 $35 $00 $25 $00 $92 $15
-	.db $00 $81 $00 $71 $00 $61 $00 $51
-	.db $00 $42 $00 $33 $00 $13 $22 $00
-	.db $21 $00 $00
+; D4, 2 rooms before boss key
+@subid1Script:
+	.db $77 $78 $79 $00
+	.db $7a $69 $68 $67 $66 $76 $00
+	.db $6a $65 $75 $00
+	.db $64 $74 $00
+	.db $84 $85 $00
+	.db $94 $95 $00
+	.db $83 $93 $00
+	.db $82 $92 $00
+	.db $81 $91 $00
+	.db $71 $72 $00
+	.db $61 $62 $00
+	.db $51 $52 $00
+	.db $41 $42 $00
+	.db $31 $32 $00
+	.db $21 $22 $00
+	.db $11 $12 $00
+	.db $13 $23 $00
+	.db $14 $24 $00
+	.db $34 $00
+	.db $44 $00
+	.db $35 $45 $00
+	.db $36 $00
+	.db $46 $00
+	.db $47 $26 $00
+	.db $16 $27 $48 $00
+	.db $28 $38 $49 $00
+	.db $29 $39 $00
+	.db $00
 
-; @addr{7e3a}
-miniScript7e3a:
-	.db $24 $25 $26 $00 $34 $35 $36 $00
-	.db $44 $45 $46 $00 $54 $55 $00 $64
-	.db $65 $00 $73 $74 $75 $00 $83 $00
-	.db $81 $82 $00 $91 $92 $00 $93 $00
-	.db $94 $00 $95 $00 $96 $00 $86 $00
-	.db $77 $87 $97 $00 $78 $88 $00 $79
-	.db $89 $99 $00 $7a $8a $9a $00 $6a
-	.db $00 $5a $00 $59 $00 $58 $00 $48
-	.db $00 $00
+; D4, 1 room before boss key
+@subid2Script:
+	.db $37 $38 $39 $00
+	.db $47 $48 $49 $00
+	.db $58 $59 $00
+	.db $68 $00
+	.db $67 $00
+	.db $77 $00
+	.db $87 $00
+	.db $96 $00
+	.db $85 $00
+	.db $75 $00
+	.db $55 $64 $00
+	.db $56 $00
+	.db $73 $45 $00
+	.db $83 $35 $00
+	.db $25 $00
+	.db $92 $15 $00
+	.db $81 $00
+	.db $71 $00
+	.db $61 $00
+	.db $51 $00
+	.db $42 $00
+	.db $33 $00
+	.db $13 $22 $00
+	.db $21 $00
+	.db $00
 
-; @addr{7e7c}
-miniScript7e7c:
-	.db $24 $25 $26 $00 $34 $35 $17 $27
-	.db $00 $36 $37 $00 $44 $45 $46 $47
-	.db $00 $18 $28 $38 $48 $00 $57 $58
-	.db $39 $49 $00 $55 $56 $19 $29 $00
-	.db $54 $59 $00 $68 $69 $4a $5a $00
-	.db $67 $3a $6a $00 $65 $66 $1a $2a
-	.db $00 $64 $6b $7a $7b $00 $78 $79
-	.db $4b $5b $00 $76 $77 $2b $3b $00
-	.db $74 $75 $1b $00 $8a $8b $5c $6c
-	.db $00 $88 $89 $3c $4c $00 $86 $87
-	.db $1c $2c $00 $84 $85 $5d $6d $00
-	.db $73 $83 $4d $00 $1d $2d $3d $00
-	.db $71 $72 $82 $00 $81 $97 $99 $9b
-	.db $00 $91 $92 $93 $95 $00 $94 $96
-	.db $98 $9a $00 $00
+; D8, lava room with keyblock
+@subid3Script:
+	.db $24 $25 $26 $00
+	.db $34 $35 $36 $00
+	.db $44 $45 $46 $00
+	.db $54 $55 $00
+	.db $64 $65 $00
+	.db $73 $74 $75 $00
+	.db $83 $00
+	.db $81 $82 $00
+	.db $91 $92 $00
+	.db $93 $00
+	.db $94 $00
+	.db $95 $00
+	.db $96 $00
+	.db $86 $00
+	.db $77 $87 $97 $00
+	.db $78 $88 $00
+	.db $79 $89 $99 $00
+	.db $7a $8a $9a $00
+	.db $6a $00
+	.db $5a $00
+	.db $59 $00
+	.db $58 $00
+	.db $48 $00
+	.db $00
 
-; @addr{7ef0}
-miniScript7ef0:
-	.db $26 $28 $27 $00 $25 $00 $35 $00
-	.db $34 $00 $44 $54 $43 $00 $42 $64
-	.db $00 $52 $74 $00 $84 $00 $93 $94
-	.db $95 $00 $92 $96 $00 $82 $91 $97
-	.db $00 $81 $87 $00 $77 $88 $00 $78
-	.db $89 $00 $8a $00 $7a $8b $00 $6a
-	.db $7b $8c $00 $5a $8d $9c $00 $5b
-	.db $9d $00 $5c $00 $4c $5d $6c $00
-	.db $6d $00 $3c $00 $3d $00 $2b $2d
-	.db $00 $1b $1d $00 $00
+; D8, other lava room
+@subid4Script:
+	.db $24 $25 $26 $00
+	.db $34 $35 $17 $27 $00
+	.db $36 $37 $00
+	.db $44 $45 $46 $47 $00
+	.db $18 $28 $38 $48 $00
+	.db $57 $58 $39 $49 $00
+	.db $55 $56 $19 $29 $00
+	.db $54 $59 $00
+	.db $68 $69 $4a $5a $00
+	.db $67 $3a $6a $00
+	.db $65 $66 $1a $2a $00
+	.db $64 $6b $7a $7b $00
+	.db $78 $79 $4b $5b $00
+	.db $76 $77 $2b $3b $00
+	.db $74 $75 $1b $00
+	.db $8a $8b $5c $6c $00
+	.db $88 $89 $3c $4c $00
+	.db $86 $87 $1c $2c $00
+	.db $84 $85 $5d $6d $00
+	.db $73 $83 $4d $00
+	.db $1d $2d $3d $00
+	.db $71 $72 $82 $00
+	.db $81 $97 $99 $9b $00
+	.db $91 $92 $93 $95 $00
+	.db $94 $96 $98 $9a $00
+	.db $00
+
+; Hero's Cave lava room
+@subid5Script:
+	.db $26 $28 $27 $00
+	.db $25 $00
+	.db $35 $00
+	.db $34 $00
+	.db $44 $54 $43 $00
+	.db $42 $64 $00
+	.db $52 $74 $00
+	.db $84 $00
+	.db $93 $94 $95 $00
+	.db $92 $96 $00
+	.db $82 $91 $97 $00
+	.db $81 $87 $00
+	.db $77 $88 $00
+	.db $78 $89 $00
+	.db $8a $00
+	.db $7a $8b $00
+	.db $6a $7b $8c $00
+	.db $5a $8d $9c $00
+	.db $5b $9d $00
+	.db $5c $00
+	.db $4c $5d $6c $00
+	.db $6d $00
+	.db $3c $00
+	.db $3d $00
+	.db $2b $2d $00
+	.db $1b $1d $00
+	.db $00
 
 
 ; ==============================================================================
@@ -139606,7 +139773,7 @@ _interactiondc_subid12:
 ; "sink" into it instead of exploding like on land.
 _interactiondc_subid13:
 	call returnIfScrollMode01Unset		; $796b
-	ld a,TILEINDEX_LAVA_1 ; TODO
+	ld a,TILEINDEX_OVERWORLD_LAVA_1 ; TODO
 	ld hl,wRoomLayout+$14		; $7970
 	ldi (hl),a		; $7973
 	ld (hl),a		; $7974

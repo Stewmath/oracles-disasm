@@ -50,7 +50,7 @@
 .define TILEINDEX_CURRENT_DOWN		$e1
 .define TILEINDEX_CURRENT_LEFT		$e2
 .define TILEINDEX_CURRENT_RIGHT		$e3
-.define TILEINDEX_LAVA_1		$e4 ; overworld only
+.define TILEINDEX_OVERWORLD_LAVA_1	$e4 ; overworld only
 .define TILEINDEX_WHIRLPOOL		$e9
 .define TILEINDEX_DUNGEON_DOOR_1	$ee ; overworld only
 .define TILEINDEX_DUNGEON_DOOR_2	$ef ; overworld only
@@ -64,6 +64,7 @@
 .define TILEINDEX_WATERFALL_BOTTOM	$fe
 .define TILEINDEX_WATERFALL		$ff
 
+.define TILEINDEX_DRIED_LAVA		$01 ; dungeons only(?)
 .define TILEINDEX_RESPAWNING_BUSH_CUT	$02 ; dungeons, indoor areas
 .define TILEINDEX_RESPAWNING_BUSH_READY	$04 ; dungeons, indoor areas
 .define TILEINDEX_BUTTON		$0c ; dungeons, indoor areas
@@ -86,6 +87,10 @@
 .define TILEINDEX_NORTH_STAIRS		$52 ; dungeons, indoors only
 .define TILEINDEX_EAST_STAIRS		$53 ; dungeons, indoors only
 .define TILEINDEX_SPIKES		$60 ; dungeons, indoors only
+
+; This tile and 3 after it ($61-$64) are assumed to all be lava tiles.
+.define TILEINDEX_DUNGEON_LAVA_1	$61 ; dungeons only(?)
+
 .define TILEINDEX_VERTICAL_BRIDGE	$6a ; dungeons only
 .define TILEINDEX_HORIZONTAL_BRIDGE	$6d ; dungeons only
 .define TILEINDEX_STANDARD_FLOOR	$a0 ; Keyblocks and such will turn into this tile
@@ -93,6 +98,14 @@
 .define TILEINDEX_RED_TOGGLE_FLOOR	$ad ; dungeons only
 .define TILEINDEX_YELLOW_TOGGLE_FLOOR	$ae ; dungeons only
 .define TILEINDEX_BLUE_TOGGLE_FLOOR	$af ; dungeons only
+
+; Used by INTERACID_LEVER_LAVA_FILLER. (Range of $0c tiles starting from $c3 is assumed to be of
+; this type.)
+.define TILEINDEX_LAVA_SOURCE_UP_LEFT		$c3 ; dungeons only
+.define TILEINDEX_LAVA_SOURCE_DOWN_LEFT		$c6 ; dungeons only
+.define TILEINDEX_LAVA_SOURCE_UP_LEFT_EMPTY	$c9 ; dungeons only
+.define TILEINDEX_LAVA_SOURCE_DOWN_LEFT_EMPTY	$cc ; dungeons only
+
 .define TILEINDEX_EYE_STATUE		$ee ; dungeon only (eyeballs spawn on these)
 .define TILEINDEX_BLANK_HOLE		$f4 ; dungeons / indoors only
 
