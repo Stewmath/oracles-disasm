@@ -95802,39 +95802,55 @@ _label_0b_341:
 @scriptTable:
 	.dw script7f30
 
+
+; ==============================================================================
+; INTERACID_DEKU_SCRUB
+;
+; Variables:
+;   var3e: 0 if the deku scrub is hiding, 1 if not
+;   var3f: Secret index (for "linkedGameNpcScript")
+; ==============================================================================
 interactionCoded6:
 	call checkInteractionState		; $797b
-	jr nz,_label_0b_342	; $797e
-	call $79b9		; $7980
+	jr nz,@state1	; $797e
+
+@state0:
+	call @initialize		; $7980
 	call interactionSetAlwaysUpdateBit		; $7983
-	ld l,$7f		; $7986
+	ld l,Interaction.var3f		; $7986
 	ld (hl),$07		; $7988
 	ld hl,linkedGameNpcScript		; $798a
 	call interactionSetScript		; $798d
 	call interactionRunScript		; $7990
-_label_0b_342:
+
+@state1:
 	call interactionRunScript		; $7993
 	jp c,interactionDeleteAndUnmarkSolidPosition		; $7996
+
 	call interactionAnimateAsNpc		; $7999
 	ld c,$20		; $799c
 	call objectCheckLinkWithinDistance		; $799e
 	ld h,d			; $79a1
-	ld l,$7e		; $79a2
-	jr c,_label_0b_343	; $79a4
-	ld a,(hl)		; $79a6
+	ld l,Interaction.var3e		; $79a2
+	jr c,@linkIsClose	; $79a4
+
+	ld a,(hl) ; [var3e]
 	or a			; $79a7
 	ret z			; $79a8
 	xor a			; $79a9
 	ld (hl),a		; $79aa
 	ld a,$03		; $79ab
 	jp interactionSetAnimation		; $79ad
-_label_0b_343:
-	ld a,(hl)		; $79b0
+
+@linkIsClose:
+	ld a,(hl) ; [var3e]
 	or a			; $79b1
 	ret nz			; $79b2
-	inc (hl)		; $79b3
+	inc (hl) ; [var3e]
 	ld a,$01		; $79b4
 	jp interactionSetAnimation		; $79b6
+
+@initialize:
 	call interactionInitGraphics		; $79b9
 	call objectMarkSolidPosition		; $79bc
 	jp interactionIncState		; $79bf
