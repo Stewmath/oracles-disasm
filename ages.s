@@ -95839,166 +95839,226 @@ _label_0b_343:
 	call objectMarkSolidPosition		; $79bc
 	jp interactionIncState		; $79bf
 
+
+; ==============================================================================
+; INTERACID_MAKU_SEED_AND_ESSENCES
+;
+; Variables:
+;   counter1: Essence index (for the maku seed / spawner object)
+; ==============================================================================
 interactionCoded7:
-	ld e,$42		; $79c2
+	ld e,Interaction.subid		; $79c2
 	ld a,(de)		; $79c4
 	rst_jumpTable			; $79c5
-.dw $79d8
-.dw $7bac
-.dw $7bac
-.dw $7bac
-.dw $7bac
-.dw $7bac
-.dw $7bac
-.dw $7bac
-.dw $7bac
-	ld e,$44		; $79d8
+	.dw interactiond7_makuSeed
+	.dw interactiond7_essence
+	.dw interactiond7_essence
+	.dw interactiond7_essence
+	.dw interactiond7_essence
+	.dw interactiond7_essence
+	.dw interactiond7_essence
+	.dw interactiond7_essence
+	.dw interactiond7_essence
+
+
+interactiond7_makuSeed:
+	ld e,Interaction.state		; $79d8
 	ld a,(de)		; $79da
 	rst_jumpTable			; $79db
-.dw $79e6
-.dw $7a18
-.dw $7a2a
-.dw $7a50
-.dw $7b10
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+
+@state0:
 	ld a,$01		; $79e6
 	ld (de),a		; $79e8
 	call interactionInitGraphics		; $79e9
+
 	ld a,(w1Link.yh)		; $79ec
 	sub $0e			; $79ef
-	ld e,$4b		; $79f1
+	ld e,Interaction.yh		; $79f1
 	ld (de),a		; $79f3
 	ld a,(w1Link.xh)		; $79f4
-	ld e,$4d		; $79f7
+	ld e,Interaction.xh		; $79f7
 	ld (de),a		; $79f9
-_label_0b_344:
+
 	call setLinkForceStateToState08		; $79fa
+
 	ld a,SNDCTRL_STOPSFX		; $79fd
 	call playSound		; $79ff
 	ld a,SND_DROPESSENCE		; $7a02
 	call playSound		; $7a04
-	ld bc,$8404		; $7a07
+
+	ldbc INTERACID_SPARKLE, $04		; $7a07
 	call objectCreateInteraction		; $7a0a
 	ret nz			; $7a0d
-	ld l,$46		; $7a0e
+	ld l,Interaction.counter1		; $7a0e
 	ld e,l			; $7a10
-	ld a,$78		; $7a11
+	ld a,120		; $7a11
 	ld (hl),a		; $7a13
 	ld (de),a		; $7a14
 	jp objectSetVisible82		; $7a15
-	ld a,$0f		; $7a18
+
+@state1:
+	ld a,LINK_ANIM_MODE_GETITEM2HAND		; $7a18
 	ld (wcc50),a		; $7a1a
+
 	call interactionDecCounter1		; $7a1d
 	ret nz			; $7a20
-	ld (hl),$40		; $7a21
-	ld l,$50		; $7a23
-	ld (hl),$14		; $7a25
+	ld (hl),$40 ; [counter1]
+	ld l,Interaction.speed		; $7a23
+	ld (hl),SPEED_80		; $7a25
 	jp interactionIncState		; $7a27
+
+@state2:
 	call objectApplySpeed		; $7a2a
-	call $7c0f		; $7a2d
+	call _interactiond7_updateSmallSparkles		; $7a2d
 	call interactionDecCounter1		; $7a30
 	ret nz			; $7a33
-	ld (hl),$78		; $7a34
-	ld a,$10		; $7a36
+
+	ld (hl),120 ; [counter1]
+	ld a,LINK_ANIM_MODE_WALK		; $7a36
 	ld (wcc50),a		; $7a38
-	ld l,$4b		; $7a3b
+	ld l,Interaction.yh		; $7a3b
 	ld (hl),$58		; $7a3d
-	ld l,$4d		; $7a3f
+	ld l,Interaction.xh		; $7a3f
 	ld (hl),$78		; $7a41
 	ld a,SND_POP		; $7a43
 	call playSound		; $7a45
 	ld a,$03		; $7a48
 	call fadeinFromWhiteWithDelay		; $7a4a
 	jp interactionIncState		; $7a4d
-	call $7c0f		; $7a50
-	call $7c46		; $7a53
-	ld e,$45		; $7a56
+
+@state3:
+	call _interactiond7_updateSmallSparkles		; $7a50
+	call _interactiond7_updateFloating		; $7a53
+	ld e,Interaction.state2		; $7a56
 	ld a,(de)		; $7a58
 	rst_jumpTable			; $7a59
-.dw $7a6e
-.dw $7a7a
-.dw $7ab9
-.dw $7acc
-.dw $7ad9
-.dw $7acc
-.dw $7ad9
-.dw $7acc
-.dw $7aed
-.dw $7afe
+	.dw @state3Substate0
+	.dw @state3Substate1
+	.dw @state3Substate2
+	.dw @state3Substate3
+	.dw @state3Substate4
+	.dw @state3Substate5
+	.dw @state3Substate6
+	.dw @state3Substate7
+	.dw @state3Substate8
+	.dw @state3Substate9
+
+@state3Substate0:
 	call interactionDecCounter1		; $7a6e
 	ret nz			; $7a71
-	ld (hl),$14		; $7a72
+	ld (hl),20		; $7a72
 	inc l			; $7a74
 	ld (hl),$08		; $7a75
 	jp interactionIncState2		; $7a77
+
+
+; Spawning the essences
+@state3Substate1:
 	call interactionDecCounter1		; $7a7a
 	ret nz			; $7a7d
-	ld (hl),$14		; $7a7e
+	ld (hl),20		; $7a7e
 	inc l			; $7a80
 	dec (hl)		; $7a81
 	ld b,(hl)		; $7a82
+
+	; Spawn next essence
 	call getFreeInteractionSlot		; $7a83
 	ret nz			; $7a86
-	ld (hl),$d7		; $7a87
+	ld (hl),INTERACID_MAKU_SEED_AND_ESSENCES		; $7a87
 	call objectCopyPosition		; $7a89
 	ld a,b			; $7a8c
-	ld bc,$7aa9		; $7a8d
+	ld bc,@essenceSpawnerData		; $7a8d
 	call addDoubleIndexToBc		; $7a90
+
 	ld a,(bc)		; $7a93
-	ld l,$42		; $7a94
+	ld l,Interaction.subid		; $7a94
 	ld (hl),a		; $7a96
-	ld l,$49		; $7a97
+	ld l,Interaction.angle		; $7a97
 	inc bc			; $7a99
 	ld a,(bc)		; $7a9a
 	ld (hl),a		; $7a9b
-	ld e,$47		; $7a9c
+	ld e,Interaction.counter2		; $7a9c
 	ld a,(de)		; $7a9e
 	or a			; $7a9f
 	ret nz			; $7aa0
+
 	call interactionIncState2		; $7aa1
-	ld l,$46		; $7aa4
-	ld (hl),$78		; $7aa6
+	ld l,Interaction.counter1		; $7aa4
+	ld (hl),120		; $7aa6
 	ret			; $7aa8
-	ld ($071a),sp		; $7aa9
-	ld d,$06		; $7aac
-	ld (de),a		; $7aae
-	dec b			; $7aaf
-	ld c,$04		; $7ab0
-	ld a,(bc)		; $7ab2
-	inc bc			; $7ab3
-	ld b,$02		; $7ab4
-	ld (bc),a		; $7ab6
-	ld bc,$cd1e		; $7ab7
-	call z,$c023		; $7aba
-	ld (hl),$3c		; $7abd
+
+; b0: subid
+; b1: angle (the direction it moves out from the maku seed)
+@essenceSpawnerData:
+	.db $08 $1a
+	.db $07 $16
+	.db $06 $12
+	.db $05 $0e
+	.db $04 $0a
+	.db $03 $06
+	.db $02 $02
+	.db $01 $1e
+
+
+; All essences spawned. Delay before next state.
+@state3Substate2:
+	call interactionDecCounter1		; $7ab9
+	ret nz			; $7abc
+	ld (hl),60 ; [counter1]
 	ld a,$01		; $7abf
-	ld ($cfc0),a		; $7ac1
+	ld (wTmpcfc0.genericCutscene.state),a		; $7ac1
 	ld a,$20		; $7ac4
-	ld ($cfc1),a		; $7ac6
+	ld (wTmpcfc0.genericCutscene.cfc1),a		; $7ac6
 	jp interactionIncState2		; $7ac9
+
+
+; Essences rotating & moving in
+@state3Substate3:
+@state3Substate5:
+@state3Substate7:
 	ld a,(wFrameCounter)		; $7acc
 	and $03			; $7acf
-	jr nz,_label_0b_346	; $7ad1
-	ld hl,$cfc1		; $7ad3
+	jr nz,@essenceRotationCommon	; $7ad1
+	ld hl,wTmpcfc0.genericCutscene.cfc1		; $7ad3
 	dec (hl)		; $7ad6
-	jr _label_0b_346		; $7ad7
+	jr @essenceRotationCommon		; $7ad7
+
+
+; Essences rotating & moving out
+@state3Substate4:
+@state3Substate6:
 	ld a,(wFrameCounter)		; $7ad9
 	and $03			; $7adc
-	jr nz,_label_0b_346	; $7ade
-	ld hl,$cfc1		; $7ae0
+	jr nz,@essenceRotationCommon	; $7ade
+	ld hl,wTmpcfc0.genericCutscene.cfc1		; $7ae0
 	inc (hl)		; $7ae3
-_label_0b_346:
+
+@essenceRotationCommon:
 	call interactionDecCounter1		; $7ae4
 	ret nz			; $7ae7
-	ld (hl),$3c		; $7ae8
+	ld (hl),60		; $7ae8
 	jp interactionIncState2		; $7aea
-	ld hl,$cfc1		; $7aed
+
+
+; Fadeout as the essences leave the screen
+@state3Substate8:
+	ld hl,wTmpcfc0.genericCutscene.cfc1		; $7aed
 	inc (hl)		; $7af0
 	ld a,SND_FADEOUT		; $7af1
 	call playSound		; $7af3
 	ld a,$04		; $7af6
 	call fadeoutToWhiteWithDelay		; $7af8
 	jp interactionIncState2		; $7afb
-	ld hl,$cfc1		; $7afe
+
+
+; Waiting for fadeout to end
+@state3Substate9:
+	ld hl,wTmpcfc0.genericCutscene.cfc1		; $7afe
 	inc (hl)		; $7b01
 	ld a,(wPaletteThread_mode)		; $7b02
 	or a			; $7b05
@@ -96007,155 +96067,221 @@ _label_0b_346:
 	inc l			; $7b0a
 	ld (hl),$00		; $7b0b
 	jp objectSetInvisible		; $7b0d
-	ld e,$45		; $7b10
+
+
+@state4:
+	ld e,Interaction.state2		; $7b10
 	ld a,(de)		; $7b12
 	rst_jumpTable			; $7b13
-.dw $7b1e
-.dw $7b5b
-.dw $7b69
-.dw $7b76
-.dw $7b9f
-	ld hl,@data		; $7b1e
-@label_0b_347:
+	.dw @state4Substate0
+	.dw @state4Substate1
+	.dw @state4Substate2
+	.dw @state4Substate3
+	.dw @state4Substate4
+
+
+; Modifying the room layout so only 1 door remains.
+@state4Substate0:
+	ld hl,@tileReplacements		; $7b1e
+--
 	ldi a,(hl)		; $7b21
 	or a			; $7b22
-	jr z,@label_0b_348	; $7b23
+	jr z,++			; $7b23
 	ld c,(hl)		; $7b25
 	inc hl			; $7b26
 	push hl			; $7b27
 	call setTile		; $7b28
 	pop hl			; $7b2b
-	jr @label_0b_347		; $7b2c
-@label_0b_348:
-	ld e,$46		; $7b2e
-	ld a,$1e		; $7b30
+	jr --		; $7b2c
+++
+	ld e,Interaction.counter1		; $7b2e
+	ld a,30		; $7b30
 	ld (de),a		; $7b32
 	jp interactionIncState2		; $7b33
 
-; @addr{7b36}
-@data:
-	.db $a3 $33 $a3 $34 $a3 $35 $b7 $43
-	.db $b7 $44 $b7 $45 $88 $53 $88 $54
-	.db $88 $55 $a3 $39 $a3 $3a $a3 $3b
-	.db $b7 $49 $b7 $4a $b7 $4b $88 $59
-	.db $88 $5a $88 $5b $00
+; b0: tile position
+; b1: tile index
+@tileReplacements:
+	.db $a3 $33
+	.db $a3 $34
+	.db $a3 $35
+	.db $b7 $43
+	.db $b7 $44
+	.db $b7 $45
+	.db $88 $53
+	.db $88 $54
+	.db $88 $55
+	.db $a3 $39
+	.db $a3 $3a
+	.db $a3 $3b
+	.db $b7 $49
+	.db $b7 $4a
+	.db $b7 $4b
+	.db $88 $59
+	.db $88 $5a
+	.db $88 $5b
+	.db $00
 
+
+; Delay before fading back in
+@state4Substate1:
 	call interactionDecCounter1		; $7b5b
 	ret nz			; $7b5e
-	ld (hl),$78		; $7b5f
+	ld (hl),120		; $7b5f
 	ld a,$08		; $7b61
 	call fadeinFromWhiteWithDelay		; $7b63
 	jp interactionIncState2		; $7b66
+
+
+; Fading back in
+@state4Substate2:
 	ld a,(wPaletteThread_mode)		; $7b69
 	or a			; $7b6c
 	ret nz			; $7b6d
 	ld a,SND_SOLVEPUZZLE_2		; $7b6e
 	call playSound		; $7b70
 	jp interactionIncState2		; $7b73
+
+
+@state4Substate3:
 	call interactionDecCounter1		; $7b76
 	ret nz			; $7b79
 	call getThisRoomFlags		; $7b7a
 	set 6,(hl)		; $7b7d
-	ld hl,$cf47		; $7b7f
+
+	; Change the door tile?
+	ld hl,wRoomLayout+$47		; $7b7f
 	ld (hl),$44		; $7b82
+
 	call checkIsLinkedGame		; $7b84
-	jr z,_label_0b_349	; $7b87
+	jr z,@@unlinkedGame			; $7b87
+
 	call fadeoutToBlack		; $7b89
 	jp interactionIncState2		; $7b8c
-_label_0b_349:
+
+@@unlinkedGame:
 	xor a			; $7b8f
 	ld (wMenuDisabled),a		; $7b90
 	ld (wDisabledObjects),a		; $7b93
 	ld a,(wActiveMusic)		; $7b96
 	call playSound		; $7b99
 	jp interactionDelete		; $7b9c
+
+
+; Linked game only: trigger cutscene
+@state4Substate4:
 	ld a,(wPaletteThread_mode)		; $7b9f
 	or a			; $7ba2
 	ret nz			; $7ba3
-	ld a,$11		; $7ba4
+	ld a,CUTSCENE_FLAME_OF_SORROW		; $7ba4
 	ld (wCutsceneTrigger),a		; $7ba6
 	jp interactionDelete		; $7ba9
-	ld e,$44		; $7bac
+
+
+interactiond7_essence:
+	ld e,Interaction.state		; $7bac
 	ld a,(de)		; $7bae
 	rst_jumpTable			; $7baf
-.dw $7bb8
-.dw $7bd7
-.dw $7be1
-.dw $7be9
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+
+@state0:
 	ld a,$01		; $7bb8
-	ld (de),a		; $7bba
+	ld (de),a ; [state]
 	ld h,d			; $7bbb
-	ld l,$46		; $7bbc
+	ld l,Interaction.counter1		; $7bbc
 	ld (hl),$10		; $7bbe
-	ld l,$50		; $7bc0
-	ld (hl),$50		; $7bc2
+	ld l,Interaction.speed		; $7bc0
+	ld (hl),SPEED_200		; $7bc2
 	ld a,SND_POOF		; $7bc4
 	call playSound		; $7bc6
 	call objectCenterOnTile		; $7bc9
-	ld l,$4e		; $7bcc
+	ld l,Interaction.z		; $7bcc
 	xor a			; $7bce
 	ldi (hl),a		; $7bcf
 	ld (hl),a		; $7bd0
 	call interactionInitGraphics		; $7bd1
 	jp objectSetVisible80		; $7bd4
+
+@state1:
 	call objectApplySpeed		; $7bd7
 	call interactionDecCounter1		; $7bda
 	ret nz			; $7bdd
 	jp interactionIncState		; $7bde
-	ld a,($cfc0)		; $7be1
+
+@state2:
+	ld a,(wTmpcfc0.genericCutscene.state)		; $7be1
 	or a			; $7be4
 	ret z			; $7be5
 	jp interactionIncState		; $7be6
+
+@state3:
 	call objectCheckWithinScreenBoundary		; $7be9
 	jp nc,interactionDelete		; $7bec
 	ld a,(wFrameCounter)		; $7bef
 	rrca			; $7bf2
 	ret c			; $7bf3
 	ld h,d			; $7bf4
-	ld l,$49		; $7bf5
+	ld l,Interaction.angle		; $7bf5
 	inc (hl)		; $7bf7
 	ld a,(hl)		; $7bf8
 	and $1f			; $7bf9
 	ld (hl),a		; $7bfb
 	ld e,l			; $7bfc
 	or a			; $7bfd
-	call z,$7c0a		; $7bfe
+	call z,@playCirclingSound		; $7bfe
 	ld bc,$5878		; $7c01
-	ld a,($cfc1)		; $7c04
+	ld a,(wTmpcfc0.genericCutscene.cfc1)		; $7c04
 	jp objectSetPositionInCircleArc		; $7c07
+
+@playCirclingSound:
 	ld a,SND_CIRCLING		; $7c0a
 	jp playSound		; $7c0c
+
+;;
+; @addr{7c0f}
+_interactiond7_updateSmallSparkles:
 	ld a,(wFrameCounter)		; $7c0f
 	and $07			; $7c12
 	ret nz			; $7c14
-	ld bc,$8403		; $7c15
+
+	ldbc INTERACID_SPARKLE, $03		; $7c15
 	call objectCreateInteraction		; $7c18
 	ret nz			; $7c1b
+
 	ld a,(wFrameCounter)		; $7c1c
 	and $38			; $7c1f
 	swap a			; $7c21
 	rlca			; $7c23
-	ld bc,$7c36		; $7c24
+	ld bc,@sparklePositionOffsets		; $7c24
 	call addDoubleIndexToBc		; $7c27
-	ld l,$4b		; $7c2a
+	ld l,Interaction.yh		; $7c2a
 	ld a,(bc)		; $7c2c
 	add (hl)		; $7c2d
 	ld (hl),a		; $7c2e
 	inc bc			; $7c2f
-	ld l,$4d		; $7c30
+	ld l,Interaction.xh		; $7c30
 	ld a,(bc)		; $7c32
 	add (hl)		; $7c33
 	ld (hl),a		; $7c34
 	ret			; $7c35
-	stop			; $7c36
-	ld (bc),a		; $7c37
-	stop			; $7c38
-	cp $08			; $7c39
-	dec b			; $7c3b
-	ld ($0cfb),sp		; $7c3c
-	ld ($f80c),sp		; $7c3f
-	ld b,$0b		; $7c42
-	ld b,$f5		; $7c44
+
+@sparklePositionOffsets:
+	.db $10 $02
+	.db $10 $fe
+	.db $08 $05
+	.db $08 $fb
+	.db $0c $08
+	.db $0c $f8
+	.db $06 $0b
+	.db $06 $f5
+
+;;
+; Updates Z-position based on frame counter.
+; @addr{7c46}
+_interactiond7_updateFloating:
 	ld a,(wFrameCounter)		; $7c46
 	and $07			; $7c49
 	ret nz			; $7c4b
@@ -96163,17 +96289,15 @@ _label_0b_349:
 	and $38			; $7c4f
 	swap a			; $7c51
 	rlca			; $7c53
-	ld hl,$7c5d		; $7c54
+	ld hl,@zPositions		; $7c54
 	rst_addAToHl			; $7c57
-	ld e,$4f		; $7c58
+	ld e,Interaction.zh		; $7c58
 	ld a,(hl)		; $7c5a
 	ld (de),a		; $7c5b
 	ret			; $7c5c
-	rst $38			; $7c5d
-	cp $ff			; $7c5e
-	nop			; $7c60
-	ld bc,$0102		; $7c61
-	nop			; $7c64
+
+@zPositions:
+	.db $ff $fe $ff $00 $01 $02 $01 $00
 
 
 ; ==============================================================================

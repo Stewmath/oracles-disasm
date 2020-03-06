@@ -1128,8 +1128,8 @@
 ; @subid_00{A tiny sparkle that disappears in an instant.}
 ; @subid_01{Used by INTERACID_TIMEWARP}
 ; @subid_02{Used by INTERACID_MAKUCONFETTI?}
-; @subid_03{}
-; @subid_04{A big, red-and-blue orb that's probably used with the maku seed or something?}
+; @subid_03{Used by INTERACID_MAKU_SEED_AND_ESSENCES.}
+; @subid_04{Big, red-and-blue orb; used by INTERACID_MAKU_SEED_AND_ESSENCES.}
 ; @subid_05{}
 ; @subid_06{Glowing orb behind Link in the intro cutscene, on the triforce screen}
 ; @subid_07{Used by tuni nut while being placed}
@@ -1722,8 +1722,12 @@
 .define INTERACID_DEKU_SCRUB		$d6
 
 ;;
-; Maku seed? (but we already have an object for that)
-.define INTERACID_d7			$d7
+; Handles the cutscene where the maku seed and the 3 essences despawn the barrier in the black
+; tower.
+;
+; @subid_00{Maku seed (spawns the other subids)}
+; @subid_01-08{Essences}
+.define INTERACID_MAKU_SEED_AND_ESSENCES	$d7
 
 ;;
 ; Handles events in rooms where pulling a lever fills lava with walkable terrain.
