@@ -1609,6 +1609,9 @@
 .define INTERACID_PIRATE_SHIP		$c2
 
 ;;
+; @subid_00{Pirate ship roaming the sea (loaded in slot $d140, "w1ReservedInteraction1")}
+; @subid_01{Unlinked cutscene of ship leaving}
+; @subid_02{Linked cutscene of ship leaving}
 .define INTERACID_PIRATE_CAPTAIN	$c3
 
 ;;

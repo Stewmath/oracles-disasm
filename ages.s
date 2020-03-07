@@ -94848,129 +94848,172 @@ _label_0b_316:
 	ld bc,$8409		; $7236
 	jp objectCreateInteraction		; $7239
 
+
+; ==============================================================================
+; INTERACID_PIRATE_SHIP
+; ==============================================================================
 interactionCodec2:
-	ld e,$42		; $723c
+	ld e,Interaction.subid		; $723c
 	ld a,(de)		; $723e
 	rst_jumpTable			; $723f
-.dw $7246
-.dw $72a0
-.dw $7310
-	ld e,$44		; $7246
+	.dw @subid0
+	.dw @subid1
+	.dw @subid2
+
+@subid0:
+	ld e,Interaction.state		; $7246
 	ld a,(de)		; $7248
 	rst_jumpTable			; $7249
-.dw $7250
-.dw $7269
-.dw interactionAnimate
-	call interactionInitGraphics
+	.dw @subid0State0
+	.dw @subid0State1
+	.dw interactionAnimate
+
+@subid0State0:
+	call interactionInitGraphics	; $7250
 	call objectSetVisible82		; $7253
 	ld a,(wPirateShipAngle)		; $7256
 	and $03			; $7259
-	ld e,$48		; $725b
+	ld e,Interaction.direction		; $725b
 	ld (de),a		; $725d
 	call interactionSetAnimation		; $725e
 	ld a,$06		; $7261
 	call objectSetCollideRadius		; $7263
 	jp interactionIncState		; $7266
+
+@subid0State1:
+	; Update position based on "wPirateShipRoom" and other variables
 	ld hl,wPirateShipRoom		; $7269
 	ld a,(wActiveRoom)		; $726c
 	cp (hl)			; $726f
 	jp nz,interactionDelete		; $7270
 	inc l			; $7273
-	ldi a,(hl)		; $7274
-	ld e,$4b		; $7275
+	ldi a,(hl) ; [wPirateShipY]
+	ld e,Interaction.yh		; $7275
 	ld (de),a		; $7277
-	ldi a,(hl)		; $7278
-	ld e,$4d		; $7279
+	ldi a,(hl) ; [wPirateShipX]
+	ld e,Interaction.xh		; $7279
 	ld (de),a		; $727b
-	ld e,$48		; $727c
+
+	ld e,Interaction.direction		; $727c
 	ld a,(de)		; $727e
-	cp (hl)			; $727f
+	cp (hl) ; [wPirateShipAngle]			; $727f
 	ld a,(hl)		; $7280
 	ld (de),a		; $7281
 	call nz,interactionSetAnimation		; $7282
+
+	; Check if Link touched the ship
 	call objectCheckCollidedWithLink_notDead		; $7285
-	jr nc,@label_0b_317	; $7288
+	jr nc,@animate	; $7288
 	call checkLinkVulnerable		; $728a
-	jr nc,@label_0b_317	; $728d
+	jr nc,@animate	; $728d
+
 	ld hl,@warpDest		; $728f
 	call setWarpDestVariables		; $7292
 	jp interactionIncState		; $7295
-@label_0b_317:
+
+@animate:
 	jp interactionAnimate		; $7298
 
 @warpDest:
 	m_HardcodedWarpA ROOM_AGES_5f8, $01, $56, $03
 
-	ld e,$44		; $72a0
+
+; Unlinked cutscene of ship leaving
+@subid1:
+	ld e,Interaction.state		; $72a0
 	ld a,(de)		; $72a2
 	rst_jumpTable			; $72a3
-.dw $72aa
-.dw $72df
-.dw $72f1
+	.dw @subid1State0
+	.dw @subid1And2State1
+	.dw @subid1State2
+
+@subid1State0:
 	call checkIsLinkedGame		; $72aa
 	jp nz,interactionDelete		; $72ad
+
 	ld a,GLOBALFLAG_PIRATES_GONE		; $72b0
 	call checkGlobalFlag		; $72b2
 	jp z,interactionDelete		; $72b5
+
 	call getThisRoomFlags		; $72b8
-	and $40			; $72bb
+	and ROOMFLAG_40			; $72bb
 	jp nz,interactionDelete		; $72bd
+
 	call interactionInitGraphics		; $72c0
 	ld a,$03		; $72c3
 	call interactionSetAnimation		; $72c5
-	xor a			; $72c8
+	xor a ; DIR_UP
 	ld (w1Link.direction),a		; $72c9
+
+@subid1And2State0Common:
 	call objectSetVisible82		; $72cc
-	ld e,$46		; $72cf
-	ld a,$3c		; $72d1
+	ld e,Interaction.counter1		; $72cf
+	ld a,60		; $72d1
 	ld (de),a		; $72d3
-	ld a,$81		; $72d4
+	ld a,DISABLE_ALL_BUT_INTERACTIONS | DISABLE_LINK		; $72d4
 	ld (wDisabledObjects),a		; $72d6
 	ld (wMenuDisabled),a		; $72d9
 	jp interactionIncState		; $72dc
+
+@subid1And2State1:
 	call interactionAnimate		; $72df
 	call interactionDecCounter1		; $72e2
 	ret nz			; $72e5
 	ld (hl),$80		; $72e6
-	ld bc,$360c		; $72e8
+	ld bc,TX_360c		; $72e8
 	call showText		; $72eb
 	jp interactionIncState		; $72ee
-	ld c,$18		; $72f1
-_label_0b_318:
-	ld b,$28		; $72f3
-	ld e,$49		; $72f5
+
+@subid1State2:
+	ld c,ANGLE_LEFT		; $72f1
+
+@moveOffScreen:
+	ld b,SPEED_100		; $72f3
+	ld e,Interaction.angle		; $72f5
 	call objectApplyGivenSpeed		; $72f7
 	call interactionAnimate		; $72fa
 	call interactionDecCounter1		; $72fd
 	ret nz			; $7300
+
 	call getThisRoomFlags		; $7301
-	set 6,(hl)		; $7304
+	set ROOMFLAG_BIT_40,(hl)		; $7304
 	xor a			; $7306
 	ld (wDisabledObjects),a		; $7307
 	ld (wMenuDisabled),a		; $730a
 	jp interactionDelete		; $730d
-	ld e,$44		; $7310
+
+
+; Linked cutscene of ship leaving
+@subid2:
+	ld e,Interaction.state		; $7310
 	ld a,(de)		; $7312
 	rst_jumpTable			; $7313
-.dw $731a
-.dw $72df
-.dw $733f
+	.dw @subid2State0
+	.dw @subid1And2State1
+	.dw @subid2State2
+
+@subid2State0:
 	call checkIsLinkedGame		; $731a
 	jp z,interactionDelete		; $731d
+
 	ld a,GLOBALFLAG_PIRATES_GONE		; $7320
 	call checkGlobalFlag		; $7322
 	jp z,interactionDelete		; $7325
+
 	call getThisRoomFlags		; $7328
-	and $40			; $732b
+	and ROOMFLAG_40			; $732b
 	jp nz,interactionDelete		; $732d
+
 	call interactionInitGraphics		; $7330
 	xor a			; $7333
 	call interactionSetAnimation		; $7334
 	ld a,$01		; $7337
 	ld (w1Link.direction),a		; $7339
-	jp $72cc		; $733c
-	ld c,$00		; $733f
-	jr _label_0b_318		; $7341
+	jp @subid1And2State0Common		; $733c
+
+@subid2State2:
+	ld c,ANGLE_UP		; $733f
+	jr @moveOffScreen		; $7341
 
 
 ; ==============================================================================
