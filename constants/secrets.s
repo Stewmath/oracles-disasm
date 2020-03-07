@@ -18,6 +18,7 @@
 .ende
 
 ; TODO: Identify all linked Ages secrets (also put them in "globalFlags.s" when it's done)
+.define GRAVEYARD_SECRET $01
 .define DIVER_SECRET $03
 .define TEMPLE_SECRET $06
 .define DEKU_SECRET $07

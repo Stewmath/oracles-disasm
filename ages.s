@@ -95556,29 +95556,44 @@ _label_0b_334:
 	.dw script7ed1
 	.dw script7ed5
 
+
+; ==============================================================================
+; INTERACID_LINKED_GAME_GHINI
+;
+; Variables:
+;   var3f: Secret index (for "linkedGameNpcScript")
+; ==============================================================================
 interactionCodecb:
 	call checkInteractionState		; $779e
-	jr nz,_label_0b_335	; $77a1
-	call $77be		; $77a3
+	jr nz,@state1	; $77a1
+
+@state0:
+	call @initialize		; $77a3
 	ld h,d			; $77a6
-	ld l,$5c		; $77a7
+	ld l,Interaction.oamFlags		; $77a7
 	ld (hl),$02		; $77a9
-	ld l,$7f		; $77ab
-	ld (hl),$01		; $77ad
+	ld l,Interaction.var3f		; $77ab
+	ld (hl),GRAVEYARD_SECRET		; $77ad
 	ld hl,linkedGameNpcScript		; $77af
 	call interactionSetScript		; $77b2
-_label_0b_335:
+
+@state1:
 	call interactionRunScript		; $77b5
 	jp c,interactionDeleteAndUnmarkSolidPosition		; $77b8
 	jp interactionAnimateAsNpc		; $77bb
+
+@initialize:
 	call interactionInitGraphics		; $77be
 	call objectMarkSolidPosition		; $77c1
 	jp interactionIncState		; $77c4
+
+; Unused
+@func_77c7:
 	call interactionInitGraphics		; $77c7
 	call objectMarkSolidPosition		; $77ca
-	ld a,$4d		; $77cd
+	ld a,>TX_4d00		; $77cd
 	call interactionSetHighTextIndex		; $77cf
-	ld e,$42		; $77d2
+	ld e,Interaction.subid		; $77d2
 	ld a,(de)		; $77d4
 	ld hl,@scriptTable		; $77d5
 	rst_addDoubleIndex			; $77d8
