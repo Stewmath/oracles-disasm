@@ -9966,36 +9966,44 @@ script7dbf:
 	rungenericnpclowindex $2c
 script7dc1:
 	loadscript scriptHlp.script15_7948
-script7dc5:
-	rungenericnpc $3608
-script7dc8:
-	rungenericnpc $3609
-script7dcb:
-	rungenericnpc $360a
-script7dce:
-	rungenericnpc $360b
-script7dd1:
+
+
+; ==============================================================================
+; INTERACID_PIRATE
+; ==============================================================================
+pirateSubid0Script:
+	rungenericnpc TX_3608
+pirateSubid1Script:
+	rungenericnpc TX_3609
+pirateSubid2Script:
+	rungenericnpc TX_360a
+pirateSubid3Script:
+	rungenericnpc TX_360b
+
+pirateSubid4Script:
 	initcollisions
-	jumpifitemobtained $4f script7dd9
-	rungenericnpc $360d
-script7dd9:
+	jumpifitemobtained TREASURE_TOKAY_EYEBALL, @haveEyeball
+	rungenericnpc TX_360d
+
+@haveEyeball:
 	checkabutton
 	disableinput
-	playsound $f0
-script7ddd:
-	orroomflag $80
-	spawninteraction $8006 $52 $6a
-	playsound $6c
+	playsound SNDCTRL_STOPMUSIC
+
+pirateSubid4Script_insertEyeball:
+	orroomflag ROOMFLAG_80
+	spawninteraction INTERACID_DECORATION, $06, $52, $6a
+	playsound SND_OPENCHEST
 	wait 60
-	playsound $b0
+	playsound SND_OPENING
 	shakescreen 160
 	wait 120
-	setcoords $58 $58
-	asm15 $7972
+	setcoords $58, $58
+	asm15 scriptHlp.pirate_openEyeballCave
 	wait 60
-	playsound $4d
+	playsound SND_SOLVEPUZZLE
 	resetmusic
-	asm15 loseTreasure $4f
+	asm15 loseTreasure, TREASURE_TOKAY_EYEBALL
 	enableinput
 	scriptend
 

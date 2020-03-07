@@ -8962,6 +8962,13 @@ script15_7956:
 	setglobalflag $34
 	scriptend
 
+
+; ==============================================================================
+; INTERACID_PIRATE
+; ==============================================================================
+;;
+; @addr{7972}
+pirate_openEyeballCave:
 	ld c,$54		; $7972
 	ld a,$a2		; $7974
 	call setTile		; $7976
@@ -8973,7 +8980,7 @@ script15_7956:
 	call setTile		; $7982
 	ld a,SND_DOORCLOSE		; $7985
 	call playSound		; $7987
-	ld bc,$0500		; $798a
+	ldbc INTERACID_PUFF, $00		; $798a
 	jp objectCreateInteraction		; $798d
 
 

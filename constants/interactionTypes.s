@@ -1612,7 +1612,10 @@
 .define INTERACID_PIRATE_CAPTAIN	$c3
 
 ;;
-; Generic Piratian
+; Generic Piratian; also, tokay eyeball slot.
+;
+; @subid_00-03{Piratian in the ship}
+; @subid_04{Tokay eyeball slot (invisible object)}
 .define INTERACID_PIRATE		$c4
 
 ;;

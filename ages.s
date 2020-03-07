@@ -94990,23 +94990,37 @@ _label_0b_320:
 	call interactionSetScript		; $7364
 	jp interactionIncState		; $7367
 
+
+; ==============================================================================
+; INTERACID_PIRATE
+;
+; Variables:
+;   var3f: Push counter for subid 4 (tokay eyeball is inserted when it reached 0)
+; ==============================================================================
 interactionCodec4:
-	ld e,$44		; $736a
+	ld e,Interaction.state		; $736a
 	ld a,(de)		; $736c
 	rst_jumpTable			; $736d
-.dw $7378
-.dw $73c1
-.dw $73dd
-.dw $7400
-.dw $7439
-	ld e,$42		; $7378
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+
+@state0:
+	ld e,Interaction.subid		; $7378
 	ld a,(de)		; $737a
 	rst_jumpTable			; $737b
-.dw $7386
-.dw $7386
-.dw $7386
-.dw $7386
-.dw $739a
+	.dw @subid0Init
+	.dw @subid1Init
+	.dw @subid2Init
+	.dw @subid3Init
+	.dw @subid4Init
+
+@subid0Init:
+@subid1Init:
+@subid2Init:
+@subid3Init:
 	ld a,(de)		; $7386
 	ld hl,@scriptTable		; $7387
 	rst_addDoubleIndex			; $738a
@@ -95018,14 +95032,17 @@ interactionCodec4:
 	call objectSetVisiblec2		; $7394
 	jp interactionIncState		; $7397
 
+@subid4Init:
 	call getThisRoomFlags		; $739a
-	and $80			; $739d
+	and ROOMFLAG_80			; $739d
 	jp nz,interactionDelete		; $739f
-	call $7440		; $73a2
-	ld e,$44		; $73a5
+
+	call @resetPushCounter		; $73a2
+	ld e,Interaction.state		; $73a5
 	ld a,$03		; $73a7
 	ld (de),a		; $73a9
-	ld e,$42		; $73aa
+
+	ld e,Interaction.subid		; $73aa
 	ld a,(de)		; $73ac
 	ld hl,@scriptTable		; $73ad
 	rst_addDoubleIndex			; $73b0
@@ -95035,70 +95052,96 @@ interactionCodec4:
 	jp interactionSetScript		; $73b4
 
 @scriptTable:
-	.dw script7dc5
-	.dw script7dc8
-	.dw script7dcb
-	.dw script7dce
-	.dw script7dd1
+	.dw pirateSubid0Script
+	.dw pirateSubid1Script
+	.dw pirateSubid2Script
+	.dw pirateSubid3Script
+	.dw pirateSubid4Script
 
-	ld a,($cfc0)		; $73c1
+
+; Subids 0-3: waiting for signal from piration captain to jump in excitement
+@state1:
+	ld a,(wTmpcfc0.genericCutscene.state)		; $73c1
 	bit 0,a			; $73c4
-	jp nz,$73cf		; $73c6
+	jp nz,@jump		; $73c6
 	call interactionRunScript		; $73c9
 	jp npcFaceLinkAndAnimate		; $73cc
+
+@jump:
 	ld a,$02		; $73cf
 	call interactionSetAnimation		; $73d1
-	ld bc,$fe00		; $73d4
+	ld bc,-$200		; $73d4
 	call objectSetSpeedZ		; $73d7
 	jp interactionIncState		; $73da
+
+
+; Subids 0-3: will set a signal when they're done jumping
+@state2:
 	ld c,$28		; $73dd
 	call objectUpdateSpeedZ_paramC		; $73df
 	ret nz			; $73e2
-	ld hl,$cfc0		; $73e3
+	ld hl,wTmpcfc0.genericCutscene.state		; $73e3
 	set 1,(hl)		; $73e6
 	jp interactionAnimate		; $73e8
+
+
+;;
+; @param[out]	cflag	c if Link is pushing up towards this object
+; @addr{73eb}
+@checkCenteredWithLink:
 	ld a,(wLinkDeathTrigger)		; $73eb
 	or a			; $73ee
 	ret nz			; $73ef
 	ld a,(wLinkPushingDirection)		; $73f0
-	or a			; $73f3
+	or a ; DIR_UP
 	ret nz			; $73f4
 	ld a,(wGameKeysPressed)		; $73f5
-	and $03			; $73f8
+	and BTN_A | BTN_B			; $73f8
 	ret nz			; $73fa
 	ld b,$05		; $73fb
 	jp objectCheckCenteredWithLink		; $73fd
+
+
+; Subid 4: tokay eyeball slot, waiting to be put in
+@state3:
 	call objectCheckCollidedWithLink_notDead		; $7400
-	call nc,$7440		; $7403
-	call $73eb		; $7406
-	call nc,$7440		; $7409
+	call nc,@resetPushCounter		; $7403
+	call @checkCenteredWithLink		; $7406
+	call nc,@resetPushCounter		; $7409
 	ld h,d			; $740c
-	ld l,$7f		; $740d
+	ld l,Interaction.var3f		; $740d
 	dec (hl)		; $740f
-	jr nz,_label_0b_322	; $7410
+	jr nz,@state4	; $7410
+
 	ld a,TREASURE_TOKAY_EYEBALL		; $7412
 	call checkTreasureObtained		; $7414
-	jr c,_label_0b_321	; $7417
-	ld bc,$360d		; $7419
+	jr c,@haveEyeball	; $7417
+
+	ld bc,TX_360d		; $7419
 	call showText		; $741c
-	jr _label_0b_323		; $741f
-_label_0b_321:
+	jr @resetPushCounter		; $741f
+
+@haveEyeball:
 	call checkLinkCollisionsEnabled		; $7421
-	jr nc,_label_0b_323	; $7424
-	ld a,$81		; $7426
+	jr nc,@resetPushCounter	; $7424
+
+	; Putting eyeball in
+	ld a,DISABLE_ALL_BUT_INTERACTIONS | DISABLE_LINK		; $7426
 	ld (wDisabledObjects),a		; $7428
 	ld (wMenuDisabled),a		; $742b
 	ld a,SNDCTRL_STOPMUSIC		; $742e
 	call playSound		; $7430
-	ld hl,script7ddd		; $7433
+	ld hl,pirateSubid4Script_insertEyeball		; $7433
 	call interactionSetScript		; $7436
-_label_0b_322:
+
+@state4:
 	call interactionRunScript		; $7439
 	ret nc			; $743c
 	jp interactionDelete		; $743d
-_label_0b_323:
-	ld e,$7f		; $7440
-	ld a,$0a		; $7442
+
+@resetPushCounter:
+	ld e,Interaction.var3f		; $7440
+	ld a,10		; $7442
 	ld (de),a		; $7444
 	ret			; $7445
 
