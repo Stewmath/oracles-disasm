@@ -238,6 +238,9 @@
 ; @subid_01{Red}
 .define PARTID_PLASMARINE_PROJECTILE		$43
 
+;;
+.define PARTID_TINGLE_BALLOON			$44
+
 ; $45: falling boulder spawner?
 
 ;;

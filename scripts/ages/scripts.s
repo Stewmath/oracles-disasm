@@ -9998,125 +9998,158 @@ script7ddd:
 	asm15 loseTreasure $4f
 	enableinput
 	scriptend
-script7dfd:
+
+
+; ==============================================================================
+; INTERACID_TINGLE
+; ==============================================================================
+tingleScript:
 	enableinput
-script7dfe:
+@loop:
 	checkabutton
-	jumpifitemobtained $54 script7e35
-	jumpifglobalflagset $1b script7e0d
-	setglobalflag $1b
-	showtextnonexitablelowindex $00
-	jump2byte script7e0f
-script7e0d:
-	showtextnonexitablelowindex $01
-script7e0f:
+	jumpifitemobtained TREASURE_ISLAND_CHART, @alreadyGotChart
+	jumpifglobalflagset GLOBALFLAG_MET_TINGLE, @notFirstMeeting
+
+	; First meeting
+	setglobalflag GLOBALFLAG_MET_TINGLE
+	showtextnonexitablelowindex <TX_1e00
+	jump2byte @respondToBeFriend
+
+@notFirstMeeting:
+	showtextnonexitablelowindex <TX_1e01
+
+@respondToBeFriend:
 	setdisabledobjectsto11
 	jumptable_memoryaddress wSelectedTextOption
-	.dw script7e1b
-	.dw script7e17
-script7e17:
-	showtextlowindex $03
-	jump2byte script7e49
-script7e1b:
+	.dw @willBeFriend
+	.dw @wontBeFriend
+
+@wontBeFriend:
+	showtextlowindex <TX_1e03
+	jump2byte @endConversation
+
+@willBeFriend:
 	disableinput
-	showtextlowindex $02
+	showtextlowindex <TX_1e02
 	checktext
-	giveitem $5400
+	giveitem TREASURE_ISLAND_CHART_SUBID_00
 	wait 1
 	checktext
-	showtextlowindex $04
-	callscript script7ebc
+	showtextlowindex <TX_1e04
+	callscript @koolooLimpah
 	wait 60
-	writememory $d103 $02
+
+	; Tell Ricky to go away?
+	writememory w1Companion.var03, $02
 	setdisabledobjectsto11
-	writememory $d104 $0a
-	jump2byte script7dfe
-script7e35:
+	writememory w1Companion.state, $0a
+
+	jump2byte @loop
+
+@alreadyGotChart:
 	disableinput
-	jumpifobjectbyteeq $7e $00 script7e47
-	jumptable_objectbyte $7d
-	.dw script7e50
-	.dw script7e88
-	.dw script7eae
-script7e43:
-	showtextlowindex $08
-	jump2byte script7e49
-script7e47:
-	showtextlowindex $04
-script7e49:
+	jumpifobjectbyteeq Interaction.var3e, $00, @notEnoughSeedTypes
+	jumptable_objectbyte Interaction.var3d
+	.dw @haveLevel1Satchel
+	.dw @haveLevel2Satchel
+	.dw @haveLevel3Satchel
+
+@alreadyGotSatchelUpgrade:
+	showtextlowindex <TX_1e08
+	jump2byte @endConversation
+
+@notEnoughSeedTypes:
+	showtextlowindex <TX_1e04
+
+@endConversation:
 	checktext
-	callscript script7ebc
+	callscript @koolooLimpah
 	enableallobjects
-	jump2byte script7dfd
-script7e50:
-	jumpifglobalflagset $46 script7e43
-	showtextnonexitablelowindex $06
+	jump2byte tingleScript
+
+@haveLevel1Satchel:
+	jumpifglobalflagset GLOBALFLAG_GOT_SATCHEL_UPGRADE, @alreadyGotSatchelUpgrade
+	showtextnonexitablelowindex <TX_1e06
 	jumptable_memoryaddress wSelectedTextOption
-	.dw script7e61
-	.dw script7e5d
-script7e5d:
-	showtextlowindex $03
-	jump2byte script7e49
-script7e61:
-	setglobalflag $46
-	showtextlowindex $07
-script7e65:
-	writeobjectbyte $7f $01
+	.dw @acceptUpgrade
+	.dw @dontAcceptUpgrade
+
+@dontAcceptUpgrade:
+	showtextlowindex <TX_1e03
+	jump2byte @endConversation
+
+@acceptUpgrade:
+	setglobalflag GLOBALFLAG_GOT_SATCHEL_UPGRADE
+	showtextlowindex <TX_1e07
+
+@giveSatchelUpgrade:
+	writeobjectbyte Interaction.var3f, $01
 	setanimation $03
-	showtextlowindex $0c
+	showtextlowindex <TX_1e0c
 	checktext
-script7e6d:
-	jumpifobjectbyteeq $7f $00 script7e75
+@waitForAnimation:
+	jumpifobjectbyteeq Interaction.var3f, $00, ++
 	wait 1
-	jump2byte script7e6d
-script7e75:
-	asm15 $7990
+	jump2byte @waitForAnimation
+++
+	asm15 scriptHlp.tingle_createGlowAroundLink
 	wait 120
-	giveitem $1904
+	giveitem TREASURE_SEED_SATCHEL_SUBID_04
 	checktext
 	asm15 refillSeedSatchel
-	jumpifobjectbyteeq $7d $02 script7eae
+	jumpifobjectbyteeq Interaction.var3d, $02, @haveLevel3Satchel
 	enableallobjects
-	jump2byte script7dfd
-script7e88:
-	jumpifglobalflagset $14 script7e8e
-	jump2byte script7e50
-script7e8e:
-	showtextlowindex $09
+	jump2byte tingleScript
+
+
+@haveLevel2Satchel:
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, @postgame
+	jump2byte @haveLevel1Satchel
+
+@postgame:
+	showtextlowindex <TX_1e09
 	jumptable_memoryaddress wSelectedTextOption
-	.dw script7e9b
-	.dw script7e97
-script7e97:
-	showtextlowindex $0a
-	jump2byte script7e49
-script7e9b:
+	.dw @enterSecret
+	.dw @dontEnterSecret
+
+@dontEnterSecret:
+	showtextlowindex <TX_1e0a
+	jump2byte @endConversation
+
+@enterSecret:
 	askforsecret TINGLE_SECRET
 	wait 30
-	jumpifmemoryeq $cc89 $00 script7ea8
-	showtextlowindex $0d
-	jump2byte script7e49
-script7ea8:
-	showtextlowindex $0e
-	setglobalflag $6b
-	jump2byte script7e65
-script7eae:
-	jumpifglobalflagset $14 script7eb4
-	jump2byte script7e43
-script7eb4:
+	jumpifmemoryeq wTextInputResult, $00, @validSecret
+	showtextlowindex <TX_1e0d
+	jump2byte @endConversation
+
+@validSecret:
+	showtextlowindex <TX_1e0e
+	setglobalflag GLOBALFLAG_BEGAN_TINGLE_SECRET
+	jump2byte @giveSatchelUpgrade
+
+
+@haveLevel3Satchel:
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, @showReturnSecret
+	jump2byte @alreadyGotSatchelUpgrade
+
+@showReturnSecret:
 	generatesecret TINGLE_RETURN_SECRET
-	setglobalflag $75
-	showtextlowindex $0f
-	jump2byte script7e49
-script7ebc:
-	writeobjectbyte $7f $01
+	setglobalflag GLOBALFLAG_DONE_TINGLE_SECRET
+	showtextlowindex <TX_1e0f
+	jump2byte @endConversation
+
+
+@koolooLimpah:
+	writeobjectbyte Interaction.var3f, $01
 	setanimation $03
-	showtextlowindex $05
+	showtextlowindex <TX_1e05
 	checktext
-script7ec4:
-	jumpifobjectbyteeq $7f $00 script7ecc
+@waitUntilKoolooLimpahAnimationDone:
+	jumpifobjectbyteeq Interaction.var3f, $00, ++
 	wait 1
-	jump2byte script7ec4
-script7ecc:
+	jump2byte @waitUntilKoolooLimpahAnimationDone
+++
 	retscript
 
 

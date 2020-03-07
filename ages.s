@@ -95230,26 +95230,40 @@ _label_0b_326:
 	call objectCreateInteractionWithSubid00		; $753c
 	jp interactionDelete		; $753f
 
+
+; ==============================================================================
+; INTERACID_TINGLE
+;
+; Variables:
+;   var3d: Satchel level (minus one); used by script.
+;   var3e: Nonzero if Link has 3 seed types or more
+;   var3f: Signal for the script, set to 1 when his "kooloo-limpah" animation ends
+; ==============================================================================
 interactionCodec8:
-	ld e,$44		; $7542
+	ld e,Interaction.state		; $7542
 	ld a,(de)		; $7544
 	rst_jumpTable			; $7545
-.dw $7550
-.dw $758f
-.dw $75b1
-.dw $7590
-.dw $75be
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+
+@state0:
 	ld a,$01		; $7550
-	ld (de),a		; $7552
+	ld (de),a ; [state]
+
 	call interactionInitGraphics		; $7553
 	call interactionSetAlwaysUpdateBit		; $7556
 	call objectSetVisiblec0		; $7559
-	ld a,$1e		; $755c
+	ld a,>TX_1e00		; $755c
 	call interactionSetHighTextIndex		; $755e
 	ld a,$06		; $7561
 	call objectSetCollideRadius		; $7563
+
+	; Count number of seed types Link has
 	ldbc TREASURE_EMBER_SEEDS, 00		; $7566
-_label_0b_327:
+@checkNextSeed:
 	ld a,b			; $7569
 	call checkTreasureObtained		; $756a
 	ld a,$00		; $756d
@@ -95258,85 +95272,112 @@ _label_0b_327:
 	ld c,a			; $7571
 	inc b			; $7572
 	ld a,b			; $7573
-	cp $25			; $7574
-	jr nz,_label_0b_327	; $7576
+	cp TREASURE_MYSTERY_SEEDS+1			; $7574
+	jr nz,@checkNextSeed	; $7576
+
 	ld a,c			; $7578
 	cp $03			; $7579
-	jr c,_label_0b_328	; $757b
-	ld e,$7e		; $757d
+	jr c,++			; $757b
+	ld e,Interaction.var3e		; $757d
 	ld (de),a		; $757f
-_label_0b_328:
+++
 	call getFreePartSlot		; $7580
 	ret nz			; $7583
-	ld (hl),$44		; $7584
+	ld (hl),PARTID_TINGLE_BALLOON		; $7584
 	call objectCopyPosition		; $7586
-	ld l,$d6		; $7589
-	ld a,$40		; $758b
+	ld l,Part.relatedObj1		; $7589
+	ld a,Interaction.start		; $758b
 	ldi (hl),a		; $758d
 	ld (hl),d		; $758e
+
+
+; Tingle's balloon will change the state to 2 when it gets popped
+@state1:
 	ret			; $758f
-	ld e,$46		; $7590
+
+
+; Falling from the air
+@state3:
+	ld e,Interaction.counter1		; $7590
 	ld a,(de)		; $7592
 	or a			; $7593
 	jp nz,interactionDecCounter1		; $7594
+
 	ld c,$10		; $7597
 	call objectUpdateSpeedZ_paramC		; $7599
 	ret nz			; $759c
-	ld e,$71		; $759d
+
+	ld e,Interaction.pressedAButton		; $759d
 	call objectAddToAButtonSensitiveObjectList		; $759f
-	ld hl,script7dfd		; $75a2
+	ld hl,tingleScript		; $75a2
 	call interactionSetScript		; $75a5
 	ld a,$04		; $75a8
-	ld e,$44		; $75aa
+	ld e,Interaction.state		; $75aa
 	ld (de),a		; $75ac
 	ld a,$01		; $75ad
-	jr _label_0b_329		; $75af
+	jr @setAnimation		; $75af
+
+
+; Balloon just popped
+@state2:
 	ld a,$03		; $75b1
-	ld (de),a		; $75b3
-	ld a,$0f		; $75b4
-	ld e,$46		; $75b6
+	ld (de),a ; [state]
+	ld a,15		; $75b4
+	ld e,Interaction.counter1		; $75b6
 	ld (de),a		; $75b8
 	ld a,$02		; $75b9
-_label_0b_329:
+
+@setAnimation:
 	jp interactionSetAnimation		; $75bb
+
+
+; On the ground
+@state4:
 	ld a,TREASURE_SEED_SATCHEL		; $75be
 	call checkTreasureObtained		; $75c0
-	ld e,$7d		; $75c3
+	ld e,Interaction.var3d		; $75c3
 	dec a			; $75c5
 	ld (de),a		; $75c6
 	call interactionRunScript		; $75c7
 	call interactionAnimateAsNpc		; $75ca
-	ld e,$61		; $75cd
+	ld e,Interaction.animParameter		; $75cd
 	ld a,(de)		; $75cf
 	rrca			; $75d0
-	jr nc,_label_0b_330	; $75d1
-	ld bc,$fe00		; $75d3
+	jr nc,@label_0b_330	; $75d1
+
+	ld bc,-$200		; $75d3
 	call objectSetSpeedZ		; $75d6
+
 	ld bc,$e800		; $75d9
 	call objectCreateSparkle		; $75dc
-	ld l,$49		; $75df
+	ld l,Interaction.angle		; $75df
 	ld (hl),$10		; $75e1
+
 	ld bc,$f008		; $75e3
 	call objectCreateSparkle		; $75e6
-	ld l,$49		; $75e9
+	ld l,Interaction.angle		; $75e9
 	ld (hl),$10		; $75eb
+
 	ld bc,$f0f8		; $75ed
 	call objectCreateSparkle		; $75f0
-	ld l,$49		; $75f3
+	ld l,Interaction.angle		; $75f3
 	ld (hl),$10		; $75f5
-_label_0b_330:
+
+@label_0b_330:
 	ld c,$20		; $75f7
 	call objectUpdateSpeedZ_paramC		; $75f9
 	ret nz			; $75fc
-	ld e,$61		; $75fd
+
+	ld e,Interaction.animParameter		; $75fd
 	ld a,(de)		; $75ff
 	rlca			; $7600
 	ret nc			; $7601
+
 	xor a			; $7602
-	ld e,$7f		; $7603
+	ld e,Interaction.var3f		; $7603
 	ld (de),a		; $7605
 	ld a,$01		; $7606
-	jr _label_0b_329		; $7608
+	jr @setAnimation		; $7608
 
 
 ; ==============================================================================
@@ -95584,7 +95625,7 @@ interactionCodec9:
 	ld (hl),$03		; $773c
 	ld l,Interaction.speed		; $773e
 	ld (hl),SPEED_200		; $7740
-	ld l,Interaction.xh		; $7742
+	ld l,Interaction.var3d		; $7742
 	ld (hl),$01		; $7744
 	ld l,Interaction.angle		; $7746
 	ld (hl),$08		; $7748

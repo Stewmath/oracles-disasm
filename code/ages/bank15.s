@@ -8975,7 +8975,15 @@ script15_7956:
 	call playSound		; $7987
 	ld bc,$0500		; $798a
 	jp objectCreateInteraction		; $798d
-	ld bc,$8404		; $7990
+
+
+; ==============================================================================
+; INTERACID_TINGLE
+; ==============================================================================
+;;
+; @addr{7990}
+tingle_createGlowAroundLink:
+	ldbc INTERACID_SPARKLE,$04		; $7990
 	call objectCreateInteraction		; $7993
 	ret nz			; $7996
 	ld l,Interaction.counter1		; $7997
