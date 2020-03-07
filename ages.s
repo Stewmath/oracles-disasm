@@ -95102,31 +95102,42 @@ _label_0b_323:
 	ld (de),a		; $7444
 	ret			; $7445
 
+
+; ==============================================================================
+; INTERACID_PLAY_HARP_SONG
+; ==============================================================================
 interactionCodec5:
-	ld e,$44		; $7446
+	ld e,Interaction.state		; $7446
 	ld a,(de)		; $7448
 	rst_jumpTable			; $7449
-.dw $7458
-.dw $7469
-.dw $7485
-.dw $74a9
-.dw $7485
-.dw $74a9
-.dw $74ba
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+	.dw @state5
+	.dw @state6
+
+@state0:
 	call setLinkForceStateToState08		; $7458
 	ld hl,w1Link.yh		; $745b
 	call objectTakePosition		; $745e
-	ld e,$46		; $7461
+	ld e,Interaction.counter1		; $7461
 	ld a,$04		; $7463
 	ld (de),a		; $7465
 	jp interactionIncState		; $7466
+
+@state1:
 	call interactionDecCounter1		; $7469
 	ret nz			; $746c
-	ld (hl),$34		; $746d
-	ld a,$1e		; $746f
+	ld (hl),52 ; [counter1]
+
+	ld a,LINK_ANIM_MODE_HARP_2		; $746f
 	ld (wcc50),a		; $7471
+
 	call interactionIncState		; $7474
-	ld e,$42		; $7477
+
+	ld e,Interaction.subid		; $7477
 	ld a,(de)		; $7479
 	ld hl,@sounds		; $747a
 	rst_addAToHl			; $747d
@@ -95134,39 +95145,50 @@ interactionCodec5:
 	jp playSound		; $747f
 
 @sounds:
-.ifdef ROM_AGES
 	.db SND_ECHO
 	.db SND_CURRENT
 	.db SND_AGES
-.endif
 
+
+; Facing left
+@state2:
+@state4:
 	ld a,(wFrameCounter)		; $7485
 	and $1f			; $7488
-	jr nz,_label_0b_324	; $748a
+	jr nz,@stateCommon	; $748a
 	xor a			; $748c
 	ld bc,$f8f8		; $748d
 	call objectCreateFloatingMusicNote		; $7490
-_label_0b_324:
+
+@stateCommon:
 	push de			; $7493
-	ld de,$d000		; $7494
-	ld hl,specialObjectAnimate		; $7497
-	ld e,$00		; $749a
-	call interBankCall		; $749c
+	ld de,w1Link		; $7494
+	callab specialObjectAnimate		; $7497
 	pop de			; $749f
 	call interactionDecCounter1		; $74a0
 	ret nz			; $74a3
-	ld (hl),$34		; $74a4
+	ld (hl),52 ; [counter1]
 	jp interactionIncState		; $74a6
+
+
+; Facing right
+@state3:
+@state5:
 	ld a,(wFrameCounter)		; $74a9
 	and $1f			; $74ac
-	jr nz,_label_0b_324	; $74ae
+	jr nz,@stateCommon	; $74ae
+
 	ld a,$01		; $74b0
 	ld bc,$f808		; $74b2
 	call objectCreateFloatingMusicNote		; $74b5
-	jr _label_0b_324		; $74b8
-	ld hl,$cfc0		; $74ba
+	jr @stateCommon		; $74b8
+
+
+; Signal to a "cutscene handler" that we're done, then delete self
+@state6:
+	ld hl,wTmpcfc0.genericCutscene.state		; $74ba
 	set 7,(hl)		; $74bd
-	ld a,$10		; $74bf
+	ld a,LINK_ANIM_MODE_WALK		; $74bf
 	ld (wcc50),a		; $74c1
 	jp interactionDelete		; $74c4
 

@@ -1617,7 +1617,10 @@
 
 ;;
 ; Play a harp song, and make music notes at Link's position. Used when Link learns a song.
-;   Subid: song to play (0-2)
+;
+; @subid_00{Tune of Echoes}
+; @subid_01{Tune of Currents}
+; @subid_02{Tune of Ages}
 .define INTERACID_PLAY_HARP_SONG	$c5
 
 ;;
