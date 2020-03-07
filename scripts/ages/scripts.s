@@ -10118,9 +10118,15 @@ script7ec4:
 	jump2byte script7ec4
 script7ecc:
 	retscript
-script7ecd:
-	showtext $0d09
+
+
+; ==============================================================================
+; INTERACID_SYRUP_CUCCO
+; ==============================================================================
+syrupCuccoScript_triedToSteal:
+	showtext TX_0d09
 	scriptend
+
 
 ; ==============================================================================
 ; INTERACID_TROY

@@ -1636,8 +1636,9 @@
 .define INTERACID_TINGLE		$c8
 
 ;;
-; See also ENEMYID_CUCCO. (TODO: what's the difference?)
-.define INTERACID_CUCCO			$c9
+; Cucco in Syrup's hut that prevents you from stealing. (Not to be confused with ENEMYID_CUCCO,
+; which is a more normal cucco.)
+.define INTERACID_SYRUP_CUCCO		$c9
 
 ;;
 ; @subid_00{Troy at target carts (postgame)}

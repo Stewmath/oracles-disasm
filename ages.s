@@ -95338,39 +95338,60 @@ _label_0b_330:
 	ld a,$01		; $7606
 	jr _label_0b_329		; $7608
 
+
+; ==============================================================================
+; INTERACID_SYRUP_CUCCO
+;
+; Variables:
+;   var3c: $00 normally, $01 while cucco is chastizing Link
+;   var3d: Animation index?
+;   var3e: Also an animation index?
+; ==============================================================================
 interactionCodec9:
-	call $7610		; $760a
-	jp $761e		; $760d
-	ld e,$44		; $7610
+	call @runState		; $760a
+	jp @updateAnimation		; $760d
+
+@runState:
+	ld e,Interaction.state		; $7610
 	ld a,(de)		; $7612
 	rst_jumpTable			; $7613
-.dw $7626
-.dw $7646
-.dw $7697
-.dw $76b1
-.dw $76c9
-	ld e,$7d		; $761e
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+
+@updateAnimation:
+	ld e,Interaction.var3d		; $761e
 	ld a,(de)		; $7620
 	or a			; $7621
 	ret z			; $7622
 	jp interactionAnimate		; $7623
+
+@state0:
 	ld a,$01		; $7626
-	ld (de),a		; $7628
+	ld (de),a ; [state]
 	call interactionInitGraphics		; $7629
+
 	ld h,d			; $762c
-	ld l,$66		; $762d
+	ld l,Interaction.collisionRadiusY		; $762d
 	ld (hl),$06		; $762f
 	inc l			; $7631
-	ld (hl),$06		; $7632
-	ld l,$50		; $7634
-	ld (hl),$19		; $7636
-	call $76f0		; $7638
-	ld e,$71		; $763b
+	ld (hl),$06 ; [collisionRadiusX]
+
+	ld l,Interaction.speed		; $7634
+	ld (hl),SPEED_a0		; $7636
+	call @beginHop		; $7638
+	ld e,Interaction.pressedAButton		; $763b
 	call objectAddToAButtonSensitiveObjectList		; $763d
 	call objectSetVisible80		; $7640
-	jp $7710		; $7643
-	call $76e9		; $7646
-	call $76f6		; $7649
+	jp @func_7710		; $7643
+
+@state1:
+	call @updateHopping		; $7646
+	call @updateMovement		; $7649
+
+	; Return if [w1Link.yh] < $69
 	ld hl,w1Link.yh		; $764c
 	ld c,$69		; $764f
 	ld b,(hl)		; $7651
@@ -95379,145 +95400,203 @@ interactionCodec9:
 	ld a,c			; $7655
 	cp b			; $7656
 	ret nc			; $7657
+
+	; Check if he's holding something
 	ld a,(wLinkGrabState)		; $7658
 	or a			; $765b
 	ret z			; $765c
-	ld e,$7c		; $765d
+
+	; Freeze Link
+	ld e,Interaction.var3c		; $765d
 	ld a,$02		; $765f
 	ld (de),a		; $7661
-	ld a,$80		; $7662
+	ld a,DISABLE_ALL_BUT_INTERACTIONS		; $7662
 	ld (wDisabledObjects),a		; $7664
+
 	ld a,l			; $7667
 	ld hl,w1Link.yh		; $7668
 	ld (hl),a		; $766b
-	jp $771b		; $766c
+	jp @initState2		; $766c
+
+; Unused?
+@func_766f:
 	xor a			; $766f
-	ld (de),a		; $7670
-	ld e,$7d		; $7671
+	ld (de),a ; ?
+	ld e,Interaction.var3d		; $7671
 	ld (de),a		; $7673
-	ld e,$7c		; $7674
+	ld e,Interaction.var3c		; $7674
 	ld a,$01		; $7676
 	ld (de),a		; $7678
 	ld a,(wLinkGrabState)		; $7679
 	or a			; $767c
-	jr z,_label_0b_331	; $767d
-	ld a,($d019)		; $767f
+	jr z,@gotoState4	; $767d
+
+	; Do something with the item Link's holding?
+	ld a,(w1Link.relatedObj2+1)		; $767f
 	ld h,a			; $7682
-	ld e,$7a		; $7683
+	ld e,Interaction.var3a		; $7683
 	ld (de),a		; $7685
-	ld hl,$7ecd		; $7686
-	jp $768f		; $7689
-_label_0b_331:
-	ld hl,script7ecd		; $768c
-	ld e,$44		; $768f
+	ld hl,syrupCuccoScript_triedToSteal		; $7686
+	jp @setScriptAndGotoState4			; $7689
+
+@gotoState4:
+	ld hl,syrupCuccoScript_triedToSteal		; $768c
+
+@setScriptAndGotoState4:
+	ld e,Interaction.state		; $768f
 	ld a,$04		; $7691
 	ld (de),a		; $7693
 	jp interactionSetScript		; $7694
-	call $76e9		; $7697
+
+
+; Moving toward Link after he tried to steal something
+@state2:
+	call @updateHopping		; $7697
 	call objectApplySpeed		; $769a
-	ld e,$4d		; $769d
+	ld e,Interaction.xh		; $769d
 	ld a,(de)		; $769f
 	sub $0c			; $76a0
 	ld hl,w1Link.xh		; $76a2
 	cp (hl)			; $76a5
 	ret nc			; $76a6
-	ld e,$7d		; $76a7
+
+	; Reached Link
+	ld e,Interaction.var3d		; $76a7
 	xor a			; $76a9
 	ld (de),a		; $76aa
-	ld hl,$7ecd		; $76ab
-	jp $768f		; $76ae
-	call $76e9		; $76b1
+	ld hl,syrupCuccoScript_triedToSteal		; $76ab
+	jp @setScriptAndGotoState4		; $76ae
+
+
+; Moving back to normal position
+@state3:
+	call @updateHopping		; $76b1
 	call objectApplySpeed		; $76b4
-	ld e,$4d		; $76b7
+	ld e,Interaction.xh		; $76b7
 	ld a,(de)		; $76b9
 	cp $78			; $76ba
 	ret c			; $76bc
+
 	xor a			; $76bd
 	ld (wDisabledObjects),a		; $76be
-	ld e,$44		; $76c1
+	ld e,Interaction.state		; $76c1
 	ld a,$01		; $76c3
 	ld (de),a		; $76c5
-	jp $7710		; $76c6
+	jp @func_7710		; $76c6
+
+
+@state4:
 	call interactionRunScript		; $76c9
 	ret nc			; $76cc
-	ld e,$7c		; $76cd
+
+	ld e,Interaction.var3c		; $76cd
 	ld a,(de)		; $76cf
 	cp $02			; $76d0
-	jr z,_label_0b_332	; $76d2
+	jr z,@beginMovingBack	; $76d2
+
 	ld h,d			; $76d4
-	ld l,$44		; $76d5
+	ld l,Interaction.state		; $76d5
 	ld (hl),$01		; $76d7
-	ld l,$7c		; $76d9
+	ld l,Interaction.var3c		; $76d9
 	ld (hl),$00		; $76db
-	ld l,$7d		; $76dd
+	ld l,Interaction.var3d		; $76dd
 	ld (hl),$01		; $76df
 	xor a			; $76e1
 	ld (wDisabledObjects),a		; $76e2
 	ret			; $76e5
-_label_0b_332:
-	jp $7739		; $76e6
+
+@beginMovingBack:
+	jp @initState3		; $76e6
+
+;;
+; @addr{76e9}
+@updateHopping:
 	ld c,$20		; $76e9
 	call objectUpdateSpeedZ_paramC		; $76eb
 	ret nz			; $76ee
 	ld h,d			; $76ef
-	ld bc,$ff40		; $76f0
+
+;;
+; @addr{76f0}
+@beginHop:
+	ld bc,-$c0		; $76f0
 	jp objectSetSpeedZ		; $76f3
+
+;;
+; @addr{76f6}
+@updateMovement:
 	call objectApplySpeed		; $76f6
-	ld e,$4d		; $76f9
+	ld e,Interaction.xh		; $76f9
 	ld a,(de)		; $76fb
 	sub $68			; $76fc
 	cp $20			; $76fe
 	ret c			; $7700
-	ld e,$49		; $7701
+
+	; Reverse direction
+	ld e,Interaction.angle		; $7701
 	ld a,(de)		; $7703
 	xor $10			; $7704
 	ld (de),a		; $7706
-	ld e,$7e		; $7707
+
+	ld e,Interaction.var3e		; $7707
 	ld a,(de)		; $7709
 	xor $01			; $770a
 	ld (de),a		; $770c
 	jp interactionSetAnimation		; $770d
+
+;;
+; @addr{7710}
+@func_7710:
 	ld h,d			; $7710
-	ld l,$7c		; $7711
+	ld l,Interaction.var3c		; $7711
 	ld (hl),$00		; $7713
-	ld l,$50		; $7715
-	ld (hl),$14		; $7717
-	jr _label_0b_333		; $7719
+	ld l,Interaction.speed		; $7715
+	ld (hl),SPEED_80		; $7717
+	jr +++			; $7719
+
+;;
+; @addr{771b}
+@initState2:
 	ld h,d			; $771b
-	ld l,$44		; $771c
+	ld l,Interaction.state		; $771c
 	ld (hl),$02		; $771e
-	ld l,$50		; $7720
-	ld (hl),$50		; $7722
-_label_0b_333:
-	ld l,$7d		; $7724
+	ld l,Interaction.speed		; $7720
+	ld (hl),SPEED_200		; $7722
++++
+	ld l,Interaction.var3d		; $7724
 	ld (hl),$01		; $7726
-	ld l,$49		; $7728
+	ld l,Interaction.angle		; $7728
 	ld (hl),$18		; $772a
 	xor a			; $772c
-	ld l,$4e		; $772d
+	ld l,Interaction.z		; $772d
 	ldi (hl),a		; $772f
 	ld (hl),a		; $7730
-	ld l,$7e		; $7731
+	ld l,Interaction.var3e		; $7731
 	ld a,$00		; $7733
 	ld (hl),a		; $7735
 	jp interactionSetAnimation		; $7736
+
+;;
+; @addr{7739}
+@initState3:
 	ld h,d			; $7739
-	ld l,$44		; $773a
+	ld l,Interaction.state		; $773a
 	ld (hl),$03		; $773c
-	ld l,$50		; $773e
-	ld (hl),$50		; $7740
-	ld l,$7d		; $7742
+	ld l,Interaction.speed		; $773e
+	ld (hl),SPEED_200		; $7740
+	ld l,Interaction.xh		; $7742
 	ld (hl),$01		; $7744
-	ld l,$49		; $7746
+	ld l,Interaction.angle		; $7746
 	ld (hl),$08		; $7748
 	xor a			; $774a
-	ld l,$4e		; $774b
+	ld l,Interaction.z		; $774b
 	ldi (hl),a		; $774d
 	ld (hl),a		; $774e
-	ld l,$7e		; $774f
+	ld l,Interaction.var3e		; $774f
 	ld a,$01		; $7751
 	ld (hl),a		; $7753
 	jp interactionSetAnimation		; $7754
+
 
 ; ==============================================================================
 ; INTERACID_TROY
