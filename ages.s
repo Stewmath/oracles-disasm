@@ -95519,30 +95519,51 @@ _label_0b_333:
 	ld (hl),a		; $7753
 	jp interactionSetAnimation		; $7754
 
+; ==============================================================================
+; INTERACID_TROY
+; ==============================================================================
 interactionCodeca:
-	ld e,$42		; $7757
+	ld e,Interaction.subid		; $7757
 	ld a,(de)		; $7759
 	rst_jumpTable			; $775a
-.dw $775f
-.dw $7779
+	.dw @subid0
+	.dw @subid1
+
+
+@subid0:
 	call checkInteractionState		; $775f
-	jr nz,_label_0b_334	; $7762
-	call $7787		; $7764
+	jr nz,@state1	; $7762
+
+	; State 0
+	call @initialize		; $7764
 	ld a,(wScreenTransitionDirection)		; $7767
 	or a			; $776a
-	jr nz,_label_0b_334	; $776b
-	ld ($cfd5),a		; $776d
-_label_0b_334:
+	jr nz,@state1			; $776b
+	ld (wTmpcfc0.targetCarts.beganGameWithTroy),a		; $776d
+
+@state1:
 	call interactionRunScript		; $7770
 	jp c,interactionDelete		; $7773
 	jp interactionAnimateAsNpc		; $7776
+
+
+@subid1:
 	call checkInteractionState		; $7779
-	jr nz,_label_0b_334	; $777c
-	jp $7787		; $777e
+	jr nz,@state1	; $777c
+
+	; State 0
+	jp @initialize		; $777e
+
+
+; Unused
+@func_7781:
 	call interactionInitGraphics		; $7781
 	jp interactionIncState		; $7784
+
+
+@initialize:
 	call interactionInitGraphics		; $7787
-	ld e,$42		; $778a
+	ld e,Interaction.subid		; $778a
 	ld a,(de)		; $778c
 	ld hl,@scriptTable		; $778d
 	rst_addDoubleIndex			; $7790
@@ -95553,8 +95574,8 @@ _label_0b_334:
 	jp interactionIncState		; $7797
 
 @scriptTable:
-	.dw script7ed1
-	.dw script7ed5
+	.dw troySubid0Script
+	.dw troySubid1Script
 
 
 ; ==============================================================================

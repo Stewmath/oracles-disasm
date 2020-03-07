@@ -8978,102 +8978,134 @@ script15_7956:
 	ld bc,$8404		; $7990
 	call objectCreateInteraction		; $7993
 	ret nz			; $7996
-	ld l,$46		; $7997
-	ld (hl),$78		; $7999
+	ld l,Interaction.counter1		; $7997
+	ld (hl),120		; $7999
 	ld a,(w1Link.yh)		; $799b
-	ld l,$4b		; $799e
+	ld l,Interaction.yh		; $799e
 	ldi (hl),a		; $79a0
 	inc l			; $79a1
 	ld a,(w1Link.xh)		; $79a2
 	ld (hl),a		; $79a5
 	ret			; $79a6
+
+
+; ==============================================================================
+; INTERACID_TROY
+; ==============================================================================
+;;
+; @addr{79a7}
+troy_chooseRandomAnimalText:
 	call getRandomNumber		; $79a7
 	and $0f			; $79aa
-	add $13			; $79ac
+	add <TX_2c13			; $79ac
 	ld (wTextSubstitutions),a		; $79ae
 	ret			; $79b1
 
-; @addr{79b2}
-script15_79b2:
-	jumpifglobalflagset $14 script15_79b7
+
+; Troy at target carts
+troySubid0Script:
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, @postgame
 	scriptend
-script15_79b7:
+
+@postgame:
 	initcollisions
-script15_79b8:
+@loop:
 	checkabutton
 	disableinput
-	jumpifglobalflagset $70 script15_7a30
-	jumpifmemoryeq $cfd5 $00 script15_79ca
-	jumpifmemoryeq $ccd5 $01 script15_7a16
-script15_79ca:
-	jumpifglobalflagset $66 script15_79f2
-	showtext $2c06
+	jumpifglobalflagset GLOBALFLAG_DONE_TROY_SECRET, @alreadyDoneSecret
+	jumpifmemoryeq wTmpcfc0.targetCarts.beganGameWithTroy, $00, @haventStartedGameYet
+	jumpifmemoryeq wShootingGalleryccd5, $01, @returnedToScreenAfterGame
+
+@haventStartedGameYet:
+	jumpifglobalflagset GLOBALFLAG_BEGAN_TROY_SECRET, @alreadyBeganSecret
+
+	; Asks if you have a secret
+	showtext TX_2c06
 	wait 30
-	jumpiftextoptioneq $00 script15_79dc
-	showtext $2c07
+	jumpiftextoptioneq $00, @askForSecret
+	showtext TX_2c07
 	enableinput
-	jump2byte script15_79b8
-script15_79dc:
+	jump2byte @loop
+
+@askForSecret:
 	askforsecret TROY_SECRET
 	wait 30
-	jumpifmemoryeq $cc89 $00 script15_79eb
-	showtext $2c09
+	jumpifmemoryeq wTextInputResult, $00, @validSecret
+
+	; Invalid secret
+	showtext TX_2c09
 	enableinput
-	jump2byte script15_79b8
-script15_79eb:
-	setglobalflag $66
-	showtext $2c08
-	jump2byte script15_79f5
-script15_79f2:
-	showtext $2c0e
-script15_79f5:
+	jump2byte @loop
+
+@validSecret:
+	setglobalflag GLOBALFLAG_BEGAN_TROY_SECRET
+	showtext TX_2c08
+	jump2byte @askToBeginGame
+
+@alreadyBeganSecret:
+	showtext TX_2c0e
+@askToBeginGame:
 	wait 30
-	jumpiftextoptioneq $00 script15_7a00
-	showtext $2c0f
+	jumpiftextoptioneq $00, @beganGame
+	showtext TX_2c0f
 	enableinput
-	jump2byte script15_79b8
-script15_7a00:
-	showtext $2c0a
+	jump2byte @loop
+
+@beganGame:
+	showtext TX_2c0a
 	wait 30
-	jumpiftextoptioneq $01 script15_7a00
-	showtext $2c0b
-	writememory $cfd5 $01
+	jumpiftextoptioneq $01, @beganGame
+	showtext TX_2c0b
+	writememory wTmpcfc0.targetCarts.beganGameWithTroy, $01
 	enableinput
-script15_7a10:
+
+@waitingToCompleteGame:
 	checkabutton
-	showtext $2c10
-	jump2byte script15_7a10
-script15_7a16:
-	writememory $ccd5 $00
+	showtext TX_2c10
+	jump2byte @waitingToCompleteGame
+
+
+@returnedToScreenAfterGame:
+	writememory wShootingGalleryccd5, $00
 	asm15 goron_targetCarts_checkHitAllTargets
-	jumpifmemoryset $cddb $80 script15_7a26
+	jumpifmemoryset $cddb, $80, @giveReward
+
+	; Failed game
 	enableinput
-	jump2byte script15_7a10
-script15_7a26:
-	showtext $2c0c
+	jump2byte @waitingToCompleteGame
+
+@giveReward:
+	showtext TX_2c0c
 	wait 30
-	giveitem $0d02
+	giveitem TREASURE_BOMBCHUS_SUBID_02
 	wait 30
-	setglobalflag $70
-script15_7a30:
+	setglobalflag GLOBALFLAG_DONE_TROY_SECRET
+
+@alreadyDoneSecret:
 	generatesecret TROY_RETURN_SECRET
-	showtext $2c0d
+	showtext TX_2c0d
 	enableinput
-	jump2byte script15_79b8
-script15_7a38:
-	jumpifglobalflagset $14 stubScript ; TODO
+	jump2byte @loop
+
+
+; Troy in his house
+troySubid1Script:
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, stubScript
 	initcollisions
-script15_7a3d:
+@loop:
 	checkabutton
-	jumpifroomflagset $40 script15_7a4c
-	asm15 $79a7
-	showtext $2c11
+	jumpifroomflagset $40, ++
+	asm15 troy_chooseRandomAnimalText
+	showtext TX_2c11
 	orroomflag $40
-	jump2byte script15_7a3d
-script15_7a4c:
-	asm15 $79a7
-	showtext $2c12
-	jump2byte script15_7a3d
+	jump2byte @loop
+++
+	asm15 troy_chooseRandomAnimalText
+	showtext TX_2c12
+	jump2byte @loop
+
+
+; ==============================================================================
 
 ;;
 ; Check that a secret-related NPC should spawn (correct essence obtained)?

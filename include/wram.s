@@ -2221,6 +2221,7 @@ wInShop: ; $ccd3/$ccea
 
 wShootingGalleryccd5: ; $ccd5
 ; Shooting gallery: ?
+; (Also used by target carts with INTERACID_TROY?)
 	.db
 wShopHaveEnoughRupees: ; $ccd5
 ; Shop: Set to 0 if you have enough money for an item, 1 otherwise
@@ -2824,7 +2825,8 @@ wRoomLayoutEnd: ; $cfc0
 		dsb $14
 	targetConfiguration: ; $cfd4
 		db
-	cfd5:
+	beganGameWithTroy:
+	; Used by INTERACID_TROY (minigame for bombchus).
 		db
 	prizeIndex: ; $cfd6
 		db

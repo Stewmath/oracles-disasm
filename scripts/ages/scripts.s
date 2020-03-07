@@ -10121,11 +10121,19 @@ script7ecc:
 script7ecd:
 	showtext $0d09
 	scriptend
-script7ed1:
-	loadscript scriptHlp.script15_79b2
-script7ed5:
-	loadscript scriptHlp.script15_7a38
 
+; ==============================================================================
+; INTERACID_TROY
+; ==============================================================================
+
+troySubid0Script:
+	loadscript scriptHlp.troySubid0Script
+
+troySubid1Script:
+	loadscript scriptHlp.troySubid1Script
+
+
+; ==============================================================================
 
 ; Used by linked game NPCs that give secrets.
 ; The npcs set "var3f" to the "secret index" (corresponds to wShortSecretIndex) before

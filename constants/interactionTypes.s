@@ -1640,6 +1640,8 @@
 .define INTERACID_CUCCO			$c9
 
 ;;
+; @subid_00{Troy at target carts (postgame)}
+; @subid_01{Troy in his house (disappears in postgame)}
 .define INTERACID_TROY			$ca
 
 ;;
