@@ -182,30 +182,38 @@
 	; LINKED AGES SECRETS
 	; ==============================================================================
 
-	; Set when corresponding NPC is spoken to; allows Farore to accept the return
-	; secret in Ages. (TODO: identify these.)
-	GLOBALFLAG_50				db ; $50
-	GLOBALFLAG_51				db ; $51
-	GLOBALFLAG_52				db ; $52
-	GLOBALFLAG_53				db ; $53
-	GLOBALFLAG_54				db ; $54
-	GLOBALFLAG_55				db ; $55
-	GLOBALFLAG_56				db ; $56
-	GLOBALFLAG_57				db ; $57
-	GLOBALFLAG_58				db ; $58
-	GLOBALFLAG_59				db ; $59
+	GLOBALFLAG_FIRST_AGES_BEGAN_SECRET	.db
 
-	; Set when the return secret has been entered.
-	GLOBALFLAG_5a				db ; $5a
-	GLOBALFLAG_5b				db ; $5b
-	GLOBALFLAG_5c				db ; $5c
-	GLOBALFLAG_5d				db ; $5d
-	GLOBALFLAG_5e				db ; $5e
-	GLOBALFLAG_5f				db ; $5f
-	GLOBALFLAG_60				db ; $60
-	GLOBALFLAG_61				db ; $61
-	GLOBALFLAG_62				db ; $62
-	GLOBALFLAG_63				db ; $63
+	; Set when corresponding NPC is spoken to.
+	; In Ages, that is the NPC who initiates the quest. The flag must be set for
+	; Farore to accept the return secret from Ages.
+	; In Seasons, that is the NPC who eventually gives you the item.
+	GLOBALFLAG_BEGAN_CLOCK_SHOP_SECRET	db ; $50
+	GLOBALFLAG_BEGAN_GRAVEYARD_SECRET	db ; $51
+	GLOBALFLAG_BEGAN_SUBROSIAN_SECRET	db ; $52
+	GLOBALFLAG_BEGAN_DIVER_SECRET		db ; $53
+	GLOBALFLAG_BEGAN_SMITH_SECRET		db ; $54
+	GLOBALFLAG_BEGAN_PIRATE_SECRET		db ; $55
+	GLOBALFLAG_BEGAN_TEMPLE_SECRET		db ; $56
+	GLOBALFLAG_BEGAN_DEKU_SECRET		db ; $57
+	GLOBALFLAG_BEGAN_BIGGORON_SECRET	db ; $58
+	GLOBALFLAG_BEGAN_RUUL_SECRET		db ; $59
+
+	GLOBALFLAG_FIRST_AGES_DONE_SECRET	.db
+
+	; Set when the sidequest is completed and Link has obtained the item.
+	; In Ages, he obtains the item from Farore.
+	; In Seasons, he obtains the item from an NPC.
+	GLOBALFLAG_DONE_CLOCK_SHOP_SECRET	db ; $5a
+	GLOBALFLAG_DONE_GRAVEYARD_SECRET	db ; $5b
+	GLOBALFLAG_DONE_SUBROSIAN_SECRET	db ; $5c
+	GLOBALFLAG_DONE_DIVER_SECRET		db ; $5d
+	GLOBALFLAG_DONE_SMITH_SECRET		db ; $5e
+	GLOBALFLAG_DONE_PIRATE_SECRET		db ; $5f
+	GLOBALFLAG_DONE_TEMPLE_SECRET		db ; $60
+	GLOBALFLAG_DONE_DEKU_SECRET		db ; $61
+	GLOBALFLAG_DONE_BIGGORON_SECRET		db ; $62
+	GLOBALFLAG_DONE_RUUL_SECRET		db ; $63
 
 	; ==============================================================================
 	; LINKED SEASONS SECRETS
@@ -227,8 +235,8 @@
 	GLOBALFLAG_BEGAN_SYMMETRY_SECRET	db ; $6d
 
 	; Set when the sidequest is completed and Link has obtained the item.
-	; In Seasons, he obtains the item from an NPC.
-	; In Ages, he obtains the item from Farore.
+	; In Seasons, he obtains the item from Farore.
+	; In Ages, he obtains the item from an NPC.
 	GLOBALFLAG_DONE_KING_ZORA_SECRET	db ; $6e
 	GLOBALFLAG_DONE_FAIRY_SECRET		db ; $6f
 	GLOBALFLAG_DONE_TROY_SECRET		db ; $70

@@ -49,7 +49,7 @@ _faroreUnlinked:
 	jump2byte @npcLoop
 
 @askForPassword:
-	generateoraskforsecret $ff
+	askforsecret $ff
 	asm15 scriptHlp.faroreCheckSecretValidity
 	jumptable_objectbyte Interaction.var3f
 	.dw @offerHolodrumSecret
@@ -90,7 +90,7 @@ _faroreLinked:
 	jump2byte @npcLoop
 
 @showPasswordScreen:
-	generateoraskforsecret $ff
+	askforsecret $ff
 	asm15 scriptHlp.faroreCheckSecretValidity
 	jumptable_objectbyte $7f
 	.dw @script4667
@@ -1832,7 +1832,7 @@ shootingGalleryScript_goronElderNpc:
 	jump2byte @loop
 
 @askForSecret:
-	generateoraskforsecret $08
+	askforsecret ELDER_SECRET
 	wait 30
 	jumpifmemoryeq wTextInputResult $00 @validSecret
 	showtext TX_3133
@@ -1854,7 +1854,7 @@ shootingGalleryScript_goronElderNpc:
 @tellSecret:
 	checkabutton
 	jumpifmemoryeq wTmpcfc0.shootingGallery.disableGoronNpcs $01 @tellSecret
-	generateoraskforsecret $18
+	generatesecret ELDER_RETURN_SECRET
 	showtext TX_313e
 	jump2byte @tellSecret
 
@@ -2018,7 +2018,7 @@ shootingGalleryScript_goronElderNpc_gameDone:
 	giveitem TREASURE_BIGGORON_SWORD $00
 	wait 30
 	setglobalflag GLOBALFLAG_DONE_ELDER_SECRET
-	generateoraskforsecret $18
+	generatesecret ELDER_RETURN_SECRET
 	showtext TX_313b
 	enableinput
 	jump2byte shootingGalleryScript_goronElderNpc@tellSecret
@@ -5150,7 +5150,7 @@ tokayGameManagerScript_present:
 	jump2byte @npcLoop_waitingForSecret
 
 @enterSecret:
-	generateoraskforsecret $05
+	askforsecret TOKAY_SECRET
 	wait 20
 	jumpifmemoryeq wTextInputResult, $00, @validSecret
 
@@ -5215,13 +5215,13 @@ tokayGameManagerScript_present:
 	wait 30
 
 	setglobalflag GLOBALFLAG_DONE_TOKAY_SECRET
-	generateoraskforsecret $15
+	generatesecret TOKAY_RETURN_SECRET
 	showtextlowindex <TX_0a50
 	enableinput
 
 @alreadyGotBombUpgrade:
 	checkabutton
-	generateoraskforsecret $15
+	generatesecret TOKAY_RETURN_SECRET
 	showtextlowindex <TX_0a53
 	jump2byte @alreadyGotBombUpgrade
 
@@ -5288,7 +5288,7 @@ forestFairyScript_heartContainerSecret:
 	jump2byte @enableInput
 
 @askForSecret:
-	generateoraskforsecret $01
+	askforsecret FAIRY_SECRET
 	wait 30
 	jumpifmemoryeq wTextInputResult, $00, @gaveValidSecret
 	showtext TX_114b
@@ -5302,13 +5302,13 @@ forestFairyScript_heartContainerSecret:
 	giveitem TREASURE_HEART_CONTAINER, $02
 	wait 30
 
-	generateoraskforsecret $11
+	generatesecret FAIRY_RETURN_SECRET
 	setglobalflag GLOBALFLAG_DONE_FAIRY_SECRET
 	showtext TX_114c
 	jump2byte @enableInput
 
 @alreadyGaveSecret:
-	generateoraskforsecret $11
+	generatesecret FAIRY_RETURN_SECRET
 	showtext TX_114d
 
 @enableInput:
@@ -9433,7 +9433,7 @@ kingZoraScript_present_postGame:
 	jump2byte @loop
 
 @askForSecret:
-	generateoraskforsecret $00
+	askforsecret KING_ZORA_SECRET
 	wait 30
 	jumpifmemoryeq wTextInputResult, $00, @gaveCorrectSecret
 	showtext TX_3438
@@ -9447,13 +9447,13 @@ kingZoraScript_present_postGame:
 	wait 30
 	callscript @giveSwordUpgrade
 	wait 30
-	generateoraskforsecret $10
+	generatesecret KING_ZORA_RETURN_SECRET
 	setglobalflag GLOBALFLAG_DONE_KING_ZORA_SECRET
 	showtext TX_3439
 	jump2byte @loop
 
 @alreadyGotUpgrade:
-	generateoraskforsecret $10
+	generatesecret KING_ZORA_RETURN_SECRET
 	showtext TX_343a
 @loop:
 	enableinput
@@ -10090,7 +10090,7 @@ script7e97:
 	showtextlowindex $0a
 	jump2byte script7e49
 script7e9b:
-	generateoraskforsecret $07
+	askforsecret TINGLE_SECRET
 	wait 30
 	jumpifmemoryeq $cc89 $00 script7ea8
 	showtextlowindex $0d
@@ -10103,7 +10103,7 @@ script7eae:
 	jumpifglobalflagset $14 script7eb4
 	jump2byte script7e43
 script7eb4:
-	generateoraskforsecret $17
+	generatesecret TINGLE_RETURN_SECRET
 	setglobalflag $75
 	showtextlowindex $0f
 	jump2byte script7e49

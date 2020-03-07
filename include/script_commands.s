@@ -72,18 +72,51 @@
 	.endif
 .ENDM
 
-; Does one of two things, depending on which game this is, and whether the secret is to be
-; told in this game, or received from this game.
+; Generates a secret, which can later be displayed in a textbox. Only works for secrets which are
+; "outgoing" for this game (ie. can't generate a linked seasons secret in ages).
 ;
-; A: Asks for a specific 5-letter secret.
+; param1:	The index of the secret (see constants/secrets.s or wShortSecretIndex).
+.MACRO generatesecret
+	.ifdef ROM_AGES
+		.IF \1 < $10
+			.FAIL
+		.ENDIF
+		.IF \1 >= $20
+			.FAIL
+		.ENDIF
+	.else; ROM_SEASONS
+		.IF \1 < $30
+			.FAIL
+		.ENDIF
+		.IF \1 >= $40
+			.FAIL
+		.ENDIF
+	.endif
+	.db $86, \1
+.ENDM
+
+; Brings up a text prompt to input a secret. Only works for secrets which are "incoming" for this
+; game (ie. can't ask for a linked ages secret in ages).
 ;
-; B: Generates a 5-letter secret, which can later be printed through a textbox. (The text
-; can use the "\secret1" command to print it.)
-;
-; param1:	The index of the secret (see wShortSecretIndex).
+; param1:	The index of the secret (see constants/secrets.s or wShortSecretIndex).
 ;		If $ff, it asks for and accepts any valid secret (used with farore).
-.MACRO generateoraskforsecret
-	.db $86 \1
+.MACRO askforsecret
+	.IF \1 == $ff
+	.ELSE
+	.ifdef ROM_AGES
+		.IF \1 >= $10
+			.FAIL
+		.ENDIF
+	.else; ROM_SEASONS
+		.IF \1 < $20
+			.FAIL
+		.ENDIF
+		.IF \1 >= $30
+			.FAIL
+		.ENDIF
+	.endif
+	.ENDIF
+	.db $86, \1
 .ENDM
 
 ; Uses the given memory address as an index for a jump table immediately after the

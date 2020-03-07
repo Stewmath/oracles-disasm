@@ -37,7 +37,7 @@ faroreCheckSecretValidity:
 	; Check if we've already told this secret
 	ld a,(wTextInputResult)		; $4023
 	and $0f			; $4026
-	add GLOBALFLAG_5a			; $4028
+	add GLOBALFLAG_DONE_CLOCK_SHOP_SECRET			; $4028
 	ld b,a			; $402a
 	call checkGlobalFlag		; $402b
 	ld a,$02		; $402e
@@ -45,7 +45,7 @@ faroreCheckSecretValidity:
 
 	; Check if we've spoken to the npc needed to trigger the secret
 	ld a,b			; $4032
-	sub GLOBALFLAG_5a - GLOBALFLAG_50			; $4033
+	sub GLOBALFLAG_FIRST_AGES_DONE_SECRET - GLOBALFLAG_FIRST_AGES_BEGAN_SECRET
 	call checkGlobalFlag		; $4035
 	ld a,$01		; $4038
 	jr nz,@setVar3f		; $403a
@@ -3509,7 +3509,7 @@ oldManScript_givesShieldUpgrade:
 	jump2byte @warpLinkOut
 
 @promptForSecret:
-	generateoraskforsecret $04
+	askforsecret LIBRARY_SECRET
 	wait 30
 	jumpifmemoryeq wTextInputResult, $00, @validSecret
 
@@ -3527,12 +3527,12 @@ oldManScript_givesShieldUpgrade:
 	wait 30
 
 	setglobalflag GLOBALFLAG_DONE_LIBRARY_SECRET
-	generateoraskforsecret $14
+	generatesecret LIBRARY_RETURN_SECRET
 	showtext TX_3313
 	jump2byte @warpLinkOut
 
 @alreadyToldSecret:
-	generateoraskforsecret $14
+	generatesecret LIBRARY_RETURN_SECRET
 	showtext TX_3314
 
 @warpLinkOut:
@@ -3688,7 +3688,7 @@ mamamuYanScript:
 	jump2byte @enableInputAndLoop
 
 @promptForSecret:
-	generateoraskforsecret $06
+	askforsecret MAMAMU_SECRET
 	wait 30
 	jumpifmemoryeq wTextInputResult, $00, @validSecret
 
@@ -8839,7 +8839,7 @@ script15_7891:
 	showtextlowindex $25
 	jump2byte script15_78dc
 script15_78a2:
-	generateoraskforsecret $09
+	askforsecret SYMMETRY_SECRET
 	wait 30
 	jumpifmemoryeq $cc89 $00 script15_78af
 	showtextlowindex $27
@@ -8868,7 +8868,7 @@ script15_78d3:
 	orroomflag $20
 	setglobalflag $77
 script15_78d8:
-	generateoraskforsecret $19
+	generatesecret SYMMETRY_RETURN_SECRET
 	showtextlowindex $2b
 script15_78dc:
 	enableinput
@@ -9014,7 +9014,7 @@ script15_79ca:
 	enableinput
 	jump2byte script15_79b8
 script15_79dc:
-	generateoraskforsecret $02
+	askforsecret TROY_SECRET
 	wait 30
 	jumpifmemoryeq $cc89 $00 script15_79eb
 	showtext $2c09
@@ -9056,7 +9056,7 @@ script15_7a26:
 	wait 30
 	setglobalflag $70
 script15_7a30:
-	generateoraskforsecret $12
+	generatesecret TROY_RETURN_SECRET
 	showtext $2c0d
 	enableinput
 	jump2byte script15_79b8
@@ -9135,7 +9135,7 @@ linkedNpc_generateSecret:
 	ld h,d			; $7aa2
 	ld l,$7f		; $7aa3
 	ld b,(hl)		; $7aa5
-	ld a,GLOBALFLAG_50		; $7aa6
+	ld a,GLOBALFLAG_FIRST_AGES_BEGAN_SECRET		; $7aa6
 	add b			; $7aa8
 	call setGlobalFlag		; $7aa9
 	ld a,$20		; $7aac
@@ -9199,7 +9199,7 @@ plenSubid0Script:
 	jump2byte @resume
 
 @giveSecret:
-	generateoraskforsecret PLEN_SECRET
+	askforsecret PLEN_SECRET
 	wait 30
 	jumpifmemoryeq wTextInputResult, $00, @validSecret
 	; Bad secret

@@ -88436,7 +88436,7 @@ _interactiond9_state0:
 	ld e,Interaction.subid		; $4de9
 	ld a,(de)		; $4deb
 	ld b,a			; $4dec
-	add GLOBALFLAG_5a			; $4ded
+	add GLOBALFLAG_FIRST_AGES_DONE_SECRET			; $4ded
 	call checkGlobalFlag		; $4def
 	jr z,@secretNotTold			; $4df2
 
@@ -88762,7 +88762,7 @@ _interactiond9_state2:
 _interactiond9_markSecretAsTold:
 	ld e,Interaction.subid		; $4fb5
 	ld a,(de)		; $4fb7
-	add GLOBALFLAG_5a			; $4fb8
+	add GLOBALFLAG_FIRST_AGES_DONE_SECRET			; $4fb8
 	call setGlobalFlag		; $4fba
 	ld a,GLOBALFLAG_SECRET_CHEST_WAITING		; $4fbd
 	jp unsetGlobalFlag		; $4fbf
@@ -95573,7 +95573,7 @@ interactionCodecb:
 	ld l,Interaction.oamFlags		; $77a7
 	ld (hl),$02		; $77a9
 	ld l,Interaction.var3f		; $77ab
-	ld (hl),GRAVEYARD_SECRET		; $77ad
+	ld (hl),GRAVEYARD_SECRET & $0f		; $77ad
 	ld hl,linkedGameNpcScript		; $77af
 	call interactionSetScript		; $77b2
 
@@ -95660,7 +95660,7 @@ interactionCodecd:
 @state0:
 	call @initialize		; $781e
 	ld l,Interaction.var3f		; $7821
-	ld (hl),DIVER_SECRET		; $7823
+	ld (hl),DIVER_SECRET & $0f		; $7823
 	ld hl,linkedGameNpcScript		; $7825
 	call interactionSetScript		; $7828
 	call interactionRunScript		; $782b
@@ -95721,7 +95721,7 @@ _greatFairy_subid0:
 	ld l,Interaction.zh		; $7869
 	ld (hl),$f0		; $786b
 	ld l,Interaction.var3f		; $786d
-	ld (hl),TEMPLE_SECRET		; $786f
+	ld (hl),TEMPLE_SECRET & $0f		; $786f
 	call interactionRunScript		; $7871
 
 @state1:
@@ -95909,7 +95909,7 @@ interactionCoded6:
 	call @initialize		; $7980
 	call interactionSetAlwaysUpdateBit		; $7983
 	ld l,Interaction.var3f		; $7986
-	ld (hl),DEKU_SECRET		; $7988
+	ld (hl),DEKU_SECRET & $0f		; $7988
 	ld hl,linkedGameNpcScript		; $798a
 	call interactionSetScript		; $798d
 	call interactionRunScript		; $7990

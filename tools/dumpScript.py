@@ -180,7 +180,7 @@ def parseScript(address, output, recurse=0):
             x = rom[address]
             address+=1
             output.write('spawnenemy ' + wlahex(enemy,4) + ' ' + wlahex(y,2) + ' ' + wlahex(x,2) + '\n')
-        elif b == 0x86:
+        elif b == 0x86: # FIXME: This opcode has been split in two ("generatesecret" and "askforsecret")
             output.write('generateoraskforsecret ' + wlahex(rom[address],2) + '\n')
             address+=1
         elif b == 0x87:

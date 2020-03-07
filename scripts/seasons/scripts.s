@@ -31,7 +31,7 @@ script45ff:
 	showtextlowindex $1a
 	jump2byte script45ec
 script4606:
-	generateoraskforsecret $ff
+	askforsecret $ff
 	asm15 $451e
 	jumptable_objectbyte $7f
 	.dw script45f5
@@ -65,7 +65,7 @@ script4633:
 	showtextlowindex $08
 	jump2byte script462c
 script463d:
-	generateoraskforsecret $ff
+	askforsecret $ff
 	asm15 $451e
 	jumptable_objectbyte $7f
 	.dw script4650
@@ -1538,7 +1538,7 @@ script4ff9:
 	showtext $3104
 	jump2byte script4fe5
 script4fff:
-	generateoraskforsecret $29
+	askforsecret RUUL_SECRET
 	wait 20
 	jumptable_memoryaddress $cca3
 	.dw script5009
@@ -1563,7 +1563,7 @@ script502c:
 script502f:
 	wait 20
 script5030:
-	generateoraskforsecret $39
+	generatesecret RUUL_RETURN_SECRET
 script5032:
 	showtext $3106
 	wait 20
@@ -3283,7 +3283,11 @@ script5c29:
 	jump2byte script5c29
 script5c37:
 	setglobalflag $6c
-	generateoraskforsecret $08
+	 ; This should be "generatesecret SUBROSIAN_SECRET" but, for some reason, this is the only opcode in
+	 ; seasons where the parameter doesn't have "| $30" applied? This may change the xor cipher,
+	 ; but nothing else?
+	 ; TODO: figure out what's up (does this cause any problems?)
+	.db $86, $08
 script5c3b:
 	showtextlowindex $33
 	wait 20
@@ -3566,7 +3570,7 @@ script5df8:
 script5e06:
 	wait 30
 	showtextlowindex $2e
-	generateoraskforsecret $25
+	askforsecret PIRATE_SECRET
 	wait 30
 	jumptable_memoryaddress $cca3
 	.dw script5e1a
@@ -3597,7 +3601,7 @@ script5e2e:
 	wait 60
 	setglobalflag $5f
 script5e39:
-	generateoraskforsecret $35
+	generatesecret PIRATE_RETURN_SECRET
 script5e3b:
 	showtextlowindex $33
 	wait 30
@@ -4150,7 +4154,7 @@ script621e:
 	asm15 $5af5 $0d
 	showtextlowindex $54
 	asm15 $5af5 $0b
-	generateoraskforsecret $28
+	askforsecret BIGGORON_SECRET
 	wait 30
 	jumptable_memoryaddress $cca3
 	.dw script6240
@@ -4164,7 +4168,7 @@ script6233:
 script6240:
 	loadscript $14 $4aa3
 script6244:
-	generateoraskforsecret $38
+	generatesecret BIGGORON_RETURN_SECRET
 script6246:
 	asm15 $5af5 $0d
 	showtextlowindex $58
@@ -6907,7 +6911,7 @@ script7603:
 script7611:
 	wait 30
 	showtextlowindex $0f
-	generateoraskforsecret $24
+	askforsecret SMITH_SECRET
 	wait 30
 	jumptable_memoryaddress $cca3
 	.dw script7623
@@ -6924,7 +6928,7 @@ script7623:
 	setglobalflag $5e
 	wait 30
 script7630:
-	generateoraskforsecret $34
+	generatesecret SMITH_RETURN_SECRET
 script7632:
 	showtextlowindex $16
 	wait 30
@@ -7653,7 +7657,7 @@ script7b12:
 	jump2byte script7b07
 script7b17:
 	wait 30
-	generateoraskforsecret $20
+	askforsecret CLOCK_SHOP_SECRET
 	wait 30
 	jumptable_memoryaddress $cca3
 	.dw script7b26
@@ -7732,7 +7736,7 @@ script7b7e:
 	setcounter1 $2d
 	setglobalflag $5a
 script7b9e:
-	generateoraskforsecret $30
+	generatesecret CLOCK_SHOP_RETURN_SECRET
 script7ba0:
 	showtextlowindex $0c
 	wait 30
@@ -7804,7 +7808,7 @@ script7c0b:
 	jump2byte script7c00
 script7c10:
 	wait 30
-	generateoraskforsecret $21
+	askforsecret GRAVEYARD_SECRET
 	wait 30
 	jumptable_memoryaddress $cca3
 	.dw script7c1f
@@ -7887,7 +7891,7 @@ script7c83:
 	setcounter1 $2d
 	setglobalflag $5b
 script7c99:
-	generateoraskforsecret $31
+	generatesecret GRAVEYARD_RETURN_SECRET
 script7c9b:
 	showtextlowindex $1b
 	wait 30
@@ -7927,7 +7931,7 @@ script7cd1:
 	showtextlowindex $20
 	jump2byte script7cc3
 script7cd5:
-	generateoraskforsecret $22
+	askforsecret SUBROSIAN_SECRET
 	wait 20
 	jumptable_memoryaddress $cca3
 	.dw script7cdf
@@ -8034,7 +8038,7 @@ script7d87:
 	giveitem $0d00
 	wait 20
 script7d9c:
-	generateoraskforsecret $32
+	generatesecret SUBROSIAN_RETURN_SECRET
 script7d9e:
 	showtextlowindex $2c
 	wait 20
@@ -8068,7 +8072,7 @@ script7dc4:
 	jump2byte script7db9
 script7dc9:
 	wait 30
-	generateoraskforsecret $23
+	askforsecret DIVER_SECRET
 	wait 30
 	jumptable_memoryaddress $cca3
 	.dw script7dd8
@@ -8187,7 +8191,7 @@ script7e7d:
 	showtextlowindex $02
 	jump2byte script7e74
 script7e82:
-	generateoraskforsecret $26
+	askforsecret TEMPLE_SECRET
 	wait 30
 	jumptable_memoryaddress $cca3
 	.dw script7e8c
@@ -8238,7 +8242,7 @@ script7ec3:
 	showtextlowindex $41
 	jump2byte script7eba
 script7ec8:
-	generateoraskforsecret $27
+	askforsecret DEKU_SECRET
 	jumptable_memoryaddress $cca3
 	.dw script7ed1
 	.dw script7ec3
@@ -8265,7 +8269,7 @@ script7ef1:
 	checkabutton
 	disableinput
 script7ef3:
-	generateoraskforsecret $37
+	generatesecret DEKU_RETURN_SECRET
 	showtextlowindex $46
 	wait 20
 	jumpiftextoptioneq $00 script7ef3
