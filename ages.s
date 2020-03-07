@@ -95591,24 +95591,34 @@ _label_0b_335:
 @scriptTable:
 	.dw linkedGameNpcScript
 
+
+; ==============================================================================
+; INTERACID_PLEN
+; ==============================================================================
 interactionCodecc:
-	ld e,$42		; $77e4
+	ld e,Interaction.subid		; $77e4
 	ld a,(de)		; $77e6
 	rst_jumpTable			; $77e7
-.dw $77ea
+	.dw @subid0
 
+@subid0:
 	call checkInteractionState		; $77ea
-	jr nz,_label_0b_336	; $77ed
-	call $7804		; $77ef
+	jr nz,@state1	; $77ed
+
+@state0:
+	call @initialize		; $77ef
 	call interactionSetAlwaysUpdateBit		; $77f2
-_label_0b_336:
+
+@state1:
 	call interactionRunScript		; $77f5
 	jp c,interactionDelete		; $77f8
 	jp interactionAnimateAsNpc		; $77fb
 	call interactionInitGraphics		; $77fe
 	jp interactionIncState		; $7801
+
+@initialize:
 	call interactionInitGraphics		; $7804
-	ld e,$42		; $7807
+	ld e,Interaction.subid		; $7807
 	ld a,(de)		; $7809
 	ld hl,@scriptTable		; $780a
 	rst_addDoubleIndex			; $780d
@@ -95619,7 +95629,7 @@ _label_0b_336:
 	jp interactionIncState		; $7814
 
 @scriptTable:
-	.dw script7f2c
+	.dw plenSubid0Script
 
 
 ; ==============================================================================
@@ -95635,7 +95645,7 @@ interactionCodecd:
 @state0:
 	call @initialize		; $781e
 	ld l,Interaction.var3f		; $7821
-	ld (hl),$03		; $7823
+	ld (hl),DIVER_SECRET		; $7823
 	ld hl,linkedGameNpcScript		; $7825
 	call interactionSetScript		; $7828
 	call interactionRunScript		; $782b
@@ -95696,7 +95706,7 @@ _greatFairy_subid0:
 	ld l,Interaction.zh		; $7869
 	ld (hl),$f0		; $786b
 	ld l,Interaction.var3f		; $786d
-	ld (hl),$06		; $786f
+	ld (hl),TEMPLE_SECRET		; $786f
 	call interactionRunScript		; $7871
 
 @state1:
@@ -95884,7 +95894,7 @@ interactionCoded6:
 	call @initialize		; $7980
 	call interactionSetAlwaysUpdateBit		; $7983
 	ld l,Interaction.var3f		; $7986
-	ld (hl),$07		; $7988
+	ld (hl),DEKU_SECRET		; $7988
 	ld hl,linkedGameNpcScript		; $798a
 	call interactionSetScript		; $798d
 	call interactionRunScript		; $7990

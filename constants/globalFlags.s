@@ -183,7 +183,7 @@
 	; ==============================================================================
 
 	; Set when corresponding NPC is spoken to; allows Farore to accept the return
-	; secret in Ages.
+	; secret in Ages. (TODO: identify these.)
 	GLOBALFLAG_50				db ; $50
 	GLOBALFLAG_51				db ; $51
 	GLOBALFLAG_52				db ; $52
@@ -215,30 +215,30 @@
 	; In Seasons, that is the NPC who initiates the quest. The flag must be set for
 	; Farore to accept the return secret from Ages.
 	; In Ages, that is the NPC who eventually gives you the item.
-	GLOBALFLAG_BEGAN_KING_ZORA_SECRET				db ; $64
-	GLOBALFLAG_BEGAN_FAIRY_SECRET				db ; $65
-	GLOBALFLAG_BEGAN_TROY_SECRET				db ; $66
-	GLOBALFLAG_BEGAN_PLEN_SECRET				db ; $67
-	GLOBALFLAG_BEGAN_LIBRARY_SECRET				db ; $68
-	GLOBALFLAG_BEGAN_TOKAY_SECRET				db ; $69
-	GLOBALFLAG_BEGAN_MAMAMU_SECRET				db ; $6a
-	GLOBALFLAG_BEGAN_TINGLE_SECRET				db ; $6b
-	GLOBALFLAG_BEGAN_ELDER_SECRET				db ; $6c
-	GLOBALFLAG_BEGAN_SYMMETRY_SECRET				db ; $6d
+	GLOBALFLAG_BEGAN_KING_ZORA_SECRET	db ; $64
+	GLOBALFLAG_BEGAN_FAIRY_SECRET		db ; $65
+	GLOBALFLAG_BEGAN_TROY_SECRET		db ; $66
+	GLOBALFLAG_BEGAN_PLEN_SECRET		db ; $67
+	GLOBALFLAG_BEGAN_LIBRARY_SECRET		db ; $68
+	GLOBALFLAG_BEGAN_TOKAY_SECRET		db ; $69
+	GLOBALFLAG_BEGAN_MAMAMU_SECRET		db ; $6a
+	GLOBALFLAG_BEGAN_TINGLE_SECRET		db ; $6b
+	GLOBALFLAG_BEGAN_ELDER_SECRET		db ; $6c
+	GLOBALFLAG_BEGAN_SYMMETRY_SECRET	db ; $6d
 
 	; Set when the sidequest is completed and Link has obtained the item.
 	; In Seasons, he obtains the item from an NPC.
 	; In Ages, he obtains the item from Farore.
-	GLOBALFLAG_DONE_KING_ZORA_SECRET				db ; $6e
-	GLOBALFLAG_DONE_FAIRY_SECRET				db ; $6f
-	GLOBALFLAG_DONE_TROY_SECRET				db ; $70
-	GLOBALFLAG_DONE_PLEN_SECRET				db ; $71
-	GLOBALFLAG_DONE_LIBRARY_SECRET				db ; $72
-	GLOBALFLAG_DONE_TOKAY_SECRET				db ; $73
-	GLOBALFLAG_DONE_MAMAMU_SECRET				db ; $74
-	GLOBALFLAG_DONE_TINGLE_SECRET				db ; $75
-	GLOBALFLAG_DONE_ELDER_SECRET				db ; $76
-	GLOBALFLAG_DONE_SYMMETRY_SECRET				db ; $77
+	GLOBALFLAG_DONE_KING_ZORA_SECRET	db ; $6e
+	GLOBALFLAG_DONE_FAIRY_SECRET		db ; $6f
+	GLOBALFLAG_DONE_TROY_SECRET		db ; $70
+	GLOBALFLAG_DONE_PLEN_SECRET		db ; $71
+	GLOBALFLAG_DONE_LIBRARY_SECRET		db ; $72
+	GLOBALFLAG_DONE_TOKAY_SECRET		db ; $73
+	GLOBALFLAG_DONE_MAMAMU_SECRET		db ; $74
+	GLOBALFLAG_DONE_TINGLE_SECRET		db ; $75
+	GLOBALFLAG_DONE_ELDER_SECRET		db ; $76
+	GLOBALFLAG_DONE_SYMMETRY_SECRET		db ; $77
 
 	; Unused?
 	GLOBALFLAG_78				db ; $78

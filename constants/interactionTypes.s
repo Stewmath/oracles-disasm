@@ -1648,9 +1648,11 @@
 .define INTERACID_LINKED_GAME_GHINI	$cb
 
 ;;
+; Mayor of Lynna City
 .define INTERACID_PLEN			$cc
 
 ;;
+; Linked game NPC
 .define INTERACID_MASTER_DIVER		$cd
 
 ;;

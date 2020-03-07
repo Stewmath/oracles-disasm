@@ -10181,8 +10181,11 @@ linkedGameNpcScript:
 	jump2byte @answeredYes
 
 
-script7f2c:
-	loadscript scriptHlp.script15_7acc
+; ==============================================================================
+; INTERACID_PLEN
+; ==============================================================================
+plenSubid0Script:
+	loadscript scriptHlp.plenSubid0Script
 
 
 ; ==============================================================================

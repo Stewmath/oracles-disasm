@@ -9172,44 +9172,56 @@ linkedNpc_calcLowTextIndex:
 	ld (de),a		; $7aca
 	ret			; $7acb
 
-; @addr{7acc}
-script15_7acc:
-	jumpifglobalflagset $14 script15_7ada
-	jumpifglobalflagset $11 script15_7ad7
-	rungenericnpc $3714
-script15_7ad7:
-	rungenericnpc $3715
-script15_7ada:
+
+; ==============================================================================
+; INTERACID_PLEN
+; ==============================================================================
+plenSubid0Script:
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, @finishedGame
+	jumpifglobalflagset GLOBALFLAG_SAVED_NAYRU, @savedNayru
+	rungenericnpc TX_3714
+
+@savedNayru:
+	rungenericnpc TX_3715
+
+@finishedGame:
 	initcollisions
-script15_7adb:
+@loop:
 	checkabutton
 	disableinput
-	jumpifglobalflagset $71 script15_7b0e
-	showtext $3700
+	jumpifglobalflagset GLOBALFLAG_DONE_PLEN_SECRET, @alreadyCompletedSecret
+
+	; He can be given a secret
+	showtext TX_3700
 	wait 30
-	jumpiftextoptioneq $00 script15_7aee
-	showtext $3701
-	jump2byte script15_7b11
-script15_7aee:
-	generateoraskforsecret $03
+	jumpiftextoptioneq $00, @giveSecret
+	showtext TX_3701
+	jump2byte @resume
+
+@giveSecret:
+	generateoraskforsecret PLEN_SECRET
 	wait 30
-	jumpifmemoryeq $cc89 $00 script15_7afc
-	showtext $3703
-	jump2byte script15_7b11
-script15_7afc:
-	setglobalflag $67
-	showtext $3702
+	jumpifmemoryeq wTextInputResult, $00, @validSecret
+	; Bad secret
+	showtext TX_3703
+	jump2byte @resume
+
+@validSecret:
+	setglobalflag GLOBALFLAG_BEGAN_PLEN_SECRET
+	showtext TX_3702
 	wait 30
-	asm15 giveRingAToLink $2f
-	setglobalflag $71
+	asm15 giveRingAToLink SPIN_RING
+	setglobalflag GLOBALFLAG_DONE_PLEN_SECRET
 	wait 30
-	showtext $3704
-	jump2byte script15_7b11
-script15_7b0e:
-	showtext $3705
-script15_7b11:
+	showtext TX_3704
+	jump2byte @resume
+
+@alreadyCompletedSecret:
+	showtext TX_3705
+
+@resume:
 	enableinput
-	jump2byte script15_7adb
+	jump2byte @loop
 
 
 ; ==============================================================================
