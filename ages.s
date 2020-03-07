@@ -94784,68 +94784,101 @@ _label_0b_315:
 	call interactionRunScript		; $71ba
 	jp npcFaceLinkAndAnimate		; $71bd
 
+
+; ==============================================================================
+; INTERACID_c1
+;
+; Variables:
+;   counter1/counter2: 16-bit counter
+;   var36: Counter for sparkle spawning
+; ==============================================================================
 interactionCodec1:
-	ld e,$44		; $71c0
+	ld e,Interaction.state		; $71c0
 	ld a,(de)		; $71c2
 	rst_jumpTable			; $71c3
-.dw $71c8
-.dw $71e5
+	.dw @state0
+	.dw @state1
+
+@state0:
 	ld a,$01		; $71c8
 	ld (de),a		; $71ca
 	call interactionInitGraphics		; $71cb
 	ld h,d			; $71ce
-	ld l,$46		; $71cf
-	ld (hl),$86		; $71d1
+	ld l,Interaction.counter1		; $71cf
+	ld (hl),<390		; $71d1
 	inc l			; $71d3
-	ld (hl),$01		; $71d4
-	ld l,$76		; $71d6
+	ld (hl),>390 ; [counter2]
+	ld l,Interaction.var36		; $71d6
 	ld (hl),$06		; $71d8
-	ld l,$49		; $71da
+	ld l,Interaction.angle		; $71da
 	ld (hl),$15		; $71dc
-	ld l,$50		; $71de
-	ld (hl),$78		; $71e0
+	ld l,Interaction.speed		; $71de
+	ld (hl),SPEED_300		; $71e0
 	jp objectSetVisible82		; $71e2
-	ld e,$45		; $71e5
+
+@state1:
+	ld e,Interaction.state2		; $71e5
 	ld a,(de)		; $71e7
 	rst_jumpTable			; $71e8
-.dw $71ef
-.dw $71fd
-.dw $7209
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+
+@substate0:
 	ld h,d			; $71ef
-	ld l,$46		; $71f0
+	ld l,Interaction.counter1		; $71f0
 	call decHlRef16WithCap		; $71f2
 	ret nz			; $71f5
-	ld l,$46		; $71f6
-	ld (hl),$28		; $71f8
+	ld l,Interaction.counter1		; $71f6
+	ld (hl),40		; $71f8
 	jp interactionIncState2		; $71fa
-	call $721a		; $71fd
-	jr nz,_label_0b_316	; $7200
-	ld l,$60		; $7202
+
+@substate1:
+	call @updateMovementAndSparkles		; $71fd
+	jr nz,@ret	; $7200
+	ld l,Interaction.animCounter		; $7202
 	ld (hl),$01		; $7204
 	jp interactionIncState2		; $7206
+
+@substate2:
 	call interactionAnimate		; $7209
-	call $722f		; $720c
+	call @updateSparkles		; $720c
 	call objectApplySpeed		; $720f
-	ld e,$61		; $7212
+	ld e,Interaction.animParameter		; $7212
 	ld a,(de)		; $7214
 	inc a			; $7215
 	jp z,interactionDelete		; $7216
 	ret			; $7219
-	call $722f		; $721a
+
+;;
+; @param[out]	zflag	z if [counter1] == 0
+; @addr{721a}
+@updateMovementAndSparkles:
+	call @updateSparkles		; $721a
 	call objectApplySpeed		; $721d
 	jp interactionDecCounter1		; $7220
-_label_0b_316:
+
+@ret:
 	ret			; $7223
+
+;;
+; Unused
+; @addr{7224}
+@func_7224:
 	ld a,(wFrameCounter)		; $7224
 	and $01			; $7227
 	jp z,objectSetInvisible		; $7229
 	jp objectSetVisible		; $722c
+
+;;
+; @addr{722f}
+@updateSparkles:
 	ld h,d			; $722f
-	ld l,$76		; $7230
+	ld l,Interaction.var36		; $7230
 	dec (hl)		; $7232
 	ret nz			; $7233
-	ld (hl),$06		; $7234
-	ld bc,$8409		; $7236
+	ld (hl),$06 ; [var36]
+	ldbc INTERACID_SPARKLE, $09		; $7236
 	jp objectCreateInteraction		; $7239
 
 

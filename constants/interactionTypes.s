@@ -1602,7 +1602,7 @@
 .define INTERACID_BANANA		$c0
 
 ;;
-; Some kind of sparkle?
+; A sparkle which stays in place for a bit, then moves down-left off screen?
 .define INTERACID_c1			$c1
 
 ;;
