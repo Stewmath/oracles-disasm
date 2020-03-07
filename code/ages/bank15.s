@@ -8924,6 +8924,11 @@ script15_7925:
 script15_792e:
 	rungenericnpclowindex $0a
 
+; ==============================================================================
+; INTERACID_PIRATE_CAPTAIN
+; ==============================================================================
+
+pirateCaptain_warpOut:
 	ld hl,@unlinkedWarp		; $7930
 	call checkIsLinkedGame		; $7933
 	jr z,+			; $7936
@@ -8937,29 +8942,30 @@ script15_792e:
 @linkedWarp:
 	m_HardcodedWarpA ROOM_AGES_0c8, $01, $52, $03
 
-; @addr{7948}
-script15_7948:
+
+pirateCaptainScript:
 	initcollisions
-script15_7949:
+@loop:
 	checkabutton
 	disableinput
-	showtextdifferentforlinked TX_3600 TX_3601
-	jumpiftextoptioneq $00 script15_7956
+	showtextdifferentforlinked TX_3600, TX_3601
+	jumpiftextoptioneq $00, @gaveZoraScale
 	enableinput
-	jump2byte script15_7949
-script15_7956:
-	showtextdifferentforlinked TX_3604 TX_3605
+	jump2byte @loop
+
+@gaveZoraScale:
+	showtextdifferentforlinked TX_3604, TX_3605
 	xorcfc0bit 0
 	wait 60
-	showtext $3607
+	showtext TX_3607
 	checkcfc0bit 1
-	asm15 loseTreasure $4e
-	showtext $3606
+	asm15 loseTreasure, TREASURE_ZORA_SCALE
+	showtext TX_3606
 	wait 30
-	giveitem $4f00
+	giveitem TREASURE_TOKAY_EYEBALL_SUBID_00
 	wait 60
-	asm15 $7930
-	setglobalflag $34
+	asm15 pirateCaptain_warpOut
+	setglobalflag GLOBALFLAG_PIRATES_GONE
 	scriptend
 
 

@@ -9964,8 +9964,13 @@ script7dbd:
 	rungenericnpclowindex $22
 script7dbf:
 	rungenericnpclowindex $2c
-script7dc1:
-	loadscript scriptHlp.script15_7948
+
+
+; ==============================================================================
+; INTERACID_PIRATE_CAPTAIN
+; ==============================================================================
+pirateCaptainScript:
+	loadscript scriptHlp.pirateCaptainScript
 
 
 ; ==============================================================================

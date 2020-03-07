@@ -94972,21 +94972,30 @@ _label_0b_318:
 	ld c,$00		; $733f
 	jr _label_0b_318		; $7341
 
+
+; ==============================================================================
+; INTERACID_PIRATE_CAPTAIN
+; ==============================================================================
 interactionCodec3:
 	call checkInteractionState		; $7343
-	jr z,_label_0b_319	; $7346
+	jr z,@state0	; $7346
+
+@state1:
 	call objectPreventLinkFromPassing		; $7348
 	call interactionRunScript		; $734b
 	jp interactionAnimate		; $734e
-_label_0b_319:
+
+@state0:
 	call interactionInitGraphics		; $7351
 	call objectSetVisible82		; $7354
 	call checkIsLinkedGame		; $7357
-	jr nz,_label_0b_320	; $735a
+	jr nz,++		; $735a
+
+	; Unlinked: mark room as in the past (for the minimap probably)
 	ld hl,wAreaFlags		; $735c
-	set 7,(hl)		; $735f
-_label_0b_320:
-	ld hl,script7dc1		; $7361
+	set AREAFLAG_BIT_PAST,(hl)		; $735f
+++
+	ld hl,pirateCaptainScript		; $7361
 	call interactionSetScript		; $7364
 	jp interactionIncState		; $7367
 
