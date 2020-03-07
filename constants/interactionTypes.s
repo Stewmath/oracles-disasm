@@ -1127,15 +1127,15 @@
 ; TODO: Label these subids
 ; @subid_00{A tiny sparkle that disappears in an instant.}
 ; @subid_01{Used by INTERACID_TIMEWARP}
-; @subid_02{Used by INTERACID_MAKUCONFETTI?}
-; @subid_03{Used by INTERACID_MAKU_SEED_AND_ESSENCES.}
-; @subid_04{Big, red-and-blue orb; used by INTERACID_MAKU_SEED_AND_ESSENCES.}
+; @subid_02{Used by INTERACID_MAKUCONFETTI, INTERACID_GREAT_FAIRY}
+; @subid_03{Used by INTERACID_MAKU_SEED_AND_ESSENCES}
+; @subid_04{Big, red-and-blue orb; used by INTERACID_MAKU_SEED_AND_ESSENCES, INTERACID_GREAT_FAIRY}
 ; @subid_05{}
 ; @subid_06{Glowing orb behind Link in the intro cutscene, on the triforce screen}
 ; @subid_07{Used by tuni nut while being placed}
 ; @subid_08{?}
 ; @subid_09{}
-; @subid_0a{}
+; @subid_0a{Used by INTERACID_GREAT_FAIRY}
 ; @subid_0b{Used by INTERACID_MAKU_SEED (but in an unused function?)}
 ; @subid_0c{Used by harp of ages in nayru's house}
 ; @subid_0d{}
@@ -1711,9 +1711,9 @@
 ;;
 ; This is for the great fairy that cleans the sea. For great fairies that heal, see
 ; "ENEMYID_GREAT_FAIRY".
-; Subid:
-;   0: ?
-;   1: cutscene after being healed from being an octorok
+;
+; @subid_00{Linked game NPC in fairies' woods (gives a secret)}
+; @subid_01{Cutscene after being healed from being an octorok}
 .define INTERACID_GREAT_FAIRY		$d5
 
 ;;

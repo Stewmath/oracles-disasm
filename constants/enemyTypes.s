@@ -344,7 +344,7 @@
 .define ENEMYID_BUTTERFLY			$37
 
 ;;
-; Heals you up
+; Heals you up. (See also INTERACID_GREAT_FAIRY for cutscenes & other stuff.)
 .define ENEMYID_GREAT_FAIRY			$38
 
 ;;

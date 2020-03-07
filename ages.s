@@ -95652,30 +95652,48 @@ _label_0b_337:
 @scriptTable:
 	; Apparently this is empty
 
+
+; ==============================================================================
+; INTERACID_GREAT_FAIRY
+;
+; Variables:
+;   var3e: ?
+;   var3f: Secret index (for "linkedGameNpcScript")
+; ==============================================================================
 interactionCoded5:
-	ld e,$42		; $7856
+	ld e,Interaction.subid		; $7856
 	ld a,(de)		; $7858
 	rst_jumpTable			; $7859
-.dw $785e
-.dw $78a5
+	.dw _greatFairy_subid0
+	.dw _greatFairy_subid1
+
+
+; Linked game NPC
+_greatFairy_subid0:
 	call checkInteractionState		; $785e
-	jr nz,_label_0b_338	; $7861
-	call $7963		; $7863
+	jr nz,@state1	; $7861
+
+@state0:
+	call _greatFairy_initialize		; $7863
 	call interactionSetAlwaysUpdateBit		; $7866
-	ld l,$4f		; $7869
+	ld l,Interaction.zh		; $7869
 	ld (hl),$f0		; $786b
-	ld l,$7f		; $786d
+	ld l,Interaction.var3f		; $786d
 	ld (hl),$06		; $786f
 	call interactionRunScript		; $7871
-_label_0b_338:
+
+@state1:
 	call returnIfScrollMode01Unset		; $7874
 	call interactionRunScript		; $7877
 	jp c,interactionDeleteAndUnmarkSolidPosition		; $787a
-	ld e,$7e		; $787d
+
+	ld e,Interaction.var3e		; $787d
 	ld a,(de)		; $787f
 	or a			; $7880
 	ret nz			; $7881
 	call interactionAnimateAsNpc		; $7882
+
+	; Update Z position every 8 frames (floats up and down)
 	ld a,(wFrameCounter)		; $7885
 	and $07			; $7888
 	ret nz			; $788a
@@ -95683,94 +95701,114 @@ _label_0b_338:
 	and $38			; $788e
 	swap a			; $7890
 	rlca			; $7892
-	ld hl,$789d		; $7893
+	ld hl,@zPositions		; $7893
 	rst_addAToHl			; $7896
-	ld e,$4f		; $7897
+	ld e,Interaction.zh		; $7897
 	ld a,(de)		; $7899
 	add (hl)		; $789a
 	ld (de),a		; $789b
 	ret			; $789c
-	rst $38			; $789d
-	cp $ff			; $789e
-	nop			; $78a0
-	ld bc,$0102		; $78a1
-	nop			; $78a4
+
+@zPositions:
+	.db $ff $fe $ff $00 $01 $02 $01 $00
+
+
+; Cutscene after being healed from being an octorok
+_greatFairy_subid1:
 	call checkInteractionState		; $78a5
-	jr nz,_label_0b_340	; $78a8
+	jr nz,@state1	; $78a8
+
+@state0:
 	ld a,SND_POP		; $78aa
 	call playSound		; $78ac
-	call $7963		; $78af
+
+	call _greatFairy_initialize		; $78af
 	call objectSetVisiblec1		; $78b2
 	call interactionSetAlwaysUpdateBit		; $78b5
-	ld l,$4f		; $78b8
+
+	ld l,Interaction.zh		; $78b8
 	ld (hl),$f0		; $78ba
-	ld l,$46		; $78bc
-	ld a,$b4		; $78be
+	ld l,Interaction.counter1		; $78bc
+	ld a,180		; $78be
 	ldi (hl),a		; $78c0
-	ld (hl),$02		; $78c1
-	ld bc,$8404		; $78c3
+	ld (hl),$02 ; [counter2]
+
+	ldbc INTERACID_SPARKLE, $04		; $78c3
 	call objectCreateInteraction		; $78c6
-	ld l,$46		; $78c9
-	ld (hl),$78		; $78cb
+	ld l,Interaction.counter1		; $78c9
+	ld (hl),120		; $78cb
+
+	; Create sparkles
 	ld b,$00		; $78cd
-_label_0b_339:
+--
 	push bc			; $78cf
-	ld bc,$840a		; $78d0
+	ldbc INTERACID_SPARKLE, $0a		; $78d0
 	call objectCreateInteraction		; $78d3
 	pop bc			; $78d6
-	ld l,$49		; $78d7
+	ld l,Interaction.angle		; $78d7
 	ld (hl),b		; $78d9
 	ld a,b			; $78da
 	add $04			; $78db
 	ld b,a			; $78dd
 	bit 5,a			; $78de
-	jr z,_label_0b_339	; $78e0
+	jr z,--			; $78e0
 	ret			; $78e2
-_label_0b_340:
+
+@state1:
 	call interactionAnimate		; $78e3
-	ld e,$45		; $78e6
+	ld e,Interaction.state2		; $78e6
 	ld a,(de)		; $78e8
 	rst_jumpTable			; $78e9
-.dw $78f2
-.dw $7909
-.dw $793a
-.dw $794d
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+
+@substate0:
 	call interactionDecCounter1		; $78f2
 	ret nz			; $78f5
 	ld (hl),$40		; $78f6
-	ld l,$49		; $78f8
+	ld l,Interaction.angle		; $78f8
 	ld (hl),$08		; $78fa
-	ld l,$50		; $78fc
-	ld (hl),$78		; $78fe
-	ld bc,$4109		; $7900
+	ld l,Interaction.speed		; $78fc
+	ld (hl),SPEED_300		; $78fe
+	ld bc,TX_4109		; $7900
 	call showText		; $7903
 	jp interactionIncState2		; $7906
+
+@substate1:
 	call retIfTextIsActive		; $7909
 	call objectApplySpeed		; $790c
+
+	; Update angle (moving in a circle)
 	call interactionDecCounter2		; $790f
-	jr nz,_label_0b_341	; $7912
+	jr nz,@updateSparklesAndSoundEffect		; $7912
 	ld (hl),$02		; $7914
-	ld l,$49		; $7916
+	ld l,Interaction.angle		; $7916
 	ld a,(hl)		; $7918
 	inc a			; $7919
 	and $1f			; $791a
 	ld (hl),a		; $791c
 	call interactionDecCounter1		; $791d
 	jp z,interactionIncState2		; $7920
-_label_0b_341:
+
+@updateSparklesAndSoundEffect:
 	ld a,(wFrameCounter)		; $7923
 	and $07			; $7926
 	ret nz			; $7928
-	ld bc,$8402		; $7929
+	ldbc INTERACID_SPARKLE, $02		; $7929
 	call objectCreateInteraction		; $792c
 	ld a,(wFrameCounter)		; $792f
 	and $1f			; $7932
 	ld a,SND_MAGIC_POWDER		; $7934
 	call z,playSound		; $7936
 	ret			; $7939
-	call $7923		; $793a
+
+; Moving up out of the screen
+@substate2:
+	call @updateSparklesAndSoundEffect		; $793a
 	ld h,d			; $793d
-	ld l,$4f		; $793e
+	ld l,Interaction.zh		; $793e
 	ld a,(hl)		; $7940
 	sub $02			; $7941
 	ld (hl),a		; $7943
@@ -95778,20 +95816,31 @@ _label_0b_341:
 	ret nc			; $7946
 	call fadeoutToWhite		; $7947
 	jp interactionIncState2		; $794a
+
+; Transition to next part of cutscene
+@substate3:
 	ld a,(wPaletteThread_mode)		; $794d
 	or a			; $7950
 	ret nz			; $7951
-	ld a,$1e		; $7952
+	ld a,CUTSCENE_CLEAN_SEAS		; $7952
 	ld (wCutsceneTrigger),a		; $7954
 	jp interactionDelete		; $7957
+
+;;
+; Unused
+; @addr{795a}
+@func_795a:
 	call interactionInitGraphics		; $795a
 	call objectMarkSolidPosition		; $795d
 	jp interactionIncState		; $7960
+
+
+_greatFairy_initialize:
 	call interactionInitGraphics		; $7963
 	call objectMarkSolidPosition		; $7966
-	ld e,$42		; $7969
+	ld e,Interaction.subid		; $7969
 	ld a,(de)		; $796b
-	ld hl,$7979		; $796c
+	ld hl,@scriptTable		; $796c
 	rst_addDoubleIndex			; $796f
 	ldi a,(hl)		; $7970
 	ld h,(hl)		; $7971
@@ -95800,7 +95849,7 @@ _label_0b_341:
 	jp interactionIncState		; $7976
 
 @scriptTable:
-	.dw script7f30
+	.dw greatFairySubid0Script
 
 
 ; ==============================================================================

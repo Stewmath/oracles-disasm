@@ -9211,26 +9211,39 @@ script15_7b11:
 	enableinput
 	jump2byte script15_7adb
 
+
+; ==============================================================================
+; INTERACID_GREAT_FAIRY
+; ==============================================================================
+greatFairy_checkScreenIsScrolling:
 	ld a,(wScrollMode)		; $7b14
 	and $01			; $7b17
 	call _writeFlagsTocddb		; $7b19
 	cpl			; $7b1c
 	ld ($cddb),a		; $7b1d
 	ret			; $7b20
-	ld a,($c6c3)		; $7b21
-	or a			; $7b24
-	ld b,$01		; $7b25
-	jr nz,_label_15_231	; $7b27
-	dec b			; $7b29
-_label_15_231:
-	ld a,b			; $7b2a
-	ld ($cfc1),a		; $7b2b
-	ret			; $7b2e
 
 
 ; ==============================================================================
 ; INTERACID_SLATE_SLOT
 ; ==============================================================================
+
+;;
+; Unused?
+; @addr{7b21}
+slateSlot_7b21:
+	ld a,(wNumSlates)		; $7b21
+	or a			; $7b24
+	ld b,$01		; $7b25
+	jr nz,+			; $7b27
+	dec b			; $7b29
++
+	ld a,b			; $7b2a
+	ld (wTmpcfc0.genericCutscene.cfc1),a		; $7b2b
+	ret			; $7b2e
+
+;;
+; @addr{7b2f}
 slateSlot_placeSlate:
 	ld a,SND_DOORCLOSE		; $7b2f
 	call playSound		; $7b31
@@ -9281,6 +9294,7 @@ slateSlot_placeSlate:
 	.db $4b $6b ; 1
 	.db $26 $28 ; 2
 	.db $43 $63 ; 3
+
 
 ; ==============================================================================
 ; INTERACID_MISCELLANEOUS_2

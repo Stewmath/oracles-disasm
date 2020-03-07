@@ -10183,23 +10183,30 @@ linkedGameNpcScript:
 
 script7f2c:
 	loadscript scriptHlp.script15_7acc
-script7f30:
+
+
+; ==============================================================================
+; INTERACID_GREAT_FAIRY
+; ==============================================================================
+greatFairySubid0Script:
 	asm15 scriptHlp.linkedNpc_checkShouldSpawn
-	jumpifmemoryset $cddb $80 stubScript
+	jumpifmemoryset $cddb, $80, stubScript
 	asm15 objectSetInvisible
-	writeobjectbyte $7e $01
-script7f3f:
-	asm15 $7b14
-	jumpifmemoryset $cddb $80 script7f4b
+	writeobjectbyte Interaction.var3e, $01
+
+@waitLoop:
+	asm15 scriptHlp.greatFairy_checkScreenIsScrolling
+	jumpifmemoryset $cddb, $80, @spawnIn
 	wait 1
-	jump2byte script7f3f
-script7f4b:
-	playsound $73
+	jump2byte @waitLoop
+
+@spawnIn:
+	playsound SND_KILLENEMY ; Why?
 	createpuff
 	wait 32
-	setmusic $0f
+	setmusic MUS_FAIRY
 	asm15 objectSetVisible
-	writeobjectbyte $7e $00
+	writeobjectbyte Interaction.var3e, $00
 	jump2byte linkedGameNpcScript
 
 
