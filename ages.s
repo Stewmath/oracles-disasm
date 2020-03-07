@@ -14387,11 +14387,11 @@ getFreeInteractionSlot:
 	ret			; $3b01
 
 
+
+.ifdef ROM_AGES
 ;;
 ; @addr{3b02}
 interactionDeleteAndUnmarkSolidPosition:
-
-.ifdef ROM_AGES
 	call objectUnmarkSolidPosition		; $3b02
 .endif
 
@@ -95621,25 +95621,42 @@ _label_0b_336:
 @scriptTable:
 	.dw script7f2c
 
+
+; ==============================================================================
+; INTERACID_MASTER_DIVER
+;
+; Variables:
+;   var3f: Secret index (for "linkedGameNpcScript")
+; ==============================================================================
 interactionCodecd:
 	call checkInteractionState		; $7819
-	jr nz,_label_0b_337	; $781c
-	call $7837		; $781e
-	ld l,$7f		; $7821
+	jr nz,@state1	; $781c
+
+@state0:
+	call @initialize		; $781e
+	ld l,Interaction.var3f		; $7821
 	ld (hl),$03		; $7823
 	ld hl,linkedGameNpcScript		; $7825
 	call interactionSetScript		; $7828
 	call interactionRunScript		; $782b
-_label_0b_337:
+
+@state1:
 	call interactionRunScript		; $782e
 	jp c,interactionDeleteAndUnmarkSolidPosition		; $7831
 	jp interactionAnimateAsNpc		; $7834
+
+@initialize:
 	call interactionInitGraphics		; $7837
 	call objectMarkSolidPosition		; $783a
 	jp interactionIncState		; $783d
+
+;;
+; Unused
+; @addr{7840}
+@func_7840:
 	call interactionInitGraphics		; $7840
 	call objectMarkSolidPosition		; $7843
-	ld e,$42		; $7846
+	ld e,Interaction.subid		; $7846
 	ld a,(de)		; $7848
 	ld hl,@scriptTable		; $7849
 	rst_addDoubleIndex			; $784c
