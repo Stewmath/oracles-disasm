@@ -2180,7 +2180,7 @@ wccb1: ; $ccb1
 .endif
 
 wDisableWarps: ; $ccb2
-; Not sure what purpose this is for. (Might be ages-exclusive?)
+; Used by INTERACID_BLACK_TOWER_DOOR_HANDLER to stop the warp from sending you anywhere.
 	db
 
 .ifdef ROM_SEASONS

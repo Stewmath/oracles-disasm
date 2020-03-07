@@ -1621,7 +1621,8 @@
 .define INTERACID_PLAY_HARP_SONG	$c5
 
 ;;
-.define INTERACID_c6			$c6
+; Object placed in the 3-door room in the black tower; checks whether to start the cutscene.
+.define INTERACID_BLACK_TOWER_DOOR_HANDLER	$c6
 
 ;;
 ; Creates an object of the given type with the given ID at every position where there's

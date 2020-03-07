@@ -95170,63 +95170,94 @@ _label_0b_324:
 	ld (wcc50),a		; $74c1
 	jp interactionDelete		; $74c4
 
+
+; ==============================================================================
+; INTERACID_BLACK_TOWER_DOOR_HANDLER
+; ==============================================================================
 interactionCodec6:
-	ld e,$44		; $74c7
+	ld e,Interaction.state		; $74c7
 	ld a,(de)		; $74c9
 	rst_jumpTable			; $74ca
-.dw $74d1
-.dw $7527
-.dw $7536
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+
+@state0:
 	call getThisRoomFlags		; $74d1
-	and $40			; $74d4
-	jr z,_label_0b_325	; $74d6
-	ld hl,$cf47		; $74d8
+	and ROOMFLAG_40			; $74d4
+	jr z,@cutsceneNotDone	; $74d6
+
+	; Already did the cutscene. Replace the door with a staircase (functionally, not visually)
+	; for some reason...
+	ld hl,wRoomLayout+$47		; $74d8
 	ld (hl),$44		; $74db
 	jp interactionDelete		; $74dd
-_label_0b_325:
+
+@cutsceneNotDone:
 	ld a,TREASURE_MAKU_SEED		; $74e0
 	call checkTreasureObtained		; $74e2
-	jr nc,_label_0b_326	; $74e5
+	jr nc,@noMakuSeed	; $74e5
+
+	; Time to start the cutscene.
 	call clearAllItemsAndPutLinkOnGround		; $74e7
 	call resetLinkInvincibility		; $74ea
-	ld a,$0b		; $74ed
+
+	ld a,LINK_STATE_FORCE_MOVEMENT		; $74ed
 	ld (wLinkForceState),a		; $74ef
 	ld a,$70		; $74f2
 	ld (wLinkStateParameter),a		; $74f4
-	ld e,$46		; $74f7
+
+	ld e,Interaction.counter1		; $74f7
 	ld (de),a		; $74f9
 	ld hl,w1Link.direction		; $74fa
 	ld (hl),$01		; $74fd
 	inc l			; $74ff
-	ld (hl),$08		; $7500
-	ld a,$81		; $7502
+	ld (hl),$08 ; [w1Link.angle]
+
+	ld a,DISABLE_ALL_BUT_INTERACTIONS | DISABLE_LINK		; $7502
 	ld (wDisabledObjects),a		; $7504
 	ld (wMenuDisabled),a		; $7507
+
 	call interactionIncState		; $750a
 	ld a,PALH_ab		; $750d
 	call loadPaletteHeader		; $750f
 	jp restartSound		; $7512
-_label_0b_326:
+
+@noMakuSeed:
+	; Replace door tiles with staircase tiles? This will only affect behaviour (not appearance),
+	; so this might be because the door tiles are actually fake for some reason?
 	ld a,$44		; $7515
-	ld hl,$cf44		; $7517
+	ld hl,wRoomLayout+$44		; $7517
 	ld (hl),a		; $751a
 	ld l,$47		; $751b
 	ld (hl),a		; $751d
 	ld l,$4a		; $751e
 	ld (hl),a		; $7520
+
+	; Prevent them from sending you anywhere
 	ld (wDisableWarps),a		; $7521
+
 	jp interactionDelete		; $7524
+
+
+; Delay before making Link face up
+@state1:
 	call interactionDecCounter1		; $7527
 	ret nz			; $752a
-	ld (hl),$1e		; $752b
-	xor a			; $752d
+	ld (hl),30		; $752b
+	xor a ; DIR_UP
 	ld hl,w1Link.direction		; $752e
 	ldi (hl),a		; $7531
 	ld (hl),a		; $7532
 	jp interactionIncState		; $7533
+
+
+; Delay before starting cutscene
+@state2:
 	call interactionDecCounter1		; $7536
 	ret nz			; $7539
-	ld b,$d7		; $753a
+	ld b,INTERACID_MAKU_SEED_AND_ESSENCES		; $753a
 	call objectCreateInteractionWithSubid00		; $753c
 	jp interactionDelete		; $753f
 
