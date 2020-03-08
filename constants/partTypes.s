@@ -239,6 +239,7 @@
 .define PARTID_PLASMARINE_PROJECTILE		$43
 
 ;;
+; relatedObj1 must be set to the tingle object (INTERACID_TINGLE).
 .define PARTID_TINGLE_BALLOON			$44
 
 ; $45: falling boulder spawner?

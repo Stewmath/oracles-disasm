@@ -708,7 +708,7 @@
 ;   $01: When the explosion's radius increases\n
 ;   $ff: When the explosion is over
 ;
-; var03: if set, it has a higher draw priority? (set in patch's minigame)
+; var03: if set, it has a higher draw priority? (set in patch's minigame, tingle's balloon explosion)
 .define INTERACID_EXPLOSION		$56
 
 

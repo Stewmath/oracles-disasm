@@ -80942,7 +80942,7 @@ interactionCode81:
 	.db TREASURE_MYSTERY_SEEDS, TREASURE_SCENT_SEEDS, $00, $00,
 	.db TREASURE_SCENT_SEEDS, TREASURE_SCENT_SEEDS, TREASURE_SCENT_SEEDS
 
-	; TODO: what is this data? ($626f)
+	; TODO: what is this data? Possibly unused? ($626f)
 	.db $28 $76 $6c $76 $b4 $76 $c4 $76
 
 @state1:
@@ -150792,33 +150792,44 @@ partCode43:
 
 	jp objectSetVisible82		; $74d3
 
-;;
-; @addr{74d6}
+
+; ==============================================================================
+; PARTID_TINGLE_BALLOON
+; ==============================================================================
 partCode44:
-	jr nz,_label_11_373	; $74d6
-	ld e,$c4		; $74d8
+	jr nz,@beenHit	; $74d6
+
+	ld e,Part.state		; $74d8
 	ld a,(de)		; $74da
 	or a			; $74db
-	jr nz,_label_11_371	; $74dc
+	jr nz,@state1	; $74dc
+
+@state0:
 	ld h,d			; $74de
 	ld l,e			; $74df
-	inc (hl)		; $74e0
-	ld l,$c6		; $74e1
+	inc (hl) ; [state] = 1
+
+	ld l,Part.counter1		; $74e1
 	ld (hl),$38		; $74e3
 	inc l			; $74e5
-	ld (hl),$ff		; $74e6
-	ld l,$cf		; $74e8
+	ld (hl),$ff ; [counter2]
+
+	ld l,Part.zh		; $74e8
 	ld (hl),$f1		; $74ea
-	ld bc,$fff0		; $74ec
+	ld bc,-$10		; $74ec
 	call objectSetSpeedZ		; $74ef
+
 	xor a			; $74f2
 	call partSetAnimation		; $74f3
 	call objectSetVisible81		; $74f6
-_label_11_371:
+
+@state1:
 	call _partDecCounter1IfNonzero		; $74f9
-	jr nz,_label_11_372	; $74fc
-	ld (hl),$38		; $74fe
-	ld l,$d4		; $7500
+	jr nz,++		; $74fc
+
+	; Reverse floating direction
+	ld (hl),$38 ; [counter1]
+	ld l,Part.speedZ		; $7500
 	ld a,(hl)		; $7502
 	cpl			; $7503
 	inc a			; $7504
@@ -150826,25 +150837,31 @@ _label_11_371:
 	ld a,(hl)		; $7506
 	cpl			; $7507
 	ld (hl),a		; $7508
-_label_11_372:
+++
 	ld c,$00		; $7509
 	call objectUpdateSpeedZ_paramC		; $750b
-	ld a,$0f		; $750e
+
+	; Update Tingle's z position
+	ld a,Object.zh		; $750e
 	call objectGetRelatedObject1Var		; $7510
-	ld e,$cf		; $7513
+	ld e,Part.zh		; $7513
 	ld a,(de)		; $7515
 	ld (hl),a		; $7516
 	ret			; $7517
-_label_11_373:
-	ld a,$04		; $7518
+
+@beenHit:
+	ld a,Object.state		; $7518
 	call objectGetRelatedObject1Var		; $751a
-	inc (hl)		; $751d
+	inc (hl) ; [tingle.state] = 2
+
+	; Spawn explosion
 	call getFreeInteractionSlot		; $751e
-	ld (hl),$56		; $7521
-	ld l,$43		; $7523
-	ld (hl),$01		; $7525
+	ld (hl),INTERACID_EXPLOSION		; $7521
+	ld l,Interaction.var03		; $7523
+	ld (hl),$01 ; Give it a higher draw priority?
 	ld bc,$f000		; $7527
 	call objectCopyPositionWithOffset		; $752a
+
 	jp partDelete		; $752d
 
 ;;
