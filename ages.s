@@ -141572,7 +141572,7 @@ _partCommon_checkOutOfBounds:
 ;;
 ; @param[out]	zflag	Set if counter1 is zero
 ; @addr{40a7}
-_partDecCounter1IfNonzero:
+_partCommon_decCounter1IfNonzero:
 	ld h,d			; $40a7
 	ld l,Part.counter1		; $40a8
 	ld a,(hl)		; $40aa
@@ -141609,7 +141609,7 @@ _partCommon_bounceWhenCollisionsEnabled:
 ;;
 ; @addr{40cf}
 _partCommon_updateSpeedAndDeleteWhenCounter1Is0:
-	call _partDecCounter1IfNonzero		; $40cf
+	call _partCommon_decCounter1IfNonzero		; $40cf
 	jp z,partDelete		; $40d2
 	ld c,$0e		; $40d5
 	call objectUpdateSpeedZ_paramC		; $40d7
@@ -141978,7 +141978,7 @@ _itemDrop_countdownToDisappear:
 	ld l,Part.collisionType		; $42d2
 	set 7,(hl)		; $42d4
 ++
-	call _partDecCounter1IfNonzero		; $42d6
+	call _partCommon_decCounter1IfNonzero		; $42d6
 	jr z,@disappear	; $42d9
 
 	; Flickering
@@ -142573,7 +142573,7 @@ partCode06:
 	ld a,(wFrameCounter)		; $45bf
 	and $03			; $45c2
 	ret nz			; $45c4
-	call _partDecCounter1IfNonzero		; $45c5
+	call _partCommon_decCounter1IfNonzero		; $45c5
 	ret nz			; $45c8
 
 	ld l,Part.collisionType		; $45c9
@@ -142612,7 +142612,7 @@ partCode06:
 	ret			; $45f9
 
 @subid2State2:
-	call _partDecCounter1IfNonzero		; $45fa
+	call _partCommon_decCounter1IfNonzero		; $45fa
 	jp nz,@gotoState1IfTileAtRelatedObjPositionIsNotLit		; $45fd
 
 	; [state]=3
@@ -142847,7 +142847,7 @@ partCode09:
 	sub $0c			; $473b
 	cp $02			; $473d
 	jr nc,_label_11_047	; $473f
-	call _partDecCounter1IfNonzero		; $4741
+	call _partCommon_decCounter1IfNonzero		; $4741
 	ret nz			; $4744
 	ld l,$f0		; $4745
 	bit 0,(hl)		; $4747
@@ -143027,7 +143027,7 @@ partCode0c:
 	ld a,(de)		; $485d
 	or a			; $485e
 	call z,$48b0		; $485f
-	call _partDecCounter1IfNonzero		; $4862
+	call _partCommon_decCounter1IfNonzero		; $4862
 	ret nz			; $4865
 	ld l,$c9		; $4866
 	ld a,(hl)		; $4868
@@ -143131,7 +143131,7 @@ partCode0e:
 	call objectTakePosition		; $48df
 
 	; Countdown to spawn a "detection projectile" forward
-	call _partDecCounter1IfNonzero		; $48e2
+	call _partCommon_decCounter1IfNonzero		; $48e2
 	jr nz,++		; $48e5
 
 	ld (hl),$0f ; [counter1]
@@ -143266,7 +143266,7 @@ partCode0e:
 
 
 @subid2_state1:
-	call _partDecCounter1IfNonzero		; $496a
+	call _partCommon_decCounter1IfNonzero		; $496a
 	jr nz,@subid1_state1	; $496d
 	jr @delete		; $496f
 
@@ -143348,14 +143348,14 @@ _label_11_068:
 	ld a,(wFrameCounter)		; $49d4
 	rrca			; $49d7
 	ret nc			; $49d8
-	call _partDecCounter1IfNonzero		; $49d9
+	call _partCommon_decCounter1IfNonzero		; $49d9
 	ret nz			; $49dc
 	ld (hl),$0c		; $49dd
 	ld l,e			; $49df
 	inc (hl)		; $49e0
 	ld a,$03		; $49e1
 	jr _label_11_069		; $49e3
-	call _partDecCounter1IfNonzero		; $49e5
+	call _partCommon_decCounter1IfNonzero		; $49e5
 	ret nz			; $49e8
 	ld (hl),$08		; $49e9
 	ld l,e			; $49eb
@@ -143367,7 +143367,7 @@ _label_11_069:
 	ld c,a			; $49f3
 	pop af			; $49f4
 	jp setTile		; $49f5
-	call _partDecCounter1IfNonzero		; $49f8
+	call _partCommon_decCounter1IfNonzero		; $49f8
 	ret nz			; $49fb
 	ld l,e			; $49fc
 	ld (hl),$01		; $49fd
@@ -143605,7 +143605,7 @@ _label_11_079:
 	ld (hl),$1e		; $4b7b
 	call objectSetInvisible		; $4b7d
 	jr $5e			; $4b80
-	call _partDecCounter1IfNonzero		; $4b82
+	call _partCommon_decCounter1IfNonzero		; $4b82
 	ret nz			; $4b85
 	ld (hl),$10		; $4b86
 	ld l,e			; $4b88
@@ -143733,7 +143733,7 @@ partCode12:
 	ld (hl),a		; $4c52
 	call objectTakePosition		; $4c53
 	ld c,h			; $4c56
-	call _partDecCounter1IfNonzero		; $4c57
+	call _partCommon_decCounter1IfNonzero		; $4c57
 	jp nz,partAnimate		; $4c5a
 	ld h,c			; $4c5d
 	ld l,$a9		; $4c5e
@@ -143803,7 +143803,7 @@ _label_11_083:
 	ld (hl),$00		; $4cc2
 	jp objectSetVisible83		; $4cc4
 	ret			; $4cc7
-	call _partDecCounter1IfNonzero		; $4cc8
+	call _partCommon_decCounter1IfNonzero		; $4cc8
 	jr nz,_label_11_084	; $4ccb
 	ld (hl),$1e		; $4ccd
 	ld l,e			; $4ccf
@@ -143834,7 +143834,7 @@ _label_11_084:
 	ld a,($0702)		; $4cf4
 	nop			; $4cf7
 	ld a,($02ff)		; $4cf8
-	call _partDecCounter1IfNonzero		; $4cfb
+	call _partCommon_decCounter1IfNonzero		; $4cfb
 	jr nz,_label_11_085	; $4cfe
 	ld l,e			; $4d00
 	ld (hl),$01		; $4d01
@@ -144399,7 +144399,7 @@ partCode31:
 	ld l,$d0		; $5081
 	ld (hl),$3c		; $5083
 	jp objectSetVisible81		; $5085
-	call _partDecCounter1IfNonzero		; $5088
+	call _partCommon_decCounter1IfNonzero		; $5088
 	ret nz			; $508b
 	ld l,e			; $508c
 	inc (hl)		; $508d
@@ -144494,7 +144494,7 @@ _label_11_112:
 	rlca			; $511f
 	call partSetAnimation		; $5120
 	jp objectSetVisible81		; $5123
-	call _partDecCounter1IfNonzero		; $5126
+	call _partCommon_decCounter1IfNonzero		; $5126
 	jr nz,_label_11_113	; $5129
 	ld l,e			; $512b
 	inc (hl)		; $512c
@@ -144594,7 +144594,7 @@ _label_11_120:
 	jp c,partAnimate		; $51c0
 _label_11_121:
 	jp partDelete		; $51c3
-	call _partDecCounter1IfNonzero		; $51c6
+	call _partCommon_decCounter1IfNonzero		; $51c6
 	jr z,_label_11_121	; $51c9
 	ld c,$0e		; $51cb
 	call objectUpdateSpeedZ_paramC		; $51cd
@@ -144776,7 +144776,7 @@ _label_11_129:
 	ld a,SND_STRIKE		; $52cc
 	call playSound		; $52ce
 	jp objectSetVisible81		; $52d1
-	call _partDecCounter1IfNonzero		; $52d4
+	call _partCommon_decCounter1IfNonzero		; $52d4
 	jr nz,_label_11_131	; $52d7
 	ld l,e			; $52d9
 	inc (hl)		; $52da
@@ -144889,7 +144889,7 @@ partCode20:
 	ld a,(de)		; $537e
 	or a			; $537f
 	jr z,_label_11_138	; $5380
-	call _partDecCounter1IfNonzero		; $5382
+	call _partCommon_decCounter1IfNonzero		; $5382
 	jp z,partDelete		; $5385
 	jp partAnimate		; $5388
 _label_11_138:
@@ -144936,7 +144936,7 @@ _label_11_139:
 	jp objectSetVisible81		; $53c5
 	call objectCheckSimpleCollision		; $53c8
 	jr nz,_label_11_143	; $53cb
-	call _partDecCounter1IfNonzero		; $53cd
+	call _partCommon_decCounter1IfNonzero		; $53cd
 	jr z,_label_11_143	; $53d0
 	call $542a		; $53d2
 _label_11_140:
@@ -145080,7 +145080,7 @@ partCode22:
 
 
 @state1:
-	call _partDecCounter1IfNonzero		; $549c
+	call _partCommon_decCounter1IfNonzero		; $549c
 	jr nz,@applySpeedAndAnimate	; $549f
 	ld l,e			; $54a1
 	inc (hl)		; $54a2
@@ -145122,7 +145122,7 @@ _label_11_147:
 	ld a,(de)		; $54ea
 	or a			; $54eb
 	jr z,_label_11_148	; $54ec
-	call _partDecCounter1IfNonzero		; $54ee
+	call _partCommon_decCounter1IfNonzero		; $54ee
 	ret nz			; $54f1
 	ld (hl),$78		; $54f2
 	jr _label_11_149		; $54f4
@@ -145133,7 +145133,7 @@ _label_11_148:
 	ld a,(de)		; $54f9
 	or a			; $54fa
 	jr z,_label_11_148	; $54fb
-	call _partDecCounter1IfNonzero		; $54fd
+	call _partCommon_decCounter1IfNonzero		; $54fd
 	ret nz			; $5500
 	call $553f		; $5501
 _label_11_149:
@@ -145219,7 +145219,7 @@ partCode27:
 	ldh a,(<hEnemyTargetX)	; $557c
 	ld (hl),a		; $557e
 	ret			; $557f
-	call _partDecCounter1IfNonzero		; $5580
+	call _partCommon_decCounter1IfNonzero		; $5580
 	ret nz			; $5583
 	ld l,e			; $5584
 	inc (hl)		; $5585
@@ -145338,7 +145338,7 @@ _label_11_151:
 	ld a,(de)		; $5633
 	ld (hl),a		; $5634
 	jp objectSetVisiblec2		; $5635
-	call _partDecCounter1IfNonzero		; $5638
+	call _partCommon_decCounter1IfNonzero		; $5638
 	jr z,_label_11_152	; $563b
 	call $56cd		; $563d
 	jp c,objectApplySpeed		; $5640
@@ -145509,7 +145509,7 @@ _label_11_160:
 	ld b,$06		; $5742
 	ld b,$07		; $5744
 	nop			; $5746
-	call _partDecCounter1IfNonzero		; $5747
+	call _partCommon_decCounter1IfNonzero		; $5747
 	jr nz,_label_11_161	; $574a
 	ld l,e			; $574c
 	inc (hl)		; $574d
@@ -145937,7 +145937,7 @@ _label_11_170:
 	ld a,$20		; $5909
 	ld e,$c9		; $590b
 	call objectSetPositionInCircleArc		; $590d
-	call _partDecCounter1IfNonzero		; $5910
+	call _partCommon_decCounter1IfNonzero		; $5910
 	ret nz			; $5913
 	ld (hl),$03		; $5914
 	ld l,$c9		; $5916
@@ -146044,7 +146044,7 @@ partCode4d:
 
 ; Being charged up
 @state1:
-	call _partDecCounter1IfNonzero		; $5996
+	call _partCommon_decCounter1IfNonzero		; $5996
 	jr z,@fire	; $5999
 
 	; Copy parent's position
@@ -146161,7 +146161,7 @@ _label_11_180:
 	ld l,$c6		; $5a3f
 	ld (hl),$1e		; $5a41
 	jp objectSetVisible82		; $5a43
-	call _partDecCounter1IfNonzero		; $5a46
+	call _partCommon_decCounter1IfNonzero		; $5a46
 	jp nz,partAnimate		; $5a49
 	ld l,e			; $5a4c
 	inc (hl)		; $5a4d
@@ -146240,7 +146240,7 @@ partCode4e:
 
 ; Spawning in, not moving yet
 @state1:
-	call _partDecCounter1IfNonzero		; $5ab5
+	call _partCommon_decCounter1IfNonzero		; $5ab5
 	jr z,@beginMoving	; $5ab8
 
 	ld l,Part.animParameter		; $5aba
@@ -146396,7 +146396,7 @@ partCode51:
 	ld a,SND_ENERGYTHING		; $5b91
 	call playSound		; $5b93
 _label_11_191:
-	call _partDecCounter1IfNonzero		; $5b96
+	call _partCommon_decCounter1IfNonzero		; $5b96
 	jp z,partDelete		; $5b99
 	jr _label_11_192		; $5b9c
 	ld a,(de)		; $5b9e
@@ -146461,7 +146461,7 @@ _label_11_194:
 	ld a,$04		; $5bf7
 	call partSetAnimation		; $5bf9
 	jp objectSetVisible82		; $5bfc
-	call _partDecCounter1IfNonzero		; $5bff
+	call _partCommon_decCounter1IfNonzero		; $5bff
 	jr nz,_label_11_197	; $5c02
 	dec (hl)		; $5c04
 	ld l,e			; $5c05
@@ -146495,7 +146495,7 @@ _label_11_194:
 	call z,setScreenShakeCounter		; $5c36
 	jp partDelete		; $5c39
 _label_11_195:
-	call _partDecCounter1IfNonzero		; $5c3c
+	call _partCommon_decCounter1IfNonzero		; $5c3c
 	ld a,(hl)		; $5c3f
 	and $07			; $5c40
 	jr nz,_label_11_196	; $5c42
@@ -146540,7 +146540,7 @@ partCode52:
 	ld l,$c6		; $5c7e
 	ld (hl),$0a		; $5c80
 	jp objectSetVisible82		; $5c82
-	call _partDecCounter1IfNonzero		; $5c85
+	call _partCommon_decCounter1IfNonzero		; $5c85
 	jr nz,_label_11_198	; $5c88
 	ld l,e			; $5c8a
 	inc (hl)		; $5c8b
@@ -146592,7 +146592,7 @@ _label_11_199:
 	ld (hl),a		; $5cda
 	ld a,$01		; $5cdb
 	call partSetAnimation		; $5cdd
-	call _partDecCounter1IfNonzero		; $5ce0
+	call _partCommon_decCounter1IfNonzero		; $5ce0
 	jr z,_label_11_201	; $5ce3
 	ld a,(hl)		; $5ce5
 	rrca			; $5ce6
@@ -146623,7 +146623,7 @@ _label_11_201:
 	call objectSetVisible82		; $5d0b
 _label_11_202:
 	jp partAnimate		; $5d0e
-	call _partDecCounter1IfNonzero		; $5d11
+	call _partCommon_decCounter1IfNonzero		; $5d11
 	jr z,_label_11_203	; $5d14
 	call objectApplySpeed		; $5d16
 	jr _label_11_202		; $5d19
@@ -146666,7 +146666,7 @@ _label_11_203:
 	ld l,$c6		; $5d53
 	ld (hl),$0f		; $5d55
 	jp objectSetVisible82		; $5d57
-	call _partDecCounter1IfNonzero		; $5d5a
+	call _partCommon_decCounter1IfNonzero		; $5d5a
 	jp nz,partAnimate		; $5d5d
 	ld (hl),$0f		; $5d60
 	ld l,e			; $5d62
@@ -146675,7 +146675,7 @@ _label_11_203:
 	call playSound		; $5d66
 	ld a,$01		; $5d69
 	jp partSetAnimation		; $5d6b
-	call _partDecCounter1IfNonzero		; $5d6e
+	call _partCommon_decCounter1IfNonzero		; $5d6e
 	jp nz,partAnimate		; $5d71
 	ld l,e			; $5d74
 	inc (hl)		; $5d75
@@ -147076,7 +147076,7 @@ _label_11_220:
 	ld e,$28		; $5fa7
 	ldd (hl),a		; $5fa9
 	inc a			; $5faa
-	call _partDecCounter1IfNonzero		; $5fab
+	call _partCommon_decCounter1IfNonzero		; $5fab
 	jr nz,_label_11_221	; $5fae
 	inc l			; $5fb0
 	ldd a,(hl)		; $5fb1
@@ -147089,7 +147089,7 @@ _label_11_221:
 	xor $80			; $5fb8
 	ld (hl),a		; $5fba
 	ret			; $5fbb
-	call _partDecCounter1IfNonzero		; $5fbc
+	call _partCommon_decCounter1IfNonzero		; $5fbc
 	jr nz,_label_11_222	; $5fbf
 	ld l,e			; $5fc1
 	inc (hl)		; $5fc2
@@ -147184,7 +147184,7 @@ partCode25:
 	ld l,$c9		; $6042
 	ld (hl),a		; $6044
 _label_11_225:
-	call _partDecCounter1IfNonzero		; $6045
+	call _partCommon_decCounter1IfNonzero		; $6045
 	ret nz			; $6048
 	ld e,$c2		; $6049
 	ld a,(de)		; $604b
@@ -147237,7 +147237,7 @@ partCode26:
 	ld a,(de)		; $608a
 	or a			; $608b
 	jr z,_label_11_229	; $608c
-	call _partDecCounter1IfNonzero		; $608e
+	call _partCommon_decCounter1IfNonzero		; $608e
 	jr nz,_label_11_227	; $6091
 	inc l			; $6093
 	ldd a,(hl)		; $6094
@@ -147564,7 +147564,7 @@ _label_11_240:
 	dec l			; $627d
 	ld (hl),$00		; $627e
 _label_11_241:
-	call _partDecCounter1IfNonzero		; $6280
+	call _partCommon_decCounter1IfNonzero		; $6280
 	ret nz			; $6283
 	ld (hl),$10		; $6284
 	ld bc,$1000		; $6286
@@ -147785,7 +147785,7 @@ _label_11_252:
 	ld (wDisableScreenTransitions),a		; $63d8
 	call objectGetRelativeAngleWithTempVars		; $63db
 	ld c,a			; $63de
-	call _partDecCounter1IfNonzero		; $63df
+	call _partCommon_decCounter1IfNonzero		; $63df
 	ld a,(hl)		; $63e2
 	and $1c			; $63e3
 	rrca			; $63e5
@@ -147905,7 +147905,7 @@ partCode2f:
 	ld a,SND_CHARGE		; $6477
 	call playSound		; $6479
 	jp objectSetVisible82		; $647c
-	call _partDecCounter1IfNonzero		; $647f
+	call _partCommon_decCounter1IfNonzero		; $647f
 	jr nz,_label_11_259	; $6482
 _label_11_257:
 	ld l,e			; $6484
@@ -147978,7 +147978,7 @@ partCode33:
 	or a			; $64ef
 	jr z,_label_11_263	; $64f0
 _label_11_262:
-	call _partDecCounter1IfNonzero		; $64f2
+	call _partCommon_decCounter1IfNonzero		; $64f2
 	ret nz			; $64f5
 	ld e,$f0		; $64f6
 	ld a,(de)		; $64f8
@@ -148196,7 +148196,7 @@ _label_11_273:
 	ld a,(de)		; $662e
 	or a			; $662f
 	jr z,_label_11_274	; $6630
-	call _partDecCounter1IfNonzero		; $6632
+	call _partCommon_decCounter1IfNonzero		; $6632
 	jp nz,objectApplySpeed		; $6635
 _label_11_274:
 	ld e,$c3		; $6638
@@ -148238,7 +148238,7 @@ _label_11_275:
 	ld a,(de)		; $6671
 	cp $06			; $6672
 	jp z,partDelete		; $6674
-	call _partDecCounter1IfNonzero		; $6677
+	call _partCommon_decCounter1IfNonzero		; $6677
 	jp nz,objectApplySpeed		; $667a
 	ld e,$c2		; $667d
 	ld (de),a		; $667f
@@ -148362,7 +148362,7 @@ _label_11_277:
 	or a			; $6743
 	jr nz,_label_11_278	; $6744
 	ret			; $6746
-	call _partDecCounter1IfNonzero		; $6747
+	call _partCommon_decCounter1IfNonzero		; $6747
 	ret nz			; $674a
 	ld c,$10		; $674b
 	call objectUpdateSpeedZ_paramC		; $674d
@@ -148541,7 +148541,7 @@ _label_11_288:
 	ld l,$e4		; $686e
 	set 7,(hl)		; $6870
 	call $68d7		; $6872
-	call _partDecCounter1IfNonzero		; $6875
+	call _partCommon_decCounter1IfNonzero		; $6875
 	ret nz			; $6878
 	call $69a5		; $6879
 	ldi a,(hl)		; $687c
@@ -148606,7 +148606,7 @@ _label_11_290:
 	call _partCommon_getTileCollisionInFront		; $68e2
 	jr nz,_label_11_292	; $68e5
 	call objectApplySpeed		; $68e7
-	call _partDecCounter1IfNonzero		; $68ea
+	call _partCommon_decCounter1IfNonzero		; $68ea
 	ret nz			; $68ed
 	ld (hl),$03		; $68ee
 	ld e,$d0		; $68f0
@@ -148642,7 +148642,7 @@ _label_11_293:
 	cp $03			; $691c
 	jp nz,objectApplySpeed		; $691e
 	jp $6762		; $6921
-	call _partDecCounter1IfNonzero		; $6924
+	call _partCommon_decCounter1IfNonzero		; $6924
 	ret nz			; $6927
 	ld l,$e4		; $6928
 	res 7,(hl)		; $692a
@@ -148852,7 +148852,7 @@ _veranProjectile_subid0:
 
 ; Firing projectiles every 8 frames until counter1 reaches 0
 @state2:
-	call _partDecCounter1IfNonzero		; $6a25
+	call _partCommon_decCounter1IfNonzero		; $6a25
 	jr z,@delete	; $6a28
 
 	ld a,(hl)		; $6a2a
@@ -149222,7 +149222,7 @@ partCode39:
 	ld a,(hl)		; $6c7a
 	adc $00			; $6c7b
 	ld (hl),a		; $6c7d
-	call _partDecCounter1IfNonzero		; $6c7e
+	call _partCommon_decCounter1IfNonzero		; $6c7e
 	jr nz,_label_11_317	; $6c81
 	ld a,(de)		; $6c83
 	cp $b0			; $6c84
@@ -149449,7 +149449,7 @@ _label_11_323:
 	jr $1a			; $6dfc
 	or a			; $6dfe
 	jr z,_label_11_325	; $6dff
-	call _partDecCounter1IfNonzero		; $6e01
+	call _partCommon_decCounter1IfNonzero		; $6e01
 	jp z,$6e4a		; $6e04
 	inc l			; $6e07
 	dec (hl)		; $6e08
@@ -149642,7 +149642,7 @@ partCode3c:
 	jr z,_label_11_334	; $6f33
 	call _partCommon_checkOutOfBounds		; $6f35
 	jp z,partDelete		; $6f38
-	call _partDecCounter1IfNonzero		; $6f3b
+	call _partCommon_decCounter1IfNonzero		; $6f3b
 	jr nz,_label_11_333	; $6f3e
 	inc l			; $6f40
 	ld e,$f0		; $6f41
@@ -149786,7 +149786,7 @@ _blueStalfosProjectile_subid0:
 
 ; Charging
 @state1:
-	call _partDecCounter1IfNonzero		; $6fea
+	call _partCommon_decCounter1IfNonzero		; $6fea
 	jr nz,@animate	; $6fed
 
 	ld (hl),40 ; [counter1]
@@ -149922,7 +149922,7 @@ _blueStalfosProjectile_checkShouldExplode:
 	and $07			; $7087
 	ret nz			; $7089
 
-	call _partDecCounter1IfNonzero		; $708a
+	call _partCommon_decCounter1IfNonzero		; $708a
 	ret nz			; $708d
 
 	ld c,$28		; $708e
@@ -150079,7 +150079,7 @@ _label_11_347:
 	cp $f4			; $7146
 	jr c,_label_11_347	; $7148
 	ret			; $714a
-	call _partDecCounter1IfNonzero		; $714b
+	call _partCommon_decCounter1IfNonzero		; $714b
 	ret nz			; $714e
 	ld l,e			; $714f
 	ld (hl),$01		; $7150
@@ -150160,7 +150160,7 @@ _kingMoblinBomb_state1:
 	rrca			; $71a8
 	ret c			; $71a9
 ++
-	call _partDecCounter1IfNonzero		; $71aa
+	call _partCommon_decCounter1IfNonzero		; $71aa
 	ret nz			; $71ad
 
 	ld l,Part.animParameter		; $71ae
@@ -150335,7 +150335,7 @@ _kingMoblinBomb_state6:
 
 
 _kingMoblinBomb_state7:
-	call _partDecCounter1IfNonzero		; $7281
+	call _partCommon_decCounter1IfNonzero		; $7281
 	ret nz			; $7284
 
 	ld l,e			; $7285
@@ -150527,7 +150527,7 @@ partCode41:
 	ld a,$02		; $736f
 	ld (de),a		; $7371
 ++
-	call _partDecCounter1IfNonzero		; $7372
+	call _partCommon_decCounter1IfNonzero		; $7372
 	jr nz,++		; $7375
 
 	ld (hl),$08		; $7377
@@ -150661,7 +150661,7 @@ _label_11_361:
 	nop			; $7429
 	ld (bc),a		; $742a
 .DB $fc				; $742b
-	call _partDecCounter1IfNonzero		; $742c
+	call _partCommon_decCounter1IfNonzero		; $742c
 	jr nz,_label_11_362	; $742f
 	ld l,e			; $7431
 	inc (hl)		; $7432
@@ -150708,7 +150708,7 @@ partCode43:
 	rrca			; $7465
 	jr c,@updateMovement	; $7466
 
-	call _partDecCounter1IfNonzero		; $7468
+	call _partCommon_decCounter1IfNonzero		; $7468
 	jp z,partDelete		; $746b
 
 	; Flicker visibility for 30 frames or less remaining
@@ -150824,7 +150824,7 @@ partCode44:
 	call objectSetVisible81		; $74f6
 
 @state1:
-	call _partDecCounter1IfNonzero		; $74f9
+	call _partCommon_decCounter1IfNonzero		; $74f9
 	jr nz,++		; $74fc
 
 	; Reverse floating direction
@@ -150903,7 +150903,7 @@ _label_11_374:
 	ld e,d			; $755f
 	add a			; $7560
 	or h			; $7561
-	call _partDecCounter1IfNonzero		; $7562
+	call _partCommon_decCounter1IfNonzero		; $7562
 	ret nz			; $7565
 	ld l,e			; $7566
 	inc (hl)		; $7567
@@ -150968,7 +150968,7 @@ _label_11_376:
 	ld a,(de)		; $75ce
 	or a			; $75cf
 	jr z,_label_11_377	; $75d0
-	call _partDecCounter1IfNonzero		; $75d2
+	call _partCommon_decCounter1IfNonzero		; $75d2
 	ret nz			; $75d5
 	ld e,$c2		; $75d6
 	ld a,(de)		; $75d8
@@ -151225,7 +151225,7 @@ _octogonDepthCharge_subid0:
 
 ; Delay before falling to ground
 @state2:
-	call _partDecCounter1IfNonzero		; $76fa
+	call _partCommon_decCounter1IfNonzero		; $76fa
 	ret nz			; $76fd
 
 	ld l,e			; $76fe
@@ -151842,7 +151842,7 @@ partCode4f:
 	ld a,(hl)		; $7a80
 	cp $0f			; $7a81
 	jr nz,_label_11_414	; $7a83
-	call _partDecCounter1IfNonzero		; $7a85
+	call _partCommon_decCounter1IfNonzero		; $7a85
 	ret nz			; $7a88
 	call objectGetAngleTowardLink		; $7a89
 	ld e,$c9		; $7a8c
@@ -151854,7 +151854,7 @@ partCode4f:
 	ld a,$02		; $7a96
 	ld (de),a		; $7a98
 	call partAnimate		; $7a99
-	call _partDecCounter1IfNonzero		; $7a9c
+	call _partCommon_decCounter1IfNonzero		; $7a9c
 	jr nz,_label_11_413	; $7a9f
 	ld (hl),$0a		; $7aa1
 	call objectGetAngleTowardLink		; $7aa3
@@ -151877,7 +151877,7 @@ partCode54:
 	ld a,(de)		; $7abc
 	or a			; $7abd
 	jr z,_label_11_415	; $7abe
-	call _partDecCounter1IfNonzero		; $7ac0
+	call _partCommon_decCounter1IfNonzero		; $7ac0
 	jp z,partDelete		; $7ac3
 	ld a,(hl)		; $7ac6
 	and $0f			; $7ac7
@@ -151996,7 +151996,7 @@ partCode55:
 
 ; Moving forward
 @state1:
-	call _partDecCounter1IfNonzero		; $7b60
+	call _partCommon_decCounter1IfNonzero		; $7b60
 	jr z,@gotoState2	; $7b63
 
 	ld a,(wFrameCounter)		; $7b65
@@ -152090,7 +152090,7 @@ _label_11_421:
 	ld a,(de)		; $7be5
 	or a			; $7be6
 	jr z,_label_11_424	; $7be7
-	call _partDecCounter1IfNonzero		; $7be9
+	call _partCommon_decCounter1IfNonzero		; $7be9
 	jr nz,_label_11_422	; $7bec
 	ld (hl),$04		; $7bee
 	call getFreePartSlot		; $7bf0
@@ -152193,7 +152193,7 @@ _label_11_426:
 	ld (de),a		; $7c8c
 	call objectSetVisible81		; $7c8d
 	jr _label_11_425		; $7c90
-	call _partDecCounter1IfNonzero		; $7c92
+	call _partCommon_decCounter1IfNonzero		; $7c92
 	jr nz,_label_11_427	; $7c95
 	ld (hl),$08		; $7c97
 	inc l			; $7c99
@@ -152225,7 +152225,7 @@ _label_11_428:
 	xor $10			; $7cc5
 	ld (hl),a		; $7cc7
 	ret			; $7cc8
-	call _partDecCounter1IfNonzero		; $7cc9
+	call _partCommon_decCounter1IfNonzero		; $7cc9
 	ret nz			; $7ccc
 	ld l,$c4		; $7ccd
 	inc (hl)		; $7ccf
@@ -152378,7 +152378,7 @@ partCode57:
 	ret c			; $7dc2
 	ld a,l			; $7dc3
 	jp setTile		; $7dc4
-	call _partDecCounter1IfNonzero		; $7dc7
+	call _partCommon_decCounter1IfNonzero		; $7dc7
 	ret nz			; $7dca
 	ld (hl),$04		; $7dcb
 	ld l,e			; $7dcd
@@ -152386,7 +152386,7 @@ partCode57:
 	ld hl,$7da9		; $7dcf
 	ld a,$a0		; $7dd2
 	jr _label_11_434		; $7dd4
-	call _partDecCounter1IfNonzero		; $7dd6
+	call _partCommon_decCounter1IfNonzero		; $7dd6
 	ret nz			; $7dd9
 	ld (hl),$04		; $7dda
 	ld hl,$7d98		; $7ddc
@@ -152426,7 +152426,7 @@ _label_11_437:
 	ld l,$c4		; $7e0c
 	inc (hl)		; $7e0e
 	ret			; $7e0f
-	call _partDecCounter1IfNonzero		; $7e10
+	call _partCommon_decCounter1IfNonzero		; $7e10
 	ret nz			; $7e13
 	ld l,$a0		; $7e14
 	call $7db7		; $7e16
@@ -152468,7 +152468,7 @@ _label_11_438:
 	ld a,SND_BEAM		; $7e50
 	call playSound		; $7e52
 	call objectSetVisible83		; $7e55
-	call _partDecCounter1IfNonzero		; $7e58
+	call _partCommon_decCounter1IfNonzero		; $7e58
 	jr z,_label_11_439	; $7e5b
 	ld a,$0b		; $7e5d
 	call objectGetRelatedObject1Var		; $7e5f
@@ -152483,7 +152483,7 @@ _label_11_439:
 	cp $b0			; $7e70
 	ret c			; $7e72
 	jp partDelete		; $7e73
-	call _partDecCounter1IfNonzero		; $7e76
+	call _partCommon_decCounter1IfNonzero		; $7e76
 	jp z,partDelete		; $7e79
 	ld a,(wGameKeysJustPressed)		; $7e7c
 	or a			; $7e7f
@@ -152531,7 +152531,7 @@ partCode59:
 	ret			; $7ebc
 	ld bc,$2814		; $7ebd
 	inc a			; $7ec0
-	call _partDecCounter1IfNonzero		; $7ec1
+	call _partCommon_decCounter1IfNonzero		; $7ec1
 	ret nz			; $7ec4
 	ld l,e			; $7ec5
 	inc (hl)		; $7ec6
@@ -152546,13 +152546,13 @@ partCode59:
 	ld a,SND_LIGHTTORCH		; $7ed4
 	call playSound		; $7ed6
 	jp objectSetVisible83		; $7ed9
-	call _partDecCounter1IfNonzero		; $7edc
+	call _partCommon_decCounter1IfNonzero		; $7edc
 	jr nz,_label_11_444	; $7edf
 	ld (hl),$14		; $7ee1
 	ld l,e			; $7ee3
 	inc (hl)		; $7ee4
 	jr _label_11_444		; $7ee5
-	call _partDecCounter1IfNonzero		; $7ee7
+	call _partCommon_decCounter1IfNonzero		; $7ee7
 	jr nz,_label_11_444	; $7eea
 	ld hl,$6dbc		; $7eec
 	ld e,$10		; $7eef
@@ -152597,7 +152597,7 @@ _label_11_442:
 	call objectApplySpeed		; $7f2a
 _label_11_444:
 	jp partAnimate		; $7f2d
-	call _partDecCounter1IfNonzero		; $7f30
+	call _partCommon_decCounter1IfNonzero		; $7f30
 	jr nz,_label_11_444	; $7f33
 	call objectCreatePuff		; $7f35
 	jp partDelete		; $7f38
