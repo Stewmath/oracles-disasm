@@ -55941,7 +55941,7 @@ _shootingGalleryGame:
 	jr @addValueToScore		; $572a
 
 @hit2Things:
-	ld a,($ccd4)		; $572c
+	ld a,(wShootingGalleryHitTargets)		; $572c
 	and $0f			; $572f
 	call getHighestSetBit		; $5731
 	inc a			; $5734
@@ -60102,7 +60102,7 @@ _ralphState0:
 	jp objectSetInvisible		; $6e3f
 
 @initSubid08:
-	callab scriptHlp.createLinkedSwordAnimation		; $6e42
+	callab scriptHlp.ralph_createLinkedSwordAnimation		; $6e42
 
 	ld hl,ralphSubid08Script		; $6e4a
 	call interactionSetScript		; $6e4d
@@ -60264,7 +60264,7 @@ _ralphState0:
 	jp nz,interactionDelete		; $6f52
 
 	call interactionLoadExtraGraphics		; $6f55
-	callab scriptHlp.createLinkedSwordAnimation		; $6f58
+	callab scriptHlp.ralph_createLinkedSwordAnimation		; $6f58
 	ld hl,ralphSubid0cScript		; $6f60
 	call interactionSetScript		; $6f63
 	xor a			; $6f66
@@ -77422,7 +77422,7 @@ _interaction6b_subid04:
 
 @state0:
 	xor a			; $4ed2
-	ld ($ccd4),a		; $4ed3
+	ld (wccd4),a		; $4ed3
 	call _interaction6b_loadScript		; $4ed6
 @state1:
 	call interactionRunScript		; $4ed9

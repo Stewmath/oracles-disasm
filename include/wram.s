@@ -2658,6 +2658,7 @@ wTmpcec0: ; $cec0
 ; Data at $cec0-$ceff has several different uses depending on context.
 ; Aside from the uses listed below, it's also used for:
 ; * Functions which apply an object's speed ($cec0-$cec3)
+; * Checking enough torches are lit to open a door ($cec0 only)
 ; * Unpacking secrets
 
 .enum $cec0 export
@@ -2732,7 +2733,20 @@ wRoomLayoutEnd: ; $cfc0
 
 .union wTmpcfc0
 
-.union shootingGallery
+; Uses of $cfc0 in "normal" gameplay
+.union normal
+	cfc0: ; $cfc0
+		;  Bit 0 is set whenever a keyhole in the overworld is opened. This triggers the
+		;  corresponding cutscene (which appears to be dependent on the room you're in).
+		;  (TODO: replace "wTmpcfc0.genericCutscene.cfc0" with "wTmpcfc0.normal.cfc0" where
+		;  appropriate)
+		db
+	doorControllerState: ; $cfc1
+		db
+
+
+; Uses of $cfc0 in shooting gallery
+.nextu shootingGallery
 
 	gameStatus: ; $cfc0
 	; Set to 0 while game is running, 1 when it's finished
@@ -2921,9 +2935,9 @@ wRoomLayoutEnd: ; $cfc0
 
 	state: ; $cfc0
 		db
-	cfc1:
+	cfc1: ; $cfc1
 		dsb 5
-	cfc6:
+	cfc6: ; $cfc6
 		db
 	filler1:
 		dsb $09
@@ -2932,8 +2946,14 @@ wRoomLayoutEnd: ; $cfc0
 		db
 	cfd1: ; $cfd1
 		db
-	filler2:
-		dsb 3
+	cfd2: ; $cfd2
+		db
+	cfd3: ; $cfd3
+	; Link's position is stored here by INTERACID_HARDHAT_WORKER
+		db
+	cfd4: ; $cfd4
+	; Link's direction is stored here by INTERACID_HARDHAT_WORKER
+		db
 	cfd5: ; $cfd5
 	; Used as a position value? Maybe a focus position for npcs in certain cutscenes?
 	; (see "objectWritePositionTocfd5")
