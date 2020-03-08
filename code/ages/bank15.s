@@ -1192,7 +1192,7 @@ createSparkle:
 ; Writes to the tilemap to replace all "target" tiles with floor tiles.
 ; @addr{50f6}
 shootingGallery_removeAllTargets:
-	jpab interactionBank1.shootingGallery_removeAllTargets		; $50f6
+	jpab interactionBank08.shootingGallery_removeAllTargets		; $50f6
 
 ;;
 ; @param	a	0 to create the entrance, 2 to remove it
@@ -2107,7 +2107,7 @@ turnToFaceSomethingAtInterval:
 	ld a,(wFrameCounter)		; $5616
 	and b			; $5619
 	ret nz			; $561a
-	callab func_0a_7877		; $561b
+	callab interactionBank0a.func_0a_7877		; $561b
 	call objectGetRelativeAngle		; $5623
 	call convertAngleToDirection		; $5626
 	ld h,d			; $5629
@@ -2583,7 +2583,7 @@ createExclamationMark:
 ;;
 ; @addr{585a}
 oscillateXRandomly:
-	jpab interactionBank1.interactionOscillateXRandomly		; $585a
+	jpab interactionBank08.interactionOscillateXRandomly		; $585a
 
 ;;
 ; Forces the next animation frame to be loaded; does something with var38 and $cfd3?
@@ -2899,8 +2899,8 @@ soldierSetSimulatedInputToEscortLink:
 	ld c,a			; $5a03
 	push de			; $5a04
 
-	ld hl,interactionBank2.linkEnterPalaceSimulatedInput		; $5a05
-	ld a,:interactionBank2.linkEnterPalaceSimulatedInput		; $5a08
+	ld hl,interactionBank09.linkEnterPalaceSimulatedInput		; $5a05
+	ld a,:interactionBank09.linkEnterPalaceSimulatedInput		; $5a08
 	call setSimulatedInputAddress		; $5a0a
 
 	pop de			; $5a0d
@@ -2919,8 +2919,8 @@ soldierSetSimulatedInputToEscortLink:
 
 @exitPalace:
 	push de			; $5a1d
-	ld hl,interactionBank2.linkExitPalaceSimulatedInput		; $5a1e
-	ld a,:interactionBank2.linkExitPalaceSimulatedInput		; $5a21
+	ld hl,interactionBank09.linkExitPalaceSimulatedInput		; $5a1e
+	ld a,:interactionBank09.linkExitPalaceSimulatedInput		; $5a21
 	call setSimulatedInputAddress		; $5a23
 	pop de			; $5a26
 	ret			; $5a27
@@ -4748,7 +4748,7 @@ goronDance_restartGame:
 	ld hl,w1Link.direction		; $6311
 	ld (hl),DIR_DOWN		; $6314
 	ld b,$0a		; $6316
-	jpab interactionBank1.shootingGallery_initializeGameRounds		; $6318
+	jpab interactionBank08.shootingGallery_initializeGameRounds		; $6318
 
 ;;
 ; @param[out]	zflag	Set if in present (in wcddb)
