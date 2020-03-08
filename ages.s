@@ -52299,7 +52299,11 @@ interactionCode13:
 
 
 ; ==============================================================================
-; INTERACID_PUSHBLOCK: a block in the process of being pushed.
+; INTERACID_PUSHBLOCK
+;
+; Variables:
+;   var30: Initial position of block being pushed (set by whatever spawn the object)
+;   var31: Tile index being pushed (this is also read by INTERACID_PUSHBLOCK_SYNCHRONIZER)
 ; ==============================================================================
 interactionCode14:
 	ld e,Interaction.state		; $4430
@@ -94604,64 +94608,85 @@ interactionCodebc:
 	.db $2d $28
 	.db $29 $40
 
+; ==============================================================================
+; INTERACID_PUSHBLOCK_SYNCHRONIZER
+; ==============================================================================
 interactionCodebd:
-	ld e,$44		; $706d
+	ld e,Interaction.state		; $706d
 	ld a,(de)		; $706f
 	rst_jumpTable			; $7070
-.dw interactionIncState
-.dw $7077
-.dw $7098
+	.dw interactionIncState
+	.dw @state1
+	.dw @state2
+
+@state1:
+	; Wait for a block to be pushed
 	ld a,(w1ReservedInteraction1.enabled)		; $7077
 	or a			; $707a
 	ret z			; $707b
 
-	ld a,(w1ReservedInteraction1.pressedAButton)		; $707c
+	ld a,(w1ReservedInteraction1.var31) ; Tile index of block being pushed
 	ldh (<hFF8B),a	; $707f
 	call findTileInRoom		; $7081
-	jr nz,_label_0b_311	; $7084
-	call $709e		; $7086
-_label_0b_310:
+	jr nz,@incState	; $7084
+
+	; Found another tile of the same type; push it, then search for more tiles of that type
+	call @pushBlockAt		; $7086
+--
 	ldh a,(<hFF8B)	; $7089
 	call backwardsSearch		; $708b
-	jr nz,_label_0b_311	; $708e
-	call $709e		; $7090
-	jr _label_0b_310		; $7093
-_label_0b_311:
+	jr nz,@incState	; $708e
+	call @pushBlockAt		; $7090
+	jr --		; $7093
+
+@incState:
 	jp interactionIncState		; $7095
-	ld e,$44		; $7098
+
+@state2:
+	ld e,Interaction.state		; $7098
 	ld a,$01		; $709a
 	ld (de),a		; $709c
 	ret			; $709d
+
+;;
+; @param	hl	Position of block to push in wRoomLayuut
+; @param	hFF8B	Index of tile to push
+; @addr{709e}
+@pushBlockAt:
 	push hl			; $709e
 	ldh a,(<hFF8B)	; $709f
-	cp $da			; $70a1
-	jr z,_label_0b_314	; $70a3
+	cp TILEINDEX_SOMARIA_BLOCK			; $70a1
+	jr z,@return	; $70a3
+
 	ld a,l			; $70a5
 	ldh (<hFF8D),a	; $70a6
 	ld h,d			; $70a8
-	ld l,$4b		; $70a9
+	ld l,Interaction.yh		; $70a9
 	call setShortPosition		; $70ab
-	ld l,$49		; $70ae
+
+	ld l,Interaction.angle		; $70ae
 	ld a,(wBlockPushAngle)		; $70b0
-_label_0b_312:
 	and $1f			; $70b3
 	ld (hl),a		; $70b5
+
 	call interactionCheckAdjacentTileIsSolid		; $70b6
-_label_0b_313:
-	jr nz,_label_0b_314	; $70b9
+	jr nz,@return	; $70b9
 	call getFreeInteractionSlot		; $70bb
-	jr nz,_label_0b_314	; $70be
-	ld (hl),$14		; $70c0
-	ld l,$49		; $70c2
+	jr nz,@return	; $70be
+
+	ld (hl),INTERACID_PUSHBLOCK		; $70c0
+	ld l,Interaction.angle		; $70c2
 	ld e,l			; $70c4
 	ld a,(de)		; $70c5
 	ld (hl),a		; $70c6
-	ld bc,$fe00		; $70c7
+	ldbc -$02, $00		; $70c7
 	call objectCopyPositionWithOffset		; $70ca
-	ld l,$70		; $70cd
+
+	; [pushblock.var30] = tile position
+	ld l,Interaction.var30		; $70cd
 	ldh a,(<hFF8D)	; $70cf
 	ld (hl),a		; $70d1
-_label_0b_314:
+@return:
 	pop hl			; $70d2
 	dec l			; $70d3
 	ret			; $70d4

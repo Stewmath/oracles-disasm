@@ -1585,7 +1585,9 @@
 .define INTERACID_TWINROVA_3		$bc
 
 ;;
-.define INTERACID_bd			$bd
+; While this object is on-screen, whenever a block is pushed, all other tiles with the same tile
+; index will also get pushed in the same direction. Used for puzzles in Ages D5.
+.define INTERACID_PUSHBLOCK_SYNCHRONIZER	$bd
 
 ;;
 ; A button in Ambi's palace that unlocks the secret passage.

@@ -3060,6 +3060,7 @@ wRoomLayoutEnd: ; $cfc0
 
 .ENUM $d000 export
 	w1Link:			instanceof SpecialObjectStruct
+
 	; This is used for:
 	; * Items from treasure chests
 	; * Key door openers
@@ -3068,6 +3069,11 @@ wRoomLayoutEnd: ; $cfc0
 
 .ENUM $d100 export
 	w1Companion:		instanceof SpecialObjectStruct
+
+	; This is used for:
+	; * Blocks being pushed
+	; * Glow behind essences
+	; * Pirate ship (ages)
 	w1ReservedInteraction1:	instanceof InteractionStruct
 .ENDE
 
