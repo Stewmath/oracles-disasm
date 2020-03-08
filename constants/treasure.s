@@ -380,6 +380,8 @@
 
 .enum TREASURE_RING_BOX<<8 ; $2c
 	TREASURE_RING_BOX_SUBID_00	db
+	TREASURE_RING_BOX_SUBID_01	db ; Level 2 upgrade
+	TREASURE_RING_BOX_SUBID_02	db ; Level 3 upgrade
 .ende
 
 .enum TREASURE_RING<<8 ; $2d

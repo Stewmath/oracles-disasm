@@ -1593,9 +1593,19 @@
 .define INTERACID_AMBIS_PALACE_BUTTON	$be
 
 ;;
-; This can be a variety of npcs...
-; Subid ranges from $00-$0c.
-.define INTERACID_MISC_NPC		$bf
+; NPC in Symmetry City.
+;
+; @subid_00{NPC in present upper-right house}
+; @subid_01{Unused?}
+; @subid_02{Lady in present lower houses}
+; @subid_03{Unused?}
+; @subid_04{NPC in present upper-left house}
+; @subid_05{Unused?}
+; @subid_06-07{Brothers with the tuni nut}
+; @subid_08-09{Sisters in the tuni nut building}
+; @subid_0a-0b{Kids in the lower past houses}
+; @subid_0c{NPC outside symmetry volcano, in the past (after tuni nut is placed)}
+.define INTERACID_SYMMETRY_NPC		$bf
 
 ;;
 ; Banana carried by Moosh in credits cutscene. Maybe also the obtainable banana in seasons?

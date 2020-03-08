@@ -8729,30 +8729,52 @@ vire_activateMusic:
 	ld a,MUS_MINIBOSS		; $77ea
 	jp playSound		; $77ec
 
+; ==============================================================================
+; INTERACID_SYMMETRY_NPC
+; ==============================================================================
+;;
+; Puts a value in wTmpcfc0.genericCutscene.cfc1:
+;   - 0: If haven't got tuni nut yet
+;   - 1: If tuni nut isn't repaired yet
+;   - 2: If tuni nut is repaired
+; @addr{77ef}
+symmetryNpc_getTuniNutState:
 	ld a,TREASURE_TUNI_NUT		; $77ef
 	call checkTreasureObtained		; $77f1
 	ld b,$00		; $77f4
-	jr nc,_label_15_221	; $77f6
+	jr nc,++		; $77f6
 	inc b			; $77f8
 	or a			; $77f9
-	jr z,_label_15_221	; $77fa
+	jr z,++			; $77fa
 	inc b			; $77fc
-_label_15_221:
+++
 	ld a,b			; $77fd
-	ld ($cfc1),a		; $77fe
+	ld (wTmpcfc0.genericCutscene.cfc1),a		; $77fe
 	ret			; $7801
+
+;;
+; Sets room flag bit 0 if we talked to the right sister, instead of the left one?
+; @addr{7802}
+symmetryNpc_setRoomFlagIfTalkedToRightSister:
 	call getThisRoomFlags		; $7802
-	ld e,$42		; $7805
+	ld e,Interaction.subid		; $7805
 	ld a,(de)		; $7807
 	sub $08			; $7808
 	or (hl)			; $780a
 	ld (hl),a		; $780b
 	ret			; $780c
-	call $77ef		; $780d
-	ld a,($cfc1)		; $7810
+
+;;
+; @addr{780d}
+symmetryNpc_getTuniNutStateForSister:
+	call symmetryNpc_getTuniNutState		; $780d
+	ld a,(wTmpcfc0.genericCutscene.cfc1)		; $7810
 	or a			; $7813
 	ret nz			; $7814
-	ld e,$42		; $7815
+
+	; Tuni nut has been obtained
+
+	ld e,Interaction.subid		; $7815
 	ld a,(de)		; $7817
 	sub $08			; $7818
 	ld b,a			; $781a
@@ -8760,169 +8782,213 @@ _label_15_221:
 	and $0f			; $781e
 	cp b			; $7820
 	ld c,$00		; $7821
-	jr z,_label_15_222	; $7823
+	jr z,+			; $7823
 	ld c,$03		; $7825
-_label_15_222:
++
 	ld a,c			; $7827
-	ld ($cfc1),a		; $7828
+	ld (wTmpcfc0.genericCutscene.cfc1),a		; $7828
 	ret			; $782b
+
+;;
+; Sets wTextNumberSubstitution with the capacity for the next level ring box.
+; @addr{782c}
+symmetryNpc_getUpgradeCapacityForText:
 	ld a,TREASURE_RING_BOX		; $782c
 	call checkTreasureObtained		; $782e
-	jr c,_label_15_223	; $7831
+	jr c,@haveRingBox	; $7831
 	ld c,$03		; $7833
-	jr _label_15_224		; $7835
-_label_15_223:
+	jr ++			; $7835
+
+@haveRingBox:
 	ld a,(wRingBoxLevel)		; $7837
 	dec a			; $783a
 	ld c,$03		; $783b
-	jr z,_label_15_224	; $783d
+	jr z,++			; $783d
 	ld c,$05		; $783f
-_label_15_224:
+++
 	ld hl,wTextNumberSubstitution		; $7841
 	ld (hl),c		; $7844
 	inc hl			; $7845
 	ld (hl),$00		; $7846
 	ret			; $7848
 
-; @addr{7849}
-script15_7849:
-	jumpifglobalflagset $14 script15_7890
-	incstate
-	jumpifglobalflagset $29 script7daf ; TODO
-script15_7853:
+; Sisters in the tuni nut building
+symmetryNpcSubid8And9Script:
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, @postgame
+	incstate ; [state] = 2
+	jumpifglobalflagset GLOBALFLAG_TUNI_NUT_PLACED, symmetryNpcSubid8And9Script_afterTuniNutRestored
+
+@loop:
 	initcollisions
 	checkabutton
 	disableinput
-	jumpifglobalflagset $2e script15_7879
-	showtextlowindex $10
-	jumpiftextoptioneq $00 script15_7865
-	showtextlowindex $13
+	jumpifglobalflagset GLOBALFLAG_TALKED_TO_SYMMETRY_SISTER, @script15_7879
+
+	showtextlowindex <TX_2d10
+	jumpiftextoptioneq $00, @saidYes
+
+	; Said no
+	showtextlowindex <TX_2d13
 	enableinput
-	jump2byte script15_7853
-script15_7865:
-	asm15 $7802
-	setglobalflag $2e
-	showtextlowindex $11
-script15_786c:
-	jumpiftextoptioneq $00 script15_7874
-	showtextlowindex $14
-	jump2byte script15_786c
-script15_7874:
-	showtextlowindex $12
+	jump2byte @loop
+
+@saidYes:
+	asm15 symmetryNpc_setRoomFlagIfTalkedToRightSister
+	setglobalflag GLOBALFLAG_TALKED_TO_SYMMETRY_SISTER
+	showtextlowindex <TX_2d11
+
+@repeat:
+	jumpiftextoptioneq $00, @almostDoneTalking
+	showtextlowindex <TX_2d14
+	jump2byte @repeat
+
+@almostDoneTalking:
+	showtextlowindex <TX_2d12
 	enableinput
-	jump2byte script15_7888
-script15_7879:
+	jump2byte @sister1
+
+@script15_7879:
 	enableinput
-	asm15 $780d
-	jumptable_memoryaddress $cfc1
-	.dw script15_7888
-	.dw script15_788c
-	.dw script15_788e
-	.dw script15_788a
-script15_7888:
-	rungenericnpclowindex $12
-script15_788a:
-	rungenericnpclowindex $15
-script15_788c:
-	rungenericnpclowindex $16
-script15_788e:
-	rungenericnpclowindex $17
-script15_7890:
+	asm15 symmetryNpc_getTuniNutStateForSister
+	jumptable_memoryaddress wTmpcfc0.genericCutscene.cfc1
+	.dw @sister1
+	.dw @sister1Unused
+	.dw @sister2Unused
+	.dw @sister2
+
+@sister1:
+	rungenericnpclowindex <TX_2d12
+@sister2:
+	rungenericnpclowindex <TX_2d15
+
+; Alternate text, don't think it's used
+@sister1Unused:
+	rungenericnpclowindex <TX_2d16
+@sister2Unused:
+	rungenericnpclowindex <TX_2d17
+
+@postgame:
 	initcollisions
-script15_7891:
+@postgameLoop:
 	checkabutton
 	disableinput
-	jumpifglobalflagset $77 script15_78d8
-	showtextlowindex $24
+	jumpifglobalflagset GLOBALFLAG_DONE_SYMMETRY_SECRET, @alreadyDoneSecret
+	showtextlowindex <TX_2d24
 	wait 30
-	jumpiftextoptioneq $00 script15_78a2
-	showtextlowindex $25
-	jump2byte script15_78dc
-script15_78a2:
+	jumpiftextoptioneq $00, @askForSecret
+	showtextlowindex <TX_2d25
+	jump2byte @resume
+
+@askForSecret:
 	askforsecret SYMMETRY_SECRET
 	wait 30
-	jumpifmemoryeq $cc89 $00 script15_78af
-	showtextlowindex $27
-	jump2byte script15_78dc
-script15_78af:
-	setglobalflag $6d
-	showtextlowindex $26
+	jumpifmemoryeq wTextInputResult, $00, @validSecret
+	showtextlowindex <TX_2d27
+	jump2byte @resume
+
+@validSecret:
+	setglobalflag GLOBALFLAG_BEGAN_SYMMETRY_SECRET
+	showtextlowindex <TX_2d26
 	wait 30
-	jumpifitemobtained $2c script15_78bc
-	showtextlowindex $2a
-	jump2byte script15_78c1
-script15_78bc:
-	showtextlowindex $28
+	jumpifitemobtained TREASURE_RING_BOX, @haveRingBox
+
+	; Don't have ring box, show different text
+	showtextlowindex <TX_2d2a
+	jump2byte @determineLevelToGive
+
+@haveRingBox:
+	showtextlowindex <TX_2d28
 	wait 30
-	showtextlowindex $29
-script15_78c1:
+	showtextlowindex <TX_2d29
+
+@determineLevelToGive:
 	wait 30
-	asm15 $782c
-	jumpifmemoryeq $cba8 $05 script15_78d0
-	giveitem $2c01
-	jump2byte script15_78d3
-script15_78d0:
-	giveitem $2c02
-script15_78d3:
+	asm15 symmetryNpc_getUpgradeCapacityForText
+	jumpifmemoryeq wTextNumberSubstitution, $05, @giveLevel3RingBox
+
+	; Level 2 box
+	giveitem TREASURE_RING_BOX_SUBID_01
+	jump2byte ++
+
+@giveLevel3RingBox:
+	giveitem TREASURE_RING_BOX_SUBID_02
+++
 	wait 30
-	orroomflag $20
-	setglobalflag $77
-script15_78d8:
+	orroomflag ROOMFLAG_ITEM
+	setglobalflag GLOBALFLAG_DONE_SYMMETRY_SECRET
+
+@alreadyDoneSecret:
 	generatesecret SYMMETRY_RETURN_SECRET
-	showtextlowindex $2b
-script15_78dc:
+	showtextlowindex <TX_2d2b
+
+@resume:
 	enableinput
-	jump2byte script15_7891
-script15_78df:
-	jumpifglobalflagset $2e script15_78e5
-	rungenericnpclowindex $0b
-script15_78e5:
-	jumpifglobalflagset $29 script15_792e
-	jumpifroomflagset $40 script15_78f1
-	jumpifglobalflagset $2a script15_78fd
-script15_78f1:
-	orroomflag $40
-	setglobalflag $2a
-	jumpifitemobtained $4c script15_78fb
-	rungenericnpclowindex $00
-script15_78fb:
-	rungenericnpclowindex $01
-script15_78fd:
-	asm15 $77ef
-	jumptable_memoryaddress $cfc1
-	.dw script15_790d
-	.dw script15_7909
-	.dw script15_790b
-script15_7909:
-	rungenericnpclowindex $08
-script15_790b:
-	rungenericnpclowindex $09
-script15_790d:
+	jump2byte @postgameLoop
+
+
+; Brothers with the tuni nut
+symmetryNpcSubid6And7Script:
+	jumpifglobalflagset GLOBALFLAG_TALKED_TO_SYMMETRY_SISTER, @talkedToSisters
+	rungenericnpclowindex <TX_2d0b
+
+@talkedToSisters:
+	jumpifglobalflagset GLOBALFLAG_TUNI_NUT_PLACED, @tuniNutPlaced
+	jumpifroomflagset ROOMFLAG_40, @brotherWithoutTuniNut
+	jumpifglobalflagset GLOBALFLAG_TALKED_TO_SYMMETRY_BROTHER, @brotherWithTuniNut
+
+@brotherWithoutTuniNut:
+	; Tells you to see his brother to get the tuni nut
+	orroomflag ROOMFLAG_40
+	setglobalflag GLOBALFLAG_TALKED_TO_SYMMETRY_BROTHER
+	jumpifitemobtained TREASURE_TUNI_NUT, ++
+	rungenericnpclowindex <TX_2d00
+++
+	rungenericnpclowindex <TX_2d01
+
+@brotherWithTuniNut:
+	asm15 symmetryNpc_getTuniNutState
+	jumptable_memoryaddress wTmpcfc0.genericCutscene.cfc1
+	.dw @dontHaveNut
+	.dw @nutNotRepaired
+	.dw @nutRepaired
+
+@nutNotRepaired:
+	rungenericnpclowindex <TX_2d08
+
+@nutRepaired:
+	rungenericnpclowindex <TX_2d09
+
+@dontHaveNut:
 	initcollisions
 	checkabutton
 	setdisabledobjectsto91
-	showtextlowindex $02
+	showtextlowindex <TX_2d02
 	disableinput
 	wait 30
-	showtextlowindex $04
-	jump2byte script15_791c
-script15_7918:
+	showtextlowindex <TX_2d04
+	jump2byte @respondToQuestion
+
+@questionLoop:
 	checkabutton
-	showtextlowindex $04
+	showtextlowindex <TX_2d04
 	disableinput
-script15_791c:
-	jumpiftextoptioneq $00 script15_7925
-	showtextlowindex $07
+
+@respondToQuestion:
+	jumpiftextoptioneq $00, @giveTuniNut
+	showtextlowindex <TX_2d07
 	enableinput
-	jump2byte script15_7918
-script15_7925:
-	showtextlowindex $05
+	jump2byte @questionLoop
+
+@giveTuniNut:
+	showtextlowindex <TX_2d05
 	wait 30
-	giveitem $4c00
+	giveitem TREASURE_TUNI_NUT_SUBID_00
 	enableinput
-	jump2byte script15_7909
-script15_792e:
-	rungenericnpclowindex $0a
+	jump2byte @nutNotRepaired
+
+@tuniNutPlaced:
+	rungenericnpclowindex <TX_2d0a
+
 
 ; ==============================================================================
 ; INTERACID_PIRATE_CAPTAIN

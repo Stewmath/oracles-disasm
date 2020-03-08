@@ -55,7 +55,7 @@
 	GLOBALFLAG_KING_ZORA_CURED		db ; $27
 	GLOBALFLAG_RING_SECRET_GENERATED	db ; $28
 	GLOBALFLAG_TUNI_NUT_PLACED		db ; $29
-	GLOBALFLAG_2a				db ; $2a
+	GLOBALFLAG_TALKED_TO_SYMMETRY_BROTHER	db ; $2a: allows you to get tuni nut from other brother
 	GLOBALFLAG_FOREST_UNSCRAMBLED		db ; $2b
 
 	; This is set when a secret has been told to farore, and a chest has appeared, but
@@ -63,7 +63,7 @@
 	GLOBALFLAG_SECRET_CHEST_WAITING		db ; $2c
 
 	GLOBALFLAG_2d				db ; $2d
-	GLOBALFLAG_2e				db ; $2e
+	GLOBALFLAG_TALKED_TO_SYMMETRY_SISTER	db ; $2e
 	GLOBALFLAG_SAVED_GORON_ELDER		db ; $2f
 	GLOBALFLAG_WATER_POLLUTION_FIXED	db ; $30
 	GLOBALFLAG_GOT_PERMISSION_TO_ENTER_JABU	db ; $31

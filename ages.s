@@ -94717,38 +94717,48 @@ interactionCodebe:
 	call fadeoutToWhite		; $713d
 	jp interactionDelete		; $7140
 
+
+; ==============================================================================
+; INTERACID_SYMMETRY_NPC
+; ==============================================================================
 interactionCodebf:
-	ld e,$44		; $7143
+	ld e,Interaction.state		; $7143
 	ld a,(de)		; $7145
 	rst_jumpTable			; $7146
-.dw $714d
-.dw $71ba
-.dw $71a8
+	.dw @state0
+	.dw @runScriptAndAnimate
+	.dw @state2
+
+@state0:
 	call interactionInitGraphics		; $714d
 	call objectSetVisible82		; $7150
 	call interactionIncState		; $7153
-	ld a,$2d		; $7156
+	ld a,>TX_2d00		; $7156
 	call interactionSetHighTextIndex		; $7158
-	ld e,$42		; $715b
+	ld e,Interaction.subid		; $715b
 	ld a,(de)		; $715d
 	rst_jumpTable			; $715e
-.dw $7181
-.dw $7181
-.dw $7181
-.dw $7181
-.dw $7181
-.dw $7181
-.dw $7181
-.dw $7181
-.dw $7181
-.dw $7181
-.dw $7181
-.dw $7181
-.dw $7179
+	.dw @loadScript
+	.dw @loadScript
+	.dw @loadScript
+	.dw @loadScript
+	.dw @loadScript
+	.dw @loadScript
+	.dw @loadScript
+	.dw @loadScript
+	.dw @loadScript
+	.dw @loadScript
+	.dw @loadScript
+	.dw @loadScript
+	.dw @subid0cInit
+
+@subid0cInit:
 	ld a,GLOBALFLAG_TUNI_NUT_PLACED		; $7179
 	call checkGlobalFlag		; $717b
 	jp z,interactionDelete		; $717e
-	ld e,$42		; $7181
+
+@loadScript:
+	ld e,Interaction.subid		; $7181
 	ld a,(de)		; $7183
 	ld hl,@scriptTable		; $7184
 	rst_addDoubleIndex			; $7187
@@ -94758,29 +94768,35 @@ interactionCodebf:
 	jp interactionSetScript		; $718b
 
 @scriptTable:
-	.dw script7da1
-	.dw script7da1
-	.dw script7da3
-	.dw script7da3
-	.dw script7da5
-	.dw script7da5
-	.dw script7da7
-	.dw script7da7
-	.dw script7dab
-	.dw script7dab
-	.dw script7db1
-	.dw script7db7
-	.dw script7dbf
+	.dw symmetryNpcSubid0And1Script
+	.dw symmetryNpcSubid0And1Script
+	.dw symmetryNpcSubid2And3Script
+	.dw symmetryNpcSubid2And3Script
+	.dw symmetryNpcSubid4And5Script
+	.dw symmetryNpcSubid4And5Script
+	.dw symmetryNpcSubid6And7Script
+	.dw symmetryNpcSubid6And7Script
+	.dw symmetryNpcSubid8And9Script
+	.dw symmetryNpcSubid8And9Script
+	.dw symmetryNpcSubidAScript
+	.dw symmetryNpcSubidBScript
+	.dw symmetryNpcSubidCScript
 
-	ld hl,$cfc0		; $71a8
+
+; For subids 8/9 (sisters in the tuni nut building)...
+; Listen for a signal from the tuni nut object; change the script when it's placed.
+@state2:
+	ld hl,wTmpcfc0.genericCutscene.state		; $71a8
 	bit 0,(hl)		; $71ab
-	jr z,_label_0b_315	; $71ad
-	ld hl,script7daf		; $71af
+	jr z,@runScriptAndAnimate	; $71ad
+
+	ld hl,symmetryNpcSubid8And9Script_afterTuniNutRestored		; $71af
 	call interactionSetScript		; $71b2
-	ld e,$44		; $71b5
+	ld e,Interaction.state		; $71b5
 	ld a,$01		; $71b7
 	ld (de),a		; $71b9
-_label_0b_315:
+
+@runScriptAndAnimate:
 	call interactionRunScript		; $71ba
 	jp npcFaceLinkAndAnimate		; $71bd
 

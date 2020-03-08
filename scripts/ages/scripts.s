@@ -9942,28 +9942,42 @@ humanVeranScript:
 	wait 180
 	scriptend
 
-script7da1:
-	rungenericnpclowindex $0c
-script7da3:
-	rungenericnpclowindex $19
-script7da5:
-	rungenericnpclowindex $23
-script7da7:
-	loadscript scriptHlp.script15_78df
-script7dab:
-	loadscript scriptHlp.script15_7849
-script7daf:
-	rungenericnpclowindex $18
-script7db1:
-	jumpifglobalflagset $29 script7dbd
-	rungenericnpclowindex $20
-script7db7:
-	jumpifglobalflagset $29 script7dbd
-	rungenericnpclowindex $21
-script7dbd:
-	rungenericnpclowindex $22
-script7dbf:
-	rungenericnpclowindex $2c
+
+; ==============================================================================
+; INTERACID_SYMMETRY_NPC
+; ==============================================================================
+
+symmetryNpcSubid0And1Script:
+	rungenericnpclowindex <TX_2d0c
+
+symmetryNpcSubid2And3Script:
+	rungenericnpclowindex <TX_2d19
+
+symmetryNpcSubid4And5Script:
+	rungenericnpclowindex <TX_2d23
+
+symmetryNpcSubid6And7Script:
+	loadscript scriptHlp.symmetryNpcSubid6And7Script
+
+symmetryNpcSubid8And9Script:
+	loadscript scriptHlp.symmetryNpcSubid8And9Script
+
+symmetryNpcSubid8And9Script_afterTuniNutRestored:
+	rungenericnpclowindex <TX_2d18
+
+symmetryNpcSubidAScript:
+	jumpifglobalflagset GLOBALFLAG_TUNI_NUT_PLACED, symmetryNpcSubidAOrBScript_afterTuniNutRestored
+	rungenericnpclowindex <TX_2d20
+
+symmetryNpcSubidBScript:
+	jumpifglobalflagset GLOBALFLAG_TUNI_NUT_PLACED, symmetryNpcSubidAOrBScript_afterTuniNutRestored
+	rungenericnpclowindex <TX_2d21
+
+symmetryNpcSubidAOrBScript_afterTuniNutRestored:
+	rungenericnpclowindex <TX_2d22
+
+symmetryNpcSubidCScript:
+	rungenericnpclowindex <TX_2d2c
 
 
 ; ==============================================================================
