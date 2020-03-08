@@ -23,7 +23,11 @@
 ; "Poof" that appears when you kill an enemy
 .define PARTID_ENEMY_DESTROYED	 		$02
 
-.define PARTID_ORB				$03 ; Orb that toggles raisable blocks
+;;
+; Orb that toggles raisable blocks.
+;
+; @subid{0-7; the bit to set/check in wToggleBlocksState.}
+.define PARTID_ORB				$03
 
 ;;
 ; Boss death explosion?

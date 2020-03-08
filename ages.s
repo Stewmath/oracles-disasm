@@ -142347,17 +142347,21 @@ partCode02:
 	ret nc			; $4482
 	jp decNumEnemies		; $4483
 
-;;
-; @addr{4486}
+
+; ==============================================================================
+; PARTID_ORB
+; ==============================================================================
 partCode03:
-	cp $01			; $4486
-	jr nz,_label_11_034	; $4488
+	cp PARTSTATUS_JUST_HIT			; $4486
+	jr nz,@notJustHit	; $4488
+
+	; Just hit
 	ld a,(wToggleBlocksState)		; $448a
 	ld h,d			; $448d
-	ld l,$c3		; $448e
+	ld l,Part.var03		; $448e
 	xor (hl)		; $4490
 	ld (wToggleBlocksState),a		; $4491
-	ld l,$db		; $4494
+	ld l,Part.oamFlagsBackup		; $4494
 	ld a,(hl)		; $4496
 	and $01			; $4497
 	inc a			; $4499
@@ -142365,18 +142369,21 @@ partCode03:
 	ld (hl),a		; $449b
 	ld a,SND_SWITCH		; $449c
 	jp playSound		; $449e
-_label_11_034:
-	ld e,$c4		; $44a1
+
+@notJustHit:
+	ld e,Part.state		; $44a1
 	ld a,(de)		; $44a3
 	or a			; $44a4
 	ret nz			; $44a5
+
+@state0:
 	inc a			; $44a6
 	ld (de),a		; $44a7
 	call objectMakeTileSolid		; $44a8
 	ld h,$cf		; $44ab
 	ld (hl),$0a		; $44ad
 	ld h,d			; $44af
-	ld l,$c2		; $44b0
+	ld l,Part.subid		; $44b0
 	ldi a,(hl)		; $44b2
 	and $07			; $44b3
 	ld bc,bitTable		; $44b5
@@ -142387,10 +142394,10 @@ _label_11_034:
 	ld a,(wToggleBlocksState)		; $44bc
 	and (hl)		; $44bf
 	ld a,$01		; $44c0
-	jr z,_label_11_035	; $44c2
+	jr z,+			; $44c2
 	inc a			; $44c4
-_label_11_035:
-	ld l,$db		; $44c5
++
+	ld l,Part.oamFlagsBackup		; $44c5
 	ldi (hl),a		; $44c7
 	ld (hl),a		; $44c8
 	jp objectSetVisible82		; $44c9
