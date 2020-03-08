@@ -42,12 +42,13 @@
 ; @subid{Bitmask for wSwitchState; xors that value when the switch is triggered.}
 .define PARTID_SWITCH				$05
 
-; Makes a torch lightable.
-; Subid:
-;   0: Once lit, it stays lit.
-;   1: Once lit, it remains lit for [counter2] frames.
-;   2: ?
-.define PARTID_06				$06
+;;
+; The object at this position becomes a lightable torch. Increments wNumTorchesLit when it's lit.
+;
+; @subid_00{Once lit, it stays lit.}
+; @subid_01{Once lit, it remains lit for [counter2] frames.}
+; @subid_02{?}
+.define PARTID_LIGHTABLE_TORCH			$06
 
 ;;
 ; This is a shadow for an object. The shadow copies its parent's position, and gets bigger

@@ -786,7 +786,7 @@ setTrigger2IfTriggers0And1Set:
 	ret			; $4f4a
 
 ;;
-; Creates a part object (PARTID_06) at each unlit torch, allowing them to be lit.
+; Creates a part object (PARTID_LIGHTABLE_TORCH) at each unlit torch, allowing them to be lit.
 ; @addr{4f4b}
 makeTorchesLightable:
 	call getFreeInteractionSlot		; $4f4b
@@ -797,7 +797,7 @@ makeTorchesLightable:
 	ld (hl),TILEINDEX_UNLIT_TORCH		; $4f52
 
 	ld l,Interaction.yh		; $4f54
-	ld (hl),PARTID_06		; $4f56
+	ld (hl),PARTID_LIGHTABLE_TORCH		; $4f56
 	ld l,Interaction.xh		; $4f58
 	ld (hl),$10		; $4f5a
 	ret			; $4f5c

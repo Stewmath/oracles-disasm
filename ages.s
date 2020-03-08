@@ -54687,7 +54687,7 @@ _makeTorchAtPositionTemporarilyLightable:
 	call getFreePartSlot		; $50a6
 	ret nz			; $50a9
 
-	ld (hl),PARTID_06		; $50aa
+	ld (hl),PARTID_LIGHTABLE_TORCH		; $50aa
 	inc l			; $50ac
 	ld (hl),$01		; $50ad
 	ld l,Part.counter2		; $50af
@@ -83235,7 +83235,7 @@ _miscPuzzles_subid07:
 	ldhl FIRST_PART_INDEX, Part.id		; $6f0e
 --
 	ld a,(hl)		; $6f11
-	cp PARTID_06			; $6f12
+	cp PARTID_LIGHTABLE_TORCH			; $6f12
 	call z,@deletePartObject		; $6f14
 	inc h			; $6f17
 	ld a,h			; $6f18
@@ -142452,6 +142452,7 @@ partCode04:
 	call nz,playSound		; $44fa
 	jp objectSetVisible80		; $44fd
 
+
 ; ==============================================================================
 ; PARTID_SWITCH
 ;
@@ -142516,22 +142517,27 @@ partCode05:
 	set 6,(hl)		; $454b
 	jp partDelete		; $454d
 
-;;
-; @addr{4550}
+
+; ==============================================================================
+; PARTID_LIGHTABLE_TORCH
+; ==============================================================================
 partCode06:
-	jr z,++			; $4550
+	jr z,@normalStatus			; $4550
+
+	; Just hit
 	ld h,d			; $4552
 	ld l,Part.subid		; $4553
 	ld a,(hl)		; $4555
 	cp $02			; $4556
-	jr z,++			; $4558
+	jr z,@normalStatus			; $4558
 
 	ld l,Part.counter2		; $455a
 	ldd a,(hl)		; $455c
 	ld (hl),a ; [counter1] = [counter2]
 	ld l,Part.state		; $455e
 	ld (hl),$02		; $4560
-++
+
+@normalStatus:
 	ld e,Part.subid		; $4562
 	ld a,(de)		; $4564
 	rst_jumpTable			; $4565
@@ -142563,9 +142569,10 @@ partCode06:
 	call playSound		; $4580
 	call objectGetShortPosition		; $4583
 	ld c,a			; $4586
+
 	ld a,(wActiveGroup)		; $4587
 	or a			; $458a
-	ld a,$a1		; $458b
+	ld a,TILEINDEX_OVERWORLD_LIT_TORCH		; $458b
 	jr z,+			; $458d
 	ld a,TILEINDEX_LIT_TORCH		; $458f
 +
@@ -142586,7 +142593,7 @@ partCode06:
 @subid1State2:
 	ld h,d			; $45a3
 	ld l,e			; $45a4
-	inc (hl)		; $45a5
+	inc (hl) ; [state] = 3
 
 	ld l,Part.collisionType		; $45a6
 	res 7,(hl)		; $45a8
@@ -142626,6 +142633,8 @@ partCode06:
 	ld a,TILEINDEX_UNLIT_TORCH		; $45d9
 	jr @setTile		; $45db
 
+
+; Subid 2: ?
 @subid2:
 	ld e,Part.state		; $45dd
 	ld a,(de)		; $45df
@@ -142637,7 +142646,7 @@ partCode06:
 	.dw @subid2State4
 
 @subid2State1:
-	call @getTileAtRelatedObjYAndThisX		; $45eb
+	call @getTileAtRelatedObjPosition		; $45eb
 	cp TILEINDEX_LIT_TORCH			; $45ee
 	ret z			; $45f0
 
@@ -142652,7 +142661,7 @@ partCode06:
 	call _partCommon_decCounter1IfNonzero		; $45fa
 	jp nz,@gotoState1IfTileAtRelatedObjPositionIsNotLit		; $45fd
 
-	; [state]=3
+	; [state] = 3
 	ld l,e			; $4600
 	inc (hl)		; $4601
 
@@ -142665,7 +142674,7 @@ partCode06:
 	jp setTile		; $460c
 
 @subid2State3:
-	call @getTileAtRelatedObjYAndThisX		; $460f
+	call @getTileAtRelatedObjPosition		; $460f
 	cp TILEINDEX_UNLIT_TORCH			; $4612
 	ret z			; $4614
 	ld e,Part.state		; $4615
@@ -142675,7 +142684,7 @@ partCode06:
 
 @subid2State4:
 	ld a,$01		; $461b
-	ld (de),a		; $461d
+	ld (de),a ; [state]
 	ld hl,wNumTorchesLit		; $461e
 	inc (hl)		; $4621
 	call objectGetShortPosition		; $4622
@@ -142684,9 +142693,8 @@ partCode06:
 	jr @setTile		; $4628
 
 ;;
-; Takes relatedObj2's Y position, this object's X position, and returns the tile there?
 ; @addr{4636}
-@getTileAtRelatedObjYAndThisX:
+@getTileAtRelatedObjPosition:
 	ld a,Object.yh		; $462a
 	call objectGetRelatedObject2Var		; $462c
 	ld b,(hl)		; $462f
@@ -142695,7 +142703,7 @@ partCode06:
 	jp getTileAtPosition		; $4633
 
 @gotoState1IfTileAtRelatedObjPositionIsNotLit:
-	call @getTileAtRelatedObjYAndThisX		; $4636
+	call @getTileAtRelatedObjPosition		; $4636
 	cp TILEINDEX_LIT_TORCH			; $4639
 	ret nz			; $463b
 	ld e,Part.state		; $463c

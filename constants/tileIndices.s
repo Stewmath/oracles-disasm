@@ -37,6 +37,7 @@
 .define TILEINDEX_RED_FLOOR		$9d
 .define TILEINDEX_YELLOW_FLOOR		$9e
 .define TILEINDEX_BLUE_FLOOR		$9f
+.define TILEINDEX_OVERWORLD_LIT_TORCH	$a1 ; overworld only (might only be used in seasons?)
 .define TILEINDEX_OVERWORLD_ROCK	$c0 ; outdoors only
 .define TILEINDEX_OVERWORLD_BUSH	$c5 ; outdoors only
 .define TILEINDEX_STAIRS		$d0 ; overworld only
