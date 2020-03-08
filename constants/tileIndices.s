@@ -10,6 +10,8 @@
 .define TILEINDEX_GRAVE_STATIONARY	$02 ; Overworld only
 .define TILEINDEX_UNLIT_TORCH		$08
 .define TILEINDEX_LIT_TORCH		$09
+.define TILEINDEX_OVERWORLD_SWITCH_OFF	$9e ; Overworld oldy
+.define TILEINDEX_OVERWORLD_SWITCH_ON	$9f ; Overworld oldy
 .define TILEINDEX_MOVING_POT		$10
 .define TILEINDEX_OVERWORLD_DUG_DIRT	$1c ; Overworld only
 .define TILEINDEX_HORIZONTAL_BRIDGE_TOP		$1d ; Overworld only
@@ -67,6 +69,8 @@
 .define TILEINDEX_DRIED_LAVA		$01 ; dungeons only(?)
 .define TILEINDEX_RESPAWNING_BUSH_CUT	$02 ; dungeons, indoor areas
 .define TILEINDEX_RESPAWNING_BUSH_READY	$04 ; dungeons, indoor areas
+.define TILEINDEX_DUNGEON_SWITCH_OFF	$0a ; dungeons, indoor areas
+.define TILEINDEX_DUNGEON_SWITCH_ON	$0b ; dungeons, indoor areas
 .define TILEINDEX_BUTTON		$0c ; dungeons, indoor areas
 .define TILEINDEX_PRESSED_BUTTON	$0d ; dungeons, indoor areas
 .define TILEINDEX_RAISABLE_FLOOR_1	$0e ; collision modes 1,2,5

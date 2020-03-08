@@ -36,7 +36,10 @@
 .define PARTID_BOSS_DEATH_EXPLOSION		$04
 
 ;;
-; @subid{Bitmask for wSwitchState?}
+; A switch which flips a bit in wSwitchState. Mostly just for dungeons, but is also kinda-hardcoded
+; to work in the present overworld too for the switch to Nuun Highlands.
+;
+; @subid{Bitmask for wSwitchState; xors that value when the switch is triggered.}
 .define PARTID_SWITCH				$05
 
 ; Makes a torch lightable.

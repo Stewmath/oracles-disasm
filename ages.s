@@ -14241,7 +14241,7 @@ setHlToTileMappingDataPlusATimes8:
 ; Sets tile 'c' to the value of 'a'.
 ;
 ; @param	a	New tile index
-; @param	c	Position of tile to change
+; @param	c	Position of tile to change (returned intact)
 ; @param[out]	zflag	Set on failure (w2ChangedTileQueue is full)
 ; @addr{3a9c}
 setTile:
@@ -142452,50 +142452,64 @@ partCode04:
 	call nz,playSound		; $44fa
 	jp objectSetVisible80		; $44fd
 
-;;
-; @addr{4500}
+; ==============================================================================
+; PARTID_SWITCH
+;
+; Variables:
+;   var30: Position of tile it's on
+; ==============================================================================
 partCode05:
-	jr z,_label_11_038	; $4500
+	jr z,@normalStatus	; $4500
+
+	; Just hit
 	ld a,(wSwitchState)		; $4502
 	ld h,d			; $4505
-	ld l,$c2		; $4506
+	ld l,Part.subid		; $4506
 	xor (hl)		; $4508
 	ld (wSwitchState),a		; $4509
-	call $4527		; $450c
+	call @updateTile		; $450c
 	ld a,SND_SWITCH		; $450f
 	jp playSound		; $4511
-_label_11_038:
-	ld e,$c4		; $4514
+
+@normalStatus:
+	ld e,Part.state		; $4514
 	ld a,(de)		; $4516
 	or a			; $4517
 	ret nz			; $4518
+
+@state0:
 	ld h,d			; $4519
 	ld l,e			; $451a
-	inc (hl)		; $451b
-	ld l,$cf		; $451c
+	inc (hl) ; [state] = 1
+	ld l,Part.zh		; $451c
 	ld (hl),$fa		; $451e
 	call objectGetShortPosition		; $4520
-	ld e,$f0		; $4523
+	ld e,Part.var30		; $4523
 	ld (de),a		; $4525
 	ret			; $4526
-	ld l,$f0		; $4527
+
+@updateTile:
+	ld l,Part.var30		; $4527
 	ld c,(hl)		; $4529
 	ld a,(wActiveGroup)		; $452a
 	or a			; $452d
-	jr z,_label_11_040	; $452e
+	jr z,@flipOverworldSwitch	; $452e
+
+	; Dungeon
 	ld hl,wSwitchState		; $4530
-	ld e,$c2		; $4533
+	ld e,Part.subid		; $4533
 	ld a,(de)		; $4535
 	and (hl)		; $4536
-	ld a,$0a		; $4537
-	jr z,_label_11_039	; $4539
-	inc a			; $453b
-_label_11_039:
+	ld a,TILEINDEX_DUNGEON_SWITCH_OFF		; $4537
+	jr z,+			; $4539
+	inc a ; TILEINDEX_DUNGEON_SWITCH_ON
++
 	jp setTile		; $453c
-_label_11_040:
-	ld a,$9f		; $453f
+
+@flipOverworldSwitch:
+	ld a,TILEINDEX_OVERWORLD_SWITCH_ON		; $453f
 	call setTile		; $4541
-	ld b,$cf		; $4544
+	ld b,>wRoomLayout		; $4544
 	xor a			; $4546
 	ld (bc),a		; $4547
 	call getThisRoomFlags		; $4548
