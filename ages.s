@@ -94666,19 +94666,27 @@ _label_0b_314:
 	dec l			; $70d3
 	ret			; $70d4
 
+
+; ==============================================================================
+; INTERACID_AMBIS_PALACE_BUTTON
+; ==============================================================================
 interactionCodebe:
-	ld e,$44		; $70d5
+	ld e,Interaction.state		; $70d5
 	ld a,(de)		; $70d7
 	rst_jumpTable			; $70d8
-.dw $70df
-.dw $70ef
-.dw $7122
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
 	call getThisRoomFlags		; $70df
-	and $80			; $70e2
+	and ROOMFLAG_80			; $70e2
 	jp nz,interactionDelete		; $70e4
 	ld a,$02		; $70e7
 	call objectSetCollideRadius		; $70e9
 	jp interactionIncState		; $70ec
+
+@state1:
 	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $70ef
 	ret nc			; $70f2
 	call objectGetTileAtPosition		; $70f3
@@ -94690,11 +94698,12 @@ interactionCodebe:
 	ret nz			; $70ff
 	call checkLinkVulnerable		; $7100
 	ret nc			; $7103
-	ld a,$81		; $7104
+
+	ld a,DISABLE_ALL_BUT_INTERACTIONS | DISABLE_LINK		; $7104
 	ld (wDisabledObjects),a		; $7106
 	ld (wMenuDisabled),a		; $7109
-	ld e,$46		; $710c
-	ld a,$2d		; $710e
+	ld e,Interaction.counter1		; $710c
+	ld a,45		; $710e
 	ld (de),a		; $7110
 	call objectGetTileAtPosition		; $7111
 	ld c,l			; $7114
@@ -94703,15 +94712,17 @@ interactionCodebe:
 	ld a,SND_OPENCHEST		; $711a
 	call playSound		; $711c
 	jp interactionIncState		; $711f
+
+@state2:
 	call interactionDecCounter1		; $7122
 	ret nz			; $7125
-	ld a,$1c		; $7126
+	ld a,CUTSCENE_AMBI_PASSAGE_OPEN		; $7126
 	ld (wCutsceneTrigger),a		; $7128
 	ld a,(wActiveRoom)		; $712b
 	ld (wTmpcbbb),a		; $712e
 	ld a,(wActiveTilePos)		; $7131
 	ld (wTmpcbbc),a		; $7134
-	ld e,$42		; $7137
+	ld e,Interaction.subid		; $7137
 	ld a,(de)		; $7139
 	ld (wTmpcbbd),a		; $713a
 	call fadeoutToWhite		; $713d
