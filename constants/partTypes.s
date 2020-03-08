@@ -65,6 +65,20 @@
 .define PARTID_SHADOW				$07
 
 ;;
+; Makes a room dark, and allows it to be lit up by lighting torches in the room. This spawns the
+; necessary PARTID_LIGHTABLE_TORCH objects to achieve this.
+;
+; The YX value is actually the length of time the torches should stay lit (the value of "counter2"
+; for the "PARTID_LIGHTABLE_TORCH" objects it spawns).
+;
+; (TODO: support postype{none} in LynnaLab, meaning the Y/X positions should be in 1 value instead
+; of divided in two.)
+;
+; @subid{Subid value for "PARTID_LIGHTABLE_TORCH" objects this will spawn.}
+; @postype{none}
+.define PARTID_DARK_ROOM_HANDLER		$08
+
+;;
 ; Spawns a bridge.
 ; counter2: Length of the bridge (measured in 8x8 tiles)
 ; angle: direction it should spawn in (value from 0-3)

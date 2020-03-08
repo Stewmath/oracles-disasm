@@ -164,7 +164,7 @@
 
 ;;
 ; Spawns armos from all tiles of a given type. All tiles of index "Y" turn into armos;
-; the tile in question gets replaces with index "X" when they spawn.
+; the tile in question gets replaced with index "X" when they spawn.
 ;
 ; If bit 7 of subid is set, the armos spawns at the position given (Y and X behave
 ; normally); and the tile the armos was at is replaced with "var30". Since var30 can't be

@@ -142794,84 +142794,116 @@ partCode07:
 
 	jp objectSetVisible83		; $46a5
 
-;;
-; @addr{46a8}
+
+; ==============================================================================
+; PARTID_DARK_ROOM_HANDLER
+;
+; Variables:
+;   counter1: Number of lightable torches in the room
+;   counter2: Number of torches currently lit (last time it checked)
+; ==============================================================================
 partCode08:
 	ld a,(wPaletteThread_mode)		; $46a8
 	or a			; $46ab
 	ret nz			; $46ac
+
 	ld a,(wScrollMode)		; $46ad
 	and $01			; $46b0
 	ret z			; $46b2
-	ld e,$c4		; $46b3
+
+	ld e,Part.state		; $46b3
 	ld a,(de)		; $46b5
 	or a			; $46b6
-	call z,$4704		; $46b7
+	call z,@state0		; $46b7
+
+@state1:
 	ld h,d			; $46ba
-	ld l,$c7		; $46bb
+	ld l,Part.counter2		; $46bb
 	ld b,(hl)		; $46bd
 	ld a,(wNumTorchesLit)		; $46be
 	cp (hl)			; $46c1
 	ret z			; $46c2
-	ldd (hl),a		; $46c3
+
+	; No torches lit?
+	ldd (hl),a ; [counter2]
 	or a			; $46c4
 	jp z,darkenRoom		; $46c5
-	cp (hl)			; $46c8
+
+	; All torches lit?
+	cp (hl) ; [counter1]
 	jp z,brightenRoom		; $46c9
+
 	ld a,(wPaletteThread_parameter)		; $46cc
 	cp $f7			; $46cf
 	ret z			; $46d1
+
+	; Check if # of lit torches increased or decreased
 	ld a,(wNumTorchesLit)		; $46d2
 	cp b			; $46d5
 	jp nc,brightenRoomLightly		; $46d6
 	jp darkenRoomLightly		; $46d9
+
+;;
+; @param	l	Position of an unlit torch
+; @param[out]	c	Incremented
+; @addr{46dc}
+@spawnLightableTorch:
 	push hl			; $46dc
 	push bc			; $46dd
 	ld c,l			; $46de
 	call getFreePartSlot		; $46df
-	jr nz,_label_11_045	; $46e2
-	ld (hl),$06		; $46e4
+	jr nz,+++		; $46e2
+	ld (hl),PARTID_LIGHTABLE_TORCH		; $46e4
 	inc l			; $46e6
 	ld e,l			; $46e7
 	ld a,(de)		; $46e8
-	ld (hl),a		; $46e9
-	ld e,$cb		; $46ea
+	ld (hl),a ; [child.subid] = [this.subid]
+
+	; Set length of time the torch can remain lit
+	ld e,Part.yh		; $46ea
 	ld a,(de)		; $46ec
 	and $f0			; $46ed
 	ld l,a			; $46ef
-	ld e,$cd		; $46f0
+	ld e,Part.xh		; $46f0
 	ld a,(de)		; $46f2
 	and $f0			; $46f3
 	swap a			; $46f5
 	or l			; $46f7
-	ld l,$c7		; $46f8
+	ld l,Part.counter2		; $46f8
 	ld (hl),a		; $46fa
-	ld l,$cb		; $46fb
+
+	ld l,Part.yh		; $46fb
 	call setShortPosition_paramC		; $46fd
-_label_11_045:
++++
 	pop bc			; $4700
 	pop hl			; $4701
 	inc c			; $4702
 	ret			; $4703
+
+@state0:
 	inc a			; $4704
-	ld (de),a		; $4705
-	ld e,$c6		; $4706
+	ld (de),a ; [state] = 1
+
+	ld e,Part.counter1		; $4706
 	ld a,(de)		; $4708
 	ld c,a			; $4709
+
+	; Search for lightable torches
 	ld hl,wRoomLayout		; $470a
-	ld b,$b0		; $470d
-_label_11_046:
+	ld b,LARGE_ROOM_HEIGHT << 4		; $470d
+--
 	ld a,(hl)		; $470f
-	cp $08			; $4710
-	call z,$46dc		; $4712
+	cp TILEINDEX_UNLIT_TORCH			; $4710
+	call z,@spawnLightableTorch		; $4712
 	inc l			; $4715
 	dec b			; $4716
-	jr nz,_label_11_046	; $4717
-	ld e,$c6		; $4719
+	jr nz,--		; $4717
+
+	ld e,Part.counter1		; $4719
 	ld a,c			; $471b
 	ld (de),a		; $471c
 	call objectGetShortPosition		; $471d
-	ld e,$cb		; $4720
+	ld e,Part.yh		; $4720
 	ld (de),a		; $4722
 	ret			; $4723
 
