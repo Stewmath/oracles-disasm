@@ -60277,7 +60277,7 @@ _ralphState0:
 @initSubid12:
 	call checkIsLinkedGame		; $6f75
 	jp z,interactionDelete		; $6f78
-	ld hl,$c9fc		; $6f7b
+	ld hl,wGroup4Flags + (<ROOM_AGES_4fc)
 	bit 7,(hl)		; $6f7e
 	jp z,interactionDelete		; $6f80
 	call objectSetVisiblec2		; $6f83
