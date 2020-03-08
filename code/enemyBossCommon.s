@@ -32,7 +32,7 @@ _enemyBoss_dead:
 	; Spawn explosion
 	call getFreePartSlot		; $450e
 	ret nz			; $4511
-	ld (hl),PARTID_04		; $4512
+	ld (hl),PARTID_BOSS_DEATH_EXPLOSION		; $4512
 	inc l			; $4514
 	ld e,Enemy.id		; $4515
 	ld a,(de)		; $4517

@@ -30,9 +30,10 @@
 .define PARTID_ORB				$03
 
 ;;
-; Boss death explosion?
-; @subid{ID of enemy being killed}
-.define PARTID_04				$04
+; Boss death explosion.
+;
+; @subid{ID of enemy being killed (if 0, no item is dropped)}
+.define PARTID_BOSS_DEATH_EXPLOSION		$04
 
 ;;
 ; @subid{Bitmask for wSwitchState?}

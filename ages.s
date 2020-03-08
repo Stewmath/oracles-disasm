@@ -11935,8 +11935,10 @@ enemyCodeTable:
 	.dw bank0f.enemyCode7d ; 0x7d
 	.dw bank0f.enemyCode7e ; 0x7e
 	.dw bank0f.enemyCode7f ; 0x7f
-	; Could there be over 0x80 enemies? Code at _enemyGetObjectGfxIndex will need to
-	; be modified for that, perhaps there are other obstacles
+
+	; Could there be over 0x80 enemies? Things that would need to be changed:
+	; - _enemyGetObjectGfxIndex
+	; - itemDropTables
 
 ;;
 ; @addr{3034}
@@ -134323,7 +134325,7 @@ _ganon_stateE_substate0:
 	jp nz,_ecom_flickerVisibility		; $5679
 
 	inc (hl)		; $567c
-	ld e,PARTID_04		; $567d
+	ld e,PARTID_BOSS_DEATH_EXPLOSION		; $567d
 	call _ganon_spawnPart		; $567f
 	ret nz			; $5682
 	ld l,Part.subid		; $5683
@@ -142350,6 +142352,9 @@ partCode02:
 
 ; ==============================================================================
 ; PARTID_ORB
+;
+; Variables:
+;   var03: Bitset to use with wToggleBlocksState (derived from subid)
 ; ==============================================================================
 partCode03:
 	cp PARTSTATUS_JUST_HIT			; $4486
@@ -142380,8 +142385,9 @@ partCode03:
 	inc a			; $44a6
 	ld (de),a		; $44a7
 	call objectMakeTileSolid		; $44a8
-	ld h,$cf		; $44ab
+	ld h,Part.zh		; $44ab
 	ld (hl),$0a		; $44ad
+
 	ld h,d			; $44af
 	ld l,Part.subid		; $44b0
 	ldi a,(hl)		; $44b2
@@ -142390,7 +142396,8 @@ partCode03:
 	add c			; $44b8
 	ld c,a			; $44b9
 	ld a,(bc)		; $44ba
-	ld (hl),a		; $44bb
+	ld (hl),a ; [var03]
+
 	ld a,(wToggleBlocksState)		; $44bc
 	and (hl)		; $44bf
 	ld a,$01		; $44c0
@@ -142402,34 +142409,43 @@ partCode03:
 	ld (hl),a		; $44c8
 	jp objectSetVisible82		; $44c9
 
-;;
-; @addr{44cc}
+
+; ==============================================================================
+; PARTID_BOSS_DEATH_EXPLOSION
+; ==============================================================================
 partCode04:
-	ld e,$c4		; $44cc
+	ld e,Part.state		; $44cc
 	ld a,(de)		; $44ce
 	or a			; $44cf
-	jr z,_label_11_037	; $44d0
-	ld e,$e1		; $44d2
+	jr z,@state0	; $44d0
+
+@state1:
+	ld e,Part.animParameter		; $44d2
 	ld a,(de)		; $44d4
 	inc a			; $44d5
 	jp nz,partAnimate		; $44d6
+
 	call decNumEnemies		; $44d9
-	jr nz,_label_11_036	; $44dc
-	ld e,$c2		; $44de
+	jr nz,@delete	; $44dc
+
+	ld e,Part.subid		; $44de
 	ld a,(de)		; $44e0
 	or a			; $44e1
-	jr z,_label_11_036	; $44e2
+	jr z,@delete	; $44e2
+
 	xor a			; $44e4
 	call decideItemDrop		; $44e5
-	jr z,_label_11_036	; $44e8
-	ld b,$01		; $44ea
+	jr z,@delete	; $44e8
+	ld b,PARTID_ITEM_DROP		; $44ea
 	jp objectReplaceWithID		; $44ec
-_label_11_036:
+
+@delete:
 	jp partDelete		; $44ef
-_label_11_037:
+
+@state0:
 	inc a			; $44f2
-	ld (de),a		; $44f3
-	ld e,$c2		; $44f4
+	ld (de),a ; [state] = 1
+	ld e,Part.subid		; $44f4
 	ld a,(de)		; $44f6
 	or a			; $44f7
 	ld a,SND_BIG_EXPLOSION		; $44f8
@@ -158221,9 +158237,9 @@ decideItemDrop_body:
 	set 7,a			; $4746
 	jr nz,+			; $4748
 
-	; If parameter == 0, assume it's an enemy; use the enemy's for the drop table. (Assumes that
-	; 'd' points to an instance of PARTID_ENEMY_DESTROYED or PARTID_04, whose subid refers to
-	; the enemy that was killed? TODO: verify.)
+	; If parameter == 0, assume it's an enemy; use the enemy's ID for the drop table. (Assumes
+	; that 'd' points to an instance of PARTID_ENEMY_DESTROYED or PARTID_BOSS_DEATH_EXPLOSION,
+	; whose subid refers to the enemy that was killed? TODO: verify.)
 	ldh a,(<hActiveObjectType)	; $474a
 	add Object.subid			; $474c
 	ld e,a			; $474e
