@@ -143442,73 +143442,102 @@ partCode0e:
 	jp objectSetComponentSpeedByScaledVelocity		; $4992
 
 
-;;
-; @addr{4995}
+; ==============================================================================
+; PARTID_RESPAWNABLE_BUSH
+; ==============================================================================
 partCode0f:
-	jr z,_label_11_068	; $4995
+	jr z,@normalStatus	; $4995
+
+	; Just hit
 	ld h,d			; $4997
-	ld l,$c4		; $4998
-	inc (hl)		; $499a
-	ld l,$c6		; $499b
+	ld l,Part.state		; $4998
+	inc (hl) ; [state] = 2
+
+	ld l,Part.counter1		; $499b
 	ld (hl),$f0		; $499d
-	ld l,$e4		; $499f
+	ld l,Part.collisionType		; $499f
 	res 7,(hl)		; $49a1
-	ld a,$02		; $49a3
-	call $49ef		; $49a5
+
+	ld a,TILEINDEX_RESPAWNING_BUSH_CUT		; $49a3
+	call @setTileHere		; $49a5
+
+	; 50/50 drop chance
 	call getRandomNumber_noPreserveVars		; $49a8
 	rrca			; $49ab
-	jr nc,_label_11_067	; $49ac
+	jr nc,@doneItemDropSpawn	; $49ac
+
 	call getFreePartSlot		; $49ae
-	jr nz,_label_11_067	; $49b1
-	ld (hl),$01		; $49b3
+	jr nz,@doneItemDropSpawn	; $49b1
+	ld (hl),PARTID_ITEM_DROP		; $49b3
 	inc l			; $49b5
 	ld e,l			; $49b6
 	ld a,(de)		; $49b7
-	ld (hl),a		; $49b8
+	ld (hl),a ; [itemDrop.subid] = [this.subid]
 	call objectCopyPosition		; $49b9
-_label_11_067:
-	ld b,$00		; $49bc
+
+@doneItemDropSpawn:
+	ld b,INTERACID_GRASSDEBRIS		; $49bc
 	call objectCreateInteractionWithSubid00		; $49be
-_label_11_068:
-	ld e,$c4		; $49c1
+
+@normalStatus:
+	ld e,Part.state		; $49c1
 	ld a,(de)		; $49c3
 	rst_jumpTable			; $49c4
-.dw $49cf
-.dw $49d3
-.dw $49d4
-.dw $49e5
-.dw $49f8
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+
+@state0:
 	ld a,$01		; $49cf
 	ld (de),a		; $49d1
 	ret			; $49d2
+
+@state1:
 	ret			; $49d3
+
+; Delay before respawning
+@state2:
 	ld a,(wFrameCounter)		; $49d4
 	rrca			; $49d7
 	ret nc			; $49d8
 	call _partCommon_decCounter1IfNonzero		; $49d9
 	ret nz			; $49dc
-	ld (hl),$0c		; $49dd
+
+	; Time to respawn
+	ld (hl),$0c ; [counter1]
 	ld l,e			; $49df
-	inc (hl)		; $49e0
-	ld a,$03		; $49e1
-	jr _label_11_069		; $49e3
+	inc (hl) ; [state] = 3
+	ld a,TILEINDEX_RESPAWNING_BUSH_REGEN		; $49e1
+	jr @setTileHere		; $49e3
+
+@state3:
 	call _partCommon_decCounter1IfNonzero		; $49e5
 	ret nz			; $49e8
-	ld (hl),$08		; $49e9
+	ld (hl),$08 ; [counter1]
 	ld l,e			; $49eb
-	inc (hl)		; $49ec
-	ld a,$04		; $49ed
-_label_11_069:
+	inc (hl) ; [state] = 4
+	ld a,TILEINDEX_RESPAWNING_BUSH_READY		; $49ed
+
+;;
+; @param	a	Tile index to set
+; @addr{49ef}
+@setTileHere:
 	push af			; $49ef
 	call objectGetShortPosition		; $49f0
 	ld c,a			; $49f3
 	pop af			; $49f4
 	jp setTile		; $49f5
+
+
+@state4:
 	call _partCommon_decCounter1IfNonzero		; $49f8
 	ret nz			; $49fb
 	ld l,e			; $49fc
-	ld (hl),$01		; $49fd
-	ld l,$e4		; $49ff
+	ld (hl),$01 ; [state] = 1
+
+	ld l,Part.collisionType		; $49ff
 	set 7,(hl)		; $4a01
 	ret			; $4a03
 

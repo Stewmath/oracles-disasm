@@ -120,6 +120,14 @@
 .define PARTID_DETECTION_HELPER			$0e
 
 ;;
+; Respawnable bush that drops something when cut. Used in Ages D3 and Ramrock boss.
+;
+; TODO: make subid a dropdown in LynnaLab.
+;
+; @subid{Item drop (see constants/itemDrops.s)}
+.define PARTID_RESPAWNABLE_BUSH			$0f
+
+;;
 ; Seed on a seed tree.
 ; @subid{Seed type (0-5)}
 .define PARTID_SEED_ON_TREE			$10

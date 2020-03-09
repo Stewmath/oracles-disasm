@@ -69,6 +69,7 @@
 
 .define TILEINDEX_DRIED_LAVA		$01 ; dungeons only(?)
 .define TILEINDEX_RESPAWNING_BUSH_CUT	$02 ; dungeons, indoor areas
+.define TILEINDEX_RESPAWNING_BUSH_REGEN	$03 ; dungeons, indoor areas
 .define TILEINDEX_RESPAWNING_BUSH_READY	$04 ; dungeons, indoor areas
 .define TILEINDEX_DUNGEON_SWITCH_OFF	$0a ; dungeons, indoor areas
 .define TILEINDEX_DUNGEON_SWITCH_ON	$0b ; dungeons, indoor areas
