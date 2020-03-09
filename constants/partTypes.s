@@ -96,11 +96,13 @@
 .define PARTID_MOVING_ORB			$0b
 
 ;;
-; Spawns a bridge.
+; Spawns a bridge. The code that spawns this must set the following variables:
 ;
 ; counter2: Length of the bridge (measured in 8x8 tiles)
 ;
 ; angle: direction it should spawn in (value from 0-3)
+;
+; Y: starting position (short-form)
 .define PARTID_BRIDGE_SPAWNER			$0c
 
 ;;

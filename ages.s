@@ -143148,28 +143148,33 @@ partCode0b:
 	ret nz			; $4857
 	jp objectRunMovementScript		; $4858
 
-;;
-; @addr{485b}
+
+; ==============================================================================
+; PARTID_BRIDGE_SPAWNER
+; ==============================================================================
 partCode0c:
-	ld e,$c4		; $485b
+	ld e,Part.state		; $485b
 	ld a,(de)		; $485d
 	or a			; $485e
-	call z,$48b0		; $485f
+	call z,@state0		; $485f
+
 	call _partCommon_decCounter1IfNonzero		; $4862
 	ret nz			; $4865
-	ld l,$c9		; $4866
+
+	; Time to create the next bridge tile
+	ld l,Part.angle		; $4866
 	ld a,(hl)		; $4868
-	ld hl,$48a4		; $4869
+	ld hl,@tileValues		; $4869
 	rst_addDoubleIndex			; $486c
-	ld e,$c7		; $486d
+	ld e,Part.counter2		; $486d
 	ld a,(de)		; $486f
 	rrca			; $4870
 	ldi a,(hl)		; $4871
-	jr nc,_label_11_058	; $4872
+	jr nc,+			; $4872
 	ld a,(hl)		; $4874
-_label_11_058:
++
 	ld b,a			; $4875
-	ld e,$cb		; $4876
+	ld e,Part.yh		; $4876
 	ld a,(de)		; $4878
 	ld c,a			; $4879
 	push bc			; $487a
@@ -143179,39 +143184,43 @@ _label_11_058:
 	call setTile		; $4880
 	ld a,SND_DOORCLOSE		; $4883
 	call playSound		; $4885
+
 	ld h,d			; $4888
-	ld l,$c6		; $4889
+	ld l,Part.counter1		; $4889
 	ld (hl),$08		; $488b
 	inc l			; $488d
-	dec (hl)		; $488e
+	dec (hl) ; [counter2]
 	jp z,partDelete		; $488f
-	ld a,(hl)		; $4892
+
+	; Move to next tile every other time (since bridges are updated in halves)
+	ld a,(hl) ; [counter1]
 	rrca			; $4893
 	ret c			; $4894
-	ld l,$c9		; $4895
+
+	ld l,Part.angle		; $4895
 	ld a,(hl)		; $4897
-	ld bc,$48ac		; $4898
+	ld bc,@directionVals		; $4898
 	call addAToBc		; $489b
 	ld a,(bc)		; $489e
-	ld l,$cb		; $489f
+	ld l,Part.yh		; $489f
 	add (hl)		; $48a1
 	ld (hl),a		; $48a2
 	ret			; $48a3
-	ld l,e			; $48a4
-	ld l,d			; $48a5
-	ld l,(hl)		; $48a6
-	ld l,l			; $48a7
-	ld l,h			; $48a8
-	ld l,d			; $48a9
-	ld l,a			; $48aa
-	ld l,l			; $48ab
-	ld a,($ff00+R_SB)	; $48ac
-	stop			; $48ae
-	rst $38			; $48af
+
+@tileValues:
+	.db TILEINDEX_VERTICAL_BRIDGE_DOWN,    TILEINDEX_VERTICAL_BRIDGE
+	.db TILEINDEX_HORIZONTAL_BRIDGE_LEFT,  TILEINDEX_HORIZONTAL_BRIDGE
+	.db TILEINDEX_VERTICAL_BRIDGE_UP,      TILEINDEX_VERTICAL_BRIDGE
+	.db TILEINDEX_HORIZONTAL_BRIDGE_RIGHT, TILEINDEX_HORIZONTAL_BRIDGE
+
+@directionVals:
+	.db $f0 $01 $10 $ff
+
+@state0:
 	ld h,d			; $48b0
 	ld l,e			; $48b1
-	inc (hl)		; $48b2
-	ld l,$c6		; $48b3
+	inc (hl) ; [state] = 1
+	ld l,Part.counter1		; $48b3
 	ld (hl),$08		; $48b5
 	ret			; $48b7
 

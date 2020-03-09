@@ -96,8 +96,12 @@
 ; This tile and 3 after it ($61-$64) are assumed to all be lava tiles.
 .define TILEINDEX_DUNGEON_LAVA_1	$61 ; dungeons only(?)
 
-.define TILEINDEX_VERTICAL_BRIDGE	$6a ; dungeons only
-.define TILEINDEX_HORIZONTAL_BRIDGE	$6d ; dungeons only
+.define TILEINDEX_VERTICAL_BRIDGE	$6a ; dungeons/indoors only
+.define TILEINDEX_VERTICAL_BRIDGE_DOWN	$6b ; dungeons/indoors only (bridge with top half missing)
+.define TILEINDEX_VERTICAL_BRIDGE_UP	$6c ; dungeons/indoors only (bridge with lower half missing)
+.define TILEINDEX_HORIZONTAL_BRIDGE	$6d ; dungeons/indoors only
+.define TILEINDEX_HORIZONTAL_BRIDGE_LEFT	$6e ; dungeons/indoors only
+.define TILEINDEX_HORIZONTAL_BRIDGE_RIGHT	$6f ; dungeons/indoors only
 .define TILEINDEX_STANDARD_FLOOR	$a0 ; Keyblocks and such will turn into this tile
 .define TILEINDEX_DUNGEON_a3		$a3 ; dungeons, indoors only
 .define TILEINDEX_RED_TOGGLE_FLOOR	$ad ; dungeons only
