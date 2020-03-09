@@ -87,12 +87,24 @@
 .define PARTID_BUTTON				$09
 
 ;;
+.define PARTID_STUB_0a				$0a
+
+;;
+; Orb that moves back and forth horizontally. Only used in Seasons?
+;
+; @var03{Bitmask for wToggleBlocksState}
+.define PARTID_MOVING_ORB			$0b
+
+;;
 ; Spawns a bridge.
 ;
 ; counter2: Length of the bridge (measured in 8x8 tiles)
 ;
 ; angle: direction it should spawn in (value from 0-3)
 .define PARTID_BRIDGE_SPAWNER			$0c
+
+;;
+.define PARTID_STUB_0d				$0d
 
 ;;
 ; This is used by ENEMYID_AMBI_GUARD to detect Link. This is an "invisible projectile"

@@ -114470,7 +114470,7 @@ _ganonRevivalCutscene_spawnShadow:
 ; ==============================================================================
 ; TODO: what object uses this?
 
-data_6b22:
+orbMovementScript:
 	.dw @subid00
 
 @subid00:
@@ -143037,91 +143037,113 @@ partCode09:
 	ldd (hl),a ; [var03]
 	ret			; $47d2
 
-;;
-; @addr{47d3}
+
+; =======================================================================================
+; PARTID_MOVING_ORB
+;
+; Variables:
+;   var32: Dest Y position (from movement script)
+;   var33: Dest X position (from movement script)
+; =======================================================================================
 partCode0b:
-	cp $01			; $47d3
-	jr nz,_label_11_053	; $47d5
+	cp PARTSTATUS_JUST_HIT			; $47d3
+	jr nz,@normalStatus	; $47d5
+
+	; Just hit
+
 	ld h,d			; $47d7
-	ld l,$db		; $47d8
+	ld l,Part.oamFlagsBackup		; $47d8
 	ldi a,(hl)		; $47da
-	ld (hl),a		; $47db
-	ld l,$c3		; $47dc
+	ld (hl),a ; [oamFlags]
+
+	ld l,Part.var03		; $47dc
 	ld a,(wToggleBlocksState)		; $47de
 	xor (hl)		; $47e1
 	ld (wToggleBlocksState),a		; $47e2
-	ld l,$db		; $47e5
+	ld l,Part.oamFlagsBackup		; $47e5
 	ld a,(hl)		; $47e7
 	dec a			; $47e8
-	jr nz,_label_11_052	; $47e9
+	jr nz,+			; $47e9
 	ld a,$02		; $47eb
-_label_11_052:
-	ldi (hl),a		; $47ed
-	ld (hl),a		; $47ee
++
+	ldi (hl),a ; [oamFlagsBackup]
+	ld (hl),a  ; [oamFlags]
 	ld a,SND_SWITCH		; $47ef
 	call playSound		; $47f1
-_label_11_053:
-	ld e,$c4		; $47f4
+
+@normalStatus:
+	ld e,Part.state		; $47f4
 	ld a,(de)		; $47f6
 	sub $08			; $47f7
-	jr c,_label_11_054	; $47f9
+	jr c,@state0To7	; $47f9
 	rst_jumpTable			; $47fb
-.dw $4820
-.dw $482c
-.dw $4838
-.dw $4844
-.dw $4853
+	.dw @state8_up
+	.dw @state9_right
+	.dw @stateA_down
+	.dw @stateB_left
+	.dw @stateC_waiting
 
-_label_11_054:
-	ld hl,bank0e.data_6b22		; $4806
+@state0To7:
+	ld hl,bank0e.orbMovementScript		; $4806
 	call objectLoadMovementScript		; $4809
+
 	ld h,d			; $480c
-	ld l,$c3		; $480d
+	ld l,Part.var03		; $480d
 	ld b,$01		; $480f
 	ld a,(wToggleBlocksState)		; $4811
 	and (hl)		; $4814
-	jr z,_label_11_055	; $4815
+	jr z,+			; $4815
 	inc b			; $4817
-_label_11_055:
++
 	ld a,b			; $4818
-	ld l,$db		; $4819
+	ld l,Part.oamFlagsBackup		; $4819
 	ldi (hl),a		; $481b
-	ld (hl),a		; $481c
+	ld (hl),a  ; [oamFlags]
 	jp objectSetVisible82		; $481d
+
+@state8_up:
 	ld h,d			; $4820
-	ld e,$f2		; $4821
+	ld e,Part.var32		; $4821
 	ld a,(de)		; $4823
-	ld l,$cb		; $4824
+	ld l,Part.yh		; $4824
 	cp (hl)			; $4826
 	jp c,objectApplySpeed		; $4827
-	jr _label_11_057		; $482a
+	jr @runMovementScript		; $482a
+
+@state9_right:
 	ld h,d			; $482c
-	ld e,$cd		; $482d
+	ld e,Part.xh		; $482d
 	ld a,(de)		; $482f
-	ld l,$f3		; $4830
+	ld l,Part.var33		; $4830
 	cp (hl)			; $4832
 	jp c,objectApplySpeed		; $4833
-	jr _label_11_057		; $4836
+	jr @runMovementScript		; $4836
+
+@stateA_down:
 	ld h,d			; $4838
-	ld e,$cb		; $4839
+	ld e,Part.yh		; $4839
 	ld a,(de)		; $483b
-	ld l,$f2		; $483c
+	ld l,Part.var32		; $483c
 	cp (hl)			; $483e
 	jp c,objectApplySpeed		; $483f
-	jr _label_11_057		; $4842
+	jr @runMovementScript		; $4842
+
+@stateB_left:
 	ld h,d			; $4844
-	ld e,$f3		; $4845
+	ld e,Part.var33		; $4845
 	ld a,(de)		; $4847
-	ld l,$cd		; $4848
-_label_11_056:
+	ld l,Part.xh		; $4848
 	cp (hl)			; $484a
 	jp c,objectApplySpeed		; $484b
-_label_11_057:
+
+@runMovementScript:
 	ld a,(de)		; $484e
 	ld (hl),a		; $484f
 	jp objectRunMovementScript		; $4850
+
+@stateC_waiting:
 	ld h,d			; $4853
-	ld l,$c6		; $4854
+	ld l,Part.counter1		; $4854
 	dec (hl)		; $4856
 	ret nz			; $4857
 	jp objectRunMovementScript		; $4858
