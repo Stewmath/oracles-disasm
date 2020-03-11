@@ -143717,148 +143717,194 @@ partCode10:
 	ld (de),a		; $4ae5
 	ret			; $4ae6
 
-;;
-; @addr{4ae7}
+
+; ==============================================================================
+; PARTID_VOLCANO_ROCK
+; ==============================================================================
 partCode11:
-	ld e,$c2		; $4ae7
+	ld e,Part.subid		; $4ae7
 	ld a,(de)		; $4ae9
-	ld e,$c4		; $4aea
+	ld e,Part.state		; $4aea
 	rst_jumpTable			; $4aec
-.dw $4af3
-.dw $4b2e
-.dw $4bd1
+	.dw _volcanoRock_subid0
+	.dw _volcanoRock_subid1
+	.dw _volcanoRock_subid2
+
+_volcanoRock_subid0:
 	ld a,(de)		; $4af3
 	or a			; $4af4
-	jr z,_label_11_079	; $4af5
+	jr z,@state0	; $4af5
+
+@state1:
 	ld c,$16		; $4af7
 	call objectUpdateSpeedZAndBounce		; $4af9
 	jp c,partDelete		; $4afc
 	jp nz,objectApplySpeed		; $4aff
+
 	call getRandomNumber_noPreserveVars		; $4b02
 	and $03			; $4b05
 	dec a			; $4b07
 	ret z			; $4b08
 	ld b,a			; $4b09
-	ld e,$c9		; $4b0a
+	ld e,Part.angle		; $4b0a
 	ld a,(de)		; $4b0c
 	add b			; $4b0d
 	and $1f			; $4b0e
-_label_11_078:
+
+@setAngleAndSpeed:
 	ld (de),a		; $4b10
-	jp $4c09		; $4b11
-_label_11_079:
-	ld bc,$fd80		; $4b14
+	jp _volcanoRock_subid0_setSpeedFromAngle		; $4b11
+
+@state0:
+	ld bc,-$280		; $4b14
 	call objectSetSpeedZ		; $4b17
 	ld l,e			; $4b1a
-	inc (hl)		; $4b1b
-	ld l,$e4		; $4b1c
+	inc (hl) ; [state]
+	ld l,Part.collisionType		; $4b1c
 	set 7,(hl)		; $4b1e
 	call objectSetVisible80		; $4b20
 	call getRandomNumber_noPreserveVars		; $4b23
 	and $0f			; $4b26
 	add $08			; $4b28
-	ld e,$c9		; $4b2a
-	jr _label_11_078		; $4b2c
+	ld e,Part.angle		; $4b2a
+	jr @setAngleAndSpeed		; $4b2c
+
+
+_volcanoRock_subid1:
 	ld a,(de)		; $4b2e
 	rst_jumpTable			; $4b2f
-.dw $4b3c
-.dw $4b66
-.dw $4b82
-.dw $4b8d
-.dw $4ba8
-.dw $4bc4
+	.dw @substate0
+	.dw @substate1
+	.dw _volcanoRock_common_substate2
+	.dw _volcanoRock_common_substate3
+	.dw _volcanoRock_common_substate4
+	.dw _volcanoRock_common_substate5
+
+@substate0:
 	ld h,d			; $4b3c
 	ld l,e			; $4b3d
 	inc (hl)		; $4b3e
-	ld l,$e4		; $4b3f
+	ld l,Part.collisionType		; $4b3f
 	set 7,(hl)		; $4b41
-	ld l,$e6		; $4b43
+
+	; Double hitbox size
+	ld l,Part.collisionRadiusY		; $4b43
 	ld a,(hl)		; $4b45
 	add a			; $4b46
 	ldi (hl),a		; $4b47
 	ldi (hl),a		; $4b48
+
+	; [damage] *= 2
 	sla (hl)		; $4b49
-	ld l,$d0		; $4b4b
-	ld (hl),$05		; $4b4d
-	ld l,$d4		; $4b4f
-	ld a,$00		; $4b51
+
+	ld l,Part.speed		; $4b4b
+	ld (hl),SPEED_20		; $4b4d
+
+	ld l,Part.speedZ		; $4b4f
+	ld a,<(-$400)		; $4b51
 	ldi (hl),a		; $4b53
-	ld (hl),$fc		; $4b54
+	ld (hl),>(-$400)		; $4b54
+
+	; Random angle
 	call getRandomNumber_noPreserveVars		; $4b56
 	and $1f			; $4b59
-	ld e,$c9		; $4b5b
+	ld e,Part.angle		; $4b5b
 	ld (de),a		; $4b5d
+
 	ld a,$01		; $4b5e
 	call partSetAnimation		; $4b60
 	jp objectSetVisible80		; $4b63
+
+@substate1:
 	ld h,d			; $4b66
-	ld l,$cb		; $4b67
-	ld e,$cf		; $4b69
+	ld l,Part.yh		; $4b67
+	ld e,Part.zh		; $4b69
 	ld a,(de)		; $4b6b
 	add (hl)		; $4b6c
 	add $08			; $4b6d
 	cp $f8			; $4b6f
 	ld c,$10		; $4b71
 	jp c,objectUpdateSpeedZ_paramC		; $4b73
-	ld l,$c4		; $4b76
+
+	ld l,Part.state		; $4b76
 	inc (hl)		; $4b78
-	ld l,$c6		; $4b79
-	ld (hl),$1e		; $4b7b
+	ld l,Part.counter1		; $4b79
+	ld (hl),30		; $4b7b
 	call objectSetInvisible		; $4b7d
-	jr $5e			; $4b80
+	jr _volcanoRock_setRandomPosition			; $4b80
+
+_volcanoRock_common_substate2:
 	call _partCommon_decCounter1IfNonzero		; $4b82
 	ret nz			; $4b85
-	ld (hl),$10		; $4b86
+	ld (hl),$10 ; [counter1]
 	ld l,e			; $4b88
-	inc (hl)		; $4b89
+	inc (hl) ; [state2]++
 	jp objectSetVisiblec0		; $4b8a
+
+_volcanoRock_common_substate3:
 	call partAnimate		; $4b8d
 	ld h,d			; $4b90
-	ld l,$cf		; $4b91
+	ld l,Part.zh		; $4b91
 	inc (hl)		; $4b93
 	inc (hl)		; $4b94
 	ret nz			; $4b95
+
 	call objectReplaceWithAnimationIfOnHazard		; $4b96
 	jp c,partDelete		; $4b99
+
 	ld h,d			; $4b9c
-	ld l,$c4		; $4b9d
+	ld l,Part.state		; $4b9d
 	inc (hl)		; $4b9f
-	ld l,$d4		; $4ba0
+	ld l,Part.speedZ		; $4ba0
 	xor a			; $4ba2
 	ldi (hl),a		; $4ba3
 	ld (hl),a		; $4ba4
 	jp objectSetVisible82		; $4ba5
+
+_volcanoRock_common_substate4:
 	call partAnimate		; $4ba8
 	ld c,$16		; $4bab
 	call objectUpdateSpeedZ_paramC		; $4bad
 	jp nz,objectApplySpeed		; $4bb0
-	ld l,$c4		; $4bb3
+
+	ld l,Part.state		; $4bb3
 	inc (hl)		; $4bb5
-	ld l,$dd		; $4bb6
+
+	ld l,Part.oamTileIndexBase		; $4bb6
 	ld (hl),$26		; $4bb8
+
 	ld a,$03		; $4bba
 	call partSetAnimation		; $4bbc
 	ld a,SND_STRONG_POUND		; $4bbf
 	jp playSound		; $4bc1
-	ld e,$e1		; $4bc4
+
+_volcanoRock_common_substate5:
+	ld e,Part.animParameter		; $4bc4
 	ld a,(de)		; $4bc6
 	inc a			; $4bc7
 	jp z,partDelete		; $4bc8
-	call $4c1c		; $4bcb
+	call _volcanoRock_setCollisionSize		; $4bcb
 	jp partAnimate		; $4bce
+
+
+_volcanoRock_subid2:
 	ld a,(de)		; $4bd1
 	rst_jumpTable			; $4bd2
-.dw $4bdd
-.dw $4b82
-.dw $4b8d
-.dw $4ba8
-.dw $4bc4
+	.dw @substate0
+	.dw _volcanoRock_common_substate2
+	.dw _volcanoRock_common_substate3
+	.dw _volcanoRock_common_substate4
+	.dw _volcanoRock_common_substate5
+
+@substate0:
 	ld a,$01		; $4bdd
-	ld (de),a		; $4bdf
+	ld (de),a ; [state2]
+
+_volcanoRock_setRandomPosition:
 	call getRandomNumber_noPreserveVars		; $4be0
 	ld b,a			; $4be3
 	ld hl,hCameraY		; $4be4
-	ld e,$cb		; $4be7
+	ld e,Part.yh		; $4be7
 	and $70			; $4be9
 	add $08			; $4beb
 	add (hl)		; $4bed
@@ -143866,10 +143912,11 @@ _label_11_079:
 	cpl			; $4bef
 	inc a			; $4bf0
 	and $fe			; $4bf1
-	ld e,$cf		; $4bf3
+	ld e,Part.zh		; $4bf3
 	ld (de),a		; $4bf5
-	ld l,$ac		; $4bf6
-	ld e,$cd		; $4bf8
+
+	ld l,<hCameraX		; $4bf6
+	ld e,Part.xh		; $4bf8
 	ld a,b			; $4bfa
 	and $07			; $4bfb
 	inc a			; $4bfd
@@ -143879,37 +143926,45 @@ _label_11_079:
 	ld (de),a		; $4c03
 	ld a,$02		; $4c04
 	jp partSetAnimation		; $4c06
-	ld b,$14		; $4c09
+
+;;
+; @param	a	Angle
+; @addr{4c09}
+_volcanoRock_subid0_setSpeedFromAngle:
+	ld b,SPEED_80		; $4c09
 	cp $0d			; $4c0b
-	jr c,_label_11_080	; $4c0d
-	ld b,$0a		; $4c0f
+	jr c,@setSpeed	; $4c0d
+	ld b,SPEED_40		; $4c0f
 	cp $14			; $4c11
-	jr c,_label_11_080	; $4c13
-	ld b,$14		; $4c15
-_label_11_080:
+	jr c,@setSpeed	; $4c13
+	ld b,SPEED_80		; $4c15
+@setSpeed:
 	ld a,b			; $4c17
-	ld e,$d0		; $4c18
+	ld e,Part.speed		; $4c18
 	ld (de),a		; $4c1a
 	ret			; $4c1b
+
+;;
+; @param	a	Value from [animParameter] (should be multiple of 2)
+; @addr{4c1c}
+_volcanoRock_setCollisionSize:
 	dec a			; $4c1c
-	ld hl,$4c29		; $4c1d
+	ld hl,@data		; $4c1d
 	rst_addAToHl			; $4c20
-	ld e,$e6		; $4c21
+	ld e,Part.collisionRadiusY		; $4c21
 	ldi a,(hl)		; $4c23
 	ld (de),a		; $4c24
 	inc e			; $4c25
 	ld a,(hl)		; $4c26
 	ld (de),a		; $4c27
 	ret			; $4c28
-	inc b			; $4c29
-	add hl,bc		; $4c2a
-	ld b,$0b		; $4c2b
-	add hl,bc		; $4c2d
-	inc c			; $4c2e
-	ld a,(bc)		; $4c2f
-	dec c			; $4c30
-	dec bc			; $4c31
-	.db $0e
+
+@data:
+	.db $04 $09
+	.db $06 $0b
+	.db $09 $0c
+	.db $0a $0d
+	.db $0b $0e
 
 
 ;;

@@ -136,6 +136,11 @@
 .define PARTID_SEED_ON_TREE			$10
 
 ;;
+; TODO: what does each subid do?
+;
+; @subid_00{?}
+; @subid_01{Rock from a volcano?}
+; @subid_02{Like subid 1, but falls directly from the sky instead of shooting up first?}
 .define PARTID_VOLCANO_ROCK			$11
 
 .define PARTID_FLAME	 			$12
