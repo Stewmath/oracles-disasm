@@ -143,6 +143,8 @@
 ; @subid_02{Like subid 1, but falls directly from the sky instead of shooting up first?}
 .define PARTID_VOLCANO_ROCK			$11
 
+;;
+; Created when an enemy is burned.
 .define PARTID_FLAME	 			$12
 
 ; Not sure if this applies to item drops outside of maple scramble?

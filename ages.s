@@ -143967,58 +143967,78 @@ _volcanoRock_setCollisionSize:
 	.db $0b $0e
 
 
-;;
-; @addr{4c33}
+; ==============================================================================
+; PARTID_FLAME
+;
+; Variables:
+;   var30: ID of enemy hit (relatedObj1)
+;   var31: Old health value of enemy
+; ==============================================================================
 partCode12:
-	ld e,$c4		; $4c33
+	ld e,Part.state		; $4c33
 	ld a,(de)		; $4c35
 	or a			; $4c36
-	call z,$4c76		; $4c37
-	ld a,$01		; $4c3a
+	call z,@state0		; $4c37
+
+@state1:
+	ld a,Object.id		; $4c3a
 	call objectGetRelatedObject1Var		; $4c3c
-	ld e,$f0		; $4c3f
+	ld e,Part.var30		; $4c3f
 	ld a,(de)		; $4c41
 	cp (hl)			; $4c42
-	jr nz,_label_11_082	; $4c43
+	jr nz,@delete	; $4c43
+
 	ld c,$10		; $4c45
 	call objectUpdateSpeedZAndBounce		; $4c47
-	ld a,$0f		; $4c4a
+
+	ld a,Object.zh		; $4c4a
 	call objectGetRelatedObject1Var		; $4c4c
-	ld e,$cf		; $4c4f
+	ld e,Part.zh		; $4c4f
 	ld a,(de)		; $4c51
 	ld (hl),a		; $4c52
+
 	call objectTakePosition		; $4c53
 	ld c,h			; $4c56
 	call _partCommon_decCounter1IfNonzero		; $4c57
 	jp nz,partAnimate		; $4c5a
+
+	; Done burning.
+
+	; Restore enemy's health
 	ld h,c			; $4c5d
-	ld l,$a9		; $4c5e
-	ld e,$f1		; $4c60
+	ld l,Enemy.health		; $4c5e
+	ld e,Part.var31		; $4c60
 	ld a,(de)		; $4c62
 	ld (hl),a		; $4c63
+
+	; Disable enemy collision if he's dead
 	or a			; $4c64
-	jr nz,_label_11_081	; $4c65
-	ld l,$a4		; $4c67
+	jr nz,+			; $4c65
+	ld l,Enemy.collisionType		; $4c67
 	res 7,(hl)		; $4c69
-_label_11_081:
-	ld l,$ab		; $4c6b
++
+	ld l,Enemy.invincibilityCounter		; $4c6b
 	ld (hl),$00		; $4c6d
-	ld l,$ae		; $4c6f
+	ld l,Enemy.stunCounter		; $4c6f
 	ld (hl),$01		; $4c71
-_label_11_082:
+@delete:
 	jp partDelete		; $4c73
+
+@state0:
 	ld h,d			; $4c76
 	ld l,e			; $4c77
-	inc (hl)		; $4c78
-	ld l,$c6		; $4c79
-	ld (hl),$3b		; $4c7b
-	ld a,$01		; $4c7d
+	inc (hl) ; [state]
+
+	ld l,Part.counter1		; $4c79
+	ld (hl),59		; $4c7b
+	ld a,Object.id		; $4c7d
 	call objectGetRelatedObject1Var		; $4c7f
-	ld e,$f0		; $4c82
+	ld e,Part.var30		; $4c82
 	ld a,(hl)		; $4c84
 	ld (de),a		; $4c85
-	ld e,$f1		; $4c86
-	ld l,$a9		; $4c88
+
+	ld e,Part.var31		; $4c86
+	ld l,Enemy.health		; $4c88
 	ld a,(hl)		; $4c8a
 	ld (de),a		; $4c8b
 	ld (hl),$01		; $4c8c
