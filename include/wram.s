@@ -2702,6 +2702,8 @@ wRoomLayoutEnd: ; $cfc0
 ; $cfc0:
 ;  * Bit 0 is set whenever a keyhole in the overworld is opened. This triggers the
 ;    corresponding cutscene (which appears to be dependent on the room you're in).
+;  * Set to nonzero by PARTID_SEED_ON_TREE to indicate that it's shown the "you can't
+;    pick up these seeds" text
 ; $cfc1:
 ;  * Used by door controllers
 ; $cfd3:

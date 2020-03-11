@@ -143541,144 +143541,179 @@ partCode0f:
 	set 7,(hl)		; $4a01
 	ret			; $4a03
 
-;;
-; @addr{4a04}
+
+; ==============================================================================
+; PARTID_SEED_ON_TREE
+; ==============================================================================
 partCode10:
-	jr z,_label_11_070	; $4a04
-	cp $02			; $4a06
-	jp z,$4aae		; $4a08
-	ld e,$c4		; $4a0b
+	jr z,@normalStatus	; $4a04
+	cp PARTSTATUS_DEAD			; $4a06
+	jp z,@dead		; $4a08
+
+	; PARTSTATUS_JUST_HIT
+	ld e,Part.state		; $4a0b
 	ld a,$02		; $4a0d
 	ld (de),a		; $4a0f
-_label_11_070:
-	ld e,$c4		; $4a10
+
+@normalStatus:
+	ld e,Part.state		; $4a10
 	ld a,(de)		; $4a12
 	rst_jumpTable			; $4a13
-.dw $4a1e
-.dw $4a45
-.dw $4a46
-.dw $4a47
-.dw $4a5e
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+
+@state0:
 	ld a,$01		; $4a1e
-	ld (de),a		; $4a20
-	ld e,$c2		; $4a21
+	ld (de),a ; [state]
+
+	ld e,Part.subid		; $4a21
 	ld a,(de)		; $4a23
-	ld hl,$4a3b		; $4a24
+	ld hl,@oamData		; $4a24
 	rst_addDoubleIndex			; $4a27
-	ld e,$dd		; $4a28
+	ld e,Part.oamTileIndexBase		; $4a28
 	ld a,(de)		; $4a2a
 	add (hl)		; $4a2b
-	ld (de),a		; $4a2c
+	ld (de),a ; [oamTileIndexBase]
 	inc hl			; $4a2d
 	dec e			; $4a2e
 	ld a,(hl)		; $4a2f
-	ld (de),a		; $4a30
+	ld (de),a ; [oamFlags]
 	dec e			; $4a31
-	ld (de),a		; $4a32
+	ld (de),a ; [oamFlagsBackup]
+
 	ld a,$01		; $4a33
 	call partSetAnimation		; $4a35
 	jp objectSetVisiblec3		; $4a38
-	ld (de),a		; $4a3b
-	ld (bc),a		; $4a3c
-	inc d			; $4a3d
-	inc bc			; $4a3e
-	ld d,$01		; $4a3f
-	jr _label_11_071		; $4a41
-	ld a,(de)		; $4a43
-_label_11_071:
-	nop			; $4a44
+
+@oamData:
+	.db $12 $02
+	.db $14 $03
+	.db $16 $01
+	.db $18 $01
+	.db $1a $00
+
+@state1:
 	ret			; $4a45
+
+@state2:
 	ret			; $4a46
+
+@state3:
 	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $4a47
-	jr c,_label_11_072	; $4a4a
+	jr c,@giveToLink	; $4a4a
+
 	call objectApplySpeed		; $4a4c
 	ld c,$20		; $4a4f
 	call objectUpdateSpeedZAndBounce		; $4a51
 	ret nc			; $4a54
-_label_11_072:
+
+@giveToLink:
 	ld h,d			; $4a55
-	ld l,$c4		; $4a56
+	ld l,Part.state		; $4a56
 	ld (hl),$04		; $4a58
 	inc l			; $4a5a
 	ld (hl),$00		; $4a5b
 	ret			; $4a5d
-	ld e,$c5		; $4a5e
+
+@state4:
+	ld e,Part.state2		; $4a5e
 	ld a,(de)		; $4a60
 	rst_jumpTable			; $4a61
-.dw $4a66
-.dw $4aa9
-	ld e,$c2		; $4a66
+	.dw @substate0
+	.dw @substate1
+
+@substate0:
+	ld e,Part.subid		; $4a66
 	ld a,(de)		; $4a68
 	ld l,a			; $4a69
 	add TREASURE_EMBER_SEEDS			; $4a6a
 	call checkTreasureObtained		; $4a6c
-	jr c,_label_11_074	; $4a6f
-	ld e,$c5		; $4a71
+	jr c,@giveSeedAndSomething	; $4a6f
+
+	; First time getting this seed type
+	ld e,Part.state2		; $4a71
 	ld a,$01		; $4a73
 	ld (de),a		; $4a75
-	ld a,l			; $4a76
-	ld hl,$4a85		; $4a77
+
+	ld a,l ; [subid]
+	ld hl,@textIndices		; $4a77
 	rst_addAToHl			; $4a7a
 	ld c,(hl)		; $4a7b
-	ld b,$00		; $4a7c
+	ld b,>TX_0000		; $4a7c
 	call showText		; $4a7e
 	ld c,$06		; $4a81
-	jr _label_11_073		; $4a83
-	add hl,hl		; $4a85
-	add hl,hl		; $4a86
-	dec hl			; $4a87
-	inc l			; $4a88
-	ldi a,(hl)		; $4a89
-_label_11_073:
-	ld e,$c2		; $4a8a
+	jr @giveSeed		; $4a83
+
+@textIndices:
+	.db <TX_0029
+	.db <TX_0029
+	.db <TX_002b
+	.db <TX_002c
+	.db <TX_002a
+
+@giveSeed:
+	ld e,Part.subid		; $4a8a
 	ld a,(de)		; $4a8c
-	add $20			; $4a8d
+	add TREASURE_EMBER_SEEDS			; $4a8d
 	jp giveTreasure		; $4a8f
-_label_11_074:
+
+@giveSeedAndSomething:
 	ld c,$06		; $4a92
-	call $4a8a		; $4a94
-_label_11_075:
-	ld a,$00		; $4a97
+	call @giveSeed		; $4a94
+
+@relatedObj2Something:
+	ld a,Object.enabled		; $4a97
 	call objectGetRelatedObject2Var		; $4a99
 	ld a,(hl)		; $4a9c
 	or a			; $4a9d
-	jr z,_label_11_076	; $4a9e
+	jr z,@delete	; $4a9e
 	ld a,l			; $4aa0
-	add $03			; $4aa1
+	add Object.var03 - Object.enabled
 	ld l,a			; $4aa3
 	ld (hl),$01		; $4aa4
-_label_11_076:
+@delete:
 	jp partDelete		; $4aa6
+
+@substate1:
 	call retIfTextIsActive		; $4aa9
-	jr _label_11_075		; $4aac
+	jr @relatedObj2Something		; $4aac
+
+@dead:
 	ld h,d			; $4aae
-	ld l,$e4		; $4aaf
+	ld l,Part.collisionType		; $4aaf
 	res 7,(hl)		; $4ab1
 	ld a,($cfc0)		; $4ab3
 	or a			; $4ab6
 	ret nz			; $4ab7
+
 	ld a,TREASURE_SEED_SATCHEL		; $4ab8
 	call checkTreasureObtained		; $4aba
-	jr c,_label_11_077	; $4abd
+	jr c,@knockOffTree	; $4abd
+
+	; Don't have satchel
 	ld a,d			; $4abf
 	ld ($cfc0),a		; $4ac0
-	ld bc,$0035		; $4ac3
+	ld bc,TX_0035		; $4ac3
 	jp showText		; $4ac6
-_label_11_077:
-	ld bc,$fec0		; $4ac9
+
+@knockOffTree:
+	ld bc,-$140		; $4ac9
 	call objectSetSpeedZ		; $4acc
-	ld l,$e9		; $4acf
+	ld l,Part.health		; $4acf
 	ld a,$03		; $4ad1
 	ld (hl),a		; $4ad3
-	ld l,$c4		; $4ad4
+	ld l,Part.state		; $4ad4
 	ldi (hl),a		; $4ad6
-	ld (hl),$00		; $4ad7
+	ld (hl),$00 ; [state2]
 	inc l			; $4ad9
-	ld (hl),$02		; $4ada
-	ld l,$d0		; $4adc
-	ld (hl),$28		; $4ade
+	ld (hl),$02 ; [counter1]
+	ld l,Part.speed		; $4adc
+	ld (hl),SPEED_100		; $4ade
 	call objectGetAngleTowardLink		; $4ae0
-	ld e,$c9		; $4ae3
+	ld e,Part.angle		; $4ae3
 	ld (de),a		; $4ae5
 	ret			; $4ae6
 

@@ -129,6 +129,9 @@
 
 ;;
 ; Seed on a seed tree.
+;
+; relatedObj2 does something?
+;
 ; @subid{Seed type (0-5)}
 .define PARTID_SEED_ON_TREE			$10
 
