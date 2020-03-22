@@ -135280,7 +135280,7 @@ _veranFinal_spiderForm_jumpAttack:
 	.dw @substate4
 
 @substate0:
-	ld b,PARTID_56		; $5b74
+	ld b,PARTID_VERAN_SPIDERWEB		; $5b74
 	call _ecom_spawnProjectile		; $5b76
 	ret nz			; $5b79
 	call _ecom_incState2		; $5b7a
@@ -135426,7 +135426,7 @@ _veranFinal_spiderForm_webAttack_substate2:
 	call _ecom_decCounter2		; $5c3b
 	ret nz			; $5c3e
 
-	ld b,PARTID_56		; $5c3f
+	ld b,PARTID_VERAN_SPIDERWEB		; $5c3f
 	call _ecom_spawnProjectile		; $5c41
 	ret nz			; $5c44
 	ld l,Part.subid		; $5c45
@@ -135709,7 +135709,7 @@ _veranFinal_beeForm_state6:
 	call _ecom_decCounter1		; $5dca
 	jr nz,++		; $5dcd
 	ld (hl),$0f ; [counter1]
-	ld b,PARTID_58		; $5dd1
+	ld b,PARTID_VERAN_BEE_PROJECTILE		; $5dd1
 	call _ecom_spawnProjectile		; $5dd3
 ++
 	call objectApplySpeed		; $5dd6

@@ -183,32 +183,42 @@
 ; Used by moblins, darknuts
 .define PARTID_ENEMY_ARROW			$1a
 
+;;
 .define PARTID_LYNEL_BEAM			$1b
 
+;;
 .define PARTID_STALFOS_BONE			$1c
 
 ;;
 ; Invisible object which provides collisions for enemy swords
 .define PARTID_ENEMY_SWORD			$1d
 
+;;
 .define PARTID_DEKU_SCRUB_PROJECTILE		$1e
 
+;;
 .define PARTID_WIZZROBE_PROJECTILE		$1f
 
 ;;
 ; Created by fire keese
 .define PARTID_FIRE				$20
 
+;;
 .define PARTID_MOBLIN_BOOMERANG			$21
 
+;;
 .define PARTID_CUCCO_ATTACKER			$22
 
+;;
 .define PARTID_23				$23
 
+;;
 .define PARTID_GROTTO_CRYSTAL			$24
 
+;;
 .define PARTID_25				$25
 
+;;
 .define PARTID_SPARKLE				$26
 
 ; Lightning strikes a specified position
@@ -218,6 +228,7 @@
 ; Some kind of item?
 .define PARTID_28				$28
 
+;;
 .define PARTID_BEAM				$29
 
 ;;
@@ -246,7 +257,7 @@
 .define PARTID_SEA_EFFECTS			$2e
 
 ;;
-; Turns Link intoa baby
+; Turns Link into a baby
 .define PARTID_BABY_BALL			$2f
 
 ;;
@@ -308,6 +319,9 @@
 ;;
 ; Subid: ?
 .define PARTID_BLUE_STALFOS_PROJECTILE		$3d
+
+;;
+.define PARTID_3e				$3e
 
 ;;
 ; @subid_00{Normal}
@@ -390,13 +404,20 @@
 ; Used by Ganon
 .define PARTID_52				$52
 
-.define PARTID_BLUE_ENERGY_BEAD			$53 ; Used by "createEnergySwirl" functions
+;;
+; Used by "createEnergySwirl" functions
+.define PARTID_BLUE_ENERGY_BEAD			$53
 
+;;
+; Some kind of boulder?
+.define PARTID_54				$54
+
+;;
 .define PARTID_OCTOGON_BUBBLE			$55
 
 ;;
 ; Used by ENEMYID_VERAN_FINAL_FORM (spider)
-.define PARTID_56				$56
+.define PARTID_VERAN_SPIDERWEB			$56
 
 ;;
 ; Used by ENEMYID_VERAN_FINAL_FORM
@@ -404,7 +425,10 @@
 
 ;;
 ; Used by ENEMYID_VERAN_FINAL_FORM (bee)
-.define PARTID_58				$58
+.define PARTID_VERAN_BEE_PROJECTILE		$58
+
+;;
+.define PARTID_59				$59
 
 ; The stone that's pushed at the start of the game. This only applies after it's moved;
 ; before it's moved, the stone is handled by INTERACID_TRIFORCE_STONE instead.
