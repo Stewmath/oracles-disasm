@@ -147,15 +147,31 @@
 ; Created when an enemy is burned.
 .define PARTID_FLAME	 			$12
 
+;;
+.define PARTID_OWL_STATUE			$13
+
+;;
 ; Not sure if this applies to item drops outside of maple scramble?
-; Subid corresponds to the item.
-;   bit 7 of subid might do something?
-; var03 determines how many frames Maple takes to collect the item.
+;
 ; Maple sets these to state 4 when being collected.
+;
+; @subid{Corresponds to the item. Bit 7 of subid might do something?}
+;
+; @var03{Determines how many frames Maple takes to collect the item.}
 .define PARTID_ITEM_FROM_MAPLE			$14
+
+;;
+; See PARTID_ITEM_FROM_MAPLE documentation.
 .define PARTID_ITEM_FROM_MAPLE_2		$15
+
+;;
+; Looks like a bubble or something?
 .define PARTID_16				$16
+
+;;
 .define PARTID_GASHA_TREE			$17
+
+;;
 .define PARTID_OCTOROK_PROJECTILE		$18
 
 ;;
@@ -187,6 +203,12 @@
 
 .define PARTID_CUCCO_ATTACKER			$22
 
+.define PARTID_23				$23
+
+.define PARTID_GROTTO_CRYSTAL			$24
+
+.define PARTID_25				$25
+
 .define PARTID_SPARKLE				$26
 
 ; Lightning strikes a specified position
@@ -211,7 +233,7 @@
 .define PARTID_2b				$2b
 
 ;;
-; Used by INTERACID_VIRE
+; Used by INTERACID_VIRE (flame used in "donkey kong" minigame?)
 .define PARTID_2c				$2c
 
 ;;
@@ -238,6 +260,10 @@
 ;;
 ; @palette(PALH_be}
 .define PARTID_SUBTERROR_DIRT			$32
+
+;;
+; Rotating things that you can shoot seeds off of (TODO: better name)
+.define PARTID_ROTATABLE_SEED_THING		$33
 
 ;;
 ; Used by Ramrock (seed form)
@@ -272,7 +298,7 @@
 .define PARTID_VIRE_PROJECTILE			$3a
 
 ;;
-; Used by head thwomp (purple face)
+; Used by head thwomp (purple face); a boulder.
 .define PARTID_3b				$3b
 
 ;;
@@ -306,7 +332,12 @@
 ; relatedObj1 must be set to the tingle object (INTERACID_TINGLE).
 .define PARTID_TINGLE_BALLOON			$44
 
-; $45: falling boulder spawner?
+;;
+; Falling boulder spawner?
+.define PARTID_45				$45
+
+;;
+.define PARTID_46				$46
 
 ;;
 ; Bomb used by PARTID_KING_MOBLIN_MINION.
