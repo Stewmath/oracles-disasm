@@ -2176,6 +2176,7 @@ wccb0: ; $ccb0/$ccc7
 
 .ifdef ROM_AGES
 wccb1: ; $ccb1
+; Disables PARTID_BUTTON when nonzero?
 	db
 .endif
 

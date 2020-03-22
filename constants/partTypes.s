@@ -79,10 +79,19 @@
 .define PARTID_DARK_ROOM_HANDLER		$08
 
 ;;
+; A button that you can step on to activate.
+;
+; If bit 7 of the subid is set, the button deactivates after a period of time?
+;
+; @subid{Value from 0-7, corresponding to a bit to set in wActiveTriggers when pressed.}
+.define PARTID_BUTTON				$09
+
+;;
 ; Spawns a bridge.
+;
 ; counter2: Length of the bridge (measured in 8x8 tiles)
+;
 ; angle: direction it should spawn in (value from 0-3)
-; Y: starting position (short-form)
 .define PARTID_BRIDGE_SPAWNER			$0c
 
 ;;

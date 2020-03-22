@@ -142907,105 +142907,134 @@ partCode08:
 	ld (de),a		; $4722
 	ret			; $4723
 
-;;
-; @addr{4724}
+
+; ==============================================================================
+; PARTID_BUTTON
+;
+; Variables:
+;   var03: Bit index (copied from subid ignoring bit 7)
+;   counter1: ?
+;   var30: 1 if button is pressed
+; ==============================================================================
 partCode09:
-	ld e,$c4		; $4724
+	ld e,Part.state		; $4724
 	ld a,(de)		; $4726
 	or a			; $4727
-	call z,$47c9		; $4728
-	ld a,($ccb1)		; $472b
+	call z,@state0		; $4728
+
+@state1:
+	ld a,(wccb1)		; $472b
 	or a			; $472e
 	ret nz			; $472f
-	ld hl,$d000		; $4730
+
+	ld hl,w1Link		; $4730
 	call checkObjectsCollided		; $4733
-	jr c,_label_11_049	; $4736
+	jr c,@linkTouchedButton	; $4736
+
 	call objectGetTileAtPosition		; $4738
-	sub $0c			; $473b
-	cp $02			; $473d
-	jr nc,_label_11_047	; $473f
+	sub TILEINDEX_BUTTON			; $473b
+	cp $02 ; TILEINDEX_BUTTON or TILEINDEX_PRESSED_BUTTON
+	jr nc,@somethingOnButton	; $473f
+
 	call _partCommon_decCounter1IfNonzero		; $4741
 	ret nz			; $4744
-	ld l,$f0		; $4745
+
+	ld l,Part.var30		; $4745
 	bit 0,(hl)		; $4747
 	ret z			; $4749
-	ld e,$f0		; $474a
+	ld e,Part.var30		; $474a
 	ld a,(de)		; $474c
 	or a			; $474d
 	ret z			; $474e
+
 	call objectGetShortPosition		; $474f
 	ld c,a			; $4752
-	ld a,$0c		; $4753
+	ld a,TILEINDEX_BUTTON		; $4753
 	call setTile		; $4755
-	ld e,$c3		; $4758
+
+	ld e,Part.var03		; $4758
 	ld a,(de)		; $475a
 	ld hl,wActiveTriggers		; $475b
 	call unsetFlag		; $475e
 	ld e,$f0		; $4761
 	xor a			; $4763
 	ld (de),a		; $4764
+
 	ld a,SND_SPLASH		; $4765
 	jp playSound		; $4767
-_label_11_047:
+
+; Tile is being held down by something (somaria block, pot, etc)
+@somethingOnButton:
 	ld h,d			; $476a
-	ld l,$c2		; $476b
+	ld l,Part.subid		; $476b
 	bit 7,(hl)		; $476d
-	jr z,_label_11_048	; $476f
-	ld l,$f0		; $4771
+	jr z,@delete	; $476f
+
+	ld l,Part.var30		; $4771
 	bit 0,(hl)		; $4773
 	ret nz			; $4775
-	ld l,$c6		; $4776
+
+	ld l,Part.counter1		; $4776
 	ld (hl),$1c		; $4778
 	call objectGetShortPosition		; $477a
 	ld c,a			; $477d
-	ld b,$0d		; $477e
+	ld b,TILEINDEX_PRESSED_BUTTON		; $477e
 	call setTileInRoomLayoutBuffer		; $4780
-	jr _label_11_051		; $4783
-_label_11_048:
-	call $47b7		; $4785
+	jr @setTriggerAndPlaySound		; $4783
+
+@delete:
+	call @updateTileBeforeDeletion		; $4785
 	jp partDelete		; $4788
-_label_11_049:
+
+@linkTouchedButton:
 	ld a,(w1Link.zh)		; $478b
 	or a			; $478e
 	ret nz			; $478f
-	ld e,$c2		; $4790
+	ld e,Part.subid		; $4790
 	ld a,(de)		; $4792
 	rlca			; $4793
-	jr nc,_label_11_048	; $4794
-_label_11_050:
-	ld e,$f0		; $4796
+	jr nc,@delete	; $4794
+
+@checkButtonPushed:
+	ld e,Part.var30		; $4796
 	ld a,(de)		; $4798
 	or a			; $4799
 	ret nz			; $479a
+
 	call objectGetShortPosition		; $479b
 	ld c,a			; $479e
-	ld a,$0d		; $479f
+	ld a,TILEINDEX_PRESSED_BUTTON		; $479f
 	call setTile		; $47a1
-_label_11_051:
-	ld e,$c3		; $47a4
+
+@setTriggerAndPlaySound:
+	ld e,Part.var03		; $47a4
 	ld a,(de)		; $47a6
 	ld hl,wActiveTriggers		; $47a7
 	call setFlag		; $47aa
-	ld e,$f0		; $47ad
+	ld e,Part.var30		; $47ad
 	ld a,$01		; $47af
 	ld (de),a		; $47b1
 	ld a,SND_SPLASH		; $47b2
 	jp playSound		; $47b4
+
+@updateTileBeforeDeletion:
 	call objectGetShortPosition		; $47b7
 	ld c,a			; $47ba
-	ld b,$0d		; $47bb
+	ld b,TILEINDEX_PRESSED_BUTTON		; $47bb
 	call setTileInRoomLayoutBuffer		; $47bd
 	call objectGetTileAtPosition		; $47c0
-	cp $0c			; $47c3
-	jr z,_label_11_050	; $47c5
-	jr _label_11_051		; $47c7
+	cp TILEINDEX_BUTTON			; $47c3
+	jr z,@checkButtonPushed	; $47c5
+	jr @setTriggerAndPlaySound		; $47c7
+
+@state0:
 	ld h,d			; $47c9
 	ld l,e			; $47ca
-	inc (hl)		; $47cb
-	ld l,$c2		; $47cc
+	inc (hl) ; [state] = 1
+	ld l,Part.subid		; $47cc
 	ldi a,(hl)		; $47ce
 	and $07			; $47cf
-	ldd (hl),a		; $47d1
+	ldd (hl),a ; [var03]
 	ret			; $47d2
 
 ;;
