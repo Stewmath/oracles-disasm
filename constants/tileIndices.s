@@ -10,6 +10,8 @@
 .define TILEINDEX_GRAVE_STATIONARY	$02 ; Overworld only
 .define TILEINDEX_UNLIT_TORCH		$08
 .define TILEINDEX_LIT_TORCH		$09
+.define TILEINDEX_OVERWORLD_SWITCH_OFF	$9e ; Overworld oldy
+.define TILEINDEX_OVERWORLD_SWITCH_ON	$9f ; Overworld oldy
 .define TILEINDEX_MOVING_POT		$10
 .define TILEINDEX_OVERWORLD_DUG_DIRT	$1c ; Overworld only
 .define TILEINDEX_HORIZONTAL_BRIDGE_TOP		$1d ; Overworld only
@@ -35,6 +37,7 @@
 .define TILEINDEX_RED_FLOOR		$9d
 .define TILEINDEX_YELLOW_FLOOR		$9e
 .define TILEINDEX_BLUE_FLOOR		$9f
+.define TILEINDEX_OVERWORLD_LIT_TORCH	$a1 ; overworld only (might only be used in seasons?)
 .define TILEINDEX_OVERWORLD_ROCK	$c0 ; outdoors only
 .define TILEINDEX_OVERWORLD_BUSH	$c5 ; outdoors only
 .define TILEINDEX_STAIRS		$d0 ; overworld only
@@ -50,7 +53,7 @@
 .define TILEINDEX_CURRENT_DOWN		$e1
 .define TILEINDEX_CURRENT_LEFT		$e2
 .define TILEINDEX_CURRENT_RIGHT		$e3
-.define TILEINDEX_LAVA_1		$e4 ; overworld only
+.define TILEINDEX_OVERWORLD_LAVA_1	$e4 ; overworld only
 .define TILEINDEX_WHIRLPOOL		$e9
 .define TILEINDEX_DUNGEON_DOOR_1	$ee ; overworld only
 .define TILEINDEX_DUNGEON_DOOR_2	$ef ; overworld only
@@ -64,8 +67,12 @@
 .define TILEINDEX_WATERFALL_BOTTOM	$fe
 .define TILEINDEX_WATERFALL		$ff
 
+.define TILEINDEX_DRIED_LAVA		$01 ; dungeons only(?)
 .define TILEINDEX_RESPAWNING_BUSH_CUT	$02 ; dungeons, indoor areas
+.define TILEINDEX_RESPAWNING_BUSH_REGEN	$03 ; dungeons, indoor areas
 .define TILEINDEX_RESPAWNING_BUSH_READY	$04 ; dungeons, indoor areas
+.define TILEINDEX_DUNGEON_SWITCH_OFF	$0a ; dungeons, indoor areas
+.define TILEINDEX_DUNGEON_SWITCH_ON	$0b ; dungeons, indoor areas
 .define TILEINDEX_BUTTON		$0c ; dungeons, indoor areas
 .define TILEINDEX_PRESSED_BUTTON	$0d ; dungeons, indoor areas
 .define TILEINDEX_RAISABLE_FLOOR_1	$0e ; collision modes 1,2,5
@@ -86,14 +93,34 @@
 .define TILEINDEX_NORTH_STAIRS		$52 ; dungeons, indoors only
 .define TILEINDEX_EAST_STAIRS		$53 ; dungeons, indoors only
 .define TILEINDEX_SPIKES		$60 ; dungeons, indoors only
-.define TILEINDEX_VERTICAL_BRIDGE	$6a ; dungeons only
-.define TILEINDEX_HORIZONTAL_BRIDGE	$6d ; dungeons only
+
+; This tile and 3 after it ($61-$64) are assumed to all be lava tiles.
+.define TILEINDEX_DUNGEON_LAVA_1	$61 ; dungeons only(?)
+
+.define TILEINDEX_VERTICAL_BRIDGE	$6a ; dungeons/indoors only
+.define TILEINDEX_VERTICAL_BRIDGE_DOWN	$6b ; dungeons/indoors only (bridge with top half missing)
+.define TILEINDEX_VERTICAL_BRIDGE_UP	$6c ; dungeons/indoors only (bridge with lower half missing)
+.define TILEINDEX_HORIZONTAL_BRIDGE	$6d ; dungeons/indoors only
+.define TILEINDEX_HORIZONTAL_BRIDGE_LEFT	$6e ; dungeons/indoors only
+.define TILEINDEX_HORIZONTAL_BRIDGE_RIGHT	$6f ; dungeons/indoors only
 .define TILEINDEX_STANDARD_FLOOR	$a0 ; Keyblocks and such will turn into this tile
 .define TILEINDEX_DUNGEON_a3		$a3 ; dungeons, indoors only
 .define TILEINDEX_RED_TOGGLE_FLOOR	$ad ; dungeons only
 .define TILEINDEX_YELLOW_TOGGLE_FLOOR	$ae ; dungeons only
 .define TILEINDEX_BLUE_TOGGLE_FLOOR	$af ; dungeons only
+
+; Used by INTERACID_LEVER_LAVA_FILLER. (Range of $0c tiles starting from $c3 is assumed to be of
+; this type.)
+.define TILEINDEX_LAVA_SOURCE_UP_LEFT		$c3 ; dungeons only
+.define TILEINDEX_LAVA_SOURCE_DOWN_LEFT		$c6 ; dungeons only
+.define TILEINDEX_LAVA_SOURCE_UP_LEFT_EMPTY	$c9 ; dungeons only
+.define TILEINDEX_LAVA_SOURCE_DOWN_LEFT_EMPTY	$cc ; dungeons only
+
+.define TILEINDEX_EYE_STATUE		$ee ; dungeon only (eyeballs spawn on these)
 .define TILEINDEX_BLANK_HOLE		$f4 ; dungeons / indoors only
+
+; $d4-$d7 are filled slate tiles in ages D8
+.define TILEINDEX_FILLED_SLATE_1	$d4
 
 .define TILEINDEX_INDOOR_DOOR		$af ; indoors only
 

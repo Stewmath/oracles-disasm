@@ -708,7 +708,7 @@
 ;   $01: When the explosion's radius increases\n
 ;   $ff: When the explosion is over
 ;
-; var03: if set, it has a higher draw priority? (set in patch's minigame)
+; var03: if set, it has a higher draw priority? (set in patch's minigame, tingle's balloon explosion)
 .define INTERACID_EXPLOSION		$56
 
 
@@ -1127,15 +1127,15 @@
 ; TODO: Label these subids
 ; @subid_00{A tiny sparkle that disappears in an instant.}
 ; @subid_01{Used by INTERACID_TIMEWARP}
-; @subid_02{Used by INTERACID_MAKUCONFETTI?}
-; @subid_03{}
-; @subid_04{A big, red-and-blue orb that's probably used with the maku seed or something?}
+; @subid_02{Used by INTERACID_MAKUCONFETTI, INTERACID_GREAT_FAIRY}
+; @subid_03{Used by INTERACID_MAKU_SEED_AND_ESSENCES}
+; @subid_04{Big, red-and-blue orb; used by INTERACID_MAKU_SEED_AND_ESSENCES, INTERACID_GREAT_FAIRY}
 ; @subid_05{}
 ; @subid_06{Glowing orb behind Link in the intro cutscene, on the triforce screen}
 ; @subid_07{Used by tuni nut while being placed}
 ; @subid_08{?}
 ; @subid_09{}
-; @subid_0a{}
+; @subid_0a{Used by INTERACID_GREAT_FAIRY}
 ; @subid_0b{Used by INTERACID_MAKU_SEED (but in an unused function?)}
 ; @subid_0c{Used by harp of ages in nayru's house}
 ; @subid_0d{}
@@ -1578,11 +1578,16 @@
 .define INTERACID_HUMAN_VERAN		$bb
 
 ;;
-; Twinrova again?
-.define INTERACID_bc			$bc
+; Twinrova again? TODO: better name.
+;
+; @subid_00-01{?}
+; @subid_02-03{?}
+.define INTERACID_TWINROVA_3		$bc
 
 ;;
-.define INTERACID_bd			$bd
+; While this object is on-screen, whenever a block is pushed, all other tiles with the same tile
+; index will also get pushed in the same direction. Used for puzzles in Ages D5.
+.define INTERACID_PUSHBLOCK_SYNCHRONIZER	$bd
 
 ;;
 ; A button in Ambi's palace that unlocks the secret passage.
@@ -1590,39 +1595,62 @@
 .define INTERACID_AMBIS_PALACE_BUTTON	$be
 
 ;;
-; This can be a variety of npcs...
-; Subid ranges from $00-$0c.
-.define INTERACID_MISC_NPC		$bf
+; NPC in Symmetry City.
+;
+; @subid_00{NPC in present upper-right house}
+; @subid_01{Unused?}
+; @subid_02{Lady in present lower houses}
+; @subid_03{Unused?}
+; @subid_04{NPC in present upper-left house}
+; @subid_05{Unused?}
+; @subid_06-07{Brothers with the tuni nut}
+; @subid_08-09{Sisters in the tuni nut building}
+; @subid_0a-0b{Kids in the lower past houses}
+; @subid_0c{NPC outside symmetry volcano, in the past (after tuni nut is placed)}
+.define INTERACID_SYMMETRY_NPC		$bf
 
 ;;
 ; Banana carried by Moosh in credits cutscene. Maybe also the obtainable banana in seasons?
 .define INTERACID_BANANA		$c0
 
 ;;
-; Some kind of sparkle?
+; A sparkle which stays in place for a bit, then moves down-left off screen?
 .define INTERACID_c1			$c1
 
 ;;
 .define INTERACID_PIRATE_SHIP		$c2
 
 ;;
+; @subid_00{Pirate ship roaming the sea (loaded in slot $d140, "w1ReservedInteraction1")}
+; @subid_01{Unlinked cutscene of ship leaving}
+; @subid_02{Linked cutscene of ship leaving}
 .define INTERACID_PIRATE_CAPTAIN	$c3
 
 ;;
-; Generic Piratian
+; Generic Piratian; also, tokay eyeball slot.
+;
+; @subid_00-03{Piratian in the ship}
+; @subid_04{Tokay eyeball slot (invisible object)}
 .define INTERACID_PIRATE		$c4
 
 ;;
 ; Play a harp song, and make music notes at Link's position. Used when Link learns a song.
-;   Subid: song to play (0-2)
+;
+; @subid_00{Tune of Echoes}
+; @subid_01{Tune of Currents}
+; @subid_02{Tune of Ages}
 .define INTERACID_PLAY_HARP_SONG	$c5
 
 ;;
-.define INTERACID_c6			$c6
+; Object placed in the 3-door room in the black tower; checks whether to start the cutscene.
+.define INTERACID_BLACK_TOWER_DOOR_HANDLER	$c6
 
 ;;
 ; Creates an object of the given type with the given ID at every position where there's
 ; a tile of the specified index, then deletes itself.
+;
+; TODO: Better interface for this in LynnaLab (show the object being spawned).
+;
 ; @subid{Tile index; an object will be spawned at each tile with this index.}
 ; @Y{ID of object to spawn}
 ; @X{bits 0-3: Subid of object to spawn;\n
@@ -1633,10 +1661,13 @@
 .define INTERACID_TINGLE		$c8
 
 ;;
-; See also ENEMYID_CUCCO. (TODO: what's the difference?)
-.define INTERACID_CUCCO			$c9
+; Cucco in Syrup's hut that prevents you from stealing. (Not to be confused with ENEMYID_CUCCO,
+; which is a more normal cucco.)
+.define INTERACID_SYRUP_CUCCO		$c9
 
 ;;
+; @subid_00{Troy at target carts (postgame)}
+; @subid_01{Troy in his house (disappears in postgame)}
 .define INTERACID_TROY			$ca
 
 ;;
@@ -1645,9 +1676,11 @@
 .define INTERACID_LINKED_GAME_GHINI	$cb
 
 ;;
+; Mayor of Lynna City
 .define INTERACID_PLEN			$cc
 
 ;;
+; Linked game NPC
 .define INTERACID_MASTER_DIVER		$cd
 
 ;;
@@ -1708,9 +1741,9 @@
 ;;
 ; This is for the great fairy that cleans the sea. For great fairies that heal, see
 ; "ENEMYID_GREAT_FAIRY".
-; Subid:
-;   0: ?
-;   1: cutscene after being healed from being an octorok
+;
+; @subid_00{Linked game NPC in fairies' woods (gives a secret)}
+; @subid_01{Cutscene after being healed from being an octorok}
 .define INTERACID_GREAT_FAIRY		$d5
 
 ;;
@@ -1719,11 +1752,23 @@
 .define INTERACID_DEKU_SCRUB		$d6
 
 ;;
-; Maku seed? (but we already have an object for that)
-.define INTERACID_d7			$d7
+; Handles the cutscene where the maku seed and the 3 essences despawn the barrier in the black
+; tower.
+;
+; @subid_00{Maku seed (spawns the other subids)}
+; @subid_01-08{Essences}
+.define INTERACID_MAKU_SEED_AND_ESSENCES	$d7
 
 ;;
-.define INTERACID_d8			$d8
+; Handles events in rooms where pulling a lever fills lava with walkable terrain.
+;
+; @subid_00{D4, 1st lava-filler room}
+; @subid_01{D4, 2 rooms before boss key}
+; @subid_02{D4, 1 room before boss key}
+; @subid_03{D8, lava room with keyblock}
+; @subid_04{D8, other lava room}
+; @subid_05{Hero's Cave lava room}
+.define INTERACID_LEVER_LAVA_FILLER	$d8
 
 ;;
 ; @subid{The index of the secret (value of "wShortSecretIndex"?). This either creates
@@ -1736,7 +1781,10 @@
 .define INTERACID_ZELDA_APPROACH_TRIGGER	$da
 
 ;;
-.define INTERACID_db			$db
+; Slot to place a slate in for ages d8.
+;
+; @subid{Value from 0-3, corresponds to room flag bits 0-3}
+.define INTERACID_SLATE_SLOT			$db
 
 ;;
 ; Miscellaneous stuff. See also INTERACID_MISCELLANEOUS_1.
@@ -1799,6 +1847,8 @@
 
 ;;
 ; Blurb that displays the season/era at the top of the screen when entering an area.
+; @subid_00{Present (but this is set by its own code)}
+; @subid_01{Past (but this is set by its own code)}
 .define INTERACID_ERA_OR_SEASON_INFO	$e0
 
 ;;
@@ -1815,7 +1865,13 @@
 .define INTERACID_TIMEPORTAL_SPAWNER	$e1
 
 ;;
-; Eyeball that looks at Link
+; Eyeball that looks at Link. (Note, spawners aren't designed to work in small rooms?)
+;
+; @subid_00{Like subid 2 but the eye extends a but further}
+; @subid_01{Spawner for subid 2; spawns eyeballs at each corresponding statue position}
+; @subid_02{Normal eyeball looking at Link}
+; @subid_03{Spawner for subid 4 (final dungeon eyeball puzzle)}
+; @subid_04{Final dungeon eyeballs (looking away from direction to go)}
 .define INTERACID_STATUE_EYEBALL	$e2
 
 ;;

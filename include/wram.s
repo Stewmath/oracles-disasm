@@ -2121,7 +2121,8 @@ wChestContentsOverride: ; $cca3/$ccbd
 ; Used for farore's secrets, maybe also the chest minigame?
 	dw
 
-wcca5: ; $cca5
+wEyePuzzleCorrectDirection: ; $cca5
+; Correct direction to move in for the scrambled rooms in the final dungeon
 	db
 wBlockPushAngle: ; $cca6
 ; The angle a block is being pushed toward? bit 7 does something?
@@ -2175,11 +2176,12 @@ wccb0: ; $ccb0/$ccc7
 
 .ifdef ROM_AGES
 wccb1: ; $ccb1
+; Disables PARTID_BUTTON when nonzero?
 	db
 .endif
 
 wDisableWarps: ; $ccb2
-; Not sure what purpose this is for. (Might be ages-exclusive?)
+; Used by INTERACID_BLACK_TOWER_DOOR_HANDLER to stop the warp from sending you anywhere.
 	db
 
 .ifdef ROM_SEASONS
@@ -2220,6 +2222,7 @@ wInShop: ; $ccd3/$ccea
 
 wShootingGalleryccd5: ; $ccd5
 ; Shooting gallery: ?
+; (Also used by target carts with INTERACID_TROY?)
 	.db
 wShopHaveEnoughRupees: ; $ccd5
 ; Shop: Set to 0 if you have enough money for an item, 1 otherwise
@@ -2659,6 +2662,7 @@ wTmpcec0: ; $cec0
 ; Data at $cec0-$ceff has several different uses depending on context.
 ; Aside from the uses listed below, it's also used for:
 ; * Functions which apply an object's speed ($cec0-$cec3)
+; * Checking enough torches are lit to open a door ($cec0 only)
 ; * Unpacking secrets
 
 .enum $cec0 export
@@ -2701,6 +2705,8 @@ wRoomLayoutEnd: ; $cfc0
 ; $cfc0:
 ;  * Bit 0 is set whenever a keyhole in the overworld is opened. This triggers the
 ;    corresponding cutscene (which appears to be dependent on the room you're in).
+;  * Set to nonzero by PARTID_SEED_ON_TREE to indicate that it's shown the "you can't
+;    pick up these seeds" text
 ; $cfc1:
 ;  * Used by door controllers
 ; $cfd3:
@@ -2733,7 +2739,20 @@ wRoomLayoutEnd: ; $cfc0
 
 .union wTmpcfc0
 
-.union shootingGallery
+; Uses of $cfc0 in "normal" gameplay
+.union normal
+	cfc0: ; $cfc0
+		;  Bit 0 is set whenever a keyhole in the overworld is opened. This triggers the
+		;  corresponding cutscene (which appears to be dependent on the room you're in).
+		;  (TODO: replace "wTmpcfc0.genericCutscene.cfc0" with "wTmpcfc0.normal.cfc0" where
+		;  appropriate)
+		db
+	doorControllerState: ; $cfc1
+		db
+
+
+; Uses of $cfc0 in shooting gallery
+.nextu shootingGallery
 
 	gameStatus: ; $cfc0
 	; Set to 0 while game is running, 1 when it's finished
@@ -2826,7 +2845,8 @@ wRoomLayoutEnd: ; $cfc0
 		dsb $14
 	targetConfiguration: ; $cfd4
 		db
-	cfd5:
+	beganGameWithTroy:
+	; Used by INTERACID_TROY (minigame for bombchus).
 		db
 	prizeIndex: ; $cfd6
 		db
@@ -2921,9 +2941,9 @@ wRoomLayoutEnd: ; $cfc0
 
 	state: ; $cfc0
 		db
-	cfc1:
+	cfc1: ; $cfc1
 		dsb 5
-	cfc6:
+	cfc6: ; $cfc6
 		db
 	filler1:
 		dsb $09
@@ -2932,8 +2952,14 @@ wRoomLayoutEnd: ; $cfc0
 		db
 	cfd1: ; $cfd1
 		db
-	filler2:
-		dsb 3
+	cfd2: ; $cfd2
+		db
+	cfd3: ; $cfd3
+	; Link's position is stored here by INTERACID_HARDHAT_WORKER
+		db
+	cfd4: ; $cfd4
+	; Link's direction is stored here by INTERACID_HARDHAT_WORKER
+		db
 	cfd5: ; $cfd5
 	; Used as a position value? Maybe a focus position for npcs in certain cutscenes?
 	; (see "objectWritePositionTocfd5")
@@ -3060,6 +3086,7 @@ wRoomLayoutEnd: ; $cfc0
 
 .ENUM $d000 export
 	w1Link:			instanceof SpecialObjectStruct
+
 	; This is used for:
 	; * Items from treasure chests
 	; * Key door openers
@@ -3068,6 +3095,11 @@ wRoomLayoutEnd: ; $cfc0
 
 .ENUM $d100 export
 	w1Companion:		instanceof SpecialObjectStruct
+
+	; This is used for:
+	; * Blocks being pushed
+	; * Glow behind essences
+	; * Pirate ship (ages)
 	w1ReservedInteraction1:	instanceof InteractionStruct
 .ENDE
 

@@ -3,6 +3,9 @@
 
  m_section_force Script_Helper1 NAMESPACE scriptHlp
 
+; ==============================================================================
+; INTERACID_FARORE
+; ==============================================================================
 faroreCheckSecretValidity:
 	ld a,(wSecretInputType)		; $4000
 	inc a			; $4003
@@ -37,7 +40,7 @@ faroreCheckSecretValidity:
 	; Check if we've already told this secret
 	ld a,(wTextInputResult)		; $4023
 	and $0f			; $4026
-	add GLOBALFLAG_5a			; $4028
+	add GLOBALFLAG_DONE_CLOCK_SHOP_SECRET			; $4028
 	ld b,a			; $402a
 	call checkGlobalFlag		; $402b
 	ld a,$02		; $402e
@@ -45,7 +48,7 @@ faroreCheckSecretValidity:
 
 	; Check if we've spoken to the npc needed to trigger the secret
 	ld a,b			; $4032
-	sub GLOBALFLAG_5a - GLOBALFLAG_50			; $4033
+	sub GLOBALFLAG_FIRST_AGES_DONE_SECRET - GLOBALFLAG_FIRST_AGES_BEGAN_SECRET
 	call checkGlobalFlag		; $4035
 	ld a,$01		; $4038
 	jr nz,@setVar3f		; $403a
@@ -121,7 +124,7 @@ doorController_updateLinkRespawn:
 
 
 ;;
-; Sets $cfc1 to:
+; Sets wTmpcfc0.normal.doorControllerState to:
 ;   $00: Nothing to be done.
 ;   $01: Door should be opened.
 ;   $02: Door should be closed.
@@ -147,7 +150,7 @@ doorController_decideActionBasedOnTriggers:
 	jr z,@end	; $40b9
 	xor a			; $40bb
 @end:
-	ld ($cfc1),a		; $40bc
+	ld (wTmpcfc0.normal.doorControllerState),a		; $40bc
 	ret			; $40bf
 
 
@@ -186,23 +189,23 @@ doorController_decideActionBasedOnTriggers:
 
 
 ;;
-; Set $cfc1 to:
+; Set wTmpcfc0.normal.doorControllerState to:
 ;   $01 if Link is on a minecart which has collided with the door
 ;   $00 otherwise
 doorController_checkMinecartCollidedWithDoor:
 	xor a			; $40e1
-	ld ($cfc1),a		; $40e2
+	ld (wTmpcfc0.normal.doorControllerState),a		; $40e2
 	ld a,(wLinkObjectIndex)		; $40e5
 	rrca			; $40e8
 	ret nc			; $40e9
 	call objectCheckCollidedWithLink_ignoreZ		; $40ea
 	ret nc			; $40ed
 	ld a,$01		; $40ee
-	ld ($cfc1),a		; $40f0
+	ld (wTmpcfc0.normal.doorControllerState),a		; $40f0
 	ret			; $40f3
 
 ;;
-; Set $cfc1 to:
+; Set wTmpcfc0.normal.doorControllerState to:
 ;   $01 if the tile at this position is a horizontal or vertical track
 ;   $00 otherwise
 doorController_checkTileIsMinecartTrack:
@@ -219,12 +222,12 @@ doorController_checkTileIsMinecartTrack:
 	dec b			; $4105
 +
 	ld a,b			; $4106
-	ld ($cfc1),a		; $4107
+	ld (wTmpcfc0.normal.doorControllerState),a		; $4107
 	ret			; $410a
 
 
 ;;
-; Compares [wNumTorchesLit] with [Interaction.speed]. Sets [$cec0] to $01 if they're
+; Compares [wNumTorchesLit] with [Interaction.speed]. Sets [wTmpcec0] to $01 if they're
 ; equal, $00 otherwise.
 doorController_checkEnoughTorchesLit:
 	ld a,(wNumTorchesLit)		; $410b
@@ -761,10 +764,15 @@ getObjectDataAddress:
 
 .ENDS
 
-.orga $4f3b
 
  m_section_force "Bank_15" NAMESPACE scriptHlp
 
+; ==============================================================================
+; INTERACID_DUNGEON_SCRIPT
+; ==============================================================================
+
+;;
+; @addr{4f3b}
 setTrigger2IfTriggers0And1Set:
 	ld hl,wActiveTriggers		; $4f3b
 	ld a,(hl)		; $4f3e
@@ -778,7 +786,7 @@ setTrigger2IfTriggers0And1Set:
 	ret			; $4f4a
 
 ;;
-; Creates a part object (PARTID_06) at each unlit torch, allowing them to be lit.
+; Creates a part object (PARTID_LIGHTABLE_TORCH) at each unlit torch, allowing them to be lit.
 ; @addr{4f4b}
 makeTorchesLightable:
 	call getFreeInteractionSlot		; $4f4b
@@ -789,7 +797,7 @@ makeTorchesLightable:
 	ld (hl),TILEINDEX_UNLIT_TORCH		; $4f52
 
 	ld l,Interaction.yh		; $4f54
-	ld (hl),PARTID_06		; $4f56
+	ld (hl),PARTID_LIGHTABLE_TORCH		; $4f56
 	ld l,Interaction.xh		; $4f58
 	ld (hl),$10		; $4f5a
 	ret			; $4f5c
@@ -851,8 +859,12 @@ moonlitGrotto_enableControlAfterBreakingCrystal:
 	ld (wMenuDisabled),a		; $4fa7
 _label_15_031:
 	ld (wDisableScreenTransitions),a		; $4faa
-	ld ($cc90),a		; $4fad
+	ld (wcc90),a		; $4fad
 	ret			; $4fb0
+
+; ==============================================================================
+; INTERACID_BIPIN
+; ==============================================================================
 
 ;;
 ; Show some text based on bipin's subid (expected to be 1-9).
@@ -885,9 +897,9 @@ bipinScript3:
 	enableinput
 	checkabutton
 	disableinput
-	jumpifroomflagset $20 @alreadyGaveSeed
+	jumpifroomflagset $20, @alreadyGaveSeed
 	showtext TX_4311
-	giveitem TREASURE_GASHA_SEED $08
+	giveitem TREASURE_GASHA_SEED, $08
 	wait 1
 	checktext
 	showtext TX_4312
@@ -896,6 +908,10 @@ bipinScript3:
 	showtext TX_4313
 	jump2byte @loop
 
+
+; ==============================================================================
+; INTERACID_BLOSSOM
+; ==============================================================================
 
 ;;
 ; @param	a	Value to write
@@ -972,18 +988,26 @@ blossom_openNameEntryMenu:
 	ld a,$07		; $5022
 	jp openMenu		; $5024
 
-; @addr{5027}
+
+; ==============================================================================
+; INTERACID_VERAN_CUTSCENE_FACE
+; ==============================================================================
 veranFaceCutsceneScript:
 	disableinput
 	checkpalettefadedone
 	wait 60
-	writememory w1Link.direction $00
+	writememory w1Link.direction, $00
 	wait 30
 	playsound SND_LIGHTTORCH
-	writeobjectbyte Interaction.visible $80
+	writeobjectbyte Interaction.visible, $80
 	wait 30
 	showtext TX_5613
 	scriptend
+
+
+; ==============================================================================
+; INTERACID_OLD_MAN_WITH_RUPEES
+; ==============================================================================
 
 ;;
 ; Writes 0 to var3f if Link has no rupees, 1 otherwise.
@@ -1019,6 +1043,10 @@ _oldMan_rupeeValues:
 	.db RUPEEVAL_200
 	.db RUPEEVAL_100
 
+
+; ==============================================================================
+; INTERACID_SHOOTING_GALLERY
+; ==============================================================================
 
 ;;
 ; @addr{505f}
@@ -1164,7 +1192,7 @@ createSparkle:
 ; Writes to the tilemap to replace all "target" tiles with floor tiles.
 ; @addr{50f6}
 shootingGallery_removeAllTargets:
-	jpab interactionBank1.shootingGallery_removeAllTargets		; $50f6
+	jpab interactionBank08.shootingGallery_removeAllTargets		; $50f6
 
 ;;
 ; @param	a	0 to create the entrance, 2 to remove it
@@ -1189,7 +1217,7 @@ shootingGallery_setEntranceTiles:
 	.db $c6 $c6 ; Remove entrance
 
 ;;
-; Sets bit 7 in $cddb if Link has the give number of rupees, clears it otherwise.
+; Sets bit 7 in wcddb if Link has the give number of rupees, clears it otherwise.
 ;
 ; @param	a	Rupee value
 ; @addr{5115}
@@ -1202,7 +1230,7 @@ _writeFlagsTocddb:
 	push af			; $5118
 	pop bc			; $5119
 	ld a,c			; $511a
-	ld ($cddb),a		; $511b
+	ld (wcddb),a		; $511b
 	ret			; $511e
 
 ;;
@@ -1328,7 +1356,7 @@ shootingGallery_checkIsNotLinkedGame:
 	call checkIsLinkedGame		; $5186
 	call _writeFlagsTocddb		; $5189
 	cpl			; $518c
-	ld ($cddb),a		; $518d
+	ld (wcddb),a		; $518d
 	ret			; $5190
 
 ;;
@@ -1355,13 +1383,13 @@ updateGravity:
 ; @param	a	Value to add to $ccd4
 ; @addr{51a6}
 addToccd4:
-	ld hl,$ccd4		; $51a6
+	ld hl,wccd4		; $51a6
 	jr ++			; $51a9
 
 ;;
 ; @addr{51ab}
 addTocfc0:
-	ld hl,$cfc0		; $51ab
+	ld hl,wTmpcfc0.genericCutscene.state		; $51ab
 ++
 	add (hl)		; $51ae
 	ld (hl),a		; $51af
@@ -1386,36 +1414,36 @@ shootingGalleryScript_humanNpc_gameDone:
 	wait 40
 
 	asm15 shootingGallery_checkIsNotLinkedGame
-	jumpifmemoryset $cddb $80 @checkScoreForNormalGame
-	jumpifitemobtained TREASURE_FLUTE @normalGame
-	jumpifglobalflagset GLOBALFLAG_CAN_BUY_FLUTE @checkScoreForFluteGame
+	jumpifmemoryset wcddb, $80, @checkScoreForNormalGame
+	jumpifitemobtained TREASURE_FLUTE, @normalGame
+	jumpifglobalflagset GLOBALFLAG_CAN_BUY_FLUTE, @checkScoreForFluteGame
 
 @normalGame:
 	jump2byte @checkScoreForNormalGame
 
 @checkScoreForFluteGame:
 	asm15 shootingGallery_cpScore, $03
-	jumpifmemoryset $cddb $80 @flutePrize
+	jumpifmemoryset wcddb, $80, @flutePrize
 	jump2byte @noPrize
 
 @flutePrize:
 	showtext TX_081b
 	wait 30
-	giveitem TREASURE_FLUTE $00
+	giveitem TREASURE_FLUTE, $00
 	jump2byte @end
 
 @checkScoreForNormalGame:
 	asm15 shootingGallery_cpScore, $00
-	jumpifmemoryset $cddb $80 @ringPrize
+	jumpifmemoryset wcddb, $80, @ringPrize
 
 	asm15 shootingGallery_cpScore, $01
-	jumpifmemoryset $cddb $80 @gashaSeedPrize
+	jumpifmemoryset wcddb, $80, @gashaSeedPrize
 
 	asm15 shootingGallery_cpScore, $02
-	jumpifmemoryset $cddb $80 @thirtyRupeePrize
+	jumpifmemoryset wcddb, $80, @thirtyRupeePrize
 
 	asm15 shootingGallery_cpScore, $03
-	jumpifmemoryset $cddb $80 @oneHeartPrize
+	jumpifmemoryset wcddb, $80, @oneHeartPrize
 
 @noPrize:
 	showtext TX_0819
@@ -1430,7 +1458,7 @@ shootingGalleryScript_humanNpc_gameDone:
 @gashaSeedPrize:
 	showtext TX_0816
 	wait 30
-	giveitem TREASURE_GASHA_SEED $00
+	giveitem TREASURE_GASHA_SEED, $00
 	jump2byte @end
 
 @thirtyRupeePrize:
@@ -1467,56 +1495,56 @@ shootingGalleryScript_goronNpc_gameDone:
 	resetmusic
 	wait 40
 
-	jumpifroomflagset $20 @normalGame
+	jumpifroomflagset $20, @normalGame
 
 ; Playing for lava juice
 
 	asm15 shootingGallery_cpScore, $07
-	jumpifmemoryset $cddb $80 @lavaJuicePrize
+	jumpifmemoryset wcddb, $80, @lavaJuicePrize
 	showtext TX_24d9
 	jump2byte @end
 
 @lavaJuicePrize:
 	showtext TX_24d8
 	wait 30
-	giveitem TREASURE_LAVA_JUICE $00
+	giveitem TREASURE_LAVA_JUICE, $00
 	jump2byte @end
 
 ; Playing for normal prizes
 @normalGame:
 	asm15 shootingGallery_cpScore, $04
-	jumpifmemoryset $cddb $80 @boomerangPrize
+	jumpifmemoryset wcddb, $80, @boomerangPrize
 
 	asm15 shootingGallery_cpScore, $05
-	jumpifmemoryset $cddb $80 @gashaSeedPrize
+	jumpifmemoryset wcddb, $80, @gashaSeedPrize
 
 	asm15 shootingGallery_cpScore, $06
-	jumpifmemoryset $cddb $80 @twentyBombsPrize
+	jumpifmemoryset wcddb, $80, @twentyBombsPrize
 
 	asm15 shootingGallery_cpScore, $07
-	jumpifmemoryset $cddb $80 @thirtyRupeesPrize
+	jumpifmemoryset wcddb, $80, @thirtyRupeesPrize
 
 	; No prize
 	showtext TX_24de
 	jump2byte @end
 
 @boomerangPrize:
-	jumpifitemobtained TREASURE_BOOMERANG @gashaSeedPrize
+	jumpifitemobtained TREASURE_BOOMERANG, @gashaSeedPrize
 	showtext TX_24da
 	wait 30
-	giveitem TREASURE_BOOMERANG $02
+	giveitem TREASURE_BOOMERANG, $02
 	jump2byte @end
 
 @gashaSeedPrize:
 	showtext TX_24db
 	wait 30
-	giveitem TREASURE_GASHA_SEED $00
+	giveitem TREASURE_GASHA_SEED, $00
 	jump2byte @end
 
 @twentyBombsPrize:
 	showtext TX_24dc
 	wait 30
-	giveitem TREASURE_BOMBS $05
+	giveitem TREASURE_BOMBS, $05
 	jump2byte @end
 
 @thirtyRupeesPrize:
@@ -1528,6 +1556,11 @@ shootingGalleryScript_goronNpc_gameDone:
 @end:
 	wait 30
 	scriptend
+
+
+; ==============================================================================
+; INTERACID_IMPA_IN_CUTSCENE
+; ==============================================================================
 
 ;;
 ; @addr{52e2}
@@ -1575,7 +1608,7 @@ impa_showZeldaKidnappedTextNonExitable:
 ; @addr{5312}
 impaScript_rockJustMoved:
 	wait 4
-	jumpifmemoryeq w1Link.angle $08 @pushedRight
+	jumpifmemoryeq w1Link.angle, $08, @pushedRight
 
 	; Pushed left: Impa needs to move down a bit
 	setangle $10
@@ -1591,13 +1624,13 @@ impaScript_rockJustMoved:
 	setspeed SPEED_100
 	applyspeed $21
 	wait 8
-	jumpifmemoryeq w1Link.angle $08 ++
+	jumpifmemoryeq w1Link.angle, $08 ++
 
 	; Pushed left: Impa needs to move back up
 	moveup $11
 	wait 8
 ++
-	writememory $cfd0 $07
+	writememory wTmpcfc0.genericCutscene.cfd0, $07
 	setanimation $00
 	wait 30
 	showtext TX_0109
@@ -1611,16 +1644,16 @@ impaScript_rockJustMoved:
 ; (unlinked)
 impaScript4:
 	showtext TX_0124
-	writememory w1Link.direction DIR_UP
+	writememory w1Link.direction, DIR_UP
 	wait 20
 	xorcfc0bit 0
-	spawninteraction INTERACID_NAYRU $09 $f8 $48
+	spawninteraction INTERACID_NAYRU, $09, $f8, $48
 
 	setspeed SPEED_100
 	movedown $41
 	wait 30
 
-	checkobjectbyteeq Interaction.var38 $04
+	checkobjectbyteeq Interaction.var38, $04
 	writeobjectword Interaction.speedZ, -$180
 	wait 1
 	showtext TX_0125
@@ -1634,15 +1667,15 @@ impaScript4:
 
 ; Subid 4: like above, but for linked game
 impaScript5:
-	checkmemoryeq $cfd0 $01
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $01
 	setanimation $00
-	checkmemoryeq $cfd0 $02
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $02
 	setanimation $03
-	checkmemoryeq $cfd0 $03
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $03
 	setanimation $02
 	checkobjectbyteeq Interaction.state2, $02
 
-	writememory $cfd0 $05
+	writememory wTmpcfc0.genericCutscene.cfd0, $05
 	setanimation $00
 	wait 8
 	writeobjectword Interaction.speedZ, -$180
@@ -1650,8 +1683,8 @@ impaScript5:
 	wait 1
 	showtext TX_0125
 
-	writememory $cfd0 $06
-	checkmemoryeq $cfd0 $08
+	writememory wTmpcfc0.genericCutscene.cfd0, $06
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $08
 	wait 90
 	writememory w1Link.direction, DIR_RIGHT
 	setspeed SPEED_100
@@ -1688,7 +1721,7 @@ impaScript7:
 
 @zeldaSaved:
 	checkpalettefadedone
-	writememory w1Link.xh $50
+	writememory w1Link.xh, $50
 	wait 60
 	asm15 impa_moveLinkUp32Frames
 
@@ -1703,8 +1736,8 @@ impaScript7:
 	jumpifmemoryeq w1Link.state, LINK_STATE_FORCE_MOVEMENT, @waitForLinkToMove2
 
 	writememory w1Link.direction, DIR_UP
-	writememory $cfd0 $01
-	checkmemoryeq $cfd0 $02
+	writememory wTmpcfc0.genericCutscene.cfd0, $01
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $02
 	setzspeed -$0200
 	playsound SND_JUMP
 	wait 1
@@ -1714,26 +1747,30 @@ impaScript7:
 	wait 30
 
 	showtext TX_0603
-	writememory $cfd0 $03
-	checkmemoryeq $cfd0 $04
+	writememory wTmpcfc0.genericCutscene.cfd0, $03
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $04
 	writememory w1Link.direction, DIR_LEFT
 	wait 30
 
 	showtext TX_0604
-	writememory $cfd0 $05
-	checkmemoryeq $cfd0 $06
-	writememory w1Link.direction DIR_UP
+	writememory wTmpcfc0.genericCutscene.cfd0, $05
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $06
+	writememory w1Link.direction, DIR_UP
 	wait 30
 
 	showtext TX_012a
-	writememory $cfd0 $07
+	writememory wTmpcfc0.genericCutscene.cfd0, $07
 	moveup $60
 
-	writememory $cfd0 $08
-	writememory $cd00 $01
+	writememory wTmpcfc0.genericCutscene.cfd0, $08
+	writememory wScrollMode, $01
 	setglobalflag GLOBALFLAG_GOT_RING_FROM_ZELDA
 	scriptend
 
+
+; ==============================================================================
+; INTERACID_FAKE_OCTOROK
+; ==============================================================================
 
 greatFairyOctorok_createMagicPowderAnimation:
 	ld a,SND_MAGIC_POWDER		; $543a
@@ -1752,6 +1789,11 @@ greatFairyOctorok_createMagicPowderAnimation:
 	cp $18			; $5452
 	jr nz,@next		; $5454
 	ret			; $5456
+
+
+; ==============================================================================
+; INTERACID_CHILD
+; ==============================================================================
 
 ;;
 ; @param	a	Value to add
@@ -1816,10 +1858,13 @@ child_giveRupees:
 	jp giveTreasure		; $548a
 
 
+; ==============================================================================
+; INTERACID_NAYRU
+; ==============================================================================
 
 ; Subid $01: Cutscene in Ambi's palace after getting bombs
 nayruScript01:
-	checkmemoryeq $cfd1 $05
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd1, $05
 	playsound MUS_LADX_SIDEVIEW
 	wait 60
 
@@ -1843,8 +1888,8 @@ nayruScript01:
 	showtext TX_1d02
 	wait 30
 	showtext TX_1306
-	writememory $cfd1 $06
-	checkmemoryeq $cfd1 $07
+	writememory wTmpcfc0.genericCutscene.cfd1, $06
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd1, $07
 	wait 30
 
 	setanimation $06
@@ -1852,7 +1897,7 @@ nayruScript01:
 	asm15 fadeoutToBlackWithDelay, $03
 	checkpalettefadedone
 
-	writememory wTextboxFlags TEXTBOXFLAG_ALTPALETTE1
+	writememory wTextboxFlags, TEXTBOXFLAG_ALTPALETTE1
 	showtext TX_1d03
 	wait 30
 	scriptend
@@ -1860,7 +1905,7 @@ nayruScript01:
 
 ; Subid $02: Nayru on maku tree screen after being saved
 nayruScript02_part2:
-	checkmemoryeq $cfd0 $05
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $05
 	disableinput
 	wait 60
 	showtext TX_1d07
@@ -1868,7 +1913,7 @@ nayruScript02_part2:
 	showtext TX_1d09
 	wait 30
 
-	writememory $cfd0 $06
+	writememory wTmpcfc0.genericCutscene.cfd0, $06
 	setanimation $04
 	playsound SNDCTRL_STOPMUSIC
 	playsound SND_AGES
@@ -1883,7 +1928,7 @@ nayruScript02_part2:
 	wait 30
 	setdisabledobjectsto11
 	wait 30
-	writememory $cfd0 $07
+	writememory wTmpcfc0.genericCutscene.cfd0, $07
 	scriptend
 
 
@@ -1907,14 +1952,14 @@ nayruScript03:
 
 	showtext TX_1d0b
 	wait 20
-	writememory   $cfd0, $02
-	checkmemoryeq $cfd0, $03
+	writememory   wTmpcfc0.genericCutscene.cfd0, $02
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $03
 
 	asm15 forceLinkDirection, DIR_LEFT
 	wait 10
 	showtext TX_1d0c
 	wait 40
-	writememory $cfd0 $04
+	writememory wTmpcfc0.genericCutscene.cfd0, $04
 	wait 16
 
 	setspeed SPEED_100
@@ -2027,7 +2072,7 @@ nayruScript11:
 	wait 60
 	showtextlowindex <TX_1d1f
 	wait 30
-	writememory $cfd0 $01
+	writememory wTmpcfc0.genericCutscene.cfd0, $01
 	scriptend
 
 ; Subid $13: NPC singing to the animals after the game is complete
@@ -2037,7 +2082,7 @@ nayruScript13:
 	checkabutton
 	disableinput
 	wait 10
-	writeobjectbyte Interaction.var39 $01
+	writeobjectbyte Interaction.var39, $01
 	asm15 turnToFaceLink
 	wait 8
 	showtextlowindex <TX_1d21
@@ -2045,7 +2090,7 @@ nayruScript13:
 	setanimation $02
 	enableinput
 	wait 20
-	writeobjectbyte Interaction.var39 $00
+	writeobjectbyte Interaction.var39, $00
 	setanimation $04
 	jump2byte @npcLoop
 
@@ -2062,7 +2107,7 @@ turnToFaceSomethingAtInterval:
 	ld a,(wFrameCounter)		; $5616
 	and b			; $5619
 	ret nz			; $561a
-	callab func_0a_7877		; $561b
+	callab interactionBank0a.func_0a_7877		; $561b
 	call objectGetRelativeAngle		; $5623
 	call convertAngleToDirection		; $5626
 	ld h,d			; $5629
@@ -2082,11 +2127,16 @@ setLinkAnimation:
 	pop de			; $5638
 	ret			; $5639
 
+
+; ==============================================================================
+; INTERACID_RALPH
+; ==============================================================================
+
 ;;
 ; Creates an instance of "INTERACID_SWORD", which will read the current object's
 ; animParameter in order to know when to produce a sword swing animation.
 ; @addr{563a}
-createLinkedSwordAnimation:
+ralph_createLinkedSwordAnimation:
 	call getFreeInteractionSlot		; $563a
 	ret nz			; $563d
 	ld (hl),INTERACID_SWORD		; $563e
@@ -2147,7 +2197,7 @@ ralph_flashScreen:
 	jp _writeFlagsTocddb		; $567f
 
 @func:
-	ld a,($cfde)		; $5682
+	ld a,(wTmpcfc0.genericCutscene.cfde)		; $5682
 	rst_jumpTable			; $5685
 	.dw @thing0
 	.dw @thing1
@@ -2157,32 +2207,32 @@ ralph_flashScreen:
 
 @thing0:
 	ld a,$0a		; $5690
-	ld ($cfdf),a		; $5692
+	ld (wTmpcfc0.genericCutscene.cfdf),a		; $5692
 	call clearFadingPalettes		; $5695
 
 @inccfde:
-	ld hl,$cfde		; $5698
+	ld hl,wTmpcfc0.genericCutscene.cfde		; $5698
 	inc (hl)		; $569b
 	ret			; $569c
 
 @thing1:
 @thing2:
-	ld hl,$cfdf		; $569d
+	ld hl,wTmpcfc0.genericCutscene.cfdf		; $569d
 	dec (hl)		; $56a0
 	ret nz			; $56a1
 	ld a,$0a		; $56a2
-	ld ($cfdf),a		; $56a4
+	ld (wTmpcfc0.genericCutscene.cfdf),a		; $56a4
 	call fastFadeoutToWhite		; $56a7
 	jp @inccfde		; $56aa
 
 @thing3:
 	ld a,$14		; $56ad
-	ld ($cfdf),a		; $56af
+	ld (wTmpcfc0.genericCutscene.cfdf),a		; $56af
 	call clearFadingPalettes		; $56b2
 	jp @inccfde		; $56b5
 
 @thing4:
-	ld hl,$cfdf		; $56b8
+	ld hl,wTmpcfc0.genericCutscene.cfdf		; $56b8
 	dec (hl)		; $56bb
 	ret			; $56bc
 
@@ -2232,7 +2282,7 @@ ralphSubid02Script:
 	; But now this!
 	showtext TX_2a04
 	wait 120
-	writememory $cfd0 $1e
+	writememory wTmpcfc0.genericCutscene.cfd0, $1e
 	wait 60
 
 	; I'll save you!
@@ -2256,7 +2306,7 @@ ralphSubid02Script:
 	movedown $28
 	wait 60
 
-	writememory $cfd0 $20
+	writememory wTmpcfc0.genericCutscene.cfd0, $20
 	scriptend
 
 
@@ -2379,7 +2429,7 @@ ralphSubid0cScript:
 @jumping:
 	asm15 objectApplySpeed
 	asm15 ralph_updateGravity
-	jumpifmemoryset $cddb, $80, @landed
+	jumpifmemoryset wcddb, $80, @landed
 	jump2byte @jumping
 
 @landed:
@@ -2397,11 +2447,11 @@ ralphSubid0cScript:
 
 @flashScreen:
 	asm15 ralph_flashScreen
-	jumpifmemoryset $cddb $80 @doneFlashingScreen
+	jumpifmemoryset wcddb, $80, @doneFlashingScreen
 	jump2byte @flashScreen
 
 @doneFlashingScreen:
-	setcoords $58 $60
+	setcoords $58, $60
 	setanimation $0c
 	asm15 fadeinFromWhiteWithDelay, $04
 	checkpalettefadedone
@@ -2430,9 +2480,14 @@ ralphSubid0cScript:
 	jump2byte @npcLoop
 
 @alreadySawCutscene:
-	setcoords $58 $60
+	setcoords $58, $60
 	setanimation $0c
 	jump2byte @npcLoop
+
+
+; ==============================================================================
+; INTERACID_MONKEY
+; ==============================================================================
 
 ;;
 ; @addr{5800}
@@ -2471,6 +2526,11 @@ monkey_setAnimationFromVar3a:
 	ld a,(de)		; $5828
 	jp interactionSetAnimation		; $5829
 
+
+; ==============================================================================
+; INTERACID_VILLAGER
+; ==============================================================================
+
 ;;
 ; @addr{582c}
 villager_setLinkYToVar39:
@@ -2508,6 +2568,11 @@ villager_createBall:
 	ld bc,$4a3c		; $584e
 	jp interactionHSetPosition		; $5851
 
+
+; ==============================================================================
+; INTERACID_BOY
+; ==============================================================================
+
 ;;
 ; @param	a	Duration
 ; @addr{5854}
@@ -2518,10 +2583,12 @@ createExclamationMark:
 ;;
 ; @addr{585a}
 oscillateXRandomly:
-	jpab interactionBank1.interactionOscillateXRandomly		; $585a
+	jpab interactionBank08.interactionOscillateXRandomly		; $585a
 
 ;;
 ; Forces the next animation frame to be loaded; does something with var38 and $cfd3?
+;
+; @param	a	?
 ; @addr{5862}
 loadNextAnimationFrameAndMore:
 	ld h,d			; $5862
@@ -2529,7 +2596,7 @@ loadNextAnimationFrameAndMore:
 	ld (hl),$01		; $5865
 	ld l,Interaction.var38		; $5867
 	dec (hl)		; $5869
-	ld ($cfd3),a		; $586a
+	ld (wTmpcfc0.genericCutscene.cfd3),a		; $586a
 	jp interactionAnimate		; $586d
 
 ;;
@@ -2581,7 +2648,7 @@ boy_runFunnyJokeCutscene:
 	ld hl,@animations		; $589c
 	rst_addDoubleIndex			; $589f
 	ldi a,(hl)		; $58a0
-	ld ($cc50),a ; Set Link animation
+	ld (wcc50),a ; Set Link animation
 	ld a,(hl)		; $58a4
 	ld e,Interaction.var3f		; $58a5
 	ld (de),a		; $58a7
@@ -2656,7 +2723,7 @@ boySubid07Script:
 
 @funnyJokeCutsceneLoop:
 	asm15 boy_runFunnyJokeCutscene
-	jumpifmemoryset $cddb, $80, @doneFunnyJokeCutscene
+	jumpifmemoryset wcddb, $80, @doneFunnyJokeCutscene
 	jump2byte @funnyJokeCutsceneLoop
 
 @doneFunnyJokeCutscene:
@@ -2664,7 +2731,7 @@ boySubid07Script:
 	wait 40
 
 	playsound SND_SWORD_OBTAINED
-	writememory $cc50, LINK_ANIM_MODE_GETITEM2HAND
+	writememory wcc50, LINK_ANIM_MODE_GETITEM2HAND
 	wait 120
 
 	asm15 setLinkToState08AndSetDirection, DIR_UP
@@ -2685,6 +2752,11 @@ boySubid07Script:
 	enableinput
 	jump2byte @npcLoop
 
+
+; ==============================================================================
+; INTERACID_VERAN_GHOST
+; ==============================================================================
+
 ;;
 ; @addr{593b}
 _ghostVeranApplySpeedUntilVar38Zero:
@@ -2699,7 +2771,7 @@ _ghostVeranApplySpeedUntilVar38Zero:
 ; Cutscene at start of game where Veran flies around the screen
 ghostVeranSubid0Script_part1:
 	wait 60
-	writememory $cfd0, $11
+	writememory wTmpcfc0.genericCutscene.cfd0, $11
 	wait 120
 	setspeed SPEED_200
 
@@ -2770,7 +2842,7 @@ ghostVeranSubid0Script_part1:
 
 @movement6:
 	wait 30
-	writememory $cfd1 $01
+	writememory wTmpcfc0.genericCutscene.cfd1, $01
 	wait 30
 	setspeed SPEED_080
 
@@ -2781,7 +2853,7 @@ ghostVeranSubid0Script_part1:
 	showtext TX_5602
 	wait 30
 
-	writememory $cfd0 $12
+	writememory wTmpcfc0.genericCutscene.cfd0, $12
 	wait 120
 
 	; Back up
@@ -2791,18 +2863,23 @@ ghostVeranSubid0Script_part1:
 	wait 60
 
 	; Begin moving toward Nayru
-	writeobjectbyte $4d $78
+	writeobjectbyte Interaction.xh, $78
 	playsound SND_SWORDSPIN
 	setspeed SPEED_300
 	setangle $00
-	writememory $cfd0 $13
+	writememory wTmpcfc0.genericCutscene.cfd0, $13
 	applyspeed $22
 
 	; Collision with Nayru
 	playsound SND_KILLENEMY
-	writememory $cfd0 $14
+	writememory wTmpcfc0.genericCutscene.cfd0, $14
 	wait 60
 	scriptend
+
+
+; ==============================================================================
+; INTERACID_SOLDIER
+; ==============================================================================
 
 ;;
 ; @addr{59f3}
@@ -2822,8 +2899,8 @@ soldierSetSimulatedInputToEscortLink:
 	ld c,a			; $5a03
 	push de			; $5a04
 
-	ld hl,interactionBank2.linkEnterPalaceSimulatedInput		; $5a05
-	ld a,:interactionBank2.linkEnterPalaceSimulatedInput		; $5a08
+	ld hl,interactionBank09.linkEnterPalaceSimulatedInput		; $5a05
+	ld a,:interactionBank09.linkEnterPalaceSimulatedInput		; $5a08
 	call setSimulatedInputAddress		; $5a0a
 
 	pop de			; $5a0d
@@ -2842,8 +2919,8 @@ soldierSetSimulatedInputToEscortLink:
 
 @exitPalace:
 	push de			; $5a1d
-	ld hl,interactionBank2.linkExitPalaceSimulatedInput		; $5a1e
-	ld a,:interactionBank2.linkExitPalaceSimulatedInput		; $5a21
+	ld hl,interactionBank09.linkExitPalaceSimulatedInput		; $5a1e
+	ld a,:interactionBank09.linkExitPalaceSimulatedInput		; $5a21
 	call setSimulatedInputAddress		; $5a23
 	pop de			; $5a26
 	ret			; $5a27
@@ -2860,20 +2937,23 @@ soldierGiveMysterySeeds:
 soldierUpdateMinimap:
 	jpab bank1.checkUpdateDungeonMinimap		; $5a2f
 
+;;
+; @addr{5a37}
+soldierGetRandomVar32Val:
 	call getRandomNumber		; $5a37
 	and $03			; $5a3a
-	ld hl,$5a49		; $5a3c
+	ld hl,@data		; $5a3c
 	rst_addAToHl			; $5a3f
 	ld a,(hl)		; $5a40
-	ld e,$72		; $5a41
+	ld e,Interaction.var32		; $5a41
 	ld (de),a		; $5a43
 	ld a,$59		; $5a44
 	inc e			; $5a46
 	ld (de),a		; $5a47
 	ret			; $5a48
-	dec c			; $5a49
-	ld c,$0f		; $5a4a
-	dec c			; $5a4c
+
+@data:
+	.db $0d $0e $0f $0d
 
 ;;
 ; @addr{5a4d}
@@ -2935,7 +3015,7 @@ soldierSubid0aScript:
 	checkmemoryeq w1Link.yh, $2a
 	asm15 objectSetVisible82
 	asm15 dropLinkHeldItem
-	writememory $cc8a $01
+	writememory wDisabledObjects, $01
 	disablemenu
 	wait 30
 	setspeed SPEED_0c0
@@ -2952,6 +3032,11 @@ soldierSubid0aScript:
 	wait 30
 	orroomflag $40
 	scriptend
+
+
+; ==============================================================================
+; INTERACID_TOKAY
+; ==============================================================================
 
 ;;
 ; @addr{5acc}
@@ -2982,12 +3067,12 @@ tokayGame_determinePrizeAndCheckRupees:
 	jr nz,++			; $5ae7
 	inc a			; $5ae9
 ++
-	ld ($cfdd),a		; $5aea
+	ld (wTmpcfc0.wildTokay.cfdd),a		; $5aea
 
 ;;
 ; @addr{5aed}
 tokayGame_checkRupees:
-	ld a,($cfdd)		; $5aed
+	ld a,(wTmpcfc0.wildTokay.cfdd)		; $5aed
 	ld bc,@gfx		; $5af0
 	call addAToBc		; $5af3
 	ld a,(bc)		; $5af6
@@ -3097,7 +3182,7 @@ tokayGiveItemToLink:
 ;;
 ; @addr{5b7e}
 tokayGame_givePrizeToLink:
-	ld a,($cfdd)		; $5b7e
+	ld a,(wTmpcfc0.wildTokay.cfdd)		; $5b7e
 	cp $05			; $5b81
 	jr z,@randomRing	; $5b83
 
@@ -3346,6 +3431,8 @@ tokayCookScript:
 	jump2byte @npcLoop
 
 
+; ==============================================================================
+
 ;;
 ; This seems mostly identical to the "turntofacelink" script command, except it uses
 ; Link's actual position instead of the "hEnemyTargetY/X" variables.
@@ -3354,6 +3441,11 @@ turnToFaceLink:
 	call objectGetAngleTowardLink		; $5ca8
 	call convertAngleToDirection		; $5cab
 	jp interactionSetAnimation		; $5cae
+
+
+; ==============================================================================
+; INTERACID_AMBI
+; ==============================================================================
 
 ambiFlickerVisibility:
 	ld b,$01		; $5cb1
@@ -3509,7 +3601,7 @@ oldManScript_givesShieldUpgrade:
 	jump2byte @warpLinkOut
 
 @promptForSecret:
-	generateoraskforsecret $04
+	askforsecret LIBRARY_SECRET
 	wait 30
 	jumpifmemoryeq wTextInputResult, $00, @validSecret
 
@@ -3527,12 +3619,12 @@ oldManScript_givesShieldUpgrade:
 	wait 30
 
 	setglobalflag GLOBALFLAG_DONE_LIBRARY_SECRET
-	generateoraskforsecret $14
+	generatesecret LIBRARY_RETURN_SECRET
 	showtext TX_3313
 	jump2byte @warpLinkOut
 
 @alreadyToldSecret:
-	generateoraskforsecret $14
+	generatesecret LIBRARY_RETURN_SECRET
 	showtext TX_3314
 
 @warpLinkOut:
@@ -3604,6 +3696,7 @@ oldManScript_givesFairyPowder:
 	showtext TX_330d
 	checktext
 	scriptend
+
 
 ; ==============================================================================
 ; INTERACID_MAMAMU_YAN
@@ -3688,7 +3781,7 @@ mamamuYanScript:
 	jump2byte @enableInputAndLoop
 
 @promptForSecret:
-	generateoraskforsecret $06
+	askforsecret MAMAMU_SECRET
 	wait 30
 	jumpifmemoryeq wTextInputResult, $00, @validSecret
 
@@ -3747,6 +3840,7 @@ mamamuYanScript:
 
 @genericNpc:
 	rungenericnpclowindex <TX_0b44
+
 
 ; ==============================================================================
 ; INTERACID_MAMAMU_DOG
@@ -3896,12 +3990,12 @@ pickaxeWorker_setAnimationFromVar03:
 pickaxeWorker_chooseRandomBlackTowerText:
 	call getRandomNumber		; $5f35
 	and $07			; $5f38
-	ld hl,$5f47		; $5f3a
+	ld hl,@blackTowerText		; $5f3a
 	rst_addAToHl			; $5f3d
 	ld a,(hl)		; $5f3e
 	ld e,Interaction.textID		; $5f3f
 	ld (de),a		; $5f41
-	ld a,$1b		; $5f42
+	ld a,>TX_1b00		; $5f42
 	inc e			; $5f44
 	ld (de),a		; $5f45
 	ret			; $5f46
@@ -3932,8 +4026,8 @@ pickaxeWorkerSubid01Script_part2:
 	writeobjectbyte Interaction.var3f, $01
 	wait 20
 
-	writememory   $cfc0, $02
-	checkmemoryeq $cfc0, $04
+	writememory   wTmpcfc0.genericCutscene.state, $02
+	checkmemoryeq wTmpcfc0.genericCutscene.state, $04
 
 	writeobjectbyte Interaction.var3f, $00
 	setangle $10
@@ -3985,10 +4079,10 @@ hardhatWorker_moveLinkAway:
 hardhatWorker_storeLinkVarsSomewhere:
 	ld de,w1Link.yh		; $5fa9
 	call getShortPositionFromDE		; $5fac
-	ld ($cfd3),a		; $5faf
+	ld (wTmpcfc0.genericCutscene.cfd3),a		; $5faf
 	ld e,<w1Link.direction		; $5fb2
 	ld a,(de)		; $5fb4
-	ld ($cfd4),a		; $5fb5
+	ld (wTmpcfc0.genericCutscene.cfd4),a		; $5fb5
 	ret			; $5fb8
 
 ;;
@@ -4091,7 +4185,7 @@ hardhatWorkerSubid02Script:
 
 	orroomflag $40
 	asm15 hardhatWorker_storeLinkVarsSomewhere
-	writememory $cbb8, $00
+	writememory wGenericCutscene.cbb8, $00
 	writememory wCutsceneTrigger, CUTSCENE_BLACK_TOWER_EXPLANATION
 	scriptend
 
@@ -4112,7 +4206,7 @@ hardhatWorkerSubid02Script:
 	wait 30
 
 	orroomflag $80
-	writememory $cbc3, $00
+	writememory wUseSimulatedInput, $00
 	enableinput
 
 @alreadySawCutscene:
@@ -4136,87 +4230,87 @@ hardhatWorkerSubid03Script:
 @val00:
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $02
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $40
-	callscript scriptFunc_patrol
+	callscript hardhatWorkerFunc_patrol
 
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $01
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $60
-	callscript scriptFunc_patrol
+	callscript hardhatWorkerFunc_patrol
 
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $03
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $60
-	callscript scriptFunc_patrol
+	callscript hardhatWorkerFunc_patrol
 
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $00
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $40
-	callscript scriptFunc_patrol
+	callscript hardhatWorkerFunc_patrol
 
 	jump2byte @val00
 
 @val01:
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $02
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $40
-	callscript scriptFunc_patrol
+	callscript hardhatWorkerFunc_patrol
 
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $01
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $80
-	callscript scriptFunc_patrol
+	callscript hardhatWorkerFunc_patrol
 
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $00
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $20
-	callscript scriptFunc_patrol
+	callscript hardhatWorkerFunc_patrol
 
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $02
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $20
-	callscript scriptFunc_patrol
+	callscript hardhatWorkerFunc_patrol
 
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $03
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $80
-	callscript scriptFunc_patrol
+	callscript hardhatWorkerFunc_patrol
 
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $00
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $40
-	callscript scriptFunc_patrol
+	callscript hardhatWorkerFunc_patrol
 
 	jump2byte @val01
 
 @val02:
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $01
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $a0
-	callscript scriptFunc_patrol
+	callscript hardhatWorkerFunc_patrol
 
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $03
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $a0
-	callscript scriptFunc_patrol
+	callscript hardhatWorkerFunc_patrol
 
 	jump2byte @val02
 
 @val03:
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $02
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $40
-	callscript scriptFunc_patrol
+	callscript hardhatWorkerFunc_patrol
 
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $01
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $a0
-	callscript scriptFunc_patrol
+	callscript hardhatWorkerFunc_patrol
 
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $03
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $a0
-	callscript scriptFunc_patrol
+	callscript hardhatWorkerFunc_patrol
 
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $00
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $40
-	callscript scriptFunc_patrol
+	callscript hardhatWorkerFunc_patrol
 
 	jump2byte @val03
 
 @val04:
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $01
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $60
-	callscript scriptFunc_patrol
+	callscript hardhatWorkerFunc_patrol
 
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $03
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $60
-	callscript scriptFunc_patrol
+	callscript hardhatWorkerFunc_patrol
 
 	jump2byte @val04
 
@@ -4264,7 +4358,7 @@ poeScript:
 	writeobjectbyte Interaction.var3e, 30
 @disappearLoop:
 	asm15 poe_decCounterAndFlickerVisibility
-	jumpifmemoryset $cddb, $80, @end
+	jumpifmemoryset wcddb, $80, @end
 	jump2byte @disappearLoop
 @end:
 	enableinput
@@ -4344,7 +4438,8 @@ oldZoraScript:
 ; INTERACID_TOILET_HAND
 ; ==============================================================================
 
-
+;;
+; @addr{61b9}
 toiletHand_checkLinkIsClose:
 	; Get Link's position in b?
 	ld hl,w1Link.yh		; $61b9
@@ -4412,7 +4507,7 @@ _toiletHand_setAnimation:
 toiletHand_checkVisibility:
 	ld e,Interaction.visible		; $61f4
 	ld a,(de)		; $61f6
-	ld ($cddb),a		; $61f7
+	ld (wcddb),a		; $61f7
 	ret			; $61fa
 
 
@@ -4509,7 +4604,7 @@ comedian_checkGameProgress:
 checkEssenceObtained:
 	call checkEssenceNotObtained		; $6269
 	cpl			; $626c
-	ld ($cddb),a		; $626d
+	ld (wcddb),a		; $626d
 	ret			; $6270
 
 ;;
@@ -4653,10 +4748,10 @@ goronDance_restartGame:
 	ld hl,w1Link.direction		; $6311
 	ld (hl),DIR_DOWN		; $6314
 	ld b,$0a		; $6316
-	jpab interactionBank1.shootingGallery_initializeGameRounds		; $6318
+	jpab interactionBank08.shootingGallery_initializeGameRounds		; $6318
 
 ;;
-; @param[out]	zflag	Set if in present (in $cddb)
+; @param[out]	zflag	Set if in present (in wcddb)
 ; @addr{6320}
 goron_checkInPresent:
 	ld a,(wAreaFlags)		; $6320
@@ -4665,7 +4760,7 @@ goron_checkInPresent:
 
 ;;
 ; Unused?
-; @param[out]	zflag	Set if in past (in $cddb)
+; @param[out]	zflag	Set if in past (in wcddb)
 ; @addr{6328}
 goron_checkInPast:
 	ld a,(wAreaFlags)		; $6328
@@ -4717,7 +4812,7 @@ goron_putLinkInState08:
 ;;
 ; Updates wTextNumberSubstitution with number of completed rounds.
 ;
-; @param[out]	zflag	z if didn't fail any rounds (in $cddb)
+; @param[out]	zflag	z if didn't fail any rounds (in wcddb)
 ; @addr{635b}
 goronDance_checkNumFailedRounds:
 	ld a,(wTmpcfc0.goronDance.numFailedRounds)		; $635b
@@ -5035,7 +5130,7 @@ goron_determineTextForGenericNpc:
 ;;
 ; Goron naps if Link is far away, gets up when he approaches.
 ;
-; @param[out]	cflag	nc if Link is within 12 pixels (in $cddb)
+; @param[out]	cflag	nc if Link is within 12 pixels (in wcddb)
 ; @addr{64f6}
 goron_checkShouldBeNapping:
 	ld bc,$1818		; $64f6
@@ -5125,7 +5220,7 @@ goron_setSpeedToMoveDown:
 	jp goron_setAnimation		; $6567
 
 ;;
-; @param[out]	zflag	z if Link's Y is same as this (in $cddb)
+; @param[out]	zflag	z if Link's Y is same as this (in wcddb)
 ; @addr{656a}
 goron_cpLinkY:
 	xor a			; $656a
@@ -5144,7 +5239,7 @@ goron_cpYTo60:
 	jp _writeFlagsTocddb		; $6577
 
 ;;
-; @param[out]	zflag	z if Goron's X is Link's X minus 14 (in $cddb)
+; @param[out]	zflag	z if Goron's X is Link's X minus 14 (in wcddb)
 ; @addr{657a}
 goron_checkReachedLinkHorizontally:
 	ld a,$f2		; $657a
@@ -5163,7 +5258,7 @@ goron_cpXTo48:
 	jp _writeFlagsTocddb		; $6588
 
 ;;
-; @param[out]	cflag	c if Link approached with bomb flower (in $cddb}
+; @param[out]	cflag	c if Link approached with bomb flower (in wcddb}
 ; @addr{658b}
 goron_checkLinkApproachedWithBombFlower:
 	ld a,TREASURE_BOMB_FLOWER		; $658b
@@ -5320,7 +5415,7 @@ goron_createRockDebrisToRight:
 
 ;;
 ; Tries to take 20 ember seeds and bombs from Link.
-; @param[out]	zflag	z if Link had the items (in $cddb)
+; @param[out]	zflag	z if Link had the items (in wcddb)
 ; @addr{6652}
 goron_tryTakeEmberSeedsAndBombs:
 	ld a,TREASURE_SEED_SATCHEL		; $6652
@@ -5358,7 +5453,7 @@ goron_tryTakeEmberSeedsAndBombs:
 
 ;;
 ; @param[out]	zflag	z if enough time passed for goron to finish breaking the cave
-;			(in $cddb). (Uses tree refill system.)
+;			(in wcddb). (Uses tree refill system.)
 ; @addr{6689}
 goron_checkEnoughTimePassed:
 	ld a,(wSeedTreeRefilledBitset)		; $6689
@@ -5603,7 +5698,7 @@ _goron_targetCarts_clearPlayingFlag:
 	ret			; $67bc
 
 ;;
-; @param[out]	zflag	z if Link has landed on the ground (in $cddb)
+; @param[out]	zflag	z if Link has landed on the ground (in wcddb)
 ; @addr{67bd}
 goron_checkLinkNotInAir:
 	ld a,(wLinkInAir)		; $67bd
@@ -5630,7 +5725,7 @@ goron_targetCarts_setupNumTargetsHitText:
 	ret			; $67d9
 
 ;;
-; @param[out]	zflag	z if hit exactly 12 targets (in $cddb)
+; @param[out]	zflag	z if hit exactly 12 targets (in wcddb)
 ; @addr{67da}
 goron_targetCarts_checkHitAllTargets:
 	ld a,(wTmpcfc0.targetCarts.numTargetsHit)		; $67da
@@ -5638,7 +5733,7 @@ goron_targetCarts_checkHitAllTargets:
 	jp _writeFlagsTocddb		; $67df
 
 ;;
-; @param[out]	cflag	c if hit less than 9 targets (in $cddb)
+; @param[out]	cflag	c if hit less than 9 targets (in wcddb)
 ; @addr{67e2}
 goron_targetCarts_checkHit9OrMoreTargets:
 	ld a,(wTmpcfc0.targetCarts.numTargetsHit)		; $67e2
@@ -5893,7 +5988,7 @@ goron_bigBang_checkLinkHitByBomb:
 	or a			; $6901
 	call _writeFlagsTocddb		; $6902
 	cpl			; $6905
-	ld ($cddb),a		; $6906
+	ld (wcddb),a		; $6906
 	ret			; $6909
 
 ;;
@@ -6146,7 +6241,7 @@ goron_subid08_pressedAScript:
 
 	orroomflag $80
 	asm15 goron_checkInPresent
-	jumpifmemoryset $cddb, CPU_ZFLAG, @checkSirloin_1
+	jumpifmemoryset wcddb, CPU_ZFLAG, @checkSirloin_1
 
 ; Check goron vase
 	jumpifitemobtained TREASURE_GORON_VASE, @haveVaseOrSirloin
@@ -6165,7 +6260,7 @@ goron_subid08_pressedAScript:
 	wait 30
 
 	asm15 goron_checkInPresent
-	jumpifmemoryset $cddb, CPU_ZFLAG, @checkSirloin_2
+	jumpifmemoryset wcddb, CPU_ZFLAG, @checkSirloin_2
 
 ; Check goron vase
 	jumpifitemobtained TREASURE_GORON_VASE, @haveVaseOrSirloin
@@ -6202,10 +6297,10 @@ goron_subid08_pressedAScript:
 	wait 30
 
 	asm15 goron_checkInPresent
-	jumpifmemoryset $cddb, CPU_ZFLAG, @giveVase
+	jumpifmemoryset wcddb, CPU_ZFLAG, @giveVase
 
 ; Get goronade, lose goron vase
-	asm15 loseTreasure TREASURE_GORON_VASE
+	asm15 loseTreasure, TREASURE_GORON_VASE
 	giveitem TREASURE_GORONADE, $00
 	jump2byte ++
 
@@ -6232,7 +6327,7 @@ goron_subid08_pressedAScript:
 rafton_subid01Script:
 	initcollisions
 	asm15 checkEssenceObtained, $02
-	jumpifmemoryset $cddb, CPU_ZFLAG, @afterD3NpcLoop
+	jumpifmemoryset wcddb, CPU_ZFLAG, @afterD3NpcLoop
 	settextid TX_2708
 
 @beforeD3NpcLoop:
@@ -6312,7 +6407,7 @@ _interaction6b_layoutSwapMakuTreeRooms:
 ;;
 ; Used for checking whin the maku sprout should talk to Link before leaving the screen.
 ;
-; @param[out]	cflag	nc if Link is near the bottom of the screen (in $cddb)
+; @param[out]	cflag	nc if Link is near the bottom of the screen (in wcddb)
 ; @addr{6b95}
 _interaction6b_isLinkAtScreenEdge:
 	ld hl,w1Link.yh		; $6b95
@@ -6402,7 +6497,7 @@ interaction6b_subid04Script:
 	wait 60
 	spawninteraction INTERACID_PUFF, $00, $58, $28
 	wait 4
-	settileat $52 $f9
+	settileat $52, $f9
 
 	writememory   wTmpcfc0.genericCutscene.state, $01
 	checkmemoryeq wTmpcfc0.genericCutscene.state, $02
@@ -6494,11 +6589,12 @@ interaction6b_subid04Script:
 @waitForLinkToApproachScreenEdge:
 	wait 1
 	asm15 _interaction6b_isLinkAtScreenEdge
-	jumpifmemoryset $cddb, CPU_ZFLAG, @waitForLinkToApproachScreenEdge
+	jumpifmemoryset wcddb, CPU_ZFLAG, @waitForLinkToApproachScreenEdge
 
 	showtext TX_05d4
 	writememory wDisableScreenTransitions, $00
 	scriptend
+
 
 ; ==============================================================================
 ; INTERACID_FAIRY_HIDING_MINIGAME
@@ -6592,7 +6688,7 @@ fairyHidingMinigame_subid01Script:
 
 ; Checks for Link leaving the hide-and-seek area
 fairyHidingMinigame_subid02Script:
-	setcollisionradii $20 $01
+	setcollisionradii $20, $01
 	makeabuttonsensitive
 
 @checkLinkLeaving:
@@ -6634,6 +6730,7 @@ possessedNayru_makeExclamationMark:
 	ld a,$18		; $6d3d
 	ld bc,$f408		; $6d3f
 	jp objectCreateExclamationMark		; $6d42
+
 
 ; ==============================================================================
 ; INTERACID_NAYRU_SAVED_CUTSCENE
@@ -6880,7 +6977,7 @@ script15_6e71:
 companionScript_subid03Script_body:
 	checkmemoryeq w1Companion.var3d, $01 ; Wait for Link to talk to Ricky
 	disableinput
-	jumpifmemoryset wRickyState $01, @alreadyExplainedSituation
+	jumpifmemoryset wRickyState, $01, @alreadyExplainedSituation
 
 	ormemory wRickyState, $01
 	jumpifmemoryeq wAnimalCompanion, SPECIALOBJECTID_RICKY, @notFirstMeeting
@@ -7174,7 +7271,7 @@ bombUpgradeFairy_decreaseLinkHealth:
 
 _bombUpgradeFairy_linkCollapsed:
 	ld a,LINK_ANIM_MODE_COLLAPSED		; $6fcc
-	ld ($cc50),a		; $6fce
+	ld (wcc50),a		; $6fce
 	ret			; $6fd1
 
 ;;
@@ -7198,7 +7295,7 @@ bombUpgradeFairy_giveBombUpgrade:
 ; @addr{6fe8}
 bombUpgradeFairy_fadeinFromWhite:
 	ld a,$ff		; $6fe8
-	ld ($cfd0),a		; $6fea
+	ld (wTmpcfc0.genericCutscene.cfd0),a		; $6fea
 	ld a,$04		; $6fed
 	jp fadeinFromWhiteWithDelay		; $6fef
 
@@ -7227,7 +7324,7 @@ bombUpgradeFairyScript_body:
 	jumpiftextoptioneq $01, @askBombType
 	wait 60
 
-	writememory $cfd0, $01
+	writememory wTmpcfc0.genericCutscene.cfd0, $01
 	wait 30
 	showtext TX_0c03
 	asm15 bombUpgradeFairy_spawnBombsAroundLink
@@ -7250,7 +7347,7 @@ bombUpgradeFairyScript_body:
 	jumpiftextoptioneq $01, @askBombType
 	wait 60
 
-	writememory $cfd0, $01
+	writememory wTmpcfc0.genericCutscene.cfd0, $01
 	wait 30
 	showtext TX_0c06
 	asm15 bombUpgradeFairy_lightningStrikesLink
@@ -7264,7 +7361,7 @@ bombUpgradeFairyScript_body:
 	scriptend
 
 @saidRegularBomb:
-	writememory $cfd0, $01
+	writememory wTmpcfc0.genericCutscene.cfd0, $01
 	wait 30
 	showtext TX_0c07
 	wait 30
@@ -7585,7 +7682,7 @@ makuTree_subid01Script_body:
 	playsound SND_MAKUDISAPPEAR
 	wait 150
 
-	writememory $cfc0, $01
+	writememory wTmpcfc0.genericCutscene.state, $01
 	asm15 incMakuTreeState
 	scriptend
 
@@ -7838,7 +7935,7 @@ goronElderScript_subid00_body:
 	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, stubScript
 
 	asm15 checkEssenceObtained, $04
-	jumpifmemoryset $cddb, CPU_ZFLAG, stubScript
+	jumpifmemoryset wcddb, CPU_ZFLAG, stubScript
 
 	initcollisions
 	jumpifroomflagset $40, @npcLoop
@@ -7883,7 +7980,7 @@ goronElderScript_subid01_body:
 	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, stubScript
 
 	asm15 checkEssenceNotObtained, $04
-	jumpifmemoryset $cddb, CPU_ZFLAG, stubScript
+	jumpifmemoryset wcddb, CPU_ZFLAG, stubScript
 
 	initcollisions
 @npcLoop:
@@ -8254,6 +8351,7 @@ moblin_spawnEnemyHere:
 	ret nz			; $7595
 	ld (hl),ENEMYID_MASKED_MOBLIN		; $7596
 	jp objectCopyPosition		; $7598
+
 
 ; ==============================================================================
 ; INTERACID_CARPENTER
@@ -8729,30 +8827,53 @@ vire_activateMusic:
 	ld a,MUS_MINIBOSS		; $77ea
 	jp playSound		; $77ec
 
+
+; ==============================================================================
+; INTERACID_SYMMETRY_NPC
+; ==============================================================================
+;;
+; Puts a value in wTmpcfc0.genericCutscene.cfc1:
+;   - 0: If haven't got tuni nut yet
+;   - 1: If tuni nut isn't repaired yet
+;   - 2: If tuni nut is repaired
+; @addr{77ef}
+symmetryNpc_getTuniNutState:
 	ld a,TREASURE_TUNI_NUT		; $77ef
 	call checkTreasureObtained		; $77f1
 	ld b,$00		; $77f4
-	jr nc,_label_15_221	; $77f6
+	jr nc,++		; $77f6
 	inc b			; $77f8
 	or a			; $77f9
-	jr z,_label_15_221	; $77fa
+	jr z,++			; $77fa
 	inc b			; $77fc
-_label_15_221:
+++
 	ld a,b			; $77fd
-	ld ($cfc1),a		; $77fe
+	ld (wTmpcfc0.genericCutscene.cfc1),a		; $77fe
 	ret			; $7801
+
+;;
+; Sets room flag bit 0 if we talked to the right sister, instead of the left one?
+; @addr{7802}
+symmetryNpc_setRoomFlagIfTalkedToRightSister:
 	call getThisRoomFlags		; $7802
-	ld e,$42		; $7805
+	ld e,Interaction.subid		; $7805
 	ld a,(de)		; $7807
 	sub $08			; $7808
 	or (hl)			; $780a
 	ld (hl),a		; $780b
 	ret			; $780c
-	call $77ef		; $780d
-	ld a,($cfc1)		; $7810
+
+;;
+; @addr{780d}
+symmetryNpc_getTuniNutStateForSister:
+	call symmetryNpc_getTuniNutState		; $780d
+	ld a,(wTmpcfc0.genericCutscene.cfc1)		; $7810
 	or a			; $7813
 	ret nz			; $7814
-	ld e,$42		; $7815
+
+	; Tuni nut has been obtained
+
+	ld e,Interaction.subid		; $7815
 	ld a,(de)		; $7817
 	sub $08			; $7818
 	ld b,a			; $781a
@@ -8760,170 +8881,219 @@ _label_15_221:
 	and $0f			; $781e
 	cp b			; $7820
 	ld c,$00		; $7821
-	jr z,_label_15_222	; $7823
+	jr z,+			; $7823
 	ld c,$03		; $7825
-_label_15_222:
++
 	ld a,c			; $7827
-	ld ($cfc1),a		; $7828
+	ld (wTmpcfc0.genericCutscene.cfc1),a		; $7828
 	ret			; $782b
+
+;;
+; Sets wTextNumberSubstitution with the capacity for the next level ring box.
+; @addr{782c}
+symmetryNpc_getUpgradeCapacityForText:
 	ld a,TREASURE_RING_BOX		; $782c
 	call checkTreasureObtained		; $782e
-	jr c,_label_15_223	; $7831
+	jr c,@haveRingBox	; $7831
 	ld c,$03		; $7833
-	jr _label_15_224		; $7835
-_label_15_223:
+	jr ++			; $7835
+
+@haveRingBox:
 	ld a,(wRingBoxLevel)		; $7837
 	dec a			; $783a
 	ld c,$03		; $783b
-	jr z,_label_15_224	; $783d
+	jr z,++			; $783d
 	ld c,$05		; $783f
-_label_15_224:
+++
 	ld hl,wTextNumberSubstitution		; $7841
 	ld (hl),c		; $7844
 	inc hl			; $7845
 	ld (hl),$00		; $7846
 	ret			; $7848
 
-; @addr{7849}
-script15_7849:
-	jumpifglobalflagset $14 script15_7890
-	incstate
-	jumpifglobalflagset $29 script7daf ; TODO
-script15_7853:
+; Sisters in the tuni nut building
+symmetryNpcSubid8And9Script:
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, @postgame
+	incstate ; [state] = 2
+	jumpifglobalflagset GLOBALFLAG_TUNI_NUT_PLACED, symmetryNpcSubid8And9Script_afterTuniNutRestored
+
+@loop:
 	initcollisions
 	checkabutton
 	disableinput
-	jumpifglobalflagset $2e script15_7879
-	showtextlowindex $10
-	jumpiftextoptioneq $00 script15_7865
-	showtextlowindex $13
+	jumpifglobalflagset GLOBALFLAG_TALKED_TO_SYMMETRY_SISTER, @script15_7879
+
+	showtextlowindex <TX_2d10
+	jumpiftextoptioneq $00, @saidYes
+
+	; Said no
+	showtextlowindex <TX_2d13
 	enableinput
-	jump2byte script15_7853
-script15_7865:
-	asm15 $7802
-	setglobalflag $2e
-	showtextlowindex $11
-script15_786c:
-	jumpiftextoptioneq $00 script15_7874
-	showtextlowindex $14
-	jump2byte script15_786c
-script15_7874:
-	showtextlowindex $12
+	jump2byte @loop
+
+@saidYes:
+	asm15 symmetryNpc_setRoomFlagIfTalkedToRightSister
+	setglobalflag GLOBALFLAG_TALKED_TO_SYMMETRY_SISTER
+	showtextlowindex <TX_2d11
+
+@repeat:
+	jumpiftextoptioneq $00, @almostDoneTalking
+	showtextlowindex <TX_2d14
+	jump2byte @repeat
+
+@almostDoneTalking:
+	showtextlowindex <TX_2d12
 	enableinput
-	jump2byte script15_7888
-script15_7879:
+	jump2byte @sister1
+
+@script15_7879:
 	enableinput
-	asm15 $780d
-	jumptable_memoryaddress $cfc1
-	.dw script15_7888
-	.dw script15_788c
-	.dw script15_788e
-	.dw script15_788a
-script15_7888:
-	rungenericnpclowindex $12
-script15_788a:
-	rungenericnpclowindex $15
-script15_788c:
-	rungenericnpclowindex $16
-script15_788e:
-	rungenericnpclowindex $17
-script15_7890:
+	asm15 symmetryNpc_getTuniNutStateForSister
+	jumptable_memoryaddress wTmpcfc0.genericCutscene.cfc1
+	.dw @sister1
+	.dw @sister1Unused
+	.dw @sister2Unused
+	.dw @sister2
+
+@sister1:
+	rungenericnpclowindex <TX_2d12
+@sister2:
+	rungenericnpclowindex <TX_2d15
+
+; Alternate text, don't think it's used
+@sister1Unused:
+	rungenericnpclowindex <TX_2d16
+@sister2Unused:
+	rungenericnpclowindex <TX_2d17
+
+@postgame:
 	initcollisions
-script15_7891:
+@postgameLoop:
 	checkabutton
 	disableinput
-	jumpifglobalflagset $77 script15_78d8
-	showtextlowindex $24
+	jumpifglobalflagset GLOBALFLAG_DONE_SYMMETRY_SECRET, @alreadyDoneSecret
+	showtextlowindex <TX_2d24
 	wait 30
-	jumpiftextoptioneq $00 script15_78a2
-	showtextlowindex $25
-	jump2byte script15_78dc
-script15_78a2:
-	generateoraskforsecret $09
+	jumpiftextoptioneq $00, @askForSecret
+	showtextlowindex <TX_2d25
+	jump2byte @resume
+
+@askForSecret:
+	askforsecret SYMMETRY_SECRET
 	wait 30
-	jumpifmemoryeq $cc89 $00 script15_78af
-	showtextlowindex $27
-	jump2byte script15_78dc
-script15_78af:
-	setglobalflag $6d
-	showtextlowindex $26
+	jumpifmemoryeq wTextInputResult, $00, @validSecret
+	showtextlowindex <TX_2d27
+	jump2byte @resume
+
+@validSecret:
+	setglobalflag GLOBALFLAG_BEGAN_SYMMETRY_SECRET
+	showtextlowindex <TX_2d26
 	wait 30
-	jumpifitemobtained $2c script15_78bc
-	showtextlowindex $2a
-	jump2byte script15_78c1
-script15_78bc:
-	showtextlowindex $28
+	jumpifitemobtained TREASURE_RING_BOX, @haveRingBox
+
+	; Don't have ring box, show different text
+	showtextlowindex <TX_2d2a
+	jump2byte @determineLevelToGive
+
+@haveRingBox:
+	showtextlowindex <TX_2d28
 	wait 30
-	showtextlowindex $29
-script15_78c1:
+	showtextlowindex <TX_2d29
+
+@determineLevelToGive:
 	wait 30
-	asm15 $782c
-	jumpifmemoryeq $cba8 $05 script15_78d0
-	giveitem $2c01
-	jump2byte script15_78d3
-script15_78d0:
-	giveitem $2c02
-script15_78d3:
+	asm15 symmetryNpc_getUpgradeCapacityForText
+	jumpifmemoryeq wTextNumberSubstitution, $05, @giveLevel3RingBox
+
+	; Level 2 box
+	giveitem TREASURE_RING_BOX_SUBID_01
+	jump2byte ++
+
+@giveLevel3RingBox:
+	giveitem TREASURE_RING_BOX_SUBID_02
+++
 	wait 30
-	orroomflag $20
-	setglobalflag $77
-script15_78d8:
-	generateoraskforsecret $19
-	showtextlowindex $2b
-script15_78dc:
+	orroomflag ROOMFLAG_ITEM
+	setglobalflag GLOBALFLAG_DONE_SYMMETRY_SECRET
+
+@alreadyDoneSecret:
+	generatesecret SYMMETRY_RETURN_SECRET
+	showtextlowindex <TX_2d2b
+
+@resume:
 	enableinput
-	jump2byte script15_7891
-script15_78df:
-	jumpifglobalflagset $2e script15_78e5
-	rungenericnpclowindex $0b
-script15_78e5:
-	jumpifglobalflagset $29 script15_792e
-	jumpifroomflagset $40 script15_78f1
-	jumpifglobalflagset $2a script15_78fd
-script15_78f1:
-	orroomflag $40
-	setglobalflag $2a
-	jumpifitemobtained $4c script15_78fb
-	rungenericnpclowindex $00
-script15_78fb:
-	rungenericnpclowindex $01
-script15_78fd:
-	asm15 $77ef
-	jumptable_memoryaddress $cfc1
-	.dw script15_790d
-	.dw script15_7909
-	.dw script15_790b
-script15_7909:
-	rungenericnpclowindex $08
-script15_790b:
-	rungenericnpclowindex $09
-script15_790d:
+	jump2byte @postgameLoop
+
+
+; Brothers with the tuni nut
+symmetryNpcSubid6And7Script:
+	jumpifglobalflagset GLOBALFLAG_TALKED_TO_SYMMETRY_SISTER, @talkedToSisters
+	rungenericnpclowindex <TX_2d0b
+
+@talkedToSisters:
+	jumpifglobalflagset GLOBALFLAG_TUNI_NUT_PLACED, @tuniNutPlaced
+	jumpifroomflagset ROOMFLAG_40, @brotherWithoutTuniNut
+	jumpifglobalflagset GLOBALFLAG_TALKED_TO_SYMMETRY_BROTHER, @brotherWithTuniNut
+
+@brotherWithoutTuniNut:
+	; Tells you to see his brother to get the tuni nut
+	orroomflag ROOMFLAG_40
+	setglobalflag GLOBALFLAG_TALKED_TO_SYMMETRY_BROTHER
+	jumpifitemobtained TREASURE_TUNI_NUT, ++
+	rungenericnpclowindex <TX_2d00
+++
+	rungenericnpclowindex <TX_2d01
+
+@brotherWithTuniNut:
+	asm15 symmetryNpc_getTuniNutState
+	jumptable_memoryaddress wTmpcfc0.genericCutscene.cfc1
+	.dw @dontHaveNut
+	.dw @nutNotRepaired
+	.dw @nutRepaired
+
+@nutNotRepaired:
+	rungenericnpclowindex <TX_2d08
+
+@nutRepaired:
+	rungenericnpclowindex <TX_2d09
+
+@dontHaveNut:
 	initcollisions
 	checkabutton
 	setdisabledobjectsto91
-	showtextlowindex $02
+	showtextlowindex <TX_2d02
 	disableinput
 	wait 30
-	showtextlowindex $04
-	jump2byte script15_791c
-script15_7918:
-	checkabutton
-	showtextlowindex $04
-	disableinput
-script15_791c:
-	jumpiftextoptioneq $00 script15_7925
-	showtextlowindex $07
-	enableinput
-	jump2byte script15_7918
-script15_7925:
-	showtextlowindex $05
-	wait 30
-	giveitem $4c00
-	enableinput
-	jump2byte script15_7909
-script15_792e:
-	rungenericnpclowindex $0a
+	showtextlowindex <TX_2d04
+	jump2byte @respondToQuestion
 
+@questionLoop:
+	checkabutton
+	showtextlowindex <TX_2d04
+	disableinput
+
+@respondToQuestion:
+	jumpiftextoptioneq $00, @giveTuniNut
+	showtextlowindex <TX_2d07
+	enableinput
+	jump2byte @questionLoop
+
+@giveTuniNut:
+	showtextlowindex <TX_2d05
+	wait 30
+	giveitem TREASURE_TUNI_NUT_SUBID_00
+	enableinput
+	jump2byte @nutNotRepaired
+
+@tuniNutPlaced:
+	rungenericnpclowindex <TX_2d0a
+
+
+; ==============================================================================
+; INTERACID_PIRATE_CAPTAIN
+; ==============================================================================
+
+pirateCaptain_warpOut:
 	ld hl,@unlinkedWarp		; $7930
 	call checkIsLinkedGame		; $7933
 	jr z,+			; $7936
@@ -8937,31 +9107,39 @@ script15_792e:
 @linkedWarp:
 	m_HardcodedWarpA ROOM_AGES_0c8, $01, $52, $03
 
-; @addr{7948}
-script15_7948:
+
+pirateCaptainScript:
 	initcollisions
-script15_7949:
+@loop:
 	checkabutton
 	disableinput
-	showtextdifferentforlinked TX_3600 TX_3601
-	jumpiftextoptioneq $00 script15_7956
+	showtextdifferentforlinked TX_3600, TX_3601
+	jumpiftextoptioneq $00, @gaveZoraScale
 	enableinput
-	jump2byte script15_7949
-script15_7956:
-	showtextdifferentforlinked TX_3604 TX_3605
+	jump2byte @loop
+
+@gaveZoraScale:
+	showtextdifferentforlinked TX_3604, TX_3605
 	xorcfc0bit 0
 	wait 60
-	showtext $3607
+	showtext TX_3607
 	checkcfc0bit 1
-	asm15 loseTreasure $4e
-	showtext $3606
+	asm15 loseTreasure, TREASURE_ZORA_SCALE
+	showtext TX_3606
 	wait 30
-	giveitem $4f00
+	giveitem TREASURE_TOKAY_EYEBALL_SUBID_00
 	wait 60
-	asm15 $7930
-	setglobalflag $34
+	asm15 pirateCaptain_warpOut
+	setglobalflag GLOBALFLAG_PIRATES_GONE
 	scriptend
 
+
+; ==============================================================================
+; INTERACID_PIRATE
+; ==============================================================================
+;;
+; @addr{7972}
+pirate_openEyeballCave:
 	ld c,$54		; $7972
 	ld a,$a2		; $7974
 	call setTile		; $7976
@@ -8973,107 +9151,147 @@ script15_7956:
 	call setTile		; $7982
 	ld a,SND_DOORCLOSE		; $7985
 	call playSound		; $7987
-	ld bc,$0500		; $798a
+	ldbc INTERACID_PUFF, $00		; $798a
 	jp objectCreateInteraction		; $798d
-	ld bc,$8404		; $7990
+
+
+; ==============================================================================
+; INTERACID_TINGLE
+; ==============================================================================
+;;
+; @addr{7990}
+tingle_createGlowAroundLink:
+	ldbc INTERACID_SPARKLE,$04		; $7990
 	call objectCreateInteraction		; $7993
 	ret nz			; $7996
-	ld l,$46		; $7997
-	ld (hl),$78		; $7999
+	ld l,Interaction.counter1		; $7997
+	ld (hl),120		; $7999
 	ld a,(w1Link.yh)		; $799b
-	ld l,$4b		; $799e
+	ld l,Interaction.yh		; $799e
 	ldi (hl),a		; $79a0
 	inc l			; $79a1
 	ld a,(w1Link.xh)		; $79a2
 	ld (hl),a		; $79a5
 	ret			; $79a6
+
+
+; ==============================================================================
+; INTERACID_TROY
+; ==============================================================================
+;;
+; @addr{79a7}
+troy_chooseRandomAnimalText:
 	call getRandomNumber		; $79a7
 	and $0f			; $79aa
-	add $13			; $79ac
+	add <TX_2c13			; $79ac
 	ld (wTextSubstitutions),a		; $79ae
 	ret			; $79b1
 
-; @addr{79b2}
-script15_79b2:
-	jumpifglobalflagset $14 script15_79b7
+
+; Troy at target carts
+troySubid0Script:
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, @postgame
 	scriptend
-script15_79b7:
+
+@postgame:
 	initcollisions
-script15_79b8:
+@loop:
 	checkabutton
 	disableinput
-	jumpifglobalflagset $70 script15_7a30
-	jumpifmemoryeq $cfd5 $00 script15_79ca
-	jumpifmemoryeq $ccd5 $01 script15_7a16
-script15_79ca:
-	jumpifglobalflagset $66 script15_79f2
-	showtext $2c06
+	jumpifglobalflagset GLOBALFLAG_DONE_TROY_SECRET, @alreadyDoneSecret
+	jumpifmemoryeq wTmpcfc0.targetCarts.beganGameWithTroy, $00, @haventStartedGameYet
+	jumpifmemoryeq wShootingGalleryccd5, $01, @returnedToScreenAfterGame
+
+@haventStartedGameYet:
+	jumpifglobalflagset GLOBALFLAG_BEGAN_TROY_SECRET, @alreadyBeganSecret
+
+	; Asks if you have a secret
+	showtext TX_2c06
 	wait 30
-	jumpiftextoptioneq $00 script15_79dc
-	showtext $2c07
+	jumpiftextoptioneq $00, @askForSecret
+	showtext TX_2c07
 	enableinput
-	jump2byte script15_79b8
-script15_79dc:
-	generateoraskforsecret $02
+	jump2byte @loop
+
+@askForSecret:
+	askforsecret TROY_SECRET
 	wait 30
-	jumpifmemoryeq $cc89 $00 script15_79eb
-	showtext $2c09
+	jumpifmemoryeq wTextInputResult, $00, @validSecret
+
+	; Invalid secret
+	showtext TX_2c09
 	enableinput
-	jump2byte script15_79b8
-script15_79eb:
-	setglobalflag $66
-	showtext $2c08
-	jump2byte script15_79f5
-script15_79f2:
-	showtext $2c0e
-script15_79f5:
+	jump2byte @loop
+
+@validSecret:
+	setglobalflag GLOBALFLAG_BEGAN_TROY_SECRET
+	showtext TX_2c08
+	jump2byte @askToBeginGame
+
+@alreadyBeganSecret:
+	showtext TX_2c0e
+@askToBeginGame:
 	wait 30
-	jumpiftextoptioneq $00 script15_7a00
-	showtext $2c0f
+	jumpiftextoptioneq $00, @beganGame
+	showtext TX_2c0f
 	enableinput
-	jump2byte script15_79b8
-script15_7a00:
-	showtext $2c0a
+	jump2byte @loop
+
+@beganGame:
+	showtext TX_2c0a
 	wait 30
-	jumpiftextoptioneq $01 script15_7a00
-	showtext $2c0b
-	writememory $cfd5 $01
+	jumpiftextoptioneq $01, @beganGame
+	showtext TX_2c0b
+	writememory wTmpcfc0.targetCarts.beganGameWithTroy, $01
 	enableinput
-script15_7a10:
+
+@waitingToCompleteGame:
 	checkabutton
-	showtext $2c10
-	jump2byte script15_7a10
-script15_7a16:
-	writememory $ccd5 $00
+	showtext TX_2c10
+	jump2byte @waitingToCompleteGame
+
+
+@returnedToScreenAfterGame:
+	writememory wShootingGalleryccd5, $00
 	asm15 goron_targetCarts_checkHitAllTargets
-	jumpifmemoryset $cddb $80 script15_7a26
+	jumpifmemoryset wcddb, $80, @giveReward
+
+	; Failed game
 	enableinput
-	jump2byte script15_7a10
-script15_7a26:
-	showtext $2c0c
+	jump2byte @waitingToCompleteGame
+
+@giveReward:
+	showtext TX_2c0c
 	wait 30
-	giveitem $0d02
+	giveitem TREASURE_BOMBCHUS_SUBID_02
 	wait 30
-	setglobalflag $70
-script15_7a30:
-	generateoraskforsecret $12
-	showtext $2c0d
+	setglobalflag GLOBALFLAG_DONE_TROY_SECRET
+
+@alreadyDoneSecret:
+	generatesecret TROY_RETURN_SECRET
+	showtext TX_2c0d
 	enableinput
-	jump2byte script15_79b8
-script15_7a38:
-	jumpifglobalflagset $14 stubScript ; TODO
+	jump2byte @loop
+
+
+; Troy in his house
+troySubid1Script:
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, stubScript
 	initcollisions
-script15_7a3d:
+@loop:
 	checkabutton
-	jumpifroomflagset $40 script15_7a4c
-	asm15 $79a7
-	showtext $2c11
+	jumpifroomflagset $40, ++
+	asm15 troy_chooseRandomAnimalText
+	showtext TX_2c11
 	orroomflag $40
-	jump2byte script15_7a3d
-script15_7a4c:
-	asm15 $79a7
-	showtext $2c12
-	jump2byte script15_7a3d
+	jump2byte @loop
+++
+	asm15 troy_chooseRandomAnimalText
+	showtext TX_2c12
+	jump2byte @loop
+
+
+; ==============================================================================
 
 ;;
 ; Check that a secret-related NPC should spawn (correct essence obtained)?
@@ -9135,7 +9353,7 @@ linkedNpc_generateSecret:
 	ld h,d			; $7aa2
 	ld l,$7f		; $7aa3
 	ld b,(hl)		; $7aa5
-	ld a,GLOBALFLAG_50		; $7aa6
+	ld a,GLOBALFLAG_FIRST_AGES_BEGAN_SECRET		; $7aa6
 	add b			; $7aa8
 	call setGlobalFlag		; $7aa9
 	ld a,$20		; $7aac
@@ -9172,72 +9390,107 @@ linkedNpc_calcLowTextIndex:
 	ld (de),a		; $7aca
 	ret			; $7acb
 
-; @addr{7acc}
-script15_7acc:
-	jumpifglobalflagset $14 script15_7ada
-	jumpifglobalflagset $11 script15_7ad7
-	rungenericnpc $3714
-script15_7ad7:
-	rungenericnpc $3715
-script15_7ada:
+
+; ==============================================================================
+; INTERACID_PLEN
+; ==============================================================================
+plenSubid0Script:
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, @finishedGame
+	jumpifglobalflagset GLOBALFLAG_SAVED_NAYRU, @savedNayru
+	rungenericnpc TX_3714
+
+@savedNayru:
+	rungenericnpc TX_3715
+
+@finishedGame:
 	initcollisions
-script15_7adb:
+@loop:
 	checkabutton
 	disableinput
-	jumpifglobalflagset $71 script15_7b0e
-	showtext $3700
-	wait 30
-	jumpiftextoptioneq $00 script15_7aee
-	showtext $3701
-	jump2byte script15_7b11
-script15_7aee:
-	generateoraskforsecret $03
-	wait 30
-	jumpifmemoryeq $cc89 $00 script15_7afc
-	showtext $3703
-	jump2byte script15_7b11
-script15_7afc:
-	setglobalflag $67
-	showtext $3702
-	wait 30
-	asm15 giveRingAToLink $2f
-	setglobalflag $71
-	wait 30
-	showtext $3704
-	jump2byte script15_7b11
-script15_7b0e:
-	showtext $3705
-script15_7b11:
-	enableinput
-	jump2byte script15_7adb
+	jumpifglobalflagset GLOBALFLAG_DONE_PLEN_SECRET, @alreadyCompletedSecret
 
+	; He can be given a secret
+	showtext TX_3700
+	wait 30
+	jumpiftextoptioneq $00, @giveSecret
+	showtext TX_3701
+	jump2byte @resume
+
+@giveSecret:
+	askforsecret PLEN_SECRET
+	wait 30
+	jumpifmemoryeq wTextInputResult, $00, @validSecret
+	; Bad secret
+	showtext TX_3703
+	jump2byte @resume
+
+@validSecret:
+	setglobalflag GLOBALFLAG_BEGAN_PLEN_SECRET
+	showtext TX_3702
+	wait 30
+	asm15 giveRingAToLink, SPIN_RING
+	setglobalflag GLOBALFLAG_DONE_PLEN_SECRET
+	wait 30
+	showtext TX_3704
+	jump2byte @resume
+
+@alreadyCompletedSecret:
+	showtext TX_3705
+
+@resume:
+	enableinput
+	jump2byte @loop
+
+
+; ==============================================================================
+; INTERACID_GREAT_FAIRY
+; ==============================================================================
+greatFairy_checkScreenIsScrolling:
 	ld a,(wScrollMode)		; $7b14
 	and $01			; $7b17
 	call _writeFlagsTocddb		; $7b19
 	cpl			; $7b1c
-	ld ($cddb),a		; $7b1d
+	ld (wcddb),a		; $7b1d
 	ret			; $7b20
-	ld a,($c6c3)		; $7b21
+
+
+; ==============================================================================
+; INTERACID_SLATE_SLOT
+; ==============================================================================
+
+;;
+; Unused?
+; @addr{7b21}
+slateSlot_7b21:
+	ld a,(wNumSlates)		; $7b21
 	or a			; $7b24
 	ld b,$01		; $7b25
-	jr nz,_label_15_231	; $7b27
+	jr nz,+			; $7b27
 	dec b			; $7b29
-_label_15_231:
++
 	ld a,b			; $7b2a
-	ld ($cfc1),a		; $7b2b
+	ld (wTmpcfc0.genericCutscene.cfc1),a		; $7b2b
 	ret			; $7b2e
+
+;;
+; @addr{7b2f}
+slateSlot_placeSlate:
 	ld a,SND_DOORCLOSE		; $7b2f
 	call playSound		; $7b31
+
+	; Set this tile to a "filled slate"  tile
 	call objectGetTileAtPosition		; $7b34
 	ld c,l			; $7b37
-	ld e,$42		; $7b38
+	ld e,Interaction.subid		; $7b38
 	ld a,(de)		; $7b3a
 	ld b,a			; $7b3b
-	ld a,$d4		; $7b3c
+	ld a,TILEINDEX_FILLED_SLATE_1		; $7b3c
 	add b			; $7b3e
 	call setTile		; $7b3f
+
+	; Mark room flag
 	call getThisRoomFlags		; $7b42
-	ld e,$42		; $7b45
+	ld e,Interaction.subid		; $7b45
 	ld a,(de)		; $7b47
 	ld bc,bitTable		; $7b48
 	add c			; $7b4b
@@ -9245,29 +9498,33 @@ _label_15_231:
 	ld a,(bc)		; $7b4d
 	or (hl)			; $7b4e
 	ld (hl),a		; $7b4f
-	ld hl,$c6c3		; $7b50
+
+	; Decrement # slates
+	ld hl,wNumSlates		; $7b50
 	dec (hl)		; $7b53
-	ld e,$42		; $7b54
+
+	; Light torches
+	ld e,Interaction.subid		; $7b54
 	ld a,(de)		; $7b56
-	ld hl,$7b6b		; $7b57
+	ld hl,@torchPositions		; $7b57
 	rst_addDoubleIndex			; $7b5a
 	ldi a,(hl)		; $7b5b
 	ld c,a			; $7b5c
-	ld a,$09		; $7b5d
+	ld a,TILEINDEX_LIT_TORCH		; $7b5d
 	push hl			; $7b5f
 	call setTile		; $7b60
 	pop hl			; $7b63
 	ld a,(hl)		; $7b64
 	ld c,a			; $7b65
-	ld a,$09		; $7b66
+	ld a,TILEINDEX_LIT_TORCH		; $7b66
 	jp setTile		; $7b68
-	add (hl)		; $7b6b
-	adc b			; $7b6c
-	ld c,e			; $7b6d
-	ld l,e			; $7b6e
-	ld h,$28		; $7b6f
-	ld b,e			; $7b71
-	ld h,e			; $7b72
+
+@torchPositions:
+	.db $86 $88 ; 0 == [subid]
+	.db $4b $6b ; 1
+	.db $26 $28 ; 2
+	.db $43 $63 ; 3
+
 
 ; ==============================================================================
 ; INTERACID_MISCELLANEOUS_2
@@ -9351,5 +9608,3 @@ _interactiondc_spawnPuff:
 	ret			; $7bfa
 
 .ends
-
-

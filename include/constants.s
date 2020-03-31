@@ -29,6 +29,7 @@
 .include "constants/specialCollisionValues.s"
 .include "constants/specialObjectTypes.s"
 .include "constants/staticObjectTypes.s"
+.include "constants/secrets.s"
 .include "constants/textboxFlags.s"
 .include "constants/tileIndices.s"
 .include "constants/tileTypes.s"

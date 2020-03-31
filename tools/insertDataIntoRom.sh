@@ -15,6 +15,7 @@ if [[ $# < 1 ]]; then
         echo "This will currently only work with zole-modded roms. Anything else will get their"
         echo "room layouts corrupted."
         echo
+	echo "This is for Ages only."
 	echo "Always make backups..."
 	exit 1
 fi
@@ -38,8 +39,8 @@ function insert() {
 # Rebuild with FORCE_SECTIONS defined.
 # This should keep the addresses the same as the vanilla rom, provided nothing was
 # altered too drastically.
-rm build/main.o
-FORCE_SECTIONS=1 make
+rm build_ages/ages.o
+FORCE_SECTIONS=1 make ages
 
 [[ $? != 0 ]] && exit 1
 
