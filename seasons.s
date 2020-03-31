@@ -113885,7 +113885,7 @@ _label_10_397:
  m_section_free "Objects_2" namespace "objectData"
 	.include "objects/seasons/pointers.s"
 	.include "objects/seasons/mainData.s"
-	.include "objects/seasons/helperData2.s"
+	.include "objects/seasons/extraData2.s"
 .ends
 
 

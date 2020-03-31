@@ -1,9 +1,9 @@
  m_section_free "Objects_1" namespace "objectData"
 
 .ifdef ROM_AGES
-.include "objects/ages/helperData.s"
+.include "objects/ages/extraData1.s"
 .else
-.include "objects/seasons/helperData.s"
+.include "objects/seasons/extraData1.s"
 .endif
 
 ;;

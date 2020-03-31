@@ -64,9 +64,9 @@ if extraInteractionBankPatch:
 
 
 pointerFile  = open("objects/" + gameString + "/pointers.s", 'w')
-helperFile   = open("objects/" + gameString + "/helperData.s", 'w')
-helperFile2  = open("objects/" + gameString + "/helperData2.s", 'w')
-helperFile3  = open("objects/" + gameString + "/helperData3.s", 'w')
+helperFile   = open("objects/" + gameString + "/extraData1.s", 'w')
+helperFile2  = open("objects/" + gameString + "/extraData2.s", 'w')
+helperFile3  = open("objects/" + gameString + "/extraData3.s", 'w')
 mainDataFile = open("objects/" + gameString + "/mainData.s", 'w')
 
 objectDataList = list()
