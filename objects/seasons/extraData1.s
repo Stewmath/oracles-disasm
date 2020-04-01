@@ -622,7 +622,7 @@ objectData4545:
 	obj_EndPointer
 
 objectData4550:
-	.db $f7 $00 ; Incomplete "SpecificEnemy" opcode? (ignored)
+	obj_Garbage $f7 $00 ; Incomplete "SpecificEnemy" opcode? (ignored)
 	obj_EndPointer
 
 objectData4553:
@@ -1404,8 +1404,7 @@ objectData4c20:
 objectData4c2b:
 	obj_RandomEnemy $40 $4d00
 	obj_RandomEnemy $60 $3400
-	.db $58 ; These get interpreted as "obj_SpecificEnemy", and are ignored?
-	.db $88
+	obj_Garbage $58 $88 ; This gets interpreted as "obj_Part", and is ignored?
 	obj_EndPointer
 
 objectData4c36:

@@ -93,3 +93,11 @@
 .ENDM
 
 
+; Used for bits of "garbage" data in Seasons. We use this instead of ".db" so that LynnaLab can
+; easily detect these (and remove them since they do nothing).
+.MACRO obj_Garbage
+	.REPEAT NARGS
+	.db \1
+	.shift
+	.ENDR
+.ENDM
