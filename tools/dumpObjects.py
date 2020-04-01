@@ -119,14 +119,17 @@ def parseObjectData(buf, pos, outFile):
             pointer = bankedAddress(0x12, read16(buf, pos))
             labelPositions[pointer] = -1
             pos+=2
-        elif op == 0x04:  # Boss object
+        elif op == 0x04:  # Pointer (Bit 7 of room flags unset)
             output += 'objectData' + myhex(read16(buf, pos), 4) + '\n'
             #output += wlahex(read16(buf, pos), 4) + '\n'
             pointer = bankedAddress(0x12, read16(buf, pos))
             labelPositions[pointer] = -1
             pos+=2
-        elif op == 0x05:  # Conditional
-            output += wlahex(read16BE(buf, pos), 4) + '\n'
+        elif op == 0x05:  # Pointer (Bit 7 of room flags set)
+            output += 'objectData' + myhex(read16(buf, pos), 4) + '\n'
+            #output += wlahex(read16(buf, pos), 4) + '\n'
+            pointer = bankedAddress(0x12, read16(buf, pos))
+            labelPositions[pointer] = -1
             pos+=2
         elif op == 0x06:  # Random spawn
             output += wlahex(buf[pos], 2) + ' '

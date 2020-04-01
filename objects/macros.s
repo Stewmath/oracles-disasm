@@ -36,7 +36,7 @@
 	.IF M_LASTOPCODE != 5
 	.db $f5
 	.ENDIF
-	.db \1>>8 \1&$ff
+	.dw \1
 	.REDEFINE M_LASTOPCODE 5
 .ENDM
 .MACRO obj_RandomEnemy

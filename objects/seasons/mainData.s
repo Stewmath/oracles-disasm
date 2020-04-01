@@ -787,7 +787,7 @@ group0Map97ObjectData: ; 6767
 
 group0Map98ObjectData: ; 676b
 	obj_NoValue $4e0b
-	obj_AntiBossPointer $ec43
+	obj_AntiBossPointer objectData43ec
 	obj_End
 
 group0Mapa6ObjectData: ; 6772
@@ -914,7 +914,7 @@ group0MapcaObjectData: ; 680b
 
 group0MapcbObjectData: ; 680f
 	obj_NoValue $6c00
-	obj_AntiBossPointer $c344
+	obj_AntiBossPointer objectData44c3
 	obj_End
 
 group0MapccObjectData: ; 6816
