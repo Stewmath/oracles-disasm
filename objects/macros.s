@@ -1,6 +1,6 @@
 .DEFINE M_LASTOPCODE 17
 
-.MACRO obj_Conditional
+.MACRO obj_Condition
 	.IF M_LASTOPCODE != 0
 	.db $f0
 	.ENDIF
@@ -27,12 +27,12 @@
 	.dw \1
 	.REDEFINE M_LASTOPCODE 3
 .ENDM
-.MACRO obj_BossPointer
+.MACRO obj_BeforeEvent
 	.db $f4
 	.dw \1
 	.REDEFINE M_LASTOPCODE 4
 .ENDM
-.MACRO obj_AntiBossPointer
+.MACRO obj_AfterEvent
 	.IF M_LASTOPCODE != 5
 	.db $f5
 	.ENDIF

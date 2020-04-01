@@ -452,28 +452,28 @@ objectData4355:
 	obj_EndPointer
 
 objectData435e:
-	obj_Conditional $02
+	obj_Condition $02
 	obj_SpecificEnemy $00 $2500 $48 $48
 	obj_SpecificEnemy     $2500 $58 $58
 	obj_EndPointer
 
 objectData436b:
-	obj_Conditional $02
+	obj_Condition $02
 	obj_SpecificEnemy $00 $2500 $28 $78
 	obj_SpecificEnemy     $2500 $38 $38
 	obj_EndPointer
 
 objectData4378:
-	obj_Conditional $01
+	obj_Condition $01
 	obj_RandomEnemy $20 $0900
 	obj_RandomEnemy $40 $1800
 	obj_EndPointer
 
 objectData4383:
-	obj_Conditional $01
+	obj_Condition $01
 	obj_RandomEnemy $20 $0900
 	obj_RandomEnemy $40 $1800
-	obj_Conditional $04
+	obj_Condition $04
 	obj_RandomEnemy $60 $0b01
 	obj_EndPointer
 
@@ -645,25 +645,25 @@ objectData44bf:
 	obj_EndPointer
 
 objectData44c4:
-	obj_Conditional $01
+	obj_Condition $01
 	obj_SpecificEnemy $00 $2d00 $48 $58
 	obj_SpecificEnemy     $2d00 $58 $78
 	obj_EndPointer
 
 objectData44d1:
-	obj_Conditional $01
+	obj_Condition $01
 	obj_SpecificEnemy $00 $2d00 $58 $38
 	obj_SpecificEnemy     $2d00 $58 $68
 	obj_EndPointer
 
 objectData44de:
-	obj_Conditional $01
+	obj_Condition $01
 	obj_SpecificEnemy $00 $2d00 $48 $48
 	obj_SpecificEnemy     $2d00 $58 $28
 	obj_EndPointer
 
 objectData44eb:
-	obj_Conditional $01
+	obj_Condition $01
 	obj_SpecificEnemy $00 $2d00 $48 $58
 	obj_EndPointer
 
@@ -671,7 +671,7 @@ objectData44f4:
 	obj_EndPointer
 
 objectData44f5:
-	obj_Conditional $01
+	obj_Condition $01
 	obj_SpecificEnemy $00 $2d00 $48 $48
 	obj_EndPointer
 
@@ -2099,7 +2099,7 @@ objectData507b:
 	obj_ItemDrop $03 $00 $5d
 	obj_SpecificEnemy $03 $5000 $09 $00
 objectData5085:
-	obj_Conditional $02
+	obj_Condition $02
 	obj_RandomEnemy $40 $3c00
 	obj_EndPointer
 
@@ -2117,16 +2117,16 @@ objectData5093:
 objectData50a2:
 	obj_SpecificEnemy $00 $1a00 $58 $68
 	obj_SpecificEnemy     $1a00 $58 $88
-	obj_Conditional $02
+	obj_Condition $02
 	obj_RandomEnemy $20 $3c00
-	obj_Conditional $01
+	obj_Condition $01
 	obj_RandomEnemy $40 $3401
 	obj_EndPointer
 
 objectData50b9:
-	obj_Conditional $02
+	obj_Condition $02
 	obj_RandomEnemy $40 $3c00
-	obj_Conditional $01
+	obj_Condition $01
 	obj_RandomEnemy $40 $3401
 	obj_EndPointer
 
@@ -2150,7 +2150,7 @@ objectData50e1:
 
 objectData50e6:
 	obj_RandomEnemy $20 $2400
-	obj_Conditional $01
+	obj_Condition $01
 	obj_RandomEnemy $40 $1c00
 	obj_EndPointer
 
@@ -2191,7 +2191,7 @@ objectData5122:
 objectData5131:
 	obj_ItemDrop $03 $00 $15
 	obj_ItemDrop     $09 $25
-	obj_Conditional $01
+	obj_Condition $01
 	obj_SpecificEnemy $00 $4f00 $38 $48
 	obj_SpecificEnemy     $4f00 $88 $a8
 	obj_EndPointer

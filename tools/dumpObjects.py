@@ -19,8 +19,8 @@ if len(sys.argv) < 2:
 
 
 # Opcode types
-opcodeTypeStrings = ["obj_Conditional", "obj_NoValue", "obj_DoubleValue", "obj_Pointer",
-                     "obj_BossPointer", "obj_AntiBossPointer", "obj_RandomEnemy",
+opcodeTypeStrings = ["obj_Condition", "obj_NoValue", "obj_DoubleValue", "obj_Pointer",
+                     "obj_BeforeEvent", "obj_AfterEvent", "obj_RandomEnemy",
                      "obj_SpecificEnemy", "obj_Part", "obj_WithParam", "obj_ItemDrop"]
 
 

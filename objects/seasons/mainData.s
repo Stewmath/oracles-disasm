@@ -464,7 +464,7 @@ group0Map4bObjectData: ; 64ef
 	obj_End
 
 group0Map5aObjectData: ; 64f5
-	obj_Conditional $04
+	obj_Condition $04
 	obj_DoubleValue $1f04 $48 $48
 	obj_Pointer objectData43a9
 	obj_End
@@ -787,7 +787,7 @@ group0Map97ObjectData: ; 6767
 
 group0Map98ObjectData: ; 676b
 	obj_NoValue $4e0b
-	obj_AntiBossPointer objectData43ec
+	obj_AfterEvent objectData43ec
 	obj_End
 
 group0Mapa6ObjectData: ; 6772
@@ -914,7 +914,7 @@ group0MapcaObjectData: ; 680b
 
 group0MapcbObjectData: ; 680f
 	obj_NoValue $6c00
-	obj_AntiBossPointer objectData44c3
+	obj_AfterEvent objectData44c3
 	obj_End
 
 group0MapccObjectData: ; 6816
@@ -2327,7 +2327,7 @@ group4Map0bObjectData: ; 7119
 	obj_DoubleValue $7e00 $58 $78
 	obj_DoubleValue $1e0b $50 $00
 	obj_DoubleValue $1e0a $a7 $00
-	obj_BossPointer objectData4917
+	obj_BeforeEvent objectData4917
 	obj_End
 
 group4Map0cObjectData: ; 712e
@@ -2359,7 +2359,7 @@ group4Map12ObjectData: ; 7159
 	obj_DoubleValue $2003 $00 $00
 	obj_DoubleValue $1e09 $5e $00
 	obj_DoubleValue $1e0a $a7 $00
-	obj_BossPointer objectData497d
+	obj_BeforeEvent objectData497d
 	obj_End
 
 group4Map13ObjectData: ; 716a
@@ -2444,7 +2444,7 @@ group4Map21ObjectData: ; 7201
 	obj_DoubleValue $2001 $80 $78
 	obj_DoubleValue $1e08 $0c $00
 	obj_DoubleValue $1e09 $4e $00
-	obj_BossPointer objectData4a2c
+	obj_BeforeEvent objectData4a2c
 	obj_End
 
 group4Map22ObjectData: ; 7216
@@ -2489,7 +2489,7 @@ group4Map29ObjectData: ; 725a
 	obj_DoubleValue $1e0b $70 $00
 	obj_DoubleValue $1e0a $ab $00
 	obj_Pointer objectData403c
-	obj_BossPointer objectData4ab2
+	obj_BeforeEvent objectData4ab2
 	obj_End
 
 group4Map2aObjectData: ; 726e
@@ -2647,7 +2647,7 @@ group4Map48ObjectData: ; 737e
 	obj_DoubleValue $1e09 $6e $00
 	obj_DoubleValue $2002 $98 $d8
 	obj_NoValue $7e00
-	obj_BossPointer objectData4bf0
+	obj_BeforeEvent objectData4bf0
 	obj_End
 
 group4Map49ObjectData: ; 738e
@@ -2699,7 +2699,7 @@ group4Map52ObjectData: ; 73d5
 group4Map53ObjectData: ; 73de
 	obj_DoubleValue $1e0a $a7 $00
 	obj_DoubleValue $2003 $18 $48
-	obj_BossPointer objectData4c36
+	obj_BeforeEvent objectData4c36
 	obj_End
 
 group4Map54ObjectData: ; 73eb
@@ -2758,7 +2758,7 @@ group4Map5fObjectData: ; 7455
 	obj_DoubleValue $2004 $58 $78
 	obj_DoubleValue $1e0b $20 $00
 	obj_DoubleValue $1e09 $8e $00
-	obj_BossPointer objectData4c70
+	obj_BeforeEvent objectData4c70
 	obj_End
 
 group4Map60ObjectData: ; 7466
@@ -2814,7 +2814,7 @@ group4Map6aObjectData: ; 74a4
 	obj_DoubleValue $7e00 $00 $00
 	obj_Pointer objectData4042
 	obj_Part $0801 $68
-	obj_BossPointer objectData4d29
+	obj_BeforeEvent objectData4d29
 	obj_End
 
 group4Map6bObjectData: ; 74c4
@@ -2973,7 +2973,7 @@ group4Map8cObjectData: ; 75b8
 	obj_DoubleValue $1e08 $07 $00
 	obj_DoubleValue $1e0a $a7 $00
 	obj_DoubleValue $2003 $58 $78
-	obj_BossPointer objectData4ed1
+	obj_BeforeEvent objectData4ed1
 	obj_End
 
 group4Map8dObjectData: ; 75c9
@@ -3079,7 +3079,7 @@ group4Mapa2ObjectData: ; 7668
 	obj_DoubleValue $1e0b $50 $00
 	obj_DoubleValue $2002 $58 $78
 	obj_DoubleValue $7e00 $00 $00
-	obj_BossPointer objectData5009
+	obj_BeforeEvent objectData5009
 	obj_End
 
 group4Mapa3ObjectData: ; 767d
@@ -3273,7 +3273,7 @@ group4Mapc8ObjectData: ; 77b8
 	obj_DoubleValue $7e00 $00 $00
 	obj_DoubleValue $1e09 $5e $00
 	obj_DoubleValue $1e0a $a2 $00
-	obj_BossPointer objectData51dc
+	obj_BeforeEvent objectData51dc
 	obj_End
 
 group4Mapc9ObjectData: ; 77cd
@@ -3337,7 +3337,7 @@ group4Mapd4ObjectData: ; 7829
 group4Mapd5ObjectData: ; 782d
 	obj_DoubleValue $1e0a $a7 $00
 	obj_DoubleValue $200b $58 $78
-	obj_BossPointer objectData528c
+	obj_BeforeEvent objectData528c
 	obj_End
 
 group4Mapd6ObjectData: ; 783a
@@ -3430,7 +3430,7 @@ group5Map42ObjectData: ; 78e6
 	obj_DoubleValue $1e0b $50 $00
 	obj_DoubleValue $1e09 $5e $00
 	obj_Pointer objectData4042
-	obj_BossPointer objectData532e
+	obj_BeforeEvent objectData532e
 	obj_End
 
 group5Map43ObjectData: ; 78fe
@@ -3508,7 +3508,7 @@ group5Map50ObjectData: ; 7988
 	obj_DoubleValue $2003 $58 $78
 	obj_DoubleValue $1e09 $7e $00
 	obj_DoubleValue $1e0b $70 $00
-	obj_BossPointer objectData53a1
+	obj_BeforeEvent objectData53a1
 	obj_End
 
 group5Map51ObjectData: ; 7999
@@ -3606,7 +3606,7 @@ group5Map64ObjectData: ; 7a2b
 	obj_DoubleValue $1e0a $a3 $00
 	obj_DoubleValue $1e08 $07 $00
 	obj_DoubleValue $2008 $58 $78
-	obj_BossPointer objectData5484
+	obj_BeforeEvent objectData5484
 	obj_End
 
 group5Map65ObjectData: ; 7a3c
@@ -3677,7 +3677,7 @@ group5Map72ObjectData: ; 7a9f
 	obj_DoubleValue $7e00 $00 $00
 	obj_DoubleValue $2007 $58 $78
 	obj_Pointer objectData4048
-	obj_BossPointer objectData551f
+	obj_BeforeEvent objectData551f
 	obj_End
 
 group5Map73ObjectData: ; 7ab7
@@ -3826,7 +3826,7 @@ group5Map90ObjectData: ; 7ba5
 	obj_End
 
 group5Map91ObjectData: ; 7ba6
-	obj_BossPointer objectData56c7
+	obj_BeforeEvent objectData56c7
 	obj_End
 
 group5Map92ObjectData: ; 7baa
@@ -3889,7 +3889,7 @@ group5Map9dObjectData: ; 7bfa
 	obj_End
 
 group5Map9eObjectData: ; 7c03
-	obj_BossPointer objectData573f
+	obj_BeforeEvent objectData573f
 	obj_End
 
 group5Map20ObjectData: ; 7c07
