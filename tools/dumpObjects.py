@@ -1,16 +1,8 @@
 # Extract object data to files
 
 import sys
-import common
 import StringIO
-
-# Get common code
-index = sys.argv[0].rfind('/')
-if index == -1:
-    directory = ''
-else:
-    directory = sys.argv[0][:index+1]
-execfile(directory+'common.py')
+from common import *
 
 if len(sys.argv) < 2:
     print('Usage: ' + sys.argv[0] + ' rom.gbc')
@@ -44,10 +36,42 @@ if romIsAges(rom):
 
     groupPointerTable = 0x15*0x4000 + 0x32b
 
+    mainDataStart = bankedAddress(0x12, 0x5977)
+    mainDataEnd = bankedAddress(0x12, 0x76d9)
+
+    enemyDataStart = bankedAddress(0x12, 0x406e) # Data in this range is named differently
+    enemyDataEnd = bankedAddress(0x12, 0x540c)
+
     extraInteractionBank = 0xfa
-    if rom[0x54328] == 0xc3:
+    if rom[0x54328] == 0xc3: # ZOLE patch
         extraInteractionBankPatch = True
-else:
+
+    garbageOffsets = []
+
+    pointerAliases = {
+            bankedAddress(0x12, 0x4000): 'faroreSparkleObjectData',
+            bankedAddress(0x12, 0x4068): 'objectData_makeAllTorchesLightable',
+            bankedAddress(0x12, 0x540c): 'blackTowerEscape_nayruAndRalph',
+            bankedAddress(0x12, 0x5416): 'blackTowerEscape_ambiAndGuards',
+            bankedAddress(0x12, 0x77c3): 'moonlitGrotto_orb',
+            bankedAddress(0x12, 0x77c8): 'moonlitGrotto_onOrbActivation',
+            bankedAddress(0x12, 0x77da): 'moonlitGrotto_onArmosSwitchPressed',
+            bankedAddress(0x12, 0x77e6): 'impaOctoroks',
+            bankedAddress(0x12, 0x77fa): 'ambisPalaceEntranceGuards',
+            bankedAddress(0x12, 0x7804): 'animalsWaitingForNayru',
+            bankedAddress(0x12, 0x7818): 'goronDancers',
+            bankedAddress(0x12, 0x7844): 'subrosianDancers',
+            bankedAddress(0x12, 0x7870): 'targetCartCrystals',
+            bankedAddress(0x12, 0x7874): '@crystals',
+            bankedAddress(0x12, 0x788b): 'nayruAndAnimalsInIntro',
+            bankedAddress(0x12, 0x78a9): 'moblinsAttackingMakuSprout',
+            bankedAddress(0x12, 0x78b3): 'ambiAndNayruInPostD3Cutscene',
+            bankedAddress(0x12, 0x78c5): '@tokayFromLeft',
+            bankedAddress(0x12, 0x78cb): '@tokayFromRight',
+            bankedAddress(0x12, 0x78d1): '@tokayOnBothSides',
+            bankedAddress(0x12, 0x78e0): 'objectData_makeTorchesLightableForD6Room',
+        }
+elif romIsSeasons(rom):
     gameString = 'seasons'
     dataBank = 0x11
     pointerBank = 0x11
@@ -55,8 +79,22 @@ else:
     groupPointerTable = 0x11*0x4000 + 0x1b3b
 
     extraInteractionBank = 0x7f
-    if rom[0x458dc] == 0xcd:
+    if rom[0x458dc] == 0xcd: # ZOLE patch
         extraInteractionBankPatch = True
+
+    garbageOffsets = [bankedAddress(0x11, 0x4550), bankedAddress(0x11, 0x4c33)]
+
+    mainDataStart = bankedAddress(0x11, 0x634b)
+    mainDataEnd = bankedAddress(0x11, 0x7dd9)
+
+    enemyDataStart = bankedAddress(0x11, 0x4060)
+    enemyDataEnd = bankedAddress(0x11, 0x5744)
+
+    pointerAliases = {
+        }
+else:
+    print('Unsupported ROM.')
+    sys.exit(1)
 
 
 if extraInteractionBankPatch:
@@ -64,48 +102,154 @@ if extraInteractionBankPatch:
 
 
 pointerFile  = open("objects/" + gameString + "/pointers.s", 'w')
-helperFile   = open("objects/" + gameString + "/extraData1.s", 'w')
+enemyFile    = open("objects/" + gameString + "/enemyData.s", 'w')
+helperFile1  = open("objects/" + gameString + "/extraData1.s", 'w')
 helperFile2  = open("objects/" + gameString + "/extraData2.s", 'w')
 helperFile3  = open("objects/" + gameString + "/extraData3.s", 'w')
+if not romIsSeasons(rom):
+    helperFile4   = open("objects/" + gameString + "/extraData4.s", 'w')
 mainDataFile = open("objects/" + gameString + "/mainData.s", 'w')
+
+enemyFile.write('; The labels in this file MUST be named as "groupXMapYYEnemyObjectData" for LynnaLab to\n')
+enemyFile.write('; treat them properly (not counting the unused labels).\n\n')
+
 
 objectDataList = list()
 mainObjectDataStr = StringIO.StringIO()
 
-labelPositions = {}
+mainDataPositions = {}
+
+def getRoomString(group, room):
+    return 'group' + str(group) + 'Map' + myhex(room, 2)
+
+
+# Check this to decide if we can definitively say something is unused or not.
+def inHardcodedRange(pos):
+    if pos >= enemyDataStart and pos < enemyDataEnd:
+        return False
+    if pos >= mainDataStart and pos < mainDataEnd:
+        return False
+    return True
 
 
 def parseObjectData(buf, pos, outFile):
     output = str()
     start = pos
 
+    # Lists of rooms this data is directly referenced by; tuples of form (group, room).
+    roomList = []
+
     lastOpcode = -1
-    while (data[pos] < 0xfe):
-        # Some objects are referenced midway through
-        if pos != start and labelPositions.has_key(pos):
-            value = labelPositions[pos]
+    while True:
+        if pos == start or mainDataPositions.has_key(pos): # Add labels
+            if pos in mainDataPositions:
+                value = mainDataPositions[pos]
+            else:
+                value = -1
             if value == -1:
-                output += 'objectData' + \
-                    myhex((pos&0x3fff)+0x4000, 4) + ':\n'
+                if pos in pointerAliases:
+                    output += pointerAliases[pos] + ':'
+                else:
+                    output += 'objectData' + myhex((pos&0x3fff)+0x4000, 4) + ':'
+                if not inHardcodedRange(pos):
+                    output += ' ; UNUSED?'
+                output += '\n'
+            elif pos >= enemyDataStart and pos < enemyDataEnd:
+                for intData in value:
+                    output += intData.name + ':\n'
             else:
                 for intData in value:
-                    output += 'group' + \
-                        str(intData.group) + 'Map' + \
-                        myhex(intData.map, 2) + 'ObjectData:\n'
+                    output += intData.name + ':\n'
                     intData.address = 0
+                    roomList.append((intData.group, intData.map))
+
+        if data[pos] >= 0xfe:
+            break
+
+        # Common code for ops 3, 4, 5
+        def handlePointer(op, pos):
+            output = ''
+            pointer = bankedAddress(dataBank, read16(buf, pos))
+            objectDataList = []
+            if pointer in pointerAliases:
+                name = pointerAliases[pointer]
+
+                objectData = ObjectData()
+                objectData.group = -1
+                objectData.map = -1
+                objectData.address = pointer
+                objectData.name = name
+                objectDataList.append(objectData)
+            elif len(roomList) == 0 or not (pointer >= enemyDataStart and pointer < enemyDataEnd):
+                name = 'objectData' + myhex(read16(buf, pos), 4)
+
+                objectData = ObjectData()
+                objectData.group = -1
+                objectData.map = -1
+                objectData.address = pointer
+                objectData.name = name
+                objectDataList.append(objectData)
+            else:
+                if pointer >= enemyDataStart and pointer < enemyDataEnd:
+                    if op == 3:
+                        prefixString = 'enemyObjectData'
+                    elif op == 4:
+                        prefixString = 'beforeEventObjectData'
+                    elif op == 5:
+                        prefixString = 'afterEventObjectData'
+                    else:
+                        assert(False)
+                else:
+                    prefixString = 'objectData'
+
+                prefixString = prefixString[0].upper() + prefixString[1:]
+
+                for (group, room) in roomList:
+                    name = getRoomString(group, room) + prefixString
+
+                    objectData = ObjectData()
+                    objectData.group = group
+                    objectData.map = room
+                    objectData.address = pointer
+                    objectData.name = name
+                    objectDataList.append(objectData)
+
+                # There's only one case (in seasons) when this happens.
+                if len(roomList) > 1:
+                    print('WARNING: ' + name + ' used by multiple rooms.')
+
+            output += name + '\n' # There could be multiple names but we need to choose one.
+            for objectData in objectDataList:
+                if not mainDataPositions.has_key(pointer):
+                    mainDataPositions[pointer] = []
+                if not any(o.name == objectData.name for o in mainDataPositions[pointer]):
+                    mainDataPositions[pointer].append(objectData)
+            return output
+        # End def handlePointer(...)
 
         op = data[pos]
-        if op < 0xf0 and lastOpcode != -1:
-            op = lastOpcode
-            fresh = 0
+
+        if pos in garbageOffsets:
+            output += '\tobj_Garbage '
         else:
-            op &= 0xf
+            if op < 0xf0 and lastOpcode != -1:
+                op = lastOpcode
+                fresh = 0
+            else:
+                op &= 0xf
+                pos+=1
+                fresh = 1
+
+            output += '\t' + opcodeTypeStrings[op] + ' '
+
+
+        if pos in garbageOffsets:
+            output += wlahex(buf[pos], 2) + ' ' + wlahex(buf[pos+1], 2) + ' ; Garbage opcode (ignored)\n'
+            pos += 2
+        elif op == 0x0:  # Condition
+            output += wlahex(buf[pos], 2) + '\n'
             pos+=1
-            fresh = 1
-
-        output += '\t' + opcodeTypeStrings[op] + ' '
-
-        if (op == 0x01):  # No-value
+        elif op == 0x01:  # No-value
             output += wlahex(read16BE(buf, pos), 4) + '\n'
             pos+=2
         elif op == 0x02:  # Double-value
@@ -114,23 +258,14 @@ def parseObjectData(buf, pos, outFile):
             output += wlahex(buf[pos+3], 2) + '\n'
             pos+=4
         elif op == 0x03:  # Pointer
-            output += 'objectData' + myhex(read16(buf, pos), 4) + '\n'
-            #output += wlahex(read16(buf, pos), 4) + '\n'
-            pointer = bankedAddress(0x12, read16(buf, pos))
-            labelPositions[pointer] = -1
-            pos+=2
+            output += handlePointer(op, pos)
+            pos += 2
         elif op == 0x04:  # Pointer (Bit 7 of room flags unset)
-            output += 'objectData' + myhex(read16(buf, pos), 4) + '\n'
-            #output += wlahex(read16(buf, pos), 4) + '\n'
-            pointer = bankedAddress(0x12, read16(buf, pos))
-            labelPositions[pointer] = -1
-            pos+=2
+            output += handlePointer(op, pos)
+            pos += 2
         elif op == 0x05:  # Pointer (Bit 7 of room flags set)
-            output += 'objectData' + myhex(read16(buf, pos), 4) + '\n'
-            #output += wlahex(read16(buf, pos), 4) + '\n'
-            pointer = bankedAddress(0x12, read16(buf, pos))
-            labelPositions[pointer] = -1
-            pos+=2
+            output += handlePointer(op, pos)
+            pos += 2
         elif op == 0x06:  # Random spawn
             output += wlahex(buf[pos], 2) + ' '
             output += wlahex(read16BE(buf, pos+1), 4) + '\n'
@@ -165,22 +300,16 @@ def parseObjectData(buf, pos, outFile):
             output += wlahex(buf[pos], 2) + ' '
             output += wlahex(buf[pos+1], 2) + '\n'
             pos+=2
-        elif op == 0x0:  # Conditional
-            output += wlahex(buf[pos], 2) + '\n'
-            pos+=1
         else:
             print("UNKNOWN OP " + hex(op) + " at " + hex(pos))
             pos+=1
 
         lastOpcode = op
 
-    # This is needed for address 45b3
-    if pos != start and labelPositions.has_key(pos):
-        output += 'objectData' + myhex((pos&0x3fff)+0x4000, 4) + ':\n'
-
-    if (data[pos] == 0xfe):
+    if data[pos] == 0xfe:
         output += '\tobj_EndPointer\n'
     else:
+        assert(data[pos] == 0xff)
         output += '\tobj_End\n'
     pos+=1
 
@@ -225,11 +354,12 @@ for group in xrange(6):
         objectData.group = group
         objectData.map = map
         objectData.address = pointer
+        objectData.name = getRoomString(group, map) + 'ObjectData'
 
         objectDataList.append(objectData)
-        if not labelPositions.has_key(pointer):
-            labelPositions[pointer] = []
-        labelPositions[pointer].append(objectData)
+        if not mainDataPositions.has_key(pointer):
+            mainDataPositions[pointer] = []
+        mainDataPositions[pointer].append(objectData)
 
         pointerFile.write('\t.dw group' + str(group) + 'Map' +
                           myhex(map, 2) + 'ObjectData\n')
@@ -264,117 +394,108 @@ for objectData in objectDataList:
         for data2 in objectDataList:
             if data2.address == address:
                 if data2.group == -1:
-                    mainObjectDataStr.write(
-                        'objectData' + myhex((address&0x3fff)+0x4000, 4) + ':\n')
+                    pass
                 else:
                     if extraInteractionBankPatch:
                         addrString = myhex(address/0x4000,2) + ':' + myhex((address&0x3fff)+0x4000, 4)
                     else:
                         addrString = myhex((address&0x3fff)+0x4000, 4)
-                    mainObjectDataStr.write('group' +
-                                                 str(data2.group) +
-                                                 'Map' + myhex(data2.map, 2) + 'ObjectData: ; ' +
-                                                 addrString + '\n')
                 data2.address = 0
         parseObjectData(data, address, mainObjectDataStr)
 
-helperOut = StringIO.StringIO()
+
+# This function isn't widely used, it's only for the object tables. Doesn't handle all cases.
+def getObjectDataLabel(pos):
+    addr = read16(data, pos)
+    fullAddr = bankedAddress(dataBank, addr)
+    if fullAddr in pointerAliases:
+        return pointerAliases[fullAddr]
+    return 'objectData' + myhex(addr, 4)
+
 
 # Search for all data blocks earlier on
 
 if romIsAges(rom):
     pos = 0x48000
 
+    while pos < enemyDataStart:
+        pos = parseObjectData(data, pos, helperFile1)
+
+    while pos < enemyDataEnd:
+        pos = parseObjectData(data, pos, enemyFile)
+
     while pos < 0x49482:
-        helperOut.write('objectData' + myhex((pos&0x3fff)+0x4000, 4) + ':\n')
-        pos = parseObjectData(data, pos, helperOut)
+        pos = parseObjectData(data, pos, helperFile2)
 
-    # Weird table in the middle of everything
-    helperOut.write('objectTable1:\n')
+    helperFile2.write('objectTable1:\n')
     while pos < 0x49492:
-        helperOut.write(
-            '\t.dw objectData' + myhex(read16(data, pos), 4) + '\n')
+        helperFile2.write('\t.dw ' + getObjectDataLabel(pos) + '\n')
         pos+=2
-    helperOut.write('\n')
-
+    helperFile2.write('\n')
     while pos < 0x495b6:
-        helperOut.write('objectData' + myhex((pos&0x3fff)+0x4000, 4) + ':\n')
-        pos = parseObjectData(data, pos, helperOut)
+        pos = parseObjectData(data, pos, helperFile2)
     # Code is after this
 
     # After main data is more object data, purpose unknown
     pos = 0x4b6dd
     # First a table of sorts
-    helperFile2.write('objectTable2:\n')
+    helperFile3.write('objectTable2:\n')
     while pos < 0x4b705:
-        helperFile2.write(
-            '.dw ' + 'objectData' + myhex(read16(data, pos), 4) + '\n')
+        helperFile3.write('\t.dw ' + getObjectDataLabel(pos) + '\n')
         pos += 2
-    helperFile2.write('\n')
+    helperFile3.write('\n')
     # Now more object data
     while pos < 0x4b8bd:
-        helperFile2.write(
-            'objectData' + myhex((pos&0x3fff)+0x4000, 4) + ':\n')
-        pos = parseObjectData(data, pos, helperFile2)
+        pos = parseObjectData(data, pos, helperFile3)
     # Another table
-    helperFile2.write('objectTable3:\n')
+    helperFile3.write('wildTokayObjectTable:\n')
     while pos < 0x4b8c5:
-        helperFile2.write(
-            '.dw ' + 'objectData' + myhex(read16(data, pos), 4) + '\n')
+        helperFile3.write('\t.dw ' + getObjectDataLabel(pos) + '\n')
         pos += 2
-    helperFile2.write('\n')
+    helperFile3.write('\n')
     # Now more object data
     while pos < 0x4b8e4:
-        helperFile2.write(
-            'objectData' + myhex((pos&0x3fff)+0x4000, 4) + ':\n')
-        pos = parseObjectData(data, pos, helperFile2)
+        pos = parseObjectData(data, pos, helperFile3)
 
     # One last round of object data
-    helperFile3.write('; A few objects stuffed into the very end\n\n')
     pos = 0x4be69
     while pos < 0x4be8f:
-        helperFile3.write('objectData' + myhex(toGbPointer(pos), 4) + ':\n')
-        pos = parseObjectData(data, pos, helperFile3)
+        pos = parseObjectData(data, pos, helperFile4)
 
 else: # Seasons
     pos = 0x44000
 
-    while pos < 0x45744:
-        helperOut.write('objectData' + myhex((pos&0x3fff)+0x4000, 4) + ':\n')
-        pos = parseObjectData(data, pos, helperOut)
+    while pos < enemyDataStart:
+        pos = parseObjectData(data, pos, helperFile1)
 
-    # Weird table in the middle of everything
-    helperOut.write('objectTable1:\n')
+    while pos < enemyDataEnd:
+        pos = parseObjectData(data, pos, enemyFile)
+
+    helperFile2.write('objectTable1:\n')
     while pos < 0x4575e:
-        helperOut.write(
-            '\t.dw objectData' + myhex(read16(data, pos), 4) + '\n')
+        helperFile2.write('\t.dw ' + getObjectDataLabel(pos) + '\n')
         pos+=2
-    helperOut.write('\n')
-
+    helperFile2.write('\n')
     while pos < 0x458b5:
-        helperOut.write('objectData' + myhex((pos&0x3fff)+0x4000, 4) + ':\n')
-        pos = parseObjectData(data, pos, helperOut)
+        pos = parseObjectData(data, pos, helperFile2)
 
     # After main data is more object data
     pos = 0x47dd9
     # First a table of sorts
     while pos < 0x47eb0:
-        helperFile2.write(
-            'objectData' + myhex((pos&0x3fff)+0x4000, 4) + ':\n')
-        pos = parseObjectData(data, pos, helperFile2)
-    helperFile2.write('\n')
+        pos = parseObjectData(data, pos, helperFile3)
 
 # Write output to files (for those which don't write directly to the files)
-
-helperOut.seek(0)
-helperFile.write(helperOut.read())
 
 mainObjectDataStr.seek(0)
 mainDataFile.write(mainObjectDataStr.read())
 
 
 romFile.close()
-helperFile.close()
+helperFile1.close()
 helperFile2.close()
 helperFile3.close()
+if not romIsSeasons(rom):
+    helperFile4.close()
 mainDataFile.close()
+enemyFile.close()

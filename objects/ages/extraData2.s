@@ -1,238 +1,154 @@
-objectTable2:
-	.dw objectData7705
-	.dw objectData7717
-	.dw objectData771b
-	.dw objectData7725
-	.dw objectData7733
-	.dw objectData7741
-	.dw objectData774b
-	.dw objectData7733
-	.dw objectData5462
-	.dw objectData5470
-	.dw blackTowerEscape_ambiAndGuards
-	.dw objectData55a2
-	.dw objectData543c
-	.dw objectData774f
-	.dw objectData7761
-	.dw objectData7765
-	.dw objectData776f
-	.dw objectData5492
-	.dw objectData777c
-	.dw objectData7792
-
-objectData7705:
-	obj_DoubleValue $3a00 $42 $78
-	obj_DoubleValue $4401 $42 $78
-	obj_DoubleValue $3b00 $42 $68
-	obj_DoubleValue $6b05 $48 $88
+blackTowerEscape_nayruAndRalph:
+	obj_DoubleValue $3603 $68 $48
+	obj_DoubleValue $3705 $68 $58
 	obj_End
 
-objectData7717:
-	obj_NoValue $3901
+blackTowerEscape_ambiAndGuards:
+	obj_DoubleValue $3604 $98 $50
+	obj_DoubleValue $3706 $b8 $50
+	obj_DoubleValue $4d01 $38 $50
+	obj_DoubleValue $3109 $38 $a8
+	obj_DoubleValue $4008 $08 $50
+	obj_DoubleValue $4008 $10 $38
+	obj_DoubleValue $4008 $10 $68
+	obj_DoubleValue $4008 $28 $20
+	obj_DoubleValue $4008 $28 $80
 	obj_End
 
-objectData771b:
-	obj_DoubleValue $3c01 $48 $78
-	obj_DoubleValue $3d01 $28 $68
+objectData543c:
+	obj_DoubleValue $3611 $48 $50
+	obj_DoubleValue $370f $48 $40
+	obj_DoubleValue $4d09 $38 $50
+	obj_DoubleValue $310a $38 $60
+	obj_DoubleValue $4008 $08 $50
+	obj_DoubleValue $4008 $10 $38
+	obj_DoubleValue $4008 $10 $68
+	obj_DoubleValue $4008 $28 $20
+	obj_DoubleValue $4008 $28 $80
 	obj_End
 
-objectData7725:
-	obj_DoubleValue $3702 $28 $48
-	obj_DoubleValue $3101 $68 $38
-	obj_DoubleValue $e140 $28 $28
+objectData5462:
+	obj_DoubleValue $3c0c $48 $48
+	obj_DoubleValue $3a0b $48 $38
+	obj_DoubleValue $4305 $28 $78
 	obj_End
 
-objectData7733:
-	obj_DoubleValue $8703 $40 $50
-	obj_DoubleValue $3704 $56 $38
-	obj_DoubleValue $3602 $48 $50
+objectData5470:
+	obj_DoubleValue $4b05 $28 $58
+	obj_DoubleValue $4b03 $40 $48
+	obj_DoubleValue $4b03 $50 $68
+	obj_DoubleValue $4b04 $28 $38
 	obj_End
 
-objectData7741:
-	obj_DoubleValue $3c05 $48 $38
-	obj_DoubleValue $3d03 $48 $48
+objectTable1:
+	.dw objectData54ac
+	.dw objectData54d0
+	.dw objectData54c6
+	.dw objectData54fe
+	.dw objectData5542
+	.dw objectData5514
+	.dw objectData5560
+	.dw objectData556a
+
+objectData5492:
+	obj_DoubleValue $a814 $48 $48
+	obj_DoubleValue $aa00 $58 $38
+	obj_DoubleValue $3608 $58 $78
+	obj_DoubleValue $3103 $48 $78
+	obj_DoubleValue $ad01 $48 $58
+	obj_DoubleValue $8705 $40 $50
 	obj_End
 
-objectData774b:
-	obj_NoValue $3904
+objectData54ac:
+	obj_DoubleValue $3102 $a0 $50
+	obj_DoubleValue $3707 $60 $60
+	obj_DoubleValue $a864 $60 $40
+	obj_DoubleValue $3605 $50 $50
+	obj_DoubleValue $6b0e $40 $84
+	obj_DoubleValue $8704 $40 $50
 	obj_End
 
-objectData774f:
-	obj_DoubleValue $3c06 $48 $78
-	obj_DoubleValue $9500 $4a $75
-	obj_DoubleValue $3a09 $48 $38
-	obj_DoubleValue $4303 $28 $78
+objectData54c6:
+	obj_DoubleValue $3708 $38 $68
+	obj_DoubleValue $a804 $38 $38
 	obj_End
 
-objectData7761:
-	obj_NoValue $4b02
+objectData54d0:
+	obj_DoubleValue $3606 $28 $60
+	obj_DoubleValue $4c03 $32 $88
+	obj_DoubleValue $4c02 $42 $7b
+	obj_DoubleValue $4c01 $4a $6c
+	obj_DoubleValue $4b00 $4a $5a
+	obj_DoubleValue $3c00 $3c $4c
+	obj_DoubleValue $3906 $2a $48
+	obj_DoubleValue $3906 $54 $44
+	obj_DoubleValue $3906 $40 $36
+	obj_DoubleValue $5d01 $22 $38
+	obj_DoubleValue $a803 $68 $f8
 	obj_End
 
-objectData7765:
-	obj_DoubleValue $4d04 $4f $78
-	obj_DoubleValue $8408 $4f $78
+objectData54fe:
+	obj_DoubleValue $4d02 $18 $50
+	obj_DoubleValue $5701 $4e $3e
+	obj_DoubleValue $5702 $56 $62
+	obj_DoubleValue $6b10 $58 $50
+	obj_DoubleValue $8802 $23 $50
 	obj_End
 
-objectData776f:
-	obj_DoubleValue $b000 $60 $88
-	obj_DoubleValue $b001 $60 $68
-	obj_NoValue $a904
+objectData5514:
+	obj_DoubleValue $aa01 $28 $50
+	obj_DoubleValue $b900 $88 $08
+	obj_DoubleValue $b901 $4c $f8
+	obj_DoubleValue $b902 $58 $a8
+	obj_DoubleValue $b903 $48 $a8
+	obj_DoubleValue $b904 $1a $0c
+	obj_DoubleValue $b905 $10 $18
+	obj_DoubleValue $b906 $0a $24
+	obj_DoubleValue $b907 $18 $a8
+	obj_DoubleValue $6b03 $38 $30
+	obj_DoubleValue $6b12 $38 $68
 	obj_End
 
-objectData777c:
-	obj_DoubleValue $3c0a $48 $48
-	obj_DoubleValue $3a0a $48 $38
-	obj_DoubleValue $4304 $28 $78
-	obj_DoubleValue $ad05 $e8 $58
-	obj_DoubleValue $3106 $e8 $68
+objectData5542:
+	obj_DoubleValue $df01 $2c $b0
+	obj_DoubleValue $df00 $44 $b0
+	obj_DoubleValue $3c08 $48 $d0
+	obj_DoubleValue $3c09 $38 $b8
+	obj_DoubleValue $3f03 $25 $c4
+	obj_DoubleValue $8009 $f6 $50
+	obj_DoubleValue $800a $f0 $50
 	obj_End
 
-objectData7792:
-	obj_DoubleValue $9306 $43 $2d
+objectData5560:
+	obj_DoubleValue $a854 $48 $50
+	obj_DoubleValue $a802 $e8 $28
 	obj_End
 
-objectData7798:
-	obj_NoValue $dc09
-	obj_NoValue $dc0a
-	obj_WithParam $00 $8a00 $09 $00 $00
+objectData556a:
+	obj_DoubleValue $ad02 $5c $a8
+	obj_DoubleValue $c100 $e0 $a8
 	obj_End
 
-objectData77a5:
-	obj_WithParam $02 $2700 $00 $24 $50
-	obj_DoubleValue $8d02 $28 $50
+objectData5574:
+	obj_DoubleValue $d400 $4a $48
+	obj_DoubleValue $d411 $51 $28
+	obj_DoubleValue $d431 $4b $23
+	obj_DoubleValue $d451 $4e $2d
+	obj_DoubleValue $d431 $3b $4a
+	obj_DoubleValue $d441 $3e $4f
+	obj_DoubleValue $d471 $43 $53
+	obj_DoubleValue $d451 $56 $6d
+	obj_DoubleValue $d421 $50 $70
+	obj_DoubleValue $d461 $53 $76
+	obj_DoubleValue $d402 $84 $82
 	obj_End
 
-objectData77b2:
-	obj_NoValue $9304
-	obj_End
-
-objectData77b6:
+objectData55a2:
+	obj_NoValue $a900
+	obj_NoValue $a901
+	obj_NoValue $a902
+	obj_DoubleValue $ad00 $32 $78
 	obj_DoubleValue $b002 $50 $80
 	obj_DoubleValue $b003 $50 $70
-	obj_NoValue $a901
-	obj_End
-
-moonlitGrotto_orb:
-	obj_Part $0304 $75
-	obj_End
-
-moonlitGrotto_onOrbActivation:
-	obj_DoubleValue $1202 $68 $98
-	obj_SpecificEnemy $00 $1d00 $26 $a0
-	obj_End
-
-objectData77d4:
-	obj_DoubleValue $1e06 $a3 $00
-	obj_End
-
-moonlitGrotto_onArmosSwitchPressed:
-	obj_DoubleValue $1201 $58 $58
-	obj_SpecificEnemy $00 $1d00 $26 $a0
-	obj_End
-
-
-impaOctoroks:
-	obj_WithParam $00 $3200 $00 $18 $48
-	obj_WithParam $00 $3200 $01 $38 $38
-	obj_WithParam $00 $3200 $02 $38 $58
-	obj_End
-
-
-ambisPalaceEntranceGuards:
-	obj_DoubleValue $4007 $28 $48
-	obj_DoubleValue $4002 $28 $58
-	obj_End
-
-
-; Spawned in with the bear (ID $5d02, var03=0); animals on screen where Nayru is
-; kidnapped, waiting for her to return.
-animalsWaitingForNayru:
-	obj_WithParam $00 $3907 $00 $28 $88
-	obj_WithParam $00 $4b07 $00 $48 $78
-	obj_WithParam $00 $3907 $02 $38 $58
-	obj_End
-
-
-goronDancers:
-	obj_WithParam $00 $6601 $00 $40 $28
-	obj_WithParam $00 $6601 $01 $40 $78
-	obj_WithParam $00 $6601 $02 $68 $28
-	obj_WithParam $00 $6601 $03 $28 $28
-	obj_WithParam $00 $6601 $04 $28 $50
-	obj_WithParam $00 $6601 $05 $28 $78
-	obj_WithParam $00 $6601 $06 $68 $78
-	obj_End
-
-
-; Subrosians take the place of goron dancers in the past (linked game)
-subrosianDancers:
-	obj_WithParam $00 $4e01 $00 $40 $28
-	obj_WithParam $00 $4e01 $01 $40 $78
-	obj_WithParam $00 $4e01 $02 $68 $28
-	obj_WithParam $00 $4e01 $03 $28 $28
-	obj_WithParam $00 $4e01 $04 $28 $50
-	obj_WithParam $00 $4e01 $05 $28 $78
-	obj_WithParam $00 $4e01 $06 $68 $78
-	obj_End
-
-
-targetCartCrystals:
-	obj_Pointer @crystals
-	obj_End
-
-@crystals:
-	obj_SpecificEnemy $00 $6300 $00 $00
-	obj_SpecificEnemy     $6301 $00 $00
-	obj_SpecificEnemy     $6302 $00 $00
-	obj_SpecificEnemy     $6303 $00 $00
-	obj_SpecificEnemy     $6304 $00 $00
-	obj_EndPointer
-
-
-nayruAndAnimalsInIntro:
-	obj_DoubleValue $3600 $18 $78
-	obj_DoubleValue $3700 $30 $88
-	obj_DoubleValue $5d00 $28 $58
-	obj_DoubleValue $3900 $50 $78
-	obj_DoubleValue $4b00 $50 $88
-	obj_DoubleValue $3c00 $48 $68
-	obj_DoubleValue $4c00 $2c $48
-	obj_End
-
-moblinsAttackingMakuSprout:
-	obj_DoubleValue $9600 $30 $68
-	obj_DoubleValue $9601 $30 $38
-	obj_End
-
-ambiAndNayruInPostD3Cutscene:
-	obj_DoubleValue $4d08 $28 $48
-	obj_DoubleValue $360e $28 $58
-	obj_End
-
-wildTokayObjectTable:
-	.dw @tokayFromLeft
-	.dw @tokayFromLeft
-	.dw @tokayFromRight
-	.dw @tokayOnBothSides
-
-@tokayFromLeft:
-	obj_DoubleValue $480c $f8 $18
-	obj_End
-
-@tokayFromRight:
-	obj_DoubleValue $480c $f8 $88
-	obj_End
-
-@tokayOnBothSides:
-	obj_DoubleValue $480c $f8 $18
-	obj_DoubleValue $480c $f8 $88
-	obj_End
-
-objectData78db:
-	obj_RandomEnemy $81 $1001
-	obj_End
-
-objectData_makeTorchesLightableForD6Room:
-	obj_Pointer objectData_makeAllTorchesLightable
 	obj_End
 

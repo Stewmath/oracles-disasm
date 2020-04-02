@@ -2,8 +2,12 @@
 
 .ifdef ROM_AGES
 .include "objects/ages/extraData1.s"
+.include "objects/ages/enemyData.s"
+.include "objects/ages/extraData2.s"
 .else
 .include "objects/seasons/extraData1.s"
+.include "objects/seasons/enemyData.s"
+.include "objects/seasons/extraData2.s"
 .endif
 
 ;;

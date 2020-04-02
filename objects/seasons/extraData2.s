@@ -1,82 +1,135 @@
-objectData7dd9:
-	obj_SpecificEnemy $02 $5b00 $34 $44
-	obj_SpecificEnemy     $5b00 $30 $56
-	obj_SpecificEnemy     $5b00 $30 $68
-	obj_SpecificEnemy     $5b00 $30 $7a
-	obj_SpecificEnemy     $5b00 $34 $8c
+objectTable1:
+	.dw objectData575e
+	.dw objectData5774
+	.dw objectData577e
+	.dw objectData578d
+	.dw objectData5797
+	.dw objectData57c7
+	.dw objectData57dd
+	.dw objectData57eb
+	.dw objectData5827
+	.dw objectData5855
+	.dw objectData5873
+	.dw objectData587d
+	.dw objectData580d
+
+objectData575e:
+	obj_DoubleValue $a700 $58 $50
+	obj_DoubleValue $a701 $48 $20
+	obj_DoubleValue $a702 $48 $30
+	obj_DoubleValue $4c07 $3e $50
+	obj_DoubleValue $4c08 $38 $50
 	obj_End
 
-objectData7df0:
-	obj_DoubleValue $7400 $28 $78
-	obj_DoubleValue $b107 $f8 $f8
+objectData5774:
+	obj_DoubleValue $a800 $48 $40
+	obj_DoubleValue $7201 $48 $68
 	obj_End
 
-objectData7dfa:
-	obj_DoubleValue $7401 $f8 $68
-	obj_DoubleValue $7403 $78 $68
-	obj_DoubleValue $7408 $a8 $50
-	obj_DoubleValue $7409 $a8 $80
-	obj_DoubleValue $7405 $f8 $68
-	obj_DoubleValue $7406 $18 $98
+objectData577e:
+	obj_SpecificEnemy $00 $1701 $38 $18
+	obj_SpecificEnemy     $1701 $48 $58
+	obj_SpecificEnemy     $1701 $68 $38
 	obj_End
 
-objectData7e14:
-	obj_DoubleValue $b101 $00 $00
-	obj_DoubleValue $b200 $58 $60
-	obj_DoubleValue $b103 $48 $88
-	obj_DoubleValue $b103 $38 $58
-	obj_DoubleValue $b103 $28 $78
-	obj_DoubleValue $b103 $28 $88
+objectData578d:
+	obj_DoubleValue $a803 $28 $48
+	obj_DoubleValue $4380 $60 $58
 	obj_End
 
-objectData7e2e:
-	obj_DoubleValue $b108 $f8 $00
-	obj_DoubleValue $b109 $f8 $00
-	obj_DoubleValue $b10d $28 $78
-	obj_DoubleValue $b10e $28 $88
+objectData5797:
+	obj_DoubleValue $a804 $e8 $58
+	obj_DoubleValue $a502 $e5 $48
+	obj_DoubleValue $a900 $08 $78
+	obj_DoubleValue $a901 $18 $38
+	obj_DoubleValue $a902 $28 $68
+	obj_DoubleValue $a903 $18 $88
+	obj_DoubleValue $a904 $58 $18
+	obj_DoubleValue $a905 $68 $28
+	obj_DoubleValue $9c00 $58 $58
+	obj_SpecificEnemy $00 $3601 $68 $70
+	obj_SpecificEnemy     $3301 $70 $80
 	obj_End
 
-objectData7e40:
-	obj_DoubleValue $b301 $48 $50
-	obj_DoubleValue $b303 $48 $50
+objectData57c7:
+	obj_DoubleValue $a813 $50 $48
+	obj_DoubleValue $8701 $26 $50
+	obj_DoubleValue $a814 $58 $58
+	obj_DoubleValue $a503 $58 $48
+	obj_DoubleValue $a703 $58 $38
 	obj_End
 
-objectData7e4a:
-	obj_Pointer objectData4468
+objectData57dd:
+	obj_DoubleValue $aa00 $38 $48
+	obj_DoubleValue $a504 $c8 $58
+	obj_DoubleValue $a824 $b8 $58
 	obj_End
 
-objectData7e4e:
-	obj_DoubleValue $4e00 $29 $18
-	obj_DoubleValue $4e01 $59 $52
-	obj_DoubleValue $4e02 $49 $74
-	obj_DoubleValue $4e03 $59 $74
-	obj_DoubleValue $4e04 $68 $38
-	obj_DoubleValue $4e05 $45 $58
-	obj_DoubleValue $4e06 $10 $48
+objectData57eb:
+	obj_DoubleValue $a834 $38 $58
+	obj_DoubleValue $a505 $38 $48
+	obj_DoubleValue $ad00 $48 $28
+	obj_DoubleValue $ad01 $48 $78
+	obj_DoubleValue $ad02 $08 $58
+	obj_DoubleValue $ad02 $18 $68
+	obj_DoubleValue $ad03 $28 $28
+	obj_DoubleValue $ad04 $68 $38
 	obj_End
 
-objectData7e6c:
-	obj_DoubleValue $6a01 $38 $88
-	obj_DoubleValue $6a02 $21 $00
-	obj_DoubleValue $6a02 $41 $01
-	obj_DoubleValue $6a02 $61 $02
-	obj_DoubleValue $6a02 $63 $03
-	obj_DoubleValue $6a02 $65 $04
-	obj_DoubleValue $6a02 $56 $05
-	obj_DoubleValue $6a02 $16 $06
-	obj_DoubleValue $6a02 $14 $07
-	obj_DoubleValue $6a02 $12 $08
+objectData580d:
+	obj_DoubleValue $a844 $58 $48
+	obj_DoubleValue $a507 $68 $28
+	obj_DoubleValue $aa02 $68 $78
+	obj_DoubleValue $aa03 $58 $78
+	obj_DoubleValue $4401 $58 $58
+	obj_DoubleValue $8702 $26 $50
 	obj_End
 
-objectData7e96:
-	obj_DoubleValue $1e14 $07 $00
-	obj_Part $0800 $00
+objectData5827:
+	obj_DoubleValue $a503 $28 $50
+	obj_DoubleValue $b900 $88 $08
+	obj_DoubleValue $b901 $4c $f8
+	obj_DoubleValue $b902 $58 $a8
+	obj_DoubleValue $b903 $48 $a8
+	obj_DoubleValue $b904 $1a $0c
+	obj_DoubleValue $b905 $10 $18
+	obj_DoubleValue $b906 $0a $24
+	obj_DoubleValue $b907 $18 $a8
+	obj_DoubleValue $4e09 $38 $30
+	obj_DoubleValue $4e08 $38 $68
 	obj_End
 
-objectData7ea0:
-	obj_NoValue $9b00
-	obj_DoubleValue $9600 $28 $28
-	obj_WithParam $02 $1600 $00 $68 $80
+objectData5855:
+	obj_DoubleValue $df00 $44 $b0
+	obj_DoubleValue $df01 $2c $b0
+	obj_DoubleValue $bb01 $48 $d0
+	obj_DoubleValue $bb02 $38 $b8
+	obj_DoubleValue $bc03 $25 $c4
+	obj_DoubleValue $4c07 $f6 $50
+	obj_DoubleValue $4c08 $f0 $50
 	obj_End
 
+objectData5873:
+	obj_DoubleValue $a854 $48 $50
+	obj_DoubleValue $a802 $e8 $28
+	obj_End
+
+objectData587d:
+	obj_DoubleValue $4405 $5c $a8
+	obj_DoubleValue $c100 $e0 $a8
+	obj_End
+
+objectData5887:
+	obj_DoubleValue $d400 $4a $48
+	obj_DoubleValue $d411 $51 $28
+	obj_DoubleValue $d431 $4b $23
+	obj_DoubleValue $d451 $4e $2d
+	obj_DoubleValue $d431 $3b $4a
+	obj_DoubleValue $d441 $3e $4f
+	obj_DoubleValue $d471 $43 $53
+	obj_DoubleValue $d451 $56 $6d
+	obj_DoubleValue $d421 $50 $70
+	obj_DoubleValue $d461 $53 $76
+	obj_DoubleValue $d402 $84 $82
+	obj_End
 
