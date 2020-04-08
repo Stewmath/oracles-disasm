@@ -11,9 +11,9 @@ if len(sys.argv) < 2:
 
 
 # Opcode types
-opcodeTypeStrings = ["obj_Condition", "obj_NoValue", "obj_DoubleValue", "obj_Pointer",
+opcodeTypeStrings = ["obj_Condition", "obj_Interaction", "obj_Interaction", "obj_Pointer",
                      "obj_BeforeEvent", "obj_AfterEvent", "obj_RandomEnemy",
-                     "obj_SpecificEnemy", "obj_Part", "obj_WithParam", "obj_ItemDrop"]
+                     "obj_SpecificEnemyA", "obj_Part", "obj_WithParam", "obj_ItemDrop"]
 
 
 class ObjectData:
@@ -240,7 +240,8 @@ def parseObjectData(buf, pos, outFile):
                 pos+=1
                 fresh = 1
 
-            output += '\t' + opcodeTypeStrings[op] + ' '
+            if op != 9: # This type has a few different opcode names
+                output += '\t' + opcodeTypeStrings[op] + ' '
 
 
         if pos in garbageOffsets:
@@ -285,11 +286,19 @@ def parseObjectData(buf, pos, outFile):
             output += wlahex(buf[pos+2], 2) + '\n'
             pos+=3
         elif op == 0x09:  # Quadruple
-            output += wlahex(buf[pos+0], 2) + ' '
+            t = buf[pos]
+            if t == 0:
+                output += '\tobj_Interaction '
+            elif t == 1:
+                output += '\tobj_SpecificEnemyB '
+            elif t == 2:
+                output += '\tobj_Part '
+            else:
+                assert(False)
             output += wlahex(read16BE(buf, pos+1), 4) + ' '
-            output += wlahex(buf[pos+3], 2) + ' '
             output += wlahex(buf[pos+4], 2) + ' '
-            output += wlahex(buf[pos+5], 2) + '\n'
+            output += wlahex(buf[pos+5], 2) + ' '
+            output += wlahex(buf[pos+3], 2) + '\n'
             pos+=6
         elif op == 0x0a:  # Item Drop
             if fresh == 1:
