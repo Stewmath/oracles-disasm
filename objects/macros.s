@@ -107,6 +107,12 @@
 ;   obj_Part ID[word], YX[byte]
 ; OR
 ;   obj_Part ID[word], YY[byte], XX[byte], Var03[byte]
+;
+; NOTE: The above 2 versions are subtly different. The first version will prevent random position
+; enemies from spawning at that position, while the second version won't. This is because they're
+; technically 2 different "opcodes", handled differently. Currently LynnaLab doesn't attempt to
+; account for this difference, and aggressively optimizes the 2nd version into the 1st version when
+; possible.
 .MACRO obj_Part
 	.IF NARGS == 2
 		.IF M_LASTOPCODE != 8
