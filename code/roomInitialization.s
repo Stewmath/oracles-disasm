@@ -59,8 +59,8 @@ loadRememberedCompanion:
 
 .ifdef ROM_AGES
 @raft:
-	ld a,(wAreaFlags)		; $76b8
-	and AREAFLAG_PAST			; $76bb
+	ld a,(wTilesetFlags)		; $76b8
+	and TILESETFLAG_PAST			; $76bb
 	ret z			; $76bd
 
 	call getFreeInteractionSlot		; $76be
@@ -784,8 +784,8 @@ calculateRoomStateModifier:
 	jr z,@companionRegion	; $79ed
 
 @standard:
-	ld a,(wAreaFlags)		; $79ef
-	and AREAFLAG_UNDERWATER			; $79f2
+	ld a,(wTilesetFlags)		; $79ef
+	and TILESETFLAG_UNDERWATER			; $79f2
 	ld b,$00		; $79f4
 	jr z,+			; $79f6
 	inc b			; $79f8

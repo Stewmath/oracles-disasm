@@ -1,37 +1,37 @@
-.macro m_SeasonalArea ; Areas which use this have different data for each season
+.macro m_SeasonalTileset ; Tilesets which use this have different data for each season
 	.db $ff
 	.dw \1
 	.dsb 5 0
 .endm
 
-areaData: ; $10c84
-	m_SeasonalArea area00Seasons        ; 0x00
-	m_SeasonalArea area01Seasons        ; 0x01
-	m_SeasonalArea area02Seasons        ; 0x02
-	m_SeasonalArea area03Seasons        ; 0x03
-	m_SeasonalArea area04Seasons        ; 0x04
-	m_SeasonalArea area05Seasons        ; 0x05
-	m_SeasonalArea area06Seasons        ; 0x06
-	m_SeasonalArea area07Seasons        ; 0x07
-	m_SeasonalArea area08Seasons        ; 0x08
-	m_SeasonalArea area09Seasons        ; 0x09
-	m_SeasonalArea area0aSeasons        ; 0x0a
-	m_SeasonalArea area0bSeasons        ; 0x0b
-	m_SeasonalArea area0cSeasons        ; 0x0c
-	m_SeasonalArea area0dSeasons        ; 0x0d
-	m_SeasonalArea area0eSeasons        ; 0x0e
-	m_SeasonalArea area0fSeasons        ; 0x0f
-	m_SeasonalArea area10Seasons        ; 0x10
-	m_SeasonalArea area11Seasons        ; 0x11
-	m_SeasonalArea area12Seasons        ; 0x12
-	m_SeasonalArea area13Seasons        ; 0x13
-	m_SeasonalArea area14Seasons        ; 0x14
-	m_SeasonalArea area15Seasons        ; 0x15
-	m_SeasonalArea area16Seasons        ; 0x16
-	m_SeasonalArea area17Seasons        ; 0x17
-	m_SeasonalArea area18Seasons        ; 0x18
-	m_SeasonalArea area19Seasons        ; 0x19
-	m_SeasonalArea area1aSeasons        ; 0x1a
+tilesetData: ; $10c84
+	m_SeasonalTileset area00Seasons        ; 0x00
+	m_SeasonalTileset area01Seasons        ; 0x01
+	m_SeasonalTileset area02Seasons        ; 0x02
+	m_SeasonalTileset area03Seasons        ; 0x03
+	m_SeasonalTileset area04Seasons        ; 0x04
+	m_SeasonalTileset area05Seasons        ; 0x05
+	m_SeasonalTileset area06Seasons        ; 0x06
+	m_SeasonalTileset area07Seasons        ; 0x07
+	m_SeasonalTileset area08Seasons        ; 0x08
+	m_SeasonalTileset area09Seasons        ; 0x09
+	m_SeasonalTileset area0aSeasons        ; 0x0a
+	m_SeasonalTileset area0bSeasons        ; 0x0b
+	m_SeasonalTileset area0cSeasons        ; 0x0c
+	m_SeasonalTileset area0dSeasons        ; 0x0d
+	m_SeasonalTileset area0eSeasons        ; 0x0e
+	m_SeasonalTileset area0fSeasons        ; 0x0f
+	m_SeasonalTileset area10Seasons        ; 0x10
+	m_SeasonalTileset area11Seasons        ; 0x11
+	m_SeasonalTileset area12Seasons        ; 0x12
+	m_SeasonalTileset area13Seasons        ; 0x13
+	m_SeasonalTileset area14Seasons        ; 0x14
+	m_SeasonalTileset area15Seasons        ; 0x15
+	m_SeasonalTileset area16Seasons        ; 0x16
+	m_SeasonalTileset area17Seasons        ; 0x17
+	m_SeasonalTileset area18Seasons        ; 0x18
+	m_SeasonalTileset area19Seasons        ; 0x19
+	m_SeasonalTileset area1aSeasons        ; 0x1a
 	.db $0f $01 $10 $41 $10 $11 $01 $04 ; 0x1b
 	.db $0f $01 $11 $41 $10 $12 $01 $05 ; 0x1c
 	.db $0f $01 $10 $41 $10 $35 $01 $04 ; 0x1d

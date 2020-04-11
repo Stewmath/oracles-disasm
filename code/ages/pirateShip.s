@@ -18,22 +18,22 @@ checkLoadPirateShip:
 	call checkGlobalFlag		; $7de3
 	ret nz			; $7de6
 
-	ld a,(wAreaFlags)		; $7de7
+	ld a,(wTilesetFlags)		; $7de7
 	ld b,a			; $7dea
-	bit AREAFLAG_BIT_OUTDOORS,b			; $7deb
+	bit TILESETFLAG_BIT_OUTDOORS,b			; $7deb
 	ret z			; $7ded
 
-	bit AREAFLAG_BIT_UNDERWATER,b			; $7dee
+	bit TILESETFLAG_BIT_UNDERWATER,b			; $7dee
 	ret nz			; $7df0
 
 	call checkIsLinkedGame		; $7df1
 	jr nz,+			; $7df4
 
-	bit AREAFLAG_BIT_PAST,b			; $7df6
+	bit TILESETFLAG_BIT_PAST,b			; $7df6
 	ret z			; $7df8
 	jr ++			; $7df9
 +
-	bit AREAFLAG_BIT_PAST,b			; $7dfb
+	bit TILESETFLAG_BIT_PAST,b			; $7dfb
 	ret nz			; $7dfd
 ++
 	ld a,(wPirateShipRoom)		; $7dfe

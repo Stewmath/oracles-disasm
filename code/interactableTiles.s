@@ -235,8 +235,8 @@ _checkFacingBottomOfTile:
 _nextToPushableBlock:
 .ifdef ROM_AGES
 	; No pushing underwater
-	ld a,(wAreaFlags)		; $410e
-	and AREAFLAG_UNDERWATER			; $4111
+	ld a,(wTilesetFlags)		; $410e
+	and TILESETFLAG_UNDERWATER			; $4111
 	ret nz			; $4113
 .endif
 
@@ -315,11 +315,11 @@ _nextToPushableBlock:
 	ldh a,(<hFF8B)	; $416a
 	cp TILEINDEX_GRAVE_HIDING_DOOR			; $416c
 	jr nz,@end		; $416e
-	ld a,(wAreaFlags)		; $4170
-	and AREAFLAG_OUTDOORS			; $4173
+	ld a,(wTilesetFlags)		; $4170
+	and TILESETFLAG_OUTDOORS			; $4173
 	jr z,@end			; $4175
 
-	; Note: this assumes that AREAFLAG_OUTDOORS == 1.
+	; Note: this assumes that TILESETFLAG_OUTDOORS == 1.
 	ld (wDisabledObjects),a		; $4177
 .endif
 

@@ -702,17 +702,17 @@ checkLoadPastSignAndChestGfx:
 	cp $0f			; $7dca
 	ret z			; $7dcc
 
-	ld a,(wAreaFlags)		; $7dcd
-	bit AREAFLAG_BIT_PAST,a			; $7dd0
+	ld a,(wTilesetFlags)		; $7dcd
+	bit TILESETFLAG_BIT_PAST,a			; $7dd0
 	ret z			; $7dd2
 
-	bit AREAFLAG_BIT_OUTDOORS,a			; $7dd3
+	bit TILESETFLAG_BIT_OUTDOORS,a			; $7dd3
 	ret nz			; $7dd5
 
-	bit AREAFLAG_BIT_SIDESCROLL,a			; $7dd6
+	bit TILESETFLAG_BIT_SIDESCROLL,a			; $7dd6
 	ret nz			; $7dd8
 
-	and (AREAFLAG_10|AREAFLAG_DUNGEON|AREAFLAG_INDOORS)
+	and (TILESETFLAG_10|TILESETFLAG_DUNGEON|TILESETFLAG_INDOORS)
 	ret z			; $7ddb
 
 	ld a,UNCMP_GFXH_37		; $7ddc

@@ -124,8 +124,8 @@ _parentItemCode_harp:
 
 @harp:
 	; Only allow harp playing on overworld, non-maku tree screens
-	ld a,(wAreaFlags)		; $4e1a
-	and (AREAFLAG_UNDERWATER|AREAFLAG_SIDESCROLL|AREAFLAG_10|AREAFLAG_DUNGEON|AREAFLAG_INDOORS|AREAFLAG_MAKU)
+	ld a,(wTilesetFlags)		; $4e1a
+	and (TILESETFLAG_UNDERWATER|TILESETFLAG_SIDESCROLL|TILESETFLAG_10|TILESETFLAG_DUNGEON|TILESETFLAG_INDOORS|TILESETFLAG_MAKU)
 	jr nz,@clearSelf	; $4e1f
 
 	ld a,(hl)		; $4e21
@@ -142,8 +142,8 @@ _parentItemCode_harp:
 	jr @tuneEchoesInVain		; $4e32
 
 @tuneOfCurrents:
-	; Test AREAFLAG_BIT_PAST
-	ld a,(wAreaFlags)		; $4e34
+	; Test TILESETFLAG_BIT_PAST
+	ld a,(wTilesetFlags)		; $4e34
 	rlca			; $4e37
 	jr nc,@tuneEchoesInVain	; $4e38
 

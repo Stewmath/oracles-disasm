@@ -4754,8 +4754,8 @@ goronDance_restartGame:
 ; @param[out]	zflag	Set if in present (in wcddb)
 ; @addr{6320}
 goron_checkInPresent:
-	ld a,(wAreaFlags)		; $6320
-	and AREAFLAG_PAST			; $6323
+	ld a,(wTilesetFlags)		; $6320
+	and TILESETFLAG_PAST			; $6323
 	jp _writeFlagsTocddb		; $6325
 
 ;;
@@ -4763,9 +4763,9 @@ goron_checkInPresent:
 ; @param[out]	zflag	Set if in past (in wcddb)
 ; @addr{6328}
 goron_checkInPast:
-	ld a,(wAreaFlags)		; $6328
+	ld a,(wTilesetFlags)		; $6328
 	cpl			; $632b
-	and AREAFLAG_PAST			; $632c
+	and TILESETFLAG_PAST			; $632c
 	jp _writeFlagsTocddb		; $632e
 
 ;;
@@ -4832,8 +4832,8 @@ goronDance_checkNumFailedRounds:
 ; Give the reward for a perfect game at platinum or gold level.
 ; @addr{6370}
 goronDance_giveRandomRingPrize:
-	ld a,(wAreaFlags)		; $6370
-	and AREAFLAG_PAST			; $6373
+	ld a,(wTilesetFlags)		; $6370
+	and TILESETFLAG_PAST			; $6373
 	jr nz,@past	; $6375
 	ld b,$02		; $6377
 	jr @giveRingForLevel		; $6379
@@ -4862,8 +4862,8 @@ goronDance_giveRandomRingPrize:
 ; @addr{6398}
 goron_showText_differentForPresent:
 	ld c,a			; $6398
-	ld a,(wAreaFlags)		; $6399
-	and AREAFLAG_PAST			; $639c
+	ld a,(wTilesetFlags)		; $6399
+	and TILESETFLAG_PAST			; $639c
 	call z,@add20		; $639e
 	ld b,>TX_2400		; $63a1
 	jp showText		; $63a3
@@ -4886,8 +4886,8 @@ goron_decideTextToShow_differentForLinkedInPast:
 	ld c,a			; $63ab
 	call checkIsLinkedGame		; $63ac
 	jr nz,@linked	; $63af
-	ld a,(wAreaFlags)		; $63b1
-	and AREAFLAG_PAST			; $63b4
+	ld a,(wTilesetFlags)		; $63b1
+	and TILESETFLAG_PAST			; $63b4
 	jr z,@showPresentText			; $63b6
 	jr @showText			; $63b8
 
@@ -4900,8 +4900,8 @@ goron_decideTextToShow_differentForLinkedInPast:
 	jp showText		; $63c0
 
 @linked:
-	ld a,(wAreaFlags)		; $63c3
-	and AREAFLAG_PAST			; $63c6
+	ld a,(wTilesetFlags)		; $63c3
+	and TILESETFLAG_PAST			; $63c6
 	jr z,@showPresentText	; $63c8
 
 	ld a,c			; $63ca
@@ -4914,8 +4914,8 @@ goron_decideTextToShow_differentForLinkedInPast:
 ; @addr{63d0}
 goron_showText_differentForPast:
 	ld c,a			; $63d0
-	ld a,(wAreaFlags)		; $63d1
-	and AREAFLAG_PAST			; $63d4
+	ld a,(wTilesetFlags)		; $63d1
+	and TILESETFLAG_PAST			; $63d4
 	call z,@add0c		; $63d6
 	ld b,>TX_2400		; $63d9
 	jp showText		; $63db
@@ -5005,8 +5005,8 @@ goron_determineTextForGenericNpc:
 
 ; Writes value from $00-$02 (past) or $00-$03 (present) representing game state to var3e.
 @getGameState:
-	ld a,(wAreaFlags)		; $6429
-	and AREAFLAG_PAST			; $642c
+	ld a,(wTilesetFlags)		; $6429
+	and TILESETFLAG_PAST			; $642c
 	jr z,@inPresent	; $642e
 
 @inPast:
@@ -5927,8 +5927,8 @@ goron_showTextForClairvoyantGoron:
 
 @showTipForItem:
 	; 'b' should be an index indicating an item to give a tip for?
-	ld a,(wAreaFlags)		; $68c3
-	and AREAFLAG_PAST			; $68c6
+	ld a,(wTilesetFlags)		; $68c3
+	and TILESETFLAG_PAST			; $68c6
 	jr z,@present	; $68c8
 
 @past:

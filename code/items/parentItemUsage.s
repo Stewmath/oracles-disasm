@@ -110,12 +110,12 @@ checkUseItems:
 	inc a			; $48eb
 	jr z,@updateParentItems	; $48ec
 
-	ld a,(wAreaFlags)		; $48ee
-	bit AREAFLAG_BIT_SIDESCROLL,a			; $48f1
+	ld a,(wTilesetFlags)		; $48ee
+	bit TILESETFLAG_BIT_SIDESCROLL,a			; $48f1
 	jr nz,@sidescroll	; $48f3
 
 .ifdef ROM_AGES
-	bit AREAFLAG_BIT_UNDERWATER,a			; $48f5
+	bit TILESETFLAG_BIT_UNDERWATER,a			; $48f5
 	jr z,@normal		; $48f7
 
 	; When underwater, only check the A button

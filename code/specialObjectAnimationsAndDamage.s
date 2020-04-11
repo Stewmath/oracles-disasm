@@ -287,8 +287,8 @@ _func_4553:
 @getLinkWalkingAnimation:
 .ifdef ROM_AGES
 	ld c,$0a		; $4589
-	ld a,(wAreaFlags)		; $458b
-	and AREAFLAG_UNDERWATER			; $458e
+	ld a,(wTilesetFlags)		; $458b
+	and TILESETFLAG_UNDERWATER			; $458e
 	jr z,@notUnderwater			; $4590
 
 @underwater:
@@ -431,11 +431,11 @@ getTransformedLinkID:
 	; Check whether Link is wearing a ring
 +
 	; Rings do nothing in sidescrolling, underwater areas
-	ld a,(wAreaFlags)		; $4637
+	ld a,(wTilesetFlags)		; $4637
 .ifdef ROM_AGES
-	and AREAFLAG_UNDERWATER | AREAFLAG_SIDESCROLL			; $463a
+	and TILESETFLAG_UNDERWATER | TILESETFLAG_SIDESCROLL			; $463a
 .else
-	and AREAFLAG_40 | AREAFLAG_SIDESCROLL
+	and TILESETFLAG_40 | TILESETFLAG_SIDESCROLL
 .endif
 	jr nz,++		; $463c
 

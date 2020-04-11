@@ -67,7 +67,7 @@
 
 	; If a bit is set here, the corresponding palette is loaded from
 	; w2FadingBgPalettes or w2FadingSprPalettes; otherwise, it's loaded from
-	; w2AreaBgPalettes or w2AreaSprPalettes.
+	; w2TilesetBgPalettes or w2TilesetSprPalettes.
 	hBgPaletteSources			db	; $ffa8
 	hSprPaletteSources			db	; $ffa9
 
