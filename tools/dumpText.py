@@ -42,7 +42,7 @@ language = 0
 
 if romIsAges(rom):
     lastGroupSize = 0x16
-    precmpDir = 'precompressed/ages/'
+    precmpDir = 'precompressed/text/ages/'
     textDir = 'text/ages/'
 
     if region == "US":
@@ -79,7 +79,7 @@ if romIsAges(rom):
 
 elif romIsSeasons(rom):
     lastGroupSize = 0x1d
-    precmpDir = 'precompressed/seasons/'
+    precmpDir = 'precompressed/text/seasons/'
     textDir = 'text/seasons/'
 
     if region == "US":
