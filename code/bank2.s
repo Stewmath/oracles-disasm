@@ -50,7 +50,7 @@ checkDisplayDmgModeScreen:
 	jr @vblankLoop		; $403c
 
 ;;
-; Indoor rooms don't appear to rely on the area flags to tell if they're in the past; they
+; Indoor rooms don't appear to rely on the tileset flags to tell if they're in the past; they
 ; have another room-based table to determine that.
 ;
 ; For ages, this marks rooms as being in the past; for seasons, it marks rooms as being in
@@ -59,7 +59,7 @@ checkDisplayDmgModeScreen:
 ; Updates wTilesetFlags accordingly with TILESETFLAG_PAST (bit 7).
 ;
 ; @addr{403e}
-updateAreaFlagsForIndoorRoomInAltWorld:
+updateTilesetFlagsForIndoorRoomInAltWorld:
 	ld a,(wActiveGroup)		; $403e
 	or a			; $4041
 	ret z			; $4042
@@ -2633,8 +2633,8 @@ runBank2Function:
 .dw _saveGraphicsOnEnterMenu
 .dw _reloadGraphicsOnExitMenu
 .dw _openMenu
-.dw _copyW2AreaBgPalettesToW4PaletteData
-.dw _copyW4PaletteDataToW2AreaBgPalettes
+.dw _copyW2TilesetBgPalettesToW4PaletteData
+.dw _copyW4PaletteDataToW2TilesetBgPalettes
 
 ;;
 ; @addr{4f2c}
@@ -2700,7 +2700,7 @@ _openMenu:
 
 ;;
 ; @addr{4f7c}
-_copyW2AreaBgPalettesToW4PaletteData:
+_copyW2TilesetBgPalettesToW4PaletteData:
 	ld hl,w2TilesetBgPalettes	; $4f7c
 	ld de,w4PaletteData	; $4f7f
 	ld b,$80		; $4f82
@@ -2724,7 +2724,7 @@ _copyW2AreaBgPalettesToW4PaletteData:
 
 ;;
 ; @addr{4f9b}
-_copyW4PaletteDataToW2AreaBgPalettes:
+_copyW4PaletteDataToW2TilesetBgPalettes:
 	ld hl,w4PaletteData	; $4f9b
 	ld de,w2TilesetBgPalettes	; $4f9e
 	ld b,$80		; $4fa1
@@ -2890,7 +2890,7 @@ _saveGraphicsOnEnterMenu:
 	ld b,GfxRegsStruct.size*2
 	call copyMemory		; $5089
 	call disableLcd		; $508c
-	call _copyW2AreaBgPalettesToW4PaletteData		; $508f
+	call _copyW2TilesetBgPalettesToW4PaletteData		; $508f
 	ld a,:w4SavedOam	; $5092
 	ld ($ff00+R_SVBK),a	; $5094
 	ld hl,wOam		; $5096
@@ -2946,15 +2946,15 @@ _reloadGraphicsOnExitMenu:
 	ld de,wOam		; $50f1
 	ld b,$a0		; $50f4
 	call copyMemory		; $50f6
-	call _copyW4PaletteDataToW2AreaBgPalettes		; $50f9
+	call _copyW4PaletteDataToW2TilesetBgPalettes		; $50f9
 	ld hl,wGfxRegs4		; $50fc
 	ld de,wGfxRegs1		; $50ff
 	ld b,GfxRegsStruct.size*2	; $5102
 	call copyMemory		; $5104
 	call _loadCommonGraphics		; $5107
 	call reloadObjectGfx		; $510a
-	call loadAreaData		; $510d
-	call loadAreaGraphics		; $5110
+	call loadTilesetData		; $510d
+	call loadTilesetGraphics		; $5110
 	call reloadTileMap		; $5113
 	call fastFadeinFromWhiteToRoom		; $5116
 	ld a,(wExtraBgPaletteHeader)		; $5119
@@ -3042,7 +3042,7 @@ _loadCommonGraphics:
 	cp $02			; $5175
 	jr nc,+			; $5177
 
-	; Check if the area is actually underwater
+	; Check if the tileset is actually underwater
 	ld a,(wTilesetFlags)		; $5179
 	and TILESETFLAG_UNDERWATER	; $517c
 	jr z,+			; $517e

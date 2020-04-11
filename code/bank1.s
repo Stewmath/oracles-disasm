@@ -81,7 +81,7 @@ initializeRoomBoundaryAndLoadAnimations:
 	add a			; $4063
 	ld (wMaxCameraX),a		; $4064
 	call calculateRoomEdge		; $4067
-	jp loadAreaAnimation		; $406a
+	jp loadTilesetAnimation		; $406a
 
 ; Format:
 ; b0: wRoomWidth (measured in 8x8 tiles)
@@ -605,7 +605,7 @@ _screenTransitionState3:
 	cp $08			; $42e8
 	ret nz			; $42ea
 
-	call loadAreaAnimation		; $42eb
+	call loadTilesetAnimation		; $42eb
 	call checkDarkenRoom		; $42ee
 
 	; Decide whether to proceed to state 4 or 5
@@ -686,7 +686,7 @@ checkBrightenRoom:
 ;
 ; @addr{433a}
 _screenTransitionState4:
-	call updateAreaUniqueGfx		; $433a
+	call updateTilesetUniqueGfx		; $433a
 	ret c			; $433d
 
 	ld a,(wTilesetUniqueGfx)		; $433e
@@ -695,7 +695,7 @@ _screenTransitionState4:
 	ld (wTilesetUniqueGfx),a		; $4345
 
 	call func_47fc		; $4348
-	call nc,updateAreaPalette		; $434b
+	call nc,updateTilesetPalette		; $434b
 	ld hl,wScreenTransitionState		; $434e
 	ld a,$05		; $4351
 	ldi (hl),a		; $4353
@@ -1134,7 +1134,7 @@ _screenTransitionState5Substate2:
 ; @addr{4559}
 @state4:
 	; Load one entry from the unique gfx per frame
-	call updateAreaUniqueGfx		; $4559
+	call updateTilesetUniqueGfx		; $4559
 	ret c			; $455c
 
 	; Finished loading unique gfx
@@ -1147,7 +1147,7 @@ _screenTransitionState5Substate2:
 ; @addr{4567}
 @state5:
 	call checkBrightenRoom		; $4567
-	call updateAreaPalette		; $456a
+	call updateTilesetPalette		; $456a
 	call setInstrumentsDisabledCounterAndScrollMode		; $456d
 
 	; Return to _screenTransitionState2 (no active transition)
@@ -1339,7 +1339,7 @@ _screenTransitionState5Substate1:
 ; @addr{464c}
 @state4:
 	; Load one entry from the unique gfx per frame
-	call updateAreaUniqueGfx		; $464c
+	call updateTilesetUniqueGfx		; $464c
 	ret c			; $464f
 
 	; Finished loading unique gfx
@@ -1352,7 +1352,7 @@ _screenTransitionState5Substate1:
 ; @addr{465a}
 @state5:
 	call checkBrightenRoom		; $465a
-	call updateAreaPalette		; $465d
+	call updateTilesetPalette		; $465d
 	call setInstrumentsDisabledCounterAndScrollMode		; $4660
 
 	; Return to _screenTransitionState2 (no active transition)
@@ -1576,9 +1576,9 @@ copyTileRowToVramBuffer:
 	ret			; $4761
 
 ;;
-; Check if the newly loaded area has a different palette than before, update accordingly
+; Check if the newly loaded tileset has a different palette than before, update accordingly
 ; @addr{4762}
-updateAreaPalette:
+updateTilesetPalette:
 	ld a,(wLoadedTilesetPalette)		; $4762
 	ld b,a			; $4765
 	ld a,(wTilesetPalette)		; $4766
@@ -2268,7 +2268,7 @@ updateLinkBeingShocked:
 	ld (hl),a		; $4a9e
 	ld hl,wDisableLinkCollisionsAndMenu		; $4a9f
 	set 0,(hl)		; $4aa2
-	jp copyW2AreaBgPalettesToW4PaletteData		; $4aa4
+	jp copyW2TilesetBgPalettesToW4PaletteData		; $4aa4
 
 @val02:
 	ld h,d			; $4aa7
@@ -2282,7 +2282,7 @@ updateLinkBeingShocked:
 	ret nz			; $4ab0
 
 	bit 3,(hl)		; $4ab1
-	jp z,copyW4PaletteDataToW2AreaBgPalettes		; $4ab3
+	jp z,copyW4PaletteDataToW2TilesetBgPalettes		; $4ab3
 
 	ld a,$08		; $4ab6
 	call setScreenShakeCounter		; $4ab8
@@ -2299,7 +2299,7 @@ updateLinkBeingShocked:
 	ld (hl),a		; $4ac9
 	ld hl,wDisableLinkCollisionsAndMenu		; $4aca
 	res 0,(hl)		; $4acd
-	jp copyW4PaletteDataToW2AreaBgPalettes		; $4acf
+	jp copyW4PaletteDataToW2TilesetBgPalettes		; $4acf
 
 ;;
 ; This is called when Link falls into a hole tile that goes a level down.
@@ -2592,8 +2592,8 @@ cutscene15:
 	call clearMemoryOnScreenReload		; $4c89
 	call stopTextThread		; $4c8c
 	call applyWarpDest		; $4c8f
-	call loadAreaData		; $4c92
-	call loadAreaGraphics		; $4c95
+	call loadTilesetData		; $4c92
+	call loadTilesetGraphics		; $4c95
 	call loadDungeonLayout		; $4c98
 	call func_131f		; $4c9b
 	call clearEnemiesKilledList		; $4c9e
@@ -3648,8 +3648,8 @@ _func_5a60:
 	call clearAllParentItems		; $5a6f
 	call dropLinkHeldItem		; $5a72
 	call loadScreenMusicAndSetRoomPack		; $5a75
-	call loadAreaData		; $5a78
-	call loadAreaGraphics		; $5a7b
+	call loadTilesetData		; $5a78
+	call loadTilesetGraphics		; $5a7b
 
 .ifdef ROM_AGES
 	ld a,(wLoadingRoomPack)		; $5a7e
@@ -3673,7 +3673,7 @@ _func_5a60:
 	call initializeRoom		; $5aaa
 	call checkDisplayEraOrSeasonInfo		; $5aad
 	call updateGrassAnimationModifier		; $5ab0
-	call checkPlayAreaMusic		; $5ab3
+	call checkPlayRoomMusic		; $5ab3
 	call checkUpdateDungeonMinimap		; $5ab6
 	jp func_593a		; $5ab9
 
@@ -3833,13 +3833,13 @@ cutscene01:
 	call func_49c9		; $5ba8
 	call setObjectsEnabledTo2		; $5bab
 	call loadScreenMusic		; $5bae
-	call loadAreaData		; $5bb1
+	call loadTilesetData		; $5bb1
 
 	call checkRoomPack		; $5bb4
 	jp nz,triggerFadeoutTransition		; $5bb7
 
 .ifdef ROM_SEASONS
-	call checkPlayAreaMusic
+	call checkPlayRoomMusic
 .endif
 	ld a,(wActiveRoom)		; $5bba
 	ld (wLoadingRoom),a		; $5bbd
@@ -3853,7 +3853,7 @@ cutscene01:
 
 .ifdef ROM_AGES
 	call initializeRoom		; $5bd2
-	jp checkPlayAreaMusic		; $5bd5
+	jp checkPlayRoomMusic		; $5bd5
 .else
 	jp initializeRoom
 .endif
@@ -3883,8 +3883,8 @@ cutscene03:
 	ld a,PALH_0f		; $5bec
 	call loadPaletteHeader		; $5bee
 	call applyWarpDest		; $5bf1
-	call loadAreaData		; $5bf4
-	call loadAreaGraphics		; $5bf7
+	call loadTilesetData		; $5bf4
+	call loadTilesetGraphics		; $5bf7
 	call loadDungeonLayout		; $5bfa
 	call func_131f		; $5bfd
 	call reloadObjectGfx		; $5c00
@@ -3934,7 +3934,7 @@ _func_5c18:
 	call checkDisplayEraOrSeasonInfo		; $5c52
 	call checkDarkenRoomAndClearPaletteFadeState		; $5c55
 	call fadeinFromWhiteToRoom		; $5c58
-	call checkPlayAreaMusic		; $5c5b
+	call checkPlayRoomMusic		; $5c5b
 	xor a			; $5c5e
 	ld (wCutsceneIndex),a		; $5c5f
 .ifdef ROM_AGES
@@ -4020,8 +4020,8 @@ cutscene05:
 
 	call clearMemoryOnScreenReload		; $5ce3
 	call loadScreenMusicAndSetRoomPack		; $5ce6
-	call loadAreaData		; $5ce9
-	call loadAreaGraphics		; $5cec
+	call loadTilesetData		; $5ce9
+	call loadTilesetGraphics		; $5cec
 	call func_131f		; $5cef
 	ld de,w1Link.yh		; $5cf2
 	call getShortPositionFromDE		; $5cf5
@@ -4283,7 +4283,7 @@ func_5e3d:
 
 ;;
 ; @addr{5e4d}
-checkPlayAreaMusic:
+checkPlayRoomMusic:
 	ld a, GLOBALFLAG_INTRO_DONE	; $5e4d
 	call checkGlobalFlag		; $5e4f
 	ret z			; $5e52
@@ -5624,8 +5624,8 @@ func_7b93:
 	call clearOam		; $7ba4
 	call clearMemoryOnScreenReload		; $7ba7
 	call loadScreenMusicAndSetRoomPack		; $7baa
-	call loadAreaData		; $7bad
-	call loadAreaGraphics		; $7bb0
+	call loadTilesetData		; $7bad
+	call loadTilesetGraphics		; $7bb0
 	call func_131f		; $7bb3
 	call loadDungeonLayout		; $7bb6
 	ld a,$01		; $7bb9

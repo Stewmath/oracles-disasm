@@ -2463,7 +2463,7 @@ wLoadedTilesetUniqueGfx: ; $cd28
 	db
 wLoadedTilesetPalette: ; $cd29
 	db
-wLoadedTilesetTileset: ; $cd2a
+wLoadedTilesetLayout: ; $cd2a
 	db
 wLoadedTilesetAnimation: ; $cd2b
 	db

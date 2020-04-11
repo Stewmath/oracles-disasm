@@ -1,4 +1,4 @@
-; Definitions for overworld areas
+; Definitions for overworld tilesets
 
 .define TILETYPE_NORMAL		$00
 .define TILETYPE_HOLE		$01
@@ -31,7 +31,7 @@
 .define TILETYPE_SEAWATER	$17
 .define TILETYPE_WHIRLPOOL	$18
 
-; Sidescrolling areas follow a different set of rules; each bit represents a certain
+; Sidescrolling tilesets follow a different set of rules; each bit represents a certain
 ; behaviour.
 
 ; This looks the same as other tiles, but it instantly respawns Link. A "death boundary".

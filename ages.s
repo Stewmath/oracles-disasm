@@ -4312,7 +4312,7 @@ func_131f:
 
 ;;
 ; @addr{1374}
-loadAreaAnimation:
+loadTilesetAnimation:
 	ld a,(wLoadedTilesetAnimation)		; $1374
 	ld b,a			; $1377
 	ld a,(wTilesetAnimation)		; $1378
@@ -4350,7 +4350,7 @@ func_1383:
 	call $4956		; $134b
 	call $4964		; $134e
 	call applyWarpDest		; $1351
-	call loadAreaData		; $1354
+	call loadTilesetData		; $1354
 	ld a,($cc4c)		; $1357
 	ld ($cc4b),a		; $135a
 	call loadTilesetAndRoomLayout		; $135d
@@ -6063,13 +6063,13 @@ openMenu:
 
 ;;
 ; @addr{1ab4}
-copyW2AreaBgPalettesToW4PaletteData:
+copyW2TilesetBgPalettesToW4PaletteData:
 	ld h,$07		; $1ab4
 	jr +++		; $1ab6
 
 ;;
 ; @addr{1ab8}
-copyW4PaletteDataToW2AreaBgPalettes:
+copyW4PaletteDataToW2TilesetBgPalettes:
 	ld h,$08		; $1ab8
 +++
 	ld l,a			; $1aba
@@ -13088,7 +13088,7 @@ clearScreenVariables:
 	call clearMemory		; $35ab
 	ld a,$ff		; $35ae
 	ld (wLoadedTilesetUniqueGfx),a		; $35b0
-	ld (wLoadedTilesetTileset),a		; $35b3
+	ld (wLoadedTilesetLayout),a		; $35b3
 	ld (wLoadedTilesetAnimation),a		; $35b6
 	ret			; $35b9
 
@@ -13463,8 +13463,8 @@ func_36f6:
 	ld a,c			; $36ff
 	ld (wActiveRoom),a		; $3700
 	call loadScreenMusicAndSetRoomPack		; $3703
-	call loadAreaData		; $3706
-	call loadAreaGraphics		; $3709
+	call loadTilesetData		; $3706
+	call loadTilesetGraphics		; $3709
 	call loadTilesetAndRoomLayout		; $370c
 	jp generateVramTilesWithRoomChanges		; $370f
 
@@ -13475,7 +13475,7 @@ func_36f6:
 ; tiles in the tileset.
 ;
 ; @addr{3712}
-loadAreaTileset:
+loadTilesetLayout:
 	ld a,(wTilesetLayout)		; $3712
 	call loadTileset		; $3715
 	ld a,:tileMappingTable
@@ -13586,7 +13586,7 @@ loadUniqueGfxHeader:
 ; Load all graphics based on wTileset variables.
 ;
 ; @addr{3796}
-loadAreaGraphics:
+loadTilesetGraphics:
 	ldh a,(<hRomBank)	; $3796
 	push af			; $3798
 
@@ -13595,7 +13595,7 @@ loadAreaGraphics:
 	ld a,(wTilesetPalette)		; $379f
 	call loadPaletteHeader		; $37a2
 
-	call          loadAreaUniqueGfx		; $37a5
+	call          loadTilesetUniqueGfx		; $37a5
 	callfrombank0 initializeAnimations	; $37a8
 
 .ifdef ROM_AGES
@@ -13623,7 +13623,7 @@ loadAreaGraphics:
 ; @param	wUniqueGfxHeaderAddress	Where to read the header from (will be updated)
 ; @param[out]	cflag			Set if there are more entries to load.
 ; @addr{37db}
-updateAreaUniqueGfx:
+updateTilesetUniqueGfx:
 	ld a,(wTilesetUniqueGfx)		; $37db
 	or a			; $37de
 	ret z			; $37df
@@ -13683,7 +13683,7 @@ uniqueGfxFunc_380b:
 
 ;;
 ; @addr{3828}
-loadAreaUniqueGfx:
+loadTilesetUniqueGfx:
 	ld a,:uniqueGfxHeaderTable	; $3828
 	setrombank		; $382a
 	ld a,(wTilesetUniqueGfx)		; $382f
@@ -13761,12 +13761,12 @@ loadUniqueGfxHeaderEntry:
 
 ;;
 ; @addr{3889}
-loadAreaData:
+loadTilesetData:
 	ldh a,(<hRomBank)	; $3889
 	push af			; $388b
 
-	callfrombank0 loadAreaData_body
-	callab        bank2.updateAreaFlagsForIndoorRoomInAltWorld		; $3896
+	callfrombank0 loadTilesetData_body
+	callab        bank2.updateTilesetFlagsForIndoorRoomInAltWorld		; $3896
 
 	pop af			; $389e
 	setrombank		; $389f
@@ -13779,12 +13779,12 @@ loadTilesetAndRoomLayout:
 	push af			; $38a7
 
 	; Reload tileset if necessary
-	ld a,(wLoadedTilesetTileset)		; $38a8
+	ld a,(wLoadedTilesetLayout)		; $38a8
 	ld b,a			; $38ab
 	ld a,(wTilesetLayout)		; $38ac
 	cp b			; $38af
-	ld (wLoadedTilesetTileset),a		; $38b0
-	call nz,loadAreaTileset		; $38b3
+	ld (wLoadedTilesetLayout),a		; $38b0
+	call nz,loadTilesetLayout		; $38b3
 
 .ifdef ROM_SEASONS
 	call seasonsFunc_3870
@@ -16319,8 +16319,8 @@ _twinrovaCutscene_fadeinToRoom:
 	call disableLcd		; $4b6f
 	call clearScreenVariablesAndWramBank1		; $4b72
 	call loadScreenMusicAndSetRoomPack		; $4b75
-	call loadAreaData		; $4b78
-	call loadAreaGraphics		; $4b7b
+	call loadTilesetData		; $4b78
+	call loadTilesetGraphics		; $4b7b
 	jp func_131f		; $4b7e
 
 ;;
@@ -19901,8 +19901,8 @@ disableLcdAndLoadRoom_body:
 	call clearMemory		; $5ff8
 	call initializeVramMaps		; $5ffb
 	call loadScreenMusicAndSetRoomPack		; $5ffe
-	call loadAreaData		; $6001
-	call loadAreaGraphics		; $6004
+	call loadTilesetData		; $6001
+	call loadTilesetGraphics		; $6004
 	call func_131f		; $6007
 	ld a,$01		; $600a
 	ld (wScrollMode),a		; $600c
@@ -20131,8 +20131,8 @@ _label_03_112:
 	call clearScreenVariablesAndWramBank1		; $6150
 	call initializeVramMaps		; $6153
 	call loadScreenMusicAndSetRoomPack		; $6156
-	call loadAreaData		; $6159
-	call loadAreaGraphics		; $615c
+	call loadTilesetData		; $6159
+	call loadTilesetGraphics		; $615c
 	call func_131f		; $615f
 	ld a,$01		; $6162
 	ld (wScrollMode),a		; $6164
@@ -20298,8 +20298,8 @@ func_03_6275:
 	call clearScreenVariablesAndWramBank1		; $62a3
 	call initializeVramMaps		; $62a6
 	call loadScreenMusicAndSetRoomPack		; $62a9
-	call loadAreaData		; $62ac
-	call loadAreaGraphics		; $62af
+	call loadTilesetData		; $62ac
+	call loadTilesetGraphics		; $62af
 	call func_131f		; $62b2
 	ld a,$01		; $62b5
 	ld (wScrollMode),a		; $62b7
@@ -23518,8 +23518,8 @@ _label_03_184:
 	ret			; $7ca7
 	call disableLcd		; $7ca8
 	call loadScreenMusicAndSetRoomPack		; $7cab
-	call loadAreaData		; $7cae
-	call loadAreaGraphics		; $7cb1
+	call loadTilesetData		; $7cae
+	call loadTilesetGraphics		; $7cb1
 	jp func_131f		; $7cb4
 ;;
 ; @addr{7cb7}
@@ -26638,10 +26638,10 @@ queueTileWriteAtVBlank:
 	ret			; $6d79
 
 ;;
-; Called from loadAreaData in bank 0.
+; Called from loadTilesetData in bank 0.
 ;
 ; @addr{6d7a}
-loadAreaData_body:
+loadTilesetData_body:
 	call getAdjustedRoomGroup		; $6d7a
 	ld hl,roomTilesetsGroupTable
 	rst_addDoubleIndex			; $6d80
@@ -133430,8 +133430,8 @@ _ganon_state_uninitialized:
 	ld (wTwinrovaTileReplacementMode),a		; $5120
 
 	call loadScreenMusicAndSetRoomPack		; $5123
-	call loadAreaData		; $5126
-	call loadAreaGraphics		; $5129
+	call loadTilesetData		; $5126
+	call loadTilesetGraphics		; $5129
 	call func_131f		; $512c
 	call resetCamera		; $512f
 	call loadCommonGraphics		; $5132

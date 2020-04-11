@@ -1,10 +1,10 @@
-; Note: the tiles listed here may not apply for all areas.
+; Note: the tiles listed here may not apply for all tilesets.
 ; TODO: Rename "up/down/left/right" to "north/south/east/west" (the distinction between
 ; "up" and "north" is useful)
 ; TODO: Figure out differences between ages and seasons, and categorize better based on
-; area type (outdoors / indoors / cave / dungeon).
+; tileset type (outdoors / indoors / cave / dungeon).
 
-; Tiles in normal areas
+; Tiles in normal tilesets
 
 .define TILEINDEX_00			$00 ; Out-of-bounds tile (also used by vine sprout?)
 .define TILEINDEX_GRAVE_STATIONARY	$02 ; Overworld only
@@ -151,7 +151,7 @@
 
 .define TILEINDEX_DEEP_WATER		$fc
 
-; Tiles in sidescrolling areas
+; Tiles in sidescrolling tilesets
 .define TILEINDEX_SS_EMPTY		$01
 .define TILEINDEX_SS_SPIKE		$02
 .define TILEINDEX_SS_LADDER		$18

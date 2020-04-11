@@ -3673,7 +3673,7 @@ func_131f:
 	ld ($2222),a		; $1311
 	ret			; $1314
 
-loadAreaAnimation:
+loadTilesetAnimation:
 	ld a,($cd2b)		; $1315
 	ld b,a			; $1318
 	ld a,($cd25)		; $1319
@@ -3705,7 +3705,7 @@ func_1383:
 	call $4956		; $134b
 	call $4964		; $134e
 	call loadScreenMusic		; $1351
-	call loadAreaData		; $1354
+	call loadTilesetData		; $1354
 	ld a,($cc4c)		; $1357
 	ld ($cc4b),a		; $135a
 	call loadTilesetAndRoomLayout		; $135d
@@ -5002,11 +5002,11 @@ openMenu:
 	ld h,$06		; $1a76
 	jr _label_00_216		; $1a78
 
-copyW2AreaBgPalettesToW4PaletteData:
+copyW2TilesetBgPalettesToW4PaletteData:
 	ld h,$07		; $1a7a
 	jr _label_00_216		; $1a7c
 
-copyW4PaletteDataToW2AreaBgPalettes:
+copyW4PaletteDataToW2TilesetBgPalettes:
 	ld h,$08		; $1a7e
 _label_00_216:
 	ld l,a			; $1a80
@@ -10192,12 +10192,12 @@ func_36f6:
 	ld a,c			; $36a4
 	ld ($cc4c),a		; $36a5
 	call loadScreenMusicAndSetRoomPack		; $36a8
-	call loadAreaData		; $36ab
-	call loadAreaGraphics		; $36ae
+	call loadTilesetData		; $36ab
+	call loadTilesetGraphics		; $36ae
 	call loadTilesetAndRoomLayout		; $36b1
 	jp generateVramTilesWithRoomChanges		; $36b4
 
-loadAreaTileset:
+loadTilesetLayout:
 	ld a,($cd23)		; $36b7
 	call loadTileset		; $36ba
 	ld a,:tileMappingTable		; $36bd
@@ -10281,14 +10281,14 @@ loadUniqueGfxHeader:
 	ld ($2222),a		; $3733
 	ret			; $3736
 
-loadAreaGraphics:
+loadTilesetGraphics:
 	ldh a,(<hRomBank)	; $3737
 	push af			; $3739
 	ld a,($cd21)		; $373a
 	call loadGfxHeader		; $373d
 	ld a,($cd22)		; $3740
 	call loadPaletteHeader		; $3743
-	call loadAreaUniqueGfx		; $3746
+	call loadTilesetUniqueGfx		; $3746
 	ld a,$04		; $3749
 	ldh (<hRomBank),a	; $374b
 	ld ($2222),a		; $374d
@@ -10304,7 +10304,7 @@ loadAreaGraphics:
 	ld ($2222),a		; $3768
 	ret			; $376b
 
-updateAreaUniqueGfx:
+updateTilesetUniqueGfx:
 	ld a,($cd20)		; $376c
 	or a			; $376f
 	ret z			; $3770
@@ -10353,7 +10353,7 @@ uniqueGfxFunc_380b:
 	ld ($2222),a		; $37b5
 	ret			; $37b8
 
-loadAreaUniqueGfx:
+loadTilesetUniqueGfx:
 	ld a,:uniqueGfxHeaderTable		; $37b9
 	ldh (<hRomBank),a	; $37bb
 	ld ($2222),a		; $37bd
@@ -10420,7 +10420,7 @@ _label_00_368:
 	ldi a,(hl)		; $3818
 	ret			; $3819
 
-loadAreaData:
+loadTilesetData:
 	ldh a,(<hRomBank)	; $381a
 	push af			; $381c
 	ld a,$04		; $381d
@@ -10443,7 +10443,7 @@ loadTilesetAndRoomLayout:
 	ld a,($cd23)		; $383d
 	cp b			; $3840
 	ld ($cd2a),a		; $3841
-	call nz,loadAreaTileset		; $3844
+	call nz,loadTilesetLayout		; $3844
 	call seasonsFunc_3870		; $3847
 	call loadRoomLayout		; $384a
 	ld a,$04		; $384d
@@ -12190,8 +12190,8 @@ _label_03_042:
 	call disableLcd		; $4b6f
 	call clearScreenVariablesAndWramBank1		; $4b72
 	call loadScreenMusicAndSetRoomPack		; $4b75
-	call loadAreaData		; $4b78
-	call loadAreaGraphics		; $4b7b
+	call loadTilesetData		; $4b78
+	call loadTilesetGraphics		; $4b7b
 	jp func_131f		; $4b7e
 	ld a,($cc03)		; $4b81
 _label_03_043:
@@ -15501,8 +15501,8 @@ _label_03_154:
 	call clearMemory		; $63e8
 	call initializeVramMaps		; $63eb
 	call loadScreenMusicAndSetRoomPack		; $63ee
-	call loadAreaData		; $63f1
-	call loadAreaGraphics		; $63f4
+	call loadTilesetData		; $63f1
+	call loadTilesetGraphics		; $63f4
 	call func_131f		; $63f7
 	ld a,$01		; $63fa
 	ld ($cd00),a		; $63fc
@@ -16242,8 +16242,8 @@ _label_03_188:
 	ld a,c			; $6923
 	ld ($cc4c),a		; $6924
 	call loadScreenMusicAndSetRoomPack		; $6927
-	call loadAreaData		; $692a
-	call loadAreaGraphics		; $692d
+	call loadTilesetData		; $692a
+	call loadTilesetGraphics		; $692d
 	jp func_131f		; $6930
 _label_03_189:
 	push af			; $6933
@@ -16631,7 +16631,7 @@ _label_03_196:
 	ld e,$01		; $6c27
 	call interBankCall		; $6c29
 	call loadScreenMusicAndSetRoomPack		; $6c2c
-	call loadAreaData		; $6c2f
+	call loadTilesetData		; $6c2f
 	call loadTilesetAndRoomLayout		; $6c32
 	call generateVramTilesWithRoomChanges		; $6c35
 	ld a,$08		; $6c38
@@ -16794,8 +16794,8 @@ _label_03_197:
 	call clearScreenVariablesAndWramBank1		; $6d8e
 	ld a,$15		; $6d91
 	call setGlobalFlag		; $6d93
-	call loadAreaData		; $6d96
-	call loadAreaGraphics		; $6d99
+	call loadTilesetData		; $6d96
+	call loadTilesetGraphics		; $6d99
 	call func_131f		; $6d9c
 	ld a,$01		; $6d9f
 	ld ($cd00),a		; $6da1
@@ -16840,8 +16840,8 @@ _label_03_197:
 	ld a,c			; $6de8
 	ld ($cc4c),a		; $6de9
 	call loadScreenMusicAndSetRoomPack		; $6dec
-	call loadAreaData		; $6def
-	call loadAreaGraphics		; $6df2
+	call loadTilesetData		; $6def
+	call loadTilesetGraphics		; $6df2
 	jp func_131f		; $6df5
 	ld a,$ff		; $6df8
 	jp setScreenShakeCounter		; $6dfa
@@ -87202,7 +87202,7 @@ _label_0e_102:
 	ld l,$86		; $4e5f
 	ld (hl),$3c		; $4e61
 	ld a,$b1		; $4e63
-	ld bc,loadAreaGraphics		; $4e65
+	ld bc,loadTilesetGraphics		; $4e65
 	jr _label_0e_103		; $4e68
 	call _ecom_decCounter1		; $4e6a
 	ret nz			; $4e6d
@@ -97594,8 +97594,8 @@ _label_0f_116:
 	ld a,$03		; $512c
 	ld ($ccc4),a		; $512e
 	call loadScreenMusicAndSetRoomPack		; $5131
-	call loadAreaData		; $5134
-	call loadAreaGraphics		; $5137
+	call loadTilesetData		; $5134
+	call loadTilesetGraphics		; $5137
 	call func_131f		; $513a
 	call resetCamera		; $513d
 	call loadCommonGraphics		; $5140
