@@ -23857,8 +23857,8 @@ roomLayoutGroupTable: ; $4f6c
 	3BytePointer room0500
 	.db $00
 
-.include "build/data/areas.s"
-.include "build/data/areaMappings.s"
+.include "build/data/tilesets.s"
+.include "build/data/tilesetAssignments.s"
 
 
 ;;
@@ -26643,7 +26643,7 @@ queueTileWriteAtVBlank:
 ; @addr{6d7a}
 loadAreaData_body:
 	call getAdjustedRoomGroup		; $6d7a
-	ld hl,roomAreasGroupTable
+	ld hl,roomTilesetsGroupTable
 	rst_addDoubleIndex			; $6d80
 	ldi a,(hl)		; $6d81
 	ld h,(hl)		; $6d82
@@ -26662,7 +26662,7 @@ loadAreaData_body:
 	ldh a,(<hFF8D)	; $6d98
 	and $7f			; $6d9a
 	call multiplyABy8		; $6d9c
-	ld hl,areaData
+	ld hl,tilesetData
 	add hl,bc		; $6da2
 	ldi a,(hl)		; $6da3
 	ld e,a			; $6da4

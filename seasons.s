@@ -19317,8 +19317,8 @@ roomLayoutGroupTable: ; $4c4c
 	3BytePointer room0600
 	.db $00
 
-.include "build/data/areas.s"
-.include "build/data/areaMappings.s"
+.include "build/data/tilesets.s"
+.include "build/data/tilesetAssignments.s"
 
 
 	ld a,($cd25)		; $574c
