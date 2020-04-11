@@ -32,7 +32,7 @@ if romIsAges(rom):
 
     dataDir = 'data/ages/'
     tilesetDir = 'tileset_layouts/ages/'
-    precmpDir = 'precompressed/ages/tileset_layouts/'
+    precmpDir = 'precompressed/tileset_layouts/ages/'
 elif romIsSeasons(rom):
     tileMappingBank = 0x17
 
@@ -49,7 +49,7 @@ elif romIsSeasons(rom):
 
     dataDir = 'data/seasons/'
     tilesetDir = 'tileset_layouts/seasons/'
-    precmpDir = 'precompressed/seasons/tileset_layouts/'
+    precmpDir = 'precompressed/tileset_layouts/seasons/'
 else:
     print('Unrecognized ROM.')
     sys.exit(1)

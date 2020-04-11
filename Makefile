@@ -153,7 +153,7 @@ build/gfx/%.cmp: gfx/$(GAME)/%.bin | build/gfx
 	@dd if=/dev/zero bs=1 count=1 of=$@ 2>/dev/null
 	@cat $< >> $@
 
-build/tileset_layouts/collisionsDictionary.bin: precompressed/$(GAME)/tileset_layouts/collisionsDictionary.bin | build/tileset_layouts
+build/tileset_layouts/collisionsDictionary.bin: precompressed/tileset_layouts/$(GAME)/collisionsDictionary.bin | build/tileset_layouts
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
@@ -182,10 +182,10 @@ $(NO_PRECMP_FILE): | build
 
 ifeq ($(BUILD_VANILLA),true)
 
-build/tileset_layouts/%.bin: precompressed/$(GAME)/tileset_layouts/%.bin $(CMP_MODE) | build/tileset_layouts
+build/tileset_layouts/%.bin: precompressed/tileset_layouts/$(GAME)/%.bin $(CMP_MODE) | build/tileset_layouts
 	@echo "Copying $< to $@..."
 	@cp $< $@
-build/tileset_layouts/%.cmp: precompressed/$(GAME)/tileset_layouts/%.cmp $(CMP_MODE) | build/tileset_layouts
+build/tileset_layouts/%.cmp: precompressed/tileset_layouts/$(GAME)/%.cmp $(CMP_MODE) | build/tileset_layouts
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
