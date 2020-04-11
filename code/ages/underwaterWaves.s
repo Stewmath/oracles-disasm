@@ -4,8 +4,8 @@
 ;
 ; @addr{626e}
 checkInitUnderwaterWaves:
-	ld a,(wAreaFlags)		; $626e
-	and AREAFLAG_UNDERWATER		; $6271
+	ld a,(wTilesetFlags)		; $626e
+	and TILESETFLAG_UNDERWATER		; $6271
 	ret z			; $6273
 
 	ld a,$10		; $6274
@@ -20,8 +20,8 @@ checkInitUnderwaterWaves:
 ;
 ; @addr{6282}
 checkUpdateUnderwaterWaves:
-	ld a,(wAreaFlags)		; $6282
-	and AREAFLAG_UNDERWATER			; $6285
+	ld a,(wTilesetFlags)		; $6282
+	and TILESETFLAG_UNDERWATER			; $6285
 	ret z			; $6287
 
 	ld a,:w2WaveScrollValues		; $6288
@@ -58,8 +58,8 @@ checkUpdateUnderwaterWaves:
 ;
 ; @addr{62b4}
 checkDisableUnderwaterWaves:
-	ld a,(wAreaFlags)		; $62b4
-	and AREAFLAG_UNDERWATER			; $62b7
+	ld a,(wTilesetFlags)		; $62b4
+	and TILESETFLAG_UNDERWATER			; $62b7
 	ret z			; $62b9
 
 	ld a,$03		; $62ba

@@ -1111,9 +1111,9 @@ loadPaletteHeader:
 	; de = destination
 	ld a,(hl)		; $0554
 	and $78			; $0555
-	add w2AreaBgPalettes&$ff
+	add w2TilesetBgPalettes&$ff
 	ld e,a			; $0559
-	ld d, w2AreaBgPalettes>>8
+	ld d, w2TilesetBgPalettes>>8
 
 	; b = number of palettes
 	ld a,(hl)		; $055c
@@ -3321,8 +3321,8 @@ func_0eda:
 ; @param	[hFF8D]	X-position
 ; @addr{0f08}
 _drawObjectTerrainEffects:
-	ld a,(wAreaFlags)		; $0f08
-	and AREAFLAG_SIDESCROLL
+	ld a,(wTilesetFlags)		; $0f08
+	and TILESETFLAG_SIDESCROLL
 	ret nz			; $0f0d
 
 	ld a,b			; $0f0e
@@ -4302,10 +4302,10 @@ func_131f:
 	ld a,UNCMP_GFXH_10		; $135c
 	call loadUncompressedGfxHeader		; $135e
 ++
-	ld a,(wAreaPalette)		; $1361
-	ld (wLoadedAreaPalette),a		; $1364
-	ld a,(wAreaUniqueGfx)		; $1367
-	ld (wLoadedAreaUniqueGfx),a		; $136a
+	ld a,(wTilesetPalette)		; $1361
+	ld (wLoadedTilesetPalette),a		; $1364
+	ld a,(wTilesetUniqueGfx)		; $1367
+	ld (wLoadedTilesetUniqueGfx),a		; $136a
 	pop af			; $136d
 	setrombank		; $136e
 	ret			; $1373
@@ -4313,12 +4313,12 @@ func_131f:
 ;;
 ; @addr{1374}
 loadAreaAnimation:
-	ld a,(wLoadedAreaAnimation)		; $1374
+	ld a,(wLoadedTilesetAnimation)		; $1374
 	ld b,a			; $1377
-	ld a,(wAreaAnimation)		; $1378
+	ld a,(wTilesetAnimation)		; $1378
 	cp b			; $137b
 	ret z			; $137c
-	ld (wLoadedAreaAnimation),a		; $137d
+	ld (wLoadedTilesetAnimation),a		; $137d
 	jp loadAnimationData		; $1380
 
 ;;
@@ -8571,21 +8571,21 @@ objectMimicBgTile:
 	; Set Object.oamTileIndexBase to the value returned from the function call above
 	ld (hl),c		; $2348
 
-	; bc = w2AreaBgPalettes + (palette index) * 8
+	; bc = w2TilesetBgPalettes + (palette index) * 8
 	ld a,b			; $2349
 	and $07			; $234a
 	swap a			; $234c
 	rrca			; $234e
-	ld bc,w2AreaBgPalettes		; $234f
+	ld bc,w2TilesetBgPalettes		; $234f
 	call addAToBc		; $2352
 
 	ld a,($ff00+R_SVBK)	; $2355
 	push af			; $2357
-	ld a,:w2AreaBgPalettes		; $2358
+	ld a,:w2TilesetBgPalettes		; $2358
 	ld ($ff00+R_SVBK),a	; $235a
 
 	; Copy the background palette to sprite palette 6
-	ld hl,w2AreaSprPalettes+6*8		; $235c
+	ld hl,w2TilesetSprPalettes+6*8		; $235c
 	ld e,$08		; $235f
 --
 	ld a,(bc)		; $2361
@@ -11184,8 +11184,8 @@ linkCreateSplash:
 	jr z,+			; $2c85
 	inc b			; $2c87
 +
-	ld a,(wAreaFlags)		; $2c88
-	and AREAFLAG_SIDESCROLL			; $2c8b
+	ld a,(wTilesetFlags)		; $2c88
+	and TILESETFLAG_SIDESCROLL			; $2c8b
 	jp z,objectCreateInteractionWithSubid00		; $2c8d
 
 	; If in a sidescrolling area, create the interaction at an offset to Link's
@@ -11420,8 +11420,8 @@ specialObjectCode_linkInCutscene:
 ;
 ; @addr{2daa}
 loadDungeonLayout:
-	ld a,(wAreaFlags)		; $2daa
-	and AREAFLAG_DUNGEON		; $2dad
+	ld a,(wTilesetFlags)		; $2daa
+	and TILESETFLAG_DUNGEON		; $2dad
 	ret z			; $2daf
 
 	ldh a,(<hRomBank)	; $2db0
@@ -12689,7 +12689,7 @@ setPaletteThreadDelay:
 ;;
 ; @addr{3384}
 paletteFadeThreadStart:
-	ld a,:w2AreaBgPalettes	; $3384
+	ld a,:w2TilesetBgPalettes	; $3384
 	ld ($ff00+R_SVBK),a	; $3386
 
 	callfrombank0 bank1.paletteFadeHandler	; $3388
@@ -13087,9 +13087,9 @@ clearScreenVariables:
 	ld b,wScreenVariables.size	; $35a9
 	call clearMemory		; $35ab
 	ld a,$ff		; $35ae
-	ld (wLoadedAreaUniqueGfx),a		; $35b0
-	ld (wLoadedAreaTileset),a		; $35b3
-	ld (wLoadedAreaAnimation),a		; $35b6
+	ld (wLoadedTilesetUniqueGfx),a		; $35b0
+	ld (wLoadedTilesetTileset),a		; $35b3
+	ld (wLoadedTilesetAnimation),a		; $35b6
 	ret			; $35b9
 
 ;;
@@ -13309,7 +13309,7 @@ checkDungeonUsesToggleBlocks:
 ;;
 ; Load data into wAnimationState, wAnimationPointerX, etc.
 ;
-; @param	a	Value of wAreaAnimation
+; @param	a	Value of wTilesetAnimation
 ; @addr{3659}
 loadAnimationData:
 	ld b,a			; $3659
@@ -13469,14 +13469,14 @@ func_36f6:
 	jp generateVramTilesWithRoomChanges		; $370f
 
 ;;
-; Loads the tileset (assumes wAreaTileset is already set to the desired value).
+; Loads the tileset (assumes wTilesetLayout is already set to the desired value).
 ;
 ; End result: w3TileMappingData is loaded with the tile indices and attributes for all
 ; tiles in the tileset.
 ;
 ; @addr{3712}
 loadAreaTileset:
-	ld a,(wAreaTileset)		; $3712
+	ld a,(wTilesetLayout)		; $3712
 	call loadTileset		; $3715
 	ld a,:tileMappingTable
 	setrombank		; $371a
@@ -13583,16 +13583,16 @@ loadUniqueGfxHeader:
 	ret			; $3795
 
 ;;
-; Load all graphics based on wArea variables.
+; Load all graphics based on wTileset variables.
 ;
 ; @addr{3796}
 loadAreaGraphics:
 	ldh a,(<hRomBank)	; $3796
 	push af			; $3798
 
-	ld a,(wAreaGfx)		; $3799
+	ld a,(wTilesetGfx)		; $3799
 	call loadGfxHeader		; $379c
-	ld a,(wAreaPalette)		; $379f
+	ld a,(wTilesetPalette)		; $379f
 	call loadPaletteHeader		; $37a2
 
 	call          loadAreaUniqueGfx		; $37a5
@@ -13603,19 +13603,19 @@ loadAreaGraphics:
 	callab        bank2.checkLoadPastSignAndChestGfx		; $37ba
 .endif
 
-	ld a,(wAreaUniqueGfx)		; $37c2
-	ld (wLoadedAreaUniqueGfx),a		; $37c5
-	ld a,(wAreaPalette)		; $37c8
-	ld (wLoadedAreaPalette),a		; $37cb
-	ld a,(wAreaAnimation)		; $37ce
-	ld (wLoadedAreaAnimation),a		; $37d1
+	ld a,(wTilesetUniqueGfx)		; $37c2
+	ld (wLoadedTilesetUniqueGfx),a		; $37c5
+	ld a,(wTilesetPalette)		; $37c8
+	ld (wLoadedTilesetPalette),a		; $37cb
+	ld a,(wTilesetAnimation)		; $37ce
+	ld (wLoadedTilesetAnimation),a		; $37d1
 
 	pop af			; $37d4
 	setrombank		; $37d5
 	ret			; $37da
 
 ;;
-; Loads one entry from the gfx header if [wAreaUniqueGfx] != [wLoadedAreaUniqueGfx].
+; Loads one entry from the gfx header if [wTilesetUniqueGfx] != [wLoadedTilesetUniqueGfx].
 ;
 ; This should be called repeatedly (once per frame, to avoid overloading vblank) until all
 ; entries in the header are read.
@@ -13624,12 +13624,12 @@ loadAreaGraphics:
 ; @param[out]	cflag			Set if there are more entries to load.
 ; @addr{37db}
 updateAreaUniqueGfx:
-	ld a,(wAreaUniqueGfx)		; $37db
+	ld a,(wTilesetUniqueGfx)		; $37db
 	or a			; $37de
 	ret z			; $37df
 
 	ld b,a			; $37e0
-	ld a,(wLoadedAreaUniqueGfx)		; $37e1
+	ld a,(wLoadedTilesetUniqueGfx)		; $37e1
 	cp b			; $37e4
 	ret z			; $37e5
 
@@ -13686,7 +13686,7 @@ uniqueGfxFunc_380b:
 loadAreaUniqueGfx:
 	ld a,:uniqueGfxHeaderTable	; $3828
 	setrombank		; $382a
-	ld a,(wAreaUniqueGfx)		; $382f
+	ld a,(wTilesetUniqueGfx)		; $382f
 	and $7f			; $3832
 	ret z			; $3834
 
@@ -13779,11 +13779,11 @@ loadTilesetAndRoomLayout:
 	push af			; $38a7
 
 	; Reload tileset if necessary
-	ld a,(wLoadedAreaTileset)		; $38a8
+	ld a,(wLoadedTilesetTileset)		; $38a8
 	ld b,a			; $38ab
-	ld a,(wAreaTileset)		; $38ac
+	ld a,(wTilesetLayout)		; $38ac
 	cp b			; $38af
-	ld (wLoadedAreaTileset),a		; $38b0
+	ld (wLoadedTilesetTileset),a		; $38b0
 	call nz,loadAreaTileset		; $38b3
 
 .ifdef ROM_SEASONS
@@ -13831,7 +13831,7 @@ seasonsFunc_3870:
 
 
 ;;
-; Load room layout into wRoomLayout using the relevant RAM addresses (wAreaLayoutGroup,
+; Load room layout into wRoomLayout using the relevant RAM addresses (wTilesetLayoutGroup,
 ; wLoadingRoom, etc)
 ;
 ; @addr{38dc}
@@ -13841,7 +13841,7 @@ loadRoomLayout:
 	call clearMemory		; $38e1
 	ld a,:roomLayoutGroupTable
 	setrombank		; $38e6
-	ld a,(wAreaLayoutGroup)		; $38eb
+	ld a,(wTilesetLayoutGroup)		; $38eb
 	add a			; $38ee
 	add a			; $38ef
 	ld hl,roomLayoutGroupTable
@@ -15282,8 +15282,8 @@ partDelete:
 ; @param[out]	cflag
 ; @addr{3eaf}
 checkLinkCanSurface:
-	ld a,(wAreaFlags)		; $3eaf
-	and AREAFLAG_UNDERWATER			; $3eb2
+	ld a,(wTilesetFlags)		; $3eaf
+	and TILESETFLAG_UNDERWATER			; $3eb2
 	ret z			; $3eb4
 	callab checkLinkCanSurface_isUnderwater
 	srl c			; $3ebd
@@ -16629,7 +16629,7 @@ _intro_gotoTitlescreen:
 	ld (wTmpcbb6),a		; $4d10
 	ld (hl),$03 ; hl = wIntroStage
 	dec a			; $4d15
-	ld (wAreaAnimation),a		; $4d16
+	ld (wTilesetAnimation),a		; $4d16
 	jr _intro_runStage	; $4d19
 
 ;;
@@ -17565,7 +17565,7 @@ _introCinematic_inTemple_state0:
 	ldh (<hCameraY),a	; $5109
 
 	ld a,$10		; $510b
-	ld (wAreaAnimation),a		; $510d
+	ld (wTilesetAnimation),a		; $510d
 	call loadAnimationData		; $5110
 
 	ld a,$01		; $5113
@@ -17930,7 +17930,7 @@ _introCinematic_preTitlescreen_state0:
 	call disableLcd		; $52c5
 
 	ld a,$ff		; $52c8
-	ld (wAreaAnimation),a		; $52ca
+	ld (wTilesetAnimation),a		; $52ca
 	ld a,GFXH_9f		; $52cd
 	call loadGfxHeader		; $52cf
 	ld a,PALH_94		; $52d2
@@ -18715,7 +18715,7 @@ _endgameCutsceneHandler_09_stage0:
 	ld (hl),60		; $566c
 
 	ld a,$ff		; $566e
-	ld (wAreaAnimation),a		; $5670
+	ld (wTilesetAnimation),a		; $5670
 	call disableLcd		; $5673
 
 	ld a,GFXH_2b		; $5676
@@ -19758,7 +19758,7 @@ _label_03_098:
 _label_03_099:
 	ld c,a			; $5ef1
 	ld a,b			; $5ef2
-	ld (wAreaAnimation),a		; $5ef3
+	ld (wTilesetAnimation),a		; $5ef3
 	call loadAnimationData		; $5ef6
 	ld a,c			; $5ef9
 	ld hl,$5f28		; $5efa
@@ -19799,7 +19799,7 @@ _label_03_100:
 	ret z			; $5f39
 	call incCbc2		; $5f3a
 	ld a,$ff		; $5f3d
-	ld (wAreaAnimation),a		; $5f3f
+	ld (wTilesetAnimation),a		; $5f3f
 	jp fadeoutToWhite		; $5f42
 	ld a,(wPaletteThread_mode)		; $5f45
 	or a			; $5f48
@@ -20386,7 +20386,7 @@ func_03_6306:
 	ld a,SND_CLOSEMENU		; $6354
 	jp playSound		; $6356
 	ld a,$ff		; $6359
-	ld (wAreaAnimation),a		; $635b
+	ld (wTilesetAnimation),a		; $635b
 	ld a,$08		; $635e
 	ld ($cfd0),a		; $6360
 	ld hl,wMenuDisabled		; $6363
@@ -20458,7 +20458,7 @@ _label_03_117:
 	jp nz,$6397		; $63f1
 	ret nz			; $63f4
 	xor a			; $63f5
-	ld (wAreaAnimation),a		; $63f6
+	ld (wTilesetAnimation),a		; $63f6
 	ld hl,$d01a		; $63f9
 	set 7,(hl)		; $63fc
 	ld a,$09		; $63fe
@@ -21193,7 +21193,7 @@ _label_03_133:
 	callab bank1.checkDisableUnderwaterWaves		; $6a00
 	xor a			; $6a08
 	ld (wScrollMode),a		; $6a09
-	ld (wAreaFlags),a		; $6a0c
+	ld (wTilesetFlags),a		; $6a0c
 	ld (wGfxRegs1.LYC),a		; $6a0f
 	ld (wGfxRegs2.SCY),a		; $6a12
 	ld ($d01a),a		; $6a15
@@ -22302,7 +22302,7 @@ _label_03_158:
 	ld a,$78		; $7357
 	ld (hl),a		; $7359
 	ld (wTmpcbb4),a		; $735a
-	ld a,(wAreaFlags)		; $735d
+	ld a,(wTilesetFlags)		; $735d
 	and $80			; $7360
 	ld a,$02		; $7362
 	jr nz,_label_03_159	; $7364
@@ -22913,7 +22913,7 @@ _label_03_172:
 	call findTileInRoom		; $782c
 	ret nz			; $782f
 	ld c,l			; $7830
-	ld a,(wAreaFlags)		; $7831
+	ld a,(wTilesetFlags)		; $7831
 	and $40			; $7834
 	ld a,$fc		; $7836
 	jr z,_label_03_173	; $7838
@@ -23864,7 +23864,7 @@ roomLayoutGroupTable: ; $4f6c
 ;;
 ; @addr{58e4}
 initializeAnimations:
-	ld a,(wAreaAnimation)		; $58e4
+	ld a,(wTilesetAnimation)		; $58e4
 	cp $ff			; $58e7
 	ret z			; $58e9
 
@@ -23887,7 +23887,7 @@ initializeAnimations:
 updateAnimations:
 	ld hl,wAnimationState		; $5906
 	res 6,(hl)		; $5909
-	ld a,(wAreaAnimation)		; $590b
+	ld a,(wTilesetAnimation)		; $590b
 	inc a			; $590e
 	ret z			; $590f
 
@@ -24156,12 +24156,12 @@ replacePollutionWithWaterIfPollutionFixed:
 	call checkGlobalFlag		; $607a
 	ret z			; $607d
 
-	ld a,(wAreaFlags)		; $607e
-	bit AREAFLAG_BIT_OUTDOORS,a			; $6081
+	ld a,(wTilesetFlags)		; $607e
+	bit TILESETFLAG_BIT_OUTDOORS,a			; $6081
 	ret z			; $6083
 
 	ld de,@aboveWaterReplacement		; $6084
-	and AREAFLAG_UNDERWATER		; $6087
+	and TILESETFLAG_UNDERWATER		; $6087
 	jr z,+			; $6089
 	ld de,@belowWaterReplacement		; $608b
 +
@@ -24403,8 +24403,8 @@ replaceJabuTilesIfUnderwater:
 	cp $07			; $61a4
 	ret nz			; $61a6
 
-	ld a,(wAreaFlags)		; $61a7
-	and AREAFLAG_SIDESCROLL			; $61aa
+	ld a,(wTilesetFlags)		; $61a7
+	and TILESETFLAG_SIDESCROLL			; $61aa
 	ret nz			; $61ac
 
 	; Only substitute tiles if on the first non-underwater floor
@@ -24534,8 +24534,8 @@ replaceShutterForLinkEntering:
 	ld e,a			; $624c
 
 	; If not in a dungeon, don't add an auto-shutter.
-	ld a,(wAreaFlags)		; $624d
-	bit AREAFLAG_BIT_DUNGEON,a			; $6250
+	ld a,(wTilesetFlags)		; $624d
+	bit TILESETFLAG_BIT_DUNGEON,a			; $6250
 	ret z			; $6252
 
 	call getFreeInteractionSlot		; $6253
@@ -26667,8 +26667,8 @@ loadAreaData_body:
 	ldi a,(hl)		; $6da3
 	ld e,a			; $6da4
 	ldi a,(hl)		; $6da5
-	ld (wAreaFlags),a		; $6da6
-	bit AREAFLAG_BIT_DUNGEON,a			; $6da9
+	ld (wTilesetFlags),a		; $6da6
+	bit TILESETFLAG_BIT_DUNGEON,a			; $6da9
 	jr z,+
 
 	ld a,e			; $6dad
@@ -26685,7 +26685,7 @@ loadAreaData_body:
 	ld (wActiveCollisions),a		; $6dbf
 
 	ld b,$06		; $6dc2
-	ld de,wAreaUniqueGfx		; $6dc4
+	ld de,wTilesetUniqueGfx		; $6dc4
 @copyloop:
 	ldi a,(hl)		; $6dc7
 	ld (de),a		; $6dc8
@@ -26693,7 +26693,7 @@ loadAreaData_body:
 	dec b			; $6dca
 	jr nz,@copyloop
 
-	ld e,wAreaUniqueGfx&$ff
+	ld e,wTilesetUniqueGfx&$ff
 	ld a,(de)		; $6dcf
 	ld b,a			; $6dd0
 	ldh a,(<hFF8B)	; $6dd1
@@ -26786,8 +26786,8 @@ func_6de7:
 	cp $07			; $6e2b
 	jr nz,++		; $6e2d
 
-	ld a,(wAreaFlags)		; $6e2f
-	and AREAFLAG_SIDESCROLL			; $6e32
+	ld a,(wTilesetFlags)		; $6e2f
+	and TILESETFLAG_SIDESCROLL			; $6e32
 	jr nz,++		; $6e34
 
 	ld a,$11		; $6e36
@@ -26827,8 +26827,8 @@ func_04_6e63:
 	or a			; $6e66
 	jr nz,@done		; $6e68
 
-	ld a,(wAreaFlags)		; $6e6a
-	and AREAFLAG_PAST			; $6e6d
+	ld a,(wTilesetFlags)		; $6e6a
+	and TILESETFLAG_PAST			; $6e6d
 	jr z,@done		; $6e6e
 
 	ld a,(wActiveRoom)		; $6e70
@@ -27025,8 +27025,8 @@ updateSpecialObjects:
 	jr nc,+			; $401a
 	set 6,(hl)		; $401c
 +
-	ld a,(wAreaFlags)		; $401e
-	and AREAFLAG_UNDERWATER			; $4021
+	ld a,(wTilesetFlags)		; $401e
+	and TILESETFLAG_UNDERWATER			; $4021
 	jr z,+			; $4023
 	set 7,(hl)		; $4025
 +
@@ -27655,8 +27655,8 @@ _linkApplyTileTypes:
 
 @tileType_hole:
 @tileType_warpHole:
-	ld a,(wAreaFlags)		; $4355
-	and AREAFLAG_UNDERWATER			; $4358
+	ld a,(wTilesetFlags)		; $4355
+	and TILESETFLAG_UNDERWATER			; $4358
 	jr nz,@tileType_normal	; $435a
 
 	xor a			; $435c
@@ -27851,8 +27851,8 @@ _linkAdjustGivenAngleInSidescrollingArea:
 	ld h,d			; $4432
 	ld e,l			; $4433
 
-	ld a,(wAreaFlags)		; $4434
-	and AREAFLAG_SIDESCROLL			; $4437
+	ld a,(wTilesetFlags)		; $4434
+	and TILESETFLAG_SIDESCROLL			; $4437
 	ret z			; $4439
 
 	; Return if angle value >= $80
@@ -30628,8 +30628,8 @@ _checkForUnderwaterTransition:
 	ld a,(wDisableScreenTransitions)		; $516c
 	or a			; $516f
 	ret nz			; $5170
-	ld a,(wAreaFlags)		; $5171
-	and AREAFLAG_UNDERWATER			; $5174
+	ld a,(wTilesetFlags)		; $5171
+	and TILESETFLAG_UNDERWATER			; $5174
 	ret z			; $5176
 	ld a,(wGameKeysJustPressed)		; $5177
 	and BTN_B			; $517a
@@ -30657,8 +30657,8 @@ _checkForUnderwaterTransition:
 	; Return from the caller (_linkState01)
 	pop af			; $5195
 
-	ld a,(wAreaFlags)		; $5196
-	and AREAFLAG_DUNGEON			; $5199
+	ld a,(wTilesetFlags)		; $5196
+	and TILESETFLAG_DUNGEON			; $5199
 	jr nz,@dungeon		; $519b
 
 	; Not in a dungeon
@@ -30683,8 +30683,8 @@ _checkForUnderwaterTransition:
 	; Return from caller
 	pop af			; $51b2
 
-	ld a,(wAreaFlags)		; $51b3
-	and AREAFLAG_DUNGEON			; $51b6
+	ld a,(wTilesetFlags)		; $51b3
+	and TILESETFLAG_DUNGEON			; $51b6
 	jr nz,+			; $51b8
 
 	; Not in a dungeon: add 2 to wActiveGroup.
@@ -31431,8 +31431,8 @@ _linkState10:
 	ld (wForceLinkPushAnimation),a		; $552f
 	ld (wLinkPlayingInstrument),a		; $5532
 
-	ld a,(wAreaFlags)		; $5535
-	and AREAFLAG_SIDESCROLL			; $5538
+	ld a,(wTilesetFlags)		; $5535
+	and TILESETFLAG_SIDESCROLL			; $5538
 	jp nz,_linkState01_sidescroll		; $553a
 
 	; The rest of this code is only run in non-sidescrolling areas.
@@ -32232,8 +32232,8 @@ _linkUpdateSwimming_sidescroll:
 ; accelerates and decelerates)
 ; @addr{58f0}
 _linkUpdateVelocity:
-	ld a,(wAreaFlags)		; $58f0
-	and AREAFLAG_UNDERWATER			; $58f3
+	ld a,(wTilesetFlags)		; $58f0
+	and TILESETFLAG_UNDERWATER			; $58f3
 	jr z,@label_05_159	; $58f5
 
 @mermaidSuit:
@@ -33453,8 +33453,8 @@ calculateAdjacentWallsBitset:
 	ldh (<hFF8B),a	; $5ea5
 
 	ld hl,@overworldOffsets		; $5ea7
-	ld a,(wAreaFlags)		; $5eaa
-	and AREAFLAG_SIDESCROLL			; $5ead
+	ld a,(wTilesetFlags)		; $5eaa
+	and TILESETFLAG_SIDESCROLL			; $5ead
 	jr z,@loop			; $5eaf
 	ld hl,@sidescrollOffsets		; $5eb1
 
@@ -45287,8 +45287,8 @@ _applyOffsetTableHL:
 ; @addr{4a4f}
 _itemMergeZPositionIfSidescrollingArea:
 	ld h,d			; $4a4f
-	ld a,(wAreaFlags)		; $4a50
-	and AREAFLAG_SIDESCROLL			; $4a53
+	ld a,(wTilesetFlags)		; $4a50
+	and TILESETFLAG_SIDESCROLL			; $4a53
 	ret z			; $4a55
 
 	ld e,Item.yh		; $4a56
@@ -45574,8 +45574,8 @@ _itemUpdateThrowingVerticallyAndCheckHazards:
 
 	; Object isn't on the ground, so only check for collisions in sidescrolling areas.
 
-	ld a,(wAreaFlags)		; $4b41
-	and AREAFLAG_SIDESCROLL			; $4b44
+	ld a,(wTilesetFlags)		; $4b41
+	and TILESETFLAG_SIDESCROLL			; $4b44
 	jr z,+			; $4b46
 
 	ld b,INTERACID_LAVASPLASH		; $4b48
@@ -45593,8 +45593,8 @@ _itemUpdateThrowingVerticallyAndCheckHazards:
 	; If the item has landed in a sidescrolling area, there's no need to check what it
 	; landed on (since if it had touched water, it would have still been considered
 	; to be in midair).
-	ld a,(wAreaFlags)		; $4b57
-	and AREAFLAG_SIDESCROLL			; $4b5a
+	ld a,(wTilesetFlags)		; $4b57
+	and TILESETFLAG_SIDESCROLL			; $4b5a
 	jr nz,@noCollisions		; $4b5c
 
 	ld h,d			; $4b5e
@@ -46550,8 +46550,8 @@ _galeSeedTryToWarpLink:
 	.dw @substate3
 
 @substate0:
-	; Test AREAFLAG_OUTDOORS
-	ld a,(wAreaFlags)		; $4f9b
+	; Test TILESETFLAG_OUTDOORS
+	ld a,(wTilesetFlags)		; $4f9b
 	rrca			; $4f9e
 	jr nc,@setSubstate3	; $4f9f
 
@@ -46984,8 +46984,8 @@ itemCode0d:
 
 	call objectSetPriorityRelativeToLink_withTerrainEffects		; $51a5
 
-	ld a,(wAreaFlags)		; $51a8
-	and AREAFLAG_SIDESCROLL			; $51ab
+	ld a,(wTilesetFlags)		; $51a8
+	and TILESETFLAG_SIDESCROLL			; $51ab
 	jr nz,@sidescroll	; $51ad
 
 	; This call will return if the bombchu falls into a hole/water/lava.
@@ -47662,8 +47662,8 @@ _bombchuCheckForEnemyTarget:
 	ld l,Item.state		; $545d
 	inc (hl)		; $545f
 
-	ld a,(wAreaFlags)		; $5460
-	and AREAFLAG_SIDESCROLL			; $5463
+	ld a,(wTilesetFlags)		; $5460
+	and TILESETFLAG_SIDESCROLL			; $5463
 	jr nz,+			; $5465
 
 	call _bombchuUpdateAngle_topDown		; $5467
@@ -47844,8 +47844,8 @@ itemCode03:
 ; @addr{5530}
 _bombUpdateThrowingVerticallyAndCheckDelete:
 	push bc			; $5530
-	ld a,(wAreaFlags)		; $5531
-	and AREAFLAG_SIDESCROLL			; $5534
+	ld a,(wTilesetFlags)		; $5531
+	and TILESETFLAG_SIDESCROLL			; $5534
 	jr z,+			; $5536
 
 	; If in a sidescrolling area, allow Y values between $08-$f7?
@@ -48107,8 +48107,8 @@ _explosionTryToBreakNextTile:
 	rst_addAToHl			; $5646
 
 	; Verify Z position is close enough (for non-sidescrolling areas)
-	ld a,(wAreaFlags)		; $5647
-	and AREAFLAG_SIDESCROLL			; $564a
+	ld a,(wTilesetFlags)		; $5647
+	and TILESETFLAG_SIDESCROLL			; $564a
 	ld e,Item.zh		; $564c
 	ld a,(de)		; $564e
 	jr nz,+			; $564f
@@ -49676,8 +49676,8 @@ itemCode18:
 	jr z,@removeBlockAndDeleteSelfWithPuff	; $5db4
 
 	; If in a sidescrolling area, check that the tile below is solid
-	ld a,(wAreaFlags)		; $5db6
-	and AREAFLAG_SIDESCROLL			; $5db9
+	ld a,(wTilesetFlags)		; $5db6
+	and TILESETFLAG_SIDESCROLL			; $5db9
 	jr z,++			; $5dbb
 
 	ld a,(hl)		; $5dbd
@@ -49767,12 +49767,12 @@ itemCode18:
 	ret nz			; $5e1b
 
 	; If underwater, never allow it
-	ld a,(wAreaFlags)		; $5e1c
-	bit AREAFLAG_BIT_UNDERWATER,a			; $5e1f
+	ld a,(wTilesetFlags)		; $5e1c
+	bit TILESETFLAG_BIT_UNDERWATER,a			; $5e1f
 	ret nz			; $5e21
 
 	; If in a sidescrolling area, check for floor underneath
-	and AREAFLAG_SIDESCROLL			; $5e22
+	and TILESETFLAG_SIDESCROLL			; $5e22
 	ret z			; $5e24
 
 	ld a,l			; $5e25
@@ -50740,12 +50740,12 @@ _itemMimicBgTile:
 	and $07			; $62a6
 	swap a			; $62a8
 	rrca			; $62aa
-	ld hl,w2AreaBgPalettes		; $62ab
+	ld hl,w2TilesetBgPalettes		; $62ab
 	rst_addAToHl			; $62ae
 	push de			; $62af
-	ld a,:w2AreaSprPalettes		; $62b0
+	ld a,:w2TilesetSprPalettes		; $62b0
 	ld ($ff00+R_SVBK),a	; $62b2
-	ld de,w2AreaSprPalettes+7*8		; $62b4
+	ld de,w2TilesetSprPalettes+7*8		; $62b4
 	ld b,$08		; $62b7
 	call copyMemory		; $62b9
 
@@ -51160,8 +51160,8 @@ _itemUpdateThrowingLaterally:
 	ld (de),a		; $646c
 
 @noCollision:
-	ld a,(wAreaFlags)		; $646d
-	and AREAFLAG_SIDESCROLL			; $6470
+	ld a,(wTilesetFlags)		; $646d
+	and TILESETFLAG_SIDESCROLL			; $6470
 	jr z,+			; $6472
 
 	; If in a sidescrolling area, don't apply speed if moving directly vertically?
@@ -51610,8 +51610,8 @@ interactionCode0c:
 	jp interactionSetAnimation		; $4090
 
 @interac00:
-	ld a,(wAreaFlags)		; $4093
-	and AREAFLAG_UNDERWATER	; $4096
+	ld a,(wTilesetFlags)		; $4093
+	and TILESETFLAG_UNDERWATER	; $4096
 	jr z,+			; $4098
 
 	ld a,$0e		; $409a
@@ -52421,8 +52421,8 @@ interactionCode14:
 ; If this object is on top of an unpressed button, this raises the z position by 2 pixels.
 ; @addr{44ca}
 @updateZPositionForButton:
-	ld a,(wAreaFlags)		; $44ca
-	and (AREAFLAG_10 | AREAFLAG_DUNGEON)			; $44cd
+	ld a,(wTilesetFlags)		; $44ca
+	and (TILESETFLAG_10 | TILESETFLAG_DUNGEON)			; $44cd
 	ret z			; $44cf
 	call objectGetShortPosition		; $44d0
 	ld c,a			; $44d3
@@ -71048,7 +71048,7 @@ interactionCode57:
 	call loadGfxHeader		; $6a21
 
 	ld a,$ff		; $6a24
-	ld (wAreaAnimation),a		; $6a26
+	ld (wTilesetAnimation),a		; $6a26
 	ld a,$04		; $6a29
 	call loadGfxRegisterStateIndex		; $6a2b
 
@@ -73354,8 +73354,8 @@ _goronSubid00:
 	call _goron_initGraphicsAndIncState		; $7582
 
 	; Set palette (red/blue for past/present)
-	ld a,(wAreaFlags)		; $7585
-	and AREAFLAG_PAST			; $7588
+	ld a,(wTilesetFlags)		; $7585
+	and TILESETFLAG_PAST			; $7588
 	ld a,$01		; $758a
 	jr z,+			; $758c
 	ld a,$02		; $758e
@@ -73367,8 +73367,8 @@ _goronSubid00:
 	ld hl,objectData.goronDancers		; $7593
 	call checkIsLinkedGame		; $7596
 	jr z,@loadDancers	; $7599
-	ld a,(wAreaFlags)		; $759b
-	and AREAFLAG_PAST			; $759e
+	ld a,(wTilesetFlags)		; $759b
+	and TILESETFLAG_PAST			; $759e
 	jr z,@loadDancers	; $75a0
 	ld hl,objectData.subrosianDancers		; $75a2
 @loadDancers:
@@ -74034,8 +74034,8 @@ _goronDance_checkLinkInput:
 
 	call checkIsLinkedGame		; $7957
 	jr z,@gorons	; $795a
-	ld a,(wAreaFlags)		; $795c
-	and AREAFLAG_PAST			; $795f
+	ld a,(wTilesetFlags)		; $795c
+	and TILESETFLAG_PAST			; $795f
 	jr z,@gorons	; $7961
 
 @subrosians:
@@ -74283,8 +74283,8 @@ _goronDance_linkBButtonAnimations:
 _goronDance_updateBackupDancerAnimation:
 	call checkIsLinkedGame		; $7a83
 	jr z,@gorons	; $7a86
-	ld a,(wAreaFlags)		; $7a88
-	and AREAFLAG_PAST			; $7a8b
+	ld a,(wTilesetFlags)		; $7a88
+	and TILESETFLAG_PAST			; $7a8b
 	jr z,@gorons	; $7a8d
 
 @subrosians:
@@ -76491,8 +76491,8 @@ interactionCode91:
 	dec a			; $49f9
 +
 	ld (hl),a		; $49fa
-	ld a,(wAreaFlags)		; $49fb
-	and AREAFLAG_SIDESCROLL			; $49fe
+	ld a,(wTilesetFlags)		; $49fb
+	and TILESETFLAG_SIDESCROLL			; $49fe
 	jp nz,objectSetVisible83		; $4a00
 
 @randomNumberFrom0To4:
@@ -76534,8 +76534,8 @@ interactionCode91:
 ; @param[out]	cflag	c if bubble should be deleted (no longer in water)
 ; @addr{4a39}
 @checkDelete:
-	ld a,(wAreaFlags)		; $4a39
-	and AREAFLAG_SIDESCROLL			; $4a3c
+	ld a,(wTilesetFlags)		; $4a39
+	and TILESETFLAG_SIDESCROLL			; $4a3c
 	jp nz,@@sidescrolling		; $4a3e
 
 @@topDown:
@@ -76603,9 +76603,9 @@ interactionCode67:
 	jp nz,@deleteSelf		; $4a8c
 
 @label_0a_047:
-	ld a,(wAreaFlags)		; $4a8f
-	and (AREAFLAG_PAST | AREAFLAG_OUTDOORS)			; $4a92
-	cp AREAFLAG_OUTDOORS			; $4a94
+	ld a,(wTilesetFlags)		; $4a8f
+	and (TILESETFLAG_PAST | TILESETFLAG_OUTDOORS)			; $4a92
+	cp TILESETFLAG_OUTDOORS			; $4a94
 	jp nz,@deleteSelf		; $4a96
 
 	; In the past or indoors; "Your song just echoes..."
@@ -77780,8 +77780,8 @@ _interaction6b_subid0e:
 	jr nz,@state1	; $50bc
 
 @state0: ; Also called by subid $15's state 0
-	ld a,(wAreaFlags)		; $50be
-	and AREAFLAG_PAST			; $50c1
+	ld a,(wTilesetFlags)		; $50be
+	and TILESETFLAG_PAST			; $50c1
 	ld a,PALH_c7		; $50c3
 	jr nz,+			; $50c5
 	dec a			; $50c7
@@ -95128,8 +95128,8 @@ interactionCodec3:
 	jr nz,++		; $735a
 
 	; Unlinked: mark room as in the past (for the minimap probably)
-	ld hl,wAreaFlags		; $735c
-	set AREAFLAG_BIT_PAST,(hl)		; $735f
+	ld hl,wTilesetFlags		; $735c
+	set TILESETFLAG_BIT_PAST,(hl)		; $735f
 ++
 	ld hl,pirateCaptainScript		; $7361
 	call interactionSetScript		; $7364
@@ -138783,8 +138783,8 @@ interactionCodee0:
 	ld a,$01		; $6f0c
 	ld (de),a ; [state]
 
-	ld a,(wAreaFlags)		; $6f0f
-	and AREAFLAG_PAST			; $6f12
+	ld a,(wTilesetFlags)		; $6f0f
+	and TILESETFLAG_PAST			; $6f12
 	rlca			; $6f14
 	ld e,Interaction.subid		; $6f15
 	ld (de),a		; $6f17
@@ -141717,8 +141717,8 @@ partCode01:
 	ld l,Part.state		; $414f
 	inc (hl) ; [state] = 1
 
-	ld a,(wAreaFlags)		; $4152
-	and AREAFLAG_SIDESCROLL			; $4155
+	ld a,(wTilesetFlags)		; $4152
+	and TILESETFLAG_SIDESCROLL			; $4155
 	jr z,@label_11_008	; $4157
 
 	; Sidescrolling only
@@ -142061,8 +142061,8 @@ _itemDrop_spawnEnemy:
 ; Delete and return from caller if it goes out of bounds in a sidescrolling room
 ; @addr{4332}
 _itemDrop_checkSidescrollingConditions:
-	ld a,(wAreaFlags)		; $4332
-	and AREAFLAG_SIDESCROLL			; $4335
+	ld a,(wTilesetFlags)		; $4332
+	and TILESETFLAG_SIDESCROLL			; $4335
 	ret z			; $4337
 	ld e,Part.subid		; $4338
 	ld a,(de)		; $433a
@@ -142167,8 +142167,8 @@ _itemDrop_checkOnHazard:
 
 @onWater:
 	ld b,INTERACID_SPLASH		; $43aa
-	ld a,(wAreaFlags)		; $43ac
-	and AREAFLAG_SIDESCROLL			; $43af
+	ld a,(wTilesetFlags)		; $43ac
+	and TILESETFLAG_SIDESCROLL			; $43af
 	jr z,@replaceWithAnimation	; $43b1
 
 	ld e,Part.var34		; $43b3
@@ -147978,7 +147978,7 @@ partCode2e:
 .dw $63a3
 
 _label_11_249:
-	ld a,(wAreaFlags)		; $6349
+	ld a,(wTilesetFlags)		; $6349
 	and $01			; $634c
 	jr z,_label_11_250	; $634e
 	call objectGetTileAtPosition		; $6350
@@ -153193,7 +153193,7 @@ checkLinkCanSurface_isUnderwater: ; 78e4
 	ldi a,(hl)		; $78fd
 	ld h,(hl)		; $78fe
 	ld l,a			; $78ff
-	ld a,(wAreaFlags)		; $7900
+	ld a,(wTilesetFlags)		; $7900
 	and $01			; $7903
 	jr z, +
 	ld b,(hl)		; $7907
@@ -153240,7 +153240,7 @@ checkLinkCanSurface_isUnderwater: ; 78e4
 	scf			; $7950
 	jr ++++
 +++
-	ld a,(wAreaFlags)		; $7953
+	ld a,(wTilesetFlags)		; $7953
 	and $01			; $7956
 	jr z, ++++
 	scf			; $795a
@@ -156735,14 +156735,14 @@ refreshDirtyPalettes:
 	ld d,a			; $401c
 	ldh a,(<hBgPaletteSources)	; $401d
 	ld e,a			; $401f
-	ld l,<w2AreaBgPalettes	; $4020
+	ld l,<w2TilesetBgPalettes	; $4020
 	call @refresh		; $4022
 
 	ldh a,(<hDirtySprPalettes)	; $4025
 	ld d,a			; $4027
 	ldh a,(<hSprPaletteSources)	; $4028
 	ld e,a			; $402a
-	ld l,<w2AreaSprPalettes	; $402b
+	ld l,<w2TilesetSprPalettes	; $402b
 ;;
 ; @param d Bitset of dirty palettes
 ; @param e Bitset of where to get the palettes from
@@ -156756,7 +156756,7 @@ refreshDirtyPalettes:
 	srl d			; $4030
 	jr nc,@nextPalette	; $4032
 
-	ld h,>w2AreaBgPalettes	; $4034
+	ld h,>w2TilesetBgPalettes	; $4034
 	srl e			; $4036
 	jr nc,+			; $4038
 

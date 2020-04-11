@@ -56,7 +56,7 @@ checkDisplayDmgModeScreen:
 ; For ages, this marks rooms as being in the past; for seasons, it marks rooms as being in
 ; subrosia.
 ;
-; Updates wAreaFlags accordingly with AREAFLAG_PAST (bit 7).
+; Updates wTilesetFlags accordingly with TILESETFLAG_PAST (bit 7).
 ;
 ; @addr{403e}
 updateAreaFlagsForIndoorRoomInAltWorld:
@@ -73,11 +73,11 @@ updateAreaFlagsForIndoorRoomInAltWorld:
 	call checkFlag		; $404d
 	ret z			; $4050
 
-	ld hl,wAreaFlags		; $4051
+	ld hl,wTilesetFlags		; $4051
 .ifdef ROM_AGES
-	set AREAFLAG_BIT_PAST,(hl)		; $4054
+	set TILESETFLAG_BIT_PAST,(hl)		; $4054
 .else
-	set AREAFLAG_BIT_SUBROSIA,(hl)
+	set TILESETFLAG_BIT_SUBROSIA,(hl)
 .endif
 	ret			; $4056
 
@@ -2701,11 +2701,11 @@ _openMenu:
 ;;
 ; @addr{4f7c}
 _copyW2AreaBgPalettesToW4PaletteData:
-	ld hl,w2AreaBgPalettes	; $4f7c
+	ld hl,w2TilesetBgPalettes	; $4f7c
 	ld de,w4PaletteData	; $4f7f
 	ld b,$80		; $4f82
 -
-	ld a,:w2AreaBgPalettes	; $4f84
+	ld a,:w2TilesetBgPalettes	; $4f84
 	ld ($ff00+R_SVBK),a	; $4f86
 	ld c,(hl)		; $4f88
 	inc l			; $4f89
@@ -2726,14 +2726,14 @@ _copyW2AreaBgPalettesToW4PaletteData:
 ; @addr{4f9b}
 _copyW4PaletteDataToW2AreaBgPalettes:
 	ld hl,w4PaletteData	; $4f9b
-	ld de,w2AreaBgPalettes	; $4f9e
+	ld de,w2TilesetBgPalettes	; $4f9e
 	ld b,$80		; $4fa1
 -
 	ld a,:w4PaletteData	; $4fa3
 	ld ($ff00+R_SVBK),a	; $4fa5
 	ld c,(hl)		; $4fa7
 	inc l			; $4fa8
-	ld a,:w2AreaBgPalettes	; $4fa9
+	ld a,:w2TilesetBgPalettes	; $4fa9
 	ld ($ff00+R_SVBK),a	; $4fab
 	ld a,c			; $4fad
 	ld (de),a		; $4fae
@@ -3043,8 +3043,8 @@ _loadCommonGraphics:
 	jr nc,+			; $5177
 
 	; Check if the area is actually underwater
-	ld a,(wAreaFlags)		; $5179
-	and AREAFLAG_UNDERWATER	; $517c
+	ld a,(wTilesetFlags)		; $5179
+	and TILESETFLAG_UNDERWATER	; $517c
 	jr z,+			; $517e
 
 	; Load a graphic for the seaweed being cut over the graphic for a bush
@@ -3060,14 +3060,14 @@ _loadCommonGraphics:
 
 ; Update key, ore chunk, or small key graphic in hud
 
-	ld a,(wAreaFlags)
+	ld a,(wTilesetFlags)
 	ld b,a
 	xor a
 	ld c,<wNumRupees
-	bit AREAFLAG_BIT_DUNGEON,b
+	bit TILESETFLAG_BIT_DUNGEON,b
 	jr nz,@loadMoneyGraphic
 
-	bit AREAFLAG_BIT_SUBROSIA,b
+	bit TILESETFLAG_BIT_SUBROSIA,b
 	jr z,@updateDisplayedMoney
 
 	ld a,$10
@@ -3217,14 +3217,14 @@ _updateStatusBar:
 	call _correctAddressForExtraHeart		; $522b
 	ld (hl),$09		; $522e
 
-	ld a,(wAreaFlags)		; $5230
+	ld a,(wTilesetFlags)		; $5230
 
 .ifdef ROM_AGES
-	bit AREAFLAG_BIT_10,a	; $5233
+	bit TILESETFLAG_BIT_10,a	; $5233
 	jr nz,+			; $5235
 .endif
 
-	bit AREAFLAG_BIT_DUNGEON,a	; $5237
+	bit TILESETFLAG_BIT_DUNGEON,a	; $5237
 	jr z,+			; $5239
 
 .ifdef ROM_AGES
@@ -4909,7 +4909,7 @@ _inventorySubmenu2CheckDirectionButtons:
 ; @param[out]	zflag	Set if the season should be displayed. (Unset in dungeons,
 ;			subrosia, etc.)
 _checkWhetherToDisplaySeasonInSubscreen:
-	ld a,(wAreaFlags)
+	ld a,(wTilesetFlags)
 	and $fc
 	ret
 
@@ -5630,8 +5630,8 @@ _inventorySubscreen2_drawTreasures:
 ; Naturally the games differ in how they do this.
 
 .ifdef ROM_AGES
-	ld a,(wAreaFlags)		; $5c95
-	and AREAFLAG_PAST			; $5c98
+	ld a,(wTilesetFlags)		; $5c95
+	and TILESETFLAG_PAST			; $5c98
 	rlca			; $5c9a
 
 .else; ROM_SEASONS
@@ -6517,8 +6517,8 @@ _mapMenu_state0:
 
 
 @dungeon:
-	ld a,(wAreaFlags)		; $605d
-	and AREAFLAG_SIDESCROLL			; $6060
+	ld a,(wTilesetFlags)		; $605d
+	and TILESETFLAG_SIDESCROLL			; $6060
 	ld a,(wMinimapDungeonFloor)		; $6062
 	jr nz,+			; $6065
 	ld a,(wDungeonFloor)		; $6067
@@ -6581,17 +6581,17 @@ _loadMinimapDisplayRoom:
 	ld c,(hl)		; $60b9
 	ld b,a			; $60ba
 	ld b,$02		; $60bb
-	ld a,(wAreaFlags)		; $60bd
-	bit AREAFLAG_BIT_10,a			; $60c0
+	ld a,(wTilesetFlags)		; $60bd
+	bit TILESETFLAG_BIT_10,a			; $60c0
 	jr nz,@overworld			; $60c2
-	bit AREAFLAG_BIT_DUNGEON,a			; $60c4
+	bit TILESETFLAG_BIT_DUNGEON,a			; $60c4
 	jr nz,@setRoom		; $60c6
 
 @overworld:
 	ld b,a			; $60c8
 	rlca			; $60c9
-	and $01 ; This tests AREAFLAG_PAST
-	bit AREAFLAG_BIT_MAKU,b			; $60cc
+	and $01 ; This tests TILESETFLAG_PAST
+	bit TILESETFLAG_BIT_MAKU,b			; $60cc
 	ld b,a			; $60ce
 	jr z,@setRoom			; $60cf
 
@@ -6927,7 +6927,7 @@ _mapGetRoomText:
 .else; ROM_AGES
 
 	push de			; $61d7
-	ld a,(wAreaFlags)		; $61d8
+	ld a,(wTilesetFlags)		; $61d8
 	rlca			; $61db
 	ld de,wMakuMapTextPresent		; $61dc
 	ld c,<TX_0323		; $61df
@@ -7294,7 +7294,7 @@ _minimapPopupType_blackTower:
 	ret			; $631a
 
 _minimapPopupType_makuTree:
-	ld a,(wAreaFlags)		; $631b
+	ld a,(wTilesetFlags)		; $631b
 	rlca			; $631e
 	ld a,$0b		; $631f
 	ret c			; $6321
@@ -7989,7 +7989,7 @@ _dungeonMap_drawArrows:
 ; the unused columns on the right - so the room at (0,1) has index 14.
 ;
 ; @param[out]	a	Index of room (assuming one row = 14 columns instead of 16)
-; @param[out]	cflag	Set if AREAFLAG_PAST/AREAFLAG_SUBROSIA is set
+; @param[out]	cflag	Set if TILESETFLAG_PAST/TILESETFLAG_SUBROSIA is set
 ; @addr{6621}
 _mapGetRoomIndexWithoutUnusedColumns:
 
@@ -8007,8 +8007,8 @@ _mapGetRoomIndexWithoutUnusedColumns:
 	sub c			; $662d
 	ld b,a			; $662e
 
-	; cflag = AREAFLAG_PAST
-	ld a,(wAreaFlags)		; $662f
+	; cflag = TILESETFLAG_PAST
+	ld a,(wTilesetFlags)		; $662f
 	rlca			; $6632
 
 	ld a,b			; $6633
@@ -8233,9 +8233,9 @@ _getWarpTreeData:
 	ld hl,treeWarps		; $660d
 
 .else; ROM_AGES
-	; Check AREAFLAG_PAST
+	; Check TILESETFLAG_PAST
 	ld hl,pastTreeWarps		; $66d5
-	ld a,(wAreaFlags)		; $66d8
+	ld a,(wTilesetFlags)		; $66d8
 	rlca			; $66db
 	jr c,@ret		; $66dc
 
@@ -8278,7 +8278,7 @@ _mapMenu_drawTimePortal:
 
 	; Check that the portal is in the map group we're currently in
 	ld hl,wPortalGroup		; $6704
-	ld a,(wAreaFlags)		; $6707
+	ld a,(wTilesetFlags)		; $6707
 	rlca			; $670a
 	and $01			; $670b
 	cp (hl)			; $670d
@@ -11360,7 +11360,7 @@ _fake_checkLoadPastSignAndChestGfx:
 	cp $0f			; $7e78
 	ret z			; $7e7a
 
-	ld a,(wAreaFlags)		; $7e7b
+	ld a,(wTilesetFlags)		; $7e7b
 	bit 7,a			; $7e7e
 	ret z			; $7e80
 

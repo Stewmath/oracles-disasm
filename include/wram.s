@@ -1416,7 +1416,7 @@ wcbe1: ; $cbe1
 wcbe2: ; $cbe2
 	db
 wExtraBgPaletteHeader: ; $cbe3
-; Palette header index to reload upon exiting a menu (separate from normal area
+; Palette header index to reload upon exiting a menu (separate from normal tileset
 ; palettes).
 ; In the ganon fight, this is used to keep track of the palette on the inverted
 ; control screen (background palette 7). This may be its only use.
@@ -1648,8 +1648,8 @@ wActiveCollisions: ; $cc33
 ; 0: overworld, 1: indoors, 2: dungeons, 3: sidescrolling, 4: underwater, 5?
 	db
 
-wAreaFlags: ; $cc34/$cc50
-; See constants/areaFlags.
+wTilesetFlags: ; $cc34/$cc50
+; See constants/tilesetFlags.
 	db
 
 wActiveMusic: ; $cc35/$cc51
@@ -2440,17 +2440,17 @@ wObjectTileIndex: ; $cd1f
 ; This is set when calling "objectCheckIsOverHazard". Might be ages-exclusive?
 	db
 
-wAreaUniqueGfx: ; $cd20
+wTilesetUniqueGfx: ; $cd20
 	db
-wAreaGfx: ; $cd21
+wTilesetGfx: ; $cd21
 	db
-wAreaPalette: ; $cd22
+wTilesetPalette: ; $cd22
 	db
-wAreaTileset: ; $cd23
+wTilesetLayout: ; $cd23
 	db
-wAreaLayoutGroup: ; $cd24
+wTilesetLayoutGroup: ; $cd24
 	db
-wAreaAnimation: ; $cd25
+wTilesetAnimation: ; $cd25
 ; Note: intro cutscene hardcoded to use animation $10
 	db
 
@@ -2459,13 +2459,13 @@ wcd26: ; $cd26
 wcd27: ; $cd27
 	db
 
-wLoadedAreaUniqueGfx: ; $cd28
+wLoadedTilesetUniqueGfx: ; $cd28
 	db
-wLoadedAreaPalette: ; $cd29
+wLoadedTilesetPalette: ; $cd29
 	db
-wLoadedAreaTileset: ; $cd2a
+wLoadedTilesetTileset: ; $cd2a
 	db
-wLoadedAreaAnimation: ; $cd2b
+wLoadedTilesetAnimation: ; $cd2b
 	db
 wLastToggleBlocksState: ; $cd2c
 ; Corresponds to wToggleBlocksState. This is used to detect changes to it.
@@ -3238,8 +3238,8 @@ w2Filler2: dsb $100
 w2GbaModePaletteData:	dsb $80		; $de00
 
 ; The "base" palettes on a screen.
-w2AreaBgPalettes:	dsb $40		; $de80
-w2AreaSprPalettes:	dsb $40		; $dec0
+w2TilesetBgPalettes:	dsb $40		; $de80
+w2TilesetSprPalettes:	dsb $40		; $dec0
 
 ; The palettes that are copied over during vblank
 w2BgPalettesBuffer:	dsb $40		; $df00

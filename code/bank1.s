@@ -322,8 +322,8 @@ _screenTransitionState2:
 +
 .ifdef ROM_AGES
 	; Ages only: forbid looping around the overworld map in any direction, except up.
-	ld a,(wAreaFlags)		; $4197
-	and AREAFLAG_OUTDOORS			; $419a
+	ld a,(wTilesetFlags)		; $4197
+	and TILESETFLAG_OUTDOORS			; $419a
 	jr z,@doneBoundaryChecks	; $419c
 
 	; Check rightmost map boundary
@@ -354,8 +354,8 @@ _screenTransitionState2:
 
 @doneBoundaryChecks:
 	; Skip hazard checks if underwater
-	ld a,(wAreaFlags)		; $41be
-	and AREAFLAG_UNDERWATER			; $41c1
+	ld a,(wTilesetFlags)		; $41be
+	and TILESETFLAG_UNDERWATER			; $41c1
 	jr nz,@startTransition	; $41c3
 
 	; Also skip checks if on a conveyor? (Or on the raft, apparently?)
@@ -610,7 +610,7 @@ _screenTransitionState3:
 
 	; Decide whether to proceed to state 4 or 5
 	ld b,$05		; $42f1
-	ld a,(wAreaUniqueGfx)		; $42f3
+	ld a,(wTilesetUniqueGfx)		; $42f3
 	bit 7,a			; $42f6
 	jr nz,+
 	or a			; $42fa
@@ -689,10 +689,10 @@ _screenTransitionState4:
 	call updateAreaUniqueGfx		; $433a
 	ret c			; $433d
 
-	ld a,(wAreaUniqueGfx)		; $433e
-	ld (wLoadedAreaUniqueGfx),a		; $4341
+	ld a,(wTilesetUniqueGfx)		; $433e
+	ld (wLoadedTilesetUniqueGfx),a		; $4341
 	xor a			; $4344
-	ld (wAreaUniqueGfx),a		; $4345
+	ld (wTilesetUniqueGfx),a		; $4345
 
 	call func_47fc		; $4348
 	call nc,updateAreaPalette		; $434b
@@ -723,8 +723,8 @@ _screenTransitionState5Substate0:
 	ret nz			; $4368
 
 .ifdef ROM_AGES
-	ld a,(wAreaFlags)		; $4369
-	and AREAFLAG_OUTDOORS			; $436c
+	ld a,(wTilesetFlags)		; $4369
+	and TILESETFLAG_OUTDOORS			; $436c
 	call nz,checkAndApplyPaletteFadeTransition		; $436e
 .else; ROM_SEASONS
 	ld a,(wActiveGroup)
@@ -1123,8 +1123,8 @@ _screenTransitionState5Substate2:
 	ld hl,wScreenTransitionState3		; $454c
 	inc (hl)		; $454f
 
-	; Go to state 4 if wAreaUniqueGfx is nonzero, otherwise go to state 5
-	ld a,(wAreaUniqueGfx)		; $4550
+	; Go to state 4 if wTilesetUniqueGfx is nonzero, otherwise go to state 5
+	ld a,(wTilesetUniqueGfx)		; $4550
 	or a			; $4553
 	jp nz,loadUniqueGfxHeader		; $4554
 	inc (hl)		; $4557
@@ -1139,10 +1139,10 @@ _screenTransitionState5Substate2:
 
 	; Finished loading unique gfx
 
-	ld a,(wAreaUniqueGfx)		; $455d
-	ld (wLoadedAreaUniqueGfx),a		; $4560
+	ld a,(wTilesetUniqueGfx)		; $455d
+	ld (wLoadedTilesetUniqueGfx),a		; $4560
 	xor a			; $4563
-	ld (wAreaUniqueGfx),a		; $4564
+	ld (wTilesetUniqueGfx),a		; $4564
 ;;
 ; @addr{4567}
 @state5:
@@ -1328,8 +1328,8 @@ _screenTransitionState5Substate1:
 	ld hl,wScreenTransitionState3		; $463f
 	inc (hl)		; $4642
 
-	; Go to state 4 if wAreaUniqueGfx is nonzero, otherwise go to state 5
-	ld a,(wAreaUniqueGfx)		; $4643
+	; Go to state 4 if wTilesetUniqueGfx is nonzero, otherwise go to state 5
+	ld a,(wTilesetUniqueGfx)		; $4643
 	or a			; $4646
 	jp nz,loadUniqueGfxHeader		; $4647
 	inc (hl)		; $464a
@@ -1344,10 +1344,10 @@ _screenTransitionState5Substate1:
 
 	; Finished loading unique gfx
 
-	ld a,(wAreaUniqueGfx)		; $4650
-	ld (wLoadedAreaUniqueGfx),a		; $4653
+	ld a,(wTilesetUniqueGfx)		; $4650
+	ld (wLoadedTilesetUniqueGfx),a		; $4653
 	xor a			; $4656
-	ld (wAreaUniqueGfx),a		; $4657
+	ld (wTilesetUniqueGfx),a		; $4657
 ;;
 ; @addr{465a}
 @state5:
@@ -1579,13 +1579,13 @@ copyTileRowToVramBuffer:
 ; Check if the newly loaded area has a different palette than before, update accordingly
 ; @addr{4762}
 updateAreaPalette:
-	ld a,(wLoadedAreaPalette)		; $4762
+	ld a,(wLoadedTilesetPalette)		; $4762
 	ld b,a			; $4765
-	ld a,(wAreaPalette)		; $4766
+	ld a,(wTilesetPalette)		; $4766
 	cp b			; $4769
 	ret z			; $476a
 
-	ld (wLoadedAreaPalette),a		; $476b
+	ld (wLoadedTilesetPalette),a		; $476b
 	jp loadPaletteHeader		; $476e
 
 ;;
@@ -1759,9 +1759,9 @@ getPaletteFadeTransitionData:
 ; @param	hl	Address of palette fade transition data (starting at byte 2)
 ; @addr{4834}
 applyPaletteFadeTransitionData:
-	ld a,(wLoadedAreaPalette)		; $4834
+	ld a,(wLoadedTilesetPalette)		; $4834
 	ld b,a			; $4837
-	ld a,(wAreaPalette)		; $4838
+	ld a,(wTilesetPalette)		; $4838
 	cp b			; $483b
 	ret z			; $483c
 
@@ -1788,7 +1788,7 @@ applyPaletteFadeTransitionData:
 	ld ($ff00+R_SVBK),a	; $4858
 
 	ld a,$ff		; $485a
-	ld (wLoadedAreaPalette),a		; $485c
+	ld (wLoadedTilesetPalette),a		; $485c
 	jp startFadeBetweenTwoPalettes		; $485f
 
 ;;
@@ -1906,7 +1906,7 @@ applyPaletteFadeTransitionData:
 	ld ($ff00+R_SVBK),a
 
 	ld a,$ff
-	ld (wLoadedAreaPalette),a
+	ld (wLoadedTilesetPalette),a
 	jp startFadeBetweenTwoPalettes
 
 .endif ; ROM_SEASONS
@@ -2722,8 +2722,8 @@ loadDungeonLayout_b01:
 	dec c			; $5680
 	jr nz,@nextFloor	; $5681
 
-	ld a,(wAreaFlags)		; $5683
-	bit AREAFLAG_BIT_SIDESCROLL,a		; $5686
+	ld a,(wTilesetFlags)		; $5683
+	bit TILESETFLAG_BIT_SIDESCROLL,a		; $5686
 	jr nz,@end		; $5688
 
 	ld a,(wDungeonFloor)		; $568a
@@ -3149,14 +3149,14 @@ _paletteFadeHandler08:
 	jp _paletteThread_stop		; $5838
 
 ;;
-; Adds the given value to each color in w2AreaBgPalettes/w2AreaSprPalettes, and stores the
+; Adds the given value to each color in w2TilesetBgPalettes/w2TilesetSprPalettes, and stores the
 ; result into w2FadingBgPalettes/w2FadingSprPalettes.
 ;
 ; @param	c	Value to add to each color component
 ; @param	hFF8B	Intensity of a color component after overflowing ($00 or $1f)
 ; @addr{583b}
 _paletteThread_calculateFadingPalettes:
-	ld hl,w2AreaBgPalettes	; $583b
+	ld hl,w2TilesetBgPalettes	; $583b
 	ld b,$40		; $583e
 
 @nextColor:
@@ -3237,7 +3237,7 @@ _paletteThread_calculateFadingPalettes:
 ;
 ; @addr{5886}
 _paletteThread_mixBG234Palettes:
-	ld hl,w2AreaBgPalettes+2*8	; $5886
+	ld hl,w2TilesetBgPalettes+2*8	; $5886
 	ld e,<w2ColorComponentBuffer1+$00		; $5889
 	ld b,3*4		; $588b
 	jr ++		; $588d
@@ -3247,11 +3247,11 @@ _paletteThread_mixBG234Palettes:
 ;
 ; @addr{588f}
 _paletteThread_mixBG567Palettes:
-	ld hl,w2AreaBgPalettes+5*8	; $588f
+	ld hl,w2TilesetBgPalettes+5*8	; $588f
 	ld e,<w2ColorComponentBuffer1+$24		; $5892
 	ld b,3*4		; $5894
 ++
-	ld a,:w2AreaBgPalettes		; $5896
+	ld a,:w2TilesetBgPalettes		; $5896
 	ld ($ff00+R_SVBK),a	; $5898
 
 @nextColor:
@@ -3428,17 +3428,17 @@ func_593a:
 checkUpdateDungeonMinimap:
 
 .ifdef ROM_AGES
-	ld a,(wAreaFlags)		; $5945
-	bit AREAFLAG_BIT_10,a			; $5948
+	ld a,(wTilesetFlags)		; $5945
+	bit TILESETFLAG_BIT_10,a			; $5948
 	ret nz			; $594a
 
-	bit AREAFLAG_BIT_SIDESCROLL,a			; $594b
+	bit TILESETFLAG_BIT_SIDESCROLL,a			; $594b
 	ret nz			; $594d
 
-	bit AREAFLAG_BIT_OUTDOORS,a			; $594e
+	bit TILESETFLAG_BIT_OUTDOORS,a			; $594e
 	jr nz,@setMinimapRoom			; $5950
 
-	bit AREAFLAG_BIT_DUNGEON,a			; $5952
+	bit TILESETFLAG_BIT_DUNGEON,a			; $5952
 	ret z			; $5954
 
 .else ; ROM_SEASONS
@@ -4144,8 +4144,8 @@ cutscene13:
 	ld (wActiveRoom),a
 	ld a,$77
 	ld (wDungeonMapPosition),a
-	ld a,AREAFLAG_SIDESCROLL | AREAFLAG_DUNGEON
-	ld (wAreaFlags),a
+	ld a,TILESETFLAG_SIDESCROLL | TILESETFLAG_DUNGEON
+	ld (wTilesetFlags),a
 
 	ld a,:w2DungeonLayout
 	ld ($ff00+R_SVBK),a
@@ -4352,8 +4352,8 @@ checkDisplayEraOrSeasonInfo:
 	dec a			; $5e8c
 	ret z			; $5e8d
 
-	ld a,(wAreaFlags)		; $5e8e
-	bit AREAFLAG_BIT_10,a			; $5e91
+	ld a,(wTilesetFlags)		; $5e8e
+	bit TILESETFLAG_BIT_10,a			; $5e91
 	ret nz			; $5e93
 
 	bit 0,a			; $5e94
@@ -4909,8 +4909,8 @@ screenTransitionEyePuzzle:
 updateSeedTreeRefillData:
 
 .ifdef ROM_AGES
-	ld a,(wAreaFlags)		; $6016
-	and AREAFLAG_OUTDOORS			; $6019
+	ld a,(wTilesetFlags)		; $6016
+	and TILESETFLAG_OUTDOORS			; $6019
 	ret z			; $601b
 
 .else; ROM_SEASONS

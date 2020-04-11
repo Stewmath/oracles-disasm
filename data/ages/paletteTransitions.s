@@ -2,7 +2,7 @@
 ; Yoll Graveyard.
 ;
 ; Note: although this data has entries for groups 4-7, it only gets checked when
-; AREAFLAG_OUTDOORS is set.
+; TILESETFLAG_OUTDOORS is set.
 ;
 ; Data format: (differs in seasons)
 ; b0: direction (or $ff to end)

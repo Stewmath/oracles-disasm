@@ -272,8 +272,8 @@ findWarpSourceAndDest:
 .ifdef ROM_AGES
 
 @warpSourceNotFound:
-	ld a,(wAreaFlags)		; $467a
-	and AREAFLAG_DUNGEON	; $467d
+	ld a,(wTilesetFlags)		; $467a
+	and TILESETFLAG_DUNGEON	; $467d
 	jr z,setWarpDestDefault	; $467f
 
 	; In dungeons, check if you're on a staircase. They don't need explicit
