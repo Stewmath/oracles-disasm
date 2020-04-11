@@ -1597,10 +1597,10 @@ loadTileset:
 	ld b,a			; $079f
 	push bc			; $07a0
 
-	ld a,:tilesetHeaderGroupTable
+	ld a,:tilesetLayoutTable
 	setrombank		; $07a3
 	ld a,e			; $07a8
-	ld hl,tilesetHeaderGroupTable
+	ld hl,tilesetLayoutTable
 	rst_addDoubleIndex			; $07ac
 	ldi a,(hl)		; $07ad
 	ld h,(hl)		; $07ae
@@ -1608,7 +1608,7 @@ loadTileset:
 --
 	ldi a,(hl)		; $07b0
 	push hl			; $07b1
-	ld hl,tilesetDictionaryTable
+	ld hl,tilesetLayoutDictionaryTable
 	rst_addDoubleIndex			; $07b5
 	ldi a,(hl)		; $07b6
 	ld h,(hl)		; $07b7
@@ -1655,7 +1655,7 @@ loadTileset:
 	pop hl			; $07dd
 	call loadTilesetHlpr		; $07de
 
-	ld a,:tilesetHeaderGroupTable
+	ld a,:tilesetLayoutTable
 	setrombank		; $07e3
 
 	; Retrieve header position
@@ -156535,11 +156535,11 @@ loadD6ChangingFloorPatternToBigBuffer:
 		.dw tileMappingAttributeData
 
 	tileMappingTable:
-		.incbin "build/tilesets/tileMappingTable.bin"
+		.incbin "build/tileset_layouts/tileMappingTable.bin"
 	tileMappingIndexData:
-		.incbin "build/tilesets/tileMappingIndexData.bin"
+		.incbin "build/tileset_layouts/tileMappingIndexData.bin"
 	tileMappingAttributeData:
-		.incbin "build/tilesets/tileMappingAttributeData.bin"
+		.incbin "build/tileset_layouts/tileMappingAttributeData.bin"
 
 .ifdef ROM_AGES
 .ifdef BUILD_VANILLA

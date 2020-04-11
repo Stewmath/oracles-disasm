@@ -124456,11 +124456,11 @@ _label_15_310:
 		.dw tileMappingAttributeData
 
 	tileMappingTable:
-		.incbin "build/tilesets/tileMappingTable.bin"
+		.incbin "build/tileset_layouts/tileMappingTable.bin"
 	tileMappingIndexData:
-		.incbin "build/tilesets/tileMappingIndexData.bin"
+		.incbin "build/tileset_layouts/tileMappingIndexData.bin"
 	tileMappingAttributeData:
-		.incbin "build/tilesets/tileMappingAttributeData.bin"
+		.incbin "build/tileset_layouts/tileMappingAttributeData.bin"
 .ends
 
 .BANK $18 SLOT 1

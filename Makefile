@@ -65,12 +65,12 @@ ROOMLAYOUTFILES += $(wildcard rooms/$(GAME)/large/*.bin)
 ROOMLAYOUTFILES := $(ROOMLAYOUTFILES:.bin=.cmp)
 ROOMLAYOUTFILES := $(foreach file,$(ROOMLAYOUTFILES),build/rooms/$(notdir $(file)))
 
-COLLISIONFILES = $(wildcard tilesets/$(GAME)/tilesetCollisions*.bin)
+COLLISIONFILES = $(wildcard tileset_layouts/$(GAME)/tilesetCollisions*.bin)
 COLLISIONFILES := $(COLLISIONFILES:.bin=.cmp)
-COLLISIONFILES := $(foreach file,$(COLLISIONFILES),build/tilesets/$(notdir $(file)))
+COLLISIONFILES := $(foreach file,$(COLLISIONFILES),build/tileset_layouts/$(notdir $(file)))
 
-MAPPINGINDICESFILES = $(wildcard tilesets/$(GAME)/tilesetMappings*.bin)
-MAPPINGINDICESFILES := $(foreach file,$(MAPPINGINDICESFILES),build/tilesets/$(notdir $(file)))
+MAPPINGINDICESFILES = $(wildcard tileset_layouts/$(GAME)/tilesetMappings*.bin)
+MAPPINGINDICESFILES := $(foreach file,$(MAPPINGINDICESFILES),build/tileset_layouts/$(notdir $(file)))
 MAPPINGINDICESFILES := $(MAPPINGINDICESFILES:.bin=Indices.cmp)
 
 # Game-specific data files
@@ -115,13 +115,13 @@ $(GAME).gbc: $(OBJS) build/linkfile
 	@-tools/verify-checksum.sh $(GAME)
 
 
-$(MAPPINGINDICESFILES): build/tilesets/mappingsDictionary.bin
-$(COLLISIONFILES): build/tilesets/collisionsDictionary.bin
+$(MAPPINGINDICESFILES): build/tileset_layouts/mappingsDictionary.bin
+$(COLLISIONFILES): build/tileset_layouts/collisionsDictionary.bin
 
 build/$(GAME).o: $(GFXFILES) $(ROOMLAYOUTFILES) $(COLLISIONFILES) $(MAPPINGINDICESFILES) $(GAMEDATAFILES)
 build/$(GAME).o: build/textData.s build/textDefines.s
 build/$(GAME).o: code/*.s code/items/*.s code/$(GAME)/*.s data/*.s objects/*.s objects/$(GAME)/*.s scripts/$(GAME)/*.s
-build/$(GAME).o: build/tilesets/tileMappingTable.bin build/tilesets/tileMappingIndexData.bin build/tilesets/tileMappingAttributeData.bin
+build/$(GAME).o: build/tileset_layouts/tileMappingTable.bin build/tileset_layouts/tileMappingIndexData.bin build/tileset_layouts/tileMappingAttributeData.bin
 build/$(GAME).o: rooms/$(GAME)/*.bin
 
 build/audio.o: audio/$(GAME)/*.s audio/$(GAME)/*.bin
@@ -153,7 +153,7 @@ build/gfx/%.cmp: gfx/$(GAME)/%.bin | build/gfx
 	@dd if=/dev/zero bs=1 count=1 of=$@ 2>/dev/null
 	@cat $< >> $@
 
-build/tilesets/collisionsDictionary.bin: precompressed/tilesets/$(GAME)/collisionsDictionary.bin | build/tilesets
+build/tileset_layouts/collisionsDictionary.bin: precompressed/$(GAME)/tileset_layouts/collisionsDictionary.bin | build/tileset_layouts
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
@@ -182,10 +182,10 @@ $(NO_PRECMP_FILE): | build
 
 ifeq ($(BUILD_VANILLA),true)
 
-build/tilesets/%.bin: precompressed/tilesets/$(GAME)/%.bin $(CMP_MODE) | build/tilesets
+build/tileset_layouts/%.bin: precompressed/$(GAME)/tileset_layouts/%.bin $(CMP_MODE) | build/tileset_layouts
 	@echo "Copying $< to $@..."
 	@cp $< $@
-build/tilesets/%.cmp: precompressed/tilesets/$(GAME)/%.cmp $(CMP_MODE) | build/tilesets
+build/tileset_layouts/%.cmp: precompressed/$(GAME)/tileset_layouts/%.cmp $(CMP_MODE) | build/tileset_layouts
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
@@ -213,34 +213,34 @@ build/textDefines.s: precompressed/$(GAME)/textDefines.s $(CMP_MODE) | build
 
 else
 
-# The parseTilesets script generates all of these files.
+# The parseTilesetLayouts script generates all of these files.
 # They need dummy rules in their recipes to convince make that they've been changed?
-$(MAPPINGINDICESFILES:.cmp=.bin): build/tilesets/mappingsUpdated
+$(MAPPINGINDICESFILES:.cmp=.bin): build/tileset_layouts/mappingsUpdated
 	@sleep 0
-build/tilesets/mappingsDictionary.bin: build/tilesets/mappingsUpdated
+build/tileset_layouts/mappingsDictionary.bin: build/tileset_layouts/mappingsUpdated
 	@sleep 0
-build/tilesets/tileMappingTable.bin: build/tilesets/mappingsUpdated
+build/tileset_layouts/tileMappingTable.bin: build/tileset_layouts/mappingsUpdated
 	@sleep 0
-build/tilesets/tileMappingIndexData.bin: build/tilesets/mappingsUpdated
+build/tileset_layouts/tileMappingIndexData.bin: build/tileset_layouts/mappingsUpdated
 	@sleep 0
-build/tilesets/tileMappingAttributeData.bin: build/tilesets/mappingsUpdated
+build/tileset_layouts/tileMappingAttributeData.bin: build/tileset_layouts/mappingsUpdated
 	@sleep 0
 
 # mappingsUpdated is a stub file which is just used as a timestamp from the
-# last time parseTilesets was run.
-build/tilesets/mappingsUpdated: $(wildcard tilesets/$(GAME)/tilesetMappings*.bin) $(CMP_MODE) | build/tilesets
+# last time parseTilesetLayouts was run.
+build/tileset_layouts/mappingsUpdated: $(wildcard tileset_layouts/$(GAME)/tilesetMappings*.bin) $(CMP_MODE) | build/tileset_layouts
 	@echo "Compressing tileset mappings..."
-	@$(PYTHON) tools/parseTilesets.py $(GAME)
+	@$(PYTHON) tools/parseTilesetLayouts.py $(GAME)
 	@echo "Done compressing tileset mappings."
 	@touch $@
 
-build/tilesets/tilesetMappings%Indices.cmp: build/tilesets/tilesetMappings%Indices.bin build/tilesets/mappingsDictionary.bin $(CMP_MODE) | build/tilesets
+build/tileset_layouts/tilesetMappings%Indices.cmp: build/tileset_layouts/tilesetMappings%Indices.bin build/tileset_layouts/mappingsDictionary.bin $(CMP_MODE) | build/tileset_layouts
 	@echo "Compressing $< to $@..."
-	@$(PYTHON) tools/compressTilesetData.py $< $@ 1 build/tilesets/mappingsDictionary.bin
+	@$(PYTHON) tools/compressTilesetLayoutData.py $< $@ 1 build/tileset_layouts/mappingsDictionary.bin
 
-build/tilesets/tilesetCollisions%.cmp: tilesets/$(GAME)/tilesetCollisions%.bin build/tilesets/collisionsDictionary.bin $(CMP_MODE) | build/tilesets
+build/tileset_layouts/tilesetCollisions%.cmp: tileset_layouts/$(GAME)/tilesetCollisions%.bin build/tileset_layouts/collisionsDictionary.bin $(CMP_MODE) | build/tileset_layouts
 	@echo "Compressing $< to $@..."
-	@$(PYTHON) tools/compressTilesetData.py $< $@ 0 build/tilesets/collisionsDictionary.bin
+	@$(PYTHON) tools/compressTilesetLayoutData.py $< $@ 0 build/tileset_layouts/collisionsDictionary.bin
 
 build/rooms/room04%.cmp: rooms/$(GAME)/large/room04%.bin $(CMP_MODE) | build/rooms
 	@echo "Compressing $< to $@..."
@@ -279,8 +279,8 @@ build/rooms: | build
 	mkdir build/rooms
 build/debug: | build
 	mkdir build/debug
-build/tilesets: | build
-	mkdir build/tilesets
+build/tileset_layouts: | build
+	mkdir build/tileset_layouts
 build/doc: | build
 	mkdir build/doc
 
