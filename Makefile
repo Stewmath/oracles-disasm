@@ -166,7 +166,7 @@ $(NO_PRECMP_FILE): | build
 
 ifeq ($(BUILD_VANILLA),true)
 
-build/rooms/room%.cmp: precompressed/$(GAME)/rooms/room%.cmp $(CMP_MODE) | build/rooms
+build/rooms/room%.cmp: precompressed/rooms/$(GAME)/room%.cmp $(CMP_MODE) | build/rooms
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
@@ -180,11 +180,11 @@ build/gfx/%.cmp: precompressed/gfx_compressible/$(GAME)/%.cmp $(CMP_MODE) | buil
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
-build/textData.s: precompressed/$(GAME)/textData.s $(CMP_MODE) | build
+build/textData.s: precompressed/text/$(GAME)/textData.s $(CMP_MODE) | build
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
-build/textDefines.s: precompressed/$(GAME)/textDefines.s $(CMP_MODE) | build
+build/textDefines.s: precompressed/text/$(GAME)/textDefines.s $(CMP_MODE) | build
 	@echo "Copying $< to $@..."
 	@cp $< $@
 

@@ -21,13 +21,13 @@ if romIsAges(rom):
     numLayoutGroups = 6
     roomDir = 'rooms/ages/'
     dataDir = 'data/ages/'
-    precmpDir = 'precompressed/ages/'
+    precmpDir = 'precompressed/rooms/ages/'
 else:
     roomLayoutGroupTable = 0x10c4c
     numLayoutGroups = 7
     roomDir = 'rooms/seasons/'
     dataDir = 'data/seasons/'
-    precmpDir = 'precompressed/seasons/'
+    precmpDir = 'precompressed/rooms/seasons/'
 
 
 class RoomLayout:
@@ -172,7 +172,7 @@ for layoutGroup in layoutGroups:
         # Precompressed output (only for large rooms)
         if layoutGroup.roomType == 0:
             outFile = open(
-                precmpDir + 'rooms/' + roomLayout.label + '.cmp', 'wb')
+                precmpDir + roomLayout.label + '.cmp', 'wb')
             outFile.write(chr(roomLayout.compressionMode))
             outFile.write(roomLayout.rawData)
             outFile.close()
