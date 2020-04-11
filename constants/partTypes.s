@@ -435,6 +435,8 @@
 .define PARTID_TRIFORCE_STONE			$5a
 
 
+; Can't have IDs higher than $80 (would need to modify code in objectLoading.s, possibly more)
+
 
 ; TODO: Separate ages/seasons stuff properly.
 
@@ -455,5 +457,6 @@
 ; @subid_80{Normal}
 ; @subid_81{Low health}
 .define PARTID_MOTHULA_PROJECTILE_2		$42
+
 
 .endif

@@ -1,4856 +1,4856 @@
-group0Map08ObjectData: ; 5977
-group0Map0eObjectData: ; 5977
-group0Map0fObjectData: ; 5977
-group0Map1cObjectData: ; 5977
-group0Map1eObjectData: ; 5977
-group0Map1fObjectData: ; 5977
-group0Map23ObjectData: ; 5977
-group0Map28ObjectData: ; 5977
-group0Map2dObjectData: ; 5977
-group0Map2eObjectData: ; 5977
-group0Map2fObjectData: ; 5977
-group0Map3eObjectData: ; 5977
-group0Map3fObjectData: ; 5977
-group0Map47ObjectData: ; 5977
-group0Map4aObjectData: ; 5977
-group0Map4eObjectData: ; 5977
-group0Map4fObjectData: ; 5977
-group0Map52ObjectData: ; 5977
-group0Map53ObjectData: ; 5977
-group0Map5eObjectData: ; 5977
-group0Map5fObjectData: ; 5977
-group0Map61ObjectData: ; 5977
-group0Map69ObjectData: ; 5977
-group0Map6eObjectData: ; 5977
-group0Map6fObjectData: ; 5977
-group0Map75ObjectData: ; 5977
-group0Map76ObjectData: ; 5977
-group0Map7dObjectData: ; 5977
-group0Map7eObjectData: ; 5977
-group0Map7fObjectData: ; 5977
-group0Map85ObjectData: ; 5977
-group0Map87ObjectData: ; 5977
-group0Map8aObjectData: ; 5977
-group0Map8cObjectData: ; 5977
-group0Map8eObjectData: ; 5977
-group0Map8fObjectData: ; 5977
-group0Map93ObjectData: ; 5977
-group0Map95ObjectData: ; 5977
-group0Map96ObjectData: ; 5977
-group0Map97ObjectData: ; 5977
-group0Map9aObjectData: ; 5977
-group0Map9bObjectData: ; 5977
-group0Map9cObjectData: ; 5977
-group0Map9dObjectData: ; 5977
-group0Map9eObjectData: ; 5977
-group0Map9fObjectData: ; 5977
-group0Mapa1ObjectData: ; 5977
-group0Mapa2ObjectData: ; 5977
-group0Mapa3ObjectData: ; 5977
-group0Mapa4ObjectData: ; 5977
-group0Mapa5ObjectData: ; 5977
-group0Mapa6ObjectData: ; 5977
-group0MapaeObjectData: ; 5977
-group0MapafObjectData: ; 5977
-group0Mapb0ObjectData: ; 5977
-group0Mapb1ObjectData: ; 5977
-group0Mapb2ObjectData: ; 5977
-group0Mapb3ObjectData: ; 5977
-group0Mapb4ObjectData: ; 5977
-group0Mapb5ObjectData: ; 5977
-group0Mapb6ObjectData: ; 5977
-group0Mapb7ObjectData: ; 5977
-group0MapbeObjectData: ; 5977
-group0MapbfObjectData: ; 5977
-group0Mapc0ObjectData: ; 5977
-group0Mapc2ObjectData: ; 5977
-group0Mapc3ObjectData: ; 5977
-group0Mapc4ObjectData: ; 5977
-group0Mapc5ObjectData: ; 5977
-group0Mapc6ObjectData: ; 5977
-group0Mapc7ObjectData: ; 5977
-group0MapceObjectData: ; 5977
-group0MapcfObjectData: ; 5977
-group0Mapd0ObjectData: ; 5977
-group0Mapd1ObjectData: ; 5977
-group0Mapd2ObjectData: ; 5977
-group0Mapd3ObjectData: ; 5977
-group0Mapd4ObjectData: ; 5977
-group0Mapd5ObjectData: ; 5977
-group0Mapd6ObjectData: ; 5977
-group0Mapd9ObjectData: ; 5977
-group0MapdcObjectData: ; 5977
-group0MapdeObjectData: ; 5977
-group0MapdfObjectData: ; 5977
-group0Mape0ObjectData: ; 5977
-group0Mape1ObjectData: ; 5977
-group0Mape2ObjectData: ; 5977
-group0Mape3ObjectData: ; 5977
-group0Mape4ObjectData: ; 5977
-group0Mape5ObjectData: ; 5977
-group0Mape6ObjectData: ; 5977
-group0Mape7ObjectData: ; 5977
-group0Mape8ObjectData: ; 5977
-group0Mape9ObjectData: ; 5977
-group0MapeaObjectData: ; 5977
-group0MapebObjectData: ; 5977
-group0MapecObjectData: ; 5977
-group0MapedObjectData: ; 5977
-group0MapeeObjectData: ; 5977
-group0MapefObjectData: ; 5977
-group0Mapf0ObjectData: ; 5977
-group0Mapf1ObjectData: ; 5977
-group0Mapf2ObjectData: ; 5977
-group0Mapf3ObjectData: ; 5977
-group0Mapf4ObjectData: ; 5977
-group0Mapf5ObjectData: ; 5977
-group0Mapf6ObjectData: ; 5977
-group0Mapf7ObjectData: ; 5977
-group0Mapf8ObjectData: ; 5977
-group0Mapf9ObjectData: ; 5977
-group0MapfaObjectData: ; 5977
-group0MapfbObjectData: ; 5977
-group0MapfcObjectData: ; 5977
-group0MapfdObjectData: ; 5977
-group0MapfeObjectData: ; 5977
-group0MapffObjectData: ; 5977
-group1Map00ObjectData: ; 5977
-group1Map0bObjectData: ; 5977
-group1Map0cObjectData: ; 5977
-group1Map0dObjectData: ; 5977
-group1Map0fObjectData: ; 5977
-group1Map18ObjectData: ; 5977
-group1Map1cObjectData: ; 5977
-group1Map1eObjectData: ; 5977
-group1Map1fObjectData: ; 5977
-group1Map29ObjectData: ; 5977
-group1Map2aObjectData: ; 5977
-group1Map2bObjectData: ; 5977
-group1Map2eObjectData: ; 5977
-group1Map2fObjectData: ; 5977
-group1Map30ObjectData: ; 5977
-group1Map3aObjectData: ; 5977
-group1Map3cObjectData: ; 5977
-group1Map3eObjectData: ; 5977
-group1Map3fObjectData: ; 5977
-group1Map40ObjectData: ; 5977
-group1Map4aObjectData: ; 5977
-group1Map4eObjectData: ; 5977
-group1Map4fObjectData: ; 5977
-group1Map50ObjectData: ; 5977
-group1Map52ObjectData: ; 5977
-group1Map56ObjectData: ; 5977
-group1Map59ObjectData: ; 5977
-group1Map5aObjectData: ; 5977
-group1Map5eObjectData: ; 5977
-group1Map5fObjectData: ; 5977
-group1Map69ObjectData: ; 5977
-group1Map6aObjectData: ; 5977
-group1Map6cObjectData: ; 5977
-group1Map6eObjectData: ; 5977
-group1Map6fObjectData: ; 5977
-group1Map7aObjectData: ; 5977
-group1Map7eObjectData: ; 5977
-group1Map7fObjectData: ; 5977
-group1Map85ObjectData: ; 5977
-group1Map87ObjectData: ; 5977
-group1Map88ObjectData: ; 5977
-group1Map89ObjectData: ; 5977
-group1Map8aObjectData: ; 5977
-group1Map8bObjectData: ; 5977
-group1Map8dObjectData: ; 5977
-group1Map8eObjectData: ; 5977
-group1Map8fObjectData: ; 5977
-group1Map98ObjectData: ; 5977
-group1Map99ObjectData: ; 5977
-group1Map9aObjectData: ; 5977
-group1Map9bObjectData: ; 5977
-group1Map9cObjectData: ; 5977
-group1Map9dObjectData: ; 5977
-group1Map9eObjectData: ; 5977
-group1Map9fObjectData: ; 5977
-group1Mapa0ObjectData: ; 5977
-group1Mapa1ObjectData: ; 5977
-group1Mapa2ObjectData: ; 5977
-group1Mapa3ObjectData: ; 5977
-group1Mapa4ObjectData: ; 5977
-group1Mapa6ObjectData: ; 5977
-group1MapaeObjectData: ; 5977
-group1MapafObjectData: ; 5977
-group1Mapb0ObjectData: ; 5977
-group1Mapb1ObjectData: ; 5977
-group1Mapb2ObjectData: ; 5977
-group1Mapb3ObjectData: ; 5977
-group1Mapb4ObjectData: ; 5977
-group1Mapb5ObjectData: ; 5977
-group1Mapb6ObjectData: ; 5977
-group1Mapb7ObjectData: ; 5977
-group1Mapb8ObjectData: ; 5977
-group1Mapb9ObjectData: ; 5977
-group1MapbeObjectData: ; 5977
-group1MapbfObjectData: ; 5977
-group1Mapc0ObjectData: ; 5977
-group1Mapc2ObjectData: ; 5977
-group1Mapc3ObjectData: ; 5977
-group1Mapc4ObjectData: ; 5977
-group1Mapc5ObjectData: ; 5977
-group1Mapc6ObjectData: ; 5977
-group1Mapc7ObjectData: ; 5977
-group1Mapc8ObjectData: ; 5977
-group1Mapc9ObjectData: ; 5977
-group1MapceObjectData: ; 5977
-group1MapcfObjectData: ; 5977
-group1Mapd1ObjectData: ; 5977
-group1Mapd2ObjectData: ; 5977
-group1Mapd3ObjectData: ; 5977
-group1Mapd4ObjectData: ; 5977
-group1Mapd5ObjectData: ; 5977
-group1Mapd6ObjectData: ; 5977
-group1Mapd8ObjectData: ; 5977
-group1MapdcObjectData: ; 5977
-group1MapdeObjectData: ; 5977
-group1MapdfObjectData: ; 5977
-group1Mape0ObjectData: ; 5977
-group1Mape1ObjectData: ; 5977
-group1Mape2ObjectData: ; 5977
-group1Mape3ObjectData: ; 5977
-group1Mape4ObjectData: ; 5977
-group1Mape5ObjectData: ; 5977
-group1Mape6ObjectData: ; 5977
-group1Mape7ObjectData: ; 5977
-group1Mape8ObjectData: ; 5977
-group1Mape9ObjectData: ; 5977
-group1MapeaObjectData: ; 5977
-group1MapebObjectData: ; 5977
-group1MapecObjectData: ; 5977
-group1MapedObjectData: ; 5977
-group1MapeeObjectData: ; 5977
-group1MapefObjectData: ; 5977
-group1Mapf0ObjectData: ; 5977
-group1Mapf1ObjectData: ; 5977
-group1Mapf2ObjectData: ; 5977
-group1Mapf3ObjectData: ; 5977
-group1Mapf4ObjectData: ; 5977
-group1Mapf5ObjectData: ; 5977
-group1Mapf6ObjectData: ; 5977
-group1Mapf7ObjectData: ; 5977
-group1Mapf8ObjectData: ; 5977
-group1Mapf9ObjectData: ; 5977
-group1MapfaObjectData: ; 5977
-group1MapfbObjectData: ; 5977
-group1MapfcObjectData: ; 5977
-group1MapfdObjectData: ; 5977
-group1MapfeObjectData: ; 5977
-group1MapffObjectData: ; 5977
-group2Map00ObjectData: ; 5977
-group2Map01ObjectData: ; 5977
-group2Map02ObjectData: ; 5977
-group2Map03ObjectData: ; 5977
-group2Map04ObjectData: ; 5977
-group2Map05ObjectData: ; 5977
-group2Map06ObjectData: ; 5977
-group2Map07ObjectData: ; 5977
-group2Map08ObjectData: ; 5977
-group2Map09ObjectData: ; 5977
-group2Map0aObjectData: ; 5977
-group2Map0bObjectData: ; 5977
-group2Map0cObjectData: ; 5977
-group2Map0dObjectData: ; 5977
-group2Map10ObjectData: ; 5977
-group2Map11ObjectData: ; 5977
-group2Map12ObjectData: ; 5977
-group2Map13ObjectData: ; 5977
-group2Map14ObjectData: ; 5977
-group2Map15ObjectData: ; 5977
-group2Map16ObjectData: ; 5977
-group2Map17ObjectData: ; 5977
-group2Map18ObjectData: ; 5977
-group2Map19ObjectData: ; 5977
-group2Map1aObjectData: ; 5977
-group2Map1bObjectData: ; 5977
-group2Map1cObjectData: ; 5977
-group2Map1dObjectData: ; 5977
-group2Map20ObjectData: ; 5977
-group2Map21ObjectData: ; 5977
-group2Map22ObjectData: ; 5977
-group2Map23ObjectData: ; 5977
-group2Map24ObjectData: ; 5977
-group2Map25ObjectData: ; 5977
-group2Map26ObjectData: ; 5977
-group2Map27ObjectData: ; 5977
-group2Map28ObjectData: ; 5977
-group2Map29ObjectData: ; 5977
-group2Map2aObjectData: ; 5977
-group2Map2bObjectData: ; 5977
-group2Map2cObjectData: ; 5977
-group2Map2dObjectData: ; 5977
-group2Map30ObjectData: ; 5977
-group2Map31ObjectData: ; 5977
-group2Map32ObjectData: ; 5977
-group2Map33ObjectData: ; 5977
-group2Map34ObjectData: ; 5977
-group2Map35ObjectData: ; 5977
-group2Map36ObjectData: ; 5977
-group2Map37ObjectData: ; 5977
-group2Map38ObjectData: ; 5977
-group2Map39ObjectData: ; 5977
-group2Map3aObjectData: ; 5977
-group2Map3bObjectData: ; 5977
-group2Map3cObjectData: ; 5977
-group2Map3dObjectData: ; 5977
-group2Map40ObjectData: ; 5977
-group2Map41ObjectData: ; 5977
-group2Map42ObjectData: ; 5977
-group2Map43ObjectData: ; 5977
-group2Map44ObjectData: ; 5977
-group2Map45ObjectData: ; 5977
-group2Map46ObjectData: ; 5977
-group2Map47ObjectData: ; 5977
-group2Map48ObjectData: ; 5977
-group2Map49ObjectData: ; 5977
-group2Map4aObjectData: ; 5977
-group2Map4bObjectData: ; 5977
-group2Map4cObjectData: ; 5977
-group2Map4dObjectData: ; 5977
-group2Map4fObjectData: ; 5977
-group2Map50ObjectData: ; 5977
-group2Map51ObjectData: ; 5977
-group2Map52ObjectData: ; 5977
-group2Map53ObjectData: ; 5977
-group2Map54ObjectData: ; 5977
-group2Map55ObjectData: ; 5977
-group2Map56ObjectData: ; 5977
-group2Map57ObjectData: ; 5977
-group2Map58ObjectData: ; 5977
-group2Map59ObjectData: ; 5977
-group2Map5aObjectData: ; 5977
-group2Map5bObjectData: ; 5977
-group2Map5cObjectData: ; 5977
-group2Map5dObjectData: ; 5977
-group2Map5fObjectData: ; 5977
-group2Map60ObjectData: ; 5977
-group2Map61ObjectData: ; 5977
-group2Map62ObjectData: ; 5977
-group2Map63ObjectData: ; 5977
-group2Map64ObjectData: ; 5977
-group2Map65ObjectData: ; 5977
-group2Map66ObjectData: ; 5977
-group2Map67ObjectData: ; 5977
-group2Map68ObjectData: ; 5977
-group2Map69ObjectData: ; 5977
-group2Map6aObjectData: ; 5977
-group2Map6bObjectData: ; 5977
-group2Map6cObjectData: ; 5977
-group2Map6dObjectData: ; 5977
-group2Map70ObjectData: ; 5977
-group2Map71ObjectData: ; 5977
-group2Map72ObjectData: ; 5977
-group2Map73ObjectData: ; 5977
-group2Map74ObjectData: ; 5977
-group2Map75ObjectData: ; 5977
-group2Map76ObjectData: ; 5977
-group2Map77ObjectData: ; 5977
-group2Map78ObjectData: ; 5977
-group2Map79ObjectData: ; 5977
-group2Map7aObjectData: ; 5977
-group2Map7bObjectData: ; 5977
-group2Map7cObjectData: ; 5977
-group2Map7dObjectData: ; 5977
-group2Map80ObjectData: ; 5977
-group2Map81ObjectData: ; 5977
-group2Map82ObjectData: ; 5977
-group2Map83ObjectData: ; 5977
-group2Map84ObjectData: ; 5977
-group2Map85ObjectData: ; 5977
-group2Map86ObjectData: ; 5977
-group2Map87ObjectData: ; 5977
-group2Map88ObjectData: ; 5977
-group2Map89ObjectData: ; 5977
-group2Map8aObjectData: ; 5977
-group2Map8bObjectData: ; 5977
-group2Map8cObjectData: ; 5977
-group2Map8dObjectData: ; 5977
-group2Map8fObjectData: ; 5977
-group2Map91ObjectData: ; 5977
-group2Map92ObjectData: ; 5977
-group2Map93ObjectData: ; 5977
-group2Map94ObjectData: ; 5977
-group2Map95ObjectData: ; 5977
-group2Map96ObjectData: ; 5977
-group2Map97ObjectData: ; 5977
-group2Map98ObjectData: ; 5977
-group2Map99ObjectData: ; 5977
-group2Map9aObjectData: ; 5977
-group2Map9bObjectData: ; 5977
-group2Map9cObjectData: ; 5977
-group2Map9dObjectData: ; 5977
-group2Mapa1ObjectData: ; 5977
-group2Mapa2ObjectData: ; 5977
-group2Mapa3ObjectData: ; 5977
-group2Mapa4ObjectData: ; 5977
-group2Mapa5ObjectData: ; 5977
-group2Mapa6ObjectData: ; 5977
-group2Mapa7ObjectData: ; 5977
-group2Mapa8ObjectData: ; 5977
-group2Mapa9ObjectData: ; 5977
-group2MapaaObjectData: ; 5977
-group2MapabObjectData: ; 5977
-group2MapacObjectData: ; 5977
-group2MapadObjectData: ; 5977
-group2MapaeObjectData: ; 5977
-group2Mapb0ObjectData: ; 5977
-group2Mapb2ObjectData: ; 5977
-group2Mapb3ObjectData: ; 5977
-group2Mapb4ObjectData: ; 5977
-group2Mapb5ObjectData: ; 5977
-group2Mapb6ObjectData: ; 5977
-group2Mapb7ObjectData: ; 5977
-group2Mapb8ObjectData: ; 5977
-group2Mapb9ObjectData: ; 5977
-group2MapbaObjectData: ; 5977
-group2MapbbObjectData: ; 5977
-group2MapbcObjectData: ; 5977
-group2MapbdObjectData: ; 5977
-group2MapbfObjectData: ; 5977
-group2Mapc0ObjectData: ; 5977
-group2Mapc1ObjectData: ; 5977
-group2Mapc2ObjectData: ; 5977
-group2Mapc3ObjectData: ; 5977
-group2Mapc4ObjectData: ; 5977
-group2Mapc5ObjectData: ; 5977
-group2Mapc6ObjectData: ; 5977
-group2Mapc7ObjectData: ; 5977
-group2Mapc8ObjectData: ; 5977
-group2Mapc9ObjectData: ; 5977
-group2MapcaObjectData: ; 5977
-group2MapcbObjectData: ; 5977
-group2MapccObjectData: ; 5977
-group2MapcdObjectData: ; 5977
-group2MapceObjectData: ; 5977
-group2Mapd0ObjectData: ; 5977
-group2Mapd2ObjectData: ; 5977
-group2Mapd3ObjectData: ; 5977
-group2Mapd4ObjectData: ; 5977
-group2Mapd5ObjectData: ; 5977
-group2Mapd6ObjectData: ; 5977
-group2Mapd8ObjectData: ; 5977
-group2Mapd9ObjectData: ; 5977
-group2MapdaObjectData: ; 5977
-group2MapdbObjectData: ; 5977
-group2MapdcObjectData: ; 5977
-group2MapddObjectData: ; 5977
-group2Mape0ObjectData: ; 5977
-group2Mape1ObjectData: ; 5977
-group2Mape2ObjectData: ; 5977
-group2MapecObjectData: ; 5977
-group2Mapf0ObjectData: ; 5977
-group2Mapf1ObjectData: ; 5977
-group2Mapf2ObjectData: ; 5977
-group2Mapf4ObjectData: ; 5977
-group2MapfcObjectData: ; 5977
-group2MapfeObjectData: ; 5977
-group3Map00ObjectData: ; 5977
-group3Map01ObjectData: ; 5977
-group3Map02ObjectData: ; 5977
-group3Map03ObjectData: ; 5977
-group3Map04ObjectData: ; 5977
-group3Map05ObjectData: ; 5977
-group3Map06ObjectData: ; 5977
-group3Map07ObjectData: ; 5977
-group3Map08ObjectData: ; 5977
-group3Map09ObjectData: ; 5977
-group3Map0aObjectData: ; 5977
-group3Map0bObjectData: ; 5977
-group3Map0cObjectData: ; 5977
-group3Map0dObjectData: ; 5977
-group3Map0eObjectData: ; 5977
-group3Map10ObjectData: ; 5977
-group3Map11ObjectData: ; 5977
-group3Map12ObjectData: ; 5977
-group3Map13ObjectData: ; 5977
-group3Map14ObjectData: ; 5977
-group3Map15ObjectData: ; 5977
-group3Map16ObjectData: ; 5977
-group3Map17ObjectData: ; 5977
-group3Map18ObjectData: ; 5977
-group3Map19ObjectData: ; 5977
-group3Map1aObjectData: ; 5977
-group3Map1bObjectData: ; 5977
-group3Map1cObjectData: ; 5977
-group3Map1dObjectData: ; 5977
-group3Map1eObjectData: ; 5977
-group3Map20ObjectData: ; 5977
-group3Map21ObjectData: ; 5977
-group3Map22ObjectData: ; 5977
-group3Map23ObjectData: ; 5977
-group3Map24ObjectData: ; 5977
-group3Map25ObjectData: ; 5977
-group3Map26ObjectData: ; 5977
-group3Map27ObjectData: ; 5977
-group3Map28ObjectData: ; 5977
-group3Map29ObjectData: ; 5977
-group3Map2aObjectData: ; 5977
-group3Map2bObjectData: ; 5977
-group3Map2cObjectData: ; 5977
-group3Map2dObjectData: ; 5977
-group3Map2fObjectData: ; 5977
-group3Map30ObjectData: ; 5977
-group3Map31ObjectData: ; 5977
-group3Map32ObjectData: ; 5977
-group3Map33ObjectData: ; 5977
-group3Map34ObjectData: ; 5977
-group3Map35ObjectData: ; 5977
-group3Map36ObjectData: ; 5977
-group3Map37ObjectData: ; 5977
-group3Map38ObjectData: ; 5977
-group3Map39ObjectData: ; 5977
-group3Map3aObjectData: ; 5977
-group3Map3bObjectData: ; 5977
-group3Map3cObjectData: ; 5977
-group3Map3dObjectData: ; 5977
-group3Map40ObjectData: ; 5977
-group3Map41ObjectData: ; 5977
-group3Map42ObjectData: ; 5977
-group3Map43ObjectData: ; 5977
-group3Map44ObjectData: ; 5977
-group3Map45ObjectData: ; 5977
-group3Map46ObjectData: ; 5977
-group3Map47ObjectData: ; 5977
-group3Map48ObjectData: ; 5977
-group3Map49ObjectData: ; 5977
-group3Map4aObjectData: ; 5977
-group3Map4bObjectData: ; 5977
-group3Map4cObjectData: ; 5977
-group3Map4dObjectData: ; 5977
-group3Map50ObjectData: ; 5977
-group3Map51ObjectData: ; 5977
-group3Map52ObjectData: ; 5977
-group3Map53ObjectData: ; 5977
-group3Map54ObjectData: ; 5977
-group3Map55ObjectData: ; 5977
-group3Map56ObjectData: ; 5977
-group3Map57ObjectData: ; 5977
-group3Map58ObjectData: ; 5977
-group3Map59ObjectData: ; 5977
-group3Map5aObjectData: ; 5977
-group3Map5bObjectData: ; 5977
-group3Map5cObjectData: ; 5977
-group3Map5dObjectData: ; 5977
-group3Map60ObjectData: ; 5977
-group3Map61ObjectData: ; 5977
-group3Map62ObjectData: ; 5977
-group3Map63ObjectData: ; 5977
-group3Map64ObjectData: ; 5977
-group3Map65ObjectData: ; 5977
-group3Map66ObjectData: ; 5977
-group3Map67ObjectData: ; 5977
-group3Map68ObjectData: ; 5977
-group3Map69ObjectData: ; 5977
-group3Map6aObjectData: ; 5977
-group3Map6bObjectData: ; 5977
-group3Map6cObjectData: ; 5977
-group3Map6dObjectData: ; 5977
-group3Map70ObjectData: ; 5977
-group3Map71ObjectData: ; 5977
-group3Map72ObjectData: ; 5977
-group3Map73ObjectData: ; 5977
-group3Map74ObjectData: ; 5977
-group3Map75ObjectData: ; 5977
-group3Map76ObjectData: ; 5977
-group3Map77ObjectData: ; 5977
-group3Map78ObjectData: ; 5977
-group3Map79ObjectData: ; 5977
-group3Map7aObjectData: ; 5977
-group3Map7bObjectData: ; 5977
-group3Map7cObjectData: ; 5977
-group3Map7dObjectData: ; 5977
-group3Map80ObjectData: ; 5977
-group3Map81ObjectData: ; 5977
-group3Map82ObjectData: ; 5977
-group3Map83ObjectData: ; 5977
-group3Map84ObjectData: ; 5977
-group3Map85ObjectData: ; 5977
-group3Map86ObjectData: ; 5977
-group3Map87ObjectData: ; 5977
-group3Map88ObjectData: ; 5977
-group3Map89ObjectData: ; 5977
-group3Map8aObjectData: ; 5977
-group3Map8bObjectData: ; 5977
-group3Map8cObjectData: ; 5977
-group3Map8dObjectData: ; 5977
-group3Map91ObjectData: ; 5977
-group3Map92ObjectData: ; 5977
-group3Map93ObjectData: ; 5977
-group3Map94ObjectData: ; 5977
-group3Map95ObjectData: ; 5977
-group3Map96ObjectData: ; 5977
-group3Map97ObjectData: ; 5977
-group3Map98ObjectData: ; 5977
-group3Map99ObjectData: ; 5977
-group3Map9aObjectData: ; 5977
-group3Map9bObjectData: ; 5977
-group3Map9cObjectData: ; 5977
-group3Map9dObjectData: ; 5977
-group3Map9fObjectData: ; 5977
-group3Mapa1ObjectData: ; 5977
-group3Mapa2ObjectData: ; 5977
-group3Mapa3ObjectData: ; 5977
-group3Mapa4ObjectData: ; 5977
-group3Mapa5ObjectData: ; 5977
-group3Mapa6ObjectData: ; 5977
-group3Mapa7ObjectData: ; 5977
-group3Mapa8ObjectData: ; 5977
-group3Mapa9ObjectData: ; 5977
-group3MapaaObjectData: ; 5977
-group3MapabObjectData: ; 5977
-group3MapacObjectData: ; 5977
-group3MapadObjectData: ; 5977
-group3Mapb0ObjectData: ; 5977
-group3Mapb2ObjectData: ; 5977
-group3Mapb3ObjectData: ; 5977
-group3Mapb4ObjectData: ; 5977
-group3Mapb5ObjectData: ; 5977
-group3Mapb6ObjectData: ; 5977
-group3Mapb7ObjectData: ; 5977
-group3Mapb8ObjectData: ; 5977
-group3Mapb9ObjectData: ; 5977
-group3MapbaObjectData: ; 5977
-group3MapbbObjectData: ; 5977
-group3MapbcObjectData: ; 5977
-group3MapbdObjectData: ; 5977
-group3MapbfObjectData: ; 5977
-group3Mapc1ObjectData: ; 5977
-group3Mapc2ObjectData: ; 5977
-group3Mapc3ObjectData: ; 5977
-group3Mapc4ObjectData: ; 5977
-group3Mapc5ObjectData: ; 5977
-group3Mapc6ObjectData: ; 5977
-group3Mapc7ObjectData: ; 5977
-group3Mapc8ObjectData: ; 5977
-group3Mapc9ObjectData: ; 5977
-group3MapcaObjectData: ; 5977
-group3MapcbObjectData: ; 5977
-group3MapccObjectData: ; 5977
-group3MapcdObjectData: ; 5977
-group3Mapd0ObjectData: ; 5977
-group3Mapd2ObjectData: ; 5977
-group3Mapd3ObjectData: ; 5977
-group3Mapd4ObjectData: ; 5977
-group3Mapd5ObjectData: ; 5977
-group3Mapd7ObjectData: ; 5977
-group3Mapd8ObjectData: ; 5977
-group3Mapd9ObjectData: ; 5977
-group3MapdaObjectData: ; 5977
-group3MapdbObjectData: ; 5977
-group3MapdcObjectData: ; 5977
-group3MapddObjectData: ; 5977
-group3Mape0ObjectData: ; 5977
-group3Mape1ObjectData: ; 5977
-group3Mape2ObjectData: ; 5977
-group3Mape4ObjectData: ; 5977
-group3Mape5ObjectData: ; 5977
-group3Mape6ObjectData: ; 5977
-group3MapeeObjectData: ; 5977
-group3Mapf0ObjectData: ; 5977
-group3Mapf1ObjectData: ; 5977
-group3Mapf2ObjectData: ; 5977
-group3Mapf3ObjectData: ; 5977
-group3Mapf4ObjectData: ; 5977
-group3Mapf5ObjectData: ; 5977
-group3Mapf9ObjectData: ; 5977
-group3MapfdObjectData: ; 5977
-group4Map00ObjectData: ; 5977
-group4Map0eObjectData: ; 5977
-group4Map0fObjectData: ; 5977
-group4Map26ObjectData: ; 5977
-group4Map67ObjectData: ; 5977
-group4Mapd5ObjectData: ; 5977
-group4Mapd6ObjectData: ; 5977
-group4Mapd7ObjectData: ; 5977
-group4Mapd8ObjectData: ; 5977
-group4Mapd9ObjectData: ; 5977
-group4MapdaObjectData: ; 5977
-group4MapdbObjectData: ; 5977
-group4MapdcObjectData: ; 5977
-group4MapddObjectData: ; 5977
-group4MapdeObjectData: ; 5977
-group4MapdfObjectData: ; 5977
-group4Mapf0ObjectData: ; 5977
-group4MapffObjectData: ; 5977
-group5Map00ObjectData: ; 5977
-group5Map05ObjectData: ; 5977
-group5Map07ObjectData: ; 5977
-group5Map08ObjectData: ; 5977
-group5Map0bObjectData: ; 5977
-group5Map0cObjectData: ; 5977
-group5Map0dObjectData: ; 5977
-group5Map0eObjectData: ; 5977
-group5Map0fObjectData: ; 5977
-group5MapafObjectData: ; 5977
-group5Mapb7ObjectData: ; 5977
-group5MapbaObjectData: ; 5977
-group5Mapc5ObjectData: ; 5977
-group5MapcdObjectData: ; 5977
-group5Mape5ObjectData: ; 5977
-group5Mape6ObjectData: ; 5977
-group5MapeaObjectData: ; 5977
-group5MapebObjectData: ; 5977
-group5Mapf0ObjectData: ; 5977
-group5MapfcObjectData: ; 5977
-group5MapfdObjectData: ; 5977
-group5MapfeObjectData: ; 5977
-group5MapffObjectData: ; 5977
-	obj_End
-
-group0Map12ObjectData: ; 5978
-	obj_DoubleValue $8009 $5e $20
-	obj_DoubleValue $800a $58 $20
-	obj_Pointer objectData44eb
-	obj_End
-
-group0Map13ObjectData: ; 5985
-	obj_DoubleValue $dc03 $48 $28
-	obj_DoubleValue $dc04 $48 $78
-	obj_DoubleValue $e100 $48 $28
-	obj_DoubleValue $e100 $48 $78
-	obj_DoubleValue $8009 $1e $50
-	obj_DoubleValue $800a $18 $50
-	obj_SpecificEnemy $00 $5a35 $00 $00
-	obj_Pointer objectData44f4
-	obj_End
-
-group0Map14ObjectData: ; 59a8
-	obj_DoubleValue $8009 $5e $80
-	obj_DoubleValue $800a $58 $80
-	obj_Pointer objectData44f5
-	obj_End
-
-group0MapacObjectData: ; 59b5
-	obj_SpecificEnemy $00 $5a17 $00 $00
-	obj_End
-
-group0Mapc1ObjectData: ; 59bc
-	obj_SpecificEnemy $00 $5a38 $00 $00
-	obj_End
-
-group0Map00ObjectData: ; 59c3
-	obj_Pointer objectData44ba
-	obj_End
-
-group0Map01ObjectData: ; 59c7
-	obj_Pointer objectData44bf
-	obj_End
-
-group0Map02ObjectData: ; 59cb
-	obj_Pointer objectData44c4
-	obj_End
-
-group0Map03ObjectData: ; 59cf
-	obj_WithParam $00 $8a00 $05 $00 $00
-	obj_Pointer objectData44d1
-	obj_End
-
-group0Map04ObjectData: ; 59da
-	obj_Pointer objectData44de
-	obj_End
-
-group0Map05ObjectData: ; 59de
-	obj_DoubleValue $b600 $28 $68
-	obj_Pointer objectData4347
-	obj_End
-
-group0Map06ObjectData: ; 59e7
-	obj_Pointer objectData4350
-	obj_End
-
-group0Map07ObjectData: ; 59eb
-	obj_Pointer objectData4347
-	obj_End
-
-group0Map09ObjectData: ; 59ef
-	obj_DoubleValue $7200 $60 $58
-	obj_DoubleValue $8001 $18 $5e
-	obj_End
-
-group0Map0aObjectData: ; 59f9
-	obj_DoubleValue $9011 $18 $78
-	obj_WithParam $00 $8a00 $07 $00 $00
-	obj_Pointer objectData4633
-	obj_End
-
-group0Map0bObjectData: ; 5a09
-	obj_DoubleValue $e100 $48 $78
-	obj_End
-
-group0Map0cObjectData: ; 5a0f
-	obj_Pointer objectData4699
-	obj_End
-
-group0Map0dObjectData: ; 5a13
-	obj_DoubleValue $dc07 $38 $78
-	obj_End
-
-group0Map10ObjectData: ; 5a19
-	obj_Pointer objectData44fe
-	obj_End
-
-group0Map11ObjectData: ; 5a1d
-	obj_DoubleValue $dc07 $58 $48
-	obj_Pointer objectData4509
-	obj_End
-
-group0Map15ObjectData: ; 5a26
-	obj_Pointer objectData434c
-	obj_End
-
-group0Map16ObjectData: ; 5a2a
-	obj_DoubleValue $9ab2 $28 $38
-	obj_DoubleValue $9ad2 $68 $38
-	obj_Pointer objectData435e
-	obj_End
-
-group0Map17ObjectData: ; 5a37
-	obj_DoubleValue $9ac2 $48 $58
-	obj_DoubleValue $9ad3 $68 $78
-	obj_End
-
-group0Map18ObjectData: ; 5a41
-	obj_Pointer objectData461e
-	obj_End
-
-group0Map19ObjectData: ; 5a45
-	obj_Pointer objectData4623
-	obj_End
-
-group0Map1aObjectData: ; 5a49
-	obj_Pointer objectData4634
-	obj_End
-
-group0Map1bObjectData: ; 5a4d
-	obj_DoubleValue $e100 $28 $48
-	obj_End
-
-group0Map1dObjectData: ; 5a53
-	obj_DoubleValue $e100 $28 $48
-	obj_Pointer objectData46b2
-	obj_End
-
-group0Map20ObjectData: ; 5a5c
-	obj_DoubleValue $e100 $28 $48
-	obj_Pointer objectData4510
-	obj_End
-
-group0Map21ObjectData: ; 5a65
-	obj_Pointer objectData451a
-	obj_End
-
-group0Map22ObjectData: ; 5a69
-	obj_DoubleValue $710d $10 $38
-	obj_Pointer objectData4515
-	obj_End
-
-group0Map24ObjectData: ; 5a72
-	obj_DoubleValue $710d $10 $68
-	obj_Pointer objectData4515
-	obj_End
-
-group0Map25ObjectData: ; 5a7b
-	obj_DoubleValue $9a00 $68 $48
-	obj_DoubleValue $9a01 $58 $58
-	obj_DoubleValue $9a02 $58 $68
-	obj_DoubleValue $9a03 $48 $58
-	obj_DoubleValue $9a04 $38 $58
-	obj_End
-
-group0Map26ObjectData: ; 5a91
-	obj_DoubleValue $9ab3 $28 $48
-	obj_DoubleValue $9ac3 $28 $48
-	obj_End
-
-group0Map27ObjectData: ; 5a9b
-	obj_DoubleValue $9ab4 $28 $50
-	obj_DoubleValue $9ad4 $68 $48
-	obj_DoubleValue $d003 $3f $50
-	obj_Pointer objectData436b
-	obj_End
-
-group0Map29ObjectData: ; 5aac
-	obj_Pointer objectData462c
-	obj_End
-
-group0Map2aObjectData: ; 5ab0
-	obj_Pointer objectData463f
-	obj_End
-
-group0Map2bObjectData: ; 5ab4
-	obj_Pointer objectData4678
-	obj_End
-
-group0Map2cObjectData: ; 5ab8
-	obj_DoubleValue $b601 $38 $48
-	obj_Pointer objectData469e
-	obj_End
-
-group0Map30ObjectData: ; 5ac1
-	obj_DoubleValue $b602 $58 $28
-	obj_Pointer objectData4523
-	obj_End
-
-group0Map31ObjectData: ; 5aca
-	obj_Pointer objectData452a
-	obj_End
-
-group0Map32ObjectData: ; 5ace
-	obj_Pointer objectData4531
-	obj_End
-
-group0Map33ObjectData: ; 5ad2
-	obj_Pointer objectData4355
-	obj_End
-
-group0Map34ObjectData: ; 5ad6
-	obj_NoValue $7108
-	obj_End
-
-group0Map35ObjectData: ; 5ada
-	obj_NoValue $9aff
-	obj_End
-
-group0Map36ObjectData: ; 5ade
-	obj_DoubleValue $d003 $1f $58
-	obj_Pointer objectData4378
-	obj_End
-
-group0Map37ObjectData: ; 5ae7
-	obj_DoubleValue $9ac4 $58 $88
-	obj_DoubleValue $1f01 $18 $20
-	obj_DoubleValue $d003 $25 $20
-	obj_Pointer objectData4383
-	obj_End
-
-group0Map38ObjectData: ; 5af8
-	obj_DoubleValue $8700 $40 $50
-	obj_DoubleValue $dc14 $58 $78
-	obj_DoubleValue $6b15 $40 $84
-	obj_End
-
-group0Map39ObjectData: ; 5b06
-	obj_NoValue $6b01
-	obj_DoubleValue $e101 $28 $28
-	obj_DoubleValue $370d $28 $18
-	obj_WithParam $00 $5d02 $00 $18 $68
-	obj_End
-
-group0Map3aObjectData: ; 5b1a
-	obj_DoubleValue $e100 $28 $18
-	obj_DoubleValue $3613 $48 $38
-	obj_DoubleValue $3711 $48 $58
-	obj_DoubleValue $3c10 $58 $58
-	obj_WithParam $00 $8a00 $02 $00 $00
-	obj_WithParam $00 $3907 $01 $58 $28
-	obj_WithParam $00 $5d02 $01 $48 $18
-	obj_End
-
-group0Map3bObjectData: ; 5b3f
-	obj_Pointer objectData4683
-	obj_End
-
-group0Map3cObjectData: ; 5b43
-	obj_DoubleValue $e100 $68 $18
-	obj_End
-
-group0Map3dObjectData: ; 5b49
-	obj_Pointer objectData46b7
-	obj_End
-
-group0Map40ObjectData: ; 5b4d
-	obj_Pointer objectData4536
-	obj_End
-
-group0Map41ObjectData: ; 5b51
-	obj_DoubleValue $e100 $28 $78
-	obj_End
-
-group0Map42ObjectData: ; 5b57
-	obj_Pointer objectData4536
-	obj_End
-
-group0Map43ObjectData: ; 5b5b
-	obj_Pointer objectData4355
-	obj_End
-
-group0Map44ObjectData: ; 5b5f
-	obj_Pointer objectData4347
-	obj_End
-
-group0Map45ObjectData: ; 5b63
-	obj_DoubleValue $3f01 $58 $48
-	obj_End
-
-group0Map46ObjectData: ; 5b69
-	obj_DoubleValue $4102 $38 $28
-	obj_DoubleValue $4105 $38 $28
-	obj_DoubleValue $3d02 $38 $68
-	obj_End
-
-group0Map48ObjectData: ; 5b77
-	obj_DoubleValue $3a03 $48 $38
-	obj_DoubleValue $dc08 $68 $02
-	obj_WithParam $00 $5401 $03 $48 $68
-	obj_End
-
-group0Map49ObjectData: ; 5b88
-	obj_NoValue $2f00
-	obj_End
-
-group0Map4bObjectData: ; 5b8c
-	obj_Pointer objectData4690
-	obj_End
-
-group0Map4cObjectData: ; 5b90
-	obj_Pointer objectData46a5
-	obj_End
-
-group0Map4dObjectData: ; 5b94
-	obj_Pointer objectData46c0
-	obj_End
-
-group0Map50ObjectData: ; 5b98
-	obj_DoubleValue $8300 $28 $68
-	obj_End
-
-group0Map51ObjectData: ; 5b9e
-	obj_DoubleValue $e100 $48 $48
-	obj_End
-
-group0Map54ObjectData: ; 5ba4
-	obj_DoubleValue $6b0f $68 $88
-	obj_End
-
-group0Map55ObjectData: ; 5baa
-	obj_WithParam $00 $5401 $01 $38 $48
-	obj_End
-
-group0Map56ObjectData: ; 5bb2
-	obj_DoubleValue $3a04 $48 $68
-	obj_DoubleValue $6500 $48 $78
-	obj_End
-
-group0Map57ObjectData: ; 5bbc
-	obj_DoubleValue $4101 $38 $48
-	obj_End
-
-group0Map58ObjectData: ; 5bc2
-	obj_DoubleValue $4104 $58 $68
-	obj_End
-
-group0Map59ObjectData: ; 5bc8
-	obj_DoubleValue $3400 $26 $38
+group0Map08ObjectData:
+group0Map0eObjectData:
+group0Map0fObjectData:
+group0Map1cObjectData:
+group0Map1eObjectData:
+group0Map1fObjectData:
+group0Map23ObjectData:
+group0Map28ObjectData:
+group0Map2dObjectData:
+group0Map2eObjectData:
+group0Map2fObjectData:
+group0Map3eObjectData:
+group0Map3fObjectData:
+group0Map47ObjectData:
+group0Map4aObjectData:
+group0Map4eObjectData:
+group0Map4fObjectData:
+group0Map52ObjectData:
+group0Map53ObjectData:
+group0Map5eObjectData:
+group0Map5fObjectData:
+group0Map61ObjectData:
+group0Map69ObjectData:
+group0Map6eObjectData:
+group0Map6fObjectData:
+group0Map75ObjectData:
+group0Map76ObjectData:
+group0Map7dObjectData:
+group0Map7eObjectData:
+group0Map7fObjectData:
+group0Map85ObjectData:
+group0Map87ObjectData:
+group0Map8aObjectData:
+group0Map8cObjectData:
+group0Map8eObjectData:
+group0Map8fObjectData:
+group0Map93ObjectData:
+group0Map95ObjectData:
+group0Map96ObjectData:
+group0Map97ObjectData:
+group0Map9aObjectData:
+group0Map9bObjectData:
+group0Map9cObjectData:
+group0Map9dObjectData:
+group0Map9eObjectData:
+group0Map9fObjectData:
+group0Mapa1ObjectData:
+group0Mapa2ObjectData:
+group0Mapa3ObjectData:
+group0Mapa4ObjectData:
+group0Mapa5ObjectData:
+group0Mapa6ObjectData:
+group0MapaeObjectData:
+group0MapafObjectData:
+group0Mapb0ObjectData:
+group0Mapb1ObjectData:
+group0Mapb2ObjectData:
+group0Mapb3ObjectData:
+group0Mapb4ObjectData:
+group0Mapb5ObjectData:
+group0Mapb6ObjectData:
+group0Mapb7ObjectData:
+group0MapbeObjectData:
+group0MapbfObjectData:
+group0Mapc0ObjectData:
+group0Mapc2ObjectData:
+group0Mapc3ObjectData:
+group0Mapc4ObjectData:
+group0Mapc5ObjectData:
+group0Mapc6ObjectData:
+group0Mapc7ObjectData:
+group0MapceObjectData:
+group0MapcfObjectData:
+group0Mapd0ObjectData:
+group0Mapd1ObjectData:
+group0Mapd2ObjectData:
+group0Mapd3ObjectData:
+group0Mapd4ObjectData:
+group0Mapd5ObjectData:
+group0Mapd6ObjectData:
+group0Mapd9ObjectData:
+group0MapdcObjectData:
+group0MapdeObjectData:
+group0MapdfObjectData:
+group0Mape0ObjectData:
+group0Mape1ObjectData:
+group0Mape2ObjectData:
+group0Mape3ObjectData:
+group0Mape4ObjectData:
+group0Mape5ObjectData:
+group0Mape6ObjectData:
+group0Mape7ObjectData:
+group0Mape8ObjectData:
+group0Mape9ObjectData:
+group0MapeaObjectData:
+group0MapebObjectData:
+group0MapecObjectData:
+group0MapedObjectData:
+group0MapeeObjectData:
+group0MapefObjectData:
+group0Mapf0ObjectData:
+group0Mapf1ObjectData:
+group0Mapf2ObjectData:
+group0Mapf3ObjectData:
+group0Mapf4ObjectData:
+group0Mapf5ObjectData:
+group0Mapf6ObjectData:
+group0Mapf7ObjectData:
+group0Mapf8ObjectData:
+group0Mapf9ObjectData:
+group0MapfaObjectData:
+group0MapfbObjectData:
+group0MapfcObjectData:
+group0MapfdObjectData:
+group0MapfeObjectData:
+group0MapffObjectData:
+group1Map00ObjectData:
+group1Map0bObjectData:
+group1Map0cObjectData:
+group1Map0dObjectData:
+group1Map0fObjectData:
+group1Map18ObjectData:
+group1Map1cObjectData:
+group1Map1eObjectData:
+group1Map1fObjectData:
+group1Map29ObjectData:
+group1Map2aObjectData:
+group1Map2bObjectData:
+group1Map2eObjectData:
+group1Map2fObjectData:
+group1Map30ObjectData:
+group1Map3aObjectData:
+group1Map3cObjectData:
+group1Map3eObjectData:
+group1Map3fObjectData:
+group1Map40ObjectData:
+group1Map4aObjectData:
+group1Map4eObjectData:
+group1Map4fObjectData:
+group1Map50ObjectData:
+group1Map52ObjectData:
+group1Map56ObjectData:
+group1Map59ObjectData:
+group1Map5aObjectData:
+group1Map5eObjectData:
+group1Map5fObjectData:
+group1Map69ObjectData:
+group1Map6aObjectData:
+group1Map6cObjectData:
+group1Map6eObjectData:
+group1Map6fObjectData:
+group1Map7aObjectData:
+group1Map7eObjectData:
+group1Map7fObjectData:
+group1Map85ObjectData:
+group1Map87ObjectData:
+group1Map88ObjectData:
+group1Map89ObjectData:
+group1Map8aObjectData:
+group1Map8bObjectData:
+group1Map8dObjectData:
+group1Map8eObjectData:
+group1Map8fObjectData:
+group1Map98ObjectData:
+group1Map99ObjectData:
+group1Map9aObjectData:
+group1Map9bObjectData:
+group1Map9cObjectData:
+group1Map9dObjectData:
+group1Map9eObjectData:
+group1Map9fObjectData:
+group1Mapa0ObjectData:
+group1Mapa1ObjectData:
+group1Mapa2ObjectData:
+group1Mapa3ObjectData:
+group1Mapa4ObjectData:
+group1Mapa6ObjectData:
+group1MapaeObjectData:
+group1MapafObjectData:
+group1Mapb0ObjectData:
+group1Mapb1ObjectData:
+group1Mapb2ObjectData:
+group1Mapb3ObjectData:
+group1Mapb4ObjectData:
+group1Mapb5ObjectData:
+group1Mapb6ObjectData:
+group1Mapb7ObjectData:
+group1Mapb8ObjectData:
+group1Mapb9ObjectData:
+group1MapbeObjectData:
+group1MapbfObjectData:
+group1Mapc0ObjectData:
+group1Mapc2ObjectData:
+group1Mapc3ObjectData:
+group1Mapc4ObjectData:
+group1Mapc5ObjectData:
+group1Mapc6ObjectData:
+group1Mapc7ObjectData:
+group1Mapc8ObjectData:
+group1Mapc9ObjectData:
+group1MapceObjectData:
+group1MapcfObjectData:
+group1Mapd1ObjectData:
+group1Mapd2ObjectData:
+group1Mapd3ObjectData:
+group1Mapd4ObjectData:
+group1Mapd5ObjectData:
+group1Mapd6ObjectData:
+group1Mapd8ObjectData:
+group1MapdcObjectData:
+group1MapdeObjectData:
+group1MapdfObjectData:
+group1Mape0ObjectData:
+group1Mape1ObjectData:
+group1Mape2ObjectData:
+group1Mape3ObjectData:
+group1Mape4ObjectData:
+group1Mape5ObjectData:
+group1Mape6ObjectData:
+group1Mape7ObjectData:
+group1Mape8ObjectData:
+group1Mape9ObjectData:
+group1MapeaObjectData:
+group1MapebObjectData:
+group1MapecObjectData:
+group1MapedObjectData:
+group1MapeeObjectData:
+group1MapefObjectData:
+group1Mapf0ObjectData:
+group1Mapf1ObjectData:
+group1Mapf2ObjectData:
+group1Mapf3ObjectData:
+group1Mapf4ObjectData:
+group1Mapf5ObjectData:
+group1Mapf6ObjectData:
+group1Mapf7ObjectData:
+group1Mapf8ObjectData:
+group1Mapf9ObjectData:
+group1MapfaObjectData:
+group1MapfbObjectData:
+group1MapfcObjectData:
+group1MapfdObjectData:
+group1MapfeObjectData:
+group1MapffObjectData:
+group2Map00ObjectData:
+group2Map01ObjectData:
+group2Map02ObjectData:
+group2Map03ObjectData:
+group2Map04ObjectData:
+group2Map05ObjectData:
+group2Map06ObjectData:
+group2Map07ObjectData:
+group2Map08ObjectData:
+group2Map09ObjectData:
+group2Map0aObjectData:
+group2Map0bObjectData:
+group2Map0cObjectData:
+group2Map0dObjectData:
+group2Map10ObjectData:
+group2Map11ObjectData:
+group2Map12ObjectData:
+group2Map13ObjectData:
+group2Map14ObjectData:
+group2Map15ObjectData:
+group2Map16ObjectData:
+group2Map17ObjectData:
+group2Map18ObjectData:
+group2Map19ObjectData:
+group2Map1aObjectData:
+group2Map1bObjectData:
+group2Map1cObjectData:
+group2Map1dObjectData:
+group2Map20ObjectData:
+group2Map21ObjectData:
+group2Map22ObjectData:
+group2Map23ObjectData:
+group2Map24ObjectData:
+group2Map25ObjectData:
+group2Map26ObjectData:
+group2Map27ObjectData:
+group2Map28ObjectData:
+group2Map29ObjectData:
+group2Map2aObjectData:
+group2Map2bObjectData:
+group2Map2cObjectData:
+group2Map2dObjectData:
+group2Map30ObjectData:
+group2Map31ObjectData:
+group2Map32ObjectData:
+group2Map33ObjectData:
+group2Map34ObjectData:
+group2Map35ObjectData:
+group2Map36ObjectData:
+group2Map37ObjectData:
+group2Map38ObjectData:
+group2Map39ObjectData:
+group2Map3aObjectData:
+group2Map3bObjectData:
+group2Map3cObjectData:
+group2Map3dObjectData:
+group2Map40ObjectData:
+group2Map41ObjectData:
+group2Map42ObjectData:
+group2Map43ObjectData:
+group2Map44ObjectData:
+group2Map45ObjectData:
+group2Map46ObjectData:
+group2Map47ObjectData:
+group2Map48ObjectData:
+group2Map49ObjectData:
+group2Map4aObjectData:
+group2Map4bObjectData:
+group2Map4cObjectData:
+group2Map4dObjectData:
+group2Map4fObjectData:
+group2Map50ObjectData:
+group2Map51ObjectData:
+group2Map52ObjectData:
+group2Map53ObjectData:
+group2Map54ObjectData:
+group2Map55ObjectData:
+group2Map56ObjectData:
+group2Map57ObjectData:
+group2Map58ObjectData:
+group2Map59ObjectData:
+group2Map5aObjectData:
+group2Map5bObjectData:
+group2Map5cObjectData:
+group2Map5dObjectData:
+group2Map5fObjectData:
+group2Map60ObjectData:
+group2Map61ObjectData:
+group2Map62ObjectData:
+group2Map63ObjectData:
+group2Map64ObjectData:
+group2Map65ObjectData:
+group2Map66ObjectData:
+group2Map67ObjectData:
+group2Map68ObjectData:
+group2Map69ObjectData:
+group2Map6aObjectData:
+group2Map6bObjectData:
+group2Map6cObjectData:
+group2Map6dObjectData:
+group2Map70ObjectData:
+group2Map71ObjectData:
+group2Map72ObjectData:
+group2Map73ObjectData:
+group2Map74ObjectData:
+group2Map75ObjectData:
+group2Map76ObjectData:
+group2Map77ObjectData:
+group2Map78ObjectData:
+group2Map79ObjectData:
+group2Map7aObjectData:
+group2Map7bObjectData:
+group2Map7cObjectData:
+group2Map7dObjectData:
+group2Map80ObjectData:
+group2Map81ObjectData:
+group2Map82ObjectData:
+group2Map83ObjectData:
+group2Map84ObjectData:
+group2Map85ObjectData:
+group2Map86ObjectData:
+group2Map87ObjectData:
+group2Map88ObjectData:
+group2Map89ObjectData:
+group2Map8aObjectData:
+group2Map8bObjectData:
+group2Map8cObjectData:
+group2Map8dObjectData:
+group2Map8fObjectData:
+group2Map91ObjectData:
+group2Map92ObjectData:
+group2Map93ObjectData:
+group2Map94ObjectData:
+group2Map95ObjectData:
+group2Map96ObjectData:
+group2Map97ObjectData:
+group2Map98ObjectData:
+group2Map99ObjectData:
+group2Map9aObjectData:
+group2Map9bObjectData:
+group2Map9cObjectData:
+group2Map9dObjectData:
+group2Mapa1ObjectData:
+group2Mapa2ObjectData:
+group2Mapa3ObjectData:
+group2Mapa4ObjectData:
+group2Mapa5ObjectData:
+group2Mapa6ObjectData:
+group2Mapa7ObjectData:
+group2Mapa8ObjectData:
+group2Mapa9ObjectData:
+group2MapaaObjectData:
+group2MapabObjectData:
+group2MapacObjectData:
+group2MapadObjectData:
+group2MapaeObjectData:
+group2Mapb0ObjectData:
+group2Mapb2ObjectData:
+group2Mapb3ObjectData:
+group2Mapb4ObjectData:
+group2Mapb5ObjectData:
+group2Mapb6ObjectData:
+group2Mapb7ObjectData:
+group2Mapb8ObjectData:
+group2Mapb9ObjectData:
+group2MapbaObjectData:
+group2MapbbObjectData:
+group2MapbcObjectData:
+group2MapbdObjectData:
+group2MapbfObjectData:
+group2Mapc0ObjectData:
+group2Mapc1ObjectData:
+group2Mapc2ObjectData:
+group2Mapc3ObjectData:
+group2Mapc4ObjectData:
+group2Mapc5ObjectData:
+group2Mapc6ObjectData:
+group2Mapc7ObjectData:
+group2Mapc8ObjectData:
+group2Mapc9ObjectData:
+group2MapcaObjectData:
+group2MapcbObjectData:
+group2MapccObjectData:
+group2MapcdObjectData:
+group2MapceObjectData:
+group2Mapd0ObjectData:
+group2Mapd2ObjectData:
+group2Mapd3ObjectData:
+group2Mapd4ObjectData:
+group2Mapd5ObjectData:
+group2Mapd6ObjectData:
+group2Mapd8ObjectData:
+group2Mapd9ObjectData:
+group2MapdaObjectData:
+group2MapdbObjectData:
+group2MapdcObjectData:
+group2MapddObjectData:
+group2Mape0ObjectData:
+group2Mape1ObjectData:
+group2Mape2ObjectData:
+group2MapecObjectData:
+group2Mapf0ObjectData:
+group2Mapf1ObjectData:
+group2Mapf2ObjectData:
+group2Mapf4ObjectData:
+group2MapfcObjectData:
+group2MapfeObjectData:
+group3Map00ObjectData:
+group3Map01ObjectData:
+group3Map02ObjectData:
+group3Map03ObjectData:
+group3Map04ObjectData:
+group3Map05ObjectData:
+group3Map06ObjectData:
+group3Map07ObjectData:
+group3Map08ObjectData:
+group3Map09ObjectData:
+group3Map0aObjectData:
+group3Map0bObjectData:
+group3Map0cObjectData:
+group3Map0dObjectData:
+group3Map0eObjectData:
+group3Map10ObjectData:
+group3Map11ObjectData:
+group3Map12ObjectData:
+group3Map13ObjectData:
+group3Map14ObjectData:
+group3Map15ObjectData:
+group3Map16ObjectData:
+group3Map17ObjectData:
+group3Map18ObjectData:
+group3Map19ObjectData:
+group3Map1aObjectData:
+group3Map1bObjectData:
+group3Map1cObjectData:
+group3Map1dObjectData:
+group3Map1eObjectData:
+group3Map20ObjectData:
+group3Map21ObjectData:
+group3Map22ObjectData:
+group3Map23ObjectData:
+group3Map24ObjectData:
+group3Map25ObjectData:
+group3Map26ObjectData:
+group3Map27ObjectData:
+group3Map28ObjectData:
+group3Map29ObjectData:
+group3Map2aObjectData:
+group3Map2bObjectData:
+group3Map2cObjectData:
+group3Map2dObjectData:
+group3Map2fObjectData:
+group3Map30ObjectData:
+group3Map31ObjectData:
+group3Map32ObjectData:
+group3Map33ObjectData:
+group3Map34ObjectData:
+group3Map35ObjectData:
+group3Map36ObjectData:
+group3Map37ObjectData:
+group3Map38ObjectData:
+group3Map39ObjectData:
+group3Map3aObjectData:
+group3Map3bObjectData:
+group3Map3cObjectData:
+group3Map3dObjectData:
+group3Map40ObjectData:
+group3Map41ObjectData:
+group3Map42ObjectData:
+group3Map43ObjectData:
+group3Map44ObjectData:
+group3Map45ObjectData:
+group3Map46ObjectData:
+group3Map47ObjectData:
+group3Map48ObjectData:
+group3Map49ObjectData:
+group3Map4aObjectData:
+group3Map4bObjectData:
+group3Map4cObjectData:
+group3Map4dObjectData:
+group3Map50ObjectData:
+group3Map51ObjectData:
+group3Map52ObjectData:
+group3Map53ObjectData:
+group3Map54ObjectData:
+group3Map55ObjectData:
+group3Map56ObjectData:
+group3Map57ObjectData:
+group3Map58ObjectData:
+group3Map59ObjectData:
+group3Map5aObjectData:
+group3Map5bObjectData:
+group3Map5cObjectData:
+group3Map5dObjectData:
+group3Map60ObjectData:
+group3Map61ObjectData:
+group3Map62ObjectData:
+group3Map63ObjectData:
+group3Map64ObjectData:
+group3Map65ObjectData:
+group3Map66ObjectData:
+group3Map67ObjectData:
+group3Map68ObjectData:
+group3Map69ObjectData:
+group3Map6aObjectData:
+group3Map6bObjectData:
+group3Map6cObjectData:
+group3Map6dObjectData:
+group3Map70ObjectData:
+group3Map71ObjectData:
+group3Map72ObjectData:
+group3Map73ObjectData:
+group3Map74ObjectData:
+group3Map75ObjectData:
+group3Map76ObjectData:
+group3Map77ObjectData:
+group3Map78ObjectData:
+group3Map79ObjectData:
+group3Map7aObjectData:
+group3Map7bObjectData:
+group3Map7cObjectData:
+group3Map7dObjectData:
+group3Map80ObjectData:
+group3Map81ObjectData:
+group3Map82ObjectData:
+group3Map83ObjectData:
+group3Map84ObjectData:
+group3Map85ObjectData:
+group3Map86ObjectData:
+group3Map87ObjectData:
+group3Map88ObjectData:
+group3Map89ObjectData:
+group3Map8aObjectData:
+group3Map8bObjectData:
+group3Map8cObjectData:
+group3Map8dObjectData:
+group3Map91ObjectData:
+group3Map92ObjectData:
+group3Map93ObjectData:
+group3Map94ObjectData:
+group3Map95ObjectData:
+group3Map96ObjectData:
+group3Map97ObjectData:
+group3Map98ObjectData:
+group3Map99ObjectData:
+group3Map9aObjectData:
+group3Map9bObjectData:
+group3Map9cObjectData:
+group3Map9dObjectData:
+group3Map9fObjectData:
+group3Mapa1ObjectData:
+group3Mapa2ObjectData:
+group3Mapa3ObjectData:
+group3Mapa4ObjectData:
+group3Mapa5ObjectData:
+group3Mapa6ObjectData:
+group3Mapa7ObjectData:
+group3Mapa8ObjectData:
+group3Mapa9ObjectData:
+group3MapaaObjectData:
+group3MapabObjectData:
+group3MapacObjectData:
+group3MapadObjectData:
+group3Mapb0ObjectData:
+group3Mapb2ObjectData:
+group3Mapb3ObjectData:
+group3Mapb4ObjectData:
+group3Mapb5ObjectData:
+group3Mapb6ObjectData:
+group3Mapb7ObjectData:
+group3Mapb8ObjectData:
+group3Mapb9ObjectData:
+group3MapbaObjectData:
+group3MapbbObjectData:
+group3MapbcObjectData:
+group3MapbdObjectData:
+group3MapbfObjectData:
+group3Mapc1ObjectData:
+group3Mapc2ObjectData:
+group3Mapc3ObjectData:
+group3Mapc4ObjectData:
+group3Mapc5ObjectData:
+group3Mapc6ObjectData:
+group3Mapc7ObjectData:
+group3Mapc8ObjectData:
+group3Mapc9ObjectData:
+group3MapcaObjectData:
+group3MapcbObjectData:
+group3MapccObjectData:
+group3MapcdObjectData:
+group3Mapd0ObjectData:
+group3Mapd2ObjectData:
+group3Mapd3ObjectData:
+group3Mapd4ObjectData:
+group3Mapd5ObjectData:
+group3Mapd7ObjectData:
+group3Mapd8ObjectData:
+group3Mapd9ObjectData:
+group3MapdaObjectData:
+group3MapdbObjectData:
+group3MapdcObjectData:
+group3MapddObjectData:
+group3Mape0ObjectData:
+group3Mape1ObjectData:
+group3Mape2ObjectData:
+group3Mape4ObjectData:
+group3Mape5ObjectData:
+group3Mape6ObjectData:
+group3MapeeObjectData:
+group3Mapf0ObjectData:
+group3Mapf1ObjectData:
+group3Mapf2ObjectData:
+group3Mapf3ObjectData:
+group3Mapf4ObjectData:
+group3Mapf5ObjectData:
+group3Mapf9ObjectData:
+group3MapfdObjectData:
+group4Map00ObjectData:
+group4Map0eObjectData:
+group4Map0fObjectData:
+group4Map26ObjectData:
+group4Map67ObjectData:
+group4Mapd5ObjectData:
+group4Mapd6ObjectData:
+group4Mapd7ObjectData:
+group4Mapd8ObjectData:
+group4Mapd9ObjectData:
+group4MapdaObjectData:
+group4MapdbObjectData:
+group4MapdcObjectData:
+group4MapddObjectData:
+group4MapdeObjectData:
+group4MapdfObjectData:
+group4Mapf0ObjectData:
+group4MapffObjectData:
+group5Map00ObjectData:
+group5Map05ObjectData:
+group5Map07ObjectData:
+group5Map08ObjectData:
+group5Map0bObjectData:
+group5Map0cObjectData:
+group5Map0dObjectData:
+group5Map0eObjectData:
+group5Map0fObjectData:
+group5MapafObjectData:
+group5Mapb7ObjectData:
+group5MapbaObjectData:
+group5Mapc5ObjectData:
+group5MapcdObjectData:
+group5Mape5ObjectData:
+group5Mape6ObjectData:
+group5MapeaObjectData:
+group5MapebObjectData:
+group5Mapf0ObjectData:
+group5MapfcObjectData:
+group5MapfdObjectData:
+group5MapfeObjectData:
+group5MapffObjectData:
+	obj_End
+
+group0Map12ObjectData:
+	obj_Interaction $8009 $5e $20
+	obj_Interaction $800a $58 $20
+	obj_Pointer group0Map12EnemyObjectData
+	obj_End
+
+group0Map13ObjectData:
+	obj_Interaction $dc03 $48 $28
+	obj_Interaction $dc04 $48 $78
+	obj_Interaction $e100 $48 $28
+	obj_Interaction $e100 $48 $78
+	obj_Interaction $8009 $1e $50
+	obj_Interaction $800a $18 $50
+	obj_SpecificEnemyA $00 $5a35 $00 $00
+	obj_Pointer group0Map13EnemyObjectData
+	obj_End
+
+group0Map14ObjectData:
+	obj_Interaction $8009 $5e $80
+	obj_Interaction $800a $58 $80
+	obj_Pointer group0Map14EnemyObjectData
+	obj_End
+
+group0MapacObjectData:
+	obj_SpecificEnemyA $00 $5a17 $00 $00
+	obj_End
+
+group0Mapc1ObjectData:
+	obj_SpecificEnemyA $00 $5a38 $00 $00
+	obj_End
+
+group0Map00ObjectData:
+	obj_Pointer group0Map00EnemyObjectData
+	obj_End
+
+group0Map01ObjectData:
+	obj_Pointer group0Map01EnemyObjectData
+	obj_End
+
+group0Map02ObjectData:
+	obj_Pointer group0Map02EnemyObjectData
+	obj_End
+
+group0Map03ObjectData:
+	obj_Interaction $8a00 $00 $00 $05
+	obj_Pointer group0Map03EnemyObjectData
+	obj_End
+
+group0Map04ObjectData:
+	obj_Pointer group0Map04EnemyObjectData
+	obj_End
+
+group0Map05ObjectData:
+	obj_Interaction $b600 $28 $68
+	obj_Pointer group0Map05EnemyObjectData
+	obj_End
+
+group0Map06ObjectData:
+	obj_Pointer group0Map06EnemyObjectData
+	obj_End
+
+group0Map07ObjectData:
+	obj_Pointer group0Map07EnemyObjectData
+	obj_End
+
+group0Map09ObjectData:
+	obj_Interaction $7200 $60 $58
+	obj_Interaction $8001 $18 $5e
+	obj_End
+
+group0Map0aObjectData:
+	obj_Interaction $9011 $18 $78
+	obj_Interaction $8a00 $00 $00 $07
+	obj_Pointer group0Map0aEnemyObjectData
+	obj_End
+
+group0Map0bObjectData:
+	obj_Interaction $e100 $48 $78
+	obj_End
+
+group0Map0cObjectData:
+	obj_Pointer group0Map0cEnemyObjectData
+	obj_End
+
+group0Map0dObjectData:
+	obj_Interaction $dc07 $38 $78
+	obj_End
+
+group0Map10ObjectData:
+	obj_Pointer group0Map10EnemyObjectData
+	obj_End
+
+group0Map11ObjectData:
+	obj_Interaction $dc07 $58 $48
+	obj_Pointer group0Map11EnemyObjectData
+	obj_End
+
+group0Map15ObjectData:
+	obj_Pointer group0Map15EnemyObjectData
+	obj_End
+
+group0Map16ObjectData:
+	obj_Interaction $9ab2 $28 $38
+	obj_Interaction $9ad2 $68 $38
+	obj_Pointer group0Map16EnemyObjectData
+	obj_End
+
+group0Map17ObjectData:
+	obj_Interaction $9ac2 $48 $58
+	obj_Interaction $9ad3 $68 $78
+	obj_End
+
+group0Map18ObjectData:
+	obj_Pointer group0Map18EnemyObjectData
+	obj_End
+
+group0Map19ObjectData:
+	obj_Pointer group0Map19EnemyObjectData
+	obj_End
+
+group0Map1aObjectData:
+	obj_Pointer group0Map1aEnemyObjectData
+	obj_End
+
+group0Map1bObjectData:
+	obj_Interaction $e100 $28 $48
+	obj_End
+
+group0Map1dObjectData:
+	obj_Interaction $e100 $28 $48
+	obj_Pointer group0Map1dEnemyObjectData
+	obj_End
+
+group0Map20ObjectData:
+	obj_Interaction $e100 $28 $48
+	obj_Pointer group0Map20EnemyObjectData
+	obj_End
+
+group0Map21ObjectData:
+	obj_Pointer group0Map21EnemyObjectData
+	obj_End
+
+group0Map22ObjectData:
+	obj_Interaction $710d $10 $38
+	obj_Pointer group0Map22EnemyObjectData
+	obj_End
+
+group0Map24ObjectData:
+	obj_Interaction $710d $10 $68
+	obj_Pointer group0Map24EnemyObjectData
+	obj_End
+
+group0Map25ObjectData:
+	obj_Interaction $9a00 $68 $48
+	obj_Interaction $9a01 $58 $58
+	obj_Interaction $9a02 $58 $68
+	obj_Interaction $9a03 $48 $58
+	obj_Interaction $9a04 $38 $58
+	obj_End
+
+group0Map26ObjectData:
+	obj_Interaction $9ab3 $28 $48
+	obj_Interaction $9ac3 $28 $48
+	obj_End
+
+group0Map27ObjectData:
+	obj_Interaction $9ab4 $28 $50
+	obj_Interaction $9ad4 $68 $48
+	obj_Interaction $d003 $3f $50
+	obj_Pointer group0Map27EnemyObjectData
+	obj_End
+
+group0Map29ObjectData:
+	obj_Pointer group0Map29EnemyObjectData
+	obj_End
+
+group0Map2aObjectData:
+	obj_Pointer group0Map2aEnemyObjectData
+	obj_End
+
+group0Map2bObjectData:
+	obj_Pointer group0Map2bEnemyObjectData
+	obj_End
+
+group0Map2cObjectData:
+	obj_Interaction $b601 $38 $48
+	obj_Pointer group0Map2cEnemyObjectData
+	obj_End
+
+group0Map30ObjectData:
+	obj_Interaction $b602 $58 $28
+	obj_Pointer group0Map30EnemyObjectData
+	obj_End
+
+group0Map31ObjectData:
+	obj_Pointer group0Map31EnemyObjectData
+	obj_End
+
+group0Map32ObjectData:
+	obj_Pointer group0Map32EnemyObjectData
+	obj_End
+
+group0Map33ObjectData:
+	obj_Pointer group0Map33EnemyObjectData
+	obj_End
+
+group0Map34ObjectData:
+	obj_Interaction $7108
+	obj_End
+
+group0Map35ObjectData:
+	obj_Interaction $9aff
+	obj_End
+
+group0Map36ObjectData:
+	obj_Interaction $d003 $1f $58
+	obj_Pointer group0Map36EnemyObjectData
+	obj_End
+
+group0Map37ObjectData:
+	obj_Interaction $9ac4 $58 $88
+	obj_Interaction $1f01 $18 $20
+	obj_Interaction $d003 $25 $20
+	obj_Pointer group0Map37EnemyObjectData
+	obj_End
+
+group0Map38ObjectData:
+	obj_Interaction $8700 $40 $50
+	obj_Interaction $dc14 $58 $78
+	obj_Interaction $6b15 $40 $84
+	obj_End
+
+group0Map39ObjectData:
+	obj_Interaction $6b01
+	obj_Interaction $e101 $28 $28
+	obj_Interaction $370d $28 $18
+	obj_Interaction $5d02 $18 $68 $00
+	obj_End
+
+group0Map3aObjectData:
+	obj_Interaction $e100 $28 $18
+	obj_Interaction $3613 $48 $38
+	obj_Interaction $3711 $48 $58
+	obj_Interaction $3c10 $58 $58
+	obj_Interaction $8a00 $00 $00 $02
+	obj_Interaction $3907 $58 $28 $01
+	obj_Interaction $5d02 $48 $18 $01
+	obj_End
+
+group0Map3bObjectData:
+	obj_Pointer group0Map3bEnemyObjectData
+	obj_End
+
+group0Map3cObjectData:
+	obj_Interaction $e100 $68 $18
+	obj_End
+
+group0Map3dObjectData:
+	obj_Pointer group0Map3dEnemyObjectData
+	obj_End
+
+group0Map40ObjectData:
+	obj_Pointer group0Map40EnemyObjectData
+	obj_End
+
+group0Map41ObjectData:
+	obj_Interaction $e100 $28 $78
+	obj_End
+
+group0Map42ObjectData:
+	obj_Pointer group0Map42EnemyObjectData
+	obj_End
+
+group0Map43ObjectData:
+	obj_Pointer group0Map43EnemyObjectData
+	obj_End
+
+group0Map44ObjectData:
+	obj_Pointer group0Map44EnemyObjectData
+	obj_End
+
+group0Map45ObjectData:
+	obj_Interaction $3f01 $58 $48
+	obj_End
+
+group0Map46ObjectData:
+	obj_Interaction $4102 $38 $28
+	obj_Interaction $4105 $38 $28
+	obj_Interaction $3d02 $38 $68
+	obj_End
+
+group0Map48ObjectData:
+	obj_Interaction $3a03 $48 $38
+	obj_Interaction $dc08 $68 $02
+	obj_Interaction $5401 $48 $68 $03
+	obj_End
+
+group0Map49ObjectData:
+	obj_Interaction $2f00
+	obj_End
+
+group0Map4bObjectData:
+	obj_Pointer group0Map4bEnemyObjectData
+	obj_End
+
+group0Map4cObjectData:
+	obj_Pointer group0Map4cEnemyObjectData
+	obj_End
+
+group0Map4dObjectData:
+	obj_Pointer group0Map4dEnemyObjectData
+	obj_End
+
+group0Map50ObjectData:
+	obj_Interaction $8300 $28 $68
+	obj_End
+
+group0Map51ObjectData:
+	obj_Interaction $e100 $48 $48
+	obj_End
+
+group0Map54ObjectData:
+	obj_Interaction $6b0f $68 $88
+	obj_End
+
+group0Map55ObjectData:
+	obj_Interaction $5401 $38 $48 $01
+	obj_End
+
+group0Map56ObjectData:
+	obj_Interaction $3a04 $48 $68
+	obj_Interaction $6500 $48 $78
+	obj_End
+
+group0Map57ObjectData:
+	obj_Interaction $4101 $38 $48
+	obj_End
+
+group0Map58ObjectData:
+	obj_Interaction $4104 $58 $68
+	obj_End
+
+group0Map59ObjectData:
+	obj_Interaction $3400 $26 $38
 	obj_Part $5a5a $23
 	obj_End
 
-group0Map5aObjectData: ; 5bd2
-	obj_DoubleValue $3902 $1c $80
-	obj_DoubleValue $3903 $50 $46
-	obj_NoValue $3905
+group0Map5aObjectData:
+	obj_Interaction $3902 $1c $80
+	obj_Interaction $3903 $50 $46
+	obj_Interaction $3905
 	obj_End
 
-group0Map5bObjectData: ; 5bdf
-	obj_DoubleValue $d004 $68 $60
+group0Map5bObjectData:
+	obj_Interaction $d004 $68 $60
 	obj_End
 
-group0Map5cObjectData: ; 5be5
-	obj_DoubleValue $7105 $40 $98
-	obj_NoValue $dc01
+group0Map5cObjectData:
+	obj_Interaction $7105 $40 $98
+	obj_Interaction $dc01
 	obj_End
 
-group0Map5dObjectData: ; 5bee
-	obj_DoubleValue $cb00 $68 $88
-	obj_Pointer objectData43e1
+group0Map5dObjectData:
+	obj_Interaction $cb00 $68 $88
+	obj_Pointer group0Map5dEnemyObjectData
 	obj_End
 
-group0Map60ObjectData: ; 5bf7
-	obj_Pointer objectData4536
+group0Map60ObjectData:
+	obj_Pointer group0Map60EnemyObjectData
 	obj_End
 
-group0Map62ObjectData: ; 5bfb
-	obj_Pointer objectData4545
+group0Map62ObjectData:
+	obj_Pointer group0Map62EnemyObjectData
 	obj_End
 
-group0Map63ObjectData: ; 5bff
-	obj_NoValue $710a
-	obj_NoValue $6705
-	obj_Pointer objectData4404
+group0Map63ObjectData:
+	obj_Interaction $710a
+	obj_Interaction $6705
+	obj_Pointer group0Map63EnemyObjectData
 	obj_End
 
-group0Map64ObjectData: ; 5c08
-	obj_DoubleValue $dc08 $67 $02
-	obj_Pointer objectData454c
+group0Map64ObjectData:
+	obj_Interaction $dc08 $67 $02
+	obj_Pointer group0Map64EnemyObjectData
 	obj_End
 
-group0Map65ObjectData: ; 5c11
-	obj_DoubleValue $3107 $68 $48
-	obj_DoubleValue $4c04 $68 $58
+group0Map65ObjectData:
+	obj_Interaction $3107 $68 $48
+	obj_Interaction $4c04 $68 $58
 	obj_End
 
-group0Map66ObjectData: ; 5c1b
-	obj_DoubleValue $3b01 $44 $7a
+group0Map66ObjectData:
+	obj_Interaction $3b01 $44 $7a
 	obj_End
 
-group0Map67ObjectData: ; 5c21
-	obj_DoubleValue $6b15 $3c $50
-	obj_DoubleValue $4103 $48 $28
+group0Map67ObjectData:
+	obj_Interaction $6b15 $3c $50
+	obj_Interaction $4103 $48 $28
 	obj_End
 
-group0Map68ObjectData: ; 5c2b
-	obj_DoubleValue $4402 $68 $78
-	obj_DoubleValue $3a05 $38 $88
-	obj_DoubleValue $3b02 $68 $78
-	obj_DoubleValue $3c02 $68 $38
-	obj_DoubleValue $e100 $18 $38
+group0Map68ObjectData:
+	obj_Interaction $4402 $68 $78
+	obj_Interaction $3a05 $38 $88
+	obj_Interaction $3b02 $68 $78
+	obj_Interaction $3c02 $68 $38
+	obj_Interaction $e100 $18 $38
 	obj_End
 
-group0Map6aObjectData: ; 5c41
-	obj_DoubleValue $3100 $38 $48
-	obj_DoubleValue $dc08 $48 $02
-	obj_DoubleValue $7104 $08 $58
-	obj_DoubleValue $7105 $40 $98
-	obj_NoValue $6702
-	obj_NoValue $7103
+group0Map6aObjectData:
+	obj_Interaction $3100 $38 $48
+	obj_Interaction $dc08 $48 $02
+	obj_Interaction $7104 $08 $58
+	obj_Interaction $7105 $40 $98
+	obj_Interaction $6702
+	obj_Interaction $7103
 	obj_End
 
-group0Map6bObjectData: ; 5c58
-	obj_DoubleValue $7101 $38 $08
-	obj_NoValue $6701
+group0Map6bObjectData:
+	obj_Interaction $7101 $38 $08
+	obj_Interaction $6701
 	obj_End
 
-group0Map6cObjectData: ; 5c61
-	obj_DoubleValue $7300 $18 $68
-	obj_DoubleValue $7301 $18 $48
-	obj_DoubleValue $7302 $38 $58
-	obj_DoubleValue $7100 $28 $58
-	obj_DoubleValue $7102 $6d $38
-	obj_NoValue $6700
+group0Map6cObjectData:
+	obj_Interaction $7300 $18 $68
+	obj_Interaction $7301 $18 $48
+	obj_Interaction $7302 $38 $58
+	obj_Interaction $7100 $28 $58
+	obj_Interaction $7102 $6d $38
+	obj_Interaction $6700
 	obj_End
 
-group0Map6dObjectData: ; 5c7a
-	obj_Pointer objectData43ec
+group0Map6dObjectData:
+	obj_Pointer group0Map6dEnemyObjectData
 	obj_End
 
-group0Map70ObjectData: ; 5c7e
-	obj_DoubleValue $490b $48 $48
+group0Map70ObjectData:
+	obj_Interaction $490b $48 $48
 	obj_End
 
-group0Map71ObjectData: ; 5c84
-	obj_DoubleValue $4907 $28 $58
+group0Map71ObjectData:
+	obj_Interaction $4907 $28 $58
 	obj_End
 
-group0Map72ObjectData: ; 5c8a
-	obj_DoubleValue $490c $38 $48
+group0Map72ObjectData:
+	obj_Interaction $490c $38 $48
 	obj_End
 
-group0Map73ObjectData: ; 5c90
-	obj_NoValue $710b
-	obj_Pointer objectData440b
+group0Map73ObjectData:
+	obj_Interaction $710b
+	obj_Pointer group0Map73EnemyObjectData
 	obj_End
 
-group0Map74ObjectData: ; 5c97
-	obj_Pointer objectData4410
+group0Map74ObjectData:
+	obj_Pointer group0Map74EnemyObjectData
 	obj_End
 
-group0Map77ObjectData: ; 5c9b
-	obj_DoubleValue $4403 $48 $68
+group0Map77ObjectData:
+	obj_Interaction $4403 $48 $68
 	obj_End
 
-group0Map78ObjectData: ; 5ca1
-	obj_SpecificEnemy $00 $5a06 $00 $00
-	obj_DoubleValue $3d04 $18 $28
+group0Map78ObjectData:
+	obj_SpecificEnemyA $00 $5a06 $00 $00
+	obj_Interaction $3d04 $18 $28
 	obj_End
 
-group0Map79ObjectData: ; 5cad
-	obj_DoubleValue $d001 $38 $78
-	obj_DoubleValue $c800 $32 $38
+group0Map79ObjectData:
+	obj_Interaction $d001 $38 $78
+	obj_Interaction $c800 $32 $38
 	obj_End
 
-group0Map7aObjectData: ; 5cb7
-	obj_NoValue $6b00
+group0Map7aObjectData:
+	obj_Interaction $6b00
 	obj_End
 
-group0Map7bObjectData: ; 5cbb
-	obj_DoubleValue $3c03 $48 $48
-	obj_DoubleValue $3c04 $48 $68
-	obj_DoubleValue $3f02 $38 $58
-	obj_DoubleValue $b603 $28 $68
+group0Map7bObjectData:
+	obj_Interaction $3c03 $48 $48
+	obj_Interaction $3c04 $48 $68
+	obj_Interaction $3f02 $38 $58
+	obj_Interaction $b603 $28 $68
 	obj_End
 
-group0Map7cObjectData: ; 5ccd
-	obj_WithParam $00 $5900 $00 $38 $68
-	obj_WithParam $00 $5900 $02 $38 $68
-	obj_Pointer objectData43fd
+group0Map7cObjectData:
+	obj_Interaction $5900 $38 $68 $00
+	obj_Interaction $5900 $38 $68 $02
+	obj_Pointer group0Map7cEnemyObjectData
 	obj_End
 
-group0Map80ObjectData: ; 5cde
-	obj_DoubleValue $6c01 $58 $48
-	obj_DoubleValue $4906 $38 $58
+group0Map80ObjectData:
+	obj_Interaction $6c01 $58 $48
+	obj_Interaction $4906 $38 $58
 	obj_End
 
-group0Map81ObjectData: ; 5ce8
-	obj_DoubleValue $6c01 $28 $58
-	obj_DoubleValue $7109 $58 $50
-	obj_DoubleValue $490d $48 $48
-	obj_NoValue $6704
+group0Map81ObjectData:
+	obj_Interaction $6c01 $28 $58
+	obj_Interaction $7109 $58 $50
+	obj_Interaction $490d $48 $48
+	obj_Interaction $6704
 	obj_End
 
-group0Map82ObjectData: ; 5cf9
-	obj_NoValue $6c00
-	obj_DoubleValue $4905 $58 $68
-	obj_DoubleValue $4908 $58 $58
-	obj_DoubleValue $4909 $48 $38
-	obj_DoubleValue $490a $28 $68
-	obj_DoubleValue $490e $58 $50
-	obj_DoubleValue $490f $40 $38
-	obj_DoubleValue $4910 $40 $68
+group0Map82ObjectData:
+	obj_Interaction $6c00
+	obj_Interaction $4905 $58 $68
+	obj_Interaction $4908 $58 $58
+	obj_Interaction $4909 $48 $38
+	obj_Interaction $490a $28 $68
+	obj_Interaction $490e $58 $50
+	obj_Interaction $490f $40 $38
+	obj_Interaction $4910 $40 $68
 	obj_End
 
-group0Map84ObjectData: ; 5d1a
-	obj_Pointer objectData441d
+group0Map84ObjectData:
+	obj_Pointer group0Map84EnemyObjectData
 	obj_End
 
-group0Map86ObjectData: ; 5d1e
-	obj_WithParam $00 $5401 $00 $38 $88
+group0Map86ObjectData:
+	obj_Interaction $5401 $38 $88 $00
 	obj_End
 
-group0Map88ObjectData: ; 5d26
-	obj_DoubleValue $dc08 $66 $02
-	obj_WithParam $00 $5401 $02 $38 $68
+group0Map88ObjectData:
+	obj_Interaction $dc08 $66 $02
+	obj_Interaction $5401 $38 $68 $02
 	obj_End
 
-group0Map89ObjectData: ; 5d33
-	obj_DoubleValue $d000 $38 $30
-	obj_DoubleValue $7102 $6d $38
+group0Map89ObjectData:
+	obj_Interaction $d000 $38 $30
+	obj_Interaction $7102 $6d $38
 	obj_End
 
-group0Map83ObjectData: ; 5d3d
-	obj_DoubleValue $d500 $28 $58
-	obj_DoubleValue $dc02 $48 $38
+group0Map83ObjectData:
+	obj_Interaction $d500 $28 $58
+	obj_Interaction $dc02 $48 $38
 	obj_End
 
-group0Map8bObjectData: ; 5d47
-	obj_DoubleValue $dc07 $38 $28
+group0Map8bObjectData:
+	obj_Interaction $dc07 $38 $28
 	obj_End
 
-group0Map8dObjectData: ; 5d4d
-	obj_WithParam $00 $8a00 $00 $00 $00
+group0Map8dObjectData:
+	obj_Interaction $8a00 $00 $00 $00
 	obj_End
 
-group0Map90ObjectData: ; 5d55
-	obj_DoubleValue $b604 $68 $18
+group0Map90ObjectData:
+	obj_Interaction $b604 $68 $18
 	obj_End
 
-group0Map91ObjectData: ; 5d5b
-	obj_DoubleValue $6c01 $38 $28
+group0Map91ObjectData:
+	obj_Interaction $6c01 $38 $28
 	obj_End
 
-group0Map92ObjectData: ; 5d61
-	obj_DoubleValue $6c02 $28 $9f
+group0Map92ObjectData:
+	obj_Interaction $6c02 $28 $9f
 	obj_End
 
-group0Map94ObjectData: ; 5d67
-	obj_Pointer objectData4422
+group0Map94ObjectData:
+	obj_Pointer group0Map94EnemyObjectData
 	obj_End
 
-group0Map98ObjectData: ; 5d6b
-	obj_DoubleValue $7400 $28 $48
-	obj_NoValue $7106
+group0Map98ObjectData:
+	obj_Interaction $7400 $28 $48
+	obj_Interaction $7106
 	obj_End
 
-group0Map99ObjectData: ; 5d74
-	obj_NoValue $7106
+group0Map99ObjectData:
+	obj_Interaction $7106
 	obj_End
 
-group0Mapa0ObjectData: ; 5d78
-	obj_DoubleValue $cd00 $38 $28
+group0Mapa0ObjectData:
+	obj_Interaction $cd00 $38 $28
 	obj_End
 
-group0Mapa7ObjectData: ; 5d7e
-	obj_DoubleValue $4106 $38 $38
+group0Mapa7ObjectData:
+	obj_Interaction $4106 $38 $38
 	obj_End
 
-group0Mapa8ObjectData: ; 5d84
-	obj_DoubleValue $7101 $38 $08
-	obj_NoValue $7106
+group0Mapa8ObjectData:
+	obj_Interaction $7101 $38 $08
+	obj_Interaction $7106
 	obj_End
 
-group0Mapa9ObjectData: ; 5d8d
-	obj_DoubleValue $e100 $58 $78
+group0Mapa9ObjectData:
+	obj_Interaction $e100 $58 $78
 	obj_End
 
-group0MapaaObjectData: ; 5d93
-	obj_DoubleValue $480f $48 $18
-	obj_DoubleValue $4810 $58 $38
-	obj_NoValue $6703
-	obj_NoValue $7107
-	obj_Pointer objectData4472
+group0MapaaObjectData:
+	obj_Interaction $480f $48 $18
+	obj_Interaction $4810 $58 $38
+	obj_Interaction $6703
+	obj_Interaction $7107
+	obj_Pointer group0MapaaEnemyObjectData
 	obj_End
 
-group0MapabObjectData: ; 5da5
-	obj_Pointer objectData4479
+group0MapabObjectData:
+	obj_Pointer group0MapabEnemyObjectData
 	obj_End
 
-group0MapadObjectData: ; 5da9
-	obj_DoubleValue $b605 $38 $68
+group0MapadObjectData:
+	obj_Interaction $b605 $38 $68
 	obj_End
 
-group0Mapb8ObjectData: ; 5daf
-	obj_DoubleValue $7101 $38 $08
+group0Mapb8ObjectData:
+	obj_Interaction $7101 $38 $08
 	obj_End
 
-group0Mapb9ObjectData: ; 5db5
-	obj_Pointer objectData4490
+group0Mapb9ObjectData:
+	obj_Pointer group0Mapb9EnemyObjectData
 	obj_End
 
-group0MapbaObjectData: ; 5db9
-	obj_NoValue $6b06
+group0MapbaObjectData:
+	obj_Interaction $6b06
 	obj_End
 
-group0MapbbObjectData: ; 5dbd
-	obj_DoubleValue $481e $58 $48
-	obj_Pointer objectData4484
+group0MapbbObjectData:
+	obj_Interaction $481e $58 $48
+	obj_Pointer group0MapbbEnemyObjectData
 	obj_End
 
-group0MapbcObjectData: ; 5dc6
-	obj_Pointer objectData447f
+group0MapbcObjectData:
+	obj_Pointer group0MapbcEnemyObjectData
 	obj_End
 
-group0MapbdObjectData: ; 5dca
-	obj_DoubleValue $4812 $48 $78
+group0MapbdObjectData:
+	obj_Interaction $4812 $48 $78
 	obj_End
 
-group0Mapc8ObjectData: ; 5dd0
-	obj_DoubleValue $7101 $38 $08
-	obj_DoubleValue $c202 $58 $38
+group0Mapc8ObjectData:
+	obj_Interaction $7101 $38 $08
+	obj_Interaction $c202 $58 $38
 	obj_End
 
-group0Mapc9ObjectData: ; 5dda
-	obj_Pointer objectData4490
+group0Mapc9ObjectData:
+	obj_Pointer group0Mapc9EnemyObjectData
 	obj_End
 
-group0MapcaObjectData: ; 5dde
-	obj_Pointer objectData447f
+group0MapcaObjectData:
+	obj_Pointer group0MapcaEnemyObjectData
 	obj_End
 
-group0MapcbObjectData: ; 5de2
-	obj_DoubleValue $b606 $68 $28
-	obj_Pointer objectData4485
+group0MapcbObjectData:
+	obj_Interaction $b606 $68 $28
+	obj_Pointer group0MapcbEnemyObjectData
 	obj_End
 
-group0MapccObjectData: ; 5deb
-	obj_Pointer objectData447f
+group0MapccObjectData:
+	obj_Pointer group0MapccEnemyObjectData
 	obj_End
 
-group0MapcdObjectData: ; 5def
-	obj_DoubleValue $e100 $28 $68
-	obj_DoubleValue $4813 $38 $68
+group0MapcdObjectData:
+	obj_Interaction $e100 $28 $68
+	obj_Interaction $4813 $38 $68
 	obj_End
 
-group0Mapd7ObjectData: ; 5df9
-	obj_DoubleValue $b607 $28 $58
+group0Mapd7ObjectData:
+	obj_Interaction $b607 $28 $58
 	obj_End
 
-group0Mapd8ObjectData: ; 5dff
-	obj_DoubleValue $7101 $38 $08
+group0Mapd8ObjectData:
+	obj_Interaction $7101 $38 $08
 	obj_End
 
-group0MapdaObjectData: ; 5e05
-	obj_Pointer objectData448b
+group0MapdaObjectData:
+	obj_Pointer group0MapdaEnemyObjectData
 	obj_End
 
-group0MapdbObjectData: ; 5e09
-	obj_Pointer objectData448b
+group0MapdbObjectData:
+	obj_Pointer group0MapdbEnemyObjectData
 	obj_End
 
-group0MapddObjectData: ; 5e0d
-	obj_DoubleValue $4814 $28 $38
+group0MapddObjectData:
+	obj_Interaction $4814 $28 $38
 	obj_End
 
-group1Map0eObjectData: ; 5e13
-	obj_DoubleValue $9012 $18 $68
-	obj_Pointer objectData4276
+group1Map0eObjectData:
+	obj_Interaction $9012 $18 $68
+	obj_Pointer group1Map0eEnemyObjectData
 	obj_End
 
-group1Map1dObjectData: ; 5e1c
-	obj_Pointer objectData4659
+group1Map1dObjectData:
+	obj_Pointer group1Map1dEnemyObjectData
 	obj_End
 
-group1Map2cObjectData: ; 5e20
-	obj_SpecificEnemy $00 $6200 $00 $00
-	obj_Pointer objectData464b
+group1Map2cObjectData:
+	obj_SpecificEnemyA $00 $6200 $00 $00
+	obj_Pointer group1Map2cEnemyObjectData
 	obj_End
 
-group1Map3dObjectData: ; 5e2a
-	obj_Pointer objectData4664
+group1Map3dObjectData:
+	obj_Pointer group1Map3dEnemyObjectData
 	obj_End
 
-group1Map4cObjectData: ; 5e2e
-	obj_Pointer objectData4654
+group1Map4cObjectData:
+	obj_Pointer group1Map4cEnemyObjectData
 	obj_End
 
-group1Map4dObjectData: ; 5e32
-	obj_Pointer objectData466d
+group1Map4dObjectData:
+	obj_Pointer group1Map4dEnemyObjectData
 	obj_End
 
-group1MapbaObjectData: ; 5e36
-	obj_DoubleValue $8005 $52 $46
-	obj_DoubleValue $8006 $52 $6a
-	obj_DoubleValue $c404 $5a $68
-	obj_SpecificEnemy $00 $6202 $00 $00
+group1MapbaObjectData:
+	obj_Interaction $8005 $52 $46
+	obj_Interaction $8006 $52 $6a
+	obj_Interaction $c404 $5a $68
+	obj_SpecificEnemyA $00 $6202 $00 $00
 	obj_End
 
-group1Map08ObjectData: ; 5e4a
-	obj_SpecificEnemy $00 $5a29 $00 $00
+group1Map08ObjectData:
+	obj_SpecificEnemyA $00 $5a29 $00 $00
 	obj_End
 
-group1Map25ObjectData: ; 5e51
-	obj_WithParam $00 $400d $00 $28 $78
-	obj_SpecificEnemy $00 $5a1a $00 $00
+group1Map25ObjectData:
+	obj_Interaction $400d $28 $78 $00
+	obj_SpecificEnemyA $00 $5a1a $00 $00
 	obj_End
 
-group1Map78ObjectData: ; 5e5f
-	obj_SpecificEnemy $00 $5a0c $00 $00
+group1Map78ObjectData:
+	obj_SpecificEnemyA $00 $5a0c $00 $00
 	obj_End
 
-group1Map79ObjectData: ; 5e66
-	obj_DoubleValue $3710 $90 $78
+group1Map79ObjectData:
+	obj_Interaction $3710 $90 $78
 	obj_End
 
-group1Mapc1ObjectData: ; 5e6c
-	obj_SpecificEnemy $00 $5a3e $00 $00
+group1Mapc1ObjectData:
+	obj_SpecificEnemyA $00 $5a3e $00 $00
 	obj_End
 
-group1Map01ObjectData: ; 5e73
-	obj_DoubleValue $1f00 $18 $00
-	obj_DoubleValue $b608 $28 $38
-	obj_Pointer objectData4557
+group1Map01ObjectData:
+	obj_Interaction $1f00 $18 $00
+	obj_Interaction $b608 $28 $38
+	obj_Pointer group1Map01EnemyObjectData
 	obj_End
 
-group1Map10ObjectData: ; 5e80
-	obj_Pointer objectData455c
+group1Map10ObjectData:
+	obj_Pointer group1Map10EnemyObjectData
 	obj_End
 
-group1Map11ObjectData: ; 5e84
-	obj_Pointer objectData455c
+group1Map11ObjectData:
+	obj_Pointer group1Map11EnemyObjectData
 	obj_End
 
-group1Map13ObjectData: ; 5e88
-	obj_DoubleValue $8009 $1e $50
-	obj_DoubleValue $800a $18 $50
+group1Map13ObjectData:
+	obj_Interaction $8009 $1e $50
+	obj_Interaction $800a $18 $50
 group1Map02ObjectData:
 group1Map04ObjectData:
 group1Map12ObjectData:
 group1Map14ObjectData:
-	obj_NoValue $dc05
+	obj_Interaction $dc05
 	obj_End
 
-group1Map03ObjectData: ; 5e95
-	obj_NoValue $dc13
-	obj_DoubleValue $dc06 $18 $50
-	obj_DoubleValue $bf0c $68 $50
+group1Map03ObjectData:
+	obj_Interaction $dc13
+	obj_Interaction $dc06 $18 $50
+	obj_Interaction $bf0c $68 $50
 	obj_End
 
-group1Map05ObjectData: ; 5ea2
-	obj_WithParam $00 $400d $02 $28 $28
-	obj_Pointer objectData4394
+group1Map05ObjectData:
+	obj_Interaction $400d $28 $28 $02
+	obj_Pointer group1Map05EnemyObjectData
 	obj_End
 
-group1Map06ObjectData: ; 5ead
-	obj_WithParam $00 $400d $03 $38 $28
-	obj_WithParam $00 $400d $04 $38 $78
-	obj_Pointer objectData439b
+group1Map06ObjectData:
+	obj_Interaction $400d $38 $28 $03
+	obj_Interaction $400d $38 $78 $04
+	obj_Pointer group1Map06EnemyObjectData
 	obj_End
 
-group1Map07ObjectData: ; 5ebe
-	obj_WithParam $00 $400d $05 $28 $78
-	obj_Pointer objectData43ae
+group1Map07ObjectData:
+	obj_Interaction $400d $28 $78 $05
+	obj_Pointer group1Map07EnemyObjectData
 	obj_End
 
-group1Map09ObjectData: ; 5ec9
-	obj_Pointer objectData45eb
+group1Map09ObjectData:
+	obj_Pointer group1Map09EnemyObjectData
 	obj_End
 
-group1Map0aObjectData: ; 5ecd
-	obj_DoubleValue $b609 $68 $68
+group1Map0aObjectData:
+	obj_Interaction $b609 $68 $68
 	obj_End
 
-group1Map15ObjectData: ; 5ed3
-	obj_DoubleValue $be00 $38 $48
-	obj_Pointer objectData43b5
+group1Map15ObjectData:
+	obj_Interaction $be00 $38 $48
+	obj_Pointer group1Map15EnemyObjectData
 	obj_End
 
-group1Map16ObjectData: ; 5edc
-	obj_DoubleValue $4004 $38 $38
-	obj_DoubleValue $4006 $68 $50
-	obj_DoubleValue $4d00 $28 $50
-	obj_DoubleValue $3601 $f0 $58
-	obj_WithParam $00 $400d $01 $28 $48
+group1Map16ObjectData:
+	obj_Interaction $4004 $38 $38
+	obj_Interaction $4006 $68 $50
+	obj_Interaction $4d00 $28 $50
+	obj_Interaction $3601 $f0 $58
+	obj_Interaction $400d $28 $48 $01
 	obj_End
 
-group1Map17ObjectData: ; 5ef5
-	obj_DoubleValue $be01 $18 $88
-	obj_Pointer objectData43c0
+group1Map17ObjectData:
+	obj_Interaction $be01 $18 $88
+	obj_Pointer group1Map17EnemyObjectData
 	obj_End
 
-group1Map19ObjectData: ; 5efe
-	obj_Pointer objectData45e5
+group1Map19ObjectData:
+	obj_Pointer group1Map19EnemyObjectData
 	obj_End
 
-group1Map1aObjectData: ; 5f02
-	obj_Pointer objectData45f2
+group1Map1aObjectData:
+	obj_Pointer group1Map1aEnemyObjectData
 	obj_End
 
-group1Map1bObjectData: ; 5f06
-	obj_DoubleValue $e100 $28 $48
-	obj_Pointer objectData4601
+group1Map1bObjectData:
+	obj_Interaction $e100 $28 $48
+	obj_Pointer group1Map1bEnemyObjectData
 	obj_End
 
-group1Map20ObjectData: ; 5f0f
-	obj_DoubleValue $e100 $28 $18
-	obj_DoubleValue $370b $38 $a8
-	obj_Pointer objectData4553
+group1Map20ObjectData:
+	obj_Interaction $e100 $28 $18
+	obj_Interaction $370b $38 $a8
+	obj_Pointer group1Map20EnemyObjectData
 	obj_End
 
-group1Map21ObjectData: ; 5f1c
-	obj_Pointer objectData4561
+group1Map21ObjectData:
+	obj_Pointer group1Map21EnemyObjectData
 	obj_End
 
-group1Map22ObjectData: ; 5f20
-	obj_Pointer objectData456a
+group1Map22ObjectData:
+	obj_Pointer group1Map22EnemyObjectData
 	obj_End
 
-group1Map23ObjectData: ; 5f24
-	obj_NoValue $9010
-	obj_Pointer objectData456f
+group1Map23ObjectData:
+	obj_Interaction $9010
+	obj_Pointer group1Map23EnemyObjectData
 	obj_End
 
-group1Map24ObjectData: ; 5f2b
-	obj_Pointer objectData456a
+group1Map24ObjectData:
+	obj_Pointer group1Map24EnemyObjectData
 	obj_End
 
-group1Map26ObjectData: ; 5f2f
-	obj_DoubleValue $4005 $68 $50
+group1Map26ObjectData:
+	obj_Interaction $4005 $68 $50
 	obj_End
 
-group1Map27ObjectData: ; 5f35
-	obj_WithParam $00 $400d $06 $58 $68
+group1Map27ObjectData:
+	obj_Interaction $400d $58 $68 $06
 	obj_End
 
-group1Map28ObjectData: ; 5f3d
-	obj_DoubleValue $b60a $68 $38
+group1Map28ObjectData:
+	obj_Interaction $b60a $68 $38
 	obj_End
 
-group1Map2dObjectData: ; 5f43
-	obj_SpecificEnemy $00 $5a4b $00 $00
-	obj_DoubleValue $4e04 $38 $88
+group1Map2dObjectData:
+	obj_SpecificEnemyA $00 $5a4b $00 $00
+	obj_Interaction $4e04 $38 $88
 	obj_End
 
-group1Map31ObjectData: ; 5f4f
-	obj_Pointer objectData457d
+group1Map31ObjectData:
+	obj_Pointer group1Map31EnemyObjectData
 	obj_End
 
-group1Map32ObjectData: ; 5f53
-	obj_Pointer objectData4584
+group1Map32ObjectData:
+	obj_Pointer group1Map32EnemyObjectData
 	obj_End
 
-group1Map33ObjectData: ; 5f57
-	obj_Pointer objectData4589
+group1Map33ObjectData:
+	obj_Pointer group1Map33EnemyObjectData
 	obj_End
 
-group1Map34ObjectData: ; 5f5b
-	obj_DoubleValue $b60b $48 $58
+group1Map34ObjectData:
+	obj_Interaction $b60b $48 $58
 	obj_End
 
-group1Map35ObjectData: ; 5f61
-	obj_DoubleValue $be02 $58 $88
-	obj_Pointer objectData43cb
+group1Map35ObjectData:
+	obj_Interaction $be02 $58 $88
+	obj_Pointer group1Map35EnemyObjectData
 	obj_End
 
-group1Map36ObjectData: ; 5f6a
-	obj_DoubleValue $4005 $68 $50
-	obj_DoubleValue $4003 $18 $48
-	obj_DoubleValue $4003 $18 $58
-	obj_DoubleValue $4003 $28 $38
-	obj_DoubleValue $4003 $28 $68
+group1Map36ObjectData:
+	obj_Interaction $4005 $68 $50
+	obj_Interaction $4003 $18 $48
+	obj_Interaction $4003 $18 $58
+	obj_Interaction $4003 $28 $38
+	obj_Interaction $4003 $28 $68
 	obj_End
 
-group1Map37ObjectData: ; 5f80
-	obj_DoubleValue $be03 $58 $78
-	obj_Pointer objectData43d6
+group1Map37ObjectData:
+	obj_Interaction $be03 $58 $78
+	obj_Pointer group1Map37EnemyObjectData
 	obj_End
 
-group1Map38ObjectData: ; 5f89
-	obj_DoubleValue $8800 $28 $50
-	obj_DoubleValue $6b15 $40 $84
+group1Map38ObjectData:
+	obj_Interaction $8800 $28 $50
+	obj_Interaction $6b15 $40 $84
 	obj_End
 
-group1Map39ObjectData: ; 5f93
-	obj_DoubleValue $3a0d $28 $18
+group1Map39ObjectData:
+	obj_Interaction $3a0d $28 $18
 	obj_End
 
-group1Map3bObjectData: ; 5f99
-	obj_Pointer objectData4610
+group1Map3bObjectData:
+	obj_Pointer group1Map3bEnemyObjectData
 	obj_End
 
-objectData5f9d:
+objectData5f9d: ; UNUSED?
 	obj_Pointer objectData4597
 	obj_End
 
-group1Map41ObjectData: ; 5fa1
-	obj_DoubleValue $e100 $28 $78
-	obj_DoubleValue $9e00 $68 $58
-	obj_DoubleValue $9e01 $68 $38
+group1Map41ObjectData:
+	obj_Interaction $e100 $28 $78
+	obj_Interaction $9e00 $68 $58
+	obj_Interaction $9e01 $68 $38
 	obj_End
 
-group1Map42ObjectData: ; 5faf
-	obj_Pointer objectData4597
+group1Map42ObjectData:
+	obj_Pointer group1Map42EnemyObjectData
 	obj_End
 
-group1Map43ObjectData: ; 5fb3
-	obj_Pointer objectData45a6
+group1Map43ObjectData:
+	obj_Pointer group1Map43EnemyObjectData
 	obj_End
 
-group1Map44ObjectData: ; 5fb7
-	obj_Pointer objectData45b4
+group1Map44ObjectData:
+	obj_Pointer group1Map44EnemyObjectData
 	obj_End
 
-group1Map45ObjectData: ; 5fbb
-	obj_DoubleValue $4301 $68 $18
+group1Map45ObjectData:
+	obj_Interaction $4301 $68 $18
 	obj_End
 
-group1Map46ObjectData: ; 5fc1
-	obj_DoubleValue $6b02 $38 $50
-	obj_DoubleValue $4002 $28 $48
-	obj_DoubleValue $4009 $28 $58
-	obj_DoubleValue $3709 $48 $48
-	obj_DoubleValue $400b $38 $38
+group1Map46ObjectData:
+	obj_Interaction $6b02 $38 $50
+	obj_Interaction $4002 $28 $48
+	obj_Interaction $4009 $28 $58
+	obj_Interaction $3709 $48 $48
+	obj_Interaction $400b $38 $38
 	obj_End
 
-group1Map47ObjectData: ; 5fd7
-	obj_DoubleValue $3a07 $48 $48
-	obj_DoubleValue $4f01 $38 $68
-	obj_DoubleValue $ad08 $38 $58
+group1Map47ObjectData:
+	obj_Interaction $3a07 $48 $48
+	obj_Interaction $4f01 $38 $68
+	obj_Interaction $ad08 $38 $58
 	obj_End
 
-group1Map48ObjectData: ; 5fe5
-	obj_DoubleValue $5700 $58 $38
-	obj_DoubleValue $e102 $48 $58
-	obj_DoubleValue $3a06 $58 $88
-	obj_DoubleValue $3800 $38 $78
+group1Map48ObjectData:
+	obj_Interaction $5700 $58 $38
+	obj_Interaction $e102 $48 $58
+	obj_Interaction $3a06 $58 $88
+	obj_Interaction $3800 $38 $78
 	obj_End
 
-group1Map49ObjectData: ; 5ff7
-	obj_DoubleValue $3c0e $48 $78
-	obj_DoubleValue $3a0c $48 $38
-	obj_DoubleValue $4306 $28 $78
+group1Map49ObjectData:
+	obj_Interaction $3c0e $48 $78
+	obj_Interaction $3a0c $48 $38
+	obj_Interaction $4306 $28 $78
 	obj_End
 
-group1Map4bObjectData: ; 6005
-	obj_Pointer objectData4619
+group1Map4bObjectData:
+	obj_Pointer group1Map4bEnemyObjectData
 	obj_End
 
-group1Map51ObjectData: ; 6009
-	obj_DoubleValue $e100 $48 $48
+group1Map51ObjectData:
+	obj_Interaction $e100 $48 $48
 	obj_End
 
-group1Map53ObjectData: ; 600f
-	obj_Pointer objectData45b3
+group1Map53ObjectData:
+	obj_Pointer group1Map53EnemyObjectData
 	obj_End
 
-group1Map54ObjectData: ; 6013
-	obj_Pointer objectData45bf
+group1Map54ObjectData:
+	obj_Pointer group1Map54EnemyObjectData
 	obj_End
 
-group1Map55ObjectData: ; 6017
-	obj_DoubleValue $b60c $28 $18
+group1Map55ObjectData:
+	obj_Interaction $b60c $28 $18
 	obj_End
 
-group1Map57ObjectData: ; 601d
-	obj_DoubleValue $3b05 $38 $48
+group1Map57ObjectData:
+	obj_Interaction $3b05 $38 $48
 	obj_End
 
-group1Map58ObjectData: ; 6023
-	obj_DoubleValue $4404 $48 $48
-	obj_DoubleValue $4f02 $48 $48
-	obj_DoubleValue $360d $48 $38
+group1Map58ObjectData:
+	obj_Interaction $4404 $48 $48
+	obj_Interaction $4f02 $48 $48
+	obj_Interaction $360d $48 $38
 	obj_End
 
-group1Map5bObjectData: ; 6031
-	obj_DoubleValue $8202 $50 $48
-	obj_Pointer objectData46cf
+group1Map5bObjectData:
+	obj_Interaction $8202 $50 $48
+	obj_Pointer group1Map5bEnemyObjectData
 	obj_End
 
-group1Map5cObjectData: ; 603a
-	obj_WithParam $00 $8a01 $0a $00 $00
+group1Map5cObjectData:
+	obj_Interaction $8a01 $00 $00 $0a
 	obj_End
 
-group1Map5dObjectData: ; 6042
-	obj_Pointer objectData46da
+group1Map5dObjectData:
+	obj_Pointer group1Map5dEnemyObjectData
 	obj_End
 
-group1Map60ObjectData: ; 6046
-	obj_Pointer objectData4597
+group1Map60ObjectData:
+	obj_Pointer group1Map60EnemyObjectData
 	obj_End
 
-group1Map61ObjectData: ; 604a
-	obj_SpecificEnemy $00 $6201 $00 $00
+group1Map61ObjectData:
+	obj_SpecificEnemyA $00 $6201 $00 $00
 	obj_End
 
-group1Map62ObjectData: ; 6051
-	obj_Pointer objectData45c4
+group1Map62ObjectData:
+	obj_Pointer group1Map62EnemyObjectData
 	obj_End
 
-group1Map63ObjectData: ; 6055
-	obj_Pointer objectData45c9
+group1Map63ObjectData:
+	obj_Pointer group1Map63EnemyObjectData
 	obj_End
 
-group1Map64ObjectData: ; 6059
-	obj_Pointer objectData45d0
+group1Map64ObjectData:
+	obj_Pointer group1Map64EnemyObjectData
 	obj_End
 
-group1Map65ObjectData: ; 605d
-	obj_DoubleValue $3b04 $38 $28
-	obj_DoubleValue $4d0a $38 $38
-	obj_DoubleValue $3712 $38 $58
-	obj_DoubleValue $dc08 $51 $08
-	obj_DoubleValue $dc08 $61 $02
+group1Map65ObjectData:
+	obj_Interaction $3b04 $38 $28
+	obj_Interaction $4d0a $38 $38
+	obj_Interaction $3712 $38 $58
+	obj_Interaction $dc08 $51 $08
+	obj_Interaction $dc08 $61 $02
 	obj_End
 
-group1Map66ObjectData: ; 6073
-	obj_DoubleValue $3a08 $68 $58
+group1Map66ObjectData:
+	obj_Interaction $3a08 $68 $58
 	obj_End
 
-group1Map67ObjectData: ; 6079
-	obj_DoubleValue $6b15 $3c $50
+group1Map67ObjectData:
+	obj_Interaction $6b15 $3c $50
 	obj_End
 
-group1Map68ObjectData: ; 607f
-	obj_DoubleValue $3b03 $68 $68
-	obj_DoubleValue $4302 $68 $28
-	obj_DoubleValue $4e00 $48 $38
-	obj_DoubleValue $360c $58 $58
+group1Map68ObjectData:
+	obj_Interaction $3b03 $68 $68
+	obj_Interaction $4302 $68 $28
+	obj_Interaction $4e00 $48 $38
+	obj_Interaction $360c $58 $58
 	obj_End
 
-group1Map6bObjectData: ; 6091
-	obj_Pointer objectData46e5
+group1Map6bObjectData:
+	obj_Pointer group1Map6bEnemyObjectData
 	obj_End
 
-group1Map6dObjectData: ; 6095
-	obj_DoubleValue $8201 $40 $38
-	obj_Pointer objectData46f4
+group1Map6dObjectData:
+	obj_Interaction $8201 $40 $38
+	obj_Pointer group1Map6dEnemyObjectData
 	obj_End
 
-group1Map70ObjectData: ; 609e
-	obj_DoubleValue $ce06 $58 $38
-	obj_Pointer objectData442b
+group1Map70ObjectData:
+	obj_Interaction $ce06 $58 $38
+	obj_Pointer group1Map70EnemyObjectData
 	obj_End
 
-group1Map71ObjectData: ; 60a7
-	obj_Pointer objectData4436
+group1Map71ObjectData:
+	obj_Pointer group1Map71EnemyObjectData
 	obj_End
 
-group1Map72ObjectData: ; 60ab
-	obj_WithParam $00 $4000 $00 $58 $28
+group1Map72ObjectData:
+	obj_Interaction $4000 $58 $28 $00
 	obj_End
 
-group1Map73ObjectData: ; 60b3
-	obj_WithParam $00 $4000 $01 $18 $18
+group1Map73ObjectData:
+	obj_Interaction $4000 $18 $18 $01
 	obj_End
 
-group1Map74ObjectData: ; 60bb
-	obj_DoubleValue $4500 $58 $38
+group1Map74ObjectData:
+	obj_Interaction $4500 $58 $38
 	obj_End
 
-group1Map75ObjectData: ; 60c1
-	obj_DoubleValue $370a $58 $60
-	obj_DoubleValue $3104 $f8 $58
-	obj_DoubleValue $3105 $58 $60
-	obj_DoubleValue $360a $58 $40
-	obj_DoubleValue $ad04 $48 $50
-	obj_WithParam $00 $5801 $00 $58 $48
-	obj_WithParam $00 $5801 $01 $58 $28
+group1Map75ObjectData:
+	obj_Interaction $370a $58 $60
+	obj_Interaction $3104 $f8 $58
+	obj_Interaction $3105 $58 $60
+	obj_Interaction $360a $58 $40
+	obj_Interaction $ad04 $48 $50
+	obj_Interaction $5801 $58 $48 $00
+	obj_Interaction $5801 $58 $28 $01
 	obj_End
 
-group1Map76ObjectData: ; 60e4
-	obj_DoubleValue $dc10 $42 $50
+group1Map76ObjectData:
+	obj_Interaction $dc10 $42 $50
 	obj_End
 
-group1Map77ObjectData: ; 60ea
-	obj_DoubleValue $4501 $48 $58
+group1Map77ObjectData:
+	obj_Interaction $4501 $48 $58
 	obj_End
 
-group1Map7bObjectData: ; 60f0
-	obj_Pointer objectData4703
+group1Map7bObjectData:
+	obj_Pointer group1Map7bEnemyObjectData
 	obj_End
 
-group1Map7cObjectData: ; 60f4
-	obj_DoubleValue $8202 $30 $78
+group1Map7cObjectData:
+	obj_Interaction $8202 $30 $78
 	obj_End
 
-group1Map7dObjectData: ; 60fa
-	obj_Pointer objectData470e
+group1Map7dObjectData:
+	obj_Pointer group1Map7dEnemyObjectData
 	obj_End
 
-group1Map80ObjectData: ; 60fe
-	obj_SpecificEnemy $00 $5a4d $00 $00
-	obj_Pointer objectData4443
+group1Map80ObjectData:
+	obj_SpecificEnemyA $00 $5a4d $00 $00
+	obj_Pointer group1Map80EnemyObjectData
 	obj_End
 
-group1Map81ObjectData: ; 6108
-	obj_DoubleValue $ce03 $38 $18
+group1Map81ObjectData:
+	obj_Interaction $ce03 $38 $18
 	obj_End
 
-group1Map82ObjectData: ; 610e
-	obj_DoubleValue $4400 $38 $58
-	obj_DoubleValue $3f00 $48 $38
+group1Map82ObjectData:
+	obj_Interaction $4400 $38 $58
+	obj_Interaction $3f00 $48 $38
 	obj_End
 
-group1Map83ObjectData: ; 6118
-	obj_DoubleValue $4100 $38 $4e
-	obj_WithParam $00 $8a01 $03 $00 $00
-	obj_Pointer objectData4457
+group1Map83ObjectData:
+	obj_Interaction $4100 $38 $4e
+	obj_Interaction $8a01 $00 $00 $03
+	obj_Pointer group1Map83EnemyObjectData
 	obj_End
 
-group1Map84ObjectData: ; 6128
-	obj_DoubleValue $4b06 $28 $58
-	obj_DoubleValue $4b06 $40 $48
-	obj_DoubleValue $4b06 $50 $68
-	obj_WithParam $00 $4001 $00 $48 $78
+group1Map84ObjectData:
+	obj_Interaction $4b06 $28 $58
+	obj_Interaction $4b06 $40 $48
+	obj_Interaction $4b06 $50 $68
+	obj_Interaction $4001 $48 $78 $00
 	obj_End
 
-group1Map86ObjectData: ; 613d
-	obj_DoubleValue $5802 $38 $48
-	obj_DoubleValue $dc07 $28 $78
+group1Map86ObjectData:
+	obj_Interaction $5802 $38 $48
+	obj_Interaction $dc07 $28 $78
 	obj_End
 
-group1Map8cObjectData: ; 6147
-	obj_DoubleValue $dc0e $38 $48
+group1Map8cObjectData:
+	obj_Interaction $dc0e $38 $48
 	obj_End
 
-group1Map90ObjectData: ; 614d
-	obj_DoubleValue $d600 $18 $38
-	obj_DoubleValue $ce00 $48 $18
-	obj_Pointer objectData4462
+group1Map90ObjectData:
+	obj_Interaction $d600 $18 $38
+	obj_Interaction $ce00 $48 $18
+	obj_Pointer group1Map90EnemyObjectData
 	obj_End
 
-group1Map91ObjectData: ; 615a
-	obj_Pointer objectData446d
+group1Map91ObjectData:
+	obj_Pointer group1Map91EnemyObjectData
 	obj_End
 
-group1Map92ObjectData: ; 615e
-	obj_WithParam $00 $4300 $00 $28 $58
+group1Map92ObjectData:
+	obj_Interaction $4300 $28 $58 $00
 	obj_End
 
-group1Map93ObjectData: ; 6166
-	obj_DoubleValue $4200 $38 $58
-	obj_WithParam $00 $4001 $01 $38 $38
+group1Map93ObjectData:
+	obj_Interaction $4200 $38 $58
+	obj_Interaction $4001 $38 $38 $01
 	obj_End
 
-group1Map94ObjectData: ; 6173
-	obj_WithParam $00 $4300 $01 $28 $68
+group1Map94ObjectData:
+	obj_Interaction $4300 $28 $68 $01
 	obj_End
 
-group1Map95ObjectData: ; 617b
-	obj_DoubleValue $b60d $38 $18
+group1Map95ObjectData:
+	obj_Interaction $b60d $38 $18
 	obj_End
 
-group1Map96ObjectData: ; 6181
-	obj_DoubleValue $3b06 $48 $28
+group1Map96ObjectData:
+	obj_Interaction $3b06 $48 $28
 	obj_End
 
-group1Map97ObjectData: ; 6187
-	obj_DoubleValue $3703 $38 $38
+group1Map97ObjectData:
+	obj_Interaction $3703 $38 $38
 	obj_End
 
-group1Mapa5ObjectData: ; 618d
-	obj_NoValue $9013
+group1Mapa5ObjectData:
+	obj_Interaction $9013
 	obj_End
 
-group1Mapa7ObjectData: ; 6191
-	obj_DoubleValue $e601 $58 $78
+group1Mapa7ObjectData:
+	obj_Interaction $e601 $58 $78
 	obj_End
 
-group1Mapa8ObjectData: ; 6197
-	obj_NoValue $9b00
+group1Mapa8ObjectData:
+	obj_Interaction $9b00
 	obj_End
 
-group1Mapa9ObjectData: ; 619b
-	obj_DoubleValue $e600 $38 $78
+group1Mapa9ObjectData:
+	obj_Interaction $e600 $38 $78
 	obj_End
 
-group1MapaaObjectData: ; 61a1
-	obj_DoubleValue $4800 $48 $18
-	obj_DoubleValue $4801 $58 $38
-	obj_DoubleValue $4802 $58 $28
-	obj_DoubleValue $4803 $58 $18
-	obj_DoubleValue $4804 $48 $38
-	obj_DoubleValue $481f $58 $78
-	obj_NoValue $6b08
+group1MapaaObjectData:
+	obj_Interaction $4800 $48 $18
+	obj_Interaction $4801 $58 $38
+	obj_Interaction $4802 $58 $28
+	obj_Interaction $4803 $58 $18
+	obj_Interaction $4804 $48 $38
+	obj_Interaction $481f $58 $78
+	obj_Interaction $6b08
 	obj_End
 
-group1MapabObjectData: ; 61be
-	obj_Pointer objectData44a8
+group1MapabObjectData:
+	obj_Pointer group1MapabEnemyObjectData
 	obj_End
 
-group1MapacObjectData: ; 61c2
-	obj_DoubleValue $4811 $38 $48
-	obj_DoubleValue $8004 $38 $48
+group1MapacObjectData:
+	obj_Interaction $4811 $38 $48
+	obj_Interaction $8004 $38 $48
 	obj_End
 
-group1MapadObjectData: ; 61cc
-	obj_DoubleValue $4815 $56 $68
+group1MapadObjectData:
+	obj_Interaction $4815 $56 $68
 	obj_End
 
-group1MapbbObjectData: ; 61d2
-	obj_DoubleValue $480a $48 $78
-	obj_DoubleValue $480b $90 $38
+group1MapbbObjectData:
+	obj_Interaction $480a $48 $78
+	obj_Interaction $480b $90 $38
 	obj_End
 
-group1MapbcObjectData: ; 61dc
-	obj_DoubleValue $ce00 $18 $48
-	obj_Pointer objectData4495
+group1MapbcObjectData:
+	obj_Interaction $ce00 $18 $48
+	obj_Pointer group1MapbcEnemyObjectData
 	obj_End
 
-group1MapbdObjectData: ; 61e5
-	obj_DoubleValue $4816 $48 $58
+group1MapbdObjectData:
+	obj_Interaction $4816 $48 $58
 	obj_End
 
-group1MapcaObjectData: ; 61eb
-	obj_DoubleValue $b60f $48 $38
-	obj_Pointer objectData44a8
+group1MapcaObjectData:
+	obj_Interaction $b60f $48 $38
+	obj_Pointer group1MapcaEnemyObjectData
 	obj_End
 
-group1MapcbObjectData: ; 61f4
-	obj_DoubleValue $4807 $38 $48
-	obj_DoubleValue $6800 $38 $38
-	obj_Pointer objectData44b1
+group1MapcbObjectData:
+	obj_Interaction $4807 $38 $48
+	obj_Interaction $6800 $38 $38
+	obj_Pointer group1MapcbEnemyObjectData
 	obj_End
 
-group1MapccObjectData: ; 6201
-	obj_SpecificEnemy $00 $6203 $00 $00
-	obj_Pointer objectData44ac
+group1MapccObjectData:
+	obj_SpecificEnemyA $00 $6203 $00 $00
+	obj_Pointer group1MapccEnemyObjectData
 	obj_End
 
-group1MapcdObjectData: ; 620b
-	obj_DoubleValue $e100 $48 $58
-	obj_DoubleValue $4817 $48 $38
+group1MapcdObjectData:
+	obj_Interaction $e100 $48 $58
+	obj_Interaction $4817 $48 $38
 	obj_End
 
-group1Mapd0ObjectData: ; 6215
-	obj_DoubleValue $b60e $38 $18
+group1Mapd0ObjectData:
+	obj_Interaction $b60e $38 $18
 	obj_End
 
-group1Mapd7ObjectData: ; 621b
-	obj_DoubleValue $c201 $18 $58
+group1Mapd7ObjectData:
+	obj_Interaction $c201 $18 $58
 	obj_End
 
-group1Mapd9ObjectData: ; 6221
-	obj_DoubleValue $e100 $18 $88
+group1Mapd9ObjectData:
+	obj_Interaction $e100 $18 $88
 	obj_End
 
-group1MapdaObjectData: ; 6227
-	obj_SpecificEnemy $00 $6204 $00 $00
-	obj_DoubleValue $4808 $20 $20
+group1MapdaObjectData:
+	obj_SpecificEnemyA $00 $6204 $00 $00
+	obj_Interaction $4808 $20 $20
 	obj_End
 
-group1MapdbObjectData: ; 6233
-	obj_Pointer objectData44a8
+group1MapdbObjectData:
+	obj_Pointer group1MapdbEnemyObjectData
 	obj_End
 
-group1MapddObjectData: ; 6237
-	obj_DoubleValue $4818 $38 $68
+group1MapddObjectData:
+	obj_Interaction $4818 $38 $68
 	obj_End
 
-group2Map0eObjectData: ; 623d
-	obj_DoubleValue $3c0d $48 $38
-	obj_DoubleValue $3d00 $48 $4a
+group2Map0eObjectData:
+	obj_Interaction $3c0d $48 $38
+	obj_Interaction $3d00 $48 $4a
 	obj_End
 
-group2Map0fObjectData: ; 6247
-	obj_DoubleValue $6a00 $40 $50
+group2Map0fObjectData:
+	obj_Interaction $6a00 $40 $50
 	obj_End
 
-group2Map1eObjectData: ; 624d
-	obj_DoubleValue $6900 $48 $68
+group2Map1eObjectData:
+	obj_Interaction $6900 $48 $68
 	obj_End
 
-group2Map1fObjectData: ; 6253
-	obj_DoubleValue $6901 $48 $28
+group2Map1fObjectData:
+	obj_Interaction $6901 $48 $28
 	obj_End
 
-group2Map2eObjectData: ; 6259
-	obj_WithParam $00 $5900 $01 $20 $50
+group2Map2eObjectData:
+	obj_Interaction $5900 $20 $50 $01
 	obj_End
 
-group2Map2fObjectData: ; 6261
-	obj_DoubleValue $5500 $18 $18
+group2Map2fObjectData:
+	obj_Interaction $5500 $18 $18
 	obj_End
 
-group2Map3eObjectData: ; 6267
-	obj_DoubleValue $5b00 $54 $88
+group2Map3eObjectData:
+	obj_Interaction $5b00 $54 $88
 	obj_End
 
-group2Map4eObjectData: ; 626d
-	obj_DoubleValue $2e01 $54 $68
+group2Map4eObjectData:
+	obj_Interaction $2e01 $54 $68
 	obj_End
 
-group2Map3fObjectData: ; 6273
-	obj_DoubleValue $4805 $28 $48
+group2Map3fObjectData:
+	obj_Interaction $4805 $28 $48
 	obj_End
 
-group2Map5eObjectData: ; 6279
-	obj_DoubleValue $4701 $28 $80
-	obj_DoubleValue $4703 $28 $68
-	obj_DoubleValue $4704 $28 $50
-	obj_DoubleValue $4600 $58 $88
-	obj_NoValue $710c
+group2Map5eObjectData:
+	obj_Interaction $4701 $28 $80
+	obj_Interaction $4703 $28 $68
+	obj_Interaction $4704 $28 $50
+	obj_Interaction $4600 $58 $88
+	obj_Interaction $710c
 	obj_End
 
-group2Map6eObjectData: ; 628e
-	obj_Pointer objectData412a
+group2Map6eObjectData:
+	obj_Pointer group2Map6eEnemyObjectData
 	obj_End
 
-group2Map6fObjectData: ; 6292
-	obj_Pointer objectData4131
+group2Map6fObjectData:
+	obj_Pointer group2Map6fEnemyObjectData
 	obj_End
 
-group2Map7eObjectData: ; 6296
-	obj_DoubleValue $4700 $28 $40
-	obj_DoubleValue $4702 $28 $60
-	obj_DoubleValue $4715 $28 $80
-	obj_DoubleValue $4601 $58 $18
+group2Map7eObjectData:
+	obj_Interaction $4700 $28 $40
+	obj_Interaction $4702 $28 $60
+	obj_Interaction $4715 $28 $80
+	obj_Interaction $4601 $58 $18
 	obj_End
 
-group2Map7fObjectData: ; 62a8
-	obj_Pointer objectData413c
+group2Map7fObjectData:
+	obj_Pointer group2Map7fEnemyObjectData
 	obj_End
 
-group2Map8eObjectData: ; 62ac
-	obj_Pointer objectData4147
+group2Map8eObjectData:
+	obj_Pointer group2Map8eEnemyObjectData
 	obj_End
 
-group2Map90ObjectData: ; 62b0
-	obj_NoValue $dc09
-	obj_NoValue $dc0a
-	obj_NoValue $6b11
+group2Map90ObjectData:
+	obj_Interaction $dc09
+	obj_Interaction $dc0a
+	obj_Interaction $6b11
 	obj_End
 
-group2Mapa0ObjectData: ; 62b8
-	obj_DoubleValue $ab10 $48 $78
-	obj_DoubleValue $ab14 $38 $18
+group2Mapa0ObjectData:
+	obj_Interaction $ab10 $48 $78
+	obj_Interaction $ab14 $38 $18
 	obj_End
 
-group2Mapb1ObjectData: ; 62c2
-	obj_DoubleValue $ab13 $18 $88
+group2Mapb1ObjectData:
+	obj_Interaction $ab13 $18 $88
 	obj_End
 
-group2MapdeObjectData: ; 62c8
-	obj_DoubleValue $480d $38 $50
+group2MapdeObjectData:
+	obj_Interaction $480d $38 $50
 	obj_End
 
-group2MapdfObjectData: ; 62ce
-	obj_Pointer objectData4290
+group2MapdfObjectData:
+	obj_Pointer group2MapdfEnemyObjectData
 	obj_End
 
-group2Mape4ObjectData: ; 62d2
-	obj_DoubleValue $8100 $40 $40
-	obj_DoubleValue $8101 $40 $60
-	obj_DoubleValue $8104 $40 $50
-	obj_DoubleValue $480e $20 $50
+group2Mape4ObjectData:
+	obj_Interaction $8100 $40 $40
+	obj_Interaction $8101 $40 $60
+	obj_Interaction $8104 $40 $50
+	obj_Interaction $480e $20 $50
 	obj_End
 
-group2Mape5ObjectData: ; 62e4
-	obj_DoubleValue $4819 $38 $50
-	obj_DoubleValue $481a $28 $18
-	obj_DoubleValue $481b $60 $18
-	obj_DoubleValue $481c $50 $88
+group2Mape5ObjectData:
+	obj_Interaction $4819 $38 $50
+	obj_Interaction $481a $28 $18
+	obj_Interaction $481b $60 $18
+	obj_Interaction $481c $50 $88
 	obj_End
 
-group2Mape6ObjectData: ; 62f6
-	obj_DoubleValue $5c00 $38 $70
+group2Mape6ObjectData:
+	obj_Interaction $5c00 $38 $70
 	obj_End
 
-group2Mape7ObjectData: ; 62fc
-	obj_DoubleValue $5300 $1a $18
-	obj_DoubleValue $5400 $38 $50
+group2Mape7ObjectData:
+	obj_Interaction $5300 $1a $18
+	obj_Interaction $5400 $38 $50
 	obj_End
 
-group2Mape8ObjectData: ; 6306
-	obj_DoubleValue $5100 $18 $50
+group2Mape8ObjectData:
+	obj_Interaction $5100 $18 $50
 	obj_End
 
-group2Mape9ObjectData: ; 630c
-	obj_DoubleValue $3000 $68 $88
+group2Mape9ObjectData:
+	obj_Interaction $3000 $68 $88
 	obj_End
 
-group2MapeaObjectData: ; 6312
-	obj_DoubleValue $ac00 $58 $38
+group2MapeaObjectData:
+	obj_Interaction $ac00 $58 $38
 	obj_End
 
-group2MapebObjectData: ; 6318
-	obj_DoubleValue $ac01 $58 $38
+group2MapebObjectData:
+	obj_Interaction $ac01 $58 $38
 	obj_End
 
-group2MapeeObjectData: ; 631e
-	obj_DoubleValue $8900 $28 $50
-	obj_DoubleValue $8901 $38 $38
-	obj_DoubleValue $8906 $38 $68
-	obj_DoubleValue $e500 $48 $28
-	obj_DoubleValue $e501 $48 $78
+group2MapeeObjectData:
+	obj_Interaction $8900 $28 $50
+	obj_Interaction $8901 $38 $38
+	obj_Interaction $8906 $38 $68
+	obj_Interaction $e500 $48 $28
+	obj_Interaction $e501 $48 $78
 	obj_End
 
-group2MapedObjectData: ; 6334
-group2MapefObjectData: ; 6334
-	obj_DoubleValue $6600 $40 $50
+group2MapedObjectData:
+group2MapefObjectData:
+	obj_Interaction $6600 $40 $50
 	obj_End
 
-group2Map9eObjectData: ; 633a
-	obj_NoValue $dc12
+group2Map9eObjectData:
+	obj_Interaction $dc12
 	obj_Part $0300 $61
 	obj_End
 
-group2Map9fObjectData: ; 6342
-	obj_DoubleValue $dc0b $18 $18
+group2Map9fObjectData:
+	obj_Interaction $dc0b $18 $18
 	obj_End
 
-group2MapafObjectData: ; 6348
-	obj_Pointer objectData42b7
+group2MapafObjectData:
+	obj_Pointer group2MapafEnemyObjectData
 	obj_End
 
-group2MapbeObjectData: ; 634c
-	obj_Pointer objectData4281
+group2MapbeObjectData:
+	obj_Pointer group2MapbeEnemyObjectData
 	obj_End
 
-group2MapcfObjectData: ; 6350
-	obj_Pointer objectData4152
+group2MapcfObjectData:
+	obj_Pointer group2MapcfEnemyObjectData
 	obj_End
 
-group2Mapd1ObjectData: ; 6354
-	obj_DoubleValue $ab1b $48 $58
+group2Mapd1ObjectData:
+	obj_Interaction $ab1b $48 $58
 	obj_End
 
-group2Mapf3ObjectData: ; 635a
-	obj_DoubleValue $3c07 $28 $50
+group2Mapf3ObjectData:
+	obj_Interaction $3c07 $28 $50
 	obj_End
 
-group2Mapf5ObjectData: ; 6360
-	obj_DoubleValue $5a00 $28 $68
+group2Mapf5ObjectData:
+	obj_Interaction $5a00 $28 $68
 	obj_End
 
-group2Mapf6ObjectData: ; 6366
-	obj_WithParam $00 $660f $00 $28 $50
+group2Mapf6ObjectData:
+	obj_Interaction $660f $28 $50 $00
 	obj_End
 
-group2Mapf7ObjectData: ; 636e
-	obj_DoubleValue $6607 $40 $50
+group2Mapf7ObjectData:
+	obj_Interaction $6607 $40 $50
 	obj_End
 
-group2Mapf8ObjectData: ; 6374
-	obj_Pointer objectData4290
+group2Mapf8ObjectData:
+	obj_Pointer group2Mapf8EnemyObjectData
 	obj_End
 
-group2Mapf9ObjectData: ; 6378
-	obj_Pointer objectData4297
+group2Mapf9ObjectData:
+	obj_Pointer group2Mapf9EnemyObjectData
 	obj_End
 
-group2MapfaObjectData: ; 637c
-	obj_Pointer objectData429c
+group2MapfaObjectData:
+	obj_Pointer group2MapfaEnemyObjectData
 	obj_End
 
-group3MapbeObjectData: ; 6380
-	obj_DoubleValue $9400 $28 $58
-	obj_Pointer objectData4166
+group3MapbeObjectData:
+	obj_Interaction $9400 $28 $58
+	obj_Pointer group3MapbeEnemyObjectData
 	obj_End
 
-group2Mapd7ObjectData: ; 6389
-	obj_DoubleValue $ab12 $48 $28
+group2Mapd7ObjectData:
+	obj_Interaction $ab12 $48 $28
 	obj_End
 
-group2Mape3ObjectData: ; 638f
-	obj_DoubleValue $6b0a $28 $28
-	obj_Pointer objectData4157
+group2Mape3ObjectData:
+	obj_Interaction $6b0a $28 $28
+	obj_Pointer group2Mape3EnemyObjectData
 	obj_End
 
-group2MapfbObjectData: ; 6398
-	obj_WithParam $00 $660e $03 $68 $88
+group2MapfbObjectData:
+	obj_Interaction $660e $68 $88 $03
 	obj_End
 
-group2MapfdObjectData: ; 63a0
-	obj_DoubleValue $6608 $58 $88
-	obj_DoubleValue $6610 $40 $38
-	obj_WithParam $00 $660c $03 $18 $38
-	obj_WithParam $00 $6801 $00 $28 $28
+group2MapfdObjectData:
+	obj_Interaction $6608 $58 $88
+	obj_Interaction $6610 $40 $38
+	obj_Interaction $660c $18 $38 $03
+	obj_Interaction $6801 $28 $28 $00
 	obj_End
 
-group2MapffObjectData: ; 63b7
-	obj_DoubleValue $6608 $58 $88
-	obj_DoubleValue $6610 $40 $38
-	obj_WithParam $00 $660c $04 $68 $18
-	obj_WithParam $00 $660c $05 $18 $38
-	obj_WithParam $00 $4e02 $00 $18 $18
-	obj_WithParam $00 $4e02 $01 $18 $28
+group2MapffObjectData:
+	obj_Interaction $6608 $58 $88
+	obj_Interaction $6610 $40 $38
+	obj_Interaction $660c $68 $18 $04
+	obj_Interaction $660c $18 $38 $05
+	obj_Interaction $4e02 $18 $18 $00
+	obj_Interaction $4e02 $18 $28 $01
 	obj_End
 
-group3Map0fObjectData: ; 63da
-	obj_DoubleValue $9012 $18 $68
-	obj_WithParam $00 $8a01 $08 $00 $00
+group3Map0fObjectData:
+	obj_Interaction $9012 $18 $68
+	obj_Interaction $8a01 $00 $00 $08
 	obj_End
 
-group3Map1fObjectData: ; 63e7
-	obj_DoubleValue $660a $48 $48
+group3Map1fObjectData:
+	obj_Interaction $660a $48 $48
 	obj_End
 
-group3Map2eObjectData: ; 63ed
-	obj_WithParam $00 $660e $04 $38 $88
+group3Map2eObjectData:
+	obj_Interaction $660e $38 $88 $04
 	obj_End
 
-group3Map3eObjectData: ; 63f5
-	obj_DoubleValue $660b $38 $50
+group3Map3eObjectData:
+	obj_Interaction $660b $38 $50
 	obj_End
 
-group3Map3fObjectData: ; 63fb
-	obj_Pointer objectData42a1
+group3Map3fObjectData:
+	obj_Pointer group3Map3fEnemyObjectData
 	obj_End
 
-group3Map4eObjectData: ; 63ff
-	obj_DoubleValue $6b13 $10 $38
-	obj_DoubleValue $6b14 $10 $68
+group3Map4eObjectData:
+	obj_Interaction $6b13 $10 $38
+	obj_Interaction $6b14 $10 $68
 	obj_End
 
-group3Map4fObjectData: ; 6409
-	obj_Pointer objectData42a8
+group3Map4fObjectData:
+	obj_Pointer group3Map4fEnemyObjectData
 	obj_End
 
-group3Mape7ObjectData: ; 640d
-	obj_DoubleValue $3001 $68 $88
-	obj_DoubleValue $8b02 $68 $28
+group3Mape7ObjectData:
+	obj_Interaction $3001 $68 $88
+	obj_Interaction $8b02 $68 $28
 	obj_End
 
-group3Mape8ObjectData: ; 6417
-	obj_NoValue $dc15
+group3Mape8ObjectData:
+	obj_Interaction $dc15
 	obj_End
 
-group3Mape9ObjectData: ; 641b
-	obj_DoubleValue $2e00 $54 $68
+group3Mape9ObjectData:
+	obj_Interaction $2e00 $54 $68
 	obj_End
 
-group3MapffObjectData: ; 6421
-	obj_NoValue $dc16
+group3MapffObjectData:
+	obj_Interaction $dc16
 	obj_End
 
-group3Map5eObjectData: ; 6425
-	obj_DoubleValue $4e03 $38 $50
+group3Map5eObjectData:
+	obj_Interaction $4e03 $38 $50
 	obj_End
 
-group3Map5fObjectData: ; 642b
-	obj_WithParam $00 $660e $06 $28 $50
+group3Map5fObjectData:
+	obj_Interaction $660e $28 $50 $06
 	obj_End
 
-group3Map6eObjectData: ; 6433
-	obj_DoubleValue $bf06 $38 $28
+group3Map6eObjectData:
+	obj_Interaction $bf06 $38 $28
 	obj_End
 
-group3Map6fObjectData: ; 6439
-	obj_DoubleValue $bf07 $38 $78
+group3Map6fObjectData:
+	obj_Interaction $bf07 $38 $78
 	obj_End
 
-group3Map7eObjectData: ; 643f
-	obj_DoubleValue $bf0a $28 $48
+group3Map7eObjectData:
+	obj_Interaction $bf0a $28 $48
 	obj_End
 
-group3Map7fObjectData: ; 6445
-	obj_DoubleValue $bf0b $28 $58
+group3Map7fObjectData:
+	obj_Interaction $bf0b $28 $58
 	obj_End
 
-group3Map8eObjectData: ; 644b
-	obj_DoubleValue $bf04 $38 $28
+group3Map8eObjectData:
+	obj_Interaction $bf04 $38 $28
 	obj_End
 
-group3MapeaObjectData: ; 6451
-	obj_DoubleValue $bf00 $38 $78
+group3MapeaObjectData:
+	obj_Interaction $bf00 $38 $78
 	obj_End
 
-group3MapebObjectData: ; 6457
-	obj_DoubleValue $bf02 $28 $48
+group3MapebObjectData:
+	obj_Interaction $bf02 $28 $48
 	obj_End
 
-group3MapecObjectData: ; 645d
-	obj_DoubleValue $bf02 $28 $58
+group3MapecObjectData:
+	obj_Interaction $bf02 $28 $58
 	obj_End
 
-group3MapedObjectData: ; 6463
-	obj_DoubleValue $5f80 $28 $20
-	obj_DoubleValue $c980 $68 $78
+group3MapedObjectData:
+	obj_Interaction $5f80 $28 $20
+	obj_Interaction $c980 $68 $78
 	obj_End
 
-group3MapefObjectData: ; 646d
-	obj_DoubleValue $3202 $28 $50
+group3MapefObjectData:
+	obj_Interaction $3202 $28 $50
 	obj_End
 
-group3Map8fObjectData: ; 6473
-	obj_DoubleValue $9d00 $18 $28
+group3Map8fObjectData:
+	obj_Interaction $9d00 $18 $28
 	obj_End
 
-group3Map90ObjectData: ; 6479
-	obj_DoubleValue $ba00 $40 $50
+group3Map90ObjectData:
+	obj_Interaction $ba00 $40 $50
 	obj_End
 
-group3Map9eObjectData: ; 647f
-	obj_NoValue $4f00
-	obj_DoubleValue $360b $28 $58
-	obj_DoubleValue $ad07 $38 $78
-	obj_DoubleValue $dc08 $32 $80
+group3Map9eObjectData:
+	obj_Interaction $4f00
+	obj_Interaction $360b $28 $58
+	obj_Interaction $ad07 $38 $78
+	obj_Interaction $dc08 $32 $80
 	obj_End
 
-group3Mapa0ObjectData: ; 6490
-	obj_DoubleValue $ab17 $28 $28
+group3Mapa0ObjectData:
+	obj_Interaction $ab17 $28 $28
 	obj_End
 
-group3MapaeObjectData: ; 6496
-	obj_DoubleValue $b300 $28 $58
+group3MapaeObjectData:
+	obj_Interaction $b300 $28 $58
 	obj_End
 
-group3MapafObjectData: ; 649c
-	obj_DoubleValue $dc07 $18 $18
+group3MapafObjectData:
+	obj_Interaction $dc07 $18 $18
 	obj_End
 
-group3Mapb1ObjectData: ; 64a2
-	obj_DoubleValue $ab18 $38 $48
+group3Mapb1ObjectData:
+	obj_Interaction $ab18 $38 $48
 	obj_End
 
-group3Mapc0ObjectData: ; 64a8
-	obj_DoubleValue $ab19 $48 $48
+group3Mapc0ObjectData:
+	obj_Interaction $ab19 $48 $48
 	obj_End
 
-group3MapceObjectData: ; 64ae
-	obj_DoubleValue $3b08 $40 $50
+group3MapceObjectData:
+	obj_Interaction $3b08 $40 $50
 	obj_End
 
-group3MapcfObjectData: ; 64b4
-	obj_DoubleValue $4201 $40 $50
+group3MapcfObjectData:
+	obj_Interaction $4201 $40 $50
 	obj_End
 
-group3Mapd1ObjectData: ; 64ba
-	obj_DoubleValue $ab1a $48 $58
+group3Mapd1ObjectData:
+	obj_Interaction $ab1a $48 $58
 	obj_End
 
-group3Mapd6ObjectData: ; 64c0
-	obj_DoubleValue $ab11 $58 $58
+group3Mapd6ObjectData:
+	obj_Interaction $ab11 $58 $58
 	obj_End
 
-group3MapdeObjectData: ; 64c6
-group3MapdfObjectData: ; 64c6
-	obj_DoubleValue $ab16 $48 $50
+group3MapdeObjectData:
+group3MapdfObjectData:
+	obj_Interaction $ab16 $48 $50
 	obj_End
 
-group3Mape3ObjectData: ; 64cc
-	obj_DoubleValue $ab15 $28 $50
+group3Mape3ObjectData:
+	obj_Interaction $ab15 $28 $50
 	obj_End
 
-group3Mapf6ObjectData: ; 64d2
-	obj_Pointer objectData42b0
+group3Mapf6ObjectData:
+	obj_Pointer group3Mapf6EnemyObjectData
 	obj_End
 
-group3Mapf7ObjectData: ; 64d6
-	obj_DoubleValue $e308 $61 $18
-	obj_DoubleValue $e309 $61 $88
-	obj_DoubleValue $e306 $51 $18
-	obj_DoubleValue $e307 $51 $88
-	obj_DoubleValue $e304 $41 $88
-	obj_DoubleValue $e305 $41 $18
-	obj_DoubleValue $e302 $31 $18
-	obj_DoubleValue $e303 $31 $88
-	obj_DoubleValue $e300 $21 $18
-	obj_DoubleValue $e301 $21 $88
+group3Mapf7ObjectData:
+	obj_Interaction $e308 $61 $18
+	obj_Interaction $e309 $61 $88
+	obj_Interaction $e306 $51 $18
+	obj_Interaction $e307 $51 $88
+	obj_Interaction $e304 $41 $88
+	obj_Interaction $e305 $41 $18
+	obj_Interaction $e302 $31 $18
+	obj_Interaction $e303 $31 $88
+	obj_Interaction $e300 $21 $18
+	obj_Interaction $e301 $21 $88
 	obj_End
 
-group3Mapf8ObjectData: ; 6500
-	obj_DoubleValue $cc00 $48 $70
-	obj_DoubleValue $3d05 $38 $58
+group3Mapf8ObjectData:
+	obj_Interaction $cc00 $48 $70
+	obj_Interaction $3d05 $38 $58
 	obj_End
 
-group3MapfaObjectData: ; 650a
-	obj_DoubleValue $2900 $40 $50
+group3MapfaObjectData:
+	obj_Interaction $2900 $40 $50
 	obj_End
 
-group3MapfbObjectData: ; 6510
-	obj_DoubleValue $ca01 $38 $28
+group3MapfbObjectData:
+	obj_Interaction $ca01 $38 $28
 	obj_End
 
-group3MapfcObjectData: ; 6516
-	obj_DoubleValue $280a $40 $50
+group3MapfcObjectData:
+	obj_Interaction $280a $40 $50
 	obj_End
 
-group3MapfeObjectData: ; 651c
-	obj_DoubleValue $470e $28 $44
-	obj_DoubleValue $470f $28 $64
-	obj_DoubleValue $4710 $28 $84
-	obj_DoubleValue $4602 $48 $28
+group3MapfeObjectData:
+	obj_Interaction $470e $28 $44
+	obj_Interaction $470f $28 $64
+	obj_Interaction $4710 $28 $84
+	obj_Interaction $4602 $48 $28
 	obj_End
 
-group4Map01ObjectData: ; 652e
-group4Map02ObjectData: ; 652e
-group4Map03ObjectData: ; 652e
+group4Map01ObjectData:
+group4Map02ObjectData:
+group4Map03ObjectData:
 	obj_End
 
-group4Map04ObjectData: ; 652f
-	obj_DoubleValue $1200 $88 $78
-	obj_NoValue $e201
+group4Map04ObjectData:
+	obj_Interaction $1200 $88 $78
+	obj_Interaction $e201
 	obj_End
 
-group4Map05ObjectData: ; 6538
-	obj_DoubleValue $2002 $48 $88
+group4Map05ObjectData:
+	obj_Interaction $2002 $48 $88
 	obj_End
 
-group4Map06ObjectData: ; 653e
-	obj_DoubleValue $1e0a $a7 $00
-	obj_DoubleValue $1e09 $8e $00
-	obj_DoubleValue $1301 $78 $a8
-	obj_DoubleValue $dc07 $38 $48
-	obj_Pointer objectData474c
+group4Map06ObjectData:
+	obj_Interaction $1e0a $a7 $00
+	obj_Interaction $1e09 $8e $00
+	obj_Interaction $1301 $78 $a8
+	obj_Interaction $dc07 $38 $48
+	obj_Pointer group4Map06EnemyObjectData
 	obj_End
 
-group4Map07ObjectData: ; 6553
+group4Map07ObjectData:
 	obj_Pointer objectData_makeAllTorchesLightable
 	obj_End
 
-group4Map08ObjectData: ; 6557
-	obj_DoubleValue $2000 $58 $78
+group4Map08ObjectData:
+	obj_Interaction $2000 $58 $78
 	obj_Part $0900 $17
 	obj_End
 
-group4Map09ObjectData: ; 6561
-	obj_DoubleValue $1e04 $07 $00
-	obj_DoubleValue $1e05 $5e $00
-	obj_DoubleValue $2003 $18 $a8
-	obj_DoubleValue $1301 $28 $a8
-	obj_DoubleValue $2001 $18 $a8
+group4Map09ObjectData:
+	obj_Interaction $1e04 $07 $00
+	obj_Interaction $1e05 $5e $00
+	obj_Interaction $2003 $18 $a8
+	obj_Interaction $1301 $28 $a8
+	obj_Interaction $2001 $18 $a8
 	obj_Part $0900 $14
 	obj_Pointer objectData_makeAllTorchesLightable
 	obj_End
 
-group4Map0aObjectData: ; 657e
-	obj_Pointer objectData4766
+group4Map0aObjectData:
+	obj_Pointer group4Map0aEnemyObjectData
 	obj_End
 
-group4Map0bObjectData: ; 6582
-	obj_DoubleValue $1e08 $07 $00
-	obj_DoubleValue $1e0b $50 $00
-	obj_Pointer objectData476b
+group4Map0bObjectData:
+	obj_Interaction $1e08 $07 $00
+	obj_Interaction $1e0b $50 $00
+	obj_Pointer group4Map0bEnemyObjectData
 	obj_End
 
-group4Map0cObjectData: ; 658f
-	obj_DoubleValue $1301 $48 $78
-	obj_DoubleValue $1e08 $07 $00
+group4Map0cObjectData:
+	obj_Interaction $1301 $48 $78
+	obj_Interaction $1e08 $07 $00
 	obj_End
 
-group4Map0dObjectData: ; 6599
-	obj_DoubleValue $1200 $88 $78
-	obj_NoValue $e201
+group4Map0dObjectData:
+	obj_Interaction $1200 $88 $78
+	obj_Interaction $e201
 	obj_End
 
-group4Mapd0ObjectData: ; 65a2
-	obj_DoubleValue $dc0f $88 $78
-	obj_Pointer objectData40ea
+group4Mapd0ObjectData:
+	obj_Interaction $dc0f $88 $78
+	obj_Pointer group4Mapd0EnemyObjectData
 	obj_End
 
-group4Mapd1ObjectData: ; 65ab
-	obj_Pointer objectData40ff
+group4Mapd1ObjectData:
+	obj_Pointer group4Mapd1EnemyObjectData
 	obj_End
 
-group4Mapd2ObjectData: ; 65af
+group4Mapd2ObjectData:
 	obj_Part $5900 $56
 	obj_Part $5901 $47
 	obj_Part $5902 $58
 	obj_Part $5903 $67
 	obj_End
 
-group4Mapd3ObjectData: ; 65bd
-	obj_Pointer objectData410c
+group4Mapd3ObjectData:
+	obj_Pointer group4Mapd3EnemyObjectData
 	obj_End
 
-group4Mapd4ObjectData: ; 65c1
-	obj_SpecificEnemy $00 $0200 $40 $78
+group4Mapd4ObjectData:
+	obj_SpecificEnemyA $00 $0200 $40 $78
 	obj_Pointer objectData404a
 	obj_End
 
-group4Mape0ObjectData: ; 65cb
-	obj_DoubleValue $3a02 $98 $38
+group4Mape0ObjectData:
+	obj_Interaction $3a02 $98 $38
 	obj_End
 
-group4Mape1ObjectData: ; 65d1
-	obj_DoubleValue $5800 $98 $48
-	obj_DoubleValue $400c $68 $58
-	obj_WithParam $00 $5703 $00 $38 $48
-	obj_WithParam $00 $5703 $01 $58 $88
+group4Mape1ObjectData:
+	obj_Interaction $5800 $98 $48
+	obj_Interaction $400c $68 $58
+	obj_Interaction $5703 $38 $48 $00
+	obj_Interaction $5703 $58 $88 $01
 	obj_End
 
-group4Mape2ObjectData: ; 65e8
-	obj_DoubleValue $400c $98 $d8
-	obj_WithParam $00 $5800 $01 $58 $88
-	obj_WithParam $00 $5803 $03 $68 $28
-	obj_WithParam $00 $5703 $02 $48 $78
-	obj_WithParam $00 $5703 $03 $58 $98
+group4Mape2ObjectData:
+	obj_Interaction $400c $98 $d8
+	obj_Interaction $5800 $58 $88 $01
+	obj_Interaction $5803 $68 $28 $03
+	obj_Interaction $5703 $48 $78 $02
+	obj_Interaction $5703 $58 $98 $03
 	obj_End
 
-group4Mape6ObjectData: ; 6607
-	obj_DoubleValue $b800 $78 $78
-	obj_NoValue $710c
+group4Mape6ObjectData:
+	obj_Interaction $b800 $78 $78
+	obj_Interaction $710c
 	obj_End
 
-group4Mape7ObjectData: ; 6610
-	obj_DoubleValue $400c $78 $a8
-	obj_DoubleValue $1200 $88 $78
-	obj_WithParam $00 $5803 $00 $58 $28
-	obj_WithParam $00 $5803 $01 $48 $38
-	obj_WithParam $00 $5703 $04 $38 $28
-	obj_WithParam $00 $5703 $05 $88 $c8
+group4Mape7ObjectData:
+	obj_Interaction $400c $78 $a8
+	obj_Interaction $1200 $88 $78
+	obj_Interaction $5803 $58 $28 $00
+	obj_Interaction $5803 $48 $38 $01
+	obj_Interaction $5703 $38 $28 $04
+	obj_Interaction $5703 $88 $c8 $05
 	obj_End
 
-group4Mape8ObjectData: ; 6633
-	obj_WithParam $00 $5803 $02 $48 $28
-	obj_WithParam $00 $5703 $06 $68 $78
-	obj_WithParam $00 $5703 $07 $58 $98
+group4Mape8ObjectData:
+	obj_Interaction $5803 $48 $28 $02
+	obj_Interaction $5703 $68 $78 $06
+	obj_Interaction $5703 $58 $98 $07
 	obj_End
 
-group4MapeaObjectData: ; 6647
-	obj_NoValue $c600
+group4MapeaObjectData:
+	obj_Interaction $c600
 	obj_End
 
-group4Mapf3ObjectData: ; 664b
-	obj_DoubleValue $1200 $88 $78
-	obj_WithParam $00 $5803 $04 $58 $98
+group4Mapf3ObjectData:
+	obj_Interaction $1200 $88 $78
+	obj_Interaction $5803 $58 $98 $04
 	obj_End
 
-group4Mapf6ObjectData: ; 6658
-	obj_DoubleValue $4d03 $f8 $78
+group4Mapf6ObjectData:
+	obj_Interaction $4d03 $f8 $78
 	obj_End
 
-group4MapfcObjectData: ; 665e
-	obj_DoubleValue $1e0a $a7 $00
-	obj_DoubleValue $4d06 $48 $78
+group4MapfcObjectData:
+	obj_Interaction $1e0a $a7 $00
+	obj_Interaction $4d06 $48 $78
 	obj_End
 
-group4MapfeObjectData: ; 6668
-	obj_DoubleValue $370c $58 $78
+group4MapfeObjectData:
+	obj_Interaction $370c $58 $78
 	obj_End
 
-group4Mape3ObjectData: ; 666e
-	obj_Pointer objectData406f
+group4Mape3ObjectData:
+	obj_Pointer group4Mape3EnemyObjectData
 	obj_End
 
-group4Mape4ObjectData: ; 6672
-	obj_Pointer objectData4074
+group4Mape4ObjectData:
+	obj_Pointer group4Mape4EnemyObjectData
 	obj_End
 
-group4Mape5ObjectData: ; 6676
-	obj_Pointer objectData4079
+group4Mape5ObjectData:
+	obj_Pointer group4Mape5EnemyObjectData
 	obj_End
 
-group4Mape9ObjectData: ; 667a
-	obj_Pointer objectData407e
+group4Mape9ObjectData:
+	obj_Pointer group4Mape9EnemyObjectData
 	obj_End
 
-group4MapebObjectData: ; 667e
-	obj_Pointer objectData4088
+group4MapebObjectData:
+	obj_Pointer group4MapebEnemyObjectData
 	obj_End
 
-group4MapecObjectData: ; 6682
-	obj_Pointer objectData408d
+group4MapecObjectData:
+	obj_Pointer group4MapecEnemyObjectData
 	obj_End
 
-group4MapedObjectData: ; 6686
-	obj_Pointer objectData4092
+group4MapedObjectData:
+	obj_Pointer group4MapedEnemyObjectData
 	obj_End
 
-group4MapeeObjectData: ; 668a
-	obj_Pointer objectData40ad
+group4MapeeObjectData:
+	obj_Pointer group4MapeeEnemyObjectData
 	obj_End
 
-group4MapefObjectData: ; 668e
-	obj_Pointer objectData40b2
+group4MapefObjectData:
+	obj_Pointer group4MapefEnemyObjectData
 	obj_End
 
-group4Mapf1ObjectData: ; 6692
-	obj_Pointer objectData40b9
+group4Mapf1ObjectData:
+	obj_Pointer group4Mapf1EnemyObjectData
 	obj_End
 
-group4Mapf2ObjectData: ; 6696
-	obj_Pointer objectData40c0
+group4Mapf2ObjectData:
+	obj_Pointer group4Mapf2EnemyObjectData
 	obj_End
 
-group4Mapf4ObjectData: ; 669a
-	obj_Pointer objectData40c5
+group4Mapf4ObjectData:
+	obj_Pointer group4Mapf4EnemyObjectData
 	obj_End
 
-group4Mapf5ObjectData: ; 669e
-	obj_Pointer objectData40ca
+group4Mapf5ObjectData:
+	obj_Pointer group4Mapf5EnemyObjectData
 	obj_End
 
-group4Mapf7ObjectData: ; 66a2
-	obj_Pointer objectData40ca
+group4Mapf7ObjectData:
+	obj_Pointer group4Mapf7EnemyObjectData
 	obj_End
 
-group4Mapf8ObjectData: ; 66a6
-	obj_Pointer objectData40cf
+group4Mapf8ObjectData:
+	obj_Pointer group4Mapf8EnemyObjectData
 	obj_End
 
-group4Mapf9ObjectData: ; 66aa
-	obj_Pointer objectData40d6
+group4Mapf9ObjectData:
+	obj_Pointer group4Mapf9EnemyObjectData
 	obj_End
 
-group4MapfaObjectData: ; 66ae
-	obj_Pointer objectData40db
+group4MapfaObjectData:
+	obj_Pointer group4MapfaEnemyObjectData
 	obj_End
 
-group4MapfbObjectData: ; 66b2
-	obj_Pointer objectData40e0
+group4MapfbObjectData:
+	obj_Pointer group4MapfbEnemyObjectData
 	obj_End
 
-group4MapfdObjectData: ; 66b6
-	obj_Pointer objectData40e5
+group4MapfdObjectData:
+	obj_Pointer group4MapfdEnemyObjectData
 	obj_End
 
-group4Map10ObjectData: ; 66ba
-	obj_DoubleValue $2001 $58 $58
+group4Map10ObjectData:
+	obj_Interaction $2001 $58 $58
 	obj_End
 
-group4Map11ObjectData: ; 66c0
-	obj_DoubleValue $7f00 $28 $78
+group4Map11ObjectData:
+	obj_Interaction $7f00 $28 $78
 	obj_End
 
-group4Map12ObjectData: ; 66c6
-	obj_Pointer objectData4770
+group4Map12ObjectData:
+	obj_Pointer group4Map12EnemyObjectData
 	obj_End
 
-group4Map13ObjectData: ; 66ca
-	obj_DoubleValue $1e08 $07 $00
-	obj_DoubleValue $1e0b $70 $00
-	obj_DoubleValue $2003 $58 $78
-	obj_BossPointer objectData477d
+group4Map13ObjectData:
+	obj_Interaction $1e08 $07 $00
+	obj_Interaction $1e0b $70 $00
+	obj_Interaction $2003 $58 $78
+	obj_BeforeEvent group4Map13BeforeEventObjectData
 	obj_End
 
-group4Map14ObjectData: ; 66db
+group4Map14ObjectData:
 	obj_End
 
-group4Map15ObjectData: ; 66dc
-	obj_DoubleValue $2000 $58 $a8
-	obj_DoubleValue $7905 $90 $30
+group4Map15ObjectData:
+	obj_Interaction $2000 $58 $a8
+	obj_Interaction $7905 $90 $30
 	obj_Part $0900 $1d
 	obj_End
 
-group4Map16ObjectData: ; 66ea
-	obj_DoubleValue $2000 $18 $78
-	obj_DoubleValue $2005 $00 $00
-	obj_DoubleValue $1e06 $a7 $00
+group4Map16ObjectData:
+	obj_Interaction $2000 $18 $78
+	obj_Interaction $2005 $00 $00
+	obj_Interaction $1e06 $a7 $00
 	obj_Part $0900 $22
 	obj_Part $0901 $2c
 	obj_End
 
-group4Map17ObjectData: ; 66ff
-	obj_Pointer objectData478a
+group4Map17ObjectData:
+	obj_Pointer group4Map17EnemyObjectData
 	obj_End
 
-group4Map18ObjectData: ; 6703
-	obj_DoubleValue $1e08 $07 $00
-	obj_DoubleValue $1e0b $50 $00
-	obj_DoubleValue $2002 $58 $78
-	obj_DoubleValue $7e00 $58 $78
-	obj_BossPointer objectData4795
+group4Map18ObjectData:
+	obj_Interaction $1e08 $07 $00
+	obj_Interaction $1e0b $50 $00
+	obj_Interaction $2002 $58 $78
+	obj_Interaction $7e00 $58 $78
+	obj_BeforeEvent group4Map18BeforeEventObjectData
 	obj_End
 
-group4Map19ObjectData: ; 6718
-	obj_Pointer objectData479c
+group4Map19ObjectData:
+	obj_Pointer group4Map19EnemyObjectData
 	obj_End
 
-group4Map1aObjectData: ; 671c
-	obj_Pointer objectData479c
+group4Map1aObjectData:
+	obj_Pointer group4Map1aEnemyObjectData
 	obj_End
 
-group4Map1bObjectData: ; 6720
-	obj_DoubleValue $2004 $28 $b8
-	obj_Pointer objectData47a1
+group4Map1bObjectData:
+	obj_Interaction $2004 $28 $b8
+	obj_Pointer group4Map1bEnemyObjectData
 	obj_End
 
-group4Map1cObjectData: ; 6729
-	obj_DoubleValue $2000 $58 $98
+group4Map1cObjectData:
+	obj_Interaction $2000 $58 $98
 	obj_Part $0900 $55
-	obj_Pointer objectData47ac
+	obj_Pointer group4Map1cEnemyObjectData
 	obj_End
 
-group4Map1dObjectData: ; 6736
+group4Map1dObjectData:
 	obj_End
 
-group4Map1eObjectData: ; 6737
-	obj_DoubleValue $1e0a $a7 $00
-	obj_DoubleValue $1e0b $50 $00
-	obj_DoubleValue $1201 $58 $38
-	obj_Pointer objectData47b1
+group4Map1eObjectData:
+	obj_Interaction $1e0a $a7 $00
+	obj_Interaction $1e0b $50 $00
+	obj_Interaction $1201 $58 $38
+	obj_Pointer group4Map1eEnemyObjectData
 	obj_End
 
-group4Map1fObjectData: ; 6748
-	obj_Pointer objectData47b6
+group4Map1fObjectData:
+	obj_Pointer group4Map1fEnemyObjectData
 	obj_End
 
-group4Map20ObjectData: ; 674c
-	obj_DoubleValue $1e04 $07 $00
-	obj_DoubleValue $1e05 $3e $00
-	obj_DoubleValue $1905 $78 $a8
-	obj_DoubleValue $1a00 $2e $98
-	obj_DoubleValue $1a00 $4e $98
-	obj_DoubleValue $1a00 $2e $b8
-	obj_DoubleValue $1a00 $4e $b8
-	obj_DoubleValue $2103 $48 $a8
-	obj_NoValue $2119
-	obj_Pointer objectData47cf
+group4Map20ObjectData:
+	obj_Interaction $1e04 $07 $00
+	obj_Interaction $1e05 $3e $00
+	obj_Interaction $1905 $78 $a8
+	obj_Interaction $1a00 $2e $98
+	obj_Interaction $1a00 $4e $98
+	obj_Interaction $1a00 $2e $b8
+	obj_Interaction $1a00 $4e $b8
+	obj_Interaction $2103 $48 $a8
+	obj_Interaction $2119
+	obj_Pointer group4Map20EnemyObjectData
 	obj_End
 
-group4Map21ObjectData: ; 6774
-	obj_Pointer objectData47d0
+group4Map21ObjectData:
+	obj_Pointer group4Map21EnemyObjectData
 	obj_End
 
-group4Map22ObjectData: ; 6778
-	obj_DoubleValue $1e05 $5e $00
+group4Map22ObjectData:
+	obj_Interaction $1e05 $5e $00
 	obj_Part $0980 $5b
-	obj_Pointer objectData47cf
+	obj_Pointer group4Map22EnemyObjectData
 	obj_End
 
-group4Map23ObjectData: ; 6785
-	obj_Pointer objectData47df
+group4Map23ObjectData:
+	obj_Pointer group4Map23EnemyObjectData
 	obj_End
 
-group4Map24ObjectData: ; 6789
-	obj_DoubleValue $1200 $88 $78
-	obj_NoValue $e201
-	obj_NoValue $7e00
+group4Map24ObjectData:
+	obj_Interaction $1200 $88 $78
+	obj_Interaction $e201
+	obj_Interaction $7e00
 	obj_End
 
-group4Map25ObjectData: ; 6794
-	obj_DoubleValue $1e08 $0a $00
-	obj_DoubleValue $1e0b $50 $00
-	obj_Pointer objectData47ee
+group4Map25ObjectData:
+	obj_Interaction $1e08 $0a $00
+	obj_Interaction $1e0b $50 $00
+	obj_Pointer group4Map25EnemyObjectData
 	obj_End
 
-group4Map27ObjectData: ; 67a1
-	obj_DoubleValue $2001 $28 $28
-	obj_Pointer objectData47fd
+group4Map27ObjectData:
+	obj_Interaction $2001 $28 $28
+	obj_Pointer group4Map27EnemyObjectData
 	obj_End
 
-group4Map28ObjectData: ; 67aa
-	obj_DoubleValue $2000 $98 $48
+group4Map28ObjectData:
+	obj_Interaction $2000 $98 $48
 	obj_End
 
-group4Map29ObjectData: ; 67b0
-	obj_DoubleValue $a106 $58 $58
-	obj_DoubleValue $a107 $68 $98
-	obj_Pointer objectData480f
+group4Map29ObjectData:
+	obj_Interaction $a106 $58 $58
+	obj_Interaction $a107 $68 $98
+	obj_Pointer group4Map29EnemyObjectData
 	obj_End
 
-group4Map2aObjectData: ; 67bd
-	obj_DoubleValue $a108 $98 $58
-	obj_DoubleValue $a109 $48 $d8
-	obj_Pointer objectData4814
+group4Map2aObjectData:
+	obj_Interaction $a108 $98 $58
+	obj_Interaction $a109 $48 $d8
+	obj_Pointer group4Map2aEnemyObjectData
 	obj_End
 
-group4Map2bObjectData: ; 67ca
-	obj_DoubleValue $2003 $58 $78
-	obj_DoubleValue $a400 $00 $00
-	obj_DoubleValue $a401 $00 $00
-	obj_DoubleValue $a402 $00 $00
-	obj_BossPointer objectData481f
+group4Map2bObjectData:
+	obj_Interaction $2003 $58 $78
+	obj_Interaction $a400 $00 $00
+	obj_Interaction $a401 $00 $00
+	obj_Interaction $a402 $00 $00
+	obj_BeforeEvent group4Map2bBeforeEventObjectData
 	obj_End
 
-group4Map2cObjectData: ; 67df
-	obj_Pointer objectData4826
+group4Map2cObjectData:
+	obj_Pointer group4Map2cEnemyObjectData
 	obj_End
 
-group4Map2dObjectData: ; 67e3
-	obj_Pointer objectData4826
+group4Map2dObjectData:
+	obj_Pointer group4Map2dEnemyObjectData
 	obj_End
 
-group4Map2eObjectData: ; 67e7
-	obj_DoubleValue $2101 $48 $58
-	obj_NoValue $1500
-	obj_Pointer objectData4835
+group4Map2eObjectData:
+	obj_Interaction $2101 $48 $58
+	obj_Interaction $1500
+	obj_Pointer group4Map2eEnemyObjectData
 	obj_End
 
-group4Map2fObjectData: ; 67f3
-	obj_DoubleValue $1901 $78 $68
-	obj_DoubleValue $7802 $6c $13
-	obj_DoubleValue $1b04 $48 $50
-	obj_DoubleValue $2103 $58 $68
-	obj_DoubleValue $2108 $00 $10
+group4Map2fObjectData:
+	obj_Interaction $1901 $78 $68
+	obj_Interaction $7802 $6c $13
+	obj_Interaction $1b04 $48 $50
+	obj_Interaction $2103 $58 $68
+	obj_Interaction $2108 $00 $10
 	obj_Part $0502 $79
-	obj_Pointer objectData483a
+	obj_Pointer group4Map2fEnemyObjectData
 	obj_End
 
-group4Map30ObjectData: ; 6810
-	obj_DoubleValue $1202 $58 $78
-	obj_Pointer objectData4845
+group4Map30ObjectData:
+	obj_Interaction $1202 $58 $78
+	obj_Pointer group4Map30EnemyObjectData
 	obj_End
 
-group4Map31ObjectData: ; 6819
-	obj_Pointer objectData484e
+group4Map31ObjectData:
+	obj_Pointer group4Map31EnemyObjectData
 	obj_End
 
-group4Map32ObjectData: ; 681d
-	obj_DoubleValue $1e07 $30 $00
-	obj_DoubleValue $1e05 $5e $00
-	obj_NoValue $1500
-	obj_NoValue $2102
-	obj_Pointer objectData4861
+group4Map32ObjectData:
+	obj_Interaction $1e07 $30 $00
+	obj_Interaction $1e05 $5e $00
+	obj_Interaction $1500
+	obj_Interaction $2102
+	obj_Pointer group4Map32EnemyObjectData
 	obj_End
 
-group4Map33ObjectData: ; 682f
-	obj_Pointer objectData4870
+group4Map33ObjectData:
+	obj_Pointer group4Map33EnemyObjectData
 	obj_End
 
-group4Map34ObjectData: ; 6833
-	obj_DoubleValue $1e0a $a7 $00
-	obj_DoubleValue $1e09 $3e $00
-	obj_DoubleValue $1e09 $7e $00
-	obj_DoubleValue $2002 $58 $78
-	obj_DoubleValue $7e00 $58 $78
-	obj_BossPointer objectData4875
+group4Map34ObjectData:
+	obj_Interaction $1e0a $a7 $00
+	obj_Interaction $1e09 $3e $00
+	obj_Interaction $1e09 $7e $00
+	obj_Interaction $2002 $58 $78
+	obj_Interaction $7e00 $58 $78
+	obj_BeforeEvent group4Map34BeforeEventObjectData
 	obj_End
 
-group4Map35ObjectData: ; 684c
-	obj_Pointer objectData487c
+group4Map35ObjectData:
+	obj_Pointer group4Map35EnemyObjectData
 	obj_End
 
-group4Map36ObjectData: ; 6850
-	obj_Pointer objectData487d
+group4Map36ObjectData:
+	obj_Pointer group4Map36EnemyObjectData
 	obj_End
 
-group4Map37ObjectData: ; 6854
-	obj_Pointer objectData488c
+group4Map37ObjectData:
+	obj_Pointer group4Map37EnemyObjectData
 	obj_End
 
-group4Map38ObjectData: ; 6858
-	obj_DoubleValue $7f00 $28 $78
+group4Map38ObjectData:
+	obj_Interaction $7f00 $28 $78
 	obj_End
 
-group4Map39ObjectData: ; 685e
-	obj_DoubleValue $1201 $58 $78
-	obj_Pointer objectData4897
+group4Map39ObjectData:
+	obj_Interaction $1201 $58 $78
+	obj_Pointer group4Map39EnemyObjectData
 	obj_End
 
-group4Map3aObjectData: ; 6867
-	obj_Pointer objectData48a0
+group4Map3aObjectData:
+	obj_Pointer group4Map3aEnemyObjectData
 	obj_End
 
-group4Map3bObjectData: ; 686b
-	obj_NoValue $1500
-	obj_DoubleValue $2107 $79 $20
-	obj_DoubleValue $1b25 $78 $b0
-	obj_Pointer objectData48af
+group4Map3bObjectData:
+	obj_Interaction $1500
+	obj_Interaction $2107 $79 $20
+	obj_Interaction $1b25 $78 $b0
+	obj_Pointer group4Map3bEnemyObjectData
 	obj_End
 
-group4Map3cObjectData: ; 687b
-	obj_DoubleValue $1e05 $5e $00
+group4Map3cObjectData:
+	obj_Interaction $1e05 $5e $00
 	obj_Part $0980 $5c
-	obj_Pointer objectData48b4
+	obj_Pointer group4Map3cEnemyObjectData
 	obj_End
 
-group4Map3dObjectData: ; 6888
-	obj_Pointer objectData48bd
+group4Map3dObjectData:
+	obj_Pointer group4Map3dEnemyObjectData
 	obj_End
 
-group4Map3eObjectData: ; 688c
-	obj_DoubleValue $1e0b $50 $00
-	obj_DoubleValue $1202 $58 $88
-	obj_DoubleValue $2200 $58 $78
-	obj_NoValue $1500
-	obj_Pointer objectData48c4
+group4Map3eObjectData:
+	obj_Interaction $1e0b $50 $00
+	obj_Interaction $1202 $58 $88
+	obj_Interaction $2200 $58 $78
+	obj_Interaction $1500
+	obj_Pointer group4Map3eEnemyObjectData
 	obj_End
 
-group4Map3fObjectData: ; 68a0
-	obj_Pointer objectData48e3
+group4Map3fObjectData:
+	obj_Pointer group4Map3fEnemyObjectData
 	obj_End
 
-group4Map40ObjectData: ; 68a4
-	obj_Pointer objectData48e8
+group4Map40ObjectData:
+	obj_Pointer group4Map40EnemyObjectData
 	obj_End
 
-group4Map41ObjectData: ; 68a8
-	obj_Pointer objectData48ed
+group4Map41ObjectData:
+	obj_Pointer group4Map41EnemyObjectData
 	obj_End
 
-group4Map42ObjectData: ; 68ac
-	obj_NoValue $1500
-	obj_DoubleValue $2104 $28 $78
-	obj_DoubleValue $2105 $58 $78
-	obj_DoubleValue $1a00 $0e $78
-	obj_Pointer objectData4900
+group4Map42ObjectData:
+	obj_Interaction $1500
+	obj_Interaction $2104 $28 $78
+	obj_Interaction $2105 $58 $78
+	obj_Interaction $1a00 $0e $78
+	obj_Pointer group4Map42EnemyObjectData
 	obj_End
 
-group4Map43ObjectData: ; 68c0
-	obj_DoubleValue $1e04 $04 $00
-	obj_DoubleValue $1904 $38 $98
-	obj_DoubleValue $1a00 $2e $28
-	obj_DoubleValue $2103 $38 $58
-	obj_NoValue $2106
-	obj_Pointer objectData487c
+group4Map43ObjectData:
+	obj_Interaction $1e04 $04 $00
+	obj_Interaction $1904 $38 $98
+	obj_Interaction $1a00 $2e $28
+	obj_Interaction $2103 $38 $58
+	obj_Interaction $2106
+	obj_Pointer group4Map43EnemyObjectData
 	obj_End
 
-group4Map44ObjectData: ; 68d8
-	obj_DoubleValue $1e0b $90 $00
-	obj_Pointer objectData4909
+group4Map44ObjectData:
+	obj_Interaction $1e0b $90 $00
+	obj_Pointer group4Map44EnemyObjectData
 	obj_End
 
-group4Map45ObjectData: ; 68e1
-	obj_DoubleValue $1301 $58 $b8
-	obj_Pointer objectData4918
+group4Map45ObjectData:
+	obj_Interaction $1301 $58 $b8
+	obj_Pointer group4Map45EnemyObjectData
 	obj_End
 
-group4Map46ObjectData: ; 68ea
-	obj_DoubleValue $1200 $88 $78
-	obj_NoValue $e201
-	obj_NoValue $7e00
-	obj_Pointer objectData492f
+group4Map46ObjectData:
+	obj_Interaction $1200 $88 $78
+	obj_Interaction $e201
+	obj_Interaction $7e00
+	obj_Pointer group4Map46EnemyObjectData
 	obj_End
 
-group4Map47ObjectData: ; 68f8
-	obj_Pointer objectData493a
+group4Map47ObjectData:
+	obj_Pointer group4Map47EnemyObjectData
 	obj_End
 
-group4Map48ObjectData: ; 68fc
-	obj_DoubleValue $1202 $58 $78
-	obj_Pointer objectData4943
+group4Map48ObjectData:
+	obj_Interaction $1202 $58 $78
+	obj_Pointer group4Map48EnemyObjectData
 	obj_End
 
-group4Map49ObjectData: ; 6905
-	obj_DoubleValue $7f00 $28 $78
+group4Map49ObjectData:
+	obj_Interaction $7f00 $28 $78
 	obj_End
 
-group4Map4aObjectData: ; 690b
-	obj_DoubleValue $1e0b $50 $00
-	obj_DoubleValue $1e09 $5e $00
-	obj_DoubleValue $2001 $58 $78
-	obj_BossPointer objectData4a49
+group4Map4aObjectData:
+	obj_Interaction $1e0b $50 $00
+	obj_Interaction $1e09 $5e $00
+	obj_Interaction $2001 $58 $78
+	obj_BeforeEvent group4Map4aBeforeEventObjectData
 	obj_End
 
-group4Map4bObjectData: ; 691c
-	obj_DoubleValue $1301 $68 $b8
-	obj_DoubleValue $1201 $58 $88
-	obj_DoubleValue $dc08 $54 $80
-	obj_Pointer objectData4948
+group4Map4bObjectData:
+	obj_Interaction $1301 $68 $b8
+	obj_Interaction $1201 $58 $88
+	obj_Interaction $dc08 $54 $80
+	obj_Pointer group4Map4bEnemyObjectData
 	obj_End
 
-group4Map4cObjectData: ; 692d
-	obj_DoubleValue $2300 $43 $00
-	obj_DoubleValue $2300 $76 $01
+group4Map4cObjectData:
+	obj_Interaction $2300 $43 $00
+	obj_Interaction $2300 $76 $01
 	obj_Part $0300 $95
 	obj_Part $0501 $38
-	obj_WithParam $02 $330a $03 $88 $88
+	obj_Part $330a $88 $88 $03
 	obj_Pointer objectData4056
-	obj_Pointer objectData4965
+	obj_Pointer group4Map4cEnemyObjectData
 	obj_End
 
-group4Map4dObjectData: ; 694b
-	obj_DoubleValue $1e0a $a7 $00
-	obj_DoubleValue $1e0b $30 $00
-	obj_DoubleValue $7e00 $58 $78
-	obj_DoubleValue $2000 $58 $78
-	obj_BossPointer objectData4a50
+group4Map4dObjectData:
+	obj_Interaction $1e0a $a7 $00
+	obj_Interaction $1e0b $30 $00
+	obj_Interaction $7e00 $58 $78
+	obj_Interaction $2000 $58 $78
+	obj_BeforeEvent group4Map4dBeforeEventObjectData
 	obj_End
 
-group4Map4eObjectData: ; 6960
-	obj_DoubleValue $2301 $39 $02
-	obj_DoubleValue $2301 $42 $03
-	obj_DoubleValue $2301 $4c $04
+group4Map4eObjectData:
+	obj_Interaction $2301 $39 $02
+	obj_Interaction $2301 $42 $03
+	obj_Interaction $2301 $4c $04
 	obj_Part $0302 $31
 	obj_Part $0303 $3d
 	obj_Part $0502 $68
-	obj_WithParam $02 $330a $0c $18 $88
+	obj_Part $330a $18 $88 $0c
 	obj_Pointer objectData4056
-	obj_Pointer objectData4965
+	obj_Pointer group4Map4eEnemyObjectData
 	obj_End
 
-group4Map4fObjectData: ; 6985
-	obj_Pointer objectData4957
+group4Map4fObjectData:
+	obj_Pointer group4Map4fEnemyObjectData
 	obj_End
 
-group4Map50ObjectData: ; 6989
+group4Map50ObjectData:
 	obj_End
 
-group4Map51ObjectData: ; 698a
-	obj_Pointer objectData4973
+group4Map51ObjectData:
+	obj_Pointer group4Map51EnemyObjectData
 	obj_End
 
-group4Map52ObjectData: ; 698e
+group4Map52ObjectData:
 	obj_End
 
-group4Map53ObjectData: ; 698f
-	obj_NoValue $2421
-	obj_DoubleValue $1e04 $08 $02
+group4Map53ObjectData:
+	obj_Interaction $2421
+	obj_Interaction $1e04 $08 $02
 	obj_Part $0504 $6a
 	obj_Part $0980 $39
-	obj_WithParam $02 $331a $01 $38 $c8
-	obj_WithParam $02 $331a $01 $38 $d8
-	obj_Pointer objectData4999
+	obj_Part $331a $38 $c8 $01
+	obj_Part $331a $38 $d8 $01
+	obj_Pointer group4Map53EnemyObjectData
 	obj_End
 
-group4Map54ObjectData: ; 69af
-	obj_DoubleValue $1e11 $20 $00
-	obj_DoubleValue $1e0a $a3 $00
-	obj_DoubleValue $1e0a $ac $00
-	obj_Pointer objectData49a0
+group4Map54ObjectData:
+	obj_Interaction $1e11 $20 $00
+	obj_Interaction $1e0a $a3 $00
+	obj_Interaction $1e0a $ac $00
+	obj_Pointer group4Map54EnemyObjectData
 	obj_End
 
-group4Map55ObjectData: ; 69c0
-	obj_DoubleValue $2002 $48 $c8
+group4Map55ObjectData:
+	obj_Interaction $2002 $48 $c8
 	obj_Pointer objectData_makeAllTorchesLightable
-	obj_Pointer objectData49af
+	obj_Pointer group4Map55EnemyObjectData
 	obj_End
 
-group4Map56ObjectData: ; 69cc
-	obj_NoValue $210a
-	obj_Pointer objectData49b4
+group4Map56ObjectData:
+	obj_Interaction $210a
+	obj_Pointer group4Map56EnemyObjectData
 	obj_End
 
-group4Map57ObjectData: ; 69d3
-	obj_DoubleValue $1e08 $08 $00
-	obj_Pointer objectData49bb
+group4Map57ObjectData:
+	obj_Interaction $1e08 $08 $00
+	obj_Pointer group4Map57EnemyObjectData
 	obj_End
 
-group4Map58ObjectData: ; 69dc
-	obj_DoubleValue $1202 $58 $98
-	obj_Pointer objectData49e3
+group4Map58ObjectData:
+	obj_Interaction $1202 $58 $98
+	obj_Pointer group4Map58EnemyObjectData
 	obj_End
 
-group4Map59ObjectData: ; 69e5
-	obj_DoubleValue $2402 $01 $01
-	obj_DoubleValue $1e06 $a3 $00
+group4Map59ObjectData:
+	obj_Interaction $2402 $01 $01
+	obj_Interaction $1e06 $a3 $00
 	obj_Pointer objectData_makeAllTorchesLightable
-	obj_Pointer objectData49f2
+	obj_Pointer group4Map59EnemyObjectData
 	obj_End
 
-group4Map5aObjectData: ; 69f5
-	obj_Pointer objectData49fd
+group4Map5aObjectData:
+	obj_Pointer group4Map5aEnemyObjectData
 	obj_End
 
-group4Map5bObjectData: ; 69f9
-	obj_DoubleValue $1e0b $50 $00
-	obj_DoubleValue $1e0a $a7 $00
-	obj_Pointer objectData4a10
+group4Map5bObjectData:
+	obj_Interaction $1e0b $50 $00
+	obj_Interaction $1e0a $a7 $00
+	obj_Pointer group4Map5bEnemyObjectData
 	obj_End
 
-group4Map5cObjectData: ; 6a06
-	obj_Pointer objectData49fd
+group4Map5cObjectData:
+	obj_Pointer group4Map5cEnemyObjectData
 	obj_End
 
-group4Map5dObjectData: ; 6a0a
-	obj_NoValue $210d
+group4Map5dObjectData:
+	obj_Interaction $210d
 	obj_Part $2410 $23
-	obj_Pointer objectData4a19
+	obj_Pointer group4Map5dEnemyObjectData
 	obj_End
 
-group4Map5eObjectData: ; 6a15
-	obj_NoValue $210c
+group4Map5eObjectData:
+	obj_Interaction $210c
 	obj_Part $0900 $19
 	obj_End
 
-group4Map5fObjectData: ; 6a1d
-	obj_NoValue $210d
+group4Map5fObjectData:
+	obj_Interaction $210d
 	obj_Part $2420 $33
-	obj_Pointer objectData496a
+	obj_Pointer group4Map5fEnemyObjectData
 	obj_End
 
-group4Map60ObjectData: ; 6a28
+group4Map60ObjectData:
 	obj_End
 
-group4Map61ObjectData: ; 6a29
-	obj_NoValue $210d
-	obj_DoubleValue $210e $58 $b8
+group4Map61ObjectData:
+	obj_Interaction $210d
+	obj_Interaction $210e $58 $b8
 	obj_Part $2440 $57
-	obj_Pointer objectData4a34
+	obj_Pointer group4Map61EnemyObjectData
 	obj_End
 
-group4Map62ObjectData: ; 6a39
-	obj_DoubleValue $1e09 $5e $00
-	obj_Pointer objectData4a39
+group4Map62ObjectData:
+	obj_Interaction $1e09 $5e $00
+	obj_Pointer group4Map62EnemyObjectData
 	obj_End
 
-group4Map63ObjectData: ; 6a42
-	obj_NoValue $210d
+group4Map63ObjectData:
+	obj_Interaction $210d
 	obj_Part $2480 $77
-	obj_Pointer objectData49ab
+	obj_Pointer group4Map63EnemyObjectData
 	obj_End
 
-group4Map64ObjectData: ; 6a4d
-	obj_DoubleValue $2109 $68 $b8
+group4Map64ObjectData:
+	obj_Interaction $2109 $68 $b8
 	obj_End
 
-group4Map65ObjectData: ; 6a53
-	obj_DoubleValue $1202 $58 $88
-	obj_Pointer objectData49cc
+group4Map65ObjectData:
+	obj_Interaction $1202 $58 $88
+	obj_Pointer group4Map65EnemyObjectData
 	obj_End
 
-group4Map66ObjectData: ; 6a5c
-	obj_DoubleValue $1200 $88 $78
-	obj_NoValue $e201
-	obj_NoValue $7e00
-	obj_NoValue $2118
-	obj_Pointer objectData4a3e
+group4Map66ObjectData:
+	obj_Interaction $1200 $88 $78
+	obj_Interaction $e201
+	obj_Interaction $7e00
+	obj_Interaction $2118
+	obj_Pointer group4Map66EnemyObjectData
 	obj_End
 
-group4Map68ObjectData: ; 6a6c
-	obj_DoubleValue $a101 $48 $58
-	obj_DoubleValue $a101 $48 $98
-	obj_Pointer objectData4a57
+group4Map68ObjectData:
+	obj_Interaction $a101 $48 $58
+	obj_Interaction $a101 $48 $98
+	obj_Pointer group4Map68EnemyObjectData
 	obj_End
 
-group4Map69ObjectData: ; 6a79
-	obj_DoubleValue $7f00 $28 $78
+group4Map69ObjectData:
+	obj_Interaction $7f00 $28 $78
 	obj_End
 
-group4Map6aObjectData: ; 6a7f
-	obj_DoubleValue $1e06 $a3 $00
+group4Map6aObjectData:
+	obj_Interaction $1e06 $a3 $00
 	obj_Part $0980 $63
-	obj_Pointer objectData4a5d
+	obj_Pointer group4Map6aEnemyObjectData
 	obj_End
 
-group4Map6bObjectData: ; 6a8c
-	obj_DoubleValue $2001 $58 $78
-	obj_DoubleValue $1e08 $07 $00
-	obj_DoubleValue $1e09 $5e $00
-	obj_BossPointer objectData4a6c
+group4Map6bObjectData:
+	obj_Interaction $2001 $58 $78
+	obj_Interaction $1e08 $07 $00
+	obj_Interaction $1e09 $5e $00
+	obj_BeforeEvent group4Map6bBeforeEventObjectData
 	obj_End
 
-group4Map6cObjectData: ; 6a9d
-	obj_DoubleValue $7903 $58 $a0
-	obj_DoubleValue $7908 $28 $68
-	obj_Pointer objectData4a73
+group4Map6cObjectData:
+	obj_Interaction $7903 $58 $a0
+	obj_Interaction $7908 $28 $68
+	obj_Pointer group4Map6cEnemyObjectData
 	obj_End
 
-group4Map6dObjectData: ; 6aaa
-	obj_Pointer objectData4a82
+group4Map6dObjectData:
+	obj_Pointer group4Map6dEnemyObjectData
 	obj_End
 
-group4Map6eObjectData: ; 6aae
-	obj_Pointer objectData4a8d
+group4Map6eObjectData:
+	obj_Pointer group4Map6eEnemyObjectData
 	obj_End
 
-group4Map6fObjectData: ; 6ab2
-	obj_DoubleValue $2500 $58 $d8
-	obj_DoubleValue $2111 $68 $78
-	obj_Pointer objectData4a98
+group4Map6fObjectData:
+	obj_Interaction $2500 $58 $d8
+	obj_Interaction $2111 $68 $78
+	obj_Pointer group4Map6fEnemyObjectData
 	obj_End
 
-group4Map70ObjectData: ; 6abf
-	obj_Pointer objectData4a9d
+group4Map70ObjectData:
+	obj_Pointer group4Map70EnemyObjectData
 	obj_End
 
-group4Map71ObjectData: ; 6ac3
-	obj_DoubleValue $1e08 $07 $00
-	obj_DoubleValue $1e0b $50 $00
-	obj_DoubleValue $2200 $58 $78
-	obj_NoValue $1500
-	obj_Pointer objectData4aba
+group4Map71ObjectData:
+	obj_Interaction $1e08 $07 $00
+	obj_Interaction $1e0b $50 $00
+	obj_Interaction $2200 $58 $78
+	obj_Interaction $1500
+	obj_Pointer group4Map71EnemyObjectData
 	obj_End
 
-group4Map72ObjectData: ; 6ad7
-	obj_NoValue $1500
-	obj_DoubleValue $1b00 $88 $c0
-	obj_DoubleValue $2107 $8d $01
-	obj_Pointer objectData4abf
+group4Map72ObjectData:
+	obj_Interaction $1500
+	obj_Interaction $1b00 $88 $c0
+	obj_Interaction $2107 $8d $01
+	obj_Pointer group4Map72EnemyObjectData
 	obj_End
 
-group4Map73ObjectData: ; 6ae7
-	obj_Pointer objectData4ac8
+group4Map73ObjectData:
+	obj_Pointer group4Map73EnemyObjectData
 	obj_End
 
-group4Map74ObjectData: ; 6aeb
-	obj_DoubleValue $7911 $40 $70
+group4Map74ObjectData:
+	obj_Interaction $7911 $40 $70
 	obj_Part $0300 $6a
-	obj_DoubleValue $2002 $58 $48
-	obj_Pointer objectData4acd
+	obj_Interaction $2002 $58 $48
+	obj_Pointer group4Map74EnemyObjectData
 	obj_End
 
-group4Map75ObjectData: ; 6afd
-	obj_DoubleValue $791a $28 $a8
-	obj_DoubleValue $7923 $48 $68
-	obj_DoubleValue $7929 $90 $68
-	obj_Pointer objectData4ad2
+group4Map75ObjectData:
+	obj_Interaction $791a $28 $a8
+	obj_Interaction $7923 $48 $68
+	obj_Interaction $7929 $90 $68
+	obj_Pointer group4Map75EnemyObjectData
 	obj_End
 
-group4Map76ObjectData: ; 6b0e
-	obj_DoubleValue $1e0b $30 $00
-	obj_Pointer objectData4ad7
+group4Map76ObjectData:
+	obj_Interaction $1e0b $30 $00
+	obj_Pointer group4Map76EnemyObjectData
 	obj_End
 
-group4Map77ObjectData: ; 6b17
-	obj_Pointer objectData4a5c
+group4Map77ObjectData:
+	obj_Pointer group4Map77EnemyObjectData
 	obj_End
 
-group4Map78ObjectData: ; 6b1b
-	obj_DoubleValue $1901 $28 $c8
-	obj_DoubleValue $1b01 $68 $60
-	obj_DoubleValue $2103 $68 $78
-	obj_DoubleValue $2108 $00 $02
-	obj_Pointer objectData4ae6
+group4Map78ObjectData:
+	obj_Interaction $1901 $28 $c8
+	obj_Interaction $1b01 $68 $60
+	obj_Interaction $2103 $68 $78
+	obj_Interaction $2108 $00 $02
+	obj_Pointer group4Map78EnemyObjectData
 	obj_End
 
-group4Map79ObjectData: ; 6b30
-	obj_DoubleValue $1e07 $50 $00
-	obj_NoValue $1500
-	obj_NoValue $210f
-	obj_Pointer objectData4af5
+group4Map79ObjectData:
+	obj_Interaction $1e07 $50 $00
+	obj_Interaction $1500
+	obj_Interaction $210f
+	obj_Pointer group4Map79EnemyObjectData
 	obj_End
 
-group4Map7aObjectData: ; 6b3e
-	obj_DoubleValue $2117 $39 $01
+group4Map7aObjectData:
+	obj_Interaction $2117 $39 $01
 	obj_Part $0980 $14
-	obj_Pointer objectData4a5c
+	obj_Pointer group4Map7aEnemyObjectData
 	obj_End
 
-group4Map7bObjectData: ; 6b4b
-	obj_DoubleValue $2110 $58 $68
-	obj_NoValue $1500
-	obj_Pointer objectData4afa
+group4Map7bObjectData:
+	obj_Interaction $2110 $58 $68
+	obj_Interaction $1500
+	obj_Pointer group4Map7bEnemyObjectData
 	obj_End
 
-group4Map7cObjectData: ; 6b57
-	obj_Pointer objectData4b05
+group4Map7cObjectData:
+	obj_Pointer group4Map7cEnemyObjectData
 	obj_End
 
-group4Map7dObjectData: ; 6b5b
-	obj_Pointer objectData4b18
+group4Map7dObjectData:
+	obj_Pointer group4Map7dEnemyObjectData
 	obj_End
 
-group4Map7eObjectData: ; 6b5f
-	obj_DoubleValue $1e0b $40 $00
-	obj_Pointer objectData4b1d
+group4Map7eObjectData:
+	obj_Interaction $1e0b $40 $00
+	obj_Pointer group4Map7eEnemyObjectData
 	obj_End
 
-group4Map7fObjectData: ; 6b68
-	obj_DoubleValue $6130 $10 $a8
-	obj_NoValue $d802
-	obj_Pointer objectData4b22
+group4Map7fObjectData:
+	obj_Interaction $6130 $10 $a8
+	obj_Interaction $d802
+	obj_Pointer group4Map7fEnemyObjectData
 	obj_End
 
-group4Map80ObjectData: ; 6b74
-	obj_DoubleValue $2000 $58 $78
-	obj_DoubleValue $7e00 $58 $78
-	obj_DoubleValue $1e09 $5e $00
-	obj_DoubleValue $1e0a $a7 $00
-	obj_BossPointer objectData4b2d
+group4Map80ObjectData:
+	obj_Interaction $2000 $58 $78
+	obj_Interaction $7e00 $58 $78
+	obj_Interaction $1e09 $5e $00
+	obj_Interaction $1e0a $a7 $00
+	obj_BeforeEvent group4Map80BeforeEventObjectData
 	obj_End
 
-group4Map81ObjectData: ; 6b89
-	obj_Pointer objectData4b34
+group4Map81ObjectData:
+	obj_Pointer group4Map81EnemyObjectData
 	obj_End
 
-group4Map82ObjectData: ; 6b8d
-	obj_DoubleValue $1e06 $ab $00
+group4Map82ObjectData:
+	obj_Interaction $1e06 $ab $00
 	obj_Part $0980 $67
-	obj_Pointer objectData4b43
+	obj_Pointer group4Map82EnemyObjectData
 	obj_End
 
-group4Map83ObjectData: ; 6b9a
-	obj_DoubleValue $6130 $10 $d8
-	obj_NoValue $d800
-	obj_Pointer objectData4b50
+group4Map83ObjectData:
+	obj_Interaction $6130 $10 $d8
+	obj_Interaction $d800
+	obj_Pointer group4Map83EnemyObjectData
 	obj_End
 
-group4Map84ObjectData: ; 6ba6
-	obj_DoubleValue $6131 $a0 $c8
-	obj_NoValue $d801
-	obj_Pointer objectData4b55
+group4Map84ObjectData:
+	obj_Interaction $6131 $a0 $c8
+	obj_Interaction $d801
+	obj_Pointer group4Map84EnemyObjectData
 	obj_End
 
-group4Map85ObjectData: ; 6bb2
-	obj_Pointer objectData4b5c
+group4Map85ObjectData:
+	obj_Pointer group4Map85EnemyObjectData
 	obj_End
 
-group4Map86ObjectData: ; 6bb6
-	obj_Pointer objectData4b67
+group4Map86ObjectData:
+	obj_Pointer group4Map86EnemyObjectData
 	obj_End
 
-group4Map87ObjectData: ; 6bba
-	obj_DoubleValue $2500 $98 $28
-	obj_DoubleValue $2111 $68 $58
-	obj_Pointer objectData4b76
+group4Map87ObjectData:
+	obj_Interaction $2500 $98 $28
+	obj_Interaction $2111 $68 $58
+	obj_Pointer group4Map87EnemyObjectData
 	obj_End
 
-group4Map88ObjectData: ; 6bc7
-	obj_Pointer objectData4b7b
+group4Map88ObjectData:
+	obj_Pointer group4Map88EnemyObjectData
 	obj_End
 
-group4Map89ObjectData: ; 6bcb
-	obj_DoubleValue $7804 $67 $0b
+group4Map89ObjectData:
+	obj_Interaction $7804 $67 $0b
 	obj_Part $0504 $62
-	obj_Pointer objectData4b76
+	obj_Pointer group4Map89EnemyObjectData
 	obj_End
 
-group4Map8aObjectData: ; 6bd8
-	obj_Pointer objectData4b8a
+group4Map8aObjectData:
+	obj_Pointer group4Map8aEnemyObjectData
 	obj_End
 
-group4Map8bObjectData: ; 6bdc
-	obj_Pointer objectData4ba3
+group4Map8bObjectData:
+	obj_Pointer group4Map8bEnemyObjectData
 	obj_End
 
-group4Map8cObjectData: ; 6be0
-	obj_DoubleValue $1e0b $70 $00
-	obj_Pointer objectData4bb2
+group4Map8cObjectData:
+	obj_Interaction $1e0b $70 $00
+	obj_Pointer group4Map8cEnemyObjectData
 	obj_End
 
-group4Map8dObjectData: ; 6be9
-	obj_Pointer objectData4bc1
+group4Map8dObjectData:
+	obj_Pointer group4Map8dEnemyObjectData
 	obj_End
 
-group4Map8eObjectData: ; 6bed
-	obj_Pointer objectData4bd0
+group4Map8eObjectData:
+	obj_Pointer group4Map8eEnemyObjectData
 	obj_End
 
-group4Map8fObjectData: ; 6bf1
-	obj_DoubleValue $7808 $52 $0c
+group4Map8fObjectData:
+	obj_Interaction $7808 $52 $0c
 	obj_Part $0508 $81
-	obj_Pointer objectData4bd5
+	obj_Pointer group4Map8fEnemyObjectData
 	obj_End
 
-group4Map90ObjectData: ; 6bfe
-	obj_DoubleValue $1900 $38 $68
-	obj_DoubleValue $2103 $78 $48
-	obj_DoubleValue $2112 $88 $48
-	obj_DoubleValue $1a00 $5e $38
-	obj_DoubleValue $1a00 $5e $58
-	obj_DoubleValue $1a00 $7e $38
-	obj_DoubleValue $1a00 $7e $58
-	obj_Pointer objectData4be4
+group4Map90ObjectData:
+	obj_Interaction $1900 $38 $68
+	obj_Interaction $2103 $78 $48
+	obj_Interaction $2112 $88 $48
+	obj_Interaction $1a00 $5e $38
+	obj_Interaction $1a00 $5e $58
+	obj_Interaction $1a00 $7e $38
+	obj_Interaction $1a00 $7e $58
+	obj_Pointer group4Map90EnemyObjectData
 	obj_End
 
-group4Map91ObjectData: ; 6c1f
-	obj_DoubleValue $1200 $88 $78
-	obj_NoValue $e201
-	obj_NoValue $7e00
-	obj_Pointer objectData4a5c
+group4Map91ObjectData:
+	obj_Interaction $1200 $88 $78
+	obj_Interaction $e201
+	obj_Interaction $7e00
+	obj_Pointer group4Map91EnemyObjectData
 	obj_End
 
-group4Map92ObjectData: ; 6c2d
-	obj_DoubleValue $2003 $68 $28
-	obj_WithParam $02 $0b00 $02 $48 $80
-	obj_Pointer objectData4bf3
+group4Map92ObjectData:
+	obj_Interaction $2003 $68 $28
+	obj_Part $0b00 $48 $80 $02
+	obj_Pointer group4Map92EnemyObjectData
 	obj_End
 
-group4Map93ObjectData: ; 6c3d
-	obj_Pointer objectData4bfa
+group4Map93ObjectData:
+	obj_Pointer group4Map93EnemyObjectData
 	obj_End
 
-group4Map94ObjectData: ; 6c41
-	obj_Pointer objectData4bff
+group4Map94ObjectData:
+	obj_Pointer group4Map94EnemyObjectData
 	obj_End
 
-group4Map95ObjectData: ; 6c45
-	obj_DoubleValue $a10a $68 $88
-	obj_Pointer objectData4bfa
+group4Map95ObjectData:
+	obj_Interaction $a10a $68 $88
+	obj_Pointer group4Map95EnemyObjectData
 	obj_End
 
-group4Map96ObjectData: ; 6c4e
-	obj_DoubleValue $a102 $68 $30
-	obj_DoubleValue $a103 $88 $90
-	obj_Pointer objectData4c06
+group4Map96ObjectData:
+	obj_Interaction $a102 $68 $30
+	obj_Interaction $a103 $88 $90
+	obj_Pointer group4Map96EnemyObjectData
 	obj_End
 
-group4Map97ObjectData: ; 6c5b
-	obj_DoubleValue $a104 $88 $58
-	obj_DoubleValue $a105 $58 $78
-	obj_DoubleValue $a105 $38 $98
-	obj_Pointer objectData4c06
+group4Map97ObjectData:
+	obj_Interaction $a104 $88 $58
+	obj_Interaction $a105 $58 $78
+	obj_Interaction $a105 $38 $98
+	obj_Pointer group4Map97EnemyObjectData
 	obj_End
 
-group4Map98ObjectData: ; 6c6c
-	obj_Pointer objectData4c07
+group4Map98ObjectData:
+	obj_Pointer group4Map98EnemyObjectData
 	obj_End
 
-group4Map99ObjectData: ; 6c70
-	obj_Pointer objectData4c0e
+group4Map99ObjectData:
+	obj_Pointer group4Map99EnemyObjectData
 	obj_End
 
-group4Map9aObjectData: ; 6c74
+group4Map9aObjectData:
 	obj_Part $0300 $5a
-	obj_Pointer objectData4c1b
+	obj_Pointer group4Map9aEnemyObjectData
 	obj_End
 
-group4Map9bObjectData: ; 6c7c
-	obj_DoubleValue $2113 $58 $48
-	obj_NoValue $bd00
-	obj_NoValue $901f
-	obj_NoValue $dc17
-	obj_Pointer objectData4c2a
+group4Map9bObjectData:
+	obj_Interaction $2113 $58 $48
+	obj_Interaction $bd00
+	obj_Interaction $901f
+	obj_Interaction $dc17
+	obj_Pointer group4Map9bEnemyObjectData
 	obj_End
 
-group4Map9cObjectData: ; 6c8c
-	obj_Pointer objectData4c2f
+group4Map9cObjectData:
+	obj_Pointer group4Map9cEnemyObjectData
 	obj_End
 
-group4Map9dObjectData: ; 6c90
-	obj_DoubleValue $1e06 $a7 $00
+group4Map9dObjectData:
+	obj_Interaction $1e06 $a7 $00
 	obj_Part $0980 $8c
-	obj_Pointer objectData4c42
+	obj_Pointer group4Map9dEnemyObjectData
 	obj_End
 
-group4Map9eObjectData: ; 6c9d
-	obj_DoubleValue $2114 $48 $78
-	obj_NoValue $bd00
-	obj_Pointer objectData4c06
+group4Map9eObjectData:
+	obj_Interaction $2114 $48 $78
+	obj_Interaction $bd00
+	obj_Pointer group4Map9eEnemyObjectData
 	obj_End
 
-group4Map9fObjectData: ; 6ca9
-	obj_Pointer objectData4c51
+group4Map9fObjectData:
+	obj_Pointer group4Map9fEnemyObjectData
 	obj_End
 
-group4Mapa0ObjectData: ; 6cad
-	obj_Pointer objectData4c60
+group4Mapa0ObjectData:
+	obj_Pointer group4Mapa0EnemyObjectData
 	obj_End
 
-group4Mapa1ObjectData: ; 6cb1
+group4Mapa1ObjectData:
 	obj_Part $0300 $35
-	obj_Pointer objectData4c6b
+	obj_Pointer group4Mapa1EnemyObjectData
 	obj_End
 
-group4Mapa2ObjectData: ; 6cb9
+group4Mapa2ObjectData:
 	obj_Part $0300 $47
-	obj_Pointer objectData4c78
+	obj_Pointer group4Mapa2EnemyObjectData
 	obj_End
 
-group4Mapa3ObjectData: ; 6cc1
-	obj_Pointer objectData4c83
+group4Mapa3ObjectData:
+	obj_Pointer group4Mapa3EnemyObjectData
 	obj_End
 
-group4Mapa4ObjectData: ; 6cc5
-	obj_Pointer objectData4c88
+group4Mapa4ObjectData:
+	obj_Pointer group4Mapa4EnemyObjectData
 	obj_End
 
-group4Mapa5ObjectData: ; 6cc9
-	obj_DoubleValue $2115 $58 $38
-	obj_DoubleValue $2116 $58 $38
+group4Mapa5ObjectData:
+	obj_Interaction $2115 $58 $38
+	obj_Interaction $2116 $58 $38
 	obj_Part $0980 $5b
-	obj_Pointer objectData4c06
+	obj_Pointer group4Mapa5EnemyObjectData
 	obj_End
 
-group4Mapa6ObjectData: ; 6cda
-	obj_DoubleValue $2402 $04 $01
-	obj_DoubleValue $1e07 $50 $00
-	obj_WithParam $02 $3308 $00 $28 $68
-	obj_WithParam $02 $3388 $00 $88 $68
+group4Mapa6ObjectData:
+	obj_Interaction $2402 $04 $01
+	obj_Interaction $1e07 $50 $00
+	obj_Part $3308 $28 $68 $00
+	obj_Part $3388 $88 $68 $00
 	obj_Pointer objectData_makeAllTorchesLightable
-	obj_Pointer objectData4c93
+	obj_Pointer group4Mapa6EnemyObjectData
 	obj_End
 
-group4Mapa7ObjectData: ; 6cf7
-	obj_Pointer objectData4ca8
+group4Mapa7ObjectData:
+	obj_Pointer group4Mapa7EnemyObjectData
 	obj_End
 
-group4Mapa8ObjectData: ; 6cfb
+group4Mapa8ObjectData:
 	obj_Part $0300 $36
-	obj_Pointer objectData4cbb
+	obj_Pointer group4Mapa8EnemyObjectData
 	obj_End
 
-group4Mapa9ObjectData: ; 6d03
-	obj_Pointer objectData4c06
+group4Mapa9ObjectData:
+	obj_Pointer group4Mapa9EnemyObjectData
 	obj_End
 
-group4MapaaObjectData: ; 6d07
+group4MapaaObjectData:
 	obj_Part $0300 $57
-	obj_Pointer objectData4cc6
+	obj_Pointer group4MapaaEnemyObjectData
 	obj_End
 
-group4MapabObjectData: ; 6d0f
-	obj_DoubleValue $1204 $00 $00
-	obj_Pointer objectData4cd9
+group4MapabObjectData:
+	obj_Interaction $1204 $00 $00
+	obj_Pointer group4MapabEnemyObjectData
 	obj_End
 
-group4MapacObjectData: ; 6d18
-	obj_Pointer objectData4cec
+group4MapacObjectData:
+	obj_Pointer group4MapacEnemyObjectData
 	obj_End
 
-group4MapadObjectData: ; 6d1c
+group4MapadObjectData:
 	obj_Part $0980 $74
-	obj_NoValue $9019
-	obj_Pointer objectData4cf7
+	obj_Interaction $9019
+	obj_Pointer group4MapadEnemyObjectData
 	obj_End
 
-group4MapaeObjectData: ; 6d27
-	obj_Pointer objectData4cfe
+group4MapaeObjectData:
+	obj_Pointer group4MapaeEnemyObjectData
 	obj_End
 
-group4MapafObjectData: ; 6d2b
-	obj_Pointer objectData4d17
+group4MapafObjectData:
+	obj_Pointer group4MapafEnemyObjectData
 	obj_End
 
-group4Mapb0ObjectData: ; 6d2f
+group4Mapb0ObjectData:
 	obj_Part $0300 $57
-	obj_Pointer objectData4d28
+	obj_Pointer group4Mapb0EnemyObjectData
 	obj_End
 
-group4Mapb1ObjectData: ; 6d37
-	obj_Pointer objectData4c06
+group4Mapb1ObjectData:
+	obj_Pointer group4Mapb1EnemyObjectData
 	obj_End
 
-group4Mapb2ObjectData: ; 6d3b
-	obj_Pointer objectData4d33
+group4Mapb2ObjectData:
+	obj_Pointer group4Mapb2EnemyObjectData
 	obj_End
 
-group4Mapb3ObjectData: ; 6d3f
-	obj_Pointer objectData4d3e
+group4Mapb3ObjectData:
+	obj_Pointer group4Mapb3EnemyObjectData
 	obj_End
 
-group4Mapb4ObjectData: ; 6d43
-	obj_DoubleValue $2000 $58 $78
-	obj_DoubleValue $7e00 $58 $78
-	obj_DoubleValue $1e0b $80 $00
-	obj_DoubleValue $1e08 $07 $00
-	obj_BossPointer objectData4dbf
+group4Mapb4ObjectData:
+	obj_Interaction $2000 $58 $78
+	obj_Interaction $7e00 $58 $78
+	obj_Interaction $1e0b $80 $00
+	obj_Interaction $1e08 $07 $00
+	obj_BeforeEvent group4Mapb4BeforeEventObjectData
 	obj_End
 
-group4Mapb5ObjectData: ; 6d58
-	obj_Pointer objectData4d53
+group4Mapb5ObjectData:
+	obj_Pointer group4Mapb5EnemyObjectData
 	obj_End
 
-group4Mapb6ObjectData: ; 6d5c
-	obj_DoubleValue $1e08 $07 $00
-	obj_Pointer objectData4d62
+group4Mapb6ObjectData:
+	obj_Interaction $1e08 $07 $00
+	obj_Pointer group4Mapb6EnemyObjectData
 	obj_End
 
-group4Mapb7ObjectData: ; 6d65
-	obj_Pointer objectData4d71
+group4Mapb7ObjectData:
+	obj_Pointer group4Mapb7EnemyObjectData
 	obj_End
 
-group4Mapb8ObjectData: ; 6d69
-	obj_DoubleValue $7f00 $28 $78
+group4Mapb8ObjectData:
+	obj_Interaction $7f00 $28 $78
 	obj_End
 
-group4Mapb9ObjectData: ; 6d6f
+group4Mapb9ObjectData:
 	obj_Part $0300 $63
-	obj_Pointer objectData4d78
+	obj_Pointer group4Mapb9EnemyObjectData
 	obj_End
 
-group4MapbaObjectData: ; 6d77
-	obj_DoubleValue $2002 $58 $78
+group4MapbaObjectData:
+	obj_Interaction $2002 $58 $78
 	obj_Part $4600 $37
 	obj_Part $4601 $65
 	obj_Part $4602 $69
-	obj_Pointer objectData4d85
+	obj_Pointer group4MapbaEnemyObjectData
 	obj_End
 
-group4MapbbObjectData: ; 6d8a
-	obj_DoubleValue $1200 $88 $78
-	obj_NoValue $e201
-	obj_NoValue $7e00
-	obj_Pointer objectData4c06
+group4MapbbObjectData:
+	obj_Interaction $1200 $88 $78
+	obj_Interaction $e201
+	obj_Interaction $7e00
+	obj_Pointer group4MapbbEnemyObjectData
 	obj_End
 
-group4MapbcObjectData: ; 6d98
-	obj_DoubleValue $2117 $57 $0f
+group4MapbcObjectData:
+	obj_Interaction $2117 $57 $0f
 	obj_Part $0980 $34
 	obj_Part $0981 $3a
 	obj_Part $0982 $74
 	obj_Part $0983 $7a
-	obj_Pointer objectData4c06
+	obj_Pointer group4MapbcEnemyObjectData
 	obj_End
 
-group4MapbdObjectData: ; 6dae
-	obj_Pointer objectData4d90
+group4MapbdObjectData:
+	obj_Pointer group4MapbdEnemyObjectData
 	obj_End
 
-group4MapbeObjectData: ; 6db2
-	obj_Pointer objectData4da3
+group4MapbeObjectData:
+	obj_Pointer group4MapbeEnemyObjectData
 	obj_End
 
-group4MapbfObjectData: ; 6db6
-	obj_DoubleValue $33ff $58 $78
-	obj_DoubleValue $2001 $58 $78
-	obj_DoubleValue $1e08 $07 $00
-	obj_DoubleValue $1e0b $50 $00
-	obj_BossPointer objectData4db8
+group4MapbfObjectData:
+	obj_Interaction $33ff $58 $78
+	obj_Interaction $2001 $58 $78
+	obj_Interaction $1e08 $07 $00
+	obj_Interaction $1e0b $50 $00
+	obj_BeforeEvent group4MapbfBeforeEventObjectData
 	obj_End
 
-group4Mapc0ObjectData: ; 6dcb
-	obj_DoubleValue $9020 $48 $b8
-	obj_Pointer objectData5337
+group4Mapc0ObjectData:
+	obj_Interaction $9020 $48 $b8
+	obj_Pointer group4Mapc0EnemyObjectData
 	obj_End
 
-group4Mapc1ObjectData: ; 6dd4
-	obj_DoubleValue $2117 $47 $0f
+group4Mapc1ObjectData:
+	obj_Interaction $2117 $47 $0f
 	obj_Part $0980 $21
 	obj_Part $0981 $12
 	obj_Part $0982 $32
 	obj_Part $0983 $23
-	obj_Pointer objectData533e
+	obj_Pointer group4Mapc1EnemyObjectData
 	obj_End
 
-group4Mapc2ObjectData: ; 6dea
-	obj_DoubleValue $6130 $10 $98
-	obj_DoubleValue $1904 $88 $38
-	obj_DoubleValue $9014 $18 $c8
-	obj_DoubleValue $9014 $38 $38
-	obj_DoubleValue $9014 $88 $58
-	obj_DoubleValue $7e01 $11 $02
-	obj_NoValue $d805
-	obj_NoValue $9015
-	obj_Pointer objectData534d
+group4Mapc2ObjectData:
+	obj_Interaction $6130 $10 $98
+	obj_Interaction $1904 $88 $38
+	obj_Interaction $9014 $18 $c8
+	obj_Interaction $9014 $38 $38
+	obj_Interaction $9014 $88 $58
+	obj_Interaction $7e01 $11 $02
+	obj_Interaction $d805
+	obj_Interaction $9015
+	obj_Pointer group4Mapc2EnemyObjectData
 	obj_End
 
-group4Mapc3ObjectData: ; 6e0c
-	obj_DoubleValue $7e01 $2c $03
-	obj_Pointer objectData534f
+group4Mapc3ObjectData:
+	obj_Interaction $7e01 $2c $03
+	obj_Pointer group4Mapc3EnemyObjectData
 	obj_End
 
-group4Mapc4ObjectData: ; 6e15
-	obj_DoubleValue $7e01 $11 $00
-	obj_DoubleValue $2000 $48 $78
+group4Mapc4ObjectData:
+	obj_Interaction $7e01 $11 $00
+	obj_Interaction $2000 $48 $78
 	obj_Part $0900 $4c
 	obj_Part $0300 $62
-	obj_Pointer objectData534d
+	obj_Pointer group4Mapc4EnemyObjectData
 	obj_End
 
-group4Mapc5ObjectData: ; 6e29
-	obj_DoubleValue $7e01 $2c $01
-	obj_DoubleValue $2003 $58 $78
-	obj_NoValue $9016
-	obj_Pointer objectData535e
+group4Mapc5ObjectData:
+	obj_Interaction $7e01 $2c $01
+	obj_Interaction $2003 $58 $78
+	obj_Interaction $9016
+	obj_Pointer group4Mapc5EnemyObjectData
 	obj_End
 
-group4Mapc6ObjectData: ; 6e39
-	obj_DoubleValue $7e01 $7a $87
-	obj_DoubleValue $2001 $48 $78
+group4Mapc6ObjectData:
+	obj_Interaction $7e01 $7a $87
+	obj_Interaction $2001 $48 $78
 	obj_Part $4600 $44
 	obj_Part $4601 $27
 	obj_Part $4602 $77
 	obj_Part $4603 $49
-	obj_Pointer objectData5375
+	obj_Pointer group4Mapc6EnemyObjectData
 	obj_End
 
-group4Mapc7ObjectData: ; 6e53
+group4Mapc7ObjectData:
 	obj_Part $0501 $68
-	obj_DoubleValue $2300 $29 $05
-	obj_DoubleValue $2300 $4d $06
-	obj_Pointer objectData5390
+	obj_Interaction $2300 $29 $05
+	obj_Interaction $2300 $4d $06
+	obj_Pointer group4Mapc7EnemyObjectData
 	obj_End
 
-group4Mapc8ObjectData: ; 6e64
-	obj_DoubleValue $2500 $58 $d8
-	obj_DoubleValue $2111 $48 $78
-	obj_Pointer objectData539f
+group4Mapc8ObjectData:
+	obj_Interaction $2500 $58 $d8
+	obj_Interaction $2111 $48 $78
+	obj_Pointer group4Mapc8EnemyObjectData
 	obj_End
 
-group4Mapc9ObjectData: ; 6e71
-	obj_DoubleValue $2000 $88 $c8
-	obj_DoubleValue $2002 $00 $00
+group4Mapc9ObjectData:
+	obj_Interaction $2000 $88 $c8
+	obj_Interaction $2002 $00 $00
 	obj_Part $0900 $58
 	obj_Part $0901 $65
-	obj_DoubleValue $7e01 $86 $86
-	obj_Pointer objectData53b2
+	obj_Interaction $7e01 $86 $86
+	obj_Pointer group4Mapc9EnemyObjectData
 	obj_End
 
-group4MapcaObjectData: ; 6e8a
-	obj_DoubleValue $2117 $3b $03
+group4MapcaObjectData:
+	obj_Interaction $2117 $3b $03
 	obj_Part $0980 $26
 	obj_Part $0981 $8c
-	obj_Pointer objectData53c1
+	obj_Pointer group4MapcaEnemyObjectData
 	obj_End
 
-group4MapcbObjectData: ; 6e9a
-	obj_DoubleValue $2117 $47 $01
+group4MapcbObjectData:
+	obj_Interaction $2117 $47 $01
 	obj_Part $0980 $93
-	obj_Pointer objectData53d0
+	obj_Pointer group4MapcbEnemyObjectData
 	obj_End
 
-group4MapccObjectData: ; 6ea7
-	obj_DoubleValue $2000 $68 $68
+group4MapccObjectData:
+	obj_Interaction $2000 $68 $68
 	obj_Part $0900 $37
-	obj_Pointer objectData53d5
+	obj_Pointer group4MapccEnemyObjectData
 	obj_End
 
-group4MapcdObjectData: ; 6eb4
-	obj_DoubleValue $9018 $48 $98
-	obj_Pointer objectData53f0
+group4MapcdObjectData:
+	obj_Interaction $9018 $48 $98
+	obj_Pointer group4MapcdEnemyObjectData
 	obj_End
 
-group4MapceObjectData: ; 6ebd
-	obj_DoubleValue $1200 $88 $78
-	obj_DoubleValue $7e01 $57 $85
-	obj_DoubleValue $1e14 $07 $00
-	obj_NoValue $e201
-	obj_NoValue $9017
+group4MapceObjectData:
+	obj_Interaction $1200 $88 $78
+	obj_Interaction $7e01 $57 $85
+	obj_Interaction $1e14 $07 $00
+	obj_Interaction $e201
+	obj_Interaction $9017
 	obj_Pointer objectData_makeAllTorchesLightable
 	obj_End
 
-group4MapcfObjectData: ; 6ed3
-	obj_DoubleValue $7e01 $91 $04
-	obj_DoubleValue $901a $58 $78
-	obj_Pointer objectData53f5
+group4MapcfObjectData:
+	obj_Interaction $7e01 $91 $04
+	obj_Interaction $901a $58 $78
+	obj_Pointer group4MapcfEnemyObjectData
 	obj_End
 
-group5Map01ObjectData: ; 6ee0
-	obj_Pointer objectData42be
+group5Map01ObjectData:
+	obj_Pointer group5Map01EnemyObjectData
 	obj_End
 
-group5Map02ObjectData: ; 6ee4
-	obj_DoubleValue $a10c $38 $40
-	obj_DoubleValue $a10d $68 $40
-	obj_Pointer objectData42ca
+group5Map02ObjectData:
+	obj_Interaction $a10c $38 $40
+	obj_Interaction $a10d $68 $40
+	obj_Pointer group5Map02EnemyObjectData
 	obj_End
 
-group5Map03ObjectData: ; 6ef1
-	obj_Pointer objectData42d8
+group5Map03ObjectData:
+	obj_Pointer group5Map03EnemyObjectData
 	obj_End
 
-group5Map04ObjectData: ; 6ef5
-	obj_Pointer objectData42ec
+group5Map04ObjectData:
+	obj_Pointer group5Map04EnemyObjectData
 	obj_End
 
-group5Map06ObjectData: ; 6ef9
-	obj_DoubleValue $a10b $68 $68
+group5Map06ObjectData:
+	obj_Interaction $a10b $68 $68
 	obj_End
 
-group5Map09ObjectData: ; 6eff
-	obj_Pointer objectData45d5
+group5Map09ObjectData:
+	obj_Pointer group5Map09EnemyObjectData
 	obj_End
 
-group5Map0aObjectData: ; 6f03
-	obj_Pointer objectData45dd
+group5Map0aObjectData:
+	obj_Pointer group5Map0aEnemyObjectData
 	obj_End
 
-group5Map10ObjectData: ; 6f07
-	obj_Pointer objectData4dde
+group5Map10ObjectData:
+	obj_Pointer group5Map10EnemyObjectData
 	obj_End
 
-group5Map11ObjectData: ; 6f0b
-	obj_DoubleValue $a10e $58 $78
-	obj_Pointer objectData4de3
+group5Map11ObjectData:
+	obj_Interaction $a10e $58 $78
+	obj_Pointer group5Map11EnemyObjectData
 	obj_End
 
-group5Map12ObjectData: ; 6f14
-	obj_DoubleValue $2000 $58 $78
-	obj_DoubleValue $7e00 $58 $78
-	obj_DoubleValue $1e09 $5e $00
-	obj_DoubleValue $1e0a $a7 $00
-	obj_BossPointer objectData4f1b
+group5Map12ObjectData:
+	obj_Interaction $2000 $58 $78
+	obj_Interaction $7e00 $58 $78
+	obj_Interaction $1e09 $5e $00
+	obj_Interaction $1e0a $a7 $00
+	obj_BeforeEvent group5Map12BeforeEventObjectData
 	obj_End
 
-group5Map13ObjectData: ; 6f29
-	obj_Pointer objectData4de8
+group5Map13ObjectData:
+	obj_Pointer group5Map13EnemyObjectData
 	obj_End
 
-group5Map14ObjectData: ; 6f2d
-	obj_Pointer objectData4dfb
+group5Map14ObjectData:
+	obj_Pointer group5Map14EnemyObjectData
 	obj_End
 
-group5Map15ObjectData: ; 6f31
-	obj_Pointer objectData4dc6
+group5Map15ObjectData:
+	obj_Pointer group5Map15EnemyObjectData
 	obj_End
 
-group5Map16ObjectData: ; 6f35
-	obj_Pointer objectData4e06
+group5Map16ObjectData:
+	obj_Pointer group5Map16EnemyObjectData
 	obj_End
 
-group5Map17ObjectData: ; 6f39
-	obj_Pointer objectData4e23
+group5Map17ObjectData:
+	obj_Pointer group5Map17EnemyObjectData
 	obj_End
 
-group5Map18ObjectData: ; 6f3d
-	obj_DoubleValue $7d00 $44 $01
-	obj_DoubleValue $7d01 $78 $02
+group5Map18ObjectData:
+	obj_Interaction $7d00 $44 $01
+	obj_Interaction $7d01 $78 $02
 	obj_End
 
-group5Map19ObjectData: ; 6f47
-	obj_Pointer objectData4e2f
+group5Map19ObjectData:
+	obj_Pointer group5Map19EnemyObjectData
 	obj_End
 
-group5Map1aObjectData: ; 6f4b
-	obj_NoValue $9004
+group5Map1aObjectData:
+	obj_Interaction $9004
 	obj_Part $0300 $57
-	obj_Pointer objectData4e2e
+	obj_Pointer group5Map1aEnemyObjectData
 	obj_End
 
-group5Map1bObjectData: ; 6f56
-	obj_DoubleValue $1202 $58 $38
-	obj_Pointer objectData4e48
+group5Map1bObjectData:
+	obj_Interaction $1202 $58 $38
+	obj_Pointer group5Map1bEnemyObjectData
 	obj_End
 
-group5Map1cObjectData: ; 6f5f
-	obj_DoubleValue $9000 $18 $78
-	obj_DoubleValue $6106 $40 $58
-	obj_DoubleValue $6146 $40 $98
-	obj_DoubleValue $1e06 $a7 $00
-	obj_NoValue $dc11
-	obj_Pointer objectData4e69
+group5Map1cObjectData:
+	obj_Interaction $9000 $18 $78
+	obj_Interaction $6106 $40 $58
+	obj_Interaction $6146 $40 $98
+	obj_Interaction $1e06 $a7 $00
+	obj_Interaction $dc11
+	obj_Pointer group5Map1cEnemyObjectData
 	obj_End
 
-group5Map1dObjectData: ; 6f77
-	obj_Pointer objectData4e6e
+group5Map1dObjectData:
+	obj_Pointer group5Map1dEnemyObjectData
 	obj_End
 
-group5Map1eObjectData: ; 6f7b
-	obj_Pointer objectData4e81
+group5Map1eObjectData:
+	obj_Pointer group5Map1eEnemyObjectData
 	obj_End
 
-group5Map1fObjectData: ; 6f7f
-	obj_Pointer objectData4e9e
+group5Map1fObjectData:
+	obj_Pointer group5Map1fEnemyObjectData
 	obj_End
 
-group5Map20ObjectData: ; 6f83
-	obj_Pointer objectData4eb7
+group5Map20ObjectData:
+	obj_Pointer group5Map20EnemyObjectData
 	obj_End
 
-group5Map21ObjectData: ; 6f87
-	obj_DoubleValue $1903 $58 $78
-	obj_DoubleValue $9002 $38 $78
-	obj_DoubleValue $9002 $68 $58
-	obj_DoubleValue $9002 $68 $98
-	obj_DoubleValue $9003 $68 $78
-	obj_Pointer objectData4e2e
+group5Map21ObjectData:
+	obj_Interaction $1903 $58 $78
+	obj_Interaction $9002 $38 $78
+	obj_Interaction $9002 $68 $58
+	obj_Interaction $9002 $68 $98
+	obj_Interaction $9003 $68 $78
+	obj_Pointer group5Map21EnemyObjectData
 	obj_End
 
-group5Map22ObjectData: ; 6fa0
-	obj_Pointer objectData4ebc
+group5Map22ObjectData:
+	obj_Pointer group5Map22EnemyObjectData
 	obj_End
 
-group5Map23ObjectData: ; 6fa4
-	obj_Pointer objectData4ec7
+group5Map23ObjectData:
+	obj_Pointer group5Map23EnemyObjectData
 	obj_End
 
-group5Map24ObjectData: ; 6fa8
-	obj_Pointer objectData4ee0
+group5Map24ObjectData:
+	obj_Pointer group5Map24EnemyObjectData
 	obj_End
 
-group5Map25ObjectData: ; 6fac
-	obj_Pointer objectData4dde
+group5Map25ObjectData:
+	obj_Pointer group5Map25EnemyObjectData
 	obj_End
 
-group5Map26ObjectData: ; 6fb0
-	obj_DoubleValue $1200 $88 $78
-	obj_NoValue $e201
-	obj_NoValue $7e00
+group5Map26ObjectData:
+	obj_Interaction $1200 $88 $78
+	obj_Interaction $e201
+	obj_Interaction $7e00
 	obj_End
 
-group5Map27ObjectData: ; 6fbb
-	obj_DoubleValue $1e09 $5e $00
-	obj_Pointer objectData4efd
+group5Map27ObjectData:
+	obj_Interaction $1e09 $5e $00
+	obj_Pointer group5Map27EnemyObjectData
 	obj_End
 
-group5Map28ObjectData: ; 6fc4
-	obj_Pointer objectData4f02
+group5Map28ObjectData:
+	obj_Pointer group5Map28EnemyObjectData
 	obj_End
 
-group5Map29ObjectData: ; 6fc8
-	obj_Pointer objectData4f22
+group5Map29ObjectData:
+	obj_Pointer group5Map29EnemyObjectData
 	obj_End
 
-group5Map2aObjectData: ; 6fcc
-	obj_Pointer objectData4f29
+group5Map2aObjectData:
+	obj_Pointer group5Map2aEnemyObjectData
 	obj_End
 
-group5Map2bObjectData: ; 6fd0
-	obj_DoubleValue $1e09 $5e $00
-	obj_Pointer objectData4f30
+group5Map2bObjectData:
+	obj_Interaction $1e09 $5e $00
+	obj_Pointer group5Map2bEnemyObjectData
 	obj_End
 
-group5Map2cObjectData: ; 6fd9
-	obj_DoubleValue $9001 $58 $78
+group5Map2cObjectData:
+	obj_Interaction $9001 $58 $78
 	obj_End
 
-group5Map2dObjectData: ; 6fdf
-	obj_BossPointer objectData4f16
+group5Map2dObjectData:
+	obj_BeforeEvent group5Map2dBeforeEventObjectData
 	obj_End
 
-group5Map2eObjectData: ; 6fe3
-	obj_Pointer objectData4f3c
+group5Map2eObjectData:
+	obj_Pointer group5Map2eEnemyObjectData
 	obj_End
 
-group5Map2fObjectData: ; 6fe7
-	obj_Pointer objectData4f4d
+group5Map2fObjectData:
+	obj_Pointer group5Map2fEnemyObjectData
 	obj_End
 
-group5Map30ObjectData: ; 6feb
-	obj_Pointer objectData4f3b
+group5Map30ObjectData:
+	obj_Pointer group5Map30EnemyObjectData
 	obj_End
 
-group5Map31ObjectData: ; 6fef
-	obj_DoubleValue $1202 $58 $78
-	obj_Pointer objectData4f4d
+group5Map31ObjectData:
+	obj_Interaction $1202 $58 $78
+	obj_Pointer group5Map31EnemyObjectData
 	obj_End
 
-group5Map32ObjectData: ; 6ff8
-	obj_Pointer objectData4f58
+group5Map32ObjectData:
+	obj_Pointer group5Map32EnemyObjectData
 	obj_End
 
-group5Map33ObjectData: ; 6ffc
-	obj_Pointer objectData4f58
+group5Map33ObjectData:
+	obj_Pointer group5Map33EnemyObjectData
 	obj_End
 
-group5Map34ObjectData: ; 7000
-	obj_Pointer objectData4f5d
+group5Map34ObjectData:
+	obj_Pointer group5Map34EnemyObjectData
 	obj_End
 
-group5Map35ObjectData: ; 7004
-	obj_Pointer objectData4f6a
+group5Map35ObjectData:
+	obj_Pointer group5Map35EnemyObjectData
 	obj_End
 
-group5Map36ObjectData: ; 7008
-	obj_DoubleValue $1e0a $a7 $00
-	obj_DoubleValue $1e09 $5e $00
-	obj_DoubleValue $2000 $58 $78
-	obj_Pointer objectData4f71
-	obj_BossPointer objectData4f11
+group5Map36ObjectData:
+	obj_Interaction $1e0a $a7 $00
+	obj_Interaction $1e09 $5e $00
+	obj_Interaction $2000 $58 $78
+	obj_Pointer group5Map36EnemyObjectData
+	obj_BeforeEvent group5Map36BeforeEventObjectData
 	obj_End
 
-group5Map37ObjectData: ; 701c
-	obj_DoubleValue $7f00 $28 $78
-	obj_Pointer objectData4f3b
+group5Map37ObjectData:
+	obj_Interaction $7f00 $28 $78
+	obj_Pointer group5Map37EnemyObjectData
 	obj_End
 
-group5Map38ObjectData: ; 7025
-	obj_NoValue $2001
-	obj_NoValue $900f
-	obj_WithParam $02 $331a $01 $58 $28
-	obj_WithParam $02 $331a $01 $58 $38
+group5Map38ObjectData:
+	obj_Interaction $2001
+	obj_Interaction $900f
+	obj_Part $331a $58 $28 $01
+	obj_Part $331a $58 $38 $01
 	obj_Part $0980 $66
 	obj_Part $0300 $35
-	obj_Pointer objectData4f78
+	obj_Pointer group5Map38EnemyObjectData
 	obj_End
 
-group5Map39ObjectData: ; 7042
-	obj_DoubleValue $7d00 $68 $01
-	obj_Pointer objectData4f85
+group5Map39ObjectData:
+	obj_Interaction $7d00 $68 $01
+	obj_Pointer group5Map39EnemyObjectData
 	obj_End
 
-group5Map3aObjectData: ; 704b
-	obj_NoValue $9008
-	obj_Pointer objectData4f92
+group5Map3aObjectData:
+	obj_Interaction $9008
+	obj_Pointer group5Map3aEnemyObjectData
 	obj_End
 
-group5Map3bObjectData: ; 7052
-	obj_DoubleValue $1e09 $4e $00
-	obj_Pointer objectData4fab
+group5Map3bObjectData:
+	obj_Interaction $1e09 $4e $00
+	obj_Pointer group5Map3bEnemyObjectData
 	obj_End
 
-group5Map3cObjectData: ; 705b
-	obj_DoubleValue $1202 $58 $58
-	obj_Pointer objectData4fb4
+group5Map3cObjectData:
+	obj_Interaction $1202 $58 $58
+	obj_Pointer group5Map3cEnemyObjectData
 	obj_End
 
-group5Map3dObjectData: ; 7064
-	obj_DoubleValue $1e04 $07 $02
-	obj_NoValue $2002
+group5Map3dObjectData:
+	obj_Interaction $1e04 $07 $02
+	obj_Interaction $2002
 	obj_Part $0980 $45
 	obj_Part $0981 $49
-	obj_Pointer objectData4fbf
+	obj_Pointer group5Map3dEnemyObjectData
 	obj_End
 
-group5Map3eObjectData: ; 7077
-	obj_Pointer objectData4fcc
+group5Map3eObjectData:
+	obj_Pointer group5Map3eEnemyObjectData
 	obj_End
 
-group5Map3fObjectData: ; 707b
-	obj_DoubleValue $1e09 $5e $00
-	obj_DoubleValue $1202 $58 $38
-	obj_DoubleValue $2200 $58 $78
-	obj_NoValue $1500
-	obj_Pointer objectData4fe5
+group5Map3fObjectData:
+	obj_Interaction $1e09 $5e $00
+	obj_Interaction $1202 $58 $38
+	obj_Interaction $2200 $58 $78
+	obj_Interaction $1500
+	obj_Pointer group5Map3fEnemyObjectData
 	obj_End
 
-group5Map40ObjectData: ; 708f
-	obj_Pointer objectData4ff8
+group5Map40ObjectData:
+	obj_Pointer group5Map40EnemyObjectData
 	obj_End
 
-group5Map41ObjectData: ; 7093
-	obj_Pointer objectData4ffd
+group5Map41ObjectData:
+	obj_Pointer group5Map41EnemyObjectData
 	obj_End
 
-group5Map42ObjectData: ; 7097
-	obj_Pointer objectData5002
+group5Map42ObjectData:
+	obj_Pointer group5Map42EnemyObjectData
 	obj_End
 
-group5Map43ObjectData: ; 709b
-	obj_NoValue $9007
-	obj_Pointer objectData5015
+group5Map43ObjectData:
+	obj_Interaction $9007
+	obj_Pointer group5Map43EnemyObjectData
 	obj_End
 
-group5Map44ObjectData: ; 70a2
-	obj_DoubleValue $1200 $88 $78
-	obj_NoValue $e201
-	obj_NoValue $9009
+group5Map44ObjectData:
+	obj_Interaction $1200 $88 $78
+	obj_Interaction $e201
+	obj_Interaction $9009
 	obj_End
 
-group5Map45ObjectData: ; 70ad
-	obj_DoubleValue $1202 $58 $78
-	obj_Pointer objectData501a
+group5Map45ObjectData:
+	obj_Interaction $1202 $58 $78
+	obj_Pointer group5Map45EnemyObjectData
 	obj_End
 
-group5Map46ObjectData: ; 70b6
-	obj_DoubleValue $1e08 $09 $00
-	obj_Pointer objectData4faf
+group5Map46ObjectData:
+	obj_Interaction $1e08 $09 $00
+	obj_Pointer group5Map46EnemyObjectData
 	obj_End
 
-group5Map47ObjectData: ; 70bf
-	obj_Pointer objectData5048
+group5Map47ObjectData:
+	obj_Pointer group5Map47EnemyObjectData
 	obj_End
 
-group5Map48ObjectData: ; 70c3
-	obj_Pointer objectData5056
+group5Map48ObjectData:
+	obj_Pointer group5Map48EnemyObjectData
 	obj_End
 
-group5Map49ObjectData: ; 70c7
-	obj_Pointer objectData505e
+group5Map49ObjectData:
+	obj_Pointer group5Map49EnemyObjectData
 	obj_End
 
-group5Map4aObjectData: ; 70cb
-	obj_DoubleValue $900b $08 $d8
-	obj_BossPointer objectData517a
+group5Map4aObjectData:
+	obj_Interaction $900b $08 $d8
+	obj_BeforeEvent group5Map4aBeforeEventObjectData
 	obj_End
 
-group5Map4bObjectData: ; 70d4
-	obj_DoubleValue $1e0a $a6 $00
-	obj_DoubleValue $1201 $48 $98
-	obj_Pointer objectData506c
+group5Map4bObjectData:
+	obj_Interaction $1e0a $a6 $00
+	obj_Interaction $1201 $48 $98
+	obj_Pointer group5Map4bEnemyObjectData
 	obj_End
 
-group5Map4cObjectData: ; 70e1
-	obj_Pointer objectData5085
+group5Map4cObjectData:
+	obj_Pointer group5Map4cEnemyObjectData
 	obj_End
 
-group5Map4dObjectData: ; 70e5
-	obj_DoubleValue $7e00 $58 $78
-	obj_Pointer objectData5085
+group5Map4dObjectData:
+	obj_Interaction $7e00 $58 $78
+	obj_Pointer group5Map4dEnemyObjectData
 	obj_End
 
-group5Map4eObjectData: ; 70ee
-	obj_Pointer objectData508c
+group5Map4eObjectData:
+	obj_Pointer group5Map4eEnemyObjectData
 	obj_End
 
-group5Map4fObjectData: ; 70f2
-	obj_DoubleValue $1e10 $06 $00
-	obj_Pointer objectData50a2
+group5Map4fObjectData:
+	obj_Interaction $1e10 $06 $00
+	obj_Pointer group5Map4fEnemyObjectData
 	obj_End
 
-group5Map50ObjectData: ; 70fb
-	obj_Pointer objectData50b9
+group5Map50ObjectData:
+	obj_Pointer group5Map50EnemyObjectData
 	obj_End
 
-group5Map51ObjectData: ; 70ff
-	obj_DoubleValue $1e10 $03 $00
-	obj_DoubleValue $1e05 $5e $00
+group5Map51ObjectData:
+	obj_Interaction $1e10 $03 $00
+	obj_Interaction $1e05 $5e $00
 	obj_Part $0980 $5a
-	obj_Pointer objectData50c6
+	obj_Pointer group5Map51EnemyObjectData
 	obj_End
 
-group5Map52ObjectData: ; 7110
-	obj_Pointer objectData5085
+group5Map52ObjectData:
+	obj_Pointer group5Map52EnemyObjectData
 	obj_End
 
-group5Map53ObjectData: ; 7114
-	obj_DoubleValue $2117 $28 $03
+group5Map53ObjectData:
+	obj_Interaction $2117 $28 $03
 	obj_Part $0980 $24
 	obj_Part $0981 $2c
-	obj_Pointer objectData5085
+	obj_Pointer group5Map53EnemyObjectData
 	obj_End
 
-group5Map54ObjectData: ; 7124
-	obj_DoubleValue $1202 $48 $78
-	obj_Pointer objectData510e
+group5Map54ObjectData:
+	obj_Interaction $1202 $48 $78
+	obj_Pointer group5Map54EnemyObjectData
 	obj_End
 
-group5Map55ObjectData: ; 712d
-	obj_DoubleValue $900c $58 $88
-	obj_Pointer objectData508c
+group5Map55ObjectData:
+	obj_Interaction $900c $58 $88
+	obj_Pointer group5Map55EnemyObjectData
 	obj_End
 
-group5Map56ObjectData: ; 7136
-	obj_DoubleValue $1200 $88 $78
-	obj_NoValue $e201
-	obj_NoValue $7e00
+group5Map56ObjectData:
+	obj_Interaction $1200 $88 $78
+	obj_Interaction $e201
+	obj_Interaction $7e00
 	obj_End
 
-group5Map57ObjectData: ; 7141
-	obj_Pointer objectData5117
+group5Map57ObjectData:
+	obj_Pointer group5Map57EnemyObjectData
 	obj_End
 
-group5Map58ObjectData: ; 7145
-	obj_Pointer objectData50d6
+group5Map58ObjectData:
+	obj_Pointer group5Map58EnemyObjectData
 	obj_End
 
-group5Map59ObjectData: ; 7149
-	obj_Pointer objectData50e1
+group5Map59ObjectData:
+	obj_Pointer group5Map59EnemyObjectData
 	obj_End
 
-group5Map5aObjectData: ; 714d
-	obj_Pointer objectData50cb
+group5Map5aObjectData:
+	obj_Pointer group5Map5aEnemyObjectData
 	obj_End
 
-group5Map5bObjectData: ; 7151
-	obj_Pointer objectData50e6
+group5Map5bObjectData:
+	obj_Pointer group5Map5bEnemyObjectData
 	obj_End
 
-group5Map5cObjectData: ; 7155
-	obj_DoubleValue $1e10 $0b $00
-	obj_Pointer objectData50f1
+group5Map5cObjectData:
+	obj_Interaction $1e10 $0b $00
+	obj_Pointer group5Map5cEnemyObjectData
 	obj_End
 
-group5Map5dObjectData: ; 715e
-	obj_Pointer objectData50fc
+group5Map5dObjectData:
+	obj_Pointer group5Map5dEnemyObjectData
 	obj_End
 
-group5Map5eObjectData: ; 7162
-	obj_Pointer objectData50e1
+group5Map5eObjectData:
+	obj_Pointer group5Map5eEnemyObjectData
 	obj_End
 
-group5Map5fObjectData: ; 7166
-	obj_Pointer objectData508c
+group5Map5fObjectData:
+	obj_Pointer group5Map5fEnemyObjectData
 	obj_End
 
-group5Map60ObjectData: ; 716a
-	obj_Pointer objectData507b
+group5Map60ObjectData:
+	obj_Pointer group5Map60EnemyObjectData
 	obj_End
 
-group5Map61ObjectData: ; 716e
-	obj_DoubleValue $7f00 $28 $68
-	obj_Pointer objectData508c
+group5Map61ObjectData:
+	obj_Interaction $7f00 $28 $68
+	obj_Pointer group5Map61EnemyObjectData
 	obj_End
 
-group5Map62ObjectData: ; 7177
-	obj_DoubleValue $1e0b $50 $00
-	obj_DoubleValue $1e0a $a7 $00
-	obj_DoubleValue $2000 $58 $78
-	obj_BossPointer objectData5173
+group5Map62ObjectData:
+	obj_Interaction $1e0b $50 $00
+	obj_Interaction $1e0a $a7 $00
+	obj_Interaction $2000 $58 $78
+	obj_BeforeEvent group5Map62BeforeEventObjectData
 	obj_End
 
-group5Map63ObjectData: ; 7188
-	obj_Pointer objectData5085
+group5Map63ObjectData:
+	obj_Pointer group5Map63EnemyObjectData
 	obj_End
 
-group5Map64ObjectData: ; 718c
-	obj_DoubleValue $1e0b $50 $00
-	obj_DoubleValue $1202 $58 $78
-	obj_Pointer objectData5109
+group5Map64ObjectData:
+	obj_Interaction $1e0b $50 $00
+	obj_Interaction $1202 $58 $78
+	obj_Pointer group5Map64EnemyObjectData
 	obj_End
 
-group5Map65ObjectData: ; 7199
-	obj_Pointer objectData5112
+group5Map65ObjectData:
+	obj_Pointer group5Map65EnemyObjectData
 	obj_End
 
-group5Map66ObjectData: ; 719d
-	obj_Pointer objectData50e1
+group5Map66ObjectData:
+	obj_Pointer group5Map66EnemyObjectData
 	obj_End
 
-group5Map67ObjectData: ; 71a1
-	obj_Pointer objectData50a2
+group5Map67ObjectData:
+	obj_Pointer group5Map67EnemyObjectData
 	obj_End
 
-group5Map68ObjectData: ; 71a5
-	obj_Pointer objectData5117
+group5Map68ObjectData:
+	obj_Pointer group5Map68EnemyObjectData
 	obj_End
 
-group5Map69ObjectData: ; 71a9
-	obj_Pointer objectData5122
+group5Map69ObjectData:
+	obj_Pointer group5Map69EnemyObjectData
 	obj_End
 
-group5Map6aObjectData: ; 71ad
-	obj_Pointer objectData5093
+group5Map6aObjectData:
+	obj_Pointer group5Map6aEnemyObjectData
 	obj_End
 
-group5Map6bObjectData: ; 71b1
-	obj_Pointer objectData508d
+group5Map6bObjectData:
+	obj_Pointer group5Map6bEnemyObjectData
 	obj_End
 
-group5Map6cObjectData: ; 71b5
-	obj_Pointer objectData508c
+group5Map6cObjectData:
+	obj_Pointer group5Map6cEnemyObjectData
 	obj_End
 
-group5Map6dObjectData: ; 71b9
+group5Map6dObjectData:
 	obj_Part $0984 $36
 	obj_Part $0985 $5a
 	obj_Part $0987 $76
-	obj_NoValue $900a
-	obj_Pointer objectData5144
+	obj_Interaction $900a
+	obj_Pointer group5Map6dEnemyObjectData
 	obj_End
 
-group5Map6eObjectData: ; 71ca
-	obj_Pointer objectData5162
+group5Map6eObjectData:
+	obj_Pointer group5Map6eEnemyObjectData
 	obj_End
 
-group5Map6fObjectData: ; 71ce
-	obj_Pointer objectData5131
+group5Map6fObjectData:
+	obj_Pointer group5Map6fEnemyObjectData
 	obj_End
 
-group5Map70ObjectData: ; 71d2
-	obj_Pointer objectData514f
+group5Map70ObjectData:
+	obj_Pointer group5Map70EnemyObjectData
 	obj_End
 
-group5Map71ObjectData: ; 71d6
-	obj_Pointer objectData50e6
+group5Map71ObjectData:
+	obj_Pointer group5Map71EnemyObjectData
 	obj_End
 
-group5Map72ObjectData: ; 71da
-	obj_Pointer objectData508c
+group5Map72ObjectData:
+	obj_Pointer group5Map72EnemyObjectData
 	obj_End
 
-group5Map73ObjectData: ; 71de
-	obj_Pointer objectData518f
+group5Map73ObjectData:
+	obj_Pointer group5Map73EnemyObjectData
 	obj_End
 
-group5Map74ObjectData: ; 71e2
-	obj_Pointer objectData518f
+group5Map74ObjectData:
+	obj_Pointer group5Map74EnemyObjectData
 	obj_End
 
-group5Map75ObjectData: ; 71e6
-	obj_Pointer objectData518f
+group5Map75ObjectData:
+	obj_Pointer group5Map75EnemyObjectData
 	obj_End
 
-group5Map76ObjectData: ; 71ea
-	obj_Pointer objectData518f
+group5Map76ObjectData:
+	obj_Pointer group5Map76EnemyObjectData
 	obj_End
 
-group5Map77ObjectData: ; 71ee
-	obj_DoubleValue $7f00 $28 $78
+group5Map77ObjectData:
+	obj_Interaction $7f00 $28 $78
 	obj_End
 
-group5Map78ObjectData: ; 71f4
-	obj_DoubleValue $1e0a $a7 $00
-	obj_DoubleValue $1e0b $80 $00
-	obj_DoubleValue $2001 $58 $78
+group5Map78ObjectData:
+	obj_Interaction $1e0a $a7 $00
+	obj_Interaction $1e0b $80 $00
+	obj_Interaction $2001 $58 $78
 	obj_Part $0f04 $91
 	obj_Part $0f06 $9d
-	obj_BossPointer objectData5181
+	obj_BeforeEvent group5Map78BeforeEventObjectData
 	obj_End
 
-group5Map79ObjectData: ; 720c
+group5Map79ObjectData:
 	obj_End
 
-group5Map7aObjectData: ; 720d
-	obj_DoubleValue $8200 $20 $78
-	obj_DoubleValue $2006 $38 $78
+group5Map7aObjectData:
+	obj_Interaction $8200 $20 $78
+	obj_Interaction $2006 $38 $78
 	obj_Pointer objectData_makeAllTorchesLightable
-	obj_Pointer objectData519b
+	obj_Pointer group5Map7aEnemyObjectData
 	obj_End
 
-group5Map7bObjectData: ; 721d
-	obj_Pointer objectData51aa
+group5Map7bObjectData:
+	obj_Pointer group5Map7bEnemyObjectData
 	obj_End
 
-group5Map7cObjectData: ; 7221
-	obj_Pointer objectData51c1
+group5Map7cObjectData:
+	obj_Pointer group5Map7cEnemyObjectData
 	obj_End
 
-group5Map7dObjectData: ; 7225
-	obj_Pointer objectData518f
+group5Map7dObjectData:
+	obj_Pointer group5Map7dEnemyObjectData
 	obj_End
 
-group5Map7eObjectData: ; 7229
-	obj_Pointer objectData518f
+group5Map7eObjectData:
+	obj_Pointer group5Map7eEnemyObjectData
 	obj_End
 
-group5Map7fObjectData: ; 722d
-	obj_Pointer objectData51c8
+group5Map7fObjectData:
+	obj_Pointer group5Map7fEnemyObjectData
 	obj_End
 
-group5Map80ObjectData: ; 7231
-	obj_Pointer objectData51d3
+group5Map80ObjectData:
+	obj_Pointer group5Map80EnemyObjectData
 	obj_End
 
-group5Map81ObjectData: ; 7235
-	obj_Pointer objectData51ea
+group5Map81ObjectData:
+	obj_Pointer group5Map81EnemyObjectData
 	obj_End
 
-group5Map82ObjectData: ; 7239
-	obj_DoubleValue $1e0a $a7 $00
-	obj_DoubleValue $1e0b $50 $00
-	obj_DoubleValue $2000 $58 $78
-	obj_DoubleValue $7e00 $58 $78
-	obj_BossPointer objectData5188
+group5Map82ObjectData:
+	obj_Interaction $1e0a $a7 $00
+	obj_Interaction $1e0b $50 $00
+	obj_Interaction $2000 $58 $78
+	obj_Interaction $7e00 $58 $78
+	obj_BeforeEvent group5Map82BeforeEventObjectData
 	obj_End
 
-group5Map83ObjectData: ; 724e
-	obj_Pointer objectData518f
+group5Map83ObjectData:
+	obj_Pointer group5Map83EnemyObjectData
 	obj_End
 
-group5Map84ObjectData: ; 7252
-	obj_Pointer objectData518f
+group5Map84ObjectData:
+	obj_Pointer group5Map84EnemyObjectData
 	obj_End
 
-group5Map85ObjectData: ; 7256
-	obj_DoubleValue $8200 $20 $58
-	obj_Pointer objectData51f5
+group5Map85ObjectData:
+	obj_Interaction $8200 $20 $58
+	obj_Pointer group5Map85EnemyObjectData
 	obj_End
 
-group5Map86ObjectData: ; 725f
-	obj_Pointer objectData5200
+group5Map86ObjectData:
+	obj_Pointer group5Map86EnemyObjectData
 	obj_End
 
-group5Map87ObjectData: ; 7263
-	obj_DoubleValue $2002 $78 $c8
-	obj_DoubleValue $8200 $40 $58
-	obj_DoubleValue $8200 $40 $98
-	obj_DoubleValue $8200 $70 $58
+group5Map87ObjectData:
+	obj_Interaction $2002 $78 $c8
+	obj_Interaction $8200 $40 $58
+	obj_Interaction $8200 $40 $98
+	obj_Interaction $8200 $70 $58
 	obj_Part $0900 $9c
-	obj_Pointer objectData5200
+	obj_Pointer group5Map87EnemyObjectData
 	obj_End
 
-group5Map88ObjectData: ; 727c
-	obj_DoubleValue $1e08 $02 $00
-	obj_Pointer objectData5205
+group5Map88ObjectData:
+	obj_Interaction $1e08 $02 $00
+	obj_Pointer group5Map88EnemyObjectData
 	obj_End
 
-group5Map89ObjectData: ; 7285
-	obj_Pointer objectData520e
+group5Map89ObjectData:
+	obj_Pointer group5Map89EnemyObjectData
 	obj_End
 
-group5Map8aObjectData: ; 7289
-	obj_DoubleValue $7b00 $58 $70
-	obj_DoubleValue $7b01 $58 $80
-	obj_DoubleValue $db00 $7a $78
-	obj_DoubleValue $db01 $58 $aa
-	obj_DoubleValue $db02 $35 $78
-	obj_DoubleValue $db03 $58 $46
-	obj_DoubleValue $900e $78 $78
-	obj_Pointer objectData518f
+group5Map8aObjectData:
+	obj_Interaction $7b00 $58 $70
+	obj_Interaction $7b01 $58 $80
+	obj_Interaction $db00 $7a $78
+	obj_Interaction $db01 $58 $aa
+	obj_Interaction $db02 $35 $78
+	obj_Interaction $db03 $58 $46
+	obj_Interaction $900e $78 $78
+	obj_Pointer group5Map8aEnemyObjectData
 	obj_End
 
-group5Map8bObjectData: ; 72aa
-	obj_DoubleValue $1e09 $8e $00
-	obj_Pointer objectData5221
+group5Map8bObjectData:
+	obj_Interaction $1e09 $8e $00
+	obj_Pointer group5Map8bEnemyObjectData
 	obj_End
 
-group5Map8cObjectData: ; 72b3
-	obj_Pointer objectData5234
+group5Map8cObjectData:
+	obj_Pointer group5Map8cEnemyObjectData
 	obj_End
 
-group5Map8dObjectData: ; 72b7
-	obj_Pointer objectData523f
+group5Map8dObjectData:
+	obj_Pointer group5Map8dEnemyObjectData
 	obj_End
 
-group5Map8eObjectData: ; 72bb
-	obj_DoubleValue $6130 $10 $18
-	obj_NoValue $d803
-	obj_Pointer objectData5244
+group5Map8eObjectData:
+	obj_Interaction $6130 $10 $18
+	obj_Interaction $d803
+	obj_Pointer group5Map8eEnemyObjectData
 	obj_End
 
-group5Map8fObjectData: ; 72c7
-	obj_DoubleValue $8200 $50 $68
-	obj_DoubleValue $8200 $50 $88
-	obj_DoubleValue $8201 $90 $68
-	obj_DoubleValue $8200 $90 $88
-	obj_Pointer objectData524d
+group5Map8fObjectData:
+	obj_Interaction $8200 $50 $68
+	obj_Interaction $8200 $50 $88
+	obj_Interaction $8201 $90 $68
+	obj_Interaction $8200 $90 $88
+	obj_Pointer group5Map8fEnemyObjectData
 	obj_End
 
-group5Map90ObjectData: ; 72dc
-	obj_DoubleValue $1900 $38 $c8
-	obj_DoubleValue $1b00 $68 $a0
-	obj_DoubleValue $2103 $68 $b8
-	obj_DoubleValue $2108 $00 $01
-	obj_Pointer objectData518f
+group5Map90ObjectData:
+	obj_Interaction $1900 $38 $c8
+	obj_Interaction $1b00 $68 $a0
+	obj_Interaction $2103 $68 $b8
+	obj_Interaction $2108 $00 $01
+	obj_Pointer group5Map90EnemyObjectData
 	obj_End
 
-group5Map91ObjectData: ; 72f1
-	obj_DoubleValue $1e0a $a6 $00
-	obj_Pointer objectData525c
+group5Map91ObjectData:
+	obj_Interaction $1e0a $a6 $00
+	obj_Pointer group5Map91EnemyObjectData
 	obj_End
 
-group5Map92ObjectData: ; 72fa
-	obj_Pointer objectData518f
+group5Map92ObjectData:
+	obj_Pointer group5Map92EnemyObjectData
 	obj_End
 
-group5Map93ObjectData: ; 72fe
-	obj_DoubleValue $6130 $10 $18
-	obj_DoubleValue $1e09 $8e $00
-	obj_NoValue $d804
-	obj_Pointer objectData5261
+group5Map93ObjectData:
+	obj_Interaction $6130 $10 $18
+	obj_Interaction $1e09 $8e $00
+	obj_Interaction $d804
+	obj_Pointer group5Map93EnemyObjectData
 	obj_End
 
-group5Map94ObjectData: ; 730e
-	obj_Pointer objectData518f
+group5Map94ObjectData:
+	obj_Pointer group5Map94EnemyObjectData
 	obj_End
 
-group5Map95ObjectData: ; 7312
-	obj_NoValue $2004
+group5Map95ObjectData:
+	obj_Interaction $2004
 	obj_Part $0900 $1a
-	obj_Pointer objectData5266
+	obj_Pointer group5Map95EnemyObjectData
 	obj_End
 
-group5Map96ObjectData: ; 731d
-	obj_DoubleValue $1e08 $07 $00
-	obj_Pointer objectData5289
+group5Map96ObjectData:
+	obj_Interaction $1e08 $07 $00
+	obj_Pointer group5Map96EnemyObjectData
 	obj_End
 
-group5Map97ObjectData: ; 7326
-	obj_Pointer objectData518f
+group5Map97ObjectData:
+	obj_Pointer group5Map97EnemyObjectData
 	obj_End
 
-group5Map98ObjectData: ; 732a
-	obj_NoValue $7731
-	obj_Pointer objectData5290
+group5Map98ObjectData:
+	obj_Interaction $7731
+	obj_Pointer group5Map98EnemyObjectData
 	obj_End
 
-group5Map99ObjectData: ; 7331
-	obj_DoubleValue $8200 $70 $b8
-	obj_Pointer objectData52a9
+group5Map99ObjectData:
+	obj_Interaction $8200 $70 $b8
+	obj_Pointer group5Map99EnemyObjectData
 	obj_End
 
-group5Map9aObjectData: ; 733a
-	obj_Pointer objectData52ae
+group5Map9aObjectData:
+	obj_Pointer group5Map9aEnemyObjectData
 	obj_End
 
-group5Map9bObjectData: ; 733e
-	obj_DoubleValue $1301 $48 $68
-	obj_DoubleValue $2005 $18 $88
-	obj_Pointer objectData52a9
+group5Map9bObjectData:
+	obj_Interaction $1301 $48 $68
+	obj_Interaction $2005 $18 $88
+	obj_Pointer group5Map9bEnemyObjectData
 	obj_End
 
-group5Map9cObjectData: ; 734b
+group5Map9cObjectData:
 	obj_Part $0900 $11
-	obj_DoubleValue $7d00 $57 $01
-	obj_DoubleValue $2003 $48 $28
-	obj_Pointer objectData518f
+	obj_Interaction $7d00 $57 $01
+	obj_Interaction $2003 $48 $28
+	obj_Pointer group5Map9cEnemyObjectData
 	obj_End
 
-group5Map9dObjectData: ; 735c
-	obj_Pointer objectData52a9
+group5Map9dObjectData:
+	obj_Pointer group5Map9dEnemyObjectData
 	obj_End
 
-group5Map9eObjectData: ; 7360
+group5Map9eObjectData:
 	obj_Part $0300 $2a
-	obj_Pointer objectData52b3
+	obj_Pointer group5Map9eEnemyObjectData
 	obj_End
 
-group5Map9fObjectData: ; 7368
-	obj_DoubleValue $8200 $50 $c8
-	obj_Pointer objectData52be
+group5Map9fObjectData:
+	obj_Interaction $8200 $50 $c8
+	obj_Pointer group5Map9fEnemyObjectData
 	obj_End
 
-group5Mapa0ObjectData: ; 7371
+group5Mapa0ObjectData:
 	obj_Part $0300 $97
-	obj_Pointer objectData518f
+	obj_Pointer group5Mapa0EnemyObjectData
 	obj_End
 
-group5Mapa1ObjectData: ; 7379
-	obj_DoubleValue $7d00 $57 $02
-	obj_Pointer objectData518f
+group5Mapa1ObjectData:
+	obj_Interaction $7d00 $57 $02
+	obj_Pointer group5Mapa1EnemyObjectData
 	obj_End
 
-group5Mapa2ObjectData: ; 7382
-	obj_DoubleValue $1e0b $50 $00
-	obj_Pointer objectData52d1
+group5Mapa2ObjectData:
+	obj_Interaction $1e0b $50 $00
+	obj_Pointer group5Mapa2EnemyObjectData
 	obj_End
 
-group5Mapa3ObjectData: ; 738b
-	obj_Pointer objectData52dc
+group5Mapa3ObjectData:
+	obj_Pointer group5Mapa3EnemyObjectData
 	obj_End
 
-group5Mapa4ObjectData: ; 738f
-	obj_Pointer objectData5309
+group5Mapa4ObjectData:
+	obj_Pointer group5Mapa4EnemyObjectData
 	obj_End
 
-group5Mapa5ObjectData: ; 7393
-	obj_Pointer objectData5312
+group5Mapa5ObjectData:
+	obj_Pointer group5Mapa5EnemyObjectData
 	obj_End
 
-group5Mapa6ObjectData: ; 7397
-	obj_DoubleValue $2500 $18 $78
-	obj_DoubleValue $2111 $38 $78
-	obj_Pointer objectData5317
+group5Mapa6ObjectData:
+	obj_Interaction $2500 $18 $78
+	obj_Interaction $2111 $38 $78
+	obj_Pointer group5Mapa6EnemyObjectData
 	obj_End
 
-group5Mapa7ObjectData: ; 73a4
-	obj_Pointer objectData531c
+group5Mapa7ObjectData:
+	obj_Pointer group5Mapa7EnemyObjectData
 	obj_End
 
-group5Mapa8ObjectData: ; 73a8
+group5Mapa8ObjectData:
 	obj_Part $0800 $00
-	obj_Pointer objectData530e
+	obj_Pointer group5Mapa8EnemyObjectData
 	obj_End
 
-group5Mapa9ObjectData: ; 73b0
-	obj_DoubleValue $7b00 $58 $70
-	obj_DoubleValue $7b01 $58 $80
-	obj_DoubleValue $900d $78 $78
+group5Mapa9ObjectData:
+	obj_Interaction $7b00 $58 $70
+	obj_Interaction $7b01 $58 $80
+	obj_Interaction $900d $78 $78
 	obj_Part $0980 $33
 	obj_Part $0981 $73
 	obj_Part $0982 $7b
 	obj_Pointer objectData_makeAllTorchesLightable
 	obj_End
 
-group5MapaaObjectData: ; 73cb
-	obj_DoubleValue $1200 $88 $78
-	obj_NoValue $e201
-	obj_NoValue $7e00
-	obj_Pointer objectData5323
+group5MapaaObjectData:
+	obj_Interaction $1200 $88 $78
+	obj_Interaction $e201
+	obj_Interaction $7e00
+	obj_Pointer group5MapaaEnemyObjectData
 	obj_End
 
-group5Mapf1ObjectData: ; 73d9
-	obj_DoubleValue $ad00 $42 $78
-	obj_DoubleValue $da00 $5c $78
-	obj_NoValue $a903
-	obj_NoValue $a904
-	obj_NoValue $a905
+group5Mapf1ObjectData:
+	obj_Interaction $ad00 $42 $78
+	obj_Interaction $da00 $5c $78
+	obj_Interaction $a903
+	obj_Interaction $a904
+	obj_Interaction $a905
 	obj_End
 
-group5Mapf2ObjectData: ; 73ea
-	obj_NoValue $901e
+group5Mapf2ObjectData:
+	obj_Interaction $901e
 	obj_End
 
-group5Mapf3ObjectData: ; 73ee
-	obj_NoValue $e203
+group5Mapf3ObjectData:
+	obj_Interaction $e203
 	obj_End
 
-group5Mapf4ObjectData: ; 73f2
-	obj_NoValue $b500
-	obj_DoubleValue $8000 $58 $78
+group5Mapf4ObjectData:
+	obj_Interaction $b500
+	obj_Interaction $8000 $58 $78
 	obj_End
 
-group5Mapf5ObjectData: ; 73fb
-	obj_BossPointer objectData5332
+group5Mapf5ObjectData:
+	obj_BeforeEvent group5Mapf5BeforeEventObjectData
 	obj_End
 
-group5MapabObjectData: ; 73ff
-	obj_DoubleValue $9c00 $30 $78
-	obj_DoubleValue $ab08 $68 $50
-	obj_DoubleValue $ab09 $88 $d0
+group5MapabObjectData:
+	obj_Interaction $9c00 $30 $78
+	obj_Interaction $ab08 $68 $50
+	obj_Interaction $ab09 $88 $d0
 	obj_End
 
-group5MapacObjectData: ; 740d
-	obj_DoubleValue $ab05 $18 $d0
-	obj_DoubleValue $ab06 $58 $50
-	obj_DoubleValue $ab07 $98 $d0
+group5MapacObjectData:
+	obj_Interaction $ab05 $18 $d0
+	obj_Interaction $ab06 $58 $50
+	obj_Interaction $ab07 $98 $d0
 	obj_End
 
-group5MapadObjectData: ; 741b
-	obj_DoubleValue $9c01 $30 $78
-	obj_DoubleValue $ab03 $68 $50
-	obj_DoubleValue $ab04 $88 $d0
+group5MapadObjectData:
+	obj_Interaction $9c01 $30 $78
+	obj_Interaction $ab03 $68 $50
+	obj_Interaction $ab04 $88 $d0
 	obj_End
 
-group5MapaeObjectData: ; 7429
-	obj_DoubleValue $ab00 $18 $d0
-	obj_DoubleValue $ab01 $58 $50
-	obj_DoubleValue $ab02 $98 $d0
+group5MapaeObjectData:
+	obj_Interaction $ab00 $18 $d0
+	obj_Interaction $ab01 $58 $50
+	obj_Interaction $ab02 $98 $d0
 	obj_End
 
-group5Mapc3ObjectData: ; 7437
-	obj_WithParam $00 $6606 $00 $60 $28
-	obj_WithParam $00 $6606 $01 $60 $48
-	obj_WithParam $00 $6605 $02 $98 $c8
-	obj_WithParam $00 $6605 $03 $28 $28
-	obj_WithParam $00 $6605 $04 $78 $c8
-	obj_WithParam $00 $6604 $00 $80 $98
+group5Mapc3ObjectData:
+	obj_Interaction $6606 $60 $28 $00
+	obj_Interaction $6606 $60 $48 $01
+	obj_Interaction $6605 $98 $c8 $02
+	obj_Interaction $6605 $28 $28 $03
+	obj_Interaction $6605 $78 $c8 $04
+	obj_Interaction $6604 $80 $98 $00
 	obj_End
 
-group5Mapc4ObjectData: ; 745d
-	obj_WithParam $00 $6605 $00 $58 $d8
-	obj_WithParam $00 $6605 $01 $18 $78
+group5Mapc4ObjectData:
+	obj_Interaction $6605 $58 $d8 $00
+	obj_Interaction $6605 $18 $78 $01
 	obj_End
 
-group5Mapc6ObjectData: ; 746b
-	obj_WithParam $00 $660d $03 $58 $88
-	obj_WithParam $00 $660e $07 $98 $d8
+group5Mapc6ObjectData:
+	obj_Interaction $660d $58 $88 $03
+	obj_Interaction $660e $98 $d8 $07
 	obj_End
 
-group5Mapc7ObjectData: ; 7479
-	obj_DoubleValue $8200 $20 $78
-	obj_DoubleValue $8201 $40 $38
-	obj_DoubleValue $8200 $40 $b8
-	obj_DoubleValue $8200 $60 $78
-	obj_DoubleValue $8200 $80 $38
-	obj_DoubleValue $8200 $80 $b8
+group5Mapc7ObjectData:
+	obj_Interaction $8200 $20 $78
+	obj_Interaction $8201 $40 $38
+	obj_Interaction $8200 $40 $b8
+	obj_Interaction $8200 $60 $78
+	obj_Interaction $8200 $80 $38
+	obj_Interaction $8200 $80 $b8
 	obj_End
 
-group5Mapc8ObjectData: ; 7493
-	obj_DoubleValue $8008 $12 $78
-	obj_DoubleValue $5201 $28 $78
+group5Mapc8ObjectData:
+	obj_Interaction $8008 $12 $78
+	obj_Interaction $5201 $28 $78
 	obj_End
 
-group5Mapb6ObjectData: ; 749d
-	obj_DoubleValue $6b0b $48 $28
-	obj_Pointer objectData41c9
+group5Mapb6ObjectData:
+	obj_Interaction $6b0b $48 $28
+	obj_Pointer group5Mapb6EnemyObjectData
 	obj_End
 
-group5MapbeObjectData: ; 74a6
-	obj_Pointer objectData41e5
+group5MapbeObjectData:
+	obj_Pointer group5MapbeEnemyObjectData
 	obj_End
 
-group5Mapb8ObjectData: ; 74aa
-	obj_NoValue $1f02
-	obj_Pointer objectData41ca
+group5Mapb8ObjectData:
+	obj_Interaction $1f02
+	obj_Pointer group5Mapb8EnemyObjectData
 	obj_End
 
-group5Mapb9ObjectData: ; 74b1
-	obj_WithParam $00 $660e $00 $68 $38
+group5Mapb9ObjectData:
+	obj_Interaction $660e $68 $38 $00
 	obj_End
 
-group5MapbbObjectData: ; 74b9
-	obj_WithParam $00 $660d $01 $18 $48
-	obj_WithParam $00 $660e $02 $98 $18
+group5MapbbObjectData:
+	obj_Interaction $660d $18 $48 $01
+	obj_Interaction $660e $98 $18 $02
 	obj_End
 
-group5MapbcObjectData: ; 74c7
-	obj_WithParam $00 $660d $00 $18 $a8
+group5MapbcObjectData:
+	obj_Interaction $660d $18 $a8 $00
 	obj_End
 
-group5MapbdObjectData: ; 74cf
-	obj_WithParam $00 $660e $01 $58 $48
+group5MapbdObjectData:
+	obj_Interaction $660e $58 $48 $01
 	obj_End
 
-group5MapbfObjectData: ; 74d7
-	obj_DoubleValue $6b0c $1c $b8
-	obj_DoubleValue $6b0d $38 $b0
-	obj_DoubleValue $6b0d $38 $c0
-	obj_DoubleValue $6130 $10 $78
+group5MapbfObjectData:
+	obj_Interaction $6b0c $1c $b8
+	obj_Interaction $6b0d $38 $b0
+	obj_Interaction $6b0d $38 $c0
+	obj_Interaction $6130 $10 $78
 	obj_End
 
-group5Mapc0ObjectData: ; 74e9
-	obj_WithParam $00 $660c $00 $18 $d8
+group5Mapc0ObjectData:
+	obj_Interaction $660c $18 $d8 $00
 	obj_End
 
-group5Mapc1ObjectData: ; 74f1
-	obj_DoubleValue $dc07 $28 $28
+group5Mapc1ObjectData:
+	obj_Interaction $dc07 $28 $28
 	obj_End
 
-group5Mapc2ObjectData: ; 74f7
-	obj_NoValue $dc0c
+group5Mapc2ObjectData:
+	obj_Interaction $dc0c
 	obj_Part $0900 $45
-	obj_WithParam $00 $660d $02 $78 $48
+	obj_Interaction $660d $78 $48 $02
 	obj_End
 
-group5MapcaObjectData: ; 7506
-	obj_DoubleValue $4806 $88 $78
+group5MapcaObjectData:
+	obj_Interaction $4806 $88 $78
 	obj_End
 
-group5MapccObjectData: ; 750c
-	obj_DoubleValue $4809 $98 $88
-	obj_DoubleValue $1f00 $12 $01
+group5MapccObjectData:
+	obj_Interaction $4809 $98 $88
+	obj_Interaction $1f00 $12 $01
 	obj_End
 
-group5Mapc9ObjectData: ; 7516
-	obj_Pointer objectData42f1
+group5Mapc9ObjectData:
+	obj_Pointer group5Mapc9EnemyObjectData
 	obj_End
 
-group5MapcbObjectData: ; 751a
-	obj_Pointer objectData42f9
+group5MapcbObjectData:
+	obj_Pointer group5MapcbEnemyObjectData
 	obj_End
 
-group5MapceObjectData: ; 751e
-	obj_DoubleValue $6d00 $4c $78
-	obj_WithParam $00 $400d $0e $58 $78
+group5MapceObjectData:
+	obj_Interaction $6d00 $4c $78
+	obj_Interaction $400d $58 $78 $0e
 	obj_End
 
-group5Mapd1ObjectData: ; 752b
-	obj_WithParam $00 $400d $08 $18 $88
-	obj_WithParam $00 $400d $09 $48 $48
-	obj_Pointer objectData4304
+group5Mapd1ObjectData:
+	obj_Interaction $400d $18 $88 $08
+	obj_Interaction $400d $48 $48 $09
+	obj_Pointer group5Mapd1EnemyObjectData
 	obj_End
 
-group5Mapd2ObjectData: ; 753c
-	obj_WithParam $00 $400d $0a $58 $58
-	obj_WithParam $00 $400d $0b $58 $98
+group5Mapd2ObjectData:
+	obj_Interaction $400d $58 $58 $0a
+	obj_Interaction $400d $58 $98 $0b
 	obj_End
 
-group5Mapd3ObjectData: ; 754a
-	obj_WithParam $00 $400d $0c $18 $68
-	obj_WithParam $00 $400d $0d $18 $88
-	obj_Pointer objectData430f
+group5Mapd3ObjectData:
+	obj_Interaction $400d $18 $68 $0c
+	obj_Interaction $400d $18 $88 $0d
+	obj_Pointer group5Mapd3EnemyObjectData
 	obj_End
 
-group5Mapd4ObjectData: ; 755b
-	obj_WithParam $00 $400d $07 $28 $28
-	obj_Pointer objectData431e
+group5Mapd4ObjectData:
+	obj_Interaction $400d $28 $28 $07
+	obj_Pointer group5Mapd4EnemyObjectData
 	obj_End
 
-group5Mapd5ObjectData: ; 7566
-	obj_WithParam $00 $400d $0f $38 $78
-	obj_Pointer objectData4329
+group5Mapd5ObjectData:
+	obj_Interaction $400d $38 $78 $0f
+	obj_Pointer group5Mapd5EnemyObjectData
 	obj_End
 
-group5Mapd6ObjectData: ; 7571
-	obj_Pointer objectData4338
+group5Mapd6ObjectData:
+	obj_Pointer group5Mapd6EnemyObjectData
 	obj_End
 
-group5Mapd7ObjectData: ; 7575
-	obj_DoubleValue $2d00 $48 $78
+group5Mapd7ObjectData:
+	obj_Interaction $2d00 $48 $78
 	obj_End
 
-group5Mapd8ObjectData: ; 757b
-	obj_DoubleValue $ca00 $98 $b8
-	obj_WithParam $00 $6609 $00 $88 $58
-	obj_WithParam $00 $6609 $01 $78 $b8
+group5Mapd8ObjectData:
+	obj_Interaction $ca00 $98 $b8
+	obj_Interaction $6609 $88 $58 $00
+	obj_Interaction $6609 $78 $b8 $01
 	obj_End
 
-group5Mapd9ObjectData: ; 758e
-	obj_Pointer objectData5029
+group5Mapd9ObjectData:
+	obj_Pointer group5Mapd9EnemyObjectData
 	obj_End
 
-group5MapdcObjectData: ; 7592
-	obj_WithParam $00 $660e $05 $18 $38
-	obj_WithParam $00 $660c $06 $88 $58
+group5MapdcObjectData:
+	obj_Interaction $660e $18 $38 $05
+	obj_Interaction $660c $88 $58 $06
 	obj_End
 
-group5MapddObjectData: ; 75a0
-	obj_WithParam $00 $660c $07 $88 $a8
+group5MapddObjectData:
+	obj_Interaction $660c $88 $a8 $07
 	obj_End
 
-group5MapdeObjectData: ; 75a8
-	obj_WithParam $00 $8b01 $00 $78 $38
-	obj_WithParam $00 $6605 $05 $88 $28
-	obj_Pointer objectData421e
+group5MapdeObjectData:
+	obj_Interaction $8b01 $78 $38 $00
+	obj_Interaction $6605 $88 $28 $05
+	obj_Pointer group5MapdeEnemyObjectData
 	obj_End
 
-group5MapdfObjectData: ; 75b9
-	obj_WithParam $00 $660e $09 $18 $b8
-	obj_WithParam $00 $660e $0a $88 $a8
-	obj_Pointer objectData4227
+group5MapdfObjectData:
+	obj_Interaction $660e $18 $b8 $09
+	obj_Interaction $660e $88 $a8 $0a
+	obj_Pointer group5MapdfEnemyObjectData
 	obj_End
 
-group5Mapb0ObjectData: ; 75ca
-	obj_Pointer objectData4171
+group5Mapb0ObjectData:
+	obj_Pointer group5Mapb0EnemyObjectData
 	obj_End
 
-group5Mapb1ObjectData: ; 75ce
-	obj_DoubleValue $dc07 $18 $58
-	obj_Pointer objectData4180
+group5Mapb1ObjectData:
+	obj_Interaction $dc07 $18 $58
+	obj_Pointer group5Mapb1EnemyObjectData
 	obj_End
 
-group5Mapb2ObjectData: ; 75d7
-	obj_Pointer objectData418f
+group5Mapb2ObjectData:
+	obj_Pointer group5Mapb2EnemyObjectData
 	obj_End
 
-group5Mapb3ObjectData: ; 75db
-	obj_Pointer objectData4194
+group5Mapb3ObjectData:
+	obj_Pointer group5Mapb3EnemyObjectData
 	obj_End
 
-group5Mapb4ObjectData: ; 75df
-	obj_Pointer objectData41ab
+group5Mapb4ObjectData:
+	obj_Pointer group5Mapb4EnemyObjectData
 	obj_End
 
-group5Mapb5ObjectData: ; 75e3
-	obj_Pointer objectData41ba
+group5Mapb5ObjectData:
+	obj_Pointer group5Mapb5EnemyObjectData
 	obj_End
 
-group5MapcfObjectData: ; 75e7
-	obj_DoubleValue $1000 $28 $58
-	obj_DoubleValue $1c00 $38 $38
+group5MapcfObjectData:
+	obj_Interaction $1000 $28 $58
+	obj_Interaction $1c00 $38 $38
 	obj_End
 
-group5Mapd0ObjectData: ; 75f1
-	obj_DoubleValue $3b07 $48 $28
-	obj_DoubleValue $ab0e $78 $38
-	obj_DoubleValue $3c0b $18 $48
-	obj_DoubleValue $2a00 $60 $c0
-	obj_DoubleValue $9a09 $18 $c8
+group5Mapd0ObjectData:
+	obj_Interaction $3b07 $48 $28
+	obj_Interaction $ab0e $78 $38
+	obj_Interaction $3c0b $18 $48
+	obj_Interaction $2a00 $60 $c0
+	obj_Interaction $9a09 $18 $c8
 	obj_End
 
-group5MapdaObjectData: ; 7607
-	obj_Pointer objectData41ee
+group5MapdaObjectData:
+	obj_Pointer group5MapdaEnemyObjectData
 	obj_End
 
-group5MapdbObjectData: ; 760b
-	obj_Pointer objectData4205
+group5MapdbObjectData:
+	obj_Pointer group5MapdbEnemyObjectData
 	obj_End
 
-group5Mape0ObjectData: ; 760f
-	obj_WithParam $00 $660e $08 $98 $18
-	obj_WithParam $00 $660d $04 $18 $98
-	obj_Pointer objectData4230
+group5Mape0ObjectData:
+	obj_Interaction $660e $98 $18 $08
+	obj_Interaction $660d $18 $98 $04
+	obj_Pointer group5Mape0EnemyObjectData
 	obj_End
 
-group5Mape1ObjectData: ; 7620
-	obj_Pointer objectData4231
+group5Mape1ObjectData:
+	obj_Pointer group5Mape1EnemyObjectData
 	obj_End
 
-group5Mape2ObjectData: ; 7624
-	obj_WithParam $00 $660c $01 $98 $38
-	obj_WithParam $00 $660c $02 $18 $78
-	obj_Pointer objectData4230
+group5Mape2ObjectData:
+	obj_Interaction $660c $98 $38 $01
+	obj_Interaction $660c $18 $78 $02
+	obj_Pointer group5Mape2EnemyObjectData
 	obj_End
 
-group5Mape3ObjectData: ; 7635
-	obj_NoValue $dc0d
+group5Mape3ObjectData:
+	obj_Interaction $dc0d
 	obj_Part $0900 $19
-	obj_Pointer objectData4240
+	obj_Pointer group5Mape3EnemyObjectData
 	obj_End
 
-group5Mape4ObjectData: ; 7640
-	obj_DoubleValue $b400 $84 $78
-	obj_DoubleValue $8007 $42 $78
-	obj_DoubleValue $5200 $58 $78
-	obj_DoubleValue $5202 $58 $78
+group5Mape4ObjectData:
+	obj_Interaction $b400 $84 $78
+	obj_Interaction $8007 $42 $78
+	obj_Interaction $5200 $58 $78
+	obj_Interaction $5202 $58 $78
 	obj_End
 
-group5Mape7ObjectData: ; 7652
-	obj_DoubleValue $b802 $10 $30
-	obj_DoubleValue $a100 $78 $58
+group5Mape7ObjectData:
+	obj_Interaction $b802 $10 $30
+	obj_Interaction $a100 $78 $58
 	obj_RandomEnemy $20 $2b00
 	obj_End
 
-group5Mape8ObjectData: ; 7660
-	obj_DoubleValue $9401 $28 $78
-	obj_DoubleValue $9402 $08 $68
+group5Mape8ObjectData:
+	obj_Interaction $9401 $28 $78
+	obj_Interaction $9402 $08 $68
 	obj_Part $0980 $45
 	obj_End
 
-group5Mape9ObjectData: ; 766e
-	obj_DoubleValue $481d $20 $c8
-	obj_Pointer objectData4281
+group5Mape9ObjectData:
+	obj_Interaction $481d $20 $c8
+	obj_Pointer group5Mape9EnemyObjectData
 	obj_End
 
-group5MapecObjectData: ; 7677
-	obj_DoubleValue $5203 $58 $c0
-	obj_DoubleValue $5204 $78 $48
-	obj_DoubleValue $5205 $48 $28
-	obj_DoubleValue $5206 $18 $88
+group5MapecObjectData:
+	obj_Interaction $5203 $58 $c0
+	obj_Interaction $5204 $78 $48
+	obj_Interaction $5205 $48 $28
+	obj_Interaction $5206 $18 $88
 	obj_End
 
-group5MapedObjectData: ; 7689
-	obj_DoubleValue $dc00 $48 $78
+group5MapedObjectData:
+	obj_Interaction $dc00 $48 $78
 	obj_Part $0800 $50
 	obj_End
 
-group5MapeeObjectData: ; 7693
-	obj_Pointer objectData425e
+group5MapeeObjectData:
+	obj_Pointer group5MapeeEnemyObjectData
 	obj_End
 
-group5MapefObjectData: ; 7697
-	obj_DoubleValue $b801 $00 $78
+group5MapefObjectData:
+	obj_Interaction $b801 $00 $78
 	obj_End
 
-group5Mapf6ObjectData: ; 769d
-	obj_DoubleValue $b100 $28 $78
-	obj_DoubleValue $bf08 $58 $58
-	obj_DoubleValue $bf09 $58 $98
-	obj_NoValue $710c
+group5Mapf6ObjectData:
+	obj_Interaction $b100 $28 $78
+	obj_Interaction $bf08 $58 $58
+	obj_Interaction $bf09 $58 $98
+	obj_Interaction $710c
 	obj_End
 
-group5Mapf7ObjectData: ; 76ae
-	obj_Pointer objectData4269
+group5Mapf7ObjectData:
+	obj_Pointer group5Mapf7EnemyObjectData
 	obj_End
 
-group5Mapf8ObjectData: ; 76b2
-	obj_DoubleValue $c300 $28 $c8
-	obj_DoubleValue $c400 $58 $a8
-	obj_DoubleValue $c401 $68 $d8
-	obj_DoubleValue $c402 $18 $28
-	obj_DoubleValue $c403 $98 $28
+group5Mapf8ObjectData:
+	obj_Interaction $c300 $28 $c8
+	obj_Interaction $c400 $58 $a8
+	obj_Interaction $c401 $68 $d8
+	obj_Interaction $c402 $18 $28
+	obj_Interaction $c403 $98 $28
 	obj_End
 
-group5Mapf9ObjectData: ; 76c8
-	obj_DoubleValue $1e09 $5e $00
-	obj_DoubleValue $dc0f $88 $78
-	obj_Pointer objectData4719
+group5Mapf9ObjectData:
+	obj_Interaction $1e09 $5e $00
+	obj_Interaction $dc0f $88 $78
+	obj_Pointer group5Mapf9EnemyObjectData
 	obj_End
 
-group5MapfaObjectData: ; 76d5
-	obj_Pointer objectData4730
+group5MapfaObjectData:
+	obj_Pointer group5MapfaEnemyObjectData
 	obj_End
 
-group5MapfbObjectData: ; 76d9
-	obj_Pointer objectData4747
+group5MapfbObjectData:
+	obj_Pointer group5MapfbEnemyObjectData
 	obj_End
 

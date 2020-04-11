@@ -31,8 +31,8 @@ if romIsAges(rom):
     numTileMappings = 0x852
 
     dataDir = 'data/ages/'
-    tilesetDir = 'tilesets/ages/'
-    precmpDir = 'precompressed/tilesets/ages/'
+    tilesetDir = 'tileset_layouts/ages/'
+    precmpDir = 'precompressed/ages/tileset_layouts/'
 elif romIsSeasons(rom):
     tileMappingBank = 0x17
 
@@ -48,8 +48,8 @@ elif romIsSeasons(rom):
     numTileMappings = 0x8f2
 
     dataDir = 'data/seasons/'
-    tilesetDir = 'tilesets/seasons/'
-    precmpDir = 'precompressed/tilesets/seasons/'
+    tilesetDir = 'tileset_layouts/seasons/'
+    precmpDir = 'precompressed/seasons/tileset_layouts/'
 else:
     print('Unrecognized ROM.')
     sys.exit(1)
@@ -186,7 +186,7 @@ for i in range(numDictionaryPointers):
     dictionary.dataAddr = bankedAddress(
         rom[dictionary.addr]&0x7f, dictionary.dataAddr)
     dictionary.compressionMode = rom[dictionary.addr]>>7
-    dictionary.label = 'tilesetDictionary' + myhex(i, 2)
+    dictionary.label = 'tilesetLayoutDictionary' + myhex(i, 2)
     dictionary.data = rom[dictionary.dataAddr:]
 
 for i in range(numTilesets):
@@ -195,7 +195,7 @@ for i in range(numTilesets):
 
     tileset.addr = bankedAddress(
         tilesetHeaderBank, read16(rom, tilesetHeaderTable+i*2))
-    tileset.label = 'tilesetHeaderGroup' + myhex(tileset.index, 2)
+    tileset.label = 'tilesetLayoutGroup' + myhex(tileset.index, 2)
 
     if tileset.addr in tilesetHeaderAddressDict:
         tileset.ref = tilesetHeaderAddressDict[tileset.addr]
@@ -235,16 +235,15 @@ for i in range(numTilesets):
 outFile = open(dataDir + 'tilesetHeaders.s', 'w')
 
 # Dictionary references
-outFile.write(
-    'tilesetDictionaryTable: ; ' + wlahex(tilesetDictionaryTable) + '\n')
+outFile.write('tilesetLayoutDictionaryTable:\n')
 
 for dictionary in dictionaries:
     outFile.write('\t.dw ' + dictionary.label + '\n')
 
 for i in range(numDictionaries):
     dictionary = dictionaries[i]
-    outFile.write(dictionary.label + ': ; ' + wlahex(dictionary.addr) + '\n')
-    outFile.write('\tm_TilesetDictionaryHeader tileset' +
+    outFile.write(dictionary.label + ':\n')
+    outFile.write('\tm_TilesetLayoutDictionaryHeader tileset' +
                   entryLabels[i] + 'Dictionary ' +
                   wlahex(dictionary.compressionMode<<7, 2) + '\n')
 for i in range(numDictionaries, len(dictionaries)):
@@ -252,7 +251,7 @@ for i in range(numDictionaries, len(dictionaries)):
     outFile.write(d.label + ':\n')
 
 # Table
-outFile.write('\ntilesetHeaderGroupTable:\n')
+outFile.write('\ntilesetLayoutTable:\n')
 
 for tileset in tilesetHeaders:
     outFile.write('\t.dw ' + tileset.label + '\n')
@@ -260,18 +259,16 @@ for tileset in tilesetHeaders:
 # Dump header data
 for tileset in sorted(tilesetHeaders, key=lambda x: x.addr):
     if tileset.index >= numUsedTilesets:  # Check for "blank" tilesets
-        outFile.write(
-            tileset.label + ': ; ' + myhex(toGbPointer(tileset.addr)) + '\n')
+        outFile.write(tileset.label + ':\n')
     elif tileset.ref is None:
-        outFile.write(
-            '\n' + tileset.label + ': ; ' + myhex(toGbPointer(tileset.addr)) + '\n')
+        outFile.write('\n' + tileset.label + ':\n')
         for other in tileset.refBy:
             outFile.write(other.label + ':\n')
 
         for j in range(len(tileset.tilesetData)):
             td = tileset.tilesetData[j]
             outFile.write(
-                '\tm_TilesetHeader ' + wlahex(td.dictionary.index, 2))
+                '\tm_TilesetLayoutHeader ' + wlahex(td.dictionary.index, 2))
             outFile.write(' ' + td.label + ' ')
             if j == 0:
                 outFile.write('  ')
@@ -297,7 +294,7 @@ for j in range(2):
     outFile = open(dataDir + 'tileset' + entryLabels[j] + '.s', 'w')
     outFile.write('tileset' + entryLabels[j] + 'Dictionary:\n')
     outFile.write(
-        '\t.incbin "build/tilesets/' + entryLabels[j].lower() + 'Dictionary.bin"\n\n')
+        '\t.incbin "build/tileset_layouts/' + entryLabels[j].lower() + 'Dictionary.bin"\n\n')
 
     lastAddr = -1
     for tilesetData in sorted(tilesetDataList[j], key=lambda x: x.addr):
@@ -307,15 +304,14 @@ for j in range(2):
                 outFile.write('; Data skip ' + hex(lastAddr) + ' -> ' +
                               hex(tilesetData.addr) + ' ' +
                               hex(tilesetData.dataSize) + '\n')
-            outFile.write(tilesetData.label + ': ; ')
-            outFile.write(hex(tilesetData.addr) + '\n')
+            outFile.write(tilesetData.label + ':\n')
             for other in tilesetData.refBy:
                 outFile.write(other.label + ':\n')
 
             if j == 0:
-                outFile.write('\t.incbin ' + '"build/tilesets/' + tilesetData.label + 'Indices.cmp"\n')
+                outFile.write('\t.incbin ' + '"build/tileset_layouts/' + tilesetData.label + 'Indices.cmp"\n')
             else:
-                outFile.write('\t.incbin ' + '"build/tilesets/' + tilesetData.label + '.cmp"\n')
+                outFile.write('\t.incbin ' + '"build/tileset_layouts/' + tilesetData.label + '.cmp"\n')
             ret = decompressTilesetData(tilesetData.addr, tilesetData.dictionary,
                                         tilesetData.dictionary.compressionMode,
                                         tilesetData.dataSize)
@@ -326,9 +322,9 @@ for j in range(2):
                 dataFile.write(rom[tilesetData.addr:ret[1]])
                 dataFile.close()
                 # (Debug) Decompressed output
-                dataFile = open('build/debug/' + tilesetData.label + '.bin', 'wb')
-                dataFile.write(ret[0])
-                dataFile.close()
+#                dataFile = open('build/debug/' + tilesetData.label + '.bin', 'wb')
+#                dataFile.write(ret[0])
+#                dataFile.close()
                 # Fully decompressed output
                 dataFile = open(tilesetDir + tilesetData.label + '.bin', 'wb')
                 for k in range(0,len(ret[0]),2):

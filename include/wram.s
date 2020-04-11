@@ -1509,7 +1509,7 @@ wCutsceneTrigger: ; $cc04/$cc04
 .ifdef ROM_AGES
 wcc05: ; $cc05
 ; bit 0: if unset, prevents the room's object data from loading
-; bit 1: if unset, prevents object pointers from loading
+; bit 1: if unset, prevents object pointers from loading (enemies & item drops)
 ; bit 2: if unset, prevents remembered Companions from loading
 ; bit 3: if unset, prevents Maple from loading
 	db
@@ -1964,8 +1964,13 @@ wGrabbableObjectBufferEnd: ; $cc84
 
 wcc84: ; $cc84
 	db
-wcc85: ; $cc85
+wcc85: ; $cc85/$cc9f
 ; Relates to maple?
+;
+; If bit 7 is set, the lower 2 bits are a direction value. Enemies and item drops won't spawn on the
+; next screen transition in that direction.
+;
+; If bit 7 is unset, but the value is nonzero, enemies and item drops don't spawn at all.
 	db
 
 wRoomEdgeY: ; $cc86/$cca0

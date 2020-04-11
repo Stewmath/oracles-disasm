@@ -1,9 +1,13 @@
  m_section_free "Objects_1" namespace "objectData"
 
 .ifdef ROM_AGES
-.include "objects/ages/helperData.s"
+.include "objects/ages/extraData1.s"
+.include "objects/ages/enemyData.s"
+.include "objects/ages/extraData2.s"
 .else
-.include "objects/seasons/helperData.s"
+.include "objects/seasons/extraData1.s"
+.include "objects/seasons/enemyData.s"
+.include "objects/seasons/extraData2.s"
 .endif
 
 ;;
@@ -259,7 +263,7 @@ _objectDataOp3:
 	jr _parsePointer		; $56bf
 
 ;;
-; Boss object pointer: use the pointer if the boss is not defeated.
+; "Before Event" pointer: use the pointer if bit 7 of room flags is not set.
 ; @addr{56c1}
 _objectDataOp4:
 	call _checkSkipPointer		; $56c1
@@ -271,7 +275,7 @@ _objectDataOp4:
 	jr _parsePointer		; $56cd
 
 ;;
-; Anti boss object pointer: use the pointer if the boss is defeated.
+; "After Event" pointer: use the pointer if bit 7 of room flags is set.
 ; @addr{56cf}
 _objectDataOp5:
 	call _checkSkipPointer		; $56cf

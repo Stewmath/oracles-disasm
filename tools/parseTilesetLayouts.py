@@ -27,7 +27,7 @@ if len(sys.argv) < 2:
 
 game = sys.argv[1]
 
-tilesetsDirectory = 'tilesets/' + game + '/'
+tilesetsDirectory = 'tileset_layouts/' + game + '/'
 
 fl = os.listdir(tilesetsDirectory)
 fileList = []
@@ -47,7 +47,7 @@ for filename in fileList:
     file = open(tilesetsDirectory + filename, 'rb')
     fileData = file.read()
 
-    outFile = open('build/tilesets/' + filename[0:len(filename)-4] + 'Indices.bin', 'wb')
+    outFile = open('build/tileset_layouts/' + filename[0:len(filename)-4] + 'Indices.bin', 'wb')
     buf = bytearray()
 
     for i in range(256):
@@ -84,9 +84,9 @@ for filename in fileList:
 indexList = []
 attributeList = []
 
-mappingsOutFile = open('build/tilesets/tileMappingTable.bin', 'wb')
-indexOutFile = open('build/tilesets/tileMappingIndexData.bin', 'wb')
-attributeOutFile = open('build/tilesets/tileMappingAttributeData.bin', 'wb')
+mappingsOutFile = open('build/tileset_layouts/tileMappingTable.bin', 'wb')
+indexOutFile = open('build/tileset_layouts/tileMappingIndexData.bin', 'wb')
+attributeOutFile = open('build/tileset_layouts/tileMappingAttributeData.bin', 'wb')
 
 for i in range(len(tileList)):
     data = tileList[i]
@@ -130,7 +130,7 @@ attributeOutFile.close()
 
 # Generate dictionary file. Every X-byte chunk that's used more than once is put into the
 # dictionary.
-file = open('build/tilesets/mappingsDictionary.bin', 'wb')
+file = open('build/tileset_layouts/mappingsDictionary.bin', 'wb')
 for key in dictionaryStrings.keys():
     val = dictionaryStrings[key]
     if val > 1:

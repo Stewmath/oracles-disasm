@@ -152877,7 +152877,7 @@ _roomSpecificCodeC: ; 596e
  m_section_free "Objects_2" namespace "objectData"
 
 .include "objects/ages/mainData.s"
-.include "objects/ages/helperData2.s"
+.include "objects/ages/extraData3.s"
 
 .ends
 
@@ -153813,7 +153813,7 @@ underWaterSurfaceData_7e53:
 
  m_section_free "Objects_3" namespace "objectData"
 
-.include "objects/ages/helperData3.s"
+.include "objects/ages/extraData4.s"
 
 .ends
 

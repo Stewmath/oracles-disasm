@@ -378,7 +378,7 @@
 ; Args:
 ; 1 - Label: name
 ; 2 - Byte: Compression mode ($00 or $80)
-.macro m_TilesetDictionaryHeader
+.macro m_TilesetLayoutDictionaryHeader
 	.db :\1 | \2
 	dwbe \1
 .endm
@@ -389,7 +389,7 @@
 ; 3 - Word: Destination (multiple of 0x10)
 ; 4 - Byte: Destination wram/vram bank
 ; 5 - Word: Data size in bytes
-.macro m_TilesetHeader
+.macro m_TilesetLayoutHeader
 	.db \1
 	.db :\2
 	dwbe \2

@@ -142,7 +142,7 @@ checkAndSpawnMaple:
 	ld (hl),$00		; $7713
 	ld hl,w1Companion.enabled	; $7715
 	ld a,$01		; $7718
-	ld (wcc85),a		; $771a
+	ld (wcc85),a ; Prevent enemies & item drops from spawning
 	ld (wIsMaplePresent),a		; $771d
 	ldi (hl),a		; $7720
 	ld (hl),$0e		; $7721
