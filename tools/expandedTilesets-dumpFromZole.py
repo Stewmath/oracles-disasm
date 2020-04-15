@@ -8,7 +8,7 @@ if len(sys.argv) < 3:
     print('\t-a: All of the below')
     print('\t-d: Dungeon layouts')
     print('\t-g: Tileset Graphics')
-    print('\t-i: Area IDs')
+    print('\t-i: Tileset IDs')
     print('\t-m: Music IDs')
     print('\t-r: Room Layouts')
     print('\t-t: Tileset Mappings')
@@ -21,7 +21,7 @@ if len(sys.argv) < 3:
             \n\t- Chests\
             \n\t- Miniboss portal warps\
             \n\t- Link\'s start location\
-            \n\t- Area flags\
+            \n\t- Tileset flags\
             \n\t- Essence warp location\
             \n\t- Enemy edits\
             \n\t- Sign & text changes\
@@ -38,17 +38,19 @@ romFile = open(filename, 'rb')
 rom = bytearray(romFile.read())
 
 
+FIX_PAST_CLIFFS = True
+
 if romIsAges(rom):
     NUM_AREAS = 0x67
     NUM_TILEMAPS = 0x2c
-    areaData = 0x10f9c
-    areaIdAddr = 0x112d4
+    tilesetDataAddr = 0x10f9c
+    tilesetIdAddr = 0x112d4
     musicTable = 0x1095c
     dungeonLayoutAddr = 0x4fce
     game = 'ages'
 elif romIsSeasons(rom):
     NUM_AREAS = 0xcf # TODO: handle seasonal areas properly
-    areaData = 0x10c84
+    tilesetDataAddr = 0x10c84
     game = 'seasons'
     print('Seasons not supported yet.')
     sys.exit(1)
@@ -92,9 +94,9 @@ if '-g' in args:
         outFile.close()
 
 if '-i' in args:
-    print('Dumping Area IDs.')
+    print('Dumping Tileset IDs.')
     for group in range(0,6):
-        addr = bankedAddress(4, read16(rom, areaIdAddr + 2 * group))
+        addr = bankedAddress(4, read16(rom, tilesetIdAddr + 2 * group))
         data = rom[addr : addr+0x100]
         f = open('rooms/%s/group%dAreas.bin' % (game, group), 'wb')
         f.write(data)
@@ -139,23 +141,43 @@ if '-r' in args:
             layoutAddr += roomSize
 
 if '-t' in args:
-    # ZOLE's tilemaps aren't actually fully separated by area ID, for some reason. So we do this
+    # ZOLE's tilemaps aren't actually fully separated by tileset ID, for some reason. So we do this
     # ourselves.
     print('Dumping tilemaps.')
     tilemapAddr = 0x201000
-    for area in range(0,NUM_AREAS):
-        tilemap = rom[areaData + area*8 + 5]
+    for tileset in range(0,NUM_AREAS):
+        tilesetData = rom[tilesetDataAddr + tileset*8 : tilesetDataAddr + tileset*8 + 8]
+        tilemap = tilesetData[5]
         tilemapAddr = 0x201000 + tilemap * 0x800
         tilemapData = rom[tilemapAddr:tilemapAddr+0x800]
-        outFile = open('tilesets/' + game + '/tilesetMappings' + myhex(area, 2) + '.bin', 'wb')
+
+        # Cliffs in the past are hardcoded to have their palettes changed from blue to red, so that
+        # the tile attributes can be reused in the past and present. Instead, we bake this into the
+        # dumped tiles so they can be edited freely.
+        if FIX_PAST_CLIFFS and romIsAges(rom):
+            if tilesetData[0] >> 4 != 0: # Collisions 0 (overworld)
+                continue
+            if tilesetData[1] & 0x80 != 0x80: # "In the past" flag
+                continue
+            if tileset == 0x26: # Maku tree screen is an exception
+                continue
+            for t in range(0x40, 0x80):
+                for i in range(0,4):
+                    pos = t * 8 + 4 + i
+                    if tilemapData[pos] & 7 == 6:
+                        tilemapData[pos] &= 0xf8 # Switch to palette 0
+
+        outFile = open('tileset_layouts/' + game + '/tilesetMappings' + myhex(tileset, 2) + '.bin', 'wb')
         outFile.write(tilemapData)
         outFile.close()
 
     # Dump collisions.
     # ZOLE actually has no support for this, so as a shortcut, we just use copies of files we've already
     # dumped from other dumper scripts.
-    #for area in range(0,NUM_AREAS):
-    #    tilemap = rom[areaData + area*8 + 5]
+    # This is commented because it only needed to be run once, for the hack-base branch initial
+    # setup.
+    #for tileset in range(0,NUM_AREAS):
+    #    tilemap = rom[tilesetDataAddr + tileset*8 + 5]
     #    path = 'tilesets/%s/' % game
     #    if game == 'ages': # Hardcoded stuff: some indices don't have their own files
     #        if tilemap == 0x20:
@@ -163,5 +185,5 @@ if '-t' in args:
     #        elif tilemap == 0x32:
     #            tilemap = 0x2b
     #    origFile = path + 'tilesetCollisions-Orig%s.bin' % myhex(tilemap, 2)
-    #    targetFile = path + 'tilesetCollisions%s.bin' % myhex(area, 2)
+    #    targetFile = path + 'tilesetCollisions%s.bin' % myhex(tileset, 2)
     #    os.system('cp %s %s' % (origFile, targetFile))
