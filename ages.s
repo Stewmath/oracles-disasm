@@ -13499,7 +13499,7 @@ loadTilesetLayout:
 	ret
 
 .else ; ROM_AGES
-	jpab func_04_6e63		; $3733
+	jpab setPastCliffPalettesToRed		; $3733
 .endif
 
 ;;
@@ -26821,8 +26821,14 @@ func_6de7:
 .endif
 
 ;;
+; Ages only: For tiles 0x40-0x7f, in the past, replace blue palettes (6) with red palettes (0). This
+; is done so that tilesets can reuse attribute data for both the past and present tilesets.
+;
+; This is annoying so it's disabled in the hack-base branch, which separates all tileset data
+; anyway.
+;
 ; @addr{6e63}
-func_04_6e63:
+setPastCliffPalettesToRed:
 	ld a,(wActiveCollisions)		; $6e63
 	or a			; $6e66
 	jr nz,@done		; $6e68
@@ -26832,12 +26838,13 @@ func_04_6e63:
 	jr z,@done		; $6e6e
 
 	ld a,(wActiveRoom)		; $6e70
-	cp $38			; $6e73
+	cp <ROOM_AGES_138			; $6e73
 	ret z			; $6e75
 
-	ld a,$03		; $6e76
+	; Replace all attributes that have palette "6" with palette "0"
+	ld a,:w3TileMappingData		; $6e76
 	ld ($ff00+R_SVBK),a	; $6e78
-	ld hl,$d204		; $6e7a
+	ld hl,w3TileMappingData + $204		; $6e7a
 	ld d,$06		; $6e7d
 ---
 	ld b,$04		; $6e7f
