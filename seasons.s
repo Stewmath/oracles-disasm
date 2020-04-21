@@ -9406,27 +9406,28 @@ unsetGlobalFlag:
 
 clearEnemiesKilledList:
 	ld h,$00		; $30d9
-	jp $30f7		; $30db
+	jp ++		; $30db
 
 addRoomToEnemiesKilledList:
 	ld h,$01		; $30de
-	jp $30f7		; $30e0
+	jp ++		; $30e0
 
 markEnemyAsKilledInRoom:
 	ld h,$02		; $30e3
-	jp $30f7		; $30e5
+	jp ++		; $30e5
 
 func_3211:
 	ld h,$03		; $30e8
-	jp $30f7		; $30ea
+	jp ++		; $30ea
 
 generateRandomBuffer:
 	ld h,$04		; $30ed
-	jp $30f7		; $30ef
+	jp ++		; $30ef
 
 getRandomPositionForEnemy:
 	ld h,$05		; $30f2
-	jp $30f7		; $30f4
+	jp ++		; $30f4
+++
 	ld l,a			; $30f7
 	ldh a,(<hRomBank)	; $30f8
 	push af			; $30fa
@@ -10144,6 +10145,7 @@ seasonsFunc_35cc:
 	ld a,c			; $35e8
 	ld ($ff00+$70),a	; $35e9
 	ret			; $35eb
+func_35ec:
 	ldh a,(<hRomBank)	; $35ec
 	push af			; $35ee
 	ld a,$01		; $35ef
@@ -18736,7 +18738,7 @@ _label_03_250:
 	ld ($c4ab),a		; $7a55
 	ld hl,$cbb8		; $7a58
 _label_03_251:
-	jp $35ec		; $7a5b
+	jp func_35ec		; $7a5b
 	or b			; $7a5e
 	ld c,c			; $7a5f
 	stop			; $7a60
@@ -124212,7 +124214,7 @@ _label_15_302:
 	add $06			; $6ee3
 	ld e,a			; $6ee5
 	ld h,d			; $6ee6
-	jp $1fd3		; $6ee7
+	jp objectApplyComponentSpeed@addSpeedComponent		; $6ee7
 
 interactionCodee4:
 	call checkInteractionState		; $6eea
