@@ -1836,7 +1836,7 @@ _mainLoop_nextThread:
 	ld a,$3f		; $093b
 	ldh (<hRomBank),a	; $093d
 	ld ($2222),a		; $093f
-	call $4016		; $0942
+	call bank3f.refreshDirtyPalettes		; $0942
 	xor a			; $0945
 	ld ($ff00+$70),a	; $0946
 	ld hl,$c49e		; $0948
@@ -1951,7 +1951,7 @@ _label_00_090:
 	ld a,$07		; $09c1
 	ldh (<hRomBank),a	; $09c3
 	ld ($2222),a		; $09c5
-	call $4000		; $09c8
+	call fileManagementFunction		; $09c8
 	ld c,a			; $09cb
 	pop af			; $09cc
 	ldh (<hRomBank),a	; $09cd
@@ -2129,10 +2129,16 @@ vblankCopyTileFunction:
 	ldi a,(hl)		; $0a9d
 	ld d,a			; $0a9e
 	ld c,e			; $0a9f
-	call $0aa8		; $0aa0
+	call @write4Bytes		; $0aa0
 	ld e,c			; $0aa3
 	ld a,$01		; $0aa4
 	ld ($ff00+$4f),a	; $0aa6
+
+;;
+; @param	de	Destination (vram)
+; @param	hl	Source
+; @addr{0acc}
+@write4Bytes:
 	ldi a,(hl)		; $0aa8
 	ld (de),a		; $0aa9
 	inc e			; $0aaa
@@ -2193,7 +2199,7 @@ updateDirtyPalettes:
 	ldh (<hDirtyBgPalettes),a	; $0aeb
 	ld c,$68		; $0aed
 	ld hl,$df00		; $0aef
-	call $0aff		; $0af2
+	call _label_00_097		; $0af2
 	ldh a,(<hDirtySprPalettes)	; $0af5
 	ld d,a			; $0af7
 	xor a			; $0af8
@@ -3230,21 +3236,21 @@ queueDrawEverything:
 	ldi (hl),a		; $104e
 	ld de,$d600		; $104f
 	ld b,$0b		; $1052
-	call $106c		; $1054
+	call @func		; $1054
 	ld de,$d080		; $1057
 	ld b,$8b		; $105a
-	call $106c		; $105c
+	call @func		; $105c
 	ld de,$d0c0		; $105f
 	ld b,$cb		; $1062
-	call $106c		; $1064
+	call @func		; $1064
 	ld de,$d040		; $1067
 	ld b,$4b		; $106a
-_label_00_159:
+@func:
 	call objectQueueDraw		; $106c
 	inc d			; $106f
 	ld a,d			; $1070
 	cp $e0			; $1071
-	jr c,_label_00_159	; $1073
+	jr c,@func	; $1073
 	ret			; $1075
 
 objectQueueDraw:
@@ -3477,7 +3483,7 @@ setRoomFlagsForUnlockedKeyDoor:
 	cp $ff			; $11c5
 	jr z,_label_00_166	; $11c7
 	call getActiveRoomFromDungeonMapPosition		; $11c9
-	call $11da		; $11cc
+	call @setRoomFlag		; $11cc
 	inc de			; $11cf
 	ld a,($cc56)		; $11d0
 	ld l,a			; $11d3
@@ -3485,6 +3491,8 @@ setRoomFlagsForUnlockedKeyDoor:
 	add l			; $11d5
 	call getRoomInDungeon		; $11d6
 	inc de			; $11d9
+
+@setRoomFlag:
 	ld c,a			; $11da
 	ld a,($cc59)		; $11db
 	ld b,a			; $11de
@@ -3565,7 +3573,7 @@ interactWithTileBeforeLink:
 	ld a,$06		; $1241
 	ldh (<hRomBank),a	; $1243
 	ld ($2222),a		; $1245
-	call $4000		; $1248
+	call bank6.interactWithTileBeforeLink		; $1248
 	rl c			; $124b
 	pop af			; $124d
 	ldh (<hRomBank),a	; $124e
@@ -3877,23 +3885,30 @@ objectGetRelativePositionOfTile:
 	ld e,a			; $1449
 	ld h,$cf		; $144a
 	ld a,$f0		; $144c
-	call $146f		; $144e
+	call @checkTileAtOffset		; $144e
 	ld a,$00		; $1451
 	ret z			; $1453
 	ld a,$01		; $1454
-	call $146f		; $1456
+	call @checkTileAtOffset		; $1456
 	ld a,$01		; $1459
 	ret z			; $145b
 	ld a,$10		; $145c
-	call $146f		; $145e
+	call @checkTileAtOffset		; $145e
 	ld a,$02		; $1461
 	ret z			; $1463
 	ld a,$ff		; $1464
-	call $146f		; $1466
+	call @checkTileAtOffset		; $1466
 	ld a,$03		; $1469
 	ret z			; $146b
 	ld a,$ff		; $146c
 	ret			; $146e
+
+;;
+; @param	a	Offset to add to 'e'
+; @param	e	Position of object
+; @param[out]	zflag	Set if the tile is at that position.
+; @addr{1481}
+@checkTileAtOffset:
 	add e			; $146f
 	ld l,a			; $1470
 	ldh a,(<hFF8B)	; $1471
@@ -4113,7 +4128,7 @@ loadRoomCollisions:
 	ld d,$db		; $156d
 	ld hl,$cf00		; $156f
 	ld b,$b0		; $1572
-_label_00_179:
+-
 	ld a,(hl)		; $1574
 	ld e,a			; $1575
 	ld a,(de)		; $1576
@@ -4121,43 +4136,50 @@ _label_00_179:
 	ldi (hl),a		; $1578
 	inc h			; $1579
 	dec b			; $157a
-	jr nz,_label_00_179	; $157b
-	call $1584		; $157d
+	jr nz,-	; $157b
+	call @blankDataAroundCollisions		; $157d
 	xor a			; $1580
 	ld ($ff00+$70),a	; $1581
 	ret			; $1583
+
+;;
+; Blanks data around the "edges" of wRoomCollisions.
+; @addr{1596}
+@blankDataAroundCollisions:
 	ld hl,$cef0		; $1584
-	call $15a4		; $1587
+	call @blankDataHorizontally		; $1587
 	ld hl,$ce0f		; $158a
-	call $15ad		; $158d
+	call @blankDataVertically		; $158d
 	ld a,($cc49)		; $1590
 	cp $04			; $1593
-	jr c,_label_00_180	; $1595
+	jr c,+	; $1595
 	ld l,$b0		; $1597
-	jr _label_00_181		; $1599
-_label_00_180:
+	jr @blankDataHorizontally		; $1599
++
 	ld l,$80		; $159b
-	call $15a4		; $159d
+	call @blankDataHorizontally		; $159d
 	ld l,$0a		; $15a0
-	jr _label_00_183		; $15a2
-_label_00_181:
+	jr @blankDataVertically		; $15a2
+
+@blankDataHorizontally:
 	ld a,$ff		; $15a4
 	ld b,$10		; $15a6
-_label_00_182:
+-
 	ldi (hl),a		; $15a8
 	dec b			; $15a9
-	jr nz,_label_00_182	; $15aa
+	jr nz,-	; $15aa
 	ret			; $15ac
-_label_00_183:
+
+@blankDataVertically:
 	ld b,$0b		; $15ad
 	ld c,$ff		; $15af
-_label_00_184:
+-
 	ld (hl),c		; $15b1
 	ld a,l			; $15b2
 	add $10			; $15b3
 	ld l,a			; $15b5
 	dec b			; $15b6
-	jr nz,_label_00_184	; $15b7
+	jr nz,-	; $15b7
 	ret			; $15b9
 
 findTileInRoom:
@@ -4696,7 +4718,7 @@ retrieveTextCharacter:
 	ld a,$1c		; $18b8
 	ldh (<hRomBank),a	; $18ba
 	ld ($2222),a		; $18bc
-	call $18d6		; $18bf
+	call func_18d6		; $18bf
 	ld a,$3f		; $18c2
 	ldh (<hRomBank),a	; $18c4
 	ld ($2222),a		; $18c6
@@ -4710,6 +4732,12 @@ retrieveTextCharacter:
 	ld b,b			; $18d3
 	nop			; $18d4
 	ld b,(hl)		; $18d5
+
+;;
+; @param bc
+; @param hl
+; @addr{18d6}
+func_18d6:
 	ld e,$10		; $18d6
 	ld a,h			; $18d8
 	cp $48			; $18d9
@@ -4804,6 +4832,7 @@ _label_00_210:
 
 getThisRoomFlags:
 	ld a,($cc4c)		; $1956
+getARoomFlags:
 	push bc			; $1959
 	ld b,a			; $195a
 	ld a,($cc49)		; $195b
@@ -5544,61 +5573,73 @@ preventObjectHFromPassingObjectD:
 	ld a,l			; $1d3d
 	and $c0			; $1d3e
 	ldh (<hFF8B),a	; $1d40
+
 	call checkObjectsCollided		; $1d42
 	ret nc			; $1d45
-	call $1d69		; $1d46
-	jr nc,_label_00_241	; $1d49
+	call @checkCollisionDirection		; $1d46
+	jr nc,+	; $1d49
+
 	ld b,$0b		; $1d4b
 	ldh a,(<hFF8D)	; $1d4d
 	ld c,a			; $1d4f
-	jr _label_00_242		; $1d50
-_label_00_241:
+	jr ++		; $1d50
++
 	ld b,$0d		; $1d52
 	ldh a,(<hFF8C)	; $1d54
 	ld c,a			; $1d56
-	jr _label_00_242		; $1d57
-_label_00_242:
-	call $1d9c		; $1d59
+	jr ++		; $1d57
+++
+	call @setBothObjectVariables		; $1d59
 	ld a,(de)		; $1d5c
 	sub (hl)		; $1d5d
 	ld a,c			; $1d5e
-	jr c,_label_00_243	; $1d5f
+	jr c,+	; $1d5f
+
 	cpl			; $1d61
 	inc a			; $1d62
-_label_00_243:
++
 	ld b,a			; $1d63
 	ld a,(de)		; $1d64
 	add b			; $1d65
 	ld (hl),a		; $1d66
 	scf			; $1d67
 	ret			; $1d68
+
+;;
+; Checks the direction of a collision. (Doesn't check for the collision itself)
+;
+; @param[out]	hFF8C	Sum of both objects' collisionRadiusX variables
+; @param[out]	hFF8D	Sum of both objects' collisionRadiusY variables
+; @param[out]	cflag	Set if the collision was predominantly from a vertical direction
+; @addr{1d69}
+@checkCollisionDirection:
 	ld b,$0b		; $1d69
-	call $1d9c		; $1d6b
+	call @setBothObjectVariables		; $1d6b
 	ld a,(de)		; $1d6e
 	sub (hl)		; $1d6f
-	jr nc,_label_00_244	; $1d70
+	jr nc,+	; $1d70
 	cpl			; $1d72
 	inc a			; $1d73
-_label_00_244:
++
 	ld c,a			; $1d74
 	ld b,$26		; $1d75
-	call $1d9c		; $1d77
+	call @setBothObjectVariables		; $1d77
 	ld a,(de)		; $1d7a
 	add (hl)		; $1d7b
 	ldh (<hFF8D),a	; $1d7c
 	sub c			; $1d7e
 	ldh (<hFF8F),a	; $1d7f
 	ld b,$0d		; $1d81
-	call $1d9c		; $1d83
+	call @setBothObjectVariables		; $1d83
 	ld a,(de)		; $1d86
 	sub (hl)		; $1d87
-	jr nc,_label_00_245	; $1d88
+	jr nc,+	; $1d88
 	cpl			; $1d8a
 	inc a			; $1d8b
-_label_00_245:
++
 	ld c,a			; $1d8c
 	ld b,$27		; $1d8d
-	call $1d9c		; $1d8f
+	call @setBothObjectVariables		; $1d8f
 	ld a,(de)		; $1d92
 	add (hl)		; $1d93
 	ldh (<hFF8C),a	; $1d94
@@ -5607,6 +5648,13 @@ _label_00_245:
 	ldh a,(<hFF8F)	; $1d98
 	cp b			; $1d9a
 	ret			; $1d9b
+
+;;
+; Makes both objects de and hl point to a particular variable.
+;
+; @param	b	The variable to make both objects point to
+; @addr{1d9c}
+@setBothObjectVariables:
 	ldh a,(<hActiveObjectType)	; $1d9c
 	or b			; $1d9e
 	ld e,a			; $1d9f
@@ -6088,8 +6136,12 @@ objectApplyComponentSpeed:
 	add $06			; $1fcb
 	ld e,a			; $1fcd
 	ld h,d			; $1fce
-	call $1fd3		; $1fcf
+	call @addSpeedComponent		; $1fcf
 	inc e			; $1fd2
+
+;;
+; @addr{1fd3}
+@addSpeedComponent:
 	ld a,(de)		; $1fd3
 	add (hl)		; $1fd4
 	ldi (hl),a		; $1fd5
@@ -6288,17 +6340,22 @@ centerCoordinatesOnTile:
 
 checkBPartSlotsAvailable:
 	ld hl,$d0c0		; $20b0
-	jr _label_00_264		; $20b3
+	jr checkBEnemySlotsAvailable@nextSlot		; $20b3
 
 checkBEnemySlotsAvailable:
 	ld hl,$d080		; $20b5
-_label_00_264:
-	call $20c2		; $20b8
-	jr c,_label_00_264	; $20bb
+
+@nextSlot:
+	call @checkSlotAvailable		; $20b8
+	jr c,@nextSlot	; $20bb
 	ret nz			; $20bd
 	dec b			; $20be
-	jr nz,_label_00_264	; $20bf
+	jr nz,@nextSlot	; $20bf
 	ret			; $20c1
+
+;;
+; @addr{20c2}
+@checkSlotAvailable:
 	ld a,(hl)		; $20c2
 	inc h			; $20c3
 	or a			; $20c4
@@ -6333,8 +6390,14 @@ objectSetPositionInCircleArc:
 getScaledPositionOffsetForVelocity:
 	ldh (<hFF8B),a	; $20e8
 	call getPositionOffsetForVelocity		; $20ea
-	call $20f1		; $20ed
+	call @scaleComponent		; $20ed
 	inc l			; $20f0
+
+;;
+; @param	hl	Address of position offset to scale
+; @param	hFF8B	Amount to scale the position offsets by
+; @addr{20f1}
+@scaleComponent:
 	push hl			; $20f1
 	ldi a,(hl)		; $20f2
 	ld c,a			; $20f3
@@ -6342,14 +6405,14 @@ getScaledPositionOffsetForVelocity:
 	ld e,$08		; $20f5
 	ld hl,$0000		; $20f7
 	ldh a,(<hFF8B)	; $20fa
-_label_00_265:
+--
 	add hl,hl		; $20fc
 	rlca			; $20fd
-	jr nc,_label_00_266	; $20fe
+	jr nc,+	; $20fe
 	add hl,bc		; $2100
-_label_00_266:
++
 	dec e			; $2101
-	jr nz,_label_00_265	; $2102
+	jr nz,--	; $2102
 	ld a,l			; $2104
 	ld b,h			; $2105
 	pop hl			; $2106
@@ -6687,25 +6750,26 @@ objectFindSameTypeObjectWithID:
 	ldh a,(<hActiveObjectType)	; $2288
 	inc a			; $228a
 	ld l,a			; $228b
-_label_00_274:
+--
 	ld a,(hl)		; $228c
 	cp c			; $228d
 	ret z			; $228e
+func_228f:
 	inc h			; $228f
 	ld a,h			; $2290
 	cp $e0			; $2291
-	jr c,_label_00_274	; $2293
+	jr c,--	; $2293
 	or h			; $2295
 	ret			; $2296
 
 objectSetPriorityRelativeToLink:
 	ld c,$80		; $2297
-	jr _label_00_275		; $2299
+	jr +		; $2299
 
 objectSetPriorityRelativeToLink_withTerrainEffects:
 	ld c,$c0		; $229b
-_label_00_275:
-	call $22a9		; $229d
++
+	call @getPriority		; $229d
 	ldh a,(<hActiveObjectType)	; $22a0
 	add $1a			; $22a2
 	ld e,a			; $22a4
@@ -6713,6 +6777,14 @@ _label_00_275:
 	or b			; $22a6
 	ld (de),a		; $22a7
 	ret			; $22a8
+
+;;
+; Gets priority based on height relative to link?
+;
+; @param	d	Object
+; @param[out]	b	Priority
+; @addr{22a9}
+@getPriority:
 	ldh a,(<hActiveObjectType)	; $22a9
 	add $0f			; $22ab
 	ld e,a			; $22ad
@@ -7194,7 +7266,7 @@ _label_00_278:
 	ld a,(hl)		; $24dc
 	or a			; $24dd
 	jr z,_label_00_279	; $24de
-	call $4000		; $24e0
+	call runScriptCommand		; $24e0
 	jr c,_label_00_278	; $24e3
 	pop af			; $24e5
 	ldh (<hRomBank),a	; $24e6
@@ -7765,25 +7837,25 @@ _label_00_295:
 
 enemyDie_uncounted_withoutItemDrop:
 	ld b,$80		; $27c2
-	jr _label_00_296		; $27c4
+	jr ++		; $27c4
 
 enemyDie_withoutItemDrop:
 	ld b,$81		; $27c6
-	jr _label_00_296		; $27c8
+	jr ++		; $27c8
 
 enemyDie_uncounted:
 	ld b,$00		; $27ca
-	jr _label_00_296		; $27cc
+	jr ++		; $27cc
 
 enemyDie:
 	ld b,$01		; $27ce
-_label_00_296:
-	call $281a		; $27d0
+++
+	call @enemyCreateDeathPuff		; $27d0
 	bit 0,b			; $27d3
 	call nz,markEnemyAsKilledInRoom		; $27d5
 	ld a,$00		; $27d8
 	call checkGlobalFlag		; $27da
-	jr nz,_label_00_297	; $27dd
+	jr nz,++	; $27dd
 	ld l,$20		; $27df
 	call incHlRef16WithCap		; $27e1
 	ldi a,(hl)		; $27e4
@@ -7794,27 +7866,33 @@ _label_00_296:
 	rlca			; $27ed
 	ld a,$00		; $27ee
 	call nc,setGlobalFlag		; $27f0
-_label_00_297:
+++
 	ld hl,$c63e		; $27f3
 	call incHlRefWithCap		; $27f6
 	ld a,$3a		; $27f9
 	call cpActiveRing		; $27fb
 	ld a,$ff		; $27fe
-	jr z,_label_00_298	; $2800
+	jr z,+	; $2800
 	xor a			; $2802
-_label_00_298:
++
 	ld l,$4c		; $2803
 	ld c,$10		; $2805
-_label_00_299:
+--
 	rlca			; $2807
 	call c,incHlRefWithCap		; $2808
 	call incHlRefWithCap		; $280b
 	inc l			; $280e
 	dec c			; $280f
-	jr nz,_label_00_299	; $2810
+	jr nz,--	; $2810
 	ld a,$03		; $2812
 	call addToGashaMaturity		; $2814
 	jp enemyDelete		; $2817
+
+;;
+; @param	b	Bit 0 set if wNumEnemies should be decremented,
+;			Bit 7 set if there should be an item drop.
+; @addr{281a}
+@enemyCreateDeathPuff:
 	ld e,$bf		; $281a
 	ld a,(de)		; $281c
 	rlca			; $281d
@@ -8599,7 +8677,7 @@ intro_cinematic:
 	ld a,$05		; $2c6e
 	ldh (<hRomBank),a	; $2c70
 	ld ($2222),a		; $2c72
-	call $4000		; $2c75
+	call updateSpecialObjects		; $2c75
 	call loadLinkAndCompanionAnimationFrame		; $2c78
 	ld a,$04		; $2c7b
 	ldh (<hRomBank),a	; $2c7d
@@ -9750,7 +9828,7 @@ updateAllObjects:
 	ld a,$05		; $3385
 	ldh (<hRomBank),a	; $3387
 	ld ($2222),a		; $3389
-	call $4000		; $338c
+	call updateSpecialObjects		; $338c
 	ld a,:updateItems		; $338f
 	ldh (<hRomBank),a	; $3391
 	ld ($2222),a		; $3393
@@ -9771,7 +9849,7 @@ updateAllObjects:
 	ld a,$01		; $33ba
 	ldh (<hRomBank),a	; $33bc
 	ld ($2222),a		; $33be
-	call $4000		; $33c1
+	call bank1.func_4000		; $33c1
 	ld a,$05		; $33c4
 	ldh (<hRomBank),a	; $33c6
 	ld ($2222),a		; $33c8
@@ -9818,7 +9896,7 @@ updateSpecialObjectsAndInteractions:
 	ld a,$05		; $3423
 	ldh (<hRomBank),a	; $3425
 	ld ($2222),a		; $3427
-	call $4000		; $342a
+	call updateSpecialObjects		; $342a
 	ld a,$00		; $342d
 	ldh (<hRomBank),a	; $342f
 	ld ($2222),a		; $3431
@@ -9852,7 +9930,7 @@ func_3539:
 	ld a,$05		; $3463
 	ldh (<hRomBank),a	; $3465
 	ld ($2222),a		; $3467
-	call $4000		; $346a
+	call updateSpecialObjects		; $346a
 	ld a,$00		; $346d
 	ldh (<hRomBank),a	; $346f
 	ld ($2222),a		; $3471
@@ -9882,7 +9960,7 @@ seasonsFunc_34a0:
 	ld a,$05		; $34a3
 	ldh (<hRomBank),a	; $34a5
 	ld ($2222),a		; $34a7
-	call $4000		; $34aa
+	call updateSpecialObjects		; $34aa
 	ld a,:updateItems		; $34ad
 	ldh (<hRomBank),a	; $34af
 	ld ($2222),a		; $34b1
@@ -10047,6 +10125,7 @@ seasonsFunc_35b8:
 	ldh (<hRomBank),a	; $35c6
 	ld ($2222),a		; $35c8
 	ret			; $35cb
+seasonsFunc_35cc:
 	ld a,($ff00+$70)	; $35cc
 	ld c,a			; $35ce
 	ldh a,(<hRomBank)	; $35cf
@@ -10093,13 +10172,13 @@ loadAnimationData:
 	ld ($cd30),a		; $3614
 	push de			; $3617
 	ld de,$cd31		; $3618
-	call $363f		; $361b
+	call @helper		; $361b
 	ld de,$cd34		; $361e
-	call $363f		; $3621
+	call @helper		; $3621
 	ld de,$cd37		; $3624
-	call $363f		; $3627
+	call @helper		; $3627
 	ld de,$cd3a		; $362a
-	call $363f		; $362d
+	call @helper		; $362d
 	pop de			; $3630
 	pop af			; $3631
 	ldh (<hRomBank),a	; $3632
@@ -10108,6 +10187,10 @@ loadAnimationData:
 	ld ($ccfa),a		; $3638
 	ld ($ccfb),a		; $363b
 	ret			; $363e
+
+;;
+; @addr{363f}
+@helper:
 	push hl			; $363f
 	ldi a,(hl)		; $3640
 	ld h,(hl)		; $3641
@@ -10208,15 +10291,19 @@ loadTilesetLayout:
 	ld hl,$dc00		; $36c8
 	ld de,$d000		; $36cb
 	ld b,$00		; $36ce
-_label_00_366:
+-
 	push bc			; $36d0
-	call $36dc		; $36d1
+	call @helper		; $36d1
 	pop bc			; $36d4
 	dec b			; $36d5
-	jr nz,_label_00_366	; $36d6
+	jr nz,-	; $36d6
 	xor a			; $36d8
 	ld ($ff00+$70),a	; $36d9
 	ret			; $36db
+
+;;
+; @addr{36dc}
+@helper:
 	ldi a,(hl)		; $36dc
 	ld c,a			; $36dd
 	ldi a,(hl)		; $36de
@@ -10513,8 +10600,12 @@ loadRoomLayout:
 	push hl			; $38c4
 	ld a,b			; $38c5
 	rst_jumpTable			; $38c6
-	ld ($ff00+$38),a	; $38c7
-	ld a,$39		; $38c9
+	.dw @loadLargeRoomLayout
+    .dw @loadSmallRoomLayout
+
+;;
+; @addr{38cb}
+@loadLargeRoomLayoutHlpr:
 	ld d,b			; $38cb
 	ld a,b			; $38cc
 	and $0f			; $38cd
@@ -10530,6 +10621,10 @@ loadRoomLayout:
 	add $03			; $38dc
 	ld b,a			; $38de
 	ret			; $38df
+
+;;
+; @addr{38e0}
+@loadLargeRoomLayout:
 	ldh a,(<hFF8F)	; $38e0
 	ld h,a			; $38e2
 	ldh a,(<hFF8E)	; $38e3
@@ -10548,54 +10643,58 @@ loadRoomLayout:
 	add hl,bc		; $38f9
 	ld bc,$fe00		; $38fa
 	add hl,bc		; $38fd
-	call $39df		; $38fe
+	call @loadLayoutData		; $38fe
 	ld de,$cf00		; $3901
-_label_00_369:
+@next8:
 	ldi a,(hl)		; $3904
 	ld b,$08		; $3905
-_label_00_370:
+@next:
 	rrca			; $3907
 	ldh (<hFF8B),a	; $3908
-	jr c,_label_00_372	; $390a
+	jr c,+	; $390a
 	ldi a,(hl)		; $390c
 	ld (de),a		; $390d
 	inc e			; $390e
 	ld a,e			; $390f
 	cp $b0			; $3910
 	ret z			; $3912
-_label_00_371:
+--
 	ldh a,(<hFF8B)	; $3913
 	dec b			; $3915
-	jr nz,_label_00_370	; $3916
-	jr _label_00_369		; $3918
-_label_00_372:
+	jr nz,@next	; $3916
+	jr @next8		; $3918
++
 	push bc			; $391a
 	ldi a,(hl)		; $391b
 	ld c,a			; $391c
 	ldi a,(hl)		; $391d
 	ld b,a			; $391e
 	push hl			; $391f
-	call $38cb		; $3920
+	call @loadLargeRoomLayoutHlpr		; $3920
 	ld d,$cf		; $3923
 	ldh a,(<hFF8D)	; $3925
 	ldh (<hRomBank),a	; $3927
 	ld ($2222),a		; $3929
-_label_00_373:
+-
 	ldi a,(hl)		; $392c
 	ld (de),a		; $392d
 	inc e			; $392e
 	ld a,e			; $392f
 	cp $b0			; $3930
-	jr z,_label_00_374	; $3932
+	jr z,+	; $3932
 	dec b			; $3934
-	jr nz,_label_00_373	; $3935
+	jr nz,-	; $3935
 	pop hl			; $3937
 	pop bc			; $3938
-	jr _label_00_371		; $3939
-_label_00_374:
+	jr --		; $3939
++
 	pop hl			; $393b
 	pop bc			; $393c
 	ret			; $393d
+
+;;
+; @addr{393e}
+@loadSmallRoomLayout:
 	ldh a,(<hFF8D)	; $393e
 	ldh (<hRomBank),a	; $3940
 	ld ($2222),a		; $3942
@@ -10613,77 +10712,104 @@ _label_00_374:
 	ld b,a			; $3955
 	pop hl			; $3956
 	add hl,bc		; $3957
-	call $39df		; $3958
+	call @loadLayoutData		; $3958
 	bit 7,e			; $395b
-	jr nz,_label_00_377	; $395d
+	jr nz,@decompressLayoutMode2	; $395d
 	bit 6,e			; $395f
-	jr nz,_label_00_379	; $3961
+	jr nz,@decompressLayoutMode1	; $3961
 	ld de,$cf00		; $3963
 	ld bc,$0a08		; $3966
-_label_00_375:
+--
 	push bc			; $3969
-_label_00_376:
+-
 	ldi a,(hl)		; $396a
 	ld (de),a		; $396b
 	inc e			; $396c
 	dec b			; $396d
-	jr nz,_label_00_376	; $396e
+	jr nz,-	; $396e
 	ld a,e			; $3970
 	add $06			; $3971
 	ld e,a			; $3973
 	pop bc			; $3974
 	dec c			; $3975
-	jr nz,_label_00_375	; $3976
+	jr nz,--	; $3976
 	ret			; $3978
-_label_00_377:
+
+;;
+; @addr{3979}
+@decompressLayoutMode2:
 	ld de,$cf00		; $3979
 	ld a,$05		; $397c
-_label_00_378:
+-
 	push af			; $397e
-	call $3987		; $397f
+	call @decompressLayoutMode2Helper		; $397f
 	pop af			; $3982
 	dec a			; $3983
-	jr nz,_label_00_378	; $3984
+	jr nz,-	; $3984
 	ret			; $3986
+
+;;
+; Decompresses layout to wRoomLayout.
+;
+; Format: word where each bit means "repeat" or "don't repeat"; byte to repeat; remaining data
+;
+; @addr{3987}
+@decompressLayoutMode2Helper:
 	ldi a,(hl)		; $3987
 	ld c,a			; $3988
 	ldi a,(hl)		; $3989
 	ldh (<hFF8A),a	; $398a
 	or c			; $398c
 	ld b,$10		; $398d
-	jr z,_label_00_381	; $398f
+	jr z,@layoutCopyBytes	; $398f
 	ldi a,(hl)		; $3991
 	ldh (<hFF8B),a	; $3992
-	call $39cb		; $3994
+	call @decompressLayoutHelper		; $3994
 	ldh a,(<hFF8A)	; $3997
 	ld c,a			; $3999
-	jr _label_00_382		; $399a
-_label_00_379:
+	jr @decompressLayoutHelper		; $399a
+
+;;
+; @addr{399c}
+@decompressLayoutMode1:
 	ld de,$cf00		; $399c
 	ld a,$0a		; $399f
-_label_00_380:
+-
 	push af			; $39a1
-	call $39aa		; $39a2
+	call @decompressLayoutMode1Helper		; $39a2
 	pop af			; $39a5
 	dec a			; $39a6
-	jr nz,_label_00_380	; $39a7
+	jr nz,-	; $39a7
 	ret			; $39a9
+
+;;
+; @addr{39aa}
+@decompressLayoutMode1Helper:
 	ldi a,(hl)		; $39aa
 	ld c,a			; $39ab
 	or a			; $39ac
 	ld b,$08		; $39ad
-	jr z,_label_00_381	; $39af
+	jr z,@layoutCopyBytes	; $39af
 	ldi a,(hl)		; $39b1
 	ldh (<hFF8B),a	; $39b2
-	jr _label_00_382		; $39b4
-_label_00_381:
+	jr @decompressLayoutHelper		; $39b4
+
+;;
+; Copy b bytes to wRoomLayout, while keeping de in bounds
+;
+; @addr{39b6}
+@layoutCopyBytes:
 	ldi a,(hl)		; $39b6
 	ld (de),a		; $39b7
 	inc e			; $39b8
-	call $39c0		; $39b9
+	call @checkDeNextLayoutRow		; $39b9
 	dec b			; $39bc
-	jr nz,_label_00_381	; $39bd
+	jr nz,@layoutCopyBytes	; $39bd
 	ret			; $39bf
+
+;;
+; @addr{39c0}
+@checkDeNextLayoutRow:
 	ld a,e			; $39c0
 	and $0f			; $39c1
 	cp $0a			; $39c3
@@ -10692,43 +10818,51 @@ _label_00_381:
 	add e			; $39c8
 	ld e,a			; $39c9
 	ret			; $39ca
-_label_00_382:
+
+;;
+; @addr{39cb}
+@decompressLayoutHelper:
 	ld b,$08		; $39cb
-_label_00_383:
+--
 	srl c			; $39cd
-	jr c,_label_00_384	; $39cf
+	jr c,+	; $39cf
 	ldi a,(hl)		; $39d1
-	jr _label_00_385		; $39d2
-_label_00_384:
+	jr ++		; $39d2
++
 	ldh a,(<hFF8B)	; $39d4
-_label_00_385:
+++
 	ld (de),a		; $39d6
 	inc e			; $39d7
-	call $39c0		; $39d8
+	call @checkDeNextLayoutRow		; $39d8
 	dec b			; $39db
-	jr nz,_label_00_383	; $39dc
+	jr nz,--	; $39dc
 	ret			; $39de
+
+;;
+; Load the compressed layout data into wRoomCollisions (temporarily)
+; @addr{39df}
+@loadLayoutData:
 	push de			; $39df
 	ldh a,(<hFF8C)	; $39e0
 	bit 7,h			; $39e2
-	jr z,_label_00_386	; $39e4
+	jr z,+	; $39e4
 	ld a,h			; $39e6
 	xor $c0			; $39e7
 	ld h,a			; $39e9
 	ldh a,(<hFF8C)	; $39ea
 	inc a			; $39ec
 	ldh (<hFF8C),a	; $39ed
-_label_00_386:
++
 	ldh (<hRomBank),a	; $39ef
 	ld ($2222),a		; $39f1
 	ld b,$b0		; $39f4
 	ld de,$ce00		; $39f6
-_label_00_387:
+-
 	call readByteSequential		; $39f9
 	ld (de),a		; $39fc
 	inc e			; $39fd
 	dec b			; $39fe
-	jr nz,_label_00_387	; $39ff
+	jr nz,-	; $39ff
 	ld hl,$ce00		; $3a01
 	pop de			; $3a04
 	ret			; $3a05
@@ -11247,24 +11381,29 @@ interactionRunSimpleScript:
 	ldi a,(hl)		; $3d68
 	ld h,(hl)		; $3d69
 	ld l,a			; $3d6a
-_label_00_401:
+--
 	ld a,(hl)		; $3d6b
 	or a			; $3d6c
-	jr z,_label_00_402	; $3d6d
-	call $3d87		; $3d6f
-	jr c,_label_00_401	; $3d72
+	jr z,@scriptEnd	; $3d6d
+	call @runCommand		; $3d6f
+	jr c,--	; $3d72
 	call interactionSetSimpleScript		; $3d74
 	pop af			; $3d77
 	ldh (<hRomBank),a	; $3d78
 	ld ($2222),a		; $3d7a
 	xor a			; $3d7d
 	ret			; $3d7e
-_label_00_402:
+
+@scriptEnd:
 	pop af			; $3d7f
 	ldh (<hRomBank),a	; $3d80
 	ld ($2222),a		; $3d82
 	scf			; $3d85
 	ret			; $3d86
+
+;;
+; @addr{3d87}
+@runCommand:
 	ldi a,(hl)		; $3d87
 	push hl			; $3d88
 	rst_jumpTable			; $3d89
@@ -18894,7 +19033,7 @@ _label_03_257:
 	ld a,$f0		; $7cb5
 	ld c,a			; $7cb7
 	ld ($c4ae),a		; $7cb8
-	call $35cc		; $7cbb
+	call seasonsFunc_35cc		; $7cbb
 	ld a,$ff		; $7cbe
 	ldh (<hDirtyBgPalettes),a	; $7cc0
 	ldh (<hDirtySprPalettes),a	; $7cc2
@@ -21243,21 +21382,21 @@ _label_04_259:
 	xor (hl)		; $62de
 	rst $38			; $62df
 	ld a,$65		; $62e0
-	call $1959		; $62e2
+	call getARoomFlags		; $62e2
 	bit 6,(hl)		; $62e5
 	jr z,_label_04_260	; $62e7
 	ld hl,$630c		; $62e9
 	call $6690		; $62ec
 _label_04_260:
 	ld a,$66		; $62ef
-	call $1959		; $62f1
+	call getARoomFlags		; $62f1
 	bit 6,(hl)		; $62f4
 	jr z,_label_04_261	; $62f6
 	ld hl,$632d		; $62f8
 	call $6690		; $62fb
 _label_04_261:
 	ld a,$6a		; $62fe
-	call $1959		; $6300
+	call getARoomFlags		; $6300
 	bit 6,(hl)		; $6303
 	ret z			; $6305
 	ld hl,$6340		; $6306
@@ -21372,7 +21511,7 @@ _label_04_262:
 	xor l			; $6382
 	rst $38			; $6383
 	ld a,$66		; $6384
-	call $1959		; $6386
+	call getARoomFlags		; $6386
 	bit 6,(hl)		; $6389
 	jr z,_label_04_263	; $638b
 	ld hl,$cf00		; $638d
@@ -21380,7 +21519,7 @@ _label_04_262:
 	call $63a2		; $6392
 _label_04_263:
 	ld a,$6b		; $6395
-	call $1959		; $6397
+	call getARoomFlags		; $6397
 	bit 6,(hl)		; $639a
 	ret z			; $639c
 	ld hl,$cf70		; $639d
@@ -21466,7 +21605,7 @@ _label_04_265:
 	ld (hl),$fa		; $642a
 	ret			; $642c
 	ld a,$81		; $642d
-	call $1959		; $642f
+	call getARoomFlags		; $642f
 	bit 7,(hl)		; $6432
 	ret nz			; $6434
 	ld hl,$6441		; $6435
@@ -21481,7 +21620,7 @@ _label_04_265:
 	inc bc			; $6447
 .DB $fd				; $6448
 	ld a,$81		; $6449
-	call $1959		; $644b
+	call getARoomFlags		; $644b
 	bit 7,(hl)		; $644e
 	ret nz			; $6450
 	ld hl,$6457		; $6451
@@ -21491,7 +21630,7 @@ _label_04_265:
 	rlca			; $6459
 .DB $fd				; $645a
 	ld a,$81		; $645b
-	call $1959		; $645d
+	call getARoomFlags		; $645d
 	bit 7,(hl)		; $6460
 	ret nz			; $6462
 	ld hl,$6469		; $6463
@@ -21500,7 +21639,7 @@ _label_04_265:
 	inc b			; $646a
 	ld b,$fd		; $646b
 	ld a,$81		; $646d
-	call $1959		; $646f
+	call getARoomFlags		; $646f
 	bit 7,(hl)		; $6472
 	ret nz			; $6474
 	ld hl,$6481		; $6475
@@ -22296,6 +22435,9 @@ _label_04_334:
 .BANK $05 SLOT 1
 .ORG 0
 
+;;
+; @addr{4000}
+updateSpecialObjects:
 	ld hl,$cc72		; $4000
 	ld a,(hl)		; $4003
 	ld (hl),$00		; $4004
@@ -33981,6 +34123,11 @@ _breakableTileModes:
 .BANK $07 SLOT 1
 .ORG 0
 
+;;
+; @param c What operation to do on the file
+; @param hActiveFileSlot File index
+; @addr{4000}
+fileManagementFunction:
 	ld a,c			; $4000
 	rst_jumpTable			; $4001
 	ld a,(bc)		; $4002
@@ -44329,7 +44476,7 @@ _label_08_154:
 	and $02			; $5b2d
 	jr nz,_label_08_155	; $5b2f
 	ld a,$71		; $5b31
-	call $1959		; $5b33
+	call getARoomFlags		; $5b33
 	bit 6,a			; $5b36
 	jp nz,interactionDelete		; $5b38
 _label_08_155:
@@ -48100,7 +48247,7 @@ interactionCode4d:
 	ld a,h			; $7392
 	cp d			; $7393
 	jp nz,interactionDelete		; $7394
-	call $228f		; $7397
+	call func_228f		; $7397
 	jp z,interactionDelete		; $739a
 _label_08_307:
 	ld a,$4a		; $739d
@@ -58891,7 +59038,7 @@ interactionCode85:
 	ld a,$01		; $7c27
 	ld (de),a		; $7c29
 	ld a,$98		; $7c2a
-	call $1959		; $7c2c
+	call getARoomFlags		; $7c2c
 	and $40			; $7c2f
 	jp nz,interactionDelete		; $7c31
 	ld hl,$cfd7		; $7c34
@@ -63260,6 +63407,7 @@ _label_0a_155:
 	ld ($0a02),sp		; $5631
 	ld bc,$0102		; $5634
 	ld (bc),a		; $5637
+@state1:
 _label_0a_156:
 	ld e,$42		; $5638
 	ld a,(de)		; $563a
@@ -104835,8 +104983,20 @@ interactionCoded7:
 
  m_section_force "Bank_10" NAMESPACE "bank10"
 
+;;
+; @param[out]	zflag	nz if there's a tile collision in the direction this part is
+;			moving
+; @addr{4000}
+_partCommon_getTileCollisionInFront:
 	ld e,$c9		; $4000
 	ld a,(de)		; $4002
+
+;;
+; @param	a	Angle
+; @param[out]	bc	Position
+; @param[out]	zflag	nz if there's a tile collision in that direction
+; @addr{4003}
+_partCommon_getTileCollisionAtAngle:
 	add $02			; $4003
 	and $1c			; $4005
 	rrca			; $4007
@@ -104852,28 +105012,36 @@ interactionCoded7:
 	add (hl)		; $4015
 	ld c,a			; $4016
 	jp getTileCollisionsAtPosition		; $4017
-	ei			; $401a
-	nop			; $401b
-	ei			; $401c
-	inc b			; $401d
-	nop			; $401e
-	inc b			; $401f
-	inc b			; $4020
-	inc b			; $4021
-	inc b			; $4022
-	nop			; $4023
-	inc b			; $4024
-	ei			; $4025
-	nop			; $4026
-	ei			; $4027
-	ei			; $4028
-	ei			; $4029
-	call $4003		; $402a
+
+
+; Position offsets used by specific angle values to check when it should be considered
+; "off-screen".
+_partCommon_anglePositionOffsets:
+	.db $fb $00 ; Up
+	.db $fb $04 ; Up/right
+	.db $00 $04 ; Right
+	.db $04 $04 ; Down/right
+	.db $04 $00 ; Down
+	.db $04 $fb ; Down/left
+	.db $00 $fb ; Left
+	.db $fb $fb ; Up/left
+
+;;
+; @param	a	Angle
+; @param[out]	zflag
+; @addr{402a}
+_partCommon_getTileCollisionAtAngle_allowHoles:
+	call _partCommon_getTileCollisionAtAngle		; $402a
 	ret z			; $402d
-	jr _label_10_000		; $402e
-	call $4000		; $4030
+	jr +++		; $402e
+
+;;
+; @param[out]	cflag	c if there's a collision
+; @addr{4030}
+_partCommon_getTileCollisionInFront_allowHoles:
+	call _partCommon_getTileCollisionInFront		; $4030
 	ret z			; $4033
-_label_10_000:
++++
 	add $01			; $4034
 	ret c			; $4036
 	dec a			; $4037
@@ -105469,7 +105637,7 @@ _label_10_030:
 	ld l,$c7		; $43d6
 	dec (hl)		; $43d8
 	jr z,_label_10_031	; $43d9
-	call $4000		; $43db
+	call _partCommon_getTileCollisionInFront		; $43db
 	inc a			; $43de
 	jp nz,objectApplySpeed		; $43df
 _label_10_031:
@@ -120313,7 +120481,7 @@ _label_15_191:
 	jp playSound		; $55ea
 	ld a,$56		; $55ed
 _label_15_192:
-	call $1959		; $55ef
+	call getARoomFlags		; $55ef
 	bit 6,(hl)		; $55f2
 	ld a,$01		; $55f4
 	jr nz,_label_15_193	; $55f6
@@ -124542,6 +124710,11 @@ _label_15_310:
 	pop af			; $4012
 	ld ($ff00+$70),a	; $4013
 	ret			; $4015
+
+;;
+; Redraw dirty palettes
+; @addr{4016}
+refreshDirtyPalettes:
 	ld a,$02		; $4016
 	ld ($ff00+$70),a	; $4018
 	ldh a,(<hDirtyBgPalettes)	; $401a
