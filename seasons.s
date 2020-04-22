@@ -34109,49 +34109,64 @@ _breakableTileModes:
 fileManagementFunction:
 	ld a,c			; $4000
 	rst_jumpTable			; $4001
-	ld a,(bc)		; $4002
-	ld b,b			; $4003
-	ld d,c			; $4004
-	ld b,b			; $4005
-	ld a,l			; $4006
-	ld b,b			; $4007
-	sub (hl)		; $4008
-	ld b,b			; $4009
-	ld hl,$4182		; $400a
-	call $416e		; $400d
-	ld hl,$c613		; $4010
+    .dw _initializeFile
+	.dw _saveFile
+	.dw _loadFile
+	.dw _eraseFile
+
+;;
+; @addr{400a}
+_initializeFile:
+	ld hl,_initialFileVariables		; $400a
+	call _initializeFileVariables		; $400d
+
+	; Load in a: wFileIsHeroGame (bit 1), wFileIsLinkedGame (bit 0)
+	ld hl,wFileIsHeroGame		; $4010
 	ldd a,(hl)		; $4013
 	add a			; $4014
 	add (hl)		; $4015
 	push af			; $4016
-	ld hl,$417a		; $4017
+
+	; Initialize data differently based on whether it's a linked or hero game
+	ld hl,_initialFileVariablesTable		; $4017
 	rst_addDoubleIndex			; $401a
 	ldi a,(hl)		; $401b
 	ld h,(hl)		; $401c
 	ld l,a			; $401d
-	call $416e		; $401e
+	call _initializeFileVariables		; $401e
+
+	; Clear unappraised rings
 	pop af			; $4021
 	ld c,a			; $4022
-	ld hl,$c5c0		; $4023
+	ld hl,wUnappraisedRings		; $4023
 	ld b,$40		; $4026
 	ld a,$ff		; $4028
 	call fillMemory		; $402a
-	ld hl,$c6c0		; $402d
+
+	; Clear ring box contents
+	ld hl,wRingBoxContents		; $402d
 	ld b,$06		; $4030
 	ld a,$ff		; $4032
 	call fillMemory		; $4034
+
+	; If hero game, give victory ring
 	ld a,c			; $4037
 	cp $02			; $4038
-	jr nz,_label_07_000	; $403a
-	ld hl,$c692		; $403c
-	ld a,$2d		; $403f
+	jr nz,++	; $403a
+
+	ld hl,wObtainedTreasureFlags		; $403c
+	ld a,TREASURE_RING		; $403f
 	call setFlag		; $4041
-	ld a,$76		; $4044
-	ld ($c5c0),a		; $4046
-_label_07_000:
-	ld hl,$4404		; $4049
-	ld e,$0a		; $404c
-	call interBankCall		; $404e
+	ld a,VICTORY_RING | $40		; $4044
+	ld (wUnappraisedRings),a		; $4046
+++
+    callab initializeChildOnGameStart
+
+;;
+; In addition to saving, this is called after creating a file, as well as when it's about
+; to be loaded (for some reason)
+; @addr{4051}
+_saveFile:
 	ld hl,$c611		; $4051
 	ld (hl),$00		; $4054
 	ld hl,$c5b2		; $4056
@@ -34173,6 +34188,8 @@ _label_07_000:
 	ld d,b			; $4077
 	call $40f6		; $4078
 	jr _label_07_003		; $407b
+
+_loadFile:
 	call $40b4		; $407d
 	push af			; $4080
 	or a			; $4081
@@ -34188,6 +34205,8 @@ _label_07_002:
 	call $40f6		; $4091
 	pop af			; $4094
 	ret			; $4095
+
+_eraseFile:
 	call $414f		; $4096
 	call $409f		; $4099
 	call $4153		; $409c
@@ -34328,6 +34347,7 @@ _label_07_008:
 	or l			; $416b
 	and b			; $416c
 	cp d			; $416d
+_initializeFileVariables:
 	ld d,$c6		; $416e
 _label_07_009:
 	ldi a,(hl)		; $4170
@@ -34339,6 +34359,7 @@ _label_07_009:
 	jr _label_07_009		; $4177
 _label_07_010:
 	ret			; $4179
+_initialFileVariablesTable:
 	sbc l			; $417a
 	ld b,c			; $417b
 	xor b			; $417c
@@ -34347,6 +34368,7 @@ _label_07_010:
 	ld b,c			; $417f
 	xor b			; $4180
 	ld b,c			; $4181
+_initialFileVariables:
 	add hl,hl		; $4182
 	ld (bc),a		; $4183
 	ld ($0701),sp		; $4184
@@ -60107,14 +60129,22 @@ _label_0a_018:
 	cp $06			; $43ff
 	ret c			; $4401
 	jr _label_0a_018		; $4402
-	ld hl,$c60f		; $4404
+
+;;
+; This is called on file initialization. In a linked game, wChildStatus will be nonzero if
+; he was given a name, so he will start at stage 5.
+; @addr{4404}
+initializeChildOnGameStart:
+	ld hl,wChildStatus		; $4404
 	ld a,(hl)		; $4407
 	or a			; $4408
 	ret z			; $4409
+
 	ld a,$05		; $440a
-	ld l,$da		; $440c
+	ld l,<wChildStage		; $440c
 	ldi (hl),a		; $440e
 	ldi (hl),a		; $440f
+
 	ld hl,$4430		; $4410
 	jr _label_0a_019		; $4413
 	ld a,($c6de)		; $4415
