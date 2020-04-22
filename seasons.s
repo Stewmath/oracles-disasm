@@ -1902,37 +1902,47 @@ _initialThreadStates:
 	m_ThreadState $02 $00 wThread2StackTop stubThreadStart
 	m_ThreadState $02 $00 wThread3StackTop paletteFadeThreadStart
 
+; Upper bytes of addresses of flags for each group
+; @addr{09a8}
 flagLocationGroupTable:
     .db >wPresentRoomFlags >wPastRoomFlags
 	.db >wPastRoomFlags >wPastRoomFlags
 	.db >wGroup4Flags >wGroup5Flags
 	.db >wGroup4Flags >wGroup5Flags
 
+;;
+; @param	hActiveFileSlot	File index
+; @addr{09b0}
 initializeFile:
 	ld c,$00		; $09b0
-	jr _label_00_090		; $09b2
+	jr ++		; $09b2
 
+;;
+; @param	hActiveFileSlot	File index
+; @addr{09b4}
 saveFile:
 	ld c,$01		; $09b4
-	jr _label_00_090		; $09b6
+	jr ++		; $09b6
 
+;;
+; @param	hActiveFileSlot	File index
+; @addr{09b8}
 loadFile:
 	ld c,$02		; $09b8
-	jr _label_00_090		; $09ba
+	jr ++		; $09ba
 
+;;
+; @param	hActiveFileSlot	File index
+; @addr{09bc}
 eraseFile:
 	ld c,$03		; $09bc
-_label_00_090:
+++
 	ldh a,(<hRomBank)	; $09be
 	push af			; $09c0
-	ld a,$07		; $09c1
-	ldh (<hRomBank),a	; $09c3
-	ld ($2222),a		; $09c5
-	call fileManagementFunction		; $09c8
+	callfrombank0 fileManagement.fileManagementFunction
 	ld c,a			; $09cb
 	pop af			; $09cc
-	ldh (<hRomBank),a	; $09cd
-	ld ($2222),a		; $09cf
+	setrombank
 	ld a,c			; $09d2
 	ret			; $09d3
 

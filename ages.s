@@ -42817,12 +42817,7 @@ _fake_specialObjectLoadAnimationFrameToBuffer:
 .BANK $07 SLOT 1
 .ORG 0
 
- m_section_superfree "File_Management" namespace "fileManagement"
-
 .include "code/fileManagement.s"
-
-.ends
-
 
  ; This section can't be superfree, since it must be in the same bank as section
  ; "Bank_7_Data".

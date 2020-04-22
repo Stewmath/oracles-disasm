@@ -1,3 +1,5 @@
+ m_section_superfree "File_Management" namespace "fileManagement"
+
 ;;
 ; @param c What operation to do on the file
 ; @param hActiveFileSlot File index
@@ -444,3 +446,5 @@ _saveVerificationString:
 .else
     .ASC "Z11216-0"
 .endif
+
+.ends
