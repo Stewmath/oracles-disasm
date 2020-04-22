@@ -34167,27 +34167,37 @@ _initializeFile:
 ; to be loaded (for some reason)
 ; @addr{4051}
 _saveFile:
-	ld hl,$c611		; $4051
+    ; Write $01 here for "seasons"
+	ld hl,wWhichGame		; $4051
 	ld (hl),$00		; $4054
-	ld hl,$c5b2		; $4056
-	ld de,$41b1		; $4059
+
+	ld hl,wSavefileString		; $4056
+	ld de,_saveVerificationString		; $4059
 	ld b,$08		; $405c
 	call copyMemoryReverse		; $405e
-	ld l,$b0		; $4061
-	call $4138		; $4063
+
+	; Calculate checksum
+	ld l,<wFileStart		; $4061
+	call _calculateFileChecksum		; $4063
 	ld (hl),e		; $4066
 	inc l			; $4067
 	ld (hl),d		; $4068
-	ld l,$b0		; $4069
-	call $414f		; $406b
+
+	; Save file
+	ld l,<wFileStart		; $4069
+	call _getFileAddress1		; $406b
 	ld e,c			; $406e
 	ld d,b			; $406f
-	call $40f6		; $4070
-	call $4153		; $4073
+	call _copyFileFromHlToDe		; $4070
+
+    ; Save file to backup slot?
+	call _getFileAddress2		; $4073
 	ld e,c			; $4076
 	ld d,b			; $4077
-	call $40f6		; $4078
-	jr _label_07_003		; $407b
+	call _copyFileFromHlToDe		; $4078
+
+    ; Redundant?
+	jr _verifyFileCopies		; $407b
 
 _loadFile:
 	call $40b4		; $407d
@@ -34220,7 +34230,7 @@ _eraseFile:
 	ret			; $40ad
 	ld bc,$0550		; $40ae
 	jp clearMemoryBc		; $40b1
-_label_07_003:
+_verifyFileCopies:
 	call $4153		; $40b4
 	ld l,c			; $40b7
 	ld h,b			; $40b8
@@ -34261,6 +34271,7 @@ _label_07_003:
 	ret			; $40f2
 	ld a,$ff		; $40f3
 	ret			; $40f5
+_copyFileFromHlToDe:
 	push hl			; $40f6
 	ld a,$0a		; $40f7
 	ld ($1111),a		; $40f9
@@ -34303,6 +34314,7 @@ _label_07_006:
 	call $40ae		; $4131
 	ld b,$ff		; $4134
 	jr _label_07_005		; $4136
+_calculateFileChecksum:
 	push hl			; $4138
 	ld a,$02		; $4139
 	rst_addAToHl			; $413b
@@ -34321,8 +34333,10 @@ _label_07_007:
 	jr nz,_label_07_007	; $414b
 	pop hl			; $414d
 	ret			; $414e
+_getFileAddress1:
 	ld c,$00		; $414f
 	jr _label_07_008		; $4151
+_getFileAddress2:
 	ld c,$03		; $4153
 _label_07_008:
 	push hl			; $4155
@@ -34407,6 +34421,7 @@ _initialFileVariables:
 	sub d			; $41ae
 	inc h			; $41af
 	nop			; $41b0
+_saveVerificationString:
 	ld e,d			; $41b1
 	ld sp,$3231		; $41b2
 	ld sp,$2d36		; $41b5
