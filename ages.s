@@ -18343,7 +18343,7 @@ introTempleSprites:
 
 
 ;;
-; Called from func_306c in bank 0.
+; Called from endgameCutsceneHandler in bank 0.
 ;
 ; @param	e
 ; @addr{5414}

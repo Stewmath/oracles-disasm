@@ -6,10 +6,13 @@
 objectLoadMovementScript:
 	ldh a,(<hRomBank)	; $3035
 	push af			; $3037
+.ifdef ROM_AGES
 	callfrombank0 bank0e.objectLoadMovementScript_body		; $3038
+.else
+    callfrombank0 objectLoadMovementScript_body		; $3038 - bank0d
+.endif
 	pop af			; $3042
-	ldh (<hRomBank),a	; $3043
-	ld ($2222),a		; $3045
+	setrombank
 	ret			; $3048
 
 ;;
@@ -17,7 +20,11 @@ objectLoadMovementScript:
 objectRunMovementScript:
 	ldh a,(<hRomBank)	; $3049
 	push af			; $304b
-	callfrombank0 bank0e.objectRunMovementScript_body		; $304c
+.ifdef ROM_AGES
+	callfrombank0 bank0e.objectRunMovementScript_body		; $3038
+.else
+    callfrombank0 objectRunMovementScript_body		; $3038 - bank0d
+.endif
 	pop af			; $3056
 	setrombank		; $3057
 	ret			; $305c

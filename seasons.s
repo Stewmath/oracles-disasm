@@ -8825,99 +8825,7 @@ getRoomInDungeon:
 	ld a,l			; $2d78
 	ret			; $2d79
 
-objectFunc_3035:
-	ldh a,(<hRomBank)	; $2d7a
-	push af			; $2d7c
-	ld a,$0d		; $2d7d
-	ldh (<hRomBank),a	; $2d7f
-	ld ($2222),a		; $2d81
-	call $798f		; $2d84
-	pop af			; $2d87
-	ldh (<hRomBank),a	; $2d88
-	ld ($2222),a		; $2d8a
-	ret			; $2d8d
-
-objectFunc_3049:
-	ldh a,(<hRomBank)	; $2d8e
-	push af			; $2d90
-	ld a,$0d		; $2d91
-	ldh (<hRomBank),a	; $2d93
-	ld ($2222),a		; $2d95
-	call $79ae		; $2d98
-	pop af			; $2d9b
-	ldh (<hRomBank),a	; $2d9c
-	ld ($2222),a		; $2d9e
-	ret			; $2da1
-
-decCbb3:
-	ld hl,$cbb3		; $2da2
-	dec (hl)		; $2da5
-	ret			; $2da6
-
-incCbc1:
-	ld hl,$cbc1		; $2da7
-	inc (hl)		; $2daa
-	ret			; $2dab
-
-incCbc2:
-	ld hl,$cbc2		; $2dac
-	inc (hl)		; $2daf
-	ret			; $2db0
-
-func_306c:
-	ldh a,(<hRomBank)	; $2db1
-	push af			; $2db3
-	ld a,$03		; $2db4
-	ldh (<hRomBank),a	; $2db6
-	ld ($2222),a		; $2db8
-	call $54ec		; $2dbb
-	pop af			; $2dbe
-	ldh (<hRomBank),a	; $2dbf
-	ld ($2222),a		; $2dc1
-	ret			; $2dc4
-
-getEntryFromObjectTable1:
-	ldh a,(<hRomBank)	; $2dc5
-	push af			; $2dc7
-	ld a,$11		; $2dc8
-	ldh (<hRomBank),a	; $2dca
-	ld ($2222),a		; $2dcc
-	ld a,b			; $2dcf
-	ld hl,$5744		; $2dd0
-	rst_addDoubleIndex			; $2dd3
-	ldi a,(hl)		; $2dd4
-	ld h,(hl)		; $2dd5
-	ld l,a			; $2dd6
-	pop af			; $2dd7
-	ldh (<hRomBank),a	; $2dd8
-	ld ($2222),a		; $2dda
-	ret			; $2ddd
-
-fileSelect_redrawDecorations:
-	ldh a,(<hRomBank)	; $2dde
-	push af			; $2de0
-	ld a,$02		; $2de1
-	ldh (<hRomBank),a	; $2de3
-	ld ($2222),a		; $2de5
-	call $4c97		; $2de8
-	pop af			; $2deb
-	ldh (<hRomBank),a	; $2dec
-	ld ($2222),a		; $2dee
-	xor a			; $2df1
-	ld ($ff00+$70),a	; $2df2
-	ret			; $2df4
-
-addSpritesFromBankToOam_withOffset:
-	ldh a,(<hRomBank)	; $2df5
-	push af			; $2df7
-	ld a,e			; $2df8
-	ldh (<hRomBank),a	; $2df9
-	ld ($2222),a		; $2dfb
-	call addSpritesToOam_withOffset		; $2dfe
-	pop af			; $2e01
-	ldh (<hRomBank),a	; $2e02
-	ld ($2222),a		; $2e04
-	ret			; $2e07
+.include "code/code_3035.s"
 
 getFreeEnemySlot:
 	call getFreeEnemySlot_uncounted		; $2e08
@@ -13756,6 +13664,13 @@ _label_03_110:
 	ld (hl),b		; $54e9
 	ld a,b			; $54ea
 	ld a,b			; $54eb
+
+;;
+; Called from endgameCutsceneHandler in bank 0.
+;
+; @param	e
+; @addr{54ec}
+endgameCutsceneHandler_body:
 	ld hl,$cc03		; $54ec
 	bit 0,(hl)		; $54ef
 	jr nz,_label_03_111	; $54f1
@@ -64710,7 +64625,7 @@ interactionCodea1:
 	ld h,c			; $608f
 _label_0a_213:
 	ld hl,$7a3c		; $6090
-	call objectFunc_3035		; $6093
+	call objectLoadMovementScript		; $6093
 	call interactionInitGraphics		; $6096
 	ld e,$48		; $6099
 	ld a,(de)		; $609b
@@ -64825,7 +64740,7 @@ interactionCodea2:
 	ld h,c			; $6149
 _label_0a_218:
 	ld hl,$7b2f		; $614a
-	call objectFunc_3035		; $614d
+	call objectLoadMovementScript		; $614d
 	call interactionInitGraphics		; $6150
 	ld h,d			; $6153
 	ld l,$66		; $6154
@@ -65229,7 +65144,7 @@ _label_0a_235:
 	add b			; $63d2
 	ld (hl),a		; $63d3
 	ret			; $63d4
-	call objectFunc_3049		; $63d5
+	call objectRunMovementScript		; $63d5
 	ld a,($ccb0)		; $63d8
 	cp d			; $63db
 	ret nz			; $63dc
@@ -85168,6 +85083,7 @@ _label_0d_349:
 	xor a			; $798c
 	ld (de),a		; $798d
 	ret			; $798e
+objectLoadMovementScript_body:
 	ldh a,(<hActiveObjectType)	; $798f
 	add $02			; $7991
 	ld e,a			; $7993
@@ -85194,6 +85110,7 @@ _label_0d_349:
 	inc e			; $79ab
 	ld a,h			; $79ac
 	ld (de),a		; $79ad
+objectRunMovementScript_body:
 	ldh a,(<hActiveObjectType)	; $79ae
 	add $30			; $79b0
 	ld e,a			; $79b2
@@ -106060,7 +105977,7 @@ _label_10_060:
 	ld c,b			; $4865
 _label_10_061:
 	ld hl,$6b30		; $4866
-	call objectFunc_3035		; $4869
+	call objectLoadMovementScript		; $4869
 	ld h,d			; $486c
 	ld l,$c3		; $486d
 	ld b,$01		; $486f
@@ -106104,12 +106021,12 @@ _label_10_062:
 _label_10_063:
 	ld a,(de)		; $48ae
 	ld (hl),a		; $48af
-	jp objectFunc_3049		; $48b0
+	jp objectRunMovementScript		; $48b0
 	ld h,d			; $48b3
 	ld l,$c6		; $48b4
 	dec (hl)		; $48b6
 	ret nz			; $48b7
-	jp objectFunc_3049		; $48b8
+	jp objectRunMovementScript		; $48b8
 	ld e,$c4		; $48bb
 	ld a,(de)		; $48bd
 	or a			; $48be
