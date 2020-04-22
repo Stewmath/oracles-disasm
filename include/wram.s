@@ -640,9 +640,9 @@ wShieldLevel: ; $c6af/$c6a9
 	db
 wNumBombs: ; $c6b0/$c6aa
 	db
-wMaxBombs: ; $c6b1
+wMaxBombs: ; $c6b1/$c6ab
 	db
-wSwordLevel: ; $c6b2
+wSwordLevel: ; $c6b2/$c6ac
 	db
 wNumBombchus: ; $c6b3
 	db

@@ -5647,7 +5647,7 @@ checkEnemyAndPartCollisionsIfTextInactive:
 	ld a,$07		; $1dab
 	ldh (<hRomBank),a	; $1dad
 	ld ($2222),a		; $1daf
-	call $41b9		; $1db2
+	call checkEnemyAndPartCollisions		; $1db2
 	pop af			; $1db5
 	ldh (<hRomBank),a	; $1db6
 	ld ($2222),a		; $1db8
@@ -34458,60 +34458,65 @@ _initializeFileVariables:
 ; game.
 ; @addr{417a}
 _initialFileVariablesTable:
-	sbc l			; $417a
-	ld b,c			; $417b
-	xor b			; $417c
-	ld b,c			; $417d
-	and c			; $417e
-	ld b,c			; $417f
-	xor b			; $4180
-	ld b,c			; $4181
+    .dw _initialFileVariables_standardGame
+	.dw _initialFileVariables_linkedGame
+	.dw _initialFileVariables_heroGame
+	.dw _initialFileVariables_linkedGame
+
+; Initial values for variables in the c6xx block.
+; @addr{4182}
 _initialFileVariables:
-	add hl,hl		; $4182
-	ld (bc),a		; $4183
-	ld ($0701),sp		; $4184
-	nop			; $4187
-	ld c,$00		; $4188
-	sub d			; $418a
-	inc b			; $418b
-	xor e			; $418c
-	stop			; $418d
-	and d			; $418e
-	stop			; $418f
-	and e			; $4190
-	stop			; $4191
-	dec hl			; $4192
-	nop			; $4193
-	inc l			; $4194
-	and a			; $4195
-	cpl			; $4196
-	jr c,_label_07_011	; $4197
-	ld c,b			; $4199
-	ld l,$02		; $419a
-	nop			; $419c
-	and d			; $419d
-	inc c			; $419e
-	and e			; $419f
-	inc c			; $41a0
-	rrca			; $41a1
-	nop			; $41a2
-	xor c			; $41a3
-	ld bc,$0b10		; $41a4
-	nop			; $41a7
-	xor h			; $41a8
-	ld bc,$01a9		; $41a9
-	add d			; $41ac
-	dec b			; $41ad
-	sub d			; $41ae
-	inc h			; $41af
-	nop			; $41b0
+    .db <wTextSpeed                     $02
+    .db <wc608                          $01
+    .db <wLinkName+5                    $00 ; Ensure names have null terminator
+    .db <wKidName+5                     $00
+    .db <wObtainedTreasureFlags         1<<TREASURE_PUNCH
+    .db <wMaxBombs                      $10
+	.db <wLinkHealth                    $10 ; 4 hearts (gets overwritten in standard game)
+	.db <wLinkMaxHealth                 $10
+	.db <wDeathRespawnBuffer.group      $00
+	.db <wDeathRespawnBuffer.room       $a7
+	.db <wDeathRespawnBuffer.y          $38
+	.db <wDeathRespawnBuffer.x          $48
+	.db <wDeathRespawnBuffer.facingDir  $02
+    .db $00
+
+; Standard game (not linked or hero)
+; @addr{419d}
+_initialFileVariables_standardGame:
+    .db <wLinkHealth            $0c
+	.db <wLinkMaxHealth         $0c
+    ; Continue reading the following data
+
+; Hero game (not linked+hero game)
+; @addr{41a1}
+_initialFileVariables_heroGame:
+	.db <wChildStatus           $00
+	.db <wShieldLevel           $01
+	.db <wAnimalCompanion       $0b
+    .db $00
+
+; Linked game, or linked+hero game
+; @addr{41a8}
+_initialFileVariables_linkedGame:
+    .db <wSwordLevel                $01
+	.db <wShieldLevel               $01
+    .db <wInventoryStorage          ITEMID_SWORD
+    .db <wObtainedTreasureFlags,    (1<<TREASURE_PUNCH) | (1<<TREASURE_SWORD)
+    .db $00
+
+; This string is different in ages and seasons.
+; @addr{41b1}
 _saveVerificationString:
-	ld e,d			; $41b1
-	ld sp,$3231		; $41b2
-	ld sp,$2d36		; $41b5
-	jr nc,-$06		; $41b8
-	ld ($87d0),sp		; $41ba
-	add a			; $41bd
+	.ASC "Z11216-0"
+
+;;
+; For each Enemy and each Part, check for collisions with Link and Items.
+; @addr{41b9}
+checkEnemyAndPartCollisions:
+    ld a,($d008)    ; $41b9
+	add a           ; $41bc
+	add a           ; $41bd
 	ld hl,$4219		; $41be
 	rst_addAToHl			; $41c1
 	ld de,$cc8a		; $41c2
