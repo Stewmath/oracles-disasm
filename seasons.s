@@ -1897,39 +1897,16 @@ _initializeThread:
 	ret			; $0987
 
 _initialThreadStates:
-	ld (bc),a		; $0988
-	nop			; $0989
-	add b			; $098a
-	pop bc			; $098b
-	ld c,(hl)		; $098c
-	inc l			; $098d
-	nop			; $098e
-	nop			; $098f
-	ld (bc),a		; $0990
-	nop			; $0991
-	jr nz,_label_00_086	; $0992
-	cp (hl)			; $0994
-	ld ($0000),sp		; $0995
-	ld (bc),a		; $0998
-	nop			; $0999
-	ld (hl),b		; $099a
-	jp nz,stubThreadStart		; $099b
-	nop			; $099e
-	nop			; $099f
-	ld (bc),a		; $09a0
-	nop			; $09a1
-	ret nz			; $09a2
-	jp nz,paletteFadeThreadStart		; $09a3
-	nop			; $09a6
-	nop			; $09a7
+	m_ThreadState $02 $00 wThread0StackTop introThreadStart
+	m_ThreadState $02 $00 wThread1StackTop stubThreadStart
+	m_ThreadState $02 $00 wThread2StackTop stubThreadStart
+	m_ThreadState $02 $00 wThread3StackTop paletteFadeThreadStart
 
 flagLocationGroupTable:
-	rst_jumpTable			; $09a8
-	ret z			; $09a9
-	ret z			; $09aa
-	ret z			; $09ab
-	ret			; $09ac
-	jp z,$cac9		; $09ad
+    .db >wPresentRoomFlags >wPastRoomFlags
+	.db >wPastRoomFlags >wPastRoomFlags
+	.db >wGroup4Flags >wGroup5Flags
+	.db >wGroup4Flags >wGroup5Flags
 
 initializeFile:
 	ld c,$00		; $09b0
