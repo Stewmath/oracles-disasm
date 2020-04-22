@@ -34199,78 +34199,123 @@ _saveFile:
     ; Redundant?
 	jr _verifyFileCopies		; $407b
 
+;;
+; @addr{407d}
 _loadFile:
-	call $40b4		; $407d
+	call _verifyFileCopies		; $407d
 	push af			; $4080
 	or a			; $4081
-	jr nz,_label_07_001	; $4082
-	call $414f		; $4084
-	jr _label_07_002		; $4087
-_label_07_001:
-	call $4153		; $4089
-_label_07_002:
+	jr nz,+	; $4082
+
+	call _getFileAddress1		; $4084
+	jr ++		; $4087
++
+	call _getFileAddress2		; $4089
+++
 	ld l,c			; $408c
 	ld h,b			; $408d
-	ld de,$c5b0		; $408e
-	call $40f6		; $4091
+	ld de,wFileStart		; $408e
+	call _copyFileFromHlToDe		; $4091
 	pop af			; $4094
 	ret			; $4095
 
+;;
+; @addr{4096}
 _eraseFile:
-	call $414f		; $4096
-	call $409f		; $4099
-	call $4153		; $409c
+	call _getFileAddress1		; $4096
+	call @clearFile		; $4099
+
+	call _getFileAddress2		; $409c
+;;
+; @param bc
+; @addr{409f}
+@clearFile:
 	ld a,$0a		; $409f
 	ld ($1111),a		; $40a1
 	ld l,c			; $40a4
 	ld h,b			; $40a5
-	call $40ae		; $40a6
+	call _clearFileAtHl		; $40a6
 	xor a			; $40a9
 	ld ($1111),a		; $40aa
 	ret			; $40ad
+
+;;
+; Clear $0550 bytes at hl
+; @addr{40ae}
+_clearFileAtHl:
 	ld bc,$0550		; $40ae
 	jp clearMemoryBc		; $40b1
+
+;;
+; Checks both copies of the file data to see if one is valid.
+; If one is valid but not the other, this also updates the invalid copy with the valid
+; copy's data.
+; @param[out] a $01 if copy 2 was valid while copy 1 wasn't
+; @addr{40b4}
 _verifyFileCopies:
-	call $4153		; $40b4
+	call _getFileAddress2		; $40b4
 	ld l,c			; $40b7
 	ld h,b			; $40b8
-	call $4108		; $40b9
+	call _verifyFileAtHl		; $40b9
 	and $01			; $40bc
 	push af			; $40be
-	call $414f		; $40bf
+
+	call _getFileAddress1		; $40bf
 	ld l,c			; $40c2
 	ld h,b			; $40c3
-	call $4108		; $40c4
+	call _verifyFileAtHl		; $40c4
 	pop bc			; $40c7
 	rl b			; $40c8
+
+	; bit 0 set if copy 1 failed, bit 1 set if copy 2 failed
 	ld a,b			; $40ca
 	rst_jumpTable			; $40cb
-	pop hl			; $40cc
-	ld b,b			; $40cd
-.DB $e3				; $40ce
-	ld b,b			; $40cf
-	call nc,$f340		; $40d0
-	ld b,b			; $40d3
-	call $4153		; $40d4
+	.dw @bothCopiesValid
+	.dw @copy1Invalid
+	.dw @copy2Invalid
+	.dw @bothCopiesInvalid
+
+;;
+; @addr{40d4}
+@copy2Invalid:
+	call _getFileAddress2		; $40d4
 	ld e,c			; $40d7
 	ld d,b			; $40d8
-	call $414f		; $40d9
+	call _getFileAddress1		; $40d9
 	ld l,c			; $40dc
 	ld h,b			; $40dd
-	call $40f6		; $40de
+	call _copyFileFromHlToDe		; $40de
+
+;;
+; @addr{40e1}
+@bothCopiesValid:
 	xor a			; $40e1
 	ret			; $40e2
-	call $414f		; $40e3
+
+;;
+; @addr{40e3}
+@copy1Invalid:
+	call _getFileAddress1		; $40e3
 	ld e,c			; $40e6
 	ld d,b			; $40e7
-	call $4153		; $40e8
+	call _getFileAddress2		; $40e8
 	ld l,c			; $40eb
 	ld h,b			; $40ec
-	call $40f6		; $40ed
+	call _copyFileFromHlToDe		; $40ed
 	ld a,$01		; $40f0
 	ret			; $40f2
+
+;;
+; @addr{40f3}
+@bothCopiesInvalid:
 	ld a,$ff		; $40f3
 	ret			; $40f5
+
+;;
+; Copy a file ($0550 bytes) from hl to de.
+; @param de Destination address
+; @param hl Source address
+; @addr{40f6}
 _copyFileFromHlToDe:
 	push hl			; $40f6
 	ld a,$0a		; $40f7
@@ -34281,46 +34326,65 @@ _copyFileFromHlToDe:
 	ld ($1111),a		; $4103
 	pop hl			; $4106
 	ret			; $4107
+
+;;
+; @param hl Address of file
+; @param[out] a Equals $ff if verification failed
+; @param[out] cflag Set if verification failed
+; @addr{4108}
+_verifyFileAtHl:
 	push hl			; $4108
 	ld a,$0a		; $4109
 	ld ($1111),a		; $410b
-	call $4138		; $410e
+
+	; Verify checksum
+	call _calculateFileChecksum		; $410e
 	ldi a,(hl)		; $4111
 	cp e			; $4112
-	jr nz,_label_07_006	; $4113
+	jr nz,@verifyFailed	; $4113
 	ldi a,(hl)		; $4115
 	cp d			; $4116
-	jr nz,_label_07_006	; $4117
-	ld de,$41b1		; $4119
+	jr nz,@verifyFailed	; $4117
+
+	ld de,_saveVerificationString		; $4119
 	ld b,$08		; $411c
-_label_07_004:
+@nextChar:
 	ld a,(de)		; $411e
 	cp (hl)			; $411f
-	jr nz,_label_07_006	; $4120
+	jr nz,@verifyFailed	; $4120
+
 	inc de			; $4122
 	inc hl			; $4123
 	dec b			; $4124
-	jr nz,_label_07_004	; $4125
-_label_07_005:
+	jr nz,@nextChar	; $4125
+
+@verifyDone:
 	xor a			; $4127
 	ld ($1111),a		; $4128
 	pop hl			; $412b
 	ld a,b			; $412c
 	rrca			; $412d
 	ret			; $412e
-_label_07_006:
+
+@verifyFailed:
 	pop hl			; $412f
 	push hl			; $4130
-	call $40ae		; $4131
+	call _clearFileAtHl		; $4131
 	ld b,$ff		; $4134
-	jr _label_07_005		; $4136
+	jr @verifyDone		; $4136
+
+;;
+; Calculate a checksum over $550 bytes (excluding the first 2) for a save file
+; @param hl Address to start at
+; @param[out] de Checksum
+; @addr{4138}
 _calculateFileChecksum:
 	push hl			; $4138
 	ld a,$02		; $4139
 	rst_addAToHl			; $413b
 	ld bc,$02a7		; $413c
 	ld de,$0000		; $413f
-_label_07_007:
+--
 	ldi a,(hl)		; $4142
 	add e			; $4143
 	ld e,a			; $4144
@@ -34330,49 +34394,69 @@ _label_07_007:
 	dec bc			; $4148
 	ld a,b			; $4149
 	or c			; $414a
-	jr nz,_label_07_007	; $414b
+	jr nz,--	; $414b
+
 	pop hl			; $414d
 	ret			; $414e
+
+;;
+; Get the first address of the save data
+; @param hActiveFileSlot Save slot
+; @param[out] bc Address
+; @addr{414f}
 _getFileAddress1:
 	ld c,$00		; $414f
-	jr _label_07_008		; $4151
+	jr +		; $4151
+
+;;
+; Get the second (backup?) address of the save data
+; @param hActiveFileSlot Save slot
+; @param[out] bc Address
+; @addr{4153}
 _getFileAddress2:
 	ld c,$03		; $4153
-_label_07_008:
++
 	push hl			; $4155
 	ldh a,(<hActiveFileSlot)	; $4156
 	add c			; $4158
-	ld hl,$4162		; $4159
+	ld hl,@saveFileAddresses		; $4159
 	rst_addDoubleIndex			; $415c
 	ldi a,(hl)		; $415d
 	ld b,(hl)		; $415e
 	ld c,a			; $415f
 	pop hl			; $4160
 	ret			; $4161
-	stop			; $4162
-	and b			; $4163
-	ld h,b			; $4164
-	and l			; $4165
-	or b			; $4166
-	xor d			; $4167
-	nop			; $4168
-	or b			; $4169
-	ld d,b			; $416a
-	or l			; $416b
-	and b			; $416c
-	cp d			; $416d
+
+; @addr{4162}
+@saveFileAddresses:
+	.dw $a010
+	.dw $a560
+	.dw $aab0
+
+	.dw $b000
+	.dw $b550
+	.dw $baa0
+
+;;
+; @param hl Address of initial values (should point to _initialFileVariables or some
+; variant)
+; @addr{416e}
 _initializeFileVariables:
-	ld d,$c6		; $416e
-_label_07_009:
+	ld d,>wc600Block		; $416e
+--
 	ldi a,(hl)		; $4170
 	or a			; $4171
-	jr z,_label_07_010	; $4172
+	jr z,+	; $4172
 	ld e,a			; $4174
 	ldi a,(hl)		; $4175
 	ld (de),a		; $4176
-	jr _label_07_009		; $4177
-_label_07_010:
+	jr --		; $4177
++
 	ret			; $4179
+
+; Table to distinguish initial file data based on whether it's a standard, linked, or hero
+; game.
+; @addr{417a}
 _initialFileVariablesTable:
 	sbc l			; $417a
 	ld b,c			; $417b
