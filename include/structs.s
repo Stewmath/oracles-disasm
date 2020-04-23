@@ -604,7 +604,7 @@
 	health			db ; $29
 	var2a			db ; $2a
 
-	; For interactions, this is a counter used in "npcAnimate_followLink" to set
+	; For interactions, this is a counter used in "npcFaceLinkAndAnimate" to set
 	; a minimum amount of time before the npc changes facing directions.
 	invincibilityCounter	db ; $2b
 

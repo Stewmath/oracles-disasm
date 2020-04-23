@@ -2858,7 +2858,7 @@ _paletteFadeHandler01:
 ; @param	hFF8B	Intensity of a color component after overflowing ($00 or $1f?)
 ; @addr{571e}
 _updateFadingPalettes:
-	call _paletteThread_calculateFadingPalettes		; $571e
+	call paletteThread_calculateFadingPalettes		; $571e
 
 	ld hl,wDirtyFadeBgPalettes		; $5721
 	ldh a,(<hDirtyBgPalettes)	; $5724
@@ -3155,7 +3155,7 @@ _paletteFadeHandler08:
 ; @param	c	Value to add to each color component
 ; @param	hFF8B	Intensity of a color component after overflowing ($00 or $1f)
 ; @addr{583b}
-_paletteThread_calculateFadingPalettes:
+paletteThread_calculateFadingPalettes:
 	ld hl,w2TilesetBgPalettes	; $583b
 	ld b,$40		; $583e
 
@@ -3794,7 +3794,7 @@ cutscene01:
 	call updatePirateShip		; $5b6f
 	call updateAllObjects		; $5b72
 	call checkUpdateUnderwaterWaves		; $5b75
-	callab bank2.func_02_7a3a		; $5b78
+	callab roomInitialization.func_02_7a3a		; $5b78
 
 .else; ROM_SEASONS
 	call updateAllObjects

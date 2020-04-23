@@ -143,3 +143,23 @@ addSpritesFromBankToOam_withOffset:
 	setrombank		; $30e5
 	ret			; $30ea
 
+
+.ifdef ROM_AGES
+
+;;
+; Same as "addSpritesToOam", except this changes the bank first.
+;
+; @param	e	Bank where the OAM data is
+; @param	hl	OAM data
+; @addr{30eb}
+addSpritesFromBankToOam:
+	ldh a,(<hRomBank)	; $30eb
+	push af			; $30ed
+	ld a,e			; $30ee
+	setrombank		; $30ef
+	call addSpritesToOam		; $30f4
+	pop af			; $30f7
+	setrombank		; $30f8
+	ret			; $30fd
+
+.endif

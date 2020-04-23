@@ -11197,8 +11197,12 @@ _runFakeReset:
 
 .ifdef ROM_AGES
 
+.ends
+
 .include "code/roomInitialization.s"
 .include "code/ages/roomGfxChanges.s"
+
+ m_section_force "Bank_2_2" NAMESPACE "bank2"
 
 
 .ifdef BUILD_VANILLA

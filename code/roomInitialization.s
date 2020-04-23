@@ -1,3 +1,5 @@
+ m_section_superfree "roomInitialization" NAMESPACE roomInitialization
+
 ; Most functions in this file are called from the "initializeRoom" function in bank
 ; 0 (perhaps indirectly).
 ;
@@ -879,3 +881,5 @@ func_02_7a3a:
 	jp setShortPosition		; $7a51
 
 .endif ; ROM_AGES
+
+.ends

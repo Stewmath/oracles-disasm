@@ -1,4 +1,8 @@
-.define SCRIPT_BANK $0c
+.ifdef ROM_AGES
+.define SIMPLE_SCRIPT_BANK $0c
+.else
+.define SIMPLE_SCRIPT_BANK $14
+.endif
 
 ;;
 ; @param a Command to execute

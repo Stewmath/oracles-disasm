@@ -150,6 +150,7 @@
 .endif
 
 .define TILEINDEX_DEEP_WATER		$fc
+.define TILERANGE_WATER             $fd-TILEINDEX_PUDDLE+1 ; number of puddle/water tiles
 
 ; Tiles in sidescrolling tilesets
 .define TILEINDEX_SS_EMPTY		$01

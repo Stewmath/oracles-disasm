@@ -1,3 +1,5 @@
+ m_section_force "roomGfxChanges" NAMESPACE roomGfxChanges
+
 ; Some code here is the same as code/ages/roomGfxChanges.s, but almost all room-specific
 ; stuff is different, so the codebases are separated.
 
@@ -754,3 +756,4 @@ _roomTileChangesAfterLoad04:
 	ld a,TREE_GFXH_03		; $6adf
 	jp loadTreeGfx		; $6ae1
 
+.ends

@@ -59,7 +59,7 @@ cutscene02:
 	ret nz			; $7ccc
 
 	call @func_7ced		; $7ccd
-	callab bank2.func_02_7a77		; $7cd0
+	callab roomGfxChanges.func_02_7a77		; $7cd0
 	xor a			; $7cd8
 	ld (wCutsceneState),a		; $7cd9
 	ld (wDisableLinkCollisionsAndMenu),a		; $7cdc
