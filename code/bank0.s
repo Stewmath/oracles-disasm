@@ -1,3 +1,4 @@
+.ORGA $0000
 ; rst_jumpTable
 	add a			; $0000
 	pop hl			; $0001
@@ -9119,13 +9120,6 @@ objectUnmarkSolidPosition:
 	ld ($ff00+R_SVBK),a	; $2515
 	ret			; $2517
 
-.else ; ROM_SEASONS
-
-; Placeholder labels for now (delete these later)
-objectFlickerVisibility:
-objectMarkSolidPosition:
-objectUnmarkSolidPosition:
-
 .endif
 
 ;;
@@ -9901,24 +9895,6 @@ interactionSetMiniScript:
 	ld a,h			; $279d
 	ld (de),a		; $279e
 	ret			; $279f
-
-
-.else ; ROM_SEASONS
-
-; Placeholder labels
-interactionDecCounter1IfTextNotActive:
-interactionDecCounter1IfPaletteNotFading:
-interactionAnimate4Times:
-interactionAnimate3Times:
-interactionAnimate2Times:
-interactionAnimateBasedOnSpeed:
-interactionSetPosition:
-interactionHSetPosition:
-interactionUnsetAlwaysUpdateBit:
-interactionLoadExtraGraphics:
-interactionFunc_278b:
-interactionGetMiniScript:
-interactionSetMiniScript:
 
 .endif
 
@@ -12487,12 +12463,6 @@ brightenRoom:
 	jr _label_331c
 
 
-; Placeholders
-func_32fc:
-darkenRoomWithSpeed:
-brightenRoomWithSpeed:
-
-
 .endif; ROM_SEASONS
 
 
@@ -13127,9 +13097,6 @@ func_35ec:
 	setrombank
 	ret			; $35ff
 
-; Placeholder
-checkDungeonUsesToggleBlocks:
-
 .endif
 
 ;;
@@ -13254,11 +13221,6 @@ getBlackTowerProgress:
 	ld a,c			; $36d3
 	pop bc			; $36d4
 	ret			; $36d5
-
-.else ; ROM_SEASONS
-
-; Placeholder
-getBlackTowerProgress:
 
 .endif
 
@@ -14372,12 +14334,6 @@ seasonsFunc_3d3d:
 	setrombank		; $3d4d
 	ret			; $3d52
 
-; Placeholders
-checkObjectIsCloseToPosition:
-checkNpcShouldExistAtGameStage:
-tokayIslandStolenItems:
-
-
 .else ; ROM_AGES
 
 ;;
@@ -14773,14 +14729,6 @@ seasonsFunc_3e52:
 	setrombank		; $3e68
 	ret			; $3e6d
 
-; Placeholders
-getWildTokayObjectDataIndex:
-objectCreateSparkle:
-objectCreateSparkleMovingUp:
-objectCreateRedBlueOrb:
-incMakuTreeState:
-setLinkDirection:
-
 .endif ; ROM_SEASONS
 
 
@@ -14927,14 +14875,6 @@ func_3ee4:
 	pop af			; $3ef1
 	setrombank		; $3ef2
 	ret			; $3ef7
-
-.else ; ROM_SEASONS
-
-; Placeholder
-checkLinkCanSurface:
-copy256BytesFromBank:
-func_3ed0:
-func_3ee4:
 
 .endif
 
