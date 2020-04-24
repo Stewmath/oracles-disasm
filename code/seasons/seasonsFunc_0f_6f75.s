@@ -1,5 +1,5 @@
 ;;
-; Graphics-related functionality
+; Functionality relating to Onox fight phase 1 leading to phase 2
 ; TODO: finish
 
 seasonsFunc_0f_6f75:
