@@ -277,10 +277,11 @@ seasons_func_0f_712a:
 	ld (wCutsceneTrigger),a		; $7155
 	ret			; $7158
 
+seasonsFunc_0f_7159:
 	ld a,($cfcf)		; $7159
 	or a			; $715c
 	ret nz			; $715d
-	ld hl,$cd18		; $715e
+	ld hl,wScreenShakeCounterY		; $715e
 	ld a,(hl)		; $7161
 	or a			; $7162
 	jr z,+	; $7163
@@ -292,11 +293,12 @@ seasons_func_0f_712a:
 	jr z,+	; $7169
 	dec (hl)		; $716b
 +
-	ld hl,$ffa8		; $716c
+	ld hl,hCameraY		; $716c
 	ld a,($d00b)		; $716f
 	sub (hl)		; $7172
 	cp $40			; $7173
 	ret z			; $7175
+
 	ld a,(hl)		; $7176
 	jr c,+	; $7177
 	cp $30			; $7179

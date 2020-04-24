@@ -1,19 +1,19 @@
 ;;
 cutscene06:
 	ld e,$00
-	jp seasonsFunc_35b8
+	jp multiIntroCutsceneCaller
 
 ;;
 cutscene07:
 	ld e,$01
-	call seasonsFunc_35b8
+	call multiIntroCutsceneCaller
 	call updateInteractionsAndDrawAllSprites
 	jp updateAnimationsAfterCutscene
 
 ;;
 cutscene08:
 	ld e,$02
-	call seasonsFunc_35b8
+	call multiIntroCutsceneCaller
 	jp updateInteractionsAndDrawAllSprites
 
 ;;
@@ -51,7 +51,7 @@ cutscene0c:
 cutscene0d:
 	call func_1613		; $5c1b
 	ld e,$03		; $5c1e
-	jp seasonsFunc_35b8		; $5c20
+	jp multiIntroCutsceneCaller		; $5c20
 
 ;;
 cutscene0e:
@@ -59,7 +59,7 @@ cutscene0e:
 	or a			; $5c26
 	jr nz,func_5e0e		; $5c27
 	ld e,$04		; $5c29
-	call seasonsFunc_35b8		; $5c2b
+	call multiIntroCutsceneCaller		; $5c2b
 	jp updateAnimationsAfterCutscene		; $5c2e
 
 ;;

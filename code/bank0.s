@@ -12871,28 +12871,28 @@ func_3539:
 
 ;;
 seasonsFunc_34a0:
-	ld a,($ff00+$97)	; $34a0
+	ldh a,(<hRomBank)	; $34a0
 	push af			; $34a2
-	callfrombank0 $05 $4000		; $34a3
-	callfrombank0 $07 $485a		; $34ad
+	callfrombank0 bank5.updateSpecialObjects		; $34a3
+	callfrombank0 itemCode.updateItems		; $34ad
 	callfrombank0 updateEnemies		; $34b7
-	callfrombank0 $10 $61dc		; $34c1
+	callfrombank0 partCode.updateParts		; $34c1
 	callfrombank0 updateInteractions		; $34cb
-	callfrombank0 $0f $7159		; $34d5
+	callfrombank0 seasonsFunc_0f_7159		; $34d5
 
 	ld a,$06		; $34df
 	setrombank		; $34e1
-	ld a,($cc75)		; $34e6
+	ld a,(wLinkGrabState)		; $34e6
 	rlca			; $34e9
-	call c,$5429		; $34ea
+	call c,bank6.updateGrabbedObjectPosition		; $34ea
 
 	call loadLinkAndCompanionAnimationFrame		; $34ed
-	callfrombank0 $07 $4902		; $34f0
-	callfrombank0 $0f $7182		; $34fa
-	callfrombank0 $04 $6b25		; $3504
+	callfrombank0 itemCode.updateItemsPost		; $34f0
+	callfrombank0 seasonsFunc_0f_7182		; $34fa
+	callfrombank0 updateChangedTileQueue		; $3504
 
 	xor a			; $350e
-	ld ($c4b6),a		; $350f
+	ld (wc4b6),a		; $350f
 
 	pop af			; $3512
 	setrombank		; $3513
@@ -13072,14 +13072,14 @@ getEntryFromObjectTable2:
 
 .else ; ROM_SEASONS
 
-seasonsFunc_35b8:
-	ld a,($ff00+$97)	; $35b8
+multiIntroCutsceneCaller:
+	ldh a,(<hRomBank)	; $35b8
 	push af			; $35ba
-	callfrombank0 $03 $72ff
+	callfrombank0 multiIntroCutsceneHandler
 	pop af			; $35c5
-	ld ($ff00+$97),a	; $35c6
-	ld ($2222),a		; $35c8
+	setrombank
 	ret			; $35cb
+
 
 .endif
 
