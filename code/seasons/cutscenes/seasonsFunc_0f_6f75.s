@@ -1,5 +1,5 @@
 ;;
-; Functionality relating to Onox fight phase 1 leading to phase 2
+; Functionality relating to Onox fight from armored phases to dragon phase
 ; TODO: finish
 
 seasonsFunc_0f_6f75:
