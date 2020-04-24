@@ -18,8 +18,7 @@
 
 
 .BANK $00 SLOT 0
-
-.ORGA $0000
+.ORG 0
 
 	.include "code/bank0.s"
 
@@ -2935,10 +2934,6 @@ _createInteraction:
 
 
 .ifdef ROM_SEASONS
-
-; Placeholder label
-_createInteraction:
-
 
 ; In Ages these sprites are located elsewhere
 
