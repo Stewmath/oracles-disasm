@@ -21,7 +21,7 @@
 
 .ORGA $0000
 
-    .include "code/bank0.s"
+	.include "code/bank0.s"
 
 .BANK $01 SLOT 1
 .ORG 0
@@ -37009,12 +37009,12 @@ interactionCode17:
 
 
 @keyDoorGraphicTable:
-        .dw @collisions0
-        .dw @collisions1
-        .dw @collisions2
-        .dw @collisions3
-        .dw @collisions4
-        .dw @collisions5
+	.dw @collisions0
+	.dw @collisions1
+	.dw @collisions2
+	.dw @collisions3
+	.dw @collisions4
+	.dw @collisions5
 
 ; Data format:
 ;   b0: tile index
@@ -37024,20 +37024,20 @@ interactionCode17:
 @collisions1:
 @collisions3:
 @collisions4:
-        .db $00 $00
+	.db $00 $00
 
 @collisions2:
 @collisions5:
-        .db $1e $00 ; Keyblock
-        .db $70 $00 ; Small key doors
-        .db $71 $00
-        .db $72 $00
-        .db $73 $00
-        .db $74 $01 ; Boss key doors
-        .db $75 $01
-        .db $76 $01
-        .db $77 $01
-        .db $00
+	.db $1e $00 ; Keyblock
+	.db $70 $00 ; Small key doors
+	.db $71 $00
+	.db $72 $00
+	.db $73 $00
+	.db $74 $01 ; Boss key doors
+	.db $75 $01
+	.db $76 $01
+	.db $77 $01
+	.db $00
 
 
 ; ==============================================================================
@@ -77702,30 +77702,30 @@ interactionCodeb4:
 
 ; List of tiles to become solid for each book
 @bookPathLists:
-        .db @subid0 - CADDR
-        .db @subid1 - CADDR
-        .db @subid2 - CADDR
-        .db @subid3 - CADDR
-        .db @subid4 - CADDR
-        .db @subid5 - CADDR
+	.db @subid0 - CADDR
+	.db @subid1 - CADDR
+	.db @subid2 - CADDR
+	.db @subid3 - CADDR
+	.db @subid4 - CADDR
+	.db @subid5 - CADDR
 @subid0:
-        .db $99 $9a $9b $8b $7b $7c
+	.db $99 $9a $9b $8b $7b $7c
 	.db $00
 @subid1:
-        .db $6d $5d $5c $4c $3c $3d
+	.db $6d $5d $5c $4c $3c $3d
 	.db $00
 @subid2:
-        .db $2c $2b $1b $1a $19
-        .db $00
+	.db $2c $2b $1b $1a $19
+	.db $00
 @subid3:
-        .db $28 $27 $26 $25 $15 $14 $13
+	.db $28 $27 $26 $25 $15 $14 $13
 	.db $00
 @subid4:
-        .db $22 $23 $33 $43 $42 $41 $51 $61
+	.db $22 $23 $33 $43 $42 $41 $51 $61
 	.db $00
 @subid5:
-        .db $72 $82 $83 $84 $74 $75 $65 $66 $67
-        .db $00
+	.db $72 $82 $83 $84 $74 $75 $65 $66 $67
+	.db $00
 
 @podiumPositions:
 	.db $84 $18
@@ -112907,9 +112907,9 @@ _smog_setCounterToFireProjectile:
 	ret			; $73cf
 
 @table:
-        .db @subid2 - CADDR
-        .db @subid3 - CADDR
-        .db @subid4 - CADDR
+	.db @subid2 - CADDR
+	.db @subid3 - CADDR
+	.db @subid4 - CADDR
 
 @subid2:
 	.db @subid2_0 - CADDR
@@ -118774,30 +118774,30 @@ _ganon_decideNextMove:
 ;
 ; 0-3 are for Ganon at high health.
 @choice0:
-        .db $08 $0a $09
+	.db $08 $0a $09
 	.db $00
 @choice1:
-        .db $09
+	.db $09
 	.db $00
 @choice2:
-        .db $0a $08 $09 $0a
-        .db $00
+	.db $0a $08 $09 $0a
+	.db $00
 @choice3:
-        .db $0a $08
-        .db $00
+	.db $0a $08
+	.db $00
 
 ; 4-7 are for Ganon at low health.
 @choice4:
-        .db $0c
+	.db $0c
 	.db $00
 @choice5:
-        .db $0b $0d $08 $0a
-        .db $00
+	.db $0b $0d $08 $0a
+	.db $00
 @choice6:
-        .db $0b $0c $09 $0a
-        .db $00
+	.db $0b $0c $09 $0a
+	.db $00
 @choice7:
-        .db $0d
+	.db $0d
 	.db $00
 
 
@@ -125661,7 +125661,7 @@ interactionCodee6:
 .BANK $11 SLOT 1
 .ORG 0
 
-    .define PART_BANK $11
+	.define PART_BANK $11
 	.export PART_BANK
 
  m_section_force "Bank_11" NAMESPACE "partCode"

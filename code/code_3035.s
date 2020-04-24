@@ -9,7 +9,7 @@ objectLoadMovementScript:
 .ifdef ROM_AGES
 	callfrombank0 bank0e.objectLoadMovementScript_body		; $3038
 .else
-    callfrombank0 objectLoadMovementScript_body		; $3038 - bank0d
+	callfrombank0 objectLoadMovementScript_body		; $3038 - bank0d
 .endif
 	pop af			; $3042
 	setrombank
@@ -23,7 +23,7 @@ objectRunMovementScript:
 .ifdef ROM_AGES
 	callfrombank0 bank0e.objectRunMovementScript_body		; $3038
 .else
-    callfrombank0 objectRunMovementScript_body		; $3038 - bank0d
+	callfrombank0 objectRunMovementScript_body		; $3038 - bank0d
 .endif
 	pop af			; $3056
 	setrombank		; $3057

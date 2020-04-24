@@ -1,7 +1,7 @@
 ; @addr{2f34}
 enemyCodeTable:
 .ifdef ROM_AGES
-    .dw bank10.enemyCode00 ; 0x00
+	.dw bank10.enemyCode00 ; 0x00
 	.dw bank10.enemyCode01 ; 0x01
 	.dw bank10.enemyCode02 ; 0x02
 	.dw bank10.enemyCode03 ; 0x03

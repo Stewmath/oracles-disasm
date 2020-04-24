@@ -6711,7 +6711,7 @@ checkLinkCollisionsEnabled:
 	jr nc,@noCarry		; $1d36
 
 .ifdef ROM_SEASONS
-    ld a,(wLinkDeathTrigger)		; $1d38
+	ld a,(wLinkDeathTrigger)		; $1d38
 	or a			; $1d3b
 	jr nz,@noCarry		; $1d3c
 .endif
@@ -9595,8 +9595,8 @@ npcFaceLinkAndAnimate:
 	ld a,(de)		; $26ce
 	add b			; $26cf
 .else
-    call seasonsFunc_2678
-    ld a,b
+	call seasonsFunc_2678
+	ld a,b
 .endif
 	call interactionSetAnimation		; $26d0
 
@@ -11880,7 +11880,7 @@ initializeRoom:
 	call nz,objectData.parseObjectData
 
 .else ; ROM_SEASONS
-    call          refreshObjectGfx
+	call          refreshObjectGfx
 
 	ldh a,(<hRomBank)
 	push af
@@ -11891,7 +11891,7 @@ initializeRoom:
 	callfrombank0 objectData.parseObjectData
 .endif
 
-    callfrombank0 staticObjects.parseStaticObjects	; $3160
+	callfrombank0 staticObjects.parseStaticObjects	; $3160
 
 	pop af			; $316a
 	setrombank		; $316b
@@ -12157,7 +12157,7 @@ checkSpawnTimeportalInteraction:
 	ld l,a			; $321f
 	ldh a,(<hRomBank)	; $3220
 	push af			; $3222
-    callfrombank0 roomInitialization.functionCaller		; $3223
+	callfrombank0 roomInitialization.functionCaller		; $3223
 	rl c			; $322d
 	pop af			; $322f
 	setrombank		; $3230
@@ -12877,7 +12877,7 @@ func_3539:
 	callfrombank0 updateEnemies		; $3557
 	callfrombank0 updateInteractions		; $356b
 .endif
-    callfrombank0 loadLinkAndCompanionAnimationFrame		; $3578
+	callfrombank0 loadLinkAndCompanionAnimationFrame		; $3578
 	callfrombank0 updateAnimations
 	xor a			; $358c
 	ld (wc4b6),a		; $358d

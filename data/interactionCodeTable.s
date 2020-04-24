@@ -1,6 +1,6 @@
 interactionCodeTable: ; $3b8b
 .ifdef ROM_AGES
-    .dw interactionBank08.interactionCode00 ; 0x00
+	.dw interactionBank08.interactionCode00 ; 0x00
 	.dw interactionBank08.interactionCode01 ; 0x01
 	.dw interactionBank08.interactionCode02 ; 0x02
 	.dw interactionBank08.interactionCode03 ; 0x03

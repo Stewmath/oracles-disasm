@@ -21,7 +21,7 @@
 .BANK $00 SLOT 0
 .ORG 0
 
-    .include "code/bank0.s"
+	.include "code/bank0.s"
 
 .BANK $01 SLOT 1
 .ORG 0
@@ -1819,7 +1819,7 @@ _introCinematic_preTitlescreen_state0:
 	ld a,$0a		; $5256
 	call loadGfxRegisterStateIndex		; $5258
 
-    ; Create the "tree branches" object
+	; Create the "tree branches" object
 	call getFreeInteractionSlot		; $525b
 	jr nz,++	; $525e
 	ld (hl),INTERACID_INTRO_SPRITES_1		; $5260
@@ -1834,7 +1834,7 @@ _introCinematic_preTitlescreen_state0:
 	ldi (hl),a		; $526e
 ++
 
-    ; Spawn birds
+	; Spawn birds
 	ld b,$08		; $526f
 --
 	call getFreeInteractionSlot		; $5271
@@ -2152,8 +2152,8 @@ templeIntro_simulatedInput:
 	.dw $ffff
 
 data_5951:
-    .db $3c $b4 $3c $50 $78 $b4 $3c $3c
-    .db $3c $70 $78 $78
+	.db $3c $b4 $3c $50 $78 $b4 $3c $3c
+	.db $3c $70 $78 $78
 
 ;;
 ; Called from endgameCutsceneHandler in bank 0.
@@ -22088,161 +22088,161 @@ _label_06_256:
 	.include "build/data/signText.s"
 
 _breakableTileCollisionTable:
-        .dw _breakableTileCollision0
-        .dw _breakableTileCollision1
-        .dw _breakableTileCollision2
-        .dw _breakableTileCollision3
-        .dw _breakableTileCollision4
-        .dw _breakableTileCollision5
+	.dw _breakableTileCollision0
+	.dw _breakableTileCollision1
+	.dw _breakableTileCollision2
+	.dw _breakableTileCollision3
+	.dw _breakableTileCollision4
+	.dw _breakableTileCollision5
 
 _breakableTileCollision0:
 _breakableTileCollision2:
-        .db $f8 $00
-        .db $f2 $0d
-        .db $c4 $01
-        .db $c5 $02
-        .db $c6 $03
-        .db $c7 $04
-        .db $e5 $05
-        .db $d8 $06
-        .db $c3 $06
-        .db $c8 $07
-        .db $c9 $08
-        .db $c0 $09
-        .db $c1 $0a
-        .db $c2 $0b
-        .db $e2 $0c
-        .db $d9 $0e
-        .db $da $0f
-        .db $db $10
-        .db $ca $11
-        .db $cb $12
-        .db $d7 $13
-        .db $e3 $15
-        .db $01 $14
-        .db $04 $14
-        .db $05 $14
-        .db $06 $14
-        .db $07 $14
-        .db $08 $14
-        .db $09 $14
-        .db $0a $14
-        .db $0b $14
-        .db $0c $14
-        .db $0d $14
-        .db $0e $14
-        .db $0f $14
-        .db $11 $14
-        .db $12 $14
-        .db $13 $14
-        .db $14 $14
-        .db $15 $14
-        .db $16 $14
-        .db $17 $14
-        .db $18 $14
-        .db $19 $14
-        .db $1a $14
-        .db $1b $14
-        .db $1c $14
-        .db $1d $14
-        .db $1e $14
-        .db $4d $14
-        .db $4e $14
-        .db $5d $14
-        .db $5e $14
-        .db $5f $14
-        .db $6d $14
-        .db $6e $14
-        .db $6f $14
-        .db $af $14
-        .db $bf $14
-        .db $00
+	.db $f8 $00
+	.db $f2 $0d
+	.db $c4 $01
+	.db $c5 $02
+	.db $c6 $03
+	.db $c7 $04
+	.db $e5 $05
+	.db $d8 $06
+	.db $c3 $06
+	.db $c8 $07
+	.db $c9 $08
+	.db $c0 $09
+	.db $c1 $0a
+	.db $c2 $0b
+	.db $e2 $0c
+	.db $d9 $0e
+	.db $da $0f
+	.db $db $10
+	.db $ca $11
+	.db $cb $12
+	.db $d7 $13
+	.db $e3 $15
+	.db $01 $14
+	.db $04 $14
+	.db $05 $14
+	.db $06 $14
+	.db $07 $14
+	.db $08 $14
+	.db $09 $14
+	.db $0a $14
+	.db $0b $14
+	.db $0c $14
+	.db $0d $14
+	.db $0e $14
+	.db $0f $14
+	.db $11 $14
+	.db $12 $14
+	.db $13 $14
+	.db $14 $14
+	.db $15 $14
+	.db $16 $14
+	.db $17 $14
+	.db $18 $14
+	.db $19 $14
+	.db $1a $14
+	.db $1b $14
+	.db $1c $14
+	.db $1d $14
+	.db $1e $14
+	.db $4d $14
+	.db $4e $14
+	.db $5d $14
+	.db $5e $14
+	.db $5f $14
+	.db $6d $14
+	.db $6e $14
+	.db $6f $14
+	.db $af $14
+	.db $bf $14
+	.db $00
 _breakableTileCollision1:
-        .db $f8 $00
-        .db $f9 $00
-        .db $f2 $0d
-        .db $e9 $09
-        .db $01 $17
-        .db $04 $17
-        .db $05 $17
-        .db $06 $17
-        .db $07 $17
-        .db $08 $17
-        .db $09 $17
-        .db $0a $17
-        .db $0b $17
-        .db $0c $17
-        .db $0d $17
-        .db $0e $17
-        .db $0f $17
-        .db $11 $17
-        .db $12 $17
-        .db $13 $17
-        .db $14 $17
-        .db $15 $17
-        .db $16 $17
-        .db $17 $17
-        .db $18 $17
-        .db $19 $17
-        .db $1a $17
-        .db $1b $17
-        .db $1c $17
-        .db $1d $17
-        .db $1e $17
-        .db $1f $17
-        .db $20 $17
-        .db $21 $17
-        .db $22 $17
-        .db $23 $17
-        .db $24 $17
-        .db $25 $17
-        .db $26 $17
-        .db $27 $17
-        .db $28 $17
-        .db $29 $17
-        .db $2a $17
-        .db $2b $17
-        .db $2c $17
-        .db $2d $17
-        .db $2e $17
-        .db $b8 $18
-        .db $b9 $18
-        .db $bb $17
-        .db $bc $17
-        .db $bd $17
-        .db $be $17
-        .db $bf $17
-        .db $2f $16
-        .db $00
+	.db $f8 $00
+	.db $f9 $00
+	.db $f2 $0d
+	.db $e9 $09
+	.db $01 $17
+	.db $04 $17
+	.db $05 $17
+	.db $06 $17
+	.db $07 $17
+	.db $08 $17
+	.db $09 $17
+	.db $0a $17
+	.db $0b $17
+	.db $0c $17
+	.db $0d $17
+	.db $0e $17
+	.db $0f $17
+	.db $11 $17
+	.db $12 $17
+	.db $13 $17
+	.db $14 $17
+	.db $15 $17
+	.db $16 $17
+	.db $17 $17
+	.db $18 $17
+	.db $19 $17
+	.db $1a $17
+	.db $1b $17
+	.db $1c $17
+	.db $1d $17
+	.db $1e $17
+	.db $1f $17
+	.db $20 $17
+	.db $21 $17
+	.db $22 $17
+	.db $23 $17
+	.db $24 $17
+	.db $25 $17
+	.db $26 $17
+	.db $27 $17
+	.db $28 $17
+	.db $29 $17
+	.db $2a $17
+	.db $2b $17
+	.db $2c $17
+	.db $2d $17
+	.db $2e $17
+	.db $b8 $18
+	.db $b9 $18
+	.db $bb $17
+	.db $bc $17
+	.db $bd $17
+	.db $be $17
+	.db $bf $17
+	.db $2f $16
+	.db $00
 _breakableTileCollision3:
 _breakableTileCollision4:
-        .db $f8 $2d
-        .db $20 $19
-        .db $21 $1a
-        .db $22 $1b
-        .db $23 $1c
-        .db $ef $2e
-        .db $11 $1d
-        .db $12 $1e
-        .db $10 $1f
-        .db $13 $20
-        .db $1f $21
-        .db $30 $22
-        .db $31 $23
-        .db $32 $24
-        .db $33 $25
-        .db $38 $26
-        .db $39 $27
-        .db $3a $28
-        .db $3b $29
-        .db $16 $2a
-        .db $15 $2b
-        .db $2b $2c
-        .db $2a $2c
-        .db $00
+	.db $f8 $2d
+	.db $20 $19
+	.db $21 $1a
+	.db $22 $1b
+	.db $23 $1c
+	.db $ef $2e
+	.db $11 $1d
+	.db $12 $1e
+	.db $10 $1f
+	.db $13 $20
+	.db $1f $21
+	.db $30 $22
+	.db $31 $23
+	.db $32 $24
+	.db $33 $25
+	.db $38 $26
+	.db $39 $27
+	.db $3a $28
+	.db $3b $29
+	.db $16 $2a
+	.db $15 $2b
+	.db $2b $2c
+	.db $2a $2c
+	.db $00
 _breakableTileCollision5:
-        .db $12 $2f
-        .db $00
+	.db $12 $2f
+	.db $00
 
 ; See ages for documentation on this macro
 .macro m_BreakableTileData
@@ -22260,54 +22260,54 @@ _breakableTileCollision5:
 
 ; @addr{76e4}
 _breakableTileModes:
-        m_BreakableTileData %10010110 %00110000 %0010 $1 $10 $04 ; $00
-        m_BreakableTileData %10110111 %10110001 %0110 $1 $00 $04 ; $01
-        m_BreakableTileData %10110111 %10110001 %0110 $0 $c0 $e6 ; $02
-        m_BreakableTileData %10110111 %10110001 %0110 $0 $c0 $e0 ; $03
-        m_BreakableTileData %10110111 %10110001 %0110 $0 $00 $f3 ; $04
-        m_BreakableTileData %10110111 %10110001 %0110 $0 $00 $04 ; $05
-        m_BreakableTileData %10110110 %10110001 %0110 $4 $01 $04 ; $06
-        m_BreakableTileData %11110110 %00110000 %0010 $3 $00 $04 ; $07
-        m_BreakableTileData %11110110 %00110000 %1011 $0 $00 $f3 ; $08
-        m_BreakableTileData %00100001 %00000000 %0000 $4 $06 $04 ; $09
-        m_BreakableTileData %00100001 %00000000 %0000 $0 $c6 $e7 ; $0a
-        m_BreakableTileData %00100001 %00000000 %0000 $0 $c6 $e0 ; $0b
-        m_BreakableTileData %00110000 %10000000 %0000 $0 $c6 $e8 ; $0c
-        m_BreakableTileData %10101101 %00010001 %0000 $7 $0c $04 ; $0d
-        m_BreakableTileData %01000000 %10000000 %0111 $4 $19 $04 ; $0e
-        m_BreakableTileData %01000000 %10000000 %0111 $0 $19 $f3 ; $0f
-        m_BreakableTileData %01110000 %00000000 %1011 $0 $1f $fd ; $10
-        m_BreakableTileData %00000000 %00010000 %0000 $7 $1f $04 ; $11
-        m_BreakableTileData %00000000 %00010000 %0000 $0 $df $e7 ; $12
-        m_BreakableTileData %10000001 %00000000 %0100 $8 $1f $04 ; $13
-        m_BreakableTileData %01000000 %00000000 %0000 $9 $0a $e1 ; $14
-        m_BreakableTileData %01000000 %00000000 %0000 $0 $ca $e0 ; $15
-        m_BreakableTileData %01000000 %00000000 %0000 $0 $0a $e1 ; $16
-        m_BreakableTileData %01000000 %00000000 %0000 $a $0a $e1 ; $17
-        m_BreakableTileData %01000000 %00000000 %0000 $b $0a $e1 ; $18
-        m_BreakableTileData %10110111 %00110001 %0100 $1 $00 $a0 ; $19
-        m_BreakableTileData %10110111 %00110001 %0100 $0 $00 $a0 ; $1a
-        m_BreakableTileData %10110111 %00110001 %0100 $0 $40 $45 ; $1b
-        m_BreakableTileData %10110111 %00110001 %0100 $0 $00 $f3 ; $1c
-        m_BreakableTileData %00100101 %00000001 %0000 $0 $06 $a0 ; $1d
-        m_BreakableTileData %00100101 %00000001 %0000 $0 $46 $45 ; $1e
-        m_BreakableTileData %00100101 %00000001 %0000 $2 $06 $a0 ; $1f
-        m_BreakableTileData %00100101 %00000001 %0000 $0 $46 $0d ; $20
-        m_BreakableTileData %00110000 %00000000 %0000 $0 $06 $a0 ; $21
-        m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $34 ; $22
-        m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $35 ; $23
-        m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $36 ; $24
-        m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $37 ; $25
-        m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $34 ; $26
-        m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $35 ; $27
-        m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $36 ; $28
-        m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $37 ; $29
-        m_BreakableTileData %00111111 %00000000 %0000 $0 $06 $a0 ; $2a
-        m_BreakableTileData %00100001 %00000000 %0000 $4 $06 $4c ; $2b
-        m_BreakableTileData %00000110 %00000000 %0000 $0 $07 $00 ; $2c
-        m_BreakableTileData %10010110 %00110000 %0010 $0 $10 $ef ; $2d
-        m_BreakableTileData %01000000 %00000000 %0000 $c $0a $4c ; $2e
-        m_BreakableTileData %00110000 %00000000 %0000 $0 $06 $01 ; $2f
+	m_BreakableTileData %10010110 %00110000 %0010 $1 $10 $04 ; $00
+	m_BreakableTileData %10110111 %10110001 %0110 $1 $00 $04 ; $01
+	m_BreakableTileData %10110111 %10110001 %0110 $0 $c0 $e6 ; $02
+	m_BreakableTileData %10110111 %10110001 %0110 $0 $c0 $e0 ; $03
+	m_BreakableTileData %10110111 %10110001 %0110 $0 $00 $f3 ; $04
+	m_BreakableTileData %10110111 %10110001 %0110 $0 $00 $04 ; $05
+	m_BreakableTileData %10110110 %10110001 %0110 $4 $01 $04 ; $06
+	m_BreakableTileData %11110110 %00110000 %0010 $3 $00 $04 ; $07
+	m_BreakableTileData %11110110 %00110000 %1011 $0 $00 $f3 ; $08
+	m_BreakableTileData %00100001 %00000000 %0000 $4 $06 $04 ; $09
+	m_BreakableTileData %00100001 %00000000 %0000 $0 $c6 $e7 ; $0a
+	m_BreakableTileData %00100001 %00000000 %0000 $0 $c6 $e0 ; $0b
+	m_BreakableTileData %00110000 %10000000 %0000 $0 $c6 $e8 ; $0c
+	m_BreakableTileData %10101101 %00010001 %0000 $7 $0c $04 ; $0d
+	m_BreakableTileData %01000000 %10000000 %0111 $4 $19 $04 ; $0e
+	m_BreakableTileData %01000000 %10000000 %0111 $0 $19 $f3 ; $0f
+	m_BreakableTileData %01110000 %00000000 %1011 $0 $1f $fd ; $10
+	m_BreakableTileData %00000000 %00010000 %0000 $7 $1f $04 ; $11
+	m_BreakableTileData %00000000 %00010000 %0000 $0 $df $e7 ; $12
+	m_BreakableTileData %10000001 %00000000 %0100 $8 $1f $04 ; $13
+	m_BreakableTileData %01000000 %00000000 %0000 $9 $0a $e1 ; $14
+	m_BreakableTileData %01000000 %00000000 %0000 $0 $ca $e0 ; $15
+	m_BreakableTileData %01000000 %00000000 %0000 $0 $0a $e1 ; $16
+	m_BreakableTileData %01000000 %00000000 %0000 $a $0a $e1 ; $17
+	m_BreakableTileData %01000000 %00000000 %0000 $b $0a $e1 ; $18
+	m_BreakableTileData %10110111 %00110001 %0100 $1 $00 $a0 ; $19
+	m_BreakableTileData %10110111 %00110001 %0100 $0 $00 $a0 ; $1a
+	m_BreakableTileData %10110111 %00110001 %0100 $0 $40 $45 ; $1b
+	m_BreakableTileData %10110111 %00110001 %0100 $0 $00 $f3 ; $1c
+	m_BreakableTileData %00100101 %00000001 %0000 $0 $06 $a0 ; $1d
+	m_BreakableTileData %00100101 %00000001 %0000 $0 $46 $45 ; $1e
+	m_BreakableTileData %00100101 %00000001 %0000 $2 $06 $a0 ; $1f
+	m_BreakableTileData %00100101 %00000001 %0000 $0 $46 $0d ; $20
+	m_BreakableTileData %00110000 %00000000 %0000 $0 $06 $a0 ; $21
+	m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $34 ; $22
+	m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $35 ; $23
+	m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $36 ; $24
+	m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $37 ; $25
+	m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $34 ; $26
+	m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $35 ; $27
+	m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $36 ; $28
+	m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $37 ; $29
+	m_BreakableTileData %00111111 %00000000 %0000 $0 $06 $a0 ; $2a
+	m_BreakableTileData %00100001 %00000000 %0000 $4 $06 $4c ; $2b
+	m_BreakableTileData %00000110 %00000000 %0000 $0 $07 $00 ; $2c
+	m_BreakableTileData %10010110 %00110000 %0010 $0 $10 $ef ; $2d
+	m_BreakableTileData %01000000 %00000000 %0000 $c $0a $4c ; $2e
+	m_BreakableTileData %00110000 %00000000 %0000 $0 $06 $01 ; $2f
 .ends
 
 
@@ -22324,7 +22324,7 @@ _breakableTileModes:
 ; For each Enemy and each Part, check for collisions with Link and Items.
 ; @addr{41b9}
 checkEnemyAndPartCollisions:
-    ld a,($d008)    ; $41b9
+	ld a,($d008)    ; $41b9
 	add a           ; $41bc
 	add a           ; $41bd
 	ld hl,$4219		; $41be
@@ -92921,7 +92921,7 @@ interactionCoded7:
 .BANK $10 SLOT 1
 .ORG 0
 
-    .define PART_BANK $10
+	.define PART_BANK $10
 	.export PART_BANK
 
  m_section_force "Part_Code" NAMESPACE "partCode"
@@ -102011,7 +102011,7 @@ _label_10_397:
 .BANK $12 SLOT 1
 .ORG 0
 
-    .define BASE_OAM_DATA_BANK $12
+	.define BASE_OAM_DATA_BANK $12
 	.export BASE_OAM_DATA_BANK
 
 	.include "data/seasons/specialObjectOamData.s"
@@ -102105,22 +102105,22 @@ puddleAnimationFrames:
 .ORG 0
 
 data_4556:
-    .dw $4020
-    .dw $4061
-    .dw $40ce
-    .dw $413f
-    .dw $4472
-    .dw $43b8
-    .dw $4419
-    .dw $459d
-    .dw $463e
-    .dw _data_4556_data9
-    .dw $41bc
-    .dw $44db
-    .dw $4568
-    .dw $4239
-    .dw $429a
-    .dw $4337
+	.dw $4020
+	.dw $4061
+	.dw $40ce
+	.dw $413f
+	.dw $4472
+	.dw $43b8
+	.dw $4419
+	.dw $459d
+	.dw $463e
+	.dw _data_4556_data9
+	.dw $41bc
+	.dw $44db
+	.dw $4568
+	.dw $4239
+	.dw $429a
+	.dw $4337
 	stop			; $4020
 	xor e			; $4021
 	ld ($ff00+$40),a	; $4022
@@ -103291,49 +103291,49 @@ _label_14_043:
 	ld ($1a23),sp		; $46cb
 	nop			; $46ce
 _data_4556_data9:
-    .db $28
-    .db $a8 $e0 $e6 $09
-    .db $a8 $e8 $e8 $09
-    .db $a8 $f0 $ea $09
-    .db $a8 $f8 $ec $09
-    .db $a8 $10 $f2 $09
-    .db $a8 $18 $f4 $09
-    .db $a8 $20 $f6 $09
-    .db $a8 $28 $f8 $09
-    .db $a8 $00 $fa $09
-    .db $a8 $08 $fc $09
-    .db $b8 $e8 $7a $01
-    .db $b8 $f0 $74 $01
-    .db $b8 $f8 $7a $01
-    .db $b8 $00 $72 $01
-    .db $b8 $08 $6c $01
-    .db $b8 $20 $74 $01
-    .db $b8 $28 $76 $01
-    .db $d4 $dc $16 $00
-    .db $d4 $e4 $08 $00
-    .db $d4 $ec $24 $00
-    .db $d4 $f4 $16 $00
-    .db $d4 $fc $10 $00
-    .db $d4 $04 $08 $00
-    .db $d4 $14 $24 $00
-    .db $d4 $1c $2c $00
-    .db $d4 $24 $00 $00
-    .db $d4 $2c $1a $00
-    .db $f0 $dc $12 $00
-    .db $f0 $e4 $08 $00
-    .db $f0 $ec $0a $00
-    .db $f0 $f4 $0a $00
-    .db $f0 $04 $18 $00
-    .db $f0 $0c $10 $00
-    .db $f0 $14 $16 $00
-    .db $f0 $1c $16 $00
-    .db $f0 $24 $08 $00
-    .db $f0 $2c $22 $00
-    .db $b8 $e0 $fe $09
-    .db $b8 $10 $fe $09
-    .db $b8 $18 $6c $01
+	.db $28
+	.db $a8 $e0 $e6 $09
+	.db $a8 $e8 $e8 $09
+	.db $a8 $f0 $ea $09
+	.db $a8 $f8 $ec $09
+	.db $a8 $10 $f2 $09
+	.db $a8 $18 $f4 $09
+	.db $a8 $20 $f6 $09
+	.db $a8 $28 $f8 $09
+	.db $a8 $00 $fa $09
+	.db $a8 $08 $fc $09
+	.db $b8 $e8 $7a $01
+	.db $b8 $f0 $74 $01
+	.db $b8 $f8 $7a $01
+	.db $b8 $00 $72 $01
+	.db $b8 $08 $6c $01
+	.db $b8 $20 $74 $01
+	.db $b8 $28 $76 $01
+	.db $d4 $dc $16 $00
+	.db $d4 $e4 $08 $00
+	.db $d4 $ec $24 $00
+	.db $d4 $f4 $16 $00
+	.db $d4 $fc $10 $00
+	.db $d4 $04 $08 $00
+	.db $d4 $14 $24 $00
+	.db $d4 $1c $2c $00
+	.db $d4 $24 $00 $00
+	.db $d4 $2c $1a $00
+	.db $f0 $dc $12 $00
+	.db $f0 $e4 $08 $00
+	.db $f0 $ec $0a $00
+	.db $f0 $f4 $0a $00
+	.db $f0 $04 $18 $00
+	.db $f0 $0c $10 $00
+	.db $f0 $14 $16 $00
+	.db $f0 $1c $16 $00
+	.db $f0 $24 $08 $00
+	.db $f0 $2c $22 $00
+	.db $b8 $e0 $fe $09
+	.db $b8 $10 $fe $09
+	.db $b8 $18 $6c $01
 
-    push af
+	push af
 .DB $e3
 	sub (hl)		; $4772
 	sbc b			; $4773
@@ -108058,7 +108058,7 @@ _label_15_111:
 	sub d			; $4e33
 	inc bc			; $4e34
 
-    .include "code/staticObjects.s"
+	.include "code/staticObjects.s"
 	.include "build/data/staticDungeonObjects.s"
 	.include "build/data/chestData.s"
 

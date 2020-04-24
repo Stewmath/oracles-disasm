@@ -62,7 +62,7 @@ _initializeFile:
 	callab interactionBank0b.initializeChildOnGameStart		; $4049
 	callab initializeVinePositions		; $4051
 .else
-    callab initializeChildOnGameStart		; $4049
+	callab initializeChildOnGameStart		; $4049
 .endif
 
 ;;
@@ -75,7 +75,7 @@ _saveFile:
 .ifdef ROM_AGES
 	ld (hl),$01		; $405c
 .else
-    ld (hl),$00
+	ld (hl),$00
 .endif
 
 	; String to verify save integrity (unique between ages/seasons)
@@ -386,7 +386,7 @@ _initialFileVariables:
 	.db <wLinkHealth			$10 ; 4 hearts (gets overwritten in standard game)
 	.db <wLinkMaxHealth			$10
 .ifdef ROM_AGES
-    .db <wDeathRespawnBuffer.group		$00
+	.db <wDeathRespawnBuffer.group		$00
 	.db <wDeathRespawnBuffer.room		$8a
 	.db <wDeathRespawnBuffer.y		$38
 	.db <wDeathRespawnBuffer.x		$48
@@ -398,8 +398,8 @@ _initialFileVariables:
 	.db <wPirateShipX			$48
 	.db <wPirateShipAngle			$02
 .else
-    .db <wDeathRespawnBuffer.group		$00
-    .db <wDeathRespawnBuffer.room       $a7
+	.db <wDeathRespawnBuffer.group		$00
+	.db <wDeathRespawnBuffer.room       $a7
 	.db <wDeathRespawnBuffer.y          $38
 	.db <wDeathRespawnBuffer.x          $48
 	.db <wDeathRespawnBuffer.facingDir  $02
@@ -421,7 +421,7 @@ _initialFileVariables_heroGame:
 .ifdef ROM_AGES
 	.db <wAnimalCompanion			$00
 .else
-    .db <wAnimalCompanion			$0b
+	.db <wAnimalCompanion			$0b
 .endif
 	.db $00
 
@@ -444,7 +444,7 @@ _saveVerificationString:
 .ifdef ROM_AGES
 	.ASC "Z21216-0"
 .else
-    .ASC "Z11216-0"
+	.ASC "Z11216-0"
 .endif
 
 .ends

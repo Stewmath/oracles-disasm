@@ -70,14 +70,14 @@ applyRoomSpecificTileChangesAfterGfxLoad:
 	.dw _roomTileChangesAfterLoad0f
 
 @tileChangesGroupTable:
-        .dw @group0
-        .dw @group1
-        .dw @group2
-        .dw @group3
-        .dw @group4
-        .dw @group5
-        .dw @group6
-        .dw @group7
+	.dw @group0
+	.dw @group1
+	.dw @group2
+	.dw @group3
+	.dw @group4
+	.dw @group5
+	.dw @group6
+	.dw @group7
 
 ; Values:
 ; $00: Pirate ship bow (at beach)
@@ -98,53 +98,53 @@ applyRoomSpecificTileChangesAfterGfxLoad:
 ; $0f: Maku tree entrance & one screen south: forbid digging up enemies
 
 @group0:
-        .db $98 $03
-        .db $78 $06
-        .db $e8 $07
-        .db $e2 $00
-        .db $f2 $01
-        .db $1f $08
-        .db $22 $08
-        .db $38 $08
-        .db $3b $08
-        .db $44 $08
-        .db $3f $08
-        .db $75 $08
-        .db $80 $08
-        .db $89 $08
-        .db $95 $08
-        .db $a6 $08
-        .db $ac $08
-        .db $c0 $08
-        .db $ef $08
-        .db $f0 $08
-        .db $c8 $08
-        .db $67 $09
-        .db $72 $0a
-        .db $10 $0b
-        .db $5f $0c
-        .db $9e $0d
-        .db $97 $0e
-        .db $d9 $0f
-        .db $e9 $0f
-        .db $00
+	.db $98 $03
+	.db $78 $06
+	.db $e8 $07
+	.db $e2 $00
+	.db $f2 $01
+	.db $1f $08
+	.db $22 $08
+	.db $38 $08
+	.db $3b $08
+	.db $44 $08
+	.db $3f $08
+	.db $75 $08
+	.db $80 $08
+	.db $89 $08
+	.db $95 $08
+	.db $a6 $08
+	.db $ac $08
+	.db $c0 $08
+	.db $ef $08
+	.db $f0 $08
+	.db $c8 $08
+	.db $67 $09
+	.db $72 $0a
+	.db $10 $0b
+	.db $5f $0c
+	.db $9e $0d
+	.db $97 $0e
+	.db $d9 $0f
+	.db $e9 $0f
+	.db $00
 @group1:
 @group2:
 @group3:
-        .db $9c $04
-        .db $a6 $04
-        .db $b0 $04
-        .db $af $04
-        .db $aa $05
-        .db $00
+	.db $9c $04
+	.db $a6 $04
+	.db $b0 $04
+	.db $af $04
+	.db $aa $05
+	.db $00
 @group4:
-        .db $c5 $02
-        .db $c6 $02
-        .db $00
+	.db $c5 $02
+	.db $c6 $02
+	.db $00
 @group5:
 @group6:
 @group7:
-        .db $00
+	.db $00
 
 
 ;;

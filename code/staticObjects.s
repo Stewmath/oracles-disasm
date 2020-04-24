@@ -25,7 +25,7 @@ parseStaticObjects:
 	cp <(wStaticObjects+_sizeof_wStaticObjects)	; $502a
 	jr c,@next		; $502c
 .else
-    or a			; $4e4a
+	or a			; $4e4a
 	jr nz,@next	; $4e4b
 .endif
 	ret			; $502e
