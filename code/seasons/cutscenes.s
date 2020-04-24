@@ -8,7 +8,7 @@ cutscene07:
 	ld e,$01
 	call seasonsFunc_35b8
 	call updateInteractionsAndDrawAllSprites
-	jp seasonsFunc_3276
+	jp updateAnimationsAfterCutscene
 
 ;;
 cutscene08:
@@ -20,7 +20,7 @@ cutscene08:
 cutscene09:
 	call func_1613		; $5bea
 	ld e,$00		; $5bed
-	call func_306c		; $5bef
+	call endgameCutsceneHandler		; $5bef
 	ld a,(wWarpTransition2)		; $5bf2
 	or a			; $5bf5
 	ret z			; $5bf6
@@ -30,12 +30,12 @@ cutscene09:
 cutscene0f:
 	call func_1613		; $5bfa
 	ld e,$02		; $5bfd
-	jp func_306c		; $5bff
+	jp endgameCutsceneHandler		; $5bff
 
 ;;
 cutscene0a:
 	ld e,$01		; $5c02
-	jp func_306c		; $5c04
+	jp endgameCutsceneHandler		; $5c04
 
 ;;
 cutscene0b:
@@ -60,7 +60,7 @@ cutscene0e:
 	jr nz,func_5e0e		; $5c27
 	ld e,$04		; $5c29
 	call seasonsFunc_35b8		; $5c2b
-	jp seasonsFunc_3276		; $5c2e
+	jp updateAnimationsAfterCutscene		; $5c2e
 
 ;;
 cutscene10:

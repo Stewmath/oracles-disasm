@@ -1140,7 +1140,7 @@ _ecom_seasonsFunc_4446:
 	set 7,(hl)		; $4456
 
 	push af			; $4458
-	call objectGetLinkRelativeAngle		; $4459
+	call objectGetAngleTowardLink		; $4459
 	ld c,a			; $445c
 	ld b,SPEED_80		; $445d
 	call _ecom_applyGivenVelocity		; $445f

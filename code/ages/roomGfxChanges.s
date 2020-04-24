@@ -1,3 +1,5 @@
+ m_section_force "roomGfxChanges" NAMESPACE roomGfxChanges
+
 ; Some code here is the same as code/seasons/roomGfxChanges.s, but almost all
 ; room-specific stuff is different, so the codebases are separated.
 
@@ -722,3 +724,5 @@ checkLoadPastSignAndChestGfx:
 rectangleData_02_7de1:
 	.db $06 $06
 	.dw w3VramTiles+8 w2TmpGfxBuffer
+
+.ends

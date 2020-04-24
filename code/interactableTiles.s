@@ -1000,66 +1000,66 @@ interactableTilesTable:
 
 ; @addr{43a3}
 interactableTilesTable:
-        .dw @collisions0
-        .dw @collisions1
-        .dw @collisions2
-        .dw @collisions3
-        .dw @collisions4
-        .dw @collisions5
+	.dw @collisions0
+	.dw @collisions1
+	.dw @collisions2
+	.dw @collisions3
+	.dw @collisions4
+	.dw @collisions5
 
 @collisions0:
-        .db $d6 $80
-        .db $c0 $03
-        .db $c1 $03
-        .db $c2 $03
-        .db $96 $43
-        .db $f1 $04
-        .db $f2 $05
-        .db $ec $06
-        .db $d5 $08
-        .db $00
+	.db $d6 $80
+	.db $c0 $03
+	.db $c1 $03
+	.db $c2 $03
+	.db $96 $43
+	.db $f1 $04
+	.db $f2 $05
+	.db $ec $06
+	.db $d5 $08
+	.db $00
 
 @collisions1:
-        .db $f1 $04
-        .db $f2 $05
-        .db $ec $07
+	.db $f1 $04
+	.db $f2 $05
+	.db $ec $07
 @collisions2:
-        .db $00
+	.db $00
 
 @collisions3:
 @collisions4:
-        .db $18 $00
-        .db $19 $10
-        .db $1a $20
-        .db $1b $30
-        .db $1c $80
-        .db $2a $80
-        .db $2c $80
-        .db $2d $80
-        .db $10 $c0
-        .db $11 $c0
-        .db $12 $c0
-        .db $13 $c0
-        .db $25 $80
-        .db $2f $80
-        .db $1e $01
-        .db $70 $02
-        .db $71 $12
-        .db $72 $22
-        .db $73 $32
-        .db $74 $42
-        .db $75 $52
-        .db $76 $62
-        .db $77 $72
-        .db $1f $13
-        .db $30 $23
-        .db $31 $23
-        .db $32 $23
-        .db $33 $23
-        .db $08 $33
-        .db $f1 $04
-        .db $f2 $05
+	.db $18 $00
+	.db $19 $10
+	.db $1a $20
+	.db $1b $30
+	.db $1c $80
+	.db $2a $80
+	.db $2c $80
+	.db $2d $80
+	.db $10 $c0
+	.db $11 $c0
+	.db $12 $c0
+	.db $13 $c0
+	.db $25 $80
+	.db $2f $80
+	.db $1e $01
+	.db $70 $02
+	.db $71 $12
+	.db $72 $22
+	.db $73 $32
+	.db $74 $42
+	.db $75 $52
+	.db $76 $62
+	.db $77 $72
+	.db $1f $13
+	.db $30 $23
+	.db $31 $23
+	.db $32 $23
+	.db $33 $23
+	.db $08 $33
+	.db $f1 $04
+	.db $f2 $05
 @collisions5:
-        .db $00
+	.db $00
 
 .endif

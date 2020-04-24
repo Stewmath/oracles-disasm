@@ -640,9 +640,9 @@ wShieldLevel: ; $c6af/$c6a9
 	db
 wNumBombs: ; $c6b0/$c6aa
 	db
-wMaxBombs: ; $c6b1
+wMaxBombs: ; $c6b1/$c6ab
 	db
-wSwordLevel: ; $c6b2
+wSwordLevel: ; $c6b2/$c6ac
 	db
 wNumBombchus: ; $c6b3
 	db
@@ -872,6 +872,12 @@ wGroup5Flags: ; $ca00
 
 .ende
 
+; Ages indoors in respective time's map. Seasons' Holodrum indoors in Subrosia's map
+.ifdef ROM_AGES
+.define wGroup2Flags wPresentRoomFlags
+.else
+.define wGroup2Flags wPastRoomFlags
+.endif
 ; Steal 6 of the past room flags for vine seed positions
 .define wVinePositions wPastRoomFlags+$f0
 
@@ -1520,7 +1526,7 @@ wLoadedObjectGfxIndex: ; $cc06/$cc05
 ; loaded?
 	db
 
-wcc07: ; $cc07
+wcc07: ; $cc07/$cc06
 	db
 
 wLoadedObjectGfx: ; $cc08/$cc07
@@ -2340,7 +2346,7 @@ wcd01: ; $cd01
 ; $cd01: 0 for large rooms, 1 for small rooms?
 	db
 
-wScreenTransitionDirection: ; $cd02/$cd02
+wScreenTransitionDirection: ; $cd02
 ; See constants/directions.s for what the directions are.
 ; Set bit 7 to force a transition to occur.
 	db
