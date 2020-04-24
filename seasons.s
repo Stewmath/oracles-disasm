@@ -2177,13 +2177,18 @@ _label_03_111:
 	ld e,(hl)		; $5501
 	xor l			; $5502
 	ld e,e			; $5503
-	ld a,$02		; $5504
-	ld ($ff00+$70),a	; $5506
-	ld hl,$df80		; $5508
+
+;;
+; @addr{5504}
+_clearFadingPalettes:
+	ld a,:w2FadingBgPalettes		; $5504
+	ld ($ff00+R_SVBK),a	; $5506
+	ld hl,w2FadingBgPalettes		; $5508
 	ld b,$80		; $550b
 	call clearMemory		; $550d
+
 	xor a			; $5510
-	ld ($ff00+$70),a	; $5511
+	ld ($ff00+R_SVBK),a	; $5511
 	dec a			; $5513
 	ldh (<hSprPaletteSources),a	; $5514
 	ldh (<hDirtySprPalettes),a	; $5516
@@ -2191,6 +2196,7 @@ _label_03_111:
 	ldh (<hBgPaletteSources),a	; $551a
 	ldh (<hDirtyBgPalettes),a	; $551c
 	ret			; $551e
+
 	ld de,$cbc1		; $551f
 	ld a,(de)		; $5522
 	rst_jumpTable			; $5523
@@ -4022,15 +4028,21 @@ _label_03_154:
 	or a			; $63cd
 	ret nz			; $63ce
 	jp resetGame		; $63cf
-	ld ($cc4e),a		; $63d2
+
+;;
+; Similar to ages' version of this function
+;
+; @addr{63d2}
+disableLcdAndLoadRoom_body:
+	ld (wRoomStateModifier),a		; $63d2
 	ld a,b			; $63d5
-	ld ($cc49),a		; $63d6
+	ld (wActiveGroup),a		; $63d6
 	ld a,c			; $63d9
-	ld ($cc4c),a		; $63da
+	ld (wActiveRoom),a		; $63da
 	call disableLcd		; $63dd
 	call clearScreenVariablesAndWramBank1		; $63e0
-	ld hl,$cc77		; $63e3
-	ld b,$88		; $63e6
+	ld hl,wLinkInAir		; $63e3
+	ld b,wcce9-wLinkInAir		; $63e6
 	call clearMemory		; $63e8
 	call initializeVramMaps		; $63eb
 	call loadScreenMusicAndSetRoomPack		; $63ee
@@ -4038,9 +4050,10 @@ _label_03_154:
 	call loadTilesetGraphics		; $63f4
 	call func_131f		; $63f7
 	ld a,$01		; $63fa
-	ld ($cd00),a		; $63fc
+	ld (wScrollMode),a		; $63fc
 	call loadCommonGraphics		; $63ff
 	jp clearOam		; $6402
+
 	ld a,b			; $6405
 	cp $ff			; $6406
 	ret z			; $6408
@@ -5378,544 +5391,627 @@ _label_03_197:
 	jp func_131f		; $6df5
 	ld a,$ff		; $6df8
 	jp setScreenShakeCounter		; $6dfa
-	ld a,($cc03)		; $6dfd
+
+;;
+; CUTSCENE_S_FLAME_OF_DESTRUCTION
+; @addr{6dfd}
+flameOfDestructionCutsceneBody:
+	ld a,(wCutsceneState)		; $6dfd
 	rst_jumpTable			; $6e00
-	dec d			; $6e01
-	ld l,(hl)		; $6e02
-	cpl			; $6e03
-	ld l,(hl)		; $6e04
-	ld a,($cc03)		; $6e05
+	.dw bank3Cutscene_state0
+	.dw flameOfDestructionCutscene_state1
+
+;;
+; CUTSCENE_S_ZELDA_VILLAGERS
+; @addr{6e05}
+zeldaAndVillagersCutsceneBody:
+	ld a,(wCutsceneState)		; $6e05
 	rst_jumpTable			; $6e08
-	dec d			; $6e09
-	ld l,(hl)		; $6e0a
-	ld e,c			; $6e0b
-	ld l,a			; $6e0c
-	ld a,($cc03)		; $6e0d
+	.dw bank3Cutscene_state0
+	.dw zeldaAndVillagersCutscene_state1
+
+zeldaKidnappedCutsceneBody:
+	ld a,(wCutsceneState)		; $6e0d
 	rst_jumpTable			; $6e10
-	dec d			; $6e11
-	ld l,(hl)		; $6e12
-	di			; $6e13
-	ld l,a			; $6e14
+	.dw bank3Cutscene_state0
+	.dw zeldaKidnappedCutscene_state1
+
+bank3Cutscene_state0:
 	ld b,$10		; $6e15
-	ld hl,$cbb3		; $6e17
+	ld hl,wGenericCutscene.cbb3		; $6e17
 	call clearMemory		; $6e1a
 	call clearWramBank1		; $6e1d
 	xor a			; $6e20
-	ld ($cca4),a		; $6e21
+	ld (wDisabledObjects),a		; $6e21
 	ld a,$80		; $6e24
-	ld ($cc02),a		; $6e26
+	ld (wMenuDisabled),a		; $6e26
 	ld a,$01		; $6e29
-	ld ($cc03),a		; $6e2b
+	ld (wCutsceneState),a		; $6e2b
 	ret			; $6e2e
-	ld a,($cbb3)		; $6e2f
+
+flameOfDestructionCutscene_state1:
+	ld a,(wGenericCutscene.cbb3)		; $6e2f
 	rst_jumpTable			; $6e32
-	ld c,e			; $6e33
-	ld l,(hl)		; $6e34
-	ld d,(hl)		; $6e35
-	ld l,(hl)		; $6e36
-	ld a,a			; $6e37
-	ld l,(hl)		; $6e38
-	adc (hl)		; $6e39
-	ld l,(hl)		; $6e3a
-	xor (hl)		; $6e3b
-	ld l,(hl)		; $6e3c
-.DB $d3				; $6e3d
-	ld l,(hl)		; $6e3e
-.DB $e4				; $6e3f
-	ld l,(hl)		; $6e40
-	dec c			; $6e41
-	ld l,a			; $6e42
-	ld d,$6f		; $6e43
-	rra			; $6e45
-	ld l,a			; $6e46
-	jr z,_label_03_200	; $6e47
-	scf			; $6e49
-	ld l,a			; $6e4a
+	.dw @fadeToBlack
+	.dw @roomOfRitesStart
+	.dw @flashScreen
+	.dw @changePalettes
+	.dw @startCutsceneText08
+	.dw @startFadeInAndLightTorch
+	.dw @createSomeObjects
+	.dw @startCutsceneText09
+	.dw @startCutsceneText0a
+	.dw @startCutsceneText0b
+	.dw @startCutsceneText0c
+	.dw @finish
+
+@fadeToBlack:
 	ld a,$28		; $6e4b
-	ld ($cbb5),a		; $6e4d
+	ld (wGenericCutscene.cbb5),a		; $6e4d
 	call fastFadeoutToBlack		; $6e50
-	jp $71f1		; $6e53
-	call $7205		; $6e56
+	jp _incTmpcbb3		; $6e53
+
+@roomOfRitesStart:
+	call _waitUntilFadeIsDone		; $6e56
 	ret nz			; $6e59
-	call $720f		; $6e5a
+	call bank3CutsceneLoadRoomOfRites		; $6e5a
 	call getFreeInteractionSlot		; $6e5d
-	jr nz,_label_03_198	; $6e60
+	jr nz,+	; $6e60
 	ld (hl),$b0		; $6e62
 	inc l			; $6e64
 	ld (hl),$03		; $6e65
-_label_03_198:
++
 	ld a,$13		; $6e67
 	call loadGfxRegisterStateIndex		; $6e69
-	ld a,$d2		; $6e6c
+	ld a,SND_LIGHTNING		; $6e6c
 	call playSound		; $6e6e
 	xor a			; $6e71
-	ld ($cbb5),a		; $6e72
-	ld ($cbb6),a		; $6e75
+	ld (wGenericCutscene.cbb5),a		; $6e72
+	ld (wGenericCutscene.cbb6),a		; $6e75
 	dec a			; $6e78
-	ld ($cbba),a		; $6e79
-	call $71f1		; $6e7c
-	ld hl,$cbb5		; $6e7f
+	ld (wGenericCutscene.cbba),a		; $6e79
+	call _incTmpcbb3		; $6e7c
+
+@flashScreen:
+	ld hl,wGenericCutscene.cbb5		; $6e7f
 	ld b,$04		; $6e82
 	call flashScreen		; $6e84
 	ret z			; $6e87
 	call clearPaletteFadeVariablesAndRefreshPalettes		; $6e88
-	jp $71f1		; $6e8b
+	jp _incTmpcbb3		; $6e8b
+
+@changePalettes:
 	call getFreeInteractionSlot		; $6e8e
-	jr nz,_label_03_199	; $6e91
+	jr nz,+	; $6e91
 	ld (hl),$b0		; $6e93
 	inc l			; $6e95
 	ld (hl),$04		; $6e96
-_label_03_199:
-	ld a,$f0		; $6e98
++
+	ld a,SNDCTRL_STOPMUSIC		; $6e98
 	call playSound		; $6e9a
 	ld a,$04		; $6e9d
-	ld ($cbb5),a		; $6e9f
-	call $5504		; $6ea2
+	ld (wGenericCutscene.cbb5),a		; $6e9f
+	call _clearFadingPalettes		; $6ea2
 	ld a,$ef		; $6ea5
 	ldh (<hSprPaletteSources),a	; $6ea7
 	ldh (<hDirtySprPalettes),a	; $6ea9
-	jp $71f1		; $6eab
-	ld hl,$cbb5		; $6eae
+	jp _incTmpcbb3		; $6eab
+
+@startCutsceneText08:
+	ld hl,wGenericCutscene.cbb5		; $6eae
 	dec (hl)		; $6eb1
 	ret nz			; $6eb2
 	ld a,$04		; $6eb3
-	ld ($cbae),a		; $6eb5
-_label_03_200:
-	ld c,$08		; $6eb8
-	jp $71e7		; $6eba
+	ld (wTextboxFlags),a		; $6eb5
+	ld c,<TX_5008		; $6eb8
+	jp showCutscene50xxText		; $6eba
+
+@fadeInAndLightTorch:
 	call fastFadeinFromBlack		; $6ebd
 	ld a,b			; $6ec0
-	ld ($c4b2),a		; $6ec1
-	ld ($c4b4),a		; $6ec4
+	ld (wDirtyFadeSprPalettes),a		; $6ec1
+	ld (wFadeSprPaletteSources),a		; $6ec4
 	xor a			; $6ec7
-	ld ($c4b1),a		; $6ec8
-	ld ($c4b3),a		; $6ecb
-	ld a,$72		; $6ece
+	ld (wDirtyFadeBgPalettes),a		; $6ec8
+	ld (wFadeBgPaletteSources),a		; $6ecb
+	ld a,SND_LIGHTTORCH		; $6ece
 	jp playSound		; $6ed0
-	call $71fb		; $6ed3
+
+@startFadeInAndLightTorch:
+	call _waitUntilTextInactive		; $6ed3
 	ret nz			; $6ed6
 	ld b,$40		; $6ed7
-	call $6ebd		; $6ed9
+	call @fadeInAndLightTorch		; $6ed9
 	ld a,$1e		; $6edc
-	ld ($cbb5),a		; $6ede
-	jp $71f1		; $6ee1
-	call $7205		; $6ee4
+	ld (wGenericCutscene.cbb5),a		; $6ede
+	jp _incTmpcbb3		; $6ee1
+
+@createSomeObjects:
+	call _waitUntilFadeIsDone		; $6ee4
 	ret nz			; $6ee7
 	call fadeinFromBlack		; $6ee8
 	ld a,$af		; $6eeb
-	ld ($c4b2),a		; $6eed
-	ld ($c4b4),a		; $6ef0
+	ld (wDirtyFadeSprPalettes),a		; $6eed
+	ld (wFadeSprPaletteSources),a		; $6ef0
 	xor a			; $6ef3
 	ld ($cfc6),a		; $6ef4
-	call $72af		; $6ef7
-	call $72d0		; $6efa
-	ld a,$21		; $6efd
+	call cutscene_func_03_72af		; $6ef7
+	call loadInteracIdb4_subid6And7		; $6efa
+	ld a,MUS_DISASTER		; $6efd
 	ld (wActiveMusic),a		; $6eff
 	call playSound		; $6f02
 	ld a,$1e		; $6f05
-	ld ($cbb5),a		; $6f07
-	jp $71f1		; $6f0a
-	call $7205		; $6f0d
+	ld (wGenericCutscene.cbb5),a		; $6f07
+	jp _incTmpcbb3		; $6f0a
+
+@startCutsceneText09:
+	call _waitUntilFadeIsDone		; $6f0d
 	ret nz			; $6f10
-	ld c,$09		; $6f11
-	jp $71e7		; $6f13
-	call $71fb		; $6f16
+	ld c,<TX_5009		; $6f11
+	jp showCutscene50xxText		; $6f13
+
+@startCutsceneText0a:
+	call _waitUntilTextInactive		; $6f16
 	ret nz			; $6f19
-	ld c,$0a		; $6f1a
-	jp $71e7		; $6f1c
-	call $71fb		; $6f1f
+	ld c,<TX_500a		; $6f1a
+	jp showCutscene50xxText		; $6f1c
+
+@startCutsceneText0b:
+	call _waitUntilTextInactive		; $6f1f
 	ret nz			; $6f22
-	ld c,$0b		; $6f23
-	jp $71e7		; $6f25
-	call $71fb		; $6f28
+	ld c,<TX_500b		; $6f23
+	jp showCutscene50xxText		; $6f25
+
+@startCutsceneText0c:
+	call _waitUntilTextInactive		; $6f28
 	ret nz			; $6f2b
-	ld c,$0c		; $6f2c
-	call $71e7		; $6f2e
+	ld c,<TX_500c		; $6f2c
+	call showCutscene50xxText		; $6f2e
 	ld a,$3c		; $6f31
-	ld ($cbb5),a		; $6f33
+	ld (wGenericCutscene.cbb5),a		; $6f33
 	ret			; $6f36
-	call $71fb		; $6f37
+
+@finish:
+	call _waitUntilTextInactive		; $6f37
 	ret nz			; $6f3a
 	xor a			; $6f3b
-	ld ($cc02),a		; $6f3c
-	ld a,$20		; $6f3f
+	ld (wMenuDisabled),a		; $6f3c
+	ld a,GLOBALFLAG_S_20		; $6f3f
 	call setGlobalFlag		; $6f41
 	ld a,$03		; $6f44
-	ld ($cc4e),a		; $6f46
-	ld hl,$6f54		; $6f49
+	ld (wRoomStateModifier),a		; $6f46
+	ld hl,@warpDest		; $6f49
 	call setWarpDestVariables		; $6f4c
-	ld a,$0f		; $6f4f
+	ld a,PALH_0f		; $6f4f
 	jp loadPaletteHeader		; $6f51
-	add b			; $6f54
-	adc d			; $6f55
-	nop			; $6f56
-	dec h			; $6f57
-	add e			; $6f58
-	ld a,($cbb3)		; $6f59
+
+@warpDest:
+	; d5 overworld entrance
+	m_HardcodedWarpA ROOM_SEASONS_08a, $00, $25, $83
+
+
+zeldaAndVillagersCutscene_state1:
+	ld a,(wGenericCutscene.cbb3)		; $6f59
 	rst_jumpTable			; $6f5c
-	ld l,e			; $6f5d
-	ld l,a			; $6f5e
-	ld (hl),c		; $6f5f
-	ld l,a			; $6f60
-	sbc d			; $6f61
-	ld l,a			; $6f62
-	and d			; $6f63
-	ld l,a			; $6f64
-	xor (hl)		; $6f65
-	ld l,a			; $6f66
-	pop de			; $6f67
-	ld l,a			; $6f68
-.DB $db				; $6f69
-	ld l,a			; $6f6a
+	.dw @start
+	.dw @loadImpaRoomAndMusic
+	.dw @waitUntilFadeInDone
+	.dw @waitToFadeOut
+	.dw @loadSokraRoomAndMusic
+	.dw @waitUntilFadeInDone2
+	.dw @finish
+
+@start:
 	call fadeoutToWhite		; $6f6b
-	jp $71f1		; $6f6e
-	ld a,($c4ab)		; $6f71
+	jp _incTmpcbb3		; $6f6e
+
+@loadImpaRoomAndMusic:
+	ld a,(wPaletteThread_mode)		; $6f71
 	or a			; $6f74
 	ret nz			; $6f75
 	ld a,$03		; $6f76
-	ld bc,$00b6		; $6f78
-	call $63d2		; $6f7b
-	ld a,$f1		; $6f7e
+	; outside impa's house
+	ld bc,ROOM_SEASONS_0b6		; $6f78
+	call disableLcdAndLoadRoom_body		; $6f7b
+	ld a,SNDCTRL_STOPSFX		; $6f7e
 	call playSound		; $6f80
-	ld a,$20		; $6f83
+	ld a,MUS_TRIUMPHANT		; $6f83
 	ld (wActiveMusic),a		; $6f85
 	call playSound		; $6f88
 	ld a,$02		; $6f8b
 	call loadGfxRegisterStateIndex		; $6f8d
 	xor a			; $6f90
-	call $7242		; $6f91
+	call loadGroupOfInteractions		; $6f91
 	call fadeinFromWhite		; $6f94
-	jp $71f1		; $6f97
-	ld a,($c4ab)		; $6f9a
+	jp _incTmpcbb3		; $6f97
+
+@waitUntilFadeInDone:
+	ld a,(wPaletteThread_mode)		; $6f9a
 	or a			; $6f9d
 	ret nz			; $6f9e
-	jp $71f1		; $6f9f
+	jp _incTmpcbb3		; $6f9f
+
+@waitToFadeOut:
 	ld a,($cfc0)		; $6fa2
 	bit 1,a			; $6fa5
 	ret z			; $6fa7
 	call fadeoutToWhite		; $6fa8
-	jp $71f1		; $6fab
-	ld a,($c4ab)		; $6fae
+	jp _incTmpcbb3		; $6fab
+
+@loadSokraRoomAndMusic:
+	ld a,(wPaletteThread_mode)		; $6fae
 	or a			; $6fb1
 	ret nz			; $6fb2
-	ld bc,$00e9		; $6fb3
-	call $63d2		; $6fb6
-	ld a,$f1		; $6fb9
+	; horon village Sokra screen
+	ld bc,ROOM_SEASONS_0e9		; $6fb3
+	call disableLcdAndLoadRoom_body		; $6fb6
+	ld a,SNDCTRL_STOPSFX		; $6fb9
 	call playSound		; $6fbb
 	ld a,$02		; $6fbe
 	call loadGfxRegisterStateIndex		; $6fc0
 	call clearWramBank1		; $6fc3
 	ld a,$01		; $6fc6
-	call $7242		; $6fc8
+	call loadGroupOfInteractions		; $6fc8
 	call fadeinFromWhite		; $6fcb
-	jp $71f1		; $6fce
-	ld a,($c4ab)		; $6fd1
+	jp _incTmpcbb3		; $6fce
+
+@waitUntilFadeInDone2:
+	ld a,(wPaletteThread_mode)		; $6fd1
 	or a			; $6fd4
 	ret nz			; $6fd5
-	ld c,$10		; $6fd6
-	jp $71e7		; $6fd8
-	call $71fb		; $6fdb
+	ld c,<TX_5010		; $6fd6
+	jp showCutscene50xxText		; $6fd8
+
+@finish:
+	call _waitUntilTextInactive		; $6fdb
 	ret nz			; $6fde
 	xor a			; $6fdf
-	ld ($cc02),a		; $6fe0
-	ld a,$1e		; $6fe3
+	ld (wMenuDisabled),a		; $6fe0
+	ld a,GLOBALFLAG_S_1e		; $6fe3
 	call setGlobalFlag		; $6fe5
-	ld hl,$6fee		; $6fe8
+	ld hl,@warpDest		; $6fe8
 	jp setWarpDestVariables		; $6feb
-	add l			; $6fee
-	add a			; $6fef
-	sub e			; $6ff0
-	rst $38			; $6ff1
-	ld bc,$00cd		; $6ff2
-	ld (hl),b		; $6ff5
-	ld hl,$cbb3		; $6ff6
+
+@warpDest:
+	; first room of d8
+	m_HardcodedWarpA ROOM_SEASONS_587, $93 $ff $01
+
+
+zeldaKidnappedCutscene_state1:
+	call zeldaKidnappedCutscene_state1Handler ; $6ff3
+	ld hl,wGenericCutscene.cbb3		; $6ff6
 	ld a,(hl)		; $6ff9
 	cp $10			; $6ffa
 	jp c,updateStatusBar		; $6ffc
 	ret			; $6fff
-	ld a,($cbb3)		; $7000
+
+zeldaKidnappedCutscene_state1Handler:
+	ld a,(wGenericCutscene.cbb3)		; $7000
 	rst_jumpTable			; $7003
-	ld l,$70		; $7004
-	inc (hl)		; $7006
-	ld (hl),b		; $7007
-	ld d,a			; $7008
-	ld (hl),b		; $7009
-	ld l,b			; $700a
-	ld (hl),b		; $700b
-	ld a,b			; $700c
-	ld (hl),b		; $700d
-	sub h			; $700e
-	ld (hl),b		; $700f
-	or e			; $7010
-	ld (hl),b		; $7011
-	jp $cc70		; $7012
-	ld (hl),b		; $7015
-	push de			; $7016
-	ld (hl),b		; $7017
-	pop hl			; $7018
-	ld (hl),b		; $7019
-	di			; $701a
-	ld (hl),b		; $701b
-	inc de			; $701c
-	ld (hl),c		; $701d
-	inc e			; $701e
-	ld (hl),c		; $701f
-	dec h			; $7020
-	ld (hl),c		; $7021
-	dec sp			; $7022
-	ld (hl),c		; $7023
-	ld b,(hl)		; $7024
-	ld (hl),c		; $7025
-	ld (hl),h		; $7026
-	ld (hl),c		; $7027
-	ld a,l			; $7028
-	ld (hl),c		; $7029
-	add (hl)		; $702a
-	ld (hl),c		; $702b
-	adc a			; $702c
-	ld (hl),c		; $702d
+	.dw @startByFadingOut
+	.dw @loadSokraRoomAndInteractions
+	.dw @waitUntilRoomLoaded
+	.dw @startCutsceneText11
+	.dw @func4
+	.dw @func5
+	.dw @startCutsceneText12
+	.dw @startCutsceneText13
+	.dw @startCutsceneText14
+	.dw @func9
+	.dw @funca
+	.dw @funcb
+	.dw @startCutsceneText16
+	.dw @startCutsceneText17
+	.dw @funce
+	.dw @funcf
+
+	; stop calling updateStatusBar above
+	.dw @loadRoomOfRitesAndInteractions
+	.dw @startCutsceneText18
+	.dw @startCutsceneText19
+	.dw @startCutsceneText1a
+	.dw @finish
+
+@startByFadingOut:
 	call fadeoutToWhite		; $702e
-	jp $71f1		; $7031
-	ld a,($c4ab)		; $7034
+	jp _incTmpcbb3		; $7031
+
+@loadSokraRoomAndInteractions:
+	ld a,(wPaletteThread_mode)		; $7034
 	or a			; $7037
 	ret nz			; $7038
-	ld bc,$00e9		; $7039
-	call $63d2		; $703c
+	; horon village Sokra screen
+	ld bc,ROOM_SEASONS_0e9		; $7039
+	call disableLcdAndLoadRoom_body		; $703c
 	ld a,$02		; $703f
 	call loadGfxRegisterStateIndex		; $7041
 	call restartSound		; $7044
 	ld a,$02		; $7047
-	call $7242		; $7049
+	call loadGroupOfInteractions		; $7049
 	call fadeinFromWhite		; $704c
 	ld a,$3c		; $704f
-	ld ($cbb5),a		; $7051
-	jp $71f1		; $7054
-	call $7205		; $7057
+	ld (wGenericCutscene.cbb5),a		; $7051
+	jp _incTmpcbb3		; $7054
+
+@waitUntilRoomLoaded:
+	call _waitUntilFadeIsDone		; $7057
 	ret nz			; $705a
 	ld hl,$cfc0		; $705b
 	set 7,(hl)		; $705e
 	ld a,$ff		; $7060
-	ld ($cbb5),a		; $7062
-	jp $71f1		; $7065
-	ld hl,$cbb5		; $7068
+	ld (wGenericCutscene.cbb5),a		; $7062
+	jp _incTmpcbb3		; $7065
+
+@startCutsceneText11:
+	ld hl,wGenericCutscene.cbb5		; $7068
 	dec (hl)		; $706b
 	ret nz			; $706c
-	ld c,$11		; $706d
-	call $71e7		; $706f
+	ld c,<TX_5011		; $706d
+	call showCutscene50xxText		; $706f
 	ld a,$5a		; $7072
-	ld ($cbb5),a		; $7074
+	ld (wGenericCutscene.cbb5),a		; $7074
 	ret			; $7077
-	call $71fb		; $7078
-	jr z,_label_03_201	; $707b
+
+@func4:
+	call _waitUntilTextInactive		; $7078
+	jr z,+	; $707b
 	ld a,$3c		; $707d
 	cp (hl)			; $707f
 	ret nz			; $7080
 	ld hl,$cfc0		; $7081
 	set 6,(hl)		; $7084
 	ret			; $7086
-_label_03_201:
++
 	ld hl,$cfc0		; $7087
 	set 5,(hl)		; $708a
 	ld a,$3c		; $708c
-	ld ($cbb5),a		; $708e
-	jp $71f1		; $7091
-	ld hl,$cbb5		; $7094
+	ld (wGenericCutscene.cbb5),a		; $708e
+	jp _incTmpcbb3		; $7091
+
+@func5:
+	ld hl,wGenericCutscene.cbb5		; $7094
 	dec (hl)		; $7097
 	ret nz			; $7098
 	ld a,$1e		; $7099
-	ld ($cbb5),a		; $709b
+	ld (wGenericCutscene.cbb5),a		; $709b
 	xor a			; $709e
 	ld ($cfc6),a		; $709f
-	call $72af		; $70a2
-	call $72ba		; $70a5
+	call cutscene_func_03_72af		; $70a2
+	call loadInteracIdb4_subid2And3		; $70a5
 	ld a,$21		; $70a8
 	ld (wActiveMusic),a		; $70aa
 	call playSound		; $70ad
-	jp $71f1		; $70b0
+	jp _incTmpcbb3		; $70b0
+
+@startCutsceneText12:
 	ld a,($cfc0)		; $70b3
 	bit 0,a			; $70b6
 	ret z			; $70b8
-	ld hl,$cbb5		; $70b9
+	ld hl,wGenericCutscene.cbb5		; $70b9
 	dec (hl)		; $70bc
 	ret nz			; $70bd
-	ld c,$12		; $70be
-	jp $71e7		; $70c0
-	call $71fb		; $70c3
+	ld c,<TX_5012		; $70be
+	jp showCutscene50xxText		; $70c0
+
+@startCutsceneText13:
+	call _waitUntilTextInactive		; $70c3
 	ret nz			; $70c6
-	ld c,$13		; $70c7
-	jp $71e7		; $70c9
-	call $71fb		; $70cc
+	ld c,<TX_5013		; $70c7
+	jp showCutscene50xxText		; $70c9
+
+@startCutsceneText14:
+	call _waitUntilTextInactive		; $70cc
 	ret nz			; $70cf
-	ld c,$14		; $70d0
-	jp $71e7		; $70d2
-	call $71fb		; $70d5
+	ld c,<TX_5014		; $70d0
+	jp showCutscene50xxText		; $70d2
+
+@func9:
+	call _waitUntilTextInactive		; $70d5
 	ret nz			; $70d8
 	ld hl,$cfc0		; $70d9
 	res 0,(hl)		; $70dc
-	jp $71f1		; $70de
+	jp _incTmpcbb3		; $70de
+
+@funca:
 	ld a,($cfc0)		; $70e1
 	bit 0,a			; $70e4
 	ret z			; $70e6
 	xor a			; $70e7
-	ld ($cbb4),a		; $70e8
-	ld a,$d2		; $70eb
+	ld (wGenericCutscene.cbb4),a		; $70e8
+	ld a,SND_LIGHTNING		; $70eb
 	call playSound		; $70ed
-	call $71f1		; $70f0
-	call $71ac		; $70f3
+	call _incTmpcbb3		; $70f0
+
+@funcb:
+	call zeldaKidnappedFlashFadeoutToWhite		; $70f3
 	ret nz			; $70f6
 	call clearWramBank1		; $70f7
 	ld hl,$cfc0		; $70fa
 	res 0,(hl)		; $70fd
 	xor a			; $70ff
 	ld ($cfc6),a		; $7100
-	call $72c5		; $7103
+	call loadInteracIdb4_subid4And5		; $7103
 	ld a,$04		; $7106
 	call fadeinFromWhiteWithDelay		; $7108
 	ld a,$1e		; $710b
-	ld ($cbb5),a		; $710d
-	jp $71f1		; $7110
-	call $7205		; $7113
+	ld (wGenericCutscene.cbb5),a		; $710d
+	jp _incTmpcbb3		; $7110
+
+@startCutsceneText16:
+	call _waitUntilFadeIsDone		; $7113
 	ret nz			; $7116
-	ld c,$16		; $7117
-	jp $71e7		; $7119
-	call $71fb		; $711c
+	ld c,<TX_5016		; $7117
+	jp showCutscene50xxText		; $7119
+
+@startCutsceneText17:
+	call _waitUntilTextInactive		; $711c
 	ret nz			; $711f
-	ld c,$17		; $7120
-	jp $71e7		; $7122
-	call $71fb		; $7125
+	ld c,<TX_5017		; $7120
+	jp showCutscene50xxText		; $7122
+
+@funce:
+	call _waitUntilTextInactive		; $7125
 	ret nz			; $7128
 	ld hl,$cfc0		; $7129
 	set 0,(hl)		; $712c
 	ld a,$3c		; $712e
-	ld ($cbb5),a		; $7130
+	ld (wGenericCutscene.cbb5),a		; $7130
 	ld a,$bb		; $7133
 	call playSound		; $7135
-	jp $71f1		; $7138
-	ld hl,$cbb5		; $713b
+	jp _incTmpcbb3		; $7138
+
+@funcf:
+	ld hl,wGenericCutscene.cbb5		; $713b
 	dec (hl)		; $713e
 	ret nz			; $713f
 	call fadeoutToWhite		; $7140
-	jp $71f1		; $7143
-	ld a,($c4ab)		; $7146
+	jp _incTmpcbb3		; $7143
+
+@loadRoomOfRitesAndInteractions:
+	ld a,(wPaletteThread_mode)		; $7146
 	or a			; $7149
 	ret nz			; $714a
-	call $720f		; $714b
-	call $7231		; $714e
+	call bank3CutsceneLoadRoomOfRites		; $714b
+	call loadInteracIdb0		; $714e
 	ld a,$f1		; $7151
 	call playSound		; $7153
 	xor a			; $7156
 	ld ($cfc6),a		; $7157
-	call $72d0		; $715a
+	call loadInteracIdb4_subid6And7		; $715a
 	call getFreeInteractionSlot		; $715d
-	jr nz,_label_03_202	; $7160
+	jr nz,+	; $7160
 	ld (hl),$b0		; $7162
-_label_03_202:
++
 	ld a,$13		; $7164
 	call loadGfxRegisterStateIndex		; $7166
 	call fadeinFromBlack		; $7169
 	ld a,$1e		; $716c
-	ld ($cbb5),a		; $716e
-	jp $71f1		; $7171
-	call $7205		; $7174
+	ld (wGenericCutscene.cbb5),a		; $716e
+	jp _incTmpcbb3		; $7171
+
+@startCutsceneText18:
+	call _waitUntilFadeIsDone		; $7174
 	ret nz			; $7177
-	ld c,$18		; $7178
-	jp $71e7		; $717a
-	call $71fb		; $717d
+	ld c,<TX_5018		; $7178
+	jp showCutscene50xxText		; $717a
+
+@startCutsceneText19:
+	call _waitUntilTextInactive		; $717d
 	ret nz			; $7180
-	ld c,$19		; $7181
-	jp $71e7		; $7183
-	call $71fb		; $7186
+	ld c,<TX_5019		; $7181
+	jp showCutscene50xxText		; $7183
+
+@startCutsceneText1a:
+	call _waitUntilTextInactive		; $7186
 	ret nz			; $7189
-	ld c,$1a		; $718a
-	jp $71e7		; $718c
-	call $71fb		; $718f
+	ld c,<TX_501a		; $718a
+	jp showCutscene50xxText		; $718c
+
+@finish:
+	call _waitUntilTextInactive		; $718f
 	ret nz			; $7192
 	xor a			; $7193
-	ld ($cc02),a		; $7194
-	ld a,$1f		; $7197
+	ld (wMenuDisabled),a		; $7194
+	ld a,GLOBALFLAG_S_1f		; $7197
 	call setGlobalFlag		; $7199
 	ld a,$03		; $719c
-	ld ($cc4e),a		; $719e
-	ld hl,$71a7		; $71a1
+	ld (wRoomStateModifier),a		; $719e
+	ld hl,@warpDest		; $71a1
 	jp setWarpDestVariables		; $71a4
-	ret nz			; $71a7
-	inc hl			; $71a8
-	nop			; $71a9
-	ld b,l			; $71aa
-	add e			; $71ab
-	ld a,($cbb4)		; $71ac
+
+@warpDest:
+    ; 1st screen on path to Onox?
+	.db $c0 $23 $00 $45 $83
+
+
+zeldaKidnappedFlashFadeoutToWhite:
+	ld a,(wGenericCutscene.cbb4)		; $71ac
 	rst_jumpTable			; $71af
-	cp h			; $71b0
-	ld (hl),c		; $71b1
-	rst_jumpTable			; $71b2
-	ld (hl),c		; $71b3
-	rst_jumpTable			; $71b4
-	ld (hl),c		; $71b5
-	rst_addAToHl			; $71b6
-	ld (hl),c		; $71b7
-.DB $db				; $71b8
-	ld (hl),c		; $71b9
-.DB $e4				; $71ba
-	ld (hl),c		; $71bb
+	.dw @func0
+	.dw @func1
+	.dw @func1
+	.dw @func3
+	.dw @func4
+	.dw @func5
+@func0:
 	ld a,$0a		; $71bc
-_label_03_203:
-	ld ($cbb5),a		; $71be
+--
+	ld (wGenericCutscene.cbb5),a		; $71be
 	call clearFadingPalettes		; $71c1
-	jp $71f6		; $71c4
-	ld hl,$cbb5		; $71c7
+	jp _incTmpcbb4		; $71c4
+@func1:
+	ld hl,wGenericCutscene.cbb5		; $71c7
 	dec (hl)		; $71ca
 	ret nz			; $71cb
 	ld a,$0a		; $71cc
-_label_03_204:
-	ld ($cbb5),a		; $71ce
+-
+	ld (wGenericCutscene.cbb5),a		; $71ce
 	call fastFadeoutToWhite		; $71d1
-	jp $71f6		; $71d4
+	jp _incTmpcbb4		; $71d4
+@func3:
 	ld a,$14		; $71d7
-	jr _label_03_203		; $71d9
-	ld hl,$cbb5		; $71db
+	jr --		; $71d9
+@func4:
+	ld hl,wGenericCutscene.cbb5		; $71db
 	dec (hl)		; $71de
 	ret nz			; $71df
 	ld a,$1e		; $71e0
-	jr _label_03_204		; $71e2
-	jp $7205		; $71e4
+	jr -		; $71e2
+@func5:
+	jp _waitUntilFadeIsDone		; $71e4
+	
+showCutscene50xxText:
 	ld b,$50		; $71e7
 	call showText		; $71e9
 	ld a,$1e		; $71ec
-	ld ($cbb5),a		; $71ee
-	ld hl,$cbb3		; $71f1
+	ld (wGenericCutscene.cbb5),a		; $71ee
+
+_incTmpcbb3:
+	ld hl,wGenericCutscene.cbb3		; $71f1
 	inc (hl)		; $71f4
 	ret			; $71f5
-	ld hl,$cbb4		; $71f6
+
+_incTmpcbb4:
+	ld hl,wGenericCutscene.cbb4		; $71f6
 	inc (hl)		; $71f9
 	ret			; $71fa
-	ld a,($cba0)		; $71fb
+	
+_waitUntilTextInactive:
+	ld a,(wTextIsActive)		; $71fb
 	or a			; $71fe
 	ret nz			; $71ff
-	ld hl,$cbb5		; $7200
+	ld hl,wGenericCutscene.cbb5		; $7200
 	dec (hl)		; $7203
 	ret			; $7204
-	ld a,($c4ab)		; $7205
+
+_waitUntilFadeIsDone:
+	ld a,(wPaletteThread_mode)		; $7205
 	or a			; $7208
 	ret nz			; $7209
-	ld hl,$cbb5		; $720a
+	ld hl,wGenericCutscene.cbb5		; $720a
 	dec (hl)		; $720d
 	ret			; $720e
+	
+bank3CutsceneLoadRoomOfRites:
 	xor a			; $720f
-	ld bc,$059a		; $7210
-	call $63d2		; $7213
-	ld a,$ac		; $7216
+	; Room of Rites
+	ld bc,ROOM_SEASONS_59a		; $7210
+	call disableLcdAndLoadRoom_body		; $7213
+	ld a,SEASONS_PALH_ac		; $7216
 	call loadPaletteHeader		; $7218
 	ld a,$28		; $721b
-	ld ($c487),a		; $721d
-	ld ($c48d),a		; $7220
+	ld (wGfxRegs1.SCX),a		; $721d
+	ld (wGfxRegs2.SCX),a		; $7220
 	ldh (<hCameraX),a	; $7223
 	ld a,$00		; $7225
-	ld ($cd00),a		; $7227
+	ld (wScrollMode),a		; $7227
 	ld a,$10		; $722a
 	ldh (<hOamTail),a	; $722c
 	jp clearWramBank1		; $722e
+
+loadInteracIdb0:
 	ld b,$02		; $7231
-_label_03_205:
+-
 	call getFreeInteractionSlot		; $7233
 	ret nz			; $7236
 	ld (hl),$b0		; $7237
@@ -5924,118 +6020,100 @@ _label_03_205:
 	add b			; $723c
 	dec b			; $723d
 	ld (hl),a		; $723e
-	jr nz,_label_03_205	; $723f
+	jr nz,-	; $723f
 	ret			; $7241
-	ld hl,$7265		; $7242
+
+loadGroupOfInteractions:
+	ld hl,@interacGroupTable		; $7242
 	rst_addDoubleIndex			; $7245
 	ldi a,(hl)		; $7246
 	ld b,(hl)		; $7247
 	ld c,a			; $7248
-_label_03_206:
+-
 	ld a,(bc)		; $7249
 	or a			; $724a
 	ret z			; $724b
 	call getFreeInteractionSlot		; $724c
 	ret nz			; $724f
+
+	; load Interaction's id
 	ld a,(bc)		; $7250
 	ldi (hl),a		; $7251
+
+	; load Interaction's subid
 	inc bc			; $7252
 	ld a,(bc)		; $7253
 	ldi (hl),a		; $7254
+
+	; load Interaction's var03 in
 	inc bc			; $7255
 	ld a,(bc)		; $7256
 	ldi (hl),a		; $7257
+
 	inc bc			; $7258
-	ld l,$4b		; $7259
+	ld l,Interaction.yh		; $7259
 	ld a,(bc)		; $725b
 	ld (hl),a		; $725c
+
 	inc bc			; $725d
-	ld l,$4d		; $725e
+	ld l,Interaction.xh		; $725e
 	ld a,(bc)		; $7260
 	ld (hl),a		; $7261
+
 	inc bc			; $7262
-	jr _label_03_206		; $7263
-	ld l,e			; $7265
-	ld (hl),d		; $7266
-	ld (hl),c		; $7267
-	ld (hl),d		; $7268
-	sub b			; $7269
-	ld (hl),d		; $726a
-	ld b,h			; $726b
-	ld (bc),a		; $726c
-	nop			; $726d
-	jr _label_03_207		; $726e
-	nop			; $7270
-	cp l			; $7271
-	nop			; $7272
-	ld bc,$3828		; $7273
-	cp (hl)			; $7276
-	nop			; $7277
-	ld bc,$3840		; $7278
-	ld b,h			; $727b
-	inc bc			; $727c
-	nop			; $727d
-	jr nz,_label_03_208	; $727e
-	cp h			; $7280
-	nop			; $7281
-	nop			; $7282
-	ld c,b			; $7283
-	ld d,b			; $7284
-	cp d			; $7285
-	nop			; $7286
-	inc bc			; $7287
-_label_03_207:
-	jr z,_label_03_211	; $7288
-	cp e			; $728a
-	nop			; $728b
-	nop			; $728c
-	ld b,b			; $728d
-	ld l,b			; $728e
-	nop			; $728f
-	cp l			; $7290
-	nop			; $7291
-	ld bc,$382c		; $7292
-	cp (hl)			; $7295
-	nop			; $7296
-	nop			; $7297
-	ld b,h			; $7298
-	ld b,b			; $7299
-	ld b,h			; $729a
-	inc bc			; $729b
-	nop			; $729c
-	jr nz,_label_03_210	; $729d
-	cp h			; $729f
-	nop			; $72a0
-	nop			; $72a1
-	ld d,b			; $72a2
-	ld e,b			; $72a3
-	cp d			; $72a4
-	nop			; $72a5
-	ld (bc),a		; $72a6
-	jr nz,$64		; $72a7
-	cp e			; $72a9
-	nop			; $72aa
-	inc bc			; $72ab
-	jr c,$68		; $72ac
-	nop			; $72ae
+	jr -		; $7263
+
+@interacGroupTable:
+	.dw @interacGroup1
+	.dw @interacGroup2
+	.dw @interacGroup3
+
+	; id - subid - var03 - yh - xh
+@interacGroup1:
+	.db INTERACID_ZELDA $02 $00 $18 $18
+	.db $00
+@interacGroup2:
+	.db $bd $00 $01 $28 $38
+	.db $be $00 $01 $40 $38
+	.db INTERACID_ZELDA $03 $00 $20 $50
+	.db $bc $00 $00 $48 $50
+	.db $ba $00 $03 $28 $68
+	.db $bb $00 $00 $40 $68
+	.db $00
+@interacGroup3:
+	.db $bd $00 $01 $2c $38
+	.db $be $00 $00 $44 $40
+	.db INTERACID_ZELDA $03 $00 $20 $50
+	.db $bc $00 $00 $50 $58
+	.db $ba $00 $02 $20 $64
+	.db $bb $00 $03 $38 $68
+	.db $00
+
+cutscene_func_03_72af:
 	ld a,$01		; $72af
-	ld ($cc17),a		; $72b1
+	ld (wLoadedTreeGfxIndex),a		; $72b1
 	ld a,$b4		; $72b4
-	ld ($cc1d),a		; $72b6
+	ld (wInteractionIDToLoadExtraGfx),a		; $72b6
 	ret			; $72b9
-	ld bc,$72ed		; $72ba
-	call $72d9		; $72bd
-	ld bc,$72f0		; $72c0
-	jr _label_03_209		; $72c3
-	ld bc,$72f3		; $72c5
-	call $72d9		; $72c8
-	ld bc,$72f6		; $72cb
-	jr _label_03_209		; $72ce
-_label_03_208:
-	ld bc,$72f9		; $72d0
-	call $72d9		; $72d3
-	ld bc,$72fc		; $72d6
-_label_03_209:
+
+loadInteracIdb4_subid2And3:
+	ld bc,loadInteracIdb4@subid2		; $72ba
+	call loadInteracIdb4		; $72bd
+	ld bc,loadInteracIdb4@subid3		; $72c0
+	jr loadInteracIdb4		; $72c3
+
+loadInteracIdb4_subid4And5:
+	ld bc,loadInteracIdb4@subid4		; $72c5
+	call loadInteracIdb4		; $72c8
+	ld bc,loadInteracIdb4@subid5		; $72cb
+	jr loadInteracIdb4		; $72ce
+
+loadInteracIdb4_subid6And7:
+	ld bc,loadInteracIdb4@subid6		; $72d0
+	call loadInteracIdb4		; $72d3
+	ld bc,loadInteracIdb4@subid7		; $72d6
+
+loadInteracIdb4:
 	call getFreeInteractionSlot		; $72d9
 	ret nz			; $72dc
 	ld (hl),$b4		; $72dd
@@ -6043,33 +6121,29 @@ _label_03_209:
 	ld a,(bc)		; $72e0
 	inc bc			; $72e1
 	ld (hl),a		; $72e2
-	ld l,$4b		; $72e3
+	ld l,Interaction.yh		; $72e3
 	ld a,(bc)		; $72e5
 	inc bc			; $72e6
 	ld (hl),a		; $72e7
-	ld l,$4d		; $72e8
+	ld l,Interaction.xh		; $72e8
 	ld a,(bc)		; $72ea
 	ld (hl),a		; $72eb
 	ret			; $72ec
-	ld (bc),a		; $72ed
-	nop			; $72ee
-_label_03_210:
-	ld b,b			; $72ef
-	inc bc			; $72f0
-	nop			; $72f1
-_label_03_211:
-	ld h,b			; $72f2
-	inc b			; $72f3
-	ld d,b			; $72f4
-	ld l,b			; $72f5
-	dec b			; $72f6
-	ld d,b			; $72f7
-	jr c,_label_03_212	; $72f8
-	ld c,h			; $72fa
-	adc (hl)		; $72fb
-	rlca			; $72fc
-	ld c,h			; $72fd
-	ld h,d			; $72fe
+
+	; subid - yh - xh
+	@subid2:
+	.db $02 $00 $40
+	@subid3:
+	.db $03 $00 $60
+	@subid4:
+	.db $04 $50 $68
+	@subid5:
+	.db $05 $50 $38
+	@subid6:
+	.db $06 $4c $8e
+	@subid7:
+	.db $07 $4c $62
+
 	ld a,e			; $72ff
 _label_03_212:
 	rst_jumpTable			; $7300
@@ -90380,6 +90454,8 @@ _label_0f_265:
 	ld ($f600),sp		; $6f6f
 	nop			; $6f72
 	xor $00			; $6f73
+
+seasonsFunc_0f_6f75:
 	ld a,($cfc8)		; $6f75
 	rst_jumpTable			; $6f78
 	add a			; $6f79
@@ -90485,6 +90561,8 @@ _label_0f_266:
 	ld a,$03		; $7047
 	ld ($cfc8),a		; $7049
 	ret			; $704c
+
+seasonsFunc_0f_704d:
 	call $70b4		; $704d
 	ld hl,$cfca		; $7050
 	call $712a		; $7053
@@ -90638,6 +90716,8 @@ _label_0f_272:
 	ret z			; $717f
 	dec (hl)		; $7180
 	ret			; $7181
+
+seasonsFunc_0f_7182:
 	ld hl,$cfcc		; $7182
 	ldh a,(<hCameraY)	; $7185
 	ld b,a			; $7187

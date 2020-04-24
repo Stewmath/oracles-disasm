@@ -12728,64 +12728,46 @@ dismountCompanionAndSetRememberedPositionToScreenCenter:
 .ifdef ROM_SEASONS
 
 seasonsFunc_331b:
-	ld a,($ff00+$97)	; $331b
+	ldh a,(<hRomBank)	; $331b
 	push af			; $331d
-	ld a,$0f		; $331e
-	ld ($ff00+$97),a	; $3320
-	ld ($2222),a		; $3322
-	call $6f75		; $3325
+	callfrombank0 seasonsFunc_0f_6f75
 	pop af			; $3328
-	ld ($ff00+$97),a	; $3329
-	ld ($2222),a		; $332b
+	setrombank
 	ret			; $332e
 
 seasonsFunc_332f:
-	ld a,($ff00+$97)	; $332f
+	ldh a,(<hRomBank)	; $332f
 	push af			; $3331
 	ld a,$0f		; $3332
-	ld ($ff00+$97),a	; $3334
-	ld ($2222),a		; $3336
-	call $704d		; $3339
-	call $7182		; $333c
+	setrombank
+	call seasonsFunc_0f_704d		; $3339
+	call seasonsFunc_0f_7182		; $333c
 	pop af			; $333f
-	ld ($ff00+$97),a	; $3340
-	ld ($2222),a		; $3342
+	setrombank
 	ret			; $3345
 
-seasonsFunc_3346:
-	ld a,($ff00+$97)	; $3346
+flameOfDestructionsCutsceneCaller:
+	ldh a,(<hRomBank)	; $3346
 	push af			; $3348
-	ld a,$03		; $3349
-	ld ($ff00+$97),a	; $334b
-	ld ($2222),a		; $334d
-	call $6dfd		; $3350
+	callfrombank0 flameOfDestructionCutsceneBody
 	pop af			; $3353
-	ld ($ff00+$97),a	; $3354
-	ld ($2222),a		; $3356
+	setrombank
 	ret			; $3359
 
-seasonsFunc_335a:
-	ld a,($ff00+$97)	; $335a
+zeldaAndVillagersCutsceneCaller:
+	ldh a,(<hRomBank)	; $335a
 	push af			; $335c
-	ld a,$03		; $335d
-	ld ($ff00+$97),a	; $335f
-	ld ($2222),a		; $3361
-	call $6e05		; $3364
+	callfrombank0 zeldaAndVillagersCutsceneBody
 	pop af			; $3367
-	ld ($ff00+$97),a	; $3368
-	ld ($2222),a		; $336a
+	setrombank
 	ret			; $336d
 
-seasonsFunc_336e:
-	ld a,($ff00+$97)	; $336e
+zeldaKidnappedCutsceneCaller:
+	ldh a,(<hRomBank)	; $336e
 	push af			; $3370
-	ld a,$03		; $3371
-	ld ($ff00+$97),a	; $3373
-	ld ($2222),a		; $3375
-	call $6e0d		; $3378
+	callfrombank0 zeldaKidnappedCutsceneBody
 	pop af			; $337b
-	ld ($ff00+$97),a	; $337c
-	ld ($2222),a		; $337e
+	setrombank
 	ret			; $3381
 
 .endif

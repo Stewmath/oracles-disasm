@@ -64,17 +64,17 @@ cutscene0e:
 
 ;;
 cutscene10:
-	call seasonsFunc_3346		; $5c31
+	call flameOfDestructionsCutsceneCaller		; $5c31
 	jp func_5d41		; $5c34
 
 ;;
 cutscene11:
-	call seasonsFunc_335a		; $5c37
+	call zeldaAndVillagersCutsceneCaller		; $5c37
 	jp _func_5d31		; $5c3a
 
 ;;
 cutscene12:
-	call seasonsFunc_336e		; $5c3d
+	call zeldaKidnappedCutsceneCaller		; $5c3d
 	jp func_5d41		; $5c40
 
 ;;

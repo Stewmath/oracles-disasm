@@ -236,7 +236,7 @@ wGfxRegs6: ; $c49f
 wGfxRegs7: ; $c4a5
 	instanceof GfxRegsStruct
 
-wPaletteThread_mode: ; $c4ab/$c4ab
+wPaletteThread_mode: ; $c4ab
 ; Determines what the palette thread does. Generally, the game is inactive when this is
 ; nonzero.
 ; Valid values:
@@ -1500,7 +1500,7 @@ wFrameCounter: ; $cc00
 wIsLinkedGame: ; $cc01
 	db
 
-wMenuDisabled: ; $cc02/$cc02
+wMenuDisabled: ; $cc02
 ; Set during screen transitions
 	db
 
@@ -1562,7 +1562,7 @@ wEnemyIDToLoadExtraGfx: ; $cc1d/$cc1c
 ; It will continue loading subsequent object gfx headers until the "stop" bit is encountered.
 ; Can't use this at the same time as "wInteractionIDToLoadExtraGraphics"?
 	db
-wInteractionIDToLoadExtraGfx: ; $cc1e
+wInteractionIDToLoadExtraGfx: ; $cc1e/$cc1d
 ; Same as above, but for interactions.
 	db
 
