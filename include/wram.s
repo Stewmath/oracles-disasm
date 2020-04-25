@@ -344,7 +344,7 @@ wFileChecksum: ; $c5b0
 wSavefileString: ; $c5b2
 ; This string is checked to verify the save data.
 ; Seasons: "Z11216-0"
-; Ages:    "Z21216-0
+; Ages:    "Z21216-0"
 	dsb 8
 
 ; $c5ba-$c5bf unused?
@@ -644,7 +644,7 @@ wMaxBombs: ; $c6b1/$c6ab
 	db
 wSwordLevel: ; $c6b2/$c6ac
 	db
-wNumBombchus: ; $c6b3
+wNumBombchus: ; $c6b3/$c6ad
 	db
 wSeedSatchelLevel: ; $c6b4/$c6ae
 ; Determines satchel capacity
@@ -2140,7 +2140,7 @@ wBlockPushAngle: ; $cca6
 	db
 wcca7: ; $cca7
 	db
-wcca8: ; $cca8
+wcca8: ; $cca8/$ccc2
 	db
 
 .ifdef ROM_SEASONS ; TODO: figure out what this is, where it goes
