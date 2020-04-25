@@ -232,7 +232,7 @@ interactionCodeTable: ; $3b8b
 	.dw interactionBank10.interactionCodee5 ; 0xe5
 	.dw interactionBank10.interactionCodee6 ; 0xe6
 .else
-	.dw interactionCode00
+	.dw interactionCode00 ; bank 08 start
 	.dw interactionCode01
 	.dw interactionCode02
 	.dw interactionCode03
@@ -325,8 +325,8 @@ interactionCodeTable: ; $3b8b
 	.dw interactionCode5a
 	.dw interactionCode5b
 	.dw interactionCode5c
-	.dw interactionCode5d
-	.dw interactionCode5e
+	.dw interactionCode5d ; bank 08 end
+	.dw interactionCode5e ; bank 09 start
 	.dw interactionCode5f
 	.dw interactionCode60
 	.dw interactionDelete
@@ -368,8 +368,8 @@ interactionCodeTable: ; $3b8b
 	.dw interactionCode85
 	.dw interactionCode86
 	.dw interactionCode87
-	.dw interactionCode88
-	.dw interactionCode89
+	.dw interactionCode88 ; bank 09 end
+	.dw interactionCode89 ; bank 0a start
 	.dw interactionCode8a
 	.dw interactionCode8b
 	.dw interactionCode8c
@@ -431,8 +431,8 @@ interactionCodeTable: ; $3b8b
 	.dw interactionCodec4
 	.dw interactionCodec5
 	.dw interactionCodec6
-	.dw interactionCodec7
-	.dw interactionCodec8
+	.dw interactionCodec7 ; bank 0a end
+	.dw interactionCodec8 ; bank 0f start
 	.dw interactionCodec9
 	.dw interactionCodeca
 	.dw interactionCodecb
@@ -447,8 +447,8 @@ interactionCodeTable: ; $3b8b
 	.dw interactionCoded4
 	.dw interactionCoded5
 	.dw interactionCoded6
-	.dw interactionCoded7
-	.dw interactionCoded8
+	.dw interactionCoded7 ; bank 0f end
+	.dw interactionCoded8 ; bank 15 start
 	.dw interactionCoded9
 	.dw interactionCodeda
 	.dw interactionCodedb
@@ -463,5 +463,5 @@ interactionCodeTable: ; $3b8b
 	.dw interactionCodee4
 	.dw interactionCodee5
 	.dw interactionCodee6
-	.dw interactionCodee7
+	.dw interactionCodee7 ; bank 15 end
 .endif

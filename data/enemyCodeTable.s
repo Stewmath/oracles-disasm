@@ -130,15 +130,15 @@ enemyCodeTable:
 	.dw bank0f.enemyCode7e ; 0x7e
 	.dw bank0f.enemyCode7f ; 0x7f
 .else
-	.dw enemyCode00
+	.dw enemyCode00 ; bank 0f start
 	.dw enemyCode01
 	.dw enemyCode02
 	.dw enemyCode03
 	.dw enemyCode04
 	.dw enemyCode05
 	.dw enemyCode06
-	.dw enemyCode07
-	.dw enemyCode08
+	.dw enemyCode07 ; bank 0f end
+	.dw enemyCode08 ; bank 0c start
 	.dw enemyCode09
 	.dw enemyCode0a
 	.dw enemyCode0b
@@ -177,8 +177,8 @@ enemyCodeTable:
 	.dw enemyCode2c
 	.dw enemyCode2d
 	.dw enemyCode2e
-	.dw enemyCode2f
-	.dw enemyCode30
+	.dw enemyCode2f ; bank 0c end
+	.dw enemyCode30 ; bank 0d start
 	.dw enemyCode31
 	.dw enemyCode32
 	.dw enemyCode33
@@ -241,8 +241,8 @@ enemyCodeTable:
 	.dw enemyCodeNil
 	.dw enemyCodeNil
 	.dw enemyCodeNil
-	.dw enemyCodeNil
-	.dw enemyCode70
+	.dw enemyCodeNil ; bank 0d end
+	.dw enemyCode70 ; bank 0e start
 	.dw enemyCode71
 	.dw enemyCode72
 	.dw enemyCode73
@@ -257,7 +257,7 @@ enemyCodeTable:
 	.dw enemyCode7c
 	.dw enemyCode7d
 	.dw enemyCode7e
-	.dw enemyCode7f
+	.dw enemyCode7f ; bank 0e end
 .endif
 
 	; Could there be over 0x80 enemies? Things that would need to be changed:
