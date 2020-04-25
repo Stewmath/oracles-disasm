@@ -20,7 +20,8 @@ jobs:
       - persist_to_workspace:
           root: ~/bin
           paths:
-            - .
+            - wla-gb
+            - wlalink
 
   build-game:
     docker:
