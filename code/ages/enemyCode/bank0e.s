@@ -2359,6 +2359,12 @@ enemyCode37:
 	.dw @state1
 
 @state0:
+.ifdef ROM_SEASONS
+	; spring-only
+	ld a,(wRoomStateModifier)		; $5000
+	or a			; $5003
+	jp nz,enemyDelete		; $5004
+.endif
 	ld h,d			; $4fe1
 	ld l,e			; $4fe2
 	inc (hl) ; [state]
@@ -3758,7 +3764,11 @@ _swordEnemy_gotoState8:
 ; ENEMYID_SWORD_DARKNUT
 ; ==============================================================================
 enemyCode48:
+.ifdef ROM_AGES
 	call _ecom_checkHazards		; $563f
+.else
+	call _ecom_seasonsFunc_4446
+.endif
 	call @runState		; $5642
 	jp _swordDarknut_updateEnemyCollisionMode		; $5645
 
@@ -3981,7 +3991,11 @@ _swordEnemy_updateEnemyCollisionMode:
 	cp ENEMYID_SWORD_SHROUDED_STALFOS			; $5750
 	ld a,ENEMYCOLLISION_BURNABLE_ENEMY		; $5752
 	jr nz,@setVars	; $5754
+.ifdef ROM_AGES
 	ld a,ENEMYCOLLISION_BURNABLE_ENEMY		; $5756
+.else
+	ld a,ENEMYCOLLISION_BURNABLE_UNDEAD
+.endif
 
 @setVars:
 	ld e,Enemy.enemyCollisionMode		; $5758
@@ -5702,7 +5716,7 @@ _pincer_head_stateA:
 	ld c,(hl)		; $5efc
 	ld a,BREAKABLETILESOURCE_06		; $5efd
 	call tryToBreakTile		; $5eff
-
+.ifdef ROM_AGES
 	; If in water, create a splash
 	call objectCheckTileAtPositionIsWater		; $5f02
 	jr nc,++		; $5f05
@@ -5713,6 +5727,7 @@ _pincer_head_stateA:
 	ld bc,$fa00		; $5f0e
 	call objectCopyPositionWithOffset		; $5f11
 ++
+.endif
 	call _ecom_updateAngleTowardTarget		; $5f14
 	add $02			; $5f17
 	and $1c			; $5f19
@@ -5952,7 +5967,11 @@ enemyCode4b:
 	jp enemyDie		; $5ffb
 
 @normalStatus:
+.ifdef ROM_AGES
 	call _ecom_checkHazards		; $5ffe
+.else
+	call _ecom_seasonsFunc_4446		; $5ffe
+.endif
 	ld e,Enemy.state		; $6001
 	ld a,(de)		; $6003
 	rst_jumpTable			; $6004
@@ -6137,7 +6156,9 @@ _ballAndChain_setDefaultState:
 ; ENEMYID_HARMLESS_HARDHAT_BEETLE
 ; ==============================================================================
 enemyCode4d:
+.ifdef ROM_AGES
 enemyCode5f:
+.endif
 	call _ecom_checkHazards		; $60bb
 	jr z,@normalStatus	; $60be
 	sub ENEMYSTATUS_NO_HEALTH			; $60c0
@@ -6162,12 +6183,13 @@ enemyCode5f:
 	.dw @state8
 
 @state_uninitialized:
+.ifdef ROM_AGES
 	ld e,Enemy.id		; $60e1
 	ld a,(de)		; $60e3
 	cp ENEMYID_HARMLESS_HARDHAT_BEETLE			; $60e4
 	ld a,PALH_8d		; $60e6
 	call z,loadPaletteHeader		; $60e8
-
+.endif
 	ld a,SPEED_60		; $60eb
 	jp _ecom_setSpeedAndState8AndVisible		; $60ed
 
@@ -6180,6 +6202,7 @@ enemyCode5f:
 	jp enemyAnimate		; $60f7
 
 
+.ifdef ROM_AGES
 ; ==============================================================================
 ; ENEMYID_LINK_MIMIC
 ;
@@ -6221,6 +6244,7 @@ _linkMimic_state8:
 	or a			; $612b
 	ret nz			; $612c
 	jr _armMimic_state8		; $612d
+.endif
 
 
 ; ==============================================================================
@@ -6376,6 +6400,18 @@ enemyCode4f:
 	ld a,(de)		; $61c8
 	ld h,a			; $61c9
 	call _ecom_killObjectH		; $61ca
+.ifdef ROM_SEASONS
+	; moldorm guarding jewel
+	ld a,(wActiveRoom)		; $61a2
+	cp $f4			; $61a5
+	jr nz,+			; $61a7
+	ld a,(wActiveGroup)		; $61a9
+	or a			; $61ac
+	jr nz,+			; $61ad
+	inc a			; $61af
+	ld ($cfc0),a		; $61b0
++
+.endif
 	jp enemyDie		; $61cd
 
 @knockback:
@@ -7216,8 +7252,6 @@ _beetle_chooseRandomAngleAndCounter1:
 @counter1Vals:
 	.db 15 30 30 60 60 60 90 90
 
-
-
 ;;
 ; Beetle has custom checkHazards function so it can decrease the spawner's var30 (number
 ; of spawned
@@ -7472,6 +7506,7 @@ _flyingTile_overwriteTileHere:
 	.db $a0 $f3 $f4 $4c $a4
 
 
+.ifdef ROM_AGES
 _flyingTile_layoutData:
 	.dw @subid0
 	.dw @subid1
@@ -7499,6 +7534,37 @@ _flyingTile_layoutData:
 	.db $67 $54 $5a $47 $34 $3a $76 $38
 	.db $78 $36 $58 $45 $49 $56 $65 $69
 	.db $00
+.else
+_flyingTile_layoutData:
+	.dw @subid0
+	.dw @subid1
+	.dw @subid2
+	.dw @subid3
+
+@subid0:
+	.db $82
+	.db $34 $66 $44 $56 $54 $46 $64 $36
+	.db $35 $65 $45 $55
+	.db $00
+@subid1:
+	.db $82
+	.db $19 $59 $7c $79 $76 $73 $93
+	.db $00
+@subid2:
+	.db $80
+	.db $57 $46 $54 $66 $37 $77 $48 $68
+	.db $5a $5b $27 $87 $45 $69 $65 $49
+	.db $53 $36 $78 $38 $76 $44 $6a $64
+	.db $4a $55 $59 $47 $67 $56 $58
+	.db $00
+@subid3:
+	.db $80
+	.db $36 $76 $38 $78 $44 $64 $4a $6a
+	.db $26 $88 $75 $39 $35 $79 $43 $6b
+	.db $63 $4b $37 $87 $77 $27 $53 $34
+	.db $7a $74 $3a $28 $86 $5b
+	.db $00
+.endif
 
 
 ; ==============================================================================
@@ -7518,6 +7584,11 @@ enemyCode53:
 
 ; Initialization
 _dragonfly_state0:
+.ifdef ROM_SEASONS
+	ld a,(wRoomStateModifier)		; $66ad
+	cp SEASON_FALL			; $66b0
+	jp nz,enemyDelete		; $66b2
+.endif
 	ld h,d			; $66ae
 	ld l,e			; $66af
 	inc (hl) ; [state]
@@ -7730,7 +7801,11 @@ enemyCode58:
 
 
 @collisionAndTileData:
+.ifdef ROM_AGES
 	.db ENEMYCOLLISION_BUSH, TILEINDEX_OVERWORLD_BUSH ; Subid 0
+.else
+	.db ENEMYCOLLISION_BUSH, $c4 ; Subid 0 TODO:
+.endif
 	.db ENEMYCOLLISION_BUSH, TILEINDEX_DUNGEON_BUSH   ; Subid 1
 	.db ENEMYCOLLISION_ROCK,           TILEINDEX_DUNGEON_POT    ; Subid 2
 	.db ENEMYCOLLISION_ROCK,           TILEINDEX_OVERWORLD_ROCK ; Subid 3
@@ -7966,6 +8041,7 @@ enemyCode5a:
 	ld a,$01		; $6899
 	ld (de),a ; [state]
 
+.ifdef ROM_AGES
 	; Locate tree
 	ld a,TILEINDEX_MYSTICAL_TREE_TL		; $689c
 	call findTileInRoom		; $689e
@@ -7997,6 +8073,29 @@ enemyCode5a:
 	swap a			; $68c0
 	and $0f			; $68c2
 	ldh (<hFF8B),a	; $68c4
+.else
+	ld e,Enemy.subid		; $68a3
+	ld a,(de)		; $68a5
+	ld b,a			; $68a6
+	add a			; $68a7
+	add b			; $68a8
+	ld hl,@seasonsTable_0d_68fb		; $68a9
+	rst_addAToHl			; $68ac
+	ldi a,(hl)		; $68ad
+	ldh (<hFF8B),a	; $68ae
+	ldi a,(hl)		; $68b0
+	ld b,a			; $68b1
+	ld a,(wRoomStateModifier)		; $68b2
+	cp b			; $68b5
+	jp nz,enemyDelete		; $68b6
+	ld a,(hl)		; $68b9
+	cpl			; $68ba
+	ld e,Enemy.direction		; $68bb
+	ld (de),a		; $68bd
+	ld a,(wSeedTreeRefilledBitset)		; $68be
+	and (hl)		; $68c1
+	jp z,enemyDelete		; $68c2
+.endif
 
 	; Spawn the 3 seed objects
 	xor a			; $68c6
@@ -8039,6 +8138,17 @@ enemyCode5a:
 	.db $00 $f8
 	.db $00 $08
 
+.ifdef ROM_SEASONS
+@seasonsTable_0d_68fb:
+	; <hFF8B - required season - checked against wSeedTreeRefilledBitset
+	.db $00	SEASON_WINTER	$80
+	.db $04	SEASON_SUMMER	$40
+	.db $01	SEASON_SPRING	$20
+	.db $02	SEASON_FALL	$10
+	.db $03	SEASON_SUMMER	$08
+	.db $03	SEASON_SUMMER	$04
+.endif
+
 
 @state1:
 	; Waiting for one of the PARTID_SEED_ON_TREE objects to write to var03, indicating
@@ -8049,12 +8159,19 @@ enemyCode5a:
 	ret z			; $6900
 
 	; Mark seeds as taken
+.ifdef ROM_AGES
 	ld e,Enemy.subid	; $6901
 	ld a,(de)		; $6903
 	and $0f			; $6904
 	ld hl,wSeedTreeRefilledBitset		; $6906
 	call unsetFlag		; $6909
-
+.else
+	ld e,Enemy.direction	; $6901
+	ld a,(de)		; $6903
+	ld hl,wSeedTreeRefilledBitset		; $6915
+	and (hl)		; $6918
+	ld (hl),a
+.endif
 	jp enemyDelete		; $690c
 
 
@@ -8448,6 +8565,7 @@ _ganonRevivalCutscene_spawnShadow:
 	.db $90 $f0 $18
 	.db $40 $00 $06
 
+;;; split
 
 ; ==============================================================================
 ; TODO: what object uses this?

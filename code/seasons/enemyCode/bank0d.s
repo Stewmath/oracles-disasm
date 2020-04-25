@@ -1,6250 +1,8648 @@
+; ==============================================================================
+; ENEMYID_TEKTITE
+;
+; Variables:
+;   var30: Gravity
+;   var31: Minimum value for counter1 (lower value = more frequent jumping)
+; ==============================================================================
 enemyCode30:
-	call _ecom_checkHazards		; $450f
-	jr z,_label_0d_039	; $4512
-	sub $03			; $4514
-	ret c			; $4516
-	jp z,enemyDie		; $4517
-	dec a			; $451a
-	jp nz,_ecom_updateKnockbackAndCheckHazards		; $451b
-	ret			; $451e
-_label_0d_039:
-	ld e,$84		; $451f
-	ld a,(de)		; $4521
-	rst_jumpTable			; $4522
-	dec sp			; $4523
-	ld b,l			; $4524
-	ld l,e			; $4525
-	ld b,l			; $4526
-	ld l,e			; $4527
-	ld b,l			; $4528
-	ld d,(hl)		; $4529
-	ld b,l			; $452a
-	ld l,e			; $452b
-	ld b,l			; $452c
-	bit 0,h			; $452d
-	ld l,e			; $452f
-	ld b,l			; $4530
-	ld l,e			; $4531
-	ld b,l			; $4532
-	ld l,h			; $4533
-	ld b,l			; $4534
-	adc c			; $4535
-	ld b,l			; $4536
-	sub h			; $4537
-	ld b,l			; $4538
-	ret nz			; $4539
-	ld b,l			; $453a
-	ld h,d			; $453b
-	ld l,$82		; $453c
-	bit 0,(hl)		; $453e
-	ld l,$b1		; $4540
-	ld (hl),$5a		; $4542
-	jr z,_label_0d_040	; $4544
-	ld (hl),$2d		; $4546
-_label_0d_040:
-	call getRandomNumber_noPreserveVars		; $4548
-	and $7f			; $454b
-	inc a			; $454d
-	ld e,$86		; $454e
-	ld (de),a		; $4550
-	ld a,$32		; $4551
-	jp _ecom_setSpeedAndState8AndVisible		; $4553
-	inc e			; $4556
-	ld a,(de)		; $4557
-	rst_jumpTable			; $4558
-	dec b			; $4559
-	ld b,b			; $455a
-	ld h,c			; $455b
-	ld b,l			; $455c
-	ld h,c			; $455d
-	ld b,l			; $455e
-	ld h,d			; $455f
-	ld b,l			; $4560
-	ret			; $4561
-	ld b,$08		; $4562
-	call _ecom_fallToGroundAndSetState		; $4564
-	ret nz			; $4567
-	jp $45cd		; $4568
-	ret			; $456b
-	call _ecom_decCounter1		; $456c
-	jr nz,_label_0d_041	; $456f
-	call getRandomNumber_noPreserveVars		; $4571
-	and $7f			; $4574
-	call _ecom_incState		; $4576
-	ld l,$b1		; $4579
-	add (hl)		; $457b
-	ld l,$86		; $457c
-	ldi (hl),a		; $457e
-	ld (hl),$18		; $457f
-	ld a,$01		; $4581
-	jp enemySetAnimation		; $4583
-_label_0d_041:
-	jp enemyAnimate		; $4586
-	call _ecom_decCounter2		; $4589
-	ret nz			; $458c
-	ld l,e			; $458d
-	inc (hl)		; $458e
-	ld a,$02		; $458f
-	jp enemySetAnimation		; $4591
-	ld a,$0b		; $4594
-	ld (de),a		; $4596
-	call getRandomNumber_noPreserveVars		; $4597
-	and $07			; $459a
-	ld hl,$45ba		; $459c
-	jr nz,_label_0d_042	; $459f
-	ld hl,$45bd		; $45a1
-_label_0d_042:
-	ld e,$94		; $45a4
-	ldi a,(hl)		; $45a6
-	ld (de),a		; $45a7
-	inc e			; $45a8
-	ldi a,(hl)		; $45a9
-	ld (de),a		; $45aa
-	ld e,$b0		; $45ab
-	ldi a,(hl)		; $45ad
-	ld (de),a		; $45ae
-	call _ecom_updateAngleTowardTarget		; $45af
-	ld a,$8f		; $45b2
-	call playSound		; $45b4
-	jp objectSetVisiblec1		; $45b7
-	xor d			; $45ba
-	cp $0e			; $45bb
-	add b			; $45bd
-	cp $0c			; $45be
-	call _ecom_bounceOffScreenBoundary		; $45c0
-	ld e,$b0		; $45c3
-	ld a,(de)		; $45c5
-	ld c,a			; $45c6
-	call objectUpdateSpeedZ_paramC		; $45c7
-	jp nz,_ecom_applyVelocityForSideviewEnemy		; $45ca
-	call getRandomNumber_noPreserveVars		; $45cd
-	and $7f			; $45d0
-	ld h,d			; $45d2
-	ld l,$b1		; $45d3
-	add (hl)		; $45d5
-	ld l,$86		; $45d6
-	ld (hl),a		; $45d8
-	ld l,$84		; $45d9
-	ld (hl),$08		; $45db
-	xor a			; $45dd
-	call enemySetAnimation		; $45de
-	jp objectSetVisiblec2		; $45e1
+	call _ecom_checkHazards		; $44f0
+	jr z,@normalStatus	; $44f3
+	sub ENEMYSTATUS_NO_HEALTH			; $44f5
+	ret c			; $44f7
+	jp z,enemyDie		; $44f8
+	dec a			; $44fb
+	jp nz,_ecom_updateKnockbackAndCheckHazards		; $44fc
+	ret			; $44ff
 
+@normalStatus:
+	ld e,Enemy.state		; $4500
+	ld a,(de)		; $4502
+	rst_jumpTable			; $4503
+	.dw @state_uninitialized
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_switchHook
+	.dw @state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state8
+	.dw @state9
+	.dw @stateA
+	.dw @stateB
+
+
+@state_uninitialized:
+	; Subid 1 has lower value for var31, meaning more frequent jumps.
+	ld h,d			; $451c
+	ld l,Enemy.subid		; $451d
+	bit 0,(hl)		; $451f
+	ld l,Enemy.var31		; $4521
+	ld (hl),90		; $4523
+	jr z,+			; $4525
+	ld (hl),45		; $4527
++
+	call getRandomNumber_noPreserveVars		; $4529
+	and $7f			; $452c
+	inc a			; $452e
+	ld e,Enemy.counter1		; $452f
+	ld (de),a		; $4531
+	ld a,SPEED_140		; $4532
+	jp _ecom_setSpeedAndState8AndVisible		; $4534
+
+
+@state_switchHook:
+	inc e			; $4537
+	ld a,(de)		; $4538
+	rst_jumpTable			; $4539
+	.dw _ecom_incState2
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+
+@substate1:
+@substate2:
+	ret			; $4542
+
+@substate3:
+	ld b,$08		; $4543
+	call _ecom_fallToGroundAndSetState		; $4545
+	ret nz			; $4548
+	jp @gotoState8		; $4549
+
+
+@state_stub:
+	ret			; $454c
+
+
+; Standing in place for [counter1] frames
+@state8:
+	call _ecom_decCounter1		; $454d
+	jr nz,@animate	; $4550
+
+	; Set [counter1] to how long the crouch will last
+	call getRandomNumber_noPreserveVars		; $4552
+	and $7f			; $4555
+	call _ecom_incState		; $4557
+	ld l,Enemy.var31		; $455a
+	add (hl)		; $455c
+	ld l,Enemy.counter1		; $455d
+	ldi (hl),a		; $455f
+	ld (hl),$18		; $4560
+	ld a,$01		; $4562
+	jp enemySetAnimation		; $4564
+@animate:
+	jp enemyAnimate		; $4567
+
+
+; Crouching before a leap
+@state9:
+	call _ecom_decCounter2		; $456a
+	ret nz			; $456d
+	ld l,e			; $456e
+	inc (hl)		; $456f
+	ld a,$02		; $4570
+	jp enemySetAnimation		; $4572
+
+
+; About to start a leap
+@stateA:
+	ld a,$0b		; $4575
+	ld (de),a ; [state]
+
+	call getRandomNumber_noPreserveVars		; $4578
+	and $07			; $457b
+	ld hl,@smallLeap		; $457d
+	jr nz,+			; $4580
+	ld hl,@bigLeap		; $4582
++
+	ld e,Enemy.speedZ		; $4585
+	ldi a,(hl)		; $4587
+	ld (de),a		; $4588
+	inc e			; $4589
+	ldi a,(hl)		; $458a
+	ld (de),a		; $458b
+
+	; Gravity
+	ld e,Enemy.var30		; $458c
+	ldi a,(hl)		; $458e
+	ld (de),a		; $458f
+
+	call _ecom_updateAngleTowardTarget		; $4590
+	ld a,SND_ENEMY_JUMP		; $4593
+	call playSound		; $4595
+	jp objectSetVisiblec1		; $4598
+
+
+; speedZ, gravity
+@smallLeap:
+	dwb $feaa, $0e
+@bigLeap:
+	dwb $fe80, $0c
+
+
+; Leaping
+@stateB:
+	call _ecom_bounceOffScreenBoundary		; $45a1
+	ld e,Enemy.var30		; $45a4
+	ld a,(de)		; $45a6
+	ld c,a			; $45a7
+	call objectUpdateSpeedZ_paramC		; $45a8
+	jp nz,_ecom_applyVelocityForSideviewEnemy		; $45ab
+
+;;
+; @addr{45ae}
+@gotoState8:
+	call getRandomNumber_noPreserveVars		; $45ae
+	and $7f			; $45b1
+	ld h,d			; $45b3
+	ld l,Enemy.var31		; $45b4
+	add (hl)		; $45b6
+	ld l,Enemy.counter1		; $45b7
+	ld (hl),a		; $45b9
+	ld l,Enemy.state		; $45ba
+	ld (hl),$08		; $45bc
+	xor a			; $45be
+	call enemySetAnimation		; $45bf
+	jp objectSetVisiblec2		; $45c2
+
+
+; ==============================================================================
+; ENEMYID_STALFOS
+; ==============================================================================
 enemyCode31:
-	call _ecom_checkHazards		; $45e4
-	jr z,_label_0d_043	; $45e7
-	sub $03			; $45e9
-	ret c			; $45eb
-	jp z,enemyDie		; $45ec
-	dec a			; $45ef
-	jp nz,_ecom_updateKnockbackAndCheckHazards		; $45f0
-	ret			; $45f3
-_label_0d_043:
-	call $4718		; $45f4
-	ld e,$84		; $45f7
-	ld a,(de)		; $45f9
-	rst_jumpTable			; $45fa
-	dec e			; $45fb
-	ld b,(hl)		; $45fc
-	ld l,$46		; $45fd
-	ld l,$46		; $45ff
-	ldi (hl),a		; $4601
-	ld b,(hl)		; $4602
-	ld l,$46		; $4603
-	bit 0,h			; $4605
-	ld l,$46		; $4607
-	ld l,$46		; $4609
-	cpl			; $460b
-	ld b,(hl)		; $460c
-	ld c,b			; $460d
-	ld b,(hl)		; $460e
-	ld e,l			; $460f
-	ld b,(hl)		; $4610
-	ld (hl),e		; $4611
-	ld b,(hl)		; $4612
-	sub c			; $4613
-	ld b,(hl)		; $4614
-	sbc b			; $4615
-	ld b,(hl)		; $4616
-	xor d			; $4617
-	ld b,(hl)		; $4618
-	or c			; $4619
-	ld b,(hl)		; $461a
-	add $46			; $461b
-	ld a,$14		; $461d
-	jp _ecom_setSpeedAndState8AndVisible		; $461f
-	inc e			; $4622
-	ld a,(de)		; $4623
-	rst_jumpTable			; $4624
-	dec b			; $4625
-	ld b,b			; $4626
-	dec l			; $4627
-	ld b,(hl)		; $4628
-	dec l			; $4629
-	ld b,(hl)		; $462a
-	rst $38			; $462b
-	ld b,h			; $462c
-	ret			; $462d
-	ret			; $462e
-	call $46ed		; $462f
-	call getRandomNumber_noPreserveVars		; $4632
-	and $07			; $4635
-	jp nz,$46ca		; $4637
-	ld e,$82		; $463a
-	ld a,(de)		; $463c
-	cp $02			; $463d
-	jp nz,$46ca		; $463f
-	ld e,$84		; $4642
-	ld a,$0c		; $4644
-	ld (de),a		; $4646
-	ret			; $4647
-	call $46ed		; $4648
-	call _ecom_decCounter1		; $464b
-	jr nz,_label_0d_044	; $464e
-	ld l,$84		; $4650
-	ld (hl),$08		; $4652
-_label_0d_044:
-	call _ecom_bounceOffWallsAndHoles		; $4654
-	call objectApplySpeed		; $4657
-	jp enemyAnimate		; $465a
-	ld bc,$fe00		; $465d
-	call objectSetSpeedZ		; $4660
-	ld l,e			; $4663
-	inc (hl)		; $4664
-	ld l,$a4		; $4665
-	res 7,(hl)		; $4667
-	ld l,$90		; $4669
-	ld (hl),$32		; $466b
-	call _ecom_updateCardinalAngleAwayFromTarget		; $466d
-	jp $470b		; $4670
-	ld c,$20		; $4673
-	call objectUpdateSpeedZ_paramC		; $4675
-	jr z,_label_0d_046	; $4678
-	ld a,(hl)		; $467a
-	or a			; $467b
-	jr nz,_label_0d_045	; $467c
-	ld l,$a4		; $467e
-	set 7,(hl)		; $4680
-_label_0d_045:
-	jp _ecom_applyVelocityForSideviewEnemy		; $4682
-_label_0d_046:
-	ld a,$14		; $4685
-	call _ecom_setSpeedAndState8		; $4687
-	xor a			; $468a
-	call enemySetAnimation		; $468b
-	jp objectSetVisiblec2		; $468e
-	ld b,$1c		; $4691
-	call _ecom_spawnProjectile		; $4693
-	jr _label_0d_047		; $4696
-	ld c,$20		; $4698
-	call objectUpdateSpeedZ_paramC		; $469a
-	ld a,(hl)		; $469d
-	or a			; $469e
-	jp nz,_ecom_applyVelocityForSideviewEnemyNoHoles		; $469f
-	ld l,$86		; $46a2
-	ld (hl),$08		; $46a4
-	ld l,$84		; $46a6
-	inc (hl)		; $46a8
-	ret			; $46a9
-	call _ecom_decCounter1		; $46aa
-	ret nz			; $46ad
-	ld l,e			; $46ae
-	inc (hl)		; $46af
-	ret			; $46b0
-	ld h,d			; $46b1
-	ld l,$8f		; $46b2
-	ld a,(hl)		; $46b4
-	add $03			; $46b5
-	ld (hl),a		; $46b7
-	cp $80			; $46b8
-	ret nc			; $46ba
-	xor a			; $46bb
-	ld (hl),a		; $46bc
-	ld l,e			; $46bd
-	inc (hl)		; $46be
-	ld l,$86		; $46bf
-	ld (hl),$1e		; $46c1
-	jp objectSetVisiblec2		; $46c3
-	call _ecom_decCounter1		; $46c6
-	ret nz			; $46c9
-_label_0d_047:
-	ld e,$30		; $46ca
-	ld bc,$1f0f		; $46cc
-	call _ecom_randomBitwiseAndBCE		; $46cf
-	ld h,d			; $46d2
-	ld l,$84		; $46d3
-	ld (hl),$09		; $46d5
-	ld l,$90		; $46d7
-	ld (hl),$14		; $46d9
-	ld a,$20		; $46db
-	add e			; $46dd
-	ld l,$86		; $46de
-	ld (hl),a		; $46e0
-	dec c			; $46e1
-	ld a,b			; $46e2
-	call z,objectGetAngleTowardEnemyTarget		; $46e3
-	ld e,$89		; $46e6
-	ld (de),a		; $46e8
-	xor a			; $46e9
-	jp enemySetAnimation		; $46ea
-	ld e,$82		; $46ed
-	ld a,(de)		; $46ef
-	cp $03			; $46f0
-	ret nz			; $46f2
-	ld c,$1c		; $46f3
-	call objectCheckLinkWithinDistance		; $46f5
-	ret nc			; $46f8
-	ld bc,$fdc0		; $46f9
-	call objectSetSpeedZ		; $46fc
-	ld l,$84		; $46ff
-	ld (hl),$0d		; $4701
-	ld l,$90		; $4703
-	ld (hl),$3c		; $4705
-	pop hl			; $4707
-	call _ecom_updateAngleTowardTarget		; $4708
-	ld a,$01		; $470b
-	call enemySetAnimation		; $470d
-	ld a,$8f		; $4710
-	call playSound		; $4712
-	jp objectSetVisiblec1		; $4715
-	ld e,$82		; $4718
-	ld a,(de)		; $471a
-	or a			; $471b
-	ret z			; $471c
-	ld a,($cc7a)		; $471d
-	and $f0			; $4720
-	ret z			; $4722
-	ld e,$84		; $4723
-	ld a,(de)		; $4725
-	cp $0a			; $4726
-	ret nc			; $4728
-	ld c,$2c		; $4729
-	call objectCheckLinkWithinDistance		; $472b
-	ret nc			; $472e
-	ld e,$84		; $472f
-	ld a,$0a		; $4731
-	ld (de),a		; $4733
-	ret			; $4734
-	ld e,$84		; $4735
-	ld a,$08		; $4737
-	ld (de),a		; $4739
-	ret			; $473a
+	call _ecom_checkHazards		; $45c5
+	jr z,@normalStatus	; $45c8
+	sub ENEMYSTATUS_NO_HEALTH			; $45ca
+	ret c			; $45cc
+	jp z,enemyDie		; $45cd
+	dec a			; $45d0
+	jp nz,_ecom_updateKnockbackAndCheckHazards		; $45d1
+	ret			; $45d4
 
+@normalStatus:
+	call _stalfos_checkJumpAwayFromLink		; $45d5
+	ld e,Enemy.state		; $45d8
+	ld a,(de)		; $45da
+	rst_jumpTable			; $45db
+	.dw _stalfos_state_uninitialized
+	.dw _stalfos_state_stub
+	.dw _stalfos_state_stub
+	.dw _stalfos_state_switchHook
+	.dw _stalfos_state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw _stalfos_state_stub
+	.dw _stalfos_state_stub
+	.dw _stalfos_state08
+	.dw _stalfos_state09
+	.dw _stalfos_state0a
+	.dw _stalfos_state0b
+	.dw _stalfos_state0c
+	.dw _stalfos_state0d
+	.dw _stalfos_state0e
+	.dw _stalfos_state0f
+	.dw _stalfos_state10
+
+
+_stalfos_state_uninitialized:
+	ld a,SPEED_80		; $45fe
+	jp _ecom_setSpeedAndState8AndVisible		; $4600
+
+
+_stalfos_state_switchHook:
+	inc e			; $4603
+	ld a,(de)		; $4604
+	rst_jumpTable			; $4605
+	.dw _ecom_incState2
+	.dw @substate1
+	.dw @substate2
+	.dw _ecom_fallToGroundAndSetState8
+
+@substate1:
+@substate2:
+	ret			; $460e
+
+
+_stalfos_state_stub:
+	ret			; $460f
+
+
+; Choosing what to do next (move in a random direction, or shoot a bone an Link)
+_stalfos_state08:
+	call _stalfos_checkSubid3StompsLink		; $4610
+	; Above function call may pop its return address, ignoring everything below this
+
+	call getRandomNumber_noPreserveVars		; $4613
+	and $07			; $4616
+	jp nz,_stalfos_moveInRandomAngle		; $4618
+
+	ld e,Enemy.subid		; $461b
+	ld a,(de)		; $461d
+	cp $02			; $461e
+	jp nz,_stalfos_moveInRandomAngle		; $4620
+
+	; For subid 2 only, there's a 1 in 8 chance of getting here (shooting a bone at
+	; Link)
+	ld e,Enemy.state		; $4623
+	ld a,$0c		; $4625
+	ld (de),a		; $4627
+	ret			; $4628
+
+
+; Moving in some direction for [counter1] frames
+_stalfos_state09:
+	call _stalfos_checkSubid3StompsLink		; $4629
+	; Above function call may pop its return address, ignoring everything below this
+
+	call _ecom_decCounter1		; $462c
+	jr nz,++		; $462f
+	ld l,Enemy.state		; $4631
+	ld (hl),$08		; $4633
+++
+	call _ecom_bounceOffWallsAndHoles		; $4635
+	call objectApplySpeed		; $4638
+	jp enemyAnimate		; $463b
+
+
+; Just starting a jump away from Link
+_stalfos_state0a:
+	ld bc,-$200		; $463e
+	call objectSetSpeedZ		; $4641
+
+	ld l,e			; $4644
+	inc (hl) ; [state]
+
+	; Make him invincible while he's moving upward
+	ld l,Enemy.collisionType		; $4646
+	res 7,(hl)		; $4648
+
+	ld l,Enemy.speed		; $464a
+	ld (hl),SPEED_140		; $464c
+
+	call _ecom_updateCardinalAngleAwayFromTarget		; $464e
+	jp _stalfos_beginJumpAnimation		; $4651
+
+
+; Jumping until hitting the ground
+_stalfos_state0b:
+	ld c,$20		; $4654
+	call objectUpdateSpeedZ_paramC		; $4656
+	jr z,@hitGround	; $4659
+
+	; Make him vulnerable to attack again once he starts moving down
+	ld a,(hl) ; a = [speedZ]
+	or a			; $465c
+	jr nz,++		; $465d
+	ld l,Enemy.collisionType		; $465f
+	set 7,(hl)		; $4661
+++
+	jp _ecom_applyVelocityForSideviewEnemy		; $4663
+
+@hitGround:
+	ld a,SPEED_80		; $4666
+	call _ecom_setSpeedAndState8		; $4668
+	xor a			; $466b
+	call enemySetAnimation		; $466c
+	jp objectSetVisiblec2		; $466f
+
+
+; Firing a projectile, then immediately going to state 9 to keep moving
+_stalfos_state0c:
+	ld b,PARTID_STALFOS_BONE		; $4672
+	call _ecom_spawnProjectile		; $4674
+	jr _stalfos_moveInRandomAngle		; $4677
+
+
+; Stomping on Link
+_stalfos_state0d:
+	ld c,$20		; $4679
+	call objectUpdateSpeedZ_paramC		; $467b
+
+	; Check if he's begun moving down yet
+	ld a,(hl)		; $467e
+	or a			; $467f
+	jp nz,_ecom_applyVelocityForSideviewEnemyNoHoles		; $4680
+
+	; He's begun moving down. Go to next state so he freezes in the air.
+	ld l,Enemy.counter1		; $4683
+	ld (hl),$08		; $4685
+	ld l,Enemy.state		; $4687
+	inc (hl)		; $4689
+	ret			; $468a
+
+
+; Wait for 8 frames while hanging in the air mid-stomp
+_stalfos_state0e:
+	call _ecom_decCounter1		; $468b
+	ret nz			; $468e
+	ld l,e			; $468f
+	inc (hl) ; [state]
+	ret			; $4691
+
+
+; Fall down for the stomp
+_stalfos_state0f:
+	ld h,d			; $4692
+	ld l,Enemy.zh		; $4693
+	ld a,(hl)		; $4695
+	add $03			; $4696
+	ld (hl),a		; $4698
+	cp $80			; $4699
+	ret nc			; $469b
+
+	; Hit the ground
+	xor a			; $469c
+	ld (hl),a ; [zh] = 0
+
+	ld l,e			; $469e
+	inc (hl) ; [state]
+
+	ld l,Enemy.counter1		; $46a0
+	ld (hl),30		; $46a2
+	jp objectSetVisiblec2		; $46a4
+
+
+; Laying on the ground for [counter1] frames until he starts moving again
+_stalfos_state10:
+	call _ecom_decCounter1		; $46a7
+	ret nz			; $46aa
+
+
+;;
+; Go to state 9 with a freshly chosen angle
+; @addr{46ab}
+_stalfos_moveInRandomAngle:
+	ld e,$30		; $46ab
+	ld bc,$1f0f		; $46ad
+	call _ecom_randomBitwiseAndBCE		; $46b0
+
+	ld h,d			; $46b3
+	ld l,Enemy.state		; $46b4
+	ld (hl),$09		; $46b6
+	ld l,Enemy.speed		; $46b8
+	ld (hl),SPEED_80		; $46ba
+
+	ld a,$20		; $46bc
+	add e			; $46be
+	ld l,Enemy.counter1		; $46bf
+	ld (hl),a		; $46c1
+
+	; 1 in 16 chance of moving toward Link; otherwise, move in random direction
+	dec c			; $46c2
+	ld a,b			; $46c3
+	call z,objectGetAngleTowardEnemyTarget		; $46c4
+	ld e,Enemy.angle		; $46c7
+	ld (de),a		; $46c9
+	xor a			; $46ca
+	jp enemySetAnimation		; $46cb
+
+
+;;
+; For subid 3 only, if Link approaches close enough, it will jump toward Link to stomp on
+; him (goes to state $0d).
+; @addr{46ce}
+_stalfos_checkSubid3StompsLink:
+	ld e,Enemy.subid		; $46ce
+	ld a,(de)		; $46d0
+	cp $03			; $46d1
+	ret nz			; $46d3
+
+	ld c,$1c		; $46d4
+	call objectCheckLinkWithinDistance		; $46d6
+	ret nc			; $46d9
+
+	ld bc,-$240		; $46da
+	call objectSetSpeedZ		; $46dd
+
+	ld l,Enemy.state		; $46e0
+	ld (hl),$0d		; $46e2
+	ld l,Enemy.speed		; $46e4
+	ld (hl),SPEED_180		; $46e6
+
+	pop hl ; Return from caller
+
+	call _ecom_updateAngleTowardTarget		; $46e9
+
+
+;;
+; @addr{46ec}
+_stalfos_beginJumpAnimation:
+	ld a,$01		; $46ec
+	call enemySetAnimation		; $46ee
+	ld a,SND_ENEMY_JUMP		; $46f1
+	call playSound		; $46f3
+	jp objectSetVisiblec1		; $46f6
+
+
+;;
+; If Link is swinging something near this object, it will set its state to $0a if not
+; already jumping.
+; @addr{46f9}
+_stalfos_checkJumpAwayFromLink:
+	; Not for subid 0
+	ld e,Enemy.subid		; $46f9
+	ld a,(de)		; $46fb
+	or a			; $46fc
+	ret z			; $46fd
+
+	; Check specifically for w1WeaponItem being used?
+	ld a,(wLinkUsingItem1)		; $46fe
+	and $f0			; $4701
+	ret z			; $4703
+
+	ld e,Enemy.state		; $4704
+	ld a,(de)		; $4706
+	cp $0a			; $4707
+	ret nc			; $4709
+
+	ld c,$2c		; $470a
+	call objectCheckLinkWithinDistance		; $470c
+	ret nc			; $470f
+
+	ld e,Enemy.state		; $4710
+	ld a,$0a		; $4712
+	ld (de),a		; $4714
+	ret			; $4715
+
+;;
+; Unused
+; @addr{4716}
+_stalfos_setState8:
+	ld e,Enemy.state		; $4716
+	ld a,$08		; $4718
+	ld (de),a		; $471a
+	ret			; $471b
+
+
+; ==============================================================================
+; ENEMYID_KEESE
+;
+; Variables (for subid 1 only, the one that moves as Link approaches):
+;   var30: Amount to add to angle each frame. (Clockwise or counterclockwise turning)
+; ==============================================================================
 enemyCode32:
-	jr z,_label_0d_048	; $473b
-	sub $03			; $473d
-	ret c			; $473f
-	jp z,enemyDie		; $4740
-	dec a			; $4743
-	jp nz,_ecom_updateKnockbackNoSolidity		; $4744
-	ret			; $4747
-_label_0d_048:
-	call _ecom_getSubidAndCpStateTo08		; $4748
-	jr nc,_label_0d_049	; $474b
-	rst_jumpTable			; $474d
-	ld h,h			; $474e
-	ld b,a			; $474f
-	ld l,l			; $4750
-	ld b,a			; $4751
-	ld l,l			; $4752
-	ld b,a			; $4753
-	ld l,l			; $4754
-	ld b,a			; $4755
-	ld l,l			; $4756
-	ld b,a			; $4757
-	bit 0,h			; $4758
-	ld l,l			; $475a
-	ld b,a			; $475b
-	ld l,l			; $475c
-	ld b,a			; $475d
-_label_0d_049:
-	ld a,b			; $475e
-	rst_jumpTable			; $475f
-	ld l,(hl)		; $4760
-	ld b,a			; $4761
-	jp hl			; $4762
-	ld b,a			; $4763
-	call _ecom_setSpeedAndState8		; $4764
-	call $4870		; $4767
-	jp objectSetVisible82		; $476a
-	ret			; $476d
-	ld a,(de)		; $476e
-	sub $08			; $476f
-	rst_jumpTable			; $4771
-	ld a,b			; $4772
-	ld b,a			; $4773
-	sbc c			; $4774
-	ld b,a			; $4775
-	cp a			; $4776
-	ld b,a			; $4777
-	call _ecom_decCounter1		; $4778
-	ret nz			; $477b
-	ld bc,$1f3f		; $477c
-	call _ecom_randomBitwiseAndBCE		; $477f
-	call _ecom_incState		; $4782
-	ld l,$89		; $4785
-	ld (hl),b		; $4787
-	ld l,$90		; $4788
-	ld (hl),$1e		; $478a
-	ld a,$c0		; $478c
-	add c			; $478e
-	ld l,$86		; $478f
-	ld (hl),a		; $4791
-	ld a,$01		; $4792
-	call enemySetAnimation		; $4794
-	jr _label_0d_051		; $4797
-	call objectApplySpeed		; $4799
-	call _ecom_bounceOffScreenBoundary		; $479c
-	ld a,(wFrameCounter)		; $479f
-	rrca			; $47a2
-	jr c,_label_0d_051	; $47a3
-	call _ecom_decCounter1		; $47a5
-	jr z,_label_0d_050	; $47a8
-	ld bc,$0f1f		; $47aa
-	call _ecom_randomBitwiseAndBCE		; $47ad
-	or b			; $47b0
-	jr nz,_label_0d_051	; $47b1
-	ld e,$89		; $47b3
-	ld a,c			; $47b5
-	ld (de),a		; $47b6
-	jr _label_0d_051		; $47b7
-_label_0d_050:
-	ld l,$84		; $47b9
-	inc (hl)		; $47bb
-_label_0d_051:
-	jp enemyAnimate		; $47bc
-	ld e,$86		; $47bf
-	ld a,(de)		; $47c1
-	cp $68			; $47c2
-	jr nc,_label_0d_052	; $47c4
-	call objectApplySpeed		; $47c6
-	call _ecom_bounceOffScreenBoundary		; $47c9
-_label_0d_052:
-	call $483b		; $47cc
-	ld h,d			; $47cf
-	ld l,$86		; $47d0
-	inc (hl)		; $47d2
-	ld a,$7f		; $47d3
-	cp (hl)			; $47d5
-	ret nz			; $47d6
-	ld l,$84		; $47d7
-	ld (hl),$08		; $47d9
-	call getRandomNumber_noPreserveVars		; $47db
-	and $7f			; $47de
-	ld e,$86		; $47e0
-	add $20			; $47e2
-	ld (de),a		; $47e4
-	xor a			; $47e5
-	jp enemySetAnimation		; $47e6
-	ld a,(de)		; $47e9
-	sub $08			; $47ea
-	rst_jumpTable			; $47ec
-	pop af			; $47ed
-	ld b,a			; $47ee
-	ld d,$48		; $47ef
-	ld c,$31		; $47f1
-	call objectCheckLinkWithinDistance		; $47f3
-	ret nc			; $47f6
-	call _ecom_updateAngleTowardTarget		; $47f7
-	call _ecom_incState		; $47fa
-	ld l,$90		; $47fd
-	ld (hl),$28		; $47ff
-	ld e,$89		; $4801
-	ld l,$b0		; $4803
-	ld a,(de)		; $4805
-	add (hl)		; $4806
-	and $1f			; $4807
-	ld (de),a		; $4809
-	ld l,$86		; $480a
-	ld (hl),$0c		; $480c
-	inc l			; $480e
-	ld (hl),$0c		; $480f
-	ld a,$01		; $4811
-	jp enemySetAnimation		; $4813
-	call objectApplySpeed		; $4816
-	call _ecom_bounceOffScreenBoundary		; $4819
-	call _ecom_decCounter1		; $481c
-	jr nz,_label_0d_051	; $481f
-	ld (hl),$0c		; $4821
-	ld l,$b0		; $4823
-	ld e,$89		; $4825
-	ld a,(de)		; $4827
-	add (hl)		; $4828
-	and $1f			; $4829
-	ld (de),a		; $482b
-	ld l,$87		; $482c
-	dec (hl)		; $482e
-	jr nz,_label_0d_051	; $482f
-	ld l,$84		; $4831
-	dec (hl)		; $4833
-	call $4880		; $4834
-	xor a			; $4837
-	jp enemySetAnimation		; $4838
-	ld e,$86		; $483b
-	ld a,(de)		; $483d
-	and $0f			; $483e
-	jr nz,_label_0d_053	; $4840
-	ld a,(de)		; $4842
-	swap a			; $4843
-	ld hl,$4860		; $4845
-	rst_addAToHl			; $4848
-	ld a,(hl)		; $4849
-	ld e,$90		; $484a
-	ld (de),a		; $484c
-_label_0d_053:
-	ld e,$86		; $484d
-	ld a,(de)		; $484f
-	and $f0			; $4850
-	swap a			; $4852
-	ld hl,$4868		; $4854
-	rst_addAToHl			; $4857
-	ld a,(wFrameCounter)		; $4858
-	and (hl)		; $485b
-	jp z,enemyAnimate		; $485c
-	ret			; $485f
-	ld e,$14		; $4860
-	ld a,(bc)		; $4862
-	ld a,(bc)		; $4863
-	dec b			; $4864
-	dec b			; $4865
-	dec b			; $4866
-	dec b			; $4867
-	nop			; $4868
-	nop			; $4869
-	ld bc,$0301		; $486a
-	inc bc			; $486d
-	rlca			; $486e
-	nop			; $486f
-	dec b			; $4870
-	jr z,_label_0d_054	; $4871
-	ld l,$86		; $4873
-	ld (hl),$20		; $4875
-	ret			; $4877
-_label_0d_054:
-	ld l,$8f		; $4878
-	ld (hl),$ff		; $487a
-	ld l,$b0		; $487c
-	ld (hl),$02		; $487e
-	call getRandomNumber_noPreserveVars		; $4880
-	and $03			; $4883
-	ret nz			; $4885
-	ld e,$b0		; $4886
-	ld a,(de)		; $4888
-	cpl			; $4889
-	inc a			; $488a
-	ld (de),a		; $488b
-	ret			; $488c
+	jr z,@normalStatus	; $471c
+	sub ENEMYSTATUS_NO_HEALTH			; $471e
+	ret c			; $4720
+	jp z,enemyDie		; $4721
+	dec a			; $4724
+	jp nz,_ecom_updateKnockbackNoSolidity		; $4725
+	ret			; $4728
 
+@normalStatus:
+	call _ecom_getSubidAndCpStateTo08		; $4729
+	jr nc,@normalState	; $472c
+	rst_jumpTable			; $472e
+	.dw _keese_state_uninitialized
+	.dw _keese_state_stub
+	.dw _keese_state_stub
+	.dw _keese_state_stub
+	.dw _keese_state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw _keese_state_stub
+	.dw _keese_state_stub
+
+@normalState:
+	ld a,b			; $473f
+	rst_jumpTable			; $4740
+	.dw _keese_subid00
+	.dw _keese_subid01
+
+
+_keese_state_uninitialized:
+	call _ecom_setSpeedAndState8		; $4745
+	call _keese_initializeSubid		; $4748
+	jp objectSetVisible82		; $474b
+
+
+_keese_state_stub:
+	ret			; $474e
+
+
+_keese_subid00:
+	ld a,(de)		; $474f
+	sub $08			; $4750
+	rst_jumpTable			; $4752
+	.dw _keese_subid00_state8
+	.dw _keese_subid00_state9
+	.dw _keese_subid00_stateA
+
+
+; Resting for [counter1] frames
+_keese_subid00_state8:
+	call _ecom_decCounter1		; $4759
+	ret nz			; $475c
+
+	; Choose random angle and counter1
+	ld bc,$1f3f		; $475d
+	call _ecom_randomBitwiseAndBCE		; $4760
+	call _ecom_incState		; $4763
+
+	ld l,Enemy.angle		; $4766
+	ld (hl),b		; $4768
+	ld l,Enemy.speed		; $4769
+	ld (hl),SPEED_c0		; $476b
+
+	ld a,$c0		; $476d
+	add c			; $476f
+	ld l,Enemy.counter1		; $4770
+	ld (hl),a		; $4772
+
+	ld a,$01		; $4773
+	call enemySetAnimation		; $4775
+	jr _keese_animate		; $4778
+
+
+; Moving in some direction for [counter1] frames
+_keese_subid00_state9:
+	call objectApplySpeed		; $477a
+	call _ecom_bounceOffScreenBoundary		; $477d
+	ld a,(wFrameCounter)		; $4780
+	rrca			; $4783
+	jr c,_keese_animate	; $4784
+
+	call _ecom_decCounter1		; $4786
+	jr z,@timeToStop			; $4789
+
+	; 1 in 16 chance, per frame, of randomly choosing a new angle to move in
+	ld bc,$0f1f		; $478b
+	call _ecom_randomBitwiseAndBCE		; $478e
+	or b			; $4791
+	jr nz,_keese_animate	; $4792
+
+	ld e,Enemy.angle		; $4794
+	ld a,c			; $4796
+	ld (de),a		; $4797
+	jr _keese_animate		; $4798
+
+@timeToStop:
+	ld l,Enemy.state		; $479a
+	inc (hl)		; $479c
+
+_keese_animate:
+	jp enemyAnimate		; $479d
+
+
+; Decelerating until [counter1] counts up to $7f, when it stops completely.
+_keese_subid00_stateA:
+	ld e,Enemy.counter1		; $47a0
+	ld a,(de)		; $47a2
+	cp $68			; $47a3
+	jr nc,++		; $47a5
+	call objectApplySpeed		; $47a7
+	call _ecom_bounceOffScreenBoundary		; $47aa
+++
+	call _keese_updateDeceleration		; $47ad
+	ld h,d			; $47b0
+	ld l,Enemy.counter1		; $47b1
+	inc (hl)		; $47b3
+
+	ld a,$7f		; $47b4
+	cp (hl)			; $47b6
+	ret nz			; $47b7
+
+	; Full stop
+	ld l,Enemy.state		; $47b8
+	ld (hl),$08		; $47ba
+
+	; Set counter1 randomly
+	call getRandomNumber_noPreserveVars		; $47bc
+	and $7f			; $47bf
+	ld e,Enemy.counter1		; $47c1
+	add $20			; $47c3
+	ld (de),a		; $47c5
+	xor a			; $47c6
+	jp enemySetAnimation		; $47c7
+
+
+_keese_subid01:
+	ld a,(de)		; $47ca
+	sub $08			; $47cb
+	rst_jumpTable			; $47cd
+	.dw _keese_subid01_state8
+	.dw _keese_subid02_state9
+
+
+; Waiting for Link to approach
+_keese_subid01_state8:
+	ld c,$31		; $47d2
+	call objectCheckLinkWithinDistance		; $47d4
+	ret nc			; $47d7
+
+	call _ecom_updateAngleTowardTarget		; $47d8
+	call _ecom_incState		; $47db
+
+	ld l,Enemy.speed		; $47de
+	ld (hl),SPEED_100		; $47e0
+
+	; Turn clockwise or counterclockwise, based on var30
+	ld e,Enemy.angle		; $47e2
+	ld l,Enemy.var30		; $47e4
+	ld a,(de)		; $47e6
+	add (hl)		; $47e7
+	and $1f			; $47e8
+	ld (de),a		; $47ea
+
+	ld l,Enemy.counter1		; $47eb
+	ld (hl),12		; $47ed
+	inc l			; $47ef
+	ld (hl),12 ; [counter2]
+
+	ld a,$01		; $47f2
+	jp enemySetAnimation		; $47f4
+
+
+_keese_subid02_state9:
+	call objectApplySpeed		; $47f7
+	call _ecom_bounceOffScreenBoundary		; $47fa
+	call _ecom_decCounter1		; $47fd
+	jr nz,_keese_animate	; $4800
+
+	ld (hl),12 ; [counter1]
+
+	; Turn clockwise or counterclockwise, based on var30
+	ld l,Enemy.var30		; $4804
+	ld e,Enemy.angle		; $4806
+	ld a,(de)		; $4808
+	add (hl)		; $4809
+	and $1f			; $480a
+	ld (de),a		; $480c
+
+	ld l,Enemy.counter2		; $480d
+	dec (hl)		; $480f
+	jr nz,_keese_animate	; $4810
+
+	; Done moving.
+	ld l,Enemy.state		; $4812
+	dec (hl)		; $4814
+	call _keese_chooseWhetherToReverseTurningAngle		; $4815
+	xor a			; $4818
+	jp enemySetAnimation		; $4819
+
+
+;;
+; Every 16 frames (based on counter1) this updates the keese's speed as it's decelerating.
+; Also handles the animation (which slows down).
+; @addr{481c}
+_keese_updateDeceleration:
+	ld e,Enemy.counter1		; $481c
+	ld a,(de)		; $481e
+	and $0f			; $481f
+	jr nz,++		; $4821
+
+	ld a,(de)		; $4823
+	swap a			; $4824
+	ld hl,@speeds		; $4826
+	rst_addAToHl			; $4829
+	ld a,(hl)		; $482a
+	ld e,Enemy.speed		; $482b
+	ld (de),a		; $482d
+++
+	ld e,Enemy.counter1		; $482e
+	ld a,(de)		; $4830
+	and $f0			; $4831
+	swap a			; $4833
+	ld hl,@bits		; $4835
+	rst_addAToHl			; $4838
+	ld a,(wFrameCounter)		; $4839
+	and (hl)		; $483c
+	jp z,enemyAnimate		; $483d
+	ret			; $4840
+
+@speeds:
+	.db SPEED_c0, SPEED_80, SPEED_40, SPEED_40, SPEED_20, SPEED_20, SPEED_20, SPEED_20
+
+@bits:
+	.db $00 $00 $01 $01 $03 $03 $07 $00
+
+
+;;
+; @addr{4851}
+_keese_initializeSubid:
+	dec b			; $4851
+	jr z,@subid1			; $4852
+
+@subid0:
+	; Just set how long to wait initially
+	ld l,Enemy.counter1		; $4854
+	ld (hl),$20		; $4856
+	ret			; $4858
+
+@subid1:
+	ld l,Enemy.zh		; $4859
+	ld (hl),$ff		; $485b
+
+	ld l,Enemy.var30		; $485d
+	ld (hl),$02		; $485f
+
+;;
+; For subid 1 only, this has a 1 in 4 chance of deciding to reverse the turning angle
+; (clockwise or counterclockwise).
+; @addr{4861}
+_keese_chooseWhetherToReverseTurningAngle:
+	call getRandomNumber_noPreserveVars		; $4861
+	and $03			; $4864
+	ret nz			; $4866
+
+	ld e,Enemy.var30		; $4867
+	ld a,(de)		; $4869
+	cpl			; $486a
+	inc a			; $486b
+	ld (de),a		; $486c
+	ret			; $486d
+
+
+; ==============================================================================
+; ENEMYID_BABY_CUCCO
+; ==============================================================================
 enemyCode33:
-	ld e,$84		; $488d
-	ld a,(de)		; $488f
-	rst_jumpTable			; $4890
-	and l			; $4891
-	ld c,b			; $4892
-	inc bc			; $4893
-	ld c,c			; $4894
-	xor d			; $4895
-	ld c,b			; $4896
-	inc bc			; $4897
-	ld c,c			; $4898
-	inc bc			; $4899
-	ld c,c			; $489a
-	inc bc			; $489b
-	ld c,c			; $489c
-	inc bc			; $489d
-	ld c,c			; $489e
-	inc bc			; $489f
-	ld c,c			; $48a0
-	inc b			; $48a1
-	ld c,c			; $48a2
-	ld l,$49		; $48a3
-	ld a,$0a		; $48a5
-	jp _ecom_setSpeedAndState8AndVisible		; $48a7
-	inc e			; $48aa
-	ld a,(de)		; $48ab
-	rst_jumpTable			; $48ac
-	or l			; $48ad
-	ld c,b			; $48ae
-	ret nc			; $48af
-	ld c,b			; $48b0
-	pop hl			; $48b1
-	ld c,b			; $48b2
-	di			; $48b3
-	ld c,b			; $48b4
-	ld h,d			; $48b5
-	ld l,e			; $48b6
-	inc (hl)		; $48b7
-	ld l,$a4		; $48b8
-	res 7,(hl)		; $48ba
-	xor a			; $48bc
-	ld (wLinkGrabState2),a		; $48bd
-	ld a,($d008)		; $48c0
-	srl a			; $48c3
-	xor $01			; $48c5
-	ld l,$88		; $48c7
-	ld (hl),a		; $48c9
-	call enemySetAnimation		; $48ca
-	jp objectSetVisiblec1		; $48cd
-	ld h,d			; $48d0
-	ld l,$88		; $48d1
-	ld a,($d008)		; $48d3
-	srl a			; $48d6
-	xor $01			; $48d8
-	cp (hl)			; $48da
-	jr z,_label_0d_055	; $48db
-	ld (hl),a		; $48dd
-	jp enemySetAnimation		; $48de
-_label_0d_055:
-	ld e,$8b		; $48e1
-	ld a,(de)		; $48e3
-	cp $80			; $48e4
-	jr nc,_label_0d_056	; $48e6
-	ld e,$8d		; $48e8
-	ld a,(de)		; $48ea
-	cp $a0			; $48eb
-	jp c,enemyAnimate		; $48ed
-_label_0d_056:
-	jp enemyDelete		; $48f0
-	ld h,d			; $48f3
-	ld l,$84		; $48f4
-	ld (hl),$08		; $48f6
-	ld l,$a4		; $48f8
-	set 7,(hl)		; $48fa
-	ld l,$88		; $48fc
-	ld (hl),$ff		; $48fe
-	jp objectSetVisiblec2		; $4900
-	ret			; $4903
-	call objectAddToGrabbableObjectBuffer		; $4904
-	call objectSetPriorityRelativeToLink_withTerrainEffects		; $4907
-	call _ecom_updateAngleTowardTarget		; $490a
-	call $4939		; $490d
-	ld c,$10		; $4910
-	call objectCheckLinkWithinDistance		; $4912
-	jr nc,_label_0d_057	; $4915
-	call getRandomNumber_noPreserveVars		; $4917
-	and $3f			; $491a
-	ret nz			; $491c
-	call _ecom_incState		; $491d
-	ld l,$94		; $4920
-	ld a,$40		; $4922
-	ldi (hl),a		; $4924
-	ld (hl),$ff		; $4925
-	ret			; $4927
-_label_0d_057:
-	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $4928
-_label_0d_058:
-	jp enemyAnimate		; $492b
-	ld c,$12		; $492e
-	call objectUpdateSpeedZ_paramC		; $4930
-	jr nz,_label_0d_058	; $4933
-	ld l,$84		; $4935
-	dec (hl)		; $4937
-	ret			; $4938
-	ld e,$89		; $4939
-	ld a,(de)		; $493b
-	cp $10			; $493c
-	ld a,$01		; $493e
-	jr c,_label_0d_059	; $4940
-	xor a			; $4942
-_label_0d_059:
-	ld h,d			; $4943
-	ld l,$88		; $4944
-	cp (hl)			; $4946
-	ret z			; $4947
-	ld (hl),a		; $4948
-	jp enemySetAnimation		; $4949
+	ld e,Enemy.state		; $486e
+	ld a,(de)		; $4870
+	rst_jumpTable			; $4871
+	.dw _babyCucco_state_uninitialized
+	.dw _babyCucco_state_stub
+	.dw _babyCucco_state_grabbed
+	.dw _babyCucco_state_stub
+	.dw _babyCucco_state_stub
+	.dw _babyCucco_state_stub
+	.dw _babyCucco_state_stub
+	.dw _babyCucco_state_stub
+	.dw _babyCucco_state8
+	.dw _babyCucco_state9
 
+
+_babyCucco_state_uninitialized:
+	ld a,SPEED_40		; $4886
+	jp _ecom_setSpeedAndState8AndVisible		; $4888
+
+
+_babyCucco_state_grabbed:
+	inc e			; $488b
+	ld a,(de)		; $488c
+	rst_jumpTable			; $488d
+	.dw @justGrabbed
+	.dw @beingHeld
+	.dw @released
+	.dw @landed
+
+@justGrabbed:
+	ld h,d			; $4896
+	ld l,e			; $4897
+	inc (hl) ; [state2]
+
+	ld l,Enemy.collisionType		; $4899
+	res 7,(hl)		; $489b
+
+	xor a			; $489d
+	ld (wLinkGrabState2),a		; $489e
+
+	ld a,(w1Link.direction)		; $48a1
+	srl a			; $48a4
+	xor $01			; $48a6
+	ld l,Enemy.direction		; $48a8
+	ld (hl),a		; $48aa
+	call enemySetAnimation		; $48ab
+
+	jp objectSetVisiblec1		; $48ae
+
+@beingHeld:
+	ld h,d			; $48b1
+	ld l,Enemy.direction		; $48b2
+	ld a,(w1Link.direction)		; $48b4
+	srl a			; $48b7
+	xor $01			; $48b9
+	cp (hl)			; $48bb
+	jr z,@released		; $48bc
+	ld (hl),a		; $48be
+	jp enemySetAnimation		; $48bf
+
+@released:
+	ld e,Enemy.yh		; $48c2
+	ld a,(de)		; $48c4
+	cp SMALL_ROOM_HEIGHT<<4			; $48c5
+	jr nc,@delete		; $48c7
+
+	ld e,Enemy.xh		; $48c9
+	ld a,(de)		; $48cb
+	cp SMALL_ROOM_WIDTH<<4			; $48cc
+	jp c,enemyAnimate		; $48ce
+@delete:
+	jp enemyDelete		; $48d1
+
+@landed:
+	ld h,d			; $48d4
+	ld l,Enemy.state		; $48d5
+	ld (hl),$08		; $48d7
+	ld l,Enemy.collisionType		; $48d9
+	set 7,(hl)		; $48db
+	ld l,Enemy.direction		; $48dd
+	ld (hl),$ff		; $48df
+	jp objectSetVisiblec2		; $48e1
+
+
+_babyCucco_state_stub:
+	ret			; $48e4
+
+
+_babyCucco_state8:
+	call objectAddToGrabbableObjectBuffer		; $48e5
+	call objectSetPriorityRelativeToLink_withTerrainEffects		; $48e8
+
+	call _ecom_updateAngleTowardTarget		; $48eb
+	call _babyCucco_updateAnimationFromAngle		; $48ee
+
+	ld c,$10		; $48f1
+	call objectCheckLinkWithinDistance		; $48f3
+	jr nc,@moveCloserToLink	; $48f6
+
+	; If near Link, 1 in 64 chance of hopping (per frame)
+	call getRandomNumber_noPreserveVars		; $48f8
+	and $3f			; $48fb
+	ret nz			; $48fd
+
+	call _ecom_incState		; $48fe
+	ld l,Enemy.speedZ		; $4901
+	ld a,<($ff40)		; $4903
+	ldi (hl),a		; $4905
+	ld (hl),>($ff40)		; $4906
+	ret			; $4908
+
+@moveCloserToLink:
+	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $4909
+
+_babyCucco_animate:
+	jp enemyAnimate		; $490c
+
+
+; Hopping
+_babyCucco_state9:
+	ld c,$12		; $490f
+	call objectUpdateSpeedZ_paramC		; $4911
+	jr nz,_babyCucco_animate	; $4914
+
+	ld l,Enemy.state		; $4916
+	dec (hl)		; $4918
+	ret			; $4919
+
+
+;;
+; @addr{491a}
+_babyCucco_updateAnimationFromAngle:
+	ld e,Enemy.angle		; $491a
+	ld a,(de)		; $491c
+	cp $10			; $491d
+	ld a,$01		; $491f
+	jr c,+			; $4921
+	xor a			; $4923
++
+	ld h,d			; $4924
+	ld l,Enemy.direction		; $4925
+	cp (hl)			; $4927
+	ret z			; $4928
+	ld (hl),a		; $4929
+	jp enemySetAnimation		; $492a
+
+
+; ==============================================================================
+; ENEMYID_ZOL
+;
+; Variables:
+;   var30: 1 when the zol is out of the ground, 0 otherwise. (only for subid 0, and only
+;          used to prevent the "jump" sound effect from playing more than once.)
+; ==============================================================================
 enemyCode34:
-	call _ecom_checkHazardsNoAnimationForHoles		; $494c
-	jr z,_label_0d_060	; $494f
-	sub $03			; $4951
-	ret c			; $4953
-	jp z,enemyDie		; $4954
-	dec a			; $4957
-	jp nz,_ecom_updateKnockbackAndCheckHazardsNoAnimationsForHoles		; $4958
-	ld e,$82		; $495b
-	ld a,(de)		; $495d
-	or a			; $495e
-	ret z			; $495f
-	ld e,$aa		; $4960
-	ld a,(de)		; $4962
-	cp $80			; $4963
-	jr z,_label_0d_060	; $4965
-	res 7,a			; $4967
-	sub $01			; $4969
-	cp $03			; $496b
-	ret c			; $496d
-	ld e,$84		; $496e
-	ld a,$0c		; $4970
-	ld (de),a		; $4972
-	ret			; $4973
-_label_0d_060:
-	call _ecom_getSubidAndCpStateTo08		; $4974
-	jr nc,_label_0d_061	; $4977
-	rst_jumpTable			; $4979
-	sub b			; $497a
-	ld c,c			; $497b
-	xor b			; $497c
-	ld c,c			; $497d
-	xor b			; $497e
-	ld c,c			; $497f
-	xor b			; $4980
-	ld c,c			; $4981
-	xor b			; $4982
-	ld c,c			; $4983
-	bit 0,h			; $4984
-	xor b			; $4986
-	ld c,c			; $4987
-	xor b			; $4988
-	ld c,c			; $4989
-_label_0d_061:
-	ld a,b			; $498a
-	rst_jumpTable			; $498b
-	xor c			; $498c
-	ld c,c			; $498d
-	ld e,d			; $498e
-	ld c,d			; $498f
-	ld a,b			; $4990
-	or a			; $4991
-	ld a,$1e		; $4992
-	jp z,_ecom_setSpeedAndState8		; $4994
-	ld h,d			; $4997
-	ld l,$86		; $4998
-	ld (hl),$18		; $499a
-	ld l,$a4		; $499c
-	set 7,(hl)		; $499e
-	ld a,$04		; $49a0
-	call enemySetAnimation		; $49a2
-	jp _ecom_setSpeedAndState8AndVisible		; $49a5
-	ret			; $49a8
-	ld a,(de)		; $49a9
-	sub $08			; $49aa
-	rst_jumpTable			; $49ac
-	cp c			; $49ad
-	ld c,c			; $49ae
-	rst $8			; $49af
-	ld c,c			; $49b0
-	rst $30			; $49b1
-	ld c,c			; $49b2
-	inc de			; $49b3
-	ld c,d			; $49b4
-	jr c,$4a		; $49b5
-	ld c,a			; $49b7
-	ld c,d			; $49b8
-	ld c,$28		; $49b9
-	call objectCheckLinkWithinDistance		; $49bb
-	ret nc			; $49be
-	ld bc,$fe00		; $49bf
-	call objectSetSpeedZ		; $49c2
-	ld l,$84		; $49c5
-	inc (hl)		; $49c7
-	ld l,$87		; $49c8
-	ld (hl),$04		; $49ca
-	jp objectSetVisiblec2		; $49cc
-	ld h,d			; $49cf
-	ld l,$a1		; $49d0
-	ld a,(hl)		; $49d2
-	or a			; $49d3
-	jr z,_label_0d_063	; $49d4
-	ld l,$b0		; $49d6
-	and (hl)		; $49d8
-	jr nz,_label_0d_062	; $49d9
-	ld (hl),$01		; $49db
-	ld a,$8f		; $49dd
-	call playSound		; $49df
-_label_0d_062:
-	ld c,$28		; $49e2
-	call objectUpdateSpeedZ_paramC		; $49e4
-	ret nz			; $49e7
-	call _ecom_incState		; $49e8
-	ld l,$86		; $49eb
-	ld (hl),$30		; $49ed
-	ld l,$a4		; $49ef
-	set 7,(hl)		; $49f1
-	inc a			; $49f3
-	jp enemySetAnimation		; $49f4
-	call _ecom_decCounter1		; $49f7
-	ret nz			; $49fa
-	ld l,e			; $49fb
-	inc (hl)		; $49fc
-	ld bc,$fe00		; $49fd
-	call objectSetSpeedZ		; $4a00
-	call _ecom_updateAngleTowardTarget		; $4a03
-	ld a,$02		; $4a06
-	call enemySetAnimation		; $4a08
-	ld a,$8f		; $4a0b
-	call playSound		; $4a0d
-_label_0d_063:
-	jp enemyAnimate		; $4a10
-	call _ecom_applyVelocityForSideviewEnemy		; $4a13
-	ld c,$28		; $4a16
-	call objectUpdateSpeedZ_paramC		; $4a18
-	ret nz			; $4a1b
-	ld h,d			; $4a1c
-	ld l,$86		; $4a1d
-	ld (hl),$30		; $4a1f
-	inc l			; $4a21
-	dec (hl)		; $4a22
-	ld a,$0a		; $4a23
-	ld b,$01		; $4a25
-	jr nz,_label_0d_064	; $4a27
-	ld l,$a4		; $4a29
-	res 7,(hl)		; $4a2b
-	ld a,$0c		; $4a2d
-	ld b,$03		; $4a2f
-_label_0d_064:
-	ld l,$84		; $4a31
-	ld (hl),a		; $4a33
-	ld a,b			; $4a34
-	jp enemySetAnimation		; $4a35
-	ld h,d			; $4a38
-	ld l,$a1		; $4a39
-	ld a,(hl)		; $4a3b
-	or a			; $4a3c
-	jr z,_label_0d_063	; $4a3d
-	ld l,e			; $4a3f
-	inc (hl)		; $4a40
-	ld l,$86		; $4a41
-	ld (hl),$28		; $4a43
-	ld l,$b0		; $4a45
-	xor a			; $4a47
-	ld (hl),a		; $4a48
-	call enemySetAnimation		; $4a49
-	jp objectSetInvisible		; $4a4c
-	call _ecom_decCounter1		; $4a4f
-	ret nz			; $4a52
-	ld l,e			; $4a53
-	ld (hl),$08		; $4a54
-	xor a			; $4a56
-	jp enemySetAnimation		; $4a57
-	ld a,(de)		; $4a5a
-	sub $08			; $4a5b
-	rst_jumpTable			; $4a5d
-	ld l,d			; $4a5e
-	ld c,d			; $4a5f
-	sub d			; $4a60
-	ld c,d			; $4a61
-	and l			; $4a62
-	ld c,d			; $4a63
-	ret z			; $4a64
-	ld c,d			; $4a65
-	ld ($ff00+c),a		; $4a66
-	ld c,d			; $4a67
-	ei			; $4a68
-	ld c,d			; $4a69
-	call _ecom_decCounter1		; $4a6a
-	jr nz,_label_0d_066	; $4a6d
-	call getRandomNumber_noPreserveVars		; $4a6f
-	and $07			; $4a72
-	ld h,d			; $4a74
-	ld l,$86		; $4a75
-	jr z,_label_0d_065	; $4a77
-	ld (hl),$10		; $4a79
-	ld l,$84		; $4a7b
-	inc (hl)		; $4a7d
-	ld l,$90		; $4a7e
-	ld (hl),$14		; $4a80
-	call _ecom_updateAngleTowardTarget		; $4a82
-	jr _label_0d_066		; $4a85
-_label_0d_065:
-	ld (hl),$20		; $4a87
-	ld l,$84		; $4a89
-	ld (hl),$0a		; $4a8b
-	ld a,$05		; $4a8d
-	jp enemySetAnimation		; $4a8f
-	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $4a92
-	call _ecom_bounceOffScreenBoundary		; $4a95
-	call _ecom_decCounter1		; $4a98
-	jr nz,_label_0d_066	; $4a9b
-	ld (hl),$18		; $4a9d
-	ld l,$84		; $4a9f
-	dec (hl)		; $4aa1
-_label_0d_066:
-	jp enemyAnimate		; $4aa2
-	call _ecom_decCounter1		; $4aa5
-	jr nz,_label_0d_066	; $4aa8
-	call _ecom_incState		; $4aaa
-	ld l,$94		; $4aad
-	ld (hl),$00		; $4aaf
-	inc l			; $4ab1
-	ld (hl),$fe		; $4ab2
-	ld l,$90		; $4ab4
-	ld (hl),$28		; $4ab6
-	call _ecom_updateAngleTowardTarget		; $4ab8
-	ld a,$02		; $4abb
-	call enemySetAnimation		; $4abd
-	ld a,$8f		; $4ac0
-	call playSound		; $4ac2
-	jp objectSetVisiblec1		; $4ac5
-	call _ecom_applyVelocityForSideviewEnemy		; $4ac8
-	ld c,$28		; $4acb
-	call objectUpdateSpeedZ_paramC		; $4acd
-	ret nz			; $4ad0
-	ld h,d			; $4ad1
-	ld l,$86		; $4ad2
-	ld (hl),$18		; $4ad4
-	ld l,$84		; $4ad6
-	ld (hl),$08		; $4ad8
-	ld a,$04		; $4ada
-	call enemySetAnimation		; $4adc
-	jp objectSetVisiblec2		; $4adf
-	ld b,$08		; $4ae2
-	call objectCreateInteractionWithSubid00		; $4ae4
-	ld h,d			; $4ae7
-	ld l,$87		; $4ae8
-	ld (hl),$12		; $4aea
-	ld l,$a4		; $4aec
-	res 7,(hl)		; $4aee
-	ld l,$84		; $4af0
-	inc (hl)		; $4af2
-	ld a,$73		; $4af3
-	call playSound		; $4af5
-	jp objectSetInvisible		; $4af8
-	call _ecom_decCounter2		; $4afb
-	ret nz			; $4afe
-	ld c,$04		; $4aff
-	call $4b0f		; $4b01
-	ld c,$fc		; $4b04
-	call $4b0f		; $4b06
-	call decNumEnemies		; $4b09
-	jp enemyDelete		; $4b0c
-	ld b,$43		; $4b0f
-	call _ecom_spawnEnemyWithSubid01		; $4b11
-	ret nz			; $4b14
-	ld (hl),a		; $4b15
-	ld b,$00		; $4b16
-	call objectCopyPositionWithOffset		; $4b18
-	xor a			; $4b1b
-	ld l,$8e		; $4b1c
-	ldi (hl),a		; $4b1e
-	ld (hl),a		; $4b1f
-	ld l,$80		; $4b20
-	ld e,l			; $4b22
-	ld a,(de)		; $4b23
-	ld (hl),a		; $4b24
-	ret			; $4b25
+	call _ecom_checkHazardsNoAnimationForHoles		; $492d
+	jr z,@normalStatus	; $4930
+	sub ENEMYSTATUS_NO_HEALTH			; $4932
+	ret c			; $4934
+	jp z,enemyDie		; $4935
+	dec a			; $4938
+	jp nz,_ecom_updateKnockbackAndCheckHazardsNoAnimationsForHoles		; $4939
 
+	; ENEMYSTATUS_JUST_HIT
+
+	ld e,Enemy.subid		; $493c
+	ld a,(de)		; $493e
+	or a			; $493f
+	ret z			; $4940
+
+	; Subid 1 only: Collision with anything except Link or a shield causes it to
+	; split in two.
+	ld e,Enemy.var2a		; $4941
+	ld a,(de)		; $4943
+	cp ITEMCOLLISION_LINK|$80			; $4944
+	jr z,@normalStatus	; $4946
+
+	res 7,a			; $4948
+	sub ITEMCOLLISION_L1_SHIELD			; $494a
+	cp ITEMCOLLISION_L3_SHIELD - ITEMCOLLISION_L1_SHIELD + 1			; $494c
+	ret c			; $494e
+
+	ld e,Enemy.state		; $494f
+	ld a,$0c		; $4951
+	ld (de),a		; $4953
+	ret			; $4954
+
+@normalStatus:
+	call _ecom_getSubidAndCpStateTo08		; $4955
+	jr nc,@normalState	; $4958
+	rst_jumpTable			; $495a
+	.dw _zol_state_uninitialized
+	.dw _zol_state_stub
+	.dw _zol_state_stub
+	.dw _zol_state_stub
+	.dw _zol_state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw _zol_state_stub
+	.dw _zol_state_stub
+
+@normalState:
+	ld a,b			; $496b
+	rst_jumpTable			; $496c
+	.dw _zol_subid00
+	.dw _zol_subid01
+
+
+_zol_state_uninitialized:
+	ld a,b			; $4971
+	or a			; $4972
+	ld a,SPEED_c0		; $4973
+	jp z,_ecom_setSpeedAndState8		; $4975
+
+	; Subid 1 only
+	ld h,d			; $4978
+	ld l,Enemy.counter1		; $4979
+	ld (hl),$18		; $497b
+	ld l,Enemy.collisionType		; $497d
+	set 7,(hl)		; $497f
+
+	ld a,$04		; $4981
+	call enemySetAnimation		; $4983
+	jp _ecom_setSpeedAndState8AndVisible		; $4986
+
+
+_zol_state_stub:
+	ret			; $4989
+
+
+_zol_subid00:
+	ld a,(de)		; $498a
+	sub $08			; $498b
+	rst_jumpTable			; $498d
+	.dw _zol_subid00_state8
+	.dw _zol_subid00_state9
+	.dw _zol_subid00_stateA
+	.dw _zol_subid00_stateB
+	.dw _zol_subid00_stateC
+	.dw _zol_subid00_stateD
+
+
+; Hiding in ground, waiting for Link to approach
+_zol_subid00_state8:
+	ld c,$28		; $499a
+	call objectCheckLinkWithinDistance		; $499c
+	ret nc			; $499f
+
+	ld bc,-$200		; $49a0
+	call objectSetSpeedZ		; $49a3
+
+	ld l,Enemy.state		; $49a6
+	inc (hl)		; $49a8
+
+	; [counter2] = number of hops before disappearing
+	ld l,Enemy.counter2		; $49a9
+	ld (hl),$04		; $49ab
+
+	jp objectSetVisiblec2		; $49ad
+
+
+; Jumping out of ground
+_zol_subid00_state9:
+	ld h,d			; $49b0
+	ld l,Enemy.animParameter		; $49b1
+	ld a,(hl)		; $49b3
+	or a			; $49b4
+	jr z,_zol_animate	; $49b5
+
+	ld l,Enemy.var30		; $49b7
+	and (hl)		; $49b9
+	jr nz,++		; $49ba
+	ld (hl),$01		; $49bc
+	ld a,SND_ENEMY_JUMP		; $49be
+	call playSound		; $49c0
+++
+	ld c,$28		; $49c3
+	call objectUpdateSpeedZ_paramC		; $49c5
+	ret nz			; $49c8
+
+	; Landed on ground; go to next state
+	call _ecom_incState		; $49c9
+
+	ld l,Enemy.counter1		; $49cc
+	ld (hl),$30		; $49ce
+
+	ld l,Enemy.collisionType		; $49d0
+	set 7,(hl)		; $49d2
+	inc a			; $49d4
+	jp enemySetAnimation		; $49d5
+
+
+; Holding still for [counter1] frames, preparing to hop toward Link
+_zol_subid00_stateA:
+	call _ecom_decCounter1		; $49d8
+	ret nz			; $49db
+
+	ld l,e			; $49dc
+	inc (hl) ; [state]
+
+	ld bc,-$200		; $49de
+	call objectSetSpeedZ		; $49e1
+
+	call _ecom_updateAngleTowardTarget		; $49e4
+
+	ld a,$02		; $49e7
+	call enemySetAnimation		; $49e9
+
+	ld a,SND_ENEMY_JUMP		; $49ec
+	call playSound		; $49ee
+
+_zol_animate:
+	jp enemyAnimate		; $49f1
+
+
+; Hopping toward Link
+_zol_subid00_stateB:
+	call _ecom_applyVelocityForSideviewEnemy		; $49f4
+
+	ld c,$28		; $49f7
+	call objectUpdateSpeedZ_paramC		; $49f9
+	ret nz			; $49fc
+
+	; Hit the ground
+
+	ld h,d			; $49fd
+	ld l,Enemy.counter1		; $49fe
+	ld (hl),$30		; $4a00
+	inc l			; $4a02
+	dec (hl) ; [counter2]-- (number of hops remaining)
+
+	ld a,$0a		; $4a04
+	ld b,$01		; $4a06
+	jr nz,++		; $4a08
+
+	; [counter2] == 0; go to state $0c, and disable collisions as we're disappearing
+	; now
+	ld l,Enemy.collisionType		; $4a0a
+	res 7,(hl)		; $4a0c
+	ld a,$0c		; $4a0e
+	ld b,$03		; $4a10
+++
+	ld l,Enemy.state		; $4a12
+	ld (hl),a		; $4a14
+	ld a,b			; $4a15
+	jp enemySetAnimation		; $4a16
+
+
+; Disappearing into the ground
+_zol_subid00_stateC:
+	ld h,d			; $4a19
+	ld l,Enemy.animParameter		; $4a1a
+	ld a,(hl)		; $4a1c
+	or a			; $4a1d
+	jr z,_zol_animate	; $4a1e
+
+	ld l,e			; $4a20
+	inc (hl) ; [state]
+
+	ld l,Enemy.counter1		; $4a22
+	ld (hl),40		; $4a24
+
+	ld l,Enemy.var30		; $4a26
+	xor a			; $4a28
+	ld (hl),a		; $4a29
+
+	call enemySetAnimation		; $4a2a
+	jp objectSetInvisible		; $4a2d
+
+
+; Fully disappeared into ground. Wait [counter1] frames before we can emerge again
+_zol_subid00_stateD:
+	call _ecom_decCounter1		; $4a30
+	ret nz			; $4a33
+
+	ld l,e			; $4a34
+	ld (hl),$08 ; [state]
+
+	xor a			; $4a37
+	jp enemySetAnimation		; $4a38
+
+
+_zol_subid01:
+	ld a,(de)		; $4a3b
+	sub $08			; $4a3c
+	rst_jumpTable			; $4a3e
+	.dw _zol_subid01_state8
+	.dw _zol_subid01_state9
+	.dw _zol_subid01_stateA
+	.dw _zol_subid01_stateB
+	.dw _zol_subid01_stateC
+	.dw _zol_subid01_stateD
+
+
+; Holding still for [counter1] frames before deciding whether to hop or move forward
+_zol_subid01_state8:
+	call _ecom_decCounter1		; $4a4b
+	jr nz,_zol_animate2	; $4a4e
+
+	; 1 in 8 chance of hopping toward Link
+	call getRandomNumber_noPreserveVars		; $4a50
+	and $07			; $4a53
+	ld h,d			; $4a55
+	ld l,Enemy.counter1		; $4a56
+	jr z,@hopTowardLink	; $4a58
+
+	; 7 in 8 chance of sliding toward Link
+	ld (hl),$10 ; [counter1]
+	ld l,Enemy.state		; $4a5c
+	inc (hl)		; $4a5e
+
+	ld l,Enemy.speed		; $4a5f
+	ld (hl),SPEED_80		; $4a61
+	call _ecom_updateAngleTowardTarget		; $4a63
+	jr _zol_animate2		; $4a66
+
+@hopTowardLink:
+	ld (hl),$20 ; [counter1]
+	ld l,Enemy.state		; $4a6a
+	ld (hl),$0a		; $4a6c
+	ld a,$05		; $4a6e
+	jp enemySetAnimation		; $4a70
+
+
+; Sliding toward Link
+_zol_subid01_state9:
+	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $4a73
+	call _ecom_bounceOffScreenBoundary		; $4a76
+
+	call _ecom_decCounter1		; $4a79
+	jr nz,_zol_animate2	; $4a7c
+
+	ld (hl),$18 ; [counter1]
+	ld l,Enemy.state		; $4a80
+	dec (hl)		; $4a82
+
+_zol_animate2:
+	jp enemyAnimate		; $4a83
+
+
+; Shaking before hopping toward Link
+_zol_subid01_stateA:
+	call _ecom_decCounter1		; $4a86
+	jr nz,_zol_animate2	; $4a89
+
+	call _ecom_incState		; $4a8b
+
+	ld l,Enemy.speedZ		; $4a8e
+	ld (hl),<(-$200)		; $4a90
+	inc l			; $4a92
+	ld (hl),>(-$200)		; $4a93
+
+	ld l,Enemy.speed		; $4a95
+	ld (hl),SPEED_100		; $4a97
+	call _ecom_updateAngleTowardTarget		; $4a99
+
+	ld a,$02		; $4a9c
+	call enemySetAnimation		; $4a9e
+	ld a,SND_ENEMY_JUMP		; $4aa1
+	call playSound		; $4aa3
+
+	jp objectSetVisiblec1		; $4aa6
+
+
+; Hopping toward Link
+_zol_subid01_stateB:
+	call _ecom_applyVelocityForSideviewEnemy		; $4aa9
+	ld c,$28		; $4aac
+	call objectUpdateSpeedZ_paramC		; $4aae
+	ret nz			; $4ab1
+
+	; Hit ground
+	ld h,d			; $4ab2
+	ld l,Enemy.counter1		; $4ab3
+	ld (hl),$18		; $4ab5
+
+	ld l,Enemy.state		; $4ab7
+	ld (hl),$08		; $4ab9
+
+	ld a,$04		; $4abb
+	call enemySetAnimation		; $4abd
+	jp objectSetVisiblec2		; $4ac0
+
+
+; Zol has been attacked, create puff, disable collisions, prepare to spawn two gels in the
+; zol's place.
+_zol_subid01_stateC:
+	ld b,INTERACID_KILLENEMYPUFF		; $4ac3
+	call objectCreateInteractionWithSubid00		; $4ac5
+
+	ld h,d			; $4ac8
+	ld l,Enemy.counter2		; $4ac9
+	ld (hl),18		; $4acb
+
+	ld l,Enemy.collisionType		; $4acd
+	res 7,(hl)		; $4acf
+
+	ld l,Enemy.state		; $4ad1
+	inc (hl)		; $4ad3
+
+	ld a,SND_KILLENEMY		; $4ad4
+	call playSound		; $4ad6
+
+	jp objectSetInvisible		; $4ad9
+
+
+; Zol has been attacked, spawn gels after [counter2] frames
+_zol_subid01_stateD:
+	call _ecom_decCounter2		; $4adc
+	ret nz			; $4adf
+
+	ld c,$04		; $4ae0
+	call _zol_spawnGel		; $4ae2
+	ld c,-$04		; $4ae5
+	call _zol_spawnGel		; $4ae7
+
+	call decNumEnemies		; $4aea
+	jp enemyDelete		; $4aed
+
+;;
+; @param	c	X offset
+; @addr{4af0}
+_zol_spawnGel:
+	ld b,ENEMYID_GEL		; $4af0
+	call _ecom_spawnEnemyWithSubid01		; $4af2
+	ret nz			; $4af5
+
+	ld (hl),a ; [child.subid] = 0
+	ld b,$00		; $4af7
+	call objectCopyPositionWithOffset		; $4af9
+
+	xor a			; $4afc
+	ld l,Enemy.z		; $4afd
+	ldi (hl),a		; $4aff
+	ld (hl),a		; $4b00
+
+	; Transfer "enemy index" to gel
+	ld l,Enemy.enabled		; $4b01
+	ld e,l			; $4b03
+	ld a,(de)		; $4b04
+	ld (hl),a		; $4b05
+	ret			; $4b06
+
+
+; ==============================================================================
+; ENEMYID_FLOORMASTER
+;
+; Variables for subids other than 0:
+;   relatedObj1: Reference to spawner object (subid 0)
+;   var30: Animation index
+;   var31: Index for z-position to use while chasing Link (0-7)
+;   var32: Angle relative to Link where floormaster should spawn
+;
+; Variables for spawner (subid 0):
+;   var30: Number of floormaster currently spawned (they delete themselves after
+;          disappearing into the ground)
+;   var31/var32: Link's position last time a floormaster was spawned. If Link hasn't moved
+;                far from here, the floormaster will spawn at a random angle relative to
+;                him; otherwise it will spawn in the direction Link is moving.
+;   var33: # floormasters to spawn. Children decrement this when they're killed.
+;          (High nibble of original Y value.)
+;   var34: Subid for child objects (high nibble of original X value, plus one)
+; ==============================================================================
 enemyCode35:
-	jr z,_label_0d_068	; $4b26
-	sub $03			; $4b28
-	ret c			; $4b2a
-	jr z,_label_0d_067	; $4b2b
-	dec a			; $4b2d
-	jp nz,_ecom_updateKnockbackNoSolidity		; $4b2e
-	ld e,$aa		; $4b31
-	ld a,(de)		; $4b33
-	cp $80			; $4b34
-	ret nz			; $4b36
-	ld h,d			; $4b37
-	ld l,$84		; $4b38
-	ld (hl),$0c		; $4b3a
-	ld l,$8f		; $4b3c
-	ld (hl),$fb		; $4b3e
-	call $4d2e		; $4b40
-	add $04			; $4b43
-	call enemySetAnimation		; $4b45
-	ld h,d			; $4b48
-	ld l,$8b		; $4b49
-	ld a,($d00b)		; $4b4b
-	sub (hl)		; $4b4e
-	sra a			; $4b4f
-	add (hl)		; $4b51
-	ld (hl),a		; $4b52
-	ld l,$8d		; $4b53
-	ld a,($d00d)		; $4b55
-	sub (hl)		; $4b58
-	sra a			; $4b59
-	add (hl)		; $4b5b
-	ld (hl),a		; $4b5c
-	ret			; $4b5d
-_label_0d_067:
-	ld a,$30		; $4b5e
-	call objectGetRelatedObject1Var		; $4b60
-	dec (hl)		; $4b63
-	ld l,$b3		; $4b64
-	dec (hl)		; $4b66
-	jp enemyDie_uncounted		; $4b67
-_label_0d_068:
-	ld e,$84		; $4b6a
-	ld a,(de)		; $4b6c
-	rst_jumpTable			; $4b6d
-	adc d			; $4b6e
-	ld c,e			; $4b6f
-	sbc e			; $4b70
-	ld c,e			; $4b71
-	push hl			; $4b72
-	ld c,e			; $4b73
-	push hl			; $4b74
-	ld c,e			; $4b75
-	push hl			; $4b76
-	ld c,e			; $4b77
-	push de			; $4b78
-	ld c,e			; $4b79
-	push hl			; $4b7a
-	ld c,e			; $4b7b
-	push hl			; $4b7c
-	ld c,e			; $4b7d
-	and $4b			; $4b7e
-	ld h,e			; $4b80
-	ld c,h			; $4b81
-	ld (hl),a		; $4b82
-	ld c,h			; $4b83
-	cp c			; $4b84
-	ld c,h			; $4b85
-	pop af			; $4b86
-	ld c,h			; $4b87
-	dec e			; $4b88
-	ld c,l			; $4b89
-	ld h,d			; $4b8a
-	ld l,$86		; $4b8b
-	ld (hl),$3c		; $4b8d
-	ld l,e			; $4b8f
-	inc (hl)		; $4b90
-	ld e,$82		; $4b91
-	ld a,(de)		; $4b93
-	or a			; $4b94
-	jp z,$4da8		; $4b95
-	ld (hl),$08		; $4b98
-	ret			; $4b9a
-	ld h,d			; $4b9b
-	ld l,$b3		; $4b9c
-	ld a,(hl)		; $4b9e
-	or a			; $4b9f
-	jr z,_label_0d_069	; $4ba0
-	ld e,$b0		; $4ba2
-	ld a,(de)		; $4ba4
-	sub (hl)		; $4ba5
-	ret nc			; $4ba6
-	ld l,$86		; $4ba7
-	dec (hl)		; $4ba9
-	ret nz			; $4baa
-	ld (hl),$01		; $4bab
-	ld l,$b0		; $4bad
-	ld a,(hl)		; $4baf
-	cp $03			; $4bb0
-	ret nc			; $4bb2
-	ld b,$35		; $4bb3
-	call _ecom_spawnUncountedEnemyWithSubid01		; $4bb5
-	ret nz			; $4bb8
-	ld e,$b4		; $4bb9
-	ld a,(de)		; $4bbb
-	ld (hl),a		; $4bbc
-	ld l,$96		; $4bbd
-	ld a,$80		; $4bbf
-	ldi (hl),a		; $4bc1
-	ld (hl),d		; $4bc2
-	ld h,d			; $4bc3
-	ld l,$b0		; $4bc4
-	inc (hl)		; $4bc6
-	ld l,$86		; $4bc7
-	ld (hl),$80		; $4bc9
-	ret			; $4bcb
-_label_0d_069:
-	call decNumEnemies		; $4bcc
-	call markEnemyAsKilledInRoom		; $4bcf
-	jp enemyDelete		; $4bd2
-	call _ecom_galeSeedEffect		; $4bd5
-	ret c			; $4bd8
-	ld a,$30		; $4bd9
-	call objectGetRelatedObject1Var		; $4bdb
-	dec (hl)		; $4bde
-	ld l,$b3		; $4bdf
-	dec (hl)		; $4be1
-	jp enemyDelete		; $4be2
-	ret			; $4be5
-	call $4d8e		; $4be6
-	ld a,$00		; $4be9
-	push bc			; $4beb
-	call c,getRandomNumber_noPreserveVars		; $4bec
-	pop bc			; $4bef
-	ld e,a			; $4bf0
-	ld a,($d009)		; $4bf1
-	add e			; $4bf4
-	and $1f			; $4bf5
-	ld e,$b2		; $4bf7
-	ld (de),a		; $4bf9
-	ld a,$50		; $4bfa
-	ldh (<hFF8A),a	; $4bfc
-_label_0d_070:
-	ldh a,(<hFF8A)	; $4bfe
-	sub $10			; $4c00
-	jr z,_label_0d_074	; $4c02
-	ldh (<hFF8A),a	; $4c04
-	push bc			; $4c06
-	ld e,$b2		; $4c07
-	call objectSetPositionInCircleArc		; $4c09
-	pop bc			; $4c0c
-	ld a,(de)		; $4c0d
-	ld e,a			; $4c0e
-	ld a,($d00d)		; $4c0f
-	sub e			; $4c12
-	jr nc,_label_0d_071	; $4c13
-	cpl			; $4c15
-	inc a			; $4c16
-_label_0d_071:
-	cp $80			; $4c17
-	jr nc,_label_0d_070	; $4c19
-	ld e,$8b		; $4c1b
-	ld a,(de)		; $4c1d
-	cp $b0			; $4c1e
-	jr nc,_label_0d_070	; $4c20
-	push bc			; $4c22
-	call objectGetTileCollisions		; $4c23
-	pop bc			; $4c26
-	jr nz,_label_0d_070	; $4c27
-	ld h,d			; $4c29
-	ld l,$84		; $4c2a
-	ld (hl),$09		; $4c2c
-	ld l,$86		; $4c2e
-	ld (hl),$20		; $4c30
-	call objectGetAngleTowardEnemyTarget		; $4c32
-	ld b,a			; $4c35
-	ld e,$82		; $4c36
-	ld a,(de)		; $4c38
-	dec a			; $4c39
-	ld a,b			; $4c3a
-	jr nz,_label_0d_072	; $4c3b
-	add $04			; $4c3d
-	and $18			; $4c3f
-_label_0d_072:
-	ld e,$89		; $4c41
-	ld (de),a		; $4c43
-	cp $10			; $4c44
-	ld a,$00		; $4c46
-	jr nc,_label_0d_073	; $4c48
-	inc a			; $4c4a
-_label_0d_073:
-	ld e,$b0		; $4c4b
-	ld (de),a		; $4c4d
-	call enemySetAnimation		; $4c4e
-	call objectSetVisiblec1		; $4c51
-_label_0d_074:
-	ld e,$97		; $4c54
-	ld a,(de)		; $4c56
-	ld h,a			; $4c57
-	ld l,$b1		; $4c58
-	ld a,($d00b)		; $4c5a
-	ldi (hl),a		; $4c5d
-	ld a,($d00d)		; $4c5e
-	ld (hl),a		; $4c61
-	ret			; $4c62
-	ld e,$a1		; $4c63
-	ld a,(de)		; $4c65
-	dec a			; $4c66
-	jp nz,enemyAnimate		; $4c67
-	ld e,$84		; $4c6a
-	ld a,$0a		; $4c6c
-	ld (de),a		; $4c6e
-	ld e,$b0		; $4c6f
-	ld a,(de)		; $4c71
-	add $02			; $4c72
-	jp enemySetAnimation		; $4c74
-	call _ecom_decCounter1		; $4c77
-	jr z,_label_0d_075	; $4c7a
-	ld a,(hl)		; $4c7c
-	srl a			; $4c7d
-	srl a			; $4c7f
-	ld hl,$4cb1		; $4c81
-	rst_addAToHl			; $4c84
-	ld a,(hl)		; $4c85
-	ld e,$8f		; $4c86
-	ld (de),a		; $4c88
-	ret			; $4c89
-_label_0d_075:
-	ld (hl),$f0		; $4c8a
-	ld l,$a4		; $4c8c
-	set 7,(hl)		; $4c8e
-	ld l,$84		; $4c90
-	ld (hl),$0b		; $4c92
-	call $4d2e		; $4c94
-	ld b,a			; $4c97
-	ld e,$97		; $4c98
-	ld a,(de)		; $4c9a
-	ld h,a			; $4c9b
-	ld l,$8d		; $4c9c
-	bit 5,(hl)		; $4c9e
-	ld h,d			; $4ca0
-	ld l,$90		; $4ca1
-	ld (hl),$0f		; $4ca3
-	jr z,_label_0d_076	; $4ca5
-	ld (hl),$19		; $4ca7
-_label_0d_076:
-	ld a,b			; $4ca9
-	add $02			; $4caa
-	call enemySetAnimation		; $4cac
-	jr _label_0d_079		; $4caf
-	ei			; $4cb1
-.DB $fc				; $4cb2
-.DB $fd				; $4cb3
-.DB $fd				; $4cb4
-	cp $fe			; $4cb5
-	rst $38			; $4cb7
-	rst $38			; $4cb8
-	call _ecom_decCounter1		; $4cb9
-	jr nz,_label_0d_077	; $4cbc
-	ld l,$8f		; $4cbe
-	ld (hl),$00		; $4cc0
-	ld l,$a4		; $4cc2
-	res 7,(hl)		; $4cc4
-	ld l,e			; $4cc6
-	ld (hl),$0d		; $4cc7
-	ld l,$b0		; $4cc9
-	ld a,$06		; $4ccb
-	add (hl)		; $4ccd
-	jp enemySetAnimation		; $4cce
-_label_0d_077:
-	ld e,$b0		; $4cd1
-	ld a,(de)		; $4cd3
-	ldh (<hFF8D),a	; $4cd4
-	call $4d2e		; $4cd6
-	ld b,a			; $4cd9
-	ldh a,(<hFF8D)	; $4cda
-	cp b			; $4cdc
-	jr z,_label_0d_078	; $4cdd
-	ld a,$02		; $4cdf
-	add b			; $4ce1
-	call enemySetAnimation		; $4ce2
-_label_0d_078:
-	call $4d70		; $4ce5
-	call $4dbe		; $4ce8
-	call _ecom_applyVelocityGivenAdjacentWalls		; $4ceb
-_label_0d_079:
-	jp enemyAnimate		; $4cee
-	ld e,$a1		; $4cf1
-	ld a,(de)		; $4cf3
-	dec a			; $4cf4
-	jr z,_label_0d_080	; $4cf5
-	dec a			; $4cf7
-	jr z,_label_0d_081	; $4cf8
-	dec a			; $4cfa
-	jr nz,_label_0d_079	; $4cfb
-	ld a,$02		; $4cfd
-	ld ($d005),a		; $4cff
-	jp objectSetInvisible		; $4d02
-_label_0d_080:
-	ld (de),a		; $4d05
-	ld ($d01a),a		; $4d06
-	ld e,$8b		; $4d09
-	ld a,($d00b)		; $4d0b
-	ld (de),a		; $4d0e
-	ld e,$8d		; $4d0f
-	ld a,($d00d)		; $4d11
-	ld (de),a		; $4d14
-	ret			; $4d15
-_label_0d_081:
-	xor a			; $4d16
-	ld (de),a		; $4d17
-	ld e,$8f		; $4d18
-	ld (de),a		; $4d1a
-	jr _label_0d_079		; $4d1b
-	ld e,$a1		; $4d1d
-	ld a,(de)		; $4d1f
-	cp $03			; $4d20
-	jr nz,_label_0d_079	; $4d22
-	ld e,$97		; $4d24
-	ld a,(de)		; $4d26
-	ld h,a			; $4d27
-	ld l,$b0		; $4d28
-	dec (hl)		; $4d2a
-	jp enemyDelete		; $4d2b
-	call $4d67		; $4d2e
-	ret nc			; $4d31
-	call objectGetAngleTowardLink		; $4d32
-	ld b,a			; $4d35
-	and $0f			; $4d36
-	jr nz,_label_0d_082	; $4d38
-	ld e,$89		; $4d3a
-	ld a,b			; $4d3c
-	ld (de),a		; $4d3d
-	ld e,$b0		; $4d3e
-	ld a,(de)		; $4d40
-	ret			; $4d41
-_label_0d_082:
-	ld e,$82		; $4d42
-	ld a,(de)		; $4d44
-	dec a			; $4d45
-	ld a,b			; $4d46
-	jr nz,_label_0d_084	; $4d47
-	ld e,$89		; $4d49
-	and $f8			; $4d4b
-	ld (de),a		; $4d4d
-	cp $10			; $4d4e
-	ld a,$00		; $4d50
-	jr nc,_label_0d_083	; $4d52
-	inc a			; $4d54
-_label_0d_083:
-	ld e,$b0		; $4d55
-	ld (de),a		; $4d57
-	ret			; $4d58
-_label_0d_084:
-	ld e,$89		; $4d59
-	ld (de),a		; $4d5b
-	cp $10			; $4d5c
-	ld a,$00		; $4d5e
-	jr nc,_label_0d_085	; $4d60
-	inc a			; $4d62
-_label_0d_085:
-	ld e,$b0		; $4d63
+	jr z,@normalStatus	; $4b07
+	sub ENEMYSTATUS_NO_HEALTH			; $4b09
+	ret c			; $4b0b
+	jr z,@dead	; $4b0c
+	dec a			; $4b0e
+	jp nz,_ecom_updateKnockbackNoSolidity		; $4b0f
+
+	; ENEMYSTATUS_JUST_HIT
+
+	ld e,Enemy.var2a		; $4b12
+	ld a,(de)		; $4b14
+	cp $80|ITEMCOLLISION_LINK			; $4b15
+	ret nz			; $4b17
+
+	; Grabbed Link
+	ld h,d			; $4b18
+	ld l,Enemy.state		; $4b19
+	ld (hl),$0c		; $4b1b
+	ld l,Enemy.zh		; $4b1d
+	ld (hl),$fb		; $4b1f
+
+	call _floormaster_updateAngleTowardLink		; $4b21
+	add $04			; $4b24
+	call enemySetAnimation		; $4b26
+
+	; Move to halfway point between Link and floormaster
+	ld h,d			; $4b29
+	ld l,Enemy.yh		; $4b2a
+	ld a,(w1Link.yh)		; $4b2c
+	sub (hl)		; $4b2f
+	sra a			; $4b30
+	add (hl)		; $4b32
+	ld (hl),a		; $4b33
+
+	ld l,Enemy.xh		; $4b34
+	ld a,(w1Link.xh)		; $4b36
+	sub (hl)		; $4b39
+	sra a			; $4b3a
+	add (hl)		; $4b3c
+	ld (hl),a		; $4b3d
+	ret			; $4b3e
+
+@dead:
+	ld a,Object.var30		; $4b3f
+	call objectGetRelatedObject1Var		; $4b41
+	dec (hl)		; $4b44
+	ld l,Enemy.var33		; $4b45
+	dec (hl)		; $4b47
+	jp enemyDie_uncounted		; $4b48
+
+@normalStatus:
+	ld e,Enemy.state		; $4b4b
+	ld a,(de)		; $4b4d
+	rst_jumpTable			; $4b4e
+	.dw _floormaster_state_uninitialized
+	.dw _floormaster_state1
+	.dw _floormaster_state_stub
+	.dw _floormaster_state_stub
+	.dw _floormaster_state_stub
+	.dw _floormaster_state_galeSeed
+	.dw _floormaster_state_stub
+	.dw _floormaster_state_stub
+	.dw _floormaster_state8
+	.dw _floormaster_state9
+	.dw _floormaster_stateA
+	.dw _floormaster_stateB
+	.dw _floormaster_stateC
+	.dw _floormaster_stateD
+
+
+_floormaster_state_uninitialized:
+	ld h,d			; $4b6b
+	ld l,Enemy.counter1		; $4b6c
+	ld (hl),60		; $4b6e
+	ld l,e			; $4b70
+	inc (hl) ; [state] = 1
+
+	ld e,Enemy.subid		; $4b72
+	ld a,(de)		; $4b74
+	or a			; $4b75
+	jp z,_floormaster_initSpawner		; $4b76
+
+	; Subid 1 only
+	ld (hl),$08 ; [state] = 8
+	ret			; $4b7b
+
+
+; State 1: only for subid 0 (spawner).
+_floormaster_state1:
+	; Delete self if all floormasters were killed
+	ld h,d			; $4b7c
+	ld l,Enemy.var33		; $4b7d
+	ld a,(hl)		; $4b7f
+	or a			; $4b80
+	jr z,@delete	; $4b81
+
+	; Return if all available floormasters have spawned already
+	ld e,Enemy.var30		; $4b83
+	ld a,(de)		; $4b85
+	sub (hl)		; $4b86
+	ret nc			; $4b87
+
+	; Spawn another floormaster in [counter1] frames
+	ld l,Enemy.counter1		; $4b88
+	dec (hl)		; $4b8a
+	ret nz			; $4b8b
+
+	ld (hl),$01 ; [counter1]
+
+	; Maximum of 3 on-screen at any given time
+	ld l,Enemy.var30		; $4b8e
+	ld a,(hl)		; $4b90
+	cp $03			; $4b91
+	ret nc			; $4b93
+
+	ld b,ENEMYID_FLOORMASTER		; $4b94
+	call _ecom_spawnUncountedEnemyWithSubid01		; $4b96
+	ret nz			; $4b99
+
+	ld e,Enemy.var34		; $4b9a
+	ld a,(de)		; $4b9c
+	ld (hl),a ; [child.subid] = [this.var34]
+
+	ld l,Enemy.relatedObj1		; $4b9e
+	ld a,Enemy.start		; $4ba0
+	ldi (hl),a		; $4ba2
+	ld (hl),d		; $4ba3
+
+	ld h,d			; $4ba4
+	ld l,Enemy.var30		; $4ba5
+	inc (hl)		; $4ba7
+
+	ld l,Enemy.counter1		; $4ba8
+	ld (hl),$80		; $4baa
+	ret			; $4bac
+
+@delete:
+	call decNumEnemies		; $4bad
+	call markEnemyAsKilledInRoom		; $4bb0
+	jp enemyDelete		; $4bb3
+
+
+_floormaster_state_galeSeed:
+	call _ecom_galeSeedEffect		; $4bb6
+	ret c			; $4bb9
+
+	ld a,Object.var30		; $4bba
+	call objectGetRelatedObject1Var		; $4bbc
+	dec (hl)		; $4bbf
+	ld l,Enemy.var33		; $4bc0
+	dec (hl)		; $4bc2
+	jp enemyDelete		; $4bc3
+
+
+_floormaster_state_stub:
+	ret			; $4bc6
+
+
+; States 8+ are for subids 1+ (not spawner objects; actual, physical floormasters).
+
+; Choosing a position to spawn at.
+_floormaster_state8:
+	; If Link is within 8 pixels of his position last time a floormaster was spawned,
+	; the floormaster will spawn at a random angle relative to Link. Otherwise, it
+	; will spawn in the direction Link is moving.
+	call _floormaster_checkLinkMoved8PixelsAway		; $4bc7
+	ld a,$00		; $4bca
+	push bc			; $4bcc
+	call c,getRandomNumber_noPreserveVars		; $4bcd
+	pop bc			; $4bd0
+
+	ld e,a			; $4bd1
+	ld a,(w1Link.angle)		; $4bd2
+	add e			; $4bd5
+	and $1f			; $4bd6
+	ld e,Enemy.var32		; $4bd8
+	ld (de),a		; $4bda
+
+	; Try various distances away from Link ($50 to $10)
+	ld a,$50		; $4bdb
+	ldh (<hFF8A),a	; $4bdd
+
+@tryDistance:
+	ldh a,(<hFF8A)	; $4bdf
+	sub $10			; $4be1
+	jr z,@doneLoop	; $4be3
+	ldh (<hFF8A),a	; $4be5
+
+	push bc			; $4be7
+	ld e,Enemy.var32		; $4be8
+	call objectSetPositionInCircleArc		; $4bea
+	pop bc			; $4bed
+
+	; Check that this position candidate is valid.
+
+	; a = abs([w1Link.xh] - [this.xh])
+	ld a,(de)		; $4bee
+	ld e,a			; $4bef
+	ld a,(w1Link.xh)		; $4bf0
+	sub e			; $4bf3
+	jr nc,+			; $4bf4
+	cpl			; $4bf6
+	inc a			; $4bf7
++
+	cp $80			; $4bf8
+	jr nc,@tryDistance	; $4bfa
+
+	ld e,Enemy.yh		; $4bfc
+	ld a,(de)		; $4bfe
+	cp LARGE_ROOM_HEIGHT<<4			; $4bff
+	jr nc,@tryDistance	; $4c01
+
+	; Tile must not be solid
+	push bc			; $4c03
+	call objectGetTileCollisions		; $4c04
+	pop bc			; $4c07
+	jr nz,@tryDistance	; $4c08
+
+	; Found a valid position. Go to state 9
+	ld h,d			; $4c0a
+	ld l,Enemy.state		; $4c0b
+	ld (hl),$09		; $4c0d
+
+	ld l,Enemy.counter1		; $4c0f
+	ld (hl),$20		; $4c11
+
+	call objectGetAngleTowardEnemyTarget		; $4c13
+	ld b,a			; $4c16
+
+	; Subid 1 only: angle must be a cardinal direction
+	ld e,Enemy.subid		; $4c17
+	ld a,(de)		; $4c19
+	dec a			; $4c1a
+	ld a,b			; $4c1b
+	jr nz,+			; $4c1c
+	add $04			; $4c1e
+	and $18			; $4c20
++
+	ld e,Enemy.angle		; $4c22
+	ld (de),a		; $4c24
+
+	; Decide animation to use
+	cp $10			; $4c25
+	ld a,$00		; $4c27
+	jr nc,+			; $4c29
+	inc a			; $4c2b
++
+	ld e,Enemy.var30		; $4c2c
+	ld (de),a		; $4c2e
+	call enemySetAnimation		; $4c2f
+	call objectSetVisiblec1		; $4c32
+
+@doneLoop:
+	; Copy Link's position to spawner.var31/var32
+	ld e,Enemy.relatedObj1+1		; $4c35
+	ld a,(de)		; $4c37
+	ld h,a			; $4c38
+	ld l,Enemy.var31		; $4c39
+	ld a,(w1Link.yh)		; $4c3b
+	ldi (hl),a		; $4c3e
+	ld a,(w1Link.xh)		; $4c3f
+	ld (hl),a		; $4c42
+	ret			; $4c43
+
+
+; Emerging from ground
+_floormaster_state9:
+	ld e,Enemy.animParameter		; $4c44
+	ld a,(de)		; $4c46
+	dec a			; $4c47
+	jp nz,enemyAnimate		; $4c48
+
+	ld e,Enemy.state		; $4c4b
+	ld a,$0a		; $4c4d
+	ld (de),a		; $4c4f
+
+	ld e,Enemy.var30		; $4c50
+	ld a,(de)		; $4c52
+	add $02			; $4c53
+	jp enemySetAnimation		; $4c55
+
+
+; Floating in place for [counter1] frames before chasing Link
+_floormaster_stateA:
+	call _ecom_decCounter1		; $4c58
+	jr z,@beginChasing	; $4c5b
+
+	ld a,(hl)		; $4c5d
+	srl a			; $4c5e
+	srl a			; $4c60
+	ld hl,@zVals		; $4c62
+	rst_addAToHl			; $4c65
+	ld a,(hl)		; $4c66
+	ld e,Enemy.zh		; $4c67
+	ld (de),a		; $4c69
+	ret			; $4c6a
+
+@beginChasing:
+	ld (hl),$f0 ; [counter1]
+
+	ld l,Enemy.collisionType		; $4c6d
+	set 7,(hl)		; $4c6f
+
+	ld l,Enemy.state		; $4c71
+	ld (hl),$0b		; $4c73
+
+	call _floormaster_updateAngleTowardLink		; $4c75
+	ld b,a			; $4c78
+
+	ld e,Enemy.relatedObj1+1		; $4c79
+	ld a,(de)		; $4c7b
+	ld h,a			; $4c7c
+	ld l,Enemy.xh		; $4c7d
+	bit 5,(hl)		; $4c7f
+
+	; Certain subids have higher speed?
+	ld h,d			; $4c81
+	ld l,Enemy.speed		; $4c82
+	ld (hl),SPEED_60		; $4c84
+	jr z,+			; $4c86
+	ld (hl),SPEED_a0		; $4c88
++
+	ld a,b			; $4c8a
+	add $02			; $4c8b
+	call enemySetAnimation		; $4c8d
+	jr _floormaster_animate		; $4c90
+
+@zVals:
+	.db $fb $fc $fd $fd $fe $fe $ff $ff
+
+
+; Chasing Link
+_floormaster_stateB:
+	call _ecom_decCounter1		; $4c9a
+	jr nz,@stillChasing	; $4c9d
+
+	; Time to go back into ground
+	ld l,Enemy.zh		; $4c9f
+	ld (hl),$00		; $4ca1
+	ld l,Enemy.collisionType		; $4ca3
+	res 7,(hl)		; $4ca5
+
+	ld l,e			; $4ca7
+	ld (hl),$0d ; [state]
+
+	ld l,Enemy.var30		; $4caa
+	ld a,$06		; $4cac
+	add (hl)		; $4cae
+	jp enemySetAnimation		; $4caf
+
+@stillChasing:
+	ld e,Enemy.var30		; $4cb2
+	ld a,(de)		; $4cb4
+	ldh (<hFF8D),a	; $4cb5
+
+	call _floormaster_updateAngleTowardLink		; $4cb7
+	ld b,a			; $4cba
+	ldh a,(<hFF8D)	; $4cbb
+	cp b			; $4cbd
+	jr z,++			; $4cbe
+	ld a,$02		; $4cc0
+	add b			; $4cc2
+	call enemySetAnimation		; $4cc3
+++
+	call _floormaster_updateZPosition		; $4cc6
+	call _floormaster_getAdjacentWallsBitset		; $4cc9
+	call _ecom_applyVelocityGivenAdjacentWalls		; $4ccc
+
+_floormaster_animate:
+	jp enemyAnimate		; $4ccf
+
+
+; Grabbing Link
+_floormaster_stateC:
+	ld e,Enemy.animParameter		; $4cd2
+	ld a,(de)		; $4cd4
+	dec a			; $4cd5
+	jr z,@makeLinkInvisible	; $4cd6
+	dec a			; $4cd8
+	jr z,@setZToZero	; $4cd9
+	dec a			; $4cdb
+	jr nz,_floormaster_animate	; $4cdc
+
+	; [animParameter] == 3
+	; Set state2 for LINK_STATE_GRABBED_BY_WALLMASTER
+	ld a,$02		; $4cde
+	ld (w1Link.state2),a		; $4ce0
+	jp objectSetInvisible		; $4ce3
+
+@makeLinkInvisible: ; [animParameter] == 1
+	ld (de),a		; $4ce6
+	ld (w1Link.visible),a		; $4ce7
+
+	ld e,Enemy.yh		; $4cea
+	ld a,(w1Link.yh)		; $4cec
+	ld (de),a		; $4cef
+	ld e,Enemy.xh		; $4cf0
+	ld a,(w1Link.xh)		; $4cf2
+	ld (de),a		; $4cf5
+	ret			; $4cf6
+
+@setZToZero: ; [animParameter] == 2
+	xor a			; $4cf7
+	ld (de),a		; $4cf8
+	ld e,Enemy.zh		; $4cf9
+	ld (de),a		; $4cfb
+	jr _floormaster_animate		; $4cfc
+
+
+; Sinking into ground
+_floormaster_stateD:
+	ld e,Enemy.animParameter		; $4cfe
+	ld a,(de)		; $4d00
+	cp $03			; $4d01
+	jr nz,_floormaster_animate	; $4d03
+
+	; Tell spawner that there's one less floormaster on-screen before deleting self
+	ld e,Enemy.relatedObj1+1		; $4d05
+	ld a,(de)		; $4d07
+	ld h,a			; $4d08
+	ld l,Enemy.var30		; $4d09
+	dec (hl)		; $4d0b
+
+	jp enemyDelete		; $4d0c
+
+
+;;
+; @param[out]	a	Value written to var30 (0 if Link is to the left, 1 if right)
+; @addr{4d0f}
+_floormaster_updateAngleTowardLink:
+	call @checkLinkCollisionsEnabled		; $4d0f
+	ret nc			; $4d12
+
+	call objectGetAngleTowardLink		; $4d13
+	ld b,a			; $4d16
+	and $0f			; $4d17
+	jr nz,++		; $4d19
+
+	; Link is directly above or below the floormaster
+	ld e,Enemy.angle		; $4d1b
+	ld a,b			; $4d1d
+	ld (de),a		; $4d1e
+	ld e,Enemy.var30		; $4d1f
+	ld a,(de)		; $4d21
+	ret			; $4d22
+++
+	ld e,Enemy.subid		; $4d23
+	ld a,(de)		; $4d25
+	dec a			; $4d26
+	ld a,b			; $4d27
+	jr nz,@subid0		; $4d28
+
+@subid1:
+	; Only move in cardinal directions
+	ld e,Enemy.angle		; $4d2a
+	and $f8			; $4d2c
+	ld (de),a		; $4d2e
+
+	cp $10			; $4d2f
+	ld a,$00		; $4d31
+	jr nc,+			; $4d33
+	inc a			; $4d35
++
+	ld e,Enemy.var30		; $4d36
+	ld (de),a		; $4d38
+	ret			; $4d39
+
+@subid0:
+	ld e,Enemy.angle		; $4d3a
+	ld (de),a		; $4d3c
+
+	cp $10			; $4d3d
+	ld a,$00		; $4d3f
+	jr nc,+			; $4d41
+	inc a			; $4d43
++
+	ld e,Enemy.var30		; $4d44
+	ld (de),a		; $4d46
+	ret			; $4d47
+
+;;
+; @param[out]	cflag	c if Link's collisions are enabled
+; @addr{4d48}
+@checkLinkCollisionsEnabled:
+	ld a,(w1Link.collisionType)		; $4d48
+	rlca			; $4d4b
+	ret c			; $4d4c
+	ld e,Enemy.var30		; $4d4d
+	ld a,(de)		; $4d4f
+	ret			; $4d50
+
+
+;;
+; @addr{4d51}
+_floormaster_updateZPosition:
+	ld e,Enemy.counter1		; $4d51
+	ld a,(de)		; $4d53
+	and $07			; $4d54
+	ret nz			; $4d56
+
+	ld e,Enemy.var31		; $4d57
+	ld a,(de)		; $4d59
+	inc a			; $4d5a
+	and $07			; $4d5b
+	ld (de),a		; $4d5d
+	ld hl,@zVals		; $4d5e
+	rst_addAToHl			; $4d61
+	ld e,Enemy.zh		; $4d62
+	ld a,(hl)		; $4d64
 	ld (de),a		; $4d65
 	ret			; $4d66
-	ld a,($d024)		; $4d67
-	rlca			; $4d6a
-	ret c			; $4d6b
-	ld e,$b0		; $4d6c
-	ld a,(de)		; $4d6e
-	ret			; $4d6f
-	ld e,$86		; $4d70
-	ld a,(de)		; $4d72
-	and $07			; $4d73
-	ret nz			; $4d75
-	ld e,$b1		; $4d76
-	ld a,(de)		; $4d78
-	inc a			; $4d79
-	and $07			; $4d7a
-	ld (de),a		; $4d7c
-	ld hl,$4d86		; $4d7d
-	rst_addAToHl			; $4d80
-	ld e,$8f		; $4d81
-	ld a,(hl)		; $4d83
-	ld (de),a		; $4d84
-	ret			; $4d85
-	ei			; $4d86
-.DB $fc				; $4d87
-.DB $fd				; $4d88
-.DB $fc				; $4d89
-	ei			; $4d8a
-	ld a,($faf9)		; $4d8b
-	ld a,$31		; $4d8e
-	call objectGetRelatedObject1Var		; $4d90
-	ld a,($d00b)		; $4d93
-	ld b,a			; $4d96
-	sub (hl)		; $4d97
-	add $08			; $4d98
-	cp $10			; $4d9a
-	ld a,($d00d)		; $4d9c
-	ld c,a			; $4d9f
-	ret nc			; $4da0
-	inc l			; $4da1
-	sub (hl)		; $4da2
-	add $08			; $4da3
-	cp $10			; $4da5
-	ret			; $4da7
-	ld e,$8b		; $4da8
-	ld a,(de)		; $4daa
-	and $f0			; $4dab
-	swap a			; $4dad
-	ld e,$b3		; $4daf
-	ld (de),a		; $4db1
-	ld e,$8d		; $4db2
-	ld a,(de)		; $4db4
-	and $f0			; $4db5
-	swap a			; $4db7
-	inc a			; $4db9
-	ld e,$b4		; $4dba
-	ld (de),a		; $4dbc
-	ret			; $4dbd
-	ld a,$02		; $4dbe
-	jp _ecom_getTopDownAdjacentWallsBitset		; $4dc0
 
+@zVals:
+	.db $fb $fc $fd $fc $fb $fa $f9 $fa
+
+
+
+;;
+; Checks whether Link has moved 8 pixels away from his position last time a floormaster
+; was spawned.
+;
+; @param[out]	bc	Link's position
+; @param[out]	cflag	c if he's within 8 pixels
+; @addr{4d6f}
+_floormaster_checkLinkMoved8PixelsAway:
+	ld a,Object.var31		; $4d6f
+	call objectGetRelatedObject1Var		; $4d71
+	ld a,(w1Link.yh)		; $4d74
+	ld b,a			; $4d77
+	sub (hl)		; $4d78
+	add $08			; $4d79
+	cp $10			; $4d7b
+	ld a,(w1Link.xh)		; $4d7d
+	ld c,a			; $4d80
+	ret nc			; $4d81
+
+	inc l			; $4d82
+	sub (hl) ; [var32]
+	add $08			; $4d84
+	cp $10			; $4d86
+	ret			; $4d88
+
+
+;;
+; @addr{4d89}
+_floormaster_initSpawner:
+	ld e,Enemy.yh		; $4d89
+	ld a,(de)		; $4d8b
+	and $f0			; $4d8c
+	swap a			; $4d8e
+	ld e,Enemy.var33		; $4d90
+	ld (de),a		; $4d92
+
+	ld e,Enemy.xh		; $4d93
+	ld a,(de)		; $4d95
+	and $f0			; $4d96
+	swap a			; $4d98
+	inc a			; $4d9a
+	ld e,Enemy.var34		; $4d9b
+	ld (de),a		; $4d9d
+	ret			; $4d9e
+
+;;
+; Only screen boundaries count as "walls" for floormaster.
+; @addr{4d9f}
+_floormaster_getAdjacentWallsBitset:
+	ld a,$02		; $4d9f
+	jp _ecom_getTopDownAdjacentWallsBitset		; $4da1
+
+
+; ==============================================================================
+; ENEMYID_CUCCO
+;
+; Shares some code with ENEMYID_GIANT_CUCCO.
+;
+; Variables:
+;   relatedObj1: INTERACID_PUFF object when transforming
+;   var30: Number of times it's been hit (also read by PARTID_CUCCO_ATTACKER to decide
+;          speed)
+;   var31: Enemy ID to transform into, when a mystery seed is used on it
+;   var32: Counter used while being held
+;   var33: Counter until next PARTID_CUCCO_ATTACKER is spawned
+; ==============================================================================
 enemyCode36:
-	jr z,_label_0d_086	; $4dc3
-	ld h,d			; $4dc5
-	ld l,$aa		; $4dc6
-	ld a,(hl)		; $4dc8
-	cp $9a			; $4dc9
-	jp z,$4fbb		; $4dcb
-	cp $9e			; $4dce
-	jp nz,$4f96		; $4dd0
-_label_0d_086:
-	call $4f68		; $4dd3
-	ld e,$84		; $4dd6
-	ld a,(de)		; $4dd8
-	rst_jumpTable			; $4dd9
-	ld a,($ff00+c)		; $4dda
-	ld c,l			; $4ddb
-	ld h,h			; $4ddc
-	ld c,(hl)		; $4ddd
-.DB $fc				; $4dde
-	ld c,l			; $4ddf
-	ld h,h			; $4de0
-	ld c,(hl)		; $4de1
-	ld h,h			; $4de2
-	ld c,(hl)		; $4de3
-	bit 0,h			; $4de4
-	ld h,h			; $4de6
-	ld c,(hl)		; $4de7
-	ld h,h			; $4de8
-	ld c,(hl)		; $4de9
-	ld h,l			; $4dea
-	ld c,(hl)		; $4deb
-	add e			; $4dec
-	ld c,(hl)		; $4ded
-	xor h			; $4dee
-	ld c,(hl)		; $4def
-	cp d			; $4df0
-	ld c,(hl)		; $4df1
-	ld a,$14		; $4df2
-	call _ecom_setSpeedAndState8AndVisible		; $4df4
-	ld l,$bf		; $4df7
-	set 5,(hl)		; $4df9
-	ret			; $4dfb
-	inc e			; $4dfc
-	ld a,(de)		; $4dfd
-	rst_jumpTable			; $4dfe
-	rlca			; $4dff
-	ld c,(hl)		; $4e00
-	ldi a,(hl)		; $4e01
-	ld c,(hl)		; $4e02
-	ld a,$4e		; $4e03
-	ld d,b			; $4e05
-	ld c,(hl)		; $4e06
-	ld h,d			; $4e07
-	ld l,e			; $4e08
-	inc (hl)		; $4e09
-	ld l,$a4		; $4e0a
-	res 7,(hl)		; $4e0c
-	ld l,$b2		; $4e0e
-	xor a			; $4e10
-	ld (hl),a		; $4e11
-	ld (wLinkGrabState2),a		; $4e12
-	ld a,($d008)		; $4e15
-	srl a			; $4e18
-	xor $01			; $4e1a
-	ld l,$88		; $4e1c
-	ld (hl),a		; $4e1e
-	call enemySetAnimation		; $4e1f
-	ld a,$a0		; $4e22
-	call playSound		; $4e24
-	jp objectSetVisiblec1		; $4e27
-	call $4fe6		; $4e2a
-	ld h,d			; $4e2d
-	ld l,$88		; $4e2e
-	ld a,($d008)		; $4e30
-	srl a			; $4e33
-	xor $01			; $4e35
-	cp (hl)			; $4e37
-	jr z,_label_0d_087	; $4e38
-	ld (hl),a		; $4e3a
-	jp enemySetAnimation		; $4e3b
-_label_0d_087:
-	ld e,$8b		; $4e3e
-	ld a,(de)		; $4e40
-	cp $80			; $4e41
-	jr nc,_label_0d_088	; $4e43
-	ld e,$8d		; $4e45
-	ld a,(de)		; $4e47
-	cp $a0			; $4e48
-	jp c,enemyAnimate		; $4e4a
-_label_0d_088:
-	jp enemyDelete		; $4e4d
-	ld h,d			; $4e50
-	ld l,$84		; $4e51
-	ld (hl),$0a		; $4e53
-	ld l,$a4		; $4e55
-	set 7,(hl)		; $4e57
-	ld l,$90		; $4e59
-	ld (hl),$28		; $4e5b
-	ld l,$86		; $4e5d
-	ld (hl),$01		; $4e5f
-	jp objectSetVisiblec2		; $4e61
-	ret			; $4e64
-	call objectAddToGrabbableObjectBuffer		; $4e65
-	ld e,$3f		; $4e68
-	ld bc,$031f		; $4e6a
-	call _ecom_randomBitwiseAndBCE		; $4e6d
-	or e			; $4e70
-	ret nz			; $4e71
-	call _ecom_incState		; $4e72
-	ld l,$86		; $4e75
-	ldi (hl),a		; $4e77
-	ld a,$02		; $4e78
-	add b			; $4e7a
-	ld (hl),a		; $4e7b
-	ld l,$89		; $4e7c
-	ld a,c			; $4e7e
-	ld (hl),a		; $4e7f
-	jp $4f44		; $4e80
-	call objectAddToGrabbableObjectBuffer		; $4e83
-	ld h,d			; $4e86
-	ld l,$86		; $4e87
-	ld a,(hl)		; $4e89
-	and $0f			; $4e8a
-	inc (hl)		; $4e8c
-	ld hl,$4f58		; $4e8d
-	rst_addAToHl			; $4e90
-	ld e,$8f		; $4e91
-	ld a,(hl)		; $4e93
-	ld (de),a		; $4e94
-	or a			; $4e95
-	jr nz,_label_0d_089	; $4e96
-	call _ecom_decCounter2		; $4e98
-	jr nz,_label_0d_089	; $4e9b
-	ld l,$84		; $4e9d
-	dec (hl)		; $4e9f
-_label_0d_089:
-	call _ecom_bounceOffWallsAndHoles		; $4ea0
-	call nz,$4f44		; $4ea3
-	call objectApplySpeed		; $4ea6
-_label_0d_090:
-	jp enemyAnimate		; $4ea9
-	call objectAddToGrabbableObjectBuffer		; $4eac
-	call _ecom_updateCardinalAngleAwayFromTarget		; $4eaf
-	call $4f44		; $4eb2
-	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $4eb5
-	jr _label_0d_090		; $4eb8
-	ld a,$21		; $4eba
-	call objectGetRelatedObject1Var		; $4ebc
-	bit 7,(hl)		; $4ebf
-	ret z			; $4ec1
-	ld e,$b1		; $4ec2
-	ld a,(de)		; $4ec4
-	ld b,a			; $4ec5
-	ld c,$00		; $4ec6
-	jp objectReplaceWithID		; $4ec8
+	jr z,@normalStatus	; $4da4
 
+	ld h,d			; $4da6
+	ld l,Enemy.var2a		; $4da7
+	ld a,(hl)		; $4da9
+	cp $80|ITEMCOLLISION_MYSTERY_SEED			; $4daa
+	jp z,_cucco_hitWithMysterySeed		; $4dac
+
+	cp $80|ITEMCOLLISION_GALE_SEED			; $4daf
+	jp nz,_cucco_attacked		; $4db1
+
+@normalStatus:
+	call _cucco_checkSpawnCuccoAttacker		; $4db4
+	ld e,Enemy.state		; $4db7
+	ld a,(de)		; $4db9
+	rst_jumpTable			; $4dba
+	.dw _cucco_state_uninitialized
+	.dw _cucco_state_stub
+	.dw _cucco_state_grabbed
+	.dw _cucco_state_stub
+	.dw _cucco_state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw _cucco_state_stub
+	.dw _cucco_state_stub
+	.dw _cucco_state8
+	.dw _cucco_state9
+	.dw _cucco_stateA
+	.dw _cucco_stateB
+
+
+_cucco_state_uninitialized:
+	ld a,SPEED_80		; $4dd3
+	call _ecom_setSpeedAndState8AndVisible		; $4dd5
+
+	ld l,Enemy.var3f		; $4dd8
+	set 5,(hl)		; $4dda
+	ret			; $4ddc
+
+
+; Also used by ENEMYID_GIANT_CUCCO
+_cucco_state_grabbed:
+	inc e			; $4ddd
+	ld a,(de)		; $4dde
+	rst_jumpTable			; $4ddf
+	.dw @justGrabbed
+	.dw @holding
+	.dw @checkOutOfScreenBounds
+	.dw @landed
+
+@justGrabbed:
+	ld h,d			; $4de8
+	ld l,e			; $4de9
+	inc (hl) ; [state]
+
+	ld l,Enemy.collisionType		; $4deb
+	res 7,(hl)		; $4ded
+	ld l,Enemy.var32		; $4def
+	xor a			; $4df1
+	ld (hl),a		; $4df2
+	ld (wLinkGrabState2),a		; $4df3
+
+	ld a,(w1Link.direction)		; $4df6
+	srl a			; $4df9
+	xor $01			; $4dfb
+	ld l,Enemy.direction		; $4dfd
+	ld (hl),a		; $4dff
+	call enemySetAnimation		; $4e00
+
+	ld a,SND_CHICKEN		; $4e03
+	call playSound		; $4e05
+	jp objectSetVisiblec1		; $4e08
+
+@holding:
+	call _cucco_playChickenSoundEvery32Frames		; $4e0b
+	ld h,d			; $4e0e
+	ld l,Enemy.direction		; $4e0f
+	ld a,(w1Link.direction)		; $4e11
+	srl a			; $4e14
+	xor $01			; $4e16
+	cp (hl)			; $4e18
+	jr z,@checkOutOfScreenBounds	; $4e19
+	ld (hl),a		; $4e1b
+	jp enemySetAnimation		; $4e1c
+
+@checkOutOfScreenBounds:
+	ld e,Enemy.yh		; $4e1f
+	ld a,(de)		; $4e21
+	cp SMALL_ROOM_HEIGHT<<4			; $4e22
+	jr nc,++		; $4e24
+	ld e,Enemy.xh		; $4e26
+	ld a,(de)		; $4e28
+	cp SMALL_ROOM_WIDTH<<4			; $4e29
+	jp c,enemyAnimate		; $4e2b
+++
+	jp enemyDelete		; $4e2e
+
+@landed:
+	ld h,d			; $4e31
+	ld l,Enemy.state		; $4e32
+	ld (hl),$0a		; $4e34
+
+	ld l,Enemy.collisionType		; $4e36
+	set 7,(hl)		; $4e38
+
+	ld l,Enemy.speed		; $4e3a
+	ld (hl),SPEED_100		; $4e3c
+
+	ld l,Enemy.counter1		; $4e3e
+	ld (hl),$01		; $4e40
+	jp objectSetVisiblec2		; $4e42
+
+
+_cucco_state_stub:
+	ret			; $4e45
+
+
+; Standing still.
+; Also used by ENEMYID_GIANT_CUCCO.
+_cucco_state8:
+	call objectAddToGrabbableObjectBuffer		; $4e46
+
+	ld e,$3f		; $4e49
+	ld bc,$031f		; $4e4b
+	call _ecom_randomBitwiseAndBCE		; $4e4e
+	or e			; $4e51
+	ret nz ; 63 in 64 chance of returning
+
+	call _ecom_incState		; $4e53
+
+	ld l,Enemy.counter1		; $4e56
+	ldi (hl),a ; [counter1] = 0
+
+	ld a,$02		; $4e59
+	add b			; $4e5b
+	ld (hl),a ; [counter2] = random value between 2-6 (number of hops)
+
+	ld l,Enemy.angle		; $4e5d
+	ld a,c			; $4e5f
+	ld (hl),a		; $4e60
+	jp _cucco_setAnimationFromAngle		; $4e61
+
+
+; Moving in some direction until [counter2] == 0.
+; Also used by ENEMYID_GIANT_CUCCO.
+_cucco_state9:
+	call objectAddToGrabbableObjectBuffer		; $4e64
+	ld h,d			; $4e67
+	ld l,Enemy.counter1		; $4e68
+	ld a,(hl)		; $4e6a
+	and $0f			; $4e6b
+	inc (hl)		; $4e6d
+
+	ld hl,_cucco_zVals		; $4e6e
+	rst_addAToHl			; $4e71
+	ld e,Enemy.zh		; $4e72
+	ld a,(hl)		; $4e74
+	ld (de),a		; $4e75
+	or a			; $4e76
+	jr nz,++		; $4e77
+
+	; Just finished a hop
+	call _ecom_decCounter2		; $4e79
+	jr nz,++		; $4e7c
+
+	; Stop moving
+	ld l,Enemy.state		; $4e7e
+	dec (hl)		; $4e80
+++
+	call _ecom_bounceOffWallsAndHoles		; $4e81
+	call nz,_cucco_setAnimationFromAngle		; $4e84
+	call objectApplySpeed		; $4e87
+_cucco_animate:
+	jp enemyAnimate		; $4e8a
+
+
+; Just landed after being thrown. Run away from Link indefinitely.
+_cucco_stateA:
+	call objectAddToGrabbableObjectBuffer		; $4e8d
+	call _ecom_updateCardinalAngleAwayFromTarget		; $4e90
+	call _cucco_setAnimationFromAngle		; $4e93
+	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $4e96
+	jr _cucco_animate		; $4e99
+
+
+; In the process of transforming (into ENEMYID_BABY_CUCCO or ENEMYID_GIANT_CUCCO, based on
+; var31)
+_cucco_stateB:
+	ld a,Object.animParameter		; $4e9b
+	call objectGetRelatedObject1Var		; $4e9d
+	bit 7,(hl)		; $4ea0
+	ret z			; $4ea2
+
+	ld e,Enemy.var31		; $4ea3
+	ld a,(de)		; $4ea5
+	ld b,a			; $4ea6
+	ld c,$00		; $4ea7
+	jp objectReplaceWithID		; $4ea9
+
+
+; ==============================================================================
+; ENEMYID_GIANT_CUCCO
+;
+; Variables are the same as ENEMYID_CUCCO.
+; ==============================================================================
 enemyCode3b:
-	jr z,_label_0d_091	; $4ecb
-	sub $03			; $4ecd
-	ret c			; $4ecf
-	ld e,$aa		; $4ed0
-	ld a,(de)		; $4ed2
-	res 7,a			; $4ed3
-	cp $04			; $4ed5
-	jr c,_label_0d_091	; $4ed7
-	ld h,d			; $4ed9
-	ld l,$b0		; $4eda
-	inc (hl)		; $4edc
-	ld l,$a9		; $4edd
-	ld (hl),$40		; $4edf
-	ld l,$84		; $4ee1
-	ld a,(hl)		; $4ee3
-	cp $0a			; $4ee4
-	jr nc,_label_0d_091	; $4ee6
-	ld (hl),$0a		; $4ee8
-	ld l,$8f		; $4eea
-	ld (hl),$00		; $4eec
-_label_0d_091:
-	ld e,$84		; $4eee
-	ld a,(de)		; $4ef0
-	rst_jumpTable			; $4ef1
-	ld a,(bc)		; $4ef2
-	ld c,a			; $4ef3
-	ld h,h			; $4ef4
-	ld c,(hl)		; $4ef5
-.DB $fc				; $4ef6
-	ld c,l			; $4ef7
-	ld h,h			; $4ef8
-	ld c,(hl)		; $4ef9
-	ld h,h			; $4efa
-	ld c,(hl)		; $4efb
-	ld h,h			; $4efc
-	ld c,(hl)		; $4efd
-	ld h,h			; $4efe
-	ld c,(hl)		; $4eff
-	ld h,h			; $4f00
-	ld c,(hl)		; $4f01
-	ld h,l			; $4f02
-	ld c,(hl)		; $4f03
-	add e			; $4f04
-	ld c,(hl)		; $4f05
-	rla			; $4f06
-	ld c,a			; $4f07
-	dec (hl)		; $4f08
-	ld c,a			; $4f09
-	ld a,$1e		; $4f0a
-	call _ecom_setSpeedAndState8		; $4f0c
-	ld a,$30		; $4f0f
-	call setScreenShakeCounter		; $4f11
-	jp objectSetVisiblec1		; $4f14
-	ld e,$b0		; $4f17
-	ld a,(de)		; $4f19
-	cp $08			; $4f1a
-	jr c,_label_0d_092	; $4f1c
-	call _ecom_incState		; $4f1e
-	ld l,$b2		; $4f21
-	ld (hl),$00		; $4f23
-	ld a,$8d		; $4f25
-	jp playSound		; $4f27
-_label_0d_092:
-	call _ecom_updateCardinalAngleAwayFromTarget		; $4f2a
-	call $4f44		; $4f2d
-	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $4f30
-	jr _label_0d_093		; $4f33
-	call objectGetAngleTowardEnemyTarget		; $4f35
-	call objectNudgeAngleTowards		; $4f38
-	call $4f44		; $4f3b
-	call objectApplySpeed		; $4f3e
-_label_0d_093:
-	jp enemyAnimate		; $4f41
-	ld h,d			; $4f44
-	ld l,$89		; $4f45
-	ld a,(hl)		; $4f47
-	and $0f			; $4f48
-	ret z			; $4f4a
-	ldd a,(hl)		; $4f4b
-	and $10			; $4f4c
-	swap a			; $4f4e
-	xor $01			; $4f50
-	cp (hl)			; $4f52
-	ret z			; $4f53
-	ld (hl),a		; $4f54
-	jp enemySetAnimation		; $4f55
-	nop			; $4f58
-	rst $38			; $4f59
-	rst $38			; $4f5a
-	cp $fe			; $4f5b
-	cp $fd			; $4f5d
-.DB $fd				; $4f5f
-.DB $fd				; $4f60
-.DB $fd				; $4f61
-	cp $fe			; $4f62
-	cp $ff			; $4f64
-	rst $38			; $4f66
-	nop			; $4f67
-	ld h,d			; $4f68
-	ld l,$b3		; $4f69
-	ld a,(hl)		; $4f6b
-	or a			; $4f6c
-	jr z,_label_0d_094	; $4f6d
-	dec (hl)		; $4f6f
-	ret nz			; $4f70
-_label_0d_094:
-	ld l,$b0		; $4f71
-	ld a,(hl)		; $4f73
-	cp $10			; $4f74
-	ret c			; $4f76
-	ld b,$22		; $4f77
-	call _ecom_spawnProjectile		; $4f79
-	ld e,$b0		; $4f7c
-	ld a,(de)		; $4f7e
-	sub $10			; $4f7f
-	and $1e			; $4f81
-	rrca			; $4f83
-	ld hl,$4f8d		; $4f84
-	rst_addAToHl			; $4f87
-	ld e,$b3		; $4f88
-	ld a,(hl)		; $4f8a
-	ld (de),a		; $4f8b
-	ret			; $4f8c
-	ld e,$1a		; $4f8d
-	jr $16			; $4f8f
-	inc d			; $4f91
-	ld (de),a		; $4f92
-	stop			; $4f93
-	ld c,$0c		; $4f94
-	ld l,$a9		; $4f96
-	ld (hl),$40		; $4f98
-	ld l,$84		; $4f9a
-	ld a,$0a		; $4f9c
-	cp (hl)			; $4f9e
-	jr z,_label_0d_095	; $4f9f
-	ld (hl),a		; $4fa1
-	ld l,$90		; $4fa2
-	ld (hl),$28		; $4fa4
-	ld l,$8f		; $4fa6
-	ld (hl),$00		; $4fa8
-_label_0d_095:
-	ld e,$aa		; $4faa
-	ld a,(de)		; $4fac
-	rlca			; $4fad
-	ret nc			; $4fae
-	ld l,$b0		; $4faf
-	bit 5,(hl)		; $4fb1
-	jr nz,_label_0d_096	; $4fb3
-	inc (hl)		; $4fb5
-_label_0d_096:
-	ld a,$a0		; $4fb6
-	jp playSound		; $4fb8
-	ld l,$a4		; $4fbb
-	res 7,(hl)		; $4fbd
-	ld l,$b0		; $4fbf
-	ld a,(hl)		; $4fc1
-	cp $10			; $4fc2
-	jr c,_label_0d_097	; $4fc4
-	ld a,$3b		; $4fc6
-	jr _label_0d_098		; $4fc8
-_label_0d_097:
-	ld a,$33		; $4fca
-_label_0d_098:
-	ld e,$b1		; $4fcc
-	ld (de),a		; $4fce
-	ld bc,$0502		; $4fcf
-	call objectCreateInteraction		; $4fd2
-	ret nz			; $4fd5
-	ld e,$96		; $4fd6
-	ld a,$40		; $4fd8
-	ld (de),a		; $4fda
-	inc e			; $4fdb
-	ld a,h			; $4fdc
-	ld (de),a		; $4fdd
-	ld e,$84		; $4fde
-	ld a,$0b		; $4fe0
-	ld (de),a		; $4fe2
-	jp objectSetInvisible		; $4fe3
-	ld h,d			; $4fe6
-	ld l,$ab		; $4fe7
-	ld a,(hl)		; $4fe9
-	or a			; $4fea
-	ret nz			; $4feb
-	ld l,$b2		; $4fec
-	dec (hl)		; $4fee
-	ld a,(hl)		; $4fef
-	and $1f			; $4ff0
-	ret nz			; $4ff2
-	ld a,$a0		; $4ff3
-	jp playSound		; $4ff5
+	jr z,@normalStatus	; $4eac
+	sub ENEMYSTATUS_NO_HEALTH			; $4eae
+	ret c			; $4eb0
 
+	ld e,Enemy.var2a		; $4eb1
+	ld a,(de)		; $4eb3
+	res 7,a			; $4eb4
+
+	; Check if hit by anything other than Link or shield.
+	cp ITEMCOLLISION_L1_SWORD			; $4eb6
+	jr c,@normalStatus	; $4eb8
+
+	ld h,d			; $4eba
+	ld l,Enemy.var30		; $4ebb
+	inc (hl)		; $4ebd
+
+	; NOTE: The cucco starts with 0 health. It's constantly reset to $40 here. This
+	; isn't a problem in Seasons, but in Ages this seems to trigger a bug causing its
+	; collisions to get disabled. See enemyTypes.s for details.
+	ld l,Enemy.health		; $4ebe
+	ld (hl),$40		; $4ec0
+
+	ld l,Enemy.state		; $4ec2
+	ld a,(hl)		; $4ec4
+	cp $0a			; $4ec5
+	jr nc,@normalStatus	; $4ec7
+	ld (hl),$0a		; $4ec9
+	ld l,Enemy.zh		; $4ecb
+	ld (hl),$00		; $4ecd
+
+@normalStatus:
+	ld e,Enemy.state		; $4ecf
+	ld a,(de)		; $4ed1
+	rst_jumpTable			; $4ed2
+	.dw _giantCucco_state_uninitialized
+	.dw _cucco_state_stub
+	.dw _cucco_state_grabbed
+	.dw _cucco_state_stub
+	.dw _cucco_state_stub
+	.dw _cucco_state_stub
+	.dw _cucco_state_stub
+	.dw _cucco_state_stub
+	.dw _cucco_state8 ; States 8 and 9 same as normal cucco (wandering around)
+	.dw _cucco_state9
+	.dw _giantCucco_stateA
+	.dw _giantCucco_stateB
+
+
+_giantCucco_state_uninitialized:
+	ld a,SPEED_c0		; $4eeb
+	call _ecom_setSpeedAndState8		; $4eed
+	ld a,$30		; $4ef0
+	call setScreenShakeCounter		; $4ef2
+	jp objectSetVisiblec1		; $4ef5
+
+
+; Hit with anything other than Link or shield
+_giantCucco_stateA:
+	ld e,Enemy.var30		; $4ef8
+	ld a,(de)		; $4efa
+	cp $08			; $4efb
+	jr c,@runAway	; $4efd
+
+	; Hit at least 8 times
+	call _ecom_incState		; $4eff
+
+	ld l,Enemy.var32		; $4f02
+	ld (hl),$00		; $4f04
+
+	ld a,SND_TELEPORT		; $4f06
+	jp playSound		; $4f08
+
+@runAway:
+	call _ecom_updateCardinalAngleAwayFromTarget		; $4f0b
+	call _cucco_setAnimationFromAngle		; $4f0e
+	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $4f11
+	jr _giantCucco_animate		; $4f14
+
+
+; Charging toward Link after being hit 8 times
+_giantCucco_stateB:
+	call objectGetAngleTowardEnemyTarget		; $4f16
+	call objectNudgeAngleTowards		; $4f19
+	call _cucco_setAnimationFromAngle		; $4f1c
+	call objectApplySpeed		; $4f1f
+
+_giantCucco_animate:
+	jp enemyAnimate		; $4f22
+
+
+;;
+; @addr{4f25}
+_cucco_setAnimationFromAngle:
+	ld h,d			; $4f25
+	ld l,Enemy.angle		; $4f26
+	ld a,(hl)		; $4f28
+	and $0f			; $4f29
+	ret z			; $4f2b
+
+	ldd a,(hl)		; $4f2c
+	and $10			; $4f2d
+	swap a			; $4f2f
+	xor $01			; $4f31
+	cp (hl) ; hl == direction
+	ret z			; $4f34
+	ld (hl),a		; $4f35
+	jp enemySetAnimation		; $4f36
+
+
+_cucco_zVals:
+	.db $00 $ff $ff $fe $fe $fe $fd $fd
+	.db $fd $fd $fe $fe $fe $ff $ff $00
+
+
+;;
+; @addr{4f49}
+_cucco_checkSpawnCuccoAttacker:
+	ld h,d			; $4f49
+	ld l,Enemy.var33		; $4f4a
+	ld a,(hl)		; $4f4c
+	or a			; $4f4d
+	jr z,+			; $4f4e
+	dec (hl)		; $4f50
+	ret nz			; $4f51
++
+	; Must have been hit at least 16 times
+	ld l,Enemy.var30		; $4f52
+	ld a,(hl)		; $4f54
+	cp $10			; $4f55
+	ret c			; $4f57
+
+	ld b,PARTID_CUCCO_ATTACKER		; $4f58
+	call _ecom_spawnProjectile		; $4f5a
+
+	ld e,Enemy.var30		; $4f5d
+	ld a,(de)		; $4f5f
+	sub $10			; $4f60
+	and $1e			; $4f62
+	rrca			; $4f64
+	ld hl,@var33Vals		; $4f65
+	rst_addAToHl			; $4f68
+	ld e,Enemy.var33		; $4f69
+	ld a,(hl)		; $4f6b
+	ld (de),a		; $4f6c
+	ret			; $4f6d
+
+@var33Vals:
+	.db $1e $1a $18 $16 $14 $12 $10 $0e
+	.db $0c
+
+
+_cucco_attacked:
+	ld l,Enemy.health		; $4f77
+	ld (hl),$40		; $4f79
+
+	ld l,Enemy.state		; $4f7b
+	ld a,$0a		; $4f7d
+	cp (hl)			; $4f7f
+	jr z,++			; $4f80
+
+	; Just starting to run away
+	ld (hl),a		; $4f82
+	ld l,Enemy.speed		; $4f83
+	ld (hl),SPEED_100		; $4f85
+	ld l,Enemy.zh		; $4f87
+	ld (hl),$00		; $4f89
+++
+	ld e,Enemy.var2a		; $4f8b
+	ld a,(de)		; $4f8d
+	rlca			; $4f8e
+	ret nc			; $4f8f
+
+	; Increment number of times hit
+	ld l,Enemy.var30		; $4f90
+	bit 5,(hl)		; $4f92
+	jr nz,+			; $4f94
+	inc (hl)		; $4f96
++
+	ld a,SND_CHICKEN		; $4f97
+	jp playSound		; $4f99
+
+
+;;
+; Cucco will transform into ENEMYID_BABY_CUCCO (if not aggressive) or ENEMYID_GIANT_CUCCO
+; (if aggressive).
+; @addr{4f9c}
+_cucco_hitWithMysterySeed:
+	ld l,Enemy.collisionType		; $4f9c
+	res 7,(hl)		; $4f9e
+
+	; Check if the cucco been hit 16 or more times
+	ld l,Enemy.var30		; $4fa0
+	ld a,(hl)		; $4fa2
+	cp $10			; $4fa3
+	jr c,+			; $4fa5
+	ld a,ENEMYID_GIANT_CUCCO		; $4fa7
+	jr ++			; $4fa9
++
+	ld a,ENEMYID_BABY_CUCCO		; $4fab
+++
+	ld e,Enemy.var31		; $4fad
+	ld (de),a		; $4faf
+
+	ldbc INTERACID_PUFF,$02		; $4fb0
+	call objectCreateInteraction		; $4fb3
+	ret nz			; $4fb6
+
+	ld e,Enemy.relatedObj1		; $4fb7
+	ld a,Interaction.start		; $4fb9
+	ld (de),a		; $4fbb
+	inc e			; $4fbc
+	ld a,h			; $4fbd
+	ld (de),a		; $4fbe
+
+	ld e,Enemy.state		; $4fbf
+	ld a,$0b		; $4fc1
+	ld (de),a		; $4fc3
+
+	jp objectSetInvisible		; $4fc4
+
+
+;;
+; @addr{4fc7}
+_cucco_playChickenSoundEvery32Frames:
+	ld h,d			; $4fc7
+	ld l,Enemy.invincibilityCounter		; $4fc8
+	ld a,(hl)		; $4fca
+	or a			; $4fcb
+	ret nz			; $4fcc
+
+	ld l,Enemy.var32		; $4fcd
+	dec (hl)		; $4fcf
+	ld a,(hl)		; $4fd0
+	and $1f			; $4fd1
+	ret nz			; $4fd3
+	ld a,SND_CHICKEN		; $4fd4
+	jp playSound		; $4fd6
+
+
+; ==============================================================================
+; ENEMYID_BUTTERFLY
+; ==============================================================================
 enemyCode37:
-	ld e,$84		; $4ff8
-	ld a,(de)		; $4ffa
-	rst_jumpTable			; $4ffb
-	nop			; $4ffc
-	ld d,b			; $4ffd
-	inc d			; $4ffe
-	ld d,b			; $4fff
-	ld a,($cc4e)		; $5000
+	ld e,Enemy.state		; $4fd9
+	ld a,(de)		; $4fdb
+	rst_jumpTable			; $4fdc
+	.dw @state0
+	.dw @state1
+
+@state0:
+.ifdef ROM_SEASONS
+	; spring-only
+	ld a,(wRoomStateModifier)		; $5000
 	or a			; $5003
 	jp nz,enemyDelete		; $5004
-	ld h,d			; $5007
-	ld l,e			; $5008
-	inc (hl)		; $5009
-	ld l,$90		; $500a
-	ld (hl),$0a		; $500c
-	call _ecom_setRandomAngle		; $500e
-	jp objectSetVisible81		; $5011
-	ld bc,$1f1f		; $5014
-	call _ecom_randomBitwiseAndBCE		; $5017
-	or b			; $501a
-	jr nz,_label_0d_099	; $501b
-	ld h,d			; $501d
-	ld l,$89		; $501e
-	ld (hl),c		; $5020
-_label_0d_099:
-	call objectApplySpeed		; $5021
-	call _ecom_bounceOffScreenBoundary		; $5024
-	jp enemyAnimate		; $5027
+.endif
+	ld h,d			; $4fe1
+	ld l,e			; $4fe2
+	inc (hl) ; [state]
 
+	ld l,Enemy.speed		; $4fe4
+	ld (hl),SPEED_40		; $4fe6
+	call _ecom_setRandomAngle		; $4fe8
+
+	jp objectSetVisible81		; $4feb
+
+@state1:
+	ld bc,$1f1f		; $4fee
+	call _ecom_randomBitwiseAndBCE		; $4ff1
+	or b			; $4ff4
+	jr nz,++		; $4ff5
+	ld h,d			; $4ff7
+	ld l,Enemy.angle		; $4ff8
+	ld (hl),c		; $4ffa
+++
+	call objectApplySpeed		; $4ffb
+	call _ecom_bounceOffScreenBoundary		; $4ffe
+	jp enemyAnimate		; $5001
+
+
+; ==============================================================================
+; ENEMYID_GREAT_FAIRY
+;
+; Variables:
+;   relatedObj2: Reference to INTERACID_PUFF
+;   var30: Counter used to update Z-position as she floats up and down
+;   var31: Number of hearts spawned (the ones that circle around Link)
+; ==============================================================================
 enemyCode38:
-	ld e,$84		; $502a
-	ld a,(de)		; $502c
-	rst_jumpTable			; $502d
-	ld b,d			; $502e
-	ld d,b			; $502f
-	ld c,d			; $5030
-	ld d,b			; $5031
-	ld e,e			; $5032
-	ld d,b			; $5033
-	ld h,(hl)		; $5034
-	ld d,b			; $5035
-	and h			; $5036
-	ld d,b			; $5037
-	xor (hl)		; $5038
-	ld d,b			; $5039
-	ret			; $503a
-	ld d,b			; $503b
-.DB $db				; $503c
-	ld d,b			; $503d
-.DB $eb				; $503e
-	ld d,b			; $503f
-	nop			; $5040
-	ld d,c			; $5041
-	ld h,d			; $5042
-	ld l,e			; $5043
-	inc (hl)		; $5044
-	ld l,$8f		; $5045
-	ld (hl),$f0		; $5047
-	ret			; $5049
-	call $515a		; $504a
-	ret nz			; $504d
-	ld l,$84		; $504e
-	inc (hl)		; $5050
-	ld l,$86		; $5051
-	ld (hl),$11		; $5053
-	ld a,$0f		; $5055
-	ld (wActiveMusic),a		; $5057
-	ret			; $505a
-	ld a,$21		; $505b
-	call objectGetRelatedObject2Var		; $505d
-	bit 7,(hl)		; $5060
-	ret z			; $5062
-	call _ecom_incState		; $5063
-	call $5130		; $5066
-	jr nc,_label_0d_101	; $5069
-	ld a,$80		; $506b
-	ld ($cc02),a		; $506d
-	ld a,$21		; $5070
-	ld ($cca4),a		; $5072
-	ld hl,$c6a2		; $5075
-	ldi a,(hl)		; $5078
-	cp (hl)			; $5079
-	ld a,$04		; $507a
-	ld bc,$4100		; $507c
-	jr nz,_label_0d_100	; $507f
-	ld e,$86		; $5081
-	ld a,$1e		; $5083
-	ld (de),a		; $5085
-	ld a,$08		; $5086
-	ld bc,$4105		; $5088
-_label_0d_100:
-	ld e,$84		; $508b
-	ld (de),a		; $508d
-	call showText		; $508e
-_label_0d_101:
-	call $5114		; $5091
-	call enemyAnimate		; $5094
-	ld e,$8b		; $5097
-	ld a,(de)		; $5099
-	ld b,a			; $509a
-	ldh a,(<hEnemyTargetY)	; $509b
-	cp b			; $509d
-	jp c,objectSetVisiblec1		; $509e
-	jp objectSetVisiblec2		; $50a1
-	ld h,d			; $50a4
-	ld l,e			; $50a5
-	inc (hl)		; $50a6
-	ld l,$86		; $50a7
-	ld (hl),$0c		; $50a9
-	inc l			; $50ab
-	ld (hl),$09		; $50ac
-	call $516a		; $50ae
-	call _ecom_decCounter1		; $50b1
-	jr nz,_label_0d_101	; $50b4
-	ld (hl),$0c		; $50b6
-	inc l			; $50b8
-	dec (hl)		; $50b9
-	jr z,_label_0d_102	; $50ba
-	call $5149		; $50bc
-	jr _label_0d_101		; $50bf
-_label_0d_102:
-	dec l			; $50c1
-	ld (hl),$1e		; $50c2
-	ld l,$84		; $50c4
-	inc (hl)		; $50c6
-	jr _label_0d_101		; $50c7
-	call $516a		; $50c9
-	call _ecom_decCounter1		; $50cc
-	jr nz,_label_0d_101	; $50cf
-	ld l,$84		; $50d1
-	inc (hl)		; $50d3
-	ld a,$29		; $50d4
-	ld c,$40		; $50d6
-	call giveTreasure		; $50d8
-	call $516a		; $50db
-	ld e,$b1		; $50de
-	ld a,(de)		; $50e0
-	or a			; $50e1
-	jr nz,_label_0d_101	; $50e2
-	call _ecom_incState		; $50e4
-	ld l,$86		; $50e7
-	ld (hl),$1e		; $50e9
-	call _ecom_decCounter1		; $50eb
-	jr nz,_label_0d_101	; $50ee
-	ld (hl),$3c		; $50f0
-	ld l,e			; $50f2
-	inc (hl)		; $50f3
-	xor a			; $50f4
-	ld ($cca4),a		; $50f5
-	ld ($cc02),a		; $50f8
-	ld a,$91		; $50fb
-	call playSound		; $50fd
-	call _ecom_decCounter1		; $5100
-	jp z,enemyDelete		; $5103
-	call $5091		; $5106
-	ld h,d			; $5109
-	ld l,$86		; $510a
-	bit 0,(hl)		; $510c
-	ret nz			; $510e
-	ld l,$9a		; $510f
-	res 7,(hl)		; $5111
-	ret			; $5113
-	ld h,d			; $5114
-	ld l,$b0		; $5115
-	dec (hl)		; $5117
-	ld a,(hl)		; $5118
-	and $07			; $5119
-	ret nz			; $511b
-	ld a,(hl)		; $511c
-	and $18			; $511d
-	swap a			; $511f
-	rlca			; $5121
-	sub $02			; $5122
-	bit 5,(hl)		; $5124
-	jr nz,_label_0d_103	; $5126
-	cpl			; $5128
-	inc a			; $5129
-_label_0d_103:
-	sub $10			; $512a
-	ld l,$8f		; $512c
-	ld (hl),a		; $512e
-	ret			; $512f
-	call checkLinkVulnerable		; $5130
-	ret nc			; $5133
-	ld h,d			; $5134
-	ld l,$8b		; $5135
-	ldh a,(<hEnemyTargetY)	; $5137
-	sub (hl)		; $5139
-	sub $10			; $513a
-	cp $21			; $513c
-	ret nc			; $513e
-	ld l,$8d		; $513f
-	ldh a,(<hEnemyTargetX)	; $5141
-	sub (hl)		; $5143
-	add $18			; $5144
-	cp $31			; $5146
-	ret			; $5148
-	call getFreePartSlot		; $5149
-	ret nz			; $514c
-	ld (hl),$30		; $514d
-	ld l,$d6		; $514f
-	ld a,$80		; $5151
-	ldi (hl),a		; $5153
-	ld (hl),d		; $5154
-	ld h,d			; $5155
-	ld l,$b1		; $5156
-	inc (hl)		; $5158
-	ret			; $5159
-	ld bc,$0502		; $515a
-	call objectCreateInteraction		; $515d
-	ret nz			; $5160
-	ld a,h			; $5161
-	ld h,d			; $5162
-	ld l,$99		; $5163
-	ldd (hl),a		; $5165
-	ld (hl),$40		; $5166
-	xor a			; $5168
-	ret			; $5169
-	ld a,(wFrameCounter)		; $516a
-	and $07			; $516d
-	ret nz			; $516f
-	ld a,$8c		; $5170
-	jp playSound		; $5172
+	ld e,Enemy.state		; $5004
+	ld a,(de)		; $5006
+	rst_jumpTable			; $5007
+	.dw _greatFairy_state_uninitialized
+	.dw _greatFairy_state1
+	.dw _greatFairy_state2
+	.dw _greatFairy_state3
+	.dw _greatFairy_state4
+	.dw _greatFairy_state5
+	.dw _greatFairy_state6
+	.dw _greatFairy_state7
+	.dw _greatFairy_state8
+	.dw _greatFairy_state9
 
+
+_greatFairy_state_uninitialized:
+	ld h,d			; $501c
+	ld l,e			; $501d
+	inc (hl) ; [state]
+	ld l,Enemy.zh		; $501f
+	ld (hl),$f0		; $5021
+	ret			; $5023
+
+
+; Create puff
+_greatFairy_state1:
+	call _greatFairy_createPuff		; $5024
+	ret nz			; $5027
+
+	ld l,Enemy.state		; $5028
+	inc (hl)		; $502a
+
+	ld l,Enemy.counter1		; $502b
+	ld (hl),$11		; $502d
+	ld a,MUS_FAIRY		; $502f
+	ld (wActiveMusic),a		; $5031
+	ret			; $5034
+
+
+; Waiting for puff to disappear
+_greatFairy_state2:
+	ld a,Object.animParameter		; $5035
+	call objectGetRelatedObject2Var		; $5037
+	bit 7,(hl)		; $503a
+	ret z			; $503c
+
+	call _ecom_incState		; $503d
+
+
+; Waiting for Link to approach
+_greatFairy_state3:
+	call _greatFairy_checkLinkApproached		; $5040
+	jr nc,_greatFairy_animate	; $5043
+
+	ld a,$80		; $5045
+	ld (wMenuDisabled),a		; $5047
+
+	ld a,DISABLE_COMPANION|DISABLE_LINK		; $504a
+	ld (wDisabledObjects),a		; $504c
+
+	ld hl,wLinkHealth		; $504f
+	ldi a,(hl)		; $5052
+	cp (hl)			; $5053
+	ld a,$04		; $5054
+	ld bc,TX_4100		; $5056
+	jr nz,++		; $5059
+
+	; Full health already
+	ld e,Enemy.counter1		; $505b
+	ld a,30		; $505d
+	ld (de),a		; $505f
+	ld a,$08		; $5060
+	ld bc,TX_4105		; $5062
+++
+	ld e,Enemy.state		; $5065
+	ld (de),a		; $5067
+	call showText		; $5068
+
+_greatFairy_animate:
+	call _greatFairy_updateZPosition		; $506b
+	call enemyAnimate		; $506e
+	ld e,Enemy.yh		; $5071
+	ld a,(de)		; $5073
+	ld b,a			; $5074
+	ldh a,(<hEnemyTargetY)	; $5075
+	cp b			; $5077
+	jp c,objectSetVisiblec1		; $5078
+	jp objectSetVisiblec2		; $507b
+
+
+; Begin healing Link
+_greatFairy_state4:
+	ld h,d			; $507e
+	ld l,e			; $507f
+	inc (hl) ; [state]
+
+	ld l,Enemy.counter1		; $5081
+	ld (hl),$0c		; $5083
+	inc l			; $5085
+	ld (hl),$09 ; [counter2]
+
+
+; Spawning hearts
+_greatFairy_state5:
+	call _greatFairy_playSoundEvery8Frames		; $5088
+	call _ecom_decCounter1		; $508b
+	jr nz,_greatFairy_animate	; $508e
+
+	ld (hl),$0c ; [counter1]
+	inc l			; $5092
+	dec (hl) ; [counter2]
+	jr z,@spawnedAllHearts			; $5094
+	call _greatFairy_spawnCirclingHeart		; $5096
+	jr _greatFairy_animate		; $5099
+
+@spawnedAllHearts:
+	dec l			; $509b
+	ld (hl),30 ; [counter1]
+
+	ld l,Enemy.state		; $509e
+	inc (hl)		; $50a0
+	jr _greatFairy_animate		; $50a1
+
+
+; Hearts have all spawned, are now circling around Link
+_greatFairy_state6:
+	call _greatFairy_playSoundEvery8Frames		; $50a3
+	call _ecom_decCounter1		; $50a6
+	jr nz,_greatFairy_animate	; $50a9
+	ld l,Enemy.state		; $50ab
+	inc (hl)		; $50ad
+	ld a,TREASURE_HEART_REFILL		; $50ae
+	ld c,MAX_LINK_HEALTH		; $50b0
+	call giveTreasure		; $50b2
+
+
+; Waiting for all hearts to disappear
+_greatFairy_state7:
+	call _greatFairy_playSoundEvery8Frames		; $50b5
+	ld e,Enemy.var31		; $50b8
+	ld a,(de)		; $50ba
+	or a			; $50bb
+	jr nz,_greatFairy_animate	; $50bc
+
+	call _ecom_incState		; $50be
+	ld l,Enemy.counter1		; $50c1
+	ld (hl),30		; $50c3
+
+
+; About to disappear; staying in place for 30 frames
+_greatFairy_state8:
+	call _ecom_decCounter1		; $50c5
+	jr nz,_greatFairy_animate	; $50c8
+
+	ld (hl),60 ; [counter1]
+	ld l,e			; $50cc
+	inc (hl) ; [state]
+
+	xor a			; $50ce
+	ld (wDisabledObjects),a		; $50cf
+	ld (wMenuDisabled),a		; $50d2
+
+	ld a,SND_FAIRYCUTSCENE		; $50d5
+	call playSound		; $50d7
+
+
+; Disappearing
+_greatFairy_state9:
+	call _ecom_decCounter1		; $50da
+	jp z,enemyDelete		; $50dd
+
+	call _greatFairy_animate		; $50e0
+
+	; Flicker visibility
+	ld h,d			; $50e3
+	ld l,Enemy.counter1		; $50e4
+	bit 0,(hl)		; $50e6
+	ret nz			; $50e8
+	ld l,Enemy.visible		; $50e9
+	res 7,(hl)		; $50eb
+	ret			; $50ed
+
+
+;;
+; @addr{50ee}
+_greatFairy_updateZPosition:
+	ld h,d			; $50ee
+	ld l,Enemy.var30		; $50ef
+	dec (hl)		; $50f1
+	ld a,(hl)		; $50f2
+	and $07			; $50f3
+	ret nz			; $50f5
+
+	ld a,(hl)		; $50f6
+	and $18			; $50f7
+	swap a			; $50f9
+	rlca			; $50fb
+	sub $02			; $50fc
+	bit 5,(hl)		; $50fe
+	jr nz,++		; $5100
+	cpl			; $5102
+	inc a			; $5103
+++
+	sub $10			; $5104
+	ld l,Enemy.zh		; $5106
+	ld (hl),a		; $5108
+	ret			; $5109
+
+
+;;
+; @param[out]	cflag	c if Link approached
+; @addr{510a}
+_greatFairy_checkLinkApproached:
+	call checkLinkVulnerable		; $510a
+	ret nc			; $510d
+
+	ld h,d			; $510e
+	ld l,Enemy.yh		; $510f
+	ldh a,(<hEnemyTargetY)	; $5111
+	sub (hl)		; $5113
+	sub $10			; $5114
+	cp $21			; $5116
+	ret nc			; $5118
+
+	ld l,Enemy.xh		; $5119
+	ldh a,(<hEnemyTargetX)	; $511b
+	sub (hl)		; $511d
+	add $18			; $511e
+	cp $31			; $5120
+	ret			; $5122
+
+;;
+; @addr{5123}
+_greatFairy_spawnCirclingHeart:
+	call getFreePartSlot		; $5123
+	ret nz			; $5126
+
+	ld (hl),PARTID_GREAT_FAIRY_HEART		; $5127
+	ld l,Part.relatedObj1		; $5129
+	ld a,Enemy.start		; $512b
+	ldi (hl),a		; $512d
+	ld (hl),d		; $512e
+
+	ld h,d			; $512f
+	ld l,Enemy.var31		; $5130
+	inc (hl)		; $5132
+	ret			; $5133
+
+
+;;
+; @addr{5134}
+_greatFairy_createPuff:
+	ldbc INTERACID_PUFF,$02		; $5134
+	call objectCreateInteraction		; $5137
+	ret nz			; $513a
+
+	ld a,h			; $513b
+	ld h,d			; $513c
+	ld l,Enemy.relatedObj2+1		; $513d
+	ldd (hl),a		; $513f
+	ld (hl),Interaction.start		; $5140
+	xor a			; $5142
+	ret			; $5143
+
+;;
+; @addr{5144}
+_greatFairy_playSoundEvery8Frames:
+	ld a,(wFrameCounter)		; $5144
+	and $07			; $5147
+	ret nz			; $5149
+	ld a,SND_UNKNOWN7		; $514a
+	jp playSound		; $514c
+
+
+; ==============================================================================
+; ENEMYID_FIRE_KEESE
+;
+; Variables:
+;   var30: Distance away (in tiles) closest lit torch is
+;   var31/var32: Position of lit torch it's moving towards to re-light itself
+;   var33: Nonzero if fire has been shed (set to 2). Doubles as animation index?
+;   var34: Position at which to search for a lit torch ($16 tiles are checked each frame,
+;          so this gets incremented by $16 each frame)
+;   var35: Angular rotation for subid 0. (set to -1 or 1 randomly on initialization, for
+;          counterclockwise or clockwise movement)
+; ==============================================================================
 enemyCode39:
-	jr z,_label_0d_104	; $5175
-	sub $03			; $5177
-	ret c			; $5179
-	jp z,enemyDie		; $517a
-	dec a			; $517d
-	jp nz,_ecom_updateKnockbackNoSolidity		; $517e
-	ld e,$aa		; $5181
-	ld a,(de)		; $5183
-	cp $80			; $5184
-	ret nz			; $5186
-	ld e,$b3		; $5187
-	ld a,(de)		; $5189
-	or a			; $518a
-	ret nz			; $518b
-	ld b,$20		; $518c
-	call _ecom_spawnProjectile		; $518e
-	ld h,d			; $5191
-	ld l,$9c		; $5192
-	ld a,$01		; $5194
-	ldd (hl),a		; $5196
-	ld (hl),a		; $5197
-	ld l,$84		; $5198
-	ld (hl),$08		; $519a
-	ld l,$a8		; $519c
-	ld (hl),$fc		; $519e
-	ld l,$b3		; $51a0
-	ld (hl),$02		; $51a2
-	ld l,$90		; $51a4
-	ld (hl),$1e		; $51a6
-	ld a,$03		; $51a8
-	jp enemySetAnimation		; $51aa
-_label_0d_104:
-	call _ecom_getSubidAndCpStateTo08		; $51ad
-	cp $0b			; $51b0
-	jr nc,_label_0d_105	; $51b2
-	rst_jumpTable			; $51b4
-	pop de			; $51b5
-	ld d,c			; $51b6
-	ld ($0852),sp		; $51b7
-	ld d,d			; $51ba
-	ld ($0852),sp		; $51bb
-	ld d,d			; $51be
-	bit 0,h			; $51bf
-	ld ($0852),sp		; $51c1
-	ld d,d			; $51c4
-	add hl,bc		; $51c5
-	ld d,d			; $51c6
-	ld b,l			; $51c7
-	ld d,d			; $51c8
-	ld l,h			; $51c9
-	ld d,d			; $51ca
-_label_0d_105:
-	ld a,b			; $51cb
-	rst_jumpTable			; $51cc
-	and d			; $51cd
-	ld d,d			; $51ce
-	jr z,_label_0d_109	; $51cf
-	ld h,d			; $51d1
-	ld l,$86		; $51d2
-	ld (hl),$08		; $51d4
-	ld l,$a8		; $51d6
-	ld (hl),$f8		; $51d8
-	bit 0,b			; $51da
-	ld l,e			; $51dc
-	jr z,_label_0d_106	; $51dd
-	ld (hl),$0b		; $51df
-	jp objectSetVisible82		; $51e1
-_label_0d_106:
-	ld (hl),$0b		; $51e4
-	ld l,$8f		; $51e6
-	ld (hl),$e4		; $51e8
-	ld l,$90		; $51ea
-	ld (hl),$14		; $51ec
-	ld bc,$1f01		; $51ee
-	call _ecom_randomBitwiseAndBCE		; $51f1
-	ld e,$89		; $51f4
-	ld a,b			; $51f6
-	ld (de),a		; $51f7
-	ld a,c			; $51f8
-	or a			; $51f9
-	jr nz,_label_0d_107	; $51fa
-	dec a			; $51fc
-_label_0d_107:
-	ld e,$b5		; $51fd
-	ld (de),a		; $51ff
-	ld a,$01		; $5200
-	call enemySetAnimation		; $5202
-	jp objectSetVisiblec1		; $5205
-	ret			; $5208
-	ld e,$b0		; $5209
-	ld a,$ff		; $520b
-	ld (de),a		; $520d
-	call objectGetTileAtPosition		; $520e
-	ld c,l			; $5211
-	ld l,$00		; $5212
-_label_0d_108:
-	ld a,(hl)		; $5214
-	cp $09			; $5215
-	call z,$53ea		; $5217
-	inc l			; $521a
-	ld a,l			; $521b
-	cp $b0			; $521c
-	jr c,_label_0d_108	; $521e
-	ld e,$b0		; $5220
-	ld a,(de)		; $5222
-	inc a			; $5223
-_label_0d_109:
-	ld h,d			; $5224
-	jr nz,_label_0d_111	; $5225
-	ld l,$82		; $5227
-	bit 0,(hl)		; $5229
-	ld a,$0d		; $522b
-	jr z,_label_0d_110	; $522d
-	ld l,$86		; $522f
-	ld (hl),$78		; $5231
-	ld a,$0c		; $5233
-_label_0d_110:
-	ld l,$84		; $5235
-	ld (hl),a		; $5237
-	ret			; $5238
-_label_0d_111:
-	ld l,$84		; $5239
-	inc (hl)		; $523b
-	ld l,$90		; $523c
-	ld (hl),$1e		; $523e
-	ld a,$03		; $5240
-	jp enemySetAnimation		; $5242
-	ld h,d			; $5245
-	ld l,$b1		; $5246
-	call _ecom_readPositionVars		; $5248
-	cp c			; $524b
-	jr nz,_label_0d_112	; $524c
-	ldh a,(<hFF8F)	; $524e
-	cp b			; $5250
-	jr z,_label_0d_113	; $5251
-_label_0d_112:
-	call $544d		; $5253
-	call _ecom_moveTowardPosition		; $5256
-	jp enemyAnimate		; $5259
-_label_0d_113:
-	call $544d		; $525c
-	ret c			; $525f
-	ld l,$84		; $5260
-	inc (hl)		; $5262
-	ld l,$86		; $5263
-	ld (hl),$3c		; $5265
-	ld a,$02		; $5267
-	jp enemySetAnimation		; $5269
-	call _ecom_decCounter1		; $526c
-	jr z,_label_0d_114	; $526f
-	ld a,(hl)		; $5271
-	sub $1e			; $5272
-	ret nz			; $5274
-	ld l,$9c		; $5275
-	ld a,$05		; $5277
-	ldd (hl),a		; $5279
-	ld (hl),a		; $527a
-	ld l,$a8		; $527b
-	ld (hl),$f8		; $527d
-	ld l,$b3		; $527f
-	xor a			; $5281
-	ld (hl),a		; $5282
-	jp enemySetAnimation		; $5283
-_label_0d_114:
-	ld l,$89		; $5286
-	ld a,(hl)		; $5288
-	add $10			; $5289
-	and $1f			; $528b
-	ld (hl),a		; $528d
-	ld l,$82		; $528e
-	bit 0,(hl)		; $5290
-	ld a,$0d		; $5292
-	jr z,_label_0d_115	; $5294
-	ld l,$86		; $5296
-	ld (hl),$78		; $5298
-	ld a,$0c		; $529a
-_label_0d_115:
-	ld (de),a		; $529c
-	ld a,$01		; $529d
-	jp enemySetAnimation		; $529f
-	call $5422		; $52a2
-	ld e,$84		; $52a5
-	ld a,(de)		; $52a7
-	sub $0b			; $52a8
-	rst_jumpTable			; $52aa
-	or c			; $52ab
-	ld d,d			; $52ac
-	reti			; $52ad
-	ld d,d			; $52ae
-	inc c			; $52af
-	ld d,e			; $52b0
-	call $53d5		; $52b1
-	jr nc,_label_0d_116	; $52b4
-	ld l,$84		; $52b6
-	inc (hl)		; $52b8
-	ld l,$86		; $52b9
-	ld (hl),$5b		; $52bb
-	ld l,$90		; $52bd
-	ld (hl),$19		; $52bf
-_label_0d_116:
-	call _ecom_decCounter1		; $52c1
-	jr nz,_label_0d_117	; $52c4
-	ld (hl),$08		; $52c6
-	ld e,$b5		; $52c8
-	ld a,(de)		; $52ca
-	ld l,$89		; $52cb
-	add (hl)		; $52cd
-	and $1f			; $52ce
-	ld (hl),a		; $52d0
-_label_0d_117:
-	call objectApplySpeed		; $52d1
-	call $5461		; $52d4
-	jr _label_0d_120		; $52d7
-	call _ecom_decCounter1		; $52d9
-	jr nz,_label_0d_118	; $52dc
-	ld l,$84		; $52de
-	inc (hl)		; $52e0
-	jr _label_0d_120		; $52e1
-_label_0d_118:
-	ld a,(hl)		; $52e3
-	and $f0			; $52e4
-	swap a			; $52e6
-	ld hl,$5486		; $52e8
-	rst_addAToHl			; $52eb
-	ld e,$8e		; $52ec
-	ld a,(de)		; $52ee
-	add (hl)		; $52ef
-	ld (de),a		; $52f0
-	inc e			; $52f1
-	ld a,(de)		; $52f2
-	adc $00			; $52f3
-	ld (de),a		; $52f5
-	call objectGetAngleTowardEnemyTarget		; $52f6
-	ld b,a			; $52f9
-	ld e,$86		; $52fa
-	ld a,(de)		; $52fc
-	and $03			; $52fd
-	ld a,b			; $52ff
-	call z,objectNudgeAngleTowards		; $5300
-_label_0d_119:
-	call _ecom_bounceOffScreenBoundary		; $5303
-	call objectApplySpeed		; $5306
-_label_0d_120:
-	jp enemyAnimate		; $5309
-	ld h,d			; $530c
-	ld l,$8e		; $530d
-	ld a,(hl)		; $530f
-	sub $40			; $5310
-	ldi (hl),a		; $5312
-	ld a,(hl)		; $5313
-	sbc $00			; $5314
-	ld (hl),a		; $5316
-	cp $e4			; $5317
-	jr nc,_label_0d_119	; $5319
-	ld l,e			; $531b
-	ld (hl),$0b		; $531c
-	ld l,$90		; $531e
-	ld (hl),$14		; $5320
-	ld l,$86		; $5322
-	ld (hl),$08		; $5324
-	jr _label_0d_120		; $5326
-	call $5422		; $5328
-	ld e,$84		; $532b
+	jr z,@normalStatus	; $514f
+	sub ENEMYSTATUS_NO_HEALTH			; $5151
+	ret c			; $5153
+	jp z,enemyDie		; $5154
+	dec a			; $5157
+	jp nz,_ecom_updateKnockbackNoSolidity		; $5158
+
+	; ENEMYSTATUS_JUST_HIT
+	ld e,Enemy.var2a		; $515b
+	ld a,(de)		; $515d
+	cp $80|ITEMCOLLISION_LINK			; $515e
+	ret nz			; $5160
+
+	; We collided with Link; if still on fire, transfer that fire to the ground.
+	ld e,Enemy.var33		; $5161
+	ld a,(de)		; $5163
+	or a			; $5164
+	ret nz			; $5165
+
+	ld b,PARTID_FIRE		; $5166
+	call _ecom_spawnProjectile		; $5168
+
+	ld h,d			; $516b
+	ld l,Enemy.oamFlags		; $516c
+	ld a,$01		; $516e
+	ldd (hl),a		; $5170
+	ld (hl),a		; $5171
+
+	ld l,Enemy.state		; $5172
+	ld (hl),$08		; $5174
+
+	ld l,Enemy.damage		; $5176
+	ld (hl),-$04		; $5178
+
+	ld l,Enemy.var33		; $517a
+	ld (hl),$02		; $517c
+
+	ld l,Enemy.speed		; $517e
+	ld (hl),SPEED_c0		; $5180
+
+	ld a,$03		; $5182
+	jp enemySetAnimation		; $5184
+
+@normalStatus:
+	call _ecom_getSubidAndCpStateTo08		; $5187
+	cp $0b			; $518a
+	jr nc,_fireKeese_stateBOrHigher	; $518c
+	rst_jumpTable			; $518e
+	.dw _fireKeese_state_uninitialized
+	.dw _fireKeese_state_stub
+	.dw _fireKeese_state_stub
+	.dw _fireKeese_state_stub
+	.dw _fireKeese_state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw _fireKeese_state_stub
+	.dw _fireKeese_state_stub
+	.dw _fireKeese_state8
+	.dw _fireKeese_state9
+	.dw _fireKeese_stateA
+
+_fireKeese_stateBOrHigher:
+	ld a,b			; $51a5
+	rst_jumpTable			; $51a6
+	.dw _fireKeese_subid0
+	.dw _fireKeese_subid1
+
+
+_fireKeese_state_uninitialized:
+	ld h,d			; $51ab
+	ld l,Enemy.counter1		; $51ac
+	ld (hl),$08		; $51ae
+
+	ld l,Enemy.damage		; $51b0
+	ld (hl),-$08		; $51b2
+
+	bit 0,b			; $51b4
+	ld l,e			; $51b6
+	jr z,@subid0	; $51b7
+
+@subid1:
+	ld (hl),$0b ; [state]
+	jp objectSetVisible82		; $51bb
+
+@subid0:
+	ld (hl),$0b ; [state]
+
+	ld l,Enemy.zh		; $51c0
+	ld (hl),-$1c		; $51c2
+
+	ld l,Enemy.speed		; $51c4
+	ld (hl),SPEED_80		; $51c6
+
+	; Random angle
+	ld bc,$1f01		; $51c8
+	call _ecom_randomBitwiseAndBCE		; $51cb
+	ld e,Enemy.angle		; $51ce
+	ld a,b			; $51d0
+	ld (de),a		; $51d1
+
+	; Set var35 to 1 or -1 for clockwise or counterclockwise movement.
+	ld a,c			; $51d2
+	or a			; $51d3
+	jr nz,+			; $51d4
+	dec a			; $51d6
++
+	ld e,Enemy.var35		; $51d7
+	ld (de),a		; $51d9
+
+	ld a,$01		; $51da
+	call enemySetAnimation		; $51dc
+	jp objectSetVisiblec1		; $51df
+
+
+_fireKeese_state_stub:
+	ret			; $51e2
+
+
+; Just lost fire; looks for a torch if one exists, otherwise it will keep flying around
+; like normal.
+_fireKeese_state8:
+	; Initialize "infinite" distance away from closest lit torch (none found yet)
+	ld e,Enemy.var30		; $51e3
+	ld a,$ff		; $51e5
+	ld (de),a		; $51e7
+
+	; Check all tiles in the room, try to find a lit torch to light self back on fire
+	call objectGetTileAtPosition		; $51e8
+	ld c,l			; $51eb
+	ld l,$00		; $51ec
+@nextTile:
+	ld a,(hl)		; $51ee
+	cp TILEINDEX_LIT_TORCH			; $51ef
+	call z,_fireKeese_addCandidateTorch		; $51f1
+	inc l			; $51f4
+	ld a,l			; $51f5
+	cp LARGE_ROOM_HEIGHT<<4			; $51f6
+	jr c,@nextTile	; $51f8
+
+	; Check if one was found
+	ld e,Enemy.var30		; $51fa
+	ld a,(de)		; $51fc
+	inc a			; $51fd
+	ld h,d			; $51fe
+	jr nz,@torchFound	; $51ff
+
+	; No torch found. Go back to doing subid-specific movement.
+
+	ld l,Enemy.subid		; $5201
+	bit 0,(hl)		; $5203
+	ld a,$0d		; $5205
+	jr z,++			; $5207
+
+	; Subid 1
+	ld l,Enemy.counter1		; $5209
+	ld (hl),120		; $520b
+	ld a,$0c		; $520d
+++
+	ld l,Enemy.state		; $520f
+	ld (hl),a		; $5211
+	ret			; $5212
+
+@torchFound:
+	ld l,Enemy.state		; $5213
+	inc (hl)		; $5215
+	ld l,Enemy.speed		; $5216
+	ld (hl),SPEED_c0		; $5218
+	ld a,$03		; $521a
+	jp enemySetAnimation		; $521c
+
+
+; Moving towards a torch's position, marked in var31/var32
+_fireKeese_state9:
+	ld h,d			; $521f
+	ld l,Enemy.var31		; $5220
+	call _ecom_readPositionVars		; $5222
+	cp c			; $5225
+	jr nz,@notAtTargetPosition		; $5226
+
+	ldh a,(<hFF8F)	; $5228
+	cp b			; $522a
+	jr z,@atTargetPosition	; $522b
+
+@notAtTargetPosition:
+	call _fireKeese_moveToGround		; $522d
+	call _ecom_moveTowardPosition		; $5230
+	jp enemyAnimate		; $5233
+
+@atTargetPosition:
+	call _fireKeese_moveToGround		; $5236
+	ret c			; $5239
+
+	ld l,Enemy.state		; $523a
+	inc (hl)		; $523c
+
+	ld l,Enemy.counter1		; $523d
+	ld (hl),60		; $523f
+
+	ld a,$02		; $5241
+	jp enemySetAnimation		; $5243
+
+
+; Touched down on the torch; in the process of being lit back on fire
+_fireKeese_stateA:
+	call _ecom_decCounter1		; $5246
+	jr z,@gotoNextState	; $5249
+
+	ld a,(hl) ; [counter1]
+	sub 30			; $524c
+	ret nz			; $524e
+
+	; [counter1] == 30
+	ld l,Enemy.oamFlags		; $524f
+	ld a,$05		; $5251
+	ldd (hl),a		; $5253
+	ld (hl),a		; $5254
+
+	ld l,Enemy.damage		; $5255
+	ld (hl),-$08		; $5257
+	ld l,Enemy.var33		; $5259
+	xor a			; $525b
+	ld (hl),a		; $525c
+	jp enemySetAnimation		; $525d
+
+@gotoNextState:
+	ld l,Enemy.angle		; $5260
+	ld a,(hl)		; $5262
+	add $10			; $5263
+	and $1f			; $5265
+	ld (hl),a		; $5267
+
+	ld l,Enemy.subid		; $5268
+	bit 0,(hl)		; $526a
+	ld a,$0d		; $526c
+	jr z,++			; $526e
+
+	; Subid 1
+	ld l,Enemy.counter1		; $5270
+	ld (hl),120		; $5272
+	ld a,$0c		; $5274
+++
+	ld (de),a		; $5276
+	ld a,$01		; $5277
+	jp enemySetAnimation		; $5279
+
+
+; Keese which move up and down on Z axis
+_fireKeese_subid0:
+	call _fireKeese_checkForNewlyLitTorch		; $527c
+	; Above function call may pop its return address, ignore everything below here
+
+	ld e,Enemy.state		; $527f
+	ld a,(de)		; $5281
+	sub $0b			; $5282
+	rst_jumpTable			; $5284
+	.dw _fireKeese_subid0_stateB
+	.dw _fireKeese_subid0_stateC
+	.dw _fireKeese_subid0_stateD
+
+
+; Flying around on fire
+_fireKeese_subid0_stateB:
+	call _fireKeese_checkCloseToLink		; $528b
+	jr nc,@linkNotClose	; $528e
+
+	; Link is close
+	ld l,Enemy.state		; $5290
+	inc (hl)		; $5292
+	ld l,Enemy.counter1		; $5293
+	ld (hl),91		; $5295
+	ld l,Enemy.speed		; $5297
+	ld (hl),SPEED_a0		; $5299
+
+@linkNotClose:
+	call _ecom_decCounter1		; $529b
+	jr nz,++		; $529e
+
+	ld (hl),$08 ; [counter1]
+
+	; Move clockwise or counterclockwise (var35 is randomly set to 1 or -1 on
+	; initialization)
+	ld e,Enemy.var35		; $52a2
+	ld a,(de)		; $52a4
+	ld l,Enemy.angle		; $52a5
+	add (hl)		; $52a7
+	and $1f			; $52a8
+	ld (hl),a		; $52aa
+++
+	call objectApplySpeed		; $52ab
+	call _fireKeese_moveTowardCenterIfOutOfBounds		; $52ae
+	jr _fireKeese_animate		; $52b1
+
+
+; Divebombing because Link got close enough
+_fireKeese_subid0_stateC:
+	call _ecom_decCounter1		; $52b3
+	jr nz,++		; $52b6
+	ld l,Enemy.state		; $52b8
+	inc (hl)		; $52ba
+	jr _fireKeese_animate		; $52bb
+++
+	; Add some amount to Z-position
+	ld a,(hl)		; $52bd
+	and $f0			; $52be
+	swap a			; $52c0
+	ld hl,_fireKeese_subid0_zOffsets		; $52c2
+	rst_addAToHl			; $52c5
+
+	ld e,Enemy.z		; $52c6
+	ld a,(de)		; $52c8
+	add (hl)		; $52c9
+	ld (de),a		; $52ca
+	inc e			; $52cb
+	ld a,(de)		; $52cc
+	adc $00			; $52cd
+	ld (de),a		; $52cf
+
+	; Adjust angle toward Link
+	call objectGetAngleTowardEnemyTarget		; $52d0
+	ld b,a			; $52d3
+	ld e,Enemy.counter1		; $52d4
+	ld a,(de)		; $52d6
+	and $03			; $52d7
+	ld a,b			; $52d9
+	call z,objectNudgeAngleTowards		; $52da
+
+_fireKeese_updatePosition:
+	call _ecom_bounceOffScreenBoundary		; $52dd
+	call objectApplySpeed		; $52e0
+
+_fireKeese_animate:
+	jp enemyAnimate		; $52e3
+
+
+; Moving back up after divebombing
+_fireKeese_subid0_stateD:
+	ld h,d			; $52e6
+	ld l,Enemy.z		; $52e7
+	ld a,(hl)		; $52e9
+	sub <($0040)			; $52ea
+	ldi (hl),a		; $52ec
+	ld a,(hl)		; $52ed
+	sbc >($0040)			; $52ee
+	ld (hl),a		; $52f0
+
+	cp $e4			; $52f1
+	jr nc,_fireKeese_updatePosition	; $52f3
+
+	ld l,e			; $52f5
+	ld (hl),$0b ; [state]
+
+	ld l,Enemy.speed		; $52f8
+	ld (hl),SPEED_80		; $52fa
+
+	ld l,Enemy.counter1		; $52fc
+	ld (hl),$08		; $52fe
+	jr _fireKeese_animate		; $5300
+
+
+; Keese which has no Z-axis movement
+_fireKeese_subid1:
+	call _fireKeese_checkForNewlyLitTorch		; $5302
+	; Above function call may pop its return address, ignore everything below here
+
+	ld e,Enemy.state		; $5305
+	ld a,(de)		; $5307
+	sub $0b			; $5308
+	rst_jumpTable			; $530a
+	.dw _fireKeese_subid1_stateB
+	.dw _fireKeese_subid1_stateC
+	.dw _fireKeese_subid1_stateD
+
+
+; Waiting [counter1] frames (8 frames) before moving
+_fireKeese_subid1_stateB:
+	call _ecom_decCounter1		; $5311
+	ret nz			; $5314
+
+	ld l,e			; $5315
+	inc (hl) ; [state]
+
+	ld l,Enemy.speed		; $5317
+	ld (hl),SPEED_c0		; $5319
+
+	; Random angle
+	ld bc,$1f3f		; $531b
+	call _ecom_randomBitwiseAndBCE		; $531e
+	ld e,Enemy.angle		; $5321
+	ld a,b			; $5323
+	ld (de),a		; $5324
+
+	; Random counter1 between $c0-$ff
+	ld a,$c0		; $5325
+	add c			; $5327
+	ld e,Enemy.counter1		; $5328
+	ld (de),a		; $532a
+
+	; Set animation based on if on fire
+	ld e,Enemy.var33		; $532b
 	ld a,(de)		; $532d
-	sub $0b			; $532e
-	rst_jumpTable			; $5330
-	scf			; $5331
-	ld d,e			; $5332
-	ld h,h			; $5333
-	ld d,e			; $5334
-	add e			; $5335
-	ld d,e			; $5336
-	call _ecom_decCounter1		; $5337
-	ret nz			; $533a
-	ld l,e			; $533b
-	inc (hl)		; $533c
-	ld l,$90		; $533d
-	ld (hl),$1e		; $533f
-	ld bc,$1f3f		; $5341
-	call _ecom_randomBitwiseAndBCE		; $5344
-	ld e,$89		; $5347
-	ld a,b			; $5349
-	ld (de),a		; $534a
-	ld a,$c0		; $534b
-	add c			; $534d
-	ld e,$86		; $534e
-	ld (de),a		; $5350
-	ld e,$b3		; $5351
-	ld a,(de)		; $5353
-	inc a			; $5354
-	call enemySetAnimation		; $5355
-	ld e,$b3		; $5358
-	ld a,(de)		; $535a
-	or a			; $535b
-	ld b,$20		; $535c
-	call z,_ecom_spawnProjectile		; $535e
-	jp enemyAnimate		; $5361
-	call $5303		; $5364
-	ld a,(wFrameCounter)		; $5367
-	and $01			; $536a
-	ret nz			; $536c
-	call _ecom_decCounter1		; $536d
-	jr z,_label_0d_121	; $5370
-	ld bc,$0f1f		; $5372
-	call _ecom_randomBitwiseAndBCE		; $5375
-	or b			; $5378
-	ret nz			; $5379
-	ld e,$89		; $537a
-	ld a,c			; $537c
-	ld (de),a		; $537d
-	ret			; $537e
-_label_0d_121:
-	ld l,$84		; $537f
-	inc (hl)		; $5381
-	ret			; $5382
-	ld e,$86		; $5383
-	ld a,(de)		; $5385
-	cp $68			; $5386
-	jr nc,_label_0d_122	; $5388
-	call _ecom_bounceOffScreenBoundary		; $538a
-	call objectApplySpeed		; $538d
-_label_0d_122:
-	call $53b0		; $5390
-	ld h,d			; $5393
-	ld l,$86		; $5394
-	inc (hl)		; $5396
-	ld a,$7f		; $5397
-	cp (hl)			; $5399
-	ret nz			; $539a
-	ld l,$84		; $539b
-	ld (hl),$0b		; $539d
-	ld e,$b3		; $539f
-	ld a,(de)		; $53a1
-	call enemySetAnimation		; $53a2
-	call getRandomNumber_noPreserveVars		; $53a5
-	and $7f			; $53a8
-	ld e,$86		; $53aa
-	add $20			; $53ac
-	ld (de),a		; $53ae
-	ret			; $53af
-	ld e,$86		; $53b0
-	ld a,(de)		; $53b2
-	and $0f			; $53b3
-	jr nz,_label_0d_123	; $53b5
-	ld a,(de)		; $53b7
-	swap a			; $53b8
-	ld hl,$548c		; $53ba
-	rst_addAToHl			; $53bd
-	ld e,$90		; $53be
-	ld a,(hl)		; $53c0
-	ld (de),a		; $53c1
-_label_0d_123:
-	ld e,$86		; $53c2
-	ld a,(de)		; $53c4
+	inc a			; $532e
+	call enemySetAnimation		; $532f
+
+	; Create fire when initially spawning
+	ld e,Enemy.var33		; $5332
+	ld a,(de)		; $5334
+	or a			; $5335
+	ld b,PARTID_FIRE		; $5336
+	call z,_ecom_spawnProjectile		; $5338
+	jp enemyAnimate		; $533b
+
+
+; Moving around randomly for [counter1]*2 frames
+_fireKeese_subid1_stateC:
+	call _fireKeese_updatePosition		; $533e
+
+	ld a,(wFrameCounter)		; $5341
+	and $01			; $5344
+	ret nz			; $5346
+
+	call _ecom_decCounter1		; $5347
+	jr z,@gotoNextState	; $534a
+
+	; 1 in 16 chance of changing angle (every 2 frames)
+	ld bc,$0f1f		; $534c
+	call _ecom_randomBitwiseAndBCE		; $534f
+	or b			; $5352
+	ret nz			; $5353
+	ld e,Enemy.angle		; $5354
+	ld a,c			; $5356
+	ld (de),a		; $5357
+	ret			; $5358
+
+@gotoNextState:
+	ld l,Enemy.state		; $5359
+	inc (hl)		; $535b
+	ret			; $535c
+
+
+; Slowing down, then stopping for a brief period
+_fireKeese_subid1_stateD:
+	ld e,Enemy.counter1		; $535d
+	ld a,(de)		; $535f
+	cp $68			; $5360
+	jr nc,++		; $5362
+
+	call _ecom_bounceOffScreenBoundary		; $5364
+	call objectApplySpeed		; $5367
+++
+	call _fireKeese_subid1_setSpeedAndAnimateBasedOnCounter1		; $536a
+
+	ld h,d			; $536d
+	ld l,Enemy.counter1		; $536e
+	inc (hl)		; $5370
+	ld a,$7f		; $5371
+	cp (hl)			; $5373
+	ret nz			; $5374
+
+	; Time to start moving again; go back to state $0b where we'll abruptly go fast.
+	ld l,Enemy.state		; $5375
+	ld (hl),$0b		; $5377
+
+	ld e,Enemy.var33		; $5379
+	ld a,(de)		; $537b
+	call enemySetAnimation		; $537c
+
+	; Set counter1 to random value from $20-$9f
+	call getRandomNumber_noPreserveVars		; $537f
+	and $7f			; $5382
+	ld e,Enemy.counter1		; $5384
+	add $20			; $5386
+	ld (de),a		; $5388
+	ret			; $5389
+
+
+;;
+; Subid 1 slows down gradually in state $0d.
+; @addr{538a}
+_fireKeese_subid1_setSpeedAndAnimateBasedOnCounter1:
+	ld e,Enemy.counter1		; $538a
+	ld a,(de)		; $538c
+	and $0f			; $538d
+	jr nz,++		; $538f
+
+	; Set speed based on value of counter1
+	ld a,(de)		; $5391
+	swap a			; $5392
+	ld hl,_fireKeese_subid1_speeds		; $5394
+	rst_addAToHl			; $5397
+	ld e,Enemy.speed		; $5398
+	ld a,(hl)		; $539a
+	ld (de),a		; $539b
+++
+	; Animate at some rate based on value of counter1
+	ld e,Enemy.counter1		; $539c
+	ld a,(de)		; $539e
+	and $f0			; $539f
+	swap a			; $53a1
+	ld hl,_fireKeese_subid1_animFrequencies		; $53a3
+	rst_addAToHl			; $53a6
+	ld a,(wFrameCounter)		; $53a7
+	and (hl)		; $53aa
+	jp z,enemyAnimate		; $53ab
+	ret			; $53ae
+
+
+;;
+; @param[out]	cflag	c if Link is within 32 pixels of keese in each direction
+; @addr{53af}
+_fireKeese_checkCloseToLink:
+	ld h,d			; $53af
+	ld l,Enemy.yh		; $53b0
+	ldh a,(<hEnemyTargetY)	; $53b2
+	sub (hl)		; $53b4
+	add $20			; $53b5
+	cp $41			; $53b7
+	ret nc			; $53b9
+	ld l,Enemy.xh		; $53ba
+	ldh a,(<hEnemyTargetX)	; $53bc
+	sub (hl)		; $53be
+	add $20			; $53bf
+	cp $41			; $53c1
+	ret			; $53c3
+
+
+;;
+; Given the position of a torch, checks whether to update "position of closest known
+; torch" (var31/var32).
+;
+; @param	c	Position of lit torch
+; @addr{53c4}
+_fireKeese_addCandidateTorch:
+	; Get Y distance
+	ld a,c			; $53c4
 	and $f0			; $53c5
 	swap a			; $53c7
-	ld hl,$5494		; $53c9
-	rst_addAToHl			; $53cc
-	ld a,(wFrameCounter)		; $53cd
-	and (hl)		; $53d0
-	jp z,enemyAnimate		; $53d1
-	ret			; $53d4
-	ld h,d			; $53d5
-	ld l,$8b		; $53d6
-	ldh a,(<hEnemyTargetY)	; $53d8
-	sub (hl)		; $53da
-	add $20			; $53db
-	cp $41			; $53dd
-	ret nc			; $53df
-	ld l,$8d		; $53e0
-	ldh a,(<hEnemyTargetX)	; $53e2
-	sub (hl)		; $53e4
-	add $20			; $53e5
-	cp $41			; $53e7
-	ret			; $53e9
-	ld a,c			; $53ea
-	and $f0			; $53eb
-	swap a			; $53ed
-	ld b,a			; $53ef
-	ld a,l			; $53f0
-	and $f0			; $53f1
-	swap a			; $53f3
-	sub b			; $53f5
-	jr nc,_label_0d_124	; $53f6
-	cpl			; $53f8
-	inc a			; $53f9
-_label_0d_124:
-	ld b,a			; $53fa
-	ld a,c			; $53fb
-	and $0f			; $53fc
-	ld e,a			; $53fe
-	ld a,l			; $53ff
-	and $0f			; $5400
-	sub e			; $5402
-	jr nc,_label_0d_125	; $5403
-	cpl			; $5405
-	inc a			; $5406
-_label_0d_125:
-	add b			; $5407
-	ld b,a			; $5408
-	ld e,$b0		; $5409
-	ld a,(de)		; $540b
-	cp b			; $540c
-	ret c			; $540d
-	ld a,b			; $540e
-	ld (de),a		; $540f
-	ld e,$b1		; $5410
-	ld a,l			; $5412
-	and $f0			; $5413
-	add $08			; $5415
+	ld b,a			; $53c9
+	ld a,l			; $53ca
+	and $f0			; $53cb
+	swap a			; $53cd
+	sub b			; $53cf
+	jr nc,+			; $53d0
+	cpl			; $53d2
+	inc a			; $53d3
++
+	ld b,a			; $53d4
+
+	; Get X distance
+	ld a,c			; $53d5
+	and $0f			; $53d6
+	ld e,a			; $53d8
+	ld a,l			; $53d9
+	and $0f			; $53da
+	sub e			; $53dc
+	jr nc,+			; $53dd
+	cpl			; $53df
+	inc a			; $53e0
++
+	; Compare with closest candidate, return if farther away
+	add b			; $53e1
+	ld b,a			; $53e2
+	ld e,Enemy.var30		; $53e3
+	ld a,(de)		; $53e5
+	cp b			; $53e6
+	ret c			; $53e7
+
+	; This is the closest torch found so far.
+	ld a,b			; $53e8
+	ld (de),a		; $53e9
+
+	; Mark its position in var31/var32
+	ld e,Enemy.var31		; $53ea
+	ld a,l			; $53ec
+	and $f0			; $53ed
+	add $08			; $53ef
+	ld (de),a		; $53f1
+	inc e			; $53f2
+	ld a,l			; $53f3
+	and $0f			; $53f4
+	swap a			; $53f6
+	add $08			; $53f8
+	ld (de),a		; $53fa
+	ret			; $53fb
+
+
+;;
+; While the keese is not lit on fire, this function checks if any new lit torches suddenly
+; appear in the room. If so, it sets the state to 8 and returns from the caller (discards
+; return address).
+; @addr{53fc}
+_fireKeese_checkForNewlyLitTorch:
+	; Return if on fire already
+	ld e,Enemy.var33		; $53fc
+	ld a,(de)		; $53fe
+	or a			; $53ff
+	ret z			; $5400
+
+	; Check $16 tiles per frame, searching for a torch. (Searching all of them could
+	; cause lag, especially with a lot of bats on-screen.)
+	ld e,Enemy.var34		; $5401
+	ld a,(de)		; $5403
+	ld l,a			; $5404
+	ld h,>wRoomLayout		; $5405
+	ld b,$16		; $5407
+@loop:
+	ldi a,(hl)		; $5409
+	cp TILEINDEX_LIT_TORCH			; $540a
+	jr z,@foundTorch	; $540c
+	dec b			; $540e
+	jr nz,@loop	; $540f
+
+	ld a,l			; $5411
+	cp LARGE_ROOM_HEIGHT<<4			; $5412
+	jr nz,+			; $5414
+	xor a			; $5416
++
 	ld (de),a		; $5417
-	inc e			; $5418
-	ld a,l			; $5419
-	and $0f			; $541a
-	swap a			; $541c
-	add $08			; $541e
-	ld (de),a		; $5420
-	ret			; $5421
-	ld e,$b3		; $5422
-	ld a,(de)		; $5424
-	or a			; $5425
-	ret z			; $5426
-	ld e,$b4		; $5427
+	ret			; $5418
+
+@foundTorch:
+	pop hl ; Return from caller
+
+	ld h,d			; $541a
+	ld l,e			; $541b
+	ld (hl),$00 ; [var34]
+
+	; State 8 will cause the bat to move toward the torch.
+	; (var31/var32 are not set here because the search will be done again in state 8.)
+	ld l,Enemy.state		; $541e
+	ld (hl),$08		; $5420
+
+	ld l,Enemy.speed		; $5422
+	ld (hl),SPEED_c0		; $5424
+	ret			; $5426
+
+;;
+; @param[out]	cflag	nc if reached ground (or at most 6 units away)
+; @addr{5427}
+_fireKeese_moveToGround:
+	ld e,Enemy.zh		; $5427
 	ld a,(de)		; $5429
-	ld l,a			; $542a
-	ld h,$cf		; $542b
-	ld b,$16		; $542d
-_label_0d_126:
-	ldi a,(hl)		; $542f
-	cp $09			; $5430
-	jr z,_label_0d_128	; $5432
-	dec b			; $5434
-	jr nz,_label_0d_126	; $5435
-	ld a,l			; $5437
-	cp $b0			; $5438
-	jr nz,_label_0d_127	; $543a
-	xor a			; $543c
-_label_0d_127:
-	ld (de),a		; $543d
-	ret			; $543e
-_label_0d_128:
-	pop hl			; $543f
-	ld h,d			; $5440
-	ld l,e			; $5441
-	ld (hl),$00		; $5442
-	ld l,$84		; $5444
-	ld (hl),$08		; $5446
-	ld l,$90		; $5448
-	ld (hl),$1e		; $544a
-	ret			; $544c
-	ld e,$8f		; $544d
+	or a			; $542a
+	ret z			; $542b
+
+	cp $fa			; $542c
+	ret nc			; $542e
+
+	; [Enemy.z] += $0080
+	dec e			; $542f
+	ld a,(de)		; $5430
+	add <($0080)			; $5431
+	ld (de),a		; $5433
+	inc e			; $5434
+	ld a,(de)		; $5435
+	adc >($0080)			; $5436
+	ld (de),a		; $5438
+	scf			; $5439
+	ret			; $543a
+
+
+;;
+; @addr{543b}
+_fireKeese_moveTowardCenterIfOutOfBounds:
+	ld e,Enemy.yh		; $543b
+	ld a,(de)		; $543d
+	cp LARGE_ROOM_HEIGHT<<4			; $543e
+	jr nc,@outOfBounds		; $5440
+
+	ld e,Enemy.xh		; $5442
+	ld a,(de)		; $5444
+	cp $f0			; $5445
+	ret c			; $5447
+
+@outOfBounds:
+	ld e,Enemy.yh		; $5448
+	ld a,(de)		; $544a
+	ldh (<hFF8F),a	; $544b
+	ld e,Enemy.xh		; $544d
 	ld a,(de)		; $544f
-	or a			; $5450
-	ret z			; $5451
-	cp $fa			; $5452
-	ret nc			; $5454
-	dec e			; $5455
-	ld a,(de)		; $5456
-	add $80			; $5457
-	ld (de),a		; $5459
-	inc e			; $545a
-	ld a,(de)		; $545b
-	adc $00			; $545c
-	ld (de),a		; $545e
-	scf			; $545f
-	ret			; $5460
-	ld e,$8b		; $5461
-	ld a,(de)		; $5463
-	cp $b0			; $5464
-	jr nc,_label_0d_129	; $5466
-	ld e,$8d		; $5468
-	ld a,(de)		; $546a
-	cp $f0			; $546b
-	ret c			; $546d
-_label_0d_129:
-	ld e,$8b		; $546e
-	ld a,(de)		; $5470
-	ldh (<hFF8F),a	; $5471
-	ld e,$8d		; $5473
-	ld a,(de)		; $5475
-	ldh (<hFF8E),a	; $5476
-	ld bc,$5878		; $5478
-	call objectGetRelativeAngleWithTempVars		; $547b
-	ld c,a			; $547e
-	ld b,$28		; $547f
-	ld e,$89		; $5481
-	jp objectApplyGivenSpeed		; $5483
-	add b			; $5486
-	ld h,b			; $5487
-	ld b,b			; $5488
-	jr nc,$20		; $5489
-	jr nz,$1e		; $548b
-	inc d			; $548d
-	ld a,(bc)		; $548e
-	ld a,(bc)		; $548f
-	dec b			; $5490
-	dec b			; $5491
-	dec b			; $5492
-	dec b			; $5493
-	nop			; $5494
-	nop			; $5495
-	ld bc,$0301		; $5496
-	inc bc			; $5499
-	rlca			; $549a
-	nop			; $549b
+	ldh (<hFF8E),a	; $5450
 
+	ldbc (LARGE_ROOM_HEIGHT/2)<<4 + 8, (LARGE_ROOM_WIDTH/2)<<4 + 8		; $5452
+	call objectGetRelativeAngleWithTempVars		; $5455
+	ld c,a			; $5458
+	ld b,SPEED_100		; $5459
+	ld e,Enemy.angle		; $545b
+	jp objectApplyGivenSpeed		; $545d
+
+
+; Offsets for Z position, in subpixels.
+_fireKeese_subid0_zOffsets:
+	.db $80 $60 $40 $30 $20 $20
+
+; Speed values for subid 1, where it gradually slows down.
+_fireKeese_subid1_speeds:
+	.db SPEED_c0 SPEED_80 SPEED_40 SPEED_40
+	.db SPEED_20 SPEED_20 SPEED_20 SPEED_20
+
+_fireKeese_subid1_animFrequencies:
+	.db $00 $00 $01 $01 $03 $03 $07 $00
+
+
+; ==============================================================================
+; ENEMYID_WATER_TEKTITE
+; ==============================================================================
 enemyCode3a:
-	jr z,_label_0d_130	; $549c
-	sub $03			; $549e
-	ret c			; $54a0
-	jp z,enemyDie		; $54a1
-	dec a			; $54a4
-	ret z			; $54a5
-	ld e,$90		; $54a6
-	ld a,(de)		; $54a8
-	push af			; $54a9
-	ld a,$50		; $54aa
-	ld (de),a		; $54ac
-	ld e,$ac		; $54ad
-	call $5530		; $54af
-	ld e,$ac		; $54b2
-	call _ecom_applyVelocityGivenAdjacentWalls		; $54b4
-	pop af			; $54b7
-	ld e,$90		; $54b8
-	ld (de),a		; $54ba
-	ret			; $54bb
-_label_0d_130:
-	ld e,$84		; $54bc
-	ld a,(de)		; $54be
-	rst_jumpTable			; $54bf
-	call nc,dec16_ff8c		; $54c0
-	ld d,l			; $54c3
-	ld ($0855),sp		; $54c4
-	ld d,l			; $54c7
-	ld ($cb55),sp		; $54c8
-	ld b,h			; $54cb
-	ld ($0855),sp		; $54cc
-	ld d,l			; $54cf
-	add hl,bc		; $54d0
-	ld d,l			; $54d1
-	daa			; $54d2
-	ld d,l			; $54d3
-	call objectSetVisible82		; $54d4
-_label_0d_131:
-	ld h,d			; $54d7
-	ld l,$84		; $54d8
-	ld (hl),$08		; $54da
-	ld l,$86		; $54dc
-	ld (hl),$40		; $54de
-	ld a,($ccf0)		; $54e0
-	or a			; $54e3
-	jr nz,_label_0d_132	; $54e4
-	call getRandomNumber_noPreserveVars		; $54e6
-	and $18			; $54e9
-	add $04			; $54eb
-	ld e,$89		; $54ed
-	ld (de),a		; $54ef
-	jr _label_0d_134		; $54f0
-_label_0d_132:
-	ldh a,(<hFFB2)	; $54f2
-	ldh (<hFF8F),a	; $54f4
-	ldh a,(<hFFB3)	; $54f6
-	ldh (<hFF8E),a	; $54f8
-	ld l,$8b		; $54fa
-	ldi a,(hl)		; $54fc
-	ld b,a			; $54fd
-	inc l			; $54fe
-	ld c,(hl)		; $54ff
-	call objectGetRelativeAngleWithTempVars		; $5500
-	ld e,$89		; $5503
-	ld (de),a		; $5505
-	jr _label_0d_134		; $5506
-	ret			; $5508
-	call _ecom_decCounter1		; $5509
-	jr nz,_label_0d_133	; $550c
-	ld l,e			; $550e
-	inc (hl)		; $550f
-	ld l,$86		; $5510
-	ld (hl),$08		; $5512
-	jr _label_0d_134		; $5514
-_label_0d_133:
-	call $5568		; $5516
-	call $552e		; $5519
-	ld e,$89		; $551c
-	call _ecom_applyVelocityGivenAdjacentWalls		; $551e
-	call _ecom_bounceOffScreenBoundary		; $5521
-_label_0d_134:
-	jp enemyAnimate		; $5524
-	call _ecom_decCounter1		; $5527
-	jr nz,_label_0d_134	; $552a
-	jr _label_0d_131		; $552c
-	ld e,$89		; $552e
-	ld a,(de)		; $5530
-	call _ecom_getAdjacentWallTableOffset		; $5531
-	ld h,d			; $5534
-	ld l,$8b		; $5535
-	ld b,(hl)		; $5537
-	ld l,$8d		; $5538
-	ld c,(hl)		; $553a
-	ld hl,$425e		; $553b
-	rst_addAToHl			; $553e
-	ld a,$10		; $553f
-	ldh (<hFF8B),a	; $5541
-	ld d,$cf		; $5543
-_label_0d_135:
-	ldi a,(hl)		; $5545
-	add b			; $5546
-	ld b,a			; $5547
-	and $f0			; $5548
-	ld e,a			; $554a
-	ldi a,(hl)		; $554b
-	add c			; $554c
-	ld c,a			; $554d
-	and $f0			; $554e
-	swap a			; $5550
-	or e			; $5552
-	ld e,a			; $5553
-	ld a,(de)		; $5554
-	sub $fa			; $5555
-	cp $04			; $5557
-	ldh a,(<hFF8B)	; $5559
-	rla			; $555b
-	ldh (<hFF8B),a	; $555c
-	jr nc,_label_0d_135	; $555e
-	xor $0f			; $5560
-	ldh (<hFF8B),a	; $5562
-	ldh a,(<hActiveObject)	; $5564
-	ld d,a			; $5566
-	ret			; $5567
-	ld a,(hl)		; $5568
-	srl a			; $5569
-	srl a			; $556b
-	ld hl,$5576		; $556d
-	rst_addAToHl			; $5570
-	ld e,$90		; $5571
-	ld a,(hl)		; $5573
-	ld (de),a		; $5574
-	ret			; $5575
-	dec b			; $5576
-	ld a,(bc)		; $5577
-	inc d			; $5578
-	ld e,$28		; $5579
-	ldd (hl),a		; $557b
-	ldd (hl),a		; $557c
-	ldd (hl),a		; $557d
-	jr z,_label_0d_138	; $557e
-	ld e,$1e		; $5580
-	inc d			; $5582
-	inc d			; $5583
-	ld a,(bc)		; $5584
-	ld a,(bc)		; $5585
+	jr z,@normalStatus	; $5476
+	sub ENEMYSTATUS_NO_HEALTH			; $5478
+	ret c			; $547a
+	jp z,enemyDie		; $547b
+	dec a			; $547e
+	ret z			; $547f
 
+	; ENEMYSTATUS_KNOCKBACK
+	; Need special knockback code for special "solidity" properties (water is
+	; traversible, everything else is solid)
+	ld e,Enemy.speed		; $5480
+	ld a,(de)		; $5482
+	push af			; $5483
+	ld a,SPEED_200		; $5484
+	ld (de),a		; $5486
+	ld e,Enemy.knockbackAngle		; $5487
+	call _waterTektite_getAdjacentWallsBitsetGivenAngle		; $5489
+	ld e,Enemy.knockbackAngle		; $548c
+	call _ecom_applyVelocityGivenAdjacentWalls		; $548e
+
+	pop af			; $5491
+	ld e,Enemy.speed		; $5492
+	ld (de),a		; $5494
+	ret			; $5495
+
+@normalStatus:
+	ld e,Enemy.state		; $5496
+	ld a,(de)		; $5498
+	rst_jumpTable			; $5499
+	.dw _waterTektite_state_uninitialized
+	.dw _waterTektike_state_stub
+	.dw _waterTektike_state_stub
+	.dw _waterTektike_state_stub
+	.dw _waterTektike_state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw _waterTektike_state_stub
+	.dw _waterTektike_state_stub
+	.dw _waterTektike_state8
+	.dw _waterTektike_state9
+
+
+_waterTektite_state_uninitialized:
+	call objectSetVisible82		; $54ae
+
+_waterTektike_decideNewAngle:
+	ld h,d			; $54b1
+	ld l,Enemy.state		; $54b2
+	ld (hl),$08		; $54b4
+
+	ld l,Enemy.counter1		; $54b6
+	ld (hl),$40		; $54b8
+
+	ld a,(wScentSeedActive)		; $54ba
+	or a			; $54bd
+	jr nz,@scentSeedActive	; $54be
+
+	; Random diagonal angle
+	call getRandomNumber_noPreserveVars		; $54c0
+	and $18			; $54c3
+	add $04			; $54c5
+	ld e,Enemy.angle		; $54c7
+	ld (de),a		; $54c9
+	jr _waterTektike_animate		; $54ca
+
+@scentSeedActive:
+	ldh a,(<hFFB2)	; $54cc
+	ldh (<hFF8F),a	; $54ce
+	ldh a,(<hFFB3)	; $54d0
+	ldh (<hFF8E),a	; $54d2
+	ld l,Enemy.yh		; $54d4
+	ldi a,(hl)		; $54d6
+	ld b,a			; $54d7
+	inc l			; $54d8
+	ld c,(hl)		; $54d9
+	call objectGetRelativeAngleWithTempVars		; $54da
+	ld e,Enemy.angle		; $54dd
+	ld (de),a		; $54df
+	jr _waterTektike_animate		; $54e0
+
+
+_waterTektike_state_stub:
+	ret			; $54e2
+
+
+; Moving in some direction for [counter1] frames, at varying speeds.
+_waterTektike_state8:
+	call _ecom_decCounter1		; $54e3
+	jr nz,++		; $54e6
+
+	ld l,e			; $54e8
+	inc (hl) ; [state]
+
+	ld l,Enemy.counter1		; $54ea
+	ld (hl),$08		; $54ec
+	jr _waterTektike_animate		; $54ee
+++
+	call _waterTektike_setSpeedFromCounter1		; $54f0
+
+	call _waterTektite_getAdjacentWallsBitset		; $54f3
+	ld e,Enemy.angle		; $54f6
+	call _ecom_applyVelocityGivenAdjacentWalls		; $54f8
+	call _ecom_bounceOffScreenBoundary		; $54fb
+
+_waterTektike_animate:
+	jp enemyAnimate		; $54fe
+
+
+
+; Not moving for [counter1] frames; then choosing new angle
+_waterTektike_state9:
+	call _ecom_decCounter1		; $5501
+	jr nz,_waterTektike_animate	; $5504
+	jr _waterTektike_decideNewAngle		; $5506
+
+;;
+; Gets the "adjacent walls bitset" for the tektike; since this swims, water is
+; traversable, everything else is not.
+;
+; This is identical to "_fish_getAdjacentWallsBitsetForKnockback".
+;
+; @addr{5508}
+_waterTektite_getAdjacentWallsBitset:
+	ld e,Enemy.angle		; $5508
+
+;;
+; @param	de	Angle variable
+; @addr{550a}
+_waterTektite_getAdjacentWallsBitsetGivenAngle:
+	ld a,(de)		; $550a
+	call _ecom_getAdjacentWallTableOffset		; $550b
+
+	ld h,d			; $550e
+	ld l,Enemy.yh		; $550f
+	ld b,(hl)		; $5511
+	ld l,Enemy.xh		; $5512
+	ld c,(hl)		; $5514
+	ld hl,_ecom_sideviewAdjacentWallOffsetTable		; $5515
+	rst_addAToHl			; $5518
+
+	ld a,$10		; $5519
+	ldh (<hFF8B),a	; $551b
+	ld d,>wRoomLayout		; $551d
+@nextOffset:
+	ldi a,(hl)		; $551f
+	add b			; $5520
+	ld b,a			; $5521
+	and $f0			; $5522
+	ld e,a			; $5524
+	ldi a,(hl)		; $5525
+	add c			; $5526
+	ld c,a			; $5527
+	and $f0			; $5528
+	swap a			; $552a
+	or e			; $552c
+	ld e,a			; $552d
+	ld a,(de)		; $552e
+	sub TILEINDEX_PUDDLE			; $552f
+	cp TILEINDEX_FD-TILEINDEX_PUDDLE+1			; $5531
+	ldh a,(<hFF8B)	; $5533
+	rla			; $5535
+	ldh (<hFF8B),a	; $5536
+	jr nc,@nextOffset	; $5538
+
+	xor $0f			; $553a
+	ldh (<hFF8B),a	; $553c
+	ldh a,(<hActiveObject)	; $553e
+	ld d,a			; $5540
+	ret			; $5541
+
+
+;;
+; @param	hl	Pointer to counter1
+; @addr{5542}
+_waterTektike_setSpeedFromCounter1:
+	ld a,(hl)		; $5542
+	srl a			; $5543
+	srl a			; $5545
+	ld hl,@speedVals		; $5547
+	rst_addAToHl			; $554a
+	ld e,Enemy.speed		; $554b
+	ld a,(hl)		; $554d
+	ld (de),a		; $554e
+	ret			; $554f
+
+@speedVals:
+	.db SPEED_020 SPEED_040 SPEED_080 SPEED_0c0 SPEED_100 SPEED_140 SPEED_140 SPEED_140
+	.db SPEED_100 SPEED_100 SPEED_0c0 SPEED_0c0 SPEED_080 SPEED_080 SPEED_040 SPEED_040
+
+
+; ==============================================================================
+; ENEMYID_SWORD_MOBLIN
+; ENEMYID_SWORD_SHROUDED_STALFOS
+; ENEMYID_SWORD_MASKED_MOBLIN
+;
+; Shares some code with ENEMYID_SWORD_DARKNUT.
+;
+; Variables:
+;   var30: Nonzero if enemyCollisionMode was changed to ignore sword damage (due to the
+;          enemy's sword blocking it)
+; ==============================================================================
 enemyCode3d:
 enemyCode49:
 enemyCode4a:
-	call _ecom_checkHazards		; $5586
-	call $558f		; $5589
-	jp $5761		; $558c
-	jr z,_label_0d_137	; $558f
-	sub $03			; $5591
-	ret c			; $5593
-	jr z,_label_0d_136	; $5594
-	dec a			; $5596
-	jp nz,_ecom_updateKnockbackAndCheckHazards		; $5597
-	ret			; $559a
-_label_0d_136:
-	pop hl			; $559b
-	jp enemyDie		; $559c
-_label_0d_137:
-	call _ecom_checkScentSeedActive		; $559f
-	jr z,_label_0d_139	; $55a2
-	ld e,$90		; $55a4
-	ld a,$19		; $55a6
-_label_0d_138:
-	ld (de),a		; $55a8
-_label_0d_139:
-	ld e,$84		; $55a9
-	ld a,(de)		; $55ab
-	rst_jumpTable			; $55ac
-	jp $0a55		; $55ad
-	ld d,(hl)		; $55b0
-	ld a,(bc)		; $55b1
-	ld d,(hl)		; $55b2
-	sbc $55			; $55b3
-.DB $f4				; $55b5
-	ld d,l			; $55b6
-	bit 0,h			; $55b7
-	ld a,(bc)		; $55b9
-	ld d,(hl)		; $55ba
-	ld a,(bc)		; $55bb
-	ld d,(hl)		; $55bc
-	dec bc			; $55bd
-	ld d,(hl)		; $55be
-	dec h			; $55bf
-	ld d,(hl)		; $55c0
-	ldd (hl),a		; $55c1
-	ld d,(hl)		; $55c2
-	ld b,$1d		; $55c3
-	call _ecom_spawnProjectile		; $55c5
-	ret nz			; $55c8
-	call _ecom_setRandomCardinalAngle		; $55c9
-	call _ecom_updateAnimationFromAngle		; $55cc
-	ld a,$14		; $55cf
-	call _ecom_setSpeedAndState8AndVisible		; $55d1
-	ld l,$86		; $55d4
-	inc (hl)		; $55d6
-	ld l,$bf		; $55d7
-	set 4,(hl)		; $55d9
-	jp $5750		; $55db
-	inc e			; $55de
-	ld a,(de)		; $55df
-	rst_jumpTable			; $55e0
-	dec b			; $55e1
-	ld b,b			; $55e2
-	jp hl			; $55e3
-	ld d,l			; $55e4
-	jp hl			; $55e5
-	ld d,l			; $55e6
-	ld ($c955),a		; $55e7
-	ld b,$09		; $55ea
-	call _ecom_fallToGroundAndSetState		; $55ec
-	ld l,$86		; $55ef
-	ld (hl),$10		; $55f1
-	ret			; $55f3
-	ld a,($ccf0)		; $55f4
-	or a			; $55f7
-	ld h,d			; $55f8
-	jp z,$564e		; $55f9
-	call _ecom_updateAngleToScentSeed		; $55fc
-	call _ecom_updateAnimationFromAngle		; $55ff
-	call _ecom_applyVelocityForSideviewEnemy		; $5602
-	call enemyAnimate		; $5605
-	jr _label_0d_140		; $5608
-	ret			; $560a
-	call $5720		; $560b
-	jp c,$56f9		; $560e
-	call _ecom_decCounter1		; $5611
-	jp z,$5706		; $5614
-	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $5617
-	jr nz,_label_0d_140	; $561a
-	call _ecom_bounceOffWallsAndHoles		; $561c
-	jp nz,_ecom_updateAnimationFromAngle		; $561f
-_label_0d_140:
-	jp enemyAnimate		; $5622
-	call _ecom_decCounter1		; $5625
-	ret nz			; $5628
-	ld (hl),$60		; $5629
-	ld l,e			; $562b
-	inc (hl)		; $562c
-	ld l,$90		; $562d
-	ld (hl),$19		; $562f
-	ret			; $5631
-	call _ecom_decCounter1		; $5632
-	jp z,$564e		; $5635
-	ld a,(hl)		; $5638
-	and $03			; $5639
-	jr nz,_label_0d_141	; $563b
-	call objectGetAngleTowardEnemyTarget		; $563d
-	call objectNudgeAngleTowards		; $5640
-	call _ecom_updateAnimationFromAngle		; $5643
-_label_0d_141:
-	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $5646
-	call enemyAnimate		; $5649
-	jr _label_0d_140		; $564c
-	ld l,e			; $564e
-	ld (hl),$08		; $564f
-	ld l,$90		; $5651
-	ld (hl),$14		; $5653
-	ld l,$89		; $5655
-	ld a,(hl)		; $5657
-	add $04			; $5658
-	and $18			; $565a
-	ld (hl),a		; $565c
-	call _ecom_updateAnimationFromAngle		; $565d
-	call $5750		; $5660
-	jr _label_0d_140		; $5663
+	call _ecom_checkHazards		; $5560
+	call @runState		; $5563
+	jp _swordEnemy_updateEnemyCollisionMode		; $5566
 
+@runState:
+	jr z,@normalStatus	; $5569
+	sub ENEMYSTATUS_NO_HEALTH			; $556b
+	ret c			; $556d
+	jr z,@dead	; $556e
+	dec a			; $5570
+	jp nz,_ecom_updateKnockbackAndCheckHazards		; $5571
+	ret			; $5574
+@dead:
+	pop hl			; $5575
+	jp enemyDie		; $5576
+
+@normalStatus:
+	call _ecom_checkScentSeedActive		; $5579
+	jr z,++			; $557c
+	ld e,Enemy.speed		; $557e
+	ld a,SPEED_a0		; $5580
+	ld (de),a		; $5582
+++
+	ld e,Enemy.state		; $5583
+	ld a,(de)		; $5585
+	rst_jumpTable			; $5586
+	.dw _swordEnemy_state_uninitialized
+	.dw _swordEnemy_state_stub
+	.dw _swordEnemy_state_stub
+	.dw _swordEnemy_state_switchHook
+	.dw _swordEnemy_state_scentSeed
+	.dw _ecom_blownByGaleSeedState
+	.dw _swordEnemy_state_stub
+	.dw _swordEnemy_state_stub
+	.dw _swordEnemy_state8
+	.dw _swordEnemy_state9
+	.dw _swordEnemy_stateA
+
+
+_swordEnemy_state_uninitialized:
+	ld b,PARTID_ENEMY_SWORD		; $559d
+	call _ecom_spawnProjectile		; $559f
+	ret nz			; $55a2
+
+	call _ecom_setRandomCardinalAngle		; $55a3
+	call _ecom_updateAnimationFromAngle		; $55a6
+
+	ld a,SPEED_80		; $55a9
+	call _ecom_setSpeedAndState8AndVisible		; $55ab
+
+	ld l,Enemy.counter1		; $55ae
+	inc (hl)		; $55b0
+
+	; Enable scent seeds
+	ld l,Enemy.var3f		; $55b1
+	set 4,(hl)		; $55b3
+
+	jp _swordEnemy_setChaseCooldown		; $55b5
+
+
+_swordEnemy_state_switchHook:
+	inc e			; $55b8
+	ld a,(de)		; $55b9
+	rst_jumpTable			; $55ba
+	.dw _ecom_incState2
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+
+@substate1:
+@substate2:
+	ret			; $55c3
+
+@substate3:
+	ld b,$09		; $55c4
+	call _ecom_fallToGroundAndSetState		; $55c6
+	ld l,Enemy.counter1		; $55c9
+	ld (hl),$10		; $55cb
+	ret			; $55cd
+
+
+_swordEnemy_state_scentSeed:
+	ld a,(wScentSeedActive)		; $55ce
+	or a			; $55d1
+	ld h,d			; $55d2
+	jp z,_swordEnemy_gotoState8		; $55d3
+	call _ecom_updateAngleToScentSeed		; $55d6
+	call _ecom_updateAnimationFromAngle		; $55d9
+	call _ecom_applyVelocityForSideviewEnemy		; $55dc
+	call enemyAnimate		; $55df
+	jr _swordEnemy_animate		; $55e2
+
+
+_swordEnemy_state_stub:
+	ret			; $55e4
+
+
+; Moving slowly in cardinal directions until Link get close.
+_swordEnemy_state8:
+	call _swordEnemy_checkLinkIsClose		; $55e5
+	jp c,_swordEnemy_beginChasingLink		; $55e8
+
+	call _ecom_decCounter1		; $55eb
+	jp z,_swordEnemy_chooseRandomAngleAndCounter1		; $55ee
+
+	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $55f1
+	jr nz,_swordEnemy_animate	; $55f4
+
+	; Hit a wall
+	call _ecom_bounceOffWallsAndHoles		; $55f6
+	jp nz,_ecom_updateAnimationFromAngle		; $55f9
+
+_swordEnemy_animate:
+	jp enemyAnimate		; $55fc
+
+
+; Started chasing Link (don't adjust angle until next state).
+_swordEnemy_state9:
+	call _ecom_decCounter1		; $55ff
+	ret nz			; $5602
+	ld (hl),$60		; $5603
+	ld l,e			; $5605
+	inc (hl) ; [state]
+	ld l,Enemy.speed		; $5607
+	ld (hl),SPEED_a0		; $5609
+	ret			; $560b
+
+
+; Chasing Link for [counter1] frames (adjusts angle appropriately).
+_swordEnemy_stateA:
+	call _ecom_decCounter1		; $560c
+	jp z,_swordEnemy_gotoState8		; $560f
+
+	ld a,(hl)		; $5612
+	and $03			; $5613
+	jr nz,++		; $5615
+	call objectGetAngleTowardEnemyTarget		; $5617
+	call objectNudgeAngleTowards		; $561a
+	call _ecom_updateAnimationFromAngle		; $561d
+++
+	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $5620
+
+	; Animate at double speed
+	call enemyAnimate		; $5623
+	jr _swordEnemy_animate		; $5626
+
+
+;;
+; Reverts to state 8; wandering around in cardinal directions
+; @addr{5628}
+_swordEnemy_gotoState8:
+	ld l,e			; $5628
+	ld (hl),$08 ; [state]
+
+	ld l,Enemy.speed		; $562b
+	ld (hl),SPEED_80		; $562d
+	ld l,Enemy.angle		; $562f
+	ld a,(hl)		; $5631
+	add $04			; $5632
+	and $18			; $5634
+	ld (hl),a		; $5636
+
+	call _ecom_updateAnimationFromAngle		; $5637
+	call _swordEnemy_setChaseCooldown		; $563a
+	jr _swordEnemy_animate		; $563d
+
+
+; ==============================================================================
+; ENEMYID_SWORD_DARKNUT
+; ==============================================================================
 enemyCode48:
-	call _ecom_seasonsFunc_4446		; $5665
-	call $566e		; $5668
-	jp $5786		; $566b
-	jr z,_label_0d_144	; $566e
-	sub $03			; $5670
-	ret c			; $5672
-	jr z,_label_0d_142	; $5673
-	dec a			; $5675
-	call nz,_ecom_updateKnockbackAndCheckHazards		; $5676
-	jp $5786		; $5679
-_label_0d_142:
-	ld e,$82		; $567c
-	ld a,(de)		; $567e
-	cp $02			; $567f
-	jr nz,_label_0d_143	; $5681
-	ld hl,$c6c9		; $5683
-	set 2,(hl)		; $5686
-_label_0d_143:
-	pop hl			; $5688
-	jp enemyDie		; $5689
-_label_0d_144:
-	ld e,$84		; $568c
-	ld a,(de)		; $568e
-	rst_jumpTable			; $568f
-	and (hl)		; $5690
-	ld d,(hl)		; $5691
-	ld a,(bc)		; $5692
-	ld d,(hl)		; $5693
-	ld a,(bc)		; $5694
-	ld d,(hl)		; $5695
-	sbc $55			; $5696
-	ld a,(bc)		; $5698
-	ld d,(hl)		; $5699
-	ld a,(bc)		; $569a
-	ld d,(hl)		; $569b
-	ld a,(bc)		; $569c
-	ld d,(hl)		; $569d
-	ld a,(bc)		; $569e
-	ld d,(hl)		; $569f
-	cp b			; $56a0
-	ld d,(hl)		; $56a1
-	ret nc			; $56a2
-	ld d,(hl)		; $56a3
-.DB $dd				; $56a4
-	ld d,(hl)		; $56a5
-	ld e,$82		; $56a6
-	ld a,(de)		; $56a8
-	cp $02			; $56a9
-	jr nz,_label_0d_145	; $56ab
-	ld a,($c6c9)		; $56ad
-	bit 2,a			; $56b0
-	jp nz,$57c7		; $56b2
-_label_0d_145:
-	jp $55c3		; $56b5
-	call $5738		; $56b8
-	jr c,_label_0d_148	; $56bb
-	call _ecom_decCounter1		; $56bd
-	jr z,_label_0d_149	; $56c0
-	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $56c2
-	jr nz,_label_0d_146	; $56c5
-	call _ecom_bounceOffWallsAndHoles		; $56c7
-	jp nz,_ecom_updateAnimationFromAngle		; $56ca
-_label_0d_146:
-	jp enemyAnimate		; $56cd
-	call _ecom_decCounter1		; $56d0
-	ret nz			; $56d3
-	ld (hl),$60		; $56d4
-	ld l,e			; $56d6
-	inc (hl)		; $56d7
-	ld l,$90		; $56d8
-	ld (hl),$1e		; $56da
-	ret			; $56dc
-	call _ecom_decCounter1		; $56dd
-	jp z,$564e		; $56e0
-	ld a,(hl)		; $56e3
-	and $01			; $56e4
-	jr nz,_label_0d_147	; $56e6
-	call objectGetAngleTowardEnemyTarget		; $56e8
-	call objectNudgeAngleTowards		; $56eb
-	call _ecom_updateAnimationFromAngle		; $56ee
-_label_0d_147:
-	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $56f1
-	call enemyAnimate		; $56f4
-	jr _label_0d_146		; $56f7
-_label_0d_148:
-	ld l,$84		; $56f9
-	inc (hl)		; $56fb
-	ld l,$86		; $56fc
-	ld (hl),$10		; $56fe
-	call _ecom_updateAngleTowardTarget		; $5700
-	jp _ecom_updateAnimationFromAngle		; $5703
-_label_0d_149:
-	ld bc,$3f07		; $5706
-	call _ecom_randomBitwiseAndBCE		; $5709
-	ld e,$86		; $570c
-	ld a,$50		; $570e
-	add b			; $5710
-	ld (de),a		; $5711
-	call $5718		; $5712
-	jp _ecom_updateAnimationFromAngle		; $5715
-	ld a,c			; $5718
-	or a			; $5719
-	jp z,_ecom_updateCardinalAngleTowardTarget		; $571a
-	jp _ecom_setRandomCardinalAngle		; $571d
-	call _ecom_decCounter2		; $5720
-	ret nz			; $5723
-	ld l,$8b		; $5724
-	ldh a,(<hFFB2)	; $5726
-	sub (hl)		; $5728
-	add $28			; $5729
-	cp $51			; $572b
-	ret nc			; $572d
-	ld l,$8d		; $572e
-	ldh a,(<hEnemyTargetX)	; $5730
-	sub (hl)		; $5732
-	add $28			; $5733
-	cp $51			; $5735
+.ifdef ROM_AGES
+	call _ecom_checkHazards		; $563f
+.else
+	call _ecom_seasonsFunc_4446
+.endif
+	call @runState		; $5642
+	jp _swordDarknut_updateEnemyCollisionMode		; $5645
+
+@runState:
+	jr z,@normalStatus	; $5648
+	sub ENEMYSTATUS_NO_HEALTH			; $564a
+	ret c			; $564c
+	jr z,@dead	; $564d
+	dec a			; $564f
+	call nz,_ecom_updateKnockbackAndCheckHazards		; $5650
+	jp _swordDarknut_updateEnemyCollisionMode		; $5653
+
+@dead:
+	ld e,Enemy.subid		; $5656
+	ld a,(de)		; $5658
+	cp $02			; $5659
+	jr nz,++		; $565b
+	ld hl,wKilledGoldenEnemies		; $565d
+	set 2,(hl)		; $5660
+++
+	pop hl			; $5662
+	jp enemyDie		; $5663
+
+@normalStatus:
+	ld e,Enemy.state		; $5666
+	ld a,(de)		; $5668
+	rst_jumpTable			; $5669
+	.dw _swordDarknut_state_uninitialized
+	.dw _swordEnemy_state_stub
+	.dw _swordEnemy_state_stub
+	.dw _swordEnemy_state_switchHook
+	.dw _swordEnemy_state_stub
+	.dw _swordEnemy_state_stub
+	.dw _swordEnemy_state_stub
+	.dw _swordEnemy_state_stub
+	.dw _swordDarknut_state8
+	.dw _swordDarknut_state9
+	.dw _swordDarknut_stateA
+
+
+_swordDarknut_state_uninitialized:
+	ld e,Enemy.subid		; $5680
+	ld a,(de)		; $5682
+	cp $02			; $5683
+	jr nz,++		; $5685
+	ld a,(wKilledGoldenEnemies)		; $5687
+	bit 2,a			; $568a
+	jp nz,_swordDarknut_delete		; $568c
+++
+	jp _swordEnemy_state_uninitialized		; $568f
+
+
+; Moving slowly in cardinal directions until Link get close.
+; Identical to _swordEnemy_state8.
+_swordDarknut_state8:
+	call _swordDarknut_checkLinkIsClose		; $5692
+	jr c,_swordEnemy_beginChasingLink	; $5695
+
+	call _ecom_decCounter1		; $5697
+	jr z,_swordEnemy_chooseRandomAngleAndCounter1	; $569a
+
+	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $569c
+	jr nz,_swordDarknut_animate	; $569f
+
+	; Hit a wall
+	call _ecom_bounceOffWallsAndHoles		; $56a1
+	jp nz,_ecom_updateAnimationFromAngle		; $56a4
+
+_swordDarknut_animate:
+	jp enemyAnimate		; $56a7
+
+
+; Started chasing Link (don't adjust angle until next state).
+; Identical to _swordEnemy_state9 except for the speed.
+_swordDarknut_state9:
+	call _ecom_decCounter1		; $56aa
+	ret nz			; $56ad
+	ld (hl),$60		; $56ae
+	ld l,e			; $56b0
+	inc (hl) ; [state]
+	ld l,Enemy.speed		; $56b2
+	ld (hl),SPEED_c0		; $56b4
+	ret			; $56b6
+
+
+; Chasing Link for [counter1] frames (adjusts angle appropriately).
+; Identical to _swordEnemy_stateA except for how quickly it turns toward Link.
+_swordDarknut_stateA:
+	call _ecom_decCounter1		; $56b7
+	jp z,_swordEnemy_gotoState8		; $56ba
+
+	ld a,(hl)		; $56bd
+	and $01			; $56be
+	jr nz,++		; $56c0
+	call objectGetAngleTowardEnemyTarget		; $56c2
+	call objectNudgeAngleTowards		; $56c5
+	call _ecom_updateAnimationFromAngle		; $56c8
+++
+	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $56cb
+
+	; Animate at double speed
+	call enemyAnimate		; $56ce
+	jr _swordDarknut_animate		; $56d1
+
+;;
+; @addr{56d3}
+_swordEnemy_beginChasingLink:
+	ld l,Enemy.state		; $56d3
+	inc (hl)		; $56d5
+	ld l,Enemy.counter1		; $56d6
+	ld (hl),$10		; $56d8
+	call _ecom_updateAngleTowardTarget		; $56da
+	jp _ecom_updateAnimationFromAngle		; $56dd
+
+;;
+; @addr{56e0}
+_swordEnemy_chooseRandomAngleAndCounter1:
+	ld bc,$3f07		; $56e0
+	call _ecom_randomBitwiseAndBCE		; $56e3
+	ld e,Enemy.counter1		; $56e6
+	ld a,$50		; $56e8
+	add b			; $56ea
+	ld (de),a		; $56eb
+
+	call @chooseAngle		; $56ec
+	jp _ecom_updateAnimationFromAngle		; $56ef
+
+@chooseAngle:
+	; 1 in 8 chance of moving toward Link
+	ld a,c			; $56f2
+	or a			; $56f3
+	jp z,_ecom_updateCardinalAngleTowardTarget		; $56f4
+	jp _ecom_setRandomCardinalAngle		; $56f7
+
+
+;;
+; @param[out]	cflag	c if Link is within 40 pixels of enemy in both directions (and
+;			counter2, the timeout, has reached 0)
+; @addr{56fa}
+_swordEnemy_checkLinkIsClose:
+	call _ecom_decCounter2		; $56fa
+	ret nz			; $56fd
+
+	; NOTE: Why does this use hFFB2, then hEnemyTargetX? It's mixing two position
+	; variables.
+	ld l,Enemy.yh		; $56fe
+	ldh a,(<hFFB2)	; $5700
+	sub (hl)		; $5702
+	add $28			; $5703
+	cp $51			; $5705
+	ret nc			; $5707
+	ld l,Enemy.xh		; $5708
+	ldh a,(<hEnemyTargetX)	; $570a
+	sub (hl)		; $570c
+	add $28			; $570d
+	cp $51			; $570f
+	ret			; $5711
+
+;;
+; This is identical to the above function.
+; @addr{5712}
+_swordDarknut_checkLinkIsClose:
+	call _ecom_decCounter2		; $5712
+	ret nz			; $5715
+
+	; NOTE: Why does this use hFFB2, then hEnemyTargetX? It's mixing two position
+	; variables.
+	ld l,Enemy.yh		; $5716
+	ldh a,(<hFFB2)	; $5718
+	sub (hl)		; $571a
+	add $28			; $571b
+	cp $51			; $571d
+	ret nc			; $571f
+	ld l,Enemy.xh		; $5720
+	ldh a,(<hEnemyTargetX)	; $5722
+	sub (hl)		; $5724
+	add $28			; $5725
+	cp $51			; $5727
+	ret			; $5729
+
+
+;;
+; Sets counter2 to the number of frames to wait before chasing Link again. Higher subids
+; have lower cooldowns.
+; @addr{572a}
+_swordEnemy_setChaseCooldown:
+	ld e,Enemy.subid		; $572a
+	ld a,(de)		; $572c
+	ld bc,@counter2Vals		; $572d
+	call addAToBc		; $5730
+	ld e,Enemy.counter2		; $5733
+	ld a,(bc)		; $5735
+	ld (de),a		; $5736
 	ret			; $5737
-	call _ecom_decCounter2		; $5738
-	ret nz			; $573b
-	ld l,$8b		; $573c
-	ldh a,(<hFFB2)	; $573e
-	sub (hl)		; $5740
-	add $28			; $5741
-	cp $51			; $5743
-	ret nc			; $5745
-	ld l,$8d		; $5746
-	ldh a,(<hEnemyTargetX)	; $5748
-	sub (hl)		; $574a
-	add $28			; $574b
-	cp $51			; $574d
-	ret			; $574f
-	ld e,$82		; $5750
-	ld a,(de)		; $5752
-	ld bc,$575e		; $5753
-	call addAToBc		; $5756
-	ld e,$87		; $5759
-	ld a,(bc)		; $575b
-	ld (de),a		; $575c
-	ret			; $575d
-	inc d			; $575e
-	stop			; $575f
-	inc c			; $5760
-	ld b,$00		; $5761
-	ld e,$ae		; $5763
-	ld a,(de)		; $5765
-	or a			; $5766
-	jr nz,_label_0d_150	; $5767
-	call $57a2		; $5769
-	ld a,$52		; $576c
-	ld b,$00		; $576e
-	jr nz,_label_0d_151	; $5770
-_label_0d_150:
-	inc b			; $5772
-	ld e,$81		; $5773
-	ld a,(de)		; $5775
-	cp $49			; $5776
-	ld a,$11		; $5778
-	jr nz,_label_0d_151	; $577a
-	ld a,$20		; $577c
-_label_0d_151:
-	ld e,$a5		; $577e
-	ld (de),a		; $5780
-	ld e,$b0		; $5781
-	ld a,b			; $5783
-	ld (de),a		; $5784
-	ret			; $5785
-	ld b,$00		; $5786
-	ld e,$ae		; $5788
-	ld a,(de)		; $578a
-	or a			; $578b
-	jr nz,_label_0d_152	; $578c
-	call $57a2		; $578e
-	ld a,$53		; $5791
-	ld b,$00		; $5793
-	jr nz,_label_0d_153	; $5795
-_label_0d_152:
-	ld a,$1f		; $5797
-	inc b			; $5799
-_label_0d_153:
-	ld e,$a5		; $579a
-	ld (de),a		; $579c
-	ld e,$b0		; $579d
-	ld a,b			; $579f
-	ld (de),a		; $57a0
-	ret			; $57a1
-	ld e,$ad		; $57a2
-	ld a,(de)		; $57a4
-	or a			; $57a5
-	ret nz			; $57a6
-	call objectGetAngleTowardEnemyTarget		; $57a7
-	ld b,a			; $57aa
-	ld e,$88		; $57ab
-	ld a,(de)		; $57ad
-	add a			; $57ae
-	ld hl,$57b7		; $57af
-	rst_addDoubleIndex			; $57b2
-	ld a,b			; $57b3
-	jp checkFlag		; $57b4
-	ccf			; $57b7
-	nop			; $57b8
-	nop			; $57b9
-	nop			; $57ba
-	nop			; $57bb
-	ccf			; $57bc
-	nop			; $57bd
-	nop			; $57be
-	nop			; $57bf
-	nop			; $57c0
-	ccf			; $57c1
-	nop			; $57c2
-	nop			; $57c3
-	nop			; $57c4
-	ld hl,sp+$01		; $57c5
-	call decNumEnemies		; $57c7
-	jp enemyDelete		; $57ca
 
+@counter2Vals:
+	.db $14 $10 $0c
+
+
+;;
+; Updates enemyCollisionMode based on Link's angle relative to the enemy. In this way,
+; Link's sword doesn't damage the enemy if positioned in such a way that their sword
+; should block it.
+; @addr{573b}
+_swordEnemy_updateEnemyCollisionMode:
+	ld b,$00		; $573b
+	ld e,Enemy.stunCounter		; $573d
+	ld a,(de)		; $573f
+	or a			; $5740
+	jr nz,++		; $5741
+
+	call _swordEnemy_checkIgnoreCollision		; $5743
+	ld a,ENEMYCOLLISION_STALFOS_BLOCKED_WITH_SWORD		; $5746
+	ld b,$00		; $5748
+	jr nz,@setVars	; $574a
+++
+	inc b			; $574c
+	ld e,Enemy.id		; $574d
+	ld a,(de)		; $574f
+	cp ENEMYID_SWORD_SHROUDED_STALFOS			; $5750
+	ld a,ENEMYCOLLISION_BURNABLE_ENEMY		; $5752
+	jr nz,@setVars	; $5754
+.ifdef ROM_AGES
+	ld a,ENEMYCOLLISION_BURNABLE_ENEMY		; $5756
+.else
+	ld a,ENEMYCOLLISION_BURNABLE_UNDEAD
+.endif
+
+@setVars:
+	ld e,Enemy.enemyCollisionMode		; $5758
+	ld (de),a		; $575a
+
+	ld e,Enemy.var30		; $575b
+	ld a,b			; $575d
+	ld (de),a		; $575e
+	ret			; $575f
+
+;;
+; Same as above, but with a different enemyCollisionMode for the darknut.
+; @addr{5760}
+_swordDarknut_updateEnemyCollisionMode:
+	ld b,$00		; $5760
+	ld e,Enemy.stunCounter		; $5762
+	ld a,(de)		; $5764
+	or a			; $5765
+	jr nz,++		; $5766
+
+	call _swordEnemy_checkIgnoreCollision		; $5768
+	ld a,ENEMYCOLLISION_DARKNUT_BLOCKED_WITH_SWORD		; $576b
+	ld b,$00		; $576d
+	jr nz,@setVars	; $576f
+++
+	ld a,ENEMYCOLLISION_DARKNUT		; $5771
+	inc b			; $5773
+
+@setVars:
+	ld e,Enemy.enemyCollisionMode		; $5774
+	ld (de),a		; $5776
+
+	ld e,Enemy.var30		; $5777
+	ld a,b			; $5779
+	ld (de),a		; $577a
+	ret			; $577b
+
+;;
+; Check whether the angle between Link and the enemy is such that the collision should be
+; ignored (due to the sword blocking it)
+;
+; Knockback is handled by PARTID_ENEMY_SWORD.
+;
+; @param[out]	zflag	z if sword hits should be ignored
+; @addr{577c}
+_swordEnemy_checkIgnoreCollision:
+	ld e,Enemy.knockbackCounter		; $577c
+	ld a,(de)		; $577e
+	or a			; $577f
+	ret nz			; $5780
+
+	call objectGetAngleTowardEnemyTarget		; $5781
+	ld b,a			; $5784
+	ld e,Enemy.direction		; $5785
+	ld a,(de)		; $5787
+	add a			; $5788
+	ld hl,@angleBits		; $5789
+	rst_addDoubleIndex			; $578c
+	ld a,b			; $578d
+	jp checkFlag		; $578e
+
+@angleBits:
+	.db $3f $00 $00 $00 ; DIR_UP
+	.db $00 $3f $00 $00 ; DIR_RIGHT
+	.db $00 $00 $3f $00 ; DIR_DOWN
+	.db $00 $00 $f8 $01 ; DIR_LEFT
+
+
+;;
+; @addr{57a1}
+_swordDarknut_delete:
+	call decNumEnemies		; $57a1
+	jp enemyDelete		; $57a4
+
+
+; ==============================================================================
+; ENEMYID_PEAHAT
+; ==============================================================================
 enemyCode3e:
-	jr z,_label_0d_154	; $57cd
-	sub $03			; $57cf
-	ret c			; $57d1
-	jp z,enemyDie		; $57d2
-	ld e,$a5		; $57d5
-	ld a,(de)		; $57d7
-	cp $55			; $57d8
-	ret nz			; $57da
-_label_0d_154:
-	call $586f		; $57db
-	ld e,$84		; $57de
-	ld a,(de)		; $57e0
-	rst_jumpTable			; $57e1
-	ld a,($0157)		; $57e2
-	ld e,b			; $57e5
-	ld bc,$0158		; $57e6
-	ld e,b			; $57e9
-	ld bc,$cb58		; $57ea
-	ld b,h			; $57ed
-	ld bc,$0158		; $57ee
-	ld e,b			; $57f1
-	ld (bc),a		; $57f2
-	ld e,b			; $57f3
-	ld a,(de)		; $57f4
-	ld e,b			; $57f5
-	dec (hl)		; $57f6
-	ld e,b			; $57f7
-	ld d,c			; $57f8
-	ld e,b			; $57f9
-	call _ecom_setSpeedAndState8AndVisible		; $57fa
-	ld l,$86		; $57fd
-	inc (hl)		; $57ff
-	ret			; $5800
-	ret			; $5801
-	call _ecom_decCounter1		; $5802
-	ret nz			; $5805
-	ld l,$84		; $5806
-	inc (hl)		; $5808
-	ld l,$86		; $5809
-	ld (hl),$7f		; $580b
-	ld l,$90		; $580d
-	ld (hl),$05		; $580f
-	ld l,$b0		; $5811
-	ld (hl),$0f		; $5813
-	call objectSetVisiblec1		; $5815
-	jr _label_0d_156		; $5818
-	call _ecom_decCounter1		; $581a
-	jp nz,$587d		; $581d
-	ld l,$84		; $5820
-	inc (hl)		; $5822
-	call getRandomNumber_noPreserveVars		; $5823
-	and $07			; $5826
-	ld hl,$58d0		; $5828
-	rst_addAToHl			; $582b
-	ld e,$86		; $582c
-	ld a,(hl)		; $582e
-	ld (de),a		; $582f
-	call _ecom_setRandomAngle		; $5830
-	jr _label_0d_156		; $5833
-	call _ecom_decCounter1		; $5835
-	jr z,_label_0d_155	; $5838
-	ld a,(hl)		; $583a
-	and $1f			; $583b
-	call z,_ecom_setRandomAngle		; $583d
-	call objectApplySpeed		; $5840
-	call _ecom_bounceOffScreenBoundary		; $5843
-	jr _label_0d_156		; $5846
-_label_0d_155:
-	ld l,e			; $5848
-	inc (hl)		; $5849
-	ld l,$86		; $584a
-	ld (hl),$00		; $584c
-_label_0d_156:
-	jp enemyAnimate		; $584e
-	ld h,d			; $5851
-	ld l,$86		; $5852
-	inc (hl)		; $5854
-	ld a,$80		; $5855
-	cp (hl)			; $5857
-	jp nz,$587d		; $5858
-	ld (hl),$80		; $585b
-	push hl			; $585d
-	call objectGetTileCollisions		; $585e
-	pop hl			; $5861
-	jr z,_label_0d_157	; $5862
-	ld (hl),$01		; $5864
-_label_0d_157:
-	ld l,$84		; $5866
-	ld (hl),$08		; $5868
-	call objectSetVisiblec2		; $586a
-	jr _label_0d_156		; $586d
-	ld e,$8f		; $586f
-	ld a,(de)		; $5871
-	or a			; $5872
-	ld a,$2e		; $5873
-	jr z,_label_0d_158	; $5875
-	ld a,$55		; $5877
-_label_0d_158:
-	ld e,$a5		; $5879
-	ld (de),a		; $587b
-	ret			; $587c
-	ld e,$86		; $587d
-	ld a,(de)		; $587f
-	dec a			; $5880
-	cp $41			; $5881
-	jr nc,_label_0d_160	; $5883
-	and $78			; $5885
-	swap a			; $5887
-	rlca			; $5889
-	ld b,a			; $588a
-	sub $06			; $588b
-	jr c,_label_0d_159	; $588d
-	xor a			; $588f
-_label_0d_159:
-	ld e,$8f		; $5890
-	ld (de),a		; $5892
-	ld a,b			; $5893
-	ld hl,$58c7		; $5894
-	rst_addAToHl			; $5897
-	ld e,$90		; $5898
-	ld a,(hl)		; $589a
-	ld (de),a		; $589b
-	call objectApplySpeed		; $589c
-	call _ecom_bounceOffScreenBoundary		; $589f
-_label_0d_160:
-	ld e,$86		; $58a2
-	ld a,(de)		; $58a4
-	and $f0			; $58a5
-	swap a			; $58a7
-	ld hl,$58bf		; $58a9
-	rst_addAToHl			; $58ac
-	ld b,(hl)		; $58ad
-	ld a,b			; $58ae
-	inc a			; $58af
-	jr nz,_label_0d_161	; $58b0
-	call enemyAnimate		; $58b2
-	ld b,$00		; $58b5
-_label_0d_161:
-	ld a,(wFrameCounter)		; $58b7
-	and b			; $58ba
-	jp z,enemyAnimate		; $58bb
-	ret			; $58be
-	rst $38			; $58bf
-	rst $38			; $58c0
-	rst $38			; $58c1
-	nop			; $58c2
-	nop			; $58c3
-	ld bc,$0703		; $58c4
-	ld e,$1e		; $58c7
-	ld e,$14		; $58c9
-	inc d			; $58cb
-	ld a,(bc)		; $58cc
-	ld a,(bc)		; $58cd
-	dec b			; $58ce
-	dec b			; $58cf
-	or h			; $58d0
-	or h			; $58d1
-	jp nc,$f0d2		; $58d2
-	ld a,($ff00+$00)	; $58d5
-	nop			; $58d7
+	jr z,@normalStatus	; $57a7
+	sub ENEMYSTATUS_NO_HEALTH			; $57a9
+	ret c			; $57ab
+	jp z,enemyDie		; $57ac
 
+	; ENEMYSTATUS_KNOCKBACK
+	ld e,Enemy.enemyCollisionMode		; $57af
+	ld a,(de)		; $57b1
+	cp ENEMYCOLLISION_PEAHAT			; $57b2
+	ret nz			; $57b4
+
+@normalStatus:
+	call _peahat_updateEnemyCollisionMode		; $57b5
+	ld e,Enemy.state		; $57b8
+	ld a,(de)		; $57ba
+	rst_jumpTable			; $57bb
+	.dw _peahat_state_uninitialized
+	.dw _peahet_state_stub
+	.dw _peahet_state_stub
+	.dw _peahet_state_stub
+	.dw _peahet_state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw _peahet_state_stub
+	.dw _peahet_state_stub
+	.dw _peahat_state8
+	.dw _peahat_state9
+	.dw _peahat_stateA
+	.dw _peahat_stateB
+
+
+_peahat_state_uninitialized:
+	call _ecom_setSpeedAndState8AndVisible		; $57d4
+	ld l,Enemy.counter1		; $57d7
+	inc (hl)		; $57d9
+	ret			; $57da
+
+
+_peahet_state_stub:
+	ret			; $57db
+
+
+; Stationary for [counter1] frames
+_peahat_state8:
+	call _ecom_decCounter1		; $57dc
+	ret nz			; $57df
+
+	ld l,Enemy.state		; $57e0
+	inc (hl)		; $57e2
+
+	ld l,Enemy.counter1		; $57e3
+	ld (hl),$7f		; $57e5
+
+	ld l,Enemy.speed		; $57e7
+	ld (hl),SPEED_20		; $57e9
+
+	ld l,Enemy.var30		; $57eb
+	ld (hl),$0f		; $57ed
+	call objectSetVisiblec1		; $57ef
+	jr _peahat_animate		; $57f2
+
+
+; Accelerating
+_peahat_state9:
+	call _ecom_decCounter1		; $57f4
+	jp nz,_peahat_updatePosition		; $57f7
+
+	ld l,Enemy.state		; $57fa
+	inc (hl)		; $57fc
+
+	call getRandomNumber_noPreserveVars		; $57fd
+	and $07			; $5800
+	ld hl,_peahat_counter1Vals		; $5802
+	rst_addAToHl			; $5805
+	ld e,Enemy.counter1		; $5806
+	ld a,(hl)		; $5808
+	ld (de),a		; $5809
+	call _ecom_setRandomAngle		; $580a
+	jr _peahat_animate		; $580d
+
+
+; Flying around at top speed
+_peahat_stateA:
+	call _ecom_decCounter1		; $580f
+	jr z,@beginSlowingDown	; $5812
+
+	; Change angle every 32 frames
+	ld a,(hl)		; $5814
+	and $1f			; $5815
+	call z,_ecom_setRandomAngle		; $5817
+
+	call objectApplySpeed		; $581a
+	call _ecom_bounceOffScreenBoundary		; $581d
+	jr _peahat_animate		; $5820
+
+@beginSlowingDown:
+	ld l,e			; $5822
+	inc (hl) ; [state]
+	ld l,Enemy.counter1		; $5824
+	ld (hl),$00		; $5826
+
+_peahat_animate:
+	jp enemyAnimate		; $5828
+
+
+; Slowing down
+_peahat_stateB:
+	ld h,d			; $582b
+	ld l,Enemy.counter1		; $582c
+	inc (hl)		; $582e
+
+	ld a,$80		; $582f
+	cp (hl)			; $5831
+	jp nz,_peahat_updatePosition		; $5832
+
+	; Go to state 8 for $80 frames (if tile is non-solid) or 1 frame (if tile is
+	; solid).
+	ld (hl),$80 ; [counter1]
+	push hl			; $5837
+	call objectGetTileCollisions		; $5838
+	pop hl			; $583b
+	jr z,+			; $583c
+	ld (hl),$01 ; [counter1]
++
+	ld l,Enemy.state		; $5840
+	ld (hl),$08		; $5842
+	call objectSetVisiblec2		; $5844
+	jr _peahat_animate		; $5847
+
+
+;;
+; @addr{5849}
+_peahat_updateEnemyCollisionMode:
+	ld e,Enemy.zh		; $5849
+	ld a,(de)		; $584b
+	or a			; $584c
+	ld a,ENEMYCOLLISION_PEAHAT_VULNERABLE		; $584d
+	jr z,+			; $584f
+	ld a,ENEMYCOLLISION_PEAHAT		; $5851
++
+	ld e,Enemy.enemyCollisionMode		; $5853
+	ld (de),a		; $5855
+	ret			; $5856
+
+;;
+; Adjusts speed based on counter1, updates position, animates.
+; @addr{5857}
+_peahat_updatePosition:
+	ld e,Enemy.counter1		; $5857
+	ld a,(de)		; $5859
+	dec a			; $585a
+	cp $41			; $585b
+	jr nc,@animate	; $585d
+
+	and $78			; $585f
+	swap a			; $5861
+	rlca			; $5863
+	ld b,a			; $5864
+	sub $06			; $5865
+	jr c,+			; $5867
+	xor a			; $5869
++
+	ld e,Enemy.zh		; $586a
+	ld (de),a		; $586c
+
+	; Determine speed
+	ld a,b			; $586d
+	ld hl,@speedVals		; $586e
+	rst_addAToHl			; $5871
+	ld e,Enemy.speed		; $5872
+	ld a,(hl)		; $5874
+	ld (de),a		; $5875
+	call objectApplySpeed		; $5876
+	call _ecom_bounceOffScreenBoundary		; $5879
+
+@animate:
+	ld e,Enemy.counter1		; $587c
+	ld a,(de)		; $587e
+	and $f0			; $587f
+	swap a			; $5881
+	ld hl,@animFrequencies		; $5883
+	rst_addAToHl			; $5886
+	ld b,(hl)		; $5887
+	ld a,b			; $5888
+	inc a			; $5889
+	jr nz,+			; $588a
+	call enemyAnimate		; $588c
+	ld b,$00		; $588f
++
+	ld a,(wFrameCounter)		; $5891
+	and b			; $5894
+	jp z,enemyAnimate		; $5895
+	ret			; $5898
+
+@animFrequencies:
+	.db $ff $ff $ff $00 $00 $01 $03 $07
+
+@speedVals:
+	.db SPEED_c0 SPEED_c0 SPEED_c0 SPEED_80 SPEED_80 SPEED_40 SPEED_40 SPEED_20
+	.db SPEED_20
+
+_peahat_counter1Vals:
+	.db 180 180 210 210 240 240 0 0
+
+
+; ==============================================================================
+; ENEMYID_WIZZROBE
+;
+; Variables:
+;   var30: The low byte of wWizzrobePositionReservations that this wizzrobe is using
+;          (red wizzrobes only)
+;   var31/var32: Target position (blue wizzrobes only)
+; ==============================================================================
 enemyCode40:
-	call _ecom_checkHazardsNoAnimationForHoles		; $58d8
-	jr z,_label_0d_163	; $58db
-	sub $03			; $58dd
-	ret c			; $58df
-	jp z,enemyDie		; $58e0
-	dec a			; $58e3
-	jp nz,_ecom_updateKnockbackAndCheckHazards		; $58e4
-	jr _label_0d_162		; $58e7
-_label_0d_162:
-	ld e,$82		; $58e9
-	ld a,(de)		; $58eb
-	dec a			; $58ec
-	ret nz			; $58ed
-	ld e,$ae		; $58ee
-	ld a,(de)		; $58f0
-	or a			; $58f1
-	ret nz			; $58f2
-	ld e,$aa		; $58f3
-	ld a,(de)		; $58f5
-	cp $80			; $58f6
-	ret z			; $58f8
-	jp $5a2e		; $58f9
-_label_0d_163:
-	call _ecom_getSubidAndCpStateTo08		; $58fc
-	jr nc,_label_0d_164	; $58ff
-	rst_jumpTable			; $5901
-	ld a,(de)		; $5902
-	ld e,c			; $5903
-	halt			; $5904
-	ld e,c			; $5905
-	halt			; $5906
-	ld e,c			; $5907
-	ld c,h			; $5908
-	ld e,c			; $5909
-	halt			; $590a
-	ld e,c			; $590b
-	bit 0,h			; $590c
-	halt			; $590e
-	ld e,c			; $590f
-	halt			; $5910
-	ld e,c			; $5911
-_label_0d_164:
-	ld a,b			; $5912
-	rst_jumpTable			; $5913
-	ld (hl),a		; $5914
-	ld e,c			; $5915
-	call z,$3a59		; $5916
-	ld e,d			; $5919
-	ld h,d			; $591a
-	ld l,$9a		; $591b
-	ld a,(hl)		; $591d
-	or $42			; $591e
-	ld (hl),a		; $5920
-	ld l,e			; $5921
-	ld e,$82		; $5922
-	ld a,(de)		; $5924
-	or a			; $5925
-	jr nz,_label_0d_165	; $5926
-	ld (hl),$08		; $5928
-	ld l,$86		; $592a
-	ld (hl),$50		; $592c
-	ret			; $592e
-_label_0d_165:
-	dec a			; $592f
-	jr nz,_label_0d_166	; $5930
-	ld (hl),$08		; $5932
-	ld hl,$cee0		; $5934
-	ld b,$10		; $5937
-	jp clearMemory		; $5939
-_label_0d_166:
-	ld (hl),$0b		; $593c
-	ld l,$90		; $593e
-	ld (hl),$14		; $5940
-	ld l,$86		; $5942
-	ld (hl),$08		; $5944
-	call _ecom_setRandomCardinalAngle		; $5946
-	jp $5acd		; $5949
-	inc e			; $594c
-	ld a,(de)		; $594d
-	rst_jumpTable			; $594e
-	dec b			; $594f
-	ld b,b			; $5950
-	ld d,a			; $5951
-	ld e,c			; $5952
-	ld d,a			; $5953
-	ld e,c			; $5954
-	ld e,b			; $5955
-	ld e,c			; $5956
-	ret			; $5957
-	call _ecom_fallToGroundAndSetState		; $5958
-	ret nz			; $595b
-	ld l,$a4		; $595c
-	res 7,(hl)		; $595e
-	ld e,$82		; $5960
-	ld a,(de)		; $5962
-	ld hl,$5970		; $5963
-	rst_addDoubleIndex			; $5966
-	ld e,$84		; $5967
-	ldi a,(hl)		; $5969
-	ld (de),a		; $596a
-	ld e,$86		; $596b
-	ld a,(hl)		; $596d
-	ld (de),a		; $596e
-	ret			; $596f
-	dec bc			; $5970
-	ld e,$0b		; $5971
-	sub (hl)		; $5973
-	add hl,bc		; $5974
-	nop			; $5975
-	ret			; $5976
-	ld a,(de)		; $5977
-	sub $08			; $5978
-	rst_jumpTable			; $597a
-	add e			; $597b
-	ld e,c			; $597c
-	adc (hl)		; $597d
-	ld e,c			; $597e
-	and d			; $597f
-	ld e,c			; $5980
-	cp d			; $5981
-	ld e,c			; $5982
-	call _ecom_decCounter1		; $5983
-	ret nz			; $5986
-	ld (hl),$4b		; $5987
-	ld l,e			; $5989
-	inc (hl)		; $598a
-	jp objectSetVisiblec2		; $598b
-	call _ecom_decCounter1		; $598e
-	jp nz,$5adb		; $5991
-	ld (hl),$48		; $5994
-	ld l,e			; $5996
+	call _ecom_checkHazardsNoAnimationForHoles		; $58b2
+	jr z,@normalStatus	; $58b5
+	sub ENEMYSTATUS_NO_HEALTH			; $58b7
+	ret c			; $58b9
+	jp z,enemyDie		; $58ba
+	dec a			; $58bd
+	jp nz,_ecom_updateKnockbackAndCheckHazards		; $58be
+	jr @justHit		; $58c1
+
+@justHit:
+	; For red wizzrobes only...
+	ld e,Enemy.subid		; $58c3
+	ld a,(de)		; $58c5
+	dec a			; $58c6
+	ret nz			; $58c7
+
+	ld e,Enemy.stunCounter		; $58c8
+	ld a,(de)		; $58ca
+	or a			; $58cb
+	ret nz			; $58cc
+
+	ld e,Enemy.var2a		; $58cd
+	ld a,(de)		; $58cf
+	cp ITEMCOLLISION_LINK|$80			; $58d0
+	ret z			; $58d2
+
+	; The wizzrobe is knocked out of its normal position; allow other wizzrobes to
+	; spawn there
+	jp _wizzrobe_removePositionReservation		; $58d3
+
+@normalStatus:
+	call _ecom_getSubidAndCpStateTo08		; $58d6
+	jr nc,@normalState	; $58d9
+	rst_jumpTable			; $58db
+	.dw _wizzrobe_state_uninitialized
+	.dw _wizzrobe_state_stub
+	.dw _wizzrobe_state_stub
+	.dw _wizzrobe_state_switchHook
+	.dw _wizzrobe_state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw _wizzrobe_state_stub
+	.dw _wizzrobe_state_stub
+
+@normalState:
+	ld a,b			; $58ec
+	rst_jumpTable			; $58ed
+	.dw _wizzrobe_subid0
+	.dw _wizzrobe_subid1
+	.dw _wizzrobe_subid2
+
+
+_wizzrobe_state_uninitialized:
+	ld h,d			; $58f4
+	ld l,Enemy.visible		; $58f5
+	ld a,(hl)		; $58f7
+	or $42			; $58f8
+	ld (hl),a		; $58fa
+
+	ld l,e			; $58fb
+	ld e,Enemy.subid		; $58fc
+	ld a,(de)		; $58fe
+	or a			; $58ff
+	jr nz,@subid1Or2	; $5900
+
+@subid0:
+	ld (hl),$08 ; [state]
+	ld l,Enemy.counter1		; $5904
+	ld (hl),$50		; $5906
+	ret			; $5908
+
+@subid1Or2:
+	dec a			; $5909
+	jr nz,@subid2	; $590a
+
+@subid1:
+	ld (hl),$08 ; [state]
+	ld hl,wWizzrobePositionReservations		; $590e
+	ld b,$10		; $5911
+	jp clearMemory		; $5913
+
+@subid2:
+	ld (hl),$0b ; [state]
+	ld l,Enemy.speed		; $5918
+	ld (hl),SPEED_80		; $591a
+
+	ld l,Enemy.counter1		; $591c
+	ld (hl),$08		; $591e
+	call _ecom_setRandomCardinalAngle		; $5920
+	jp _wizzrobe_setAnimationFromAngle		; $5923
+
+
+_wizzrobe_state_switchHook:
+	inc e			; $5926
+	ld a,(de)		; $5927
+	rst_jumpTable			; $5928
+	.dw _ecom_incState2
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+
+@substate1:
+@substate2:
+	ret			; $5931
+
+@substate3:
+	call _ecom_fallToGroundAndSetState		; $5932
+	ret nz			; $5935
+
+	ld l,Enemy.collisionType		; $5936
+	res 7,(hl)		; $5938
+
+	ld e,Enemy.subid		; $593a
+	ld a,(de)		; $593c
+	ld hl,@stateAndCounter1		; $593d
+	rst_addDoubleIndex			; $5940
+
+	ld e,Enemy.state		; $5941
+	ldi a,(hl)		; $5943
+	ld (de),a		; $5944
+	ld e,Enemy.counter1		; $5945
+	ld a,(hl)		; $5947
+	ld (de),a		; $5948
+	ret			; $5949
+
+@stateAndCounter1:
+	.db $0b,  30 ; 0 == [subid]
+	.db $0b, 150 ; 1
+	.db $09,   0 ; 2
+
+
+_wizzrobe_state_stub:
+	ret			; $5950
+
+
+; Green wizzrobe
+_wizzrobe_subid0:
+	ld a,(de)		; $5951
+	sub $08			; $5952
+	rst_jumpTable			; $5954
+	.dw _wizzrobe_subid0_state8
+	.dw _wizzrobe_subid0_state9
+	.dw _wizzrobe_subid0_stateA
+	.dw _wizzrobe_subid0_stateB
+
+
+; Waiting [counter1] frames before spawning in
+_wizzrobe_subid0_state8:
+	call _ecom_decCounter1		; $595d
+	ret nz			; $5960
+	ld (hl),75		; $5961
+	ld l,e			; $5963
+	inc (hl) ; [state]
+	jp objectSetVisiblec2		; $5965
+
+
+; Phasing in for [counter1] frames
+_wizzrobe_subid0_state9:
+	call _ecom_decCounter1		; $5968
+	jp nz,_wizzrobe_checkFlickerVisibility		; $596b
+
+	ld (hl),72 ; [counter1]
+	ld l,e			; $5970
+	inc (hl) ; [state]
+
+	ld l,Enemy.collisionType		; $5972
+	set 7,(hl)		; $5974
+
+	call _ecom_updateCardinalAngleTowardTarget		; $5976
+	jp _wizzrobe_setAnimationFromAngle		; $5979
+
+
+; Fully phased in; standing there for [counter1] frames, and firing a projectile at some
+; point
+_wizzrobe_subid0_stateA:
+	call _ecom_decCounter1		; $597c
+	jr z,@phaseOut	; $597f
+
+	; Fire a projectile when [counter1] == 52
+	ld a,(hl)		; $5981
+	cp 52			; $5982
+	ret nz			; $5984
+	ld b,PARTID_WIZZROBE_PROJECTILE		; $5985
+	jp _ecom_spawnProjectile		; $5987
+
+@phaseOut:
+	ld l,e			; $598a
+	inc (hl) ; [state]
+
+	ld l,Enemy.collisionType		; $598c
+	res 7,(hl)		; $598e
+
+	xor a			; $5990
+	jp enemySetAnimation		; $5991
+
+
+; Phasing out
+_wizzrobe_subid0_stateB:
+	ld h,d			; $5994
+	ld l,Enemy.counter1		; $5995
 	inc (hl)		; $5997
-	ld l,$a4		; $5998
-	set 7,(hl)		; $599a
-	call _ecom_updateCardinalAngleTowardTarget		; $599c
-	jp $5acd		; $599f
+	ld a,(hl)		; $5998
+	cp 75			; $5999
+	jp c,_wizzrobe_checkFlickerVisibility		; $599b
 
-	call _ecom_decCounter1		; $59a2
-	jr z,_label_0d_167	; $59a5
-	ld a,(hl)		; $59a7
-	cp $34			; $59a8
-	ret nz			; $59aa
-	ld b,$1f		; $59ab
-	jp _ecom_spawnProjectile		; $59ad
-_label_0d_167:
-	ld l,e			; $59b0
-	inc (hl)		; $59b1
-	ld l,$a4		; $59b2
-	res 7,(hl)		; $59b4
-	xor a			; $59b6
-	jp enemySetAnimation		; $59b7
+	ld (hl),72 ; [counter1]
+	ld l,e			; $59a0
+	ld (hl),$08 ; [state]
+	jp objectSetInvisible		; $59a3
+
+
+; Red wizzrobe
+_wizzrobe_subid1:
+	ld a,(de)		; $59a6
+	sub $08			; $59a7
+	rst_jumpTable			; $59a9
+	.dw _wizzrobe_subid1_state8
+	.dw _wizzrobe_subid1_state9
+	.dw _wizzrobe_subid1_stateA
+	.dw _wizzrobe_subid1_stateB
+
+
+; Choosing a new position to spawn at
+_wizzrobe_subid1_state8:
+	call _wizzrobe_chooseSpawnPosition		; $59b2
+	ret nz			; $59b5
+	call _wizzrobe_markSpotAsTaken		; $59b6
+	ret z			; $59b9
+
 	ld h,d			; $59ba
-	ld l,$86		; $59bb
-	inc (hl)		; $59bd
-	ld a,(hl)		; $59be
-	cp $4b			; $59bf
-	jp c,$5adb		; $59c1
-	ld (hl),$48		; $59c4
-	ld l,e			; $59c6
-	ld (hl),$08		; $59c7
-	jp objectSetInvisible		; $59c9
-	ld a,(de)		; $59cc
-	sub $08			; $59cd
-	rst_jumpTable			; $59cf
-	ret c			; $59d0
-	ld e,c			; $59d1
-.DB $f4				; $59d2
-	ld e,c			; $59d3
-	dec b			; $59d4
-	ld e,d			; $59d5
-	inc e			; $59d6
-	ld e,d			; $59d7
-	call $5b05		; $59d8
-	ret nz			; $59db
-	call $5b33		; $59dc
-	ret z			; $59df
-	ld h,d			; $59e0
-	ld l,$8b		; $59e1
-	ld (hl),b		; $59e3
-	ld l,$8d		; $59e4
-	ld (hl),c		; $59e6
-	ld l,$84		; $59e7
-	inc (hl)		; $59e9
-	ld l,$86		; $59ea
-	ld (hl),$3c		; $59ec
-	call _ecom_updateCardinalAngleTowardTarget		; $59ee
-	jp $5acd		; $59f1
-	call _ecom_decCounter1		; $59f4
-	jp nz,_ecom_flickerVisibility		; $59f7
-	ld (hl),$48		; $59fa
-	ld l,e			; $59fc
-	inc (hl)		; $59fd
-	ld l,$a4		; $59fe
-	set 7,(hl)		; $5a00
-	jp objectSetVisiblec2		; $5a02
-	call _ecom_decCounter1		; $5a05
-	jr z,_label_0d_168	; $5a08
-	ld a,(hl)		; $5a0a
-	cp $34			; $5a0b
-	ret nz			; $5a0d
-	ld b,$1f		; $5a0e
-	jp _ecom_spawnProjectile		; $5a10
-_label_0d_168:
-	ld (hl),$b4		; $5a13
-	ld l,e			; $5a15
-	inc (hl)		; $5a16
-	ld l,$a4		; $5a17
-	res 7,(hl)		; $5a19
-	ret			; $5a1b
-	call _ecom_decCounter1		; $5a1c
-	jr z,_label_0d_169	; $5a1f
-	ld a,(hl)		; $5a21
-	cp $78			; $5a22
-	ret c			; $5a24
-	jp z,objectSetInvisible		; $5a25
-	jp _ecom_flickerVisibility		; $5a28
-_label_0d_169:
-	ld l,e			; $5a2b
-	ld (hl),$08		; $5a2c
-	ld h,d			; $5a2e
-	ld l,$b0		; $5a2f
-	ld l,(hl)		; $5a31
-	ld h,$ce		; $5a32
-	ld a,(hl)		; $5a34
-	sub d			; $5a35
-	ret nz			; $5a36
-	ldd (hl),a		; $5a37
-	ld (hl),a		; $5a38
-	ret			; $5a39
-	ld a,(de)		; $5a3a
-	sub $08			; $5a3b
-	rst_jumpTable			; $5a3d
-	ld b,(hl)		; $5a3e
-	ld e,d			; $5a3f
-	ld l,(hl)		; $5a40
-	ld e,d			; $5a41
-	add l			; $5a42
-	ld e,d			; $5a43
-	and l			; $5a44
-	ld e,d			; $5a45
-	call _ecom_decCounter1		; $5a46
-	jr z,_label_0d_171	; $5a49
-	inc l			; $5a4b
-	dec (hl)		; $5a4c
-	jr nz,_label_0d_170	; $5a4d
-	call _ecom_updateCardinalAngleTowardTarget		; $5a4f
-	call $5acd		; $5a52
-	call getRandomNumber_noPreserveVars		; $5a55
-	and $3f			; $5a58
-	add $20			; $5a5a
-	ld e,$87		; $5a5c
-	ld (de),a		; $5a5e
-_label_0d_170:
-	call $5b28		; $5a5f
-	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $5a62
-	ret nz			; $5a65
-_label_0d_171:
-	call _ecom_incState		; $5a66
-	ld l,$a4		; $5a69
-	res 7,(hl)		; $5a6b
-	ret			; $5a6d
-	call $5b05		; $5a6e
-	jp nz,_ecom_flickerVisibility		; $5a71
-	ld h,d			; $5a74
-	ld l,$b1		; $5a75
-	ld (hl),b		; $5a77
-	inc l			; $5a78
-	ld (hl),c		; $5a79
-	ld l,$84		; $5a7a
-	inc (hl)		; $5a7c
-	ld l,$8f		; $5a7d
-	dec (hl)		; $5a7f
-	call $5af8		; $5a80
-	jr _label_0d_172		; $5a83
-	call $5af8		; $5a85
-	call _ecom_flickerVisibility		; $5a88
-	call $5ae4		; $5a8b
-	jp nc,objectApplySpeed		; $5a8e
-	ld l,$84		; $5a91
-	inc (hl)		; $5a93
-	ld l,$86		; $5a94
-	ld (hl),$08		; $5a96
-	ld l,$8f		; $5a98
-	ld (hl),$00		; $5a9a
-	call _ecom_updateCardinalAngleTowardTarget		; $5a9c
-	call $5acd		; $5a9f
-	jp objectSetVisiblec2		; $5aa2
-	call _ecom_decCounter1		; $5aa5
-	jp nz,_ecom_flickerVisibility		; $5aa8
-	ld h,d			; $5aab
-	ld l,e			; $5aac
-	ld (hl),$08		; $5aad
-	ld l,$a4		; $5aaf
-	set 7,(hl)		; $5ab1
-	ld bc,$7f3f		; $5ab3
-	call _ecom_randomBitwiseAndBCE		; $5ab6
-	ld e,$86		; $5ab9
-	ld a,b			; $5abb
-	add $80			; $5abc
-	ld (de),a		; $5abe
-	inc e			; $5abf
-	ld a,c			; $5ac0
-	add $10			; $5ac1
-	ld (de),a		; $5ac3
-	call _ecom_updateCardinalAngleTowardTarget		; $5ac4
-	call $5acd		; $5ac7
-	jp objectSetVisiblec2		; $5aca
-_label_0d_172:
-	ld e,$89		; $5acd
-	ld a,(de)		; $5acf
-	add $04			; $5ad0
-	and $18			; $5ad2
-	swap a			; $5ad4
-	rlca			; $5ad6
-	inc a			; $5ad7
-	jp enemySetAnimation		; $5ad8
-	ld e,$86		; $5adb
-	ld a,(de)		; $5add
-	cp $2d			; $5ade
-	ret c			; $5ae0
-	jp _ecom_flickerVisibility		; $5ae1
-	ld h,d			; $5ae4
-	ld l,$8b		; $5ae5
-	ld e,$b1		; $5ae7
-	ld a,(de)		; $5ae9
-	sub (hl)		; $5aea
-	inc a			; $5aeb
-	cp $03			; $5aec
-	ret nc			; $5aee
-	ld l,$8d		; $5aef
-	inc e			; $5af1
-	ld a,(de)		; $5af2
-	sub (hl)		; $5af3
-	inc a			; $5af4
-	cp $03			; $5af5
-	ret			; $5af7
-	ld h,d			; $5af8
-	ld l,$b1		; $5af9
-	call _ecom_readPositionVars		; $5afb
-	call objectGetRelativeAngleWithTempVars		; $5afe
-	ld e,$89		; $5b01
-	ld (de),a		; $5b03
-	ret			; $5b04
-	call getRandomNumber_noPreserveVars		; $5b05
-	and $70			; $5b08
-	ld b,a			; $5b0a
-	ldh a,(<hCameraY)	; $5b0b
-	add b			; $5b0d
-	and $f0			; $5b0e
-	add $08			; $5b10
-	ld b,a			; $5b12
-_label_0d_173:
-	call getRandomNumber		; $5b13
-	and $f0			; $5b16
-	cp $a0			; $5b18
-	jr nc,_label_0d_173	; $5b1a
-	ld c,a			; $5b1c
-	ldh a,(<hCameraX)	; $5b1d
-	add c			; $5b1f
-	and $f0			; $5b20
-	add $08			; $5b22
-	ld c,a			; $5b24
-	jp getTileCollisionsAtPosition		; $5b25
-	ld e,$86		; $5b28
-	ld a,(de)		; $5b2a
-	and $1f			; $5b2b
-	ret nz			; $5b2d
-	ld b,$1f		; $5b2e
-	jp _ecom_spawnProjectile		; $5b30
-	push bc			; $5b33
-	ld e,l			; $5b34
-	ld b,$08		; $5b35
-	ld c,b			; $5b37
-	ld hl,$cee0		; $5b38
-_label_0d_174:
-	ldi a,(hl)		; $5b3b
-	cp e			; $5b3c
-	jr z,_label_0d_177	; $5b3d
-	inc l			; $5b3f
-	dec b			; $5b40
-	jr nz,_label_0d_174	; $5b41
-	ld l,$e0		; $5b43
-_label_0d_175:
-	ld a,(hl)		; $5b45
-	or a			; $5b46
-	jr z,_label_0d_176	; $5b47
-	inc l			; $5b49
-	inc l			; $5b4a
-	dec c			; $5b4b
-	jr nz,_label_0d_175	; $5b4c
-	jr _label_0d_177		; $5b4e
-_label_0d_176:
-	ld (hl),e		; $5b50
-	inc l			; $5b51
-	ld (hl),d		; $5b52
-	ld e,$b0		; $5b53
-	ld a,l			; $5b55
-	ld (de),a		; $5b56
-	or d			; $5b57
-_label_0d_177:
-	pop bc			; $5b58
-	ret			; $5b59
+	ld l,Enemy.yh		; $59bb
+	ld (hl),b		; $59bd
+	ld l,Enemy.xh		; $59be
+	ld (hl),c		; $59c0
+
+	ld l,Enemy.state		; $59c1
+	inc (hl)		; $59c3
+
+	ld l,Enemy.counter1		; $59c4
+	ld (hl),60		; $59c6
+
+	call _ecom_updateCardinalAngleTowardTarget		; $59c8
+	jp _wizzrobe_setAnimationFromAngle		; $59cb
 
 
+; Phasing in for [counter1] frames
+_wizzrobe_subid1_state9:
+	call _ecom_decCounter1		; $59ce
+	jp nz,_ecom_flickerVisibility		; $59d1
+
+	ld (hl),72 ; [counter1]
+	ld l,e			; $59d6
+	inc (hl) ; [state]
+
+	ld l,Enemy.collisionType		; $59d8
+	set 7,(hl)		; $59da
+	jp objectSetVisiblec2		; $59dc
+
+
+; Fully phased in; standing there for [counter1] frames, and firing a projectile at some
+; point
+_wizzrobe_subid1_stateA:
+	call _ecom_decCounter1		; $59df
+	jr z,@phaseOut	; $59e2
+
+	; Fire a projectile when [counter1] == 52
+	ld a,(hl)		; $59e4
+	cp 52			; $59e5
+	ret nz			; $59e7
+	ld b,PARTID_WIZZROBE_PROJECTILE		; $59e8
+	jp _ecom_spawnProjectile		; $59ea
+
+@phaseOut:
+	ld (hl),180 ; [counter1]
+	ld l,e			; $59ef
+	inc (hl) ; [state]
+
+	ld l,Enemy.collisionType		; $59f1
+	res 7,(hl)		; $59f3
+	ret			; $59f5
+
+
+; Phasing out
+_wizzrobe_subid1_stateB:
+	call _ecom_decCounter1		; $59f6
+	jr z,@gotoState8	; $59f9
+
+	ld a,(hl)		; $59fb
+	cp 120			; $59fc
+	ret c			; $59fe
+	jp z,objectSetInvisible		; $59ff
+	jp _ecom_flickerVisibility		; $5a02
+
+@gotoState8:
+	ld l,e			; $5a05
+	ld (hl),$08 ; [state]
+
+
+;;
+; Removes position reservation in "wWizzrobePositionReservations" allowing other wizzrobes
+; to spawn here.
+; @addr{5a08}
+_wizzrobe_removePositionReservation:
+	ld h,d			; $5a08
+	ld l,Enemy.var30		; $5a09
+	ld l,(hl)		; $5a0b
+	ld h,>wWizzrobePositionReservations		; $5a0c
+	ld a,(hl)		; $5a0e
+	sub d			; $5a0f
+	ret nz			; $5a10
+	ldd (hl),a		; $5a11
+	ld (hl),a		; $5a12
+	ret			; $5a13
+
+
+; Blue wizzrobe
+_wizzrobe_subid2:
+	ld a,(de)		; $5a14
+	sub $08			; $5a15
+	rst_jumpTable			; $5a17
+	.dw _wizzrobe_subid2_state8
+	.dw _wizzrobe_subid2_state9
+	.dw _wizzrobe_subid2_stateA
+	.dw _wizzrobe_subid2_stateB
+
+
+; Currently phased in, attacking until [counter1] reaches 0 or it hits a wall
+_wizzrobe_subid2_state8:
+	call _ecom_decCounter1		; $5a20
+	jr z,@phaseOut	; $5a23
+
+	; Reorient toward Link in [counter2] frames
+	inc l			; $5a25
+	dec (hl) ; [counter2]
+	jr nz,@updatePosition	; $5a27
+
+	call _ecom_updateCardinalAngleTowardTarget		; $5a29
+	call _wizzrobe_setAnimationFromAngle		; $5a2c
+
+	; Set random counter2 from $20-$5f
+	call getRandomNumber_noPreserveVars		; $5a2f
+	and $3f			; $5a32
+	add $20			; $5a34
+	ld e,Enemy.counter2		; $5a36
+	ld (de),a		; $5a38
+
+@updatePosition:
+	call _wizzrobe_fireEvery32Frames		; $5a39
+	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $5a3c
+	ret nz			; $5a3f
+
+@phaseOut:
+	call _ecom_incState		; $5a40
+	ld l,Enemy.collisionType		; $5a43
+	res 7,(hl)		; $5a45
+	ret			; $5a47
+
+
+; Currently phased out, choosing a target position
+_wizzrobe_subid2_state9:
+	call _wizzrobe_chooseSpawnPosition		; $5a48
+	jp nz,_ecom_flickerVisibility		; $5a4b
+
+	; Store target position
+	ld h,d			; $5a4e
+	ld l,Enemy.var31		; $5a4f
+	ld (hl),b		; $5a51
+	inc l			; $5a52
+	ld (hl),c		; $5a53
+
+	ld l,Enemy.state		; $5a54
+	inc (hl)		; $5a56
+
+	ld l,Enemy.zh		; $5a57
+	dec (hl)		; $5a59
+
+	call _wizzrobe_setAngleTowardTargetPosition		; $5a5a
+	jr _wizzrobe_setAnimationFromAngle		; $5a5d
+
+
+; Currently phased out, moving toward target position
+_wizzrobe_subid2_stateA:
+	call _wizzrobe_setAngleTowardTargetPosition		; $5a5f
+	call _ecom_flickerVisibility		; $5a62
+	call _wizzrobe_checkReachedTargetPosition		; $5a65
+	jp nc,objectApplySpeed		; $5a68
+
+	; Reached target position
+	ld l,Enemy.state		; $5a6b
+	inc (hl)		; $5a6d
+
+	ld l,Enemy.counter1		; $5a6e
+	ld (hl),$08		; $5a70
+
+	ld l,Enemy.zh		; $5a72
+	ld (hl),$00		; $5a74
+
+	call _ecom_updateCardinalAngleTowardTarget		; $5a76
+	call _wizzrobe_setAnimationFromAngle		; $5a79
+	jp objectSetVisiblec2		; $5a7c
+
+
+; Standing still for [counter1] frames (8 frames) before phasing in and attacking again
+_wizzrobe_subid2_stateB:
+	call _ecom_decCounter1		; $5a7f
+	jp nz,_ecom_flickerVisibility		; $5a82
+
+	ld h,d			; $5a85
+	ld l,e			; $5a86
+	ld (hl),$08 ; [state]
+
+	ld l,Enemy.collisionType		; $5a89
+	set 7,(hl)		; $5a8b
+
+	; Choose random counter1 between $80-$ff (how long to stay in state 8)
+	ld bc,$7f3f		; $5a8d
+	call _ecom_randomBitwiseAndBCE		; $5a90
+	ld e,Enemy.counter1		; $5a93
+	ld a,b			; $5a95
+	add $80			; $5a96
+	ld (de),a		; $5a98
+
+	; Choose random counter2 between $10-$4f (when to reorient toward Link)
+	inc e			; $5a99
+	ld a,c			; $5a9a
+	add $10			; $5a9b
+	ld (de),a		; $5a9d
+
+	call _ecom_updateCardinalAngleTowardTarget		; $5a9e
+	call _wizzrobe_setAnimationFromAngle		; $5aa1
+	jp objectSetVisiblec2		; $5aa4
+
+;;
+; @addr{5aa7}
+_wizzrobe_setAnimationFromAngle:
+	ld e,Enemy.angle		; $5aa7
+	ld a,(de)		; $5aa9
+	add $04			; $5aaa
+	and $18			; $5aac
+	swap a			; $5aae
+	rlca			; $5ab0
+	inc a			; $5ab1
+	jp enemySetAnimation		; $5ab2
+
+;;
+; Flicker visibility when [counter1] < 45.
+; @addr{5ab5}
+_wizzrobe_checkFlickerVisibility:
+	ld e,Enemy.counter1		; $5ab5
+	ld a,(de)		; $5ab7
+	cp 45			; $5ab8
+	ret c			; $5aba
+	jp _ecom_flickerVisibility		; $5abb
+
+;;
+; @param[out]	cflag	c if within 1 pixel of target position in both directions
+; @addr{5abe}
+_wizzrobe_checkReachedTargetPosition:
+	ld h,d			; $5abe
+	ld l,Enemy.yh		; $5abf
+	ld e,Enemy.var31		; $5ac1
+	ld a,(de)		; $5ac3
+	sub (hl)		; $5ac4
+	inc a			; $5ac5
+	cp $03			; $5ac6
+	ret nc			; $5ac8
+	ld l,Enemy.xh		; $5ac9
+	inc e			; $5acb
+	ld a,(de)		; $5acc
+	sub (hl)		; $5acd
+	inc a			; $5ace
+	cp $03			; $5acf
+	ret			; $5ad1
+
+
+;;
+; @addr{5ad2}
+_wizzrobe_setAngleTowardTargetPosition:
+	ld h,d			; $5ad2
+	ld l,Enemy.var31		; $5ad3
+	call _ecom_readPositionVars		; $5ad5
+	call objectGetRelativeAngleWithTempVars		; $5ad8
+	ld e,Enemy.angle		; $5adb
+	ld (de),a		; $5add
+	ret			; $5ade
+
+
+;;
+; Chooses a random position somewhere within the screen boundaries (accounting for camera
+; position). It may choose a solid position (in which case this need to be called again).
+;
+; @param[out]	bc	Chosen position (long form)
+; @param[out]	l	Chosen position (short form)
+; @param[out]	zflag	nz if this tile has solidity
+; @addr{5adf}
+_wizzrobe_chooseSpawnPosition:
+	call getRandomNumber_noPreserveVars		; $5adf
+	and $70 ; Value strictly under SCREEN_HEIGHT<<4
+	ld b,a			; $5ae4
+	ldh a,(<hCameraY)	; $5ae5
+	add b			; $5ae7
+	and $f0			; $5ae8
+	add $08			; $5aea
+	ld b,a			; $5aec
+--
+	call getRandomNumber		; $5aed
+	and $f0			; $5af0
+	cp SCREEN_WIDTH<<4			; $5af2
+	jr nc,--		; $5af4
+
+	ld c,a			; $5af6
+	ldh a,(<hCameraX)	; $5af7
+	add c			; $5af9
+	and $f0			; $5afa
+	add $08			; $5afc
+	ld c,a			; $5afe
+	jp getTileCollisionsAtPosition		; $5aff
+
+;;
+; @addr{5b02}
+_wizzrobe_fireEvery32Frames:
+	ld e,Enemy.counter1		; $5b02
+	ld a,(de)		; $5b04
+	and $1f			; $5b05
+	ret nz			; $5b07
+	ld b,PARTID_WIZZROBE_PROJECTILE		; $5b08
+	jp _ecom_spawnProjectile		; $5b0a
+
+
+;;
+; Marks a spot as taken in wWizzrobePositionReservations; the position is reserved so no
+; other red wizzrobe can spawn there. If this position is already reserved, this returns
+; with the zflag set.
+;
+; @param	l	Position
+; @param[out]	zflag	z if position already reserved, or wWizzrobePositionReservations
+;			is full
+; @addr{5b0d}
+_wizzrobe_markSpotAsTaken:
+	push bc			; $5b0d
+	ld e,l			; $5b0e
+	ld b,$08		; $5b0f
+	ld c,b			; $5b11
+	ld hl,wWizzrobePositionReservations		; $5b12
+--
+	ldi a,(hl)		; $5b15
+	cp e			; $5b16
+	jr z,@ret	; $5b17
+	inc l			; $5b19
+	dec b			; $5b1a
+	jr nz,--		; $5b1b
+
+	ld l,<wWizzrobePositionReservations		; $5b1d
+--
+	ld a,(hl)		; $5b1f
+	or a			; $5b20
+	jr z,@fillBlankSpot	; $5b21
+	inc l			; $5b23
+	inc l			; $5b24
+	dec c			; $5b25
+	jr nz,--		; $5b26
+	jr @ret		; $5b28
+
+@fillBlankSpot:
+	ld (hl),e		; $5b2a
+	inc l			; $5b2b
+	ld (hl),d		; $5b2c
+	ld e,Enemy.var30		; $5b2d
+	ld a,l			; $5b2f
+	ld (de),a		; $5b30
+	or d			; $5b31
+
+@ret:
+	pop bc			; $5b32
+	ret			; $5b33
+
+
+; ==============================================================================
+; ENEMYID_CROW
+; ENEMYID_BLUE_CROW
+;
+; Variables:
+;   var30: "Base" animation index (direction gets added to this)
+;   var31: Actual animation index
+;   var32/var33: Target position (subid 1 only)
+; ==============================================================================
 enemyCode41:
 enemyCode4c:
-	jr z,_label_0d_178	; $5b5a
-	sub $03			; $5b5c
-	ret c			; $5b5e
-	jp z,enemyDie		; $5b5f
-	dec a			; $5b62
-	ret z			; $5b63
-	jp _ecom_updateKnockbackNoSolidity		; $5b64
-_label_0d_178:
-	call _ecom_getSubidAndCpStateTo08		; $5b67
-	jr nc,_label_0d_179	; $5b6a
-	rst_jumpTable			; $5b6c
-	add e			; $5b6d
-	ld e,e			; $5b6e
-	sub d			; $5b6f
-	ld e,e			; $5b70
-	sub d			; $5b71
-	ld e,e			; $5b72
-	sub d			; $5b73
-	ld e,e			; $5b74
-	sub d			; $5b75
-	ld e,e			; $5b76
-	bit 0,h			; $5b77
-	sub d			; $5b79
-	ld e,e			; $5b7a
-	sub d			; $5b7b
-	ld e,e			; $5b7c
-_label_0d_179:
-	ld a,b			; $5b7d
-	rst_jumpTable			; $5b7e
-	sub e			; $5b7f
-	ld e,e			; $5b80
-	ld d,$5c		; $5b81
-	ld e,$82		; $5b83
-	ld a,(de)		; $5b85
-	or a			; $5b86
-	jp nz,_ecom_setSpeedAndState8		; $5b87
-	ld a,$32		; $5b8a
-	call _ecom_setSpeedAndState8		; $5b8c
-	jp objectSetVisiblec1		; $5b8f
-	ret			; $5b92
-	ld a,(de)		; $5b93
-	sub $08			; $5b94
-	rst_jumpTable			; $5b96
-	sbc l			; $5b97
-	ld e,e			; $5b98
-	call nz,$f75b		; $5b99
-	ld e,e			; $5b9c
-	call _ecom_updateAngleTowardTarget		; $5b9d
-	call $5cf2		; $5ba0
-	ld h,d			; $5ba3
-	ld l,$8b		; $5ba4
-	ldh a,(<hEnemyTargetY)	; $5ba6
-	sub (hl)		; $5ba8
-	add $30			; $5ba9
-	cp $61			; $5bab
-	ret nc			; $5bad
-	ld l,$8d		; $5bae
-	ldh a,(<hEnemyTargetX)	; $5bb0
-	sub (hl)		; $5bb2
-	add $18			; $5bb3
-	cp $31			; $5bb5
-	ret nc			; $5bb7
-	call _ecom_incState		; $5bb8
-	ld l,$86		; $5bbb
-	ld (hl),$19		; $5bbd
-	ld l,$b0		; $5bbf
-	ld (hl),$02		; $5bc1
-	ret			; $5bc3
-	call _ecom_updateAngleTowardTarget		; $5bc4
-	call $5cf2		; $5bc7
-	call _ecom_decCounter1		; $5bca
-	jr z,_label_0d_180	; $5bcd
-	ld a,(hl)		; $5bcf
-	and $03			; $5bd0
-	jr nz,_label_0d_183	; $5bd2
-	ld l,$8f		; $5bd4
-	dec (hl)		; $5bd6
-	jr _label_0d_183		; $5bd7
-_label_0d_180:
-	inc l			; $5bd9
-	ld (hl),$5a		; $5bda
-	ld l,$84		; $5bdc
-	inc (hl)		; $5bde
-	ld l,$a4		; $5bdf
-	set 7,(hl)		; $5be1
-	call _ecom_updateAngleTowardTarget		; $5be3
-	call getRandomNumber_noPreserveVars		; $5be6
-	and $04			; $5be9
-	jr nz,_label_0d_181	; $5beb
-	ld a,$fc		; $5bed
-_label_0d_181:
-	ld b,a			; $5bef
-	ld e,$89		; $5bf0
-	ld a,(de)		; $5bf2
-	add b			; $5bf3
-	ld (de),a		; $5bf4
-	jr _label_0d_183		; $5bf5
-	call $5d09		; $5bf7
-	jp nc,enemyDelete		; $5bfa
-	call _ecom_decCounter2		; $5bfd
-	jr z,_label_0d_182	; $5c00
-	ld a,(hl)		; $5c02
-	and $07			; $5c03
-	jr nz,_label_0d_182	; $5c05
-	call objectGetAngleTowardEnemyTarget		; $5c07
-	call objectNudgeAngleTowards		; $5c0a
-	call $5cf2		; $5c0d
-_label_0d_182:
-	call objectApplySpeed		; $5c10
-_label_0d_183:
-	jp enemyAnimate		; $5c13
-	ld a,(de)		; $5c16
-	sub $08			; $5c17
-	rst_jumpTable			; $5c19
-	ld h,$5c		; $5c1a
-	ld d,l			; $5c1c
-	ld e,h			; $5c1d
-	sbc l			; $5c1e
-	ld e,h			; $5c1f
-	or c			; $5c20
-	ld e,h			; $5c21
-	bit 3,h			; $5c22
-	ld ($ff00+$5c),a	; $5c24
-	ld hl,$d081		; $5c26
-	ld b,$00		; $5c29
-_label_0d_184:
-	ld a,(hl)		; $5c2b
-	cp $41			; $5c2c
-	jr nz,_label_0d_185	; $5c2e
-	ld l,e			; $5c30
-	ldd a,(hl)		; $5c31
-	dec l			; $5c32
-	dec l			; $5c33
-	cp $09			; $5c34
-	jr c,_label_0d_185	; $5c36
-	inc b			; $5c38
-_label_0d_185:
-	inc h			; $5c39
-	ld a,h			; $5c3a
-	cp $e0			; $5c3b
-	jr c,_label_0d_184	; $5c3d
-	ld a,b			; $5c3f
-	cp $02			; $5c40
-	ret nc			; $5c42
-	ld h,d			; $5c43
-	ld l,e			; $5c44
-	inc (hl)		; $5c45
-	ld l,$86		; $5c46
-	or a			; $5c48
-	ld a,$3c		; $5c49
-	jr z,_label_0d_186	; $5c4b
-	ld a,$f0		; $5c4d
-_label_0d_186:
-	ld (hl),a		; $5c4f
-	ld l,$b0		; $5c50
-	ld (hl),$02		; $5c52
-	ret			; $5c54
-	call _ecom_decCounter1		; $5c55
-	ret nz			; $5c58
-	ld b,$00		; $5c59
-	ldh a,(<hEnemyTargetY)	; $5c5b
-	cp $40			; $5c5d
-	jr c,_label_0d_187	; $5c5f
-	ld b,$08		; $5c61
-_label_0d_187:
-	ldh a,(<hEnemyTargetX)	; $5c63
-	cp $50			; $5c65
-	jr c,_label_0d_188	; $5c67
-	set 2,b			; $5c69
-_label_0d_188:
-	ld a,b			; $5c6b
-	ld hl,$5d5a		; $5c6c
-	rst_addAToHl			; $5c6f
-	ld e,$8b		; $5c70
-	ldi a,(hl)		; $5c72
-	ld (de),a		; $5c73
-	ldh (<hFF8F),a	; $5c74
-	ld e,$8d		; $5c76
-	ldi a,(hl)		; $5c78
-	ld (de),a		; $5c79
-	ldh (<hFF8E),a	; $5c7a
-	ld e,$b2		; $5c7c
-	ldi a,(hl)		; $5c7e
-	ld (de),a		; $5c7f
-	ld b,a			; $5c80
-	inc e			; $5c81
-	ld a,(hl)		; $5c82
-	ld (de),a		; $5c83
-	ld c,a			; $5c84
-	call _ecom_updateAngleTowardTarget		; $5c85
-	call _ecom_incState		; $5c88
-	ld l,$a4		; $5c8b
-	set 7,(hl)		; $5c8d
-	ld l,$90		; $5c8f
-	ld (hl),$14		; $5c91
-	ld l,$8f		; $5c93
-	ld (hl),$fa		; $5c95
-	call $5cf2		; $5c97
-	jp objectSetVisiblec1		; $5c9a
-	call $5d15		; $5c9d
-	jr nc,_label_0d_189	; $5ca0
-	ld l,e			; $5ca2
-	inc (hl)		; $5ca3
-	ld l,$86		; $5ca4
-	ld (hl),$3c		; $5ca6
-	call _ecom_updateAngleTowardTarget		; $5ca8
-	call $5cf2		; $5cab
-_label_0d_189:
-	jp enemyAnimate		; $5cae
-	call _ecom_decCounter1		; $5cb1
-	jr nz,_label_0d_189	; $5cb4
-	ld (hl),$18		; $5cb6
-	inc l			; $5cb8
-	ld (hl),$00		; $5cb9
+	jr z,@normalStatus	; $5b34
+	sub ENEMYSTATUS_NO_HEALTH			; $5b36
+	ret c			; $5b38
+	jp z,enemyDie		; $5b39
+	dec a			; $5b3c
+	ret z			; $5b3d
+	jp _ecom_updateKnockbackNoSolidity		; $5b3e
+
+@normalStatus:
+	call _ecom_getSubidAndCpStateTo08		; $5b41
+	jr nc,@normalState	; $5b44
+	rst_jumpTable			; $5b46
+	.dw _crow_state_uninitialized
+	.dw _crow_state_stub
+	.dw _crow_state_stub
+	.dw _crow_state_stub
+	.dw _crow_state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw _crow_state_stub
+	.dw _crow_state_stub
+
+@normalState:
+	ld a,b			; $5b57
+	rst_jumpTable			; $5b58
+	.dw _crow_subid0
+	.dw _crow_subid1
+
+
+_crow_state_uninitialized:
+	ld e,Enemy.subid		; $5b5d
+	ld a,(de)		; $5b5f
+	or a			; $5b60
+	jp nz,_ecom_setSpeedAndState8		; $5b61
+
+	; Subid 0
+	ld a,SPEED_140		; $5b64
+	call _ecom_setSpeedAndState8		; $5b66
+	jp objectSetVisiblec1		; $5b69
+
+
+_crow_state_stub:
+	ret			; $5b6c
+
+
+_crow_subid0:
+	ld a,(de)		; $5b6d
+	sub $08			; $5b6e
+	rst_jumpTable			; $5b70
+	.dw _crow_subid0_state8
+	.dw _crow_subid0_state9
+	.dw _crow_subid0_stateA
+
+
+; Perched, waiting for Link to approach
+_crow_subid0_state8:
+	call _ecom_updateAngleTowardTarget		; $5b77
+	call _crow_setAnimationFromAngle		; $5b7a
+
+	; Check if Link has approached
+	ld h,d			; $5b7d
+	ld l,Enemy.yh		; $5b7e
+	ldh a,(<hEnemyTargetY)	; $5b80
+	sub (hl)		; $5b82
+	add $30			; $5b83
+	cp $61			; $5b85
+	ret nc			; $5b87
+
+	ld l,Enemy.xh		; $5b88
+	ldh a,(<hEnemyTargetX)	; $5b8a
+	sub (hl)		; $5b8c
+	add $18			; $5b8d
+	cp $31			; $5b8f
+	ret nc			; $5b91
+
+	; Link has approached.
+	call _ecom_incState		; $5b92
+	ld l,Enemy.counter1		; $5b95
+	ld (hl),25		; $5b97
+
+	ld l,Enemy.var30		; $5b99
+	ld (hl),$02		; $5b9b
+	ret			; $5b9d
+
+
+; Moving up and preparing to charge at Link after [counter1] frames (25 frames)
+_crow_subid0_state9:
+	call _ecom_updateAngleTowardTarget		; $5b9e
+	call _crow_setAnimationFromAngle		; $5ba1
+	call _ecom_decCounter1		; $5ba4
+	jr z,@beginCharge	; $5ba7
+
+	ld a,(hl) ; [counter1]
+	and $03			; $5baa
+	jr nz,_crow_subid0_animate	; $5bac
+
+	ld l,Enemy.zh		; $5bae
+	dec (hl)		; $5bb0
+	jr _crow_subid0_animate		; $5bb1
+
+@beginCharge:
+	inc l			; $5bb3
+	ld (hl),90 ; [counter2]
+
+	ld l,Enemy.state		; $5bb6
+	inc (hl)		; $5bb8
+
+	ld l,Enemy.collisionType		; $5bb9
+	set 7,(hl)		; $5bbb
+
+	call _ecom_updateAngleTowardTarget		; $5bbd
+
+	; Randomly add or subtract 4 from angle (will either overshoot or undershoot Link)
+	call getRandomNumber_noPreserveVars		; $5bc0
+	and $04			; $5bc3
+	jr nz,+			; $5bc5
+	ld a,-$04		; $5bc7
++
+	ld b,a			; $5bc9
+	ld e,Enemy.angle		; $5bca
+	ld a,(de)		; $5bcc
+	add b			; $5bcd
+	ld (de),a		; $5bce
+
+	jr _crow_subid0_animate		; $5bcf
+
+
+; Charging toward Link
+_crow_subid0_stateA:
+	call _crow_subid0_checkWithinScreenBounds		; $5bd1
+	jp nc,enemyDelete		; $5bd4
+
+	call _ecom_decCounter2		; $5bd7
+	jr z,@applySpeed	; $5bda
+
+	; Adjust angle toward Link every 8 frames
+	ld a,(hl)		; $5bdc
+	and $07			; $5bdd
+	jr nz,@applySpeed	; $5bdf
+
+	call objectGetAngleTowardEnemyTarget		; $5be1
+	call objectNudgeAngleTowards		; $5be4
+	call _crow_setAnimationFromAngle		; $5be7
+
+@applySpeed:
+	call objectApplySpeed		; $5bea
+
+_crow_subid0_animate:
+	jp enemyAnimate		; $5bed
+
+
+_crow_subid1:
+	ld a,(de)		; $5bf0
+	sub $08			; $5bf1
+	rst_jumpTable			; $5bf3
+	.dw _crow_subid1_state8
+	.dw _crow_subid1_state9
+	.dw _crow_subid1_stateA
+	.dw _crow_subid1_stateB
+	.dw _crow_subid1_stateC
+	.dw _crow_subid1_stateD
+
+
+; Checking whether it's ok to charge in right now
+_crow_subid1_state8:
+	; Count the number of crows that are in state 9 or higher (number of crows that
+	; are either about to or are already charging across the screen)
+	ldhl FIRST_ENEMY_INDEX, Enemy.id		; $5c00
+	ld b,$00		; $5c03
+@nextEnemy:
+	ld a,(hl)		; $5c05
+	cp ENEMYID_CROW			; $5c06
+	jr nz,++		; $5c08
+
+	ld l,e ; l = state
+	ldd a,(hl)		; $5c0b
+	dec l			; $5c0c
+	dec l			; $5c0d
+	cp $09			; $5c0e
+	jr c,++		; $5c10
+	inc b			; $5c12
+++
+	inc h			; $5c13
+	ld a,h			; $5c14
+	cp LAST_ENEMY_INDEX+1			; $5c15
+	jr c,@nextEnemy	; $5c17
+
+	; Only allow 2 such crows at a time (this one needs to wait)
+	ld a,b			; $5c19
+	cp $02			; $5c1a
+	ret nc			; $5c1c
+
+	ld h,d			; $5c1d
+	ld l,e			; $5c1e
+	inc (hl) ; [state]
+
+	ld l,Enemy.counter1		; $5c20
+	or a			; $5c22
+	ld a,60   ; 1st crow on-screen
+	jr z,+			; $5c25
+	ld a,240  ; 2nd crow on-screen
++
+	ld (hl),a		; $5c29
+
+	ld l,Enemy.var30		; $5c2a
+	ld (hl),$02		; $5c2c
+	ret			; $5c2e
+
+
+; Spawn in after [counter1] frames
+_crow_subid1_state9:
+	call _ecom_decCounter1		; $5c2f
+	ret nz			; $5c32
+
+	; Determine spawn/target position data to read based on which screen quadrant Link
+	; is in
+	ld b,$00		; $5c33
+	ldh a,(<hEnemyTargetY)	; $5c35
+	cp (SMALL_ROOM_HEIGHT/2)<<4			; $5c37
+	jr c,+			; $5c39
+	ld b,$08		; $5c3b
++
+	ldh a,(<hEnemyTargetX)	; $5c3d
+	cp (SMALL_ROOM_WIDTH/2)<<4			; $5c3f
+	jr c,+			; $5c41
+	set 2,b			; $5c43
++
+	ld a,b			; $5c45
+	ld hl,_crow_offScreenSpawnData		; $5c46
+	rst_addAToHl			; $5c49
+
+	; Read in spawn position
+	ld e,Enemy.yh		; $5c4a
+	ldi a,(hl)		; $5c4c
+	ld (de),a		; $5c4d
+	ldh (<hFF8F),a	; $5c4e
+
+	ld e,Enemy.xh		; $5c50
+	ldi a,(hl)		; $5c52
+	ld (de),a		; $5c53
+	ldh (<hFF8E),a	; $5c54
+
+	; Read in target position
+	ld e,Enemy.var32		; $5c56
+	ldi a,(hl)		; $5c58
+	ld (de),a		; $5c59
+	ld b,a			; $5c5a
+
+	inc e			; $5c5b
+	ld a,(hl)		; $5c5c
+	ld (de),a		; $5c5d
+	ld c,a			; $5c5e
+
+	; Set angle to target position
+	call _ecom_updateAngleTowardTarget		; $5c5f
+
+	call _ecom_incState		; $5c62
+
+	ld l,Enemy.collisionType		; $5c65
+	set 7,(hl)		; $5c67
+
+	ld l,Enemy.speed		; $5c69
+	ld (hl),SPEED_80		; $5c6b
+
+	ld l,Enemy.zh		; $5c6d
+	ld (hl),-$06		; $5c6f
+
+	call _crow_setAnimationFromAngle		; $5c71
+	jp objectSetVisiblec1		; $5c74
+
+
+; Moving into screen
+_crow_subid1_stateA:
+	call _crow_moveTowardTargetPosition		; $5c77
+	jr nc,_crow_subid1_animate	; $5c7a
+
+	ld l,e			; $5c7c
+	inc (hl) ; [state]
+
+	ld l,Enemy.counter1		; $5c7e
+	ld (hl),60		; $5c80
+
+	call _ecom_updateAngleTowardTarget		; $5c82
+	call _crow_setAnimationFromAngle		; $5c85
+
+_crow_subid1_animate:
+	jp enemyAnimate		; $5c88
+
+
+; Hovering in position for [counter1] frames before charging
+_crow_subid1_stateB:
+	call _ecom_decCounter1		; $5c8b
+	jr nz,_crow_subid1_animate	; $5c8e
+
+	ld (hl),24  ; [counter1]
+	inc l			; $5c92
+	ld (hl),$00 ; [counter2]
+
+	ld l,e			; $5c95
+	inc (hl) ; [state]
+
+	ld l,Enemy.var32		; $5c97
+	ldh a,(<hEnemyTargetY)	; $5c99
+	ldi (hl),a		; $5c9b
+	ldh a,(<hEnemyTargetX)	; $5c9c
+	ld (hl),a		; $5c9e
+
+	ld l,Enemy.speed		; $5c9f
+	ld (hl),SPEED_20		; $5ca1
+	jr _crow_subid1_animate		; $5ca3
+
+
+; Moving, accelerating toward Link
+_crow_subid1_stateC:
+	call _crow_subid1_checkWithinScreenBounds		; $5ca5
+	jr nc,@outOfBounds	; $5ca8
+
+	call _crow_updateAngleTowardLinkIfCounter1Zero		; $5caa
+	call _crow_updateSpeed		; $5cad
+	call objectApplySpeed		; $5cb0
+	jr _crow_subid1_animate		; $5cb3
+
+@outOfBounds:
+	call _ecom_incState		; $5cb5
+	jr _crow_subid1_animate		; $5cb8
+
+
+; Moved out of bounds; go back to state 8 to eventually charge again
+_crow_subid1_stateD:
+	ld h,d			; $5cba
 	ld l,e			; $5cbb
-	inc (hl)		; $5cbc
-	ld l,$b2		; $5cbd
-	ldh a,(<hEnemyTargetY)	; $5cbf
-	ldi (hl),a		; $5cc1
-	ldh a,(<hEnemyTargetX)	; $5cc2
-	ld (hl),a		; $5cc4
-	ld l,$90		; $5cc5
-	ld (hl),$05		; $5cc7
-	jr _label_0d_189		; $5cc9
-	call $5d46		; $5ccb
-	jr nc,_label_0d_190	; $5cce
-	call $5ceb		; $5cd0
-	call $5d30		; $5cd3
-	call objectApplySpeed		; $5cd6
-	jr _label_0d_189		; $5cd9
-_label_0d_190:
-	call _ecom_incState		; $5cdb
-	jr _label_0d_189		; $5cde
-	ld h,d			; $5ce0
-	ld l,e			; $5ce1
-	ld (hl),$08		; $5ce2
-	ld l,$a4		; $5ce4
-	res 7,(hl)		; $5ce6
-	jp objectSetInvisible		; $5ce8
-	call _ecom_decCounter1		; $5ceb
-	ret nz			; $5cee
-	call _ecom_updateAngleTowardTarget		; $5cef
-	ld h,d			; $5cf2
-	ld l,$89		; $5cf3
-	ld a,(hl)		; $5cf5
-	and $0f			; $5cf6
-	ret z			; $5cf8
-	bit 4,(hl)		; $5cf9
-	ld l,$b0		; $5cfb
-	ld a,(hl)		; $5cfd
-	jr nz,_label_0d_191	; $5cfe
-	inc a			; $5d00
-_label_0d_191:
-	ld l,$b1		; $5d01
-	cp (hl)			; $5d03
-_label_0d_192:
-	ret z			; $5d04
-	ld (hl),a		; $5d05
-	jp enemySetAnimation		; $5d06
-	ld e,$8b		; $5d09
-	ld a,(de)		; $5d0b
-	cp $88			; $5d0c
-	ret nc			; $5d0e
-	ld e,$8d		; $5d0f
-	ld a,(de)		; $5d11
-	cp $a8			; $5d12
-	ret			; $5d14
-	ld h,d			; $5d15
-	ld l,$b2		; $5d16
-	call _ecom_readPositionVars		; $5d18
-	sub c			; $5d1b
-	inc a			; $5d1c
-	cp $02			; $5d1d
-	jr nc,_label_0d_193	; $5d1f
-	ldh a,(<hFF8F)	; $5d21
-	sub b			; $5d23
-	inc a			; $5d24
-	cp $02			; $5d25
-	ret c			; $5d27
-_label_0d_193:
-	call _ecom_moveTowardPosition		; $5d28
-	call $5cf2		; $5d2b
-	or d			; $5d2e
-	ret			; $5d2f
-	ld e,$87		; $5d30
-	ld a,(de)		; $5d32
-	cp $7f			; $5d33
-	jr z,_label_0d_194	; $5d35
-	inc a			; $5d37
-	ld (de),a		; $5d38
-_label_0d_194:
-	and $f0			; $5d39
-	swap a			; $5d3b
-	ld hl,$5d52		; $5d3d
-	rst_addAToHl			; $5d40
-	ld e,$90		; $5d41
-	ld a,(hl)		; $5d43
-	ld (de),a		; $5d44
-	ret			; $5d45
-	ld e,$8b		; $5d46
-	ld a,(de)		; $5d48
-	cp $88			; $5d49
-	ret nc			; $5d4b
-	ld e,$8d		; $5d4c
-	ld a,(de)		; $5d4e
-	cp $a8			; $5d4f
-	ret			; $5d51
-	ld a,(bc)		; $5d52
-	inc d			; $5d53
-	ld e,$28		; $5d54
-	ldd (hl),a		; $5d56
-	inc a			; $5d57
-	ld b,(hl)		; $5d58
-	ld d,b			; $5d59
-	ld h,b			; $5d5a
-	and b			; $5d5b
-	ld (hl),b		; $5d5c
-	sub b			; $5d5d
-	ld h,b			; $5d5e
-	nop			; $5d5f
-	ld (hl),b		; $5d60
-	stop			; $5d61
-	jr nz,_label_0d_192	; $5d62
-	stop			; $5d64
-	sub b			; $5d65
-	jr nz,_label_0d_195	; $5d66
-_label_0d_195:
-	stop			; $5d68
-	stop			; $5d69
+	ld (hl),$08 ; [state]
 
+	ld l,Enemy.collisionType		; $5cbe
+	res 7,(hl)		; $5cc0
+
+	jp objectSetInvisible		; $5cc2
+
+
+;;
+; Adjusts angle to move directly toward Link when [counter1] reaches 0. After this it
+; underflows to 255, so the angle correction only happens once.
+; @addr{5cc5}
+_crow_updateAngleTowardLinkIfCounter1Zero:
+	call _ecom_decCounter1		; $5cc5
+	ret nz			; $5cc8
+	call _ecom_updateAngleTowardTarget		; $5cc9
+
+
+;;
+; @addr{5ccc}
+_crow_setAnimationFromAngle:
+	ld h,d			; $5ccc
+	ld l,Enemy.angle		; $5ccd
+	ld a,(hl)		; $5ccf
+	and $0f			; $5cd0
+	ret z			; $5cd2
+
+	bit 4,(hl)		; $5cd3
+	ld l,Enemy.var30		; $5cd5
+	ld a,(hl)		; $5cd7
+	jr nz,+			; $5cd8
+	inc a			; $5cda
++
+	ld l,Enemy.var31		; $5cdb
+	cp (hl)			; $5cdd
+	ret z			; $5cde
+	ld (hl),a		; $5cdf
+	jp enemySetAnimation		; $5ce0
+
+;;
+; Identical to _crow_subid1_checkWithinScreenBounds.
+;
+; @param[out]	cflag	c if within screen bounds
+; @addr{5ce3}
+_crow_subid0_checkWithinScreenBounds:
+	ld e,Enemy.yh		; $5ce3
+	ld a,(de)		; $5ce5
+	cp SMALL_ROOM_HEIGHT<<4 + 8			; $5ce6
+	ret nc			; $5ce8
+	ld e,Enemy.xh		; $5ce9
+	ld a,(de)		; $5ceb
+	cp SMALL_ROOM_WIDTH<<4 + 8			; $5cec
+	ret			; $5cee
+
+;;
+; @param[out]	cflag	c if within 1 pixel of target position
+; @addr{5cef}
+_crow_moveTowardTargetPosition:
+	ld h,d			; $5cef
+	ld l,Enemy.var32		; $5cf0
+	call _ecom_readPositionVars		; $5cf2
+	sub c			; $5cf5
+	inc a			; $5cf6
+	cp $02			; $5cf7
+	jr nc,@moveToward	; $5cf9
+
+	ldh a,(<hFF8F)	; $5cfb
+	sub b			; $5cfd
+	inc a			; $5cfe
+	cp $02			; $5cff
+	ret c			; $5d01
+
+@moveToward:
+	call _ecom_moveTowardPosition		; $5d02
+	call _crow_setAnimationFromAngle		; $5d05
+	or d			; $5d08
+	ret			; $5d09
+
+;;
+; Updates speed based on counter2. For subid 1.
+; @addr{5d0a}
+_crow_updateSpeed:
+	ld e,Enemy.counter2		; $5d0a
+	ld a,(de)		; $5d0c
+	cp $7f			; $5d0d
+	jr z,+			; $5d0f
+	inc a			; $5d11
+	ld (de),a		; $5d12
++
+	and $f0			; $5d13
+	swap a			; $5d15
+	ld hl,_crow_speeds		; $5d17
+	rst_addAToHl			; $5d1a
+	ld e,Enemy.speed		; $5d1b
+	ld a,(hl)		; $5d1d
+	ld (de),a		; $5d1e
+	ret			; $5d1f
+
+
+;;
+; Identical to _crow_subid0_checkWithinScreenBounds.
+;
+; @param[out]	cflag	c if within screen bounds
+; @addr{5d20}
+_crow_subid1_checkWithinScreenBounds:
+	ld e,Enemy.yh		; $5d20
+	ld a,(de)		; $5d22
+	cp SCREEN_HEIGHT<<4 + 8			; $5d23
+	ret nc			; $5d25
+	ld e,Enemy.xh		; $5d26
+	ld a,(de)		; $5d28
+	cp SCREEN_WIDTH<<4 + 8			; $5d29
+	ret			; $5d2b
+
+
+; Speeds for subid 1; accerelates while chasing Link.
+_crow_speeds:
+	.db SPEED_040 SPEED_080 SPEED_0c0 SPEED_100
+	.db SPEED_140 SPEED_180 SPEED_1c0 SPEED_200
+
+; Each row corresponds to a screen quadrant Link is in.
+; Byte values:
+;   b0/b1: Spawn Y/X position
+;   b2/b3: Target Y/X position (position to move to before charging in)
+_crow_offScreenSpawnData:
+	.db $60 $a0 $70 $90
+	.db $60 $00 $70 $10
+	.db $20 $a0 $10 $90
+	.db $20 $00 $10 $10
+
+
+; ==============================================================================
+; ENEMYID_GEL
+; ==============================================================================
 enemyCode43:
-	call _ecom_checkHazardsNoAnimationForHoles		; $5d6a
-	jr z,_label_0d_196	; $5d6d
-	sub $03			; $5d6f
-	ret c			; $5d71
-	jp z,enemyDie		; $5d72
-	ld e,$aa		; $5d75
-	ld a,(de)		; $5d77
-	cp $80			; $5d78
-	jr nz,_label_0d_196	; $5d7a
-	ld e,$84		; $5d7c
-	ld a,$0c		; $5d7e
-	ld (de),a		; $5d80
-_label_0d_196:
-	ld e,$84		; $5d81
-	ld a,(de)		; $5d83
-	rst_jumpTable			; $5d84
-	and c			; $5d85
-	ld e,l			; $5d86
-	xor c			; $5d87
-	ld e,l			; $5d88
-	xor c			; $5d89
-	ld e,l			; $5d8a
-	xor c			; $5d8b
-	ld e,l			; $5d8c
-	xor c			; $5d8d
-	ld e,l			; $5d8e
-	bit 0,h			; $5d8f
-	xor c			; $5d91
-	ld e,l			; $5d92
-	xor c			; $5d93
-	ld e,l			; $5d94
-	xor d			; $5d95
-	ld e,l			; $5d96
-	call nc,$e75d		; $5d97
-	ld e,l			; $5d9a
-	ld a,($ff00+c)		; $5d9b
-	ld e,l			; $5d9c
-	dec bc			; $5d9d
-	ld e,(hl)		; $5d9e
-	rla			; $5d9f
-	ld e,(hl)		; $5da0
-	ld e,$86		; $5da1
-	ld a,$10		; $5da3
-	ld (de),a		; $5da5
-	jp _ecom_setSpeedAndState8AndVisible		; $5da6
-	ret			; $5da9
-	call _ecom_decCounter1		; $5daa
-	jr nz,_label_0d_198	; $5dad
-	call getRandomNumber_noPreserveVars		; $5daf
-	and $07			; $5db2
-	ld h,d			; $5db4
-	jr nz,_label_0d_197	; $5db5
-	ld l,$86		; $5db7
-	ld (hl),$30		; $5db9
-	ld l,$84		; $5dbb
-	ld (hl),$0a		; $5dbd
-	ld a,$02		; $5dbf
-	jp enemySetAnimation		; $5dc1
-_label_0d_197:
-	ld l,$86		; $5dc4
-	ld (hl),$08		; $5dc6
-	ld l,$84		; $5dc8
-	inc (hl)		; $5dca
-	ld l,$90		; $5dcb
-	ld (hl),$0a		; $5dcd
-	call _ecom_updateAngleTowardTarget		; $5dcf
-	jr _label_0d_198		; $5dd2
-	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $5dd4
-	call _ecom_decCounter1		; $5dd7
-	jr nz,_label_0d_198	; $5dda
-	ld l,$84		; $5ddc
-	ld (hl),$08		; $5dde
-	ld l,$86		; $5de0
-	ld (hl),$10		; $5de2
-_label_0d_198:
-	jp enemyAnimate		; $5de4
-	call _ecom_decCounter1		; $5de7
-	jr nz,_label_0d_198	; $5dea
-	call $5e58		; $5dec
-	jp _ecom_updateAngleTowardTarget		; $5def
-	call _ecom_applyVelocityForSideviewEnemy		; $5df2
-	ld c,$28		; $5df5
-	call objectUpdateSpeedZ_paramC		; $5df7
-	ret nz			; $5dfa
-	ld h,d			; $5dfb
-	ld l,$84		; $5dfc
-	ld (hl),$08		; $5dfe
-	ld l,$86		; $5e00
-	ld (hl),$10		; $5e02
-	ld l,$a4		; $5e04
-	set 7,(hl)		; $5e06
-	jp objectSetVisiblec2		; $5e08
-	ld h,d			; $5e0b
-	ld l,e			; $5e0c
-	inc (hl)		; $5e0d
-	ld l,$87		; $5e0e
-	ld (hl),$78		; $5e10
-	ld a,$01		; $5e12
-	jp enemySetAnimation		; $5e14
-	ld a,($d00b)		; $5e17
-	ld e,$8b		; $5e1a
-	ld (de),a		; $5e1c
-	ld a,($d00d)		; $5e1d
-	ld e,$8d		; $5e20
-	ld (de),a		; $5e22
-	call _ecom_decCounter2		; $5e23
-	jr z,_label_0d_202	; $5e26
-	ld a,($cc46)		; $5e28
-	or a			; $5e2b
-	jr z,_label_0d_200	; $5e2c
-	ld a,(hl)		; $5e2e
-	sub $03			; $5e2f
-	jr nc,_label_0d_199	; $5e31
-	ld a,$01		; $5e33
-_label_0d_199:
-	ld (hl),a		; $5e35
-_label_0d_200:
-	ld a,(hl)		; $5e36
-	and $03			; $5e37
-	jr nz,_label_0d_201	; $5e39
-	ld l,$9a		; $5e3b
-	ld a,(hl)		; $5e3d
-	xor $07			; $5e3e
-	ld (hl),a		; $5e40
-_label_0d_201:
-	ld hl,$ccef		; $5e41
-	set 5,(hl)		; $5e44
-	ld a,(wFrameCounter)		; $5e46
-	rrca			; $5e49
-	jr nc,_label_0d_198	; $5e4a
-	ld hl,wLinkImmobilized		; $5e4c
-	set 5,(hl)		; $5e4f
-	jr _label_0d_198		; $5e51
-_label_0d_202:
-	call $5e72		; $5e53
-	jr _label_0d_203		; $5e56
-_label_0d_203:
-	ld bc,$fe00		; $5e58
-	call objectSetSpeedZ		; $5e5b
-	ld l,$84		; $5e5e
-	ld (hl),$0b		; $5e60
-	ld l,$90		; $5e62
-	ld (hl),$28		; $5e64
-	xor a			; $5e66
-	call enemySetAnimation		; $5e67
-	ld a,$8f		; $5e6a
-	call playSound		; $5e6c
-	jp objectSetVisiblec1		; $5e6f
-	ld a,($d009)		; $5e72
-	bit 7,a			; $5e75
-	jp nz,_ecom_setRandomAngle		; $5e77
-	xor $10			; $5e7a
-	ld e,$89		; $5e7c
-	ld (de),a		; $5e7e
-	ret			; $5e7f
+	call _ecom_checkHazardsNoAnimationForHoles		; $5d44
+	jr z,@normalStatus	; $5d47
+	sub ENEMYSTATUS_NO_HEALTH			; $5d49
+	ret c			; $5d4b
+	jp z,enemyDie		; $5d4c
 
+	; ENEMYSTATUS_JUST_HIT or ENEMYSTATUS_KNOCKBACK
+	ld e,Enemy.var2a		; $5d4f
+	ld a,(de)		; $5d51
+	cp $80|ITEMCOLLISION_LINK			; $5d52
+	jr nz,@normalStatus	; $5d54
+
+	; Touched Link; attach self to him.
+	ld e,Enemy.state		; $5d56
+	ld a,$0c		; $5d58
+	ld (de),a		; $5d5a
+
+@normalStatus:
+	ld e,Enemy.state		; $5d5b
+	ld a,(de)		; $5d5d
+	rst_jumpTable			; $5d5e
+	.dw _gel_state_uninitialized
+	.dw _gel_state_stub
+	.dw _gel_state_stub
+	.dw _gel_state_stub
+	.dw _gel_state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw _gel_state_stub
+	.dw _gel_state_stub
+	.dw _gel_state8
+	.dw _gel_state9
+	.dw _gel_stateA
+	.dw _gel_stateB
+	.dw _gel_stateC
+	.dw _gel_stateD
+
+
+_gel_state_uninitialized:
+	ld e,Enemy.counter1		; $5d7b
+	ld a,$10		; $5d7d
+	ld (de),a		; $5d7f
+	jp _ecom_setSpeedAndState8AndVisible		; $5d80
+
+
+_gel_state_stub:
+	ret			; $5d83
+
+
+; Standing in place for [counter1] frames
+_gel_state8:
+	call _ecom_decCounter1		; $5d84
+	jr nz,_gel_animate	; $5d87
+
+	; 1 in 8 chance of switching to "hopping" state
+	call getRandomNumber_noPreserveVars		; $5d89
+	and $07			; $5d8c
+	ld h,d			; $5d8e
+	jr nz,@inchForward	; $5d8f
+
+	; Prepare to hop
+	ld l,Enemy.counter1		; $5d91
+	ld (hl),$30		; $5d93
+
+	ld l,Enemy.state		; $5d95
+	ld (hl),$0a		; $5d97
+
+	ld a,$02		; $5d99
+	jp enemySetAnimation		; $5d9b
+
+@inchForward:
+	ld l,Enemy.counter1		; $5d9e
+	ld (hl),$08		; $5da0
+
+	ld l,Enemy.state		; $5da2
+	inc (hl)		; $5da4
+
+	ld l,Enemy.speed		; $5da5
+	ld (hl),SPEED_40		; $5da7
+
+	call _ecom_updateAngleTowardTarget		; $5da9
+	jr _gel_animate		; $5dac
+
+
+; Inching toward Link for [counter1] frames
+_gel_state9:
+	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $5dae
+	call _ecom_decCounter1		; $5db1
+	jr nz,_gel_animate	; $5db4
+
+	ld l,Enemy.state		; $5db6
+	ld (hl),$08		; $5db8
+	ld l,Enemy.counter1		; $5dba
+	ld (hl),$10		; $5dbc
+
+_gel_animate:
+	jp enemyAnimate		; $5dbe
+
+
+; Preparing to hop toward Link
+_gel_stateA:
+	call _ecom_decCounter1		; $5dc1
+	jr nz,_gel_animate	; $5dc4
+
+	call _gel_beginHop		; $5dc6
+	jp _ecom_updateAngleTowardTarget		; $5dc9
+
+
+; Hopping toward Link
+_gel_stateB:
+	call _ecom_applyVelocityForSideviewEnemy		; $5dcc
+	ld c,$28		; $5dcf
+	call objectUpdateSpeedZ_paramC		; $5dd1
+	ret nz			; $5dd4
+
+	; Just landed
+
+	ld h,d			; $5dd5
+	ld l,Enemy.state		; $5dd6
+	ld (hl),$08		; $5dd8
+
+	ld l,Enemy.counter1		; $5dda
+	ld (hl),$10		; $5ddc
+
+	ld l,Enemy.collisionType		; $5dde
+	set 7,(hl)		; $5de0
+	jp objectSetVisiblec2		; $5de2
+
+
+; Just latched onto Link
+_gel_stateC:
+	ld h,d			; $5de5
+	ld l,e			; $5de6
+	inc (hl) ; [state]
+
+	ld l,Enemy.counter2		; $5de8
+	ld (hl),120		; $5dea
+
+	ld a,$01		; $5dec
+	jp enemySetAnimation		; $5dee
+
+
+; Attached to Link, slowing him down
+_gel_stateD:
+	ld a,(w1Link.yh)		; $5df1
+	ld e,Enemy.yh		; $5df4
+	ld (de),a		; $5df6
+	ld a,(w1Link.xh)		; $5df7
+	ld e,Enemy.xh		; $5dfa
+	ld (de),a		; $5dfc
+
+	call _ecom_decCounter2		; $5dfd
+	jr z,@hopOff	; $5e00
+
+	; If any button is pressed, counter2 goes down more quickly
+	ld a,(wGameKeysJustPressed)		; $5e02
+	or a			; $5e05
+	jr z,++		; $5e06
+
+	ld a,(hl) ; [counter2]
+	sub $03			; $5e09
+	jr nc,+			; $5e0b
+	ld a,$01		; $5e0d
++
+	ld (hl),a		; $5e0f
+++
+	; Invert draw priority every 4 frames
+	ld a,(hl)		; $5e10
+	and $03			; $5e11
+	jr nz,++		; $5e13
+	ld l,Enemy.visible		; $5e15
+	ld a,(hl)		; $5e17
+	xor $07			; $5e18
+	ld (hl),a		; $5e1a
+++
+	; Disable use of sword
+	ld hl,wccd8		; $5e1b
+	set 5,(hl)		; $5e1e
+
+	; Disable movement every other frame
+	ld a,(wFrameCounter)		; $5e20
+	rrca			; $5e23
+	jr nc,_gel_animate	; $5e24
+	ld hl,wLinkImmobilized		; $5e26
+	set 5,(hl)		; $5e29
+	jr _gel_animate		; $5e2b
+
+@hopOff:
+	call _gel_setAngleAwayFromLink		; $5e2d
+	jr _gel_beginHop		; $5e30
+
+
+;;
+; @addr{5e32}
+_gel_beginHop:
+	ld bc,-$200		; $5e32
+	call objectSetSpeedZ		; $5e35
+
+	ld l,Enemy.state		; $5e38
+	ld (hl),$0b		; $5e3a
+
+	ld l,Enemy.speed		; $5e3c
+	ld (hl),SPEED_100		; $5e3e
+
+	xor a			; $5e40
+	call enemySetAnimation		; $5e41
+
+	ld a,SND_ENEMY_JUMP		; $5e44
+	call playSound		; $5e46
+	jp objectSetVisiblec1		; $5e49
+
+;;
+; @addr{5e4c}
+_gel_setAngleAwayFromLink:
+	ld a,(w1Link.angle)		; $5e4c
+	bit 7,a			; $5e4f
+	jp nz,_ecom_setRandomAngle		; $5e51
+	xor $10			; $5e54
+	ld e,Enemy.angle		; $5e56
+	ld (de),a		; $5e58
+	ret			; $5e59
+
+
+; ==============================================================================
+; ENEMYID_PINCER
+;
+; Variables:
+;   relatedObj1: Pointer to "head", aka subid 1 (only for body parts, subids 2+)
+;   var31/var32: Base Y/X position (where it originates from)
+;   var33: Amount extended (0 means still in hole)
+;   var34: Copy of parent's "id" value. For body parts only.
+; ==============================================================================
 enemyCode45:
-	jr z,_label_0d_204	; $5e80
-	sub $03			; $5e82
-	ret c			; $5e84
-	jp z,enemyDie		; $5e85
-_label_0d_204:
-	call _ecom_getSubidAndCpStateTo08		; $5e88
-	jr nc,_label_0d_205	; $5e8b
-	rst_jumpTable			; $5e8d
-	xor c			; $5e8e
-	ld e,(hl)		; $5e8f
-	or b			; $5e90
-	ld e,(hl)		; $5e91
-	call c,$dc5e		; $5e92
-	ld e,(hl)		; $5e95
-	call c,$dc5e		; $5e96
-	ld e,(hl)		; $5e99
-	call c,$dc5e		; $5e9a
-	ld e,(hl)		; $5e9d
-_label_0d_205:
-	dec b			; $5e9e
-	ld a,b			; $5e9f
-	rst_jumpTable			; $5ea0
-.DB $dd				; $5ea1
-	ld e,(hl)		; $5ea2
-	ld a,l			; $5ea3
-	ld e,a			; $5ea4
-	ld a,l			; $5ea5
-	ld e,a			; $5ea6
-	ld a,l			; $5ea7
-	ld e,a			; $5ea8
-	ld a,b			; $5ea9
-	or a			; $5eaa
-	jp nz,_ecom_setSpeedAndState8		; $5eab
-	inc a			; $5eae
-	ld (de),a		; $5eaf
-	ld b,$04		; $5eb0
-	call checkBEnemySlotsAvailable		; $5eb2
-	ret nz			; $5eb5
-	ld b,$45		; $5eb6
-	call _ecom_spawnUncountedEnemyWithSubid01		; $5eb8
-	ld l,$80		; $5ebb
-	ld e,l			; $5ebd
-	ld a,(de)		; $5ebe
-	ld (hl),a		; $5ebf
-	call objectCopyPosition		; $5ec0
-	ld c,h			; $5ec3
-	call _ecom_spawnUncountedEnemyWithSubid01		; $5ec4
-	call $5fc7		; $5ec7
-	call _ecom_spawnUncountedEnemyWithSubid01		; $5eca
-	inc (hl)		; $5ecd
-	call $5fc7		; $5ece
-	call _ecom_spawnUncountedEnemyWithSubid01		; $5ed1
-	inc (hl)		; $5ed4
-	inc (hl)		; $5ed5
-	call $5fc7		; $5ed6
-	jp enemyDelete		; $5ed9
-	ret			; $5edc
-	ld a,(de)		; $5edd
-	sub $08			; $5ede
-	rst_jumpTable			; $5ee0
-	rst $28			; $5ee1
-	ld e,(hl)		; $5ee2
-.DB $fd				; $5ee3
-	ld e,(hl)		; $5ee4
-	dec bc			; $5ee5
-	ld e,a			; $5ee6
-	dec (hl)		; $5ee7
-	ld e,a			; $5ee8
-	ld c,e			; $5ee9
-	ld e,a			; $5eea
-	ld d,d			; $5eeb
-	ld e,a			; $5eec
-	ld l,b			; $5eed
-	ld e,a			; $5eee
-	ld h,d			; $5eef
-	ld l,e			; $5ef0
-	inc (hl)		; $5ef1
-	ld e,$8b		; $5ef2
-	ld l,$b1		; $5ef4
-	ld a,(de)		; $5ef6
-	ldi (hl),a		; $5ef7
-	ld e,$8d		; $5ef8
-	ld a,(de)		; $5efa
-	ld (hl),a		; $5efb
-	ret			; $5efc
-	ld c,$28		; $5efd
-	call objectCheckLinkWithinDistance		; $5eff
-	ret nc			; $5f02
-	ld e,$84		; $5f03
-	ld a,$0a		; $5f05
-	ld (de),a		; $5f07
-	jp objectSetVisible82		; $5f08
-	ld e,$a1		; $5f0b
-	ld a,(de)		; $5f0d
-	dec a			; $5f0e
-	jp nz,enemyAnimate		; $5f0f
-	call _ecom_incState		; $5f12
-	ld l,$a4		; $5f15
-	set 7,(hl)		; $5f17
-	ld l,$b3		; $5f19
-	ld (hl),$00		; $5f1b
-	ld l,$8b		; $5f1d
-	ld b,(hl)		; $5f1f
-	ld l,$8d		; $5f20
-	ld c,(hl)		; $5f22
-	ld a,$06		; $5f23
-	call tryToBreakTile		; $5f25
-	call _ecom_updateAngleTowardTarget		; $5f28
-	add $02			; $5f2b
-	and $1c			; $5f2d
-	rrca			; $5f2f
-	rrca			; $5f30
-	inc a			; $5f31
-	jp enemySetAnimation		; $5f32
-	call $5fcf		; $5f35
-	ld e,$b3		; $5f38
-	ld a,(de)		; $5f3a
-	add $02			; $5f3b
-	cp $20			; $5f3d
-	jr nc,_label_0d_206	; $5f3f
-	ld (de),a		; $5f41
-	ret			; $5f42
-_label_0d_206:
-	call _ecom_incState		; $5f43
-	ld l,$86		; $5f46
-	ld (hl),$08		; $5f48
-	ret			; $5f4a
-	call _ecom_decCounter1		; $5f4b
-	ret nz			; $5f4e
-	ld l,e			; $5f4f
-	inc (hl)		; $5f50
-	ret			; $5f51
-	call $5fcf		; $5f52
-	ld h,d			; $5f55
-	ld l,$b3		; $5f56
-	dec (hl)		; $5f58
-	ret nz			; $5f59
-	ld l,$86		; $5f5a
-	ld (hl),$1e		; $5f5c
-	ld l,$84		; $5f5e
-	inc (hl)		; $5f60
-	ld l,$a4		; $5f61
-	res 7,(hl)		; $5f63
-	jp objectSetInvisible		; $5f65
-	call _ecom_decCounter1		; $5f68
-	ret nz			; $5f6b
-	ld l,e			; $5f6c
-	ld (hl),$09		; $5f6d
-	ld l,$b1		; $5f6f
-	ld e,$8b		; $5f71
-	ldi a,(hl)		; $5f73
-	ld (de),a		; $5f74
-	ld e,$8d		; $5f75
-	ld a,(hl)		; $5f77
-	ld (de),a		; $5f78
-	xor a			; $5f79
-	jp enemySetAnimation		; $5f7a
-	ld a,(de)		; $5f7d
-	sub $08			; $5f7e
-	rst_jumpTable			; $5f80
-	add l			; $5f81
-	ld e,a			; $5f82
-	and b			; $5f83
-	ld e,a			; $5f84
-	ld a,$09		; $5f85
-	ld (de),a		; $5f87
-	ld a,$0b		; $5f88
-	call objectGetRelatedObject1Var		; $5f8a
-	ld e,$b1		; $5f8d
-	ldi a,(hl)		; $5f8f
-	ld (de),a		; $5f90
-	inc l			; $5f91
-	inc e			; $5f92
-	ld a,(hl)		; $5f93
-	ld (de),a		; $5f94
-	ld e,$b4		; $5f95
-	ld l,$81		; $5f97
-	ld a,(hl)		; $5f99
-	ld (de),a		; $5f9a
-	ld a,$09		; $5f9b
-	jp enemySetAnimation		; $5f9d
-	ld a,$01		; $5fa0
-	call objectGetRelatedObject1Var		; $5fa2
-	ld e,$b4		; $5fa5
-	ld a,(de)		; $5fa7
-	cp (hl)			; $5fa8
-	jp nz,enemyDelete		; $5fa9
-	ld l,$89		; $5fac
-	ld e,l			; $5fae
-	ld a,(hl)		; $5faf
-	ld (de),a		; $5fb0
-	ld l,$ab		; $5fb1
-	ld e,l			; $5fb3
-	ld a,(hl)		; $5fb4
-	ld (de),a		; $5fb5
-	ld l,$84		; $5fb6
-	ld a,(hl)		; $5fb8
-	cp $0b			; $5fb9
-	jr c,_label_0d_207	; $5fbb
-	ld l,$9a		; $5fbd
-	ld e,l			; $5fbf
-	ld a,(hl)		; $5fc0
-	ld (de),a		; $5fc1
-_label_0d_207:
-	call $5fdc		; $5fc2
-	jr _label_0d_208		; $5fc5
-	inc (hl)		; $5fc7
-	ld l,$96		; $5fc8
-	ld a,$80		; $5fca
-	ldi (hl),a		; $5fcc
-	ld (hl),c		; $5fcd
-	ret			; $5fce
-_label_0d_208:
-	ld h,d			; $5fcf
-	ld l,$b1		; $5fd0
-	ld b,(hl)		; $5fd2
-	inc l			; $5fd3
-	ld c,(hl)		; $5fd4
-	inc l			; $5fd5
-	ld a,(hl)		; $5fd6
-	ld e,$89		; $5fd7
-	jp objectSetPositionInCircleArc		; $5fd9
-	push hl			; $5fdc
-	ld e,$82		; $5fdd
-	ld a,(de)		; $5fdf
-	sub $02			; $5fe0
-	rst_jumpTable			; $5fe2
-	jp hl			; $5fe3
-	ld e,a			; $5fe4
-	ld a,($ff00+c)		; $5fe5
-	ld e,a			; $5fe6
-	ld sp,hl		; $5fe7
-	ld e,a			; $5fe8
-	pop hl			; $5fe9
-	call $5fff		; $5fea
-	ld b,a			; $5fed
-	add a			; $5fee
-	add b			; $5fef
-	ld (de),a		; $5ff0
-	ret			; $5ff1
-	pop hl			; $5ff2
-	call $5fff		; $5ff3
-	add a			; $5ff6
-	ld (de),a		; $5ff7
-	ret			; $5ff8
-	pop hl			; $5ff9
-	call $5fff		; $5ffa
-	ld (de),a		; $5ffd
-	ret			; $5ffe
-	ld l,$b3		; $5fff
-	ld e,l			; $6001
-	ld a,(hl)		; $6002
-	srl a			; $6003
-	srl a			; $6005
-	ret			; $6007
+	jr z,@normalStatus	; $5e5a
+	sub ENEMYSTATUS_NO_HEALTH			; $5e5c
+	ret c			; $5e5e
+	jp z,enemyDie		; $5e5f
 
+@normalStatus:
+	call _ecom_getSubidAndCpStateTo08		; $5e62
+	jr nc,@normalState	; $5e65
+	rst_jumpTable			; $5e67
+	.dw _pincer_state_uninitialized
+	.dw _pincer_state1
+	.dw _pincer_state_stub
+	.dw _pincer_state_stub
+	.dw _pincer_state_stub
+	.dw _pincer_state_stub
+	.dw _pincer_state_stub
+	.dw _pincer_state_stub
+
+@normalState:
+	dec b			; $5e78
+	ld a,b			; $5e79
+	rst_jumpTable			; $5e7a
+	.dw _pincer_head
+	.dw _pincer_body
+	.dw _pincer_body
+	.dw _pincer_body
+
+
+_pincer_state_uninitialized:
+	ld a,b			; $5e83
+	or a			; $5e84
+	jp nz,_ecom_setSpeedAndState8		; $5e85
+
+	; subid 0 only
+	inc a			; $5e88
+	ld (de),a ; [state] = 1
+
+
+; Spawner only (subid 0): Spawn head and body parts, then delete self.
+_pincer_state1:
+	ld b,$04		; $5e8a
+	call checkBEnemySlotsAvailable		; $5e8c
+	ret nz			; $5e8f
+
+	; Spawn head
+	ld b,ENEMYID_PINCER		; $5e90
+	call _ecom_spawnUncountedEnemyWithSubid01		; $5e92
+	ld l,Enemy.enabled		; $5e95
+	ld e,l			; $5e97
+	ld a,(de)		; $5e98
+	ld (hl),a		; $5e99
+	call objectCopyPosition		; $5e9a
+
+	; Spawn body parts
+	ld c,h			; $5e9d
+	call _ecom_spawnUncountedEnemyWithSubid01		; $5e9e
+	call _pincer_setChildRelatedObj1		; $5ea1
+	; [child.subid] = 2 (incremented in above function call)
+
+	call _ecom_spawnUncountedEnemyWithSubid01		; $5ea4
+	inc (hl)
+	call _pincer_setChildRelatedObj1		; $5ea8
+	; [child.subid] = 3
+
+	call _ecom_spawnUncountedEnemyWithSubid01		; $5eab
+	inc (hl)		; $5eae
+	inc (hl)
+	call _pincer_setChildRelatedObj1		; $5eb0
+	; [child.subid] = 4
+
+	; Spawner no longer needed
+	jp enemyDelete		; $5eb3
+
+
+_pincer_state_stub:
+	ret			; $5eb6
+
+
+; Subid 1: Head of pincer (the "main" part, which is attackable)
+_pincer_head:
+	ld a,(de)		; $5eb7
+	sub $08			; $5eb8
+	rst_jumpTable			; $5eba
+	.dw _pincer_head_state8
+	.dw _pincer_head_state9
+	.dw _pincer_head_stateA
+	.dw _pincer_head_stateB
+	.dw _pincer_head_stateC
+	.dw _pincer_head_stateD
+	.dw _pincer_head_stateE
+
+
+; Initialization
+_pincer_head_state8:
+	ld h,d			; $5ec9
+	ld l,e			; $5eca
+	inc (hl) ; [state]
+
+	ld e,Enemy.yh		; $5ecc
+	ld l,Enemy.var31		; $5ece
+	ld a,(de)		; $5ed0
+	ldi (hl),a		; $5ed1
+	ld e,Enemy.xh		; $5ed2
+	ld a,(de)		; $5ed4
+	ld (hl),a		; $5ed5
+	ret			; $5ed6
+
+
+; Waiting for Link to approach
+_pincer_head_state9:
+	ld c,$28		; $5ed7
+	call objectCheckLinkWithinDistance		; $5ed9
+	ret nc			; $5edc
+
+	ld e,Enemy.state		; $5edd
+	ld a,$0a		; $5edf
+	ld (de),a		; $5ee1
+	jp objectSetVisible82		; $5ee2
+
+
+; Showing eyes as a "warning" that it's about to attack
+_pincer_head_stateA:
+	ld e,Enemy.animParameter		; $5ee5
+	ld a,(de)		; $5ee7
+	dec a			; $5ee8
+	jp nz,enemyAnimate		; $5ee9
+
+	; Time to attack
+	call _ecom_incState		; $5eec
+
+	ld l,Enemy.collisionType		; $5eef
+	set 7,(hl)		; $5ef1
+
+	; Initial "extended" amount is 0
+	ld l,Enemy.var33		; $5ef3
+	ld (hl),$00		; $5ef5
+
+	; "Dig up" the tile if coming from underground
+	ld l,Enemy.yh		; $5ef7
+	ld b,(hl)		; $5ef9
+	ld l,Enemy.xh		; $5efa
+	ld c,(hl)		; $5efc
+	ld a,BREAKABLETILESOURCE_06		; $5efd
+	call tryToBreakTile		; $5eff
+.ifdef ROM_AGES
+	; If in water, create a splash
+	call objectCheckTileAtPositionIsWater		; $5f02
+	jr nc,++		; $5f05
+
+	call getFreeInteractionSlot		; $5f07
+	jr nz,++		; $5f0a
+	ld (hl),INTERACID_SPLASH		; $5f0c
+	ld bc,$fa00		; $5f0e
+	call objectCopyPositionWithOffset		; $5f11
+++
+.endif
+	call _ecom_updateAngleTowardTarget		; $5f14
+	add $02			; $5f17
+	and $1c			; $5f19
+	rrca			; $5f1b
+	rrca			; $5f1c
+	inc a			; $5f1d
+	jp enemySetAnimation		; $5f1e
+
+
+; Extending toward target
+_pincer_head_stateB:
+	call _pincer_updatePosition		; $5f21
+
+	ld e,Enemy.var33		; $5f24
+	ld a,(de)		; $5f26
+	add $02			; $5f27
+	cp $20			; $5f29
+	jr nc,@fullyExtended	; $5f2b
+	ld (de),a		; $5f2d
+	ret			; $5f2e
+
+@fullyExtended:
+	call _ecom_incState		; $5f2f
+	ld l,Enemy.counter1		; $5f32
+	ld (hl),$08		; $5f34
+	ret			; $5f36
+
+
+; Staying fully extended for several frames
+_pincer_head_stateC:
+	call _ecom_decCounter1		; $5f37
+	ret nz			; $5f3a
+	ld l,e			; $5f3b
+	inc (hl) ; [state]
+	ret			; $5f3d
+
+
+; Retracting
+_pincer_head_stateD:
+	call _pincer_updatePosition		; $5f3e
+
+	ld h,d			; $5f41
+	ld l,Enemy.var33		; $5f42
+	dec (hl)		; $5f44
+	ret nz			; $5f45
+
+	; Fully retracted
+	ld l,Enemy.counter1		; $5f46
+	ld (hl),30		; $5f48
+
+	ld l,Enemy.state		; $5f4a
+	inc (hl)		; $5f4c
+
+	ld l,Enemy.collisionType		; $5f4d
+	res 7,(hl)		; $5f4f
+	jp objectSetInvisible		; $5f51
+
+
+; Fully retracted; on cooldown
+_pincer_head_stateE:
+	call _ecom_decCounter1		; $5f54
+	ret nz			; $5f57
+
+	; Cooldown over
+	ld l,e			; $5f58
+	ld (hl),$09 ; [state]
+
+	; Make sure Y/X position is fully fixed back to origin
+	ld l,Enemy.var31		; $5f5b
+	ld e,Enemy.yh		; $5f5d
+	ldi a,(hl)		; $5f5f
+	ld (de),a		; $5f60
+	ld e,Enemy.xh		; $5f61
+	ld a,(hl)		; $5f63
+	ld (de),a		; $5f64
+
+	xor a			; $5f65
+	jp enemySetAnimation		; $5f66
+
+
+;;
+; Subid 2-4: body of pincer (just decoration)
+; @addr{5f69}
+_pincer_body:
+	ld a,(de)		; $5f69
+	sub $08			; $5f6a
+	rst_jumpTable			; $5f6c
+	.dw @state8
+	.dw @state9
+
+; Initialization
+@state8:
+	ld a,$09		; $5f71
+	ld (de),a ; [state]
+
+	; Copy parent's base position (var31/var32)
+	ld a,Object.yh		; $5f74
+	call objectGetRelatedObject1Var		; $5f76
+	ld e,Enemy.var31		; $5f79
+	ldi a,(hl)		; $5f7b
+	ld (de),a		; $5f7c
+	inc l			; $5f7d
+	inc e			; $5f7e
+	ld a,(hl)		; $5f7f
+	ld (de),a		; $5f80
+
+	ld e,Enemy.var34		; $5f81
+	ld l,Enemy.id		; $5f83
+	ld a,(hl)		; $5f85
+	ld (de),a		; $5f86
+
+	ld a,$09		; $5f87
+	jp enemySetAnimation		; $5f89
+
+@state9:
+	; Check if parent was deleted
+	ld a,Object.id		; $5f8c
+	call objectGetRelatedObject1Var		; $5f8e
+	ld e,Enemy.var34		; $5f91
+	ld a,(de)		; $5f93
+	cp (hl)			; $5f94
+	jp nz,enemyDelete		; $5f95
+
+	; Copy parent's angle, invincibilityCounter
+	ld l,Enemy.angle		; $5f98
+	ld e,l			; $5f9a
+	ld a,(hl)		; $5f9b
+	ld (de),a		; $5f9c
+	ld l,Enemy.invincibilityCounter		; $5f9d
+	ld e,l			; $5f9f
+	ld a,(hl)		; $5fa0
+	ld (de),a		; $5fa1
+
+	; Copy parent's visibility only if parent is in state $0b or higher
+	ld l,Enemy.state		; $5fa2
+	ld a,(hl)		; $5fa4
+	cp $0b			; $5fa5
+	jr c,++		; $5fa7
+
+	ld l,Enemy.visible		; $5fa9
+	ld e,l			; $5fab
+	ld a,(hl)		; $5fac
+	ld (de),a		; $5fad
+++
+	call _pincer_body_updateExtendedAmount		; $5fae
+	jr _pincer_updatePosition		; $5fb1
+
+
+;;
+; Sets relatedObj1 of object 'h' to object 'c'.
+; 'h' is part of the pincer's body, 'c' is the pincer's head.
+; Also increments the body part's subid since that does need to be done...
+; @addr{5fb3}
+_pincer_setChildRelatedObj1:
+	inc (hl) ; [subid]++
+	ld l,Enemy.relatedObj1		; $5fb4
+	ld a,Enemy.start		; $5fb6
+	ldi (hl),a		; $5fb8
+	ld (hl),c		; $5fb9
+	ret			; $5fba
+
+;;
+; Updates position based on "base position" (var31), angle, and distance extended (var33).
+; @addr{5fbb}
+_pincer_updatePosition:
+	ld h,d			; $5fbb
+	ld l,Enemy.var31		; $5fbc
+	ld b,(hl)		; $5fbe
+	inc l			; $5fbf
+	ld c,(hl)		; $5fc0
+	inc l			; $5fc1
+	ld a,(hl)		; $5fc2
+	ld e,Enemy.angle		; $5fc3
+	jp objectSetPositionInCircleArc		; $5fc5
+
+;;
+; Calculates value for var33 (amount extended) for a body part.
+; @addr{5fc8}
+_pincer_body_updateExtendedAmount:
+	push hl			; $5fc8
+	ld e,Enemy.subid		; $5fc9
+	ld a,(de)		; $5fcb
+	sub $02			; $5fcc
+	rst_jumpTable			; $5fce
+	.dw @subid2
+	.dw @subid3
+	.dw @subid4
+
+@subid2:
+	pop hl			; $5fd5
+	call @getExtendedAmountDividedByFour		; $5fd6
+	ld b,a			; $5fd9
+	add a			; $5fda
+	add b			; $5fdb
+	ld (de),a		; $5fdc
+	ret			; $5fdd
+
+@subid3:
+	pop hl			; $5fde
+	call @getExtendedAmountDividedByFour		; $5fdf
+	add a			; $5fe2
+	ld (de),a		; $5fe3
+	ret			; $5fe4
+
+@subid4:
+	pop hl			; $5fe5
+	call @getExtendedAmountDividedByFour		; $5fe6
+	ld (de),a		; $5fe9
+	ret			; $5fea
+
+@getExtendedAmountDividedByFour:
+	ld l,Enemy.var33		; $5feb
+	ld e,l			; $5fed
+	ld a,(hl)		; $5fee
+	srl a			; $5fef
+	srl a			; $5ff1
+	ret			; $5ff3
+
+
+; ==============================================================================
+; ENEMYID_BALL_AND_CHAIN_SOLDIER
+;
+; Variables:
+;   relatedObj2: reference to PARTID_SPIKED_BALL
+;   counter1: Written to by PARTID_SPIKED_BALL?
+;   var30: Signal for PARTID_SPIKED_BALL.
+;          0: Ball should rotate at normal speed.
+;          1: Ball should rotate at double speed.
+;          2: Ball should be thrown at Link.
+;   var31: State to return to after switch hook is used on enemy
+; ==============================================================================
 enemyCode4b:
-	jr z,_label_0d_209	; $6008
-	sub $03			; $600a
-	ret c			; $600c
-	jr nz,_label_0d_209	; $600d
-	jp enemyDie		; $600f
-_label_0d_209:
-	call _ecom_seasonsFunc_4446		; $6012
-	ld e,$84		; $6015
-	ld a,(de)		; $6017
-	rst_jumpTable			; $6018
-	cpl			; $6019
-	ld h,b			; $601a
-	ld d,b			; $601b
-	ld h,b			; $601c
-	ld d,b			; $601d
-	ld h,b			; $601e
-	dec a			; $601f
-	ld h,b			; $6020
-	ld d,b			; $6021
-	ld h,b			; $6022
-	ld d,b			; $6023
-	ld h,b			; $6024
-	ld d,b			; $6025
-	ld h,b			; $6026
-	ld d,b			; $6027
-	ld h,b			; $6028
-	ld d,c			; $6029
-	ld h,b			; $602a
-	ld (hl),e		; $602b
-	ld h,b			; $602c
-	add d			; $602d
-	ld h,b			; $602e
-	call $60a9		; $602f
-	ret nz			; $6032
-	ld a,$0f		; $6033
-	call _ecom_setSpeedAndState8AndVisible		; $6035
-	ld l,$b1		; $6038
-	ld (hl),$08		; $603a
+	jr z,@normalStatus	; $5ff4
+	sub ENEMYSTATUS_NO_HEALTH			; $5ff6
+	ret c			; $5ff8
+	jr nz,@normalStatus	; $5ff9
+	jp enemyDie		; $5ffb
+
+@normalStatus:
+.ifdef ROM_AGES
+	call _ecom_checkHazards		; $5ffe
+.else
+	call _ecom_seasonsFunc_4446		; $5ffe
+.endif
+	ld e,Enemy.state		; $6001
+	ld a,(de)		; $6003
+	rst_jumpTable			; $6004
+	.dw _ballAndChain_state_uninitialized
+	.dw _ballAndChain_state_stub
+	.dw _ballAndChain_state_stub
+	.dw _ballAndChain_state_switchHook
+	.dw _ballAndChain_state_stub
+	.dw _ballAndChain_state_stub
+	.dw _ballAndChain_state_stub
+	.dw _ballAndChain_state_stub
+	.dw _ballAndChain_state8
+	.dw _ballAndChain_state9
+	.dw _ballAndChain_stateA
+
+
+_ballAndChain_state_uninitialized:
+	call _ballAndChain_spawnSpikedBall		; $601b
+	ret nz			; $601e
+
+	ld a,SPEED_60		; $601f
+	call _ecom_setSpeedAndState8AndVisible		; $6021
+
+	ld l,Enemy.var31		; $6024
+	ld (hl),$08		; $6026
+	ret			; $6028
+
+
+_ballAndChain_state_switchHook:
+	inc e			; $6029
+	ld a,(de)		; $602a
+	rst_jumpTable			; $602b
+	.dw _ecom_incState2
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+
+@substate1:
+@substate2:
+	ret			; $6034
+
+@substate3:
+	ld e,Enemy.var31		; $6035
+	ld a,(de)		; $6037
+	ld b,a			; $6038
+	jp _ecom_fallToGroundAndSetState		; $6039
+
+
+_ballAndChain_state_stub:
 	ret			; $603c
-	inc e			; $603d
-	ld a,(de)		; $603e
-	rst_jumpTable			; $603f
-	dec b			; $6040
-	ld b,b			; $6041
-	ld c,b			; $6042
-	ld h,b			; $6043
-	ld c,b			; $6044
-	ld h,b			; $6045
-	ld c,c			; $6046
-	ld h,b			; $6047
-	ret			; $6048
-	ld e,$b1		; $6049
-	ld a,(de)		; $604b
-	ld b,a			; $604c
-	jp _ecom_fallToGroundAndSetState		; $604d
-	ret			; $6050
-	ld c,$38		; $6051
-	call objectCheckLinkWithinDistance		; $6053
-	jr nc,_label_0d_210	; $6056
-	call _ecom_incState		; $6058
-	call $60ca		; $605b
-	ld l,$86		; $605e
-	ld (hl),$5a		; $6060
-	ld l,$b0		; $6062
-	inc (hl)		; $6064
-	ld a,$01		; $6065
-	jp enemySetAnimation		; $6067
-_label_0d_210:
-	call _ecom_updateAngleTowardTarget		; $606a
-	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $606d
-_label_0d_211:
-	jp enemyAnimate		; $6070
-	call _ecom_decCounter1		; $6073
-	jr nz,_label_0d_211	; $6076
-	inc (hl)		; $6078
-	ld l,e			; $6079
-	inc (hl)		; $607a
-	call $60ca		; $607b
-	ld l,$b0		; $607e
-	inc (hl)		; $6080
-	ret			; $6081
-	ld e,$86		; $6082
-	ld a,(de)		; $6084
-	or a			; $6085
-	ret nz			; $6086
-	ld c,$38		; $6087
-	call objectCheckLinkWithinDistance		; $6089
-	ld h,d			; $608c
-	ld l,$84		; $608d
-	jr nc,_label_0d_212	; $608f
-	dec (hl)		; $6091
-	call $60ca		; $6092
-	ld l,$86		; $6095
-	ld (hl),$5a		; $6097
-	ld l,$b0		; $6099
-	dec (hl)		; $609b
-	ret			; $609c
-_label_0d_212:
-	ld (hl),$08		; $609d
-	call $60ca		; $609f
-	ld l,$b0		; $60a2
-	xor a			; $60a4
-	ld (hl),a		; $60a5
-	jp enemySetAnimation		; $60a6
-	ld b,$04		; $60a9
-	call checkBEnemySlotsAvailable		; $60ab
-	ret nz			; $60ae
-	ld b,$2a		; $60af
-	call _ecom_spawnProjectile		; $60b1
-	ld c,h			; $60b4
-	ld e,$01		; $60b5
-_label_0d_213:
-	call getFreePartSlot		; $60b7
-	ld (hl),b		; $60ba
-	inc l			; $60bb
-	ld (hl),e		; $60bc
-	ld l,$d6		; $60bd
-	ld a,$c0		; $60bf
-	ldi (hl),a		; $60c1
-	ld (hl),c		; $60c2
-	inc e			; $60c3
-	ld a,e			; $60c4
-	cp $04			; $60c5
-	jr nz,_label_0d_213	; $60c7
-	ret			; $60c9
-	ld a,(hl)		; $60ca
-	ld l,$b1		; $60cb
-	ld (hl),a		; $60cd
-	ret			; $60ce
 
+
+; Waiting for Link to be close enough to attack
+_ballAndChain_state8:
+	ld c,$38		; $603d
+	call objectCheckLinkWithinDistance		; $603f
+	jr nc,@moveTowardLink	; $6042
+
+	; Link is close enough
+	call _ecom_incState		; $6044
+	call _ballAndChain_setDefaultState		; $6047
+
+	ld l,Enemy.counter1		; $604a
+	ld (hl),90		; $604c
+
+	; Signal PARTID_SPIKED_BALL to rotate faster
+	ld l,Enemy.var30		; $604e
+	inc (hl)		; $6050
+
+	ld a,$01		; $6051
+	jp enemySetAnimation		; $6053
+
+@moveTowardLink:
+	call _ecom_updateAngleTowardTarget		; $6056
+	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $6059
+
+_ballAndChain_animate:
+	jp enemyAnimate		; $605c
+
+
+; Spinning up ball for [counter1] frames before attacking
+_ballAndChain_state9:
+	call _ecom_decCounter1		; $605f
+	jr nz,_ballAndChain_animate	; $6062
+
+	inc (hl) ; [counter1]
+	ld l,e			; $6065
+	inc (hl) ; [state]
+
+	call _ballAndChain_setDefaultState		; $6067
+
+	; Signal PARTID_SPIKED_BALL to begin throw toward Link
+	ld l,Enemy.var30		; $606a
+	inc (hl)		; $606c
+	ret			; $606d
+
+
+; Waiting for PARTID_SPIKED_BALL to set this object's counter1 to 0 (signalling the throw
+; is done)
+_ballAndChain_stateA:
+	ld e,Enemy.counter1		; $606e
+	ld a,(de)		; $6070
+	or a			; $6071
+	ret nz			; $6072
+
+	; Throw done
+
+	ld c,$38		; $6073
+	call objectCheckLinkWithinDistance		; $6075
+	ld h,d			; $6078
+	ld l,Enemy.state		; $6079
+	jr nc,@gotoState8	; $607b
+
+	; Link is close; attack again immediately
+	dec (hl) ; [state] = 9
+	call _ballAndChain_setDefaultState		; $607e
+	ld l,Enemy.counter1		; $6081
+	ld (hl),90		; $6083
+
+	ld l,Enemy.var30		; $6085
+	dec (hl)		; $6087
+	ret			; $6088
+
+@gotoState8:
+	; Link isn't close; go to state 8, waiting for him to be close enough
+	ld (hl),$08 ; [state]
+	call _ballAndChain_setDefaultState		; $608b
+
+	ld l,Enemy.var30		; $608e
+	xor a			; $6090
+	ld (hl),a		; $6091
+	jp enemySetAnimation		; $6092
+
+
+;;
+; @param[out]	zflag	z if spawned successfully
+; @addr{6095}
+_ballAndChain_spawnSpikedBall:
+	; BUG: This checks for 4 enemy slots, but we actually need 4 part slots...
+	ld b,$04		; $6095
+	call checkBEnemySlotsAvailable		; $6097
+	ret nz			; $609a
+
+	; Spawn the ball
+	ld b,PARTID_SPIKED_BALL		; $609b
+	call _ecom_spawnProjectile		; $609d
+
+	; Spawn the 3 parts of the chain. Their "relatedObj1" will be set to the ball (not
+	; this enemy).
+	ld c,h			; $60a0
+	ld e,$01		; $60a1
+@nextChain:
+	call getFreePartSlot		; $60a3
+	ld (hl),b		; $60a6
+	inc l			; $60a7
+	ld (hl),e		; $60a8
+	ld l,Part.relatedObj1		; $60a9
+	ld a,Part.start		; $60ab
+	ldi (hl),a		; $60ad
+	ld (hl),c		; $60ae
+	inc e			; $60af
+	ld a,e			; $60b0
+	cp $04			; $60b1
+	jr nz,@nextChain	; $60b3
+	ret			; $60b5
+
+
+;;
+; Sets state the enemy will return to after switch hook is used on it
+;
+; @param	hl	Pointer to state
+; @addr{60b6}
+_ballAndChain_setDefaultState:
+	ld a,(hl)		; $60b6
+	ld l,Enemy.var31		; $60b7
+	ld (hl),a		; $60b9
+	ret			; $60ba
+
+
+; ==============================================================================
+; ENEMYID_HARDHAT_BEETLE
+; ENEMYID_HARMLESS_HARDHAT_BEETLE
+; ==============================================================================
 enemyCode4d:
-	call _ecom_checkHazards		; $60cf
-	jr z,_label_0d_214	; $60d2
-	sub $03			; $60d4
-	ret c			; $60d6
-	jp z,enemyDie		; $60d7
-	dec a			; $60da
-	jp nz,_ecom_updateKnockbackAndCheckHazards		; $60db
-	ret			; $60de
-_label_0d_214:
-	ld e,$84		; $60df
-	ld a,(de)		; $60e1
-	rst_jumpTable			; $60e2
-	push af			; $60e3
-	ld h,b			; $60e4
-	ld a,($fa60)		; $60e5
-	ld h,b			; $60e8
-	ld a,($fa60)		; $60e9
-	ld h,b			; $60ec
-	bit 0,h			; $60ed
-	ld a,($fa60)		; $60ef
-	ld h,b			; $60f2
-	ei			; $60f3
-	ld h,b			; $60f4
-	ld a,$0f		; $60f5
-	jp _ecom_setSpeedAndState8AndVisible		; $60f7
-	ret			; $60fa
-	call _ecom_updateAngleTowardTarget		; $60fb
-	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $60fe
-	jp enemyAnimate		; $6101
+.ifdef ROM_AGES
+enemyCode5f:
+.endif
+	call _ecom_checkHazards		; $60bb
+	jr z,@normalStatus	; $60be
+	sub ENEMYSTATUS_NO_HEALTH			; $60c0
+	ret c			; $60c2
+	jp z,enemyDie		; $60c3
+	dec a			; $60c6
+	jp nz,_ecom_updateKnockbackAndCheckHazards		; $60c7
+	ret			; $60ca
 
+@normalStatus:
+	ld e,Enemy.state		; $60cb
+	ld a,(de)		; $60cd
+	rst_jumpTable			; $60ce
+	.dw @state_uninitialized
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state8
+
+@state_uninitialized:
+.ifdef ROM_AGES
+	ld e,Enemy.id		; $60e1
+	ld a,(de)		; $60e3
+	cp ENEMYID_HARMLESS_HARDHAT_BEETLE			; $60e4
+	ld a,PALH_8d		; $60e6
+	call z,loadPaletteHeader		; $60e8
+.endif
+	ld a,SPEED_60		; $60eb
+	jp _ecom_setSpeedAndState8AndVisible		; $60ed
+
+@state_stub:
+	ret			; $60f0
+
+@state8:
+	call _ecom_updateAngleTowardTarget		; $60f1
+	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $60f4
+	jp enemyAnimate		; $60f7
+
+
+.ifdef ROM_AGES
+; ==============================================================================
+; ENEMYID_LINK_MIMIC
+;
+; Shares code with ENEMYID_ARM_MIMIC.
+; ==============================================================================
+enemyCode64:
+	jr z,@normalStatus	; $60fa
+	sub ENEMYSTATUS_NO_HEALTH			; $60fc
+	ret c			; $60fe
+	jp z,enemyDie		; $60ff
+	dec a			; $6102
+	jp nz,_ecom_updateKnockback		; $6103
+	ret			; $6106
+
+@normalStatus:
+	ld e,Enemy.state		; $6107
+	ld a,(de)		; $6109
+	rst_jumpTable			; $610a
+	.dw @state_uninitialized
+	.dw _armMimic_state_stub
+	.dw _armMimic_state_stub
+	.dw _armMimic_state_switchHook
+	.dw _armMimic_state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw _armMimic_state_stub
+	.dw _armMimic_state_stub
+	.dw _linkMimic_state8
+
+
+@state_uninitialized:
+	ld a,PALH_82		; $611d
+	call loadPaletteHeader		; $611f
+	call _armMimic_uninitialized		; $6122
+	jp objectSetVisible83		; $6125
+
+
+_linkMimic_state8:
+	ld a,(wDisabledObjects)		; $6128
+	or a			; $612b
+	ret nz			; $612c
+	jr _armMimic_state8		; $612d
+.endif
+
+
+; ==============================================================================
+; ENEMYID_ARM_MIMIC
+;
+; Shares code with ENEMYID_LINK_MIMIC.
+;
+; Variables:
+;   var30: Animation index
+; ==============================================================================
 enemyCode4e:
-	call _ecom_checkHazards		; $6104
-	jr z,_label_0d_215	; $6107
-	sub $03			; $6109
-	ret c			; $610b
-	jp z,enemyDie		; $610c
-	dec a			; $610f
-	jp nz,_ecom_updateKnockbackAndCheckHazards		; $6110
-	ret			; $6113
-_label_0d_215:
-	ld e,$84		; $6114
-	ld a,(de)		; $6116
-	rst_jumpTable			; $6117
-	ldi a,(hl)		; $6118
-	ld h,c			; $6119
-	ld c,b			; $611a
-	ld h,c			; $611b
-	ld c,b			; $611c
-	ld h,c			; $611d
-	inc a			; $611e
-	ld h,c			; $611f
-	ld c,b			; $6120
-	ld h,c			; $6121
-	bit 0,h			; $6122
-	ld c,b			; $6124
-	ld h,c			; $6125
-	ld c,b			; $6126
-	ld h,c			; $6127
-	ld c,c			; $6128
-	ld h,c			; $6129
-	ld e,$b0		; $612a
-	ld a,($d008)		; $612c
-	add $02			; $612f
-	and $03			; $6131
-	ld (de),a		; $6133
-	call enemySetAnimation		; $6134
-	ld a,$28		; $6137
-	jp _ecom_setSpeedAndState8AndVisible		; $6139
-	inc e			; $613c
-	ld a,(de)		; $613d
-	rst_jumpTable			; $613e
-	dec b			; $613f
-	ld b,b			; $6140
-	ld b,a			; $6141
-	ld h,c			; $6142
-	ld b,a			; $6143
-	ld h,c			; $6144
-	rst $38			; $6145
-	ld b,h			; $6146
-	ret			; $6147
-	ret			; $6148
-	ld a,($cc47)		; $6149
-	inc a			; $614c
-	ret z			; $614d
-	add $0f			; $614e
-	and $1f			; $6150
-	ld e,$89		; $6152
-	ld (de),a		; $6154
-	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $6155
-	ld h,d			; $6158
-	ld l,$b0		; $6159
-	ld a,($d008)		; $615b
-	add $02			; $615e
-	and $03			; $6160
-	cp (hl)			; $6162
-	jr z,_label_0d_216	; $6163
-	ld (hl),a		; $6165
-	call enemySetAnimation		; $6166
-_label_0d_216:
-	jp enemyAnimate		; $6169
+	call _ecom_checkHazards		; $612f
+	jr z,@normalStatus	; $6132
+	sub ENEMYSTATUS_NO_HEALTH			; $6134
+	ret c			; $6136
+	jp z,enemyDie		; $6137
+	dec a			; $613a
+	jp nz,_ecom_updateKnockbackAndCheckHazards		; $613b
+	ret			; $613e
 
+@normalStatus:
+	ld e,Enemy.state		; $613f
+	ld a,(de)		; $6141
+	rst_jumpTable			; $6142
+	.dw _armMimic_uninitialized
+	.dw _armMimic_state_stub
+	.dw _armMimic_state_stub
+	.dw _armMimic_state_switchHook
+	.dw _armMimic_state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw _armMimic_state_stub
+	.dw _armMimic_state_stub
+	.dw _armMimic_state8
+
+
+_armMimic_uninitialized:
+	ld e,Enemy.var30		; $6155
+	ld a,(w1Link.direction)		; $6157
+	add $02			; $615a
+	and $03			; $615c
+	ld (de),a		; $615e
+	call enemySetAnimation		; $615f
+
+	ld a,SPEED_100		; $6162
+	jp _ecom_setSpeedAndState8AndVisible		; $6164
+
+
+_armMimic_state_switchHook:
+	inc e			; $6167
+	ld a,(de)		; $6168
+	rst_jumpTable			; $6169
+	.dw _ecom_incState2
+	.dw @substate1
+	.dw @substate2
+	.dw _ecom_fallToGroundAndSetState8
+
+@substate1:
+@substate2:
+	ret			; $6172
+
+
+_armMimic_state_stub:
+	ret			; $6173
+
+
+; Only "normal" state; simply moves in reverse of Link's direction.
+_armMimic_state8:
+	; Check that Link is moving
+	ld a,(wLinkAngle)		; $6174
+	inc a			; $6177
+	ret z			; $6178
+
+	add $0f			; $6179
+	and $1f			; $617b
+	ld e,Enemy.angle		; $617d
+	ld (de),a		; $617f
+	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $6180
+
+	ld h,d			; $6183
+	ld l,Enemy.var30		; $6184
+	ld a,(w1Link.direction)		; $6186
+	add $02			; $6189
+	and $03			; $618b
+	cp (hl)			; $618d
+	jr z,@animate	; $618e
+
+	ld (hl),a		; $6190
+	call enemySetAnimation		; $6191
+@animate:
+	jp enemyAnimate		; $6194
+
+
+; ==============================================================================
+; ENEMYID_MOLDORM
+;
+; Variables for head (subid 1):
+;   var30: Tail 1 object index
+;   var31: Tail 2 object index
+;   var32: Animation index
+;   var33: Angular speed (added to angle)
+;
+; Variables for tail (subids 2-3):
+;   relatedObj1: Object to follow (either the head or the tail in front)
+;   var30: Index for offset buffer
+;   var31/var32: Parent object's position last frame
+;   var33-var3b: Offset buffer. Stores the parent's movement offsets for up to 8 frames.
+; ==============================================================================
 enemyCode4f:
-	call $6308		; $616c
-	jr z,_label_0d_220	; $616f
-	sub $03			; $6171
-	ret c			; $6173
-	jr z,_label_0d_217	; $6174
-	dec a			; $6176
-	jr nz,_label_0d_219	; $6177
-	ld e,$82		; $6179
-	ld a,(de)		; $617b
-	dec a			; $617c
-	jr nz,_label_0d_220	; $617d
-	ld e,$ab		; $617f
-	ld l,e			; $6181
-	ld a,(de)		; $6182
-	ld b,a			; $6183
-	ld e,$b0		; $6184
-	ld a,(de)		; $6186
-	ld h,a			; $6187
-	ld (hl),b		; $6188
-	inc e			; $6189
-	ld a,(de)		; $618a
-	ld h,a			; $618b
-	ld (hl),b		; $618c
-	ret			; $618d
-_label_0d_217:
-	ld e,$82		; $618e
-	ld a,(de)		; $6190
-	dec a			; $6191
-	jp nz,$62d8		; $6192
-	ld e,$b0		; $6195
-	ld a,(de)		; $6197
-	ld h,a			; $6198
-	call _ecom_killObjectH		; $6199
-	inc e			; $619c
-	ld a,(de)		; $619d
-	ld h,a			; $619e
-	call _ecom_killObjectH		; $619f
-	ld a,($cc4c)		; $61a2
+	call _moldorm_checkHazards		; $6197
+	jr z,@normalStatus	; $619a
+	sub ENEMYSTATUS_NO_HEALTH			; $619c
+	ret c			; $619e
+	jr z,@dead	; $619f
+	dec a			; $61a1
+	jr nz,@knockback	; $61a2
+
+	; ENEMYSTATUS_JUST_HIT
+	; Only apply this to the head (subid 1)
+	ld e,Enemy.subid		; $61a4
+	ld a,(de)		; $61a6
+	dec a			; $61a7
+	jr nz,@normalStatus	; $61a8
+
+	; [tail1.invincibilityCounter] = [this.invincibilityCounter]
+	ld e,Enemy.invincibilityCounter		; $61aa
+	ld l,e			; $61ac
+	ld a,(de)		; $61ad
+	ld b,a			; $61ae
+	ld e,Enemy.var30		; $61af
+	ld a,(de)		; $61b1
+	ld h,a			; $61b2
+	ld (hl),b		; $61b3
+
+	; [tail2.invincibilityCounter] = [this.invincibilityCounter]
+	inc e			; $61b4
+	ld a,(de)		; $61b5
+	ld h,a			; $61b6
+	ld (hl),b		; $61b7
+	ret			; $61b8
+
+@dead:
+	ld e,Enemy.subid		; $61b9
+	ld a,(de)		; $61bb
+	dec a			; $61bc
+	jp nz,_moldorm_tail_delete		; $61bd
+
+	; Head only; kill the tails.
+	ld e,Enemy.var30		; $61c0
+	ld a,(de)		; $61c2
+	ld h,a			; $61c3
+	call _ecom_killObjectH		; $61c4
+	inc e			; $61c7
+	ld a,(de)		; $61c8
+	ld h,a			; $61c9
+	call _ecom_killObjectH		; $61ca
+.ifdef ROM_SEASONS
+	; moldorm guarding jewel
+	ld a,(wActiveRoom)		; $61a2
 	cp $f4			; $61a5
-	jr nz,_label_0d_218	; $61a7
-	ld a,($cc49)		; $61a9
+	jr nz,+			; $61a7
+	ld a,(wActiveGroup)		; $61a9
 	or a			; $61ac
-	jr nz,_label_0d_218	; $61ad
+	jr nz,+			; $61ad
 	inc a			; $61af
 	ld ($cfc0),a		; $61b0
-_label_0d_218:
-	jp enemyDie		; $61b3
-_label_0d_219:
-	ld e,$82		; $61b6
-	ld a,(de)		; $61b8
-	dec a			; $61b9
-	jr nz,_label_0d_220	; $61ba
-	jp _ecom_updateKnockbackAndCheckHazards		; $61bc
-_label_0d_220:
-	call _ecom_getSubidAndCpStateTo08		; $61bf
-	jr nc,_label_0d_221	; $61c2
-	rst_jumpTable			; $61c4
-	sbc $61			; $61c5
-	pop af			; $61c7
-	ld h,c			; $61c8
-	ldi (hl),a		; $61c9
-	ld h,d			; $61ca
-	ldi (hl),a		; $61cb
-	ld h,d			; $61cc
-	ldi (hl),a		; $61cd
-	ld h,d			; $61ce
-	ldi (hl),a		; $61cf
-	ld h,d			; $61d0
-	ldi (hl),a		; $61d1
-	ld h,d			; $61d2
-	ldi (hl),a		; $61d3
-	ld h,d			; $61d4
-_label_0d_221:
-	dec b			; $61d5
-	ld a,b			; $61d6
-	rst_jumpTable			; $61d7
-	inc hl			; $61d8
-	ld h,d			; $61d9
-	ld l,c			; $61da
-	ld h,d			; $61db
-	ld l,c			; $61dc
-	ld h,d			; $61dd
-	ld a,b			; $61de
-	or a			; $61df
-	jr nz,_label_0d_222	; $61e0
-	inc a			; $61e2
-	ld (de),a		; $61e3
-	jr _label_0d_223		; $61e4
-_label_0d_222:
-	call _ecom_setSpeedAndState8AndVisible		; $61e6
-	ld a,b			; $61e9
-	dec a			; $61ea
-	ret z			; $61eb
-	add $07			; $61ec
-	jp enemySetAnimation		; $61ee
-_label_0d_223:
-	ld b,$03		; $61f1
-	call checkBEnemySlotsAvailable		; $61f3
-	jp nz,objectSetVisible82		; $61f6
-	ld b,$4f		; $61f9
-	call _ecom_spawnUncountedEnemyWithSubid01		; $61fb
-	ld c,h			; $61fe
-	push hl			; $61ff
-	call _ecom_spawnEnemyWithSubid01		; $6200
-	inc (hl)		; $6203
-	call $62de		; $6204
-	ld c,h			; $6207
-	call _ecom_spawnEnemyWithSubid01		; $6208
-	inc (hl)		; $620b
-	inc (hl)		; $620c
-	call $62de		; $620d
-	ld b,h			; $6210
-	pop hl			; $6211
-	ld l,$b0		; $6212
-	ld (hl),c		; $6214
-	inc l			; $6215
-	ld (hl),b		; $6216
-	ld l,$80		; $6217
-	ld e,l			; $6219
-	ld a,(de)		; $621a
-	ld (hl),a		; $621b
-	call objectCopyPosition		; $621c
-	jp enemyDelete		; $621f
-	ret			; $6222
-	ld a,(de)		; $6223
-	sub $08			; $6224
-	rst_jumpTable			; $6226
-	dec hl			; $6227
-	ld h,d			; $6228
-	ld b,b			; $6229
-	ld h,d			; $622a
-	ld h,d			; $622b
-	ld l,e			; $622c
-	inc (hl)		; $622d
-	ld l,$86		; $622e
-	ld (hl),$08		; $6230
-	ld l,$90		; $6232
-	ld (hl),$28		; $6234
-	ld l,$b3		; $6236
-	ld (hl),$02		; $6238
-	call _ecom_setRandomAngle		; $623a
-	jp $62e7		; $623d
-	call _ecom_decCounter1		; $6240
-	jr nz,_label_0d_224	; $6243
-	ld (hl),$08		; $6245
-	ld l,$b3		; $6247
-	ld e,$89		; $6249
-	ld a,(de)		; $624b
-	add (hl)		; $624c
-	and $1f			; $624d
-	ld (de),a		; $624f
-	call $62e7		; $6250
-	call getRandomNumber_noPreserveVars		; $6253
-	and $0f			; $6256
-	jr nz,_label_0d_224	; $6258
-	ld e,$b3		; $625a
-	ld a,(de)		; $625c
-	cpl			; $625d
-	inc a			; $625e
-	ld (de),a		; $625f
-_label_0d_224:
-	call _ecom_bounceOffWallsAndHoles		; $6260
-	call nz,$62e7		; $6263
-	jp objectApplySpeed		; $6266
-	ld e,$84		; $6269
-	ld a,(de)		; $626b
-	sub $08			; $626c
-	rst_jumpTable			; $626e
-	ld (hl),e		; $626f
-	ld h,d			; $6270
-	adc d			; $6271
-	ld h,d			; $6272
-	ld h,d			; $6273
-	ld l,e			; $6274
-	inc (hl)		; $6275
-	ld l,$a4		; $6276
-	res 7,(hl)		; $6278
-	ld l,$97		; $627a
-	ld h,(hl)		; $627c
-	ld l,$8b		; $627d
-	ld e,$b1		; $627f
-	ldi a,(hl)		; $6281
-	ld (de),a		; $6282
-	inc e			; $6283
-	inc l			; $6284
-	ld a,(hl)		; $6285
-	ld (de),a		; $6286
-	jp $62f9		; $6287
-	ld a,$00		; $628a
-	call objectGetRelatedObject1Var		; $628c
-	ld a,(hl)		; $628f
-	or a			; $6290
-	jr z,_label_0d_225	; $6291
-	ld l,$8b		; $6293
-	ld e,$b1		; $6295
-	ld a,(de)		; $6297
-	ld b,a			; $6298
-	ldi a,(hl)		; $6299
-	sub b			; $629a
-	add $08			; $629b
-	swap a			; $629d
-	ld b,a			; $629f
-	inc e			; $62a0
-	inc l			; $62a1
-	ld a,(de)		; $62a2
-	ld c,a			; $62a3
-	ld a,(hl)		; $62a4
-	sub c			; $62a5
-	add $08			; $62a6
-	or b			; $62a8
-	ld b,a			; $62a9
-	ldd a,(hl)		; $62aa
-	ld (de),a		; $62ab
-	dec e			; $62ac
-	dec l			; $62ad
-	ld a,(hl)		; $62ae
-	ld (de),a		; $62af
-	ld e,$b0		; $62b0
-	ld a,(de)		; $62b2
-	add $b3			; $62b3
-	ld e,a			; $62b5
-	ld a,b			; $62b6
-	ld (de),a		; $62b7
-	ld h,d			; $62b8
-	ld l,$8b		; $62b9
-	ld e,$b0		; $62bb
-	ld a,(de)		; $62bd
-	inc a			; $62be
-	and $07			; $62bf
-	ld (de),a		; $62c1
-	add $b3			; $62c2
-	ld e,a			; $62c4
-	ld a,(de)		; $62c5
-	ld b,a			; $62c6
-	and $f0			; $62c7
-	swap a			; $62c9
-	sub $08			; $62cb
-	add (hl)		; $62cd
-	ldi (hl),a		; $62ce
-	inc l			; $62cf
++
+.endif
+	jp enemyDie		; $61cd
+
+@knockback:
+	ld e,Enemy.subid		; $61d0
+	ld a,(de)		; $61d2
+	dec a			; $61d3
+	jr nz,@normalStatus	; $61d4
+	jp _ecom_updateKnockbackAndCheckHazards		; $61d6
+
+@normalStatus:
+	call _ecom_getSubidAndCpStateTo08		; $61d9
+	jr nc,@normalState	; $61dc
+	rst_jumpTable			; $61de
+	.dw _moldorm_state_uninitialized
+	.dw _moldorm_state1
+	.dw _moldorm_state_stub
+	.dw _moldorm_state_stub
+	.dw _moldorm_state_stub
+	.dw _moldorm_state_stub
+	.dw _moldorm_state_stub
+	.dw _moldorm_state_stub
+
+@normalState:
+	dec b			; $61ef
+	ld a,b			; $61f0
+	rst_jumpTable			; $61f1
+	.dw _moldorm_head
+	.dw _moldorm_tail
+	.dw _moldorm_tail
+
+
+_moldorm_state_uninitialized:
+	ld a,b			; $61f8
+	or a			; $61f9
+	jr nz,@notSpawner		; $61fa
+
+@spawner:
+	inc a			; $61fc
+	ld (de),a ; [state] = 1
+	jr _moldorm_state1		; $61fe
+
+@notSpawner:
+	call _ecom_setSpeedAndState8AndVisible		; $6200
+	ld a,b			; $6203
+	dec a			; $6204
+	ret z			; $6205
+	add $07			; $6206
+	jp enemySetAnimation		; $6208
+
+
+; Spawner; spawn the head and tails, then delete self.
+_moldorm_state1:
+	ld b,$03		; $620b
+	call checkBEnemySlotsAvailable		; $620d
+	jp nz,objectSetVisible82		; $6210
+
+	; Spawn head
+	ld b,ENEMYID_MOLDORM		; $6213
+	call _ecom_spawnUncountedEnemyWithSubid01		; $6215
+
+	; Spawn tail 1
+	ld c,h			; $6218
+	push hl			; $6219
+	call _ecom_spawnEnemyWithSubid01		; $621a
+	inc (hl) ; [subid] = 2
+	call _moldorm_tail_setRelatedObj1AndCopyPosition ; Follows head
+
+	; Spawn tail 2
+	ld c,h			; $6221
+	call _ecom_spawnEnemyWithSubid01		; $6222
+	inc (hl)		; $6225
+	inc (hl) ; [subid] = 3
+	call _moldorm_tail_setRelatedObj1AndCopyPosition ; Follows tail1
+
+	; [head.var30] = tail1
+	ld b,h			; $622a
+	pop hl			; $622b
+	ld l,Enemy.var30		; $622c
+	ld (hl),c		; $622e
+
+	; [head.var31] = tail2
+	inc l			; $622f
+	ld (hl),b		; $6230
+
+	; [head.enabled] = [this.enabled] (copy spawned index value)
+	ld l,Enemy.enabled		; $6231
+	ld e,l			; $6233
+	ld a,(de)		; $6234
+	ld (hl),a		; $6235
+
+	call objectCopyPosition		; $6236
+	jp enemyDelete		; $6239
+
+
+_moldorm_state_stub:
+	ret			; $623c
+
+
+; Subid 1
+_moldorm_head:
+	ld a,(de)		; $623d
+	sub $08			; $623e
+	rst_jumpTable			; $6240
+	.dw @state8
+	.dw @state9
+
+
+; Initialization
+@state8:
+	ld h,d			; $6245
+	ld l,e			; $6246
+	inc (hl) ; [state]
+
+	ld l,Enemy.counter1		; $6248
+	ld (hl),$08		; $624a
+
+	ld l,Enemy.speed		; $624c
+	ld (hl),SPEED_100		; $624e
+
+	; Angular speed
+	ld l,Enemy.var33		; $6250
+	ld (hl),$02		; $6252
+
+	call _ecom_setRandomAngle		; $6254
+	jp _moldorm_head_updateAnimationFromAngle		; $6257
+
+
+; Main state for head
+@state9:
+	call _ecom_decCounter1		; $625a
+	jr nz,@applySpeed	; $625d
+
+	ld (hl),$08 ; [counter1]
+
+	; Angle is updated every 8 frames.
+	ld l,Enemy.var33		; $6261
+	ld e,Enemy.angle		; $6263
+	ld a,(de)		; $6265
+	add (hl)		; $6266
+	and $1f			; $6267
+	ld (de),a		; $6269
+	call _moldorm_head_updateAnimationFromAngle		; $626a
+
+	; 1 in 16 chance of inverting rotation every 8 frames
+	call getRandomNumber_noPreserveVars		; $626d
+	and $0f			; $6270
+	jr nz,@applySpeed	; $6272
+	ld e,Enemy.var33		; $6274
+	ld a,(de)		; $6276
+	cpl			; $6277
+	inc a			; $6278
+	ld (de),a		; $6279
+
+@applySpeed:
+	call _ecom_bounceOffWallsAndHoles		; $627a
+	call nz,_moldorm_head_updateAnimationFromAngle		; $627d
+	jp objectApplySpeed		; $6280
+
+
+_moldorm_tail:
+	ld e,Enemy.state		; $6283
+	ld a,(de)		; $6285
+	sub $08			; $6286
+	rst_jumpTable			; $6288
+	.dw @state8
+	.dw @state9
+
+
+; Initialization
+@state8:
+	ld h,d			; $628d
+	ld l,e			; $628e
+	inc (hl) ; [state]
+
+	ld l,Enemy.collisionType		; $6290
+	res 7,(hl)		; $6292
+
+	; Copy parent's current position into var31/var32
+	ld l,Enemy.relatedObj1+1		; $6294
+	ld h,(hl)		; $6296
+	ld l,Enemy.yh		; $6297
+	ld e,Enemy.var31		; $6299
+	ldi a,(hl)		; $629b
+	ld (de),a		; $629c
+	inc e			; $629d
+	inc l			; $629e
+	ld a,(hl)		; $629f
+	ld (de),a		; $62a0
+
+	jp _moldorm_tail_clearOffsetBuffer		; $62a1
+
+
+; Main state for tail
+@state9:
+	; Check if parent deleted
+	ld a,Object.enabled		; $62a4
+	call objectGetRelatedObject1Var		; $62a6
+	ld a,(hl)		; $62a9
+	or a			; $62aa
+	jr z,_moldorm_tail_delete	; $62ab
+
+	; Get distance between parent's last and current Y position in high nibble of 'b'.
+	; (Add 8 so it's positive.)
+	ld l,Enemy.yh		; $62ad
+	ld e,Enemy.var31		; $62af
+	ld a,(de)		; $62b1
+	ld b,a			; $62b2
+	ldi a,(hl)		; $62b3
+	sub b			; $62b4
+	add $08			; $62b5
+	swap a			; $62b7
+	ld b,a			; $62b9
+
+	; Get distance between parent's last and current X position in low nibble of 'b'.
+	inc e			; $62ba
+	inc l			; $62bb
+	ld a,(de)		; $62bc
+	ld c,a			; $62bd
+	ld a,(hl)		; $62be
+	sub c			; $62bf
+	add $08			; $62c0
+	or b			; $62c2
+	ld b,a			; $62c3
+
+	; Copy parent's Y/X to var31/var32
+	ldd a,(hl)		; $62c4
+	ld (de),a		; $62c5
+	dec e			; $62c6
+	dec l			; $62c7
+	ld a,(hl)		; $62c8
+	ld (de),a		; $62c9
+
+	; Add the calculated position difference to the offset buffer starting at var33
+	ld e,Enemy.var30		; $62ca
+	ld a,(de)		; $62cc
+	add Enemy.var33			; $62cd
+	ld e,a			; $62cf
 	ld a,b			; $62d0
-	and $0f			; $62d1
-	sub $08			; $62d3
-	add (hl)		; $62d5
-	ld (hl),a		; $62d6
-	ret			; $62d7
-_label_0d_225:
-	call decNumEnemies		; $62d8
-	jp enemyDelete		; $62db
-	ld l,$96		; $62de
-	ld a,$80		; $62e0
-	ldi (hl),a		; $62e2
-	ld (hl),c		; $62e3
-	jp objectCopyPosition		; $62e4
-	ld e,$89		; $62e7
-	ld a,(de)		; $62e9
-	add $02			; $62ea
-	and $1c			; $62ec
-	rrca			; $62ee
-	rrca			; $62ef
-	ld h,d			; $62f0
-	ld l,$b2		; $62f1
-	cp (hl)			; $62f3
-	ret z			; $62f4
-	ld (hl),a		; $62f5
-	jp enemySetAnimation		; $62f6
-	ld h,d			; $62f9
-	ld l,$b3		; $62fa
-	ld b,$02		; $62fc
-	ld a,$88		; $62fe
-_label_0d_226:
-	ldi (hl),a		; $6300
-	ldi (hl),a		; $6301
-	ldi (hl),a		; $6302
-	ldi (hl),a		; $6303
-	dec b			; $6304
-	jr nz,_label_0d_226	; $6305
-	ret			; $6307
-	ld b,a			; $6308
-	ld e,$82		; $6309
-	ld a,(de)		; $630b
-	dec a			; $630c
-	jr z,_label_0d_227	; $630d
-	ld a,$3f		; $630f
-	call objectGetRelatedObject1Var		; $6311
-	ld a,(hl)		; $6314
-	and $07			; $6315
-	jr nz,_label_0d_227	; $6317
-	ld a,b			; $6319
-	or a			; $631a
-	ret			; $631b
-_label_0d_227:
-	ld a,b			; $631c
-	jp _ecom_checkHazardsNoAnimationForHoles		; $631d
+	ld (de),a		; $62d1
+	ld h,d			; $62d2
+	ld l,Enemy.yh		; $62d3
 
+	; Offset buffer index ++
+	ld e,Enemy.var30		; $62d5
+	ld a,(de)		; $62d7
+	inc a			; $62d8
+	and $07			; $62d9
+	ld (de),a		; $62db
+
+	; Read next byte in offset buffer (value from 8 frames ago) to get the value to
+	; add to our current position.
+	add Enemy.var33			; $62dc
+	ld e,a			; $62de
+	ld a,(de)		; $62df
+	ld b,a			; $62e0
+	and $f0			; $62e1
+	swap a			; $62e3
+	sub $08			; $62e5
+	add (hl) ; [yh]
+	ldi (hl),a		; $62e8
+	inc l			; $62e9
+	ld a,b			; $62ea
+	and $0f			; $62eb
+	sub $08			; $62ed
+	add (hl) ; [xh]
+	ld (hl),a		; $62f0
+	ret			; $62f1
+
+;;
+; @addr{62f2}
+_moldorm_tail_delete:
+	call decNumEnemies		; $62f2
+	jp enemyDelete		; $62f5
+
+
+;;
+; @param	h	Object to follow (either the head or the tail in front)
+; @addr{62f8}
+_moldorm_tail_setRelatedObj1AndCopyPosition:
+	ld l,Enemy.relatedObj1		; $62f8
+	ld a,Enemy.start		; $62fa
+	ldi (hl),a		; $62fc
+	ld (hl),c		; $62fd
+	jp objectCopyPosition		; $62fe
+
+
+;;
+; @addr{6301}
+_moldorm_head_updateAnimationFromAngle:
+	ld e,Enemy.angle		; $6301
+	ld a,(de)		; $6303
+	add $02			; $6304
+	and $1c			; $6306
+	rrca			; $6308
+	rrca			; $6309
+	ld h,d			; $630a
+	ld l,Enemy.var32		; $630b
+	cp (hl)			; $630d
+	ret z			; $630e
+	ld (hl),a		; $630f
+	jp enemySetAnimation		; $6310
+
+;;
+; @addr{6313}
+_moldorm_tail_clearOffsetBuffer:
+	ld h,d			; $6313
+	ld l,Enemy.var33		; $6314
+	ld b,$02		; $6316
+	ld a,$88		; $6318
+--
+	ldi (hl),a		; $631a
+	ldi (hl),a		; $631b
+	ldi (hl),a		; $631c
+	ldi (hl),a		; $631d
+	dec b			; $631e
+	jr nz,--		; $631f
+	ret			; $6321
+
+
+;;
+; @addr{6322}
+_moldorm_checkHazards:
+	ld b,a			; $6322
+	ld e,Enemy.subid		; $6323
+	ld a,(de)		; $6325
+	dec a			; $6326
+	jr z,@checkHazards	; $6327
+
+	; Tails only; check if parent fell into a hazard
+	ld a,Object.var3f		; $6329
+	call objectGetRelatedObject1Var		; $632b
+	ld a,(hl)		; $632e
+	and $07			; $632f
+	jr nz,@checkHazards	; $6331
+	ld a,b			; $6333
+	or a			; $6334
+	ret			; $6335
+
+@checkHazards:
+	ld a,b			; $6336
+	jp _ecom_checkHazardsNoAnimationForHoles		; $6337
+
+
+; ==============================================================================
+; ENEMYID_FIREBALL_SHOOTER
+; ==============================================================================
 enemyCode50:
-	dec a			; $6320
-	ret z			; $6321
-	dec a			; $6322
-	ret z			; $6323
-	ld e,$84		; $6324
-	ld a,(de)		; $6326
-	rst_jumpTable			; $6327
-	inc a			; $6328
-	ld h,e			; $6329
-	ld c,b			; $632a
-	ld h,e			; $632b
-	adc c			; $632c
-	ld h,e			; $632d
-	adc c			; $632e
-	ld h,e			; $632f
-	adc c			; $6330
-	ld h,e			; $6331
-	adc c			; $6332
-	ld h,e			; $6333
-	adc c			; $6334
-	ld h,e			; $6335
-	adc c			; $6336
-	ld h,e			; $6337
-	adc d			; $6338
-	ld h,e			; $6339
-	sbc c			; $633a
-	ld h,e			; $633b
-	ld h,d			; $633c
-	ld l,e			; $633d
-	inc (hl)		; $633e
-	ld e,$82		; $633f
-	ld a,(de)		; $6341
-	bit 7,a			; $6342
-	ret z			; $6344
-	ld (hl),$08		; $6345
-	ret			; $6347
-	xor a			; $6348
-	ldh (<hFF8D),a	; $6349
-	ld e,$8b		; $634b
-	ld a,(de)		; $634d
-	ld c,a			; $634e
-	ld hl,$cf00		; $634f
-	ld b,$b0		; $6352
-_label_0d_228:
-	ldi a,(hl)		; $6354
-	cp c			; $6355
-	jr nz,_label_0d_229	; $6356
-	push bc			; $6358
-	push hl			; $6359
-	ld c,l			; $635a
-	dec c			; $635b
-	ld b,$50		; $635c
-	call _ecom_spawnUncountedEnemyWithSubid01		; $635e
-	jr nz,_label_0d_230	; $6361
-	ld e,l			; $6363
-	ld a,(de)		; $6364
-	set 7,a			; $6365
-	ldi (hl),a		; $6367
-	ldh a,(<hFF8D)	; $6368
-	inc a			; $636a
-	and $03			; $636b
-	ldh (<hFF8D),a	; $636d
-	ld (hl),a		; $636f
-	ld a,c			; $6370
-	and $f0			; $6371
-	add $06			; $6373
-	ld l,$8b		; $6375
-	ldi (hl),a		; $6377
-	ld a,c			; $6378
-	and $0f			; $6379
-	swap a			; $637b
-	add $08			; $637d
-	inc l			; $637f
-	ld (hl),a		; $6380
-	pop hl			; $6381
-	pop bc			; $6382
-_label_0d_229:
-	dec b			; $6383
-	jr nz,_label_0d_228	; $6384
-_label_0d_230:
-	jp enemyDelete		; $6386
-	ret			; $6389
-	ld a,$09		; $638a
-	ld (de),a		; $638c
-	ld e,$83		; $638d
-	ld a,(de)		; $638f
-	ld hl,$63b6		; $6390
-	rst_addAToHl			; $6393
-	ld e,$86		; $6394
-	ld a,(hl)		; $6396
-	ld (de),a		; $6397
-	ret			; $6398
-	call $63ba		; $6399
-	ld c,$24		; $639c
-	call objectCheckLinkWithinDistance		; $639e
-	ret c			; $63a1
-	call _ecom_decCounter1		; $63a2
-	ret nz			; $63a5
-	ld b,$31		; $63a6
-	call _ecom_spawnProjectile		; $63a8
-	call getRandomNumber_noPreserveVars		; $63ab
-	and $07			; $63ae
-	add $c0			; $63b0
-	ld e,$86		; $63b2
-	ld (de),a		; $63b4
-	ret			; $63b5
-	ld c,(hl)		; $63b6
-	ld a,(hl)		; $63b7
-	xor (hl)		; $63b8
-	sbc $1e			; $63b9
-	add d			; $63bb
-	ld a,(de)		; $63bc
-	cp $81			; $63bd
+	dec a			; $633a
+	ret z			; $633b
+	dec a			; $633c
+	ret z			; $633d
+	ld e,Enemy.state		; $633e
+	ld a,(de)		; $6340
+	rst_jumpTable			; $6341
+	.dw _fireballShooter_state_uninitialized
+	.dw _fireballShooter_state1
+	.dw _fireballShooter_state_stub
+	.dw _fireballShooter_state_stub
+	.dw _fireballShooter_state_stub
+	.dw _fireballShooter_state_stub
+	.dw _fireballShooter_state_stub
+	.dw _fireballShooter_state_stub
+	.dw _fireballShooter_state8
+	.dw _fireballShooter_state9
+
+
+_fireballShooter_state_uninitialized:
+	ld h,d			; $6356
+	ld l,e			; $6357
+	inc (hl) ; [state]
+
+	ld e,Enemy.subid		; $6359
+	ld a,(de)		; $635b
+	bit 7,a			; $635c
+	ret z			; $635e
+	ld (hl),$08 ; [state]
+	ret			; $6361
+
+
+; "Spawner"; spawns shooters at each appropriate tile index, then deletes self.
+_fireballShooter_state1:
+	xor a			; $6362
+	ldh (<hFF8D),a	; $6363
+
+	ld e,Enemy.yh		; $6365
+	ld a,(de)		; $6367
+	ld c,a ; c = tile index to spawn at
+
+	ld hl,wRoomLayout		; $6369
+	ld b,LARGE_ROOM_HEIGHT<<4		; $636c
+
+@nextTile:
+	ldi a,(hl)		; $636e
+	cp c			; $636f
+	jr nz,+++		; $6370
+
+	push bc			; $6372
+	push hl			; $6373
+	ld c,l			; $6374
+	dec c			; $6375
+	ld b,ENEMYID_FIREBALL_SHOOTER		; $6376
+	call _ecom_spawnUncountedEnemyWithSubid01		; $6378
+	jr nz,@delete	; $637b
+
+	; [child.subid] = [this.subid] | $80
+	ld e,l			; $637d
+	ld a,(de)		; $637e
+	set 7,a			; $637f
+	ldi (hl),a		; $6381
+
+	; [child.var03] = ([hFF8D]+1)&3 (timing offset)
+	ldh a,(<hFF8D)	; $6382
+	inc a			; $6384
+	and $03			; $6385
+	ldh (<hFF8D),a	; $6387
+	ld (hl),a		; $6389
+
+	; Set child's position
+	ld a,c			; $638a
+	and $f0			; $638b
+	add $06			; $638d
+	ld l,Enemy.yh		; $638f
+	ldi (hl),a		; $6391
+	ld a,c			; $6392
+	and $0f			; $6393
+	swap a			; $6395
+	add $08			; $6397
+	inc l			; $6399
+	ld (hl),a		; $639a
+
+	pop hl			; $639b
+	pop bc			; $639c
++++
+	dec b			; $639d
+	jr nz,@nextTile	; $639e
+
+@delete:
+	jp enemyDelete		; $63a0
+
+
+_fireballShooter_state_stub:
+	ret			; $63a3
+
+
+; Initialization for "actual" shooter (not spawner)
+_fireballShooter_state8:
+	ld a,$09		; $63a4
+	ld (de),a ; [state]
+
+	ld e,Enemy.var03		; $63a7
+	ld a,(de)		; $63a9
+	ld hl,_fireballShooter_timingOffsets		; $63aa
+	rst_addAToHl			; $63ad
+	ld e,Enemy.counter1		; $63ae
+	ld a,(hl)		; $63b0
+	ld (de),a		; $63b1
+	ret			; $63b2
+
+
+; Main state for actual shooter
+_fireballShooter_state9:
+	call _fireballShooter_checkAllEnemiesKilled		; $63b3
+	; BUG: This does NOT return if it's just deleted itself! This could cause counter1
+	; to be dirty the next time an enemy is spawned in its former slot.
+
+	; Wait for Link to be far enough away
+	ld c,$24		; $63b6
+	call objectCheckLinkWithinDistance		; $63b8
+	ret c			; $63bb
+
+	; Wait for cooldown
+	call _ecom_decCounter1		; $63bc
 	ret nz			; $63bf
-	ld a,($cc30)		; $63c0
-	or a			; $63c3
-	ret nz			; $63c4
-	jp enemyDelete		; $63c5
 
+	ld b,PARTID_GOPONGA_PROJECTILE		; $63c0
+	call _ecom_spawnProjectile		; $63c2
+
+	; Random cooldown between $c0-$c7
+	call getRandomNumber_noPreserveVars		; $63c5
+	and $07			; $63c8
+	add $c0			; $63ca
+	ld e,Enemy.counter1		; $63cc
+	ld (de),a		; $63ce
+	ret			; $63cf
+
+
+_fireballShooter_timingOffsets:
+	.db $4e $7e $ae $de
+
+
+;;
+; For subid $81 only, this deletes itself when all enemies are killed.
+; @addr{63d4}
+_fireballShooter_checkAllEnemiesKilled:
+	ld e,Enemy.subid	; $63d4
+	ld a,(de)		; $63d6
+	cp $81			; $63d7
+	ret nz			; $63d9
+	ld a,(wNumEnemies)		; $63da
+	or a			; $63dd
+	ret nz			; $63de
+	jp enemyDelete		; $63df
+
+
+; ==============================================================================
+; ENEMYID_BEETLE
+;
+; Variables for spawner (subid 0):
+;   var30: Number of beetles spawned in? It's never actually used, and it doesn't seem to
+;          update correctly, so this was probably for some abandoned idea.
+;
+; Variables for actual beetles (subid 1+):
+;   relatedObj1: Reference to spawner object (optional)
+; ==============================================================================
 enemyCode51:
-	call $653e		; $63c8
-	or a			; $63cb
-	jr z,_label_0d_233	; $63cc
-	sub $03			; $63ce
-	ret c			; $63d0
-	jr z,_label_0d_231	; $63d1
-	dec a			; $63d3
-	jp nz,_ecom_updateKnockbackAndCheckHazards		; $63d4
-	ld e,$82		; $63d7
-	ld a,(de)		; $63d9
-	cp $02			; $63da
-	ret nz			; $63dc
-	ld e,$aa		; $63dd
-	ld a,(de)		; $63df
-	cp $80			; $63e0
-	ret z			; $63e2
-	ld h,d			; $63e3
-	ld l,$84		; $63e4
-	ld (hl),$0a		; $63e6
-	ld l,$86		; $63e8
-	ld (hl),$01		; $63ea
-	ret			; $63ec
-_label_0d_231:
-	ld e,$82		; $63ed
-	ld a,(de)		; $63ef
-	dec a			; $63f0
-	jr nz,_label_0d_232	; $63f1
-	ld e,$97		; $63f3
-	ld a,(de)		; $63f5
-	or a			; $63f6
-	jr z,_label_0d_232	; $63f7
-	ld a,$30		; $63f9
-	call objectGetRelatedObject1Var		; $63fb
-	dec (hl)		; $63fe
-_label_0d_232:
-	jp enemyDie		; $63ff
-_label_0d_233:
-	call _ecom_getSubidAndCpStateTo08		; $6402
-	jr nc,_label_0d_234	; $6405
-	rst_jumpTable			; $6407
-	ld hl,$2b64		; $6408
-	ld h,h			; $640b
-	ld l,c			; $640c
-	ld h,h			; $640d
-	ld e,b			; $640e
-	ld h,h			; $640f
-	ld l,c			; $6410
-	ld h,h			; $6411
-	ld b,h			; $6412
-	ld h,h			; $6413
-	ld l,c			; $6414
-	ld h,h			; $6415
-	ld l,c			; $6416
-	ld h,h			; $6417
-_label_0d_234:
-	dec b			; $6418
-	ld a,b			; $6419
-	rst_jumpTable			; $641a
-	ld l,d			; $641b
-	ld h,h			; $641c
-	xor (hl)		; $641d
-	ld h,h			; $641e
-.DB $dd				; $641f
-	ld h,h			; $6420
-	ld a,b			; $6421
-	or a			; $6422
-	ld a,$14		; $6423
-	jp nz,_ecom_setSpeedAndState8		; $6425
-	ld a,$01		; $6428
-	ld (de),a		; $642a
-	call _ecom_decCounter2		; $642b
-	ret nz			; $642e
-	ld c,$20		; $642f
-	call objectCheckLinkWithinDistance		; $6431
-	ret nc			; $6434
-	ld e,$87		; $6435
-	ld a,$5a		; $6437
-	ld (de),a		; $6439
-	ld b,$51		; $643a
-	call _ecom_spawnEnemyWithSubid01		; $643c
-	ret nz			; $643f
-	inc (hl)		; $6440
-	jp objectCopyPosition		; $6441
-	call _ecom_galeSeedEffect		; $6444
-	ret c			; $6447
-	ld e,$97		; $6448
-	ld a,(de)		; $644a
-	or a			; $644b
-	jr z,_label_0d_235	; $644c
-	ld h,a			; $644e
-	ld l,$b0		; $644f
-	dec (hl)		; $6451
-_label_0d_235:
-	call decNumEnemies		; $6452
-	jp enemyDelete		; $6455
-	inc e			; $6458
-	ld a,(de)		; $6459
-	rst_jumpTable			; $645a
-	dec b			; $645b
-	ld b,b			; $645c
-	ld h,e			; $645d
-	ld h,h			; $645e
-	ld h,e			; $645f
-	ld h,h			; $6460
-	ld h,h			; $6461
-	ld h,h			; $6462
-	ret			; $6463
-	ld b,$0a		; $6464
-	jp _ecom_fallToGroundAndSetState		; $6466
-	ret			; $6469
-	ld a,(de)		; $646a
-	sub $08			; $646b
-	rst_jumpTable			; $646d
-	ld (hl),h		; $646e
-	ld h,h			; $646f
-	adc b			; $6470
-	ld h,h			; $6471
-	and d			; $6472
-	ld h,h			; $6473
-	ld h,d			; $6474
-	ld l,e			; $6475
-	inc (hl)		; $6476
-	ld l,$a4		; $6477
-	set 7,(hl)		; $6479
-	ld c,$08		; $647b
-	call _ecom_setZAboveScreen		; $647d
-	call objectSetVisiblec1		; $6480
-	ld a,$59		; $6483
-	jp playSound		; $6485
-	ld c,$0e		; $6488
-	call objectUpdateSpeedZ_paramC		; $648a
-	ret nz			; $648d
-	ld l,$94		; $648e
-	ldi (hl),a		; $6490
-	ld (hl),a		; $6491
-	ld l,$84		; $6492
-	inc (hl)		; $6494
-	call objectSetVisiblec2		; $6495
-	ld a,$52		; $6498
-	call playSound		; $649a
-	call $6522		; $649d
-	jr _label_0d_237		; $64a0
-_label_0d_236:
-	call _ecom_decCounter1		; $64a2
-	call z,$6522		; $64a5
-	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $64a8
-_label_0d_237:
-	jp enemyAnimate		; $64ab
-	ld a,(de)		; $64ae
-	sub $08			; $64af
-	rst_jumpTable			; $64b1
-	cp b			; $64b2
-	ld h,h			; $64b3
-	push bc			; $64b4
-	ld h,h			; $64b5
-	and d			; $64b6
-	ld h,h			; $64b7
-	ld h,d			; $64b8
-	ld l,e			; $64b9
-	inc (hl)		; $64ba
-	ld l,$86		; $64bb
-	ld (hl),$1e		; $64bd
-	call _ecom_updateCardinalAngleTowardTarget		; $64bf
-	jp objectSetVisiblec2		; $64c2
-	call _ecom_decCounter1		; $64c5
-	jr nz,_label_0d_238	; $64c8
-	inc (hl)		; $64ca
-	ld l,e			; $64cb
-	inc (hl)		; $64cc
-	jr _label_0d_236		; $64cd
-_label_0d_238:
-	ld a,(hl)		; $64cf
-	cp $16			; $64d0
-	jr nz,_label_0d_239	; $64d2
-	ld l,$a4		; $64d4
-	set 7,(hl)		; $64d6
-_label_0d_239:
-	call _ecom_applyVelocityForSideviewEnemy		; $64d8
-	jr _label_0d_237		; $64db
-	ld a,(de)		; $64dd
-	sub $08			; $64de
-	rst_jumpTable			; $64e0
-	rst $20			; $64e1
-	ld h,h			; $64e2
-	ld bc,$a265		; $64e3
-	ld h,h			; $64e6
-	ld h,d			; $64e7
-	ld l,e			; $64e8
-	inc (hl)		; $64e9
-	ld l,$94		; $64ea
-	ld a,$fe		; $64ec
-	ldi (hl),a		; $64ee
-	ld (hl),$fe		; $64ef
-	ld l,$90		; $64f1
-	ld (hl),$1e		; $64f3
-	ld l,$89		; $64f5
-	ld a,($d008)		; $64f7
-	swap a			; $64fa
-	rrca			; $64fc
-	ld (hl),a		; $64fd
-	jp objectSetVisiblec2		; $64fe
-	ld c,$0e		; $6501
-	call objectUpdateSpeedZAndBounce		; $6503
-	jr c,_label_0d_241	; $6506
-	ld a,$52		; $6508
-	call z,playSound		; $650a
-	ld e,$95		; $650d
-	ld a,(de)		; $650f
-	or a			; $6510
-	jr nz,_label_0d_240	; $6511
-	ld h,d			; $6513
-	ld l,$a4		; $6514
-	set 7,(hl)		; $6516
-_label_0d_240:
-	jp _ecom_applyVelocityForSideviewEnemyNoHoles		; $6518
-_label_0d_241:
-	call _ecom_incState		; $651b
-	ld l,$90		; $651e
-	ld (hl),$14		; $6520
-	ld bc,$071c		; $6522
-	call _ecom_randomBitwiseAndBCE		; $6525
-	ld e,$89		; $6528
-	ld a,c			; $652a
-	ld (de),a		; $652b
-	ld a,b			; $652c
-	ld hl,$6536		; $652d
-	rst_addAToHl			; $6530
-	ld e,$86		; $6531
-	ld a,(hl)		; $6533
-	ld (de),a		; $6534
-	ret			; $6535
-	rrca			; $6536
-	ld e,$1e		; $6537
-	inc a			; $6539
-	inc a			; $653a
-	inc a			; $653b
-	ld e,d			; $653c
-	ld e,d			; $653d
-	ld b,a			; $653e
-	ld e,$84		; $653f
-	ld a,(de)		; $6541
-	cp $0a			; $6542
-	ld a,b			; $6544
-	ret c			; $6545
-	ld h,d			; $6546
-	ld l,$bf		; $6547
-	bit 1,(hl)		; $6549
-	jr z,_label_0d_242	; $654b
-	ld l,$86		; $654d
-	ld a,(hl)		; $654f
-	cp $3b			; $6550
-	jr nz,_label_0d_242	; $6552
-	ld l,$97		; $6554
-	ld a,(hl)		; $6556
-	or a			; $6557
-	jr z,_label_0d_242	; $6558
-	ld h,a			; $655a
-	ld l,$b0		; $655b
-	dec (hl)		; $655d
-_label_0d_242:
+	call _beetle_checkHazards		; $63e2
+	or a			; $63e5
+	jr z,@normalStatus	; $63e6
+	sub ENEMYSTATUS_NO_HEALTH			; $63e8
+	ret c			; $63ea
+	jr z,@dead	; $63eb
+	dec a			; $63ed
+	jp nz,_ecom_updateKnockbackAndCheckHazards		; $63ee
+
+	; ENEMYSTATUS_JUST_HIT
+
+	ld e,Enemy.subid		; $63f1
+	ld a,(de)		; $63f3
+	cp $02			; $63f4
+	ret nz			; $63f6
+
+	ld e,Enemy.var2a		; $63f7
+	ld a,(de)		; $63f9
+	cp $80|ITEMCOLLISION_LINK			; $63fa
+	ret z			; $63fc
+
+	ld h,d			; $63fd
+	ld l,Enemy.state		; $63fe
+	ld (hl),$0a		; $6400
+
+	ld l,Enemy.counter1		; $6402
+	ld (hl),$01		; $6404
+	ret			; $6406
+
+@dead:
+	ld e,Enemy.subid		; $6407
+	ld a,(de)		; $6409
+	dec a			; $640a
+	jr nz,++		; $640b
+
+	; Subid 1 only (falling from sky): Update spawner's var30.
+	; Since the spawner spawns subid 2, this is probably broken... (not that it
+	; matters since the spawner doesn't check its var30 anyway)
+	ld e,Enemy.relatedObj1+1		; $640d
+	ld a,(de)		; $640f
+	or a			; $6410
+	jr z,++			; $6411
+	ld a,Object.var30		; $6413
+	call objectGetRelatedObject1Var		; $6415
+	dec (hl)		; $6418
+++
+	jp enemyDie		; $6419
+
+@normalStatus:
+	call _ecom_getSubidAndCpStateTo08		; $641c
+	jr nc,@normalState	; $641f
+	rst_jumpTable			; $6421
+	.dw _beetle_state_uninitialized
+	.dw _beetle_state_spawner
+	.dw _beetle_state_stub
+	.dw _beetle_state_switchHook
+	.dw _beetle_state_stub
+	.dw _beetle_state_galeSeed
+	.dw _beetle_state_stub
+	.dw _beetle_state_stub
+
+@normalState:
+	dec b			; $6432
+	ld a,b			; $6433
+	rst_jumpTable			; $6434
+	.dw _beetle_subid1
+	.dw _beetle_subid2
+	.dw _beetle_subid3
+
+
+_beetle_state_uninitialized:
+	ld a,b			; $643b
+	or a			; $643c
+	ld a,SPEED_80		; $643d
+	jp nz,_ecom_setSpeedAndState8		; $643f
+
+	; Subid 0
+	ld a,$01		; $6442
+	ld (de),a ; [state]
+
+
+_beetle_state_spawner:
+	call _ecom_decCounter2		; $6445
+	ret nz			; $6448
+
+	; Only spawn beetles when Link is close
+	ld c,$20		; $6449
+	call objectCheckLinkWithinDistance		; $644b
+	ret nc			; $644e
+
+	ld e,Enemy.counter2		; $644f
+	ld a,90		; $6451
+	ld (de),a		; $6453
+
+	ld b,ENEMYID_BEETLE		; $6454
+	call _ecom_spawnEnemyWithSubid01		; $6456
+	ret nz			; $6459
+	inc (hl) ; [subid] = 2
+	jp objectCopyPosition		; $645b
+
+
+_beetle_state_galeSeed:
+	call _ecom_galeSeedEffect		; $645e
+	ret c			; $6461
+
+	ld e,Enemy.relatedObj1+1		; $6462
+	ld a,(de)		; $6464
+	or a			; $6465
+	jr z,++			; $6466
+
+	ld h,a			; $6468
+	ld l,Enemy.var30		; $6469
+	dec (hl)		; $646b
+++
+	call decNumEnemies		; $646c
+	jp enemyDelete		; $646f
+
+
+_beetle_state_switchHook:
+	inc e			; $6472
+	ld a,(de)		; $6473
+	rst_jumpTable			; $6474
+	.dw _ecom_incState2
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+
+@substate1:
+@substate2:
+	ret			; $647d
+
+@substate3:
+	ld b,$0a		; $647e
+	jp _ecom_fallToGroundAndSetState		; $6480
+
+
+_beetle_state_stub:
+	ret			; $6483
+
+
+; Falls from the sky
+_beetle_subid1:
+	ld a,(de)		; $6484
+	sub $08			; $6485
+	rst_jumpTable			; $6487
+	.dw @state8
+	.dw @state9
+	.dw _beetle_stateA
+
+
+; Initialization
+@state8:
+	ld h,d			; $648e
+	ld l,e			; $648f
+	inc (hl) ; [state]
+
+	ld l,Enemy.collisionType		; $6491
+	set 7,(hl)		; $6493
+
+	ld c,$08		; $6495
+	call _ecom_setZAboveScreen		; $6497
+
+	call objectSetVisiblec1		; $649a
+
+	ld a,SND_FALLINHOLE		; $649d
+	jp playSound		; $649f
+
+
+; Falling in from above the screen
+@state9:
+	ld c,$0e		; $64a2
+	call objectUpdateSpeedZ_paramC		; $64a4
+	ret nz			; $64a7
+
+	; [speedZ] = 0
+	ld l,Enemy.speedZ		; $64a8
+	ldi (hl),a		; $64aa
+	ld (hl),a		; $64ab
+
+	ld l,Enemy.state		; $64ac
+	inc (hl)		; $64ae
+
+	call objectSetVisiblec2		; $64af
+
+	ld a,SND_BOMB_LAND		; $64b2
+	call playSound		; $64b4
+
+	call _beetle_chooseRandomAngleAndCounter1		; $64b7
+	jr _beetle_animate		; $64ba
+
+
+; Common beetle state
+_beetle_stateA:
+	call _ecom_decCounter1		; $64bc
+	call z,_beetle_chooseRandomAngleAndCounter1		; $64bf
+	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $64c2
+
+_beetle_animate:
+	jp enemyAnimate		; $64c5
+
+
+; Spawns in instantly
+_beetle_subid2:
+	ld a,(de)		; $64c8
+	sub $08			; $64c9
+	rst_jumpTable			; $64cb
+	.dw @state8
+	.dw @state9
+	.dw _beetle_stateA
+
+
+; Initialization
+@state8:
+	ld h,d			; $64d2
+	ld l,e			; $64d3
+	inc (hl) ; [state]
+
+	ld l,Enemy.counter1		; $64d5
+	ld (hl),30		; $64d7
+
+	call _ecom_updateCardinalAngleTowardTarget		; $64d9
+	jp objectSetVisiblec2		; $64dc
+
+
+; Moving toward Link for 30 frames, before starting random movement
+@state9:
+	call _ecom_decCounter1		; $64df
+	jr nz,@keepMovingTowardLink	; $64e2
+
+	inc (hl) ; [counter1] = 1
+	ld l,e			; $64e5
+	inc (hl) ; [state]
+	jr _beetle_stateA		; $64e7
+
+@keepMovingTowardLink:
+	ld a,(hl)		; $64e9
+	cp 22			; $64ea
+	jr nz,++		; $64ec
+	ld l,Enemy.collisionType		; $64ee
+	set 7,(hl)		; $64f0
+++
+	call _ecom_applyVelocityForSideviewEnemy		; $64f2
+	jr _beetle_animate		; $64f5
+
+
+; "Bounces in" when it spawns (dug up from the ground)
+_beetle_subid3:
+	ld a,(de)		; $64f7
+	sub $08			; $64f8
+	rst_jumpTable			; $64fa
+	.dw @state8
+	.dw @state9
+	.dw _beetle_stateA
+
+
+; Initialization
+@state8:
+	ld h,d			; $6501
+	ld l,e			; $6502
+	inc (hl) ; [state]
+
+	ld l,Enemy.speedZ		; $6504
+	ld a,<(-$102)		; $6506
+	ldi (hl),a		; $6508
+	ld (hl),>(-$102)		; $6509
+
+	ld l,Enemy.speed		; $650b
+	ld (hl),SPEED_c0		; $650d
+
+	; Bounce in the direction Link is facing
+	ld l,Enemy.angle		; $650f
+	ld a,(w1Link.direction)		; $6511
+	swap a			; $6514
+	rrca			; $6516
+	ld (hl),a		; $6517
+
+	jp objectSetVisiblec2		; $6518
+
+
+; Bouncing
+@state9:
+	ld c,$0e		; $651b
+	call objectUpdateSpeedZAndBounce		; $651d
+	jr c,@doneBouncing	; $6520
+
+	ld a,SND_BOMB_LAND		; $6522
+	call z,playSound		; $6524
+
+	; Enable collisions when it starts moving back down
+	ld e,Enemy.speedZ+1		; $6527
+	ld a,(de)		; $6529
+	or a			; $652a
+	jr nz,++		; $652b
+	ld h,d			; $652d
+	ld l,Enemy.collisionType		; $652e
+	set 7,(hl)		; $6530
+++
+	jp _ecom_applyVelocityForSideviewEnemyNoHoles		; $6532
+
+@doneBouncing:
+	call _ecom_incState		; $6535
+	ld l,Enemy.speed		; $6538
+	ld (hl),SPEED_80		; $653a
+
+
+;;
+; @addr{653c}
+_beetle_chooseRandomAngleAndCounter1:
+	ld bc,$071c		; $653c
+	call _ecom_randomBitwiseAndBCE		; $653f
+	ld e,Enemy.angle		; $6542
+	ld a,c			; $6544
+	ld (de),a		; $6545
+
+	ld a,b			; $6546
+	ld hl,@counter1Vals		; $6547
+	rst_addAToHl			; $654a
+	ld e,Enemy.counter1		; $654b
+	ld a,(hl)		; $654d
+	ld (de),a		; $654e
+	ret			; $654f
+
+@counter1Vals:
+	.db 15 30 30 60 60 60 90 90
+
+;;
+; Beetle has custom checkHazards function so it can decrease the spawner's var30 (number
+; of spawned
+; @addr{6558}
+_beetle_checkHazards:
+	ld b,a			; $6558
+	ld e,Enemy.state		; $6559
+	ld a,(de)		; $655b
+	cp $0a			; $655c
 	ld a,b			; $655e
-	jp _ecom_checkHazards		; $655f
+	ret c			; $655f
 
+	; Check if currently sinking in lava? (water doesn't count?)
+	ld h,d			; $6560
+	ld l,Enemy.var3f		; $6561
+	bit 1,(hl)		; $6563
+	jr z,@checkHazards	; $6565
+
+	; When [counter1] == 59, decrement spawner's var30 if it exists?
+	ld l,Enemy.counter1		; $6567
+	ld a,(hl)		; $6569
+	cp 59			; $656a
+	jr nz,@checkHazards	; $656c
+
+	ld l,Enemy.relatedObj1+1		; $656e
+	ld a,(hl)		; $6570
+	or a			; $6571
+	jr z,@checkHazards	; $6572
+
+	ld h,a			; $6574
+	ld l,Enemy.var30		; $6575
+	dec (hl)		; $6577
+
+@checkHazards:
+	ld a,b			; $6578
+	jp _ecom_checkHazards		; $6579
+
+
+; ==============================================================================
+; ENEMYID_FLYING_TILE
+;
+; Variables:
+;   var30/var31: Pointer to current address in _flyingTile_layoutData
+; ==============================================================================
 enemyCode52:
-	jr z,_label_0d_243	; $6562
-	sub $03			; $6564
-	ret c			; $6566
-	jp $661c		; $6567
-_label_0d_243:
-	ld e,$84		; $656a
-	ld a,(de)		; $656c
-	rst_jumpTable			; $656d
-	add (hl)		; $656e
-	ld h,l			; $656f
-	sub l			; $6570
-	ld h,l			; $6571
-	ld ($ff00+c),a		; $6572
-	ld h,l			; $6573
-	ld ($ff00+c),a		; $6574
-	ld h,l			; $6575
-	ld ($ff00+c),a		; $6576
-	ld h,l			; $6577
-	ld ($ff00+c),a		; $6578
-	ld h,l			; $6579
-	ld ($ff00+c),a		; $657a
-	ld h,l			; $657b
-	ld ($ff00+c),a		; $657c
-	ld h,l			; $657d
-.DB $e3				; $657e
-	ld h,l			; $657f
-	ld a,($ff00+$65)	; $6580
-	ld ($1466),sp		; $6582
-	ld h,(hl)		; $6585
-	ld e,$82		; $6586
-	ld a,(de)		; $6588
-	rlca			; $6589
-	ld a,$46		; $658a
-	jp c,_ecom_setSpeedAndState8		; $658c
-	ld e,$84		; $658f
-	ld a,$01		; $6591
-	ld (de),a		; $6593
-	ret			; $6594
-	inc e			; $6595
-	ld a,(de)		; $6596
-	rst_jumpTable			; $6597
-	sbc h			; $6598
-	ld h,l			; $6599
-	cp b			; $659a
-	ld h,l			; $659b
-	ld h,d			; $659c
-	ld l,e			; $659d
-	inc (hl)		; $659e
-	inc l			; $659f
-	ld (hl),$78		; $65a0
-	ld e,$82		; $65a2
-	ld a,(de)		; $65a4
-	ld hl,$663d		; $65a5
-	rst_addDoubleIndex			; $65a8
-	ldi a,(hl)		; $65a9
-	ld h,(hl)		; $65aa
-	ld l,a			; $65ab
-	ld e,$83		; $65ac
-	ldi a,(hl)		; $65ae
-	ld (de),a		; $65af
-	ld e,$b0		; $65b0
-	ld a,l			; $65b2
-	ld (de),a		; $65b3
-	inc e			; $65b4
-	ld a,h			; $65b5
-	ld (de),a		; $65b6
-	ret			; $65b7
-	call _ecom_decCounter1		; $65b8
-	ret nz			; $65bb
-	ld (hl),$3c		; $65bc
-	ld l,$b0		; $65be
-	ldi a,(hl)		; $65c0
-	ld h,(hl)		; $65c1
-	ld l,a			; $65c2
+	jr z,@normalStatus	; $657c
+	sub ENEMYSTATUS_NO_HEALTH			; $657e
+	ret c			; $6580
+	jp _flyingTile_dead		; $6581
+
+@normalStatus:
+	ld e,Enemy.state		; $6584
+	ld a,(de)		; $6586
+	rst_jumpTable			; $6587
+	.dw _flyingTile_state_uninitialized
+	.dw _flyingTile_state_spawner
+	.dw _flyingTile_state_stub
+	.dw _flyingTile_state_stub
+	.dw _flyingTile_state_stub
+	.dw _flyingTile_state_stub
+	.dw _flyingTile_state_stub
+	.dw _flyingTile_state_stub
+	.dw _flyingTile_state8
+	.dw _flyingTile_state9
+	.dw _flyingTile_stateA
+	.dw _flyingTile_stateB
+
+
+_flyingTile_state_uninitialized:
+	ld e,Enemy.subid		; $65a0
+	ld a,(de)		; $65a2
+	rlca			; $65a3
+	ld a,SPEED_1c0		; $65a4
+	jp c,_ecom_setSpeedAndState8		; $65a6
+
+	; Subids $00-$7f only
+	ld e,Enemy.state		; $65a9
+	ld a,$01		; $65ab
+	ld (de),a		; $65ad
+	ret			; $65ae
+
+
+_flyingTile_state_spawner:
+	inc e			; $65af
+	ld a,(de) ; [state2]
+	rst_jumpTable			; $65b1
+	.dw @substate0
+	.dw @substate1
+
+@substate0:
+	ld h,d			; $65b6
+	ld l,e			; $65b7
+	inc (hl) ; [state2]
+
+	inc l			; $65b9
+	ld (hl),120 ; [counter1]
+
+	ld e,Enemy.subid		; $65bc
+	ld a,(de)		; $65be
+	ld hl,_flyingTile_layoutData		; $65bf
+	rst_addDoubleIndex			; $65c2
 	ldi a,(hl)		; $65c3
-	ld c,a			; $65c4
-	push hl			; $65c5
-	call $65b0		; $65c6
-	ld b,$52		; $65c9
-	call _ecom_spawnEnemyWithSubid01		; $65cb
-	jr nz,_label_0d_244	; $65ce
-	ld l,$82		; $65d0
-	ld e,$83		; $65d2
-	ld a,(de)		; $65d4
-	ld (hl),a		; $65d5
-	ld l,$8b		; $65d6
-	call setShortPosition_paramC		; $65d8
-_label_0d_244:
-	pop hl			; $65db
-	ld a,(hl)		; $65dc
-	or a			; $65dd
-	ret nz			; $65de
-	jp $6621		; $65df
-	ret			; $65e2
-	ld h,d			; $65e3
-	ld l,e			; $65e4
-	inc (hl)		; $65e5
-	ld l,$a4		; $65e6
-	set 7,(hl)		; $65e8
-	call $6627		; $65ea
-	jp objectSetVisiblec2		; $65ed
-	ld h,d			; $65f0
-	ld l,$8e		; $65f1
-	ld a,(hl)		; $65f3
-	sub $80			; $65f4
-	ldi (hl),a		; $65f6
-	ld a,(hl)		; $65f7
-	sbc $00			; $65f8
-	ld (hl),a		; $65fa
-	cp $fd			; $65fb
-	jr nc,_label_0d_245	; $65fd
-	ld l,e			; $65ff
-	inc (hl)		; $6600
-	ld l,$86		; $6601
-	ld (hl),$0f		; $6603
-_label_0d_245:
-	jp enemyAnimate		; $6605
-	call _ecom_decCounter1		; $6608
-	jr nz,_label_0d_245	; $660b
-	ld l,e			; $660d
-	inc (hl)		; $660e
-	call _ecom_updateAngleTowardTarget		; $660f
-	jr _label_0d_245		; $6612
-	call objectApplySpeed		; $6614
-	call objectCheckTileCollision_allowHoles		; $6617
-	jr nc,_label_0d_245	; $661a
-	ld b,$06		; $661c
-	call objectCreateInteractionWithSubid00		; $661e
-_label_0d_246:
-	call decNumEnemies		; $6621
-	jp enemyDelete		; $6624
-	call objectGetShortPosition		; $6627
-	ld c,a			; $662a
-	ld e,$82		; $662b
-	ld a,(de)		; $662d
-	and $0f			; $662e
-	ld hl,$6638		; $6630
-	rst_addAToHl			; $6633
-	ld a,(hl)		; $6634
-	jp setTile		; $6635
-	and b			; $6638
-	di			; $6639
-.DB $f4				; $663a
-	ld c,h			; $663b
-	and h			; $663c
-	ld b,l			; $663d
-	ld h,(hl)		; $663e
-	ld d,e			; $663f
-	ld h,(hl)		; $6640
-	ld e,h			; $6641
-	ld h,(hl)		; $6642
-	ld a,l			; $6643
-	ld h,(hl)		; $6644
-	add d			; $6645
-	inc (hl)		; $6646
-	ld h,(hl)		; $6647
-	ld b,h			; $6648
-	ld d,(hl)		; $6649
-	ld d,h			; $664a
-	ld b,(hl)		; $664b
-	ld h,h			; $664c
-	ld (hl),$35		; $664d
-	ld h,l			; $664f
-	ld b,l			; $6650
-	ld d,l			; $6651
-	nop			; $6652
-	add d			; $6653
-	add hl,de		; $6654
-	ld e,c			; $6655
-	ld a,h			; $6656
-	ld a,c			; $6657
-	halt			; $6658
-	ld (hl),e		; $6659
-	sub e			; $665a
-	nop			; $665b
-	add b			; $665c
-	ld d,a			; $665d
-	ld b,(hl)		; $665e
-	ld d,h			; $665f
-	ld h,(hl)		; $6660
-	scf			; $6661
-	ld (hl),a		; $6662
-	ld c,b			; $6663
-	ld l,b			; $6664
-	ld e,d			; $6665
-	ld e,e			; $6666
-	daa			; $6667
-	add a			; $6668
-	ld b,l			; $6669
-	ld l,c			; $666a
-	ld h,l			; $666b
-	ld c,c			; $666c
-	ld d,e			; $666d
-	ld (hl),$78		; $666e
-	jr c,_label_0d_248	; $6670
-	ld b,h			; $6672
-	ld l,d			; $6673
-	ld h,h			; $6674
-	ld c,d			; $6675
-	ld d,l			; $6676
-	ld e,c			; $6677
-	ld b,a			; $6678
-	ld h,a			; $6679
-	ld d,(hl)		; $667a
-	ld e,b			; $667b
-	nop			; $667c
-	add b			; $667d
-	ld (hl),$76		; $667e
-	jr c,_label_0d_250	; $6680
-	ld b,h			; $6682
-	ld h,h			; $6683
-	ld c,d			; $6684
-	ld l,d			; $6685
-	ld h,$88		; $6686
-	ld (hl),l		; $6688
-	add hl,sp		; $6689
-	dec (hl)		; $668a
-	ld a,c			; $668b
-	ld b,e			; $668c
-	ld l,e			; $668d
-	ld h,e			; $668e
-	ld c,e			; $668f
-	scf			; $6690
-	add a			; $6691
-	ld (hl),a		; $6692
-	daa			; $6693
-	ld d,e			; $6694
-	inc (hl)		; $6695
-	ld a,d			; $6696
-	ld (hl),h		; $6697
-	ldd a,(hl)		; $6698
-	jr z,_label_0d_246	; $6699
-	ld e,e			; $669b
-	nop			; $669c
+	ld h,(hl)		; $65c4
+	ld l,a			; $65c5
 
+	ld e,Enemy.var03		; $65c6
+	ldi a,(hl)		; $65c8
+	ld (de),a		; $65c9
+
+
+;;
+; @param	hl	Address to save to var30/var31
+; @addr{65ca}
+@flyingTile_saveTileDataAddress:
+	ld e,Enemy.var30		; $65ca
+	ld a,l			; $65cc
+	ld (de),a		; $65cd
+	inc e			; $65ce
+	ld a,h			; $65cf
+	ld (de),a		; $65d0
+	ret			; $65d1
+
+@substate1:
+	call _ecom_decCounter1		; $65d2
+	ret nz			; $65d5
+
+	ld (hl),60		; $65d6
+
+	; Retrieve address in _flyingTile_layoutData
+	ld l,Enemy.var30		; $65d8
+	ldi a,(hl)		; $65da
+	ld h,(hl)		; $65db
+	ld l,a			; $65dc
+
+	; Get next position to spawn tile at
+	ldi a,(hl)		; $65dd
+	ld c,a			; $65de
+	push hl			; $65df
+
+	call @flyingTile_saveTileDataAddress		; $65e0
+	ld b,ENEMYID_FLYING_TILE		; $65e3
+	call _ecom_spawnEnemyWithSubid01		; $65e5
+	jr nz,++		; $65e8
+
+	; [child.subid] = [this.var03]
+	ld l,Enemy.subid		; $65ea
+	ld e,Enemy.var03		; $65ec
+	ld a,(de)		; $65ee
+	ld (hl),a		; $65ef
+
+	ld l,Enemy.yh		; $65f0
+	call setShortPosition_paramC		; $65f2
+++
+	pop hl			; $65f5
+	ld a,(hl)		; $65f6
+	or a			; $65f7
+	ret nz			; $65f8
+
+	; Spawned all tiles; delete the spawner.
+	jp _flyingTile_delete		; $65f9
+
+
+_flyingTile_state_stub:
+	ret			; $65fc
+
+
+; Initialization of actual flying tile (not spawner)
+_flyingTile_state8:
+	ld h,d			; $65fd
+	ld l,e			; $65fe
+	inc (hl) ; [state]
+
+	ld l,Enemy.collisionType		; $6600
+	set 7,(hl)		; $6602
+
+	call _flyingTile_overwriteTileHere		; $6604
+	jp objectSetVisiblec2		; $6607
+
+
+; Moving up before charging at Link
+_flyingTile_state9:
+	ld h,d			; $660a
+	ld l,Enemy.z		; $660b
+	ld a,(hl)		; $660d
+	sub <($0080)			; $660e
+	ldi (hl),a		; $6610
+	ld a,(hl)		; $6611
+	sbc >($0080)			; $6612
+	ld (hl),a		; $6614
+
+	cp $fd			; $6615
+	jr nc,_flyingTile_animate		; $6617
+
+	; Moved high enoguh
+	ld l,e			; $6619
+	inc (hl) ; [state]
+	ld l,Enemy.counter1		; $661b
+	ld (hl),$0f		; $661d
+
+_flyingTile_animate:
+	jp enemyAnimate		; $661f
+
+
+; Staying in place for [counter1] frames before charging Link
+_flyingTile_stateA:
+	call _ecom_decCounter1		; $6622
+	jr nz,_flyingTile_animate	; $6625
+
+	ld l,e			; $6627
+	inc (hl) ; [state]
+
+	call _ecom_updateAngleTowardTarget		; $6629
+	jr _flyingTile_animate		; $662c
+
+
+; Charging at Link
+_flyingTile_stateB:
+	call objectApplySpeed		; $662e
+	call objectCheckTileCollision_allowHoles		; $6631
+	jr nc,_flyingTile_animate	; $6634
+
+
+;;
+; @addr{6636}
+_flyingTile_dead:
+	ld b,INTERACID_ROCKDEBRIS		; $6636
+	call objectCreateInteractionWithSubid00		; $6638
+
+;;
+; @addr{663b}
+_flyingTile_delete:
+	call decNumEnemies		; $663b
+	jp enemyDelete		; $663e
+
+;;
+; Overwrites the tile at this position with whatever it should become after a flying tile
+; is created there (depends on subid).
+; @addr{6641}
+_flyingTile_overwriteTileHere:
+	call objectGetShortPosition		; $6641
+	ld c,a			; $6644
+	ld e,Enemy.subid		; $6645
+	ld a,(de)		; $6647
+	and $0f			; $6648
+	ld hl,@tileReplacements		; $664a
+	rst_addAToHl			; $664d
+	ld a,(hl)		; $664e
+	jp setTile		; $664f
+
+
+@tileReplacements:
+	.db $a0 $f3 $f4 $4c $a4
+
+
+.ifdef ROM_AGES
+_flyingTile_layoutData:
+	.dw @subid0
+	.dw @subid1
+	.dw @subid2
+
+; First byte is value for var03 (subid for spawned children).
+; All remaining bytes are positions at which to spawn flying tiles.
+; Ends when it reads $00.
+@subid0:
+	.db $80
+	.db $57 $56 $46 $47 $48 $58 $68 $67
+	.db $66 $65 $55 $45 $36 $37 $38 $49
+	.db $59 $69 $78 $77 $76 $54 $5a
+	.db $00
+
+@subid1:
+	.db $80
+	.db $57 $46 $48 $39 $35 $26 $37 $59
+	.db $49 $38 $29 $28 $36 $45 $56 $58
+	.db $27 $47 $55 $25
+	.db $00
+
+@subid2:
+	.db $80
+	.db $67 $54 $5a $47 $34 $3a $76 $38
+	.db $78 $36 $58 $45 $49 $56 $65 $69
+	.db $00
+.else
+_flyingTile_layoutData:
+	.dw @subid0
+	.dw @subid1
+	.dw @subid2
+	.dw @subid3
+
+@subid0:
+	.db $82
+	.db $34 $66 $44 $56 $54 $46 $64 $36
+	.db $35 $65 $45 $55
+	.db $00
+@subid1:
+	.db $82
+	.db $19 $59 $7c $79 $76 $73 $93
+	.db $00
+@subid2:
+	.db $80
+	.db $57 $46 $54 $66 $37 $77 $48 $68
+	.db $5a $5b $27 $87 $45 $69 $65 $49
+	.db $53 $36 $78 $38 $76 $44 $6a $64
+	.db $4a $55 $59 $47 $67 $56 $58
+	.db $00
+@subid3:
+	.db $80
+	.db $36 $76 $38 $78 $44 $64 $4a $6a
+	.db $26 $88 $75 $39 $35 $79 $43 $6b
+	.db $63 $4b $37 $87 $77 $27 $53 $34
+	.db $7a $74 $3a $28 $86 $5b
+	.db $00
+.endif
+
+
+; ==============================================================================
+; ENEMYID_DRAGONFLY
+; ==============================================================================
 enemyCode53:
-	ld e,$84		; $669d
-	ld a,(de)		; $669f
-	rst_jumpTable			; $66a0
-	xor l			; $66a1
-	ld h,(hl)		; $66a2
-	add $66			; $66a3
-	inc c			; $66a5
-	ld h,a			; $66a6
-	jr nz,$67		; $66a7
-	ld b,a			; $66a9
-	ld h,a			; $66aa
-	ld h,d			; $66ab
-	ld h,a			; $66ac
-	ld a,($cc4e)		; $66ad
-	cp $02			; $66b0
+	ld e,Enemy.state		; $669e
+	ld a,(de)		; $66a0
+	rst_jumpTable			; $66a1
+	.dw _dragonfly_state0
+	.dw _dragonfly_state1
+	.dw _dragonfly_state2
+	.dw _dragonfly_state3
+	.dw _dragonfly_state4
+	.dw _dragonfly_state5
+
+
+; Initialization
+_dragonfly_state0:
+.ifdef ROM_SEASONS
+	ld a,(wRoomStateModifier)		; $66ad
+	cp SEASON_FALL			; $66b0
 	jp nz,enemyDelete		; $66b2
-	ld h,d			; $66b5
-	ld l,e			; $66b6
-	inc (hl)		; $66b7
-	ld l,$82		; $66b8
-	ld a,(hl)		; $66ba
-	ld l,$9b		; $66bb
-	ldi (hl),a		; $66bd
-	ld (hl),a		; $66be
-	ld l,$8f		; $66bf
-	ld (hl),$f8		; $66c1
-	jp objectSetVisiblec1		; $66c3
-	ld h,d			; $66c6
-	ld l,e			; $66c7
-	inc (hl)		; $66c8
-	ld l,$86		; $66c9
-	ld (hl),$03		; $66cb
-	ld l,$90		; $66cd
-	ld (hl),$50		; $66cf
-	call getRandomNumber_noPreserveVars		; $66d1
-	and $06			; $66d4
-	ld c,a			; $66d6
-	ld b,$00		; $66d7
-	ld e,$8b		; $66d9
-	ld a,(de)		; $66db
-	cp $40			; $66dc
-	jr c,_label_0d_247	; $66de
-	inc b			; $66e0
-_label_0d_247:
-	ld e,$8d		; $66e1
-	ld a,(de)		; $66e3
-	cp $50			; $66e4
-	jr c,_label_0d_249	; $66e6
-_label_0d_248:
-	set 1,b			; $66e8
-_label_0d_249:
-	ld a,b			; $66ea
-	ld hl,$6708		; $66eb
-	rst_addAToHl			; $66ee
-	ld a,(hl)		; $66ef
-	add c			; $66f0
-	and $1f			; $66f1
-	ld e,$89		; $66f3
-	ld (de),a		; $66f5
-	ld e,$89		; $66f6
-	ld a,(de)		; $66f8
-	ld b,a			; $66f9
-_label_0d_250:
-	and $0f			; $66fa
-	ret z			; $66fc
-	ld a,b			; $66fd
-	cp $10			; $66fe
-	ld a,$01		; $6700
-	jr c,_label_0d_251	; $6702
-	dec a			; $6704
-_label_0d_251:
-	jp enemySetAnimation		; $6705
-	ld ($1202),sp		; $6708
-	jr -$33			; $670b
-	ld l,h			; $670d
-	ld h,a			; $670e
-	jr nz,_label_0d_252	; $670f
-	call _ecom_decCounter1		; $6711
-	jr nz,_label_0d_253	; $6714
-_label_0d_252:
-	call _ecom_incState		; $6716
-	ld l,$86		; $6719
-	ld (hl),$0c		; $671b
-_label_0d_253:
-	jp enemyAnimate		; $671d
-	call $676c		; $6720
-	jr nz,_label_0d_254	; $6723
-	call _ecom_decCounter1		; $6725
-	jr z,_label_0d_254	; $6728
-	ld a,(hl)		; $672a
-	rrca			; $672b
-	jr nc,_label_0d_253	; $672c
-	ld l,$90		; $672e
-	ld a,(hl)		; $6730
-	sub $05			; $6731
-	ld (hl),a		; $6733
-	jr _label_0d_253		; $6734
-_label_0d_254:
-	ld e,$84		; $6736
-	ld a,$04		; $6738
-	ld (de),a		; $673a
-	call getRandomNumber_noPreserveVars		; $673b
-	and $07			; $673e
-	add $18			; $6740
-	ld e,$86		; $6742
-	ld (de),a		; $6744
-	jr _label_0d_253		; $6745
-	call $676c		; $6747
-	jr nz,_label_0d_255	; $674a
-	call _ecom_decCounter1		; $674c
-	jr nz,_label_0d_253	; $674f
-_label_0d_255:
-	call getRandomNumber_noPreserveVars		; $6751
-	and $7f			; $6754
-	add $20			; $6756
-	ld e,$86		; $6758
-	ld (de),a		; $675a
-	ld e,$84		; $675b
-	ld a,$05		; $675d
-	ld (de),a		; $675f
-	jr _label_0d_253		; $6760
-	call _ecom_decCounter1		; $6762
-	jr nz,_label_0d_253	; $6765
-	ld l,e			; $6767
-	ld (hl),$01		; $6768
-	jr _label_0d_253		; $676a
-	ld a,$02		; $676c
-	call _ecom_getSideviewAdjacentWallsBitset		; $676e
-	ret nz			; $6771
-	call objectApplySpeed		; $6772
-	xor a			; $6775
-	ret			; $6776
+.endif
+	ld h,d			; $66ae
+	ld l,e			; $66af
+	inc (hl) ; [state]
 
+	ld l,Enemy.subid		; $66b1
+	ld a,(hl)		; $66b3
+	ld l,Enemy.oamFlagsBackup		; $66b4
+	ldi (hl),a		; $66b6
+	ld (hl),a		; $66b7
+
+	ld l,Enemy.zh		; $66b8
+	ld (hl),-$08		; $66ba
+	jp objectSetVisiblec1		; $66bc
+
+
+; Choosing new direction to move in
+_dragonfly_state1:
+	ld h,d			; $66bf
+	ld l,e			; $66c0
+	inc (hl) ; [state]
+
+	ld l,Enemy.counter1		; $66c2
+	ld (hl),$03		; $66c4
+
+	ld l,Enemy.speed		; $66c6
+	ld (hl),SPEED_200		; $66c8
+
+	call getRandomNumber_noPreserveVars		; $66ca
+	and $06			; $66cd
+	ld c,a			; $66cf
+
+	ld b,$00		; $66d0
+	ld e,Enemy.yh		; $66d2
+	ld a,(de)		; $66d4
+	cp (SMALL_ROOM_HEIGHT/2)<<4			; $66d5
+	jr c,+			; $66d7
+	inc b			; $66d9
++
+	ld e,Enemy.xh		; $66da
+	ld a,(de)		; $66dc
+	cp (SMALL_ROOM_WIDTH/2)<<4			; $66dd
+	jr c,+			; $66df
+	set 1,b			; $66e1
++
+	ld a,b			; $66e3
+	ld hl,@angleVals		; $66e4
+	rst_addAToHl			; $66e7
+	ld a,(hl)		; $66e8
+	add c			; $66e9
+	and $1f			; $66ea
+	ld e,Enemy.angle		; $66ec
+	ld (de),a		; $66ee
+
+	; Update animation
+	ld e,Enemy.angle		; $66ef
+	ld a,(de)		; $66f1
+	ld b,a			; $66f2
+	and $0f			; $66f3
+	ret z			; $66f5
+
+	ld a,b			; $66f6
+	cp $10			; $66f7
+	ld a,$01		; $66f9
+	jr c,+			; $66fb
+	dec a			; $66fd
++
+	jp enemySetAnimation		; $66fe
+
+@angleVals:
+	.db $08 $02 $12 $18
+
+
+; Move in given direction for 3 frames at SPEED_200
+_dragonfly_state2:
+	call _dragonfly_applySpeed		; $6705
+	jr nz,@nextState	; $6708
+
+	call _ecom_decCounter1		; $670a
+	jr nz,_dragonfly_animate	; $670d
+
+@nextState:
+	call _ecom_incState		; $670f
+	ld l,Enemy.counter1		; $6712
+	ld (hl),$0c		; $6714
+
+_dragonfly_animate:
+	jp enemyAnimate		; $6716
+
+
+; Slowing down over 12 frames, eventually reaching SPEED_140
+_dragonfly_state3:
+	call _dragonfly_applySpeed		; $6719
+	jr nz,@nextState	; $671c
+
+	call _ecom_decCounter1		; $671e
+	jr z,@nextState	; $6721
+
+	ld a,(hl) ; [counter1]
+	rrca			; $6724
+	jr nc,_dragonfly_animate	; $6725
+
+	ld l,Enemy.speed		; $6727
+	ld a,(hl)		; $6729
+	sub SPEED_20			; $672a
+	ld (hl),a		; $672c
+	jr _dragonfly_animate		; $672d
+
+@nextState:
+	ld e,Enemy.state		; $672f
+	ld a,$04		; $6731
+	ld (de),a		; $6733
+
+	; Set counter1 somewhere in range $18-$1f
+	call getRandomNumber_noPreserveVars		; $6734
+	and $07			; $6737
+	add $18			; $6739
+	ld e,Enemy.counter1		; $673b
+	ld (de),a		; $673d
+	jr _dragonfly_animate		; $673e
+
+
+; Moving at SPEED_140 for between 24-31 frames
+_dragonfly_state4:
+	call _dragonfly_applySpeed		; $6740
+	jr nz,@nextState	; $6743
+
+	call _ecom_decCounter1		; $6745
+	jr nz,_dragonfly_animate	; $6748
+
+@nextState:
+	call getRandomNumber_noPreserveVars		; $674a
+	and $7f			; $674d
+	add $20			; $674f
+	ld e,Enemy.counter1		; $6751
+	ld (de),a		; $6753
+
+	ld e,Enemy.state		; $6754
+	ld a,$05		; $6756
+	ld (de),a		; $6758
+	jr _dragonfly_animate		; $6759
+
+
+; Holding still for [counter1] frames
+_dragonfly_state5:
+	call _ecom_decCounter1		; $675b
+	jr nz,_dragonfly_animate	; $675e
+
+	ld l,e			; $6760
+	ld (hl),$01 ; [state]
+	jr _dragonfly_animate		; $6763
+
+
+;;
+; @param[out]	zflag	nz if touched a wall
+; @addr{6765}
+_dragonfly_applySpeed:
+	ld a,$02 ; Only screen boundaries count as walls
+	call _ecom_getSideviewAdjacentWallsBitset		; $6767
+	ret nz			; $676a
+	call objectApplySpeed		; $676b
+	xor a			; $676e
+	ret			; $676f
+
+
+; ==============================================================================
+; ENEMYID_BUSH_OR_ROCK
+;
+; Variables:
+;   var30: Enemy ID of parent object
+; ==============================================================================
 enemyCode58:
-	jr z,_label_0d_256	; $6777
-	sub $03			; $6779
-	ret c			; $677b
-	jp z,$6817		; $677c
-_label_0d_256:
-	ld e,$84		; $677f
-	ld a,(de)		; $6781
-	rst_jumpTable			; $6782
-	sub l			; $6783
-	ld h,a			; $6784
-.DB $fd				; $6785
-	ld h,a			; $6786
-	or a			; $6787
-	ld h,a			; $6788
-.DB $e3				; $6789
-	ld h,a			; $678a
-.DB $fd				; $678b
-	ld h,a			; $678c
-.DB $fd				; $678d
-	ld h,a			; $678e
-.DB $fd				; $678f
-	ld h,a			; $6790
-.DB $fd				; $6791
-	ld h,a			; $6792
-	cp $67			; $6793
-	ld e,$82		; $6795
-	ld a,(de)		; $6797
-	ld hl,$67af		; $6798
-	rst_addDoubleIndex			; $679b
-	ld e,$a5		; $679c
-	ldi a,(hl)		; $679e
-	ld (de),a		; $679f
-	ld a,(hl)		; $67a0
-	call objectMimicBgTile		; $67a1
-	call $6854		; $67a4
-	call _ecom_setSpeedAndState8		; $67a7
-	call $6839		; $67aa
-	jr _label_0d_257		; $67ad
-	ld a,$c4		; $67af
-	ld a,$20		; $67b1
-	ld c,a			; $67b3
-	stop			; $67b4
-	ld c,a			; $67b5
-	ret nz			; $67b6
-	inc e			; $67b7
-	ld a,(de)		; $67b8
-	rst_jumpTable			; $67b9
-	jp nz,$d367		; $67ba
-	ld h,a			; $67bd
-	call nc,$de67		; $67be
-	ld h,a			; $67c1
-	ld h,d			; $67c2
-	ld l,e			; $67c3
-	inc (hl)		; $67c4
-	ld l,$a4		; $67c5
-	res 7,(hl)		; $67c7
-	xor a			; $67c9
-	ld (wLinkGrabState2),a		; $67ca
-	call $682c		; $67cd
-	jp objectSetVisible81		; $67d0
-	ret			; $67d3
-	ld h,d			; $67d4
-	ld l,$80		; $67d5
-	res 1,(hl)		; $67d7
-	ld l,$8f		; $67d9
-	bit 7,(hl)		; $67db
-	ret nz			; $67dd
-	call objectSetPriorityRelativeToLink		; $67de
-	jr _label_0d_258		; $67e1
-	inc e			; $67e3
-	ld a,(de)		; $67e4
-	rst_jumpTable			; $67e5
-	xor $67			; $67e6
-.DB $f4				; $67e8
-	ld h,a			; $67e9
-.DB $f4				; $67ea
-	ld h,a			; $67eb
-	push af			; $67ec
-	ld h,a			; $67ed
-	call $682c		; $67ee
-	jp _ecom_incState2		; $67f1
-	ret			; $67f4
-	ld c,$20		; $67f5
-	call objectUpdateSpeedZ_paramC		; $67f7
-	ret nz			; $67fa
-	jr _label_0d_258		; $67fb
-	ret			; $67fd
-	ld a,$01		; $67fe
-	call objectGetRelatedObject1Var		; $6800
-	ld e,$b0		; $6803
-	ld a,(de)		; $6805
-	cp (hl)			; $6806
-	jp nz,enemyDelete		; $6807
-	ld l,$83		; $680a
-	ld a,(hl)		; $680c
-	rlca			; $680d
-	call c,objectAddToGrabbableObjectBuffer		; $680e
-	call $6839		; $6811
-_label_0d_257:
-	jp objectSetPriorityRelativeToLink		; $6814
-	call $682c		; $6817
-_label_0d_258:
-	ld e,$82		; $681a
-	ld a,(de)		; $681c
-	ld hl,$6828		; $681d
-	rst_addAToHl			; $6820
-	ld b,(hl)		; $6821
-	call objectCreateInteractionWithSubid00		; $6822
-	jp enemyDelete		; $6825
-	nop			; $6828
-	nop			; $6829
-	ld b,$06		; $682a
-	ld a,$1a		; $682c
-	call objectGetRelatedObject1Var		; $682e
-	set 7,(hl)		; $6831
-	ld l,$98		; $6833
-	xor a			; $6835
-	ldi (hl),a		; $6836
-	ld (hl),a		; $6837
-	ret			; $6838
-	ld a,$0b		; $6839
-	call objectGetRelatedObject1Var		; $683b
-	call objectTakePosition		; $683e
-	ld l,$83		; $6841
-	ld a,(hl)		; $6843
-	and $03			; $6844
-	ld hl,$6850		; $6846
-	rst_addAToHl			; $6849
-	ld e,$8f		; $684a
-	ld a,(de)		; $684c
-	add (hl)		; $684d
-	ld (de),a		; $684e
-	ret			; $684f
-	nop			; $6850
-.DB $fc				; $6851
-	ld hl,sp-$0c		; $6852
-	ld a,$01		; $6854
-	call objectGetRelatedObject1Var		; $6856
-	ld e,$b0		; $6859
-	ld a,(hl)		; $685b
-	ld (de),a		; $685c
-	cp $27			; $685d
-	ret nz			; $685f
-	ld e,$a5		; $6860
-	ld a,$4f		; $6862
-	ld (de),a		; $6864
-	ret			; $6865
+	jr z,@normalStatus	; $6770
+	sub ENEMYSTATUS_NO_HEALTH			; $6772
+	ret c			; $6774
+	jp z,@destroyed		; $6775
 
+@normalStatus:
+	ld e,Enemy.state		; $6778
+	ld a,(de)		; $677a
+	rst_jumpTable			; $677b
+	.dw @state_uninitialized
+	.dw @state_stub
+	.dw @state_grabbed
+	.dw @state_switchHook
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state8
+
+
+@state_uninitialized:
+	; Initialize enemyCollisionMode and load tile to mimic
+	ld e,Enemy.subid		; $678e
+	ld a,(de)		; $6790
+	ld hl,@collisionAndTileData		; $6791
+	rst_addDoubleIndex			; $6794
+
+	ld e,Enemy.enemyCollisionMode		; $6795
+	ldi a,(hl)		; $6797
+	ld (de),a		; $6798
+
+	ld a,(hl)		; $6799
+	call objectMimicBgTile		; $679a
+
+	call @checkDisableDestruction		; $679d
+	call _ecom_setSpeedAndState8		; $67a0
+	call @copyParentPosition		; $67a3
+	jr @setPriorityRelativeToLink		; $67a6
+
+
+@collisionAndTileData:
+.ifdef ROM_AGES
+	.db ENEMYCOLLISION_BUSH, TILEINDEX_OVERWORLD_BUSH ; Subid 0
+.else
+	.db ENEMYCOLLISION_BUSH, $c4 ; Subid 0 TODO:
+.endif
+	.db ENEMYCOLLISION_BUSH, TILEINDEX_DUNGEON_BUSH   ; Subid 1
+	.db ENEMYCOLLISION_ROCK,           TILEINDEX_DUNGEON_POT    ; Subid 2
+	.db ENEMYCOLLISION_ROCK,           TILEINDEX_OVERWORLD_ROCK ; Subid 3
+
+
+
+@state_grabbed:
+	inc e			; $67b0
+	ld a,(de)		; $67b1
+	rst_jumpTable			; $67b2
+	.dw @@substate0
+	.dw @@substate1
+	.dw @@substate2
+	.dw @@substate3
+
+@@substate0: ; Just picked up
+	ld h,d			; $67bb
+	ld l,e			; $67bc
+	inc (hl)		; $67bd
+
+	ld l,Enemy.collisionType		; $67be
+	res 7,(hl)		; $67c0
+
+	xor a			; $67c2
+	ld (wLinkGrabState2),a		; $67c3
+	call @makeParentEnemyVisibleAndRemoveReference		; $67c6
+	jp objectSetVisible81		; $67c9
+
+@@substate1: ; Being held
+	ret			; $67cc
+
+@@substate2: ; Being thrown
+	ld h,d			; $67cd
+
+	; No longer persist between screens
+	ld l,Enemy.enabled		; $67ce
+	res 1,(hl)		; $67d0
+
+	ld l,Enemy.zh		; $67d2
+	bit 7,(hl)		; $67d4
+	ret nz			; $67d6
+
+@@substate3:
+	call objectSetPriorityRelativeToLink		; $67d7
+	jr @makeDebrisAndDelete		; $67da
+
+
+@state_switchHook:
+	inc e			; $67dc
+	ld a,(de)		; $67dd
+	rst_jumpTable			; $67de
+	.dw @@substate0
+	.dw @@substate1
+	.dw @@substate2
+	.dw @@substate3
+
+@@substate0:
+	call @makeParentEnemyVisibleAndRemoveReference		; $67e7
+	jp _ecom_incState2		; $67ea
+
+@@substate1:
+@@substate2:
+	ret			; $67ed
+
+@@substate3:
+	ld c,$20		; $67ee
+	call objectUpdateSpeedZ_paramC		; $67f0
+	ret nz			; $67f3
+	jr @makeDebrisAndDelete		; $67f4
+
+
+@state_stub:
+	ret			; $67f6
+
+
+@state8:
+	; Check if parent object's type has changed, if so, delete self?
+	ld a,Object.id		; $67f7
+	call objectGetRelatedObject1Var		; $67f9
+	ld e,Enemy.var30		; $67fc
+	ld a,(de)		; $67fe
+	cp (hl)			; $67ff
+	jp nz,enemyDelete		; $6800
+
+	ld l,Enemy.var03		; $6803
+	ld a,(hl)		; $6805
+	rlca			; $6806
+	call c,objectAddToGrabbableObjectBuffer		; $6807
+	call @copyParentPosition		; $680a
+
+@setPriorityRelativeToLink:
+	jp objectSetPriorityRelativeToLink		; $680d
+
+
+@destroyed:
+	call @makeParentEnemyVisibleAndRemoveReference		; $6810
+
+@makeDebrisAndDelete:
+	ld e,Enemy.subid		; $6813
+	ld a,(de)		; $6815
+	ld hl,@debrisTypes		; $6816
+	rst_addAToHl			; $6819
+	ld b,(hl)		; $681a
+	call objectCreateInteractionWithSubid00		; $681b
+	jp enemyDelete		; $681e
+
+; Debris for each subid (0-3)
+@debrisTypes:
+	.db INTERACID_GRASSDEBRIS
+	.db INTERACID_GRASSDEBRIS
+	.db INTERACID_ROCKDEBRIS
+	.db INTERACID_ROCKDEBRIS
+
+;;
+; Make parent visible, remove self from Parent.relatedObj2
+; @addr{6825}
+@makeParentEnemyVisibleAndRemoveReference:
+	ld a,Object.visible		; $6825
+	call objectGetRelatedObject1Var		; $6827
+	set 7,(hl)		; $682a
+	ld l,Enemy.relatedObj2		; $682c
+	xor a			; $682e
+	ldi (hl),a		; $682f
+	ld (hl),a		; $6830
+	ret			; $6831
+
+;;
+; Copies parent position, with a Z offset determined by parent.var03.
+; @addr{6832}
+@copyParentPosition:
+	ld a,Object.yh		; $6832
+	call objectGetRelatedObject1Var		; $6834
+	call objectTakePosition		; $6837
+
+	ld l,Enemy.var03		; $683a
+	ld a,(hl)		; $683c
+	and $03			; $683d
+	ld hl,@zVals		; $683f
+	rst_addAToHl			; $6842
+	ld e,Enemy.zh		; $6843
+	ld a,(de)		; $6845
+	add (hl)		; $6846
+	ld (de),a		; $6847
+	ret			; $6848
+
+@zVals:
+	.db $00 $fc $f8 $f4
+
+;;
+; Disable bush destruction for deku scrubs only.
+; @addr{684d}
+@checkDisableDestruction:
+	ld a,Object.id		; $684d
+	call objectGetRelatedObject1Var		; $684f
+	ld e,Enemy.var30		; $6852
+	ld a,(hl)		; $6854
+	ld (de),a		; $6855
+
+	; Don't allow destruction of bush for deku scrubs
+	cp ENEMYID_DEKU_SCRUB			; $6856
+	ret nz			; $6858
+	ld e,Enemy.enemyCollisionMode		; $6859
+	ld a,ENEMYCOLLISION_ROCK		; $685b
+	ld (de),a		; $685d
+	ret			; $685e
+
+
+; ==============================================================================
+; ENEMYID_ITEM_DROP_PRODUCER
+;
+; Variables:
+;   var30: Tile at position (item drop will spawn when this changes)
+; ==============================================================================
 enemyCode59:
-	ld e,$84		; $6866
-	ld a,(de)		; $6868
-	or a			; $6869
-	jr nz,_label_0d_259	; $686a
-	ld a,$01		; $686c
-	ld (de),a		; $686e
-	call objectGetTileAtPosition		; $686f
-	ld e,$b0		; $6872
-	ld (de),a		; $6874
-_label_0d_259:
-	call objectGetTileAtPosition		; $6875
-	ld h,d			; $6878
-	ld l,$b0		; $6879
-	cp (hl)			; $687b
-	ret z			; $687c
-	ld e,$82		; $687d
-	ld a,(de)		; $687f
-	call checkItemDropAvailable		; $6880
-	jp z,enemyDelete		; $6883
-	call getFreePartSlot		; $6886
-	ret nz			; $6889
-	ld (hl),$01		; $688a
-	inc l			; $688c
-	ld e,$82		; $688d
-	ld a,(de)		; $688f
-	ld (hl),a		; $6890
-	call objectCopyPosition		; $6891
-	call markEnemyAsKilledInRoom		; $6894
-	jp enemyDelete		; $6897
+	ld e,Enemy.state		; $685f
+	ld a,(de)		; $6861
+	or a			; $6862
+	jr nz,@state1		; $6863
 
+@state0:
+	; Initialization
+	ld a,$01		; $6865
+	ld (de),a ; [state]
+	call objectGetTileAtPosition		; $6868
+	ld e,Enemy.var30		; $686b
+	ld (de),a		; $686d
+
+@state1
+	call objectGetTileAtPosition		; $686e
+	ld h,d			; $6871
+	ld l,Enemy.var30		; $6872
+	cp (hl)			; $6874
+	ret z			; $6875
+
+	; Tile has changed.
+
+	; Delete self if Link can't get the item drop yet (ie. doesn't have bombs)
+	ld e,Enemy.subid		; $6876
+	ld a,(de)		; $6878
+	call checkItemDropAvailable		; $6879
+	jp z,enemyDelete		; $687c
+
+	call getFreePartSlot		; $687f
+	ret nz			; $6882
+	ld (hl),PARTID_ITEM_DROP		; $6883
+
+	; [child.subid] = [this.subid]
+	inc l			; $6885
+	ld e,Enemy.subid		; $6886
+	ld a,(de)		; $6888
+	ld (hl),a		; $6889
+
+	call objectCopyPosition		; $688a
+	call markEnemyAsKilledInRoom		; $688d
+	jp enemyDelete		; $6890
+
+
+; ==============================================================================
+; ENEMYID_SEEDS_ON_TREE
+;
+; Variables:
+;   var03: Child "PARTID_SEED_ON_TREE" objects write here when Link touches them?
+; ==============================================================================
 enemyCode5a:
-	ld e,$84		; $689a
-	ld a,(de)		; $689c
-	or a			; $689d
-	jr nz,$6d		; $689e
-	ld a,$01		; $68a0
-	ld (de),a		; $68a2
-	ld e,$82		; $68a3
+	ld e,Enemy.state	; $6893
+	ld a,(de)		; $6895
+	or a			; $6896
+	jr nz,@state1	; $6897
+
+
+; Initialization
+@state0:
+	ld a,$01		; $6899
+	ld (de),a ; [state]
+
+.ifdef ROM_AGES
+	; Locate tree
+	ld a,TILEINDEX_MYSTICAL_TREE_TL		; $689c
+	call findTileInRoom		; $689e
+	jp nz,interactionDelete ; BUG: Wrong function call! (see below)
+
+	; Move to that position
+	ld c,l			; $68a4
+	ld h,d			; $68a5
+	ld l,Enemy.yh		; $68a6
+	call setShortPosition_paramC		; $68a8
+	ld bc,$0808		; $68ab
+	call objectCopyPositionWithOffset		; $68ae
+
+	ld e,Enemy.subid	; $68b1
+	ld a,(de)		; $68b3
+	and $0f			; $68b4
+	ld hl,wSeedTreeRefilledBitset		; $68b6
+	call checkFlag		; $68b9
+	jp z,interactionDelete		; $68bc
+
+	; BUG: Above function call is wrong! Should be "enemyDelete"!
+	; If a seed tree's seeds are exhausted, instead of deleting this object, it will
+	; try to delete the interaction in the corresponding spot!
+	; This is not be very noticeable, because often this will be in slot $d0, which
+	; for interactions, is reserved for items from chests and stuff like that. But
+	; that can be manipulated by digging up enemies from the ground...
+
+	ld a,(de)		; $68bf
+	swap a			; $68c0
+	and $0f			; $68c2
+	ldh (<hFF8B),a	; $68c4
+.else
+	ld e,Enemy.subid		; $68a3
 	ld a,(de)		; $68a5
 	ld b,a			; $68a6
 	add a			; $68a7
 	add b			; $68a8
-	ld hl,$68fb		; $68a9
+	ld hl,@seasonsTable_0d_68fb		; $68a9
 	rst_addAToHl			; $68ac
 	ldi a,(hl)		; $68ad
 	ldh (<hFF8B),a	; $68ae
 	ldi a,(hl)		; $68b0
 	ld b,a			; $68b1
-	ld a,($cc4e)		; $68b2
+	ld a,(wRoomStateModifier)		; $68b2
 	cp b			; $68b5
 	jp nz,enemyDelete		; $68b6
 	ld a,(hl)		; $68b9
 	cpl			; $68ba
-	ld e,$88		; $68bb
+	ld e,Enemy.direction		; $68bb
 	ld (de),a		; $68bd
-	ld a,($cc69)		; $68be
+	ld a,(wSeedTreeRefilledBitset)		; $68be
 	and (hl)		; $68c1
 	jp z,enemyDelete		; $68c2
-	xor a			; $68c5
-	call $68d0		; $68c6
-	ld a,$01		; $68c9
-	call $68d0		; $68cb
-	ld a,$02		; $68ce
-	ld hl,$68f5		; $68d0
-	rst_addDoubleIndex			; $68d3
-	ld e,$8b		; $68d4
-	ld a,(de)		; $68d6
-	add (hl)		; $68d7
-	inc hl			; $68d8
-	ld b,a			; $68d9
-	ld e,$8d		; $68da
-	ld a,(de)		; $68dc
-	add (hl)		; $68dd
-	ld c,a			; $68de
-	call getFreePartSlot		; $68df
-	ld (hl),$10		; $68e2
-	inc l			; $68e4
-	ldh a,(<hFF8B)	; $68e5
-	ld (hl),a		; $68e7
-	ld l,$cb		; $68e8
-	ld (hl),b		; $68ea
-	ld l,$cd		; $68eb
-	ld (hl),c		; $68ed
-	ld l,$d8		; $68ee
-	ld (hl),$80		; $68f0
-	inc l			; $68f2
-	ld (hl),d		; $68f3
-	ret			; $68f4
-	ld hl,sp+$00		; $68f5
-	nop			; $68f7
-	ld hl,sp+$00		; $68f8
-	ld ($0300),sp		; $68fa
-	add b			; $68fd
-	inc b			; $68fe
-	ld bc,$0140		; $68ff
-	nop			; $6902
-	jr nz,_label_0d_260	; $6903
-	ld (bc),a		; $6905
-	stop			; $6906
-_label_0d_260:
-	inc bc			; $6907
-	ld bc,$0308		; $6908
-	ld bc,$1e04		; $690b
-	add e			; $690e
-	ld a,(de)		; $690f
-	or a			; $6910
-	ret z			; $6911
-	ld e,$88		; $6912
-	ld a,(de)		; $6914
-	ld hl,$cc69		; $6915
+.endif
+
+	; Spawn the 3 seed objects
+	xor a			; $68c6
+	call @addSeed		; $68c7
+	ld a,$01		; $68ca
+	call @addSeed		; $68cc
+	ld a,$02		; $68cf
+@addSeed:
+	ld hl,@positionOffsets		; $68d1
+	rst_addDoubleIndex			; $68d4
+	ld e,Enemy.yh		; $68d5
+	ld a,(de)		; $68d7
+	add (hl)		; $68d8
+	inc hl			; $68d9
+	ld b,a			; $68da
+	ld e,Enemy.xh		; $68db
+	ld a,(de)		; $68dd
+	add (hl)		; $68de
+	ld c,a			; $68df
+
+	call getFreePartSlot		; $68e0
+	ld (hl),PARTID_SEED_ON_TREE		; $68e3
+	inc l			; $68e5
+	ldh a,(<hFF8B)	; $68e6
+	ld (hl),a ; [subid]
+
+	ld l,Part.yh		; $68e9
+	ld (hl),b		; $68eb
+	ld l,Part.xh		; $68ec
+	ld (hl),c		; $68ee
+
+	ld l,Part.relatedObj2	; $68ef
+	ld (hl),Enemy.start	; $68f1
+	inc l			; $68f3
+	ld (hl),d		; $68f4
+	ret			; $68f5
+
+@positionOffsets:
+	.db $f8 $00
+	.db $00 $f8
+	.db $00 $08
+
+.ifdef ROM_SEASONS
+@seasonsTable_0d_68fb:
+	; <hFF8B - required season - checked against wSeedTreeRefilledBitset
+	.db $00	SEASON_WINTER	$80
+	.db $04	SEASON_SUMMER	$40
+	.db $01	SEASON_SPRING	$20
+	.db $02	SEASON_FALL	$10
+	.db $03	SEASON_SUMMER	$08
+	.db $03	SEASON_SUMMER	$04
+.endif
+
+
+@state1:
+	; Waiting for one of the PARTID_SEED_ON_TREE objects to write to var03, indicating
+	; that they were grabbed
+	ld e,Enemy.var03
+	ld a,(de)		; $68fe
+	or a			; $68ff
+	ret z			; $6900
+
+	; Mark seeds as taken
+.ifdef ROM_AGES
+	ld e,Enemy.subid	; $6901
+	ld a,(de)		; $6903
+	and $0f			; $6904
+	ld hl,wSeedTreeRefilledBitset		; $6906
+	call unsetFlag		; $6909
+.else
+	ld e,Enemy.direction	; $6901
+	ld a,(de)		; $6903
+	ld hl,wSeedTreeRefilledBitset		; $6915
 	and (hl)		; $6918
-	ld (hl),a		; $6919
-	jp enemyDelete		; $691a
+	ld (hl),a
+.endif
+	jp enemyDelete		; $690c
 
+
+; ==============================================================================
+; ENEMYID_TWINROVA_ICE
+;
+; Variables:
+;   var3e: ?
+; ==============================================================================
 enemyCode5d:
-	jr z,_label_0d_261	; $691d
-	sub $03			; $691f
-	ret c			; $6921
-	ld e,$aa		; $6922
-	ld a,(de)		; $6924
-	cp $80			; $6925
-	jr z,_label_0d_261	; $6927
-	res 7,a			; $6929
-	sub $02			; $692b
-	cp $02			; $692d
-	call c,$6980		; $692f
-	call _ecom_updateCardinalAngleAwayFromTarget		; $6932
-_label_0d_261:
-	ld e,$84		; $6935
-	ld a,(de)		; $6937
-	rst_jumpTable			; $6938
-	ccf			; $6939
-	ld l,c			; $693a
-	ld d,(hl)		; $693b
-	ld l,c			; $693c
-	ld e,(hl)		; $693d
-	ld l,c			; $693e
-	ld h,d			; $693f
-	ld l,e			; $6940
-	inc (hl)		; $6941
-	ld l,$90		; $6942
-	ld (hl),$46		; $6944
-	ld l,$86		; $6946
-	ld (hl),$78		; $6948
-	ld l,$be		; $694a
-	ld (hl),$08		; $694c
-	ld a,$98		; $694e
-	call playSound		; $6950
-	jp objectSetVisible82		; $6953
-	call _ecom_decCounter1		; $6956
-	jp nz,enemyAnimate		; $6959
-	ld l,e			; $695c
-	inc (hl)		; $695d
-	ld a,$29		; $695e
-	call objectGetRelatedObject1Var		; $6960
-	ld a,(hl)		; $6963
-	or a			; $6964
-	jr z,_label_0d_262	; $6965
-	ld l,$84		; $6967
-	ld a,(hl)		; $6969
-	cp $0a			; $696a
-	jr z,_label_0d_262	; $696c
-	call objectApplySpeed		; $696e
-	call _ecom_bounceOffWallsAndHoles		; $6971
-	ret z			; $6974
-	ld a,$50		; $6975
-	jp playSound		; $6977
-_label_0d_262:
-	call objectCreatePuff		; $697a
-	jp enemyDelete		; $697d
-	ld a,($d008)		; $6980
-	swap a			; $6983
-	ld b,a			; $6985
-	ld e,$89		; $6986
-	ld a,(de)		; $6988
-	add b			; $6989
-	ld hl,$6997		; $698a
-	rst_addAToHl			; $698d
-	ld e,$89		; $698e
-	ld a,(hl)		; $6990
-	ld (de),a		; $6991
-	ld a,$50		; $6992
-	jp playSound		; $6994
-	stop			; $6997
-	rrca			; $6998
-	ld c,$0d		; $6999
-	inc c			; $699b
-	dec bc			; $699c
-	ld a,(bc)		; $699d
-	add hl,bc		; $699e
-	ld ($0607),sp		; $699f
-	dec b			; $69a2
-	inc b			; $69a3
-	inc bc			; $69a4
-	ld (bc),a		; $69a5
-	ld bc,$1f00		; $69a6
-	ld e,$1d		; $69a9
-	inc e			; $69ab
-	dec de			; $69ac
-	ld a,(de)		; $69ad
-	add hl,de		; $69ae
-	jr $17			; $69af
-	ld d,$15		; $69b1
-	inc d			; $69b3
-	inc de			; $69b4
-	ld (de),a		; $69b5
-	ld de,$0f10		; $69b6
-	ld c,$0d		; $69b9
-	inc c			; $69bb
-	dec bc			; $69bc
-	ld a,(bc)		; $69bd
-	add hl,bc		; $69be
-	ld ($0607),sp		; $69bf
-	dec b			; $69c2
-	inc b			; $69c3
-	inc bc			; $69c4
-	ld (bc),a		; $69c5
-	ld bc,$1f00		; $69c6
-	ld e,$1d		; $69c9
-	inc e			; $69cb
-	dec de			; $69cc
-	ld a,(de)		; $69cd
-	add hl,de		; $69ce
-	jr $17			; $69cf
-	ld d,$15		; $69d1
-	inc d			; $69d3
-	inc de			; $69d4
-	ld (de),a		; $69d5
-	ld de,$0f10		; $69d6
-	ld c,$0d		; $69d9
-	inc c			; $69db
-	dec bc			; $69dc
-	ld a,(bc)		; $69dd
-	add hl,bc		; $69de
-	ld ($0607),sp		; $69df
-	dec b			; $69e2
-	inc b			; $69e3
-	inc bc			; $69e4
-	ld (bc),a		; $69e5
-	.db $01
+	jr z,@normalStatus	; $690f
+	sub ENEMYSTATUS_NO_HEALTH			; $6911
+	ret c			; $6913
 
+	; Hit something
+	ld e,Enemy.var2a		; $6914
+	ld a,(de)		; $6916
+	cp $80|ITEMCOLLISION_LINK			; $6917
+	jr z,@normalStatus	; $6919
+
+	res 7,a			; $691b
+	sub ITEMCOLLISION_L2_SHIELD			; $691d
+	cp ITEMCOLLISION_L3_SHIELD-ITEMCOLLISION_L2_SHIELD + 1			; $691f
+	call c,_twinrovaIce_bounceOffShield		; $6921
+	call _ecom_updateCardinalAngleAwayFromTarget		; $6924
+
+@normalStatus:
+	ld e,Enemy.state		; $6927
+	ld a,(de)		; $6929
+	rst_jumpTable			; $692a
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+
+; Initialization
+@state0:
+	ld h,d			; $6931
+	ld l,e			; $6932
+	inc (hl) ; [state]
+
+	ld l,Enemy.speed		; $6934
+	ld (hl),SPEED_1c0		; $6936
+
+	ld l,Enemy.counter1		; $6938
+	ld (hl),120		; $693a
+
+	ld l,Enemy.var3e		; $693c
+	ld (hl),$08		; $693e
+
+	ld a,SND_POOF		; $6940
+	call playSound		; $6942
+	jp objectSetVisible82		; $6945
+
+
+@state1:
+	call _ecom_decCounter1		; $6948
+	jp nz,enemyAnimate		; $694b
+
+	ld l,e			; $694e
+	inc (hl)		; $694f
+
+
+@state2:
+	; Check if parent is dead
+	ld a,Object.health		; $6950
+	call objectGetRelatedObject1Var		; $6952
+	ld a,(hl)		; $6955
+	or a			; $6956
+	jr z,@delete	; $6957
+
+	ld l,Enemy.state		; $6959
+	ld a,(hl)		; $695b
+	cp $0a			; $695c
+	jr z,@delete	; $695e
+
+	call objectApplySpeed		; $6960
+	call _ecom_bounceOffWallsAndHoles		; $6963
+	ret z			; $6966
+	ld a,SND_CLINK		; $6967
+	jp playSound		; $6969
+
+@delete:
+	call objectCreatePuff		; $696c
+	jp enemyDelete		; $696f
+
+
+;;
+; This doesn't appear to do anything other than make a sound, because the angle is
+; immediately overwritten after this is called?
+; @addr{6972}
+_twinrovaIce_bounceOffShield:
+	ld a,(w1Link.direction)		; $6972
+	swap a			; $6975
+	ld b,a			; $6977
+	ld e,Enemy.angle		; $6978
+	ld a,(de)		; $697a
+	add b			; $697b
+	ld hl,@bounceTable		; $697c
+	rst_addAToHl			; $697f
+	ld e,Enemy.angle		; $6980
+	ld a,(hl)		; $6982
+	ld (de),a		; $6983
+	ld a,SND_CLINK		; $6984
+	jp playSound		; $6986
+
+@bounceTable:
+	.db $10 $0f $0e $0d $0c $0b $0a $09
+	.db $08 $07 $06 $05 $04 $03 $02 $01
+
+	.db $00 $1f $1e $1d $1c $1b $1a $19
+	.db $18 $17 $16 $15 $14 $13 $12 $11
+
+	.db $10 $0f $0e $0d $0c $0b $0a $09
+	.db $08 $07 $06 $05 $04 $03 $02 $01
+
+	.db $00 $1f $1e $1d $1c $1b $1a $19
+	.db $18 $17 $16 $15 $14 $13 $12 $11
+
+	.db $10 $0f $0e $0d $0c $0b $0a $09
+	.db $08 $07 $06 $05 $04 $03 $02 $01
+
+
+; ==============================================================================
+; ENEMYID_TWINROVA_BAT
+; ==============================================================================
 enemyCode5e:
-	jr z,++		; $69e7
-	sub $03			; $69e9
-	ret c			; $69eb
-	jp z,enemyDie_uncounted		; $69ec
-++
-	ld a,$01		; $69ef
-	call objectGetRelatedObject1Var		; $69f1
-	ld a,(hl)		; $69f4
-	cp $01			; $69f5
-	jp nz,enemyDelete		; $69f7
-	ld e,$86		; $69fa
-	ld a,(de)		; $69fc
-	inc a			; $69fd
-	and $1f			; $69fe
-	ld a,$78		; $6a00
-	call z,playSound		; $6a02
-	ld e,$84		; $6a05
-	ld a,(de)		; $6a07
-	rst_jumpTable			; $6a08
-	rrca			; $6a09
-	ld l,d			; $6a0a
-	jr z,_label_0d_264	; $6a0b
-	dec (hl)		; $6a0d
-	ld l,d			; $6a0e
-	ld h,d			; $6a0f
-	ld l,e			; $6a10
-	inc (hl)		; $6a11
-	ld l,$90		; $6a12
-	ld (hl),$50		; $6a14
-	ld l,$87		; $6a16
-	ld (hl),$50		; $6a18
-	call getRandomNumber_noPreserveVars		; $6a1a
-	ld e,$86		; $6a1d
-	ld (de),a		; $6a1f
-	ld a,$a8		; $6a20
-	call playSound		; $6a22
-	jp objectSetVisible82		; $6a25
-	call $6a50		; $6a28
-	call _ecom_decCounter2		; $6a2b
-	jr nz,_label_0d_263	; $6a2e
-	ld l,e			; $6a30
-	inc (hl)		; $6a31
-	call _ecom_updateAngleTowardTarget		; $6a32
-	call $6a44		; $6a35
-	jp nc,enemyDelete		; $6a38
-	call $6a50		; $6a3b
-	call objectApplySpeed		; $6a3e
-_label_0d_263:
-	jp enemyAnimate		; $6a41
-	ld e,$8b		; $6a44
-	ld a,(de)		; $6a46
-	cp $b0			; $6a47
-	ret nc			; $6a49
-	ld e,$8d		; $6a4a
-	ld a,(de)		; $6a4c
-	cp $f0			; $6a4d
-	ret			; $6a4f
-	call _ecom_decCounter1		; $6a50
-	ld a,(hl)		; $6a53
-	and $04			; $6a54
-	rrca			; $6a56
-	rrca			; $6a57
-	add $02			; $6a58
-	ld l,$9b		; $6a5a
-	ldi (hl),a		; $6a5c
-	ld (hl),a		; $6a5d
-	ret			; $6a5e
+	jr z,+			; $69d9
+	sub ENEMYSTATUS_NO_HEALTH			; $69db
+	ret c			; $69dd
+	jp z,enemyDie_uncounted		; $69de
++
+	ld a,Object.id		; $69e1
+	call objectGetRelatedObject1Var		; $69e3
+	ld a,(hl)		; $69e6
+	cp ENEMYID_MERGED_TWINROVA			; $69e7
+	jp nz,enemyDelete		; $69e9
 
+	ld e,Enemy.counter1		; $69ec
+	ld a,(de)		; $69ee
+	inc a			; $69ef
+	and $1f			; $69f0
+	ld a,SND_BOOMERANG		; $69f2
+	call z,playSound		; $69f4
+
+	ld e,Enemy.state		; $69f7
+	ld a,(de)		; $69f9
+	rst_jumpTable			; $69fa
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+
+@state0:
+	ld h,d			; $6a01
+	ld l,e			; $6a02
+	inc (hl) ; [state]
+
+	ld l,Enemy.speed		; $6a04
+	ld (hl),SPEED_200		; $6a06
+
+	ld l,Enemy.counter2		; $6a08
+	ld (hl),$50		; $6a0a
+
+	call getRandomNumber_noPreserveVars		; $6a0c
+	ld e,Enemy.counter1		; $6a0f
+	ld (de),a		; $6a11
+
+	ld a,SND_VERAN_FAIRY_ATTACK		; $6a12
+	call playSound		; $6a14
+	jp objectSetVisible82		; $6a17
+
+
+@state1:
+	call @updateOamFlags		; $6a1a
+	call _ecom_decCounter2		; $6a1d
+	jr nz,@animate	; $6a20
+
+	ld l,e			; $6a22
+	inc (hl) ; [state]
+	call _ecom_updateAngleTowardTarget		; $6a24
+
+
+@state2:
+	call @checkInBounds		; $6a27
+	jp nc,enemyDelete		; $6a2a
+
+	call @updateOamFlags		; $6a2d
+	call objectApplySpeed		; $6a30
+@animate:
+	jp enemyAnimate		; $6a33
+
+
+;;
+; @param[out]	cflag	c if in bounds
+; @addr{6a36}
+@checkInBounds:
+	ld e,Enemy.yh		; $6a36
+	ld a,(de)		; $6a38
+	cp LARGE_ROOM_HEIGHT<<4			; $6a39
+	ret nc			; $6a3b
+	ld e,Enemy.xh		; $6a3c
+	ld a,(de)		; $6a3e
+	cp LARGE_ROOM_WIDTH<<4			; $6a3f
+	ret			; $6a41
+
+;;
+; @addr{6a42}
+@updateOamFlags:
+	call _ecom_decCounter1		; $6a42
+	ld a,(hl)		; $6a45
+	and $04			; $6a46
+	rrca			; $6a48
+	rrca			; $6a49
+	add $02			; $6a4a
+	ld l,Enemy.oamFlagsBackup		; $6a4c
+	ldi (hl),a		; $6a4e
+	ld (hl),a		; $6a4f
+	ret			; $6a50
+
+
+; ==============================================================================
+; ENEMYID_GANON_REVIVAL_CUTSCENE
+;
+; Variables:
+;   var30: Copied to counter2?
+;   var31: Nonzero if initialization has occurred? (spawner only)
+; ==============================================================================
 enemyCode60:
-	ld e,$82		; $6a5f
-	ld a,(de)		; $6a61
-	or a			; $6a62
-	ld e,$b1		; $6a63
-	jr z,_label_0d_268	; $6a65
-	ld a,(de)		; $6a67
-	or a			; $6a68
-	jr nz,_label_0d_265	; $6a69
-	ld h,d			; $6a6b
-	ld l,e			; $6a6c
-	inc (hl)		; $6a6d
-	ld l,$90		; $6a6e
-	ld (hl),$50		; $6a70
-	call objectSetVisible83		; $6a72
-	ld a,$d3		; $6a75
-_label_0d_264:
-	call playSound		; $6a77
-_label_0d_265:
-	ld bc,$5478		; $6a7a
-	ld e,$8b		; $6a7d
-	ld a,(de)		; $6a7f
-	ldh (<hFF8F),a	; $6a80
-	ld e,$8d		; $6a82
-	ld a,(de)		; $6a84
-	ldh (<hFF8E),a	; $6a85
-	sub c			; $6a87
-	add $08			; $6a88
-	cp $11			; $6a8a
-	jr nc,_label_0d_266	; $6a8c
-	ldh a,(<hFF8F)	; $6a8e
-	sub b			; $6a90
-	add $08			; $6a91
-	cp $11			; $6a93
-	jp c,enemyDelete		; $6a95
-_label_0d_266:
-	ld a,(wFrameCounter)		; $6a98
-	and $07			; $6a9b
-	jr nz,_label_0d_267	; $6a9d
-	call objectGetRelativeAngleWithTempVars		; $6a9f
-	call objectNudgeAngleTowards		; $6aa2
-_label_0d_267:
-	call objectApplySpeed		; $6aa5
-	jp _ecom_flickerVisibility		; $6aa8
-_label_0d_268:
-	ld a,(de)		; $6aab
-	or a			; $6aac
-	jr nz,_label_0d_269	; $6aad
-	ld a,($c4ab)		; $6aaf
-	or a			; $6ab2
-	ret nz			; $6ab3
-	ld h,d			; $6ab4
-	ld l,e			; $6ab5
-	inc (hl)		; $6ab6
-	ld l,$b0		; $6ab7
-	ld (hl),$28		; $6ab9
-	call hideStatusBar		; $6abb
-	ldh a,(<hActiveObject)	; $6abe
-	ld d,a			; $6ac0
-	ld a,$0e		; $6ac1
-	call fadeoutToBlackWithDelay		; $6ac3
-	xor a			; $6ac6
-	ld ($c4b2),a		; $6ac7
-	ld ($c4b4),a		; $6aca
-_label_0d_269:
-	call _ecom_decCounter2		; $6acd
-	ret nz			; $6ad0
-	dec l			; $6ad1
-	ld a,(hl)		; $6ad2
-	cp $10			; $6ad3
-	inc (hl)		; $6ad5
-	jr nc,_label_0d_270	; $6ad6
-	call $6af4		; $6ad8
-	ld e,$b0		; $6adb
-	ld a,(de)		; $6add
-	ld e,$87		; $6ade
-	ld (de),a		; $6ae0
-	ld e,$b0		; $6ae1
-	ld a,(de)		; $6ae3
-	sub $04			; $6ae4
-	cp $10			; $6ae6
-	ret c			; $6ae8
-	ld (de),a		; $6ae9
-	ret			; $6aea
-_label_0d_270:
-	ld a,$06		; $6aeb
-	call objectGetRelatedObject1Var		; $6aed
-	inc (hl)		; $6af0
-	jp enemyDelete		; $6af1
-	call getFreeEnemySlot_uncounted		; $6af4
-	ret nz			; $6af7
-	ld (hl),$60		; $6af8
-	inc l			; $6afa
-	inc (hl)		; $6afb
-	ld e,$86		; $6afc
-	ld a,(de)		; $6afe
-	and $07			; $6aff
-	ld b,a			; $6b01
-	add a			; $6b02
-	add b			; $6b03
-	ld bc,$6b18		; $6b04
-	call addAToBc		; $6b07
-	ld l,$8b		; $6b0a
-	ld a,(bc)		; $6b0c
-	ldi (hl),a		; $6b0d
-	inc l			; $6b0e
-	inc bc			; $6b0f
-	ld a,(bc)		; $6b10
-	ld (hl),a		; $6b11
-	ld l,$89		; $6b12
-	inc bc			; $6b14
-	ld a,(bc)		; $6b15
-	ld (hl),a		; $6b16
-	ret			; $6b17
-	ld h,b			; $6b18
-	ld a,($ff00+$19)	; $6b19
-	cp b			; $6b1b
-	ret nc			; $6b1c
-	nop			; $6b1d
-	sub b			; $6b1e
-	nop			; $6b1f
-	ld (bc),a		; $6b20
-	ld b,b			; $6b21
-	ld a,($ff00+$16)	; $6b22
-	cp b			; $6b24
-	ld h,b			; $6b25
-	ld e,$b8		; $6b26
-	jr nz,_label_0d_271	; $6b28
-	sub b			; $6b2a
-	ld a,($ff00+$18)	; $6b2b
-	ld b,b			; $6b2d
-	nop			; $6b2e
-_label_0d_271:
-	ld b,$46		; $6b2f
-	ld l,e			; $6b31
-	ld d,e			; $6b32
-	ld l,e			; $6b33
-	ld h,b			; $6b34
-	ld l,e			; $6b35
-	ld l,l			; $6b36
-	ld l,e			; $6b37
-	ld a,d			; $6b38
-	ld l,e			; $6b39
-	add a			; $6b3a
-	ld l,e			; $6b3b
-	sub b			; $6b3c
-	ld l,e			; $6b3d
-	sbc c			; $6b3e
-	ld l,e			; $6b3f
-	and d			; $6b40
-	ld l,e			; $6b41
-	xor e			; $6b42
-	ld l,e			; $6b43
-	or h			; $6b44
-	ld l,e			; $6b45
-	inc d			; $6b46
-	nop			; $6b47
-	ld (bc),a		; $6b48
-	jr c,_label_0d_272	; $6b49
-	inc d			; $6b4b
-	inc b			; $6b4c
-	jr _label_0d_273		; $6b4d
-	inc d			; $6b4f
-_label_0d_272:
-	nop			; $6b50
-	ld c,b			; $6b51
-	ld l,e			; $6b52
-	inc a			; $6b53
-_label_0d_273:
-	nop			; $6b54
-	ld (bc),a		; $6b55
-	ld c,b			; $6b56
-	dec b			; $6b57
-	inc d			; $6b58
-	inc b			; $6b59
-	jr $05			; $6b5a
-	inc d			; $6b5c
-	nop			; $6b5d
-	ld d,l			; $6b5e
-	ld l,e			; $6b5f
-	jr z,_label_0d_274	; $6b60
-_label_0d_274:
-	ld (bc),a		; $6b62
-	ld c,b			; $6b63
-	dec b			; $6b64
-	inc d			; $6b65
-	inc b			; $6b66
-	jr _label_0d_275		; $6b67
-	inc d			; $6b69
-	nop			; $6b6a
-	ld h,d			; $6b6b
-	ld l,e			; $6b6c
-	inc d			; $6b6d
-_label_0d_275:
-	nop			; $6b6e
-	ld (bc),a		; $6b6f
-	ld c,b			; $6b70
-	dec b			; $6b71
-	inc d			; $6b72
-	inc b			; $6b73
-	jr _label_0d_276		; $6b74
-	inc d			; $6b76
-	nop			; $6b77
-	ld l,a			; $6b78
-	ld l,e			; $6b79
-	inc d			; $6b7a
-_label_0d_276:
-	nop			; $6b7b
-	ld (bc),a		; $6b7c
-	ret c			; $6b7d
-	dec b			; $6b7e
-	inc d			; $6b7f
-	inc b			; $6b80
-	cp b			; $6b81
-	dec b			; $6b82
-	inc d			; $6b83
-	nop			; $6b84
-	ld a,h			; $6b85
-	ld l,e			; $6b86
-	ld a,b			; $6b87
-	nop			; $6b88
-	ld (bc),a		; $6b89
-	ld a,b			; $6b8a
-	inc b			; $6b8b
-	jr c,_label_0d_277	; $6b8c
-_label_0d_277:
-	adc c			; $6b8e
-	ld l,e			; $6b8f
-	ld (hl),e		; $6b90
-	nop			; $6b91
-	ld (bc),a		; $6b92
-	ld a,b			; $6b93
-	inc b			; $6b94
-	jr c,_label_0d_278	; $6b95
-_label_0d_278:
-	sub d			; $6b97
-	ld l,e			; $6b98
-	ld l,(hl)		; $6b99
-	nop			; $6b9a
-	ld (bc),a		; $6b9b
-	ld a,b			; $6b9c
-	inc b			; $6b9d
-	jr c,_label_0d_279	; $6b9e
-_label_0d_279:
-	sbc e			; $6ba0
-	ld l,e			; $6ba1
-	ld l,c			; $6ba2
-	nop			; $6ba3
-	ld (bc),a		; $6ba4
-	ld a,b			; $6ba5
-	inc b			; $6ba6
-	jr c,_label_0d_280	; $6ba7
-_label_0d_280:
-	and h			; $6ba9
-	ld l,e			; $6baa
-	ld h,h			; $6bab
-	nop			; $6bac
-	ld (bc),a		; $6bad
-	ld a,b			; $6bae
-	inc b			; $6baf
-	jr c,_label_0d_281	; $6bb0
-_label_0d_281:
-	xor l			; $6bb2
-	ld l,e			; $6bb3
-	ld e,a			; $6bb4
-	nop			; $6bb5
-	ld (bc),a		; $6bb6
-	ld a,b			; $6bb7
-	inc b			; $6bb8
-	jr c,_label_0d_282	; $6bb9
-_label_0d_282:
-	or (hl)			; $6bbb
-	ld l,e			; $6bbc
+	ld e,Enemy.subid		; $6a51
+	ld a,(de)		; $6a53
+	or a			; $6a54
+	ld e,Enemy.var31		; $6a55
+	jr z,_ganonRevivalCutscene_controller	; $6a57
 
+	; This is an individual shadow in the cutscene.
+
+	ld a,(de)		; $6a59
+	or a			; $6a5a
+	jr nz,_label_266	; $6a5b
+
+	ld h,d			; $6a5d
+	ld l,e			; $6a5e
+	inc (hl) ; [state]
+
+	ld l,Enemy.speed		; $6a60
+	ld (hl),SPEED_200		; $6a62
+
+	call objectSetVisible83		; $6a64
+
+	ld a,SND_WIND		; $6a67
+	call playSound		; $6a69
+
+_label_266:
+	ld bc,$5478		; $6a6c
+	ld e,Enemy.yh		; $6a6f
+	ld a,(de)		; $6a71
+	ldh (<hFF8F),a	; $6a72
+	ld e,Enemy.xh		; $6a74
+	ld a,(de)		; $6a76
+	ldh (<hFF8E),a	; $6a77
+	sub c			; $6a79
+	add $08			; $6a7a
+	cp $11			; $6a7c
+	jr nc,_label_267	; $6a7e
+
+	ldh a,(<hFF8F)	; $6a80
+	sub b			; $6a82
+	add $08			; $6a83
+	cp $11			; $6a85
+	jp c,enemyDelete		; $6a87
+
+_label_267:
+	; Nudge toward target every 8 frames
+	ld a,(wFrameCounter)		; $6a8a
+	and $07			; $6a8d
+	jr nz,++		; $6a8f
+	call objectGetRelativeAngleWithTempVars		; $6a91
+	call objectNudgeAngleTowards		; $6a94
+++
+	call objectApplySpeed		; $6a97
+	jp _ecom_flickerVisibility		; $6a9a
+
+
+_ganonRevivalCutscene_controller:
+	ld a,(de) ; [var31]
+	or a			; $6a9e
+	jr nz,_label_270	; $6a9f
+
+	; Just starting the cutscene
+
+	ld a,(wPaletteThread_mode)		; $6aa1
+	or a			; $6aa4
+	ret nz			; $6aa5
+
+	ld h,d			; $6aa6
+	ld l,e			; $6aa7
+	inc (hl) ; [var31] = 1
+
+	ld l,Enemy.var30		; $6aa9
+	ld (hl),$28		; $6aab
+
+	call hideStatusBar		; $6aad
+
+	ldh a,(<hActiveObject)	; $6ab0
+	ld d,a			; $6ab2
+	ld a,$0e		; $6ab3
+	call fadeoutToBlackWithDelay		; $6ab5
+
+	xor a			; $6ab8
+	ld (wDirtyFadeSprPalettes),a		; $6ab9
+	ld (wFadeSprPaletteSources),a		; $6abc
+
+_label_270:
+	call _ecom_decCounter2		; $6abf
+	ret nz			; $6ac2
+
+	; Check number of shadows spawned already
+	dec l			; $6ac3
+	ld a,(hl) ; [counter1]
+	cp $10			; $6ac5
+	inc (hl)		; $6ac7
+	jr nc,@delete	; $6ac8
+
+	call _ganonRevivalCutscene_spawnShadow		; $6aca
+
+	ld e,Enemy.var30		; $6acd
+	ld a,(de)		; $6acf
+	ld e,Enemy.counter2		; $6ad0
+	ld (de),a		; $6ad2
+
+	ld e,Enemy.var30		; $6ad3
+	ld a,(de)		; $6ad5
+	sub $04			; $6ad6
+	cp $10			; $6ad8
+	ret c			; $6ada
+	ld (de),a		; $6adb
+	ret			; $6adc
+
+@delete:
+	; Signal parent to move to next phase of cutscene?
+	ld a,Object.counter1		; $6add
+	call objectGetRelatedObject1Var		; $6adf
+	inc (hl)		; $6ae2
+	jp enemyDelete		; $6ae3
+
+;;
+; @addr{6ae6}
+_ganonRevivalCutscene_spawnShadow:
+	call getFreeEnemySlot_uncounted		; $6ae6
+	ret nz			; $6ae9
+
+	ld (hl),ENEMYID_GANON_REVIVAL_CUTSCENE		; $6aea
+	inc l			; $6aec
+	inc (hl) ; [child.subid] = 1
+
+	ld e,Enemy.counter1		; $6aee
+	ld a,(de)		; $6af0
+	and $07			; $6af1
+	ld b,a			; $6af3
+	add a			; $6af4
+	add b			; $6af5
+	ld bc,@shadowVariables		; $6af6
+	call addAToBc		; $6af9
+
+	ld l,Enemy.yh		; $6afc
+	ld a,(bc)		; $6afe
+	ldi (hl),a		; $6aff
+	inc l			; $6b00
+	inc bc			; $6b01
+	ld a,(bc)		; $6b02
+	ld (hl),a ; [xh]
+
+	ld l,Enemy.angle		; $6b04
+	inc bc			; $6b06
+	ld a,(bc)		; $6b07
+	ld (hl),a		; $6b08
+	ret			; $6b09
+
+; Byte 0: yh
+; Byte 1: xh
+; Byte 2: angle
+@shadowVariables:
+	.db $60 $f0 $19
+	.db $b8 $d0 $00
+	.db $90 $00 $02
+	.db $40 $f0 $16
+	.db $b8 $60 $1e
+	.db $b8 $20 $05
+	.db $90 $f0 $18
+	.db $40 $00 $06
+
+;;; split
+
+seasonsTable_0d_6b30:
+	.dw @index0
+	.dw @index1
+	.dw @index2
+	.dw @index3
+	.dw @index4
+	.dw @index5
+	.dw @index6
+	.dw @index7
+	.dw @index8
+	.dw @index9
+	.dw @indexA
+
+@index0:
+	.db $14 $00 $02 $38
+	.db $05 $14 $04 $18
+	.db $05 $14 $00 $48
+	.db $6b
+
+@index1:
+	.db $3c $00 $02 $48
+	.db $05 $14 $04 $18
+	.db $05 $14 $00 $55
+	.db $6b
+
+@index2:
+	.db $28 $00 $02 $48
+	.db $05 $14 $04 $18
+	.db $05 $14 $00 $62
+	.db $6b
+
+@index3:
+	.db $14 $00 $02 $48
+	.db $05 $14 $04 $18
+	.db $05 $14 $00 $6f
+	.db $6b
+
+@index4:
+	.db $14 $00 $02 $d8
+	.db $05 $14 $04 $b8
+	.db $05 $14 $00 $7c
+	.db $6b
+
+@index5:
+	.db $78 $00 $02 $78
+	.db $04 $38 $00 $89
+	.db $6b
+
+@index6:
+	.db $73 $00 $02 $78
+	.db $04 $38 $00 $92
+	.db $6b
+
+@index7:
+	.db $6e $00 $02 $78
+	.db $04 $38 $00 $9b
+	.db $6b
+
+@index8:
+	.db $69 $00 $02 $78
+	.db $04 $38 $00 $a4
+	.db $6b
+
+@index9:
+	.db $64 $00 $02 $78
+	.db $04 $38 $00 $ad
+	.db $6b
+
+@indexA:
+	.db $5f $00 $02 $78
+	.db $04 $38 $00 $b6
+	.db $6b
+
+
+; ==============================================================================
+; ENEMYID_MAGUNESU
+; ==============================================================================
 enemyCode3c:
 	jr z,_label_0d_283	; $6bbd
 	sub $03			; $6bbf
@@ -6535,6 +8933,9 @@ _label_0d_289:
 	jp enemyDelete		; $6d86
 	ret			; $6d89
 
+; ==============================================================================
+; ENEMYID_???
+; ==============================================================================
 enemyCode46:
 	jr z,_label_0d_291	; $6d8a
 	sub $03			; $6d8c
@@ -6852,6 +9253,9 @@ _label_0d_303:
 	ld e,d			; $6fa3
 	ld e,d			; $6fa4
 
+; ==============================================================================
+; ENEMYID_???
+; ==============================================================================
 enemyCode47:
 	jr z,_label_0d_304	; $6fa5
 	sub $03			; $6fa7
@@ -7009,6 +9413,9 @@ _label_0d_312:
 	ld (hl),a		; $7095
 	jp enemySetAnimation		; $7096
 
+; ==============================================================================
+; ENEMYID_???
+; ==============================================================================
 enemyCode54:
 	jr z,_label_0d_313	; $7099
 	sub $03			; $709b
@@ -7539,6 +9946,9 @@ _label_0d_328:
 	ld (hl),a		; $73e7
 	ret			; $73e8
 
+; ==============================================================================
+; ENEMYID_???
+; ==============================================================================
 enemyCode55:
 	jr z,_label_0d_331	; $73e9
 	sub $03			; $73eb
@@ -7766,6 +10176,9 @@ _label_0d_336:
 	ld a,$a3		; $754d
 	jp playSound		; $754f
 
+; ==============================================================================
+; ENEMYID_???
+; ==============================================================================
 enemyCode56:
 	jr z,_label_0d_337	; $7552
 	ld e,$84		; $7554
@@ -7901,6 +10314,9 @@ _label_0d_342:
 	inc (hl)		; $761c
 	ret			; $761d
 
+; ==============================================================================
+; ENEMYID_???
+; ==============================================================================
 enemyCode5b:
 	ld e,$84		; $761e
 	ld a,(de)		; $7620
@@ -7925,6 +10341,9 @@ enemyCode5b:
 	inc (hl)		; $763e
 	jp objectSetVisible83		; $763f
 
+; ==============================================================================
+; ENEMYID_WALL_FLAME_SHOOTER
+; ==============================================================================
 enemyCode5c:
 	dec a			; $7642
 	ret z			; $7643
@@ -7957,6 +10376,9 @@ enemyCode5c:
 	ld bc,$0600		; $766b
 	jp objectCopyPositionWithOffset		; $766e
 
+; ==============================================================================
+; ENEMYID_???
+; ==============================================================================
 enemyCode5f:
 	jr z,_label_0d_344	; $7671
 	call $7986		; $7673

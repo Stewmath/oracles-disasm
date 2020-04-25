@@ -1756,7 +1756,7 @@ wWarpTransition2: ; $cc4b/$cc67
 ; Does bit 7 do something?
 	db
 
-wWarpDestVariablesEnd: ; $cc4c
+wWarpDestVariablesEnd: ; $cc4c;$cc68
 	.db
 
 wcc4c: ; $cc4c/$cc68

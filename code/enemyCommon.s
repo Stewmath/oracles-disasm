@@ -1127,7 +1127,7 @@ _ecom_readPositionVars:
 ; @param[out]	zflag
 _ecom_seasonsFunc_4446:
 	ld b,a			; $4446
-	ld a,($cc79) ; TODO: figure out what this corresponds to in ages (if anything)
+	ld a,(wMagnetGloveState) ; TODO: figure out what this corresponds to in ages (if anything)
 	or a			; $444a
 	ld a,b			; $444b
 	jp z,_ecom_checkHazards		; $444c

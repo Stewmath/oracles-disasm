@@ -387,12 +387,16 @@
 ; aren't used in Ages, this was probably untested.
 .define ENEMYID_GIANT_CUCCO			$3b
 
+.ifdef ROM_AGES
 ;;
 ; Jellyfish enemy that splits in two. The large ones always hover close to their spawn
 ; position, the small ones move toward Link.
 ; @subid_00{Normal version}
 ; @subid_01{Small version}
 .define ENEMYID_BARI				$3c
+.else
+.define ENEMYID_MAGUNESU			$3c
+.endif
 
 ;;
 ; Moblin with a sword.
@@ -600,7 +604,11 @@
 .define ENEMYID_SEEDS_ON_TREE			$5a
 
 .define ENEMYID_STUB_5b				$5b
+.ifdef ROM_AGES
 .define ENEMYID_STUB_5c				$5c
+.else
+.define ENEMYID_WALL_FLAME_SHOOTER		$5c
+.endif
 
 ;;
 ; Ice projectiles used in Twinrova battle
