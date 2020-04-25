@@ -1068,7 +1068,11 @@ _moblin_state_9:
 ; ENEMYID_ARROW_DARKNUT
 ; ==============================================================================
 enemyCode21:
+.ifdef ROM_AGES
 	call _ecom_checkHazards		; $4a02
+.else
+	call _ecom_seasonsFunc_4446
+.endif
 	jr z,@normalStatus	; $4a05
 	sub ENEMYSTATUS_NO_HEALTH			; $4a07
 	ret c			; $4a09
@@ -1376,6 +1380,7 @@ enemyCode0d:
 
 ; ==============================================================================
 ; ENEMYID_BLADE_TRAP
+; ENEMYID_FLAME_TRAP
 ;
 ; Variables for normal traps:
 ;   var30: Speed
@@ -1386,6 +1391,9 @@ enemyCode0d:
 ;   var32: Radius of circle for circular traps
 ; ==============================================================================
 enemyCode0e:
+.ifdef ROM_SEASONS
+enemyCode2b:
+.endif
 	dec a			; $4b9e
 	ret z			; $4b9f
 	dec a			; $4ba0
@@ -2486,8 +2494,13 @@ enemyCode13:
 	ld e,Enemy.var2a		; $508b
 	ld a,(de)		; $508d
 	res 7,a			; $508e
+.ifdef ROM_AGES
 	sub ITEMCOLLISION_BOOMERANG			; $5090
 	cp $01			; $5092
+.else
+	sub ITEMCOLLISION_BOOMERANG-2			; $5090
+	cp $02			; $5092
+.endif
 	jr nc,@normalStatus	; $5094
 
 	; Collision with boomerang occurred. Go to state 9.
@@ -2579,8 +2592,13 @@ enemyCode19:
 	ld e,Enemy.var2a		; $5101
 	ld a,(de)		; $5103
 	res 7,a			; $5104
+.ifdef ROM_AGES
 	sub ITEMCOLLISION_BOOMERANG			; $5106
 	cp $01			; $5108
+.else
+	sub ITEMCOLLISION_BOOMERANG-2			; $5106
+	cp $02			; $5108
+.endif
 	jr nc,@normalStatus	; $510a
 
 	; Hit with boomerang
@@ -2785,7 +2803,11 @@ enemyCode14:
 	; Check if the collision was a shovel or shield (enemy will flip over)
 	ld e,Enemy.var2a		; $51f1
 	ld a,(de)		; $51f3
+.ifdef ROM_AGES
 	cp $80|ITEMCOLLISION_SHOVEL			; $51f4
+.else
+	cp $80|ITEMCOLLISION_SHOVEL+1			; $51f4
+.endif
 	jr z,++			; $51f6
 	res 7,a			; $51f8
 	sub ITEMCOLLISION_L1_SHIELD			; $51fa
@@ -4337,7 +4359,7 @@ _armos_subid00:
 
 ; Waiting for Link to touch the statue (or for "$cca2" trigger?)
 _armos_subid00_state8:
-	ld a,($cca2)		; $5956
+	ld a,(wcca2)		; $5956
 	or a			; $5959
 	ret z			; $595a
 	ld a,$09		; $595b
@@ -4692,7 +4714,11 @@ _fish_subid00:
 	ld l,e			; $5ae1
 	inc (hl)		; $5ae2
 	ld l,Enemy.enemyCollisionMode		; $5ae3
+.ifdef ROM_AGES
 	ld (hl),ENEMYCOLLISION_SWITCHHOOK_DAMAGE_ENEMY		; $5ae5
+.else
+	ld (hl),ENEMYCOLLISION_STANDARD_ENEMY		; $5ae5
+.endif
 	ld l,Enemy.zh		; $5ae7
 	ld (hl),$00		; $5ae9
 
@@ -5097,7 +5123,11 @@ enemyCode24:
 	ld c,(hl)		; $5cb3
 
 	; Don't eat him if Link would (somehow) get stuck in a wall
+.ifdef ROM_AGES
 	callab bank5.checkPositionSurroundedByWalls		; $5cb4
+.else
+	callab bank5.seasonsFunc_05_5d74		; $5cb4
+.endif
 	rl b			; $5cbc
 	jp c,_likelike_releaseLink		; $5cbe
 
@@ -7613,6 +7643,8 @@ _thwomp_updateLinkRidingSelf:
 	ld (wLinkRidingObject),a		; $67f9
 	ret			; $67fc
 
+
+;;; split
 
 ; ==============================================================================
 ; ENEMYID_VERAN_SPIDER

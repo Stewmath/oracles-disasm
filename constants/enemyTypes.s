@@ -89,12 +89,17 @@
 ; @subid_05{Green blade trap (unlimited range)}
 .define ENEMYID_BLADE_TRAP			$0e
 
+.ifdef ROM_AGES
 ;;
 ; Spider that Veran spawns when fighting possessed Ambi. Spawns in a random position within
 ; the screen boundary. If used in a small room, it could spawn off-screen...
 ; @palette{PALH_8a}
 ; @postype{none}
 .define ENEMYID_VERAN_SPIDER			$0f
+.else
+;;
+.define ENEMYID_ROLLING_SPIKE_TRAP		$0f
+.endif
 
 ;;
 ; Rope = snake
@@ -104,6 +109,7 @@
 ; @subid_03{Falls and bounces toward Link when it spawns}
 .define ENEMYID_ROPE				$10
 
+.ifdef ROM_AGES
 ;;
 ; Part of D4 boss (ENEMYID_EYESOAR)
 ; @subid_00{Spawns above eyesoar}
@@ -111,6 +117,9 @@
 ; @subid_02{Below eyesoar}
 ; @subid_03{Left of eyesoar}
 .define ENEMYID_EYESOAR_CHILD			$11
+.else
+.define ENEMYID_POKEY				$11
+.endif
 
 ;;
 .define ENEMYID_GIBDO				$12
@@ -264,11 +273,15 @@
 ; @subid_03{Plain, same as Red but starts facing down, moves counterclockwise}
 .define ENEMYID_GIANT_BLADE_TRAP		$2a
 
+.ifdef ROM_AGES
 ;;
 ; This object allows down-transitions to work in the "donkey kong" sidescrolling area with
 ; vire. In particular, it forces a transition to occur if Link falls onto the bottom
 ; boundary of the screen, and is far enough to the right side of the screen.
 .define ENEMYID_ENABLE_SIDESCROLL_DOWN_TRANSITION	$2b
+.else
+.define ENEMYID_FLAME_TRAP				$2b
+.endif
 
 ;;
 ; Fish in sidescrolling areas that moves back and forth.

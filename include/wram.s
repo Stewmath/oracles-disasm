@@ -2122,7 +2122,7 @@ wActiveTriggers: ; $cca0
 ; $cca1-$cca2: Changes behaviour of chests in shops? (For the chest game probably)
 wcca1: ; $cca1
 	db
-wcca2: ; $cca2
+wcca2: ; $cca2/$ccbc
 ; Position of a chest?
 ; When a nonzero value is written here, dormant armos statues with subid 0 begin moving?
 	db

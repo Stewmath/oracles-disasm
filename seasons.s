@@ -10667,8 +10667,10 @@ _label_05_206:
 	ld e,$33		; $5d70
 	ld (de),a		; $5d72
 	ret			; $5d73
-	call $5d85		; $5d74
-_label_05_207:
+
+seasonsFunc_05_5d74:
+	call seasonsFunc_05_5d85		; $5d74
+-
 	ld b,$80		; $5d77
 	cp $ff			; $5d79
 	ret z			; $5d7b
@@ -10676,16 +10678,17 @@ _label_05_207:
 	rl b			; $5d7d
 	rra			; $5d7f
 	rl b			; $5d80
-	jr nz,_label_05_207	; $5d82
+	jr nz,-	; $5d82
 	ret			; $5d84
+seasonsFunc_05_5d85:
 	ld a,$01		; $5d85
 	ldh (<hFF8B),a	; $5d87
-	ld hl,$5da9		; $5d89
-	ld a,($cc50)		; $5d8c
+	ld hl,seasonsTable_05_5da9		; $5d89
+	ld a,(wTilesetFlags)		; $5d8c
 	and $20			; $5d8f
-	jr z,_label_05_208	; $5d91
-	ld hl,$5db9		; $5d93
-_label_05_208:
+	jr z,seasonsFunc_05_5d85_helper	; $5d91
+	ld hl,seasonsTable_05_5db9		; $5d93
+seasonsFunc_05_5d85_helper:
 	ldi a,(hl)		; $5d96
 	add b			; $5d97
 	ld b,a			; $5d98
@@ -10698,40 +10701,28 @@ _label_05_208:
 	ldh a,(<hFF8B)	; $5da1
 	rla			; $5da3
 	ldh (<hFF8B),a	; $5da4
-	jr nc,_label_05_208	; $5da6
+	jr nc,seasonsFunc_05_5d85_helper	; $5da6
 	ret			; $5da8
-.DB $fd				; $5da9
-.DB $fd				; $5daa
-	nop			; $5dab
-	dec b			; $5dac
-	ld a,(bc)		; $5dad
-	ei			; $5dae
-	nop			; $5daf
-	dec b			; $5db0
-	ld sp,hl		; $5db1
-	ld sp,hl		; $5db2
-	dec b			; $5db3
-	nop			; $5db4
-	ei			; $5db5
-	add hl,bc		; $5db6
-	dec b			; $5db7
-	nop			; $5db8
-.DB $fd				; $5db9
-.DB $fd				; $5dba
-	nop			; $5dbb
-	dec b			; $5dbc
-	ld a,(bc)		; $5dbd
-	ei			; $5dbe
-	nop			; $5dbf
-	dec b			; $5dc0
-	ld sp,hl		; $5dc1
-	ld sp,hl		; $5dc2
-	dec b			; $5dc3
-	nop			; $5dc4
-	ei			; $5dc5
-	add hl,bc		; $5dc6
-	dec b			; $5dc7
-	nop			; $5dc8
+seasonsTable_05_5da9:
+	.db $fd $fd
+	.db $00 $05
+	.db $0a $fb
+	.db $00 $05
+	.db $f9 $f9
+	.db $05 $00
+	.db $fb $09
+	.db $05 $00
+; same as above table
+seasonsTable_05_5db9:
+	.db $fd $fd
+	.db $00 $05
+	.db $0a $fb
+	.db $00 $05
+	.db $f9 $f9
+	.db $05 $00
+	.db $fb $09
+	.db $05 $00
+
 	push hl			; $5dc9
 	ld hl,wLinkImmobilized		; $5dca
 	res 4,(hl)		; $5dcd
