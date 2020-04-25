@@ -12582,11 +12582,11 @@ updateAnimationsAfterCutscene:
 loadScreenMusic:
 	ldh a,(<hRomBank)	; $33cf
 	push af			; $33d1
-	ld a,:groupMusicPointerTable
+	ld a,:musicAssignmentGroupTable
 	setrombank		; $33d4
 
 	ld a,(wActiveGroup)		; $33d9
-	ld hl,groupMusicPointerTable
+	ld hl,musicAssignmentGroupTable
 	rst_addDoubleIndex			; $33df
 	ldi a,(hl)		; $33e0
 	ld h,(hl)		; $33e1
