@@ -32,10 +32,12 @@ endif
 ifdef ROM_SEASONS
 	DEFINES += -D ROM_SEASONS -D FORCE_SECTIONS # TODO: remove force_sections later
 	GAME = seasons
+	OTHERGAME = ages
 	TEXT_INSERT_ADDRESS = 0x71c00
 else # ROM_AGES
 	DEFINES += -D ROM_AGES
 	GAME = ages
+	OTHERGAME = seasons
 	TEXT_INSERT_ADDRESS = 0x74000
 endif
 
@@ -76,6 +78,10 @@ MAPPINGINDICESFILES := $(MAPPINGINDICESFILES:.bin=Indices.cmp)
 # Game-specific data files
 GAMEDATAFILES = $(wildcard data/$(GAME)/*.s)
 GAMEDATAFILES := $(foreach file,$(GAMEDATAFILES),build/data/$(notdir $(file)))
+
+MAIN_ASM_FILES = $(shell find code/ objects/ scripts/ -name '*.s' | grep -v '/$(OTHERGAME)/')
+AUDIO_FILES = $(shell find audio/ -name '*.s' -o -name '*.bin' | grep -v '/$(OTHERGAME)/')
+COMMON_INCLUDE_FILES = $(shell find constants/ include/ -name '*.s' | grep -v '/$(OTHERGAME)/')
 
 
 ifneq ($(BUILD_VANILLA),true)
@@ -118,16 +124,15 @@ $(GAME).gbc: $(OBJS) build/linkfile
 $(MAPPINGINDICESFILES): build/tileset_layouts/mappingsDictionary.bin
 $(COLLISIONFILES): build/tileset_layouts/collisionsDictionary.bin
 
+build/$(GAME).o: $(MAIN_ASM_FILES)
 build/$(GAME).o: $(GFXFILES) $(ROOMLAYOUTFILES) $(COLLISIONFILES) $(MAPPINGINDICESFILES) $(GAMEDATAFILES)
-build/$(GAME).o: build/textData.s build/textDefines.s
-build/$(GAME).o: code/*.s code/items/*.s code/$(GAME)/*.s data/*.s objects/*.s objects/$(GAME)/*.s scripts/$(GAME)/*.s
 build/$(GAME).o: build/tileset_layouts/tileMappingTable.bin build/tileset_layouts/tileMappingIndexData.bin build/tileset_layouts/tileMappingAttributeData.bin
 build/$(GAME).o: rooms/$(GAME)/*.bin
 
-build/audio.o: audio/$(GAME)/*.s audio/$(GAME)/*.bin
-build/*.o: include/*.s constants/*.s Makefile
+build/audio.o: $(AUDIO_FILES)
+build/*.o: $(COMMON_INCLUDE_FILES) Makefile
 
-build/$(GAME).o: $(GAME).s Makefile | build
+build/$(GAME).o: $(GAME).s build/textData.s build/textDefines.s Makefile | build
 	$(CC) -o $@ $(CFLAGS) $<
 
 build/%.o: code/%.s | build
