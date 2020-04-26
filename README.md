@@ -24,11 +24,11 @@ will try to build them in parallel which doesn't currently work).
 
 By default, the rom is built with precompressed assets, so that an exact copy of the
 original game is produced. In order to edit text, graphics, and other things, run the
-"swapbuild.sh" script. This will switch the build mode to "modifiable" instead of
-"precompressed".
+"./swapbuild.sh" script in the root of the repository. This will switch the build mode to
+"modifiable" instead of "precompressed".
 
-There are 4 build directories, which are dynamically renamed and symlinked depending on
-which game is being built and what the build mode is.
+There are 4 build directories (for ages and seasons, vanilla or editable) which are
+symlinked to the "build" directory depending on which game is built for which mode.
 
 [See the wiki](https://wiki.zeldahacking.net/oracle/Setting_up_ages-disasm) for detailed
 setup instructions.
