@@ -56,3 +56,8 @@ workflows:
           game: seasons
           requires:
             - build-wla
+          filters: # For now, expanded-tilesets branch doesn't support Seasons
+            branches:
+              ignore:
+                - qol/expanded-tilesets
+                - hack-base
