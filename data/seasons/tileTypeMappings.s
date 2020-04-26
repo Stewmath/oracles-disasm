@@ -1,179 +1,135 @@
+; This table maps a tile index to a tileType (see constants/tileTypes.s).
+; @addr{7bad}
 tileTypesTable:
-	cp c			; $7bad
-	ld a,e			; $7bae
-.DB $ec				; $7baf
-	ld a,e			; $7bb0
-	add hl,hl		; $7bb1
-	ld a,h			; $7bb2
-	ldd (hl),a		; $7bb3
-	ld a,h			; $7bb4
-	ldd (hl),a		; $7bb5
-	ld a,h			; $7bb6
-	ld (hl),e		; $7bb7
-	ld a,h			; $7bb8
-	jr nz,_label_05_432	; $7bb9
-	di			; $7bbb
-	ld bc,$01f4		; $7bbc
-.DB $dd				; $7bbf
-	inc b			; $7bc0
-	sbc $04			; $7bc1
-_label_05_432:
-	rst_addDoubleIndex			; $7bc3
-	inc b			; $7bc4
-	ld hl,sp+$05		; $7bc5
-	ld sp,hl		; $7bc7
-	dec b			; $7bc8
-	ret nc			; $7bc9
-	ld b,$db		; $7bca
-	ld c,$dc		; $7bcc
-	rrca			; $7bce
-.DB $fd				; $7bcf
-	rlca			; $7bd0
-	ld a,($fb11)		; $7bd1
-	ld de,setRoomFlagsForUnlockedKeyDoor_overworldOnly		; $7bd4
-	pop de			; $7bd7
-	ld (de),a		; $7bd8
-	call nc,$d213		; $7bd9
-	inc d			; $7bdc
-.DB $d3				; $7bdd
-	dec d			; $7bde
-	ret			; $7bdf
-	inc bc			; $7be0
-	ld a,e			; $7be1
-	stop			; $7be2
-	ld a,h			; $7be3
-	stop			; $7be4
-	ld a,l			; $7be5
-	stop			; $7be6
-	ld a,(hl)		; $7be7
-	stop			; $7be8
-	ld a,a			; $7be9
-	stop			; $7bea
-	nop			; $7beb
-	di			; $7bec
-	ld bc,$01f4		; $7bed
-	ld hl,sp+$05		; $7bf0
-	ld sp,hl		; $7bf2
-	dec b			; $7bf3
-	ret nc			; $7bf4
-	ld b,$d1		; $7bf5
-	ld b,$fa		; $7bf7
-	ld de,$11fb		; $7bf9
-.DB $fc				; $7bfc
-	ld de,$107b		; $7bfd
-	ld a,h			; $7c00
-	stop			; $7c01
-	ld a,l			; $7c02
-	stop			; $7c03
-	ld a,(hl)		; $7c04
-	stop			; $7c05
-	ld a,a			; $7c06
-	stop			; $7c07
-	ret nz			; $7c08
-	stop			; $7c09
-	pop bc			; $7c0a
-	stop			; $7c0b
-	jp nz,$c310		; $7c0c
-	stop			; $7c0f
-	call nz,$c510		; $7c10
-	stop			; $7c13
-	add $10			; $7c14
-	rst_jumpTable			; $7c16
-	stop			; $7c17
-	ret z			; $7c18
-	stop			; $7c19
-	ret			; $7c1a
-	stop			; $7c1b
-	jp z,$cb10		; $7c1c
-	stop			; $7c1f
-	call z,$cd10		; $7c20
-	stop			; $7c23
-	adc $10			; $7c24
-	rst $8			; $7c26
-	stop			; $7c27
-	nop			; $7c28
-	ret nc			; $7c29
-	inc b			; $7c2a
-.DB $dd				; $7c2b
-	inc b			; $7c2c
-	sbc $04			; $7c2d
-	rst_addDoubleIndex			; $7c2f
-	inc b			; $7c30
-	nop			; $7c31
-	di			; $7c32
-	ld bc,$01f4		; $7c33
-	push af			; $7c36
-	ld bc,$01f6		; $7c37
-	rst $30			; $7c3a
-	ld bc,$07fd		; $7c3b
-	ld a,($fb11)		; $7c3e
-	ld de,setRoomFlagsForUnlockedKeyDoor_overworldOnly		; $7c41
-	ret nc			; $7c44
-_label_05_433:
-	ld bc,$1061		; $7c45
-	ld h,d			; $7c48
-	stop			; $7c49
-	ld h,e			; $7c4a
-	stop			; $7c4b
-	ld h,h			; $7c4c
-	stop			; $7c4d
-	ld h,l			; $7c4e
-	stop			; $7c4f
-	ld d,b			; $7c50
-	ld b,$51		; $7c51
-	ld b,$52		; $7c53
-	ld b,$53		; $7c55
-	ld b,$48		; $7c57
-	ld (bc),a		; $7c59
-	ld c,c			; $7c5a
-	ld (bc),a		; $7c5b
-	ld c,d			; $7c5c
-	ld (bc),a		; $7c5d
-	ld c,e			; $7c5e
-	ld (bc),a		; $7c5f
-	ld c,l			; $7c60
-	inc bc			; $7c61
-	ld d,h			; $7c62
-	add hl,bc		; $7c63
-	ld d,l			; $7c64
-	ld a,(bc)		; $7c65
-	ld d,(hl)		; $7c66
-	dec bc			; $7c67
-	ld d,a			; $7c68
-	inc c			; $7c69
-	ld h,b			; $7c6a
-	dec c			; $7c6b
-	adc h			; $7c6c
-	rrca			; $7c6d
-	adc l			; $7c6e
-	rrca			; $7c6f
-	ccf			; $7c70
-	ld bc,$1600		; $7c71
-	stop			; $7c74
-	jr $10			; $7c75
-	rla			; $7c77
-	sub b			; $7c78
-	add hl,de		; $7c79
-	sub b			; $7c7a
-.DB $f4				; $7c7b
-	ld bc,$010f		; $7c7c
-	inc c			; $7c7f
-	ld bc,$301a		; $7c80
-	dec de			; $7c83
-_label_05_434:
-	jr nz,$1c	; $7c84
-	jr nz,$1d	; $7c86
-	jr nz,$1e	; $7c88
-	jr nz,$1f	; $7c8a
-	jr nz,$20	; $7c8c
-	ld b,b			; $7c8e
-	ldi (hl),a		; $7c8f
-	ld b,b			; $7c90
-	inc c			; $7c91
-	inc b			; $7c92
-	dec c			; $7c93
-	inc b			; $7c94
-	ld c,$04		; $7c95
-	ld (bc),a		; $7c97
-	nop			; $7c98
-	nop			; $7c99
+        .dw @collisions0Data
+        .dw @collisions1Data
+        .dw @collisions2Data
+        .dw @collisions3Data
+        .dw @collisions4Data
+        .dw @collisions5Data
+
+@collisions0Data:
+	.db $20 TILETYPE_STUMP
+	.db $f3 TILETYPE_HOLE
+	.db $f4 TILETYPE_HOLE
+	.db $dd TILETYPE_VINES
+	.db $de TILETYPE_VINES
+	.db $df TILETYPE_VINES
+	.db $f8 TILETYPE_GRASS
+	.db $f9 TILETYPE_GRASS
+	.db $d0 TILETYPE_STAIRS
+	.db $db TILETYPE_CRACKED_ICE
+	.db $dc TILETYPE_ICE
+	.db $fd TILETYPE_WATER
+	.db $fa TILETYPE_PUDDLE
+	.db $fb TILETYPE_PUDDLE
+	.db $fc TILETYPE_PUDDLE
+	.db $d1 TILETYPE_UPCURRENT
+	.db $d4 TILETYPE_RIGHTCURRENT
+	.db $d2 TILETYPE_DOWNCURRENT
+	.db $d3 TILETYPE_LEFTCURRENT
+	.db $c9 TILETYPE_CRACKEDFLOOR
+	.db $7b TILETYPE_LAVA
+	.db $7c TILETYPE_LAVA
+	.db $7d TILETYPE_LAVA
+	.db $7e TILETYPE_LAVA
+	.db $7f TILETYPE_LAVA
+	.db $00
+
+@collisions1Data:
+        .db $f3 TILETYPE_HOLE
+        .db $f4 TILETYPE_HOLE
+        .db $f8 TILETYPE_GRASS
+        .db $f9 TILETYPE_GRASS
+        .db $d0 TILETYPE_STAIRS
+        .db $d1 TILETYPE_STAIRS
+        .db $fa TILETYPE_PUDDLE
+        .db $fb TILETYPE_PUDDLE
+        .db $fc TILETYPE_PUDDLE
+        .db $7b TILETYPE_LAVA
+        .db $7c TILETYPE_LAVA
+        .db $7d TILETYPE_LAVA
+        .db $7e TILETYPE_LAVA
+        .db $7f TILETYPE_LAVA
+        .db $c0 TILETYPE_LAVA
+        .db $c1 TILETYPE_LAVA
+        .db $c2 TILETYPE_LAVA
+        .db $c3 TILETYPE_LAVA
+        .db $c4 TILETYPE_LAVA
+        .db $c5 TILETYPE_LAVA
+        .db $c6 TILETYPE_LAVA
+        .db $c7 TILETYPE_LAVA
+        .db $c8 TILETYPE_LAVA
+        .db $c9 TILETYPE_LAVA
+        .db $ca TILETYPE_LAVA
+        .db $cb TILETYPE_LAVA
+        .db $cc TILETYPE_LAVA
+        .db $cd TILETYPE_LAVA
+        .db $ce TILETYPE_LAVA
+        .db $cf TILETYPE_LAVA
+        .db $00
+
+@collisions2Data:
+        .db $d0 TILETYPE_VINES
+        .db $dd TILETYPE_VINES
+        .db $de TILETYPE_VINES
+        .db $df TILETYPE_VINES
+        .db $00
+
+@collisions3Data:
+@collisions4Data:
+        .db $f3 TILETYPE_HOLE
+        .db $f4 TILETYPE_HOLE
+        .db $f5 TILETYPE_HOLETy
+        .db $f6 TILETYPE_HOLE
+        .db $f7 TILETYPE_HOLE
+        .db $fd TILETYPE_WATER
+        .db $fa TILETYPE_PUDDLE
+        .db $fb TILETYPE_PUDDLE
+        .db $fc TILETYPE_PUDDLE
+        .db $d0 TILETYPE_HOLE
+        .db $61 TILETYPE_LAVA
+        .db $62 TILETYPE_LAVA
+        .db $63 TILETYPE_LAVA
+        .db $64 TILETYPE_LAVA
+        .db $65 TILETYPE_LAVA
+        .db $50 TILETYPE_STAIRS
+        .db $51 TILETYPE_STAIRS
+        .db $52 TILETYPE_STAIRS
+        .db $53 TILETYPE_STAIRS
+        .db $48 TILETYPE_WARPHOLE
+        .db $49 TILETYPE_WARPHOLE
+        .db $4a TILETYPE_WARPHOLE
+        .db $4b TILETYPE_WARPHOLE
+        .db $4d TILETYPE_CRACKEDFLOOR
+        .db $54 TILETYPE_UPCONVEYOR
+        .db $55 TILETYPE_RIGHTCONVEYOR
+        .db $56 TILETYPE_DOWNCONVEYOR
+        .db $57 TILETYPE_LEFTCONVEYOR
+        .db $60 TILETYPE_SPIKE
+        .db $8c TILETYPE_ICE
+        .db $8d TILETYPE_ICE
+        .db $3f TILETYPE_HOLE
+        .db $00
+
+@collisions5Data:
+        .db $16 TILETYPE_SS_LADDER
+        .db $18 TILETYPE_SS_LADDER
+        .db $17 TILETYPE_SS_LADDER_TOP | TILETYPE_SS_LADDER
+        .db $19 TILETYPE_SS_LADDER_TOP | TILETYPE_SS_LADDER
+        .db $f4 TILETYPE_SS_HOLE
+        .db $0f TILETYPE_SS_HOLE
+        .db $0c TILETYPE_SS_HOLE
+        .db $1a TILETYPE_SS_WATER | TILETYPE_SS_LADDER
+        .db $1b TILETYPE_SS_WATER
+        .db $1c TILETYPE_SS_WATER
+        .db $1d TILETYPE_SS_WATER
+        .db $1e TILETYPE_SS_WATER
+        .db $1f TILETYPE_SS_WATER
+        .db $20 TILETYPE_SS_ICE
+        .db $22 TILETYPE_SS_ICE
+        .db $0c TILETYPE_SS_LAVA
+        .db $0d TILETYPE_SS_LAVA
+        .db $0e TILETYPE_SS_LAVA
+        .db $02 $00
+        .db $00
