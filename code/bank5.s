@@ -100,7 +100,7 @@ updateSpecialObjects:
 .ifdef ROM_AGES
 	.dw  specialObjectCode_transformedLink
 .else
-	.dw specialObjectCode_05_7cda
+	.dw  specialObjectCode_subrosiaDanceLink
 .endif
 	.dw  specialObjectCode_transformedLink
 	.dw  specialObjectCode_transformedLink
