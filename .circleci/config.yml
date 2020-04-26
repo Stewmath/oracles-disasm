@@ -34,6 +34,9 @@ jobs:
       - attach_workspace:
           at: ~/bin
       - run: make << parameters.game >>
+      # We run "verifyChecksum.sh" even though it's in the makefile, because the makefile ignores
+      # its error code.
+      - run: tools/build/verify-checksum.sh << parameters.game >>
 
 
 workflows:
