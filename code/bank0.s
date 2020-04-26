@@ -1885,7 +1885,7 @@ _initialThreadStates:
 ; @addr{09cc}
 flagLocationGroupTable:
 	.db >wPresentRoomFlags >wPastRoomFlags
-	.db >wPresentRoomFlags >wPastRoomFlags
+	.db >wGroup2Flags >wPastRoomFlags
 	.db >wGroup4Flags >wGroup5Flags
 	.db >wGroup4Flags >wGroup5Flags
 
@@ -2522,13 +2522,13 @@ serialFunc_0c7e:
 ;;
 ; @addr{0c85}
 serialFunc_0c85:
-	jpab bank16.func_44ac		; $0c85
+	jpab serialCode.func_44ac		; $0c85
 
 ;;
 ; @addr{0c8d}
 serialFunc_0c8d:
 	push de			; $0c8d
-	callab bank16.func_4000		; $0c8e
+	callab serialCode.func_4000		; $0c8e
 	pop de			; $0c96
 	ret			; $0c97
 
@@ -3556,10 +3556,10 @@ objectQueueDraw:
 getChestData:
 	ldh a,(<hRomBank)	; $10cc
 	push af			; $10ce
-	ld a,:bank16.chestDataGroupTable		; $10cf
+	ld a,:chestData.chestDataGroupTable		; $10cf
 	setrombank		; $10d1
 	ld a,(wActiveGroup)		; $10d6
-	ld hl,bank16.chestDataGroupTable	; $10d9
+	ld hl,chestData.chestDataGroupTable	; $10d9
 	rst_addDoubleIndex			; $10dc
 	ldi a,(hl)		; $10dd
 	ld h,(hl)		; $10de
@@ -3937,7 +3937,7 @@ setRoomFlagsForUnlockedKeyDoor_overworldOnly:
 	rst_addAToHl			; $1243
 	ld a,(wActiveRoom)		; $1244
 	ld c,a			; $1247
-	ld b,>wPresentRoomFlags		; $1248
+	ld b,>wGroup2Flags		; $1248
 	ld a,(bc)		; $124a
 	or (hl)			; $124b
 	ld (bc),a		; $124c
@@ -4150,11 +4150,10 @@ func_1383:
 	ld ($cd05),a		; $133e
 	ld ($cd06),a		; $1341
 	ld a,$01		; $1344
-	ld ($ff00+$97),a	; $1346
-	ld ($2222),a		; $1348
-	call $4956		; $134b
-	call $4964		; $134e
-	call applyWarpDest		; $1351
+	setrombank
+	call bank1.func_49c9		; $134b
+	call bank1.setObjectsEnabledTo2		; $134e
+	call loadScreenMusic		; $1351
 	call loadTilesetData		; $1354
 	ld a,($cc4c)		; $1357
 	ld ($cc4b),a		; $135a
@@ -4930,9 +4929,9 @@ loadObjectGfx2:
 .endif
 
 	push de			; $1692
-	ld a,($cc07)		; $1693
+	ld a,(wcc07)		; $1693
 	xor $ff			; $1696
-	ld ($cc07),a		; $1698
+	ld (wcc07),a		; $1698
 	ld de,w4GfxBuf1 | (:w4GfxBuf1)	; $169b
 	jr nz,+			; $169e
 	ld de,w4GfxBuf2 | (:w4GfxBuf2)	; $16a0
@@ -5566,6 +5565,7 @@ readByteFromW7TextTableBank:
 ; @addr{197d}
 getThisRoomFlags:
 	ld a,(wActiveRoom)		; $197d
+getARoomFlags:
 	push bc			; $1980
 	ld b,a			; $1981
 	ld a,(wActiveGroup)		; $1982
@@ -6493,7 +6493,11 @@ _checkCollisionWithHAndD:
 checkLinkID0AndControlNormal:
 	ld a,(w1Link.id)		; $1d18
 	or a			; $1d1b
+.ifdef ROM_AGES
 	jr z,+++		; $1d1c
+.else
+	jr z,checkLinkVulnerableAndIDZero		; $1d1c
+.endif
 	xor a			; $1d1e
 	ret			; $1d1f
 
@@ -6533,6 +6537,12 @@ checkLinkCollisionsEnabled:
 	rlca			; $1d35
 	jr nc,@noCarry		; $1d36
 
+.ifdef ROM_SEASONS
+	ld a,(wLinkDeathTrigger)		; $1d38
+	or a			; $1d3b
+	jr nz,@noCarry		; $1d3c
+.endif
+
 	ld a,(wDisableLinkCollisionsAndMenu)		; $1d38
 	or a			; $1d3b
 	jr nz,@noCarry		; $1d3c
@@ -6540,10 +6550,13 @@ checkLinkCollisionsEnabled:
 	ld a,(wMenuDisabled)		; $1d3e
 	or a			; $1d41
 	jr nz,@noCarry		; $1d42
+
+.ifdef ROM_AGES
 +++
 	ld a,(wLinkDeathTrigger)		; $1d44
 	or a			; $1d47
 	jr nz,@noCarry		; $1d48
+.endif
 
 	; Check if in a spinner
 	ld a,(wcc95)		; $1d4a
@@ -8173,8 +8186,8 @@ breakCrackedFloor:
 ; @addr{22a9}
 objectCheckTileAtPositionIsWater:
 	call objectGetTileAtPosition		; $22a9
-	sub $f9			; $22ac
-	cp $05			; $22ae
+	sub TILEINDEX_PUDDLE			; $22ac
+	cp TILERANGE_WATER			; $22ae
 	ret			; $22b0
 
 ;;
@@ -8185,8 +8198,8 @@ objectCheckTileAtPositionIsWater:
 ; @addr{22b1}
 checkTileAtPositionIsWater:
 	call getTileAtPosition		; $22b1
-	sub $f9			; $22b4
-	cp $05			; $22b6
+	sub TILEINDEX_PUDDLE			; $22b4
+	cp TILERANGE_WATER			; $22b6
 	ret			; $22b8
 
 ;;
@@ -8234,7 +8247,7 @@ objectFindSameTypeObjectWithID:
 	ld a,(hl)		; $22d1
 	cp c			; $22d2
 	ret z			; $22d3
-
+func_228f:
 	inc h			; $22d4
 	ld a,h			; $22d5
 	cp $e0			; $22d6
@@ -8933,13 +8946,6 @@ objectUnmarkSolidPosition:
 	ld ($ff00+R_SVBK),a	; $2515
 	ret			; $2517
 
-.else ; ROM_SEASONS
-
-; Placeholder labels for now (delete these later)
-objectFlickerVisibility:
-objectMarkSolidPosition:
-objectUnmarkSolidPosition:
-
 .endif
 
 ;;
@@ -9404,9 +9410,14 @@ npcFaceLinkAndAnimate:
 
 	; Set animation
 	srl b			; $26ca
+.ifdef ROM_AGES
 	ld e,Interaction.var37		; $26cc
 	ld a,(de)		; $26ce
 	add b			; $26cf
+.else
+	call seasonsFunc_2678
+	ld a,b
+.endif
 	call interactionSetAnimation		; $26d0
 
 	; Don't change directions again for another 30 frames
@@ -9711,24 +9722,6 @@ interactionSetMiniScript:
 	ld (de),a		; $279e
 	ret			; $279f
 
-
-.else ; ROM_SEASONS
-
-; Placeholder labels
-interactionDecCounter1IfTextNotActive:
-interactionDecCounter1IfPaletteNotFading:
-interactionAnimate4Times:
-interactionAnimate3Times:
-interactionAnimate2Times:
-interactionAnimateBasedOnSpeed:
-interactionSetPosition:
-interactionHSetPosition:
-interactionUnsetAlwaysUpdateBit:
-interactionLoadExtraGraphics:
-interactionFunc_278b:
-interactionGetMiniScript:
-interactionSetMiniScript:
-
 .endif
 
 
@@ -9739,7 +9732,11 @@ interactionSetMiniScript:
 objectOscillateZ:
 	ldh a,(<hRomBank)	; $27a0
 	push af			; $27a2
+.ifdef ROM_AGES
 	callfrombank0 interactionBank09.objectOscillateZ_body		; $27a3
+.else
+	callfrombank0 objectOscillateZ_body		; $27a3
+.endif
 	pop af			; $27ad
 	setrombank		; $27ae
 	ret			; $27b3
@@ -9812,10 +9809,18 @@ objectCreateExclamationMark:
 	ldh (<hFF8B),a	; $27e0
 	ldh a,(<hRomBank)	; $27e2
 	push af			; $27e4
+.ifdef ROM_AGES
 	ld a,:interactionBank0b.objectCreateExclamationMark_body		; $27e5
+.else
+	ld a,:objectCreateExclamationMark_body		; $27e5
+.endif
 	setrombank		; $27e7
 	ldh a,(<hFF8B)	; $27ec
+.ifdef ROM_AGES
 	call interactionBank0b.objectCreateExclamationMark_body		; $27ee
+.else
+	call objectCreateExclamationMark_body		; $27ee
+.endif
 	pop af			; $27f1
 	setrombank		; $27f2
 	ret			; $27f7
@@ -9844,7 +9849,11 @@ objectCreateFloatingMusicNote:
 	ldh (<hFF8D),a	; $2802
 	ldh a,(<hRomBank)	; $2804
 	push af			; $2806
+.ifdef ROM_AGES
 	callfrombank0 interactionBank0b.objectCreateFloatingImage		; $2807
+.else
+	callfrombank0 objectCreateFloatingImage		; $2807
+.endif
 	pop af			; $2811
 	setrombank		; $2812
 	ret			; $2817
@@ -10288,7 +10297,7 @@ _partNextAnimationFrame:
 	or $40			; $29cd
 	ld (de),a		; $29cf
 
-	ld a,$11		; $29d0
+	ld a,PART_BANK		; $29d0
 	setrombank		; $29d2
 	ret			; $29d7
 
@@ -10302,7 +10311,7 @@ createEnergySwirlGoingIn:
 	ld l,a			; $29d8
 	ldh a,(<hRomBank)	; $29d9
 	push af			; $29db
-	callfrombank0 createEnergySwirlGoingIn_body		; $29f1
+	callfrombank0 partCode.createEnergySwirlGoingIn_body		; $29f1
 	pop af			; $29e6
 	setrombank		; $29e7
 	ret			; $29ec
@@ -10317,7 +10326,7 @@ createEnergySwirlGoingOut:
 	ld l,a			; $29ed
 	ldh a,(<hRomBank)	; $29ee
 	push af			; $29f0
-	callfrombank0 createEnergySwirlGoingOut_body		; $29f1
+	callfrombank0 partCode.createEnergySwirlGoingOut_body		; $29f1
 	pop af			; $29fb
 	setrombank		; $29fc
 	ret			; $2a01
@@ -11145,10 +11154,18 @@ func_2d48:
 	ldh a,(<hRomBank)	; $2d48
 	push af			; $2d4a
 
+.ifdef ROM_AGES
 	ld a,:bank3f.data_5951		; $2d4b
+.else
+	ld a,:data_5951		; $2d4b
+.endif
 	setrombank		; $2d4d
 	ld a,b			; $2d52
+.ifdef ROM_AGES
 	ld hl,bank3f.data_5951		; $2d53
+.else
+	ld hl,data_5951		; $2d53
+.endif
 	rst_addAToHl			; $2d56
 	ld b,(hl)		; $2d57
 
@@ -11610,176 +11627,13 @@ updateEnemy:
 	or a			; $2f32
 	jp hl			; $2f33
 
-; @addr{2f34}
-enemyCodeTable:
-	.dw bank10.enemyCode00 ; 0x00
-	.dw bank10.enemyCode01 ; 0x01
-	.dw bank10.enemyCode02 ; 0x02
-	.dw bank10.enemyCode03 ; 0x03
-	.dw bank10.enemyCode04 ; 0x04
-	.dw bank10.enemyCode05 ; 0x05
-	.dw bank10.enemyCode06 ; 0x06
-	.dw bank10.enemyCode07 ; 0x07
-	.dw bank0d.enemyCode08 ; 0x08
-	.dw bank0d.enemyCode09 ; 0x09
-	.dw bank0d.enemyCode0a ; 0x0a
-	.dw bank0d.enemyCode0b ; 0x0b
-	.dw bank0d.enemyCode0c ; 0x0c
-	.dw bank0d.enemyCode0d ; 0x0d
-	.dw bank0d.enemyCode0e ; 0x0e
-	.dw bank0d.enemyCode0f ; 0x0f
-	.dw bank0d.enemyCode10 ; 0x10
-	.dw bank0d.enemyCode11 ; 0x11
-	.dw bank0d.enemyCode12 ; 0x12
-	.dw bank0d.enemyCode13 ; 0x13
-	.dw bank0d.enemyCode14 ; 0x14
-	.dw bank0d.enemyCode15 ; 0x15
-	.dw bank0d.enemyCode16 ; 0x16
-	.dw bank0d.enemyCode17 ; 0x17
-	.dw bank0d.enemyCode18 ; 0x18
-	.dw bank0d.enemyCode19 ; 0x19
-	.dw bank0d.enemyCode1a ; 0x1a
-	.dw bank0d.enemyCode1b ; 0x1b
-	.dw bank0d.enemyCode1c ; 0x1c
-	.dw bank0d.enemyCode1d ; 0x1d
-	.dw bank0d.enemyCode1e ; 0x1e
-	.dw bank0d.enemyCode1f ; 0x1f
-	.dw bank0d.enemyCode20 ; 0x20
-	.dw bank0d.enemyCode21 ; 0x21
-	.dw bank0d.enemyCode22 ; 0x22
-	.dw bank0d.enemyCode23 ; 0x23
-	.dw bank0d.enemyCode24 ; 0x24
-	.dw bank0d.enemyCode25 ; 0x25
-	.dw bank0d.enemyCode26 ; 0x26
-	.dw bank0d.enemyCode27 ; 0x27
-	.dw bank0d.enemyCode28 ; 0x28
-	.dw bank0d.enemyCode29 ; 0x29
-	.dw bank0d.enemyCode2a ; 0x2a
-	.dw bank0d.enemyCode2b ; 0x2b
-	.dw bank0d.enemyCode2c ; 0x2c
-	.dw bank0d.enemyCode2d ; 0x2d
-	.dw bank0d.enemyCode2e ; 0x2e
-	.dw bank0d.enemyCode2f ; 0x2f
-	.dw bank0e.enemyCode30 ; 0x30
-	.dw bank0e.enemyCode31 ; 0x31
-	.dw bank0e.enemyCode32 ; 0x32
-	.dw bank0e.enemyCode33 ; 0x33
-	.dw bank0e.enemyCode34 ; 0x34
-	.dw bank0e.enemyCode35 ; 0x35
-	.dw bank0e.enemyCode36 ; 0x36
-	.dw bank0e.enemyCode37 ; 0x37
-	.dw bank0e.enemyCode38 ; 0x38
-	.dw bank0e.enemyCode39 ; 0x39
-	.dw bank0e.enemyCode3a ; 0x3a
-	.dw bank0e.enemyCode3b ; 0x3b
-	.dw bank0e.enemyCode3c ; 0x3c
-	.dw bank0e.enemyCode3d ; 0x3d
-	.dw bank0e.enemyCode3e ; 0x3e
-	.dw bank0e.enemyCode3f ; 0x3f
-	.dw bank0e.enemyCode40 ; 0x40
-	.dw bank0e.enemyCode41 ; 0x41
-	.dw bank0e.enemyCode42 ; 0x42
-	.dw bank0e.enemyCode43 ; 0x43
-	.dw enemyCodeNil       ; 0x44
-	.dw bank0e.enemyCode45 ; 0x45
-	.dw enemyCodeNil       ; 0x46
-	.dw bank0e.enemyCode47 ; 0x47
-	.dw bank0e.enemyCode48 ; 0x48
-	.dw bank0e.enemyCode49 ; 0x49
-	.dw bank0e.enemyCode4a ; 0x4a
-	.dw bank0e.enemyCode4b ; 0x4b
-	.dw bank0e.enemyCode4c ; 0x4c
-	.dw bank0e.enemyCode4d ; 0x4d
-	.dw bank0e.enemyCode4e ; 0x4e
-	.dw bank0e.enemyCode4f ; 0x4f
-	.dw bank0e.enemyCode50 ; 0x50
-	.dw bank0e.enemyCode51 ; 0x51
-	.dw bank0e.enemyCode52 ; 0x52
-	.dw bank0e.enemyCode53 ; 0x53
-	.dw bank0e.enemyCode54 ; 0x54
-	.dw bank0e.enemyCode55 ; 0x55
-	.dw bank0e.enemyCode56 ; 0x56
-	.dw enemyCodeNil       ; 0x57
-	.dw bank0e.enemyCode58 ; 0x58
-	.dw bank0e.enemyCode59 ; 0x59
-	.dw bank0e.enemyCode5a ; 0x5a
-	.dw enemyCodeNil       ; 0x5b
-	.dw enemyCodeNil       ; 0x5c
-	.dw bank0e.enemyCode5d ; 0x5d
-	.dw bank0e.enemyCode5e ; 0x5e
-	.dw bank0e.enemyCode5f ; 0x5f
-	.dw bank0e.enemyCode60 ; 0x60
-	.dw bank0e.enemyCode61 ; 0x61
-	.dw bank0e.enemyCode62 ; 0x62
-	.dw bank0e.enemyCode63 ; 0x63
-	.dw bank0e.enemyCode64 ; 0x64
-	.dw enemyCodeNil       ; 0x65
-	.dw enemyCodeNil       ; 0x66
-	.dw enemyCodeNil       ; 0x67
-	.dw enemyCodeNil       ; 0x68
-	.dw enemyCodeNil       ; 0x69
-	.dw enemyCodeNil       ; 0x6a
-	.dw enemyCodeNil       ; 0x6b
-	.dw enemyCodeNil       ; 0x6c
-	.dw enemyCodeNil       ; 0x6d
-	.dw enemyCodeNil       ; 0x6e
-	.dw enemyCodeNil       ; 0x6f
-	.dw bank0f.enemyCode70 ; 0x70
-	.dw bank0f.enemyCode71 ; 0x71
-	.dw bank0f.enemyCode72 ; 0x72
-	.dw bank0f.enemyCode73 ; 0x73
-	.dw bank0f.enemyCode74 ; 0x74
-	.dw bank0f.enemyCode75 ; 0x75
-	.dw bank0f.enemyCode76 ; 0x76
-	.dw bank0f.enemyCode77 ; 0x77
-	.dw bank0f.enemyCode78 ; 0x78
-	.dw bank0f.enemyCode79 ; 0x79
-	.dw bank0f.enemyCode7a ; 0x7a
-	.dw bank0f.enemyCode7b ; 0x7b
-	.dw bank0f.enemyCode7c ; 0x7c
-	.dw bank0f.enemyCode7d ; 0x7d
-	.dw bank0f.enemyCode7e ; 0x7e
-	.dw bank0f.enemyCode7f ; 0x7f
-
-	; Could there be over 0x80 enemies? Things that would need to be changed:
-	; - _enemyGetObjectGfxIndex
-	; - itemDropTables
-
-;;
-; @addr{3034}
-enemyCodeNil:
-	ret			; $3034
+.include "data/enemyCodeTable.s"
 
 
 .ifdef ROM_AGES
 	.include "code/code_3035.s"
 .endif
 
-
-.ifdef ROM_AGES
-
-;;
-; Same as "addSpritesToOam", except this changes the bank first.
-;
-; @param	e	Bank where the OAM data is
-; @param	hl	OAM data
-; @addr{30eb}
-addSpritesFromBankToOam:
-	ldh a,(<hRomBank)	; $30eb
-	push af			; $30ed
-	ld a,e			; $30ee
-	setrombank		; $30ef
-	call addSpritesToOam		; $30f4
-	pop af			; $30f7
-	setrombank		; $30f8
-	ret			; $30fd
-
-.else ; ROM_SEASONS
-
-; Placeholder label
-addSpritesFromBankToOam:
-
-.endif
 
 ;;
 ; Called when loading a room.
@@ -11800,47 +11654,46 @@ initializeRoom:
 	ld b,INTERACID_SCREEN_DISTORTION		; $310c
 	jp objectCreateInteractionWithSubid00		; $310e
 +
-	callab bank2.calculateRoomStateModifier		; $3111
+	callab roomInitialization.calculateRoomStateModifier		; $3111
 	call   refreshObjectGfx		; $3119
 	callab roomSpecificCode.runRoomSpecificCode
-	callab bank2.createSeaEffectsPartIfApplicable		; $3124
+	callab roomInitialization.createSeaEffectsPartIfApplicable		; $3124
 	callab bank1.checkLoadPirateShip		; $312c
 
 	ldh a,(<hRomBank)	; $3134
 	push af			; $3136
-	ld a,:bank2.checkAndSpawnMaple		; $3137
+	ld a,:roomInitialization.checkAndSpawnMaple		; $3137
 	setrombank		; $3139
 
 	call checkSpawnTimeportalInteraction		; $313e
 
 	ld a,(wcc05)		; $3141
 	bit 2,a			; $3144
-	call nz,bank2.loadRememberedCompanion		; $3146
+	call nz,roomInitialization.loadRememberedCompanion		; $3146
 
 	ld a,(wcc05)		; $3149
 	bit 3,a			; $314c
-	call nz,bank2.checkAndSpawnMaple		; $314e
+	call nz,roomInitialization.checkAndSpawnMaple		; $314e
 
 	ld a,:objectData.parseObjectData
 	setrombank		; $3153
 	ld a,(wcc05)		; $3158
 	bit 0,a			; $315b
 	call nz,objectData.parseObjectData
-	callfrombank0 bank16.parseStaticObjects	; $3160
 
 .else ; ROM_SEASONS
+	call          refreshObjectGfx
 
 	ldh a,(<hRomBank)
 	push af
 
-	call          refreshObjectGfx
-	callfrombank0 bank10.loadRememberedCompanion
-	call          bank10.checkAndSpawnMaple
-	call          bank10.updateRosaDateStatus
-	callfrombank0 $11 $58b5
-	callfrombank0 $15 $4e35
-
+	callfrombank0 roomInitialization.loadRememberedCompanion
+	call          roomInitialization.checkAndSpawnMaple
+	call          roomInitialization.updateRosaDateStatus
+	callfrombank0 objectData.parseObjectData
 .endif
+
+	callfrombank0 staticObjects.parseStaticObjects	; $3160
 
 	pop af			; $316a
 	setrombank		; $316b
@@ -11871,10 +11724,10 @@ parseGivenObjectData:
 loadStaticObjects:
 	ldh a,(<hRomBank)	; $3189
 	push af			; $318b
-	ld a,:bank16.loadStaticObjects_body	; $318c
+	ld a,:staticObjects.loadStaticObjects_body	; $318c
 	setrombank		; $318e
 	push de			; $3193
-	call bank16.loadStaticObjects_body		; $3194
+	call staticObjects.loadStaticObjects_body		; $3194
 	pop de			; $3197
 	pop af			; $3198
 	setrombank		; $3199
@@ -12106,7 +11959,7 @@ checkSpawnTimeportalInteraction:
 	ld l,a			; $321f
 	ldh a,(<hRomBank)	; $3220
 	push af			; $3222
-	callfrombank0 bank2.functionCaller		; $3223
+	callfrombank0 roomInitialization.functionCaller		; $3223
 	rl c			; $322d
 	pop af			; $322f
 	setrombank		; $3230
@@ -12436,12 +12289,6 @@ brightenRoom:
 	jr _label_331c
 
 
-; Placeholders
-func_32fc:
-darkenRoomWithSpeed:
-brightenRoomWithSpeed:
-
-
 .endif; ROM_SEASONS
 
 
@@ -12544,14 +12391,10 @@ mainThreadStart:
 
 .ifdef ROM_SEASONS
 
-seasonsFunc_3276:
+updateAnimationsAfterCutscene:
 	ldh a,(<hRomBank)
 	push af
-	ld a,:groupMusicPointerTable
-	setrombank
-
-	; bank 4
-	call $575e
+	callfrombank0 updateAnimations
 	pop af
 	setrombank
 	ret
@@ -12565,11 +12408,11 @@ seasonsFunc_3276:
 loadScreenMusic:
 	ldh a,(<hRomBank)	; $33cf
 	push af			; $33d1
-	ld a,:groupMusicPointerTable
+	ld a,:musicAssignmentGroupTable
 	setrombank		; $33d4
 
 	ld a,(wActiveGroup)		; $33d9
-	ld hl,groupMusicPointerTable
+	ld hl,musicAssignmentGroupTable
 	rst_addDoubleIndex			; $33df
 	ldi a,(hl)		; $33e0
 	ld h,(hl)		; $33e1
@@ -12681,64 +12524,46 @@ dismountCompanionAndSetRememberedPositionToScreenCenter:
 .ifdef ROM_SEASONS
 
 seasonsFunc_331b:
-	ld a,($ff00+$97)	; $331b
+	ldh a,(<hRomBank)	; $331b
 	push af			; $331d
-	ld a,$0f		; $331e
-	ld ($ff00+$97),a	; $3320
-	ld ($2222),a		; $3322
-	call $6f75		; $3325
+	callfrombank0 seasonsFunc_0f_6f75
 	pop af			; $3328
-	ld ($ff00+$97),a	; $3329
-	ld ($2222),a		; $332b
+	setrombank
 	ret			; $332e
 
 seasonsFunc_332f:
-	ld a,($ff00+$97)	; $332f
+	ldh a,(<hRomBank)	; $332f
 	push af			; $3331
 	ld a,$0f		; $3332
-	ld ($ff00+$97),a	; $3334
-	ld ($2222),a		; $3336
-	call $704d		; $3339
-	call $7182		; $333c
+	setrombank
+	call seasonsFunc_0f_704d		; $3339
+	call seasonsFunc_0f_7182		; $333c
 	pop af			; $333f
-	ld ($ff00+$97),a	; $3340
-	ld ($2222),a		; $3342
+	setrombank
 	ret			; $3345
 
-seasonsFunc_3346:
-	ld a,($ff00+$97)	; $3346
+flameOfDestructionsCutsceneCaller:
+	ldh a,(<hRomBank)	; $3346
 	push af			; $3348
-	ld a,$03		; $3349
-	ld ($ff00+$97),a	; $334b
-	ld ($2222),a		; $334d
-	call $6dfd		; $3350
+	callfrombank0 flameOfDestructionCutsceneBody
 	pop af			; $3353
-	ld ($ff00+$97),a	; $3354
-	ld ($2222),a		; $3356
+	setrombank
 	ret			; $3359
 
-seasonsFunc_335a:
-	ld a,($ff00+$97)	; $335a
+zeldaAndVillagersCutsceneCaller:
+	ldh a,(<hRomBank)	; $335a
 	push af			; $335c
-	ld a,$03		; $335d
-	ld ($ff00+$97),a	; $335f
-	ld ($2222),a		; $3361
-	call $6e05		; $3364
+	callfrombank0 zeldaAndVillagersCutsceneBody
 	pop af			; $3367
-	ld ($ff00+$97),a	; $3368
-	ld ($2222),a		; $336a
+	setrombank
 	ret			; $336d
 
-seasonsFunc_336e:
-	ld a,($ff00+$97)	; $336e
+zeldaKidnappedCutsceneCaller:
+	ldh a,(<hRomBank)	; $336e
 	push af			; $3370
-	ld a,$03		; $3371
-	ld ($ff00+$97),a	; $3373
-	ld ($2222),a		; $3375
-	call $6e0d		; $3378
+	callfrombank0 zeldaKidnappedCutsceneBody
 	pop af			; $337b
-	ld ($ff00+$97),a	; $337c
-	ld ($2222),a		; $337e
+	setrombank
 	ret			; $3381
 
 .endif
@@ -12754,7 +12579,7 @@ updateAllObjects:
 	callfrombank0 itemCode.updateItems		; $346f
 	call          setEnemyTargetToLinkPosition		; $3472
 	callfrombank0 updateEnemies		; $347c
-	callfrombank0 updateParts		; $3486
+	callfrombank0 partCode.updateParts		; $3486
 	callfrombank0 updateInteractions		; $3490
 	callfrombank0 bank1.func_4000		; $349a
 
@@ -12822,14 +12647,15 @@ func_3539:
 	callfrombank0 bank5.updateSpecialObjects		; $353c
 .ifdef ROM_AGES
 	callfrombank0 itemCode.updateItems		; $3546
-.endif
 	callfrombank0 updateEnemies		; $3557
-	callfrombank0 updateParts		; $355a
+	callfrombank0 partCode.updateParts		; $355a
 	callfrombank0 updateInteractions		; $356b
-.ifdef ROM_AGES
 	callfrombank0 itemCode.updateItemsPost		; $356e
-	callfrombank0 loadLinkAndCompanionAnimationFrame		; $3578
+.else
+	callfrombank0 updateEnemies		; $3557
+	callfrombank0 updateInteractions		; $356b
 .endif
+	callfrombank0 loadLinkAndCompanionAnimationFrame		; $3578
 	callfrombank0 updateAnimations
 	xor a			; $358c
 	ld (wc4b6),a		; $358d
@@ -12841,28 +12667,28 @@ func_3539:
 
 ;;
 seasonsFunc_34a0:
-	ld a,($ff00+$97)	; $34a0
+	ldh a,(<hRomBank)	; $34a0
 	push af			; $34a2
-	callfrombank0 $05 $4000		; $34a3
-	callfrombank0 $07 $485a		; $34ad
+	callfrombank0 bank5.updateSpecialObjects		; $34a3
+	callfrombank0 itemCode.updateItems		; $34ad
 	callfrombank0 updateEnemies		; $34b7
-	callfrombank0 $10 $61dc		; $34c1
+	callfrombank0 partCode.updateParts		; $34c1
 	callfrombank0 updateInteractions		; $34cb
-	callfrombank0 $0f $7159		; $34d5
+	callfrombank0 seasonsFunc_0f_7159		; $34d5
 
 	ld a,$06		; $34df
 	setrombank		; $34e1
-	ld a,($cc75)		; $34e6
+	ld a,(wLinkGrabState)		; $34e6
 	rlca			; $34e9
-	call c,$5429		; $34ea
+	call c,bank6.updateGrabbedObjectPosition		; $34ea
 
 	call loadLinkAndCompanionAnimationFrame		; $34ed
-	callfrombank0 $07 $4902		; $34f0
-	callfrombank0 $0f $7182		; $34fa
-	callfrombank0 $04 $6b25		; $3504
+	callfrombank0 itemCode.updateItemsPost		; $34f0
+	callfrombank0 seasonsFunc_0f_7182		; $34fa
+	callfrombank0 updateChangedTileQueue		; $3504
 
 	xor a			; $350e
-	ld ($c4b6),a		; $350f
+	ld (wc4b6),a		; $350f
 
 	pop af			; $3512
 	setrombank		; $3513
@@ -13042,17 +12868,14 @@ getEntryFromObjectTable2:
 
 .else ; ROM_SEASONS
 
-seasonsFunc_35b8:
-	ld a,($ff00+$97)	; $35b8
+multiIntroCutsceneCaller:
+	ldh a,(<hRomBank)	; $35b8
 	push af			; $35ba
-	ld a,$03		; $35bb
-	ld ($ff00+$97),a	; $35bd
-	ld ($2222),a		; $35bf
-	call $72ff		; $35c2
+	callfrombank0 multiIntroCutsceneHandler
 	pop af			; $35c5
-	ld ($ff00+$97),a	; $35c6
-	ld ($2222),a		; $35c8
+	setrombank
 	ret			; $35cb
+
 
 .endif
 
@@ -13075,7 +12898,7 @@ checkDungeonUsesToggleBlocks:
 	.include "data/dungeonsUsingToggleBlocks.s"
 
 .else ; ROM_SEASONS
-
+seasonsFunc_35cc:
 	ld a,($ff00+$70)	; $35cc
 	ld c,a			; $35ce
 	ld a,($ff00+$97)	; $35cf
@@ -13083,10 +12906,7 @@ checkDungeonUsesToggleBlocks:
 	push bc			; $35d2
 	ld a,$02		; $35d3
 	ld ($ff00+$70),a	; $35d5
-	ld a,$01		; $35d7
-	ld ($ff00+$97),a	; $35d9
-	ld ($2222),a		; $35db
-	call $5683		; $35de
+	callfrombank0 bank1.paletteThread_calculateFadingPalettes
 	pop bc			; $35e1
 	ld a,b			; $35e2
 	ld ($ff00+$97),a	; $35e3
@@ -13095,19 +12915,13 @@ checkDungeonUsesToggleBlocks:
 	ld ($ff00+$70),a	; $35e9
 	ret			; $35eb
 
+func_35ec:
 	ld a,($ff00+$97)	; $35ec
 	push af			; $35ee
-	ld a,$01		; $35ef
-	ld ($ff00+$97),a	; $35f1
-	ld ($2222),a		; $35f3
-	call $565d		; $35f6
+	callfrombank0 $01 $565d
 	pop af			; $35f9
-	ld ($ff00+$97),a	; $35fa
-	ld ($2222),a		; $35fc
+	setrombank
 	ret			; $35ff
-
-; Placeholder
-checkDungeonUsesToggleBlocks:
 
 .endif
 
@@ -13170,13 +12984,10 @@ loadAnimationData:
 
 .ifdef ROM_SEASONS
 
-seasonsFunc_364f:
+roomTileChangesAfterLoad02:
 	ld a,($ff00+$97)	; $364f
 	push af			; $3651
-	ld a,$09		; $3652
-	ld ($ff00+$97),a	; $3654
-	ld ($2222),a		; $3656
-	call $53f0		; $3659
+	callfrombank0 roomTileChangesAfterLoad02_body
 	pop af			; $365c
 	ld ($ff00+$97),a	; $365d
 	ld ($2222),a		; $365f
@@ -13185,7 +12996,7 @@ seasonsFunc_364f:
 .endif
 
 ;;
-; See the comments for bank2.getIndexOfGashaSpotInRoom_body.
+; See the comments for roomGfxChanges.getIndexOfGashaSpotInRoom_body.
 ;
 ; @param	a	Room
 ; @param[out]	c	Bit 7 set if something is planted in the given room.
@@ -13196,10 +13007,10 @@ getIndexOfGashaSpotInRoom:
 	ldh a,(<hRomBank)	; $36a9
 	push af			; $36ab
 
-	ld a,:bank2.getIndexOfGashaSpotInRoom_body		; $36ac
+	ld a,:roomGfxChanges.getIndexOfGashaSpotInRoom_body		; $36ac
 	setrombank		; $36ae
 	ld a,c			; $36b3
-	call bank2.getIndexOfGashaSpotInRoom_body		; $36b4
+	call roomGfxChanges.getIndexOfGashaSpotInRoom_body		; $36b4
 
 	push af			; $36b7
 	pop bc			; $36b8
@@ -13236,11 +13047,6 @@ getBlackTowerProgress:
 	ld a,c			; $36d3
 	pop bc			; $36d4
 	ret			; $36d5
-
-.else ; ROM_SEASONS
-
-; Placeholder
-getBlackTowerProgress:
 
 .endif
 
@@ -13330,11 +13136,11 @@ loadTilesetLayout:
 
 .ifdef ROM_SEASONS
 	xor a
-	ldh (<R_SVBK),a
+	ld ($ff00+R_SVBK),a
 	ret
 
-.else; ROM_AGES
-	jpab func_04_6e63
+.else ; ROM_AGES
+	jpab setPastCliffPalettesToRed		; $3733
 .endif
 
 
@@ -13365,8 +13171,8 @@ loadTilesetGraphics:
 	callfrombank0 initializeAnimations	; $37a8
 
 .ifdef ROM_AGES
-	callab        bank2.func_02_7a77		; $37b2
-	callab        bank2.checkLoadPastSignAndChestGfx		; $37ba
+	callab        roomGfxChanges.func_02_7a77		; $37b2
+	callab        roomGfxChanges.checkLoadPastSignAndChestGfx		; $37ba
 .endif
 
 	; Removed for expanded-tilesets branch
@@ -13869,9 +13675,9 @@ generateVramTilesWithRoomChanges:
 
 	callfrombank0 generateW3VramTilesAndAttributes		; $3a55
 .ifdef ROM_AGES
-	callab        bank2.applyRoomSpecificTileChangesAfterGfxLoad		; $3a5f
+	callab        roomGfxChanges.applyRoomSpecificTileChangesAfterGfxLoad		; $3a5f
 .else
-	call        applyRoomSpecificTileChangesAfterGfxLoad
+	call        roomGfxChanges.applyRoomSpecificTileChangesAfterGfxLoad		; $3a5f
 .endif
 
 	pop bc			; $3a67
@@ -14049,10 +13855,10 @@ seasonsFunc_3a9c:
 	ld ($cc68),a		; $3aae
 	ret			; $3ab1
 
-seasonsFunc_3ab2:
+checkRoomPackAfterWarp:
 	ld a,($ff00+$97)	; $3ab2
 	push af			; $3ab4
-	callfrombank0 bank1.seasonsFunc_7e6e		; $3ab5
+	callfrombank0 bank1.checkRoomPackAfterWarp_body		; $3abc
 	pop af			; $3abf
 	ld ($ff00+$97),a	; $3ac0
 	ld ($2222),a		; $3ac2
@@ -14223,242 +14029,7 @@ updateInteraction:
 	ld l,a			; $3b89
 	jp hl			; $3b8a
 
-interactionCodeTable: ; $3b8b
-	.dw interactionBank08.interactionCode00 ; 0x00
-	.dw interactionBank08.interactionCode01 ; 0x01
-	.dw interactionBank08.interactionCode02 ; 0x02
-	.dw interactionBank08.interactionCode03 ; 0x03
-	.dw interactionBank08.interactionCode04 ; 0x04
-	.dw interactionBank08.interactionCode05 ; 0x05
-	.dw interactionBank08.interactionCode06 ; 0x06
-	.dw interactionBank08.interactionCode07 ; 0x07
-	.dw interactionBank08.interactionCode08 ; 0x08
-	.dw interactionBank08.interactionCode09 ; 0x09
-	.dw interactionBank08.interactionCode0a ; 0x0a
-	.dw interactionBank08.interactionCode0b ; 0x0b
-	.dw interactionBank08.interactionCode0c ; 0x0c
-	.dw                   interactionDelete ; 0x0d
-	.dw                   interactionDelete ; 0x0e
-	.dw interactionBank08.interactionCode0f ; 0x0f
-	.dw interactionBank08.interactionCode10 ; 0x10
-	.dw interactionBank08.interactionCode11 ; 0x11
-	.dw interactionBank08.interactionCode12 ; 0x12
-	.dw interactionBank08.interactionCode13 ; 0x13
-	.dw interactionBank08.interactionCode14 ; 0x14
-	.dw interactionBank08.interactionCode15 ; 0x15
-	.dw interactionBank08.interactionCode16 ; 0x16
-	.dw interactionBank08.interactionCode17 ; 0x17
-	.dw interactionBank08.interactionCode18 ; 0x18
-	.dw interactionBank08.interactionCode19 ; 0x19
-	.dw interactionBank08.interactionCode1a ; 0x1a
-	.dw interactionBank08.interactionCode1b ; 0x1b
-	.dw interactionBank08.interactionCode1c ; 0x1c
-	.dw                   interactionDelete ; 0x1d
-	.dw interactionBank08.interactionCode1e ; 0x1e
-	.dw interactionBank08.interactionCode1f ; 0x1f
-	.dw interactionBank08.interactionCode20 ; 0x20
-	.dw interactionBank08.interactionCode21 ; 0x21
-	.dw interactionBank08.interactionCode22 ; 0x22
-	.dw interactionBank08.interactionCode23 ; 0x23
-	.dw interactionBank08.interactionCode24 ; 0x24
-	.dw interactionBank08.interactionCode25 ; 0x25
-	.dw                   interactionDelete ; 0x26
-	.dw                   interactionDelete ; 0x27
-	.dw interactionBank08.interactionCode28 ; 0x28
-	.dw interactionBank08.interactionCode29 ; 0x29
-	.dw interactionBank08.interactionCode2a ; 0x2a
-	.dw interactionBank08.interactionCode2b ; 0x2b
-	.dw interactionBank08.interactionCode2c ; 0x2c
-	.dw interactionBank08.interactionCode2d ; 0x2d
-	.dw interactionBank08.interactionCode2e ; 0x2e
-	.dw interactionBank08.interactionCode2f ; 0x2f
-	.dw interactionBank08.interactionCode30 ; 0x30
-	.dw interactionBank08.interactionCode31 ; 0x31
-	.dw interactionBank08.interactionCode32 ; 0x32
-	.dw interactionBank08.interactionCode33 ; 0x33
-	.dw interactionBank08.interactionCode34 ; 0x34
-	.dw interactionBank08.interactionCode35 ; 0x35
-	.dw interactionBank08.interactionCode36 ; 0x36
-	.dw interactionBank08.interactionCode37 ; 0x37
-	.dw interactionBank08.interactionCode38 ; 0x38
-	.dw interactionBank08.interactionCode39 ; 0x39
-	.dw interactionBank08.interactionCode3a ; 0x3a
-	.dw interactionBank08.interactionCode3b ; 0x3b
-	.dw interactionBank08.interactionCode3c ; 0x3c
-	.dw interactionBank08.interactionCode3d ; 0x3d
-	.dw interactionBank09.interactionCode3e ; 0x3e
-	.dw interactionBank09.interactionCode3f ; 0x3f
-	.dw interactionBank09.interactionCode40 ; 0x40
-	.dw interactionBank09.interactionCode41 ; 0x41
-	.dw interactionBank09.interactionCode42 ; 0x42
-	.dw interactionBank09.interactionCode43 ; 0x43
-	.dw interactionBank09.interactionCode44 ; 0x44
-	.dw interactionBank09.interactionCode45 ; 0x45
-	.dw interactionBank09.interactionCode46 ; 0x46
-	.dw interactionBank09.interactionCode47 ; 0x47
-	.dw interactionBank09.interactionCode48 ; 0x48
-	.dw interactionBank09.interactionCode49 ; 0x49
-	.dw interactionBank09.interactionCode4a ; 0x4a
-	.dw interactionBank09.interactionCode4b ; 0x4b
-	.dw interactionBank09.interactionCode4c ; 0x4c
-	.dw interactionBank09.interactionCode4d ; 0x4d
-	.dw interactionBank09.interactionCode4e ; 0x4e
-	.dw interactionBank09.interactionCode4f ; 0x4f
-	.dw                   interactionDelete ; 0x50
-	.dw interactionBank09.interactionCode51 ; 0x51
-	.dw interactionBank09.interactionCode52 ; 0x52
-	.dw interactionBank09.interactionCode53 ; 0x53
-	.dw interactionBank09.interactionCode54 ; 0x54
-	.dw interactionBank09.interactionCode55 ; 0x55
-	.dw interactionBank09.interactionCode56 ; 0x56
-	.dw interactionBank09.interactionCode57 ; 0x57
-	.dw interactionBank09.interactionCode58 ; 0x58
-	.dw interactionBank09.interactionCode59 ; 0x59
-	.dw interactionBank09.interactionCode5a ; 0x5a
-	.dw interactionBank09.interactionCode5b ; 0x5b
-	.dw interactionBank09.interactionCode5c ; 0x5c
-	.dw interactionBank09.interactionCode5d ; 0x5d
-	.dw interactionBank09.interactionCode5e ; 0x5e
-	.dw interactionBank09.interactionCode5f ; 0x5f
-	.dw interactionBank09.interactionCode60 ; 0x60
-	.dw interactionBank09.interactionCode61 ; 0x61
-	.dw interactionBank09.interactionCode62 ; 0x62
-	.dw interactionBank09.interactionCode63 ; 0x63
-	.dw interactionBank09.interactionCode64 ; 0x64
-	.dw interactionBank09.interactionCode65 ; 0x65
-	.dw interactionBank09.interactionCode66 ; 0x66
-	.dw interactionBank0a.interactionCode67 ; 0x67
-	.dw interactionBank0a.interactionCode68 ; 0x68
-	.dw interactionBank0a.interactionCode69 ; 0x69
-	.dw interactionBank0a.interactionCode6a ; 0x6a
-	.dw interactionBank0a.interactionCode6b ; 0x6b
-	.dw interactionBank0a.interactionCode6c ; 0x6c
-	.dw interactionBank0a.interactionCode6d ; 0x6d
-	.dw interactionBank0a.interactionCode6e ; 0x6e
-	.dw interactionBank0a.interactionCode6f ; 0x6f
-	.dw interactionBank0a.interactionCode70 ; 0x70
-	.dw interactionBank0a.interactionCode71 ; 0x71
-	.dw interactionBank0a.interactionCode72 ; 0x72
-	.dw interactionBank0a.interactionCode73 ; 0x73
-	.dw interactionBank0a.interactionCode74 ; 0x74
-	.dw interactionBank0a.interactionCode75 ; 0x75
-	.dw interactionBank0a.interactionCode76 ; 0x76
-	.dw interactionBank0a.interactionCode77 ; 0x77
-	.dw interactionBank0a.interactionCode78 ; 0x78
-	.dw interactionBank0a.interactionCode79 ; 0x79
-	.dw interactionBank0a.interactionCode7a ; 0x7a
-	.dw interactionBank0a.interactionCode7b ; 0x7b
-	.dw interactionBank0a.interactionCode7c ; 0x7c
-	.dw interactionBank0a.interactionCode7d ; 0x7d
-	.dw interactionBank0a.interactionCode7e ; 0x7e
-	.dw interactionBank0a.interactionCode7f ; 0x7f
-	.dw interactionBank0a.interactionCode80 ; 0x80
-	.dw interactionBank0a.interactionCode81 ; 0x81
-	.dw interactionBank0a.interactionCode82 ; 0x82
-	.dw interactionBank0a.interactionCode83 ; 0x83
-	.dw interactionBank0a.interactionCode84 ; 0x84
-	.dw                   interactionDelete ; 0x85
-	.dw interactionBank0a.interactionCode86 ; 0x86
-	.dw interactionBank0a.interactionCode87 ; 0x87
-	.dw interactionBank0a.interactionCode88 ; 0x88
-	.dw interactionBank0a.interactionCode89 ; 0x89
-	.dw interactionBank0a.interactionCode8a ; 0x8a
-	.dw interactionBank0a.interactionCode8b ; 0x8b
-	.dw interactionBank0a.interactionCode8c ; 0x8c
-	.dw interactionBank0a.interactionCode8d ; 0x8d
-	.dw interactionBank0a.interactionCode8e ; 0x8e
-	.dw interactionBank0a.interactionCode8f ; 0x8f
-	.dw interactionBank0a.interactionCode90 ; 0x90
-	.dw interactionBank0a.interactionCode91 ; 0x91
-	.dw interactionBank0a.interactionCode92 ; 0x92
-	.dw interactionBank0a.interactionCode93 ; 0x93
-	.dw interactionBank0a.interactionCode94 ; 0x94
-	.dw interactionBank0a.interactionCode95 ; 0x95
-	.dw interactionBank0a.interactionCode96 ; 0x96
-	.dw interactionBank0a.interactionCode97 ; 0x97
-	.dw interactionBank0b.interactionCode98 ; 0x98
-	.dw interactionBank0b.interactionCode99 ; 0x99
-	.dw interactionBank0b.interactionCode9a ; 0x9a
-	.dw interactionBank0b.interactionCode9b ; 0x9b
-	.dw interactionBank0b.interactionCode9c ; 0x9c
-	.dw interactionBank0b.interactionCode9d ; 0x9d
-	.dw interactionBank0b.interactionCode9e ; 0x9e
-	.dw interactionBank0b.interactionCode9f ; 0x9f
-	.dw interactionBank0b.interactionCodea0 ; 0xa0
-	.dw interactionBank0b.interactionCodea1 ; 0xa1
-	.dw interactionBank0b.interactionCodea2 ; 0xa2
-	.dw interactionBank0b.interactionCodea3 ; 0xa3
-	.dw interactionBank0b.interactionCodea4 ; 0xa4
-	.dw interactionBank0b.interactionCodea5 ; 0xa5
-	.dw interactionBank0b.interactionCodea6 ; 0xa6
-	.dw interactionBank0b.interactionCodea7 ; 0xa7
-	.dw interactionBank0b.interactionCodea8 ; 0xa8
-	.dw interactionBank0b.interactionCodea9 ; 0xa9
-	.dw interactionBank0b.interactionCodeaa ; 0xaa
-	.dw interactionBank0b.interactionCodeab ; 0xab
-	.dw interactionBank0b.interactionCodeac ; 0xac
-	.dw interactionBank0b.interactionCodead ; 0xad
-	.dw interactionBank0b.interactionCodeae ; 0xae
-	.dw interactionBank0b.interactionCodeaf ; 0xaf
-	.dw interactionBank0b.interactionCodeb0 ; 0xb0
-	.dw interactionBank0b.interactionCodeb1 ; 0xb1
-	.dw interactionBank0b.interactionCodeb2 ; 0xb2
-	.dw interactionBank0b.interactionCodeb3 ; 0xb3
-	.dw interactionBank0b.interactionCodeb4 ; 0xb4
-	.dw interactionBank0b.interactionCodeb5 ; 0xb5
-	.dw interactionBank0b.interactionCodeb6 ; 0xb6
-	.dw interactionBank0b.interactionCodeb7 ; 0xb7
-	.dw interactionBank0b.interactionCodeb8 ; 0xb8
-	.dw interactionBank0b.interactionCodeb9 ; 0xb9
-	.dw interactionBank0b.interactionCodeba ; 0xba
-	.dw interactionBank0b.interactionCodebb ; 0xbb
-	.dw interactionBank0b.interactionCodebc ; 0xbc
-	.dw interactionBank0b.interactionCodebd ; 0xbd
-	.dw interactionBank0b.interactionCodebe ; 0xbe
-	.dw interactionBank0b.interactionCodebf ; 0xbf
-	.dw interactionBank0b.interactionCodec0 ; 0xc0
-	.dw interactionBank0b.interactionCodec1 ; 0xc1
-	.dw interactionBank0b.interactionCodec2 ; 0xc2
-	.dw interactionBank0b.interactionCodec3 ; 0xc3
-	.dw interactionBank0b.interactionCodec4 ; 0xc4
-	.dw interactionBank0b.interactionCodec5 ; 0xc5
-	.dw interactionBank0b.interactionCodec6 ; 0xc6
-	.dw interactionBank0b.interactionCodec7 ; 0xc7
-	.dw interactionBank0b.interactionCodec8 ; 0xc8
-	.dw interactionBank0b.interactionCodec9 ; 0xc9
-	.dw interactionBank0b.interactionCodeca ; 0xca
-	.dw interactionBank0b.interactionCodecb ; 0xcb
-	.dw interactionBank0b.interactionCodecc ; 0xcc
-	.dw interactionBank0b.interactionCodecd ; 0xcd
-	.dw interactionBank0b.interactionCodece ; 0xce
-	.dw interactionBank0b.interactionCodecf ; 0xcf
-	.dw interactionBank0b.interactionCoded0 ; 0xd0
-	.dw interactionBank0b.interactionCoded1 ; 0xd1
-	.dw interactionBank0b.interactionCoded2 ; 0xd2
-	.dw interactionBank0b.interactionCoded3 ; 0xd3
-	.dw interactionBank0b.interactionCoded4 ; 0xd4
-	.dw interactionBank0b.interactionCoded5 ; 0xd5
-	.dw interactionBank0b.interactionCoded6 ; 0xd6
-	.dw interactionBank0b.interactionCoded7 ; 0xd7
-	.dw interactionBank0b.interactionCoded8 ; 0xd8
-	.dw interactionBank0b.interactionCoded9 ; 0xd9
-	.dw interactionBank0b.interactionCodeda ; 0xda
-	.dw interactionBank0b.interactionCodedb ; 0xdb
-	.dw interactionBank10.interactionCodedc ; 0xdc
-	.dw interactionBank10.interactionCodedd ; 0xdd
-	.dw interactionBank10.interactionCodede ; 0xde
-	.dw interactionBank10.interactionCodedf ; 0xdf
-	.dw interactionBank10.interactionCodee0 ; 0xe0
-	.dw interactionBank10.interactionCodee1 ; 0xe1
-	.dw interactionBank10.interactionCodee2 ; 0xe2
-	.dw interactionBank10.interactionCodee3 ; 0xe3
-	.dw                   interactionDelete ; 0xe4
-	.dw interactionBank10.interactionCodee5 ; 0xe5
-	.dw interactionBank10.interactionCodee6 ; 0xe6
-.ifdef ROM_SEASONS
-	.dw 0
-.endif
-
+.include "data/interactionCodeTable.s"
 
 .ifdef ROM_SEASONS
 
@@ -14479,12 +14050,6 @@ seasonsFunc_3d3d:
 	pop af			; $3d4c
 	setrombank		; $3d4d
 	ret			; $3d52
-
-; Placeholders
-checkObjectIsCloseToPosition:
-checkNpcShouldExistAtGameStage:
-tokayIslandStolenItems:
-
 
 .else ; ROM_AGES
 
@@ -14576,7 +14141,7 @@ interactionSetSimpleScript:
 interactionRunSimpleScript:
 	ldh a,(<hRomBank)	; $3da8
 	push af			; $3daa
-	ld a,SCRIPT_BANK		; $3dab
+	ld a,SIMPLE_SCRIPT_BANK		; $3dab
 	setrombank		; $3dad
 
 	ld h,d			; $3db2
@@ -14881,14 +14446,6 @@ seasonsFunc_3e52:
 	setrombank		; $3e68
 	ret			; $3e6d
 
-; Placeholders
-getWildTokayObjectDataIndex:
-objectCreateSparkle:
-objectCreateSparkleMovingUp:
-objectCreateRedBlueOrb:
-incMakuTreeState:
-setLinkDirection:
-
 .endif ; ROM_SEASONS
 
 
@@ -14903,11 +14460,19 @@ interactionFunc_3e6d:
 
 	ldh a,(<hRomBank)	; $3e71
 	push af			; $3e73
+.ifdef ROM_AGES
 	ld a,:bank16.data_4556		; $3e74
+.else
+	ld a,:data_4556		; $3e74
+.endif
 	setrombank		; $3e76
 
 	ld a,e			; $3e7b
+.ifdef ROM_AGES
 	ld hl,bank16.data_4556		; $3e7c
+.else
+	ld hl,data_4556		; $3e7c
+.endif
 	rst_addDoubleIndex			; $3e7f
 	ldi a,(hl)		; $3e80
 	ld h,(hl)		; $3e81
@@ -14924,7 +14489,9 @@ interactionFunc_3e6d:
 seasonsFunc_3e8f:
 	ld a,($ff00+$97)	; $3e8f
 	push af			; $3e91
-	callfrombank0 $04 $7655	; $3e92
+	ld a,$04		; $3e92
+	setrombank
+	ld hl,$7655		; $3e99
 	ld a,(hl)		; $3e9c
 	ld ($cc64),a		; $3e9d
 	pop af			; $3ea0
@@ -15025,14 +14592,6 @@ func_3ee4:
 	pop af			; $3ef1
 	setrombank		; $3ef2
 	ret			; $3ef7
-
-.else ; ROM_SEASONS
-
-; Placeholder
-checkLinkCanSurface:
-copy256BytesFromBank:
-func_3ed0:
-func_3ee4:
 
 .endif
 

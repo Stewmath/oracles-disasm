@@ -8044,7 +8044,7 @@ miscPuzzles_drawCrownDungeonOpeningFrame3:
 	ld c,$02		; $73dd
 ++
 	push de			; $73df
-	callab bank2.drawCrownDungeonOpeningTiles		; $73e0
+	callab roomGfxChanges.drawCrownDungeonOpeningTiles		; $73e0
 	call reloadTileMap		; $73e8
 	pop de			; $73eb
 	ld a,$0f		; $73ec

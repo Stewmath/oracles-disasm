@@ -1293,6 +1293,7 @@
 ; @subid_06-07{Something in endgame just before Ganon's being revived?}
 .define INTERACID_TWINROVA		$93
 
+.ifdef ROM_AGES
 ;;
 ; The restoration guru.
 ; @subid_00{Patch in the upstairs room}
@@ -1304,6 +1305,9 @@
 ; @subid_06{Fixed tuni nut sprite}
 ; @subid_07{Fixed sword sprite}
 .define INTERACID_PATCH			$94
+.else
+.define INTERACID_GHASTLY_DOLL		$94
+.endif
 
 ;;
 ; Ball used by villagers. Subid is controlled by $cfd3.

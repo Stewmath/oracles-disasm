@@ -1,12 +1,13 @@
-# Config for LynnaLab. DO NOT EDIT unless you know what you're doing. These
-# config options are set or unset on specific branches of oracles-disasm so that
-# LynnaLab knows what kind of data customization has occurred.
+# Config for LynnaLab. Be careful with editing this. Unexpected values could break LynnaLab.
 
 
-# Normally each area has "Main Gfx", "Unique Gfx", "Palette", and
-# "Tilemap" variables. These all mix together to define how the area looks.
-# This adds a confusing layer of indirection when editing areas.
-# On certain oracles-disasm branches, all of that complexity has been removed,
-# and each area simply has its own data for all of this. This uses more space in
-# the rom.
+# Set this to either "ages" or "seasons" to change which game LynnaLab edits.
+EditingGame: ages
+
+# Normally each tileset has "Main Gfx", "Unique Gfx", "Palette", and "Tilemap" variables. These all
+# mix together to define how the tileset looks.  This adds a confusing layer of indirection when
+# editing tilesets. So, on certain oracles-disasm branches, all of that complexity has been removed,
+# and each tileset simply has its own data for all of this. This uses more space in the rom.
+#
+# Don't modify this. The relevant branches (ie. hack-base) have it set if necessary.
 ExpandedTilesets: true

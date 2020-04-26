@@ -1,3 +1,5 @@
+ m_section_force "chestData" NAMESPACE chestData
+
 chestDataGroupTable:
 	.dw chestGroup0Data
 	.dw chestGroup1Data
@@ -161,3 +163,4 @@ chestGroup6Data:
 chestGroup7Data:
 	.db $ff
 
+.ends

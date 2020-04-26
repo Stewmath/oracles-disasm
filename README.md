@@ -19,7 +19,8 @@ setup instructions.
 # Build instructions
 
 Once the dependencies are installed, running `make` will build both games. To build
-a specific game, run `make ages` or `make seasons`.
+a specific game, run `make ages` or `make seasons`. (Don't try "make ages seasons"; make
+will try to build them in parallel which doesn't currently work).
 
 By default, the rom is built with precompressed assets, so that an exact copy of the
 original game is produced. In order to edit text, graphics, and other things, run the

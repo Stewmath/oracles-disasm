@@ -32,10 +32,12 @@ endif
 ifdef ROM_SEASONS
 	DEFINES += -D ROM_SEASONS -D FORCE_SECTIONS # TODO: remove force_sections later
 	GAME = seasons
+	OTHERGAME = ages
 	TEXT_INSERT_ADDRESS = 0x71c00
 else # ROM_AGES
 	DEFINES += -D ROM_AGES
 	GAME = ages
+	OTHERGAME = seasons
 	TEXT_INSERT_ADDRESS = 0x74000
 endif
 
@@ -46,8 +48,12 @@ NO_PRECMP_FILE = build/no_use_precompressed
 
 ifeq ($(BUILD_VANILLA), true)
 CMP_MODE = $(PRECMP_FILE)
+AGES_BUILD_DIR = build_ages_v
+SEASONS_BUILD_DIR = build_seasons_v
 else
 CMP_MODE = $(NO_PRECMP_FILE)
+AGES_BUILD_DIR = build_ages_e
+SEASONS_BUILD_DIR = build_seasons_e
 endif
 
 
@@ -69,6 +75,10 @@ ROOMLAYOUTFILES := $(foreach file,$(ROOMLAYOUTFILES),build/rooms/$(notdir $(file
 GAMEDATAFILES = $(wildcard data/$(GAME)/*.s)
 GAMEDATAFILES := $(foreach file,$(GAMEDATAFILES),build/data/$(notdir $(file)))
 
+MAIN_ASM_FILES = $(shell find code/ objects/ scripts/ -name '*.s' | grep -v '/$(OTHERGAME)/')
+AUDIO_FILES = $(shell find audio/ -name '*.s' -o -name '*.bin' | grep -v '/$(OTHERGAME)/')
+COMMON_INCLUDE_FILES = $(shell find constants/ include/ -name '*.s' | grep -v '/$(OTHERGAME)/')
+
 
 ifneq ($(BUILD_VANILLA),true)
 
@@ -89,33 +99,32 @@ ages:
 	@echo '=====Ages====='
 	@if [[ -L build ]]; then rm build; fi
 	@if [[ -e build ]]; then echo "The 'build' folder is not a symlink; please delete it."; false; fi
-	@if [[ ! -d build_ages ]]; then mkdir build_ages; fi
-	@ln -s build_ages build
+	@if [[ ! -d $(AGES_BUILD_DIR) ]]; then mkdir $(AGES_BUILD_DIR); fi
+	@ln -s $(AGES_BUILD_DIR) build
 	@ROM_AGES=1 $(MAKE) ages.gbc
 
 seasons:
 	@echo '===Seasons==='
 	@if [[ -L build ]]; then rm build; fi
 	@if [[ -e build ]]; then echo "The 'build' folder is not a symlink; please delete it."; false; fi
-	@if [[ ! -d build_seasons ]]; then mkdir build_seasons; fi
-	@ln -s build_seasons build
+	@if [[ ! -d $(SEASONS_BUILD_DIR) ]]; then mkdir $(SEASONS_BUILD_DIR); fi
+	@ln -s $(SEASONS_BUILD_DIR) build
 	@ROM_SEASONS=1 $(MAKE) seasons.gbc
 
 
 $(GAME).gbc: $(OBJS) build/linkfile
 	$(LD) -S build/linkfile $@
-	@-tools/verify-checksum.sh $(GAME)
+	@-tools/build/verify-checksum.sh $(GAME)
 
 
-build/$(GAME).o: $(GFXFILES) $(ROOMLAYOUTFILES) $(GAMEDATAFILES)
-build/$(GAME).o: build/textData.s build/textDefines.s
-build/$(GAME).o: code/*.s code/items/*.s code/$(GAME)/*.s data/*.s objects/*.s objects/$(GAME)/*.s scripts/$(GAME)/*.s
+build/$(GAME).o: $(MAIN_ASM_FILES)
+build/$(GAME).o: $(GFXFILES) $(ROOMLAYOUTFILES) $(COLLISIONFILES) $(MAPPINGINDICESFILES) $(GAMEDATAFILES)
 build/$(GAME).o: rooms/$(GAME)/*.bin
 
-build/audio.o: audio/$(GAME)/*.s audio/$(GAME)/*.bin
-build/*.o: include/*.s constants/*.s Makefile
+build/audio.o: $(AUDIO_FILES)
+build/*.o: $(COMMON_INCLUDE_FILES) Makefile
 
-build/$(GAME).o: $(GAME).s Makefile | build
+build/$(GAME).o: $(GAME).s build/textData.s build/textDefines.s Makefile | build
 	$(CC) -o $@ $(CFLAGS) $<
 
 build/%.o: code/%.s | build
@@ -127,7 +136,7 @@ build/linkfile: $(OBJS)
 
 build/rooms/%.cmp: rooms/$(GAME)/small/%.bin $(CMP_MODE) | build/rooms
 	@echo "Compressing $< to $@..."
-	@$(PYTHON) tools/compressRoomLayout.py $< $@ $(OPTIMIZE)
+	@$(PYTHON) tools/build/compressRoomLayout.py $< $@ $(OPTIMIZE)
 
 # Uncompressed graphics (from either game)
 build/gfx/%.cmp: gfx/%.bin | build/gfx
@@ -153,13 +162,13 @@ build/data/%.s: data/$(GAME)/%.s | build/data
 
 $(PRECMP_FILE): | build
 	@[[ ! -f $(NO_PRECMP_FILE) ]] || (\
-		echo "ERROR: the current 'build' directory does not use precompressed data, but the Makefile does. Please run fixbuild.sh." && \
+		echo "ERROR: the current 'build' directory does not use precompressed data, but the Makefile does. Please run \"./fixbuild.sh\"." && \
 		false )
 	touch $@
 
 $(NO_PRECMP_FILE): | build
 	@[[ ! -f $(PRECMP_FILE) ]] || (\
-		echo "ERROR: the current 'build' directory uses precompressed data, but the Makefile does not. Please run fixbuild.sh." && \
+		echo "ERROR: the current 'build' directory uses precompressed data, but the Makefile does not. Please run \"./fixbuild.sh\"." && \
 		false )
 	touch $@
 
@@ -192,27 +201,27 @@ else
 
 build/rooms/room04%.cmp: rooms/$(GAME)/large/room04%.bin $(CMP_MODE) | build/rooms
 	@echo "Compressing $< to $@..."
-	@$(PYTHON) tools/compressRoomLayout.py $< $@ -d rooms/$(GAME)/dictionary4.bin
+	@$(PYTHON) tools/build/compressRoomLayout.py $< $@ -d rooms/$(GAME)/dictionary4.bin
 build/rooms/room05%.cmp: rooms/$(GAME)/large/room05%.bin $(CMP_MODE) | build/rooms
 	@echo "Compressing $< to $@..."
-	@$(PYTHON) tools/compressRoomLayout.py $< $@ -d rooms/$(GAME)/dictionary5.bin
+	@$(PYTHON) tools/build/compressRoomLayout.py $< $@ -d rooms/$(GAME)/dictionary5.bin
 build/rooms/room06%.cmp: rooms/$(GAME)/large/room06%.bin $(CMP_MODE) | build/rooms
 	@echo "Compressing $< to $@..."
-	@$(PYTHON) tools/compressRoomLayout.py $< $@ -d rooms/$(GAME)/dictionary6.bin
+	@$(PYTHON) tools/build/compressRoomLayout.py $< $@ -d rooms/$(GAME)/dictionary6.bin
 
 # Compress graphics (from either game)
 build/gfx/%.cmp: gfx_compressible/%.bin $(CMP_MODE) | build/gfx
 	@echo "Compressing $< to $@..."
-	@$(PYTHON) tools/compressGfx.py $< $@
+	@$(PYTHON) tools/build/compressGfx.py $< $@
 
 # Compress graphics (from a particular game)
 build/gfx/%.cmp: gfx_compressible/$(GAME)/%.bin $(CMP_MODE) | build/gfx
 	@echo "Compressing $< to $@..."
-	@$(PYTHON) tools/compressGfx.py $< $@
+	@$(PYTHON) tools/build/compressGfx.py $< $@
 
-build/textData.s: text/$(GAME)/text.txt text/$(GAME)/dict.txt tools/parseText.py $(CMP_MODE) | build
+build/textData.s: text/$(GAME)/text.txt text/$(GAME)/dict.txt tools/build/parseText.py $(CMP_MODE) | build
 	@echo "Compressing text..."
-	@$(PYTHON) tools/parseText.py text/$(GAME)/dict.txt $< $@ $$(($(TEXT_INSERT_ADDRESS))) $$((0x2c))
+	@$(PYTHON) tools/build/parseText.py text/$(GAME)/dict.txt $< $@ $$(($(TEXT_INSERT_ADDRESS))) $$((0x2c))
 
 build/textDefines.s: build/textData.s
 
@@ -244,4 +253,4 @@ doc: $(DOCFILES) | build/doc
 	doxygen
 
 build/%-s.c: %.s | build/doc
-	cd build/doc/; $(TOPDIR)/tools/asm4doxy.pl -ns ../../$<
+	cd build/doc/; $(TOPDIR)/tools/build/asm4doxy.pl -ns ../../$<

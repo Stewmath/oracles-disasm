@@ -1127,7 +1127,7 @@ _ecom_readPositionVars:
 ; @param[out]	zflag
 _ecom_seasonsFunc_4446:
 	ld b,a			; $4446
-	ld a,($cc79) ; TODO: figure out what this corresponds to in ages (if anything)
+	ld a,(wMagnetGloveState) ; TODO: figure out what this corresponds to in ages (if anything)
 	or a			; $444a
 	ld a,b			; $444b
 	jp z,_ecom_checkHazards		; $444c
@@ -1140,7 +1140,7 @@ _ecom_seasonsFunc_4446:
 	set 7,(hl)		; $4456
 
 	push af			; $4458
-	call objectGetLinkRelativeAngle		; $4459
+	call objectGetAngleTowardLink		; $4459
 	ld c,a			; $445c
 	ld b,SPEED_80		; $445d
 	call _ecom_applyGivenVelocity		; $445f

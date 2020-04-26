@@ -26,7 +26,12 @@ init:
 	call _setCpuToDoubleSpeed		; $401f
 +
 	ld hl,hActiveFileSlot		; $4022
+.ifdef ROM_AGES
 	ld b,hramEnd-hActiveFileSlot		; $4025
+.else
+	; hFFBE and hFFBF not cleared in seasons
+	ld b,hramEnd-hActiveFileSlot-2		; $4025
+.endif
 	call clearMemory		; $4027
 
 	; Clear all memory after the stacks
@@ -132,7 +137,6 @@ objectSpeedTable:
 
 	.undefine TMP_SPEED
 
-
 ;;
 ; Calculates the game-transfer secret's text?
 ; @addr{481b}
@@ -199,6 +203,7 @@ secretFunctionCaller_body:
 	.dw _verifyUnpackedSecretGameID
 	.dw _generateGameIDIfNeeded
 	.dw _loadUnpackedSecretData
+
 
 ;;
 ; Generates a secret. If this is one of the 5-letter secrets, then wShortSecretIndex
@@ -884,7 +889,7 @@ _incCutsceneState:
 ;;
 ; Unused
 ; @addr{4b15}
-_incTmpcbb3:
+unused_incTmpcbb3:
 	ld hl,wTmpcbb3		; $4b15
 	inc (hl)		; $4b18
 	ret			; $4b19
@@ -923,7 +928,11 @@ _twinrovaCutscene_state1:
 
 	call _incCutsceneState		; $4b38
 
+.ifdef ROM_AGES
 	ld a,$f1 ; Room with zelda and torches
+.else
+	ld a,$9a ; Room with zelda and torches
+.endif
 	ld (wActiveRoom),a		; $4b3d
 	call _twinrovaCutscene_fadeinToRoom		; $4b40
 
@@ -940,7 +949,11 @@ _twinrovaCutscene_state1:
 	ld hl,objectData.objectData4022
 	call parseGivenObjectData		; $4b55
 
+.ifdef ROM_AGES
 	ld a,PALH_ac		; $4b58
+.else
+	ld a,SEASONS_PALH_ac		; $4b58
+.endif
 	call loadPaletteHeader		; $4b5a
 
 	ld a,$01		; $4b5d
@@ -1033,7 +1046,11 @@ _cutscene18_state5:
 	ret nz			; $4bd4
 
 	; Load twinrova fight room, start a fadein, then exit cutscene
+.ifdef ROM_AGES
 	ld a,$f5		; $4bd5
+.else
+	ld a,$9e		; $4bd5
+.endif
 	ld (wActiveRoom),a		; $4bd7
 	call _twinrovaCutscene_fadeinToRoom		; $4bda
 
@@ -1072,7 +1089,11 @@ _twinrovaCutscene_deleteAllInteractionsExceptFlames:
 	or a			; $4c13
 	jr z,+			; $4c14
 	ldi a,(hl)		; $4c16
+.ifdef ROM_AGES
 	cp INTERACID_TWINROVA_FLAME			; $4c17
+.else
+	cp INTERACID_TWINROVA_IN_CUTSCENE			; $4c17
+.endif
 	call z,@delete		; $4c19
 +
 	inc h			; $4c1c
@@ -1090,7 +1111,11 @@ _twinrovaCutscene_deleteAllInteractionsExceptFlames:
 ; Loads the "angry-looking" version of the flames.
 ; @addr{4c29}
 _twinrovaCutscene_loadAngryFlames:
+.ifdef ROM_AGES
 	ld a,PALH_af		; $4c29
+.else
+	ld a,SEASONS_PALH_af		; $4c29
+.endif
 	call loadPaletteHeader		; $4c2b
 	ld hl,objectData.objectData402f		; $4c2e
 	jp parseGivenObjectData		; $4c31
@@ -1303,6 +1328,8 @@ _intro_incState:
 _intro_uninitialized:
 	ld hl,wIntroStage		; $4d38
 	inc (hl)		; $4d3b
+
+
 ;;
 ; @addr{4d3c}
 _intro_capcomScreen:
@@ -1390,7 +1417,6 @@ _intro_titlescreen:
 	ld hl,titlescreenPressStartSprites
 	jp addSpritesToOam
 .endif
-
 
 ;;
 ; @addr{4da7}
@@ -1520,7 +1546,6 @@ titlescreenPressStartSprites:
 	.db $80 $74 $3a $00
 	.db $80 $7c $40 $00
 
-
 .endif
 
 ;;
@@ -1579,7 +1604,11 @@ _introCinematic_ridingHorse_state0:
 
 	ld a,GFXH_9b		; $4e71
 	call loadGfxHeader		; $4e73
+.ifdef ROM_AGES
 	ld a,PALH_90		; $4e76
+.else
+	ld a,SEASONS_PALH_90		; $4e76
+.endif
 	call loadPaletteHeader		; $4e78
 
 	; Use cbb3-cbb4 as a 2-byte counter; wait for 0x15e=350 frames
@@ -1695,7 +1724,11 @@ _introCinematic_ridingHorse_state3:
 	inc hl			; $4f12
 	ld (hl),$01		; $4f13
 
+.ifdef ROM_AGES
 	ld a,PALH_96		; $4f15
+.else
+	ld a,SEASONS_PALH_96		; $4f15
+.endif
 	call loadPaletteHeader		; $4f17
 	ld a,UNCMP_GFXH_38		; $4f1a
 	call loadUncompressedGfxHeader		; $4f1c
@@ -1822,7 +1855,11 @@ _introCinematic_ridingHorse_state6:
 	ret nz			; $4fca
 
 	call disableLcd		; $4fcb
-	ld a,PALH_92		; $4fce
+.ifdef ROM_AGES
+	ld a,PALH_92		;$4fce
+.else
+	ld a,SEASONS_PALH_92	;$4fce
+.endif
 	call loadPaletteHeader		; $4fd0
 	ld a,GFXH_9c		; $4fd3
 	call loadGfxHeader		; $4fd5
@@ -1862,7 +1899,11 @@ _introCinematic_ridingHorse_state0:
 	ldh (<hOamTail),a
 	ld a,GFXH_9b
 	call loadGfxHeader
-	ld a,PALH_90
+.ifdef ROM_AGES
+	ld a,PALH_90		; $4e76
+.else
+	ld a,SEASONS_PALH_90		; $4e76
+.endif
 	call loadPaletteHeader
 
 	; Use cbb3-cbb4 as a 2-byte counter; wait for 0x37e=894 frames
@@ -1907,11 +1948,19 @@ _introCinematic_ridingHorse_state1:
 	ret nz
 
 	call clearPaletteFadeVariablesAndRefreshPalettes
+.ifdef ROM_AGES
 	ld a,PALH_96
+.else
+	ld a,SEASONS_PALH_96
+.endif
 	call loadPaletteHeader
 	ld a,$0c
 	call loadGfxRegisterStateIndex
+.ifdef ROM_AGES
 	ld a,(wGfxRegs1.LYC)
+.else
+	ld a,(wGfxRegs2.SCY)
+.endif
 	ld (wTmpcbbb),a
 	ld a,(wGfxRegs2.SCX)
 	ld (wTmpcbbc),a
@@ -1930,7 +1979,11 @@ _introCinematic_ridingHorse_state2:
 	jr nz,++
 
 	call disableLcd
+.ifdef ROM_AGES
 	ld a,PALH_92
+.else
+	ld a,SEASONS_PALH_92
+.endif
 	call loadPaletteHeader
 	ld a,GFXH_9c
 	call loadGfxHeader
@@ -2007,7 +2060,11 @@ _introCinematic_ridingHorse_state8:
 	dec (hl)		; $5006
 	jr nz,_introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites_2	; $5007
 
+.ifdef ROM_AGES
 	ld a,PALH_93		; $5009
+.else
+	ld a,SEASONS_PALH_93		; $5009
+.endif
 	call loadPaletteHeader		; $500b
 	call disableLcd		; $500e
 	call clearOam		; $5011
@@ -2195,7 +2252,11 @@ _introCinematic_inTemple_state0:
 
 	ld a,GFXH_9e		; $50f7
 	call loadGfxHeader		; $50f9
+.ifdef ROM_AGES
 	ld a,PALH_91		; $50fc
+.else
+	ld a,SEASONS_PALH_91		; $50fc
+.endif
 	call loadPaletteHeader		; $50fe
 
 	ld a,$09		; $5101
@@ -2204,7 +2265,11 @@ _introCinematic_inTemple_state0:
 	ld a,(wGfxRegs1.SCY)		; $5106
 	ldh (<hCameraY),a	; $5109
 
+.ifdef ROM_AGES
 	ld a,$10		; $510b
+.else
+	ld a,$18		; $510b
+.endif
 	ld (wTilesetAnimation),a		; $510d
 	call loadAnimationData		; $5110
 
@@ -2223,8 +2288,13 @@ _introCinematic_inTemple_state0:
 	ld l,<w1Link.xh		; $5129
 	ld (hl),$50		; $512b
 
+.ifdef ROM_AGES
 	ld hl,interactionBank10.templeIntro_simulatedInput		; $512d
 	ld a,:interactionBank10.templeIntro_simulatedInput		; $5130
+.else
+	ld hl,templeIntro_simulatedInput		; $512d
+        ld a,:templeIntro_simulatedInput		; $5130
+.endif
 	call setSimulatedInputAddress		; $5132
 
 	; Spawn the 3 pieces of triforce
@@ -2573,7 +2643,11 @@ _introCinematic_preTitlescreen_state0:
 	ld (wTilesetAnimation),a		; $52ca
 	ld a,GFXH_9f		; $52cd
 	call loadGfxHeader		; $52cf
+.ifdef ROM_AGES
 	ld a,PALH_94		; $52d2
+.else
+	ld a,SEASONS_PALH_94		; $52d2
+.endif
 	call loadPaletteHeader		; $52d4
 	call refreshObjectGfx		; $52d7
 	ld a,$0a		; $52da
@@ -2896,10 +2970,6 @@ _createInteraction:
 
 .ifdef ROM_SEASONS
 
-; Placeholder label
-_createInteraction:
-
-
 ; In Ages these sprites are located elsewhere
 
 ; Sprites used on the closeup shot of Link on the horse in the intro
@@ -2978,30 +3048,59 @@ introTempleSprites:
 	.db $10 $40 $4e $03
 	.db $18 $48 $50 $03
 
+templeIntro_simulatedInput:
+	dwb   45  $00
+	dwb   16  BTN_UP
+	dwb   48  $00
+	dwb   32  BTN_UP
+	dwb   24  $00
+	dwb   32  BTN_UP
+	dwb   48  $00
+	dwb   34  BTN_UP
+	dwb  112  $00
+	dwb    5  BTN_UP
+	dwb   32  $00
+	dwb    5  BTN_UP
+	dwb   36  $00
+	dwb    5  BTN_UP
+	dwb   36  $00
+	dwb    5  BTN_UP
+	dwb   36  $00
+	dwb   12  BTN_UP
+	.dw $ffff
+
+data_5951:
+	.db $3c $b4 $3c $50 $78 $b4 $3c $3c
+	.db $3c $70 $78 $78
 
 .endif; ROM_SEASONS
 
-
 ;;
-; Called from func_306c in bank 0.
+; Called from endgameCutsceneHandler in bank 0.
 ;
 ; @param	e
 ; @addr{5414}
 endgameCutsceneHandler_body:
 	ld hl,wCutsceneState		; $5414
 	bit 0,(hl)		; $5417
-	jr nz,_label_03_084	; $5419
+	jr nz,+	; $5419
 	inc (hl)		; $541b
 	ld hl,wTmpcbb3		; $541c
 	ld b,$10		; $541f
 	call clearMemory		; $5421
-_label_03_084:
++
 	ld a,e			; $5424
 	rst_jumpTable			; $5425
+.ifdef ROM_AGES
 	.dw _endgameCutsceneHandler_09
 	.dw _endgameCutsceneHandler_0a
 	.dw _endgameCutsceneHandler_0f
 	.dw _endgameCutsceneHandler_20
+.else
+	.dw $551f
+	.dw $5e7f
+	.dw $5bad
+.endif
 
 ;;
 ; @addr{542e}
