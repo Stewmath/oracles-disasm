@@ -37,7 +37,9 @@ jobs:
       # We run "verifyChecksum.sh" even though it's in the makefile, because the makefile ignores
       # its error code.
       # Only do it if the makefile is in BUILD_VANILLA mode, though.
-      - run: grep 'BUILD_VANILLA = false' Makefile || tools/build/verify-checksum.sh << parameters.game >>
+      - run:
+          name: Verify checksum (if applicable)
+          command: grep 'BUILD_VANILLA = false' Makefile || tools/build/verify-checksum.sh << parameters.game >>
 
 
 workflows:
