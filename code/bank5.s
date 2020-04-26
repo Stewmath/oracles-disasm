@@ -100,7 +100,7 @@ updateSpecialObjects:
 .ifdef ROM_AGES
 	.dw  specialObjectCode_transformedLink
 .else
-	.dw specialObjectCode_05_7cda
+	.dw  specialObjectCode_subrosiaDanceLink
 .endif
 	.dw  specialObjectCode_transformedLink
 	.dw  specialObjectCode_transformedLink
@@ -587,7 +587,7 @@ _linkApplyTileTypes:
 	.dw @tileType_conveyor ; TILETYPE_DOWNCONVEYOR
 	.dw @tileType_conveyor ; TILETYPE_LEFTCONVEYOR
 	.dw _dealSpikeDamageToLink ; TILETYPE_SPIKE
-	.dw @tileType_nothing ; TILETYPE_NOTHING
+	.dw @tileType_cracked_ice ; TILETYPE_CRACKED_ICE
 	.dw @tileType_ice ; TILETYPE_ICE
 	.dw @tileType_lava ; TILETYPE_LAVA
 	.dw @tileType_puddle ; TILETYPE_PUDDLE
@@ -709,7 +709,7 @@ _linkApplyTileTypes:
 	set 6,(hl)		; $4390
 	jr @notSwimming		; $4392
 
-@tileType_nothing:
+@tileType_cracked_ice:
 .ifdef ROM_AGES
 	ret			; $4394
 .else
@@ -12040,7 +12040,7 @@ _dimitriState2Substate1:
 	xor a			; $7463
 	ld (w1Link.knockbackCounter),a		; $7464
 	ld a,(wActiveTileType)		; $7467
-	cp TILETYPE_NOTHING			; $746a
+	cp TILETYPE_CRACKED_ICE			; $746a
 	jr nz,+			; $746c
 	ld a,$20		; $746e
 	ld (wStandingOnTileCounter),a		; $7470

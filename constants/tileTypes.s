@@ -19,7 +19,7 @@
 .define TILETYPE_DOWNCONVEYOR	$0b
 .define TILETYPE_LEFTCONVEYOR	$0c
 .define TILETYPE_SPIKE		$0d
-.define TILETYPE_NOTHING	$0e ; This is a stub? Dimitri checks for this?
+.define TILETYPE_CRACKED_ICE	$0e ; Seasons-only
 .define TILETYPE_ICE		$0f
 .define TILETYPE_LAVA		$10
 .define TILETYPE_PUDDLE		$11
