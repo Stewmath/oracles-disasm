@@ -48,8 +48,12 @@ NO_PRECMP_FILE = build/no_use_precompressed
 
 ifeq ($(BUILD_VANILLA), true)
 CMP_MODE = $(PRECMP_FILE)
+AGES_BUILD_DIR = build_ages_v
+SEASONS_BUILD_DIR = build_seasons_v
 else
 CMP_MODE = $(NO_PRECMP_FILE)
+AGES_BUILD_DIR = build_ages_e
+SEASONS_BUILD_DIR = build_seasons_e
 endif
 
 
@@ -103,22 +107,22 @@ ages:
 	@echo '=====Ages====='
 	@if [[ -L build ]]; then rm build; fi
 	@if [[ -e build ]]; then echo "The 'build' folder is not a symlink; please delete it."; false; fi
-	@if [[ ! -d build_ages ]]; then mkdir build_ages; fi
-	@ln -s build_ages build
+	@if [[ ! -d $(AGES_BUILD_DIR) ]]; then mkdir $(AGES_BUILD_DIR); fi
+	@ln -s $(AGES_BUILD_DIR) build
 	@ROM_AGES=1 $(MAKE) ages.gbc
 
 seasons:
 	@echo '===Seasons==='
 	@if [[ -L build ]]; then rm build; fi
 	@if [[ -e build ]]; then echo "The 'build' folder is not a symlink; please delete it."; false; fi
-	@if [[ ! -d build_seasons ]]; then mkdir build_seasons; fi
-	@ln -s build_seasons build
+	@if [[ ! -d $(SEASONS_BUILD_DIR) ]]; then mkdir $(SEASONS_BUILD_DIR); fi
+	@ln -s $(SEASONS_BUILD_DIR) build
 	@ROM_SEASONS=1 $(MAKE) seasons.gbc
 
 
 $(GAME).gbc: $(OBJS) build/linkfile
 	$(LD) -S build/linkfile $@
-	@-tools/verify-checksum.sh $(GAME)
+	@-tools/build/verify-checksum.sh $(GAME)
 
 
 $(MAPPINGINDICESFILES): build/tileset_layouts/mappingsDictionary.bin
@@ -144,7 +148,7 @@ build/linkfile: $(OBJS)
 
 build/rooms/%.cmp: rooms/$(GAME)/small/%.bin $(CMP_MODE) | build/rooms
 	@echo "Compressing $< to $@..."
-	@$(PYTHON) tools/compressRoomLayout.py $< $@ $(OPTIMIZE)
+	@$(PYTHON) tools/build/compressRoomLayout.py $< $@ $(OPTIMIZE)
 
 # Uncompressed graphics (from either game)
 build/gfx/%.cmp: gfx/%.bin | build/gfx
@@ -174,13 +178,13 @@ build/data/%.s: data/$(GAME)/%.s | build/data
 
 $(PRECMP_FILE): | build
 	@[[ ! -f $(NO_PRECMP_FILE) ]] || (\
-		echo "ERROR: the current 'build' directory does not use precompressed data, but the Makefile does. Please run fixbuild.sh." && \
+		echo "ERROR: the current 'build' directory does not use precompressed data, but the Makefile does. Please run \"./fixbuild.sh\"." && \
 		false )
 	touch $@
 
 $(NO_PRECMP_FILE): | build
 	@[[ ! -f $(PRECMP_FILE) ]] || (\
-		echo "ERROR: the current 'build' directory uses precompressed data, but the Makefile does not. Please run fixbuild.sh." && \
+		echo "ERROR: the current 'build' directory uses precompressed data, but the Makefile does not. Please run \"./fixbuild.sh\"." && \
 		false )
 	touch $@
 
@@ -235,41 +239,41 @@ build/tileset_layouts/tileMappingAttributeData.bin: build/tileset_layouts/mappin
 # last time parseTilesetLayouts was run.
 build/tileset_layouts/mappingsUpdated: $(wildcard tileset_layouts/$(GAME)/tilesetMappings*.bin) $(CMP_MODE) | build/tileset_layouts
 	@echo "Compressing tileset mappings..."
-	@$(PYTHON) tools/parseTilesetLayouts.py $(GAME)
+	@$(PYTHON) tools/build/parseTilesetLayouts.py $(GAME)
 	@echo "Done compressing tileset mappings."
 	@touch $@
 
 build/tileset_layouts/tilesetMappings%Indices.cmp: build/tileset_layouts/tilesetMappings%Indices.bin build/tileset_layouts/mappingsDictionary.bin $(CMP_MODE) | build/tileset_layouts
 	@echo "Compressing $< to $@..."
-	@$(PYTHON) tools/compressTilesetLayoutData.py $< $@ 1 build/tileset_layouts/mappingsDictionary.bin
+	@$(PYTHON) tools/build/compressTilesetLayoutData.py $< $@ 1 build/tileset_layouts/mappingsDictionary.bin
 
 build/tileset_layouts/tilesetCollisions%.cmp: tileset_layouts/$(GAME)/tilesetCollisions%.bin build/tileset_layouts/collisionsDictionary.bin $(CMP_MODE) | build/tileset_layouts
 	@echo "Compressing $< to $@..."
-	@$(PYTHON) tools/compressTilesetLayoutData.py $< $@ 0 build/tileset_layouts/collisionsDictionary.bin
+	@$(PYTHON) tools/build/compressTilesetLayoutData.py $< $@ 0 build/tileset_layouts/collisionsDictionary.bin
 
 build/rooms/room04%.cmp: rooms/$(GAME)/large/room04%.bin $(CMP_MODE) | build/rooms
 	@echo "Compressing $< to $@..."
-	@$(PYTHON) tools/compressRoomLayout.py $< $@ -d rooms/$(GAME)/dictionary4.bin
+	@$(PYTHON) tools/build/compressRoomLayout.py $< $@ -d rooms/$(GAME)/dictionary4.bin
 build/rooms/room05%.cmp: rooms/$(GAME)/large/room05%.bin $(CMP_MODE) | build/rooms
 	@echo "Compressing $< to $@..."
-	@$(PYTHON) tools/compressRoomLayout.py $< $@ -d rooms/$(GAME)/dictionary5.bin
+	@$(PYTHON) tools/build/compressRoomLayout.py $< $@ -d rooms/$(GAME)/dictionary5.bin
 build/rooms/room06%.cmp: rooms/$(GAME)/large/room06%.bin $(CMP_MODE) | build/rooms
 	@echo "Compressing $< to $@..."
-	@$(PYTHON) tools/compressRoomLayout.py $< $@ -d rooms/$(GAME)/dictionary6.bin
+	@$(PYTHON) tools/build/compressRoomLayout.py $< $@ -d rooms/$(GAME)/dictionary6.bin
 
 # Compress graphics (from either game)
 build/gfx/%.cmp: gfx_compressible/%.bin $(CMP_MODE) | build/gfx
 	@echo "Compressing $< to $@..."
-	@$(PYTHON) tools/compressGfx.py $< $@
+	@$(PYTHON) tools/build/compressGfx.py $< $@
 
 # Compress graphics (from a particular game)
 build/gfx/%.cmp: gfx_compressible/$(GAME)/%.bin $(CMP_MODE) | build/gfx
 	@echo "Compressing $< to $@..."
-	@$(PYTHON) tools/compressGfx.py $< $@
+	@$(PYTHON) tools/build/compressGfx.py $< $@
 
-build/textData.s: text/$(GAME)/text.txt text/$(GAME)/dict.txt tools/parseText.py $(CMP_MODE) | build
+build/textData.s: text/$(GAME)/text.txt text/$(GAME)/dict.txt tools/build/parseText.py $(CMP_MODE) | build
 	@echo "Compressing text..."
-	@$(PYTHON) tools/parseText.py text/$(GAME)/dict.txt $< $@ $$(($(TEXT_INSERT_ADDRESS))) $$((0x2c))
+	@$(PYTHON) tools/build/parseText.py text/$(GAME)/dict.txt $< $@ $$(($(TEXT_INSERT_ADDRESS))) $$((0x2c))
 
 build/textDefines.s: build/textData.s
 
@@ -303,4 +307,4 @@ doc: $(DOCFILES) | build/doc
 	doxygen
 
 build/%-s.c: %.s | build/doc
-	cd build/doc/; $(TOPDIR)/tools/asm4doxy.pl -ns ../../$<
+	cd build/doc/; $(TOPDIR)/tools/build/asm4doxy.pl -ns ../../$<
