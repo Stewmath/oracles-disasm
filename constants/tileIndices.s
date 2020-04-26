@@ -41,9 +41,15 @@
 .define TILEINDEX_OVERWORLD_ROCK	$c0 ; outdoors only
 .define TILEINDEX_OVERWORLD_BUSH	$c5 ; outdoors only
 .define TILEINDEX_STAIRS		$d0 ; overworld only
+.ifdef ROM_AGES
 .define TILEINDEX_VINE_TOP		$d4
 .define TILEINDEX_VINE_MIDDLE		$d5
 .define TILEINDEX_VINE_BOTTOM		$d6
+.else
+.define TILEINDEX_VINE_TOP		$dd
+.define TILEINDEX_VINE_MIDDLE		$de
+.define TILEINDEX_VINE_BOTTOM		$df
+.endif
 .define TILEINDEX_PORTAL_SPOT		$d7
 .define TILEINDEX_GRAVE_HIDING_DOOR	$d9
 .define TILEINDEX_SOMARIA_BLOCK		$da

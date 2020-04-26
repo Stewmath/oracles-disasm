@@ -5123,11 +5123,8 @@ enemyCode24:
 	ld c,(hl)		; $5cb3
 
 	; Don't eat him if Link would (somehow) get stuck in a wall
-.ifdef ROM_AGES
 	callab bank5.checkPositionSurroundedByWalls		; $5cb4
-.else
-	callab bank5.seasonsFunc_05_5d74		; $5cb4
-.endif
+
 	rl b			; $5cbc
 	jp c,_likelike_releaseLink		; $5cbe
 

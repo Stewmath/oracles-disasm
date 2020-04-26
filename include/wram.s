@@ -528,13 +528,13 @@ wc645: ; $c645
 wCompanionStates: ; $c646
 	.db
 
-wRickyState: ; $c646
+wRickyState: ; $c646/$c643
 ; bit 0: set if you've talked to Ricky about getting his gloves
 ;     5: set if you've returned Ricky's gloves
 ;     6: set when Ricky leaves you after obtaining island chart
 ;     7: set if you have Ricky's flute
 	db
-wDimitriState: ; $c647
+wDimitriState: ; $c647/$c644
 ; bit 0: set if you've seen the initial cutscene of the tokays discussing eating dimitri
 ;     1: set if you've driven off the tokays harassing Dimitri
 ;     2:
@@ -542,7 +542,7 @@ wDimitriState: ; $c647
 ;     6: set if Dimitri should disappear from Tokay Island.
 ;     7: set if you have Dimitri's flute
 	db
-wMooshState: ; $c648
+wMooshState: ; $c648/$c645
 ; bit 5:
 ;     6: set if he's left after you finished helping him
 ;     7: set if you have Moosh's flute
@@ -693,7 +693,7 @@ wNumMysterySeeds: ; $c6bd/$c6b9
 	db
 wNumGashaSeeds: ; $c6be/$c6ba
 	db
-wEssencesObtained: ; $c6bf
+wEssencesObtained: ; $c6bf/$c6bb
 	db
 wTradeItem: ; $c6c0
 	db
@@ -1448,7 +1448,7 @@ wcbe8: ; $cbe8
 ; Bit 0 set if status bar needs to be reorganized slightly for last row of hearts
 	db
 
-wStatusBarNeedsRefresh: ; $cbe9
+wStatusBarNeedsRefresh: ; $cbe9/$cbea
 ; Bit 0: A/B buttons need refresh?
 ; Bit 1: A/B button item count needs refresh? (ie. seed count)
 ; Bit 2: heart display needs refresh
@@ -1649,7 +1649,7 @@ wRoomStateModifier: ; $cc32/$cc4e
 ; In seasons, this might determine the season?
 	db
 
-wActiveCollisions: ; $cc33
+wActiveCollisions: ; $cc33/$cc4f
 ; wActiveCollisions should be a value from 0-5.
 ; 0: overworld, 1: indoors, 2: dungeons, 3: sidescrolling, 4: underwater, 5?
 	db
@@ -1688,7 +1688,7 @@ wDungeonIndex: ; $cc39/$cc55
 wDungeonMapPosition: ; $cc3a/$cc56
 ; Index on map for mapped areas (dungeons)
 	db
-wDungeonFloor: ; $cc3b
+wDungeonFloor: ; $cc3b/$cc57
 ; Index for w2DungeonLayout, possibly used for floors?
 	db
 
@@ -1730,7 +1730,7 @@ wActiveMusic2: ; $cc46/$cc62
 	db
 
 
-wWarpDestVariables: ; $cc47
+wWarpDestVariables: ; $cc47/$cc63
 	.db
 
 wWarpDestGroup: ; $cc47/$cc63
@@ -1793,7 +1793,7 @@ wLinkStateParameter: ; $cc51/$cc6c
 ; This can be used for various other purposes depending on the state, though.
 	db
 
-wcc52: ; $cc52
+wcc52: ; $cc52/$cc6d
 ; Used by LINK_STATE_04 to remember a previous animation?
 	db
 
@@ -1866,7 +1866,7 @@ wLinkUsingItem1: ; $cc5f/$cc7a
 ; This is a bitset of special item objects ($d2-$d6) which are being used?
 	db
 
-wLinkTurningDisabled: ; $cc60
+wLinkTurningDisabled: ; $cc60/$cc7b
 ; Bit 7: set when Link presses the A button next to an object (ie. npc)
 ; When this is nonzero, Link's facing direction is locked (ie. using a sword).
 	db
@@ -1918,7 +1918,7 @@ wLinkRaisedFloorOffset: ; $cc69
 	db
 .endif
 
-wPushingAgainstTileCounter: ; $cc6a
+wPushingAgainstTileCounter: ; $cc6a/$cc84
 ; Keeps track of how many frames Link has been pushing against a tile, ie. for push
 ; blocks, key doors, etc.
 	db
@@ -1937,13 +1937,13 @@ wWarpsDisabled: ; $cc6e
 ; Set while being grabbed by a wallmaster, grabbed by Veran spider form?
 	db
 
-wUsingShield: ; $cc6f
+wUsingShield: ; $cc6f/$cc89
 ; Nonzero if link is using a shield. If he is, the value is equal to [wShieldLevel].
 	db
 
 
 ; Offset from link's position, used for collision calculations
-wShieldY: ; $cc70
+wShieldY: ; $cc70/$cc8a
 	db
 wShieldX: ; $cc71
 	db
@@ -1989,7 +1989,7 @@ wSecretInputType: ; $cc88
 ; $02: 15-char secret entry
 ; $ff: 5-char secret entry
 	db
-wTextInputResult: ; $cc89
+wTextInputResult: ; $cc89/$cca3
 ; This is usually set to 0 on successful text input, 1 or failure.
 ; In the case of telling secrets to Farore, this actually returns the value of the input
 ; secret's "wShortSecretType".
@@ -2063,14 +2063,14 @@ wScreenShakeMagnitude: ; $cc94
 ; 2: 3 pixels
 	db
 
-wcc95: ; $cc95
+wcc95: ; $cc95/$ccaf
 ; $cc95: Bits 0-3 unset when corresponding item is in use (w1ParentItem2/3/4)
 ; bit 4: Unset when in midair or swimming (in overworld, not underwater areas)?
 ; bit 5: Set when experiencing knockback?
 ; bit 7: Set when in a spinner or playing harp/flute (Link can't move or use items).
 	db
 
-wLinkRidingObject: ; $cc96
+wLinkRidingObject: ; $cc96/$ccb0
 ; When Link is riding an object, this is the index of that object (ie. raft, moving
 ; platforms, thwomps).
 ; The value of [wLinkPlayingInstrument] is also copied here each frame, though it may get
@@ -2082,12 +2082,12 @@ wForceCompanionDismount: ; $cc97
 ; (Gets ignored if the companion's "var38" variable is nonzero?)
 	db
 
-wDisallowMountingCompanion: ; $cc98
+wDisallowMountingCompanion: ; $cc98/$ccb2
 ; $cc98: relates to switch hook
 ; If nonzero, can't mount animal companion?
 	db
 
-wActiveTilePos: ; $cc99
+wActiveTilePos: ; $cc99/$ccb3
 ; The tile Link is standing on (not updated while in midair)
 	db
 wActiveTileIndex: ; $cc9a
