@@ -6403,7 +6403,7 @@ enemyCode4f:
 .ifdef ROM_SEASONS
 	; moldorm guarding jewel
 	ld a,(wActiveRoom)		; $61a2
-	cp $f4			; $61a5
+	cp <ROOM_SEASONS_0f4			; $61a5
 	jr nz,+			; $61a7
 	ld a,(wActiveGroup)		; $61a9
 	or a			; $61ac
@@ -7801,14 +7801,10 @@ enemyCode58:
 
 
 @collisionAndTileData:
-.ifdef ROM_AGES
-	.db ENEMYCOLLISION_BUSH, TILEINDEX_OVERWORLD_BUSH ; Subid 0
-.else
-	.db ENEMYCOLLISION_BUSH, $c4 ; Subid 0 TODO:
-.endif
-	.db ENEMYCOLLISION_BUSH, TILEINDEX_DUNGEON_BUSH   ; Subid 1
-	.db ENEMYCOLLISION_ROCK,           TILEINDEX_DUNGEON_POT    ; Subid 2
-	.db ENEMYCOLLISION_ROCK,           TILEINDEX_OVERWORLD_ROCK ; Subid 3
+	.db ENEMYCOLLISION_BUSH, TILEINDEX_OVERWORLD_BUSH_1 ; Subid 0
+	.db ENEMYCOLLISION_BUSH, TILEINDEX_DUNGEON_BUSH     ; Subid 1
+	.db ENEMYCOLLISION_ROCK, TILEINDEX_DUNGEON_POT      ; Subid 2
+	.db ENEMYCOLLISION_ROCK, TILEINDEX_OVERWORLD_ROCK   ; Subid 3
 
 
 

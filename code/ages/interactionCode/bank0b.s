@@ -1662,9 +1662,9 @@ interactionCodece:
 @mimicBush:
 	ld a,(wActiveGroup)		; $49bd
 	or a			; $49c0
-	ld a,TILEINDEX_OVERWORLD_BUSH		; $49c1
+	ld a,TILEINDEX_OVERWORLD_BUSH_1		; $49c1
 	jr z,+			; $49c3
-	ld a,TILEINDEX_OVERWORLD_BUSH		; $49c5
+	ld a,TILEINDEX_OVERWORLD_BUSH_1		; $49c5
 +
 	call objectMimicBgTile		; $49c7
 	ld a,$05		; $49ca
