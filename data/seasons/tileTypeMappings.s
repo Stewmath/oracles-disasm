@@ -80,7 +80,7 @@ tileTypesTable:
 @collisions4Data:
         .db $f3 TILETYPE_HOLE
         .db $f4 TILETYPE_HOLE
-        .db $f5 TILETYPE_HOLETy
+        .db $f5 TILETYPE_HOLE
         .db $f6 TILETYPE_HOLE
         .db $f7 TILETYPE_HOLE
         .db $fd TILETYPE_WATER
