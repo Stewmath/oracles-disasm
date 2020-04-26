@@ -13134,14 +13134,9 @@ loadTilesetLayout:
 	ld b,$00
 	call copyMemory
 
-.ifdef ROM_SEASONS
 	xor a
 	ld ($ff00+R_SVBK),a
 	ret
-
-.else ; ROM_AGES
-	jpab setPastCliffPalettesToRed		; $3733
-.endif
 
 
 ;;
