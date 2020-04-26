@@ -2803,11 +2803,7 @@ enemyCode14:
 	; Check if the collision was a shovel or shield (enemy will flip over)
 	ld e,Enemy.var2a		; $51f1
 	ld a,(de)		; $51f3
-.ifdef ROM_AGES
 	cp $80|ITEMCOLLISION_SHOVEL			; $51f4
-.else
-	cp $80|ITEMCOLLISION_SHOVEL+1			; $51f4
-.endif
 	jr z,++			; $51f6
 	res 7,a			; $51f8
 	sub ITEMCOLLISION_L1_SHIELD			; $51fa

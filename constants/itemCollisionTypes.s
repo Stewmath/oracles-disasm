@@ -24,8 +24,14 @@
 	ITEMCOLLISION_SWORD_HELD		db ; $09: Sword being held out (any level?)
 	ITEMCOLLISION_FIST_PUNCH		db ; $0a: Punch (fist ring, unused item)
 	ITEMCOLLISION_EXPERT_PUNCH		db ; $0b: Punch (expert's ring)
+
+.ifdef ROM_AGES
 	ITEMCOLLISION_SHOVEL			db ; $0c: Shovel (bumps enemies)
 	ITEMCOLLISION_SWITCH_HOOK		db ; $0d: Switch hook
+.else
+	ITEMCOLLISION_0c			db ; $0c: Seasons-only something???
+	ITEMCOLLISION_SHOVEL			db ; $0d: Shovel (bumps enemies)
+.endif
 	ITEMCOLLISION_0e			db ; $0e:
 	ITEMCOLLISION_0f			db ; $0f: Instant death - maybe dimitri?
 	ITEMCOLLISION_10			db ; $10:
