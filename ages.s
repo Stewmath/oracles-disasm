@@ -8641,6 +8641,8 @@ unknownData7ede:
  m_section_force "Bank_5" NAMESPACE bank5
 
 .include "code/bank5.s"
+.include "build/data/tileTypeMappings.s"
+.include "build/data/cliffTilesTable.s"
 
 .ifdef BUILD_VANILLA
 

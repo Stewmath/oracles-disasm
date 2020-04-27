@@ -1013,6 +1013,7 @@ _checkCollisionForCompanion:
 	jr z,@checkCollision	; $44dd
 	ld a,(hl)		; $44df
 .ifdef ROM_SEASONS
+	; tiles that are half-floor/half-cliff?
 	cp $d9			; $4493
 	ret z			; $4495
 	cp $da			; $4496
@@ -1565,9 +1566,9 @@ _companionRespawn:
 	ld bc,$0500		; $46b8
 	call objectGetRelativeTile		; $46bb
 	cp $20			; $46be
-	jr nz,+	; $46c0
+	jr nz,+			; $46c0
 	ld h,d			; $46c2
-	ld l,$0b		; $46c3
+	ld l,SpecialObject.yh		; $46c3
 	ld a,(wRememberedCompanionY)		; $46c5
 	ldi (hl),a		; $46c8
 	inc l			; $46c9
@@ -2637,49 +2638,51 @@ _warpTransition5_01:
 
 .ifdef ROM_SEASONS
 _warpTransition6:
-	ld e,$05		; $4b83
+	ld e,SpecialObject.state2		; $4b83
 	ld a,(de)		; $4b85
 	rst_jumpTable			; $4b86
-	.dw $4b8b
-	.dw $4bb5
+	.dw _warpTransition6_00
+	.dw _warpTransition6_01
 
+_warpTransition6_00:
 	ld a,$01		; $4b8b
 	ld (de),a		; $4b8d
 
 	ld a,(wcc50)		; $4b8e
 	bit 7,a			; $4b91
-	jr z,+	; $4b93
+	jr z,+			; $4b93
 	rrca			; $4b95
 	and $0f			; $4b96
-	ld ($cc6b),a		; $4b98
+	ld (wcc50),a		; $4b98
 	ld a,$09		; $4b9b
 	jp linkSetState		; $4b9d
 +
-	ld bc,$fd00		; $4ba0
+	ld bc,-$300		; $4ba0
 	call objectSetSpeedZ		; $4ba3
-	ld l,$06		; $4ba6
+	ld l,SpecialObject.counter1		; $4ba6
 	ld (hl),$78		; $4ba8
-	ld l,$0b		; $4baa
+	ld l,SpecialObject.yh		; $4baa
 	ld a,(hl)		; $4bac
 	sub $04			; $4bad
 	ld (hl),a		; $4baf
-	ld a,$04		; $4bb0
+	ld a,LINK_ANIM_MODE_FALL		; $4bb0
 	call specialObjectSetAnimation		; $4bb2
 
+_warpTransition6_01:
 	ld c,$18		; $4bb5
 	call objectUpdateSpeedZ_paramC		; $4bb7
-	jr z,_label_05_079	; $4bba
+	jr z,+			; $4bba
 	call specialObjectAnimate		; $4bbc
-	call $5d53		; $4bbf
-	ld e,$10		; $4bc2
+	call _specialObjectUpdateAdjacentWallsBitset		; $4bbf
+	ld e,SpecialObject.speed		; $4bc2
 	ld a,$14		; $4bc4
 	ld (de),a		; $4bc6
-	ld a,($cc47)		; $4bc7
-	ld e,$09		; $4bca
+	ld a,(wLinkAngle)		; $4bc7
+	ld e,SpecialObject.angle		; $4bca
 	ld (de),a		; $4bcc
 	call updateLinkDirectionFromAngle		; $4bcd
 	jp specialObjectUpdatePosition		; $4bd0
-_label_05_079:
++
 	call objectGetTileAtPosition		; $4bd3
 	cp $07			; $4bd6
 	jp z,seasonsFunc_05_50a5		; $4bd8
@@ -2994,7 +2997,7 @@ _warpTransitionB:
 	ld (wDisabledObjects),a		; $4d95
 	ld a,$08		; $4d98
 	call setLinkIDOverride		; $4d9a
-	ld l,$02		; $4d9d
+	ld l,SpecialObject.subid		; $4d9d
 	ld (hl),$02		; $4d9f
 	ret			; $4da1
 .endif
@@ -3902,8 +3905,8 @@ _checkForUnderwaterTransition:
 .ifdef ROM_SEASONS
 _linkState09:
 	call retIfTextIsActive		; $4fc4
-	ld e,SpecialObject.state2		; $4fc7
-	ld a,(de)		; $4fc9
+	ld e,SpecialObject.state2	; $4fc7
+	ld a,(de)			; $4fc9
 	rst_jumpTable			; $4fca
 	.dw @substate0
 	.dw @substate1
@@ -3916,11 +3919,11 @@ _linkState09:
 @substate0:
 	call clearAllParentItems		; $4fd9
 	xor a			; $4fdc
-	ld (wScrollMode),a		; $4fdd
-	ld (wUsingShield),a		; $4fe0
-	ld bc,$fc00		; $4fe3
-	call objectSetSpeedZ		; $4fe6
-	ld l,$06		; $4fe9
+	ld (wScrollMode),a	; $4fdd
+	ld (wUsingShield),a	; $4fe0
+	ld bc,-$400		; $4fe3
+	call objectSetSpeedZ	; $4fe6
+	ld l,SpecialObject.counter1		; $4fe9
 	ld (hl),$0a		; $4feb
 	ld a,(wcc50)		; $4fed
 	rrca			; $4ff0
@@ -3928,10 +3931,10 @@ _linkState09:
 	jr nc,+			; $4ff3
 	inc a			; $4ff5
 +
-	ld l,$05		; $4ff6
+	ld l,SpecialObject.state2		; $4ff6
 	ld (hl),a		; $4ff8
 	ld a,$81		; $4ff9
-	ld (wLinkInAir),a		; $4ffb
+	ld (wLinkInAir),a	; $4ffb
 	ret			; $4ffe
 
 @substate1:
@@ -3957,13 +3960,13 @@ _linkState09:
 	ret c			; $502c
 	ld a,$01		; $502d
 	ld (wScrollMode),a		; $502f
-	ld l,$05		; $5032
+	ld l,SpecialObject.state2		; $5032
 	inc (hl)		; $5034
-	ld l,$06		; $5035
+	ld l,SpecialObject.counter1		; $5035
 	ld (hl),$1e		; $5037
 	ld a,$08		; $5039
 	call setScreenShakeCounter		; $503b
-	ld a,$02		; $503e
+	ld a,LINK_ANIM_MODE_COLLAPSED		; $503e
 	jp specialObjectSetAnimation		; $5040
 
 @seasonsFunc_05_5043:
@@ -3971,28 +3974,28 @@ _linkState09:
 	call objectUpdateSpeedZ_paramC		; $5045
 	call specialObjectAnimate		; $5048
 	ld h,d			; $504b
-	ld l,$06		; $504c
+	ld l,SpecialObject.counter1		; $504c
 	ld a,(hl)		; $504e
 	or a			; $504f
-	jr z,+	; $5050
+	jr z,+			; $5050
 	dec (hl)		; $5052
-	jr nz,+	; $5053
-	ld a,$04		; $5055
+	jr nz,+			; $5053
+	ld a,LINK_ANIM_MODE_FALL		; $5055
 	call specialObjectSetAnimation		; $5057
 +
 	call objectGetZAboveScreen		; $505a
 	ld h,d			; $505d
-	ld l,$0f		; $505e
+	ld l,SpecialObject.zh		; $505e
 	cp (hl)			; $5060
 	ret			; $5061
 
 @substate3:
-	call itemDecCounter1		; $5062
+	call itemDecCounter1	; $5062
 	ret nz			; $5065
 	dec l			; $5066
 	inc (hl)		; $5067
-	ld bc,$ff00		; $5068
-	jp objectSetSpeedZ		; $506b
+	ld bc,-$100		; $5068
+	jp objectSetSpeedZ	; $506b
 
 @substate4:
 	ld c,$20		; $506e
@@ -4002,11 +4005,12 @@ _linkState09:
 	cp $07			; $5077
 	jr z,seasonsFunc_05_50a5	; $5079
 	ld h,d			; $507b
-	ld l,$05		; $507c
+	ld l,SpecialObject.state2		; $507c
 	inc (hl)		; $507e
+	; SpecialObject.counter1
 	inc l			; $507f
 	ld (hl),$1e		; $5080
-	ld a,$02		; $5082
+	ld a,LINK_ANIM_MODE_COLLAPSED		; $5082
 	call specialObjectSetAnimation		; $5084
 
 @substate5:
@@ -4032,43 +4036,43 @@ seasonsFunc_05_50a5:
 	ld b,$02		; $50a9
 -
 	ld a,b			; $50ab
-	ld hl,seasonsTable_05_50e4		; $50ac
-	rst_addAToHl			; $50af
+	ld hl,@offsets		; $50ac
+	rst_addAToHl		; $50af
 	ld a,c			; $50b0
 	add (hl)		; $50b1
-	ld h,$ce		; $50b2
+	ld h,>wRoomCollisions	; $50b2
 	ld l,a			; $50b4
 	ld a,(hl)		; $50b5
 	or a			; $50b6
-	jr z,+	; $50b7
+	jr z,+			; $50b7
 	ld a,b			; $50b9
 	inc a			; $50ba
 	and $03			; $50bb
 	ld b,a			; $50bd
-	jr -		; $50be
+	jr -			; $50be
 +
 	ld h,d			; $50c0
-	ld l,$08		; $50c1
+	ld l,SpecialObject.direction		; $50c1
 	ld (hl),b		; $50c3
 	ld a,b			; $50c4
 	swap a			; $50c5
 	rrca			; $50c7
 	inc l			; $50c8
 	ld (hl),a		; $50c9
-	ld l,$0f		; $50ca
+	ld l,SpecialObject.zh		; $50ca
 	ld (hl),$ff		; $50cc
-	ld bc,$fd00		; $50ce
+	ld bc,-$300		; $50ce
 	call objectSetSpeedZ		; $50d1
-	ld l,$10		; $50d4
+	ld l,SpecialObject.speed		; $50d4
 	ld (hl),$14		; $50d6
-	ld l,$04		; $50d8
+	ld l,SpecialObject.state		; $50d8
 	ld (hl),$09		; $50da
 	inc l			; $50dc
 	ld (hl),$06		; $50dd
-	ld a,$04		; $50df
+	ld a,LINK_ANIM_MODE_FALL		; $50df
 	jp specialObjectSetAnimation		; $50e1
 
-seasonsTable_05_50e4:
+@offsets:
 	.db $f0 $01 $10 $ff
 .endif
 
@@ -4646,67 +4650,74 @@ _linkState09:
 .else
 
 _linkState0f:
-	ld e,$05		; $52ee
+	ld e,SpecialObject.state2		; $52ee
 	ld a,(de)		; $52f0
-	rst_jumpTable			; $52f1
-	cp $52			; $52f2
-	ld d,$53		; $52f4
-	add hl,hl		; $52f6
-	ld d,e			; $52f7
-	ld b,h			; $52f8
-	ld d,e			; $52f9
-	add a			; $52fa
-	ld d,e			; $52fb
-	sbc c			; $52fc
-	ld d,e			; $52fd
+	rst_jumpTable		; $52f1
+        .dw @substate0
+        .dw @substate1
+        .dw @substate2
+        .dw @substate3
+        .dw @substate4
+        .dw @substate5
+
+@substate0:
 	ld h,d			; $52fe
 	ld l,e			; $52ff
 	inc (hl)		; $5300
 	inc l			; $5301
 	ld (hl),$10		; $5302
 	xor a			; $5304
-	ld l,$08		; $5305
+	ld l,SpecialObject.direction		; $5305
 	ldi (hl),a		; $5307
+	; SpecialObject.angle
 	ld (hl),a		; $5308
 	call linkCancelAllItemUsageAndClearAdjacentWallsBitset		; $5309
 	ld a,$01		; $530c
-	ld ($cbca),a		; $530e
-	ld a,$10		; $5311
+	ld (wDisableLinkCollisionsAndMenu),a		; $530e
+	ld a,LINK_ANIM_MODE_WALK		; $5311
 	call specialObjectSetAnimation		; $5313
+
+@substate1:
 	call itemDecCounter1		; $5316
-	jr nz,_label_05_103	; $5319
+	jr nz,@updateObject	; $5319
 	ld (hl),$5a		; $531b
+	; SpecialObject.state2
 	dec l			; $531d
 	inc (hl)		; $531e
-	ld l,$10		; $531f
+	ld l,SpecialObject.speed		; $531f
 	ld (hl),$14		; $5321
-_label_05_103:
+@updateObject:
 	call specialObjectAnimate		; $5323
 	jp specialObjectUpdatePositionWithoutTileEdgeAdjust		; $5326
+
+@substate2:
 	ld h,d			; $5329
-	ld l,$06		; $532a
+	ld l,SpecialObject.counter1		; $532a
 	ld a,(hl)		; $532c
 	or a			; $532d
-	jr z,_label_05_104	; $532e
+	jr z,+			; $532e
 	dec (hl)		; $5330
 	ret			; $5331
-_label_05_104:
++
 	ld h,d			; $5332
-	ld l,$0b		; $5333
+	ld l,SpecialObject.yh		; $5333
 	ld a,(hl)		; $5335
 	cp $74			; $5336
-	jr nc,_label_05_103	; $5338
-	ld l,$05		; $533a
+	jr nc,@updateObject	; $5338
+	ld l,SpecialObject.state2		; $533a
 	inc (hl)		; $533c
 	inc l			; $533d
+	; SpecialObject.direction
 	ld (hl),$60		; $533e
-	ld l,$10		; $5340
+	ld l,SpecialObject.speed		; $5340
 	ld (hl),$28		; $5342
+
+@substate3:
 	call itemDecCounter1		; $5344
-	jr z,_label_05_106	; $5347
+	jr z,++			; $5347
 	ld a,(hl)		; $5349
 	sub $19			; $534a
-	jr c,_label_05_105	; $534c
+	jr c,+			; $534c
 	cp $32			; $534e
 	ret nc			; $5350
 	and $0f			; $5351
@@ -4719,89 +4730,100 @@ _label_05_104:
 	ld l,$08		; $535b
 	ld (hl),a		; $535d
 	ret			; $535e
-_label_05_105:
++
 	inc a			; $535f
 	ret nz			; $5360
-	ld l,$08		; $5361
+	ld l,SpecialObject.direction		; $5361
 	ld (hl),$00		; $5363
+	; SpecialObject.angle
 	inc l			; $5365
 	ld (hl),$10		; $5366
 	ld a,$18		; $5368
 	ld bc,$f4f8		; $536a
 	call objectCreateExclamationMark		; $536d
-	ld a,$50		; $5370
+	ld a,SND_CLINK		; $5370
 	jp playSound		; $5372
-_label_05_106:
+++
 	ld l,e			; $5375
 	inc (hl)		; $5376
-	ld bc,$fe80		; $5377
+	ld bc,-$180		; $5377
 	call objectSetSpeedZ		; $537a
-	ld a,$18		; $537d
+	ld a,LINK_ANIM_MODE_JUMP		; $537d
 	call specialObjectSetAnimation		; $537f
-	ld a,$53		; $5382
+	ld a,SND_JUMP		; $5382
 	call playSound		; $5384
+@substate4:
 	ld c,$18		; $5387
 	call objectUpdateSpeedZ_paramC		; $5389
-	jr nz,_label_05_103	; $538c
-	ld l,$05		; $538e
+	jr nz,@updateObject	; $538c
+	ld l,SpecialObject.state2		; $538e
 	inc (hl)		; $5390
+	; SpecialObject.counter1
 	inc l			; $5391
 	ld (hl),$f0		; $5392
-	ld a,$10		; $5394
+	ld a,LINK_ANIM_MODE_WALK		; $5394
 	call specialObjectSetAnimation		; $5396
+@substate5:
 	ld a,(wFrameCounter)		; $5399
 	rrca			; $539c
 	ret nc			; $539d
 	call itemDecCounter1		; $539e
 	ret nz			; $53a1
 	xor a			; $53a2
-	ld ($cbca),a		; $53a3
+	ld (wDisableLinkCollisionsAndMenu),a		; $53a3
 	jp _initLinkStateAndAnimateStanding		; $53a6
 
 _linkState10:
-	ld e,$05		; $53a9
+	ld e,SpecialObject.state2		; $53a9
 	ld a,(de)		; $53ab
 	rst_jumpTable			; $53ac
-	or e			; $53ad
-	ld d,e			; $53ae
-	jp z,$fa53		; $53af
-	ld d,e			; $53b2
+        .dw @substate0
+        .dw @substate1
+        .dw @substate2
+
+@substate0:
 	ld a,$01		; $53b3
 	ld (de),a		; $53b5
-	call $4df1		; $53b6
+	call linkCancelAllItemUsage		; $53b6
 	call resetLinkInvincibility		; $53b9
-	ld l,$10		; $53bc
+	ld l,SpecialObject.speed		; $53bc
 	ld (hl),$14		; $53be
-	ld l,$08		; $53c0
+	ld l,SpecialObject.direction		; $53c0
 	ld (hl),$00		; $53c2
+	; SpecialObject.angle
 	inc l			; $53c4
-	ld (hl),$00		; $53c5
+	ld (hl),DIR_UP		; $53c5
 	jp _animateLinkStanding		; $53c7
+
+@substate1:
 	call specialObjectAnimate		; $53ca
 	ld h,d			; $53cd
 	ld a,(wFrameCounter)		; $53ce
 	and $07			; $53d1
-	jr nz,_label_05_107	; $53d3
-	ld l,$10		; $53d5
+	jr nz,+			; $53d3
+	ld l,SpecialObject.speed		; $53d5
 	ld a,(hl)		; $53d7
 	sub $05			; $53d8
-	jr z,_label_05_107	; $53da
+	jr z,+			; $53da
 	ld (hl),a		; $53dc
-_label_05_107:
++
 	ld a,($cbb3)		; $53dd
 	cp $02			; $53e0
 	jp nz,specialObjectUpdatePosition		; $53e2
-	ld a,($cc03)		; $53e5
+	ld a,(wCutsceneState)		; $53e5
 	dec a			; $53e8
 	jp nz,_initLinkStateAndAnimateStanding		; $53e9
-	ld l,$05		; $53ec
+	ld l,SpecialObject.state2		; $53ec
 	inc (hl)		; $53ee
+	; SpecialObject.counter1
 	inc l			; $53ef
 	ld (hl),$20		; $53f0
-	ld l,$09		; $53f2
+	ld l,SpecialObject.angle		; $53f2
 	ld (hl),$10		; $53f4
-	ld l,$10		; $53f6
+	ld l,SpecialObject.speed		; $53f6
 	ld (hl),$50		; $53f8
+
+@substate2:
 	call specialObjectAnimate		; $53fa
 	call itemDecCounter1		; $53fd
 	jp nz,specialObjectUpdatePosition		; $5400
@@ -5037,7 +5059,7 @@ _linkState10:
 
 	call checkLinkPushingAgainstBed		; $556f
 .ifdef ROM_SEASONS
-	call seasonsFunc_05_5e74		; $5516
+	call checkLinkPushingAgainstTreeStump		; $5516
 .endif
 	call _checkLinkJumpingOffCliff		; $5519
 ++
@@ -7000,7 +7022,7 @@ _specialObjectUpdateAdjacentWallsBitset:
 
 .ifdef ROM_SEASONS
 	ld a,(wActiveTileType)		; $5d5c
-	sub $08			; $5d5f
+	sub TILETYPE_STUMP			; $5d5f
 	jr nz,+			; $5d61
 	dec a			; $5d63
 	jr +++			; $5d64
@@ -7363,10 +7385,11 @@ checkLinkPushingAgainstBed:
 ;;
 ; Pushing against tree stump
 ; @addr{5e74}
-seasonsFunc_05_5e74:
+checkLinkPushingAgainstTreeStump:
 	ld a,(wActiveTileType)		; $5e74
 	cp TILETYPE_STUMP		; $5e77
 	jp z,seasonsFunc_05_5ed3		; $5e79
+
 	ld a,(wActiveGroup)		; $5e7c
 	or a			; $5e7f
 	ret nz			; $5e80
@@ -7435,15 +7458,15 @@ seasonsFunc_05_5ed3:
 	ldi a,(hl)		; $5ee3
 	ld c,(hl)		; $5ee4
 	ld h,d			; $5ee5
-	ld l,$0b		; $5ee6
+	ld l,SpecialObject.yh		; $5ee6
 	add (hl)		; $5ee8
 	ld b,a			; $5ee9
-	ld l,$0d		; $5eea
+	ld l,SpecialObject.xh		; $5eea
 	ld a,(hl)		; $5eec
 	add c			; $5eed
 	ld c,a			; $5eee
 	call checkTileCollisionAt_allowHoles		; $5eef
-	jr c,++	; $5ef2
+	jr c,++			; $5ef2
 	ld a,(wLinkAngle)		; $5ef4
 	ld e,$09		; $5ef7
 	ld (de),a		; $5ef9
@@ -7456,23 +7479,24 @@ seasonsFunc_05_5ed3:
 	rst_addAToHl			; $5f03
 	ld a,(wLinkTurningDisabled)		; $5f04
 	or a			; $5f07
-	jr nz,+	; $5f08
-	ld e,$08		; $5f0a
+	jr nz,+			; $5f08
+	ld e,SpecialObject.direction		; $5f0a
 	ld a,c			; $5f0c
 	ld (de),a		; $5f0d
 +
-	ld e,$10		; $5f0e
+	ld e,SpecialObject.speed		; $5f0e
 	ldi a,(hl)		; $5f10
 	ld (de),a		; $5f11
+	; SpecialObject.speedTmp
 	inc e			; $5f12
 	ld (de),a		; $5f13
-	ld e,$14		; $5f14
+	ld e,SpecialObject.speedZ		; $5f14
 	ldi a,(hl)		; $5f16
 	ld (de),a		; $5f17
 	inc e			; $5f18
 	ldi a,(hl)		; $5f19
 	ld (de),a		; $5f1a
-	call _label_05_234		; $5f1b
+	call clearVar37AndVar38		; $5f1b
 	ld a,$81		; $5f1e
 	ld (wLinkInAir),a		; $5f20
 	xor a			; $5f23
@@ -7488,13 +7512,14 @@ seasonsTable_05_5f27:
 	.db $00 $f6
 
 seasonsTable_05_5f2f:
-	.db $0f $60 $fe
-	.db $14 $60 $fe
-	.db $1e $40 $fe
-	.db $14 $60 $fe
+	; speed&speedTmp - speedZ
+	dbw $0f $fe60
+	dbw $14 $fe60
+	dbw $1e $fe40
+	dbw $14 $fe60
 .endif
 
-_label_05_234:
+clearVar37AndVar38:
 	xor a			; $5fe6
 	ld e,SpecialObject.var37		; $5fe7
 	ld (de),a		; $5fe9
@@ -7576,7 +7601,7 @@ _specialObjectSetPositionToVar38IfSet:
 	add (hl)		; $602e
 	ld e,SpecialObject.xh		; $602f
 	ld (de),a		; $6031
-	jr _label_05_234		; $6032
+	jr clearVar37AndVar38		; $6032
 
 ;;
 ; Checks if Link touches a cliff tile, and starts the jumping-off-cliff code if so.
@@ -11430,39 +11455,39 @@ _rickyStateASubstate7:
 _rickyStateASubstate7:
 	call _companionSetAnimationToVar3f		; $708d
 	call specialObjectAnimate		; $7090
-	ld e,$21		; $7093
+	ld e,SpecialObject.animParameter		; $7093
 	ld a,(de)		; $7095
 	or a			; $7096
-	ld a,$c3		; $7097
+	ld a,SND_RICKY		; $7097
 	jp z,playSound		; $7099
 	ld a,(de)		; $709c
 	rlca			; $709d
 	ret nc			; $709e
 	call _rickySetJumpSpeedForCutsceneAndSetAngle		; $709f
-	ld e,$09		; $70a2
+	ld e,SpecialObject.angle		; $70a2
 	ld a,$10		; $70a4
 	ld (de),a		; $70a6
 	ret			; $70a7
 _rickyStateASubstate3:
 	call _companionSetAnimationToVar3f		; $70a8
-	ld e,$3e		; $70ab
+	ld e,SpecialObject.var3e		; $70ab
 	ld a,(de)		; $70ad
 	and $01			; $70ae
 	ret nz			; $70b0
 	call _rickyWaitUntilJumpDone		; $70b1
 	ret nz			; $70b4
-	ld e,$0b		; $70b5
+	ld e,SpecialObject.yh		; $70b5
 	ld a,(de)		; $70b7
 	cp $38			; $70b8
 	jr nc,_rickySetJumpSpeedForCutsceneAndSetAngle	; $70ba
-	ld e,$3e		; $70bc
+	ld e,SpecialObject.var3e		; $70bc
 	ld a,(de)		; $70be
 	or $01			; $70bf
 	ld (de),a		; $70c1
 	ret			; $70c2
 _rickyStateASubstate4:
 	call _companionSetAnimationToVar3f		; $70c3
-	ld e,$3e		; $70c6
+	ld e,SpecialObject.var3e		; $70c6
 	ld a,(de)		; $70c8
 	bit 1,a			; $70c9
 	ret nz			; $70cb
@@ -11471,7 +11496,7 @@ _rickyStateASubstate4:
 	jp companionDismount		; $70cf
 _rickyStateASubstate5:
 	call _rickySetJumpSpeedForCutsceneAndSetAngle		; $70d2
-	ld e,$09		; $70d5
+	ld e,SpecialObject.angle		; $70d5
 	ld a,$10		; $70d7
 	ld (de),a		; $70d9
 	ret			; $70da
@@ -11482,32 +11507,32 @@ _rickyStateASubstate8:
 	ret nz			; $70e1
 	call objectCheckWithinScreenBoundary		; $70e2
 	jr nc,++	; $70e5
-	ld e,$0b		; $70e7
+	ld e,SpecialObject.yh		; $70e7
 	ld a,(de)		; $70e9
 	cp $60			; $70ea
 	jr c,+	; $70ec
-	ld e,$3e		; $70ee
+	ld e,SpecialObject.var3e		; $70ee
 	ld a,(de)		; $70f0
-	or $04			; $70f1
+	or SpecialObject.state			; $70f1
 	ld (de),a		; $70f3
 +
 	call _rickySetJumpSpeedForCutsceneAndSetAngle		; $70f4
-	ld e,$09		; $70f7
+	ld e,SpecialObject.angle		; $70f7
 	ld a,$10		; $70f9
 	ld (de),a		; $70fb
 	ret			; $70fc
 ++
 	ld a,$01		; $70fd
-	ld ($cc6a),a		; $70ff
+	ld (wLinkForceState),a		; $70ff
 	xor a			; $7102
-	ld ($cca4),a		; $7103
+	ld (wDisabledObjects),a		; $7103
 	call itemDelete		; $7106
 	jp saveLinkLocalRespawnAndCompanionPosition		; $7109
 _rickyStateASubstate9:
 	ld a,$80		; $710c
-	ld ($cc02),a		; $710e
+	ld (wMenuDisabled),a		; $710e
 	ld a,$01		; $7111
-	ld e,$08		; $7113
+	ld e,SpecialObject.direction		; $7113
 	ld (de),a		; $7115
 	call _rickyIncVar03		; $7116
 	ld c,$20		; $7119
@@ -11516,13 +11541,13 @@ _rickyStateASubstate9:
 	ld bc,$4070		; $711e
 	call objectGetRelativeAngle		; $7121
 	and $1c			; $7124
-	ld e,$09		; $7126
+	ld e,SpecialObject.angle		; $7126
 	ld (de),a		; $7128
 	ret			; $7129
 _rickyStateASubstateA:
 	call specialObjectAnimate		; $712a
 	call _companionUpdateMovement		; $712d
-	ld e,$0d		; $7130
+	ld e,SpecialObject.xh		; $7130
 	ld a,(de)		; $7132
 	cp $38			; $7133
 	jr c,-	; $7135
@@ -13645,7 +13670,7 @@ _mooshStateASubstate1:
 	ld a,(wMooshState)		; $7be6
 	and $80			; $7be9
 	ret z			; $7beb
-	jr _label_05_458		; $7bec
+	jr +			; $7bec
 
 ;;
 ; @addr{7bee}
@@ -13658,7 +13683,7 @@ _mooshStateASubstate3:
 	ld a,$ff		; $7bfa
 	ld (wStatusBarNeedsRefresh),a		; $7bfc
 
-_label_05_458:
++
 	ld e,SpecialObject.var3d	; $7bff
 	xor a			; $7c01
 	ld (de),a		; $7c02
@@ -13719,7 +13744,7 @@ _mooshStateASubstate6:
 	jp itemDelete		; $7c54
 .else
 _mooshStateA:
-	ld e,$03
+	ld e,SpecialObject.var03
 	ld a,(de)		; $7a46
 	rst_jumpTable			; $7a47
         .dw _mooshStateASubstate0
@@ -13740,46 +13765,46 @@ _mooshStateASubstate0:
 	ld a,$01		; $7a62
 	ld (de),a		; $7a64
 
-	ld a,($c610)		; $7a65
-	cp $0d			; $7a68
-	jr nz,_label_05_425	; $7a6a
-	ld a,($c645)		; $7a6c
+	ld a,(wAnimalCompanion)		; $7a65
+	cp SPECIALOBJECTID_MOOSH			; $7a68
+	jr nz,+			; $7a6a
+	ld a,(wMooshState)		; $7a6c
 	and $20			; $7a6f
-	jr nz,_label_05_425	; $7a71
+	jr nz,+			; $7a71
 	ld a,$02		; $7a73
 	ld (de),a		; $7a75
 	ld c,$01		; $7a76
-	call $4547		; $7a78
-	jr _label_05_426		; $7a7b
-_label_05_425:
+	call _companionSetAnimation		; $7a78
+	jr ++			; $7a7b
++
 	ld a,$00		; $7a7d
-	ld e,$3f		; $7a7f
+	ld e,SpecialObject.var3f		; $7a7f
 	ld (de),a		; $7a81
 	call specialObjectSetAnimation		; $7a82
-_label_05_426:
+++
 	call objectSetVisiblec3		; $7a85
-	ld e,$3d		; $7a88
+	ld e,SpecialObject.var3d		; $7a88
 	jp objectAddToAButtonSensitiveObjectList		; $7a8a
 
 _mooshStateASubstate1:
 _mooshStateASubstate7:
-	call $485a		; $7a8d
-	call $7b9e		; $7a90
-	ld a,($c645)		; $7a93
+	call _companionSetAnimationToVar3f		; $7a8d
+	call _mooshUpdateAsNpc		; $7a90
+	ld a,(wMooshState)		; $7a93
 	and $80			; $7a96
-	jr z,_label_05_427	; $7a98
-	jr _label_05_428		; $7a9a
-_label_05_427:
-	ld e,$3d		; $7a9c
+	jr z,+			; $7a98
+	jr ++			; $7a9a
++
+	ld e,SpecialObject.var3d		; $7a9c
 	ld a,(de)		; $7a9e
 	or a			; $7a9f
 	ret z			; $7aa0
 	ld a,$81		; $7aa1
-	ld ($cca4),a		; $7aa3
+	ld (wDisabledObjects),a		; $7aa3
 	ret			; $7aa6
 
 _mooshStateASubstate2:
-	ld e,$2b		; $7aa7
+	ld e,SpecialObject.invincibilityCounter		; $7aa7
 	ld a,(de)		; $7aa9
 	or a			; $7aaa
 	ret z			; $7aab
@@ -13789,19 +13814,19 @@ _mooshStateASubstate2:
 	jp $4244		; $7aaf
 
 _mooshStateASubstate3:
-	call $485a		; $7ab2
+	call _companionSetAnimationToVar3f		; $7ab2
 	call specialObjectAnimate		; $7ab5
-	call $4917		; $7ab8
+	call _companionDecCounter1IfNonzero		; $7ab8
 	ret nz			; $7abb
 	ld c,$10		; $7abc
 	jp objectUpdateSpeedZ_paramC		; $7abe
 
 _mooshStateASubstate4:
-	call $485a		; $7ac1
+	call _companionSetAnimationToVar3f		; $7ac1
 	ld c,$10		; $7ac4
 	call objectUpdateSpeedZ_paramC		; $7ac6
 	ret nz			; $7ac9
-	ld e,$3e		; $7aca
+	ld e,SpecialObject.var3e		; $7aca
 	ld a,(de)		; $7acc
 	or $40			; $7acd
 	ld (de),a		; $7acf
@@ -13809,35 +13834,36 @@ _mooshStateASubstate4:
 
 _mooshStateASubstate5:
 _mooshStateASubstate6:
-	call $485a		; $7ad3
-	call $7b9e		; $7ad6
-	ld a,($c645)		; $7ad9
+	call _companionSetAnimationToVar3f		; $7ad3
+	call _mooshUpdateAsNpc		; $7ad6
+	ld a,(wMooshState)		; $7ad9
 	and $20			; $7adc
 	ret z			; $7ade
 	ld a,$ff		; $7adf
-	ld ($cbea),a		; $7ae1
-_label_05_428:
-	ld e,$3d		; $7ae4
+	ld (wStatusBarNeedsRefresh),a		; $7ae1
+++
+	ld e,SpecialObject.var3d		; $7ae4
 	xor a			; $7ae6
 	ld (de),a		; $7ae7
 	call objectRemoveFromAButtonSensitiveObjectList		; $7ae8
 	ld c,$01		; $7aeb
-	call $4547		; $7aed
-	jp $4948		; $7af0
+	call _companionSetAnimation		; $7aed
+	jp _companionForceMount		; $7af0
 
 _mooshStateASubstate8:
-	call $485a		; $7af3
-	ld e,$3e		; $7af6
+	call _companionSetAnimationToVar3f		; $7af3
+	ld e,SpecialObject.var3e		; $7af6
 	xor a			; $7af8
 	ld (de),a		; $7af9
 	ld c,$10		; $7afa
 	jp objectUpdateSpeedZ_paramC		; $7afc
-_label_05_429:
+
+_mooshFunc_05_7aff:
 	ld b,$40		; $7aff
 	ld c,$70		; $7b01
 	call objectGetRelativeAngle		; $7b03
 	and $1c			; $7b06
-	ld e,$09		; $7b08
+	ld e,SpecialObject.angle		; $7b08
 	ld (de),a		; $7b0a
 	ret			; $7b0b
 
@@ -13845,43 +13871,43 @@ _mooshStateASubstate9:
 	ld c,$10		; $7b0c
 	call objectUpdateSpeedZ_paramC		; $7b0e
 	call specialObjectAnimate		; $7b11
-	call $441e		; $7b14
-	ld e,$0d		; $7b17
+	call _companionUpdateMovement		; $7b14
+	ld e,SpecialObject.xh		; $7b17
 	ld a,(de)		; $7b19
 	cp $38			; $7b1a
-	jr c,_label_05_429	; $7b1c
+	jr c,_mooshFunc_05_7aff	; $7b1c
 	ld a,$01		; $7b1e
-	ld e,$3e		; $7b20
+	ld e,SpecialObject.var3e		; $7b20
 	ld (de),a		; $7b22
-	jp $7ba7		; $7b23
+	jp _mooshIncVar03		; $7b23
 
 _mooshStateASubstateA:
-	call $485a		; $7b26
-	ld e,$3e		; $7b29
+	call _companionSetAnimationToVar3f		; $7b26
+	ld e,SpecialObject.var3e		; $7b29
 	ld a,(de)		; $7b2b
 	and $02			; $7b2c
 	ret z			; $7b2e
-	ld bc,$220f		; $7b2f
+	ld bc,TX_220f		; $7b2f
 	call showText		; $7b32
-	jp $7ba7		; $7b35
+	jp _mooshIncVar03		; $7b35
 
 _mooshStateASubstateB:
 	call retIfTextIsActive		; $7b38
-	call $45f5		; $7b3b
+	call companionDismount		; $7b3b
 	ld a,$18		; $7b3e
-	ld ($d009),a		; $7b40
-	ld ($cc47),a		; $7b43
+	ld (w1Link.angle),a		; $7b40
+	ld (wLinkAngle),a		; $7b43
 	ld a,$32		; $7b46
-	ld ($d010),a		; $7b48
-	ld bc,$fec0		; $7b4b
+	ld (w1Link.speed),a		; $7b48
+	ld bc,-$140		; $7b4b
 	call objectSetSpeedZ		; $7b4e
-	ld l,$09		; $7b51
+	ld l,SpecialObject.angle		; $7b51
 	ld (hl),$18		; $7b53
-	ld l,$06		; $7b55
+	ld l,SpecialObject.counter1		; $7b55
 	ld (hl),$1e		; $7b57
 	ld c,$0c		; $7b59
-	call $4547		; $7b5b
-	jp $7ba7		; $7b5e
+	call _companionSetAnimation		; $7b5b
+	jp _mooshIncVar03		; $7b5e
 
 _mooshStateASubstateC:
 	call specialObjectAnimate		; $7b61
@@ -13889,33 +13915,33 @@ _mooshStateASubstateC:
 	ld a,(de)		; $7b66
 	or a			; $7b67
 	ld c,$10		; $7b68
-	call nz,objectUpdateSpeedZ_paramC		; $7b6a
-	ld a,($cc77)		; $7b6d
+	call nz,objectUpdateSpeedZ_paramC	; $7b6a
+	ld a,(wLinkInAir)	; $7b6d
 	or a			; $7b70
 	ret nz			; $7b71
 	call setLinkForceStateToState08		; $7b72
-	ld hl,$d00d		; $7b75
-	ld e,$0d		; $7b78
+	ld hl,w1Link.xh		; $7b75
+	ld e,SpecialObject.xh	; $7b78
 	ld a,(de)		; $7b7a
 	bit 7,a			; $7b7b
-	jr nz,_label_05_430	; $7b7d
+	jr nz,+			; $7b7d
 	cp (hl)			; $7b7f
 	ld a,$01		; $7b80
-	jr nc,_label_05_431	; $7b82
-_label_05_430:
-	ld a,$03		; $7b84
-_label_05_431:
-	ld l,$08		; $7b86
-	ld (hl),a		; $7b88
-	call $4917		; $7b89
-	ret nz			; $7b8c
-	call $441e		; $7b8d
-	call objectCheckWithinScreenBoundary		; $7b90
-	ret c			; $7b93
-	xor a			; $7b94
-	ld ($cc40),a		; $7b95
-	ld ($cc02),a		; $7b98
-	jp itemDelete		; $7b9b
+	jr nc,++		; $7b82
++
+	ld a,DIR_LEFT		; $7b84
+++
+	ld l,SpecialObject.direction		; $7b86
+	ld (hl),a				; $7b88
+	call _companionDecCounter1IfNonzero	; $7b89
+	ret nz					; $7b8c
+	call _companionUpdateMovement		; $7b8d
+	call objectCheckWithinScreenBoundary	; $7b90
+	ret c					; $7b93
+	xor a					; $7b94
+	ld (wRememberedCompanionId),a		; $7b95
+	ld (wMenuDisabled),a			; $7b98
+	jp itemDelete				; $7b9b
 .endif
 
 ;;
@@ -13941,84 +13967,4 @@ _mooshIncVar03:
 _specialObjectCode_raft:
 .ifdef ROM_AGES
 	jpab bank6.specialObjectCode_raft		; $7c66
-.endif
-
-.include "build/data/tileTypeMappings.s"
-
-; @addr{7d09}
-cliffTilesTable:
-	.dw @collisions0Data
-	.dw @collisions1Data
-	.dw @collisions2Data
-	.dw @collisions3Data
-	.dw @collisions4Data
-	.dw @collisions5Data
-
-; Data format:
-; b0: Tile index
-; b1: Angle value from which the tile can be jumped off of.
-
-.ifdef ROM_AGES
-@collisions0Data:
-@collisions4Data:
-	.db $05 $10
-	.db $06 $10
-	.db $07 $10
-	.db $0a $18
-	.db $0b $08
-	.db $64 $10
-	.db $ff $10
-	.db $00
-
-@collisions1Data:
-@collisions2Data:
-@collisions5Data:
-	.db $b0 $10
-	.db $b1 $18
-	.db $b2 $00
-	.db $b3 $08
-	.db $c1 $10
-	.db $c2 $18
-	.db $c3 $00
-	.db $c4 $08
-@collisions3Data:
-	.db $00
-.else
-@collisions0Data:
-	.db $54 $10
-	.db $25 $18
-	.db $26 $08
-	.db $28 $08
-	.db $27 $18
-	.db $94 $10
-	.db $95 $10
-	.db $2a $00
-	.db $9a $10
-	.db $cc $10
-	.db $cd $10
-	.db $ce $10
-	.db $cf $10
-	.db $fe $10
-	.db $ff $10
-	.db $00
-
-@collisions1Data:
-	.db $ea $10
-	.db $eb $10
-	.db $54 $10
-	.db $00
-
-@collisions2Data:
-	.db $00			; $7ccc
-@collisions3Data:
-@collisions4Data:
-	.db $b0 $10
-	.db $b1 $18
-	.db $b2 $00
-	.db $b3 $08
-	.db $05 $00
-	.db $06 $10
-
-@collisions5Data:
-	.db $00			; $7cd9
 .endif
