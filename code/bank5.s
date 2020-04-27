@@ -7393,15 +7393,17 @@ checkLinkPushingAgainstTreeStump:
 	ld a,(wActiveGroup)		; $5e7c
 	or a			; $5e7f
 	ret nz			; $5e80
+
 	ld a,(wLinkAngle)		; $5e81
 	and $e7			; $5e84
 	ret nz			; $5e86
 	call checkLinkPushingAgainstWall		; $5e87
 	ret nc			; $5e8a
-	ld e,$08		; $5e8b
+	ld e,SpecialObject.direction		; $5e8b
 	ld a,(de)		; $5e8d
-	ld hl,seasonsTable_05_5ebf		; $5e8e
+	ld hl,@relativeTile		; $5e8e
 	rst_addDoubleIndex			; $5e91
+
 	ldi a,(hl)		; $5e92
 	ld b,a			; $5e93
 	ld c,(hl)		; $5e94
@@ -7410,39 +7412,42 @@ checkLinkPushingAgainstTreeStump:
 	ret nz			; $5e9a
 	ld a,$01		; $5e9b
 	call _specialObjectSetVar37AndVar38		; $5e9d
-	ld e,$08		; $5ea0
+
+	ld e,SpecialObject.direction		; $5ea0
 	ld a,(de)		; $5ea2
 	ld l,a			; $5ea3
 	add a			; $5ea4
 	add l			; $5ea5
-	ld hl,seasonsTable_05_5ec7		; $5ea6
+	ld hl,@speedValues		; $5ea6
 	rst_addAToHl			; $5ea9
-	ld e,$10		; $5eaa
+
+	ld e,SpecialObject.speed		; $5eaa
 	ldi a,(hl)		; $5eac
 	ld (de),a		; $5ead
 	inc e			; $5eae
 	ld (de),a		; $5eaf
-	ld e,$14		; $5eb0
+	ld e,SpecialObject.speedZ		; $5eb0
 	ldi a,(hl)		; $5eb2
 	ld (de),a		; $5eb3
 	inc e			; $5eb4
 	ldi a,(hl)		; $5eb5
 	ld (de),a		; $5eb6
+
 	ld a,$81		; $5eb7
 	ld (wLinkInAir),a		; $5eb9
 	jp linkCancelAllItemUsage		; $5ebc
 
-seasonsTable_05_5ebf:
-	.db $f4 $00
-	.db $00 $07
-	.db $08 $00
-	.db $00 $f8
+@relativeTile:
+	.db $f4 $00 ; DIR_UP
+	.db $00 $07 ; DIR_RIGHT
+	.db $08 $00 ; DIR_DOWN
+	.db $00 $f8 ; DIR_LEFT
 
-seasonsTable_05_5ec7:
-	.db $23 $40 $fe
-	.db $14 $60 $fe
-	.db $0f $40 $fe
-	.db $14 $60 $fe
+@speedValues:
+	dbw $23 $fe40
+	dbw $14 $fe60
+	dbw $0f $fe40
+	dbw $14 $fe60
 
 
 seasonsFunc_05_5ed3:
@@ -7450,10 +7455,12 @@ seasonsFunc_05_5ed3:
 	ld c,a
 	and $e7
 	jr nz,++	; $5ed9
+
 	ld a,c			; $5edb
 	add a			; $5edc
 	swap a			; $5edd
-	ld hl,seasonsTable_05_5f27		; $5edf
+	ld hl,@relativeTile		; $5edf
+
 	rst_addDoubleIndex			; $5ee2
 	ldi a,(hl)		; $5ee3
 	ld c,(hl)		; $5ee4
@@ -7467,15 +7474,16 @@ seasonsFunc_05_5ed3:
 	ld c,a			; $5eee
 	call checkTileCollisionAt_allowHoles		; $5eef
 	jr c,++			; $5ef2
+
 	ld a,(wLinkAngle)		; $5ef4
-	ld e,$09		; $5ef7
+	ld e,SpecialObject.angle		; $5ef7
 	ld (de),a		; $5ef9
 	add a			; $5efa
 	swap a			; $5efb
 	ld c,a			; $5efd
 	add a			; $5efe
 	add c			; $5eff
-	ld hl,seasonsTable_05_5f2f		; $5f00
+	ld hl,@speedValues		; $5f00
 	rst_addAToHl			; $5f03
 	ld a,(wLinkTurningDisabled)		; $5f04
 	or a			; $5f07
@@ -7496,6 +7504,7 @@ seasonsFunc_05_5ed3:
 	inc e			; $5f18
 	ldi a,(hl)		; $5f19
 	ld (de),a		; $5f1a
+
 	call clearVar37AndVar38		; $5f1b
 	ld a,$81		; $5f1e
 	ld (wLinkInAir),a		; $5f20
@@ -7505,14 +7514,13 @@ seasonsFunc_05_5ed3:
 	or d			; $5f25
 	ret			; $5f26
 
-seasonsTable_05_5f27:
+@relativeTile:
 	.db $fb $00
 	.db $00 $09
 	.db $1b $00
 	.db $00 $f6
 
-seasonsTable_05_5f2f:
-	; speed&speedTmp - speedZ
+@speedValues:
 	dbw $0f $fe60
 	dbw $14 $fe60
 	dbw $1e $fe40
