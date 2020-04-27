@@ -2494,12 +2494,8 @@ enemyCode13:
 	ld e,Enemy.var2a		; $508b
 	ld a,(de)		; $508d
 	res 7,a			; $508e
-	sub ITEMCOLLISION_BOOMERANG			; $5090
-.ifdef ROM_AGES
-	cp $01			; $5092
-.else
-	cp $02			; $5092
-.endif
+	sub ITEMCOLLISION_L1_BOOMERANG			; $5090
+	cp MAX_BOOMERANG_LEVEL			; $5092
 	jr nc,@normalStatus	; $5094
 
 	; Collision with boomerang occurred. Go to state 9.
@@ -2591,12 +2587,8 @@ enemyCode19:
 	ld e,Enemy.var2a		; $5101
 	ld a,(de)		; $5103
 	res 7,a			; $5104
-	sub ITEMCOLLISION_BOOMERANG			; $5106
-.ifdef ROM_AGES
-	cp $01			; $5108
-.else
-	cp $02			; $5108
-.endif
+	sub ITEMCOLLISION_L1_BOOMERANG			; $5106
+	cp MAX_BOOMERANG_LEVEL			; $5108
 	jr nc,@normalStatus	; $510a
 
 	; Hit with boomerang

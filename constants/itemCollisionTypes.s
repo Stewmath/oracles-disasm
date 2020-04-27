@@ -29,31 +29,35 @@
 	ITEMCOLLISION_SHOVEL			db ; $0c: Shovel (bumps enemies)
 	ITEMCOLLISION_SWITCH_HOOK		db ; $0d: Switch hook
 .else
-	ITEMCOLLISION_0c			db ; $0c: Seasons-only something???
+	ITEMCOLLISION_ROD_OF_SEASONS		db ; $0c: Rod of Seasons
 	ITEMCOLLISION_SHOVEL			db ; $0d: Shovel (bumps enemies)
 .endif
+
 	ITEMCOLLISION_0e			db ; $0e:
 	ITEMCOLLISION_0f			db ; $0f: Instant death - maybe dimitri?
-	ITEMCOLLISION_10			db ; $10:
+	ITEMCOLLISION_10			db ; $10: Used by ROD_OF_SEASONS in ages? (ages/itemAttributes.s)
 	ITEMCOLLISION_11			db ; $11:
+	ITEMCOLLISION_HARMLESS			db ; $12: Cane of Somaria, other harmless things
 
 	; Collisions $00-$11 are considered "direct attacks" from Link, for the purpose of
-	; ambi's guards (they notice him right away), while $11-$1f are indirect attacks?
+	; ambi's guards (they notice him right away), while $12-$1f are indirect attacks?
 
-	ITEMCOLLISION_CANE_OF_SOMARIA		db ; $12: Cane of Somaria, other harmless things?
-	ITEMCOLLISION_13			db ; $13:
-	ITEMCOLLISION_14			db ; $14:
 .ifdef ROM_AGES
+	ITEMCOLLISION_AG_13			db ; $13:
+	ITEMCOLLISION_AG_14			db ; $14:
 	ITEMCOLLISION_SOMARIA_BLOCK		db ; $15: Cane of Somaria block
-	ITEMCOLLISION_16			db ; $16: Object being thrown (ie. sign)
-	ITEMCOLLISION_BOOMERANG			db ; $17: Boomerang (both levels?)
+	ITEMCOLLISION_THROWN_OBJECT		db ; $16: Object being thrown (ie. sign)
+	ITEMCOLLISION_L1_BOOMERANG		db ; $17: Boomerang
 	ITEMCOLLISION_BOMB			db ; $18: Bomb, bombchu
 .else
-	ITEMCOLLISION_BOOMERANG			db ; $15: Boomerang (both levels?)
-	ITEMCOLLISION_16			db ; $16: Object being thrown (ie. sign)
+	ITEMCOLLISION_SOMARIA_BLOCK		db ; $13: It's used in seasons/itemAttributes.s
+	ITEMCOLLISION_THROWN_OBJECT		db ; $14: Object being thrown (ie. sign)
+	ITEMCOLLISION_L1_BOOMERANG		db ; $15: L-1 Boomerang
+	ITEMCOLLISION_SE_16			db ; $16: L-2 Boomerang
 	ITEMCOLLISION_BOMB			db ; $17: Bomb, bombchu
-	ITEMCOLLISION_18			db ; $18
+	ITEMCOLLISION_SE_18			db ; $18
 .endif
+
 	ITEMCOLLISION_SWORD_BEAM		db ; $19: Sword beam
 	ITEMCOLLISION_MYSTERY_SEED		db ; $1a: Mystery seed
 	ITEMCOLLISION_EMBER_SEED		db ; $1b: Ember seed
@@ -70,3 +74,11 @@
 	ITEMCOLLISION_ELECTRIC_SHOCK		db ; $20
 
 .ende
+
+
+; This constant is used by some code that checks for boomerang collisions
+.ifdef ROM_AGES
+	.define MAX_BOOMERANG_LEVEL $01
+.else
+	.define MAX_BOOMERANG_LEVEL $02
+.endif
