@@ -2006,7 +2006,7 @@ wDisabledObjects: ; $cc8a/$cca4
 ; Bit 7 disables link, companions, items, enemies, not interactions.
 	db
 
-wcc8b: ; $cc8b
+wcc8b: ; $cc8b/$cca5
 ; Bit 0 set if items aren't being updated?
 	db
 wLinkCanPassNpcs: ; $cc8c/$cca6

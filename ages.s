@@ -11744,7 +11744,7 @@ updateItems:
 @dontUpdateItems:
 	inc b			; $488e
 ++
-	ld hl,$cc8b		; $488f
+	ld hl,wcc8b		; $488f
 	ld a,(hl)		; $4892
 	and $fe			; $4893
 	or b			; $4895
@@ -11772,7 +11772,7 @@ updateItems:
 	jr z,+			; $48ae
 
 	; If already initialized, don't update items if this variable is set
-	ld a,($cc8b)		; $48b0
+	ld a,(wcc8b)		; $48b0
 	or a			; $48b3
 +
 	call z,@updateItem		; $48b4
@@ -11790,6 +11790,7 @@ updateItems:
 	ld e,Item.id		; $48be
 	ld a,(de)		; $48c0
 	rst_jumpTable			; $48c1
+.ifdef ROM_AGES
 	.dw itemCode00 ; 0x00
 	.dw itemDelete ; 0x01
 	.dw itemCode02 ; 0x02
@@ -11834,6 +11835,52 @@ updateItems:
 	.dw itemCode29 ; 0x29
 	.dw itemCode2a ; 0x2a
 	.dw itemCode2b ; 0x2b
+.else
+	.dw itemCode00 ; 0x00
+	.dw itemDelete ; 0x01
+	.dw itemCode02 ; 0x02
+	.dw itemCode03 ; 0x03
+	.dw itemDelete ; 0x04
+	.dw itemCode05 ; 0x05
+	.dw itemCode06 ; 0x06
+	.dw itemCode07 ; 0x07
+	.dw itemCode08 ; 0x08
+	.dw itemDelete ; 0x09
+	.dw itemDelete ; 0x0a
+	.dw itemDelete ; 0x0b
+	.dw itemCode0c ; 0x0c
+	.dw itemCode0d ; 0x0d
+	.dw itemDelete ; 0x0e
+	.dw itemDelete ; 0x0f
+	.dw itemDelete ; 0x10
+	.dw itemDelete ; 0x11
+	.dw itemDelete ; 0x12
+	.dw itemCode13 ; 0x13
+	.dw itemDelete ; 0x14
+	.dw itemCode15 ; 0x15
+	.dw itemCode16 ; 0x16
+	.dw itemDelete ; 0x17
+	.dw itemDelete ; 0x18
+	.dw itemDelete ; 0x19
+	.dw itemCode1a ; 0x1a
+	.dw itemDelete ; 0x1b
+	.dw itemDelete ; 0x1c
+	.dw itemCode1d ; 0x1d
+	.dw itemCode1e ; 0x1e
+	.dw itemDelete ; 0x1f
+	.dw itemCode20 ; 0x20
+	.dw itemCode21 ; 0x21
+	.dw itemCode22 ; 0x22
+	.dw itemCode23 ; 0x23
+	.dw itemCode24 ; 0x24
+	.dw itemDelete ; 0x25
+	.dw itemDelete ; 0x26
+	.dw itemCode27 ; 0x27
+	.dw itemCode28 ; 0x28
+	.dw itemCode29 ; 0x29
+	.dw itemCode2a ; 0x2a
+	.dw itemCode2b ; 0x2b
+.endif
 
 ;;
 ; The main difference between this and the above "updateItems" is that this is called
@@ -11877,12 +11924,21 @@ _updateItemPost:
 	.dw itemCode07Post	; 0x07
 	.dw itemCode08Post	; 0x08
 	.dw itemCodeNilPost	; 0x09
+.ifdef ROM_AGES
 	.dw itemCode0aPost	; 0x0a
 	.dw itemCode0bPost	; 0x0b
 	.dw itemCode0cPost	; 0x0c
 	.dw itemCodeNilPost	; 0x0d
 	.dw itemCodeNilPost	; 0x0e
 	.dw itemCode0fPost	; 0x0f
+.else
+	.dw itemDelete		; 0x0a
+	.dw itemDelete		; 0x0b
+	.dw itemCode0cPost	; 0x0c
+	.dw itemCodeNilPost	; 0x0d
+	.dw itemCodeNilPost	; 0x0e
+	.dw itemDelete		; 0x0f
+.endif
 	.dw itemCodeNilPost	; 0x10
 	.dw itemCodeNilPost	; 0x11
 	.dw itemCodeNilPost	; 0x12
@@ -12718,6 +12774,7 @@ _itemConveyorTilesTable:
 ; b0: tile index
 ; b1: angle to move in
 
+.ifdef ROM_AGES
 @collisions2:
 @collisions5:
 	.db TILEINDEX_CONVEYOR_UP	$00
@@ -12729,6 +12786,19 @@ _itemConveyorTilesTable:
 @collisions3:
 @collisions4:
 	.db $00
+.else
+@collisions4:
+	.db TILEINDEX_CONVEYOR_UP	$00
+	.db TILEINDEX_CONVEYOR_RIGHT	$08
+	.db TILEINDEX_CONVEYOR_DOWN	$10
+	.db TILEINDEX_CONVEYOR_LEFT	$18
+@collisions0:
+@collisions1:
+@collisions2:
+@collisions3:
+@collisions5:
+	.db $00			; $4c37
+.endif
 
 
 ; This lists the tiles that are passible from a single direction - usually cliffs.
@@ -12743,6 +12813,7 @@ _itemPassableCliffTilesTable:
 	.dw @collisions4
 	.dw @collisions5
 
+.ifdef ROM_AGES
 @collisions0:
 @collisions4:
 	.db @@up-CADDR
@@ -12840,6 +12911,88 @@ _itemPassableCliffTilesTable:
 @@down:
 @@left:
 	.db $00
+.else
+@collisions0:
+	.db @@up-CADDR
+	.db @@right-CADDR
+	.db @@down-CADDR
+	.db @@left-CADDR
+	.db @@up-CADDR
+@@up:
+        .db $54 $ff
+        .db $cf $ff
+        .db $ce $ff
+        .db $58 $ff
+        .db $cd $ff
+        .db $94 $ff
+        .db $95 $ff
+        .db $2a $01
+        .db $00
+@@down:
+        .db $54 $01
+        .db $cf $01
+        .db $ce $01
+        .db $58 $01
+        .db $cd $01
+        .db $94 $01
+        .db $95 $01
+        .db $2a $ff
+        .db $00
+@@right:
+        .db $27 $01
+        .db $26 $01
+        .db $25 $ff
+        .db $28 $ff
+        .db $00
+@@left:
+	.db $27 $ff
+        .db $26 $ff
+        .db $25 $01
+        .db $28 $01
+        .db $00
+
+@collisions1:
+@collisions2:
+@collisions3:
+@collisions5:
+	.db @@up-CADDR
+	.db @@right-CADDR
+	.db @@down-CADDR
+	.db @@left-CADDR
+	.db @@up-CADDR
+@@up:
+@@right:
+@@down:
+@@left:
+	.db $00		; $4c82
+
+@collisions4:
+	.db @@up-CADDR
+	.db @@right-CADDR
+	.db @@down-CADDR
+	.db @@left-CADDR
+	.db @@up-CADDR
+@@up:
+        .db $b2 $01
+        .db $b0 $ff
+        .db $05 $01
+        .db $06 $ff
+        .db $00
+@@down:
+        .db $b0 $01
+        .db $b2 $ff
+        .db $05 $ff
+        .db $06 $01
+        .db $00
+@@right:
+        .db $b3 $01
+        .db $b1 $ff
+        .db $00
+@@left:
+        .db $b1 $01
+        .db $b3 $ff
+        .db $00
+.endif
 
 ; This lists the tiles that can be passed through by items (such as the switch hook or
 ; seeds) even if their collisions prevent link from passing them.
@@ -12852,6 +13005,7 @@ _itemPassableTilesTable:
 	.dw @collisions4
 	.dw @collisions5
 
+.ifdef ROM_AGES
 @collisions0:
 @collisions4:
 	.db $fd $eb
@@ -12865,7 +13019,20 @@ _itemPassableTilesTable:
 	.db $98 $99 $9a $9b $0a $0b $0e $0f
 @collisions3:
 	.db $00
-
+.else
+@collisions0:
+@collisions1:
+	.db $fd
+@collisions2:
+	.db $00
+@collisions3:
+        .db $cf $00
+@collisions4:
+        .db $90 $91 $92 $93 $94 $95 $96 $97
+        .db $98 $99 $9a $9b $0a $0b
+@collisions5:
+	.db $00
+.endif
 
 ;;
 ; ITEMID_EMBER_SEED
