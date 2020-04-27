@@ -190,20 +190,26 @@ secretSymbols:
 
 	.db $00 ; Null terminator
 
-; Filler?
-	.DB         $00 $00 $00 $00 $00 $ff	; $00e2
-	.DB $00 $00 $00 $00 $00 $00 $00 $00	; $00e8
-	.DB $00 $00 $00 $00 $00 $00 $00 $00	; $00f0
+	; This is probably nothing...?
+	.db $00 $00 $00 $00 $00 $ff	; $00e2
+.ENDS
 
-;;;
+
+.ORGA $00f8
+
+;;
+; Table used to convert a bit number (0-7) to a bitmask ($00-$80).
+;
+; This needs to be aligned such that the high byte of the address stays constant. Best to just
+; leave it under an .ORGA.
 bitTable:
 	.db $01 $02 $04 $08 $10 $20 $40 $80	; $00f8
 
-; Entry point
+
+.ORGA $0100
+	; Entry point
 	nop			; $0100
 	jp begin
-
-.ENDS
 
 
 ; ROM title / manufacturer code
