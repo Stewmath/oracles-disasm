@@ -75,7 +75,7 @@ for addr in sorted(subidDataAddresses):
     elif address < addr:
         interactionDataOut.write('; Unused data?\n')
         while address < addr:
-            interactionDataOut.write('\t.db ' + wlahex(rom[address],2)
+            interactionDataOut.write('\tm_InteractionData ' + wlahex(rom[address],2)
                     + ' ' + wlahex(rom[address+1],2)
                     + ' ' + wlahex(rom[address+2],2)
                     + '\n')
@@ -97,7 +97,7 @@ for addr in sorted(subidDataAddresses):
 
 #         numExtraDataIndices = max(numExtraDataIndices, extraDataIndex+1)
 
-        interactionDataOut.write('\t.db ' + wlahex(b0,2)
+        interactionDataOut.write('\tm_InteractionData ' + wlahex(b0,2)
                 + ' ' + wlahex(b1,2)
                 + ' ' + wlahex(b2,2)
                 + '\n')

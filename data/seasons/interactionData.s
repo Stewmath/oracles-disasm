@@ -245,565 +245,565 @@ interactionData:
 
 interaction54SubidData:
 interaction60SubidData:
-	.db $5c $04 $00
-	.db $5c $06 $40
-	.db $5c $08 $53
-	.db $5c $0c $10
-	.db $5c $0e $50
-	.db $5c $10 $40
-	.db $5c $12 $20
-	.db $5c $14 $30
-	.db $5c $16 $10
-	.db $5c $18 $10
-	.db $5c $1a $00
-	.db $5c $1c $10
-	.db $5c $1e $20
-	.db $5d $0a $10
-	.db $5d $08 $00
-	.db $00 $00 $00
-	.db $60 $00 $00
-	.db $60 $02 $50
-	.db $60 $04 $40
-	.db $60 $06 $00
-	.db $60 $08 $50
-	.db $60 $0a $40
-	.db $60 $0c $40
-	.db $60 $0e $50
-	.db $5f $10 $10
-	.db $60 $12 $50
-	.db $60 $14 $10
-	.db $60 $16 $40
-	.db $60 $18 $50
-	.db $60 $1a $40
-	.db $60 $10 $20
-	.db $60 $1e $40
-	.db $5f $00 $50
-	.db $5f $02 $40
-	.db $5f $04 $50
-	.db $5f $16 $03
-	.db $61 $00 $50
-	.db $61 $02 $33
-	.db $5d $0c $33
-	.db $00 $00 $00
-	.db $5c $04 $00
-	.db $5c $04 $10
-	.db $5c $04 $20
-	.db $5c $06 $40
-	.db $5c $06 $50
-	.db $5c $08 $43
-	.db $5c $08 $53
-	.db $5c $0c $30
-	.db $5d $00 $00
-	.db $5d $04 $53
-	.db $5d $04 $00
-	.db $5d $14 $00
-	.db $5d $14 $10
-	.db $5d $14 $20
+	m_InteractionData $5c $04 $00
+	m_InteractionData $5c $06 $40
+	m_InteractionData $5c $08 $53
+	m_InteractionData $5c $0c $10
+	m_InteractionData $5c $0e $50
+	m_InteractionData $5c $10 $40
+	m_InteractionData $5c $12 $20
+	m_InteractionData $5c $14 $30
+	m_InteractionData $5c $16 $10
+	m_InteractionData $5c $18 $10
+	m_InteractionData $5c $1a $00
+	m_InteractionData $5c $1c $10
+	m_InteractionData $5c $1e $20
+	m_InteractionData $5d $0a $10
+	m_InteractionData $5d $08 $00
+	m_InteractionData $00 $00 $00
+	m_InteractionData $60 $00 $00
+	m_InteractionData $60 $02 $50
+	m_InteractionData $60 $04 $40
+	m_InteractionData $60 $06 $00
+	m_InteractionData $60 $08 $50
+	m_InteractionData $60 $0a $40
+	m_InteractionData $60 $0c $40
+	m_InteractionData $60 $0e $50
+	m_InteractionData $5f $10 $10
+	m_InteractionData $60 $12 $50
+	m_InteractionData $60 $14 $10
+	m_InteractionData $60 $16 $40
+	m_InteractionData $60 $18 $50
+	m_InteractionData $60 $1a $40
+	m_InteractionData $60 $10 $20
+	m_InteractionData $60 $1e $40
+	m_InteractionData $5f $00 $50
+	m_InteractionData $5f $02 $40
+	m_InteractionData $5f $04 $50
+	m_InteractionData $5f $16 $03
+	m_InteractionData $61 $00 $50
+	m_InteractionData $61 $02 $33
+	m_InteractionData $5d $0c $33
+	m_InteractionData $00 $00 $00
+	m_InteractionData $5c $04 $00
+	m_InteractionData $5c $04 $10
+	m_InteractionData $5c $04 $20
+	m_InteractionData $5c $06 $40
+	m_InteractionData $5c $06 $50
+	m_InteractionData $5c $08 $43
+	m_InteractionData $5c $08 $53
+	m_InteractionData $5c $0c $30
+	m_InteractionData $5d $00 $00
+	m_InteractionData $5d $04 $53
+	m_InteractionData $5d $04 $00
+	m_InteractionData $5d $14 $00
+	m_InteractionData $5d $14 $10
+	m_InteractionData $5d $14 $20
 interaction92SubidData:
-	.db $65 $04 $00
-	.db $65 $06 $20
-	.db $65 $08 $10
-	.db $65 $0a $30
-	.db $5d $10 $22
-	.db $5d $12 $52
-	.db $00 $00 $00
-	.db $00 $00 $00
-	.db $00 $00 $00
-	.db $00 $00 $00
-	.db $5e $00 $33
-	.db $5e $04 $13
+	m_InteractionData $65 $04 $00
+	m_InteractionData $65 $06 $20
+	m_InteractionData $65 $08 $10
+	m_InteractionData $65 $0a $30
+	m_InteractionData $5d $10 $22
+	m_InteractionData $5d $12 $52
+	m_InteractionData $00 $00 $00
+	m_InteractionData $00 $00 $00
+	m_InteractionData $00 $00 $00
+	m_InteractionData $00 $00 $00
+	m_InteractionData $5e $00 $33
+	m_InteractionData $5e $04 $13
 interaction17SubidData:
-	.db $5e $0c $50
-	.db $5e $08 $53
+	m_InteractionData $5e $0c $50
+	m_InteractionData $5e $08 $53
 interaction18SubidData:
-	.db $5e $0e $50
-	.db $5e $10 $40
-	.db $5e $12 $10
-	.db $66 $12 $0a
-	.db $00 $00 $00
-	.db $00 $00 $00
-	.db $00 $00 $00
-	.db $00 $00 $00
-	.db $00 $00 $00
-	.db $00 $00 $00
-	.db $00 $00 $00
-	.db $00 $00 $00
-	.db $00 $00 $00
-	.db $00 $00 $00
-	.db $00 $00 $00
-	.db $00 $00 $00
-	.db $65 $10 $33
-	.db $64 $1c $53
-	.db $66 $0a $04
-	.db $66 $00 $33
-	.db $66 $04 $10
-	.db $66 $04 $20
-	.db $66 $06 $03
-	.db $65 $18 $23
-	.db $65 $1c $13
-	.db $64 $1c $43
-	.db $00 $00 $00
+	m_InteractionData $5e $0e $50
+	m_InteractionData $5e $10 $40
+	m_InteractionData $5e $12 $10
+	m_InteractionData $66 $12 $0a
+	m_InteractionData $00 $00 $00
+	m_InteractionData $00 $00 $00
+	m_InteractionData $00 $00 $00
+	m_InteractionData $00 $00 $00
+	m_InteractionData $00 $00 $00
+	m_InteractionData $00 $00 $00
+	m_InteractionData $00 $00 $00
+	m_InteractionData $00 $00 $00
+	m_InteractionData $00 $00 $00
+	m_InteractionData $00 $00 $00
+	m_InteractionData $00 $00 $00
+	m_InteractionData $00 $00 $00
+	m_InteractionData $65 $10 $33
+	m_InteractionData $64 $1c $53
+	m_InteractionData $66 $0a $04
+	m_InteractionData $66 $00 $33
+	m_InteractionData $66 $04 $10
+	m_InteractionData $66 $04 $20
+	m_InteractionData $66 $06 $03
+	m_InteractionData $65 $18 $23
+	m_InteractionData $65 $1c $13
+	m_InteractionData $64 $1c $43
+	m_InteractionData $00 $00 $00
 interactiondeSubidData:
-	.db $66 $12 $0a
-	.db $62 $14 $02
-	.db $62 $10 $12
-	.db $62 $06 $53
-	.db $62 $0a $42
-	.db $62 $16 $52
-	.db $62 $0c $43
-	.db $62 $02 $23
-	.db $62 $00 $32
-	.db $00 $00 $00
-	.db $00 $00 $00
-	.db $00 $00 $00
-	.db $00 $00 $00
-	.db $00 $00 $00
-	.db $00 $00 $00
-	.db $00 $00 $00
-	.db $00 $00 $00
-	.db $63 $00 $03
-	.db $63 $04 $32
-	.db $63 $06 $03
-	.db $63 $0a $43
-	.db $64 $14 $53
-	.db $63 $0e $53
-	.db $63 $12 $13
-	.db $64 $00 $13
-	.db $64 $04 $53
-	.db $64 $08 $33
-	.db $64 $0c $13
-	.db $64 $90 $03
+	m_InteractionData $66 $12 $0a
+	m_InteractionData $62 $14 $02
+	m_InteractionData $62 $10 $12
+	m_InteractionData $62 $06 $53
+	m_InteractionData $62 $0a $42
+	m_InteractionData $62 $16 $52
+	m_InteractionData $62 $0c $43
+	m_InteractionData $62 $02 $23
+	m_InteractionData $62 $00 $32
+	m_InteractionData $00 $00 $00
+	m_InteractionData $00 $00 $00
+	m_InteractionData $00 $00 $00
+	m_InteractionData $00 $00 $00
+	m_InteractionData $00 $00 $00
+	m_InteractionData $00 $00 $00
+	m_InteractionData $00 $00 $00
+	m_InteractionData $00 $00 $00
+	m_InteractionData $63 $00 $03
+	m_InteractionData $63 $04 $32
+	m_InteractionData $63 $06 $03
+	m_InteractionData $63 $0a $43
+	m_InteractionData $64 $14 $53
+	m_InteractionData $63 $0e $53
+	m_InteractionData $63 $12 $13
+	m_InteractionData $64 $00 $13
+	m_InteractionData $64 $04 $53
+	m_InteractionData $64 $08 $33
+	m_InteractionData $64 $0c $13
+	m_InteractionData $64 $90 $03
 
 interaction7dSubidData:
-	.db $58 $00 $40
-	.db $58 $00 $51
-	.db $58 $80 $02
+	m_InteractionData $58 $00 $40
+	m_InteractionData $58 $00 $51
+	m_InteractionData $58 $80 $02
 
 interaction7aSubidData:
-	.db $59 $00 $40
-	.db $59 $00 $42
-	.db $59 $00 $44
-	.db $59 $80 $46
+	m_InteractionData $59 $00 $40
+	m_InteractionData $59 $00 $42
+	m_InteractionData $59 $00 $44
+	m_InteractionData $59 $80 $46
 
 interaction7fSubidData:
-	.db $62 $00 $00
-	.db $5b $00 $40
-	.db $5b $06 $43
-	.db $2e $80 $00
+	m_InteractionData $62 $00 $00
+	m_InteractionData $5b $00 $40
+	m_InteractionData $5b $06 $43
+	m_InteractionData $2e $80 $00
 
 interaction0bSubidData:
-	.db $6b $08 $40
-	.db $6b $88 $41
+	m_InteractionData $6b $08 $40
+	m_InteractionData $6b $88 $41
 
 interactione0SubidData:
-	.db $55 $00 $00
-	.db $55 $08 $20
-	.db $55 $10 $30
-	.db $55 $98 $10
+	m_InteractionData $55 $00 $00
+	m_InteractionData $55 $08 $20
+	m_InteractionData $55 $10 $30
+	m_InteractionData $55 $98 $10
 
 interactione1SubidData:
-	.db $4f $18 $40
-	.db $4f $98 $50
+	m_InteractionData $4f $18 $40
+	m_InteractionData $4f $98 $50
 
 interaction6aSubidData:
-	.db $07 $00 $12
-	.db $07 $00 $22
-	.db $07 $00 $12
-	.db $41 $80 $07
+	m_InteractionData $07 $00 $12
+	m_InteractionData $07 $00 $22
+	m_InteractionData $07 $00 $12
+	m_InteractionData $41 $80 $07
 
 interaction7cSubidData:
-	.db $58 $1a $10
-	.db $58 $9a $20
+	m_InteractionData $58 $1a $10
+	m_InteractionData $58 $9a $20
 
 interaction2aSubidData:
-	.db $46 $14 $00
-	.db $46 $14 $10
-	.db $46 $14 $20
-	.db $46 $14 $30
-	.db $46 $14 $20
-	.db $46 $14 $30
-	.db $46 $14 $10
-	.db $46 $14 $00
-	.db $46 $14 $00
-	.db $46 $94 $10
+	m_InteractionData $46 $14 $00
+	m_InteractionData $46 $14 $10
+	m_InteractionData $46 $14 $20
+	m_InteractionData $46 $14 $30
+	m_InteractionData $46 $14 $20
+	m_InteractionData $46 $14 $30
+	m_InteractionData $46 $14 $10
+	m_InteractionData $46 $14 $00
+	m_InteractionData $46 $14 $00
+	m_InteractionData $46 $94 $10
 
 interaction34SubidData:
-	.db $07 $00 $00
-	.db $07 $80 $01
+	m_InteractionData $07 $00 $00
+	m_InteractionData $07 $80 $01
 
 interaction35SubidData:
-	.db $3b $00 $00
-	.db $3b $00 $10
-	.db $3b $00 $20
-	.db $3b $00 $00
-	.db $3b $00 $00
-	.db $3c $00 $00
-	.db $3c $00 $00
-	.db $3a $80 $00
+	m_InteractionData $3b $00 $00
+	m_InteractionData $3b $00 $10
+	m_InteractionData $3b $00 $20
+	m_InteractionData $3b $00 $00
+	m_InteractionData $3b $00 $00
+	m_InteractionData $3c $00 $00
+	m_InteractionData $3c $00 $00
+	m_InteractionData $3a $80 $00
 
 interaction3eSubidData:
-	.db $31 $10 $03
-	.db $31 $10 $12
-	.db $31 $10 $22
-	.db $31 $90 $32
+	m_InteractionData $31 $10 $03
+	m_InteractionData $31 $10 $12
+	m_InteractionData $31 $10 $22
+	m_InteractionData $31 $90 $32
 
 interaction3bSubidData:
-	.db $46 $00 $33
-	.db $46 $00 $34
-	.db $46 $00 $32
-	.db $46 $00 $35
-	.db $46 $00 $34
-	.db $46 $00 $35
-	.db $46 $00 $24
-	.db $46 $80 $22
+	m_InteractionData $46 $00 $33
+	m_InteractionData $46 $00 $34
+	m_InteractionData $46 $00 $32
+	m_InteractionData $46 $00 $35
+	m_InteractionData $46 $00 $34
+	m_InteractionData $46 $00 $35
+	m_InteractionData $46 $00 $24
+	m_InteractionData $46 $80 $22
 
 interaction44SubidData:
-	.db $11 $00 $05
-	.db $11 $00 $02
-	.db $11 $00 $02
-	.db $11 $00 $02
-	.db $11 $00 $02
-	.db $11 $00 $02
-	.db $11 $00 $00
-	.db $11 $00 $02
-	.db $11 $00 $02
-	.db $11 $80 $02
+	m_InteractionData $11 $00 $05
+	m_InteractionData $11 $00 $02
+	m_InteractionData $11 $00 $02
+	m_InteractionData $11 $00 $02
+	m_InteractionData $11 $00 $02
+	m_InteractionData $11 $00 $02
+	m_InteractionData $11 $00 $00
+	m_InteractionData $11 $00 $02
+	m_InteractionData $11 $00 $02
+	m_InteractionData $11 $80 $02
 
 interaction47SubidData:
-	.db $5f $00 $50
-	.db $5c $02 $59
-	.db $5d $0a $10
-	.db $60 $06 $00
-	.db $5c $10 $40
-	.db $65 $14 $33
-	.db $5d $0a $10
-	.db $5d $00 $23
-	.db $5d $0a $10
-	.db $5d $00 $23
-	.db $5d $0a $10
-	.db $61 $00 $50
-	.db $5d $10 $13
-	.db $5f $16 $03
-	.db $5d $0a $10
-	.db $5d $08 $00
-	.db $5d $08 $00
-	.db $60 $08 $50
-	.db $60 $0a $40
-	.db $5d $0a $10
+	m_InteractionData $5f $00 $50
+	m_InteractionData $5c $02 $59
+	m_InteractionData $5d $0a $10
+	m_InteractionData $60 $06 $00
+	m_InteractionData $5c $10 $40
+	m_InteractionData $65 $14 $33
+	m_InteractionData $5d $0a $10
+	m_InteractionData $5d $00 $23
+	m_InteractionData $5d $0a $10
+	m_InteractionData $5d $00 $23
+	m_InteractionData $5d $0a $10
+	m_InteractionData $61 $00 $50
+	m_InteractionData $5d $10 $13
+	m_InteractionData $5f $16 $03
+	m_InteractionData $5d $0a $10
+	m_InteractionData $5d $08 $00
+	m_InteractionData $5d $08 $00
+	m_InteractionData $60 $08 $50
+	m_InteractionData $60 $0a $40
+	m_InteractionData $5d $0a $10
 interaction4aSubidData:
-	.db $50 $00 $60
-	.db $50 $00 $60
-	.db $50 $00 $60
-	.db $50 $0a $13
-	.db $5b $06 $45
-	.db $00 $00 $22
-	.db $00 $00 $22
-	.db $50 $12 $14
-	.db $68 $00 $46
-	.db $00 $60 $a0
-	.db $00 $ea $93
+	m_InteractionData $50 $00 $60
+	m_InteractionData $50 $00 $60
+	m_InteractionData $50 $00 $60
+	m_InteractionData $50 $0a $13
+	m_InteractionData $5b $06 $45
+	m_InteractionData $00 $00 $22
+	m_InteractionData $00 $00 $22
+	m_InteractionData $50 $12 $14
+	m_InteractionData $68 $00 $46
+	m_InteractionData $00 $60 $a0
+	m_InteractionData $00 $ea $93
 
 interaction4bSubidData:
-	.db $00 $18 $b0
-	.db $00 $02 $b1
-	.db $00 $86 $a2
+	m_InteractionData $00 $18 $b0
+	m_InteractionData $00 $02 $b1
+	m_InteractionData $00 $86 $a2
 
 interaction4cSubidData:
-	.db $4e $00 $00
-	.db $4e $18 $09
-	.db $52 $18 $62
-	.db $52 $18 $63
-	.db $66 $04 $25
-	.db $66 $04 $15
-	.db $4e $1e $25
-	.db $53 $0a $66
-	.db $53 $1a $67
-	.db $63 $0e $51
-	.db $56 $0e $01
-	.db $56 $12 $21
-	.db $56 $16 $15
-	.db $56 $98 $39
+	m_InteractionData $4e $00 $00
+	m_InteractionData $4e $18 $09
+	m_InteractionData $52 $18 $62
+	m_InteractionData $52 $18 $63
+	m_InteractionData $66 $04 $25
+	m_InteractionData $66 $04 $15
+	m_InteractionData $4e $1e $25
+	m_InteractionData $53 $0a $66
+	m_InteractionData $53 $1a $67
+	m_InteractionData $63 $0e $51
+	m_InteractionData $56 $0e $01
+	m_InteractionData $56 $12 $21
+	m_InteractionData $56 $16 $15
+	m_InteractionData $56 $98 $39
 
 interaction4eSubidData:
-	.db $48 $00 $04
-	.db $48 $00 $00
-	.db $48 $00 $02
-	.db $48 $00 $03
-	.db $0f $00 $2b
-	.db $00 $06 $a5
-	.db $13 $00 $06
-	.db $80 $12 $17
-	.db $48 $00 $00
-	.db $48 $00 $02
-	.db $48 $80 $01
+	m_InteractionData $48 $00 $04
+	m_InteractionData $48 $00 $00
+	m_InteractionData $48 $00 $02
+	m_InteractionData $48 $00 $03
+	m_InteractionData $0f $00 $2b
+	m_InteractionData $00 $06 $a5
+	m_InteractionData $13 $00 $06
+	m_InteractionData $80 $12 $17
+	m_InteractionData $48 $00 $00
+	m_InteractionData $48 $00 $02
+	m_InteractionData $48 $80 $01
 
 interaction4fSubidData:
-	.db $14 $00 $00
-	.db $6a $00 $01
-	.db $15 $18 $43
-	.db $6b $00 $46
-	.db $15 $18 $44
-	.db $6d $80 $0f
+	m_InteractionData $14 $00 $00
+	m_InteractionData $6a $00 $01
+	m_InteractionData $15 $18 $43
+	m_InteractionData $6b $00 $46
+	m_InteractionData $15 $18 $44
+	m_InteractionData $6d $80 $0f
 
 interaction50SubidData:
-	.db $49 $00 $00
-	.db $49 $00 $20
-	.db $49 $00 $30
-	.db $49 $80 $10
+	m_InteractionData $49 $00 $00
+	m_InteractionData $49 $00 $20
+	m_InteractionData $49 $00 $30
+	m_InteractionData $49 $80 $10
 
 ; Unused data?
-	.db $5d $10 $20
-	.db $5d $0a $11
-	.db $5d $08 $01
-	.db $5d $08 $01
-	.db $5d $00 $24
+	m_InteractionData $5d $10 $20
+	m_InteractionData $5d $0a $11
+	m_InteractionData $5d $08 $01
+	m_InteractionData $5d $08 $01
+	m_InteractionData $5d $00 $24
 
 interaction59SubidData:
-	.db $4e $1a $50
-	.db $4e $1a $40
+	m_InteractionData $4e $1a $50
+	m_InteractionData $4e $1a $40
 interaction5dSubidData:
-	.db $63 $00 $00
-	.db $63 $04 $30
-	.db $63 $06 $00
-	.db $63 $0a $40
-	.db $64 $14 $50
-	.db $63 $0e $50
-	.db $63 $12 $10
-	.db $64 $00 $10
-	.db $64 $04 $50
-	.db $64 $08 $30
-	.db $64 $0c $10
-	.db $64 $90 $00
+	m_InteractionData $63 $00 $00
+	m_InteractionData $63 $04 $30
+	m_InteractionData $63 $06 $00
+	m_InteractionData $63 $0a $40
+	m_InteractionData $64 $14 $50
+	m_InteractionData $63 $0e $50
+	m_InteractionData $63 $12 $10
+	m_InteractionData $64 $00 $10
+	m_InteractionData $64 $04 $50
+	m_InteractionData $64 $08 $30
+	m_InteractionData $64 $0c $10
+	m_InteractionData $64 $90 $00
 
 interaction69SubidData:
-	.db $5b $0a $40
-	.db $5b $0a $40
-	.db $5b $06 $41
-	.db $5b $8e $12
+	m_InteractionData $5b $0a $40
+	m_InteractionData $5b $0a $40
+	m_InteractionData $5b $06 $41
+	m_InteractionData $5b $8e $12
 
 interaction6bSubidData:
-	.db $43 $1c $10
-	.db $74 $9a $02
+	m_InteractionData $43 $1c $10
+	m_InteractionData $74 $9a $02
 
 interaction71SubidData:
-	.db $65 $10 $30
-	.db $5f $16 $30
+	m_InteractionData $65 $10 $30
+	m_InteractionData $5f $16 $30
 interaction73SubidData:
-	.db $75 $00 $00
-	.db $75 $00 $23
-	.db $75 $00 $20
-	.db $75 $00 $20
-	.db $75 $00 $20
-	.db $75 $00 $23
+	m_InteractionData $75 $00 $00
+	m_InteractionData $75 $00 $23
+	m_InteractionData $75 $00 $20
+	m_InteractionData $75 $00 $20
+	m_InteractionData $75 $00 $20
+	m_InteractionData $75 $00 $23
 interaction74SubidData:
-	.db $54 $00 $60
-	.db $54 $00 $60
-	.db $54 $00 $63
-	.db $54 $00 $63
-	.db $54 $00 $63
-	.db $54 $00 $61
-	.db $54 $1c $62
-	.db $54 $00 $60
-	.db $54 $00 $64
-	.db $54 $00 $65
-	.db $54 $00 $64
-	.db $54 $00 $65
-	.db $53 $80 $56
+	m_InteractionData $54 $00 $60
+	m_InteractionData $54 $00 $60
+	m_InteractionData $54 $00 $63
+	m_InteractionData $54 $00 $63
+	m_InteractionData $54 $00 $63
+	m_InteractionData $54 $00 $61
+	m_InteractionData $54 $1c $62
+	m_InteractionData $54 $00 $60
+	m_InteractionData $54 $00 $64
+	m_InteractionData $54 $00 $65
+	m_InteractionData $54 $00 $64
+	m_InteractionData $54 $00 $65
+	m_InteractionData $53 $80 $56
 
 interaction75SubidData:
-	.db $00 $00 $00
-	.db $00 $00 $04
-	.db $00 $80 $05
+	m_InteractionData $00 $00 $00
+	m_InteractionData $00 $00 $04
+	m_InteractionData $00 $80 $05
 
 interaction76SubidData:
-	.db $31 $00 $00
-	.db $31 $10 $00
-	.db $31 $10 $21
+	m_InteractionData $31 $00 $00
+	m_InteractionData $31 $10 $00
+	m_InteractionData $31 $10 $21
 interaction79SubidData:
-	.db $57 $08 $00
-	.db $57 $08 $01
-	.db $57 $08 $02
-	.db $57 $08 $03
-	.db $57 $08 $04
-	.db $57 $88 $05
+	m_InteractionData $57 $08 $00
+	m_InteractionData $57 $08 $01
+	m_InteractionData $57 $08 $02
+	m_InteractionData $57 $08 $03
+	m_InteractionData $57 $08 $04
+	m_InteractionData $57 $88 $05
 
 interaction81SubidData:
-	.db $65 $0c $23
-	.db $5c $10 $50
-	.db $5d $0a $10
-	.db $5d $0a $10
-	.db $5d $10 $26
-	.db $5d $08 $00
-	.db $5d $08 $00
-	.db $5d $08 $00
-	.db $5d $08 $00
-	.db $5c $12 $20
-	.db $60 $06 $00
-	.db $5c $16 $10
-	.db $5c $02 $57
-	.db $5d $0c $13
-	.db $5c $0c $10
+	m_InteractionData $65 $0c $23
+	m_InteractionData $5c $10 $50
+	m_InteractionData $5d $0a $10
+	m_InteractionData $5d $0a $10
+	m_InteractionData $5d $10 $26
+	m_InteractionData $5d $08 $00
+	m_InteractionData $5d $08 $00
+	m_InteractionData $5d $08 $00
+	m_InteractionData $5d $08 $00
+	m_InteractionData $5c $12 $20
+	m_InteractionData $60 $06 $00
+	m_InteractionData $5c $16 $10
+	m_InteractionData $5c $02 $57
+	m_InteractionData $5d $0c $13
+	m_InteractionData $5c $0c $10
 interaction84SubidData:
-	.db $2e $00 $00
-	.db $50 $0a $21
-	.db $50 $0a $01
-	.db $50 $0a $01
-	.db $2e $00 $00
-	.db $50 $0a $01
-	.db $2e $14 $52
-	.db $2e $00 $00
-	.db $2e $00 $00
-	.db $2e $00 $04
-	.db $2e $80 $00
+	m_InteractionData $2e $00 $00
+	m_InteractionData $50 $0a $21
+	m_InteractionData $50 $0a $01
+	m_InteractionData $50 $0a $01
+	m_InteractionData $2e $00 $00
+	m_InteractionData $50 $0a $01
+	m_InteractionData $2e $14 $52
+	m_InteractionData $2e $00 $00
+	m_InteractionData $2e $00 $00
+	m_InteractionData $2e $00 $04
+	m_InteractionData $2e $80 $00
 
 interaction8eSubidData:
-	.db $38 $02 $10
-	.db $38 $02 $11
-	.db $38 $82 $12
+	m_InteractionData $38 $02 $10
+	m_InteractionData $38 $02 $11
+	m_InteractionData $38 $82 $12
 
 interaction95SubidData:
-	.db $00 $00 $00
-	.db $00 $00 $03
-	.db $00 $00 $01
-	.db $0b $00 $04
-	.db $0a $00 $06
-	.db $0a $80 $07
+	m_InteractionData $00 $00 $00
+	m_InteractionData $00 $00 $03
+	m_InteractionData $00 $00 $01
+	m_InteractionData $0b $00 $04
+	m_InteractionData $0a $00 $06
+	m_InteractionData $0a $80 $07
 
 interaction9aSubidData:
-	.db $00 $0c $a0
-	.db $00 $82 $a1
+	m_InteractionData $00 $0c $a0
+	m_InteractionData $00 $82 $a1
 
 interaction9fSubidData:
-	.db $38 $08 $50
-	.db $2f $98 $41
+	m_InteractionData $38 $08 $50
+	m_InteractionData $2f $98 $41
 
 interactiona0SubidData:
-	.db $38 $00 $30
-	.db $00 $c4 $90
+	m_InteractionData $38 $00 $30
+	m_InteractionData $00 $c4 $90
 
 interactiona1SubidData:
-	.db $57 $0e $00
-	.db $57 $0e $00
-	.db $57 $0e $01
-	.db $57 $0e $01
-	.db $57 $0e $02
-	.db $57 $0e $02
-	.db $57 $0e $03
-	.db $57 $8e $03
+	m_InteractionData $57 $0e $00
+	m_InteractionData $57 $0e $00
+	m_InteractionData $57 $0e $01
+	m_InteractionData $57 $0e $01
+	m_InteractionData $57 $0e $02
+	m_InteractionData $57 $0e $02
+	m_InteractionData $57 $0e $03
+	m_InteractionData $57 $8e $03
 
 interactiona2SubidData:
-	.db $5a $00 $50
-	.db $5a $00 $50
-	.db $5a $00 $51
-	.db $5a $80 $51
+	m_InteractionData $5a $00 $50
+	m_InteractionData $5a $00 $50
+	m_InteractionData $5a $00 $51
+	m_InteractionData $5a $80 $51
 
 interactiona5SubidData:
-	.db $13 $00 $04
-	.db $13 $00 $01
-	.db $13 $00 $02
-	.db $13 $00 $06
-	.db $13 $00 $00
-	.db $13 $00 $01
-	.db $13 $00 $04
-	.db $14 $00 $08
-	.db $13 $80 $06
+	m_InteractionData $13 $00 $04
+	m_InteractionData $13 $00 $01
+	m_InteractionData $13 $00 $02
+	m_InteractionData $13 $00 $06
+	m_InteractionData $13 $00 $00
+	m_InteractionData $13 $00 $01
+	m_InteractionData $13 $00 $04
+	m_InteractionData $14 $00 $08
+	m_InteractionData $13 $80 $06
 
 interactiona7SubidData:
-	.db $3e $10 $00
-	.db $39 $00 $01
-	.db $3a $00 $02
-	.db $32 $80 $03
+	m_InteractionData $3e $10 $00
+	m_InteractionData $39 $00 $01
+	m_InteractionData $3a $00 $02
+	m_InteractionData $32 $80 $03
 
 interactiona9SubidData:
-	.db $37 $16 $20
-	.db $31 $10 $02
-	.db $36 $10 $24
-	.db $36 $00 $16
-	.db $34 $00 $18
-	.db $37 $80 $2a
+	m_InteractionData $37 $16 $20
+	m_InteractionData $31 $10 $02
+	m_InteractionData $36 $10 $24
+	m_InteractionData $36 $00 $16
+	m_InteractionData $34 $00 $18
+	m_InteractionData $37 $80 $2a
 
 interactionaaSubidData:
-	.db $0f $00 $20
-	.db $11 $00 $02
-	.db $4a $00 $17
-	.db $0f $80 $2b
+	m_InteractionData $0f $00 $20
+	m_InteractionData $11 $00 $02
+	m_InteractionData $4a $00 $17
+	m_InteractionData $0f $80 $2b
 
 interactionadSubidData:
-	.db $46 $00 $30
-	.db $3f $00 $22
-	.db $07 $00 $04
-	.db $3f $08 $36
-	.db $45 $80 $28
+	m_InteractionData $46 $00 $30
+	m_InteractionData $3f $00 $22
+	m_InteractionData $07 $00 $04
+	m_InteractionData $3f $08 $36
+	m_InteractionData $45 $80 $28
 
 interactionb0SubidData:
-	.db $11 $00 $03
-	.db $6c $00 $10
-	.db $6c $00 $21
-	.db $6e $00 $42
-	.db $6e $00 $62
-	.db $6e $00 $72
-	.db $4a $00 $14
-	.db $13 $00 $05
-	.db $6e $00 $42
-	.db $6e $00 $62
-	.db $6e $00 $72
-	.db $6f $00 $72
-	.db $6f $00 $72
-	.db $6f $00 $72
+	m_InteractionData $11 $00 $03
+	m_InteractionData $6c $00 $10
+	m_InteractionData $6c $00 $21
+	m_InteractionData $6e $00 $42
+	m_InteractionData $6e $00 $62
+	m_InteractionData $6e $00 $72
+	m_InteractionData $4a $00 $14
+	m_InteractionData $13 $00 $05
+	m_InteractionData $6e $00 $42
+	m_InteractionData $6e $00 $62
+	m_InteractionData $6e $00 $72
+	m_InteractionData $6f $00 $72
+	m_InteractionData $6f $00 $72
+	m_InteractionData $6f $00 $72
 interactionb6SubidData:
-	.db $5d $10 $22
-	.db $5d $08 $00
-	.db $5d $08 $00
-	.db $5d $08 $00
-	.db $5d $08 $00
-	.db $5d $08 $00
-	.db $5d $00 $23
-	.db $5c $08 $53
-	.db $5c $00 $20
-	.db $5c $02 $50
-	.db $64 $98 $53
+	m_InteractionData $5d $10 $22
+	m_InteractionData $5d $08 $00
+	m_InteractionData $5d $08 $00
+	m_InteractionData $5d $08 $00
+	m_InteractionData $5d $08 $00
+	m_InteractionData $5d $08 $00
+	m_InteractionData $5d $00 $23
+	m_InteractionData $5c $08 $53
+	m_InteractionData $5c $00 $20
+	m_InteractionData $5c $02 $50
+	m_InteractionData $64 $98 $53
 
 interactionb7SubidData:
-	.db $00 $00 $a0
-	.db $5c $82 $51
+	m_InteractionData $00 $00 $a0
+	m_InteractionData $5c $82 $51
 
 interactionb9SubidData:
-	.db $3f $08 $30
-	.db $31 $10 $12
-	.db $31 $00 $04
-	.db $36 $10 $26
-	.db $46 $14 $28
-	.db $46 $14 $0a
-	.db $46 $14 $3c
-	.db $46 $80 $2e
+	m_InteractionData $3f $08 $30
+	m_InteractionData $31 $10 $12
+	m_InteractionData $31 $00 $04
+	m_InteractionData $36 $10 $26
+	m_InteractionData $46 $14 $28
+	m_InteractionData $46 $14 $0a
+	m_InteractionData $46 $14 $3c
+	m_InteractionData $46 $80 $2e
 
 interactioncfSubidData:
-	.db $00 $26 $e0
-	.db $00 $26 $e1
-	.db $00 $a6 $e2
+	m_InteractionData $00 $26 $e0
+	m_InteractionData $00 $26 $e1
+	m_InteractionData $00 $a6 $e2
 
 interactiond2SubidData:
-	.db $69 $00 $20
-	.db $69 $00 $21
-	.db $69 $00 $22
-	.db $69 $80 $23
+	m_InteractionData $69 $00 $20
+	m_InteractionData $69 $00 $21
+	m_InteractionData $69 $00 $22
+	m_InteractionData $69 $80 $23
 
 interactiond4SubidData:
-	.db $70 $00 $00
-	.db $70 $0e $71
-	.db $70 $90 $42
+	m_InteractionData $70 $00 $00
+	m_InteractionData $70 $0e $71
+	m_InteractionData $70 $90 $42
 
 interactiondbSubidData:
-	.db $75 $00 $12
-	.db $3d $04 $24
-	.db $37 $96 $14
+	m_InteractionData $75 $00 $12
+	m_InteractionData $3d $04 $24
+	m_InteractionData $37 $96 $14
 
 interactiondfSubidData:
-	.db $4a $00 $04
-	.db $4b $90 $12
+	m_InteractionData $4a $00 $04
+	m_InteractionData $4b $90 $12
 
 interactione6SubidData:
-	.db $00 $00 $00
-	.db $73 $18 $00
-	.db $60 $10 $21
-	.db $5b $06 $42
+	m_InteractionData $00 $00 $00
+	m_InteractionData $73 $18 $00
+	m_InteractionData $60 $10 $21
+	m_InteractionData $5b $06 $42
