@@ -500,7 +500,7 @@ _pokey_state_0:
 	ld l,$82		; $6ad1
 	ld a,(hl)		; $6ad3
 	cp $05			; $6ad4
-	jr z,_label_0c_284	; $6ad6
+	jr z,+++		; $6ad6
 	ld b,a			; $6ad8
 	ld a,$30		; $6ad9
 	call objectGetRelatedObject1Var		; $6adb
@@ -517,17 +517,17 @@ _pokey_state_0:
 	ld a,(hl)		; $6ae8
 	ld (de),a		; $6ae9
 	dec b			; $6aea
-	jr z,_label_0c_283	; $6aeb
+	jr z,++			; $6aeb
 	dec b			; $6aed
 	ld a,$f3		; $6aee
-	jr z,_label_0c_282	; $6af0
+	jr z,+			; $6af0
 	add a			; $6af2
-_label_0c_282:
++
 	ld e,$8f		; $6af3
 	ld (de),a		; $6af5
-_label_0c_283:
+++
 	jp objectSetVisible82		; $6af6
-_label_0c_284:
++++
 	ld l,$a4		; $6af9
 	res 7,(hl)		; $6afb
 	call getRandomNumber_noPreserveVars		; $6afd
@@ -542,7 +542,7 @@ _pokey_6b05:
 	ld e,$8f		; $6b05
 	ld a,(de)		; $6b07
 	or a			; $6b08
-	jr z,_label_0c_285	; $6b09
+	jr z,+			; $6b09
 	ld c,$0e		; $6b0b
 	call objectUpdateSpeedZ_paramC		; $6b0d
 	jp nz,objectSetVisiblec2		; $6b10
@@ -550,7 +550,7 @@ _pokey_6b05:
 	xor a			; $6b15
 	ldi (hl),a		; $6b16
 	ld (hl),a		; $6b17
-_label_0c_285:
++
 	ld a,$10		; $6b18
 	call objectGetRelatedObject1Var		; $6b1a
 	ld e,l			; $6b1d

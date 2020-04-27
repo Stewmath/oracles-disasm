@@ -81,7 +81,7 @@ _subrosiaDance_state1:
 	jp specialObjectSetAnimation		; $7d54
 
 subrosiaDance_nextTileLookup:
-	; curr tile, 'left' tile<<8 | 'right' tile
+	; curr tile, 'left' btn direction <<8 | 'right' btn direction
 	.db $11 $21
 	.db $21 $20
 	.db $31 $20
