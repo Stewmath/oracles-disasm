@@ -2494,11 +2494,10 @@ enemyCode13:
 	ld e,Enemy.var2a		; $508b
 	ld a,(de)		; $508d
 	res 7,a			; $508e
-.ifdef ROM_AGES
 	sub ITEMCOLLISION_BOOMERANG			; $5090
+.ifdef ROM_AGES
 	cp $01			; $5092
 .else
-	sub ITEMCOLLISION_BOOMERANG-2			; $5090
 	cp $02			; $5092
 .endif
 	jr nc,@normalStatus	; $5094
@@ -2592,11 +2591,10 @@ enemyCode19:
 	ld e,Enemy.var2a		; $5101
 	ld a,(de)		; $5103
 	res 7,a			; $5104
-.ifdef ROM_AGES
 	sub ITEMCOLLISION_BOOMERANG			; $5106
+.ifdef ROM_AGES
 	cp $01			; $5108
 .else
-	sub ITEMCOLLISION_BOOMERANG-2			; $5106
 	cp $02			; $5108
 .endif
 	jr nc,@normalStatus	; $510a

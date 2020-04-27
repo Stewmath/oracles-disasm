@@ -43,10 +43,17 @@
 	ITEMCOLLISION_CANE_OF_SOMARIA		db ; $12: Cane of Somaria, other harmless things?
 	ITEMCOLLISION_13			db ; $13:
 	ITEMCOLLISION_14			db ; $14:
+.ifdef ROM_AGES
 	ITEMCOLLISION_SOMARIA_BLOCK		db ; $15: Cane of Somaria block
 	ITEMCOLLISION_16			db ; $16: Object being thrown (ie. sign)
 	ITEMCOLLISION_BOOMERANG			db ; $17: Boomerang (both levels?)
 	ITEMCOLLISION_BOMB			db ; $18: Bomb, bombchu
+.else
+	ITEMCOLLISION_BOOMERANG			db ; $15: Boomerang (both levels?)
+	ITEMCOLLISION_16			db ; $16: Object being thrown (ie. sign)
+	ITEMCOLLISION_BOMB			db ; $17: Bomb, bombchu
+	ITEMCOLLISION_18			db ; $18
+.endif
 	ITEMCOLLISION_SWORD_BEAM		db ; $19: Sword beam
 	ITEMCOLLISION_MYSTERY_SEED		db ; $1a: Mystery seed
 	ITEMCOLLISION_EMBER_SEED		db ; $1b: Ember seed
