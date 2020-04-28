@@ -9193,1192 +9193,493 @@ puddleAnimationFrames:
 .ORG 0
 
 data_4556:
-	.dw $4020
-	.dw $4061
-	.dw $40ce
-	.dw $413f
-	.dw $4472
-	.dw $43b8
-	.dw $4419
-	.dw $459d
-	.dw $463e
-	.dw _data_4556_data9
-	.dw $41bc
-	.dw $44db
-	.dw $4568
-	.dw $4239
-	.dw $429a
-	.dw $4337
-	stop			; $4020
-	xor e			; $4021
-	ld ($ff00+$40),a	; $4022
-	ld bc,$eaab		; $4024
-	ld b,d			; $4027
-	ld bc,$f4ab		; $4028
-	ld b,h			; $402b
-	ld bc,$feab		; $402c
-	ld b,(hl)		; $402f
-	ld bc,$1cab		; $4030
-	ld c,b			; $4033
-	ld bc,$08ab		; $4034
-	ld c,h			; $4037
-	ld bc,$12ab		; $4038
-	ld c,(hl)		; $403b
-	ld bc,$27ab		; $403c
-	ld d,(hl)		; $403f
-	ld bc,$e9d0		; $4040
-	ld a,(bc)		; $4043
-	nop			; $4044
-	ret nc			; $4045
-	pop af			; $4046
-	ld d,$00		; $4047
-	ret nc			; $4049
-	ld sp,hl		; $404a
-	nop			; $404b
-	nop			; $404c
-	ret nc			; $404d
-	ld bc,$000c		; $404e
-	ret nc			; $4051
-	add hl,bc		; $4052
-	inc h			; $4053
-	nop			; $4054
-	ret nc			; $4055
-	ld de,$000e		; $4056
-	ret nc			; $4059
-	rla			; $405a
-	stop			; $405b
-	nop			; $405c
-	ret nc			; $405d
-	dec e			; $405e
-	ld e,$00		; $405f
-	dec de			; $4061
-	xor b			; $4062
-	jp hl			; $4063
-	ld c,d			; $4064
-	ld bc,$f2a8		; $4065
-	ld c,h			; $4068
-	ld bc,$fca8		; $4069
-	ld c,(hl)		; $406c
-	ld bc,$04a8		; $406d
-	ld c,h			; $4070
-	ld bc,$16a8		; $4071
-	ld d,b			; $4074
-	ld bc,$20a8		; $4075
-	ld d,d			; $4078
-	ld bc,$29a8		; $4079
-	ld c,(hl)		; $407c
-	ld bc,$eeb8		; $407d
-	ld l,d			; $4080
-	ld bc,$f8b8		; $4081
-	ld l,h			; $4084
-	ld bc,$01b8		; $4085
-	ld l,(hl)		; $4088
-	ld bc,loadFile		; $4089
-	ld (hl),b		; $408c
-	ld bc,$13b8		; $408d
-	ld (hl),d		; $4090
-	ld bc,$1cb8		; $4091
-	ld (hl),h		; $4094
-	ld bc,$e0a8		; $4095
-	ld b,d			; $4098
-	ld bc,$0ea8		; $4099
-	ld b,d			; $409c
-	ld bc,$dcd0		; $409d
-	jr nc,_label_14_000	; $40a0
-_label_14_000:
-	ret nc			; $40a2
-.DB $e4				; $40a3
-	jr z,_label_14_001	; $40a4
-_label_14_001:
-	ret nc			; $40a6
-.DB $ec				; $40a7
-	inc h			; $40a8
-	nop			; $40a9
-	ret nc			; $40aa
-.DB $f4				; $40ab
-	jr z,_label_14_002	; $40ac
-_label_14_002:
-	ret nc			; $40ae
-.DB $fc				; $40af
-	inc d			; $40b0
-	nop			; $40b1
-	ret nc			; $40b2
-	inc b			; $40b3
-	ld ($e000),sp		; $40b4
-	inc b			; $40b7
-	ld a,(de)		; $40b8
-	nop			; $40b9
-	ld ($ff00+$0c),a	; $40ba
-	nop			; $40bc
-	nop			; $40bd
-	ld ($ff00+$14),a	; $40be
-	inc d			; $40c0
-	nop			; $40c1
-	ld ($ff00+$1c),a	; $40c2
-	nop			; $40c4
-	nop			; $40c5
-	ld ($ff00+$23),a	; $40c6
-	ld a,(de)		; $40c8
-	nop			; $40c9
-	ld ($ff00+$2b),a	; $40ca
-	inc e			; $40cc
-	nop			; $40cd
-	inc e			; $40ce
-	xor b			; $40cf
-	ld ($ff00+$52),a	; $40d0
-	ld bc,$e8a8		; $40d2
-	ld d,h			; $40d5
-	ld bc,$faa8		; $40d6
-	ld d,b			; $40d9
-	ld bc,$04a8		; $40da
-	ld d,(hl)		; $40dd
-	ld bc,$0da8		; $40de
-	ld c,(hl)		; $40e1
-	ld bc,$1ea8		; $40e2
-	ld c,h			; $40e5
-	ld bc,$28a8		; $40e6
-	ld e,b			; $40e9
-	ld bc,$eeb8		; $40ea
-	ld l,d			; $40ed
-	ld bc,$f8b8		; $40ee
-	ld l,h			; $40f1
-	ld bc,$01b8		; $40f2
-	ld l,(hl)		; $40f5
-	ld bc,loadFile		; $40f6
-	ld (hl),b		; $40f9
-	ld bc,$13b8		; $40fa
-	ld (hl),d		; $40fd
-	ld bc,$1cb8		; $40fe
-	ld (hl),h		; $4101
-	ld bc,$f1a8		; $4102
-	ld c,b			; $4105
-	ld bc,$15a8		; $4106
-	ld c,b			; $4109
-	ld bc,$f4d0		; $410a
-	nop			; $410d
-	nop			; $410e
-	ret nc			; $410f
-.DB $fc				; $4110
-	jr z,_label_14_003	; $4111
-_label_14_003:
-	ret nc			; $4113
-	inc b			; $4114
-	inc c			; $4115
-	nop			; $4116
-	ret nc			; $4117
-	inc c			; $4118
-	ld ($d000),sp		; $4119
-	inc de			; $411c
-	ld a,(de)		; $411d
-	nop			; $411e
-	add sp,-$17		; $411f
-	jr nc,_label_14_004	; $4121
-_label_14_004:
-	add sp,-$0f		; $4123
-	inc (hl)		; $4125
-	nop			; $4126
-	add sp,-$07		; $4127
-	ld h,$00		; $4129
-	add sp,$00		; $412b
-	nop			; $412d
-	nop			; $412e
-	add sp,$07		; $412f
-	ld a,(de)		; $4131
-	nop			; $4132
-	add sp,$0f		; $4133
-	nop			; $4135
-	nop			; $4136
-	add sp,$17		; $4137
-	inc d			; $4139
-	nop			; $413a
-	add sp,$1f		; $413b
-	nop			; $413d
-	nop			; $413e
-	rra			; $413f
-	call nc,$0ef9		; $4140
-	nop			; $4143
-	call nc,$1c01		; $4144
-	nop			; $4147
-	call nc,$2609		; $4148
-	nop			; $414b
-	call nc,$2611		; $414c
-	nop			; $414f
-	call nc,$0018		; $4150
-	nop			; $4153
-	ld b,$f4		; $4154
-	ld h,$00		; $4156
-	ld b,$fc		; $4158
-	ld ($0600),sp		; $415a
-	inc b			; $415d
-	ldd (hl),a		; $415e
-	nop			; $415f
-	ld b,$0c		; $4160
-	jr z,_label_14_005	; $4162
-_label_14_005:
-	ld b,$14		; $4164
-	inc d			; $4166
-	nop			; $4167
-	ld b,$1c		; $4168
-	nop			; $416a
-	nop			; $416b
-	call nc,$70f0		; $416c
-	ld ($ec06),sp		; $416f
-	ld (hl),b		; $4172
-	ld ($ecee),sp		; $4173
-	ld (hl),d		; $4176
-	ld ($f6ee),sp		; $4177
-	jr nc,_label_14_006	; $417a
-_label_14_006:
-	xor $fe			; $417c
-	nop			; $417e
-	nop			; $417f
-	xor $06			; $4180
-	jr _label_14_007		; $4182
-_label_14_007:
-	xor $0e			; $4184
-	nop			; $4186
-	nop			; $4187
-	xor $16			; $4188
-	ld b,$00		; $418a
-	xor $1e			; $418c
-	nop			; $418e
-	nop			; $418f
-	xor b			; $4190
-	inc bc			; $4191
-	ld e,d			; $4192
-	ld bc,$0ba8		; $4193
-	ld d,d			; $4196
-	ld bc,$14a8		; $4197
-	ld c,(hl)		; $419a
-	ld bc,$eeb0		; $419b
-	ld e,h			; $419e
-	ld bc,$f3a8		; $419f
-	ld b,b			; $41a2
-	ld bc,$fbb0		; $41a3
-	ld h,b			; $41a6
-	ld bc,$18b8		; $41a7
-	ld l,(hl)		; $41aa
-	ld bc,$ffb8		; $41ab
-	ld l,(hl)		; $41ae
-	ld bc,$f7b8		; $41af
-	ld (hl),b		; $41b2
-	ld bc,$07b8		; $41b3
-	ld h,h			; $41b6
-	ld bc,$0fb8		; $41b7
-	ld l,b			; $41ba
-	ld bc,$b01f		; $41bb
-	add sp,$4c		; $41be
-	add hl,bc		; $41c0
-	or b			; $41c1
-	ld a,($ff00+$4e)	; $41c2
-	add hl,bc		; $41c4
-	or b			; $41c5
-	ld hl,sp+$50		; $41c6
-	add hl,bc		; $41c8
-	or b			; $41c9
-	nop			; $41ca
-	ld d,d			; $41cb
-	add hl,bc		; $41cc
-	or b			; $41cd
-	ld ($0954),sp		; $41ce
-	or b			; $41d1
-	stop			; $41d2
-	ld d,(hl)		; $41d3
-	add hl,bc		; $41d4
-	or b			; $41d5
-	jr $58			; $41d6
-	add hl,bc		; $41d8
-	or b			; $41d9
-	jr nz,$5a		; $41da
-	add hl,bc		; $41dc
-	ret nc			; $41dd
-	pop hl			; $41de
-	jr _label_14_008		; $41df
-_label_14_008:
-	ret nc			; $41e1
-	jp hl			; $41e2
-	stop			; $41e3
-	nop			; $41e4
-	ret nc			; $41e5
-	ld a,($ff00+$1a)	; $41e6
-	nop			; $41e8
-	ret nc			; $41e9
-	ld sp,hl		; $41ea
-	inc e			; $41eb
-	nop			; $41ec
-	ret nc			; $41ed
-	ld bc,$0022		; $41ee
-	ret nc			; $41f1
-	add hl,bc		; $41f2
-	jr z,_label_14_009	; $41f3
-_label_14_009:
-	ld ($ff00+$09),a	; $41f5
-	nop			; $41f7
-	nop			; $41f8
-	ld ($ff00+$11),a	; $41f9
-	ldi (hl),a		; $41fb
-	nop			; $41fc
-	ld ($ff00+$19),a	; $41fd
-	nop			; $41ff
-	nop			; $4200
-	ld ($ff00+$21),a	; $4201
-	inc d			; $4203
-	nop			; $4204
-	ld ($ff00+$29),a	; $4205
-	nop			; $4207
-	nop			; $4208
-	ld ($ff00+$31),a	; $4209
-	inc l			; $420b
-	nop			; $420c
-.DB $f4				; $420d
-.DB $ed				; $420e
-	jr _label_14_010		; $420f
-_label_14_010:
-.DB $f4				; $4211
-	push af			; $4212
-	stop			; $4213
-	nop			; $4214
-.DB $f4				; $4215
-.DB $fd				; $4216
-	inc d			; $4217
-	nop			; $4218
-.DB $f4				; $4219
-	dec b			; $421a
-	ld ($0400),sp		; $421b
-	dec b			; $421e
-	ld a,(bc)		; $421f
-	nop			; $4220
-	inc b			; $4221
-	dec c			; $4222
-	jr z,_label_14_011	; $4223
-_label_14_011:
-	inc b			; $4225
-	dec d			; $4226
-	inc d			; $4227
-	nop			; $4228
-	inc b			; $4229
-	dec e			; $422a
-	jr z,_label_14_012	; $422b
-_label_14_012:
-	inc b			; $422d
-	dec h			; $422e
-	ld b,$00		; $422f
-	inc b			; $4231
-	dec l			; $4232
-	nop			; $4233
-	nop			; $4234
-	ld ($ff00+$39),a	; $4235
-	nop			; $4237
-	nop			; $4238
-	jr -$54			; $4239
-	ld ($ff00+$5a),a	; $423b
-	ld bc,$eaac		; $423d
-	ld c,(hl)		; $4240
-	ld bc,$f5ac		; $4241
-	ld d,(hl)		; $4244
-	ld bc,$ffac		; $4245
-	ld d,h			; $4248
-	ld bc,$1eac		; $4249
-	ld d,d			; $424c
-	ld bc,$29ac		; $424d
-	ld c,(hl)		; $4250
-	ld bc,$0ab4		; $4251
-	ld h,b			; $4254
-	ld bc,$14ac		; $4255
-	ld b,d			; $4258
-	ld bc,$d0d0		; $4259
-	ld a,(de)		; $425c
-	nop			; $425d
-	ret nc			; $425e
-	ret c			; $425f
-	inc e			; $4260
-	nop			; $4261
-	ret nc			; $4262
-	ld ($ff00+$22),a	; $4263
-	nop			; $4265
-	ret nc			; $4266
-	and $10			; $4267
-	nop			; $4269
-	ret nc			; $426a
-.DB $ec				; $426b
-	ld h,$00		; $426c
-	ret nc			; $426e
-	di			; $426f
-	nop			; $4270
-	nop			; $4271
-	ret nc			; $4272
-	ei			; $4273
-	inc d			; $4274
-	nop			; $4275
-	ld ($ff00+$03),a	; $4276
-	ld a,(bc)		; $4278
-	nop			; $4279
-	ld ($ff00+$0b),a	; $427a
-	jr z,_label_14_013	; $427c
-_label_14_013:
-	ld ($ff00+$12),a	; $427e
-	ld a,(de)		; $4280
-	nop			; $4281
-	ld ($ff00+$1b),a	; $4282
-	nop			; $4284
-	nop			; $4285
-	ld ($ff00+$23),a	; $4286
-	jr _label_14_014		; $4288
-_label_14_014:
-	ld ($ff00+$29),a	; $428a
-	stop			; $428c
-	nop			; $428d
-	ld ($ff00+$2f),a	; $428e
-	ldd (hl),a		; $4290
-	nop			; $4291
-	ld ($ff00+$37),a	; $4292
-	jr z,_label_14_015	; $4294
-_label_14_015:
-	ret nc			; $4296
-	inc bc			; $4297
-	nop			; $4298
-	nop			; $4299
-	daa			; $429a
-	ret nc			; $429b
-	call nc,$0024		; $429c
-	ret nc			; $429f
-	call c,$000e		; $42a0
-	ret nc			; $42a3
-	ld ($ff00+c),a		; $42a4
-	stop			; $42a5
-	nop			; $42a6
-	ret nc			; $42a7
-	add sp,$0c		; $42a8
-	nop			; $42aa
-	ret nc			; $42ab
-	ld a,($ff00+$08)	; $42ac
-	nop			; $42ae
-	ret nc			; $42af
-	ld hl,sp+$22		; $42b0
-	nop			; $42b2
-	ret nc			; $42b3
-	nop			; $42b4
-	jr z,_label_14_016	; $42b5
-_label_14_016:
-	ld ($ff00+$00),a	; $42b7
-	jr _label_14_017		; $42b9
-_label_14_017:
-	ld ($ff00+$0c),a	; $42bb
-	jr nc,_label_14_018	; $42bd
-_label_14_018:
-	ld ($ff00+$06),a	; $42bf
-	stop			; $42c1
-	nop			; $42c2
-	ld ($ff00+$13),a	; $42c3
-	nop			; $42c5
-	nop			; $42c6
-	ld ($ff00+$1b),a	; $42c7
-	jr _label_14_019		; $42c9
-_label_14_019:
-	ld ($ff00+$23),a	; $42cb
-	inc e			; $42cd
-	nop			; $42ce
-	ld ($ff00+$2b),a	; $42cf
-	ld h,$00		; $42d1
-	ld ($ff00+$33),a	; $42d3
-	inc e			; $42d5
-	nop			; $42d6
-	ld hl,sp-$29		; $42d7
-	jr nc,_label_14_020	; $42d9
-_label_14_020:
-	ld hl,sp-$21		; $42db
-	inc e			; $42dd
-	nop			; $42de
-	ld hl,sp-$19		; $42df
-_label_14_021:
-	inc h			; $42e1
-	nop			; $42e2
-	ld hl,sp-$11		; $42e3
-	ld c,$00		; $42e5
-	ld hl,sp-$0b		; $42e7
-	stop			; $42e9
-	nop			; $42ea
-	ld hl,sp-$05		; $42eb
-	inc d			; $42ed
-	nop			; $42ee
-	ld hl,sp+$01		; $42ef
-	stop			; $42f1
-	nop			; $42f2
-	ld ($1c01),sp		; $42f3
-	nop			; $42f6
-	ld ($1409),sp		; $42f7
-	nop			; $42fa
-	ld ($0011),sp		; $42fb
-	nop			; $42fe
-	ld ($1819),sp		; $42ff
-	nop			; $4302
-	ld ($1c21),sp		; $4303
-	nop			; $4306
-	ld ($2629),sp		; $4307
-	nop			; $430a
-	ld ($1c31),sp		; $430b
-	nop			; $430e
-	or b			; $430f
-	ld ($ff00+$12),a	; $4310
-	add hl,bc		; $4312
-	or b			; $4313
-	add sp,$14		; $4314
-	add hl,bc		; $4316
-	or b			; $4317
-	ld a,($ff00+$16)	; $4318
-	add hl,bc		; $431a
-	or b			; $431b
-	ld hl,sp+$18		; $431c
-	add hl,bc		; $431e
-	or b			; $431f
-	nop			; $4320
-	ld a,(de)		; $4321
-	add hl,bc		; $4322
-	or b			; $4323
-	ld ($091c),sp		; $4324
-	or b			; $4327
-	stop			; $4328
-	ld e,$09		; $4329
-	or b			; $432b
-	jr _label_14_022		; $432c
-	add hl,bc		; $432e
-	or b			; $432f
-	jr nz,$22		; $4330
-	add hl,bc		; $4332
-	or b			; $4333
-	jr z,_label_14_023	; $4334
-	add hl,bc		; $4336
-	jr nz,_label_14_021	; $4337
-	rst_addDoubleIndex			; $4339
-	ld d,d			; $433a
-	ld bc,$e8b0		; $433b
-	ld a,(hl)		; $433e
-	ld bc,$f1a8		; $433f
-	ld d,d			; $4342
-	ld bc,$0ca8		; $4343
-	ld d,b			; $4346
-	ld bc,$1fa8		; $4347
-	ld e,h			; $434a
-	ld bc,$29a8		; $434b
-_label_14_022:
-	ld d,d			; $434e
-	ld bc,$feb8		; $434f
-	ld l,d			; $4352
-	ld bc,$1bb8		; $4353
-	ld l,h			; $4356
-	ld bc,$faa8		; $4357
-_label_14_023:
-	ld b,d			; $435a
-	ld bc,$04b0		; $435b
-	ld h,b			; $435e
-	ld bc,$16a8		; $435f
-	ld c,b			; $4362
-	ld bc,$08b8		; $4363
-	ld h,b			; $4366
-	ld bc,$d5d0		; $4367
-	ld c,$00		; $436a
-	ret nc			; $436c
-.DB $db				; $436d
-	stop			; $436e
-	nop			; $436f
-	ret nc			; $4370
-	pop hl			; $4371
-	ldi (hl),a		; $4372
-	nop			; $4373
-	ret nc			; $4374
-	jp hl			; $4375
-	inc e			; $4376
-	nop			; $4377
-	ret nc			; $4378
-	pop af			; $4379
-	inc h			; $437a
-	nop			; $437b
-	ret nc			; $437c
-	ld sp,hl		; $437d
-	ld c,$00		; $437e
-	ret nc			; $4380
-	rst $38			; $4381
-	stop			; $4382
-	nop			; $4383
-	ld ($ff00+$ff),a	; $4384
-	jr nc,_label_14_024	; $4386
-_label_14_024:
-	ld ($ff00+$06),a	; $4388
-	nop			; $438a
-	nop			; $438b
-	ld ($ff00+$0e),a	; $438c
-	jr _label_14_025		; $438e
-_label_14_025:
-	ld ($ff00+$16),a	; $4390
-	nop			; $4392
-	nop			; $4393
-	ld ($ff00+$1e),a	; $4394
-	jr z,_label_14_026	; $4396
-_label_14_026:
-	ld ($ff00+$26),a	; $4398
-	inc b			; $439a
-	nop			; $439b
-	ld ($ff00+$2e),a	; $439c
-	ld c,$00		; $439e
-	ld ($ff00+$34),a	; $43a0
-	stop			; $43a2
-	nop			; $43a3
-	cp b			; $43a4
-.DB $e3				; $43a5
-	ld h,d			; $43a6
-	ld bc,$ecb8		; $43a7
-	ld l,b			; $43aa
-	ld bc,$f6b8		; $43ab
-	ld h,h			; $43ae
-	ld bc,$11b8		; $43af
-	ld h,(hl)		; $43b2
-	ld bc,$24b8		; $43b3
-	ld l,b			; $43b6
-	ld bc,$d818		; $43b7
-.DB $ec				; $43ba
-	inc d			; $43bb
-	nop			; $43bc
-	ret c			; $43bd
-.DB $f4				; $43be
-	inc (hl)		; $43bf
-	nop			; $43c0
-	ret c			; $43c1
-.DB $fc				; $43c2
-	inc d			; $43c3
-	nop			; $43c4
-	ret c			; $43c5
-	inc b			; $43c6
-	inc e			; $43c7
-	nop			; $43c8
-	ret c			; $43c9
-	inc c			; $43ca
-	ld a,(de)		; $43cb
-	nop			; $43cc
-	ret c			; $43cd
-	inc d			; $43ce
-	ld b,$00		; $43cf
-	ret c			; $43d1
-	inc e			; $43d2
-	inc e			; $43d3
-	nop			; $43d4
-	xor b			; $43d5
-	ld ($ff00+$38),a	; $43d6
-	add hl,bc		; $43d8
-	xor b			; $43d9
-	add sp,$3a		; $43da
-	add hl,bc		; $43dc
-	xor b			; $43dd
-	ld a,($ff00+$3c)	; $43de
-	add hl,bc		; $43e0
-	xor b			; $43e1
-	ld hl,sp+$3e		; $43e2
-	add hl,bc		; $43e4
-	or b			; $43e5
-	nop			; $43e6
-	ld b,b			; $43e7
-	add hl,bc		; $43e8
-	or b			; $43e9
-	ld ($0942),sp		; $43ea
-	xor b			; $43ed
-	stop			; $43ee
-	ld b,h			; $43ef
-	add hl,bc		; $43f0
-	xor b			; $43f1
-	jr $46			; $43f2
-	add hl,bc		; $43f4
-	xor b			; $43f5
-	jr nz,_label_14_027	; $43f6
-	add hl,bc		; $43f8
-	xor b			; $43f9
-	jr z,$4a		; $43fa
-	add hl,bc		; $43fc
-	ret nz			; $43fd
-.DB $ec				; $43fe
-	ld a,d			; $43ff
-	ld bc,$f4c0		; $4400
-	ld l,d			; $4403
-	ld bc,$fcb8		; $4404
-	ld e,h			; $4407
-	ld bc,$04c0		; $4408
-	ld (hl),b		; $440b
-	ld bc,$0cc0		; $440c
-	ld l,(hl)		; $440f
-	ld bc,$14c0		; $4410
-	ld l,h			; $4413
-	ld bc,$1cc0		; $4414
-	ld l,b			; $4417
-	ld bc,$a816		; $4418
-.DB $ec				; $441b
-	ld e,d			; $441c
-	ld bc,$f4a8		; $441d
-	ld e,b			; $4420
-	ld bc,$fca8		; $4421
-	ld c,h			; $4424
-	ld bc,$04a8		; $4425
-	ld b,(hl)		; $4428
-	ld bc,$0ca8		; $4429
-	ld b,(hl)		; $442c
-	ld bc,$14a8		; $442d
-	ld b,h			; $4430
-	ld bc,$1ca8		; $4431
-	ld c,(hl)		; $4434
-	ld bc,$ecb8		; $4435
-	ld l,(hl)		; $4438
-	ld bc,$f4b8		; $4439
-	ld h,b			; $443c
-	ld bc,$fcb8		; $443d
-_label_14_027:
-	ld h,d			; $4440
-	ld bc,$04b8		; $4441
-	ld h,d			; $4444
-	ld bc,$0cb8		; $4445
-	ld h,h			; $4448
-	ld bc,$14b8		; $4449
-	ld l,b			; $444c
-	ld bc,$1cb8		; $444d
-	halt			; $4450
-	ld bc,$e8d0		; $4451
-	ld a,(de)		; $4454
-	nop			; $4455
-	ret nc			; $4456
-	ld a,($ff00+$1c)	; $4457
-	nop			; $4459
-	ret nc			; $445a
-	ld hl,sp+$24		; $445b
-	nop			; $445d
-	ret nc			; $445e
-	nop			; $445f
-	ld ($d000),sp		; $4460
-	ld ($0026),sp		; $4463
-	ret nc			; $4466
-	stop			; $4467
-	nop			; $4468
-	nop			; $4469
-	ret nc			; $446a
-	jr _label_14_028		; $446b
-	nop			; $446d
-	ret nc			; $446e
-	jr nz,$08		; $446f
-	nop			; $4471
-	ld a,(de)		; $4472
-	ret nc			; $4473
-	add sp,$18		; $4474
-	nop			; $4476
-	ret nc			; $4477
-	ld a,($ff00+$34)	; $4478
-	nop			; $447a
-	ret nc			; $447b
-	ld hl,sp+$1a		; $447c
-	nop			; $447e
-	ret nc			; $447f
-	nop			; $4480
-_label_14_028:
-	nop			; $4481
-	nop			; $4482
-	ret nc			; $4483
-	ld ($0022),sp		; $4484
-	ret nc			; $4487
-	stop			; $4488
-	stop			; $4489
-	nop			; $448a
-	ret nc			; $448b
-	jr _label_14_032		; $448c
-	nop			; $448e
-	ret nc			; $448f
-	jr nz,_label_14_029	; $4490
-_label_14_029:
-	nop			; $4492
-	add sp,-$18		; $4493
-	inc d			; $4495
-	nop			; $4496
-	add sp,-$10		; $4497
-	inc (hl)		; $4499
-	nop			; $449a
-	add sp,-$08		; $449b
-	jr _label_14_030		; $449d
-_label_14_030:
-	add sp,$00		; $449f
-	stop			; $44a1
-	nop			; $44a2
-	add sp,$08		; $44a3
-	ldd (hl),a		; $44a5
-	nop			; $44a6
-	add sp,$10		; $44a7
-	jr z,_label_14_031	; $44a9
-_label_14_031:
-	add sp,$18		; $44ab
-	inc d			; $44ad
-	nop			; $44ae
-	add sp,$20		; $44af
-	stop			; $44b1
-	nop			; $44b2
-	nop			; $44b3
-_label_14_032:
-.DB $ec				; $44b4
-	jr nc,_label_14_033	; $44b5
-_label_14_033:
-	nop			; $44b7
-	di			; $44b8
-	nop			; $44b9
-	nop			; $44ba
-	nop			; $44bb
-	ei			; $44bc
-	jr _label_14_034		; $44bd
-_label_14_034:
-	nop			; $44bf
-	inc bc			; $44c0
-	nop			; $44c1
-	nop			; $44c2
-	nop			; $44c3
-	dec bc			; $44c4
-	inc h			; $44c5
-	nop			; $44c6
-	nop			; $44c7
-	inc de			; $44c8
-	ld c,$00		; $44c9
-	nop			; $44cb
-	add hl,de		; $44cc
-	stop			; $44cd
-	nop			; $44ce
-	nop			; $44cf
-	rra			; $44d0
-	ld h,$00		; $44d1
-	nop			; $44d3
-	dec h			; $44d4
-	nop			; $44d5
-	nop			; $44d6
-	nop			; $44d7
-.DB $e4				; $44d8
-	ld (hl),d		; $44d9
-	ld ($cc23),sp		; $44da
-	add sp,$1c		; $44dd
-	nop			; $44df
-	call z,$22f0		; $44e0
-	nop			; $44e3
-	call z,$10f8		; $44e4
-	nop			; $44e7
-	call z,$0c00		; $44e8
-	nop			; $44eb
-	call z,$1008		; $44ec
-	nop			; $44ef
-	call z,$1a10		; $44f0
-	nop			; $44f3
-	call z,$0018		; $44f4
-	nop			; $44f7
-	call z,$1620		; $44f8
-	nop			; $44fb
-.DB $f4				; $44fc
-.DB $f4				; $44fd
-	inc h			; $44fe
-	nop			; $44ff
-.DB $f4				; $4500
-	inc b			; $4501
-	ld e,$00		; $4502
-.DB $f4				; $4504
-.DB $fc				; $4505
-	jr z,_label_14_035	; $4506
-_label_14_035:
-.DB $f4				; $4508
-	inc c			; $4509
-	ld ($f400),sp		; $450a
-	inc d			; $450d
-	ldi (hl),a		; $450e
-	nop			; $450f
-	inc b			; $4510
-	ld ($ff00+c),a		; $4511
-	jr _label_14_036		; $4512
-_label_14_036:
-	inc b			; $4514
-	ld a,($ff00+c)		; $4515
-	ldi (hl),a		; $4516
-	nop			; $4517
-	inc b			; $4518
-	ld ($0000),a		; $4519
-	inc b			; $451c
-	ld a,($0010)		; $451d
-	inc b			; $4520
-	ld (bc),a		; $4521
-	inc e			; $4522
-	nop			; $4523
-	inc b			; $4524
-	ld c,$04		; $4525
-	nop			; $4527
-	inc b			; $4528
-	ld d,$16		; $4529
-	nop			; $452b
-	inc b			; $452c
-	ld e,$28		; $452d
-	nop			; $452f
-	inc b			; $4530
-	ld h,$02		; $4531
-	nop			; $4533
-	call c,$5cde		; $4534
-	ld ($e6dc),sp		; $4537
-	ld e,(hl)		; $453a
-	ld ($eedc),sp		; $453b
-	ld h,b			; $453e
-	ld ($f6dc),sp		; $453f
-	ld h,d			; $4542
-	ld ($fedc),sp		; $4543
-	ld h,h			; $4546
-	ld ($06dc),sp		; $4547
-	ld h,(hl)		; $454a
-	ld ($0edc),sp		; $454b
-	ld l,b			; $454e
-_label_14_037:
-	ld ($16dc),sp		; $454f
-	ld l,d			; $4552
-	ld ($1edc),sp		; $4553
-	ld l,h			; $4556
-	ld ($26dc),sp		; $4557
-	ld l,(hl)		; $455a
-	ld ($fcb4),sp		; $455b
-	nop			; $455e
-	nop			; $455f
-	or h			; $4560
-	inc b			; $4561
-	ld (bc),a		; $4562
-	nop			; $4563
-	or h			; $4564
-	inc c			; $4565
-	jr z,_label_14_038	; $4566
-_label_14_038:
-	dec c			; $4568
-	cp b			; $4569
-.DB $fc				; $456a
-	ld a,(de)		; $456b
-	nop			; $456c
-	cp b			; $456d
-	inc b			; $456e
-	inc e			; $456f
-	nop			; $4570
-	cp b			; $4571
-	inc c			; $4572
-	nop			; $4573
-	nop			; $4574
-	ret z			; $4575
-.DB $dd				; $4576
-	ld b,$00		; $4577
-	ret z			; $4579
-	push hl			; $457a
-	ld ($c800),sp		; $457b
-.DB $ed				; $457e
-	ld (bc),a		; $457f
-	nop			; $4580
-	ret z			; $4581
-	push af			; $4582
-	jr z,_label_14_039	; $4583
-_label_14_039:
-	ret z			; $4585
-.DB $fd				; $4586
-	inc c			; $4587
-	nop			; $4588
-	ret z			; $4589
-	inc c			; $458a
-_label_14_040:
-	inc h			; $458b
-	nop			; $458c
-	ret z			; $458d
-	inc d			; $458e
-	ld h,$00		; $458f
-_label_14_041:
-	ret z			; $4591
-	inc e			; $4592
-	nop			; $4593
-	nop			; $4594
-	ret z			; $4595
-	inc h			; $4596
-_label_14_042:
-	ld a,(bc)		; $4597
-	nop			; $4598
-	ret z			; $4599
-	inc l			; $459a
-	ld a,(bc)		; $459b
-	nop			; $459c
-	jr z,_label_14_037	; $459d
-	ld ($ff00+$c0),a	; $459f
-	add hl,bc		; $45a1
-	or b			; $45a2
-	add sp,-$3e		; $45a3
-	add hl,bc		; $45a5
-	or b			; $45a6
-	ld a,($ff00+$c4)	; $45a7
-	add hl,bc		; $45a9
-	or b			; $45aa
-	ld hl,sp-$3a		; $45ab
-	add hl,bc		; $45ad
-	or b			; $45ae
-	nop			; $45af
-	ret z			; $45b0
-	add hl,bc		; $45b1
-	or b			; $45b2
-	ld ($09ca),sp		; $45b3
-	or b			; $45b6
-	stop			; $45b7
-	call z,$b009		; $45b8
-	jr _label_14_040		; $45bb
-	add hl,bc		; $45bd
-	or b			; $45be
-	jr nz,_label_14_041	; $45bf
-	add hl,bc		; $45c1
-	or b			; $45c2
-	jr z,_label_14_042	; $45c3
-	add hl,bc		; $45c5
-	adc $e0			; $45c6
-	call nc,$ce09		; $45c8
-	add sp,-$2a		; $45cb
-	add hl,bc		; $45cd
-	adc $f0			; $45ce
-	ret c			; $45d0
-	add hl,bc		; $45d1
-	adc $f8			; $45d2
-	jp c,$ce09		; $45d4
-	nop			; $45d7
-	call c,$ce09		; $45d8
-	ld ($09de),sp		; $45db
-	adc $10			; $45de
-	ld ($ff00+$09),a	; $45e0
-	adc $18			; $45e2
-	ld ($ff00+c),a		; $45e4
-	add hl,bc		; $45e5
-	adc $20			; $45e6
-.DB $e4				; $45e8
-	add hl,bc		; $45e9
-	sbc $e0			; $45ea
-	and $09			; $45ec
-	sbc $e8			; $45ee
-	add sp,$09		; $45f0
-	sbc $f0			; $45f2
-	ld ($de09),a		; $45f4
-	ld hl,sp-$14		; $45f7
-	add hl,bc		; $45f9
-	sbc $00			; $45fa
-	xor $09			; $45fc
-	sbc $08			; $45fe
-	ld a,($ff00+$09)	; $4600
-	sbc $10			; $4602
-	ld a,($ff00+c)		; $4604
-	add hl,bc		; $4605
-	sbc $18			; $4606
-.DB $f4				; $4608
-	add hl,bc		; $4609
-	sbc $20			; $460a
-	or $09			; $460c
-	sbc $28			; $460e
-	ld hl,sp+$09		; $4610
-	adc $28			; $4612
-	ld hl,sp+$09		; $4614
-	ld hl,sp-$1b		; $4616
-	ld (bc),a		; $4618
-	nop			; $4619
-	ld hl,sp-$13		; $461a
-	stop			; $461c
-	nop			; $461d
-	ld hl,sp-$0b		; $461e
-	ld d,$00		; $4620
-	ld hl,sp-$03		; $4622
-	ld d,$00		; $4624
-	ld ($26fd),sp		; $4626
-	nop			; $4629
-	ld ($2205),sp		; $462a
-	nop			; $462d
-	ld ($100d),sp		; $462e
-	nop			; $4631
-	ld ($1a15),sp		; $4632
-	nop			; $4635
-	ld ($081d),sp		; $4636
-	nop			; $4639
-	ld ($1a24),sp		; $463a
-	nop			; $463d
-	inc h			; $463e
-	xor b			; $463f
-	ld hl,sp+$50		; $4640
-	ld bc,$00a8		; $4642
-	ld d,d			; $4645
-	ld bc,$08b0		; $4646
-	ld a,(hl)		; $4649
-	ld bc,$10a8		; $464a
-	ld d,b			; $464d
-	ld bc,$ecb8		; $464e
-	ld l,h			; $4651
-	ld bc,$f4b8		; $4652
-	ld l,d			; $4655
-	ld bc,$fcb8		; $4656
-	ld (hl),b		; $4659
-	ld bc,$04b8		; $465a
-	halt			; $465d
-	ld bc,$0cb8		; $465e
-	ld h,h			; $4661
-	ld bc,$1cb8		; $4662
-	ld l,(hl)		; $4665
-	ld bc,$14b8		; $4666
-	ld l,b			; $4669
-	ld bc,$d8d0		; $466a
-	ld h,$00		; $466d
-	ret nc			; $466f
-	ld ($ff00+$08),a	; $4670
-	nop			; $4672
-	ret nc			; $4673
-	add sp,$22		; $4674
-	nop			; $4676
-	ret nc			; $4677
-	ld a,($ff00+$08)	; $4678
-	nop			; $467a
-	ret nc			; $467b
-	ld hl,sp+$24		; $467c
-	nop			; $467e
-	ret nc			; $467f
-	nop			; $4680
-	nop			; $4681
-	nop			; $4682
-	ld ($ff00+$fa),a	; $4683
-	ld d,$00		; $4685
-	ld ($ff00+$01),a	; $4687
-	stop			; $4689
-	nop			; $468a
-	ld ($ff00+$08),a	; $468b
-	ld d,$00		; $468d
-	ld ($ff00+$10),a	; $468f
-	ld d,$00		; $4691
-	ld ($ff00+$18),a	; $4693
-	jr nc,_label_14_043	; $4695
-_label_14_043:
-	ld ($ff00+$20),a	; $4697
-	inc c			; $4699
-	nop			; $469a
-	ld ($ff00+$28),a	; $469b
-	ldi (hl),a		; $469d
-	nop			; $469e
-	ld ($ff00+$30),a	; $469f
-	ld ($e000),sp		; $46a1
-	scf			; $46a4
-	ld a,(de)		; $46a5
-	nop			; $46a6
-	ld hl,sp-$1d		; $46a7
-	inc h			; $46a9
-	nop			; $46aa
-	ld hl,sp-$0d		; $46ab
-	nop			; $46ad
-	nop			; $46ae
-	ld hl,sp-$15		; $46af
-	ld c,$00		; $46b1
-	ld hl,sp-$05		; $46b3
-	ldi (hl),a		; $46b5
-	nop			; $46b6
-	ld hl,sp+$03		; $46b7
-	stop			; $46b9
-	nop			; $46ba
-	ld ($0203),sp		; $46bb
-	nop			; $46be
-	ld ($220b),sp		; $46bf
-	nop			; $46c2
-	ld ($1c13),sp		; $46c3
-	nop			; $46c6
-	ld ($2c1b),sp		; $46c7
-	nop			; $46ca
-	ld ($1a23),sp		; $46cb
-	nop			; $46ce
-_data_4556_data9:
+	.dw @data0
+	.dw @data1
+	.dw @data2
+	.dw @data3
+	.dw @data4
+	.dw @data5
+	.dw @data6
+	.dw @data7
+	.dw @data8
+	.dw @data9
+	.dw @dataA
+	.dw @dataB
+	.dw @dataC
+	.dw @dataD
+	.dw @dataE
+	.dw @dataF
+
+@data0:
+	.db $10
+        .db $ab $e0 $40 $01
+        .db $ab $ea $42 $01
+        .db $ab $f4 $44 $01
+        .db $ab $fe $46 $01
+        .db $ab $1c $48 $01
+        .db $ab $08 $4c $01
+        .db $ab $12 $4e $01
+        .db $ab $27 $56 $01
+        .db $d0 $e9 $0a $00
+        .db $d0 $f1 $16 $00
+        .db $d0 $f9 $00 $00
+        .db $d0 $01 $0c $00
+        .db $d0 $09 $24 $00
+        .db $d0 $11 $0e $00
+        .db $d0 $17 $10 $00
+        .db $d0 $1d $1e $00
+
+@data1:
+	.db $1b
+        .db $a8 $e9 $4a $01
+        .db $a8 $f2 $4c $01
+        .db $a8 $fc $4e $01
+        .db $a8 $04 $4c $01
+        .db $a8 $16 $50 $01
+        .db $a8 $20 $52 $01
+        .db $a8 $29 $4e $01
+        .db $b8 $ee $6a $01
+        .db $b8 $f8 $6c $01
+        .db $b8 $01 $6e $01
+        .db $b8 $09 $70 $01
+        .db $b8 $13 $72 $01
+        .db $b8 $1c $74 $01
+        .db $a8 $e0 $42 $01
+        .db $a8 $0e $42 $01
+        .db $d0 $dc $30 $00
+        .db $d0 $e4 $28 $00
+        .db $d0 $ec $24 $00
+        .db $d0 $f4 $28 $00
+        .db $d0 $fc $14 $00
+        .db $d0 $04 $08 $00
+        .db $e0 $04 $1a $00
+        .db $e0 $0c $00 $00
+        .db $e0 $14 $14 $00
+        .db $e0 $1c $00 $00
+        .db $e0 $23 $1a $00
+        .db $e0 $2b $1c $00
+
+@data2:
+	.db $1c
+        .db $a8 $e0 $52 $01
+        .db $a8 $e8 $54 $01
+        .db $a8 $fa $50 $01
+        .db $a8 $04 $56 $01
+        .db $a8 $0d $4e $01
+        .db $a8 $1e $4c $01
+        .db $a8 $28 $58 $01
+        .db $b8 $ee $6a $01
+        .db $b8 $f8 $6c $01
+        .db $b8 $01 $6e $01
+        .db $b8 $09 $70 $01
+        .db $b8 $13 $72 $01
+        .db $b8 $1c $74 $01
+        .db $a8 $f1 $48 $01
+        .db $a8 $15 $48 $01
+        .db $d0 $f4 $00 $00
+        .db $d0 $fc $28 $00
+        .db $d0 $04 $0c $00
+        .db $d0 $0c $08 $00
+        .db $d0 $13 $1a $00
+        .db $e8 $e9 $30 $00
+        .db $e8 $f1 $34 $00
+        .db $e8 $f9 $26 $00
+        .db $e8 $00 $00 $00
+        .db $e8 $07 $1a $00
+        .db $e8 $0f $00 $00
+        .db $e8 $17 $14 $00
+        .db $e8 $1f $00 $00
+
+@data3:
+	.db $1f
+        .db $d4 $f9 $0e $00
+        .db $d4 $01 $1c $00
+        .db $d4 $09 $26 $00
+        .db $d4 $11 $26 $00
+        .db $d4 $18 $00 $00
+        .db $06 $f4 $26 $00
+        .db $06 $fc $08 $00
+        .db $06 $04 $32 $00
+        .db $06 $0c $28 $00
+        .db $06 $14 $14 $00
+        .db $06 $1c $00 $00
+        .db $d4 $f0 $70 $08
+        .db $06 $ec $70 $08
+        .db $ee $ec $72 $08
+        .db $ee $f6 $30 $00
+        .db $ee $fe $00 $00
+        .db $ee $06 $18 $00
+        .db $ee $0e $00 $00
+        .db $ee $16 $06 $00
+        .db $ee $1e $00 $00
+        .db $a8 $03 $5a $01
+        .db $a8 $0b $52 $01
+        .db $a8 $14 $4e $01
+        .db $b0 $ee $5c $01
+        .db $a8 $f3 $40 $01
+        .db $b0 $fb $60 $01
+        .db $b8 $18 $6e $01
+        .db $b8 $ff $6e $01
+        .db $b8 $f7 $70 $01
+        .db $b8 $07 $64 $01
+        .db $b8 $0f $68 $01
+
+@dataA:
+	.db $1f			; $41bc
+        .db $b0 $e8 $4c $09
+        .db $b0 $f0 $4e $09
+        .db $b0 $f8 $50 $09
+        .db $b0 $00 $52 $09
+        .db $b0 $08 $54 $09
+        .db $b0 $10 $56 $09
+        .db $b0 $18 $58 $09
+        .db $b0 $20 $5a $09
+        .db $d0 $e1 $18 $00
+        .db $d0 $e9 $10 $00
+        .db $d0 $f0 $1a $00
+        .db $d0 $f9 $1c $00
+        .db $d0 $01 $22 $00
+        .db $d0 $09 $28 $00
+        .db $e0 $09 $00 $00
+        .db $e0 $11 $22 $00
+        .db $e0 $19 $00 $00
+        .db $e0 $21 $14 $00
+        .db $e0 $29 $00 $00
+        .db $e0 $31 $2c $00
+        .db $f4 $ed $18 $00
+        .db $f4 $f5 $10 $00
+        .db $f4 $fd $14 $00
+        .db $f4 $05 $08 $00
+        .db $04 $05 $0a $00
+        .db $04 $0d $28 $00
+        .db $04 $15 $14 $00
+        .db $04 $1d $28 $00
+        .db $04 $25 $06 $00
+        .db $04 $2d $00 $00
+        .db $e0 $39 $00 $00
+
+@dataD:
+	.db $18			; $4239
+        .db $ac $e0 $5a $01
+        .db $ac $ea $4e $01
+        .db $ac $f5 $56 $01
+        .db $ac $ff $54 $01
+        .db $ac $1e $52 $01
+        .db $ac $29 $4e $01
+        .db $b4 $0a $60 $01
+        .db $ac $14 $42 $01
+        .db $d0 $d0 $1a $00
+        .db $d0 $d8 $1c $00
+        .db $d0 $e0 $22 $00
+        .db $d0 $e6 $10 $00
+        .db $d0 $ec $26 $00
+        .db $d0 $f3 $00 $00
+        .db $d0 $fb $14 $00
+        .db $e0 $03 $0a $00
+        .db $e0 $0b $28 $00
+        .db $e0 $12 $1a $00
+        .db $e0 $1b $00 $00
+        .db $e0 $23 $18 $00
+        .db $e0 $29 $10 $00
+        .db $e0 $2f $32 $00
+        .db $e0 $37 $28 $00
+        .db $d0 $03 $00 $00
+
+@dataE:
+	.db $27			; $429a
+        .db $d0 $d4 $24 $00
+        .db $d0 $dc $0e $00
+        .db $d0 $e2 $10 $00
+        .db $d0 $e8 $0c $00
+        .db $d0 $f0 $08 $00
+        .db $d0 $f8 $22 $00
+        .db $d0 $00 $28 $00
+        .db $e0 $00 $18 $00
+        .db $e0 $0c $30 $00
+        .db $e0 $06 $10 $00
+        .db $e0 $13 $00 $00
+        .db $e0 $1b $18 $00
+        .db $e0 $23 $1c $00
+        .db $e0 $2b $26 $00
+        .db $e0 $33 $1c $00
+        .db $f8 $d7 $30 $00
+        .db $f8 $df $1c $00
+        .db $f8 $e7 $24 $00
+        .db $f8 $ef $0e $00
+        .db $f8 $f5 $10 $00
+        .db $f8 $fb $14 $00
+        .db $f8 $01 $10 $00
+        .db $08 $01 $1c $00
+        .db $08 $09 $14 $00
+        .db $08 $11 $00 $00
+        .db $08 $19 $18 $00
+        .db $08 $21 $1c $00
+        .db $08 $29 $26 $00
+        .db $08 $31 $1c $00
+        .db $b0 $e0 $12 $09
+        .db $b0 $e8 $14 $09
+        .db $b0 $f0 $16 $09
+        .db $b0 $f8 $18 $09
+        .db $b0 $00 $1a $09
+        .db $b0 $08 $1c $09
+        .db $b0 $10 $1e $09
+        .db $b0 $18 $20 $09
+        .db $b0 $20 $22 $09
+        .db $b0 $28 $24 $09
+
+@dataF:
+	.db $20			; $4337
+        .db $a8 $df $52 $01
+        .db $b0 $e8 $7e $01
+        .db $a8 $f1 $52 $01
+        .db $a8 $0c $50 $01
+        .db $a8 $1f $5c $01
+        .db $a8 $29 $52 $01
+        .db $b8 $fe $6a $01
+        .db $b8 $1b $6c $01
+        .db $a8 $fa $42 $01
+        .db $b0 $04 $60 $01
+        .db $a8 $16 $48 $01
+        .db $b8 $08 $60 $01
+        .db $d0 $d5 $0e $00
+        .db $d0 $db $10 $00
+        .db $d0 $e1 $22 $00
+        .db $d0 $e9 $1c $00
+        .db $d0 $f1 $24 $00
+        .db $d0 $f9 $0e $00
+        .db $d0 $ff $10 $00
+        .db $e0 $ff $30 $00
+        .db $e0 $06 $00 $00
+        .db $e0 $0e $18 $00
+        .db $e0 $16 $00 $00
+        .db $e0 $1e $28 $00
+        .db $e0 $26 $04 $00
+        .db $e0 $2e $0e $00
+        .db $e0 $34 $10 $00
+        .db $b8 $e3 $62 $01
+        .db $b8 $ec $68 $01
+        .db $b8 $f6 $64 $01
+        .db $b8 $11 $66 $01
+        .db $b8 $24 $68 $01
+
+@data5:
+	.db $18			; $43b8
+        .db $d8 $ec $14 $00
+        .db $d8 $f4 $34 $00
+        .db $d8 $fc $14 $00
+        .db $d8 $04 $1c $00
+        .db $d8 $0c $1a $00
+        .db $d8 $14 $06 $00
+        .db $d8 $1c $1c $00
+        .db $a8 $e0 $38 $09
+        .db $a8 $e8 $3a $09
+        .db $a8 $f0 $3c $09
+        .db $a8 $f8 $3e $09
+        .db $b0 $00 $40 $09
+        .db $b0 $08 $42 $09
+        .db $a8 $10 $44 $09
+        .db $a8 $18 $46 $09
+        .db $a8 $20 $48 $09
+        .db $a8 $28 $4a $09
+        .db $c0 $ec $7a $01
+        .db $c0 $f4 $6a $01
+        .db $b8 $fc $5c $01
+        .db $c0 $04 $70 $01
+        .db $c0 $0c $6e $01
+        .db $c0 $14 $6c $01
+        .db $c0 $1c $68 $01
+
+@data6:
+	.db $16			; $4419
+        .db $a8 $ec $5a $01
+        .db $a8 $f4 $58 $01
+        .db $a8 $fc $4c $01
+        .db $a8 $04 $46 $01
+        .db $a8 $0c $46 $01
+        .db $a8 $14 $44 $01
+        .db $a8 $1c $4e $01
+        .db $b8 $ec $6e $01
+        .db $b8 $f4 $60 $01
+        .db $b8 $fc $62 $01
+        .db $b8 $04 $62 $01
+        .db $b8 $0c $64 $01
+        .db $b8 $14 $68 $01
+        .db $b8 $1c $76 $01
+        .db $d0 $e8 $1a $00
+        .db $d0 $f0 $1c $00
+        .db $d0 $f8 $24 $00
+        .db $d0 $00 $08 $00
+        .db $d0 $08 $26 $00
+        .db $d0 $10 $00 $00
+        .db $d0 $18 $14 $00
+        .db $d0 $20 $08 $00
+
+@data4:
+	.db $1a			; $4472
+        .db $d0 $e8 $18 $00
+        .db $d0 $f0 $34 $00
+        .db $d0 $f8 $1a $00
+        .db $d0 $00 $00 $00
+        .db $d0 $08 $22 $00
+        .db $d0 $10 $10 $00
+        .db $d0 $18 $26 $00
+        .db $d0 $20 $00 $00
+        .db $e8 $e8 $14 $00
+        .db $e8 $f0 $34 $00
+        .db $e8 $f8 $18 $00
+        .db $e8 $00 $10 $00
+        .db $e8 $08 $32 $00
+        .db $e8 $10 $28 $00
+        .db $e8 $18 $14 $00
+        .db $e8 $20 $10 $00
+        .db $00 $ec $30 $00
+        .db $00 $f3 $00 $00
+        .db $00 $fb $18 $00
+        .db $00 $03 $00 $00
+        .db $00 $0b $24 $00
+        .db $00 $13 $0e $00
+        .db $00 $19 $10 $00
+        .db $00 $1f $26 $00
+        .db $00 $25 $00 $00
+        .db $00 $e4 $72 $08
+
+@dataB:
+	.db $23			; $44db
+        .db $cc $e8 $1c $00
+        .db $cc $f0 $22 $00
+        .db $cc $f8 $10 $00
+        .db $cc $00 $0c $00
+        .db $cc $08 $10 $00
+        .db $cc $10 $1a $00
+        .db $cc $18 $00 $00
+        .db $cc $20 $16 $00
+        .db $f4 $f4 $24 $00
+        .db $f4 $04 $1e $00
+        .db $f4 $fc $28 $00
+        .db $f4 $0c $08 $00
+        .db $f4 $14 $22 $00
+        .db $04 $e2 $18 $00
+        .db $04 $f2 $22 $00
+        .db $04 $ea $00 $00
+        .db $04 $fa $10 $00
+        .db $04 $02 $1c $00
+        .db $04 $0e $04 $00
+        .db $04 $16 $16 $00
+        .db $04 $1e $28 $00
+        .db $04 $26 $02 $00
+        .db $dc $de $5c $08
+        .db $dc $e6 $5e $08
+        .db $dc $ee $60 $08
+        .db $dc $f6 $62 $08
+        .db $dc $fe $64 $08
+        .db $dc $06 $66 $08
+        .db $dc $0e $68 $08
+        .db $dc $16 $6a $08
+        .db $dc $1e $6c $08
+        .db $dc $26 $6e $08
+        .db $b4 $fc $00 $00
+        .db $b4 $04 $02 $00
+        .db $b4 $0c $28 $00
+
+@dataC:
+	.db $0d			; $4568
+        .db $b8 $fc $1a $00
+        .db $b8 $04 $1c $00
+        .db $b8 $0c $00 $00
+        .db $c8 $dd $06 $00
+        .db $c8 $e5 $08 $00
+        .db $c8 $ed $02 $00
+        .db $c8 $f5 $28 $00
+        .db $c8 $fd $0c $00
+        .db $c8 $0c $24 $00
+        .db $c8 $14 $26 $00
+        .db $c8 $1c $00 $00
+        .db $c8 $24 $0a $00
+        .db $c8 $2c $0a $00
+
+@data7:
+	.db $28			; $459d
+        .db $b0 $e0 $c0 $09
+        .db $b0 $e8 $c2 $09
+        .db $b0 $f0 $c4 $09
+        .db $b0 $f8 $c6 $09
+        .db $b0 $00 $c8 $09
+        .db $b0 $08 $ca $09
+        .db $b0 $10 $cc $09
+        .db $b0 $18 $ce $09
+        .db $b0 $20 $d0 $09
+        .db $b0 $28 $d2 $09
+        .db $ce $e0 $d4 $09
+        .db $ce $e8 $d6 $09
+        .db $ce $f0 $d8 $09
+        .db $ce $f8 $da $09
+        .db $ce $00 $dc $09
+        .db $ce $08 $de $09
+        .db $ce $10 $e0 $09
+        .db $ce $18 $e2 $09
+        .db $ce $20 $e4 $09
+        .db $de $e0 $e6 $09
+        .db $de $e8 $e8 $09
+        .db $de $f0 $ea $09
+        .db $de $f8 $ec $09
+        .db $de $00 $ee $09
+        .db $de $08 $f0 $09
+        .db $de $10 $f2 $09
+        .db $de $18 $f4 $09
+        .db $de $20 $f6 $09
+        .db $de $28 $f8 $09
+        .db $ce $28 $f8 $09
+        .db $f8 $e5 $02 $00
+        .db $f8 $ed $10 $00
+        .db $f8 $f5 $16 $00
+        .db $f8 $fd $16 $00
+        .db $08 $fd $26 $00
+        .db $08 $05 $22 $00
+        .db $08 $0d $10 $00
+        .db $08 $15 $1a $00
+        .db $08 $1d $08 $00
+        .db $08 $24 $1a $00
+
+@data8:
+	.db $24			; $463e
+        .db $a8 $f8 $50 $01
+        .db $a8 $00 $52 $01
+        .db $b0 $08 $7e $01
+        .db $a8 $10 $50 $01
+        .db $b8 $ec $6c $01
+        .db $b8 $f4 $6a $01
+        .db $b8 $fc $70 $01
+        .db $b8 $04 $76 $01
+        .db $b8 $0c $64 $01
+        .db $b8 $1c $6e $01
+        .db $b8 $14 $68 $01
+        .db $d0 $d8 $26 $00
+        .db $d0 $e0 $08 $00
+        .db $d0 $e8 $22 $00
+        .db $d0 $f0 $08 $00
+        .db $d0 $f8 $24 $00
+        .db $d0 $00 $00 $00
+        .db $e0 $fa $16 $00
+        .db $e0 $01 $10 $00
+        .db $e0 $08 $16 $00
+        .db $e0 $10 $16 $00
+        .db $e0 $18 $30 $00
+        .db $e0 $20 $0c $00
+        .db $e0 $28 $22 $00
+        .db $e0 $30 $08 $00
+        .db $e0 $37 $1a $00
+        .db $f8 $e3 $24 $00
+        .db $f8 $f3 $00 $00
+        .db $f8 $eb $0e $00
+        .db $f8 $fb $22 $00
+        .db $f8 $03 $10 $00
+        .db $08 $03 $02 $00
+        .db $08 $0b $22 $00
+        .db $08 $13 $1c $00
+        .db $08 $1b $2c $00
+        .db $08 $23 $1a $00
+
+@data9:
 	.db $28
 	.db $a8 $e0 $e6 $09
 	.db $a8 $e8 $e8 $09
