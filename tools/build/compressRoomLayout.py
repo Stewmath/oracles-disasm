@@ -1,13 +1,7 @@
 import sys
 import io
 import copy
-
-index = sys.argv[0].rfind('/')
-if index == -1:
-    directory = ''
-else:
-    directory = sys.argv[0][:index+1]
-exec(compile(open(directory+'common.py', "rb").read(), directory+'common.py', 'exec'))
+from common import *
 
 if len(sys.argv) < 3:
     print('Usage: ' + sys.argv[0] + ' roomLayout.bin output.cmp [-o] [-d dictionary.bin]')
