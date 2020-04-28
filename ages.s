@@ -11720,9 +11720,9 @@ _fake_specialObjectLoadAnimationFrameToBuffer:
  m_section_superfree "Item_Code" namespace "itemCode"
 .include "code/updateItems.s"
 
-.include "build/data/itemConveyorTilesTable.s"
-.include "build/data/itemPassableCliffTilesTable.s"
-.include "build/data/itemPassableTilesTable.s"
+	.include "build/data/itemConveyorTilesTable.s"
+	.include "build/data/itemPassableCliffTilesTable.s"
+	.include "build/data/itemPassableTilesTable.s"
 
 
 ;;
@@ -11755,6 +11755,7 @@ itemCode24:
 	ld bc,$ffe0		; $4d06
 	call objectSetSpeedZ		; $4d09
 
+.ifdef ROM_AGES
 	; Subid is nonzero if being used from seed shooter
 	ld l,Item.subid		; $4d0c
 	ld a,(hl)		; $4d0e
@@ -11763,11 +11764,18 @@ itemCode24:
 
 	ld l,Item.var34		; $4d13
 	ld (hl),$03		; $4d15
+.else
+	call itemUpdateAngle		; $4ce2
+.endif
 
 	ld l,Item.subid		; $4d17
 	ldd a,(hl)		; $4d19
 	or a			; $4d1a
+.ifdef ROM_AGES
 	jr nz,@shooter		; $4d1b
+.else
+	jr nz,@slingshot	; $4d1b
+.endif
 
 	; Satchel
 	ldi a,(hl)		; $4d1d
@@ -11783,11 +11791,16 @@ itemCode24:
 	ld (hl),$ff		; $4d2a
 	ret			; $4d2c
 ++
+
+.ifdef ROM_AGES
 	ld hl,@satchelPositionOffsets		; $4d2d
 	call _applyOffsetTableHL		; $4d30
+.endif
+
 	ld a,SPEED_c0		; $4d33
 	jr @setSpeed		; $4d35
 
+.ifdef ROM_AGES
 @shooter:
 	ld e,Item.angle		; $4d37
 	ld a,(de)		; $4d39
@@ -11806,6 +11819,16 @@ itemCode24:
 
 	; Since 'd'='h', this will copy its own position and apply the offset
 	call objectCopyPositionWithOffset		; $4d49
+.else
+@slingshot:
+	ld hl,@slingshotAngleTable-1		; $4cff
+	rst_addAToHl			; $4d02
+	ld e,Item.angle		; $4d03
+	ld a,(de)		; $4d05
+	add (hl)		; $4d06
+	and $1f			; $4d07
+	ld (de),a		; $4d09
+.endif
 
 	ld hl,wIsSeedShooterInUse		; $4d4c
 	inc (hl)		; $4d4f
@@ -11814,6 +11837,10 @@ itemCode24:
 @setSpeed:
 	ld e,Item.speed		; $4d52
 	ld (de),a		; $4d54
+.ifdef ROM_SEASONS
+	ld hl,@satchelPositionOffsets		; $4d13
+	call _applyOffsetTableHL		; $4d16
+.endif
 
 	; If it's a mystery seed, get a random effect
 	ld e,Item.id		; $4d55
@@ -11830,6 +11857,10 @@ itemCode24:
 	ld (de),a		; $4d67
 	ret			; $4d68
 
+.ifdef ROM_SEASONS
+@slingshotAngleTable:
+	.db $00 $02 $fe
+.endif
 
 ; Y/X/Z position offsets relative to Link to make seeds appear at (for satchel)
 @satchelPositionOffsets:
@@ -11838,6 +11869,7 @@ itemCode24:
 	.db $05 $00 $fe ; DIR_DOWN
 	.db $01 $fb $fe ; DIR_LEFT
 
+.ifdef ROM_AGES
 ; Y/X offsets for shooter
 @shooterPositionOffsets:
 	.db $f2 $fc ; Up
@@ -11848,13 +11880,14 @@ itemCode24:
 	.db $0a $f8 ; Down-left
 	.db $05 $f3 ; Left
 	.db $f8 $f8 ; Up-left
-
+.endif
 
 ;;
 ; State 1: seed moving
 ; @addr{4d85}
 _seedItemState1:
 	call _itemUpdateDamageToApply		; $4d85
+.ifdef ROM_AGES
 	jr z,@noCollision		; $4d88
 
 	; Check bit 4 of Item.var2a
@@ -11867,6 +11900,9 @@ _seedItemState1:
 	call _func_50f4		; $4d90
 	jr z,@updatePosition	; $4d93
 	jr @seedCollidedWithWall		; $4d95
+.else
+	jr nz,@seedCollidedWithEnemy	; $4d3f
+.endif
 
 @noCollision:
 	ld e,Item.subid		; $4d97
@@ -11874,11 +11910,20 @@ _seedItemState1:
 	or a			; $4d9a
 	jr z,@satchelUpdate	; $4d9b
 
+@slingshotUpdate:
+.ifdef ROM_AGES
 	call _seedItemUpdateBouncing		; $4d9d
+.else
+	call _slingshotCheckCanPassSolidTile
+.endif
 	jr nz,@seedCollidedWithWall	; $4da0
 
 @updatePosition:
+.ifdef ROM_AGES
 	call objectCheckWithinRoomBoundary		; $4da2
+.else
+	call objectCheckWithinScreenBoundary
+.endif
 	jp c,objectApplySpeed		; $4da5
 	jp _seedItemDelete		; $4da8
 
@@ -12277,8 +12322,13 @@ _galeSeedTryToWarpLink:
 @substate0:
 	; Test TILESETFLAG_OUTDOORS
 	ld a,(wTilesetFlags)		; $4f9b
+.ifdef ROM_AGES
 	rrca			; $4f9e
 	jr nc,@setSubstate3	; $4f9f
+.else
+	dec a
+	jr nz,@setSubstate3	; $4f49
+.endif
 
 	; Check warps enabled, Link not riding companion
 	ld a,(wWarpsDisabled)		; $4fa1
@@ -12294,7 +12344,11 @@ _galeSeedTryToWarpLink:
 	cp $40			; $4fb2
 	jr z,_galeSeedUpdateAnimationAndCounter	; $4fb4
 
+.ifdef ROM_AGES
 	call checkLinkVulnerableAndIDZero		; $4fb6
+.else
+	call checkLinkID0AndControlNormal
+.endif
 	jr nc,_galeSeedUpdateAnimationAndCounter	; $4fb9
 	call objectCheckCollidedWithLink		; $4fbb
 	jr nc,_galeSeedUpdateAnimationAndCounter	; $4fbe
@@ -12384,6 +12438,7 @@ _galeSeedTryToWarpLink:
 	ld (hl),a		; $5033
 	ret			; $5034
 
+.ifdef ROM_AGES
 ;;
 ; Called for seeds used with seed shooter. Checks for tile collisions and triggers
 ; "bounces" when that happens.
@@ -12626,7 +12681,19 @@ _seedDontBounceTilesTable:
 	.db TILEINDEX_UNLIT_TORCH
 	.db TILEINDEX_LIT_TORCH
 	.db $00
-
+.else
+;;
+; @param[out]	zflag	z if no collision
+; @addr{4fdf}
+_slingshotCheckCanPassSolidTile:
+	call objectCheckTileCollision_allowHoles		; $4fdf
+	jr nc,++		; $4fe2
+	call _itemCheckCanPassSolidTile		; $4fe4
+	ret			; $4fe7
+++
+	xor a			; $4fe8
+	ret			; $4fe9
+.endif
 
 ;;
 ; This is an object which serves as a collision for enemies when Dimitri does his eating
@@ -13430,7 +13497,7 @@ _bombchuCheckForEnemyTarget:
 	ld (de),a		; $548e
 	ret			; $548f
 
-.include "data/bombchuTargets.s"
+.include "build/data/bombchuTargets.s"
 
 ;;
 ; ITEMID_BOMB
@@ -13592,8 +13659,12 @@ _bombUpdateThrowingVerticallyAndCheckDelete:
 	call _itemUpdateThrowingVerticallyAndCheckHazards		; $5548
 	ret nc			; $554b
 
+.ifdef ROM_AGES
 	; Check if room $0050 (Present overworld, bomb upgrade screen)
 	ld bc,$0050		; $554c
+.else
+	ld bc,$04ef		; $554c
+.endif
 	ld a,(wActiveGroup)		; $554f
 	cp b			; $5552
 	jr nz,@delete		; $5553
@@ -13921,15 +13992,43 @@ itemCode06:
 
 @state0:
 	call _itemLoadAttributesAndGraphics		; $56ab
+.ifdef ROM_AGES
 	ld a,UNCMP_GFXH_18		; $56ae
+.else
+	ld e,Item.subid		; $554b
+	ld a,(de)		; $554d
+	add $18			; $554e
+.endif
 	call loadWeaponGfx		; $56b0
 
 	call itemIncState		; $56b3
+
+.ifdef ROM_AGES
 	ld l,Item.speed		; $56b6
 	ld (hl),SPEED_1a0		; $56b8
 
 	ld l,Item.counter1		; $56ba
 	ld (hl),$28		; $56bc
+.else
+	ld bc,(SPEED_1a0<<8|$28)		; $5556
+	ld l,Item.subid		; $5559
+	bit 0,(hl)		; $555b
+	jr z,+			; $555d
+
+	; level-2
+	ld l,Item.collisionType		; $555f
+	ld (hl),$96		; $5561
+	ld l,Item.oamFlagsBackup		; $5563
+	ld a,$0c		; $5565
+	ldi (hl),a		; $5567
+	ldi (hl),a		; $5568
+	ld bc,(SPEED_260<<8|$78)		; $5569
++
+	ld l,Item.speed		; $556c
+	ld (hl),b		; $556e
+	ld l,Item.counter1		; $556f
+	ld (hl),c		; $5571
+.endif
 
 	ld c,-1		; $56be
 	ld a,RANG_RING_L1		; $56c0
@@ -13954,6 +14053,10 @@ itemCode06:
 
 ; State 1: boomerang moving outward
 @state1:
+.ifdef ROM_SEASONS
+	call magicBoomerangTryToBreakTile		; $5590
+.endif
+
 	ld e,Item.var2a		; $56dc
 	ld a,(de)		; $56de
 	or a			; $56df
@@ -14039,7 +14142,7 @@ itemCode06:
 	call _itemCheckWithinRangeOfLink		; $5739
 	call c,itemIncState		; $573c
 
-	jr @updateSpeedAndAnimation		; $573f
+	jr @breakTileAndUpdateSpeedAndAnimation		; $573f
 
 
 ; State 3: boomerang within 10 pixels of link; move directly toward him instead of nudging
@@ -14052,7 +14155,7 @@ itemCode06:
 	; Check if within 2 pixels of Link
 	ld bc,$0402		; $5747
 	call _itemCheckWithinRangeOfLink		; $574a
-	jr nc,@updateSpeedAndAnimation	; $574d
+	jr nc,@breakTileAndUpdateSpeedAndAnimation	; $574d
 
 	; Go to state 4, make invisible, disable collisions
 	call itemIncState		; $574f
@@ -14074,6 +14177,10 @@ itemCode06:
 	ld l,SpecialObject.yh		; $5767
 	jp objectTakePosition		; $5769
 
+@breakTileAndUpdateSpeedAndAnimation:
+.ifdef ROM_SEASONS
+	call magicBoomerangTryToBreakTile		; $5623
+.endif
 
 @updateSpeedAndAnimation:
 	call objectApplySpeed		; $576c
@@ -14088,6 +14195,18 @@ itemCode06:
 	call nz,playSound		; $5778
 
 	jp itemAnimate		; $577b
+
+.ifdef ROM_SEASONS
+magicBoomerangTryToBreakTile:
+	ld e,Item.subid		; $5638
+	ld a,(de)		; $563a
+	or a			; $563b
+	ret z			; $563c
+
+	; level-2
+	ld a,BREAKABLETILESOURCE_07	; $563d
+	jp itemTryToBreakTile		; $563f
+.endif
 
 ;;
 ; Assumes that both objects are of the same size (checks top-left positions)
@@ -14113,6 +14232,7 @@ _itemCheckWithinRangeOfLink:
 	cp b			; $578f
 	ret			; $5790
 
+.ifdef ROM_AGES
 ;;
 ; The chain on the switch hook; cycles between 3 intermediate positions
 ;
@@ -14837,6 +14957,7 @@ _func_5af5:
 	ld l,Item.var2f		; $5afb
 	set 5,(hl)		; $5afd
 	ret			; $5aff
+.endif
 
 ;;
 ; ITEMID_RICKY_TORNADO
@@ -14905,7 +15026,7 @@ itemCode2a:
 
 	jp itemAnimate		; $5b4e
 
-
+.ifdef ROM_AGES
 ;;
 ; ITEMID_SHOOTER
 ; ITEMID_29
@@ -14961,7 +15082,680 @@ itemCode0fPost:
 ; b2/b3: Y/X offsets relative to Link
 @data:
 	.db $00 $00 $00 $00
+.else
+;;
+; ITEMID_MAGNET_GLOVES
+; ITEMID_29
+itemCode29:
+	ld e,Item.state		; $56a6
+	ld a,(de)		; $56a8
+	rst_jumpTable			; $56a9
+        .dw @state0
+        .dw @state1
+        .dw @state2
 
+@state0:
+	ld a,$01		; $56b0
+	ld (de),a		; $56b2
+
+	ld h,d			; $56b3
+	ld l,Item.speed		; $56b4
+	ld (hl),SPEED_40		; $56b6
+	ld l,Item.yh		; $56b8
+	ld a,(hl)		; $56ba
+	ld b,a			; $56bb
+	ld l,Item.xh		; $56bc
+	ld a,(hl)		; $56be
+	ld l,Item.var31		; $56bf
+	ldd (hl),a		; $56c1
+	ld (hl),b		; $56c2
+	call _itemLoadAttributesAndGraphics		; $56c3
+	xor a			; $56c6
+	call itemSetAnimation		; $56c7
+	call objectSetVisiblec3		; $56ca
+
+	ld a,(wActiveGroup)		; $56cd
+	cp >ROOM_SEASONS_494		; $56d0
+	jr nz,@state1	; $56d2
+	ld a,(wActiveRoom)		; $56d4
+	cp <ROOM_SEASONS_494		; $56d7
+	jr nz,@state1	; $56d9
+	ld e,Item.var03		; $56db
+	ld a,$01		; $56dd
+	ld (de),a		; $56df
+
+@state1:
+	call @seasonsFunc_07_56ef		; $56e0
+	call @seasonsFunc_07_590f		; $56e3
+	ld e,Item.collisionType		; $56e6
+	ld a,(de)		; $56e8
+	bit 7,a			; $56e9
+	ret nz			; $56eb
+	jp @seasonsFunc_07_5a06		; $56ec
+
+@seasonsFunc_07_56ef:
+	ld h,d			; $56ef
+	ld l,Item.var03		; $56f0
+	ld a,(hl)		; $56f2
+	or a			; $56f3
+	jr nz,+			; $56f4
+	ld l,Item.collisionType		; $56f6
+	res 7,(hl)		; $56f8
++
+	call @seasonsFunc_07_5a28		; $56fa
+	call @seasonsFunc_07_5a5e		; $56fd
+	ld a,(wMagnetGloveState)		; $5700
+	or a			; $5703
+	jp z,@seasonsFunc_07_57bd		; $5704
+	ld b,$0c		; $5707
+	call objectCheckCenteredWithLink		; $5709
+	jp nc,@seasonsFunc_07_57bd		; $570c
+	call objectGetAngleTowardLink		; $570f
+	add $04			; $5712
+	add a			; $5714
+	swap a			; $5715
+	and $03			; $5717
+	xor $02			; $5719
+	ld b,a			; $571b
+	ld a,(w1Link.direction)		; $571c
+	cp b			; $571f
+	jp nz,@seasonsFunc_07_57bd		; $5720
+	ld e,$10		; $5723
+	ld a,$28		; $5725
+	ld (de),a		; $5727
+	ld e,$32		; $5728
+	ld a,(de)		; $572a
+	or a			; $572b
+	jr z,+			; $572c
+	inc e			; $572e
+	ld a,(de)		; $572f
+	cp $10			; $5730
+	jp nc,@seasonsFunc_07_57bd		; $5732
+	inc e			; $5735
+	ld a,(de)		; $5736
+	cp $10			; $5737
+	jp nc,@seasonsFunc_07_57bd		; $5739
+	ld e,$32		; $573c
+	xor a			; $573e
+	ld (de),a		; $573f
++
+	ld a,(wMagnetGloveState)		; $5740
+	bit 1,a			; $5743
+	jr nz,@seasonsFunc_07_578b	; $5745
+	ld a,($d008)		; $5747
+	ld hl,@seasonsTable_07_587b		; $574a
+	rst_addDoubleIndex			; $574d
+	ld a,($d00b)		; $574e
+	add (hl)		; $5751
+	ldh (<hFF8D),a	; $5752
+	inc hl			; $5754
+	ld a,($d00d)		; $5755
+	add (hl)		; $5758
+	ldh (<hFF8C),a	; $5759
+	push bc			; $575b
+	call @seasonsFunc_07_5842		; $575c
+	pop bc			; $575f
+	jp c,@seasonsFunc_07_5806		; $5760
+	bit 0,b			; $5763
+	jr nz,@seasonsFunc_07_5779	; $5765
+	call @seasonsFunc_07_588d		; $5767
+	ld e,$04		; $576a
+	ld a,(de)		; $576c
+	cp $01			; $576d
+	ret nz			; $576f
+	call @seasonsFunc_07_5972		; $5770
+	call @seasonsFunc_07_594e		; $5773
+	jp @seasonsFunc_07_5883		; $5776
+
+@seasonsFunc_07_5779:
+	call @seasonsFunc_07_5883		; $5779
+	ld e,$04		; $577c
+	ld a,(de)		; $577e
+	cp $01			; $577f
+	ret nz			; $5781
+	call @seasonsFunc_07_5979		; $5782
+	call @seasonsFunc_07_5966		; $5785
+	jp @seasonsFunc_07_588d		; $5788
+
+@seasonsFunc_07_578b:
+	ld a,($d00b)		; $578b
+	ldh (<hFF8D),a	; $578e
+	ld a,($d00d)		; $5790
+	ldh (<hFF8C),a	; $5793
+	bit 0,b			; $5795
+	jr nz,@seasonsFunc_07_57ab	; $5797
+	call @seasonsFunc_07_588d		; $5799
+	ld e,$04		; $579c
+	ld a,(de)		; $579e
+	cp $01			; $579f
+	ret nz			; $57a1
+	call @seasonsFunc_07_5972		; $57a2
+	call @seasonsFunc_07_594e		; $57a5
+	jp @seasonsFunc_07_5897		; $57a8
+
+@seasonsFunc_07_57ab:
+	call @seasonsFunc_07_5883		; $57ab
+	ld e,$04		; $57ae
+	ld a,(de)		; $57b0
+	cp $01			; $57b1
+	ret nz			; $57b3
+	call @seasonsFunc_07_5979		; $57b4
+	call @seasonsFunc_07_5966		; $57b7
+	jp @seasonsFunc_07_58a1		; $57ba
+
+@seasonsFunc_07_57bd:
+	ld e,$33		; $57bd
+	ld a,(de)		; $57bf
+	or a			; $57c0
+	jr z,+			; $57c1
+	ld e,$32		; $57c3
+	ld a,$01		; $57c5
+	ld (de),a		; $57c7
+	call @seasonsFunc_07_5980		; $57c8
+	call @seasonsFunc_07_5980		; $57cb
+	call @seasonsFunc_07_594e		; $57ce
+	ld e,$09		; $57d1
+	ld a,(de)		; $57d3
+	call @seasonsFunc_07_58c3		; $57d4
++
+	ld e,$34		; $57d7
+	ld a,(de)		; $57d9
+	or a			; $57da
+	jr z,+			; $57db
+	ld e,$32		; $57dd
+	ld a,$01		; $57df
+	ld (de),a		; $57e1
+	call @seasonsFunc_07_598f		; $57e2
+	call @seasonsFunc_07_598f		; $57e5
+	call @seasonsFunc_07_5966		; $57e8
+	ld e,$09		; $57eb
+	ld a,(de)		; $57ed
+	call @seasonsFunc_07_58c3		; $57ee
++
+	call objectCheckIsOnHazard		; $57f1
+	jp c,@seasonsFunc_07_57f8		; $57f4
+	ret			; $57f7
+
+@seasonsFunc_07_57f8:
+	ldh (<hFF8B),a	; $57f8
+	call @seasonsFunc_07_5a1f		; $57fa
+	ldh a,(<hFF8B)	; $57fd
+	dec a			; $57ff
+	jp z,objectReplaceWithSplash		; $5800
+	jp objectReplaceWithFallingDownHoleInteraction		; $5803
+
+@seasonsFunc_07_5806:
+	xor a			; $5806
+	ld e,$33		; $5807
+	ld (de),a		; $5809
+	ld e,$34		; $580a
+	ld (de),a		; $580c
+	ld a,(wLinkAngle)		; $580d
+	cp $ff			; $5810
+	ret z			; $5812
+	ld a,(wGameKeysPressed)		; $5813
+	ld b,a			; $5816
+	bit 6,b			; $5817
+	jr z,+			; $5819
+	ld a,$00		; $581b
+	call @seasonsFunc_07_583c		; $581d
+	jr ++			; $5820
+
++
+	bit 7,b			; $5822
+	jr z,++			; $5824
+	ld a,$10		; $5826
+	call @seasonsFunc_07_583c		; $5828
+++
+	ld a,(wGameKeysPressed)		; $582b
+	ld b,a			; $582e
+	bit 4,b			; $582f
+	jr z,+			; $5831
+	ld a,$08		; $5833
+	jr @seasonsFunc_07_583c		; $5835
++
+	bit 5,b			; $5837
+	ld a,$18		; $5839
+	ret z			; $583b
+
+@seasonsFunc_07_583c:
+	ld e,$09		; $583c
+	ld (de),a		; $583e
+	jp @seasonsFunc_07_58c3		; $583f
+
+@seasonsFunc_07_5842:
+	ldh a,(<hFF8D)	; $5842
+	ld b,a			; $5844
+	ldh a,(<hFF8C)	; $5845
+	ld c,a			; $5847
+	jp objectCheckContainsPoint		; $5848
+
+@state2:
+	ld h,d			; $584b
+	ld l,$24		; $584c
+	set 7,(hl)		; $584e
+	ld l,$08		; $5850
+	ldi a,(hl)		; $5852
+	ld (hl),a		; $5853
+	call objectApplySpeed		; $5854
+	ld c,$20		; $5857
+	call objectUpdateSpeedZ_paramC		; $5859
+	ret nz			; $585c
+	ld a,$77		; $585d
+	call playSound		; $585f
+	ld h,d			; $5862
+	ld l,$06		; $5863
+	dec (hl)		; $5865
+	jr z,+			; $5866
+	ld bc,$ff20		; $5868
+	ld l,$14		; $586b
+	ld (hl),c		; $586d
+	inc l			; $586e
+	ld (hl),b		; $586f
+	ld l,$10		; $5870
+	ld (hl),$14		; $5872
+	ret			; $5874
++
+	ld a,$01		; $5875
+	ld e,$04		; $5877
+	ld (de),a		; $5879
+	ret			; $587a
+
+@seasonsTable_07_587b:
+        .db $f0 $00
+        .db $00 $10
+        .db $10 $00
+        .db $00 $f0
+
+@seasonsFunc_07_5883:
+	ld b,$00		; $5883
+	ld c,$10		; $5885
+	call @seasonsFunc_07_58ab		; $5887
+	ret z			; $588a
+	jr @seasonsFunc_07_58c3		; $588b
+
+@seasonsFunc_07_588d:
+	ld b,$18		; $588d
+	ld c,$08		; $588f
+	call @seasonsFunc_07_58bb		; $5891
+	ret z			; $5894
+	jr @seasonsFunc_07_58c3		; $5895
+
+@seasonsFunc_07_5897:
+	ld b,$10		; $5897
+	ld c,$00		; $5899
+	call @seasonsFunc_07_58ab		; $589b
+	ret z			; $589e
+	jr @seasonsFunc_07_58c3		; $589f
+
+@seasonsFunc_07_58a1:
+	ld b,$08		; $58a1
+	ld c,$18		; $58a3
+	call @seasonsFunc_07_58bb		; $58a5
+	ret z			; $58a8
+	jr @seasonsFunc_07_58c3		; $58a9
+
+@seasonsFunc_07_58ab:
+	ldh a,(<hFF8D)	; $58ab
+	ld l,$0b		; $58ad
+	ld e,$33		; $58af
+-
+	ld h,d			; $58b1
+	cp (hl)			; $58b2
+	ld a,b			; $58b3
+	jr c,+			; $58b4
+	ld a,c			; $58b6
++
+	ld l,$09		; $58b7
+	ld (hl),a		; $58b9
+	ret			; $58ba
+
+@seasonsFunc_07_58bb:
+	ldh a,(<hFF8C)	; $58bb
+	ld l,$0d		; $58bd
+	ld e,$34		; $58bf
+	jr -			; $58c1
+
+@seasonsFunc_07_58c3:
+	srl a			; $58c3
+	ld hl,@seasonsTable_07_58ff		; $58c5
+	rst_addAToHl			; $58c8
+	call @seasonsFunc_07_58ed		; $58c9
+	jr c,+			; $58cc
+	call @seasonsFunc_07_58ed		; $58ce
+	jr c,+			; $58d1
+	ld h,d			; $58d3
+	ld l,$24		; $58d4
+	set 7,(hl)		; $58d6
+	call objectApplySpeed		; $58d8
+	jr @seasonsFunc_07_5930		; $58db
++
+	call @seasonsFunc_07_59a9		; $58dd
+	ld e,$09		; $58e0
+	ld a,(de)		; $58e2
+	bit 3,a			; $58e3
+	ld e,$33		; $58e5
+	jr z,+			; $58e7
+	inc e			; $58e9
++
+	xor a			; $58ea
+	ld (de),a		; $58eb
+	ret			; $58ec
+
+@seasonsFunc_07_58ed:
+	ld e,$0b		; $58ed
+	ld a,(de)		; $58ef
+	add (hl)		; $58f0
+	inc hl			; $58f1
+	ld b,a			; $58f2
+	ld e,$0d		; $58f3
+	ld a,(de)		; $58f5
+	add (hl)		; $58f6
+	inc hl			; $58f7
+	ld c,a			; $58f8
+	push hl			; $58f9
+	call checkTileCollisionAt_allowHoles		; $58fa
+	pop hl			; $58fd
+	ret			; $58fe
+
+@seasonsTable_07_58ff:
+        .db $f8 $fc
+        .db $f8 $04
+        .db $fc $08
+        .db $04 $08
+        .db $08 $fc
+        .db $08 $04
+        .db $fc $f8
+        .db $04 $f8
+
+@seasonsFunc_07_590f:
+	call objectGetTileAtPosition		; $590f
+	ld hl,hazardCollisionTable		; $5912
+	call lookupCollisionTable		; $5915
+	ret nc			; $5918
+	call objectGetPosition		; $5919
+	ld a,$05		; $591c
+	add b			; $591e
+	ld b,a			; $591f
+	call checkTileCollisionAt_allowHoles		; $5920
+	ret nc			; $5923
+	ld b,$14		; $5924
+	call @seasonsFunc_07_5961		; $5926
+	ld e,$09		; $5929
+	xor a			; $592b
+	ld (de),a		; $592c
+	jp objectApplySpeed		; $592d
+
+@seasonsFunc_07_5930:
+	ld bc,$a8e8		; $5930
+	ld e,$08		; $5933
+	ld h,d			; $5935
+	ld l,$0b		; $5936
+	ld a,e			; $5938
+	cp (hl)			; $5939
+	jr c,+			; $593a
+	ld (hl),a		; $593c
++
+	ld a,b			; $593d
+	cp (hl)			; $593e
+	jr nc,+			; $593f
+	ld (hl),a		; $5941
++
+	ld l,$0d		; $5942
+	ld a,e			; $5944
+	cp (hl)			; $5945
+	jr c,+			; $5946
+	ld (hl),a		; $5948
++
+	ld a,c			; $5949
+	cp (hl)			; $594a
+	ret nc			; $594b
+	ld (hl),a		; $594c
+	ret			; $594d
+
+@seasonsFunc_07_594e:
+	ld e,$33		; $594e
+--
+	ld a,(de)		; $5950
+	cp $40			; $5951
+	ld b,$78		; $5953
+	jr nc,@seasonsFunc_07_5961	; $5955
+	and $38			; $5957
+	swap a			; $5959
+	rlca			; $595b
+	ld hl,@seasonsTable_596a		; $595c
+	rst_addAToHl			; $595f
+	ld b,(hl)		; $5960
+
+@seasonsFunc_07_5961:
+	ld a,b			; $5961
+	ld e,$10		; $5962
+	ld (de),a		; $5964
+	ret			; $5965
+
+@seasonsFunc_07_5966:
+	ld e,$34		; $5966
+	jr --			; $5968
+
+@seasonsTable_596a:
+        .db $0a $14
+        .db $28 $32
+        .db $3c $46
+        .db $50 $50
+
+@seasonsFunc_07_5972:
+	ld h,d			; $5972
+	ld l,$33		; $5973
+	inc (hl)		; $5975
+	ret nz			; $5976
+	dec (hl)		; $5977
+	ret			; $5978
+
+@seasonsFunc_07_5979:
+	ld h,d			; $5979
+	ld l,$34		; $597a
+	inc (hl)		; $597c
+	ret nz			; $597d
+	dec (hl)		; $597e
+	ret			; $597f
+
+@seasonsFunc_07_5980:
+	ld l,$33		; $5980
+--
+	ld h,d			; $5982
+	ld a,(hl)		; $5983
+	cp $40			; $5984
+	jr c,+			; $5986
+	ld a,$40		; $5988
++
+	or a			; $598a
+	ret z			; $598b
+	dec a			; $598c
+	ld (hl),a		; $598d
+	ret			; $598e
+
+@seasonsFunc_07_598f:
+	ld l,$34		; $598f
+	jr --			; $5991
+
+@seasonsFunc_07_5993:
+	ld e,$0b		; $5993
+	ld a,(de)		; $5995
+	add (hl)		; $5996
+	inc hl			; $5997
+	ld b,a			; $5998
+	ld e,$0d		; $5999
+	ld a,(de)		; $599b
+	add (hl)		; $599c
+	inc hl			; $599d
+	ld c,a			; $599e
+	push hl			; $599f
+	call getTileAtPosition		; $59a0
+	pop hl			; $59a3
+	sub $b0			; $59a4
+	cp $04			; $59a6
+	ret			; $59a8
+
+@seasonsFunc_07_59a9:
+	call @seasonsFunc_07_59fb		; $59a9
+	add a			; $59ac
+	ld hl,@seasonsTable_07_58ff		; $59ad
+	rst_addDoubleIndex			; $59b0
+	call @seasonsFunc_07_5993		; $59b1
+	ret nc			; $59b4
+	call @seasonsFunc_07_5993		; $59b5
+	ret nc			; $59b8
+	add $02			; $59b9
+	and $03			; $59bb
+	swap a			; $59bd
+	rrca			; $59bf
+	ld b,a			; $59c0
+	ld e,$09		; $59c1
+	ld a,(de)		; $59c3
+	cp b			; $59c4
+	ret nz			; $59c5
+	sra a			; $59c6
+	ld hl,@seasonsTable_07_59eb		; $59c8
+	rst_addAToHl			; $59cb
+	ldi a,(hl)		; $59cc
+	ld e,$08		; $59cd
+	ld (de),a		; $59cf
+	ldi a,(hl)		; $59d0
+	ld e,$10		; $59d1
+	ld (de),a		; $59d3
+	ldi a,(hl)		; $59d4
+	ld e,$14		; $59d5
+	ld (de),a		; $59d7
+	inc e			; $59d8
+	ld a,(hl)		; $59d9
+	ld (de),a		; $59da
+	xor a			; $59db
+	ld h,d			; $59dc
+	ld l,$32		; $59dd
+	ldi (hl),a		; $59df
+	ldi (hl),a		; $59e0
+	ld (hl),a		; $59e1
+	ld l,$06		; $59e2
+	ld (hl),$02		; $59e4
+	ld l,$04		; $59e6
+	ld (hl),$02		; $59e8
+	ret			; $59ea
+
+@seasonsTable_07_59eb:
+        .db $00 $28
+        .db $40 $fe
+        .db $08 $28
+        .db $40 $fe
+        .db $10 $28
+        .db $40 $fe
+        .db $18 $28
+        .db $40 $fe
+
+@seasonsFunc_07_59fb:
+	ld e,$09		; $59fb
+	ld a,(de)		; $59fd
+	add $04			; $59fe
+	add a			; $5a00
+	swap a			; $5a01
+	and $03			; $5a03
+	ret			; $5a05
+
+@seasonsFunc_07_5a06:
+	ld hl,$d080		; $5a06
+-
+	ld a,(hl)		; $5a09
+	or a			; $5a0a
+	call nz,@seasonsFunc_07_5a15		; $5a0b
+	inc h			; $5a0e
+	ld a,h			; $5a0f
+	cp $e0			; $5a10
+	jr c,-			; $5a12
+	ret			; $5a14
+
+@seasonsFunc_07_5a15:
+	push hl			; $5a15
+	ld l,$8f		; $5a16
+	bit 7,(hl)		; $5a18
+	call z,preventObjectHFromPassingObjectD		; $5a1a
+	pop hl			; $5a1d
+	ret			; $5a1e
+
+@seasonsFunc_07_5a1f:
+	ld e,$30		; $5a1f
+	ld a,(de)		; $5a21
+	ld b,a			; $5a22
+	inc e			; $5a23
+	ld a,(de)		; $5a24
+	ld c,a			; $5a25
+	jr +			; $5a26
+
+@seasonsFunc_07_5a28:
+	call objectCheckIsOnHazard		; $5a28
+	ret c			; $5a2b
+	ld e,$0b		; $5a2c
+	ld a,(de)		; $5a2e
+	ld b,a			; $5a2f
+	ld e,$0d		; $5a30
+	ld a,(de)		; $5a32
+	ld c,a			; $5a33
++
+	ld e,$16		; $5a34
+	ld a,(de)		; $5a36
+	ld l,a			; $5a37
+	inc e			; $5a38
+	ld a,(de)		; $5a39
+	ld h,a			; $5a3a
+	push bc			; $5a3b
+	ld bc,$0004		; $5a3c
+	add hl,bc		; $5a3f
+	pop bc			; $5a40
+	ld a,b			; $5a41
+	cp $18			; $5a42
+	jr nc,+			; $5a44
+	ld a,$18		; $5a46
++
+	cp $99			; $5a48
+	jr c,+			; $5a4a
+	ld a,$98		; $5a4c
++
+	ldi (hl),a		; $5a4e
+	ld a,c			; $5a4f
+	cp $18			; $5a50
+	jr nc,+			; $5a52
+	ld a,$18		; $5a54
++
+	cp $d9			; $5a56
+	jr c,+			; $5a58
+	ld a,$d8		; $5a5a
++
+	ld (hl),a		; $5a5c
+	ret			; $5a5d
+
+@seasonsFunc_07_5a5e:
+	ld a,(wLinkInAir)		; $5a5e
+	rlca			; $5a61
+	ret c			; $5a62
+	ld a,($d004)		; $5a63
+	cp $01			; $5a66
+	ret nz			; $5a68
+	call objectCheckCollidedWithLink_ignoreZ		; $5a69
+	ret nc			; $5a6c
+	ld a,($d00b)		; $5a6d
+	ld b,a			; $5a70
+	ld a,($d00d)		; $5a71
+	ld c,a			; $5a74
+	call objectCheckContainsPoint		; $5a75
+	jr c,+			; $5a78
+	call objectGetAngleTowardLink		; $5a7a
+	ld c,a			; $5a7d
+	ld b,$78		; $5a7e
+	jp updateLinkPositionGivenVelocity		; $5a80
++
+	call objectGetAngleTowardLink		; $5a83
+	ld c,a			; $5a86
+	ld b,$14		; $5a87
+	jp updateLinkPositionGivenVelocity		; $5a89
+.endif
 
 ;;
 ; ITEMID_28 (ricky/moosh attack?)
@@ -15104,7 +15898,7 @@ itemCode15:
 	ret nz			; $5c45
 	jp itemDelete		; $5c46
 
-
+.ifdef ROM_AGES
 ;;
 ; ITEMID_CANE_OF_SOMARIA
 ; @addr{5c49}
@@ -15543,7 +16337,46 @@ itemCode18:
 	dec (hl)		; $5e57
 	dec (hl)		; $5e58
 	ret			; $5e59
-
+.else
+; ITEMID_ROD_OF_SEASONS
+itemCode07:
+	call $4a0a		; $5b49
+	ld e,$04		; $5b4c
+	ld a,(de)		; $5b4e
+	rst_jumpTable			; $5b4f
+	ld d,h			; $5b50
+	ld e,e			; $5b51
+	ld (hl),b		; $5b52
+	ld e,e			; $5b53
+	ld a,$01		; $5b54
+	ld (de),a		; $5b56
+	ld h,d			; $5b57
+	ld l,$00		; $5b58
+	ld (hl),$03		; $5b5a
+	ld l,$06		; $5b5c
+	ld (hl),$10		; $5b5e
+	ld a,$74		; $5b60
+	call playSound		; $5b62
+	ld a,$1c		; $5b65
+	call loadWeaponGfx		; $5b67
+	call _itemLoadAttributesAndGraphics		; $5b6a
+	jp objectSetVisible82		; $5b6d
+	ld h,d			; $5b70
+	ld l,$06		; $5b71
+	dec (hl)		; $5b73
+	ret nz			; $5b74
+	ld a,($ccb6)		; $5b75
+	cp $08			; $5b78
+	ret nz			; $5b7a
+	call getFreeInteractionSlot		; $5b7b
+	ret nz			; $5b7e
+	ld (hl),$15		; $5b7f
+	ld e,$09		; $5b81
+	ld l,$49		; $5b83
+	ld a,(de)		; $5b85
+	ldi (hl),a		; $5b86
+	jp objectCopyPosition		; $5b87
+.endif
 
 ;;
 ; ITEMID_MINECART_COLLISION
@@ -15572,21 +16405,83 @@ itemCode1dPost:
 	jp z,objectTakePosition		; $5e70
 	jp itemDelete		; $5e73
 
-
+.ifdef ROM_AGES
 ;;
 ; ITEMID_SLINGSHOT
 ; @addr{5e76}
 itemCode13:
 	ret			; $5e76
+.else
+; ITEMID_SLINGSHOT
+itemCode13:
+	ld e,Item.state		; $5ba6
+	ld a,(de)		; $5ba8
+	or a			; $5ba9
+	ret nz			; $5baa
+	ld a,$1d		; $5bab
+	call loadWeaponGfx		; $5bad
+	call _loadAttributesAndGraphicsAndIncState		; $5bb0
+	ld h,d			; $5bb3
+	ld a,(wSlingshotLevel)		; $5bb4
+	or $08			; $5bb7
+	ld l,$1b		; $5bb9
+	ldi (hl),a		; $5bbb
+	ld (hl),a		; $5bbc
+	jp objectSetVisible81		; $5bbd
 
+foolsOreRet:
+	ret			; $5bc0
+
+; ITEMID_MAGNET_GLOVES
+itemCode08:
+	ld e,Item.state		; $5bc1
+	ld a,(de)		; $5bc3
+	rst_jumpTable			; $5bc4
+        .dw @state0
+        .dw @state1
+
+@state0:
+	ld a,$1e		; $5bc9
+	call loadWeaponGfx	; $5bcb
+	call _loadAttributesAndGraphicsAndIncState		; $5bce
+	call objectSetVisible81		; $5bd1
+
+@state1:
+	ld a,(wMagnetGloveState)		; $5bd4
+	bit 1,a			; $5bd7
+	ld a,$0c		; $5bd9
+	jr z,+			; $5bdb
+	inc a			; $5bdd
++
+	ld h,d			; $5bde
+	ld l,Item.oamFlagsBackup		; $5bdf
+	ldi (hl),a		; $5be1
+	ld (hl),a		; $5be2
+	ret			; $5be3
+.endif
+
+; ITEMID_FOOLS_ORE
+itemCode1e:
+.ifdef ROM_SEASONS
+	ld e,Item.state		; $5be4
+	ld a,(de)		; $5be6
+	rst_jumpTable			; $5be7
+        .dw @state0
+        .dw foolsOreRet
+
+@state0:
+	ld a,$1f		; $5bec
+	call loadWeaponGfx		; $5bee
+	call _loadAttributesAndGraphicsAndIncState		; $5bf1
+	xor a			; $5bf4
+	call itemSetAnimation		; $5bf5
+	jp objectSetVisible82		; $5bf8
+.endif
 
 ;;
 ; ITEMID_BIGGORON_SWORD
-; ITEMID_FOOLS_ORE
-;
 ; @addr{5e77}
 itemCode0c:
-itemCode1e:
 	ld e,Item.state		; $5e77
 	ld a,(de)		; $5e79
 	rst_jumpTable			; $5e7a
@@ -15892,7 +16787,11 @@ itemCode27:
 ; @addr{5fca}
 _updateSwingableItemAnimation:
 	ld l,Item.animParameter		; $5fca
+.ifdef ROM_AGES
 	cp $04			; $5fcc
+.else
+	cp $07			; $5fcc
+.endif
 	jr z,_label_07_227	; $5fce
 	bit 6,(hl)		; $5fd0
 	jr z,_label_07_227	; $5fd2
@@ -16111,10 +17010,14 @@ _itemInitializeFromLinkPosition:
 	ld (de),a		; $60dc
 
 	; Y
+.ifdef ROM_AGES
 	ld a,(wLinkRaisedFloorOffset)		; $60dd
 	ld b,a			; $60e0
 	ld a,(w1Link.yh)		; $60e1
 	add b			; $60e4
+.else
+	ld a,(w1Link.yh)		; $5e61
+.endif
 	add (hl)		; $60e5
 	ld e,Item.yh		; $60e6
 	ld (de),a		; $60e8
@@ -16236,9 +17139,9 @@ _tryBreakTileWithSword:
 
 	; Copy tile position, then tile index
 	ldh a,(<hFF93)	; $61ba
-	ld ($ccb0),a		; $61bc
+	ld (wccb0),a		; $61bc
 	ldh a,(<hFF92)	; $61bf
-	ld ($ccaf),a		; $61c1
+	ld (wccaf),a		; $61c1
 	pop bc			; $61c4
 
 	; Return if the tile was broken
@@ -16316,6 +17219,7 @@ _tryBreakTileWithSword:
 	.dw @collisions4
 	.dw @collisions5
 
+.ifdef ROM_AGES
 @collisions0:
 @collisions4:
 	.db $c1 $c2 $c4 $d1 $cf
@@ -16339,7 +17243,37 @@ _tryBreakTileWithSword:
 	.db $00
 
 	.db $00
+.else
+@collisions0:
+        .db $c1 $c2 $e2 $cb
+        .db $00
 
+        .db $fd $fe $ff $d9 $da $20 $d7
+
+@collisions1:
+	.db $00
+
+	.db $fd
+
+@collisions2:
+	.db $00
+	.db $00
+
+@collisions3:
+@collisions4:
+        .db $1f $30 $31 $32 $33 $38 $39 $3a $3b
+        .db $00
+
+        .db $0a $0b
+        .db $00
+
+
+@collisions5:
+	.db $12
+	.db $00
+
+	.db $00
+.endif
 
 ;;
 ; Calculates the value for Item.damage, accounting for ring modifiers.
@@ -16589,7 +17523,11 @@ itemCode16:
 @state3:
 	call _braceletCheckDeleteSelfWhileThrowing		; $632c
 	call _itemUpdateThrowingLaterally		; $632f
+.ifdef ROM_AGES
 	jr z,@@destroyWithAnimation	; $6332
+.else
+	jr z,@@preDestroyWithAnimation	; $6332
+.endif
 
 	ld e,Item.var39		; $6334
 	ld a,(de)		; $6336
@@ -16599,7 +17537,17 @@ itemCode16:
 
 	; If it's breakable, destroy it; if not, let it bounce
 	call _braceletCheckBreakable		; $633d
+
+.ifdef ROM_AGES
 	jr nz,@@destroyWithAnimation	; $6340
+.else
+	jr nz,@@preDestroyWithAnimation	; $60c2
+	jr nc,+			; $60c4
+	call objectReplaceWithAnimationIfOnHazard		; $60c6
+	ret c			; $60c9
++
+.endif
+
 	call _itemBounce		; $6342
 	jr c,@@release		; $6345
 
@@ -16614,10 +17562,28 @@ itemCode16:
 	jp objectCopyPosition		; $6351
 
 @@release:
+.ifdef ROM_SEASONS
+	ld e,$02		; $60dc
+	ld a,(de)		; $60de
+	cp $d7			; $60df
+	jr z,@@createPuff	; $60e1
+.endif
+
 	ld a,Object.state2		; $6354
 	call objectGetRelatedObject2Var		; $6356
 	ld (hl),$03		; $6359
 	jp itemDelete		; $635b
+
+.ifdef ROM_SEASONS
+@@preDestroyWithAnimation:
+	ld e,Item.subid		; $60ed
+	ld a,(de)		; $60ef
+	cp $d7			; $60f0
+	jr nz,@@destroyWithAnimation	; $60f2
+@@createPuff:
+	call objectCreatePuff		; $60f4
+	jp itemDelete		; $60f7
+.endif
 
 @@destroyWithAnimation:
 	call objectReplaceWithAnimationIfOnHazard		; $635e
@@ -16634,6 +17600,9 @@ _braceletCheckBreakable:
 	ld a,(de)		; $636f
 	or a			; $6370
 	ret z			; $6371
+.ifdef ROM_SEASONS
+	cp $d7			; $610e
+.endif
 	scf			; $6372
 	ret			; $6373
 
@@ -16801,7 +17770,11 @@ _itemUpdateThrowingLaterally:
 	; Check whether the "weight" value for the item equals 3?
 	cp $40			; $640a
 	jr nc,+			; $640c
+.ifdef ROM_AGES
 	cp $30			; $640e
+.else
+	cp $20			; $640e
+.endif
 	jr nc,@weight3		; $6410
 +
 	; Return if not moving
@@ -16943,8 +17916,13 @@ _data_649a:
 _itemWeights:
 	.db $1c $10 SPEED_180 SPEED_280
 	.db $20 $00 SPEED_080 SPEED_100
+.ifdef ROM_AGES
 	.db $28 $20 SPEED_1a0 SPEED_280
 	.db $20 $00 SPEED_080 SPEED_100
+.else
+        .db $20 $00 SPEED_100 SPEED_180
+        .db $20 $00 SPEED_0c0 SPEED_100
+.endif
 	.db $20 $e0 SPEED_140 SPEED_180
 	.db $20 $00 SPEED_080 SPEED_100
 

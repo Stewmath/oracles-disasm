@@ -1601,7 +1601,7 @@ wRememberedCompanionX: ; $cc28/$cc44
 
 
 ; Dunno what the distinction is between these and wKeysPressed, wKeysJustPressed?
-wGameKeysPressed: ; $cc29
+wGameKeysPressed: ; $cc29/$cc45
 	db
 wGameKeysJustPressed: ; $cc2a/$cc46
 	db
