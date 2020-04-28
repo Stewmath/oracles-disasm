@@ -267,14 +267,13 @@ area1aSeasons:
 	.db $0f $01 $00 $4d $65 $19 $01 $0a ; 0xcd
 	.db $0f $01 $00 $4e $66 $1a $02 $05 ; 0xce
 
-
-; The rest is unused?
-
+seasonsFunc_04_6ce6Seasons:
 	.db $0f $01 $00 $48 $30 $16 $04 $08 ; 0xcf
 	.db $0f $01 $00 $49 $31 $16 $04 $08 ; 0xd0
 	.db $0f $01 $00 $4a $32 $16 $04 $08 ; 0xd1
 	.db $0f $01 $00 $4b $33 $16 $04 $08 ; 0xd2
 
+moblinKeepSeasons:
 	.db $0f $01 $00 $4c $64 $18 $03 $00 ; 0xd3
 	.db $0f $01 $00 $4c $64 $18 $03 $00 ; 0xd4
 	.db $0f $01 $00 $4d $65 $19 $03 $0a ; 0xd5

@@ -6844,17 +6844,21 @@ _label_0a_259:
 	call interactionRunScript		; $69cd
 	jp c,interactionDelete		; $69d0
 	ret			; $69d3
-	ld a,$08		; $69d4
-	ld ($cc6a),a		; $69d6
-	ld hl,$d008		; $69d9
-	ld (hl),$02		; $69dc
-	ld l,$0b		; $69de
+
+seasonsFunc_0a_69d4:
+	ld a,LINK_STATE_08		; $69d4
+	ld (wLinkForceState),a		; $69d6
+	ld hl,w1Link.direction		; $69d9
+	ld (hl),DIR_DOWN		; $69dc
+	ld l,<w1Link.yh		; $69de
 	ld (hl),$18		; $69e0
-	ld l,$0d		; $69e2
+	ld l,<w1Link.xh		; $69e2
 	ld (hl),$48		; $69e4
 	ret			; $69e6
+
+seasonsFunc_0a_69e7:
 	add a			; $69e7
-	ld bc,$6a02		; $69e8
+	ld bc,seasonsTable_0a_6a02		; $69e8
 	call addDoubleIndexToBc		; $69eb
 	call getFreeInteractionSlot		; $69ee
 	ret nz			; $69f1
@@ -6871,14 +6875,12 @@ _label_0a_259:
 	ld a,(bc)		; $69ff
 	ld (hl),a		; $6a00
 	ret			; $6a01
-	inc bc			; $6a02
-	ld h,b			; $6a03
-	inc h			; $6a04
-	nop			; $6a05
-	inc b			; $6a06
-	ld d,b			; $6a07
-	ld c,b			; $6a08
-	nop			; $6a09
+
+seasonsTable_0a_6a02:
+        .db $03 $60 $24 $00
+        .db $04 $50 $48 $00
+
+seasonsFunc_0a_6a0a:
 	ld bc,$6a2b		; $6a0a
 	ld e,$02		; $6a0d
 _label_0a_260:
@@ -6903,6 +6905,7 @@ _label_0a_260:
 	dec e			; $6a27
 	jr nz,_label_0a_260	; $6a28
 	ret			; $6a2a
+
 	nop			; $6a2b
 	ld d,(hl)		; $6a2c
 	jr z,_label_0a_261	; $6a2d
@@ -9517,14 +9520,19 @@ _label_0a_355:
 	ret			; $7a75
 	ld a,$1e		; $7a76
 	jp checkGlobalFlag		; $7a78
+
+seasonsFunc_0a_7a7b:
 	call checkIsLinkedGame		; $7a7b
 	ret z			; $7a7e
-	ld a,$1f		; $7a7f
+
+	ld a,GLOBALFLAG_S_1f		; $7a7f
 	call checkGlobalFlag		; $7a81
-	jp z,$7a89		; $7a84
+	jp z,seasonsFunc_0a_7a89		; $7a84
 	xor a			; $7a87
 	ret			; $7a88
-	ld a,$19		; $7a89
+
+seasonsFunc_0a_7a89:
+	ld a,GLOBALFLAG_S_19		; $7a89
 	jp checkGlobalFlag		; $7a8b
 	sub d			; $7a8e
 	ld a,d			; $7a8f
@@ -9594,6 +9602,7 @@ _label_0a_356:
 	ret c			; $7af6
 	call interactionDecCounter1		; $7af7
 	ret nz			; $7afa
+
 _label_0a_357:
 	inc l			; $7afb
 	ldd a,(hl)		; $7afc

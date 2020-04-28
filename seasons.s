@@ -6134,7 +6134,7 @@ _label_04_327:
 	ld d,(hl)		; $6c6b
 	ret			; $6c6c
 loadTilesetData_body:
-	call $6ce6		; $6c6d
+	call seasonsFunc_04_6ce6		; $6c6d
 	jr c,_label_04_328	; $6c70
 	call $6d17		; $6c72
 	jr c,_label_04_328	; $6c75
@@ -6205,69 +6205,83 @@ _label_04_330:
 	ld a,$20		; $6ce0
 	ld ($cd20),a		; $6ce2
 	ret			; $6ce5
-	ld a,$15		; $6ce6
+
+seasonsFunc_04_6ce6:
+	ld a,GLOBALFLAG_S_15		; $6ce6
 	call checkGlobalFlag		; $6ce8
 	ret z			; $6ceb
-	call $6cff		; $6cec
+
+	call seasonsFunc_04_6cff		; $6cec
 	ret nc			; $6cef
-	ld a,($cc4e)		; $6cf0
+
+	ld a,(wRoomStateModifier)		; $6cf0
 	call multiplyABy8		; $6cf3
-	ld hl,$52fc		; $6cf6
+	ld hl,seasonsFunc_04_6ce6Seasons		; $6cf6
 	add hl,bc		; $6cf9
-_label_04_331:
+--
 	xor a			; $6cfa
 	ldh (<hFF8B),a	; $6cfb
 	scf			; $6cfd
 	ret			; $6cfe
-	ld a,($cc49)		; $6cff
+
+seasonsFunc_04_6cff:
+	ld a,(wActiveGroup)		; $6cff
 	or a			; $6d02
 	ret nz			; $6d03
-	ld a,($cc4c)		; $6d04
+	ld a,(wActiveRoom)		; $6d04
 	cp $14			; $6d07
-	jr c,_label_04_332	; $6d09
+	jr c,+			; $6d09
 	sub $04			; $6d0b
 	cp $30			; $6d0d
 	ret nc			; $6d0f
 	and $0f			; $6d10
 	cp $04			; $6d12
 	ret			; $6d14
-_label_04_332:
++
 	xor a			; $6d15
 	ret			; $6d16
-	ld a,($cc49)		; $6d17
+
+getMoblinKeepSeasons:
+	ld a,(wActiveGroup)		; $6d17
 	or a			; $6d1a
 	ret nz			; $6d1b
-	call $6d36		; $6d1c
+
+	call getMoblinKeepScreenIndex		; $6d1c
 	ret nc			; $6d1f
-	ld a,$16		; $6d20
+
+	ld a,GLOBALFLAG_MOBLINS_KEEP_DESTROYED		; $6d20
 	call checkGlobalFlag		; $6d22
 	ret z			; $6d25
-	ld a,($c610)		; $6d26
+
+	ld a,(wAnimalCompanion)		; $6d26
 	sub $0a			; $6d29
 	and $03			; $6d2b
 	call multiplyABy8		; $6d2d
-	ld hl,$531c		; $6d30
+	ld hl,moblinKeepSeasons		; $6d30
 	add hl,bc		; $6d33
-	jr _label_04_331		; $6d34
-	ld a,($cc4c)		; $6d36
+	jr --			; $6d34
+
+;;
+; @param[out]	b	5 if on 1st room of Moblin Keep, decreasing by 1 for subsequent rooms
+; @param[out]	cflag	Set if active room is in Moblin keep
+getMoblinKeepScreenIndex:
+	ld a,(wActiveRoom)		; $6d36
 	ld b,$05		; $6d39
-	ld hl,$6d49		; $6d3b
-_label_04_333:
+	ld hl,moblinKeepRooms		; $6d3b
+-
 	cp (hl)			; $6d3e
-	jr z,_label_04_334	; $6d3f
+	jr z,+			; $6d3f
 	inc hl			; $6d41
 	dec b			; $6d42
-	jr nz,_label_04_333	; $6d43
+	jr nz,-			; $6d43
 	xor a			; $6d45
 	ret			; $6d46
-_label_04_334:
++
 	scf			; $6d47
 	ret			; $6d48
-	ld e,e			; $6d49
-	ld e,h			; $6d4a
-	ld l,e			; $6d4b
-	ld l,h			; $6d4c
-	ld a,e			; $6d4d
+
+moblinKeepRooms:
+        .db $5b $5c $6b $6c $7b
 
 	.include "build/data/warpData.s"
 

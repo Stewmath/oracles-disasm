@@ -2813,7 +2813,7 @@ paletteFadeHandler:
 	.dw _paletteFadeHandler05
 	.dw _paletteFadeHandler06
 	.dw _paletteFadeHandler07
-	.dw _paletteFadeHandler08
+	.dw paletteFadeHandler08
 	.dw _paletteFadeHandler09
 	.dw _paletteFadeHandler0a
 	.dw _paletteFadeHandler0b
@@ -3114,11 +3114,12 @@ _paletteFadeHandler07:
 ;;
 ; Fade between two palettes
 ; @addr{580f}
-_paletteFadeHandler08:
+paletteFadeHandler08:
 	ld hl,wPaletteThread_fadeOffset		; $580f
 	dec (hl)		; $5812
 	jr z,@stop			; $5813
 
+@seasonsFunc_01_5816:
 	; Get bits 1-4 in 'b'
 	ld a,(hl)		; $5815
 	rrca			; $5816

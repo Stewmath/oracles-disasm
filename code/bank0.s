@@ -13079,26 +13079,25 @@ checkDungeonUsesToggleBlocks:
 
 .else ; ROM_SEASONS
 seasonsFunc_35cc:
-	ld a,($ff00+$70)	; $35cc
+	ld a,($ff00+R_SVBK)	; $35cc
 	ld c,a			; $35ce
-	ld a,($ff00+$97)	; $35cf
+	ldh a,(<hRomBank)	; $35cf
 	ld b,a			; $35d1
 	push bc			; $35d2
 	ld a,$02		; $35d3
-	ld ($ff00+$70),a	; $35d5
+	ld ($ff00+R_SVBK),a	; $35d5
 	callfrombank0 bank1.paletteThread_calculateFadingPalettes
 	pop bc			; $35e1
 	ld a,b			; $35e2
-	ld ($ff00+$97),a	; $35e3
-	ld ($2222),a		; $35e5
+	setrombank
 	ld a,c			; $35e8
-	ld ($ff00+$70),a	; $35e9
+	ld ($ff00+R_SVBK),a	; $35e9
 	ret			; $35eb
 
 func_35ec:
-	ld a,($ff00+$97)	; $35ec
+	ldh a,(<hRomBank)	; $35ec
 	push af			; $35ee
-	callfrombank0 $01 $565d
+	callfrombank0 bank1.paletteFadeHandler08@seasonsFunc_01_5816
 	pop af			; $35f9
 	setrombank
 	ret			; $35ff
@@ -13605,14 +13604,15 @@ seasonsFunc_3870:
 	ld a,GLOBALFLAG_S_15		; $3870
 	call checkGlobalFlag		; $3872
 	ret z			; $3875
-	callfrombank0 $04 $6cff		; $3876
+
+	callfrombank0 seasonsFunc_04_6cff		; $3876
 	ret nc			; $3880
-	ld a,($cc4e)		; $3881
+	ld a,(wRoomStateModifier)		; $3881
 	ld hl,@data		; $3884
-	rst $10			; $3887
-	ld a,($cc4c)		; $3888
+	rst_addAToHl			; $3887
+	ld a,(wActiveRoom)		; $3888
 	add (hl)		; $388b
-	ld ($cc4b),a		; $388c
+	ld (wLoadingRoom),a		; $388c
 	ret			; $388f
 
 @data:
@@ -14132,16 +14132,19 @@ setInterleavedTile:
 
 seasonsFunc_3a9c:
 	ld b,a			; $3a9c
-	ld a,($cc49)		; $3a9d
+	ld a,(wActiveGroup)		; $3a9d
 	or a			; $3aa0
 	ret nz			; $3aa1
-	ld a,($cc4d)		; $3aa2
+
+	ld a,(wRoomPack)		; $3aa2
 	cp $f1			; $3aa5
 	ret nc			; $3aa7
+
+	; Natzu
 	ld a,b			; $3aa8
-	ld ($cc4e),a		; $3aa9
+	ld (wRoomStateModifier),a		; $3aa9
 	ld a,$02		; $3aac
-	ld ($cc68),a		; $3aae
+	ld (wcc4c),a		; $3aae
 	ret			; $3ab1
 
 checkRoomPackAfterWarp:
@@ -14333,7 +14336,7 @@ seasonsFunc_3d30:
 seasonsFunc_3d3d:
 	ldh a,(<hRomBank)	; $3d3d
 	push af			; $3d3f
-	callfrombank0 $0a $7a7b		; $3d40
+	callfrombank0 seasonsFunc_0a_7a7b		; $3d40
 	push af			; $3d4a
 	pop bc			; $3d4b
 	pop af			; $3d4c
@@ -14696,9 +14699,9 @@ setLinkDirection:
 .else ; ROM_SEASONS
 
 seasonsFunc_3e07:
-	ld a,($ff00+$97)	; $3e07
+	ldh a,(<hRomBank)	; $3e07
 	push af			; $3e09
-	callfrombank0 $08 $57db		; $3e0a
+	callfrombank0 _label_08_140		; $3e0a
 	ld c,$01		; $3e14
 	jr c,+			; $3e16
 	dec c			; $3e18
@@ -14708,29 +14711,29 @@ seasonsFunc_3e07:
 	ret			; $3e1f
 
 seasonsFunc_3e20:
-	ld a,($ff00+$97)	; $3e20
+	ldh a,(<hRomBank)	; $3e20
 	push af			; $3e22
-	callfrombank0 $09 $7d8b		; $3e23
-	callfrombank0 $15 $60fc		; $3e2d
+	callfrombank0 seasonsFunc_09_7d8b		; $3e23
+	callfrombank0 seasonsFunc_15_60fc		; $3e2d
 	pop af			; $3e37
 	setrombank		; $3e38
 	ret			; $3e3d
 
 seasonsFunc_3e3e:
-	ld a,($ff00+$97)	; $3e3e
+	ldh a,(<hRomBank)	; $3e3e
 	push af			; $3e40
-	callfrombank0 $08 $5874		; $3e41
+	callfrombank0 _label_08_147		; $3e41
 	pop af			; $3e4b
 	setrombank		; $3e4c
 	ret			; $3e51
 
 seasonsFunc_3e52:
-	ld a,($ff00+$97)	; $3e52
+	ldh a,(<hRomBank)	; $3e52
 	push af			; $3e54
-	callfrombank0 $0a $69d4 		; $3e55
+	callfrombank0 seasonsFunc_0a_69d4 		; $3e55
 	ld a,$01		; $3e5f
-	call $69e7		; $3e61
-	call $6a0a		; $3e64
+	call seasonsFunc_0a_69e7		; $3e61
+	call seasonsFunc_0a_6a0a		; $3e64
 	pop af			; $3e67
 	setrombank		; $3e68
 	ret			; $3e6d
@@ -14776,13 +14779,14 @@ interactionFunc_3e6d:
 .ifdef ROM_SEASONS
 
 seasonsFunc_3e8f:
-	ld a,($ff00+$97)	; $3e8f
+	ldh a,(<hRomBank)	; $3e8f
 	push af			; $3e91
 	ld a,$04		; $3e92
 	setrombank
 	ld hl,$7655		; $3e99
 	ld a,(hl)		; $3e9c
-	ld ($cc64),a		; $3e9d
+	; ROOM_SEASONS_052
+	ld (wWarpDestRoom),a		; $3e9d
 	pop af			; $3ea0
 	setrombank		; $3ea1
 	ret			; $3ea6

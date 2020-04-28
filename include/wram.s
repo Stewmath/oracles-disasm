@@ -1634,7 +1634,7 @@ wRoomIsLarge: ; $cc2e
 ; $00 for normal-size rooms, $01 for large rooms
 	db
 
-wLoadingRoom: ; $cc2f
+wLoadingRoom: ; $cc2f/$cc4b
 	db
 wActiveRoom: ; $cc30/$cc4c
 	db

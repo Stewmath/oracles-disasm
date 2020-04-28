@@ -9181,14 +9181,16 @@ _label_09_309:
 	call $7df6		; $7d82
 	call interactionRunScript		; $7d85
 	jp interactionAnimate		; $7d88
-	ld a,$28		; $7d8b
+
+seasonsFunc_09_7d8b:
+	ld a,GLOBALFLAG_FINISHEDGAME		; $7d8b
 	call checkGlobalFlag		; $7d8d
-	jp nz,$7df0		; $7d90
-	ld a,$40		; $7d93
+	jp nz,seasonsFunc_09_7df0		; $7d90
+	ld a,TREASURE_ESSENCE		; $7d93
 	call checkTreasureObtained		; $7d95
-	jr c,_label_09_310	; $7d98
+	jr c,+			; $7d98
 	xor a			; $7d9a
-_label_09_310:
++
 	cp $17			; $7d9b
 	jr z,_label_09_313	; $7d9d
 	cp $1f			; $7d9f
@@ -9237,6 +9239,8 @@ _label_09_316:
 _label_09_317:
 	ld a,$0d		; $7dec
 	jr _label_09_318		; $7dee
+
+seasonsFunc_09_7df0:
 	ld a,$0e		; $7df0
 _label_09_318:
 	ld ($cc39),a		; $7df2

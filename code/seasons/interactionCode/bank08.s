@@ -2712,19 +2712,19 @@ _label_08_093:
 	jp objectSetVisible82		; $5135
 
 interactionCode15:
-	ld a,($cc02)		; $5138
+	ld a,(wMenuDisabled)		; $5138
 	ld b,a			; $513b
-	ld a,($cc34)		; $513c
+	ld a,(wLinkDeathTrigger)		; $513c
 	or b			; $513f
-	jr nz,_label_08_095	; $5140
-	ld a,($cc49)		; $5142
+	jr nz,+			; $5140
+	ld a,(wActiveGroup)		; $5142
 	or a			; $5145
-	jr nz,_label_08_095	; $5146
-	ld hl,$c6b0		; $5148
+	jr nz,+			; $5146
+	ld hl,wObtainedSeasons		; $5148
 	ld a,(hl)		; $514b
 	add a			; $514c
-	jr z,_label_08_095	; $514d
-	ld a,($cc4e)		; $514f
+	jr z,+			; $514d
+	ld a,(wRoomStateModifier)		; $514f
 _label_08_094:
 	inc a			; $5152
 	and $03			; $5153
@@ -2733,11 +2733,11 @@ _label_08_094:
 	ld a,b			; $5159
 	jr z,_label_08_094	; $515a
 	call seasonsFunc_3a9c		; $515c
-	ld a,$5c		; $515f
+	ld a,SND_ENERGYTHING		; $515f
 	call playSound		; $5161
 	ld a,$02		; $5164
-	ld ($c4ad),a		; $5166
-_label_08_095:
+	ld (wPaletteThread_updateRate),a		; $5166
++
 	jp interactionDelete		; $5169
 
 interactionCode1f:

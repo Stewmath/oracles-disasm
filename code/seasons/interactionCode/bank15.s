@@ -2627,14 +2627,18 @@ _label_15_248:
 _label_15_249:
 	ld b,$17		; $60f7
 	jp showText		; $60f9
-	ld a,($cc39)		; $60fc
-	ld hl,$6116		; $60ff
+
+seasonsFunc_15_60fc:
+	ld a,(ws_cc39)		; $60fc
+	ld hl,seasonsTable_15_6116		; $60ff
 	rst_addAToHl			; $6102
 	ld a,(hl)		; $6103
-	call $610c		; $6104
-	ld hl,$c6e5		; $6107
+	call seasonsFunc_15_610c		; $6104
+	ld hl,wMakuMapTextPresent		; $6107
 	ld (hl),c		; $610a
 	ret			; $610b
+
+seasonsFunc_15_610c:
 	ld c,a			; $610c
 	call checkIsLinkedGame		; $610d
 	ret z			; $6110
@@ -2642,6 +2646,8 @@ _label_15_249:
 	add $1b			; $6112
 	ld c,a			; $6114
 	ret			; $6115
+
+seasonsTable_15_6116:
 	inc bc			; $6116
 	dec b			; $6117
 	ld ($0c0a),sp		; $6118
