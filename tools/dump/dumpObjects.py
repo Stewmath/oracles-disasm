@@ -1,7 +1,7 @@
 # Extract object data to files
 
 import sys
-import StringIO
+import io
 from common import *
 
 if len(sys.argv) < 2:
@@ -115,7 +115,7 @@ enemyFile.write('; treat them properly (not counting the unused labels).\n\n')
 
 
 objectDataList = list()
-mainObjectDataStr = StringIO.StringIO()
+mainObjectDataStr = io.StringIO()
 
 mainDataPositions = {}
 
@@ -141,7 +141,7 @@ def parseObjectData(buf, pos, outFile):
 
     lastOpcode = -1
     while True:
-        if pos == start or mainDataPositions.has_key(pos): # Add labels
+        if pos == start or pos in mainDataPositions: # Add labels
             if pos in mainDataPositions:
                 value = mainDataPositions[pos]
             else:
@@ -220,7 +220,7 @@ def parseObjectData(buf, pos, outFile):
 
             output += name + '\n' # There could be multiple names but we need to choose one.
             for objectData in objectDataList:
-                if not mainDataPositions.has_key(pointer):
+                if pointer not in mainDataPositions:
                     mainDataPositions[pointer] = []
                 if not any(o.name == objectData.name for o in mainDataPositions[pointer]):
                     mainDataPositions[pointer].append(objectData)
@@ -331,7 +331,7 @@ def parseObjectData(buf, pos, outFile):
 
 # Start on pointer file
 pointerFile.write('objectDataGroupTable:\n')
-for i in xrange(8):
+for i in range(8):
     write = i
     if i > 5:
         write -= 2
@@ -343,14 +343,14 @@ pointerFile.write('\n')
 
 # Go through each group's object data, store into data structures for
 # later
-for group in xrange(6):
+for group in range(6):
     if romIsSeasons(rom) and group >= 2 and group <= 3:
         continue # Groups 2 and 3 don't really exist
 
     pointerTable = bankedAddress(pointerBank, read16(data, groupPointerTable + group*2))
 
     pointerFile.write('group' + str(group) + 'ObjectDataTable:\n')
-    for map in xrange(0x100):
+    for map in range(0x100):
         rawPointer = read16(data, pointerTable+map*2)
         if rawPointer & 0xc000 == 0xc000:
             if not extraInteractionBankPatch:
@@ -366,7 +366,7 @@ for group in xrange(6):
         objectData.name = getRoomString(group, map) + 'ObjectData'
 
         objectDataList.append(objectData)
-        if not mainDataPositions.has_key(pointer):
+        if pointer not in mainDataPositions:
             mainDataPositions[pointer] = []
         mainDataPositions[pointer].append(objectData)
 
@@ -406,7 +406,7 @@ for objectData in objectDataList:
                     pass
                 else:
                     if extraInteractionBankPatch:
-                        addrString = myhex(address/0x4000,2) + ':' + myhex((address&0x3fff)+0x4000, 4)
+                        addrString = myhex(address//0x4000,2) + ':' + myhex((address&0x3fff)+0x4000, 4)
                     else:
                         addrString = myhex((address&0x3fff)+0x4000, 4)
                 data2.address = 0

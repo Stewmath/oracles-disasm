@@ -11,7 +11,7 @@ SHELL := /bin/bash
 
 CC = wla-gb
 LD = wlalink
-PYTHON = python2
+PYTHON = python3
 
 ifeq ($(BUILD_VANILLA), true)
 

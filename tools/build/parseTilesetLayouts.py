@@ -9,19 +9,13 @@
 
 import sys
 import os
-import StringIO
+import io
 import copy
 import operator
-
-index = sys.argv[0].rfind('/') 
-if index == -1:
-	directory = ''
-else:
-	directory = sys.argv[0][:index+1]
-execfile(directory+'common.py')
+from common import *
 
 if len(sys.argv) < 2:
-	print 'Usage: ' + sys.argv[0] + ' ages|seasons'
+	print('Usage: ' + sys.argv[0] + ' ages|seasons')
 	sys.exit()
 
 
@@ -111,17 +105,17 @@ for i in range(len(tileList)):
         attributeList.append(attributeData)
 
     if indexI >= 0x1000 :
-        print 'WARNING: more than 0x1000 unique tile index arrangements, this is bad'
+        print('WARNING: more than 0x1000 unique tile index arrangements, this is bad')
     if attributeI >= 0x1000:
-        print 'WARNING: more than 0x1000 unique tile attribute arrangements, this is bad'
+        print('WARNING: more than 0x1000 unique tile attribute arrangements, this is bad')
 
     b1 = indexI&0xff
     b2 = ((indexI>>4)&0xf0) | (attributeI>>8)
     b3 = attributeI&0xff
 
-    mappingsOutFile.write(chr(b1))
-    mappingsOutFile.write(chr(b2))
-    mappingsOutFile.write(chr(b3))
+    mappingsOutFile.write(bytes([b1]))
+    mappingsOutFile.write(bytes([b2]))
+    mappingsOutFile.write(bytes([b3]))
 
 mappingsOutFile.close()
 indexOutFile.close()
@@ -131,7 +125,7 @@ attributeOutFile.close()
 # Generate dictionary file. Every X-byte chunk that's used more than once is put into the
 # dictionary.
 file = open('build/tileset_layouts/mappingsDictionary.bin', 'wb')
-for key in dictionaryStrings.keys():
+for key in list(dictionaryStrings.keys()):
     val = dictionaryStrings[key]
     if val > 1:
         file.write(bytearray(key))

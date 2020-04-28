@@ -2,18 +2,12 @@
 # (objects at $d000-$d03f, $d100-$d13f)
 
 import sys
-import StringIO
-
-index = sys.argv[0].rfind('/')
-if index == -1:
-    directory = ''
-else:
-    directory = sys.argv[0][:index + 1]
-execfile(directory + 'common.py')
+import io
+from common import *
 
 if len(sys.argv) < 2:
-    print 'Usage: ' + sys.argv[0] + ' romfile'
-    print 'Output goes to files: data/specialObjectAnimationPointers.s, data/specialObjectAnimationData.s, data/specialObjectOamData.s'
+    print('Usage: ' + sys.argv[0] + ' romfile')
+    print('Output goes to files: data/specialObjectAnimationPointers.s, data/specialObjectAnimationData.s, data/specialObjectOamData.s')
     sys.exit()
 
 romFile = open(sys.argv[1], 'rb')
@@ -66,7 +60,7 @@ def dumpAnimations(objectType):
     for i in range(numAnimationIndices):
         pointer = read16(rom, graphicsTable+i*2)
         if pointer < 0x4000 or pointer >= 0x8000:
-            print 'Invalid pointer: ' + hex(address)
+            print('Invalid pointer: ' + hex(address))
         pointerAddress = bankedAddress(animationBank, pointer)
         graphicsPointerList.append(pointerAddress)
         outFile.write('\t.dw ' + objectType + myhex(i, 2) + 'GfxPointers')
@@ -78,7 +72,7 @@ def dumpAnimations(objectType):
     for i in range(numAnimationIndices):
         pointer = read16(rom, animPointerTable+i*2)
         if pointer < 0x4000 or pointer >= 0x8000:
-            print 'Invalid pointer: ' + hex(pointer)
+            print('Invalid pointer: ' + hex(pointer))
         pointerAddress = bankedAddress(animationBank, pointer)
         animationPointerList.append(pointerAddress)
         outFile.write('\t.dw ' + objectType + myhex(i,2) + 'AnimationDataPointers')
@@ -90,7 +84,7 @@ def dumpAnimations(objectType):
     for i in range(numAnimationIndices):
         pointer = read16(rom, oamDataTable+i*2)
         if pointer < 0x4000 or pointer >= 0x8000:
-            print 'Invalid pointer: ' + hex(pointer)
+            print('Invalid pointer: ' + hex(pointer))
         pointerAddress = bankedAddress(animationBank, pointer)
         oamDataPointerList.append(pointerAddress)
         outFile.write('\t.dw ' + objectType + myhex(i,2) + 'OamDataPointers')
@@ -311,7 +305,7 @@ elif romIsSeasons(rom):
     animationDataEnd = bankedAddress(animationBank, 0x69c9)
     numAnimationIndices = 20
 else:
-    print 'Unrecognized rom.'
+    print('Unrecognized rom.')
     sys.exit(1)
 
 dumpAnimations('specialObject')

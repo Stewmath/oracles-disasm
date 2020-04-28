@@ -1,16 +1,10 @@
 import sys
-import StringIO
-
-index = sys.argv[0].rfind('/')
-if index == -1:
-    directory = ''
-else:
-    directory = sys.argv[0][:index + 1]
-execfile(directory + 'common.py')
+import io
+from common import *
 
 if len(sys.argv) < 2:
-    print 'Usage: ' + sys.argv[0] + ' romfile'
-    print 'Output goes to stdout'
+    print('Usage: ' + sys.argv[0] + ' romfile')
+    print('Output goes to stdout')
     sys.exit()
 
 romFile = open(sys.argv[1], 'rb')
@@ -37,7 +31,7 @@ else:
 # This will be calculated
 numExtraDataIndices = 0
 
-enemyDataOut = StringIO.StringIO()
+enemyDataOut = io.StringIO()
 
 # Dictionary of address to list of indices
 subidDataAddresses = {}
@@ -46,7 +40,7 @@ address = dataAddress
 
 enemyDataOut.write('; @addr{' + wlahex(address) + '}\n')
 enemyDataOut.write('enemyData:\n')
-for i in xrange(numObjects):
+for i in range(numObjects):
     npcGfxIndex = rom[address]
     collisionProperties = rom[address+1]
     subidTableAddress = read16BE(rom, address+2)
@@ -63,7 +57,7 @@ for i in xrange(numObjects):
         enemyDataOut.write(' enemy' + myhex(i,2) + 'SubidData\n')
         subidTableAddress = bankedAddress(dataBank, subidTableAddress)
 
-        if not subidDataAddresses.has_key(subidTableAddress):
+        if subidTableAddress not in subidDataAddresses:
             subidDataAddresses[subidTableAddress] = []
         subidDataAddresses[subidTableAddress].append(i)
 
@@ -100,7 +94,7 @@ if address != extraDataAddress:
 
 enemyDataOut.write('\n; @addr{' + wlahex(address) + '}\n')
 enemyDataOut.write('extraEnemyData:\n')
-for i in xrange(numExtraDataIndices):
+for i in range(numExtraDataIndices):
     enemyDataOut.write('\t.db ' + wlahex(rom[address],2) + ' ' + wlahex(rom[address+1],2)
             + ' ' + wlahex(rom[address+2],2) + ' ' + wlahex(rom[address+3],2) + '\n')
     address+=4
@@ -108,4 +102,4 @@ for i in xrange(numExtraDataIndices):
 enemyDataOut.write('; End at ' + wlahex(address) + '\n')
 
 enemyDataOut.seek(0)
-print enemyDataOut.read()
+print(enemyDataOut.read())

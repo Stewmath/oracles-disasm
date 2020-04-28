@@ -2,24 +2,18 @@
 # from the current address to start reading data from.
 
 import sys
-import StringIO
-
-index = sys.argv[0].rfind('/')
-if index == -1:
-    directory = ''
-else:
-    directory = sys.argv[0][:index + 1]
-execfile(directory + 'common.py')
+import io
+from common import *
 
 if len(sys.argv) < 3:
-    print 'Usage: ' + sys.argv[0] + ' romfile startaddress'
-    print 'Output goes to stout'
+    print('Usage: ' + sys.argv[0] + ' romfile startaddress')
+    print('Output goes to stout')
     sys.exit()
 
 romFile = open(sys.argv[1], 'rb')
 rom = bytearray(romFile.read())
 
-output = StringIO.StringIO()
+output = io.StringIO()
 
 output.write('table:\n')
 

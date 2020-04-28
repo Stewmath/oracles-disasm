@@ -1,15 +1,9 @@
 import sys
-import StringIO
-
-index = sys.argv[0].rfind('/')
-if index == -1:
-    directory = ''
-else:
-    directory = sys.argv[0][:index+1]
-execfile(directory+'common.py')
+import io
+from common import *
 
 if len(sys.argv) < 2:
-    print 'Usage: ' + sys.argv[0] + ' romfile'
+    print('Usage: ' + sys.argv[0] + ' romfile')
     sys.exit()
 
 romFile = open(sys.argv[1], 'rb')
@@ -90,7 +84,7 @@ for i in range(numPaletteHeaders):
     repeat = True
     while repeat:
         if pointer in headerAddressDict:
-            print 'Header overlap is a thing apparently: ' + hex(pointer)
+            print('Header overlap is a thing apparently: ' + hex(pointer))
         headerAddressDict[pointer] = True
 
         flags = rom[pointer]
@@ -184,11 +178,11 @@ outFile.close()
 
 # Debug stuff
 
-print 'Palette data starts at ' + hex(paletteDataStart)
-print 'Palette data ends at ' + hex(paletteDataEnd)
+print('Palette data starts at ' + hex(paletteDataStart))
+print('Palette data ends at ' + hex(paletteDataEnd))
 
 lastHeader = sorted(paletteHeaders, key=lambda x: x.addr)[
     len(paletteHeaders)-1]
 headerEndAddr = lastHeader.addr + len(lastHeader.entries)*3
 
-print 'Header data ends at ' + hex(headerEndAddr)
+print('Header data ends at ' + hex(headerEndAddr))

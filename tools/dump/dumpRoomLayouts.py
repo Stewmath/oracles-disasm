@@ -1,15 +1,9 @@
 import sys
-import StringIO
-
-index = sys.argv[0].rfind('/')
-if index == -1:
-    directory = ''
-else:
-    directory = sys.argv[0][:index+1]
-execfile(directory+'common.py')
+import io
+from common import *
 
 if len(sys.argv) < 2:
-    print 'Usage: ' + sys.argv[0] + ' romfile'
+    print('Usage: ' + sys.argv[0] + ' romfile')
     sys.exit()
 
 romFile = open(sys.argv[1], 'rb')
@@ -55,7 +49,7 @@ class RoomLayoutGroup:
         self.baseLabel = ''
         self.roomLayouts = []
         self.dictionary = bytearray()
-        for j in xrange(256):
+        for j in range(256):
             self.roomLayouts.append(RoomLayout(j))
 
 
@@ -88,7 +82,7 @@ def decompressRoomLayout_dictionary(data, offset, dataLen, layoutGroup):
 
 usedLayoutAddresses = {}
 layoutGroups = []
-for i in xrange(0, numLayoutGroups):
+for i in range(0, numLayoutGroups):
     layoutGroup = RoomLayoutGroup(i)
 
     addr = roomLayoutGroupTable+i*8
@@ -97,7 +91,7 @@ for i in xrange(0, numLayoutGroups):
     layoutGroup.baseAddr = bankedAddress(rom[addr+4], read16(rom, addr+5))
 
     if layoutGroup.roomType == 1:  # Common byte compression
-        for j in xrange(0, 256):
+        for j in range(0, 256):
             roomLayout = layoutGroup.roomLayouts[j]
             pointer = read16(rom, layoutGroup.tableAddr+j*2)
             roomLayout.addr = layoutGroup.baseAddr + (pointer&0x3fff)
@@ -131,7 +125,7 @@ for i in xrange(0, numLayoutGroups):
     else:  # Dictionary compression
         layoutGroup.dictionary = rom[
             layoutGroup.tableAddr:layoutGroup.tableAddr+0x1000]
-        for j in xrange(256):
+        for j in range(256):
             roomLayout = layoutGroup.roomLayouts[j]
             pointer = read16(rom, layoutGroup.tableAddr+0x1000+j*2)
             pointer -= 0x200
@@ -173,7 +167,7 @@ for layoutGroup in layoutGroups:
         if layoutGroup.roomType == 0:
             outFile = open(
                 precmpDir + roomLayout.label + '.cmp', 'wb')
-            outFile.write(chr(roomLayout.compressionMode))
+            outFile.write(bytes([roomLayout.compressionMode]))
             outFile.write(roomLayout.rawData)
             outFile.close()
 
@@ -183,7 +177,7 @@ for layoutGroup in layoutGroups:
     if layoutGroup.roomType == 0:
         continue  # Skip large rooms
     outFile.write('roomLayoutGroup' + str(layoutGroup.index) + 'Table:\n')
-    for i in xrange(0, 256):
+    for i in range(0, 256):
         roomLayout = layoutGroup.roomLayouts[i]
         outFile.write('\tm_RoomLayoutPointer ' +
                       roomLayout.label + ' ' + layoutGroup.baseLabel + '\n')
@@ -197,7 +191,7 @@ for layoutGroup in layoutGroups:
     outFile.write('roomLayoutGroup' + str(layoutGroup.index) + 'Table:\n')
     outFile.write(
         '\t.incbin "' + roomDir + 'dictionary' + str(layoutGroup.index) + '.bin"\n\n')
-    for i in xrange(0, 256):
+    for i in range(0, 256):
         roomLayout = layoutGroup.roomLayouts[i]
         outFile.write('\tm_RoomLayoutDictPointer ' +
                       roomLayout.label + ' ' + layoutGroup.baseLabel + '\n')
@@ -208,7 +202,7 @@ outFile.close()
 for layoutGroup in layoutGroups:
     if layoutGroup.roomType != 0:
         continue
-    outFile = open(roomDir + 'dictionary' + str(layoutGroup.index) + '.bin', 'w')
+    outFile = open(roomDir + 'dictionary' + str(layoutGroup.index) + '.bin', 'wb')
     outFile.write(layoutGroup.dictionary)
     outFile.close()
 

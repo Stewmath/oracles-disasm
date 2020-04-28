@@ -1,17 +1,11 @@
 import sys
-import StringIO
+import io
 import binascii
 import copy
-
-index = sys.argv[0].rfind('/')
-if index == -1:
-    directory = ''
-else:
-    directory = sys.argv[0][:index+1]
-execfile(directory+'common.py')
+from common import *
 
 if len(sys.argv) < 3:
-    print 'Usage: ' + sys.argv[0] + ' gfxFile outFile'
+    print('Usage: ' + sys.argv[0] + ' gfxFile outFile')
     sys.exit()
 
 
@@ -28,7 +22,7 @@ def mode3FindLastBasePos(compressedData):
         while i < 8 and pos < len(compressedData):
             if (b & 0x80) != 0:
                 if pos >= len(compressedData)-1:
-                    print binascii.hexlify(compressedData)
+                    print(binascii.hexlify(compressedData))
                 word = read16(compressedData, pos)
                 pos+=2
                 if (word&0xf800) == 0:
@@ -49,7 +43,7 @@ def compressMode1Or3(data, mode):
     compressionCache = {}
     charPositionLists = {}
 
-    for dataLen in xrange(1, len(data)+1):
+    for dataLen in range(1, len(data)+1):
         if dataLen >= 2:
             b = data[dataLen-2]
             if charPositionLists.get(b) is None:
@@ -64,7 +58,7 @@ def compressMode1Or3Hlpr(data, mode, dataLen=-1):
         # When dataLen is not passed, do first initialization
         dataLen = len(data)
 
-    if compressionCache.has_key(dataLen):
+    if dataLen in compressionCache:
         return compressionCache[dataLen]
 
     if dataLen == 0:
@@ -105,7 +99,7 @@ def compressMode1Or3Hlpr(data, mode, dataLen=-1):
     matchedLen = 1
     while len(matchedPositions) != 0:
         elementsToRemove = []
-        for i in xrange(len(matchedPositions)):
+        for i in range(len(matchedPositions)):
             addr = matchedPositions[i]
             if matchedLen == 1 and (dataLen-addr) > maxDistance:
                 charPositionLists[data[dataLen-1]].remove(addr)
@@ -181,17 +175,17 @@ def compressMode1Or3Hlpr(data, mode, dataLen=-1):
 def compressMode2(data):
     retData = bytearray()
 
-    numRows = int(len(data)/16)
+    numRows = int(len(data)//16)
     if len(data)%16 != 0:
         numRows+=1
-    for row in xrange(0, numRows):
+    for row in range(0, numRows):
         numberRepeats = {}
         highestRepeatCount = 0
-        for i in xrange(0, 16):
+        for i in range(0, 16):
             if row*16+i >= len(data):
                 break
             num = data[row*16+i]
-            if not numberRepeats.has_key(num):
+            if num not in numberRepeats:
                 numberRepeats[num] = 1
             else:
                 numberRepeats[num] += 1
@@ -202,7 +196,7 @@ def compressMode2(data):
         if highestRepeatCount < 2:
             retData.append(0)
             retData.append(0)
-            for i in xrange(0, 16):
+            for i in range(0, 16):
                 if row*16+i >= len(data):
                     break
                 retData.append(data[row*16+i])
@@ -212,7 +206,7 @@ def compressMode2(data):
             retData.append(0)
             retData.append(highestRepeatNumber)
             repeatBits = 0
-            for i in xrange(0, 16):
+            for i in range(0, 16):
                 if row*16+i >= len(data):
                     break
                 if data[row*16+i] == highestRepeatNumber:
@@ -247,6 +241,6 @@ for i in range(0, 4):
         mode = i
 
 outFile = open(sys.argv[2], 'wb')
-outFile.write(chr(mode))
+outFile.write(bytes([mode]))
 outFile.write(outBuf)
 outFile.close()

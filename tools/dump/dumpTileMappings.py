@@ -1,17 +1,11 @@
-# This is obsolute / only for debugging, use dumpTilesets instead?
+# This is obsolete / only for debugging, use dumpTilesets instead?
 
 import sys
-import StringIO
-
-index = sys.argv[0].rfind('/')
-if index == -1:
-    directory = ''
-else:
-    directory = sys.argv[0][:index+1]
-execfile(directory+'common.py')
+import io
+from common import *
 
 if len(sys.argv) < 2:
-    print 'Usage: ' + sys.argv[0] + ' romfile'
+    print('Usage: ' + sys.argv[0] + ' romfile')
 
 romFile = open(sys.argv[1], 'rb')
 rom = bytearray(romFile.read())
@@ -62,7 +56,7 @@ for i in range(numTileMappings):
 outFile.close()
 
 # Debug stuff
-print 'Pointer   data starts at ' + hex(tileMappingTable) + ', ends at ' + hex(tileMappingTable+numTileMappings*3)
-print 'Index     data starts at ' + hex(tileIndexDataAddr) + ', ends at ' + hex(highestIndexData)
-print 'Attribute data starts at ' + hex(tileAttributeDataAddr) + ', ends at ' + hex(highestAttributeData)
+print('Pointer   data starts at ' + hex(tileMappingTable) + ', ends at ' + hex(tileMappingTable+numTileMappings*3))
+print('Index     data starts at ' + hex(tileIndexDataAddr) + ', ends at ' + hex(highestIndexData))
+print('Attribute data starts at ' + hex(tileAttributeDataAddr) + ', ends at ' + hex(highestAttributeData))
 

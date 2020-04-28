@@ -9,12 +9,12 @@ def read16BE(buf, index):
 
 # Read: bank number, then pointer
 def read3BytePointer(buf, index):
-    return bankedAddress(buf[index], read16(rom, index+1))
+    return bankedAddress(buf[index], read16(buf, index+1))
 
 
 # Read: pointer, then bank number
 def readReversed3BytePointer(buf, index):
-    return bankedAddress(buf[index+2], read16(rom, index))
+    return bankedAddress(buf[index+2], read16(buf, index))
 
 
 def toGbPointer(val):
@@ -121,33 +121,33 @@ def compressData_commonByte(data, numBytes):
     if len(data)%multiple != 0:
         print('compressData_commonByte error: not a multiple of ' + str(multiple))
         exit(1)
-    for row in xrange(0, len(data)/multiple):
+    for row in range(0, len(data) // multiple):
         mostCommonByteScore = 0
         mostCommonByte = 0
         byteCounts = []
         for i in range(256):
             byteCounts.append(0)
-        for i in xrange(row*multiple, (row+1)*multiple):
+        for i in range(row*multiple, (row+1)*multiple):
             b = data[i]
             byteCounts[b]+=1
-        for i in xrange(256):
+        for i in range(256):
             if byteCounts[i] > mostCommonByteScore:
                 mostCommonByteScore = byteCounts[i]
                 mostCommonByte = i
         if mostCommonByteScore <= 1:
-            for j in xrange(numBytes):
+            for j in range(numBytes):
                 res.append(0)
-            for j in xrange(multiple):
+            for j in range(multiple):
                 res.append(data[row*multiple+j])
         else:
             key = 0
-            for j in xrange(multiple):
+            for j in range(multiple):
                 if data[row*multiple+j] == mostCommonByte:
                     key |= (1<<j)
-            for j in xrange(numBytes):
+            for j in range(numBytes):
                 res.append((key>>(j*8))&0xff)
             res.append(mostCommonByte)
-            for j in xrange(multiple):
+            for j in range(multiple):
                 if data[row*multiple+j] != mostCommonByte:
                     res.append(data[row*multiple+j])
     return res
@@ -174,7 +174,7 @@ def decompressGfxData(rom, address, size, mode, physicalSize=0x10000000):
             physicalSize-=1
             carry = 0
             if a | c == 0:
-                for i in xrange(0x10):
+                for i in range(0x10):
                     retData.append(rom[address])
                     address+=1
                     physicalSize-=1
@@ -183,7 +183,7 @@ def decompressGfxData(rom, address, size, mode, physicalSize=0x10000000):
                 address+=1
                 physicalSize-=1
                 ff8b = a
-                for b in xrange(8):
+                for b in range(8):
                     carrynew = (c&0x80)>>7
                     c = ((c&0x7f)<<1 | carry)&0xff
                     carry = carrynew
@@ -195,7 +195,7 @@ def decompressGfxData(rom, address, size, mode, physicalSize=0x10000000):
                         a = ff8b
                     retData.append(a)
                 c = ff8a
-                for b in xrange(8):
+                for b in range(8):
                     carrynew = (c&0x80)>>7
                     c = ((c&0x7f)<<1 | carry)&0xff
                     carry = carrynew

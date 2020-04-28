@@ -1,15 +1,9 @@
 import sys
-
-index = sys.argv[0].rfind('/')
-if index == -1:
-    directory = ''
-else:
-    directory = sys.argv[0][:index+1]
-execfile(directory+'common.py')
+from common import *
 
 
 if len(sys.argv) < 2:
-    print 'Usage: ' + sys.argv[0] + ' romfile'
+    print('Usage: ' + sys.argv[0] + ' romfile')
     sys.exit()
 
 romFile = open(sys.argv[1], 'rb')
@@ -49,7 +43,7 @@ class WarpData:
         else:
             self.pointer = read16(rom,addr+2)
             if self.opcode != 0xff and self.pointer in usedPointers:
-                print "Pointer " + hex(self.pointer) + " not uniquely used"
+                print("Pointer " + hex(self.pointer) + " not uniquely used")
             else:
                 usedPointers[self.pointer] = True
 #             self.pointer = bankedAddress(warpBank,read16(rom,addr+2))
@@ -159,7 +153,7 @@ for group in range(8):
         address+=4
 
         if warpData.opcode != 0 and warpData.opcode != 1 and warpData.opcode != 2 and warpData.opcode != 4 and warpData.opcode != 8 and warpData.opcode != 0x40:
-            print "Nonstandard opcode " + hex(warpData.opcode)
+            print("Nonstandard opcode " + hex(warpData.opcode))
 
 #         print "Opcode: " + myhex(warpData.opcode,2)
 #         print "Map: " + myhex(warpData.map,2)

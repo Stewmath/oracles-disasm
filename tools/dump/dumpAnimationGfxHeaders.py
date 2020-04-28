@@ -1,15 +1,9 @@
 import sys
-import StringIO
-
-index = sys.argv[0].rfind('/')
-if index == -1:
-    directory = ''
-else:
-    directory = sys.argv[0][:index + 1]
-execfile(directory + 'common.py')
+import io
+from common import *
 
 if len(sys.argv) < 2:
-    print 'Usage: ' + sys.argv[0] + ' romfile'
+    print('Usage: ' + sys.argv[0] + ' romfile')
     sys.exit()
 
 romFile = open(sys.argv[1], 'rb')
@@ -38,7 +32,7 @@ else:
             AnimationGfx("gfx_animations_1", 0x62400) ]
     dataDir = 'data/seasons/'
 
-outFile = open(dataDir + 'animationGfxHeaders.s', 'wb')
+outFile = open(dataDir + 'animationGfxHeaders.s', 'w')
 outFile.write('animationGfxHeaders: ; ' + hex(animationHeadersStart) + '\n')
 
 for i in range(numAnimationHeaders):
@@ -55,7 +49,7 @@ for i in range(numAnimationHeaders):
 #     print
 
     for gfx in animationGfxList:
-        if bank == gfx.address/0x4000 and bankedAddress(bank,src) >= gfx.address:
+        if bank == gfx.address//0x4000 and bankedAddress(bank,src) >= gfx.address:
             gfxSource = gfx
             break
 
@@ -66,4 +60,4 @@ for i in range(numAnimationHeaders):
 
 outFile.close()
 
-print 'Data ends at ' + hex(animationHeadersStart + numAnimationHeaders*6)
+print('Data ends at ' + hex(animationHeadersStart + numAnimationHeaders*6))

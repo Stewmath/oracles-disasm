@@ -1,15 +1,9 @@
 import sys
-import StringIO
-
-index = sys.argv[0].rfind('/')
-if index == -1:
-    directory = ''
-else:
-    directory = sys.argv[0][:index+1]
-execfile(directory+'common.py')
+import io
+from common import *
 
 if len(sys.argv) < 2:
-    print 'Usage: ' + sys.argv[0] + ' romfile'
+    print('Usage: ' + sys.argv[0] + ' romfile')
     sys.exit()
 
 romFile = open(sys.argv[1], 'rb')
@@ -300,7 +294,7 @@ for j in range(2):
     for tilesetData in sorted(tilesetDataList[j], key=lambda x: x.addr):
         if tilesetData.ref is None:
             if lastAddr != -1 and lastAddr != tilesetData.addr:
-                print 'Data skip'
+                print('Data skip')
                 outFile.write('; Data skip ' + hex(lastAddr) + ' -> ' +
                               hex(tilesetData.addr) + ' ' +
                               hex(tilesetData.dataSize) + '\n')
@@ -344,15 +338,15 @@ for j in range(2):
 
             lastAddr = ret[1]
 
-    print 'Tileset data ' + str(j) + ' ends at ' + hex(lastAddr)
+    print('Tileset data ' + str(j) + ' ends at ' + hex(lastAddr))
 
     outFile.close()
 
 # Dump dictionaries
 for i in range(numDictionaries):
     dictionary = dictionaries[i]
-    print 'Dictionary ' + str(i) + ' start: ' + hex(dictionary.dataAddr)
-    print 'Dictionary ' + str(i) + ' end:   ' + hex(dictionary.dataEndAddr)
+    print('Dictionary ' + str(i) + ' start: ' + hex(dictionary.dataAddr))
+    print('Dictionary ' + str(i) + ' end:   ' + hex(dictionary.dataEndAddr))
 
     outFile = open(
         precmpDir + entryLabels[i].lower() + 'Dictionary.bin', 'wb')
@@ -364,12 +358,12 @@ outFile = open(precmpDir + 'tileMappingTable.bin','wb')
 outFile.write(rom[tileMappingTable:tileMappingTable+numTileMappings*3])
 outFile.close()
 
-print 'Tile mapping data starts at ' + hex(tileMappingTable)
-print 'Tile mapping data ends at   ' + hex(tileMappingTable+numTileMappings*3)
-print 'Tile index data starts at ' + hex(tileIndexDataAddr)
-print 'Tile index data ends at   ' + hex(maxTileIndexAddr)
-print 'Tile attribute data starts at ' + hex(tileAttributeDataAddr)
-print 'Tile attribute data ends at   ' + hex(maxTileAttributeAddr)
+print('Tile mapping data starts at ' + hex(tileMappingTable))
+print('Tile mapping data ends at   ' + hex(tileMappingTable+numTileMappings*3))
+print('Tile index data starts at ' + hex(tileIndexDataAddr))
+print('Tile index data ends at   ' + hex(maxTileIndexAddr))
+print('Tile attribute data starts at ' + hex(tileAttributeDataAddr))
+print('Tile attribute data ends at   ' + hex(maxTileAttributeAddr))
 
 # Dump precompressed tile index data
 outFile = open(precmpDir + 'tileMappingIndexData.bin','wb')

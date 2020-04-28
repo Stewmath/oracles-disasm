@@ -2,17 +2,11 @@
 # compression mode (so not the format of ".cmp" files).
 
 import sys
-
-index = sys.argv[0].rfind('/')
-if index == -1:
-    directory = ''
-else:
-    directory = sys.argv[0][:index+1]
-execfile(directory+'common.py')
+from common import *
 
 if len(sys.argv) < 4:
-    print 'Usage: ' + sys.argv[0] + ' gfxFile outFile size cmpMode'
-    print '\ncmpMode is a number from 0-3. If omitted, it uses the first byte of the input file.'
+    print('Usage: ' + sys.argv[0] + ' gfxFile outFile size cmpMode')
+    print('\ncmpMode is a number from 0-3. If omitted, it uses the first byte of the input file.')
     sys.exit()
 
 gfxFile = open(sys.argv[1], 'rb')

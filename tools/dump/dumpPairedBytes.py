@@ -1,16 +1,10 @@
 
 import sys
-import StringIO
-
-index = sys.argv[0].rfind('/')
-if index == -1:
-    directory = ''
-else:
-    directory = sys.argv[0][:index+1]
-execfile(directory+'common.py')
+import io
+from common import *
 
 if len(sys.argv) < 3:
-    print 'Usage: ' + sys.argv[0] + ' romfile startaddress size'
+    print('Usage: ' + sys.argv[0] + ' romfile startaddress size')
     sys.exit()
 
 romFile = open(sys.argv[1], 'rb')
@@ -22,7 +16,7 @@ endAddress = startAddress+int(sys.argv[3])
 address = startAddress
 
 bytesThisRow = 0
-output = StringIO.StringIO()
+output = io.StringIO()
 
 while address < endAddress:
     output.write(

@@ -1,15 +1,9 @@
 import sys
-import StringIO
-
-index = sys.argv[0].rfind('/')
-if index == -1:
-    directory = ''
-else:
-    directory = sys.argv[0][:index + 1]
-execfile(directory + 'common.py')
+import io
+from common import *
 
 if len(sys.argv) < 2:
-    print 'Usage: ' + sys.argv[0] + ' romfile'
+    print('Usage: ' + sys.argv[0] + ' romfile')
     sys.exit()
 
 romFile = open(sys.argv[1], 'rb')
@@ -40,7 +34,7 @@ class ChannelPointer:
         self.address = address
         self.bank = bank
         self.channel = channel
-	self.channelValue = channel>>4
+        self.channelValue = channel>>4
         self.labels = labels
 
 
@@ -56,9 +50,9 @@ def byteToNote(b):
 soundPointers = []
 channelPointers = []
 
-pointerOutput = StringIO.StringIO()
-dataOutput = StringIO.StringIO()
-chanOut = StringIO.StringIO()
+pointerOutput = io.StringIO()
+dataOutput = io.StringIO()
+chanOut = io.StringIO()
 
 # Highest level of pointers (1 pointer for each sound effect)
 pointerOutput.write('_soundPointers:\n')
@@ -168,29 +162,29 @@ def parseChannelData(address, channel, chanOut):
             chanOut.write('music' + myhex(address) + ':\n')
         b = rom[address]
         address+=1
-	if b == 0xff:
-	    chanOut.write('\tcmdff\n')
-	    break
+        if b == 0xff:
+            chanOut.write('\tcmdff\n')
+            break
         elif b == 0xfe:
             addr = read16(rom, address)
             address+=2
-            bankedAddr = bankedAddress(address/0x4000,addr)
+            bankedAddr = bankedAddress(address//0x4000,addr)
             chanOut.write('\tgoto music' + myhex(bankedAddr, 4) + '\n')
             labelAddresses.append(bankedAddr)
-	elif b == 0xf6:
+        elif b == 0xf6:
             param = rom[address]
             address+=1
             chanOut.write('\tduty ' + wlahex(param,2) + '\n')
-	elif b == 0xf9:
+        elif b == 0xf9:
             param = rom[address]
             address+=1
             chanOut.write('\tvibrato ' + wlahex(param,2) + '\n')
-	elif b == 0xf0:
+        elif b == 0xf0:
             param = rom[address]
             address+=1
             chanOut.write('\tcmdf0 ' + wlahex(param,2) + '\n')
-	    if channel != 7:
-		c039 = 1
+            if channel != 7:
+                c039 = 1
         elif b == 0xf0 or b == 0xf6 or b == 0xf8 or b == 0xf9 or b == 0xfd:
             param = rom[address]
             address+=1
@@ -203,27 +197,27 @@ def parseChannelData(address, channel, chanOut):
             chanOut.write('\tenv ' + wlahex(b&0x7) + ' ' + wlahex(param,2) + '\n')
         elif b >= 0xd0 and b < 0xe0:
             chanOut.write('\tvol ' + wlahex(b&0xf) + '\n')
-	elif b == 0x60:
+        elif b == 0x60:
             param = rom[address]
             address+=1
-	    chanOut.write('\twait1 ' + wlahex(param,2) + '\n')
+            chanOut.write('\twait1 ' + wlahex(param,2) + '\n')
 
-	elif channel >= 6:
-	    # Noise channels
-	    wait = rom[address]
-	    address+=1
-	    chanOut.write('\tnote ' + wlahex(b,2) + ' ' + wlahex(wait,2) + '\n')
+        elif channel >= 6:
+            # Noise channels
+            wait = rom[address]
+            address+=1
+            chanOut.write('\tnote ' + wlahex(b,2) + ' ' + wlahex(wait,2) + '\n')
 
-	elif c039 != 0:
-	    b2 = rom[address]
-	    address+=1
-	    wait = rom[address]
-	    address+=1
-	    chanOut.write('\t.db ' + wlahex(b,2) + ' ' + wlahex(b2,2) + ' ' + wlahex(wait,2) + '\n')
-	elif b == 0x61:
+        elif c039 != 0:
+            b2 = rom[address]
+            address+=1
+            wait = rom[address]
+            address+=1
+            chanOut.write('\t.db ' + wlahex(b,2) + ' ' + wlahex(b2,2) + ' ' + wlahex(wait,2) + '\n')
+        elif b == 0x61:
             param = rom[address]
             address+=1
-	    chanOut.write('\twait2 ' + wlahex(param,2) + '\n')
+            chanOut.write('\twait2 ' + wlahex(param,2) + '\n')
         elif b >= 0 and b <= 0x58: # and b >= 0xc
             l = rom[address]
             address+=1
@@ -237,17 +231,17 @@ for i in range(numSoundIndices):
     startLabelsDefined.append(False)
 
 for ptr in channelPointers:
-    tmpOut = StringIO.StringIO()
+    tmpOut = io.StringIO()
     address = ptr.address
     if lastAddress != -1 and lastAddress != address:
         if lastAddress >= address:
             chanOut.write('; BACKWARD GAP\n')
             continue
-	chanOut.write('; GAP\n')
-	while lastAddress < address:
-	    lastAddress = parseChannelData(lastAddress, 0, chanOut)
+        chanOut.write('; GAP\n')
+        while lastAddress < address:
+            lastAddress = parseChannelData(lastAddress, 0, chanOut)
     if address & 0x3fff == 0:
-        chanOut.write('.bank ' + wlahex(address/0x4000,2) + ' slot 1\n')
+        chanOut.write('.bank ' + wlahex(address//0x4000,2) + ' slot 1\n')
         chanOut.write('.org 0\n')
 
     for i in ptr.indices:

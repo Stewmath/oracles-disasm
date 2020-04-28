@@ -1,5 +1,5 @@
 import sys
-import StringIO
+import io
 import copy
 
 index = sys.argv[0].rfind('/')
@@ -7,13 +7,13 @@ if index == -1:
     directory = ''
 else:
     directory = sys.argv[0][:index+1]
-execfile(directory+'common.py')
+exec(compile(open(directory+'common.py', "rb").read(), directory+'common.py', 'exec'))
 
 if len(sys.argv) < 3:
-    print 'Usage: ' + sys.argv[0] + ' roomLayout.bin output.cmp [-o] [-d dictionary.bin]'
-    print '\t-o: Compress optimally (instead of trying to match capcom\'s algorithm)'
-    print '\t\tThis is implied when using dictionary compression.'
-    print '\t-d: Use dictionary compression with the given dictionary file (for large rooms / dungeons)'
+    print('Usage: ' + sys.argv[0] + ' roomLayout.bin output.cmp [-o] [-d dictionary.bin]')
+    print('\t-o: Compress optimally (instead of trying to match capcom\'s algorithm)')
+    print('\t\tThis is implied when using dictionary compression.')
+    print('\t-d: Use dictionary compression with the given dictionary file (for large rooms / dungeons)')
     sys.exit()
 
 dictionaryMapping = {}
@@ -36,7 +36,7 @@ def compressRoomLayout_dictionary_nomemo(data, i, dictionary):
 
     possibilities.append(res)
 
-    for j in xrange(i-0x12, i-2):
+    for j in range(i-0x12, i-2):
         if j < 0:
             continue
         matchSize = i-j
@@ -57,7 +57,7 @@ def compressRoomLayout_dictionary_nomemo(data, i, dictionary):
             possibilities.append(res)
 
     res = possibilities[0]
-    for j in xrange(1, len(possibilities)):
+    for j in range(1, len(possibilities)):
         res2 = possibilities[j]
         if len(res2[0]) <= len(res[0]):
             res = res2
@@ -89,7 +89,7 @@ while i < len(sys.argv):
             i+=1
             dictionaryFilename = sys.argv[i]
     else:
-        print 'Unrecognized commandline argument "' + sys.argv[i] + '".'
+        print('Unrecognized commandline argument "' + sys.argv[i] + '".')
         sys.exit(1)
     i+=1
 
@@ -124,7 +124,7 @@ if compressionMode == 'commonbyte':
             smallestIndex = 0
 
     outFile = open(sys.argv[2], 'wb')
-    outFile.write(chr(smallestIndex))
+    outFile.write(bytes([smallestIndex]))
     outFile.write(possibilities[smallestIndex])
     outFile.close()
 elif compressionMode == 'dictionary':
@@ -139,7 +139,7 @@ elif compressionMode == 'dictionary':
             dictionaryMapping[bytes(dictionary[i:j])] = i
 
     outFile = open(sys.argv[2], 'wb')
-    outFile.write(chr(3))
+    outFile.write(bytes([3]))
     outFile.write(compressRoomLayout_dictionary(
         layoutData, len(layoutData), dictionary)[0])
     outFile.close()

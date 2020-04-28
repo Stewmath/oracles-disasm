@@ -1,15 +1,9 @@
 import sys
-import StringIO
-
-index = sys.argv[0].rfind('/')
-if index == -1:
-    directory = ''
-else:
-    directory = sys.argv[0][:index+1]
-execfile(directory+'common.py')
+import io
+from common import *
 
 if len(sys.argv) < 2:
-    print 'Usage: ' + sys.argv[0] + ' romfile'
+    print('Usage: ' + sys.argv[0] + ' romfile')
     sys.exit()
 
 romFile = open(sys.argv[1], 'rb')
@@ -32,9 +26,9 @@ class TextStruct:
         self.indices = []  # List of all actual indices
         self.address = -1
 
-textTableOutput = StringIO.StringIO()
-textDataOutput = StringIO.StringIO()
-dictDataOutput = StringIO.StringIO()
+textTableOutput = io.StringIO()
+textDataOutput = io.StringIO()
+dictDataOutput = io.StringIO()
 
 # Constants
 region = getRomRegion(rom)
@@ -117,7 +111,7 @@ def getTextBase(index):
 highIndexList = []
 
 textTableOutput.write('textTableENG:\n')
-for i in xrange(0, numHighTextIndices):
+for i in range(0, numHighTextIndices):
     textTableOutput.write(
         '\t.dw textTableENG_' + myhex(i, 2) + ' - textTableENG\n')
 
@@ -139,10 +133,10 @@ for i in xrange(0, numHighTextIndices):
 highIndexList = sorted(highIndexList, key=lambda d: d.address)
 
 # First pass through address-sorted tables: calculate table sizes
-for i in xrange(len(highIndexList)):
+for i in range(len(highIndexList)):
     data = highIndexList[i]
     if i != 0:
-        highIndexList[i-1].size = (data.address - highIndexList[i-1].address)/2
+        highIndexList[i-1].size = (data.address - highIndexList[i-1].address)//2
 
 # Size of last one must be hard-coded
 highIndexList[len(highIndexList)-1].size = lastGroupSize
@@ -155,7 +149,7 @@ textList = set()
 lastAddress = 0
 
 # Second pass, print stuff out and get list of text addresses
-for i in xrange(len(highIndexList)):
+for i in range(len(highIndexList)):
     data = highIndexList[i]
 
     if lastAddress != data.address and i != 0:
@@ -163,7 +157,7 @@ for i in xrange(len(highIndexList)):
     for index in data.indices:
         textTableOutput.write(
             'textTableENG_' + myhex(index, 2) + ': ; ' + wlahex(data.address, 4) + '\n')
-    for index in xrange(data.size):
+    for index in range(data.size):
         addr = data.address + index*2
         textAddress = read16(rom, addr)
 
@@ -183,7 +177,7 @@ for i in xrange(len(highIndexList)):
         textTableOutput.write('\tm_TextPointer text_' + myhex(textAddress, 4))
         textBase = getTextBase(data.indices[0])
         textTableOutput.write(
-            ' ' + wlahex(textBase/0x4000, 2) + ' ' + wlahex(textBase&0x3fff, 4) + '\n')
+            ' ' + wlahex(textBase//0x4000, 2) + ' ' + wlahex(textBase&0x3fff, 4) + '\n')
 
     lastAddress = data.address + data.size*2
 
@@ -247,8 +241,8 @@ while address < textEndAddress:
     pos+=1
     textStruct = textAddressDictionary.get(address)
     if textStruct is None:
-        print 'text_' + myhex(address, 2) + ' is never referenced'
-        print 'Output may be malformed'
+        print('text_' + myhex(address, 2) + ' is never referenced')
+        print('Output may be malformed')
         out = textDataOutput
     else:
         index = textStruct.index
@@ -329,7 +323,7 @@ while address < textEndAddress:
             elif p == 7:
                 dataOut.write('\\slow()')
             else:
-                print 'Bad opcode'
+                print('Bad opcode')
             i+=1
         elif b == 0xd and len(data)>i+1:
             dataOut.write('\\wait(' + wlahex(data[i+1], 2) + ')')
@@ -422,8 +416,8 @@ outFile = open(precmpDir + 'textData.s', 'w')
 outFile.write('; Precompressed blob of text data since my compression algorithms aren\'t 1:1.\n')
 outFile.write('; Unset USE_VANILLA in the makefile if you want to edit text.txt instead of using this.\n\n')
 outFile.write('.DEFINE TEXT_END_ADDR ' + wlahex(toGbPointer(textEndAddress),4) + '\n')
-outFile.write('.DEFINE TEXT_END_BANK ' + wlahex(textEndAddress/0x4000,2) + '\n\n')
-outFile.write('.BANK ' + wlahex(textTable/0x4000) + '\n')
+outFile.write('.DEFINE TEXT_END_BANK ' + wlahex(textEndAddress//0x4000,2) + '\n\n')
+outFile.write('.BANK ' + wlahex(textTable//0x4000) + '\n')
 outFile.write('.ORGA ' + wlahex(toGbPointer(textTable)) + '\n\n')
 
 outFile.write('textTableENG:')
@@ -444,7 +438,7 @@ while address < textEndAddress:
     address+=1
     if (address&0x3fff) == 0:
         i = 8
-        outFile.write('\n\n.BANK ' + wlahex(address/0x4000,2) + '\n')
+        outFile.write('\n\n.BANK ' + wlahex(address//0x4000,2) + '\n')
         outFile.write('.ORGA $4000\n')
 outFile.write('\n')
 outFile.close()

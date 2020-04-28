@@ -1,16 +1,10 @@
 import sys
-import StringIO
-
-index = sys.argv[0].rfind('/')
-if index == -1:
-    directory = ''
-else:
-    directory = sys.argv[0][:index + 1]
-execfile(directory + 'common.py')
+import io
+from common import *
 
 if len(sys.argv) < 2:
-    print 'Usage: ' + sys.argv[0] + ' romfile'
-    print 'Output goes to stdout'
+    print('Usage: ' + sys.argv[0] + ' romfile')
+    print('Output goes to stdout')
     sys.exit()
 
 romFile = open(sys.argv[1], 'rb')
@@ -29,7 +23,7 @@ else:
 # This will be calculated
 numExtraDataIndices = 0
 
-treasureDataOut = StringIO.StringIO()
+treasureDataOut = io.StringIO()
 
 # Dictionary of address to list of indices
 subidDataAddresses = {}
@@ -39,7 +33,7 @@ address = dataAddress
 treasureDataOut.write('; @addr{' + wlahex(address) + '}\n')
 treasureDataOut.write('treasureData:\n')
 
-for i in xrange(numObjects):
+for i in range(numObjects):
     b0 = rom[address]
     
     treasureDataOut.write('\t; 0x' + myhex(i,2) + '\n')
@@ -60,7 +54,7 @@ for i in xrange(numObjects):
         subidTableAddress = read16(rom, address+1)
         subidTableAddress = bankedAddress(dataBank, subidTableAddress)
 
-        if not subidDataAddresses.has_key(subidTableAddress):
+        if subidTableAddress not in subidDataAddresses:
             subidDataAddresses[subidTableAddress] = []
         subidDataAddresses[subidTableAddress].append(i)
 
@@ -111,4 +105,4 @@ for addr in sorted(subidDataAddresses):
 treasureDataOut.write('; End at ' + wlahex(address) + '\n')
 
 treasureDataOut.seek(0)
-print treasureDataOut.read()
+print(treasureDataOut.read())

@@ -2,18 +2,12 @@
 # glitch. (See my findings here: http://wiki.zeldahacking.net/oracle/Veran_Warp)
 
 import sys
-import StringIO
-
-index = sys.argv[0].rfind('/')
-if index == -1:
-    directory = ''
-else:
-    directory = sys.argv[0][:index + 1]
-execfile(directory + 'common.py')
+import io
+from common import *
 
 if len(sys.argv) < 2:
-    print 'Usage: ' + sys.argv[0] + ' romfile'
-    print 'Output goes to stout'
+    print('Usage: ' + sys.argv[0] + ' romfile')
+    print('Output goes to stout')
     sys.exit()
 
 romFile = open(sys.argv[1], 'rb')
@@ -22,7 +16,7 @@ rom = bytearray(romFile.read())
 # This is actually 2 bytes prior to the start of the table, but index 0 is never used
 itemPositionsTable = 0x9b80
 
-output = StringIO.StringIO()
+output = io.StringIO()
 
 output.write('{| class="wikitable"\n')
 output.write('!FF8D value\n')

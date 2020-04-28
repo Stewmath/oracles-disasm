@@ -1,16 +1,10 @@
 import sys
-import StringIO
-
-index = sys.argv[0].rfind('/')
-if index == -1:
-    directory = ''
-else:
-    directory = sys.argv[0][:index + 1]
-execfile(directory + 'common.py')
+import io
+from common import *
 
 if len(sys.argv) < 2:
-    print 'Usage: ' + sys.argv[0] + ' romfile'
-    print 'Output goes to stdout'
+    print('Usage: ' + sys.argv[0] + ' romfile')
+    print('Output goes to stdout')
     sys.exit()
 
 romFile = open(sys.argv[1], 'rb')
@@ -37,7 +31,7 @@ else:
 # This will be calculated
 numExtraDataIndices = 0
 
-interactionDataOut = StringIO.StringIO()
+interactionDataOut = io.StringIO()
 
 # Dictionary of address to list of indices
 subidDataAddresses = {}
@@ -47,7 +41,7 @@ address = dataAddress
 interactionDataOut.write('; @addr{' + wlahex(address) + '}\n')
 interactionDataOut.write('interactionData:\n')
 
-for i in xrange(numObjects):
+for i in range(numObjects):
     b0 = rom[address]
     b1 = rom[address+1]
     b2 = rom[address+2]
@@ -61,7 +55,7 @@ for i in xrange(numObjects):
         interactionDataOut.write('interaction' + myhex(i,2) + 'SubidData\n')
         subidTableAddress = bankedAddress(dataBank, subidTableAddress)
 
-        if not subidDataAddresses.has_key(subidTableAddress):
+        if subidTableAddress not in subidDataAddresses:
             subidDataAddresses[subidTableAddress] = []
         subidDataAddresses[subidTableAddress].append(i)
 
@@ -123,4 +117,4 @@ for addr in sorted(subidDataAddresses):
 interactionDataOut.write('; End at ' + wlahex(address) + '\n')
 
 interactionDataOut.seek(0)
-print interactionDataOut.read()
+print(interactionDataOut.read())

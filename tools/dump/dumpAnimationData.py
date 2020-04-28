@@ -1,15 +1,9 @@
 import sys
-import StringIO
-
-index = sys.argv[0].rfind('/')
-if index == -1:
-    directory = ''
-else:
-    directory = sys.argv[0][:index + 1]
-execfile(directory + 'common.py')
+import io
+from common import *
 
 if len(sys.argv) < 2:
-    print 'Usage: ' + sys.argv[0] + ' romfile'
+    print('Usage: ' + sys.argv[0] + ' romfile')
     sys.exit()
 
 romFile = open(sys.argv[1], 'rb')
@@ -76,7 +70,7 @@ else:
 
 animationPointerList = []
 
-outFile = open(dataDir+"animationGroups.s",'wb')
+outFile = open(dataDir+"animationGroups.s", 'w')
 outFile.write('animationGroupTable: ; ' + hex(animationGroupAddress) + '\n')
 for i in range(numAnimationIndices):
     pointer = read16(rom, animationGroupAddress+i*2)
@@ -116,7 +110,7 @@ for i in range(numAnimationIndices):
 
 outFile.close()
 
-outFile = open(dataDir+'animationData.s','wb')
+outFile = open(dataDir+'animationData.s', 'w')
 
 animationDataList = sorted(animationDataList, key=lambda x:x.address)
 

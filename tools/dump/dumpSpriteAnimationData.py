@@ -1,16 +1,10 @@
 import sys
-import StringIO
-
-index = sys.argv[0].rfind('/')
-if index == -1:
-    directory = ''
-else:
-    directory = sys.argv[0][:index + 1]
-execfile(directory + 'common.py')
+import io
+from common import *
 
 if len(sys.argv) < 2:
-    print 'Usage: ' + sys.argv[0] + ' romfile'
-    print 'Output goes to files: data/{game}/{item|interaction|enemy|part}Animations.s, data/{game}{item|interaction|enemy|part}OamData.s'
+    print('Usage: ' + sys.argv[0] + ' romfile')
+    print('Output goes to files: data/{game}/{item|interaction|enemy|part}Animations.s, data/{game}{item|interaction|enemy|part}OamData.s')
     sys.exit()
 
 romFile = open(sys.argv[1], 'rb')
@@ -50,7 +44,7 @@ def dumpAnimations(objectType):
     for i in range(numAnimationIndices):
         pointer = read16(rom, animationDataTable+i*2)
         if pointer < 0x4000 or pointer >= 0x8000:
-            print 'Invalid pointer at ' + hex(address)
+            print('Invalid pointer at ' + hex(address))
         pointerAddress = bankedAddress(animationBank, pointer)
         animationPointerList.append(bankedAddress(animationBank, pointer))
         outFile.write('\t.dw ' + objectType + myhex(i, 2) + 'Animations')
@@ -64,7 +58,7 @@ def dumpAnimations(objectType):
         animationPointerList2.append(bankedAddress(animationBank, pointer))
         outFile.write('\t.dw ' + objectType + myhex(i,2) + 'OamDataPointers')
         if pointer < 0x4000 or pointer >= 0x8000:
-            print 'Invalid pointer at ' + hex(address)
+            print('Invalid pointer at ' + hex(address))
             outFile.write(' ; INVALID POINTER')
         outFile.write('\n')
     outFile.write('\n')
@@ -87,7 +81,7 @@ def dumpAnimations(objectType):
     #     animationDataStart = max(animationDataStart, animationData.address)
         outFile.write('\t.dw ' + animationData.name)
         if pointer < 0x4000 or pointer >= 0x8000:
-            print 'Invalid pointer at ' + hex(address)
+            print('Invalid pointer at ' + hex(address))
             outFile.write(' ; INVALID POINTER')
         outFile.write('\n')
         address+=2
@@ -223,7 +217,7 @@ if romIsAges(rom):
     animationBank = 0x16
     animationDataTable = 0x59855
     oamTableStart = 0x59a23
-    numAnimationIndices = (oamTableStart - animationDataTable)/2
+    numAnimationIndices = (oamTableStart - animationDataTable)//2
     animationPointersStart = oamTableStart + numAnimationIndices*2
     animationDataStart = 0x5a083
     oamDataStart = 0x5adfc
@@ -236,7 +230,7 @@ if romIsAges(rom):
     animationBank = 0x16
     animationDataTable = 0x5b668
     oamTableStart = 0x5b71e
-    numAnimationIndices = (oamTableStart - animationDataTable)/2
+    numAnimationIndices = (oamTableStart - animationDataTable)//2
     animationPointersStart = oamTableStart + numAnimationIndices*2
     animationDataStart = 0x5b8c0
     oamDataStart = 0x5bc04
@@ -249,7 +243,7 @@ if romIsAges(rom):
     animationBank = 0x0d
     animationDataTable = 0x36d5c
     oamTableStart = 0x36e5c
-    numAnimationIndices = (oamTableStart - animationDataTable)/2
+    numAnimationIndices = (oamTableStart - animationDataTable)//2
     animationPointersStart = oamTableStart + numAnimationIndices*2
     animationDataStart = 0x37200
     oamDataStart = 0x379ff
@@ -262,7 +256,7 @@ if romIsAges(rom):
     animationBank = 0x07
     animationDataTable = 0x1e663
     oamTableStart = 0x1e6c3
-    numAnimationIndices = (oamTableStart - animationDataTable)/2
+    numAnimationIndices = (oamTableStart - animationDataTable)//2
     animationPointersStart = oamTableStart + numAnimationIndices*2
     animationDataStart = 0x1e777
     oamDataStart = 0x1e8bc
@@ -277,7 +271,7 @@ else:
     animationBank = 0x14
     animationDataTable = 0x51325
     oamTableStart = 0x514f5
-    numAnimationIndices = (oamTableStart - animationDataTable)/2
+    numAnimationIndices = (oamTableStart - animationDataTable)//2
     animationPointersStart = oamTableStart + numAnimationIndices*2
     animationDataStart = bankedAddress(animationBank, read16(rom, animationPointersStart))
     oamDataStart = bankedAddress(animationBank, read16(rom, oamTableStart))
@@ -290,7 +284,7 @@ else:
     animationBank = 0x15
     animationDataTable = 0x5718f
     oamTableStart = 0x57237
-    numAnimationIndices = (oamTableStart - animationDataTable)/2
+    numAnimationIndices = (oamTableStart - animationDataTable)//2
     animationPointersStart = oamTableStart + numAnimationIndices*2
     animationDataStart = bankedAddress(animationBank, read16(rom, animationPointersStart))
     oamDataStart = bankedAddress(animationBank, read16(rom, oamTableStart))
@@ -303,7 +297,7 @@ else:
     animationBank = 0x0c
     animationDataTable = 0x32df7
     oamTableStart = 0x32ef7
-    numAnimationIndices = (oamTableStart - animationDataTable)/2
+    numAnimationIndices = (oamTableStart - animationDataTable)//2
     animationPointersStart = oamTableStart + numAnimationIndices*2
     animationDataStart = 0x332a5
     oamDataStart = bankedAddress(animationBank, read16(rom, oamTableStart))
@@ -316,7 +310,7 @@ else:
     animationBank = 0x07
     animationDataTable = 0x1e401
     oamTableStart = 0x1e461
-    numAnimationIndices = (oamTableStart - animationDataTable)/2
+    numAnimationIndices = (oamTableStart - animationDataTable)//2
     animationPointersStart = oamTableStart + numAnimationIndices*2
     animationDataStart = bankedAddress(animationBank, read16(rom, animationPointersStart))
     oamDataStart = bankedAddress(animationBank, read16(rom, oamTableStart))

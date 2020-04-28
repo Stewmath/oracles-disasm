@@ -3,17 +3,11 @@
 # This is obsolete now, don't use it.
 
 import sys
-import StringIO
-
-index = sys.argv[0].rfind('/')
-if index == -1:
-    directory = ''
-else:
-    directory = sys.argv[0][:index+1]
-execfile(directory+'common.py')
+import io
+from common import *
 
 if len(sys.argv) < 2:
-    print 'Usage: ' + sys.argv[0] + ' romfile'
+    print('Usage: ' + sys.argv[0] + ' romfile')
     sys.exit()
 
 romFile = open(sys.argv[1], 'rb')
@@ -66,7 +60,7 @@ elif romIsSeasons(rom):
     precmpDir = 'precompressed/gfx_compressible/seasons/'
     gfxDir = 'gfx_compressible/seasons/'
 else:
-    print 'Unrecognized ROM.'
+    print('Unrecognized ROM.')
     sys.exit(1)
 
 
@@ -76,30 +70,30 @@ class GfxData:
         self.walrus = 0
 
     def printself(self):
-        print 'type ' + str(self.mode)
-        print 'src ' + hex(self.src)
-        print 'size ' + hex(self.size)
-        print 'dest ' + hex(self.dest)
+        print('type ' + str(self.mode))
+        print('src ' + hex(self.src))
+        print('size ' + hex(self.size))
+        print('dest ' + hex(self.dest))
 
-gfxHeaderOutput = StringIO.StringIO()
-uncmpGfxHeaderOutput = StringIO.StringIO()
-uniqueTilesetHeaderOutput = StringIO.StringIO()
-uniqueTilesetPointerOutput = StringIO.StringIO()
-npcHeaderOutput = StringIO.StringIO()
-treeHeaderOutput = StringIO.StringIO()
-gfxDataOutput = StringIO.StringIO()
+gfxHeaderOutput = io.StringIO()
+uncmpGfxHeaderOutput = io.StringIO()
+uniqueTilesetHeaderOutput = io.StringIO()
+uniqueTilesetPointerOutput = io.StringIO()
+npcHeaderOutput = io.StringIO()
+treeHeaderOutput = io.StringIO()
+gfxDataOutput = io.StringIO()
 
 gfxHeaderAddresses = []
 uncmpGfxHeaderAddresses = []
 uniqueTilesetHeaderAddresses = []
 
-for h in xrange(numGfxHeaders):
+for h in range(numGfxHeaders):
     gfxHeaderAddresses.append(
         bankedAddress(gfxHeaderBank, read16(rom, gfxHeaderTable+h*2)))
-for h in xrange(numUncmpGfxHeaders):
+for h in range(numUncmpGfxHeaders):
     uncmpGfxHeaderAddresses.append(
         bankedAddress(uncmpGfxHeaderBank, read16(rom, uncmpGfxHeaderTable+h*2)))
-for h in xrange(numUniqueTilesetHeaders):
+for h in range(numUniqueTilesetHeaders):
     address = read16(rom, uniqueTilesetHeaderTable+h*2)
     uniqueTilesetHeaderAddresses.append(
         bankedAddress(uniqueTilesetHeaderBank, address))
@@ -236,14 +230,14 @@ for address in sorted(set(uniqueTilesetHeaderAddresses)):
 
 # Go through all npc gfx data
 npcHeaderOutput.write('npcGfxHeaderTable: ; ' + wlahex(npcGfxTable, 4) + '\n')
-for i in xrange(numNpcGraphics):
+for i in range(numNpcGraphics):
     address = npcGfxTable + i*3
     parseNpcHeader(address, npcHeaderOutput, i)
 
 # Go through treetop data
 treeHeaderOutput.write(
     'treeGfxHeaderTable: ; ' + wlahex(treeGfxTable, 4) + '\n')
-for i in xrange(numTreeGraphics):
+for i in range(numTreeGraphics):
     address = treeGfxTable + i*3
     parseNpcHeader(address, treeHeaderOutput, i)
 
@@ -303,7 +297,7 @@ for data in gfxDataList:
             precmpDir + 'gfx_' + myhex(data.src, 6) + '.cmp', 'wb')
         romFile.seek(data.src)
         # First byte of the file indicates compression mode
-        outFile.write(chr(data.mode))
+        outFile.write(bytes([data.mode]))
         outFile.write(romFile.read(data.physicalSize))
         outFile.close()
 
@@ -317,17 +311,17 @@ for data in gfxDataList:
             gfxDataOutput.seek(0)
             outFile.write(gfxDataOutput.read())
             outFile.close()
-            gfxDataOutput = StringIO.StringIO()
+            gfxDataOutput = io.StringIO()
 
-            print 'Gap from ' + wlahex(lastAddress) + ' - ' + wlahex(data.src)
+            print('Gap from ' + wlahex(lastAddress) + ' - ' + wlahex(data.src))
 
         fileStartAddress = data.src
 
         gfxDataOutput.write(
-            '; .BANK ' + wlahex(data.src/0x4000, 2) + ' SLOT 1\n')
+            '; .BANK ' + wlahex(data.src//0x4000, 2) + ' SLOT 1\n')
         gfxDataOutput.write('; .ORGA ' + wlahex(toGbPointer(data.src), 4) + '\n\n')
         gfxDataOutput.write(
-            '; .REDEFINE DATA_CURBANK ' + wlahex(data.src/0x4000, 2) + '\n')
+            '; .REDEFINE DATA_CURBANK ' + wlahex(data.src//0x4000, 2) + '\n')
         gfxDataOutput.write(
             '; .REDEFINE DATA_ADDR ' + wlahex(toGbPointer(data.src), 4) + '\n\n')
 

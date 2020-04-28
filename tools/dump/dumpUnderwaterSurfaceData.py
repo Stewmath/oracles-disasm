@@ -1,16 +1,9 @@
-
 import sys
-import StringIO
-
-index = sys.argv[0].rfind('/')
-if index == -1:
-    directory = ''
-else:
-    directory = sys.argv[0][:index+1]
-execfile(directory+'common.py')
+import io
+from common import *
 
 if len(sys.argv) < 3:
-    print 'Usage: ' + sys.argv[0] + ' romfile startaddress size'
+    print('Usage: ' + sys.argv[0] + ' romfile startaddress size')
     sys.exit()
 
 romFile = open(sys.argv[1], 'rb')
@@ -20,7 +13,7 @@ startAddress = int(sys.argv[2])
 endAddress = startAddress+int(sys.argv[3])
 
 address = startAddress
-output = StringIO.StringIO()
+output = io.StringIO()
 
 offset = 0
 
@@ -29,12 +22,12 @@ while address < endAddress:
     #		output.write('underWaterSurfaceData_' + myhex(toGbPointer(address),4) + ':\n')
     output.write('\t.dw %')
 
-    for i in xrange(7, -1, -1):
+    for i in range(7, -1, -1):
         if rom[address+1] & (1<<i):
             output.write('1')
         else:
             output.write('0')
-    for i in xrange(7, -1, -1):
+    for i in range(7, -1, -1):
         if rom[address] & (1<<i):
             output.write('1')
         else:

@@ -1,20 +1,14 @@
 # Compresses "tilesetCollisions" or "tilesetMappingsIndices" files.
 #
 import sys
-import StringIO
+import io
 import copy
-
-index = sys.argv[0].rfind('/')
-if index == -1:
-    directory = ''
-else:
-    directory = sys.argv[0][:index+1]
-execfile(directory+'common.py')
+from common import *
 
 if len(sys.argv) < 5:
-    print 'Usage: ' + sys.argv[0] + ' tilesetData.bin output.cmp mode dictionary.bin'
-    print '\tmode: 0 or 1 to select one of the variations to the compression algorithm'
-    print '\tdictionary.bin: Use this dictionary file for compression'
+    print('Usage: ' + sys.argv[0] + ' tilesetData.bin output.cmp mode dictionary.bin')
+    print('\tmode: 0 or 1 to select one of the variations to the compression algorithm')
+    print('\tdictionary.bin: Use this dictionary file for compression')
     sys.exit()
 
 # The second should be 0x100 but it doesn't improve compression.
@@ -44,7 +38,7 @@ def compressTilesetData_nomemo(data, i, mode):
 
     minMatchLen = 3
     maxMatchLen = maxModeLens[mode]
-    for j in xrange(i-maxMatchLen, i-minMatchLen):
+    for j in range(i-maxMatchLen, i-minMatchLen):
         if j < 0:
             continue
         matchSize = i-j
@@ -73,7 +67,7 @@ def compressTilesetData_nomemo(data, i, mode):
             possibilities.append(res)
 
     res = possibilities[0]
-    for j in xrange(1, len(possibilities)):
+    for j in range(1, len(possibilities)):
         res2 = possibilities[j]
         if len(res2[0]) <= len(res[0]):
             res = res2
