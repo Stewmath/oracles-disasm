@@ -12332,10 +12332,10 @@ _label_07_277:
 	ld (hl),a		; $634f
 	ret			; $6350
 
-.ends
 
-.include "data/seasons/itemAttributes.s"
-.include "data/itemAnimations.s"
+	.include "data/seasons/itemAttributes.s"
+	.include "data/itemAnimations.s"
+.ends
 
 
  ; This section can't be superfree, since it must be in the same bank as section

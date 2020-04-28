@@ -17138,10 +17138,10 @@ itemCode1a:
 	ld (hl),a		; $65b1
 	ret			; $65b2
 
-.ends
 
-.include "build/data/itemAttributes.s"
-.include "data/itemAnimations.s"
+	.include "build/data/itemAttributes.s"
+	.include "data/itemAnimations.s"
+.ends
 
 
  ; This section can't be superfree, since it must be in the same bank as section
