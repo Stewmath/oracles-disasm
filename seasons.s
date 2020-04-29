@@ -23,6 +23,7 @@
 
 	.include "code/bank0.s"
 
+
 .BANK $01 SLOT 1
 .ORG 0
 
@@ -38,197 +39,206 @@
 .BANK $03 SLOT 1
 .ORG 0
 
-.include "code/bank3.s"
-.include "code/seasons/cutscenes/endgameCutscenes.s"
-.include "code/seasons/cutscenes/pirateShipDeparting.s"
-.include "code/seasons/cutscenes/volcanoErupting.s"
-.include "code/seasons/cutscenes/linkedGameCutscenes.s"
-.include "code/seasons/cutscenes/introCutscenes.s"
+	.include "code/bank3.s"
+	.include "code/seasons/cutscenes/endgameCutscenes.s"
+	.include "code/seasons/cutscenes/pirateShipDeparting.s"
+	.include "code/seasons/cutscenes/volcanoErupting.s"
+	.include "code/seasons/cutscenes/linkedGameCutscenes.s"
+	.include "code/seasons/cutscenes/introCutscenes.s"
+
 
 .BANK $04 SLOT 1
 .ORG 0
 
 .include "code/bank4.s"
 
-
 ; These 2 includes must be in the same bank
 .include "build/data/roomPacks.s"
 .include "build/data/musicAssignments.s"
-
-
-; Format:
-; First byte indicates whether it's a dungeon or not (and consequently what compression it uses)
-; 3 byte pointer to a table containing relative offsets for room data for each sector on the map
-; 3 byte pointer to the base offset of the actual layout data
-roomLayoutGroupTable: ; $4c4c
-	.db $01
-	3BytePointer roomLayoutGroup0Table
-	3BytePointer room0000
-	.db $00
-
-	.db $01
-	3BytePointer roomLayoutGroup1Table
-	3BytePointer room0100
-	.db $00
-
-	.db $01
-	3BytePointer roomLayoutGroup2Table
-	3BytePointer room0200
-	.db $00
-
-	.db $01
-	3BytePointer roomLayoutGroup3Table
-	3BytePointer room0300
-	.db $00
-
-	.db $01
-	3BytePointer roomLayoutGroup4Table
-	3BytePointer room0400
-	.db $00
-
-	.db $00
-	3BytePointer roomLayoutGroup5Table
-	3BytePointer room0500
-	.db $00
-
-	.db $00
-	3BytePointer roomLayoutGroup6Table
-	3BytePointer room0600
-	.db $00
-
+.include "build/data/roomLayoutGroupTable.s"
 .include "build/data/tilesets.s"
 .include "build/data/tilesetAssignments.s"
 
+;;
+; @addr{58e4}
 initializeAnimations:
-	ld a,($cd25)		; $574c
-	cp $ff			; $574f
-	ret z			; $5751
-	call loadAnimationData		; $5752
-	call $579a		; $5755
-_label_04_183:
-	call $5773		; $5758
-	jr nz,_label_04_183	; $575b
-	ret			; $575d
+	ld a,(wTilesetAnimation)		; $58e4
+	cp $ff			; $58e7
+	ret z			; $58e9
+
+	call loadAnimationData		; $58ea
+.ifdef ROM_AGES
+	call @locFunc		; $58ed
+	ld hl,wAnimationState		; $58f0
+	set 7,(hl)		; $58f3
+	call @locFunc		; $58f5
+	ld hl,wAnimationState		; $58f8
+	set 7,(hl)		; $58fb
+.endif
+@locFunc:
+	call updateAnimationData		; $58fd
+-
+	call updateAnimationQueue		; $5900
+	jr nz, -
+	ret			; $5905
+
+;;
+; @addr{5906}
 updateAnimations:
-	ld hl,$cd30		; $575e
-	res 6,(hl)		; $5761
-	ld a,($cd25)		; $5763
-	inc a			; $5766
-	ret z			; $5767
-	ld a,($cd00)		; $5768
-	and $01			; $576b
-	ret z			; $576d
-	call $5773		; $576e
-	jr _label_04_184		; $5771
-	ld a,($ccfa)		; $5773
-	ld b,a			; $5776
-	ld a,($ccfb)		; $5777
-	cp b			; $577a
-	ret z			; $577b
-	inc b			; $577c
-	ld a,b			; $577d
-	and $1f			; $577e
-	ld ($ccfa),a		; $5780
-	ld hl,$db90		; $5783
-	rst_addAToHl			; $5786
-	ld a,$02		; $5787
-	ld ($ff00+$70),a	; $5789
-	ld b,(hl)		; $578b
-	xor a			; $578c
-	ld ($ff00+$70),a	; $578d
-	ld a,b			; $578f
-	call $580f		; $5790
-	ld hl,$cd30		; $5793
-	set 6,(hl)		; $5796
-	or h			; $5798
-	ret			; $5799
-_label_04_184:
-	ld hl,$cd31		; $579a
-	ld a,($cd30)		; $579d
-	bit 0,a			; $57a0
-	call nz,$57cf		; $57a2
-	ld hl,$cd34		; $57a5
-	ld a,($cd30)		; $57a8
-	bit 1,a			; $57ab
-	call nz,$57cf		; $57ad
-	ld hl,$cd37		; $57b0
-	ld a,($cd30)		; $57b3
-	bit 2,a			; $57b6
-	call nz,$57cf		; $57b8
-	ld hl,$cd3a		; $57bb
-	ld a,($cd30)		; $57be
-	bit 3,a			; $57c1
-	call nz,$57cf		; $57c3
-	ld a,($cd30)		; $57c6
-	and $7f			; $57c9
-	ld ($cd30),a		; $57cb
-	ret			; $57ce
-	ld a,($cd30)		; $57cf
-	bit 7,a			; $57d2
-	jr nz,_label_04_185	; $57d4
-	dec (hl)		; $57d6
-	ret nz			; $57d7
-_label_04_185:
-	push hl			; $57d8
-	inc hl			; $57d9
-	ldi a,(hl)		; $57da
-	ld h,(hl)		; $57db
-	ld l,a			; $57dc
-	ld e,(hl)		; $57dd
-	inc hl			; $57de
-	ldi a,(hl)		; $57df
-	cp $ff			; $57e0
-	jr nz,_label_04_186	; $57e2
-	ld b,a			; $57e4
-	ld c,(hl)		; $57e5
-	add hl,bc		; $57e6
-	ldi a,(hl)		; $57e7
-_label_04_186:
-	ld c,l			; $57e8
-	ld b,h			; $57e9
-	pop hl			; $57ea
-	ldi (hl),a		; $57eb
-	ld (hl),c		; $57ec
-	inc hl			; $57ed
-	ld (hl),b		; $57ee
-	ld b,e			; $57ef
-	ld a,($ccfb)		; $57f0
-	inc a			; $57f3
-	and $1f			; $57f4
-	ld e,a			; $57f6
-	ld a,($ccfa)		; $57f7
-	cp e			; $57fa
-	ret z			; $57fb
-	ld a,e			; $57fc
-	ld ($ccfb),a		; $57fd
-	ld a,$02		; $5800
-	ld ($ff00+$70),a	; $5802
-	ld a,e			; $5804
-	ld hl,$db90		; $5805
-	rst_addAToHl			; $5808
-	ld (hl),b		; $5809
-	xor a			; $580a
-	ld ($ff00+$70),a	; $580b
-	or h			; $580d
-	ret			; $580e
-	ld c,$06		; $580f
-	call multiplyAByC		; $5811
-	ld bc,$5a48		; $5814
-	add hl,bc		; $5817
-	ldi a,(hl)		; $5818
-	ld c,a			; $5819
-	ldi a,(hl)		; $581a
-	ld d,a			; $581b
-	ldi a,(hl)		; $581c
-	ld e,a			; $581d
-	push de			; $581e
-	ldi a,(hl)		; $581f
-	ld d,a			; $5820
-	ldi a,(hl)		; $5821
-	ld e,a			; $5822
-	ld b,(hl)		; $5823
-	pop hl			; $5824
-	jp queueDmaTransfer		; $5825
+	ld hl,wAnimationState		; $5906
+	res 6,(hl)		; $5909
+	ld a,(wTilesetAnimation)		; $590b
+	inc a			; $590e
+	ret z			; $590f
+
+	ld a,(wScrollMode)		; $5910
+	and $01			; $5913
+	ret z			; $5915
+
+	call updateAnimationQueue		; $5916
+	jr updateAnimationData		; $5919
+
+;;
+; Read the next index off of the animation queue, set zero flag if there's
+; nothing more to be read.
+; @addr{591b}
+updateAnimationQueue:
+	ld a,(wAnimationQueueHead)		; $591b
+	ld b,a			; $591e
+	ld a,(wAnimationQueueTail)		; $591f
+	cp b			; $5922
+	ret z			; $5923
+
+	inc b			; $5924
+	ld a,b			; $5925
+	and $1f			; $5926
+	ld (wAnimationQueueHead),a		; $5928
+	ld hl,w2AnimationQueue		; $592b
+	rst_addAToHl			; $592e
+	ld a,:w2AnimationQueue
+	ld ($ff00+R_SVBK),a	; $5931
+	ld b,(hl)		; $5933
+	xor a			; $5934
+	ld ($ff00+R_SVBK),a	; $5935
+	ld a,b			; $5937
+	call loadAnimationGfxIndex		; $5938
+	ld hl,wAnimationState		; $593b
+	set 6,(hl)		; $593e
+	or h			; $5940
+	ret			; $5941
+
+;;
+; @addr{5942}
+updateAnimationData:
+	ld hl,wAnimationCounter1		; $5942
+	ld a,(wAnimationState)		; $5945
+	bit 0,a			; $5948
+	call nz,updateAnimationDataPointer		; $594a
+	ld hl,wAnimationCounter2		; $594d
+	ld a,(wAnimationState)		; $5950
+	bit 1,a			; $5953
+	call nz,updateAnimationDataPointer		; $5955
+	ld hl,wAnimationCounter3		; $5958
+	ld a,(wAnimationState)		; $595b
+	bit 2,a			; $595e
+	call nz,updateAnimationDataPointer		; $5960
+	ld hl,wAnimationCounter4		; $5963
+	ld a,(wAnimationState)		; $5966
+	bit 3,a			; $5969
+	call nz,updateAnimationDataPointer		; $596b
+
+	; Unset force update bit
+	ld a,(wAnimationState)		; $596e
+	and $7f			; $5971
+	ld (wAnimationState),a		; $5973
+	ret			; $5976
+
+;;
+; Update animation data pointed to by hl
+; @addr{5977}
+updateAnimationDataPointer:
+	; If bit 7 set, force update
+	ld a,(wAnimationState)		; $5977
+	bit 7,a			; $597a
+	jr nz, +
+
+	; Otherwise, decrement counter
+	dec (hl)		; $597e
+	ret nz			; $597f
++
+	; Load hl with a pointer to the animationData structure
+	push hl			; $5980
+	inc hl			; $5981
+	ldi a,(hl)		; $5982
+	ld h,(hl)		; $5983
+	ld l,a			; $5984
+
+	; e = animation gfx index
+	ld e,(hl)		; $5985
+	inc hl			; $5986
+	; If next byte is 0xff, it jumps several bytes back, otherwise the data
+	; structure continues
+	ldi a,(hl)		; $5987
+	cp $ff			; $5988
+	jr nz, +
+	ld b,a			; $598c
+	ld c,(hl)		; $598d
+	add hl,bc		; $598e
+	ldi a,(hl)		; $598f
++
+	ld c,l			; $5990
+	ld b,h			; $5991
+	pop hl			; $5992
+	ldi (hl),a		; $5993
+	ld (hl),c		; $5994
+	inc hl			; $5995
+	ld (hl),b		; $5996
+
+	; Set animation index to be loaded
+	ld b,e			; $5997
+	ld a,(wAnimationQueueTail)		; $5998
+	inc a			; $599b
+	and $1f			; $599c
+	ld e,a			; $599e
+	ld a,(wAnimationQueueHead)		; $599f
+	cp e			; $59a2
+	ret z			; $59a3
+
+	ld a,e			; $59a4
+	ld (wAnimationQueueTail),a		; $59a5
+	ld a,:w2AnimationQueue
+	ld ($ff00+R_SVBK),a	; $59aa
+	ld a,e			; $59ac
+	ld hl,w2AnimationQueue		; $59ad
+	rst_addAToHl			; $59b0
+	ld (hl),b		; $59b1
+	xor a			; $59b2
+	ld ($ff00+R_SVBK),a	; $59b3
+	or h			; $59b5
+	ret			; $59b6
+
+;;
+; Load animation index a
+; @addr{59b7}
+loadAnimationGfxIndex:
+	ld c,$06		; $59b7
+	call multiplyAByC		; $59b9
+	ld bc, animationGfxHeaders
+	add hl,bc		; $59bf
+	ldi a,(hl)		; $59c0
+	ld c,a			; $59c1
+	ldi a,(hl)		; $59c2
+	ld d,a			; $59c3
+	ldi a,(hl)		; $59c4
+	ld e,a			; $59c5
+	push de			; $59c6
+	ldi a,(hl)		; $59c7
+	ld d,a			; $59c8
+	ldi a,(hl)		; $59c9
+	ld e,a			; $59ca
+	ld b,(hl)		; $59cb
+	pop hl			; $59cc
+	jp queueDmaTransfer		; $59cd
 
 
 	.include "data/seasons/uniqueGfxHeaders.s"
@@ -362,6 +372,7 @@ _label_04_190:
 	add c			; $5a45
 	ld d,h			; $5a46
 	ld e,l			; $5a47
+animationGfxHeaders:
 	jr $65			; $5a48
 	ld b,b			; $5a4a
 	adc b			; $5a4b

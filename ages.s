@@ -39,73 +39,8 @@
 
 	.include "code/bank3.s"
 	.include "code/ages/cutscenes/miscCutscenes.s"
-
 .ifdef BUILD_VANILLA
-
-; Garbage functions appear to follow (corrupted repeats of the above functions).
-
-;;
-; @addr{7e54}
-func_7e54:
-	ld a,$10		; $7e54
-	ld (wLinkStateParameter),a		; $7e56
-	ld hl,w1Link.direction		; $7e59
-	ld a,$02		; $7e5c
-	ldi (hl),a		; $7e5e
-	ld (hl),$10		; $7e5f
-	ld a,$07		; $7e61
-	ld (wTmpcbb5),a		; $7e63
-	xor a			; $7e66
-	ld ($cfde),a		; $7e67
-	call $3b46		; $7e6a
-	ld (hl),$92		; $7e6d
-	ld l,$43		; $7e6f
-	ld (hl),$01		; $7e71
-	call $3b46		; $7e73
-	ld (hl),$2c		; $7e76
-	ld l,$4b		; $7e78
-	ld a,(w1Link.yh)		; $7e7a
-	add $10			; $7e7d
-	ldi (hl),a		; $7e7f
-	ld a,(w1Link.xh)		; $7e80
-	inc l			; $7e83
-	ld (hl),a		; $7e84
-	jp $7d02		; $7e85
-
-;;
-; @addr{7e88}
-func_7e88:
-	call $7ea9		; $7e88
-	ld a,(wTmpcbb5)		; $7e8b
-	cp $08			; $7e8e
-	ret nz			; $7e90
-	ld a,$f0		; $7e91
-	call $0cb1		; $7e93
-	xor a			; $7e96
-	ld (wActiveMusic),a		; $7e97
-	inc a			; $7e9a
-	ld (wCutsceneIndex),a		; $7e9b
-	ld hl,$7ea4		; $7e9e
-	jp $19c5		; $7ea1
-
-;;
-; @addr{7ea4}
-func_7ea4:
-	add l			; $7ea4
-	rst_addAToHl			; $7ea5
-	dec b			; $7ea6
-	ld (hl),a		; $7ea7
-	inc bc			; $7ea8
-	ld a,(wScreenShakeCounterY)		; $7ea9
-	and $0f			; $7eac
-	ld a,$b3		; $7eae
-	call z,$0cb1		; $7eb0
-	ld a,(wScreenShakeCounterY)		; $7eb3
-	or a			; $7eb6
-	ld a,$ff		; $7eb7
-	jp z,$24f8		; $7eb9
-	ret			; $7ebc
-
+	.include "code/ages/garbage/bank3end.s"
 .endif
 
 .BANK $04 SLOT 1
@@ -117,43 +52,7 @@ func_7ea4:
 ; These 2 includes must be in the same bank
 .include "build/data/roomPacks.s"
 .include "build/data/musicAssignments.s"
-
-
-; Format:
-; First byte indicates whether it's a dungeon or not (and consequently what compression it uses)
-; 3 byte pointer to a table containing relative offsets for room data for each sector on the map
-; 3 byte pointer to the base offset of the actual layout data
-roomLayoutGroupTable: ; $4f6c
-	.db $01
-	3BytePointer roomLayoutGroup0Table
-	3BytePointer room0000
-	.db $00
-
-	.db $01
-	3BytePointer roomLayoutGroup1Table
-	3BytePointer room0100
-	.db $00
-
-	.db $01
-	3BytePointer roomLayoutGroup2Table
-	3BytePointer room0200
-	.db $00
-
-	.db $01
-	3BytePointer roomLayoutGroup3Table
-	3BytePointer room0300
-	.db $00
-
-	.db $00
-	3BytePointer roomLayoutGroup4Table
-	3BytePointer room0400
-	.db $00
-
-	.db $00
-	3BytePointer roomLayoutGroup5Table
-	3BytePointer room0500
-	.db $00
-
+.include "build/data/roomLayoutGroupTable.s"
 .include "build/data/tilesets.s"
 .include "build/data/tilesetAssignments.s"
 
@@ -166,12 +65,14 @@ initializeAnimations:
 	ret z			; $58e9
 
 	call loadAnimationData		; $58ea
+.ifdef ROM_AGES
 	call @locFunc		; $58ed
 	ld hl,wAnimationState		; $58f0
 	set 7,(hl)		; $58f3
 	call @locFunc		; $58f5
 	ld hl,wAnimationState		; $58f8
 	set 7,(hl)		; $58fb
+.endif
 @locFunc:
 	call updateAnimationData		; $58fd
 -
