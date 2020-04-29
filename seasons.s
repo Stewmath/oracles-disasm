@@ -245,33 +245,33 @@ loadAnimationGfxIndex:
 	.include "data/seasons/uniqueGfxHeaderPointers.s"
 
 animationGroupTable:
-        .dw animationGroup00
-        .dw animationGroup01
-        .dw animationGroup02
-        .dw animationGroup03
-        .dw animationGroup04
-        .dw animationGroup05
-        .dw animationGroup06
-        .dw animationGroup07
-        .dw animationGroup08
-        .dw animationGroup09
-        .dw animationGroup0a
-        .dw animationGroup0b
-        .dw animationGroup0c
-        .dw animationGroup0d
-        .dw animationGroup0e
-        .dw animationGroup0f
-        .dw animationGroup10
-        .dw animationGroup11
-        .dw animationGroup12
-        .dw animationGroup13
-        .dw animationGroup14
-        .dw animationGroup15
-        .dw animationGroup16
-        .dw animationGroup17
-        .dw animationGroup18
-        .dw animationGroup19
-        .dw animationGroup1a
+	.dw animationGroup00
+	.dw animationGroup01
+	.dw animationGroup02
+	.dw animationGroup03
+	.dw animationGroup04
+	.dw animationGroup05
+	.dw animationGroup06
+	.dw animationGroup07
+	.dw animationGroup08
+	.dw animationGroup09
+	.dw animationGroup0a
+	.dw animationGroup0b
+	.dw animationGroup0c
+	.dw animationGroup0d
+	.dw animationGroup0e
+	.dw animationGroup0f
+	.dw animationGroup10
+	.dw animationGroup11
+	.dw animationGroup12
+	.dw animationGroup13
+	.dw animationGroup14
+	.dw animationGroup15
+	.dw animationGroup16
+	.dw animationGroup17
+	.dw animationGroup18
+	.dw animationGroup19
+	.dw animationGroup1a
 
 animationGroup00:
 animationGroup07:
@@ -283,100 +283,102 @@ animationGroup15:
 animationGroup16:
 animationGroup17:
 	.db $83			; $59e6
-        .dw $5c94
-        .dw $5c9e
+	.dw animationData_04_5c94
+	.dw animationData_04_5c9e
 
 animationGroup01:
 	.db $83			; $59eb
-        .dw $5c94
-        .dw $5ce4
+	.dw animationData_04_5c94
+	.dw animationData_04_5ce4
 
 animationGroup02:
 	.db $83			; $59f0
-        .dw $5c94
-        .dw $5ca8
+	.dw animationData_04_5c94
+	.dw animationData_04_5ca8
 
 animationGroup03:
 	.db $81			; $59f5
-        .dw $5c94
+	.dw animationData_04_5c94
 
 animationGroup04:
 	.db $87			; $59f8
-        .dw $5c94
-        .dw $5cc6
-        .dw $5cda
+	.dw animationData_04_5c94
+	.dw animationData_04_5cc6
+	.dw animationData_04_5cda
 
 animationGroup05:
 	.db $83		; $59ff
-        .dw $5c94
-        .dw $5cda
+	.dw animationData_04_5c94
+	.dw animationData_04_5cda
 
 animationGroup06:
-        .db $87		; $5a04
-        .dw $5c94
-        .dw $5cd0
-        .dw $5cbc
-        .dw $9481
-        .db $5c
+	.db $87		; $5a04
+	.dw animationData_04_5c94
+	.dw animationData_04_5cd0
+	.dw animationData_04_5cbc
+
+unknownAnimationGroup:
+	.db $81		; $5a0b
+	.dw animationData_04_5c94
 
 animationGroup08:
 	.db $83			; $5a0e
-        .dw $5cf8
-        .dw $5d02
+	.dw animationData_04_5cf8
+	.dw animationData_04_5d02
 
 animationGroup09:
 	.db $81			; $5a13
-        .dw $5d0c
+	.dw animationData_04_5d0c
 
 animationGroup0a:
 	.db $87			; $5a16
-        .dw $5c94
-        .dw $5ca8
-        .dw $5cee
+	.dw animationData_04_5c94
+	.dw animationData_04_5ca8
+	.dw animationData_04_5cee
 
 animationGroup0b:
 	.db $81			; $5a1d
-        .dw $5d16
+	.dw animationData_04_5d16
 
 animationGroup0c:
 	.db $81			; $5a20
-        .dw $5d1a
+	.dw animationData_04_5d1a
 
 animationGroup0d:
 	.db $81			; $5a23
-        .dw $5d1e
+	.dw animationData_04_5d1e
 
 animationGroup0e:
 	.db $81			; $5a26
-        .dw $5d24
+	.dw animationData_04_5d24
 
 animationGroup10:
 	.db $83			; $5a29
-        .dw $5d2e
-        .dw $5d38
+	.dw animationData_04_5d2e
+	.dw animationData_04_5d38
 
 animationGroup11:
 	.db $83			; $5a2e
-        .dw $5d2e
-        .dw $5d4a
+	.dw animationData_04_5d2e
+	.dw animationData_04_5d4a
 
 animationGroup18:
 	.db $8f			; $5a33
-        .dw $5d5e
-        .dw $5d68
-        .dw $5d72
-        .dw $5d80
+	.dw animationData_04_5d5e
+	.dw animationData_04_5d68
+	.dw animationData_04_5d72
+	.dw animationData_04_5d80
 
 animationGroup19:
 	.db $8f			; $5a3c
-        .dw $5d5e
-        .dw $5d68
-        .dw $5d72
-        .dw $5d8a
+	.dw animationData_04_5d5e
+	.dw animationData_04_5d68
+	.dw animationData_04_5d72
+	.dw animationData_04_5d8a
 
 animationGroup1a:
 	.db $81			; $5a45
-        .dw $5d54
+	.dw animationData_04_5d54
 
 
 animationGfxHeaders:
@@ -772,11 +774,11 @@ _label_04_221:
 	ld ($ff00+$89),a	; $5c2a
 	or c			; $5c2c
 	nop			; $5c2d
-	jr _label_04_225		; $5c2e
+	jr $6f		; $5c2e
 	ld a,($ff00+$89)	; $5c30
 	or c			; $5c32
 	nop			; $5c33
-	jr _label_04_226		; $5c34
+	jr $70		; $5c34
 _label_04_222:
 	nop			; $5c36
 	adc c			; $5c37
@@ -839,226 +841,191 @@ _label_04_224:
 	ld a,b			; $5c8f
 	add b			; $5c90
 	adc l			; $5c91
-	ld bc,$0f0d		; $5c92
-	nop			; $5c95
-	rrca			; $5c96
-	ld bc,$020f		; $5c97
-	rrca			; $5c9a
-	inc bc			; $5c9b
-	rst $38			; $5c9c
-	rst $30			; $5c9d
-	rrca			; $5c9e
-_label_04_225:
-	inc b			; $5c9f
-	rrca			; $5ca0
-	dec b			; $5ca1
-	rrca			; $5ca2
-	ld b,$0f		; $5ca3
-	rlca			; $5ca5
-_label_04_226:
-	rst $38			; $5ca6
-	rst $30			; $5ca7
-	ld ($0810),sp		; $5ca8
-	ld de,$1208		; $5cab
-	ld ($ff13),sp		; $5cae
-	rst $30			; $5cb1
-	rrca			; $5cb2
-	inc d			; $5cb3
-	rrca			; $5cb4
-	dec d			; $5cb5
-	rrca			; $5cb6
-	ld d,$0f		; $5cb7
-	rla			; $5cb9
-	rst $38			; $5cba
-	rst $30			; $5cbb
-	rrca			; $5cbc
-	jr _label_04_227		; $5cbd
-	add hl,de		; $5cbf
-	rrca			; $5cc0
-	ld a,(de)		; $5cc1
-	rrca			; $5cc2
-	dec de			; $5cc3
-	rst $38			; $5cc4
-	rst $30			; $5cc5
-	rrca			; $5cc6
-	.db $08 $0f $09 ; $5cc7
-	rrca			; $5cca
-	ld a,(bc)		; $5ccb
-	rrca			; $5ccc
-	dec bc			; $5ccd
-_label_04_227:
-	rst $38			; $5cce
-	rst $30			; $5ccf
-	rrca			; $5cd0
-	inc c			; $5cd1
-	rrca			; $5cd2
-	dec c			; $5cd3
-	rrca			; $5cd4
-	ld c,$0f		; $5cd5
-	rrca			; $5cd7
-	rst $38			; $5cd8
-	rst $30			; $5cd9
-	inc b			; $5cda
-	inc e			; $5cdb
-	inc b			; $5cdc
-	dec e			; $5cdd
-	inc b			; $5cde
-	ld e,$04		; $5cdf
-	rra			; $5ce1
-	rst $38			; $5ce2
-	rst $30			; $5ce3
-	ld b,$20		; $5ce4
-	ld b,$21		; $5ce6
-	ld b,$22		; $5ce8
-	ld b,$23		; $5cea
-	rst $38			; $5cec
-	rst $30			; $5ced
-	ld b,$24		; $5cee
-	ld b,$25		; $5cf0
-	ld b,$26		; $5cf2
-	ld b,$27		; $5cf4
-	rst $38			; $5cf6
-	rst $30			; $5cf7
-	rrca			; $5cf8
-	jr z,_label_04_228	; $5cf9
-	add hl,hl		; $5cfb
-	rrca			; $5cfc
-	ldi a,(hl)		; $5cfd
-	rrca			; $5cfe
-	dec hl			; $5cff
-	rst $38			; $5d00
-	rst $30			; $5d01
-	ld ($082c),sp		; $5d02
-	dec l			; $5d05
-	ld ($082e),sp		; $5d06
-	cpl			; $5d09
-_label_04_228:
-	rst $38			; $5d0a
-	rst $30			; $5d0b
-	rrca			; $5d0c
-	jr nc,_label_04_229	; $5d0d
-	ld sp,$320f		; $5d0f
-	rrca			; $5d12
-	inc sp			; $5d13
-	rst $38			; $5d14
-	rst $30			; $5d15
-	rrca			; $5d16
-	inc (hl)		; $5d17
-	rst $38			; $5d18
-.DB $fd				; $5d19
-	rrca			; $5d1a
-	dec (hl)		; $5d1b
-	rst $38			; $5d1c
-.DB $fd				; $5d1d
-_label_04_229:
-	rrca			; $5d1e
-	inc (hl)		; $5d1f
-	rrca			; $5d20
-	dec (hl)		; $5d21
-	rst $38			; $5d22
-	ei			; $5d23
-	ld (bc),a		; $5d24
-	ld (hl),$02		; $5d25
-	scf			; $5d27
-	ld (bc),a		; $5d28
-	jr c,_label_04_230	; $5d29
-	add hl,sp		; $5d2b
-	rst $38			; $5d2c
-_label_04_230:
-	rst $30			; $5d2d
-	rrca			; $5d2e
-	ldd a,(hl)		; $5d2f
-	rrca			; $5d30
-	dec sp			; $5d31
-	rrca			; $5d32
-	inc a			; $5d33
-	rrca			; $5d34
-	dec a			; $5d35
-	rst $38			; $5d36
-	rst $30			; $5d37
-	inc b			; $5d38
-	ld a,$04		; $5d39
-	ld b,d			; $5d3b
-	inc b			; $5d3c
-	ccf			; $5d3d
-	inc b			; $5d3e
-	ld b,e			; $5d3f
-	inc b			; $5d40
-	ld b,b			; $5d41
-	inc b			; $5d42
-	ld b,h			; $5d43
-	inc b			; $5d44
-	ld b,c			; $5d45
-	inc b			; $5d46
-	ld b,l			; $5d47
-	rst $38			; $5d48
-	rst $28			; $5d49
-	rrca			; $5d4a
-	ld b,(hl)		; $5d4b
-	rrca			; $5d4c
-	ld b,a			; $5d4d
-	rrca			; $5d4e
-	ld c,b			; $5d4f
-	rrca			; $5d50
-	ld c,c			; $5d51
-	rst $38			; $5d52
-	rst $30			; $5d53
-	ld e,$5e		; $5d54
-	ld e,$5f		; $5d56
-	ld e,$60		; $5d58
-	ld e,$61		; $5d5a
-	rst $38			; $5d5c
-	rst $30			; $5d5d
-	rrca			; $5d5e
-	ld c,d			; $5d5f
-	rrca			; $5d60
-	ld c,e			; $5d61
-	rrca			; $5d62
-	ld c,h			; $5d63
-	rrca			; $5d64
-	ld c,l			; $5d65
-	rst $38			; $5d66
-	rst $30			; $5d67
-	ld ($084e),sp		; $5d68
-	ld c,a			; $5d6b
-	ld ($0850),sp		; $5d6c
-	ld d,c			; $5d6f
-	rst $38			; $5d70
-	rst $30			; $5d71
-	rrca			; $5d72
-	ld d,d			; $5d73
-	rrca			; $5d74
-	ld d,e			; $5d75
-	rrca			; $5d76
-	ld d,h			; $5d77
-	rrca			; $5d78
-	ld d,l			; $5d79
-	rrca			; $5d7a
-	ld d,h			; $5d7b
-	rrca			; $5d7c
-	ld d,e			; $5d7d
-	rst $38			; $5d7e
-	di			; $5d7f
-	rrca			; $5d80
-	ld d,(hl)		; $5d81
-	rrca			; $5d82
-	ld d,a			; $5d83
-	rrca			; $5d84
-	ld e,b			; $5d85
-	rrca			; $5d86
-	ld e,c			; $5d87
-	rst $38			; $5d88
-	rst $30			; $5d89
-	rrca			; $5d8a
-	ld e,d			; $5d8b
-	rrca			; $5d8c
-	ld e,e			; $5d8d
-	rrca			; $5d8e
-	ld e,h			; $5d8f
-	rrca			; $5d90
-	ld e,l			; $5d91
-	rst $38			; $5d92
-	rst $30			; $5d93
+	.db $01		; $5c92
+	.db $0d		; $5c93
+
+animationData_04_5c94:
+	.db $0f	$00
+	.db $0f $01
+	.db $0f $02
+	.db $0f $03
+	m_AnimationLoop animationData_04_5c94
+
+
+animationData_04_5c9e:
+	.db $0f $04
+	.db $0f $05
+	.db $0f $06
+	.db $0f $07
+	m_AnimationLoop animationData_04_5c9e
+
+animationData_04_5ca8:
+	.db $08 $10
+	.db $08 $11
+	.db $08 $12
+	.db $08 $13
+	m_AnimationLoop animationData_04_5ca8
+
+unknownAnimationData_04_5cb2:
+	.db $0f $14
+	.db $0f $15
+	.db $0f $16
+	.db $0f $17
+	m_AnimationLoop unknownAnimationData_04_5cb2
+
+animationData_04_5cbc:
+	.db $0f $18
+	.db $0f $19
+	.db $0f $1a
+	.db $0f $1b
+	m_AnimationLoop animationData_04_5cbc
+
+animationData_04_5cc6:
+	.db $0f $08
+	.db $0f $09
+	.db $0f $0a
+	.db $0f $0b
+	m_AnimationLoop animationData_04_5cc6
+
+animationData_04_5cd0:
+	.db $0f $0c
+	.db $0f $0d
+	.db $0f $0e
+	.db $0f $0f
+	m_AnimationLoop animationData_04_5cd0
+
+animationData_04_5cda:
+	.db $04 $1c
+	.db $04 $1d
+	.db $04 $1e
+	.db $04 $1f
+	m_AnimationLoop animationData_04_5cda
+
+animationData_04_5ce4:
+	.db $06 $20
+	.db $06 $21
+	.db $06 $22
+	.db $06 $23
+	m_AnimationLoop animationData_04_5ce4
+
+animationData_04_5cee:
+	.db $06 $24
+	.db $06 $25
+	.db $06 $26
+	.db $06 $27
+	m_AnimationLoop animationData_04_5cee
+
+animationData_04_5cf8:
+	.db $0f $28
+	.db $0f $29
+	.db $0f $2a
+	.db $0f $2b
+	m_AnimationLoop animationData_04_5cf8
+
+animationData_04_5d02:
+	.db $08 $2c
+	.db $08 $2d
+	.db $08 $2e
+	.db $08 $2f
+	m_AnimationLoop animationData_04_5d02
+
+animationData_04_5d0c:
+	.db $0f $30
+	.db $0f $31
+	.db $0f $32
+	.db $0f $33
+	m_AnimationLoop animationData_04_5d0c
+
+animationData_04_5d16:
+	.db $0f $34
+	m_AnimationLoop animationData_04_5d16
+
+animationData_04_5d1a:
+	.db $0f $35
+	m_AnimationLoop animationData_04_5d1a
+
+animationData_04_5d1e:
+        .db $0f $34
+        .db $0f $35
+	m_AnimationLoop animationData_04_5d1e
+
+animationData_04_5d24:
+        .db $02 $36
+        .db $02 $37
+        .db $02 $38
+        .db $02 $39
+	m_AnimationLoop animationData_04_5d24
+
+animationData_04_5d2e:
+        .db $0f $3a
+        .db $0f $3b
+        .db $0f $3c
+        .db $0f $3d
+	m_AnimationLoop animationData_04_5d2e
+
+animationData_04_5d38:
+        .db $04 $3e
+        .db $04 $42
+        .db $04 $3f
+        .db $04 $43
+        .db $04 $40
+        .db $04 $44
+        .db $04 $41
+        .db $04 $45
+	m_AnimationLoop animationData_04_5d38
+
+animationData_04_5d4a:
+        .db $0f $46
+        .db $0f $47
+        .db $0f $48
+        .db $0f $49
+	m_AnimationLoop animationData_04_5d4a
+
+animationData_04_5d54:
+        .db $1e $5e
+        .db $1e $5f
+        .db $1e $60
+        .db $1e $61
+	m_AnimationLoop animationData_04_5d54
+
+animationData_04_5d5e:
+        .db $0f $4a
+        .db $0f $4b
+        .db $0f $4c
+        .db $0f $4d
+	m_AnimationLoop animationData_04_5d5e
+
+animationData_04_5d68:
+        .db $08 $4e
+        .db $08 $4f
+        .db $08 $50
+        .db $08 $51
+	m_AnimationLoop animationData_04_5d68
+
+animationData_04_5d72:
+        .db $0f $52
+        .db $0f $53
+        .db $0f $54
+        .db $0f $55
+        .db $0f $54
+        .db $0f $53
+	m_AnimationLoop animationData_04_5d72
+
+animationData_04_5d80:
+        .db $0f $56
+        .db $0f $57
+        .db $0f $58
+        .db $0f $59
+	m_AnimationLoop animationData_04_5d80
+
+animationData_04_5d8a:
+        .db $0f $5a
+        .db $0f $5b
+        .db $0f $5c
+        .db $0f $5d
+	m_AnimationLoop animationData_04_5d8a
+
+
 applyAllTileSubstitutions:
 	call $5fda		; $5d94
 	call $5de8		; $5d97
