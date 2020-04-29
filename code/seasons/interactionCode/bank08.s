@@ -9609,7 +9609,7 @@ _subrosianAtD8_subid1:
 
 	call getThisRoomFlags		; $7d0c
 	set 6,(hl)		; $7d0f
-	ld a,CUTSCENE_S_VOLCANO_ERUPTNING		; $7d11
+	ld a,CUTSCENE_S_VOLCANO_ERUPTING		; $7d11
 	ld (wCutsceneTrigger),a		; $7d13
 	call fadeoutToWhite		; $7d16
 	jp interactionDelete		; $7d19

@@ -56,7 +56,7 @@
 	CUTSCENE_S_TEMPLE_SINKING	db ; 0x08: Temple of seasons sinking
 	CUTSCENE_S_DIN_CRYSTAL_DESCENDING	db ; 0x09: Din appears after beating Onox
 	CUTSCENE_S_CREDITS		db ; 0x0a
-	CUTSCENE_S_VOLCANO_ERUPTNING	db ; 0x0b: Why did you throw a bomb into a volcano
+	CUTSCENE_S_VOLCANO_ERUPTING	db ; 0x0b: Why did you throw a bomb into a volcano
 	CUTSCENE_S_PIRATES_DEPART	db ; 0x0c
 	CUTSCENE_S_PREGAME_INTRO	db ; 0x0d: "Accept our quest, hero!"
 	CUTSCENE_S_ONOX_TAUNTING	db ; 0x0e: Triggers after getting the maku seed
