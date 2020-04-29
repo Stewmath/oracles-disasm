@@ -245,133 +245,140 @@ loadAnimationGfxIndex:
 	.include "data/seasons/uniqueGfxHeaderPointers.s"
 
 animationGroupTable:
-	and $59			; $59b0
-.DB $eb				; $59b2
-	ld e,c			; $59b3
-	ld a,($ff00+$59)	; $59b4
-	push af			; $59b6
-	ld e,c			; $59b7
-_label_04_188:
-	ld hl,sp+$59		; $59b8
-_label_04_189:
-	rst $38			; $59ba
-	ld e,c			; $59bb
-	inc b			; $59bc
-	ld e,d			; $59bd
-	and $59			; $59be
-	ld c,$5a		; $59c0
-	inc de			; $59c2
-	ld e,d			; $59c3
-	ld d,$5a		; $59c4
-	dec e			; $59c6
-	ld e,d			; $59c7
-	jr nz,_label_04_190	; $59c8
-	inc hl			; $59ca
-	ld e,d			; $59cb
-	ld h,$5a		; $59cc
-	and $59			; $59ce
-	add hl,hl		; $59d0
-	ld e,d			; $59d1
-	ld l,$5a		; $59d2
-	and $59			; $59d4
-	and $59			; $59d6
-	and $59			; $59d8
-	and $59			; $59da
-	and $59			; $59dc
-	and $59			; $59de
-	inc sp			; $59e0
-	ld e,d			; $59e1
-	inc a			; $59e2
-	ld e,d			; $59e3
-	ld b,l			; $59e4
-	ld e,d			; $59e5
-	add e			; $59e6
-	sub h			; $59e7
-	ld e,h			; $59e8
-	sbc (hl)		; $59e9
-	ld e,h			; $59ea
-	add e			; $59eb
-	sub h			; $59ec
-	ld e,h			; $59ed
-.DB $e4				; $59ee
-	ld e,h			; $59ef
-	add e			; $59f0
-	sub h			; $59f1
-	ld e,h			; $59f2
-	xor b			; $59f3
-	ld e,h			; $59f4
-	add c			; $59f5
-	sub h			; $59f6
-	ld e,h			; $59f7
-	add a			; $59f8
-	sub h			; $59f9
-	ld e,h			; $59fa
-	add $5c			; $59fb
-	jp c,$835c		; $59fd
-	sub h			; $5a00
-	ld e,h			; $5a01
-	jp c,$875c		; $5a02
-	sub h			; $5a05
-	ld e,h			; $5a06
-	ret nc			; $5a07
-	ld e,h			; $5a08
-	cp h			; $5a09
-	ld e,h			; $5a0a
-	add c			; $5a0b
-	sub h			; $5a0c
-	ld e,h			; $5a0d
-	add e			; $5a0e
-	ld hl,sp+$5c		; $5a0f
-	ld (bc),a		; $5a11
-	ld e,l			; $5a12
-	add c			; $5a13
-	inc c			; $5a14
-	ld e,l			; $5a15
-	add a			; $5a16
-	sub h			; $5a17
-	ld e,h			; $5a18
-	xor b			; $5a19
-	ld e,h			; $5a1a
-	xor $5c			; $5a1b
-	add c			; $5a1d
-	ld d,$5d		; $5a1e
-	add c			; $5a20
-	ld a,(de)		; $5a21
-	ld e,l			; $5a22
-	add c			; $5a23
-_label_04_190:
-	ld e,$5d		; $5a24
-	add c			; $5a26
-	inc h			; $5a27
-	ld e,l			; $5a28
-	add e			; $5a29
-	ld l,$5d		; $5a2a
-	jr c,_label_04_191	; $5a2c
-	add e			; $5a2e
-	ld l,$5d		; $5a2f
-	ld c,d			; $5a31
-	ld e,l			; $5a32
-	adc a			; $5a33
-	ld e,(hl)		; $5a34
-	ld e,l			; $5a35
-	ld l,b			; $5a36
-	ld e,l			; $5a37
-	ld (hl),d		; $5a38
-	ld e,l			; $5a39
-	add b			; $5a3a
-	ld e,l			; $5a3b
-	adc a			; $5a3c
-	ld e,(hl)		; $5a3d
-	ld e,l			; $5a3e
-	ld l,b			; $5a3f
-	ld e,l			; $5a40
-	ld (hl),d		; $5a41
-	ld e,l			; $5a42
-	adc d			; $5a43
-	ld e,l			; $5a44
-	add c			; $5a45
-	ld d,h			; $5a46
-	ld e,l			; $5a47
+        .dw animationGroup00
+        .dw animationGroup01
+        .dw animationGroup02
+        .dw animationGroup03
+        .dw animationGroup04
+        .dw animationGroup05
+        .dw animationGroup06
+        .dw animationGroup07
+        .dw animationGroup08
+        .dw animationGroup09
+        .dw animationGroup0a
+        .dw animationGroup0b
+        .dw animationGroup0c
+        .dw animationGroup0d
+        .dw animationGroup0e
+        .dw animationGroup0f
+        .dw animationGroup10
+        .dw animationGroup11
+        .dw animationGroup12
+        .dw animationGroup13
+        .dw animationGroup14
+        .dw animationGroup15
+        .dw animationGroup16
+        .dw animationGroup17
+        .dw animationGroup18
+        .dw animationGroup19
+        .dw animationGroup1a
+
+animationGroup00:
+animationGroup07:
+animationGroup0f:
+animationGroup12:
+animationGroup13:
+animationGroup14:
+animationGroup15:
+animationGroup16:
+animationGroup17:
+	.db $83			; $59e6
+        .dw $5c94
+        .dw $5c9e
+
+animationGroup01:
+	.db $83			; $59eb
+        .dw $5c94
+        .dw $5ce4
+
+animationGroup02:
+	.db $83			; $59f0
+        .dw $5c94
+        .dw $5ca8
+
+animationGroup03:
+	.db $81			; $59f5
+        .dw $5c94
+
+animationGroup04:
+	.db $87			; $59f8
+        .dw $5c94
+        .dw $5cc6
+        .dw $5cda
+
+animationGroup05:
+	.db $83		; $59ff
+        .dw $5c94
+        .dw $5cda
+
+animationGroup06:
+        .db $87		; $5a04
+        .dw $5c94
+        .dw $5cd0
+        .dw $5cbc
+        .dw $9481
+        .db $5c
+
+animationGroup08:
+	.db $83			; $5a0e
+        .dw $5cf8
+        .dw $5d02
+
+animationGroup09:
+	.db $81			; $5a13
+        .dw $5d0c
+
+animationGroup0a:
+	.db $87			; $5a16
+        .dw $5c94
+        .dw $5ca8
+        .dw $5cee
+
+animationGroup0b:
+	.db $81			; $5a1d
+        .dw $5d16
+
+animationGroup0c:
+	.db $81			; $5a20
+        .dw $5d1a
+
+animationGroup0d:
+	.db $81			; $5a23
+        .dw $5d1e
+
+animationGroup0e:
+	.db $81			; $5a26
+        .dw $5d24
+
+animationGroup10:
+	.db $83			; $5a29
+        .dw $5d2e
+        .dw $5d38
+
+animationGroup11:
+	.db $83			; $5a2e
+        .dw $5d2e
+        .dw $5d4a
+
+animationGroup18:
+	.db $8f			; $5a33
+        .dw $5d5e
+        .dw $5d68
+        .dw $5d72
+        .dw $5d80
+
+animationGroup19:
+	.db $8f			; $5a3c
+        .dw $5d5e
+        .dw $5d68
+        .dw $5d72
+        .dw $5d8a
+
+animationGroup1a:
+	.db $81			; $5a45
+        .dw $5d54
+
+
 animationGfxHeaders:
 	jr $65			; $5a48
 	ld b,b			; $5a4a
