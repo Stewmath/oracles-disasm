@@ -3091,15 +3091,11 @@ endgameCutsceneHandler_body:
 +
 	ld a,e			; $5424
 	rst_jumpTable			; $5425
-.ifdef ROM_AGES
 	.dw _endgameCutsceneHandler_09
 	.dw _endgameCutsceneHandler_0a
 	.dw _endgameCutsceneHandler_0f
+.ifdef ROM_AGES
 	.dw _endgameCutsceneHandler_20
-.else
-	.dw $551f
-	.dw $5e7f
-	.dw $5bad
 .endif
 
 ;;

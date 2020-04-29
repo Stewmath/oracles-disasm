@@ -2056,7 +2056,7 @@ wcc93: ; $cc93/$ccad
 ; "Status" of door shutters?
 	db
 
-wScreenShakeMagnitude: ; $cc94
+wScreenShakeMagnitude: ; $cc94/$ccae
 ; Affects how much the screen shakes when the "wScreenShakeCounter" variables are set.
 ; 0: 1-2 pixels
 ; 1: 1 pixel
@@ -2235,7 +2235,7 @@ wShootingGalleryccd5: ; $ccd5
 ; Shooting gallery: ?
 ; (Also used by target carts with INTERACID_TROY?)
 	.db
-wShopHaveEnoughRupees: ; $ccd5
+wShopHaveEnoughRupees: ; $ccd5/$ccec
 ; Shop: Set to 0 if you have enough money for an item, 1 otherwise
 ; Also used by target carts?
 	db
@@ -2259,7 +2259,7 @@ wInformativeTextsShown: ; $ccd7
 ;   Bit 6: Roller from Seasons
 	db
 
-wccd8: ; $ccd8
+wccd8: ; $ccd8/$ccef
 ; If nonzero, link can't use his sword. Relates to dimitri?
 ; Bit 5 set while latched by a gel or ages d1 miniboss
 	db

@@ -1034,6 +1034,8 @@ seasonsFunc_03_7a6b:
 	ld hl,$9800		; $7a7f
 	ld bc,$0400		; $7a82
 	jp clearMemoryBc		; $7a85
+
+seasonsFunc_03_7a88:
 	ldh (<hFF8B),a	; $7a88
 	ld a,($ff00+R_SVBK)	; $7a8a
 	push af			; $7a8c

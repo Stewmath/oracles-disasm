@@ -39,12 +39,12 @@ cutscene0a:
 
 ;;
 cutscene0b:
-	callab $03 $6b89	; $5c07
+	callab _cutsceneHandler_0b	; $5c07
 	jr _func_5d31		; $5c0f
 
 ;;
 cutscene0c:
-	callab $03 $66ff		; $5c11
+	callab _cutsceneHandler_0c		; $5c11
 	jr _func_5d31		; $5c19
 
 ;;
@@ -93,6 +93,6 @@ cutscene16:
 	ld (wCutsceneIndex),a		; $5c57
 	xor a			; $5c5a
 	ld (wMenuDisabled),a		; $5c5b
-	ld ($cca6),a		; $5c5e
-	ld ($ccab),a		; $5c61
+	ld (wLinkCanPassNpcs),a		; $5c5e
+	ld (wDisableScreenTransitions),a		; $5c61
 	ret			; $5c64

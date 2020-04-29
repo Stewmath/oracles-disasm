@@ -40,92 +40,68 @@
 
 .include "code/bank3.s"
 
+;;
+; CUTSCENE_S_DIN_CRYSTAL_DESCENDING
+_endgameCutsceneHandler_09:
 	ld de,$cbc1		; $551f
 	ld a,(de)		; $5522
 	rst_jumpTable			; $5523
-	jr z,_label_03_112	; $5524
-	ld sp,$cd5a		; $5526
-	ld h,d			; $5529
-	ld a,(de)		; $552a
-	call $5534		; $552b
+        .dw _endgameCutsceneHandler_09_stage0
+        .dw _endgameCutsceneHandler_09_stage1
+
+_endgameCutsceneHandler_09_stage0:
+        call updateStatusBar		; $5528
+	call _endgameCutsceneHandler_09_stage0_body		; $552b
 	call updateAllObjects		; $552e
 	jp checkEnemyAndPartCollisionsIfTextInactive		; $5531
+
+_endgameCutsceneHandler_09_stage0_body:
 	ld de,$cbc2		; $5534
 	ld a,(de)		; $5537
 	rst_jumpTable			; $5538
-	adc c			; $5539
-	ld d,l			; $553a
-	rst $30			; $553b
-	ld d,l			; $553c
-	rrca			; $553d
-	ld d,(hl)		; $553e
-	jr $56			; $553f
-	ldi a,(hl)		; $5541
-	ld d,(hl)		; $5542
-	add hl,sp		; $5543
-	ld d,(hl)		; $5544
-	ld c,(hl)		; $5545
-	ld d,(hl)		; $5546
-	ld e,b			; $5547
-	ld d,(hl)		; $5548
-	or (hl)			; $5549
-	ld d,(hl)		; $554a
-	cp l			; $554b
-	ld d,(hl)		; $554c
-	rst_jumpTable			; $554d
-	ld d,(hl)		; $554e
-.DB $f4				; $554f
-	ld d,(hl)		; $5550
-	inc de			; $5551
-	ld d,a			; $5552
-	jr z,$57		; $5553
-	dec sp			; $5555
-	ld d,a			; $5556
-	ld d,h			; $5557
-	ld d,a			; $5558
-	sbc c			; $5559
-	ld d,a			; $555a
-	or b			; $555b
-	ld d,a			; $555c
-	ret nz			; $555d
-	ld d,a			; $555e
-	ld (de),a		; $555f
-	ld e,b			; $5560
-	jr z,$58		; $5561
-	ld a,$58		; $5563
-	ld b,l			; $5565
-	ld e,b			; $5566
-	ld d,e			; $5567
-	ld e,b			; $5568
-	adc c			; $5569
-	ld e,b			; $556a
-	xor a			; $556b
-	ld e,b			; $556c
-	pop bc			; $556d
-	ld e,b			; $556e
-.DB $d3				; $556f
-	ld e,b			; $5570
-.DB $f4				; $5571
-	ld e,b			; $5572
-	ld ($1759),sp		; $5573
-	ld e,c			; $5576
-	ld a,a			; $5577
-	ld e,c			; $5578
-	sbc a			; $5579
-	ld e,c			; $557a
-_label_03_112:
-	and a			; $557b
-	ld e,c			; $557c
-	or e			; $557d
-	ld e,c			; $557e
-	cp e			; $557f
-	ld e,c			; $5580
-	ret nz			; $5581
-	ld e,c			; $5582
-	call nc,$eb59		; $5583
-	ld e,c			; $5586
-	ld b,$5a		; $5587
-	ld a,($c4ab)		; $5589
+        .dw @state0
+        .dw @state1
+        .dw @state2
+        .dw @state3
+        .dw @state4
+        .dw @state5
+        .dw @state6
+        .dw @state7
+        .dw @state8
+        .dw @state9
+        .dw @stateA
+        .dw @stateB
+        .dw @stateC
+        .dw @stateD
+        .dw @stateE
+        .dw @stateF
+        .dw @state10
+        .dw @state11
+        .dw @state12
+        .dw @state13
+        .dw @state14
+        .dw @state15
+        .dw @state16
+        .dw @state17
+        .dw @state18
+        .dw @state19
+        .dw @state1A
+        .dw @state1B
+        .dw @state1C
+        .dw @state1D
+        .dw @state1E
+        .dw @state1F
+        .dw @state20
+        .dw @state21
+        .dw @state22
+        .dw @state23
+        .dw @state24
+        .dw @state25
+        .dw @state26
+        .dw @state27
+
+@state0:
+	ld a,(wPaletteThread_mode)		; $5589
 	or a			; $558c
 	ret nz			; $558d
 	ld b,$20		; $558e
@@ -134,24 +110,25 @@ _label_03_112:
 	call incCbc2		; $5596
 	xor a			; $5599
 	ld bc,$0790		; $559a
-	call $63d2		; $559d
+	call disableLcdAndLoadRoom_body		; $559d
 	ld a,$0d		; $55a0
 	call playSound		; $55a2
 	call clearAllParentItems		; $55a5
 	call dropLinkHeldItem		; $55a8
 	ld c,$00		; $55ab
+@state0Func0:
 	call getFreeInteractionSlot		; $55ad
-	jr nz,_label_03_113	; $55b0
+	jr nz,+			; $55b0
 	ld a,$a5		; $55b2
-	ld ($cc1d),a		; $55b4
+	ld (wInteractionIDToLoadExtraGfx),a		; $55b4
 	ldi (hl),a		; $55b7
 	ld (hl),c		; $55b8
-	ld ($cc17),a		; $55b9
-_label_03_113:
+	ld (wLoadedTreeGfxIndex),a		; $55b9
++
 	ld a,c			; $55bc
 	ld hl,$d000		; $55bd
 	ld (hl),$03		; $55c0
-	ld de,$55f3		; $55c2
+	ld de,@state0Table_03_55f3		; $55c2
 	call addDoubleIndexToDe		; $55c5
 	ld a,(de)		; $55c8
 	inc de			; $55c9
@@ -165,37 +142,42 @@ _label_03_113:
 	ld a,c			; $55d4
 	ld bc,$0050		; $55d5
 	or a			; $55d8
-	jr z,_label_03_114	; $55d9
+	jr z,+			; $55d9
 	ld bc,$3050		; $55db
-_label_03_114:
-	ld hl,$ffa8		; $55de
++
+	ld hl,hCameraY		; $55de
 	ld (hl),b		; $55e1
-	ld hl,$ffaa		; $55e2
+	ld hl,hCameraX		; $55e2
 	ld (hl),c		; $55e5
 	ld a,$80		; $55e6
-	ld ($cca4),a		; $55e8
+	ld (wDisabledObjects),a		; $55e8
 	ld a,$02		; $55eb
 	call loadGfxRegisterStateIndex		; $55ed
 	jp fadeinFromWhiteToRoom		; $55f0
-	sbc c			; $55f3
-	ret z			; $55f4
-	sbc c			; $55f5
-	cp b			; $55f6
-	ld hl,$ccef		; $55f7
+@state0Table_03_55f3:
+        .db $99 $c8
+        .db $99 $b8
+
+@state1:
+	ld hl,wccd8		; $55f7
 	ld (hl),$ff		; $55fa
-	ld a,($c4ab)		; $55fc
+	ld a,(wPaletteThread_mode)		; $55fc
 	or a			; $55ff
 	ret nz			; $5600
 	ld a,($cfdf)		; $5601
 	or a			; $5604
 	ret z			; $5605
 	call incCbc2		; $5606
-	ld bc,$3d00		; $5609
+	ld bc,TX_3d00		; $5609
 	jp showText		; $560c
+
+@state2:
 	call retIfTextIsActive		; $560f
 	call incCbc2		; $5612
 	jp fastFadeoutToWhite		; $5615
-	ld a,($c4ab)		; $5618
+
+@state3:
+	ld a,(wPaletteThread_mode)		; $5618
 	or a			; $561b
 	ret nz			; $561c
 	call incCbc2		; $561d
@@ -203,147 +185,168 @@ _label_03_114:
 	ld (hl),$3c		; $5623
 	inc l			; $5625
 	ld (hl),$00		; $5626
-	jr _label_03_115		; $5628
-	call $6462		; $562a
+	jr @state7Func0		; $5628
+
+@state4:
+	call seasonsFunc_03_6462		; $562a
 	ret nz			; $562d
 	call incCbc2		; $562e
-	ld a,$c1		; $5631
+	ld a,SND_RESTORE		; $5631
 	call playSound		; $5633
 	jp fadeoutToWhite		; $5636
-	ld a,($c4ab)		; $5639
+
+@state5:
+	ld a,(wPaletteThread_mode)		; $5639
 	or a			; $563c
 	ret nz			; $563d
 	call incCbc2		; $563e
 	ld a,$00		; $5641
-	call $644c		; $5643
+	call seasonsFunc_03_644c		; $5643
 	ld hl,$cbb3		; $5646
 	ld (hl),$3c		; $5649
 	jp fadeinFromWhite		; $564b
-	call $6462		; $564e
+
+@state6:
+	call seasonsFunc_03_6462		; $564e
 	ret nz			; $5651
 	call incCbc2		; $5652
 	jp fastFadeoutToWhite		; $5655
-	ld a,($c4ab)		; $5658
+
+@state7:
+	ld a,(wPaletteThread_mode)		; $5658
 	or a			; $565b
 	ret nz			; $565c
-_label_03_115:
+@state7Func0:
 	call clearDynamicInteractions		; $565d
 	ld hl,$cbb3		; $5660
 	ld (hl),$3c		; $5663
 	inc l			; $5665
 	ld a,(hl)		; $5666
-	ld hl,$56ac		; $5667
+	ld hl,@state7Table0		; $5667
 	rst_addDoubleIndex			; $566a
 	ld c,(hl)		; $566b
 	inc hl			; $566c
 	ld b,(hl)		; $566d
 	ld a,$03		; $566e
-	call $63d2		; $5670
+	call disableLcdAndLoadRoom_body		; $5670
 	call fastFadeinFromWhite		; $5673
 	ld hl,$cbb4		; $5676
 	ld a,(hl)		; $5679
 	ld b,a			; $567a
 	inc (hl)		; $567b
 	cp $04			; $567c
-	jr nc,_label_03_116	; $567e
+	jr nc,+			; $567e
 	ld c,$04		; $5680
 	push bc			; $5682
 	ld a,$02		; $5683
 	call loadGfxRegisterStateIndex		; $5685
 	call resetCamera		; $5688
 	pop bc			; $568b
-	jr _label_03_117		; $568c
-_label_03_116:
+	jr ++			; $568c
++
 	ld hl,$cbb3		; $568e
 	ld (hl),$3c		; $5691
 	push bc			; $5693
 	ld c,$01		; $5694
-	call $55ad		; $5696
+	call @state0Func0		; $5696
 	pop bc			; $5699
 	ld c,$08		; $569a
 	call checkIsLinkedGame		; $569c
 	ld b,$ff		; $569f
-	jr z,_label_03_117	; $56a1
+	jr z,++			; $56a1
 	ld c,$0d		; $56a3
-_label_03_117:
+++
 	ld hl,$cbc2		; $56a5
 	ld (hl),c		; $56a8
-	jp $6405		; $56a9
-	rst $20			; $56ac
-	nop			; $56ad
-	ld d,h			; $56ae
-	nop			; $56af
-	pop de			; $56b0
-	nop			; $56b1
-	ld e,(hl)		; $56b2
-	nop			; $56b3
-	sub b			; $56b4
-	rlca			; $56b5
+	jp seasonsFunc_03_6405		; $56a9
+@state7Table0:
+        .db $e7 $00
+        .db $54 $00
+        .db $d1 $00
+        .db $5e $00
+        .db $90 $07
+
+@state8:
 	ld e,$3c		; $56b6
-	ld bc,$3d01		; $56b8
-	jr _label_03_118		; $56bb
-	call $645a		; $56bd
+	ld bc,TX_3d01		; $56b8
+	jr @stateDFunc0		; $56bb
+
+@state9:
+	call seasonsFunc_03_645a		; $56bd
 	ret nz			; $56c0
 	call incCbc2		; $56c1
 	jp fadeoutToWhite		; $56c4
-	ld a,($c4ab)		; $56c7
+
+@stateA:
+	ld a,(wPaletteThread_mode)		; $56c7
 	or a			; $56ca
 	ret nz			; $56cb
 	call incCbc2		; $56cc
 	ld hl,$cbb3		; $56cf
 	ld (hl),$3c		; $56d2
 	ld a,$ff		; $56d4
-	ld ($cd25),a		; $56d6
+	ld (wTilesetAnimation),a		; $56d6
 	call disableLcd		; $56d9
 	ld a,$2b		; $56dc
 	call loadGfxHeader		; $56de
 	ld a,$9d		; $56e1
 	call loadPaletteHeader		; $56e3
-	call $539c		; $56e6
-	call $5ab0		; $56e9
+	call _cutscene_clearObjects		; $56e6
+	call _endgameCutsceneHandler_09_stage1_body@seasonsFunc_03_5ab0		; $56e9
 	ld a,$04		; $56ec
 	call loadGfxRegisterStateIndex		; $56ee
 	jp fadeinFromWhite		; $56f1
-	call $5ab0		; $56f4
-	call $6462		; $56f7
+
+@stateB:
+	call _endgameCutsceneHandler_09_stage1_body@seasonsFunc_03_5ab0		; $56f4
+	call seasonsFunc_03_6462		; $56f7
 	ret nz			; $56fa
 	call incCbc2		; $56fb
-	ld hl,$cc02		; $56fe
+	ld hl,wMenuDisabled		; $56fe
 	ld (hl),$01		; $5701
 	ld hl,$cbb3		; $5703
 	ld (hl),$3c		; $5706
-	ld bc,$3d02		; $5708
+	ld bc,TX_3d02		; $5708
+@stateBFunc0:
 	ld a,$01		; $570b
-	ld ($cbae),a		; $570d
+	ld (wTextboxFlags),a		; $570d
 	jp showText		; $5710
-	call $5ab0		; $5713
-	call $645a		; $5716
+
+@stateC:
+	call _endgameCutsceneHandler_09_stage1_body@seasonsFunc_03_5ab0		; $5713
+	call seasonsFunc_03_645a		; $5716
 	ret nz			; $5719
-	call $646a		; $571a
+	call seasonsFunc_03_646a		; $571a
 	ld a,$01		; $571d
 	ld ($cbc1),a		; $571f
 	call disableActiveRing		; $5722
 	jp fadeoutToWhite		; $5725
+
+@stateD:
 	ld e,$3c		; $5728
-	ld bc,$4f00		; $572a
-_label_03_118:
-	call $6462		; $572d
+	ld bc,TX_4f00		; $572a
+@stateDFunc0:
+	call seasonsFunc_03_6462		; $572d
 	ret nz			; $5730
 	call incCbc2		; $5731
 	ld a,e			; $5734
 	ld ($cbb3),a		; $5735
 	jp showText		; $5738
-	call $645a		; $573b
+
+@stateE:
+	call seasonsFunc_03_645a		; $573b
 	ret nz			; $573e
 	xor a			; $573f
 	ld ($cbb3),a		; $5740
 	dec a			; $5743
 	ld ($cbba),a		; $5744
-	ld a,$d2		; $5747
+	ld a,SND_LIGHTNING		; $5747
 	call playSound		; $5749
-	ld a,$f0		; $574c
+	ld a,SNDCTRL_STOPMUSIC		; $574c
 	call playSound		; $574e
 	jp incCbc2		; $5751
+
+@stateF:
 	ld hl,$cbb3		; $5754
 	ld b,$02		; $5757
 	call flashScreen		; $5759
@@ -351,43 +354,47 @@ _label_03_118:
 	call incCbc2		; $575d
 	xor a			; $5760
 	ld bc,$059a		; $5761
-	call $63d2		; $5764
+	call disableLcdAndLoadRoom_body		; $5764
 	ld a,$ac		; $5767
 	call loadPaletteHeader		; $5769
 	call hideStatusBar		; $576c
-	call $5504		; $576f
+	call _clearFadingPalettes		; $576f
 	ld b,$06		; $5772
-_label_03_119:
+-
 	call getFreeInteractionSlot		; $5774
-	jr nz,_label_03_120	; $5777
+	jr nz,+			; $5777
 	ld (hl),$b0		; $5779
 	inc l			; $577b
 	dec b			; $577c
 	ld (hl),b		; $577d
-	jr nz,_label_03_119	; $577e
-_label_03_120:
+	jr nz,-			; $577e
++
 	ld hl,$cbb3		; $5780
 	ld (hl),$1e		; $5783
 	ld a,$13		; $5785
 	call loadGfxRegisterStateIndex		; $5787
-	ld hl,$c486		; $578a
+	ld hl,wGfxRegs1.SCY		; $578a
 	ldi a,(hl)		; $578d
 	ldh (<hCameraY),a	; $578e
 	ld a,(hl)		; $5790
 	ldh (<hCameraX),a	; $5791
 	ld a,$00		; $5793
-	ld ($cd00),a		; $5795
+	ld (wScrollMode),a		; $5795
 	ret			; $5798
+
+@state10:
 	call decCbb3		; $5799
 	ret nz			; $579c
 	call incCbc2		; $579d
 	ld hl,$cbb3		; $57a0
 	ld (hl),$28		; $57a3
 	ld a,$04		; $57a5
-	ld ($cbae),a		; $57a7
-	ld bc,$4f01		; $57aa
+	ld (wTextboxFlags),a		; $57a7
+	ld bc,TX_4f01		; $57aa
 	jp showText		; $57ad
-	call $645a		; $57b0
+
+@state11:
+	call seasonsFunc_03_645a		; $57b0
 	ret nz			; $57b3
 	call incCbc2		; $57b4
 	ld a,$20		; $57b7
@@ -396,107 +403,120 @@ _label_03_120:
 	xor a			; $57bd
 	ld (hl),a		; $57be
 	ret			; $57bf
-	call $6462		; $57c0
+
+@state12:
+	call seasonsFunc_03_6462		; $57c0
 	ret nz			; $57c3
 	ld hl,$cbb3		; $57c4
 	ld (hl),$20		; $57c7
 	inc hl			; $57c9
 	ld a,(hl)		; $57ca
 	cp $03			; $57cb
-	jr nc,_label_03_121	; $57cd
+	jr nc,+			; $57cd
 	ld b,a			; $57cf
 	push hl			; $57d0
-	ld a,$72		; $57d1
+	ld a,SND_LIGHTTORCH		; $57d1
 	call playSound		; $57d3
 	pop hl			; $57d6
 	ld a,b			; $57d7
-_label_03_121:
++
 	inc (hl)		; $57d8
-	ld hl,$580c		; $57d9
+	ld hl,@state12Table0		; $57d9
 	rst_addAToHl			; $57dc
 	ld a,(hl)		; $57dd
 	or a			; $57de
 	ld b,a			; $57df
-	jr nz,_label_03_122	; $57e0
+	jr nz,+			; $57e0
 	call fadeinFromBlack		; $57e2
 	ld a,$01		; $57e5
-	ld ($c4b2),a		; $57e7
-	ld ($c4b4),a		; $57ea
+	ld (wDirtyFadeSprPalettes),a		; $57e7
+	ld (wFadeSprPaletteSources),a		; $57ea
 	ld hl,$cbb3		; $57ed
 	ld (hl),$3c		; $57f0
-	ld a,$21		; $57f2
+	ld a,MUS_DISASTER		; $57f2
 	call playSound		; $57f4
 	jp incCbc2		; $57f7
-_label_03_122:
++
 	call fastFadeinFromBlack		; $57fa
 	ld a,b			; $57fd
-	ld ($c4b2),a		; $57fe
-	ld ($c4b4),a		; $5801
+	ld (wDirtyFadeSprPalettes),a		; $57fe
+	ld (wFadeSprPaletteSources),a		; $5801
 	xor a			; $5804
-	ld ($c4b1),a		; $5805
-	ld ($c4b3),a		; $5808
+	ld (wDirtyFadeBgPalettes),a		; $5805
+	ld (wFadeBgPaletteSources),a		; $5808
 	ret			; $580b
-	stop			; $580c
-	ld b,b			; $580d
-	add b			; $580e
-	jr z,_label_03_123	; $580f
-	nop			; $5811
+@state12Table0:
+        .db $10 $40
+        .db $80 $28
+        .db $06 $00
+
+@state13:
 	ld e,$28		; $5812
-	ld bc,$4f02		; $5814
-_label_03_123:
-	call $581d		; $5817
-	jp $572d		; $581a
+	ld bc,TX_4f02		; $5814
+	call @state13Func0		; $5817
+	jp @stateDFunc0		; $581a
+@state13Func0:
 	ld a,$08		; $581d
-	ld ($cbae),a		; $581f
+	ld (wTextboxFlags),a		; $581f
 	ld a,$03		; $5822
-	ld ($cbac),a		; $5824
+	ld (wTextboxPosition),a		; $5824
 	ret			; $5827
+
+@state14:
 	ld e,$28		; $5828
-	ld bc,$4f03		; $582a
-_label_03_124:
-	call $645a		; $582d
+	ld bc,TX_4f03		; $582a
+-
+	call seasonsFunc_03_645a		; $582d
 	ret nz			; $5830
 	call incCbc2		; $5831
 	ld hl,$cbb3		; $5834
 	ld (hl),e		; $5837
-	call $581d		; $5838
+	call @state13Func0		; $5838
 	jp showText		; $583b
+
+@state15:
 	ld e,$3c		; $583e
-	ld bc,$4f04		; $5840
-	jr _label_03_124		; $5843
+	ld bc,TX_4f04		; $5840
+	jr -		; $5843
+
+@state16:
 	ld e,$b4		; $5845
-	call $645a		; $5847
+@state16Func0:
+	call seasonsFunc_03_645a		; $5847
 	ret nz			; $584a
 	call incCbc2		; $584b
 	ld hl,$cbb3		; $584e
 	ld (hl),e		; $5851
 	ret			; $5852
-	ld hl,$c486		; $5853
+
+@state17:
+	ld hl,wGfxRegs1.SCY		; $5853
 	ldh a,(<hCameraY)	; $5856
 	ldi (hl),a		; $5858
 	ldh a,(<hCameraX)	; $5859
 	ldi (hl),a		; $585b
-	ld hl,$5881		; $585c
-	ld de,$c486		; $585f
-	call $79cd		; $5862
+	ld hl,@state17Table0		; $585c
+	ld de,wGfxRegs1.SCY		; $585f
+	call seasonsFunc_03_79cd		; $5862
 	inc de			; $5865
-	call $79cd		; $5866
-	call $5d00		; $5869
+	call seasonsFunc_03_79cd		; $5866
+	call seasonsFunc_03_5d00		; $5869
 	call decCbb3		; $586c
 	ret nz			; $586f
 	dec a			; $5870
 	ld ($cbba),a		; $5871
-	ld a,$d2		; $5874
+	ld a,SND_LIGHTNING		; $5874
 	call playSound		; $5876
-	ld a,$f0		; $5879
+	ld a,SNDCTRL_STOPMUSIC		; $5879
 	call playSound		; $587b
 	jp incCbc2		; $587e
-	rst $38			; $5881
-	ld bc,$0100		; $5882
-	nop			; $5885
-	nop			; $5886
-	rst $38			; $5887
-	nop			; $5888
+@state17Table0:
+        .db $ff $01
+        .db $00 $01
+        .db $00 $00
+        .db $ff $00
+
+@state18:
 	ld hl,$cbb3		; $5889
 	ld b,$01		; $588c
 	call flashScreen		; $588e
@@ -508,29 +528,35 @@ _label_03_124:
 	call clearOam		; $589d
 	call showStatusBar		; $58a0
 	xor a			; $58a3
-	ld bc,$0790		; $58a4
-	call $63d2		; $58a7
+	ld bc,ROOM_SEASONS_790		; $58a4
+	call disableLcdAndLoadRoom_body		; $58a7
 	ld c,$01		; $58aa
-	jp $55ad		; $58ac
+	jp @state0Func0		; $58ac
+
+@state19:
 	call decCbb3		; $58af
 	ret nz			; $58b2
 	call incCbc2		; $58b3
 	ld hl,$cbb3		; $58b6
 	ld (hl),$1e		; $58b9
-	ld bc,$3d17		; $58bb
+	ld bc,TX_3d17		; $58bb
 	jp showText		; $58be
-	call $645a		; $58c1
+
+@state1A:
+	call seasonsFunc_03_645a		; $58c1
 	ret nz			; $58c4
 	call incCbc2		; $58c5
 	ld hl,$cbb3		; $58c8
 	ld (hl),$1e		; $58cb
-	ld bc,$4f09		; $58cd
+	ld bc,TX_4f09		; $58cd
 	jp showText		; $58d0
-	call $645a		; $58d3
+
+@state1B:
+	call seasonsFunc_03_645a		; $58d3
 	ret nz			; $58d6
 	call incCbc2		; $58d7
 	ld c,$40		; $58da
-	ld a,$29		; $58dc
+	ld a,TREASURE_HEART_REFILL		; $58dc
 	call giveTreasure		; $58de
 	ld a,$08		; $58e1
 	call setLinkIDOverride		; $58e3
@@ -538,8 +564,10 @@ _label_03_124:
 	ld (hl),$07		; $58e8
 	ld hl,$cbb3		; $58ea
 	ld (hl),$5a		; $58ed
-	ld a,$4a		; $58ef
+	ld a,MUS_PRECREDITS		; $58ef
 	jp playSound		; $58f1
+
+@state1C:
 	call decCbb3		; $58f4
 	ret nz			; $58f7
 	call incCbc2		; $58f8
@@ -548,13 +576,17 @@ _label_03_124:
 	ld bc,$90bd		; $5900
 	ld a,$ff		; $5903
 	jp createEnergySwirlGoingOut		; $5905
+
+@state1D:
 	call decCbb3		; $5908
 	ret nz			; $590b
 	call incCbc2		; $590c
 	ld hl,$cbb3		; $590f
 	ld (hl),$3c		; $5912
 	jp fadeoutToWhite		; $5914
-	call $6462		; $5917
+
+@state1E:
+	call seasonsFunc_03_6462		; $5917
 	ret nz			; $591a
 	call incCbc2		; $591b
 	call disableLcd		; $591e
@@ -563,72 +595,85 @@ _label_03_124:
 	call refreshObjectGfx		; $5927
 	call hideStatusBar		; $592a
 	ld a,$02		; $592d
-	ld ($ff00+$70),a	; $592f
-	ld hl,$de90		; $5931
+	ld ($ff00+R_SVBK),a	; $592f
+	ld hl,w2TilesetBgPalettes+$10		; $5931
 	ld b,$08		; $5934
 	ld a,$ff		; $5936
 	call fillMemory		; $5938
 	xor a			; $593b
-	ld ($ff00+$70),a	; $593c
+	ld ($ff00+R_SVBK),a	; $593c
 	ld a,$07		; $593e
 	ldh (<hDirtyBgPalettes),a	; $5940
 	ld b,$02		; $5942
-_label_03_125:
+-
 	call getFreeInteractionSlot		; $5944
-	jr nz,_label_03_126	; $5947
+	jr nz,+			; $5947
 	ld (hl),$b0		; $5949
 	inc l			; $594b
 	ld a,$05		; $594c
 	add b			; $594e
 	ld (hl),a		; $594f
 	dec b			; $5950
-	jr nz,_label_03_125	; $5951
-_label_03_126:
+	jr nz,-			; $5951
++
 	ld a,$02		; $5953
-	ld ($cbcb),a		; $5955
-	call $7a6b		; $5958
+	ld (wOpenedMenuType),a		; $5955
+	call seasonsFunc_03_7a6b		; $5958
 	ld a,$02		; $595b
-	call $7a88		; $595d
+	call seasonsFunc_03_7a88		; $595d
 	ld hl,$cbb3		; $5960
 	ld (hl),$1e		; $5963
 	ld a,$04		; $5965
 	call loadGfxRegisterStateIndex		; $5967
 	ld a,$10		; $596a
 	ldh (<hCameraY),a	; $596c
-	ld ($cd2d),a		; $596e
+	ld (wDeleteEnergyBeads),a		; $596e
 	xor a			; $5971
 	ldh (<hCameraX),a	; $5972
 	ld a,$00		; $5974
-	ld ($cd00),a		; $5976
-	ld bc,$4f05		; $5979
+	ld (wScrollMode),a		; $5976
+	ld bc,TX_4f05		; $5979
 	jp showText		; $597c
-	call $645a		; $597f
+
+@state1F:
+	call seasonsFunc_03_645a		; $597f
 	ret nz			; $5982
 	call incCbc2		; $5983
 	ld b,$02		; $5986
+@state1FFunc0:
 	call fadeinFromWhite		; $5988
 	ld a,b			; $598b
-	ld ($c4b2),a		; $598c
-	ld ($c4b4),a		; $598f
+	ld (wDirtyFadeSprPalettes),a		; $598c
+	ld (wFadeSprPaletteSources),a		; $598f
 	xor a			; $5992
-	ld ($c4b1),a		; $5993
-	ld ($c4b3),a		; $5996
+	ld (wDirtyFadeBgPalettes),a		; $5993
+	ld (wFadeBgPaletteSources),a		; $5996
 	ld hl,$cbb3		; $5999
 	ld (hl),$3c		; $599c
 	ret			; $599e
+
+@state20:
 	ld e,$1e		; $599f
-	ld bc,$4f06		; $59a1
-	jp $572d		; $59a4
-	call $645a		; $59a7
+	ld bc,TX_4f06		; $59a1
+	jp @stateDFunc0		; $59a4
+
+@state21:
+	call seasonsFunc_03_645a		; $59a7
 	ret nz			; $59aa
 	call incCbc2		; $59ab
 	ld b,$14		; $59ae
-	jp $5988		; $59b0
+	jp @state1FFunc0		; $59b0
+
+@state22:
 	ld e,$1e		; $59b3
-	ld bc,$4f07		; $59b5
-	jp $572d		; $59b8
+	ld bc,TX_4f07		; $59b5
+	jp @stateDFunc0		; $59b8
+
+@state23:
 	ld e,$3c		; $59bb
-	jp $5847		; $59bd
+	jp @state16Func0		; $59bd
+
+@state24:
 	call decCbb3		; $59c0
 	ret nz			; $59c3
 	call incCbc2		; $59c4
@@ -637,16 +682,20 @@ _label_03_126:
 	ld a,$ff		; $59cc
 	ld bc,$4850		; $59ce
 	jp createEnergySwirlGoingOut		; $59d1
+
+@state25:
 	call decCbb3		; $59d4
 	ret nz			; $59d7
 	ld hl,$cbb3		; $59d8
 	ld (hl),$5a		; $59db
 	call fadeoutToWhite		; $59dd
 	ld a,$fc		; $59e0
-	ld ($c4b1),a		; $59e2
-	ld ($c4b3),a		; $59e5
+	ld (wDirtyFadeBgPalettes),a		; $59e2
+	ld (wFadeBgPaletteSources),a		; $59e5
 	jp incCbc2		; $59e8
-	call $6462		; $59eb
+
+@state26:
+	call seasonsFunc_03_6462		; $59eb
 	ret nz			; $59ee
 	call incCbc2		; $59ef
 	call clearDynamicInteractions		; $59f2
@@ -654,24 +703,26 @@ _label_03_126:
 	call clearOam		; $59f8
 	ld hl,$cbb3		; $59fb
 	ld (hl),$3c		; $59fe
-	ld bc,$4f08		; $5a00
+	ld bc,TX_4f08		; $5a00
 	jp showTextNonExitable		; $5a03
-	ld a,($cba0)		; $5a06
+
+@state27:
+	ld a,(wTextIsActive)		; $5a06
 	rlca			; $5a09
 	ret nc			; $5a0a
 	call decCbb3		; $5a0b
 	ret nz			; $5a0e
 	call showStatusBar		; $5a0f
 	xor a			; $5a12
-	ld ($cbcb),a		; $5a13
+	ld (wOpenedMenuType),a		; $5a13
 	dec a			; $5a16
 	ld (wActiveMusic),a		; $5a17
-	ld a,$f0		; $5a1a
+	ld a,SNDCTRL_STOPMUSIC		; $5a1a
 	call playSound		; $5a1c
-	ld hl,$cc63		; $5a1f
-	ld a,$85		; $5a22
+	ld hl,wWarpDestGroup		; $5a1f
+	ld a,$80|>ROOM_SEASONS_59d		; $5a22
 	ldi (hl),a		; $5a24
-	ld a,$9d		; $5a25
+	ld a,<ROOM_SEASONS_59d		; $5a25
 	ldi (hl),a		; $5a27
 	ld a,$0f		; $5a28
 	ldi (hl),a		; $5a2a
@@ -679,31 +730,29 @@ _label_03_126:
 	ldi (hl),a		; $5a2d
 	ld (hl),$03		; $5a2e
 	ret			; $5a30
-	call $5a37		; $5a31
+
+_endgameCutsceneHandler_09_stage1:
+	call _endgameCutsceneHandler_09_stage1_body		; $5a31
 	jp updateAllObjects		; $5a34
+
+_endgameCutsceneHandler_09_stage1_body:
 	ld de,$cbc2		; $5a37
 	ld a,(de)		; $5a3a
 	rst_jumpTable			; $5a3b
-	ld d,b			; $5a3c
-	ld e,d			; $5a3d
-	ld a,l			; $5a3e
-	ld e,d			; $5a3f
-	adc d			; $5a40
-	ld e,d			; $5a41
-	cp h			; $5a42
-	ld e,d			; $5a43
-	jp nc,$e35a		; $5a44
-	ld e,d			; $5a47
-	rst $38			; $5a48
-	ld e,d			; $5a49
-	inc d			; $5a4a
-	ld e,e			; $5a4b
-	dec hl			; $5a4c
-	ld e,e			; $5a4d
-	add c			; $5a4e
-	ld e,e			; $5a4f
-	call $5ab0		; $5a50
-	ld a,($c4ab)		; $5a53
+        .dw @state0
+        .dw @state1
+        .dw @state2
+        .dw @state3
+        .dw @state4
+        .dw @state5
+        .dw @state6
+        .dw @state7
+        .dw @state8
+        .dw @state9
+
+@state0:
+	call @seasonsFunc_03_5ab0		; $5a50
+	ld a,(wPaletteThread_mode)		; $5a53
 	or a			; $5a56
 	ret nz			; $5a57
 	call incCbc2		; $5a58
@@ -711,92 +760,113 @@ _label_03_126:
 	ld (hl),$3c		; $5a5e
 	call disableLcd		; $5a60
 	call clearOam		; $5a63
-	ld a,$2c		; $5a66
+	ld a,GFXH_2c		; $5a66
 	call loadGfxHeader		; $5a68
-	ld a,$9e		; $5a6b
+	ld a,SEASONS_PALH_9e		; $5a6b
 	call loadPaletteHeader		; $5a6d
 	ld a,$04		; $5a70
 	call loadGfxRegisterStateIndex		; $5a72
-	ld a,$21		; $5a75
+	ld a,MUS_DISASTER		; $5a75
 	call playSound		; $5a77
 	jp fadeinFromWhite		; $5a7a
+
+@state1:
 	ld a,$01		; $5a7d
-	ld ($cbae),a		; $5a7f
+	ld (wTextboxFlags),a		; $5a7f
 	ld a,$3c		; $5a82
-	ld bc,$3d03		; $5a84
-	jp $572d		; $5a87
-	call $645a		; $5a8a
+	ld bc,TX_3d03		; $5a84
+	jp _endgameCutsceneHandler_09_stage0_body@stateDFunc0		; $5a87
+
+@state2:
+	call seasonsFunc_03_645a		; $5a8a
 	ret nz			; $5a8d
 	call incCbc2		; $5a8e
 	ld hl,$cbb5		; $5a91
 	ld (hl),$d0		; $5a94
-_label_03_127:
-	ld hl,$6472		; $5a96
-_label_03_128:
+--
+	ld hl,seasonsOamData_03_6472		; $5a96
+-
 	ld b,$30		; $5a99
 	ld de,$cbb5		; $5a9b
 	ld a,(de)		; $5a9e
 	ld c,a			; $5a9f
-	jr _label_03_129		; $5aa0
+	jr +			; $5aa0
+
+@seasonsFunc_03_5aa2:
 	ld hl,$4da3		; $5aa2
 	ld e,$15		; $5aa5
 	ld bc,$3038		; $5aa7
 	xor a			; $5aaa
 	ldh (<hOamTail),a	; $5aab
 	jp addSpritesFromBankToOam_withOffset		; $5aad
-	ld hl,$65a4		; $5ab0
+
+@seasonsFunc_03_5ab0:
+	ld hl,seasonsOamData_03_65a4		; $5ab0
 	ld bc,$3038		; $5ab3
-_label_03_129:
++
 	xor a			; $5ab6
 	ldh (<hOamTail),a	; $5ab7
 	jp addSpritesToOam_withOffset		; $5ab9
+
+@state3:
 	ld hl,$cbb5		; $5abc
 	inc (hl)		; $5abf
-	jr nz,_label_03_127	; $5ac0
+	jr nz,--		; $5ac0
 	call clearOam		; $5ac2
 	ld a,UNCMP_GFXH_0a		; $5ac5
 	call loadUncompressedGfxHeader		; $5ac7
 	ld hl,$cbb3		; $5aca
 	ld (hl),$1e		; $5acd
 	jp incCbc2		; $5acf
+
+@state4:
 	call decCbb3		; $5ad2
 	ret nz			; $5ad5
 	call incCbc2		; $5ad6
 	ld hl,$cbb5		; $5ad9
 	ld (hl),$d0		; $5adc
-	ld hl,$650b		; $5ade
-	jr _label_03_128		; $5ae1
-	call $5ade		; $5ae3
+@state4Func0:
+	ld hl,seasonsOamData_03_650b		; $5ade
+	jr -			; $5ae1
+
+@state5:
+	call @state4Func0		; $5ae3
 	ld hl,$cbb5		; $5ae6
 	dec (hl)		; $5ae9
 	ld a,(hl)		; $5aea
 	sub $a0			; $5aeb
 	ret nz			; $5aed
-	ld ($cd08),a		; $5aee
-	ld ($cd09),a		; $5af1
+	ld (wScreenOffsetY),a		; $5aee
+	ld (wScreenOffsetX),a		; $5af1
 	ld a,$1e		; $5af4
 	ld ($cbb3),a		; $5af6
-	ld ($cbcb),a		; $5af9
+	ld (wOpenedMenuType),a		; $5af9
 	jp incCbc2		; $5afc
-	call $5ade		; $5aff
+
+@state6:
+	call @state4Func0		; $5aff
 	call decCbb3		; $5b02
 	ret nz			; $5b05
 	ld hl,$cbb3		; $5b06
 	ld (hl),$14		; $5b09
-	ld bc,$3d04		; $5b0b
-	call $570b		; $5b0e
+	ld bc,TX_3d04		; $5b0b
+	call _endgameCutsceneHandler_09_stage0_body@stateBFunc0		; $5b0e
 	jp incCbc2		; $5b11
-	call $5ade		; $5b14
-	call $645a		; $5b17
+
+@state7:
+	call @state4Func0		; $5b14
+	call seasonsFunc_03_645a		; $5b17
 	ret nz			; $5b1a
 	xor a			; $5b1b
-	ld ($cbcb),a		; $5b1c
+	ld (wOpenedMenuType),a		; $5b1c
 	dec a			; $5b1f
 	ld ($cbba),a		; $5b20
-	ld a,$d2		; $5b23
+	ld a,SND_LIGHTNING		; $5b23
 	call playSound		; $5b25
 	jp incCbc2		; $5b28
-	call $5ade		; $5b2b
+
+@state8:
+	call @state4Func0		; $5b2b
 	ld hl,$cbb3		; $5b2e
 	ld b,$02		; $5b31
 	call flashScreen		; $5b33
@@ -807,34 +877,36 @@ _label_03_129:
 	call disableLcd		; $5b3f
 	call clearOam		; $5b42
 	xor a			; $5b45
-	ld ($ff00+$4f),a	; $5b46
+	ld ($ff00+R_VBK),a	; $5b46
 	ld hl,$8000		; $5b48
 	ld bc,$2000		; $5b4b
 	call clearMemoryBc		; $5b4e
 	xor a			; $5b51
-	ld ($ff00+$4f),a	; $5b52
+	ld ($ff00+R_VBK),a	; $5b52
 	ld hl,$9c00		; $5b54
 	ld bc,$0400		; $5b57
 	call clearMemoryBc		; $5b5a
 	ld a,$01		; $5b5d
-	ld ($ff00+$4f),a	; $5b5f
+	ld ($ff00+R_VBK),a	; $5b5f
 	ld hl,$9c00		; $5b61
 	ld bc,$0400		; $5b64
 	call clearMemoryBc		; $5b67
-	ld a,$2d		; $5b6a
+	ld a,GFXH_2d		; $5b6a
 	call loadGfxHeader		; $5b6c
-	ld a,$9c		; $5b6f
+	ld a,SEASONS_PALH_9c		; $5b6f
 	call loadPaletteHeader		; $5b71
 	ld a,$04		; $5b74
 	call loadGfxRegisterStateIndex		; $5b76
-	ld a,$d2		; $5b79
+	ld a,SND_LIGHTNING		; $5b79
 	call playSound		; $5b7b
 	jp clearPaletteFadeVariablesAndRefreshPalettes		; $5b7e
+
+@state9:
 	call decCbb3		; $5b81
 	ret nz			; $5b84
 	ld a,$0a		; $5b85
-	ld ($c2ef),a		; $5b87
-	call $646a		; $5b8a
+	ld (wCutsceneIndex),a		; $5b87
+	call seasonsFunc_03_646a		; $5b8a
 	ld hl,$cf00		; $5b8d
 	ld bc,$00c0		; $5b90
 	call clearMemoryBc		; $5b93
@@ -847,48 +919,44 @@ _label_03_129:
 	ld (hl),$3c		; $5ba6
 	ld a,$03		; $5ba8
 	jp fadeoutToBlackWithDelay		; $5baa
+
+;;
+; CUTSCENE_S_ROOM_OF_RITES_COLLAPSE
+_endgameCutsceneHandler_0f:
 	ld de,$cbc1		; $5bad
 	ld a,(de)		; $5bb0
 	rst_jumpTable			; $5bb1
-	or (hl)			; $5bb2
-	ld e,e			; $5bb3
-	ld e,$5d		; $5bb4
+        .dw _endgameCutsceneHandler_0f_stage0
+        .dw _endgameCutsceneHandler_0f_stage1
+
+_endgameCutsceneHandler_0f_stage0:
 	call updateStatusBar		; $5bb6
-	call $5bbf		; $5bb9
+	call _endgameCutsceneHandler_0f_stage0_body		; $5bb9
 	jp updateAllObjects		; $5bbc
+
+_endgameCutsceneHandler_0f_stage0_body:
 	ld de,$cbc2		; $5bbf
 	ld a,(de)		; $5bc2
 	rst_jumpTable			; $5bc3
-	ld ($ff00+$5b),a	; $5bc4
-	add hl,bc		; $5bc6
-	ld e,h			; $5bc7
-	ld a,(de)		; $5bc8
-	ld e,h			; $5bc9
-	inc l			; $5bca
-	ld e,h			; $5bcb
-	ld b,(hl)		; $5bcc
-	ld e,h			; $5bcd
-	ld e,d			; $5bce
-	ld e,h			; $5bcf
-	ld l,c			; $5bd0
-	ld e,h			; $5bd1
-	ld a,l			; $5bd2
-	ld e,h			; $5bd3
-	adc a			; $5bd4
-	ld e,h			; $5bd5
-	and e			; $5bd6
-	ld e,h			; $5bd7
-	cp b			; $5bd8
-	ld e,h			; $5bd9
-	cp l			; $5bda
-	ld e,h			; $5bdb
-	rst_addAToHl			; $5bdc
-	ld e,h			; $5bdd
-	jp hl			; $5bde
-	ld e,h			; $5bdf
+        .dw @state0
+        .dw @state1
+        .dw @state2
+        .dw @state3
+        .dw @state4
+        .dw @state5
+        .dw @state6
+        .dw @state7
+        .dw @state8
+        .dw @state9
+        .dw @stateA
+        .dw @stateB
+        .dw @stateC
+        .dw @stateD
+
+@state0:
 	ld a,$01		; $5be0
 	ld (de),a		; $5be2
-	ld hl,$c6c5		; $5be3
+	ld hl,wActiveRing		; $5be3
 	ld (hl),$ff		; $5be6
 	xor a			; $5be8
 	ldh (<hActiveObjectType),a	; $5be9
@@ -906,60 +974,76 @@ _label_03_129:
 	ld hl,$cbb3		; $5c03
 	ld (hl),$0a		; $5c06
 	ret			; $5c08
+
+@state1:
 	call decCbb3		; $5c09
 	ret nz			; $5c0c
 	ld hl,$cbb3		; $5c0d
 	ld (hl),$1e		; $5c10
-	ld a,$f0		; $5c12
+	ld a,SNDCTRL_STOPMUSIC		; $5c12
 	call playSound		; $5c14
 	jp incCbc2		; $5c17
-	call $5cfb		; $5c1a
+
+@state2:
+	call seasonsFunc_03_5cfb		; $5c1a
 	call decCbb3		; $5c1d
 	ret nz			; $5c20
 	call incCbc2		; $5c21
 	ld hl,$cbb3		; $5c24
 	ld (hl),$96		; $5c27
-	jp $5d0b		; $5c29
-	call $5cfb		; $5c2c
+	jp seasonsFunc_03_5d0b		; $5c29
+
+@state3:
+	call seasonsFunc_03_5cfb		; $5c2c
 	call decCbb3		; $5c2f
 	ret nz			; $5c32
 	call incCbc2		; $5c33
-	ld a,$f1		; $5c36
+	ld a,SNDCTRL_STOPSFX		; $5c36
 	call playSound		; $5c38
 	ld hl,$cbb3		; $5c3b
 	ld (hl),$3c		; $5c3e
-	ld bc,$3d0e		; $5c40
+	ld bc,TX_3d0e		; $5c40
 	jp showText		; $5c43
-	call $645a		; $5c46
+
+@state4:
+	call seasonsFunc_03_645a		; $5c46
 	ret nz			; $5c49
 	call incCbc2		; $5c4a
-	ld a,$21		; $5c4d
+	ld a,MUS_DISASTER		; $5c4d
 	call playSound		; $5c4f
 	ld hl,$cbb3		; $5c52
 	ld (hl),$3c		; $5c55
-	jp $5d0b		; $5c57
-	call $5cfb		; $5c5a
+	jp seasonsFunc_03_5d0b		; $5c57
+
+@state5:
+	call seasonsFunc_03_5cfb		; $5c5a
 	call decCbb3		; $5c5d
 	ret nz			; $5c60
 	ld hl,$cbb3		; $5c61
 	ld (hl),$5a		; $5c64
 	jp incCbc2		; $5c66
-	call $5cfb		; $5c69
+
+@state6:
+	call seasonsFunc_03_5cfb		; $5c69
 	call decCbb3		; $5c6c
 	ret nz			; $5c6f
 	call incCbc2		; $5c70
 	ld hl,$cbb3		; $5c73
 	ld (hl),$3c		; $5c76
-	ld a,$f1		; $5c78
+	ld a,SNDCTRL_STOPSFX		; $5c78
 	jp playSound		; $5c7a
+
+@state7:
 	call decCbb3		; $5c7d
 	ret nz			; $5c80
 	call incCbc2		; $5c81
 	ld hl,$cbb3		; $5c84
 	ld (hl),$3c		; $5c87
-	ld bc,$3d0f		; $5c89
+	ld bc,TX_3d0f		; $5c89
 	jp showText		; $5c8c
-	call $645a		; $5c8f
+
+@state8:
+	call seasonsFunc_03_645a		; $5c8f
 	ret nz			; $5c92
 	call incCbc2		; $5c93
 	ld hl,$cbb3		; $5c96
@@ -967,35 +1051,45 @@ _label_03_129:
 	inc hl			; $5c9b
 	ld (hl),$01		; $5c9c
 	ld b,$03		; $5c9e
-	jp $5d12		; $5ca0
+	jp seasonsFunc_03_5d12		; $5ca0
+
+@state9:
 	ld hl,$cbb3		; $5ca3
 	call decHlRef16WithCap		; $5ca6
 	ret nz			; $5ca9
 	call incCbc2		; $5caa
 	ld hl,$cbb3		; $5cad
 	ld (hl),$3c		; $5cb0
-	ld bc,$3d10		; $5cb2
+	ld bc,TX_3d10		; $5cb2
 	jp showText		; $5cb5
+
+@stateA:
 	ld e,$1e		; $5cb8
-	jp $5847		; $5cba
-	call $5cfb		; $5cbd
+	jp _endgameCutsceneHandler_09_stage0_body@state16Func0		; $5cba
+
+@stateB:
+	call seasonsFunc_03_5cfb		; $5cbd
 	call decCbb3		; $5cc0
 	ret nz			; $5cc3
 	call incCbc2		; $5cc4
-	call $5d0b		; $5cc7
+	call seasonsFunc_03_5d0b		; $5cc7
 	ld a,$8c		; $5cca
 	ld ($cbb3),a		; $5ccc
 	ld a,$ff		; $5ccf
 	ld bc,$4478		; $5cd1
 	jp createEnergySwirlGoingOut		; $5cd4
-	call $5cfb		; $5cd7
+
+@stateC:
+	call seasonsFunc_03_5cfb		; $5cd7
 	call decCbb3		; $5cda
 	ret nz			; $5cdd
 	call incCbc2		; $5cde
 	ld hl,$cbb3		; $5ce1
 	ld (hl),$3c		; $5ce4
-	jp $5d0b		; $5ce6
-	call $5cfb		; $5ce9
+	jp seasonsFunc_03_5d0b		; $5ce6
+
+@stateD:
+	call seasonsFunc_03_5cfb		; $5ce9
 	call decCbb3		; $5cec
 	ret nz			; $5cef
 	call incCbc1		; $5cf0
@@ -1004,17 +1098,25 @@ _label_03_129:
 	ld (hl),a		; $5cf5
 	ld a,$03		; $5cf6
 	jp fadeoutToWhiteWithDelay		; $5cf8
+
+seasonsFunc_03_5cfb:
 	ld a,$04		; $5cfb
 	call setScreenShakeCounter		; $5cfd
+
+seasonsFunc_03_5d00:
 	ld a,(wFrameCounter)		; $5d00
 	and $0f			; $5d03
-	ld a,$b8		; $5d05
+	ld a,SND_RUMBLE2		; $5d05
 	jp z,playSound		; $5d07
 	ret			; $5d0a
+
+seasonsFunc_03_5d0b:
 	call getFreePartSlot		; $5d0b
 	ret nz			; $5d0e
 	ld (hl),$48		; $5d0f
 	ret			; $5d11
+
+seasonsFunc_03_5d12:
 	call getFreeInteractionSlot		; $5d12
 	ret nz			; $5d15
 	ld (hl),$48		; $5d16
@@ -1023,41 +1125,37 @@ _label_03_129:
 	inc l			; $5d1b
 	ld (hl),b		; $5d1c
 	ret			; $5d1d
+
+_endgameCutsceneHandler_0f_stage1:
 	call updateStatusBar		; $5d1e
-	call $5d27		; $5d21
+	call _endgameCutsceneHandler_0f_stage1_body		; $5d21
 	jp updateAllObjects		; $5d24
+
+_endgameCutsceneHandler_0f_stage1_body:
 	ld de,$cbc2		; $5d27
 	ld a,(de)		; $5d2a
 	rst_jumpTable			; $5d2b
-	ld b,d			; $5d2c
-	ld e,l			; $5d2d
-	ld a,a			; $5d2e
-	ld e,l			; $5d2f
-	sub e			; $5d30
-	ld e,l			; $5d31
-	and d			; $5d32
-	ld e,l			; $5d33
-	cp l			; $5d34
-	ld e,l			; $5d35
-.DB $d3				; $5d36
-	ld e,l			; $5d37
-	rst $20			; $5d38
-	ld e,l			; $5d39
-	nop			; $5d3a
-	ld e,(hl)		; $5d3b
-	ld c,$5e		; $5d3c
-	dec sp			; $5d3e
-	ld e,(hl)		; $5d3f
-	ld c,a			; $5d40
-	ld e,(hl)		; $5d41
-	call $5cfb		; $5d42
-	ld a,($c4ab)		; $5d45
+        .dw @state0
+        .dw @state1
+        .dw @state2
+        .dw @state3
+        .dw @state4
+        .dw @state5
+        .dw @state6
+        .dw @state7
+        .dw @state8
+        .dw @state9
+        .dw @stateA
+
+@state0:
+	call seasonsFunc_03_5cfb		; $5d42
+	ld a,(wPaletteThread_mode)		; $5d45
 	or a			; $5d48
 	ret nz			; $5d49
 	call incCbc2		; $5d4a
 	xor a			; $5d4d
-	ld bc,$022b		; $5d4e
-	call $63d2		; $5d51
+	ld bc,ROOM_SEASONS_22b		; $5d4e
+	call disableLcdAndLoadRoom_body		; $5d51
 	call refreshObjectGfx		; $5d54
 	ld b,$0c		; $5d57
 	call getEntryFromObjectTable1		; $5d59
@@ -1066,17 +1164,19 @@ _label_03_129:
 	call parseGivenObjectData		; $5d5e
 	ld a,$04		; $5d61
 	ld b,$02		; $5d63
-	call $642e		; $5d65
-	ld a,$f1		; $5d68
+	call seasonsFunc_03_642e		; $5d65
+	ld a,SNDCTRL_STOPSFX		; $5d68
 	call playSound		; $5d6a
-	ld a,$fa		; $5d6d
+	ld a,SNDCTRL_FAST_FADEOUT		; $5d6d
 	call playSound		; $5d6f
 	ld a,$02		; $5d72
 	call loadGfxRegisterStateIndex		; $5d74
 	ld hl,$cbb3		; $5d77
 	ld (hl),$3c		; $5d7a
 	jp fadeinFromWhiteToRoom		; $5d7c
-	call $6462		; $5d7f
+
+@state1:
+	call seasonsFunc_03_6462		; $5d7f
 	ret nz			; $5d82
 	call incCbc2		; $5d83
 	ld a,$3c		; $5d86
@@ -1084,6 +1184,8 @@ _label_03_129:
 	ld a,$64		; $5d8b
 	ld bc,$5850		; $5d8d
 	jp createEnergySwirlGoingIn		; $5d90
+
+@state2:
 	call decCbb3		; $5d93
 	ret nz			; $5d96
 	xor a			; $5d97
@@ -1091,6 +1193,8 @@ _label_03_129:
 	dec a			; $5d9b
 	ld ($cbba),a		; $5d9c
 	jp incCbc2		; $5d9f
+
+@state3:
 	ld hl,$cbb3		; $5da2
 	ld b,$01		; $5da5
 	call flashScreen		; $5da7
@@ -1102,15 +1206,19 @@ _label_03_129:
 	ld ($cfc0),a		; $5db5
 	ld a,$03		; $5db8
 	jp fadeinFromWhiteWithDelay		; $5dba
-	call $6462		; $5dbd
+
+@state4:
+	call seasonsFunc_03_6462		; $5dbd
 	ret nz			; $5dc0
 	ld a,$01		; $5dc1
-	ld ($cc17),a		; $5dc3
-	ld a,$29		; $5dc6
+	ld (wLoadedTreeGfxIndex),a		; $5dc3
+	ld a,MUS_CREDITS_1		; $5dc6
 	call playSound		; $5dc8
 	ld hl,$cbb3		; $5dcb
 	ld (hl),$3c		; $5dce
 	jp incCbc2		; $5dd0
+
+@state5:
 	call decCbb3		; $5dd3
 	ret nz			; $5dd6
 	call incCbc2		; $5dd7
@@ -1119,55 +1227,65 @@ _label_03_129:
 	inc hl			; $5ddf
 	ld (hl),$01		; $5de0
 	ld b,$00		; $5de2
-	jp $5d12		; $5de4
+	jp seasonsFunc_03_5d12		; $5de4
+
+@state6:
 	ld hl,$cbb3		; $5de7
 	call decHlRef16WithCap		; $5dea
 	ret nz			; $5ded
 	ld a,$01		; $5dee
-	ld ($cc17),a		; $5df0
+	ld (wLoadedTreeGfxIndex),a		; $5df0
 	ld hl,$cbb3		; $5df3
 	ld (hl),$3c		; $5df6
 	ld hl,$cfc0		; $5df8
 	ld (hl),$02		; $5dfb
 	jp incCbc2		; $5dfd
+
+@state7:
 	ld a,($cfc0)		; $5e00
 	cp $09			; $5e03
 	ret nz			; $5e05
 	call incCbc2		; $5e06
 	ld a,$03		; $5e09
 	jp fadeoutToWhiteWithDelay		; $5e0b
-	ld a,($c4ab)		; $5e0e
+
+@state8:
+	ld a,(wPaletteThread_mode)		; $5e0e
 	or a			; $5e11
 	ret nz			; $5e12
 	call incCbc2		; $5e13
 	call disableLcd		; $5e16
 	call clearScreenVariablesAndWramBank1		; $5e19
 	call hideStatusBar		; $5e1c
-	ld a,$3c		; $5e1f
+	ld a,GFXH_3c		; $5e1f
 	call loadGfxHeader		; $5e21
-	ld a,$ad		; $5e24
+	ld a,SEASONS_PALH_ad		; $5e24
 	call loadPaletteHeader		; $5e26
 	ld hl,$cbb3		; $5e29
 	ld (hl),$f0		; $5e2c
 	ld a,$04		; $5e2e
 	call loadGfxRegisterStateIndex		; $5e30
-	call $5aa2		; $5e33
+	call _endgameCutsceneHandler_09_stage1_body@seasonsFunc_03_5aa2		; $5e33
 	ld a,$03		; $5e36
 	jp fadeinFromWhiteWithDelay		; $5e38
-	call $5aa2		; $5e3b
-	call $6462		; $5e3e
+
+@state9:
+	call _endgameCutsceneHandler_09_stage1_body@seasonsFunc_03_5aa2		; $5e3b
+	call seasonsFunc_03_6462		; $5e3e
 	ret nz			; $5e41
 	call incCbc2		; $5e42
 	ld hl,$cbb3		; $5e45
 	ld (hl),$10		; $5e48
 	ld a,$03		; $5e4a
 	jp fadeoutToBlackWithDelay		; $5e4c
-	call $5aa2		; $5e4f
-	call $6462		; $5e52
+
+@stateA:
+	call _endgameCutsceneHandler_09_stage1_body@seasonsFunc_03_5aa2		; $5e4f
+	call seasonsFunc_03_6462		; $5e52
 	ret nz			; $5e55
 	ld a,$0a		; $5e56
-	ld ($c2ef),a		; $5e58
-	call $646a		; $5e5b
+	ld (wCutsceneIndex),a		; $5e58
+	call seasonsFunc_03_646a		; $5e5b
 	ld hl,$cf00		; $5e5e
 	ld bc,$00c0		; $5e61
 	call clearMemoryBc		; $5e64
@@ -1179,41 +1297,48 @@ _label_03_129:
 	ldh (<hCameraX),a	; $5e73
 	ld hl,$cbb3		; $5e75
 	ld (hl),$3c		; $5e78
-	ld a,$fb		; $5e7a
+	ld a,SNDCTRL_MEDIUM_FADEOUT		; $5e7a
 	jp playSound		; $5e7c
-	call $5e85		; $5e7f
+
+;;
+; CUTSCENE_S_CREDITS
+_endgameCutsceneHandler_0a:
+	call _endgameCutsceneHandler_0a_body		; $5e7f
 	jp func_3539		; $5e82
+
+_endgameCutsceneHandler_0a_body:
 	ld de,$cbc1		; $5e85
 	ld a,(de)		; $5e88
 	rst_jumpTable			; $5e89
-	sub d			; $5e8a
-	ld e,(hl)		; $5e8b
-.DB $f4				; $5e8c
-	ld e,(hl)		; $5e8d
-	ld l,l			; $5e8e
-	ld h,b			; $5e8f
-	ld a,($1161)		; $5e90
-	jp nz,$1acb		; $5e93
+        .dw _endgameCutsceneHandler_0a_stage0
+        .dw _endgameCutsceneHandler_0a_stage1
+        .dw _endgameCutsceneHandler_0a_stage2
+        .dw _endgameCutsceneHandler_0a_stage3
+
+_endgameCutsceneHandler_0a_stage0:
+	ld de,$cbc2		; $5e92
+	ld a,(de)
 	rst_jumpTable			; $5e96
-	sbc l			; $5e97
-	ld e,(hl)		; $5e98
-	cp h			; $5e99
-	ld e,(hl)		; $5e9a
-	ret c			; $5e9b
-	ld e,(hl)		; $5e9c
-	call $6462		; $5e9d
+        .dw @state0
+        .dw @state1
+        .dw @state2
+
+@state0:
+	call seasonsFunc_03_6462		; $5e9d
 	ret nz			; $5ea0
-	call $66dc		; $5ea1
+	call seasonsFunc_03_66dc		; $5ea1
 	call incCbc2		; $5ea4
 	call clearOam		; $5ea7
 	ld hl,$cbb3		; $5eaa
 	ld (hl),$b4		; $5ead
 	inc hl			; $5eaf
 	ld (hl),$00		; $5eb0
-	ld hl,$c485		; $5eb2
+	ld hl,wGfxRegs1.LCDC		; $5eb2
 	set 3,(hl)		; $5eb5
-	ld a,$2a		; $5eb7
+	ld a,MUS_CREDITS_2		; $5eb7
 	jp playSound		; $5eb9
+
+@state1:
 	ld hl,$cbb3		; $5ebc
 	call decHlRef16WithCap		; $5ebf
 	ret nz			; $5ec2
@@ -1222,10 +1347,12 @@ _label_03_129:
 	ld (hl),$48		; $5ec9
 	inc hl			; $5ecb
 	ld (hl),$03		; $5ecc
-	ld a,$04		; $5ece
+	ld a,PALH_04		; $5ece
 	call loadPaletteHeader		; $5ed0
 	ld a,$06		; $5ed3
 	jp fadeinFromBlackWithDelay		; $5ed5
+
+@state2:
 	ld hl,$cbb3		; $5ed8
 	call decHlRef16WithCap		; $5edb
 	ret nz			; $5ede
@@ -1234,25 +1361,27 @@ _label_03_129:
 	ld (hl),a		; $5ee3
 	ld b,$04		; $5ee4
 	call checkIsLinkedGame		; $5ee6
-	jr z,_label_03_130	; $5ee9
+	jr z,+			; $5ee9
 	ld b,$08		; $5eeb
-_label_03_130:
++
 	ld hl,$cbb4		; $5eed
 	ld (hl),b		; $5ef0
 	jp fadeoutToWhite		; $5ef1
+
+_endgameCutsceneHandler_0a_stage1:
 	ld de,$cbc2		; $5ef4
 	ld a,(de)		; $5ef7
 	rst_jumpTable			; $5ef8
-	inc bc			; $5ef9
-	ld e,a			; $5efa
-	or (hl)			; $5efb
-	ld e,a			; $5efc
-	bit 3,a			; $5efd
-	ld de,$2d60		; $5eff
-	ld h,b			; $5f02
+        .dw @state0
+        .dw @state1
+        .dw @state2
+        .dw @state3
+        .dw @state4
+
+@state0:
 	xor a			; $5f03
 	ldh (<hOamTail),a	; $5f04
-	ld a,($c4ab)		; $5f06
+	ld a,(wPaletteThread_mode)		; $5f06
 	or a			; $5f09
 	ret nz			; $5f0a
 	call disableLcd		; $5f0b
@@ -1263,61 +1392,61 @@ _label_03_130:
 	ldh (<hOamTail),a	; $5f19
 	ld a,($cbb4)		; $5f1b
 	sub $04			; $5f1e
-	ld hl,$5fa6		; $5f20
+	ld hl,@state0Table0		; $5f20
 	rst_addDoubleIndex			; $5f23
 	ld b,(hl)		; $5f24
 	inc hl			; $5f25
 	ld a,(hl)		; $5f26
 	or a			; $5f27
-	jr z,_label_03_132	; $5f28
+	jr z,++			; $5f28
 	ld c,a			; $5f2a
 	ld a,$00		; $5f2b
 	call func_36f6		; $5f2d
 	ld b,$2d		; $5f30
 	ld a,($cbb4)		; $5f32
 	cp $04			; $5f35
-	jr nz,_label_03_131	; $5f37
+	jr nz,+			; $5f37
 	ld b,UNCMP_GFXH_0f		; $5f39
-_label_03_131:
++
 	ld a,b			; $5f3b
 	call loadUncompressedGfxHeader		; $5f3c
-_label_03_132:
+++
 	ld a,($cbb4)		; $5f3f
 	sub $04			; $5f42
 	add a			; $5f44
 	add $85			; $5f45
 	call loadGfxHeader		; $5f47
-	ld a,$0f		; $5f4a
+	ld a,PALH_0f		; $5f4a
 	call loadPaletteHeader		; $5f4c
 	call reloadObjectGfx		; $5f4f
 	call checkIsLinkedGame		; $5f52
-	jr nz,_label_03_133	; $5f55
+	jr nz,+			; $5f55
 	ld a,($cbb4)		; $5f57
 	ld b,$10		; $5f5a
 	ld c,$00		; $5f5c
 	cp $05			; $5f5e
-	jr nz,_label_03_134	; $5f60
+	jr nz,++		; $5f60
 	ld b,$50		; $5f62
 	ld c,$0e		; $5f64
-	jr _label_03_134		; $5f66
-_label_03_133:
+	jr ++			; $5f66
++
 	ld a,($cbb4)		; $5f68
 	ld b,$10		; $5f6b
 	ld c,$00		; $5f6d
 	cp $0b			; $5f6f
-	jr nz,_label_03_134	; $5f71
+	jr nz,++		; $5f71
 	ld b,$ae		; $5f73
 	ld c,$ff		; $5f75
-_label_03_134:
+++
 	ld a,b			; $5f77
 	push bc			; $5f78
 	call loadPaletteHeader		; $5f79
 	pop bc			; $5f7c
 	ld a,c			; $5f7d
-	ld ($cd25),a		; $5f7e
+	ld (wTilesetAnimation),a		; $5f7e
 	call loadAnimationData		; $5f81
 	ld a,$01		; $5f84
-	ld ($cd00),a		; $5f86
+	ld (wScrollMode),a		; $5f86
 	xor a			; $5f89
 	ldh (<hCameraX),a	; $5f8a
 	ld b,$20		; $5f8c
@@ -1327,23 +1456,22 @@ _label_03_134:
 	ld (hl),$f0		; $5f97
 	inc l			; $5f99
 	ld b,(hl)		; $5f9a
-	call $6405		; $5f9b
+	call seasonsFunc_03_6405		; $5f9b
 	ld a,$04		; $5f9e
 	call loadGfxRegisterStateIndex		; $5fa0
 	jp fadeinFromWhite		; $5fa3
-	nop			; $5fa6
-	add $01			; $5fa7
-	dec hl			; $5fa9
-	nop			; $5faa
-	or (hl)			; $5fab
-	nop			; $5fac
-	sub $00			; $5fad
-	nop			; $5faf
-	ld bc,$002b		; $5fb0
-	nop			; $5fb3
-	nop			; $5fb4
-	nop			; $5fb5
-	ld a,($c4ab)		; $5fb6
+@state0Table0:
+        .db $00 $c6
+        .db $01 $2b
+        .db $00 $b6
+        .db $00 $d6
+        .db $00 $00
+        .db $01 $2b
+        .db $00 $00
+        .db $00 $00
+
+@state1:
+	ld a,(wPaletteThread_mode)		; $5fb6
 	or a			; $5fb9
 	ret nz			; $5fba
 	ld a,($cfdf)		; $5fbb
@@ -1351,9 +1479,11 @@ _label_03_134:
 	ret z			; $5fbf
 	call incCbc2		; $5fc0
 	ld a,$ff		; $5fc3
-	ld ($cd25),a		; $5fc5
+	ld (wTilesetAnimation),a		; $5fc5
 	jp fadeoutToWhite		; $5fc8
-	ld a,($c4ab)		; $5fcb
+
+@state2:
+	ld a,(wPaletteThread_mode)		; $5fcb
 	or a			; $5fce
 	ret nz			; $5fcf
 	call incCbc2		; $5fd0
@@ -1374,22 +1504,21 @@ _label_03_134:
 	call loadGfxRegisterStateIndex		; $5ff2
 	ld a,($cbb4)		; $5ff5
 	sub $04			; $5ff8
-	ld hl,$6009		; $5ffa
+	ld hl,@state2Table0		; $5ffa
 	rst_addAToHl			; $5ffd
 	ld a,(hl)		; $5ffe
-	ld ($c487),a		; $5fff
+	ld (wGfxRegs1.SCX),a		; $5fff
 	ld a,$10		; $6002
 	ldh (<hCameraX),a	; $6004
 	jp fadeinFromWhite		; $6006
-	nop			; $6009
-	ret nc			; $600a
-	nop			; $600b
-	ret nc			; $600c
-	nop			; $600d
-	ret nc			; $600e
-	nop			; $600f
-	ret nc			; $6010
-	ld a,($c4ab)		; $6011
+@state2Table0:
+        .db $00 $d0
+        .db $00 $d0
+        .db $00 $d0
+        .db $00 $d0
+
+@state3:
+	ld a,(wPaletteThread_mode)		; $6011
 	or a			; $6014
 	ret nz			; $6015
 	call decCbb3		; $6016
@@ -1404,7 +1533,9 @@ _label_03_134:
 	ldi (hl),a		; $6029
 	ld (hl),$00		; $602a
 	ret			; $602c
-	ld a,($c4ab)		; $602d
+
+@state4:
+	ld a,(wPaletteThread_mode)		; $602d
 	or a			; $6030
 	ret nz			; $6031
 	xor a			; $6032
@@ -1414,23 +1545,23 @@ _label_03_134:
 	ret z			; $6039
 	ld b,$07		; $603a
 	call checkIsLinkedGame		; $603c
-	jr z,_label_03_135	; $603f
+	jr z,+			; $603f
 	ld b,$0b		; $6041
-_label_03_135:
++
 	ld hl,$cbb4		; $6043
 	ld a,(hl)		; $6046
 	cp b			; $6047
-	jr nc,_label_03_136	; $6048
+	jr nc,+			; $6048
 	inc (hl)		; $604a
 	xor a			; $604b
 	ld ($cbc2),a		; $604c
-	jr _label_03_137		; $604f
-_label_03_136:
-	call $646a		; $6051
+	jr ++			; $604f
++
+	call seasonsFunc_03_646a		; $6051
 	call enableActiveRing		; $6054
 	ld a,$02		; $6057
 	ld ($cbc1),a		; $6059
-	ld hl,$c6a3		; $605c
+	ld hl,wLinkMaxHealth		; $605c
 	ldd a,(hl)		; $605f
 	ld (hl),a		; $6060
 	xor a			; $6061
@@ -1439,28 +1570,27 @@ _label_03_136:
 	ld (hl),a		; $6065
 	ld l,$c5		; $6066
 	ld (hl),$ff		; $6068
-_label_03_137:
+++
 	jp fadeoutToWhite		; $606a
+
+_endgameCutsceneHandler_0a_stage2:
 	xor a			; $606d
 	ldh (<hOamTail),a	; $606e
 	ld de,$cbc2		; $6070
 	ld a,(de)		; $6073
 	rst_jumpTable			; $6074
-	add a			; $6075
-	ld h,b			; $6076
-	cp l			; $6077
-	ld h,b			; $6078
-	call $0e60		; $6079
-	ld h,c			; $607c
-	ldi a,(hl)		; $607d
-	ld h,c			; $607e
-	ld (hl),$61		; $607f
-	xor c			; $6081
-	ld h,c			; $6082
-	cp b			; $6083
-	ld h,c			; $6084
-	and $61			; $6085
-	ld a,($c4ab)		; $6087
+        .dw @state0
+        .dw @state1
+        .dw @state2
+        .dw @state3
+        .dw @state4
+        .dw @state5
+        .dw @state6
+        .dw @state7
+        .dw @state8
+
+@state0:
+	ld a,(wPaletteThread_mode)		; $6087
 	or a			; $608a
 	ret nz			; $608b
 	call incCbc2		; $608c
@@ -1469,9 +1599,9 @@ _label_03_137:
 	call clearOam		; $6095
 	xor a			; $6098
 	ld ($cfde),a		; $6099
-	ld a,$95		; $609c
+	ld a,GFXH_95		; $609c
 	call loadGfxHeader		; $609e
-	ld a,$a0		; $60a1
+	ld a,SEASONS_PALH_a0		; $60a1
 	call loadPaletteHeader		; $60a3
 	ld a,$09		; $60a6
 	call loadGfxRegisterStateIndex		; $60a8
@@ -1485,6 +1615,8 @@ _label_03_137:
 	inc l			; $60b9
 	ld (hl),$50		; $60ba
 	ret			; $60bc
+
+@state1:
 	ld a,($cfde)		; $60bd
 	or a			; $60c0
 	ret z			; $60c1
@@ -1493,78 +1625,86 @@ _label_03_137:
 	inc hl			; $60c7
 	ld (hl),$01		; $60c8
 	jp incCbc2		; $60ca
+
+@state2:
 	ld hl,$cbb3		; $60cd
 	call decHlRef16WithCap		; $60d0
 	ret nz			; $60d3
 	call checkIsLinkedGame		; $60d4
-	jr nz,_label_03_138	; $60d7
-	call $646a		; $60d9
+	jr nz,+			; $60d7
+	call seasonsFunc_03_646a		; $60d9
 	ld a,$03		; $60dc
 	ld ($cbc1),a		; $60de
 	ld a,$04		; $60e1
 	jp fadeoutToWhiteWithDelay		; $60e3
-_label_03_138:
++
 	ld a,$04		; $60e6
 	ld ($cbb3),a		; $60e8
-	ld a,($c486)		; $60eb
+	ld a,(wGfxRegs1.SCY)		; $60eb
 	ldh (<hCameraY),a	; $60ee
 	ld a,UNCMP_GFXH_01		; $60f0
 	call loadUncompressedGfxHeader		; $60f2
-	ld a,$0b		; $60f5
+	ld a,PALH_0b		; $60f5
 	call loadPaletteHeader		; $60f7
 	ld b,$03		; $60fa
-_label_03_139:
+-
 	call getFreeInteractionSlot		; $60fc
-	jr nz,_label_03_140	; $60ff
+	jr nz,+			; $60ff
 	ld (hl),$4a		; $6101
 	inc l			; $6103
 	ld (hl),$09		; $6104
 	inc l			; $6106
 	dec b			; $6107
 	ld (hl),b		; $6108
-	jr nz,_label_03_139	; $6109
-_label_03_140:
+	jr nz,-			; $6109
++
 	jp incCbc2		; $610b
-	ld a,($c486)		; $610e
+
+@state3:
+	ld a,(wGfxRegs1.SCY)		; $610e
 	or a			; $6111
-	jr nz,_label_03_141	; $6112
+	jr nz,+			; $6112
 	ld a,$78		; $6114
 	ld ($cbb3),a		; $6116
 	jp incCbc2		; $6119
-_label_03_141:
++
 	call decCbb3		; $611c
 	ret nz			; $611f
 	ld (hl),$04		; $6120
-	ld hl,$c486		; $6122
+	ld hl,wGfxRegs1.SCY	; $6122
 	dec (hl)		; $6125
 	ld a,(hl)		; $6126
 	ldh (<hCameraY),a	; $6127
 	ret			; $6129
+
+@state4:
 	call decCbb3		; $612a
 	ret nz			; $612d
 	ld a,$ff		; $612e
 	ld ($cbba),a		; $6130
 	jp incCbc2		; $6133
+
+@state5:
 	ld hl,$cbb3		; $6136
 	ld b,$01		; $6139
 	call flashScreen		; $613b
 	ret z			; $613e
 	call disableLcd		; $613f
-	ld a,$9a		; $6142
+	ld a,GFXH_9a		; $6142
 	call loadGfxHeader		; $6144
-	ld a,$9f		; $6147
+	ld a,SEASONS_PALH_9f		; $6147
 	call loadPaletteHeader		; $6149
 	call clearDynamicInteractions		; $614c
 	ld b,$03		; $614f
-_label_03_142:
+-
 	call getFreeInteractionSlot		; $6151
-	jr nz,_label_03_143	; $6154
+	jr nz,+			; $6154
 	ld (hl),$cf		; $6156
 	inc l			; $6158
 	dec b			; $6159
 	ld (hl),b		; $615a
-	jr nz,_label_03_142	; $615b
-_label_03_143:
+	jr nz,-			; $615b
++
 	ld a,$04		; $615d
 	call loadGfxRegisterStateIndex		; $615f
 	ld a,$04		; $6162
@@ -1572,127 +1712,129 @@ _label_03_143:
 	call incCbc2		; $6167
 	ld a,$f0		; $616a
 	ld ($cbb3),a		; $616c
+
+@seasonsFunc_03_616f:
 	xor a			; $616f
 	ldh (<hOamTail),a	; $6170
-	ld a,($c486)		; $6172
+	ld a,(wGfxRegs1.SCY)		; $6172
 	cp $60			; $6175
-	jr nc,_label_03_144	; $6177
+	jr nc,+			; $6177
 	cpl			; $6179
 	inc a			; $617a
 	ld b,a			; $617b
 	ld a,(wFrameCounter)		; $617c
 	and $01			; $617f
-	jr nz,_label_03_144	; $6181
+	jr nz,+			; $6181
 	ld c,a			; $6183
-	ld hl,$6641		; $6184
+	ld hl,seasonsOamData_03_6641		; $6184
 	call addSpritesToOam_withOffset		; $6187
-_label_03_144:
-	ld a,($c486)		; $618a
++
+	ld a,(wGfxRegs1.SCY)		; $618a
 	cpl			; $618d
 	inc a			; $618e
 	ld b,$c7		; $618f
 	add b			; $6191
 	ld b,a			; $6192
 	ld c,$38		; $6193
-	ld hl,$668a		; $6195
+	ld hl,seasonsOamData_03_668a		; $6195
 	push bc			; $6198
 	call addSpritesToOam_withOffset		; $6199
 	pop bc			; $619c
-	ld a,($c486)		; $619d
+	ld a,(wGfxRegs1.SCY)		; $619d
 	cp $60			; $61a0
 	ret c			; $61a2
-	ld hl,$66bf		; $61a3
+	ld hl,seasonsOamData_03_66bf		; $61a3
 	jp addSpritesToOam_withOffset		; $61a6
-	call $616f		; $61a9
-	call $6462		; $61ac
+
+@state6:
+	call @seasonsFunc_03_616f		; $61a9
+	call seasonsFunc_03_6462		; $61ac
 	ret nz			; $61af
 	ld a,$04		; $61b0
 	ld ($cbb3),a		; $61b2
 	jp incCbc2		; $61b5
-	ld a,($c486)		; $61b8
+
+@state7:
+	ld a,(wGfxRegs1.SCY)		; $61b8
 	cp $98			; $61bb
-	jr nz,_label_03_145	; $61bd
+	jr nz,+			; $61bd
 	ld a,$f0		; $61bf
 	ld ($cbb3),a		; $61c1
 	call incCbc2		; $61c4
-	jr _label_03_146		; $61c7
-_label_03_145:
+	jr ++			; $61c7
++
 	call decCbb3		; $61c9
-	jr nz,_label_03_146	; $61cc
+	jr nz,++		; $61cc
 	ld (hl),$04		; $61ce
-	ld hl,$c486		; $61d0
+	ld hl,wGfxRegs1.SCY		; $61d0
 	inc (hl)		; $61d3
 	ld a,(hl)		; $61d4
 	ldh (<hCameraY),a	; $61d5
 	cp $60			; $61d7
-	jr nz,_label_03_146	; $61d9
+	jr nz,++		; $61d9
 	call clearDynamicInteractions		; $61db
 	ld a,UNCMP_GFXH_2c		; $61de
 	call loadUncompressedGfxHeader		; $61e0
-_label_03_146:
-	jp $616f		; $61e3
-	call $616f		; $61e6
+++
+	jp @seasonsFunc_03_616f		; $61e3
+
+@state8:
+	call @seasonsFunc_03_616f		; $61e6
 	call decCbb3		; $61e9
 	ret nz			; $61ec
-	call $646a		; $61ed
+	call seasonsFunc_03_646a		; $61ed
 	ld a,$03		; $61f0
 	ld ($cbc1),a		; $61f2
 	ld a,$04		; $61f5
 	jp fadeoutToWhiteWithDelay		; $61f7
+
+_endgameCutsceneHandler_0a_stage3:
 	ld de,$cbc2		; $61fa
 	ld a,(de)		; $61fd
 	rst_jumpTable			; $61fe
-	rla			; $61ff
-	ld h,d			; $6200
-	ld (hl),b		; $6201
-	ld h,d			; $6202
-	sbc h			; $6203
-	ld h,d			; $6204
-	and (hl)		; $6205
-	ld h,d			; $6206
-	cp l			; $6207
-	ld h,d			; $6208
-	rla			; $6209
-	ld h,e			; $620a
-	ld l,$63		; $620b
-	ld c,b			; $620d
-	ld h,e			; $620e
-	ld l,b			; $620f
-	ld h,e			; $6210
-	sub c			; $6211
-	ld h,e			; $6212
-	xor a			; $6213
-	ld h,e			; $6214
-	rst_jumpTable			; $6215
-	ld h,e			; $6216
+        .dw @state0
+        .dw @state1
+        .dw @state2
+        .dw @state3
+        .dw @state4
+        .dw @state5
+        .dw @state6
+        .dw @state7
+        .dw @state8
+        .dw @state9
+        .dw @stateA
+        .dw @stateB
+
+@state0:
 	call checkIsLinkedGame		; $6217
-	call nz,$616f		; $621a
-	ld a,($c4ab)		; $621d
+	call nz,_endgameCutsceneHandler_0a_stage2@seasonsFunc_03_616f		; $621a
+	ld a,(wPaletteThread_mode)		; $621d
 	or a			; $6220
 	ret nz			; $6221
 	call disableLcd		; $6222
 	call incCbc2		; $6225
-	call $66ed		; $6228
+	call seasonsFunc_03_66ed		; $6228
 	call clearDynamicInteractions		; $622b
 	call clearOam		; $622e
 	call checkIsLinkedGame		; $6231
-	jp z,$6249		; $6234
+	jp z,@state0Func0		; $6234
 	ld a,$99		; $6237
 	call loadGfxHeader		; $6239
 	ld a,$aa		; $623c
 	call loadPaletteHeader		; $623e
-	ld hl,$5887		; $6241
+	ld hl,objectData.objectData5887		; $6241
 	call parseGivenObjectData		; $6244
-	jr _label_03_147		; $6247
-	ld a,$98		; $6249
+	jr +				; $6247
+@state0Func0:
+	ld a,GFXH_98		; $6249
 	call loadGfxHeader		; $624b
-	ld a,$a9		; $624e
+	ld a,SEASONS_PALH_a9		; $624e
 	call loadPaletteHeader		; $6250
-_label_03_147:
++
 	ld a,$04		; $6253
 	call loadGfxRegisterStateIndex		; $6255
 	xor a			; $6258
-	ld hl,$ffa8		; $6259
+	ld hl,hCameraY		; $6259
 	ldi (hl),a		; $625c
 	ldi (hl),a		; $625d
 	ldi (hl),a		; $625e
@@ -1700,82 +1842,89 @@ _label_03_147:
 	ld hl,$cbb3		; $6260
 	ld (hl),$f0		; $6263
 	ld (hl),a		; $6265
-	ld a,$fb		; $6266
+	ld a,SNDCTRL_MEDIUM_FADEOUT		; $6266
 	call playSound		; $6268
 	ld a,$04		; $626b
 	jp fadeinFromWhiteWithDelay		; $626d
-	ld a,($c4ab)		; $6270
+
+@state1:
+	ld a,(wPaletteThread_mode)		; $6270
 	or a			; $6273
 	ret nz			; $6274
 	call incCbc2		; $6275
+@state1Func0:
 	call checkIsLinkedGame		; $6278
 	ret z			; $627b
 	ld hl,$cbb4		; $627c
 	ld a,(hl)		; $627f
 	or a			; $6280
-	jr z,_label_03_148	; $6281
+	jr z,+			; $6281
 	dec (hl)		; $6283
 	ret			; $6284
-_label_03_148:
-	ld a,$aa		; $6285
++
+	ld a,SND_WAVE		; $6285
 	call playSound		; $6287
 	call getRandomNumber_noPreserveVars		; $628a
 	and $03			; $628d
-	ld hl,$6298		; $628f
+	ld hl,@state1Table0		; $628f
 	rst_addAToHl			; $6292
 	ld a,(hl)		; $6293
 	ld ($cbb4),a		; $6294
 	ret			; $6297
-	and b			; $6298
-	ret z			; $6299
-	stop			; $629a
-	ld a,($ff00+$cd)	; $629b
-	ld a,b			; $629d
-	ld h,d			; $629e
+@state1Table0:
+        .db $a0 $c8
+        .db $10 $f0
+
+@state2:
+	call @state1Func0		; $629c
 	call decCbb3		; $629f
 	ret nz			; $62a2
 	call incCbc2		; $62a3
-	call $6278		; $62a6
-	ld hl,$c612		; $62a9
+
+@state3:
+	call @state1Func0		; $62a6
+	ld hl,wFileIsLinkedGame		; $62a9
 	ldi a,(hl)		; $62ac
 	add (hl)		; $62ad
 	cp $02			; $62ae
 	ret z			; $62b0
-	ld a,($c482)		; $62b1
-	and $0b			; $62b4
+	ld a,(wKeysJustPressed)		; $62b1
+	and (BTN_START|BTN_A|BTN_B)	; $62b4
 	ret z			; $62b6
 	call incCbc2		; $62b7
 	jp fadeoutToWhite		; $62ba
-	ld a,($c4ab)		; $62bd
+
+@state4:
+	ld a,(wPaletteThread_mode)		; $62bd
 	or a			; $62c0
 	ret nz			; $62c1
 	call incCbc2		; $62c2
 	call disableLcd		; $62c5
-	call $481b		; $62c8
+	call generateGameTransferSecret		; $62c8
 	ld a,$ff		; $62cb
 	ld ($cbba),a		; $62cd
-	ld a,($ff00+$70)	; $62d0
+	ld a,($ff00+R_SVBK)	; $62d0
 	push af			; $62d2
 	ld a,$07		; $62d3
-	ld ($ff00+$70),a	; $62d5
+	ld ($ff00+R_SVBK),a	; $62d5
 	ld hl,$d460		; $62d7
 	ld de,$d800		; $62da
 	ld bc,$1800		; $62dd
-_label_03_149:
+-
 	ldi a,(hl)		; $62e0
 	call copyTextCharacterGfx		; $62e1
 	dec b			; $62e4
-	jr nz,_label_03_149	; $62e5
+	jr nz,-			; $62e5
 	pop af			; $62e7
-	ld ($ff00+$70),a	; $62e8
-	ld a,$97		; $62ea
+	ld ($ff00+R_SVBK),a	; $62e8
+	ld a,GFXH_97		; $62ea
 	call loadGfxHeader		; $62ec
 	ld a,UNCMP_GFXH_2b		; $62ef
 	call loadUncompressedGfxHeader		; $62f1
-	ld a,$05		; $62f4
+	ld a,PALH_05		; $62f4
 	call loadPaletteHeader		; $62f6
 	call checkIsLinkedGame		; $62f9
-	ld a,$84		; $62fc
+	ld a,GFXH_84		; $62fc
 	call nz,loadGfxHeader		; $62fe
 	call clearDynamicInteractions		; $6301
 	call clearOam		; $6304
@@ -1785,47 +1934,55 @@ _label_03_149:
 	ld (hl),$3c		; $630f
 	call fileSelect_redrawDecorations		; $6311
 	jp fadeinFromWhite		; $6314
+
+@state5:
 	call fileSelect_redrawDecorations		; $6317
-	call $6462		; $631a
+	call seasonsFunc_03_6462		; $631a
 	ret nz			; $631d
 	ld hl,$cbb3		; $631e
 	ld b,$3c		; $6321
 	call checkIsLinkedGame		; $6323
-	jr z,_label_03_150	; $6326
+	jr z,+			; $6326
 	ld b,$b4		; $6328
-_label_03_150:
++
 	ld (hl),b		; $632a
 	jp incCbc2		; $632b
+
+@state6:
 	call fileSelect_redrawDecorations		; $632e
 	call decCbb3		; $6331
 	ret nz			; $6334
 	call checkIsLinkedGame		; $6335
-	jr nz,_label_03_151	; $6338
+	jr nz,+			; $6338
 	call getFreeInteractionSlot		; $633a
-	jr nz,_label_03_151	; $633d
+	jr nz,+			; $633d
 	ld (hl),$d1		; $633f
 	xor a			; $6341
 	ld ($cfde),a		; $6342
-_label_03_151:
++
 	jp incCbc2		; $6345
+
+@state7:
 	call fileSelect_redrawDecorations		; $6348
 	call checkIsLinkedGame		; $634b
-	jr z,_label_03_152	; $634e
-	ld a,($c482)		; $6350
-	and $01			; $6353
-	jr nz,_label_03_153	; $6355
+	jr z,+		; $634e
+	ld a,(wKeysJustPressed)		; $6350
+	and BTN_A			; $6353
+	jr nz,++	; $6355
 	ret			; $6357
-_label_03_152:
++
 	ld a,($cfde)		; $6358
 	or a			; $635b
 	ret z			; $635c
-_label_03_153:
+++
 	call incCbc2		; $635d
-	ld a,$fa		; $6360
+	ld a,SNDCTRL_FAST_FADEOUT		; $6360
 	call playSound		; $6362
 	jp fadeoutToWhite		; $6365
+
+@state8:
 	call fileSelect_redrawDecorations		; $6368
-	ld a,($c4ab)		; $636b
+	ld a,(wPaletteThread_mode)		; $636b
 	or a			; $636e
 	ret nz			; $636f
 	call checkIsLinkedGame		; $6370
@@ -1833,41 +1990,48 @@ _label_03_153:
 	call disableLcd		; $6376
 	call clearOam		; $6379
 	call incCbc2		; $637c
-	ld a,$82		; $637f
+	ld a,GFXH_82		; $637f
 	call loadGfxHeader		; $6381
-	ld a,$8f		; $6384
+	ld a,SEASONS_PALH_8f		; $6384
 	call loadPaletteHeader		; $6386
 	call fadeinFromWhite		; $6389
 	ld a,$04		; $638c
 	jp loadGfxRegisterStateIndex		; $638e
-	call $63a1		; $6391
-	ld a,($c4ab)		; $6394
+
+@state9:
+	call @state9Func0		; $6391
+	ld a,(wPaletteThread_mode)		; $6394
 	or a			; $6397
 	ret nz			; $6398
 	ld hl,$cbb3		; $6399
 	ld (hl),$b4		; $639c
 	jp incCbc2		; $639e
+@state9Func0:
 	ld hl,$4e0c		; $63a1
 	ld e,$15		; $63a4
 	ld bc,$3038		; $63a6
 	xor a			; $63a9
 	ldh (<hOamTail),a	; $63aa
 	jp addSpritesFromBankToOam_withOffset		; $63ac
-	call $63a1		; $63af
+
+@stateA:
+	call @state9Func0		; $63af
 	ld hl,$cbb3		; $63b2
 	ld a,(hl)		; $63b5
 	or a			; $63b6
-	jr z,_label_03_154	; $63b7
+	jr z,+			; $63b7
 	dec (hl)		; $63b9
 	ret			; $63ba
-_label_03_154:
-	ld a,($c482)		; $63bb
-	and $01			; $63be
++
+	ld a,(wKeysJustPressed)		; $63bb
+	and BTN_A		; $63be
 	ret z			; $63c0
 	call incCbc2		; $63c1
 	jp fadeoutToWhite		; $63c4
-	call $63a1		; $63c7
-	ld a,($c4ab)		; $63ca
+
+@stateB:
+	call @state9Func0		; $63c7
+	ld a,(wPaletteThread_mode)		; $63ca
 	or a			; $63cd
 	ret nz			; $63ce
 	jp resetGame		; $63cf
@@ -1887,6 +2051,8 @@ disableLcdAndLoadRoom_body:
 	ld hl,wLinkInAir		; $63e3
 	ld b,wcce9-wLinkInAir		; $63e6
 	call clearMemory		; $63e8
+
+seasonsFunc_03_63eb:
 	call initializeVramMaps		; $63eb
 	call loadScreenMusicAndSetRoomPack		; $63ee
 	call loadTilesetData		; $63f1
@@ -1897,6 +2063,7 @@ disableLcdAndLoadRoom_body:
 	call loadCommonGraphics		; $63ff
 	jp clearOam		; $6402
 
+seasonsFunc_03_6405:
 	ld a,b			; $6405
 	cp $ff			; $6406
 	ret z			; $6408
@@ -1911,501 +2078,301 @@ disableLcdAndLoadRoom_body:
 	ld ($cfc0),a		; $6417
 	ld a,($cbb4)		; $641a
 	cp $05			; $641d
-	jr z,_label_03_155	; $641f
+	jr z,+			; $641f
 	cp $06			; $6421
-	jr z,_label_03_158	; $6423
+	jr z,++			; $6423
 	cp $07			; $6425
-	jr z,_label_03_159	; $6427
+	jr z,+++		; $6427
 	ret			; $6429
-_label_03_155:
++
 	ld a,$04		; $642a
 	ld b,$03		; $642c
-_label_03_156:
-	call $6434		; $642e
+
+seasonsFunc_03_642e:
+	call seasonsFunc_03_6434		; $642e
 	jp reloadObjectGfx		; $6431
-	ld hl,$cc07		; $6434
-_label_03_157:
+
+seasonsFunc_03_6434:
+	ld hl,wLoadedObjectGfx		; $6434
+-
 	ldi (hl),a		; $6437
 	inc a			; $6438
 	ld (hl),$01		; $6439
 	inc l			; $643b
 	dec b			; $643c
-	jr nz,_label_03_157	; $643d
+	jr nz,-			; $643d
 	ret			; $643f
-_label_03_158:
+++
 	ld a,$0f		; $6440
 	ld b,$06		; $6442
-	jr _label_03_156		; $6444
-_label_03_159:
+	jr seasonsFunc_03_642e		; $6444
++++
 	ld a,$13		; $6446
 	ld b,$02		; $6448
-	jr _label_03_156		; $644a
-	ld ($cc4e),a		; $644c
+	jr seasonsFunc_03_642e		; $644a
+
+seasonsFunc_03_644c:
+	ld (wRoomStateModifier),a		; $644c
 	call disableLcd		; $644f
-	call $63eb		; $6452
+	call seasonsFunc_03_63eb		; $6452
 	ld a,$02		; $6455
 	jp loadGfxRegisterStateIndex		; $6457
-	ld a,($cba0)		; $645a
+
+seasonsFunc_03_645a:
+	ld a,(wTextIsActive)		; $645a
 	or a			; $645d
 	ret nz			; $645e
 	jp decCbb3		; $645f
-	ld a,($c4ab)		; $6462
+
+seasonsFunc_03_6462:
+	ld a,(wPaletteThread_mode)		; $6462
 	or a			; $6465
 	ret nz			; $6466
 	jp decCbb3		; $6467
+
+seasonsFunc_03_646a:
 	ld hl,$cbb3		; $646a
 	ld b,$10		; $646d
 	jp clearMemory		; $646f
-	ld h,$e0		; $6472
-	stop			; $6474
-	ld (bc),a		; $6475
-	ld bc,$18e0		; $6476
-	inc b			; $6479
-	ld bc,$20e0		; $647a
-	ld b,$01		; $647d
-	ld ($ff00+$28),a	; $647f
-	ld ($f001),sp		; $6481
-	ld ($0114),sp		; $6484
-	ld a,($ff00+$10)	; $6487
-	ld d,$01		; $6489
-	ld a,($ff00+$18)	; $648b
-	jr $01			; $648d
-	ld a,($ff00+$20)	; $648f
-	ld a,(de)		; $6491
-	ld bc,$28f0		; $6492
-	inc e			; $6495
-	ld bc,$0800		; $6496
-	jr z,_label_03_160	; $6499
-	nop			; $649b
-_label_03_160:
-	stop			; $649c
-	ldi a,(hl)		; $649d
-	ld bc,$1800		; $649e
-	inc l			; $64a1
-	ld bc,$2000		; $64a2
-	ld l,$01		; $64a5
-	nop			; $64a7
-	jr z,$30		; $64a8
-	ld bc,$0810		; $64aa
-	ldd a,(hl)		; $64ad
-	ld bc,$1010		; $64ae
-	inc a			; $64b1
-	ld bc,$1810		; $64b2
-	ld a,$01		; $64b5
-	stop			; $64b7
-	jr nz,_label_03_162	; $64b8
-	ld bc,$2810		; $64ba
-	ld b,d			; $64bd
-	ld bc,$0820		; $64be
-	nop			; $64c1
-	ld bc,$1020		; $64c2
-	ld a,(bc)		; $64c5
-	ld bc,$1820		; $64c6
-	inc c			; $64c9
-	ld bc,$2020		; $64ca
-	ld c,$01		; $64cd
-	jr nz,_label_03_161	; $64cf
-	stop			; $64d1
-	ld bc,$0830		; $64d2
-	ld e,$01		; $64d5
-	jr nc,$10		; $64d7
-	jr nz,$01		; $64d9
-	jr nc,$18		; $64db
-	ldi (hl),a		; $64dd
-	ld bc,$2030		; $64de
-	inc h			; $64e1
-	ld bc,$2830		; $64e2
-	ld h,$01		; $64e5
-	ld b,b			; $64e7
-	ld ($0132),sp		; $64e8
-	ld b,b			; $64eb
-	stop			; $64ec
-	inc (hl)		; $64ed
-	ld bc,$1840		; $64ee
-	ld (hl),$01		; $64f1
-	ld d,b			; $64f3
-	ld ($0144),sp		; $64f4
-	ld d,b			; $64f7
-	stop			; $64f8
-_label_03_161:
-	ld b,(hl)		; $64f9
-_label_03_162:
-	ld bc,$1850		; $64fa
-	ld c,b			; $64fd
-	ld bc,$2040		; $64fe
-	jr c,_label_03_163	; $6501
-	ld h,b			; $6503
-_label_03_163:
-	ld ($0100),sp		; $6504
-	ld h,b			; $6507
-	stop			; $6508
-	ld (de),a		; $6509
-	ld bc,$e026		; $650a
-	ld hl,sp+$02		; $650d
-	ld hl,$f0e0		; $650f
-	inc b			; $6512
-	ld hl,$e8e0		; $6513
-	ld b,$21		; $6516
-	ld ($ff00+$e0),a	; $6518
-	ld ($f021),sp		; $651a
-	nop			; $651d
-	inc d			; $651e
-	ld hl,$f8f0		; $651f
-	ld d,$21		; $6522
-	ld a,($ff00+$f0)	; $6524
-	jr $21			; $6526
-	ld a,($ff00+$e8)	; $6528
-	ld a,(de)		; $652a
-	ld hl,$e0f0		; $652b
-	inc e			; $652e
-	ld hl,$0000		; $652f
-	jr z,$21		; $6532
-	nop			; $6534
-	ld hl,sp+$2a		; $6535
-	ld hl,$f000		; $6537
-	inc l			; $653a
-	ld hl,$e800		; $653b
-	ld l,$21		; $653e
-	nop			; $6540
-	ld ($ff00+$30),a	; $6541
-	ld hl,$0010		; $6543
-	ldd a,(hl)		; $6546
-	ld hl,$f810		; $6547
-_label_03_164:
-	inc a			; $654a
-	ld hl,$f010		; $654b
-	ld a,$21		; $654e
-	stop			; $6550
-	add sp,$40		; $6551
-	ld hl,$e010		; $6553
-	ld b,d			; $6556
-	ld hl,$0020		; $6557
-	nop			; $655a
-	ld hl,$f820		; $655b
-	ld a,(bc)		; $655e
-	ld hl,$f020		; $655f
-	inc c			; $6562
-	ld hl,$e820		; $6563
-_label_03_165:
-	ld c,$21		; $6566
-	jr nz,_label_03_164	; $6568
-_label_03_166:
-	stop			; $656a
-	ld hl,$0030		; $656b
-	ld e,$21		; $656e
-	jr nc,_label_03_166	; $6570
-	jr nz,$21		; $6572
-	jr nc,_label_03_165	; $6574
-	ldi (hl),a		; $6576
-	ld hl,$e830		; $6577
-	inc h			; $657a
-	ld hl,$e030		; $657b
-	ld h,$21		; $657e
-	ld b,b			; $6580
-	nop			; $6581
-	ldd (hl),a		; $6582
-	ld hl,$f840		; $6583
-	inc (hl)		; $6586
-	ld hl,$f040		; $6587
-	ld (hl),$21		; $658a
-	ld d,b			; $658c
-	nop			; $658d
-	ld b,h			; $658e
-	ld hl,$f850		; $658f
-	ld b,(hl)		; $6592
-	ld hl,$f050		; $6593
-	ld c,b			; $6596
-	ld hl,$e840		; $6597
-	jr c,$21		; $659a
-	ld h,b			; $659c
-	nop			; $659d
-	nop			; $659e
-	ld hl,$f860		; $659f
-	ld (de),a		; $65a2
-	ld hl,$e027		; $65a3
-	add sp,$00		; $65a6
-	ld bc,$f0e0		; $65a8
-	ld (bc),a		; $65ab
-	ld bc,$f8e0		; $65ac
-	inc b			; $65af
-	ld bc,$e0f0		; $65b0
-	stop			; $65b3
-	ld bc,$e8f0		; $65b4
-	ld (de),a		; $65b7
-	ld bc,$f0f0		; $65b8
-	inc d			; $65bb
-	ld bc,$e000		; $65bc
-	ld l,$01		; $65bf
-	nop			; $65c1
-	add sp,$30		; $65c2
-	ld bc,$e820		; $65c4
-	ldd (hl),a		; $65c7
-	ld bc,$f020		; $65c8
-	inc (hl)		; $65cb
-	ld bc,$f820		; $65cc
-	ld (hl),$01		; $65cf
-	nop			; $65d1
-	jr _label_03_167		; $65d2
-	ld (bc),a		; $65d4
-	nop			; $65d5
-	jr nz,_label_03_168	; $65d6
-	ld (bc),a		; $65d8
-	stop			; $65d9
-	jr $3c			; $65da
-	ld (bc),a		; $65dc
-	stop			; $65dd
-	jr nz,_label_03_170	; $65de
-	ld (bc),a		; $65e0
-	ld h,b			; $65e1
-	ld a,($0140)		; $65e2
-	ld h,b			; $65e5
-	ld (bc),a		; $65e6
-	ld b,d			; $65e7
-	ld bc,$1960		; $65e8
-	ld b,h			; $65eb
-	ld bc,$2160		; $65ec
-	ld b,(hl)		; $65ef
-	inc bc			; $65f0
-	ld d,b			; $65f1
-	jr _label_03_175		; $65f2
-	ld bc,$2050		; $65f4
-	ld c,d			; $65f7
-	inc bc			; $65f8
-	ld b,b			; $65f9
-	jr _label_03_177		; $65fa
-	inc bc			; $65fc
-	ld c,b			; $65fd
-	stop			; $65fe
-	inc l			; $65ff
-	ld bc,$2960		; $6600
-	ld d,$04		; $6603
-	ld b,b			; $6605
-	jr nz,_label_03_171	; $6606
-	inc b			; $6608
-	ld b,b			; $6609
-	jr z,_label_03_172	; $660a
-_label_03_167:
-	inc b			; $660c
-	ld d,b			; $660d
-	jr z,_label_03_173	; $660e
-	inc b			; $6610
-	ld d,b			; $6611
-_label_03_168:
-	ld e,b			; $6612
-	ld e,$04		; $6613
-	ld d,b			; $6615
-	ld h,b			; $6616
-	jr nz,_label_03_169	; $6617
-	ld d,b			; $6619
-	ld l,b			; $661a
-	ldi (hl),a		; $661b
-	inc b			; $661c
-_label_03_169:
-	ld b,b			; $661d
-_label_03_170:
-	ld h,b			; $661e
-	inc h			; $661f
-_label_03_171:
-	inc b			; $6620
-	ld h,b			; $6621
-	ld e,b			; $6622
-	ld h,$04		; $6623
-	ld h,b			; $6625
-_label_03_172:
-	ld h,b			; $6626
-	jr z,_label_03_174	; $6627
-	ld h,b			; $6629
-	ld l,b			; $662a
-	ldi a,(hl)		; $662b
-_label_03_173:
-	inc b			; $662c
-_label_03_174:
-	jr $38			; $662d
-	ld b,$05		; $662f
-	jr _label_03_181		; $6631
-	ld ($0805),sp		; $6633
-	jr nc,_label_03_176	; $6636
-	ld b,$00		; $6638
-	jr c,_label_03_177	; $663a
-_label_03_175:
-	ld b,$00		; $663c
-	ld b,b			; $663e
-	ld c,$06		; $663f
-	ld (de),a		; $6641
-_label_03_176:
-	stop			; $6642
-	ld ($0c00),sp		; $6643
-	stop			; $6646
-	stop			; $6647
-_label_03_177:
-	ld (bc),a		; $6648
-	inc c			; $6649
-	stop			; $664a
-	jr _label_03_178		; $664b
-	inc c			; $664d
-	jr nz,_label_03_179	; $664e
-	inc c			; $6650
-_label_03_178:
-	inc c			; $6651
-	jr nz,$10		; $6652
-	ld c,$0c		; $6654
-	jr nz,_label_03_180	; $6656
-_label_03_179:
-	stop			; $6658
-	inc c			; $6659
-	ld sp,$0623		; $665a
-	dec c			; $665d
-	ld sp,$082b		; $665e
-	dec c			; $6661
-	ld sp,$063b		; $6662
-	dec l			; $6665
-	ld sp,$0833		; $6666
-	dec l			; $6669
-	ld b,c			; $666a
-	inc hl			; $666b
-	ld b,$4d		; $666c
-	ld b,c			; $666e
-	dec hl			; $666f
-_label_03_180:
-	ld ($414d),sp		; $6670
-	dec sp			; $6673
-	ld b,$6d		; $6674
-	ld b,c			; $6676
-	inc sp			; $6677
-	ld ($2c6d),sp		; $6678
-_label_03_181:
-	dec e			; $667b
-	ld a,(bc)		; $667c
-	dec c			; $667d
-	inc l			; $667e
-	dec h			; $667f
-	ld a,(bc)		; $6680
-	dec l			; $6681
-	ld c,h			; $6682
-	ldd a,(hl)		; $6683
-	ld a,(bc)		; $6684
-	dec c			; $6685
-	ld c,h			; $6686
-	ld b,d			; $6687
-	ld a,(bc)		; $6688
-	dec l			; $6689
-	dec c			; $668a
-	jr c,-$2d		; $668b
-	ld (bc),a		; $668d
-	inc bc			; $668e
-	ldd (hl),a		; $668f
-	ld hl,sp+$0c		; $6690
-	ld bc,$d8f8		; $6692
-	stop			; $6695
-	rlca			; $6696
-	ld hl,sp-$20		; $6697
-	ld (de),a		; $6699
-	rlca			; $669a
-	ld hl,sp-$18		; $669b
-	inc d			; $669d
-	rlca			; $669e
-	rst $30			; $669f
-	rst $30			; $66a0
-	ld d,$07		; $66a1
-	ldi (hl),a		; $66a3
-	ld hl,sp+$1a		; $66a4
-	inc bc			; $66a6
-	ld a,(de)		; $66a7
-	nop			; $66a8
-	inc e			; $66a9
-	inc bc			; $66aa
-	ld de,$1ee2		; $66ab
-	nop			; $66ae
-	ld de,$20ea		; $66af
-	nop			; $66b2
-	ld bc,$22ea		; $66b3
-	nop			; $66b6
-	ld de,$26f2		; $66b7
-	nop			; $66ba
-	ld bc,$24f2		; $66bb
-	nop			; $66be
-	rlca			; $66bf
-	ld h,b			; $66c0
-	ld hl,sp+$00		; $66c1
-	ld (bc),a		; $66c3
-	ld c,b			; $66c4
-.DB $d3				; $66c5
-	inc b			; $66c6
-	inc bc			; $66c7
-	ld b,b			; $66c8
-	ld ($ff00+$06),a	; $66c9
-	rlca			; $66cb
-	ld b,b			; $66cc
-	add sp,$08		; $66cd
-	rlca			; $66cf
-	ld b,b			; $66d0
-	ld a,($ff00+$0a)	; $66d1
-	rlca			; $66d3
-	ld b,d			; $66d4
-	ld hl,sp+$0e		; $66d5
-	ld bc,$e068		; $66d7
-	jr $02			; $66da
-	ld hl,$c6a2		; $66dc
+
+seasonsOamData_03_6472:
+	.db $26			; $6472
+        .db $e0 $10 $02 $01
+        .db $e0 $18 $04 $01
+        .db $e0 $20 $06 $01
+        .db $e0 $28 $08 $01
+        .db $f0 $08 $14 $01
+        .db $f0 $10 $16 $01
+        .db $f0 $18 $18 $01
+        .db $f0 $20 $1a $01
+        .db $f0 $28 $1c $01
+        .db $00 $08 $28 $01
+        .db $00 $10 $2a $01
+        .db $00 $18 $2c $01
+        .db $00 $20 $2e $01
+        .db $00 $28 $30 $01
+        .db $10 $08 $3a $01
+        .db $10 $10 $3c $01
+        .db $10 $18 $3e $01
+        .db $10 $20 $40 $01
+        .db $10 $28 $42 $01
+        .db $20 $08 $00 $01
+        .db $20 $10 $0a $01
+        .db $20 $18 $0c $01
+        .db $20 $20 $0e $01
+        .db $20 $28 $10 $01
+        .db $30 $08 $1e $01
+        .db $30 $10 $20 $01
+        .db $30 $18 $22 $01
+        .db $30 $20 $24 $01
+        .db $30 $28 $26 $01
+        .db $40 $08 $32 $01
+        .db $40 $10 $34 $01
+        .db $40 $18 $36 $01
+        .db $50 $08 $44 $01
+        .db $50 $10 $46 $01
+        .db $50 $18 $48 $01
+        .db $40 $20 $38 $01
+        .db $60 $08 $00 $01
+        .db $60 $10 $12 $01
+
+seasonsOamData_03_650b:
+	.db $26			; $650b
+        .db $e0 $f8 $02 $21
+        .db $e0 $f0 $04 $21
+        .db $e0 $e8 $06 $21
+        .db $e0 $e0 $08 $21
+        .db $f0 $00 $14 $21
+        .db $f0 $f8 $16 $21
+        .db $f0 $f0 $18 $21
+        .db $f0 $e8 $1a $21
+        .db $f0 $e0 $1c $21
+        .db $00 $00 $28 $21
+        .db $00 $f8 $2a $21
+        .db $00 $f0 $2c $21
+        .db $00 $e8 $2e $21
+        .db $00 $e0 $30 $21
+        .db $10 $00 $3a $21
+        .db $10 $f8 $3c $21
+        .db $10 $f0 $3e $21
+        .db $10 $e8 $40 $21
+        .db $10 $e0 $42 $21
+        .db $20 $00 $00 $21
+        .db $20 $f8 $0a $21
+        .db $20 $f0 $0c $21
+        .db $20 $e8 $0e $21
+        .db $20 $e0 $10 $21
+        .db $30 $00 $1e $21
+        .db $30 $f8 $20 $21
+        .db $30 $f0 $22 $21
+        .db $30 $e8 $24 $21
+        .db $30 $e0 $26 $21
+        .db $40 $00 $32 $21
+        .db $40 $f8 $34 $21
+        .db $40 $f0 $36 $21
+        .db $50 $00 $44 $21
+        .db $50 $f8 $46 $21
+        .db $50 $f0 $48 $21
+        .db $40 $e8 $38 $21
+        .db $60 $00 $00 $21
+        .db $60 $f8 $12 $21
+
+seasonsOamData_03_65a4:
+	.db $27			; $65a4
+        .db $e0 $e8 $00 $01
+        .db $e0 $f0 $02 $01
+        .db $e0 $f8 $04 $01
+        .db $f0 $e0 $10 $01
+        .db $f0 $e8 $12 $01
+        .db $f0 $f0 $14 $01
+        .db $00 $e0 $2e $01
+        .db $00 $e8 $30 $01
+        .db $20 $e8 $32 $01
+        .db $20 $f0 $34 $01
+        .db $20 $f8 $36 $01
+        .db $00 $18 $38 $02
+        .db $00 $20 $3a $02
+        .db $10 $18 $3c $02
+        .db $10 $20 $3e $02
+        .db $60 $fa $40 $01
+        .db $60 $02 $42 $01
+        .db $60 $19 $44 $01
+        .db $60 $21 $46 $03
+        .db $50 $18 $48 $01
+        .db $50 $20 $4a $03
+        .db $40 $18 $4c $03
+        .db $48 $10 $2c $01
+        .db $60 $29 $16 $04
+        .db $40 $20 $18 $04
+        .db $40 $28 $1a $04
+        .db $50 $28 $1c $04
+        .db $50 $58 $1e $04
+        .db $50 $60 $20 $04
+        .db $50 $68 $22 $04
+        .db $40 $60 $24 $04
+        .db $60 $58 $26 $04
+        .db $60 $60 $28 $04
+        .db $60 $68 $2a $04
+        .db $18 $38 $06 $05
+        .db $18 $48 $08 $05
+        .db $08 $30 $0a $06
+        .db $00 $38 $0c $06
+        .db $00 $40 $0e $06
+
+seasonsOamData_03_6641:
+	.db $12			; $6641
+        .db $10 $08 $00 $0c
+        .db $10 $10 $02 $0c
+        .db $10 $18 $04 $0c
+        .db $20 $08 $0c $0c
+        .db $20 $10 $0e $0c
+        .db $20 $18 $10 $0c
+        .db $31 $23 $06 $0d
+        .db $31 $2b $08 $0d
+        .db $31 $3b $06 $2d
+        .db $31 $33 $08 $2d
+        .db $41 $23 $06 $4d
+        .db $41 $2b $08 $4d
+        .db $41 $3b $06 $6d
+        .db $41 $33 $08 $6d
+        .db $2c $1d $0a $0d
+        .db $2c $25 $0a $2d
+        .db $4c $3a $0a $0d
+        .db $4c $42 $0a $2d
+
+seasonsOamData_03_668a:
+	.db $0d			; $668a
+        .db $38 $d3 $02 $03
+        .db $32 $f8 $0c $01
+        .db $f8 $d8 $10 $07
+        .db $f8 $e0 $12 $07
+        .db $f8 $e8 $14 $07
+        .db $f7 $f7 $16 $07
+        .db $22 $f8 $1a $03
+        .db $1a $00 $1c $03
+        .db $11 $e2 $1e $00
+        .db $11 $ea $20 $00
+        .db $01 $ea $22 $00
+        .db $11 $f2 $26 $00
+        .db $01 $f2 $24 $00
+
+seasonsOamData_03_66bf:
+	.db $07			; $66bf
+        .db $60 $f8 $00 $02
+        .db $48 $d3 $04 $03
+        .db $40 $e0 $06 $07
+        .db $40 $e8 $08 $07
+        .db $40 $f0 $0a $07
+        .db $42 $f8 $0e $01
+        .db $68 $e0 $18 $02
+
+seasonsFunc_03_66dc:
+	ld hl,wLinkHealth		; $66dc
 	ld (hl),$04		; $66df
-	ld l,$80		; $66e1
+	ld l,<wInventoryB		; $66e1
 	ldi a,(hl)		; $66e3
 	ld b,(hl)		; $66e4
 	ld hl,$cc3b		; $66e5
 	ldi (hl),a		; $66e8
 	ld (hl),b		; $66e9
 	jp disableActiveRing		; $66ea
-	ld hl,$c6a3		; $66ed
+
+seasonsFunc_03_66ed:
+	ld hl,wLinkMaxHealth		; $66ed
 	ldd a,(hl)		; $66f0
 	ld (hl),a		; $66f1
 	ld hl,$cc3b		; $66f2
 	ldi a,(hl)		; $66f5
 	ld b,(hl)		; $66f6
-	ld hl,$c680		; $66f7
+	ld hl,wInventoryB		; $66f7
 	ldi (hl),a		; $66fa
 	ld (hl),b		; $66fb
 	jp enableActiveRing		; $66fc
-	ld a,($cc03)		; $66ff
+
+;;
+; CUTSCENE_S_PIRATES_DEPART
+_cutsceneHandler_0c:
+	ld a,(wCutsceneState)		; $66ff
 	rst_jumpTable			; $6702
-	rrca			; $6703
-	ld h,a			; $6704
-	ldd (hl),a		; $6705
-	ld h,a			; $6706
-	add d			; $6707
-	ld l,b			; $6708
-	call nc,$e368		; $6709
-	ld l,c			; $670c
-	ld ($066a),sp		; $670d
-	stop			; $6710
+        .dw _cutsceneHandler_0c_stage0
+        .dw _cutsceneHandler_0c_stage1
+        .dw _cutsceneHandler_0c_stage2
+        .dw _cutsceneHandler_0c_stage3
+        .dw _cutsceneHandler_0c_stage4
+        .dw _cutsceneHandler_0c_stage5
+
+_cutsceneHandler_0c_stage0:
+	ld b,$10		; $670f
 	ld hl,$cbb3		; $6711
 	call clearMemory		; $6714
 	call clearWramBank1		; $6717
 	xor a			; $671a
-	ld ($cca4),a		; $671b
-	ld ($cd00),a		; $671e
-	ld a,($c48c)		; $6721
+	ld (wDisabledObjects),a		; $671b
+	ld (wScrollMode),a		; $671e
+	ld a,(wGfxRegs2.SCY)		; $6721
 	ld ($cbba),a		; $6724
 	ld a,$80		; $6727
-	ld ($cc02),a		; $6729
+	ld (wMenuDisabled),a		; $6729
 	ld a,$01		; $672c
-	ld ($cc03),a		; $672e
+	ld (wCutsceneState),a		; $672e
 	ret			; $6731
-	call $6b6c		; $6732
+
+_cutsceneHandler_0c_stage1:
+	call seasonsFunc_03_6b6c		; $6732
 	ld a,(wFrameCounter)		; $6735
 	and $07			; $6738
 	ret nz			; $673a
 	ld a,($cbb3)		; $673b
 	rst_jumpTable			; $673e
-	ld c,e			; $673f
-	ld h,a			; $6740
-	adc l			; $6741
-	ld h,a			; $6742
-	sbc (hl)		; $6743
-	ld h,a			; $6744
-	xor a			; $6745
-	ld h,a			; $6746
-	jp nz,$d267		; $6747
-	ld h,a			; $674a
-	call $6815		; $674b
+        .dw @state0
+        .dw @state1
+        .dw @state2
+        .dw @state3
+        .dw @state4
+        .dw @state5
+
+@state0:
+	call seasonsFunc_03_6815		; $674b
 	ld a,$08		; $674e
 	ld ($cbb8),a		; $6750
 	ld a,$04		; $6753
@@ -2416,11 +2383,12 @@ _label_03_181:
 	call loadGfxHeader		; $675f
 	ld a,$04		; $6762
 	ldh (<hNextLcdInterruptBehaviour),a	; $6764
-	call $681a		; $6766
-	jp $67f8		; $6769
-	ld hl,$677e		; $676c
+	call seasonsFunc_03_681a		; $6766
+	jp seasonsFunc_03_67f8		; $6769
+@state0Func0:
+	ld hl,@state0Table0		; $676c
 	ld d,$0f		; $676f
-_label_03_182:
+-
 	ldi a,(hl)		; $6771
 	ld c,a			; $6772
 	ld a,$0f		; $6773
@@ -2428,80 +2396,91 @@ _label_03_182:
 	call setTile		; $6776
 	pop hl			; $6779
 	dec d			; $677a
-	jr nz,_label_03_182	; $677b
+	jr nz,-			; $677b
 	ret			; $677d
-	inc b			; $677e
-	dec b			; $677f
-	ld b,$07		; $6780
-	ld ($1514),sp		; $6782
-	ld d,$17		; $6785
-	jr $24			; $6787
-	dec h			; $6789
-	ld h,$27		; $678a
-	jr z,_label_03_183	; $678c
-	or h			; $678e
-	swap l			; $678f
+@state0Table0:
+        .db $04 $05 $06 $07
+        .db $08 $14 $15 $16
+        .db $17 $18 $24 $25
+        .db $26 $27 $28
+
+@state1:
+	ld hl,$cbb4		; $678d
+	dec (hl)		; $6790
 	ret nz			; $6791
-	ld bc,$4e00		; $6792
+	ld bc,TX_4e00		; $6792
 	call showText		; $6795
-	call $676c		; $6798
-	jp $6815		; $679b
+	call @state0Func0		; $6798
+	jp seasonsFunc_03_6815		; $679b
+
+@state2:
 	call retIfTextIsActive		; $679e
 	ld hl,$7dd9		; $67a1
 	call parseGivenObjectData		; $67a4
-	ld a,$20		; $67a7
+	ld a,MUS_TRIUMPHANT		; $67a7
 	call playSound		; $67a9
-	jp $6815		; $67ac
-_label_03_183:
-	call $6b77		; $67af
+	jp seasonsFunc_03_6815		; $67ac
+
+@state3:
+	call seasonsFunc_03_6b77		; $67af
 	ld a,(hl)		; $67b2
 	cp $10			; $67b3
-	jr c,_label_03_184	; $67b5
-	call $681a		; $67b7
-	jr nz,_label_03_184	; $67ba
-	call $6815		; $67bc
-_label_03_184:
-	jp $67f8		; $67bf
-	call $6b77		; $67c2
+	jr c,+			; $67b5
+	call seasonsFunc_03_681a		; $67b7
+	jr nz,+			; $67ba
+	call seasonsFunc_03_6815		; $67bc
++
+	jp seasonsFunc_03_67f8		; $67bf
+
+@state4:
+	call seasonsFunc_03_6b77		; $67c2
 	ld a,(hl)		; $67c5
 	cp $30			; $67c6
-	jr c,_label_03_185	; $67c8
+	jr c,seasonsFunc_03_67f8	; $67c8
 	call fadeoutToWhite		; $67ca
-	call $6815		; $67cd
-	jr _label_03_185		; $67d0
-	call $6b77		; $67d2
-	ld a,($c4ab)		; $67d5
+	call seasonsFunc_03_6815		; $67cd
+	jr seasonsFunc_03_67f8		; $67d0
+
+@state5:
+	call seasonsFunc_03_6b77		; $67d2
+	ld a,(wPaletteThread_mode)		; $67d5
 	or a			; $67d8
-	jr nz,_label_03_185	; $67d9
+	jr nz,seasonsFunc_03_67f8	; $67d9
 	ld a,$c7		; $67db
-	ld ($c488),a		; $67dd
-	ld ($c48e),a		; $67e0
+	ld (wGfxRegs1.WINY),a		; $67dd
+	ld (wGfxRegs2.WINY),a		; $67e0
 	ld a,$03		; $67e3
 	ldh (<hNextLcdInterruptBehaviour),a	; $67e5
 	ld a,$02		; $67e7
-	ld ($cc03),a		; $67e9
+seasonsFunc_03_67e9:
+	ld (wCutsceneState),a		; $67e9
 	xor a			; $67ec
 	ld ($cfc0),a		; $67ed
 	ld b,$10		; $67f0
 	ld hl,$cbb3		; $67f2
 	jp clearMemory		; $67f5
-_label_03_185:
+
+seasonsFunc_03_67f8:
 	ld a,$40		; $67f8
-	ld ($c490),a		; $67fa
+	ld (wGfxRegs2.LYC),a		; $67fa
 	ld a,$47		; $67fd
-	ld ($c48f),a		; $67ff
+	ld (wGfxRegs2.WINX),a		; $67ff
 	ld a,$a5		; $6802
-	ld ($c489),a		; $6804
+	ld (wGfxRegs1.WINX),a		; $6804
 	ld a,($cbb8)		; $6807
-	ld ($c48e),a		; $680a
-	ld ($c488),a		; $680d
+	ld (wGfxRegs2.WINY),a		; $680a
+	ld (wGfxRegs1.WINY),a		; $680d
 	ld ($cbbc),a		; $6810
-	jr _label_03_187		; $6813
+	jr seasonsFunc_03_684c		; $6813
+
+seasonsFunc_03_6815:
 	ld hl,$cbb3		; $6815
 	inc (hl)		; $6818
 	ret			; $6819
+
+seasonsFunc_03_681a:
 	ld a,($cbb7)		; $681a
-	ld hl,$6844		; $681d
+	ld hl,seasonsTable_03_6844		; $681d
 	rst_addAToHl			; $6820
 	ld a,(hl)		; $6821
 	cp $ff			; $6822
@@ -2521,17 +2500,14 @@ _label_03_185:
 	ld hl,$cbb7		; $683f
 	inc (hl)		; $6842
 	ret			; $6843
-	ret nz			; $6844
-	and b			; $6845
-	add b			; $6846
-	ld h,b			; $6847
-	ld b,b			; $6848
-	jr nz,_label_03_186	; $6849
-_label_03_186:
-	rst $38			; $684b
-_label_03_187:
+
+seasonsTable_03_6844:
+        .db $c0 $a0 $80 $60
+        .db $40 $20 $00 $ff
+
+seasonsFunc_03_684c:
 	ld a,$02		; $684c
-	ld ($ff00+$70),a	; $684e
+	ld ($ff00+R_SVBK),a	; $684e
 	ld a,($cbb8)		; $6850
 	and $07			; $6853
 	ld hl,$d800		; $6855
@@ -2547,23 +2523,25 @@ _label_03_187:
 	ld b,$10		; $686d
 	call copyMemory		; $686f
 	ld a,$00		; $6872
-	ld ($ff00+$70),a	; $6874
+	ld ($ff00+R_SVBK),a	; $6874
 	ld hl,$d9e0		; $6876
 	ld de,$94e1		; $6879
 	ld bc,$0102		; $687c
 	jp queueDmaTransfer		; $687f
+
+_cutsceneHandler_0c_stage2:
 	ld a,($cbb3)		; $6882
 	rst_jumpTable			; $6885
-	cp l			; $6886
-	ld l,b			; $6887
-	bit 5,b			; $6888
-	call z,$cd68		; $688a
-	pop bc			; $688d
-	ld (bc),a		; $688e
+        .dw @state0
+        .dw @state1
+        .dw @state2
+
+@seasonsFunc_03_688c:
+	call disableLcd			; $688c
 	call clearScreenVariablesAndWramBank1		; $688f
-	call $6815		; $6892
+	call seasonsFunc_03_6815		; $6892
 	ld bc,$05d4		; $6895
-	call $691f		; $6898
+	call _cutsceneHandler_0c_stage3@state0Func0		; $6898
 	ld hl,$d000		; $689b
 	ld (hl),$03		; $689e
 	ld l,$0b		; $68a0
@@ -2573,50 +2551,55 @@ _label_03_187:
 	ld l,$08		; $68a8
 	ld (hl),$02		; $68aa
 	xor a			; $68ac
-	ld ($cc6a),a		; $68ad
+	ld (wLinkForceState),a		; $68ad
 	ld a,$01		; $68b0
-	ld ($ccae),a		; $68b2
+	ld (wScreenShakeMagnitude),a		; $68b2
 	call resetCamera		; $68b5
 	ld a,$02		; $68b8
-	jp $6933		; $68ba
-	ld a,($c4ab)		; $68bd
+	jp _cutsceneHandler_0c_stage3@state0Func1		; $68ba
+
+@state0:
+	ld a,(wPaletteThread_mode)		; $68bd
 	or a			; $68c0
 	ret nz			; $68c1
-	call $688c		; $68c2
+	call @seasonsFunc_03_688c		; $68c2
 	ld hl,$7e14		; $68c5
 	jp parseGivenObjectData		; $68c8
+
+@state1:
 	ret			; $68cb
+
+@state2:
 	ld a,$03		; $68cc
-	call $67e9		; $68ce
+	call seasonsFunc_03_67e9		; $68ce
 	jp fadeoutToWhite		; $68d1
+
+_cutsceneHandler_0c_stage3:
 	ld a,($cbb3)		; $68d4
 	rst_jumpTable			; $68d7
-	ld ($ff00+c),a		; $68d8
-	ld l,b			; $68d9
-	ld (hl),h		; $68da
-	ld l,c			; $68db
-	add a			; $68dc
-	ld l,c			; $68dd
-	sub d			; $68de
-	ld l,c			; $68df
-	xor l			; $68e0
-	ld l,c			; $68e1
-	ld a,($c4ab)		; $68e2
+        .dw @state0
+        .dw @state1
+        .dw @state2
+        .dw @state3
+        .dw @state4
+
+@state0:
+	ld a,(wPaletteThread_mode)		; $68e2
 	or a			; $68e5
 	ret nz			; $68e6
 	call disableLcd		; $68e7
 	call clearScreenVariablesAndWramBank1		; $68ea
-	call $6815		; $68ed
+	call seasonsFunc_03_6815		; $68ed
 	ld a,$40		; $68f0
 	ld ($cbb8),a		; $68f2
 	ld ($cbbf),a		; $68f5
 	ld a,$1e		; $68f8
 	ld ($cbb4),a		; $68fa
 	ld a,$01		; $68fd
-	ld ($cc4e),a		; $68ff
+	ld (wRoomStateModifier),a		; $68ff
 	ld bc,$00fe		; $6902
-	call $691f		; $6905
-	call $6943		; $6908
+	call @state0Func0		; $6905
+	call @state0Func2		; $6908
 	ld e,$0c		; $690b
 	call loadObjectGfxHeaderToSlot4		; $690d
 	ld a,$52		; $6910
@@ -2624,26 +2607,27 @@ _label_03_187:
 	ld hl,$7df0		; $6915
 	call parseGivenObjectData		; $6918
 	ld a,$11		; $691b
-	jr _label_03_189		; $691d
-_label_03_188:
+	jr @state0Func1		; $691d
+@state0Func0:
 	ld a,b			; $691f
-	ld ($cc49),a		; $6920
+	ld (wActiveGroup),a		; $6920
 	ld a,c			; $6923
-	ld ($cc4c),a		; $6924
+	ld (wActiveRoom),a		; $6924
 	call loadScreenMusicAndSetRoomPack		; $6927
 	call loadTilesetData		; $692a
 	call loadTilesetGraphics		; $692d
 	jp func_131f		; $6930
-_label_03_189:
+@state0Func1:
 	push af			; $6933
 	ld a,$01		; $6934
-	ld ($cd00),a		; $6936
+	ld (wScrollMode),a		; $6936
 	call fadeinFromWhite		; $6939
 	call loadCommonGraphics		; $693c
 	pop af			; $693f
 	jp loadGfxRegisterStateIndex		; $6940
+@state0Func2:
 	ld hl,$6953		; $6943
-_label_03_190:
+-
 	ldi a,(hl)		; $6946
 	cp $ff			; $6947
 	ret z			; $6949
@@ -2652,123 +2636,124 @@ _label_03_190:
 	push hl			; $694c
 	call setTile		; $694d
 	pop hl			; $6950
-	jr _label_03_190		; $6951
-	dec b			; $6953
-	xor l			; $6954
-	ld b,$ad		; $6955
-	ld ($09ae),sp		; $6957
-	xor (hl)		; $695a
-	dec d			; $695b
-	xor l			; $695c
-	ld d,$ad		; $695d
-	jr -$52			; $695f
-	add hl,de		; $6961
-	xor (hl)		; $6962
-	dec h			; $6963
-	xor l			; $6964
-	ld h,$ad		; $6965
-	jr z,-$52		; $6967
-	add hl,hl		; $6969
-	xor (hl)		; $696a
-	dec (hl)		; $696b
-	xor l			; $696c
-	ld (hl),$ad		; $696d
-	jr c,_label_03_188	; $696f
-	add hl,sp		; $6971
-	xor (hl)		; $6972
-	rst $38			; $6973
+	jr -			; $6951
+@state0Table0:
+        .db $05 $ad $06 $ad
+        .db $08 $ae $09 $ae
+        .db $15 $ad $16 $ad
+        .db $18 $ae $19 $ae
+        .db $25 $ad $26 $ad
+        .db $28 $ae $29 $ae
+        .db $35 $ad $36 $ad
+        .db $38 $ae $39 $ae
+        .db $ff
+
+@state1:
 	ld hl,$cbb4		; $6974
 	dec (hl)		; $6977
 	ret nz			; $6978
-	call $6815		; $6979
+	call seasonsFunc_03_6815		; $6979
 	xor a			; $697c
 	ldh (<hCameraY),a	; $697d
 	ldh (<hCameraX),a	; $697f
-	ld bc,$4e09		; $6981
+	ld bc,TX_4e09		; $6981
 	jp showText		; $6984
+
+@state2:
 	call retIfTextIsActive		; $6987
 	ld a,$ff		; $698a
 	ld ($cfc0),a		; $698c
-	jp $6815		; $698f
+	jp seasonsFunc_03_6815		; $698f
+
+@state3:
 	ld a,(wFrameCounter)		; $6992
 	and $07			; $6995
 	ret nz			; $6997
-	call $6b77		; $6998
+	call seasonsFunc_03_6b77		; $6998
 	ld a,(hl)		; $699b
 	cp $70			; $699c
-	jr c,_label_03_191	; $699e
+	jr c,seasonsFunc_03_69d1			; $699e
 	call fadeoutToWhite		; $69a0
 	ld a,$fb		; $69a3
 	call playSound		; $69a5
-	call $6815		; $69a8
-	jr _label_03_191		; $69ab
+	call seasonsFunc_03_6815		; $69a8
+	jr seasonsFunc_03_69d1			; $69ab
+
+@state4:
 	ld a,(wFrameCounter)		; $69ad
 	and $07			; $69b0
 	ret nz			; $69b2
-	call $6b77		; $69b3
-	ld a,($c4ab)		; $69b6
+	call seasonsFunc_03_6b77		; $69b3
+	ld a,(wPaletteThread_mode)		; $69b6
 	or a			; $69b9
-	jr nz,_label_03_191	; $69ba
+	jr nz,seasonsFunc_03_69d1		; $69ba
 	ld a,$c7		; $69bc
-	ld ($c488),a		; $69be
-	ld ($c48e),a		; $69c1
+	ld (wGfxRegs1.WINY),a		; $69be
+	ld (wGfxRegs2.WINY),a		; $69c1
 	ld a,$04		; $69c4
-	ld ($cc03),a		; $69c6
+	ld (wCutsceneState),a		; $69c6
 	ld b,$10		; $69c9
 	ld hl,$cbb3		; $69cb
 	jp clearMemory		; $69ce
-_label_03_191:
+
+seasonsFunc_03_69d1:
 	ld a,$a5		; $69d1
-	ld ($c489),a		; $69d3
+	ld (wGfxRegs1.WINX),a		; $69d3
 	ld a,($cbb8)		; $69d6
-	ld ($c48e),a		; $69d9
-	ld ($c488),a		; $69dc
+	ld (wGfxRegs2.WINY),a		; $69d9
+	ld (wGfxRegs1.WINY),a		; $69dc
 	ld ($cbbc),a		; $69df
 	ret			; $69e2
+
+_cutsceneHandler_0c_stage4:
 	ld a,($cbb3)		; $69e3
 	rst_jumpTable			; $69e6
-.DB $ed				; $69e7
-	ld l,c			; $69e8
-	rst $38			; $69e9
-	ld l,c			; $69ea
-	nop			; $69eb
-	ld l,d			; $69ec
-	ld a,($c4ab)		; $69ed
+        .dw @state0
+        .dw @state1
+        .dw @state2
+
+@state0:
+	ld a,(wPaletteThread_mode)		; $69ed
 	or a			; $69f0
 	ret nz			; $69f1
-	call $688c		; $69f2
+	call _cutsceneHandler_0c_stage2@seasonsFunc_03_688c		; $69f2
 	xor a			; $69f5
 	ld ($cfc0),a		; $69f6
 	ld hl,$7e2e		; $69f9
 	jp parseGivenObjectData		; $69fc
+
+@state1:
 	ret			; $69ff
+
+@state2:
 	ld a,$05		; $6a00
-	call $67e9		; $6a02
+	call seasonsFunc_03_67e9		; $6a02
 	jp fadeoutToWhite		; $6a05
-	call $6b6c		; $6a08
+
+_cutsceneHandler_0c_stage5:
+	call seasonsFunc_03_6b6c		; $6a08
 	ld a,($cbb3)		; $6a0b
 	rst_jumpTable			; $6a0e
-	dec d			; $6a0f
-	ld l,d			; $6a10
-	ld e,d			; $6a11
-	ld l,d			; $6a12
-	ld (hl),l		; $6a13
-	ld l,d			; $6a14
-	ld a,($c4ab)		; $6a15
+        .dw @state0
+        .dw @state1
+        .dw @state2
+
+@state0:
+	ld a,(wPaletteThread_mode)		; $6a15
 	or a			; $6a18
 	ret nz			; $6a19
 	call disableLcd		; $6a1a
 	call clearScreenVariablesAndWramBank1		; $6a1d
-	call $6815		; $6a20
+	call seasonsFunc_03_6815		; $6a20
 	ld a,$90		; $6a23
 	ld ($cbb8),a		; $6a25
 	ld ($cbbf),a		; $6a28
 	ld a,$10		; $6a2b
 	ld ($cbbd),a		; $6a2d
 	ld a,$03		; $6a30
-	ld ($cc4e),a		; $6a32
+	ld (wRoomStateModifier),a		; $6a32
 	ld bc,$00f2		; $6a35
-	call $691f		; $6a38
+	call _cutsceneHandler_0c_stage3@state0Func0		; $6a38
 	ld a,$ff		; $6a3b
 	ld ($cd25),a		; $6a3d
 	ld e,$00		; $6a40
@@ -2780,46 +2765,48 @@ _label_03_191:
 	ld hl,$7dfa		; $6a4f
 	call parseGivenObjectData		; $6a52
 	ld a,$12		; $6a55
-	jp $6933		; $6a57
+	jp _cutsceneHandler_0c_stage3@state0Func1		; $6a57
+
+@state1:
 	ld a,(wFrameCounter)		; $6a5a
 	and $03			; $6a5d
-	jr nz,_label_03_192	; $6a5f
-	call $6b80		; $6a61
+	jr nz,@state1Func0	; $6a5f
+	call seasonsFunc_03_6b80		; $6a61
 	ld a,(hl)		; $6a64
 	cp $09			; $6a65
-	jp nc,$6a70		; $6a67
-	call $6b30		; $6a6a
-	call $6815		; $6a6d
-_label_03_192:
-	call $69d1		; $6a70
-	jr _label_03_194		; $6a73
+	jp nc,@state1Func0		; $6a67
+	call seasonsFunc_03_6b30		; $6a6a
+	call seasonsFunc_03_6815		; $6a6d
+@state1Func0:
+	call seasonsFunc_03_69d1		; $6a70
+	jr seasonsFunc_03_6aca		; $6a73
+
+@state2:
 	ld a,(wFrameCounter)		; $6a75
 	and $07			; $6a78
-	jr nz,_label_03_192	; $6a7a
-	call $6b80		; $6a7c
+	jr nz,@state1Func0	; $6a7a
+	call seasonsFunc_03_6b80		; $6a7c
 	ld a,(hl)		; $6a7f
 	cp $09			; $6a80
-	jr nc,_label_03_192	; $6a82
-	call $6b30		; $6a84
-	jr nz,_label_03_192	; $6a87
-	ld a,$17		; $6a89
+	jr nc,@state1Func0	; $6a82
+	call seasonsFunc_03_6b30		; $6a84
+	jr nz,@state1Func0	; $6a87
+	ld a,GLOBALFLAG_PIRATE_SHIP_DOCKED		; $6a89
 	call setGlobalFlag		; $6a8b
 	xor a			; $6a8e
 	ld (wActiveMusic),a		; $6a8f
-	ld hl,$6a98		; $6a92
+	ld hl,@state2WarpDestVariables		; $6a92
 	jp setWarpDestVariables		; $6a95
-	add b			; $6a98
-	ld ($ff00+c),a		; $6a99
-	rrca			; $6a9a
-	ld h,(hl)		; $6a9b
-	inc bc			; $6a9c
-_label_03_193:
+@state2WarpDestVariables:
+	m_HardcodedWarpA ROOM_SEASONS_0e2 $0f $66 $03
+
+seasonsFunc_03_6a9d:
 	ld a,$02		; $6a9d
-	ld ($ff00+$70),a	; $6a9f
+	ld ($ff00+R_SVBK),a	; $6a9f
 	ld a,($cbbe)		; $6aa1
 	dec a			; $6aa4
 	and $03			; $6aa5
-	ld hl,$6b1a		; $6aa7
+	ld hl,seasonsTable_03_6b1a		; $6aa7
 	rst_addDoubleIndex			; $6aaa
 	ldi a,(hl)		; $6aab
 	ld h,(hl)		; $6aac
@@ -2828,37 +2815,38 @@ _label_03_193:
 	and $07			; $6ab1
 	rst_addDoubleIndex			; $6ab3
 	ld de,$d9e0		; $6ab4
-	call $6b22		; $6ab7
+	call seasonsFunc_03_6b22		; $6ab7
 	ld a,$00		; $6aba
-	ld ($ff00+$70),a	; $6abc
+	ld ($ff00+R_SVBK),a	; $6abc
 	ld hl,$d9e0		; $6abe
 	ld de,$8ce0		; $6ac1
 	ld bc,$0102		; $6ac4
 	jp queueDmaTransfer		; $6ac7
-_label_03_194:
+
+seasonsFunc_03_6aca:
 	ld hl,$cbbd		; $6aca
 	dec (hl)		; $6acd
-	jr nz,_label_03_193	; $6ace
+	jr nz,seasonsFunc_03_6a9d	; $6ace
 	ld (hl),$10		; $6ad0
 	ld a,$02		; $6ad2
-	ld ($ff00+$70),a	; $6ad4
+	ld ($ff00+R_SVBK),a	; $6ad4
 	ld a,($cbbe)		; $6ad6
-	ld hl,$6b1a		; $6ad9
+	ld hl,seasonsTable_03_6b1a		; $6ad9
 	rst_addDoubleIndex			; $6adc
 	ldi a,(hl)		; $6add
 	ld h,(hl)		; $6ade
 	ld l,a			; $6adf
 	ld de,$d9c0		; $6ae0
 	push hl			; $6ae3
-	call $6b22		; $6ae4
+	call seasonsFunc_03_6b22		; $6ae4
 	pop hl			; $6ae7
 	ld a,($cbb8)		; $6ae8
 	and $07			; $6aeb
 	rst_addDoubleIndex			; $6aed
 	ld de,$d9e0		; $6aee
-	call $6b22		; $6af1
+	call seasonsFunc_03_6b22		; $6af1
 	ld a,$00		; $6af4
-	ld ($ff00+$70),a	; $6af6
+	ld ($ff00+R_SVBK),a	; $6af6
 	ld hl,$d9c0		; $6af8
 	ld de,$88e1		; $6afb
 	ld bc,$0102		; $6afe
@@ -2872,23 +2860,24 @@ _label_03_194:
 	and $03			; $6b14
 	ld ($cbbe),a		; $6b16
 	ret			; $6b19
-	ld b,b			; $6b1a
-	ret c			; $6b1b
-	add b			; $6b1c
-	ret c			; $6b1d
-	ret nz			; $6b1e
-	ret c			; $6b1f
-	nop			; $6b20
-	reti			; $6b21
+
+seasonsTable_03_6b1a:
+        .db $40 $d8
+        .db $80 $d8
+        .db $c0 $d8
+        .db $00 $d9
+
+seasonsFunc_03_6b22:
 	ld b,$10		; $6b22
 	call copyMemory		; $6b24
 	ld bc,$0010		; $6b27
 	add hl,bc		; $6b2a
-_label_03_195:
 	ld b,$10		; $6b2b
 	jp copyMemory		; $6b2d
+
+seasonsFunc_03_6b30:
 	ld a,($cbb7)		; $6b30
-	ld hl,$6b59		; $6b33
+	ld hl,seasonsTable_03_6b59		; $6b33
 	rst_addDoubleIndex			; $6b36
 	ldi a,(hl)		; $6b37
 	cp $ff			; $6b38
@@ -2909,90 +2898,95 @@ _label_03_196:
 	ld hl,$cbb7		; $6b54
 	inc (hl)		; $6b57
 	ret			; $6b58
-	jr nz,_label_03_195	; $6b59
-	ld b,b			; $6b5b
-	ret nc			; $6b5c
-	ld h,b			; $6b5d
-	ret nc			; $6b5e
-	add b			; $6b5f
-	ret nc			; $6b60
-	and b			; $6b61
-	ret nc			; $6b62
-	ret nz			; $6b63
-	ret nc			; $6b64
-	ld ($ff00+$d0),a	; $6b65
-	nop			; $6b67
-	pop de			; $6b68
-	jr nz,_label_03_196	; $6b69
-	rst $38			; $6b6b
-	ld hl,$6b72		; $6b6c
-	jp addSpritesToOam		; $6b6f
-	ld bc,$a610		; $6b72
-	ld c,h			; $6b75
-	add hl,bc		; $6b76
+
+seasonsTable_03_6b59:
+        .db $20 $d0
+        .db $40 $d0
+        .db $60 $d0
+        .db $80 $d0
+        .db $a0 $d0
+        .db $c0 $d0
+        .db $e0 $d0
+        .db $00 $d1
+        .db $20 $d1
+        .db $ff
+
+seasonsFunc_03_6b6c:
+	ld hl,seasonsOamData_03_6b72		; $6b6c
+	jp addSpritesToOam	; $6b6f
+
+seasonsOamData_03_6b72:
+	.db $01			; $6b72
+	.db $10 $a6 $4c $09	; $6b73
+
+seasonsFunc_03_6b77:
 	ld hl,$cbbf		; $6b77
 	inc (hl)		; $6b7a
 	ld hl,$cbb8		; $6b7b
 	inc (hl)		; $6b7e
 	ret			; $6b7f
+
+seasonsFunc_03_6b80:
 	ld hl,$cbbf		; $6b80
 	dec (hl)		; $6b83
 	ld hl,$cbb8		; $6b84
 	dec (hl)		; $6b87
 	ret			; $6b88
-	ld a,($cc03)		; $6b89
+
+;;
+; CUTSCENE_S_VOLCANO_ERUPTNING
+_cutsceneHandler_0b:
+	ld a,(wCutsceneState)		; $6b89
 	rst_jumpTable			; $6b8c
-	sbc c			; $6b8d
-	ld l,e			; $6b8e
-	jp c,$696b		; $6b8f
-	ld l,h			; $6b92
-	adc c			; $6b93
-	ld l,h			; $6b94
-	stop			; $6b95
-	ld l,l			; $6b96
-	ld b,e			; $6b97
-	ld l,l			; $6b98
-	ld a,($c4ab)		; $6b99
+	.dw _cutsceneHandler_0b_stage0
+	.dw _cutsceneHandler_0b_stage1
+	.dw _cutsceneHandler_0b_stage2
+	.dw _cutsceneHandler_0b_stage3
+	.dw _cutsceneHandler_0b_stage4
+	.dw _cutsceneHandler_0b_stage5
+
+_cutsceneHandler_0b_stage0:
+	ld a,(wPaletteThread_mode)		; $6b99
 	or a			; $6b9c
 	ret nz			; $6b9d
 	call disableLcd		; $6b9e
 	call clearScreenVariablesAndWramBank1		; $6ba1
 	ld a,$03		; $6ba4
-	ld ($cc4e),a		; $6ba6
+	ld (wRoomStateModifier),a		; $6ba6
 	ld bc,$0103		; $6ba9
-	call $6de4		; $6bac
+	call seasonsFunc_03_6de4		; $6bac
 	ld a,$78		; $6baf
 	ld ($cbb4),a		; $6bb1
 	ld a,$01		; $6bb4
-	ld ($cc03),a		; $6bb6
+	ld (wCutsceneState),a		; $6bb6
 	xor a			; $6bb9
 	ld ($cbb3),a		; $6bba
-	ld a,$21		; $6bbd
+	ld a,MUS_DISASTER		; $6bbd
 	ld (wActiveMusic),a		; $6bbf
 	call playSound		; $6bc2
-	ld a,$b0		; $6bc5
+	ld a,SND_OPENING		; $6bc5
 	call playSound		; $6bc7
 	ld a,$01		; $6bca
-	ld ($cd00),a		; $6bcc
+	ld (wScrollMode),a		; $6bcc
 	call fadeinFromWhite		; $6bcf
 	call loadCommonGraphics		; $6bd2
 	ld a,$02		; $6bd5
 	jp loadGfxRegisterStateIndex		; $6bd7
-	call $6df8		; $6bda
+
+_cutsceneHandler_0b_stage1:
+	call seasonsFunc_03_6df8		; $6bda
 	ld a,($cbb3)		; $6bdd
 	rst_jumpTable			; $6be0
-	jp hl			; $6be1
-	ld l,e			; $6be2
-	inc bc			; $6be3
-	ld l,h			; $6be4
-	add hl,de		; $6be5
-	ld l,h			; $6be6
-	ld b,c			; $6be7
-	ld l,h			; $6be8
-	ld a,($c4ab)		; $6be9
+        .dw @state0
+        .dw @state1
+        .dw @state2
+        .dw @state3
+
+@state0:
+	ld a,(wPaletteThread_mode)		; $6be9
 	or a			; $6bec
 	ret nz			; $6bed
-	call $6ddf		; $6bee
+	call seasonsFunc_03_6ddf		; $6bee
 	ret nz			; $6bf1
 	ld a,$b0		; $6bf2
 	call playSound		; $6bf4
@@ -3002,197 +2996,222 @@ _label_03_196:
 	ld (hl),$01		; $6bfd
 	ld hl,$cbb3		; $6bff
 	inc (hl)		; $6c02
+
+@state1:
 	ld bc,$1478		; $6c03
 	ld hl,$cbb5		; $6c06
-	call $6db1		; $6c09
-	call $6ddf		; $6c0c
+	call seasonsFunc_03_6db1		; $6c09
+	call seasonsFunc_03_6ddf		; $6c0c
 	ret nz			; $6c0f
 	ld a,$81		; $6c10
-	ld ($cd02),a		; $6c12
+	ld (wScreenTransitionDirection),a		; $6c12
 	ld hl,$cbb3		; $6c15
 	inc (hl)		; $6c18
-	ld a,($cd00)		; $6c19
+
+@state2:
+	ld a,(wScrollMode)		; $6c19
 	and $04			; $6c1c
 	ret z			; $6c1e
 	ld a,$04		; $6c1f
-	ld ($cc4c),a		; $6c21
-	ld hl,$4964		; $6c24
-	ld e,$01		; $6c27
-	call interBankCall		; $6c29
+	ld (wActiveRoom),a		; $6c21
+	callab bank1.setObjectsEnabledTo2	; $6c24
 	call loadScreenMusicAndSetRoomPack		; $6c2c
 	call loadTilesetData		; $6c2f
 	call loadTilesetAndRoomLayout		; $6c32
 	call generateVramTilesWithRoomChanges		; $6c35
 	ld a,$08		; $6c38
-	ld ($cd00),a		; $6c3a
+	ld (wScrollMode),a		; $6c3a
 	ld hl,$cbb3		; $6c3d
 	inc (hl)		; $6c40
-	ld a,($cd00)		; $6c41
+
+@state3:
+	ld a,(wScrollMode)		; $6c41
 	and $01			; $6c44
 	ret z			; $6c46
-	ld hl,$49a4		; $6c47
-	ld e,$01		; $6c4a
-	call interBankCall		; $6c4c
+	callab bank1.clearObjectsWithEnabled2		; $6c47
 	ld hl,$cbb4		; $6c4f
 	ld (hl),$96		; $6c52
 	inc hl			; $6c54
 	ld (hl),$01		; $6c55
 	inc hl			; $6c57
 	ld (hl),$01		; $6c58
-	ld a,$b0		; $6c5a
+	ld a,SND_OPENING		; $6c5a
 	call playSound		; $6c5c
-	ld hl,$cc03		; $6c5f
+
+seasonsFunc_03_6c5f:
+	ld hl,wCutsceneState		; $6c5f
 	inc (hl)		; $6c62
 	ld hl,$cbb3		; $6c63
 	ld (hl),$00		; $6c66
 	ret			; $6c68
-	call $6df8		; $6c69
+
+_cutsceneHandler_0b_stage2:
+	call seasonsFunc_03_6df8		; $6c69
 	ld bc,$1430		; $6c6c
 	ld hl,$cbb5		; $6c6f
-	call $6db1		; $6c72
+	call seasonsFunc_03_6db1		; $6c72
 	ld bc,$1488		; $6c75
 	ld hl,$cbb6		; $6c78
-	call $6db1		; $6c7b
+	call seasonsFunc_03_6db1		; $6c7b
 	ld hl,$cbb4		; $6c7e
 	dec (hl)		; $6c81
 	ret nz			; $6c82
-	call $6c5f		; $6c83
+	call seasonsFunc_03_6c5f		; $6c83
 	jp fastFadeoutToWhite		; $6c86
+
+_cutsceneHandler_0b_stage3:
 	ld a,($cbb3)		; $6c89
 	rst_jumpTable			; $6c8c
-	sub a			; $6c8d
-	ld l,h			; $6c8e
-	or a			; $6c8f
-	ld l,h			; $6c90
-	jp z,$e06c		; $6c91
-	ld l,h			; $6c94
-	cp $6c			; $6c95
-	ld a,($c4ab)		; $6c97
+        .dw @state0
+        .dw @state1
+        .dw @state2
+        .dw @state3
+        .dw @state4
+
+@state0:
+	ld a,(wPaletteThread_mode)		; $6c97
 	or a			; $6c9a
 	ret nz			; $6c9b
 	call setScreenShakeCounter		; $6c9c
 	call disableLcd		; $6c9f
 	call clearScreenVariablesAndWramBank1		; $6ca2
 	ld bc,$0015		; $6ca5
-	call $6de4		; $6ca8
+	call seasonsFunc_03_6de4		; $6ca8
 	ld a,$1e		; $6cab
 	ld ($cbb4),a		; $6cad
 	ld hl,$cbb3		; $6cb0
 	inc (hl)		; $6cb3
-	jp $6d9f		; $6cb4
-	call $6ddf		; $6cb7
+	jp seasonsFunc_03_6d9f		; $6cb4
+
+@state1:
+	call seasonsFunc_03_6ddf		; $6cb7
 	ret nz			; $6cba
-	call $6df8		; $6cbb
+	call seasonsFunc_03_6df8		; $6cbb
 	ld hl,$cbb4		; $6cbe
 	ld (hl),$78		; $6cc1
 	inc hl			; $6cc3
 	ld (hl),$01		; $6cc4
 	ld hl,$cbb3		; $6cc6
 	inc (hl)		; $6cc9
+
+@state2:
 	ld hl,$cbb5		; $6cca
-	call $6dcb		; $6ccd
-	call $6ddf		; $6cd0
+	call seasonsFunc_03_6dcb		; $6ccd
+	call seasonsFunc_03_6ddf		; $6cd0
 	ret nz			; $6cd3
-	call $6df8		; $6cd4
+	call seasonsFunc_03_6df8		; $6cd4
 	ld hl,$cbb3		; $6cd7
 	inc (hl)		; $6cda
 	ld a,$02		; $6cdb
 	call fadeoutToWhiteWithDelay		; $6cdd
-	ld a,($c4ab)		; $6ce0
+
+@state3:
+	ld a,(wPaletteThread_mode)		; $6ce0
 	or a			; $6ce3
 	ret nz			; $6ce4
-	call $6d8b		; $6ce5
+	call seasonsFunc_03_6d8b		; $6ce5
 	call getFreeInteractionSlot		; $6ce8
-	jr nz,_label_03_197	; $6ceb
+	jr nz,+			; $6ceb
 	ld (hl),$dc		; $6ced
 	inc l			; $6cef
 	ld (hl),$0e		; $6cf0
-_label_03_197:
++
 	ld hl,$cbb3		; $6cf2
 	inc (hl)		; $6cf5
 	ld hl,$cbb4		; $6cf6
 	ld (hl),$78		; $6cf9
-	call $6df8		; $6cfb
+	call seasonsFunc_03_6df8		; $6cfb
+
+@state4:
 	ld hl,$cbb5		; $6cfe
-	call $6dcb		; $6d01
-	call $6ddf		; $6d04
+	call seasonsFunc_03_6dcb		; $6d01
+	call seasonsFunc_03_6ddf		; $6d04
 	ret nz			; $6d07
-	call $6c5f		; $6d08
+	call seasonsFunc_03_6c5f		; $6d08
 	ld a,$02		; $6d0b
 	jp fadeoutToWhiteWithDelay		; $6d0d
+
+_cutsceneHandler_0b_stage4:
 	ld a,($cbb3)		; $6d10
 	rst_jumpTable			; $6d13
-	ld e,$6d		; $6d14
-	or a			; $6d16
-	ld l,h			; $6d17
-	jp z,$e06c		; $6d18
-	ld l,h			; $6d1b
-	cp $6c			; $6d1c
-	ld a,($c4ab)		; $6d1e
+        .dw @state0
+        .dw _cutsceneHandler_0b_stage3@state1
+        .dw _cutsceneHandler_0b_stage3@state2
+        .dw _cutsceneHandler_0b_stage3@state3
+        .dw _cutsceneHandler_0b_stage3@state4
+
+@state0:
+	ld a,(wPaletteThread_mode)		; $6d1e
 	or a			; $6d21
 	ret nz			; $6d22
 	call setScreenShakeCounter		; $6d23
 	call disableLcd		; $6d26
 	call clearScreenVariablesAndWramBank1		; $6d29
-	ld a,$15		; $6d2c
+	ld a,GLOBALFLAG_S_15		; $6d2c
 	call unsetGlobalFlag		; $6d2e
 	ld bc,$0027		; $6d31
-	call $6de4		; $6d34
+	call seasonsFunc_03_6de4		; $6d34
 	ld a,$1e		; $6d37
 	ld ($cbb4),a		; $6d39
 	ld hl,$cbb3		; $6d3c
 	inc (hl)		; $6d3f
-	jp $6d9f		; $6d40
+	jp seasonsFunc_03_6d9f		; $6d40
+
+_cutsceneHandler_0b_stage5:
 	ld a,($cbb3)		; $6d43
 	rst_jumpTable			; $6d46
-	ld d,c			; $6d47
-	ld l,l			; $6d48
-	or a			; $6d49
-	ld l,h			; $6d4a
-	jp z,$e06c		; $6d4b
-	ld l,h			; $6d4e
-	halt			; $6d4f
-	ld l,l			; $6d50
-	ld a,($c4ab)		; $6d51
+        .dw @state0
+        .dw _cutsceneHandler_0b_stage3@state1
+        .dw _cutsceneHandler_0b_stage3@state2
+        .dw _cutsceneHandler_0b_stage3@state3
+        .dw @state4
+
+@state0:
+	ld a,(wPaletteThread_mode)		; $6d51
 	or a			; $6d54
 	ret nz			; $6d55
 	call setScreenShakeCounter		; $6d56
 	call disableLcd		; $6d59
 	call clearScreenVariablesAndWramBank1		; $6d5c
-	ld a,$15		; $6d5f
+	ld a,GLOBALFLAG_S_15		; $6d5f
 	call unsetGlobalFlag		; $6d61
 	ld bc,$0017		; $6d64
-	call $6de4		; $6d67
+	call seasonsFunc_03_6de4		; $6d67
 	ld a,$1e		; $6d6a
 	ld ($cbb4),a		; $6d6c
 	ld hl,$cbb3		; $6d6f
 	inc (hl)		; $6d72
-	jp $6d9f		; $6d73
+	jp seasonsFunc_03_6d9f		; $6d73
+
+@state4:
 	ld hl,$cbb5		; $6d76
-	call $6dcb		; $6d79
-	call $6ddf		; $6d7c
+	call seasonsFunc_03_6dcb		; $6d79
+	call seasonsFunc_03_6ddf		; $6d7c
 	ret nz			; $6d7f
-	ld hl,$6d86		; $6d80
+	ld hl,@warpDestVariables		; $6d80
 	jp setWarpDestVariables		; $6d83
-	add h			; $6d86
-	rst $28			; $6d87
-	nop			; $6d88
-	ld l,c			; $6d89
-	inc bc			; $6d8a
+@warpDestVariables:
+	m_HardcodedWarpA ROOM_SEASONS_4ef $00 $69 $03
+
+seasonsFunc_03_6d8b:
 	call disableLcd		; $6d8b
 	call clearScreenVariablesAndWramBank1		; $6d8e
-	ld a,$15		; $6d91
+	ld a,GLOBALFLAG_S_15		; $6d91
 	call setGlobalFlag		; $6d93
 	call loadTilesetData		; $6d96
 	call loadTilesetGraphics		; $6d99
 	call func_131f		; $6d9c
+
+seasonsFunc_03_6d9f:
 	ld a,$01		; $6d9f
-	ld ($cd00),a		; $6da1
+	ld (wScrollMode),a		; $6da1
 	ld a,$02		; $6da4
 	call fadeinFromWhiteWithDelay		; $6da6
 	call loadCommonGraphics		; $6da9
 	ld a,$02		; $6dac
 	jp loadGfxRegisterStateIndex		; $6dae
+
+seasonsFunc_03_6db1:
 	dec (hl)		; $6db1
 	ret nz			; $6db2
 	call getRandomNumber		; $6db3
@@ -3209,6 +3228,8 @@ _label_03_197:
 	ld l,$cd		; $6dc7
 	ld (hl),c		; $6dc9
 	ret			; $6dca
+
+seasonsFunc_03_6dcb:
 	dec (hl)		; $6dcb
 	ret nz			; $6dcc
 	call getRandomNumber		; $6dcd
@@ -3221,17 +3242,23 @@ _label_03_197:
 	inc l			; $6ddb
 	ld (hl),$02		; $6ddc
 	ret			; $6dde
+
+seasonsFunc_03_6ddf:
 	ld hl,$cbb4		; $6ddf
 	dec (hl)		; $6de2
 	ret			; $6de3
+
+seasonsFunc_03_6de4:
 	ld a,b			; $6de4
-	ld ($cc49),a		; $6de5
+	ld (wActiveGroup),a		; $6de5
 	ld a,c			; $6de8
-	ld ($cc4c),a		; $6de9
+	ld (wActiveRoom),a		; $6de9
 	call loadScreenMusicAndSetRoomPack		; $6dec
 	call loadTilesetData		; $6def
 	call loadTilesetGraphics		; $6df2
 	jp func_131f		; $6df5
+
+seasonsFunc_03_6df8:
 	ld a,$ff		; $6df8
 	jp setScreenShakeCounter		; $6dfa
 
