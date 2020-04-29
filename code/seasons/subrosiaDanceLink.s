@@ -4,12 +4,12 @@ specialObjectCode_subrosiaDanceLink:
 	ld e,SpecialObject.state		; $7cda
 	ld a,(de)		; $7cdc
 	rst_jumpTable			; $7cdd
-        .dw _subrosiaDance_state0
-        .dw _subrosiaDance_state1
-        .dw _subrosiaDance_state2
-        .dw _subrosiaDance_state3
-        .dw _subrosiaDance_state4
-        .dw _subrosiaDance_state5
+	.dw _subrosiaDance_state0
+	.dw _subrosiaDance_state1
+	.dw _subrosiaDance_state2
+	.dw _subrosiaDance_state3
+	.dw _subrosiaDance_state4
+	.dw _subrosiaDance_state5
 
 _subrosiaDance_state0:
 	; Initialize, then go to state 1

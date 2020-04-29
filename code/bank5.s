@@ -4653,12 +4653,12 @@ _linkState0f:
 	ld e,SpecialObject.state2		; $52ee
 	ld a,(de)		; $52f0
 	rst_jumpTable		; $52f1
-        .dw @substate0
-        .dw @substate1
-        .dw @substate2
-        .dw @substate3
-        .dw @substate4
-        .dw @substate5
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw @substate4
+	.dw @substate5
 
 @substate0:
 	ld h,d			; $52fe
@@ -4777,9 +4777,9 @@ _linkState10:
 	ld e,SpecialObject.state2		; $53a9
 	ld a,(de)		; $53ab
 	rst_jumpTable			; $53ac
-        .dw @substate0
-        .dw @substate1
-        .dw @substate2
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
 
 @substate0:
 	ld a,$01		; $53b3
@@ -13755,19 +13755,19 @@ _mooshStateA:
 	ld e,SpecialObject.var03
 	ld a,(de)		; $7a46
 	rst_jumpTable			; $7a47
-        .dw _mooshStateASubstate0
-        .dw _mooshStateASubstate1
-        .dw _mooshStateASubstate2
-        .dw _mooshStateASubstate3
-        .dw _mooshStateASubstate4
-        .dw _mooshStateASubstate5
-        .dw _mooshStateASubstate6
-        .dw _mooshStateASubstate7
-        .dw _mooshStateASubstate8
-        .dw _mooshStateASubstate9
-        .dw _mooshStateASubstateA
-        .dw _mooshStateASubstateB
-        .dw _mooshStateASubstateC
+	.dw _mooshStateASubstate0
+	.dw _mooshStateASubstate1
+	.dw _mooshStateASubstate2
+	.dw _mooshStateASubstate3
+	.dw _mooshStateASubstate4
+	.dw _mooshStateASubstate5
+	.dw _mooshStateASubstate6
+	.dw _mooshStateASubstate7
+	.dw _mooshStateASubstate8
+	.dw _mooshStateASubstate9
+	.dw _mooshStateASubstateA
+	.dw _mooshStateASubstateB
+	.dw _mooshStateASubstateC
 
 _mooshStateASubstate0:
 	ld a,$01		; $7a62

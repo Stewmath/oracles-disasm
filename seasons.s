@@ -3088,7 +3088,7 @@ getMoblinKeepScreenIndex:
 	ret			; $6d48
 
 moblinKeepRooms:
-        .db $5b $5c $6b $6c $7b
+	.db $5b $5c $6b $6c $7b
 
 	.include "build/data/warpData.s"
 

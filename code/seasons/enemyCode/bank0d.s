@@ -752,19 +752,19 @@ enemyCode47:
 	rst_jumpTable			; $6fb7
 	.dw @state0
 	.dw @state1
-        .dw @state_stub
-        .dw @state_stub
-        .dw @state_stub
-        .dw @state5
-        .dw @state_stub
-        .dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state5
+	.dw @state_stub
+	.dw @state_stub
 +
 	ld a,b			; $6fc8
 	rst_jumpTable			; $6fc9
-        .dw @subid0
-        .dw @subid1
-        .dw @subid2
-        .dw @subid3
+	.dw @subid0
+	.dw @subid1
+	.dw @subid2
+	.dw @subid3
 
 @state0:
 	bit 7,b			; $6fd2
@@ -811,8 +811,8 @@ enemyCode47:
 	jp enemyDelete		; $7014
 
 @seasonsTable_0d_7017:
-        .db $04 $0c $14 $1c $00
-        .db $05 $0b $10 $15 $1b
+	.db $04 $0c $14 $1c $00
+	.db $05 $0b $10 $15 $1b
 
 @state5:
 	call _ecom_galeSeedEffect		; $7021
@@ -826,8 +826,8 @@ enemyCode47:
 	ld a,(de)		; $7029
 	sub $08			; $702a
 	rst_jumpTable			; $702c
-        .dw @@state8
-        .dw @@state9
+	.dw @@state8
+	.dw @@state9
 
 @@state8:
 	ld h,d			; $7031
@@ -959,22 +959,22 @@ enemyCode54:
 	ld e,Enemy.state		; $70ee
 	ld a,(de)		; $70f0
 	rst_jumpTable			; $70f1
-        .dw @state0
-        .dw @state_stub
-        .dw @state_stub
-        .dw @state_stub
-        .dw @state_stub
-        .dw @state_stub
-        .dw @state_stub
-        .dw @state_stub
-        .dw @state8
-        .dw @state9
-        .dw @stateA
-        .dw @stateB
-        .dw @stateC
-        .dw @stateD
-        .dw @stateE
-        .dw @stateF
+	.dw @state0
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state8
+	.dw @state9
+	.dw @stateA
+	.dw @stateB
+	.dw @stateC
+	.dw @stateD
+	.dw @stateE
+	.dw @stateF
 
 @state0:
 	call getFreeEnemySlot_uncounted		; $7112
@@ -1051,11 +1051,11 @@ enemyCode54:
 	ld a,(de)		; $7177
 	ld e,Enemy.state2		; $7178
 	rst_jumpTable			; $717a
-        .dw @stateCvar03_0
-        .dw @stateCvar03_1
-        .dw @stateCvar03_2
-        .dw @stateCvar03_3
-        .dw @stateCvar03_4
+	.dw @stateCvar03_0
+	.dw @stateCvar03_1
+	.dw @stateCvar03_2
+	.dw @stateCvar03_3
+	.dw @stateCvar03_4
 
 @stateD:
 	ld h,d			; $7185
@@ -1080,8 +1080,8 @@ enemyCode54:
 	inc e			; $719f
 	ld a,(de)		; $71a0
 	rst_jumpTable			; $71a1
-        .dw @stateEcont
-        .dw @stateA
+	.dw @stateEcont
+	.dw @stateA
 
 @stateEcont:
 	call seasonsFunc_0d_7312		; $71a6
@@ -1123,8 +1123,8 @@ enemyCode54:
 @stateCvar03_1:
 	ld a,(de)		; $71e6
 	rst_jumpTable			; $71e7
-        .dw @@state0
-        .dw @@state1
+	.dw @@state0
+	.dw @@state1
 
 @@state0:
 	ld h,d			; $71ec
@@ -1141,11 +1141,11 @@ enemyCode54:
 @stateCvar03_2:
 	ld a,(de)		; $71f9
 	rst_jumpTable			; $71fa
-        .dw @@substate0
-        .dw @@substate1
-        .dw @@substate2
-        .dw @@substate3
-        .dw @@substate4
+	.dw @@substate0
+	.dw @@substate1
+	.dw @@substate2
+	.dw @@substate3
+	.dw @@substate4
 
 @@substate0:
 	ld h,d			; $7205
@@ -1199,10 +1199,10 @@ enemyCode54:
 @stateCvar03_3:
 	ld a,(de)		; $7248
 	rst_jumpTable			; $7249
-        .dw @@substate0
-        .dw @@substate1
-        .dw @@substate2
-        .dw @@substate3
+	.dw @@substate0
+	.dw @@substate1
+	.dw @@substate2
+	.dw @@substate3
 
 @@substate0:
 	ld h,d			; $7252
@@ -1238,9 +1238,9 @@ enemyCode54:
 @stateCvar03_4:
 	ld a,(de)		; $727c
 	rst_jumpTable			; $727d
-        .dw @@substate0
-        .dw @@substate1
-        .dw @@substate2
+	.dw @@substate0
+	.dw @@substate1
+	.dw @@substate2
 
 @@substate0:
 	ld h,d			; $7284
@@ -1531,19 +1531,19 @@ enemyCode55:
 	ld e,$84		; $7421
 	ld a,(de)		; $7423
 	rst_jumpTable			; $7424
-        .dw @state0
-        .dw @state_stub
-        .dw @state_stub
-        .dw @state_stub
-        .dw @state_stub
-        .dw @state_stub
-        .dw @state_stub
-        .dw @state_stub
-        .dw @state8
-        .dw @state9
-        .dw @stateA
-        .dw @stateB
-        .dw @stateC
+	.dw @state0
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state8
+	.dw @state9
+	.dw @stateA
+	.dw @stateB
+	.dw @stateC
 
 @state0:
 	ld bc,$011f		; $743f
@@ -1749,10 +1749,10 @@ enemyCode56:
 	ld e,$84		; $7559
 	ld a,(de)		; $755b
 	rst_jumpTable			; $755c
-        .dw @state0
-        .dw @state1
-        .dw @state2
-        .dw @state3
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
 
 @state0:
 	ld a,$01		; $7565
@@ -1820,12 +1820,12 @@ enemyCode56:
 	ret			; $75c0
 
 @seasonsTable_0d_75c1:
-        .db $d8 $e0 $00 $00
-        .db $06 $f6 $00 $00
-        .db $08 $f0 $06 $00
-        .db $04 $ec $08 $00
-        .db $07 $f0 $06 $00
-        .db $05 $f6 $00 $00
+	.db $d8 $e0 $00 $00
+	.db $06 $f6 $00 $00
+	.db $08 $f0 $06 $00
+	.db $04 $ec $08 $00
+	.db $07 $f0 $06 $00
+	.db $05 $f6 $00 $00
 
 @state2:
 	ld h,d			; $75d9
@@ -1879,9 +1879,9 @@ enemyCode5b:
 	ld e,$84		; $761e
 	ld a,(de)		; $7620
 	rst_jumpTable			; $7621
-        .dw @state0
-        .dw @state1
-        .dw enemyAnimate
+	.dw @state0
+	.dw @state1
+	.dw enemyAnimate
 
 @state0:
 	ld a,$01		; $7628
@@ -1912,8 +1912,8 @@ enemyCode5c:
 	ld e,$84		; $7646
 	ld a,(de)		; $7648
 	rst_jumpTable			; $7649
-        .dw @state0
-        .dw @state1
+	.dw @state0
+	.dw @state1
 
 @state0:
 	ld h,d			; $764e
@@ -1977,10 +1977,10 @@ enemyCode5f:
 	ld e,Enemy.state		; $76a9
 	ld a,(de)		; $76ab
 	rst_jumpTable			; $76ac
-        .dw @state0
-        .dw @state1
-        .dw @state2
-        .dw @state3
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
 
 @state0:
 	ld a,$01		; $76b5
@@ -1992,12 +1992,12 @@ enemyCode5f:
 	ld e,Enemy.state2		; $76bc
 	ld a,(hl)		; $76be
 	rst_jumpTable			; $76bf
-        .dw @seasonsFunc_0d_76fa
-        .dw @seasonsFunc_0d_76fa
-        .dw @state1zh2
-        .dw @state1zh3
-        .dw @state1zh4
-        .dw @state1zh5
+	.dw @seasonsFunc_0d_76fa
+	.dw @seasonsFunc_0d_76fa
+	.dw @state1zh2
+	.dw @state1zh3
+	.dw @state1zh4
+	.dw @state1zh5
 
 @state2:
 	call _ecom_decCounter2		; $76cc
@@ -2034,8 +2034,8 @@ enemyCode5f:
 @state1zh2:
 	ld a,(de)		; $76fe
 	rst_jumpTable			; $76ff
-        .dw @@substate0
-        .dw @@substate1
+	.dw @@substate0
+	.dw @@substate1
 
 @@substate0:
 	ld h,d			; $7704
@@ -2069,20 +2069,20 @@ enemyCode5f:
 	ret			; $772a
 
 @seasonsTable_0d_772b:
-        .db $f8 $00 $fb $00
-        .db $00 $08 $00 $05
-        .db $08 $00 $05 $00
-        .db $00 $f8 $00 $fb
+	.db $f8 $00 $fb $00
+	.db $00 $08 $00 $05
+	.db $08 $00 $05 $00
+	.db $00 $f8 $00 $fb
 
 @state1zh3:
 	ld a,(de)		; $773b
 	rst_jumpTable			; $773c
-        .dw @@substate0
-        .dw @@substate1
-        .dw @@substate2
-        .dw @@substate3
-        .dw @@substate4
-        .dw @@substate5
+	.dw @@substate0
+	.dw @@substate1
+	.dw @@substate2
+	.dw @@substate3
+	.dw @@substate4
+	.dw @@substate5
 
 @@substate0:
 	ld h,d			; $7749
@@ -2152,10 +2152,10 @@ enemyCode5f:
 @state1zh4:
 	ld a,(de)		; $77ae
 	rst_jumpTable			; $77af
-        .dw @@substate0
-        .dw @@substate1
-        .dw @@substate2
-        .dw @@substate3
+	.dw @@substate0
+	.dw @@substate1
+	.dw @@substate2
+	.dw @@substate3
 
 @@substate0:
 	ld h,d			; $77b8
@@ -2214,9 +2214,9 @@ enemyCode5f:
 @state1zh5:
 	ld a,(de)		; $780f
 	rst_jumpTable			; $7810
-        .dw @@substate0
-        .dw @@substate1
-        .dw @@substate2
+	.dw @@substate0
+	.dw @@substate1
+	.dw @@substate2
 
 @@substate0:
 	ld h,d			; $7817
@@ -2317,8 +2317,8 @@ seasonsFunc_0d_7898:
 	jp objectSetVisible81		; $78a0
 
 seasonsTable_0d_78a3:
-        .db $fb $fc $01 $06
-        .db $04 $04 $01 $fc
+	.db $fb $fc $01 $06
+	.db $04 $04 $01 $fc
 
 seasonsFunc_0d_78ab:
 	ld l,$b2		; $78ab
@@ -2436,8 +2436,8 @@ seasonsFunc_0d_7915:
 	ret			; $7953
 
 seasonsTable_0d_7954:
-        .db $fc $00 $00 $04
-        .db $04 $00 $00 $fc
+	.db $fc $00 $00 $04
+	.db $04 $00 $00 $fc
 
 seasonsFunc_0d_795c:
 	ld h,d			; $795c
@@ -2466,7 +2466,7 @@ seasonsFunc_0d_796d:
 	jp seasonsFunc_0d_7898		; $797f
 
 seasonsTable_0d_7982:
-        .db $fb $fc $05 $04
+	.db $fb $fc $05 $04
 
 seasonsFunc_0d_7986:
 	ld e,$ab		; $7986

@@ -4,11 +4,11 @@ _endgameCutsceneHandler_09:
 	ld de,$cbc1		; $551f
 	ld a,(de)		; $5522
 	rst_jumpTable			; $5523
-        .dw _endgameCutsceneHandler_09_stage0
-        .dw _endgameCutsceneHandler_09_stage1
+	.dw _endgameCutsceneHandler_09_stage0
+	.dw _endgameCutsceneHandler_09_stage1
 
 _endgameCutsceneHandler_09_stage0:
-        call updateStatusBar		; $5528
+	call updateStatusBar		; $5528
 	call _endgameCutsceneHandler_09_stage0_body		; $552b
 	call updateAllObjects		; $552e
 	jp checkEnemyAndPartCollisionsIfTextInactive		; $5531
@@ -17,46 +17,46 @@ _endgameCutsceneHandler_09_stage0_body:
 	ld de,$cbc2		; $5534
 	ld a,(de)		; $5537
 	rst_jumpTable			; $5538
-        .dw @state0
-        .dw @state1
-        .dw @state2
-        .dw @state3
-        .dw @state4
-        .dw @state5
-        .dw @state6
-        .dw @state7
-        .dw @state8
-        .dw @state9
-        .dw @stateA
-        .dw @stateB
-        .dw @stateC
-        .dw @stateD
-        .dw @stateE
-        .dw @stateF
-        .dw @state10
-        .dw @state11
-        .dw @state12
-        .dw @state13
-        .dw @state14
-        .dw @state15
-        .dw @state16
-        .dw @state17
-        .dw @state18
-        .dw @state19
-        .dw @state1A
-        .dw @state1B
-        .dw @state1C
-        .dw @state1D
-        .dw @state1E
-        .dw @state1F
-        .dw @state20
-        .dw @state21
-        .dw @state22
-        .dw @state23
-        .dw @state24
-        .dw @state25
-        .dw @state26
-        .dw @state27
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+	.dw @state5
+	.dw @state6
+	.dw @state7
+	.dw @state8
+	.dw @state9
+	.dw @stateA
+	.dw @stateB
+	.dw @stateC
+	.dw @stateD
+	.dw @stateE
+	.dw @stateF
+	.dw @state10
+	.dw @state11
+	.dw @state12
+	.dw @state13
+	.dw @state14
+	.dw @state15
+	.dw @state16
+	.dw @state17
+	.dw @state18
+	.dw @state19
+	.dw @state1A
+	.dw @state1B
+	.dw @state1C
+	.dw @state1D
+	.dw @state1E
+	.dw @state1F
+	.dw @state20
+	.dw @state21
+	.dw @state22
+	.dw @state23
+	.dw @state24
+	.dw @state25
+	.dw @state26
+	.dw @state27
 
 @state0:
 	ld a,(wPaletteThread_mode)		; $5589
@@ -113,8 +113,8 @@ _endgameCutsceneHandler_09_stage0_body:
 	call loadGfxRegisterStateIndex		; $55ed
 	jp fadeinFromWhiteToRoom		; $55f0
 @state0Table_03_55f3:
-        .db $99 $c8
-        .db $99 $b8
+	.db $99 $c8
+	.db $99 $b8
 
 @state1:
 	ld hl,wccd8		; $55f7
@@ -218,11 +218,11 @@ _endgameCutsceneHandler_09_stage0_body:
 	ld (hl),c		; $56a8
 	jp seasonsFunc_03_6405		; $56a9
 @state7Table0:
-        .db $e7 $00
-        .db $54 $00
-        .db $d1 $00
-        .db $5e $00
-        .db $90 $07
+	.db $e7 $00
+	.db $54 $00
+	.db $d1 $00
+	.db $5e $00
+	.db $90 $07
 
 @state8:
 	ld e,$3c		; $56b6
@@ -404,9 +404,9 @@ _endgameCutsceneHandler_09_stage0_body:
 	ld (wFadeBgPaletteSources),a		; $5808
 	ret			; $580b
 @state12Table0:
-        .db $10 $40
-        .db $80 $28
-        .db $06 $00
+	.db $10 $40
+	.db $80 $28
+	.db $06 $00
 
 @state13:
 	ld e,$28		; $5812
@@ -469,10 +469,10 @@ _endgameCutsceneHandler_09_stage0_body:
 	call playSound		; $587b
 	jp incCbc2		; $587e
 @state17Table0:
-        .db $ff $01
-        .db $00 $01
-        .db $00 $00
-        .db $ff $00
+	.db $ff $01
+	.db $00 $01
+	.db $00 $00
+	.db $ff $00
 
 @state18:
 	ld hl,$cbb3		; $5889
@@ -697,16 +697,16 @@ _endgameCutsceneHandler_09_stage1_body:
 	ld de,$cbc2		; $5a37
 	ld a,(de)		; $5a3a
 	rst_jumpTable			; $5a3b
-        .dw @state0
-        .dw @state1
-        .dw @state2
-        .dw @state3
-        .dw @state4
-        .dw @state5
-        .dw @state6
-        .dw @state7
-        .dw @state8
-        .dw @state9
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+	.dw @state5
+	.dw @state6
+	.dw @state7
+	.dw @state8
+	.dw @state9
 
 @state0:
 	call @seasonsFunc_03_5ab0		; $5a50
@@ -884,8 +884,8 @@ _endgameCutsceneHandler_0f:
 	ld de,$cbc1		; $5bad
 	ld a,(de)		; $5bb0
 	rst_jumpTable			; $5bb1
-        .dw _endgameCutsceneHandler_0f_stage0
-        .dw _endgameCutsceneHandler_0f_stage1
+	.dw _endgameCutsceneHandler_0f_stage0
+	.dw _endgameCutsceneHandler_0f_stage1
 
 _endgameCutsceneHandler_0f_stage0:
 	call updateStatusBar		; $5bb6
@@ -896,20 +896,20 @@ _endgameCutsceneHandler_0f_stage0_body:
 	ld de,$cbc2		; $5bbf
 	ld a,(de)		; $5bc2
 	rst_jumpTable			; $5bc3
-        .dw @state0
-        .dw @state1
-        .dw @state2
-        .dw @state3
-        .dw @state4
-        .dw @state5
-        .dw @state6
-        .dw @state7
-        .dw @state8
-        .dw @state9
-        .dw @stateA
-        .dw @stateB
-        .dw @stateC
-        .dw @stateD
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+	.dw @state5
+	.dw @state6
+	.dw @state7
+	.dw @state8
+	.dw @state9
+	.dw @stateA
+	.dw @stateB
+	.dw @stateC
+	.dw @stateD
 
 @state0:
 	ld a,$01		; $5be0
@@ -1093,17 +1093,17 @@ _endgameCutsceneHandler_0f_stage1_body:
 	ld de,$cbc2		; $5d27
 	ld a,(de)		; $5d2a
 	rst_jumpTable			; $5d2b
-        .dw @state0
-        .dw @state1
-        .dw @state2
-        .dw @state3
-        .dw @state4
-        .dw @state5
-        .dw @state6
-        .dw @state7
-        .dw @state8
-        .dw @state9
-        .dw @stateA
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+	.dw @state5
+	.dw @state6
+	.dw @state7
+	.dw @state8
+	.dw @state9
+	.dw @stateA
 
 @state0:
 	call seasonsFunc_03_5cfb		; $5d42
@@ -1268,18 +1268,18 @@ _endgameCutsceneHandler_0a_body:
 	ld de,$cbc1		; $5e85
 	ld a,(de)		; $5e88
 	rst_jumpTable			; $5e89
-        .dw _endgameCutsceneHandler_0a_stage0
-        .dw _endgameCutsceneHandler_0a_stage1
-        .dw _endgameCutsceneHandler_0a_stage2
-        .dw _endgameCutsceneHandler_0a_stage3
+	.dw _endgameCutsceneHandler_0a_stage0
+	.dw _endgameCutsceneHandler_0a_stage1
+	.dw _endgameCutsceneHandler_0a_stage2
+	.dw _endgameCutsceneHandler_0a_stage3
 
 _endgameCutsceneHandler_0a_stage0:
 	ld de,$cbc2		; $5e92
 	ld a,(de)
 	rst_jumpTable			; $5e96
-        .dw @state0
-        .dw @state1
-        .dw @state2
+	.dw @state0
+	.dw @state1
+	.dw @state2
 
 @state0:
 	call seasonsFunc_03_6462		; $5e9d
@@ -1330,11 +1330,11 @@ _endgameCutsceneHandler_0a_stage1:
 	ld de,$cbc2		; $5ef4
 	ld a,(de)		; $5ef7
 	rst_jumpTable			; $5ef8
-        .dw @state0
-        .dw @state1
-        .dw @state2
-        .dw @state3
-        .dw @state4
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
 
 @state0:
 	xor a			; $5f03
@@ -1419,14 +1419,14 @@ _endgameCutsceneHandler_0a_stage1:
 	call loadGfxRegisterStateIndex		; $5fa0
 	jp fadeinFromWhite		; $5fa3
 @state0Table0:
-        .db $00 $c6
-        .db $01 $2b
-        .db $00 $b6
-        .db $00 $d6
-        .db $00 $00
-        .db $01 $2b
-        .db $00 $00
-        .db $00 $00
+	.db $00 $c6
+	.db $01 $2b
+	.db $00 $b6
+	.db $00 $d6
+	.db $00 $00
+	.db $01 $2b
+	.db $00 $00
+	.db $00 $00
 
 @state1:
 	ld a,(wPaletteThread_mode)		; $5fb6
@@ -1470,10 +1470,10 @@ _endgameCutsceneHandler_0a_stage1:
 	ldh (<hCameraX),a	; $6004
 	jp fadeinFromWhite		; $6006
 @state2Table0:
-        .db $00 $d0
-        .db $00 $d0
-        .db $00 $d0
-        .db $00 $d0
+	.db $00 $d0
+	.db $00 $d0
+	.db $00 $d0
+	.db $00 $d0
 
 @state3:
 	ld a,(wPaletteThread_mode)		; $6011
@@ -1537,15 +1537,15 @@ _endgameCutsceneHandler_0a_stage2:
 	ld de,$cbc2		; $6070
 	ld a,(de)		; $6073
 	rst_jumpTable			; $6074
-        .dw @state0
-        .dw @state1
-        .dw @state2
-        .dw @state3
-        .dw @state4
-        .dw @state5
-        .dw @state6
-        .dw @state7
-        .dw @state8
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+	.dw @state5
+	.dw @state6
+	.dw @state7
+	.dw @state8
 
 @state0:
 	ld a,(wPaletteThread_mode)		; $6087
@@ -1750,18 +1750,18 @@ _endgameCutsceneHandler_0a_stage3:
 	ld de,$cbc2		; $61fa
 	ld a,(de)		; $61fd
 	rst_jumpTable			; $61fe
-        .dw @state0
-        .dw @state1
-        .dw @state2
-        .dw @state3
-        .dw @state4
-        .dw @state5
-        .dw @state6
-        .dw @state7
-        .dw @state8
-        .dw @state9
-        .dw @stateA
-        .dw @stateB
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+	.dw @state5
+	.dw @state6
+	.dw @state7
+	.dw @state8
+	.dw @state9
+	.dw @stateA
+	.dw @stateB
 
 @state0:
 	call checkIsLinkedGame		; $6217
@@ -1830,8 +1830,8 @@ _endgameCutsceneHandler_0a_stage3:
 	ld ($cbb4),a		; $6294
 	ret			; $6297
 @state1Table0:
-        .db $a0 $c8
-        .db $10 $f0
+	.db $a0 $c8
+	.db $10 $f0
 
 @state2:
 	call @state1Func0		; $629c

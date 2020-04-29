@@ -3363,9 +3363,9 @@ itemCode29:
 	ld e,Item.state		; $56a6
 	ld a,(de)		; $56a8
 	rst_jumpTable			; $56a9
-        .dw @state0
-        .dw @state1
-        .dw @state2
+	.dw @state0
+	.dw @state1
+	.dw @state2
 
 @state0:
 	ld a,$01		; $56b0
@@ -3635,10 +3635,10 @@ itemCode29:
 	ret			; $587a
 
 @seasonsTable_07_587b:
-        .db $f0 $00
-        .db $00 $10
-        .db $10 $00
-        .db $00 $f0
+	.db $f0 $00
+	.db $00 $10
+	.db $10 $00
+	.db $00 $f0
 
 @seasonsFunc_07_5883:
 	ld b,$00		; $5883
@@ -3732,14 +3732,14 @@ itemCode29:
 	ret			; $58fe
 
 @seasonsTable_07_58ff:
-        .db $f8 $fc
-        .db $f8 $04
-        .db $fc $08
-        .db $04 $08
-        .db $08 $fc
-        .db $08 $04
-        .db $fc $f8
-        .db $04 $f8
+	.db $f8 $fc
+	.db $f8 $04
+	.db $fc $08
+	.db $04 $08
+	.db $08 $fc
+	.db $08 $04
+	.db $fc $f8
+	.db $04 $f8
 
 @seasonsFunc_07_590f:
 	call objectGetTileAtPosition		; $590f
@@ -3811,10 +3811,10 @@ itemCode29:
 	jr --			; $5968
 
 @seasonsTable_596a:
-        .db $0a $14
-        .db $28 $32
-        .db $3c $46
-        .db $50 $50
+	.db $0a $14
+	.db $28 $32
+	.db $3c $46
+	.db $50 $50
 
 @seasonsFunc_07_5972:
 	ld h,d			; $5972
@@ -3915,14 +3915,14 @@ itemCode29:
 	ret			; $59ea
 
 @seasonsTable_07_59eb:
-        .db $00 $28
-        .db $40 $fe
-        .db $08 $28
-        .db $40 $fe
-        .db $10 $28
-        .db $40 $fe
-        .db $18 $28
-        .db $40 $fe
+	.db $00 $28
+	.db $40 $fe
+	.db $08 $28
+	.db $40 $fe
+	.db $10 $28
+	.db $40 $fe
+	.db $18 $28
+	.db $40 $fe
 
 @seasonsFunc_07_59fb:
 	ld e,$09		; $59fb
@@ -4710,8 +4710,8 @@ itemCode08:
 	ld e,Item.state		; $5bc1
 	ld a,(de)		; $5bc3
 	rst_jumpTable			; $5bc4
-        .dw @state0
-        .dw @state1
+	.dw @state0
+	.dw @state1
 
 @state0:
 	ld a,$1e		; $5bc9
@@ -4739,8 +4739,8 @@ itemCode1e:
 	ld e,Item.state		; $5be4
 	ld a,(de)		; $5be6
 	rst_jumpTable			; $5be7
-        .dw @state0
-        .dw foolsOreRet
+	.dw @state0
+	.dw foolsOreRet
 
 @state0:
 	ld a,$1f		; $5bec
@@ -5518,10 +5518,10 @@ _tryBreakTileWithSword:
 	.db $00
 .else
 @collisions0:
-        .db $c1 $c2 $e2 $cb
-        .db $00
+	.db $c1 $c2 $e2 $cb
+	.db $00
 
-        .db $fd $fe $ff $d9 $da $20 $d7
+	.db $fd $fe $ff $d9 $da $20 $d7
 
 @collisions1:
 	.db $00
@@ -5534,11 +5534,11 @@ _tryBreakTileWithSword:
 
 @collisions3:
 @collisions4:
-        .db $1f $30 $31 $32 $33 $38 $39 $3a $3b
-        .db $00
+	.db $1f $30 $31 $32 $33 $38 $39 $3a $3b
+	.db $00
 
-        .db $0a $0b
-        .db $00
+	.db $0a $0b
+	.db $00
 
 
 @collisions5:
@@ -6193,8 +6193,8 @@ _itemWeights:
 	.db $28 $20 SPEED_1a0 SPEED_280
 	.db $20 $00 SPEED_080 SPEED_100
 .else
-        .db $20 $00 SPEED_100 SPEED_180
-        .db $20 $00 SPEED_0c0 SPEED_100
+	.db $20 $00 SPEED_100 SPEED_180
+	.db $20 $00 SPEED_0c0 SPEED_100
 .endif
 	.db $20 $e0 SPEED_140 SPEED_180
 	.db $20 $00 SPEED_080 SPEED_100

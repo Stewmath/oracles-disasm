@@ -879,7 +879,7 @@ _ironMask_subid01:
 	rst_jumpTable			; $6ce8
 	.dw @state8
 	.dw @state9
-        .dw @stateA
+	.dw @stateA
 
 @state8:
 	ld h,d			; $6cef

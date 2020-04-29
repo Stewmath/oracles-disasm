@@ -42,10 +42,10 @@ _cutsceneHandler_0b_stage1:
 	call seasonsFunc_03_6df8		; $6bda
 	ld a,($cbb3)		; $6bdd
 	rst_jumpTable			; $6be0
-        .dw @state0
-        .dw @state1
-        .dw @state2
-        .dw @state3
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
 
 @state0:
 	ld a,(wPaletteThread_mode)		; $6be9
@@ -127,11 +127,11 @@ _cutsceneHandler_0b_stage2:
 _cutsceneHandler_0b_stage3:
 	ld a,($cbb3)		; $6c89
 	rst_jumpTable			; $6c8c
-        .dw @state0
-        .dw @state1
-        .dw @state2
-        .dw @state3
-        .dw @state4
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
 
 @state0:
 	ld a,(wPaletteThread_mode)		; $6c97
@@ -199,11 +199,11 @@ _cutsceneHandler_0b_stage3:
 _cutsceneHandler_0b_stage4:
 	ld a,($cbb3)		; $6d10
 	rst_jumpTable			; $6d13
-        .dw @state0
-        .dw _cutsceneHandler_0b_stage3@state1
-        .dw _cutsceneHandler_0b_stage3@state2
-        .dw _cutsceneHandler_0b_stage3@state3
-        .dw _cutsceneHandler_0b_stage3@state4
+	.dw @state0
+	.dw _cutsceneHandler_0b_stage3@state1
+	.dw _cutsceneHandler_0b_stage3@state2
+	.dw _cutsceneHandler_0b_stage3@state3
+	.dw _cutsceneHandler_0b_stage3@state4
 
 @state0:
 	ld a,(wPaletteThread_mode)		; $6d1e
@@ -225,11 +225,11 @@ _cutsceneHandler_0b_stage4:
 _cutsceneHandler_0b_stage5:
 	ld a,($cbb3)		; $6d43
 	rst_jumpTable			; $6d46
-        .dw @state0
-        .dw _cutsceneHandler_0b_stage3@state1
-        .dw _cutsceneHandler_0b_stage3@state2
-        .dw _cutsceneHandler_0b_stage3@state3
-        .dw @state4
+	.dw @state0
+	.dw _cutsceneHandler_0b_stage3@state1
+	.dw _cutsceneHandler_0b_stage3@state2
+	.dw _cutsceneHandler_0b_stage3@state3
+	.dw @state4
 
 @state0:
 	ld a,(wPaletteThread_mode)		; $6d51

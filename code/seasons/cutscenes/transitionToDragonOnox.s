@@ -463,7 +463,7 @@ seasons_func_0f_722f:
 ; @param	hl	a few values between $d000-$db00 in bank 6 (w6Filler1, etc)
 ; @addr{7297}
 seasonsFunc_0f_7297_copyw6Filler1IntowTmpVramBuffer:
-        ld a,$06		; $7297
+	ld a,$06		; $7297
 	ld ($ff00+R_SVBK),a	; $7299
 	ld de,wTmpVramBuffer		; $729b
 -

@@ -2293,7 +2293,7 @@ _introCinematic_inTemple_state0:
 	ld a,:interactionBank10.templeIntro_simulatedInput		; $5130
 .else
 	ld hl,templeIntro_simulatedInput		; $512d
-        ld a,:templeIntro_simulatedInput		; $5130
+	ld a,:templeIntro_simulatedInput		; $5130
 .endif
 	call setSimulatedInputAddress		; $5132
 
