@@ -66,104 +66,104 @@
 .include "build/data/animationGroups.s"
 
 animationGfxHeaders:
-        .db $18 $65 $40 $88 $81 $03
-        .db $18 $65 $80 $88 $81 $03
-        .db $18 $65 $c0 $88 $81 $03
-        .db $18 $66 $00 $88 $81 $03
-        .db $18 $67 $60 $88 $c1 $01
-        .db $18 $67 $a0 $88 $c1 $01
-        .db $18 $67 $e0 $88 $c1 $01
-        .db $18 $68 $20 $88 $c1 $01
-        .db $18 $67 $40 $96 $01 $03
-        .db $18 $67 $80 $96 $01 $03
-        .db $18 $67 $c0 $96 $01 $03
-        .db $18 $68 $00 $96 $01 $03
-        .db $18 $67 $40 $88 $c1 $03
-        .db $18 $67 $80 $88 $c1 $03
-        .db $18 $67 $c0 $88 $c1 $03
-        .db $18 $68 $00 $88 $c1 $03
-        .db $18 $66 $40 $88 $c1 $03
-        .db $18 $66 $80 $88 $c1 $03
-        .db $18 $66 $c0 $88 $c1 $03
-        .db $18 $67 $00 $88 $c1 $03
-        .db $18 $69 $40 $96 $81 $01
-        .db $18 $69 $60 $96 $81 $01
-        .db $18 $69 $80 $96 $81 $01
-        .db $18 $69 $a0 $96 $81 $01
-        .db $18 $69 $40 $96 $31 $01
-        .db $18 $69 $60 $96 $31 $01
-        .db $18 $69 $80 $96 $31 $01
-        .db $18 $69 $a0 $96 $31 $01
-        .db $18 $68 $40 $88 $c1 $03
-        .db $18 $68 $80 $88 $c1 $03
-        .db $18 $68 $c0 $88 $c1 $03
-        .db $18 $69 $00 $88 $c1 $03
-        .db $18 $6c $00 $88 $c1 $03
-        .db $18 $6c $40 $88 $c1 $03
-        .db $18 $6c $80 $88 $c1 $03
-        .db $18 $6c $c0 $88 $c1 $03
-        .db $18 $6c $00 $93 $81 $03
-        .db $18 $6c $40 $93 $81 $03
-        .db $18 $6c $80 $93 $81 $03
-        .db $18 $6c $c0 $93 $81 $03
-        .db $18 $69 $e0 $88 $a1 $04
-        .db $18 $6a $70 $88 $a1 $04
-        .db $18 $6b $00 $88 $a1 $04
-        .db $18 $6b $90 $88 $a1 $04
-        .db $18 $69 $c0 $88 $81 $01
-        .db $18 $6a $50 $88 $81 $01
-        .db $18 $6a $e0 $88 $81 $01
-        .db $18 $6b $70 $88 $81 $01
-        .db $18 $69 $c0 $88 $81 $03
-        .db $18 $6a $50 $88 $81 $03
-        .db $18 $6a $e0 $88 $81 $03
-        .db $18 $6b $70 $88 $81 $03
-        .db $18 $64 $40 $88 $81 $07
-        .db $18 $64 $c0 $88 $81 $07
-        .db $18 $64 $00 $90 $91 $00
-        .db $18 $64 $10 $90 $91 $00
-        .db $18 $64 $20 $90 $91 $00
-        .db $18 $64 $30 $90 $91 $00
-        .db $18 $71 $80 $8d $81 $06
-        .db $18 $72 $80 $8d $81 $06
-        .db $18 $73 $80 $8d $81 $06
-        .db $18 $74 $80 $8d $81 $06
-        .db $18 $71 $f0 $8d $f1 $00
-        .db $18 $72 $f0 $8d $f1 $00
-        .db $18 $73 $f0 $8d $f1 $00
-        .db $18 $74 $f0 $8d $f1 $00
-        .db $18 $72 $00 $8f $01 $00
-        .db $18 $73 $00 $8f $01 $00
-        .db $18 $74 $00 $8f $01 $00
-        .db $18 $75 $00 $8f $01 $00
-        .db $18 $72 $00 $8f $01 $04
-        .db $18 $73 $00 $8f $01 $04
-        .db $18 $74 $00 $8f $01 $04
-        .db $18 $75 $00 $8f $01 $04
-        .db $18 $6d $00 $89 $01 $0a
-        .db $18 $6d $b0 $89 $01 $0a
-        .db $18 $6e $60 $89 $01 $0a
-        .db $18 $6f $10 $89 $01 $0a
-        .db $18 $6f $c0 $89 $b1 $00
-        .db $18 $6f $d0 $89 $b1 $00
-        .db $18 $6f $e0 $89 $b1 $00
-        .db $18 $6f $f0 $89 $b1 $00
-        .db $18 $70 $00 $89 $c1 $01
-        .db $18 $70 $20 $89 $c1 $01
-        .db $18 $70 $40 $89 $c1 $01
-        .db $18 $70 $60 $89 $c1 $01
-        .db $18 $70 $80 $89 $e1 $01
-        .db $18 $70 $a0 $89 $e1 $01
-        .db $18 $70 $c0 $89 $e1 $01
-        .db $18 $70 $e0 $89 $e1 $01
-        .db $18 $71 $00 $89 $e1 $01
-        .db $18 $71 $20 $89 $e1 $01
-        .db $18 $71 $40 $89 $e1 $01
-        .db $18 $71 $60 $89 $e1 $01
-        .db $18 $75 $80 $8d $01 $0d
-        .db $18 $76 $80 $8d $01 $0d
-        .db $18 $77 $80 $8d $01 $0d
-        .db $18 $78 $80 $8d $01 $0d
+	.db $18 $65 $40 $88 $81 $03
+	.db $18 $65 $80 $88 $81 $03
+	.db $18 $65 $c0 $88 $81 $03
+	.db $18 $66 $00 $88 $81 $03
+	.db $18 $67 $60 $88 $c1 $01
+	.db $18 $67 $a0 $88 $c1 $01
+	.db $18 $67 $e0 $88 $c1 $01
+	.db $18 $68 $20 $88 $c1 $01
+	.db $18 $67 $40 $96 $01 $03
+	.db $18 $67 $80 $96 $01 $03
+	.db $18 $67 $c0 $96 $01 $03
+	.db $18 $68 $00 $96 $01 $03
+	.db $18 $67 $40 $88 $c1 $03
+	.db $18 $67 $80 $88 $c1 $03
+	.db $18 $67 $c0 $88 $c1 $03
+	.db $18 $68 $00 $88 $c1 $03
+	.db $18 $66 $40 $88 $c1 $03
+	.db $18 $66 $80 $88 $c1 $03
+	.db $18 $66 $c0 $88 $c1 $03
+	.db $18 $67 $00 $88 $c1 $03
+	.db $18 $69 $40 $96 $81 $01
+	.db $18 $69 $60 $96 $81 $01
+	.db $18 $69 $80 $96 $81 $01
+	.db $18 $69 $a0 $96 $81 $01
+	.db $18 $69 $40 $96 $31 $01
+	.db $18 $69 $60 $96 $31 $01
+	.db $18 $69 $80 $96 $31 $01
+	.db $18 $69 $a0 $96 $31 $01
+	.db $18 $68 $40 $88 $c1 $03
+	.db $18 $68 $80 $88 $c1 $03
+	.db $18 $68 $c0 $88 $c1 $03
+	.db $18 $69 $00 $88 $c1 $03
+	.db $18 $6c $00 $88 $c1 $03
+	.db $18 $6c $40 $88 $c1 $03
+	.db $18 $6c $80 $88 $c1 $03
+	.db $18 $6c $c0 $88 $c1 $03
+	.db $18 $6c $00 $93 $81 $03
+	.db $18 $6c $40 $93 $81 $03
+	.db $18 $6c $80 $93 $81 $03
+	.db $18 $6c $c0 $93 $81 $03
+	.db $18 $69 $e0 $88 $a1 $04
+	.db $18 $6a $70 $88 $a1 $04
+	.db $18 $6b $00 $88 $a1 $04
+	.db $18 $6b $90 $88 $a1 $04
+	.db $18 $69 $c0 $88 $81 $01
+	.db $18 $6a $50 $88 $81 $01
+	.db $18 $6a $e0 $88 $81 $01
+	.db $18 $6b $70 $88 $81 $01
+	.db $18 $69 $c0 $88 $81 $03
+	.db $18 $6a $50 $88 $81 $03
+	.db $18 $6a $e0 $88 $81 $03
+	.db $18 $6b $70 $88 $81 $03
+	.db $18 $64 $40 $88 $81 $07
+	.db $18 $64 $c0 $88 $81 $07
+	.db $18 $64 $00 $90 $91 $00
+	.db $18 $64 $10 $90 $91 $00
+	.db $18 $64 $20 $90 $91 $00
+	.db $18 $64 $30 $90 $91 $00
+	.db $18 $71 $80 $8d $81 $06
+	.db $18 $72 $80 $8d $81 $06
+	.db $18 $73 $80 $8d $81 $06
+	.db $18 $74 $80 $8d $81 $06
+	.db $18 $71 $f0 $8d $f1 $00
+	.db $18 $72 $f0 $8d $f1 $00
+	.db $18 $73 $f0 $8d $f1 $00
+	.db $18 $74 $f0 $8d $f1 $00
+	.db $18 $72 $00 $8f $01 $00
+	.db $18 $73 $00 $8f $01 $00
+	.db $18 $74 $00 $8f $01 $00
+	.db $18 $75 $00 $8f $01 $00
+	.db $18 $72 $00 $8f $01 $04
+	.db $18 $73 $00 $8f $01 $04
+	.db $18 $74 $00 $8f $01 $04
+	.db $18 $75 $00 $8f $01 $04
+	.db $18 $6d $00 $89 $01 $0a
+	.db $18 $6d $b0 $89 $01 $0a
+	.db $18 $6e $60 $89 $01 $0a
+	.db $18 $6f $10 $89 $01 $0a
+	.db $18 $6f $c0 $89 $b1 $00
+	.db $18 $6f $d0 $89 $b1 $00
+	.db $18 $6f $e0 $89 $b1 $00
+	.db $18 $6f $f0 $89 $b1 $00
+	.db $18 $70 $00 $89 $c1 $01
+	.db $18 $70 $20 $89 $c1 $01
+	.db $18 $70 $40 $89 $c1 $01
+	.db $18 $70 $60 $89 $c1 $01
+	.db $18 $70 $80 $89 $e1 $01
+	.db $18 $70 $a0 $89 $e1 $01
+	.db $18 $70 $c0 $89 $e1 $01
+	.db $18 $70 $e0 $89 $e1 $01
+	.db $18 $71 $00 $89 $e1 $01
+	.db $18 $71 $20 $89 $e1 $01
+	.db $18 $71 $40 $89 $e1 $01
+	.db $18 $71 $60 $89 $e1 $01
+	.db $18 $75 $80 $8d $01 $0d
+	.db $18 $76 $80 $8d $01 $0d
+	.db $18 $77 $80 $8d $01 $0d
+	.db $18 $78 $80 $8d $01 $0d
 
 .include "build/data/animationData.s"
 
@@ -1291,2186 +1291,750 @@ _linkItemAnimationTable:
 	.db $e6  LINK_ANIM_MODE_22	; ITEMID_FOOLS_ORE
 	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_1f
 
+;;
+; Update a minecart object.
+; (Called from bank5._specialObjectCode_minecart)
+; @addr{563e}
 specialObjectCode_minecart:
-	call $5727		; $5588
-	ld e,$04		; $558b
-	ld a,(de)		; $558d
-	rst_jumpTable			; $558e
-	sub e			; $558f
-	ld d,l			; $5590
-	cp a			; $5591
-	ld d,l			; $5592
-	ld a,$01		; $5593
-	ld (de),a		; $5595
-	ld hl,$41b5		; $5596
-	ld e,$05		; $5599
-	call interBankCall		; $559b
-	ld h,d			; $559e
-	ld l,$10		; $559f
-	ld (hl),$28		; $55a1
-	ld l,$08		; $55a3
-	ld a,(hl)		; $55a5
-	call specialObjectSetAnimation		; $55a6
-	ld a,d			; $55a9
-	ld ($cc48),a		; $55aa
-	call setCameraFocusedObjectToLink		; $55ad
-	call clearVar3fForParentItems		; $55b0
-	call clearPegasusSeedCounter		; $55b3
-	ld hl,$d00e		; $55b6
-	xor a			; $55b9
-	ldi (hl),a		; $55ba
-	ldi (hl),a		; $55bb
-	jp objectSetVisiblec2		; $55bc
-	ld a,($c4ab)		; $55bf
-	or a			; $55c2
-	ret nz			; $55c3
-	call retIfTextIsActive		; $55c4
-	ld a,($cd00)		; $55c7
-	and $0e			; $55ca
-	ret nz			; $55cc
-	ld a,($cca4)		; $55cd
-	and $81			; $55d0
-	ret nz			; $55d2
-	ld hl,$d024		; $55d3
-	res 7,(hl)		; $55d6
-	xor a			; $55d8
-	ld l,$2d		; $55d9
-	ldi (hl),a		; $55db
-	ld h,d			; $55dc
-	ld l,$0b		; $55dd
-	ldi a,(hl)		; $55df
-	ld b,a			; $55e0
-	and $0f			; $55e1
-	cp $08			; $55e3
-	jr nz,_label_06_159	; $55e5
-	inc l			; $55e7
-	ldi a,(hl)		; $55e8
-	ld c,a			; $55e9
-	and $0f			; $55ea
-	cp $08			; $55ec
-	jr nz,_label_06_159	; $55ee
-	call $5656		; $55f0
-	jr c,_label_06_161	; $55f3
-	ld h,d			; $55f5
-	ld l,$08		; $55f6
-	ldi a,(hl)		; $55f8
-	swap a			; $55f9
-	rrca			; $55fb
-	cp (hl)			; $55fc
-	jr z,_label_06_159	; $55fd
-	ldd (hl),a		; $55ff
-	ld a,(hl)		; $5600
-	call specialObjectSetAnimation		; $5601
-_label_06_159:
-	ld h,d			; $5604
-	ld l,$35		; $5605
-	dec (hl)		; $5607
-	bit 7,(hl)		; $5608
-	jr z,_label_06_160	; $560a
-	ld (hl),$1a		; $560c
-	ld a,$80		; $560e
-	call playSound		; $5610
-_label_06_160:
-	call objectApplySpeed		; $5613
-	jp specialObjectAnimate		; $5616
-_label_06_161:
-	ld e,$04		; $5619
-	ld a,$02		; $561b
-	ld (de),a		; $561d
-	call clearVar3fForParentItems		; $561e
-	ld a,$81		; $5621
-	ld ($cc77),a		; $5623
-	ld hl,$d009		; $5626
-	ld e,$09		; $5629
-	ld a,(de)		; $562b
-	ld (hl),a		; $562c
-	ld l,$0b		; $562d
-	ld a,(hl)		; $562f
-	add $06			; $5630
-	ld (hl),a		; $5632
-	ld l,$0f		; $5633
-	ld (hl),$fa		; $5635
-	ld l,$10		; $5637
-	ld (hl),$14		; $5639
-	ld l,$14		; $563b
-	ld (hl),$40		; $563d
-	inc l			; $563f
-	ld (hl),$fe		; $5640
-	ld l,$1a		; $5642
-	set 6,(hl)		; $5644
-	ld a,$d0		; $5646
-	ld ($cc48),a		; $5648
-	call setCameraFocusedObjectToLink		; $564b
-	ld b,$16		; $564e
-	call objectCreateInteractionWithSubid00		; $5650
-	jp objectDelete_useActiveObjectType		; $5653
-	call getTileAtPosition		; $5656
-	ld e,a			; $5659
-	ld c,l			; $565a
-	ld h,d			; $565b
-	ld l,$08		; $565c
-	ld a,(hl)		; $565e
-	swap a			; $565f
-	ld hl,$56cd		; $5661
-	rst_addAToHl			; $5664
-_label_06_162:
-	ldi a,(hl)		; $5665
-	or a			; $5666
-	jr z,_label_06_167	; $5667
-	cp e			; $5669
-	jr z,_label_06_163	; $566a
-	ld a,$04		; $566c
-	rst_addAToHl			; $566e
-	jr _label_06_162		; $566f
-_label_06_163:
-	ldi a,(hl)		; $5671
-	add c			; $5672
-	ld c,a			; $5673
-	ldh (<hFF8B),a	; $5674
-	ld b,$ce		; $5676
-	ld a,(bc)		; $5678
-	cp $ff			; $5679
-	ret z			; $567b
-	ld b,$cf		; $567c
-	ld a,(bc)		; $567e
-	cp $5f			; $567f
-	jr z,_label_06_165	; $5681
-	ld c,a			; $5683
-	ld b,$03		; $5684
-_label_06_164:
-	ldi a,(hl)		; $5686
-	cp c			; $5687
-	jr z,_label_06_166	; $5688
-	dec b			; $568a
-	jr nz,_label_06_164	; $568b
-	jr _label_06_167		; $568d
-_label_06_165:
-	scf			; $568f
-	ret			; $5690
-_label_06_166:
-	ld a,e			; $5691
-	sub $59			; $5692
-	cp $06			; $5694
-	jr c,_label_06_168	; $5696
-_label_06_167:
-	ld a,$06		; $5698
-_label_06_168:
-	ld e,$08		; $569a
-	rst_jumpTable			; $569c
-	xor e			; $569d
-	ld d,(hl)		; $569e
-	xor e			; $569f
-	ld d,(hl)		; $56a0
-	or b			; $56a1
-	ld d,(hl)		; $56a2
-	or b			; $56a3
-	ld d,(hl)		; $56a4
-	or l			; $56a5
-	ld d,(hl)		; $56a6
-	cp h			; $56a7
-	ld d,(hl)		; $56a8
-	pop bc			; $56a9
-	ld d,(hl)		; $56aa
-	ld a,(de)		; $56ab
-	xor $01			; $56ac
-	ld (de),a		; $56ae
-	ret			; $56af
-	ld a,(de)		; $56b0
-	xor $03			; $56b1
-	ld (de),a		; $56b3
-	ret			; $56b4
-	ld a,(de)		; $56b5
-	and $02			; $56b6
-	or $01			; $56b8
-	ld (de),a		; $56ba
-	ret			; $56bb
-	ld a,(de)		; $56bc
-	and $02			; $56bd
-	ld (de),a		; $56bf
-	ret			; $56c0
-	call $570d		; $56c1
-	jr nc,_label_06_169	; $56c4
-	xor a			; $56c6
-	ret			; $56c7
-_label_06_169:
-	ld a,(de)		; $56c8
-	xor $02			; $56c9
-	ld (de),a		; $56cb
-	ret			; $56cc
-	ld e,(hl)		; $56cd
-	ld a,($ff00+$5e)	; $56ce
-	ld e,c			; $56d0
-	ld e,h			; $56d1
-	ld e,c			; $56d2
-	ld bc,$5a5d		; $56d3
-	ld e,h			; $56d6
-	ld e,h			; $56d7
-	rst $38			; $56d8
-	ld e,l			; $56d9
-	ld e,e			; $56da
-	ld e,c			; $56db
-	nop			; $56dc
-	ld e,l			; $56dd
-	ld bc,$5a5d		; $56de
-	ld e,h			; $56e1
-	ld e,d			; $56e2
-	ld a,($ff00+$5e)	; $56e3
-	ld e,c			; $56e5
-	ld e,h			; $56e6
-	ld e,h			; $56e7
-	stop			; $56e8
-	ld e,(hl)		; $56e9
-	ld e,e			; $56ea
-	ld e,d			; $56eb
-	nop			; $56ec
-	ld e,(hl)		; $56ed
-	stop			; $56ee
-	ld e,(hl)		; $56ef
-	ld e,d			; $56f0
-	ld e,e			; $56f1
-	ld e,d			; $56f2
-	rst $38			; $56f3
-	ld e,l			; $56f4
-	ld e,e			; $56f5
-	ld e,c			; $56f6
-	ld e,e			; $56f7
-	ld bc,$5a5d		; $56f8
-	ld e,h			; $56fb
-	nop			; $56fc
-	ld e,l			; $56fd
-	rst $38			; $56fe
-	ld e,l			; $56ff
-	ld e,e			; $5700
-	ld e,c			; $5701
-	ld e,e			; $5702
-	ld a,($ff00+$5e)	; $5703
-	ld e,h			; $5705
-	ld e,c			; $5706
-	ld e,c			; $5707
-	stop			; $5708
-	ld e,(hl)		; $5709
-	ld e,d			; $570a
-	ld e,e			; $570b
-	nop			; $570c
-	ld a,c			; $570d
-	sub $7c			; $570e
-	cp $04			; $5710
-	ret nc			; $5712
-	add $0c			; $5713
-	add a			; $5715
-	ld b,a			; $5716
-	call getFreeInteractionSlot		; $5717
-	ret nz			; $571a
-	ld (hl),$1e		; $571b
-	ld l,$49		; $571d
-	ld (hl),b		; $571f
-	ld l,$4b		; $5720
-	ldh a,(<hFF8B)	; $5722
-	ld (hl),a		; $5724
-	scf			; $5725
-	ret			; $5726
-	ld e,$36		; $5727
-	ld a,(de)		; $5729
-	or a			; $572a
-	ret nz			; $572b
-	call getFreeItemSlot		; $572c
-	ret nz			; $572f
-	ld e,$36		; $5730
-	ld a,$01		; $5732
-	ld (de),a		; $5734
-	ldi (hl),a		; $5735
-	ld (hl),$1d		; $5736
-	ret			; $5738
+	call _minecartCreateCollisionItem		; $563e
+	ld e,SpecialObject.state		; $5641
+	ld a,(de)		; $5643
+	rst_jumpTable			; $5644
 
+	.dw @state0
+	.dw @state1
+
+@state0:
+	; Set state to $01
+	ld a,$01		; $5649
+	ld (de),a		; $564b
+
+	; Setup palette, etc
+	callab bank5.specialObjectSetOamVariables		; $564c
+
+	ld h,d			; $5654
+	ld l,SpecialObject.speed		; $5655
+	ld (hl),SPEED_100		; $5657
+
+	ld l,SpecialObject.direction		; $5659
+	ld a,(hl)		; $565b
+	call specialObjectSetAnimation		; $565c
+
+	ld a,d			; $565f
+	ld (wLinkObjectIndex),a		; $5660
+	call setCameraFocusedObjectToLink		; $5663
+
+	; Resets link's animation if he's using an item, maybe?
+	call clearVar3fForParentItems		; $5666
+
+	call clearPegasusSeedCounter		; $5669
+
+	ld hl,w1Link.z		; $566c
+	xor a			; $566f
+	ldi (hl),a		; $5670
+	ldi (hl),a		; $5671
+
+	jp objectSetVisiblec2		; $5672
+
+@state1:
+	ld a,(wPaletteThread_mode)		; $5675
+	or a			; $5678
+	ret nz			; $5679
+
+	call retIfTextIsActive		; $567a
+
+	ld a,(wScrollMode)		; $567d
+	and $0e			; $5680
+	ret nz			; $5682
+
+	ld a,(wDisabledObjects)		; $5683
+	and $81			; $5686
+	ret nz			; $5688
+
+	; Disable link's collisions?
+	ld hl,w1Link.collisionType		; $5689
+	res 7,(hl)		; $568c
+
+	xor a			; $568e
+	ld l,<w1Link.knockbackCounter		; $568f
+	ldi (hl),a		; $5691
+
+	; Check if on the center of the tile (y)
+	ld h,d			; $5692
+	ld l,SpecialObject.yh		; $5693
+	ldi a,(hl)		; $5695
+	ld b,a			; $5696
+	and $0f			; $5697
+	cp $08			; $5699
+	jr nz,++		; $569b
+
+	; Check if on the center of the tile (x)
+	inc l			; $569d
+	ldi a,(hl)		; $569e
+	ld c,a			; $569f
+	and $0f			; $56a0
+	cp $08			; $56a2
+	jr nz,++		; $56a4
+
+	; Minecart is centered on the tile
+
+	call _minecartCheckCollisions		; $56a6
+	jr c,@minecartStopped	; $56a9
+
+	; Compare direction to angle, ensure they're synchronized
+	ld h,d			; $56ab
+	ld l,SpecialObject.direction		; $56ac
+	ldi a,(hl)		; $56ae
+	swap a			; $56af
+	rrca			; $56b1
+	cp (hl)			; $56b2
+	jr z,++			; $56b3
+
+	ldd (hl),a		; $56b5
+	ld a,(hl)		; $56b6
+	call specialObjectSetAnimation		; $56b7
+
+++
+	ld h,d			; $56ba
+	ld l,SpecialObject.var35		; $56bb
+	dec (hl)		; $56bd
+	bit 7,(hl)		; $56be
+	jr z,+			; $56c0
+
+	ld (hl),$1a		; $56c2
+	ld a,SND_MINECART		; $56c4
+	call playSound		; $56c6
++
+	call objectApplySpeed		; $56c9
+	jp specialObjectAnimate		; $56cc
+
+@minecartStopped:
+	; Go to state $02.
+	; State $02 doesn't exist, so, good thing this is getting deleted anyway.
+	ld e,SpecialObject.state		; $56cf
+	ld a,$02		; $56d1
+	ld (de),a		; $56d3
+
+	call clearVar3fForParentItems		; $56d4
+
+	; Force link to jump, lock his direction?
+	ld a,$81		; $56d7
+	ld (wLinkInAir),a		; $56d9
+
+	; Copy / initialize various link variables
+
+	ld hl,w1Link.angle		; $56dc
+	ld e,SpecialObject.angle		; $56df
+	ld a,(de)		; $56e1
+	ld (hl),a		; $56e2
+
+	ld l,<w1Link.yh		; $56e3
+	ld a,(hl)		; $56e5
+	add $06			; $56e6
+	ld (hl),a		; $56e8
+
+	ld l,<w1Link.zh		; $56e9
+	ld (hl),$fa		; $56eb
+
+	ld l,<w1Link.speed		; $56ed
+	ld (hl),SPEED_80		; $56ef
+
+	ld l,<w1Link.speedZ		; $56f1
+	ld (hl),$40		; $56f3
+	inc l			; $56f5
+	ld (hl),$fe		; $56f6
+
+	; Re-enable terrain effects (shadow)
+	ld l,<w1Link.visible		; $56f8
+	set 6,(hl)		; $56fa
+
+	; Change main object back to w1Link ($d000) instead of this object ($d100)
+	ld a,>w1Link		; $56fc
+	ld (wLinkObjectIndex),a		; $56fe
+	call setCameraFocusedObjectToLink		; $5701
+
+	; Create the "interaction" minecart to replace the "special object" minecart
+	ld b,INTERACID_MINECART		; $5704
+	call objectCreateInteractionWithSubid00		; $5706
+	jp objectDelete_useActiveObjectType		; $5709
+
+;;
+; Check for collisions, check the track for changing direction.
+; @param[out] cflag Set if the minecart should stop (reached a platform)
+; @addr{570c}
+_minecartCheckCollisions:
+	; Get minecart position in c, tile it's on in e
+	call getTileAtPosition		; $570c
+	ld e,a			; $570f
+	ld c,l			; $5710
+
+	; Try to find the relevant data in @trackData based on the tile the minecart is
+	; currently on.
+	ld h,d			; $5711
+	ld l,SpecialObject.direction		; $5712
+	ld a,(hl)		; $5714
+	swap a			; $5715
+	ld hl,@trackData		; $5717
+	rst_addAToHl			; $571a
+--
+	ldi a,(hl)		; $571b
+	or a			; $571c
+	jr z,@noTrackFound		; $571d
+
+	cp e			; $571f
+	jr z,++			; $5720
+
+	ld a,$04		; $5722
+	rst_addAToHl			; $5724
+	jr --		; $5725
+
+	; Found a matching tile in @trackData
+++
+	; Add value to c to get the position of the next tile the minecart will move to.
+	ldi a,(hl)		; $5727
+	add c			; $5728
+	ld c,a			; $5729
+	ldh (<hFF8B),a	; $572a
+
+	; Check for the edge of the room
+	ld b,>wRoomCollisions		; $572c
+	ld a,(bc)		; $572e
+	cp $ff			; $572f
+	ret z			; $5731
+
+	; Check for a platform to disembark at
+	ld b,>wRoomLayout		; $5732
+	ld a,(bc)		; $5734
+	cp TILEINDEX_MINECART_PLATFORM			; $5735
+	jr z,@stopMinecart	; $5737
+
+	; c will now store the value of the next tile.
+	ld c,a			; $5739
+
+	; Check the next 3 bytes of @trackData to see if the next track tile is acceptable
+	ld b,$03		; $573a
+--
+	ldi a,(hl)		; $573c
+	cp c			; $573d
+	jr z,@updateDirection	; $573e
+	dec b			; $5740
+	jr nz,--		; $5741
+	jr @noTrackFound		; $5743
+
+@stopMinecart:
+	; Set carry flag to give the signal that the ride is over.
+	scf			; $5745
+	ret			; $5746
+
+@updateDirection:
+	ld a,e			; $5747
+	sub TILEINDEX_TRACK_TL		; $5748
+	cp TILEINDEX_MINECART_PLATFORM - TILEINDEX_TRACK_TL	; $574a
+	jr c,++			; $574c
+
+@noTrackFound:
+	; Index $06 will jump to @notTrack.
+	ld a,$06		; $574e
+++
+	ld e,SpecialObject.direction		; $5750
+	rst_jumpTable			; $5752
+.dw @trackTL
+.dw @trackBR
+.dw @trackBL
+.dw @trackTR
+.dw @trackHorizontal
+.dw @trackVertical
+.dw @notTrack
+
+@trackTL:
+@trackBR:
+	ld a,(de)		; $5761
+	xor $01			; $5762
+	ld (de),a		; $5764
+	ret			; $5765
+
+@trackBL:
+@trackTR:
+	ld a,(de)		; $5766
+	xor $03			; $5767
+	ld (de),a		; $5769
+	ret			; $576a
+
+@trackHorizontal:
+	ld a,(de)		; $576b
+	and $02			; $576c
+	or $01			; $576e
+	ld (de),a		; $5770
+	ret			; $5771
+
+@trackVertical:
+	ld a,(de)		; $5772
+	and $02			; $5773
+	ld (de),a		; $5775
+	ret			; $5776
+
+@notTrack:
+	call @checkMinecartDoor		; $5777
+	jr nc,+			; $577a
+
+	; Next tile is a minecart door, keep going
+	xor a			; $577c
+	ret			; $577d
++
+	; Reverse direction
+	ld a,(de)		; $577e
+	xor $02			; $577f
+	ld (de),a		; $5781
+	ret			; $5782
+
+; b0: Tile to check for ($00 to end list)
+; b1: Value to add to position (where the next tile is)
+; b2-b4: Other tiles that are allowed to link to the current tile
+; @addr{5783}
+@trackData:
+	; DIR_UP
+	.db TILEINDEX_TRACK_VERTICAL $f0 TILEINDEX_TRACK_VERTICAL   TILEINDEX_TRACK_TL TILEINDEX_TRACK_TR
+	.db TILEINDEX_TRACK_TL       $01 TILEINDEX_TRACK_HORIZONTAL TILEINDEX_TRACK_BR TILEINDEX_TRACK_TR
+	.db TILEINDEX_TRACK_TR       $ff TILEINDEX_TRACK_HORIZONTAL TILEINDEX_TRACK_BL TILEINDEX_TRACK_TL
+	.db $00
+
+	; DIR_RIGHT
+	.db TILEINDEX_TRACK_HORIZONTAL $01 TILEINDEX_TRACK_HORIZONTAL TILEINDEX_TRACK_BR TILEINDEX_TRACK_TR
+	.db TILEINDEX_TRACK_BR         $f0 TILEINDEX_TRACK_VERTICAL   TILEINDEX_TRACK_TL TILEINDEX_TRACK_TR
+	.db TILEINDEX_TRACK_TR         $10 TILEINDEX_TRACK_VERTICAL   TILEINDEX_TRACK_BL TILEINDEX_TRACK_BR
+	.db $00
+
+	; DIR_DOWN
+	.db TILEINDEX_TRACK_VERTICAL $10 TILEINDEX_TRACK_VERTICAL   TILEINDEX_TRACK_BR TILEINDEX_TRACK_BL
+	.db TILEINDEX_TRACK_BR       $ff TILEINDEX_TRACK_HORIZONTAL TILEINDEX_TRACK_BL TILEINDEX_TRACK_TL
+	.db TILEINDEX_TRACK_BL       $01 TILEINDEX_TRACK_HORIZONTAL TILEINDEX_TRACK_BR TILEINDEX_TRACK_TR
+	.db $00
+
+	; DIR_LEFT
+	.db TILEINDEX_TRACK_HORIZONTAL $ff TILEINDEX_TRACK_HORIZONTAL TILEINDEX_TRACK_BL TILEINDEX_TRACK_TL
+	.db TILEINDEX_TRACK_BL         $f0 TILEINDEX_TRACK_VERTICAL   TILEINDEX_TRACK_TR TILEINDEX_TRACK_TL
+	.db TILEINDEX_TRACK_TL         $10 TILEINDEX_TRACK_VERTICAL   TILEINDEX_TRACK_BR TILEINDEX_TRACK_BL
+	.db $00
+
+;;
+; @param	c	Next tile
+; @param[out]	cflag	Set if the next tile is a minecart door that will open
+; @addr{57c3}
+@checkMinecartDoor:
+	; Check if the next tile is a minecart door
+	ld a,c			; $57c3
+	sub TILEINDEX_MINECART_DOOR_UP			; $57c4
+	cp $04			; $57c6
+	ret nc			; $57c8
+
+	; Calculate the angle for the interaction to be created (?)
+	add $0c			; $57c9
+	add a			; $57cb
+	ld b,a			; $57cc
+
+	call getFreeInteractionSlot		; $57cd
+	ret nz			; $57d0
+
+	ld (hl),INTERACID_DOOR_CONTROLLER		; $57d1
+
+	ld l,Interaction.angle		; $57d3
+	ld (hl),b		; $57d5
+
+	; Set position (this interaction stuffs both X and Y in the yh variable)
+	ld l,Interaction.yh		; $57d6
+	ldh a,(<hFF8B)	; $57d8
+	ld (hl),a		; $57da
+
+	scf			; $57db
+	ret			; $57dc
+
+;;
+; Creates an invisible item object which stays with the minecart to give it collision with enemies
+; @addr{57dd}
+_minecartCreateCollisionItem:
+	; Check if the "item" has been created already
+	ld e,SpecialObject.var36		; $57dd
+	ld a,(de)		; $57df
+	or a			; $57e0
+	ret nz			; $57e1
+
+	call getFreeItemSlot		; $57e2
+	ret nz			; $57e5
+
+	; Mark it as created
+	ld e,SpecialObject.var36		; $57e6
+	ld a,$01		; $57e8
+	ld (de),a		; $57ea
+
+	; Set Item.enabled
+	ldi (hl),a		; $57eb
+
+	; Set Item.id
+	ld (hl),ITEMID_MINECART_COLLISION		; $57ec
+	ret			; $57ee
+
+;;
+; @addr{57ef}
+specialObjectCode_raft:
+.ifdef ROM_AGES
+	ld a,d			; $57ef
+	ld (wLinkRidingObject),a		; $57f0
+	ld e,Item.state		; $57f3
+	ld a,(de)		; $57f5
+	rst_jumpTable			; $57f6
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+
+@state0:
+	callab bank5.specialObjectSetOamVariables		; $57ff
+	xor a			; $5807
+	call specialObjectSetAnimation		; $5808
+	call itemIncState		; $580b
+
+	ld l,SpecialObject.collisionType		; $580e
+	ld a,$80|ITEMCOLLISION_LINK		; $5810
+	ldi (hl),a		; $5812
+
+	; collisionRadiusY/X
+	inc l			; $5813
+	ld a,$06		; $5814
+	ldi (hl),a		; $5816
+	ldi (hl),a		; $5817
+
+	ld l,SpecialObject.counter1		; $5818
+	ld (hl),$0c		; $581a
+
+	ld a,d			; $581c
+	ld (wLinkObjectIndex),a		; $581d
+	call setCameraFocusedObjectToLink		; $5820
+	jp @saveRaftPosition		; $5823
+
+
+; State 1: riding the raft
+@state1:
+	ld a,(wPaletteThread_mode)		; $5826
+	or a			; $5829
+	ret nz			; $582a
+	call retIfTextIsActive		; $582b
+	ld a,(wScrollMode)		; $582e
+	and $0e			; $5831
+	ret nz			; $5833
+	ld a,(wDisabledObjects)		; $5834
+	and $81			; $5837
+	ret nz			; $5839
+
+	ld a,(wLinkForceState)		; $583a
+	cp LINK_STATE_RESPAWNING			; $583d
+	jr z,@respawning			; $583f
+	ld a,(w1Link.state)		; $5841
+	cp LINK_STATE_RESPAWNING			; $5844
+	jr nz,++		; $5846
+
+@respawning:
+	ld hl,wLinkLocalRespawnY		; $5848
+	ld e,SpecialObject.yh		; $584b
+	ldi a,(hl)		; $584d
+	ld (de),a		; $584e
+	ld e,SpecialObject.xh		; $584f
+	ldi a,(hl)		; $5851
+	ld (de),a		; $5852
+	jp objectSetInvisible		; $5853
+
+++
+	; Update direction; if changed, re-initialize animation
+	call updateCompanionDirectionFromAngle		; $5856
+	jr c,+			; $5859
+	call specialObjectAnimate		; $585b
+	jr ++			; $585e
++
+	call specialObjectSetAnimation		; $5860
+++
+	call @raftCalculateAdjacentWallsBitset		; $5863
+	call @transferKnockbackToLink		; $5866
+	ld hl,w1Link.knockbackCounter		; $5869
+	ld a,(hl)		; $586c
+	or a			; $586d
+	jr z,@updateMovement	; $586e
+
+	; Experiencing knockback; decrement counter, apply knockback speed
+	dec (hl)		; $5870
+	dec l			; $5871
+	ld c,(hl)		; $5872
+	ld b,SPEED_100		; $5873
+	callab bank5.specialObjectUpdatePositionGivenVelocity		; $5875
+
+	ld a,$88		; $587d
+	ld (wcc92),a		; $587f
+	jr @notDismounting		; $5882
+
+@updateMovement:
+	ld e,SpecialObject.speed		; $5884
+	ld a,SPEED_e0		; $5886
+	ld (de),a		; $5888
+
+	ld e,SpecialObject.angle		; $5889
+	ld a,(wLinkAngle)		; $588b
+	ld (de),a		; $588e
+	bit 7,a			; $588f
+	jr nz,@notDismounting	; $5891
+	ld a,(wLinkImmobilized)		; $5893
+	or a			; $5896
+	jr nz,@notDismounting	; $5897
+
+	callab bank5.specialObjectUpdatePosition	; $5899
+	ld a,c			; $58a1
+	or a			; $58a2
+	jr z,@positionUnchanged	; $58a3
+
+	ld a,$08		; $58a5
+	ld (wcc92),a		; $58a7
+
+
+	; If not dismounting this frame, reset 'dismounting angle' (var3e) and
+	; 'dismounting counter' (var3f).
+@notDismounting:
+	ld h,d			; $58aa
+	ld l,SpecialObject.var3e		; $58ab
+	ld a,$ff		; $58ad
+	ldi (hl),a		; $58af
+
+	; [var3f] = $04
+	ld (hl),$04		; $58b0
+	ret			; $58b2
+
+
+	; If position is unchanged, check whether to dismount
+@positionUnchanged:
+	; Return if "dismount angle" changed from before
+	ld h,d			; $58b3
+	ld e,SpecialObject.angle		; $58b4
+	ld a,(de)		; $58b6
+	ld l,SpecialObject.var3e		; $58b7
+	cp (hl)			; $58b9
+	ldi (hl),a		; $58ba
+	ret nz			; $58bb
+
+	; [var3f]--
+	dec (hl)		; $58bc
+	ret nz			; $58bd
+
+	; Get angle from var3e
+	dec e			; $58be
+	ld a,(de)		; $58bf
+	ld hl,@dismountTileOffsets		; $58c0
+	rst_addDoubleIndex			; $58c3
+
+	; Get Y/X offset from this object in 'bc'
+	ldi a,(hl)		; $58c4
+	ld c,(hl)		; $58c5
+	ld h,d			; $58c6
+	ld l,SpecialObject.yh		; $58c7
+	add (hl)		; $58c9
+	ld b,a			; $58ca
+	ld l,SpecialObject.xh		; $58cb
+	ld a,(hl)		; $58cd
+	add c			; $58ce
+	ld c,a			; $58cf
+
+	; If Link can walk on the adjacent tile, check whether to dismount
+	call getTileAtPosition		; $58d0
+	ld h,>wRoomCollisions		; $58d3
+	ld a,(hl)		; $58d5
+	or a			; $58d6
+	jr z,@checkDismount	; $58d7
+	cp SPECIALCOLLISION_STAIRS			; $58d9
+	jr nz,@notDismounting	; $58db
+
+@checkDismount:
+	callab bank5.calculateAdjacentWallsBitset		; $58dd
+	ldh a,(<hFF8B)	; $58e5
+	or a			; $58e7
+	jr nz,@notDismounting	; $58e8
+
+	; Disable menu, force Link to walk for 14 frames
+	inc a			; $58ea
+	ld (wMenuDisabled),a		; $58eb
+	ld a,LINK_STATE_FORCE_MOVEMENT		; $58ee
+	ld (wLinkForceState),a		; $58f0
+	ld a,14		; $58f3
+	ld (wLinkStateParameter),a		; $58f5
+
+	; Update angle; copy direction + angle to Link
+	call itemUpdateAngle		; $58f8
+	ld e,l			; $58fb
+	ld h,>w1Link		; $58fc
+	ld a,(de)		; $58fe
+	ldi (hl),a		; $58ff
+	inc e			; $5900
+	ld a,(de)		; $5901
+	ldi (hl),a		; $5902
+
+	; Link is no longer riding the raft, set object index to $d0
+	ld a,h			; $5903
+	ld (wLinkObjectIndex),a		; $5904
+
+	call setCameraFocusedObjectToLink		; $5907
+	call itemIncState		; $590a
+	jr @saveRaftPosition		; $590d
+
+
+; These are offsets from the raft's position at which to check whether the tile there can
+; be dismounted onto. (the only requirement is that it's non-solid.)
+@dismountTileOffsets:
+	.db $f7 $00 ; DIR_UP
+	.db $fd $08 ; DIR_RIGHT
+	.db $08 $00 ; DIR_DOWN
+	.db $fd $f7 ; DIR_LEFT
+
+
+; State 2: started dismounting
+@state2:
+	ld a,$80		; $5917
+	ld (wcc92),a		; $5919
+	call itemDecCounter1		; $591c
+	ret nz			; $591f
+
+	xor a			; $5920
+	ld (wMenuDisabled),a		; $5921
+	ld e,SpecialObject.enabled		; $5924
+	inc a			; $5926
+	ld (de),a		; $5927
+	call updateLinkLocalRespawnPosition		; $5928
+	call itemIncState		; $592b
+
+
+; State 3: replace self with raft interaction
+@state3:
+	ldbc INTERACID_RAFT, $02		; $592e
+	call objectCreateInteraction		; $5931
+	ret nz			; $5934
+	ld e,SpecialObject.direction		; $5935
+	ld a,(de)		; $5937
+	ld l,Interaction.direction		; $5938
+	ld (hl),a		; $593a
+	jp itemDelete		; $593b
+
+;;
+; @addr{593e}
+@saveRaftPosition:
+	ld bc,wLastAnimalMountPointY		; $593e
+	ld h,d			; $5941
+	ld l,SpecialObject.yh		; $5942
+	ldi a,(hl)		; $5944
+	ld (bc),a		; $5945
+	inc c			; $5946
+	inc l			; $5947
+	ld a,(hl)		; $5948
+	ld (bc),a		; $5949
+	jpab bank5.saveLinkLocalRespawnAndCompanionPosition		; $594a
+
+;;
+; Calculates the "adjacent walls bitset" for the raft specifically, treating everything as
+; solid except for water tiles.
+;
+; @addr{5952}
+@raftCalculateAdjacentWallsBitset:
+	ld a,$01		; $5952
+	ldh (<hFF8B),a	; $5954
+	ld hl,@@wallPositionOffsets		; $5956
+--
+	ldi a,(hl)		; $5959
+	ld b,a			; $595a
+	ldi a,(hl)		; $595b
+	ld c,a			; $595c
+	push hl			; $595d
+	call objectGetRelativeTile		; $595e
+	or a			; $5961
+	jr z,+			; $5962
+	ld e,a			; $5964
+	ld hl,@@validTiles		; $5965
+	call findByteAtHl		; $5968
+	ccf			; $596b
++
+	pop hl			; $596c
+	ldh a,(<hFF8B)	; $596d
+	rla			; $596f
+	ldh (<hFF8B),a	; $5970
+	jr nc,--		; $5972
+
+	ld e,SpecialObject.adjacentWallsBitset		; $5974
+	ld (de),a		; $5976
+	ret			; $5977
+
+; Offsets at which to check for solid walls (8 positions to check)
+@@wallPositionOffsets:
+	.db $fa $fb
+	.db $fa $04
+	.db $05 $fb
+	.db $05 $04
+	.db $fb $fa
+	.db $04 $fa
+	.db $fb $05
+	.db $04 $05
+
+
+; A list of tiles that the raft may cross.
+@@validTiles:
+	.db TILEINDEX_DEEP_WATER
+	.db TILEINDEX_CURRENT_UP
+	.db TILEINDEX_CURRENT_DOWN
+	.db TILEINDEX_CURRENT_LEFT
+	.db TILEINDEX_CURRENT_RIGHT
+	.db TILEINDEX_WATER
+	.db TILEINDEX_WHIRLPOOL
+	.db $00
+
+
+;;
+; @addr{5990}
+@transferKnockbackToLink:
+	; Check Link's invincibilityCounter and var2a
+	ld hl,w1Link.invincibilityCounter		; $5990
+	ldd a,(hl)		; $5993
+	or (hl)			; $5994
+	jr nz,@@end		; $5995
+
+	; Ret if raft's var2a is zero
+	ld e,l			; $5997
+	ld a,(de)		; $5998
+	or a			; $5999
+	ret z			; $599a
+
+	; Transfer raft's var2a, invincibilityCounter, knockbackCounter, knockbackAngle,
+	; and damageToApply to Link.
+	ldi (hl),a		; $599b
+	inc e			; $599c
+	ld a,(de)		; $599d
+	ldi (hl),a		; $599e
+	inc e			; $599f
+	ld a,(de)		; $59a0
+	ldi (hl),a		; $59a1
+	inc e			; $59a2
+	ld a,(de)		; $59a3
+	ldi (hl),a		; $59a4
+	ld e,SpecialObject.damageToApply		; $59a5
+	ld a,(de)		; $59a7
+	ld l,e			; $59a8
+	ld (hl),a		; $59a9
+
+@@end:
+	; Clear raft's invincibilityCounter and var2a
+	ld e,SpecialObject.var2a		; $59aa
+	xor a			; $59ac
+	ld (de),a		; $59ad
+	inc e			; $59ae
+	ld (de),a		; $59af
+	ret			; $59b0
+.endif
 
 	.include "data/seasons/specialObjectAnimationData.s"
-
-specialObjectCode_companionCutscene:
-	ld hl,$d101		; $69c9
-	ld a,(hl)		; $69cc
-	sub $0f			; $69cd
-	rst_jumpTable			; $69cf
-	ret c			; $69d0
-	ld l,c			; $69d1
-	ld a,(bc)		; $69d2
-	ld l,h			; $69d3
-	ld h,h			; $69d4
-	ld l,e			; $69d5
-.DB $f4				; $69d6
-	ld l,h			; $69d7
-	ld e,$04		; $69d8
-	ld a,(de)		; $69da
-	ld a,(de)		; $69db
-	rst_jumpTable			; $69dc
-	pop hl			; $69dd
-	ld l,c			; $69de
-	dec d			; $69df
-	ld l,d			; $69e0
-	call $6a07		; $69e1
-	ld h,d			; $69e4
-	ld l,$02		; $69e5
-	ld a,(hl)		; $69e7
-	or a			; $69e8
-	jr z,_label_06_220	; $69e9
-	ld l,$10		; $69eb
-	ld (hl),$50		; $69ed
-	ld l,$09		; $69ef
-	ld (hl),$08		; $69f1
-	ld bc,$fe00		; $69f3
-	call objectSetSpeedZ		; $69f6
-	ld a,$02		; $69f9
-	jp specialObjectSetAnimation		; $69fb
-_label_06_220:
-	xor a			; $69fe
-	ld ($cbb5),a		; $69ff
-	ld a,$1e		; $6a02
-	jp specialObjectSetAnimation		; $6a04
-	ld a,$01		; $6a07
-_label_06_221:
-	ld (de),a		; $6a09
-	ld hl,$41b5		; $6a0a
-	ld e,$05		; $6a0d
-	call interBankCall		; $6a0f
-	jp objectSetVisiblec0		; $6a12
-	ld e,$02		; $6a15
-	ld a,(de)		; $6a17
-	rst_jumpTable			; $6a18
-	dec e			; $6a19
-	ld l,d			; $6a1a
-	ld h,l			; $6a1b
-	ld l,d			; $6a1c
-	ld e,$05		; $6a1d
-	ld a,(de)		; $6a1f
-	rst_jumpTable			; $6a20
-	dec h			; $6a21
-	ld l,d			; $6a22
-	ld b,h			; $6a23
-	ld l,d			; $6a24
-	call specialObjectAnimate		; $6a25
-	ld h,d			; $6a28
-	ld l,$21		; $6a29
-	ld a,(hl)		; $6a2b
-	or a			; $6a2c
-	jr z,_label_06_222	; $6a2d
-	ld a,$01		; $6a2f
-	ld ($cbb5),a		; $6a31
-	ld l,$05		; $6a34
-	inc (hl)		; $6a36
-_label_06_222:
-	ld c,$20		; $6a37
-	call objectUpdateSpeedZ_paramC		; $6a39
-	ret nz			; $6a3c
-	ld h,d			; $6a3d
-	ld bc,$ff20		; $6a3e
-	jp objectSetSpeedZ		; $6a41
-	call specialObjectAnimate		; $6a44
-	ld h,d			; $6a47
-	ld l,$21		; $6a48
-	ld a,(hl)		; $6a4a
-	or a			; $6a4b
-	ret z			; $6a4c
-	ld (hl),$00		; $6a4d
-	inc a			; $6a4f
-	jr z,_label_06_223	; $6a50
-	call getFreeInteractionSlot		; $6a52
-	ret nz			; $6a55
-	ld (hl),$07		; $6a56
-	ld bc,$f812		; $6a58
-	jp objectCopyPositionWithOffset		; $6a5b
-_label_06_223:
-	ld l,$05		; $6a5e
-	ld (hl),$00		; $6a60
-	jp $69fe		; $6a62
-	ld e,$05		; $6a65
-	ld a,(de)		; $6a67
-	rst_jumpTable			; $6a68
-	ld a,a			; $6a69
-	ld l,d			; $6a6a
-	add d			; $6a6b
-	ld l,d			; $6a6c
-	or h			; $6a6d
-	ld l,d			; $6a6e
-	cp l			; $6a6f
-	ld l,d			; $6a70
-	jp z,$dd6a		; $6a71
-	ld l,d			; $6a74
-	ld ($126a),a		; $6a75
-	ld l,e			; $6a78
-	inc h			; $6a79
-	ld l,e			; $6a7a
-	add hl,sp		; $6a7b
-	ld l,e			; $6a7c
-	ld e,d			; $6a7d
-	ld l,e			; $6a7e
-	ld l,$05		; $6a7f
-	inc (hl)		; $6a81
-	call objectApplySpeed		; $6a82
-	ld e,$0d		; $6a85
-	ld a,(de)		; $6a87
-	bit 7,a			; $6a88
-	jr nz,_label_06_224	; $6a8a
-	ld hl,$d00d		; $6a8c
-	ld b,(hl)		; $6a8f
-	add $18			; $6a90
-	cp b			; $6a92
-	jr c,_label_06_224	; $6a93
-	call itemIncState2		; $6a95
-	inc (hl)		; $6a98
-	inc l			; $6a99
-	ld (hl),$3c		; $6a9a
-	ld l,$0e		; $6a9c
-	xor a			; $6a9e
-	ldi (hl),a		; $6a9f
-	ld (hl),a		; $6aa0
-	jp specialObjectAnimate		; $6aa1
-_label_06_224:
-	ld c,$40		; $6aa4
-	call objectUpdateSpeedZ_paramC		; $6aa6
-	ret nz			; $6aa9
-	call itemIncState2		; $6aaa
-	ld l,$06		; $6aad
-	ld (hl),$08		; $6aaf
-	jp specialObjectAnimate		; $6ab1
-	call itemDecCounter1		; $6ab4
-	ret nz			; $6ab7
-	dec l			; $6ab8
-	dec (hl)		; $6ab9
-	jp $69f3		; $6aba
-	call itemDecCounter1		; $6abd
-	ret nz			; $6ac0
-	ld (hl),$5a		; $6ac1
-	dec l			; $6ac3
-	inc (hl)		; $6ac4
-	ld a,$14		; $6ac5
-	jp specialObjectSetAnimation		; $6ac7
-	call specialObjectAnimate		; $6aca
-	call itemDecCounter1		; $6acd
-	ret nz			; $6ad0
-	ld (hl),$0c		; $6ad1
-	dec l			; $6ad3
-	inc (hl)		; $6ad4
-	ld a,$1f		; $6ad5
-	call specialObjectSetAnimation		; $6ad7
-	jp $6a52		; $6ada
-	call itemDecCounter1		; $6add
-	ret nz			; $6ae0
-	ld (hl),$3c		; $6ae1
-	dec l			; $6ae3
-	inc (hl)		; $6ae4
-	ld a,$1e		; $6ae5
-	jp specialObjectSetAnimation		; $6ae7
-	call itemDecCounter1		; $6aea
-	ret nz			; $6aed
-	ld (hl),$1e		; $6aee
-	dec l			; $6af0
-	inc (hl)		; $6af1
-	ld hl,$c6c5		; $6af2
-	ld (hl),$ff		; $6af5
-	ld a,$81		; $6af7
-	ld ($cc77),a		; $6af9
-	ld hl,$d010		; $6afc
-	ld (hl),$14		; $6aff
-	ld l,$14		; $6b01
-	ld (hl),$00		; $6b03
-	inc l			; $6b05
-	ld (hl),$fe		; $6b06
-	ld a,$18		; $6b08
-	ld ($d009),a		; $6b0a
-	ld a,$53		; $6b0d
-	jp playSound		; $6b0f
-	call itemDecCounter1		; $6b12
-	ret nz			; $6b15
-	ld (hl),$14		; $6b16
-	dec l			; $6b18
-	inc (hl)		; $6b19
-	xor a			; $6b1a
-	ld hl,$d01a		; $6b1b
-	ld (hl),a		; $6b1e
-	inc a			; $6b1f
-	ld ($cca4),a		; $6b20
-	ret			; $6b23
-	call itemDecCounter1		; $6b24
-	ret nz			; $6b27
-	dec l			; $6b28
-	inc (hl)		; $6b29
-	ld l,$09		; $6b2a
-	ld (hl),$18		; $6b2c
-	ld a,$1c		; $6b2e
-	call specialObjectSetAnimation		; $6b30
-	ld bc,$fe00		; $6b33
-	jp objectSetSpeedZ		; $6b36
-	call objectApplySpeed		; $6b39
-	ld e,$0d		; $6b3c
-	ld a,(de)		; $6b3e
-	sub $10			; $6b3f
-	rlca			; $6b41
-	jr nc,_label_06_225	; $6b42
-	ld hl,$cfdf		; $6b44
-	ld (hl),$01		; $6b47
-	ret			; $6b49
-_label_06_225:
-	ld c,$40		; $6b4a
-	call objectUpdateSpeedZ_paramC		; $6b4c
-	ret nz			; $6b4f
-	call itemIncState2		; $6b50
-	ld l,$06		; $6b53
-	ld (hl),$08		; $6b55
-	jp specialObjectAnimate		; $6b57
-	call itemDecCounter1		; $6b5a
-	ret nz			; $6b5d
-	ld l,$05		; $6b5e
-	dec (hl)		; $6b60
-	jp $6b2e		; $6b61
-	ld e,$04		; $6b64
-	ld a,(de)		; $6b66
-	rst_jumpTable			; $6b67
-	ld l,h			; $6b68
-	ld l,e			; $6b69
-	sub (hl)		; $6b6a
-	ld l,e			; $6b6b
-	call $6a07		; $6b6c
-	ld h,d			; $6b6f
-	ld l,$06		; $6b70
-	ld (hl),$5a		; $6b72
-	ld l,$10		; $6b74
-	ld (hl),$37		; $6b76
-	ld l,$36		; $6b78
-	ld (hl),$05		; $6b7a
-	ld l,$09		; $6b7c
-	ld (hl),$10		; $6b7e
-	ld l,$0e		; $6b80
-	ld (hl),$ff		; $6b82
-	inc l			; $6b84
-	ld (hl),$e0		; $6b85
-	call getFreeInteractionSlot		; $6b87
-	jr nz,_label_06_226	; $6b8a
-	ld (hl),$c0		; $6b8c
-	ld l,$57		; $6b8e
-	ld (hl),d		; $6b90
-_label_06_226:
-	ld a,$07		; $6b91
-	jp specialObjectSetAnimation		; $6b93
-	ld e,$05		; $6b96
-	ld a,(de)		; $6b98
-	or a			; $6b99
-	jr z,_label_06_227	; $6b9a
-	call specialObjectAnimate		; $6b9c
-	call objectApplySpeed		; $6b9f
-_label_06_227:
-	ld e,$05		; $6ba2
-	ld a,(de)		; $6ba4
-	rst_jumpTable			; $6ba5
-	or b			; $6ba6
-	ld l,e			; $6ba7
-	cp d			; $6ba8
-	ld l,e			; $6ba9
-	add $6b			; $6baa
-	sbc $6b			; $6bac
-	xor $6b			; $6bae
-	call itemDecCounter1		; $6bb0
-	ret nz			; $6bb3
-	ld (hl),$48		; $6bb4
-	ld l,$05		; $6bb6
-	inc (hl)		; $6bb8
-	ret			; $6bb9
-	call itemDecCounter1		; $6bba
-	ret nz			; $6bbd
-	ld (hl),$06		; $6bbe
-	ld l,$05		; $6bc0
-	inc (hl)		; $6bc2
-	jp $6d89		; $6bc3
-	ld h,d			; $6bc6
-	ld l,$09		; $6bc7
-	ld a,(hl)		; $6bc9
-	cp $10			; $6bca
-	jr z,_label_06_228	; $6bcc
-	ld l,$05		; $6bce
-	inc (hl)		; $6bd0
-	ret			; $6bd1
-_label_06_228:
-	ld l,$06		; $6bd2
-	dec (hl)		; $6bd4
-	ret nz			; $6bd5
-	call $6da0		; $6bd6
-	ld (hl),$06		; $6bd9
-	jp $6d89		; $6bdb
-	ld h,d			; $6bde
-	ld l,$09		; $6bdf
-	ld a,(hl)		; $6be1
-	cp $10			; $6be2
-	jr nz,_label_06_228	; $6be4
-	ld l,$05		; $6be6
-	inc (hl)		; $6be8
-	ld a,$07		; $6be9
-	jp specialObjectSetAnimation		; $6beb
-	ld e,$0b		; $6bee
-	ld a,(de)		; $6bf0
-	cp $b0			; $6bf1
-	ret c			; $6bf3
-	ld hl,$d101		; $6bf4
-	ld b,$3f		; $6bf7
-	call clearMemory		; $6bf9
-	ld hl,$d101		; $6bfc
-	ld (hl),$10		; $6bff
-	ld l,$0b		; $6c01
-	ld (hl),$e8		; $6c03
-	inc l			; $6c05
-	inc l			; $6c06
-	ld (hl),$28		; $6c07
-	ret			; $6c09
-	ld e,$04		; $6c0a
-	ld a,(de)		; $6c0c
-	rst_jumpTable			; $6c0d
-	ld (de),a		; $6c0e
-	ld l,h			; $6c0f
-	ld h,$6c		; $6c10
-	call $6a07		; $6c12
-	ld h,d			; $6c15
-	ld l,$10		; $6c16
-	ld (hl),$28		; $6c18
-	ld l,$0e		; $6c1a
-	ld (hl),$e0		; $6c1c
-	inc l			; $6c1e
-	ld (hl),$ff		; $6c1f
-	ld a,$19		; $6c21
-	jp specialObjectSetAnimation		; $6c23
-	ld e,$05		; $6c26
-	ld a,(de)		; $6c28
-	rst_jumpTable			; $6c29
-	jr c,$6c		; $6c2a
-	ld h,h			; $6c2c
-	ld l,h			; $6c2d
-	add a			; $6c2e
-	ld l,h			; $6c2f
-	sub a			; $6c30
-	ld l,h			; $6c31
-	and e			; $6c32
-	ld l,h			; $6c33
-	cp d			; $6c34
-	ld l,h			; $6c35
-	add $6c			; $6c36
-	ld h,d			; $6c38
-	ld l,$05		; $6c39
-	inc (hl)		; $6c3b
-	ld l,$07		; $6c3c
-	ld a,(hl)		; $6c3e
-	cp $02			; $6c3f
-	jr nz,_label_06_229	; $6c41
-	push af			; $6c43
-	ld a,$1a		; $6c44
-	call specialObjectSetAnimation		; $6c46
-	pop af			; $6c49
-_label_06_229:
-	ld b,a			; $6c4a
-	add a			; $6c4b
-	add b			; $6c4c
-	ld hl,$6c5b		; $6c4d
-	rst_addAToHl			; $6c50
-	ldi a,(hl)		; $6c51
-	ld e,$09		; $6c52
-	ld (de),a		; $6c54
-	ld c,(hl)		; $6c55
-	inc hl			; $6c56
-	ld b,(hl)		; $6c57
-	jp objectSetSpeedZ		; $6c58
-	inc c			; $6c5b
-	ld b,b			; $6c5c
-.DB $fd				; $6c5d
-	inc c			; $6c5e
-	and b			; $6c5f
-.DB $fd				; $6c60
-	inc de			; $6c61
-	add b			; $6c62
-	cp $cd			; $6c63
-	ld (hl),$2a		; $6c65
-	call objectApplySpeed		; $6c67
-	ld c,$18		; $6c6a
-	call objectUpdateSpeedZ_paramC		; $6c6c
-	ret nz			; $6c6f
-	ld h,d			; $6c70
-	ld l,$07		; $6c71
-	inc (hl)		; $6c73
-	ld a,(hl)		; $6c74
-	ld l,$05		; $6c75
-	cp $03			; $6c77
-	jr z,_label_06_230	; $6c79
-	dec (hl)		; $6c7b
-	ld l,$06		; $6c7c
-	ld (hl),$08		; $6c7e
-	ret			; $6c80
-_label_06_230:
-	inc (hl)		; $6c81
-	ld l,$06		; $6c82
-	ld (hl),$06		; $6c84
-	ret			; $6c86
-	call itemDecCounter1		; $6c87
-	ret nz			; $6c8a
-	ld l,$05		; $6c8b
-	inc (hl)		; $6c8d
-	ld l,$06		; $6c8e
-	ld (hl),$14		; $6c90
-	ld a,$27		; $6c92
-	jp specialObjectSetAnimation		; $6c94
-	call itemDecCounter1		; $6c97
-	ret nz			; $6c9a
-	ld l,$05		; $6c9b
-	inc (hl)		; $6c9d
-	ld l,$06		; $6c9e
-	ld (hl),$78		; $6ca0
-	ret			; $6ca2
-	call specialObjectAnimate		; $6ca3
-	call itemDecCounter1		; $6ca6
-	ret nz			; $6ca9
-	ld l,$05		; $6caa
-	inc (hl)		; $6cac
-	ld l,$06		; $6cad
-	ld (hl),$3c		; $6caf
-	ld l,$09		; $6cb1
-	ld (hl),$0b		; $6cb3
-	ld l,$10		; $6cb5
-	ld (hl),$14		; $6cb7
-	ret			; $6cb9
-	call itemDecCounter1		; $6cba
-	ret nz			; $6cbd
-	ld l,$05		; $6cbe
-	inc (hl)		; $6cc0
-	ld a,$26		; $6cc1
-	jp specialObjectSetAnimation		; $6cc3
-	call specialObjectAnimate		; $6cc6
-	call objectApplySpeed		; $6cc9
-	ld e,$0d		; $6ccc
-	ld a,(de)		; $6cce
-	cp $78			; $6ccf
-	jr nz,_label_06_231	; $6cd1
-	ld a,$05		; $6cd3
-	jp specialObjectSetAnimation		; $6cd5
-_label_06_231:
-	cp $b0			; $6cd8
-	ret c			; $6cda
-	ld hl,$d101		; $6cdb
-	ld b,$3f		; $6cde
-	call clearMemory		; $6ce0
-	ld hl,$d101		; $6ce3
-	ld (hl),$0f		; $6ce6
-	inc l			; $6ce8
-	ld (hl),$01		; $6ce9
-	ld l,$0b		; $6ceb
-	ld (hl),$48		; $6ced
-	inc l			; $6cef
-	inc l			; $6cf0
-	ld (hl),$d8		; $6cf1
-	ret			; $6cf3
-	ld e,$04		; $6cf4
-	ld a,(de)		; $6cf6
-	ld a,(de)		; $6cf7
-	rst_jumpTable			; $6cf8
-.DB $fd				; $6cf9
-	ld l,h			; $6cfa
-	inc h			; $6cfb
-	ld l,l			; $6cfc
-	call $6a07		; $6cfd
-	ld h,d			; $6d00
-	ld l,$10		; $6d01
-	ld (hl),$32		; $6d03
-	ld l,$36		; $6d05
-	ld (hl),$04		; $6d07
-	ld l,$02		; $6d09
-	ld a,(hl)		; $6d0b
-	or a			; $6d0c
-	ld a,$f0		; $6d0d
-	jr z,_label_06_232	; $6d0f
-	ld a,d			; $6d11
-	ld ($cc48),a		; $6d12
-	ld a,$d0		; $6d15
-_label_06_232:
-	ld l,$0f		; $6d17
-	ld (hl),a		; $6d19
-	ld l,$09		; $6d1a
-	ld (hl),$18		; $6d1c
-	ld l,$02		; $6d1e
-	ld a,(hl)		; $6d20
-	jp $6d78		; $6d21
-	ld e,$02		; $6d24
-	ld a,(de)		; $6d26
-	rst_jumpTable			; $6d27
-	ld d,d			; $6d28
-	ld l,l			; $6d29
-	inc l			; $6d2a
-	ld l,l			; $6d2b
-	ld e,$05		; $6d2c
-	ld a,(de)		; $6d2e
-	rst_jumpTable			; $6d2f
-	ld (hl),$6d		; $6d30
-	ld h,d			; $6d32
-	ld l,l			; $6d33
-	ld (hl),a		; $6d34
-	ld l,l			; $6d35
-	ld a,($cfc0)		; $6d36
-	or a			; $6d39
-	jr z,_label_06_233	; $6d3a
-	call itemIncState2		; $6d3c
-	ld bc,$ff00		; $6d3f
-	call objectSetSpeedZ		; $6d42
-	ld l,$09		; $6d45
-	ld (hl),$0e		; $6d47
-	ld l,$10		; $6d49
-	ld (hl),$14		; $6d4b
-	ld a,$1b		; $6d4d
-	jp specialObjectSetAnimation		; $6d4f
-_label_06_233:
-	ld h,d			; $6d52
-	ld l,$02		; $6d53
-	ld a,(hl)		; $6d55
-	ld l,$06		; $6d56
-	dec (hl)		; $6d58
-	call z,$6d78		; $6d59
-	call objectApplySpeed		; $6d5c
-	jp specialObjectAnimate		; $6d5f
-	call objectApplySpeed		; $6d62
-	ld c,$20		; $6d65
-	call objectUpdateSpeedZAndBounce		; $6d67
-	jp nc,$6d74		; $6d6a
-	call itemIncState2		; $6d6d
-	ld l,$20		; $6d70
-	ld (hl),$01		; $6d72
-	jp specialObjectAnimate		; $6d74
-	ret			; $6d77
-	ld hl,$6da8		; $6d78
-	rst_addDoubleIndex			; $6d7b
-	ldi a,(hl)		; $6d7c
-	ld h,(hl)		; $6d7d
-	ld l,a			; $6d7e
-	call $6da0		; $6d7f
-	ld b,a			; $6d82
-	rst_addAToHl			; $6d83
-	ld a,(hl)		; $6d84
-	ld e,$06		; $6d85
-	ld (de),a		; $6d87
-	ld a,b			; $6d88
-	sub $04			; $6d89
-	and $07			; $6d8b
-	ret nz			; $6d8d
-	ld e,$09		; $6d8e
-	call convertAngleDeToDirection		; $6d90
-	dec a			; $6d93
-	and $03			; $6d94
-	ld h,d			; $6d96
-	ld l,$08		; $6d97
-	ld (hl),a		; $6d99
-	ld l,$36		; $6d9a
-	add (hl)		; $6d9c
-	jp specialObjectSetAnimation		; $6d9d
-	ld e,$09		; $6da0
-	ld a,(de)		; $6da2
-	dec a			; $6da3
-	and $1f			; $6da4
-	ld (de),a		; $6da6
-	ret			; $6da7
-	xor h			; $6da8
-	ld l,l			; $6da9
-	call z,$066d		; $6daa
-	ld b,$06		; $6dad
-	ld b,$07		; $6daf
-	ld ($0a09),sp		; $6db1
-	dec bc			; $6db4
-	ld a,(bc)		; $6db5
-	add hl,bc		; $6db6
-	ld ($0607),sp		; $6db7
-	ld b,$06		; $6dba
-	ld b,$06		; $6dbc
-	ld b,$06		; $6dbe
-	rlca			; $6dc0
-	ld ($0a09),sp		; $6dc1
-	dec bc			; $6dc4
-	ld a,(bc)		; $6dc5
-	add hl,bc		; $6dc6
-	ld ($0607),sp		; $6dc7
-	ld b,$06		; $6dca
-	ld (bc),a		; $6dcc
-	ld (bc),a		; $6dcd
-	ld (bc),a		; $6dce
-	ld (bc),a		; $6dcf
-	inc b			; $6dd0
-	ld b,$08		; $6dd1
-	ld a,(bc)		; $6dd3
-	dec c			; $6dd4
-	ld a,(bc)		; $6dd5
-	ld ($0406),sp		; $6dd6
-	ld (bc),a		; $6dd9
-	ld (bc),a		; $6dda
-	ld (bc),a		; $6ddb
-	ld (bc),a		; $6ddc
-	ld (bc),a		; $6ddd
-	ld (bc),a		; $6dde
-	ld (bc),a		; $6ddf
-	inc b			; $6de0
-	ld b,$08		; $6de1
-	ld a,(bc)		; $6de3
-	dec c			; $6de4
-	ld a,(bc)		; $6de5
-	ld ($0406),sp		; $6de6
-	ld (bc),a		; $6de9
-	ld (bc),a		; $6dea
-	ld (bc),a		; $6deb
-specialObjectCode_linkInCutscene:
-	ld e,$02		; $6dec
-	ld a,(de)		; $6dee
-	rst_jumpTable			; $6def
-	ld b,$6e		; $6df0
-	ld de,$096f		; $6df2
-	ld (hl),c		; $6df5
-	or b			; $6df6
-	ld (hl),c		; $6df7
-	inc c			; $6df8
-	ld (hl),d		; $6df9
-	sbc a			; $6dfa
-	ld (hl),d		; $6dfb
-.DB $eb				; $6dfc
-	ld (hl),d		; $6dfd
-	ld (hl),e		; $6dfe
-	ld (hl),e		; $6dff
-	adc a			; $6e00
-	ld (hl),e		; $6e01
-	or l			; $6e02
-	ld (hl),e		; $6e03
-	ld d,d			; $6e04
-	ld (hl),h		; $6e05
-	ld e,$04		; $6e06
-	ld a,(de)		; $6e08
-	rst_jumpTable			; $6e09
-	ld c,$6e		; $6e0a
-	jr _label_06_236		; $6e0c
-	call $7381		; $6e0e
-	call objectSetVisible81		; $6e11
-	xor a			; $6e14
-	call specialObjectSetAnimation		; $6e15
-	ld e,$05		; $6e18
-	ld a,(de)		; $6e1a
-	rst_jumpTable			; $6e1b
-	ldi a,(hl)		; $6e1c
-	ld l,(hl)		; $6e1d
-	ld d,(hl)		; $6e1e
-	ld l,(hl)		; $6e1f
-	ld l,l			; $6e20
-	ld l,(hl)		; $6e21
-	add e			; $6e22
-	ld l,(hl)		; $6e23
-	sbc e			; $6e24
-	ld l,(hl)		; $6e25
-	xor c			; $6e26
-	ld l,(hl)		; $6e27
-	ld hl,sp+$6e		; $6e28
-	ld a,($cc47)		; $6e2a
-	rlca			; $6e2d
-	ld a,$00		; $6e2e
-	jp c,specialObjectSetAnimation		; $6e30
-	ld h,d			; $6e33
-	ld l,$0b		; $6e34
-	ld a,($cc45)		; $6e36
-	bit 7,a			; $6e39
-	jr z,_label_06_234	; $6e3b
-	inc (hl)		; $6e3d
-_label_06_234:
-	bit 6,a			; $6e3e
-	jr z,_label_06_235	; $6e40
-	dec (hl)		; $6e42
-_label_06_235:
-	ld a,(hl)		; $6e43
-	cp $40			; $6e44
-	jp nc,specialObjectAnimate		; $6e46
-	ld a,$01		; $6e49
-	ld ($cbb9),a		; $6e4b
-	ld a,$77		; $6e4e
-	call playSound		; $6e50
-	jp itemIncState2		; $6e53
-	ld a,($cbb9)		; $6e56
-	cp $02			; $6e59
-	ret nz			; $6e5b
-	call itemIncState2		; $6e5c
-	ld b,$04		; $6e5f
-	call func_2d48		; $6e61
-	ld a,b			; $6e64
-	ld e,$06		; $6e65
-	ld (de),a		; $6e67
-	ld a,$04		; $6e68
-	jp specialObjectSetAnimation		; $6e6a
-	call itemDecCounter1		; $6e6d
-	jp nz,specialObjectAnimate		; $6e70
-	ld l,$10		; $6e73
-	ld (hl),$05		; $6e75
-	ld b,$05		; $6e77
-	call func_2d48		; $6e79
-_label_06_236:
-	ld a,b			; $6e7c
-	ld e,$06		; $6e7d
-	ld (de),a		; $6e7f
-	jp itemIncState2		; $6e80
-	call itemDecCounter1		; $6e83
-	jp nz,$6e95		; $6e86
-	call itemIncState2		; $6e89
-	ld b,$07		; $6e8c
-	call func_2d48		; $6e8e
-	ld a,b			; $6e91
-	ld e,$06		; $6e92
-	ld (de),a		; $6e94
-	ld hl,$6ee0		; $6e95
-	jp $6ec9		; $6e98
-	call itemDecCounter1		; $6e9b
-	jp nz,$6ec6		; $6e9e
-	ld a,$03		; $6ea1
-	ld ($cbb9),a		; $6ea3
-	call itemIncState2		; $6ea6
-	ld a,($cbb9)		; $6ea9
-	cp $06			; $6eac
-	jr nz,_label_06_238	; $6eae
-	ld bc,$8406		; $6eb0
-	call objectCreateInteraction		; $6eb3
-	jr nz,_label_06_237	; $6eb6
-	ld l,$56		; $6eb8
-	ld a,$00		; $6eba
-	ldi (hl),a		; $6ebc
-	ld (hl),d		; $6ebd
-_label_06_237:
-	call itemIncState2		; $6ebe
-	ld a,$05		; $6ec1
-	jp specialObjectSetAnimation		; $6ec3
-_label_06_238:
-	ld hl,$6ee8		; $6ec6
-	ld a,($cbb7)		; $6ec9
-	ld b,a			; $6ecc
-	and $07			; $6ecd
-	jr nz,_label_06_239	; $6ecf
-	ld a,b			; $6ed1
-	and $38			; $6ed2
-	swap a			; $6ed4
-	rlca			; $6ed6
-	rst_addAToHl			; $6ed7
-	ld e,$0f		; $6ed8
-	ld a,(de)		; $6eda
-	add (hl)		; $6edb
-	ld (de),a		; $6edc
-_label_06_239:
-	jp specialObjectAnimate		; $6edd
-	rst $38			; $6ee0
-	cp $fe			; $6ee1
-	rst $38			; $6ee3
-	nop			; $6ee4
-	ld bc,$0001		; $6ee5
-	rst $38			; $6ee8
-	rst $38			; $6ee9
-	rst $38			; $6eea
-	nop			; $6eeb
-	ld bc,$0101		; $6eec
-	nop			; $6eef
-	ld (bc),a		; $6ef0
-	inc bc			; $6ef1
-	inc b			; $6ef2
-	inc bc			; $6ef3
-	ld (bc),a		; $6ef4
-	nop			; $6ef5
-	rst $38			; $6ef6
-	nop			; $6ef7
-	ld e,$21		; $6ef8
-	ld a,(de)		; $6efa
-	inc a			; $6efb
-	jr nz,_label_06_240	; $6efc
-	ld a,$07		; $6efe
-	ld ($cbb9),a		; $6f00
-	ret			; $6f03
-_label_06_240:
-	call specialObjectAnimate		; $6f04
-	ld a,($cbb7)		; $6f07
-	rrca			; $6f0a
-	jp nc,objectSetInvisible		; $6f0b
-	jp objectSetVisible		; $6f0e
-	ld e,$04		; $6f11
-	ld a,(de)		; $6f13
-	rst_jumpTable			; $6f14
-	add hl,de		; $6f15
-	ld l,a			; $6f16
-	inc e			; $6f17
-	ld l,a			; $6f18
-	jp $7381		; $6f19
-	ld e,$05		; $6f1c
-	ld a,(de)		; $6f1e
-	rst_jumpTable			; $6f1f
-	ld c,h			; $6f20
-	ld l,a			; $6f21
-	ld a,e			; $6f22
-	ld l,a			; $6f23
-	adc l			; $6f24
-	ld l,a			; $6f25
-	and b			; $6f26
-	ld l,a			; $6f27
-	or (hl)			; $6f28
-	ld l,a			; $6f29
-	rst_jumpTable			; $6f2a
-	ld l,a			; $6f2b
-	call nc,$e16f		; $6f2c
-	ld l,a			; $6f2f
-	or $6f			; $6f30
-	rst $38			; $6f32
-	ld l,a			; $6f33
-	inc de			; $6f34
-	ld (hl),b		; $6f35
-	rra			; $6f36
-	ld (hl),b		; $6f37
-	ldd (hl),a		; $6f38
-	ld (hl),b		; $6f39
-	ld h,c			; $6f3a
-	ld (hl),b		; $6f3b
-	halt			; $6f3c
-	ld (hl),b		; $6f3d
-	add d			; $6f3e
-	ld (hl),b		; $6f3f
-	and b			; $6f40
-	ld (hl),b		; $6f41
-	or a			; $6f42
-	ld (hl),b		; $6f43
-	ret z			; $6f44
-	ld (hl),b		; $6f45
-	push de			; $6f46
-	ld (hl),b		; $6f47
-.DB $f4				; $6f48
-	ld (hl),b		; $6f49
-	ld h,b			; $6f4a
-	ld (hl),b		; $6f4b
-	ld a,($cfd0)		; $6f4c
-	or a			; $6f4f
-	ret nz			; $6f50
-	call itemIncState2		; $6f51
-	ld l,$06		; $6f54
-	ld (hl),$aa		; $6f56
-	ld l,$0b		; $6f58
-	ld a,$30		; $6f5a
-	ldi (hl),a		; $6f5c
-	inc l			; $6f5d
-	ld a,$50		; $6f5e
-	ld (hl),a		; $6f60
-	ld l,$19		; $6f61
-	ld h,(hl)		; $6f63
-	ld l,$4b		; $6f64
-	ld a,$30		; $6f66
-	ldi (hl),a		; $6f68
-	inc l			; $6f69
-	ld a,$60		; $6f6a
-	ld (hl),a		; $6f6c
-	ld e,$08		; $6f6d
-	xor a			; $6f6f
-	ld (de),a		; $6f70
-_label_06_241:
-	ld a,$07		; $6f71
-	call specialObjectSetAnimation		; $6f73
-	ld a,$08		; $6f76
-	jp $71a4		; $6f78
-	call itemDecCounter1		; $6f7b
-	jr nz,_label_06_242	; $6f7e
-	ld (hl),$1e		; $6f80
-	call itemIncState2		; $6f82
-	jr _label_06_241		; $6f85
-_label_06_242:
-	call specialObjectAnimate		; $6f87
-	jp $719a		; $6f8a
-	call itemDecCounter1		; $6f8d
-	ret nz			; $6f90
-	ld (hl),$28		; $6f91
-	ld a,$10		; $6f93
-	call specialObjectSetAnimation		; $6f95
-	ld a,$0d		; $6f98
-	call $71a4		; $6f9a
-	jp itemIncState2		; $6f9d
-	call itemDecCounter1		; $6fa0
-	ret nz			; $6fa3
-	ld (hl),$3c		; $6fa4
-	call itemIncState2		; $6fa6
-	ld bc,$0c17		; $6fa9
-	call checkIsLinkedGame		; $6fac
-	jr z,_label_06_243	; $6faf
-	ld c,$18		; $6fb1
-_label_06_243:
-	jp showText		; $6fb3
-	ld a,($cba0)		; $6fb6
-	or a			; $6fb9
-	ret nz			; $6fba
-	call itemDecCounter1		; $6fbb
-	ret nz			; $6fbe
-	ld (hl),$96		; $6fbf
-	call $6f71		; $6fc1
-	jp itemIncState2		; $6fc4
-	call itemDecCounter1		; $6fc7
-	jr nz,_label_06_242	; $6fca
-	ld a,$02		; $6fcc
-	ld ($cfd0),a		; $6fce
-	jp itemIncState2		; $6fd1
-	ld a,($cfd0)		; $6fd4
-	cp $03			; $6fd7
-	jr nz,_label_06_242	; $6fd9
-	call $6f71		; $6fdb
-	jp itemIncState2		; $6fde
-	ld a,($cfd0)		; $6fe1
-	cp $04			; $6fe4
-	ret nz			; $6fe6
-	call itemIncState2		; $6fe7
-	ld l,$06		; $6fea
-	ld (hl),$5a		; $6fec
-	ld l,$08		; $6fee
-	ld (hl),$03		; $6ff0
-	xor a			; $6ff2
-	jp specialObjectSetAnimation		; $6ff3
-	call itemDecCounter1		; $6ff6
-	ret nz			; $6ff9
-	ld (hl),$12		; $6ffa
-	jp itemIncState2		; $6ffc
-	call itemDecCounter1		; $6fff
-	jr nz,_label_06_244	; $7002
-	ld (hl),$46		; $7004
-	xor a			; $7006
-	call specialObjectSetAnimation		; $7007
-	jp itemIncState2		; $700a
-_label_06_244:
-	ld l,$0d		; $700d
-	dec (hl)		; $700f
-	jp specialObjectAnimate		; $7010
-	call itemDecCounter1		; $7013
-	ret nz			; $7016
-	ld hl,$cfd0		; $7017
-	ld (hl),$05		; $701a
-	jp itemIncState2		; $701c
-	ld hl,$cfd1		; $701f
-	bit 6,(hl)		; $7022
-	ret z			; $7024
-	ld a,$14		; $7025
-	ld e,$06		; $7027
-	ld (de),a		; $7029
-	ld e,$0d		; $702a
-	ld a,(de)		; $702c
-	dec e			; $702d
-	ld (de),a		; $702e
-	jp itemIncState2		; $702f
-	call itemDecCounter1		; $7032
-	jr nz,_label_06_245	; $7035
-	ld h,d			; $7037
-	ld l,$10		; $7038
-	ld (hl),$50		; $703a
-	ld l,$09		; $703c
-	ld (hl),$0e		; $703e
-	ld l,$0d		; $7040
-	ld (hl),$40		; $7042
-	ld a,$08		; $7044
-	call specialObjectSetAnimation		; $7046
-	ld bc,$fe80		; $7049
-	call objectSetSpeedZ		; $704c
-	jp itemIncState2		; $704f
-_label_06_245:
-	call getRandomNumber		; $7052
-	and $0f			; $7055
-	sub $08			; $7057
-	ld b,a			; $7059
-	ld e,$0c		; $705a
-	ld a,(de)		; $705c
-	inc e			; $705d
-	add b			; $705e
-	ld (de),a		; $705f
-	ret			; $7060
-	call objectApplySpeed		; $7061
-	ld c,$20		; $7064
-	call objectUpdateSpeedZ_paramC		; $7066
-	ret nz			; $7069
-	call itemIncState2		; $706a
-	ld l,$06		; $706d
-	ld (hl),$28		; $706f
-	ld a,$14		; $7071
-	jp specialObjectSetAnimation		; $7073
-	call itemDecCounter1		; $7076
-	ret nz			; $7079
-	ld a,$07		; $707a
-	ld ($cfd0),a		; $707c
-	jp itemIncState2		; $707f
-	ld a,($cfd0)		; $7082
-	cp $09			; $7085
-	ret nz			; $7087
-	call itemIncState2		; $7088
-	ld l,$14		; $708b
-	ld (hl),$f0		; $708d
-	inc l			; $708f
-	ld (hl),$fd		; $7090
-	ld l,$08		; $7092
-	ld (hl),$02		; $7094
-	ld a,$0a		; $7096
-	call specialObjectSetAnimation		; $7098
-	ld a,$53		; $709b
-	jp playSound		; $709d
-	call specialObjectAnimate		; $70a0
-	ld c,$20		; $70a3
-	call objectUpdateSpeedZ_paramC		; $70a5
-	ret nz			; $70a8
-	call itemIncState2		; $70a9
-	ld l,$06		; $70ac
-	ld (hl),$1e		; $70ae
-	xor a			; $70b0
-	ld l,$08		; $70b1
-	ld (hl),a		; $70b3
-	jp specialObjectSetAnimation		; $70b4
-	call itemDecCounter1		; $70b7
-	ret nz			; $70ba
-	ld (hl),$19		; $70bb
-	ld l,$10		; $70bd
-	ld (hl),$50		; $70bf
-	ld l,$09		; $70c1
-	ld (hl),$02		; $70c3
-	jp itemIncState2		; $70c5
-	call specialObjectAnimate		; $70c8
-	call objectApplySpeed		; $70cb
-	call itemDecCounter1		; $70ce
-	ret nz			; $70d1
-	jp $7025		; $70d2
-	call itemDecCounter1		; $70d5
-	jp nz,$7052		; $70d8
-	ld e,$10		; $70db
-	ld a,$78		; $70dd
-	ld (de),a		; $70df
-	ld e,$09		; $70e0
-	ld a,$19		; $70e2
-	ld (de),a		; $70e4
-	ld e,$08		; $70e5
-	xor a			; $70e7
-	ld (de),a		; $70e8
-	ld ($cd00),a		; $70e9
-	ld a,$08		; $70ec
-	call specialObjectSetAnimation		; $70ee
-	jp itemIncState2		; $70f1
-	call specialObjectAnimate		; $70f4
-	call objectApplySpeed		; $70f7
-	call objectApplySpeed		; $70fa
-	call objectCheckWithinScreenBoundary		; $70fd
-	ret c			; $7100
-	ld a,$0a		; $7101
-	ld ($cfd0),a		; $7103
-	jp itemIncState2		; $7106
-	ld e,$04		; $7109
-	ld a,(de)		; $710b
-	rst_jumpTable			; $710c
-	ld de,$1971		; $710d
-	ld (hl),c		; $7110
-	call $7381		; $7111
-	ld a,$09		; $7114
-	call specialObjectSetAnimation		; $7116
-	ld e,$05		; $7119
-	ld a,(de)		; $711b
-	rst_jumpTable			; $711c
-	dec h			; $711d
-	ld (hl),c		; $711e
-	ld c,h			; $711f
-	ld (hl),c		; $7120
-	ld e,b			; $7121
-	ld (hl),c		; $7122
-	ld l,l			; $7123
-	ld (hl),c		; $7124
-	ld hl,$cfd0		; $7125
-	ld a,(hl)		; $7128
-	cp $01			; $7129
-	ret nz			; $712b
-	call specialObjectAnimate		; $712c
-	ld e,$21		; $712f
-	ld a,(de)		; $7131
-	inc a			; $7132
-	ret nz			; $7133
-	call itemIncState2		; $7134
-	ld l,$14		; $7137
-	ld (hl),$f0		; $7139
-	inc l			; $713b
-	ld (hl),$fd		; $713c
-	ld l,$08		; $713e
-	ld (hl),$02		; $7140
-	ld a,$0a		; $7142
-	call specialObjectSetAnimation		; $7144
-	ld a,$53		; $7147
-	call playSound		; $7149
-	call $7178		; $714c
-	ret nz			; $714f
-	call itemIncState2		; $7150
-	ld l,$06		; $7153
-	ld (hl),$1e		; $7155
-	ret			; $7157
-	call itemDecCounter1		; $7158
-	ret nz			; $715b
-	ld hl,$cfd0		; $715c
-	ld (hl),$02		; $715f
-	call itemIncState2		; $7161
-	ld l,$08		; $7164
-	ld (hl),$03		; $7166
-	ld a,$00		; $7168
-	jp specialObjectSetAnimation		; $716a
-	ld a,($cfd0)		; $716d
-	cp $03			; $7170
-	ret nz			; $7172
-	ld a,$00		; $7173
-	jp setLinkIDOverride		; $7175
-	call specialObjectAnimate		; $7178
-	ld c,$20		; $717b
-	call objectUpdateSpeedZ_paramC		; $717d
-	jr z,_label_06_246	; $7180
-	ld h,d			; $7182
-	ld l,$15		; $7183
-	ld a,(hl)		; $7185
-	bit 7,a			; $7186
-	ret nz			; $7188
-	cp $03			; $7189
-	ret c			; $718b
-	ld l,$14		; $718c
-	xor a			; $718e
-	ldi (hl),a		; $718f
-	ld a,$03		; $7190
-	ld (hl),a		; $7192
-	or a			; $7193
-	ret			; $7194
-_label_06_246:
-	ld a,$00		; $7195
-	jp specialObjectSetAnimation		; $7197
-	push de			; $719a
-	ld e,$19		; $719b
-	ld a,(de)		; $719d
-	ld d,a			; $719e
-	call interactionAnimate		; $719f
-	pop de			; $71a2
-	ret			; $71a3
-	ld b,a			; $71a4
-	push de			; $71a5
-	ld e,$19		; $71a6
-	ld a,(de)		; $71a8
-	ld d,a			; $71a9
-	ld a,b			; $71aa
-	call interactionSetAnimation		; $71ab
-	pop de			; $71ae
-	ret			; $71af
-	ld e,$04		; $71b0
-	ld a,(de)		; $71b2
-	rst_jumpTable			; $71b3
-	cp b			; $71b4
-	ld (hl),c		; $71b5
-	call nz,$cd71		; $71b6
-	add c			; $71b9
-	ld (hl),e		; $71ba
-	ld l,$06		; $71bb
-	ld (hl),$a8		; $71bd
-	ld a,$0c		; $71bf
-	jp specialObjectSetAnimation		; $71c1
-	ld e,$05		; $71c4
-	ld a,(de)		; $71c6
-	rst_jumpTable			; $71c7
-	ret nc			; $71c8
-	ld (hl),c		; $71c9
-	and $71			; $71ca
-.DB $f4				; $71cc
-	ld (hl),c		; $71cd
-	ld (bc),a		; $71ce
-	ld (hl),d		; $71cf
-	call itemDecCounter1		; $71d0
-	jr nz,_label_06_247	; $71d3
-	ld a,$80		; $71d5
-	ld ($cfc0),a		; $71d7
-	call itemIncState2		; $71da
-	ld bc,$ff00		; $71dd
-	call objectSetSpeedZ		; $71e0
-_label_06_247:
-	jp specialObjectAnimate		; $71e3
-	ld c,$20		; $71e6
-	call objectUpdateSpeedZ_paramC		; $71e8
-	ret nz			; $71eb
-	call itemIncState2		; $71ec
-	ld l,$06		; $71ef
-	ld (hl),$0a		; $71f1
-	ret			; $71f3
-	call itemDecCounter1		; $71f4
-	ret nz			; $71f7
-	ld (hl),$78		; $71f8
-	call itemIncState2		; $71fa
-	ld a,$0c		; $71fd
-	jp specialObjectSetAnimation		; $71ff
-	call itemDecCounter1		; $7202
-	ret nz			; $7205
-	ld a,$01		; $7206
-	ld ($cfdf),a		; $7208
-	ret			; $720b
-	ld e,$04		; $720c
-	ld a,(de)		; $720e
-	rst_jumpTable			; $720f
-	inc d			; $7210
-	ld (hl),d		; $7211
-	jr z,_label_06_248	; $7212
-	call $7381		; $7214
-	ld l,$09		; $7217
-	ld (hl),$00		; $7219
-	ld l,$10		; $721b
-	ld (hl),$28		; $721d
-	ld l,$06		; $721f
-	ld (hl),$80		; $7221
-	ld a,$00		; $7223
-	jp specialObjectSetAnimation		; $7225
-	ld e,$05		; $7228
-	ld a,(de)		; $722a
-	rst_jumpTable			; $722b
-	jr c,$72		; $722c
-	ld c,h			; $722e
-	ld (hl),d		; $722f
-	ld e,d			; $7230
-	ld (hl),d		; $7231
-	ld h,(hl)		; $7232
-	ld (hl),d		; $7233
-	ld a,(hl)		; $7234
-	ld (hl),d		; $7235
-	sub e			; $7236
-	ld (hl),d		; $7237
-	ld a,($c4ab)		; $7238
-	or a			; $723b
-	ret nz			; $723c
-	call specialObjectAnimate		; $723d
-	call objectApplySpeed		; $7240
-	call itemDecCounter1		; $7243
-	ret nz			; $7246
-	ld (hl),$06		; $7247
-	jp itemIncState2		; $7249
-	call itemDecCounter1		; $724c
-	ret nz			; $724f
-	ld (hl),$78		; $7250
-	call itemIncState2		; $7252
-	ld a,$03		; $7255
-	jp specialObjectSetAnimation		; $7257
-	call itemDecCounter1		; $725a
-	ret nz			; $725d
-	ld hl,$cfc0		; $725e
-	ld (hl),$01		; $7261
-	jp itemIncState2		; $7263
-	ld a,($cfc0)		; $7266
-	cp $02			; $7269
-	ret nz			; $726b
-	call itemIncState2		; $726c
-	ld l,$09		; $726f
-	ld (hl),$10		; $7271
-	ld bc,$ff00		; $7273
-	call objectSetSpeedZ		; $7276
-	ld a,$0d		; $7279
-	jp specialObjectSetAnimation		; $727b
-	call objectApplySpeed		; $727e
-	ld c,$20		; $7281
-	call objectUpdateSpeedZ_paramC		; $7283
-_label_06_248:
-	ret nz			; $7286
-	call itemIncState2		; $7287
-	ld l,$06		; $728a
-	ld (hl),$78		; $728c
-	ld l,$20		; $728e
-	ld (hl),$01		; $7290
-	ret			; $7292
-	call itemDecCounter1		; $7293
-	jp nz,specialObjectAnimate		; $7296
-	ld hl,$cfdf		; $7299
-	ld (hl),$01		; $729c
-	ret			; $729e
-	ld e,$04		; $729f
-	ld a,(de)		; $72a1
-	rst_jumpTable			; $72a2
-	and a			; $72a3
-	ld (hl),d		; $72a4
-	or e			; $72a5
-	ld (hl),d		; $72a6
-	call $7381		; $72a7
-	ld l,$06		; $72aa
-	ld (hl),$f0		; $72ac
-	ld a,$03		; $72ae
-	jp specialObjectSetAnimation		; $72b0
-	ld e,$05		; $72b3
-	ld a,(de)		; $72b5
-	rst_jumpTable			; $72b6
-	cp e			; $72b7
-	ld (hl),d		; $72b8
-	pop hl			; $72b9
-	ld (hl),d		; $72ba
-	ld a,($c4ab)		; $72bb
-	or a			; $72be
-	ret nz			; $72bf
-	call itemDecCounter1		; $72c0
-	ret nz			; $72c3
-	ld l,$06		; $72c4
-	ld (hl),$3c		; $72c6
-	call itemIncState2		; $72c8
-	ld hl,$cfc0		; $72cb
-	ld (hl),$01		; $72ce
-	ld bc,$f804		; $72d0
-	ld a,$ff		; $72d3
-	call objectCreateExclamationMark		; $72d5
-	ld l,$42		; $72d8
-	ld (hl),$01		; $72da
-	ld a,$0e		; $72dc
-	jp specialObjectSetAnimation		; $72de
-	call itemDecCounter1		; $72e1
-	ret nz			; $72e4
-	ld hl,$cfdf		; $72e5
-	ld (hl),$01		; $72e8
-	ret			; $72ea
-	ld e,$04		; $72eb
-	ld a,(de)		; $72ed
-	rst_jumpTable			; $72ee
-	di			; $72ef
-	ld (hl),d		; $72f0
-	rrca			; $72f1
-	ld (hl),e		; $72f2
-	call $7381		; $72f3
-	call objectSetInvisible		; $72f6
-	call $7305		; $72f9
-	ld a,$0b		; $72fc
-	jr nz,_label_06_249	; $72fe
-	ld a,$0f		; $7300
-_label_06_249:
-	jp specialObjectSetAnimation		; $7302
-	ld hl,$c680		; $7305
-	ld a,$01		; $7308
-	cp (hl)			; $730a
-	ret z			; $730b
-	inc l			; $730c
-	cp (hl)			; $730d
-	ret			; $730e
-	ld e,$05		; $730f
-	ld a,(de)		; $7311
-	rst_jumpTable			; $7312
-	dec de			; $7313
-	ld (hl),e		; $7314
-	daa			; $7315
-	ld (hl),e		; $7316
-	dec sp			; $7317
-	ld (hl),e		; $7318
-	ld h,e			; $7319
-	ld (hl),e		; $731a
-	ld a,($cfc0)		; $731b
-	cp $01			; $731e
-	ret nz			; $7320
-	call itemIncState2		; $7321
-	jp objectSetVisible		; $7324
-	ld a,($cfc0)		; $7327
-	cp $07			; $732a
-	ret nz			; $732c
-	call itemIncState2		; $732d
-	call $7305		; $7330
-	ld a,$10		; $7333
-	jr nz,_label_06_250	; $7335
-	inc a			; $7337
-_label_06_250:
-	jp specialObjectSetAnimation		; $7338
-	ld a,($cfc0)		; $733b
-	cp $08			; $733e
-	ret nz			; $7340
-	call itemIncState2		; $7341
-	ld l,$06		; $7344
-	ld (hl),$68		; $7346
-	inc l			; $7348
-	ld (hl),$01		; $7349
-	ld b,$02		; $734b
-_label_06_251:
-	call getFreeInteractionSlot		; $734d
-	jr nz,_label_06_252	; $7350
-	ld (hl),$b7		; $7352
-	inc l			; $7354
-	ld a,b			; $7355
-	dec a			; $7356
-	ld (hl),a		; $7357
-	call objectCopyPosition		; $7358
-	dec b			; $735b
-	jr nz,_label_06_251	; $735c
-_label_06_252:
-	ld a,$12		; $735e
-	jp specialObjectSetAnimation		; $7360
-	call specialObjectAnimate		; $7363
-	ld h,d			; $7366
-	ld l,$06		; $7367
-	call decHlRef16WithCap		; $7369
-	ret nz			; $736c
-	ld hl,$cfc0		; $736d
-	ld (hl),$09		; $7370
-	ret			; $7372
-	ld e,$04		; $7373
-	ld a,(de)		; $7375
-	rst_jumpTable			; $7376
-	ld a,e			; $7377
-	ld (hl),e		; $7378
-	ld ($cd72),a		; $7379
-	add c			; $737c
-	ld (hl),e		; $737d
-	jp $72d0		; $737e
-	ld hl,$41b5		; $7381
-	ld e,$05		; $7384
-	call interBankCall		; $7386
-	call objectSetVisiblec1		; $7389
-	jp itemIncState		; $738c
-	ld e,$04		; $738f
-	ld a,(de)		; $7391
-	rst_jumpTable			; $7392
-	sub a			; $7393
-	ld (hl),e		; $7394
-	and e			; $7395
-	ld (hl),e		; $7396
-	call $7381		; $7397
-	ld l,$10		; $739a
-	ld (hl),$28		; $739c
-	ld a,$00		; $739e
-	call specialObjectSetAnimation		; $73a0
-	call specialObjectAnimate		; $73a3
-	call $74ee		; $73a6
-	call $7520		; $73a9
-	call $7501		; $73ac
-	ret nc			; $73af
-	ld a,$00		; $73b0
-	jp setLinkIDOverride		; $73b2
-	ld e,$04		; $73b5
-	ld a,(de)		; $73b7
-	rst_jumpTable			; $73b8
-	cp l			; $73b9
-	ld (hl),e		; $73ba
-	jp z,$cd73		; $73bb
-	add c			; $73be
-	ld (hl),e		; $73bf
-	push de			; $73c0
-	call clearItems		; $73c1
-	pop de			; $73c4
-	ld a,$13		; $73c5
-	jp specialObjectSetAnimation		; $73c7
-	ld e,$05		; $73ca
-	ld a,(de)		; $73cc
-	rst_jumpTable			; $73cd
-	call c,$f173		; $73ce
-	ld (hl),e		; $73d1
-.DB $fc				; $73d2
-	ld (hl),e		; $73d3
-	ld d,$74		; $73d4
-	dec l			; $73d6
-	ld (hl),h		; $73d7
-	dec sp			; $73d8
-	ld (hl),h		; $73d9
-	ld d,c			; $73da
-	ld (hl),h		; $73db
-	ld a,($cfd1)		; $73dc
-	or a			; $73df
-	ret z			; $73e0
-	call itemIncState2		; $73e1
-	ld l,$06		; $73e4
-	ld (hl),$28		; $73e6
-	ld l,$10		; $73e8
-	ld (hl),$05		; $73ea
-	ld l,$09		; $73ec
-	ld (hl),$10		; $73ee
-	ret			; $73f0
-	call itemDecCounter1		; $73f1
-	jp nz,objectApplySpeed		; $73f4
-	ld (hl),$19		; $73f7
-	jp itemIncState2		; $73f9
-	call itemDecCounter1		; $73fc
-	ret nz			; $73ff
-	call itemIncState2		; $7400
-	ld l,$10		; $7403
-	ld (hl),$78		; $7405
-	ld l,$09		; $7407
-	xor a			; $7409
-	ld (hl),a		; $740a
-	ld l,$0f		; $740b
-	ld (hl),$fa		; $740d
-_label_06_253:
-	ld l,$20		; $740f
-	ld (hl),$01		; $7411
-	jp specialObjectAnimate		; $7413
-	call objectApplySpeed		; $7416
-	ld e,$0b		; $7419
-	ld a,(de)		; $741b
-	cp $10			; $741c
-	ret nc			; $741e
-	ld a,$82		; $741f
-	call playSound		; $7421
-	call itemIncState2		; $7424
-	ld l,$06		; $7427
-	ld (hl),$1e		; $7429
-	jr _label_06_253		; $742b
-	call itemDecCounter1		; $742d
-	jr nz,_label_06_254	; $7430
-	call itemIncState2		; $7432
-	ld bc,$ff40		; $7435
-	jp objectSetSpeedZ		; $7438
-	ld c,$10		; $743b
-	call objectUpdateSpeedZ_paramC		; $743d
-	ret nz			; $7440
-	call itemIncState2		; $7441
-	jr _label_06_253		; $7444
-_label_06_254:
-	ld a,(wFrameCounter)		; $7446
-	and $03			; $7449
-	ret nz			; $744b
-	ld a,$04		; $744c
-	ld ($cd18),a		; $744e
-	ret			; $7451
-	ld e,$04		; $7452
-	ld a,(de)		; $7454
-	rst_jumpTable			; $7455
-	ld e,d			; $7456
-	ld (hl),h		; $7457
-	add (hl)		; $7458
-	ld (hl),h		; $7459
-	call $7381		; $745a
-	call objectSetVisible81		; $745d
-	ld l,$06		; $7460
-	ld (hl),$2c		; $7462
-	inc hl			; $7464
-	ld (hl),$01		; $7465
-	ld l,$0b		; $7467
-	ld (hl),$d0		; $7469
-	ld l,$0d		; $746b
-	ld (hl),$50		; $746d
-	ld a,$08		; $746f
-	call specialObjectSetAnimation		; $7471
-	xor a			; $7474
-	ld ($cbb9),a		; $7475
-	ld bc,$8409		; $7478
-	call objectCreateInteraction		; $747b
-	jr nz,_label_06_255	; $747e
-	ld l,$56		; $7480
-	ld a,$00		; $7482
-	ldi (hl),a		; $7484
-	ld (hl),d		; $7485
-_label_06_255:
-	ld a,(wFrameCounter)		; $7486
-	ld ($cbb7),a		; $7489
-	ld e,$05		; $748c
-	ld a,(de)		; $748e
-	rst_jumpTable			; $748f
-	sbc b			; $7490
-	ld (hl),h		; $7491
-	and a			; $7492
-	ld (hl),h		; $7493
-	or a			; $7494
-	ld (hl),h		; $7495
-	rst $8			; $7496
-	ld (hl),h		; $7497
-	call $74e8		; $7498
-	ld hl,$d006		; $749b
-	call decHlRef16WithCap		; $749e
-	ret nz			; $74a1
-	ld (hl),$3c		; $74a2
-	jp itemIncState2		; $74a4
-	call $74e8		; $74a7
-	call itemDecCounter1		; $74aa
-	ret nz			; $74ad
-	call itemIncState2		; $74ae
-	ld bc,$0c16		; $74b1
-	jp showText		; $74b4
-	ld hl,$6ee8		; $74b7
-	call $6ec9		; $74ba
-	ld a,($cba0)		; $74bd
-	or a			; $74c0
-	ret nz			; $74c1
-	ld a,$06		; $74c2
-	ld ($cbb9),a		; $74c4
-	ld a,$91		; $74c7
-	call playSound		; $74c9
-	jp $6eb0		; $74cc
-	ld e,$21		; $74cf
-	ld a,(de)		; $74d1
-	inc a			; $74d2
-	jr nz,_label_06_256	; $74d3
-	ld a,$07		; $74d5
-	ld ($cbb9),a		; $74d7
-	ret			; $74da
-_label_06_256:
-	call specialObjectAnimate		; $74db
-	ld a,(wFrameCounter)		; $74de
-	rrca			; $74e1
-	jp nc,objectSetInvisible		; $74e2
-	jp objectSetVisible		; $74e5
-	ld hl,$6ef0		; $74e8
-	jp $6ec9		; $74eb
-	ld e,$03		; $74ee
-	ld a,(de)		; $74f0
-	ld hl,$751e		; $74f1
-	rst_addDoubleIndex			; $74f4
-	ld b,(hl)		; $74f5
-	inc hl			; $74f6
-	ld c,(hl)		; $74f7
-	call objectGetRelativeAngle		; $74f8
-	ld e,$09		; $74fb
-	ld (de),a		; $74fd
-	jp objectApplySpeed		; $74fe
-	ld e,$03		; $7501
-	ld a,(de)		; $7503
-	ld bc,$751e		; $7504
-	call addDoubleIndexToBc		; $7507
-	ld h,d			; $750a
-	ld l,$0b		; $750b
-	ld a,(bc)		; $750d
-	sub (hl)		; $750e
-	add $01			; $750f
-	cp $03			; $7511
-	ret nc			; $7513
-	inc bc			; $7514
-	ld l,$0d		; $7515
-	ld a,(bc)		; $7517
-	sub (hl)		; $7518
-	add $01			; $7519
-	cp $03			; $751b
-	ret			; $751d
-	ld c,b			; $751e
-	ld d,b			; $751f
-	ld a,(wFrameCounter)		; $7520
-	and $07			; $7523
-	ret nz			; $7525
-	ld e,$09		; $7526
-	ld a,(de)		; $7528
-	ld hl,$7532		; $7529
-	rst_addAToHl			; $752c
-	ld a,(hl)		; $752d
-	ld e,$08		; $752e
-	ld (de),a		; $7530
-	ret			; $7531
-	nop			; $7532
-	nop			; $7533
-	ld bc,$0101		; $7534
-	ld bc,$0101		; $7537
-	ld bc,$0101		; $753a
-	ld bc,$0101		; $753d
-	ld bc,$0202		; $7540
-	ld (bc),a		; $7543
-	inc bc			; $7544
-	inc bc			; $7545
-	inc bc			; $7546
-	inc bc			; $7547
-	inc bc			; $7548
-	inc bc			; $7549
-	inc bc			; $754a
-	inc bc			; $754b
-	inc bc			; $754c
-	inc bc			; $754d
-	inc bc			; $754e
-	inc bc			; $754f
-	inc bc			; $7550
-	nop			; $7551
-
+	.include "code/seasons/cutscenes/companionCutscenes.s"
+	.include "code/seasons/cutscenes/linkCutscenes.s"
 	.include "build/data/signText.s"
+	.include "build/data/breakableTileCollisionTable.s"
 
-_breakableTileCollisionTable:
-	.dw _breakableTileCollision0
-	.dw _breakableTileCollision1
-	.dw _breakableTileCollision2
-	.dw _breakableTileCollision3
-	.dw _breakableTileCollision4
-	.dw _breakableTileCollision5
-
-_breakableTileCollision0:
-_breakableTileCollision2:
-	.db $f8 $00
-	.db $f2 $0d
-	.db $c4 $01
-	.db $c5 $02
-	.db $c6 $03
-	.db $c7 $04
-	.db $e5 $05
-	.db $d8 $06
-	.db $c3 $06
-	.db $c8 $07
-	.db $c9 $08
-	.db $c0 $09
-	.db $c1 $0a
-	.db $c2 $0b
-	.db $e2 $0c
-	.db $d9 $0e
-	.db $da $0f
-	.db $db $10
-	.db $ca $11
-	.db $cb $12
-	.db $d7 $13
-	.db $e3 $15
-	.db $01 $14
-	.db $04 $14
-	.db $05 $14
-	.db $06 $14
-	.db $07 $14
-	.db $08 $14
-	.db $09 $14
-	.db $0a $14
-	.db $0b $14
-	.db $0c $14
-	.db $0d $14
-	.db $0e $14
-	.db $0f $14
-	.db $11 $14
-	.db $12 $14
-	.db $13 $14
-	.db $14 $14
-	.db $15 $14
-	.db $16 $14
-	.db $17 $14
-	.db $18 $14
-	.db $19 $14
-	.db $1a $14
-	.db $1b $14
-	.db $1c $14
-	.db $1d $14
-	.db $1e $14
-	.db $4d $14
-	.db $4e $14
-	.db $5d $14
-	.db $5e $14
-	.db $5f $14
-	.db $6d $14
-	.db $6e $14
-	.db $6f $14
-	.db $af $14
-	.db $bf $14
-	.db $00
-_breakableTileCollision1:
-	.db $f8 $00
-	.db $f9 $00
-	.db $f2 $0d
-	.db $e9 $09
-	.db $01 $17
-	.db $04 $17
-	.db $05 $17
-	.db $06 $17
-	.db $07 $17
-	.db $08 $17
-	.db $09 $17
-	.db $0a $17
-	.db $0b $17
-	.db $0c $17
-	.db $0d $17
-	.db $0e $17
-	.db $0f $17
-	.db $11 $17
-	.db $12 $17
-	.db $13 $17
-	.db $14 $17
-	.db $15 $17
-	.db $16 $17
-	.db $17 $17
-	.db $18 $17
-	.db $19 $17
-	.db $1a $17
-	.db $1b $17
-	.db $1c $17
-	.db $1d $17
-	.db $1e $17
-	.db $1f $17
-	.db $20 $17
-	.db $21 $17
-	.db $22 $17
-	.db $23 $17
-	.db $24 $17
-	.db $25 $17
-	.db $26 $17
-	.db $27 $17
-	.db $28 $17
-	.db $29 $17
-	.db $2a $17
-	.db $2b $17
-	.db $2c $17
-	.db $2d $17
-	.db $2e $17
-	.db $b8 $18
-	.db $b9 $18
-	.db $bb $17
-	.db $bc $17
-	.db $bd $17
-	.db $be $17
-	.db $bf $17
-	.db $2f $16
-	.db $00
-_breakableTileCollision3:
-_breakableTileCollision4:
-	.db $f8 $2d
-	.db $20 $19
-	.db $21 $1a
-	.db $22 $1b
-	.db $23 $1c
-	.db $ef $2e
-	.db $11 $1d
-	.db $12 $1e
-	.db $10 $1f
-	.db $13 $20
-	.db $1f $21
-	.db $30 $22
-	.db $31 $23
-	.db $32 $24
-	.db $33 $25
-	.db $38 $26
-	.db $39 $27
-	.db $3a $28
-	.db $3b $29
-	.db $16 $2a
-	.db $15 $2b
-	.db $2b $2c
-	.db $2a $2c
-	.db $00
-_breakableTileCollision5:
-	.db $12 $2f
-	.db $00
-
-; See ages for documentation on this macro
-.macro m_BreakableTileData
-	.if \3 > $f
-	.fail
-	.endif
-	.if \4 > $f
-	.fail
-	.endif
-
-	.db \1 \2
-	.db \3 | (\4<<4)
-	.db \5 \6
-.endm
-
-; @addr{76e4}
-_breakableTileModes:
-	m_BreakableTileData %10010110 %00110000 %0010 $1 $10 $04 ; $00
-	m_BreakableTileData %10110111 %10110001 %0110 $1 $00 $04 ; $01
-	m_BreakableTileData %10110111 %10110001 %0110 $0 $c0 $e6 ; $02
-	m_BreakableTileData %10110111 %10110001 %0110 $0 $c0 $e0 ; $03
-	m_BreakableTileData %10110111 %10110001 %0110 $0 $00 $f3 ; $04
-	m_BreakableTileData %10110111 %10110001 %0110 $0 $00 $04 ; $05
-	m_BreakableTileData %10110110 %10110001 %0110 $4 $01 $04 ; $06
-	m_BreakableTileData %11110110 %00110000 %0010 $3 $00 $04 ; $07
-	m_BreakableTileData %11110110 %00110000 %1011 $0 $00 $f3 ; $08
-	m_BreakableTileData %00100001 %00000000 %0000 $4 $06 $04 ; $09
-	m_BreakableTileData %00100001 %00000000 %0000 $0 $c6 $e7 ; $0a
-	m_BreakableTileData %00100001 %00000000 %0000 $0 $c6 $e0 ; $0b
-	m_BreakableTileData %00110000 %10000000 %0000 $0 $c6 $e8 ; $0c
-	m_BreakableTileData %10101101 %00010001 %0000 $7 $0c $04 ; $0d
-	m_BreakableTileData %01000000 %10000000 %0111 $4 $19 $04 ; $0e
-	m_BreakableTileData %01000000 %10000000 %0111 $0 $19 $f3 ; $0f
-	m_BreakableTileData %01110000 %00000000 %1011 $0 $1f $fd ; $10
-	m_BreakableTileData %00000000 %00010000 %0000 $7 $1f $04 ; $11
-	m_BreakableTileData %00000000 %00010000 %0000 $0 $df $e7 ; $12
-	m_BreakableTileData %10000001 %00000000 %0100 $8 $1f $04 ; $13
-	m_BreakableTileData %01000000 %00000000 %0000 $9 $0a $e1 ; $14
-	m_BreakableTileData %01000000 %00000000 %0000 $0 $ca $e0 ; $15
-	m_BreakableTileData %01000000 %00000000 %0000 $0 $0a $e1 ; $16
-	m_BreakableTileData %01000000 %00000000 %0000 $a $0a $e1 ; $17
-	m_BreakableTileData %01000000 %00000000 %0000 $b $0a $e1 ; $18
-	m_BreakableTileData %10110111 %00110001 %0100 $1 $00 $a0 ; $19
-	m_BreakableTileData %10110111 %00110001 %0100 $0 $00 $a0 ; $1a
-	m_BreakableTileData %10110111 %00110001 %0100 $0 $40 $45 ; $1b
-	m_BreakableTileData %10110111 %00110001 %0100 $0 $00 $f3 ; $1c
-	m_BreakableTileData %00100101 %00000001 %0000 $0 $06 $a0 ; $1d
-	m_BreakableTileData %00100101 %00000001 %0000 $0 $46 $45 ; $1e
-	m_BreakableTileData %00100101 %00000001 %0000 $2 $06 $a0 ; $1f
-	m_BreakableTileData %00100101 %00000001 %0000 $0 $46 $0d ; $20
-	m_BreakableTileData %00110000 %00000000 %0000 $0 $06 $a0 ; $21
-	m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $34 ; $22
-	m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $35 ; $23
-	m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $36 ; $24
-	m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $37 ; $25
-	m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $34 ; $26
-	m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $35 ; $27
-	m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $36 ; $28
-	m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $37 ; $29
-	m_BreakableTileData %00111111 %00000000 %0000 $0 $06 $a0 ; $2a
-	m_BreakableTileData %00100001 %00000000 %0000 $4 $06 $4c ; $2b
-	m_BreakableTileData %00000110 %00000000 %0000 $0 $07 $00 ; $2c
-	m_BreakableTileData %10010110 %00110000 %0010 $0 $10 $ef ; $2d
-	m_BreakableTileData %01000000 %00000000 %0000 $c $0a $4c ; $2e
-	m_BreakableTileData %00110000 %00000000 %0000 $0 $06 $01 ; $2f
 .ends
 
 

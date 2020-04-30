@@ -3693,16 +3693,16 @@ enemyCode05:
 	ld e,Enemy.state		; $5ce0
 	ld a,b			; $5ce2
 	rst_jumpTable			; $5ce3
-        .dw dragonOnox_bodyPartSpawner
-        .dw dragonOnox_mainBody
-        .dw dragonOnox_leftShoulder
-        .dw dragonOnox_rightShoulder
-        .dw dragonOnox_leftClaw
-        .dw dragonOnox_rightClaw
-        .dw dragonOnox_leftClawSphere
-        .dw dragonOnox_rightClawSphere
-        .dw dragonOnox_leftShoulderSphere
-        .dw dragonOnox_rightShoulderSphere
+	.dw dragonOnox_bodyPartSpawner
+	.dw dragonOnox_mainBody
+	.dw dragonOnox_leftShoulder
+	.dw dragonOnox_rightShoulder
+	.dw dragonOnox_leftClaw
+	.dw dragonOnox_rightClaw
+	.dw dragonOnox_leftClawSphere
+	.dw dragonOnox_rightClawSphere
+	.dw dragonOnox_leftShoulderSphere
+	.dw dragonOnox_rightShoulderSphere
 
 dragonOnox_bodyPartSpawner:
 	ld a,ENEMYID_DRAGON_ONOX		; $5cf8
@@ -3762,21 +3762,21 @@ dragonOnox_mainBodyStateHandler:
 	ld e,Enemy.state	; $5d51
 	ld a,(de)		; $5d53
 	rst_jumpTable			; $5d54
-        .dw dragonOnox_mainBody_state0
-        .dw dragonOnox_mainBody_state1
-        .dw dragonOnox_mainBody_state2
-        .dw dragonOnox_mainBody_state3
-        .dw dragonOnox_mainBody_state4
-        .dw dragonOnox_mainBody_state5
-        .dw dragonOnox_mainBody_state6
-        .dw dragonOnox_mainBody_state7
-        .dw dragonOnox_mainBody_state8
-        .dw dragonOnox_mainBody_state9
-        .dw dragonOnox_mainBody_stateA
-        .dw dragonOnox_mainBody_stateB
-        .dw dragonOnox_mainBody_stateC
-        .dw dragonOnox_mainBody_stateD
-        .dw dragonOnox_mainBody_stateE
+	.dw dragonOnox_mainBody_state0
+	.dw dragonOnox_mainBody_state1
+	.dw dragonOnox_mainBody_state2
+	.dw dragonOnox_mainBody_state3
+	.dw dragonOnox_mainBody_state4
+	.dw dragonOnox_mainBody_state5
+	.dw dragonOnox_mainBody_state6
+	.dw dragonOnox_mainBody_state7
+	.dw dragonOnox_mainBody_state8
+	.dw dragonOnox_mainBody_state9
+	.dw dragonOnox_mainBody_stateA
+	.dw dragonOnox_mainBody_stateB
+	.dw dragonOnox_mainBody_stateC
+	.dw dragonOnox_mainBody_stateD
+	.dw dragonOnox_mainBody_stateE
 
 dragonOnox_checkTransitionState:
 	ld e,Enemy.state		; $5d73
@@ -3914,11 +3914,11 @@ dragonOnox_mainBody_state2:
 	inc e			; $5e1c
 	ld a,(de)		; $5e1d
 	rst_jumpTable			; $5e1e
-        .dw @substate0
-        .dw @substate1
-        .dw @substate2
-        .dw @substate3
-        .dw @substate4
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw @substate4
 
 @substate0:
 	ld h,d			; $5e29
@@ -4092,10 +4092,10 @@ dragonOnox_mainBody_state5:
 	inc e			; $5f07
 	ld a,(de)		; $5f08
 	rst_jumpTable			; $5f09
-        .dw @substate0
-        .dw @substate1
-        .dw @substate2
-        .dw @substate3
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
 
 @substate0:
 	ld h,d			; $5f12
@@ -4197,13 +4197,13 @@ dragonOnox_mainBody_state8:
 	inc e			; $5f9a
 	ld a,(de)		; $5f9b
 	rst_jumpTable			; $5f9c
-        .dw @substate0
-        .dw @substate1
-        .dw @substate2
-        .dw @substate3
-        .dw @substate4
-        .dw @substate5
-        .dw @substate6
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw @substate4
+	.dw @substate5
+	.dw @substate6
 
 @substate0:
 	ld h,d			; $5fab
@@ -4456,10 +4456,10 @@ dragonOnox_mainBody_stateB:
 	jp dragonOnoxLoadaIntoVar30Andcfc9		; $6113
 
 @seasonsTable_0f_6116:
-        .db $08 $a0 $18 $90 $28 $80 $38 $70
-        .db $48 $60 $58 $50 $68 $40 $78 $30
-        .db $88 $20 $98 $10 $00 $50 $30 $70
-        .db $10 $90 $40 $60 $20 $80 $08 $98
+	.db $08 $a0 $18 $90 $28 $80 $38 $70
+	.db $48 $60 $58 $50 $68 $40 $78 $30
+	.db $88 $20 $98 $10 $00 $50 $30 $70
+	.db $10 $90 $40 $60 $20 $80 $08 $98
 
 dragonOnox_mainBody_stateD:
 	ld e,Enemy.state		; $6136
@@ -4477,9 +4477,9 @@ dragonOnox_mainBody_stateE:
 	inc e			; $6142
 	ld a,(de)		; $6143
 	rst_jumpTable			; $6144
-        .dw @substate0
-        .dw @substate1
-        .dw @substate2
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
 
 @substate0:
 	ld h,d			; $614b
@@ -4544,13 +4544,13 @@ dragonOnox_mainBody_stateE:
 	jp seasonsFunc_0f_650d		; $61b6
 
 @seasonsTable_0f_61b9:
-        .db $fd $06 $fc $01
+	.db $fd $06 $fc $01
 
 dragonOnox_leftShoulder:
 	ld a,(de)		; $61bd
 	rst_jumpTable			; $61be
-        .dw @animate
-        .dw @offsetBasedOncfca
+	.dw @animate
+	.dw @offsetBasedOncfca
 
 @animate:
 	ld h,d			; $61c3
@@ -4586,8 +4586,8 @@ dragonOnox_leftShoulder:
 dragonOnox_rightShoulder:
 	ld a,(de)		; $61ef
 	rst_jumpTable			; $61f0
-        .dw @animate
-        .dw @offsetBasedOncfca
+	.dw @animate
+	.dw @offsetBasedOncfca
 
 @animate:
 	ld h,d			; $61f5
@@ -4623,10 +4623,10 @@ dragonOnox_rightShoulder:
 dragonOnox_leftClaw:
 	ld a,(de)		; $6221
 	rst_jumpTable			; $6222
-        .dw @state0
-        .dw @state1
-        .dw @state2
-        .dw @state3
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
 
 @state0:
 	ld h,d			; $622b
@@ -4719,13 +4719,13 @@ dragonOnox_leftClaw:
 	inc e			; $62a5
 	ld a,(de)		; $62a6
 	rst_jumpTable			; $62a7
-        .dw @@substate0
-        .dw @@substate1
-        .dw @@substate2
-        .dw @@substate3
-        .dw @@substate4
-        .dw @@substate5
-        .dw @@substate6
+	.dw @@substate0
+	.dw @@substate1
+	.dw @@substate2
+	.dw @@substate3
+	.dw @@substate4
+	.dw @@substate5
+	.dw @@substate6
 +
 	ld a,$00		; $62b6
 	call objectGetRelatedObject1Var		; $62b8
@@ -4899,8 +4899,8 @@ dragonOnox_leftClaw:
 	inc e			; $63a9
 	ld a,(de)		; $63aa
 	rst_jumpTable			; $63ab
-        .dw @@substate0
-        .dw @@substate1
+	.dw @@substate0
+	.dw @@substate1
 
 @@substate0:
 	ld h,d			; $63b0
@@ -4952,10 +4952,10 @@ dragonOnox_leftClaw:
 dragonOnox_rightClaw:
 	ld a,(de)		; $63f8
 	rst_jumpTable			; $63f9
-        .dw @state0
-        .dw @state1
-        .dw dragonOnox_leftClaw@state2
-        .dw dragonOnox_leftClaw@state3
+	.dw @state0
+	.dw @state1
+	.dw dragonOnox_leftClaw@state2
+	.dw dragonOnox_leftClaw@state3
 
 @state0:
 	ld h,d			; $6402
@@ -5014,8 +5014,8 @@ dragonOnox_rightClaw:
 dragonOnox_leftClawSphere:
 	ld a,(de)		; $6451
 	rst_jumpTable			; $6452
-        .dw @linkPartsAndAnimate
-        .dw @connectParts
+	.dw @linkPartsAndAnimate
+	.dw @connectParts
 
 @linkPartsAndAnimate:
 	ld h,d			; $6457
@@ -5063,8 +5063,8 @@ dragonOnox_leftClawSphere:
 dragonOnox_rightClawSphere:
 	ld a,(de)		; $648a
 	rst_jumpTable			; $648b
-        .dw @linkPartsAndAnimate
-        .dw dragonOnox_leftClawSphere@connectParts
+	.dw @linkPartsAndAnimate
+	.dw dragonOnox_leftClawSphere@connectParts
 
 @linkPartsAndAnimate:
 	ld h,d			; $6490
@@ -5088,8 +5088,8 @@ dragonOnox_rightClawSphere:
 dragonOnox_leftShoulderSphere:
 	ld a,(de)		; $64ad
 	rst_jumpTable			; $64ae
-        .dw @linkPartsAndAnimate
-        .dw @connectParts
+	.dw @linkPartsAndAnimate
+	.dw @connectParts
 
 @linkPartsAndAnimate:
 	ld h,d			; $64b3
@@ -5138,8 +5138,8 @@ dragonOnox_leftShoulderSphere:
 dragonOnox_rightShoulderSphere:
 	ld a,(de)		; $64ea
 	rst_jumpTable			; $64eb
-        .dw @linkPartsAndAnimate
-        .dw dragonOnox_leftShoulderSphere@connectParts
+	.dw @linkPartsAndAnimate
+	.dw dragonOnox_leftShoulderSphere@connectParts
 
 @linkPartsAndAnimate:
 	ld h,d			; $64f0
@@ -5321,11 +5321,11 @@ seasonsFunc_0f_65c7:
 	jp enemySetAnimation		; $65ea
 
 seasonsTable_0f_65ed:
-        .db $48 $50 $00
-        .db $41 $50 $01
-        .db $41 $50 $01
-        .db $41 $47 $02
-        .db $48 $50 $00
+	.db $48 $50 $00
+	.db $41 $50 $01
+	.db $41 $50 $01
+	.db $41 $47 $02
+	.db $48 $50 $00
 
 seasonsFunc_0f_65fc:
 	ld h,d			; $65fc
@@ -5394,14 +5394,14 @@ seasonsFunc_0f_6637:
 	ret			; $664b
 
 seasonsTable_0f_664c:
-        .db $00 $00
-        .db $f8 $10
-        .db $00 $20
-        .db $08 $10
-        .db $00 $00
-        .db $f8 $f0
-        .db $00 $e0
-        .db $08 $f0
+	.db $00 $00
+	.db $f8 $10
+	.db $00 $20
+	.db $08 $10
+	.db $00 $00
+	.db $f8 $f0
+	.db $00 $e0
+	.db $08 $f0
 
 seasonsFunc_0f_665c:
 	ld l,Enemy.state		; $665c
@@ -5421,14 +5421,14 @@ seasonsFunc_0f_665c:
 	ret			; $6677
 
 seasonsTable_0f_6678:
-        .db $1e
-        .db $3c
-        .db $3c
-        .db $5a
-        .db $5a
-        .db $5a
-        .db $78
-        .db $78
+	.db $1e
+	.db $3c
+	.db $3c
+	.db $5a
+	.db $5a
+	.db $5a
+	.db $78
+	.db $78
 
 seasonsFunc_0f_6680:
 	call getRandomNumber_noPreserveVars		; $6680
@@ -5452,14 +5452,14 @@ seasonsFunc_0f_6680:
 	ret			; $6699
 
 seasonsTable_0f_669a:
-        .db $f8 $f0
-        .db $08 $f0
-        .db $f8 $fc
-        .db $08 $fc
-        .db $f8 $04
-        .db $08 $04
-        .db $f8 $10
-        .db $08 $10
+	.db $f8 $f0
+	.db $08 $f0
+	.db $f8 $fc
+	.db $08 $fc
+	.db $f8 $04
+	.db $08 $04
+	.db $f8 $10
+	.db $08 $10
 
 seasonsFunc_0f_66aa:
 	ld a,($cfcc)		; $66aa
