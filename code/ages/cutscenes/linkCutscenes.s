@@ -112,7 +112,11 @@ _linkCutscene0:
 	ld (de),a		; $714c
 ++
 	ld hl,_linkCutscene_zOscillation0		; $714d
+.ifdef ROM_AGES
 	jr _linkCutscene_oscillateZ		; $7150
+.else
+	jp _linkCutscene_oscillateZ
+.endif
 
 @substate4:
 	call itemDecCounter1		; $7152
@@ -151,24 +155,37 @@ _linkCutscene_oscillateZ_1:
 ; @addr{7180}
 _linkCutscene_oscillateZ:
 	ld a,($cbb7)		; $7180
+.ifdef ROM_SEASONS
+	ld b,a			; $6ecc
+	and $07			; $6ecd
+	jr nz,++		; $6ecf
+
+	ld a,b			; $6ed1
+.else
 	and $07			; $7183
 	jr nz,++		; $7185
 
 	ld a,($cbb7)		; $7187
+.endif
 	and $38			; $718a
 	swap a			; $718c
 	rlca			; $718e
 	rst_addAToHl			; $718f
 	ld e,SpecialObject.zh		; $7190
+.ifdef ROM_AGES
 	ld a,(hl)		; $7192
 	ld b,a			; $7193
 	ld a,(de)		; $7194
 	add b			; $7195
+.else
+	ld a,(de)		; $6eda
+	add (hl)		; $6edb
+.endif
 	ld (de),a		; $7196
 ++
 	jp specialObjectAnimate		; $7197
 
-_linkCutscene_zOscillation0
+_linkCutscene_zOscillation0:
 	.db $ff $fe $fe $ff $00 $01 $01 $00
 
 _linkCutscene_zOscillation1:
@@ -885,7 +902,7 @@ _linkCutscene9:
 	ret			; $75df
 
 ;;
-; Link being kissed by Zelda in ending cutscene
+; Link being kissed by Zelda in ending cutscene - cutscene 6 in seasons
 ;
 ; @addr{75e0}
 _linkCutsceneA:
@@ -933,7 +950,11 @@ _linkCutsceneA:
 	ret nz			; $7615
 
 	call itemIncState2		; $7616
+.ifdef ROM_AGES
 	jp objectSetVisible82		; $7619
+.else
+	jp objectSetVisible		; $7619
+.endif
 
 @substate1:
 	ld a,($cfc0)		; $761c
@@ -987,7 +1008,7 @@ _linkCutsceneA:
 	ret			; $7667
 
 ;;
-; Cutscene played on starting a new game ("accept our quest, hero")
+; Cutscene played on starting a new game ("accept our quest, hero") - cutsceneB in seasons
 ;
 ; @addr{7668}
 _linkCutsceneB:
@@ -1015,7 +1036,11 @@ _linkCutsceneB:
 	xor a			; $768a
 	ld (wTmpcbb9),a		; $768b
 
+.ifdef ROM_AGES
 	ldbc INTERACID_SPARKLE, $0d		; $768e
+.else
+	ldbc INTERACID_SPARKLE, $09		; $768e
+.endif
 	call objectCreateInteraction		; $7691
 	jr nz,@state1	; $7694
 	ld l,Interaction.relatedObj1		; $7696
@@ -1049,7 +1074,11 @@ _linkCutsceneB:
 	ret nz			; $76c3
 
 	call itemIncState2		; $76c4
+.ifdef ROM_AGES
 	ld bc,TX_1213		; $76c7
+.else
+	ld bc,TX_0c16		; $76c7
+.endif
 	jp showText		; $76ca
 
 @substate2:
