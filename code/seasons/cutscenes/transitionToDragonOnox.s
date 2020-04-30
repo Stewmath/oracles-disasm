@@ -5,14 +5,14 @@
 seasonsFunc_0f_6f75:
 	ld a,($cfc8)		; $6f75
 	rst_jumpTable			; $6f78
-	.dw @state1
+	.dw @state0
 	.dw @return
 	.dw @state2
 	.dw seasonsFunc_0f_70b4_swapGraphics@state3
 	.dw seasonsFunc_0f_704d@state4
 	.dw seasons_func_0f_712a@state5
 	.dw seasons_func_0f_712a@state6
-@state1:
+@state0:
 	ld a,(wPaletteThread_mode)		; $6f87
 	or a			; $6f8a
 	ret nz			; $6f8b
@@ -21,7 +21,7 @@ seasonsFunc_0f_6f75:
 	call setScreenShakeCounter		; $6f90
 
 	call getFreeEnemySlot_uncounted		; $6f93
-	ld (hl),$02		; $6f96
+	ld (hl),ENEMYID_GENERAL_ONOX		; $6f96
 	inc l			; $6f98
 	ld (hl),$02		; $6f99
 
@@ -113,7 +113,7 @@ seasonsFunc_0f_6f75:
 @state2:
 	call clearEnemies		; $702e
 	call getFreeEnemySlot		; $7031
-	ld (hl),$05		; $7034
+	ld (hl),ENEMYID_DRAGON_ONOX		; $7034
 	ld hl,$cfca		; $7036
 	call seasons_func_0f_712a		; $7039
 	ld hl,$cfcb		; $703c

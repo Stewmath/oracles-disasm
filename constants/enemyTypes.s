@@ -7,36 +7,6 @@
 ; enemyBossCommon.s.)
 
 ;;
-.define ENEMYID_MERGED_TWINROVA			$01
-
-;;
-; See also INTERACID_VERAN_CUTSCENE_FACE (triggers cutscene for this)
-.define ENEMYID_VERAN_FINAL_FORM		$02
-
-;;
-; @subid_00{Red twinrova}
-; @subid_01{Blue twinrova}
-.define ENEMYID_TWINROVA			$03
-
-;;
-; King of Evil
-.define ENEMYID_GANON				$04
-
-;;
-; Even subids appear on the left, while odd subids are on the right.
-; @subid_00-01{Fists}
-; @subid_02-03{Bomb chompers}
-; @subid_04-05{Grabbable balls}
-.define ENEMYID_RAMROCK_ARMS			$05
-
-;;
-.define ENEMYID_VERAN_FAIRY			$06
-
-;;
-; @palette{PALH_83}
-.define ENEMYID_RAMROCK				$07
-
-;;
 .define ENEMYID_RIVER_ZORA			$08
 
 ;;
@@ -692,6 +662,8 @@
 ; Minibosses
 ; ================================================================================
 
+.ifdef ROM_AGES
+
 .define ENEMYID_GIANT_GHINI			$70
 .define ENEMYID_SWOOP				$71
 .define ENEMYID_SUBTERROR			$72
@@ -709,11 +681,6 @@
 .define ENEMYID_SMASHER				$74
 
 ;;
-; @subid_00{Main form}
-; @subid_01{Bat form}
-.define ENEMYID_VIRE				$75
-
-;;
 ; @subid_00{The fish}
 ; @subid_01{His antenna (weak point)}
 .define ENEMYID_ANGLER_FISH			$76
@@ -726,12 +693,60 @@
 ; @subid_03{"Afterimage" visible when moving}
 .define ENEMYID_BLUE_STALFOS			$77
 
+.else; ROM SEASONS
+
+.define ENEMYID_BROTHER_GORIYAS			$70
+.define ENEMYID_FACADE				$71
+.define ENEMYID_OMUAI				$72
+.define ENEMYID_AGUNIMA				$73
+.define ENEMYID_SYGER				$74
+.define ENEMYID_POE_SISTERS_1			$76
+.define ENEMYID_FRYPOLAR			$77
+.define ENEMYID_POE_SISTERS_2			$7e
+
+.endif
+
+;;
+; @subid_00{Main form}
+; @subid_01{Bat form}
+.define ENEMYID_VIRE				$75
+
 
 ; ================================================================================
 ; Bosses
 ; ================================================================================
 
+;;
+.define ENEMYID_MERGED_TWINROVA			$01
+
+;;
+; @subid_00{Red twinrova}
+; @subid_01{Blue twinrova}
+.define ENEMYID_TWINROVA			$03
+
+;;
+; King of Evil
+.define ENEMYID_GANON				$04
+
 .ifdef ROM_AGES
+
+;;
+; See also INTERACID_VERAN_CUTSCENE_FACE (triggers cutscene for this)
+.define ENEMYID_VERAN_FINAL_FORM		$02
+
+;;
+; Even subids appear on the left, while odd subids are on the right.
+; @subid_00-01{Fists}
+; @subid_02-03{Bomb chompers}
+; @subid_04-05{Grabbable balls}
+.define ENEMYID_RAMROCK_ARMS			$05
+
+;;
+.define ENEMYID_VERAN_FAIRY			$06
+
+;;
+; @palette{PALH_83}
+.define ENEMYID_RAMROCK				$07
 
 ;;
 ; @subid_00{Spawner (use this)}
@@ -786,6 +801,12 @@
 
 .else; ROM_SEASONS
 
+.define ENEMYID_GENERAL_ONOX			$02
+.define ENEMYID_DRAGON_ONOX			$05
+
+.define ENEMYID_GLEEOK				$06
+.define ENEMYID_KING_MOBLIN			$07
+
 ;;
 ; @subid_80{}
 ; @subid_81{}
@@ -812,7 +833,6 @@
 .define ENEMYID_GOHMA				$7b
 .define ENEMYID_DIGDOGGER			$7c
 .define ENEMYID_MANHANDLA			$7d
-.define ENEMYID_POE_SISTER			$7e
 .define ENEMYID_MEDUSA_HEAD			$7f
 
 .endif ; ROM_SEASONS

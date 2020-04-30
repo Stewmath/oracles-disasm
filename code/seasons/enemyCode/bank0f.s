@@ -1,3 +1,6 @@
+; ==============================================================================
+; ENEMYID_MERGED_TWINROVA
+; ==============================================================================
 enemyCode01:
 	jr z,_label_0f_043	; $45a2
 	sub $03			; $45a4
@@ -759,6 +762,9 @@ _label_0f_064:
 	dec (hl)		; $4a63
 	ret			; $4a64
 
+; ==============================================================================
+; ENEMYID_TWINROVA
+; ==============================================================================
 enemyCode03:
 	jr z,_label_0f_065	; $4a65
 	sub $03			; $4a67
@@ -1765,6 +1771,9 @@ _label_0f_112:
 	jr z,_label_0f_108	; $5068
 	nop			; $506a
 
+; ==============================================================================
+; ENEMYID_GANON
+; ==============================================================================
 enemyCode04:
 	jr z,_label_0f_116	; $506b
 	sub $03			; $506d
@@ -2929,6 +2938,9 @@ enemyCode00:
 	ret			; $5834
 
 
+; ==============================================================================
+; ENEMYID_???
+; ==============================================================================
 enemyCode02:
 	jr z,_label_0f_142	; $5835
 	sub $03			; $5837
@@ -3592,92 +3604,133 @@ _label_0f_155:
 	ld a,$67		; $5c96
 	jp playSound		; $5c98
 
+; ==============================================================================
+; ENEMYID_DRAGON_ONOX
+;
+; Variables:
+;   var2a:
+;   var2f:
+;   var30:
+;   var31:
+;   var32:
+;   var33:
+;   var34:
+;   var35:
+;   var36:
+;   var37:
+;   var38:
+;   $cfc8 - near end
+;   $cfc9
+;   $cfca
+;   $cfcb
+;   $cfcc
+;   $cfcd
+;   $cfd7 - Pointer to main body (subid $01)
+;   $cfd8 - Pointer to left shoulder (subid $02)
+;   $cfd9 - Pointer to right shoulder (subid $03)
+;   $cfda - Pointer to left claw (subid $04)
+;   $cfdb - Pointer to right claw (subid $05)
+;   $cfdc - Pointer to left claw sphere (subid $06)
+;   $cfdd - Pointer to right claw sphere (subid $07)
+;   $cfde - Pointer to left shoulder sphere (subid $08)
+;   $cfdf - Pointer to right shoulder sphere (subid $09)
+; ==============================================================================
 enemyCode05:
-	jr z,_label_0f_157	; $5c9b
-	sub $03			; $5c9d
+	jr z,@normalStatus	; $5c9b
+	sub ENEMYSTATUS_NO_HEALTH		; $5c9d
 	ret c			; $5c9f
-	jr nz,_label_0f_156	; $5ca0
+	jr nz,@justHit		; $5ca0
+
 	ld h,d			; $5ca2
-	ld l,$a4		; $5ca3
+	ld l,Enemy.collisionType		; $5ca3
 	res 7,(hl)		; $5ca5
 	xor a			; $5ca7
-	ld l,$85		; $5ca8
+	ld l,Enemy.state2	; $5ca8
 	ldd (hl),a		; $5caa
+	; state $0e
 	ld (hl),$0e		; $5cab
-	ld l,$a9		; $5cad
+	ld l,Enemy.health	; $5cad
 	inc a			; $5caf
 	ld (hl),a		; $5cb0
-	ld ($cbca),a		; $5cb1
-	jr _label_0f_157		; $5cb4
-_label_0f_156:
-	ld e,$82		; $5cb6
+	ld (wDisableLinkCollisionsAndMenu),a		; $5cb1
+	jr @normalStatus		; $5cb4
+
+@justHit:
+	ld e,Enemy.subid		; $5cb6
 	ld a,(de)		; $5cb8
 	dec a			; $5cb9
-	jr nz,_label_0f_157	; $5cba
-	ld e,$aa		; $5cbc
+	jr nz,@normalStatus	; $5cba
+
+	; main body
+	ld e,Enemy.var2a	; $5cbc
 	ld a,(de)		; $5cbe
 	res 7,a			; $5cbf
 	sub $04			; $5cc1
 	cp $06			; $5cc3
-	jr nc,_label_0f_157	; $5cc5
+	jr nc,@normalStatus	; $5cc5
+
 	ld h,d			; $5cc7
-	ld l,$ab		; $5cc8
+	ld l,Enemy.invincibilityCounter		; $5cc8
 	ld (hl),$3c		; $5cca
-	ld l,$b7		; $5ccc
+	; var30 - $06
+	; var31 - $06
+	; var32 - $04
+	; var37 - $01
+	; $cfc9 - $86
+	ld l,Enemy.var37	; $5ccc
 	ld (hl),$01		; $5cce
-	ld l,$b1		; $5cd0
+	ld l,Enemy.var31	; $5cd0
 	ld (hl),$06		; $5cd2
 	inc l			; $5cd4
 	ld (hl),$04		; $5cd5
 	ld a,$06		; $5cd7
-	call $66c3		; $5cd9
-_label_0f_157:
-	ld e,$82		; $5cdc
+	call dragonOnoxLoadaIntoVar30Andcfc9		; $5cd9
+
+@normalStatus:
+	ld e,Enemy.subid		; $5cdc
 	ld a,(de)		; $5cde
 	ld b,a			; $5cdf
-	ld e,$84		; $5ce0
+	ld e,Enemy.state		; $5ce0
 	ld a,b			; $5ce2
 	rst_jumpTable			; $5ce3
-	ld hl,sp+$5c		; $5ce4
-	ldd (hl),a		; $5ce6
-	ld e,l			; $5ce7
-	cp l			; $5ce8
-	ld h,c			; $5ce9
-	rst $28			; $5cea
-	ld h,c			; $5ceb
-	ld hl,$f862		; $5cec
-	ld h,e			; $5cef
-	ld d,c			; $5cf0
-	ld h,h			; $5cf1
-	adc d			; $5cf2
-	ld h,h			; $5cf3
-	xor l			; $5cf4
-	ld h,h			; $5cf5
-	ld ($3e64),a		; $5cf6
-	dec b			; $5cf9
+        .dw dragonOnox_bodyPartSpawner
+        .dw dragonOnox_mainBody
+        .dw dragonOnox_leftShoulder
+        .dw dragonOnox_rightShoulder
+        .dw dragonOnox_leftClaw
+        .dw dragonOnox_rightClaw
+        .dw dragonOnox_leftClawSphere
+        .dw dragonOnox_rightClawSphere
+        .dw dragonOnox_leftShoulderSphere
+        .dw dragonOnox_rightShoulderSphere
+
+dragonOnox_bodyPartSpawner:
+	ld a,ENEMYID_DRAGON_ONOX		; $5cf8
 	ld b,$8a		; $5cfa
 	call _enemyBoss_initializeRoom		; $5cfc
 	xor a			; $5cff
-	ld ($cc6a),a		; $5d00
+	ld (wLinkForceState),a		; $5d00
 	inc a			; $5d03
-	ld ($cc17),a		; $5d04
-	ld ($cbca),a		; $5d07
+	ld (wLoadedTreeGfxIndex),a		; $5d04
+	ld (wDisableLinkCollisionsAndMenu),a		; $5d07
 	ld b,$09		; $5d0a
 	call checkBEnemySlotsAvailable		; $5d0c
 	ret nz			; $5d0f
-	ld b,$05		; $5d10
+	ld b,ENEMYID_DRAGON_ONOX		; $5d10
 	call _ecom_spawnUncountedEnemyWithSubid01		; $5d12
-	ld l,$80		; $5d15
+	ld l,Enemy.enabled		; $5d15
 	ld e,l			; $5d17
 	ld a,(de)		; $5d18
 	ld (hl),a		; $5d19
 	ld a,h			; $5d1a
+	; store in $cfd7 a pointer to Dragon Onox with subid $01
 	ld hl,$cfd7		; $5d1b
 	ldi (hl),a		; $5d1e
 	ld c,$08		; $5d1f
-_label_0f_158:
+-
 	push hl			; $5d21
 	call _ecom_spawnUncountedEnemyWithSubid01		; $5d22
+	; spawn from subids $02 to $09, storing in $cfd8 to $cfdf
 	ld a,$0a		; $5d25
 	sub c			; $5d27
 	ld (hl),a		; $5d28
@@ -3685,205 +3738,244 @@ _label_0f_158:
 	pop hl			; $5d2a
 	ldi (hl),a		; $5d2b
 	dec c			; $5d2c
-	jr nz,_label_0f_158	; $5d2d
+	jr nz,-			; $5d2d
 	jp enemyDelete		; $5d2f
-	ld e,$84		; $5d32
+
+dragonOnox_mainBody:
+	ld e,Enemy.state		; $5d32
 	ld a,(de)		; $5d34
 	sub $02			; $5d35
 	cp $0c			; $5d37
-	jr nc,_label_0f_159	; $5d39
+	jr nc,+			; $5d39
+	; state $02 to $0d
 	ld a,(wFrameCounter)		; $5d3b
 	and $3f			; $5d3e
-	ld a,$7c		; $5d40
+	ld a,SND_AQUAMENTUS_HOVER		; $5d40
 	call z,playSound		; $5d42
-_label_0f_159:
-	call $5d73		; $5d45
-	call z,$5d51		; $5d48
-	call $65c7		; $5d4b
-	jp $65fc		; $5d4e
-	ld e,$84		; $5d51
++
+	call dragonOnox_checkTransitionState		; $5d45
+	call z,dragonOnox_mainBodyStateHandler		; $5d48
+	call seasonsFunc_0f_65c7		; $5d4b
+	jp seasonsFunc_0f_65fc		; $5d4e
+
+dragonOnox_mainBodyStateHandler:
+	ld e,Enemy.state	; $5d51
 	ld a,(de)		; $5d53
 	rst_jumpTable			; $5d54
-	and (hl)		; $5d55
-	ld e,l			; $5d56
-.DB $d3				; $5d57
-	ld e,l			; $5d58
-	rrca			; $5d59
-	ld e,(hl)		; $5d5a
-	jp $d75e		; $5d5b
-	ld e,(hl)		; $5d5e
-	ld a,($c35e)		; $5d5f
-	ld e,(hl)		; $5d62
-	add e			; $5d63
-	ld e,a			; $5d64
-	sbc d			; $5d65
-	ld e,a			; $5d66
-	jp $6d5e		; $5d67
-	ld h,b			; $5d6a
-	add h			; $5d6b
-	ld h,b			; $5d6c
-	jp $365e		; $5d6d
-	ld h,c			; $5d70
-	ld b,d			; $5d71
-	ld h,c			; $5d72
-	ld e,$84		; $5d73
+        .dw dragonOnox_mainBody_state0
+        .dw dragonOnox_mainBody_state1
+        .dw dragonOnox_mainBody_state2
+        .dw dragonOnox_mainBody_state3
+        .dw dragonOnox_mainBody_state4
+        .dw dragonOnox_mainBody_state5
+        .dw dragonOnox_mainBody_state6
+        .dw dragonOnox_mainBody_state7
+        .dw dragonOnox_mainBody_state8
+        .dw dragonOnox_mainBody_state9
+        .dw dragonOnox_mainBody_stateA
+        .dw dragonOnox_mainBody_stateB
+        .dw dragonOnox_mainBody_stateC
+        .dw dragonOnox_mainBody_stateD
+        .dw dragonOnox_mainBody_stateE
+
+dragonOnox_checkTransitionState:
+	ld e,Enemy.state		; $5d73
 	ld a,(de)		; $5d75
 	cp $0e			; $5d76
 	ret z			; $5d78
+
 	ld b,a			; $5d79
-	ld e,$ab		; $5d7a
+	ld e,Enemy.invincibilityCounter		; $5d7a
 	ld a,(de)		; $5d7c
 	or a			; $5d7d
 	ret z			; $5d7e
+
+	; Continue once invincibilityCounter about to end
 	dec a			; $5d7f
 	ret nz			; $5d80
+
 	ld a,b			; $5d81
 	cp $08			; $5d82
-	jr nz,_label_0f_160	; $5d84
-	ld e,$85		; $5d86
+	jr nz,+			; $5d84
+
+	ld e,Enemy.state2		; $5d86
 	ld a,(de)		; $5d88
 	sub $02			; $5d89
 	cp $02			; $5d8b
-	jr nc,_label_0f_160	; $5d8d
-	ld e,$89		; $5d8f
+	jr nc,+			; $5d8d
+
+	; state2 with value $02 or $03
+	ld e,Enemy.angle		; $5d8f
 	ld a,(de)		; $5d91
 	bit 4,a			; $5d92
 	ld a,$08		; $5d94
-	jr nz,_label_0f_161	; $5d96
+	jr nz,++		; $5d96
 	ld a,$09		; $5d98
-	jr _label_0f_161		; $5d9a
-_label_0f_160:
-	ld e,$b0		; $5d9c
+	jr ++			; $5d9a
++
+	; non-state $08 goes here
+	; or non-state2 of $02/$03
+	ld e,Enemy.var30		; $5d9c
 	ld a,(de)		; $5d9e
 	and $01			; $5d9f
 	add $00			; $5da1
-_label_0f_161:
-	jp $66c3		; $5da3
+++
+	; non-state 8
+	;	var30 - bit 0 of previous var30
+	;	$cfc9 - $80|bit 0 of previous var30
+	; state 8, state2 of $02/$03, bit 4 of angle set (ANGLE_DOWN/ANGLE_LEFT)
+	;	var30 - $08
+	;	$cfc9 - $88
+	; state 8, state2 of $02/$03, bit 4 of angle not set (ANGLE_UP/ANGLE_RIGHT)
+	;	var30 - $09
+	;	$cfc9 - $89
+	jp dragonOnoxLoadaIntoVar30Andcfc9		; $5da3
+
+dragonOnox_mainBody_state0:
 	ld h,d			; $5da6
 	ld l,e			; $5da7
+	; next state
 	inc (hl)		; $5da8
-	ld l,$86		; $5da9
+
+	ld l,Enemy.counter1		; $5da9
 	ld (hl),$5a		; $5dab
-	ld l,$90		; $5dad
-	ld (hl),$14		; $5daf
-	ld l,$a4		; $5db1
+	ld l,Enemy.speed		; $5dad
+	ld (hl),SPEED_80		; $5daf
+	ld l,Enemy.collisionType		; $5db1
 	set 7,(hl)		; $5db3
-	ld l,$9b		; $5db5
+	ld l,Enemy.oamFlagsBackup		; $5db5
 	ld a,$05		; $5db7
 	ldi (hl),a		; $5db9
 	ld (hl),a		; $5dba
-	ld l,$b1		; $5dbb
+	; var31 - $14
+	; var32 - $0c
+	ld l,Enemy.var31		; $5dbb
 	ld (hl),$14		; $5dbd
 	inc l			; $5dbf
 	ld (hl),$0c		; $5dc0
 	call checkIsLinkedGame		; $5dc2
-	jr nz,_label_0f_162	; $5dc5
-	ld l,$a9		; $5dc7
+	jr nz,+			; $5dc5
+	ld l,Enemy.health		; $5dc7
 	ld (hl),$22		; $5dc9
-_label_0f_162:
++
 	call objectSetVisible83		; $5dcb
 	ld a,$04		; $5dce
 	jp fadeinFromWhiteWithDelay		; $5dd0
+
+dragonOnox_mainBody_state1:
 	inc e			; $5dd3
 	ld a,(de)		; $5dd4
 	or a			; $5dd5
-	jr nz,_label_0f_164	; $5dd6
+	jr nz,++		; $5dd6
+
+	; state2 is 0
 	call _ecom_decCounter1		; $5dd8
-	jr z,_label_0f_163	; $5ddb
+	jr z,+			; $5ddb
 	ld a,(hl)		; $5ddd
 	cp $3c			; $5dde
 	ret nz			; $5de0
-	ld a,$7c		; $5de1
+	ld a,SND_AQUAMENTUS_HOVER		; $5de1
 	jp playSound		; $5de3
-_label_0f_163:
++
 	ld l,e			; $5de6
 	inc (hl)		; $5de7
 	ld a,$08		; $5de8
-	ld ($cbae),a		; $5dea
+	ld (wTextboxFlags),a		; $5dea
 	ld a,$06		; $5ded
-	ld ($cbac),a		; $5def
-	ld bc,$501e		; $5df2
+	ld (wTextboxPosition),a		; $5def
+	ld bc,TX_501e		; $5df2
 	jp showText		; $5df5
-_label_0f_164:
+++
 	ld h,d			; $5df8
 	ld l,e			; $5df9
 	xor a			; $5dfa
 	ldd (hl),a		; $5dfb
 	inc (hl)		; $5dfc
+
+	; start fight
 	xor a			; $5dfd
-	ld ($cbca),a		; $5dfe
-	ld ($cca4),a		; $5e01
-	ld ($cc02),a		; $5e04
-	ld a,$32		; $5e07
+	ld (wDisableLinkCollisionsAndMenu),a		; $5dfe
+	ld (wDisabledObjects),a		; $5e01
+	ld (wMenuDisabled),a		; $5e04
+	ld a,MUS_FINAL_BOSS		; $5e07
 	ld (wActiveMusic),a		; $5e09
 	jp playSound		; $5e0c
+
+dragonOnox_mainBody_state2:
+	; Every substate here starts with (hl)=Enemy.var37
 	ld h,d			; $5e0f
-	ld l,$b7		; $5e10
+	ld l,Enemy.var37		; $5e10
 	bit 0,(hl)		; $5e12
-	jr z,_label_0f_165	; $5e14
+	jr z,+			; $5e14
 	ld (hl),$00		; $5e16
-	ld l,$87		; $5e18
+	ld l,Enemy.counter2		; $5e18
 	ld (hl),$00		; $5e1a
-_label_0f_165:
++
 	inc e			; $5e1c
 	ld a,(de)		; $5e1d
 	rst_jumpTable			; $5e1e
-	add hl,hl		; $5e1f
-	ld e,(hl)		; $5e20
-	ld c,(hl)		; $5e21
-	ld e,(hl)		; $5e22
-	ld e,d			; $5e23
-	ld e,(hl)		; $5e24
-	sbc a			; $5e25
-	ld e,(hl)		; $5e26
-	or a			; $5e27
-	ld e,(hl)		; $5e28
+        .dw @substate0
+        .dw @substate1
+        .dw @substate2
+        .dw @substate3
+        .dw @substate4
+
+@substate0:
 	ld h,d			; $5e29
 	ld l,e			; $5e2a
+	; next substate
 	inc (hl)		; $5e2b
+	; counter1
 	inc l			; $5e2c
 	ld (hl),$1e		; $5e2d
+	; counter2
 	inc l			; $5e2f
 	ld (hl),$10		; $5e30
-	ld l,$90		; $5e32
-	ld (hl),$1e		; $5e34
-	ld l,$b3		; $5e36
+
+	ld l,Enemy.speed		; $5e32
+	ld (hl),SPEED_c0		; $5e34
+	ld l,Enemy.var33		; $5e36
 	ld (hl),$00		; $5e38
 	call getRandomNumber_noPreserveVars		; $5e3a
 	and $01			; $5e3d
-	ld b,$00		; $5e3f
-	jr nz,_label_0f_166	; $5e41
+	ld b,ANGLE_UP		; $5e3f
+	jr nz,+			; $5e41
 	dec a			; $5e43
-	ld b,$10		; $5e44
-_label_0f_166:
-	ld e,$b4		; $5e46
+	ld b,ANGLE_DOWN		; $5e44
++
+	ld e,Enemy.var34		; $5e46
 	ld (de),a		; $5e48
-	ld e,$89		; $5e49
+	ld e,Enemy.angle		; $5e49
 	ld a,b			; $5e4b
 	ld (de),a		; $5e4c
 	ret			; $5e4d
-_label_0f_167:
+
+@substate1:
 	call _ecom_decCounter2		; $5e4e
-	jp z,$665c		; $5e51
+	jp z,seasonsFunc_0f_665c		; $5e51
 	ld l,e			; $5e54
+	; go to substate2
 	ld (hl),$02		; $5e55
-	call $6637		; $5e57
+	call seasonsFunc_0f_6637		; $5e57
+	
+@substate2:
 	call _ecom_decCounter1		; $5e5a
-	jr nz,_label_0f_168	; $5e5d
+	jr nz,+			; $5e5d
 	ld (hl),$1e		; $5e5f
 	ld a,($cfcc)		; $5e61
 	sub $10			; $5e64
 	cp $40			; $5e66
-	jr c,_label_0f_168	; $5e68
+	jr c,+			; $5e68
 	call getRandomNumber		; $5e6a
 	cp $a0			; $5e6d
-	jr nc,_label_0f_168	; $5e6f
+	jr nc,+			; $5e6f
 	ld l,e			; $5e71
 	inc (hl)		; $5e72
 	ret			; $5e73
-_label_0f_168:
-	ld l,$b5		; $5e74
++
+	ld l,Enemy.var35		; $5e74
 	ld b,(hl)		; $5e76
+	; var36
 	inc l			; $5e77
 	ld c,(hl)		; $5e78
 	ld a,($cfcc)		; $5e79
@@ -3893,138 +3985,167 @@ _label_0f_168:
 	sub c			; $5e81
 	add $06			; $5e82
 	cp $0d			; $5e84
-	jr nc,_label_0f_169	; $5e86
+	jr nc,+			; $5e86
 	ld a,h			; $5e88
 	sub b			; $5e89
 	add $06			; $5e8a
 	cp $0d			; $5e8c
-	jr c,_label_0f_167	; $5e8e
-_label_0f_169:
-	ld e,$86		; $5e90
+	jr c,@substate1	; $5e8e
++
+	ld e,Enemy.counter1		; $5e90
 	ld a,(de)		; $5e92
 	rrca			; $5e93
-	jr c,_label_0f_170	; $5e94
-	call $6529		; $5e96
+	jr c,+			; $5e94
+	call seasonsFunc_0f_6529		; $5e96
 	call objectNudgeAngleTowards		; $5e99
-_label_0f_170:
-	jp $650d		; $5e9c
++
+	jp seasonsFunc_0f_650d		; $5e9c
+
+@substate3:
 	call _ecom_decCounter1		; $5e9f
 	ret nz			; $5ea2
 	ld l,e			; $5ea3
 	inc (hl)		; $5ea4
-	ld l,$8d		; $5ea5
-	ld a,($d00d)		; $5ea7
+	ld l,Enemy.xh		; $5ea5
+	ld a,(w1Link.xh)		; $5ea7
 	cp (hl)			; $5eaa
+	; dragon Onox subid 4
 	ld hl,$cfda		; $5eab
-	jr c,_label_0f_171	; $5eae
+	jr c,+			; $5eae
+	; subid 5
 	inc l			; $5eb0
-_label_0f_171:
++
+	; choose claw to action
 	ld h,(hl)		; $5eb1
-	ld l,$b0		; $5eb2
+	ld l,Enemy.var30		; $5eb2
 	ld (hl),$01		; $5eb4
 	ret			; $5eb6
+
+@substate4:
 	ld h,d			; $5eb7
-	ld l,$86		; $5eb8
+	ld l,Enemy.counter1		; $5eb8
 	bit 0,(hl)		; $5eba
 	ret z			; $5ebc
 	ld (hl),$96		; $5ebd
 	ld l,e			; $5ebf
+	; back to substate 2
 	ld (hl),$02		; $5ec0
 	ret			; $5ec2
+
+dragonOnox_mainBody_state3:
+dragonOnox_mainBody_state6:
+dragonOnox_mainBody_state9:
+dragonOnox_mainBody_stateC:
 	call _ecom_decCounter1		; $5ec3
-	jr nz,_label_0f_172	; $5ec6
+	jr nz,@seasonsFunc_0f_5ecb	; $5ec6
 	ld l,e			; $5ec8
 	inc (hl)		; $5ec9
 	ret			; $5eca
-_label_0f_172:
-	ld l,$b5		; $5ecb
+
+@seasonsFunc_0f_5ecb:
+	ld l,Enemy.var35		; $5ecb
 	ldi a,(hl)		; $5ecd
+	; var36
 	ld c,(hl)		; $5ece
 	ld b,a			; $5ecf
-	call $66aa		; $5ed0
+	call seasonsFunc_0f_66aa		; $5ed0
 	ret nz			; $5ed3
-	jp $6680		; $5ed4
+	jp seasonsFunc_0f_6680		; $5ed4
+
+dragonOnox_mainBody_state4:
 	call getRandomNumber_noPreserveVars		; $5ed7
 	ld b,a			; $5eda
-	call $66cc		; $5edb
-	ld e,$a9		; $5ede
+	call dragonOnoxLowHealthThresholdIntoC		; $5edb
+	ld e,Enemy.health		; $5ede
 	ld a,(de)		; $5ee0
 	cp c			; $5ee1
 	ld a,b			; $5ee2
-	jr nc,_label_0f_173	; $5ee3
+	jr nc,@seasonsFunc_0f_5ee8	; $5ee3
 	rrca			; $5ee5
-	jr _label_0f_174		; $5ee6
-_label_0f_173:
+	jr +			; $5ee6
+
+@seasonsFunc_0f_5ee8:
 	cp $a0			; $5ee8
-_label_0f_174:
++
 	ld a,$05		; $5eea
-	jr c,_label_0f_175	; $5eec
+	jr c,+			; $5eec
 	ld a,$08		; $5eee
-_label_0f_175:
-	ld e,$84		; $5ef0
++
+	ld e,Enemy.state		; $5ef0
 	ld (de),a		; $5ef2
 	inc e			; $5ef3
 	xor a			; $5ef4
 	ld (de),a		; $5ef5
-	ld e,$b7		; $5ef6
+	ld e,Enemy.var37		; $5ef6
 	ld (de),a		; $5ef8
 	ret			; $5ef9
+
+dragonOnox_mainBody_state5:
 	ld h,d			; $5efa
-	ld l,$b7		; $5efb
+	ld l,Enemy.var37		; $5efb
 	bit 0,(hl)		; $5efd
-	jr z,_label_0f_176	; $5eff
+	jr z,+			; $5eff
 	ld (hl),$00		; $5f01
-	ld l,$87		; $5f03
+	ld l,Enemy.counter2		; $5f03
 	ld (hl),$00		; $5f05
-_label_0f_176:
++
 	inc e			; $5f07
 	ld a,(de)		; $5f08
 	rst_jumpTable			; $5f09
-	ld (de),a		; $5f0a
-	ld e,a			; $5f0b
-	jr nz,$5f		; $5f0c
-	ld a,$5f		; $5f0e
-	ld d,d			; $5f10
-	ld e,a			; $5f11
+        .dw @substate0
+        .dw @substate1
+        .dw @substate2
+        .dw @substate3
+
+@substate0:
 	ld h,d			; $5f12
 	ld l,e			; $5f13
+	; go to substate1
 	inc (hl)		; $5f14
 	inc l			; $5f15
+	; counter1
 	ld (hl),$2d		; $5f16
 	inc l			; $5f18
+	; counter2
 	ld (hl),$04		; $5f19
-	ld l,$90		; $5f1b
-	ld (hl),$19		; $5f1d
+	ld l,Enemy.speed		; $5f1b
+	ld (hl),SPEED_a0		; $5f1d
 	ret			; $5f1f
+
+@substate1:
 	call _ecom_decCounter1		; $5f20
-	jr z,_label_0f_177	; $5f23
-	ld a,($d00d)		; $5f25
+	jr z,+			; $5f23
+	ld a,(w1Link.xh)		; $5f25
 	sub $50			; $5f28
 	ld c,a			; $5f2a
 	ld b,$00		; $5f2b
-	jp $66aa		; $5f2d
-_label_0f_177:
+	jp seasonsFunc_0f_66aa		; $5f2d
++
 	ld (hl),$1e		; $5f30
 	ld l,e			; $5f32
 	inc (hl)		; $5f33
-	ld l,$b0		; $5f34
+	ld l,Enemy.var30		; $5f34
 	ld a,(hl)		; $5f36
 	and $01			; $5f37
 	add $02			; $5f39
-	jp $66c3		; $5f3b
+	jp dragonOnoxLoadaIntoVar30Andcfc9		; $5f3b
+
+@substate2:
 	call _ecom_decCounter1		; $5f3e
 	ret nz			; $5f41
 	ld l,e			; $5f42
 	inc (hl)		; $5f43
-	ld l,$86		; $5f44
+	ld l,Enemy.counter1		; $5f44
 	ld (hl),$1e		; $5f46
 	ld l,$b0		; $5f48
 	ld a,(hl)		; $5f4a
 	and $01			; $5f4b
 	add $04			; $5f4d
-	jp $66c3		; $5f4f
+	jp dragonOnoxLoadaIntoVar30Andcfc9		; $5f4f
+
+@substate3:
 	call _ecom_decCounter1		; $5f52
-	jr z,_label_0f_178	; $5f55
+	jr z,@seasonsFunc_0f_5f6c	; $5f55
 	ld a,(hl)		; $5f57
 	cp $14			; $5f58
 	ret nz			; $5f5a
@@ -4033,611 +4154,697 @@ _label_0f_177:
 	ld (hl),$33		; $5f5f
 	ld bc,$1800		; $5f61
 	call objectCopyPositionWithOffset		; $5f64
-	ld a,$7f		; $5f67
+	ld a,SND_DODONGO_OPEN_MOUTH		; $5f67
 	jp playSound		; $5f69
-_label_0f_178:
-	ld l,$b0		; $5f6c
+
+@seasonsFunc_0f_5f6c:
+	ld l,Enemy.var30		; $5f6c
 	ld a,(hl)		; $5f6e
 	and $01			; $5f6f
 	add $00			; $5f71
-	call $66c3		; $5f73
+	call dragonOnoxLoadaIntoVar30Andcfc9		; $5f73
 	call _ecom_decCounter2		; $5f76
-	jp z,$665c		; $5f79
+	jp z,seasonsFunc_0f_665c		; $5f79
+	; var2f
 	dec l			; $5f7c
 	ld (hl),$2d		; $5f7d
+	; stunCounter
 	dec l			; $5f7f
 	ld (hl),$01		; $5f80
 	ret			; $5f82
-	call $66cc		; $5f83
-	ld e,$a9		; $5f86
+
+dragonOnox_mainBody_state7:
+	call dragonOnoxLowHealthThresholdIntoC		; $5f83
+	ld e,Enemy.health		; $5f86
 	ld a,(de)		; $5f88
 	cp c			; $5f89
 	ld a,$08		; $5f8a
-	jr nc,_label_0f_179	; $5f8c
+	jr nc,+			; $5f8c
 	ld a,$0b		; $5f8e
-_label_0f_179:
-	ld e,$84		; $5f90
++
+	ld e,Enemy.state		; $5f90
+	; go to state $08 if health is high, else $0b
+	; reset state2, and var37
 	ld (de),a		; $5f92
 	inc e			; $5f93
 	xor a			; $5f94
 	ld (de),a		; $5f95
-	ld e,$b7		; $5f96
+	ld e,Enemy.var37		; $5f96
 	ld (de),a		; $5f98
 	ret			; $5f99
+
+dragonOnox_mainBody_state8:
 	inc e			; $5f9a
 	ld a,(de)		; $5f9b
 	rst_jumpTable			; $5f9c
-	xor e			; $5f9d
-	ld e,a			; $5f9e
-	call nz,$ec5f		; $5f9f
-	ld e,a			; $5fa2
-	ld a,(bc)		; $5fa3
-	ld h,b			; $5fa4
-	inc hl			; $5fa5
-	ld h,b			; $5fa6
-	ld b,b			; $5fa7
-	ld h,b			; $5fa8
-	ld h,h			; $5fa9
-	ld h,b			; $5faa
+        .dw @substate0
+        .dw @substate1
+        .dw @substate2
+        .dw @substate3
+        .dw @substate4
+        .dw @substate5
+        .dw @substate6
+
+@substate0:
 	ld h,d			; $5fab
 	ld l,e			; $5fac
 	inc (hl)		; $5fad
-	ld l,$90		; $5fae
-	ld (hl),$1e		; $5fb0
+	ld l,Enemy.speed		; $5fae
+	ld (hl),SPEED_c0		; $5fb0
 	ld bc,$20c0		; $5fb2
-	ld l,$8d		; $5fb5
+	ld l,Enemy.xh		; $5fb5
 	ld a,(hl)		; $5fb7
 	cp $50			; $5fb8
-	jr c,_label_0f_180	; $5fba
+	jr c,+			; $5fba
 	ld c,$40		; $5fbc
-_label_0f_180:
-	ld l,$b5		; $5fbe
++
+	ld l,Enemy.var35		; $5fbe
 	ld (hl),b		; $5fc0
+	; var36
 	inc l			; $5fc1
 	ld (hl),c		; $5fc2
 	ret			; $5fc3
+
+@substate1:
 	ld h,d			; $5fc4
-	ld l,$b5		; $5fc5
+	ld l,Enemy.var35		; $5fc5
 	ld b,(hl)		; $5fc7
+	; var36
 	inc l			; $5fc8
 	ld c,(hl)		; $5fc9
-	call $66aa		; $5fca
+	call seasonsFunc_0f_66aa		; $5fca
 	ret nz			; $5fcd
 	ld h,d			; $5fce
-	ld l,$85		; $5fcf
+	ld l,Enemy.state2		; $5fcf
 	inc (hl)		; $5fd1
+	; counter1
 	inc l			; $5fd2
 	ld (hl),$1e		; $5fd3
-	ld l,$b6		; $5fd5
+	ld l,Enemy.var36		; $5fd5
 	bit 7,(hl)		; $5fd7
 	ld a,$09		; $5fd9
-	ld bc,$0848		; $5fdb
-	jr nz,_label_0f_181	; $5fde
+	ld bc,ANGLE_RIGHT<<8|$48		; $5fdb
+	jr nz,+			; $5fde
 	ld a,$08		; $5fe0
-	ld bc,$18b8		; $5fe2
-_label_0f_181:
+	ld bc,ANGLE_LEFT<<8|$b8		; $5fe2
++
 	ld (hl),c		; $5fe5
-	ld l,$89		; $5fe6
+	ld l,Enemy.angle		; $5fe6
 	ld (hl),b		; $5fe8
-	jp $66c3		; $5fe9
+	jp dragonOnoxLoadaIntoVar30Andcfc9		; $5fe9
+
+@substate2:
 	call _ecom_decCounter1		; $5fec
 	ret nz			; $5fef
 	ld l,e			; $5ff0
 	inc (hl)		; $5ff1
-	ld l,$90		; $5ff2
-	ld (hl),$5a		; $5ff4
-	ld l,$b6		; $5ff6
+	ld l,Enemy.speed		; $5ff2
+	ld (hl),SPEED_240		; $5ff4
+	ld l,Enemy.var36		; $5ff6
 	bit 7,(hl)		; $5ff8
+	; dragon Onox subid 4
 	ld hl,$cfda		; $5ffa
-	jr z,_label_0f_182	; $5ffd
+	jr z,+			; $5ffd
 	inc l			; $5fff
-_label_0f_182:
++
+	; choose claw to action
 	ld h,(hl)		; $6000
-	ld l,$b0		; $6001
+	ld l,Enemy.var30		; $6001
 	ld (hl),$02		; $6003
-	ld a,$7f		; $6005
+	ld a,SND_DODONGO_OPEN_MOUTH		; $6005
 	jp playSound		; $6007
+
+@substate3:
 	ld h,d			; $600a
-	ld l,$b6		; $600b
+	ld l,Enemy.var36		; $600b
 	ld a,($cfcd)		; $600d
 	sub (hl)		; $6010
 	add $02			; $6011
 	cp $05			; $6013
-	jp nc,$650d		; $6015
+	jp nc,seasonsFunc_0f_650d		; $6015
 	ld l,e			; $6018
 	inc (hl)		; $6019
-	ld l,$90		; $601a
-	ld (hl),$1e		; $601c
+	ld l,Enemy.speed		; $601a
+	ld (hl),SPEED_c0		; $601c
 	ld a,$00		; $601e
-	jp $66c3		; $6020
+	jp dragonOnoxLoadaIntoVar30Andcfc9		; $6020
+
+@substate4:
 	call _ecom_decCounter1		; $6023
 	ld a,(hl)		; $6026
 	and $03			; $6027
-	jr nz,_label_0f_183	; $6029
+	jr nz,+			; $6029
 	xor a			; $602b
 	call objectNudgeAngleTowards		; $602c
-_label_0f_183:
-	call $650d		; $602f
++
+	call seasonsFunc_0f_650d		; $602f
 	ld a,($cfcc)		; $6032
 	cp $d0			; $6035
 	ret nz			; $6037
 	ld h,d			; $6038
-	ld l,$85		; $6039
+	ld l,Enemy.state2		; $6039
 	inc (hl)		; $603b
 	inc l			; $603c
 	ld (hl),$00		; $603d
 	ret			; $603f
+
+@substate5:
 	call _ecom_decCounter1		; $6040
 	ld bc,$b000		; $6043
 	ld a,($cfcd)		; $6046
 	or a			; $6049
-	jr nz,_label_0f_184	; $604a
+	jr nz,+			; $604a
 	ld l,e			; $604c
 	inc (hl)		; $604d
 	ret			; $604e
-_label_0f_184:
++
 	ld l,a			; $604f
 	ld a,($cfcc)		; $6050
 	ld h,a			; $6053
-	ld e,$86		; $6054
+	ld e,Enemy.counter1		; $6054
 	ld a,(de)		; $6056
 	and $03			; $6057
-	jr nz,_label_0f_185	; $6059
-	call $6529		; $605b
+	jr nz,+			; $6059
+	call seasonsFunc_0f_6529		; $605b
 	call objectNudgeAngleTowards		; $605e
-_label_0f_185:
-	jp $650d		; $6061
++
+	jp seasonsFunc_0f_650d		; $6061
+
+@substate6:
 	ld hl,$cfcc		; $6064
 	inc (hl)		; $6067
 	ret nz			; $6068
 	ld h,d			; $6069
-	jp $665c		; $606a
-	call $66cc		; $606d
-	ld e,$a9		; $6070
+	jp seasonsFunc_0f_665c		; $606a
+
+dragonOnox_mainBody_stateA:
+	call dragonOnoxLowHealthThresholdIntoC		; $606d
+	ld e,Enemy.health		; $6070
 	ld a,(de)		; $6072
 	cp c			; $6073
 	ld a,$02		; $6074
-	jr nc,_label_0f_186	; $6076
+	jr nc,+			; $6076
 	ld a,$0b		; $6078
-_label_0f_186:
-	ld e,$84		; $607a
++
+	; go to state $02 if health is high, else $0b
+	ld e,Enemy.state		; $607a
 	ld (de),a		; $607c
 	inc e			; $607d
 	xor a			; $607e
 	ld (de),a		; $607f
-	ld e,$b7		; $6080
+	ld e,Enemy.var37		; $6080
 	ld (de),a		; $6082
 	ret			; $6083
+
+dragonOnox_mainBody_stateB:
 	ld h,d			; $6084
-	ld l,$b7		; $6085
+	ld l,Enemy.var37		; $6085
 	bit 0,(hl)		; $6087
-	jr z,_label_0f_187	; $6089
-	ld l,$84		; $608b
+	jr z,+			; $6089
+	ld l,Enemy.state		; $608b
 	inc (hl)		; $608d
 	ret			; $608e
-_label_0f_187:
++
 	inc e			; $608f
 	ld a,(de)		; $6090
 	rst_jumpTable			; $6091
-	sbc d			; $6092
-	ld h,b			; $6093
-	and d			; $6094
-	ld h,b			; $6095
-	cp d			; $6096
-	ld h,b			; $6097
-	call c,$6260		; $6098
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+
+@substate0:
+	ld h,d			; $609a
 	ld l,e			; $609b
-_label_0f_188:
 	inc (hl)		; $609c
-	ld l,$90		; $609d
-	ld (hl),$1e		; $609f
+	ld l,Enemy.speed		; $609d
+	ld (hl),SPEED_c0		; $609f
 	ret			; $60a1
+
+@substate1:
 	ld bc,$f800		; $60a2
-	call $66aa		; $60a5
+	call seasonsFunc_0f_66aa		; $60a5
 	ret nz			; $60a8
 	ld h,d			; $60a9
-	ld l,$85		; $60aa
+	ld l,Enemy.state2		; $60aa
 	inc (hl)		; $60ac
+	; counter1
 	inc l			; $60ad
 	ld (hl),$3c		; $60ae
-	ld l,$b0		; $60b0
+	ld l,Enemy.var30		; $60b0
 	ld a,(hl)		; $60b2
 	and $01			; $60b3
 	add $02			; $60b5
-	jp $66c3		; $60b7
+	jp dragonOnoxLoadaIntoVar30Andcfc9		; $60b7
+
+@substate2:
 	call _ecom_decCounter1		; $60ba
-	jr z,_label_0f_189	; $60bd
+	jr z,+			; $60bd
 	ld a,(hl)		; $60bf
 	cp $1e			; $60c0
 	ret nz			; $60c2
-	ld l,$b0		; $60c3
+	ld l,Enemy.var30		; $60c3
 	ld a,(hl)		; $60c5
 	and $01			; $60c6
 	add $04			; $60c8
-	jp $66c3		; $60ca
-_label_0f_189:
+	jp dragonOnoxLoadaIntoVar30Andcfc9		; $60ca
++
 	inc (hl)		; $60cd
+	; var38
 	inc l			; $60ce
 	ld (hl),$18		; $60cf
 	ld l,e			; $60d1
 	inc (hl)		; $60d2
 	call getRandomNumber_noPreserveVars		; $60d3
 	and $18			; $60d6
-	ld e,$b3		; $60d8
+	ld e,Enemy.var33		; $60d8
 	ld (de),a		; $60da
 	ret			; $60db
+
+@substate3:
 	call _ecom_decCounter1		; $60dc
 	ret nz			; $60df
 	ld (hl),$14		; $60e0
-	ld l,$b3		; $60e2
+	ld l,Enemy.var33		; $60e2
 	ld a,(hl)		; $60e4
-	ld hl,$6116		; $60e5
+	ld hl,@seasonsTable_0f_6116		; $60e5
 	rst_addAToHl			; $60e8
 	ld c,(hl)		; $60e9
+	; fireballs?
 	call getFreePartSlot		; $60ea
 	ret nz			; $60ed
 	ld (hl),$4a		; $60ee
-	ld l,$f1		; $60f0
+	ld l,Part.var31		; $60f0
 	ld (hl),c		; $60f2
 	ld bc,$1800		; $60f3
 	call objectCopyPositionWithOffset		; $60f6
-	ld a,$a4		; $60f9
+	ld a,SND_BEAM		; $60f9
 	call playSound		; $60fb
-	ld e,$b3		; $60fe
+	ld e,Enemy.var33		; $60fe
 	ld a,(de)		; $6100
 	inc a			; $6101
 	and $1f			; $6102
 	ld (de),a		; $6104
 	call _ecom_decCounter2		; $6105
 	ret nz			; $6108
-	ld l,$84		; $6109
+	ld l,Enemy.state		; $6109
 	inc (hl)		; $610b
-	ld l,$b0		; $610c
+	ld l,Enemy.var30		; $610c
 	ld a,(hl)		; $610e
 	and $01			; $610f
 	add $00			; $6111
-	jp $66c3		; $6113
-	ld ($18a0),sp		; $6116
-	sub b			; $6119
-	jr z,_label_0f_188	; $611a
-	jr c,$70		; $611c
-	ld c,b			; $611e
-	ld h,b			; $611f
-	ld e,b			; $6120
-	ld d,b			; $6121
-	ld l,b			; $6122
-	ld b,b			; $6123
-	ld a,b			; $6124
-	jr nc,-$78		; $6125
-	jr nz,-$68		; $6127
-	stop			; $6129
-	nop			; $612a
-	ld d,b			; $612b
-	jr nc,_label_0f_190	; $612c
-	stop			; $612e
-	sub b			; $612f
-	ld b,b			; $6130
-	ld h,b			; $6131
-	jr nz,-$80		; $6132
-	ld ($1e98),sp		; $6134
-	add h			; $6137
+	jp dragonOnoxLoadaIntoVar30Andcfc9		; $6113
+
+@seasonsTable_0f_6116:
+        .db $08 $a0 $18 $90 $28 $80 $38 $70
+        .db $48 $60 $58 $50 $68 $40 $78 $30
+        .db $88 $20 $98 $10 $00 $50 $30 $70
+        .db $10 $90 $40 $60 $20 $80 $08 $98
+
+dragonOnox_mainBody_stateD:
+	ld e,Enemy.state		; $6136
 	ld a,$02		; $6138
 	ld (de),a		; $613a
 	inc e			; $613b
 	xor a			; $613c
 	ld (de),a		; $613d
-	ld e,$b7		; $613e
+	ld e,Enemy.var37		; $613e
 	ld (de),a		; $6140
 	ret			; $6141
+
+dragonOnox_mainBody_stateE:
+	; defeated
 	inc e			; $6142
 	ld a,(de)		; $6143
 	rst_jumpTable			; $6144
-	ld c,e			; $6145
-	ld h,c			; $6146
-	sub e			; $6147
-	ld h,c			; $6148
-	sbc e			; $6149
-	ld h,c			; $614a
+        .dw @substate0
+        .dw @substate1
+        .dw @substate2
+
+@substate0:
 	ld h,d			; $614b
 	ld l,e			; $614c
 	inc (hl)		; $614d
+	; counter1
 	inc l			; $614e
 	ld (hl),$00		; $614f
-	ld l,$89		; $6151
-	ld (hl),$10		; $6153
-	ld l,$90		; $6155
+	ld l,Enemy.angle		; $6151
+	ld (hl),ANGLE_DOWN		; $6153
+	ld l,Enemy.speed		; $6155
 	ld (hl),$0a		; $6157
-	ld l,$a4		; $6159
+	ld l,Enemy.collisionType		; $6159
 	res 7,(hl)		; $615b
+	; dragon Onox subid 4 - left claw
 	ld a,($cfda)		; $615d
 	ld h,a			; $6160
 	res 7,(hl)		; $6161
+	; dragon Onox subid 5 - right claw
 	ld a,($cfdb)		; $6163
 	ld h,a			; $6166
 	res 7,(hl)		; $6167
+
 	ld a,$04		; $6169
 	ld ($cfc8),a		; $616b
-	ld a,$f0		; $616e
+	ld a,SNDCTRL_STOPMUSIC		; $616e
 	call playSound		; $6170
 	ld a,($cfcd)		; $6173
 	cpl			; $6176
 	inc a			; $6177
-	ld ($cd09),a		; $6178
+	ld (wScreenOffsetX),a		; $6178
 	ld a,($cfcc)		; $617b
 	cpl			; $617e
 	inc a			; $617f
-	ld ($cd08),a		; $6180
+	ld (wScreenOffsetY),a		; $6180
 	ld a,$08		; $6183
-	ld ($cbae),a		; $6185
+	ld (wTextboxFlags),a		; $6185
 	ld a,$04		; $6188
-	ld ($cbac),a		; $618a
-	ld bc,$501f		; $618d
+	ld (wTextboxPosition),a		; $618a
+	ld bc,TX_501f		; $618d
 	jp showTextNonExitable		; $6190
+
+@substate1:
 	ld a,$02		; $6193
 	ld (de),a		; $6195
-	ld a,$bc		; $6196
+	ld a,SND_BIG_EXPLOSION_2		; $6196
 	jp playSound		; $6198
+
+@substate2:
 	ld a,(wFrameCounter)		; $619b
-_label_0f_190:
 	and $0f			; $619e
-	ld a,$b3		; $61a0
+	ld a,SND_RUMBLE		; $61a0
 	call z,playSound		; $61a2
 	call _ecom_decCounter1		; $61a5
 	ld a,(hl)		; $61a8
 	and $03			; $61a9
-	ld hl,$61b9		; $61ab
+	ld hl,@seasonsTable_0f_61b9		; $61ab
 	rst_addAToHl			; $61ae
 	ld a,($cfcd)		; $61af
 	add (hl)		; $61b2
 	ld ($cfcd),a		; $61b3
-	jp $650d		; $61b6
-.DB $fd				; $61b9
-	ld b,$fc		; $61ba
-	ld bc,$c71a		; $61bc
-	jp $ce61		; $61bf
-	ld h,c			; $61c2
+	jp seasonsFunc_0f_650d		; $61b6
+
+@seasonsTable_0f_61b9:
+        .db $fd $06 $fc $01
+
+dragonOnox_leftShoulder:
+	ld a,(de)		; $61bd
+	rst_jumpTable			; $61be
+        .dw @animate
+        .dw @offsetBasedOncfca
+
+@animate:
 	ld h,d			; $61c3
 	ld l,e			; $61c4
 	inc (hl)		; $61c5
 	ld a,$09		; $61c6
 	call enemySetAnimation		; $61c8
 	call objectSetVisible83		; $61cb
+
+@offsetBasedOncfca:
 	ld a,($cfca)		; $61ce
 	cp $08			; $61d1
 	ld bc,$603a		; $61d3
-	jr c,_label_0f_191	; $61d6
+	jr c,+			; $61d6
 	ld bc,$5238		; $61d8
-	jr z,_label_0f_191	; $61db
+	jr z,+			; $61db
 	ld bc,$6640		; $61dd
-_label_0f_191:
-	ld e,$8b		; $61e0
++
+	; $00-$07	bc = $603a
+	; $08		bc = $5238
+	; $09+		bc = $6640
+	ld e,Enemy.yh		; $61e0
 	ld a,($cfcc)		; $61e2
 	add b			; $61e5
 	ld (de),a		; $61e6
-	ld e,$8d		; $61e7
+
+	ld e,Enemy.xh		; $61e7
 	ld a,($cfcd)		; $61e9
 	add c			; $61ec
 	ld (de),a		; $61ed
 	ret			; $61ee
+
+dragonOnox_rightShoulder:
 	ld a,(de)		; $61ef
 	rst_jumpTable			; $61f0
-	push af			; $61f1
-	ld h,c			; $61f2
-	nop			; $61f3
-	ld h,d			; $61f4
+        .dw @animate
+        .dw @offsetBasedOncfca
+
+@animate:
 	ld h,d			; $61f5
 	ld l,e			; $61f6
 	inc (hl)		; $61f7
 	ld a,$0a		; $61f8
 	call enemySetAnimation		; $61fa
 	call objectSetVisible83		; $61fd
+
+@offsetBasedOncfca:
 	ld a,($cfca)		; $6200
 	cp $08			; $6203
 	ld bc,$6066		; $6205
-	jr c,_label_0f_192	; $6208
+	jr c,+			; $6208
 	ld bc,$6660		; $620a
-	jr z,_label_0f_192	; $620d
+	jr z,+			; $620d
 	ld bc,$5268		; $620f
-_label_0f_192:
-	ld e,$8b		; $6212
++
+	; $00-$07	bc = $6066
+	; $08		bc = $6660
+	; $09+		bc = $5268
+	ld e,Enemy.yh		; $6212
 	ld a,($cfcc)		; $6214
 	add b			; $6217
 	ld (de),a		; $6218
-	ld e,$8d		; $6219
+
+	ld e,Enemy.xh		; $6219
 	ld a,($cfcd)		; $621b
 	add c			; $621e
 	ld (de),a		; $621f
 	ret			; $6220
+
+dragonOnox_leftClaw:
 	ld a,(de)		; $6221
 	rst_jumpTable			; $6222
-	dec hl			; $6223
-	ld h,d			; $6224
-	ld c,(hl)		; $6225
-	ld h,d			; $6226
-	sub (hl)		; $6227
-	ld h,d			; $6228
-	xor c			; $6229
-	ld h,e			; $622a
+        .dw @state0
+        .dw @state1
+        .dw @state2
+        .dw @state3
+
+@state0:
 	ld h,d			; $622b
 	ld l,e			; $622c
 	inc (hl)		; $622d
-	ld l,$a4		; $622e
+	ld l,Enemy.collisionType		; $622e
 	set 7,(hl)		; $6230
+	; enemyCollisionMode
 	inc l			; $6232
 	ld (hl),$65		; $6233
+	; collisionRadiusY
 	inc l			; $6235
 	ld (hl),$05		; $6236
+	; collisionRadiusX
 	inc l			; $6238
 	ld (hl),$09		; $6239
+	; damage
 	inc l			; $623b
 	ld (hl),$fc		; $623c
-	ld l,$97		; $623e
+	ld l,Enemy.relatedObj1+1		; $623e
+	; dragon Onox subid 1
 	ld a,($cfd7)		; $6240
 	ldd (hl),a		; $6243
 	ld (hl),$80		; $6244
 	ld a,$03		; $6246
 	call enemySetAnimation		; $6248
 	call objectSetVisible82		; $624b
-	ld e,$b0		; $624e
+
+@state1:
+	ld e,Enemy.var30		; $624e
 	ld a,(de)		; $6250
 	or a			; $6251
-	call nz,$6277		; $6252
+	call nz,@seasonsFunc_0f_6277		; $6252
 	ld a,$00		; $6255
 	call objectGetRelatedObject1Var		; $6257
 	ld bc,$30d8		; $625a
 	ld a,($cfca)		; $625d
 	cp $06			; $6260
-	jr c,_label_0f_193	; $6262
+	jr c,+			; $6262
 	sub $09			; $6264
-	jr z,_label_0f_193	; $6266
+	jr z,+			; $6266
 	ld bc,$18d0		; $6268
 	inc a			; $626b
-	jr z,_label_0f_193	; $626c
+	jr z,+			; $626c
 	ld bc,$30e1		; $626e
-_label_0f_193:
++
+	; $01-$05	bc = $30d8
+	; $06-$07	bc = $30e1
+	; $08		bc = $18d0
+	; $09		bc = $30d8
 	call objectTakePositionWithOffset		; $6271
-	jp $6557		; $6274
+	jp seasonsFunc_0f_6557		; $6274
+
+@seasonsFunc_0f_6277:
 	ld h,d			; $6277
 	ld l,e			; $6278
+	; clear var30
 	ld (hl),$00		; $6279
-	ld l,$84		; $627b
+	ld l,Enemy.state		; $627b
 	add (hl)		; $627d
 	ld (hl),a		; $627e
+	; state2
 	inc l			; $627f
 	ld (hl),$00		; $6280
+	; counter1
 	inc l			; $6282
 	ld (hl),$1e		; $6283
-	ld l,$82		; $6285
+	ld l,Enemy.subid		; $6285
 	ld a,(hl)		; $6287
 	cp $04			; $6288
 	ld a,$d8		; $628a
-	jr z,_label_0f_194	; $628c
+	jr z,+			; $628c
 	ld a,$28		; $628e
-_label_0f_194:
-	ld l,$b8		; $6290
++
+	ld l,Enemy.var38		; $6290
 	ldd (hl),a		; $6292
+	; var37
 	ld (hl),$30		; $6293
 	ret			; $6295
+
+@state2:
 	ld a,($cfca)		; $6296
 	sub $06			; $6299
 	cp $02			; $629b
-	jr c,_label_0f_195	; $629d
-	call $62a5		; $629f
-	jp $6557		; $62a2
+	jr c,+			; $629d
+	call @seasonsFunc_0f_62a5		; $629f
+	jp seasonsFunc_0f_6557		; $62a2
+
+@seasonsFunc_0f_62a5:
 	inc e			; $62a5
 	ld a,(de)		; $62a6
 	rst_jumpTable			; $62a7
-	push bc			; $62a8
-	ld h,d			; $62a9
-	sbc $62			; $62aa
-	xor $62			; $62ac
-	ld de,$3463		; $62ae
-	ld h,e			; $62b1
-	ld c,a			; $62b2
-	ld h,e			; $62b3
-	sbc d			; $62b4
-	ld h,e			; $62b5
-_label_0f_195:
+        .dw @@substate0
+        .dw @@substate1
+        .dw @@substate2
+        .dw @@substate3
+        .dw @@substate4
+        .dw @@substate5
+        .dw @@substate6
++
 	ld a,$00		; $62b6
 	call objectGetRelatedObject1Var		; $62b8
-	ld e,$b7		; $62bb
+	ld e,Enemy.var37		; $62bb
 	ld a,(de)		; $62bd
 	ld b,a			; $62be
 	inc e			; $62bf
 	ld a,(de)		; $62c0
 	ld c,a			; $62c1
 	jp objectTakePositionWithOffset		; $62c2
+
+@@substate0:
 	call _ecom_decCounter1		; $62c5
 	ret nz			; $62c8
+	; counter1 set to $14
 	ld (hl),$14		; $62c9
 	ld l,e			; $62cb
 	inc (hl)		; $62cc
-	ld l,$90		; $62cd
-	ld (hl),$28		; $62cf
-	ld l,$89		; $62d1
-	ld (hl),$00		; $62d3
-	ld l,$a8		; $62d5
+	ld l,Enemy.speed		; $62cd
+	ld (hl),SPEED_100		; $62cf
+	ld l,Enemy.angle		; $62d1
+	ld (hl),ANGLE_UP		; $62d3
+	ld l,Enemy.damage		; $62d5
 	ld (hl),$f8		; $62d7
-	ld a,$74		; $62d9
+	ld a,SND_SWORDSLASH		; $62d9
 	jp playSound		; $62db
+
+@@substate1:
 	call _ecom_decCounter1		; $62de
-	jr nz,_label_0f_196	; $62e1
+	jr nz,+			; $62e1
 	ld (hl),$06		; $62e3
 	ld l,e			; $62e5
 	inc (hl)		; $62e6
 	ret			; $62e7
-_label_0f_196:
++
 	call objectApplySpeed		; $62e8
-	jp $6386		; $62eb
+	jp @@seasonsFunc_0f_6386		; $62eb
+
+@@substate2:
 	call _ecom_decCounter1		; $62ee
-	jr z,_label_0f_197	; $62f1
+	jr z,+			; $62f1
 	ld a,(hl)		; $62f3
 	cp $04			; $62f4
 	ret nz			; $62f6
-	ld l,$b6		; $62f7
-	ld a,($d00d)		; $62f9
+	; counter1 = $04
+	ld l,Enemy.var36		; $62f7
+	ld a,(w1Link.xh)		; $62f9
 	ldd (hl),a		; $62fc
+	; var35
 	ld (hl),$a5		; $62fd
 	ret			; $62ff
-_label_0f_197:
++
 	ld l,e			; $6300
 	inc (hl)		; $6301
-	ld l,$90		; $6302
-	ld (hl),$78		; $6304
-	ld l,$a7		; $6306
+	ld l,Enemy.speed		; $6302
+	ld (hl),SPEED_300		; $6304
+	ld l,Enemy.collisionRadiusX		; $6306
 	ld (hl),$0e		; $6308
-	ld e,$82		; $630a
+	ld e,Enemy.subid		; $630a
 	ld a,(de)		; $630c
 	inc a			; $630d
 	jp enemySetAnimation		; $630e
+
+@@substate3:
 	ld h,d			; $6311
-	ld l,$b5		; $6312
+	ld l,Enemy.var35		; $6312
 	call _ecom_readPositionVars		; $6314
 	call _ecom_moveTowardPosition		; $6317
-	call $6386		; $631a
-	ld e,$8b		; $631d
+	call @@seasonsFunc_0f_6386		; $631a
+	ld e,Enemy.yh		; $631d
 	ld a,(de)		; $631f
 	cp $a0			; $6320
 	ret c			; $6322
 	ld a,$1e		; $6323
-	ld ($cd18),a		; $6325
+	ld (wScreenShakeCounterY),a		; $6325
 	ld h,d			; $6328
-	ld l,$85		; $6329
+	ld l,Enemy.state2		; $6329
 	inc (hl)		; $632b
+	; counter1
 	inc l			; $632c
 	ld (hl),$3c		; $632d
-	ld a,$6f		; $632f
+	ld a,SND_EXPLOSION		; $632f
 	jp playSound		; $6331
+
+@@substate4:
 	call _ecom_decCounter1		; $6334
-	jr z,_label_0f_198	; $6337
+	jr z,+			; $6337
 	ld a,(hl)		; $6339
 	cp $0a			; $633a
 	ret nz			; $633c
-	ld l,$a7		; $633d
+	ld l,Enemy.collisionRadiusX		; $633d
 	ld (hl),$09		; $633f
-	ld e,$82		; $6341
+	ld e,Enemy.subid		; $6341
 	ld a,(de)		; $6343
 	dec a			; $6344
 	jp enemySetAnimation		; $6345
-_label_0f_198:
++
 	ld l,e			; $6348
 	inc (hl)		; $6349
-	ld l,$90		; $634a
-	ld (hl),$1e		; $634c
+	ld l,Enemy.speed		; $634a
+	ld (hl),SPEED_c0		; $634c
 	ret			; $634e
-	ld a,$0b		; $634f
+
+@@substate5:
+	ld a,Enemy.yh-Enemy		; $634f
 	call objectGetRelatedObject1Var		; $6351
 	ldi a,(hl)		; $6354
 	add $30			; $6355
 	ld b,a			; $6357
 	inc l			; $6358
-	ld e,$82		; $6359
+	ld e,Enemy.subid		; $6359
 	ld a,(de)		; $635b
 	cp $04			; $635c
 	ld c,$28		; $635e
-	jr z,_label_0f_199	; $6360
+	jr z,+			; $6360
 	ld c,$78		; $6362
-_label_0f_199:
++
+	; left claw	c = 28
+	; right claw	c = 78
 	ld a,(hl)		; $6364
 	add c			; $6365
 	ld c,a			; $6366
@@ -4649,158 +4856,192 @@ _label_0f_199:
 	ld a,(hl)		; $636e
 	ldh (<hFF8F),a	; $636f
 	cp b			; $6371
-	jr nz,_label_0f_200	; $6372
+	jr nz,+			; $6372
 	ldh a,(<hFF8E)	; $6374
 	cp c			; $6376
-	jr nz,_label_0f_200	; $6377
-	ld l,$85		; $6379
+	jr nz,+			; $6377
+	ld l,Enemy.state2		; $6379
 	inc (hl)		; $637b
 	ret			; $637c
-_label_0f_200:
++
 	call objectGetRelativeAngleWithTempVars		; $637d
-	ld e,$89		; $6380
+	ld e,Enemy.angle		; $6380
 	ld (de),a		; $6382
 	call objectApplySpeed		; $6383
-	ld a,$0b		; $6386
+@@seasonsFunc_0f_6386:
+	ld a,Enemy.yh-Enemy		; $6386
 	call objectGetRelatedObject1Var		; $6388
 	ld e,l			; $638b
 	ld a,(de)		; $638c
 	sub (hl)		; $638d
-	ld e,$b7		; $638e
+	ld e,Enemy.var37		; $638e
 	ld (de),a		; $6390
-	ld l,$8d		; $6391
+	ld l,Enemy.xh		; $6391
 	ld e,l			; $6393
 	ld a,(de)		; $6394
 	sub (hl)		; $6395
-	ld e,$b8		; $6396
+	ld e,Enemy.var38		; $6396
 	ld (de),a		; $6398
 	ret			; $6399
+
+@@substate6:
 	ld h,d			; $639a
-	ld l,$84		; $639b
+	ld l,Enemy.state		; $639b
 	dec (hl)		; $639d
-	ld l,$a8		; $639e
+	ld l,Enemy.damage		; $639e
 	ld (hl),$fc		; $63a0
 	ld a,$06		; $63a2
 	call objectGetRelatedObject1Var		; $63a4
 	inc (hl)		; $63a7
 	ret			; $63a8
+
+@state3:
 	inc e			; $63a9
 	ld a,(de)		; $63aa
 	rst_jumpTable			; $63ab
-	or b			; $63ac
-	ld h,e			; $63ad
-	add $63			; $63ae
+        .dw @@substate0
+        .dw @@substate1
+
+@@substate0:
 	ld h,d			; $63b0
 	ld l,e			; $63b1
 	inc (hl)		; $63b2
-	ld l,$a6		; $63b3
+	ld l,Enemy.collisionRadiusY		; $63b3
 	ld (hl),$0e		; $63b5
+	; collisionRadiusY
 	inc l			; $63b7
 	ld (hl),$0a		; $63b8
-	ld l,$a8		; $63ba
+	ld l,Enemy.damage		; $63ba
 	ld (hl),$f8		; $63bc
-	ld e,$82		; $63be
+	ld e,Enemy.subid		; $63be
 	ld a,(de)		; $63c0
 	add $03			; $63c1
 	call enemySetAnimation		; $63c3
+
+@@substate1:
 	ld a,($cfca)		; $63c6
 	or a			; $63c9
-	call z,$63e1		; $63ca
+	call z,@@seasonsFunc_0f_63e1		; $63ca
 	ld a,$00		; $63cd
 	call objectGetRelatedObject1Var		; $63cf
 	ld bc,$30d8		; $63d2
-	ld e,$82		; $63d5
+	ld e,Enemy.subid		; $63d5
 	ld a,(de)		; $63d7
 	cp $04			; $63d8
-	jr z,_label_0f_201	; $63da
+	jr z,+			; $63da
 	ld c,$28		; $63dc
-_label_0f_201:
++
 	jp objectTakePositionWithOffset		; $63de
+
+@@seasonsFunc_0f_63e1:
 	ld h,d			; $63e1
-	ld l,$84		; $63e2
+	ld l,Enemy.state		; $63e2
 	ld (hl),$01		; $63e4
-	ld l,$a6		; $63e6
+	ld l,Enemy.collisionRadiusY		; $63e6
 	ld (hl),$05		; $63e8
+	; collisionRadiusX
 	inc l			; $63ea
 	ld (hl),$09		; $63eb
-	ld l,$a8		; $63ed
+	ld l,Enemy.damage		; $63ed
 	ld (hl),$fc		; $63ef
-	ld e,$82		; $63f1
+	ld e,Enemy.subid		; $63f1
 	ld a,(de)		; $63f3
 	dec a			; $63f4
 	jp enemySetAnimation		; $63f5
+
+dragonOnox_rightClaw:
 	ld a,(de)		; $63f8
 	rst_jumpTable			; $63f9
-	ld (bc),a		; $63fa
-	ld h,h			; $63fb
-	jr z,_label_0f_203	; $63fc
-	sub (hl)		; $63fe
-	ld h,d			; $63ff
-	xor c			; $6400
-	ld h,e			; $6401
+        .dw @state0
+        .dw @state1
+        .dw dragonOnox_leftClaw@state2
+        .dw dragonOnox_leftClaw@state3
+
+@state0:
 	ld h,d			; $6402
 	ld l,e			; $6403
 	inc (hl)		; $6404
-	ld l,$a4		; $6405
+	ld l,Enemy.collisionType		; $6405
 	set 7,(hl)		; $6407
 	inc l			; $6409
+	; enemyCollisionMode
 	ld (hl),$65		; $640a
 	inc l			; $640c
+	; collisionRadiusY
 	ld (hl),$05		; $640d
 	inc l			; $640f
+	; collisionRadiusX
 	ld (hl),$09		; $6410
 	inc l			; $6412
+	; damage
 	ld (hl),$fc		; $6413
-	ld l,$97		; $6415
+
+	ld l,Enemy.relatedObj1+1		; $6415
+	; dragon Onox subid 1
 	ld a,($cfd7)		; $6417
 	ldd (hl),a		; $641a
 	ld (hl),$80		; $641b
 	ld a,$04		; $641d
 	call enemySetAnimation		; $641f
 	call objectSetVisible82		; $6422
-	jp $6428		; $6425
-	ld e,$b0		; $6428
+	jp @state1		; $6425
+
+@state1:
+	ld e,Enemy.var30		; $6428
 	ld a,(de)		; $642a
 	or a			; $642b
-	call nz,$6277		; $642c
-	ld a,$00		; $642f
+	call nz,dragonOnox_leftClaw@seasonsFunc_0f_6277		; $642c
+	ld a,Enemy.enabled-Enemy		; $642f
 	call objectGetRelatedObject1Var		; $6431
 	ld bc,$3028		; $6434
 	ld a,($cfca)		; $6437
 	cp $06			; $643a
-	jr c,_label_0f_202	; $643c
+	jr c,+			; $643c
 	sub $08			; $643e
-	jr z,_label_0f_202	; $6440
+	jr z,+			; $6440
 	ld bc,$1830		; $6442
 	dec a			; $6445
-	jr z,_label_0f_202	; $6446
+	jr z,+			; $6446
 	ld bc,$3031		; $6448
-_label_0f_202:
++
+	; $00-$05	bc = $3028
+	; $06-$07	bc = $3031
+	; $08		bc = $3028
+	; $09		bc = $1830
 	call objectTakePositionWithOffset		; $644b
-	jp $6557		; $644e
+	jp seasonsFunc_0f_6557		; $644e
+
+dragonOnox_leftClawSphere:
 	ld a,(de)		; $6451
 	rst_jumpTable			; $6452
-	ld d,a			; $6453
-	ld h,h			; $6454
-	ld (hl),d		; $6455
-	ld h,h			; $6456
+        .dw @linkPartsAndAnimate
+        .dw @connectParts
+
+@linkPartsAndAnimate:
 	ld h,d			; $6457
 	ld l,e			; $6458
+	; go to state 1
 	inc (hl)		; $6459
-	ld l,$97		; $645a
+
+	ld l,Enemy.relatedObj1+1		; $645a
+	; dragon Onox subid 4
 	ld a,($cfda)		; $645c
 	ldd (hl),a		; $645f
 	ld (hl),$80		; $6460
-_label_0f_203:
-	ld l,$99		; $6462
+
+	ld l,Enemy.relatedObj2+1		; $6462
+	; dragon Onox subid 2
 	ld a,($cfd8)		; $6464
 	ldd (hl),a		; $6467
 	ld (hl),$80		; $6468
+
 	ld a,$0d		; $646a
 	call enemySetAnimation		; $646c
 	call objectSetVisible82		; $646f
-_label_0f_204:
-	call $653e		; $6472
+
+@connectParts:
+	; keeps self 1/4 of the way from relatedObj1 (claw) to relatedObj2 (shoulder)
+	call dragonOnoxDistanceToRelatedObjects		; $6472
 	ld e,l			; $6475
 	sra b			; $6476
 	ld a,b			; $6478
@@ -4808,7 +5049,8 @@ _label_0f_204:
 	add b			; $647b
 	add (hl)		; $647c
 	ld (de),a		; $647d
-	ld l,$8d		; $647e
+
+	ld l,Enemy.xh		; $647e
 	ld e,l			; $6480
 	sra c			; $6481
 	ld a,c			; $6483
@@ -4817,48 +5059,62 @@ _label_0f_204:
 	add (hl)		; $6487
 	ld (de),a		; $6488
 	ret			; $6489
+
+dragonOnox_rightClawSphere:
 	ld a,(de)		; $648a
 	rst_jumpTable			; $648b
-	sub b			; $648c
-	ld h,h			; $648d
-	ld (hl),d		; $648e
-	ld h,h			; $648f
+        .dw @linkPartsAndAnimate
+        .dw dragonOnox_leftClawSphere@connectParts
+
+@linkPartsAndAnimate:
 	ld h,d			; $6490
 	ld l,e			; $6491
 	inc (hl)		; $6492
-	ld l,$97		; $6493
+	ld l,Enemy.relatedObj1+1		; $6493
+	; dragon Onox subid 5
 	ld a,($cfdb)		; $6495
 	ldd (hl),a		; $6498
 	ld (hl),$80		; $6499
-	ld l,$99		; $649b
+	ld l,Enemy.relatedObj2+1		; $649b
+	; dragon Onox subid 3
 	ld a,($cfd9)		; $649d
 	ldd (hl),a		; $64a0
 	ld (hl),$80		; $64a1
 	ld a,$0e		; $64a3
 	call enemySetAnimation		; $64a5
 	call objectSetVisible82		; $64a8
-	jr _label_0f_204		; $64ab
+	jr dragonOnox_leftClawSphere@connectParts		; $64ab
+
+dragonOnox_leftShoulderSphere:
 	ld a,(de)		; $64ad
 	rst_jumpTable			; $64ae
-	or e			; $64af
-	ld h,h			; $64b0
-	adc $64			; $64b1
+        .dw @linkPartsAndAnimate
+        .dw @connectParts
+
+@linkPartsAndAnimate:
 	ld h,d			; $64b3
 	ld l,e			; $64b4
 	inc (hl)		; $64b5
-	ld l,$97		; $64b6
+
+	ld l,Enemy.relatedObj1+1		; $64b6
+	; dragon Onox subid 4
 	ld a,($cfda)		; $64b8
 	ldd (hl),a		; $64bb
 	ld (hl),$80		; $64bc
-	ld l,$99		; $64be
+
+	ld l,Enemy.relatedObj2+1		; $64be
+	; dragon Onox subid 2
 	ld a,($cfd8)		; $64c0
 	ldd (hl),a		; $64c3
 	ld (hl),$80		; $64c4
+
 	ld a,$0b		; $64c6
 	call enemySetAnimation		; $64c8
 	call objectSetVisible82		; $64cb
-_label_0f_205:
-	call $653e		; $64ce
+
+@connectParts:
+	; keeps self 1/3 of the way from relatedObj2 (claw) to relatedObj1 (shoulder)
+	call dragonOnoxDistanceToRelatedObjects		; $64ce
 	ld e,l			; $64d1
 	sra b			; $64d2
 	sra b			; $64d4
@@ -4867,7 +5123,8 @@ _label_0f_205:
 	add b			; $64d9
 	add (hl)		; $64da
 	ld (de),a		; $64db
-	ld l,$8d		; $64dc
+
+	ld l,Enemy.xh		; $64dc
 	ld e,l			; $64de
 	sra c			; $64df
 	sra c			; $64e1
@@ -4877,39 +5134,49 @@ _label_0f_205:
 	add (hl)		; $64e7
 	ld (de),a		; $64e8
 	ret			; $64e9
+
+dragonOnox_rightShoulderSphere:
 	ld a,(de)		; $64ea
 	rst_jumpTable			; $64eb
-	ld a,($ff00+$64)	; $64ec
-	adc $64			; $64ee
+        .dw @linkPartsAndAnimate
+        .dw dragonOnox_leftShoulderSphere@connectParts
+
+@linkPartsAndAnimate:
 	ld h,d			; $64f0
 	ld l,e			; $64f1
 	inc (hl)		; $64f2
-	ld l,$97		; $64f3
+	ld l,Enemy.relatedObj1+1		; $64f3
+	; dragon Onox subid 5
 	ld a,($cfdb)		; $64f5
 	ldd (hl),a		; $64f8
 	ld (hl),$80		; $64f9
-	ld l,$99		; $64fb
+	ld l,Enemy.relatedObj2+1		; $64fb
+	; dragon Onox subid 3
 	ld a,($cfd9)		; $64fd
 	ldd (hl),a		; $6500
 	ld (hl),$80		; $6501
 	ld a,$0c		; $6503
 	call enemySetAnimation		; $6505
 	call objectSetVisible82		; $6508
-	jr _label_0f_205		; $650b
-	ld e,$8b		; $650d
+	jr dragonOnox_leftShoulderSphere@connectParts		; $650b
+
+seasonsFunc_0f_650d:
+	ld e,Enemy.yh		; $650d
 	ld a,($cfcc)		; $650f
 	ld (de),a		; $6512
-	ld e,$8d		; $6513
+	ld e,Enemy.xh		; $6513
 	ld a,($cfcd)		; $6515
 	ld (de),a		; $6518
 	call objectApplySpeed		; $6519
-	ld e,$8b		; $651c
+	ld e,Enemy.yh		; $651c
 	ld a,(de)		; $651e
 	ld ($cfcc),a		; $651f
-	ld e,$8d		; $6522
+	ld e,Enemy.xh		; $6522
 	ld a,(de)		; $6524
 	ld ($cfcd),a		; $6525
 	ret			; $6528
+
+seasonsFunc_0f_6529:
 	ld a,h			; $6529
 	add $60			; $652a
 	ldh (<hFF8F),a	; $652c
@@ -4923,273 +5190,312 @@ _label_0f_205:
 	add $50			; $6538
 	ld c,a			; $653a
 	jp objectGetRelativeAngleWithTempVars		; $653b
-	ld a,$0b		; $653e
+
+
+; @param[out]	b	relatedObj1.yh - relatedObj2.yh
+; @param[out]	c	relatedObj1.xh - relatedObj2.xh
+; @param[out]	hl	relatedObj2.yh
+dragonOnoxDistanceToRelatedObjects:
+	ld a,Enemy.yh-Enemy		; $653e
 	call objectGetRelatedObject2Var		; $6540
 	push hl			; $6543
 	ld b,(hl)		; $6544
-	ld l,$8d		; $6545
+	ld l,Enemy.xh		; $6545
 	ld c,(hl)		; $6547
-	ld a,$0b		; $6548
+
+	ld a,Enemy.yh-Enemy		; $6548
 	call objectGetRelatedObject1Var		; $654a
 	ld a,(hl)		; $654d
 	sub b			; $654e
+	; b now yh delta
 	ld b,a			; $654f
-	ld l,$8d		; $6550
+	ld l,Enemy.xh		; $6550
 	ld a,(hl)		; $6552
+
 	sub c			; $6553
+	; c now xh delta
 	ld c,a			; $6554
+
+	; now relatedObject2.yh
 	pop hl			; $6555
 	ret			; $6556
+
+seasonsFunc_0f_6557:
 	ld h,d			; $6557
-	ld l,$a4		; $6558
+	ld l,Enemy.collisionType		; $6558
 	bit 7,(hl)		; $655a
 	ret z			; $655c
-	ld a,($d015)		; $655d
+	ld a,(w1Link.speedZ+1)		; $655d
 	rlca			; $6560
-	jr c,_label_0f_207	; $6561
-	ld l,$a7		; $6563
+	jr c,seasonsFunc_0f_65b7	; $6561
+	ld l,Enemy.collisionRadiusX		; $6563
 	ld a,(hl)		; $6565
 	add $06			; $6566
 	ld b,a			; $6568
 	add a			; $6569
 	inc a			; $656a
 	ld c,a			; $656b
-	ld l,$8d		; $656c
-	ld a,($d00d)		; $656e
+	ld l,Enemy.xh		; $656c
+	ld a,(w1Link.xh)		; $656e
 	sub (hl)		; $6571
 	add b			; $6572
 	cp c			; $6573
-	jr nc,_label_0f_207	; $6574
-	ld l,$a6		; $6576
-	ld a,($d026)		; $6578
+	jr nc,seasonsFunc_0f_65b7	; $6574
+	ld l,Enemy.collisionRadiusY		; $6576
+	ld a,(w1Link.collisionRadiusY)		; $6578
 	add (hl)		; $657b
 	add $03			; $657c
 	ld b,a			; $657e
-	ld e,$8b		; $657f
+	ld e,Enemy.yh		; $657f
 	ld a,(de)		; $6581
 	sub b			; $6582
 	ld c,a			; $6583
-	ld a,($d00b)		; $6584
+	ld a,(w1Link.yh)		; $6584
 	sub c			; $6587
 	inc a			; $6588
 	cp $03			; $6589
-	jr nc,_label_0f_207	; $658b
+	jr nc,seasonsFunc_0f_65b7	; $658b
 	ld a,d			; $658d
-	ld ($ccb0),a		; $658e
-	ld l,$b1		; $6591
+	ld (wLinkRidingObject),a		; $658e
+	ld l,Enemy.var31		; $6591
 	bit 0,(hl)		; $6593
-	jr nz,_label_0f_206	; $6595
+	jr nz,+			; $6595
 	inc (hl)		; $6597
-	call $65bb		; $6598
-_label_0f_206:
+	call seasonsFunc_0f_65bb		; $6598
++
 	ld a,c			; $659b
-	ld ($d00b),a		; $659c
-	ld l,$8d		; $659f
+	ld (w1Link.yh),a		; $659c
+	ld l,Enemy.xh		; $659f
 	ld a,(hl)		; $65a1
-	ld l,$b3		; $65a2
+	ld l,Enemy.var33		; $65a2
 	sub (hl)		; $65a4
 	ld e,a			; $65a5
-	ld a,($d00d)		; $65a6
+	ld a,(w1Link.xh)		; $65a6
 	add e			; $65a9
 	sub $05			; $65aa
-	cp $97			; $65ac
-	jr nc,_label_0f_208	; $65ae
+	cp Enemy.relatedObj1+1			; $65ac
+	jr nc,seasonsFunc_0f_65bb	; $65ae
 	add $05			; $65b0
-	ld ($d00d),a		; $65b2
-	jr _label_0f_208		; $65b5
-_label_0f_207:
-	ld l,$b1		; $65b7
+	ld (w1Link.xh),a		; $65b2
+	jr seasonsFunc_0f_65bb		; $65b5
+
+seasonsFunc_0f_65b7:
+	ld l,Enemy.var31		; $65b7
 	ld (hl),$00		; $65b9
-_label_0f_208:
-	ld e,$8b		; $65bb
+seasonsFunc_0f_65bb:
+	ld e,Enemy.yh		; $65bb
 	ld a,(de)		; $65bd
-	ld l,$b2		; $65be
+	ld l,Enemy.var32		; $65be
 	ld (hl),a		; $65c0
-	ld e,$8d		; $65c1
+	ld e,Enemy.xh		; $65c1
 	ld a,(de)		; $65c3
+	; var33
 	inc l			; $65c4
 	ld (hl),a		; $65c5
 	ret			; $65c6
+
+seasonsFunc_0f_65c7:
 	ld a,($cfca)		; $65c7
 	and $0e			; $65ca
 	ld b,a			; $65cc
 	rrca			; $65cd
 	add b			; $65ce
-	ld hl,$65ed		; $65cf
+	ld hl,seasonsTable_0f_65ed		; $65cf
 	rst_addAToHl			; $65d2
-	ld e,$8b		; $65d3
+	ld e,Enemy.yh		; $65d3
 	ld a,($cfcc)		; $65d5
 	add (hl)		; $65d8
 	ld (de),a		; $65d9
-	ld e,$8d		; $65da
+	ld e,Enemy.xh		; $65da
 	inc hl			; $65dc
 	ld a,($cfcd)		; $65dd
 	add (hl)		; $65e0
 	ld (de),a		; $65e1
 	inc hl			; $65e2
-	ld e,$88		; $65e3
+	ld e,Enemy.direction		; $65e3
 	ld a,(de)		; $65e5
 	cp (hl)			; $65e6
 	ret z			; $65e7
 	ld a,(hl)		; $65e8
 	ld (de),a		; $65e9
 	jp enemySetAnimation		; $65ea
-	ld c,b			; $65ed
-	ld d,b			; $65ee
-	nop			; $65ef
-	ld b,c			; $65f0
-	ld d,b			; $65f1
-	ld bc,$5041		; $65f2
-	ld bc,$4741		; $65f5
-	ld (bc),a		; $65f8
-	ld c,b			; $65f9
-	ld d,b			; $65fa
-	nop			; $65fb
+
+seasonsTable_0f_65ed:
+        .db $48 $50 $00
+        .db $41 $50 $01
+        .db $41 $50 $01
+        .db $41 $47 $02
+        .db $48 $50 $00
+
+seasonsFunc_0f_65fc:
 	ld h,d			; $65fc
-	ld l,$b1		; $65fd
+	ld l,Enemy.var31		; $65fd
 	dec (hl)		; $65ff
-	ld e,$ab		; $6600
-	jr nz,_label_0f_211	; $6602
+	ld e,Enemy.invincibilityCounter		; $6600
+	jr nz,++		; $6602
 	ld a,(de)		; $6604
 	or a			; $6605
 	ld b,$14		; $6606
-	jr z,_label_0f_209	; $6608
+	jr z,+			; $6608
 	ld b,$06		; $660a
-_label_0f_209:
++
 	ld (hl),b		; $660c
-	ld e,$b0		; $660d
+	ld e,Enemy.var30		; $660d
 	ld a,(de)		; $660f
 	cp $08			; $6610
-	jr nc,_label_0f_210	; $6612
+	jr nc,+			; $6612
 	xor $01			; $6614
 	ld (de),a		; $6616
-_label_0f_210:
++
 	or $80			; $6617
 	ld ($cfc9),a		; $6619
-_label_0f_211:
+++
+	; Enemy.var32
 	inc l			; $661c
 	dec (hl)		; $661d
 	ret nz			; $661e
 	ld a,(de)		; $661f
 	or a			; $6620
 	ld b,$0c		; $6621
-	jr z,_label_0f_212	; $6623
+	jr z,+			; $6623
 	ld b,$04		; $6625
-_label_0f_212:
++
 	ld (hl),b		; $6627
 	ld a,($cfcb)		; $6628
 	inc a			; $662b
 	cp $06			; $662c
-	jr c,_label_0f_213	; $662e
+	jr c,+			; $662e
 	xor a			; $6630
-_label_0f_213:
++
 	or $80			; $6631
 	ld ($cfcb),a		; $6633
 	ret			; $6636
-	ld l,$b4		; $6637
-	ld e,$b3		; $6639
+
+seasonsFunc_0f_6637:
+	; var33 - += var34 % 8
+	; var34 - n/a
+	; var35 - 1st value in table below, indexed by var33
+	; var36 - 2nd value in table below, indexed by var33
+	ld l,Enemy.var34		; $6637
+	ld e,Enemy.var33		; $6639
 	ld a,(de)		; $663b
 	add (hl)		; $663c
 	and $07			; $663d
 	ld (de),a		; $663f
-	ld hl,$664c		; $6640
+	ld hl,seasonsTable_0f_664c		; $6640
 	rst_addDoubleIndex			; $6643
-	ld e,$b5		; $6644
+	ld e,Enemy.var35		; $6644
 	ldi a,(hl)		; $6646
 	ld (de),a		; $6647
+	; var36
 	inc e			; $6648
 	ld a,(hl)		; $6649
 	ld (de),a		; $664a
 	ret			; $664b
-	nop			; $664c
-	nop			; $664d
-	ld hl,sp+$10		; $664e
-	nop			; $6650
-	jr nz,_label_0f_214	; $6651
-	stop			; $6653
-	nop			; $6654
-	nop			; $6655
-	ld hl,sp-$10		; $6656
-	nop			; $6658
-	ld ($ff00+$08),a	; $6659
-_label_0f_214:
-	ld a,($ff00+$2e)	; $665b
-	add h			; $665d
+
+seasonsTable_0f_664c:
+        .db $00 $00
+        .db $f8 $10
+        .db $00 $20
+        .db $08 $10
+        .db $00 $00
+        .db $f8 $f0
+        .db $00 $e0
+        .db $08 $f0
+
+seasonsFunc_0f_665c:
+	ld l,Enemy.state		; $665c
 	inc (hl)		; $665e
-	ld l,$b3		; $665f
+	ld l,Enemy.var33		; $665f
 	ld (hl),$ff		; $6661
-	ld l,$90		; $6663
-	ld (hl),$14		; $6665
-	call $6680		; $6667
+	ld l,Enemy.speed		; $6663
+	ld (hl),SPEED_80		; $6665
+	call seasonsFunc_0f_6680		; $6667
 	call getRandomNumber_noPreserveVars		; $666a
 	and $07			; $666d
-	ld hl,$6678		; $666f
+	ld hl,seasonsTable_0f_6678		; $666f
 	rst_addAToHl			; $6672
-	ld e,$86		; $6673
+	ld e,Enemy.counter1		; $6673
 	ld a,(hl)		; $6675
 	ld (de),a		; $6676
 	ret			; $6677
-	ld e,$3c		; $6678
-	inc a			; $667a
-	ld e,d			; $667b
-	ld e,d			; $667c
-	ld e,d			; $667d
-	ld a,b			; $667e
-	ld a,b			; $667f
-_label_0f_215:
+
+seasonsTable_0f_6678:
+        .db $1e
+        .db $3c
+        .db $3c
+        .db $5a
+        .db $5a
+        .db $5a
+        .db $78
+        .db $78
+
+seasonsFunc_0f_6680:
 	call getRandomNumber_noPreserveVars		; $6680
 	and $07			; $6683
 	ld b,a			; $6685
-	ld e,$b3		; $6686
+	ld e,Enemy.var33		; $6686
 	ld a,(de)		; $6688
 	cp b			; $6689
-	jr z,_label_0f_215	; $668a
+	jr z,seasonsFunc_0f_6680	; $668a
 	ld a,b			; $668c
 	ld (de),a		; $668d
-	ld hl,$669a		; $668e
+	ld hl,seasonsTable_0f_669a		; $668e
 	rst_addDoubleIndex			; $6691
-	ld e,$b5		; $6692
+	ld e,Enemy.var35		; $6692
 	ldi a,(hl)		; $6694
 	ld (de),a		; $6695
+	; var36
 	inc e			; $6696
 	ld a,(hl)		; $6697
 	ld (de),a		; $6698
 	ret			; $6699
-	ld hl,sp-$10		; $669a
-	ld ($f8f0),sp		; $669c
-.DB $fc				; $669f
-	ld ($f8fc),sp		; $66a0
-	inc b			; $66a3
-	ld ($f804),sp		; $66a4
-	stop			; $66a7
-	ld ($fa10),sp		; $66a8
-	call z,$67cf		; $66ab
+
+seasonsTable_0f_669a:
+        .db $f8 $f0
+        .db $08 $f0
+        .db $f8 $fc
+        .db $08 $fc
+        .db $f8 $04
+        .db $08 $04
+        .db $f8 $10
+        .db $08 $10
+
+seasonsFunc_0f_66aa:
+	ld a,($cfcc)		; $66aa
+	ld h,a			; $66ad
 	ld a,($cfcd)		; $66ae
 	ld l,a			; $66b1
 	cp c			; $66b2
-	jr nz,_label_0f_216	; $66b3
+	jr nz,+			; $66b3
 	ld a,h			; $66b5
 	cp b			; $66b6
 	ret z			; $66b7
-_label_0f_216:
-	call $6529		; $66b8
-	ld e,$89		; $66bb
++
+	call seasonsFunc_0f_6529		; $66b8
+	ld e,Enemy.angle		; $66bb
 	ld (de),a		; $66bd
-	call $650d		; $66be
+	call seasonsFunc_0f_650d		; $66be
 	or d			; $66c1
 	ret			; $66c2
-	ld e,$b0		; $66c3
+
+dragonOnoxLoadaIntoVar30Andcfc9:
+	ld e,Enemy.var30		; $66c3
 	ld (de),a		; $66c5
 	or $80			; $66c6
 	ld ($cfc9),a		; $66c8
 	ret			; $66cb
+
+dragonOnoxLowHealthThresholdIntoC:
 	call checkIsLinkedGame		; $66cc
 	ld c,$11		; $66cf
 	ret z			; $66d1
 	ld c,$18		; $66d2
 	ret			; $66d4
 
-
+; ==============================================================================
+; ENEMYID_GLEEOK
+; ==============================================================================
 enemyCode06:
 	jr z,_label_0f_219	; $66d5
 	sub $03			; $66d7
@@ -6252,6 +6558,9 @@ _label_0f_254:
 .db $18 $18 $19 $19 $1a $1a $1b $1c
 .db $04 $05 $06 $06 $07 $07 $08 $08
 
+; ==============================================================================
+; ENEMYID_KING_MOBLIN
+; ==============================================================================
 enemyCode07:
 	jr z,_label_0f_257		; $6d54
 	sub $03			; $6d56
