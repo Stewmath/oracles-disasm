@@ -1,4 +1,4 @@
-animationGroupTable: ; 0x119b0
+animationGroupTable:
 	.dw animationGroup00
 	.dw animationGroup01
 	.dw animationGroup02
@@ -27,87 +27,109 @@ animationGroupTable: ; 0x119b0
 	.dw animationGroup19
 	.dw animationGroup1a
 
-animationGroup00: ; 0x119e6
-animationGroup07: ; 0x119e6
-animationGroup0f: ; 0x119e6
-animationGroup12: ; 0x119e6
-animationGroup13: ; 0x119e6
-animationGroup14: ; 0x119e6
-animationGroup15: ; 0x119e6
-animationGroup16: ; 0x119e6
-animationGroup17: ; 0x119e6
-	.db $83
-	.dw animationData11c94
-	.dw animationData11c9e
-animationGroup01: ; 0x119eb
-	.db $83
-	.dw animationData11c94
-	.dw animationData11ce4
-animationGroup02: ; 0x119f0
-	.db $83
-	.dw animationData11c94
-	.dw animationData11ca8
-animationGroup03: ; 0x119f5
-	.db $81
-	.dw animationData11c94
-animationGroup04: ; 0x119f8
-	.db $87
-	.dw animationData11c94
-	.dw animationData11cc6
-	.dw animationData11cda
-animationGroup05: ; 0x119ff
-	.db $83
-	.dw animationData11c94
-	.dw animationData11cda
-animationGroup06: ; 0x11a04
-	.db $87
-	.dw animationData11c94
-	.dw animationData11cd0
-	.dw animationData11cbc
-animationGroup08: ; 0x11a0e
-	.db $83
-	.dw animationData11cf8
-	.dw animationData11d02
-animationGroup09: ; 0x11a13
-	.db $81
-	.dw animationData11d0c
-animationGroup0a: ; 0x11a16
-	.db $87
-	.dw animationData11c94
-	.dw animationData11ca8
-	.dw animationData11cee
-animationGroup0b: ; 0x11a1d
-	.db $81
-	.dw animationData11d16
-animationGroup0c: ; 0x11a20
-	.db $81
-	.dw animationData11d1a
-animationGroup0d: ; 0x11a23
-	.db $81
-	.dw animationData11d1e
-animationGroup0e: ; 0x11a26
-	.db $81
-	.dw animationData11d24
-animationGroup10: ; 0x11a29
-	.db $83
-	.dw animationData11d2e
-	.dw animationData11d38
-animationGroup11: ; 0x11a2e
-	.db $83
-	.dw animationData11d2e
-	.dw animationData11d4a
-animationGroup18: ; 0x11a33
-	.db $8f
-	.dw animationData11d5e
-	.dw animationData11d68
-	.dw animationData11d72
-	.dw animationData11d80
-animationGroup19: ; 0x11a3c
-	.db $8f
-	.dw animationData11d5e
-	.dw animationData11d68
-	.dw animationData11d72
-	.dw animationData11d8a
-animationGroup1a: ; 0x11a45
-	.db $81
-	.dw animationData11d54
+animationGroup00:
+animationGroup07:
+animationGroup0f:
+animationGroup12:
+animationGroup13:
+animationGroup14:
+animationGroup15:
+animationGroup16:
+animationGroup17:
+	.db $83			; $59e6
+	.dw animationData_04_5c94
+	.dw animationData_04_5c9e
+
+animationGroup01:
+	.db $83			; $59eb
+	.dw animationData_04_5c94
+	.dw animationData_04_5ce4
+
+animationGroup02:
+	.db $83			; $59f0
+	.dw animationData_04_5c94
+	.dw animationData_04_5ca8
+
+animationGroup03:
+	.db $81			; $59f5
+	.dw animationData_04_5c94
+
+animationGroup04:
+	.db $87			; $59f8
+	.dw animationData_04_5c94
+	.dw animationData_04_5cc6
+	.dw animationData_04_5cda
+
+animationGroup05:
+	.db $83		; $59ff
+	.dw animationData_04_5c94
+	.dw animationData_04_5cda
+
+animationGroup06:
+	.db $87		; $5a04
+	.dw animationData_04_5c94
+	.dw animationData_04_5cd0
+	.dw animationData_04_5cbc
+
+unknownAnimationGroup:
+	.db $81		; $5a0b
+	.dw animationData_04_5c94
+
+animationGroup08:
+	.db $83			; $5a0e
+	.dw animationData_04_5cf8
+	.dw animationData_04_5d02
+
+animationGroup09:
+	.db $81			; $5a13
+	.dw animationData_04_5d0c
+
+animationGroup0a:
+	.db $87			; $5a16
+	.dw animationData_04_5c94
+	.dw animationData_04_5ca8
+	.dw animationData_04_5cee
+
+animationGroup0b:
+	.db $81			; $5a1d
+	.dw animationData_04_5d16
+
+animationGroup0c:
+	.db $81			; $5a20
+	.dw animationData_04_5d1a
+
+animationGroup0d:
+	.db $81			; $5a23
+	.dw animationData_04_5d1e
+
+animationGroup0e:
+	.db $81			; $5a26
+	.dw animationData_04_5d24
+
+animationGroup10:
+	.db $83			; $5a29
+	.dw animationData_04_5d2e
+	.dw animationData_04_5d38
+
+animationGroup11:
+	.db $83			; $5a2e
+	.dw animationData_04_5d2e
+	.dw animationData_04_5d4a
+
+animationGroup18:
+	.db $8f			; $5a33
+	.dw animationData_04_5d5e
+	.dw animationData_04_5d68
+	.dw animationData_04_5d72
+	.dw animationData_04_5d80
+
+animationGroup19:
+	.db $8f			; $5a3c
+	.dw animationData_04_5d5e
+	.dw animationData_04_5d68
+	.dw animationData_04_5d72
+	.dw animationData_04_5d8a
+
+animationGroup1a:
+	.db $81			; $5a45
+	.dw animationData_04_5d54
