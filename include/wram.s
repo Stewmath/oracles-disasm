@@ -497,7 +497,7 @@ wMapleKillCounter: ; $c641/$c63e
 ; Maple appears when this reaches 30 (15 with Maple's ring).
 	db
 
-wBoughtShopItems1: ; $c642
+wBoughtShopItems1: ; $c642/$c63f
 ; Bit 0: Bought ring box upgrade from hidden shop.
 ; Bit 1: Bought gasha seed 1 from hidden shop.
 ; Bit 2: Bought gasha seed 2 from hidden shop.

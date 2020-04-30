@@ -267,7 +267,7 @@ area1aSeasons:
 	.db $0f $01 $00 $4d $65 $19 $01 $0a ; 0xcd
 	.db $0f $01 $00 $4e $66 $1a $02 $05 ; 0xce
 
-seasonsFunc_04_6ce6Seasons:
+templeRemainsSeasons:
 	.db $0f $01 $00 $48 $30 $16 $04 $08 ; 0xcf
 	.db $0f $01 $00 $49 $31 $16 $04 $08 ; 0xd0
 	.db $0f $01 $00 $4a $32 $16 $04 $08 ; 0xd1

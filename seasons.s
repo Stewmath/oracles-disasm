@@ -945,111 +945,120 @@ animationData_04_5d1a:
 	m_AnimationLoop animationData_04_5d1a
 
 animationData_04_5d1e:
-        .db $0f $34
-        .db $0f $35
+	.db $0f $34
+	.db $0f $35
 	m_AnimationLoop animationData_04_5d1e
 
 animationData_04_5d24:
-        .db $02 $36
-        .db $02 $37
-        .db $02 $38
-        .db $02 $39
+	.db $02 $36
+	.db $02 $37
+	.db $02 $38
+	.db $02 $39
 	m_AnimationLoop animationData_04_5d24
 
 animationData_04_5d2e:
-        .db $0f $3a
-        .db $0f $3b
-        .db $0f $3c
-        .db $0f $3d
+	.db $0f $3a
+	.db $0f $3b
+	.db $0f $3c
+	.db $0f $3d
 	m_AnimationLoop animationData_04_5d2e
 
 animationData_04_5d38:
-        .db $04 $3e
-        .db $04 $42
-        .db $04 $3f
-        .db $04 $43
-        .db $04 $40
-        .db $04 $44
-        .db $04 $41
-        .db $04 $45
+	.db $04 $3e
+	.db $04 $42
+	.db $04 $3f
+	.db $04 $43
+	.db $04 $40
+	.db $04 $44
+	.db $04 $41
+	.db $04 $45
 	m_AnimationLoop animationData_04_5d38
 
 animationData_04_5d4a:
-        .db $0f $46
-        .db $0f $47
-        .db $0f $48
-        .db $0f $49
+	.db $0f $46
+	.db $0f $47
+	.db $0f $48
+	.db $0f $49
 	m_AnimationLoop animationData_04_5d4a
 
 animationData_04_5d54:
-        .db $1e $5e
-        .db $1e $5f
-        .db $1e $60
-        .db $1e $61
+	.db $1e $5e
+	.db $1e $5f
+	.db $1e $60
+	.db $1e $61
 	m_AnimationLoop animationData_04_5d54
 
 animationData_04_5d5e:
-        .db $0f $4a
-        .db $0f $4b
-        .db $0f $4c
-        .db $0f $4d
+	.db $0f $4a
+	.db $0f $4b
+	.db $0f $4c
+	.db $0f $4d
 	m_AnimationLoop animationData_04_5d5e
 
 animationData_04_5d68:
-        .db $08 $4e
-        .db $08 $4f
-        .db $08 $50
-        .db $08 $51
+	.db $08 $4e
+	.db $08 $4f
+	.db $08 $50
+	.db $08 $51
 	m_AnimationLoop animationData_04_5d68
 
 animationData_04_5d72:
-        .db $0f $52
-        .db $0f $53
-        .db $0f $54
-        .db $0f $55
-        .db $0f $54
-        .db $0f $53
+	.db $0f $52
+	.db $0f $53
+	.db $0f $54
+	.db $0f $55
+	.db $0f $54
+	.db $0f $53
 	m_AnimationLoop animationData_04_5d72
 
 animationData_04_5d80:
-        .db $0f $56
-        .db $0f $57
-        .db $0f $58
-        .db $0f $59
+	.db $0f $56
+	.db $0f $57
+	.db $0f $58
+	.db $0f $59
 	m_AnimationLoop animationData_04_5d80
 
 animationData_04_5d8a:
-        .db $0f $5a
-        .db $0f $5b
-        .db $0f $5c
-        .db $0f $5d
+	.db $0f $5a
+	.db $0f $5b
+	.db $0f $5c
+	.db $0f $5d
 	m_AnimationLoop animationData_04_5d8a
 
 
 applyAllTileSubstitutions:
-	call $5fda		; $5d94
-	call $5de8		; $5d97
-	call $5f53		; $5d9a
-	ld a,($cc49)		; $5d9d
+	call applySingleTileChanges		; $5d94
+	call applyStandardTileSubstitutions		; $5d97
+	call replaceOpenedChest		; $5d9a
+	ld a,(wActiveGroup)		; $5d9d
 	cp $02			; $5da0
-	jr z,_label_04_232	; $5da2
-	cp $04			; $5da4
-	jr nc,_label_04_231	; $5da6
-	call $5dbc		; $5da8
-	jp $60ab		; $5dab
-_label_04_231:
-	call $5ebd		; $5dae
-	call $5f62		; $5db1
-	jp $60ab		; $5db4
-_label_04_232:
-	ld e,$03		; $5db7
+	jr z,++			; $5da2
+	cp NUM_SMALL_GROUPS			; $5da4
+	jr nc,+			; $5da6
+	; groups 0,1,3
+	call loadSubrosiaObjectGfxHeader		; $5da8
+	jp applyRoomSpecificTileChanges		; $5dab
++
+	; groups 4,5,6,7
+	call replaceShutterForLinkEntering		; $5dae
+	call replaceSwitchTiles		; $5db1
+	jp applyRoomSpecificTileChanges		; $5db4
+++
+	; group 2
+	ld e,OBJGFXH_04-1		; $5db7
 	jp loadObjectGfxHeaderToSlot4		; $5db9
-	ld a,($c63a)		; $5dbc
+
+loadSubrosiaObjectGfxHeader:
+	ld a,(wMinimapGroup)		; $5dbc
 	cp $01			; $5dbf
 	ret nz			; $5dc1
-	ld e,$06		; $5dc2
+	ld e,OBJGFXH_07-1		; $5dc2
 	jp loadObjectGfxHeaderToSlot4		; $5dc4
-_label_04_233:
+
+;;
+; @param de Structure for tiles to replace
+; (format: tile to replace with, tile to replace, repeat, $00 to end)
+replaceTiles:
 	ld a,(de)		; $5dc7
 	or a			; $5dc8
 	ret z			; $5dc9
@@ -1058,217 +1067,239 @@ _label_04_233:
 	ld a,(de)		; $5dcc
 	inc de			; $5dcd
 	call findTileInRoom		; $5dce
-	jr nz,_label_04_233	; $5dd1
+	jr nz,replaceTiles	; $5dd1
 	ld (hl),b		; $5dd3
 	ld c,a			; $5dd4
 	ld a,l			; $5dd5
 	or a			; $5dd6
-	jr z,_label_04_233	; $5dd7
-_label_04_234:
+	jr z,replaceTiles	; $5dd7
+-
 	dec l			; $5dd9
 	ld a,c			; $5dda
 	call backwardsSearch		; $5ddb
-	jr nz,_label_04_233	; $5dde
+	jr nz,replaceTiles	; $5dde
 	ld (hl),b		; $5de0
 	ld c,a			; $5de1
 	ld a,l			; $5de2
 	or a			; $5de3
-	jr z,_label_04_233	; $5de4
-	jr _label_04_234		; $5de6
+	jr z,replaceTiles	; $5de4
+	jr -			; $5de6
+
+applyStandardTileSubstitutions:
 	call getThisRoomFlags		; $5de8
 	ldh (<hFF8B),a	; $5deb
-	ld hl,$5e26		; $5ded
+	ld hl,@bit0		; $5ded
 	bit 0,a			; $5df0
-	call nz,$5e1b		; $5df2
-	ld hl,$5e36		; $5df5
+	call nz,@locFunc		; $5df2
+
+	ld hl,@bit1		; $5df5
 	ldh a,(<hFF8B)	; $5df8
 	bit 1,a			; $5dfa
-	call nz,$5e1b		; $5dfc
-	ld hl,$5e46		; $5dff
+	call nz,@locFunc		; $5dfc
+
+	ld hl,@bit2		; $5dff
 	ldh a,(<hFF8B)	; $5e02
 	bit 2,a			; $5e04
-	call nz,$5e1b		; $5e06
-	ld hl,$5e56		; $5e09
+	call nz,@locFunc		; $5e06
+
+	ld hl,@bit3		; $5e09
 	ldh a,(<hFF8B)	; $5e0c
 	bit 3,a			; $5e0e
-	call nz,$5e1b		; $5e10
-	ld hl,$5e66		; $5e13
+	call nz,@locFunc		; $5e10
+
+	ld hl,@bit7		; $5e13
 	ldh a,(<hFF8B)	; $5e16
 	bit 7,a			; $5e18
 	ret z			; $5e1a
-	ld a,($cc49)		; $5e1b
+@locFunc:
+	ld a,(wActiveGroup)		; $5e1b
 	rst_addDoubleIndex			; $5e1e
 	ldi a,(hl)		; $5e1f
 	ld h,(hl)		; $5e20
 	ld l,a			; $5e21
 	ld e,l			; $5e22
 	ld d,h			; $5e23
-	jr _label_04_233		; $5e24
-	halt			; $5e26
-	ld e,(hl)		; $5e27
-	halt			; $5e28
-	ld e,(hl)		; $5e29
-	halt			; $5e2a
-	ld e,(hl)		; $5e2b
-	ld (hl),a		; $5e2c
-	ld e,(hl)		; $5e2d
-	ld (hl),a		; $5e2e
-	ld e,(hl)		; $5e2f
-	ld (hl),a		; $5e30
-	ld e,(hl)		; $5e31
-	add b			; $5e32
-	ld e,(hl)		; $5e33
-	add b			; $5e34
-	ld e,(hl)		; $5e35
-	add c			; $5e36
-	ld e,(hl)		; $5e37
-	add c			; $5e38
-	ld e,(hl)		; $5e39
-	add c			; $5e3a
-	ld e,(hl)		; $5e3b
-	add d			; $5e3c
-	ld e,(hl)		; $5e3d
-	add d			; $5e3e
-	ld e,(hl)		; $5e3f
-	add d			; $5e40
-	ld e,(hl)		; $5e41
-	adc d			; $5e42
-	ld e,(hl)		; $5e43
-	adc d			; $5e44
-	ld e,(hl)		; $5e45
-	adc e			; $5e46
-	ld e,(hl)		; $5e47
-	adc e			; $5e48
-	ld e,(hl)		; $5e49
-	adc e			; $5e4a
-	ld e,(hl)		; $5e4b
-	adc h			; $5e4c
-	ld e,(hl)		; $5e4d
-	adc h			; $5e4e
-	ld e,(hl)		; $5e4f
-	adc h			; $5e50
-	ld e,(hl)		; $5e51
-	sub h			; $5e52
-	ld e,(hl)		; $5e53
-	sub h			; $5e54
-	ld e,(hl)		; $5e55
-	sub l			; $5e56
-	ld e,(hl)		; $5e57
-	sub l			; $5e58
-	ld e,(hl)		; $5e59
-	sub l			; $5e5a
-	ld e,(hl)		; $5e5b
-	sub (hl)		; $5e5c
-	ld e,(hl)		; $5e5d
-	sub (hl)		; $5e5e
-	ld e,(hl)		; $5e5f
-	sub (hl)		; $5e60
-	ld e,(hl)		; $5e61
-	sbc (hl)		; $5e62
-	ld e,(hl)		; $5e63
-	sbc (hl)		; $5e64
-	ld e,(hl)		; $5e65
-	sbc a			; $5e66
-	ld e,(hl)		; $5e67
-	xor l			; $5e68
-	ld e,(hl)		; $5e69
-	xor (hl)		; $5e6a
-	ld e,(hl)		; $5e6b
-	xor a			; $5e6c
-	ld e,(hl)		; $5e6d
-	or b			; $5e6e
-	ld e,(hl)		; $5e6f
-	or b			; $5e70
-	ld e,(hl)		; $5e71
-	cp h			; $5e72
-	ld e,(hl)		; $5e73
-	cp h			; $5e74
-	ld e,(hl)		; $5e75
-	nop			; $5e76
-	inc (hl)		; $5e77
-	jr nc,_label_04_235	; $5e78
-	jr c,-$60		; $5e7a
-	ld (hl),b		; $5e7c
-	and b			; $5e7d
-	ld (hl),h		; $5e7e
-	nop			; $5e7f
-	nop			; $5e80
-	nop			; $5e81
-	dec (hl)		; $5e82
-	ld sp,$3935		; $5e83
-	and b			; $5e86
-	ld (hl),c		; $5e87
-	and b			; $5e88
-	ld (hl),l		; $5e89
-	nop			; $5e8a
-	nop			; $5e8b
-	ld (hl),$32		; $5e8c
-	ld (hl),$3a		; $5e8e
-	and b			; $5e90
-	ld (hl),d		; $5e91
-	and b			; $5e92
-	halt			; $5e93
-	nop			; $5e94
-	nop			; $5e95
-	scf			; $5e96
-	inc sp			; $5e97
-	scf			; $5e98
-	dec sp			; $5e99
-	and b			; $5e9a
-	ld (hl),e		; $5e9b
-	and b			; $5e9c
-	ld (hl),a		; $5e9d
-	nop			; $5e9e
-	rst $20			; $5e9f
-	pop bc			; $5ea0
-	ld ($ff00+$c6),a	; $5ea1
-	ld ($ff00+$c2),a	; $5ea3
-	ld ($ff00+$e3),a	; $5ea5
-	and $c5			; $5ea7
-	rst $20			; $5ea9
-	set 5,b			; $5eaa
-	ld ($ff00+c),a		; $5eac
-	nop			; $5ead
-_label_04_235:
-	nop			; $5eae
-	nop			; $5eaf
-	and b			; $5eb0
-	ld e,$44		; $5eb1
-	ld b,d			; $5eb3
-	ld b,l			; $5eb4
-	ld b,e			; $5eb5
-	ld b,(hl)		; $5eb6
-	ld b,b			; $5eb7
-	ld b,a			; $5eb8
-	ld b,c			; $5eb9
-	ld b,l			; $5eba
-	adc l			; $5ebb
-	nop			; $5ebc
-	ld a,($cc55)		; $5ebd
+	jr replaceTiles		; $5e24
+
+@bit0:
+	.dw @bit0Collisions0
+	.dw @bit0Collisions1
+	.dw @bit0Collisions2
+	.dw @bit0Collisions3
+	.dw @bit0Collisions4
+	.dw @bit0Collisions5
+	.dw @bit0Collisions6
+	.dw @bit0Collisions7
+
+@bit1:
+	.dw @bit1Collisions0
+	.dw @bit1Collisions1
+	.dw @bit1Collisions2
+	.dw @bit1Collisions3
+	.dw @bit1Collisions4
+	.dw @bit1Collisions5
+	.dw @bit1Collisions6
+	.dw @bit1Collisions7
+
+@bit2:
+	.dw @bit2Collisions0
+	.dw @bit2Collisions1
+	.dw @bit2Collisions2
+	.dw @bit2Collisions3
+	.dw @bit2Collisions4
+	.dw @bit2Collisions5
+	.dw @bit2Collisions6
+	.dw @bit2Collisions7
+
+@bit3:
+	.dw @bit3Collisions0
+	.dw @bit3Collisions1
+	.dw @bit3Collisions2
+	.dw @bit3Collisions3
+	.dw @bit3Collisions4
+	.dw @bit3Collisions5
+	.dw @bit3Collisions6
+	.dw @bit3Collisions7
+
+@bit7:
+	.dw @bit7Collisions0
+	.dw @bit7Collisions1
+	.dw @bit7Collisions2
+	.dw @bit7Collisions3
+	.dw @bit7Collisions4
+	.dw @bit7Collisions5
+	.dw @bit7Collisions6
+	.dw @bit7Collisions7
+
+@bit0Collisions0:
+@bit0Collisions1:
+@bit0Collisions2:
+	.db $00
+
+@bit0Collisions3:
+@bit0Collisions4:
+@bit0Collisions5:
+	.db $34 $30
+	.db $34 $38
+	.db $a0 $70
+	.db $a0 $74
+	.db $00
+
+@bit0Collisions6:
+@bit0Collisions7:
+	.db $00
+
+@bit1Collisions0:
+@bit1Collisions1:
+@bit1Collisions2:
+	.db $00
+
+@bit1Collisions3:
+@bit1Collisions4:
+@bit1Collisions5:
+	.db $35 $31
+	.db $35 $39
+	.db $a0 $71
+	.db $a0 $75
+
+@bit1Collisions6:
+@bit1Collisions7:
+	.db $00
+
+@bit2Collisions0:
+@bit2Collisions1:
+@bit2Collisions2:
+	.db $00
+
+@bit2Collisions3:
+@bit2Collisions4:
+@bit2Collisions5:
+	.db $36 $32
+	.db $36 $3a
+	.db $a0 $72
+	.db $a0 $76
+
+@bit2Collisions6:
+@bit2Collisions7:
+	.db $00
+
+@bit3Collisions0:
+@bit3Collisions1:
+@bit3Collisions2:
+	.db $00
+
+@bit3Collisions3:
+@bit3Collisions4:
+@bit3Collisions5:
+	.db $37 $33
+	.db $37 $3b
+	.db $a0 $73
+	.db $a0 $77
+
+@bit3Collisions6:
+@bit3Collisions7:
+	.db $00
+
+@bit7Collisions0:
+	.db $e7 $c1
+	.db $e0 $c6
+	.db $e0 $c2
+	.db $e0 $e3
+	.db $e6 $c5
+	.db $e7 $cb
+	.db $e8 $e2
+
+@bit7Collisions1:
+	.db $00
+
+@bit7Collisions2:
+	.db $00
+
+@bit7Collisions3:
+	.db $00
+
+@bit7Collisions4:
+@bit7Collisions5:
+	.db $a0 $1e
+	.db $44 $42
+	.db $45 $43
+	.db $46 $40
+	.db $47 $41
+	.db $45 $8d
+
+@bit7Collisions6:
+@bit7Collisions7:
+	.db $00
+
+replaceShutterForLinkEntering:
+	ld a,(wDungeonIndex)		; $5ebd
 	inc a			; $5ec0
 	ret z			; $5ec1
-	ld bc,$cfae		; $5ec2
-_label_04_236:
+	ld bc,wRoomLayout+$ae		; $5ec2
+-
 	ld a,(bc)		; $5ec5
 	push bc			; $5ec6
 	sub $78			; $5ec7
 	cp $08			; $5ec9
-	call c,$5ed3		; $5ecb
+	call c,@temporarilyOpenDoor		; $5ecb
 	pop bc			; $5ece
 	dec c			; $5ecf
-	jr nz,_label_04_236	; $5ed0
+	jr nz,-			; $5ed0
 	ret			; $5ed2
-	ld de,$5f43		; $5ed3
+
+@temporarilyOpenDoor:
+	ld de,@shutterData		; $5ed3
 	call addDoubleIndexToDe		; $5ed6
 	ld a,(de)		; $5ed9
 	ldh (<hFF8B),a	; $5eda
 	inc de			; $5edc
 	ld a,(de)		; $5edd
 	ld e,a			; $5ede
-	ld a,($cd00)		; $5edf
+	ld a,(wScrollMode)		; $5edf
 	and $08			; $5ee2
-	jr z,_label_04_242	; $5ee4
-	ld a,($cc48)		; $5ee6
+	jr z,@doneReplacement	; $5ee4
+
+	ld a,(wLinkObjectIndex)		; $5ee6
 	ld h,a			; $5ee9
 	ld a,($cd02)		; $5eea
 	xor $02			; $5eed
@@ -1279,43 +1310,50 @@ _label_04_236:
 	ret nz			; $5ef4
 	ld a,($cd02)		; $5ef5
 	bit 0,a			; $5ef8
-	jr nz,_label_04_238	; $5efa
+	jr nz,@horizontal	; $5efa
+
 	and $02			; $5efc
 	ld l,$0d		; $5efe
 	ld a,(hl)		; $5f00
-	jr nz,_label_04_237	; $5f01
+	jr nz,@down	; $5f01
+@up:
 	and $f0			; $5f03
 	swap a			; $5f05
 	or $a0			; $5f07
-	jr _label_04_240		; $5f09
-_label_04_237:
+	jr @doReplacement		; $5f09
+@down:
 	and $f0			; $5f0b
 	swap a			; $5f0d
-	jr _label_04_240		; $5f0f
-_label_04_238:
+	jr @doReplacement		; $5f0f
+@horizontal:
 	and $02			; $5f11
 	ld l,$0b		; $5f13
 	ld a,(hl)		; $5f15
-	jr nz,_label_04_239	; $5f16
+	jr nz,@left	; $5f16
+@right:
 	and $f0			; $5f18
-	jr _label_04_240		; $5f1a
-_label_04_239:
+	jr @doReplacement		; $5f1a
+@left:
 	and $f0			; $5f1c
 	or $0e			; $5f1e
-_label_04_240:
+
+@doReplacement:
 	cp c			; $5f20
-	jr nz,_label_04_242	; $5f21
+	jr nz,@doneReplacement	; $5f21
+
 	push bc			; $5f23
 	ld c,a			; $5f24
 	ld a,(bc)		; $5f25
 	sub $78			; $5f26
 	cp $08			; $5f28
-	jr nc,_label_04_241	; $5f2a
+	jr nc,+			; $5f2a
+
 	ldh a,(<hFF8B)	; $5f2c
 	ld (bc),a		; $5f2e
-_label_04_241:
++
 	pop bc			; $5f2f
-_label_04_242:
+
+@doneReplacement:
 	ld a,e			; $5f30
 	bit 7,a			; $5f31
 	ret nz			; $5f33
@@ -1329,21 +1367,18 @@ _label_04_242:
 	ld l,$4b		; $5f3f
 	ld (hl),c		; $5f41
 	ret			; $5f42
-	and b			; $5f43
-	add b			; $5f44
-	and b			; $5f45
-	add c			; $5f46
-	and b			; $5f47
-	add d			; $5f48
-	and b			; $5f49
-	add e			; $5f4a
-	ld e,(hl)		; $5f4b
-	inc c			; $5f4c
-	ld e,l			; $5f4d
-	dec c			; $5f4e
-	ld e,(hl)		; $5f4f
-	ld c,$5d		; $5f50
-	rrca			; $5f52
+
+@shutterData:
+	.db $a0 $80
+	.db $a0 $81
+	.db $a0 $82
+	.db $a0 $83
+	.db $5e $0c
+	.db $5d $0d
+	.db $5e $0e
+	.db $5d $0f
+
+replaceOpenedChest:
 	call getThisRoomFlags		; $5f53
 	bit 5,a			; $5f56
 	ret z			; $5f58
@@ -1352,465 +1387,325 @@ _label_04_242:
 	ld a,$f0		; $5f5e
 	ld (de),a		; $5f60
 	ret			; $5f61
-	ld hl,$5f90		; $5f62
+
+replaceSwitchTiles:
+	ld hl,@group4SwitchData		; $5f62
 	ld a,($cc49)		; $5f65
 	sub $04			; $5f68
-	jr z,_label_04_243	; $5f6a
+	jr z,+	; $5f6a
+
 	dec a			; $5f6c
 	ret nz			; $5f6d
-	ld hl,$5fd1		; $5f6e
-_label_04_243:
+
+	ld hl,@group5SwitchData		; $5f6e
++
 	ld a,($cc4c)		; $5f71
 	ld b,a			; $5f74
 	ld a,($cc32)		; $5f75
 	ld c,a			; $5f78
 	ld d,$cf		; $5f79
-_label_04_244:
+@next:
 	ldi a,(hl)		; $5f7b
 	or a			; $5f7c
 	ret z			; $5f7d
 	cp b			; $5f7e
-	jr nz,_label_04_245	; $5f7f
+	jr nz,@skip3Bytes	; $5f7f
+
 	ldi a,(hl)		; $5f81
 	and c			; $5f82
-	jr z,_label_04_246	; $5f83
+	jr z,@skip2Bytes	; $5f83
+
 	ldi a,(hl)		; $5f85
 	ld e,(hl)		; $5f86
 	inc hl			; $5f87
 	ld (de),a		; $5f88
-	jr _label_04_244		; $5f89
-_label_04_245:
+	jr @next		; $5f89
+@skip3Bytes:
 	inc hl			; $5f8b
-_label_04_246:
+@skip2Bytes:
 	inc hl			; $5f8c
 	inc hl			; $5f8d
-	jr _label_04_244		; $5f8e
-	rrca			; $5f90
-	ld bc,$330b		; $5f91
-	rrca			; $5f94
-	ld bc,$745a		; $5f95
-	ld l,a			; $5f98
-	ld bc,$8c0b		; $5f99
-	ld l,a			; $5f9c
-	ld bc,$295c		; $5f9d
-	ld (hl),b		; $5fa0
-	ld (bc),a		; $5fa1
-	dec bc			; $5fa2
-	jr z,_label_04_249	; $5fa3
-	ld (bc),a		; $5fa5
-	ld e,e			; $5fa6
-	ld d,d			; $5fa7
-	ld (hl),b		; $5fa8
-	inc b			; $5fa9
-	dec bc			; $5faa
-	ld e,c			; $5fab
-	ld (hl),b		; $5fac
-	inc b			; $5fad
-	ld e,e			; $5fae
-	add h			; $5faf
-	halt			; $5fb0
-	ld ($170b),sp		; $5fb1
-	halt			; $5fb4
-	ld ($255d),sp		; $5fb5
-	ld a,(hl)		; $5fb8
-	stop			; $5fb9
-	dec bc			; $5fba
-	ld d,(hl)		; $5fbb
-	ld a,(hl)		; $5fbc
-	stop			; $5fbd
-	ld e,h			; $5fbe
-	ld h,(hl)		; $5fbf
-	and b			; $5fc0
-	ld bc,$445e		; $5fc1
-	and b			; $5fc4
-	ld (bc),a		; $5fc5
-	ld e,(hl)		; $5fc6
-	scf			; $5fc7
-	and b			; $5fc8
-	ld bc,$830b		; $5fc9
-	and b			; $5fcc
-	ld (bc),a		; $5fcd
-	dec bc			; $5fce
-	ld a,b			; $5fcf
-	nop			; $5fd0
-	ld a,(hl)		; $5fd1
-	ld bc,$2b5c		; $5fd2
-	ld a,(hl)		; $5fd5
-	ld bc,$780b		; $5fd6
-	nop			; $5fd9
+	jr @next		; $5f8e
+
+@group4SwitchData:
+	.db $0f $01 $0b $33
+	.db $0f $01 $5a $74
+	.db $6f $01 $0b $8c
+	.db $6f $01 $5c $29
+	.db $70 $02 $0b $28
+	.db $70 $02 $5b $52
+	.db $70 $04 $0b $59
+	.db $70 $04 $5b $84
+	.db $76 $08 $0b $17
+	.db $76 $08 $5d $25
+	.db $7e $10 $0b $56
+	.db $7e $10 $5c $66
+	.db $a0 $01 $5e $44
+	.db $a0 $02 $5e $37
+	.db $a0 $01 $0b $83
+	.db $a0 $02 $0b $78
+	.db $00
+
+@group5SwitchData:
+	.db $7e $01 $5c $2b
+	.db $7e $01 $0b $78
+	.db $00
+
+applySingleTileChanges:
 	ld a,($cc4c)		; $5fda
 	ld b,a			; $5fdd
 	call getThisRoomFlags		; $5fde
 	ld c,a			; $5fe1
 	ld d,$cf		; $5fe2
 	ld a,($cc49)		; $5fe4
-	ld hl,$6005		; $5fe7
+	ld hl,singleTileChangeGroupTable		; $5fe7
 	rst_addDoubleIndex			; $5fea
 	ldi a,(hl)		; $5feb
 	ld h,(hl)		; $5fec
 	ld l,a			; $5fed
-_label_04_247:
+@next:
 	ldi a,(hl)		; $5fee
 	cp b			; $5fef
-	jr nz,_label_04_248	; $5ff0
+	jr nz,@match	; $5ff0
 	ld a,(hl)		; $5ff2
 	and c			; $5ff3
-	jr z,_label_04_248	; $5ff4
+	jr z,@match	; $5ff4
 	inc hl			; $5ff6
 	ldi a,(hl)		; $5ff7
 	ld e,a			; $5ff8
 	ldi a,(hl)		; $5ff9
 	ld (de),a		; $5ffa
-	jr _label_04_247		; $5ffb
-_label_04_248:
+	jr @next		; $5ffb
+
+@match:
 	ld a,(hl)		; $5ffd
 	or a			; $5ffe
 	ret z			; $5fff
 	inc hl			; $6000
 	inc hl			; $6001
 	inc hl			; $6002
-	jr _label_04_247		; $6003
-	dec d			; $6005
-	ld h,b			; $6006
-	ccf			; $6007
-	ld h,b			; $6008
-	ld (hl),l		; $6009
-	ld h,b			; $600a
-	ld (hl),l		; $600b
-	ld h,b			; $600c
-	ld (hl),l		; $600d
-	ld h,b			; $600e
-	add e			; $600f
-	ld h,b			; $6010
-	xor c			; $6011
-	ld h,b			; $6012
-	xor c			; $6013
-	ld h,b			; $6014
-_label_04_249:
-	sbc d			; $6015
-	ld b,b			; $6016
-	inc sp			; $6017
-	push bc			; $6018
-	ld d,d			; $6019
-	ld b,b			; $601a
-	ld (bc),a		; $601b
-	ret nc			; $601c
-	ld d,d			; $601d
-	ld b,b			; $601e
-	ld bc,$526b		; $601f
-	ld b,b			; $6022
-	inc bc			; $6023
-	ld b,l			; $6024
-	jp hl			; $6025
-	ld bc,$0448		; $6026
-	jp hl			; $6029
-	ld (bc),a		; $602a
-	ld e,b			; $602b
-	inc b			; $602c
-	ld bc,$6680		; $602d
-	inc b			; $6030
-	ld bc,$6580		; $6031
-	sbc h			; $6034
-	ld bc,$6640		; $6035
-	inc b			; $6038
-	ld bc,$6740		; $6039
-	sbc h			; $603c
-	nop			; $603d
-	nop			; $603e
-	ld a,(bc)		; $603f
-	add b			; $6040
-	ldd (hl),a		; $6041
-	pop hl			; $6042
-	ld a,(bc)		; $6043
-	add b			; $6044
-	inc sp			; $6045
-	pop hl			; $6046
-	ld a,(bc)		; $6047
-	add b			; $6048
-	inc (hl)		; $6049
-	pop hl			; $604a
-	ld ($5340),sp		; $604b
-	add sp,$12		; $604e
-	ld b,b			; $6050
-	ld e,b			; $6051
-	add sp,$35		; $6052
-	ld b,b			; $6054
-	ld b,(hl)		; $6055
-	add sp,$13		; $6056
-	ld bc,$0425		; $6058
-	ld b,d			; $605b
-	ld bc,$0657		; $605c
-	ld b,h			; $605f
-	ld bc,$0656		; $6060
-	ld c,b			; $6063
-	ld bc,$0435		; $6064
-	ld d,l			; $6067
-	ld bc,fillMemoryBc		; $6068
-	ld d,l			; $606b
-	ld (bc),a		; $606c
-	ld h,d			; $606d
-	inc b			; $606e
-	ld l,c			; $606f
-	jr nz,_label_04_250	; $6070
-	pop hl			; $6072
-	nop			; $6073
-	nop			; $6074
-	add hl,sp		; $6075
-	add b			; $6076
-	rlca			; $6077
-	and b			; $6078
-	add hl,sp		; $6079
-	add b			; $607a
-	inc h			; $607b
-	add hl,bc		; $607c
-	add hl,sp		; $607d
-	add b			; $607e
-	ldi a,(hl)		; $607f
-	add hl,bc		; $6080
-	nop			; $6081
-	nop			; $6082
-	ld a,($ff00+$40)	; $6083
-	ld (hl),a		; $6085
-	ld l,d			; $6086
-	cp h			; $6087
-	jr nz,_label_04_251	; $6088
-	ld d,e			; $608a
-	ld a,$80		; $608b
-	ld e,h			; $608d
-	dec b			; $608e
-	ld (hl),e		; $608f
-	add b			; $6090
-	ld b,l			; $6091
-	and b			; $6092
-	ld (hl),e		; $6093
-	add b			; $6094
-	inc (hl)		; $6095
-	ld h,$99		; $6096
-	add b			; $6098
-	sbc l			; $6099
-_label_04_250:
-	ld b,h			; $609a
-	sbc d			; $609b
-	add b			; $609c
-	ld h,(hl)		; $609d
-	ld b,l			; $609e
-	sbc (hl)		; $609f
-	add b			; $60a0
-	sbc l			; $60a1
-	ld b,h			; $60a2
-	daa			; $60a3
-	add b			; $60a4
-	ld d,a			; $60a5
-	ld c,a			; $60a6
-	nop			; $60a7
-	nop			; $60a8
-	nop			; $60a9
-	nop			; $60aa
-	ld a,($cc4c)		; $60ab
-	ld hl,$6114		; $60ae
+	jr @next		; $6003
+
+singleTileChangeGroupTable:
+	.dw singleTileChangeGroup0Data
+	.dw singleTileChangeGroup1Data
+	.dw singleTileChangeGroup2Data
+	.dw singleTileChangeGroup3Data
+	.dw singleTileChangeGroup4Data
+	.dw singleTileChangeGroup5Data
+	.dw singleTileChangeGroup6Data
+	.dw singleTileChangeGroup7Data
+
+singleTileChangeGroup0Data:
+	.db $9a $40 $33 $c5
+	.db $52 $40 $02 $d0
+	.db $52 $40 $01 $6b
+	.db $52 $40 $03 $45
+	.db $e9 $01 $48 $04
+	.db $e9 $02 $58 $04
+	.db $01 $80 $66 $04
+	.db $01 $80 $65 $9c
+	.db $01 $40 $66 $04
+	.db $01 $40 $67 $9c
+	.db $00 $00
+
+singleTileChangeGroup1Data:
+	.db $0a $80 $32 $e1
+	.db $0a $80 $33 $e1
+	.db $0a $80 $34 $e1
+	.db $08 $40 $53 $e8
+	.db $12 $40 $58 $e8
+	.db $35 $40 $46 $e8
+	.db $13 $01 $25 $04
+	.db $42 $01 $57 $06
+	.db $44 $01 $56 $06
+	.db $48 $01 $35 $04
+	.db $55 $01 $52 $04
+	.db $55 $02 $62 $04
+	.db $69 $20 $28 $e1
+	.db $00 $00
+
+singleTileChangeGroup2Data:
+singleTileChangeGroup3Data:
+singleTileChangeGroup4Data:
+	.db $39 $80 $07 $a0
+	.db $39 $80 $24 $09
+	.db $39 $80 $2a $09
+	.db $00 $00
+
+singleTileChangeGroup5Data:
+	.db $f0 $40 $77 $6a
+	.db $bc $20 $2a $53
+	.db $3e $80 $5c $05
+	.db $73 $80 $45 $a0
+	.db $73 $80 $34 $26
+	.db $99 $80 $9d $44
+	.db $9a $80 $66 $45
+	.db $9e $80 $9d $44
+	.db $27 $80 $57 $4f
+	.db $00 $00
+
+singleTileChangeGroup6Data:
+singleTileChangeGroup7Data:
+	.db $00 $00
+
+applyRoomSpecificTileChanges:
+	ld a,(wActiveRoom)		; $60ab
+	ld hl,roomTileChangerCodeGroupTable		; $60ae
 	call findRoomSpecificData		; $60b1
-_label_04_251:
 	ret nc			; $60b4
 	rst_jumpTable			; $60b5
-	sub l			; $60b6
-	ld h,c			; $60b7
-	sbc a			; $60b8
-	ld h,c			; $60b9
-	dec d			; $60ba
-	ld h,d			; $60bb
-	jr nc,_label_04_252	; $60bc
-	ld d,b			; $60be
-	ld h,d			; $60bf
-	ld hl,$6862		; $60c0
-	ld h,d			; $60c3
-	ld e,h			; $60c4
-	ld h,d			; $60c5
-	adc c			; $60c6
-	ld h,c			; $60c7
-	ld (hl),a		; $60c8
-	ld h,d			; $60c9
-	or c			; $60ca
-	ld h,e			; $60cb
-	ld ($ff00+$62),a	; $60cc
-	add h			; $60ce
-	ld h,e			; $60cf
-	or c			; $60d0
-	ld h,e			; $60d1
-	or c			; $60d2
-	ld h,e			; $60d3
-	sub $63			; $60d4
-	ld a,($ff00+c)		; $60d6
-	ld h,e			; $60d7
-	cp $63			; $60d8
-	ld a,(bc)		; $60da
-	ld h,h			; $60db
-	dec l			; $60dc
-	ld h,h			; $60dd
-	ld c,c			; $60de
-	ld h,h			; $60df
-	ld e,e			; $60e0
-	ld h,h			; $60e1
-	ld l,l			; $60e2
-	ld h,h			; $60e3
-	adc c			; $60e4
-	ld h,h			; $60e5
-	or d			; $60e6
-	ld h,h			; $60e7
-	jp nz,$fb64		; $60e8
-	ld h,h			; $60eb
-	inc b			; $60ec
-	ld h,l			; $60ed
-	ld hl,$2b64		; $60ee
-	ld h,(hl)		; $60f1
-	or h			; $60f2
-	ld h,c			; $60f3
-	di			; $60f4
-	ld h,c			; $60f5
-	ld d,$65		; $60f6
-	ld e,(hl)		; $60f8
-	ld h,l			; $60f9
-	adc c			; $60fa
-	ld h,l			; $60fb
-	and a			; $60fc
-	ld h,l			; $60fd
-	or l			; $60fe
-	ld h,l			; $60ff
-	jp $d265		; $6100
-	ld h,c			; $6103
-	ei			; $6104
-	ld h,l			; $6105
-	rlca			; $6106
-	ld h,(hl)		; $6107
-	add $61			; $6108
-	ld (hl),e		; $610a
-	ld h,(hl)		; $610b
-	ldd a,(hl)		; $610c
-	ld h,(hl)		; $610d
-	dec c			; $610e
-	ld h,l			; $610f
-	ld a,($ff00+c)		; $6110
-	ld h,h			; $6111
-	jp hl			; $6112
-	ld h,h			; $6113
-	inc h			; $6114
-	ld h,c			; $6115
-	ld d,c			; $6116
-	ld h,c			; $6117
-	ld e,b			; $6118
-	ld h,c			; $6119
-	ld e,b			; $611a
-	ld h,c			; $611b
-	ld h,c			; $611c
-	ld h,c			; $611d
-	ld l,(hl)		; $611e
-	ld h,c			; $611f
-_label_04_252:
-	add a			; $6120
-	ld h,c			; $6121
-	add a			; $6122
-	ld h,c			; $6123
-	push bc			; $6124
-	nop			; $6125
-	reti			; $6126
-	ld bc,$1054		; $6127
-	ld a,a			; $612a
-	ld de,$1262		; $612b
-	ld h,b			; $612e
-	inc de			; $612f
-	ld h,c			; $6130
-	inc d			; $6131
-	ld (hl),b		; $6132
-	dec d			; $6133
-	ld (hl),c		; $6134
-	ld d,$81		; $6135
-	rla			; $6137
-	dec c			; $6138
-	jr _label_04_253		; $6139
-	add hl,de		; $613b
-	ld h,e			; $613c
-	ld e,$e4		; $613d
-	ld h,$f4		; $613f
-	rra			; $6141
-	ld l,a			; $6142
-	jr nz,_label_04_254	; $6143
-	ld hl,$22fc		; $6145
-	xor $25			; $6148
-	ld d,(hl)		; $614a
-	jr z,_label_04_255	; $614b
-	dec e			; $614d
-	or $08			; $614e
-	nop			; $6150
-	dec (hl)		; $6151
-	daa			; $6152
-	ld h,h			; $6153
-	inc hl			; $6154
-	ld (hl),h		; $6155
-	inc h			; $6156
-	nop			; $6157
-_label_04_253:
-	and h			; $6158
-	add hl,hl		; $6159
-	xor e			; $615a
-	ldi a,(hl)		; $615b
-	or b			; $615c
-	inc bc			; $615d
-	or l			; $615e
-	inc e			; $615f
-	nop			; $6160
-	ld h,c			; $6161
-	ld l,$78		; $6162
-	ld (bc),a		; $6164
-	ld l,$04		; $6165
-	ld h,h			; $6167
-	dec b			; $6168
-	adc c			; $6169
-	ld b,$bb		; $616a
-	rlca			; $616c
-	nop			; $616d
-	dec sp			; $616e
-	dec l			; $616f
-	ld h,l			; $6170
-	add hl,bc		; $6171
-	ld h,(hl)		; $6172
-	ld a,(bc)		; $6173
-	ld h,a			; $6174
-	dec bc			; $6175
-	ld l,b			; $6176
-	inc c			; $6177
-	ld l,d			; $6178
-	dec c			; $6179
-	ld l,e			; $617a
-	ld c,$86		; $617b
-	rrca			; $617d
-	ld a,d			; $617e
-	ld a,(de)		; $617f
-	ld a,b			; $6180
-	dec de			; $6181
-	adc (hl)		; $6182
-	inc l			; $6183
-	sbc (hl)		; $6184
-	dec hl			; $6185
-	nop			; $6186
-_label_04_254:
-	nop			; $6187
+	.dw tileReplacement_group0Mapc5 ; $00
+	.dw tileReplacement_group0Mapd9 ; $01
+	.dw tileReplacement_group4Map78 ; $02
+	.dw tileReplacement_group2_3Mapb0 ; $03
+	.dw tileReplacement_group4Map2e ; $04
+	.dw tileReplacement_group4Map64 ; $05
+	.dw tileReplacement_group4Map89 ; $06
+	.dw tileReplacement_group4Mapbb ; $07
+	.dw tileReplacement_group0Mapf6 ; $08
+	.dw tileReplacement_group5Map65 ; $09
+	.dw tileReplacement_group5Map66 ; $0a
+	.dw tileReplacement_group5Map67 ; $0b
+	.dw tileReplacement_group5Map68 ; $0c
+	.dw tileReplacement_group5Map6a ; $0d
+	.dw tileReplacement_group5Map6b ; $0e
+	.dw tileReplacement_group5Map86 ; $0f
+	.dw tileReplacement_group0Map54 ; $10
+	.dw tileReplacement_group0Map7f ; $11
+	.dw tileReplacement_group0Map62 ; $12
+	.dw tileReplacement_group0Map60 ; $13
+	.dw tileReplacement_group0Map61 ; $14
+	.dw tileReplacement_group0Map70 ; $15
+	.dw tileReplacement_group0Map71 ; $16
+	.dw tileReplacement_group0Map81 ; $17
+	.dw tileReplacement_group0Map0d ; $18
+	.dw tileReplacement_group0Map1d ; $19
+	.dw tileReplacement_group5Map7a ; $1a
+	.dw tileReplacement_group5Map78 ; $1b
+	.dw tileReplacement_group2_3Mapb5 ; $1c
+	.dw tileReplacement_group0Map4b ; $1d
+	.dw tileReplacement_group0Map63 ; $1e
+	.dw tileReplacement_group0Mapf4 ; $1f
+	.dw tileReplacement_group0Map6f ; $20
+	.dw tileReplacement_group0Map42 ; $21
+	.dw tileReplacement_group0Mapfc ; $22
+	.dw tileReplacement_group1Map64 ; $23
+	.dw tileReplacement_group1Map74 ; $24
+	.dw tileReplacement_group0Mapee ; $25
+	.dw tileReplacement_group0Mape4 ; $26
+	.dw tileReplacement_group1Map35 ; $27
+	.dw tileReplacement_group0Map56 ; $28
+	.dw tileReplacement_group2_3Mapa4 ; $29
+	.dw tileReplacement_group2_3Mapab ; $2a
+	.dw tileReplacement_group5Map9e ; $2b
+	.dw tileReplacement_group5Map8e ; $2c
+	.dw tileReplacement_group5Map3b ; $2d
+	.dw tileReplacement_group4Map61 ; $2e
+
+roomTileChangerCodeGroupTable:
+	.dw roomTileChangerCodeGroup0Data
+	.dw roomTileChangerCodeGroup1Data
+	.dw roomTileChangerCodeGroup2Data
+	.dw roomTileChangerCodeGroup3Data
+	.dw roomTileChangerCodeGroup4Data
+	.dw roomTileChangerCodeGroup5Data
+	.dw roomTileChangerCodeGroup6Data
+	.dw roomTileChangerCodeGroup7Data
+
+roomTileChangerCodeGroup0Data:
+	.db $c5 $00
+	.db $d9 $01
+	.db $54 $10
+	.db $7f $11
+	.db $62 $12
+	.db $60 $13
+	.db $61 $14
+	.db $70 $15
+	.db $71 $16
+	.db $81 $17
+	.db $0d $18
+	.db $1d $19
+	.db $63 $1e
+	.db $e4 $26
+	.db $f4 $1f
+	.db $6f $20
+	.db $42 $21
+	.db $fc $22
+	.db $ee $25
+	.db $56 $28
+	.db $4b $1d
+	.db $f6 $08
+	.db $00
+
+roomTileChangerCodeGroup1Data:
+	.db $35 $27
+	.db $64 $23
+	.db $74 $24
+	.db $00
+
+roomTileChangerCodeGroup2Data:
+roomTileChangerCodeGroup3Data:
+	.db $a4 $29
+	.db $ab $2a
+	.db $b0 $03
+	.db $b5 $1c
+	.db $00
+
+roomTileChangerCodeGroup4Data:
+	.db $61 $2e
+	.db $78 $02
+	.db $2e $04
+	.db $64 $05
+	.db $89 $06
+	.db $bb $07
+	.db $00
+
+roomTileChangerCodeGroup5Data:
+	.db $3b $2d
+	.db $65 $09
+	.db $66 $0a
+	.db $67 $0b
+	.db $68 $0c
+	.db $6a $0d
+	.db $6b $0e
+	.db $86 $0f
+	.db $7a $1a
+	.db $78 $1b
+	.db $8e $2c
+	.db $9e $2b
+	.db $00
+
+roomTileChangerCodeGroup6Data:
+roomTileChangerCodeGroup7Data:
+	.db $00			; $6187
+
 	ret			; $6188
-	ld a,$28		; $6189
+
+; Adds a sign outside couple's house
+tileReplacement_group0Mapf6:
+	ld a,GLOBALFLAG_FINISHEDGAME		; $6189
 	call checkGlobalFlag		; $618b
 	ret z			; $618e
-	ld hl,$cf33		; $618f
-	ld (hl),$f2		; $6192
+	ld hl,wRoomLayout+$33		; $618f
+	ld (hl),TILEINDEX_SIGN		; $6192
 	ret			; $6194
+
+; Open GBA shop
+tileReplacement_group0Mapc5:
 	ldh a,(<hGameboyType)	; $6195
 	rlca			; $6197
-_label_04_255:
 	ret nc			; $6198
-	ld hl,$cf14		; $6199
+	ld hl,wRoomLayout+$14		; $6199
 	ld (hl),$ea		; $619c
 	ret			; $619e
+
+; Open Maku tree gates
+tileReplacement_group0Mapd9:
 	call getThisRoomFlags		; $619f
 	bit 7,(hl)		; $61a2
 	ret z			; $61a4
-	ld hl,$cf14		; $61a5
+	ld hl,wRoomLayout+$14		; $61a5
 	ld a,$bf		; $61a8
 	ldi (hl),a		; $61aa
 	ld (hl),a		; $61ab
@@ -1820,10 +1715,13 @@ _label_04_255:
 	inc a			; $61b1
 	ld (hl),a		; $61b2
 	ret			; $61b3
+
+; Open Tarm gates
+tileReplacement_group0Map63:
 	call getThisRoomFlags		; $61b4
 	bit 7,(hl)		; $61b7
 	ret z			; $61b9
-	ld hl,$cf14		; $61ba
+	ld hl,wRoomLayout+$14		; $61ba
 	ld a,$ad		; $61bd
 	ldi (hl),a		; $61bf
 	ld (hl),a		; $61c0
@@ -1831,22 +1729,28 @@ _label_04_255:
 	ldi (hl),a		; $61c3
 	ld (hl),a		; $61c4
 	ret			; $61c5
+
+; Mr. Write's house - lit torch
+tileReplacement_group2_3Mapa4:
 	call getThisRoomFlags		; $61c6
 	and $40			; $61c9
 	ret z			; $61cb
-	ld hl,$cf36		; $61cc
-	ld (hl),$09		; $61cf
+	ld hl,wRoomLayout+$36		; $61cc
+	ld (hl),TILEINDEX_LIT_TORCH		; $61cf
 	ret			; $61d1
+
+; Bridge to moldorm guarding jewel
+tileReplacement_group0Mape4:
 	call getThisRoomFlags		; $61d2
 	and $40			; $61d5
-	jr z,_label_04_256	; $61d7
-	ld hl,$cf77		; $61d9
-	ld (hl),$a1		; $61dc
+	jr z,+			; $61d7
+	ld hl,wRoomLayout+$77		; $61d9
+	ld (hl),TILEINDEX_OVERWORLD_LIT_TORCH		; $61dc
 	ret			; $61de
-_label_04_256:
-	ld hl,$61ee		; $61df
++
+	ld hl,@table_group0Mape4		; $61df
 	ld d,$cf		; $61e2
-_label_04_257:
+-
 	ldi a,(hl)		; $61e4
 	or a			; $61e5
 	ret z			; $61e6
@@ -1855,21 +1759,23 @@ _label_04_257:
 	ld (de),a		; $61e9
 	inc e			; $61ea
 	ld (de),a		; $61eb
-	jr _label_04_257		; $61ec
-	ld h,l			; $61ee
-.DB $fd				; $61ef
-	ld (hl),l		; $61f0
-.DB $fd				; $61f1
-	nop			; $61f2
+	jr -			; $61ec
+@table_group0Mape4:
+	.db $65 TILEINDEX_WATER
+	.db $75 TILEINDEX_WATER
+	.db $00
+
+; Moldorm guarding jewel
+tileReplacement_group0Mapf4:
 	call getThisRoomFlags		; $61f3
 	bit 6,(hl)		; $61f6
 	ret z			; $61f8
 	bit 5,(hl)		; $61f9
-	jr nz,_label_04_258	; $61fb
-	ld hl,$cf45		; $61fd
+	jr nz,+			; $61fb
+	ld hl,wRoomLayout+$45		; $61fd
 	ld (hl),$f1		; $6200
-_label_04_258:
-	ld hl,$cf22		; $6202
++
+	ld hl,wRoomLayout+$22		; $6202
 	ld (hl),$0f		; $6205
 	inc l			; $6207
 	ld (hl),$11		; $6208
@@ -1880,318 +1786,227 @@ _label_04_258:
 	inc l			; $6211
 	ld (hl),$11		; $6212
 	ret			; $6214
+
+; D4 - 1F stairs leading to 2-tile pits to stairs to B1
+tileReplacement_group4Map78:
 	call getThisRoomFlags		; $6215
 	bit 7,(hl)		; $6218
 	ret nz			; $621a
-	ld hl,$cf39		; $621b
+	ld hl,wRoomLayout+$39		; $621b
 	ld (hl),$b0		; $621e
 	ret			; $6220
+
+; D4 - 3-torch room while on minecart
+tileReplacement_group4Map64:
 	call getThisRoomFlags		; $6221
 	bit 7,(hl)		; $6224
 	ret z			; $6226
-	ld de,$622d		; $6227
-	jp $5dc7		; $622a
-	add hl,bc		; $622d
-	ld ($fa00),sp		; $622e
-	ccf			; $6231
-	add $e6			; $6232
-	rrca			; $6234
+	ld de,@tileReplaceTable		; $6227
+	jp replaceTiles		; $622a
+@tileReplaceTable:
+	.db TILEINDEX_LIT_TORCH TILEINDEX_UNLIT_TORCH
+	.db $00
+
+; Member's shop - unlocking chest gambling game
+tileReplacement_group2_3Mapb0:
+	ld a,(wBoughtShopItems1)			; $6230
+	and $0f			; $6233
 	cp $0f			; $6235
 	ret nz			; $6237
-	ld hl,$624c		; $6238
-	call $669d		; $623b
-	ld a,$f1		; $623e
-	ld hl,$cf25		; $6240
+
+	ld hl,@rect		; $6238
+	call fillRectInRoomLayout		; $623b
+	ld a,TILEINDEX_CHEST		; $623e
+	ld hl,wRoomLayout+$25		; $6240
 	ld (hl),a		; $6243
 	ld l,$27		; $6244
 	ld (hl),a		; $6246
 	ld l,$32		; $6247
-	ld (hl),$a0		; $6249
+	ld (hl),TILEINDEX_STANDARD_FLOOR		; $6249
 	ret			; $624b
-	inc de			; $624c
-	inc bc			; $624d
-	ld b,$a0		; $624e
-	ld hl,$cf23		; $6250
+@rect:
+	.db $13 $03 $06 TILEINDEX_STANDARD_FLOOR
+
+; D2 - hidden rupee room
+tileReplacement_group4Map2e:
+	ld hl,wRoomLayout+$23		; $6250
 	ld bc,$0808		; $6253
 	ld de,$c8f0		; $6256
-	jp $66b7		; $6259
-	ld hl,$cf34		; $625c
+	jp replaceRupeeRoomRupees		; $6259
+
+; D6 - hidden rupee room
+tileReplacement_group4Mapbb:
+	ld hl,wRoomLayout+$34		; $625c
 	ld bc,$0808		; $625f
 	ld de,$c8f8		; $6262
-	jp $66b7		; $6265
+	jp replaceRupeeRoomRupees		; $6265
+
+; D5 - magnet glove chest
+tileReplacement_group4Map89:
 	call getThisRoomFlags		; $6268
 	bit 5,(hl)		; $626b
 	ret z			; $626d
-	ld de,$6274		; $626e
-	jp $5dc7		; $6271
-	ld a,($ff00+$25)	; $6274
-	nop			; $6276
+	ld de,@tileReplaceTable		; $626e
+	jp replaceTiles		; $6271
+@tileReplaceTable:
+	.db TILEINDEX_CHEST_OPENED $25
+	.db $00
+
+; D8 - top-left screen of huge lava pool room
+tileReplacement_group5Map65:
 	call getThisRoomFlags		; $6277
 	bit 6,(hl)		; $627a
-	jr z,_label_04_259	; $627c
-	call $63cb		; $627e
-	ld hl,$6294		; $6281
-	call $6690		; $6284
-_label_04_259:
+	jr z,+			; $627c
+	call d8LavaRoomsReplaceLavaSpewingFace		; $627e
+	ld hl,@leftLava		; $6281
+	call d8LavaRoomsFillTilesWithLava		; $6284
++
 	call getThisRoomFlags		; $6287
 	inc l			; $628a
 	bit 6,(hl)		; $628b
 	ret z			; $628d
-	ld hl,$62c8		; $628e
-	jp $6690		; $6291
-	rst_addAToHl			; $6294
-	ld de,$1817		; $6295
-	ld hl,$2827		; $6298
-	ld sp,$4137		; $629b
-	ld b,d			; $629e
-	ld b,e			; $629f
-	ld b,h			; $62a0
-	ld b,l			; $62a1
-	ld b,(hl)		; $62a2
-	ld b,a			; $62a3
-	ld d,c			; $62a4
-	ld d,d			; $62a5
-	ld d,e			; $62a6
-	ld d,l			; $62a7
-	ld h,c			; $62a8
-	ld h,d			; $62a9
-	ld h,h			; $62aa
-	ld h,(hl)		; $62ab
-	ld h,a			; $62ac
-	ld l,b			; $62ad
-	ld (hl),c		; $62ae
-	ld (hl),d		; $62af
-	ld (hl),e		; $62b0
-	ld (hl),h		; $62b1
-	ld (hl),l		; $62b2
-	halt			; $62b3
-	ld (hl),a		; $62b4
-	add c			; $62b5
-	add d			; $62b6
-	add e			; $62b7
-	add h			; $62b8
-	add l			; $62b9
-	add (hl)		; $62ba
-	add a			; $62bb
-	sub c			; $62bc
-	sub d			; $62bd
-	sub h			; $62be
-	sub l			; $62bf
-	sub (hl)		; $62c0
-	and c			; $62c1
-	and d			; $62c2
-	and e			; $62c3
-	and h			; $62c4
-	and l			; $62c5
-	and (hl)		; $62c6
-	rst $38			; $62c7
-	rst_addAToHl			; $62c8
-	ld l,l			; $62c9
-	ld l,(hl)		; $62ca
-	ld a,h			; $62cb
-	ld a,l			; $62cc
-	ld a,(hl)		; $62cd
-	adc d			; $62ce
-	adc e			; $62cf
-	adc h			; $62d0
-	adc l			; $62d1
-	adc (hl)		; $62d2
-	sbc c			; $62d3
-	sbc d			; $62d4
-	sbc e			; $62d5
-	sbc h			; $62d6
-	sbc l			; $62d7
-	sbc (hl)		; $62d8
-	xor c			; $62d9
-	xor d			; $62da
-	xor e			; $62db
-	xor h			; $62dc
-	xor l			; $62dd
-	xor (hl)		; $62de
-	rst $38			; $62df
-	ld a,$65		; $62e0
+	ld hl,@bottomRightLava		; $628e
+	jp d8LavaRoomsFillTilesWithLava		; $6291
+@leftLava:
+	.db $d7
+	.db $11                     $17 $18
+	.db $21                     $27 $28
+	.db $31                     $37
+	.db $41 $42 $43 $44 $45 $46 $47
+	.db $51 $52 $53     $55
+	.db $61 $62     $64     $66 $67 $68
+	.db $71 $72 $73 $74 $75 $76 $77
+	.db $81 $82 $83 $84 $85 $86 $87
+	.db $91 $92     $94 $95 $96
+	.db $a1 $a2 $a3 $a4 $a5 $a6
+	.db $ff
+@bottomRightLava:
+	.db $d7
+	.db                 $6d $6e
+	.db             $7c $7d $7e
+	.db     $8a $8b $8c $8d $8e
+	.db $99 $9a $9b $9c $9d $9e
+	.db $a9 $aa $ab $ac $ad $ae
+	.db $ff
+
+; D8 - center-left screen of huge lava pool room
+tileReplacement_group5Map67:
+	ld a,<ROOM_SEASONS_565		; $62e0
 	call getARoomFlags		; $62e2
 	bit 6,(hl)		; $62e5
-	jr z,_label_04_260	; $62e7
+	jr z,+			; $62e7
 	ld hl,$630c		; $62e9
-	call $6690		; $62ec
-_label_04_260:
-	ld a,$66		; $62ef
+	call d8LavaRoomsFillTilesWithLava		; $62ec
++
+	ld a,<ROOM_SEASONS_566		; $62ef
 	call getARoomFlags		; $62f1
 	bit 6,(hl)		; $62f4
-	jr z,_label_04_261	; $62f6
+	jr z,+			; $62f6
 	ld hl,$632d		; $62f8
-	call $6690		; $62fb
-_label_04_261:
-	ld a,$6a		; $62fe
+	call d8LavaRoomsFillTilesWithLava		; $62fb
++
+	ld a,<ROOM_SEASONS_56a		; $62fe
 	call getARoomFlags		; $6300
 	bit 6,(hl)		; $6303
 	ret z			; $6305
 	ld hl,$6340		; $6306
-	jp $6690		; $6309
-	rst_addAToHl			; $630c
-	ld bc,$0302		; $630d
-	inc b			; $6310
-	dec b			; $6311
-	ld b,$11		; $6312
-	ld (de),a		; $6314
-	inc de			; $6315
-	inc d			; $6316
-	dec d			; $6317
-	ld d,$21		; $6318
-	ldi (hl),a		; $631a
-	inc hl			; $631b
-	ld sp,$3332		; $631c
-	ld b,c			; $631f
-	ld b,d			; $6320
-	ld b,e			; $6321
-	ld d,c			; $6322
-	ld d,d			; $6323
-	ld d,e			; $6324
-	ld h,c			; $6325
-	ld h,d			; $6326
-	ld h,e			; $6327
-	ld h,h			; $6328
-	ld (hl),c		; $6329
-	ld (hl),d		; $632a
-	ld (hl),e		; $632b
-	rst $38			; $632c
-	rst_addAToHl			; $632d
-	add hl,bc		; $632e
-	ld a,(bc)		; $632f
-	dec bc			; $6330
-	inc c			; $6331
-	dec c			; $6332
-	ld c,$19		; $6333
-	ld a,(de)		; $6335
-	dec de			; $6336
-	inc e			; $6337
-	dec e			; $6338
-	ld e,$2a		; $6339
-	dec hl			; $633b
-	dec l			; $633c
-	ld l,$3e		; $633d
-	rst $38			; $633f
-	rst_addAToHl			; $6340
-	dec h			; $6341
-	ld h,$27		; $6342
-	dec (hl)		; $6344
-	ld (hl),$37		; $6345
-	jr c,_label_04_262	; $6347
-	ld b,l			; $6349
-	ld b,(hl)		; $634a
-	ld b,a			; $634b
-	ld c,b			; $634c
-	ld c,c			; $634d
-	ld d,l			; $634e
-	ld d,(hl)		; $634f
-	ld d,a			; $6350
-	ld e,b			; $6351
-	ld e,c			; $6352
-	ld h,(hl)		; $6353
-	ld h,a			; $6354
-	ld l,b			; $6355
-	ld l,c			; $6356
-	ld l,d			; $6357
-	ld (hl),l		; $6358
-	halt			; $6359
-	ld (hl),a		; $635a
-	ld a,b			; $635b
-	ld a,c			; $635c
-	ld a,d			; $635d
-	add c			; $635e
-	add d			; $635f
-	add e			; $6360
-	add h			; $6361
-	add l			; $6362
-	add (hl)		; $6363
-	add a			; $6364
-	adc b			; $6365
-	adc c			; $6366
-	adc d			; $6367
-	adc e			; $6368
-	sub c			; $6369
-	sub d			; $636a
-	sub e			; $636b
-	sub h			; $636c
-	sub l			; $636d
-	sub (hl)		; $636e
-	sub a			; $636f
-	sbc b			; $6370
-	sbc c			; $6371
-	sbc d			; $6372
-	sbc e			; $6373
-	sbc h			; $6374
-	sbc l			; $6375
-	and c			; $6376
-	and d			; $6377
-	and e			; $6378
-	and h			; $6379
-	and l			; $637a
-	and (hl)		; $637b
-	and a			; $637c
-	xor b			; $637d
-	xor c			; $637e
-	xor d			; $637f
-	xor e			; $6380
-	xor h			; $6381
-_label_04_262:
-	xor l			; $6382
-	rst $38			; $6383
-	ld a,$66		; $6384
+	jp d8LavaRoomsFillTilesWithLava		; $6309
+@topLeftLava:
+	.db $d7
+	.db $01 $02 $03 $04 $05 $06
+	.db $11 $12 $13 $14 $15 $16
+	.db $21 $22 $23
+	.db $31 $32 $33
+	.db $41 $42 $43
+	.db $51 $52 $53
+	.db $61 $62 $63 $64
+	.db $71 $72 $73
+	.db $ff
+@topRightLava:
+	.db $d7
+	.db $09 $0a $0b $0c $0d $0e
+	.db $19 $1a $1b $1c $1d $1e
+	.db     $2a $2b     $2d $2e
+	.db                     $3e
+	.db $ff
+@bottomLava:
+	.db $d7
+	.db                 $25 $26 $27
+	.db                 $35 $36 $37 $38 $39
+	.db                 $45 $46 $47 $48 $49
+	.db                 $55 $56 $57 $58 $59
+	.db                     $66 $67 $68 $69 $6a
+	.db                 $75 $76 $77 $78 $79 $7a
+	.db $81 $82 $83 $84 $85 $86 $87 $88 $89 $8a $8b
+	.db $91 $92 $93 $94 $95 $96 $97 $98 $99 $9a $9b $9c $9d
+	.db $a1 $a2 $a3 $a4 $a5 $a6 $a7 $a8 $a9 $aa $ab $ac $ad
+
+	.db $ff
+
+; D8 - center-right screen of huge lava pool room
+tileReplacement_group5Map68:
+	ld a,<ROOM_SEASONS_566		; $6384
 	call getARoomFlags		; $6386
 	bit 6,(hl)		; $6389
-	jr z,_label_04_263	; $638b
-	ld hl,$cf00		; $638d
+	jr z,+			; $638b
+	ld hl,wRoomLayout		; $638d
 	ld b,$70		; $6390
-	call $63a2		; $6392
-_label_04_263:
-	ld a,$6b		; $6395
+	call replaceAllLavaTilesInGivenRange		; $6392
++
+	ld a,<ROOM_SEASONS_56b		; $6395
 	call getARoomFlags		; $6397
 	bit 6,(hl)		; $639a
 	ret z			; $639c
-	ld hl,$cf70		; $639d
+	ld hl,wRoomLayout+$70		; $639d
 	ld b,$00		; $63a0
-_label_04_264:
+
+; @params	hl	pointer to start of room layout to start replacing lava
+; @params	b	YX to stop at
+replaceAllLavaTilesInGivenRange:
 	ld a,(hl)		; $63a2
-	sub $61			; $63a3
+	sub TILEINDEX_DUNGEON_LAVA_1			; $63a3
 	cp $05			; $63a5
-	jr nc,_label_04_265	; $63a7
+	jr nc,+			; $63a7
 	ld (hl),$d7		; $63a9
-_label_04_265:
++
 	inc l			; $63ab
 	ld a,l			; $63ac
 	cp b			; $63ad
-	jr nz,_label_04_264	; $63ae
+	jr nz,replaceAllLavaTilesInGivenRange	; $63ae
 	ret			; $63b0
+
+; D8 - top-right, and bottom 2 screens of huge lava pool room
+tileReplacement_group5Map66:
+tileReplacement_group5Map6a:
+tileReplacement_group5Map6b:
 	call getThisRoomFlags		; $63b1
 	bit 6,(hl)		; $63b4
 	ret z			; $63b6
-	call $63cb		; $63b7
-	ld de,$63c0		; $63ba
-	jp $5dc7		; $63bd
-	rst_addAToHl			; $63c0
-	ld h,c			; $63c1
-	rst_addAToHl			; $63c2
-	ld h,d			; $63c3
-	rst_addAToHl			; $63c4
-	ld h,e			; $63c5
-	rst_addAToHl			; $63c6
-	ld h,h			; $63c7
-	rst_addAToHl			; $63c8
-	ld h,l			; $63c9
-	nop			; $63ca
-	ld de,$63d1		; $63cb
-	jp $5dc7		; $63ce
-	push de			; $63d1
-	call nc,$67d7		; $63d2
-	nop			; $63d5
+	call d8LavaRoomsReplaceLavaSpewingFace		; $63b7
+	ld de,@tileReplaceTable		; $63ba
+	jp replaceTiles		; $63bd
+@tileReplaceTable:
+.REPT 5 INDEX COUNT
+	.db $d7 TILEINDEX_DUNGEON_LAVA_1+COUNT
+.ENDR
+	.db $00
+
+d8LavaRoomsReplaceLavaSpewingFace:
+	ld de,@tileReplacetable		; $63cb
+	jp replaceTiles		; $63ce
+@tileReplacetable:
+	.db $d5 $d4 ; shut lava-spewing face
+	.db $d7 $67 ; lava waterfall below face
+	.db $00
+
+; D8 - ice-block puzzle room, finished puzzle
+tileReplacement_group5Map86:
 	call getThisRoomFlags		; $63d6
 	bit 7,(hl)		; $63d9
 	ret z			; $63db
-	ld de,$63ef		; $63dc
-	call $5dc7		; $63df
-	ld hl,$cf4d		; $63e2
+	ld de,@tileReplaceTable		; $63dc
+	call replaceTiles		; $63df
+	ld hl,wRoomLayout+$4d		; $63e2
 	ld a,$2f		; $63e5
 	ld (hl),a		; $63e7
 	ld l,$5d		; $63e8
@@ -2199,240 +2014,274 @@ _label_04_265:
 	ld l,$6d		; $63eb
 	ld (hl),a		; $63ed
 	ret			; $63ee
-	adc h			; $63ef
-	cpl			; $63f0
-	nop			; $63f1
-	ld a,($c643)		; $63f2
+@tileReplaceTable:
+	.db $8c $2f
+	.db $00
+
+; Ricky screen - replace Ricky with sign
+tileReplacement_group0Map54:
+	ld a,(wRickyState)		; $63f2
 	bit 6,a			; $63f5
 	ret z			; $63f7
-	ld hl,$cf34		; $63f8
-	ld (hl),$f2		; $63fb
+	ld hl,wRoomLayout+$34		; $63f8
+	ld (hl),TILEINDEX_SIGN		; $63fb
 	ret			; $63fd
-	ld a,($cc4e)		; $63fe
-	cp $03			; $6401
+
+; Holly's house - opening door
+tileReplacement_group0Map7f:
+	ld a,(wRoomStateModifier)		; $63fe
+	cp SEASON_WINTER			; $6401
 	ret nz			; $6403
-	ld hl,$cf47		; $6404
+	ld hl,wRoomLayout+$47		; $6404
 	ld (hl),$ea		; $6407
 	ret			; $6409
-	ld h,$c8		; $640a
-	ld l,$b5		; $640c
+
+; Floodgate-keeper's house - water outside
+tileReplacement_group0Map62:
+	ld h,>wPastRoomFlags		; $640a
+	ld l,<ROOM_SEASONS_2b5		; $640c
 	bit 6,(hl)		; $640e
 	ret nz			; $6410
-	ld hl,$641d		; $6411
-	call $669d		; $6414
-	ld hl,$cf27		; $6417
-	ld (hl),$fd		; $641a
+	ld hl,@rect		; $6411
+	call fillRectInRoomLayout		; $6414
+	ld hl,wRoomLayout+$27		; $6417
+	ld (hl),TILEINDEX_WATER		; $641a
 	ret			; $641c
-	ld h,$02		; $641d
-	inc bc			; $641f
-	ld a,($56cd)		; $6420
-	add hl,de		; $6423
+@rect:
+	.db $26 $02 $03 TILEINDEX_PUDDLE
+
+; Inside floodgate-keeper's house
+tileReplacement_group2_3Mapb5:
+	call getThisRoomFlags	; $6421
 	bit 6,(hl)		; $6424
 	ret nz			; $6426
-	ld hl,$cf37		; $6427
-	ld (hl),$fa		; $642a
+	ld hl,wRoomLayout+$37		; $6427
+	ld (hl),TILEINDEX_PUDDLE		; $642a
 	ret			; $642c
-	ld a,$81		; $642d
+
+; D3 entrance screen - still flooded
+tileReplacement_group0Map60:
+	ld a,<ROOM_SEASONS_081		; $642d
 	call getARoomFlags		; $642f
 	bit 7,(hl)		; $6432
 	ret nz			; $6434
-	ld hl,$6441		; $6435
-	call $669d		; $6438
-	ld hl,$6445		; $643b
-	jp $669d		; $643e
-	inc h			; $6441
-	ld b,$03		; $6442
-.DB $fd				; $6444
-	ld b,a			; $6445
-	inc b			; $6446
-	inc bc			; $6447
-.DB $fd				; $6448
-	ld a,$81		; $6449
+	ld hl,@rect1		; $6435
+	call fillRectInRoomLayout		; $6438
+	ld hl,@rect2		; $643b
+	jp fillRectInRoomLayout		; $643e
+@rect1:
+	.db $24 $06 $03 TILEINDEX_WATER
+@rect2:
+	.db $47 $04 $03 TILEINDEX_WATER
+
+; Screen right of D3 entrance
+tileReplacement_group0Map61:
+	ld a,<ROOM_SEASONS_081		; $6449
 	call getARoomFlags		; $644b
 	bit 7,(hl)		; $644e
 	ret nz			; $6450
-	ld hl,$6457		; $6451
-	jp $669d		; $6454
-	ld b,b			; $6457
-	inc b			; $6458
-	rlca			; $6459
-.DB $fd				; $645a
-	ld a,$81		; $645b
+	ld hl,@rect		; $6451
+	jp fillRectInRoomLayout		; $6454
+@rect:
+	.db $40 $04 $07 TILEINDEX_WATER
+
+; Screen below D3 entrance
+tileReplacement_group0Map70:
+	ld a,<ROOM_SEASONS_081		; $645b
 	call getARoomFlags		; $645d
 	bit 7,(hl)		; $6460
 	ret nz			; $6462
-	ld hl,$6469		; $6463
-	jp $669d		; $6466
-	inc b			; $6469
-	inc b			; $646a
-	ld b,$fd		; $646b
-	ld a,$81		; $646d
+	ld hl,@rect		; $6463
+	jp fillRectInRoomLayout		; $6466
+@rect:
+	.db $04 $04 $06 TILEINDEX_WATER
+
+; Spool swamp screen with Sokra
+tileReplacement_group0Map71:
+	ld a,<ROOM_SEASONS_081		; $646d
 	call getARoomFlags		; $646f
 	bit 7,(hl)		; $6472
 	ret nz			; $6474
 	ld hl,$6481		; $6475
-	call $669d		; $6478
+	call fillRectInRoomLayout		; $6478
 	ld hl,$6485		; $647b
-	jp $669d		; $647e
-	nop			; $6481
-	inc b			; $6482
-	rlca			; $6483
-.DB $fd				; $6484
-	ld b,h			; $6485
-	inc b			; $6486
-	inc bc			; $6487
-.DB $fd				; $6488
+	jp fillRectInRoomLayout		; $647e
+@rect1:
+	.db $00 $04 $07 TILEINDEX_WATER
+@rect2:
+	.db $44 $04 $03 TILEINDEX_WATER
+
+; Spool swamp screen with keylock
+tileReplacement_group0Map81:
 	call getThisRoomFlags		; $6489
 	bit 7,(hl)		; $648c
-	jr nz,_label_04_266	; $648e
-	ld hl,$64a6		; $6490
-	jp $669d		; $6493
-_label_04_266:
-	ld hl,$64ae		; $6496
-	ld a,($cc4e)		; $6499
-	cp $03			; $649c
-	jr z,_label_04_267	; $649e
-	ld hl,$64aa		; $64a0
-_label_04_267:
-	jp $669d		; $64a3
-	inc b			; $64a6
-	ld bc,$fd03		; $64a7
-	inc d			; $64aa
-	ld bc,$fa03		; $64ab
-	inc d			; $64ae
-	ld bc,$dc03		; $64af
+	jr nz,+			; $648e
+	ld hl,@rect1		; $6490
+	jp fillRectInRoomLayout		; $6493
++
+	ld hl,@rect3		; $6496
+	ld a,(wRoomStateModifier)		; $6499
+	cp SEASON_WINTER			; $649c
+	jr z,+			; $649e
+	ld hl,@rect2		; $64a0
++
+	jp fillRectInRoomLayout		; $64a3
+@rect1:
+	.db $04 $01 $03 TILEINDEX_WATER
+@rect2:
+	.db $14 $01 $03 TILEINDEX_PUDDLE
+@rect3:
+	.db $14 $01 $03 $dc
+
+; Screen above D4 entrance
+tileReplacement_group0Map0d:
 	call getThisRoomFlags		; $64b2
 	bit 7,(hl)		; $64b5
 	ret nz			; $64b7
-	ld hl,$64be		; $64b8
-	jp $669d		; $64bb
-	ld h,d			; $64be
-	ld (bc),a		; $64bf
-	inc bc			; $64c0
-	rst $38			; $64c1
+	ld hl,@rect		; $64b8
+	jp fillRectInRoomLayout		; $64bb
+@rect:
+	.db $62 $02 $03 TILEINDEX_WATERFALL
+
+; D4 entrance screen
+tileReplacement_group0Map1d:
 	call getThisRoomFlags		; $64c2
 	bit 7,(hl)		; $64c5
 	ret nz			; $64c7
-	ld hl,$64d9		; $64c8
-	call $669d		; $64cb
+	ld hl,@rect		; $64c8
+	call fillRectInRoomLayout		; $64cb
 	ld l,$13		; $64ce
-	ld a,$fe		; $64d0
+	ld a,TILEINDEX_WATERFALL_BOTTOM		; $64d0
 	ld (hl),a		; $64d2
 	ld l,$22		; $64d3
 	ldi (hl),a		; $64d5
 	ldi (hl),a		; $64d6
 	ld (hl),a		; $64d7
 	ret			; $64d8
-	ld (bc),a		; $64d9
-	inc bc			; $64da
-	inc bc			; $64db
-	rst $38			; $64dc
+@rect:
+	.db $02 $03 $03 TILEINDEX_WATERFALL
+
 	ret			; $64dd
-_label_04_268:
+
+;;
+; @param	bc	pointer to table for fillRectInRoomLayout
+fillRectIfRoomFlagBit7Set:
 	call getThisRoomFlags		; $64de
 	bit 7,(hl)		; $64e1
 	ret z			; $64e3
 	ld h,b			; $64e4
 	ld l,c			; $64e5
-	jp $669d		; $64e6
-	ld bc,$64ee		; $64e9
-	jr _label_04_268		; $64ec
-	ld e,c			; $64ee
-	ld bc,$6d03		; $64ef
-	ld bc,$64f7		; $64f2
-	jr _label_04_268		; $64f5
-	ld (hl),a		; $64f7
-	ld bc,$6d04		; $64f8
-	ld bc,$6500		; $64fb
-	jr _label_04_268		; $64fe
-	inc a			; $6500
-	ld b,$01		; $6501
-	ld l,d			; $6503
-	ld bc,$6509		; $6504
-	jr _label_04_268		; $6507
-	add d			; $6509
-	ld bc,$6d07		; $650a
-	ld bc,$6512		; $650d
-	jr _label_04_268		; $6510
-	dec de			; $6512
-	rlca			; $6513
-	ld bc,$cd6a		; $6514
-	ld d,(hl)		; $6517
-	add hl,de		; $6518
+	jp fillRectInRoomLayout		; $64e6
+
+; D4 B2 room with torches that, when lit, open up a bridge
+tileReplacement_group4Map61:
+	ld bc,@rect		; $64e9
+	jr fillRectIfRoomFlagBit7Set		; $64ec
+@rect:
+	.db $59 $01 $03 TILEINDEX_HORIZONTAL_BRIDGE
+
+; D7 - screen left of 1st B2 room, with darknuts and unlockable bridge
+tileReplacement_group5Map3b:
+	ld bc,@rect		; $64f2
+	jr fillRectIfRoomFlagBit7Set		; $64f5
+@rect:
+	.db $77 $01 $04 TILEINDEX_HORIZONTAL_BRIDGE
+
+; D8 - top-right-most room with long bridge unlocked by hitting an orb
+tileReplacement_group5Map7a:
+	ld bc,@rect		; $64fb
+	jr fillRectIfRoomFlagBit7Set		; $64fe
+@rect:
+	.db $3c $06 $01 TILEINDEX_VERTICAL_BRIDGE
+
+; D8 - HSS-skip bridge
+tileReplacement_group5Map78:
+	ld bc,@rect		; $6504
+	jr fillRectIfRoomFlagBit7Set		; $6507
+@rect:
+	.db $82 $01 $07 TILEINDEX_HORIZONTAL_BRIDGE
+
+; D8 - 1F bridge that extends into lava
+tileReplacement_group5Map8e:
+	ld bc,@rect		; $650d
+	jr fillRectIfRoomFlagBit7Set		; $6510
+@rect:
+	.db $1b $07 $01 TILEINDEX_VERTICAL_BRIDGE
+
+; King moblin house
+tileReplacement_group0Map6f:
+	call getThisRoomFlags	; $6516
 	and $c0			; $6519
 	ret z			; $651b
-	ld de,$6555		; $651c
-	ld a,$12		; $651f
+	ld de,@ruinedHouse		; $651c
+	ld a,GLOBALFLAG_S_12		; $651f
 	call checkGlobalFlag		; $6521
-	jr nz,_label_04_270	; $6524
-	ld a,($cc69)		; $6526
+	jr nz,++		; $6524
+	ld a,(wSeedTreeRefilledBitset)		; $6526
 	bit 1,a			; $6529
-	jr nz,_label_04_269	; $652b
-	ld de,$654c		; $652d
-	jr _label_04_270		; $6530
-_label_04_269:
-	ld a,$12		; $6532
+	jr nz,+			; $652b
+	ld de,@destroyedHouse		; $652d
+	jr ++			; $6530
++
+	ld a,GLOBALFLAG_S_12		; $6532
 	call setGlobalFlag		; $6534
-_label_04_270:
-	ld hl,$cf36		; $6537
+++
+	ld hl,wRoomLayout+$36		; $6537
 	ld b,$03		; $653a
-_label_04_271:
+--
 	ld c,$03		; $653c
-_label_04_272:
+-
 	ld a,(de)		; $653e
 	inc de			; $653f
 	ldi (hl),a		; $6540
 	dec c			; $6541
-	jr nz,_label_04_272	; $6542
+	jr nz,-			; $6542
 	ld a,$0d		; $6544
 	add l			; $6546
 	ld l,a			; $6547
 	dec b			; $6548
-	jr nz,_label_04_271	; $6549
+	jr nz,--		; $6549
 	ret			; $654b
-.DB $fd				; $654c
-.DB $fd				; $654d
-.DB $fc				; $654e
-	ei			; $654f
-.DB $fd				; $6550
-.DB $fc				; $6551
-.DB $fd				; $6552
-	ei			; $6553
-.DB $fd				; $6554
-	xor b			; $6555
-.DB $eb				; $6556
-	and l			; $6557
-	or e			; $6558
-	or h			; $6559
-	or l			; $655a
-	and e			; $655b
-	xor $a4			; $655c
-	ld hl,$cf44		; $655e
+@destroyedHouse:
+	.db $fd $fd $fc
+	.db $fb $fd $fc
+	.db $fd $fb $fd
+@ruinedHouse:
+	.db $a8 $eb $a5
+	.db $b3 $b4 $b5
+	.db $a3 $ee $a4
+
+; Tarm ruins - statues pushed into water
+tileReplacement_group0Map42:
+	ld hl,wRoomLayout+$44		; $655e
 	ld (hl),$9c		; $6561
 	call getThisRoomFlags		; $6563
 	and $80			; $6566
-	jr z,_label_04_273	; $6568
-	ld hl,$cf55		; $656a
+	jr z,+			; $6568
+	ld hl,wRoomLayout+$55		; $656a
 	ld (hl),$bc		; $656d
-	jr _label_04_274		; $656f
-_label_04_273:
-	ld hl,$cf54		; $6571
+	jr ++			; $656f
++
+	ld hl,wRoomLayout+$54		; $6571
 	ld (hl),$d6		; $6574
-_label_04_274:
+++
 	call getThisRoomFlags		; $6576
 	and $40			; $6579
-	jr z,_label_04_275	; $657b
-	ld hl,$cf65		; $657d
+	jr z,+			; $657b
+	ld hl,wRoomLayout+$65		; $657d
 	ld (hl),$bc		; $6580
 	ret			; $6582
-_label_04_275:
-	ld hl,$cf64		; $6583
++
+	ld hl,wRoomLayout+$64		; $6583
 	ld (hl),$d6		; $6586
 	ret			; $6588
+
+; Pirate door into samasa desert
+tileReplacement_group0Mapfc:
 	call getThisRoomFlags		; $6589
 	bit 7,(hl)		; $658c
 	ret z			; $658e
-	ld hl,$cf03		; $658f
+	ld hl,wRoomLayout+$03		; $658f
 	ld a,$af		; $6592
 	ldi (hl),a		; $6594
 	ldi (hl),a		; $6595
@@ -2446,146 +2295,156 @@ _label_04_275:
 	ldi (hl),a		; $659f
 	ld (hl),a		; $65a0
 	ret			; $65a1
-	ld a,$17		; $65a2
+
+checkPirateShipDocked:
+	ld a,GLOBALFLAG_PIRATE_SHIP_DOCKED		; $65a2
 	jp checkGlobalFlag		; $65a4
-	call $65a2		; $65a7
+
+; Top screen of pirate ship in Subrosia
+tileReplacement_group1Map64:
+	call checkPirateShipDocked		; $65a7
 	ret z			; $65aa
-	ld hl,$65b1		; $65ab
-	jp $669d		; $65ae
-	ld b,h			; $65b1
-	inc b			; $65b2
-	dec b			; $65b3
-	rrca			; $65b4
-	call $65a2		; $65b5
+	ld hl,@rect		; $65ab
+	jp fillRectInRoomLayout		; $65ae
+@rect:
+	.db $44 $04 $05 $0f
+
+; Bottom screen of pirate ship in Subrosia
+tileReplacement_group1Map74:
+	call checkPirateShipDocked		; $65b5
 	ret z			; $65b8
-	ld hl,$65bf		; $65b9
-	jp $669d		; $65bc
-	inc b			; $65bf
-	inc b			; $65c0
-	dec b			; $65c1
-	rrca			; $65c2
-	call $65a2		; $65c3
+	ld hl,@rect		; $65b9
+	jp fillRectInRoomLayout		; $65bc
+@rect:
+	.db $04 $04 $05 $0f
+
+; Pirate ship screen in samasa desert - turns ship into quicksand rect
+tileReplacement_group0Mapee:
+	call checkPirateShipDocked		; $65c3
 	ret z			; $65c6
-	ld hl,$65e2		; $65c7
-	ld de,$cf23		; $65ca
+	ld hl,@sandRect		; $65c7
+	ld de,wRoomLayout+$23		; $65ca
 	ld bc,$0505		; $65cd
-_label_04_276:
+--
 	push de			; $65d0
 	push bc			; $65d1
-_label_04_277:
+-
 	ldi a,(hl)		; $65d2
 	ld (de),a		; $65d3
 	inc e			; $65d4
 	dec b			; $65d5
-	jr nz,_label_04_277	; $65d6
+	jr nz,-			; $65d6
 	pop bc			; $65d8
 	pop de			; $65d9
 	ld a,e			; $65da
 	add $10			; $65db
 	ld e,a			; $65dd
 	dec c			; $65de
-	jr nz,_label_04_276	; $65df
+	jr nz,--		; $65df
 	ret			; $65e1
-	xor a			; $65e2
-	xor a			; $65e3
-	xor a			; $65e4
-	xor a			; $65e5
-	xor a			; $65e6
-	xor l			; $65e7
-	xor l			; $65e8
-	xor (hl)		; $65e9
-	xor (hl)		; $65ea
-	xor a			; $65eb
-	xor l			; $65ec
-	xor l			; $65ed
-	xor (hl)		; $65ee
-	xor (hl)		; $65ef
-	xor a			; $65f0
-	cp l			; $65f1
-	cp l			; $65f2
-	cp (hl)			; $65f3
-	cp (hl)			; $65f4
-	xor a			; $65f5
-	cp l			; $65f6
-	cp l			; $65f7
-	cp (hl)			; $65f8
-	cp (hl)			; $65f9
-	xor a			; $65fa
-	ld a,($c9f9)		; $65fb
+@sandRect:
+	.db $af $af $af $af $af
+	.db $ad $ad $ae $ae $af
+	.db $ad $ad $ae $ae $af
+	.db $bd $bd $be $be $af
+	.db $bd $bd $be $be $af
+
+; Screen with linked locked doors in Subrosia
+tileReplacement_group1Map35:
+	ld a,(wGroup4Flags|<ROOM_SEASONS_4f9)		; $65fb
 	and $04			; $65fe
 	ret z			; $6600
-	ld hl,$cf43		; $6601
-	ld (hl),$e8		; $6604
+	ld hl,wRoomLayout+$43		; $6601
+	ld (hl),TILEINDEX_OPEN_CAVE_DOOR		; $6604
 	ret			; $6606
+
+; Big bridge into Natzu
+tileReplacement_group0Map56:
 	xor a			; $6607
-	ld ($cc32),a		; $6608
-	ld a,($c610)		; $660b
-	cp $0c			; $660e
+	ld (wSwitchState),a		; $6608
+	ld a,(wAnimalCompanion)		; $660b
+	cp SPECIALOBJECTID_DIMITRI			; $660e
 	ret z			; $6610
+
 	call getThisRoomFlags		; $6611
 	and $40			; $6614
-	jr nz,_label_04_278	; $6616
-	ld a,$fd		; $6618
-	ld hl,$cf43		; $661a
+	jr nz,+			; $6616
+	ld a,TILEINDEX_WATER		; $6618
+	ld hl,wRoomLayout+$43		; $661a
 	ldi (hl),a		; $661d
 	ld (hl),a		; $661e
-	ld hl,$cf53		; $661f
+	ld hl,wRoomLayout+$53		; $661f
 	ldi (hl),a		; $6622
 	ld (hl),a		; $6623
 	ret			; $6624
-_label_04_278:
++
 	ld a,$b0		; $6625
-	ld ($cf66),a		; $6627
+	ld (wRoomLayout+$66),a		; $6627
 	ret			; $662a
-	ld a,$16		; $662b
+
+; Moblin keep roof - remove when destroyed
+tileReplacement_group0Map4b:
+	ld a,GLOBALFLAG_MOBLINS_KEEP_DESTROYED		; $662b
 	call checkGlobalFlag		; $662d
 	ret z			; $6630
-	ld hl,$cf73		; $6631
+	ld hl,wRoomLayout+$73		; $6631
 	ld a,$40		; $6634
 	ldi (hl),a		; $6636
 	ldi (hl),a		; $6637
 	ld (hl),a		; $6638
 	ret			; $6639
-	ld a,($ccc4)		; $663a
+
+;;
+; Twinrova/ganon fight - same as ages
+tileReplacement_group5Map9e:
+	ld a,(wTwinrovaTileReplacementMode)		; $663a
 	or a			; $663d
 	ret z			; $663e
 	dec a			; $663f
-	jr z,_label_04_281	; $6640
+	jr z,@val01	; $6640
 	dec a			; $6642
-	jr z,_label_04_280	; $6643
+	jr z,@fillWithIce	; $6643
 	dec a			; $6645
-	jr z,_label_04_279	; $6646
+	jr z,@val03	; $6646
+
+	; Fill the room with the seizure tiles?
 	xor a			; $6648
-	ld ($ccc4),a		; $6649
-	ld hl,$6652		; $664c
-	jp $669d		; $664f
-	nop			; $6652
-	dec bc			; $6653
-	rrca			; $6654
-	xor d			; $6655
-_label_04_279:
-	ld ($ccc4),a		; $6656
+	ld (wTwinrovaTileReplacementMode),a		; $6649
+	ld hl,@seizureTiles		; $664c
+	jp fillRectInRoomLayout		; $664f
+
+@seizureTiles:
+	.db $00 LARGE_ROOM_HEIGHT LARGE_ROOM_WIDTH $aa
+
+@val03:
+	ld (wTwinrovaTileReplacementMode),a		; $6656
 	ld a,$b9		; $6659
 	jp loadGfxHeader		; $665b
-_label_04_280:
-	ld ($ccc4),a		; $665e
-	ld hl,$6667		; $6661
-	jp $669d		; $6664
-	ld de,$0d09		; $6667
-	adc h			; $666a
-_label_04_281:
-	ld ($ccc4),a		; $666b
+
+@fillWithIce:
+	ld (wTwinrovaTileReplacementMode),a		; $665e
+	ld hl,@iceTiles		; $6661
+	jp fillRectInRoomLayout		; $6664
+
+@iceTiles:
+	.db $11 LARGE_ROOM_HEIGHT-2 LARGE_ROOM_WIDTH-2 $8c
+
+@val01:
+	ld (wTwinrovaTileReplacementMode),a		; $666b
 	ld a,$b8		; $666e
 	jp loadGfxHeader		; $6670
+
+; Down horon village stairs leading to Subrosia portal
+tileReplacement_group2_3Mapab:
 	call getThisRoomFlags		; $6673
 	and $40			; $6676
 	ret z			; $6678
-	ld hl,$cf14		; $6679
-	ld a,$6d		; $667c
+	ld hl,wRoomLayout+$14		; $6679
+	ld a,TILEINDEX_HORIZONTAL_BRIDGE		; $667c
 	ldi (hl),a		; $667e
 	ldi (hl),a		; $667f
 	ld (hl),a		; $6680
-	ld a,$6a		; $6681
+	ld a,TILEINDEX_VERTICAL_BRIDGE		; $6681
 	ld l,$47		; $6683
 	ld (hl),a		; $6685
 	ld l,$37		; $6686
@@ -2595,17 +2454,33 @@ _label_04_281:
 	ld l,$17		; $668c
 	ld (hl),a		; $668e
 	ret			; $668f
+
+;;
+; @param	hl	pointer to data structure
+;			* starts with tile to replace with
+;			* fills every YX specified until $ff found
+d8LavaRoomsFillTilesWithLava:
 	ld d,$cf		; $6690
 	ldi a,(hl)		; $6692
 	ld c,a			; $6693
-_label_04_282:
+-
 	ldi a,(hl)		; $6694
 	cp $ff			; $6695
 	ret z			; $6697
 	ld e,a			; $6698
 	ld a,c			; $6699
 	ld (de),a		; $669a
-	jr _label_04_282		; $669b
+	jr -			; $669b
+
+;;
+; Fills a square in wRoomLayout using the data at hl.
+; Data format:
+; - Top-left position (YX)
+; - Height
+; - Width
+; - Tile value
+; @addr{6bb5}
+fillRectInRoomLayout:
 	ldi a,(hl)		; $669d
 	ld e,a			; $669e
 	ldi a,(hl)		; $669f
@@ -2614,40 +2489,45 @@ _label_04_282:
 	ld c,a			; $66a2
 	ldi a,(hl)		; $66a3
 	ld d,a			; $66a4
-	ld h,$cf		; $66a5
-_label_04_283:
+	ld h,>wRoomLayout	; $66a5
+--
 	ld a,d			; $66a7
 	ld l,e			; $66a8
 	push bc			; $66a9
-_label_04_284:
+-
 	ldi (hl),a		; $66aa
 	dec c			; $66ab
-	jr nz,_label_04_284	; $66ac
+	jr nz,-			; $66ac
 	ld a,e			; $66ae
 	add $10			; $66af
 	ld e,a			; $66b1
 	pop bc			; $66b2
 	dec b			; $66b3
-	jr nz,_label_04_283	; $66b4
+	jr nz,--		; $66b4
 	ret			; $66b6
-_label_04_285:
+
+;;
+; @param	bc	$0808
+; @param	de	$c8f0 - d2 rupee room, $c8f8 - d6 rupee room
+; @param	hl	top-left tile of rupees
+replaceRupeeRoomRupees:
 	ld a,(de)		; $66b7
 	inc de			; $66b8
 	push bc			; $66b9
-_label_04_286:
+-
 	rrca			; $66ba
-	jr nc,_label_04_287	; $66bb
-	ld (hl),$a0		; $66bd
-_label_04_287:
+	jr nc,+			; $66bb
+	ld (hl),TILEINDEX_STANDARD_FLOOR		; $66bd
++
 	inc l			; $66bf
 	dec b			; $66c0
-	jr nz,_label_04_286	; $66c1
+	jr nz,-			; $66c1
 	ld a,l			; $66c3
 	add $08			; $66c4
 	ld l,a			; $66c6
 	pop bc			; $66c7
 	dec c			; $66c8
-	jr nz,_label_04_285	; $66c9
+	jr nz,replaceRupeeRoomRupees	; $66c9
 	ret			; $66cb
 
 
@@ -2687,6 +2567,8 @@ _label_04_318:
 	dec c			; $6b12
 	jr nz,_label_04_317	; $6b13
 	ret			; $6b15
+
+write4BytesToVramLayout:
 	ldi a,(hl)		; $6b16
 	ld (de),a		; $6b17
 	inc e			; $6b18
@@ -2715,6 +2597,8 @@ _label_04_319:
 	xor a			; $6b35
 	ld ($ff00+$70),a	; $6b36
 	ret			; $6b38
+
+@handleSingleEntry:
 	ld a,($ccf5)		; $6b39
 	ld b,a			; $6b3c
 	ld a,($ccf6)		; $6b3d
@@ -2754,10 +2638,12 @@ _label_04_319:
 	pop af			; $6b78
 	ld ($ff00+$70),a	; $6b79
 	ret			; $6b7b
+
+getVramSubtileAddressOfTile:
 	ld a,c			; $6b7c
 	swap a			; $6b7d
 	and $0f			; $6b7f
-	ld hl,$6b90		; $6b81
+	ld hl,@addresses		; $6b81
 	rst_addDoubleIndex			; $6b84
 	ldi a,(hl)		; $6b85
 	ld h,(hl)		; $6b86
@@ -2769,174 +2655,235 @@ _label_04_319:
 	ld e,l			; $6b8d
 	ld d,h			; $6b8e
 	ret			; $6b8f
-	nop			; $6b90
-	ret c			; $6b91
-	ld b,b			; $6b92
-	ret c			; $6b93
-	add b			; $6b94
-	ret c			; $6b95
-	ret nz			; $6b96
-	ret c			; $6b97
-	nop			; $6b98
-	reti			; $6b99
-	ld b,b			; $6b9a
-	reti			; $6b9b
-	add b			; $6b9c
-	reti			; $6b9d
-	ret nz			; $6b9e
-	reti			; $6b9f
-	nop			; $6ba0
-	jp c,$da40		; $6ba1
-	add b			; $6ba4
-	.db $da ; $6ba5
+
+@addresses:
+	.dw w3VramTiles+$000
+	.dw w3VramTiles+$040
+	.dw w3VramTiles+$080
+	.dw w3VramTiles+$0c0
+	.dw w3VramTiles+$100
+	.dw w3VramTiles+$140
+	.dw w3VramTiles+$180
+	.dw w3VramTiles+$1c0
+	.dw w3VramTiles+$200
+	.dw w3VramTiles+$240
+	.dw w3VramTiles+$280
+
+;;
+; Called from "setInterleavedTile" in bank 0.
+;
+; Mixes two tiles together by using some subtiles from one, and some subtiles from the
+; other. Used for example by shutter doors, which would combine the door and floor tiles
+; for the partway-closed part of the animation.
+;
+; Tile 2 uses its tiles from the same "half" that tile 1 uses. For example, if tile 1 was
+; placed on the right side, both tiles would use the right halves of their subtiles.
+;
+; @param	a	0: Top is tile 2, bottom is tile 1
+;			1: Left is tile 1, right is tile 2
+;			2: Top is tile 1, bottom is tile 2
+;			3: Left is tile 2, right is tile 1
+; @param	hFF8C	Position of tile to change
+; @param	hFF8F	Tile index 1
+; @param	hFF8E	Tile index 2
+; @addr{6cb3}
 setInterleavedTile_body:
-	ld ($ff00+$8b),a ; $6ba6
-	ld a,($ff00+$70)	; $6ba8
-	push af			; $6baa
-	ld a,$03		; $6bab
-	ld ($ff00+$70),a	; $6bad
-	ldh a,(<hFF8F)	; $6baf
-	call setHlToTileMappingDataPlusATimes8		; $6bb1
-	ld de,$cec8		; $6bb4
-	ld b,$08		; $6bb7
-_label_04_320:
-	ldi a,(hl)		; $6bb9
-	ld (de),a		; $6bba
-	inc de			; $6bbb
-	dec b			; $6bbc
-	jr nz,_label_04_320	; $6bbd
-	ldh a,(<hFF8E)	; $6bbf
-	call setHlToTileMappingDataPlusATimes8		; $6bc1
-	ld de,$cec8		; $6bc4
-	ldh a,(<hFF8B)	; $6bc7
-	bit 0,a			; $6bc9
-	jr nz,_label_04_323	; $6bcb
-	bit 1,a			; $6bcd
-	jr nz,_label_04_321	; $6bcf
-	inc hl			; $6bd1
-	inc hl			; $6bd2
-	call $6be6		; $6bd3
-	jr _label_04_322		; $6bd6
-_label_04_321:
-	inc de			; $6bd8
-	inc de			; $6bd9
-	call $6be6		; $6bda
-_label_04_322:
-	inc hl			; $6bdd
-	inc hl			; $6bde
-	inc de			; $6bdf
-	inc de			; $6be0
-	call $6be6		; $6be1
-	jr _label_04_326		; $6be4
-	ldi a,(hl)		; $6be6
-	ld (de),a		; $6be7
-	inc de			; $6be8
-	ldi a,(hl)		; $6be9
-	ld (de),a		; $6bea
-	inc de			; $6beb
-	ret			; $6bec
-_label_04_323:
-	bit 1,a			; $6bed
-	jr nz,_label_04_324	; $6bef
-	inc de			; $6bf1
-	call $6c02		; $6bf2
-	jr _label_04_325		; $6bf5
-_label_04_324:
-	inc hl			; $6bf7
-	call $6c02		; $6bf8
-_label_04_325:
-	inc hl			; $6bfb
-	inc de			; $6bfc
-	call $6c02		; $6bfd
-	jr _label_04_326		; $6c00
-	ldi a,(hl)		; $6c02
-	ld (de),a		; $6c03
-	inc de			; $6c04
-	inc hl			; $6c05
-	inc de			; $6c06
-	ldi a,(hl)		; $6c07
-	ld (de),a		; $6c08
-	inc de			; $6c09
-	ret			; $6c0a
-_label_04_326:
-	ldh a,(<hFF8C)	; $6c0b
-	ld hl,$cec8		; $6c0d
-	call $6c17		; $6c10
-	pop af			; $6c13
-	ld ($ff00+$70),a	; $6c14
-	ret			; $6c16
-	push hl			; $6c17
-	call $6c47		; $6c18
-	add $20			; $6c1b
-	ld c,a			; $6c1d
-	ldh a,(<hVBlankFunctionQueueTail)	; $6c1e
-	ld l,a			; $6c20
-	ld h,$c4		; $6c21
-	ld a,(vblankCopyTileFunctionOffset)		; $6c23
-	ldi (hl),a		; $6c26
-	ld (hl),e		; $6c27
-	inc l			; $6c28
-	ld (hl),d		; $6c29
-	inc l			; $6c2a
-	ld e,l			; $6c2b
-	ld d,h			; $6c2c
-	pop hl			; $6c2d
-	ld b,$02		; $6c2e
-_label_04_327:
-	call $6c40		; $6c30
-	ld a,c			; $6c33
-	ld (de),a		; $6c34
-	inc e			; $6c35
-	call $6c40		; $6c36
-	dec b			; $6c39
-	jr nz,_label_04_327	; $6c3a
-	ld a,e			; $6c3c
-	ldh (<hVBlankFunctionQueueTail),a	; $6c3d
-	ret			; $6c3f
-	ldi a,(hl)		; $6c40
-	ld (de),a		; $6c41
-	inc e			; $6c42
-	ldi a,(hl)		; $6c43
-	ld (de),a		; $6c44
-	inc e			; $6c45
-	ret			; $6c46
-	ld e,a			; $6c47
-	and $f0			; $6c48
-	swap a			; $6c4a
-	ld d,a			; $6c4c
-	ld a,e			; $6c4d
-	and $0f			; $6c4e
-	add a			; $6c50
-	ld e,a			; $6c51
-	ld a,($cd09)		; $6c52
-	swap a			; $6c55
-	add a			; $6c57
-	add e			; $6c58
-	and $1f			; $6c59
-	ld e,a			; $6c5b
-	ld a,($cd08)		; $6c5c
-	swap a			; $6c5f
-	add d			; $6c61
-	and $0f			; $6c62
-	ld hl,vramBgMapTable		; $6c64
-	rst_addDoubleIndex			; $6c67
-	ldi a,(hl)		; $6c68
-	add e			; $6c69
-	ld e,a			; $6c6a
-	ld d,(hl)		; $6c6b
-	ret			; $6c6c
+	ldh (<hFF8B),a	; $6cb3
+
+	ld a,($ff00+R_SVBK)	; $6cb5
+	push af			; $6cb7
+	ld a,:w3TileMappingData		; $6cb8
+	ld ($ff00+R_SVBK),a	; $6cba
+
+	ldh a,(<hFF8F)	; $6cbc
+	call setHlToTileMappingDataPlusATimes8		; $6cbe
+	ld de,$cec8		; $6cc1
+	ld b,$08		; $6cc4
+-
+	ldi a,(hl)		; $6cc6
+	ld (de),a		; $6cc7
+	inc de			; $6cc8
+	dec b			; $6cc9
+	jr nz,-			; $6cca
+
+	ldh a,(<hFF8E)	; $6ccc
+	call setHlToTileMappingDataPlusATimes8		; $6cce
+	ld de,$cec8		; $6cd1
+	ldh a,(<hFF8B)	; $6cd4
+	bit 0,a			; $6cd6
+	jr nz,@interleaveDiagonally		; $6cd8
+
+	bit 1,a			; $6cda
+	jr nz,+			; $6cdc
+
+	inc hl			; $6cde
+	inc hl			; $6cdf
+	call @copy2Bytes		; $6ce0
+	jr ++			; $6ce3
++
+	inc de			; $6ce5
+	inc de			; $6ce6
+	call @copy2Bytes		; $6ce7
+++
+	inc hl			; $6cea
+	inc hl			; $6ceb
+	inc de			; $6cec
+	inc de			; $6ced
+	call @copy2Bytes		; $6cee
+	jr @queueWrite			; $6cf1
+
+@copy2Bytes:
+	ldi a,(hl)		; $6cf3
+	ld (de),a		; $6cf4
+	inc de			; $6cf5
+	ldi a,(hl)		; $6cf6
+	ld (de),a		; $6cf7
+	inc de			; $6cf8
+	ret			; $6cf9
+
+@interleaveDiagonally:
+	bit 1,a			; $6cfa
+	jr nz,+			; $6cfc
+
+	inc de			; $6cfe
+	call @copy2BytesSeparated		; $6cff
+	jr ++			; $6d02
++
+	inc hl			; $6d04
+	call @copy2BytesSeparated		; $6d05
+++
+	inc hl			; $6d08
+	inc de			; $6d09
+	call @copy2BytesSeparated		; $6d0a
+	jr @queueWrite			; $6d0d
+
+;;
+; @addr{6d0f}
+@copy2BytesSeparated:
+	ldi a,(hl)		; $6d0f
+	ld (de),a		; $6d10
+	inc de			; $6d11
+	inc hl			; $6d12
+	inc de			; $6d13
+	ldi a,(hl)		; $6d14
+	ld (de),a		; $6d15
+	inc de			; $6d16
+	ret			; $6d17
+
+;;
+; @param	hFF8C	The position of the tile to refresh
+; @param	$cec8	The data to write for that tile
+; @addr{6d18}
+@queueWrite:
+	ldh a,(<hFF8C)	; $6d18
+	ld hl,$cec8		; $6d1a
+	call queueTileWriteAtVBlank		; $6d1d
+	pop af			; $6d20
+	ld ($ff00+R_SVBK),a	; $6d21
+	ret			; $6d23
+
+;;
+; Set wram bank to 3 (or wherever hl is pointing to) before calling this.
+;
+; @param	a	Tile position
+; @param	hl	Pointer to 8 bytes of tile data (usually somewhere in
+;			w3TileMappingData)
+; @addr{6d24}
+queueTileWriteAtVBlank:
+	push hl			; $6d24
+	call @getTilePositionInVram		; $6d25
+	add $20			; $6d28
+	ld c,a			; $6d2a
+
+	; Add a command to the vblank queue.
+	ldh a,(<hVBlankFunctionQueueTail)	; $6d2b
+	ld l,a			; $6d2d
+	ld h,>wVBlankFunctionQueue
+	ld a,(vblankCopyTileFunctionOffset)		; $6d30
+	ldi (hl),a		; $6d33
+	ld (hl),e		; $6d34
+	inc l			; $6d35
+	ld (hl),d		; $6d36
+	inc l			; $6d37
+
+	ld e,l			; $6d38
+	ld d,h			; $6d39
+	pop hl			; $6d3a
+	ld b,$02		; $6d3b
+--
+	; Write 2 bytes to the command
+	call @copy2Bytes		; $6d3d
+
+	; Then give it the address for the lower half of the tile
+	ld a,c			; $6d40
+	ld (de),a		; $6d41
+	inc e			; $6d42
+
+	; Then write the next 2 bytes
+	call @copy2Bytes		; $6d43
+	dec b			; $6d46
+	jr nz,--		; $6d47
+
+	; Update the tail of the vblank queue
+	ld a,e			; $6d49
+	ldh (<hVBlankFunctionQueueTail),a	; $6d4a
+	ret			; $6d4c
+
+;;
+; @addr{6d4d}
+@copy2Bytes:
+	ldi a,(hl)		; $6d4d
+	ld (de),a		; $6d4e
+	inc e			; $6d4f
+	ldi a,(hl)		; $6d50
+	ld (de),a		; $6d51
+	inc e			; $6d52
+	ret			; $6d53
+
+;;
+; @param	a	Tile position
+; @param[out]	a	Same as 'e'
+; @param[out]	de	Somewhere in the vram bg map
+; @addr{6d54}
+@getTilePositionInVram:
+	ld e,a			; $6d54
+	and $f0			; $6d55
+	swap a			; $6d57
+	ld d,a			; $6d59
+	ld a,e			; $6d5a
+	and $0f			; $6d5b
+	add a			; $6d5d
+	ld e,a			; $6d5e
+	ld a,(wScreenOffsetX)		; $6d5f
+	swap a			; $6d62
+	add a			; $6d64
+	add e			; $6d65
+	and $1f			; $6d66
+	ld e,a			; $6d68
+	ld a,(wScreenOffsetY)		; $6d69
+	swap a			; $6d6c
+	add d			; $6d6e
+	and $0f			; $6d6f
+	ld hl,vramBgMapTable		; $6d71
+	rst_addDoubleIndex			; $6d74
+	ldi a,(hl)		; $6d75
+	add e			; $6d76
+	ld e,a			; $6d77
+	ld d,(hl)		; $6d78
+	ret			; $6d79
+
 loadTilesetData_body:
-	call seasonsFunc_04_6ce6		; $6c6d
-	jr c,_label_04_328	; $6c70
-	call $6d17		; $6c72
-	jr c,_label_04_328	; $6c75
-	ld a,($cc49)		; $6c77
-	ld hl,$533c		; $6c7a
+	call getTempleRemainsSeasonsTilesetData		; $6c6d
+	jr c,+			; $6c70
+	call getMoblinKeepSeasonsTilesetData		; $6c72
+	jr c,+			; $6c75
+	ld a,(wActiveGroup)		; $6c77
+	ld hl,roomTilesetsGroupTable		; $6c7a
 	rst_addDoubleIndex			; $6c7d
 	ldi a,(hl)		; $6c7e
 	ld h,(hl)		; $6c7f
 	ld l,a			; $6c80
-	ld a,($cc4c)		; $6c81
+	ld a,(wActiveRoom)		; $6c81
 	rst_addAToHl			; $6c84
 	ld a,(hl)		; $6c85
 	and $80			; $6c86
@@ -2944,71 +2891,71 @@ loadTilesetData_body:
 	ld a,(hl)		; $6c8a
 	and $7f			; $6c8b
 	call multiplyABy8		; $6c8d
-	ld hl,$4c84		; $6c90
+	ld hl,tilesetData		; $6c90
 	add hl,bc		; $6c93
 	ld a,(hl)		; $6c94
 	inc a			; $6c95
-	jr nz,_label_04_328	; $6c96
+	jr nz,+			; $6c96
 	inc hl			; $6c98
 	ldi a,(hl)		; $6c99
 	ld h,(hl)		; $6c9a
 	ld l,a			; $6c9b
-	ld a,($cc4e)		; $6c9c
+	ld a,(wRoomStateModifier)		; $6c9c
 	call multiplyABy8		; $6c9f
 	add hl,bc		; $6ca2
-_label_04_328:
++
 	ldi a,(hl)		; $6ca3
 	ld e,a			; $6ca4
 	and $0f			; $6ca5
 	cp $0f			; $6ca7
-	jr nz,_label_04_329	; $6ca9
+	jr nz,+			; $6ca9
 	ld a,$ff		; $6cab
-_label_04_329:
-	ld ($cc55),a		; $6cad
++
+	ld (wDungeonIndex),a		; $6cad
 	ld a,e			; $6cb0
 	swap a			; $6cb1
 	and $0f			; $6cb3
-	ld ($cc4f),a		; $6cb5
+	ld (wActiveCollisions),a		; $6cb5
 	ldi a,(hl)		; $6cb8
-	ld ($cc50),a		; $6cb9
+	ld (wTilesetFlags),a		; $6cb9
 	ld b,$06		; $6cbc
 	ld de,$cd20		; $6cbe
-_label_04_330:
+-
 	ldi a,(hl)		; $6cc1
 	ld (de),a		; $6cc2
 	inc e			; $6cc3
 	dec b			; $6cc4
-	jr nz,_label_04_330	; $6cc5
+	jr nz,-			; $6cc5
 	ld e,$20		; $6cc7
 	ld a,(de)		; $6cc9
 	ld b,a			; $6cca
 	ldh a,(<hFF8B)	; $6ccb
 	or b			; $6ccd
 	ld (de),a		; $6cce
-	ld a,($cc49)		; $6ccf
+	ld a,(wActiveGroup)		; $6ccf
 	or a			; $6cd2
 	ret nz			; $6cd3
-	ld a,($cc4c)		; $6cd4
+	ld a,(wActiveRoom)		; $6cd4
 	cp $96			; $6cd7
 	ret nz			; $6cd9
 	call getThisRoomFlags		; $6cda
 	and $80			; $6cdd
 	ret nz			; $6cdf
 	ld a,$20		; $6ce0
-	ld ($cd20),a		; $6ce2
+	ld (wTilesetUniqueGfx),a		; $6ce2
 	ret			; $6ce5
 
-seasonsFunc_04_6ce6:
+getTempleRemainsSeasonsTilesetData:
 	ld a,GLOBALFLAG_S_15		; $6ce6
 	call checkGlobalFlag		; $6ce8
 	ret z			; $6ceb
 
-	call seasonsFunc_04_6cff		; $6cec
+	call checkIsTempleRemains		; $6cec
 	ret nc			; $6cef
 
 	ld a,(wRoomStateModifier)		; $6cf0
 	call multiplyABy8		; $6cf3
-	ld hl,seasonsFunc_04_6ce6Seasons		; $6cf6
+	ld hl,templeRemainsSeasons		; $6cf6
 	add hl,bc		; $6cf9
 --
 	xor a			; $6cfa
@@ -3016,7 +2963,8 @@ seasonsFunc_04_6ce6:
 	scf			; $6cfd
 	ret			; $6cfe
 
-seasonsFunc_04_6cff:
+; @param[out]	cflag	set if active room is temple remains
+checkIsTempleRemains:
 	ld a,(wActiveGroup)		; $6cff
 	or a			; $6d02
 	ret nz			; $6d03
@@ -3033,7 +2981,7 @@ seasonsFunc_04_6cff:
 	xor a			; $6d15
 	ret			; $6d16
 
-getMoblinKeepSeasons:
+getMoblinKeepSeasonsTilesetData:
 	ld a,(wActiveGroup)		; $6d17
 	or a			; $6d1a
 	ret nz			; $6d1b
@@ -3054,7 +3002,6 @@ getMoblinKeepSeasons:
 	jr --			; $6d34
 
 ;;
-; @param[out]	b	5 if on 1st room of Moblin Keep, decreasing by 1 for subsequent rooms
 ; @param[out]	cflag	Set if active room is in Moblin keep
 getMoblinKeepScreenIndex:
 	ld a,(wActiveRoom)		; $6d36
