@@ -13605,7 +13605,7 @@ seasonsFunc_3870:
 	call checkGlobalFlag		; $3872
 	ret z			; $3875
 
-	callfrombank0 seasonsFunc_04_6cff		; $3876
+	callfrombank0 checkIsTempleRemains		; $3876
 	ret nc			; $3880
 	ld a,(wRoomStateModifier)		; $3881
 	ld hl,@data		; $3884
