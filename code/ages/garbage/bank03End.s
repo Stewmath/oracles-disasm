@@ -1,3 +1,5 @@
+.ifdef BUILD_VANILLA
+
 ; Garbage functions appear to follow (corrupted repeats of the above functions).
 
 ;;
@@ -61,3 +63,5 @@ func_7ea4:
 	ld a,$ff		; $7eb7
 	jp z,$24f8		; $7eb9
 	ret			; $7ebc
+
+.endif
