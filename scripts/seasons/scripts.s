@@ -1328,7 +1328,7 @@ script4cc4:
 	wait 8
 	jump2byte script4cc4
 script4ccb:
-	loadscript $14, $4801
+	loadscript script_14_4801
 script4ccf:
 	asm15 $5562
 	scriptend
@@ -1384,9 +1384,9 @@ script4d23:
 	asm15 $55b9
 	jump2byte script4d16
 script4d28:
-	loadscript $14, $47d4
+	loadscript script_14_47d4
 script4d2c:
-	loadscript $14, $47eb
+	loadscript script_14_47eb
 script4d30:
 	stopifroomflag40set
 	asm15 $55ed
@@ -1394,7 +1394,7 @@ script4d30:
 	.dw script4d3b
 	.dw script4d3f
 script4d3b:
-	loadscript $14, $4770
+	loadscript script_14_4770
 script4d3f:
 	playsound SND_SOLVEPUZZLE
 	orroomflag $40
@@ -1406,7 +1406,7 @@ script4d44:
 	.dw script4d4f
 	.dw script4d3f
 script4d4f:
-	loadscript $14, $47a2
+	loadscript script_14_47a2
 script4d53:
 	stopifroomflag80set
 	checknoenemies
@@ -1607,9 +1607,9 @@ script4e94:
 	enableinput
 	scriptend
 script4ea5:
-	loadscript $14, $4830
+	loadscript script_14_4830
 script4ea9:
-	loadscript $14, $4849
+	loadscript script_14_4849
 script4ead:
 	jumpifroomflagset $40, script4f1b
 	jumpifitemobtained $7, script4ed2
@@ -2833,7 +2833,7 @@ script56b0:
 	wait 4
 	scriptend
 script56e7:
-	loadscript $14, $4861
+	loadscript script_14_4861
 script56eb:
 	writeobjectbyte $40, $81
 	setstate $02
@@ -2842,7 +2842,7 @@ script56eb:
 	setangleandanimation $18
 	retscript
 script56f8:
-	loadscript $14, $489a
+	loadscript script_14_489a
 script56fc:
 	jumpifglobalflagset $0f, stubScript
 	writeobjectbyte $5c, $01
@@ -3784,7 +3784,7 @@ script5d6f:
 script5d7f:
 	movedown $21
 script5d81:
-	loadscript $14, $48b5
+	loadscript script_14_48b5
 script5d85:
 	initcollisions
 script5d86:
@@ -3904,7 +3904,7 @@ script5e47:
 script5e4b:
 	initcollisions
 	jumpifglobalflagset $13, script5e54
-	loadscript $14, $48dc
+	loadscript script_14_48dc
 script5e54:
 	checkabutton
 	showtextlowindex $0e
@@ -3945,7 +3945,7 @@ script5e85:
 	orroomflag $40
 	scriptend
 script5e93:
-	loadscript $14, $4930
+	loadscript script_14_4930
 script5e97:
 	writeobjectbyte $7c, $01
 	asm15 objectSetVisible80
@@ -4127,13 +4127,13 @@ script5fc3:
 	writememory $cc04, $0f
 	scriptend
 script5fde:
-	loadscript $14, $4973
+	loadscript script_14_4973
 script5fe2:
-	loadscript $14, $4999
+	loadscript script_14_4999
 script5fe6:
-	loadscript $14, $49b6
+	loadscript script_14_49b6
 script5fea:
-	loadscript $14, $49c8
+	loadscript script_14_49c8
 script5fee:
 	checkmemoryeq $cfc0, $01
 	setanimation $02
@@ -4231,7 +4231,7 @@ script6092:
 	setdisabledobjectsto91
 	jump2byte script6092
 script60a0:
-	loadscript $14, $49db
+	loadscript script_14_49db
 script60a4:
 	rungenericnpclowindex $18
 script60a6:
@@ -4328,9 +4328,9 @@ script6135:
 	orroomflag $40
 	jump2byte script6135
 script6142:
-	loadscript $14, $4a0f
+	loadscript script_14_4a0f
 script6146:
-	loadscript $14, $4a4b
+	loadscript script_14_4a4b
 script614a:
 	initcollisions
 	settextid $3d19
@@ -4349,7 +4349,7 @@ script6160:
 	setcoords $53, $82
 	scriptend
 script6164:
-	loadscript $14, $4a6d
+	loadscript script_14_4a6d
 script6168:
 	wait 60
 	showtext TX_1e06
@@ -4357,7 +4357,7 @@ script6168:
 	writememory $cfd0, $0f
 	scriptend
 script6172:
-	loadscript $14, $4a91
+	loadscript script_14_4a91
 script6176:
 	setcollisionradii $22, $20
 	makeabuttonsensitive
@@ -4453,7 +4453,7 @@ script6233:
 	enableinput
 	jump2byte script6200
 script6240:
-	loadscript $14, $4aa3
+	loadscript script_14_4aa3
 script6244:
 	generatesecret BIGGORON_RETURN_SECRET
 script6246:
@@ -4482,7 +4482,7 @@ script6265:
 	enablemenu
 	jump2byte script6265
 script6277:
-	loadscript $14, $4b4c
+	loadscript script_14_4b4c
 script627b:
 	checkcfc0bit 0
 	setstate $04
@@ -4511,7 +4511,7 @@ script629d:
 	showtext TX_2a01
 	jump2byte script629d
 script62aa:
-	loadscript $14, $4aea
+	loadscript script_14_4aea
 script62ae:
 	rungenericnpc TX_2a05
 script62b1:
@@ -4940,7 +4940,7 @@ script655a:
 	setdisabledobjectsto91
 	jump2byte script655a
 script6568:
-	loadscript $14, $4b8e
+	loadscript script_14_4b8e
 script656c:
 	checkabutton
 	showtextlowindex $24
@@ -5049,7 +5049,7 @@ script6623:
 	showtext TX_0103
 	jump2byte script6623
 script6630:
-	loadscript $14, $4be4
+	loadscript script_14_4be4
 script6634:
 	showtext TX_0115
 	jumpiftextoptioneq $01, script6641
@@ -5057,7 +5057,7 @@ script6634:
 	setstate2 $ff
 	scriptend
 script6641:
-	loadscript $14, $4c06
+	loadscript script_14_4c06
 script6645:
 	giveitem $0600
 	jump2byte script6657
@@ -5188,9 +5188,9 @@ script6710:
 	scriptend
 script6717:
 	jumpifroomflagset $40, script671f
-	loadscript $14, $4e3f
+	loadscript script_14_4e3f
 script671f:
-	loadscript $14, $4e56
+	loadscript script_14_4e56
 script6723:
 	xorcfc0bit 0
 	asm15 $5db1
@@ -5204,33 +5204,33 @@ script672d:
 	setspeed SPEED_100
 	jumprandom script6739, script673d
 script6739:
-	loadscript $14, $4e62
+	loadscript script_14_4e62
 script673d:
-	loadscript $14, $4e79
+	loadscript script_14_4e79
 script6741:
 	asm15 $5e4e
 	setstate2 $04
 	setspeed SPEED_100
 	jumprandom script674d, script6751
 script674d:
-	loadscript $14, $4e97
+	loadscript script_14_4e97
 script6751:
-	loadscript $14, $4ec1
+	loadscript script_14_4ec1
 script6755:
 	asm15 $5e4e
 	setstate2 $04
 	setspeed SPEED_100
 	jumprandom script6761, script6765
 script6761:
-	loadscript $14, $4ee6
+	loadscript script_14_4ee6
 script6765:
-	loadscript $14, $4f02
+	loadscript script_14_4f02
 script6769:
-	loadscript $14, $4f1b
+	loadscript script_14_4f1b
 script676d:
-	loadscript $14, $4f26
+	loadscript script_14_4f26
 script6771:
-	loadscript $14, $4f44
+	loadscript script_14_4f44
 script6775:
 	wait 30
 	setangleandanimation $10
@@ -5531,54 +5531,54 @@ script6997:
 	setcoords $28, $18
 	setangleandanimation $10
 	callscript script67f4
-	loadscript $14, $4f51
+	loadscript script_14_4f51
 script69a3:
 	setcoords $48, $28
 	setangleandanimation $00
 	callscript script67f4
-	loadscript $14, $4f64
+	loadscript script_14_4f64
 script69af:
 	jumptable_memoryaddress $cfd0
 	.dw script69b6
 	.dw script69ba
 script69b6:
-	loadscript $14, $4f7f
+	loadscript script_14_4f7f
 script69ba:
-	loadscript $14, $4fa9
+	loadscript script_14_4fa9
 script69be:
 	jumptable_memoryaddress $cfd0
 	.dw script69c5
 	.dw script69c9
 script69c5:
-	loadscript $14, $4fcb
+	loadscript script_14_4fcb
 script69c9:
-	loadscript $14, $4fe9
+	loadscript script_14_4fe9
 script69cd:
 	jumptable_memoryaddress $cfd0
 	.dw script69d4
 	.dw script69d8
 script69d4:
-	loadscript $14, $5013
+	loadscript script_14_5013
 script69d8:
-	loadscript $14, $503a
+	loadscript script_14_503a
 script69dc:
 	jumptable_memoryaddress $cfd0
 	.dw script69e3
 	.dw script69e7
 script69e3:
-	loadscript $14, $504f
+	loadscript script_14_504f
 script69e7:
-	loadscript $14, $506d
+	loadscript script_14_506d
 script69eb:
 	jumptable_memoryaddress $cfd0
 	.dw script69f2
 	.dw script69f6
 script69f2:
-	loadscript $14, $5089
+	loadscript script_14_5089
 script69f6:
-	loadscript $14, $50ab
+	loadscript script_14_50ab
 script69fa:
-	loadscript $14, $50ca
+	loadscript script_14_50ca
 script69fe:
 	setangleandanimation $10
 	wait 30
@@ -6817,7 +6817,7 @@ script737a:
 	settileat $77, $a1
 	scriptend
 script737e:
-	loadscript $14, $50d3
+	loadscript script_14_50d3
 script7382:
 	stopifitemflagset
 	jumptable_memoryaddress wIsLinkedGame
@@ -6862,7 +6862,7 @@ script73c3:
 	showtext TX_3805
 	jump2byte script73c3
 script73c9:
-	loadscript $14, $5190
+	loadscript script_14_5190
 script73cd:
 	checkcfc0bit 0
 	setspeed SPEED_200
@@ -7081,7 +7081,7 @@ script7546:
 	setcoords $78, $68
 	rungenericnpc TX_0609
 script754c:
-	loadscript $14, $51c5
+	loadscript script_14_51c5
 script7550:
 	rungenericnpc TX_0502
 script7553:
@@ -7268,9 +7268,9 @@ script7677:
 	showtextlowindex $09
 	jump2byte script7677
 script767c:
-	loadscript $14, $51f0
+	loadscript script_14_51f0
 script7680:
-	loadscript $14, $520a
+	loadscript script_14_520a
 script7684:
 	scriptend
 script7685:
@@ -7288,7 +7288,7 @@ script7686:
 	setanimation $06
 	jump2byte script7686
 script769b:
-	loadscript $14, $521b
+	loadscript script_14_521b
 script769f:
 	checkmemoryeq $cfc0, $01
 	setanimation $01
@@ -7926,7 +7926,7 @@ script7afb:
 	showloadedtext
 	jump2byte script7afb
 script7aff:
-	loadscript $14, $5246
+	loadscript script_14_5246
 script7b03:
 	rungenericnpc TX_3e18
 script7b06:
@@ -8632,9 +8632,15 @@ script7f62:
 	showtextlowindex $07
 script7f64:
 	rungenericnpclowindex $07
-script7f66:
-	loadscript $14, $52e8
-script7f6a:
+
+
+; ==============================================================================
+; INTERACID_GET_ROD_OF_SEASONS
+; ==============================================================================
+gettingRodOfSeasons:
+	loadscript gettingRodOfSeasons_body
+
+setCounter1To32:
 	setcounter1 $32
 	scriptend
 

@@ -1823,6 +1823,7 @@ puddleAnimationFrames:
 
 .include "build/data/data_4556.s"
 
+script_14_4770:
 	push af
 .DB $e3
 	sub (hl)		; $4772
@@ -1859,6 +1860,8 @@ puddleAnimationFrames:
 	ld ($ff00+$6d),a	; $479e
 	ld d,l			; $47a0
 	nop			; $47a1
+
+script_14_47a2:
 	push af			; $47a2
 .DB $e3				; $47a3
 	sub (hl)		; $47a4
@@ -1895,6 +1898,8 @@ puddleAnimationFrames:
 	ld ($ff00+$6d),a	; $47d0
 	ld d,l			; $47d2
 	nop			; $47d3
+
+script_14_47d4:
 	adc $d5			; $47d4
 	xor c			; $47d6
 	call z,$e302		; $47d7
@@ -1912,6 +1917,8 @@ _label_14_049:
 	ld b,b			; $47e8
 	cp c			; $47e9
 	nop			; $47ea
+
+script_14_47eb:
 	adc $d5			; $47eb
 	xor c			; $47ed
 	call z,$e304		; $47ee
@@ -1929,6 +1936,8 @@ _label_14_050:
 	or c			; $47fe
 	ld b,b			; $47ff
 	nop			; $4800
+
+script_14_4801:
 	add h			; $4801
 	ld e,$13		; $4802
 	jr nc,_label_14_051	; $4804
@@ -1972,6 +1981,8 @@ _label_14_051:
 	nop			; $482d
 	nop			; $482e
 	nop			; $482f
+
+script_14_4830:
 	adc $8d			; $4830
 	ld ($d020),sp		; $4832
 	cp l			; $4835
@@ -1990,6 +2001,8 @@ _label_14_051:
 	ld b,b			; $4846
 	cp (hl)			; $4847
 	nop			; $4848
+
+script_14_4849:
 	adc $d5			; $4849
 	inc b			; $484b
 	ret nc			; $484c
@@ -2010,6 +2023,8 @@ _label_14_053:
 	or c			; $485e
 	ld b,b			; $485f
 	nop			; $4860
+
+script_14_4861:
 	adc $8e			; $4861
 	ld e,h			; $4863
 	ld bc,$ebc0		; $4864
@@ -2054,6 +2069,8 @@ _label_14_055:
 .DB $e4				; $4897
 	rst $38			; $4898
 	nop			; $4899
+
+script_14_489a:
 	or l			; $489a
 	rrca			; $489b
 	ret c			; $489c
@@ -2082,6 +2099,8 @@ _label_14_057:
 _label_14_058:
 	ld b,b			; $48b3
 	nop			; $48b4
+
+script_14_48b5:
 	pop hl			; $48b5
 	pop de			; $48b6
 	ld h,e			; $48b7
@@ -2108,7 +2127,10 @@ _label_14_059:
 	or $98			; $48d6
 	inc h			; $48d8
 	or $5d			; $48d9
-	ld (hl),$9e		; $48db
+	.db $36		; $48db
+
+script_14_48dc:
+	.db $9e		; $48dc
 	cp b			; $48dd
 	sbc b			; $48de
 	inc c			; $48df
@@ -2179,6 +2201,8 @@ _label_14_060:
 	or $b9			; $492c
 	ld e,(hl)		; $492e
 	ld d,b			; $492f
+
+script_14_4930:
 	cp l			; $4930
 	ld ($ff00+$67),a	; $4931
 	ld e,d			; $4933
@@ -2226,6 +2250,8 @@ _label_14_062:
 	sub c			; $496e
 	inc b			; $496f
 	call z,$000c		; $4970
+
+script_14_4973:
 	ld ($ff00+$39),a	; $4973
 	ld e,$d5		; $4975
 	ret nz			; $4977
@@ -2255,7 +2281,11 @@ _label_14_063:
 	ld e,$91		; $4993
 	ret nz			; $4995
 	rst $8			; $4996
-	ld ($f800),sp		; $4997
+	.db $08		; $4997
+	.db $00		; $4998
+
+script_14_4999:
+	.db $f8		; $4999
 	adc b			; $499a
 	jr _label_14_065		; $499b
 	adc e			; $499d
@@ -2278,6 +2308,8 @@ _label_14_064:
 	xor c			; $49b4
 _label_14_065:
 	nop			; $49b5
+
+script_14_49b6:
 	adc a			; $49b6
 	ld (bc),a		; $49b7
 	and (hl)		; $49b8
@@ -2293,6 +2325,8 @@ _label_14_065:
 .DB $e3				; $49c5
 	ld d,b			; $49c6
 	nop			; $49c7
+
+script_14_49c8:
 	adc a			; $49c8
 	inc bc			; $49c9
 	ei			; $49ca
@@ -2309,7 +2343,11 @@ _label_14_067:
 	sub c			; $49d6
 	rst_addDoubleIndex			; $49d7
 	rst $8			; $49d8
-	ld bc,$bd00		; $49d9
+	.db $01		; $49d9
+	.db $00		; $49da
+
+script_14_49db:
+	.db $bd		; $49db
 	add h			; $49dc
 	ld e,l			; $49dd
 	rlca			; $49de
@@ -2349,6 +2387,8 @@ _label_14_068:
 	add hl,hl		; $4a0c
 	cp (hl)			; $4a0d
 	nop			; $4a0e
+
+script_14_4a0f:
 	adc b			; $4a0f
 	ld (hl),b		; $4a10
 	jr _label_14_064		; $4a11
@@ -2394,7 +2434,11 @@ _label_14_068:
 	sub d			; $4a46
 	pop de			; $4a47
 	rst $8			; $4a48
-	ld bc,$8900		; $4a49
+	.db $01		; $4a49
+	.db $00		; $4a4a
+
+script_14_4a4b:
+	.db $89		; $4a4b
 	ld ($148c),sp		; $4a4c
 	sub d			; $4a4f
 	pop de			; $4a50
@@ -2424,6 +2468,8 @@ _label_14_068:
 	or c			; $4a6a
 	add b			; $4a6b
 	nop			; $4a6c
+
+script_14_4a6d:
 	adc b			; $4a6d
 	ld ($ff00+$80),a	; $4a6e
 	or $8b			; $4a70
@@ -2451,6 +2497,8 @@ _label_14_068:
 	rst $8			; $4a8e
 	dec bc			; $4a8f
 	nop			; $4a90
+
+script_14_4a91:
 	adc b			; $4a91
 	nop			; $4a92
 	ld h,b			; $4a93
@@ -2467,6 +2515,8 @@ _label_14_068:
 	ld a,(de)		; $4a9f
 	ld hl,sp-$57		; $4aa0
 	nop			; $4aa2
+
+script_14_4aa3:
 	or (hl)			; $4aa3
 	ld e,b			; $4aa4
 	pop hl			; $4aa5
@@ -2517,6 +2567,8 @@ _label_14_068:
 	ld h,d			; $4ae7
 	ld h,d			; $4ae8
 	ld b,h			; $4ae9
+
+script_14_4aea:
 	cp e			; $4aea
 	cp d			; $4aeb
 	add b			; $4aec
@@ -2595,6 +2647,8 @@ _label_14_072:
 	sub a			; $4b49
 	ldi a,(hl)		; $4b4a
 	dec b			; $4b4b
+
+script_14_4b4c:
 	sbc b			; $4b4c
 _label_14_073:
 	daa			; $4b4d
@@ -2647,6 +2701,8 @@ _label_14_075:
 	ld ($ff00+$d5),a	; $4b8a
 	ld e,e			; $4b8c
 	nop			; $4b8d
+
+script_14_4b8e:
 	or $98			; $4b8e
 	ld hl,$7f8e		; $4b90
 	ld bc,$508b		; $4b93
@@ -2709,6 +2765,8 @@ _label_14_075:
 	cp (hl)			; $4be1
 	ld h,l			; $4be2
 	ld l,h			; $4be3
+
+script_14_4be4:
 	sbc b			; $4be4
 	ld bc,$b102		; $4be5
 	add b			; $4be8
@@ -2734,6 +2792,8 @@ _label_14_075:
 	add b			; $4c03
 	rst $38			; $4c04
 	nop			; $4c05
+
+script_14_4c06:
 	sub c			; $4c06
 	rst_addDoubleIndex			; $4c07
 	rst $8			; $4c08
@@ -3169,6 +3229,8 @@ _label_14_076:
 	ld c,l			; $4e3d
 _label_14_077:
 	nop			; $4e3e
+
+script_14_4e3f:
 _label_14_078:
 	adc b			; $4e3f
 	ld c,b			; $4e40
@@ -3194,6 +3256,8 @@ _label_14_081:
 	ld h,$00		; $4e52
 	ld h,a			; $4e54
 	inc hl			; $4e55
+
+script_14_4e56:
 	adc e			; $4e56
 	ld d,b			; $4e57
 	adc a			; $4e58
@@ -3205,6 +3269,8 @@ _label_14_082:
 	ld h,$02		; $4e5e
 	ld h,a			; $4e60
 	inc hl			; $4e61
+
+script_14_4e62:
 .DB $ec				; $4e62
 _label_14_083:
 	jr nz,_label_14_081	; $4e63
@@ -3228,6 +3294,8 @@ _label_14_085:
 	ld b,h			; $4e76
 	xor b			; $4e77
 	nop			; $4e78
+
+script_14_4e79:
 .DB $ec				; $4e79
 	jr nz,_label_14_084	; $4e7a
 	jr nc,_label_14_077	; $4e7c
@@ -3256,6 +3324,8 @@ _label_14_089:
 	inc h			; $4e94
 	xor b			; $4e95
 	nop			; $4e96
+
+script_14_4e97:
 .DB $ec				; $4e97
 	stop			; $4e98
 .DB $ed				; $4e99
@@ -3295,6 +3365,8 @@ _label_14_092:
 _label_14_093:
 	xor b			; $4ebf
 	nop			; $4ec0
+
+script_14_4ec1:
 .DB $ec				; $4ec1
 	jr nc,_label_14_091	; $4ec2
 	jr nc,_label_14_087	; $4ec4
@@ -3325,6 +3397,8 @@ _label_14_094:
 	inc (hl)		; $4ee3
 	xor b			; $4ee4
 	nop			; $4ee5
+
+script_14_4ee6:
 .DB $ec				; $4ee6
 	jr nz,_label_14_094	; $4ee7
 	jr nc,_label_14_090	; $4ee9
@@ -3350,6 +3424,8 @@ _label_14_095:
 	inc (hl)		; $4eff
 	ld h,a			; $4f00
 	ld l,c			; $4f01
+
+script_14_4f02:
 .DB $ec				; $4f02
 	jr nz,_label_14_095	; $4f03
 	stop			; $4f05
@@ -3373,6 +3449,8 @@ _label_14_095:
 _label_14_096:
 	ld h,a			; $4f19
 	ld l,c			; $4f1a
+
+script_14_4f1b:
 	or $ed			; $4f1b
 	inc d			; $4f1d
 	or $c0			; $4f1e
@@ -3383,6 +3461,8 @@ _label_14_096:
 _label_14_097:
 	xor b			; $4f24
 	nop			; $4f25
+
+script_14_4f26:
 	cp l			; $4f26
 _label_14_098:
 .DB $e4				; $4f27
@@ -3409,6 +3489,8 @@ _label_14_100:
 	ld b,b			; $4f41
 	cp (hl)			; $4f42
 	nop			; $4f43
+
+script_14_4f44:
 	add c			; $4f44
 	ld (bc),a		; $4f45
 	cp b			; $4f46
@@ -3421,6 +3503,8 @@ _label_14_100:
 	add c			; $4f4e
 	dec b			; $4f4f
 	nop			; $4f50
+
+script_14_4f51:
 	xor $40			; $4f51
 	ret nz			; $4f53
 	dec bc			; $4f54
@@ -3437,6 +3521,8 @@ _label_14_101:
 	xor c			; $4f62
 _label_14_102:
 	nop			; $4f63
+
+script_14_4f64:
 .DB $ec				; $4f64
 	jr nz,_label_14_098	; $4f65
 	cp $69			; $4f67
@@ -3457,6 +3543,8 @@ _label_14_103:
 	xor c			; $4f7d
 _label_14_104:
 	nop			; $4f7e
+
+script_14_4f7f:
 	adc b			; $4f7f
 _label_14_105:
 	jr z,-$78		; $4f80
@@ -3494,6 +3582,8 @@ _label_14_111:
 	xor c			; $4fa7
 _label_14_112:
 	nop			; $4fa8
+
+script_14_4fa9:
 	adc b			; $4fa9
 	ld a,b			; $4faa
 	jr c,_label_14_108	; $4fab
@@ -3517,6 +3607,8 @@ _label_14_113:
 	xor $40			; $4fc7
 	xor c			; $4fc9
 	nop			; $4fca
+
+script_14_4fcb:
 	adc b			; $4fcb
 _label_14_114:
 	jr c,_label_14_101	; $4fcc
@@ -3543,6 +3635,8 @@ _label_14_117:
 	rst $28			; $4fe5
 	jr nz,_label_14_109	; $4fe6
 	nop			; $4fe8
+
+script_14_4fe9:
 _label_14_118:
 	adc b			; $4fe9
 _label_14_119:
@@ -3581,6 +3675,8 @@ _label_14_123:
 	rst $28			; $500f
 	jr nz,-$57		; $5010
 	nop			; $5012
+
+script_14_5013:
 	adc b			; $5013
 _label_14_124:
 	jr c,_label_14_135	; $5014
@@ -3620,6 +3716,8 @@ _label_14_131:
 	xor c			; $5038
 _label_14_132:
 	nop			; $5039
+
+script_14_503a:
 	adc b			; $503a
 	ld ($e018),sp		; $503b
 	ld c,(hl)		; $503e
@@ -3633,6 +3731,8 @@ _label_14_132:
 	jr nz,_label_14_131	; $504a
 	jr nz,_label_14_123	; $504c
 	nop			; $504e
+
+script_14_504f:
 	adc b			; $504f
 	ld ($e038),sp		; $5050
 	ld c,(hl)		; $5053
@@ -3660,6 +3760,8 @@ _label_14_136:
 .DB $ec				; $5069
 	jr nz,-$57		; $506a
 	nop			; $506c
+
+script_14_506d:
 	adc b			; $506d
 _label_14_137:
 	ld ($e088),sp		; $506e
@@ -3684,6 +3786,8 @@ _label_14_138:
 .DB $ec				; $5085
 	jr nz,_label_14_127	; $5086
 	nop			; $5088
+
+script_14_5089:
 	adc b			; $5089
 	jr _label_14_124		; $508a
 _label_14_139:
@@ -3714,6 +3818,8 @@ _label_14_142:
 	add b			; $50a8
 	xor c			; $50a9
 	nop			; $50aa
+
+script_14_50ab:
 	adc b			; $50ab
 	jr _label_14_130		; $50ac
 	ld ($ff00+$4e),a	; $50ae
@@ -3737,6 +3843,8 @@ _label_14_143:
 	ld d,b			; $50c7
 	xor c			; $50c8
 	nop			; $50c9
+
+script_14_50ca:
 	adc b			; $50ca
 	ld c,b			; $50cb
 	jr c,_label_14_134	; $50cc
@@ -3744,6 +3852,8 @@ _label_14_143:
 	and b			; $50cf
 	xor $50			; $50d0
 	nop			; $50d2
+
+script_14_50d3:
 	adc $a0			; $50d3
 	sub c			; $50d5
 	xor e			; $50d6
@@ -3907,6 +4017,8 @@ _label_14_147:
 	ld b,b			; $518d
 	cp h			; $518e
 	nop			; $518f
+
+script_14_5190:
 	adc (hl)		; $5190
 	ld (hl),a		; $5191
 	ld bc,$508b		; $5192
@@ -3948,7 +4060,11 @@ _label_14_150:
 	sub c			; $51c0
 	pop de			; $51c1
 	rst $8			; $51c2
-	ld bc,$fb00		; $51c3
+	.db $01		; $51c3
+	.db $00		; $51c4
+
+script_14_51c5:
+	.db $fb		; $51c5
 	adc e			; $51c6
 	jr z,_label_14_145	; $51c7
 	stop			; $51c9
@@ -3983,6 +4099,8 @@ _label_14_151:
 	or (hl)			; $51ed
 	ldi (hl),a		; $51ee
 	nop			; $51ef
+
+script_14_51f0:
 	ld hl,sp-$75		; $51f0
 	jr z,_label_14_147	; $51f2
 	stop			; $51f4
@@ -4003,7 +4121,11 @@ _label_14_152:
 	sub c			; $5205
 	rst_addDoubleIndex			; $5206
 	rst $8			; $5207
-	ld bc,$8b00		; $5208
+	.db $01		; $5208
+	.db $00		; $5209
+
+script_14_520a:
+	.db $8b		; $520a
 	jr z,_label_14_148	; $520b
 	nop			; $520d
 	adc h			; $520e
@@ -4017,6 +4139,8 @@ _label_14_152:
 	adc a			; $5218
 	rlca			; $5219
 	nop			; $521a
+
+script_14_521b:
 	push de			; $521b
 	rrca			; $521c
 	ret nc			; $521d
@@ -4049,6 +4173,8 @@ _label_14_152:
 	jr nc,_label_14_152	; $5242
 	ld b,b			; $5244
 	nop			; $5245
+
+script_14_5246:
 	cp l			; $5246
 	sub c			; $5247
 	xor e			; $5248
@@ -4183,35 +4309,43 @@ _label_14_152:
 	xor e			; $52e3
 	call z,$be00		; $52e4
 	nop			; $52e7
-	adc b			; $52e8
-	ld b,b			; $52e9
-	ld d,b			; $52ea
-	adc l			; $52eb
-	ld (bc),a		; $52ec
-	inc b			; $52ed
-	ret nc			; $52ee
-	cp l			; $52ef
-	ld ($ff00+$39),a	; $52f0
-	ld (hl),c		; $52f2
-	rst_addAToHl			; $52f3
-	add d			; $52f4
-.DB $e3				; $52f5
-	or h			; $52f6
-	ld ($ff00+$44),a	; $52f7
-	ld sp,$e3f5		; $52f9
-	or h			; $52fc
-	ld ($ff00+$44),a	; $52fd
-	ld sp,$e3f5		; $52ff
-	or h			; $5302
-	ld ($ff00+$44),a	; $5303
-	ld sp,$f5d1		; $5305
-	add h			; $5308
-	and $02			; $5309
 
-	.db $38 $50 $e1 $5c $31 $04 $d1 $d3
-	.db $00 $eb $cc $e1 $30 $71 $02 $f7
-	.db $98 $08 $10 $e4 $fb $f9 $e4 $ff
-	.db $be $00
+
+gettingRodOfSeasons_body:
+	setcoords $40 $50
+	setcollisionradii $02 $04
+	checkcollidedwithlink_onground
+	disableinput
+	asm15 spawnRodOfSeasonsSparkles
+	setcounter1 $82
+
+	playsound SND_FADEOUT
+	asm15 fadeoutToWhite
+	delay 5
+
+	playsound SND_FADEOUT
+	asm15 fadeoutToWhite
+	delay 5
+
+	playsound SND_FADEOUT
+	asm15 fadeoutToWhite
+	checkpalettefadedone
+	delay 5
+
+	spawninteraction INTERACID_GET_ROD_OF_SEASONS $02 $38 $50
+	asm15 fadeinFromWhiteWithDelay $04
+	checkpalettefadedone
+	checkflagset $00 $cceb
+	asm15 forceLinksDirection DIR_DOWN
+	delay $07
+
+	showtext TX_0810
+	setmusic SNDCTRL_MEDIUM_FADEOUT
+	delay $09
+
+	setmusic $ff
+	enableinput
+	scriptend
 
 
 	.include "data/seasons/interactionAnimations.s"

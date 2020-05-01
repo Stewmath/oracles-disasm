@@ -1931,4 +1931,8 @@
 ; Jewels in place in tarm ruins (visual only)
 .define INTERACID_JEWEL			$92
 
+;;
+; Interaction to start cutscene of getting Rod of Seasons
+.define INTERACID_GET_ROD_OF_SEASONS	$e6
+
 .endif

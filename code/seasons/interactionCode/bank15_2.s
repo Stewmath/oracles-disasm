@@ -1384,314 +1384,380 @@ seasonsFunc_15_6f49:
 	ld ($cfd0),a		; $6f5a
 	ret			; $6f5d
 
+
+; ==============================================================================
+; INTERACID_GET_ROD_OF_SEASONS
+;
+; Variables:
+;   var03:    Index of a seasons' sparkle from 0 to 3
+;   var3b:    Initial time for each seasons' sparkle to start dropping sparkles
+;   $cceb:    Set to 1 when Rod disappears, to remove its aura, and continue cutscene
+; ==============================================================================
 interactionCodee6:
-	ld e,$44		; $6f5e
+	ld e,Interaction.state		; $6f5e
 	ld a,(de)		; $6f60
 	rst_jumpTable			; $6f61
-	ld h,(hl)		; $6f62
-	ld l,a			; $6f63
-	add sp,$6f		; $6f64
+	.dw _interactionCodee6_state0
+	.dw _interactionCodee6_state1
+
+_interactionCodee6_state0:
 	ld a,$01		; $6f66
 	ld (de),a		; $6f68
+
 	call interactionInitGraphics		; $6f69
-	ld e,$42		; $6f6c
+	ld e,Interaction.subid		; $6f6c
 	ld a,(de)		; $6f6e
 	rst_jumpTable			; $6f6f
-	ld a,b			; $6f70
-	ld l,a			; $6f71
-	adc d			; $6f72
-	ld l,a			; $6f73
-	cp (hl)			; $6f74
-	ld l,a			; $6f75
-	ld ($ff00+c),a		; $6f76
-	ld l,a			; $6f77
+	.dw @subid0
+	.dw @sparkles
+	.dw @rodOfSeasons
+	.dw @rodOfSeasonsAura
+
+@subid0:
 	call getThisRoomFlags		; $6f78
 	bit 5,(hl)		; $6f7b
 	jp nz,interactionDelete		; $6f7d
 	xor a			; $6f80
 	ld ($cceb),a		; $6f81
-	ld hl,$7f66		; $6f84
+	ld hl,gettingRodOfSeasons		; $6f84
 	jp interactionSetScript		; $6f87
-	ld e,$43		; $6f8a
+
+@sparkles:
+	ld e,Interaction.var03		; $6f8a
 	ld a,(de)		; $6f8c
 	rlca			; $6f8d
-	ld hl,$6fae		; $6f8e
+	ld hl,@sparklesData		; $6f8e
 	rst_addDoubleIndex			; $6f91
+
 	ldi a,(hl)		; $6f92
-	ld e,$49		; $6f93
+	ld e,Interaction.angle		; $6f93
 	ld (de),a		; $6f95
+
 	ldi a,(hl)		; $6f96
-	ld e,$5c		; $6f97
+	ld e,Interaction.oamFlags		; $6f97
 	ld (de),a		; $6f99
+
 	ldi a,(hl)		; $6f9a
-	ld e,$7b		; $6f9b
+	ld e,Interaction.var3b		; $6f9b
 	ld (de),a		; $6f9d
+
 	ldi a,(hl)		; $6f9e
-	ld e,$50		; $6f9f
+	ld e,Interaction.speed		; $6f9f
 	ld (de),a		; $6fa1
+
 	ld h,d			; $6fa2
-	ld l,$46		; $6fa3
+	ld l,Interaction.counter1		; $6fa3
 	ld (hl),$3c		; $6fa5
-	ld l,$47		; $6fa7
+
+	ld l,Interaction.counter2		; $6fa7
 	ld (hl),$5a		; $6fa9
 	jp objectSetVisible80		; $6fab
-	inc bc			; $6fae
-	nop			; $6faf
-	ld ($0b3c),sp		; $6fb0
-	ld (bc),a		; $6fb3
-	inc c			; $6fb4
-	jr z,_label_15_306	; $6fb5
-	inc bc			; $6fb7
-	stop			; $6fb8
-	jr z,$1d		; $6fb9
-	ld bc,$3c14		; $6fbb
+@sparklesData:
+	; angle - oamFlags - var3b(time to start pulsing) - speed
+	.db $03 $00 $08 SPEED_180
+	.db $0b $02 $0c SPEED_100
+	.db $15 $03 $10 SPEED_100
+	.db $1d $01 $14 SPEED_180
+
+@rodOfSeasons:
 	ld a,$04		; $6fbe
 	call objectSetCollideRadius		; $6fc0
 	ld h,d			; $6fc3
-	ld l,$4f		; $6fc4
+	ld l,Interaction.zh		; $6fc4
 	ld (hl),$f0		; $6fc6
-	ld l,$46		; $6fc8
+
+	ld l,Interaction.counter1		; $6fc8
 	ld (hl),$00		; $6fca
-_label_15_306:
-	ld l,$47		; $6fcc
+
+	ld l,Interaction.counter2		; $6fcc
 	ld (hl),$30		; $6fce
-	ld bc,$e603		; $6fd0
+
+	ldbc INTERACID_GET_ROD_OF_SEASONS 03		; $6fd0
 	call objectCreateInteraction		; $6fd3
 	ret nz			; $6fd6
-	ld l,$56		; $6fd7
+
+	ld l,Interaction.relatedObj1		; $6fd7
 	ldh a,(<hActiveObjectType)	; $6fd9
 	ldi (hl),a		; $6fdb
 	ldh a,(<hActiveObject)	; $6fdc
 	ld (hl),a		; $6fde
+
 	jp objectSetVisible81		; $6fdf
+
+@rodOfSeasonsAura:
 	call interactionSetAlwaysUpdateBit		; $6fe2
 	jp objectSetVisible82		; $6fe5
-	ld e,$42		; $6fe8
+
+_interactionCodee6_state1:
+	ld e,Interaction.subid		; $6fe8
 	ld a,(de)		; $6fea
 	rst_jumpTable			; $6feb
-.DB $f4				; $6fec
-	ld l,a			; $6fed
-	ei			; $6fee
-	ld l,a			; $6fef
-	ld a,(de)		; $6ff0
-	ld (hl),b		; $6ff1
-	nop			; $6ff2
-	ld (hl),c		; $6ff3
+	.dw @subid0
+	.dw @sparkles
+	.dw @rodOfSeasons
+	.dw @rodOfSeasonsAura
+
+@subid0:
 	call interactionRunScript		; $6ff4
 	jp c,interactionDelete		; $6ff7
 	ret			; $6ffa
+
+@sparkles:
 	call interactionAnimate		; $6ffb
-	ld e,$45		; $6ffe
+	ld e,Interaction.state2		; $6ffe
 	ld a,(de)		; $7000
 	rst_jumpTable			; $7001
-	ld b,$70		; $7002
-	dec c			; $7004
-	ld (hl),b		; $7005
+	.dw @@waitToMove
+	.dw @@move
+
+@@waitToMove:
 	call interactionDecCounter2		; $7006
 	ret nz			; $7009
 	call interactionIncState2		; $700a
-	call $7121		; $700d
+
+@@move:
+	call dropSparkles		; $700d
 	call objectApplySpeed		; $7010
 	call interactionDecCounter1		; $7013
 	jp z,interactionDelete		; $7016
 	ret			; $7019
-	ld e,$45		; $701a
+
+@rodOfSeasons:
+	ld e,Interaction.state2		; $701a
 	ld a,(de)		; $701c
 	rst_jumpTable			; $701d
-	inc l			; $701e
-	ld (hl),b		; $701f
-	ld l,a			; $7020
-	ld (hl),b		; $7021
-	add h			; $7022
-	ld (hl),b		; $7023
-	sub a			; $7024
-	ld (hl),b		; $7025
-	push de			; $7026
-	ld (hl),b		; $7027
-	pop hl			; $7028
-	ld (hl),b		; $7029
-	rst $28			; $702a
-	ld (hl),b		; $702b
+	.dw @@substate0
+	.dw @@substate1
+	.dw @@substate2
+	.dw @@substate3
+	.dw @@substate4
+	.dw @@substate5
+	.dw @@substate6
+
+@@substate0:
 	ld a,(wFrameCounter)		; $702c
 	and $03			; $702f
 	ret nz			; $7031
+
 	ld h,d			; $7032
-	ld l,$46		; $7033
+	ld l,Interaction.counter1		; $7033
 	inc (hl)		; $7035
 	ld a,(hl)		; $7036
 	and $0f			; $7037
-	ld hl,$705f		; $7039
+	ld hl,@@seasonsTable_15_705f		; $7039
 	rst_addAToHl			; $703c
 	ld a,(hl)		; $703d
 	add $f0			; $703e
-	ld e,$4f		; $7040
+	ld e,Interaction.zh		; $7040
 	ld (de),a		; $7042
 	ld h,d			; $7043
-	ld l,$47		; $7044
+	ld l,Interaction.counter2		; $7044
 	dec (hl)		; $7046
 	ret nz			; $7047
+
 	call clearAllParentItems		; $7048
-	ld hl,$d008		; $704b
-	ld (hl),$00		; $704e
+
+	ld hl,w1Link.direction		; $704b
+	ld (hl),DIR_UP		; $704e
+
 	call objectGetAngleTowardLink		; $7050
 	ld h,d			; $7053
-	ld l,$49		; $7054
+	ld l,Interaction.angle		; $7054
 	ld (hl),a		; $7056
-	ld l,$50		; $7057
-	ld (hl),$14		; $7059
-	ld l,$45		; $705b
+
+	ld l,Interaction.speed		; $7057
+	ld (hl),SPEED_80		; $7059
+
+	ld l,Interaction.state2		; $705b
 	inc (hl)		; $705d
 	ret			; $705e
-	nop			; $705f
-	nop			; $7060
-	rst $38			; $7061
-	rst $38			; $7062
-	rst $38			; $7063
-	cp $fe			; $7064
-	cp $fe			; $7066
-	cp $fe			; $7068
-	rst $38			; $706a
-	rst $38			; $706b
-	rst $38			; $706c
-	rst $38			; $706d
-	nop			; $706e
+
+@@seasonsTable_15_705f:
+	.db $00 $00 $ff $ff
+	.db $ff $fe $fe $fe
+	.db $fe $fe $fe $ff
+	.db $ff $ff $ff $00
+
+@@substate1:
 	call objectGetAngleTowardLink		; $706f
-	ld e,$49		; $7072
+	ld e,Interaction.angle		; $7072
 	ld (de),a		; $7074
 	call objectApplySpeed		; $7075
 	call objectCheckCollidedWithLink_ignoreZ		; $7078
 	ret nc			; $707b
-	ld e,$67		; $707c
+
+	ld e,Interaction.collisionRadiusX		; $707c
 	ld a,$06		; $707e
 	ld (de),a		; $7080
 	jp interactionIncState2		; $7081
+
+@@substate2:
 	ld c,$08		; $7084
 	call objectUpdateSpeedZ_paramC		; $7086
-	jr z,_label_15_307	; $7089
+	jr z,+			; $7089
 	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $708b
 	ret nc			; $708e
-_label_15_307:
++
 	ld h,d			; $708f
-	ld l,$47		; $7090
+	ld l,Interaction.counter2		; $7090
 	ld (hl),$1e		; $7092
 	jp interactionIncState2		; $7094
+
+@@substate3:
 	call interactionDecCounter2		; $7097
 	ret nz			; $709a
+
 	ld a,$04		; $709b
-	ld ($cc6a),a		; $709d
+	ld (wLinkForceState),a		; $709d
 	xor a			; $70a0
-	ld ($cc6b),a		; $70a1
+	ld (wcc50),a		; $70a1
+
 	call interactionIncState2		; $70a4
-	ld a,($d00b)		; $70a7
+	ld a,(w1Link.yh)		; $70a7
 	sub $0e			; $70aa
-	ld l,$4b		; $70ac
+	ld l,Interaction.yh		; $70ac
 	ldi (hl),a		; $70ae
+
 	inc l			; $70af
-	ld a,($d00d)		; $70b0
+	ld a,(w1Link.xh)		; $70b0
 	sub $04			; $70b3
 	ldi (hl),a		; $70b5
+
+	; zh/speed
 	inc l			; $70b6
 	xor a			; $70b7
 	ldi (hl),a		; $70b8
 	ld (hl),a		; $70b9
-	ld b,$00		; $70ba
-	ld c,$71		; $70bc
+
+	ld b,>TX_0071		; $70ba
+	ld c,<TX_0071		; $70bc
 	call showText		; $70be
+
 	call getThisRoomFlags		; $70c1
 	set 5,(hl)		; $70c4
-	ld a,$06		; $70c6
+
+	ld a,MUS_ESSENCE		; $70c6
 	call playSound		; $70c8
+
 	ld c,$07		; $70cb
-	ld a,$07		; $70cd
+	ld a,TREASURE_ROD_OF_SEASONS		; $70cd
 	call giveTreasure		; $70cf
+
 	jp darkenRoom		; $70d2
+
+@@substate4:
 	call retIfTextIsActive		; $70d5
 	call interactionIncState2		; $70d8
-	ld hl,$7f6a		; $70db
+	ld hl,setCounter1To32		; $70db
 	jp interactionSetScript		; $70de
+
+@@substate5:
 	call interactionRunScript		; $70e1
 	ret nc			; $70e4
+
 	call interactionIncState2		; $70e5
-	ld l,$47		; $70e8
+	ld l,Interaction.counter2		; $70e8
 	ld (hl),$14		; $70ea
 	jp brightenRoom		; $70ec
-	ld a,($c4ab)		; $70ef
+
+@@substate6:
+	ld a,(wPaletteThread_mode)		; $70ef
 	or a			; $70f2
 	ret nz			; $70f3
+
 	call interactionDecCounter2		; $70f4
 	ret nz			; $70f7
 	ld a,$01		; $70f8
 	ld ($cceb),a		; $70fa
 	jp interactionDelete		; $70fd
+
+@rodOfSeasonsAura:
 	ld a,($cceb)		; $7100
 	or a			; $7103
 	jp nz,interactionDelete		; $7104
+
 	ld a,$00		; $7107
 	call objectGetRelatedObject1Var		; $7109
 	call objectTakePosition		; $710c
 	call interactionAnimate		; $710f
 	ld h,d			; $7112
-	ld l,$61		; $7113
+	ld l,Interaction.animParameter		; $7113
 	ld a,(hl)		; $7115
 	or a			; $7116
 	ret z			; $7117
 	ld (hl),$00		; $7118
-	ld l,$5a		; $711a
+	ld l,Interaction.visible		; $711a
 	ld a,$80		; $711c
 	xor (hl)		; $711e
 	ld (hl),a		; $711f
 	ret			; $7120
+
+dropSparkles:
 	ld h,d			; $7121
-	ld l,$7b		; $7122
+	ld l,Interaction.var3b		; $7122
 	dec (hl)		; $7124
 	ret nz			; $7125
-	ld l,$7b		; $7126
+
+	ld l,Interaction.var3b		; $7126
 	ld (hl),$10		; $7128
-	ld bc,$8401		; $712a
+	ldbc INTERACID_SPARKLE, $01		; $712a
 	jp objectCreateInteraction		; $712d
-	ld hl,$d008		; $7130
+
+
+forceLinksDirection:
+	ld hl,w1Link.direction		; $7130
 	ld (hl),a		; $7133
 	ld a,$80		; $7134
 	jp setLinkForceStateToState08_withParam		; $7136
-	ld bc,$715e		; $7139
+
+
+spawnRodOfSeasonsSparkles:
+	ld bc,@spawnCoordinates		; $7139
 	xor a			; $713c
-_label_15_308:
-	ldh (<hFF8B),a	; $713d
+-
+	ldh (<hFF8B),a		; $713d
 	call getFreeInteractionSlot		; $713f
 	ret nz			; $7142
-	ld (hl),$e6		; $7143
+
+	; spawn subid $01 (the sparkles for each season)
+	ld (hl),INTERACID_GET_ROD_OF_SEASONS		; $7143
 	inc l			; $7145
 	ld (hl),$01		; $7146
 	inc l			; $7148
-	ldh a,(<hFF8B)	; $7149
+
+	; var03 = 0 to 3
+	ldh a,(<hFF8B)		; $7149
 	ld (hl),a		; $714b
-	ld l,$4b		; $714c
+
+	; yx from table below
+	ld l,Interaction.yh		; $714c
 	ld a,(bc)		; $714e
 	ld (hl),a		; $714f
 	inc bc			; $7150
-	ld l,$4d		; $7151
+	ld l,Interaction.xh		; $7151
 	ld a,(bc)		; $7153
 	ld (hl),a		; $7154
+
 	inc bc			; $7155
-	ldh a,(<hFF8B)	; $7156
+	ldh a,(<hFF8B)		; $7156
 	inc a			; $7158
+
 	cp $04			; $7159
-	jr nz,_label_15_308	; $715b
+	jr nz,-			; $715b
 	ret			; $715d
-	ld a,b			; $715e
-	jr _label_15_309		; $715f
-	jr _label_15_310		; $7161
-	adc b			; $7163
-	ld a,b			; $7164
-	adc b			; $7165
+
+@spawnCoordinates:
+	.db $78 $18
+	.db $08 $18
+	.db $08 $88
+	.db $78 $88
+
 
 interactionCodee7:
 	ld e,$44		; $7166
 	ld a,(de)		; $7168
-_label_15_309:
 	rst_jumpTable			; $7169
 	ld l,(hl)		; $716a
-_label_15_310:
 	ld (hl),c		; $716b
 	adc c			; $716c
 	ld (hl),c		; $716d
