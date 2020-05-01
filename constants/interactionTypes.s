@@ -1907,23 +1907,28 @@
 
 ;;
 ; The subrosian trying to blow up the volcano leading to d8
-.define INTERACID_SUBROSIAN_AT_D8 $55
+.define INTERACID_SUBROSIAN_AT_D8	$55
+
+;;
+; @subid_00{grabbable treasure}
+; @subid_01{unblocking the Temple of Autumn}
+.define INTERACID_BOMB_FLOWER		$6f
 
 ;;
 ; @subid_00{Rooster on top of d4}
 ; @subid_01{Rooster that leads to spring banana}
-.define INTERACID_FLYING_ROOSTER $8c
+.define INTERACID_FLYING_ROOSTER	$8c
 
 ;;
-.define INTERACID_OLD_MAN_WITH_JEWEL $8f
+.define INTERACID_OLD_MAN_WITH_JEWEL	$8f
 
 ;;
 ; @subid_00{Tarm ruins entrance script (spawn jewels)}
 ; @subid_01-07{?}
-.define INTERACID_JEWEL_HELPER $90
+.define INTERACID_JEWEL_HELPER		$90
 
 ;;
 ; Jewels in place in tarm ruins (visual only)
-.define INTERACID_JEWEL $92
+.define INTERACID_JEWEL			$92
 
 .endif

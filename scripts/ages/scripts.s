@@ -436,6 +436,31 @@ doorController_openWhenTorchesLit_left_1Torch:
 ; INTERACID_SHOPKEEPER
 ; ==============================================================================
 
+.ifdef ROM_SEASONS
+shopkeeperScript_blockLinkAccess:
+	setspeed SPEED_200
+	setdisabledobjectsto11
+	playsound SND_CLINK
+	movedown $10
+	setangleandanimation $08
+	jumptable_objectbyte Interaction.var3e
+	.dw @noMembersCard
+	.dw @membersCard
+
+@membersCard:
+	showtextlowindex <TX_0e0c
+	writeobjectbyte $7d, $01
+	jump2byte +
+
+@noMembersCard:
+	showtextlowindex <TX_0e01
++
+	moveup $10
+	setangleandanimation $08
+	enableallobjects
+	scriptend
+.endif
+
 shopkeeperScript_lynnaShopWelcome:
 	showtextlowindex <TX_0e00
 	scriptend
@@ -637,6 +662,7 @@ shopkeeperSubid1Script_stopLink:
 	enableallobjects
 	scriptend
 
+.ifdef ROM_AGES
 ; Lynna city shopkeeper prevents Link from stealing something
 shopkeeperSubid0Script_stopLink:
 	setspeed SPEED_200
@@ -649,6 +675,7 @@ shopkeeperSubid0Script_stopLink:
 	setangleandanimation $18
 	enableallobjects
 	scriptend
+.endif
 
 
 ; Prompt to play the chest-choosing minigame
@@ -695,7 +722,7 @@ shopkeeperChestGameScript:
 
 	setangleandanimation $10
 	writeobjectbyte Interaction.var3c, $00 ; Initialize to round 0
-	showtextlowindex <TX_1e10
+	showtextlowindex <TX_0e10
 
 	enableallobjects
 	ormemory wInShop, $80
@@ -796,7 +823,7 @@ _shopkeeperReturnToDeskAfterChestGame:
 	retscript
 
 
-; Unused?
+; Seasons - Shop not open until Link gets sword
 script49b5:
 	showtextlowindex <TX_0e28
 	scriptend

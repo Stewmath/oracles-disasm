@@ -506,7 +506,7 @@ wBoughtShopItems1: ; $c642/$c63f
 ; Bit 7: Set the first time you talk to the shopkeeper for the chest game.
 	db
 
-wBoughtShopItems2: ; $c643
+wBoughtShopItems2: ; $c643/$c640
 ; Bit 0: Bought gasha seed from advance shop.
 ; Bit 1: Bought gba ring from advance shop.
 ; Bit 2: Bought random ring from advance shop.

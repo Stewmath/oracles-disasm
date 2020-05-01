@@ -1201,11 +1201,14 @@ _interaction7f_subid00:
 	ld a,(wDungeonIndex)		; $45fc
 	dec a			; $45ff
 
+.ifdef ROM_AGES
 	; Override dungeon 6 past ($0b) with present ($05)
 	cp $0b			; $4600
 	jr nz,+			; $4602
 	ld a,$05		; $4604
 +
+.endif
+
 	; [var03] = index of oam data?
 	ld l,Interaction.var03		; $4606
 	ld (hl),a		; $4608
@@ -1237,6 +1240,7 @@ _interaction7f_subid00:
 ;   b1: palette (/ flags)
 ;   b2: which layout to use (2-tile or 4-tile)
 @essenceOamData:
+.ifdef ROM_AGES
 	.db $00 $01 $01
 	.db $04 $00 $02
 	.db $06 $03 $02
@@ -1245,6 +1249,16 @@ _interaction7f_subid00:
 	.db $0c $00 $02
 	.db $0e $01 $01
 	.db $12 $05 $01
+.else
+	.db $14 $00 $02
+	.db $10 $01 $02
+	.db $06 $05 $01
+	.db $0a $04 $02
+	.db $16 $05 $02
+	.db $0c $04 $01
+	.db $02 $02 $01
+	.db $00 $03 $02
+.endif
 
 
 ; State 1: waiting for Link to approach.
@@ -1453,6 +1467,7 @@ _interaction7f_subid00:
 ;   b2: wWarpDestPos
 ;   b3: wWarpTransition
 @essenceWarps:
+.ifdef ROM_AGES
 	.db $80, $8d, $26, TRANSITION_DEST_SET_RESPAWN
 	.db $81, $83, $25, TRANSITION_DEST_SET_RESPAWN
 	.db $80, $ba, $55, TRANSITION_DEST_SET_RESPAWN
@@ -1461,6 +1476,16 @@ _interaction7f_subid00:
 	.db $83, $0f, $16, TRANSITION_DEST_SET_RESPAWN
 	.db $82, $90, $45, TRANSITION_DEST_X_SHIFTED
 	.db $81, $5c, $15, TRANSITION_DEST_X_SHIFTED
+.else
+	.db $80 $96 $44 TRANSITION_DEST_SET_RESPAWN
+	.db $80 $8d $24 TRANSITION_DEST_SET_RESPAWN
+	.db $80 $60 $25 TRANSITION_DEST_SET_RESPAWN
+	.db $80 $1d $13 TRANSITION_DEST_SET_RESPAWN
+	.db $80 $8a $25 TRANSITION_DEST_SET_RESPAWN
+	.db $80 $00 $34 TRANSITION_DEST_SET_RESPAWN
+	.db $80 $d0 $34 TRANSITION_DEST_SET_RESPAWN
+	.db $81 $00 $33 TRANSITION_DEST_SET_RESPAWN
+.endif
 
 
 ;;
@@ -1480,6 +1505,17 @@ _interaction7f_subid01:
 	call objectGetTileAtPosition		; $477e
 	dec h			; $4781
 	ld (hl),$0f		; $4782
+
+.ifdef ROM_SEASONS
+	ld a,(wDungeonIndex)		; $4b8e
+	cp $06			; $4b91
+	jr nz,+			; $4b93
+	ld hl,$ce24		; $4b95
+	ld (hl),$05		; $4b98
+	inc l			; $4b9a
+	ld (hl),$0a		; $4b9b
++
+.endif
 
 	call interactionInitGraphics		; $4784
 	jp objectSetVisible83		; $4787

@@ -39,6 +39,7 @@
 .define TILEINDEX_BLUE_FLOOR		$9f
 .define TILEINDEX_OVERWORLD_LIT_TORCH	$a1 ; overworld only (might only be used in seasons?)
 .define TILEINDEX_OVERWORLD_ROCK	$c0 ; outdoors only
+.define TILEINDEX_DUG_HOLE		$e1 ; outdoors only
 
 .ifdef ROM_AGES
 	.define TILEINDEX_OVERWORLD_BUSH_1	$c5 ; Overworld only

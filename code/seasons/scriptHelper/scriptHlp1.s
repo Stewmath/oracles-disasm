@@ -321,7 +321,7 @@ interactionLoadTreasureData:
 	ret			; $4555
 
 
-seasonsFunc_15_4677:
+createBossDeathExplosion:
 	call getFreePartSlot		; $4677
 	ret nz			; $467a
 	ld (hl),PARTID_BOSS_DEATH_EXPLOSION		; $467b
@@ -862,12 +862,12 @@ _label_15_073:
 	inc b			; $48ff
 	rst $30			; $4900
 
-seasonsFunc_15_4901:
+essence_createEnergySwirl:
 	call objectGetPosition		; $4901
 	ld a,$ff		; $4904
 	jp createEnergySwirlGoingIn		; $4906
 
-seasonsFunc_15_4909:
+essence_stopEnergySwirl:
 	ld a,$01		; $4909
 	ld ($cd2d),a		; $490b
 	ret			; $490e

@@ -669,37 +669,49 @@ _label_10_041:
 	ld (hl),a		; $4520
 	jp objectSetVisible82		; $4521
 
+
+; ==============================================================================
+; PARTID_BOSS_DEATH_EXPLOSION
+; ==============================================================================
 partCode04:
-	ld e,$c4		; $4524
-	ld a,(de)		; $4526
-	or a			; $4527
-	jr z,_label_10_043	; $4528
-	ld e,$e1		; $452a
-	ld a,(de)		; $452c
-	inc a			; $452d
-	jp nz,partAnimate		; $452e
-	call decNumEnemies		; $4531
-	jr nz,_label_10_042	; $4534
-	ld e,$c2		; $4536
-	ld a,(de)		; $4538
-	or a			; $4539
-	jr z,_label_10_042	; $453a
-	xor a			; $453c
-	call decideItemDrop		; $453d
-	jr z,_label_10_042	; $4540
-	ld b,$01		; $4542
-	jp objectReplaceWithID		; $4544
-_label_10_042:
-	jp partDelete		; $4547
-_label_10_043:
-	inc a			; $454a
-	ld (de),a		; $454b
-	ld e,$c2		; $454c
-	ld a,(de)		; $454e
-	or a			; $454f
-	ld a,$79		; $4550
-	call nz,playSound		; $4552
-	jp objectSetVisible80		; $4555
+	ld e,Part.state		; $44cc
+	ld a,(de)		; $44ce
+	or a			; $44cf
+	jr z,@state0	; $44d0
+
+@state1:
+	ld e,Part.animParameter		; $44d2
+	ld a,(de)		; $44d4
+	inc a			; $44d5
+	jp nz,partAnimate		; $44d6
+
+	call decNumEnemies		; $44d9
+	jr nz,@delete	; $44dc
+
+	ld e,Part.subid		; $44de
+	ld a,(de)		; $44e0
+	or a			; $44e1
+	jr z,@delete	; $44e2
+
+	xor a			; $44e4
+	call decideItemDrop		; $44e5
+	jr z,@delete	; $44e8
+	ld b,PARTID_ITEM_DROP		; $44ea
+	jp objectReplaceWithID		; $44ec
+
+@delete:
+	jp partDelete		; $44ef
+
+@state0:
+	inc a			; $44f2
+	ld (de),a ; [state] = 1
+	ld e,Part.subid		; $44f4
+	ld a,(de)		; $44f6
+	or a			; $44f7
+	ld a,SND_BIG_EXPLOSION		; $44f8
+	call nz,playSound		; $44fa
+	jp objectSetVisible80		; $44fd
+
 
 partCode05:
 	jr z,_label_10_044	; $4558

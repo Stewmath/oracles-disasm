@@ -58,7 +58,7 @@ _shopkeeperState0:
 	ld (de),a		; $4039
 
 	ld a,$80		; $403a
-	ld ($cca2),a		; $403c
+	ld (wcca2),a		; $403c
 
 	call interactionInitGraphics		; $403f
 
@@ -80,11 +80,21 @@ _shopkeeperState0:
 	jr nz,++		; $405b
 	set 7,(hl)		; $405d
 ++
+.ifdef ROM_AGES
 	ld e,Interaction.subid		; $405f
 	ld a,(de)		; $4061
 	or a			; $4062
 	ld a,$03		; $4063
 	call z,interactionSetAnimation		; $4065
+.else
+	ld a,$53		; $47f9
+	call checkTreasureObtained		; $47fb
+	jr nc,+			; $47fe
+	ld e,$7e		; $4800
+	ld a,$01		; $4802
+	ld (de),a		; $4804
++
+.endif
 
 	ld a,>TX_0e00		; $4068
 	call interactionSetHighTextIndex		; $406a
@@ -101,12 +111,40 @@ _shopkeeperState1:
 	or a			; $4078
 	jr nz,@pressedA	; $4079
 
+.ifdef ROM_SEASONS
+	ld e,Interaction.subid		; $4818
+	ld a,(de)		; $481a
+	or a			; $481b
+	jr nz,+			; $481c
+	ld e,Interaction.var3d		; $481e
+	ld a,(de)		; $4820
+	or a			; $4821
+	jr nz,+			; $4822
+	ld bc,$3008		; $4824
+	call objectSetCollideRadii		; $4827
+	call objectCheckCollidedWithLink		; $482a
+	jr nc,+			; $482d
+	ld e,Interaction.state		; $482f
+	ld a,$03		; $4831
+	ld (de),a		; $4833
+	ret			; $4834
++
+.endif
+
 	; Check Link's position to see if he's trying to steal something
 	ld e,Interaction.subid		; $407b
 	ld a,(de)		; $407d
 	or a			; $407e
 	ld hl,w1Link.xh		; $407f
 	jr nz,+			; $4082
+
+.ifdef ROM_SEASONS
+	ld e,Interaction.xh		; $483e
+	ld a,(de)		; $4840
+	cp (hl)			; $4841
+	jr nc,@goToState6	; $4842
+.endif
+
 +
 	ld l,<w1Link.yh		; $4084
 	ld e,Interaction.subid		; $4086
@@ -165,6 +203,17 @@ _shopkeeperState1:
 	ld (de),a		; $40d6
 	ret			; $40d7
 
+.ifdef ROM_SEASONS
+@goToState6:
+	ld a,$06		; $4898
+	call objectSetCollideRadius		; $489a
+	ld l,Interaction.state		; $489d
+	ld (hl),$06		; $489f
+	ld l,Interaction.var3d		; $48a1
+	ld (hl),d		; $48a3
+	ret			; $48a4
+.endif
+
 
 ; State 6: ?
 _shopkeeperState6:
@@ -200,6 +249,13 @@ _shopkeeperState2:
 	ld a,(de)		; $40fd
 	and $80			; $40fe
 	jr nz,_shopkeeperPromptChestGame	; $4100
+
+.ifdef ROM_SEASONS
+	ld a,TREASURE_SWORD		; $48cf
+	call checkTreasureObtained		; $48d1
+	ld hl,shopkeeperScript_notOpenYet		; $48d4
+	jr nc,_shopkeeperLoadScript	; $48d7
+.endif
 
 	ld a,(wLinkGrabState)		; $4102
 	or a			; $4105
@@ -250,9 +306,15 @@ _shopkeeperPromptChestGame:
 	jr _shopkeeperLoadScript		; $4146
 
 
-; State 3: ?
-; State 4: Running a script (prompting whether to buy, playing chest game, etc...)
+; State 3: Seasons - block Link access
 _shopkeeperState3:
+.ifdef ROM_SEASONS
+	ld hl,shopkeeperScript_blockLinkAccess		; $491f
+	jp _shopkeeperLoadScript		; $4922
+.endif
+
+
+; State 4: Running a script (prompting whether to buy, playing chest game, etc...)
 _shopkeeperState4:
 	ld e,Interaction.subid		; $4148
 	ld a,(de)		; $414a
@@ -320,6 +382,7 @@ _shopkeeperGotoState1:
 	ld a,$01		; $4193
 	ld (de),a		; $4195
 
+.ifdef ROM_AGES
 	ld bc,$0614		; $4196
 	call objectSetCollideRadii		; $4199
 
@@ -328,6 +391,22 @@ _shopkeeperGotoState1:
 	or a			; $419f
 	ld a,$03		; $41a0
 	jr z,+			; $41a2
+.else
+	ld hl,w1Link.xh		; $4973
+	ld e,Interaction.xh		; $4976
+	ld a,(de)		; $4978
+	cp (hl)			; $4979
+	jr nc,+			; $497a
+
+	ld bc,$0614		; $497c
+	call objectSetCollideRadii		; $497f
+
+	jr ++			; $4982
++
+	ld a,$06		; $4984
+	call objectSetCollideRadius		; $4986
+++
+.endif
 	ld a,$01		; $41a4
 +
 	call interactionSetAnimation		; $41a6
@@ -359,7 +438,7 @@ _shopkeeperState5:
 
 	call _shopkeeperCloseOpenedChest		; $41c5
 	xor a			; $41c8
-	ld ($cca2),a		; $41c9
+	ld (wcca2),a		; $41c9
 	ld e,Interaction.var3f		; $41cc
 	ld (de),a		; $41ce
 	ret			; $41cf
@@ -377,7 +456,7 @@ _shopkeeperState5:
 	jp _shopkeeperLoadScript		; $41db
 ++
 	; Check if Link's opened a chest
-	ld a,($cca2)		; $41de
+	ld a,(wcca2)		; $41de
 	or a			; $41e1
 	ret z			; $41e2
 
@@ -387,7 +466,7 @@ _shopkeeperState5:
 
 	ld a,TILEINDEX_CHEST		; $41e7
 	call findTileInRoom		; $41e9
-	ld a,($cca2)		; $41ec
+	ld a,(wcca2)		; $41ec
 	sub l			; $41ef
 	rlca			; $41f0
 	xor $01			; $41f1
@@ -478,7 +557,7 @@ _shopkeeperGetItemPrice:
 ;;
 ; @addr{4263}
 _shopkeeperCloseOpenedChest:
-	ld a,($cca2)		; $4263
+	ld a,(wcca2)		; $4263
 	bit 7,a			; $4266
 	ld c,a			; $4268
 	ld a,TILEINDEX_CHEST		; $4269
@@ -580,7 +659,11 @@ _shopkeeperTurnToFaceLink:
 
 
 _shopkeeperTheftPreventionScriptTable:
+.ifdef ROM_AGES
 	.dw shopkeeperSubid0Script_stopLink
+.else
+	.dw shopkeeperSubid2Script_stopLink
+.endif
 	.dw shopkeeperSubid1Script_stopLink
 	.dw shopkeeperSubid2Script_stopLink
 
