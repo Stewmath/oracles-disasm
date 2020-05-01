@@ -2217,7 +2217,38 @@ puddleAnimationFrames:
 .include "build/data/partOamData.s"
 
 
-.include "code/ages/bank15.s"
+.BANK $15 SLOT 1
+.ORG 0
+
+.include "code/ages/scriptHelper/scriptHlp1.s"
+
+ m_section_free "Object_Pointers" namespace "objectData"
+
+;;
+; @addr{4315}
+getObjectDataAddress:
+	ld a,(wActiveGroup)		; $4315
+	ld hl,objectDataGroupTable
+	rst_addDoubleIndex			; $431b
+	ldi a,(hl)		; $431c
+	ld h,(hl)		; $431d
+	ld l,a			; $431e
+	ld a,(wActiveRoom)		; $431f
+	ld e,a			; $4322
+	ld d,$00		; $4323
+	add hl,de		; $4325
+	add hl,de		; $4326
+	ldi a,(hl)		; $4327
+	ld d,(hl)		; $4328
+	ld e,a			; $4329
+	ret			; $432a
+
+
+	.include "objects/ages/pointers.s"
+
+.ENDS
+
+.include "code/ages/scriptHelper/scriptHlp2.s"
 
 
 .BANK $16 SLOT 1
