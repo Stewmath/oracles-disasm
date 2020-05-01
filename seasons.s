@@ -1188,10 +1188,10 @@ moblinKeepRooms:
 
  m_section_force "Bank_5" NAMESPACE bank5
 
-.include "code/bank5.s"
-.include "build/data/tileTypeMappings.s"
-.include "build/data/cliffTilesTable.s"
-.include "code/seasons/subrosiaDanceLink.s"
+	.include "code/bank5.s"
+	.include "build/data/tileTypeMappings.s"
+	.include "build/data/cliffTilesTable.s"
+	.include "code/seasons/subrosiaDanceLink.s"
 
 .ends
 
@@ -1291,743 +1291,8 @@ _linkItemAnimationTable:
 	.db $e6  LINK_ANIM_MODE_22	; ITEMID_FOOLS_ORE
 	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_1f
 
-;;
-; Update a minecart object.
-; (Called from bank5._specialObjectCode_minecart)
-; @addr{563e}
-specialObjectCode_minecart:
-	call _minecartCreateCollisionItem		; $563e
-	ld e,SpecialObject.state		; $5641
-	ld a,(de)		; $5643
-	rst_jumpTable			; $5644
-
-	.dw @state0
-	.dw @state1
-
-@state0:
-	; Set state to $01
-	ld a,$01		; $5649
-	ld (de),a		; $564b
-
-	; Setup palette, etc
-	callab bank5.specialObjectSetOamVariables		; $564c
-
-	ld h,d			; $5654
-	ld l,SpecialObject.speed		; $5655
-	ld (hl),SPEED_100		; $5657
-
-	ld l,SpecialObject.direction		; $5659
-	ld a,(hl)		; $565b
-	call specialObjectSetAnimation		; $565c
-
-	ld a,d			; $565f
-	ld (wLinkObjectIndex),a		; $5660
-	call setCameraFocusedObjectToLink		; $5663
-
-	; Resets link's animation if he's using an item, maybe?
-	call clearVar3fForParentItems		; $5666
-
-	call clearPegasusSeedCounter		; $5669
-
-	ld hl,w1Link.z		; $566c
-	xor a			; $566f
-	ldi (hl),a		; $5670
-	ldi (hl),a		; $5671
-
-	jp objectSetVisiblec2		; $5672
-
-@state1:
-	ld a,(wPaletteThread_mode)		; $5675
-	or a			; $5678
-	ret nz			; $5679
-
-	call retIfTextIsActive		; $567a
-
-	ld a,(wScrollMode)		; $567d
-	and $0e			; $5680
-	ret nz			; $5682
-
-	ld a,(wDisabledObjects)		; $5683
-	and $81			; $5686
-	ret nz			; $5688
-
-	; Disable link's collisions?
-	ld hl,w1Link.collisionType		; $5689
-	res 7,(hl)		; $568c
-
-	xor a			; $568e
-	ld l,<w1Link.knockbackCounter		; $568f
-	ldi (hl),a		; $5691
-
-	; Check if on the center of the tile (y)
-	ld h,d			; $5692
-	ld l,SpecialObject.yh		; $5693
-	ldi a,(hl)		; $5695
-	ld b,a			; $5696
-	and $0f			; $5697
-	cp $08			; $5699
-	jr nz,++		; $569b
-
-	; Check if on the center of the tile (x)
-	inc l			; $569d
-	ldi a,(hl)		; $569e
-	ld c,a			; $569f
-	and $0f			; $56a0
-	cp $08			; $56a2
-	jr nz,++		; $56a4
-
-	; Minecart is centered on the tile
-
-	call _minecartCheckCollisions		; $56a6
-	jr c,@minecartStopped	; $56a9
-
-	; Compare direction to angle, ensure they're synchronized
-	ld h,d			; $56ab
-	ld l,SpecialObject.direction		; $56ac
-	ldi a,(hl)		; $56ae
-	swap a			; $56af
-	rrca			; $56b1
-	cp (hl)			; $56b2
-	jr z,++			; $56b3
-
-	ldd (hl),a		; $56b5
-	ld a,(hl)		; $56b6
-	call specialObjectSetAnimation		; $56b7
-
-++
-	ld h,d			; $56ba
-	ld l,SpecialObject.var35		; $56bb
-	dec (hl)		; $56bd
-	bit 7,(hl)		; $56be
-	jr z,+			; $56c0
-
-	ld (hl),$1a		; $56c2
-	ld a,SND_MINECART		; $56c4
-	call playSound		; $56c6
-+
-	call objectApplySpeed		; $56c9
-	jp specialObjectAnimate		; $56cc
-
-@minecartStopped:
-	; Go to state $02.
-	; State $02 doesn't exist, so, good thing this is getting deleted anyway.
-	ld e,SpecialObject.state		; $56cf
-	ld a,$02		; $56d1
-	ld (de),a		; $56d3
-
-	call clearVar3fForParentItems		; $56d4
-
-	; Force link to jump, lock his direction?
-	ld a,$81		; $56d7
-	ld (wLinkInAir),a		; $56d9
-
-	; Copy / initialize various link variables
-
-	ld hl,w1Link.angle		; $56dc
-	ld e,SpecialObject.angle		; $56df
-	ld a,(de)		; $56e1
-	ld (hl),a		; $56e2
-
-	ld l,<w1Link.yh		; $56e3
-	ld a,(hl)		; $56e5
-	add $06			; $56e6
-	ld (hl),a		; $56e8
-
-	ld l,<w1Link.zh		; $56e9
-	ld (hl),$fa		; $56eb
-
-	ld l,<w1Link.speed		; $56ed
-	ld (hl),SPEED_80		; $56ef
-
-	ld l,<w1Link.speedZ		; $56f1
-	ld (hl),$40		; $56f3
-	inc l			; $56f5
-	ld (hl),$fe		; $56f6
-
-	; Re-enable terrain effects (shadow)
-	ld l,<w1Link.visible		; $56f8
-	set 6,(hl)		; $56fa
-
-	; Change main object back to w1Link ($d000) instead of this object ($d100)
-	ld a,>w1Link		; $56fc
-	ld (wLinkObjectIndex),a		; $56fe
-	call setCameraFocusedObjectToLink		; $5701
-
-	; Create the "interaction" minecart to replace the "special object" minecart
-	ld b,INTERACID_MINECART		; $5704
-	call objectCreateInteractionWithSubid00		; $5706
-	jp objectDelete_useActiveObjectType		; $5709
-
-;;
-; Check for collisions, check the track for changing direction.
-; @param[out] cflag Set if the minecart should stop (reached a platform)
-; @addr{570c}
-_minecartCheckCollisions:
-	; Get minecart position in c, tile it's on in e
-	call getTileAtPosition		; $570c
-	ld e,a			; $570f
-	ld c,l			; $5710
-
-	; Try to find the relevant data in @trackData based on the tile the minecart is
-	; currently on.
-	ld h,d			; $5711
-	ld l,SpecialObject.direction		; $5712
-	ld a,(hl)		; $5714
-	swap a			; $5715
-	ld hl,@trackData		; $5717
-	rst_addAToHl			; $571a
---
-	ldi a,(hl)		; $571b
-	or a			; $571c
-	jr z,@noTrackFound		; $571d
-
-	cp e			; $571f
-	jr z,++			; $5720
-
-	ld a,$04		; $5722
-	rst_addAToHl			; $5724
-	jr --		; $5725
-
-	; Found a matching tile in @trackData
-++
-	; Add value to c to get the position of the next tile the minecart will move to.
-	ldi a,(hl)		; $5727
-	add c			; $5728
-	ld c,a			; $5729
-	ldh (<hFF8B),a	; $572a
-
-	; Check for the edge of the room
-	ld b,>wRoomCollisions		; $572c
-	ld a,(bc)		; $572e
-	cp $ff			; $572f
-	ret z			; $5731
-
-	; Check for a platform to disembark at
-	ld b,>wRoomLayout		; $5732
-	ld a,(bc)		; $5734
-	cp TILEINDEX_MINECART_PLATFORM			; $5735
-	jr z,@stopMinecart	; $5737
-
-	; c will now store the value of the next tile.
-	ld c,a			; $5739
-
-	; Check the next 3 bytes of @trackData to see if the next track tile is acceptable
-	ld b,$03		; $573a
---
-	ldi a,(hl)		; $573c
-	cp c			; $573d
-	jr z,@updateDirection	; $573e
-	dec b			; $5740
-	jr nz,--		; $5741
-	jr @noTrackFound		; $5743
-
-@stopMinecart:
-	; Set carry flag to give the signal that the ride is over.
-	scf			; $5745
-	ret			; $5746
-
-@updateDirection:
-	ld a,e			; $5747
-	sub TILEINDEX_TRACK_TL		; $5748
-	cp TILEINDEX_MINECART_PLATFORM - TILEINDEX_TRACK_TL	; $574a
-	jr c,++			; $574c
-
-@noTrackFound:
-	; Index $06 will jump to @notTrack.
-	ld a,$06		; $574e
-++
-	ld e,SpecialObject.direction		; $5750
-	rst_jumpTable			; $5752
-.dw @trackTL
-.dw @trackBR
-.dw @trackBL
-.dw @trackTR
-.dw @trackHorizontal
-.dw @trackVertical
-.dw @notTrack
-
-@trackTL:
-@trackBR:
-	ld a,(de)		; $5761
-	xor $01			; $5762
-	ld (de),a		; $5764
-	ret			; $5765
-
-@trackBL:
-@trackTR:
-	ld a,(de)		; $5766
-	xor $03			; $5767
-	ld (de),a		; $5769
-	ret			; $576a
-
-@trackHorizontal:
-	ld a,(de)		; $576b
-	and $02			; $576c
-	or $01			; $576e
-	ld (de),a		; $5770
-	ret			; $5771
-
-@trackVertical:
-	ld a,(de)		; $5772
-	and $02			; $5773
-	ld (de),a		; $5775
-	ret			; $5776
-
-@notTrack:
-	call @checkMinecartDoor		; $5777
-	jr nc,+			; $577a
-
-	; Next tile is a minecart door, keep going
-	xor a			; $577c
-	ret			; $577d
-+
-	; Reverse direction
-	ld a,(de)		; $577e
-	xor $02			; $577f
-	ld (de),a		; $5781
-	ret			; $5782
-
-; b0: Tile to check for ($00 to end list)
-; b1: Value to add to position (where the next tile is)
-; b2-b4: Other tiles that are allowed to link to the current tile
-; @addr{5783}
-@trackData:
-	; DIR_UP
-	.db TILEINDEX_TRACK_VERTICAL $f0 TILEINDEX_TRACK_VERTICAL   TILEINDEX_TRACK_TL TILEINDEX_TRACK_TR
-	.db TILEINDEX_TRACK_TL       $01 TILEINDEX_TRACK_HORIZONTAL TILEINDEX_TRACK_BR TILEINDEX_TRACK_TR
-	.db TILEINDEX_TRACK_TR       $ff TILEINDEX_TRACK_HORIZONTAL TILEINDEX_TRACK_BL TILEINDEX_TRACK_TL
-	.db $00
-
-	; DIR_RIGHT
-	.db TILEINDEX_TRACK_HORIZONTAL $01 TILEINDEX_TRACK_HORIZONTAL TILEINDEX_TRACK_BR TILEINDEX_TRACK_TR
-	.db TILEINDEX_TRACK_BR         $f0 TILEINDEX_TRACK_VERTICAL   TILEINDEX_TRACK_TL TILEINDEX_TRACK_TR
-	.db TILEINDEX_TRACK_TR         $10 TILEINDEX_TRACK_VERTICAL   TILEINDEX_TRACK_BL TILEINDEX_TRACK_BR
-	.db $00
-
-	; DIR_DOWN
-	.db TILEINDEX_TRACK_VERTICAL $10 TILEINDEX_TRACK_VERTICAL   TILEINDEX_TRACK_BR TILEINDEX_TRACK_BL
-	.db TILEINDEX_TRACK_BR       $ff TILEINDEX_TRACK_HORIZONTAL TILEINDEX_TRACK_BL TILEINDEX_TRACK_TL
-	.db TILEINDEX_TRACK_BL       $01 TILEINDEX_TRACK_HORIZONTAL TILEINDEX_TRACK_BR TILEINDEX_TRACK_TR
-	.db $00
-
-	; DIR_LEFT
-	.db TILEINDEX_TRACK_HORIZONTAL $ff TILEINDEX_TRACK_HORIZONTAL TILEINDEX_TRACK_BL TILEINDEX_TRACK_TL
-	.db TILEINDEX_TRACK_BL         $f0 TILEINDEX_TRACK_VERTICAL   TILEINDEX_TRACK_TR TILEINDEX_TRACK_TL
-	.db TILEINDEX_TRACK_TL         $10 TILEINDEX_TRACK_VERTICAL   TILEINDEX_TRACK_BR TILEINDEX_TRACK_BL
-	.db $00
-
-;;
-; @param	c	Next tile
-; @param[out]	cflag	Set if the next tile is a minecart door that will open
-; @addr{57c3}
-@checkMinecartDoor:
-	; Check if the next tile is a minecart door
-	ld a,c			; $57c3
-	sub TILEINDEX_MINECART_DOOR_UP			; $57c4
-	cp $04			; $57c6
-	ret nc			; $57c8
-
-	; Calculate the angle for the interaction to be created (?)
-	add $0c			; $57c9
-	add a			; $57cb
-	ld b,a			; $57cc
-
-	call getFreeInteractionSlot		; $57cd
-	ret nz			; $57d0
-
-	ld (hl),INTERACID_DOOR_CONTROLLER		; $57d1
-
-	ld l,Interaction.angle		; $57d3
-	ld (hl),b		; $57d5
-
-	; Set position (this interaction stuffs both X and Y in the yh variable)
-	ld l,Interaction.yh		; $57d6
-	ldh a,(<hFF8B)	; $57d8
-	ld (hl),a		; $57da
-
-	scf			; $57db
-	ret			; $57dc
-
-;;
-; Creates an invisible item object which stays with the minecart to give it collision with enemies
-; @addr{57dd}
-_minecartCreateCollisionItem:
-	; Check if the "item" has been created already
-	ld e,SpecialObject.var36		; $57dd
-	ld a,(de)		; $57df
-	or a			; $57e0
-	ret nz			; $57e1
-
-	call getFreeItemSlot		; $57e2
-	ret nz			; $57e5
-
-	; Mark it as created
-	ld e,SpecialObject.var36		; $57e6
-	ld a,$01		; $57e8
-	ld (de),a		; $57ea
-
-	; Set Item.enabled
-	ldi (hl),a		; $57eb
-
-	; Set Item.id
-	ld (hl),ITEMID_MINECART_COLLISION		; $57ec
-	ret			; $57ee
-
-;;
-; @addr{57ef}
-specialObjectCode_raft:
-.ifdef ROM_AGES
-	ld a,d			; $57ef
-	ld (wLinkRidingObject),a		; $57f0
-	ld e,Item.state		; $57f3
-	ld a,(de)		; $57f5
-	rst_jumpTable			; $57f6
-	.dw @state0
-	.dw @state1
-	.dw @state2
-	.dw @state3
-
-@state0:
-	callab bank5.specialObjectSetOamVariables		; $57ff
-	xor a			; $5807
-	call specialObjectSetAnimation		; $5808
-	call itemIncState		; $580b
-
-	ld l,SpecialObject.collisionType		; $580e
-	ld a,$80|ITEMCOLLISION_LINK		; $5810
-	ldi (hl),a		; $5812
-
-	; collisionRadiusY/X
-	inc l			; $5813
-	ld a,$06		; $5814
-	ldi (hl),a		; $5816
-	ldi (hl),a		; $5817
-
-	ld l,SpecialObject.counter1		; $5818
-	ld (hl),$0c		; $581a
-
-	ld a,d			; $581c
-	ld (wLinkObjectIndex),a		; $581d
-	call setCameraFocusedObjectToLink		; $5820
-	jp @saveRaftPosition		; $5823
-
-
-; State 1: riding the raft
-@state1:
-	ld a,(wPaletteThread_mode)		; $5826
-	or a			; $5829
-	ret nz			; $582a
-	call retIfTextIsActive		; $582b
-	ld a,(wScrollMode)		; $582e
-	and $0e			; $5831
-	ret nz			; $5833
-	ld a,(wDisabledObjects)		; $5834
-	and $81			; $5837
-	ret nz			; $5839
-
-	ld a,(wLinkForceState)		; $583a
-	cp LINK_STATE_RESPAWNING			; $583d
-	jr z,@respawning			; $583f
-	ld a,(w1Link.state)		; $5841
-	cp LINK_STATE_RESPAWNING			; $5844
-	jr nz,++		; $5846
-
-@respawning:
-	ld hl,wLinkLocalRespawnY		; $5848
-	ld e,SpecialObject.yh		; $584b
-	ldi a,(hl)		; $584d
-	ld (de),a		; $584e
-	ld e,SpecialObject.xh		; $584f
-	ldi a,(hl)		; $5851
-	ld (de),a		; $5852
-	jp objectSetInvisible		; $5853
-
-++
-	; Update direction; if changed, re-initialize animation
-	call updateCompanionDirectionFromAngle		; $5856
-	jr c,+			; $5859
-	call specialObjectAnimate		; $585b
-	jr ++			; $585e
-+
-	call specialObjectSetAnimation		; $5860
-++
-	call @raftCalculateAdjacentWallsBitset		; $5863
-	call @transferKnockbackToLink		; $5866
-	ld hl,w1Link.knockbackCounter		; $5869
-	ld a,(hl)		; $586c
-	or a			; $586d
-	jr z,@updateMovement	; $586e
-
-	; Experiencing knockback; decrement counter, apply knockback speed
-	dec (hl)		; $5870
-	dec l			; $5871
-	ld c,(hl)		; $5872
-	ld b,SPEED_100		; $5873
-	callab bank5.specialObjectUpdatePositionGivenVelocity		; $5875
-
-	ld a,$88		; $587d
-	ld (wcc92),a		; $587f
-	jr @notDismounting		; $5882
-
-@updateMovement:
-	ld e,SpecialObject.speed		; $5884
-	ld a,SPEED_e0		; $5886
-	ld (de),a		; $5888
-
-	ld e,SpecialObject.angle		; $5889
-	ld a,(wLinkAngle)		; $588b
-	ld (de),a		; $588e
-	bit 7,a			; $588f
-	jr nz,@notDismounting	; $5891
-	ld a,(wLinkImmobilized)		; $5893
-	or a			; $5896
-	jr nz,@notDismounting	; $5897
-
-	callab bank5.specialObjectUpdatePosition	; $5899
-	ld a,c			; $58a1
-	or a			; $58a2
-	jr z,@positionUnchanged	; $58a3
-
-	ld a,$08		; $58a5
-	ld (wcc92),a		; $58a7
-
-
-	; If not dismounting this frame, reset 'dismounting angle' (var3e) and
-	; 'dismounting counter' (var3f).
-@notDismounting:
-	ld h,d			; $58aa
-	ld l,SpecialObject.var3e		; $58ab
-	ld a,$ff		; $58ad
-	ldi (hl),a		; $58af
-
-	; [var3f] = $04
-	ld (hl),$04		; $58b0
-	ret			; $58b2
-
-
-	; If position is unchanged, check whether to dismount
-@positionUnchanged:
-	; Return if "dismount angle" changed from before
-	ld h,d			; $58b3
-	ld e,SpecialObject.angle		; $58b4
-	ld a,(de)		; $58b6
-	ld l,SpecialObject.var3e		; $58b7
-	cp (hl)			; $58b9
-	ldi (hl),a		; $58ba
-	ret nz			; $58bb
-
-	; [var3f]--
-	dec (hl)		; $58bc
-	ret nz			; $58bd
-
-	; Get angle from var3e
-	dec e			; $58be
-	ld a,(de)		; $58bf
-	ld hl,@dismountTileOffsets		; $58c0
-	rst_addDoubleIndex			; $58c3
-
-	; Get Y/X offset from this object in 'bc'
-	ldi a,(hl)		; $58c4
-	ld c,(hl)		; $58c5
-	ld h,d			; $58c6
-	ld l,SpecialObject.yh		; $58c7
-	add (hl)		; $58c9
-	ld b,a			; $58ca
-	ld l,SpecialObject.xh		; $58cb
-	ld a,(hl)		; $58cd
-	add c			; $58ce
-	ld c,a			; $58cf
-
-	; If Link can walk on the adjacent tile, check whether to dismount
-	call getTileAtPosition		; $58d0
-	ld h,>wRoomCollisions		; $58d3
-	ld a,(hl)		; $58d5
-	or a			; $58d6
-	jr z,@checkDismount	; $58d7
-	cp SPECIALCOLLISION_STAIRS			; $58d9
-	jr nz,@notDismounting	; $58db
-
-@checkDismount:
-	callab bank5.calculateAdjacentWallsBitset		; $58dd
-	ldh a,(<hFF8B)	; $58e5
-	or a			; $58e7
-	jr nz,@notDismounting	; $58e8
-
-	; Disable menu, force Link to walk for 14 frames
-	inc a			; $58ea
-	ld (wMenuDisabled),a		; $58eb
-	ld a,LINK_STATE_FORCE_MOVEMENT		; $58ee
-	ld (wLinkForceState),a		; $58f0
-	ld a,14		; $58f3
-	ld (wLinkStateParameter),a		; $58f5
-
-	; Update angle; copy direction + angle to Link
-	call itemUpdateAngle		; $58f8
-	ld e,l			; $58fb
-	ld h,>w1Link		; $58fc
-	ld a,(de)		; $58fe
-	ldi (hl),a		; $58ff
-	inc e			; $5900
-	ld a,(de)		; $5901
-	ldi (hl),a		; $5902
-
-	; Link is no longer riding the raft, set object index to $d0
-	ld a,h			; $5903
-	ld (wLinkObjectIndex),a		; $5904
-
-	call setCameraFocusedObjectToLink		; $5907
-	call itemIncState		; $590a
-	jr @saveRaftPosition		; $590d
-
-
-; These are offsets from the raft's position at which to check whether the tile there can
-; be dismounted onto. (the only requirement is that it's non-solid.)
-@dismountTileOffsets:
-	.db $f7 $00 ; DIR_UP
-	.db $fd $08 ; DIR_RIGHT
-	.db $08 $00 ; DIR_DOWN
-	.db $fd $f7 ; DIR_LEFT
-
-
-; State 2: started dismounting
-@state2:
-	ld a,$80		; $5917
-	ld (wcc92),a		; $5919
-	call itemDecCounter1		; $591c
-	ret nz			; $591f
-
-	xor a			; $5920
-	ld (wMenuDisabled),a		; $5921
-	ld e,SpecialObject.enabled		; $5924
-	inc a			; $5926
-	ld (de),a		; $5927
-	call updateLinkLocalRespawnPosition		; $5928
-	call itemIncState		; $592b
-
-
-; State 3: replace self with raft interaction
-@state3:
-	ldbc INTERACID_RAFT, $02		; $592e
-	call objectCreateInteraction		; $5931
-	ret nz			; $5934
-	ld e,SpecialObject.direction		; $5935
-	ld a,(de)		; $5937
-	ld l,Interaction.direction		; $5938
-	ld (hl),a		; $593a
-	jp itemDelete		; $593b
-
-;;
-; @addr{593e}
-@saveRaftPosition:
-	ld bc,wLastAnimalMountPointY		; $593e
-	ld h,d			; $5941
-	ld l,SpecialObject.yh		; $5942
-	ldi a,(hl)		; $5944
-	ld (bc),a		; $5945
-	inc c			; $5946
-	inc l			; $5947
-	ld a,(hl)		; $5948
-	ld (bc),a		; $5949
-	jpab bank5.saveLinkLocalRespawnAndCompanionPosition		; $594a
-
-;;
-; Calculates the "adjacent walls bitset" for the raft specifically, treating everything as
-; solid except for water tiles.
-;
-; @addr{5952}
-@raftCalculateAdjacentWallsBitset:
-	ld a,$01		; $5952
-	ldh (<hFF8B),a	; $5954
-	ld hl,@@wallPositionOffsets		; $5956
---
-	ldi a,(hl)		; $5959
-	ld b,a			; $595a
-	ldi a,(hl)		; $595b
-	ld c,a			; $595c
-	push hl			; $595d
-	call objectGetRelativeTile		; $595e
-	or a			; $5961
-	jr z,+			; $5962
-	ld e,a			; $5964
-	ld hl,@@validTiles		; $5965
-	call findByteAtHl		; $5968
-	ccf			; $596b
-+
-	pop hl			; $596c
-	ldh a,(<hFF8B)	; $596d
-	rla			; $596f
-	ldh (<hFF8B),a	; $5970
-	jr nc,--		; $5972
-
-	ld e,SpecialObject.adjacentWallsBitset		; $5974
-	ld (de),a		; $5976
-	ret			; $5977
-
-; Offsets at which to check for solid walls (8 positions to check)
-@@wallPositionOffsets:
-	.db $fa $fb
-	.db $fa $04
-	.db $05 $fb
-	.db $05 $04
-	.db $fb $fa
-	.db $04 $fa
-	.db $fb $05
-	.db $04 $05
-
-
-; A list of tiles that the raft may cross.
-@@validTiles:
-	.db TILEINDEX_DEEP_WATER
-	.db TILEINDEX_CURRENT_UP
-	.db TILEINDEX_CURRENT_DOWN
-	.db TILEINDEX_CURRENT_LEFT
-	.db TILEINDEX_CURRENT_RIGHT
-	.db TILEINDEX_WATER
-	.db TILEINDEX_WHIRLPOOL
-	.db $00
-
-
-;;
-; @addr{5990}
-@transferKnockbackToLink:
-	; Check Link's invincibilityCounter and var2a
-	ld hl,w1Link.invincibilityCounter		; $5990
-	ldd a,(hl)		; $5993
-	or (hl)			; $5994
-	jr nz,@@end		; $5995
-
-	; Ret if raft's var2a is zero
-	ld e,l			; $5997
-	ld a,(de)		; $5998
-	or a			; $5999
-	ret z			; $599a
-
-	; Transfer raft's var2a, invincibilityCounter, knockbackCounter, knockbackAngle,
-	; and damageToApply to Link.
-	ldi (hl),a		; $599b
-	inc e			; $599c
-	ld a,(de)		; $599d
-	ldi (hl),a		; $599e
-	inc e			; $599f
-	ld a,(de)		; $59a0
-	ldi (hl),a		; $59a1
-	inc e			; $59a2
-	ld a,(de)		; $59a3
-	ldi (hl),a		; $59a4
-	ld e,SpecialObject.damageToApply		; $59a5
-	ld a,(de)		; $59a7
-	ld l,e			; $59a8
-	ld (hl),a		; $59a9
-
-@@end:
-	; Clear raft's invincibilityCounter and var2a
-	ld e,SpecialObject.var2a		; $59aa
-	xor a			; $59ac
-	ld (de),a		; $59ad
-	inc e			; $59ae
-	ld (de),a		; $59af
-	ret			; $59b0
-.endif
+	.include "code/specialObjects/minecart.s"
+	.include "code/specialObjects/raft.s"
 
 	.include "data/seasons/specialObjectAnimationData.s"
 	.include "code/seasons/cutscenes/companionCutscenes.s"
@@ -2046,7 +1311,9 @@ specialObjectCode_raft:
  ; This section can't be superfree, since it must be in the same bank as section
  ; "Bank_7_Data".
  m_section_free "Enemy_Part_Collisions" namespace "bank7"
+
 	.include "code/collisionEffects.s"
+
 .ends
 
 
@@ -2059,6 +1326,7 @@ specialObjectCode_raft:
 	.include "code/itemCodes.s"
 	.include "data/seasons/itemAttributes.s"
 	.include "data/itemAnimations.s"
+
 .ends
 
 
@@ -2076,17 +1344,17 @@ specialObjectCode_raft:
 .BANK $08 SLOT 1
 .ORG 0
 
-.include "code/seasons/interactionCode/bank08.s"
+	.include "code/seasons/interactionCode/bank08.s"
 
 .BANK $09 SLOT 1
 .ORG 0
 
-.include "code/seasons/interactionCode/bank09.s"
+	.include "code/seasons/interactionCode/bank09.s"
 
 .BANK $0a SLOT 1
 .ORG 0
 
-.include "code/seasons/interactionCode/bank0a.s"
+	.include "code/seasons/interactionCode/bank0a.s"
 
 .BANK $0b SLOT 1
 .ORG 0
@@ -2114,405 +1382,291 @@ specialObjectCode_raft:
 	.include "code/enemyCommon.s"
 	.include "code/seasons/enemyCode/bank0d.s"
 
+;;
+; Called from objectRunMovementScript in bank0. See include/movementscript_commands.s.
+;
+; @param	hl	Script address
+; @addr{6b2d}
 objectLoadMovementScript_body:
-	ldh a,(<hActiveObjectType)	; $798f
-	add $02			; $7991
-	ld e,a			; $7993
-	ld a,(de)		; $7994
-	rst_addDoubleIndex			; $7995
-	ldi a,(hl)		; $7996
-	ld h,(hl)		; $7997
-	ld l,a			; $7998
-	ld a,e			; $7999
-	add $0e			; $799a
-	ld e,a			; $799c
-	ldi a,(hl)		; $799d
-	ld (de),a		; $799e
-	ld a,e			; $799f
-	add $f8			; $79a0
-	ld e,a			; $79a2
-	ldi a,(hl)		; $79a3
-	ld (de),a		; $79a4
-	ld a,e			; $79a5
-	add $28			; $79a6
-	ld e,a			; $79a8
-	ld a,l			; $79a9
-	ld (de),a		; $79aa
-	inc e			; $79ab
-	ld a,h			; $79ac
-	ld (de),a		; $79ad
+	ldh a,(<hActiveObjectType)	; $6b2d
+	add Object.subid			; $6b2f
+	ld e,a			; $6b31
+	ld a,(de)		; $6b32
+	rst_addDoubleIndex			; $6b33
+	ldi a,(hl)		; $6b34
+	ld h,(hl)		; $6b35
+	ld l,a			; $6b36
+
+	ld a,e			; $6b37
+	add Object.speed-Object.subid			; $6b38
+	ld e,a			; $6b3a
+	ldi a,(hl)		; $6b3b
+	ld (de),a		; $6b3c
+
+	ld a,e			; $6b3d
+	add Object.direction-Object.speed			; $6b3e
+	ld e,a			; $6b40
+	ldi a,(hl)		; $6b41
+	ld (de),a		; $6b42
+
+	ld a,e			; $6b43
+	add Object.var30-Object.direction 			; $6b44
+	ld e,a			; $6b46
+	ld a,l			; $6b47
+	ld (de),a		; $6b48
+	inc e			; $6b49
+	ld a,h			; $6b4a
+	ld (de),a		; $6b4b
+
+;;
+; Called from objectRunMovementScript in bank0. See include/movementscript_commands.s.
+; @addr{6b4c}
 objectRunMovementScript_body:
-	ldh a,(<hActiveObjectType)	; $79ae
-	add $30			; $79b0
-	ld e,a			; $79b2
-	ld a,(de)		; $79b3
-	ld l,a			; $79b4
-	inc e			; $79b5
-	ld a,(de)		; $79b6
-	ld h,a			; $79b7
-_label_0d_350:
-	ldi a,(hl)		; $79b8
-	push hl			; $79b9
-	rst_jumpTable			; $79ba
-	rst_jumpTable			; $79bb
-	ld a,c			; $79bc
-	call $e379		; $79bd
-	ld a,c			; $79c0
-	ld sp,hl		; $79c1
-	ld a,c			; $79c2
-	rrca			; $79c3
-	ld a,d			; $79c4
-	dec h			; $79c5
-	ld a,d			; $79c6
-	pop hl			; $79c7
-	ldi a,(hl)		; $79c8
-	ld h,(hl)		; $79c9
-	ld l,a			; $79ca
-	jr _label_0d_350		; $79cb
-	pop bc			; $79cd
-	ld h,d			; $79ce
-	ldh a,(<hActiveObjectType)	; $79cf
-	add $32			; $79d1
-	ld l,a			; $79d3
-	ld a,(bc)		; $79d4
-	ld (hl),a		; $79d5
-	ld a,l			; $79d6
-	add $d7			; $79d7
-	ld l,a			; $79d9
-	ld (hl),$00		; $79da
-	add $fb			; $79dc
-	ld l,a			; $79de
-	ld (hl),$08		; $79df
-	jr _label_0d_351		; $79e1
-	pop bc			; $79e3
-	ld h,d			; $79e4
-	ldh a,(<hActiveObjectType)	; $79e5
-	add $33			; $79e7
-	ld l,a			; $79e9
-	ld a,(bc)		; $79ea
-	ld (hl),a		; $79eb
-	ld a,l			; $79ec
-	add $d6			; $79ed
-	ld l,a			; $79ef
-	ld (hl),$08		; $79f0
-	add $fb			; $79f2
-	ld l,a			; $79f4
-	ld (hl),$09		; $79f5
-	jr _label_0d_351		; $79f7
-	pop bc			; $79f9
-	ld h,d			; $79fa
-	ldh a,(<hActiveObjectType)	; $79fb
-	add $32			; $79fd
-	ld l,a			; $79ff
-	ld a,(bc)		; $7a00
-	ld (hl),a		; $7a01
-	ld a,l			; $7a02
-	add $d7			; $7a03
-	ld l,a			; $7a05
-	ld (hl),$10		; $7a06
-	add $fb			; $7a08
-	ld l,a			; $7a0a
-	ld (hl),$0a		; $7a0b
-	jr _label_0d_351		; $7a0d
-	pop bc			; $7a0f
-	ld h,d			; $7a10
-	ldh a,(<hActiveObjectType)	; $7a11
-	add $33			; $7a13
-	ld l,a			; $7a15
-	ld a,(bc)		; $7a16
-	ld (hl),a		; $7a17
-	ld a,l			; $7a18
-	add $d6			; $7a19
-	ld l,a			; $7a1b
-	ld (hl),$18		; $7a1c
-	add $fb			; $7a1e
-	ld l,a			; $7a20
-	ld (hl),$0b		; $7a21
-	jr _label_0d_351		; $7a23
-	pop bc			; $7a25
-	ld h,d			; $7a26
-	ldh a,(<hActiveObjectType)	; $7a27
-	add $06			; $7a29
-	ld l,a			; $7a2b
-	ld a,(bc)		; $7a2c
+	ldh a,(<hActiveObjectType)	; $6b4c
+	add Object.var30			; $6b4e
+	ld e,a			; $6b50
+	ld a,(de)		; $6b51
+	ld l,a			; $6b52
+	inc e			; $6b53
+	ld a,(de)		; $6b54
+	ld h,a			; $6b55
+
+@nextOp:
+	ldi a,(hl)		; $6b56
+	push hl			; $6b57
+	rst_jumpTable			; $6b58
+	.dw @cmd00_jump
+	.dw @moveUp
+	.dw @moveRight
+	.dw @moveDown
+	.dw @moveLeft
+	.dw @wait
+.ifdef ROM_AGES
+	.dw @setstate
+.endif
+
+
+@cmd00_jump:
+	pop hl			; $6b67
+	ldi a,(hl)		; $6b68
+	ld h,(hl)		; $6b69
+	ld l,a			; $6b6a
+	jr @nextOp		; $6b6b
+
+
+@moveUp:
+	pop bc			; $6b6d
+	ld h,d			; $6b6e
+	ldh a,(<hActiveObjectType)	; $6b6f
+	add Object.var32			; $6b71
+	ld l,a			; $6b73
+	ld a,(bc)		; $6b74
+	ld (hl),a		; $6b75
+
+	ld a,l			; $6b76
+	add Object.angle-Object.var32			; $6b77
+	ld l,a			; $6b79
+	ld (hl),ANGLE_UP		; $6b7a
+
+	add Object.state-Object.angle			; $6b7c
+	ld l,a			; $6b7e
+	ld (hl),$08		; $6b7f
+	jr @storePointer		; $6b81
+
+
+@moveRight:
+	pop bc			; $6b83
+	ld h,d			; $6b84
+	ldh a,(<hActiveObjectType)	; $6b85
+	add Object.var33			; $6b87
+	ld l,a			; $6b89
+	ld a,(bc)		; $6b8a
+	ld (hl),a		; $6b8b
+
+	ld a,l			; $6b8c
+	add Object.angle-Object.var33			; $6b8d
+	ld l,a			; $6b8f
+	ld (hl),ANGLE_RIGHT		; $6b90
+
+	add Object.state-Object.angle			; $6b92
+	ld l,a			; $6b94
+	ld (hl),$09		; $6b95
+	jr @storePointer		; $6b97
+
+
+@moveDown:
+	pop bc			; $6b99
+	ld h,d			; $6b9a
+	ldh a,(<hActiveObjectType)	; $6b9b
+	add Object.var32			; $6b9d
+	ld l,a			; $6b9f
+	ld a,(bc)		; $6ba0
+	ld (hl),a		; $6ba1
+
+	ld a,l			; $6ba2
+	add Object.angle-Object.var32			; $6ba3
+	ld l,a			; $6ba5
+	ld (hl),ANGLE_DOWN		; $6ba6
+
+	add Object.state-Object.angle			; $6ba8
+	ld l,a			; $6baa
+	ld (hl),$0a		; $6bab
+	jr @storePointer		; $6bad
+
+
+@moveLeft:
+	pop bc			; $6baf
+	ld h,d			; $6bb0
+	ldh a,(<hActiveObjectType)	; $6bb1
+	add Object.var33			; $6bb3
+	ld l,a			; $6bb5
+	ld a,(bc)		; $6bb6
+	ld (hl),a		; $6bb7
+
+	ld a,l			; $6bb8
+	add Object.angle-Object.var33			; $6bb9
+	ld l,a			; $6bbb
+	ld (hl),ANGLE_LEFT		; $6bbc
+
+	add Object.state-Object.angle			; $6bbe
+	ld l,a			; $6bc0
+	ld (hl),$0b		; $6bc1
+	jr @storePointer		; $6bc3
+
+
+@wait:
+	pop bc			; $6bc5
+	ld h,d			; $6bc6
+	ldh a,(<hActiveObjectType)	; $6bc7
+	add Object.counter1			; $6bc9
+	ld l,a			; $6bcb
+	ld a,(bc)		; $6bcc
+.ifdef ROM_AGES
+	ldd (hl),a		; $6bcd
+
+	dec l			; $6bce
+	ld (hl),$0c ; [state]
+.else
 	ld (hl),a		; $7a2d
 	ld a,l			; $7a2e
 	add $fe			; $7a2f
 	ld l,a			; $7a31
 	ld (hl),$0c		; $7a32
-_label_0d_351:
-	inc bc			; $7a34
-	add $2c			; $7a35
-	ld l,a			; $7a37
-	ld (hl),c		; $7a38
-	inc l			; $7a39
-	ld (hl),b		; $7a3a
-	ret			; $7a3b
-	ld h,(hl)		; $7a3c
-	ld a,d			; $7a3d
-	ld l,a			; $7a3e
-	ld a,d			; $7a3f
-	ld a,b			; $7a40
-	ld a,d			; $7a41
-	add c			; $7a42
-	ld a,d			; $7a43
-	adc d			; $7a44
-	ld a,d			; $7a45
-	sub e			; $7a46
-	ld a,d			; $7a47
-	sbc h			; $7a48
-	ld a,d			; $7a49
-	and l			; $7a4a
-	ld a,d			; $7a4b
-	xor (hl)		; $7a4c
-	ld a,d			; $7a4d
-	or a			; $7a4e
-	ld a,d			; $7a4f
-	ret nz			; $7a50
-	ld a,d			; $7a51
-	ret			; $7a52
-	ld a,d			; $7a53
-	sub $7a			; $7a54
-.DB $e3				; $7a56
-	ld a,d			; $7a57
-.DB $ec				; $7a58
-	ld a,d			; $7a59
-	push af			; $7a5a
-	ld a,d			; $7a5b
-	ld (bc),a		; $7a5c
-	ld a,e			; $7a5d
-	dec bc			; $7a5e
-	ld a,e			; $7a5f
-	inc d			; $7a60
-	ld a,e			; $7a61
-	dec e			; $7a62
-	ld a,e			; $7a63
-	ld h,$7b		; $7a64
-	inc d			; $7a66
-	nop			; $7a67
-	ld (bc),a		; $7a68
-	ld l,d			; $7a69
-	inc b			; $7a6a
-	ld c,d			; $7a6b
-	nop			; $7a6c
-	ld l,b			; $7a6d
-	ld a,d			; $7a6e
-	inc d			; $7a6f
-	nop			; $7a70
-	inc b			; $7a71
-	sub (hl)		; $7a72
-	ld (bc),a		; $7a73
-	or (hl)			; $7a74
-	nop			; $7a75
-	ld (hl),c		; $7a76
-	ld a,d			; $7a77
-	inc d			; $7a78
-	nop			; $7a79
-	ld bc,$0328		; $7a7a
-	ld e,b			; $7a7d
-	nop			; $7a7e
-	ld a,d			; $7a7f
-	ld a,d			; $7a80
-	inc d			; $7a81
-	nop			; $7a82
-	inc b			; $7a83
-	ld d,b			; $7a84
-	ld (bc),a		; $7a85
-	and b			; $7a86
-	nop			; $7a87
-	add e			; $7a88
-	ld a,d			; $7a89
-	inc d			; $7a8a
-	nop			; $7a8b
-	inc b			; $7a8c
-	ld d,b			; $7a8d
-	ld (bc),a		; $7a8e
-	add b			; $7a8f
-	nop			; $7a90
-	adc h			; $7a91
-	ld a,d			; $7a92
-	inc d			; $7a93
-	nop			; $7a94
-	ld (bc),a		; $7a95
-	ld (hl),b		; $7a96
-	inc b			; $7a97
-	ld b,b			; $7a98
-	nop			; $7a99
-	sub l			; $7a9a
-	ld a,d			; $7a9b
-	inc d			; $7a9c
-	nop			; $7a9d
-	inc b			; $7a9e
-	ld b,b			; $7a9f
-	ld (bc),a		; $7aa0
-	or b			; $7aa1
-	nop			; $7aa2
-	sbc (hl)		; $7aa3
-	ld a,d			; $7aa4
-	inc d			; $7aa5
-	nop			; $7aa6
-	ld bc,$0368		; $7aa7
-	sbc b			; $7aaa
-	nop			; $7aab
-	and a			; $7aac
-	ld a,d			; $7aad
-	inc d			; $7aae
-	ld (bc),a		; $7aaf
-	ld bc,$0338		; $7ab0
-	adc b			; $7ab3
-	nop			; $7ab4
-	or b			; $7ab5
-	ld a,d			; $7ab6
-	inc d			; $7ab7
-	ld (bc),a		; $7ab8
-	inc bc			; $7ab9
-	adc b			; $7aba
-	ld bc,$0038		; $7abb
-	cp c			; $7abe
-	ld a,d			; $7abf
-	inc d			; $7ac0
-	inc bc			; $7ac1
-	inc b			; $7ac2
-	ld b,b			; $7ac3
-	ld (bc),a		; $7ac4
-	sub b			; $7ac5
-	nop			; $7ac6
-	jp nz,$147a		; $7ac7
-	nop			; $7aca
-	ld (bc),a		; $7acb
-	adc b			; $7acc
-	inc bc			; $7acd
-	ld l,b			; $7ace
-	inc b			; $7acf
-	ld a,b			; $7ad0
-	ld bc,$0028		; $7ad1
-	bit 7,d			; $7ad4
-	inc d			; $7ad6
-	nop			; $7ad7
-	inc b			; $7ad8
-	xor b			; $7ad9
-	inc bc			; $7ada
-	adc b			; $7adb
-	ld (bc),a		; $7adc
-	ret nz			; $7add
-	ld bc,$0038		; $7ade
-	ret c			; $7ae1
-	ld a,d			; $7ae2
-	inc d			; $7ae3
-	nop			; $7ae4
-	ld (bc),a		; $7ae5
-	ld h,b			; $7ae6
-	inc b			; $7ae7
-	jr nc,_label_0d_352	; $7ae8
-_label_0d_352:
-	push hl			; $7aea
-	ld a,d			; $7aeb
-	inc d			; $7aec
-	nop			; $7aed
-	ld (bc),a		; $7aee
-	and b			; $7aef
-	inc b			; $7af0
-	ld (hl),b		; $7af1
-	nop			; $7af2
-	xor $7a			; $7af3
-	inc d			; $7af5
-	ld bc,$8803		; $7af6
-	dec b			; $7af9
-	ld e,$01		; $7afa
-	ld l,b			; $7afc
-	dec b			; $7afd
-	ld e,$00		; $7afe
-	rst $30			; $7b00
-	ld a,d			; $7b01
-	inc d			; $7b02
-	ld (bc),a		; $7b03
-	inc bc			; $7b04
-	adc b			; $7b05
-	ld bc,addAToDe		; $7b06
-	inc b			; $7b09
-	ld a,e			; $7b0a
-	inc d			; $7b0b
-	ld (bc),a		; $7b0c
-	inc bc			; $7b0d
-	adc b			; $7b0e
-	ld bc,$0048		; $7b0f
-	dec c			; $7b12
-	ld a,e			; $7b13
-	inc d			; $7b14
-	ld (bc),a		; $7b15
-	ld bc,$0348		; $7b16
-	adc b			; $7b19
-	nop			; $7b1a
-	ld d,$7b		; $7b1b
-	inc d			; $7b1d
-	nop			; $7b1e
-	ld bc,$0328		; $7b1f
-	adc b			; $7b22
-	nop			; $7b23
-	rra			; $7b24
-	ld a,e			; $7b25
-	inc d			; $7b26
-	nop			; $7b27
-	inc bc			; $7b28
-	adc b			; $7b29
-	ld bc,$0028		; $7b2a
-	.db $28 $7b 
-	add hl,sp		; $7b2f
-	ld a,e			; $7b30
-	ld b,(hl)		; $7b31
-	ld a,e			; $7b32
-	ld c,a			; $7b33
-	ld a,e			; $7b34
-	ld e,b			; $7b35
-	ld a,e			; $7b36
-	ld h,l			; $7b37
-	ld a,e			; $7b38
-	inc d			; $7b39
-	ld bc,$5002		; $7b3a
-	inc bc			; $7b3d
-	adc b			; $7b3e
-	inc b			; $7b3f
-	jr c,$01		; $7b40
-	jr c,_label_0d_353	; $7b42
-_label_0d_353:
-	dec sp			; $7b44
-	ld a,e			; $7b45
-	inc d			; $7b46
-	nop			; $7b47
-	inc bc			; $7b48
-	adc b			; $7b49
-	ld bc,$0028		; $7b4a
-	ld c,b			; $7b4d
-	ld a,e			; $7b4e
-	inc d			; $7b4f
-	ld bc,$2801		; $7b50
-	inc bc			; $7b53
-	adc b			; $7b54
-	nop			; $7b55
-	ld d,c			; $7b56
-	ld a,e			; $7b57
-	inc d			; $7b58
-	ld bc,$2801		; $7b59
-	ld (bc),a		; $7b5c
-	add b			; $7b5d
-	inc bc			; $7b5e
-	adc b			; $7b5f
-	inc b			; $7b60
-	ld b,b			; $7b61
-	nop			; $7b62
-	ld e,d			; $7b63
-	ld a,e			; $7b64
-	inc d			; $7b65
-	nop			; $7b66
-	ld bc,$0438		; $7b67
-	ld b,b			; $7b6a
-	inc bc			; $7b6b
-	ld a,b			; $7b6c
-	ld (bc),a		; $7b6d
-	and b			; $7b6e
-	nop			; $7b6f
-	ld h,a			; $7b70
-	ld a,e			; $7b71
+.endif
+
+@storePointer:
+	inc bc			; $6bd1
+.ifdef ROM_AGES
+	ld a,l			; $6bd2
+.endif
+	add Object.var30-Object.state			; $6bd3
+	ld l,a			; $6bd5
+	ld (hl),c		; $6bd6
+	inc l			; $6bd7
+	ld (hl),b		; $6bd8
+	ret			; $6bd9
+
+.ifdef ROM_AGES
+@setstate:
+	pop bc			; $6bda
+	ld h,d			; $6bdb
+	ldh a,(<hActiveObjectType)	; $6bdc
+	add Object.counter1			; $6bde
+	ld l,a			; $6be0
+	ld a,(bc)		; $6be1
+	ldd (hl),a		; $6be2
+
+	dec l			; $6be3
+	inc bc			; $6be4
+	ld a,(bc)		; $6be5
+	ld (hl),a ; [state]
+
+	jr @storePointer		; $6be7
+.endif
+
+; @addr{7a3c}
+	.dw unknownData_0d_7a66
+	.dw unknownData_0d_7a6f
+	.dw unknownData_0d_7a78
+	.dw unknownData_0d_7a81
+	.dw unknownData_0d_7a8a
+	.dw unknownData_0d_7a93
+	.dw unknownData_0d_7a9c
+	.dw unknownData_0d_7aa5
+	.dw unknownData_0d_7aae
+	.dw unknownData_0d_7ab7
+	.dw unknownData_0d_7ac0
+	.dw unknownData_0d_7ac9
+	.dw unknownData_0d_7ad6
+	.dw unknownData_0d_7ae3
+	.dw unknownData_0d_7aec
+	.dw unknownData_0d_7af5
+	.dw unknownData_0d_7b02
+	.dw unknownData_0d_7b0b
+	.dw unknownData_0d_7b14
+	.dw unknownData_0d_7b1d
+	.dw unknownData_0d_7b26
+
+unknownData_0d_7a66:
+	.db $14 $00 $02 $6a $04 $4a $00 $68 $7a
+unknownData_0d_7a6f:
+	.db $14 $00 $04 $96 $02 $b6 $00 $71 $7a
+unknownData_0d_7a78:
+	.db $14 $00 $01 $28 $03 $58 $00 $7a $7a
+unknownData_0d_7a81:
+	.db $14 $00 $04 $50 $02 $a0 $00 $83 $7a
+unknownData_0d_7a8a:
+	.db $14 $00 $04 $50 $02 $80 $00 $8c $7a
+unknownData_0d_7a93:
+	.db $14 $00 $02 $70 $04 $40 $00 $95 $7a
+unknownData_0d_7a9c:
+	.db $14 $00 $04 $40 $02 $b0 $00 $9e $7a
+unknownData_0d_7aa5:
+	.db $14 $00 $01 $68 $03 $98 $00 $a7 $7a
+unknownData_0d_7aae:
+	.db $14 $02 $01 $38 $03 $88 $00 $b0 $7a
+unknownData_0d_7ab7:
+	.db $14 $02 $03 $88 $01 $38 $00 $b9 $7a
+unknownData_0d_7ac0:
+	.db $14 $03 $04 $40 $02 $90 $00 $c2 $7a
+unknownData_0d_7ac9:
+	.db $14 $00 $02 $88 $03 $68 $04 $78 $01 $28 $00 $cb $7a
+unknownData_0d_7ad6:
+	.db $14 $00 $04 $a8 $03 $88 $02 $c0 $01 $38 $00 $d8 $7a
+unknownData_0d_7ae3:
+	.db $14 $00 $02 $60 $04 $30 $00 $e5 $7a
+unknownData_0d_7aec:
+	.db $14 $00 $02 $a0 $04 $70 $00 $ee $7a
+unknownData_0d_7af5:
+	.db $14 $01 $03 $88 $05 $1e $01 $68 $05 $1e $00 $f7 $7a
+unknownData_0d_7b02:
+	.db $14 $02 $03 $88 $01 $68 $00 $04 $7b
+unknownData_0d_7b0b:
+	.db $14 $02 $03 $88 $01 $48 $00 $0d $7b
+unknownData_0d_7b14:
+	.db $14 $02 $01 $48 $03 $88 $00 $16 $7b
+unknownData_0d_7b1d:
+	.db $14 $00 $01 $28 $03 $88 $00 $1f $7b
+unknownData_0d_7b26:
+	.db $14 $00 $03 $88 $01 $28 $00 $28 $7b
+
+; @addr{7b2f}
+	.dw unknownData_0d_7b39
+	.dw unknownData_0d_7b46
+	.dw unknownData_0d_7b4f
+	.dw unknownData_0d_7b58
+	.dw unknownData_0d_7b65
+
+unknownData_0d_7b39:
+	.db $14 $01 $02 $50 $03 $88 $04 $38 $01 $38 $00 $3b $7b
+unknownData_0d_7b46:
+	.db $14 $00 $03 $88 $01 $28 $00 $48 $7b
+unknownData_0d_7b4f:
+	.db $14 $01 $01 $28 $03 $88 $00 $51 $7b
+unknownData_0d_7b58:
+	.db $14 $01 $01 $28 $02 $80 $03 $88 $04 $40 $00 $5a $7b
+unknownData_0d_7b65:
+	.db $14 $00 $01 $38 $04 $40 $03 $78 $02 $a0 $00 $67 $7b
 
 .ends
 
@@ -5069,278 +4223,388 @@ _label_14_152:
 .include "code/serialFunctions.s"
 
 
-	ld a,($cca2)		; $451e
-	inc a			; $4521
-	jr nz,_label_15_040	; $4522
-	xor a			; $4524
-_label_15_038:
-	ld e,$7f		; $4525
-_label_15_039:
-	ld (de),a		; $4527
-	ret			; $4528
-_label_15_040:
-	ld a,($cca3)		; $4529
-	swap a			; $452c
-	and $03			; $452e
-	rst_jumpTable			; $4530
-	add hl,sp		; $4531
-	ld b,l			; $4532
-	ld b,c			; $4533
-	ld b,l			; $4534
-	dec a			; $4535
-	ld b,l			; $4536
-	add hl,sp		; $4537
-	ld b,l			; $4538
-	ld a,$04		; $4539
-	jr _label_15_038		; $453b
-	ld a,$03		; $453d
-	jr _label_15_038		; $453f
-	ld a,($cca3)		; $4541
-	and $0f			; $4544
-	add $6e			; $4546
-	ld b,a			; $4548
-	call checkGlobalFlag		; $4549
-	ld a,$02		; $454c
-	jr nz,_label_15_038	; $454e
-	ld a,b			; $4550
-	sub $0a			; $4551
-	call checkGlobalFlag		; $4553
-	ld a,$01		; $4556
-	jr nz,_label_15_038	; $4558
-	ld a,$05		; $455a
-	jr _label_15_038		; $455c
-	ld a,($cca3)		; $455e
-	and $0f			; $4561
-	add $0f			; $4563
-	ld c,a			; $4565
-	ld b,$55		; $4566
-	jp showText		; $4568
-	call getFreeInteractionSlot		; $456b
-	ret nz			; $456e
-	ld (hl),$d9		; $456f
-	inc l			; $4571
-	ld a,($cca3)		; $4572
-	and $0f			; $4575
-	ld (hl),a		; $4577
-	ld l,$4b		; $4578
-	ld c,$75		; $457a
-	jp setShortPosition_paramC		; $457c
-	ld hl,$481b		; $457f
-	ld e,$03		; $4582
-	jp interBankCall		; $4584
-	call objectGetShortPosition		; $4587
-	ld c,a			; $458a
-	ld a,($cc3d)		; $458b
-	and $f0			; $458e
-	ld b,a			; $4590
-	ld a,($cc3e)		; $4591
-	and $f0			; $4594
-	swap a			; $4596
-	or b			; $4598
-	cp c			; $4599
-	ret nz			; $459a
-	ld e,$49		; $459b
-	ld a,(de)		; $459d
-	rrca			; $459e
-	and $03			; $459f
-	ld hl,$45ba		; $45a1
-	rst_addAToHl			; $45a4
-	ld a,(hl)		; $45a5
-	add c			; $45a6
-	ld c,a			; $45a7
-	and $f0			; $45a8
-	or $08			; $45aa
-	ld ($cc3d),a		; $45ac
-	ld a,c			; $45af
-	swap a			; $45b0
-	and $f0			; $45b2
-	or $08			; $45b4
-	ld ($cc3e),a		; $45b6
-	ret			; $45b9
-	stop			; $45ba
-	rst $38			; $45bb
-	ld a,($ff00+$01)	; $45bc
-	ld e,$7d		; $45be
-	ld a,(de)		; $45c0
-	ld b,a			; $45c1
-	ld a,($ccba)		; $45c2
-	and b			; $45c5
-	jr z,_label_15_041	; $45c6
-	call $45de		; $45c8
-	ld a,$01		; $45cb
-	jr z,_label_15_042	; $45cd
-	xor a			; $45cf
-	jr _label_15_042		; $45d0
-_label_15_041:
-	call $45f6		; $45d2
-	ld a,$02		; $45d5
-	jr z,_label_15_042	; $45d7
-	xor a			; $45d9
-_label_15_042:
-	ld ($cfc1),a		; $45da
-	ret			; $45dd
-	ld e,$49		; $45de
-	ld a,(de)		; $45e0
-	sub $10			; $45e1
-	srl a			; $45e3
-	ld hl,$45f2		; $45e5
-	rst_addAToHl			; $45e8
-	ld e,$7e		; $45e9
-	ld a,(de)		; $45eb
-	ld c,a			; $45ec
-	ld b,$cf		; $45ed
-	ld a,(bc)		; $45ef
-	cp (hl)			; $45f0
-	ret			; $45f1
-	ld a,b			; $45f2
-	ld a,c			; $45f3
-	ld a,d			; $45f4
-	ld a,e			; $45f5
-	ld e,$7e		; $45f6
-	ld a,(de)		; $45f8
-	ld c,a			; $45f9
-	ld b,$ce		; $45fa
-	ld a,(bc)		; $45fc
-	or a			; $45fd
-	ret			; $45fe
-	xor a			; $45ff
-	ld ($cfc1),a		; $4600
-	ld a,($cc48)		; $4603
-	rrca			; $4606
-	ret nc			; $4607
-	call objectCheckCollidedWithLink_ignoreZ		; $4608
-	ret nc			; $460b
-	ld a,$01		; $460c
-	ld ($cfc1),a		; $460e
-	ret			; $4611
-	ld e,$7e		; $4612
-	ld a,(de)		; $4614
-	ld c,a			; $4615
-	ld b,$cf		; $4616
-	ld a,(bc)		; $4618
-	cp $5d			; $4619
-	ld b,$01		; $461b
-	jr z,_label_15_043	; $461d
-	cp $5e			; $461f
-	jr z,_label_15_043	; $4621
-	dec b			; $4623
-_label_15_043:
-	ld a,b			; $4624
-	ld ($cfc1),a		; $4625
-	ret			; $4628
-	ld a,($cca9)		; $4629
-	ld b,a			; $462c
-	ld e,$50		; $462d
-	ld a,(de)		; $462f
-	cp b			; $4630
-	ld a,$01		; $4631
-	jr z,_label_15_044	; $4633
-	dec a			; $4635
-_label_15_044:
-	ld ($cec0),a		; $4636
-	ret			; $4639
-	ld a,$04		; $463a
-	jp removeRupeeValue		; $463c
+ m_section_force Script_Helper1 NAMESPACE scriptHlp
+
+; ==============================================================================
+; INTERACID_FARORE
+; ==============================================================================
+faroreCheckSecretValidity:
+	ld a,(wSecretInputType)		; $4000
+	inc a			; $4003
+	jr nz,+			; $4004
+	xor a			; $4006
+
+@setVar3f
+	ld e,Interaction.var3f		; $4007
+	ld (de),a		; $4009
+	ret			; $400a
++
+	ld a,(wTextInputResult)		; $400b
+	swap a			; $400e
+	and $03			; $4010
+	rst_jumpTable			; $4012
+.ifdef ROM_AGES
+	.dw @jump0
+	.dw @jump1Or2
+	.dw @jump1Or2
+	.dw @jump3
+.else
+	.dw @jump1Or2
+	.dw @jump3
+	.dw @jump0
+	.dw @jump1Or2
+.endif
+
+@jump1Or2:
+	; Wrong game
+	ld a,$04		; $401b
+	jr @setVar3f			; $401d
+
+@jump0:
+	; Invalid? Pressed "back"?
+	ld a,$03		; $401f
+	jr @setVar3f			; $4021
+
+@jump3:
+	; Check if we've already told this secret
+	ld a,(wTextInputResult)		; $4023
+	and $0f			; $4026
+.ifdef ROM_AGES
+	add GLOBALFLAG_DONE_CLOCK_SHOP_SECRET			; $4028
+.else
+	add GLOBALFLAG_DONE_KING_ZORA_SECRET			; $4028
+.endif
+	ld b,a			; $402a
+	call checkGlobalFlag		; $402b
+	ld a,$02		; $402e
+	jr nz,@setVar3f		; $4030
+
+	; Check if we've spoken to the npc needed to trigger the secret
+	ld a,b			; $4032
+	sub GLOBALFLAG_FIRST_AGES_DONE_SECRET - GLOBALFLAG_FIRST_AGES_BEGAN_SECRET
+	call checkGlobalFlag		; $4035
+	ld a,$01		; $4038
+	jr nz,@setVar3f		; $403a
+	ld a,$05		; $403c
+	jr @setVar3f			; $403e
 
 
+faroreShowTextForSecretHint:
+	ld a,(wTextInputResult)		; $4040
+	and $0f			; $4043
+	add <TX_550f			; $4045
+	ld c,a			; $4047
+	ld b,>TX_5500		; $4048
+	jp showText		; $404a
+
+
+faroreSpawnSecretChest:
+	call getFreeInteractionSlot		; $404d
+	ret nz			; $4050
+	ld (hl),INTERACID_FARORE_GIVEITEM		; $4051
+	inc l			; $4053
+	ld a,(wTextInputResult)		; $4054
+	and $0f			; $4057
+	ld (hl),a		; $4059
+
+	ld l,Interaction.yh		; $405a
+	ld c,$75		; $405c
+	jp setShortPosition_paramC		; $405e
+
+faroreGenerateGameTransferSecret:
+	jpab generateGameTransferSecret		; $4061
+
+
+; ==============================================================================
+; INTERACID_DOOR_CONTROLLER
+; ==============================================================================
+
+; Update Link's respawn position in case it's on a door that's just about to close
+doorController_updateLinkRespawn:
+	call objectGetShortPosition		; $4069
+	ld c,a			; $406c
+	ld a,(wLinkLocalRespawnY)		; $406d
+	and $f0			; $4070
+	ld b,a			; $4072
+	ld a,(wLinkLocalRespawnX)		; $4073
+	and $f0			; $4076
+	swap a			; $4078
+	or b			; $407a
+	cp c			; $407b
+	ret nz			; $407c
+
+	ld e,Interaction.angle		; $407d
+	ld a,(de)		; $407f
+	rrca			; $4080
+	and $03			; $4081
+	ld hl,@offsets		; $4083
+	rst_addAToHl			; $4086
+	ld a,(hl)		; $4087
+	add c			; $4088
+	ld c,a			; $4089
+	and $f0			; $408a
+	or $08			; $408c
+	ld (wLinkLocalRespawnY),a		; $408e
+	ld a,c			; $4091
+	swap a			; $4092
+	and $f0			; $4094
+	or $08			; $4096
+	ld (wLinkLocalRespawnX),a		; $4098
+	ret			; $409b
+
+@offsets:
+	.db $10 $ff $f0 $01
+
+
+;;
+; Sets wTmpcfc0.normal.doorControllerState to:
+;   $00: Nothing to be done.
+;   $01: Door should be opened.
+;   $02: Door should be closed.
+doorController_decideActionBasedOnTriggers:
+	ld e,Interaction.var3d		; $40a0
+	ld a,(de)		; $40a2
+	ld b,a			; $40a3
+	ld a,(wActiveTriggers)		; $40a4
+	and b			; $40a7
+	jr z,@triggerInactive	; $40a8
+
+; If trigger is active, open the door.
+	call @checkTileIsShutterDoor		; $40aa
+	ld a,$01		; $40ad
+	jr z,@end	; $40af
+	xor a			; $40b1
+	jr @end		; $40b2
+
+; If trigger is inactive, close the door.
+@triggerInactive:
+	call @checkTileCollision		; $40b4
+	ld a,$02		; $40b7
+	jr z,@end	; $40b9
+	xor a			; $40bb
+@end:
+	ld (wTmpcfc0.normal.doorControllerState),a		; $40bc
+	ret			; $40bf
+
+
+;;
+; @param[out]	zflag	Set if the tile at this object's position is the expected shutter
+;			door (the one facing the correct direction)
+@checkTileIsShutterDoor:
+	ld e,Interaction.angle		; $40c0
+	ld a,(de)		; $40c2
+	sub $10			; $40c3
+	srl a			; $40c5
+	ld hl,@tileIndices		; $40c7
+	rst_addAToHl			; $40ca
+	ld e,Interaction.var3e		; $40cb
+	ld a,(de)		; $40cd
+	ld c,a			; $40ce
+	ld b,>wRoomLayout		; $40cf
+	ld a,(bc)		; $40d1
+	cp (hl)			; $40d2
+	ret			; $40d3
+
+@tileIndices: ; Tile indices for shutter doors
+	.db $78 $79 $7a $7b
+
+
+;;
+; @param[out]	zflag	Set if collisions at this object's position are 0
+@checkTileCollision:
+	ld e,Interaction.var3e		; $40d8
+	ld a,(de)		; $40da
+	ld c,a			; $40db
+	ld b,>wRoomCollisions		; $40dc
+	ld a,(bc)		; $40de
+	or a			; $40df
+	ret			; $40e0
+
+
+;;
+; Set wTmpcfc0.normal.doorControllerState to:
+;   $01 if Link is on a minecart which has collided with the door
+;   $00 otherwise
+doorController_checkMinecartCollidedWithDoor:
+	xor a			; $40e1
+	ld (wTmpcfc0.normal.doorControllerState),a		; $40e2
+	ld a,(wLinkObjectIndex)		; $40e5
+	rrca			; $40e8
+	ret nc			; $40e9
+	call objectCheckCollidedWithLink_ignoreZ		; $40ea
+	ret nc			; $40ed
+	ld a,$01		; $40ee
+	ld (wTmpcfc0.normal.doorControllerState),a		; $40f0
+	ret			; $40f3
+
+;;
+; Set wTmpcfc0.normal.doorControllerState to:
+;   $01 if the tile at this position is a horizontal or vertical track
+;   $00 otherwise
+doorController_checkTileIsMinecartTrack:
+	ld e,Interaction.var3e		; $40f4
+	ld a,(de)		; $40f6
+	ld c,a			; $40f7
+	ld b,>wRoomLayout		; $40f8
+	ld a,(bc)		; $40fa
+	cp TILEINDEX_TRACK_HORIZONTAL			; $40fb
+	ld b,$01		; $40fd
+	jr z,+			; $40ff
+	cp TILEINDEX_TRACK_VERTICAL			; $4101
+	jr z,+			; $4103
+	dec b			; $4105
++
+	ld a,b			; $4106
+	ld (wTmpcfc0.normal.doorControllerState),a		; $4107
+	ret			; $410a
+
+
+;;
+; Compares [wNumTorchesLit] with [Interaction.speed]. Sets [wTmpcec0] to $01 if they're
+; equal, $00 otherwise.
+doorController_checkEnoughTorchesLit:
+	ld a,(wNumTorchesLit)		; $410b
+	ld b,a			; $410e
+	ld e,Interaction.speed		; $410f
+	ld a,(de)		; $4111
+	cp b			; $4112
+	ld a,$01		; $4113
+	jr z,+			; $4115
+	dec a			; $4117
++
+	ld (wTmpcec0),a		; $4118
+	ret			; $411b
+
+
+; ==============================================================================
+; INTERACID_SHOPKEEPER
+; ==============================================================================
+
+;;
+; @addr{411c}
+shopkeeper_take10Rupees:
+	ld a,RUPEEVAL_10		; $411c
+	jp removeRupeeValue		; $411e
+
+.ends
+
+
+;;
+; @param	d	Interaction index (should be of type INTERACID_TREASURE)
+; @addr{451e}
 interactionLoadTreasureData:
-	ld e,$42		; $463f
-	ld a,(de)		; $4641
-	ld e,$70		; $4642
-	ld (de),a		; $4644
-	ld hl,treasureObjectData		; $4645
-_label_15_045:
-	call multiplyABy4		; $4648
-	add hl,bc		; $464b
-	bit 7,(hl)		; $464c
-	jr z,_label_15_046	; $464e
-	inc hl			; $4650
-	ldi a,(hl)		; $4651
-	ld h,(hl)		; $4652
-	ld l,a			; $4653
-	ld e,$43		; $4654
-	ld a,(de)		; $4656
-	jr _label_15_045		; $4657
-_label_15_046:
-	ldi a,(hl)		; $4659
-	ld b,a			; $465a
-	swap a			; $465b
-	and $07			; $465d
-	ld e,$71		; $465f
-	ld (de),a		; $4661
-	ld a,b			; $4662
-	and $07			; $4663
-	inc e			; $4665
-	ld (de),a		; $4666
-	ld a,b			; $4667
-	and $08			; $4668
-	inc e			; $466a
-	ld (de),a		; $466b
-	ldi a,(hl)		; $466c
-	inc e			; $466d
-	ld (de),a		; $466e
-	ldi a,(hl)		; $466f
-	inc e			; $4670
-	ld (de),a		; $4671
-	ldi a,(hl)		; $4672
-	ld e,$42		; $4673
-	ld (de),a		; $4675
-	ret			; $4676
+	ld e,Interaction.subid	; $451e
+	ld a,(de)		; $4520
+	ld e,Interaction.var30		; $4521
+	ld (de),a		; $4523
+	ld hl,treasureObjectData		; $4524
+--
+	call multiplyABy4		; $4527
+	add hl,bc		; $452a
+	bit 7,(hl)		; $452b
+	jr z,+			; $452d
+
+	inc hl			; $452f
+	ldi a,(hl)		; $4530
+	ld h,(hl)		; $4531
+	ld l,a			; $4532
+	ld e,Interaction.var03		; $4533
+	ld a,(de)		; $4535
+	jr --			; $4536
++
+	; var31 = spawn mode
+	ldi a,(hl)		; $4538
+	ld b,a			; $4539
+	swap a			; $453a
+	and $07			; $453c
+	ld e,Interaction.var31		; $453e
+	ld (de),a		; $4540
+
+	; var32 = collect mode
+	ld a,b			; $4541
+	and $07			; $4542
+	inc e			; $4544
+	ld (de),a		; $4545
+
+	; var33 = ?
+	ld a,b			; $4546
+	and $08			; $4547
+	inc e			; $4549
+	ld (de),a		; $454a
+
+	; var34 = parameter (value of 'c' for "giveTreasure")
+	ldi a,(hl)		; $454b
+	inc e			; $454c
+	ld (de),a		; $454d
+
+	; var35 = low text ID
+	ldi a,(hl)		; $454e
+	inc e			; $454f
+	ld (de),a		; $4550
+
+	; subid = graphics to use
+	ldi a,(hl)		; $4551
+	ld e,Interaction.subid		; $4552
+	ld (de),a		; $4554
+	ret			; $4555
+
+
+
+ m_section_force Script_Helper2 NAMESPACE scriptHlp
+
+seasonsFunc_15_4677:
 	call getFreePartSlot		; $4677
 	ret nz			; $467a
-	ld (hl),$04		; $467b
+	ld (hl),PARTID_BOSS_DEATH_EXPLOSION		; $467b
 	jp objectCopyPosition		; $467d
-	ld a,($cc55)		; $4680
+
+
+seasonsFunc_15_4680:
+	ld a,(wDungeonIndex)		; $4680
 	ld b,a			; $4683
 	inc a			; $4684
-	jr nz,_label_15_047	; $4685
-	ld hl,$471d		; $4687
-	jr _label_15_048		; $468a
-_label_15_047:
+	jr nz,+			; $4685
+	ld hl,seasonsTable_15_471d		; $4687
+	jr ++			; $468a
++
 	ld a,b			; $468c
-	ld hl,$4723		; $468d
+	ld hl,seasonsTable_15_4723		; $468d
 	rst_addDoubleIndex			; $4690
 	ldi a,(hl)		; $4691
 	ld h,(hl)		; $4692
 	ld l,a			; $4693
-_label_15_048:
+++
 	ld e,$72		; $4694
 	ld a,(de)		; $4696
 	rst_addDoubleIndex			; $4697
 	ldi a,(hl)		; $4698
 	ld h,(hl)		; $4699
 	ld l,a			; $469a
-	jr _label_15_053		; $469b
-	ld e,$58		; $469d
+	jr seasonsFunc_15_4715		; $469b
+	ld e,Interaction.relatedObj2		; $469d
 	ld a,(de)		; $469f
 	ld l,a			; $46a0
 	inc e			; $46a1
 	ld a,(de)		; $46a2
 	ld h,a			; $46a3
-_label_15_049:
+seasonsFunc_15_46a4:
 	ldi a,(hl)		; $46a4
 	push hl			; $46a5
 	rst_jumpTable			; $46a6
-	cp a			; $46a7
-	ld b,(hl)		; $46a8
-	jp z,$d646		; $46a9
-	ld b,(hl)		; $46ac
-.DB $dd				; $46ad
-	ld b,(hl)		; $46ae
-.DB $e4				; $46af
-	ld b,(hl)		; $46b0
-.DB $ec				; $46b1
-	ld b,(hl)		; $46b2
-	cp a			; $46b3
-	ld b,(hl)		; $46b4
-	cp a			; $46b5
-	ld b,(hl)		; $46b6
-	ld (bc),a		; $46b7
-	ld b,a			; $46b8
-	ld b,$47		; $46b9
-	ld a,(bc)		; $46bb
-	ld b,a			; $46bc
-	ld c,$47		; $46bd
+	.dw seasonsFunc_15_46bf
+	.dw seasonsFunc_15_46ca
+	.dw seasonsFunc_15_46d6
+	.dw seasonsFunc_15_46dd
+	.dw seasonsFunc_15_46e4
+	.dw seasonsFunc_15_46ec
+	.dw seasonsFunc_15_46bf
+	.dw seasonsFunc_15_46bf
+	.dw seasonsFunc_15_4702
+	.dw seasonsFunc_15_4706
+	.dw seasonsFunc_15_470a
+	.dw seasonsFunc_15_470e
+
+seasonsFunc_15_46bf:
 	pop hl			; $46bf
 	ldi a,(hl)		; $46c0
 	ld e,$46		; $46c1
@@ -5348,8 +4612,9 @@ _label_15_049:
 	ld e,$45		; $46c4
 	xor a			; $46c6
 	ld (de),a		; $46c7
-	jr _label_15_053		; $46c8
-_label_15_050:
+	jr seasonsFunc_15_4715		; $46c8
+
+seasonsFunc_15_46ca:
 	pop hl			; $46ca
 	ldi a,(hl)		; $46cb
 	ld e,$46		; $46cc
@@ -5357,28 +4622,36 @@ _label_15_050:
 	ld e,$45		; $46cf
 	ld a,$01		; $46d1
 	ld (de),a		; $46d3
-	jr _label_15_053		; $46d4
+	jr seasonsFunc_15_4715		; $46d4
+
+seasonsFunc_15_46d6:
 	pop hl			; $46d6
 	ldi a,(hl)		; $46d7
 	ld e,$49		; $46d8
 	ld (de),a		; $46da
-	jr _label_15_049		; $46db
+	jr seasonsFunc_15_46a4		; $46db
+
+seasonsFunc_15_46dd:
 	pop hl			; $46dd
 	ldi a,(hl)		; $46de
 	ld e,$50		; $46df
 	ld (de),a		; $46e1
-	jr _label_15_049		; $46e2
+	jr seasonsFunc_15_46a4		; $46e2
+
+seasonsFunc_15_46e4:
 	pop hl			; $46e4
 	ld a,(hl)		; $46e5
 	call s8ToS16		; $46e6
 	add hl,bc		; $46e9
-	jr _label_15_049		; $46ea
+	jr seasonsFunc_15_46a4		; $46ea
+
+seasonsFunc_15_46ec:
 	pop hl			; $46ec
 	ld a,($ccb0)		; $46ed
 	cp d			; $46f0
 	jr nz,_label_15_051	; $46f1
 	inc hl			; $46f3
-	jr _label_15_049		; $46f4
+	jr seasonsFunc_15_46a4		; $46f4
 _label_15_051:
 	dec hl			; $46f6
 	ld a,$01		; $46f7
@@ -5387,32 +4660,45 @@ _label_15_051:
 	xor a			; $46fc
 	ld e,$45		; $46fd
 	ld (de),a		; $46ff
-	jr _label_15_053		; $4700
+	jr seasonsFunc_15_4715		; $4700
+
+seasonsFunc_15_4702:
 	ld a,$00		; $4702
 	jr _label_15_052		; $4704
+
+seasonsFunc_15_4706:
 	ld a,$08		; $4706
 	jr _label_15_052		; $4708
+
+seasonsFunc_15_470a:
 	ld a,$10		; $470a
 	jr _label_15_052		; $470c
+
+seasonsFunc_15_470e:
 	ld a,$18		; $470e
 _label_15_052:
 	ld e,$49		; $4710
 	ld (de),a		; $4712
-	jr _label_15_050		; $4713
-_label_15_053:
-	ld e,$58		; $4715
+	jr seasonsFunc_15_46ca		; $4713
+
+seasonsFunc_15_4715:
+	ld e,Interaction.relatedObj2		; $4715
 	ld a,l			; $4717
 	ld (de),a		; $4718
 	inc e			; $4719
 	ld a,h			; $471a
 	ld (de),a		; $471b
 	ret			; $471c
+
+seasonsTable_15_471d:
 .DB $d3				; $471d
 	ld c,b			; $471e
 .DB $ed				; $471f
 	ld c,b			; $4720
 	rst $30			; $4721
 	ld c,b			; $4722
+
+seasonsTable_15_4723:
 	dec (hl)		; $4723
 	ld b,a			; $4724
 	dec (hl)		; $4725
@@ -5806,12 +5092,18 @@ _label_15_073:
 	ld ($4009),sp		; $48fc
 	inc b			; $48ff
 	rst $30			; $4900
+
+seasonsFunc_15_4901:
 	call objectGetPosition		; $4901
 	ld a,$ff		; $4904
 	jp createEnergySwirlGoingIn		; $4906
+
+seasonsFunc_15_4909:
 	ld a,$01		; $4909
 	ld ($cd2d),a		; $490b
 	ret			; $490e
+
+seasonsFunc_15_490f:
 	call getFreeInteractionSlot		; $490f
 	ld bc,$2c00		; $4912
 	ld (hl),$60		; $4915
@@ -5826,17 +5118,25 @@ _label_15_073:
 	ld a,($d00d)		; $4922
 	ld (hl),a		; $4925
 	ret			; $4926
+
+seasonsFunc_15_4927:
 	ld ($cbd3),a		; $4927
 	ld a,$01		; $492a
 	ld ($cca4),a		; $492c
 	ld a,$04		; $492f
 	jp openMenu		; $4931
+
+seasonsFunc_15_4934:
 	ld a,$02		; $4934
 	jp openSecretInputMenu		; $4936
+
+seasonsFunc_15_4939:
 	ld a,$31		; $4939
 	call setGlobalFlag		; $493b
 	ld bc,$0002		; $493e
 	jp secretFunctionCaller		; $4941
+
+seasonsFunc_15_4944:
 	ld e,$44		; $4944
 	ld a,$05		; $4946
 	ld (de),a		; $4948
@@ -5858,6 +5158,8 @@ _label_15_073:
 	ld bc,$3028		; $4965
 _label_15_074:
 	jp showText		; $4968
+
+seasonsFunc_15_496b:
 	ld a,$00		; $496b
 	call $498d		; $496d
 	jr nz,_label_15_076	; $4970
@@ -5893,16 +5195,24 @@ _label_15_076:
 _label_15_077:
 	xor a			; $49a4
 	ret			; $49a5
+
+seasonsFunc_15_49a6:
 	ld a,$00		; $49a6
 	jr _label_15_078		; $49a8
+
+seasonsFunc_15_49aa:
 	ld a,$38		; $49aa
 	jr _label_15_078		; $49ac
+
+seasonsFunc_15_49ae:
 	ld e,$7a		; $49ae
 	ld a,(de)		; $49b0
 _label_15_078:
 	ld b,a			; $49b1
 	ld c,$00		; $49b2
 	jp giveRingToLink		; $49b4
+
+seasonsFunc_15_49b7:
 	xor a			; $49b7
 	ld ($c63e),a		; $49b8
 	inc a			; $49bb
@@ -5910,7 +5220,19 @@ _label_15_078:
 	ld a,$28		; $49bf
 	jp setGlobalFlag		; $49c1
 
+.ends
+
+	.include "code/seasons/interactionCode/bank15_1.s"
+
+	.include "code/staticObjects.s"
+	.include "build/data/staticDungeonObjects.s"
+	.include "build/data/chestData.s"
+
+	.include "build/data/treasureObjectData.s"
+
+	; rename to script help
 	.include "code/seasons/interactionCode/bank15.s"
+
 	.include "data/seasons/partAnimations.s"
 
 
@@ -6009,20 +5331,20 @@ _label_15_078:
 
 .define BANK_3f $3f
 
-.include "code/loadGraphics.s"
-.include "code/treasureAndDrops.s"
-.include "code/textbox.s"
-.include "code/seasons/interactionCode/interactionCode11_body.s"
+	.include "code/loadGraphics.s"
+	.include "code/treasureAndDrops.s"
+	.include "code/textbox.s"
+	.include "code/seasons/interactionCode/interactionCode11_body.s"
 
-.include "build/data/objectGfxHeaders.s"
-.include "build/data/treeGfxHeaders.s"
+	.include "build/data/objectGfxHeaders.s"
+	.include "build/data/treeGfxHeaders.s"
 
-.include "build/data/enemyData.s"
-.include "build/data/partData.s"
-.include "build/data/itemData.s"
-.include "build/data/interactionData.s"
+	.include "build/data/enemyData.s"
+	.include "build/data/partData.s"
+	.include "build/data/itemData.s"
+	.include "build/data/interactionData.s"
 
-.include "build/data/treasureCollectionBehaviours.s"
-.include "build/data/treasureDisplayData.s"
+	.include "build/data/treasureCollectionBehaviours.s"
+	.include "build/data/treasureDisplayData.s"
 
 .ends

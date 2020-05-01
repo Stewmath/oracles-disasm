@@ -37,13 +37,13 @@ _faroreUnlinked:
 	showtextlowindex <TX_5502
 	jumpiftextoptioneq $00, @askForPassword
 
-@offerHolodrumSecret:
+@offerOtherGameSecret:
 	showtextlowindex <TX_5519
-	jumpiftextoptioneq $00, @sayHolodrumSecret
+	jumpiftextoptioneq $00, @sayOtherGameSecret
 	showtextlowindex <TX_5505
 	jump2byte @npcLoop
 
-@sayHolodrumSecret:
+@sayOtherGameSecret:
 	asm15 scriptHlp.faroreGenerateGameTransferSecret
 	showtextlowindex <TX_551a
 	jump2byte @npcLoop
@@ -52,22 +52,22 @@ _faroreUnlinked:
 	askforsecret $ff
 	asm15 scriptHlp.faroreCheckSecretValidity
 	jumptable_objectbyte Interaction.var3f
-	.dw @offerHolodrumSecret
-	.dw @offerHolodrumSecret
-	.dw @offerHolodrumSecret
+	.dw @offerOtherGameSecret
+	.dw @offerOtherGameSecret
+	.dw @offerOtherGameSecret
 	.dw @secretOK
 	.dw @wrongGame
-	.dw @offerHolodrumSecret
+	.dw @offerOtherGameSecret
 
 @wrongGame: ; A Seasons secret was given in Ages.
 	showtextlowindex <TX_550b
-	jump2byte @offerHolodrumSecret
+	jump2byte @offerOtherGameSecret
 
 @secretOK: ; The secret is fine, but you're supposed to tell it to someone else.
 	asm15 scriptHlp.faroreShowTextForSecretHint
 	wait 30
 	showtextlowindex <TX_5504
-	jump2byte @offerHolodrumSecret
+	jump2byte @offerOtherGameSecret
 
 
 ; When talking to Farore in a linked game, you can tell her secrets and she'll respond by
@@ -115,7 +115,7 @@ _faroreLinked:
 	showtextlowindex <TX_550c
 	jump2byte @npcLoop
 
-@wrongGame: ; A secret for Seasons was told in Ages
+@wrongGame: ; A secret for Seasons was told in Ages, or vice versa
 	showtextlowindex <TX_550b
 	jump2byte @npcLoop
 
@@ -415,6 +415,7 @@ doorController_openWhenTorchesLit_left_2Torches:
 	setspeed $02
 	jump2byte _doorController_shutUntilTorchesLit
 
+.ifdef ROM_AGES
 ; Subid $16
 doorController_openWhenTorchesLit_down_1Torch:
 	setcollisionradii $0a, $08
@@ -428,7 +429,7 @@ doorController_openWhenTorchesLit_left_1Torch:
 	setangle $16
 	setspeed $01
 	jump2byte _doorController_shutUntilTorchesLit
-
+.endif
 
 
 ; ==============================================================================

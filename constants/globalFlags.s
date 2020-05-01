@@ -138,7 +138,7 @@
 	GLOBALFLAG_S_29				db ; $29
 	GLOBALFLAG_3d				db ; $2a: same as GLOBALFLAG_3d from ages?
 	GLOBALFLAG_S_2b				db ; $2b
-	GLOBALFLAG_S_2c				db ; $2c
+	GLOBALFLAG_SECRET_CHEST_WAITING		db ; $2c
 	GLOBALFLAG_S_2d				db ; $2d
 	GLOBALFLAG_S_2e				db ; $2e
 	GLOBALFLAG_S_2f				db ; $2f

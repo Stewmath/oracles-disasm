@@ -2,17 +2,17 @@ specialObjectCode_linkInCutscene:
 	ld e,SpecialObject.subid		; $6dec
 	ld a,(de)		; $6dee
 	rst_jumpTable			; $6def
-        .dw _linkCutscene0
-        .dw _linkCutscene1
-        .dw _linkCutscene2
-        .dw _linkCutscene3
-        .dw _linkCutscene4
-        .dw _linkCutscene5
-        .dw _linkCutscene6
-        .dw _linkCutscene7
-        .dw _linkCutscene8
-        .dw _linkCutscene9
-        .dw _linkCutsceneA
+	.dw _linkCutscene0
+	.dw _linkCutscene1
+	.dw _linkCutscene2
+	.dw _linkCutscene3
+	.dw _linkCutscene4
+	.dw _linkCutscene5
+	.dw _linkCutscene6
+	.dw _linkCutscene7
+	.dw _linkCutscene8
+	.dw _linkCutscene9
+	.dw _linkCutsceneA
 
 ;;
 ; Opening cutscene with the triforce
@@ -211,8 +211,8 @@ _linkCutscene1:
 	ld e,Item.state		; $6f11
 	ld a,(de)		; $6f13
 	rst_jumpTable			; $6f14
-        .dw @state0
-        .dw @state1
+	.dw @state0
+	.dw @state1
 
 @state0:
 	jp _linkCutscene_initOam_setVisible_incState		; $6f19
@@ -221,28 +221,28 @@ _linkCutscene1:
 	ld e,Item.state2		; $6f1c
 	ld a,(de)		; $6f1e
 	rst_jumpTable			; $6f1f
-        .dw @substate0
-        .dw @substate1
-        .dw @substate2
-        .dw @substate3
-        .dw @substate4
-        .dw @substate5
-        .dw @substate6
-        .dw @substate7
-        .dw @substate8
-        .dw @substate9
-        .dw @substateA
-        .dw @substateB
-        .dw @substateC
-        .dw @substateD
-        .dw @substateE
-        .dw @substateF
-        .dw @substate10
-        .dw @substate11
-        .dw @substate12
-        .dw @substate13
-        .dw @substate14
-        .dw @ret
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw @substate4
+	.dw @substate5
+	.dw @substate6
+	.dw @substate7
+	.dw @substate8
+	.dw @substate9
+	.dw @substateA
+	.dw @substateB
+	.dw @substateC
+	.dw @substateD
+	.dw @substateE
+	.dw @substateF
+	.dw @substate10
+	.dw @substate11
+	.dw @substate12
+	.dw @substate13
+	.dw @substate14
+	.dw @ret
 
 @substate0:
 	ld a,($cfd0)		; $6f4c
@@ -516,8 +516,8 @@ _linkCutscene2:
 	ld e,SpecialObject.state		; $7109
 	ld a,(de)		; $710b
 	rst_jumpTable			; $710c
-        .dw @state0
-        .dw @state1
+	.dw @state0
+	.dw @state1
 
 @state0:
 	call _linkCutscene_initOam_setVisible_incState		; $7111
@@ -528,10 +528,10 @@ _linkCutscene2:
 	ld e,SpecialObject.state2		; $7119
 	ld a,(de)		; $711b
 	rst_jumpTable			; $711c
-        .dw @substate0
-        .dw @substate1
-        .dw @substate2
-        .dw @substate3
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
 
 @substate0:
 	ld hl,$cfd0		; $7125
@@ -630,7 +630,7 @@ _linkCutscene3:
 	ld e,SpecialObject.state		; $71b0
 	ld a,(de)		; $71b2
 	rst_jumpTable			; $71b3
-        .dw @state0
+	.dw @state0
 	.dw @state1
 
 @state0:
@@ -644,10 +644,10 @@ _linkCutscene3:
 	ld e,SpecialObject.state2		; $71c4
 	ld a,(de)		; $71c6
 	rst_jumpTable			; $71c7
-        .dw @substate0
-        .dw @substate1
-        .dw @substate2
-        .dw @substate3
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
 
 @substate0:
 	call itemDecCounter1		; $71d0
@@ -689,8 +689,8 @@ _linkCutscene4:
 	ld e,SpecialObject.state		; $720c
 	ld a,(de)		; $720e
 	rst_jumpTable			; $720f
-        .dw @state0
-        .dw @state1
+	.dw @state0
+	.dw @state1
 
 @state0:
 	call _linkCutscene_initOam_setVisible_incState		; $7214
@@ -707,12 +707,12 @@ _linkCutscene4:
 	ld e,SpecialObject.state2		; $7228
 	ld a,(de)		; $722a
 	rst_jumpTable			; $722b
-        .dw @substate0
-        .dw @substate1
-        .dw @substate2
-        .dw @substate3
-        .dw @substate4
-        .dw @substate5
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw @substate4
+	.dw @substate5
 
 @substate0:
 	ld a,(wPaletteThread_mode)		; $7238
@@ -777,8 +777,8 @@ _linkCutscene5:
 	ld e,SpecialObject.state		; $729f
 	ld a,(de)		; $72a1
 	rst_jumpTable			; $72a2
-        .dw @state0
-        .dw @state1
+	.dw @state0
+	.dw @state1
 
 @state0:
 	call _linkCutscene_initOam_setVisible_incState		; $72a7
@@ -791,8 +791,8 @@ _linkCutscene5:
 	ld e,SpecialObject.state2		; $72b3
 	ld a,(de)		; $72b5
 	rst_jumpTable			; $72b6
-        .dw @substate0
-        .dw @substate1
+	.dw @substate0
+	.dw @substate1
 
 @substate0:
 	ld a,(wPaletteThread_mode)		; $72bb
@@ -953,8 +953,8 @@ _linkCutscene8:
 	ld e,SpecialObject.state		; $738f
 	ld a,(de)		; $7391
 	rst_jumpTable			; $7392
-        .dw @state0
-        .dw @state1
+	.dw @state0
+	.dw @state1
 
 @state0:
 	call _linkCutscene_initOam_setVisible_incState		; $7397
@@ -977,7 +977,7 @@ _linkCutscene9:
 	ld e,SpecialObject.state		; $73b5
 	ld a,(de)		; $73b7
 	rst_jumpTable			; $73b8
-        .dw @state0
+	.dw @state0
 	.dw @state1
 
 @state0:
@@ -992,13 +992,13 @@ _linkCutscene9:
 	ld e,SpecialObject.state2		; $73ca
 	ld a,(de)		; $73cc
 	rst_jumpTable			; $73cd
-        .dw @substate0
-        .dw @substate1
-        .dw @substate2
-        .dw @substate3
-        .dw @substate4
-        .dw @substate5
-        .dw @ret
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw @substate4
+	.dw @substate5
+	.dw @ret
 
 @substate0:
 	ld a,($cfd1)		; $73dc
@@ -1213,7 +1213,7 @@ checkCloseToY48X50:
 	cp $03			; $751b
 	ret			; $751d
 @destination:
-        .db $48 $50
+	.db $48 $50
 
 moveToAngleSnapToGrid:
 	ld a,(wFrameCounter)		; $7520
@@ -1229,7 +1229,7 @@ moveToAngleSnapToGrid:
 	ld (de),a		; $7530
 	ret			; $7531
 angleToDirectionTable:
-        .db $00 $00 $01 $01 $01 $01 $01 $01
-        .db $01 $01 $01 $01 $01 $01 $01 $02
-        .db $02 $02 $03 $03 $03 $03 $03 $03
-        .db $03 $03 $03 $03 $03 $03 $03 $00
+	.db $00 $00 $01 $01 $01 $01 $01 $01
+	.db $01 $01 $01 $01 $01 $01 $01 $02
+	.db $02 $02 $03 $03 $03 $03 $03 $03
+	.db $03 $03 $03 $03 $03 $03 $03 $00

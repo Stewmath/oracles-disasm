@@ -65,7 +65,7 @@ _partCommon_getTileCollisionInFront_allowHoles:
 ;;
 ; Analagous to the "enemyStandardUpdate" function.
 ; @addr{403b}
-_partCommon_standardUpdate:
+partCommon_standardUpdate:
 	ld h,d			; $403b
 	ld l,Part.state		; $403c
 	ld a,(hl)		; $403e

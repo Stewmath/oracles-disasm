@@ -21,10 +21,17 @@ faroreCheckSecretValidity:
 	swap a			; $400e
 	and $03			; $4010
 	rst_jumpTable			; $4012
+.ifdef ROM_AGES
 	.dw @jump0
 	.dw @jump1Or2
 	.dw @jump1Or2
 	.dw @jump3
+.else
+	.dw @jump1Or2
+	.dw @jump3
+	.dw @jump0
+	.dw @jump1Or2
+.endif
 
 @jump1Or2:
 	; Wrong game
@@ -40,7 +47,11 @@ faroreCheckSecretValidity:
 	; Check if we've already told this secret
 	ld a,(wTextInputResult)		; $4023
 	and $0f			; $4026
+.ifdef ROM_AGES
 	add GLOBALFLAG_DONE_CLOCK_SHOP_SECRET			; $4028
+.else
+	add GLOBALFLAG_DONE_KING_ZORA_SECRET			; $4028
+.endif
 	ld b,a			; $402a
 	call checkGlobalFlag		; $402b
 	ld a,$02		; $402e
@@ -889,7 +900,7 @@ bipin_showText_subid1To9:
 	.db <TX_4308
 	.db <TX_4308
 
-
+.ifdef ROM_AGES
 ; Script for the "past" version of bipin
 bipinScript3:
 	initcollisions
@@ -907,6 +918,7 @@ bipinScript3:
 @alreadyGaveSeed:
 	showtext TX_4313
 	jump2byte @loop
+.endif
 
 
 ; ==============================================================================

@@ -1,3 +1,4 @@
+partCode01:
 	jr z,_label_10_006	; $4113
 	cp $02			; $4115
 	jp z,$4223		; $4117
@@ -578,6 +579,8 @@ _label_10_036:
 	ld ($1056),sp		; $4493
 	ld d,a			; $4496
 	jr _label_10_037		; $4497
+
+partCode02:
 _label_10_037:
 	ld e,$c4		; $4499
 	ld a,(de)		; $449b
@@ -619,6 +622,8 @@ _label_10_039:
 	rrca			; $44d9
 	ret nc			; $44da
 	jp decNumEnemies		; $44db
+
+partCode03:
 	cp $01			; $44de
 	jr nz,_label_10_040	; $44e0
 	ld a,($cc31)		; $44e2
@@ -663,6 +668,8 @@ _label_10_041:
 	ldi (hl),a		; $451f
 	ld (hl),a		; $4520
 	jp objectSetVisible82		; $4521
+
+partCode04:
 	ld e,$c4		; $4524
 	ld a,(de)		; $4526
 	or a			; $4527
@@ -693,6 +700,8 @@ _label_10_043:
 	ld a,$79		; $4550
 	call nz,playSound		; $4552
 	jp objectSetVisible80		; $4555
+
+partCode05:
 	jr z,_label_10_044	; $4558
 	ld a,($cc32)		; $455a
 	ld h,d			; $455d
@@ -739,6 +748,8 @@ _label_10_046:
 	call getThisRoomFlags		; $45a0
 	set 6,(hl)		; $45a3
 	jp partDelete		; $45a5
+
+partCode06:
 	jr z,_label_10_047	; $45a8
 	ld h,d			; $45aa
 	ld l,$c2		; $45ab
@@ -881,6 +892,8 @@ _label_10_049:
 	ld a,$01		; $4696
 	ld (de),a		; $4698
 	ret			; $4699
+
+partCode07:
 	ld e,$c4		; $469a
 	ld a,(de)		; $469c
 	or a			; $469d
@@ -939,6 +952,8 @@ _label_10_050:
 	ld a,(hl)		; $46fb
 	ld (de),a		; $46fc
 	jp objectSetVisible83		; $46fd
+
+partCode08:
 	ld a,($c4ab)		; $4700
 	or a			; $4703
 	ret nz			; $4704
@@ -1016,6 +1031,8 @@ _label_10_052:
 	ld e,$cb		; $4778
 	ld (de),a		; $477a
 	ret			; $477b
+
+partCode09:
 	ld e,$c4		; $477c
 	ld a,(de)		; $477e
 	or a			; $477f
@@ -1117,6 +1134,8 @@ _label_10_058:
 	and $07			; $482f
 	ldd (hl),a		; $4831
 	ret			; $4832
+
+partCode0b:
 	cp $01			; $4833
 	jr nz,_label_10_060	; $4835
 	ld h,d			; $4837
@@ -1205,6 +1224,8 @@ _label_10_063:
 	dec (hl)		; $48b6
 	ret nz			; $48b7
 	jp objectRunMovementScript		; $48b8
+
+partCode0c:
 	ld e,$c4		; $48bb
 	ld a,(de)		; $48bd
 	or a			; $48be
@@ -1268,6 +1289,8 @@ _label_10_064:
 	ld l,$c6		; $4913
 	ld (hl),$08		; $4915
 	ret			; $4917
+
+partCode0e:
 	jp nz,partDelete		; $4918
 	ld e,$c2		; $491b
 	ld a,(de)		; $491d
@@ -1414,6 +1437,8 @@ _label_10_072:
 	ld b,$64		; $49ee
 	ld a,$04		; $49f0
 	jp objectSetComponentSpeedByScaledVelocity		; $49f2
+
+partCode0f:
 	jr z,_label_10_074	; $49f5
 	ld h,d			; $49f7
 	ld l,$c4		; $49f8
@@ -1485,6 +1510,8 @@ _label_10_075:
 	ld l,$e4		; $4a5f
 	set 7,(hl)		; $4a61
 	ret			; $4a63
+
+partCode10:
 	jr z,_label_10_076	; $4a64
 	cp $02			; $4a66
 	jp z,$4b0e		; $4a68
@@ -1628,6 +1655,8 @@ _label_10_083:
 	ld e,$c9		; $4b43
 	ld (de),a		; $4b45
 	ret			; $4b46
+
+partCode11:
 	ld e,$c2		; $4b47
 	ld a,(de)		; $4b49
 	ld e,$c4		; $4b4a
@@ -1825,7 +1854,10 @@ _label_10_087:
 	ld a,(bc)		; $4c8f
 	dec c			; $4c90
 	dec bc			; $4c91
-	ld c,$1e		; $4c92
+	.db $0e		; $4c92
+
+partCode12:
+	.db $1e		; $4c93
 	call nz,$b71a		; $4c94
 	call z,$4cd6		; $4c97
 	ld a,$01		; $4c9a
@@ -1878,6 +1910,8 @@ _label_10_089:
 	ld (hl),$01		; $4cec
 	call objectTakePosition		; $4cee
 	jp objectSetVisible80		; $4cf1
+
+partCode13:
 	jr z,_label_10_090	; $4cf4
 	ld e,$ea		; $4cf6
 	ld a,(de)		; $4cf8
@@ -1959,6 +1993,9 @@ _label_10_093:
 	ld c,(hl)		; $4d70
 	ld b,$39		; $4d71
 	jp showText		; $4d73
+
+partCode14:
+partCode15:
 	ld e,$c2		; $4d76
 	jr z,_label_10_094	; $4d78
 	cp $02			; $4d7a
@@ -2332,7 +2369,11 @@ _label_10_110:
 	inc b			; $4fb7
 	inc bc			; $4fb8
 	ld (bc),a		; $4fb9
-	ld bc,$2800		; $4fba
+	.db $01		; $4fba
+	.db $00		; $4fbb
+
+partCode17:
+	.db $28		; $4fbc
 	dec l			; $4fbd
 	ld e,$c2		; $4fbe
 	ld a,(de)		; $4fc0
@@ -2448,6 +2489,8 @@ _label_10_113:
 	ld a,($ff00+$03)	; $5085
 	nop			; $5087
 	nop			; $5088
+
+partCode18:
 	jr z,_label_10_114	; $5089
 	ld e,$ea		; $508b
 	ld a,(de)		; $508d
@@ -2491,6 +2534,9 @@ _label_10_115:
 	ld (de),a		; $50cb
 	xor a			; $50cc
 	jp $40af		; $50cd
+
+partCode19:
+partCode31:
 	jp nz,partDelete		; $50d0
 	ld e,$c4		; $50d3
 	ld a,(de)		; $50d5
@@ -2541,6 +2587,8 @@ _label_10_117:
 	call objectCheckWithinScreenBoundary		; $511b
 	jp nc,partDelete		; $511e
 	jp partAnimate		; $5121
+
+partCode1a:
 	jr z,_label_10_118	; $5124
 	ld e,$ea		; $5126
 	ld a,(de)		; $5128
@@ -2633,6 +2681,8 @@ _label_10_124:
 	ld (de),a		; $51a9
 	ld a,$04		; $51aa
 	jp $40af		; $51ac
+
+partCode1b:
 	jr z,_label_10_125	; $51af
 	ld e,$ea		; $51b1
 	ld a,(de)		; $51b3
@@ -2672,6 +2722,8 @@ _label_10_126:
 	rlca			; $51ec
 	call partSetAnimation		; $51ed
 	jp objectSetVisible81		; $51f0
+
+partCode1c:
 	jr z,_label_10_127	; $51f3
 	ld e,$ea		; $51f5
 	ld a,(de)		; $51f7
@@ -2719,6 +2771,8 @@ _label_10_130:
 	ld (de),a		; $5244
 	xor a			; $5245
 	jp $40af		; $5246
+
+partCode1d:
 	jr z,_label_10_132	; $5249
 	ld e,$ea		; $524b
 	ld a,(de)		; $524d
@@ -2845,6 +2899,8 @@ _label_10_135:
 	ld (de),a		; $52fc
 	xor a			; $52fd
 	ret			; $52fe
+
+partCode1e:
 	jr z,_label_10_136	; $52ff
 	ld e,$ea		; $5301
 	ld a,(de)		; $5303
@@ -2959,6 +3015,8 @@ _label_10_142:
 	ld a,$04		; $53b2
 	ld (de),a		; $53b4
 	ret			; $53b5
+
+partCode1f:
 	jr nz,_label_10_143	; $53b6
 	ld e,$c4		; $53b8
 	ld a,(de)		; $53ba
@@ -2982,6 +3040,8 @@ _label_10_144:
 	rlca			; $53d8
 	call partSetAnimation		; $53d9
 	jp objectSetVisible81		; $53dc
+
+partCode20:
 	ld e,$c4		; $53df
 	ld a,(de)		; $53e1
 	or a			; $53e2
@@ -2996,6 +3056,8 @@ _label_10_145:
 	ld l,$c6		; $53f1
 	ld (hl),$b4		; $53f3
 	jp objectSetVisible82		; $53f5
+
+partCode21:
 	jr z,_label_10_146	; $53f8
 	ld e,$ea		; $53fa
 	ld a,(de)		; $53fc
@@ -3097,6 +3159,8 @@ _label_10_150:
 	ret c			; $5499
 	ld (de),a		; $549a
 	ret			; $549b
+
+partCode22:
 	ld e,$c4		; $549c
 	ld a,(de)		; $549e
 	rst_jumpTable			; $549f
@@ -3208,6 +3272,8 @@ _label_10_153:
 	ld h,h			; $553e
 	ld l,(hl)		; $553f
 	ld a,b			; $5540
+
+partCode23:
 	ld e,$c2		; $5541
 	ld a,(de)		; $5543
 	ld e,$c4		; $5544
@@ -3287,6 +3353,8 @@ _label_10_157:
 	inc a			; $55b2
 	inc a			; $55b3
 	ld e,$1e		; $55b4
+
+partCode27:
 	ld e,$c4		; $55b6
 	ld a,(de)		; $55b8
 	rst_jumpTable			; $55b9
@@ -3409,6 +3477,8 @@ _label_10_157:
 .DB $fc				; $5670
 	nop			; $5671
 	dec b			; $5672
+
+partCode28:
 	jr z,_label_10_158	; $5673
 	cp $02			; $5675
 	jp z,$5702		; $5677
@@ -3565,6 +3635,8 @@ _label_10_165:
 .DB $fc				; $5768
 .DB $fc				; $5769
 .DB $fc				; $576a
+
+partCode29:
 	jr z,_label_10_166	; $576b
 	ld e,$ea		; $576d
 	ld a,(de)		; $576f
@@ -3626,6 +3698,8 @@ _label_10_167:
 	and b			; $57c8
 	jp z,objectSetVisible81		; $57c9
 	jp objectSetInvisible		; $57cc
+
+partCode2a:
 	jr z,_label_10_169	; $57cf
 	ld e,$ea		; $57d1
 	ld a,(de)		; $57d3
@@ -3891,6 +3965,8 @@ _label_10_176:
 	srl a			; $5955
 	ld (de),a		; $5957
 	ret			; $5958
+
+partCode30:
 	ld e,$c4		; $5959
 	ld a,(de)		; $595b
 	or a			; $595c
@@ -3926,6 +4002,9 @@ _label_10_177:
 	call objectGetRelatedObject1Var		; $598e
 	dec (hl)		; $5991
 	jp partDelete		; $5992
+
+partCode4b:
+partCode4d:
 	jr z,_label_10_178	; $5995
 	ld e,$ea		; $5997
 	ld a,(de)		; $5999
@@ -4032,6 +4111,8 @@ _label_10_184:
 	jp partDelete		; $5a4b
 	call objectCreatePuff		; $5a4e
 	jp partDelete		; $5a51
+
+partCode4c:
 	jr z,_label_10_185	; $5a54
 	ld e,$ea		; $5a56
 	ld a,(de)		; $5a58
@@ -4120,6 +4201,8 @@ _label_10_189:
 	jr nz,_label_10_188	; $5ae4
 	call objectCreatePuff		; $5ae6
 	jp partDelete		; $5ae9
+
+partCode4e:
 	jr z,_label_10_190	; $5aec
 	ld e,$ea		; $5aee
 	ld a,(de)		; $5af0
@@ -4170,6 +4253,8 @@ _label_10_193:
 	ld b,$09		; $5b3e
 	call objectCreateInteractionWithSubid00		; $5b40
 	jp partDelete		; $5b43
+
+partCode50:
 	ld a,$04		; $5b46
 	call objectGetRelatedObject1Var		; $5b48
 	ld a,(hl)		; $5b4b
@@ -4262,6 +4347,8 @@ _label_10_197:
 	jr nz,$0c		; $5bc9
 	rst $30			; $5bcb
 	add hl,de		; $5bcc
+
+partCode51:
 	ld a,$04		; $5bcd
 	call objectGetRelatedObject1Var		; $5bcf
 	ld a,(hl)		; $5bd2
@@ -4412,6 +4499,8 @@ _label_10_203:
 	call objectApplyComponentSpeed		; $5cbc
 _label_10_204:
 	jp partAnimate		; $5cbf
+
+partCode52:
 	ld a,$04		; $5cc2
 	call objectGetRelatedObject1Var		; $5cc4
 	ld a,(hl)		; $5cc7
@@ -4591,6 +4680,8 @@ _label_10_210:
 	ld (de),a		; $5de5
 	ld a,$02		; $5de6
 	jp partSetAnimation		; $5de8
+
+partCode53:
 	ld e,$c4		; $5deb
 	ld a,(de)		; $5ded
 	or a			; $5dee
@@ -4722,7 +4813,8 @@ _label_10_218:
 
  m_section_force "Part_Code_2" NAMESPACE "partCode"
 
-_label_10_244:
+
+_label_11_212:
 	ld d,$d0		; $61be
 	ld a,d			; $61c0
 _label_10_245:
@@ -4745,37 +4837,46 @@ _label_10_247:
 	cp $e0			; $61d7
 	jr c,_label_10_245	; $61d9
 	ret			; $61db
+
+;;
+; @addr{5e58}
 updateParts:
-	ld a,$c0		; $61dc
-	ldh (<hActiveObjectType),a	; $61de
-	ld a,($cd00)		; $61e0
-	cp $08			; $61e3
-	jr z,_label_10_244	; $61e5
-	ld a,($cba0)		; $61e7
-	or a			; $61ea
-	jr nz,_label_10_244	; $61eb
-	ld a,($cca4)		; $61ed
-	and $88			; $61f0
-	jr nz,_label_10_244	; $61f2
-	ld d,$d0		; $61f4
-	ld a,d			; $61f6
-_label_10_248:
-	ldh (<hActiveObject),a	; $61f7
-	ld e,$c0		; $61f9
-	ld a,(de)		; $61fb
-	or a			; $61fc
-	jr z,_label_10_249	; $61fd
-	call $620e		; $61ff
-	ld h,d			; $6202
-	ld l,$ea		; $6203
-	res 7,(hl)		; $6205
-_label_10_249:
-	inc d			; $6207
-	ld a,d			; $6208
-	cp $e0			; $6209
-	jr c,_label_10_248	; $620b
-	ret			; $620d
-	call $403b		; $620e
+	ld a,$c0		; $5e58
+	ldh (<hActiveObjectType),a	; $5e5a
+	ld a,(wScrollMode)		; $5e5c
+	cp $08			; $5e5f
+	jr z,_label_11_212	; $5e61
+	ld a,(wTextIsActive)		; $5e63
+	or a			; $5e66
+	jr nz,_label_11_212	; $5e67
+
+	ld a,(wDisabledObjects)		; $5e69
+	and $88			; $5e6c
+	jr nz,_label_11_212	; $5e6e
+
+	ld d,FIRST_PART_INDEX	; $5e70
+	ld a,d			; $5e72
+-
+	ldh (<hActiveObject),a	; $5e73
+	ld e,Part.enabled	; $5e75
+	ld a,(de)		; $5e77
+	or a			; $5e78
+	jr z,+			; $5e79
+
+	call _func_11_5e8a		; $5e7b
+	ld h,d			; $5e7e
+	ld l,Part.var2a		; $5e7f
+	res 7,(hl)		; $5e81
++
+	inc d			; $5e83
+	ld a,d			; $5e84
+	cp LAST_PART_INDEX+1			; $5e85
+	jr c,-			; $5e87
+	ret			; $5e89
+
+_func_11_5e8a:
+	call partCode.partCommon_standardUpdate		; $620e
+
 	ld e,$c1		; $6211
 	ld a,(de)		; $6213
 	add a			; $6214
@@ -4784,168 +4885,108 @@ _label_10_249:
 	ld a,$00		; $6218
 	adc $62			; $621a
 	ld h,a			; $621c
+
 	ldi a,(hl)		; $621d
 	ld h,(hl)		; $621e
 	ld l,a			; $621f
+
 	ld a,c			; $6220
 	or a			; $6221
 	jp hl			; $6222
-	call z,$1362		; $6223
-	ld b,c			; $6226
-	sbc c			; $6227
-	ld b,h			; $6228
-	sbc $44			; $6229
-	inc h			; $622b
-	ld b,l			; $622c
-	ld e,b			; $622d
-	ld b,l			; $622e
-	xor b			; $622f
-	ld b,l			; $6230
-	sbc d			; $6231
-	ld b,(hl)		; $6232
-	nop			; $6233
-	ld b,a			; $6234
-	ld a,h			; $6235
-	ld b,a			; $6236
-	rst $8			; $6237
-	ld h,d			; $6238
-	inc sp			; $6239
-	ld c,b			; $623a
-	cp e			; $623b
-	ld c,b			; $623c
-	ld a,(de)		; $623d
-	ld h,h			; $623e
-	jr $49			; $623f
-	push af			; $6241
-	ld c,c			; $6242
-	ld h,h			; $6243
-	ld c,d			; $6244
-	ld b,a			; $6245
-	ld c,e			; $6246
-	sub e			; $6247
-	ld c,h			; $6248
-.DB $f4				; $6249
-	ld c,h			; $624a
-	halt			; $624b
-	ld c,l			; $624c
-	halt			; $624d
-	ld c,l			; $624e
-	ld d,a			; $624f
-	ld h,h			; $6250
-	cp h			; $6251
-	ld c,a			; $6252
-	adc c			; $6253
-	ld d,b			; $6254
-	ret nc			; $6255
-	ld d,b			; $6256
-	inc h			; $6257
-	ld d,c			; $6258
-	xor a			; $6259
-	ld d,c			; $625a
-	di			; $625b
-	ld d,c			; $625c
-	ld c,c			; $625d
-	ld d,d			; $625e
-	rst $38			; $625f
-	ld d,d			; $6260
-	or (hl)			; $6261
-	ld d,e			; $6262
-	rst_addDoubleIndex			; $6263
-	ld d,e			; $6264
-	ld hl,sp+$53		; $6265
-	sbc h			; $6267
-	ld d,h			; $6268
-	ld b,c			; $6269
-	ld d,l			; $626a
-	inc hl			; $626b
-	ld h,l			; $626c
-	ret z			; $626d
-	ld h,l			; $626e
-	ld (hl),c		; $626f
-	ld h,(hl)		; $6270
-	or (hl)			; $6271
-	ld d,l			; $6272
-	ld (hl),e		; $6273
-	ld d,(hl)		; $6274
-	ld l,e			; $6275
-	ld d,a			; $6276
-	rst $8			; $6277
-	ld d,a			; $6278
-	ld (de),a		; $6279
-	ld h,a			; $627a
-	rst $38			; $627b
-	ld h,l			; $627c
-	inc sp			; $627d
-	ld h,a			; $627e
-	ldi (hl),a		; $627f
-	ld l,b			; $6280
-	ld h,a			; $6281
-	ld l,b			; $6282
-	ld e,c			; $6283
-	ld e,c			; $6284
-	ret nc			; $6285
-	ld d,b			; $6286
-	ld a,e			; $6287
-	ld l,b			; $6288
-	ld hl,sp+$68		; $6289
-	bit 4,d			; $628b
-	bit 4,d			; $628d
-	bit 4,d			; $628f
-	bit 4,d			; $6291
-	ld d,l			; $6293
-	ld l,c			; $6294
-	jp hl			; $6295
-	ld l,c			; $6296
-	ld e,l			; $6297
-	ld l,d			; $6298
-	add hl,bc		; $6299
-	ld l,h			; $629a
-	ld l,e			; $629b
-	ld l,h			; $629c
-	sbc l			; $629d
-	ld l,h			; $629e
-	dec d			; $629f
-	ld l,l			; $62a0
-	ld a,(hl)		; $62a1
-	ld l,(hl)		; $62a2
-	scf			; $62a3
-	ld (hl),b		; $62a4
-	xor d			; $62a5
-	ld (hl),b		; $62a6
-	rst $30			; $62a7
-	ld (hl),b		; $62a8
-	inc b			; $62a9
-	ld (hl),d		; $62aa
-	ld d,d			; $62ab
-	ld (hl),e		; $62ac
-	xor $73			; $62ad
-	ld d,d			; $62af
-	ld (hl),h		; $62b0
-	ldd (hl),a		; $62b1
-	ld (hl),l		; $62b2
-	and l			; $62b3
-	ld (hl),a		; $62b4
-	jr c,$79		; $62b5
-	ld l,a			; $62b7
-	ld a,c			; $62b8
-	sub l			; $62b9
-	ld e,c			; $62ba
-	ld d,h			; $62bb
-	ld e,d			; $62bc
-	sub l			; $62bd
-	ld e,c			; $62be
-.DB $ec				; $62bf
-	ld e,d			; $62c0
-	cp d			; $62c1
-	ld a,c			; $62c2
-	ld b,(hl)		; $62c3
-	ld e,e			; $62c4
-	call $c25b		; $62c5
-	ld e,h			; $62c8
-.DB $eb				; $62c9
-	ld e,l			; $62ca
+
+partCodeTable:
+	.dw partCode00
+	.dw partCode01
+	.dw partCode02
+	.dw partCode03
+	.dw partCode04
+	.dw partCode05
+	.dw partCode06
+	.dw partCode07
+	.dw partCode08
+	.dw partCode09
+	.dw partCode0a
+	.dw partCode0b
+	.dw partCode0c
+	.dw partCode0d
+	.dw partCode0e
+	.dw partCode0f
+	.dw partCode10
+	.dw partCode11
+	.dw partCode12
+	.dw partCode13
+	.dw partCode14
+	.dw partCode15
+	.dw partCode16
+	.dw partCode17
+	.dw partCode18
+	.dw partCode19
+	.dw partCode1a
+	.dw partCode1b
+	.dw partCode1c
+	.dw partCode1d
+	.dw partCode1e
+	.dw partCode1f
+	.dw partCode20
+	.dw partCode21
+	.dw partCode22
+	.dw partCode23
+	.dw partCode24
+	.dw partCode25
+	.dw partCode26
+	.dw partCode27
+	.dw partCode28
+	.dw partCode29
+	.dw partCode2a
+	.dw partCode2b
+	.dw partCode2c
+	.dw partCode2d
+	.dw partCode2e
+	.dw partCode2f
+	.dw partCode30
+	.dw partCode31
+	.dw partCode32
+	.dw partCode33
+	.dw partCodeNil
+	.dw partCodeNil
+	.dw partCodeNil
+	.dw partCodeNil
+	.dw partCode38
+	.dw partCode39
+	.dw partCode3a
+	.dw partCode3b
+	.dw partCode3c
+	.dw partCode3d
+	.dw partCode3e
+	.dw partCode3f
+	.dw partCode40
+	.dw partCode41
+	.dw partCode42
+	.dw partCode43
+	.dw partCode44
+	.dw partCode45
+	.dw partCode46
+	.dw partCode47
+	.dw partCode48
+	.dw partCode49
+	.dw partCode4a
+	.dw partCode4b
+	.dw partCode4c
+	.dw partCode4d
+	.dw partCode4e
+	.dw partCode4f
+	.dw partCode50
+	.dw partCode51
+	.dw partCode52
+	.dw partCode53
+
+partCodeNil:
 	ret			; $62cb
+
+partCode00:
 	jp partDelete		; $62cc
+
+partCode0a:
 	ld e,$c2		; $62cf
 	ld a,(de)		; $62d1
 	rst_jumpTable			; $62d2
@@ -5159,6 +5200,8 @@ _label_10_256:
 	ld (de),a		; $6417
 	or d			; $6418
 	ret			; $6419
+
+partCode0d:
 	jr z,_label_10_257	; $641a
 	call objectSetVisible83		; $641c
 	ld h,d			; $641f
@@ -5194,6 +5237,8 @@ _label_10_257:
 	ld hl,$ccba		; $644e
 	call unsetFlag		; $6451
 	jp objectSetInvisible		; $6454
+
+partCode16:
 	jr z,_label_10_259	; $6457
 	ld h,d			; $6459
 	ld l,$c4		; $645a
@@ -5308,6 +5353,8 @@ _label_10_262:
 	xor a			; $6520
 	ld (bc),a		; $6521
 	ret			; $6522
+
+partCode24:
 	jr z,_label_10_263	; $6523
 	ld e,$ea		; $6525
 	ld a,(de)		; $6527
@@ -5416,6 +5463,8 @@ _label_10_267:
 	ld a,$1e		; $65c4
 	ld (de),a		; $65c6
 	ret			; $65c7
+
+partCode25:
 	ld e,$c4		; $65c8
 	ld a,(de)		; $65ca
 	or a			; $65cb
@@ -5452,6 +5501,8 @@ _label_10_269:
 	ld (de),a		; $65f9
 	ld hl,$6661		; $65fa
 	jr _label_10_271		; $65fd
+
+partCode2c:
 	ld e,$c4		; $65ff
 	ld a,(de)		; $6601
 	or a			; $6602
@@ -5527,7 +5578,10 @@ _label_10_271:
 	nop			; $666b
 	ld ($0008),sp		; $666c
 	nop			; $666f
-	ld hl,sp+$28		; $6670
+	.db $f8		; $6670
+
+partCode26:
+	.db $28		; $6671
 	ld a,(bc)		; $6672
 	ld e,$ea		; $6673
 	ld a,(de)		; $6675
@@ -5629,6 +5683,8 @@ _label_10_273:
 	ret			; $670b
 	call objectCreatePuff		; $670c
 	jp partDelete		; $670f
+
+partCode2b:
 	jr z,_label_10_274	; $6712
 	ld e,$ea		; $6714
 	ld a,(de)		; $6716
@@ -5650,6 +5706,8 @@ _label_10_274:
 	ld l,$ff		; $672e
 	set 5,(hl)		; $6730
 	ret			; $6732
+
+partCode2d:
 	jr z,_label_10_275	; $6733
 	ld h,d			; $6735
 	ld l,$f0		; $6736
@@ -5794,6 +5852,8 @@ _label_10_283:
 	inc a			; $681d
 	inc c			; $681e
 	jp setTile		; $681f
+
+partCode2e:
 	ld e,$c4		; $6822
 	ld a,(de)		; $6824
 	or a			; $6825
@@ -5836,6 +5896,8 @@ _label_10_286:
 	ld (de),a		; $6863
 	ld (hl),$f3		; $6864
 	ret			; $6866
+
+partCode2f:
 	ld e,$c4		; $6867
 	ld a,(de)		; $6869
 	or a			; $686a
@@ -5851,6 +5913,8 @@ _label_10_286:
 	add $03			; $6877
 	ld (de),a		; $6879
 	ret			; $687a
+
+partCode32:
 	jr z,_label_10_287	; $687b
 	ld e,$c5		; $687d
 	ld a,(de)		; $687f
@@ -5926,6 +5990,8 @@ _label_10_289:
 	add (hl)		; $68f5
 	ld (hl),a		; $68f6
 	ret			; $68f7
+
+partCode33:
 	ld e,$c4		; $68f8
 	ld a,(de)		; $68fa
 	rst_jumpTable			; $68fb
@@ -5979,6 +6045,8 @@ _label_10_292:
 	call $40a7		; $694d
 	jp z,partDelete		; $6950
 	jr _label_10_292		; $6953
+
+partCode38:
 	ld e,$d7		; $6955
 	ld a,(de)		; $6957
 	or a			; $6958
@@ -6070,6 +6138,8 @@ _label_10_294:
 	ldi (hl),a		; $69e4
 	ld (hl),a		; $69e5
 	jp partDelete		; $69e6
+
+partCode39:
 	ld e,$c4		; $69e9
 	ld a,(de)		; $69eb
 	or a			; $69ec
@@ -6135,6 +6205,8 @@ _label_10_297:
 	call partSetAnimation		; $6a58
 	or d			; $6a5b
 	ret			; $6a5c
+
+partCode3a:
 	jr z,_label_10_298	; $6a5d
 	ld e,$ea		; $6a5f
 	ld a,(de)		; $6a61
@@ -6383,6 +6455,8 @@ _label_10_308:
 	ld a,b			; $6c06
 	ld (de),a		; $6c07
 	ret			; $6c08
+
+partCode3b:
 	ld e,$c4		; $6c09
 	ld a,(de)		; $6c0b
 	or a			; $6c0c
@@ -6451,7 +6525,10 @@ _label_10_311:
 	ld (bc),a		; $6c67
 .DB $f4				; $6c68
 	ld (bc),a		; $6c69
-	ld b,$1e		; $6c6a
+	.db $06		; $6c6a
+
+partCode3c:
+	.db $1e		; $6c6b
 	call nz,$b71a		; $6c6c
 	jr z,_label_10_314	; $6c6f
 	ld bc,$0104		; $6c71
@@ -6480,6 +6557,8 @@ _label_10_314:
 	ld l,$c6		; $6c96
 	ld (hl),$64		; $6c98
 	jp objectSetVisible83		; $6c9a
+
+partCode3d:
 	ld e,$c4		; $6c9d
 	ld a,(de)		; $6c9f
 	rst_jumpTable			; $6ca0
@@ -6547,6 +6626,8 @@ _label_10_316:
 	jp z,partDelete		; $6d0f
 _label_10_317:
 	jp partAnimate		; $6d12
+
+partCode3e:
 	jr z,_label_10_318	; $6d15
 	ld e,$ea		; $6d17
 	ld a,(de)		; $6d19
@@ -6763,6 +6844,8 @@ _label_10_324:
 	call objectCreatePuff		; $6e79
 	or d			; $6e7c
 	ret			; $6e7d
+
+partCode3f:
 	jr z,_label_10_325	; $6e7e
 	ld e,$c2		; $6e80
 	ld a,(de)		; $6e82
@@ -7027,6 +7110,8 @@ _label_10_333:
 	ld l,$a9		; $7033
 	dec (hl)		; $7035
 	ret			; $7036
+
+partCode40:
 	jp nz,partDelete		; $7037
 	ld e,$c4		; $703a
 	ld a,(de)		; $703c
@@ -7098,6 +7183,8 @@ _label_10_334:
 	ld a,(de)		; $70a7
 	ld (hl),a		; $70a8
 	ret			; $70a9
+
+partCode41:
 	ld e,$c4		; $70aa
 	ld a,(de)		; $70ac
 	or a			; $70ad
@@ -7142,7 +7229,10 @@ _label_10_336:
 	jp objectSetVisible81		; $70f0
 	xor $12			; $70f3
 	stop			; $70f5
-	xor $28			; $70f6
+	.db $ee			; $70f6
+
+partCode42:
+	.db $28			; $70f7
 	add hl,bc		; $70f8
 	ld e,$ea		; $70f9
 	ld a,(de)		; $70fb
@@ -7310,6 +7400,8 @@ _label_10_345:
 	inc e			; $71fe
 	ld ($130d),sp		; $71ff
 	jr _label_10_346		; $7202
+
+partCode43:
 	ld e,$c2		; $7204
 	ld a,(de)		; $7206
 	ld e,$c4		; $7207
@@ -7507,6 +7599,8 @@ _label_10_351:
 	ldi a,(hl)		; $734f
 	ld (de),a		; $7350
 	ret			; $7351
+
+partCode44:
 	jr z,_label_10_354	; $7352
 	ld e,$ea		; $7354
 	ld a,(de)		; $7356
@@ -7597,6 +7691,8 @@ _label_10_356:
 	ld a,(de)		; $73ea
 	inc e			; $73eb
 	ld e,$00		; $73ec
+
+partCode45:
 	jr z,_label_10_357	; $73ee
 	dec a			; $73f0
 	jr nz,_label_10_358	; $73f1
@@ -7661,6 +7757,8 @@ _label_10_361:
 	ld a,(de)		; $744f
 	ld (hl),a		; $7450
 	ret			; $7451
+
+partCode46:
 	jr nz,_label_10_363	; $7452
 	ld e,$c2		; $7454
 	ld a,(de)		; $7456
@@ -7797,6 +7895,8 @@ _label_10_364:
 	xor a			; $752f
 	ld (de),a		; $7530
 	ret			; $7531
+
+partCode47:
 	ld e,$c2		; $7532
 	ld a,(de)		; $7534
 	ld e,$c4		; $7535
@@ -8191,6 +8291,8 @@ _label_10_375:
 	sra a			; $77a1
 	ld l,a			; $77a3
 	ret			; $77a4
+
+partCode48:
 	ld e,$c2		; $77a5
 	ld a,(de)		; $77a7
 	ld e,$c4		; $77a8
@@ -8436,6 +8538,8 @@ _label_10_382:
 	bit 7,a			; $7930
 	jp nz,partDelete		; $7932
 	jp partAnimate		; $7935
+
+partCode49:
 	ld e,$c4		; $7938
 	ld a,(de)		; $793a
 	rst_jumpTable			; $793b
@@ -8467,6 +8571,8 @@ _label_10_382:
 	call objectApplySpeed		; $7969
 _label_10_383:
 	jp partAnimate		; $796c
+
+partCode4a:
 	jp nz,partDelete		; $796f
 	ld e,$c4		; $7972
 	ld a,(de)		; $7974
@@ -8511,6 +8617,8 @@ _label_10_384:
 	ld e,$c9		; $79b4
 	ld (de),a		; $79b6
 	jp objectApplySpeed		; $79b7
+
+partCode4f:
 	jr z,_label_10_386	; $79ba
 	ld e,$c4		; $79bc
 	ld a,(de)		; $79be

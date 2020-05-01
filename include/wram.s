@@ -747,11 +747,11 @@ wGlobalFlags: ; $c6d0/$c6ca
 wChildStage: ; $c6e0/$c6da
 ; Determines the "stage" of child's growth.
 	db
-wNextChildStage: ; $c6e1
+wNextChildStage: ; $c6e1/$c6db
 ; The next stage of the child's growth. It will advance to this state after leaving the
 ; house and coming back a bit later.
 	db
-wc6e2: ; $c6e2
+wc6e2: ; $c6e2/$c6dc
 ; Bit 0: Baby has been named
 ; Bit 1: Money has been given for doctor
 ; Bit 2: Advice has been given about how to get the baby to sleep
@@ -1984,7 +1984,7 @@ wRoomEdgeY: ; $cc86/$cca0
 wRoomEdgeX: ; $cc87
 	db
 
-wSecretInputType: ; $cc88
+wSecretInputType: ; $cc88/$cca2
 ; $00: 20-char secret entry
 ; $02: 15-char secret entry
 ; $ff: 5-char secret entry

@@ -14714,7 +14714,7 @@ seasonsFunc_3e20:
 	ldh a,(<hRomBank)	; $3e20
 	push af			; $3e22
 	callfrombank0 seasonsFunc_09_7d8b		; $3e23
-	callfrombank0 seasonsFunc_15_60fc		; $3e2d
+	callfrombank0 scriptHlp.seasonsFunc_15_60fc		; $3e2d
 	pop af			; $3e37
 	setrombank		; $3e38
 	ret			; $3e3d

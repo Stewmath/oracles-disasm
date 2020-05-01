@@ -5448,6 +5448,8 @@ _label_11_211:
 	ld a,(hl)		; $5e37
 	ld (de),a		; $5e38
 	ret			; $5e39
+
+
 _label_11_212:
 	ld d,$d0		; $5e3a
 	ld a,d			; $5e3c
@@ -5511,7 +5513,7 @@ updateParts:
 ;;
 ; @addr{5e8a}
 _func_11_5e8a:
-	call _partCommon_standardUpdate		; $5e8a
+	call partCommon_standardUpdate		; $5e8a
 
 	; hl = partCodeTable + [Part.id] * 2
 	ld e,Part.id		; $5e8d

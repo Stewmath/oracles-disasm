@@ -1419,7 +1419,7 @@ _label_08_039:
 	call $4a33		; $4917
 	ld hl,$48ba		; $491a
 	jr _label_08_038		; $491d
-	ld hl,$4791		; $491f
+	ld hl,shopkeeperScript_blockLinkAccess		; $491f
 	jp $490d		; $4922
 	ld e,$42		; $4925
 	ld a,(de)		; $4927

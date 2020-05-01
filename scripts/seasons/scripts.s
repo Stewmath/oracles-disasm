@@ -1,311 +1,480 @@
+; Scripts for interactions are in this file. You may want to cross-reference with the
+; corresponding code for the script to get the full picture (search for INTERACID_X in
+; main.s to find the code).
+
 stubScript:
 	scriptend
+
 genericNpcScript:
 	initcollisions
-script45da:
+--
 	checkabutton
 	showloadedtext
-	jump2byte script45da
-script45de:
-	jumptable_memoryaddress $cc01
-	.dw script45e5
-	.dw script4625
-script45e5:
-	jumpifglobalflagset $28, script45eb
-	rungenericnpclowindex $01
-script45eb:
+	jump2byte --
+
+
+; ==============================================================================
+; INTERACID_FARORE
+; ==============================================================================
+
+faroreScript:
+	jumptable_memoryaddress wIsLinkedGame
+	.dw _faroreUnlinked
+	.dw _faroreLinked
+
+; When talking to farore in a completed unlinked game, you can tell her secrets, but all
+; she'll do is direct you to the person you're supposed to tell them to.
+_faroreUnlinked:
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, @finishedGame
+	rungenericnpclowindex <TX_5501
+
+@finishedGame:
 	initcollisions
-script45ec:
+@npcLoop:
 	enableinput
 	checkabutton
 	setdisabledobjectsto91
-	showtextlowindex $02
-	jumpiftextoptioneq $00, script4606
-script45f5:
-	showtextlowindex $19
-	jumpiftextoptioneq $00, script45ff
-	showtextlowindex $05
-	jump2byte script45ec
-script45ff:
-	asm15 $457f
-	showtextlowindex $1a
-	jump2byte script45ec
-script4606:
+	showtextlowindex <TX_5502
+	jumpiftextoptioneq $00, @askForPassword
+
+@offerOtherGameSecret:
+	showtextlowindex <TX_5519
+	jumpiftextoptioneq $00, @sayOtherGameSecret
+	showtextlowindex <TX_5505
+	jump2byte @npcLoop
+
+@sayOtherGameSecret:
+	asm15 scriptHlp.faroreGenerateGameTransferSecret
+	showtextlowindex <TX_551a
+	jump2byte @npcLoop
+
+@askForPassword:
 	askforsecret $ff
-	asm15 $451e
-	jumptable_objectbyte $7f
-	.dw script45f5
-	.dw script45f5
-	.dw script45f5
-	.dw script461d
-	.dw script4619
-	.dw script45f5
-script4619:
-	showtextlowindex $0b
-	jump2byte script45f5
-script461d:
-	asm15 $455e
+	asm15 scriptHlp.faroreCheckSecretValidity
+	jumptable_objectbyte Interaction.var3f
+	.dw @offerOtherGameSecret
+	.dw @offerOtherGameSecret
+	.dw @offerOtherGameSecret
+	.dw @secretOK
+	.dw @wrongGame
+	.dw @offerOtherGameSecret
+
+@wrongGame: ; A Seasons secret was given in Ages.
+	showtextlowindex <TX_550b
+	jump2byte @offerOtherGameSecret
+
+@secretOK: ; The secret is fine, but you're supposed to tell it to someone else.
+	asm15 scriptHlp.faroreShowTextForSecretHint
 	wait 30
-	showtextlowindex $04
-	jump2byte script45f5
-script4625:
+	showtextlowindex <TX_5504
+	jump2byte @offerOtherGameSecret
+
+
+; When talking to Farore in a linked game, you can tell her secrets and she'll respond by
+; giving you an item if it's correct.
+_faroreLinked:
 	initcollisions
 	checkabutton
 	setdisabledobjectsto91
-	showtextlowindex $06
-	jump2byte script4633
-script462c:
+	showtextlowindex <TX_5506
+	jump2byte ++
+@npcLoop:
 	enableinput
 	checkabutton
 	disableinput
-	jumpifglobalflagset $2c, script4668
-script4633:
-	showtextlowindex $07
-	jumpiftextoptioneq $00, script463d
-	showtextlowindex $08
-	jump2byte script462c
-script463d:
+	jumpifglobalflagset GLOBALFLAG_SECRET_CHEST_WAITING, @waitForLinkToOpenChest
+++
+	showtextlowindex <TX_5507 ; Do you know a secret?
+	jumpiftextoptioneq $00, @showPasswordScreen
+	showtextlowindex <TX_5508 ; Come back anytime
+	jump2byte @npcLoop
+
+@showPasswordScreen:
 	askforsecret $ff
-	asm15 $451e
-	jumptable_objectbyte $7f
-	.dw script4650
-	.dw script4654
-	.dw script465c
-	.dw script4650
-	.dw script4660
-	.dw script4664
-script4650:
-	showtextlowindex $05
-	jump2byte script462c
-script4654:
-	asm15 $456b
+	asm15 scriptHlp.faroreCheckSecretValidity
+	jumptable_objectbyte Interaction.var3f
+	.dw @script4667
+	.dw @secretOK
+	.dw @alreadyToldSecret
+	.dw @script4667
+	.dw @wrongGame
+	.dw @secretNotActive
+
+@script4667:
+	showtextlowindex <TX_5505
+	jump2byte @npcLoop
+
+@secretOK:
+	asm15 scriptHlp.faroreSpawnSecretChest
 	checkcfc0bit 1
 	xorcfc0bit 1
 	enableinput
-	jump2byte script462c
-script465c:
-	showtextlowindex $0c
-	jump2byte script462c
-script4660:
-	showtextlowindex $0b
-	jump2byte script462c
-script4664:
-	showtextlowindex $1c
-	jump2byte script462c
-script4668:
-	showtextlowindex $0a
-	jump2byte script462c
-script466c:
-	stopifitemflagset
+	jump2byte @npcLoop
+
+@alreadyToldSecret: ; The secret has already been told to farore
+	showtextlowindex <TX_550c
+	jump2byte @npcLoop
+
+@wrongGame: ; A secret for Seasons was told in Ages, or vice versa
+	showtextlowindex <TX_550b
+	jump2byte @npcLoop
+
+@secretNotActive: ; Need to talk to the corresponding npc before you can tell the secret
+	showtextlowindex <TX_551c
+	jump2byte @npcLoop
+
+@waitForLinkToOpenChest: ; A chest exists already, waiting for Link to open it
+	showtextlowindex <TX_550a
+	jump2byte @npcLoop
+
+
+; ==============================================================================
+; INTERACID_DUNGEON_STUFF
+; ==============================================================================
+
+dropSmallKeyWhenNoEnemiesScript:
+	stopifitemflagset ; Stop if already got the key
 	checknoenemies
-	spawnitem $3001
+	spawnitem TREASURE_SMALL_KEY, $01
 	scriptend
-script4672:
-	stopifitemflagset
+
+createChestWhenNoEnemiesScript:
+	stopifitemflagset ; Stop if already opened the chest
 	setcollisionradii $04, $06
 	checknoenemies
 	playsound SND_SOLVEPUZZLE
 	createpuff
 	wait 30
-	settilehere $f1
-	setstate $ff
+	settilehere TILEINDEX_CHEST
+	incstate
 	scriptend
-script4680:
+
+setRoomFlagBit7WhenNoEnemiesScript:
 	stopifroomflag80set
 	checknoenemies
 	orroomflag $80
 	scriptend
-script4685:
+
+
+; ==============================================================================
+; INTERACID_FARORES_MEMORY
+; ==============================================================================
+faroresMemoryScript:
 	initcollisions
-script4686:
+--
 	enableinput
 	checkabutton
 	setdisabledobjectsto91
 	showtext TX_551b
-	jumpiftextoptioneq $00, script4693
+	jumpiftextoptioneq $00, @openSecretList
 	wait 8
-	jump2byte script4686
-script4693:
-	asm15 $1a76, $0a
+	jump2byte --
+
+@openSecretList:
+	asm15 openMenu, $0a
 	wait 8
-	jump2byte script4686
-script469a:
+	jump2byte --
+
+
+; ==================================================
+; INTERACID_DOOR_CONTROLLER.
+; ==================================================
+;
+; Door opener/closer scripts.
+;
+; States:
+;   $01: does nothing except run the script
+;   $02: opens the door
+;   $03: closes the door
+;
+; Variables:
+;   angle: the type and direction of door (see interactionTypes.s)
+;   speed: for subids $14-$17, this is the number of torches that must be lit.
+;   var3d: Bitmask to check on wActiveTriggers (value of "X" parameter converted to
+;          a bitmask)
+;   var3e: Short-form position of the tile the door is on (value of "Y" parameter)
+;   var3f: Value of "X" parameter (a number from 0-7 corresponding to a switch; see
+;          var3d)
+
+
+_doorController_updateRespawnWhenLinkNotTouching:
 	checknotcollidedwithlink_ignorez
-	asm15 $4587
+	asm15 scriptHlp.doorController_updateLinkRespawn
 	retscript
-script469f:
-	setstate $ff
+
+
+; Subid $00: door just opens.
+doorOpenerScript:
+	incstate
 	scriptend
-script46a2:
+
+
+; Subids $04-$07:
+;   Door is controlled by a bit in "wActiveTriggers" (uses the bitmask in var3d).
+
+; Subid $04
+doorController_controlledByTriggers_up:
 	setcollisionradii $0a, $08
 	setangle $10
-	jump2byte script46bc
-script46a9:
+	jump2byte _doorController_controlledByTriggers
+
+; Subid $05
+doorController_controlledByTriggers_right:
 	setcollisionradii $08, $0a
 	setangle $12
-	jump2byte script46bc
-script46b0:
+	jump2byte _doorController_controlledByTriggers
+
+; Subid $06
+doorController_controlledByTriggers_down:
 	setcollisionradii $0a, $08
 	setangle $14
-	jump2byte script46bc
-script46b7:
+	jump2byte _doorController_controlledByTriggers
+
+; Subid $07
+doorController_controlledByTriggers_left:
 	setcollisionradii $08, $0a
 	setangle $16
-script46bc:
-	callscript script469a
-script46bf:
-	asm15 $45be
-	jumptable_memoryaddress $cfc1
-	.dw script46bf
-	.dw script46cb
-	.dw script46d1
-script46cb:
+
+_doorController_controlledByTriggers:
+	callscript _doorController_updateRespawnWhenLinkNotTouching
+@loop:
+	asm15 scriptHlp.doorController_decideActionBasedOnTriggers
+	jumptable_memoryaddress wTmpcfc0.normal.doorControllerState
+	.dw @loop
+	.dw @open
+	.dw @close
+@open:
 	playsound SND_SOLVEPUZZLE
 	setstate $02
-	jump2byte script46bf
-script46d1:
+	jump2byte @loop
+@close:
 	setstate $03
-	jump2byte script46bf
-script46d5:
-	callscript script469a
-	jumpifnoenemies script46e3
+	jump2byte @loop
+
+
+; Subids $08-$0b:
+;   Door shuts itself until [wNumEnemies] == 0.
+
+_doorController_shutUntilEnemiesDead:
+	callscript _doorController_updateRespawnWhenLinkNotTouching
+	jumpifnoenemies @end
 	setstate $03
 	checknoenemies
 	playsound SND_SOLVEPUZZLE
 	wait 8
-	setstate $ff
-script46e3:
+	incstate
+@end:
 	scriptend
-script46e4:
+
+_doorController_open:
 	setstate $02
 	scriptend
-script46e7:
+
+; Subid $08
+doorController_shutUntilEnemiesDead_up:
 	setcollisionradii $0a, $08
 	setangle $10
-	jumpifnoenemies script46e4
-	jump2byte script46d5
-script46f1:
+	jumpifnoenemies _doorController_open
+	jump2byte _doorController_shutUntilEnemiesDead
+
+; Subid $09
+doorController_shutUntilEnemiesDead_right:
 	setcollisionradii $08, $0a
 	setangle $12
-	jumpifnoenemies script46e4
-	jump2byte script46d5
-script46fb:
+	jumpifnoenemies _doorController_open
+	jump2byte _doorController_shutUntilEnemiesDead
+
+; Subid $0a
+doorController_shutUntilEnemiesDead_down:
 	setcollisionradii $0a, $08
 	setangle $14
-	jumpifnoenemies script46e4
-	jump2byte script46d5
-script4705:
+	jumpifnoenemies _doorController_open
+	jump2byte _doorController_shutUntilEnemiesDead
+
+; Subid $0b
+doorController_shutUntilEnemiesDead_left:
 	setcollisionradii $08, $0a
 	setangle $16
-	jumpifnoenemies script46e4
-	jump2byte script46d5
-script470f:
-	asm15 $45ff
-	jumptable_memoryaddress $cfc1
-	.dw script470f
-	.dw script4719
-script4719:
-	setstate $ff
-script471b:
-	callscript script469a
+	jumpifnoenemies _doorController_open
+	jump2byte _doorController_shutUntilEnemiesDead
+
+_doorController_openOnMinecartCollision:
+	asm15 scriptHlp.doorController_checkMinecartCollidedWithDoor
+	jumptable_memoryaddress wTmpcfc0.normal.doorControllerState
+	.dw _doorController_openOnMinecartCollision
+	.dw @incState
+
+@incState:
+	incstate
+
+_doorController_closeDoorWhenLinkNotTouching:
+	callscript _doorController_updateRespawnWhenLinkNotTouching
 	setstate $03
 	scriptend
-script4721:
-	asm15 $4612
-	jumptable_memoryaddress $cfc1
-	.dw script470f
-	.dw script471b
-script472b:
+
+_doorController_minecart:
+	asm15 scriptHlp.doorController_checkTileIsMinecartTrack
+	jumptable_memoryaddress wTmpcfc0.normal.doorControllerState
+	.dw _doorController_openOnMinecartCollision ; Not minecart track (door is closed)
+	.dw _doorController_closeDoorWhenLinkNotTouching ; Minecart track (door is open)
+
+
+; Subids $0c-$0f:
+;   Minecart door; opens when a minecart collides with it
+
+; Subid $0c
+doorController_minecartDoor_up:
 	setcollisionradii $10, $08
 	setangle $18
-	jump2byte script4721
-script4732:
+	jump2byte _doorController_minecart
+
+; Subid $0d
+doorController_minecartDoor_right:
 	setcollisionradii $08, $0e
 	setangle $1a
-	jump2byte script4721
-script4739:
+	jump2byte _doorController_minecart
+
+; Subid $0e
+doorController_minecartDoor_down:
 	setcollisionradii $0f, $08
 	setangle $1c
-	jump2byte script4721
-script4740:
+	jump2byte _doorController_minecart
+
+; Subid $0f
+doorController_minecartDoor_left:
 	setcollisionradii $08, $0f
 	setangle $1e
-	jump2byte script4721
-script4747:
-	callscript script469a
+	jump2byte _doorController_minecart
+
+
+; Subids $10-$13:
+;   Door which automatically closes when Link walks out of that tile.
+;   When Link transitions onto a shutter door tile, the game automatically removes that
+;   tile and replaces it with an interaction of this type.
+
+_doorController_closeDoorWhenLinkNotTouchingAndFlipcfc0:
+	callscript _doorController_updateRespawnWhenLinkNotTouching
 	setstate $03
 	xorcfc0bit 0
 	scriptend
-script474e:
+
+; Subid $10
+doorController_closeAfterLinkEnters_up:
 	setcollisionradii $0c, $08
 	setangle $10
-	jump2byte script4747
-script4755:
+	jump2byte _doorController_closeDoorWhenLinkNotTouchingAndFlipcfc0
+
+; Subid $11
+doorController_closeAfterLinkEnters_right:
 	setcollisionradii $08, $0c
 	setangle $12
-	jump2byte script4747
-script475c:
+	jump2byte _doorController_closeDoorWhenLinkNotTouchingAndFlipcfc0
+
+; Subid $12
+doorController_closeAfterLinkEnters_down:
 	setcollisionradii $0c, $08
 	setangle $14
-	jump2byte script4747
-script4763:
+	jump2byte _doorController_closeDoorWhenLinkNotTouchingAndFlipcfc0
+
+; Subid $13
+doorController_closeAfterLinkEnters_left:
 	setcollisionradii $08, $0c
 	setangle $16
-	jump2byte script4747
-script476a:
-	callscript script469a
+	jump2byte _doorController_closeDoorWhenLinkNotTouchingAndFlipcfc0
+
+
+; Subids $14-$17:
+;   Door opens when a number of torches are lit.
+
+_doorController_shutUntilTorchesLit:
+	callscript _doorController_updateRespawnWhenLinkNotTouching
 	setstate $03
-script476f:
-	asm15 $4629
-	jumptable_memoryaddress $cec0
-	.dw script476f
-	.dw script4779
-script4779:
+@loop:
+	asm15 scriptHlp.doorController_checkEnoughTorchesLit
+	jumptable_memoryaddress wTmpcec0
+	.dw @loop
+	.dw @torchesLit
+
+@torchesLit:
 	wait 30
 	playsound SND_SOLVEPUZZLE
-	setstate $ff
+	incstate
 	scriptend
-script477f:
+
+; Subid $14
+doorController_openWhenTorchesLit_up_2Torches:
 	setcollisionradii $0a, $08
 	setangle $10
 	setspeed $02
-	jump2byte script476a
-script4788:
+	jump2byte _doorController_shutUntilTorchesLit
+
+; Subid $15
+doorController_openWhenTorchesLit_left_2Torches:
 	setcollisionradii $08, $0a
 	setangle $16
 	setspeed $02
-	jump2byte script476a
-script4791:
+	jump2byte _doorController_shutUntilTorchesLit
+
+.ifdef ROM_AGES
+; Subid $16
+doorController_openWhenTorchesLit_down_1Torch:
+	setcollisionradii $0a, $08
+	setangle $14
+	setspeed $01
+	jump2byte _doorController_shutUntilTorchesLit
+
+; Subid $17
+doorController_openWhenTorchesLit_left_1Torch:
+	setcollisionradii $08, $0a
+	setangle $16
+	setspeed $01
+	jump2byte _doorController_shutUntilTorchesLit
+.endif
+
+
+; ==============================================================================
+; INTERACID_SHOPKEEPER
+; ==============================================================================
+
+.ifdef ROM_SEASONS
+shopkeeperScript_blockLinkAccess:
 	setspeed SPEED_200
 	setdisabledobjectsto11
 	playsound SND_CLINK
 	movedown $10
 	setangleandanimation $08
-	jumptable_objectbyte $7e
-	.dw script47a7
-	.dw script47a0
-script47a0:
-	showtextlowindex $0c
+	jumptable_objectbyte Interaction.var3e
+	.dw @noMembersCard
+	.dw @membersCard
+
+@membersCard:
+	showtextlowindex <TX_0e0c
 	writeobjectbyte $7d, $01
-	jump2byte script47a9
-script47a7:
-	showtextlowindex $01
-script47a9:
+	jump2byte +
+
+@noMembersCard:
+	showtextlowindex <TX_0e01
++
 	moveup $10
 	setangleandanimation $08
 	enableallobjects
 	scriptend
-script47af:
-	showtextlowindex $00
+.endif
+
+shopkeeperScript_lynnaShopWelcome:
+	showtextlowindex <TX_0e00
 	scriptend
-script47b2:
-	showtextlowindex $20
+
+shopkeeperScript_advanceShopWelcome:
+	showtextlowindex <TX_0e20
 	scriptend
-script47b5:
-	showtextlowindex $26
+
+shopkeeperScript_boughtEverything:
+	showtextlowindex <TX_0e26
 	scriptend
+
 script47b8:
-	jumptable_objectbyte $77
+	jumptable_objectbyte Interaction.var37
 	.dw script47e2
 	.dw script47ec
 	.dw script47fe
@@ -328,71 +497,71 @@ script47b8:
 	.dw script4852
 script47e2:
 	showtextnonexitablelowindex $1c
-	callscript script485c
-	ormemory $c63f, $01
+	callscript _shopkeeperConfirmPurchase
+	ormemory wBoughtShopItems1, $01
 	scriptend
 script47ec:
 	showtextnonexitablelowindex $02
-	callscript script485c
+	callscript _shopkeeperConfirmPurchase
 	scriptend
 script47f2:
 	showtextnonexitablelowindex $03
-	callscript script485c
+	callscript _shopkeeperConfirmPurchase
 	scriptend
 script47f8:
 	showtextnonexitablelowindex $04
-	callscript script485c
+	callscript _shopkeeperConfirmPurchase
 	scriptend
 script47fe:
 	showtextnonexitablelowindex $1d
-	callscript script485c
-	ormemory $c63f, $02
+	callscript _shopkeeperConfirmPurchase
+	ormemory wBoughtShopItems1, $02
 	scriptend
 script4808:
 	showtextnonexitablelowindex $1e
-	callscript script485c
-	ormemory $c63f, $08
+	callscript _shopkeeperConfirmPurchase
+	ormemory wBoughtShopItems1, $08
 	showtextlowindex $27
 	scriptend
 script4814:
 	showtextnonexitablelowindex $1d
-	callscript script485c
-	ormemory $c63f, $04
+	callscript _shopkeeperConfirmPurchase
+	ormemory wBoughtShopItems1, $04
 	scriptend
 script481e:
 	showtextnonexitablelowindex $1b
-	callscript script485c
+	callscript _shopkeeperConfirmPurchase
 	ormemory $c643, $20
 	scriptend
 script4828:
 	showtextnonexitablelowindex $1d
-	callscript script485c
+	callscript _shopkeeperConfirmPurchase
 	ormemory $c640, $01
 	scriptend
 script4832:
 	showtextnonexitablelowindex $23
-	callscript script485c
+	callscript _shopkeeperConfirmPurchase
 	ormemory $c640, $02
 	scriptend
 script483c:
 	showtextnonexitablelowindex $25
-	callscript script485c
+	callscript _shopkeeperConfirmPurchase
 	ormemory $c640, $04
 	scriptend
 script4846:
 	showtextnonexitablelowindex $29
-	callscript script485c
+	callscript _shopkeeperConfirmPurchase
 	scriptend
 script484c:
 	showtextnonexitablelowindex $2a
-	callscript script485c
+	callscript _shopkeeperConfirmPurchase
 	scriptend
 script4852:
 	showtextnonexitablelowindex $1d
-	callscript script485c
-	ormemory $c63f, $20
+	callscript _shopkeeperConfirmPurchase
+	ormemory wBoughtShopItems1, $20
 	scriptend
-script485c:
+_shopkeeperConfirmPurchase:
 	jumpiftextoptioneq $00, script486c
 	writememory $cbad, $03
 	writememory $cba0, $01
@@ -447,7 +616,7 @@ script48ad:
 script48ba:
 	jumpifc6xxset $3f, $80, script48c7
 	showtextlowindex $0d
-	ormemory $c63f, $80
+	ormemory wBoughtShopItems1, $80
 	jump2byte script48c9
 script48c7:
 	showtextlowindex $0e
@@ -459,7 +628,7 @@ script48c9:
 	scriptend
 script48d2:
 	jumpifmemoryeq $ccec, $01, script487c
-	asm15 $463a
+	asm15 scriptHlp.shopkeeper_take10Rupees
 	setspeed SPEED_200
 	setcollisionradii $06, $06
 	moveup $08
@@ -469,7 +638,7 @@ script48d2:
 	movedown $08
 	jump2byte script48ef
 script48ec:
-	asm15 $463a
+	asm15 scriptHlp.shopkeeper_take10Rupees
 script48ef:
 	setangleandanimation $08
 	writeobjectbyte $45, $02
@@ -554,26 +723,26 @@ script4986:
 	scriptend
 script4989:
 	wait 60
-	setstate $ff
+	incstate
 	wait 10
 	playsound SND_FADEOUT
-	asm15 $3144
+	asm15 fadeoutToWhite
 	wait 20
 	playsound SND_FADEOUT
-	asm15 $3144
+	asm15 fadeoutToWhite
 	shakescreen 120
-	asm15 $4677
+	asm15 scriptHlp.seasonsFunc_15_4677
 	wait 20
 	playsound SND_FADEOUT
-	asm15 $3144
+	asm15 fadeoutToWhite
 	checkpalettefadedone
 	setdisabledobjectsto11
 	settilehere $e1
 	settileat $32, $e1
 	settileat $34, $e1
-	setstate $ff
+	incstate
 	wait 60
-	asm15 $3171
+	asm15 fadeinFromWhite
 	checkpalettefadedone
 	orroomflag $80
 	setglobalflag $0d
@@ -585,11 +754,11 @@ script49bc:
 	wait 30
 	checkcollidedwithlink_onground
 	ormemory $ccaf, $80
-	asm15 $2b8a
+	asm15 dropLinkHeldItem
 	setanimationfromangle
-	setstate $ff
+	incstate
 	playsound MUS_ESSENCE
-	asm15 $4901
+	asm15 scriptHlp.seasonsFunc_15_4901
 	wait 180
 	wait 180
 	playsound SND_FADEOUT
@@ -599,7 +768,7 @@ script49bc:
 	playsound SND_FADEOUT
 	wait 40
 	playsound SND_FADEOUT
-	asm15 $4909
+	asm15 scriptHlp.seasonsFunc_15_4909
 	scriptend
 script49e2:
 	setcollisionradii $12, $06
@@ -609,14 +778,14 @@ script49e6:
 	checkabutton
 	disableinput
 	jumpifglobalflagset $08, script4a44
-	jumpifmemoryeq $cc01, $00, script4a0c
+	jumpifmemoryeq wIsLinkedGame, $00, script4a0c
 	jumpifmemoryset $c615, $01, script49fb
 	jump2byte script4a0c
 script49fb:
 	showtextlowindex $3e
 	jumpifobjectbyteeq $76, $01, script4a08
 	showtextlowindex $3b
-	asm15 $490f
+	asm15 scriptHlp.seasonsFunc_15_490f
 	wait 1
 script4a08:
 	setdisabledobjectsto11
@@ -631,21 +800,21 @@ script4a0e:
 script4a16:
 	jumpifobjectbyteeq $76, $01, script4a23
 	showtextlowindex $3b
-	asm15 $490f
+	asm15 scriptHlp.seasonsFunc_15_490f
 	wait 1
 	setdisabledobjectsto11
 	checktext
 script4a23:
 	showtextlowindex $3f
-	asm15 $49a6
+	asm15 scriptHlp.seasonsFunc_15_49a6
 	wait 1
 	setdisabledobjectsto11
 	checktext
 	showtextlowindex $33
-	asm15 $4927, $00
+	asm15 scriptHlp.seasonsFunc_15_4927, $00
 	wait 10
 	showtextlowindex $13
-	asm15 $4927, $01
+	asm15 scriptHlp.seasonsFunc_15_4927, $01
 	wait 10
 	showtextlowindex $08
 script4a3b:
@@ -654,7 +823,7 @@ script4a3b:
 	enableinput
 	jump2byte script49e6
 script4a44:
-	asm15 $496b
+	asm15 scriptHlp.seasonsFunc_15_496b
 	jumptable_objectbyte $7b
 	.dw script4a51
 	.dw script4a55
@@ -670,7 +839,7 @@ script4a59:
 	showtextlowindex $39
 script4a5b:
 	checktext
-	asm15 $49ae
+	asm15 scriptHlp.seasonsFunc_15_49ae
 	jump2byte script49e6
 script4a61:
 	showtextnonexitablelowindex $03
@@ -681,11 +850,11 @@ script4a61:
 	jump2byte script49e6
 script4a70:
 	jumpifobjectbyteeq $77, $00, script4a98
-	asm15 $4927, $00
+	asm15 scriptHlp.seasonsFunc_15_4927, $00
 	jump2byte script4a84
 script4a7b:
 	jumpifobjectbyteeq $78, $00, script4a9c
-	asm15 $4927, $01
+	asm15 scriptHlp.seasonsFunc_15_4927, $01
 script4a84:
 	wait 10
 	jumpifglobalflagset $09, script4a8e
@@ -696,7 +865,7 @@ script4a8e:
 	showtextlowindex $38
 	checktext
 	setglobalflag $89
-	asm15 $49aa
+	asm15 scriptHlp.seasonsFunc_15_49aa
 	jump2byte script49e6
 script4a98:
 	showtextlowindex $14
@@ -731,7 +900,7 @@ script4aca:
 	jumpiftextoptioneq $02, script4ad6
 script4ad0:
 	setdisabledobjectsto11
-	asm15 $4944
+	asm15 scriptHlp.seasonsFunc_15_4944
 	wait 1
 	scriptend
 script4ad6:
@@ -750,13 +919,13 @@ script4ae2:
 	showtextnonexitablelowindex $18
 	jumpiftextoptioneq $02, script4b04
 	jumpiftextoptioneq $00, script4af7
-	asm15 $4939
+	asm15 scriptHlp.seasonsFunc_15_4939
 script4aef:
 	showtextnonexitablelowindex $1d
 	jumpiftextoptioneq $00, script4aef
 	jump2byte script4b04
 script4af7:
-	asm15 $4934
+	asm15 scriptHlp.seasonsFunc_15_4934
 	wait 1
 	jumpifmemoryeq $cca3, $00, script4b07
 	showtextlowindex $1e
@@ -770,7 +939,7 @@ script4b07:
 script4b0a:
 	setdisabledobjectsto11
 	showtextlowindex $23
-	asm15 $49ae
+	asm15 scriptHlp.seasonsFunc_15_49ae
 	wait 1
 	checktext
 	enableallobjects
@@ -782,8 +951,8 @@ script4b17:
 	wait 30
 	showtext TX_550d
 	jumpiftextoptioneq $00, script4b28
-	asm15 $49b7
-	asm15 $09b4
+	asm15 scriptHlp.seasonsFunc_15_49b7
+	asm15 saveFile
 	wait 30
 	jump2byte script4b30
 script4b28:
@@ -1064,7 +1233,7 @@ script4ce8:
 	checkmemoryeq $ccba, $01
 	jump2byte script4cfa
 script4cf2:
-	asm15 $26ac
+	asm15 interactionSetAlwaysUpdateBit
 	jumpifroomflagset $40, script4cfe
 	checknoenemies
 script4cfa:
@@ -1225,7 +1394,7 @@ script4dea:
 	shakescreen 120
 	wait 60
 	orroomflag $80
-	setstate $ff
+	incstate
 	scriptend
 script4df7:
 	disableinput
@@ -1233,16 +1402,16 @@ script4df7:
 	writememory $cbae, $04
 	setmusic MUS_MAKU_TREE
 	wait 40
-	asm15 $1a66
+	asm15 hideStatusBar
 	asm15 $571a, $02
 	checkpalettefadedone
 	spawninteraction $4800, $40, $50
 	wait 240
 	wait 60
 	callscript script4e25
-	asm15 $1a6a
-	asm15 $2ca6
-	asm15 $315c, $02
+	asm15 showStatusBar
+	asm15 clearFadingPalettes
+	asm15 fadeinFromWhiteWithDelay, $02
 	checkpalettefadedone
 	resetmusic
 	enableinput
@@ -1312,7 +1481,7 @@ script4e94:
 	giveitem $0503
 	disableinput
 	wait 60
-	setstate $ff
+	incstate
 	orroomflag $80
 	checkobjectbyteeq $44, $01
 	playsound SND_SOLVEPUZZLE
@@ -1356,17 +1525,17 @@ script4ed2:
 	asm15 $5788
 	wait 10
 	playsound SND_FADEOUT
-	asm15 $3144
+	asm15 fadeoutToWhite
 	wait 20
 	playsound SND_FADEOUT
-	asm15 $3144
+	asm15 fadeoutToWhite
 	wait 20
 	playsound SND_FADEOUT
-	asm15 $3144
+	asm15 fadeoutToWhite
 	checkpalettefadedone
 	xorcfc0bit 2
 	wait 20
-	asm15 $315c, $04
+	asm15 fadeinFromWhiteWithDelay, $04
 	checkpalettefadedone
 	callscript script4faa
 	asm15 $57b6
@@ -1405,7 +1574,7 @@ script4f22:
 	enableinput
 	jump2byte script4f22
 script4f39:
-	jumpifglobalflagset $28, script4f5c
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, script4f5c
 	jumpifobjectbyteeq $7e, $01, script4f76
 	jumptable_objectbyte $43
 	.dw script4f4c
@@ -1804,7 +1973,7 @@ script51b0:
 	rungenericnpc TX_1208
 script51b3:
 	settextid $1000
-	jumpifmemoryeq $cc01, $01, script51c4
+	jumpifmemoryeq wIsLinkedGame, $01, script51c4
 script51bc:
 	setcollisionradii $03, $0b
 	makeabuttonsensitive
@@ -1922,11 +2091,11 @@ script5276:
 	writeobjectbyte $71, $00
 	showtextlowindex $02
 script5286:
-	asm15 $3d30
+	asm15 seasonsFunc_3d30
 	jump2byte script5276
 script528b:
 	disableinput
-	asm15 $57e5
+	asm15 scriptHlp.seasonsFunc_15_57e5
 	playsound SND_CLINK
 	setcounter1 $40
 	setcollisionradii $00, $00
@@ -1948,7 +2117,7 @@ script52a1:
 	setanimation $07
 script52b6:
 	wait 1
-	asm15 $5812, $28
+	asm15 scriptHlp.seasonsFunc_15_5812, $28
 	jumpifobjectbyteeq $76, $01, script52b6
 	setangle $08
 	applyspeed $10
@@ -1963,7 +2132,7 @@ script52b6:
 	setanimation $00
 script52d3:
 	wait 1
-	asm15 $3d30
+	asm15 seasonsFunc_3d30
 	jumpifobjectbyteeq $71, $00, script52d3
 	writeobjectbyte $71, $00
 	showtextlowindex $02
@@ -1971,7 +2140,7 @@ script52d3:
 script52e3:
 	setanimation $02
 	writeobjectbyte $43, $01
-	asm15 $5821
+	asm15 scriptHlp.seasonsFunc_15_5821
 	jumptable_memoryaddress $cfc0
 	.dw script52f4
 	.dw script52f6
@@ -1985,11 +2154,11 @@ script52f8:
 script52fa:
 	jumpifobjectbyteeq $77, $01, script5305
 	wait 1
-	asm15 $3d30
+	asm15 seasonsFunc_3d30
 	jump2byte script52fa
 script5305:
 	disableinput
-	asm15 $57e5
+	asm15 scriptHlp.seasonsFunc_15_57e5
 	playsound SND_CLINK
 	setcounter1 $40
 	showtextlowindex $04
@@ -1999,7 +2168,7 @@ script5305:
 	setangle $10
 script5316:
 	wait 1
-	asm15 $5838
+	asm15 scriptHlp.seasonsFunc_15_5838
 	jumpifobjectbyteeq $4f, $00, script5321
 	jump2byte script5316
 script5321:
@@ -2007,10 +2176,10 @@ script5321:
 	setangle $18
 	applyspeed $24
 	wait 10
-	asm15 $5840
+	asm15 scriptHlp.seasonsFunc_15_5840
 script532a:
 	wait 1
-	asm15 $5802
+	asm15 scriptHlp.seasonsFunc_15_5802
 	jumpifobjectbyteeq $76, $00, script532a
 	wait 20
 	writememory $d008, $01
@@ -2026,7 +2195,7 @@ script533a:
 	setspeed SPEED_100
 script534a:
 	wait 1
-	asm15 $5812, $88
+	asm15 scriptHlp.seasonsFunc_15_5812, $88
 	jumpifobjectbyteeq $76, $01, script534a
 	enableinput
 	orroomflag $40
@@ -2071,7 +2240,7 @@ script5394:
 	checkabutton
 	setdisabledobjectsto91
 	setanimation $02
-	asm15 $5850
+	asm15 scriptHlp.bipin_showText_subid1To9
 	wait 30
 	callscript script53ab
 	enableallobjects
@@ -2081,7 +2250,7 @@ script53a2:
 script53a3:
 	checkabutton
 	setdisabledobjectsto91
-	asm15 $5850
+	asm15 scriptHlp.bipin_showText_subid1To9
 	enableallobjects
 	jump2byte script53a3
 script53ab:
@@ -2123,7 +2292,7 @@ script53da:
 	jump2byte script53da
 script53ea:
 	initcollisions
-	asm15 $5871, $00
+	asm15 scriptHlp.checkc6e2BitSet, $00
 	jumpifobjectbyteeq $7b, $01, script5421
 script53f4:
 	checkabutton
@@ -2147,8 +2316,8 @@ script5408:
 	.dw script53f8
 script5412:
 	asm15 $588d
-	asm15 $586b, $00
-	asm15 $5866, $01
+	asm15 scriptHlp.setc6e2Bit, $00
+	asm15 scriptHlp.setNextChildStage, $01
 	wait 30
 	showtextlowindex $08
 	enableinput
@@ -2158,7 +2327,7 @@ script5421:
 	jump2byte script5421
 script5426:
 	initcollisions
-	asm15 $5871, $01
+	asm15 scriptHlp.checkc6e2BitSet, $01
 	jumpifobjectbyteeq $7b, $01, script54cd
 script5430:
 	checkabutton
@@ -2178,10 +2347,10 @@ script543b:
 script5449:
 	asm15 $5880, $0f
 	jumpifobjectbyteeq $7c, $01, script54c1
-	asm15 $1751, $0f
+	asm15 removeRupeeValue, $0f
 	asm15 $5887, $08
-	asm15 $586b, $01
-	asm15 $5866, $02
+	asm15 scriptHlp.setc6e2Bit, $01
+	asm15 scriptHlp.setNextChildStage, $02
 	enableallobjects
 script5463:
 	showtextlowindex $0d
@@ -2190,10 +2359,10 @@ script5463:
 script5468:
 	asm15 $5880, $0b
 	jumpifobjectbyteeq $7c, $01, script54c1
-	asm15 $1751, $0b
+	asm15 removeRupeeValue, $0b
 	asm15 $5887, $05
-	asm15 $586b, $01
-	asm15 $5866, $02
+	asm15 scriptHlp.setc6e2Bit, $01
+	asm15 scriptHlp.setNextChildStage, $02
 	enableallobjects
 script5482:
 	showtextlowindex $0e
@@ -2202,10 +2371,10 @@ script5482:
 script5487:
 	asm15 $5880, $04
 	jumpifobjectbyteeq $7c, $01, script54c1
-	asm15 $1751, $04
+	asm15 removeRupeeValue, $04
 	asm15 $5887, $02
-	asm15 $586b, $01
-	asm15 $5866, $02
+	asm15 scriptHlp.setc6e2Bit, $01
+	asm15 scriptHlp.setNextChildStage, $02
 	enableallobjects
 script54a1:
 	showtextlowindex $0f
@@ -2214,9 +2383,9 @@ script54a1:
 script54a6:
 	asm15 $5880, $01
 	jumpifobjectbyteeq $7c, $01, script54c1
-	asm15 $1751, $01
-	asm15 $586b, $01
-	asm15 $5866, $02
+	asm15 removeRupeeValue, $01
+	asm15 scriptHlp.setc6e2Bit, $01
+	asm15 scriptHlp.setNextChildStage, $02
 	enableallobjects
 script54bc:
 	showtextlowindex $10
@@ -2242,18 +2411,18 @@ script54d3:
 	checkabutton
 	setdisabledobjectsto91
 	showtextlowindex $12
-	asm15 $5866, $03
+	asm15 scriptHlp.setNextChildStage, $03
 	enableallobjects
 	jump2byte script54d3
 script54de:
 	initcollisions
-	asm15 $5871, $02
+	asm15 scriptHlp.checkc6e2BitSet, $02
 	jumpifobjectbyteeq $7b, $01, script5509
 	checkabutton
 	setdisabledobjectsto91
 	showtextlowindex $13
-	asm15 $586b, $02
-	asm15 $5866, $04
+	asm15 scriptHlp.setc6e2Bit, $02
+	asm15 scriptHlp.setNextChildStage, $04
 	jumptable_memoryaddress $cba5
 	.dw script54fb
 	.dw script5501
@@ -2277,7 +2446,7 @@ script5510:
 	rungenericnpclowindex $18
 script5512:
 	initcollisions
-	asm15 $5871, $03
+	asm15 scriptHlp.checkc6e2BitSet, $03
 	jumptable_objectbyte $43
 	.dw script551f
 	.dw script5536
@@ -2328,7 +2497,7 @@ script5564:
 script556b:
 	wait 30
 	showtextlowindex $1c
-	asm15 $586b, $03
+	asm15 scriptHlp.setc6e2Bit, $03
 	writeobjectbyte $7a, $01
 	asm15 $5887, $08
 	retscript
@@ -2341,7 +2510,7 @@ script557a:
 script5584:
 	wait 30
 	showtextlowindex $1e
-	asm15 $586b, $03
+	asm15 scriptHlp.setc6e2Bit, $03
 	writeobjectbyte $7a, $01
 	asm15 $5887, $05
 	retscript
@@ -2354,7 +2523,7 @@ script5593:
 script559d:
 	wait 30
 	showtextlowindex $20
-	asm15 $586b, $03
+	asm15 scriptHlp.setc6e2Bit, $03
 	writeobjectbyte $7a, $01
 	asm15 $5887, $01
 	retscript
@@ -2538,7 +2707,7 @@ script56b0:
 	playsound SND_GETSEED
 	checkcfc0bit 4
 	updatelinkrespawnposition
-	asm15 $10ce
+	asm15 setDeathRespawnPoint
 	setanimation $03
 	setspeed SPEED_200
 	setangle $18
@@ -2573,10 +2742,10 @@ script5716:
 	writeobjectbyte $5c, $01
 	rungenericnpc TX_3e00
 script571c:
-	jumpifglobalflagset $28, stubScript
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, stubScript
 	rungenericnpc TX_3e01
 script5723:
-	jumpifglobalflagset $28, stubScript
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, stubScript
 	writeobjectbyte $5c, $01
 	rungenericnpc TX_3e02
 script572d:
@@ -2584,7 +2753,7 @@ script572d:
 script5730:
 	rungenericnpc TX_3e04
 script5733:
-	jumpifglobalflagset $28, stubScript
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, stubScript
 	writeobjectbyte $5c, $01
 	rungenericnpc TX_3e08
 script573d:
@@ -2752,7 +2921,7 @@ script5855:
 script5861:
 	rungenericnpc TX_2706
 script5864:
-	jumpifglobalflagset $28, stubScript
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, stubScript
 	rungenericnpc TX_3e06
 script586b:
 	writeobjectbyte $5c, $01
@@ -2788,31 +2957,31 @@ script5890:
 script5891:
 	checkabutton
 	showtext TX_4701
-	asm15 $5866, $06
+	asm15 scriptHlp.setNextChildStage, $06
 	jump2byte script5891
 script589b:
 	initcollisions
 script589c:
 	checkabutton
 	showtext TX_4201
-	asm15 $5866, $06
+	asm15 scriptHlp.setNextChildStage, $06
 	jump2byte script589c
 script58a6:
 	initcollisions
 script58a7:
 	checkabutton
 	showtext TX_4901
-	asm15 $5866, $06
+	asm15 scriptHlp.setNextChildStage, $06
 	jump2byte script58a7
 script58b1:
 	initcollisions
-	asm15 $5871, $04
+	asm15 scriptHlp.checkc6e2BitSet, $04
 	jumpifobjectbyteeq $7b, $01, script58df
 	checkabutton
 	disableinput
 	showtext TX_4702
-	asm15 $586b, $04
-	asm15 $5866, $07
+	asm15 scriptHlp.setc6e2Bit, $04
+	asm15 scriptHlp.setNextChildStage, $07
 	jumptable_memoryaddress $cba5
 	.dw script58cf
 	.dw script58da
@@ -2832,13 +3001,13 @@ script58df:
 	jump2byte script58df
 script58e5:
 	initcollisions
-	asm15 $5871, $04
+	asm15 scriptHlp.checkc6e2BitSet, $04
 	jumpifobjectbyteeq $7b, $01, script5913
 	checkabutton
 	disableinput
 	showtext TX_4202
-	asm15 $586b, $04
-	asm15 $5866, $07
+	asm15 scriptHlp.setc6e2Bit, $04
+	asm15 scriptHlp.setNextChildStage, $07
 	jumptable_memoryaddress $cba5
 	.dw script5903
 	.dw script590e
@@ -2858,13 +3027,13 @@ script5913:
 	jump2byte script5913
 script5919:
 	initcollisions
-	asm15 $5871, $04
+	asm15 scriptHlp.checkc6e2BitSet, $04
 	jumpifobjectbyteeq $7b, $01, script5947
 	checkabutton
 	disableinput
 	showtext TX_4902
-	asm15 $586b, $04
-	asm15 $5866, $07
+	asm15 scriptHlp.setc6e2Bit, $04
+	asm15 scriptHlp.setNextChildStage, $07
 	jumptable_memoryaddress $cba5
 	.dw script5937
 	.dw script5942
@@ -2887,32 +3056,32 @@ script594d:
 script594e:
 	checkabutton
 	showtext TX_4b00
-	asm15 $5866, $08
+	asm15 scriptHlp.setNextChildStage, $08
 	jump2byte script594e
 script5958:
 	initcollisions
 script5959:
 	checkabutton
 	showtext TX_4a00
-	asm15 $5866, $08
+	asm15 scriptHlp.setNextChildStage, $08
 	jump2byte script5959
 script5963:
 	initcollisions
 script5964:
 	checkabutton
 	showtext TX_4800
-	asm15 $5866, $08
+	asm15 scriptHlp.setNextChildStage, $08
 	jump2byte script5964
 script596e:
 	initcollisions
 script596f:
 	checkabutton
 	showtext TX_4600
-	asm15 $5866, $08
+	asm15 scriptHlp.setNextChildStage, $08
 	jump2byte script596f
 script5979:
 	initcollisions
-	asm15 $5871, $05
+	asm15 scriptHlp.checkc6e2BitSet, $05
 	jumpifobjectbyteeq $7b, $01, script5a30
 script5983:
 	checkabutton
@@ -2932,10 +3101,10 @@ script598f:
 script599e:
 	asm15 $5994, $0c
 	jumpifobjectbyteeq $7c, $01, script5a22
-	asm15 $1751, $0c
+	asm15 removeRupeeValue, $0c
 	asm15 $599f, $00
-	asm15 $586b, $05
-	asm15 $5866, $09
+	asm15 scriptHlp.setc6e2Bit, $05
+	asm15 scriptHlp.setNextChildStage, $09
 	wait 30
 	enableinput
 script59b9:
@@ -2945,10 +3114,10 @@ script59b9:
 script59bf:
 	asm15 $5994, $0b
 	jumpifobjectbyteeq $7c, $01, script5a22
-	asm15 $1751, $0b
+	asm15 removeRupeeValue, $0b
 	asm15 $599f, $01
-	asm15 $586b, $05
-	asm15 $5866, $09
+	asm15 scriptHlp.setc6e2Bit, $05
+	asm15 scriptHlp.setNextChildStage, $09
 	wait 30
 	enableinput
 script59da:
@@ -2958,10 +3127,10 @@ script59da:
 script59e0:
 	asm15 $5994, $04
 	jumpifobjectbyteeq $7c, $01, script5a22
-	asm15 $1751, $04
+	asm15 removeRupeeValue, $04
 	asm15 $599f, $02
-	asm15 $586b, $05
-	asm15 $5866, $09
+	asm15 scriptHlp.setc6e2Bit, $05
+	asm15 scriptHlp.setNextChildStage, $09
 	wait 30
 	enableinput
 script59fb:
@@ -2971,10 +3140,10 @@ script59fb:
 script5a01:
 	asm15 $5994, $01
 	jumpifobjectbyteeq $7c, $01, script5a22
-	asm15 $1751, $01
+	asm15 removeRupeeValue, $01
 	asm15 $599f, $03
-	asm15 $586b, $05
-	asm15 $5866, $09
+	asm15 scriptHlp.setc6e2Bit, $05
+	asm15 scriptHlp.setNextChildStage, $09
 	wait 30
 	enableinput
 script5a1c:
@@ -2997,7 +3166,7 @@ script5a30:
 	jump2byte script5a30
 script5a36:
 	initcollisions
-	asm15 $5871, $05
+	asm15 scriptHlp.checkc6e2BitSet, $05
 	jumpifobjectbyteeq $7b, $01, script5a94
 	checkabutton
 	disableinput
@@ -3019,8 +3188,8 @@ script5a57:
 	.dw script5a62
 script5a62:
 	asm15 $599f, $03
-	asm15 $586b, $05
-	asm15 $5866, $09
+	asm15 scriptHlp.setc6e2Bit, $05
+	asm15 scriptHlp.setNextChildStage, $09
 	wait 30
 	showtext TX_4a04
 	enableinput
@@ -3035,8 +3204,8 @@ script5a7c:
 script5a82:
 	asm15 $599f, $02
 script5a86:
-	asm15 $586b, $05
-	asm15 $5866, $09
+	asm15 scriptHlp.setc6e2Bit, $05
+	asm15 scriptHlp.setNextChildStage, $09
 	wait 30
 	showtext TX_4a05
 	wait 30
@@ -3047,14 +3216,14 @@ script5a94:
 	jump2byte script5a94
 script5a9a:
 	initcollisions
-	asm15 $5871, $05
+	asm15 scriptHlp.checkc6e2BitSet, $05
 	jumpifobjectbyteeq $7b, $01, script5aba
 	checkabutton
 	disableinput
 	showtext TX_4801
 	giveitem $3403
-	asm15 $586b, $05
-	asm15 $5866, $09
+	asm15 scriptHlp.setc6e2Bit, $05
+	asm15 scriptHlp.setNextChildStage, $09
 	wait 30
 	showtext TX_4802
 	wait 30
@@ -3065,14 +3234,14 @@ script5aba:
 	jump2byte script5aba
 script5ac0:
 	initcollisions
-	asm15 $5871, $05
+	asm15 scriptHlp.checkc6e2BitSet, $05
 	jumpifobjectbyteeq $7b, $01, script5adf
 	checkabutton
 	disableinput
 	showtext TX_4601
 	asm15 $599b, $00
-	asm15 $586b, $05
-	asm15 $5866, $09
+	asm15 scriptHlp.setc6e2Bit, $05
+	asm15 scriptHlp.setNextChildStage, $09
 	wait 30
 	enableinput
 	jump2byte script5ae0
@@ -3083,12 +3252,12 @@ script5ae0:
 	jump2byte script5adf
 script5ae5:
 	initcollisions
-	asm15 $5871, $06
+	asm15 scriptHlp.checkc6e2BitSet, $06
 	jumpifobjectbyteeq $7b, $01, script5b21
 	checkabutton
 	disableinput
 	showtext TX_4b0a
-	asm15 $586b, $06
+	asm15 scriptHlp.setc6e2Bit, $06
 	wait 30
 	jumptable_memoryaddress $c6dd
 	.dw script5b04
@@ -3096,7 +3265,7 @@ script5ae5:
 	.dw script5b15
 	.dw script5b1a
 script5b04:
-	asm15 $17e5
+	asm15 refillSeedSatchel
 	showtext TX_0052
 	jump2byte script5b1d
 script5b0c:
@@ -3119,14 +3288,14 @@ script5b22:
 	jump2byte script5b21
 script5b27:
 	initcollisions
-	asm15 $5871, $06
+	asm15 scriptHlp.checkc6e2BitSet, $06
 	jumpifobjectbyteeq $7b, $01, script5b6f
 	checkabutton
 	disableinput
 	showtext TX_4a06
 	wait 30
 	showtext TX_4a07
-	asm15 $586b, $06
+	asm15 scriptHlp.setc6e2Bit, $06
 	wait 30
 	jumptable_memoryaddress $c6dd
 	.dw script5b4a
@@ -3221,15 +3390,15 @@ script5bd2:
 script5bd4:
 	rungenericnpclowindex $06
 script5bd6:
-	jumpifglobalflagset $28, script5bdc
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, script5bdc
 	rungenericnpclowindex $02
 script5bdc:
 	rungenericnpclowindex $0e
 script5bde:
-	jumpifglobalflagset $28, script5bea
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, script5bea
 	rungenericnpclowindex $03
 script5be4:
-	jumpifglobalflagset $28, script5bea
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, script5bea
 	rungenericnpclowindex $07
 script5bea:
 	rungenericnpclowindex $0f
@@ -3350,7 +3519,7 @@ script5c93:
 	initcollisions
 script5c94:
 	checkabutton
-	asm15 $63b8
+	asm15 scriptHlp.seasonsFunc_15_63b8
 	showloadedtext
 	wait 10
 	setanimationfromobjectbyte $7b
@@ -3448,7 +3617,7 @@ script5d23:
 	showtextlowindex $1f
 	wait 30
 	writememory $c6e4, $02
-	jumptable_memoryaddress $cc01
+	jumptable_memoryaddress wIsLinkedGame
 	.dw script5d36
 	.dw script5d44
 script5d36:
@@ -3545,7 +3714,7 @@ script5dd9:
 	jump2byte script5dd9
 script5ddd:
 	initcollisions
-	jumpifglobalflagset $28, script5df0
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, script5df0
 	jumpifglobalflagset $13, script5deb
 script5de6:
 	checkabutton
@@ -3661,7 +3830,7 @@ script5e93:
 	loadscript $14, $4930
 script5e97:
 	writeobjectbyte $7c, $01
-	asm15 $1e15
+	asm15 objectSetVisible80
 	setspeed SPEED_080
 	movedown $03
 	wait 20
@@ -3694,7 +3863,7 @@ script5ec9:
 	setcounter1 $6a
 	setcounter1 $44
 	writeobjectbyte $7c, $01
-	asm15 $1e15
+	asm15 objectSetVisible80
 	setspeed SPEED_100
 	movedown $0f
 	wait 4
@@ -3714,7 +3883,7 @@ script5ee5:
 	setcounter1 $44
 	xorcfc0bit 2
 	writeobjectbyte $7c, $01
-	asm15 $1e15
+	asm15 objectSetVisible80
 	setspeed SPEED_100
 	moveright $11
 	wait 4
@@ -3880,7 +4049,7 @@ script601f:
 	wait 60
 	applyspeed $20
 	wait 30
-	asm15 $63d1, $01
+	asm15 scriptHlp.seasonsFunc_15_63d1, $01
 	showtext TX_0607
 	asm15 $59b3
 	checkheartdisplayupdated
@@ -4074,7 +4243,7 @@ script6172:
 script6176:
 	setcollisionradii $22, $20
 	makeabuttonsensitive
-	jumpifglobalflagset $28, script61ee
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, script61ee
 script617e:
 	jumpifroomflagset $40, script61d7
 	asm15 $5af5, $0b
@@ -4445,7 +4614,7 @@ script63ff:
 	makeabuttonsensitive
 	checkabutton
 	disableinput
-	asm15 $1e39
+	asm15 objectSetInvisible
 	xorcfc0bit 0
 	callscript script6411
 	orroomflag $40
@@ -4515,7 +4684,7 @@ script646d:
 	jump2byte script6462
 script6474:
 	asm15 $5c23
-	asm15 $3144
+	asm15 fadeoutToWhite
 	checkpalettefadedone
 	setdisabledobjectsto11
 	writememory $cced, $01
@@ -4524,7 +4693,7 @@ script6474:
 	asm15 $5c61
 	asm15 $5cb0, $00
 	wait 4
-	asm15 $3171
+	asm15 fadeinFromWhite
 	checkpalettefadedone
 	showtextlowindex $05
 	playsound SND_DING
@@ -4540,13 +4709,13 @@ script649a:
 	wait 20
 	playsound SND_DING
 	wait 90
-	asm15 $3144
+	asm15 fadeoutToWhite
 	checkpalettefadedone
 	setdisabledobjectsto11
 	asm15 $5c80
 	asm15 $5c49
 	wait 4
-	asm15 $3171
+	asm15 fadeinFromWhite
 	checkpalettefadedone
 	resetmusic
 	writeobjectbyte $71, $00
@@ -4683,7 +4852,7 @@ script6598:
 	wait 30
 	createpuff
 	enableallobjects
-	asm15 $12ae
+	asm15 setCameraFocusedObjectToLink
 	setstate $03
 	scriptend
 script65a1:
@@ -4766,7 +4935,7 @@ script6630:
 script6634:
 	showtext TX_0115
 	jumpiftextoptioneq $01, script6641
-	asm15 $313b
+	asm15 fastFadeoutToWhite
 	setstate2 $ff
 	scriptend
 script6641:
@@ -4841,9 +5010,9 @@ script66aa:
 	disableinput
 	wait 30
 	playsound SND_FLOODGATES
-	asm15 $1e42
+	asm15 objectSetVisible
 	wait 60
-	asm15 $1e39
+	asm15 objectSetInvisible
 	orroomflag $40
 	settilehere $aa
 	playsound SNDCTRL_STOPSFX
@@ -4861,7 +5030,7 @@ script66ca:
 	writememory $d008, $01
 	orroomflag $80
 	spawninteraction $6b14, $00, $00
-	setstate $ff
+	incstate
 	scriptend
 script66e0:
 	checkcfc0bit 0
@@ -5348,7 +5517,7 @@ script6a28:
 	asm15 $5e5d
 	setspeed SPEED_100
 	setangle $04
-	setstate $ff
+	incstate
 	initcollisions
 	wait 120
 	setzspeed -$0100
@@ -5399,7 +5568,7 @@ script6ab8:
 	checkmemoryeq $d13d, $01
 	disablemenu
 	writememory $d13d, $00
-	jumpifmemoryeq $cc01, $00, script6ad5
+	jumpifmemoryeq wIsLinkedGame, $00, script6ad5
 	showtext TX_2214
 	jump2byte script6ad9
 script6ad5:
@@ -5416,7 +5585,7 @@ script6ad9:
 	writememory $d13d, $00
 	checkmemoryeq $d13d, $01
 	disablemenu
-	jumpifmemoryeq $cc01, $00, script6b0c
+	jumpifmemoryeq wIsLinkedGame, $00, script6b0c
 	showtext TX_2215
 	writeobjectbyte $44, $02
 	showtext TX_003a
@@ -5439,7 +5608,7 @@ script6b26:
 	setdisabledobjectsto11
 	jumpifitemobtained $48, script6b55
 	enablemenu
-	jumpifmemoryeq $cc01, $00, script6b47
+	jumpifmemoryeq wIsLinkedGame, $00, script6b47
 	jumpifmemoryset $c643, $10, script6b42
 	showtext TX_200a
 	jump2byte script6b4a
@@ -5454,7 +5623,7 @@ script6b4a:
 	enableallobjects
 	jump2byte script6b26
 script6b55:
-	jumpifmemoryeq $cc01, $00, script6b6b
+	jumpifmemoryeq wIsLinkedGame, $00, script6b6b
 	jumpifmemoryset $c643, $10, script6b66
 	showtext TX_200a
 	jump2byte script6b6e
@@ -5473,7 +5642,7 @@ script6b6e:
 	writeobjectbyte $44, $02
 	jump2byte script6b9c
 script6b85:
-	jumpifmemoryeq $cc01, $00, script6b90
+	jumpifmemoryeq wIsLinkedGame, $00, script6b90
 	showtext TX_200c
 	jump2byte script6b93
 script6b90:
@@ -5533,7 +5702,7 @@ script6c0a:
 	jump2byte script6c0a
 script6c1d:
 	disablemenu
-	jumpifmemoryeq $cc01, $00, script6c2f
+	jumpifmemoryeq wIsLinkedGame, $00, script6c2f
 	showtext TX_2115
 	writeobjectbyte $44, $02
 	showtext TX_0039
@@ -6194,7 +6363,7 @@ script7102:
 	writeobjectbyte $7d, $01
 	retscript
 script710b:
-	jumptable_memoryaddress $cc01
+	jumptable_memoryaddress wIsLinkedGame
 	.dw script7112
 	.dw script7133
 script7112:
@@ -6232,17 +6401,17 @@ script7133:
 	.dw script7223
 	.dw script7242
 script7154:
-	asm15 $6123, $00
-	asm15 $60e2, $03
+	asm15 scriptHlp.seasonsFunc_15_6123, $00
+	asm15 scriptHlp.seasonsFunc_15_60e2, $03
 	jumpifroomflagset $40, script7196
 	callscript script727d
 	disableinput
 	jumpifglobalflagset $18, script717c
 	setglobalflag $18
-	asm15 $60f4, $00
+	asm15 scriptHlp.seasonsFunc_15_60f4, $00
 	wait 30
 script716f:
-	asm15 $60f4, $01
+	asm15 scriptHlp.seasonsFunc_15_60f4, $01
 	wait 1
 	jumpiftextoptioneq $01, script717b
 	wait 30
@@ -6250,110 +6419,110 @@ script716f:
 script717b:
 	wait 30
 script717c:
-	asm15 $60f4, $02
+	asm15 scriptHlp.seasonsFunc_15_60f4, $02
 	wait 1
 	jumpifroomflagset $80, script718a
 	orroomflag $80
-	asm15 $6132
+	asm15 scriptHlp.seasonsFunc_15_6132
 script718a:
-	asm15 $6123, $02
+	asm15 scriptHlp.seasonsFunc_15_6123, $02
 	checkobjectbyteeq $61, $ff
-	asm15 $6123, $00
+	asm15 scriptHlp.seasonsFunc_15_6123, $00
 	enableinput
 script7196:
 	callscript script727d
-	asm15 $60ef, $03
+	asm15 scriptHlp.seasonsFunc_15_60ef, $03
 	callscript script729c
 	jump2byte script7196
 script71a2:
-	asm15 $6123, $00
+	asm15 scriptHlp.seasonsFunc_15_6123, $00
 script71a6:
 	callscript script727d
-	asm15 $60ea
+	asm15 scriptHlp.seasonsFunc_15_60ea
 	callscript script729c
 	jump2byte script71a6
 script71b1:
-	asm15 $6123, $04
+	asm15 scriptHlp.seasonsFunc_15_6123, $04
 	setcollisionradii $24, $10
 	makeabuttonsensitive
 script71b9:
 	checkabutton
-	asm15 $6123, $01
-	asm15 $60ea
+	asm15 scriptHlp.seasonsFunc_15_6123, $01
+	asm15 scriptHlp.seasonsFunc_15_60ea
 	wait 1
-	asm15 $6123, $04
+	asm15 scriptHlp.seasonsFunc_15_6123, $04
 	jump2byte script71b9
 script71c8:
-	asm15 $6123, $04
+	asm15 scriptHlp.seasonsFunc_15_6123, $04
 	checkflagset $00, $cd00
 	disableinput
 	wait 30
-	asm15 $6123, $01
-	asm15 $60e7, $17
+	asm15 scriptHlp.seasonsFunc_15_6123, $01
+	asm15 scriptHlp.seasonsFunc_15_60e7, $17
 	wait 1
-	asm15 $6123, $04
-	asm15 $617e
+	asm15 scriptHlp.seasonsFunc_15_6123, $04
+	asm15 scriptHlp.seasonsFunc_15_617e
 	setcounter1 $61
 	setcounter1 $61
 	playsound SND_GETSEED
 	giveitem $3600
 	wait 40
-	asm15 $6123, $01
-	asm15 $60ef, $18
+	asm15 scriptHlp.seasonsFunc_15_6123, $01
+	asm15 scriptHlp.seasonsFunc_15_60ef, $18
 	wait 40
-	asm15 $3183, $01
-	asm15 $6184
+	asm15 fadeoutToBlackWithDelay, $01
+	asm15 scriptHlp.seasonsFunc_15_6184
 	setcounter1 $ff
 	scriptend
 script71ff:
-	asm15 $6123, $04
-	asm15 $619a
+	asm15 scriptHlp.seasonsFunc_15_6123, $04
+	asm15 scriptHlp.seasonsFunc_15_619a
 	setmusic MUS_MAKU_TREE
-	asm15 $60e2, $18
+	asm15 scriptHlp.seasonsFunc_15_60e2, $18
 	setcollisionradii $24, $10
 	makeabuttonsensitive
-	asm15 $618e
+	asm15 scriptHlp.seasonsFunc_15_618e
 script7213:
 	checkabutton
-	asm15 $6123, $01
-	asm15 $60ef, $18
+	asm15 scriptHlp.seasonsFunc_15_6123, $01
+	asm15 scriptHlp.seasonsFunc_15_60ef, $18
 	wait 1
-	asm15 $6123, $04
+	asm15 scriptHlp.seasonsFunc_15_6123, $04
 	jump2byte script7213
 script7223:
-	asm15 $6123, $04
-	asm15 $619a
+	asm15 scriptHlp.seasonsFunc_15_6123, $04
+	asm15 scriptHlp.seasonsFunc_15_619a
 	setmusic MUS_MAKU_TREE
-	asm15 $60e2, $38
+	asm15 scriptHlp.seasonsFunc_15_60e2, $38
 	setcollisionradii $24, $10
 	makeabuttonsensitive
 script7234:
 	checkabutton
-	asm15 $6123, $01
+	asm15 scriptHlp.seasonsFunc_15_6123, $01
 	showtext TX_1738
-	asm15 $6123, $04
+	asm15 scriptHlp.seasonsFunc_15_6123, $04
 	jump2byte script7234
 script7242:
-	asm15 $6123, $00
-	asm15 $60e2, $39
+	asm15 scriptHlp.seasonsFunc_15_6123, $00
+	asm15 scriptHlp.seasonsFunc_15_60e2, $39
 script724a:
 	callscript script727d
 	showtext TX_1739
 	callscript script729c
 	jump2byte script724a
 script7255:
-	asm15 $6123, $00
+	asm15 scriptHlp.seasonsFunc_15_6123, $00
 	checkcfc0bit 7
 	playsound SND_POOF
-	asm15 $6123, $03
+	asm15 scriptHlp.seasonsFunc_15_6123, $03
 	scriptend
 script7261:
-	asm15 $6123, $04
+	asm15 scriptHlp.seasonsFunc_15_6123, $04
 	checkmemoryeq $cfc0, $02
-	asm15 $6123, $01
+	asm15 scriptHlp.seasonsFunc_15_6123, $01
 	showtext TX_3d07
 	wait 1
-	asm15 $6123, $04
+	asm15 scriptHlp.seasonsFunc_15_6123, $04
 	wait 60
 	writememory $cfc0, $03
 	setcounter1 $ff
@@ -6363,20 +6532,20 @@ script727d:
 	disablemenu
 	writememory $ccaf, $80
 	playsound SND_POOF
-	asm15 $6123, $03
+	asm15 scriptHlp.seasonsFunc_15_6123, $03
 	checkmemoryeq $ccaf, $ff
 	setdisabledobjectsto11
 	checkobjectbyteeq $61, $ff
 	setdisabledobjectsto91
 	writememory $ccaf, $00
-	asm15 $6123, $01
+	asm15 scriptHlp.seasonsFunc_15_6123, $01
 	enablemenu
 	retscript
 script729c:
 	enableallobjects
-	asm15 $6123, $02
+	asm15 scriptHlp.seasonsFunc_15_6123, $02
 	checkobjectbyteeq $61, $ff
-	asm15 $6123, $00
+	asm15 scriptHlp.seasonsFunc_15_6123, $00
 	retscript
 script72a9:
 	initcollisions
@@ -6497,7 +6666,7 @@ jewelHelperScript_insertedAllJewels:
 
 script7345:
 	stopifitemflagset
-	jumptable_memoryaddress $cc01
+	jumptable_memoryaddress wIsLinkedGame
 	.dw script734d
 	.dw script7357
 script734d:
@@ -6533,12 +6702,12 @@ script737e:
 	loadscript $14, $50d3
 script7382:
 	stopifitemflagset
-	jumptable_memoryaddress $cc01
+	jumptable_memoryaddress wIsLinkedGame
 	.dw script7392
 	.dw script739e
 script738a:
 	stopifitemflagset
-	jumptable_memoryaddress $cc01
+	jumptable_memoryaddress wIsLinkedGame
 	.dw script739e
 	.dw script7392
 script7392:
@@ -6653,7 +6822,7 @@ script7443:
 	moveleft $29
 	setanimation $09
 	checkmemoryeq $cfc0, $03
-	asm15 $6206
+	asm15 scriptHlp.seasonsFunc_15_6206
 	wait 1
 	scriptend
 script7456:
@@ -6662,12 +6831,12 @@ script7456:
 	moveright $29
 	setanimation $09
 	checkmemoryeq $cfc0, $03
-	asm15 $6206
+	asm15 scriptHlp.seasonsFunc_15_6206
 	wait 1
 	scriptend
 script7469:
 	checkmemoryeq $cfc0, $03
-	asm15 $61fa
+	asm15 scriptHlp.seasonsFunc_15_61fa
 	wait 1
 	scriptend
 script7472:
@@ -6676,7 +6845,7 @@ script7472:
 	checkabutton
 	disableinput
 	showtextlowindex $03
-	asm15 $6226
+	asm15 scriptHlp.seasonsFunc_15_6226
 	wait 8
 	checkrupeedisplayupdated
 	orroomflag $40
@@ -6691,7 +6860,7 @@ script7488:
 	checkabutton
 	disableinput
 	showtextlowindex $00
-	asm15 $620f
+	asm15 scriptHlp.seasonsFunc_15_620f
 	jumpifobjectbyteeq $7f, $00, script74a3
 	wait 8
 	checkrupeedisplayupdated
@@ -6720,7 +6889,7 @@ script74a9:
 	writememory $cfd0, $01
 	checkmemoryeq $cfd0, $02
 	wait 30
-	jumpifmemoryeq $cc01, $01, script74d0
+	jumpifmemoryeq wIsLinkedGame, $01, script74d0
 	showtext TX_2500
 	jump2byte script74d3
 script74d0:
@@ -6760,7 +6929,7 @@ script750d:
 script7510:
 	rungenericnpc TX_250a
 script7513:
-	asm15 $623b
+	asm15 scriptHlp.seasonsFunc_15_623b
 	jumptable_memoryaddress $cfc0
 	.dw script751d
 	.dw script750d
@@ -6776,7 +6945,7 @@ script7529:
 	initcollisions
 script752a:
 	checkabutton
-	asm15 $63b8
+	asm15 scriptHlp.seasonsFunc_15_63b8
 	showtext TX_0600
 	wait 10
 	setanimationfromobjectbyte $7b
@@ -6813,16 +6982,16 @@ script7556:
 	scriptend
 script756f:
 	playsound SND_KILLENEMY
-	asm15 $624c
+	asm15 scriptHlp.seasonsFunc_15_624c
 	setcounter1 $05
 	playsound SND_KILLENEMY
-	asm15 $624f
+	asm15 scriptHlp.seasonsFunc_15_624f
 	setcounter1 $05
 	playsound SND_KILLENEMY
-	asm15 $624c
+	asm15 scriptHlp.seasonsFunc_15_624c
 	setcounter1 $05
 	playsound SND_KILLENEMY
-	asm15 $624c
+	asm15 scriptHlp.seasonsFunc_15_624c
 	retscript
 script758a:
 	setcollisionradii $12, $06
@@ -6873,7 +7042,7 @@ script75cc:
 	wait 30
 	showtextlowindex $0d
 	callscript script7650
-	asm15 $62a2
+	asm15 scriptHlp.seasonsFunc_15_62a2
 	jump2byte script7675
 script75e2:
 	wait 30
@@ -6924,7 +7093,7 @@ script7623:
 	setglobalflag $54
 	showtextlowindex $12
 	callscript script7650
-	asm15 $62a7
+	asm15 scriptHlp.seasonsFunc_15_62a7
 	setglobalflag $5e
 	wait 30
 script7630:
@@ -6952,12 +7121,12 @@ script7642:
 	wait 30
 	retscript
 script7650:
-	asm15 $3144
+	asm15 fadeoutToWhite
 	checkpalettefadedone
 	setcoords $50, $70
 	setanimation $01
 	wait 60
-	asm15 $3171
+	asm15 fadeinFromWhite
 	checkpalettefadedone
 	wait 30
 	setspeed SPEED_200
@@ -6993,7 +7162,7 @@ script7686:
 	disableinput
 	wait 10
 	writeobjectbyte $78, $01
-	asm15 $62ca
+	asm15 scriptHlp.seasonsFunc_15_62ca
 	wait 8
 	showtext TX_3d18
 	enableinput
@@ -7010,7 +7179,7 @@ script769f:
 	scriptend
 script76ad:
 	checkmemoryeq $cfc0, $02
-	asm15 $62d9
+	asm15 scriptHlp.seasonsFunc_15_62d9
 	setanimation $03
 	scriptend
 script76b7:
@@ -7057,8 +7226,8 @@ script7705:
 	setcollisionradii $1c, $1c
 	checkcollidedwithlink_ignorez
 	setdisabledobjectsto91
-	asm15 $6304
-	jumptable_memoryaddress $cc01
+	asm15 scriptHlp.seasonsFunc_15_6304
+	jumptable_memoryaddress wIsLinkedGame
 	.dw script7717
 	.dw script7725
 script7717:
@@ -7093,8 +7262,8 @@ script7733:
 	setcollisionradii $28, $08
 	checkcollidedwithlink_ignorez
 	setdisabledobjectsto91
-	asm15 $6304
-	asm15 $62fc
+	asm15 scriptHlp.seasonsFunc_15_6304
+	asm15 scriptHlp.seasonsFunc_15_62fc
 	showtextlowindex $04
 	playsound SND_BOOMERANG
 	wait 30
@@ -7111,28 +7280,28 @@ script7733:
 	callscript script7783
 	callscript script7783
 	callscript script7783
-	asm15 $62e2
+	asm15 scriptHlp.seasonsFunc_15_62e2
 	scriptend
 script7776:
 	playsound SND_BIG_EXPLOSION_2
-	asm15 $2ca6
+	asm15 clearFadingPalettes
 	wait 8
 	playsound SND_BIG_EXPLOSION_2
-	asm15 $3110
+	asm15 clearPaletteFadeVariablesAndRefreshPalettes
 	wait 8
 	retscript
 script7783:
 	playsound SND_BIG_EXPLOSION_2
-	asm15 $2ca6
+	asm15 clearFadingPalettes
 	wait 4
 	playsound SND_BIG_EXPLOSION_2
-	asm15 $3110
+	asm15 clearPaletteFadeVariablesAndRefreshPalettes
 	wait 4
 	retscript
 script7790:
 	stopifroomflag40set
 	disableinput
-	asm15 $3e52
+	asm15 seasonsFunc_3e52
 	showtextlowindex $05
 	xorcfc0bit 0
 	setcounter1 $4b
@@ -7162,13 +7331,13 @@ script77a9:
 	setstate $02
 	xorcfc0bit 2
 	checkcfc0bit 0
-	asm15 $630a
+	asm15 scriptHlp.seasonsFunc_15_630a
 	scriptend
 script77c4:
 	setstate $02
 	setspeed SPEED_100
 	callscript script7801
-	asm15 $1dfa
+	asm15 objectSetVisiblec1
 	setzspeed -$01c0
 	wait 30
 	showtextlowindex $01
@@ -7210,7 +7379,7 @@ script7809:
 	retscript
 script7811:
 	setstate $02
-	asm15 $630f
+	asm15 scriptHlp.seasonsFunc_15_630f
 	checkcfc0bit 1
 	setzspeed -$01c0
 	setangleandanimation $10
@@ -7233,14 +7402,14 @@ script782b:
 	checkcfc0bit 7
 	wait 30
 	showtextlowindex $11
-	asm15 $630a
+	asm15 scriptHlp.seasonsFunc_15_630a
 	scriptend
 script783e:
 	setstate $02
 	wait 10
-	asm15 $1e39
+	asm15 objectSetInvisible
 	setcoords $58, $70
-	asm15 $12a3
+	asm15 setCameraFocusedObject
 	setspeed SPEED_040
 	moveright $20
 script784e:
@@ -7346,7 +7515,7 @@ script7915:
 	rungenericnpclowindex $1b
 script7917:
 	setstate $02
-	asm15 $1e39
+	asm15 objectSetInvisible
 	jumpifglobalflagset $1b, stubScript
 	setcollisionradii $38, $30
 	checkcollidedwithlink_onground
@@ -7354,9 +7523,9 @@ script7917:
 	writeobjectbyte $5c, $02
 	initcollisions
 	setstate $05
-	asm15 $26ac
+	asm15 interactionSetAlwaysUpdateBit
 	checkabutton
-	asm15 $6324
+	asm15 scriptHlp.seasonsFunc_15_6324
 	showtextlowindex $01
 	setdisabledobjectsto11
 	wait 30
@@ -7368,7 +7537,7 @@ script793a:
 	scriptend
 script793c:
 	setstate $06
-	asm15 $1e39
+	asm15 objectSetInvisible
 	setcollisionradii $06, $0a
 script7944:
 	jumpifglobalflagset $1b, stubScript
@@ -7377,7 +7546,7 @@ script7944:
 	jump2byte script793a
 script794d:
 	setstate $06
-	asm15 $1e39
+	asm15 objectSetInvisible
 	initcollisions
 	jump2byte script7944
 script7955:
@@ -7409,7 +7578,7 @@ script7974:
 	jump2byte script77a6
 script7985:
 	jumpifroomflagset $40, script7999
-	asm15 $1e39
+	asm15 objectSetInvisible
 	wait 4
 	wait 60
 	showtextlowindex $12
@@ -7418,20 +7587,20 @@ script7985:
 	orroomflag $40
 	scriptend
 script7999:
-	setstate $ff
+	incstate
 	setcoords $68, $78
 	rungenericnpclowindex $14
 script79a0:
 	setspeed SPEED_100
 	setangle $08
 	applyspeed $10
-	asm15 $6317
+	asm15 scriptHlp.seasonsFunc_15_6317
 	setdisabledobjectsto11
 	wait 60
 	showtextlowindex $13
 	resetmusic
 	enableinput
-	setstate $ff
+	incstate
 	rungenericnpclowindex $14
 script79b4:
 	checkflagset $00, $cd00
@@ -7439,17 +7608,17 @@ script79b4:
 	setdisabledobjects $35
 	wait 40
 	setcoords $58, $38
-	asm15 $0c8e
-	asm15 $632f
+	asm15 restartSound
+	asm15 scriptHlp.seasonsFunc_15_632f
 	checkpalettefadedone
 	showtextlowindex $00
 	wait 30
-	asm15 $6347
+	asm15 scriptHlp.seasonsFunc_15_6347
 	wait 40
 	setmusic MUS_ONOX_CASTLE
 	createpuff
 	wait 4
-	asm15 $635e
+	asm15 scriptHlp.seasonsFunc_15_635e
 	wait 90
 	xorcfc0bit 0
 	wait 10
@@ -7460,7 +7629,7 @@ script79b4:
 	wait 20
 	setmusic SNDCTRL_MEDIUM_FADEOUT
 	wait 90
-	asm15 $6334
+	asm15 scriptHlp.seasonsFunc_15_6334
 	checkpalettefadedone
 	resetmusic
 	setglobalflag $1c
@@ -7474,20 +7643,20 @@ script79ea:
 	wait 60
 	setmusic SNDCTRL_MEDIUM_FADEOUT
 	wait 90
-	asm15 $634c
+	asm15 scriptHlp.seasonsFunc_15_634c
 	wait 40
 	createpuff
 	wait 4
-	asm15 $6363
+	asm15 scriptHlp.seasonsFunc_15_6363
 	wait 90
 	showtextlowindex $02
 	wait 30
 	createpuff
 	xorcfc0bit 7
 	writememory $cfc6, $00
-	asm15 $6378
+	asm15 scriptHlp.seasonsFunc_15_6378
 	wait 1
-	asm15 $6383
+	asm15 scriptHlp.seasonsFunc_15_6383
 	setmusic MUS_DISASTER
 	checkcfc0bit 0
 	setdisabledobjectsto91
@@ -7500,7 +7669,7 @@ script79ea:
 	playsound SND_BEAM2
 	checkcfc0bit 0
 	wait 60
-	asm15 $63a6
+	asm15 scriptHlp.seasonsFunc_15_63a6
 	setglobalflag $1d
 	scriptend
 script7a2a:
@@ -7607,7 +7776,7 @@ script7ac9:
 	initcollisions
 script7aca:
 	checkabutton
-	asm15 $63b8
+	asm15 scriptHlp.seasonsFunc_15_63b8
 	showloadedtext
 	wait 10
 	setanimationfromobjectbyte $7b
@@ -7629,7 +7798,7 @@ script7ae9:
 	jump2byte script7ac9
 script7aee:
 	initcollisions
-	jumpifglobalflagset $28, script7af8
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, script7af8
 	settextid $3101
 	jump2byte script7afb
 script7af8:
@@ -7695,25 +7864,25 @@ script7b4c:
 	showtextlowindex $06
 	createpuff
 	wait 4
-	asm15 $6455
+	asm15 scriptHlp.seasonsFunc_15_6455
 	setcounter1 $2d
 	playsound SND_WHISTLE
 	setmusic MUS_MINIBOSS
 	writeobjectbyte $71, $00
-	asm15 $6443
+	asm15 scriptHlp.seasonsFunc_15_6443
 	enableinput
-	setstate $ff
+	incstate
 	scriptend
 script7b64:
 	disableinput
 	resetmusic
 	playsound SND_WHISTLE
 	writeobjectbyte $71, $00
-	asm15 $3144
+	asm15 fadeoutToWhite
 	checkpalettefadedone
-	asm15 $6464
+	asm15 scriptHlp.seasonsFunc_15_6464
 	wait 30
-	asm15 $3171
+	asm15 fadeinFromWhite
 	checkpalettefadedone
 	jumptable_objectbyte $7a
 	.dw script7b7e
@@ -7722,7 +7891,7 @@ script7b7e:
 	showtextlowindex $0a
 	createpuff
 	wait 4
-	asm15 $645d
+	asm15 scriptHlp.seasonsFunc_15_645d
 	setcounter1 $2d
 	showtextlowindex $0b
 	disableinput
@@ -7761,28 +7930,28 @@ script7bbc:
 	giveitem $0505
 	retscript
 script7bc3:
-	asm15 $649a
+	asm15 scriptHlp.seasonsFunc_15_649a
 	wait 30
-	asm15 $648d
+	asm15 scriptHlp.seasonsFunc_15_648d
 	wait 10
 	playsound SND_FADEOUT
-	asm15 $3144
+	asm15 fadeoutToWhite
 	wait 20
 	playsound SND_FADEOUT
-	asm15 $3144
+	asm15 fadeoutToWhite
 	wait 20
 	playsound SND_FADEOUT
-	asm15 $3144
+	asm15 fadeoutToWhite
 	checkpalettefadedone
 	wait 20
-	asm15 $315c, $04
+	asm15 fadeinFromWhiteWithDelay, $04
 	checkpalettefadedone
 	retscript
 script7be4:
 	showtextlowindex $08
 	createpuff
 	wait 4
-	asm15 $645d
+	asm15 scriptHlp.seasonsFunc_15_645d
 	setcounter1 $2d
 	showtextlowindex $09
 	jumpiftextoptioneq $00, script7b4c
@@ -7839,20 +8008,20 @@ script7c38:
 	jumpiftextoptioneq $00, script7c41
 	jump2byte script7c38
 script7c41:
-	asm15 $3144
+	asm15 fadeoutToWhite
 	checkpalettefadedone
 	wait 4
-	asm15 $64bc
+	asm15 scriptHlp.seasonsFunc_15_64bc
 	settileat $61, $a2
 	wait 4
-	asm15 $3171
+	asm15 fadeinFromWhite
 	checkpalettefadedone
 script7c51:
 	wait 30
 	showtextlowindex $16
 	createpuff
 	wait 4
-	asm15 $64b3
+	asm15 scriptHlp.seasonsFunc_15_64b3
 	setcounter1 $2d
 	playsound SND_WHISTLE
 	scriptend
@@ -7862,10 +8031,10 @@ script7c5e:
 	wait 30
 	createpuff
 	wait 4
-	asm15 $64b9
+	asm15 scriptHlp.seasonsFunc_15_64b9
 	setcounter1 $2d
 	showtextlowindex $17
-	asm15 $64a0
+	asm15 scriptHlp.seasonsFunc_15_64a0
 	wait 30
 	jumptable_objectbyte $7f
 	.dw script7c75
@@ -7950,8 +8119,8 @@ script7cec:
 	wait 20
 	showtextlowindex $24
 	wait 20
-	asm15 $653c, $01
-	asm15 $64fe, $87
+	asm15 scriptHlp.seasonsFunc_15_653c, $01
+	asm15 scriptHlp.seasonsFunc_15_64fe, $87
 	scriptend
 script7d00:
 	initcollisions
@@ -7959,13 +8128,13 @@ script7d00:
 	setangleandanimation $00
 	writeobjectbyte $79, $00
 	setdisabledobjectsto11
-	asm15 $64d1
-	asm15 $6545
+	asm15 scriptHlp.seasonsFunc_15_64d1
+	asm15 scriptHlp.seasonsFunc_15_6545
 	jumpifobjectbyteeq $7c, $03, script7d19
 	asm15 $5cb0, $06
 script7d19:
 	checkpalettefadedone
-	asm15 $6518
+	asm15 scriptHlp.seasonsFunc_15_6518
 	writememory $cc02, $01
 	wait 20
 	showloadedtext
@@ -7980,7 +8149,7 @@ script7d19:
 	enableallobjects
 script7d32:
 	checkabutton
-	asm15 $64e9
+	asm15 scriptHlp.seasonsFunc_15_64e9
 	jumptable_objectbyte $79
 	.dw script7d40
 	.dw script7d6b
@@ -7995,8 +8164,8 @@ script7d44:
 	wait 20
 	showtextlowindex $3f
 	wait 20
-	asm15 $64fe, $87
-	asm15 $653c, $03
+	asm15 scriptHlp.seasonsFunc_15_64fe, $87
+	asm15 scriptHlp.seasonsFunc_15_653c, $03
 	scriptend
 script7d56:
 	wait 20
@@ -8008,7 +8177,7 @@ script7d56:
 	wait 8
 	setangleandanimation $10
 	asm15 $5cf7
-	asm15 $652e
+	asm15 scriptHlp.seasonsFunc_15_652e
 	rungenericnpclowindex $22
 script7d6b:
 	showtextlowindex $29
@@ -8022,15 +8191,15 @@ script7d77:
 	showtextlowindex $2a
 	writeobjectbyte $4f, $00
 	wait 20
-	asm15 $653c, $02
-	asm15 $64fe, $57
+	asm15 scriptHlp.seasonsFunc_15_653c, $02
+	asm15 scriptHlp.seasonsFunc_15_64fe, $57
 	scriptend
 script7d87:
 	initcollisions
 	setcoords $48, $78
 	setangleandanimation $10
 	disableinput
-	asm15 $64e3
+	asm15 scriptHlp.seasonsFunc_15_64e3
 	asm15 $5cf7
 	checkpalettefadedone
 	showtextlowindex $2b
@@ -8044,7 +8213,7 @@ script7d9e:
 	wait 20
 	jumpiftextoptioneq $01, script7d9e
 	showtextlowindex $2d
-	asm15 $652e
+	asm15 scriptHlp.seasonsFunc_15_652e
 	setglobalflag $5c
 	initcollisions
 	enableinput
@@ -8120,7 +8289,7 @@ script7e0f:
 	disableinput
 	wait 40
 	showtextlowindex $36
-	asm15 $654e
+	asm15 scriptHlp.seasonsFunc_15_654e
 	setcounter1 $2d
 	playsound SND_WHISTLE
 	enableinput
@@ -8131,32 +8300,32 @@ script7e21:
 	disableinput
 	orroomflag $40
 	playsound SND_WHISTLE
-	asm15 $6572
-	asm15 $6430
+	asm15 scriptHlp.seasonsFunc_15_6572
+	asm15 scriptHlp.seasonsFunc_15_6430
 	wait 30
 	jumpifglobalflagset $2e, script7e42
 	showtextlowindex $37
 	jumpiftextoptioneq $00, script7e3b
-	asm15 $6598
+	asm15 scriptHlp.seasonsFunc_15_6598
 	scriptend
 script7e3b:
-	asm15 $6558
-	asm15 $6588
+	asm15 scriptHlp.seasonsFunc_15_6558
+	asm15 scriptHlp.seasonsFunc_15_6588
 	scriptend
 script7e42:
 	showtextlowindex $38
-	asm15 $6598
+	asm15 scriptHlp.seasonsFunc_15_6598
 	scriptend
 script7e48:
 	disableinput
 	initcollisions
-	asm15 $655d
+	asm15 scriptHlp.seasonsFunc_15_655d
 	jumpifglobalflagset $2e, script7e53
 	jump2byte script7e65
 script7e53:
 	wait 40
 	showtextlowindex $39
-	asm15 $63c1, $15
+	asm15 scriptHlp.seasonsFunc_15_63c1, $15
 	setcounter1 $02
 	setglobalflag $5d
 script7e5e:
@@ -8199,7 +8368,7 @@ script7e82:
 script7e8c:
 	showtextlowindex $03
 	wait 30
-	asm15 $63c1, $13
+	asm15 scriptHlp.seasonsFunc_15_63c1, $13
 	wait 30
 script7e94:
 	showtextlowindex $04
@@ -8221,7 +8390,7 @@ script7e9e:
 	jump2byte script7e9e
 script7eac:
 	showtextlowindex $49
-	asm15 $17e5
+	asm15 refillSeedSatchel
 	wait 20
 script7eb2:
 	showtextlowindex $4a
@@ -8252,12 +8421,12 @@ script7ed1:
 	showtextlowindex $42
 	wait 20
 script7ed7:
-	asm15 $65a8
+	asm15 scriptHlp.seasonsFunc_15_65a8
 	jumpifobjectbyteeq $78, $00, script7f01
 	showtextlowindex $44
 	wait 20
 	giveitem $6200
-	asm15 $17e5
+	asm15 refillSeedSatchel
 	wait 20
 	showtextlowindex $45
 	wait 20
@@ -8288,7 +8457,7 @@ script7f0a:
 	initcollisions
 script7f0b:
 	checkabutton
-	asm15 $6abf
+	asm15 seasonsFunc_15_6abf
 	jumptable_memoryaddress $cfc1
 	.dw script7f16
 	.dw script7f1a
@@ -8298,7 +8467,7 @@ script7f16:
 script7f1a:
 	showtextlowindex $05
 	disableinput
-	asm15 $6ad9
+	asm15 seasonsFunc_15_6ad9
 	wait 20
 	showtextlowindex $06
 	wait 20
@@ -8326,13 +8495,13 @@ script7f43:
 	showtextlowindex $06
 	jump2byte script7f38
 script7f47:
-	asm15 $6f49
+	asm15 seasonsFunc_15_6f49
 	jumptable_memoryaddress $cfd0
 	.dw script7f43
 	.dw script7f51
 script7f51:
 	disableinput
-	asm15 $6f14
+	asm15 seasonsFunc_15_6f14
 	wait 60
 	showtextlowindex $04
 	enableinput

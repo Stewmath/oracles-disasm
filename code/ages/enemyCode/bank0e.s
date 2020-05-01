@@ -1,7 +1,6 @@
 .include "code/enemyCode/group2.s"
 
 ; ==============================================================================
-; TODO: what object uses this?
 
 orbMovementScript:
 	.dw @subid00
@@ -74,7 +73,9 @@ objectRunMovementScript_body:
 	.dw @moveDown
 	.dw @moveLeft
 	.dw @wait
+.ifdef ROM_AGES
 	.dw @setstate
+.endif
 
 
 @cmd00_jump:
@@ -172,14 +173,24 @@ objectRunMovementScript_body:
 	add Object.counter1			; $6bc9
 	ld l,a			; $6bcb
 	ld a,(bc)		; $6bcc
+.ifdef ROM_AGES
 	ldd (hl),a		; $6bcd
 
 	dec l			; $6bce
 	ld (hl),$0c ; [state]
+.else
+	ld (hl),a		; $7a2d
+	ld a,l			; $7a2e
+	add $fe			; $7a2f
+	ld l,a			; $7a31
+	ld (hl),$0c		; $7a32
+.endif
 
 @storePointer:
 	inc bc			; $6bd1
+.ifdef ROM_AGES
 	ld a,l			; $6bd2
+.endif
 	add Object.var30-Object.state			; $6bd3
 	ld l,a			; $6bd5
 	ld (hl),c		; $6bd6
@@ -187,7 +198,7 @@ objectRunMovementScript_body:
 	ld (hl),b		; $6bd8
 	ret			; $6bd9
 
-
+.ifdef ROM_AGES
 @setstate:
 	pop bc			; $6bda
 	ld h,d			; $6bdb
@@ -203,6 +214,7 @@ objectRunMovementScript_body:
 	ld (hl),a ; [state]
 
 	jr @storePointer		; $6be7
+.endif
 
 
 ; ==============================================================================
