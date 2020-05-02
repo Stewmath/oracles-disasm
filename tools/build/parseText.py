@@ -78,7 +78,7 @@
 
 # TODOS:
 # - "index: auto"
-# - Calculate textoffsetsplitindex automatically
+# - Calculate textoffsetsplitindex automatically, OR warn when text overflows
 
 import sys
 import io
@@ -706,6 +706,8 @@ for group in groupDict.values():
 
 # Compile dictionary
 for i in range(4):
+    if not i in groupDict:
+        continue
     group = groupDict[i]
     for textStruct in group.textStructs:
         if len(textStruct.data) != 0:

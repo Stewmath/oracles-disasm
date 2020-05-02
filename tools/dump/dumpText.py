@@ -1,15 +1,21 @@
+# Note about dumping European text: There's something odd about Ages's
+# French/Spanish text, and Season's French text.
+#
+# There are 4 dictionary groups, but they only use group 0. Groups 1-3 reference
+# pieces of "actual" text data for no reason. It's even worse in French Seasons,
+# where it references the MIDDLE of pieces of text, which seriously screws up
+# the text dump!
+#
+# Anyway, these versions are barely compressed at all, using only a few entries
+# in dictionary group 0. In order to fix the above mentioned issues, dictionary
+# groups 1-3 are completely ignored. This shouldn't cause any problems unless
+# one is trying to get a perfect 1:1 data match.
+
 import sys
 import io
 import yaml
 from collections import OrderedDict
 from common import *
-
-if len(sys.argv) < 2:
-    print('Usage: ' + sys.argv[0] + ' romfile')
-    sys.exit()
-
-romFile = open(sys.argv[1], 'rb')
-rom = bytearray(romFile.read())
 
 
 class HighIndexStruct:
@@ -113,9 +119,22 @@ commentText = '''
 
 
 
+if len(sys.argv) < 2:
+    print('Usage: ' + sys.argv[0] + ' romfile [language]')
+    print('\n"language" is a number from 0-4, for dumping from European ROMS.')
+    sys.exit()
+
+romFile = open(sys.argv[1], 'rb')
+rom = bytearray(romFile.read())
+
+if len(sys.argv) > 2:
+    language = int(sys.argv[2])
+else:
+    language = 0
+
+
 # Constants
 region = getRomRegion(rom)
-language = 0
 
 if romIsAges(rom):
     lastGroupSize = 0x16
@@ -169,9 +188,23 @@ elif romIsSeasons(rom):
         textBase2Table = 0xfcffa
 
         textBase3IndexStart = 0x100
-        textBase3Table = 0;
+        textBase3Table = 0
 
         languageTable = 0xfd012
+
+    elif region == "EU":
+        numHighTextIndices = 0x64
+
+        textBase1IndexStart = 0x00
+        textBase1Table = 0xfd008
+
+        textBase2IndexStart = 0x1a
+        textBase2Table = 0xfd01c
+
+        textBase3IndexStart = 0x34
+        textBase3Table = 0xfd030
+
+        languageTable = 0xfd044
     else:
         assert False, "Unsupported region."
 else:
@@ -182,6 +215,17 @@ textBase1 = read3BytePointer(rom, textBase1Table+language*4)
 textBase2 = read3BytePointer(rom, textBase2Table+language*4)
 textBase3 = read3BytePointer(rom, textBase3Table+language*4)
 textTable = readReversed3BytePointer(rom, languageTable+language*3)
+
+
+# See note at top of file
+def ignoreDictionaries123():
+    if region != "EU":
+        return False
+    if language == 1: # French
+        return True
+    if romIsAges(rom) and language == 4: # Spanish
+        return True
+    return False
 
 
 def getTextBase(index):
@@ -198,6 +242,9 @@ textTableOutput.write('textTableENG:\n')
 for i in range(0, numHighTextIndices):
     textTableOutput.write(
         '\t.dw textTableENG_' + myhex(i, 2) + ' - textTableENG\n')
+
+    if ignoreDictionaries123() and i >= 1 and i <= 3:
+        continue
 
     address = textTable+read16(rom, textTable+i*2)
     data = None
@@ -241,6 +288,7 @@ for i in range(len(highIndexList)):
     for index in data.indices:
         textTableOutput.write(
             'textTableENG_' + myhex(index, 2) + ': ; ' + wlahex(data.address, 4) + '\n')
+
     for index in range(data.size):
         addr = data.address + index*2
         textAddress = read16(rom, addr)
@@ -253,6 +301,8 @@ for i in range(len(highIndexList)):
             textStruct = TextStruct()
             textStruct.address = textAddress
             textStruct.index = ((data.indices[0]<<8)|index)
+            if textAddress in textAddressDictionary:
+                print('WARNING: Address ' + hex(textAddress) + ' referenced multiple times')
             textAddressDictionary[textAddress] = textStruct
             textIndexDictionary[textStruct.index] = textStruct
             textList.add(textStruct)
@@ -278,7 +328,7 @@ textEndAddress = max(textAddressList)+1
 # outFile.close()
 
 
-def getTextDecompressed(out, address, end=-1):
+def getTextDecompressed(out, address, end=-1, dictLookup=False):
     if end == -1:
         end = 0x100000000
     i = address
@@ -286,18 +336,18 @@ def getTextDecompressed(out, address, end=-1):
         b = rom[i]
         if b >= 2 and b < 6 and end-i >= 2:
             dictAddress = textIndexDictionary[((b-2)<<8) | rom[i+1]].address
-            getTextDecompressed(out, dictAddress)
+            getTextDecompressed(out, dictAddress, dictLookup=True)
             i+=1
         elif b >= 0x6 and b < 0x10:
-            data.append(b)
-            data.append(rom[i+1])
+            out.append(b)
+            out.append(rom[i+1])
             i+=1
         else:
             if b == 0:
-                if end != 0x100000000:  # Not parsing a dictionary
-                    data.append(b)
+                if not dictLookup:
+                    out.append(b)
                 break
-            data.append(b)
+            out.append(b)
         i += 1
 
 def getTextName(index):
@@ -322,68 +372,14 @@ parsedGroups = set()
 textGroupList = []
 dictGroupList = []
 
-while address < textEndAddress:
-    pos = address
-    while rom[pos] != 0:
-        c = rom[pos]
-        pos+=1
 
-        # Special cases (don't have preceding null terminators)
-        if textAddressDictionary.get(pos+1) is not None:
-            break
-
-        if c >= 0x2 and c < 0x10:
-            pos+=1
-
-        # Special cases (don't have preceding null terminators)
-        if textAddressDictionary.get(pos+1) is not None:
-            break
-    pos+=1
-    textStruct = textAddressDictionary.get(address)
-    if textStruct is None:
-        print('text_' + myhex(address, 2) + ' is never referenced')
-        print('Output may be malformed')
-        out = textDataOutput
-    else:
-        index = textStruct.index
-
-        if index < 0x400:
-            groupList = dictGroupList
-            isDict = True
-        else:
-            groupList = textGroupList
-            isDict = False
-
-        if isDict:
-            writtenGroupIndex = (index >> 8)
-        else:
-            writtenGroupIndex = (index >> 8) - 4
-
-        if groupYaml is None or groupYaml['group'] != writtenGroupIndex:
-            groupYaml = OrderedDict({'group': writtenGroupIndex})
-            groupYaml['data'] = []
-            groupList.append(groupYaml)
-            if (index >> 8) in parsedGroups:
-                print('WARNING: Parsing group 0x%s twice' % myhex(index >> 8, 2))
-            parsedGroups.add(index >> 8)
-
-        name = getTextName(index)
-        textStruct.name = name
-        groupYaml['data'].append(textStruct)
-
-        for ind in textStruct.indices:
-            if ind >= 0x400:
-                definesFile.write('.define TX_' + myhex(ind-0x400,4) + ' ' + wlahex(ind-0x400,4) + '\n')
-
-    data = bytearray()
-    getTextDecompressed(data, address, pos)
+def parseTextData(data):
     i = 0
     textData = ''
-
     def fixTrailingSpace():
-        global textData
+        nonlocal textData
         # Replace any space that occurs before a newline or at the end of
-        # a string with "\x20" because YAML doesn't it very well.
+        # a string with "\x20" because YAML ignores trailing space.
         j = len(textData)-1
         while j >= 0 and textData[j] == ' ':
             textData = textData[::-1].replace(' ', '02x\\', 1)[::-1]
@@ -502,15 +498,77 @@ while address < textEndAddress:
             textData += '\\rectangle'
         else:
             if not (b == 0 and i == len(data)-1):
-                textData += '\\' + myhex(b, 2)
+                textData += '\\x' + myhex(b, 2)
         i+=1
 
     fixTrailingSpace()
+    return textData
 
-    textStruct.data = data
-    textStruct.textData = textData
 
-    textStruct.hasNullTerminator = data[len(data)-1] == 0
+while address < textEndAddress:
+    pos = address
+    while rom[pos] != 0:
+        c = rom[pos]
+        pos+=1
+
+        # Special cases (don't have preceding null terminators)
+        if textAddressDictionary.get(pos+1) is not None:
+            break
+
+        if c >= 0x2 and c < 0x10:
+            pos+=1
+
+        # Special cases (don't have preceding null terminators)
+        if textAddressDictionary.get(pos+1) is not None:
+            break
+    pos+=1
+    textStruct = textAddressDictionary.get(address)
+    if textStruct is None:
+        print('WARNING: text_' + myhex(address, 2) + ' is never referenced.')
+    else:
+        index = textStruct.index
+
+        if index < 0x400:
+            groupList = dictGroupList
+            isDict = True
+        else:
+            groupList = textGroupList
+            isDict = False
+
+        if isDict:
+            writtenGroupIndex = (index >> 8)
+        else:
+            writtenGroupIndex = (index >> 8) - 4
+
+        if groupYaml is None or (index >> 8) != lastGroup:
+            lastGroup = index >> 8
+            groupYaml = OrderedDict({'group': writtenGroupIndex})
+            groupYaml['data'] = []
+            groupList.append(groupYaml)
+            if (index >> 8) in parsedGroups:
+                print('WARNING: Parsing group 0x%s twice' % myhex(index >> 8, 2))
+            parsedGroups.add(index >> 8)
+
+        name = getTextName(index)
+        textStruct.name = name
+        groupYaml['data'].append(textStruct)
+
+        for ind in textStruct.indices:
+            if ind >= 0x400:
+                definesFile.write('.define TX_' + myhex(ind-0x400,4) + ' ' + wlahex(ind-0x400,4) + '\n')
+
+    data = bytearray()
+    getTextDecompressed(data, address, pos)
+
+    textData = parseTextData(data)
+
+    if textStruct != None:
+        textStruct.data = data
+        textStruct.textData = textData
+        textStruct.hasNullTerminator = data[len(data)-1] == 0
+    else:
+        print('Unreferenced text:')
+        print('  ' + textData.replace('\n', '\n  ') + '\n')
 
     address = pos
 
