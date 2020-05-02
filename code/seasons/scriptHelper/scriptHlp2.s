@@ -1,12 +1,18 @@
  m_section_force Script_Helper2 NAMESPACE scriptHlp
 
+D3spawnPitSpreader:
+	; Part $0a, subid $00, yh $72
 	ld bc,$0072		; $5481
-	jp $5500		; $5484
+	jp _spawnPitSpreader		; $5484
+
+
+D3StatuePuzzleCheck:
 	xor a			; $5487
 	ld ($ccba),a		; $5488
 	ld l,$84		; $548b
-	ld h,$cf		; $548d
+	ld h,>wRoomLayout		; $548d
 	ldi a,(hl)		; $548f
+	; blue statue
 	cp $2c			; $5490
 	ret nz			; $5492
 	ldi a,(hl)		; $5493
@@ -16,6 +22,7 @@
 	cp $2c			; $5498
 	ret nz			; $549a
 	ldi a,(hl)		; $549b
+	; red statue
 	cp $2d			; $549c
 	ret nz			; $549e
 	ldi a,(hl)		; $549f
@@ -29,13 +36,14 @@
 	ret			; $54ac
 
 
+_solvedPuzzleSetRoomFlag07:
 	call getThisRoomFlags		; $54ad
 	set 7,(hl)		; $54b0
 	ld a,SND_SOLVEPUZZLE		; $54b2
 	jp playSound		; $54b4
 
 
-createBridgeSpawner:
+_createBridgeSpawner:
 	call getFreePartSlot		; $54b7
 	ret nz			; $54ba
 	ld (hl),PARTID_BRIDGE_SPAWNER		; $54bb
@@ -48,10 +56,11 @@ createBridgeSpawner:
 	ret			; $54c6
 
 
-	call $54ad		; $54c7
+D4spawnBridgeB2:
+	call _solvedPuzzleSetRoomFlag07		; $54c7
 	ld bc,$0601		; $54ca
 	ld e,$59		; $54cd
-	jp $54b7		; $54cf
+	jp _createBridgeSpawner		; $54cf
 
 
 D7spawnDarknutBridge:
@@ -59,45 +68,58 @@ D7spawnDarknutBridge:
 	call playSound		; $54d4
 	ld bc,$0801		; $54d7
 	ld e,$77		; $54da
-	jp $54b7		; $54dc
+	jp _createBridgeSpawner		; $54dc
 
 
-	call $54ad		; $54df
+	call _solvedPuzzleSetRoomFlag07		; $54df
 	ld bc,$0c02		; $54e2
 	ld e,$3c		; $54e5
-	jp $54b7		; $54e7
-	call $54ad		; $54ea
+	jp _createBridgeSpawner		; $54e7
+	call _solvedPuzzleSetRoomFlag07		; $54ea
 	ld bc,$0e00		; $54ed
 	ld e,$7b		; $54f0
-	jp $54b7		; $54f2
-	call $54ad		; $54f5
+	jp _createBridgeSpawner		; $54f2
+	call _solvedPuzzleSetRoomFlag07		; $54f5
 	ld bc,$0e03		; $54f8
 	ld e,$88		; $54fb
-	jp $54b7		; $54fd
+	jp _createBridgeSpawner		; $54fd
+
+
+_spawnPitSpreader:
 	call getFreePartSlot		; $5500
 	ret nz			; $5503
 	ld (hl),$0a		; $5504
 	inc l			; $5506
+	; subid
 	ld (hl),b		; $5507
-	ld l,$cb		; $5508
+	ld l,Part.yh		; $5508
 	ld (hl),c		; $550a
 	ret			; $550b
+
+
+D3hallToMiniboss_buttonStepped:
 	ld a,$01		; $550c
 	ld ($ccbf),a		; $550e
 	ret			; $5511
-	ld a,($cc59)		; $5512
+
+
+D3openEssenceDoorIfBossBeat_body:
+	ld a,(wDungeonFlagsAddressH)		; $5512
 	ld b,a			; $5515
-	ld c,$53		; $5516
+	ld c,<ROOM_SEASONS_453		; $5516
 	ld a,(bc)		; $5518
 	bit 7,a			; $5519
 	ret z			; $551b
 	call getFreeInteractionSlot		; $551c
-	ld (hl),$1e		; $551f
-	ld l,$49		; $5521
-	ld (hl),$10		; $5523
-	ld l,$4b		; $5525
+	ld (hl),INTERACID_DOOR_CONTROLLER		; $551f
+	ld l,Interaction.angle		; $5521
+	; shutter
+	ld (hl),ANGLE_DOWN		; $5523
+	ld l,Interaction.yh		; $5525
 	ld (hl),$07		; $5527
 	ret			; $5529
+
+
 	ld e,$49		; $552a
 	ld a,(de)		; $552c
 	ld l,a			; $552d
@@ -129,7 +151,7 @@ _label_15_190:
 	ld (hl),$04		; $5558
 	ld bc,$0603		; $555a
 	ld e,$14		; $555d
-	jp $54b7		; $555f
+	jp _createBridgeSpawner		; $555f
 	xor a			; $5562
 	ld ($cfd0),a		; $5563
 	call getThisRoomFlags		; $5566
@@ -591,11 +613,13 @@ seasonsFunc_15_5840:
 	ld a,(de)		; $5842
 	ld hl,$d00b		; $5843
 	cp (hl)			; $5846
-	ld a,$10		; $5847
-	jr c,_label_15_208	; $5849
+
+seasonsFunc_15_5847:
+	ld a,ANGLE_DOWN		; $5847
+	jr c,+			; $5849
 	xor a			; $584b
-_label_15_208:
-	ld e,$49		; $584c
++
+	ld e,Interaction.angle		; $584c
 	ld (de),a		; $584e
 	ret			; $584f
 

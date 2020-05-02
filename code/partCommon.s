@@ -167,7 +167,7 @@ _partCommon_checkOutOfBounds:
 ;;
 ; @param[out]	zflag	Set if counter1 is zero
 ; @addr{40a7}
-_partCommon_decCounter1IfNonzero:
+partCommon_decCounter1IfNonzero:
 	ld h,d			; $40a7
 	ld l,Part.counter1		; $40a8
 	ld a,(hl)		; $40aa
@@ -204,7 +204,7 @@ _partCommon_bounceWhenCollisionsEnabled:
 ;;
 ; @addr{40cf}
 _partCommon_updateSpeedAndDeleteWhenCounter1Is0:
-	call _partCommon_decCounter1IfNonzero		; $40cf
+	call partCommon_decCounter1IfNonzero		; $40cf
 	jp z,partDelete		; $40d2
 	ld c,$0e		; $40d5
 	call objectUpdateSpeedZ_paramC		; $40d7

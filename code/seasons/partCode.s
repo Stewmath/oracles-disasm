@@ -287,7 +287,7 @@ _label_10_017:
 	ld l,$e4		; $42df
 	set 7,(hl)		; $42e1
 _label_10_018:
-	call $40a7		; $42e3
+	call partCommon_decCounter1IfNonzero		; $42e3
 	jr z,_label_10_019	; $42e6
 	ld a,(hl)		; $42e8
 	cp $3c			; $42e9
@@ -832,7 +832,7 @@ _label_10_048:
 	ld a,(wFrameCounter)		; $4617
 	and $03			; $461a
 	ret nz			; $461c
-	call $40a7		; $461d
+	call partCommon_decCounter1IfNonzero		; $461d
 	ret nz			; $4620
 	ld l,$e4		; $4621
 	set 7,(hl)		; $4623
@@ -865,7 +865,7 @@ _label_10_048:
 	ld l,$c6		; $464d
 	ld (hl),$f0		; $464f
 	ret			; $4651
-	call $40a7		; $4652
+	call partCommon_decCounter1IfNonzero		; $4652
 	jp nz,$468e		; $4655
 	ld l,e			; $4658
 	inc (hl)		; $4659
@@ -1062,7 +1062,7 @@ partCode09:
 	sub $0c			; $479b
 	cp $02			; $479d
 	jr nc,_label_10_053	; $479f
-	call $40a7		; $47a1
+	call partCommon_decCounter1IfNonzero		; $47a1
 	ret nz			; $47a4
 	ld l,$f0		; $47a5
 	bit 0,(hl)		; $47a7
@@ -1242,7 +1242,7 @@ partCode0c:
 	ld a,(de)		; $48bd
 	or a			; $48be
 	call z,$4910		; $48bf
-	call $40a7		; $48c2
+	call partCommon_decCounter1IfNonzero		; $48c2
 	ret nz			; $48c5
 	ld l,$c9		; $48c6
 	ld a,(hl)		; $48c8
@@ -1329,7 +1329,7 @@ partCode0e:
 	ld a,(hl)		; $493d
 	ld (de),a		; $493e
 	call objectTakePosition		; $493f
-	call $40a7		; $4942
+	call partCommon_decCounter1IfNonzero		; $4942
 	jr nz,_label_10_065	; $4945
 	ld (hl),$0f		; $4947
 	ld e,$c9		; $4949
@@ -1420,7 +1420,7 @@ _label_10_070:
 	ld a,(de)		; $49c6
 	or a			; $49c7
 	jr z,_label_10_071	; $49c8
-	call $40a7		; $49ca
+	call partCommon_decCounter1IfNonzero		; $49ca
 	jr nz,_label_10_067	; $49cd
 	jr _label_10_069		; $49cf
 _label_10_071:
@@ -1496,14 +1496,14 @@ _label_10_074:
 	ld a,(wFrameCounter)		; $4a34
 	rrca			; $4a37
 	ret nc			; $4a38
-	call $40a7		; $4a39
+	call partCommon_decCounter1IfNonzero		; $4a39
 	ret nz			; $4a3c
 	ld (hl),$0c		; $4a3d
 	ld l,e			; $4a3f
 	inc (hl)		; $4a40
 	ld a,$03		; $4a41
 	jr _label_10_075		; $4a43
-	call $40a7		; $4a45
+	call partCommon_decCounter1IfNonzero		; $4a45
 	ret nz			; $4a48
 	ld (hl),$08		; $4a49
 	ld l,e			; $4a4b
@@ -1515,7 +1515,7 @@ _label_10_075:
 	ld c,a			; $4a53
 	pop af			; $4a54
 	jp setTile		; $4a55
-	call $40a7		; $4a58
+	call partCommon_decCounter1IfNonzero		; $4a58
 	ret nz			; $4a5b
 	ld l,e			; $4a5c
 	ld (hl),$01		; $4a5d
@@ -1759,7 +1759,7 @@ _label_10_085:
 	ld (hl),$1e		; $4bdb
 	call objectSetInvisible		; $4bdd
 	jr _label_10_086		; $4be0
-	call $40a7		; $4be2
+	call partCommon_decCounter1IfNonzero		; $4be2
 	ret nz			; $4be5
 	ld (hl),$10		; $4be6
 	ld l,e			; $4be8
@@ -1887,7 +1887,7 @@ partCode12:
 	ld (hl),a		; $4cb2
 	call objectTakePosition		; $4cb3
 	ld c,h			; $4cb6
-	call $40a7		; $4cb7
+	call partCommon_decCounter1IfNonzero		; $4cb7
 	jp nz,partAnimate		; $4cba
 	ld h,c			; $4cbd
 	ld l,$a9		; $4cbe
@@ -1957,7 +1957,7 @@ _label_10_090:
 	ld (hl),$00		; $4d22
 	jp objectSetVisible83		; $4d24
 	ret			; $4d27
-	call $40a7		; $4d28
+	call partCommon_decCounter1IfNonzero		; $4d28
 	jr nz,_label_10_091	; $4d2b
 	ld (hl),$1e		; $4d2d
 	ld l,e			; $4d2f
@@ -1990,7 +1990,7 @@ _label_10_091:
 	ld a,($0702)		; $4d57
 	nop			; $4d5a
 	ld a,($02ff)		; $4d5b
-	call $40a7		; $4d5e
+	call partCommon_decCounter1IfNonzero		; $4d5e
 _label_10_092:
 	jr nz,_label_10_093	; $4d61
 	ld l,e			; $4d63
@@ -2567,7 +2567,7 @@ partCode31:
 	ld l,$d0		; $50e4
 	ld (hl),$3c		; $50e6
 	jp objectSetVisible81		; $50e8
-	call $40a7		; $50eb
+	call partCommon_decCounter1IfNonzero		; $50eb
 	ret nz			; $50ee
 	ld l,e			; $50ef
 	inc (hl)		; $50f0
@@ -2669,7 +2669,7 @@ _label_10_119:
 	rlca			; $5182
 	call partSetAnimation		; $5183
 	jp objectSetVisible81		; $5186
-	call $40a7		; $5189
+	call partCommon_decCounter1IfNonzero		; $5189
 	jr nz,_label_10_120	; $518c
 	ld l,e			; $518e
 	inc (hl)		; $518f
@@ -2766,7 +2766,7 @@ _label_10_127:
 	jp c,partAnimate		; $5223
 _label_10_128:
 	jp partDelete		; $5226
-	call $40a7		; $5229
+	call partCommon_decCounter1IfNonzero		; $5229
 	jr z,_label_10_128	; $522c
 	ld c,$0e		; $522e
 	call objectUpdateSpeedZ_paramC		; $5230
@@ -2949,7 +2949,7 @@ _label_10_136:
 	ld a,$a6		; $532f
 	call playSound		; $5331
 	jp objectSetVisible81		; $5334
-	call $40a7		; $5337
+	call partCommon_decCounter1IfNonzero		; $5337
 	jr nz,_label_10_138	; $533a
 	ld l,e			; $533c
 	inc (hl)		; $533d
@@ -3058,7 +3058,7 @@ partCode20:
 	ld a,(de)		; $53e1
 	or a			; $53e2
 	jr z,_label_10_145	; $53e3
-	call $40a7		; $53e5
+	call partCommon_decCounter1IfNonzero		; $53e5
 	jp z,partDelete		; $53e8
 	jp partAnimate		; $53eb
 _label_10_145:
@@ -3105,7 +3105,7 @@ _label_10_146:
 	jp objectSetVisible81		; $5428
 	call objectCheckSimpleCollision		; $542b
 	jr nz,_label_10_150	; $542e
-	call $40a7		; $5430
+	call partCommon_decCounter1IfNonzero		; $5430
 	jr z,_label_10_150	; $5433
 	call $548d		; $5435
 _label_10_147:
@@ -3234,7 +3234,7 @@ _label_10_151:
 	inc a			; $54fb
 _label_10_152:
 	jp partSetAnimation		; $54fc
-	call $40a7		; $54ff
+	call partCommon_decCounter1IfNonzero		; $54ff
 	jr nz,_label_10_153	; $5502
 	ld l,e			; $5504
 	inc (hl)		; $5505
@@ -3300,7 +3300,7 @@ _label_10_154:
 	ld a,(de)		; $554d
 	or a			; $554e
 	jr z,_label_10_155	; $554f
-	call $40a7		; $5551
+	call partCommon_decCounter1IfNonzero		; $5551
 	ret nz			; $5554
 	ld (hl),$3c		; $5555
 	jr _label_10_156		; $5557
@@ -3311,7 +3311,7 @@ _label_10_155:
 	ld a,(de)		; $555c
 	or a			; $555d
 	jr z,_label_10_155	; $555e
-	call $40a7		; $5560
+	call partCommon_decCounter1IfNonzero		; $5560
 	ret nz			; $5563
 	call $55a2		; $5564
 _label_10_156:
@@ -3398,7 +3398,7 @@ partCode27:
 	ldh a,(<hEnemyTargetX)	; $55df
 	ld (hl),a		; $55e1
 	ret			; $55e2
-	call $40a7		; $55e3
+	call partCommon_decCounter1IfNonzero		; $55e3
 	ret nz			; $55e6
 	ld l,e			; $55e7
 	inc (hl)		; $55e8
@@ -3520,7 +3520,7 @@ _label_10_158:
 	ld a,(de)		; $5699
 	ld (hl),a		; $569a
 	jp objectSetVisiblec2		; $569b
-	call $40a7		; $569e
+	call partCommon_decCounter1IfNonzero		; $569e
 	jr z,_label_10_159	; $56a1
 	call $5733		; $56a3
 	jp c,objectApplySpeed		; $56a6
@@ -3693,7 +3693,7 @@ _label_10_166:
 	ld b,$06		; $57a8
 	ld b,$07		; $57aa
 	nop			; $57ac
-	call $40a7		; $57ad
+	call partCommon_decCounter1IfNonzero		; $57ad
 	jr nz,_label_10_167	; $57b0
 	ld l,e			; $57b2
 	inc (hl)		; $57b3
@@ -3997,7 +3997,7 @@ _label_10_177:
 	ld a,$20		; $596f
 	ld e,$c9		; $5971
 	call objectSetPositionInCircleArc		; $5973
-	call $40a7		; $5976
+	call partCommon_decCounter1IfNonzero		; $5976
 	ret nz			; $5979
 	ld (hl),$03		; $597a
 	ld l,$c9		; $597c
@@ -4078,7 +4078,7 @@ _label_10_178:
 _label_10_179:
 	call playSound		; $59f6
 	call objectSetVisible81		; $59f9
-	call $40a7		; $59fc
+	call partCommon_decCounter1IfNonzero		; $59fc
 	jr z,_label_10_180	; $59ff
 	ld a,$0b		; $5a01
 	call objectGetRelatedObject1Var		; $5a03
@@ -4179,7 +4179,7 @@ _label_10_187:
 	ld l,$c6		; $5aa5
 	ld (hl),$1e		; $5aa7
 	jp objectSetVisible82		; $5aa9
-	call $40a7		; $5aac
+	call partCommon_decCounter1IfNonzero		; $5aac
 	jp nz,partAnimate		; $5aaf
 	ld l,e			; $5ab2
 	inc (hl)		; $5ab3
@@ -4242,7 +4242,7 @@ _label_10_190:
 	ld a,$8d		; $5b13
 	call playSound		; $5b15
 	jp objectSetVisible82		; $5b18
-	call $40a7		; $5b1b
+	call partCommon_decCounter1IfNonzero		; $5b1b
 	jr z,_label_10_192	; $5b1e
 	ld l,$e1		; $5b20
 	bit 0,(hl)		; $5b22
@@ -4391,7 +4391,7 @@ partCode51:
 	ld a,$5c		; $5bf7
 	call playSound		; $5bf9
 _label_10_198:
-	call $40a7		; $5bfc
+	call partCommon_decCounter1IfNonzero		; $5bfc
 	jp z,partDelete		; $5bff
 	jr _label_10_199		; $5c02
 	ld a,(de)		; $5c04
@@ -4459,7 +4459,7 @@ _label_10_201:
 	ld a,$04		; $5c5d
 	call partSetAnimation		; $5c5f
 	jp objectSetVisible82		; $5c62
-	call $40a7		; $5c65
+	call partCommon_decCounter1IfNonzero		; $5c65
 	jr nz,_label_10_204	; $5c68
 	dec (hl)		; $5c6a
 	ld l,e			; $5c6b
@@ -4493,7 +4493,7 @@ _label_10_201:
 	call z,setScreenShakeCounter		; $5c9c
 	jp partDelete		; $5c9f
 _label_10_202:
-	call $40a7		; $5ca2
+	call partCommon_decCounter1IfNonzero		; $5ca2
 	ld a,(hl)		; $5ca5
 	and $07			; $5ca6
 	jr nz,_label_10_203	; $5ca8
@@ -4540,7 +4540,7 @@ partCode52:
 	ld l,$c6		; $5ce4
 	ld (hl),$0a		; $5ce6
 	jp objectSetVisible82		; $5ce8
-	call $40a7		; $5ceb
+	call partCommon_decCounter1IfNonzero		; $5ceb
 	jr nz,_label_10_205	; $5cee
 	ld l,e			; $5cf0
 	inc (hl)		; $5cf1
@@ -4596,7 +4596,7 @@ _label_10_206:
 	ld (hl),a		; $5d40
 	ld a,$01		; $5d41
 	call partSetAnimation		; $5d43
-	call $40a7		; $5d46
+	call partCommon_decCounter1IfNonzero		; $5d46
 	jr z,_label_10_208	; $5d49
 	ld a,(hl)		; $5d4b
 	rrca			; $5d4c
@@ -4627,7 +4627,7 @@ _label_10_208:
 	call objectSetVisible82		; $5d71
 _label_10_209:
 	jp partAnimate		; $5d74
-	call $40a7		; $5d77
+	call partCommon_decCounter1IfNonzero		; $5d77
 	jr z,_label_10_210	; $5d7a
 	call objectApplySpeed		; $5d7c
 	jr _label_10_209		; $5d7f
@@ -4672,7 +4672,7 @@ _label_10_210:
 	ld l,$c6		; $5db9
 	ld (hl),$0f		; $5dbb
 	jp objectSetVisible82		; $5dbd
-	call $40a7		; $5dc0
+	call partCommon_decCounter1IfNonzero		; $5dc0
 	jp nz,partAnimate		; $5dc3
 	ld (hl),$0f		; $5dc6
 	ld l,e			; $5dc8
@@ -4681,7 +4681,7 @@ _label_10_210:
 	call playSound		; $5dcc
 	ld a,$01		; $5dcf
 	jp partSetAnimation		; $5dd1
-	call $40a7		; $5dd4
+	call partCommon_decCounter1IfNonzero		; $5dd4
 	jp nz,partAnimate		; $5dd7
 	ld l,e			; $5dda
 	inc (hl)		; $5ddb
@@ -4998,190 +4998,225 @@ partCodeNil:
 partCode00:
 	jp partDelete		; $62cc
 
+
+; var30 - pointer to tile at part's position
+; $ccbf - set to 1 when button in hallway to D3 miniboss is pressed
 partCode0a:
-	ld e,$c2		; $62cf
+	ld e,Part.subid		; $62cf
 	ld a,(de)		; $62d1
 	rst_jumpTable			; $62d2
-.DB $dd				; $62d3
-	ld h,d			; $62d4
-	ld bc,$0463		; $62d5
-	ld h,e			; $62d8
-	inc b			; $62d9
-	ld h,e			; $62da
-	inc h			; $62db
-	ld h,e			; $62dc
-	ld e,$c4		; $62dd
+	.dw @subid0
+	.dw @subidStub
+	.dw @subid2
+	.dw @subid3
+	.dw @subid4
+
+@subid0:
+	ld e,Part.state		; $62dd
 	ld a,(de)		; $62df
 	rst_jumpTable			; $62e0
-	push hl			; $62e1
-	ld h,d			; $62e2
-.DB $ed				; $62e3
-	ld h,d			; $62e4
-	call $63a4		; $62e5
-	ld l,$c6		; $62e8
+	.dw @@state0
+	.dw @@state1
+@@state0:
+	call @init_StoreTileAtPartInVar30		; $62e5
+	ld l,Part.counter1		; $62e8
 	ld (hl),$08		; $62ea
 	ret			; $62ec
+@@state1:
+	; Proceed once button in D3 hallway to miniboss stepped on
 	ld a,($ccbf)		; $62ed
 	or a			; $62f0
 	ret z			; $62f1
-	call $63b3		; $62f2
+
+	call @breakFloorsAtInterval		; $62f2
 	ret nz			; $62f5
-	call $63cc		; $62f6
+
+	call @spreadVertical		; $62f6
 	ret z			; $62f9
-	call $63d0		; $62fa
+
+	call @spreadHorizontal		; $62fa
 	ret z			; $62fd
 	jp partDelete		; $62fe
+
+@subidStub:
 	jp partDelete		; $6301
-	ld e,$c4		; $6304
+
+@subid2:
+@subid3:
+	ld e,Part.state		; $6304
 	ld a,(de)		; $6306
 	rst_jumpTable			; $6307
-	inc c			; $6308
-	ld h,e			; $6309
-	inc d			; $630a
-	ld h,e			; $630b
-	call $63a4		; $630c
-	ld l,$c6		; $630f
+	.dw @@state0
+	.dw @@state1
+@@state0:
+	call @init_StoreTileAtPartInVar30		; $630c
+	ld l,Part.counter1		; $630f
 	ld (hl),$20		; $6311
 	ret			; $6313
+@@state1:
 	ld a,($ccbf)		; $6314
 	or a			; $6317
 	ret z			; $6318
-	call $63b3		; $6319
+	call @breakFloorsAtInterval		; $6319
 	ret nz			; $631c
 	call $63ed		; $631d
 	ret nz			; $6320
 	jp partDelete		; $6321
+
+@subid4:
 	ld h,d			; $6324
-	ld l,$c4		; $6325
+	ld l,Part.state		; $6325
 	ld a,(hl)		; $6327
 	or a			; $6328
-	jr nz,_label_10_250	; $6329
+	jr nz,+			; $6329
 	ld (hl),$01		; $632b
-	ld l,$c6		; $632d
+	ld l,Part.counter1		; $632d
 	ld (hl),$08		; $632f
 	inc l			; $6331
 	ld (hl),$00		; $6332
-	call $6348		; $6334
-_label_10_250:
+	call @seasonsFunc_10_6348		; $6334
++
 	ld a,$3c		; $6337
 	call setScreenShakeCounter		; $6339
-	call $40a7		; $633c
+	call partCommon_decCounter1IfNonzero		; $633c
 	ret nz			; $633f
-	ld l,$cb		; $6340
+	ld l,Part.yh		; $6340
 	ld c,(hl)		; $6342
-	ld a,$f4		; $6343
+	ld a,TILEINDEX_BLANK_HOLE		; $6343
 	call breakCrackedFloor		; $6345
-	ld e,$c7		; $6348
+@seasonsFunc_10_6348:
+	ld e,Part.counter2		; $6348
 	ld a,(de)		; $634a
-	ld hl,$6361		; $634b
+	ld hl,@seasonsTable_10_6361		; $634b
 	rst_addDoubleIndex			; $634e
 	ld a,(hl)		; $634f
 	or a			; $6350
 	jp z,partDelete		; $6351
+
 	ldi a,(hl)		; $6354
-	ld e,$c6		; $6355
+	ld e,Part.counter1		; $6355
 	ld (de),a		; $6357
+
 	ld a,(hl)		; $6358
-	ld e,$cb		; $6359
+	ld e,Part.yh		; $6359
 	ld (de),a		; $635b
+
 	ld h,d			; $635c
-	ld l,$c7		; $635d
+	ld l,Part.counter2		; $635d
 	inc (hl)		; $635f
 	ret			; $6360
-	ld e,$91		; $6361
-	ld e,$81		; $6363
-	ld bc,$1d82		; $6365
-	ld (hl),c		; $6368
-	ld bc,$1d61		; $6369
-	add e			; $636c
-	ld bc,$1d51		; $636d
-	add h			; $6370
-	ld bc,$1d52		; $6371
-	add l			; $6374
-	ld bc,$1d53		; $6375
-	add (hl)		; $6378
-	ld bc,$1d63		; $6379
-	add a			; $637c
-	ld bc,$1d64		; $637d
-	adc b			; $6380
-	ld bc,$1d65		; $6381
-	adc c			; $6384
-	ld bc,$1d55		; $6385
-	ld a,c			; $6388
-	ld bc,$1d45		; $6389
-	ld l,c			; $638c
-	ld bc,$0135		; $638d
-	ld l,b			; $6390
-	inc e			; $6391
-	ld l,d			; $6392
-	ld bc,$0125		; $6393
-	ld e,b			; $6396
-	inc e			; $6397
-	ld l,e			; $6398
-	ld bc,$1d48		; $6399
-	ld e,e			; $639c
-	ld e,$38		; $639d
-	ld e,$37		; $639f
-	ld e,$36		; $63a1
-	nop			; $63a3
+@seasonsTable_10_6361:
+	.db $1e $91
+	.db $1e $81
+	.db $01 $82
+	.db $1d $71
+	.db $01 $61
+	.db $1d $83
+	.db $01 $51
+	.db $1d $84
+	.db $01 $52
+	.db $1d $85
+	.db $01 $53
+	.db $1d $86
+	.db $01 $63
+	.db $1d $87
+	.db $01 $64
+	.db $1d $88
+	.db $01 $65
+	.db $1d $89
+	.db $01 $55
+	.db $1d $79
+	.db $01 $45
+	.db $1d $69
+	.db $01 $35
+	.db $01 $68
+	.db $1c $6a
+	.db $01 $25
+	.db $01 $58
+	.db $1c $6b
+	.db $01 $48
+	.db $1d $5b
+	.db $1e $38
+	.db $1e $37
+	.db $1e $36
+	.db $00
+
+@init_StoreTileAtPartInVar30:
 	ld a,$01		; $63a4
 	ld (de),a		; $63a6
+
 	ld h,d			; $63a7
-	ld l,$cb		; $63a8
+	ld l,Part.yh		; $63a8
 	ld a,(hl)		; $63aa
 	ld c,a			; $63ab
-	ld b,$cf		; $63ac
+
+	ld b,>wRoomLayout		; $63ac
 	ld a,(bc)		; $63ae
-	ld l,$f0		; $63af
+
+	ld l,Part.var30		; $63af
 	ld (hl),a		; $63b1
 	ret			; $63b2
-	call $40a7		; $63b3
+
+@breakFloorsAtInterval:
+	call partCommon_decCounter1IfNonzero		; $63b3
 	ret nz			; $63b6
+
+	; counter back to $08
 	ld (hl),$08		; $63b7
-	ld l,$f0		; $63b9
-	ld a,$4d		; $63bb
+	ld l,Part.var30		; $63b9
+	ld a,TILEINDEX_CRACKED_FLOOR		; $63bb
 	cp (hl)			; $63bd
-	ld a,$f3		; $63be
-	jr z,_label_10_251	; $63c0
-	ld a,$f4		; $63c2
-_label_10_251:
-	ld l,$cb		; $63c4
+	ld a,TILEINDEX_HOLE		; $63be
+	jr z,+			; $63c0
+	ld a,TILEINDEX_BLANK_HOLE		; $63c2
++
+	ld l,Part.yh		; $63c4
 	ld c,(hl)		; $63c6
 	call breakCrackedFloor		; $63c7
+
+	; proceed to below function
 	xor a			; $63ca
 	ret			; $63cb
+
+@spreadVertical:
 	ld h,$10		; $63cc
-	jr _label_10_252		; $63ce
+	jr @spread			; $63ce
+@spreadHorizontal:
 	ld h,$01		; $63d0
-_label_10_252:
-	ld b,$cf		; $63d2
-	ld e,$f0		; $63d4
+@spread:
+	ld b,>wRoomLayout		; $63d2
+	ld e,Part.var30		; $63d4
 	ld a,(de)		; $63d6
 	ld l,a			; $63d7
-	ld e,$cb		; $63d8
+
+	ld e,Part.yh		; $63d8
 	ld a,(de)		; $63da
 	ld e,a			; $63db
+
 	sub h			; $63dc
 	ld c,a			; $63dd
 	ld a,(bc)		; $63de
 	cp l			; $63df
-	jr z,_label_10_253	; $63e0
+	jr z,+			; $63e0
+
 	ld a,e			; $63e2
 	add h			; $63e3
 	ld c,a			; $63e4
 	ld a,(bc)		; $63e5
 	cp l			; $63e6
 	ret nz			; $63e7
-_label_10_253:
++
 	ld a,c			; $63e8
-	ld e,$cb		; $63e9
+	ld e,Part.yh		; $63e9
 	ld (de),a		; $63eb
 	ret			; $63ec
-	ld e,$f0		; $63ed
+
+seasonsFunc_10_63ed:
+	ld e,Part.var30		; $63ed
 	ld a,(de)		; $63ef
 	ld b,a			; $63f0
 	ld c,$10		; $63f1
-	ld hl,$cf00		; $63f3
+	ld hl,wRoomLayout		; $63f3
 _label_10_254:
 	ld a,b			; $63f6
 	cp (hl)			; $63f7
@@ -5208,10 +5243,11 @@ _label_10_255:
 	jr _label_10_254		; $6412
 _label_10_256:
 	ld a,l			; $6414
-	ld e,$cb		; $6415
+	ld e,Part.yh		; $6415
 	ld (de),a		; $6417
 	or d			; $6418
 	ret			; $6419
+
 
 partCode0d:
 	jr z,_label_10_257	; $641a
@@ -5242,7 +5278,7 @@ _label_10_257:
 	ld a,$01		; $6443
 	ld (de),a		; $6445
 	ret			; $6446
-	call $40a7		; $6447
+	call partCommon_decCounter1IfNonzero		; $6447
 	ret nz			; $644a
 	ld e,$c2		; $644b
 	ld a,(de)		; $644d
@@ -5311,7 +5347,7 @@ _label_10_259:
 	ld a,(de)		; $64c5
 	or a			; $64c6
 	jr nz,_label_10_260	; $64c7
-	call $40a7		; $64c9
+	call partCommon_decCounter1IfNonzero		; $64c9
 	ret nz			; $64cc
 	ld (hl),$b4		; $64cd
 	inc l			; $64cf
@@ -5322,7 +5358,7 @@ _label_10_259:
 	inc (hl)		; $64d7
 	ret			; $64d8
 _label_10_260:
-	call $40a7		; $64d9
+	call partCommon_decCounter1IfNonzero		; $64d9
 	jr nz,_label_10_261	; $64dc
 	ld a,($cd00)		; $64de
 	and $01			; $64e1
@@ -5386,7 +5422,7 @@ _label_10_263:
 	ld a,(de)		; $6539
 	or a			; $653a
 	jr z,_label_10_266	; $653b
-	call $40a7		; $653d
+	call partCommon_decCounter1IfNonzero		; $653d
 	ret nz			; $6540
 	ld l,$c2		; $6541
 	bit 0,(hl)		; $6543
@@ -5438,7 +5474,7 @@ _label_10_266:
 	ld l,$e4		; $6581
 	set 7,(hl)		; $6583
 	jp objectSetVisible81		; $6585
-	call $40a7		; $6588
+	call partCommon_decCounter1IfNonzero		; $6588
 	jr nz,_label_10_267	; $658b
 	ld l,e			; $658d
 	inc (hl)		; $658e
@@ -5491,7 +5527,7 @@ partCode25:
 	ld l,$c9		; $65d7
 	ld (hl),a		; $65d9
 _label_10_268:
-	call $40a7		; $65da
+	call partCommon_decCounter1IfNonzero		; $65da
 	ret nz			; $65dd
 	ld e,$c2		; $65de
 	ld a,(de)		; $65e0
@@ -5552,7 +5588,7 @@ _label_10_270:
 	ld a,(de)		; $6635
 	cp b			; $6636
 	ret nc			; $6637
-	call $40a7		; $6638
+	call partCommon_decCounter1IfNonzero		; $6638
 	ret nz			; $663b
 	call getRandomNumber_noPreserveVars		; $663c
 	and $60			; $663f
@@ -5623,7 +5659,7 @@ partCode26:
 	ld a,$73		; $669c
 	call playSound		; $669e
 	jp objectSetVisible82		; $66a1
-	call $40a7		; $66a4
+	call partCommon_decCounter1IfNonzero		; $66a4
 	jr nz,_label_10_272	; $66a7
 	ld (hl),$10		; $66a9
 	ld l,e			; $66ab
@@ -5812,7 +5848,7 @@ _label_10_281:
 	ld l,$c9		; $67c8
 	ld (hl),a		; $67ca
 	ret			; $67cb
-	call $40a7		; $67cc
+	call partCommon_decCounter1IfNonzero		; $67cc
 	jp z,partDelete		; $67cf
 	ld a,(hl)		; $67d2
 	cp $35			; $67d3
@@ -5972,7 +6008,7 @@ _label_10_287:
 	or a			; $68c0
 	jr nz,_label_10_288	; $68c1
 	call objectApplySpeed		; $68c3
-	call $40a7		; $68c6
+	call partCommon_decCounter1IfNonzero		; $68c6
 	jp nz,$68e0		; $68c9
 	ld h,d			; $68cc
 	ld l,$c5		; $68cd
@@ -6054,7 +6090,7 @@ _label_10_291:
 	ld (hl),$78		; $6948
 _label_10_292:
 	jp partAnimate		; $694a
-	call $40a7		; $694d
+	call partCommon_decCounter1IfNonzero		; $694d
 	jp z,partDelete		; $6950
 	jr _label_10_292		; $6953
 
@@ -6088,7 +6124,7 @@ _label_10_293:
 	or a			; $6979
 	jp z,objectSetVisible82		; $697a
 	jp objectSetVisible81		; $697d
-	call $40a7		; $6980
+	call partCommon_decCounter1IfNonzero		; $6980
 	ret nz			; $6983
 	ld l,e			; $6984
 	inc (hl)		; $6985
@@ -6196,7 +6232,7 @@ _label_10_296:
 	call objectGetRelatedObject1Var		; $6a2f
 	bit 7,(hl)		; $6a32
 	jp z,partDelete		; $6a34
-	call $40a7		; $6a37
+	call partCommon_decCounter1IfNonzero		; $6a37
 	dec a			; $6a3a
 	ld b,$01		; $6a3b
 	cp $17			; $6a3d
@@ -6401,7 +6437,7 @@ _label_10_304:
 	jr $1a			; $6b8f
 	or a			; $6b91
 	jr z,_label_10_306	; $6b92
-	call $40a7		; $6b94
+	call partCommon_decCounter1IfNonzero		; $6b94
 	jp z,$6bdd		; $6b97
 	inc l			; $6b9a
 	dec (hl)		; $6b9b
@@ -6544,7 +6580,7 @@ partCode3c:
 	call nz,$b71a		; $6c6c
 	jr z,_label_10_314	; $6c6f
 	ld bc,$0104		; $6c71
-	call $40a7		; $6c74
+	call partCommon_decCounter1IfNonzero		; $6c74
 	jr z,_label_10_313	; $6c77
 	ld a,(hl)		; $6c79
 	cp $46			; $6c7a
@@ -6627,14 +6663,14 @@ _label_10_316:
 	call playSound		; $6cf6
 	ld a,$01		; $6cf9
 	jp partSetAnimation		; $6cfb
-	call $40a7		; $6cfe
+	call partCommon_decCounter1IfNonzero		; $6cfe
 	jr nz,_label_10_317	; $6d01
 	ld (hl),$14		; $6d03
 	ld l,e			; $6d05
 	inc (hl)		; $6d06
 	ld a,$02		; $6d07
 	jp partSetAnimation		; $6d09
-	call $40a7		; $6d0c
+	call partCommon_decCounter1IfNonzero		; $6d0c
 	jp z,partDelete		; $6d0f
 _label_10_317:
 	jp partAnimate		; $6d12
@@ -6760,7 +6796,7 @@ _label_10_321:
 	jp partDelete		; $6dd3
 	call $6e70		; $6dd6
 	jp nz,partDelete		; $6dd9
-	call $40a7		; $6ddc
+	call partCommon_decCounter1IfNonzero		; $6ddc
 	jr z,_label_10_322	; $6ddf
 	ld e,$c2		; $6de1
 	ld a,(de)		; $6de3
@@ -6995,7 +7031,7 @@ _label_10_330:
 	ld e,$c9		; $6f5b
 	ld (de),a		; $6f5d
 	ret			; $6f5e
-	call $40a7		; $6f5f
+	call partCommon_decCounter1IfNonzero		; $6f5f
 	ret nz			; $6f62
 	ld l,e			; $6f63
 	inc (hl)		; $6f64
@@ -7146,7 +7182,7 @@ partCode40:
 	or a			; $7052
 	jr z,_label_10_334	; $7053
 	ret			; $7055
-	call $40a7		; $7056
+	call partCommon_decCounter1IfNonzero		; $7056
 	ret nz			; $7059
 	ld l,e			; $705a
 	inc (hl)		; $705b
@@ -7261,7 +7297,7 @@ partCode42:
 	ld a,(de)		; $710f
 	cp $02			; $7110
 	jr z,_label_10_337	; $7112
-	call $40a7		; $7114
+	call partCommon_decCounter1IfNonzero		; $7114
 	jr nz,_label_10_337	; $7117
 	inc l			; $7119
 	ld e,$f0		; $711a
@@ -7432,7 +7468,7 @@ partCode43:
 	or a			; $7215
 	jr z,_label_10_348	; $7216
 	call partAnimate		; $7218
-	call $40a7		; $721b
+	call partCommon_decCounter1IfNonzero		; $721b
 	jp nz,objectApplyComponentSpeed		; $721e
 _label_10_346:
 	ld b,$06		; $7221
@@ -7504,7 +7540,7 @@ _label_10_348:
 	ldd (hl),a		; $7289
 	ld (hl),a		; $728a
 	ret			; $728b
-	call $40a7		; $728c
+	call partCommon_decCounter1IfNonzero		; $728c
 	ret nz			; $728f
 	ld (hl),$b4		; $7290
 	ld l,e			; $7292
@@ -7517,7 +7553,7 @@ _label_10_349:
 	call objectSetVisible81		; $729d
 	ld a,$72		; $72a0
 	jp playSound		; $72a2
-	call $40a7		; $72a5
+	call partCommon_decCounter1IfNonzero		; $72a5
 	jp z,partDelete		; $72a8
 	jp partAnimate		; $72ab
 	ld a,(de)		; $72ae
@@ -7816,7 +7852,7 @@ _label_10_362:
 	inc (hl)		; $7489
 	ld l,$c6		; $748a
 	ld (hl),$1e		; $748c
-	call $40a7		; $748e
+	call partCommon_decCounter1IfNonzero		; $748e
 	ret nz			; $7491
 	ld l,e			; $7492
 	inc (hl)		; $7493
@@ -7837,7 +7873,7 @@ _label_10_362:
 	inc (hl)		; $74b1
 	ld l,$c6		; $74b2
 	ld (hl),$1e		; $74b4
-	call $40a7		; $74b6
+	call partCommon_decCounter1IfNonzero		; $74b6
 	ret nz			; $74b9
 	ld l,e			; $74ba
 	inc (hl)		; $74bb
@@ -7865,7 +7901,7 @@ _label_10_363:
 	ld (hl),$08		; $74e3
 	call $7524		; $74e5
 	call objectSetVisible82		; $74e8
-	call $40a7		; $74eb
+	call partCommon_decCounter1IfNonzero		; $74eb
 	jr nz,_label_10_364	; $74ee
 	ld l,e			; $74f0
 	inc (hl)		; $74f1
@@ -8045,7 +8081,7 @@ _label_10_367:
 	ld a,$6f		; $75f5
 	call playSound		; $75f7
 	jp $776f		; $75fa
-	call $40a7		; $75fd
+	call partCommon_decCounter1IfNonzero		; $75fd
 	ret nz			; $7600
 	ld l,e			; $7601
 	inc (hl)		; $7602
@@ -8130,7 +8166,7 @@ _label_10_369:
 	ld (de),a		; $7686
 	ld bc,$e009		; $7687
 	jr _label_10_369		; $768a
-	call $40a7		; $768c
+	call partCommon_decCounter1IfNonzero		; $768c
 	jr nz,_label_10_370	; $768f
 	ld (hl),$02		; $7691
 	ld l,$c9		; $7693
@@ -8156,7 +8192,7 @@ _label_10_371:
 	call $776f		; $76b4
 	ld a,$6f		; $76b7
 	jp playSound		; $76b9
-	call $40a7		; $76bc
+	call partCommon_decCounter1IfNonzero		; $76bc
 	ret nz			; $76bf
 	ld l,e			; $76c0
 	inc (hl)		; $76c1
@@ -8323,7 +8359,7 @@ partCode48:
 	ld a,(de)		; $77b7
 	or a			; $77b8
 	jr z,_label_10_376	; $77b9
-	call $40a7		; $77bb
+	call partCommon_decCounter1IfNonzero		; $77bb
 	jp z,partDelete		; $77be
 	ld a,(hl)		; $77c1
 	and $0f			; $77c2
@@ -8480,7 +8516,7 @@ _label_10_379:
 	ld e,$1a		; $78c0
 	or a			; $78c2
 	jr z,_label_10_380	; $78c3
-	call $40a7		; $78c5
+	call partCommon_decCounter1IfNonzero		; $78c5
 	jp z,partDelete		; $78c8
 	ld a,(hl)		; $78cb
 	and $0f			; $78cc
@@ -8569,7 +8605,7 @@ partCode49:
 	ld l,$c6		; $794a
 	ld (hl),$3c		; $794c
 	jp objectSetVisible81		; $794e
-	call $40a7		; $7951
+	call partCommon_decCounter1IfNonzero		; $7951
 	jr nz,_label_10_383	; $7954
 	ld l,e			; $7956
 	inc (hl)		; $7957
@@ -8756,7 +8792,7 @@ _label_10_388:
 	ld l,$cf		; $7a7b
 	ld (hl),$00		; $7a7d
 	jp objectSetInvisible		; $7a7f
-	call $40a7		; $7a82
+	call partCommon_decCounter1IfNonzero		; $7a82
 	ret nz			; $7a85
 	call getFreeEnemySlot		; $7a86
 	ret nz			; $7a89
@@ -8852,7 +8888,7 @@ _label_10_392:
 	res 7,(hl)		; $7b1a
 	ret			; $7b1c
 	call $7bd6		; $7b1d
-	call $40a7		; $7b20
+	call partCommon_decCounter1IfNonzero		; $7b20
 	jr z,_label_10_393	; $7b23
 	call objectCheckTileCollision_allowHoles		; $7b25
 	call nc,objectApplySpeed		; $7b28
@@ -8898,7 +8934,7 @@ _label_10_394:
 	ld a,$3c		; $7b63
 	ld (hl),a		; $7b65
 	call setScreenShakeCounter		; $7b66
-	call $40a7		; $7b69
+	call partCommon_decCounter1IfNonzero		; $7b69
 	ret nz			; $7b6c
 	ld a,$0f		; $7b6d
 	ld (hl),a		; $7b6f
@@ -8945,7 +8981,7 @@ _label_10_396:
 	ld l,$d0		; $7baf
 	ld (hl),$0f		; $7bb1
 _label_10_397:
-	call $40a7		; $7bb3
+	call partCommon_decCounter1IfNonzero		; $7bb3
 	jp z,partDelete		; $7bb6
 	ld l,$da		; $7bb9
 	ld a,(hl)		; $7bbb

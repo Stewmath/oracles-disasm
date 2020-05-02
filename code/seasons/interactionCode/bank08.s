@@ -3232,36 +3232,36 @@ interactionCode20:
 	.dw @dungeonB
 
 @dungeon0:
-	.dw script4b77
-	.dw script4b78
+	.dw dungeonScript_end
+	.dw dungeonScript_checkActiveTriggersEq01
 
 @dungeon1:
 	.dw dungeonScript_minibossDeath
-	.dw script4b78
-	.dw script4b78
+	.dw dungeonScript_checkActiveTriggersEq01
+	.dw dungeonScript_checkActiveTriggersEq01
 	.dw dungeonScript_bossDeath
 
 @dungeon2:
-	.dw script4b97
+	.dw snakesRemainsScript_timerForChestDisappearing
 	.dw dungeonScript_minibossDeath
-	.dw script4ba6
+	.dw snakesRemainsScript_bossDeath
 
 @dungeon3:
-	.dw script4bb9
-	.dw script4bc4
-	.dw script4bca
-	.dw script4bd9
-	.dw script4be8
+	.dw poisonMothsLairScript_hallwayTrapRoom
+	.dw poisonMothsLairScript_checkStatuePuzzle
+	.dw poisonMothsLairScript_minibossDeath
+	.dw poisonMothsLairScript_bossDeath
+	.dw poisonMothsLairScript_openEssenceDoorIfBossBeat
 
 @dungeon4:
-	.dw script4bec
-	.dw script4bfb
-	.dw script4bfb
-	.dw script4c09
+	.dw dancingDragonScript_spawnStairsToB1
+	.dw dancingDragonScript_torchesHallway
+	.dw dancingDragonScript_torchesHallway
+	.dw dancingDragonScript_spawnBossKey
 	.dw dungeonScript_bossDeath
 	.dw dungeonScript_minibossDeath
-	.dw script4c0e
-	.dw script4c17
+	.dw dancingDragonScript_pushingPotsRoom
+	.dw dancingDragonScript_bridgeInB2
 
 @dungeon5:
 	.dw script4c20
@@ -3324,7 +3324,7 @@ interactionCode20:
 @dungeonA:
 @dungeonB:
 	.dw script4c2b
-	.dw script4b78
+	.dw dungeonScript_checkActiveTriggersEq01
 	.dw script4dcd
 	.dw explorersCryptScript_checkIfMagnetBallOnButton
 	.dw script4ddb

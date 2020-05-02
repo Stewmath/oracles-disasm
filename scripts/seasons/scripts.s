@@ -1112,13 +1112,13 @@ dungeonScript_minibossDeath:
 	orroomflag $80
 	wait 20
 	spawninteraction INTERACID_MINIBOSS_PORTAL $00, $00, $00
-script4b73:
+dungeonScriptEnableLinkAndMenu:
 	writememory wDisableLinkCollisionsAndMenu, $00
-script4b77:
+dungeonScript_end:
 	scriptend
 
 
-script4b78:
+dungeonScript_checkActiveTriggersEq01:
 	stopifitemflagset
 	checkmemoryeq wActiveTriggers, $01
 
@@ -1132,10 +1132,10 @@ spawnChestAfterPuff:
 
 
 dungeonScript_bossDeath:
-	jumpifroomflagset $80, _spawnHeartContainer
+	jumpifroomflagset $80, _spawnHeartContainerCenterOfRoom
 	checknoenemies
 	orroomflag $80
-_spawnHeartContainer:
+_spawnHeartContainerCenterOfRoom:
 	stopifitemflagset
 	setcoords $58, $78
 	spawnitem TREASURE_HEART_CONTAINER $00
@@ -1143,7 +1143,7 @@ _spawnHeartContainer:
 	scriptend
 
 
-script4b97:
+snakesRemainsScript_timerForChestDisappearing:
 	stopifitemflagset
 	wait 240
 	wait 240
@@ -1155,81 +1155,105 @@ script4b97:
 	stopifitemflagset
 	playsound SND_POOF
 	createpuff
-	settilehere $a0
+	settilehere TILEINDEX_STANDARD_FLOOR
 	scriptend
-script4ba6:
-	jumpifroomflagset $80, script4bad
+
+
+snakesRemainsScript_bossDeath:
+	jumpifroomflagset $80, _snakesRemains_coordsForHeartContainer
 	checknoenemies
 	orroomflag $80
-script4bad:
+_snakesRemains_coordsForHeartContainer:
 	stopifitemflagset
 	setcoords $88, $78
-script4bb1:
-	spawnitem $2a00
-	writememory $cbca, $00
+_spawnHeartContainerAtCustomPosition:
+	spawnitem TREASURE_HEART_CONTAINER $00
+	writememory wDisableLinkCollisionsAndMenu, $00
 	scriptend
-script4bb9:
-	asm15 $5481
+
+
+poisonMothsLairScript_hallwayTrapRoom:
+	asm15 scriptHlp.D3spawnPitSpreader
 	checkmemoryeq wActiveTriggers, $01
-	asm15 $550c
+	asm15 scriptHlp.D3hallToMiniboss_buttonStepped
 	scriptend
-script4bc4:
-	asm15 $5487
+
+
+poisonMothsLairScript_checkStatuePuzzle:
+	asm15 scriptHlp.D3StatuePuzzleCheck
 	wait 1
-	jump2byte script4bc4
-script4bca:
+	jump2byte poisonMothsLairScript_checkStatuePuzzle
+
+
+poisonMothsLairScript_minibossDeath:
 	stopifroomflag80set
 	checknoenemies
 	orroomflag $80
 	wait 20
 	createpuff
-	settilehere $44
-	spawninteraction $7e00, $00, $00
-	jump2byte script4b73
-script4bd9:
-	jumpifroomflagset $80, script4be2
+	settilehere TILEINDEX_INDOOR_UPSTAIRCASE
+	spawninteraction INTERACID_MINIBOSS_PORTAL $00, $00, $00
+	jump2byte dungeonScriptEnableLinkAndMenu
+
+
+poisonMothsLairScript_bossDeath:
+	jumpifroomflagset $80, _poisonMothsLair_coordsForHeartContainer
 	checknoenemies
 	wait 60
 	createpuff
 	settilehere $45
-script4be2:
+_poisonMothsLair_coordsForHeartContainer:
 	stopifitemflagset
 	setcoords $20, $78
-	jump2byte script4bb1
-script4be8:
-	asm15 $5512
+	jump2byte _spawnHeartContainerAtCustomPosition
+
+
+poisonMothsLairScript_openEssenceDoorIfBossBeat:
+	asm15 scriptHlp.D3openEssenceDoorIfBossBeat_body
 	scriptend
-script4bec:
+
+
+dancingDragonScript_spawnStairsToB1:
 	stopifroomflag80set
 	checknoenemies
 	orroomflag $80
-	spawninteraction $0500, $38, $98
+	spawninteraction INTERACID_PUFF $00, $38, $98
 	wait 8
-	settilehere $50
+	settilehere TILEINDEX_SOUTH_STAIRS
 	playsound SND_SOLVEPUZZLE
 	scriptend
-script4bfb:
-	jumpifroomflagset $80, script4c06
-	checkmemoryeq $cca9, $03
+
+
+dancingDragonScript_torchesHallway:
+	jumpifroomflagset $80, @spawnChest
+	checkmemoryeq wNumTorchesLit, $03
 	orroomflag $80
 	wait 8
-script4c06:
+@spawnChest:
 	stopifitemflagset
 	jump2byte spawnChestAfterPuff
-script4c09:
+
+
+dancingDragonScript_spawnBossKey:
 	stopifitemflagset
-	spawnitem $3102
+	spawnitem TREASURE_BOSS_KEY $02
 	scriptend
-script4c0e:
+
+
+dancingDragonScript_pushingPotsRoom:
 	stopifitemflagset
 	checkmemoryeq wActiveTriggers, $ff
-	spawnitem $3001
+	spawnitem TREASURE_SMALL_KEY $01
 	scriptend
-script4c17:
+
+
+dancingDragonScript_bridgeInB2:
 	stopifroomflag80set
-	checkmemoryeq $cca9, $02
-	asm15 $54c7
+	checkmemoryeq wNumTorchesLit, $02
+	asm15 scriptHlp.D4spawnBridgeB2
 	scriptend
+
+
 script4c20:
 	stopifitemflagset
 	spawnitem $3100
@@ -1316,14 +1340,14 @@ script4c94:
 	settilehere $45
 	scriptend
 script4ca5:
-	jumpifroomflagset $80, _spawnHeartContainer
+	jumpifroomflagset $80, _spawnHeartContainerCenterOfRoom
 	checknoenemies
 	orroomflag $80
 	setcoords $08, $78
 	createpuff
 	wait 30
 	settilehere $46
-	jump2byte _spawnHeartContainer
+	jump2byte _spawnHeartContainerCenterOfRoom
 script4cb5:
 	checkmemoryeq wActiveTriggers, $01
 	asm15 $5551
