@@ -26,7 +26,7 @@
 #   Jump to the given text index. This only works if the high byte of the index you're
 #   jumping to is the same as the one you're jumping from.
 #   For example, you can't jump from TX_3500 to TX_3600, but TX_3601->TX_3650 is fine.
-# \kidname:
+# \Child or \child:
 #   Name of Bipin & Blossom's child.
 # \Link or \link:
 #   Player name.
@@ -74,6 +74,11 @@
 #
 # You can also insert arbitrary bytes. For example, \abtn is equivalent to:
 #   \xb8\xb9
+
+# TODOS:
+# - "index: auto"
+# - Calculate textoffsetsplitindex automatically
+# - Support "$" sign and make use consistent (ie. "\sym($54)")
 
 import sys
 import io
@@ -404,7 +409,7 @@ def parseTextFile(textFile, isDictionary):
                             textStruct.data.append(0x0a)
                             textStruct.data.append(0x00)
                             addWidth(state, 8*5)
-                        elif textEq('kidname'):
+                        elif textEq('Child') or textEq('child'):
                             validToken = True
                             textStruct.data.append(0x0a)
                             textStruct.data.append(0x01)
@@ -696,7 +701,7 @@ for group in groupDict.values():
             try:
                 struct.data[i] = parseName(name, struct.getGroupIndex())
             except ValueError:
-                print('Error: \"' + name + '\" is an invalid name.')
+                print('Error: \"' + name + '\" is an invalid name to jump to from %s.' % struct.getPrimaryName())
                 exit(1)
 
 # Compile dictionary

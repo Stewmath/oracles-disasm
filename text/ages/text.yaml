@@ -43,7 +43,7 @@
 # DESCRIPTION OF KEYS
 # ==============================================================================
 #
-# group:
+# groups:
 #   group: The index for a group. This is the high byte for all text in the
 #          group.
 #
@@ -20723,7 +20723,7 @@ groups:
     index: 0x00
     text: |-
       I... I am called
-      \col(3)\kidname\col(0)...\stop
+      \col(3)\Child\col(0)...\stop
       ! ! ! ! ! !
       Oops! I spoke to
       a stranger!
@@ -20733,7 +20733,7 @@ groups:
     index: 0x01
     text: |-
       You're \Link?\stop
-      I'm \col(3)\kidname\col(0)!
+      I'm \col(3)\Child\col(0)!
       No way!
     null_terminator: True
 
@@ -20791,7 +20791,7 @@ groups:
     text: |-
       So, the name is
       decided!
-      \col(3)\kidname\col(0), huh?
+      \col(3)\Child\col(0), huh?
       It's a fine
       name! I hope he
       grows to be a
@@ -20821,7 +20821,7 @@ groups:
     index: 0x04
     text: |-
       Hey, \Link!
-      \col(3)\kidname\col(0) grows
+      \col(3)\Child\col(0) grows
       by the day, and
       today, I have
       more to teach!
@@ -20842,7 +20842,7 @@ groups:
     index: 0x06
     text: |-
       Hey, \Link!
-      \col(3)\kidname\col(0) is
+      \col(3)\Child\col(0) is
       doing well!
       And I can teach
       you everything
@@ -20853,7 +20853,7 @@ groups:
     index: 0x07
     text: |
       Hey, \Link!\stop
-      \col(3)\kidname\col(0) is
+      \col(3)\Child\col(0) is
       all grown up and
       off on his own!
     null_terminator: False
@@ -21036,7 +21036,7 @@ groups:
     - 0x07
     text: |-
       You would name
-      him \col(3)\kidname\col(0)?
+      him \col(3)\Child\col(0)?
         \opt()Yes \opt()No
     null_terminator: True
 
@@ -21055,7 +21055,7 @@ groups:
   - name: TX_4409
     index: 0x09
     text: |-
-      I hope \col(3)\kidname\col(0)
+      I hope \col(3)\Child\col(0)
       will grow strong
       and healthy,
       like you.
@@ -21072,7 +21072,7 @@ groups:
   - name: TX_440b
     index: 0x0b
     text: |-
-      \col(3)\kidname\col(0) looks a
+      \col(3)\Child\col(0) looks a
       little strange.\stop
       I want to take
       him to a doctor,
@@ -21136,7 +21136,7 @@ groups:
   - name: TX_4412
     index: 0x12
     text: |-
-      \col(3)\kidname\col(0) has
+      \col(3)\Child\col(0) has
       gotten better!
       Thank you!
     null_terminator: True
@@ -21178,7 +21178,7 @@ groups:
   - name: TX_4417
     index: 0x17
     text: |-
-      See! \col(3)\kidname\col(0)
+      See! \col(3)\Child\col(0)
       has grown!
     null_terminator: True
 
@@ -21189,14 +21189,14 @@ groups:
       We meet again!\stop
       Do you remember
       naming our son,
-      \col(3)\kidname\col(0)?
+      \col(3)\Child\col(0)?
       He's quite well!
     null_terminator: True
 
   - name: TX_4419
     index: 0x19
     text: |-
-      \col(3)\kidname\col(0) is
+      \col(3)\Child\col(0) is
       so hyperactive!\stop
       Were you a
       hyperactive
@@ -21207,7 +21207,7 @@ groups:
   - name: TX_441a
     index: 0x1a
     text: |-
-      \col(3)\kidname\col(0) is
+      \col(3)\Child\col(0) is
       very shy.\stop
       What kind of
       child were you,
@@ -21219,7 +21219,7 @@ groups:
   - name: TX_441b
     index: 0x1b
     text: |-
-      \col(3)\kidname\col(0) is such
+      \col(3)\Child\col(0) is such
       a curious child.\stop
       What kind of
       child were you,
@@ -21276,21 +21276,21 @@ groups:
   - name: TX_4422
     index: 0x22
     text: |-
-      \col(3)\kidname\col(0) is
+      \col(3)\Child\col(0) is
       so hyperactive!
     null_terminator: True
 
   - name: TX_4423
     index: 0x23
     text: |-
-      \col(3)\kidname\col(0) is
+      \col(3)\Child\col(0) is
       too shy.
     null_terminator: True
 
   - name: TX_4424
     index: 0x24
     text: |-
-      \col(3)\kidname\col(0) is a
+      \col(3)\Child\col(0) is a
       strange child,
       but he'll be a
       man of great
@@ -21307,7 +21307,7 @@ groups:
       \Link!\stop
       Do you remember
       naming our son,
-      \col(3)\kidname\col(0)?
+      \col(3)\Child\col(0)?
       He's grown into
       a fine man!
     null_terminator: True
@@ -21318,7 +21318,7 @@ groups:
       \Link!\stop
       Do you remember
       naming our son,
-      \col(3)\kidname\col(0)? He's
+      \col(3)\Child\col(0)? He's
       a master
       arborist, too!
     null_terminator: True
@@ -21329,7 +21329,7 @@ groups:
       \Link!\stop
       Do you remember
       naming our son,
-      \col(3)\kidname\col(0)?
+      \col(3)\Child\col(0)?
       He's a famed
       musician now!
     null_terminator: True
@@ -21337,7 +21337,7 @@ groups:
   - name: TX_4429
     index: 0x29
     text: |-
-      \col(3)\kidname\col(0)...
+      \col(3)\Child\col(0)...
       He's grown up,
       but he idles
       his time away.\stop
@@ -21347,7 +21347,7 @@ groups:
   - name: TX_442a
     index: 0x2a
     text: |-
-      \col(3)\kidname\col(0), my
+      \col(3)\Child\col(0), my
       son, heard of
       your deeds, and
       is now trying
@@ -21366,7 +21366,7 @@ groups:
   - name: TX_442c
     index: 0x2c
     text: |-
-      \col(3)\kidname\col(0) said
+      \col(3)\Child\col(0) said
       he is writing a
       song about your
       deeds!
@@ -21375,7 +21375,7 @@ groups:
   - name: TX_442d
     index: 0x2d
     text: |-
-      \col(3)\kidname\col(0)...
+      \col(3)\Child\col(0)...
       He's grown up,
       but he idles
       his time away.\stop
@@ -21392,7 +21392,7 @@ groups:
   - name: TX_442f
     index: 0x2f
     text: |-
-      \col(3)\kidname\col(0) has
+      \col(3)\Child\col(0) has
       followed in
       \col(3)Bipin's\col(0)
       footsteps.
@@ -21403,7 +21403,7 @@ groups:
     index: 0x30
     text: |-
       Have you heard
-      \col(3)\kidname\col(0)'s
+      \col(3)\Child\col(0)'s
       songs? They're
       quite nice.
     null_terminator: True
@@ -21506,7 +21506,7 @@ groups:
   - name: TX_4600
     index: 0x00
     text: |-
-      I, \col(3)\kidname\col(0), am
+      I, \col(3)\Child\col(0), am
       writing a song
       to praise the
       great hero,
@@ -21562,7 +21562,7 @@ groups:
     index: 0x00
     text: |-
       I am called
-      \col(3)\kidname\col(0). They
+      \col(3)\Child\col(0). They
       say I was named
       by a great man.
       Isn't it a cool
@@ -21576,7 +21576,7 @@ groups:
       been, \Link?
       Do you remember
       me?\stop
-      It's \col(3)\kidname\col(0)!\stop
+      It's \col(3)\Child\col(0)!\stop
       Mom and Dad are
       doing well, too!
     null_terminator: True
@@ -21617,7 +21617,7 @@ groups:
   - name: TX_4800
     index: 0x00
     text: |-
-      I, \col(3)\kidname\col(0),
+      I, \col(3)\Child\col(0),
       have decided to
       take the same
       tree-lined path
@@ -21740,7 +21740,7 @@ groups:
     index: 0x00
     text: |-
       My name is
-      \col(3)\kidname\col(0).
+      \col(3)\Child\col(0).
       Isn't it groovy?
     null_terminator: True
 
@@ -21749,7 +21749,7 @@ groups:
     text: |-
       Hey! \Link!\stop
       Remember me?
-      It's \col(3)\kidname\col(0)!
+      It's \col(3)\Child\col(0)!
       All right!
       We meet again!
     null_terminator: True
@@ -21793,7 +21793,7 @@ groups:
     index: 0x00
     text: |-
       My name is
-      \col(3)\kidname\col(0).
+      \col(3)\Child\col(0).
       I am training
       every day to
       be a hero like
@@ -21873,7 +21873,7 @@ groups:
     index: 0x00
     text: |-
       My name is
-      \col(3)\kidname\col(0)!
+      \col(3)\Child\col(0)!
       Isn't it a cool
       name?
       Yeah, dude!

@@ -79,7 +79,7 @@ commentText = '''
 # DESCRIPTION OF KEYS
 # ==============================================================================
 #
-# group:
+# groups:
 #   group: The index for a group. This is the high byte for all text in the
 #          group.
 #
@@ -419,7 +419,7 @@ while address < textEndAddress:
                 textData += '\\Link'
                 i+=1
             elif data[i+1] == 0x1:
-                textData += '\\kidname'
+                textData += '\\Child'
                 i+=1
             elif data[i+1] == 0x2:
                 textData += '\\secret1'
