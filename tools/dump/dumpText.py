@@ -417,9 +417,17 @@ def parseTextData(data):
         else:
             if not (b == 0 and i == len(data)-1):
                 textData += '\\x' + myhex(b, 2)
+            if b == 0 and i != len(data)-1:
+                print('WARNING: Null terminator before text end')
         i+=1
 
     fixTrailingSpace()
+
+    # Replace any trailing newlines with '\n' so that it doesn't need to be
+    # accomodated with weird YAML formatting to prevent it from being trimmed.
+    if len(textData) > 0 and textData[-1] == '\n':
+        textData = textData[:-1] + '\\n'
+
     return textData
 
 
@@ -569,7 +577,8 @@ def setup_yaml():
             dataList.append((stringNode('index'), intNode('0x' + myhex(data.index&0xff, 2))))
 
         dataList.append((stringNode('text'), dumper.represent_scalar(stringTag, data.textData, '|')))
-        dataList.append((stringNode('null_terminator'), boolNode(data.hasNullTerminator)))
+        if not data.hasNullTerminator:
+            dataList.append((stringNode('null_terminator'), boolNode(data.hasNullTerminator)))
 
         return yaml.MappingNode('tag:yaml.org,2002:map', dataList)
 
@@ -586,8 +595,9 @@ def dumpYaml(l, outStream):
 
     # Add some spacing to make it nicer.
     # Must be careful with this. It could break block text which doesn't trim
-    # newlines. For this reason the "null_terminator" key is always present after
-    # the "text" key to make sure that doesn't happen.
+    # newlines. For this reason, any text which ends with a newline has the last
+    # newline replaced with the literal "\n" sequence, which should avoid this
+    # issue.
     s = s.replace("\n- group:", "\n\n- group:")
     s = s.replace("groups:\n\n", "groups:\n")
     s = s.replace("\n  - name:", "\n\n  - name:")
@@ -607,15 +617,15 @@ outFile.close()
 
 # Debug output: write a decompressed blob of all the text.
 
-#outFile = open(textDir + 'text_blob_decompressed.bin','wb')
-#lastAddress = -1
-#for address in sorted(textAddressList):
-#    if address < lastAddress:
-#        print('BAD')
-#    lastAddress = address
-#    textStruct = textAddressDictionary[address]
-#    if textStruct.data is None:
-#        print('Index ' + hex(textStruct.index) + ' uninitialized')
-#    else:
-#        outFile.write(textStruct.data)
-#outFile.close()
+outFile = open(textDir + 'text_blob_decompressed.bin','wb')
+lastAddress = -1
+for address in sorted(textAddressList):
+    if address < lastAddress:
+        print('BAD')
+    lastAddress = address
+    textStruct = textAddressDictionary[address]
+    if textStruct.data is None:
+        print('Index ' + hex(textStruct.index) + ' uninitialized')
+    else:
+        outFile.write(textStruct.data)
+outFile.close()

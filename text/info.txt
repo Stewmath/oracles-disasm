@@ -23,7 +23,6 @@ In most cases, the block style ("|-") is used, like this:
     allowed in...
     Sir \Link!
     Excuse me!
-  null_terminator: True
 
 With this style, newlines are preserved wherever they are. Also, if a line is
 too long, the text parser will automatically insert a newline. But, when
@@ -34,7 +33,6 @@ creating new text, you may prefer to use the flow style (">-"):
     There is no explicit newline here.
 
     But there is one here.
-  null_terminator: True
 
 The advantage of this style is that you can write long text across multiple
 lines, without worrying about where the line-breaks will actually be in-game.
@@ -43,9 +41,8 @@ a row. But you still have flexibility to insert explicit linebreaks by leaving
 an empty line.
 
 Most text uses chomping ("-" sign after "|" or ">"), which ignores any
-newlines at the end of the text. But this not the case when the game actually
-does wants to leave a newline at the end of the text, particularly when
-null_terminator is False.
+newlines at the end of the text. If you DO need a newline at the end of text
+(ie. when "null_terminator" is False), it's recommended to use "\n".
 
 For more information: https://yaml-multiline.info/
 
@@ -75,7 +72,7 @@ groups:
 
     text: The text string. See text formatting notes.
 
-    null_terminator: True or False. If False, the text does not end here, and
+    null_terminator: Optional boolean. If False, the text does not end here, and
           the game will continue to show the text that comes after this. In
           this case, you will usually want to ensure a newline is inserted at
           the end of the text. (See notes about YAML above.)
@@ -153,5 +150,11 @@ The following symbols are also understood:
   \circle, \club, \diamond, \spade, \heart, \triangle, \rectangle,
   \up, \down, \left, \right, \abtn, \bbtn
 
+You can also use "\n" as a newline. Useful when you have no null terminator
+("null_terminator: False") and need an explicit newline, since YAML will trim
+newlines with the string format being used in most cases (see YAML notes).
+
 You can also insert arbitrary bytes. For example, \abtn is equivalent to:
   \xb8\xb9
+
+All commands can have optional empty brackets, ie. "\opt()".

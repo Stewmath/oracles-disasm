@@ -461,13 +461,19 @@ def parseTextFile(textFile, isDictionary):
                             c = 0x7f
                             textStruct.data.append(c)
                             addWidth(state, characterSpacing[c])
+                        elif textEq('n'): # NOTE: shares prefix with "num1", "num2"
+                            validToken = True
+                            textStruct.data.append(0x01)
+                            state.lineWidth = 0
+                            state.lastSpaceIndex = 0
+                            state.currentTileColor = state.currentColor
                         elif textEq('\\'):  # 2 backslashes
                             validToken = True
                             textStruct.data.append('\\')
                             addWidth(state, characterSpacing[ord('\\')])
 
                         if validToken:
-                            try:
+                            try: # Allow optional empty brackets
                                 if i+1 < len(text) and text[i] == '(' and text[i+1] == ')':
                                     i+=2
                             except exceptions.IndexError:
@@ -786,8 +792,8 @@ outFile.close()
 
 # Debug output: if this is equivalent to the debug output from "dumpText.py", then the text was at
 # least parsed correctly.
-#outFile = open('text/test2.bin','wb')
-#for group in groupDict.values():
-#    for textStruct in group.textStructs:
-#        outFile.write(bytes(textStruct.data))
-#outFile.close()
+outFile = open('text/test2.bin','wb')
+for group in groupDict.values():
+    for textStruct in group.textStructs:
+        outFile.write(bytes(textStruct.data))
+outFile.close()

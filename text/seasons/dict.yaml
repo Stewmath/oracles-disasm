@@ -5,1537 +5,1281 @@ groups:
     index: 0x00
     text: |2-
         \opt()OK \opt()No thanks
-    null_terminator: True
 
   - name: DICT0_01
     index: 0x01
     text: |-
       \col(3)Princess Zelda\col(0)
-    null_terminator: True
 
   - name: DICT0_02
     index: 0x02
     text: |2-
         \opt()Yes \opt()No
-    null_terminator: True
 
   - name: DICT0_03
     index: 0x03
-    text: |
-      You got the
-    null_terminator: True
+    text: |-
+      You got the\n
 
   - name: DICT0_04
     index: 0x04
     text: |-
       \col(3)Labrynna\col(0)
-    null_terminator: True
 
   - name: DICT0_05
     index: 0x05
-    text: |
-      My books tell me
-    null_terminator: True
+    text: |-
+      My books tell me\n
 
   - name: DICT0_06
     index: 0x06
     text: |2-
        \col(1)secret\col(0)
-    null_terminator: True
 
   - name: DICT0_07
     index: 0x07
     text: |-
       \opt()Yes \opt()Not really
-    null_terminator: True
 
   - name: DICT0_08
     index: 0x08
-    text: |
-      I'll trade for
-    null_terminator: True
+    text: |-
+      I'll trade for\n
 
   - name: DICT0_09
     index: 0x09
     text: |-
       Ore Chunks\col(0)
-    null_terminator: True
 
   - name: DICT0_0a
     index: 0x0a
     text: |-
       ee hee hee hee!
-    null_terminator: True
 
   - name: DICT0_0b
     index: 0x0b
     text: |-
       Hohhm...ZZZ...
-    null_terminator: True
 
   - name: DICT0_0c
     index: 0x0c
     text: |-
       Sword damage\x20
-    null_terminator: True
 
   - name: DICT0_0d
     index: 0x0d
     text: |-
       \col(3)Zelda\col(0)
-    null_terminator: True
 
   - name: DICT0_0e
     index: 0x0e
     text: |-
       \col(1)Gasha Seed
-    null_terminator: True
 
   - name: DICT0_0f
     index: 0x0f
     text: |-
       \col(3)Twinrova\col(0)
-    null_terminator: True
 
   - name: DICT0_10
     index: 0x10
     text: |-
       \col(1)secret\col(0)
-    null_terminator: True
 
   - name: DICT0_11
     index: 0x11
     text: |-
       Thank you
-    null_terminator: True
 
   - name: DICT0_12
     index: 0x12
     text: |-
       You got \col(1)
-    null_terminator: True
 
   - name: DICT0_13
     index: 0x13
     text: |2-
        \col(1)rings\col(0)
-    null_terminator: True
 
   - name: DICT0_14
     index: 0x14
     text: |-
       Horon Village
-    null_terminator: True
 
   - name: DICT0_15
     index: 0x15
     text: |-
       Damage taken\x20
-    null_terminator: True
 
   - name: DICT0_16
     index: 0x16
     text: |-
       Want to learn
-    null_terminator: True
 
   - name: DICT0_17
     index: 0x17
     text: |-
       \col(3)Holodrum\col(0)
-    null_terminator: True
 
   - name: DICT0_18
     index: 0x18
     text: |-
       he seasons
-    null_terminator: True
 
   - name: DICT0_19
     index: 0x19
     text: |-
       Subrosian
-    null_terminator: True
 
   - name: DICT0_1a
     index: 0x1a
     text: |-
       Seasons\col(0)
-    null_terminator: True
 
   - name: DICT0_1b
     index: 0x1b
     text: |-
       You got a
-    null_terminator: True
 
   - name: DICT0_1c
     index: 0x1c
     text: |-
       something
-    null_terminator: True
 
   - name: DICT0_1d
     index: 0x1d
     text: |-
       0 Rupees
-    null_terminator: True
 
   - name: DICT0_1e
     index: 0x1e
-    text: |
-      \col(3)Temple of
-    null_terminator: True
+    text: |-
+      \col(3)Temple of\n
 
   - name: DICT0_1f
     index: 0x1f
     text: |-
       estruction
-    null_terminator: True
 
   - name: DICT0_20
     index: 0x20
     text: |-
       nderstand
-    null_terminator: True
 
   - name: DICT0_21
     index: 0x21
     text: |-
       Spool Swamp
-    null_terminator: True
 
   - name: DICT0_22
     index: 0x22
     text: |-
       Heart Container
-    null_terminator: True
 
   - name: DICT0_23
     index: 0x23
-    text: |
-      a fellow named
-    null_terminator: True
+    text: |-
+      a fellow named\n
 
   - name: DICT0_24
     index: 0x24
     text: |-
       \col(1)Ring Box\col(0)
-    null_terminator: True
 
   - name: DICT0_25
     index: 0x25
-    text: |2
-       damage from
-    null_terminator: True
+    text: |2-
+       damage from\n
 
   - name: DICT0_26
     index: 0x26
-    text: |
-      Essence of
-    null_terminator: True
+    text: |-
+      Essence of\n
 
   - name: DICT0_27
     index: 0x27
     text: |-
       Sunken City
-    null_terminator: True
 
   - name: DICT0_28
     index: 0x28
     text: |-
       ome back
-    null_terminator: True
 
   - name: DICT0_29
     index: 0x29
     text: |-
       I can't\x20
-    null_terminator: True
 
   - name: DICT0_2a
     index: 0x2a
     text: |-
       \col(1)ring\col(0)
-    null_terminator: True
 
   - name: DICT0_2b
     index: 0x2b
     text: |-
       This is\x20
-    null_terminator: True
 
   - name: DICT0_2c
     index: 0x2c
     text: |-
       I'll teach you
-    null_terminator: True
 
   - name: DICT0_2d
     index: 0x2d
     text: |-
       \col(3)Labrynna's\col(0)
-    null_terminator: True
 
   - name: DICT0_2e
     index: 0x2e
     text: |-
       Take this
-    null_terminator: True
 
   - name: DICT0_2f
     index: 0x2f
-    text: |2
-       of the
-    null_terminator: True
+    text: |2-
+       of the\n
 
   - name: DICT0_30
     index: 0x30
     text: |2-
        you can
-    null_terminator: True
 
   - name: DICT0_31
     index: 0x31
     text: |-
       \col(3)Onox\col(0)
-    null_terminator: True
 
   - name: DICT0_32
     index: 0x32
     text: |-
       Try again later!
-    null_terminator: True
 
   - name: DICT0_33
     index: 0x33
     text: |-
       Do you know\x20
-    null_terminator: True
 
   - name: DICT0_34
     index: 0x34
     text: |-
       \col(1)Hard Ore\col(0)
-    null_terminator: True
 
   - name: DICT0_35
     index: 0x35
     text: |-
       \col(1)essences\col(0)
-    null_terminator: True
 
   - name: DICT0_36
     index: 0x36
     text: |-
       \col(1)secrets\col(0)
-    null_terminator: True
 
   - name: DICT0_37
     index: 0x37
     text: |2-
        \col(1)bell\col(0)
-    null_terminator: True
 
   - name: DICT0_38
     index: 0x38
     text: |-
       Mystery Seeds
-    null_terminator: True
 
   - name: DICT0_39
     index: 0x39
     text: |-
       \col(3)Maku Tree\col(0)
-    null_terminator: True
 
   - name: DICT0_3a
     index: 0x3a
     text: |-
       of Seasons
-    null_terminator: True
 
   - name: DICT0_3b
     index: 0x3b
     text: |-
       If you\x20
-    null_terminator: True
 
   - name: DICT0_3c
     index: 0x3c
-    text: |
-      Thanks to you,
-    null_terminator: True
+    text: |-
+      Thanks to you,\n
 
   - name: DICT0_3d
     index: 0x3d
-    text: |
-      o you remember
-    null_terminator: True
+    text: |-
+      o you remember\n
 
   - name: DICT0_3e
     index: 0x3e
     text: |-
       You don't
-    null_terminator: True
 
   - name: DICT0_3f
     index: 0x3f
     text: |-
       Oracle of
-    null_terminator: True
 
   - name: DICT0_40
     index: 0x40
     text: |-
       That's\x20
-    null_terminator: True
 
   - name: DICT0_41
     index: 0x41
     text: |-
       \col(1)seeds\col(0)
-    null_terminator: True
 
   - name: DICT0_42
     index: 0x42
     text: |-
       \col(3)Din\col(0)
-    null_terminator: True
 
   - name: DICT0_43
     index: 0x43
-    text: |2
-       to the
-    null_terminator: True
+    text: |2-
+       to the\n
 
   - name: DICT0_44
     index: 0x44
     text: |-
       You can
-    null_terminator: True
 
   - name: DICT0_45
     index: 0x45
     text: |-
       You're\x20
-    null_terminator: True
 
   - name: DICT0_46
     index: 0x46
     text: |-
       the village
-    null_terminator: True
 
   - name: DICT0_47
     index: 0x47
     text: |-
       appraise
-    null_terminator: True
 
   - name: DICT0_48
     index: 0x48
-    text: |2
-       in the
-    null_terminator: True
+    text: |2-
+       in the\n
 
   - name: DICT0_49
     index: 0x49
     text: |-
       ou have
-    null_terminator: True
 
   - name: DICT0_4a
     index: 0x4a
-    text: |2
-       will be
-    null_terminator: True
+    text: |2-
+       will be\n
 
   - name: DICT0_4b
     index: 0x4b
     text: |-
       Evil King
-    null_terminator: True
 
   - name: DICT0_4c
     index: 0x4c
     text: |2-
        give you
-    null_terminator: True
 
   - name: DICT0_4d
     index: 0x4d
     text: |2-
        \opt()No way
-    null_terminator: True
 
   - name: DICT0_4e
     index: 0x4e
     text: |-
       \col(1)Bombs\col(0)
-    null_terminator: True
 
   - name: DICT0_4f
     index: 0x4f
     text: |-
       \col(3)Ganon\col(0)
-    null_terminator: True
 
   - name: DICT0_50
     index: 0x50
-    text: |2
-       has been
-    null_terminator: True
+    text: |2-
+       has been\n
 
   - name: DICT0_51
     index: 0x51
     text: |2-
        ho ho ho!
-    null_terminator: True
 
   - name: DICT0_52
     index: 0x52
     text: |-
       \col(1)Ribbon\col(0)
-    null_terminator: True
 
   - name: DICT0_53
     index: 0x53
     text: |-
       Seeds\col(0)
-    null_terminator: True
 
   - name: DICT0_54
     index: 0x54
     text: |-
       he power
-    null_terminator: True
 
   - name: DICT0_55
     index: 0x55
-    text: |2
-       if you
-    null_terminator: True
+    text: |2-
+       if you\n
 
   - name: DICT0_56
     index: 0x56
     text: |-
       darkness
-    null_terminator: True
 
   - name: DICT0_57
     index: 0x57
     text: |-
       You got
-    null_terminator: True
 
   - name: DICT0_58
     index: 0x58
     text: |2-
        return
-    null_terminator: True
 
   - name: DICT0_59
     index: 0x59
     text: |-
       to the\x20
-    null_terminator: True
 
   - name: DICT0_5a
     index: 0x5a
     text: |-
       ou must
-    null_terminator: True
 
   - name: DICT0_5b
     index: 0x5b
     text: |-
       Boomerang
-    null_terminator: True
 
   - name: DICT0_5c
     index: 0x5c
     text: |-
       sacrifice
-    null_terminator: True
 
   - name: DICT0_5d
     index: 0x5d
     text: |-
       Biggoron
-    null_terminator: True
 
   - name: DICT0_5e
     index: 0x5e
     text: |-
       he Flame
-    null_terminator: True
 
   - name: DICT0_5f
     index: 0x5f
     text: |-
       \col(3)Rosa\col(0)
-    null_terminator: True
 
   - name: DICT0_60
     index: 0x60
     text: |-
       You've\x20
-    null_terminator: True
 
   - name: DICT0_61
     index: 0x61
     text: |-
       I'm gonna\x20
-    null_terminator: True
 
   - name: DICT0_62
     index: 0x62
     text: |-
       I want to\x20
-    null_terminator: True
 
   - name: DICT0_63
     index: 0x63
-    text: |
-      Nature!\stop
-    null_terminator: True
+    text: |-
+      Nature!\stop\n
 
   - name: DICT0_64
     index: 0x64
     text: |-
       \col(1)shield\col(0)
-    null_terminator: True
 
   - name: DICT0_65
     index: 0x65
-    text: |
-      our \col(1)Seed
-    null_terminator: True
+    text: |-
+      our \col(1)Seed\n
 
   - name: DICT0_66
     index: 0x66
     text: |-
       \col(3)Dimitri\col(0)
-    null_terminator: True
 
   - name: DICT0_67
     index: 0x67
     text: |2-
        Ring L-
-    null_terminator: True
 
   - name: DICT0_68
     index: 0x68
     text: |-
       reasure
-    null_terminator: True
 
   - name: DICT0_69
     index: 0x69
     text: |-
       in the\x20
-    null_terminator: True
 
   - name: DICT0_6a
     index: 0x6a
-    text: |2
-       your
-    null_terminator: True
+    text: |2-
+       your\n
 
   - name: DICT0_6b
     index: 0x6b
     text: |-
       here's\x20
-    null_terminator: True
 
   - name: DICT0_6c
     index: 0x6c
     text: |-
       Will you\x20
-    null_terminator: True
 
   - name: DICT0_6d
     index: 0x6d
-    text: |
-      Hwaah...
-    null_terminator: True
+    text: |-
+      Hwaah...\n
 
   - name: DICT0_6e
     index: 0x6e
     text: |-
       Satchel\col(0)
-    null_terminator: True
 
   - name: DICT0_6f
     index: 0x6f
     text: |-
       \col(3)Cap'n\col(0)
-    null_terminator: True
 
   - name: DICT0_70
     index: 0x70
     text: |-
       Pieces of Heart
-    null_terminator: True
 
   - name: DICT0_71
     index: 0x71
     text: |-
       I don't\x20
-    null_terminator: True
 
   - name: DICT0_72
     index: 0x72
     text: |-
       Can you\x20
-    null_terminator: True
 
   - name: DICT0_73
     index: 0x73
     text: |-
       come to
-    null_terminator: True
 
   - name: DICT0_74
     index: 0x74
     text: |-
       e you\x20
-    null_terminator: True
 
   - name: DICT0_75
     index: 0x75
     text: |2-
        again
-    null_terminator: True
 
   - name: DICT0_76
     index: 0x76
-    text: |
-      ...\stop
-    null_terminator: True
+    text: |-
+      ...\stop\n
 
   - name: DICT0_77
     index: 0x77
     text: |-
       seasons
-    null_terminator: True
 
   - name: DICT0_78
     index: 0x78
     text: |2-
        found\x20
-    null_terminator: True
 
   - name: DICT0_79
     index: 0x79
     text: |-
       of the\x20
-    null_terminator: True
 
   - name: DICT0_7a
     index: 0x7a
     text: |2-
        won't\x20
-    null_terminator: True
 
   - name: DICT0_7b
     index: 0x7b
     text: |-
       "temple
-    null_terminator: True
 
   - name: DICT0_7c
     index: 0x7c
     text: |2-
        there
-    null_terminator: True
 
   - name: DICT0_7d
     index: 0x7d
     text: |-
       Game Boy Color
-    null_terminator: True
 
   - name: DICT0_7e
     index: 0x7e
-    text: |
-      \col(4)\num1 signs\col(0)!
-    null_terminator: True
+    text: |-
+      \col(4)\num1 signs\col(0)!\n
 
   - name: DICT0_7f
     index: 0x7f
     text: |-
       \col(1)Essences
-    null_terminator: True
 
   - name: DICT0_80
     index: 0x80
     text: |2-
        your\x20
-    null_terminator: True
 
   - name: DICT0_81
     index: 0x81
-    text: |2
-       will
-    null_terminator: True
+    text: |2-
+       will\n
 
   - name: DICT0_82
     index: 0x82
-    text: |2
-       on the
-    null_terminator: True
+    text: |2-
+       on the\n
 
   - name: DICT0_83
     index: 0x83
     text: |-
       Subrosia
-    null_terminator: True
 
   - name: DICT0_84
     index: 0x84
     text: |-
       Seasons
-    null_terminator: True
 
   - name: DICT0_85
     index: 0x85
-    text: |2
-       shall
-    null_terminator: True
+    text: |2-
+       shall\n
 
   - name: DICT0_86
     index: 0x86
     text: |-
       Good luck
-    null_terminator: True
 
   - name: DICT0_87
     index: 0x87
     text: |-
       waterfall
-    null_terminator: True
 
   - name: DICT0_88
     index: 0x88
     text: |2-
        with\x20
-    null_terminator: True
 
   - name: DICT0_89
     index: 0x89
     text: |2-
        power
-    null_terminator: True
 
   - name: DICT0_8a
     index: 0x8a
-    text: |2
-       this
-    null_terminator: True
+    text: |2-
+       this\n
 
   - name: DICT0_8b
     index: 0x8b
     text: |-
       about\x20
-    null_terminator: True
 
   - name: DICT0_8c
     index: 0x8c
     text: |-
       , but\x20
-    null_terminator: True
 
   - name: DICT0_8d
     index: 0x8d
     text: |-
       \col(2)essence\col(4)
-    null_terminator: True
 
   - name: DICT0_8e
     index: 0x8e
     text: |-
       \col(1)Star-Shaped Ore\col(0)
-    null_terminator: True
 
   - name: DICT0_8f
     index: 0x8f
     text: |2-
        Rupees
-    null_terminator: True
 
   - name: DICT0_90
     index: 0x90
     text: |-
       without
-    null_terminator: True
 
   - name: DICT0_91
     index: 0x91
     text: |-
       I have\x20
-    null_terminator: True
 
   - name: DICT0_92
     index: 0x92
     text: |2-
        around
-    null_terminator: True
 
   - name: DICT0_93
     index: 0x93
     text: |-
       strange
-    null_terminator: True
 
   - name: DICT0_94
     index: 0x94
     text: |-
       I am \col(3)
-    null_terminator: True
 
   - name: DICT0_95
     index: 0x95
     text: |-
       Don't\x20
-    null_terminator: True
 
   - name: DICT0_96
     index: 0x96
-    text: |2
-       have
-    null_terminator: True
+    text: |2-
+       have\n
 
   - name: DICT0_97
     index: 0x97
     text: |2-
        this\x20
-    null_terminator: True
 
   - name: DICT0_98
     index: 0x98
     text: |2-
        that\x20
-    null_terminator: True
 
   - name: DICT0_99
     index: 0x99
-    text: |2
-       that
-    null_terminator: True
+    text: |2-
+       that\n
 
   - name: DICT0_9a
     index: 0x9a
     text: |-
       Strange Flute
-    null_terminator: True
 
   - name: DICT0_9b
     index: 0x9b
     text: |-
       Member's Card
-    null_terminator: True
 
   - name: DICT0_9c
     index: 0x9c
-    text: |
-      What kind of
-    null_terminator: True
+    text: |-
+      What kind of\n
 
   - name: DICT0_9d
     index: 0x9d
-    text: |
-      I surrender!
-    null_terminator: True
+    text: |-
+      I surrender!\n
 
   - name: DICT0_9e
     index: 0x9e
     text: |-
       \col(3)Mt. Cucco\col(0)
-    null_terminator: True
 
   - name: DICT0_9f
     index: 0x9f
-    text: |2
-       with
-    null_terminator: True
+    text: |2-
+       with\n
 
   - name: DICT0_a0
     index: 0xa0
     text: |-
       loodgate
-    null_terminator: True
 
   - name: DICT0_a1
     index: 0xa1
     text: |2-
        for the
-    null_terminator: True
 
   - name: DICT0_a2
     index: 0xa2
     text: |-
       remember
-    null_terminator: True
 
   - name: DICT0_a3
     index: 0xa3
-    text: |
-      ing the
-    null_terminator: True
+    text: |-
+      ing the\n
 
   - name: DICT0_a4
     index: 0xa4
     text: |-
       able to\x20
-    null_terminator: True
 
   - name: DICT0_a5
     index: 0xa5
     text: |-
       from the
-    null_terminator: True
 
   - name: DICT0_a6
     index: 0xa6
     text: |-
       ountain
-    null_terminator: True
 
   - name: DICT0_a7
     index: 0xa7
     text: |-
       Really?
-    null_terminator: True
 
   - name: DICT0_a8
     index: 0xa8
     text: |-
       cannot\x20
-    null_terminator: True
 
   - name: DICT0_a9
     index: 0xa9
     text: |2-
        I'll\x20
-    null_terminator: True
 
   - name: DICT0_aa
     index: 0xaa
-    text: |
-      , but
-    null_terminator: True
+    text: |-
+      , but\n
 
   - name: DICT0_ab
     index: 0xab
     text: |-
       secret
-    null_terminator: True
 
   - name: DICT0_ac
     index: 0xac
     text: |2-
        the\x20
-    null_terminator: True
 
   - name: DICT0_ad
     index: 0xad
     text: |2-
        just\x20
-    null_terminator: True
 
   - name: DICT0_ae
     index: 0xae
     text: |-
       Something
-    null_terminator: True
 
   - name: DICT0_af
     index: 0xaf
     text: |-
       like this
-    null_terminator: True
 
   - name: DICT0_b0
     index: 0xb0
     text: |-
       kidnapped
-    null_terminator: True
 
   - name: DICT0_b1
     index: 0xb1
     text: |-
       Game Link
-    null_terminator: True
 
   - name: DICT0_b2
     index: 0xb2
     text: |-
       Village\col(0)
-    null_terminator: True
 
   - name: DICT0_b3
     index: 0xb3
     text: |-
       \col(3)Veran\col(0)
-    null_terminator: True
 
   - name: DICT0_b4
     index: 0xb4
-    text: |2
-       the
-    null_terminator: True
+    text: |2-
+       the\n
 
   - name: DICT0_b5
     index: 0xb5
     text: |-
       you're\x20
-    null_terminator: True
 
   - name: DICT0_b6
     index: 0xb6
     text: |2-
        summer
-    null_terminator: True
 
   - name: DICT0_b7
     index: 0xb7
     text: |-
       It's a\x20
-    null_terminator: True
 
   - name: DICT0_b8
     index: 0xb8
     text: |-
       hen you
-    null_terminator: True
 
   - name: DICT0_b9
     index: 0xb9
     text: |-
       ystical
-    null_terminator: True
 
   - name: DICT0_ba
     index: 0xba
-    text: |2
-       Seeds
-    null_terminator: True
+    text: |2-
+       Seeds\n
 
   - name: DICT0_bb
     index: 0xbb
     text: |-
       someone
-    null_terminator: True
 
   - name: DICT0_bc
     index: 0xbc
     text: |-
       Great Moblin
-    null_terminator: True
 
   - name: DICT0_bd
     index: 0xbd
     text: |-
       Bright Sun
-    null_terminator: True
 
   - name: DICT0_be
     index: 0xbe
     text: |-
       \col(1)Blue Ore\col(0)
-    null_terminator: True
 
   - name: DICT0_bf
     index: 0xbf
     text: |-
       r har har!
-    null_terminator: True
 
   - name: DICT0_c0
     index: 0xc0
     text: |-
       \col(3)Hyrule\col(0)
-    null_terminator: True
 
   - name: DICT0_c1
     index: 0xc1
     text: |-
       friend
-    null_terminator: True
 
   - name: DICT0_c2
     index: 0xc2
-    text: |2
-       you
-    null_terminator: True
+    text: |2-
+       you\n
 
   - name: DICT0_c3
     index: 0xc3
     text: |-
       othing
-    null_terminator: True
 
   - name: DICT0_c4
     index: 0xc4
     text: |2-
        right
-    null_terminator: True
 
   - name: DICT0_c5
     index: 0xc5
     text: |2-
        will\x20
-    null_terminator: True
 
   - name: DICT0_c6
     index: 0xc6
     text: |-
       shall\x20
-    null_terminator: True
 
   - name: DICT0_c7
     index: 0xc7
     text: |2-
        I can
-    null_terminator: True
 
   - name: DICT0_c8
     index: 0xc8
     text: |-
       forget
-    null_terminator: True
 
   - name: DICT0_c9
     index: 0xc9
-    text: |
-      naming our son,
-    null_terminator: True
+    text: |-
+      naming our son,\n
 
   - name: DICT0_ca
     index: 0xca
     text: |-
       you can\x20
-    null_terminator: True
 
   - name: DICT0_cb
     index: 0xcb
-    text: |
-      Got it?
-    null_terminator: True
+    text: |-
+      Got it?\n
 
   - name: DICT0_cc
     index: 0xcc
     text: |2-
        brought
-    null_terminator: True
 
   - name: DICT0_cd
     index: 0xcd
     text: |-
       It's so\x20
-    null_terminator: True
 
   - name: DICT0_ce
     index: 0xce
     text: |-
       Darkness
-    null_terminator: True
 
   - name: DICT0_cf
     index: 0xcf
     text: |-
       \col(1)Rod of
-    null_terminator: True
 
   - name: DICT0_d0
     index: 0xd0
     text: |2-
        Ring
-    null_terminator: True
 
   - name: DICT0_d1
     index: 0xd1
     text: |-
       strong
-    null_terminator: True
 
   - name: DICT0_d2
     index: 0xd2
-    text: |2
-       when
-    null_terminator: True
+    text: |2-
+       when\n
 
   - name: DICT0_d3
     index: 0xd3
-    text: |2
-       from
-    null_terminator: True
+    text: |2-
+       from\n
 
   - name: DICT0_d4
     index: 0xd4
-    text: |
-      \col(0) is
-    null_terminator: True
+    text: |-
+      \col(0) is\n
 
   - name: DICT0_d5
     index: 0xd5
     text: |2-
        you\x20
-    null_terminator: True
 
   - name: DICT0_d6
     index: 0xd6
     text: |2-
        spring
-    null_terminator: True
 
   - name: DICT0_d7
     index: 0xd7
     text: |-
       through
-    null_terminator: True
 
   - name: DICT0_d8
     index: 0xd8
     text: |2-
        Screen
-    null_terminator: True
 
   - name: DICT0_d9
     index: 0xd9
     text: |2-
        Shield
-    null_terminator: True
 
   - name: DICT0_da
     index: 0xda
     text: |-
       monster
-    null_terminator: True
 
   - name: DICT0_db
     index: 0xdb
     text: |-
       special
-    null_terminator: True
 
   - name: DICT0_dc
     index: 0xdc
-    text: |2
-       and
-    null_terminator: True
+    text: |2-
+       and\n
 
   - name: DICT0_dd
     index: 0xdd
     text: |-
       hat's\x20
-    null_terminator: True
 
   - name: DICT0_de
     index: 0xde
     text: |-
       Spring
-    null_terminator: True
 
   - name: DICT0_df
     index: 0xdf
     text: |2-
        great
-    null_terminator: True
 
   - name: DICT0_e0
     index: 0xe0
     text: |2-
        think
-    null_terminator: True
 
   - name: DICT0_e1
     index: 0xe1
     text: |2-
        and\x20
-    null_terminator: True
 
   - name: DICT0_e2
     index: 0xe2
-    text: |2
-       for
-    null_terminator: True
+    text: |2-
+       for\n
 
   - name: DICT0_e3
     index: 0xe3
     text: |2-
        carry
-    null_terminator: True
 
   - name: DICT0_e4
     index: 0xe4
     text: |2-
        find\x20
-    null_terminator: True
 
   - name: DICT0_e5
     index: 0xe5
     text: |-
       Master
-    null_terminator: True
 
   - name: DICT0_e6
     index: 0xe6
-    text: |
-      ! You
-    null_terminator: True
+    text: |-
+      ! You\n
 
   - name: DICT0_e7
     index: 0xe7
     text: |-
       people
-    null_terminator: True
 
   - name: DICT0_e8
     index: 0xe8
-    text: |2
-       I'll
-    null_terminator: True
+    text: |2-
+       I'll\n
 
   - name: DICT0_e9
     index: 0xe9
     text: |-
       Please
-    null_terminator: True
 
   - name: DICT0_ea
     index: 0xea
     text: |-
       don't\x20
-    null_terminator: True
 
   - name: DICT0_eb
     index: 0xeb
     text: |2-
        could
-    null_terminator: True
 
   - name: DICT0_ec
     index: 0xec
     text: |-
       It's\x20
-    null_terminator: True
 
   - name: DICT0_ed
     index: 0xed
-    text: |
-      ! That's
-    null_terminator: True
+    text: |-
+      ! That's\n
 
   - name: DICT0_ee
     index: 0xee
     text: |-
       verything
-    null_terminator: True
 
   - name: DICT0_ef
     index: 0xef
     text: |-
       I wonder\x20
-    null_terminator: True
 
   - name: DICT0_f0
     index: 0xf0
     text: |-
       Pegasus
-    null_terminator: True
 
   - name: DICT0_f1
     index: 0xf1
     text: |-
       \col(1)rings\col(0)
-    null_terminator: True
 
   - name: DICT0_f2
     index: 0xf2
     text: |-
       out of\x20
-    null_terminator: True
 
   - name: DICT0_f3
     index: 0xf3
     text: |-
       \col(3)Maple\col(0)
-    null_terminator: True
 
   - name: DICT0_f4
     index: 0xf4
     text: |-
       here\x20
-    null_terminator: True
 
   - name: DICT0_f5
     index: 0xf5
     text: |-
       have\x20
-    null_terminator: True
 
   - name: DICT0_f6
     index: 0xf6
-    text: |
-      stump to call
-    null_terminator: True
+    text: |-
+      stump to call\n
 
   - name: DICT0_f7
     index: 0xf7
     text: |-
       Power Bracelet
-    null_terminator: True
 
   - name: DICT0_f8
     index: 0xf8
-    text: |
-      The season is
-    null_terminator: True
+    text: |-
+      The season is\n
 
   - name: DICT0_f9
     index: 0xf9
-    text: |
-      No matter how
-    null_terminator: True
+    text: |-
+      No matter how\n
 
   - name: DICT0_fa
     index: 0xfa
     text: |-
       \col(3)Twinrova's\col(0)
-    null_terminator: True
 
   - name: DICT0_fb
     index: 0xfb
     text: |-
       terrible
-    null_terminator: True
 
   - name: DICT0_fc
     index: 0xfc
     text: |-
       has come
-    null_terminator: True
 
   - name: DICT0_fd
     index: 0xfd
     text: |-
       I, too,\x20
-    null_terminator: True
 
   - name: DICT0_fe
     index: 0xfe
     text: |2-
         \opt()Sure
-    null_terminator: True
 
   - name: DICT0_ff
     index: 0xff
     text: |-
       winter
-    null_terminator: True
 
 - group: 0x01
   data:
@@ -1543,1537 +1287,1281 @@ groups:
     index: 0x00
     text: |-
       happen
-    null_terminator: True
 
   - name: DICT1_01
     index: 0x01
     text: |2-
        north
-    null_terminator: True
 
   - name: DICT1_02
     index: 0x02
     text: |-
       , too!
-    null_terminator: True
 
   - name: DICT1_03
     index: 0x03
     text: |2-
        would
-    null_terminator: True
 
   - name: DICT1_04
     index: 0x04
     text: |2-
        place
-    null_terminator: True
 
   - name: DICT1_05
     index: 0x05
     text: |-
       espair
-    null_terminator: True
 
   - name: DICT1_06
     index: 0x06
     text: |-
       word\col(0)
-    null_terminator: True
 
   - name: DICT1_07
     index: 0x07
     text: |2-
        hear
-    null_terminator: True
 
   - name: DICT1_08
     index: 0x08
     text: |-
       that\x20
-    null_terminator: True
 
   - name: DICT1_09
     index: 0x09
     text: |-
       I'll\x20
-    null_terminator: True
 
   - name: DICT1_0a
     index: 0x0a
     text: |2-
        time
-    null_terminator: True
 
   - name: DICT1_0b
     index: 0x0b
     text: |-
       your\x20
-    null_terminator: True
 
   - name: DICT1_0c
     index: 0x0c
     text: |2-
        for\x20
-    null_terminator: True
 
   - name: DICT1_0d
     index: 0x0d
     text: |2-
        like
-    null_terminator: True
 
   - name: DICT1_0e
     index: 0x0e
     text: |2-
        here
-    null_terminator: True
 
   - name: DICT1_0f
     index: 0x0f
     text: |-
       other
-    null_terminator: True
 
   - name: DICT1_10
     index: 0x10
     text: |-
       before
-    null_terminator: True
 
   - name: DICT1_11
     index: 0x11
     text: |-
       Spirit
-    null_terminator: True
 
   - name: DICT1_12
     index: 0x12
     text: |-
       We're\x20
-    null_terminator: True
 
   - name: DICT1_13
     index: 0x13
     text: |-
       Hmm...
-    null_terminator: True
 
   - name: DICT1_14
     index: 0x14
     text: |-
       always
-    null_terminator: True
 
   - name: DICT1_15
     index: 0x15
     text: |-
       erhaps
-    null_terminator: True
 
   - name: DICT1_16
     index: 0x16
     text: |2-
        can\x20
-    null_terminator: True
 
   - name: DICT1_17
     index: 0x17
-    text: |
-      Climb atop a
-    null_terminator: True
+    text: |-
+      Climb atop a\n
 
   - name: DICT1_18
     index: 0x18
     text: |-
       power
-    null_terminator: True
 
   - name: DICT1_19
     index: 0x19
     text: |2-
        you.
-    null_terminator: True
 
   - name: DICT1_1a
     index: 0x1a
     text: |-
       This\x20
-    null_terminator: True
 
   - name: DICT1_1b
     index: 0x1b
     text: |2-
        you!
-    null_terminator: True
 
   - name: DICT1_1c
     index: 0x1c
     text: |2-
        to see
-    null_terminator: True
 
   - name: DICT1_1d
     index: 0x1d
     text: |-
       courage
-    null_terminator: True
 
   - name: DICT1_1e
     index: 0x1e
     text: |-
       want to
-    null_terminator: True
 
   - name: DICT1_1f
     index: 0x1f
     text: |2-
        thanks
-    null_terminator: True
 
   - name: DICT1_20
     index: 0x20
     text: |-
       ushroom
-    null_terminator: True
 
   - name: DICT1_21
     index: 0x21
     text: |2-
        Level\x20
-    null_terminator: True
 
   - name: DICT1_22
     index: 0x22
     text: |-
       Advance
-    null_terminator: True
 
   - name: DICT1_23
     index: 0x23
     text: |-
       tell me
-    null_terminator: True
 
   - name: DICT1_24
     index: 0x24
     text: |-
       rincess
-    null_terminator: True
 
   - name: DICT1_25
     index: 0x25
     text: |2-
        Oracle
-    null_terminator: True
 
   - name: DICT1_26
     index: 0x26
     text: |-
       You'll\x20
-    null_terminator: True
 
   - name: DICT1_27
     index: 0x27
     text: |-
       anytime
-    null_terminator: True
 
   - name: DICT1_28
     index: 0x28
     text: |-
       Snake\col(0)
-    null_terminator: True
 
   - name: DICT1_29
     index: 0x29
     text: |2-
        is a
-    null_terminator: True
 
   - name: DICT1_2a
     index: 0x2a
     text: |-
       What\x20
-    null_terminator: True
 
   - name: DICT1_2b
     index: 0x2b
     text: |2-
        more
-    null_terminator: True
 
   - name: DICT1_2c
     index: 0x2c
     text: |2-
        them
-    null_terminator: True
 
   - name: DICT1_2d
     index: 0x2d
     text: |2-
        some
-    null_terminator: True
 
   - name: DICT1_2e
     index: 0x2e
     text: |-
       ssence
-    null_terminator: True
 
   - name: DICT1_2f
     index: 0x2f
     text: |-
       change
-    null_terminator: True
 
   - name: DICT1_30
     index: 0x30
     text: |-
       return
-    null_terminator: True
 
   - name: DICT1_31
     index: 0x31
-    text: |2
-       It's
-    null_terminator: True
+    text: |2-
+       It's\n
 
   - name: DICT1_32
     index: 0x32
     text: |-
       ake it
-    null_terminator: True
 
   - name: DICT1_33
     index: 0x33
     text: |2-
        dance
-    null_terminator: True
 
   - name: DICT1_34
     index: 0x34
     text: |-
       enough
-    null_terminator: True
 
   - name: DICT1_35
     index: 0x35
     text: |-
       hidden
-    null_terminator: True
 
   - name: DICT1_36
     index: 0x36
     text: |-
       ortune
-    null_terminator: True
 
   - name: DICT1_37
     index: 0x37
     text: |-
       \col(1)Bomb
-    null_terminator: True
 
   - name: DICT1_38
     index: 0x38
-    text: |
-      \col(0)!\stop
-    null_terminator: True
+    text: |-
+      \col(0)!\stop\n
 
   - name: DICT1_39
     index: 0x39
     text: |-
       thing
-    null_terminator: True
 
   - name: DICT1_3a
     index: 0x3a
     text: |-
       this\x20
-    null_terminator: True
 
   - name: DICT1_3b
     index: 0x3b
-    text: |
-      s of
-    null_terminator: True
+    text: |-
+      s of\n
 
   - name: DICT1_3c
     index: 0x3c
     text: |-
       Then\x20
-    null_terminator: True
 
   - name: DICT1_3d
     index: 0x3d
     text: |2-
        hero
-    null_terminator: True
 
   - name: DICT1_3e
     index: 0x3e
     text: |-
       ring\x20
-    null_terminator: True
 
   - name: DICT1_3f
     index: 0x3f
     text: |-
       ature
-    null_terminator: True
 
   - name: DICT1_40
     index: 0x40
     text: |2-
        get\x20
-    null_terminator: True
 
   - name: DICT1_41
     index: 0x41
-    text: |2
-       are
-    null_terminator: True
+    text: |2-
+       are\n
 
   - name: DICT1_42
     index: 0x42
     text: |-
       from\x20
-    null_terminator: True
 
   - name: DICT1_43
     index: 0x43
     text: |-
       Fertile Soil
-    null_terminator: True
 
   - name: DICT1_44
     index: 0x44
-    text: |
-      Know-It-All
-    null_terminator: True
+    text: |-
+      Know-It-All\n
 
   - name: DICT1_45
     index: 0x45
     text: |-
       Magic Potion
-    null_terminator: True
 
   - name: DICT1_46
     index: 0x46
     text: |-
       ah, hah, hah
-    null_terminator: True
 
   - name: DICT1_47
     index: 0x47
     text: |-
       egendary
-    null_terminator: True
 
   - name: DICT1_48
     index: 0x48
     text: |-
       yourself
-    null_terminator: True
 
   - name: DICT1_49
     index: 0x49
     text: |-
       strength
-    null_terminator: True
 
   - name: DICT1_4a
     index: 0x4a
     text: |-
       precious
-    null_terminator: True
 
   - name: DICT1_4b
     index: 0x4b
-    text: |2
-       you'll
-    null_terminator: True
+    text: |2-
+       you'll\n
 
   - name: DICT1_4c
     index: 0x4c
     text: |-
       Bwee-hee
-    null_terminator: True
 
   - name: DICT1_4d
     index: 0x4d
     text: |-
       finished
-    null_terminator: True
 
   - name: DICT1_4e
     index: 0x4e
-    text: |
-      \col(1)Gasha
-    null_terminator: True
+    text: |-
+      \col(1)Gasha\n
 
   - name: DICT1_4f
     index: 0x4f
-    text: |
-      \col(3)Horon
-    null_terminator: True
+    text: |-
+      \col(3)Horon\n
 
   - name: DICT1_50
     index: 0x50
     text: |-
       That\x20
-    null_terminator: True
 
   - name: DICT1_51
     index: 0x51
     text: |2-
        good
-    null_terminator: True
 
   - name: DICT1_52
     index: 0x52
-    text: |2
-       has
-    null_terminator: True
+    text: |2-
+       has\n
 
   - name: DICT1_53
     index: 0x53
     text: |2-
        it to
-    null_terminator: True
 
   - name: DICT1_54
     index: 0x54
     text: |-
       eather
-    null_terminator: True
 
   - name: DICT1_55
     index: 0x55
     text: |-
       should
-    null_terminator: True
 
   - name: DICT1_56
     index: 0x56
     text: |-
       master
-    null_terminator: True
 
   - name: DICT1_57
     index: 0x57
     text: |2-
        must\x20
-    null_terminator: True
 
   - name: DICT1_58
     index: 0x58
     text: |-
       Thanks
-    null_terminator: True
 
   - name: DICT1_59
     index: 0x59
     text: |-
       beasts
-    null_terminator: True
 
   - name: DICT1_5a
     index: 0x5a
     text: |-
       called
-    null_terminator: True
 
   - name: DICT1_5b
     index: 0x5b
     text: |-
       better
-    null_terminator: True
 
   - name: DICT1_5c
     index: 0x5c
     text: |-
       travel
-    null_terminator: True
 
   - name: DICT1_5d
     index: 0x5d
     text: |-
       Bwee!\x20
-    null_terminator: True
 
   - name: DICT1_5e
     index: 0x5e
     text: |-
       , too.
-    null_terminator: True
 
   - name: DICT1_5f
     index: 0x5f
     text: |-
       the \col(1)
-    null_terminator: True
 
   - name: DICT1_60
     index: 0x60
     text: |-
       lute\col(0)
-    null_terminator: True
 
   - name: DICT1_61
     index: 0x61
     text: |-
       take\x20
-    null_terminator: True
 
   - name: DICT1_62
     index: 0x62
     text: |-
       will\x20
-    null_terminator: True
 
   - name: DICT1_63
     index: 0x63
     text: |-
       Megaphone
-    null_terminator: True
 
   - name: DICT1_64
     index: 0x64
     text: |-
       , ha, ha!
-    null_terminator: True
 
   - name: DICT1_65
     index: 0x65
     text: |-
       dreamt of
-    null_terminator: True
 
   - name: DICT1_66
     index: 0x66
     text: |-
       different
-    null_terminator: True
 
   - name: DICT1_67
     index: 0x67
     text: |-
       \col(3)Nayru\col(0)
-    null_terminator: True
 
   - name: DICT1_68
     index: 0x68
     text: |-
       \col(3)Vasu\col(0)\x20
-    null_terminator: True
 
   - name: DICT1_69
     index: 0x69
     text: |-
       with\x20
-    null_terminator: True
 
   - name: DICT1_6a
     index: 0x6a
-    text: |
-      e of
-    null_terminator: True
+    text: |-
+      e of\n
 
   - name: DICT1_6b
     index: 0x6b
     text: |2-
        are\x20
-    null_terminator: True
 
   - name: DICT1_6c
     index: 0x6c
     text: |2-
        was\x20
-    null_terminator: True
 
   - name: DICT1_6d
     index: 0x6d
     text: |-
       finally
-    null_terminator: True
 
   - name: DICT1_6e
     index: 0x6e
     text: |-
       produce
-    null_terminator: True
 
   - name: DICT1_6f
     index: 0x6f
     text: |-
       General
-    null_terminator: True
 
   - name: DICT1_70
     index: 0x70
     text: |-
       careful
-    null_terminator: True
 
   - name: DICT1_71
     index: 0x71
     text: |-
       outside
-    null_terminator: True
 
   - name: DICT1_72
     index: 0x72
     text: |-
       already
-    null_terminator: True
 
   - name: DICT1_73
     index: 0x73
     text: |-
       keyhole
-    null_terminator: True
 
   - name: DICT1_74
     index: 0x74
     text: |-
       Your\x20
-    null_terminator: True
 
   - name: DICT1_75
     index: 0x75
     text: |-
       world
-    null_terminator: True
 
   - name: DICT1_76
     index: 0x76
     text: |2-
        want
-    null_terminator: True
 
   - name: DICT1_77
     index: 0x77
     text: |-
       Wooden Bird
-    null_terminator: True
 
   - name: DICT1_78
     index: 0x78
     text: |-
       Hero's Cave
-    null_terminator: True
 
   - name: DICT1_79
     index: 0x79
-    text: |
-      Greetings!
-    null_terminator: True
+    text: |-
+      Greetings!\n
 
   - name: DICT1_7a
     index: 0x7a
     text: |-
       button
-    null_terminator: True
 
   - name: DICT1_7b
     index: 0x7b
     text: |-
       Goron\x20
-    null_terminator: True
 
   - name: DICT1_7c
     index: 0x7c
     text: |2-
        weird
-    null_terminator: True
 
   - name: DICT1_7d
     index: 0x7d
     text: |-
       eweler
-    null_terminator: True
 
   - name: DICT1_7e
     index: 0x7e
     text: |-
       Winter
-    null_terminator: True
 
   - name: DICT1_7f
     index: 0x7f
-    text: |
-      ed to
-    null_terminator: True
+    text: |-
+      ed to\n
 
   - name: DICT1_80
     index: 0x80
     text: |-
       defeat
-    null_terminator: True
 
   - name: DICT1_81
     index: 0x81
     text: |-
       o much
-    null_terminator: True
 
   - name: DICT1_82
     index: 0x82
     text: |-
       broken
-    null_terminator: True
 
   - name: DICT1_83
     index: 0x83
     text: |-
       ight\x20
-    null_terminator: True
 
   - name: DICT1_84
     index: 0x84
     text: |-
       where
-    null_terminator: True
 
   - name: DICT1_85
     index: 0x85
     text: |-
       e to\x20
-    null_terminator: True
 
   - name: DICT1_86
     index: 0x86
     text: |-
       been\x20
-    null_terminator: True
 
   - name: DICT1_87
     index: 0x87
     text: |2-
        hope
-    null_terminator: True
 
   - name: DICT1_88
     index: 0x88
     text: |2-
         \opt()OK
-    null_terminator: True
 
   - name: DICT1_89
     index: 0x89
     text: |2-
        has\x20
-    null_terminator: True
 
   - name: DICT1_8a
     index: 0x8a
     text: |-
       when\x20
-    null_terminator: True
 
   - name: DICT1_8b
     index: 0x8b
     text: |-
       come\x20
-    null_terminator: True
 
   - name: DICT1_8c
     index: 0x8c
     text: |2-
        know
-    null_terminator: True
 
   - name: DICT1_8d
     index: 0x8d
     text: |-
       I am\x20
-    null_terminator: True
 
   - name: DICT1_8e
     index: 0x8e
     text: |2-
        well
-    null_terminator: True
 
   - name: DICT1_8f
     index: 0x8f
     text: |2-
        help
-    null_terminator: True
 
   - name: DICT1_90
     index: 0x90
     text: |-
       never
-    null_terminator: True
 
   - name: DICT1_91
     index: 0x91
-    text: |
-      e!\stop
-    null_terminator: True
+    text: |-
+      e!\stop\n
 
   - name: DICT1_92
     index: 0x92
-    text: |
-      Congratulations!
-    null_terminator: True
+    text: |-
+      Congratulations!\n
 
   - name: DICT1_93
     index: 0x93
-    text: |
-      offer my advice!
-    null_terminator: True
+    text: |-
+      offer my advice!\n
 
   - name: DICT1_94
     index: 0x94
     text: |-
       the\x20
-    null_terminator: True
 
   - name: DICT1_95
     index: 0x95
     text: |2-
        into
-    null_terminator: True
 
   - name: DICT1_96
     index: 0x96
     text: |-
       ress\x20
-    null_terminator: True
 
   - name: DICT1_97
     index: 0x97
     text: |-
       ! The
-    null_terminator: True
 
   - name: DICT1_98
     index: 0x98
     text: |2-
        that
-    null_terminator: True
 
   - name: DICT1_99
     index: 0x99
     text: |-
       lower
-    null_terminator: True
 
   - name: DICT1_9a
     index: 0x9a
     text: |-
       trade
-    null_terminator: True
 
   - name: DICT1_9b
     index: 0x9b
     text: |-
       t it\x20
-    null_terminator: True
 
   - name: DICT1_9c
     index: 0x9c
     text: |2-
        what
-    null_terminator: True
 
   - name: DICT1_9d
     index: 0x9d
     text: |2-
        grow
-    null_terminator: True
 
   - name: DICT1_9e
     index: 0x9e
     text: |2-
        it's
-    null_terminator: True
 
   - name: DICT1_9f
     index: 0x9f
     text: |2-
        were
-    null_terminator: True
 
   - name: DICT1_a0
     index: 0xa0
     text: |-
       since
-    null_terminator: True
 
   - name: DICT1_a1
     index: 0xa1
     text: |-
       after
-    null_terminator: True
 
   - name: DICT1_a2
     index: 0xa2
     text: |-
       e'll\x20
-    null_terminator: True
 
   - name: DICT1_a3
     index: 0xa3
-    text: |
-      !\stop
-    null_terminator: True
+    text: |-
+      !\stop\n
 
   - name: DICT1_a4
     index: 0xa4
-    text: |
-      .\stop
-    null_terminator: True
+    text: |-
+      .\stop\n
 
   - name: DICT1_a5
     index: 0xa5
-    text: |
-      ...
-    null_terminator: True
+    text: |-
+      ...\n
 
   - name: DICT1_a6
     index: 0xa6
     text: |-
       ing\x20
-    null_terminator: True
 
   - name: DICT1_a7
     index: 0xa7
-    text: |
-      Scattered seeds
-    null_terminator: True
+    text: |-
+      Scattered seeds\n
 
   - name: DICT1_a8
     index: 0xa8
     text: |2-
         \opt()Read \opt()Don't
-    null_terminator: True
 
   - name: DICT1_a9
     index: 0xa9
     text: |-
       pprais
-    null_terminator: True
 
   - name: DICT1_aa
     index: 0xaa
     text: |-
       Let's\x20
-    null_terminator: True
 
   - name: DICT1_ab
     index: 0xab
     text: |-
       could\x20
-    null_terminator: True
 
   - name: DICT1_ac
     index: 0xac
     text: |-
       I saw\x20
-    null_terminator: True
 
   - name: DICT1_ad
     index: 0xad
     text: |-
       , then
-    null_terminator: True
 
   - name: DICT1_ae
     index: 0xae
     text: |-
       I'm so
-    null_terminator: True
 
   - name: DICT1_af
     index: 0xaf
     text: |-
       still\x20
-    null_terminator: True
 
   - name: DICT1_b0
     index: 0xb0
     text: |2-
        to\x20
-    null_terminator: True
 
   - name: DICT1_b1
     index: 0xb1
     text: |-
       The\x20
-    null_terminator: True
 
   - name: DICT1_b2
     index: 0xb2
-    text: |2
-       to
-    null_terminator: True
+    text: |2-
+       to\n
 
   - name: DICT1_b3
     index: 0xb3
     text: |2-
        this
-    null_terminator: True
 
   - name: DICT1_b4
     index: 0xb4
-    text: |2
-       can
-    null_terminator: True
+    text: |2-
+       can\n
 
   - name: DICT1_b5
     index: 0xb5
     text: |2-
        back
-    null_terminator: True
 
   - name: DICT1_b6
     index: 0xb6
     text: |2-
        look
-    null_terminator: True
 
   - name: DICT1_b7
     index: 0xb7
-    text: |
-      on't
-    null_terminator: True
+    text: |-
+      on't\n
 
   - name: DICT1_b8
     index: 0xb8
     text: |-
       dream
-    null_terminator: True
 
   - name: DICT1_b9
     index: 0xb9
     text: |-
       h...\x20
-    null_terminator: True
 
   - name: DICT1_ba
     index: 0xba
     text: |2-
        I'm\x20
-    null_terminator: True
 
   - name: DICT1_bb
     index: 0xbb
     text: |-
       They\x20
-    null_terminator: True
 
   - name: DICT1_bc
     index: 0xbc
     text: |-
       round
-    null_terminator: True
 
   - name: DICT1_bd
     index: 0xbd
     text: |-
       need\x20
-    null_terminator: True
 
   - name: DICT1_be
     index: 0xbe
-    text: |2
-       it!
-    null_terminator: True
+    text: |2-
+       it!\n
 
   - name: DICT1_bf
     index: 0xbf
     text: |2-
        \opt()No
-    null_terminator: True
 
   - name: DICT1_c0
     index: 0xc0
     text: |-
       Welcome
-    null_terminator: True
 
   - name: DICT1_c1
     index: 0xc1
     text: |-
       protect
-    null_terminator: True
 
   - name: DICT1_c2
     index: 0xc2
     text: |-
       complet
-    null_terminator: True
 
   - name: DICT1_c3
     index: 0xc3
     text: |-
       Mittens
-    null_terminator: True
 
   - name: DICT1_c4
     index: 0xc4
-    text: |
-      \col(0), an
-    null_terminator: True
+    text: |-
+      \col(0), an\n
 
   - name: DICT1_c5
     index: 0xc5
     text: |-
       Moosh\col(0)
-    null_terminator: True
 
   - name: DICT1_c6
     index: 0xc6
     text: |-
       anana\col(0)
-    null_terminator: True
 
   - name: DICT1_c7
     index: 0xc7
-    text: |
-      ing
-    null_terminator: True
+    text: |-
+      ing\n
 
   - name: DICT1_c8
     index: 0xc8
     text: |-
       Phonograph
-    null_terminator: True
 
   - name: DICT1_c9
     index: 0xc9
     text: |-
       Gasha Seed
-    null_terminator: True
 
   - name: DICT1_ca
     index: 0xca
     text: |2-
        quickly
-    null_terminator: True
 
   - name: DICT1_cb
     index: 0xcb
     text: |-
       Holodrum
-    null_terminator: True
 
   - name: DICT1_cc
     index: 0xcc
     text: |-
       ower of\x20
-    null_terminator: True
 
   - name: DICT1_cd
     index: 0xcd
     text: |2-
        worried
-    null_terminator: True
 
   - name: DICT1_ce
     index: 0xce
-    text: |
-      name is
-    null_terminator: True
+    text: |-
+      name is\n
 
   - name: DICT1_cf
     index: 0xcf
     text: |-
       \col(3)Blaino\col(0)
-    null_terminator: True
 
   - name: DICT1_d0
     index: 0xd0
     text: |-
       \col(1)bell\col(0)
-    null_terminator: True
 
   - name: DICT1_d1
     index: 0xd1
-    text: |2
-       of
-    null_terminator: True
+    text: |2-
+       of\n
 
   - name: DICT1_d2
     index: 0xd2
     text: |-
       you\x20
-    null_terminator: True
 
   - name: DICT1_d3
     index: 0xd3
     text: |-
       lucky
-    null_terminator: True
 
   - name: DICT1_d4
     index: 0xd4
     text: |-
       eason
-    null_terminator: True
 
   - name: DICT1_d5
     index: 0xd5
     text: |-
       right
-    null_terminator: True
 
   - name: DICT1_d6
     index: 0xd6
     text: |-
       Heart
-    null_terminator: True
 
   - name: DICT1_d7
     index: 0xd7
     text: |-
       find\x20
-    null_terminator: True
 
   - name: DICT1_d8
     index: 0xd8
     text: |-
       ouble
-    null_terminator: True
 
   - name: DICT1_d9
     index: 0xd9
     text: |-
       three
-    null_terminator: True
 
   - name: DICT1_da
     index: 0xda
     text: |-
       Ricky
-    null_terminator: True
 
   - name: DICT1_db
     index: 0xdb
     text: |2-
        long
-    null_terminator: True
 
   - name: DICT1_dc
     index: 0xdc
     text: |-
       stuff
-    null_terminator: True
 
   - name: DICT1_dd
     index: 0xdd
-    text: |
-      make
-    null_terminator: True
+    text: |-
+      make\n
 
   - name: DICT1_de
     index: 0xde
-    text: |
-      give
-    null_terminator: True
+    text: |-
+      give\n
 
   - name: DICT1_df
     index: 0xdf
     text: |-
       child
-    null_terminator: True
 
   - name: DICT1_e0
     index: 0xe0
     text: |2-
        away
-    null_terminator: True
 
   - name: DICT1_e1
     index: 0xe1
     text: |-
       plant
-    null_terminator: True
 
   - name: DICT1_e2
     index: 0xe2
-    text: |
-      \col(0)\stop
-    null_terminator: True
+    text: |-
+      \col(0)\stop\n
 
   - name: DICT1_e3
     index: 0xe3
     text: |2-
        of\x20
-    null_terminator: True
 
   - name: DICT1_e4
     index: 0xe4
-    text: |
-      \col(0)!
-    null_terminator: True
+    text: |-
+      \col(0)!\n
 
   - name: DICT1_e5
     index: 0xe5
-    text: |2
-       is
-    null_terminator: True
+    text: |2-
+       is\n
 
   - name: DICT1_e6
     index: 0xe6
-    text: |2
-       in
-    null_terminator: True
+    text: |2-
+       in\n
 
   - name: DICT1_e7
     index: 0xe7
-    text: |
-      ?\stop
-    null_terminator: True
+    text: |-
+      ?\stop\n
 
   - name: DICT1_e8
     index: 0xe8
     text: |-
       You\x20
-    null_terminator: True
 
   - name: DICT1_e9
     index: 0xe9
     text: |-
       and\x20
-    null_terminator: True
 
   - name: DICT1_ea
     index: 0xea
     text: |2-
        not\x20
-    null_terminator: True
 
   - name: DICT1_eb
     index: 0xeb
     text: |2-
        many
-    null_terminator: True
 
   - name: DICT1_ec
     index: 0xec
     text: |2-
        near
-    null_terminator: True
 
   - name: DICT1_ed
     index: 0xed
-    text: |
-      just
-    null_terminator: True
+    text: |-
+      just\n
 
   - name: DICT1_ee
     index: 0xee
     text: |-
       I've\x20
-    null_terminator: True
 
   - name: DICT1_ef
     index: 0xef
     text: |-
       et me
-    null_terminator: True
 
   - name: DICT1_f0
     index: 0xf0
     text: |-
       break
-    null_terminator: True
 
   - name: DICT1_f1
     index: 0xf1
     text: |-
       teach
-    null_terminator: True
 
   - name: DICT1_f2
     index: 0xf2
-    text: |2
-       I'm
-    null_terminator: True
+    text: |2-
+       I'm\n
 
   - name: DICT1_f3
     index: 0xf3
     text: |-
       quest
-    null_terminator: True
 
   - name: DICT1_f4
     index: 0xf4
     text: |2-
        true
-    null_terminator: True
 
   - name: DICT1_f5
     index: 0xf5
-    text: |
-      come
-    null_terminator: True
+    text: |-
+      come\n
 
   - name: DICT1_f6
     index: 0xf6
-    text: |
-      's\col(0)
-    null_terminator: True
+    text: |-
+      's\col(0)\n
 
   - name: DICT1_f7
     index: 0xf7
     text: |2-
        fruit
-    null_terminator: True
 
   - name: DICT1_f8
     index: 0xf8
     text: |-
       ollect
-    null_terminator: True
 
   - name: DICT1_f9
     index: 0xf9
     text: |-
       aven't
-    null_terminator: True
 
   - name: DICT1_fa
     index: 0xfa
     text: |-
       sacred
-    null_terminator: True
 
   - name: DICT1_fb
     index: 0xfb
     text: |-
       ed Ore
-    null_terminator: True
 
   - name: DICT1_fc
     index: 0xfc
     text: |-
       Here's
-    null_terminator: True
 
   - name: DICT1_fd
     index: 0xfd
     text: |-
       Let us
-    null_terminator: True
 
   - name: DICT1_fe
     index: 0xfe
     text: |-
       may be
-    null_terminator: True
 
   - name: DICT1_ff
     index: 0xff
     text: |-
       filled
-    null_terminator: True
 
 - group: 0x02
   data:
@@ -3081,1537 +2569,1281 @@ groups:
     index: 0x00
     text: |-
       shield
-    null_terminator: True
 
   - name: DICT2_01
     index: 0x01
     text: |-
       please
-    null_terminator: True
 
   - name: DICT2_02
     index: 0x02
     text: |-
       Sorrow
-    null_terminator: True
 
   - name: DICT2_03
     index: 0x03
-    text: |2
-       I've
-    null_terminator: True
+    text: |2-
+       I've\n
 
   - name: DICT2_04
     index: 0x04
     text: |2-
        \opt()Yes
-    null_terminator: True
 
   - name: DICT2_05
     index: 0x05
     text: |2-
        now
-    null_terminator: True
 
   - name: DICT2_06
     index: 0x06
     text: |2-
        see
-    null_terminator: True
 
   - name: DICT2_07
     index: 0x07
     text: |-
       all\x20
-    null_terminator: True
 
   - name: DICT2_08
     index: 0x08
     text: |-
       land
-    null_terminator: True
 
   - name: DICT2_09
     index: 0x09
     text: |-
       reat
-    null_terminator: True
 
   - name: DICT2_0a
     index: 0x0a
     text: |-
       Slingshot
-    null_terminator: True
 
   - name: DICT2_0b
     index: 0x0b
     text: |-
       Lava Soup
-    null_terminator: True
 
   - name: DICT2_0c
     index: 0x0c
     text: |-
       Maku Tree
-    null_terminator: True
 
   - name: DICT2_0d
     index: 0x0d
     text: |-
       left hand
-    null_terminator: True
 
   - name: DICT2_0e
     index: 0x0e
     text: |-
       beautiful
-    null_terminator: True
 
   - name: DICT2_0f
     index: 0x0f
-    text: |
-      Game Boy
-    null_terminator: True
+    text: |-
+      Game Boy\n
 
   - name: DICT2_10
     index: 0x10
     text: |-
       nderstood
-    null_terminator: True
 
   - name: DICT2_11
     index: 0x11
     text: |-
       Subscreen
-    null_terminator: True
 
   - name: DICT2_12
     index: 0x12
     text: |-
       Thank'ee!
-    null_terminator: True
 
   - name: DICT2_13
     index: 0x13
     text: |2-
        Jewel\col(0)!
-    null_terminator: True
 
   - name: DICT2_14
     index: 0x14
     text: |2-
        in\x20
-    null_terminator: True
 
   - name: DICT2_15
     index: 0x15
     text: |-
       ance
-    null_terminator: True
 
   - name: DICT2_16
     index: 0x16
     text: |2-
        got\x20
-    null_terminator: True
 
   - name: DICT2_17
     index: 0x17
     text: |-
       sleep
-    null_terminator: True
 
   - name: DICT2_18
     index: 0x18
     text: |-
       . The
-    null_terminator: True
 
   - name: DICT2_19
     index: 0x19
     text: |2-
        open
-    null_terminator: True
 
   - name: DICT2_1a
     index: 0x1a
     text: |2-
        they
-    null_terminator: True
 
   - name: DICT2_1b
     index: 0x1b
-    text: |
-      take
-    null_terminator: True
+    text: |-
+      take\n
 
   - name: DICT2_1c
     index: 0x1c
     text: |-
       more\x20
-    null_terminator: True
 
   - name: DICT2_1d
     index: 0x1d
     text: |-
       can't
-    null_terminator: True
 
   - name: DICT2_1e
     index: 0x1e
     text: |-
       like\x20
-    null_terminator: True
 
   - name: DICT2_1f
     index: 0x1f
     text: |-
       Hey!\x20
-    null_terminator: True
 
   - name: DICT2_20
     index: 0x20
     text: |2-
        cold
-    null_terminator: True
 
   - name: DICT2_21
     index: 0x21
     text: |-
       give\x20
-    null_terminator: True
 
   - name: DICT2_22
     index: 0x22
     text: |-
       favor
-    null_terminator: True
 
   - name: DICT2_23
     index: 0x23
-    text: |
-      all
-    null_terminator: True
+    text: |-
+      all\n
 
   - name: DICT2_24
     index: 0x24
     text: |-
       are\x20
-    null_terminator: True
 
   - name: DICT2_25
     index: 0x25
     text: |-
       ight
-    null_terminator: True
 
   - name: DICT2_26
     index: 0x26
     text: |2-
        one
-    null_terminator: True
 
   - name: DICT2_27
     index: 0x27
     text: |-
       ther
-    null_terminator: True
 
   - name: DICT2_28
     index: 0x28
-    text: |
-      \col(0).
-    null_terminator: True
+    text: |-
+      \col(0).\n
 
   - name: DICT2_29
     index: 0x29
     text: |-
       Engine Grease
-    null_terminator: True
 
   - name: DICT2_2a
     index: 0x2a
     text: |-
       Aye, aye, sir
-    null_terminator: True
 
   - name: DICT2_2b
     index: 0x2b
     text: |-
       .............
-    null_terminator: True
 
   - name: DICT2_2c
     index: 0x2c
     text: |2-
        it\x20
-    null_terminator: True
 
   - name: DICT2_2d
     index: 0x2d
     text: |2-
        you
-    null_terminator: True
 
   - name: DICT2_2e
     index: 0x2e
     text: |-
       ever
-    null_terminator: True
 
   - name: DICT2_2f
     index: 0x2f
     text: |-
       But\x20
-    null_terminator: True
 
   - name: DICT2_30
     index: 0x30
-    text: |2
-       my
-    null_terminator: True
+    text: |2-
+       my\n
 
   - name: DICT2_31
     index: 0x31
     text: |-
       east
-    null_terminator: True
 
   - name: DICT2_32
     index: 0x32
     text: |-
       Lon Lon
-    null_terminator: True
 
   - name: DICT2_33
     index: 0x33
     text: |-
       yeglass
-    null_terminator: True
 
   - name: DICT2_34
     index: 0x34
     text: |-
       dropped
-    null_terminator: True
 
   - name: DICT2_35
     index: 0x35
     text: |-
       spirits
-    null_terminator: True
 
   - name: DICT2_36
     index: 0x36
     text: |2-
        anyone
-    null_terminator: True
 
   - name: DICT2_37
     index: 0x37
     text: |-
       usiness
-    null_terminator: True
 
   - name: DICT2_38
     index: 0x38
     text: |-
       ctually
-    null_terminator: True
 
   - name: DICT2_39
     index: 0x39
     text: |2-
        ask me
-    null_terminator: True
 
   - name: DICT2_3a
     index: 0x3a
     text: |-
       my test
-    null_terminator: True
 
   - name: DICT2_3b
     index: 0x3b
     text: |-
       mateys!
-    null_terminator: True
 
   - name: DICT2_3c
     index: 0x3c
     text: |2-
        out
-    null_terminator: True
 
   - name: DICT2_3d
     index: 0x3d
     text: |-
       I'm\x20
-    null_terminator: True
 
   - name: DICT2_3e
     index: 0x3e
     text: |-
       our\x20
-    null_terminator: True
 
   - name: DICT2_3f
     index: 0x3f
     text: |-
       tion
-    null_terminator: True
 
   - name: DICT2_40
     index: 0x40
     text: |-
       even
-    null_terminator: True
 
   - name: DICT2_41
     index: 0x41
     text: |-
       Rupee
-    null_terminator: True
 
   - name: DICT2_42
     index: 0x42
     text: |-
       found
-    null_terminator: True
 
   - name: DICT2_43
     index: 0x43
     text: |-
       Sword
-    null_terminator: True
 
   - name: DICT2_44
     index: 0x44
     text: |-
       ttack
-    null_terminator: True
 
   - name: DICT2_45
     index: 0x45
     text: |-
       loves
-    null_terminator: True
 
   - name: DICT2_46
     index: 0x46
     text: |2-
        swim
-    null_terminator: True
 
   - name: DICT2_47
     index: 0x47
     text: |-
       Bombs
-    null_terminator: True
 
   - name: DICT2_48
     index: 0x48
     text: |-
       hunks
-    null_terminator: True
 
   - name: DICT2_49
     index: 0x49
     text: |-
       about
-    null_terminator: True
 
   - name: DICT2_4a
     index: 0x4a
     text: |2-
        fine
-    null_terminator: True
 
   - name: DICT2_4b
     index: 0x4b
-    text: |2
-       was
-    null_terminator: True
+    text: |2-
+       was\n
 
   - name: DICT2_4c
     index: 0x4c
     text: |-
       shape
-    null_terminator: True
 
   - name: DICT2_4d
     index: 0x4d
     text: |-
       order
-    null_terminator: True
 
   - name: DICT2_4e
     index: 0x4e
     text: |-
       , so\x20
-    null_terminator: True
 
   - name: DICT2_4f
     index: 0x4f
     text: |-
       eed\col(0)
-    null_terminator: True
 
   - name: DICT2_50
     index: 0x50
     text: |-
       \col(1)\num1\x20
-    null_terminator: True
 
   - name: DICT2_51
     index: 0x51
     text: |-
       ring
-    null_terminator: True
 
   - name: DICT2_52
     index: 0x52
-    text: |
-      \col(0)?
-    null_terminator: True
+    text: |-
+      \col(0)?\n
 
   - name: DICT2_53
     index: 0x53
-    text: |
-      Gmph, gmph,
-    null_terminator: True
+    text: |-
+      Gmph, gmph,\n
 
   - name: DICT2_54
     index: 0x54
     text: |2-
        \opt()Maybe not
-    null_terminator: True
 
   - name: DICT2_55
     index: 0x55
     text: |-
       across
-    null_terminator: True
 
   - name: DICT2_56
     index: 0x56
     text: |-
       agical
-    null_terminator: True
 
   - name: DICT2_57
     index: 0x57
-    text: |2
-       than
-    null_terminator: True
+    text: |2-
+       than\n
 
   - name: DICT2_58
     index: 0x58
     text: |-
       urnace
-    null_terminator: True
 
   - name: DICT2_59
     index: 0x59
     text: |-
       follow
-    null_terminator: True
 
   - name: DICT2_5a
     index: 0x5a
     text: |-
       I had\x20
-    null_terminator: True
 
   - name: DICT2_5b
     index: 0x5b
     text: |-
       shadow
-    null_terminator: True
 
   - name: DICT2_5c
     index: 0x5c
     text: |-
       symbol
-    null_terminator: True
 
   - name: DICT2_5d
     index: 0x5d
     text: |-
       appear
-    null_terminator: True
 
   - name: DICT2_5e
     index: 0x5e
     text: |-
       Here!\x20
-    null_terminator: True
 
   - name: DICT2_5f
     index: 0x5f
     text: |-
       What?\x20
-    null_terminator: True
 
   - name: DICT2_60
     index: 0x60
     text: |2-
        chaos
-    null_terminator: True
 
   - name: DICT2_61
     index: 0x61
     text: |2-
        is\x20
-    null_terminator: True
 
   - name: DICT2_62
     index: 0x62
     text: |-
       atch
-    null_terminator: True
 
   - name: DICT2_63
     index: 0x63
     text: |-
       save
-    null_terminator: True
 
   - name: DICT2_64
     index: 0x64
-    text: |2
-       it
-    null_terminator: True
+    text: |2-
+       it\n
 
   - name: DICT2_65
     index: 0x65
-    text: |
-      our
-    null_terminator: True
+    text: |-
+      our\n
 
   - name: DICT2_66
     index: 0x66
     text: |-
       meet
-    null_terminator: True
 
   - name: DICT2_67
     index: 0x67
     text: |-
       over
-    null_terminator: True
 
   - name: DICT2_68
     index: 0x68
     text: |-
       tell
-    null_terminator: True
 
   - name: DICT2_69
     index: 0x69
     text: |-
       saplings
-    null_terminator: True
 
   - name: DICT2_6a
     index: 0x6a
     text: |-
       Flippers
-    null_terminator: True
 
   - name: DICT2_6b
     index: 0x6b
     text: |-
       Cuccodex
-    null_terminator: True
 
   - name: DICT2_6c
     index: 0x6c
     text: |-
       's House
-    null_terminator: True
 
   - name: DICT2_6d
     index: 0x6d
     text: |-
       guardian
-    null_terminator: True
 
   - name: DICT2_6e
     index: 0x6e
     text: |-
       not\x20
-    null_terminator: True
 
   - name: DICT2_6f
     index: 0x6f
     text: |-
       n't\x20
-    null_terminator: True
 
   - name: DICT2_70
     index: 0x70
     text: |-
       hold
-    null_terminator: True
 
   - name: DICT2_71
     index: 0x71
     text: |2-
        You
-    null_terminator: True
 
   - name: DICT2_72
     index: 0x72
-    text: |2
-       up
-    null_terminator: True
+    text: |2-
+       up\n
 
   - name: DICT2_73
     index: 0x73
     text: |-
       but\x20
-    null_terminator: True
 
   - name: DICT2_74
     index: 0x74
     text: |-
       ship
-    null_terminator: True
 
   - name: DICT2_75
     index: 0x75
-    text: |
-      \col(0),
-    null_terminator: True
+    text: |-
+      \col(0),\n
 
   - name: DICT2_76
     index: 0x76
     text: |-
       hoots
-    null_terminator: True
 
   - name: DICT2_77
     index: 0x77
     text: |-
       then\x20
-    null_terminator: True
 
   - name: DICT2_78
     index: 0x78
     text: |-
       start
-    null_terminator: True
 
   - name: DICT2_79
     index: 0x79
     text: |-
       Ember
-    null_terminator: True
 
   - name: DICT2_7a
     index: 0x7a
     text: |-
       ready
-    null_terminator: True
 
   - name: DICT2_7b
     index: 0x7b
-    text: |
-      very
-    null_terminator: True
+    text: |-
+      very\n
 
   - name: DICT2_7c
     index: 0x7c
-    text: |2
-       get
-    null_terminator: True
+    text: |2-
+       get\n
 
   - name: DICT2_7d
     index: 0x7d
     text: |-
       emple
-    null_terminator: True
 
   - name: DICT2_7e
     index: 0x7e
     text: |-
       esert
-    null_terminator: True
 
   - name: DICT2_7f
     index: 0x7f
-    text: |
-      find
-    null_terminator: True
+    text: |-
+      find\n
 
   - name: DICT2_80
     index: 0x80
     text: |2-
        name
-    null_terminator: True
 
   - name: DICT2_81
     index: 0x81
     text: |-
       first
-    null_terminator: True
 
   - name: DICT2_82
     index: 0x82
     text: |-
       urely
-    null_terminator: True
 
   - name: DICT2_83
     index: 0x83
     text: |-
       ruins
-    null_terminator: True
 
   - name: DICT2_84
     index: 0x84
     text: |-
       just\x20
-    null_terminator: True
 
   - name: DICT2_85
     index: 0x85
     text: |-
       ought
-    null_terminator: True
 
   - name: DICT2_86
     index: 0x86
     text: |-
       water
-    null_terminator: True
 
   - name: DICT2_87
     index: 0x87
     text: |-
       Sorry
-    null_terminator: True
 
   - name: DICT2_88
     index: 0x88
     text: |2-
        love
-    null_terminator: True
 
   - name: DICT2_89
     index: 0x89
     text: |-
       woods
-    null_terminator: True
 
   - name: DICT2_8a
     index: 0x8a
     text: |-
       trees
-    null_terminator: True
 
   - name: DICT2_8b
     index: 0x8b
     text: |-
       peace
-    null_terminator: True
 
   - name: DICT2_8c
     index: 0x8c
     text: |-
       nside
-    null_terminator: True
 
   - name: DICT2_8d
     index: 0x8d
     text: |-
       ry it
-    null_terminator: True
 
   - name: DICT2_8e
     index: 0x8e
     text: |-
       cable
-    null_terminator: True
 
   - name: DICT2_8f
     index: 0x8f
     text: |-
       orth
-    null_terminator: True
 
   - name: DICT2_90
     index: 0x90
     text: |-
       eeds
-    null_terminator: True
 
   - name: DICT2_91
     index: 0x91
     text: |-
       for\x20
-    null_terminator: True
 
   - name: DICT2_92
     index: 0x92
     text: |-
       feel
-    null_terminator: True
 
   - name: DICT2_93
     index: 0x93
-    text: |2
-       on
-    null_terminator: True
+    text: |2-
+       on\n
 
   - name: DICT2_94
     index: 0x94
     text: |-
       take
-    null_terminator: True
 
   - name: DICT2_95
     index: 0x95
     text: |-
       here
-    null_terminator: True
 
   - name: DICT2_96
     index: 0x96
     text: |-
       town
-    null_terminator: True
 
   - name: DICT2_97
     index: 0x97
-    text: |
-      e a
-    null_terminator: True
+    text: |-
+      e a\n
 
   - name: DICT2_98
     index: 0x98
     text: |-
       know
-    null_terminator: True
 
   - name: DICT2_99
     index: 0x99
     text: |-
       wait
-    null_terminator: True
 
   - name: DICT2_9a
     index: 0x9a
     text: |-
       each
-    null_terminator: True
 
   - name: DICT2_9b
     index: 0x9b
     text: |-
       Dimitri's F
-    null_terminator: True
 
   - name: DICT2_9c
     index: 0x9c
     text: |-
       less
-    null_terminator: True
 
   - name: DICT2_9d
     index: 0x9d
     text: |-
       fall
-    null_terminator: True
 
   - name: DICT2_9e
     index: 0x9e
     text: |-
       What
-    null_terminator: True
 
   - name: DICT2_9f
     index: 0x9f
     text: |-
       back
-    null_terminator: True
 
   - name: DICT2_a0
     index: 0xa0
     text: |-
       Now\x20
-    null_terminator: True
 
   - name: DICT2_a1
     index: 0xa1
     text: |-
       some
-    null_terminator: True
 
   - name: DICT2_a2
     index: 0xa2
     text: |-
       e's\x20
-    null_terminator: True
 
   - name: DICT2_a3
     index: 0xa3
-    text: |
-      're
-    null_terminator: True
+    text: |-
+      're\n
 
   - name: DICT2_a4
     index: 0xa4
-    text: |2
-       be
-    null_terminator: True
+    text: |2-
+       be\n
 
   - name: DICT2_a5
     index: 0xa5
     text: |2-
        we\x20
-    null_terminator: True
 
   - name: DICT2_a6
     index: 0xa6
     text: |-
       ing!
-    null_terminator: True
 
   - name: DICT2_a7
     index: 0xa7
-    text: |
-      the
-    null_terminator: True
+    text: |-
+      the\n
 
   - name: DICT2_a8
     index: 0xa8
     text: |-
       e...
-    null_terminator: True
 
   - name: DICT2_a9
     index: 0xa9
     text: |-
       ster
-    null_terminator: True
 
   - name: DICT2_aa
     index: 0xaa
     text: |2-
        use
-    null_terminator: True
 
   - name: DICT2_ab
     index: 0xab
     text: |-
       ould
-    null_terminator: True
 
   - name: DICT2_ac
     index: 0xac
     text: |-
       hear
-    null_terminator: True
 
   - name: DICT2_ad
     index: 0xad
     text: |-
       one\x20
-    null_terminator: True
 
   - name: DICT2_ae
     index: 0xae
     text: |-
       ay,\x20
-    null_terminator: True
 
   - name: DICT2_af
     index: 0xaf
     text: |2-
        all
-    null_terminator: True
 
   - name: DICT2_b0
     index: 0xb0
     text: |2-
        any
-    null_terminator: True
 
   - name: DICT2_b1
     index: 0xb1
     text: |2-
         \opt()
-    null_terminator: True
 
   - name: DICT2_b2
     index: 0xb2
     text: |-
       thin
-    null_terminator: True
 
   - name: DICT2_b3
     index: 0xb3
     text: |2-
        on\x20
-    null_terminator: True
 
   - name: DICT2_b4
     index: 0xb4
     text: |-
       time
-    null_terminator: True
 
   - name: DICT2_b5
     index: 0xb5
     text: |-
       only
-    null_terminator: True
 
   - name: DICT2_b6
     index: 0xb6
     text: |-
       Come
-    null_terminator: True
 
   - name: DICT2_b7
     index: 0xb7
-    text: |
-      it?
-    null_terminator: True
+    text: |-
+      it?\n
 
   - name: DICT2_b8
     index: 0xb8
     text: |-
       e me
-    null_terminator: True
 
   - name: DICT2_b9
     index: 0xb9
     text: |2-
        my\x20
-    null_terminator: True
 
   - name: DICT2_ba
     index: 0xba
     text: |-
       help
-    null_terminator: True
 
   - name: DICT2_bb
     index: 0xbb
-    text: |
-      been
-    null_terminator: True
+    text: |-
+      been\n
 
   - name: DICT2_bc
     index: 0xbc
     text: |-
       ummer
-    null_terminator: True
 
   - name: DICT2_bd
     index: 0xbd
     text: |-
       their
-    null_terminator: True
 
   - name: DICT2_be
     index: 0xbe
     text: |-
       ocked
-    null_terminator: True
 
   - name: DICT2_bf
     index: 0xbf
     text: |-
       while
-    null_terminator: True
 
   - name: DICT2_c0
     index: 0xc0
     text: |2-
        real
-    null_terminator: True
 
   - name: DICT2_c1
     index: 0xc1
     text: |-
       prize
-    null_terminator: True
 
   - name: DICT2_c2
     index: 0xc2
     text: |-
       racti
-    null_terminator: True
 
   - name: DICT2_c3
     index: 0xc3
     text: |-
       told\x20
-    null_terminator: True
 
   - name: DICT2_c4
     index: 0xc4
     text: |-
       those
-    null_terminator: True
 
   - name: DICT2_c5
     index: 0xc5
     text: |-
       forge
-    null_terminator: True
 
   - name: DICT2_c6
     index: 0xc6
     text: |-
       it's\x20
-    null_terminator: True
 
   - name: DICT2_c7
     index: 0xc7
     text: |-
       First
-    null_terminator: True
 
   - name: DICT2_c8
     index: 0xc8
     text: |-
       isten
-    null_terminator: True
 
   - name: DICT2_c9
     index: 0xc9
     text: |-
       huge\x20
-    null_terminator: True
 
   - name: DICT2_ca
     index: 0xca
     text: |-
       happy
-    null_terminator: True
 
   - name: DICT2_cb
     index: 0xcb
     text: |-
       learn
-    null_terminator: True
 
   - name: DICT2_cc
     index: 0xcc
     text: |-
       items
-    null_terminator: True
 
   - name: DICT2_cd
     index: 0xcd
     text: |-
       olish
-    null_terminator: True
 
   - name: DICT2_ce
     index: 0xce
     text: |-
       pupil
-    null_terminator: True
 
   - name: DICT2_cf
     index: 0xcf
     text: |-
       's\col(0)\x20
-    null_terminator: True
 
   - name: DICT2_d0
     index: 0xd0
     text: |-
       Tarm Ruins
-    null_terminator: True
 
   - name: DICT2_d1
     index: 0xd1
     text: |-
       Hyuh, hyuh
-    null_terminator: True
 
   - name: DICT2_d2
     index: 0xd2
     text: |-
       down south
-    null_terminator: True
 
   - name: DICT2_d3
     index: 0xd3
     text: |-
       soft earth
-    null_terminator: True
 
   - name: DICT2_d4
     index: 0xd4
     text: |-
       Warmth
-    null_terminator: True
 
   - name: DICT2_d5
     index: 0xd5
     text: |-
       SELECT
-    null_terminator: True
 
   - name: DICT2_d6
     index: 0xd6
     text: |-
       Wooden
-    null_terminator: True
 
   - name: DICT2_d7
     index: 0xd7
     text: |-
       emains
-    null_terminator: True
 
   - name: DICT2_d8
     index: 0xd8
     text: |-
       Moblin
-    null_terminator: True
 
   - name: DICT2_d9
     index: 0xd9
     text: |-
       Sunken
-    null_terminator: True
 
   - name: DICT2_da
     index: 0xda
     text: |-
       danger
-    null_terminator: True
 
   - name: DICT2_db
     index: 0xdb
     text: |-
       I knew
-    null_terminator: True
 
   - name: DICT2_dc
     index: 0xdc
     text: |-
       final\x20
-    null_terminator: True
 
   - name: DICT2_dd
     index: 0xdd
     text: |-
       effect
-    null_terminator: True
 
   - name: DICT2_de
     index: 0xde
     text: |2-
        I ask
-    null_terminator: True
 
   - name: DICT2_df
     index: 0xdf
     text: |-
       Secret
-    null_terminator: True
 
   - name: DICT2_e0
     index: 0xe0
     text: |-
       damage
-    null_terminator: True
 
   - name: DICT2_e1
     index: 0xe1
     text: |-
       \col(3)Deku
-    null_terminator: True
 
   - name: DICT2_e2
     index: 0xe2
     text: |-
       nice
-    null_terminator: True
 
   - name: DICT2_e3
     index: 0xe3
     text: |-
       grow
-    null_terminator: True
 
   - name: DICT2_e4
     index: 0xe4
     text: |-
       s a\x20
-    null_terminator: True
 
   - name: DICT2_e5
     index: 0xe5
     text: |-
       that
-    null_terminator: True
 
   - name: DICT2_e6
     index: 0xe6
     text: |-
       good
-    null_terminator: True
 
   - name: DICT2_e7
     index: 0xe7
     text: |-
       Good
-    null_terminator: True
 
   - name: DICT2_e8
     index: 0xe8
     text: |-
       what
-    null_terminator: True
 
   - name: DICT2_e9
     index: 0xe9
     text: |-
       left
-    null_terminator: True
 
   - name: DICT2_ea
     index: 0xea
     text: |-
       work
-    null_terminator: True
 
   - name: DICT2_eb
     index: 0xeb
-    text: |
-      !!!
-    null_terminator: True
+    text: |-
+      !!!\n
 
   - name: DICT2_ec
     index: 0xec
     text: |-
       rest
-    null_terminator: True
 
   - name: DICT2_ed
     index: 0xed
-    text: |2
-       so
-    null_terminator: True
+    text: |2-
+       so\n
 
   - name: DICT2_ee
     index: 0xee
     text: |-
       Oh!\x20
-    null_terminator: True
 
   - name: DICT2_ef
     index: 0xef
     text: |-
       \col(0)!\x20
-    null_terminator: True
 
   - name: DICT2_f0
     index: 0xf0
     text: |-
       enemies
-    null_terminator: True
 
   - name: DICT2_f1
     index: 0xf1
     text: |-
       agnetic
-    null_terminator: True
 
   - name: DICT2_f2
     index: 0xf2
     text: |-
       narled\x20
-    null_terminator: True
 
   - name: DICT2_f3
     index: 0xf3
     text: |-
       Blossom
-    null_terminator: True
 
   - name: DICT2_f4
     index: 0xf4
     text: |-
       unleash
-    null_terminator: True
 
   - name: DICT2_f5
     index: 0xf5
     text: |-
       I guess
-    null_terminator: True
 
   - name: DICT2_f6
     index: 0xf6
     text: |-
       explain
-    null_terminator: True
 
   - name: DICT2_f7
     index: 0xf7
     text: |-
       connect
-    null_terminator: True
 
   - name: DICT2_f8
     index: 0xf8
     text: |-
       systems
-    null_terminator: True
 
   - name: DICT2_f9
     index: 0xf9
-    text: |
-      , huh?
-    null_terminator: True
+    text: |-
+      , huh?\n
 
   - name: DICT2_fa
     index: 0xfa
-    text: |2
-       is:\stop
-    null_terminator: True
+    text: |2-
+       is:\stop\n
 
   - name: DICT2_fb
     index: 0xfb
     text: |-
       \col(1)key\col(0)
-    null_terminator: True
 
   - name: DICT2_fc
     index: 0xfc
     text: |-
       How\x20
-    null_terminator: True
 
   - name: DICT2_fd
     index: 0xfd
     text: |-
       this
-    null_terminator: True
 
   - name: DICT2_fe
     index: 0xfe
     text: |-
       nder
-    null_terminator: True
 
   - name: DICT2_ff
     index: 0xff
     text: |-
       life
-    null_terminator: True
 
 - group: 0x03
   data:
@@ -4619,1534 +3851,1278 @@ groups:
     index: 0x00
     text: |-
       ress
-    null_terminator: True
 
   - name: DICT3_01
     index: 0x01
     text: |-
       ches
-    null_terminator: True
 
   - name: DICT3_02
     index: 0x02
     text: |-
       open
-    null_terminator: True
 
   - name: DICT3_03
     index: 0x03
     text: |-
       stop
-    null_terminator: True
 
   - name: DICT3_04
     index: 0x04
     text: |-
       play
-    null_terminator: True
 
   - name: DICT3_05
     index: 0x05
     text: |2-
        it.
-    null_terminator: True
 
   - name: DICT3_06
     index: 0x06
     text: |-
       Some
-    null_terminator: True
 
   - name: DICT3_07
     index: 0x07
-    text: |2
-       if
-    null_terminator: True
+    text: |2-
+       if\n
 
   - name: DICT3_08
     index: 0x08
     text: |-
       keep
-    null_terminator: True
 
   - name: DICT3_09
     index: 0x09
     text: |-
       wear
-    null_terminator: True
 
   - name: DICT3_0a
     index: 0x0a
     text: |-
       hard
-    null_terminator: True
 
   - name: DICT3_0b
     index: 0x0b
-    text: |
-      me!
-    null_terminator: True
+    text: |-
+      me!\n
 
   - name: DICT3_0c
     index: 0x0c
-    text: |
-      not
-    null_terminator: True
+    text: |-
+      not\n
 
   - name: DICT3_0d
     index: 0x0d
     text: |-
       lost
-    null_terminator: True
 
   - name: DICT3_0e
     index: 0x0e
     text: |-
       Seed
-    null_terminator: True
 
   - name: DICT3_0f
     index: 0x0f
     text: |-
       get\x20
-    null_terminator: True
 
   - name: DICT3_10
     index: 0x10
     text: |-
       ound
-    null_terminator: True
 
   - name: DICT3_11
     index: 0x11
     text: |-
       pass
-    null_terminator: True
 
   - name: DICT3_12
     index: 0x12
     text: |-
       make
-    null_terminator: True
 
   - name: DICT3_13
     index: 0x13
     text: |-
       With
-    null_terminator: True
 
   - name: DICT3_14
     index: 0x14
     text: |-
       you.
-    null_terminator: True
 
   - name: DICT3_15
     index: 0x15
     text: |-
       alon
-    null_terminator: True
 
   - name: DICT3_16
     index: 0x16
     text: |-
       ...\x20
-    null_terminator: True
 
   - name: DICT3_17
     index: 0x17
     text: |-
       mean
-    null_terminator: True
 
   - name: DICT3_18
     index: 0x18
     text: |-
       Ages
-    null_terminator: True
 
   - name: DICT3_19
     index: 0x19
-    text: |2
-       me
-    null_terminator: True
+    text: |2-
+       me\n
 
   - name: DICT3_1a
     index: 0x1a
     text: |-
       hero
-    null_terminator: True
 
   - name: DICT3_1b
     index: 0x1b
     text: |-
       Oh,\x20
-    null_terminator: True
 
   - name: DICT3_1c
     index: 0x1c
     text: |-
       burn
-    null_terminator: True
 
   - name: DICT3_1d
     index: 0x1d
     text: |2-
        him
-    null_terminator: True
 
   - name: DICT3_1e
     index: 0x1e
     text: |-
       west
-    null_terminator: True
 
   - name: DICT3_1f
     index: 0x1f
     text: |2-
        new
-    null_terminator: True
 
   - name: DICT3_20
     index: 0x20
     text: |-
       move
-    null_terminator: True
 
   - name: DICT3_21
     index: 0x21
     text: |-
       's Plaque
-    null_terminator: True
 
   - name: DICT3_22
     index: 0x22
     text: |-
       Like Like
-    null_terminator: True
 
   - name: DICT3_23
     index: 0x23
     text: |-
       h hoh hoh
-    null_terminator: True
 
   - name: DICT3_24
     index: 0x24
     text: |2-
        promised
-    null_terminator: True
 
   - name: DICT3_25
     index: 0x25
     text: |-
       utumn
-    null_terminator: True
 
   - name: DICT3_26
     index: 0x26
     text: |-
       hovel
-    null_terminator: True
 
   - name: DICT3_27
     index: 0x27
     text: |-
       force
-    null_terminator: True
 
   - name: DICT3_28
     index: 0x28
     text: |-
       Blue\x20
-    null_terminator: True
 
   - name: DICT3_29
     index: 0x29
     text: |-
       Goron
-    null_terminator: True
 
   - name: DICT3_2a
     index: 0x2a
     text: |-
       weird
-    null_terminator: True
 
   - name: DICT3_2b
     index: 0x2b
     text: |-
       Zelda
-    null_terminator: True
 
   - name: DICT3_2c
     index: 0x2c
     text: |-
       sword
-    null_terminator: True
 
   - name: DICT3_2d
     index: 0x2d
     text: |-
       place
-    null_terminator: True
 
   - name: DICT3_2e
     index: 0x2e
-    text: |2
-       who
-    null_terminator: True
+    text: |2-
+       who\n
 
   - name: DICT3_2f
     index: 0x2f
     text: |-
       leave
-    null_terminator: True
 
   - name: DICT3_30
     index: 0x30
     text: |-
       offer
-    null_terminator: True
 
   - name: DICT3_31
     index: 0x31
     text: |-
       float
-    null_terminator: True
 
   - name: DICT3_32
     index: 0x32
     text: |-
       hese\x20
-    null_terminator: True
 
   - name: DICT3_33
     index: 0x33
     text: |-
       Just\x20
-    null_terminator: True
 
   - name: DICT3_34
     index: 0x34
     text: |-
       Huh?\x20
-    null_terminator: True
 
   - name: DICT3_35
     index: 0x35
-    text: |
-      he's
-    null_terminator: True
+    text: |-
+      he's\n
 
   - name: DICT3_36
     index: 0x36
     text: |-
       check
-    null_terminator: True
 
   - name: DICT3_37
     index: 0x37
     text: |2-
        gift
-    null_terminator: True
 
   - name: DICT3_38
     index: 0x38
     text: |2-
        once
-    null_terminator: True
 
   - name: DICT3_39
     index: 0x39
     text: |2-
        late
-    null_terminator: True
 
   - name: DICT3_3a
     index: 0x3a
     text: |-
       skill
-    null_terminator: True
 
   - name: DICT3_3b
     index: 0x3b
-    text: |2
-       it,
-    null_terminator: True
+    text: |2-
+       it,\n
 
   - name: DICT3_3c
     index: 0x3c
     text: |-
       aught
-    null_terminator: True
 
   - name: DICT3_3d
     index: 0x3d
     text: |2-
        sho
-    null_terminator: True
 
   - name: DICT3_3e
     index: 0x3e
     text: |-
       into
-    null_terminator: True
 
   - name: DICT3_3f
     index: 0x3f
     text: |-
       reen
-    null_terminator: True
 
   - name: DICT3_40
     index: 0x40
     text: |-
       cent
-    null_terminator: True
 
   - name: DICT3_41
     index: 0x41
     text: |-
       And\x20
-    null_terminator: True
 
   - name: DICT3_42
     index: 0x42
     text: |-
       more
-    null_terminator: True
 
   - name: DICT3_43
     index: 0x43
     text: |-
       come
-    null_terminator: True
 
   - name: DICT3_44
     index: 0x44
     text: |-
       rust
-    null_terminator: True
 
   - name: DICT3_45
     index: 0x45
     text: |-
       give
-    null_terminator: True
 
   - name: DICT3_46
     index: 0x46
     text: |-
       Then
-    null_terminator: True
 
   - name: DICT3_47
     index: 0x47
     text: |-
       best
-    null_terminator: True
 
   - name: DICT3_48
     index: 0x48
     text: |-
       ! We
-    null_terminator: True
 
   - name: DICT3_49
     index: 0x49
     text: |2-
        did
-    null_terminator: True
 
   - name: DICT3_4a
     index: 0x4a
     text: |-
       ing.
-    null_terminator: True
 
   - name: DICT3_4b
     index: 0x4b
     text: |2-
        she
-    null_terminator: True
 
   - name: DICT3_4c
     index: 0x4c
     text: |-
       urse
-    null_terminator: True
 
   - name: DICT3_4d
     index: 0x4d
     text: |-
       you,
-    null_terminator: True
 
   - name: DICT3_4e
     index: 0x4e
     text: |-
       When
-    null_terminator: True
 
   - name: DICT3_4f
     index: 0x4f
     text: |-
       I am
-    null_terminator: True
 
   - name: DICT3_50
     index: 0x50
     text: |-
       hole
-    null_terminator: True
 
   - name: DICT3_51
     index: 0x51
     text: |-
       does
-    null_terminator: True
 
   - name: DICT3_52
     index: 0x52
     text: |-
       live
-    null_terminator: True
 
   - name: DICT3_53
     index: 0x53
     text: |-
       List
-    null_terminator: True
 
   - name: DICT3_54
     index: 0x54
     text: |-
       song
-    null_terminator: True
 
   - name: DICT3_55
     index: 0x55
     text: |-
       ...
-    null_terminator: True
 
   - name: DICT3_56
     index: 0x56
-    text: |
-      \stop
-    null_terminator: True
+    text: |-
+      \stop\n
 
   - name: DICT3_57
     index: 0x57
     text: |-
       That
-    null_terminator: True
 
   - name: DICT3_58
     index: 0x58
-    text: |
-      ful
-    null_terminator: True
+    text: |-
+      ful\n
 
   - name: DICT3_59
     index: 0x59
     text: |-
       seed
-    null_terminator: True
 
   - name: DICT3_5a
     index: 0x5a
     text: |-
       This
-    null_terminator: True
 
   - name: DICT3_5b
     index: 0x5b
     text: |-
       sign
-    null_terminator: True
 
   - name: DICT3_5c
     index: 0x5c
     text: |-
       cont
-    null_terminator: True
 
   - name: DICT3_5d
     index: 0x5d
-    text: |
-      one
-    null_terminator: True
+    text: |-
+      one\n
 
   - name: DICT3_5e
     index: 0x5e
     text: |-
       ! No
-    null_terminator: True
 
   - name: DICT3_5f
     index: 0x5f
     text: |-
       can\x20
-    null_terminator: True
 
   - name: DICT3_60
     index: 0x60
     text: |-
       want
-    null_terminator: True
 
   - name: DICT3_61
     index: 0x61
-    text: |
-      n't
-    null_terminator: True
+    text: |-
+      n't\n
 
   - name: DICT3_62
     index: 0x62
     text: |-
       look
-    null_terminator: True
 
   - name: DICT3_63
     index: 0x63
     text: |-
       very
-    null_terminator: True
 
   - name: DICT3_64
     index: 0x64
-    text: |
-      get
-    null_terminator: True
+    text: |-
+      get\n
 
   - name: DICT3_65
     index: 0x65
     text: |-
       Here
-    null_terminator: True
 
   - name: DICT3_66
     index: 0x66
     text: |-
       I'll
-    null_terminator: True
 
   - name: DICT3_67
     index: 0x67
     text: |2-
        way
-    null_terminator: True
 
   - name: DICT3_68
     index: 0x68
     text: |-
       girl
-    null_terminator: True
 
   - name: DICT3_69
     index: 0x69
     text: |2-
        boy
-    null_terminator: True
 
   - name: DICT3_6a
     index: 0x6a
     text: |-
       name
-    null_terminator: True
 
   - name: DICT3_6b
     index: 0x6b
     text: |2-
        was
-    null_terminator: True
 
   - name: DICT3_6c
     index: 0x6c
     text: |-
       lose
-    null_terminator: True
 
   - name: DICT3_6d
     index: 0x6d
     text: |-
       eyes
-    null_terminator: True
 
   - name: DICT3_6e
     index: 0x6e
-    text: |
-      , I
-    null_terminator: True
+    text: |-
+      , I\n
 
   - name: DICT3_6f
     index: 0x6f
     text: |2-
        sea
-    null_terminator: True
 
   - name: DICT3_70
     index: 0x70
     text: |-
       ines
-    null_terminator: True
 
   - name: DICT3_71
     index: 0x71
     text: |-
       part
-    null_terminator: True
 
   - name: DICT3_72
     index: 0x72
-    text: |
-      er!
-    null_terminator: True
+    text: |-
+      er!\n
 
   - name: DICT3_73
     index: 0x73
     text: |-
       down
-    null_terminator: True
 
   - name: DICT3_74
     index: 0x74
     text: |-
       If I
-    null_terminator: True
 
   - name: DICT3_75
     index: 0x75
     text: |-
       kind
-    null_terminator: True
 
   - name: DICT3_76
     index: 0x76
     text: |-
       hich
-    null_terminator: True
 
   - name: DICT3_77
     index: 0x77
     text: |-
       city
-    null_terminator: True
 
   - name: DICT3_78
     index: 0x78
     text: |-
       a \col(1)
-    null_terminator: True
 
   - name: DICT3_79
     index: 0x79
     text: |-
       to\x20
-    null_terminator: True
 
   - name: DICT3_7a
     index: 0x7a
     text: |-
       of\x20
-    null_terminator: True
 
   - name: DICT3_7b
     index: 0x7b
     text: |-
       ing
-    null_terminator: True
 
   - name: DICT3_7c
     index: 0x7c
     text: |-
       you
-    null_terminator: True
 
   - name: DICT3_7d
     index: 0x7d
-    text: |
-      ed
-    null_terminator: True
+    text: |-
+      ed\n
 
   - name: DICT3_7e
     index: 0x7e
     text: |2-
        a\x20
-    null_terminator: True
 
   - name: DICT3_7f
     index: 0x7f
-    text: |
-      \col(0)
-    null_terminator: True
+    text: |-
+      \col(0)\n
 
   - name: DICT3_80
     index: 0x80
-    text: |
-      's
-    null_terminator: True
+    text: |-
+      's\n
 
   - name: DICT3_81
     index: 0x81
     text: |-
       all
-    null_terminator: True
 
   - name: DICT3_82
     index: 0x82
     text: |-
       my\x20
-    null_terminator: True
 
   - name: DICT3_83
     index: 0x83
     text: |-
       Iron Pot
-    null_terminator: True
 
   - name: DICT3_84
     index: 0x84
-    text: |
-      Strange
-    null_terminator: True
+    text: |-
+      Strange\n
 
   - name: DICT3_85
     index: 0x85
     text: |-
       olcanoes
-    null_terminator: True
 
   - name: DICT3_86
     index: 0x86
     text: |-
       ! See ya
-    null_terminator: True
 
   - name: DICT3_87
     index: 0x87
     text: |-
       awakened
-    null_terminator: True
 
   - name: DICT3_88
     index: 0x88
     text: |-
       elicious
-    null_terminator: True
 
   - name: DICT3_89
     index: 0x89
     text: |-
       adventur
-    null_terminator: True
 
   - name: DICT3_8a
     index: 0x8a
     text: |-
       ungeon
-    null_terminator: True
 
   - name: DICT3_8b
     index: 0x8b
     text: |-
       Banana
-    null_terminator: True
 
   - name: DICT3_8c
     index: 0x8c
     text: |-
       illage
-    null_terminator: True
 
   - name: DICT3_8d
     index: 0x8d
     text: |-
       Hyrule
-    null_terminator: True
 
   - name: DICT3_8e
     index: 0x8e
     text: |-
       golden
-    null_terminator: True
 
   - name: DICT3_8f
     index: 0x8f
     text: |-
       almost
-    null_terminator: True
 
   - name: DICT3_90
     index: 0x90
     text: |-
       matter
-    null_terminator: True
 
   - name: DICT3_91
     index: 0x91
     text: |-
       \col(1)Fish\col(0)
-    null_terminator: True
 
   - name: DICT3_92
     index: 0x92
     text: |-
       summit
-    null_terminator: True
 
   - name: DICT3_93
     index: 0x93
     text: |-
       regret
-    null_terminator: True
 
   - name: DICT3_94
     index: 0x94
     text: |-
       normal
-    null_terminator: True
 
   - name: DICT3_95
     index: 0x95
     text: |-
       \col(3)Ambi\col(0)
-    null_terminator: True
 
   - name: DICT3_96
     index: 0x96
     text: |-
       wisdom
-    null_terminator: True
 
   - name: DICT3_97
     index: 0x97
     text: |-
       , dude
-    null_terminator: True
 
   - name: DICT3_98
     index: 0x98
     text: |-
       \col(3)Onox
-    null_terminator: True
 
   - name: DICT3_99
     index: 0x99
     text: |-
       in\x20
-    null_terminator: True
 
   - name: DICT3_9a
     index: 0x9a
     text: |-
       's\x20
-    null_terminator: True
 
   - name: DICT3_9b
     index: 0x9b
     text: |-
       ed\x20
-    null_terminator: True
 
   - name: DICT3_9c
     index: 0x9c
     text: |-
       the
-    null_terminator: True
 
   - name: DICT3_9d
     index: 0x9d
     text: |-
       You
-    null_terminator: True
 
   - name: DICT3_9e
     index: 0x9e
     text: |-
       !!!
-    null_terminator: True
 
   - name: DICT3_9f
     index: 0x9f
     text: |-
       be\x20
-    null_terminator: True
 
   - name: DICT3_a0
     index: 0xa0
     text: |2-
        me
-    null_terminator: True
 
   - name: DICT3_a1
     index: 0xa1
     text: |-
       and
-    null_terminator: True
 
   - name: DICT3_a2
     index: 0xa2
     text: |-
       ate
-    null_terminator: True
 
   - name: DICT3_a3
     index: 0xa3
     text: |-
       ell
-    null_terminator: True
 
   - name: DICT3_a4
     index: 0xa4
     text: |-
       Time
-    null_terminator: True
 
   - name: DICT3_a5
     index: 0xa5
     text: |-
       find
-    null_terminator: True
 
   - name: DICT3_a6
     index: 0xa6
     text: |-
       lock
-    null_terminator: True
 
   - name: DICT3_a7
     index: 0xa7
     text: |-
       door
-    null_terminator: True
 
   - name: DICT3_a8
     index: 0xa8
-    text: |2
-       or
-    null_terminator: True
+    text: |2-
+       or\n
 
   - name: DICT3_a9
     index: 0xa9
     text: |-
       Open
-    null_terminator: True
 
   - name: DICT3_aa
     index: 0xaa
     text: |-
       any\x20
-    null_terminator: True
 
   - name: DICT3_ab
     index: 0xab
     text: |-
       Bomb
-    null_terminator: True
 
   - name: DICT3_ac
     index: 0xac
     text: |-
       lute
-    null_terminator: True
 
   - name: DICT3_ad
     index: 0xad
     text: |-
       astl
-    null_terminator: True
 
   - name: DICT3_ae
     index: 0xae
     text: |-
       ayor
-    null_terminator: True
 
   - name: DICT3_af
     index: 0xaf
     text: |-
       wish
-    null_terminator: True
 
   - name: DICT3_b0
     index: 0xb0
     text: |-
       Find
-    null_terminator: True
 
   - name: DICT3_b1
     index: 0xb1
     text: |-
       Read
-    null_terminator: True
 
   - name: DICT3_b2
     index: 0xb2
     text: |-
       made
-    null_terminator: True
 
   - name: DICT3_b3
     index: 0xb3
     text: |-
       last
-    null_terminator: True
 
   - name: DICT3_b4
     index: 0xb4
     text: |-
       was\x20
-    null_terminator: True
 
   - name: DICT3_b5
     index: 0xb5
     text: |-
       lame
-    null_terminator: True
 
   - name: DICT3_b6
     index: 0xb6
     text: |-
       link
-    null_terminator: True
 
   - name: DICT3_b7
     index: 0xb7
     text: |-
       said
-    null_terminator: True
 
   - name: DICT3_b8
     index: 0xb8
     text: |-
       seen
-    null_terminator: True
 
   - name: DICT3_b9
     index: 0xb9
     text: |-
       Link
-    null_terminator: True
 
   - name: DICT3_ba
     index: 0xba
-    text: |2
-       a
-    null_terminator: True
+    text: |2-
+       a\n
 
   - name: DICT3_bb
     index: 0xbb
     text: |2-
        \opt()
-    null_terminator: True
 
   - name: DICT3_bc
     index: 0xbc
-    text: |2
-       got
-    null_terminator: True
+    text: |2-
+       got\n
 
   - name: DICT3_bd
     index: 0xbd
     text: |-
       Nurtu
-    null_terminator: True
 
   - name: DICT3_be
     index: 0xbe
     text: |-
       build
-    null_terminator: True
 
   - name: DICT3_bf
     index: 0xbf
     text: |-
       hoose
-    null_terminator: True
 
   - name: DICT3_c0
     index: 0xc0
     text: |-
       ragon
-    null_terminator: True
 
   - name: DICT3_c1
     index: 0xc1
     text: |-
       thank
-    null_terminator: True
 
   - name: DICT3_c2
     index: 0xc2
     text: |-
       gonna
-    null_terminator: True
 
   - name: DICT3_c3
     index: 0xc3
     text: |-
       Syrup
-    null_terminator: True
 
   - name: DICT3_c4
     index: 0xc4
     text: |2-
        Shop
-    null_terminator: True
 
   - name: DICT3_c5
     index: 0xc5
     text: |-
       visit
-    null_terminator: True
 
   - name: DICT3_c6
     index: 0xc6
     text: |-
       throw
-    null_terminator: True
 
   - name: DICT3_c7
     index: 0xc7
     text: |-
       bloom
-    null_terminator: True
 
   - name: DICT3_c8
     index: 0xc8
     text: |-
       cliff
-    null_terminator: True
 
   - name: DICT3_c9
     index: 0xc9
     text: |-
       Scrub
-    null_terminator: True
 
   - name: DICT3_ca
     index: 0xca
     text: |-
       racle
-    null_terminator: True
 
   - name: DICT3_cb
     index: 0xcb
     text: |-
       , sir
-    null_terminator: True
 
   - name: DICT3_cc
     index: 0xcc
     text: |-
       After
-    null_terminator: True
 
   - name: DICT3_cd
     index: 0xcd
-    text: |2
-       may
-    null_terminator: True
+    text: |2-
+       may\n
 
   - name: DICT3_ce
     index: 0xce
     text: |-
       reviv
-    null_terminator: True
 
   - name: DICT3_cf
     index: 0xcf
     text: |-
       are
-    null_terminator: True
 
   - name: DICT3_d0
     index: 0xd0
     text: |-
       ave
-    null_terminator: True
 
   - name: DICT3_d1
     index: 0xd1
     text: |-
       ill
-    null_terminator: True
 
   - name: DICT3_d2
     index: 0xd2
     text: |2-
        it
-    null_terminator: True
 
   - name: DICT3_d3
     index: 0xd3
     text: |2-
        so
-    null_terminator: True
 
   - name: DICT3_d4
     index: 0xd4
     text: |2-
        \col(1)
-    null_terminator: True
 
   - name: DICT3_d5
     index: 0xd5
     text: |2-
        \col(3)
-    null_terminator: True
 
   - name: DICT3_d6
     index: 0xd6
     text: |-
       ! I
-    null_terminator: True
 
   - name: DICT3_d7
     index: 0xd7
     text: |-
       ent
-    null_terminator: True
 
   - name: DICT3_d8
     index: 0xd8
     text: |-
       \col(0)!
-    null_terminator: True
 
   - name: DICT3_d9
     index: 0xd9
     text: |-
       one
-    null_terminator: True
 
   - name: DICT3_da
     index: 0xda
     text: |2-
        to
-    null_terminator: True
 
   - name: DICT3_db
     index: 0xdb
     text: |-
       ain
-    null_terminator: True
 
   - name: DICT3_dc
     index: 0xdc
     text: |-
       ear
-    null_terminator: True
 
   - name: DICT3_dd
     index: 0xdd
     text: |-
       Doo, dee, dee\sym(0x1c)
-    null_terminator: True
 
   - name: DICT3_de
     index: 0xde
     text: |-
       for
-    null_terminator: True
 
   - name: DICT3_df
     index: 0xdf
     text: |2-
        is
-    null_terminator: True
 
   - name: DICT3_e0
     index: 0xe0
     text: |2-
        he
-    null_terminator: True
 
   - name: DICT3_e1
     index: 0xe1
     text: |-
       out
-    null_terminator: True
 
   - name: DICT3_e2
     index: 0xe2
     text: |-
       ree
-    null_terminator: True
 
   - name: DICT3_e3
     index: 0xe3
     text: |-
       ick
-    null_terminator: True
 
   - name: DICT3_e4
     index: 0xe4
     text: |-
       ake
-    null_terminator: True
 
   - name: DICT3_e5
     index: 0xe5
     text: |-
       is\x20
-    null_terminator: True
 
   - name: DICT3_e6
     index: 0xe6
     text: |-
       in'
-    null_terminator: True
 
   - name: DICT3_e7
     index: 0xe7
     text: |-
       so\x20
-    null_terminator: True
 
   - name: DICT3_e8
     index: 0xe8
     text: |-
       \col(0)\x20
-    null_terminator: True
 
   - name: DICT3_e9
     index: 0xe9
     text: |2-
        bad
-    null_terminator: True
 
   - name: DICT3_ea
     index: 0xea
-    text: |2
-       an
-    null_terminator: True
+    text: |2-
+       an\n
 
   - name: DICT3_eb
     index: 0xeb
     text: |-
       Life
-    null_terminator: True
 
   - name: DICT3_ec
     index: 0xec
     text: |-
       arry
-    null_terminator: True
 
   - name: DICT3_ed
     index: 0xed
     text: |-
       lect
-    null_terminator: True
 
   - name: DICT3_ee
     index: 0xee
     text: |-
       Hold
-    null_terminator: True
 
   - name: DICT3_ef
     index: 0xef
     text: |-
       ease
-    null_terminator: True
 
   - name: DICT3_f0
     index: 0xf0
     text: |-
       They
-    null_terminator: True
 
   - name: DICT3_f1
     index: 0xf1
     text: |-
       Gale
-    null_terminator: True
 
   - name: DICT3_f2
     index: 0xf2
     text: |-
       evil
-    null_terminator: True
 
   - name: DICT3_f3
     index: 0xf3
     text: |-
       sure
-    null_terminator: True
 
   - name: DICT3_f4
     index: 0xf4
     text: |-
       appr
-    null_terminator: True
 
   - name: DICT3_f5
     index: 0xf5
     text: |-
       ouse
-    null_terminator: True
 
   - name: DICT3_f6
     index: 0xf6
-    text: |
-      on!
-    null_terminator: True
+    text: |-
+      on!\n
 
   - name: DICT3_f7
     index: 0xf7
     text: |-
       goes
-    null_terminator: True
 
   - name: DICT3_f8
     index: 0xf8
     text: |2-
        say
-    null_terminator: True
 
   - name: DICT3_f9
     index: 0xf9
     text: |-
       next
-    null_terminator: True
 
   - name: DICT3_fa
     index: 0xfa
     text: |-
       were
-    null_terminator: True
 
   - name: DICT3_fb
     index: 0xfb
     text: |-
       Even
-    null_terminator: True
 
   - name: DICT3_fc
     index: 0xfc
     text: |-
       such
-    null_terminator: True
 
   - name: DICT3_fd
     index: 0xfd
     text: |-
       spot
-    null_terminator: True
 
   - name: DICT3_fe
     index: 0xfe
     text: |-
       melt
-    null_terminator: True
 
   - name: DICT3_ff
     index: 0xff
     text: |-
       end
-    null_terminator: True
