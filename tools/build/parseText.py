@@ -239,8 +239,7 @@ MAX_LINE_WIDTH = 16*8+1
 groupDict = {}
 parsedGroups = set()
 
-# Turns a name into an index.
-# Note that this ANDs the index with 0xff. I haven't had a need for the upper byte yet.
+# Turns a name into an index. (Group of the name must match "neededHighIndex".)
 def parseName(s, neededHighIndex):
     for group in groupDict.values():
         for textStruct in group.textStructs:
@@ -260,10 +259,14 @@ def parseTextFile(textFile, isDictionary):
 
     for yamlGroup in yamlData['groups']:
         if isDictionary:
-            textGroup = GroupStruct(yamlGroup['group'])
+            adjustedIndex = yamlGroup['group']
         else:
-            textGroup = GroupStruct(yamlGroup['group'] + 4)
+            adjustedIndex = yamlGroup['group'] + 4
 
+        if adjustedIndex in groupDict:
+            raise Exception('Group 0x%.2x defined twice.' % yamlGroup['group'])
+
+        textGroup = GroupStruct(adjustedIndex)
         groupDict[textGroup.index] = textGroup
 
         if textGroup.index in parsedGroups:
@@ -281,13 +284,15 @@ def parseTextFile(textFile, isDictionary):
             if len(names) != len(indices):
                 raise Exception("Mismatch between # of names & indices for " + names[0] + ".")
 
-            textStruct = textGroup.addTextStruct(indices, names)
-
             try:
                 for index in indices:
                     if index < 0 or index > 255:
                         raise ValueError("Index " + hex(index) + " is invalid.")
+                    if textGroup.getTextStruct(index) != None:
+                        raise Exception('Index 0x%.2x already defined.' % index)
                     textGroup.lastTextIndex = max(textGroup.lastTextIndex, index)
+
+                textStruct = textGroup.addTextStruct(indices, names)
 
                 state = TextState()
 
@@ -607,7 +612,11 @@ def parseTextFile(textFile, isDictionary):
 
                         i+=1
 
+
                 # Outside while loop
+                if not 'null_terminator' in yamlTextData:
+                    yamlTextData['null_terminator'] = True
+
                 if yamlTextData['null_terminator']:
                     textStruct.data.append(0)
 
