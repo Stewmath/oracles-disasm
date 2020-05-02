@@ -354,7 +354,7 @@ def parseTextFile(textFile, isDictionary):
                             validToken = True
                             textStruct.data.append(0x0c)
                             textStruct.data.append(1<<3)
-                            addWidth(state, 8*3)
+                            addWidth(state, 8*2)
                         elif textEq('opt'):
                             validToken = True
                             textStruct.data.append(0x0c)
@@ -373,7 +373,7 @@ def parseTextFile(textFile, isDictionary):
                             validToken = True
                             textStruct.data.append(0x0c)
                             textStruct.data.append(6<<3)
-                            addWidth(state, 8*3)
+                            addWidth(state, 8*2)
                         elif textEq('slow'):
                             validToken = True
                             textStruct.data.append(0x0c)
@@ -775,10 +775,10 @@ outFile.write('\n.DEFINE TEXT_END_ADDR ' + wlahex(address, 4) + '\n')
 outFile.write('.DEFINE TEXT_END_BANK ' + wlahex(bank, 2))
 outFile.close()
 
-# Debug output
-# outFile = open('text/test2.bin','wb')
-# for i in xrange(4,len(groupDict)):
-#         group = groupDict[i]
-#         for textStruct in group.textStructs:
-#                 outFile.write(compressTextMemoised(bytes(textStruct.data), len(textStruct.data)))
-# outFile.close()
+# Debug output: if this is equivalent to the debug output from "dumpText.py", then the text was at
+# least parsed correctly.
+#outFile = open('text/test2.bin','wb')
+#for group in groupDict.values():
+#    for textStruct in group.textStructs:
+#        outFile.write(bytes(textStruct.data))
+#outFile.close()
