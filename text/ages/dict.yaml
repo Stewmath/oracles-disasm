@@ -1,0 +1,6152 @@
+groups:
+- group: 0x00
+  data:
+  - name: DICT0_00
+    index: 0x00
+    text: |2-
+        \opt()OK \opt()No thanks
+    null_terminator: True
+
+  - name: DICT0_01
+    index: 0x01
+    text: |
+      ##LINE OVER##
+    null_terminator: True
+
+  - name: DICT0_02
+    index: 0x02
+    text: |2-
+        \opt()Yes \opt()No
+    null_terminator: True
+
+  - name: DICT0_03
+    index: 0x03
+    text: |-
+      \col(3)Rolling Ridge\col(0)
+    null_terminator: True
+
+  - name: DICT0_04
+    index: 0x04
+    text: |-
+      \col(3)Queen Ambi\col(0)
+    null_terminator: True
+
+  - name: DICT0_05
+    index: 0x05
+    text: |-
+      \col(3)Black Tower\col(0)
+    null_terminator: True
+
+  - name: DICT0_06
+    index: 0x06
+    text: |
+      You got the
+    null_terminator: True
+
+  - name: DICT0_07
+    index: 0x07
+    text: |-
+      Sword damage\x20
+    null_terminator: True
+
+  - name: DICT0_08
+    index: 0x08
+    text: |-
+      \col(3)Holodrum\col(0)
+    null_terminator: True
+
+  - name: DICT0_09
+    index: 0x09
+    text: |-
+      Damage taken\x20
+    null_terminator: True
+
+  - name: DICT0_0a
+    index: 0x0a
+    text: |2-
+       \opt()#YES \opt()#NO
+    null_terminator: True
+
+  - name: DICT0_0b
+    index: 0x0b
+    text: |2-
+       \col(1)secret\col(0)
+    null_terminator: True
+
+  - name: DICT0_0c
+    index: 0x0c
+    text: |-
+      Eee hee hee hee!
+    null_terminator: True
+
+  - name: DICT0_0d
+    index: 0x0d
+    text: |2
+       damage from
+    null_terminator: True
+
+  - name: DICT0_0e
+    index: 0x0e
+    text: |-
+      \col(3)Jabu-Jabu\col(0)
+    null_terminator: True
+
+  - name: DICT0_0f
+    index: 0x0f
+    text: |2-
+       \col(3)Nayru\col(0)
+    null_terminator: True
+
+  - name: DICT0_10
+    index: 0x10
+    text: |-
+      ##LINE OVER##
+    null_terminator: True
+
+  - name: DICT0_11
+    index: 0x11
+    text: |
+      You don't have
+    null_terminator: True
+
+  - name: DICT0_12
+    index: 0x12
+    text: |-
+      \col(1)Mystery Seeds\col(0)
+    null_terminator: True
+
+  - name: DICT0_13
+    index: 0x13
+    text: |-
+      \col(3)Veran\col(0)
+    null_terminator: True
+
+  - name: DICT0_14
+    index: 0x14
+    text: |-
+      something
+    null_terminator: True
+
+  - name: DICT0_15
+    index: 0x15
+    text: |-
+      Oh ho ho ho ho!
+    null_terminator: True
+
+  - name: DICT0_16
+    index: 0x16
+    text: |-
+      \col(3)Labrynna\col(0)
+    null_terminator: True
+
+  - name: DICT0_17
+    index: 0x17
+    text: |-
+      \col(3)Twinrova\col(0)
+    null_terminator: True
+
+  - name: DICT0_18
+    index: 0x18
+    text: |-
+      Thank you
+    null_terminator: True
+
+  - name: DICT0_19
+    index: 0x19
+    text: |-
+      \col(3)Nayru\col(0)
+    null_terminator: True
+
+  - name: DICT0_1a
+    index: 0x1a
+    text: |-
+      Oracle of Ages
+    null_terminator: True
+
+  - name: DICT0_1b
+    index: 0x1b
+    text: |
+      Come back if you
+    null_terminator: True
+
+  - name: DICT0_1c
+    index: 0x1c
+    text: |-
+      \col(1)Bomb Flower
+    null_terminator: True
+
+  - name: DICT0_1d
+    index: 0x1d
+    text: |-
+      \col(3)Ralph\col(0)
+    null_terminator: True
+
+  - name: DICT0_1e
+    index: 0x1e
+    text: |-
+      \col(1)Gasha Seed
+    null_terminator: True
+
+  - name: DICT0_1f
+    index: 0x1f
+    text: |-
+      You got\x20
+    null_terminator: True
+
+  - name: DICT0_20
+    index: 0x20
+    text: |-
+      \col(3)Zelda\col(0)
+    null_terminator: True
+
+  - name: DICT0_21
+    index: 0x21
+    text: |-
+      Symmetry City
+    null_terminator: True
+
+  - name: DICT0_22
+    index: 0x22
+    text: |-
+      Want to learn
+    null_terminator: True
+
+  - name: DICT0_23
+    index: 0x23
+    text: |-
+      \col(3)Maku Tree\col(0)
+    null_terminator: True
+
+  - name: DICT0_24
+    index: 0x24
+    text: |
+      hanks to you,
+    null_terminator: True
+
+  - name: DICT0_25
+    index: 0x25
+    text: |-
+      h hah hah hah!
+    null_terminator: True
+
+  - name: DICT0_26
+    index: 0x26
+    text: |-
+      This is the
+    null_terminator: True
+
+  - name: DICT0_27
+    index: 0x27
+    text: |-
+      \col(1)essence\col(0)
+    null_terminator: True
+
+  - name: DICT0_28
+    index: 0x28
+    text: |-
+      \col(1)Tuni Nut\col(0)
+    null_terminator: True
+
+  - name: DICT0_29
+    index: 0x29
+    text: |2-
+       \col(1)rings\col(0)
+    null_terminator: True
+
+  - name: DICT0_2a
+    index: 0x2a
+    text: |
+      I'll teach you
+    null_terminator: True
+
+  - name: DICT0_2b
+    index: 0x2b
+    text: |
+      ............\stop
+    null_terminator: True
+
+  - name: DICT0_2c
+    index: 0x2c
+    text: |-
+      0 Rupees
+    null_terminator: True
+
+  - name: DICT0_2d
+    index: 0x2d
+    text: |
+      an animal called
+    null_terminator: True
+
+  - name: DICT0_2e
+    index: 0x2e
+    text: |-
+      \col(1)secret\col(0)
+    null_terminator: True
+
+  - name: DICT0_2f
+    index: 0x2f
+    text: |-
+      \col(3)King Zora
+    null_terminator: True
+
+  - name: DICT0_30
+    index: 0x30
+    text: |2-
+       Goron Dance
+    null_terminator: True
+
+  - name: DICT0_31
+    index: 0x31
+    text: |-
+      \col(1)Ring Box\col(0)
+    null_terminator: True
+
+  - name: DICT0_32
+    index: 0x32
+    text: |-
+      \col(1)Shovel\col(0)
+    null_terminator: True
+
+  - name: DICT0_33
+    index: 0x33
+    text: |2
+       to the
+    null_terminator: True
+
+  - name: DICT0_34
+    index: 0x34
+    text: |-
+      \col(1)Fairy Powder\col(0)
+    null_terminator: True
+
+  - name: DICT0_35
+    index: 0x35
+    text: |
+      he \col(3)Graceful
+    null_terminator: True
+
+  - name: DICT0_36
+    index: 0x36
+    text: |-
+      \col(3)Lynna City\col(0)
+    null_terminator: True
+
+  - name: DICT0_37
+    index: 0x37
+    text: |-
+      I can't\x20
+    null_terminator: True
+
+  - name: DICT0_38
+    index: 0x38
+    text: |-
+      \col(1)secrets\col(0)
+    null_terminator: True
+
+  - name: DICT0_39
+    index: 0x39
+    text: |
+      Essence of Time!\stop
+    null_terminator: True
+
+  - name: DICT0_3a
+    index: 0x3a
+    text: |-
+      \col(3)Tingle\col(0)
+    null_terminator: True
+
+  - name: DICT0_3b
+    index: 0x3b
+    text: |2
+       in the
+    null_terminator: True
+
+  - name: DICT0_3c
+    index: 0x3c
+    text: |2-
+       you can
+    null_terminator: True
+
+  - name: DICT0_3d
+    index: 0x3d
+    text: |-
+      Crescent Island
+    null_terminator: True
+
+  - name: DICT0_3e
+    index: 0x3e
+    text: |-
+      \col(1)Mystical Seeds\col(0)
+    null_terminator: True
+
+  - name: DICT0_3f
+    index: 0x3f
+    text: |2-
+       remember
+    null_terminator: True
+
+  - name: DICT0_40
+    index: 0x40
+    text: |-
+      ome back
+    null_terminator: True
+
+  - name: DICT0_41
+    index: 0x41
+    text: |
+      Welcome to
+    null_terminator: True
+
+  - name: DICT0_42
+    index: 0x42
+    text: |-
+      ou don't
+    null_terminator: True
+
+  - name: DICT0_43
+    index: 0x43
+    text: |-
+      \col(3)Nayru's
+    null_terminator: True
+
+  - name: DICT0_44
+    index: 0x44
+    text: |-
+      \col(1)seeds\col(0)
+    null_terminator: True
+
+  - name: DICT0_45
+    index: 0x45
+    text: |2-
+       \col(1)ring\col(0)
+    null_terminator: True
+
+  - name: DICT0_46
+    index: 0x46
+    text: |-
+      want to\x20
+    null_terminator: True
+
+  - name: DICT0_47
+    index: 0x47
+    text: |-
+      That's\x20
+    null_terminator: True
+
+  - name: DICT0_48
+    index: 0x48
+    text: |
+      Eyeglass Isle
+    null_terminator: True
+
+  - name: DICT0_49
+    index: 0x49
+    text: |-
+      nderstand
+    null_terminator: True
+
+  - name: DICT0_4a
+    index: 0x4a
+    text: |-
+      from the
+    null_terminator: True
+
+  - name: DICT0_4b
+    index: 0x4b
+    text: |-
+      \col(1)Rock Brisket\col(0)
+    null_terminator: True
+
+  - name: DICT0_4c
+    index: 0x4c
+    text: |-
+      Target Carts
+    null_terminator: True
+
+  - name: DICT0_4d
+    index: 0x4d
+    text: |2-
+        \opt()No \opt()Yes
+    null_terminator: True
+
+  - name: DICT0_4e
+    index: 0x4e
+    text: |2
+       \num1 Rupees
+    null_terminator: True
+
+  - name: DICT0_4f
+    index: 0x4f
+    text: |-
+      If you\x20
+    null_terminator: True
+
+  - name: DICT0_50
+    index: 0x50
+    text: |-
+      You can't
+    null_terminator: True
+
+  - name: DICT0_51
+    index: 0x51
+    text: |-
+      \col(1)Bombs\col(0)
+    null_terminator: True
+
+  - name: DICT0_52
+    index: 0x52
+    text: |2-
+       are you
+    null_terminator: True
+
+  - name: DICT0_53
+    index: 0x53
+    text: |-
+      You have
+    null_terminator: True
+
+  - name: DICT0_54
+    index: 0x54
+    text: |-
+      Lynna Village
+    null_terminator: True
+
+  - name: DICT0_55
+    index: 0x55
+    text: |-
+      enough Rupees
+    null_terminator: True
+
+  - name: DICT0_56
+    index: 0x56
+    text: |-
+      estoration
+    null_terminator: True
+
+  - name: DICT0_57
+    index: 0x57
+    text: |-
+      don't know
+    null_terminator: True
+
+  - name: DICT0_58
+    index: 0x58
+    text: |
+      Oracle of
+    null_terminator: True
+
+  - name: DICT0_59
+    index: 0x59
+    text: |2
+       of the
+    null_terminator: True
+
+  - name: DICT0_5a
+    index: 0x5a
+    text: |-
+      darkness
+    null_terminator: True
+
+  - name: DICT0_5b
+    index: 0x5b
+    text: |-
+      Did you\x20
+    null_terminator: True
+
+  - name: DICT0_5c
+    index: 0x5c
+    text: |-
+      Heart Container
+    null_terminator: True
+
+  - name: DICT0_5d
+    index: 0x5d
+    text: |-
+      Will you\x20
+    null_terminator: True
+
+  - name: DICT0_5e
+    index: 0x5e
+    text: |-
+      the tower
+    null_terminator: True
+
+  - name: DICT0_5f
+    index: 0x5f
+    text: |-
+      This is
+    null_terminator: True
+
+  - name: DICT0_60
+    index: 0x60
+    text: |2-
+        \opt()OK \opt()
+    null_terminator: True
+
+  - name: DICT0_61
+    index: 0x61
+    text: |2
+       on the
+    null_terminator: True
+
+  - name: DICT0_62
+    index: 0x62
+    text: |-
+      You must
+    null_terminator: True
+
+  - name: DICT0_63
+    index: 0x63
+    text: |-
+      ake this
+    null_terminator: True
+
+  - name: DICT0_64
+    index: 0x64
+    text: |-
+      to the\x20
+    null_terminator: True
+
+  - name: DICT0_65
+    index: 0x65
+    text: |-
+      Do you know
+    null_terminator: True
+
+  - name: DICT0_66
+    index: 0x66
+    text: |-
+      \col(3)Dimitri\col(0)
+    null_terminator: True
+
+  - name: DICT0_67
+    index: 0x67
+    text: |-
+      \col(3)Veran's\col(0)
+    null_terminator: True
+
+  - name: DICT0_68
+    index: 0x68
+    text: |2-
+       should\x20
+    null_terminator: True
+
+  - name: DICT0_69
+    index: 0x69
+    text: |-
+      he Goron
+    null_terminator: True
+
+  - name: DICT0_6a
+    index: 0x6a
+    text: |-
+      Are you\x20
+    null_terminator: True
+
+  - name: DICT0_6b
+    index: 0x6b
+    text: |-
+      ou can\x20
+    null_terminator: True
+
+  - name: DICT0_6c
+    index: 0x6c
+    text: |-
+      \col(3)Princess Zelda\col(0)
+    null_terminator: True
+
+  - name: DICT0_6d
+    index: 0x6d
+    text: |-
+      Wild Tokay
+    null_terminator: True
+
+  - name: DICT0_6e
+    index: 0x6e
+    text: |-
+      Give him the
+    null_terminator: True
+
+  - name: DICT0_6f
+    index: 0x6f
+    text: |-
+      Don't forget
+    null_terminator: True
+
+  - name: DICT0_70
+    index: 0x70
+    text: |-
+      \col(3)Holodrum's\col(0)
+    null_terminator: True
+
+  - name: DICT0_71
+    index: 0x71
+    text: |-
+      appraise
+    null_terminator: True
+
+  - name: DICT0_72
+    index: 0x72
+    text: |-
+      he world
+    null_terminator: True
+
+  - name: DICT0_73
+    index: 0x73
+    text: |2-
+       thought
+    null_terminator: True
+
+  - name: DICT0_74
+    index: 0x74
+    text: |-
+      \col(3)Ambi's
+    null_terminator: True
+
+  - name: DICT0_75
+    index: 0x75
+    text: |-
+      I have\x20
+    null_terminator: True
+
+  - name: DICT0_76
+    index: 0x76
+    text: |2-
+       happen
+    null_terminator: True
+
+  - name: DICT0_77
+    index: 0x77
+    text: |-
+      through
+    null_terminator: True
+
+  - name: DICT0_78
+    index: 0x78
+    text: |2-
+       return
+    null_terminator: True
+
+  - name: DICT0_79
+    index: 0x79
+    text: |-
+      Seeds\col(0)
+    null_terminator: True
+
+  - name: DICT0_7a
+    index: 0x7a
+    text: |-
+      I am \col(3)
+    null_terminator: True
+
+  - name: DICT0_7b
+    index: 0x7b
+    text: |2
+       that
+    null_terminator: True
+
+  - name: DICT0_7c
+    index: 0x7c
+    text: |-
+      You found
+    null_terminator: True
+
+  - name: DICT0_7d
+    index: 0x7d
+    text: |-
+      here are\x20
+    null_terminator: True
+
+  - name: DICT0_7e
+    index: 0x7e
+    text: |-
+      somewhere
+    null_terminator: True
+
+  - name: DICT0_7f
+    index: 0x7f
+    text: |-
+      I'm going
+    null_terminator: True
+
+  - name: DICT0_80
+    index: 0x80
+    text: |-
+      \col(1)flute\col(0)
+    null_terminator: True
+
+  - name: DICT0_81
+    index: 0x81
+    text: |-
+      the past
+    null_terminator: True
+
+  - name: DICT0_82
+    index: 0x82
+    text: |-
+      anything
+    null_terminator: True
+
+  - name: DICT0_83
+    index: 0x83
+    text: |2
+       this
+    null_terminator: True
+
+  - name: DICT0_84
+    index: 0x84
+    text: |2
+       your
+    null_terminator: True
+
+  - name: DICT0_85
+    index: 0x85
+    text: |
+      'll give you
+    null_terminator: True
+
+  - name: DICT0_86
+    index: 0x86
+    text: |-
+      here's\x20
+    null_terminator: True
+
+  - name: DICT0_87
+    index: 0x87
+    text: |-
+      What's\x20
+    null_terminator: True
+
+  - name: DICT0_88
+    index: 0x88
+    text: |-
+      without
+    null_terminator: True
+
+  - name: DICT0_89
+    index: 0x89
+    text: |2-
+       that\x20
+    null_terminator: True
+
+  - name: DICT0_8a
+    index: 0x8a
+    text: |2-
+       your\x20
+    null_terminator: True
+
+  - name: DICT0_8b
+    index: 0x8b
+    text: |-
+      your stuff, too!
+    null_terminator: True
+
+  - name: DICT0_8c
+    index: 0x8c
+    text: |-
+      everything
+    null_terminator: True
+
+  - name: DICT0_8d
+    index: 0x8d
+    text: |-
+      generation
+    null_terminator: True
+
+  - name: DICT0_8e
+    index: 0x8e
+    text: |-
+      , but\x20
+    null_terminator: True
+
+  - name: DICT0_8f
+    index: 0x8f
+    text: |-
+      you have
+    null_terminator: True
+
+  - name: DICT0_90
+    index: 0x90
+    text: |-
+      treasure
+    null_terminator: True
+
+  - name: DICT0_91
+    index: 0x91
+    text: |-
+      Want to\x20
+    null_terminator: True
+
+  - name: DICT0_92
+    index: 0x92
+    text: |-
+      I guess\x20
+    null_terminator: True
+
+  - name: DICT0_93
+    index: 0x93
+    text: |2
+       called
+    null_terminator: True
+
+  - name: DICT0_94
+    index: 0x94
+    text: |-
+      Subrosia
+    null_terminator: True
+
+  - name: DICT0_95
+    index: 0x95
+    text: |2-
+       Ring L-
+    null_terminator: True
+
+  - name: DICT0_96
+    index: 0x96
+    text: |2-
+       again
+    null_terminator: True
+
+  - name: DICT0_97
+    index: 0x97
+    text: |-
+      You've\x20
+    null_terminator: True
+
+  - name: DICT0_98
+    index: 0x98
+    text: |
+      e the
+    null_terminator: True
+
+  - name: DICT0_99
+    index: 0x99
+    text: |2-
+       this\x20
+    null_terminator: True
+
+  - name: DICT0_9a
+    index: 0x9a
+    text: |2
+       have
+    null_terminator: True
+
+  - name: DICT0_9b
+    index: 0x9b
+    text: |2-
+       right
+    null_terminator: True
+
+  - name: DICT0_9c
+    index: 0x9c
+    text: |-
+      ssences
+    null_terminator: True
+
+  - name: DICT0_9d
+    index: 0x9d
+    text: |-
+      brother
+    null_terminator: True
+
+  - name: DICT0_9e
+    index: 0x9e
+    text: |2
+       there's
+    null_terminator: True
+
+  - name: DICT0_9f
+    index: 0x9f
+    text: |-
+      the power
+    null_terminator: True
+
+  - name: DICT0_a0
+    index: 0xa0
+    text: |-
+      Satchel\col(0)
+    null_terminator: True
+
+  - name: DICT0_a1
+    index: 0xa1
+    text: |-
+      \col(3)Ganon\col(0)
+    null_terminator: True
+
+  - name: DICT0_a2
+    index: 0xa2
+    text: |2
+       will
+    null_terminator: True
+
+  - name: DICT0_a3
+    index: 0xa3
+    text: |-
+      Pieces of Heart
+    null_terminator: True
+
+  - name: DICT0_a4
+    index: 0xa4
+    text: |-
+      Great Moblin
+    null_terminator: True
+
+  - name: DICT0_a5
+    index: 0xa5
+    text: |
+      he Flame of
+    null_terminator: True
+
+  - name: DICT0_a6
+    index: 0xa6
+    text: |
+      You got
+    null_terminator: True
+
+  - name: DICT0_a7
+    index: 0xa7
+    text: |-
+      when you
+    null_terminator: True
+
+  - name: DICT0_a8
+    index: 0xa8
+    text: |2-
+       strange
+    null_terminator: True
+
+  - name: DICT0_a9
+    index: 0xa9
+    text: |2
+       can't
+    null_terminator: True
+
+  - name: DICT0_aa
+    index: 0xaa
+    text: |-
+      You're\x20
+    null_terminator: True
+
+  - name: DICT0_ab
+    index: 0xab
+    text: |-
+      I don't
+    null_terminator: True
+
+  - name: DICT0_ac
+    index: 0xac
+    text: |-
+      all the
+    null_terminator: True
+
+  - name: DICT0_ad
+    index: 0xad
+    text: |-
+      e you\x20
+    null_terminator: True
+
+  - name: DICT0_ae
+    index: 0xae
+    text: |
+      t the
+    null_terminator: True
+
+  - name: DICT0_af
+    index: 0xaf
+    text: |2-
+       will\x20
+    null_terminator: True
+
+  - name: DICT0_b0
+    index: 0xb0
+    text: |
+      s the
+    null_terminator: True
+
+  - name: DICT0_b1
+    index: 0xb1
+    text: |-
+      n the\x20
+    null_terminator: True
+
+  - name: DICT0_b2
+    index: 0xb2
+    text: |-
+      Please\x20
+    null_terminator: True
+
+  - name: DICT0_b3
+    index: 0xb3
+    text: |-
+      complet
+    null_terminator: True
+
+  - name: DICT0_b4
+    index: 0xb4
+    text: |-
+      Welcome
+    null_terminator: True
+
+  - name: DICT0_b5
+    index: 0xb5
+    text: |2-
+       friend
+    null_terminator: True
+
+  - name: DICT0_b6
+    index: 0xb6
+    text: |
+      ...\stop
+    null_terminator: True
+
+  - name: DICT0_b7
+    index: 0xb7
+    text: |2-
+       could
+    null_terminator: True
+
+  - name: DICT0_b8
+    index: 0xb8
+    text: |-
+      Power Bracelet
+    null_terminator: True
+
+  - name: DICT0_b9
+    index: 0xb9
+    text: |-
+      \col(1)Lava Juice\col(0)
+    null_terminator: True
+
+  - name: DICT0_ba
+    index: 0xba
+    text: |2
+       with the
+    null_terminator: True
+
+  - name: DICT0_bb
+    index: 0xbb
+    text: |
+      , the
+    null_terminator: True
+
+  - name: DICT0_bc
+    index: 0xbc
+    text: |-
+      ceremony
+    null_terminator: True
+
+  - name: DICT0_bd
+    index: 0xbd
+    text: |-
+      You are\x20
+    null_terminator: True
+
+  - name: DICT0_be
+    index: 0xbe
+    text: |-
+      he Queen
+    null_terminator: True
+
+  - name: DICT0_bf
+    index: 0xbf
+    text: |-
+      ibrary\col(0)
+    null_terminator: True
+
+  - name: DICT0_c0
+    index: 0xc0
+    text: |-
+      you're\x20
+    null_terminator: True
+
+  - name: DICT0_c1
+    index: 0xc1
+    text: |-
+      of the\x20
+    null_terminator: True
+
+  - name: DICT0_c2
+    index: 0xc2
+    text: |-
+      already
+    null_terminator: True
+
+  - name: DICT0_c3
+    index: 0xc3
+    text: |-
+      village
+    null_terminator: True
+
+  - name: DICT0_c4
+    index: 0xc4
+    text: |-
+      ear the
+    null_terminator: True
+
+  - name: DICT0_c5
+    index: 0xc5
+    text: |-
+      I shall
+    null_terminator: True
+
+  - name: DICT0_c6
+    index: 0xc6
+    text: |-
+      Sword\col(0)
+    null_terminator: True
+
+  - name: DICT0_c7
+    index: 0xc7
+    text: |-
+      different
+    null_terminator: True
+
+  - name: DICT0_c8
+    index: 0xc8
+    text: |-
+      struction
+    null_terminator: True
+
+  - name: DICT0_c9
+    index: 0xc9
+    text: |-
+      Evil King
+    null_terminator: True
+
+  - name: DICT0_ca
+    index: 0xca
+    text: |
+      d the
+    null_terminator: True
+
+  - name: DICT0_cb
+    index: 0xcb
+    text: |-
+      Do you
+    null_terminator: True
+
+  - name: DICT0_cc
+    index: 0xcc
+    text: |2-
+       I'll\x20
+    null_terminator: True
+
+  - name: DICT0_cd
+    index: 0xcd
+    text: |2-
+       great
+    null_terminator: True
+
+  - name: DICT0_ce
+    index: 0xce
+    text: |
+      e you
+    null_terminator: True
+
+  - name: DICT0_cf
+    index: 0xcf
+    text: |-
+      Mermaid Key
+    null_terminator: True
+
+  - name: DICT0_d0
+    index: 0xd0
+    text: |
+      My name is
+    null_terminator: True
+
+  - name: DICT0_d1
+    index: 0xd1
+    text: |2-
+        \opt()Sure \opt()
+    null_terminator: True
+
+  - name: DICT0_d2
+    index: 0xd2
+    text: |-
+      nothing
+    null_terminator: True
+
+  - name: DICT0_d3
+    index: 0xd3
+    text: |-
+      Can you
+    null_terminator: True
+
+  - name: DICT0_d4
+    index: 0xd4
+    text: |2-
+       won't\x20
+    null_terminator: True
+
+  - name: DICT0_d5
+    index: 0xd5
+    text: |-
+      if you\x20
+    null_terminator: True
+
+  - name: DICT0_d6
+    index: 0xd6
+    text: |2-
+       around
+    null_terminator: True
+
+  - name: DICT0_d7
+    index: 0xd7
+    text: |2-
+       \col(1)Bomb
+    null_terminator: True
+
+  - name: DICT0_d8
+    index: 0xd8
+    text: |2-
+       power
+    null_terminator: True
+
+  - name: DICT0_d9
+    index: 0xd9
+    text: |2-
+       Goron
+    null_terminator: True
+
+  - name: DICT0_da
+    index: 0xda
+    text: |2-
+       about
+    null_terminator: True
+
+  - name: DICT0_db
+    index: 0xdb
+    text: |2-
+       never
+    null_terminator: True
+
+  - name: DICT0_dc
+    index: 0xdc
+    text: |
+      ! You
+    null_terminator: True
+
+  - name: DICT0_dd
+    index: 0xdd
+    text: |-
+      s the\x20
+    null_terminator: True
+
+  - name: DICT0_de
+    index: 0xde
+    text: |-
+      e the\x20
+    null_terminator: True
+
+  - name: DICT0_df
+    index: 0xdf
+    text: |
+      , but
+    null_terminator: True
+
+  - name: DICT0_e0
+    index: 0xe0
+    text: |-
+      I can\x20
+    null_terminator: True
+
+  - name: DICT0_e1
+    index: 0xe1
+    text: |-
+      Rolling Ridge
+    null_terminator: True
+
+  - name: DICT0_e2
+    index: 0xe2
+    text: |2
+       like
+    null_terminator: True
+
+  - name: DICT0_e3
+    index: 0xe3
+    text: |-
+      can't\x20
+    null_terminator: True
+
+  - name: DICT0_e4
+    index: 0xe4
+    text: |-
+      people
+    null_terminator: True
+
+  - name: DICT0_e5
+    index: 0xe5
+    text: |-
+      Don't\x20
+    null_terminator: True
+
+  - name: DICT0_e6
+    index: 0xe6
+    text: |
+      ing the
+    null_terminator: True
+
+  - name: DICT0_e7
+    index: 0xe7
+    text: |-
+      's House
+    null_terminator: True
+
+  - name: DICT0_e8
+    index: 0xe8
+    text: |-
+      going on
+    null_terminator: True
+
+  - name: DICT0_e9
+    index: 0xe9
+    text: |-
+      I wonder
+    null_terminator: True
+
+  - name: DICT0_ea
+    index: 0xea
+    text: |-
+      he Elder
+    null_terminator: True
+
+  - name: DICT0_eb
+    index: 0xeb
+    text: |-
+      \col(3)Ambi\col(0)
+    null_terminator: True
+
+  - name: DICT0_ec
+    index: 0xec
+    text: |-
+      of Time
+    null_terminator: True
+
+  - name: DICT0_ed
+    index: 0xed
+    text: |-
+      come to
+    null_terminator: True
+
+  - name: DICT0_ee
+    index: 0xee
+    text: |-
+      Village
+    null_terminator: True
+
+  - name: DICT0_ef
+    index: 0xef
+    text: |-
+      cannot\x20
+    null_terminator: True
+
+  - name: DICT0_f0
+    index: 0xf0
+    text: |-
+      give me
+    null_terminator: True
+
+  - name: DICT0_f1
+    index: 0xf1
+    text: |2-
+       must\x20
+    null_terminator: True
+
+  - name: DICT0_f2
+    index: 0xf2
+    text: |-
+      ing to
+    null_terminator: True
+
+  - name: DICT0_f3
+    index: 0xf3
+    text: |2-
+        \opt()Trade \opt()Don't
+    null_terminator: True
+
+  - name: DICT0_f4
+    index: 0xf4
+    text: |-
+      , too!
+    null_terminator: True
+
+  - name: DICT0_f5
+    index: 0xf5
+    text: |2-
+       time\x20
+    null_terminator: True
+
+  - name: DICT0_f6
+    index: 0xf6
+    text: |2-
+       heart
+    null_terminator: True
+
+  - name: DICT0_f7
+    index: 0xf7
+    text: |-
+      t the\x20
+    null_terminator: True
+
+  - name: DICT0_f8
+    index: 0xf8
+    text: |2-
+       with\x20
+    null_terminator: True
+
+  - name: DICT0_f9
+    index: 0xf9
+    text: |-
+      legendary
+    null_terminator: True
+
+  - name: DICT0_fa
+    index: 0xfa
+    text: |-
+      Boomerang
+    null_terminator: True
+
+  - name: DICT0_fb
+    index: 0xfb
+    text: |2-
+       Ring Box
+    null_terminator: True
+
+  - name: DICT0_fc
+    index: 0xfc
+    text: |2
+       You can
+    null_terminator: True
+
+  - name: DICT0_fd
+    index: 0xfd
+    text: |-
+      thank you
+    null_terminator: True
+
+  - name: DICT0_fe
+    index: 0xfe
+    text: |2
+       or more
+    null_terminator: True
+
+  - name: DICT0_ff
+    index: 0xff
+    text: |-
+      sacrifice
+    null_terminator: True
+
+- group: 0x01
+  data:
+  - name: DICT1_00
+    index: 0x00
+    text: |2
+       \col(3)Queen
+    null_terminator: True
+
+  - name: DICT1_01
+    index: 0x01
+    text: |-
+      passion
+    null_terminator: True
+
+  - name: DICT1_02
+    index: 0x02
+    text: |-
+      the sea
+    null_terminator: True
+
+  - name: DICT1_03
+    index: 0x03
+    text: |2-
+       things
+    null_terminator: True
+
+  - name: DICT1_04
+    index: 0x04
+    text: |-
+      ! It's\x20
+    null_terminator: True
+
+  - name: DICT1_05
+    index: 0x05
+    text: |2
+       I can
+    null_terminator: True
+
+  - name: DICT1_06
+    index: 0x06
+    text: |-
+      trouble
+    null_terminator: True
+
+  - name: DICT1_07
+    index: 0x07
+    text: |2
+       Seeds
+    null_terminator: True
+
+  - name: DICT1_08
+    index: 0x08
+    text: |-
+      ong ago
+    null_terminator: True
+
+  - name: DICT1_09
+    index: 0x09
+    text: |-
+      anytime
+    null_terminator: True
+
+  - name: DICT1_0a
+    index: 0x0a
+    text: |-
+      Magic Potion
+    null_terminator: True
+
+  - name: DICT1_0b
+    index: 0x0b
+    text: |-
+      \col(1)Biggoron's
+    null_terminator: True
+
+  - name: DICT1_0c
+    index: 0x0c
+    text: |-
+      of Seals\col(0)
+    null_terminator: True
+
+  - name: DICT1_0d
+    index: 0x0d
+    text: |-
+      other\x20
+    null_terminator: True
+
+  - name: DICT1_0e
+    index: 0x0e
+    text: |2-
+       place
+    null_terminator: True
+
+  - name: DICT1_0f
+    index: 0x0f
+    text: |2-
+       there
+    null_terminator: True
+
+  - name: DICT1_10
+    index: 0x10
+    text: |-
+      What a
+    null_terminator: True
+
+  - name: DICT1_11
+    index: 0x11
+    text: |2-
+       have\x20
+    null_terminator: True
+
+  - name: DICT1_12
+    index: 0x12
+    text: |-
+      about\x20
+    null_terminator: True
+
+  - name: DICT1_13
+    index: 0x13
+    text: |-
+      Thanks
+    null_terminator: True
+
+  - name: DICT1_14
+    index: 0x14
+    text: |2-
+       just\x20
+    null_terminator: True
+
+  - name: DICT1_15
+    index: 0x15
+    text: |-
+      I'm so
+    null_terminator: True
+
+  - name: DICT1_16
+    index: 0x16
+    text: |2-
+       dance
+    null_terminator: True
+
+  - name: DICT1_17
+    index: 0x17
+    text: |2
+       you
+    null_terminator: True
+
+  - name: DICT1_18
+    index: 0x18
+    text: |2-
+       the\x20
+    null_terminator: True
+
+  - name: DICT1_19
+    index: 0x19
+    text: |2-
+       to me
+    null_terminator: True
+
+  - name: DICT1_1a
+    index: 0x1a
+    text: |-
+      please
+    null_terminator: True
+
+  - name: DICT1_1b
+    index: 0x1b
+    text: |-
+      forget
+    null_terminator: True
+
+  - name: DICT1_1c
+    index: 0x1c
+    text: |-
+      Congratulations!
+    null_terminator: True
+
+  - name: DICT1_1d
+    index: 0x1d
+    text: |
+      naming our son,
+    null_terminator: True
+
+  - name: DICT1_1e
+    index: 0x1e
+    text: |-
+      guardian
+    null_terminator: True
+
+  - name: DICT1_1f
+    index: 0x1f
+    text: |-
+      terrible
+    null_terminator: True
+
+  - name: DICT1_20
+    index: 0x20
+    text: |-
+      together
+    null_terminator: True
+
+  - name: DICT1_21
+    index: 0x21
+    text: |-
+      Graceful
+    null_terminator: True
+
+  - name: DICT1_22
+    index: 0x22
+    text: |-
+      Become a
+    null_terminator: True
+
+  - name: DICT1_23
+    index: 0x23
+    text: |-
+      \col(1)Scent\x20
+    null_terminator: True
+
+  - name: DICT1_24
+    index: 0x24
+    text: |2
+       and
+    null_terminator: True
+
+  - name: DICT1_25
+    index: 0x25
+    text: |2-
+       here
+    null_terminator: True
+
+  - name: DICT1_26
+    index: 0x26
+    text: |2-
+       you\x20
+    null_terminator: True
+
+  - name: DICT1_27
+    index: 0x27
+    text: |2-
+       found
+    null_terminator: True
+
+  - name: DICT1_28
+    index: 0x28
+    text: |2-
+       find\x20
+    null_terminator: True
+
+  - name: DICT1_29
+    index: 0x29
+    text: |2
+       with
+    null_terminator: True
+
+  - name: DICT1_2a
+    index: 0x2a
+    text: |-
+      palace
+    null_terminator: True
+
+  - name: DICT1_2b
+    index: 0x2b
+    text: |-
+      I know
+    null_terminator: True
+
+  - name: DICT1_2c
+    index: 0x2c
+    text: |-
+      Really
+    null_terminator: True
+
+  - name: DICT1_2d
+    index: 0x2d
+    text: |2-
+       Ring
+    null_terminator: True
+
+  - name: DICT1_2e
+    index: 0x2e
+    text: |-
+      present
+    null_terminator: True
+
+  - name: DICT1_2f
+    index: 0x2f
+    text: |2-
+       out of
+    null_terminator: True
+
+  - name: DICT1_30
+    index: 0x30
+    text: |-
+      monster
+    null_terminator: True
+
+  - name: DICT1_31
+    index: 0x31
+    text: |-
+      of Ages
+    null_terminator: True
+
+  - name: DICT1_32
+    index: 0x32
+    text: |-
+      looking
+    null_terminator: True
+
+  - name: DICT1_33
+    index: 0x33
+    text: |-
+      able to
+    null_terminator: True
+
+  - name: DICT1_34
+    index: 0x34
+    text: |-
+      courage
+    null_terminator: True
+
+  - name: DICT1_35
+    index: 0x35
+    text: |-
+      hield\col(0)
+    null_terminator: True
+
+  - name: DICT1_36
+    index: 0x36
+    text: |2-
+       and\x20
+    null_terminator: True
+
+  - name: DICT1_37
+    index: 0x37
+    text: |-
+      \col(1)key\col(0)
+    null_terminator: True
+
+  - name: DICT1_38
+    index: 0x38
+    text: |2
+       the
+    null_terminator: True
+
+  - name: DICT1_39
+    index: 0x39
+    text: |2
+       for
+    null_terminator: True
+
+  - name: DICT1_3a
+    index: 0x3a
+    text: |-
+      It's\x20
+    null_terminator: True
+
+  - name: DICT1_3b
+    index: 0x3b
+    text: |-
+      \col(3)Western Woods
+    null_terminator: True
+
+  - name: DICT1_3c
+    index: 0x3c
+    text: |2
+       when
+    null_terminator: True
+
+  - name: DICT1_3d
+    index: 0x3d
+    text: |2-
+       Heart
+    null_terminator: True
+
+  - name: DICT1_3e
+    index: 0x3e
+    text: |-
+      before
+    null_terminator: True
+
+  - name: DICT1_3f
+    index: 0x3f
+    text: |-
+      happen
+    null_terminator: True
+
+  - name: DICT1_40
+    index: 0x40
+    text: |-
+      Please
+    null_terminator: True
+
+  - name: DICT1_41
+    index: 0x41
+    text: |-
+      sorrow
+    null_terminator: True
+
+  - name: DICT1_42
+    index: 0x42
+    text: |-
+      great\x20
+    null_terminator: True
+
+  - name: DICT1_43
+    index: 0x43
+    text: |-
+      change
+    null_terminator: True
+
+  - name: DICT1_44
+    index: 0x44
+    text: |-
+      always
+    null_terminator: True
+
+  - name: DICT1_45
+    index: 0x45
+    text: |2-
+       need\x20
+    null_terminator: True
+
+  - name: DICT1_46
+    index: 0x46
+    text: |
+      0 pts
+    null_terminator: True
+
+  - name: DICT1_47
+    index: 0x47
+    text: |-
+      your\x20
+    null_terminator: True
+
+  - name: DICT1_48
+    index: 0x48
+    text: |2-
+       time
+    null_terminator: True
+
+  - name: DICT1_49
+    index: 0x49
+    text: |-
+      Black Tower
+    null_terminator: True
+
+  - name: DICT1_4a
+    index: 0x4a
+    text: |2-
+       back
+    null_terminator: True
+
+  - name: DICT1_4b
+    index: 0x4b
+    text: |-
+      have\x20
+    null_terminator: True
+
+  - name: DICT1_4c
+    index: 0x4c
+    text: |-
+      that\x20
+    null_terminator: True
+
+  - name: DICT1_4d
+    index: 0x4d
+    text: |2-
+       still
+    null_terminator: True
+
+  - name: DICT1_4e
+    index: 0x4e
+    text: |-
+      should
+    null_terminator: True
+
+  - name: DICT1_4f
+    index: 0x4f
+    text: |2-
+       think
+    null_terminator: True
+
+  - name: DICT1_50
+    index: 0x50
+    text: |2
+       from
+    null_terminator: True
+
+  - name: DICT1_51
+    index: 0x51
+    text: |-
+      secret
+    null_terminator: True
+
+  - name: DICT1_52
+    index: 0x52
+    text: |2-
+       for\x20
+    null_terminator: True
+
+  - name: DICT1_53
+    index: 0x53
+    text: |2
+       has
+    null_terminator: True
+
+  - name: DICT1_54
+    index: 0x54
+    text: |-
+      this\x20
+    null_terminator: True
+
+  - name: DICT1_55
+    index: 0x55
+    text: |-
+      I've been
+    null_terminator: True
+
+  - name: DICT1_56
+    index: 0x56
+    text: |-
+      I'm gonna
+    null_terminator: True
+
+  - name: DICT1_57
+    index: 0x57
+    text: |-
+      Game Link
+    null_terminator: True
+
+  - name: DICT1_58
+    index: 0x58
+    text: |-
+      Boy Color
+    null_terminator: True
+
+  - name: DICT1_59
+    index: 0x59
+    text: |-
+      Flowers\col(0)
+    null_terminator: True
+
+  - name: DICT1_5a
+    index: 0x5a
+    text: |-
+      Pegasus
+    null_terminator: True
+
+  - name: DICT1_5b
+    index: 0x5b
+    text: |-
+      \col(3)Ricky\col(0)
+    null_terminator: True
+
+  - name: DICT1_5c
+    index: 0x5c
+    text: |-
+      rincess
+    null_terminator: True
+
+  - name: DICT1_5d
+    index: 0x5d
+    text: |-
+      You may
+    null_terminator: True
+
+  - name: DICT1_5e
+    index: 0x5e
+    text: |-
+      emember
+    null_terminator: True
+
+  - name: DICT1_5f
+    index: 0x5f
+    text: |-
+      finally
+    null_terminator: True
+
+  - name: DICT1_60
+    index: 0x60
+    text: |-
+      Too bad
+    null_terminator: True
+
+  - name: DICT1_61
+    index: 0x61
+    text: |2
+       where
+    null_terminator: True
+
+  - name: DICT1_62
+    index: 0x62
+    text: |-
+      targets
+    null_terminator: True
+
+  - name: DICT1_63
+    index: 0x63
+    text: |2-
+       really
+    null_terminator: True
+
+  - name: DICT1_64
+    index: 0x64
+    text: |-
+      ometime
+    null_terminator: True
+
+  - name: DICT1_65
+    index: 0x65
+    text: |-
+      brought
+    null_terminator: True
+
+  - name: DICT1_66
+    index: 0x66
+    text: |-
+      sn't it
+    null_terminator: True
+
+  - name: DICT1_67
+    index: 0x67
+    text: |-
+      Seasons
+    null_terminator: True
+
+  - name: DICT1_68
+    index: 0x68
+    text: |-
+      \col(1)sword\col(0)
+    null_terminator: True
+
+  - name: DICT1_69
+    index: 0x69
+    text: |-
+      \col(3)Patch\col(0)
+    null_terminator: True
+
+  - name: DICT1_6a
+    index: 0x6a
+    text: |
+      \col(1)Seed
+    null_terminator: True
+
+  - name: DICT1_6b
+    index: 0x6b
+    text: |-
+      Flute\col(0)
+    null_terminator: True
+
+  - name: DICT1_6c
+    index: 0x6c
+    text: |2-
+       take
+    null_terminator: True
+
+  - name: DICT1_6d
+    index: 0x6d
+    text: |-
+      \col(1)Zora Scale\col(0)
+    null_terminator: True
+
+  - name: DICT1_6e
+    index: 0x6e
+    text: |-
+      raveyard
+    null_terminator: True
+
+  - name: DICT1_6f
+    index: 0x6f
+    text: |-
+      research
+    null_terminator: True
+
+  - name: DICT1_70
+    index: 0x70
+    text: |-
+      mountain
+    null_terminator: True
+
+  - name: DICT1_71
+    index: 0x71
+    text: |-
+      continue
+    null_terminator: True
+
+  - name: DICT1_72
+    index: 0x72
+    text: |-
+      It looks
+    null_terminator: True
+
+  - name: DICT1_73
+    index: 0x73
+    text: |-
+      precious
+    null_terminator: True
+
+  - name: DICT1_74
+    index: 0x74
+    text: |
+      want to
+    null_terminator: True
+
+  - name: DICT1_75
+    index: 0x75
+    text: |-
+      \col(3)Hyrule
+    null_terminator: True
+
+  - name: DICT1_76
+    index: 0x76
+    text: |-
+      \col(1)ring\col(0)
+    null_terminator: True
+
+  - name: DICT1_77
+    index: 0x77
+    text: |-
+      Goron
+    null_terminator: True
+
+  - name: DICT1_78
+    index: 0x78
+    text: |-
+      That\x20
+    null_terminator: True
+
+  - name: DICT1_79
+    index: 0x79
+    text: |-
+      like\x20
+    null_terminator: True
+
+  - name: DICT1_7a
+    index: 0x7a
+    text: |2-
+       what
+    null_terminator: True
+
+  - name: DICT1_7b
+    index: 0x7b
+    text: |-
+      Rupees
+    null_terminator: True
+
+  - name: DICT1_7c
+    index: 0x7c
+    text: |2-
+       would
+    null_terminator: True
+
+  - name: DICT1_7d
+    index: 0x7d
+    text: |2
+       just
+    null_terminator: True
+
+  - name: DICT1_7e
+    index: 0x7e
+    text: |-
+      enough
+    null_terminator: True
+
+  - name: DICT1_7f
+    index: 0x7f
+    text: |2
+       It's
+    null_terminator: True
+
+  - name: DICT1_80
+    index: 0x80
+    text: |-
+      inside
+    null_terminator: True
+
+  - name: DICT1_81
+    index: 0x81
+    text: |2
+       I'll
+    null_terminator: True
+
+  - name: DICT1_82
+    index: 0x82
+    text: |-
+      ing me
+    null_terminator: True
+
+  - name: DICT1_83
+    index: 0x83
+    text: |2-
+       might
+    null_terminator: True
+
+  - name: DICT1_84
+    index: 0x84
+    text: |-
+      island
+    null_terminator: True
+
+  - name: DICT1_85
+    index: 0x85
+    text: |-
+      friend
+    null_terminator: True
+
+  - name: DICT1_86
+    index: 0x86
+    text: |
+      !!!\stop
+    null_terminator: True
+
+  - name: DICT1_87
+    index: 0x87
+    text: |
+      \col(0)!\stop
+    null_terminator: True
+
+  - name: DICT1_88
+    index: 0x88
+    text: |2-
+       more
+    null_terminator: True
+
+  - name: DICT1_89
+    index: 0x89
+    text: |-
+      What\x20
+    null_terminator: True
+
+  - name: DICT1_8a
+    index: 0x8a
+    text: |-
+      I'll\x20
+    null_terminator: True
+
+  - name: DICT1_8b
+    index: 0x8b
+    text: |2-
+       work
+    null_terminator: True
+
+  - name: DICT1_8c
+    index: 0x8c
+    text: |2
+       all
+    null_terminator: True
+
+  - name: DICT1_8d
+    index: 0x8d
+    text: |2-
+       long
+    null_terminator: True
+
+  - name: DICT1_8e
+    index: 0x8e
+    text: |2-
+       to se
+    null_terminator: True
+
+  - name: DICT1_8f
+    index: 0x8f
+    text: |-
+      Zora's
+    null_terminator: True
+
+  - name: DICT1_90
+    index: 0x90
+    text: |-
+      broken
+    null_terminator: True
+
+  - name: DICT1_91
+    index: 0x91
+    text: |-
+      e can\x20
+    null_terminator: True
+
+  - name: DICT1_92
+    index: 0x92
+    text: |-
+      don't\x20
+    null_terminator: True
+
+  - name: DICT1_93
+    index: 0x93
+    text: |-
+      sed to
+    null_terminator: True
+
+  - name: DICT1_94
+    index: 0x94
+    text: |2
+       What
+    null_terminator: True
+
+  - name: DICT1_95
+    index: 0x95
+    text: |-
+      return
+    null_terminator: True
+
+  - name: DICT1_96
+    index: 0x96
+    text: |-
+      thanks
+    null_terminator: True
+
+  - name: DICT1_97
+    index: 0x97
+    text: |-
+      0 pts.
+    null_terminator: True
+
+  - name: DICT1_98
+    index: 0x98
+    text: |-
+      ake it
+    null_terminator: True
+
+  - name: DICT1_99
+    index: 0x99
+    text: |-
+      finish
+    null_terminator: True
+
+  - name: DICT1_9a
+    index: 0x9a
+    text: |
+      \col(0) is
+    null_terminator: True
+
+  - name: DICT1_9b
+    index: 0x9b
+    text: |
+      \col(0).\stop
+    null_terminator: True
+
+  - name: DICT1_9c
+    index: 0x9c
+    text: |2-
+       was\x20
+    null_terminator: True
+
+  - name: DICT1_9d
+    index: 0x9d
+    text: |2
+       mystical
+    null_terminator: True
+
+  - name: DICT1_9e
+    index: 0x9e
+    text: |2-
+       ho ho ho!
+    null_terminator: True
+
+  - name: DICT1_9f
+    index: 0x9f
+    text: |2
+       seas are
+    null_terminator: True
+
+  - name: DICT1_a0
+    index: 0xa0
+    text: |-
+      hen I grow up
+    null_terminator: True
+
+  - name: DICT1_a1
+    index: 0xa1
+    text: |-
+      been\x20
+    null_terminator: True
+
+  - name: DICT1_a2
+    index: 0xa2
+    text: |2
+       I'm
+    null_terminator: True
+
+  - name: DICT1_a3
+    index: 0xa3
+    text: |2-
+       come
+    null_terminator: True
+
+  - name: DICT1_a4
+    index: 0xa4
+    text: |2-
+       you!
+    null_terminator: True
+
+  - name: DICT1_a5
+    index: 0xa5
+    text: |
+      s of
+    null_terminator: True
+
+  - name: DICT1_a6
+    index: 0xa6
+    text: |-
+      Then\x20
+    null_terminator: True
+
+  - name: DICT1_a7
+    index: 0xa7
+    text: |-
+      alling\x20
+    null_terminator: True
+
+  - name: DICT1_a8
+    index: 0xa8
+    text: |-
+      haven't
+    null_terminator: True
+
+  - name: DICT1_a9
+    index: 0xa9
+    text: |2-
+       effect
+    null_terminator: True
+
+  - name: DICT1_aa
+    index: 0xaa
+    text: |-
+      one who
+    null_terminator: True
+
+  - name: DICT1_ab
+    index: 0xab
+    text: |2-
+       Level\x20
+    null_terminator: True
+
+  - name: DICT1_ac
+    index: 0xac
+    text: |-
+      Advance
+    null_terminator: True
+
+  - name: DICT1_ad
+    index: 0xad
+    text: |2-
+       you'll
+    null_terminator: True
+
+  - name: DICT1_ae
+    index: 0xae
+    text: |-
+      someone
+    null_terminator: True
+
+  - name: DICT1_af
+    index: 0xaf
+    text: |-
+      balance
+    null_terminator: True
+
+  - name: DICT1_b0
+    index: 0xb0
+    text: |-
+      mazing!
+    null_terminator: True
+
+  - name: DICT1_b1
+    index: 0xb1
+    text: |-
+      after
+    null_terminator: True
+
+  - name: DICT1_b2
+    index: 0xb2
+    text: |-
+      . The
+    null_terminator: True
+
+  - name: DICT1_b3
+    index: 0xb3
+    text: |-
+      thing
+    null_terminator: True
+
+  - name: DICT1_b4
+    index: 0xb4
+    text: |-
+      Tokay
+    null_terminator: True
+
+  - name: DICT1_b5
+    index: 0xb5
+    text: |2-
+       save
+    null_terminator: True
+
+  - name: DICT1_b6
+    index: 0xb6
+    text: |-
+      to be
+    null_terminator: True
+
+  - name: DICT1_b7
+    index: 0xb7
+    text: |2-
+       good
+    null_terminator: True
+
+  - name: DICT1_b8
+    index: 0xb8
+    text: |2-
+       well
+    null_terminator: True
+
+  - name: DICT1_b9
+    index: 0xb9
+    text: |-
+      other
+    null_terminator: True
+
+  - name: DICT1_ba
+    index: 0xba
+    text: |-
+      This\x20
+    null_terminator: True
+
+  - name: DICT1_bb
+    index: 0xbb
+    text: |
+      on't
+    null_terminator: True
+
+  - name: DICT1_bc
+    index: 0xbc
+    text: |
+      hat's
+    null_terminator: True
+
+  - name: DICT1_bd
+    index: 0xbd
+    text: |-
+      ssence
+    null_terminator: True
+
+  - name: DICT1_be
+    index: 0xbe
+    text: |-
+      trange
+    null_terminator: True
+
+  - name: DICT1_bf
+    index: 0xbf
+    text: |-
+      travel
+    null_terminator: True
+
+  - name: DICT1_c0
+    index: 0xc0
+    text: |-
+      Queen\x20
+    null_terminator: True
+
+  - name: DICT1_c1
+    index: 0xc1
+    text: |-
+      What?\x20
+    null_terminator: True
+
+  - name: DICT1_c2
+    index: 0xc2
+    text: |-
+      listen
+    null_terminator: True
+
+  - name: DICT1_c3
+    index: 0xc3
+    text: |-
+      though
+    null_terminator: True
+
+  - name: DICT1_c4
+    index: 0xc4
+    text: |-
+      you've
+    null_terminator: True
+
+  - name: DICT1_c5
+    index: 0xc5
+    text: |-
+      espair
+    null_terminator: True
+
+  - name: DICT1_c6
+    index: 0xc6
+    text: |-
+      Let me
+    null_terminator: True
+
+  - name: DICT1_c7
+    index: 0xc7
+    text: |2-
+       not\x20
+    null_terminator: True
+
+  - name: DICT1_c8
+    index: 0xc8
+    text: |2-
+       them
+    null_terminator: True
+
+  - name: DICT1_c9
+    index: 0xc9
+    text: |-
+      world
+    null_terminator: True
+
+  - name: DICT1_ca
+    index: 0xca
+    text: |-
+      tower
+    null_terminator: True
+
+  - name: DICT1_cb
+    index: 0xcb
+    text: |2-
+       know
+    null_terminator: True
+
+  - name: DICT1_cc
+    index: 0xcc
+    text: |-
+      Your\x20
+    null_terminator: True
+
+  - name: DICT1_cd
+    index: 0xcd
+    text: |2
+       was
+    null_terminator: True
+
+  - name: DICT1_ce
+    index: 0xce
+    text: |
+      e...
+    null_terminator: True
+
+  - name: DICT1_cf
+    index: 0xcf
+    text: |
+      Sword beams
+    null_terminator: True
+
+  - name: DICT1_d0
+    index: 0xd0
+    text: |
+      Beasts drop
+    null_terminator: True
+
+  - name: DICT1_d1
+    index: 0xd1
+    text: |
+      Find double
+    null_terminator: True
+
+  - name: DICT1_d2
+    index: 0xd2
+    text: |-
+      \col(1)Dumbbell\col(0)
+    null_terminator: True
+
+  - name: DICT1_d3
+    index: 0xd3
+    text: |-
+      ymbol of
+    null_terminator: True
+
+  - name: DICT1_d4
+    index: 0xd4
+    text: |-
+      the top\x20
+    null_terminator: True
+
+  - name: DICT1_d5
+    index: 0xd5
+    text: |-
+      counting
+    null_terminator: True
+
+  - name: DICT1_d6
+    index: 0xd6
+    text: |2
+       across
+    null_terminator: True
+
+  - name: DICT1_d7
+    index: 0xd7
+    text: |-
+      You were
+    null_terminator: True
+
+  - name: DICT1_d8
+    index: 0xd8
+    text: |-
+      back to\x20
+    null_terminator: True
+
+  - name: DICT1_d9
+    index: 0xd9
+    text: |-
+      grandson
+    null_terminator: True
+
+  - name: DICT1_da
+    index: 0xda
+    text: |
+      Got it?
+    null_terminator: True
+
+  - name: DICT1_db
+    index: 0xdb
+    text: |-
+      damage \up
+    null_terminator: True
+
+  - name: DICT1_dc
+    index: 0xdc
+    text: |2
+       \col(3)King
+    null_terminator: True
+
+  - name: DICT1_dd
+    index: 0xdd
+    text: |-
+      \col(3)Impa\col(0)
+    null_terminator: True
+
+  - name: DICT1_de
+    index: 0xde
+    text: |-
+      will\x20
+    null_terminator: True
+
+  - name: DICT1_df
+    index: 0xdf
+    text: |-
+      with\x20
+    null_terminator: True
+
+  - name: DICT1_e0
+    index: 0xe0
+    text: |-
+      water
+    null_terminator: True
+
+  - name: DICT1_e1
+    index: 0xe1
+    text: |2-
+       play
+    null_terminator: True
+
+  - name: DICT1_e2
+    index: 0xe2
+    text: |-
+      only\x20
+    null_terminator: True
+
+  - name: DICT1_e3
+    index: 0xe3
+    text: |-
+      I am\x20
+    null_terminator: True
+
+  - name: DICT1_e4
+    index: 0xe4
+    text: |-
+      Hey!\x20
+    null_terminator: True
+
+  - name: DICT1_e5
+    index: 0xe5
+    text: |2
+       get
+    null_terminator: True
+
+  - name: DICT1_e6
+    index: 0xe6
+    text: |
+      e!\stop
+    null_terminator: True
+
+  - name: DICT1_e7
+    index: 0xe7
+    text: |-
+      remain
+    null_terminator: True
+
+  - name: DICT1_e8
+    index: 0xe8
+    text: |-
+      Screen
+    null_terminator: True
+
+  - name: DICT1_e9
+    index: 0xe9
+    text: |-
+      attack
+    null_terminator: True
+
+  - name: DICT1_ea
+    index: 0xea
+    text: |-
+      ermaid
+    null_terminator: True
+
+  - name: DICT1_eb
+    index: 0xeb
+    text: |-
+      pprais
+    null_terminator: True
+
+  - name: DICT1_ec
+    index: 0xec
+    text: |-
+      Cheval
+    null_terminator: True
+
+  - name: DICT1_ed
+    index: 0xed
+    text: |2-
+       beast
+    null_terminator: True
+
+  - name: DICT1_ee
+    index: 0xee
+    text: |-
+      better
+    null_terminator: True
+
+  - name: DICT1_ef
+    index: 0xef
+    text: |-
+      I knew
+    null_terminator: True
+
+  - name: DICT1_f0
+    index: 0xf0
+    text: |-
+      I want
+    null_terminator: True
+
+  - name: DICT1_f1
+    index: 0xf1
+    text: |2-
+       young
+    null_terminator: True
+
+  - name: DICT1_f2
+    index: 0xf2
+    text: |-
+      ortune
+    null_terminator: True
+
+  - name: DICT1_f3
+    index: 0xf3
+    text: |2-
+       prize
+    null_terminator: True
+
+  - name: DICT1_f4
+    index: 0xf4
+    text: |-
+      I hope
+    null_terminator: True
+
+  - name: DICT1_f5
+    index: 0xf5
+    text: |2-
+       seems
+    null_terminator: True
+
+  - name: DICT1_f6
+    index: 0xf6
+    text: |-
+      let me
+    null_terminator: True
+
+  - name: DICT1_f7
+    index: 0xf7
+    text: |2-
+       hear
+    null_terminator: True
+
+  - name: DICT1_f8
+    index: 0xf8
+    text: |2-
+       is a
+    null_terminator: True
+
+  - name: DICT1_f9
+    index: 0xf9
+    text: |2-
+       this
+    null_terminator: True
+
+  - name: DICT1_fa
+    index: 0xfa
+    text: |-
+      Fairy
+    null_terminator: True
+
+  - name: DICT1_fb
+    index: 0xfb
+    text: |-
+      weird
+    null_terminator: True
+
+  - name: DICT1_fc
+    index: 0xfc
+    text: |2-
+       mean
+    null_terminator: True
+
+  - name: DICT1_fd
+    index: 0xfd
+    text: |2-
+       help
+    null_terminator: True
+
+  - name: DICT1_fe
+    index: 0xfe
+    text: |-
+      first
+    null_terminator: True
+
+  - name: DICT1_ff
+    index: 0xff
+    text: |-
+      Zora Seas
+    null_terminator: True
+
+- group: 0x02
+  data:
+  - name: DICT2_00
+    index: 0x00
+    text: |-
+      eedling\col(0)
+    null_terminator: True
+
+  - name: DICT2_01
+    index: 0x01
+    text: |2
+       \col(1)Gasha
+    null_terminator: True
+
+  - name: DICT2_02
+    index: 0x02
+    text: |-
+      ustache\col(0)
+    null_terminator: True
+
+  - name: DICT2_03
+    index: 0x03
+    text: |-
+      \col(3)Maple\col(0)
+    null_terminator: True
+
+  - name: DICT2_04
+    index: 0x04
+    text: |-
+      \col(3)Vasu\col(0)\x20
+    null_terminator: True
+
+  - name: DICT2_05
+    index: 0x05
+    text: |
+      t to
+    null_terminator: True
+
+  - name: DICT2_06
+    index: 0x06
+    text: |-
+      Maybe
+    null_terminator: True
+
+  - name: DICT2_07
+    index: 0x07
+    text: |
+      e of
+    null_terminator: True
+
+  - name: DICT2_08
+    index: 0x08
+    text: |2-
+       hero
+    null_terminator: True
+
+  - name: DICT2_09
+    index: 0x09
+    text: |-
+      power
+    null_terminator: True
+
+  - name: DICT2_0a
+    index: 0x0a
+    text: |-
+      ! The
+    null_terminator: True
+
+  - name: DICT2_0b
+    index: 0x0b
+    text: |-
+      carry
+    null_terminator: True
+
+  - name: DICT2_0c
+    index: 0x0c
+    text: |-
+      ding\x20
+    null_terminator: True
+
+  - name: DICT2_0d
+    index: 0x0d
+    text: |-
+      just\x20
+    null_terminator: True
+
+  - name: DICT2_0e
+    index: 0x0e
+    text: |2
+       our
+    null_terminator: True
+
+  - name: DICT2_0f
+    index: 0x0f
+    text: |2-
+       it to\x20
+    null_terminator: True
+
+  - name: DICT2_10
+    index: 0x10
+    text: |-
+      ncient\x20
+    null_terminator: True
+
+  - name: DICT2_11
+    index: 0x11
+    text: |-
+      I came\x20
+    null_terminator: True
+
+  - name: DICT2_12
+    index: 0x12
+    text: |-
+      promise
+    null_terminator: True
+
+  - name: DICT2_13
+    index: 0x13
+    text: |-
+      protect
+    null_terminator: True
+
+  - name: DICT2_14
+    index: 0x14
+    text: |-
+      started
+    null_terminator: True
+
+  - name: DICT2_15
+    index: 0x15
+    text: |-
+      anymore
+    null_terminator: True
+
+  - name: DICT2_16
+    index: 0x16
+    text: |-
+      veryone
+    null_terminator: True
+
+  - name: DICT2_17
+    index: 0x17
+    text: |2
+       while
+    null_terminator: True
+
+  - name: DICT2_18
+    index: 0x18
+    text: |-
+      oh hoh!
+    null_terminator: True
+
+  - name: DICT2_19
+    index: 0x19
+    text: |-
+      from\x20
+    null_terminator: True
+
+  - name: DICT2_1a
+    index: 0x1a
+    text: |-
+      e of\x20
+    null_terminator: True
+
+  - name: DICT2_1b
+    index: 0x1b
+    text: |2-
+       into
+    null_terminator: True
+
+  - name: DICT2_1c
+    index: 0x1c
+    text: |-
+      press
+    null_terminator: True
+
+  - name: DICT2_1d
+    index: 0x1d
+    text: |-
+      right
+    null_terminator: True
+
+  - name: DICT2_1e
+    index: 0x1e
+    text: |2-
+       grow
+    null_terminator: True
+
+  - name: DICT2_1f
+    index: 0x1f
+    text: |-
+      plant
+    null_terminator: True
+
+  - name: DICT2_20
+    index: 0x20
+    text: |-
+      ntroduction
+    null_terminator: True
+
+  - name: DICT2_21
+    index: 0x21
+    text: |-
+      Gar har har
+    null_terminator: True
+
+  - name: DICT2_22
+    index: 0x22
+    text: |-
+      Spin Attack
+    null_terminator: True
+
+  - name: DICT2_23
+    index: 0x23
+    text: |-
+      urrent
+    null_terminator: True
+
+  - name: DICT2_24
+    index: 0x24
+    text: |-
+      choing
+    null_terminator: True
+
+  - name: DICT2_25
+    index: 0x25
+    text: |-
+      , then
+    null_terminator: True
+
+  - name: DICT2_26
+    index: 0x26
+    text: |2
+       This
+    null_terminator: True
+
+  - name: DICT2_27
+    index: 0x27
+    text: |2
+       you,
+    null_terminator: True
+
+  - name: DICT2_28
+    index: 0x28
+    text: |-
+      appear
+    null_terminator: True
+
+  - name: DICT2_29
+    index: 0x29
+    text: |-
+      ing...
+    null_terminator: True
+
+  - name: DICT2_2a
+    index: 0x2a
+    text: |-
+      erhaps
+    null_terminator: True
+
+  - name: DICT2_2b
+    index: 0x2b
+    text: |-
+      No way
+    null_terminator: True
+
+  - name: DICT2_2c
+    index: 0x2c
+    text: |-
+      Hmm...
+    null_terminator: True
+
+  - name: DICT2_2d
+    index: 0x2d
+    text: |-
+      erfect
+    null_terminator: True
+
+  - name: DICT2_2e
+    index: 0x2e
+    text: |-
+      We're\x20
+    null_terminator: True
+
+  - name: DICT2_2f
+    index: 0x2f
+    text: |-
+      forest
+    null_terminator: True
+
+  - name: DICT2_30
+    index: 0x30
+    text: |-
+      Sorrow
+    null_terminator: True
+
+  - name: DICT2_31
+    index: 0x31
+    text: |-
+      lately
+    null_terminator: True
+
+  - name: DICT2_32
+    index: 0x32
+    text: |-
+      ring\x20
+    null_terminator: True
+
+  - name: DICT2_33
+    index: 0x33
+    text: |-
+      the \col(1)
+    null_terminator: True
+
+  - name: DICT2_34
+    index: 0x34
+    text: |2
+       are
+    null_terminator: True
+
+  - name: DICT2_35
+    index: 0x35
+    text: |-
+      king\x20
+    null_terminator: True
+
+  - name: DICT2_36
+    index: 0x36
+    text: |2-
+       you.
+    null_terminator: True
+
+  - name: DICT2_37
+    index: 0x37
+    text: |2-
+       true
+    null_terminator: True
+
+  - name: DICT2_38
+    index: 0x38
+    text: |-
+      very\x20
+    null_terminator: True
+
+  - name: DICT2_39
+    index: 0x39
+    text: |-
+      Great
+    null_terminator: True
+
+  - name: DICT2_3a
+    index: 0x3a
+    text: |-
+      shall
+    null_terminator: True
+
+  - name: DICT2_3b
+    index: 0x3b
+    text: |
+      's\col(0)
+    null_terminator: True
+
+  - name: DICT2_3c
+    index: 0x3c
+    text: |-
+      , too
+    null_terminator: True
+
+  - name: DICT2_3d
+    index: 0x3d
+    text: |-
+      heart
+    null_terminator: True
+
+  - name: DICT2_3e
+    index: 0x3e
+    text: |-
+      aster
+    null_terminator: True
+
+  - name: DICT2_3f
+    index: 0x3f
+    text: |2-
+       feel
+    null_terminator: True
+
+  - name: DICT2_40
+    index: 0x40
+    text: |-
+      round
+    null_terminator: True
+
+  - name: DICT2_41
+    index: 0x41
+    text: |2-
+       some
+    null_terminator: True
+
+  - name: DICT2_42
+    index: 0x42
+    text: |-
+      peace
+    null_terminator: True
+
+  - name: DICT2_43
+    index: 0x43
+    text: |-
+      Huh?\x20
+    null_terminator: True
+
+  - name: DICT2_44
+    index: 0x44
+    text: |2-
+       away
+    null_terminator: True
+
+  - name: DICT2_45
+    index: 0x45
+    text: |
+      ...
+    null_terminator: True
+
+  - name: DICT2_46
+    index: 0x46
+    text: |-
+      the\x20
+    null_terminator: True
+
+  - name: DICT2_47
+    index: 0x47
+    text: |2
+       to
+    null_terminator: True
+
+  - name: DICT2_48
+    index: 0x48
+    text: |2-
+       get\x20
+    null_terminator: True
+
+  - name: DICT2_49
+    index: 0x49
+    text: |2-
+       stop
+    null_terminator: True
+
+  - name: DICT2_4a
+    index: 0x4a
+    text: |2
+       can
+    null_terminator: True
+
+  - name: DICT2_4b
+    index: 0x4b
+    text: |-
+      come\x20
+    null_terminator: True
+
+  - name: DICT2_4c
+    index: 0x4c
+    text: |-
+      three
+    null_terminator: True
+
+  - name: DICT2_4d
+    index: 0x4d
+    text: |2-
+       Bomb
+    null_terminator: True
+
+  - name: DICT2_4e
+    index: 0x4e
+    text: |2-
+       much
+    null_terminator: True
+
+  - name: DICT2_4f
+    index: 0x4f
+    text: |-
+      aving
+    null_terminator: True
+
+  - name: DICT2_50
+    index: 0x50
+    text: |
+      ing!
+    null_terminator: True
+
+  - name: DICT2_51
+    index: 0x51
+    text: |2-
+       all\x20
+    null_terminator: True
+
+  - name: DICT2_52
+    index: 0x52
+    text: |-
+      alone
+    null_terminator: True
+
+  - name: DICT2_53
+    index: 0x53
+    text: |-
+      clean
+    null_terminator: True
+
+  - name: DICT2_54
+    index: 0x54
+    text: |-
+      Dance
+    null_terminator: True
+
+  - name: DICT2_55
+    index: 0x55
+    text: |-
+      dance
+    null_terminator: True
+
+  - name: DICT2_56
+    index: 0x56
+    text: |-
+      The\x20
+    null_terminator: True
+
+  - name: DICT2_57
+    index: 0x57
+    text: |2-
+       to\x20
+    null_terminator: True
+
+  - name: DICT2_58
+    index: 0x58
+    text: |
+      .\stop
+    null_terminator: True
+
+  - name: DICT2_59
+    index: 0x59
+    text: |
+      !\stop
+    null_terminator: True
+
+  - name: DICT2_5a
+    index: 0x5a
+    text: |
+      ing
+    null_terminator: True
+
+  - name: DICT2_5b
+    index: 0x5b
+    text: |-
+      you\x20
+    null_terminator: True
+
+  - name: DICT2_5c
+    index: 0x5c
+    text: |2
+       is
+    null_terminator: True
+
+  - name: DICT2_5d
+    index: 0x5d
+    text: |2-
+        \opt()Read \opt()Don't
+    null_terminator: True
+
+  - name: DICT2_5e
+    index: 0x5e
+    text: |2-
+       learn
+    null_terminator: True
+
+  - name: DICT2_5f
+    index: 0x5f
+    text: |2
+       been
+    null_terminator: True
+
+  - name: DICT2_60
+    index: 0x60
+    text: |-
+      Press\x20
+    null_terminator: True
+
+  - name: DICT2_61
+    index: 0x61
+    text: |2
+       than
+    null_terminator: True
+
+  - name: DICT2_62
+    index: 0x62
+    text: |-
+      create
+    null_terminator: True
+
+  - name: DICT2_63
+    index: 0x63
+    text: |2
+       must
+    null_terminator: True
+
+  - name: DICT2_64
+    index: 0x64
+    text: |-
+      vanish
+    null_terminator: True
+
+  - name: DICT2_65
+    index: 0x65
+    text: |2
+       need
+    null_terminator: True
+
+  - name: DICT2_66
+    index: 0x66
+    text: |-
+      matter
+    null_terminator: True
+
+  - name: DICT2_67
+    index: 0x67
+    text: |-
+      Shall\x20
+    null_terminator: True
+
+  - name: DICT2_68
+    index: 0x68
+    text: |2-
+       dream
+    null_terminator: True
+
+  - name: DICT2_69
+    index: 0x69
+    text: |-
+      reward
+    null_terminator: True
+
+  - name: DICT2_6a
+    index: 0x6a
+    text: |2-
+       since
+    null_terminator: True
+
+  - name: DICT2_6b
+    index: 0x6b
+    text: |-
+      ing\x20
+    null_terminator: True
+
+  - name: DICT2_6c
+    index: 0x6c
+    text: |2
+       in
+    null_terminator: True
+
+  - name: DICT2_6d
+    index: 0x6d
+    text: |-
+      find\x20
+    null_terminator: True
+
+  - name: DICT2_6e
+    index: 0x6e
+    text: |-
+      think
+    null_terminator: True
+
+  - name: DICT2_6f
+    index: 0x6f
+    text: |
+      very
+    null_terminator: True
+
+  - name: DICT2_70
+    index: 0x70
+    text: |-
+      sound
+    null_terminator: True
+
+  - name: DICT2_71
+    index: 0x71
+    text: |-
+      happy
+    null_terminator: True
+
+  - name: DICT2_72
+    index: 0x72
+    text: |-
+      Well,
+    null_terminator: True
+
+  - name: DICT2_73
+    index: 0x73
+    text: |-
+      teach
+    null_terminator: True
+
+  - name: DICT2_74
+    index: 0x74
+    text: |2-
+       done
+    null_terminator: True
+
+  - name: DICT2_75
+    index: 0x75
+    text: |-
+      child
+    null_terminator: True
+
+  - name: DICT2_76
+    index: 0x76
+    text: |-
+      Wooden\x20
+    null_terminator: True
+
+  - name: DICT2_77
+    index: 0x77
+    text: |-
+      heavens
+    null_terminator: True
+
+  - name: DICT2_78
+    index: 0x78
+    text: |-
+      collect
+    null_terminator: True
+
+  - name: DICT2_79
+    index: 0x79
+    text: |
+      Oracle
+    null_terminator: True
+
+  - name: DICT2_7a
+    index: 0x7a
+    text: |-
+      Not bad
+    null_terminator: True
+
+  - name: DICT2_7b
+    index: 0x7b
+    text: |-
+      kind of
+    null_terminator: True
+
+  - name: DICT2_7c
+    index: 0x7c
+    text: |2
+       costs
+    null_terminator: True
+
+  - name: DICT2_7d
+    index: 0x7d
+    text: |
+      rules?
+    null_terminator: True
+
+  - name: DICT2_7e
+    index: 0x7e
+    text: |-
+      volcano
+    null_terminator: True
+
+  - name: DICT2_7f
+    index: 0x7f
+    text: |
+      \col(0), an
+    null_terminator: True
+
+  - name: DICT2_80
+    index: 0x80
+    text: |-
+      \col(1)Ember
+    null_terminator: True
+
+  - name: DICT2_81
+    index: 0x81
+    text: |-
+      owder\col(0)
+    null_terminator: True
+
+  - name: DICT2_82
+    index: 0x82
+    text: |-
+      Lynna City
+    null_terminator: True
+
+  - name: DICT2_83
+    index: 0x83
+    text: |2-
+       ha ha ha!
+    null_terminator: True
+
+  - name: DICT2_84
+    index: 0x84
+    text: |-
+      Gasha Seed
+    null_terminator: True
+
+  - name: DICT2_85
+    index: 0x85
+    text: |-
+      ked floors
+    null_terminator: True
+
+  - name: DICT2_86
+    index: 0x86
+    text: |-
+      adventur
+    null_terminator: True
+
+  - name: DICT2_87
+    index: 0x87
+    text: |-
+      distance
+    null_terminator: True
+
+  - name: DICT2_88
+    index: 0x88
+    text: |-
+      suddenly
+    null_terminator: True
+
+  - name: DICT2_89
+    index: 0x89
+    text: |2-
+       quickly
+    null_terminator: True
+
+  - name: DICT2_8a
+    index: 0x8a
+    text: |-
+      practice
+    null_terminator: True
+
+  - name: DICT2_8b
+    index: 0x8b
+    text: |-
+      ancestor
+    null_terminator: True
+
+  - name: DICT2_8c
+    index: 0x8c
+    text: |2-
+       \col(1)chart\col(0)
+    null_terminator: True
+
+  - name: DICT2_8d
+    index: 0x8d
+    text: |-
+      eather\col(0)
+    null_terminator: True
+
+  - name: DICT2_8e
+    index: 0x8e
+    text: |-
+      \col(1)book\col(0)
+    null_terminator: True
+
+  - name: DICT2_8f
+    index: 0x8f
+    text: |-
+      \col(1)tune\col(0)
+    null_terminator: True
+
+  - name: DICT2_90
+    index: 0x90
+    text: |2
+       of
+    null_terminator: True
+
+  - name: DICT2_91
+    index: 0x91
+    text: |
+      \col(0)!
+    null_terminator: True
+
+  - name: DICT2_92
+    index: 0x92
+    text: |-
+      You\x20
+    null_terminator: True
+
+  - name: DICT2_93
+    index: 0x93
+    text: |-
+      place
+    null_terminator: True
+
+  - name: DICT2_94
+    index: 0x94
+    text: |-
+      again
+    null_terminator: True
+
+  - name: DICT2_95
+    index: 0x95
+    text: |-
+      as a\x20
+    null_terminator: True
+
+  - name: DICT2_96
+    index: 0x96
+    text: |-
+      I see
+    null_terminator: True
+
+  - name: DICT2_97
+    index: 0x97
+    text: |2-
+       were
+    null_terminator: True
+
+  - name: DICT2_98
+    index: 0x98
+    text: |2-
+       it's
+    null_terminator: True
+
+  - name: DICT2_99
+    index: 0x99
+    text: |-
+      House
+    null_terminator: True
+
+  - name: DICT2_9a
+    index: 0x9a
+    text: |-
+      could
+    null_terminator: True
+
+  - name: DICT2_9b
+    index: 0x9b
+    text: |
+      , so
+    null_terminator: True
+
+  - name: DICT2_9c
+    index: 0x9c
+    text: |-
+      give\x20
+    null_terminator: True
+
+  - name: DICT2_9d
+    index: 0x9d
+    text: |2-
+       I am
+    null_terminator: True
+
+  - name: DICT2_9e
+    index: 0x9e
+    text: |-
+      and\x20
+    null_terminator: True
+
+  - name: DICT2_9f
+    index: 0x9f
+    text: |-
+      But\x20
+    null_terminator: True
+
+  - name: DICT2_a0
+    index: 0xa0
+    text: |
+      ?\stop
+    null_terminator: True
+
+  - name: DICT2_a1
+    index: 0xa1
+    text: |-
+      I'm\x20
+    null_terminator: True
+
+  - name: DICT2_a2
+    index: 0xa2
+    text: |-
+      here
+    null_terminator: True
+
+  - name: DICT2_a3
+    index: 0xa3
+    text: |2-
+       now
+    null_terminator: True
+
+  - name: DICT2_a4
+    index: 0xa4
+    text: |2-
+       out
+    null_terminator: True
+
+  - name: DICT2_a5
+    index: 0xa5
+    text: |2-
+       is\x20
+    null_terminator: True
+
+  - name: DICT2_a6
+    index: 0xa6
+    text: |-
+      back\x20
+    null_terminator: True
+
+  - name: DICT2_a7
+    index: 0xa7
+    text: |2-
+       are\x20
+    null_terminator: True
+
+  - name: DICT2_a8
+    index: 0xa8
+    text: |-
+      sleep
+    null_terminator: True
+
+  - name: DICT2_a9
+    index: 0xa9
+    text: |
+      even
+    null_terminator: True
+
+  - name: DICT2_aa
+    index: 0xaa
+    text: |
+      take
+    null_terminator: True
+
+  - name: DICT2_ab
+    index: 0xab
+    text: |-
+      sword
+    null_terminator: True
+
+  - name: DICT2_ac
+    index: 0xac
+    text: |-
+      hadow
+    null_terminator: True
+
+  - name: DICT2_ad
+    index: 0xad
+    text: |-
+      some\x20
+    null_terminator: True
+
+  - name: DICT2_ae
+    index: 0xae
+    text: |-
+      ready
+    null_terminator: True
+
+  - name: DICT2_af
+    index: 0xaf
+    text: |2-
+       meet
+    null_terminator: True
+
+  - name: DICT2_b0
+    index: 0xb0
+    text: |2-
+       live
+    null_terminator: True
+
+  - name: DICT2_b1
+    index: 0xb1
+    text: |-
+      cause
+    null_terminator: True
+
+  - name: DICT2_b2
+    index: 0xb2
+    text: |-
+      Sorry
+    null_terminator: True
+
+  - name: DICT2_b3
+    index: 0xb3
+    text: |-
+      Good\x20
+    null_terminator: True
+
+  - name: DICT2_b4
+    index: 0xb4
+    text: |-
+      trees
+    null_terminator: True
+
+  - name: DICT2_b5
+    index: 0xb5
+    text: |-
+      build
+    null_terminator: True
+
+  - name: DICT2_b6
+    index: 0xb6
+    text: |-
+      stuff
+    null_terminator: True
+
+  - name: DICT2_b7
+    index: 0xb7
+    text: |
+      make
+    null_terminator: True
+
+  - name: DICT2_b8
+    index: 0xb8
+    text: |-
+      reach
+    null_terminator: True
+
+  - name: DICT2_b9
+    index: 0xb9
+    text: |-
+      quest
+    null_terminator: True
+
+  - name: DICT2_ba
+    index: 0xba
+    text: |2-
+       once
+    null_terminator: True
+
+  - name: DICT2_bb
+    index: 0xbb
+    text: |-
+      which
+    null_terminator: True
+
+  - name: DICT2_bc
+    index: 0xbc
+    text: |2
+       my
+    null_terminator: True
+
+  - name: DICT2_bd
+    index: 0xbd
+    text: |
+      Witch Syrup's
+    null_terminator: True
+
+  - name: DICT2_be
+    index: 0xbe
+    text: |2-
+       speak
+    null_terminator: True
+
+  - name: DICT2_bf
+    index: 0xbf
+    text: |-
+      button
+    null_terminator: True
+
+  - name: DICT2_c0
+    index: 0xc0
+    text: |-
+      ibrary
+    null_terminator: True
+
+  - name: DICT2_c1
+    index: 0xc1
+    text: |2
+       hold
+    null_terminator: True
+
+  - name: DICT2_c2
+    index: 0xc2
+    text: |-
+      You're
+    null_terminator: True
+
+  - name: DICT2_c3
+    index: 0xc3
+    text: |-
+      Listen
+    null_terminator: True
+
+  - name: DICT2_c4
+    index: 0xc4
+    text: |-
+      Palace
+    null_terminator: True
+
+  - name: DICT2_c5
+    index: 0xc5
+    text: |-
+      Why do
+    null_terminator: True
+
+  - name: DICT2_c6
+    index: 0xc6
+    text: |-
+      You'll
+    null_terminator: True
+
+  - name: DICT2_c7
+    index: 0xc7
+    text: |-
+      almost
+    null_terminator: True
+
+  - name: DICT2_c8
+    index: 0xc8
+    text: |-
+      My son
+    null_terminator: True
+
+  - name: DICT2_c9
+    index: 0xc9
+    text: |-
+      strong
+    null_terminator: True
+
+  - name: DICT2_ca
+    index: 0xca
+    text: |-
+      rhythm
+    null_terminator: True
+
+  - name: DICT2_cb
+    index: 0xcb
+    text: |-
+      screen
+    null_terminator: True
+
+  - name: DICT2_cc
+    index: 0xcc
+    text: |-
+      ings\col(0)
+    null_terminator: True
+
+  - name: DICT2_cd
+    index: 0xcd
+    text: |-
+      Ambi\col(0)
+    null_terminator: True
+
+  - name: DICT2_ce
+    index: 0xce
+    text: |2-
+       of\x20
+    null_terminator: True
+
+  - name: DICT2_cf
+    index: 0xcf
+    text: |-
+      ight
+    null_terminator: True
+
+  - name: DICT2_d0
+    index: 0xd0
+    text: |-
+      ...\x20
+    null_terminator: True
+
+  - name: DICT2_d1
+    index: 0xd1
+    text: |
+      \col(0)?
+    null_terminator: True
+
+  - name: DICT2_d2
+    index: 0xd2
+    text: |-
+      all\x20
+    null_terminator: True
+
+  - name: DICT2_d3
+    index: 0xd3
+    text: |-
+      Time Hole
+    null_terminator: True
+
+  - name: DICT2_d4
+    index: 0xd4
+    text: |-
+      Maku Tree
+    null_terminator: True
+
+  - name: DICT2_d5
+    index: 0xd5
+    text: |-
+      wonderful
+    null_terminator: True
+
+  - name: DICT2_d6
+    index: 0xd6
+    text: |-
+      Wanna try
+    null_terminator: True
+
+  - name: DICT2_d7
+    index: 0xd7
+    text: |-
+      that
+    null_terminator: True
+
+  - name: DICT2_d8
+    index: 0xd8
+    text: |-
+      tion
+    null_terminator: True
+
+  - name: DICT2_d9
+    index: 0xd9
+    text: |-
+      can\x20
+    null_terminator: True
+
+  - name: DICT2_da
+    index: 0xda
+    text: |2-
+       it!
+    null_terminator: True
+
+  - name: DICT2_db
+    index: 0xdb
+    text: |-
+      over
+    null_terminator: True
+
+  - name: DICT2_dc
+    index: 0xdc
+    text: |2-
+       it\x20
+    null_terminator: True
+
+  - name: DICT2_dd
+    index: 0xdd
+    text: |-
+      time
+    null_terminator: True
+
+  - name: DICT2_de
+    index: 0xde
+    text: |2-
+       one
+    null_terminator: True
+
+  - name: DICT2_df
+    index: 0xdf
+    text: |
+      move
+    null_terminator: True
+
+  - name: DICT2_e0
+    index: 0xe0
+    text: |-
+      hield
+    null_terminator: True
+
+  - name: DICT2_e1
+    index: 0xe1
+    text: |-
+      ! Now
+    null_terminator: True
+
+  - name: DICT2_e2
+    index: 0xe2
+    text: |-
+      start
+    null_terminator: True
+
+  - name: DICT2_e3
+    index: 0xe3
+    text: |-
+      more\x20
+    null_terminator: True
+
+  - name: DICT2_e4
+    index: 0xe4
+    text: |-
+      trade
+    null_terminator: True
+
+  - name: DICT2_e5
+    index: 0xe5
+    text: |-
+      ed me
+    null_terminator: True
+
+  - name: DICT2_e6
+    index: 0xe6
+    text: |-
+      First
+    null_terminator: True
+
+  - name: DICT2_e7
+    index: 0xe7
+    text: |-
+      sn't\x20
+    null_terminator: True
+
+  - name: DICT2_e8
+    index: 0xe8
+    text: |2
+       she
+    null_terminator: True
+
+  - name: DICT2_e9
+    index: 0xe9
+    text: |
+      find
+    null_terminator: True
+
+  - name: DICT2_ea
+    index: 0xea
+    text: |-
+      offer
+    null_terminator: True
+
+  - name: DICT2_eb
+    index: 0xeb
+    text: |-
+      never
+    null_terminator: True
+
+  - name: DICT2_ec
+    index: 0xec
+    text: |-
+      Let's
+    null_terminator: True
+
+  - name: DICT2_ed
+    index: 0xed
+    text: |2-
+       you
+    null_terminator: True
+
+  - name: DICT2_ee
+    index: 0xee
+    text: |-
+      help
+    null_terminator: True
+
+  - name: DICT2_ef
+    index: 0xef
+    text: |2-
+       my\x20
+    null_terminator: True
+
+  - name: DICT2_f0
+    index: 0xf0
+    text: |2
+       it
+    null_terminator: True
+
+  - name: DICT2_f1
+    index: 0xf1
+    text: |-
+      tell
+    null_terminator: True
+
+  - name: DICT2_f2
+    index: 0xf2
+    text: |
+      throne room.
+    null_terminator: True
+
+  - name: DICT2_f3
+    index: 0xf3
+    text: |-
+      name
+    null_terminator: True
+
+  - name: DICT2_f4
+    index: 0xf4
+    text: |-
+      know
+    null_terminator: True
+
+  - name: DICT2_f5
+    index: 0xf5
+    text: |-
+      this
+    null_terminator: True
+
+  - name: DICT2_f6
+    index: 0xf6
+    text: |2-
+       in\x20
+    null_terminator: True
+
+  - name: DICT2_f7
+    index: 0xf7
+    text: |-
+      has\x20
+    null_terminator: True
+
+  - name: DICT2_f8
+    index: 0xf8
+    text: |-
+      produce
+    null_terminator: True
+
+  - name: DICT2_f9
+    index: 0xf9
+    text: |-
+      Ricky's
+    null_terminator: True
+
+  - name: DICT2_fa
+    index: 0xfa
+    text: |-
+      Gallery
+    null_terminator: True
+
+  - name: DICT2_fb
+    index: 0xfb
+    text: |-
+      healthy
+    null_terminator: True
+
+  - name: DICT2_fc
+    index: 0xfc
+    text: |-
+      eft and
+    null_terminator: True
+
+  - name: DICT2_fd
+    index: 0xfd
+    text: |-
+      ctually
+    null_terminator: True
+
+  - name: DICT2_fe
+    index: 0xfe
+    text: |-
+      Goodbye
+    null_terminator: True
+
+  - name: DICT2_ff
+    index: 0xff
+    text: |-
+      Heh heh
+    null_terminator: True
+
+- group: 0x03
+  data:
+  - name: DICT3_00
+    index: 0x00
+    text: |-
+      , like,
+    null_terminator: True
+
+  - name: DICT3_01
+    index: 0x01
+    text: |2
+       Thank
+    null_terminator: True
+
+  - name: DICT3_02
+    index: 0x02
+    text: |-
+      explain
+    null_terminator: True
+
+  - name: DICT3_03
+    index: 0x03
+    text: |-
+      destroy
+    null_terminator: True
+
+  - name: DICT3_04
+    index: 0x04
+    text: |-
+      believe
+    null_terminator: True
+
+  - name: DICT3_05
+    index: 0x05
+    text: |-
+      \col(1)Magic
+    null_terminator: True
+
+  - name: DICT3_06
+    index: 0x06
+    text: |-
+      Zelda\col(0)
+    null_terminator: True
+
+  - name: DICT3_07
+    index: 0x07
+    text: |-
+      \col(3)Lynna
+    null_terminator: True
+
+  - name: DICT3_08
+    index: 0x08
+    text: |2
+       is:\stop
+    null_terminator: True
+
+  - name: DICT3_09
+    index: 0x09
+    text: |-
+      Zora
+    null_terminator: True
+
+  - name: DICT3_0a
+    index: 0x0a
+    text: |-
+      but\x20
+    null_terminator: True
+
+  - name: DICT3_0b
+    index: 0x0b
+    text: |-
+      wait
+    null_terminator: True
+
+  - name: DICT3_0c
+    index: 0x0c
+    text: |-
+      pirit
+    null_terminator: True
+
+  - name: DICT3_0d
+    index: 0x0d
+    text: |-
+      choes
+    null_terminator: True
+
+  - name: DICT3_0e
+    index: 0x0e
+    text: |-
+      found
+    null_terminator: True
+
+  - name: DICT3_0f
+    index: 0x0f
+    text: |-
+      Sword
+    null_terminator: True
+
+  - name: DICT3_10
+    index: 0x10
+    text: |-
+      their
+    null_terminator: True
+
+  - name: DICT3_11
+    index: 0x11
+    text: |-
+      items
+    null_terminator: True
+
+  - name: DICT3_12
+    index: 0x12
+    text: |-
+      nergy
+    null_terminator: True
+
+  - name: DICT3_13
+    index: 0x13
+    text: |2-
+       fine
+    null_terminator: True
+
+  - name: DICT3_14
+    index: 0x14
+    text: |-
+      check
+    null_terminator: True
+
+  - name: DICT3_15
+    index: 0x15
+    text: |2-
+       fish
+    null_terminator: True
+
+  - name: DICT3_16
+    index: 0x16
+    text: |2-
+       flow
+    null_terminator: True
+
+  - name: DICT3_17
+    index: 0x17
+    text: |-
+      Elder
+    null_terminator: True
+
+  - name: DICT3_18
+    index: 0x18
+    text: |-
+      They\x20
+    null_terminator: True
+
+  - name: DICT3_19
+    index: 0x19
+    text: |-
+      hose\x20
+    null_terminator: True
+
+  - name: DICT3_1a
+    index: 0x1a
+    text: |-
+      Ready
+    null_terminator: True
+
+  - name: DICT3_1b
+    index: 0x1b
+    text: |-
+      Blue\x20
+    null_terminator: True
+
+  - name: DICT3_1c
+    index: 0x1c
+    text: |-
+      shape
+    null_terminator: True
+
+  - name: DICT3_1d
+    index: 0x1d
+    text: |-
+      clear
+    null_terminator: True
+
+  - name: DICT3_1e
+    index: 0x1e
+    text: |
+      give
+    null_terminator: True
+
+  - name: DICT3_1f
+    index: 0x1f
+    text: |-
+      enter
+    null_terminator: True
+
+  - name: DICT3_20
+    index: 0x20
+    text: |2
+       any
+    null_terminator: True
+
+  - name: DICT3_21
+    index: 0x21
+    text: |2-
+       hard
+    null_terminator: True
+
+  - name: DICT3_22
+    index: 0x22
+    text: |-
+      Game\x20
+    null_terminator: True
+
+  - name: DICT3_23
+    index: 0x23
+    text: |2-
+       late
+    null_terminator: True
+
+  - name: DICT3_24
+    index: 0x24
+    text: |-
+      these
+    null_terminator: True
+
+  - name: DICT3_25
+    index: 0x25
+    text: |-
+      ren't
+    null_terminator: True
+
+  - name: DICT3_26
+    index: 0x26
+    text: |-
+      cable
+    null_terminator: True
+
+  - name: DICT3_27
+    index: 0x27
+    text: |-
+      Now\x20
+    null_terminator: True
+
+  - name: DICT3_28
+    index: 0x28
+    text: |-
+      are\x20
+    null_terminator: True
+
+  - name: DICT3_29
+    index: 0x29
+    text: |-
+      hear
+    null_terminator: True
+
+  - name: DICT3_2a
+    index: 0x2a
+    text: |-
+      for\x20
+    null_terminator: True
+
+  - name: DICT3_2b
+    index: 0x2b
+    text: |-
+      atch
+    null_terminator: True
+
+  - name: DICT3_2c
+    index: 0x2c
+    text: |2
+       on
+    null_terminator: True
+
+  - name: DICT3_2d
+    index: 0x2d
+    text: |2-
+       it.
+    null_terminator: True
+
+  - name: DICT3_2e
+    index: 0x2e
+    text: |-
+      one\x20
+    null_terminator: True
+
+  - name: DICT3_2f
+    index: 0x2f
+    text: |
+      !!!
+    null_terminator: True
+
+  - name: DICT3_30
+    index: 0x30
+    text: |-
+      land
+    null_terminator: True
+
+  - name: DICT3_31
+    index: 0x31
+    text: |-
+      I've
+    null_terminator: True
+
+  - name: DICT3_32
+    index: 0x32
+    text: |-
+      Seed Shooter
+    null_terminator: True
+
+  - name: DICT3_33
+    index: 0x33
+    text: |
+      Know-It-All
+    null_terminator: True
+
+  - name: DICT3_34
+    index: 0x34
+    text: |-
+      \col(3)Labrynna\col(4)
+    null_terminator: True
+
+  - name: DICT3_35
+    index: 0x35
+    text: |-
+      ternal
+    null_terminator: True
+
+  - name: DICT3_36
+    index: 0x36
+    text: |2
+       only
+    null_terminator: True
+
+  - name: DICT3_37
+    index: 0x37
+    text: |-
+      acred\x20
+    null_terminator: True
+
+  - name: DICT3_38
+    index: 0x38
+    text: |-
+      ystery
+    null_terminator: True
+
+  - name: DICT3_39
+    index: 0x39
+    text: |-
+      gotten
+    null_terminator: True
+
+  - name: DICT3_3a
+    index: 0x3a
+    text: |-
+      hidden
+    null_terminator: True
+
+  - name: DICT3_3b
+    index: 0x3b
+    text: |-
+      to try
+    null_terminator: True
+
+  - name: DICT3_3c
+    index: 0x3c
+    text: |-
+      such a
+    null_terminator: True
+
+  - name: DICT3_3d
+    index: 0x3d
+    text: |-
+      Ambi's
+    null_terminator: True
+
+  - name: DICT3_3e
+    index: 0x3e
+    text: |-
+      Moblin
+    null_terminator: True
+
+  - name: DICT3_3f
+    index: 0x3f
+    text: |-
+      eweler
+    null_terminator: True
+
+  - name: DICT3_40
+    index: 0x40
+    text: |-
+      filled
+    null_terminator: True
+
+  - name: DICT3_41
+    index: 0x41
+    text: |-
+      e goes
+    null_terminator: True
+
+  - name: DICT3_42
+    index: 0x42
+    text: |-
+      little
+    null_terminator: True
+
+  - name: DICT3_43
+    index: 0x43
+    text: |-
+      anyone
+    null_terminator: True
+
+  - name: DICT3_44
+    index: 0x44
+    text: |-
+      hungry
+    null_terminator: True
+
+  - name: DICT3_45
+    index: 0x45
+    text: |-
+      Silver
+    null_terminator: True
+
+  - name: DICT3_46
+    index: 0x46
+    text: |-
+      animal
+    null_terminator: True
+
+  - name: DICT3_47
+    index: 0x47
+    text: |-
+      didn't
+    null_terminator: True
+
+  - name: DICT3_48
+    index: 0x48
+    text: |-
+      normal
+    null_terminator: True
+
+  - name: DICT3_49
+    index: 0x49
+    text: |-
+      bridge
+    null_terminator: True
+
+  - name: DICT3_4a
+    index: 0x4a
+    text: |-
+      choose
+    null_terminator: True
+
+  - name: DICT3_4b
+    index: 0x4b
+    text: |-
+      filthy
+    null_terminator: True
+
+  - name: DICT3_4c
+    index: 0x4c
+    text: |-
+      ower\col(0)
+    null_terminator: True
+
+  - name: DICT3_4d
+    index: 0x4d
+    text: |-
+      \col(1)Book
+    null_terminator: True
+
+  - name: DICT3_4e
+    index: 0x4e
+    text: |-
+      will
+    null_terminator: True
+
+  - name: DICT3_4f
+    index: 0x4f
+    text: |-
+      eeds
+    null_terminator: True
+
+  - name: DICT3_50
+    index: 0x50
+    text: |-
+      open
+    null_terminator: True
+
+  - name: DICT3_51
+    index: 0x51
+    text: |-
+      look
+    null_terminator: True
+
+  - name: DICT3_52
+    index: 0x52
+    text: |-
+      east
+    null_terminator: True
+
+  - name: DICT3_53
+    index: 0x53
+    text: |2-
+       me!
+    null_terminator: True
+
+  - name: DICT3_54
+    index: 0x54
+    text: |2-
+        \opt()
+    null_terminator: True
+
+  - name: DICT3_55
+    index: 0x55
+    text: |2-
+       for
+    null_terminator: True
+
+  - name: DICT3_56
+    index: 0x56
+    text: |-
+      with
+    null_terminator: True
+
+  - name: DICT3_57
+    index: 0x57
+    text: |-
+      get\x20
+    null_terminator: True
+
+  - name: DICT3_58
+    index: 0x58
+    text: |-
+      them
+    null_terminator: True
+
+  - name: DICT3_59
+    index: 0x59
+    text: |-
+      love
+    null_terminator: True
+
+  - name: DICT3_5a
+    index: 0x5a
+    text: |2
+       if
+    null_terminator: True
+
+  - name: DICT3_5b
+    index: 0x5b
+    text: |-
+      move
+    null_terminator: True
+
+  - name: DICT3_5c
+    index: 0x5c
+    text: |-
+      many
+    null_terminator: True
+
+  - name: DICT3_5d
+    index: 0x5d
+    text: |-
+      hero
+    null_terminator: True
+
+  - name: DICT3_5e
+    index: 0x5e
+    text: |2-
+       can
+    null_terminator: True
+
+  - name: DICT3_5f
+    index: 0x5f
+    text: |-
+      What
+    null_terminator: True
+
+  - name: DICT3_60
+    index: 0x60
+    text: |-
+      come
+    null_terminator: True
+
+  - name: DICT3_61
+    index: 0x61
+    text: |-
+      must
+    null_terminator: True
+
+  - name: DICT3_62
+    index: 0x62
+    text: |2
+       me
+    null_terminator: True
+
+  - name: DICT3_63
+    index: 0x63
+    text: |-
+      what
+    null_terminator: True
+
+  - name: DICT3_64
+    index: 0x64
+    text: |2-
+       so\x20
+    null_terminator: True
+
+  - name: DICT3_65
+    index: 0x65
+    text: |
+      . I
+    null_terminator: True
+
+  - name: DICT3_66
+    index: 0x66
+    text: |-
+      strength
+    null_terminator: True
+
+  - name: DICT3_67
+    index: 0x67
+    text: |-
+      made me\x20
+    null_terminator: True
+
+  - name: DICT3_68
+    index: 0x68
+    text: |-
+      delicate
+    null_terminator: True
+
+  - name: DICT3_69
+    index: 0x69
+    text: |-
+      romantic
+    null_terminator: True
+
+  - name: DICT3_6a
+    index: 0x6a
+    text: |-
+      everyday
+    null_terminator: True
+
+  - name: DICT3_6b
+    index: 0x6b
+    text: |-
+      electric
+    null_terminator: True
+
+  - name: DICT3_6c
+    index: 0x6c
+    text: |-
+      stairway
+    null_terminator: True
+
+  - name: DICT3_6d
+    index: 0x6d
+    text: |-
+      ring
+    null_terminator: True
+
+  - name: DICT3_6e
+    index: 0x6e
+    text: |-
+      lock
+    null_terminator: True
+
+  - name: DICT3_6f
+    index: 0x6f
+    text: |-
+      hen\x20
+    null_terminator: True
+
+  - name: DICT3_70
+    index: 0x70
+    text: |-
+      want
+    null_terminator: True
+
+  - name: DICT3_71
+    index: 0x71
+    text: |-
+      be a
+    null_terminator: True
+
+  - name: DICT3_72
+    index: 0x72
+    text: |-
+      ave\x20
+    null_terminator: True
+
+  - name: DICT3_73
+    index: 0x73
+    text: |
+      not
+    null_terminator: True
+
+  - name: DICT3_74
+    index: 0x74
+    text: |-
+      long
+    null_terminator: True
+
+  - name: DICT3_75
+    index: 0x75
+    text: |
+      get
+    null_terminator: True
+
+  - name: DICT3_76
+    index: 0x76
+    text: |
+      \col(0).
+    null_terminator: True
+
+  - name: DICT3_77
+    index: 0x77
+    text: |-
+      ears\x20
+    null_terminator: True
+
+  - name: DICT3_78
+    index: 0x78
+    text: |-
+      Flame
+    null_terminator: True
+
+  - name: DICT3_79
+    index: 0x79
+    text: |-
+      throw
+    null_terminator: True
+
+  - name: DICT3_7a
+    index: 0x7a
+    text: |-
+      witch
+    null_terminator: True
+
+  - name: DICT3_7b
+    index: 0x7b
+    text: |-
+      smell
+    null_terminator: True
+
+  - name: DICT3_7c
+    index: 0x7c
+    text: |-
+      Nayru
+    null_terminator: True
+
+  - name: DICT3_7d
+    index: 0x7d
+    text: |-
+      would
+    null_terminator: True
+
+  - name: DICT3_7e
+    index: 0x7e
+    text: |-
+      sense
+    null_terminator: True
+
+  - name: DICT3_7f
+    index: 0x7f
+    text: |-
+      to do
+    null_terminator: True
+
+  - name: DICT3_80
+    index: 0x80
+    text: |-
+      iddle
+    null_terminator: True
+
+  - name: DICT3_81
+    index: 0x81
+    text: |2-
+       hole
+    null_terminator: True
+
+  - name: DICT3_82
+    index: 0x82
+    text: |-
+      south
+    null_terminator: True
+
+  - name: DICT3_83
+    index: 0x83
+    text: |2-
+       cool
+    null_terminator: True
+
+  - name: DICT3_84
+    index: 0x84
+    text: |-
+      visit
+    null_terminator: True
+
+  - name: DICT3_85
+    index: 0x85
+    text: |-
+      worry
+    null_terminator: True
+
+  - name: DICT3_86
+    index: 0x86
+    text: |-
+      s all
+    null_terminator: True
+
+  - name: DICT3_87
+    index: 0x87
+    text: |-
+      today
+    null_terminator: True
+
+  - name: DICT3_88
+    index: 0x88
+    text: |-
+      prize
+    null_terminator: True
+
+  - name: DICT3_89
+    index: 0x89
+    text: |-
+      begin
+    null_terminator: True
+
+  - name: DICT3_8a
+    index: 0x8a
+    text: |2-
+       kid!
+    null_terminator: True
+
+  - name: DICT3_8b
+    index: 0x8b
+    text: |-
+      Hey,\x20
+    null_terminator: True
+
+  - name: DICT3_8c
+    index: 0x8c
+    text: |-
+      back
+    null_terminator: True
+
+  - name: DICT3_8d
+    index: 0x8d
+    text: |2-
+       see
+    null_terminator: True
+
+  - name: DICT3_8e
+    index: 0x8e
+    text: |2-
+       sea
+    null_terminator: True
+
+  - name: DICT3_8f
+    index: 0x8f
+    text: |-
+      make
+    null_terminator: True
+
+  - name: DICT3_90
+    index: 0x90
+    text: |
+      one
+    null_terminator: True
+
+  - name: DICT3_91
+    index: 0x91
+    text: |
+      ! I
+    null_terminator: True
+
+  - name: DICT3_92
+    index: 0x92
+    text: |-
+      rest
+    null_terminator: True
+
+  - name: DICT3_93
+    index: 0x93
+    text: |-
+      llow
+    null_terminator: True
+
+  - name: DICT3_94
+    index: 0x94
+    text: |-
+      good
+    null_terminator: True
+
+  - name: DICT3_95
+    index: 0x95
+    text: |-
+      \col(0)!\x20
+    null_terminator: True
+
+  - name: DICT3_96
+    index: 0x96
+    text: |-
+      Doggie Mask
+    null_terminator: True
+
+  - name: DICT3_97
+    index: 0x97
+    text: |-
+      How\x20
+    null_terminator: True
+
+  - name: DICT3_98
+    index: 0x98
+    text: |-
+      ness
+    null_terminator: True
+
+  - name: DICT3_99
+    index: 0x99
+    text: |
+      ave
+    null_terminator: True
+
+  - name: DICT3_9a
+    index: 0x9a
+    text: |-
+      body
+    null_terminator: True
+
+  - name: DICT3_9b
+    index: 0x9b
+    text: |-
+      care
+    null_terminator: True
+
+  - name: DICT3_9c
+    index: 0x9c
+    text: |-
+      own\x20
+    null_terminator: True
+
+  - name: DICT3_9d
+    index: 0x9d
+    text: |-
+      Oh!\x20
+    null_terminator: True
+
+  - name: DICT3_9e
+    index: 0x9e
+    text: |-
+      I'll
+    null_terminator: True
+
+  - name: DICT3_9f
+    index: 0x9f
+    text: |-
+      Some
+    null_terminator: True
+
+  - name: DICT3_a0
+    index: 0xa0
+    text: |-
+      need
+    null_terminator: True
+
+  - name: DICT3_a1
+    index: 0xa1
+    text: |-
+      Come
+    null_terminator: True
+
+  - name: DICT3_a2
+    index: 0xa2
+    text: |-
+      e'll
+    null_terminator: True
+
+  - name: DICT3_a3
+    index: 0xa3
+    text: |-
+      a \col(1)
+    null_terminator: True
+
+  - name: DICT3_a4
+    index: 0xa4
+    text: |
+      \col(0),
+    null_terminator: True
+
+  - name: DICT3_a5
+    index: 0xa5
+    text: |-
+      cent
+    null_terminator: True
+
+  - name: DICT3_a6
+    index: 0xa6
+    text: |-
+      your
+    null_terminator: True
+
+  - name: DICT3_a7
+    index: 0xa7
+    text: |-
+      stop
+    null_terminator: True
+
+  - name: DICT3_a8
+    index: 0xa8
+    text: |-
+      play
+    null_terminator: True
+
+  - name: DICT3_a9
+    index: 0xa9
+    text: |-
+      e's\x20
+    null_terminator: True
+
+  - name: DICT3_aa
+    index: 0xaa
+    text: |-
+      was\x20
+    null_terminator: True
+
+  - name: DICT3_ab
+    index: 0xab
+    text: |-
+      left
+    null_terminator: True
+
+  - name: DICT3_ac
+    index: 0xac
+    text: |-
+      it's
+    null_terminator: True
+
+  - name: DICT3_ad
+    index: 0xad
+    text: |-
+      hope
+    null_terminator: True
+
+  - name: DICT3_ae
+    index: 0xae
+    text: |-
+      lost
+    null_terminator: True
+
+  - name: DICT3_af
+    index: 0xaf
+    text: |-
+      turn
+    null_terminator: True
+
+  - name: DICT3_b0
+    index: 0xb0
+    text: |-
+      s...
+    null_terminator: True
+
+  - name: DICT3_b1
+    index: 0xb1
+    text: |-
+      game
+    null_terminator: True
+
+  - name: DICT3_b2
+    index: 0xb2
+    text: |-
+      wish
+    null_terminator: True
+
+  - name: DICT3_b3
+    index: 0xb3
+    text: |-
+      less
+    null_terminator: True
+
+  - name: DICT3_b4
+    index: 0xb4
+    text: |
+      the
+    null_terminator: True
+
+  - name: DICT3_b5
+    index: 0xb5
+    text: |2-
+       her
+    null_terminator: True
+
+  - name: DICT3_b6
+    index: 0xb6
+    text: |-
+      our\x20
+    null_terminator: True
+
+  - name: DICT3_b7
+    index: 0xb7
+    text: |-
+      have
+    null_terminator: True
+
+  - name: DICT3_b8
+    index: 0xb8
+    text: |-
+      ower
+    null_terminator: True
+
+  - name: DICT3_b9
+    index: 0xb9
+    text: |-
+      Bomb
+    null_terminator: True
+
+  - name: DICT3_ba
+    index: 0xba
+    text: |-
+      ing!
+    null_terminator: True
+
+  - name: DICT3_bb
+    index: 0xbb
+    text: |-
+      ance
+    null_terminator: True
+
+  - name: DICT3_bc
+    index: 0xbc
+    text: |-
+      take
+    null_terminator: True
+
+  - name: DICT3_bd
+    index: 0xbd
+    text: |-
+      keep
+    null_terminator: True
+
+  - name: DICT3_be
+    index: 0xbe
+    text: |-
+      rock
+    null_terminator: True
+
+  - name: DICT3_bf
+    index: 0xbf
+    text: |-
+      ing.
+    null_terminator: True
+
+  - name: DICT3_c0
+    index: 0xc0
+    text: |-
+      came
+    null_terminator: True
+
+  - name: DICT3_c1
+    index: 0xc1
+    text: |2-
+       had
+    null_terminator: True
+
+  - name: DICT3_c2
+    index: 0xc2
+    text: |-
+      said
+    null_terminator: True
+
+  - name: DICT3_c3
+    index: 0xc3
+    text: |2
+       we
+    null_terminator: True
+
+  - name: DICT3_c4
+    index: 0xc4
+    text: |-
+      ueen
+    null_terminator: True
+
+  - name: DICT3_c5
+    index: 0xc5
+    text: |-
+      live
+    null_terminator: True
+
+  - name: DICT3_c6
+    index: 0xc6
+    text: |2-
+       who
+    null_terminator: True
+
+  - name: DICT3_c7
+    index: 0xc7
+    text: |-
+      e're
+    null_terminator: True
+
+  - name: DICT3_c8
+    index: 0xc8
+    text: |-
+      ever
+    null_terminator: True
+
+  - name: DICT3_c9
+    index: 0xc9
+    text: |-
+      last
+    null_terminator: True
+
+  - name: DICT3_ca
+    index: 0xca
+    text: |-
+      alls
+    null_terminator: True
+
+  - name: DICT3_cb
+    index: 0xcb
+    text: |
+      age
+    null_terminator: True
+
+  - name: DICT3_cc
+    index: 0xcc
+    text: |2-
+       him
+    null_terminator: True
+
+  - name: DICT3_cd
+    index: 0xcd
+    text: |-
+      work
+    null_terminator: True
+
+  - name: DICT3_ce
+    index: 0xce
+    text: |2-
+       nice
+    null_terminator: True
+
+  - name: DICT3_cf
+    index: 0xcf
+    text: |-
+      truth
+    null_terminator: True
+
+  - name: DICT3_d0
+    index: 0xd0
+    text: |-
+      close
+    null_terminator: True
+
+  - name: DICT3_d1
+    index: 0xd1
+    text: |-
+      still
+    null_terminator: True
+
+  - name: DICT3_d2
+    index: 0xd2
+    text: |-
+      heavy
+    null_terminator: True
+
+  - name: DICT3_d3
+    index: 0xd3
+    text: |-
+      Moosh
+    null_terminator: True
+
+  - name: DICT3_d4
+    index: 0xd4
+    text: |-
+      Hurry
+    null_terminator: True
+
+  - name: DICT3_d5
+    index: 0xd5
+    text: |-
+      you,\x20
+    null_terminator: True
+
+  - name: DICT3_d6
+    index: 0xd6
+    text: |-
+      a way
+    null_terminator: True
+
+  - name: DICT3_d7
+    index: 0xd7
+    text: |-
+      ed up
+    null_terminator: True
+
+  - name: DICT3_d8
+    index: 0xd8
+    text: |-
+      chase
+    null_terminator: True
+
+  - name: DICT3_d9
+    index: 0xd9
+    text: |-
+      . She
+    null_terminator: True
+
+  - name: DICT3_da
+    index: 0xda
+    text: |-
+      point
+    null_terminator: True
+
+  - name: DICT3_db
+    index: 0xdb
+    text: |-
+      wins\x20
+    null_terminator: True
+
+  - name: DICT3_dc
+    index: 0xdc
+    text: |-
+      until
+    null_terminator: True
+
+  - name: DICT3_dd
+    index: 0xdd
+    text: |-
+      magic
+    null_terminator: True
+
+  - name: DICT3_de
+    index: 0xde
+    text: |-
+      Snake
+    null_terminator: True
+
+  - name: DICT3_df
+    index: 0xdf
+    text: |-
+      \col(1)Tun
+    null_terminator: True
+
+  - name: DICT3_e0
+    index: 0xe0
+    text: |-
+      Dimitri's\x20
+    null_terminator: True
+
+  - name: DICT3_e1
+    index: 0xe1
+    text: |-
+      Funny Joke
+    null_terminator: True
+
+  - name: DICT3_e2
+    index: 0xe2
+    text: |-
+      Mamamu Yan
+    null_terminator: True
+
+  - name: DICT3_e3
+    index: 0xe3
+    text: |-
+      instrument
+    null_terminator: True
+
+  - name: DICT3_e4
+    index: 0xe4
+    text: |-
+      ah hah hah
+    null_terminator: True
+
+  - name: DICT3_e5
+    index: 0xe5
+    text: |-
+      hyperactiv
+    null_terminator: True
+
+  - name: DICT3_e6
+    index: 0xe6
+    text: |-
+      ungeon
+    null_terminator: True
+
+  - name: DICT3_e7
+    index: 0xe7
+    text: |-
+      object
+    null_terminator: True
+
+  - name: DICT3_e8
+    index: 0xe8
+    text: |-
+      ippers
+    null_terminator: True
+
+  - name: DICT3_e9
+    index: 0xe9
+    text: |-
+      bigger
+    null_terminator: True
+
+  - name: DICT3_ea
+    index: 0xea
+    text: |-
+      entrus
+    null_terminator: True
+
+  - name: DICT3_eb
+    index: 0xeb
+    text: |-
+      symbol
+    null_terminator: True
+
+  - name: DICT3_ec
+    index: 0xec
+    text: |-
+      worrie
+    null_terminator: True
+
+  - name: DICT3_ed
+    index: 0xed
+    text: |-
+      airies
+    null_terminator: True
+
+  - name: DICT3_ee
+    index: 0xee
+    text: |-
+      Storms
+    null_terminator: True
+
+  - name: DICT3_ef
+    index: 0xef
+    text: |-
+      undred
+    null_terminator: True
+
+  - name: DICT3_f0
+    index: 0xf0
+    text: |-
+      hey're
+    null_terminator: True
+
+  - name: DICT3_f1
+    index: 0xf1
+    text: |-
+      behind
+    null_terminator: True
+
+  - name: DICT3_f2
+    index: 0xf2
+    text: |-
+      buried
+    null_terminator: True
+
+  - name: DICT3_f3
+    index: 0xf3
+    text: |-
+      called
+    null_terminator: True
+
+  - name: DICT3_f4
+    index: 0xf4
+    text: |-
+      crumbl
+    null_terminator: True
+
+  - name: DICT3_f5
+    index: 0xf5
+    text: |-
+      tunnel
+    null_terminator: True
+
+  - name: DICT3_f6
+    index: 0xf6
+    text: |-
+      ot yet
+    null_terminator: True
+
+  - name: DICT3_f7
+    index: 0xf7
+    text: |-
+      safely
+    null_terminator: True
+
+  - name: DICT3_f8
+    index: 0xf8
+    text: |-
+      Golden
+    null_terminator: True
+
+  - name: DICT3_f9
+    index: 0xf9
+    text: |-
+      person
+    null_terminator: True
+
+  - name: DICT3_fa
+    index: 0xfa
+    text: |-
+      desire
+    null_terminator: True
+
+  - name: DICT3_fb
+    index: 0xfb
+    text: |2-
+       use
+    null_terminator: True
+
+  - name: DICT3_fc
+    index: 0xfc
+    text: |-
+      ther
+    null_terminator: True
+
+  - name: DICT3_fd
+    index: 0xfd
+    text: |-
+      life
+    null_terminator: True
+
+  - name: DICT3_fe
+    index: 0xfe
+    text: |-
+      pass
+    null_terminator: True
+
+  - name: DICT3_ff
+    index: 0xff
+    text: |-
+      song
+    null_terminator: True

@@ -1,5 +1,7 @@
 import sys
 import io
+import yaml
+from collections import OrderedDict
 from common import *
 
 if len(sys.argv) < 2:
@@ -22,13 +24,94 @@ class TextStruct:
 
     def __init__(self):
         self.data = None
+        self.textData = None
+        self.name = None
         self.index = -1  # "Main" index
         self.indices = []  # List of all actual indices
         self.address = -1
 
-textTableOutput = io.StringIO()
-textDataOutput = io.StringIO()
-dictDataOutput = io.StringIO()
+
+# Text printed at the start of the yaml file
+
+commentText = '''
+# ==============================================================================
+# YAML NOTES
+# ==============================================================================
+#
+# This text is formatted with YAML. One particular thing to note is how
+# multiline strings are handled.
+#
+# In most cases, the block style ("|-") is used, like this:
+#
+#   text: |-
+#     You! Kids aren't
+#     allowed in...
+#     Sir \Link!
+#     Excuse me!
+#   null_terminator: True
+#
+# With this style, newlines are preserved wherever they are. Also, if a line is
+# too long, the text parser will automatically insert a newline. But, when
+# creating new text, you may prefer to use the flow style (">-"):
+#
+#   text: >-
+#     This is some new text using the flow style.
+#     There is no explicit newline here.
+#
+#     But there is one here.
+#   null_terminator: True
+#
+# The advantage of this style is that you can write long text across multiple
+# lines, without worrying about where the line-breaks will actually be in-game.
+# With this style, line breaks are ignored unless you have two line-breaks in
+# a row. But you still have flexibility to insert explicit linebreaks by leaving
+# an empty line.
+#
+# Most text uses chomping ("-" sign after "|" or ">"), which ignores any
+# newlines at the end of the text. But this not the case when the game actually
+# does wants to leave a newline at the end of the text, particularly when
+# null_terminator is False.
+#
+# For more information: https://yaml-multiline.info/
+#
+#
+# ==============================================================================
+# DESCRIPTION OF KEYS
+# ==============================================================================
+#
+# group:
+#   group: The index for a group. This is the high byte for all text in the
+#          group.
+#
+#   data: List of text data, described below...
+#
+#   - name: Name assigned to text. When used in the disassembly, this resolves
+#           to the full 4-digit (2-byte) text index. The upper 2 digits
+#           correspond to the group index; the lower 2 digits correspond to the
+#           value of the "index" key below. Can be a single value or a list (see
+#           below).
+#
+#     index: The lower 2 digits (1 byte) of the text index. Combined with the
+#           group index (upper 2 digits) to get the full index. This can be
+#           a list instead of a single value. In this case, all indices refer to
+#           the same data. Also, if this is a list, then the "name" key must
+#           also be a list, and must have the same number of entries as this.
+#           Each "name" will refer to the corresponding index in this list.
+#
+#     text: The text string. See text formatting notes.
+#
+#     null_terminator: True or False. If False, the text does not end here, and
+#           the game will continue to show the text that comes after this. In
+#           this case, you will usually want to ensure a newline is inserted at
+#           the end of the text. (See notes about YAML above.)
+#     
+#
+# TEXT FORMATTING:
+# 
+# TODO
+'''.strip()
+
+
 
 # Constants
 region = getRomRegion(rom)
@@ -110,6 +193,7 @@ def getTextBase(index):
 
 highIndexList = []
 
+textTableOutput = io.StringIO()
 textTableOutput.write('textTableENG:\n')
 for i in range(0, numHighTextIndices):
     textTableOutput.write(
@@ -216,12 +300,28 @@ def getTextDecompressed(out, address, end=-1):
             data.append(b)
         i += 1
 
-definesFile = open(precmpDir + 'textDefines.s','w')
+def getTextName(index):
+    if index < 0x400:
+        return 'DICT' + myhex(index>>8, 1) + '_' + myhex(index&0xff, 2)
+    else:
+        return 'TX_' + myhex(index-0x400, 4)
 
+
+definesFile = open(precmpDir + 'textDefines.s','w')
 definesFile.write('.define TEXT_OFFSET_SPLIT_INDEX ' + wlahex(textBase2IndexStart) + '\n\n')
+
 
 # Now pass through the text addresses themselves, start dumping
 address = textStartAddress
+lastGroup = -1
+
+groupList = []
+groupYaml = None
+parsedGroups = set()
+
+textGroupList = []
+dictGroupList = []
+
 while address < textEndAddress:
     pos = address
     while rom[pos] != 0:
@@ -246,165 +346,173 @@ while address < textEndAddress:
         out = textDataOutput
     else:
         index = textStruct.index
+
         if index < 0x400:
-            dataOut = dictDataOutput
-            dataOut.write('\\name(DICT' + myhex(index>>8, 1) + '_'
-                                 + myhex(index&0xff, 2) + ')\n')
+            groupList = dictGroupList
+            isDict = True
         else:
-            dataOut = textDataOutput
-            dataOut.write('\\name(TX_' + myhex(index-0x400, 4) + ')\n')
+            groupList = textGroupList
+            isDict = False
+
+        if isDict:
+            writtenGroupIndex = (index >> 8)
+        else:
+            writtenGroupIndex = (index >> 8) - 4
+
+        if groupYaml is None or groupYaml['group'] != writtenGroupIndex:
+            groupYaml = OrderedDict({'group': writtenGroupIndex})
+            groupYaml['data'] = []
+            groupList.append(groupYaml)
+            if (index >> 8) in parsedGroups:
+                print('WARNING: Parsing group 0x%s twice' % myhex(index >> 8, 2))
+            parsedGroups.add(index >> 8)
+
+        name = getTextName(index)
+        textStruct.name = name
+        groupYaml['data'].append(textStruct)
 
         for ind in textStruct.indices:
             if ind >= 0x400:
                 definesFile.write('.define TX_' + myhex(ind-0x400,4) + ' ' + wlahex(ind-0x400,4) + '\n')
 
-    dataOut.write('\\start\n')
-
     data = bytearray()
     getTextDecompressed(data, address, pos)
     i = 0
+    textData = ''
+
+    def fixTrailingSpace():
+        global textData
+        # Replace any space that occurs before a newline or at the end of
+        # a string with "\x20" because YAML doesn't it very well.
+        j = len(textData)-1
+        while j >= 0 and textData[j] == ' ':
+            textData = textData[::-1].replace(' ', '02x\\', 1)[::-1]
+            j-=1
+
     while i < len(data):
         b = data[i]
-        if (b >= 0x20 and b < 0x80):
-            dataOut.write(chr(b))
+        if b == 0x27: # Single quote
+            textData += "'"
+        elif (b >= 0x20 and b < 0x80):
+            textData += chr(b)
         elif b == 0x1:
-            dataOut.write('\n')
+            fixTrailingSpace()
+            textData += '\n'
         elif b == 0x6 and len(data)>i+1:
             p = data[i+1]
             if p&0x80 == 0x80:
-                dataOut.write('\\item(' + wlahex(p&0x7f,2) + ')')
+                textData += '\\item(' + wlahex(p&0x7f,2) + ')'
             else:
-                dataOut.write('\\sym(' + wlahex(p&0x7f,2) + ')')
+                textData += '\\sym(' + wlahex(p&0x7f,2) + ')'
             i+=1
         elif b == 0x7 and len(data)>i+1:
-            dataOut.write('\\jump(TX_' + myhex((index>>8)-4,2) + myhex(data[i+1], 2) + ')')
+            textData += '\\jump(' + getTextName((index & 0xff00) | data[i+1]) + ')'
             i+=1
         elif b == 0x9 and len(data)>i+1:
             if data[i+1] < 0x80:
-                dataOut.write('\\col(' + str(data[i+1]) + ')')
+                textData += '\\col(' + str(data[i+1]) + ')'
             else:
-                dataOut.write('\\col(' + wlahex(data[i+1], 2) + ')')
+                textData += '\\col(' + wlahex(data[i+1], 2) + ')'
             i+=1
         elif b == 0xa and len(data)>i+1:
             if data[i+1] == 0:
-                dataOut.write('\\Link')
+                textData += '\\Link'
                 i+=1
             elif data[i+1] == 0x1:
-                dataOut.write('\\kidname')
+                textData += '\\kidname'
                 i+=1
             elif data[i+1] == 0x2:
-                dataOut.write('\\secret1')
+                textData += '\\secret1'
                 i+=1
             elif data[i+1] == 0x3:
-                dataOut.write('\\secret2')
+                textData += '\\secret2'
                 i+=1
             else:
-                dataOut.write('\\' + myhex(b, 2))
+                textData += '\\' + myhex(b, 2)
         elif b == 0xb and len(data)>i+1:
-            dataOut.write('\\charsfx(' + wlahex(data[i+1], 2) + ')')
+            textData += '\\charsfx(' + wlahex(data[i+1], 2) + ')'
             i+=1
         elif b == 0xc and len(data)>i+1:
             p = data[i+1]>>3
             c = data[i+1]&3
             if p == 0:
-                dataOut.write('\\speed(' + str(c) + ')')
+                textData += '\\speed(' + str(c) + ')'
             elif p == 1:
-                dataOut.write('\\number')
+                textData += '\\num1'
             elif p == 2:
-                dataOut.write('\\opt()')
+                textData += '\\opt()'
             elif p == 3:
-                dataOut.write('\\stop')
+                textData += '\\stop'
             elif p == 4:
-                dataOut.write('\\pos(' + str(c) + ')')
+                textData += '\\pos(' + str(c) + ')'
             elif p == 5:
-                dataOut.write('\\heartpiece')
+                textData += '\\heartpiece'
             elif p == 6:
-                dataOut.write('\\num2') # This doesn't show up in ages... maybe in seasons
+                textData += '\\num2' # This doesn't show up in ages... maybe in seasons
             elif p == 7:
-                dataOut.write('\\slow()')
+                textData += '\\slow()'
             else:
                 print('Bad opcode')
             i+=1
         elif b == 0xd and len(data)>i+1:
-            dataOut.write('\\wait(' + wlahex(data[i+1], 2) + ')')
+            textData += '\\wait(' + wlahex(data[i+1], 2) + ')'
             i+=1
         elif b == 0xe and len(data)>i+1:
-            dataOut.write('\\sfx(' + wlahex(data[i+1], 2) + ')')
+            textData += '\\sfx(' + wlahex(data[i+1], 2) + ')'
             i+=1
         elif b == 0xf and len(data)>i+1:
             p=data[i+1]
             if p < 0xfc:
-                dataOut.write('\\call(TX_' + myhex((index>>8)-4,2) + myhex(p, 2) + ')')
+                textData += '\\call(' + getTextName((index & 0xff00) | p) + ')'
             else:
-                dataOut.write('\\call(' + wlahex(p,2) + ')')
+                textData += '\\call(' + wlahex(p,2) + ')'
             i+=1
         elif b >= 0x6 and b < 0x10:
-            dataOut.write('\\cmd' + myhex(b, 1) + '(' +
-                                 wlahex(data[i+1], 2) + ')')
+            textData += '\\cmd' + myhex(b, 1) + '(' + wlahex(data[i+1], 2) + ')'
             i+=1
         elif b == '\\':
-            dataOut.write('\\\\')
+            textData += '\\\\'
         elif b == 0x10:
-            dataOut.write('\\circle')
+            textData += '\\circle'
         elif b == 0x11:
-            dataOut.write('\\club')
+            textData += '\\club'
         elif b == 0x12:
-            dataOut.write('\\diamond')
+            textData += '\\diamond'
         elif b == 0x13:
-            dataOut.write('\\spade')
+            textData += '\\spade'
         elif b == 0x14:
-            dataOut.write('\\heart')
+            textData += '\\heart'
         elif b == 0x15:
-            dataOut.write('\\up')
+            textData += '\\up'
         elif b == 0x16:
-            dataOut.write('\\down')
+            textData += '\\down'
         elif b == 0x17:
-            dataOut.write('\\left')
+            textData += '\\left'
         elif b == 0x18:
-            dataOut.write('\\right')
+            textData += '\\right'
         elif b == 0xb8 and len(data)>i+1 and data[i+1] == 0xb9:
-            dataOut.write('\\abtn')
+            textData += '\\abtn'
             i+=1
         elif b == 0xba and len(data)>i+1 and data[i+1] == 0xbb:
-            dataOut.write('\\bbtn')
+            textData += '\\bbtn'
             i+=1
         elif b == 0x7e:
-            dataOut.write('\\triangle')
+            textData += '\\triangle'
         elif b == 0x7f:
-            dataOut.write('\\rectangle')
+            textData += '\\rectangle'
         else:
             if not (b == 0 and i == len(data)-1):
-                dataOut.write('\\' + myhex(b, 2))
+                textData += '\\' + myhex(b, 2)
         i+=1
-    if data[len(data)-1] != 0:
-        dataOut.write('\n\\endwithoutnull\n')
-    else:
-        dataOut.write('\n\\end\n')
+
+    fixTrailingSpace()
 
     textStruct.data = data
+    textStruct.textData = textData
 
-    for i in sorted(textStruct.indices):  # Handle extra indices with 'stubs'
-        if i != index:
-            if index+1 == i:
-                dataOut.write('\\next\n\n')
-            else:
-                dataOut.write('\\next(' + wlahex(i-0x400, 4) + ')\n\n')
-            dataOut.write('\\name(TX_' + myhex(i-0x400,4) + ')\n')
-            index = i
+    textStruct.hasNullTerminator = data[len(data)-1] == 0
 
     address = pos
-
-    nextTextStruct = textAddressDictionary.get(address)
-    if nextTextStruct is not None:
-        nextIndex = nextTextStruct.index
-        if (index>>8)+1 == (nextIndex>>8) and (nextIndex&0xff) == 0:
-            dataOut.write('\\nextgroup\n')
-        elif index+1 == nextIndex:
-            dataOut.write('\\next\n')
-        else:
-            dataOut.write('\\next(' + wlahex(nextIndex-0x400, 4) + ')\n')
-    dataOut.write('\n')
-    # print '\rpos ' + hex(pos),
 
     if address > textEndAddress:
         textEndAddress = address
@@ -444,27 +552,93 @@ outFile.write('\n')
 outFile.close()
 
 
-outFile = open(textDir + 'dict.txt', 'w')
-dictDataOutput.seek(0)
-outFile.write(dictDataOutput.read())
+# Setup yaml to use OrderedDict instead of dict
+def setup_yaml():
+    """ https://stackoverflow.com/a/8661021 """
+    represent_dict_order = lambda self, data: self.represent_mapping('tag:yaml.org,2002:map', data.items())
+    yaml.add_representer(OrderedDict, represent_dict_order)
+
+    stringTag = 'tag:yaml.org,2002:str'
+
+    def stringNode(s):
+        return yaml.ScalarNode(stringTag, s)
+
+    def intNode(i):
+        return yaml.ScalarNode('tag:yaml.org,2002:int', i)
+
+    def boolNode(b):
+        return yaml.ScalarNode('tag:yaml.org,2002:bool', str(b))
+
+    def stringMap(s1, s2):
+        return (stringNode(s1), stringNode(s2))
+
+    def representTextStruct(dumper, data):
+        dataList = [
+            #(stringNode('index'), stringNode('0x' + myhex(data.index, 4))),
+        ]
+
+        if len(data.indices) != 1:
+            extraIndexList = data.indices
+            assert(extraIndexList == sorted(extraIndexList))
+
+            nameList = [stringNode(getTextName(x)) for x in extraIndexList]
+            dataList.append((stringNode('name'), yaml.SequenceNode('tag:yaml.org,2002:seq', nameList)))
+
+            extraIndexList = [intNode('0x' + myhex(x&0xff, 2)) for x in extraIndexList]
+            dataList.append((stringNode('index'), yaml.SequenceNode('tag:yaml.org,2002:seq', extraIndexList)))
+        else:
+            assert(data.indices[0] == data.index)
+            dataList.append(stringMap('name', data.name))
+            dataList.append((stringNode('index'), intNode('0x' + myhex(data.index&0xff, 2))))
+
+        dataList.append((stringNode('text'), dumper.represent_scalar(stringTag, data.textData, '|')))
+        dataList.append((stringNode('null_terminator'), boolNode(data.hasNullTerminator)))
+
+        return yaml.MappingNode('tag:yaml.org,2002:map', dataList)
+
+    yaml.add_representer(TextStruct, representTextStruct)
+
+    # Default int representation: 2-digit hex number
+    yaml.add_representer(int, lambda dumper, i: intNode('0x' + myhex(i, 2)))
+
+setup_yaml()
+
+
+def dumpYaml(l, outStream):
+    s = yaml.dump({'groups': l})
+
+    # Add some spacing to make it nicer.
+    # Must be careful with this. It could break block text which doesn't trim
+    # newlines. For this reason the "null_terminator" key is always present after
+    # the "text" key to make sure that doesn't happen.
+    s = s.replace("\n- group:", "\n\n- group:")
+    s = s.replace("groups:\n\n", "groups:\n")
+    s = s.replace("\n  - name:", "\n\n  - name:")
+    s = s.replace("\n  data:\n\n", "\n  data:\n")
+
+    outStream.write(s)
+
+
+outFile = open(textDir + 'dict.yaml', 'w')
+dumpYaml(dictGroupList, outFile)
 outFile.close()
 
-outFile = open(textDir + 'text.txt', 'w')
-textDataOutput.seek(0)
-outFile.write(textDataOutput.read())
+outFile = open(textDir + 'text.yaml', 'w')
+outFile.write(commentText + '\n')
+dumpYaml(textGroupList, outFile)
 outFile.close()
 
-# Debug output
+# Debug output: write a decompressed blob of all the text.
 
-#outFile = open(textDir + 'text_blob_decompressed.bin','w')
+#outFile = open(textDir + 'text_blob_decompressed.bin','wb')
 #lastAddress = -1
-# for address in sorted(textAddressList):
-#        if address < lastAddress:
-#            print 'BAD'
-#        lastAddress = address
-#        textStruct = textAddressDictionary[address]
-#        if textStruct.data is None:
-#                print 'Index ' + hex(textStruct.index) + ' uninitialized'
-#        else:
-#                outFile.write(textStruct.data)
-# outFile.close()
+#for address in sorted(textAddressList):
+#    if address < lastAddress:
+#        print('BAD')
+#    lastAddress = address
+#    textStruct = textAddressDictionary[address]
+#    if textStruct.data is None:
+#        print('Index ' + hex(textStruct.index) + ' uninitialized')
+#    else:
+#        outFile.write(textStruct.data)
+#outFile.close()

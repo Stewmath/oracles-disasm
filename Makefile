@@ -271,9 +271,9 @@ build/gfx/%.cmp: gfx_compressible/$(GAME)/%.bin $(CMP_MODE) | build/gfx
 	@echo "Compressing $< to $@..."
 	@$(PYTHON) tools/build/compressGfx.py $< $@
 
-build/textData.s: text/$(GAME)/text.txt text/$(GAME)/dict.txt tools/build/parseText.py $(CMP_MODE) | build
+build/textData.s: text/$(GAME)/text.yaml text/$(GAME)/dict.yaml tools/build/parseText.py $(CMP_MODE) | build
 	@echo "Compressing text..."
-	@$(PYTHON) tools/build/parseText.py text/$(GAME)/dict.txt $< $@ $$(($(TEXT_INSERT_ADDRESS))) $$((0x2c))
+	@$(PYTHON) tools/build/parseText.py text/$(GAME)/dict.yaml $< $@ $$(($(TEXT_INSERT_ADDRESS))) $$((0x2c))
 
 build/textDefines.s: build/textData.s
 

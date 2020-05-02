@@ -30,12 +30,11 @@
 #   Name of Bipin & Blossom's child.
 # \Link or \link:
 #   Player name.
-# \number:
+# \num1:
 #   Display the bcd (binary-coded decimal) number at "wTextNumberSubstution".
 #   The value is 2 bytes long, little-endian.
 # \num2:
-#   Like \number, but uses the value starting 2 bytes after wTextNumberSubstitution.
-#   The actual game doesn't use this.
+#   Like \num1, but uses the value starting 2 bytes after wTextNumberSubstitution.
 # \opt:
 #   Mark the position of an available option in those "yes/no" prompts.
 # \pos(XX): (0 <= XX <= 3)
@@ -43,7 +42,7 @@
 #   This must be the first command in the text, or it might not work.
 # \secret1, \secret2:
 #   Display the secret at "w7SecretBuffer1" or "w7SecretBuffer2".
-# \speed(XX): (0 <= XX <=3)
+# \speed(XX): (0 <= XX <= 3)
 #   Change the speed of the text, relative to the selected text speed.
 #   The actual game doesn't use this.
 # \slow:
@@ -56,7 +55,7 @@
 #   Displays character "X" from gfx_font_jp.bin. Most of these are kanji.
 # \wait(XX):
 #   When the textbox is finished, wait for XX frames and then close the textbox automatically.
-#   The actual game doesn't use this.
+#   Used only once, in Seasons.
 # 
 # The following symbols are also understood:
 #   \circle
@@ -74,10 +73,11 @@
 #   \bbtn
 #
 # You can also insert arbitrary bytes. For example, \abtn is equivalent to:
-#   \b8\b9
+#   \xb8\xb9
 
 import sys
 import io
+import yaml
 from common import *
 
 if len(sys.argv) < 6:
@@ -114,17 +114,22 @@ while len(sys.argv) > argIndex:
 
 class TextStruct:
 
-    def __init__(self, i):
-        self.index = i
+    def __init__(self, groupIndex, indices, names):
+        self.indices = indices
         self.data = bytearray()
-        self.name = 'TX_' + myhex(i-0x400, 4)
-        self.ref = None
+        self.names = names
+        self.groupIndex = groupIndex
 
-        # List of tuples (index,name,line), where:
+        # List of tuples (index,name), where:
         #  "index" is an index for "data".
         #  "name" is a string which can be evaluated to a byte to be written there.
-        #  "line" is the line the data is on for debugging purposes.
         self.unparsedNames = []
+
+    def getPrimaryName(self):
+        return self.names[0]
+
+    def getGroupIndex(self):
+        return self.groupIndex
 
 
 class GroupStruct:
@@ -132,15 +137,28 @@ class GroupStruct:
     def __init__(self, i):
         self.index = i
         self.textStructs = []
-        for x in range(0, 256):
-            self.textStructs.append(TextStruct((self.index<<8) | x))
         self.lastTextIndex = 0
+
+    def addTextStruct(self, indices, names):
+        t = TextStruct(self.index, indices, names)
+        self.textStructs.append(t)
+        return t
+
+    def getTextStruct(self, index):
+        for textStruct in self.textStructs:
+            if index in textStruct.indices:
+                return textStruct
+
+    def getTextName(self, index):
+        struct = self.getTextStruct(index)
+        i = struct.indices.index(index)
+        return struct.names[i]
 
 
 class DictEntry:
 
     def __init__(self, i, s):
-        self.index = i
+        self.fullIndex = i
         self.string = s
 
 
@@ -193,8 +211,8 @@ def compressTextMatchGame(text, i):
                 entry = e
                 break
         if entry is not None:
-            res.append((e.dictEntry.index>>8)+2)
-            res.append(e.dictEntry.index&0xff)
+            res.append((e.dictEntry.fullIndex>>8)+2)
+            res.append(e.dictEntry.fullIndex&0xff)
             i = e.j
         else:
             res.append(text[i])
@@ -241,8 +259,8 @@ def compressTextOptimal(text, i):
             res = compressTextMemoised(text[:j], j)
             if len(res)+2 < len(ret):
                 res = bytearray(res)
-                res.append(((dictEntry.index)>>8)+2)
-                res.append(dictEntry.index&0xff)
+                res.append((dictEntry.fullIndex>>8)+2)
+                res.append(dictEntry.fullIndex&0xff)
                 ret = res
 
         # Control codes can't have their parameters compressed
@@ -286,434 +304,383 @@ MAX_LINE_WIDTH = 16*8+1
 
 
 textList = []
+parsedGroups = set()
 
 # Turns a name into an index.
 # Note that this ANDs the index with 0xff. I haven't had a need for the upper byte yet.
 def parseName(s, neededHighIndex):
     for group in textList:
         for textStruct in group.textStructs:
-            if textStruct.name == s:
-                if textStruct.index>>8 != neededHighIndex:
+            if s in textStruct.names:
+                i = textStruct.names.index(s)
+                index = textStruct.indices[i]
+                if textStruct.getGroupIndex() != neededHighIndex:
                     raise ValueError
-                return textStruct.index&0xff
+                return index
     raise ValueError
 
 def parseTextFile(textFile, isDictionary):
     global textList
 
-    if isDictionary:
-        textGroup = GroupStruct(0)
-        index = 0x0000
-    else:
-        textGroup = GroupStruct(4)
-        index = 0x0400
+    yamlData = yaml.safe_load(textFile)
+    textFile.close()
 
-    eof = False
-    lineIndex = 0
-    # Parse text file
-    while not eof:
-        textStruct = textGroup.textStructs[index&0xff]
-        started = False
+    for yamlGroup in yamlData['groups']:
+        if isDictionary:
+            textGroup = GroupStruct(yamlGroup['group'])
+        else:
+            textGroup = GroupStruct(yamlGroup['group'] + 4)
 
-        while True:
-            line = textFile.readline()
-            lineIndex+=1
-            if len(line) == 0:
-                eof = True
-                break
-            try:
-                x = str.find(line, '(')
-                if x == -1:
-                    token = str.strip(line)
-                    param = -1
-                else:
-                    token = str.strip(line[0:x])
-                    param = line[x+1:str.find(line, ')')]
-
-                if token == '\\start':
-                    started = True
-                    state = TextState()
-
-                elif token == '\\end':
-                    started = False
-                    c = textStruct.data.pop()
-                    if c != 1:
-                        print('Expected newline at line ' + str(lineIndex))
-                        print('This is probably a bug')
-                    textStruct.data.append(0)
-                elif token == '\\endwithoutnull':
-                    textStruct.data.pop()
-                    started = False
-                elif started:
-                    # After the 'start' directive, text is actually read.
-
-                    def addWidth(state, w):
-                        oldWidth = state.lineWidth
-                        state.lineWidth += w
-                        if state.lineWidth > MAX_LINE_WIDTH:
-                            if state.lastSpaceIndex != 0:
-                                textStruct.data[state.lastSpaceIndex] = 0x01
-                                state.lastSpaceIndex = 0
-                                state.lineWidth -= state.widthUpToLastSpace
-                                state.currentTileColor = state.currentColor
-
-                        # vwf: when we pass a tile boundary, update the currentTileColor.
-                        # Uses oldWidth-2 because characters always end with a space.
-                        if (oldWidth-2)//8 != state.lineWidth//8:
-                            state.currentTileColor = state.currentColor
-
-                    i = 0
-                    while i < len(line):
-                        c = line[i]
-                        if c == '\n':
-                            textStruct.data.append(0x01)
-                            state.lineWidth = 0
-                            state.lastSpaceIndex = 0
-                            state.currentTileColor = state.currentColor
-                            i+=1
-                        elif c == '\\':
-                            i+=1
-
-                            validToken = False
-
-                            # Check values which don't need to use brackets
-                            if line[i:i+4] == 'Link' or line[i:i+4] == 'link':
-                                validToken = True
-                                textStruct.data.append(0x0a)
-                                textStruct.data.append(0x00)
-                                addWidth(state, 8*5)
-                                i += 4
-                            elif line[i:i+7] == 'kidname':
-                                validToken = True
-                                textStruct.data.append(0x0a)
-                                textStruct.data.append(0x01)
-                                addWidth(state, 8*5)
-                                i += 7
-                            elif line[i:i+7] == 'secret1':
-                                validToken = True
-                                textStruct.data.append(0x0a)
-                                textStruct.data.append(0x02)
-                                addWidth(state, 8*5)
-                                i += 7
-                            elif line[i:i+7] == 'secret2':
-                                validToken = True
-                                textStruct.data.append(0x0a)
-                                textStruct.data.append(0x03)
-                                addWidth(state, 8*5)
-                                i += 7
-                            elif line[i:i+6] == 'number':
-                                validToken = True
-                                textStruct.data.append(0x0c)
-                                textStruct.data.append(1<<3)
-                                addWidth(state, 8*3)
-                                i+=6
-                            elif line[i:i+3] == 'opt':
-                                validToken = True
-                                textStruct.data.append(0x0c)
-                                textStruct.data.append(2<<3)
-                                addWidth(state, 8)
-                                i+=3
-                            elif line[i:i+4] == 'stop':
-                                validToken = True
-                                textStruct.data.append(0x0c)
-                                textStruct.data.append(3<<3)
-                                i+=4
-                            elif line[i:i+10] == 'heartpiece':
-                                validToken = True
-                                textStruct.data.append(0x0c)
-                                textStruct.data.append(5<<3)
-                                addWidth(state, 16)
-                                i+=10
-                            elif line[i:i+4] == 'num2':
-                                validToken = True
-                                textStruct.data.append(0x0c)
-                                textStruct.data.append(6<<3)
-                                addWidth(state, 8*3)
-                                i+=4
-                            elif line[i:i+4] == 'slow':
-                                validToken = True
-                                textStruct.data.append(0x0c)
-                                textStruct.data.append(7<<3)
-                                i+=4
-                            elif line[i:i+6] == 'circle':
-                                validToken = True
-                                c = 0x10
-                                textStruct.data.append(c)
-                                addWidth(state, characterSpacing[c])
-                                i+=6
-                            elif line[i:i+4] == 'club':
-                                validToken = True
-                                c = 0x11
-                                textStruct.data.append(c)
-                                addWidth(state, characterSpacing[c])
-                                i+=4
-                            elif line[i:i+7] == 'diamond':
-                                validToken = True
-                                c = 0x12
-                                textStruct.data.append(c)
-                                addWidth(state, characterSpacing[c])
-                                i+=7
-                            elif line[i:i+5] == 'spade':
-                                validToken = True
-                                c = 0x13
-                                textStruct.data.append(c)
-                                addWidth(state, characterSpacing[c])
-                                i+=5
-                            elif line[i:i+5] == 'heart':
-                                validToken = True
-                                c = 0x14
-
-                                if useVwf:
-                                    # vwf stuff: the heart is always supposed to be
-                                    # red. Since I messed with the palettes this
-                                    # needs to be fixed
-                                    if state.currentColor >= 2:
-                                        textStruct.data.append(0x09)
-                                        textStruct.data.append(0x00)
-                                        state.currentColor = 0x00
-
-                                textStruct.data.append(c)
-                                addWidth(state, characterSpacing[c])
-                                i+=5
-                            elif line[i:i+2] == 'up':
-                                validToken = True
-                                c = 0x15
-                                textStruct.data.append(c)
-                                addWidth(state, characterSpacing[c])
-                                i+=2
-                            elif line[i:i+4] == 'down':
-                                validToken = True
-                                c = 0x16
-                                textStruct.data.append(c)
-                                addWidth(state, characterSpacing[c])
-                                i+=4
-                            elif line[i:i+4] == 'left':
-                                validToken = True
-                                c = 0x17
-                                textStruct.data.append(c)
-                                addWidth(state, characterSpacing[c])
-                                i+=4
-                            elif line[i:i+5] == 'right':
-                                validToken = True
-                                c = 0x18
-                                textStruct.data.append(c)
-                                addWidth(state, characterSpacing[c])
-                                i+=5
-                            elif line[i:i+4] == 'abtn':
-                                validToken = True
-                                c = 0xb8
-                                textStruct.data.append(c)
-                                addWidth(state, characterSpacing[c])
-                                c = 0xb9
-                                textStruct.data.append(c)
-                                addWidth(state, characterSpacing[c])
-                                i+=4
-                            elif line[i:i+4] == 'bbtn':
-                                validToken = True
-                                textStruct.data.append(0xba)
-                                textStruct.data.append(0xbb)
-                                addWidth(state, characterSpacing[0xba]+characterSpacing[0xbb])
-                                i+=4
-                            elif line[i:i+8] == 'triangle':
-                                validToken = True
-                                c = 0x7e
-                                textStruct.data.append(c)
-                                addWidth(state, characterSpacing[c])
-                                i+=8
-                            elif line[i:i+9] == 'rectangle':
-                                validToken = True
-                                c = 0x7f
-                                textStruct.data.append(c)
-                                addWidth(state, characterSpacing[c])
-                                i+=9
-                            elif line[i] == '\\':  # 2 backslashes
-                                validToken = True
-                                textStruct.data.append('\\')
-                                addWidth(state, characterSpacing[ord('\\')])
-                                i+=1
-
-                            if validToken:
-                                try:
-                                    if line[i] == '(' and line[i+1] == ')':
-                                        i+=2
-                                except exceptions.IndexError:
-                                    pass
-                                continue
-
-                            x = str.find(line, '(', i)
-                            token = ''
-                            param = -1
-
-                            if x != -1:
-                                y = str.find(line, ')', i)
-                                if y != -1:
-                                    token = line[i:x]
-                                    param = line[x+1:y]
-
-                            # Check values which use brackets (tokens)
-                            if token == 'item':
-                                if useVwf:
-                                    # Symbols must be aligned to a tile.
-
-                                    # Remove a space if there was one, because
-                                    # it will be weirdly spaced out.
-                                    if (len(textStruct.data) >= 3
-                                            and textStruct.data[-3] == ord(' ') # There was a space
-                                            and textStruct.data[-2] == 0x09 # Then a color opcode
-                                            and textStruct.data[-1] >= 0x80 # Color opcode's parameter
-                                            and state.lineWidth >= characterSpacing[ord(' ')]
-                                            and (state.lineWidth&7) < 4 ):
-                                        textStruct.data[-3] = textStruct.data[-2]
-                                        textStruct.data[-2] = textStruct.data[-1]
-                                        textStruct.data.pop()
-
-                                        state.lineWidth -= characterSpacing[ord(' ')]
-                                        print('Trimming space for item in ' + textStruct.name)
-
-                                    # Align to the next tile
-                                    if state.lineWidth & 7 != 0:
-                                        state.lineWidth &= ~7
-                                        state.lineWidth += 8
-                                    addWidth(state, 8)
-                                else:
-                                    addWidth(state, 8)
-
-                                textStruct.data.append(0x06)
-                                textStruct.data.append(parseVal(param) | 0x80)
-
-                            elif token == 'sym':
-                                textStruct.data.append(0x06)
-                                textStruct.data.append(parseVal(param))
-                                addWidth(state, 8)
-                            elif token == 'jump':
-                                textStruct.data.append(0x07)
-                                try:
-                                    textStruct.data.append(parseVal(param))
-                                except ValueError:
-                                    textStruct.unparsedNames.append( (len(textStruct.data), param, lineIndex) )
-                                    textStruct.data.append(0xff)
-                            elif token == 'col':
-                                p = parseVal(param)
-
-                                if useVwf:
-                                    # Check if 2 non-white colors are adjacent
-                                    def colorCmp(x,y):
-                                        return x!=0 and y!=0 \
-                                                and x<4 and y<4 \
-                                                and x != y
-
-                                    # Check if separate colors are too close
-                                    # together
-                                    if colorCmp(state.currentTileColor,p):
-                                        print('Red/blue colors too close together in "' + textStruct.name + '", adding extra space')
-                                        addWidth(state, characterSpacing[ord(' ')])
-                                        textStruct.data.append(' ')
-
-                                    # Special behaviour for vwf: in order to
-                                    # prevent colors from "leaking", after using
-                                    # color 3, it must switch to color 4 for the
-                                    # normal color instead of color 0
-                                    if state.currentColor == 3 and p == 0:
-                                        p = 4
-
-                                textStruct.data.append(0x09)
-                                textStruct.data.append(p)
-                                state.currentColor = p
-                            elif token == 'charsfx':
-                                textStruct.data.append(0x0b)
-                                textStruct.data.append(parseVal(param))
-                            elif token == 'speed':
-                                p = parseVal(param)
-                                assert p < 4, '"\speed" takes parameters from 0-3'
-                                textStruct.data.append(0x0c)
-                                textStruct.data.append(p)
-                            elif token == 'pos':
-                                p = parseVal(param)
-                                assert p < 4, '"\pos" takes parameters from 0-3'
-                                textStruct.data.append(0x0c)
-                                textStruct.data.append((4<<3) | p)
-                            elif token == 'wait':
-                                textStruct.data.append(0x0d)
-                                textStruct.data.append(parseVal(param))
-                            elif token == 'sfx':
-                                textStruct.data.append(0x0e)
-                                textStruct.data.append(parseVal(param))
-                            elif token == 'call':
-                                textStruct.data.append(0x0f)
-                                try:
-                                    textStruct.data.append(parseVal(param))
-                                except ValueError:
-                                    textStruct.unparsedNames.append( (len(textStruct.data), param, lineIndex) )
-                                    textStruct.data.append(0xff)
-                            elif len(token) == 4 and\
-                                    token[0:3] == 'cmd' and\
-                                    isHex(token[3]):
-                                textStruct.data.append(int(token[3], 16))
-                                textStruct.data.append(parseVal(param))
-                            else:
-                                textStruct.data.append(int(line[i:i+2], 16))
-                                i+=2
-
-                                try:
-                                    if line[i] == '(' and line[i+1] == ')':
-                                        i+=2
-                                except exceptions.IndexError:
-                                    pass
-
-                                continue
-
-                            assert(param != -1)
-                            i = y+1
-                        else:
-                            c = line[i]
-                            textStruct.data.append(ord(c))
-
-                            if c == ' ':
-                                state.lastSpaceIndex = len(textStruct.data)-1
-                                state.widthUpToLastSpace = state.lineWidth+characterSpacing[ord(c)]
-
-                            addWidth(state, characterSpacing[ord(c)])
-
-                            i+=1
-
-                elif token == '\\name':
-                    textStruct.name = param
-                elif token == '\\next':
-                    if len(textStruct.data) == 0:
-                        textStruct.ref = lastTextStruct
-                    else:
-                        lastTextStruct = textStruct
-                    lastIndex = index
-                    if param == -1:
-                        index+=1
-                    else:
-                        index = parseVal(param)
-                        if not isDictionary:
-                            index += 0x400
-                        if index>>8 != lastIndex>>8:
-                            textList.append(textGroup)
-                            textGroup = GroupStruct(index>>8)
-                    textStruct = textGroup.textStructs[index&0xff]
-                    if textGroup.lastTextIndex < index&0xff:
-                        textGroup.lastTextIndex = index&0xff
-                    break
-                elif token == '\\nextgroup':
-                    if len(textStruct.data) == 0:
-                        textStruct.ref = lastTextStruct
-                    else:
-                        lastTextStruct = textStruct
-                    textList.append(textGroup)
-                    index = (index&0xff00)+0x100
-                    textGroup = GroupStruct(index>>8)
-                    textStruct = textGroup.textStructs[index&0xff]
-                    if textGroup.lastTextIndex < index&0xff:
-                        textGroup.lastTextIndex = index&0xff
-            except e:
-                print('Error on line ' + str(lineIndex) + ': \"' + line + '\"')
-                raise e
-
-    if (index&0xff) != 0:
         textList.append(textGroup)
+
+        if textGroup.index in parsedGroups:
+            print('WARNING: Parsing group 0x' + myhex(textGroup.index, 2) + ' more than once.')
+
+        for yamlTextData in yamlGroup['data']:
+            indices = yamlTextData['index']
+            if type(indices) == int:
+                indices = [indices]
+
+            names = yamlTextData['name']
+            if type(names) == str:
+                names = [names]
+
+            if len(names) != len(indices):
+                raise Exception("Mismatch between # of names & indices for " + names[0] + ".")
+
+            textStruct = textGroup.addTextStruct(indices, names)
+
+            try:
+                for index in indices:
+                    if index < 0 or index > 255:
+                        raise ValueError("Index " + hex(index) + " is invalid.")
+                    textGroup.lastTextIndex = max(textGroup.lastTextIndex, index)
+
+                state = TextState()
+
+                def addWidth(state, w):
+                    oldWidth = state.lineWidth
+                    state.lineWidth += w
+                    if state.lineWidth > MAX_LINE_WIDTH:
+                        if state.lastSpaceIndex != 0:
+                            textStruct.data[state.lastSpaceIndex] = 0x01
+                            state.lastSpaceIndex = 0
+                            state.lineWidth -= state.widthUpToLastSpace
+                            state.currentTileColor = state.currentColor
+
+                    # vwf: when we pass a tile boundary, update the currentTileColor.
+                    # Uses oldWidth-2 because characters always end with a space.
+                    if (oldWidth-2)//8 != state.lineWidth//8:
+                        state.currentTileColor = state.currentColor
+
+                i = 0
+
+                def textEq(s):
+                    nonlocal i
+                    if text[i:i+len(s)] == s:
+                        i += len(s)
+                        return True
+                    return False
+                
+                text = yamlTextData['text']
+                while i < len(text):
+                    c = text[i]
+                    if c == '\n':
+                        textStruct.data.append(0x01)
+                        state.lineWidth = 0
+                        state.lastSpaceIndex = 0
+                        state.currentTileColor = state.currentColor
+                        i+=1
+                    elif c == '\\':
+                        i+=1
+
+                        validToken = False
+
+                        # Check values which don't need to use brackets
+                        if textEq('Link') or textEq('link'):
+                            validToken = True
+                            textStruct.data.append(0x0a)
+                            textStruct.data.append(0x00)
+                            addWidth(state, 8*5)
+                        elif textEq('kidname'):
+                            validToken = True
+                            textStruct.data.append(0x0a)
+                            textStruct.data.append(0x01)
+                            addWidth(state, 8*5)
+                        elif textEq('secret1'):
+                            validToken = True
+                            textStruct.data.append(0x0a)
+                            textStruct.data.append(0x02)
+                            addWidth(state, 8*5)
+                        elif textEq('secret2'):
+                            validToken = True
+                            textStruct.data.append(0x0a)
+                            textStruct.data.append(0x03)
+                            addWidth(state, 8*5)
+                        elif textEq('num1'):
+                            validToken = True
+                            textStruct.data.append(0x0c)
+                            textStruct.data.append(1<<3)
+                            addWidth(state, 8*3)
+                        elif textEq('opt'):
+                            validToken = True
+                            textStruct.data.append(0x0c)
+                            textStruct.data.append(2<<3)
+                            addWidth(state, 8)
+                        elif textEq('stop'):
+                            validToken = True
+                            textStruct.data.append(0x0c)
+                            textStruct.data.append(3<<3)
+                        elif textEq('heartpiece'):
+                            validToken = True
+                            textStruct.data.append(0x0c)
+                            textStruct.data.append(5<<3)
+                            addWidth(state, 16)
+                        elif textEq('num2'):
+                            validToken = True
+                            textStruct.data.append(0x0c)
+                            textStruct.data.append(6<<3)
+                            addWidth(state, 8*3)
+                        elif textEq('slow'):
+                            validToken = True
+                            textStruct.data.append(0x0c)
+                            textStruct.data.append(7<<3)
+                        elif textEq('circle'):
+                            validToken = True
+                            c = 0x10
+                            textStruct.data.append(c)
+                            addWidth(state, characterSpacing[c])
+                        elif textEq('club'):
+                            validToken = True
+                            c = 0x11
+                            textStruct.data.append(c)
+                            addWidth(state, characterSpacing[c])
+                        elif textEq('diamond'):
+                            validToken = True
+                            c = 0x12
+                            textStruct.data.append(c)
+                            addWidth(state, characterSpacing[c])
+                        elif textEq('spade'):
+                            validToken = True
+                            c = 0x13
+                            textStruct.data.append(c)
+                            addWidth(state, characterSpacing[c])
+                        elif textEq('heart'):
+                            validToken = True
+                            c = 0x14
+
+                            if useVwf:
+                                # vwf stuff: the heart is always supposed to be
+                                # red. Since I messed with the palettes this
+                                # needs to be fixed
+                                if state.currentColor >= 2:
+                                    textStruct.data.append(0x09)
+                                    textStruct.data.append(0x00)
+                                    state.currentColor = 0x00
+
+                            textStruct.data.append(c)
+                            addWidth(state, characterSpacing[c])
+                        elif textEq('up'):
+                            validToken = True
+                            c = 0x15
+                            textStruct.data.append(c)
+                            addWidth(state, characterSpacing[c])
+                        elif textEq('down'):
+                            validToken = True
+                            c = 0x16
+                            textStruct.data.append(c)
+                            addWidth(state, characterSpacing[c])
+                        elif textEq('left'):
+                            validToken = True
+                            c = 0x17
+                            textStruct.data.append(c)
+                            addWidth(state, characterSpacing[c])
+                        elif textEq('right'):
+                            validToken = True
+                            c = 0x18
+                            textStruct.data.append(c)
+                            addWidth(state, characterSpacing[c])
+                        elif textEq('abtn'):
+                            validToken = True
+                            c = 0xb8
+                            textStruct.data.append(c)
+                            addWidth(state, characterSpacing[c])
+                            c = 0xb9
+                            textStruct.data.append(c)
+                            addWidth(state, characterSpacing[c])
+                        elif textEq('bbtn'):
+                            validToken = True
+                            textStruct.data.append(0xba)
+                            textStruct.data.append(0xbb)
+                            addWidth(state, characterSpacing[0xba]+characterSpacing[0xbb])
+                        elif textEq('triangle'):
+                            validToken = True
+                            c = 0x7e
+                            textStruct.data.append(c)
+                            addWidth(state, characterSpacing[c])
+                        elif textEq('rectangle'):
+                            validToken = True
+                            c = 0x7f
+                            textStruct.data.append(c)
+                            addWidth(state, characterSpacing[c])
+                        elif textEq('\\'):  # 2 backslashes
+                            validToken = True
+                            textStruct.data.append('\\')
+                            addWidth(state, characterSpacing[ord('\\')])
+
+                        if validToken:
+                            try:
+                                if i+1 < len(text) and text[i] == '(' and text[i+1] == ')':
+                                    i+=2
+                            except exceptions.IndexError:
+                                pass
+                            continue
+
+                        x = str.find(text, '(', i)
+                        token = ''
+                        param = -1
+
+                        if x != -1:
+                            y = str.find(text, ')', i)
+                            if y != -1:
+                                token = text[i:x]
+                                param = text[x+1:y]
+
+                        # Check values which use brackets (tokens)
+                        if token == 'item':
+                            if useVwf:
+                                # Symbols must be aligned to a tile.
+
+                                # Remove a space if there was one, because
+                                # it will be weirdly spaced out.
+                                if (len(textStruct.data) >= 3
+                                        and textStruct.data[-3] == ord(' ') # There was a space
+                                        and textStruct.data[-2] == 0x09 # Then a color opcode
+                                        and textStruct.data[-1] >= 0x80 # Color opcode's parameter
+                                        and state.lineWidth >= characterSpacing[ord(' ')]
+                                        and (state.lineWidth&7) < 4 ):
+                                    textStruct.data[-3] = textStruct.data[-2]
+                                    textStruct.data[-2] = textStruct.data[-1]
+                                    textStruct.data.pop()
+
+                                    state.lineWidth -= characterSpacing[ord(' ')]
+                                    print('Trimming space for item in ' + textStruct.name)
+
+                                # Align to the next tile
+                                if state.lineWidth & 7 != 0:
+                                    state.lineWidth &= ~7
+                                    state.lineWidth += 8
+                                addWidth(state, 8)
+                            else:
+                                addWidth(state, 8)
+
+                            textStruct.data.append(0x06)
+                            textStruct.data.append(parseVal(param) | 0x80)
+
+                        elif token == 'sym':
+                            textStruct.data.append(0x06)
+                            textStruct.data.append(parseVal(param))
+                            addWidth(state, 8)
+                        elif token == 'jump':
+                            textStruct.data.append(0x07)
+                            try:
+                                textStruct.data.append(parseVal(param))
+                            except ValueError:
+                                textStruct.unparsedNames.append( (len(textStruct.data), param) )
+                                textStruct.data.append(0xff)
+                        elif token == 'col':
+                            p = parseVal(param)
+
+                            if useVwf:
+                                # Check if 2 non-white colors are adjacent
+                                def colorCmp(x,y):
+                                    return x!=0 and y!=0 \
+                                            and x<4 and y<4 \
+                                            and x != y
+
+                                # Check if separate colors are too close
+                                # together
+                                if colorCmp(state.currentTileColor,p):
+                                    print('Red/blue colors too close together in "' + textStruct.name + '", adding extra space')
+                                    addWidth(state, characterSpacing[ord(' ')])
+                                    textStruct.data.append(' ')
+
+                                # Special behaviour for vwf: in order to
+                                # prevent colors from "leaking", after using
+                                # color 3, it must switch to color 4 for the
+                                # normal color instead of color 0
+                                if state.currentColor == 3 and p == 0:
+                                    p = 4
+
+                            textStruct.data.append(0x09)
+                            textStruct.data.append(p)
+                            state.currentColor = p
+                        elif token == 'charsfx':
+                            textStruct.data.append(0x0b)
+                            textStruct.data.append(parseVal(param))
+                        elif token == 'speed':
+                            p = parseVal(param)
+                            assert p < 4, '"\speed" takes parameters from 0-3'
+                            textStruct.data.append(0x0c)
+                            textStruct.data.append(p)
+                        elif token == 'pos':
+                            p = parseVal(param)
+                            assert p < 4, '"\pos" takes parameters from 0-3'
+                            textStruct.data.append(0x0c)
+                            textStruct.data.append((4<<3) | p)
+                        elif token == 'wait':
+                            textStruct.data.append(0x0d)
+                            textStruct.data.append(parseVal(param))
+                        elif token == 'sfx':
+                            textStruct.data.append(0x0e)
+                            textStruct.data.append(parseVal(param))
+                        elif token == 'call':
+                            textStruct.data.append(0x0f)
+                            try:
+                                textStruct.data.append(parseVal(param))
+                            except ValueError:
+                                textStruct.unparsedNames.append( (len(textStruct.data), param) )
+                                textStruct.data.append(0xff)
+                        elif len(token) == 4 and\
+                                token[0:3] == 'cmd' and\
+                                isHex(token[3]):
+                            textStruct.data.append(int(token[3], 16))
+                            textStruct.data.append(parseVal(param))
+                        elif text[i] == 'x':
+                            textStruct.data.append(int(text[i+1:i+3], 16))
+                            i+=3
+
+                            try:
+                                if i+1 < len(text) and text[i] == '(' and text[i+1] == ')':
+                                    i+=2
+                            except exceptions.IndexError:
+                                pass
+
+                            continue
+                        else:
+                            raise Exception("Couldn't parse '" + token + "'.")
+
+                        assert(param != -1)
+                        i = y+1
+                    else:
+                        c = text[i]
+                        textStruct.data.append(ord(c))
+
+                        if c == ' ':
+                            state.lastSpaceIndex = len(textStruct.data)-1
+                            state.widthUpToLastSpace = state.lineWidth+characterSpacing[ord(c)]
+
+                        addWidth(state, characterSpacing[ord(c)])
+
+                        i+=1
+
+                # Outside while loop
+                if yamlTextData['null_terminator']:
+                    textStruct.data.append(0)
+
+            except:
+                print('Error parsing text: "' + textStruct.getPrimaryName() + '".')
+                raise
 
 parseTextFile(dictFile, True)
 parseTextFile(textFile, False)
@@ -724,11 +691,10 @@ for group in textList:
         for tup in struct.unparsedNames:
             i = tup[0]
             name = tup[1]
-            line = tup[2]
             try:
-                struct.data[i] = parseName(name, struct.index>>8)
+                struct.data[i] = parseName(name, struct.getGroupIndex())
             except ValueError:
-                print('Error on line ' + str(line) + ': \"' + name + '\" is an invalid name.')
+                print('Error: \"' + name + '\" is an invalid name.')
                 exit(1)
 
 # Compile dictionary
@@ -737,10 +703,11 @@ for i in range(4):
     for textStruct in group.textStructs:
         if len(textStruct.data) != 0:
             dat = bytearray(textStruct.data)
-            c = dat.pop()  # Remove null terminator
-            if c != 0:
-                print('Expected null terminator on dictionary entry ' + hex(textStruct.index))
-            textDictionary[bytes(dat)] = DictEntry(textStruct.index, dat)
+            if dat[-1] != 0:
+                print('Expected null terminator on dictionary entry ' + textStruct.getPrimaryName())
+                continue
+            dat = dat[:-1]
+            textDictionary[bytes(dat)] = DictEntry((textStruct.getGroupIndex() << 8) | textStruct.indices[0], dat)
 
 
 numGroups = (textList[len(textList)-1].index)+1
@@ -767,21 +734,22 @@ address = (startAddress%0x4000)+0x4000
 bank = startAddress//0x4000
 
 textOffset1 = 'DICT0_00'
-textOffset2 = 'TX_' + myhex(textOffsetSplitIndex-4, 2) + '00'
+textOffset2 = 'TX_' + myhex(textOffsetSplitIndex-4, 2) + '00' # TODO: is this ok?
 
 # Print defines
 
 definesFile = open('build/textDefines.s', 'w')
 
 definesFile.write(
-    '.DEFINE TEXT_OFFSET_SPLIT_INDEX ' + wlahex(textOffsetSplitIndex, 2) + '\n')
+    '.define TEXT_OFFSET_SPLIT_INDEX ' + wlahex(textOffsetSplitIndex, 2) + '\n\n')
 
+# TODO: verify defines identical to dumpText.py
 for group in textList:
     if group.index >= 4:
         for textStruct in group.textStructs:
-            if textStruct.index&0xff > group.lastTextIndex:
-                break
-            definesFile.write('.DEFINE ' + textStruct.name + ' ' + wlahex(textStruct.index-0x400) + '\n')
+            for i in range(len(textStruct.names)):
+                fullIndex = ((textStruct.getGroupIndex() - 4) << 8) | textStruct.indices[i]
+                definesFile.write('.define ' + textStruct.names[i] + ' ' + wlahex(fullIndex, 4) + '\n')
 
 definesFile.close()
 
@@ -801,8 +769,6 @@ outFile.write('\ntextTableENG_00:\n')
 for g in sorted(skippedGroups):
     outFile.write('textTableENG_' + myhex(g, 2) + ':\n')
 
-lastTextName = 'TX_WTFLOL_ADDR'
-
 for group in textList:
     if group.index != 0:
         outFile.write('textTableENG_' + myhex(group.index, 2) + ':\n')
@@ -813,44 +779,35 @@ for group in textList:
         textOffset = 'TEXT_OFFSET_2'
 
     for i in range(0, group.lastTextIndex+1):
-        textStruct = group.textStructs[i]
-        if textStruct.ref is None:
-            outFile.write(
-                '\tm_RelativePointer ' + textStruct.name + '_ADDR  ' + textOffset + '\n')
+        textName = group.getTextName(i)
+        if textName is None:
+            outFile.write('\t.dw 0 ; TODO: FIX THIS')
+            print('WARNING: Missing text index ' + hex(i))
             address += 2
-            i+=1
         else:
             outFile.write(
-                '\tm_RelativePointer ' + textStruct.ref.name + '_ADDR  ' + textOffset + '\n')
+                '\tm_RelativePointer ' + textName + '_ADDR  ' + textOffset + '\n')
             address += 2
-            i+=1
-
-    while i <= group.lastTextIndex:
-        outFile.write(
-            '\tm_RelativePointer ' + lastTextName + '  ' + textOffset + '\n')
-        address += 2
-        i+=1
 
 
 outFile.write('\n')
 
 # Print actual text
 for group in textList:
-    for j in range(0, group.lastTextIndex+1):
-        textStruct = group.textStructs[j]
-
+    for textStruct in group.textStructs:
         if group.index < 4:  # Dictionaries don't get compressed
             data = textStruct.data
         else:  # Everything else does
             data = compressTextMemoised(
                 bytes(textStruct.data), len(textStruct.data))
 
-        if textStruct.name == textOffset1:
+        if textOffset1 in textStruct.names: # TODO: this can be better
             outFile.write('TEXT_OFFSET_1:\n')
-        elif textStruct.name == textOffset2:
+        elif textOffset2 in textStruct.names:
             outFile.write('TEXT_OFFSET_2:\n')
 
-        outFile.write(textStruct.name + '_ADDR:\n')
+        for name in textStruct.names:
+            outFile.write(name + '_ADDR:\n')
         i = 0
         lineEntries = 0
         while i < len(data):
