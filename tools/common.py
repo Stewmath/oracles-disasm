@@ -77,7 +77,9 @@ def isHex(c):
 def parseVal(s):
     s = str.strip(s)
     if s[0] == '$':
-        return int(s[1:len(s)], 16)
+        return int(s[1:], 16)
+    elif s[0:2] == '0x':
+        return int(s[2:], 16)
     else:
         return int(s)
 

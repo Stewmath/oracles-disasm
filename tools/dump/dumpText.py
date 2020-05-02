@@ -401,9 +401,9 @@ while address < textEndAddress:
         elif b == 0x6 and len(data)>i+1:
             p = data[i+1]
             if p&0x80 == 0x80:
-                textData += '\\item(' + wlahex(p&0x7f,2) + ')'
+                textData += '\\item(0x' + myhex(p&0x7f,2) + ')'
             else:
-                textData += '\\sym(' + wlahex(p&0x7f,2) + ')'
+                textData += '\\sym(0x' + myhex(p&0x7f,2) + ')'
             i+=1
         elif b == 0x7 and len(data)>i+1:
             textData += '\\jump(' + getTextName((index & 0xff00) | data[i+1]) + ')'
@@ -412,7 +412,7 @@ while address < textEndAddress:
             if data[i+1] < 0x80:
                 textData += '\\col(' + str(data[i+1]) + ')'
             else:
-                textData += '\\col(' + wlahex(data[i+1], 2) + ')'
+                textData += '\\col(0x' + myhex(data[i+1], 2) + ')'
             i+=1
         elif b == 0xa and len(data)>i+1:
             if data[i+1] == 0:
@@ -430,7 +430,7 @@ while address < textEndAddress:
             else:
                 textData += '\\' + myhex(b, 2)
         elif b == 0xb and len(data)>i+1:
-            textData += '\\charsfx(' + wlahex(data[i+1], 2) + ')'
+            textData += '\\charsfx(0x' + myhex(data[i+1], 2) + ')'
             i+=1
         elif b == 0xc and len(data)>i+1:
             p = data[i+1]>>3
@@ -455,20 +455,20 @@ while address < textEndAddress:
                 print('Bad opcode')
             i+=1
         elif b == 0xd and len(data)>i+1:
-            textData += '\\wait(' + wlahex(data[i+1], 2) + ')'
+            textData += '\\wait(' + str(data[i+1]) + ')'
             i+=1
         elif b == 0xe and len(data)>i+1:
-            textData += '\\sfx(' + wlahex(data[i+1], 2) + ')'
+            textData += '\\sfx(0x' + myhex(data[i+1], 2) + ')'
             i+=1
         elif b == 0xf and len(data)>i+1:
             p=data[i+1]
             if p < 0xfc:
                 textData += '\\call(' + getTextName((index & 0xff00) | p) + ')'
             else:
-                textData += '\\call(' + wlahex(p,2) + ')'
+                textData += '\\call(0x' + myhex(p,2) + ')'
             i+=1
         elif b >= 0x6 and b < 0x10:
-            textData += '\\cmd' + myhex(b, 1) + '(' + wlahex(data[i+1], 2) + ')'
+            textData += '\\cmd' + myhex(b, 1) + '(0x' + myhex(data[i+1], 2) + ')'
             i+=1
         elif b == '\\':
             textData += '\\\\'

@@ -5944,7 +5944,7 @@ groups:
   - name: DICT3_dd
     index: 0xdd
     text: |-
-      Doo, dee, dee\sym($1c)
+      Doo, dee, dee\sym(0x1c)
     null_terminator: True
 
   - name: DICT3_de

@@ -6,17 +6,18 @@
 #   Similar to Jump, but it returns to the current text when it's done.
 #   There are special values that will cause this to read the text index from
 #   RAM at wTextSubstitutions. The values are:
-#     \call($ff): Uses [wTextSubstitutions] as the text index.
-#     \call($fe): Uses [wTextSubstitutions+1] as the text index.
-#     \call($fd): Uses [wTextSubstitutions+2] as the text index.
-#     \call($fc): Uses [wTextSubstitutions+3] as the text index.
+#     \call(0xff): Uses [wTextSubstitutions] as the text index.
+#     \call(0xfe): Uses [wTextSubstitutions+1] as the text index.
+#     \call(0xfd): Uses [wTextSubstitutions+2] as the text index.
+#     \call(0xfc): Uses [wTextSubstitutions+3] as the text index.
 # \charsfx(XX):
 #   Change the sound effect that's played when each character is displayed.
+#   The actual game doesn't use this.
 # \cmd8(XX):
 #   Displays another textbox when the current one is finished, depending on...
 #   things. This is used sparingly, in shops.
 # \col(XX):
-#   Change to color XX. If XX is $80 or above, the value is written directly
+#   Change to color XX. If XX is 0x80 or above, the value is written directly
 #   to the "attribute byte" in vram.
 # \heartpiece:
 #   Show the heart icon that pops up when you get a heart piece.
@@ -78,7 +79,6 @@
 # TODOS:
 # - "index: auto"
 # - Calculate textoffsetsplitindex automatically
-# - Support "$" sign and make use consistent (ie. "\sym($54)")
 
 import sys
 import io

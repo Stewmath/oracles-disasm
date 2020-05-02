@@ -445,7 +445,7 @@ groups:
     text: |-
       \pos(2)It's the \col(1)Magical
       Boomerang\col(0)!
-      Press \col($84)\item($00)\col(0)
+      Press \col(0x84)\item(0x00)\col(0)
       while holding
       the button to
       control its
@@ -475,7 +475,7 @@ groups:
       \pos(2)You got the
       \col(1)Power Bracelet\col(0)!
       Hold the button
-      and press \col($84)\item($00)\col(0)
+      and press \col(0x84)\item(0x00)\col(0)
       to lift heavy
       objects!
     null_terminator: True
@@ -929,7 +929,7 @@ groups:
     index: 0x5a
     text: |-
       You got a
-      \col($84)\item($01) \col(1)Cuccodex\col(0)!
+      \col(0x84)\item(0x01) \col(1)Cuccodex\col(0)!
       It's the result
       of many years of
       Cucco research!
@@ -938,8 +938,8 @@ groups:
   - name: TX_005b
     index: 0x5b
     text: |-
-      \pos(2)The \col($84)\item($01)\col(0) turned
-      into a \col($84)\item($02)\col(1) Lon Lon
+      \pos(2)The \col(0x84)\item(0x01)\col(0) turned
+      into a \col(0x84)\item(0x02)\col(1) Lon Lon
       Egg\col(0)! It's a
       beauty aid?!?
     null_terminator: True
@@ -947,8 +947,8 @@ groups:
   - name: TX_005c
     index: 0x5c
     text: |-
-      You traded \col($84)\item($02)\col(0)
-      for a \col($84)\item($03)\col(1) Ghastly
+      You traded \col(0x84)\item(0x02)\col(0)
+      for a \col(0x84)\item(0x03)\col(1) Ghastly
       Doll\col(0)!  Looking
       at it gives you
       chills!
@@ -957,8 +957,8 @@ groups:
   - name: TX_005d
     index: 0x5d
     text: |-
-      The \col($84)\item($03)\col(0) is now an
-      \col($84)\item($04)\col(1) Iron Pot\col(0).
+      The \col(0x84)\item(0x03)\col(0) is now an
+      \col(0x84)\item(0x04)\col(1) Iron Pot\col(0).
       It looks...
       well-seasoned.
     null_terminator: True
@@ -966,7 +966,7 @@ groups:
   - name: TX_005e
     index: 0x5e
     text: |-
-      Your \col($80)\item($05)\col(1) Lava Soup\col(0)
+      Your \col(0x80)\item(0x05)\col(1) Lava Soup\col(0)
       is ready! It's
       molten hot!
     null_terminator: True
@@ -974,35 +974,35 @@ groups:
   - name: TX_005f
     index: 0x5f
     text: |-
-      You got the \col($84)\item($06)
+      You got the \col(0x84)\item(0x06)
       \col(1)Goron Vase\col(0) as
       thanks for the
-      \col($80)\item($05)\col(0)! It's a very
+      \col(0x80)\item(0x05)\col(0)! It's a very
       nice vase...
     null_terminator: True
 
   - name: TX_0060
     index: 0x60
     text: |-
-      You got a \col($84)\item($07)
+      You got a \col(0x84)\item(0x07)
       \col(1)Fish\col(0) as thanks
-      for the \col($84)\item($06)\col(0)! It's
+      for the \col(0x84)\item(0x06)\col(0)! It's
       market fresh!
     null_terminator: True
 
   - name: TX_0061
     index: 0x61
     text: |-
-      Your \col($84)\item($07)\col(0) is now
-      a \col($84)\item($08)\col(1) Megaphone\col(0)!
+      Your \col(0x84)\item(0x07)\col(0) is now
+      a \col(0x84)\item(0x08)\col(1) Megaphone\col(0)!
       Give a shout!
     null_terminator: True
 
   - name: TX_0062
     index: 0x62
     text: |-
-      \pos(2)Your \col($84)\item($08)\col(0) is now
-      a \col($84)\item($09)\col(1) Mushroom\col(0)!
+      \pos(2)Your \col(0x84)\item(0x08)\col(0) is now
+      a \col(0x84)\item(0x09)\col(1) Mushroom\col(0)!
       It smells weird.
     null_terminator: True
 
@@ -1010,7 +1010,7 @@ groups:
     index: 0x63
     text: |-
       You traded the
-      \pos(2)\col($84)\item($09)\col(0) for a \col($84)\item($0a)\col(1)
+      \pos(2)\col(0x84)\item(0x09)\col(0) for a \col(0x84)\item(0x0a)\col(1)
       Wooden Bird\col(0)!
       It looks real!
     null_terminator: True
@@ -1018,17 +1018,17 @@ groups:
   - name: TX_0064
     index: 0x64
     text: |-
-      You got \col($84)\item($0b)
+      You got \col(0x84)\item(0x0b)
       \col(1)Engine Grease\col(0)
-      \pos(2)for your \col($84)\item($0a)\col(0).
+      \pos(2)for your \col(0x84)\item(0x0a)\col(0).
     null_terminator: True
 
   - name: TX_0065
     index: 0x65
     text: |-
       You traded your
-      \col($84)\item($0b)\col(0) for a
-      \col($84)\item($0c)\col(1) Phonograph\col(0)!
+      \col(0x84)\item(0x0b)\col(0) for a
+      \col(0x84)\item(0x0c)\col(1) Phonograph\col(0)!
       What a tune!
     null_terminator: True
 
@@ -1415,7 +1415,7 @@ groups:
   - name: TX_0300
     index: 0x00
     text: |-
-      \call($fd)
+      \call(0xfd)
        \opt()Warp \opt()Don't
     null_terminator: True
 
@@ -2366,7 +2366,7 @@ groups:
       legends say the
       hero destined to
       overthrow evil
-      has a \sym($57) on his
+      has a \sym(0x57) on his
       left hand.
       Perhaps you
       are this hero.
@@ -2394,7 +2394,7 @@ groups:
       To think I can
       add to the power
       of the hero with
-      the \sym($57) symbol!
+      the \sym(0x57) symbol!
       I loan you the
       power of the
       Spirit of
@@ -3645,9 +3645,9 @@ groups:
   - name: TX_0b20
     index: 0x20
     text: |-
-      Hey! That \col($84)\item($04)\col(0)!\stop
+      Hey! That \col(0x84)\item(0x04)\col(0)!\stop
       It's just what I
-      need! A \col($84)\item($04)\col(0) like
+      need! A \col(0x84)\item(0x04)\col(0) like
       that would make
       great soup!\stop
       Leave it to me!
@@ -3694,7 +3694,7 @@ groups:
   - name: TX_0b26
     index: 0x26
     text: |-
-      \sfx($c7)(Achoo!) I'b all
+      \sfx(0xc7)(Achoo!) I'b all
       stuffed ub.
       It's so cold. Do
       you hab adyting
@@ -3705,9 +3705,9 @@ groups:
   - name: TX_0b27
     index: 0x27
     text: |-
-      \sfx($c7)Oh? Dat sbells
+      \sfx(0xc7)Oh? Dat sbells
       good! Cad I hab
-      dat soup \col($80)\item($05)\col(0)?
+      dat soup \col(0x80)\item(0x05)\col(0)?
         \opt()Sure \opt()No way
     null_terminator: True
 
@@ -3715,7 +3715,7 @@ groups:
     index: 0x28
     text: |-
       (Glug! Glug!)\stop
-      \sfx($c7)It's a harmony
+      \sfx(0xc7)It's a harmony
       of flavors!
       Thanks to you,
       I'm all better!
@@ -3727,7 +3727,7 @@ groups:
   - name: TX_0b29
     index: 0x29
     text: |-
-      \sfx($c7)Goron or human,
+      \sfx(0xc7)Goron or human,
       health is all
       that matters!
     null_terminator: True
@@ -3735,7 +3735,7 @@ groups:
   - name: TX_0b2a
     index: 0x2a
     text: |-
-      \sfx($c7)Brrrrr...
+      \sfx(0xc7)Brrrrr...
       I'b so cold!
     null_terminator: True
 
@@ -3882,7 +3882,7 @@ groups:
     text: |-
       \call(TX_0b39)
       Wake him with
-      the \col(1)Megaphone\col(0) \col($84)\item($08)\col(0)?
+      the \col(1)Megaphone\col(0) \col(0x84)\item(0x08)\col(0)?
         \opt()Wake him \opt()No
     null_terminator: True
 
@@ -4028,7 +4028,7 @@ groups:
   - name: TX_0b49
     index: 0x49
     text: |-
-      \col(1)Engine Grease\col(0) \col($84)\item($0b)\col(0)?
+      \col(1)Engine Grease\col(0) \col(0x84)\item(0x0b)\col(0)?
       Will that make
       it go quickly?
       \opt()Sure \opt()Maybe not
@@ -4060,7 +4060,7 @@ groups:
   - name: TX_0b4d
     index: 0x4d
     text: |-
-      \pos(2)\sfx($c6)Doo, dee, dee\sym($1c)\stop
+      \pos(2)\sfx(0xc6)Doo, dee, dee\sym(0x1c)\stop
       Hrm!\stop
       You won't play
       for me? Fine!
@@ -4069,7 +4069,7 @@ groups:
   - name: TX_0b4e
     index: 0x4e
     text: |-
-      \pos(2)\sfx($c6)Doo, dee, dee\sym($1c)\stop
+      \pos(2)\sfx(0xc6)Doo, dee, dee\sym(0x1c)\stop
       Dee?
     null_terminator: True
 
@@ -4078,14 +4078,14 @@ groups:
     text: |-
       \pos(2)It's staring at
       your
-      \col(1)Phonograph\col(0) \col($84)\item($0c)\col(0).
+      \col(1)Phonograph\col(0) \col(0x84)\item(0x0c)\col(0).
       \opt()Play it \opt()Don't
     null_terminator: True
 
   - name: TX_0b50
     index: 0x50
     text: |-
-      \pos(2)\sfx($c6)Dee! What a
+      \pos(2)\sfx(0xc6)Dee! What a
       tune! I love it!
       I'll teach you
       the way to my
@@ -4105,7 +4105,7 @@ groups:
   - name: TX_0b52
     index: 0x52
     text: |-
-      \sfx($c7)I want to forge
+      \sfx(0xc7)I want to forge
       a great sword
       like those the
       Gorons of old
@@ -4123,7 +4123,7 @@ groups:
   - name: TX_0b53
     index: 0x53
     text: |-
-      \sfx($c7)Oh... \stop
+      \sfx(0xc7)Oh... \stop
       Come back if you
       figure it out.
     null_terminator: True
@@ -4131,14 +4131,14 @@ groups:
   - name: TX_0b54
     index: 0x54
     text: |-
-      \sfx($c7)Really?
+      \sfx(0xc7)Really?
       Please tell me!
     null_terminator: True
 
   - name: TX_0b55
     index: 0x55
     text: |-
-      \sfx($c7)So! That's how
+      \sfx(0xc7)So! That's how
       you forge it!
       I think I'll try
       it now. Hang on!
@@ -4149,13 +4149,13 @@ groups:
   - name: TX_0b56
     index: 0x56
     text: |-
-      \sfx($c7)You forgot it?
+      \sfx(0xc7)You forgot it?
     null_terminator: True
 
   - name: TX_0b57
     index: 0x57
     text: |-
-      \sfx($c7)That's it! The
+      \sfx(0xc7)That's it! The
       Goron's \col(1)Great
       Sword\col(0) is
       reforged! I'll
@@ -4171,7 +4171,7 @@ groups:
   - name: TX_0b58
     index: 0x58
     text: |-
-      \sfx($c7)I'll teach the
+      \sfx(0xc7)I'll teach the
       \col(1)secret\col(0) of
       Biggoron that
       will let you use
@@ -4185,7 +4185,7 @@ groups:
   - name: TX_0b59
     index: 0x59
     text: |-
-      \sfx($c7)Come back if you
+      \sfx(0xc7)Come back if you
       forget the
       \col(1)secret\col(0).
     null_terminator: True
@@ -4514,7 +4514,7 @@ groups:
       since I had such
       fun! Hey! Your
       left hand! It
-      has a \sym($57) on it.
+      has a \sym(0x57) on it.
       That is a sacred
       mark in \col(3)Hyrule\col(0).
       If it's the true
@@ -4538,7 +4538,7 @@ groups:
       since I've had
       such fun!
       Hey! Your left
-      hand has a \sym($57)
+      hand has a \sym(0x57)
       on it! That is
       a sacred symbol
       in Hyrule.
@@ -4577,7 +4577,7 @@ groups:
     text: |-
       \pos(2)\col(1)Magic Potion\col(0)
       300 Rupees each.
-        \opt()OK \opt()No thanks\cmd8($0d)
+        \opt()OK \opt()No thanks\cmd8(0x0d)
     null_terminator: True
 
   - name: TX_0d02
@@ -4612,7 +4612,7 @@ groups:
     text: |-
       \pos(2)\col(1)Gasha Seed\col(0)
       300 Rupees each!
-        \opt()OK \opt()No thanks\cmd8($0e)
+        \opt()OK \opt()No thanks\cmd8(0x0e)
     null_terminator: True
 
   - name: TX_0d06
@@ -4653,7 +4653,7 @@ groups:
     text: |-
       \pos(2)\col(1)Bombchu\col(0)
       5 for 100 Rupees
-        \opt()OK \opt()No thanks\cmd8($11)
+        \opt()OK \opt()No thanks\cmd8(0x11)
     null_terminator: True
 
   - name: TX_0d0b
@@ -4701,7 +4701,7 @@ groups:
     text: |-
       \col(1)3 Hearts\col(0)\stop
        10 Rupees
-        \opt()OK \opt()No thanks\cmd8($0f)
+        \opt()OK \opt()No thanks\cmd8(0x0f)
     null_terminator: True
 
   - name: TX_0e03
@@ -4709,7 +4709,7 @@ groups:
     text: |-
       \col(1)Wooden Shield\col(0)\stop
        30 Rupees
-        \opt()OK \opt()No thanks\cmd8($0f)
+        \opt()OK \opt()No thanks\cmd8(0x0f)
     null_terminator: True
 
   - name: TX_0e04
@@ -4717,7 +4717,7 @@ groups:
     text: |-
       \col(1)10 Bombs\col(0)\stop
        20 Rupees
-        \opt()OK \opt()No thanks\cmd8($0f)
+        \opt()OK \opt()No thanks\cmd8(0x0f)
     null_terminator: True
 
   - name: TX_0e05
@@ -4756,7 +4756,7 @@ groups:
     text: |-
       \col(1)Big Seed Satchel\col(0)\stop
        500 Rupees
-        \opt()OK \opt()No thanks\cmd8($0f)
+        \opt()OK \opt()No thanks\cmd8(0x0f)
     null_terminator: True
 
   - name: TX_0e0a
@@ -4764,7 +4764,7 @@ groups:
     text: |-
       \col(1)1 Gasha Seed\col(0)\stop
        500 Rupees
-        \opt()OK \opt()No thanks\cmd8($0f)
+        \opt()OK \opt()No thanks\cmd8(0x0f)
     null_terminator: True
 
   - name: TX_0e0b
@@ -4772,7 +4772,7 @@ groups:
     text: |-
       \col(1)Treasure Map\col(0)\stop
        200 Rupees
-        \opt()OK \opt()No thanks\cmd8($0f)
+        \opt()OK \opt()No thanks\cmd8(0x0f)
     null_terminator: True
 
   - name: TX_0e0c
@@ -4914,7 +4914,7 @@ groups:
     text: |-
       \col(1)Strange Flute\col(0)\stop
        150 Rupees
-        \opt()OK \opt()No thanks\cmd8($0f)
+        \opt()OK \opt()No thanks\cmd8(0x0f)
     null_terminator: True
 
   - name: TX_0e1c
@@ -4988,7 +4988,7 @@ groups:
     text: |-
       \col(1)1 Gasha Seed\col(0)\stop
         100 Rupees
-        \opt()OK \opt()No thanks\cmd8($0f)
+        \opt()OK \opt()No thanks\cmd8(0x0f)
     null_terminator: True
 
   - name: TX_0e23
@@ -4996,7 +4996,7 @@ groups:
     text: |-
       \col(1)Advance Ring\col(0)\stop
        100 Rupees
-        \opt()OK \opt()No thanks\cmd8($0f)
+        \opt()OK \opt()No thanks\cmd8(0x0f)
     null_terminator: True
 
   - name: TX_0e24
@@ -5015,7 +5015,7 @@ groups:
       \col(1)ring\col(0) it is is
       a secret.\stop
       100 Rupees
-        \opt()OK \opt()No thanks\cmd8($0f)
+        \opt()OK \opt()No thanks\cmd8(0x0f)
     null_terminator: True
 
   - name: TX_0e26
@@ -5047,7 +5047,7 @@ groups:
     text: |-
       \col(1)Iron Shield\col(0)\stop
        50 Rupees
-        \opt()OK \opt()No thanks\cmd8($0f)
+        \opt()OK \opt()No thanks\cmd8(0x0f)
     null_terminator: True
 
   - name: TX_0e2a
@@ -5055,7 +5055,7 @@ groups:
     text: |-
       \col(1)Mirror Shield\col(0)\stop
        80 Rupees
-        \opt()OK \opt()No thanks\cmd8($0f)
+        \opt()OK \opt()No thanks\cmd8(0x0f)
     null_terminator: True
 
 - group: 0x0f
@@ -6893,14 +6893,14 @@ groups:
   - name: TX_2000
     index: 0x00
     text: |-
-      \pos(2)\sfx($c3)I'm \col(3)Ricky\col(0)!\stop
+      \pos(2)\sfx(0xc3)I'm \col(3)Ricky\col(0)!\stop
       \jump(TX_200b)
     null_terminator: False
 
   - name: TX_2001
     index: 0x01
     text: |-
-      \pos(2)\sfx($c3)Th-those are my
+      \pos(2)\sfx(0xc3)Th-those are my
       \col(1)gloves\col(0)!
       You brought them
       back? Thank you!
@@ -6909,14 +6909,14 @@ groups:
   - name: TX_2002
     index: 0x02
     text: |-
-      \pos(2)\sfx($c3)In exchange...
+      \pos(2)\sfx(0xc3)In exchange...
       \jump(TX_2009)
     null_terminator: False
 
   - name: TX_2003
     index: 0x03
     text: |-
-      \sfx($c3)We made it!
+      \sfx(0xc3)We made it!
       \col(3)Spool Swamp\col(0) is
       up ahead. I'm
       going home, so
@@ -6927,7 +6927,7 @@ groups:
   - name: TX_2004
     index: 0x04
     text: |-
-      \sfx($c3)Ew! It smells
+      \sfx(0xc3)Ew! It smells
       like medicine...
       I can't stand
       it! See ya...
@@ -6936,7 +6936,7 @@ groups:
   - name: TX_2005
     index: 0x05
     text: |-
-      \sfx($c3)Press \abtn to
+      \sfx(0xc3)Press \abtn to
       punch, or save
       power to unleash
       a tornado. I can
@@ -6947,7 +6947,7 @@ groups:
   - name: TX_2006
     index: 0x06
     text: |
-      \pos(2)\sfx($c3)But if you beat
+      \pos(2)\sfx(0xc3)But if you beat
       \col(3)Blaino\col(0), you must
       be tough. What's
       your name?\stop
@@ -6970,7 +6970,7 @@ groups:
   - name: TX_2008
     index: 0x08
     text: |-
-      \pos(2)\sfx($c3)First,
+      \pos(2)\sfx(0xc3)First,
     null_terminator: False
 
   - name: TX_2009
@@ -6985,7 +6985,7 @@ groups:
   - name: TX_200a
     index: 0x0a
     text: |
-      \pos(2)\sfx($c3)\Link!\stop
+      \pos(2)\sfx(0xc3)\Link!\stop
       Wow! To think
       we'd meet here!
     null_terminator: False
@@ -6993,7 +6993,7 @@ groups:
   - name: TX_200b
     index: 0x0b
     text: |-
-      \pos(2)\sfx($c3)\col(3)Spool Swamp\col(0) is
+      \pos(2)\sfx(0xc3)\col(3)Spool Swamp\col(0) is
       my backyard.
       If you go south
       from here, then
@@ -7012,7 +7012,7 @@ groups:
   - name: TX_200c
     index: 0x0c
     text: |-
-      \pos(2)\sfx($c3)But if you beat
+      \pos(2)\sfx(0xc3)But if you beat
       \col(3)Blaino\col(0), you must
       be strong!
       \jump(TX_2007)
@@ -7021,7 +7021,7 @@ groups:
   - name: TX_200d
     index: 0x0d
     text: |-
-      \sfx($c3)If you move
+      \sfx(0xc3)If you move
       toward a hole,
       I'll just jump
       right over.
@@ -7033,7 +7033,7 @@ groups:
   - name: TX_200e
     index: 0x0e
     text: |-
-      \sfx($c3)A cliff like
+      \sfx(0xc3)A cliff like
       that is one
       leap. I'll jump
       if you move up
@@ -7069,7 +7069,7 @@ groups:
   - name: TX_2103
     index: 0x03
     text: |-
-      \pos(2)\sfx($c4)Dee! Dee!
+      \pos(2)\sfx(0xc4)Dee! Dee!
     null_terminator: True
 
   - name: TX_2104
@@ -7079,7 +7079,7 @@ groups:
       Then you can
       pay us for it!
       50 Rupees!
-        \opt()OK \opt()No way\cmd8($1f)
+        \opt()OK \opt()No way\cmd8(0x1f)
     null_terminator: True
 
   - name:
@@ -7093,7 +7093,7 @@ groups:
       But 50 Rupees is
       too cheap! Give
       me 30 more!
-        \opt()OK \opt()No way\cmd8($12)
+        \opt()OK \opt()No way\cmd8(0x12)
     null_terminator: True
 
   - name: TX_2107
@@ -7127,7 +7127,7 @@ groups:
   - name: TX_210b
     index: 0x0b
     text: |-
-      \sfx($c4)You saved me!
+      \sfx(0xc4)You saved me!
       I'm \col(3)Dimitri\col(0).
       What about you?\stop
       \Link? That's
@@ -7213,7 +7213,7 @@ groups:
   - name: TX_2115
     index: 0x15
     text: |-
-      \sfx($c4)\Link!\stop
+      \sfx(0xc4)\Link!\stop
       I've been trying
       to find you.
       We're friends!
@@ -7274,7 +7274,7 @@ groups:
     text: |-
       Do you have
       \col(1)Bombs\col(0)?
-        \opt()Yes \opt()No\cmd8($13)
+        \opt()Yes \opt()No\cmd8(0x13)
     null_terminator: True
 
   - name: TX_211d
@@ -7293,19 +7293,19 @@ groups:
   - name: TX_211e
     index: 0x1e
     text: |-
-      \sfx($c4)Not that way!
+      \sfx(0xc4)Not that way!
     null_terminator: True
 
   - name: TX_211f
     index: 0x1f
     text: |-
-      \sfx($c4)Get on my back.
+      \sfx(0xc4)Get on my back.
     null_terminator: True
 
   - name: TX_2120
     index: 0x20
     text: |-
-      \sfx($c4)You saved me.
+      \sfx(0xc4)You saved me.
       I am \col(3)Dimitri\col(0).
       You can't swim?
       I can even swim
@@ -7317,7 +7317,7 @@ groups:
   - name: TX_2121
     index: 0x21
     text: |-
-      \sfx($c4)You can carry
+      \sfx(0xc4)You can carry
       and throw me
       when you use the
       \col(1)Power Bracelet\col(0).
@@ -7327,7 +7327,7 @@ groups:
   - name: TX_2122
     index: 0x22
     text: |-
-      \sfx($c4)I even swim up
+      \sfx(0xc4)I even swim up
       waterfalls.
       Try it!
     null_terminator: True
@@ -7361,7 +7361,7 @@ groups:
   - name: TX_2203
     index: 0x03
     text: |-
-      \pos(1)\sfx($c5)Gmph, gmph,
+      \pos(1)\sfx(0xc5)Gmph, gmph,
       GULP!
     null_terminator: True
 
@@ -7409,7 +7409,7 @@ groups:
   - name: TX_220a
     index: 0x0a
     text: |-
-      \sfx($c5)I am \col(3)Moosh\col(0).\stop
+      \sfx(0xc5)I am \col(3)Moosh\col(0).\stop
       I got startled
       when they asked
       for my \col(1)banana\col(0).
@@ -7441,7 +7441,7 @@ groups:
   - name: TX_220d
     index: 0x0d
     text: |-
-      \sfx($c5)Thank you for
+      \sfx(0xc5)Thank you for
       helping me out.
       Tell me your
       name.\stop
@@ -7465,7 +7465,7 @@ groups:
   - name: TX_220f
     index: 0x0f
     text: |-
-      \sfx($c5)Oh! Water, water
+      \sfx(0xc5)Oh! Water, water
       everywhere!
       I must leave
       such a frightful
@@ -7476,7 +7476,7 @@ groups:
   - name: TX_2210
     index: 0x10
     text: |-
-      \sfx($c5)Sniff! Sniff!
+      \sfx(0xc5)Sniff! Sniff!
       There's a \col(1)Spring
       Banana\col(0) tree up
       there. But until
@@ -7490,7 +7490,7 @@ groups:
   - name: TX_2211
     index: 0x11
     text: |-
-      \sfx($c5)You brought me
+      \sfx(0xc5)You brought me
       a \col(1)Spring Banana\col(0)!
       Is it for me? I
       happily accept!
@@ -7522,7 +7522,7 @@ groups:
   - name: TX_2214
     index: 0x14
     text: |-
-      \sfx($c5)\Link! Why
+      \sfx(0xc5)\Link! Why
       are you here?
       I find myself
       another \col(1)banana\col(0),
@@ -7534,7 +7534,7 @@ groups:
   - name: TX_2215
     index: 0x15
     text: |-
-      \sfx($c5)Thank you for
+      \sfx(0xc5)Thank you for
       helping me.\stop
       \Link's
       always out and
@@ -7548,7 +7548,7 @@ groups:
   - name: TX_2216
     index: 0x16
     text: |-
-      \sfx($c5)Gmph, gmph,
+      \sfx(0xc5)Gmph, gmph,
       GULP! So tasty!
       That was great.
       I am \col(3)Moosh\col(0).
@@ -7560,7 +7560,7 @@ groups:
   - name: TX_2217
     index: 0x17
     text: |-
-      \sfx($c5)Hold \abtn to power
+      \sfx(0xc5)Hold \abtn to power
       up. If you build
       enough power and
       let it go, I'll
@@ -7571,7 +7571,7 @@ groups:
   - name: TX_2218
     index: 0x18
     text: |-
-      \sfx($c5)I can float
+      \sfx(0xc5)I can float
       if you tap \abtn.
       If you move as
       I float, you can
@@ -7582,7 +7582,7 @@ groups:
   - name: TX_2219
     index: 0x19
     text: |-
-      \sfx($c5)Gmph, gmph,
+      \sfx(0xc5)Gmph, gmph,
       GULP! Delicious!
       \Link,
       let's go!
@@ -7829,7 +7829,7 @@ groups:
       woods, but...
       You and \col(3)Din\col(0) were
       fated to meet.
-      If the \sym($57) on your
+      If the \sym(0x57) on your
       left hand is
       real, then you
       may be the hero
@@ -8073,7 +8073,7 @@ groups:
   - name: TX_2702
     index: 0x02
     text: |-
-      \sym($1c)Melt it down\sym($1c)!
+      \sym(0x1c)Melt it down\sym(0x1c)!
       These furnaces
       can melt any
       metal!
@@ -9688,7 +9688,7 @@ groups:
     text: |-
       Hmm... I see!
       I call this the
-      \call($fd)!
+      \call(0xfd)!
     null_terminator: True
 
   - name: TX_301d
@@ -10919,8 +10919,8 @@ groups:
   - name: TX_30c1
     index: 0xc1
     text: |-
-      \call($fd)
-      \call($fc)
+      \call(0xfd)
+      \call(0xfc)
     null_terminator: True
 
 - group: 0x31
@@ -11199,7 +11199,7 @@ groups:
       \col(1)Bomb\col(0) out, press
       the button again
       to place it.
-      Press \col($84)\item($00)\col(0) to
+      Press \col(0x84)\item(0x00)\col(0) to
       throw a \col(1)Bomb\col(0) in
       that direction.
       Press the button
@@ -11577,7 +11577,7 @@ groups:
   - name: TX_3700
     index: 0x00
     text: |-
-      \sfx($c7)Welcome to
+      \sfx(0xc7)Welcome to
       \col(3)Goron Mountain\col(0).\stop
       It's too cold to
       go outside, so
@@ -11588,7 +11588,7 @@ groups:
   - name: TX_3701
     index: 0x01
     text: |-
-      \sfx($c7)Do you know of
+      \sfx(0xc7)Do you know of
       the \col(1)Goron Vase\col(0)?\stop
       All collectors
       want to have it!
@@ -11597,7 +11597,7 @@ groups:
   - name: TX_3702
     index: 0x02
     text: |-
-      \sfx($c7)\col(3)Biggoron\col(0) is
+      \sfx(0xc7)\col(3)Biggoron\col(0) is
       so big he can't
       fit in our cave.
       But it's so cold
@@ -11608,7 +11608,7 @@ groups:
   - name: TX_3703
     index: 0x03
     text: |-
-      \sfx($c7)\col(3)Goron Mountain\col(0)
+      \sfx(0xc7)\col(3)Goron Mountain\col(0)
       has always had
       winter year-
       round, but ever
@@ -11623,7 +11623,7 @@ groups:
   - name: TX_3704
     index: 0x04
     text: |-
-      \sfx($c7)\col(3)Biggoron\col(0) is
+      \sfx(0xc7)\col(3)Biggoron\col(0) is
       up above, but he
       has a cold, so
       be quiet.
@@ -11632,14 +11632,14 @@ groups:
   - name: TX_3705
     index: 0x05
     text: |-
-      \sfx($c7)Lava, huh?
+      \sfx(0xc7)Lava, huh?
       I hate the cold.
     null_terminator: True
 
   - name: TX_3706
     index: 0x06
     text: |-
-      \sfx($c7)If I had the
+      \sfx(0xc7)If I had the
       \col(1)Goron Vase\col(0),
       I wouldn't trade
       it for 100 \col(1)Fish\col(0).
@@ -11648,7 +11648,7 @@ groups:
   - name: TX_3707
     index: 0x07
     text: |-
-      \sfx($c7)This year is
+      \sfx(0xc7)This year is
       so weird.\stop
       No matter how
       long winter is,
@@ -11661,7 +11661,7 @@ groups:
   - name: TX_3708
     index: 0x08
     text: |-
-      \sfx($c7)Good thing
+      \sfx(0xc7)Good thing
       \col(3)Biggoron\col(0) is
       over his cold.
     null_terminator: True
@@ -11669,7 +11669,7 @@ groups:
   - name: TX_3709
     index: 0x09
     text: |-
-      \sfx($c7)It's so nice of
+      \sfx(0xc7)It's so nice of
       you to come all
       the way here
       just to see me!
@@ -11683,7 +11683,7 @@ groups:
   - name: TX_370a
     index: 0x0a
     text: |-
-      \sfx($c7)Then let me
+      \sfx(0xc7)Then let me
       see your \col(1)box\col(0).\stop
       Do this here...
       That there...\stop
@@ -11693,7 +11693,7 @@ groups:
   - name: TX_370b
     index: 0x0b
     text: |-
-      \sfx($c7)Living alone is
+      \sfx(0xc7)Living alone is
       nice, but it can
       get lonely...
     null_terminator: True
@@ -11701,7 +11701,7 @@ groups:
   - name: TX_370c
     index: 0x0c
     text: |-
-      \sfx($c7)Mind your own
+      \sfx(0xc7)Mind your own
       business...\stop
       Is that your
       attitude..?
@@ -11719,7 +11719,7 @@ groups:
   - name: TX_370e
     index: 0x0e
     text: |-
-      \sfx($c7)Forging the
+      \sfx(0xc7)Forging the
       \col(1)great sword\col(0) is a
       huge task.
       \col(3)Biggoron\col(0) can't
@@ -11731,7 +11731,7 @@ groups:
   - name: TX_370f
     index: 0x0f
     text: |-
-      \sfx($c7)The weather is
+      \sfx(0xc7)The weather is
       back to normal,
       but I still hate
       the cold.
@@ -13027,7 +13027,7 @@ groups:
     - 0x16
     text: |-
       \pos(0)\Link...\stop
-      The three \sym($57)
+      The three \sym(0x57)
       on your left
       hand symbolize
       power, wisdom
@@ -13307,10 +13307,10 @@ groups:
   - name: TX_3e12
     index: 0x12
     text: |-
-      \sym($1c)Diggin' around
-      for \col(1)Ore Chunks\col(0)\sym($1c)
-      \sym($1c)Diggin' down
-      for more chunks\sym($1c)
+      \sym(0x1c)Diggin' around
+      for \col(1)Ore Chunks\col(0)\sym(0x1c)
+      \sym(0x1c)Diggin' down
+      for more chunks\sym(0x1c)
     null_terminator: True
 
   - name: TX_3e13
@@ -14399,7 +14399,7 @@ groups:
   - name: TX_4500
     index: 0x00
     text: |-
-      \sfx($c6)I surrender!
+      \sfx(0xc6)I surrender!
       In return, I
       offer my advice!
       If you are lost
@@ -14415,7 +14415,7 @@ groups:
   - name: TX_4501
     index: 0x01
     text: |-
-      \sfx($c6)I surrender!
+      \sfx(0xc6)I surrender!
       In return,
       here's a tip!
       On the summit
@@ -14429,7 +14429,7 @@ groups:
   - name: TX_4502
     index: 0x02
     text: |-
-      \sfx($c6)Greetings!
+      \sfx(0xc6)Greetings!
       It's much nicer
       around here
       since that eye-
@@ -14444,7 +14444,7 @@ groups:
   - name: TX_4503
     index: 0x03
     text: |-
-      \sfx($c6)I surrender!
+      \sfx(0xc6)I surrender!
       In return, I
       offer my advice!
       Even if you have
@@ -14458,7 +14458,7 @@ groups:
   - name: TX_4504
     index: 0x04
     text: |-
-      \sfx($c6)I surrender!
+      \sfx(0xc6)I surrender!
       In return, I
       offer my advice!
       Even if you have
@@ -14473,33 +14473,33 @@ groups:
   - name: TX_4505
     index: 0x05
     text: |-
-      \sfx($c6)Thank you!
+      \sfx(0xc6)Thank you!
     null_terminator: True
 
   - name: TX_4506
     index: 0x06
     text: |-
-      \sfx($c6)Then be gone!
+      \sfx(0xc6)Then be gone!
     null_terminator: True
 
   - name: TX_4507
     index: 0x07
     text: |-
-      \sfx($c6)You don't have
+      \sfx(0xc6)You don't have
       enough Rupees!
     null_terminator: True
 
   - name: TX_4508
     index: 0x08
     text: |-
-      \sfx($c6)You already
+      \sfx(0xc6)You already
       have it!
     null_terminator: True
 
   - name: TX_4509
     index: 0x09
     text: |
-      \sfx($c6)Greetings!
+      \sfx(0xc6)Greetings!
       Let me share
       my wisdom!
       South of the
@@ -14524,7 +14524,7 @@ groups:
   - name: TX_450b
     index: 0x0b
     text: |-
-      \sfx($c6)Greetings!
+      \sfx(0xc6)Greetings!
       Since you came,
       \jump(TX_450a)
     null_terminator: False
@@ -14532,7 +14532,7 @@ groups:
   - name: TX_450c
     index: 0x0c
     text: |-
-      \sfx($c6)Greetings!
+      \sfx(0xc6)Greetings!
       Here's a deal!
       10 Ember Seeds
       for 20 Rupees!
@@ -14542,7 +14542,7 @@ groups:
   - name: TX_450d
     index: 0x0d
     text: |-
-      \sfx($c6)Greetings!
+      \sfx(0xc6)Greetings!
       Here's a deal!
       \col(1)10 Bombs\col(0)
       for 30 Rupees!
@@ -15608,14 +15608,14 @@ groups:
   - name: TX_4c40
     index: 0x40
     text: |-
-      \sfx($c6)I can't remember
+      \sfx(0xc6)I can't remember
       the last half of
       "Love the Seed,"
       the hit \col(1)secret\col(0)
       among us \col(3)Deku
       Scrubs\col(0).
-      "\sym($1c)Love, love
-      the seed!\sym($1c)"
+      "\sym(0x1c)Love, love
+      the seed!\sym(0x1c)"
       What's the
       next part?
       Do you know it?
@@ -15625,14 +15625,14 @@ groups:
   - name: TX_4c41
     index: 0x41
     text: |-
-      \sfx($c6)You're no help!
+      \sfx(0xc6)You're no help!
       Good-bye!
     null_terminator: True
 
   - name: TX_4c42
     index: 0x42
     text: |
-      \sfx($c6)Yes! Yes! That's
+      \sfx(0xc6)Yes! Yes! That's
       it! It touches
       me everytime I
       hear it!
@@ -15641,7 +15641,7 @@ groups:
   - name: TX_4c43
     index: 0x43
     text: |-
-      \sfx($c6)In return, I'll
+      \sfx(0xc6)In return, I'll
       make it so you
       can carry more
       \col(1)seeds\col(0)! Come back
@@ -15654,7 +15654,7 @@ groups:
   - name: TX_4c44
     index: 0x44
     text: |-
-      \sfx($c6)Is your \col(1)Seed
+      \sfx(0xc6)Is your \col(1)Seed
       Satchel\col(0) full?\stop
       Then I'll make
       it carry more!
@@ -15664,14 +15664,14 @@ groups:
   - name: TX_4c45
     index: 0x45
     text: |-
-      \sfx($c6)And it's full
+      \sfx(0xc6)And it's full
       of \col(1)seeds\col(0)!
     null_terminator: True
 
   - name: TX_4c46
     index: 0x46
     text: |-
-      \sfx($c6)Now I'll teach
+      \sfx(0xc6)Now I'll teach
       you the \col(1)secret\col(0)
       to carrying more
       \col(1)seeds\col(0) in
@@ -15684,7 +15684,7 @@ groups:
   - name: TX_4c47
     index: 0x47
     text: |-
-      \sfx($c6)If you forget
+      \sfx(0xc6)If you forget
       the \col(1)secret\col(0), ask!
     null_terminator: True
 
@@ -15699,7 +15699,7 @@ groups:
   - name: TX_4c49
     index: 0x49
     text: |-
-      \sfx($c6)Here's a human
+      \sfx(0xc6)Here's a human
       I understand!
       Let me fill your
       \col(1)satchel\col(0) for you!
@@ -15708,8 +15708,8 @@ groups:
   - name: TX_4c4a
     index: 0x4a
     text: |-
-      \sfx($c6)"\sym($1c)Love, love
-      the seed!\sym($1c)"
+      \sfx(0xc6)"\sym(0x1c)Love, love
+      the seed!\sym(0x1c)"
       What a great
       song!
     null_terminator: True
@@ -16079,7 +16079,7 @@ groups:
       \col(3)Zelda\col(0). Go to
       her, quickly!
       I sense a
-      terrible evil...\wait($3c)
+      terrible evil...\wait(60)
     null_terminator: True
 
   - name: TX_4f01
@@ -16819,11 +16819,11 @@ groups:
   - name: TX_520a
     index: 0x0a
     text: |-
-      \sym($1c)\col(3)Princess Zelda\col(0)
-      Hope for all\sym($1c)
-      \sym($1c)Alas!
+      \sym(0x1c)\col(3)Princess Zelda\col(0)
+      Hope for all\sym(0x1c)
+      \sym(0x1c)Alas!
       You've been
-       taken!\sym($1c)
+       taken!\sym(0x1c)
     null_terminator: True
 
 - group: 0x53
