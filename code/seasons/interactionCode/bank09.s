@@ -5246,14 +5246,18 @@ _label_09_151:
 .db $30 $58 $07 $30 $58 $07 $30 $38
 .db $08 $30 $58 $09
 
+
+; ==============================================================================
+; INTERACID_MISCELLANEOUS_1
+; ==============================================================================
 interactionCode6b:
 	ld e,Interaction.subid		; $60ee
 	ld a,(de)		; $60f0
 	rst_jumpTable			; $60f1
 	.dw $6140
 	.dw $6161
-	.dw $6196
-	.dw $61e0
+	.dw interactionCode6bSubid02
+	.dw interactionCode6bSubid03
 	.dw $626e
 	.dw $62a2
 	.dw $62a8
@@ -5267,10 +5271,10 @@ interactionCode6b:
 	.dw $6427
 	.dw $648b
 	.dw $6491
-	.dw $64bc
+	.dw interactionCode6bSubid11
 	.dw interactionCode6bSubid12
 	.dw $6545
-	.dw $6559
+	.dw interactionCode6bSubid14
 	.dw $657c
 	.dw $658c
 	.dw $65af
@@ -5327,15 +5331,14 @@ _label_09_157:
 	call interactionRunScript		; $618f
 	ret nc			; $6192
 	jp interactionDelete		; $6193
+
+interactionCode6bSubid02:
 	ld e,Interaction.state		; $6196
 	ld a,(de)		; $6198
 	rst_jumpTable			; $6199
-	and b			; $619a
-	ld h,c			; $619b
-	inc c			; $619c
-	dec h			; $619d
-	or c			; $619e
-	ld h,c			; $619f
+	.dw $61a0
+	.dw interactionRunScript
+	.dw $61b1
 	ld a,$01		; $61a0
 	ld (de),a		; $61a2
 	call getThisRoomFlags		; $61a3
@@ -5343,6 +5346,7 @@ _label_09_157:
 	jp nz,interactionDelete		; $61a8
 	ld hl,$66ca		; $61ab
 	jp interactionSetScript		; $61ae
+
 	ld a,$04		; $61b1
 	call setScreenShakeCounter		; $61b3
 	ld a,($cfc0)		; $61b6
@@ -5363,18 +5367,17 @@ _label_09_158:
 	ld a,$4d		; $61d8
 	call playSound		; $61da
 	jp interactionDelete		; $61dd
+
+interactionCode6bSubid03:
 	ld e,Interaction.state		; $61e0
 	ld a,(de)		; $61e2
 	rst_jumpTable			; $61e3
-	xor $61			; $61e4
-	rlca			; $61e6
-	ld h,d			; $61e7
-	inc h			; $61e8
-	ld h,d			; $61e9
-	ccf			; $61ea
-	ld h,d			; $61eb
-	ld d,e			; $61ec
-	ld h,d			; $61ed
+	.dw $61ee
+	.dw $6207
+	.dw $6224
+	.dw $623f
+	.dw $6253
+
 	ld a,$01		; $61ee
 	ld (de),a		; $61f0
 	call getThisRoomFlags		; $61f1
@@ -5385,13 +5388,15 @@ _label_09_158:
 	ld ($ccae),a		; $61fe
 	ld hl,$66e0		; $6201
 	jp interactionSetScript		; $6204
+
+
 	ld a,($cc4c)		; $6207
 	cp $0d			; $620a
 	jp nz,interactionDelete		; $620c
 	call interactionRunScript		; $620f
 	ret nc			; $6212
 	call interactionIncState		; $6213
-	ld hl,$4d80		; $6216
+	ld hl,simpleScript_14_4d80		; $6216
 	jp interactionSetSimpleScript		; $6219
 	ld h,d			; $621c
 	ld l,$46		; $621d
@@ -5412,13 +5417,14 @@ _label_09_158:
 	ld e,$15		; $6239
 	call interBankCall		; $623b
 	ret			; $623e
+
 	ld a,($cd00)		; $623f
 	and $01			; $6242
 	ret z			; $6244
 	call getThisRoomFlags		; $6245
 	set 7,(hl)		; $6248
 	call interactionIncState		; $624a
-	ld hl,$4dbd		; $624d
+	ld hl,simpleScript_14_4dbd		; $624d
 	jp interactionSetSimpleScript		; $6250
 	ld a,$3c		; $6253
 	call setScreenShakeCounter		; $6255
@@ -5742,14 +5748,15 @@ _label_09_168:
 	or b			; $64b7
 	ld (hl),a		; $64b8
 	jp interactionDelete		; $64b9
+
+
+interactionCode6bSubid11:
 	ld e,Interaction.state		; $64bc
 	ld a,(de)		; $64be
 	rst_jumpTable			; $64bf
-	add $64			; $64c0
-	push hl			; $64c2
-	ld h,h			; $64c3
-	inc bc			; $64c4
-	ld h,l			; $64c5
+	.dw $64c6
+	.dw $64e5
+	.dw $6503
 	ld a,$01		; $64c6
 	ld (de),a		; $64c8
 	ld a,($c610)		; $64c9
@@ -5764,6 +5771,7 @@ _label_09_168:
 	inc l			; $64df
 	ld (hl),$01		; $64e0
 	jp objectCopyPosition		; $64e2
+
 	ld a,($cc32)		; $64e5
 	or a			; $64e8
 	ret z			; $64e9
@@ -5774,7 +5782,7 @@ _label_09_168:
 	call getThisRoomFlags		; $64f5
 	set 6,(hl)		; $64f8
 	call interactionIncState		; $64fa
-	ld hl,$4e12		; $64fd
+	ld hl,simpleScript_14_4e12		; $64fd
 	jp interactionSetSimpleScript		; $6500
 	call $621c		; $6503
 	ret nz			; $6506
@@ -5815,6 +5823,8 @@ interactionCode6bSubid12:
 	ld a,$80		; $6551
 	ld ($cc9f),a		; $6553
 	jp interactionDelete		; $6556
+
+interactionCode6bSubid14:
 	ld h,d			; $6559
 	ld l,$46		; $655a
 	ld a,(hl)		; $655c
@@ -5826,7 +5836,7 @@ _label_09_169:
 	call checkInteractionState		; $6562
 	jr nz,_label_09_170	; $6565
 	call interactionIncState		; $6567
-	ld hl,$4c6a		; $656a
+	ld hl,simpleScript_14_4c6a		; $656a
 	jp interactionSetSimpleScript		; $656d
 _label_09_170:
 	call interactionRunSimpleScript		; $6570
@@ -5834,6 +5844,7 @@ _label_09_170:
 	ld hl,$cfc0		; $6574
 	set 7,(hl)		; $6577
 	jp interactionDelete		; $6579
+
 	ld a,$17		; $657c
 	call checkGlobalFlag		; $657e
 	jp z,interactionDelete		; $6581

@@ -700,9 +700,9 @@
 .define ENEMYID_OMUAI				$72
 .define ENEMYID_AGUNIMA				$73
 .define ENEMYID_SYGER				$74
-.define ENEMYID_POE_SISTERS_1			$76
+.define ENEMYID_POE_SISTER_2			$76
 .define ENEMYID_FRYPOLAR			$77
-.define ENEMYID_POE_SISTERS_2			$7e
+.define ENEMYID_POE_SISTER_1			$7e
 
 .endif
 

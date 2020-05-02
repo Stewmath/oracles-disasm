@@ -128,8 +128,8 @@
 	GLOBALFLAG_S_1f				db ; $1f
 	GLOBALFLAG_S_20				db ; $20
 	GLOBALFLAG_PREGAME_INTRO_DONE		db ; $21
-	GLOBALFLAG_S_22				db ; $22
-	GLOBALFLAG_S_23				db ; $23
+	GLOBALFLAG_IMPA_ASKED_TO_SAVE_ZELDA	db ; $22
+	GLOBALFLAG_ZELDA_SAVED_FROM_VIRE	db ; $23: Saved Zelda from Vire
 	GLOBALFLAG_S_24				db ; $24: Relates to outside Onox castle
 	GLOBALFLAG_S_25				db ; $25
 	GLOBALFLAG_S_26				db ; $26

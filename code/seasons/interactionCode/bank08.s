@@ -3236,14 +3236,14 @@ interactionCode20:
 	.dw script4b78
 
 @dungeon1:
-	.dw script4b69
+	.dw dungeonScript_minibossDeath
 	.dw script4b78
 	.dw script4b78
-	.dw script4b84
+	.dw dungeonScript_bossDeath
 
 @dungeon2:
 	.dw script4b97
-	.dw script4b69
+	.dw dungeonScript_minibossDeath
 	.dw script4ba6
 
 @dungeon3:
@@ -3258,16 +3258,16 @@ interactionCode20:
 	.dw script4bfb
 	.dw script4bfb
 	.dw script4c09
-	.dw script4b84
-	.dw script4b69
+	.dw dungeonScript_bossDeath
+	.dw dungeonScript_minibossDeath
 	.dw script4c0e
 	.dw script4c17
 
 @dungeon5:
 	.dw script4c20
 	.dw script4c25
-	.dw script4b69
-	.dw script4b84
+	.dw dungeonScript_minibossDeath
+	.dw dungeonScript_bossDeath
 
 @dungeon6:
 	.dw script4c2b
@@ -3277,7 +3277,7 @@ interactionCode20:
 	.dw script4c58
 	.dw script4c63
 	.dw script4c6b
-	.dw script4b69
+	.dw dungeonScript_minibossDeath
 	.dw script4c6f
 	.dw script4c90
 	.dw script4c94
@@ -3287,21 +3287,21 @@ interactionCode20:
 	.dw script4ccf
 
 @dungeon7:
-	.dw script4ce6
-	.dw script4cf2
-	.dw script4b69
-	.dw script4b84
+	.dw explorersCryptScript_4OrbTrampoline
+	.dw explorersCryptScript_magunesuTrampoline
+	.dw dungeonScript_minibossDeath
+	.dw dungeonScript_bossDeath
 	.dw script4d05
-	.dw script4d12
-	.dw script4d16
-	.dw script4d28
-	.dw script4d2c
-	.dw script4d30
-	.dw script4d44
-	.dw script4d53
-	.dw script4ce8
-	.dw script4cd3
-	.dw script4cdc
+	.dw explorersCryptScript_randomlyPlaceNonEnemyArmos
+	.dw explorersCryptScript_checkIfMagnetBallOnButton
+	.dw explorersCryptScript_1stPoeSisterRoom
+	.dw explorersCryptScript_2ndPoeSisterRoom
+	.dw explorersCryptScript_4FiresRoom_1
+	.dw explorersCryptScript_4FiresRoom_2
+	.dw explorersCryptScript_darknutBridge
+	.dw explorersCryptScript_roomLeftOfRandomArmosRoom
+	.dw explorersCryptScript_dropKeyDownAFloor
+	.dw explorersCryptScript_keyDroppedFromAbove
 
 @dungeon8:
 	.dw script4d5b
@@ -3311,8 +3311,8 @@ interactionCode20:
 	.dw script4d7a
 	.dw script4d8c
 	.dw script4d96
-	.dw script4b69
-	.dw script4b84
+	.dw dungeonScript_minibossDeath
+	.dw dungeonScript_bossDeath
 	.dw script4dab
 	.dw script4db4
 	.dw script4dbb
@@ -3326,7 +3326,7 @@ interactionCode20:
 	.dw script4c2b
 	.dw script4b78
 	.dw script4dcd
-	.dw script4d16
+	.dw explorersCryptScript_checkIfMagnetBallOnButton
 	.dw script4ddb
 	.dw script4ddf
 	.dw script4dd4

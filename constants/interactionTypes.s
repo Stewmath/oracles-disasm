@@ -1914,6 +1914,8 @@
 ; @subid_01{unblocking the Temple of Autumn}
 .define INTERACID_BOMB_FLOWER		$6f
 
+.define INTERACID_TRAMPOLINE		$7c
+
 ;;
 ; @subid_00{Rooster on top of d4}
 ; @subid_01{Rooster that leads to spring banana}

@@ -2030,7 +2030,7 @@ wEnteredWarpPosition: ; $cc8e/$cca8
 wNumTorchesLit: ; $cc8f/$cca9
 	db
 
-wcc90: ; $cc90
+wcc90: ; $cc90/$ccaa
 ; Disables warp tiles if nonzero?
 	db
 
@@ -2115,7 +2115,7 @@ wLinkOnChest: ; $cc9f
 ; Position of chest link is standing on ($00 doesn't count)
 	db
 
-wActiveTriggers: ; $cca0
+wActiveTriggers: ; $cca0/$ccba
 ; Keeps track of which switches are set (buttons on the floor)
 	db
 

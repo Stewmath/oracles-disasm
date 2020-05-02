@@ -30,3 +30,28 @@
 .macro ss_setinterleavedtile
 	.db $04 \1 \2 \3 \4
 .endm
+
+.ifdef ROM_SEASONS
+; param1: number of tiles
+; param2: first tile position
+; param3: tile
+.macro ss_setrowoftiles
+	.db $05 \1 \2 \3
+.endm
+
+.macro ss_ret1
+	.db $06
+.endm
+
+; param1: number of tiles
+; param2: first tile position
+; param3: tile 2 (tile 1 is at param2)
+; param4: how to mix the tiles (value from 0-3)
+.macro ss_setrowofinterleavedtiles
+	.db $07 \1 \2 \3 \4
+.endm
+
+.macro ss_ret2
+	.db $08
+.endm
+.endif

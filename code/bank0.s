@@ -14554,11 +14554,11 @@ interactionRunSimpleScript:
 	ldi a,(hl)		; $3dcd
 	ld c,a			; $3dce
 	ldi a,(hl)		; $3dcf
-	ld ($ff00+$8b),a	; $3dd0
+	ldh (<hFF8B),a	; $3dd0
 	push hl			; $3dd2
 --
 	push bc			; $3dd3
-	ld a,($ff00+$8b)	; $3dd4
+	ldh a,(<hFF8B)	; $3dd4
 	call setTile		; $3dd6
 	pop bc			; $3dd9
 	inc c			; $3dda
@@ -14573,20 +14573,20 @@ interactionRunSimpleScript:
 	ldi a,(hl)		; $3de2
 	ld b,a			; $3de3
 	ldi a,(hl)		; $3de4
-	ld ($ff00+$8c),a	; $3de5
+	ldh (<hFF8C),a	; $3de5
 	ldi a,(hl)		; $3de7
-	ld ($ff00+$8e),a	; $3de8
+	ldh (<hFF8E),a	; $3de8
 	ldi a,(hl)		; $3dea
-	ld ($ff00+$8d),a	; $3deb
+	ldh (<hFF8D),a	; $3deb
 	push hl			; $3ded
 --
 	push bc			; $3dee
-	ld b,$cf		; $3def
-	ld a,($ff00+$8c)	; $3df1
+	ld b,>wRoomLayout		; $3def
+	ldh a,(<hFF8C)	; $3df1
 	ld c,a			; $3df3
 	ld a,(bc)		; $3df4
-	ld ($ff00+$8f),a	; $3df5
-	ld a,($ff00+$8d)	; $3df7
+	ldh (<hFF8F),a	; $3df5
+	ldh a,(<hFF8D)	; $3df7
 	call setInterleavedTile		; $3df9
 	ld hl,$ff8c		; $3dfc
 	inc (hl)		; $3dff

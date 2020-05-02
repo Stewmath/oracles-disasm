@@ -1104,35 +1104,45 @@ script4b61:
 	showtextnonexitablelowindex $26
 	jumpiftextoptioneq $01, script4b44
 	jump2byte script4b4f
-script4b69:
+
+
+dungeonScript_minibossDeath:
 	stopifroomflag80set
 	checknoenemies
 	orroomflag $80
 	wait 20
-	spawninteraction $7e00, $00, $00
+	spawninteraction INTERACID_MINIBOSS_PORTAL $00, $00, $00
 script4b73:
-	writememory $cbca, $00
+	writememory wDisableLinkCollisionsAndMenu, $00
 script4b77:
 	scriptend
+
+
 script4b78:
 	stopifitemflagset
-	checkmemoryeq $ccba, $01
-script4b7d:
+	checkmemoryeq wActiveTriggers, $01
+
+
+spawnChestAfterPuff:
 	playsound SND_SOLVEPUZZLE
 	createpuff
 	wait 15
-	settilehere $f1
+	settilehere TILEINDEX_CHEST
 	scriptend
-script4b84:
-	jumpifroomflagset $80, script4b8b
+
+
+dungeonScript_bossDeath:
+	jumpifroomflagset $80, _spawnHeartContainer
 	checknoenemies
 	orroomflag $80
-script4b8b:
+_spawnHeartContainer:
 	stopifitemflagset
 	setcoords $58, $78
-	spawnitem $2a00
-	writememory $cbca, $00
+	spawnitem TREASURE_HEART_CONTAINER $00
+	writememory wDisableLinkCollisionsAndMenu, $00
 	scriptend
+
+
 script4b97:
 	stopifitemflagset
 	wait 240
@@ -1160,7 +1170,7 @@ script4bb1:
 	scriptend
 script4bb9:
 	asm15 $5481
-	checkmemoryeq $ccba, $01
+	checkmemoryeq wActiveTriggers, $01
 	asm15 $550c
 	scriptend
 script4bc4:
@@ -1205,14 +1215,14 @@ script4bfb:
 	wait 8
 script4c06:
 	stopifitemflagset
-	jump2byte script4b7d
+	jump2byte spawnChestAfterPuff
 script4c09:
 	stopifitemflagset
 	spawnitem $3102
 	scriptend
 script4c0e:
 	stopifitemflagset
-	checkmemoryeq $ccba, $ff
+	checkmemoryeq wActiveTriggers, $ff
 	spawnitem $3001
 	scriptend
 script4c17:
@@ -1232,7 +1242,7 @@ script4c25:
 	scriptend
 script4c2b:
 	stopifitemflagset
-	checkmemoryeq $ccba, $01
+	checkmemoryeq wActiveTriggers, $01
 	spawnitem $3001
 	scriptend
 script4c34:
@@ -1249,7 +1259,7 @@ script4c3b:
 	scriptend
 script4c47:
 	stopifroomflag80set
-	checkmemoryeq $ccba, $01
+	checkmemoryeq wActiveTriggers, $01
 	setangle $be
 	jump2byte script4c3b
 script4c50:
@@ -1265,7 +1275,7 @@ script4c58:
 	setangle $c4
 	jump2byte script4c3b
 script4c63:
-	checkmemoryeq $ccba, $01
+	checkmemoryeq wActiveTriggers, $01
 	asm15 $5692
 	scriptend
 script4c6b:
@@ -1306,16 +1316,16 @@ script4c94:
 	settilehere $45
 	scriptend
 script4ca5:
-	jumpifroomflagset $80, script4b8b
+	jumpifroomflagset $80, _spawnHeartContainer
 	checknoenemies
 	orroomflag $80
 	setcoords $08, $78
 	createpuff
 	wait 30
 	settilehere $46
-	jump2byte script4b8b
+	jump2byte _spawnHeartContainer
 script4cb5:
-	checkmemoryeq $ccba, $01
+	checkmemoryeq wActiveTriggers, $01
 	asm15 $5551
 	stopifroomflag80set
 	orroomflag $80
@@ -1332,87 +1342,111 @@ script4ccb:
 script4ccf:
 	asm15 $5562
 	scriptend
-script4cd3:
+
+
+explorersCryptScript_dropKeyDownAFloor:
 	stopifroomflag40set
-	checkmemoryeq $ccba, $01
-	asm15 $55d0
+	checkmemoryeq wActiveTriggers, $01
+	asm15 scriptHlp.D7dropKeyDownAFloor
 	scriptend
-script4cdc:
+
+
+explorersCryptScript_keyDroppedFromAbove:
 	stopifitemflagset
-	jumpifroomflagset $80, script4ce2
+	jumpifroomflagset $80, @keyDroppedFromAbove
 	scriptend
-script4ce2:
-	spawnitem $3001
+@keyDroppedFromAbove:
+	spawnitem TREASURE_SMALL_KEY $01
 	scriptend
-script4ce6:
+
+
+explorersCryptScript_4OrbTrampoline:
 	setangle $01
-script4ce8:
-	jumpifroomflagset $40, script4cfe
-	checkmemoryeq $ccba, $01
-	jump2byte script4cfa
-script4cf2:
+explorersCryptScript_roomLeftOfRandomArmosRoom:
+	jumpifroomflagset $40, _D7createTrampoline
+	checkmemoryeq wActiveTriggers, $01
+	jump2byte _D7buttonPressed
+explorersCryptScript_magunesuTrampoline:
 	asm15 interactionSetAlwaysUpdateBit
-	jumpifroomflagset $40, script4cfe
+	jumpifroomflagset $40, _D7createTrampoline
 	checknoenemies
-script4cfa:
+_D7buttonPressed:
 	orroomflag $40
 	playsound SND_SOLVEPUZZLE
-script4cfe:
+_D7createTrampoline:
 	wait 8
 	createpuff
 	wait 15
-	asm15 $56d7
+	asm15 scriptHlp.createD7Trampoline
 	scriptend
+
+
 script4d05:
 	stopifitemflagset
-	jumpifroomflagset $40, script4b7d
-	checkmemoryeq $ccba, $01
+	jumpifroomflagset $40, spawnChestAfterPuff
+	checkmemoryeq wActiveTriggers, $01
 	orroomflag $40
-	jump2byte script4b7d
-script4d12:
-	asm15 $5578
+	jump2byte spawnChestAfterPuff
+
+
+explorersCryptScript_randomlyPlaceNonEnemyArmos:
+	asm15 scriptHlp.D7randomlyPlaceNonEnemyArmos_body
 	scriptend
-script4d16:
+
+
+explorersCryptScript_checkIfMagnetBallOnButton:
 	stopifitemflagset
-	jumptable_memoryaddress $ccba
-	.dw script4d1e
-	.dw script4d23
-script4d1e:
-	asm15 $55ab
-	jump2byte script4d16
-script4d23:
-	asm15 $55b9
-	jump2byte script4d16
-script4d28:
-	loadscript script_14_47d4
-script4d2c:
-	loadscript script_14_47eb
-script4d30:
+	jumptable_memoryaddress wActiveTriggers
+	.dw @unpressed
+	.dw @pressed
+@unpressed:
+	asm15 scriptHlp.D7MagnetBallRoom_removeChest
+	jump2byte explorersCryptScript_checkIfMagnetBallOnButton
+@pressed:
+	asm15 scriptHlp.D7MagnetBallRoom_addChest
+	jump2byte explorersCryptScript_checkIfMagnetBallOnButton
+
+
+explorersCryptScript_1stPoeSisterRoom:
+	loadscript explorersCrypt_firstPoeSister
+
+
+explorersCryptScript_2ndPoeSisterRoom:
+	loadscript explorersCrypt_secondPoeSister
+
+
+explorersCryptScript_4FiresRoom_1:
 	stopifroomflag40set
-	asm15 $55ed
+	asm15 scriptHlp.checkFirstPoeBeaten
 	jumptable_memoryaddress $cfc1
-	.dw script4d3b
-	.dw script4d3f
-script4d3b:
-	loadscript script_14_4770
-script4d3f:
+	.dw @notBeaten
+	.dw poeBeaten
+@notBeaten:
+	loadscript explorersCrypt_firesGoingOut_1
+poeBeaten:
 	playsound SND_SOLVEPUZZLE
 	orroomflag $40
 	scriptend
-script4d44:
+
+
+explorersCryptScript_4FiresRoom_2:
 	stopifroomflag40set
-	asm15 $55fd
+	asm15 scriptHlp.checkSecondPoeBeaten
 	jumptable_memoryaddress $cfc1
-	.dw script4d4f
-	.dw script4d3f
-script4d4f:
-	loadscript script_14_47a2
-script4d53:
+	.dw @notBeaten
+	.dw poeBeaten
+@notBeaten:
+	loadscript explorersCrypt_firesGoingOut_2
+
+
+explorersCryptScript_darknutBridge:
 	stopifroomflag80set
 	checknoenemies
 	orroomflag $80
-	asm15 $54d2
+	asm15 scriptHlp.D7spawnDarknutBridge
 	scriptend
+
+
 script4d5b:
 	stopifroomflag80set
 	checkmemoryeq $cc31, $01
@@ -1420,7 +1454,7 @@ script4d5b:
 	scriptend
 script4d64:
 	stopifroomflag80set
-	checkmemoryeq $ccba, $01
+	checkmemoryeq wActiveTriggers, $01
 	asm15 $54ea
 	scriptend
 script4d6d:
@@ -1466,17 +1500,17 @@ script4da2:
 	scriptend
 script4dab:
 	stopifroomflag80set
-	checkmemoryeq $ccba, $01
+	checkmemoryeq wActiveTriggers, $01
 	asm15 $54f5
 	scriptend
 script4db4:
 	stopifroomflag80set
-	checkmemoryeq $ccba, $07
+	checkmemoryeq wActiveTriggers, $07
 	jump2byte script4d83
 script4dbb:
 	stopifitemflagset
-	checkmemoryeq $ccba, $07
-	jump2byte script4b7d
+	checkmemoryeq wActiveTriggers, $07
+	jump2byte spawnChestAfterPuff
 script4dc2:
 	stopifroomflag40set
 	checknoenemies
@@ -1489,17 +1523,17 @@ script4dc9:
 script4dcd:
 	stopifitemflagset
 	checkmemoryeq $cca9, $01
-	jump2byte script4b7d
+	jump2byte spawnChestAfterPuff
 script4dd4:
 	stopifitemflagset
 	checkmemoryeq $cca9, $02
-	jump2byte script4b7d
+	jump2byte spawnChestAfterPuff
 script4ddb:
 	setangle $3f
 	jump2byte script4c52
 script4ddf:
 	stopifitemflagset
-	checkmemoryeq $ccba, $ff
+	checkmemoryeq wActiveTriggers, $ff
 	wait 60
 	checknoenemies
 	spawnitem $3001

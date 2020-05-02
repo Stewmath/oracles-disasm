@@ -27,29 +27,41 @@
 	ld a,$01		; $54a7
 	ld ($ccba),a		; $54a9
 	ret			; $54ac
+
+
 	call getThisRoomFlags		; $54ad
 	set 7,(hl)		; $54b0
-	ld a,$4d		; $54b2
+	ld a,SND_SOLVEPUZZLE		; $54b2
 	jp playSound		; $54b4
+
+
+createBridgeSpawner:
 	call getFreePartSlot		; $54b7
 	ret nz			; $54ba
-	ld (hl),$0c		; $54bb
-	ld l,$c7		; $54bd
+	ld (hl),PARTID_BRIDGE_SPAWNER		; $54bb
+	ld l,Part.counter2		; $54bd
 	ld (hl),b		; $54bf
-	ld l,$c9		; $54c0
+	ld l,Part.angle		; $54c0
 	ld (hl),c		; $54c2
-	ld l,$cb		; $54c3
+	ld l,Part.yh		; $54c3
 	ld (hl),e		; $54c5
 	ret			; $54c6
+
+
 	call $54ad		; $54c7
 	ld bc,$0601		; $54ca
 	ld e,$59		; $54cd
 	jp $54b7		; $54cf
-	ld a,$4d		; $54d2
+
+
+D7spawnDarknutBridge:
+	ld a,SND_SOLVEPUZZLE		; $54d2
 	call playSound		; $54d4
 	ld bc,$0801		; $54d7
 	ld e,$77		; $54da
 	jp $54b7		; $54dc
+
+
 	call $54ad		; $54df
 	ld bc,$0c02		; $54e2
 	ld e,$3c		; $54e5
@@ -124,28 +136,34 @@ _label_15_190:
 	inc hl			; $5569
 	res 5,(hl)		; $556a
 	ret			; $556c
-	ld hl,$5573		; $556d
+
+
+warpToD7Entrance:
+	ld hl,@warpDestVariables		; $556d
 	jp setWarpDestVariables		; $5570
-	add l			; $5573
-	ld e,e			; $5574
-	nop			; $5575
-	ld d,a			; $5576
-	inc bc			; $5577
+@warpDestVariables:
+	m_HardcodedWarpA ROOM_SEASONS_55b $00 $57 $03
+
+
+D7randomlyPlaceNonEnemyArmos_body:
 	call getRandomNumber		; $5578
 	and $07			; $557b
-	ld hl,$55a3		; $557d
+	ld hl,@armosPositions		; $557d
 	rst_addAToHl			; $5580
 	ld l,(hl)		; $5581
 	ld h,$cf		; $5582
 	ld (hl),$25		; $5584
 	ld a,$03		; $5586
-	ld ($ff00+$70),a	; $5588
+	ld ($ff00+R_SVBK),a	; $5588
 	ld h,$df		; $558a
 	ld (hl),$25		; $558c
+
 	xor a			; $558e
-	ld ($ff00+$70),a	; $558f
+	ld ($ff00+R_SVBK),a	; $558f
+
 	call getFreeEnemySlot		; $5591
 	ret nz			; $5594
+
 	ld (hl),$1d		; $5595
 	inc l			; $5597
 	ld (hl),$00		; $5598
@@ -154,35 +172,39 @@ _label_15_190:
 	ld l,$8d		; $559e
 	ld (hl),$a0		; $55a0
 	ret			; $55a2
-	ld (hl),$38		; $55a3
-	ld b,l			; $55a5
-	ld c,c			; $55a6
-	ld h,l			; $55a7
-	ld l,c			; $55a8
-	halt			; $55a9
-	ld a,b			; $55aa
+@armosPositions:
+	.db $36 $38 $45 $49
+	.db $65 $69 $76 $78
+
+
+D7MagnetBallRoom_removeChest:
 	call objectGetTileAtPosition		; $55ab
-	cp $a3			; $55ae
+	cp TILEINDEX_DUNGEON_a3			; $55ae
 	ret z			; $55b0
 	ld c,l			; $55b1
-	ld a,$a3		; $55b2
+	ld a,TILEINDEX_DUNGEON_a3		; $55b2
 	call setTile		; $55b4
-	jr _label_15_191		; $55b7
+	jr +		; $55b7
+
+D7MagnetBallRoom_addChest:
 	call objectGetTileAtPosition		; $55b9
-	cp $f1			; $55bc
+	cp TILEINDEX_CHEST			; $55bc
 	ret z			; $55be
-	cp $f0			; $55bf
+	cp TILEINDEX_CHEST_OPENED			; $55bf
 	ret z			; $55c1
 	ld c,l			; $55c2
-	ld a,$f1		; $55c3
+	ld a,TILEINDEX_CHEST		; $55c3
 	call setTile		; $55c5
-	ld a,$4d		; $55c8
+	ld a,SND_SOLVEPUZZLE		; $55c8
 	call playSound		; $55ca
-_label_15_191:
++
 	jp objectCreatePuff		; $55cd
+
+
+D7dropKeyDownAFloor:
 	call getFreeInteractionSlot		; $55d0
 	ret nz			; $55d3
-	ld (hl),$60		; $55d4
+	ld (hl),INTERACID_TREASURE		; $55d4
 	inc l			; $55d6
 	ld (hl),$30		; $55d7
 	inc l			; $55d9
@@ -190,22 +212,31 @@ _label_15_191:
 	call objectCopyPosition		; $55dc
 	call getThisRoomFlags		; $55df
 	set 6,(hl)		; $55e2
-	ld l,$45		; $55e4
+	; room below
+	ld l,<ROOM_SEASONS_545		; $55e4
 	set 7,(hl)		; $55e6
-	ld a,$4d		; $55e8
+	ld a,SND_SOLVEPUZZLE		; $55e8
 	jp playSound		; $55ea
-	ld a,$56		; $55ed
-_label_15_192:
+
+
+checkFirstPoeBeaten:
+	ld a,<ROOM_SEASONS_556		; $55ed
+checkPoeBeaten:
 	call getARoomFlags		; $55ef
 	bit 6,(hl)		; $55f2
 	ld a,$01		; $55f4
-	jr nz,_label_15_193	; $55f6
+	jr nz,+			; $55f6
 	dec a			; $55f8
-_label_15_193:
++
 	ld ($cfc1),a		; $55f9
 	ret			; $55fc
-	ld a,$4e		; $55fd
-	jr _label_15_192		; $55ff
+
+
+checkSecondPoeBeaten:
+	ld a,<ROOM_SEASONS_54e		; $55fd
+	jr checkPoeBeaten		; $55ff
+
+
 	ld a,($cc7a)		; $5601
 	or a			; $5604
 	jr nz,_label_15_194	; $5605
@@ -333,11 +364,16 @@ _label_15_198:
 _label_15_199:
 	ld ($ccba),a		; $56d3
 	ret			; $56d6
-	ld e,$49		; $56d7
+
+
+createD7Trampoline:
+	ld e,Interaction.angle		; $56d7
 	ld a,(de)		; $56d9
 	ld c,a			; $56da
-	ld b,$7c		; $56db
+	ld b,INTERACID_TRAMPOLINE		; $56db
 	jp objectCreateInteraction		; $56dd
+
+
 	call getThisRoomFlags		; $56e0
 	ld l,$93		; $56e3
 	res 6,(hl)		; $56e5

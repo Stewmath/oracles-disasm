@@ -103,12 +103,12 @@
 	hFFB8				db	; $ffb8
 
 	; This is 0 until the capcom screen is over
-	hIntroInputsEnabled		db	; $ffb9
+	hIntroInputsEnabled		db	; $ffb9/$ffb7
 
 	; Tentative name
 	hSerialInterruptBehaviour	db	; $ffba/$ffb8
 	; Serial interrupt sets to 1 if a byte has been read
-	hSerialRead			db	; $ffbb
+	hSerialRead			db	; $ffbb/$ffb9
 	; Value of byte from R_SB
 	hSerialByte			db	; $ffbc
 
