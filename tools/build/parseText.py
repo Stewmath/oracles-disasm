@@ -303,13 +303,13 @@ else:
 MAX_LINE_WIDTH = 16*8+1
 
 
-textList = []
+groupDict = {}
 parsedGroups = set()
 
 # Turns a name into an index.
 # Note that this ANDs the index with 0xff. I haven't had a need for the upper byte yet.
 def parseName(s, neededHighIndex):
-    for group in textList:
+    for group in groupDict.values():
         for textStruct in group.textStructs:
             if s in textStruct.names:
                 i = textStruct.names.index(s)
@@ -320,7 +320,7 @@ def parseName(s, neededHighIndex):
     raise ValueError
 
 def parseTextFile(textFile, isDictionary):
-    global textList
+    global groupDict
 
     yamlData = yaml.safe_load(textFile)
     textFile.close()
@@ -331,7 +331,7 @@ def parseTextFile(textFile, isDictionary):
         else:
             textGroup = GroupStruct(yamlGroup['group'] + 4)
 
-        textList.append(textGroup)
+        groupDict[textGroup.index] = textGroup
 
         if textGroup.index in parsedGroups:
             print('WARNING: Parsing group 0x' + myhex(textGroup.index, 2) + ' more than once.')
@@ -686,7 +686,7 @@ parseTextFile(dictFile, True)
 parseTextFile(textFile, False)
 
 # Go through all the TextStructs to deal with the unparsedNames's.
-for group in textList:
+for group in groupDict.values():
     for struct in group.textStructs:
         for tup in struct.unparsedNames:
             i = tup[0]
@@ -699,7 +699,7 @@ for group in textList:
 
 # Compile dictionary
 for i in range(4):
-    group = textList[i]
+    group = groupDict[i]
     for textStruct in group.textStructs:
         if len(textStruct.data) != 0:
             dat = bytearray(textStruct.data)
@@ -710,7 +710,7 @@ for i in range(4):
             textDictionary[bytes(dat)] = DictEntry((textStruct.getGroupIndex() << 8) | textStruct.indices[0], dat)
 
 
-numGroups = (textList[len(textList)-1].index)+1
+numGroups = max(groupDict)+1
 # Hardcoded stuff: groups 5e-63 are unused but still have pointers defined
 if numGroups < 0x64:
     numGroups = 0x64
@@ -718,7 +718,8 @@ if numGroups < 0x64:
 # Find 'skipped groups': list of group numbers which are skipped over
 skippedGroups = []
 i = 0
-for group in sorted(textList, key=lambda x: x.index):
+for g in sorted(groupDict):
+    group = groupDict[g]
     while group.index != i:
         skippedGroups.append(i)
         i+=1
@@ -733,8 +734,8 @@ outFile = open(outFilename, 'w')
 address = (startAddress%0x4000)+0x4000
 bank = startAddress//0x4000
 
-textOffset1 = 'DICT0_00'
-textOffset2 = 'TX_' + myhex(textOffsetSplitIndex-4, 2) + '00' # TODO: is this ok?
+textOffset1 = groupDict[0].textStructs[0]
+textOffset2 = groupDict[textOffsetSplitIndex].textStructs[0]
 
 # Print defines
 
@@ -743,8 +744,7 @@ definesFile = open('build/textDefines.s', 'w')
 definesFile.write(
     '.define TEXT_OFFSET_SPLIT_INDEX ' + wlahex(textOffsetSplitIndex, 2) + '\n\n')
 
-# TODO: verify defines identical to dumpText.py
-for group in textList:
+for group in groupDict.values():
     if group.index >= 4:
         for textStruct in group.textStructs:
             for i in range(len(textStruct.names)):
@@ -769,7 +769,7 @@ outFile.write('\ntextTableENG_00:\n')
 for g in sorted(skippedGroups):
     outFile.write('textTableENG_' + myhex(g, 2) + ':\n')
 
-for group in textList:
+for group in groupDict.values():
     if group.index != 0:
         outFile.write('textTableENG_' + myhex(group.index, 2) + ':\n')
 
@@ -793,7 +793,7 @@ for group in textList:
 outFile.write('\n')
 
 # Print actual text
-for group in textList:
+for group in groupDict.values():
     for textStruct in group.textStructs:
         if group.index < 4:  # Dictionaries don't get compressed
             data = textStruct.data
@@ -801,9 +801,9 @@ for group in textList:
             data = compressTextMemoised(
                 bytes(textStruct.data), len(textStruct.data))
 
-        if textOffset1 in textStruct.names: # TODO: this can be better
+        if textOffset1 == textStruct:
             outFile.write('TEXT_OFFSET_1:\n')
-        elif textOffset2 in textStruct.names:
+        elif textOffset2 == textStruct:
             outFile.write('TEXT_OFFSET_2:\n')
 
         for name in textStruct.names:
@@ -842,8 +842,8 @@ outFile.close()
 
 # Debug output
 # outFile = open('text/test2.bin','wb')
-# for i in xrange(4,len(textList)):
-#         group = textList[i]
+# for i in xrange(4,len(groupDict)):
+#         group = groupDict[i]
 #         for textStruct in group.textStructs:
 #                 outFile.write(compressTextMemoised(bytes(textStruct.data), len(textStruct.data)))
 # outFile.close()
