@@ -1,81 +1,7 @@
 #!/usr/bin/python3
 
-# This is the program which parses text.txt. Some commands:
+# This is the program which parses text.yaml.
 #
-# \call(XX):
-#   Similar to Jump, but it returns to the current text when it's done.
-#   There are special values that will cause this to read the text index from
-#   RAM at wTextSubstitutions. The values are:
-#     \call(0xff): Uses [wTextSubstitutions] as the text index.
-#     \call(0xfe): Uses [wTextSubstitutions+1] as the text index.
-#     \call(0xfd): Uses [wTextSubstitutions+2] as the text index.
-#     \call(0xfc): Uses [wTextSubstitutions+3] as the text index.
-# \charsfx(XX):
-#   Change the sound effect that's played when each character is displayed.
-#   The actual game doesn't use this.
-# \cmd8(XX):
-#   Displays another textbox when the current one is finished, depending on...
-#   things. This is used sparingly, in shops.
-# \col(XX):
-#   Change to color XX. If XX is 0x80 or above, the value is written directly
-#   to the "attribute byte" in vram.
-# \heartpiece:
-#   Show the heart icon that pops up when you get a heart piece.
-# \item(XX):
-#   Displays character "X" from gfx_font_tradeitems.bin.
-# \jump(XX):
-#   Jump to the given text index. This only works if the high byte of the index you're
-#   jumping to is the same as the one you're jumping from.
-#   For example, you can't jump from TX_3500 to TX_3600, but TX_3601->TX_3650 is fine.
-# \Child or \child:
-#   Name of Bipin & Blossom's child.
-# \Link or \link:
-#   Player name.
-# \num1:
-#   Display the bcd (binary-coded decimal) number at "wTextNumberSubstution".
-#   The value is 2 bytes long, little-endian.
-# \num2:
-#   Like \num1, but uses the value starting 2 bytes after wTextNumberSubstitution.
-# \opt:
-#   Mark the position of an available option in those "yes/no" prompts.
-# \pos(XX): (0 <= XX <= 3)
-#   Set the position of the textbox.
-#   This must be the first command in the text, or it might not work.
-# \secret1, \secret2:
-#   Display the secret at "w7SecretBuffer1" or "w7SecretBuffer2".
-# \speed(XX): (0 <= XX <= 3)
-#   Change the speed of the text, relative to the selected text speed.
-#   The actual game doesn't use this.
-# \slow:
-#   Disable fast-forwarding to the end of a line for a certain amount of time.
-#   The game uses this when you get an essence.
-# \stop:
-#   Stop the text and wait for input before continuing. The textbox gets wiped
-#   when you continue.
-# \sym(XX):
-#   Displays character "X" from gfx_font_jp.bin. Most of these are kanji.
-# \wait(XX):
-#   When the textbox is finished, wait for XX frames and then close the textbox automatically.
-#   Used only once, in Seasons.
-# 
-# The following symbols are also understood:
-#   \circle
-#   \club
-#   \diamond
-#   \spade
-#   \heart
-#   \triangle
-#   \rectangle
-#   \up
-#   \down
-#   \left
-#   \right
-#   \abtn
-#   \bbtn
-#
-# You can also insert arbitrary bytes. For example, \abtn is equivalent to:
-#   \xb8\xb9
-
 # TODOS:
 # - "index: auto"
 # - Calculate textoffsetsplitindex automatically, OR warn when text overflows
@@ -627,12 +553,12 @@ def parseTextFile(textFile, isDictionary):
                             textStruct.data.append(parseVal(param))
                         elif token == 'speed':
                             p = parseVal(param)
-                            assert p < 4, '"\speed" takes parameters from 0-3'
+                            assert p >= 0 and p < 4, '"\speed" takes parameters from 0-3'
                             textStruct.data.append(0x0c)
                             textStruct.data.append(p)
                         elif token == 'pos':
                             p = parseVal(param)
-                            assert p < 4, '"\pos" takes parameters from 0-3'
+                            assert p >= 0 and p < 4, '"\pos" takes parameters from 0-3'
                             textStruct.data.append(0x0c)
                             textStruct.data.append((4<<3) | p)
                         elif token == 'wait':

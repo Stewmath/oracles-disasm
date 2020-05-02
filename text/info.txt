@@ -1,0 +1,157 @@
+This file describes the format of the yaml files in the "text/ages" and
+"text/seasons" directories.
+
+==============================================================================
+DICTIONARY FILES (dict.yaml)
+==============================================================================
+
+You can mostly ignore these, they're just used to help with compression of the
+actual text. The format is essentially the same as the "text.yaml" files, which
+is documented below.
+
+==============================================================================
+YAML NOTES
+==============================================================================
+
+The text is represented with YAML. One particular thing to note is how multiline
+strings are handled.
+
+In most cases, the block style ("|-") is used, like this:
+
+  text: |-
+    You! Kids aren't
+    allowed in...
+    Sir \Link!
+    Excuse me!
+  null_terminator: True
+
+With this style, newlines are preserved wherever they are. Also, if a line is
+too long, the text parser will automatically insert a newline. But, when
+creating new text, you may prefer to use the flow style (">-"):
+
+  text: >-
+    This is some new text using the flow style.
+    There is no explicit newline here.
+
+    But there is one here.
+  null_terminator: True
+
+The advantage of this style is that you can write long text across multiple
+lines, without worrying about where the line-breaks will actually be in-game.
+With this style, line breaks are ignored unless you have two line-breaks in
+a row. But you still have flexibility to insert explicit linebreaks by leaving
+an empty line.
+
+Most text uses chomping ("-" sign after "|" or ">"), which ignores any
+newlines at the end of the text. But this not the case when the game actually
+does wants to leave a newline at the end of the text, particularly when
+null_terminator is False.
+
+For more information: https://yaml-multiline.info/
+
+
+==============================================================================
+DESCRIPTION OF KEYS
+==============================================================================
+
+groups:
+  group: The index for a group. This is the high byte for all text in the
+         group.
+
+  data: List of text data, described below...
+
+  - name: Name assigned to text. When used in the disassembly, this resolves
+          to the full 4-digit (2-byte) text index. The upper 2 digits
+          correspond to the group index; the lower 2 digits correspond to the
+          value of the "index" key below. Can be a single value or a list (see
+          below).
+
+    index: The lower 2 digits (1 byte) of the text index. Combined with the
+          group index (upper 2 digits) to get the full index. This can be
+          a list instead of a single value. In this case, all indices refer to
+          the same data. Also, if this is a list, then the "name" key must
+          also be a list, and must have the same number of entries as this.
+          Each "name" will refer to the corresponding index in this list.
+
+    text: The text string. See text formatting notes.
+
+    null_terminator: True or False. If False, the text does not end here, and
+          the game will continue to show the text that comes after this. In
+          this case, you will usually want to ensure a newline is inserted at
+          the end of the text. (See notes about YAML above.)
+    
+
+==============================================================================
+TEXT COMMANDS
+==============================================================================
+
+Certain commands can be inserted into text when prefixed with a backslash.
+Below is a list of these commands.
+
+\call(XX):
+  Similar to Jump, but it returns to the current text when it's done.
+  There are special values that will cause this to read the text index from
+  RAM at wTextSubstitutions. The values are:
+    \call(0xff): Uses [wTextSubstitutions] as the text index.
+    \call(0xfe): Uses [wTextSubstitutions+1] as the text index.
+    \call(0xfd): Uses [wTextSubstitutions+2] as the text index.
+    \call(0xfc): Uses [wTextSubstitutions+3] as the text index.
+\charsfx(XX):
+  Change the sound effect that's played when each character is displayed.
+  The actual game doesn't use this.
+\cmd8(XX):
+  Displays another textbox when the current one is finished, depending on...
+  things. This is used sparingly, in shops.
+\col(XX):
+  Change to color XX. If XX is 0x80 or above, the value is written directly
+  to the "attribute byte" in vram.
+  Normally value "0" is normal, "1" is red, "3" is blue. But this can change
+  under specific circumstances.
+\heartpiece:
+  Show the heart icon that pops up when you get a heart piece.
+\item(XX):
+  Displays character "X" from gfx_font_tradeitems.bin.
+\jump(XX):
+  Jump to the given text index. This only works if the group of the text
+  you're jumping to is the same as the one you're jumping from.
+  For example, you can't jump from TX_3500 to TX_3600, but TX_3601->TX_3650 is fine.
+\Child or \child:
+  Name of Bipin & Blossom's child.
+\Link or \link:
+  Player name.
+\num1:
+  Display the bcd (binary-coded decimal) number at "wTextNumberSubstution".
+  The value is 2 bytes long, little-endian.
+\num2:
+  Like \num1, but uses the value starting 2 bytes after wTextNumberSubstitution.
+\opt:
+  Mark the position of an available option in those "yes/no" prompts.
+\pos(X): (0 <= X <= 3)
+  Set the position of the textbox.
+  This must be the first command in the text, or it might not work.
+\secret1, \secret2:
+  Display the secret at "w7SecretBuffer1" or "w7SecretBuffer2".
+\sfx(X):
+  Plays sound effect "X" (see constants/music.s for values)
+\slow:
+  Disable fast-forwarding to the end of a line for a certain amount of time.
+  The game uses this when you get an essence.
+\speed(X): (0 <= X <= 3)
+  Change the speed of the text, relative to the selected text speed.
+  The actual game doesn't use this.
+\stop:
+  Stop the text and wait for input before continuing. The textbox gets wiped
+  when you continue.
+\sym(X):
+  Displays character "X" from gfx_font_jp.bin. Most of these are kanji, but
+  there are some other symbols too.
+\wait(X):
+  When the textbox is finished, wait for X frames and then close the textbox automatically.
+  Used only once, in Seasons.
+
+The following symbols are also understood:
+  \circle, \club, \diamond, \spade, \heart, \triangle, \rectangle,
+  \up, \down, \left, \right, \abtn, \bbtn
+
+You can also insert arbitrary bytes. For example, \abtn is equivalent to:
+  \xb8\xb9

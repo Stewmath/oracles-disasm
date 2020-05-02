@@ -37,88 +37,6 @@ class TextStruct:
         self.address = -1
 
 
-# Text printed at the start of the yaml file
-
-commentText = '''
-# ==============================================================================
-# YAML NOTES
-# ==============================================================================
-#
-# This text is formatted with YAML. One particular thing to note is how
-# multiline strings are handled.
-#
-# In most cases, the block style ("|-") is used, like this:
-#
-#   text: |-
-#     You! Kids aren't
-#     allowed in...
-#     Sir \Link!
-#     Excuse me!
-#   null_terminator: True
-#
-# With this style, newlines are preserved wherever they are. Also, if a line is
-# too long, the text parser will automatically insert a newline. But, when
-# creating new text, you may prefer to use the flow style (">-"):
-#
-#   text: >-
-#     This is some new text using the flow style.
-#     There is no explicit newline here.
-#
-#     But there is one here.
-#   null_terminator: True
-#
-# The advantage of this style is that you can write long text across multiple
-# lines, without worrying about where the line-breaks will actually be in-game.
-# With this style, line breaks are ignored unless you have two line-breaks in
-# a row. But you still have flexibility to insert explicit linebreaks by leaving
-# an empty line.
-#
-# Most text uses chomping ("-" sign after "|" or ">"), which ignores any
-# newlines at the end of the text. But this not the case when the game actually
-# does wants to leave a newline at the end of the text, particularly when
-# null_terminator is False.
-#
-# For more information: https://yaml-multiline.info/
-#
-#
-# ==============================================================================
-# DESCRIPTION OF KEYS
-# ==============================================================================
-#
-# groups:
-#   group: The index for a group. This is the high byte for all text in the
-#          group.
-#
-#   data: List of text data, described below...
-#
-#   - name: Name assigned to text. When used in the disassembly, this resolves
-#           to the full 4-digit (2-byte) text index. The upper 2 digits
-#           correspond to the group index; the lower 2 digits correspond to the
-#           value of the "index" key below. Can be a single value or a list (see
-#           below).
-#
-#     index: The lower 2 digits (1 byte) of the text index. Combined with the
-#           group index (upper 2 digits) to get the full index. This can be
-#           a list instead of a single value. In this case, all indices refer to
-#           the same data. Also, if this is a list, then the "name" key must
-#           also be a list, and must have the same number of entries as this.
-#           Each "name" will refer to the corresponding index in this list.
-#
-#     text: The text string. See text formatting notes.
-#
-#     null_terminator: True or False. If False, the text does not end here, and
-#           the game will continue to show the text that comes after this. In
-#           this case, you will usually want to ensure a newline is inserted at
-#           the end of the text. (See notes about YAML above.)
-#     
-#
-# TEXT FORMATTING:
-# 
-# TODO
-'''.strip()
-
-
-
 if len(sys.argv) < 2:
     print('Usage: ' + sys.argv[0] + ' romfile [language]')
     print('\n"language" is a number from 0-4, for dumping from European ROMS.')
@@ -610,7 +528,8 @@ outFile.write('\n')
 outFile.close()
 
 
-# Setup yaml to use OrderedDict instead of dict
+# Setup yaml to use OrderedDict instead of dict, and also represent 'TextStruct'
+# in a specific way.
 def setup_yaml():
     """ https://stackoverflow.com/a/8661021 """
     represent_dict_order = lambda self, data: self.represent_mapping('tag:yaml.org,2002:map', data.items())
@@ -682,7 +601,7 @@ dumpYaml(dictGroupList, outFile)
 outFile.close()
 
 outFile = open(textDir + 'text.yaml', 'w')
-outFile.write(commentText + '\n')
+outFile.write('# See "text/info.txt" for documentation about this file.\n\n')
 dumpYaml(textGroupList, outFile)
 outFile.close()
 
