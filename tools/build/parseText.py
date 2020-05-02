@@ -151,6 +151,8 @@ class GroupStruct:
 
     def getTextName(self, index):
         struct = self.getTextStruct(index)
+        if struct == None:
+            return None
         i = struct.indices.index(index)
         return struct.names[i]
 
@@ -781,8 +783,8 @@ for group in groupDict.values():
     for i in range(0, group.lastTextIndex+1):
         textName = group.getTextName(i)
         if textName is None:
-            outFile.write('\t.dw 0 ; TODO: FIX THIS')
-            print('WARNING: Missing text index ' + hex(i))
+            outFile.write('\t.dw $0000 ; Undefined\n')
+            print('WARNING: Text index ' + myhex(((group.index-4) << 8) | i, 4) + ' undefined.')
             address += 2
         else:
             outFile.write(
