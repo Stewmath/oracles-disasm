@@ -118,12 +118,14 @@ interactionCode0c:
 	jp interactionSetAnimation		; $4090
 
 @interac00:
+.ifdef ROM_AGES
 	ld a,(wTilesetFlags)		; $4093
 	and TILESETFLAG_UNDERWATER	; $4096
 	jr z,+			; $4098
 
 	ld a,$0e		; $409a
 	jr ++			; $409c
+.endif
 +
 	ld a,(wGrassAnimationModifier)		; $409e
 	and $03			; $40a1
@@ -173,7 +175,9 @@ interactionCode0f:
 	rlca			; $40d2
 	ld a,SND_FALLINHOLE	; $40d3
 	call nc,playSound		; $40d5
+.ifdef ROM_AGES
 	call @checkUpdateHoleEvent		; $40d8
+.endif
 	jp objectSetVisible83		; $40db
 
 
@@ -229,6 +233,7 @@ interactionCode0f:
 	jp interactionDelete		; $411b
 
 
+.ifdef ROM_AGES
 ;;
 ; Certain rooms have things happen when something falls into a hole; this writes something
 ; around $cfd8 to provide a signal?
@@ -279,6 +284,7 @@ clearFallDownHoleEventBuffer:
 	ld b,_sizeof_wTmpcfc0.fallDownHoleEvent.cfd8		; $414e
 	ld a,$ff		; $4150
 	jp fillMemory		; $4152
+.endif
 
 
 ; ==============================================================================
@@ -320,222 +326,12 @@ interactionCode10:
 	jp interactionAnimate		; $4189
 
 
-; ==============================================================================
-; INTERACID_FARORE_MAKECHEST
-; ==============================================================================
-interactionCode11:
-	ld e,Interaction.subid	; $418c
-	ld a,(de)		; $418e
-	and $0f			; $418f
-	rst_jumpTable			; $4191
-	.dw _interac11_subid00
-	.dw _interac11_subid01
-
-
-; Subid 0 is the "parent" which controls the cutscene and the "children" (subid 1).
-; The parent uses 2 variables to control the children:
-;   * [$cfd8] is the distance away from the center of the circle the sparkles should be.
-;   * [$cfd9] is set to 1 when the sparkles should start moving off-screen.
-_interac11_subid00:
-	ld e,Interaction.state	; $4196
-	ld a,(de)		; $4198
-	rst_jumpTable			; $4199
-	.dw @interac11_00_state0
-	.dw @interac11_00_state1
-	.dw @interac11_00_state2
-	.dw @interac11_00_state3
-	.dw @interac11_00_state4
-	.dw @interac11_00_state5
-	.dw @interac11_00_state678
-	.dw @interac11_00_state678
-	.dw @interac11_00_state678
-	.dw @interac11_00_state9
-	.dw @interac11_00_stateA
-
-@interac11_00_state0:
-	ld a,$30		; $41b0
-	ld ($cfd8),a		; $41b2
-	xor a			; $41b5
-	ld ($cfd9),a		; $41b6
-	call setCameraFocusedObject		; $41b9
-	ld e,Interaction.counter1		; $41bc
-	ld a,$5a		; $41be
-	ld (de),a		; $41c0
-	call darkenRoomLightly		; $41c1
-	jp interactionIncState		; $41c4
-
-@interac11_00_state1:
-	call interactionDecCounter1		; $41c7
-	ret nz			; $41ca
-	ld (hl),$30		; $41cb
-
-	; Create 8 "sparkles".
-	ld hl,objectData.faroreSparkleObjectData		; $41cd
-	call parseGivenObjectData		; $41d0
-
-	jp interactionIncState		; $41d3
-
-@interac11_00_state2:
-	call interactionDecCounter1		; $41d6
-	ret nz			; $41d9
-	ld (hl),$1e		; $41da
-	jp interactionIncState		; $41dc
-
-@interac11_00_state3:
-	call interactionDecCounter1		; $41df
-	ret nz			; $41e2
-	ld (hl),$50		; $41e3
-	jp interactionIncState		; $41e5
-
-@interac11_00_state4:
-	ld a,(wFrameCounter)		; $41e8
-	rrca			; $41eb
-	jr c,+			; $41ec
-	ld hl,$cfd8		; $41ee
-	dec (hl)		; $41f1
-+
-	call interactionDecCounter1		; $41f2
-	ret nz			; $41f5
-	ld (hl),$28		; $41f6
-	jp interactionIncState		; $41f8
-
-@interac11_00_state5:
-	call interactionDecCounter1		; $41fb
-	ret nz			; $41fe
-	ld (hl),$08		; $41ff
-	ld a,$01		; $4201
-	ld ($cfd9),a		; $4203
-
-	; Create a large, blue-and-red sparkle, and set its "related object" to this.
-	ldbc INTERACID_SPARKLE, $0c		; $4206
-	call objectCreateInteraction		; $4209
-	ld l,Interaction.relatedObj1	; $420c
-	ld (hl),Interaction.start		; $420e
-	inc l			; $4210
-	ld (hl),d		; $4211
-
-	call objectCreatePuff		; $4212
-	ld a,TILEINDEX_CHEST	; $4215
-	ld c,$75		; $4217
-	call setTile		; $4219
-	jp interactionIncState		; $421c
-
-@interac11_00_state678:
-	call interactionDecCounter1		; $421f
-	ret nz			; $4222
-	ld (hl),$10		; $4223
-	call fadeinFromWhite		; $4225
-
-@playFadeoutSound:
-	ld a,SND_FADEOUT	; $4228
-	call playSound		; $422a
-	jp interactionIncState		; $422d
-
-@interac11_00_state9:
-	call interactionDecCounter1		; $4230
-	ret nz			; $4233
-	ld a,$04		; $4234
-	call fadeinFromWhiteWithDelay		; $4236
-	jr @playFadeoutSound	; $4239
-
-@interac11_00_stateA:
-	ld a,(wPaletteThread_mode)		; $423b
-	or a			; $423e
-	ret nz			; $423f
-	ld a,$01		; $4240
-	ld ($cfc0),a		; $4242
-	xor a			; $4245
-	ld (wPaletteThread_parameter),a		; $4246
-	call setCameraFocusedObjectToLink		; $4249
-	jp interactionDelete		; $424c
-
-
-; Subid 1 is a "sparkle" which is controlled by the parent, subid 0.
-_interac11_subid01:
-	ld e,Interaction.state	; $424f
-	ld a,(de)		; $4251
-	rst_jumpTable			; $4252
-	.dw @interac11_01_state0
-	.dw @interac11_01_state1
-	.dw @interac11_01_state2
-	.dw @interac11_01_state3
-
-@interac11_01_state0:
-	; Determine angle based on upper nibble of subid
-	ld e,Interaction.subid		; $425b
-	ld a,(de)		; $425d
-	swap a			; $425e
-	and $0f			; $4260
-	ld hl,@initialAngles	; $4262
-	rst_addAToHl			; $4265
-	ld a,(hl)		; $4266
-	ld e,Interaction.angle		; $4267
-	ld (de),a		; $4269
-
-	ld e,Interaction.speed		; $426a
-	ld a,SPEED_100		; $426c
-	ld (de),a		; $426e
-	ld e,Interaction.counter1		; $426f
-	ld a,$30		; $4271
-	ld (de),a		; $4273
-
-	call interactionInitGraphics		; $4274
-	call objectSetVisible80		; $4277
-	jp interactionIncState		; $427a
-
-@initialAngles:
-	.db $02 $06 $0a $0e $12 $16 $1a $1e
-
-
-; Sparkles moving away from center, not rotating
-@interac11_01_state1:
-	call objectApplySpeed		; $4285
-	call interactionAnimate		; $4288
-	call interactionDecCounter1		; $428b
-	ret nz			; $428e
-	jp interactionIncState		; $428f
-
-; Sparkles rotating around center
-@interac11_01_state2:
-	call @interac11_updateSparkle		; $4292
-
-	; Wait for signal from parent to start flying away
-	ld a,($cfd9)		; $4295
-	or a			; $4298
-	ret z			; $4299
-
-	ld e,Interaction.speed		; $429a
-	ld a,SPEED_200		; $429c
-	ld (de),a		; $429e
-	jp interactionIncState		; $429f
-
-; Sparkles moving away until off-screen
-@interac11_01_state3:
-	call objectApplySpeed		; $42a2
-	call interactionAnimate		; $42a5
-	call objectCheckWithinScreenBoundary		; $42a8
-	ret c			; $42ab
-	jp interactionDelete		; $42ac
-
-@interac11_updateSparkle:
-	ld a,(wFrameCounter)		; $42af
-	rrca			; $42b2
-	jr c,++			; $42b3
-
-	ld h,d			; $42b5
-	ld l,Interaction.angle	; $42b6
-	inc (hl)		; $42b8
-	ld a,(hl)		; $42b9
-	and $1f			; $42ba
-	ld (hl),a		; $42bc
-	ld a,SND_CIRCLING		; $42bd
-	call z,playSound		; $42bf
-++
-	ld e,Interaction.angle		; $42c2
-	ld bc,$7858		; $42c4
-	ld a,($cfd8)		; $42c7
-	call objectSetPositionInCircleArc		; $42ca
-	jp interactionAnimate		; $42cd
+.ifdef ROM_AGES
+.include "code/seasons/interactionCode/interactionCode11_body.s"
+.else
+interactionCode11_caller:
+	jpab bank3f.interactionCode11
+.endif
 
 
 ; ==============================================================================
@@ -550,6 +346,9 @@ interactionCode12:
 	.dw @subid02
 	.dw @subid03
 	.dw @subid04
+.ifdef ROM_SEASONS
+	.dw @subid05
+.endif
 
 
 ; Show text upon entering a dungeon
@@ -572,9 +371,21 @@ interactionCode12:
 	call objectSetCollideRadius		; $42f8
 	call initializeDungeonStuff		; $42fb
 	ld a,(wDungeonIndex)		; $42fe
+.ifdef ROM_AGES
 	ld hl,@initialSpinnerValues		; $4301
 	rst_addAToHl			; $4304
 	ld a,(hl)		; $4305
+.else
+	cp $07			; $4182
+	jr nz,+	; $4184
+	ld a,$05		; $4186
+	ld (wToggleBlocksState),a		; $4188
++
+	ld a,(wDungeonIndex)		; $418b
+	cp $08			; $418e
+	jr nz,@initialized	; $4190
+	ld a,$01		; $4192
+.endif
 	ld (wSpinnerState),a		; $4306
 
 @initialized:
@@ -600,15 +411,17 @@ interactionCode12:
 	.else; ROM_SEASONS
 
 		.db <TX_0200 <TX_0201 <TX_0202 <TX_0203 <TX_0204 <TX_0205 <TX_0206 <TX_0207
-		.db <TX_0208 <TX_0209 <TX_020a <TX_020b
+		.db <TX_0208 <TX_0209 <TX_020a <TX_0200 <TX_0200 <TX_0200 <TX_0200 <TX_0200
 	.endif
 
 
+.ifdef ROM_AGES
 ; Initial values for wSpinnerState. A set bit means the corresponding spinner starts red.
 ; One byte per dungeon.
 @initialSpinnerValues:
 	.db $00 $00 $00 $00 $00 $00 $02 $00
 	.db $01 $00 $00 $00 $01 $00 $00 $00
+.endif
 
 
 ; A small key falls when [wNumEnemies]==0.
@@ -719,6 +532,48 @@ interactionCode12:
 	ld l,Interaction.yh		; $43c8
 	jp setShortPosition_paramC		; $43ca
 
+.ifdef ROM_SEASONS
+@subid05:
+	ld e,Interaction.state		; $424b
+	ld a,(de)		; $424d
+	rst_jumpTable			; $424e
+	.dw @@state0
+	.dw @@state1
+	.dw @@state2
+@@state0:
+	ld a,$01		; $4255
+	ld (de),a		; $4257
+	call interactionInitGraphics		; $4258
+	call objectSetVisible82		; $425b
+@@state1:
+	ld hl,$dd00		; $425e
+	ld a,(hl)		; $4261
+	or a			; $4262
+	ret nz			; $4263
+
+	ld (hl),$01		; $4264
+	inc l			; $4266
+	; TODO:
+	ld (hl),$29		; $4267
+	call objectCopyPosition		; $4269
+
+	; copy relatedObj1 over
+	ld e,Interaction.relatedObj1		; $426c
+	ld l,$16		; $426e
+	ld a,(de)		; $4270
+	ldi (hl),a		; $4271
+	inc e			; $4272
+	ld a,(de)		; $4273
+	ld (hl),a		; $4274
+
+	ld e,Interaction.state		; $4275
+	ld a,$02		; $4277
+	ld (de),a		; $4279
+	ret			; $427a
+@@state2:
+	jp interactionDelete		; $427b
+.endif
+
 
 ; ==============================================================================
 ; INTERACID_PUSHBLOCK_TRIGGER
@@ -821,6 +676,9 @@ interactionCode14:
 	rst_jumpTable			; $4433
 	.dw @state0
 	.dw @state1
+.ifdef ROM_SEASONS
+	.dw @state2
+.endif
 
 ; State 0: block just pushed.
 @state0:
@@ -840,8 +698,10 @@ interactionCode14:
 	ld (de),a		; $4447
 	call objectMimicBgTile		; $4448
 
+.ifdef ROM_AGES
 	call @checkRotatingCubePermitsPushing		; $444b
 	jp c,interactionDelete		; $444e
+.endif
 
 	ld a,$06		; $4451
 	call objectSetCollideRadius		; $4453
@@ -852,6 +712,15 @@ interactionCode14:
 	; two consecutive tiles
 	ld h,d			; $4459
 	ld l,Interaction.var34		; $445a
+.ifdef ROM_SEASONS
+	ld a,(hl)		; $4309
+	and $02			; $430a
+	jr z,+			; $430c
+	ld e,Interaction.state		; $430e
+	ld a,$02		; $4310
+	ld (de),a		; $4312
++
+.endif
 	bit 2,(hl)		; $445c
 	ld a,$01		; $445e
 	call nz,interactionSetAnimation		; $4460
@@ -859,6 +728,7 @@ interactionCode14:
 	; Determine speed to push with (L-2 bracelet pushes faster)
 	ld h,d			; $4463
 	ldbc SPEED_80, $20		; $4464
+.ifdef ROM_AGES
 	ld a,(wBraceletLevel)		; $4467
 	cp $02			; $446a
 	jr nz,+			; $446c
@@ -867,6 +737,7 @@ interactionCode14:
 	jr nz,+			; $4472
 	ldbc SPEED_c0, $15		; $4474
 +
+.endif
 	ld l,Interaction.speed		; $4477
 	ld (hl),b		; $4479
 	ld l,Interaction.counter1		; $447a
@@ -892,6 +763,7 @@ interactionCode14:
 	ret nz			; $449c
 
 ; Finished moving; decide what to do next
+@func_449d:
 
 	call objectReplaceWithAnimationIfOnHazard		; $449d
 	jp c,interactionDelete		; $44a0
@@ -924,6 +796,42 @@ interactionCode14:
 	call playSound		; $44c4
 ++
 	jp interactionDelete		; $44c7
+
+.ifdef ROM_SEASONS
+@state2:
+	call @updateZPositionForButton		; $4371
+	ld e,Interaction.speed		; $4374
+	ld a,SPEED_1c0		; $4376
+	ld (de),a		; $4378
+	call objectApplySpeed		; $4379
+	call objectPreventLinkFromPassing		; $437c
+	call @@func_438a		; $437f
+	ret z			; $4382
+	ld a,SND_CLINK		; $4383
+	call playSound		; $4385
+	jr @func_449d		; $4388
+@@func_438a:
+	ld e,Interaction.angle		; $438a
+	ld a,(de)		; $438c
+	call convertAngleDeToDirection		; $438d
+	ld hl,@@table_43a2		; $4390
+	rst_addDoubleIndex			; $4393
+	ld e,Interaction.yh		; $4394
+	ld a,(de)		; $4396
+	add (hl)		; $4397
+	ld b,a			; $4398
+	inc hl			; $4399
+	ld e,Interaction.xh		; $439a
+	ld a,(de)		; $439c
+	add (hl)		; $439d
+	ld c,a			; $439e
+	jp getTileCollisionsAtPosition		; $439f
+@@table_43a2:
+	.db $f8 $00
+	.db $00 $08
+	.db $08 $00
+	.db $00 $f8
+.endif
 
 ;;
 ; If this object is on top of an unpressed button, this raises the z position by 2 pixels.
@@ -963,6 +871,7 @@ interactionCode14:
 	ld a,(de)		; $44ee
 	jp setTile		; $44ef
 
+.ifdef ROM_AGES
 ;;
 ; This appears to check whether pushing blocks $2c-$2e (colored blocks) is permitted,
 ; based on whether a rotating cube is present, and whether the correct color flames for
@@ -987,12 +896,17 @@ interactionCode14:
 ++
 	scf			; $4508
 	ret			; $4509
+.endif
 
 ;;
 ; Loads var31-var34 with some variables relating to pushable blocks (see below).
 ; @addr{450a}
 @loadPushableTileProperties:
+.ifdef ROM_AGES
 	ld a,(wActiveCollisions)		; $450a
+.else
+	ld a,(wActiveGroup)
+.endif
 	ld hl,_pushableTilePropertiesTable		; $450d
 	rst_addAToHl			; $4510
 	ld a,(hl)		; $4511
@@ -1034,6 +948,10 @@ _pushableTilePropertiesTable:
 	.db @collisions3-CADDR
 	.db @collisions4-CADDR
 	.db @collisions5-CADDR
+.ifdef ROM_SEASONS
+	.db @collisions6-CADDR
+	.db @collisions7-CADDR
+.endif
 
 ; Data format:
 ;   b0 (var31): tile index
@@ -1047,7 +965,7 @@ _pushableTilePropertiesTable:
 ;               bit 7: play secret discovery sound after moving, and set
 ;               	"wDisabledObjects" to 0 (it would have been set to 1 previously
 ;               	from the "interactableTilesTable".
-
+.ifdef ROM_AGES
 @collisions0:
 	.db $d3 $3a $02 $01
 	.db $d8 $3a $02 $05
@@ -1078,6 +996,33 @@ _pushableTilePropertiesTable:
 
 @collisions3:
 	.db $00
+.else
+@collisions0:
+@collisions1:
+	.db $d6 $04 $9c $01
+@collisions2:
+	.db $00
+@collisions3:
+@collisions4:
+@collisions5:
+	.db $18 $a0 $1d $01
+	.db $19 $a0 $1d $01
+	.db $1a $a0 $1d $01
+	.db $1b $a0 $1d $01
+	.db $1c $a0 $1d $01
+	.db $2a $a0 $2a $01
+	.db $2c $a0 $2c $01
+	.db $2d $a0 $2d $01
+	.db $10 $a0 $10 $01
+	.db $11 $a0 $10 $01
+	.db $12 $a0 $10 $01
+	.db $13 $0d $10 $01
+	.db $25 $a0 $25 $01
+	.db $2f $8c $2f $02
+@collisions6:
+@collisions7:
+	.db $00
+.endif
 
 
 ; ==============================================================================
@@ -1272,6 +1217,7 @@ interactionCode17:
 ;   b0: tile index
 ;   b1: key type (0=small key, 1=boss key)
 
+.ifdef ROM_AGES
 @collisions0:
 @collisions1:
 @collisions3:
@@ -1290,6 +1236,28 @@ interactionCode17:
 	.db $76 $01
 	.db $77 $01
 	.db $00
+.else
+@collisions0:
+	.db $00
+@collisions1:
+	.db $ec $00
+@collisions2:
+@collisions3:
+@collisions5:
+	.db $00
+@collisions4:
+	.db $1e $00
+	.db $70 $00
+	.db $71 $00
+	.db $72 $00
+	.db $73 $00
+	.db $74 $01
+	.db $75 $01
+	.db $76 $01
+	.db $77 $01
+	.db $00
+
+.endif
 
 
 ; ==============================================================================
@@ -1355,15 +1323,116 @@ interactionCode1c:
 	jp interactionIncState		; $46e1
 
 
+.ifdef ROM_SEASONS
+; ==============================================================================
+; INTERACID_RUPEE_ROOM_RUPEES
+; ==============================================================================
+interactionCode1d:
+	ld e,Interaction.state		; $45a0
+	ld a,(de)		; $45a2
+	rst_jumpTable			; $45a3
+	.dw @state0
+	.dw @state1
+
+@state0:
+	ld a,$01		; $45a8
+	ld (de),a		; $45aa
+	ld e,Interaction.subid		; $45ab
+	ld a,(de)		; $45ad
+	ld b,a			; $45ae
+	add a			; $45af
+	add b			; $45b0
+	ld hl,@@rupeeRoomTable		; $45b1
+	rst_addAToHl			; $45b4
+	ldi a,(hl)		; $45b5
+	ld e,Interaction.var30		; $45b6
+	ld (de),a		; $45b8
+	ldi a,(hl)		; $45b9
+	ld e,Interaction.var31		; $45ba
+	ld (de),a		; $45bc
+	ld a,(hl)		; $45bd
+	inc e			; $45be
+	; var32
+	ld (de),a		; $45bf
+	ret			; $45c0
+
+@@rupeeRoomTable:
+	; top-left coords of rupees grid
+	dbw $23 wD2RupeeRoomRupees
+	dbw $34 wD6RupeeRoomRupees
+
+@state1:
+	ld a,(wActiveTileIndex)		; $45c7
+	; is a rupee tile
+	cp $3c			; $45ca
+	jr z,+			; $45cc
+	cp $3d			; $45ce
+	ret nz			; $45d0
++
+	ld h,d			; $45d1
+	ld l,Interaction.var30		; $45d2
+	ld a,(hl)		; $45d4
+	ld a,(wActiveTilePos)		; $45d5
+	sub (hl)		; $45d8
+	ld b,a			; $45d9
+	ld l,Interaction.var31		; $45da
+	ldi a,(hl)		; $45dc
+	ld h,(hl)		; $45dd
+	ld l,a			; $45de
+	ld a,b			; $45df
+	swap a			; $45e0
+	and $0f			; $45e2
+	rst_addAToHl			; $45e4
+	ld a,b			; $45e5
+	and $0f			; $45e6
+	ld bc,bitTable		; $45e8
+	add c			; $45eb
+	ld c,a			; $45ec
+	ld a,(bc)		; $45ed
+	or (hl)			; $45ee
+	ld (hl),a		; $45ef
+	call getRandomNumber		; $45f0
+	and $0f			; $45f3
+	ld hl,@@chosenRupeeVal		; $45f5
+	rst_addAToHl			; $45f8
+	ld c,(hl)		; $45f9
+	ld a,GOLD_JOY_RING		; $45fa
+	call cpActiveRing		; $45fc
+	jr z,@@doubleRupees	; $45ff
+	ld a,RED_JOY_RING		; $4601
+	call cpActiveRing		; $4603
+	jr nz,@@giveRupees	; $4606
+
+@@doubleRupees:
+	inc c			; $4608
+
+@@giveRupees:
+	ld a,TREASURE_RUPEES		; $4609
+	call giveTreasure		; $460b
+	ld a,(wActiveTilePos)		; $460e
+	ld c,a			; $4611
+	ld a,TILEINDEX_STANDARD_FLOOR		; $4612
+	jp setTile		; $4614
+
+@@chosenRupeeVal:
+	.db RUPEEVAL_001 RUPEEVAL_010 RUPEEVAL_010 RUPEEVAL_005
+	.db RUPEEVAL_005 RUPEEVAL_005 RUPEEVAL_005 RUPEEVAL_001
+	.db RUPEEVAL_001 RUPEEVAL_020 RUPEEVAL_001 RUPEEVAL_001
+	.db RUPEEVAL_001 RUPEEVAL_001 RUPEEVAL_001 RUPEEVAL_001
+.endif
+
+
 ; ==============================================================================
 ; INTERACID_DOOR_CONTROLLER
 ; ==============================================================================
 interactionCode1e:
 	call interactionDeleteAndRetIfEnabled02		; $46e4
 	call returnIfScrollMode01Unset		; $46e7
+.ifdef ROM_AGES
 	ld a,(wSwitchHookState)		; $46ea
 	cp $02			; $46ed
 	ret z			; $46ef
+.endif
 
 	ld e,Interaction.state		; $46f0
 	ld a,(de)		; $46f2
@@ -1497,10 +1566,12 @@ interactionCode1e:
 	.dw @state3Substate1
 
 @state3Substate0:
+.ifdef ROM_AGES
 	; The tile at this position must not be solid
 	call objectGetTileAtPosition		; $4791
 	cp TILEINDEX_SOMARIA_BLOCK			; $4794
 	jr z,@interleaveDoorTile	; $4796
+.endif
 	call objectCheckTileCollision_allowHoles		; $4798
 	jr c,@gotoState1	; $479b
 	jr @interleaveDoorTile		; $479d
@@ -1572,7 +1643,7 @@ interactionCode1e:
 	ld a,(de)		; $47f0
 	cp $04			; $47f1
 	ret c			; $47f3
-	ld hl,$cc93		; $47f4
+	ld hl,wcc93		; $47f4
 	inc (hl)		; $47f7
 	ret			; $47f8
 
@@ -1581,7 +1652,7 @@ interactionCode1e:
 	ld a,(de)		; $47fb
 	cp $04			; $47fc
 	ret c			; $47fe
-	ld hl,$cc93		; $47ff
+	ld hl,wcc93		; $47ff
 	ld a,(hl)		; $4802
 	or a			; $4803
 	ret z			; $4804
@@ -1650,8 +1721,10 @@ interactionCode1e:
 	/* $13 */ .dw doorController_closeAfterLinkEnters_left
 	/* $14 */ .dw doorController_openWhenTorchesLit_up_2Torches
 	/* $15 */ .dw doorController_openWhenTorchesLit_left_2Torches
+.ifdef ROM_AGES
 	/* $16 */ .dw doorController_openWhenTorchesLit_down_1Torch
 	/* $17 */ .dw doorController_openWhenTorchesLit_left_1Torch
+.endif
 
 
 ; ==============================================================================

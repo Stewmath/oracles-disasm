@@ -878,8 +878,12 @@ wGroup5Flags: ; $ca00
 .else
 .define wGroup2Flags wPastRoomFlags
 .endif
+
 ; Steal 6 of the past room flags for vine seed positions
 .define wVinePositions wPastRoomFlags+$f0
+; Steal 16 of subrosia's room flags for rupee room rupees gotten
+.define wD2RupeeRoomRupees wPastRoomFlags+$f0
+.define wD6RupeeRoomRupees wPastRoomFlags+$f8
 
 ; ========================================================================================
 ; $cb00: END of data that goes into the save file
@@ -2090,7 +2094,7 @@ wDisallowMountingCompanion: ; $cc98/$ccb2
 wActiveTilePos: ; $cc99/$ccb3
 ; The tile Link is standing on (not updated while in midair)
 	db
-wActiveTileIndex: ; $cc9a
+wActiveTileIndex: ; $cc9a/$ccb4
 	db
 
 wStandingOnTileCounter: ; $cc9b/$ccb5

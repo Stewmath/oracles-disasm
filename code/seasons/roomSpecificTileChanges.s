@@ -280,14 +280,14 @@ tileReplacement_group2_3Mapb0:
 tileReplacement_group4Map2e:
 	ld hl,wRoomLayout+$23		; $6250
 	ld bc,$0808		; $6253
-	ld de,$c8f0		; $6256
+	ld de,wD2RupeeRoomRupees		; $6256
 	jp replaceRupeeRoomRupees		; $6259
 
 ; D6 - hidden rupee room
 tileReplacement_group4Mapbb:
 	ld hl,wRoomLayout+$34		; $625c
 	ld bc,$0808		; $625f
-	ld de,$c8f8		; $6262
+	ld de,wD6RupeeRoomRupees		; $6262
 	jp replaceRupeeRoomRupees		; $6265
 
 ; D5 - magnet glove chest

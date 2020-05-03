@@ -1,183 +1,220 @@
 ; ==============================================================================
-; INTERACID_11
-;
-; Variables:
-;   varxx: ???
+; INTERACID_FARORE_MAKECHEST
 ; ==============================================================================
-interactionCode11_body:
-	ld e,Interaction.subid	; $59b7
-	ld a,(de)		; $59b9
-	and $0f			; $59ba
-	rst_jumpTable			; $59bc
-	.dw @subid0
-	.dw @subid1
-@subid0:
-	ld e,Interaction.state		; $59c1
-	ld a,(de)		; $59c3
-	rst_jumpTable			; $59c4
-	.dw @subid0state0
-	.dw @subid0state1
-	.dw @subid0state2
-	.dw @subid0state3
-	.dw @subid0state4
-	.dw @subid0state5
-	.dw @subid0state6
-	.dw @subid0state7
-	.dw @subid0state8
-	.dw @subid0state9
-	.dw @subid0statea
-@subid0state0:
-	ld a,$30		; $59db
-	ld ($cfd8),a		; $59dd
-	xor a			; $59e0
-	ld ($cfd9),a		; $59e1
-	call setCameraFocusedObject		; $59e4
-	ld e,$46		; $59e7
-	ld a,$5a		; $59e9
-	ld (de),a		; $59eb
-	call darkenRoomLightly		; $59ec
-	jp interactionIncState		; $59ef
-@subid0state1:
-	call interactionDecCounter1		; $59f2
-	ret nz			; $59f5
-	ld (hl),$30		; $59f6
-	ld hl,$4000		; $59f8
-	call parseGivenObjectData		; $59fb
-	jp interactionIncState		; $59fe
-@subid0state2:
-	call interactionDecCounter1		; $5a01
-	ret nz			; $5a04
-	ld (hl),$1e		; $5a05
-	jp interactionIncState		; $5a07
-@subid0state3:
-	call interactionDecCounter1		; $5a0a
-	ret nz			; $5a0d
-	ld (hl),$50		; $5a0e
-	jp interactionIncState		; $5a10
-@subid0state4:
-	ld a,(wFrameCounter)		; $5a13
-	rrca			; $5a16
-	jr c,+			; $5a17
-	ld hl,$cfd8		; $5a19
-	dec (hl)		; $5a1c
-+
-	call interactionDecCounter1		; $5a1d
-	ret nz			; $5a20
-	ld (hl),$28		; $5a21
-	jp interactionIncState		; $5a23
-@subid0state5:
-	call interactionDecCounter1		; $5a26
-	ret nz			; $5a29
-	ld (hl),$08		; $5a2a
-	ld a,$01		; $5a2c
-	ld ($cfd9),a		; $5a2e
-	ld bc,$8404		; $5a31
-	call objectCreateInteraction		; $5a34
-	ld l,$56		; $5a37
-	ld (hl),$40		; $5a39
-	inc l			; $5a3b
-	ld (hl),d		; $5a3c
-	call objectCreatePuff		; $5a3d
-	ld a,$f1		; $5a40
-	ld c,$75		; $5a42
-	call setTile		; $5a44
-	jp interactionIncState		; $5a47
-@subid0state6:
-@subid0state7:
-@subid0state8:
-	call interactionDecCounter1		; $5a4a
-	ret nz			; $5a4d
-	ld (hl),$10		; $5a4e
-	call fadeinFromWhite		; $5a50
--
-	; subrosia transition sound
-	ld a,SND_FADEOUT		; $5a53
-	call playSound		; $5a55
-	jp interactionIncState		; $5a58
-@subid0state9:
-	call interactionDecCounter1		; $5a5b
-	ret nz			; $5a5e
-	ld a,$04		; $5a5f
-	call fadeinFromWhiteWithDelay		; $5a61
-	jr -		; $5a64
-@subid0statea:
-	ld a,(wPaletteThread_mode)		; $5a66
-	or a			; $5a69
-	ret nz			; $5a6a
-	ld a,$01		; $5a6b
-	ld ($cfc0),a		; $5a6d
-	xor a			; $5a70
-	ld (wPaletteThread_parameter),a		; $5a71
-	call setCameraFocusedObjectToLink		; $5a74
-	jp interactionDelete		; $5a77
+interactionCode11:
+	ld e,Interaction.subid	; $418c
+	ld a,(de)		; $418e
+	and $0f			; $418f
+	rst_jumpTable			; $4191
+	.dw _interac11_subid00
+	.dw _interac11_subid01
 
-@subid1:
-	ld e,Interaction.state		; $5a7a
-	ld a,(de)		; $5a7c
-	rst_jumpTable			; $5a7d
-	.dw @subid1state0
-	.dw @subid1state1
-	.dw @subid1state2
-	.dw @subid1state3
-@subid1state0:
-	ld e,Interaction.subid			; $5a86
-	ld a,(de)		; $5a88
-	swap a			; $5a89
-	and $0f			; $5a8b
-	ld hl,@subid1state0table		; $5a8d
-	rst_addAToHl			; $5a90
-	ld a,(hl)		; $5a91
-	ld e,$49		; $5a92
-	ld (de),a		; $5a94
-	ld e,$50		; $5a95
-	ld a,$28		; $5a97
-	ld (de),a		; $5a99
-	ld e,$46		; $5a9a
-	ld a,$30		; $5a9c
-	ld (de),a		; $5a9e
-	call interactionInitGraphics		; $5a9f
-	call objectSetVisible80		; $5aa2
-	jp interactionIncState		; $5aa5
-@subid1state0table:
+
+; Subid 0 is the "parent" which controls the cutscene and the "children" (subid 1).
+; The parent uses 2 variables to control the children:
+;   * [$cfd8] is the distance away from the center of the circle the sparkles should be.
+;   * [$cfd9] is set to 1 when the sparkles should start moving off-screen.
+_interac11_subid00:
+	ld e,Interaction.state	; $4196
+	ld a,(de)		; $4198
+	rst_jumpTable			; $4199
+	.dw @interac11_00_state0
+	.dw @interac11_00_state1
+	.dw @interac11_00_state2
+	.dw @interac11_00_state3
+	.dw @interac11_00_state4
+	.dw @interac11_00_state5
+	.dw @interac11_00_state678
+	.dw @interac11_00_state678
+	.dw @interac11_00_state678
+	.dw @interac11_00_state9
+	.dw @interac11_00_stateA
+
+@interac11_00_state0:
+	ld a,$30		; $41b0
+	ld ($cfd8),a		; $41b2
+	xor a			; $41b5
+	ld ($cfd9),a		; $41b6
+	call setCameraFocusedObject		; $41b9
+	ld e,Interaction.counter1		; $41bc
+	ld a,$5a		; $41be
+	ld (de),a		; $41c0
+	call darkenRoomLightly		; $41c1
+	jp interactionIncState		; $41c4
+
+@interac11_00_state1:
+	call interactionDecCounter1		; $41c7
+	ret nz			; $41ca
+	ld (hl),$30		; $41cb
+
+	; Create 8 "sparkles".
+	ld hl,objectData.faroreSparkleObjectData		; $41cd - $4000
+	call parseGivenObjectData		; $41d0
+
+	jp interactionIncState		; $41d3
+
+@interac11_00_state2:
+	call interactionDecCounter1		; $41d6
+	ret nz			; $41d9
+	ld (hl),$1e		; $41da
+	jp interactionIncState		; $41dc
+
+@interac11_00_state3:
+	call interactionDecCounter1		; $41df
+	ret nz			; $41e2
+	ld (hl),$50		; $41e3
+	jp interactionIncState		; $41e5
+
+@interac11_00_state4:
+	ld a,(wFrameCounter)		; $41e8
+	rrca			; $41eb
+	jr c,+			; $41ec
+	ld hl,$cfd8		; $41ee
+	dec (hl)		; $41f1
++
+	call interactionDecCounter1		; $41f2
+	ret nz			; $41f5
+	ld (hl),$28		; $41f6
+	jp interactionIncState		; $41f8
+
+@interac11_00_state5:
+	call interactionDecCounter1		; $41fb
+	ret nz			; $41fe
+	ld (hl),$08		; $41ff
+	ld a,$01		; $4201
+	ld ($cfd9),a		; $4203
+
+	; Create a large, blue-and-red sparkle, and set its "related object" to this.
+.ifdef ROM_AGES
+	ldbc INTERACID_SPARKLE, $0c		; $4206
+.else
+	ldbc INTERACID_SPARKLE, $04		; $4206
+.endif
+	call objectCreateInteraction		; $4209
+	ld l,Interaction.relatedObj1	; $420c
+	ld (hl),Interaction.start		; $420e
+	inc l			; $4210
+	ld (hl),d		; $4211
+
+	call objectCreatePuff		; $4212
+	ld a,TILEINDEX_CHEST	; $4215
+	ld c,$75		; $4217
+	call setTile		; $4219
+	jp interactionIncState		; $421c
+
+@interac11_00_state678:
+	call interactionDecCounter1		; $421f
+	ret nz			; $4222
+	ld (hl),$10		; $4223
+	call fadeinFromWhite		; $4225
+
+@playFadeoutSound:
+	ld a,SND_FADEOUT	; $4228
+	call playSound		; $422a
+	jp interactionIncState		; $422d
+
+@interac11_00_state9:
+	call interactionDecCounter1		; $4230
+	ret nz			; $4233
+	ld a,$04		; $4234
+	call fadeinFromWhiteWithDelay		; $4236
+	jr @playFadeoutSound	; $4239
+
+@interac11_00_stateA:
+	ld a,(wPaletteThread_mode)		; $423b
+	or a			; $423e
+	ret nz			; $423f
+	ld a,$01		; $4240
+	ld ($cfc0),a		; $4242
+	xor a			; $4245
+	ld (wPaletteThread_parameter),a		; $4246
+	call setCameraFocusedObjectToLink		; $4249
+	jp interactionDelete		; $424c
+
+
+; Subid 1 is a "sparkle" which is controlled by the parent, subid 0.
+_interac11_subid01:
+	ld e,Interaction.state	; $424f
+	ld a,(de)		; $4251
+	rst_jumpTable			; $4252
+	.dw @interac11_01_state0
+	.dw @interac11_01_state1
+	.dw @interac11_01_state2
+	.dw @interac11_01_state3
+
+@interac11_01_state0:
+	; Determine angle based on upper nibble of subid
+	ld e,Interaction.subid		; $425b
+	ld a,(de)		; $425d
+	swap a			; $425e
+	and $0f			; $4260
+	ld hl,@initialAngles	; $4262
+	rst_addAToHl			; $4265
+	ld a,(hl)		; $4266
+	ld e,Interaction.angle		; $4267
+	ld (de),a		; $4269
+
+	ld e,Interaction.speed		; $426a
+	ld a,SPEED_100		; $426c
+	ld (de),a		; $426e
+	ld e,Interaction.counter1		; $426f
+	ld a,$30		; $4271
+	ld (de),a		; $4273
+
+	call interactionInitGraphics		; $4274
+	call objectSetVisible80		; $4277
+	jp interactionIncState		; $427a
+
+@initialAngles:
 	.db $02 $06 $0a $0e $12 $16 $1a $1e
 
-@subid1state1:
-	call objectApplySpeed		; $5ab0
-	call interactionAnimate		; $5ab3
-	call interactionDecCounter1		; $5ab6
-	ret nz			; $5ab9
-	jp interactionIncState		; $5aba
-@subid1state2:
-	call @func_3f_5ada		; $5abd
-	ld a,($cfd9)		; $5ac0
-	or a			; $5ac3
-	ret z			; $5ac4
-	ld e,$50		; $5ac5
-	ld a,$50		; $5ac7
-	ld (de),a		; $5ac9
-	jp interactionIncState		; $5aca
-@subid1state3:
-	call objectApplySpeed		; $5acd
-	call interactionAnimate		; $5ad0
-	call objectCheckWithinScreenBoundary		; $5ad3
-	ret c			; $5ad6
-	jp interactionDelete		; $5ad7
 
-@func_3f_5ada:
-	ld a,(wFrameCounter)		; $5ada
-	rrca			; $5add
-	jr c,+	; $5ade
-	ld h,d			; $5ae0
-	ld l,$49		; $5ae1
-	inc (hl)		; $5ae3
-	ld a,(hl)		; $5ae4
-	and $1f			; $5ae5
-	ld (hl),a		; $5ae7
-	ld a,SND_CIRCLING		; $5ae8
-	call z,playSound		; $5aea
-+
-	ld e,$49		; $5aed
-	ld bc,$7858		; $5aef
-	ld a,($cfd8)		; $5af2
-	call objectSetPositionInCircleArc		; $5af5
-	jp interactionAnimate		; $5af8
+; Sparkles moving away from center, not rotating
+@interac11_01_state1:
+	call objectApplySpeed		; $4285
+	call interactionAnimate		; $4288
+	call interactionDecCounter1		; $428b
+	ret nz			; $428e
+	jp interactionIncState		; $428f
+
+; Sparkles rotating around center
+@interac11_01_state2:
+	call @interac11_updateSparkle		; $4292
+
+	; Wait for signal from parent to start flying away
+	ld a,($cfd9)		; $4295
+	or a			; $4298
+	ret z			; $4299
+
+	ld e,Interaction.speed		; $429a
+	ld a,SPEED_200		; $429c
+	ld (de),a		; $429e
+	jp interactionIncState		; $429f
+
+; Sparkles moving away until off-screen
+@interac11_01_state3:
+	call objectApplySpeed		; $42a2
+	call interactionAnimate		; $42a5
+	call objectCheckWithinScreenBoundary		; $42a8
+	ret c			; $42ab
+	jp interactionDelete		; $42ac
+
+@interac11_updateSparkle:
+	ld a,(wFrameCounter)		; $42af
+	rrca			; $42b2
+	jr c,++			; $42b3
+
+	ld h,d			; $42b5
+	ld l,Interaction.angle	; $42b6
+	inc (hl)		; $42b8
+	ld a,(hl)		; $42b9
+	and $1f			; $42ba
+	ld (hl),a		; $42bc
+	ld a,SND_CIRCLING		; $42bd
+	call z,playSound		; $42bf
+++
+	ld e,Interaction.angle		; $42c2
+	ld bc,$7858		; $42c4
+	ld a,($cfd8)		; $42c7
+	call objectSetPositionInCircleArc		; $42ca
+	jp interactionAnimate		; $42cd

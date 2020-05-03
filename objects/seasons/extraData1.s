@@ -1,4 +1,4 @@
-objectData4000:
+faroreSparkleObjectData:
 	obj_Interaction $1101 $78 $58
 	obj_Interaction $1111 $78 $58
 	obj_Interaction $1121 $78 $58

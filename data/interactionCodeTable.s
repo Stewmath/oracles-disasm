@@ -249,7 +249,7 @@ interactionCodeTable: ; $3b8b
 	.dw interactionDelete
 	.dw interactionCode0f
 	.dw interactionCode10
-	.dw interactionCode11
+	.dw interactionCode11_caller
 	.dw interactionCode12
 	.dw interactionCode13
 	.dw interactionCode14
