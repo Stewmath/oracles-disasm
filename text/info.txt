@@ -1,6 +1,10 @@
 This file describes the format of the yaml files in the "text/ages" and
 "text/seasons" directories.
 
+IMPORTANT NOTE: If a line of text is more than 16 characters, the game will
+break, badly. Newlines are inserted automatically to prevent this, but it can
+still happen if you have 17 consecutive non-space characters in a row.
+
 ==============================================================================
 DICTIONARY FILES (dict.yaml)
 ==============================================================================
