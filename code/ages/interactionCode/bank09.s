@@ -700,6 +700,7 @@ _shopItemState0:
 	ld a,$01		; $42f2
 	ld (de),a		; $42f4
 
+.ifdef ROM_AGES
 	; If this is the ring box upgrade, check whether to change it to the L3 box
 	ld e,Interaction.subid		; $42f5
 	ld a,(de)		; $42f7
@@ -725,6 +726,14 @@ _shopItemState0:
 	jp nc,_shopItemPopStackAndDeleteSelf		; $4316
 	jr @checkFlutePurchasable		; $4319
 ++
+.else
+	ld a,TREASURE_SWORD		; $4ada
+	call checkTreasureObtained		; $4adc
+	jp nc,_shopItemPopStackAndDeleteSelf		; $4adf
+	ld e,Interaction.subid		; $4ae2
+	ld a,(de)		; $4ae4
+.endif
+
 	; If this is the shield, check whether to replace it with a gasha seed (linked)
 	cp $03			; $431b
 	jr nz,@checkFlutePurchasable	; $431d
@@ -741,9 +750,20 @@ _shopItemState0:
 	call checkTreasureObtained		; $4329
 	jr c,@fluteNotPurchasable	; $432c
 
+.ifdef ROM_AGES
 	ld a,GLOBALFLAG_CAN_BUY_FLUTE		; $432e
 	call checkGlobalFlag		; $4330
 	jr z,@fluteNotPurchasable	; $4333
+.else
+	ld a,(wRickyState)		; $4af8
+	bit 5,a			; $4afb
+	jr nz,@fluteNotPurchasable	; $4afd
+	ld a,(wEssencesObtained)		; $4aff
+	bit 1,a			; $4b02
+	jr z,@fluteNotPurchasable	; $4b04
+	call checkIsLinkedGame		; $4b06
+	jr nz,@fluteNotPurchasable	; $4b09
+.endif
 
 	; Flute purchasable
 	ld c,$08		; $4335
@@ -967,6 +987,13 @@ _shopItemState3:
 +
 	call giveTreasure		; $4425
 
+.ifdef ROM_SEASONS
+	ld e,Interaction.subid		; $4bfe
+	ld a,(de)		; $4c00
+	or a			; $4c01
+	call z,refillSeedSatchel		; $4c02
+.endif
+
 	ld e,Interaction.state		; $4428
 	ld a,$05		; $442a
 	ld (de),a		; $442c
@@ -1025,7 +1052,11 @@ _shopItemGetTilesForRupeeDisplay:
 	ld (hl),d		; $4464
 	inc l			; $4465
 
+.ifdef ROM_AGES
 	ld e,$06 ; Attribute value to use
+.else
+	ld e,$03 ; Attribute value to use
+.endif
 	ld d,$30 ; Tile index "base" (digit 0 is tile $30)
 	ld a,$02 ; Number of tiles to write
 	ldi (hl),a		; $446c
@@ -1081,8 +1112,10 @@ _shopItemGetTilesForRupeeDisplay:
 	.dw w3VramTiles+$6c
 	.dw w3VramTiles+$6c
 	.dw w3VramTiles+$6c
+.ifdef ROM_AGES
 	.dw w3VramTiles+$66
 	.dw w3VramTiles+$6e
+.endif
 
 _shopItemPrices:
 	/* $00 */ .db RUPEEVAL_300
@@ -1090,7 +1123,11 @@ _shopItemPrices:
 	/* $02 */ .db RUPEEVAL_300
 	/* $03 */ .db RUPEEVAL_030
 	/* $04 */ .db RUPEEVAL_020
+.ifdef ROM_AGES
 	/* $05 */ .db RUPEEVAL_300
+.else
+	/* $05 */ .db RUPEEVAL_200
+.endif
 	/* $06 */ .db RUPEEVAL_500
 	/* $07 */ .db RUPEEVAL_300
 	/* $08 */ .db RUPEEVAL_300
@@ -1105,8 +1142,10 @@ _shopItemPrices:
 	/* $11 */ .db RUPEEVAL_050
 	/* $12 */ .db RUPEEVAL_080
 	/* $13 */ .db RUPEEVAL_030
+.ifdef ROM_AGES
 	/* $14 */ .db RUPEEVAL_300
 	/* $15 */ .db RUPEEVAL_500
+.endif
 
 ;;
 ; @param[out]	zflag	z if Link should grab or release the item
@@ -1151,12 +1190,20 @@ _shopItemCheckGrabbed:
 ;   b0: Treasure index to give (if $00, it's a random ring)
 ;   b1: Treasure parameter (if it's random ring, this is the tier of the ring)
 shopItemTreasureToGive:
+.ifdef ROM_AGES
 	/* $00 */ .db  TREASURE_RING_BOX      $02
+.else
+	/* $00 */ .db  TREASURE_SEED_SATCHEL  $01
+.endif
 	/* $01 */ .db  TREASURE_HEART_REFILL  $0c
 	/* $02 */ .db  TREASURE_GASHA_SEED    $01
 	/* $03 */ .db  TREASURE_SHIELD        $01
 	/* $04 */ .db  TREASURE_BOMBS         $10
+.ifdef ROM_AGES
 	/* $05 */ .db  $00                    $03
+.else
+	/* $05 */ .db  TREASURE_TREASURE_MAP  $01
+.endif
 	/* $06 */ .db  TREASURE_GASHA_SEED    $01
 	/* $07 */ .db  TREASURE_POTION        $01
 	/* $08 */ .db  TREASURE_GASHA_SEED    $01
@@ -1164,15 +1211,23 @@ shopItemTreasureToGive:
 	/* $0a */ .db  TREASURE_GASHA_SEED    $01
 	/* $0b */ .db  TREASURE_BOMBCHUS      $05
 	/* $0c */ .db  $00                    $00
+.ifdef ROM_AGES
 	/* $0d */ .db  TREASURE_FLUTE         SPECIALOBJECTID_DIMITRI
 	/* $0e */ .db  TREASURE_GASHA_SEED    $01
 	/* $0f */ .db  TREASURE_RING          GBA_TIME_RING
+.else
+	/* $0d */ .db  TREASURE_FLUTE         SPECIALOBJECTID_MOOSH
+	/* $0e */ .db  TREASURE_GASHA_SEED    $01
+	/* $0f */ .db  TREASURE_RING          GBA_NATURE_RING
+.endif
 	/* $10 */ .db  $00                    $01
 	/* $11 */ .db  TREASURE_SHIELD        $02
 	/* $12 */ .db  TREASURE_SHIELD        $03
 	/* $13 */ .db  TREASURE_GASHA_SEED    $01
+.ifdef ROM_AGES
 	/* $14 */ .db  TREASURE_RING_BOX      $03
 	/* $15 */ .db  TREASURE_HEART_PIECE   $01
+.endif
 
 
 ; This lists conditions where a shop item may be replaced with something else.
@@ -1202,18 +1257,28 @@ _shopItemReplacementTable:
 	/* $11 */ .db <wShieldLevel       $01 $12 $00
 	/* $12 */ .db <wShieldLevel       $00 $ff $00
 	/* $13 */ .db <wBoughtShopItems1  $20 $03 $00
+.ifdef ROM_AGES
 	/* $14 */ .db <wBoughtShopItems1  $01 $ff $00
 	/* $15 */ .db <wBoughtShopItems2  $40 $05 $00
+.endif
 
 
 ; Text to show upon buying a shop item (or $00 for no text)
 _shopItemTextTable:
+.ifdef ROM_AGES
 	/* $00 */ .db <TX_0058
+.else
+	/* $00 */ .db <TX_0046
+.endif
 	/* $01 */ .db <TX_004c
 	/* $02 */ .db <TX_004b
 	/* $03 */ .db <TX_001f
 	/* $04 */ .db <TX_004d
+.ifdef ROM_AGES
 	/* $05 */ .db <TX_0054
+.else
+	/* $05 */ .db <TX_006c
+.endif
 	/* $06 */ .db <TX_004b
 	/* $07 */ .db <TX_006d
 	/* $08 */ .db <TX_004b
@@ -1228,8 +1293,10 @@ _shopItemTextTable:
 	/* $11 */ .db <TX_0020
 	/* $12 */ .db <TX_0021
 	/* $13 */ .db <TX_004b
+.ifdef ROM_AGES
 	/* $14 */ .db <TX_0059
 	/* $15 */ .db <TX_0017
+.endif
 
 
 ; ==============================================================================
@@ -1627,10 +1694,9 @@ _introSpriteSetChildRelatedObject1ToSelf:
 
 
 ; ==============================================================================
-; Unused, unreferenced "Fairy" interaction from Seasons that resides in each of the season
-; temples
+; INTERACID_SEASONS_FAIRY
 ; ==============================================================================
-unusedInteraction:
+interactionCode50:
 	ld e,Interaction.state		; $479b
 	ld a,(de)		; $479d
 	rst_jumpTable			; $479e
@@ -1929,11 +1995,16 @@ objectOscillateZ_body:
 
 	ld hl,@zOffsets		; $493b
 	rst_addAToHl			; $493e
+.ifdef ROM_AGES
 	ldh a,(<hActiveObjectType)	; $493f
 	add Object.zh			; $4941
 	ld e,a			; $4943
 	ld a,(de)		; $4944
 	add (hl)		; $4945
+.else
+	ld e,Interaction.zh		; $5108
+	ld a,(hl)		; $510a
+.endif
 	ld (de),a		; $4946
 	ret			; $4947
 

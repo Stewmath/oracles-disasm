@@ -1485,7 +1485,7 @@ puddleAnimationFrames:
 	.include "code/loadGraphics.s"
 	.include "code/treasureAndDrops.s"
 	.include "code/textbox.s"
-	.include "code/seasons/interactionCode/interactionCode11_body.s"
+	.include "code/interactionCode/faroreMakeChest.s"
 
 	.include "build/data/objectGfxHeaders.s"
 	.include "build/data/treeGfxHeaders.s"

@@ -1906,6 +1906,7 @@
 .ifdef ROM_SEASONS
 
 .define INTERACID_RUPEE_ROOM_RUPEES	$1d
+.define INTERACID_SEASONS_FAIRY		$50
 
 ;;
 ; The subrosian trying to blow up the volcano leading to d8
