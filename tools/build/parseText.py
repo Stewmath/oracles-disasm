@@ -102,6 +102,13 @@ class GroupStruct:
                 return textStruct.indices[i]
         raise ValueError
 
+    # Gets the first index in this group that's not used already
+    def getFreeIndex(self):
+        for i in range(256):
+            if self.getTextStruct(i) == None:
+                return i
+        raise Exception("Ran out of free indices")
+
 
 
 class DictEntry:
@@ -281,18 +288,21 @@ def parseTextFile(textFile, isDictionary):
 
         for yamlTextData in yamlGroup['data']:
             indices = yamlTextData['index']
-            if type(indices) == int:
+            if type(indices) != list:
                 indices = [indices]
 
             names = yamlTextData['name']
-            if type(names) == str:
+            if type(names) != list:
                 names = [names]
 
             if len(names) != len(indices):
                 raise Exception("Mismatch between # of names & indices for " + names[0] + ".")
 
             try:
-                for index in indices:
+                for i in range(len(indices)):
+                    if indices[i] == 'auto': # Special case; can be this string instead of a number
+                        indices[i] = textGroup.getFreeIndex()
+                    index = indices[i]
                     if index < 0 or index > 255:
                         raise ValueError("Index " + hex(index) + " is invalid.")
                     if textGroup.getTextStruct(index) != None:

@@ -70,7 +70,10 @@ groups:
           also be a list, and must have the same number of entries as this.
           Each "name" will refer to the corresponding index in this list.
 
-    text: The text string. See text formatting notes.
+	  You can also write "index: auto", in which case the first unused
+	  index in the group will be substituted as the value for this.
+
+    text: The text string. See text commands section.
 
     null_terminator: Optional boolean. If False, the text does not end here, and
           the game will continue to show the text that comes after this. In
