@@ -3264,27 +3264,27 @@ interactionCode20:
 	.dw dancingDragonScript_bridgeInB2
 
 @dungeon5:
-	.dw script4c20
-	.dw script4c25
+	.dw unicornsCaveScript_spawnBossKey
+	.dw unicornsCaveScript_dropMagnetBallAfterDarknutKill
 	.dw dungeonScript_minibossDeath
 	.dw dungeonScript_bossDeath
 
 @dungeon6:
-	.dw script4c2b
-	.dw script4c34
-	.dw script4c47
+	.dw dungeonScript_spawnKeyOnMagnetBallToButton
+	.dw ancientRuinsScript_spawnStaircaseUp1FTopLeftRoom
+	.dw ancientRuinsScript_spawnStaircaseUp1FTopMiddleRoom
 	.dw script4c50
-	.dw script4c58
-	.dw script4c63
-	.dw script4c6b
+	.dw ancientRuinsScript_5TorchesMovingPlatformsRoom
+	.dw ancientRuinsScript_roomWithJustRopesSpawningButton
+	.dw ancientRuinsScript_UShapePitToMagicBoomerangOrb
 	.dw dungeonScript_minibossDeath
-	.dw script4c6f
-	.dw script4c90
-	.dw script4c94
-	.dw script4ca5
-	.dw script4cb5
-	.dw script4cc0
-	.dw script4ccf
+	.dw ancientRuinsScript_randomButtonRoom
+	.dw ancientRuinsScript_4F3OrbsRoom
+	.dw ancientRuinsScript_spawnStairsLeadingToBoss
+	.dw ancientRuinsScript_spawnHeartContainerAndStairsUp
+	.dw ancientRuinsScript_1FTopRightTrapButtonRoom
+	.dw ancientRuinsScript_crystalTrapRoom
+	.dw ancientRuinsScript_spawnChestAfterCrystalTrapRoom
 
 @dungeon7:
 	.dw explorersCryptScript_4OrbTrampoline
@@ -3293,7 +3293,7 @@ interactionCode20:
 	.dw dungeonScript_bossDeath
 	.dw script4d05
 	.dw explorersCryptScript_randomlyPlaceNonEnemyArmos
-	.dw explorersCryptScript_checkIfMagnetBallOnButton
+	.dw dungeonScript_checkIfMagnetBallOnButton
 	.dw explorersCryptScript_1stPoeSisterRoom
 	.dw explorersCryptScript_2ndPoeSisterRoom
 	.dw explorersCryptScript_4FiresRoom_1
@@ -3304,32 +3304,32 @@ interactionCode20:
 	.dw explorersCryptScript_keyDroppedFromAbove
 
 @dungeon8:
-	.dw script4d5b
-	.dw script4d64
-	.dw script4d6d
-	.dw script4c2b
-	.dw script4d7a
-	.dw script4d8c
-	.dw script4d96
+	.dw swordAndShieldMazeScript_verticalBridgeUnlockedByOrb
+	.dw swordAndShieldMazeScript_verticalBridgeInLava
+	.dw swordAndShieldMazeScript_armosBlockingStairs
+	.dw dungeonScript_spawnKeyOnMagnetBallToButton
+	.dw swordAndShieldMazeScript_7torchesAfterMiniboss
+	.dw swordAndShieldMazeScript_spawnFireKeeseAtLavaHoles
+	.dw swordAndShieldMazeScript_pushableIceBlocks
 	.dw dungeonScript_minibossDeath
 	.dw dungeonScript_bossDeath
-	.dw script4dab
-	.dw script4db4
-	.dw script4dbb
+	.dw swordAndShieldMazeScript_horizontalBridgeByMoldorms
+	.dw swordAndShieldMazeScript_tripleEyesByMiniboss
+	.dw swordAndShieldMazeScript_tripleEyesNearStart
 
 @dungeon9:
-	.dw script4dc2
-	.dw script4dc9
+	.dw onoxsCastleScript_setFlagOnAllEnemiesDefeated
+	.dw onoxsCastleScript_resetRoomFlagsOnDungeonStart
 
 @dungeonA:
 @dungeonB:
-	.dw script4c2b
+	.dw dungeonScript_spawnKeyOnMagnetBallToButton
 	.dw dungeonScript_checkActiveTriggersEq01
-	.dw script4dcd
-	.dw explorersCryptScript_checkIfMagnetBallOnButton
-	.dw script4ddb
-	.dw script4ddf
-	.dw script4dd4
+	.dw herosCaveScript_spawnChestOnTorchLit
+	.dw dungeonScript_checkIfMagnetBallOnButton
+	.dw herosCaveScript_check6OrbsHit
+	.dw herosCaveScript_allButtonsPressedAndEnemiesDefeated
+	.dw herosCaveScript_spawnChestOn2TorchesLit
 
 interactionCode21:
 	ld e,$44		; $53c3

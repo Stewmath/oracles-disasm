@@ -95,8 +95,10 @@
 .define TILEINDEX_RED_PUSHABLE_BLOCK	$2c ; dungeons only
 .define TILEINDEX_YELLOW_PUSHABLE_BLOCK	$2d ; dungeons only
 .define TILEINDEX_BLUE_PUSHABLE_BLOCK	$2e ; dungeons only
+.define TILEINDEX_PUSHABLE_ICE_BLOCK	$2f ; dungeons only
 .define TILEINDEX_INDOOR_UPSTAIRCASE	$44 ; dungeons, indoors only
 .define TILEINDEX_INDOOR_DOWNSTAIRCASE	$45 ; dungeons, indoors only
+.define TILEINDEX_INDOOR_WALL_UPSTAIRCASE	$46 ; dungeons, indoors only
 .define TILEINDEX_DUNGEON_DUG_DIRT	$4c ; dungeons, indoors only
 .define TILEINDEX_CRACKED_FLOOR		$4d ; dungeons, indoors only
 .define TILEINDEX_SOUTH_STAIRS		$50 ; dungeons, indoors only
@@ -126,6 +128,8 @@
 .define TILEINDEX_LAVA_SOURCE_DOWN_LEFT		$c6 ; dungeons only
 .define TILEINDEX_LAVA_SOURCE_UP_LEFT_EMPTY	$c9 ; dungeons only
 .define TILEINDEX_LAVA_SOURCE_DOWN_LEFT_EMPTY	$cc ; dungeons only
+
+.define TILEINDEX_LAVA_HOLE			$d0 ; Seasons D8 holes for ice crystals
 
 .define TILEINDEX_EYE_STATUE		$ee ; dungeon only (eyeballs spawn on these)
 .define TILEINDEX_BLANK_HOLE		$f4 ; dungeons / indoors only

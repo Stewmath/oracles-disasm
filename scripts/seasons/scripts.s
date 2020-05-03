@@ -1254,117 +1254,149 @@ dancingDragonScript_bridgeInB2:
 	scriptend
 
 
-script4c20:
+unicornsCaveScript_spawnBossKey:
 	stopifitemflagset
-	spawnitem $3100
+	spawnitem TREASURE_BOSS_KEY $00
 	scriptend
-script4c25:
+
+
+unicornsCaveScript_dropMagnetBallAfterDarknutKill:
 	stopifroomflag80set
 	wait 30
 	checknoenemies
 	orroomflag $80
 	scriptend
-script4c2b:
+
+
+dungeonScript_spawnKeyOnMagnetBallToButton:
 	stopifitemflagset
 	checkmemoryeq wActiveTriggers, $01
-	spawnitem $3001
+	spawnitem TREASURE_SMALL_KEY $01
 	scriptend
-script4c34:
+
+
+ancientRuinsScript_spawnStaircaseUp1FTopLeftRoom:
 	stopifroomflag80set
-	checkflagset $00, $cc31
-	setangle $bc
-script4c3b:
-	asm15 $552a
+	checkflagset $00, wToggleBlocksState
+	setangle <ROOM_SEASONS_5bc
+_createWallUpStaircaseAndSetOtherRoomFlag:
+	; angle is the low index of the other room
+	asm15 scriptHlp.D6setFlagBit7InRoomWithLowIndexInAngle
 	playsound SND_SOLVEPUZZLE
 	orroomflag $80
 	createpuff
 	wait 8
-	settilehere $46
+	settilehere TILEINDEX_INDOOR_WALL_UPSTAIRCASE
 	scriptend
-script4c47:
+
+
+ancientRuinsScript_spawnStaircaseUp1FTopMiddleRoom:
 	stopifroomflag80set
 	checkmemoryeq wActiveTriggers, $01
-	setangle $be
-	jump2byte script4c3b
+	setangle <ROOM_SEASONS_5be
+	jump2byte _createWallUpStaircaseAndSetOtherRoomFlag
+
+
+; ???
 script4c50:
 	setangle $02
-script4c52:
-	asm15 $56c5
+_loopCheckToggleBlocks:
+	asm15 scriptHlp.toggleBlocksInAngleBitsHit
 	wait 8
-	jump2byte script4c52
-script4c58:
+	jump2byte _loopCheckToggleBlocks
+
+
+ancientRuinsScript_5TorchesMovingPlatformsRoom:
 	stopifroomflag80set
-	checkmemoryeq $cca9, $05
+	checkmemoryeq wNumTorchesLit, $05
 	setcounter1 $2d
-	setangle $c4
-	jump2byte script4c3b
-script4c63:
+	setangle <ROOM_SEASONS_5c4
+	jump2byte _createWallUpStaircaseAndSetOtherRoomFlag
+
+
+ancientRuinsScript_roomWithJustRopesSpawningButton:
 	checkmemoryeq wActiveTriggers, $01
-	asm15 $5692
+	asm15 scriptHlp.D6RandomButtonSpawnRopes
 	scriptend
-script4c6b:
+
+
+ancientRuinsScript_UShapePitToMagicBoomerangOrb:
 	setangle $04
-	jump2byte script4c52
-script4c6f:
-	asm15 $553d
+	jump2byte _loopCheckToggleBlocks
+
+
+ancientRuinsScript_randomButtonRoom:
+	asm15 scriptHlp.D6getRandomButtonResult
 	jumptable_memoryaddress $cfc1
-	.dw script4c6f
-	.dw script4c7b
-	.dw script4c85
-script4c7b:
+	.dw ancientRuinsScript_randomButtonRoom
+	.dw @success
+	.dw @failed
+@success:
 	playsound SND_SOLVEPUZZLE
 	createpuff
 	wait 30
-	settilehere $44
-	asm15 $5530
+	settilehere TILEINDEX_INDOOR_UPSTAIRCASE
+	asm15 scriptHlp.D6setFlagBit7InFirst4FRoom
 	scriptend
-script4c85:
+@failed:
 	wait 60
 	playsound SND_ERROR
 	wait 60
-	asm15 $5692
+	asm15 scriptHlp.D6RandomButtonSpawnRopes
 	wait 60
 	checknoenemies
-	jump2byte script4c6f
-script4c90:
+	jump2byte ancientRuinsScript_randomButtonRoom
+
+
+ancientRuinsScript_4F3OrbsRoom:
 	setangle $38
-	jump2byte script4c52
-script4c94:
+	jump2byte _loopCheckToggleBlocks
+
+
+ancientRuinsScript_spawnStairsLeadingToBoss:
 	stopifroomflag80set
-	checkflagset $06, $cc31
-	asm15 $5534
+	checkflagset $06, wToggleBlocksState
+	asm15 scriptHlp.D6setFlagBit7InLast4FRoom
 	orroomflag $80
 	playsound SND_SOLVEPUZZLE
 	createpuff
 	wait 30
-	settilehere $45
+	settilehere TILEINDEX_INDOOR_DOWNSTAIRCASE
 	scriptend
-script4ca5:
+
+
+ancientRuinsScript_spawnHeartContainerAndStairsUp:
 	jumpifroomflagset $80, _spawnHeartContainerCenterOfRoom
 	checknoenemies
 	orroomflag $80
 	setcoords $08, $78
 	createpuff
 	wait 30
-	settilehere $46
+	settilehere TILEINDEX_INDOOR_WALL_UPSTAIRCASE
 	jump2byte _spawnHeartContainerCenterOfRoom
-script4cb5:
+
+
+ancientRuinsScript_1FTopRightTrapButtonRoom:
 	checkmemoryeq wActiveTriggers, $01
-	asm15 $5551
+	asm15 scriptHlp.D6spawnFloorDestroyerAndEscapeBridge
 	stopifroomflag80set
 	orroomflag $80
 	scriptend
-script4cc0:
+
+
+ancientRuinsScript_crystalTrapRoom:
 	stopifitemflagset
-	spawnitem $280a
-script4cc4:
-	jumpifroomflagset $20, script4ccb
+	spawnitem TREASURE_RUPEES $0a
+@waitUntilRupeeGotten:
+	jumpifroomflagset $20, @rupeeGotten
 	wait 8
-	jump2byte script4cc4
-script4ccb:
+	jump2byte @waitUntilRupeeGotten
+@rupeeGotten:
 	loadscript script_14_4801
-script4ccf:
-	asm15 $5562
+
+
+ancientRuinsScript_spawnChestAfterCrystalTrapRoom:
+	asm15 scriptHlp.D6spawnChestAfterCrystalTrapRoom_body
 	scriptend
 
 
@@ -1405,6 +1437,7 @@ _D7createTrampoline:
 	scriptend
 
 
+; ???
 script4d05:
 	stopifitemflagset
 	jumpifroomflagset $40, spawnChestAfterPuff
@@ -1418,17 +1451,17 @@ explorersCryptScript_randomlyPlaceNonEnemyArmos:
 	scriptend
 
 
-explorersCryptScript_checkIfMagnetBallOnButton:
+dungeonScript_checkIfMagnetBallOnButton:
 	stopifitemflagset
 	jumptable_memoryaddress wActiveTriggers
 	.dw @unpressed
 	.dw @pressed
 @unpressed:
 	asm15 scriptHlp.D7MagnetBallRoom_removeChest
-	jump2byte explorersCryptScript_checkIfMagnetBallOnButton
+	jump2byte dungeonScript_checkIfMagnetBallOnButton
 @pressed:
 	asm15 scriptHlp.D7MagnetBallRoom_addChest
-	jump2byte explorersCryptScript_checkIfMagnetBallOnButton
+	jump2byte dungeonScript_checkIfMagnetBallOnButton
 
 
 explorersCryptScript_1stPoeSisterRoom:
@@ -1471,97 +1504,127 @@ explorersCryptScript_darknutBridge:
 	scriptend
 
 
-script4d5b:
+swordAndShieldMazeScript_verticalBridgeUnlockedByOrb:
 	stopifroomflag80set
-	checkmemoryeq $cc31, $01
-	asm15 $54df
+	checkmemoryeq wToggleBlocksState, $01
+	asm15 scriptHlp.D8VerticalBridgeUnlockedByOrb
 	scriptend
-script4d64:
+
+
+swordAndShieldMazeScript_verticalBridgeInLava:
 	stopifroomflag80set
 	checkmemoryeq wActiveTriggers, $01
-	asm15 $54ea
+	asm15 scriptHlp.D8VerticalBridgeInLava
 	scriptend
-script4d6d:
+
+
+swordAndShieldMazeScript_armosBlockingStairs:
 	stopifroomflag80set
-	writeobjectbyte $48, $96
-script4d71:
-	asm15 $5601
+	writeobjectbyte Interaction.direction, $96
+@checkIfWillMove:
+	asm15 scriptHlp.D8armosCheckIfWillMove
 	jumptable_objectbyte $49
-	.dw script4d71
+	.dw @checkIfWillMove
 	.dw stubScript
-script4d7a:
-	asm15 $56ee, $a0
+
+
+swordAndShieldMazeScript_7torchesAfterMiniboss:
+	asm15 scriptHlp.D8createFiresGoingOut, $a0
 	stopifroomflag80set
-	checkmemoryeq $cca9, $07
-script4d83:
+	checkmemoryeq wNumTorchesLit, $07
+_puzzelSolvedSpawnUpStaircase:
 	orroomflag $80
 	createpuff
 	wait 30
-	settilehere $44
+	settilehere TILEINDEX_INDOOR_UPSTAIRCASE
 	playsound SND_SOLVEPUZZLE
 	scriptend
-script4d8c:
+
+
+swordAndShieldMazeScript_spawnFireKeeseAtLavaHoles:
 	stopifroomflag40set
-	asm15 $5635
-script4d90:
+	asm15 scriptHlp.D8setSpawnAtLavaHole
+@loop:
 	wait 240
-	asm15 $5641
-	jump2byte script4d90
-script4d96:
+	asm15 scriptHlp.D8SpawnLimitedFireKeese
+	jump2byte @loop
+
+
+swordAndShieldMazeScript_pushableIceBlocks:
 	stopifroomflag80set
-script4d97:
+@waitUntilIceBlocksInPlace:
 	wait 8
-	asm15 $5678
+	asm15 scriptHlp.D8checkAllIceBlocksInPlace
 	jumptable_memoryaddress $cfc1
-	.dw script4d97
-	.dw script4da2
-script4da2:
+	.dw @waitUntilIceBlocksInPlace
+	.dw @success
+@success:
 	orroomflag $80
 	playsound SND_SOLVEPUZZLE
 	createpuff
 	wait 20
-	settilehere $45
+	settilehere TILEINDEX_INDOOR_DOWNSTAIRCASE
 	scriptend
-script4dab:
+
+
+swordAndShieldMazeScript_horizontalBridgeByMoldorms:
 	stopifroomflag80set
 	checkmemoryeq wActiveTriggers, $01
-	asm15 $54f5
+	asm15 scriptHlp.D8HorizontalBridgeByMoldorms
 	scriptend
-script4db4:
+
+
+swordAndShieldMazeScript_tripleEyesByMiniboss:
 	stopifroomflag80set
 	checkmemoryeq wActiveTriggers, $07
-	jump2byte script4d83
-script4dbb:
+	jump2byte _puzzelSolvedSpawnUpStaircase
+
+
+swordAndShieldMazeScript_tripleEyesNearStart:
 	stopifitemflagset
 	checkmemoryeq wActiveTriggers, $07
 	jump2byte spawnChestAfterPuff
-script4dc2:
+
+
+onoxsCastleScript_setFlagOnAllEnemiesDefeated:
 	stopifroomflag40set
 	checknoenemies
 	orroomflag $40
 	playsound SND_SOLVEPUZZLE
 	scriptend
-script4dc9:
-	asm15 $56e0
+
+
+onoxsCastleScript_resetRoomFlagsOnDungeonStart:
+	asm15 scriptHlp.D9forceRoomClearsOnDungeonEntry
 	scriptend
-script4dcd:
+
+
+herosCaveScript_spawnChestOnTorchLit:
 	stopifitemflagset
-	checkmemoryeq $cca9, $01
+	checkmemoryeq wNumTorchesLit, $01
 	jump2byte spawnChestAfterPuff
-script4dd4:
+
+
+herosCaveScript_spawnChestOn2TorchesLit:
 	stopifitemflagset
-	checkmemoryeq $cca9, $02
+	checkmemoryeq wNumTorchesLit, $02
 	jump2byte spawnChestAfterPuff
-script4ddb:
+
+
+herosCaveScript_check6OrbsHit:
 	setangle $3f
-	jump2byte script4c52
-script4ddf:
+	jump2byte _loopCheckToggleBlocks
+
+
+herosCaveScript_allButtonsPressedAndEnemiesDefeated:
 	stopifitemflagset
 	checkmemoryeq wActiveTriggers, $ff
 	wait 60
 	checknoenemies
-	spawnitem $3001
+	spawnitem TREASURE_SMALL_KEY $01
 	scriptend
+
+
 script4dea:
 	checkcfc0bit 0
 	disableinput
@@ -1951,7 +2014,7 @@ script5072:
 	makeabuttonsensitive
 	jumpifroomflagset $40, script5099
 script507a:
-	jumptable_memoryaddress $cca9
+	jumptable_memoryaddress wNumTorchesLit
 	.dw script5081
 	.dw script508e
 script5081:
@@ -5091,7 +5154,7 @@ script65e7:
 	jump2byte script6598
 script660c:
 	setcoords $58, $b8
-	spawnitem $3001
+	spawnitem TREASURE_SMALL_KEY $01
 	scriptend
 script6613:
 	initcollisions
@@ -6846,18 +6909,18 @@ script7345:
 	.dw script734d
 	.dw script7357
 script734d:
-	spawnitem $4d00
+	spawnitem TREASURE_PYRAMID_JEWEL $00
 script7350:
 	jumpifitemobtained $4d, script7356
 	jump2byte script7350
 script7356:
 	scriptend
 script7357:
-	spawnitem $280c
+	spawnitem TREASURE_RUPEES RUPEEVAL_100
 	scriptend
 script735b:
 	jumpifroomflagset $40, script737a
-	checkmemoryeq $cca9, $01
+	checkmemoryeq wNumTorchesLit, $01
 	orroomflag $40
 	wait 40
 	playsound SND_SOLVEPUZZLE
@@ -8077,7 +8140,7 @@ script7b7e:
 	wait 90
 	enableallobjects
 	setdisabledobjectsto91
-	settileat $9d, $44
+	settileat $9d, TILEINDEX_INDOOR_UPSTAIRCASE
 	setcounter1 $2d
 	setglobalflag $5a
 script7b9e:
@@ -8131,7 +8194,7 @@ script7be4:
 	setcounter1 $2d
 	showtextlowindex $09
 	jumpiftextoptioneq $00, script7b4c
-	settileat $9d, $44
+	settileat $9d, TILEINDEX_INDOOR_UPSTAIRCASE
 	wait 15
 	writeobjectbyte $71, $00
 	jump2byte script7b3a
@@ -8232,7 +8295,7 @@ script7c83:
 	wait 60
 	spawninteraction $0500, $68, $18
 	wait 4
-	settileat $61, $44
+	settileat $61, TILEINDEX_INDOOR_UPSTAIRCASE
 	setcounter1 $2d
 	setglobalflag $5b
 script7c99:
@@ -8255,7 +8318,7 @@ script7cab:
 	jumpiftextoptioneq $00, script7c51
 	spawninteraction $0500, $68, $18
 	wait 4
-	settileat $61, $44
+	settileat $61, TILEINDEX_INDOOR_UPSTAIRCASE
 	wait 15
 	jump2byte script7c33
 script7cbf:
@@ -8521,7 +8584,7 @@ script7e6c:
 	initcollisions
 	jump2byte script7e61
 script7e6f:
-	spawnitem $6001
+	spawnitem TREASURE_60 $01
 	scriptend
 script7e73:
 	initcollisions

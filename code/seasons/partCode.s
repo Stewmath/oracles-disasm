@@ -761,34 +761,39 @@ _label_10_046:
 	set 6,(hl)		; $45a3
 	jp partDelete		; $45a5
 
+
+; ==============================================================================
+; PARTID_LIGHTABLE_TORCH
+; ==============================================================================
 partCode06:
-	jr z,_label_10_047	; $45a8
+	jr z,+			; $45a8
 	ld h,d			; $45aa
-	ld l,$c2		; $45ab
+	ld l,Part.subid		; $45ab
 	ld a,(hl)		; $45ad
 	cp $02			; $45ae
-	jr z,_label_10_047	; $45b0
-	ld l,$c7		; $45b2
+	jr z,+			; $45b0
+	; subid $01 - counter2 into counter1
+	ld l,Part.counter2		; $45b2
 	ldd a,(hl)		; $45b4
 	ld (hl),a		; $45b5
-	ld l,$c4		; $45b6
+	ld l,Part.state		; $45b6
 	ld (hl),$02		; $45b8
-_label_10_047:
-	ld e,$c2		; $45ba
++
+	ld e,Part.subid		; $45ba
 	ld a,(de)		; $45bc
 	rst_jumpTable			; $45bd
-	call nz,$ef45		; $45be
-	ld b,l			; $45c1
-	dec (hl)		; $45c2
-	ld b,(hl)		; $45c3
+	.dw $45c4
+	.dw @subid1
+	.dw $4635
 	ld e,$c4		; $45c4
 	ld a,(de)		; $45c6
 	rst_jumpTable			; $45c7
-	adc $45			; $45c8
-	pop de			; $45ca
-	ld b,l			; $45cb
-	jp nc,$3e45		; $45cc
-	ld bc,$c912		; $45cf
+	.dw $45ce
+	.dw $45d1
+	.dw $45d2
+	ld a,$01	; $45ce
+	ld (de),a		; $45d0
+	ret		; $45d1
 	ld hl,$cca9		; $45d2
 	inc (hl)		; $45d5
 	ld a,$72		; $45d6
@@ -798,64 +803,63 @@ _label_10_047:
 	ld a,($cc49)		; $45df
 	or a			; $45e2
 	ld a,$a1		; $45e3
-	jr z,_label_10_048	; $45e5
+	jr z,+			; $45e5
 	ld a,$09		; $45e7
-_label_10_048:
++
 	call setTile		; $45e9
 	jp partDelete		; $45ec
-	ld e,$c4		; $45ef
+
+@subid1:
+	ld e,Part.state                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 		; $45ef
 	ld a,(de)		; $45f1
 	rst_jumpTable			; $45f2
-	adc $45			; $45f3
-	pop de			; $45f5
-	ld b,l			; $45f6
-	ei			; $45f7
-	ld b,l			; $45f8
-	rla			; $45f9
-	ld b,(hl)		; $45fa
+	.dw $45ce
+	.dw $45d1
+	.dw @@state2
+	.dw @@state3
+@@state2:
+	; next state
 	ld h,d			; $45fb
 	ld l,e			; $45fc
 	inc (hl)		; $45fd
-	ld l,$e4		; $45fe
+	; counter2 into counter1
+	ld l,Part.collisionType		; $45fe
 	res 7,(hl)		; $4600
-	ld l,$c7		; $4602
+	ld l,Part.counter2		; $4602
 	ldd a,(hl)		; $4604
 	ld (hl),a		; $4605
-	ld hl,$cca9		; $4606
+	ld hl,wNumTorchesLit		; $4606
 	inc (hl)		; $4609
-	ld a,$72		; $460a
+	ld a,SND_LIGHTTORCH		; $460a
 	call playSound		; $460c
 	call objectGetShortPosition		; $460f
 	ld c,a			; $4612
-	ld a,$09		; $4613
+	ld a,TILEINDEX_LIT_TORCH		; $4613
 	jr _label_10_049		; $4615
+@@state3:
 	ld a,(wFrameCounter)		; $4617
 	and $03			; $461a
 	ret nz			; $461c
 	call partCommon_decCounter1IfNonzero		; $461d
 	ret nz			; $4620
-	ld l,$e4		; $4621
+	ld l,Part.collisionType		; $4621
 	set 7,(hl)		; $4623
-	ld l,$c4		; $4625
+	ld l,Part.state		; $4625
 	ld (hl),$01		; $4627
-	ld hl,$cca9		; $4629
+	ld hl,wNumTorchesLit		; $4629
 	dec (hl)		; $462c
 	call objectGetShortPosition		; $462d
 	ld c,a			; $4630
-	ld a,$08		; $4631
+	ld a,TILEINDEX_UNLIT_TORCH		; $4631
 	jr _label_10_049		; $4633
-	ld e,$c4		; $4635
+	ld e,Part.state		; $4635
 	ld a,(de)		; $4637
 	rst_jumpTable			; $4638
-	adc $45			; $4639
-	ld b,e			; $463b
-	ld b,(hl)		; $463c
-	ld d,d			; $463d
-	ld b,(hl)		; $463e
-	ld h,a			; $463f
-	ld b,(hl)		; $4640
-	ld (hl),e		; $4641
-	ld b,(hl)		; $4642
+	.dw $45ce
+	.dw $4643
+	.dw $4652
+	.dw $4667
+	.dw $4673
 	call $4682		; $4643
 	cp $09			; $4646
 	ret z			; $4648
@@ -876,6 +880,7 @@ _label_10_048:
 	ld a,$08		; $4662
 _label_10_049:
 	jp setTile		; $4664
+
 	call $4682		; $4667
 	cp $08			; $466a
 	ret z			; $466c
@@ -883,6 +888,7 @@ _label_10_049:
 	ld a,$04		; $466f
 	ld (de),a		; $4671
 	ret			; $4672
+
 	ld a,$01		; $4673
 	ld (de),a		; $4675
 	ld hl,$cca9		; $4676
@@ -904,6 +910,7 @@ _label_10_049:
 	ld a,$01		; $4696
 	ld (de),a		; $4698
 	ret			; $4699
+
 
 partCode07:
 	ld e,$c4		; $469a
@@ -4999,8 +5006,15 @@ partCode00:
 	jp partDelete		; $62cc
 
 
-; var30 - pointer to tile at part's position
-; $ccbf - set to 1 when button in hallway to D3 miniboss is pressed
+; ==============================================================================
+; PARTID_HOLES_FLOORTRAP
+;   subid $00 - D3 hallway to miniboss room
+;   subid $04 - D6 room where button destroys floor tiles
+;
+; Variables:
+;   var30 - pointer to tile at part's position
+;   $ccbf - set to 1 when button in hallway to D3 miniboss is pressed
+; ==============================================================================
 partCode0a:
 	ld e,Part.subid		; $62cf
 	ld a,(de)		; $62d1
@@ -5059,7 +5073,7 @@ partCode0a:
 	ret z			; $6318
 	call @breakFloorsAtInterval		; $6319
 	ret nz			; $631c
-	call $63ed		; $631d
+	call seasonsFunc_10_63ed		; $631d
 	ret nz			; $6320
 	jp partDelete		; $6321
 
@@ -5069,13 +5083,15 @@ partCode0a:
 	ld a,(hl)		; $6327
 	or a			; $6328
 	jr nz,+			; $6329
+	; state 0
 	ld (hl),$01		; $632b
 	ld l,Part.counter1		; $632d
 	ld (hl),$08		; $632f
 	inc l			; $6331
 	ld (hl),$00		; $6332
-	call @seasonsFunc_10_6348		; $6334
+	call @@setPositionToCrackTile		; $6334
 +
+	; state 1
 	ld a,$3c		; $6337
 	call setScreenShakeCounter		; $6339
 	call partCommon_decCounter1IfNonzero		; $633c
@@ -5084,10 +5100,10 @@ partCode0a:
 	ld c,(hl)		; $6342
 	ld a,TILEINDEX_BLANK_HOLE		; $6343
 	call breakCrackedFloor		; $6345
-@seasonsFunc_10_6348:
+@@setPositionToCrackTile:
 	ld e,Part.counter2		; $6348
 	ld a,(de)		; $634a
-	ld hl,@seasonsTable_10_6361		; $634b
+	ld hl,@@crackedTileTable		; $634b
 	rst_addDoubleIndex			; $634e
 	ld a,(hl)		; $634f
 	or a			; $6350
@@ -5105,7 +5121,8 @@ partCode0a:
 	ld l,Part.counter2		; $635d
 	inc (hl)		; $635f
 	ret			; $6360
-@seasonsTable_10_6361:
+@@crackedTileTable:
+	; counter1 - position of tile to break
 	.db $1e $91
 	.db $1e $81
 	.db $01 $82
@@ -5217,21 +5234,21 @@ seasonsFunc_10_63ed:
 	ld b,a			; $63f0
 	ld c,$10		; $63f1
 	ld hl,wRoomLayout		; $63f3
-_label_10_254:
+--
 	ld a,b			; $63f6
 	cp (hl)			; $63f7
-	jr z,_label_10_256	; $63f8
+	jr z,++			; $63f8
 	ld a,l			; $63fa
 	cp $ae			; $63fb
 	ret z			; $63fd
 	add c			; $63fe
 	cp $f0			; $63ff
-	jr nc,_label_10_255	; $6401
+	jr nc,+			; $6401
 	cp $b0			; $6403
-	jr nc,_label_10_255	; $6405
+	jr nc,+			; $6405
 	ld l,a			; $6407
-	jr _label_10_254		; $6408
-_label_10_255:
+	jr --			; $6408
++
 	ld a,c			; $640a
 	cpl			; $640b
 	inc a			; $640c
@@ -5240,8 +5257,8 @@ _label_10_255:
 	add c			; $640f
 	inc a			; $6410
 	ld l,a			; $6411
-	jr _label_10_254		; $6412
-_label_10_256:
+	jr --			; $6412
+++
 	ld a,l			; $6414
 	ld e,Part.yh		; $6415
 	ld (de),a		; $6417

@@ -442,6 +442,8 @@
 
 .ifdef ROM_SEASONS
 
+.define PARTID_HOLES_FLOORTRAP			$0a
+
 ;;
 ; TODO: Is this the same as PARTID_GOPONGA_PROJECTILE?
 ; @subid_80{Normal}

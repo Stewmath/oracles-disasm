@@ -1592,21 +1592,15 @@ interactionCodecd:
 	ld e,$44		; $7dcf
 	ld a,(de)		; $7dd1
 	rst_jumpTable			; $7dd2
-	reti			; $7dd3
-	ld a,l			; $7dd4
-	ld l,c			; $7dd5
-	ld a,(hl)		; $7dd6
-	ld (hl),h		; $7dd7
-	ld a,(hl)		; $7dd8
+	.dw $7dd9
+	.dw $7e69
+	.dw $7e74
 	ld e,$42		; $7dd9
 	ld a,(de)		; $7ddb
 	rst_jumpTable			; $7ddc
-.DB $e3				; $7ddd
-	ld a,l			; $7dde
-	inc (hl)		; $7ddf
-	ld a,(hl)		; $7de0
-	ld d,a			; $7de1
-	ld a,(hl)		; $7de2
+	.dw $7de3
+	.dw $7e34
+	.dw $7e57
 	ld a,$28		; $7de3
 	call checkGlobalFlag		; $7de5
 	jp z,interactionDelete		; $7de8
@@ -1659,12 +1653,13 @@ _label_0f_369:
 	call interactionSetScript		; $7e4f
 	call objectSetReservedBit1		; $7e52
 	jr _label_0f_370		; $7e55
+
 	ld h,d			; $7e57
 	ld l,$44		; $7e58
 	ld (hl),$02		; $7e5a
 	ld a,$4c		; $7e5c
 	call interactionSetHighTextIndex		; $7e5e
-	ld hl,$7e6f		; $7e61
+	ld hl,script7e6f		; $7e61
 	call interactionSetScript		; $7e64
 	jr _label_0f_370		; $7e67
 	call interactionRunScript		; $7e69

@@ -71,14 +71,21 @@ D7spawnDarknutBridge:
 	jp _createBridgeSpawner		; $54dc
 
 
+D8VerticalBridgeUnlockedByOrb:
 	call _solvedPuzzleSetRoomFlag07		; $54df
 	ld bc,$0c02		; $54e2
 	ld e,$3c		; $54e5
 	jp _createBridgeSpawner		; $54e7
+
+
+D8VerticalBridgeInLava:
 	call _solvedPuzzleSetRoomFlag07		; $54ea
 	ld bc,$0e00		; $54ed
 	ld e,$7b		; $54f0
 	jp _createBridgeSpawner		; $54f2
+
+
+D8HorizontalBridgeByMoldorms:
 	call _solvedPuzzleSetRoomFlag07		; $54f5
 	ld bc,$0e03		; $54f8
 	ld e,$88		; $54fb
@@ -88,7 +95,7 @@ D7spawnDarknutBridge:
 _spawnPitSpreader:
 	call getFreePartSlot		; $5500
 	ret nz			; $5503
-	ld (hl),$0a		; $5504
+	ld (hl),PARTID_HOLES_FLOORTRAP		; $5504
 	inc l			; $5506
 	; subid
 	ld (hl),b		; $5507
@@ -120,38 +127,58 @@ D3openEssenceDoorIfBossBeat_body:
 	ret			; $5529
 
 
-	ld e,$49		; $552a
+D6setFlagBit7InRoomWithLowIndexInAngle:
+	ld e,Interaction.angle		; $552a
 	ld a,(de)		; $552c
 	ld l,a			; $552d
-	jr _label_15_189		; $552e
-	ld l,$d4		; $5530
-	jr _label_15_189		; $5532
-	ld l,$d3		; $5534
-_label_15_189:
-	ld a,($cc59)		; $5536
+	jr _setFlagBit7InRoomLowIndexInL		; $552e
+
+
+D6setFlagBit7InFirst4FRoom:
+	ld l,<ROOM_SEASONS_4d4		; $5530
+	jr _setFlagBit7InRoomLowIndexInL		; $5532
+
+
+D6setFlagBit7InLast4FRoom:
+	ld l,<ROOM_SEASONS_4d3		; $5534
+
+
+_setFlagBit7InRoomLowIndexInL:
+	ld a,(wDungeonFlagsAddressH)		; $5536
 	ld h,a			; $5539
 	set 7,(hl)		; $553a
 	ret			; $553c
+
+
+D6getRandomButtonResult:
 	ld b,$00		; $553d
-	ld a,($ccba)		; $553f
+	ld a,(wActiveTriggers)		; $553f
 	or a			; $5542
-	jr z,_label_15_190	; $5543
+	jr z,+			; $5543
 	ld a,(wFrameCounter)		; $5545
 	and $01			; $5548
 	inc a			; $554a
 	ld b,a			; $554b
-_label_15_190:
++
 	ld a,b			; $554c
 	ld ($cfc1),a		; $554d
 	ret			; $5550
+
+
+D6spawnFloorDestroyerAndEscapeBridge:
 	call getFreePartSlot		; $5551
 	ret nz			; $5554
-	ld (hl),$0a		; $5555
+
+	ld (hl),PARTID_HOLES_FLOORTRAP		; $5555
 	inc l			; $5557
 	ld (hl),$04		; $5558
+
 	ld bc,$0603		; $555a
 	ld e,$14		; $555d
 	jp _createBridgeSpawner		; $555f
+
+
+D6spawnChestAfterCrystalTrapRoom_body:
 	xor a			; $5562
 	ld ($cfd0),a		; $5563
 	call getThisRoomFlags		; $5566
@@ -208,6 +235,7 @@ D7MagnetBallRoom_removeChest:
 	call setTile		; $55b4
 	jr +		; $55b7
 
+
 D7MagnetBallRoom_addChest:
 	call objectGetTileAtPosition		; $55b9
 	cp TILEINDEX_CHEST			; $55bc
@@ -259,45 +287,54 @@ checkSecondPoeBeaten:
 	jr checkPoeBeaten		; $55ff
 
 
-	ld a,($cc7a)		; $5601
+D8armosCheckIfWillMove:
+	ld a,(wLinkUsingItem1)		; $5601
 	or a			; $5604
-	jr nz,_label_15_194	; $5605
+	jr nz,+			; $5605
 	ld a,(wFrameCounter)		; $5607
 	rrca			; $560a
 	ret c			; $560b
+
 	ld h,d			; $560c
-	ld l,$48		; $560d
+	ld l,Interaction.direction		; $560d
 	dec (hl)		; $560f
 	ret nz			; $5610
+
 	call getFreeEnemySlot		; $5611
-	jr nz,_label_15_194	; $5614
+	jr nz,+			; $5614
 	ld (hl),$1d		; $5616
-	ld l,$8b		; $5618
+	ld l,Enemy.yh		; $5618
 	ld (hl),$27		; $561a
-	ld l,$8d		; $561c
+	ld l,Enemy.xh		; $561c
 	ld (hl),$a0		; $561e
 	ld a,$45		; $5620
-	ld ($ccbc),a		; $5622
-	ld a,$4d		; $5625
+	ld (wcca2),a		; $5622
+	ld a,SND_SOLVEPUZZLE		; $5625
 	call playSound		; $5627
 	call getThisRoomFlags		; $562a
 	set 7,(hl)		; $562d
-_label_15_194:
-	ld e,$49		; $562f
++
+	ld e,Interaction.angle		; $562f
 	ld a,$01		; $5631
 	ld (de),a		; $5633
 	ret			; $5634
-	ld a,$d0		; $5635
+
+
+D8setSpawnAtLavaHole:
+	ld a,TILEINDEX_LAVA_HOLE		; $5635
 	call findTileInRoom		; $5637
 	ld a,l			; $563a
-	ld l,$4b		; $563b
+	ld l,Interaction.yh		; $563b
 	ld h,d			; $563d
 	jp setShortPosition		; $563e
-	ld a,($cca4)		; $5641
+
+
+D8SpawnLimitedFireKeese:
+	ld a,(wDisabledObjects)		; $5641
 	or a			; $5644
 	ret nz			; $5645
-	ld b,$39		; $5646
-	call $5660		; $5648
+	ld b,ENEMYID_FIRE_KEESE		; $5646
+	call _countFireKeese		; $5648
 	cp $04			; $564b
 	ret nc			; $564d
 	call getRandomNumber		; $564e
@@ -305,34 +342,40 @@ _label_15_194:
 	ret c			; $5653
 	call getFreeEnemySlot_uncounted		; $5654
 	ret nz			; $5657
-	ld (hl),$39		; $5658
+	ld (hl),ENEMYID_FIRE_KEESE		; $5658
 	inc l			; $565a
 	ld (hl),$01		; $565b
 	jp objectCopyPosition		; $565d
+
+
+_countFireKeese:
 	ld c,$00		; $5660
 	ld hl,$d080		; $5662
-_label_15_195:
+-
 	ldi a,(hl)		; $5665
 	or a			; $5666
-	jr z,_label_15_196	; $5667
+	jr z,+			; $5667
 	ld a,(hl)		; $5669
 	cp b			; $566a
-	jr nz,_label_15_196	; $566b
+	jr nz,+			; $566b
 	inc c			; $566d
-_label_15_196:
++
 	dec l			; $566e
 	inc h			; $566f
 	ld a,h			; $5670
 	cp $e0			; $5671
-	jr c,_label_15_195	; $5673
+	jr c,-			; $5673
 	ld a,c			; $5675
 	or a			; $5676
 	ret			; $5677
+
+
+D8checkAllIceBlocksInPlace:
 	xor a			; $5678
 	ld ($cfc1),a		; $5679
-	ld h,$cf		; $567c
+	ld h,>wRoomLayout		; $567c
 	ld l,$4d		; $567e
-	ld a,$2f		; $5680
+	ld a,TILEINDEX_PUSHABLE_ICE_BLOCK		; $5680
 	cp (hl)			; $5682
 	ret nz			; $5683
 	ld l,$5d		; $5684
@@ -344,8 +387,11 @@ _label_15_196:
 	ld a,$01		; $568c
 	ld ($cfc1),a		; $568e
 	ret			; $5691
+
+
+D6RandomButtonSpawnRopes:
 	ld e,$06		; $5692
-_label_15_197:
+-
 	call getFreeEnemySlot		; $5694
 	ret nz			; $5697
 	ld (hl),$10		; $5698
@@ -353,38 +399,43 @@ _label_15_197:
 	ld (hl),$01		; $569b
 	call $56a4		; $569d
 	dec e			; $56a0
-	jr nz,_label_15_197	; $56a1
+	jr nz,-			; $56a1
 	ret			; $56a3
-_label_15_198:
+@spawnRopeAtRandomPosition:
 	call getRandomNumber		; $56a4
 	and $07			; $56a7
 	inc a			; $56a9
 	swap a			; $56aa
 	ld b,a			; $56ac
 	bit 7,a			; $56ad
-	jr nz,_label_15_198	; $56af
+	jr nz,@spawnRopeAtRandomPosition	; $56af
+	; b is 1 - 7
 	call getRandomNumber		; $56b1
 	and $07			; $56b4
 	add $03			; $56b6
+	; a is 3 - 10
 	or b			; $56b8
 	ld b,$ce		; $56b9
 	ld c,a			; $56bb
 	ld a,(bc)		; $56bc
 	or a			; $56bd
-	jr nz,_label_15_198	; $56be
+	jr nz,@spawnRopeAtRandomPosition	; $56be
 	ld l,$8b		; $56c0
 	jp setShortPosition_paramC		; $56c2
-	ld e,$49		; $56c5
+
+
+toggleBlocksInAngleBitsHit:
+	ld e,Interaction.angle		; $56c5
 	ld a,(de)		; $56c7
 	ld b,a			; $56c8
-	ld a,($cc31)		; $56c9
+	ld a,(wToggleBlocksState)		; $56c9
 	and b			; $56cc
 	cp b			; $56cd
 	ld a,$01		; $56ce
-	jr z,_label_15_199	; $56d0
+	jr z,+			; $56d0
 	xor a			; $56d2
-_label_15_199:
-	ld ($ccba),a		; $56d3
++
+	ld (wActiveTriggers),a		; $56d3
 	ret			; $56d6
 
 
@@ -396,6 +447,7 @@ createD7Trampoline:
 	jp objectCreateInteraction		; $56dd
 
 
+D9forceRoomClearsOnDungeonEntry:
 	call getThisRoomFlags		; $56e0
 	ld l,$93		; $56e3
 	res 6,(hl)		; $56e5
@@ -404,31 +456,40 @@ createD7Trampoline:
 	inc l			; $56ea
 	res 6,(hl)		; $56eb
 	ret			; $56ed
-	ld a,$08		; $56ee
+
+
+D8createFiresGoingOut:
+	ld a,TILEINDEX_UNLIT_TORCH		; $56ee
 	call findTileInRoom		; $56f0
 	ret nz			; $56f3
-	call $5702		; $56f4
-_label_15_200:
-	ld a,$08		; $56f7
+
+	call _createLightableTorches		; $56f4
+-
+	ld a,TILEINDEX_UNLIT_TORCH		; $56f7
 	call backwardsSearch		; $56f9
 	ret nz			; $56fc
-	call $5702		; $56fd
-	jr _label_15_200		; $5700
+	call _createLightableTorches		; $56fd
+	jr -			; $5700
+
+
+_createLightableTorches:
 	push hl			; $5702
 	ld c,l			; $5703
 	call getFreePartSlot		; $5704
-	jr nz,_label_15_201	; $5707
-	ld (hl),$06		; $5709
+	jr nz,+			; $5707
+	ld (hl),PARTID_LIGHTABLE_TORCH		; $5709
 	inc l			; $570b
 	ld (hl),$01		; $570c
-	ld l,$c7		; $570e
+	ld l,Part.counter2		; $570e
 	ld (hl),$30		; $5710
-	ld l,$cb		; $5712
+	ld l,Part.yh		; $5712
 	call setShortPosition_paramC		; $5714
-_label_15_201:
++
 	pop hl			; $5717
 	dec hl			; $5718
 	ret			; $5719
+
+
 	call fadeoutToBlackWithDelay		; $571a
 	jr _label_15_202		; $571d
 	call fadeinFromBlackWithDelay		; $571f
