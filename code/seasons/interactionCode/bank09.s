@@ -1,462 +1,618 @@
+; ==============================================================================
+; INTERACID_TREASURE
+;
+; State $04 is used as a way to delete a treasure? (Bomb flower cutscene with goron elder
+; sets the bomb flower to state 4 to delete it.)
+;
+; Variables:
+;   subid: overwritten by call to "interactionLoadTreasureData" to correspond to a certain
+;          graphic.
+;   var30: former value of subid (treasure index)
+;
+;   var31-var35 based on data from "treasureObjectData.s":
+;     var31: spawn mode
+;     var32: collect mode
+;     var33: a boolean?
+;     var34: parameter (value of 'c' for "giveTreasure" function)
+;     var35: low text ID
+;   var39: If set, this is part of the chest minigame? Gets written to "wDisabledObjects"?
+; ==============================================================================
 interactionCode60:
-	ld e,Interaction.state		; $4000
-	ld a,(de)		; $4002
-	rst_jumpTable			; $4003
-	ld c,$40		; $4004
-	ld (hl),$40		; $4006
-	rlca			; $4008
-	ld b,d			; $4009
-	ld de,$d942		; $400a
-	ldd a,(hl)		; $400d
-	ld a,$01		; $400e
-	ld (de),a		; $4010
-	ld hl,$463f		; $4011
-	ld e,$15		; $4014
-	call interBankCall		; $4016
-	ld a,$06		; $4019
-	call objectSetCollideRadius		; $401b
-	ld l,$78		; $401e
-	ld a,(hl)		; $4020
-	or a			; $4021
-	jr z,_label_09_000	; $4022
-	cp $ff			; $4024
-	jr z,_label_09_000	; $4026
-	ld l,$74		; $4028
-	ld (hl),a		; $402a
-_label_09_000:
-	call interactionInitGraphics		; $402b
-	ld e,$71		; $402e
-	ld a,(de)		; $4030
-	or a			; $4031
-	ret nz			; $4032
-	jp objectSetVisiblec2		; $4033
-	ld e,$71		; $4036
-	ld a,(de)		; $4038
-	rst_jumpTable			; $4039
-	ld c,b			; $403a
-	ld b,b			; $403b
-	ld e,c			; $403c
-	ld b,b			; $403d
-	ld (hl),c		; $403e
-	ld b,b			; $403f
-	add hl,bc		; $4040
-	ld b,c			; $4041
-	sub h			; $4042
-	ld b,c			; $4043
-	xor (hl)		; $4044
-	ld b,c			; $4045
-	ld d,l			; $4046
-	ld b,c			; $4047
-_label_09_001:
-	ld h,d			; $4048
-	ld l,$44		; $4049
-	ld (hl),$02		; $404b
-	inc l			; $404d
-	ld (hl),$00		; $404e
-	call $431a		; $4050
-	jp c,$40e2		; $4053
-	jp objectSetVisiblec2		; $4056
-	ld e,Interaction.state2		; $4059
-	ld a,(de)		; $405b
-	or a			; $405c
-	jr nz,_label_09_002	; $405d
-	ld a,$01		; $405f
-	ld (de),a		; $4061
-	ld e,$46		; $4062
-	ld a,$1e		; $4064
-	ld (de),a		; $4066
-	call objectCreatePuff		; $4067
-	ret nz			; $406a
-_label_09_002:
-	call interactionDecCounter1		; $406b
-	ret nz			; $406e
-	jr _label_09_001		; $406f
-	ld e,Interaction.state2		; $4071
-	ld a,(de)		; $4073
-	rst_jumpTable			; $4074
-	ld a,e			; $4075
-	ld b,b			; $4076
-	adc b			; $4077
-	ld b,b			; $4078
-	and c			; $4079
-	ld b,b			; $407a
-	ld a,$01		; $407b
-	ld (de),a		; $407d
-	ld h,d			; $407e
-	ld l,$46		; $407f
-	ld (hl),$28		; $4081
-	ld a,$4d		; $4083
-	jp playSound		; $4085
-	call interactionDecCounter1		; $4088
-	ret nz			; $408b
-	ld (hl),$02		; $408c
-	inc l			; $408e
-	ld (hl),$02		; $408f
-	ld l,$45		; $4091
-	inc (hl)		; $4093
-	call objectGetZAboveScreen		; $4094
-	ld h,d			; $4097
-	ld l,$4f		; $4098
-	ld (hl),a		; $409a
-	call objectSetVisiblec0		; $409b
-	jp $40d9		; $409e
-	call $431a		; $40a1
-	jr c,_label_09_005	; $40a4
-	call $40d9		; $40a6
-	ld c,$10		; $40a9
-	call objectUpdateSpeedZ_paramC		; $40ab
-	ret nz			; $40ae
-	call objectCheckIsOnHazard		; $40af
-	jr nc,_label_09_003	; $40b2
-	dec a			; $40b4
-	jr z,_label_09_007	; $40b5
-	jp objectReplaceWithFallingDownHoleInteraction		; $40b7
-_label_09_003:
-	ld e,$70		; $40ba
+	ld e,Interaction.state		; $4973
+	ld a,(de)		; $4975
+	rst_jumpTable			; $4976
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw interactionDelete
+
+@state0:
+	ld a,$01		; $4981
+	ld (de),a		; $4983
+.ifdef ROM_AGES
+	callab bank16.interactionLoadTreasureData		; $4984
+.else
+	callab scriptHlp.interactionLoadTreasureData		; $4984
+.endif
+	ld a,$06		; $498c
+	call objectSetCollideRadius		; $498e
+
+	; Check whether to overwrite the "parameter" for the treasure?
+	ld l,Interaction.var38		; $4991
+	ld a,(hl)		; $4993
+	or a			; $4994
+	jr z,+			; $4995
+	cp $ff			; $4997
+	jr z,+			; $4999
+	ld l,Interaction.var34		; $499b
+	ld (hl),a		; $499d
++
+	call interactionInitGraphics		; $499e
+
+	ld e,Interaction.var31		; $49a1
+	ld a,(de)		; $49a3
+	or a			; $49a4
+	ret nz			; $49a5
+	jp objectSetVisiblec2		; $49a6
+
+
+; State 1: spawning in; goes to state 2 when finished spawning.
+@state1:
+	ld e,Interaction.var31		; $49a9
+	ld a,(de)		; $49ab
+	rst_jumpTable			; $49ac
+	.dw @spawnMode0
+	.dw @spawnMode1
+	.dw @spawnMode2
+	.dw @spawnMode3
+	.dw @spawnMode4
+	.dw @spawnMode5
+	.dw @spawnMode6
+
+; Spawns instantly
+@spawnMode0:
+	ld h,d			; $49bb
+	ld l,Interaction.state		; $49bc
+	ld (hl),$02		; $49be
+	inc l			; $49c0
+	ld (hl),$00		; $49c1
+	call @checkLinkTouched		; $49c3
+	jp c,@gotoState3		; $49c6
+	jp objectSetVisiblec2		; $49c9
+
+; Appears with a poof
+@spawnMode1:
+	ld e,Interaction.state2		; $49cc
+	ld a,(de)		; $49ce
+	or a			; $49cf
+	jr nz,++		; $49d0
+
+	ld a,$01		; $49d2
+	ld (de),a		; $49d4
+	ld e,Interaction.counter1		; $49d5
+	ld a,$1e		; $49d7
+	ld (de),a		; $49d9
+	call objectCreatePuff		; $49da
+	ret nz			; $49dd
+++
+	call interactionDecCounter1		; $49de
+	ret nz			; $49e1
+	jr @spawnMode0			; $49e2
+
+; Falls from top of screen
+@spawnMode2:
+	ld e,Interaction.state2		; $49e4
+	ld a,(de)		; $49e6
+	rst_jumpTable			; $49e7
+	.dw @@substate0
+	.dw @@substate1
+	.dw @@substate2
+
+@@substate0:
+	ld a,$01		; $49ee
+	ld (de),a		; $49f0
+	ld h,d			; $49f1
+	ld l,Interaction.counter1		; $49f2
+	ld (hl),$28		; $49f4
+	ld a,SND_SOLVEPUZZLE	; $49f6
+	jp playSound		; $49f8
+
+@@substate1:
+	call interactionDecCounter1		; $49fb
+	ret nz			; $49fe
+	ld (hl),$02		; $49ff
+	inc l			; $4a01
+	ld (hl),$02		; $4a02
+
+	ld l,Interaction.state2		; $4a04
+	inc (hl)		; $4a06
+
+	call objectGetZAboveScreen		; $4a07
+	ld h,d			; $4a0a
+	ld l,Interaction.zh		; $4a0b
+	ld (hl),a		; $4a0d
+
+	call objectSetVisiblec0		; $4a0e
+	jp @setVisibleIfWithinScreenBoundary		; $4a11
+
+@@substate2:
+	call @checkLinkTouched		; $4a14
+	jr c,@gotoState3		; $4a17
+	call @setVisibleIfWithinScreenBoundary		; $4a19
+	ld c,$10		; $4a1c
+	call objectUpdateSpeedZ_paramC		; $4a1e
+	ret nz			; $4a21
+	call objectCheckIsOnHazard		; $4a22
+	jr nc,+			; $4a25
+
+	dec a			; $4a27
+	jr z,@landedOnWater		; $4a28
+	jp objectReplaceWithFallingDownHoleInteraction		; $4a2a
++
+.ifdef ROM_AGES
+	ld a,SND_DROPESSENCE		; $4a2d
+	call playSound		; $4a2f
+.else
+	ld e,Interaction.var30		; $40ba
 	ld a,(de)		; $40bc
 	cp $30			; $40bd
-	ld a,$77		; $40bf
+	ld a,SND_DROPESSENCE		; $40bf
 	call z,playSound		; $40c1
-	call interactionDecCounter1		; $40c4
-	jr z,_label_09_004	; $40c7
-	ld bc,$ff56		; $40c9
-	jp objectSetSpeedZ		; $40cc
-_label_09_004:
-	call objectSetVisible		; $40cf
-	call objectSetVisiblec2		; $40d2
-	ld a,$02		; $40d5
-	jr _label_09_006		; $40d7
-	call objectCheckWithinScreenBoundary		; $40d9
-	jp nc,objectSetInvisible		; $40dc
-	jp objectSetVisible		; $40df
-_label_09_005:
-	call $42c4		; $40e2
-	ld a,$03		; $40e5
-_label_09_006:
-	ld h,d			; $40e7
-	ld l,$44		; $40e8
-	ldi (hl),a		; $40ea
-	xor a			; $40eb
-	ld (hl),a		; $40ec
-	ld l,$4e		; $40ed
-	ldi (hl),a		; $40ef
-	ld (hl),a		; $40f0
-	jp interactionSetAlwaysUpdateBit		; $40f1
-_label_09_007:
-	ld h,d			; $40f4
-	ld l,$70		; $40f5
-	ld a,(hl)		; $40f7
-	ld l,$42		; $40f8
-	ldi (hl),a		; $40fa
-	inc (hl)		; $40fb
-	inc l			; $40fc
-	xor a			; $40fd
-	ldi (hl),a		; $40fe
-	ld (hl),a		; $40ff
-	ld l,$5a		; $4100
-	res 7,(hl)		; $4102
-	ld b,$03		; $4104
-	jp objectCreateInteractionWithSubid00		; $4106
-	ld a,$80		; $4109
-	ld ($cc81),a		; $410b
-	ld e,Interaction.state2		; $410e
-	ld a,(de)		; $4110
-	rst_jumpTable			; $4111
-	jr _label_09_008		; $4112
-	inc l			; $4114
-	ld b,c			; $4115
-	ld b,d			; $4116
-	ld b,c			; $4117
-	ld a,$01		; $4118
-	ld (de),a		; $411a
-	ld ($cbca),a		; $411b
-	call interactionSetAlwaysUpdateBit		; $411e
-	ld l,$50		; $4121
-	ld (hl),$0a		; $4123
-	ld l,$46		; $4125
-	ld (hl),$20		; $4127
-	jp objectSetVisible80		; $4129
-	call objectApplySpeed		; $412c
-	call interactionDecCounter1		; $412f
-	ret nz			; $4132
-	ld l,$45		; $4133
-	inc (hl)		; $4135
-	ld l,$79		; $4136
-	ld a,(hl)		; $4138
-	or a			; $4139
-	call z,$42c4		; $413a
-	ld a,$4c		; $413d
-	call playSound		; $413f
-	ld a,($cba0)		; $4142
-	and $7f			; $4145
-	ret nz			; $4147
-	xor a			; $4148
-	ld ($cbca),a		; $4149
-	ld e,$79		; $414c
-	ld a,(de)		; $414e
-	ld ($cca4),a		; $414f
-	jp interactionDelete		; $4152
-_label_09_008:
-	ld e,Interaction.state2		; $4155
-	ld a,(de)		; $4157
-	rst_jumpTable			; $4158
-	ld e,a			; $4159
-	ld b,c			; $415a
-	ld l,h			; $415b
-	ld b,c			; $415c
-	add h			; $415d
-	ld b,c			; $415e
-	ld a,$01		; $415f
-	ld (de),a		; $4161
-	ld ($cbca),a		; $4162
-	call interactionSetAlwaysUpdateBit		; $4165
-	ld l,$46		; $4168
-	ld (hl),$0f		; $416a
-	call interactionDecCounter1		; $416c
-	ret nz			; $416f
-	call interactionIncState2		; $4170
-	call objectSetVisible80		; $4173
-	call $42c4		; $4176
-	ld bc,$8100		; $4179
-	call $4231		; $417c
-	ld a,$4c		; $417f
-	jp playSound		; $4181
-	ld a,($cba0)		; $4184
-	and $7f			; $4187
-	ret nz			; $4189
-	xor a			; $418a
-	ld ($cbca),a		; $418b
-	ld ($cca4),a		; $418e
-	jp interactionDelete		; $4191
-	call $431a		; $4194
-	ret nc			; $4197
-	ld a,($cc78)		; $4198
-	bit 7,a			; $419b
-	ret z			; $419d
-	call objectSetVisible82		; $419e
-	call $42c4		; $41a1
-	ld a,$4c		; $41a4
-	call playSound		; $41a6
-	ld a,$03		; $41a9
-	jp $40e7		; $41ab
-	ld e,Interaction.state2		; $41ae
-	ld a,(de)		; $41b0
-	rst_jumpTable			; $41b1
-	cp b			; $41b2
-	ld b,c			; $41b3
-	jp nz,$e841		; $41b4
-	ld b,c			; $41b7
-	ld a,$01		; $41b8
-	ld (de),a		; $41ba
-	call objectGetShortPosition		; $41bb
-	ld ($ccc5),a		; $41be
-	ret			; $41c1
-	ld a,($cd00)		; $41c2
-	and $0c			; $41c5
-	jp nz,interactionDelete		; $41c7
-	ld a,($ccc5)		; $41ca
-	inc a			; $41cd
-	ret nz			; $41ce
-	ld bc,$ff00		; $41cf
-	call objectSetSpeedZ		; $41d2
-	ld l,$45		; $41d5
-	inc (hl)		; $41d7
-	ld a,($d008)		; $41d8
-	swap a			; $41db
-	rrca			; $41dd
-	ld l,$49		; $41de
-	ld (hl),a		; $41e0
-	ld l,$50		; $41e1
-	ld (hl),$14		; $41e3
-	jp objectSetVisiblec2		; $41e5
-	call objectCheckTileCollision_allowHoles		; $41e8
-	call nc,objectApplySpeed		; $41eb
-	ld c,$10		; $41ee
-	call objectUpdateSpeedZAndBounce		; $41f0
-	ret nz			; $41f3
-	push af			; $41f4
-	call objectReplaceWithAnimationIfOnHazard		; $41f5
-	pop bc			; $41f8
-	jp c,interactionDelete		; $41f9
-	ld a,$77		; $41fc
-	call playSound		; $41fe
-	bit 4,c			; $4201
-	ret z			; $4203
-	jp $40cf		; $4204
-	call returnIfScrollMode01Unset		; $4207
-	call $431a		; $420a
-	ret nc			; $420d
-	jp $40e2		; $420e
-	ld e,$72		; $4211
-	ld a,(de)		; $4213
-	rst_jumpTable			; $4214
-	reti			; $4215
-	ldd a,(hl)		; $4216
-	ld hl,$2642		; $4217
-	ld b,d			; $421a
-	ld e,a			; $421b
-	ld b,d			; $421c
-	ld hl,$2642		; $421d
-	ld b,d			; $4220
-	ld bc,$80fc		; $4221
-	jr _label_09_009		; $4224
-	ld bc,$8100		; $4226
-_label_09_009:
-	ld e,Interaction.state2		; $4229
-	ld a,(de)		; $422b
-	or a			; $422c
-	jr nz,_label_09_010	; $422d
-	inc a			; $422f
-	ld (de),a		; $4230
-	ld a,$04		; $4231
-	ld ($cc6a),a		; $4233
-	ld a,b			; $4236
-	ld ($cc6b),a		; $4237
-	ld hl,$cca4		; $423a
-	set 0,(hl)		; $423d
-	ld hl,$d000		; $423f
-	ld b,$f2		; $4242
-	call objectTakePositionWithOffset		; $4244
-	call objectSetVisible80		; $4247
-	ld a,$4c		; $424a
-	call playSound		; $424c
-_label_09_010:
-	call retIfTextIsActive		; $424f
-	ld hl,$cca4		; $4252
-	res 0,(hl)		; $4255
-	ld a,$0f		; $4257
-	ld ($cc85),a		; $4259
-	jp interactionDelete		; $425c
-	ld a,$78		; $425f
-	ld ($cc85),a		; $4261
-	ld e,Interaction.state2		; $4264
-	ld a,(de)		; $4266
-	rst_jumpTable			; $4267
-	ld (hl),b		; $4268
-	ld b,d			; $4269
-	add a			; $426a
-	ld b,d			; $426b
-	sub h			; $426c
-	ld b,d			; $426d
-	cp h			; $426e
-	ld b,d			; $426f
-	ld a,$01		; $4270
-	ld (de),a		; $4272
-	inc e			; $4273
-	ld a,$04		; $4274
-	ld (de),a		; $4276
-	ld a,$81		; $4277
-	ld ($cca4),a		; $4279
-	ld a,$ff		; $427c
-	call setLinkForceStateToState08_withParam		; $427e
-	ld hl,$cc6a		; $4281
-	jp objectSetInvisible		; $4284
-	call interactionDecCounter1		; $4287
-	ret nz			; $428a
-	ld l,$45		; $428b
-	inc (hl)		; $428d
-	ld a,$ff		; $428e
-	ld ($cc7e),a		; $4290
-	ret			; $4293
-	ld a,($cc7e)		; $4294
-	or a			; $4297
-	ret nz			; $4298
-	ld a,$0e		; $4299
-	ld ($cc6b),a		; $429b
-	ld e,$4b		; $429e
-	ld a,($d00b)		; $42a0
-	sub $0e			; $42a3
-	ld (de),a		; $42a5
-	ld e,$4d		; $42a6
-	ld a,($d00d)		; $42a8
-	sub $04			; $42ab
-	ld (de),a		; $42ad
-	call objectSetVisible		; $42ae
-	call objectSetVisible80		; $42b1
-	call interactionIncState2		; $42b4
-	ld a,$ab		; $42b7
-	jp playSound		; $42b9
-	ld a,($cca4)		; $42bc
-	or a			; $42bf
-	ret nz			; $42c0
-	jp interactionDelete		; $42c1
-	ld e,$74		; $42c4
-	ld a,(de)		; $42c6
-	ld c,a			; $42c7
-	ld e,$70		; $42c8
-	ld a,(de)		; $42ca
-	ld b,a			; $42cb
-	cp $37			; $42cc
-	jr nz,_label_09_012	; $42ce
-	ld a,$26		; $42d0
-	call cpActiveRing		; $42d2
-	jr z,_label_09_011	; $42d5
-	ld a,$27		; $42d7
-	call cpActiveRing		; $42d9
-	jr nz,_label_09_012	; $42dc
-_label_09_011:
-	inc c			; $42de
-_label_09_012:
-	ld a,b			; $42df
-	call giveTreasure		; $42e0
-	ld b,a			; $42e3
-	ld e,$72		; $42e4
-	ld a,(de)		; $42e6
-	cp $03			; $42e7
-	jr z,_label_09_013	; $42e9
-	ld a,b			; $42eb
-	call playSound		; $42ec
-_label_09_013:
-	ld e,$75		; $42ef
-	ld a,(de)		; $42f1
-	cp $ff			; $42f2
-	jr z,_label_09_015	; $42f4
-	ld c,a			; $42f6
-	ld b,$00		; $42f7
-	call showText		; $42f9
-	ldh a,(<hCameraY)	; $42fc
-	ld b,a			; $42fe
-	ld a,($d00b)		; $42ff
-	sub b			; $4302
-	sub $10			; $4303
-	cp $48			; $4305
-	ld a,$02		; $4307
-	jr c,_label_09_014	; $4309
-	xor a			; $430b
-_label_09_014:
-	ld ($cbac),a		; $430c
-_label_09_015:
-	ld e,$73		; $430f
-	ld a,(de)		; $4311
-	or a			; $4312
-	ret z			; $4313
-	call getThisRoomFlags		; $4314
-	set 5,(hl)		; $4317
-	ret			; $4319
-	ld a,($cc6a)		; $431a
-	or a			; $431d
-	ret nz			; $431e
-	ld a,($cca7)		; $431f
-	or a			; $4322
-	ret nz			; $4323
-	ld a,($d004)		; $4324
-	cp $01			; $4327
-	jr z,_label_09_016	; $4329
-	cp $08			; $432b
-	jr nz,_label_09_017	; $432d
-_label_09_016:
-	ld a,($cc48)		; $432f
-	rrca			; $4332
-	jr c,_label_09_017	; $4333
-	ld e,$6a		; $4335
-	ld a,(de)		; $4337
-	or a			; $4338
-	jp z,objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $4339
-	scf			; $433c
-	ret			; $433d
-_label_09_017:
-	xor a			; $433e
-	ret			; $433f
+.endif
+	call interactionDecCounter1		; $4a32
+	jr z,@gotoState2			; $4a35
+
+	ld bc,$ff56		; $4a37
+	jp objectSetSpeedZ		; $4a3a
+
+@gotoState2:
+	call objectSetVisible		; $4a3d
+	call objectSetVisiblec2		; $4a40
+	ld a,$02		; $4a43
+	jr @gotoStateAndAlwaysUpdate			; $4a45
+
+@setVisibleIfWithinScreenBoundary:
+	call objectCheckWithinScreenBoundary		; $4a47
+	jp nc,objectSetInvisible		; $4a4a
+	jp objectSetVisible		; $4a4d
+
+@gotoState3:
+	call @giveTreasure		; $4a50
+	ld a,$03		; $4a53
+
+@gotoStateAndAlwaysUpdate:
+	ld h,d			; $4a55
+	ld l,Interaction.state		; $4a56
+	ldi (hl),a		; $4a58
+	xor a			; $4a59
+	ld (hl),a		; $4a5a
+
+	ld l,Interaction.z		; $4a5b
+	ldi (hl),a		; $4a5d
+	ld (hl),a		; $4a5e
+
+	jp interactionSetAlwaysUpdateBit		; $4a5f
+
+; If the treasure fell into the water, "reset" this object to state 0, increment var03.
+@landedOnWater:
+	ld h,d			; $4a62
+	ld l,Interaction.var30		; $4a63
+	ld a,(hl)		; $4a65
+	ld l,Interaction.subid		; $4a66
+	ldi (hl),a		; $4a68
+
+	inc (hl) ; [var03]++ (use the subsequent entry in treasureObjectData)
+
+	; Clear state
+	inc l			; $4a6a
+	xor a			; $4a6b
+	ldi (hl),a		; $4a6c
+	ld (hl),a		; $4a6d
+
+	ld l,Interaction.visible		; $4a6e
+	res 7,(hl)		; $4a70
+	ld b,INTERACID_SPLASH		; $4a72
+	jp objectCreateInteractionWithSubid00		; $4a74
+
+
+; Spawns from a chest
+@spawnMode3:
+	ld a,$80		; $4a77
+	ld (wForceLinkPushAnimation),a		; $4a79
+	ld e,Interaction.state2		; $4a7c
+	ld a,(de)		; $4a7e
+	rst_jumpTable			; $4a7f
+	.dw @m3State0
+	.dw @m3State1
+	.dw @m3State2
+
+@m3State0:
+	ld a,$01		; $4a86
+	ld (de),a		; $4a88
+	ld (wDisableLinkCollisionsAndMenu),a		; $4a89
+	call interactionSetAlwaysUpdateBit		; $4a8c
+
+	; Angle is already $00 (up), so don't need to set it
+	ld l,Interaction.speed		; $4a8f
+	ld (hl),SPEED_40		; $4a91
+
+	ld l,Interaction.counter1		; $4a93
+	ld (hl),$20		; $4a95
+	jp objectSetVisible80		; $4a97
+
+@m3State1:
+	; Move up
+	call objectApplySpeed		; $4a9a
+	call interactionDecCounter1		; $4a9d
+	ret nz			; $4aa0
+
+	; Finished moving up
+	ld l,Interaction.state2		; $4aa1
+	inc (hl)		; $4aa3
+	ld l,Interaction.var39		; $4aa4
+	ld a,(hl)		; $4aa6
+	or a			; $4aa7
+	call z,@giveTreasure		; $4aa8
+	ld a,SND_GETITEM	; $4aab
+	call playSound		; $4aad
+
+	; Wait for player to close text
+@m3State2:
+	ld a,(wTextIsActive)		; $4ab0
+	and $7f			; $4ab3
+	ret nz			; $4ab5
+
+	xor a			; $4ab6
+	ld (wDisableLinkCollisionsAndMenu),a		; $4ab7
+	ld e,Interaction.var39		; $4aba
+	ld a,(de)		; $4abc
+	ld (wDisabledObjects),a		; $4abd
+	jp interactionDelete		; $4ac0
+
+
+; Appears at Link's position after a short delay
+@spawnMode6:
+	ld e,Interaction.state2		; $4ac3
+	ld a,(de)		; $4ac5
+	rst_jumpTable			; $4ac6
+	.dw @m6State0
+	.dw @m6State1
+	.dw @m6State2
+
+@m6State0:
+	ld a,$01		; $4acd
+	ld (de),a		; $4acf
+	ld (wDisableLinkCollisionsAndMenu),a		; $4ad0
+	call interactionSetAlwaysUpdateBit		; $4ad3
+	ld l,Interaction.counter1		; $4ad6
+	ld (hl),$0f		; $4ad8
+@m6State1:
+	call interactionDecCounter1		; $4ada
+	ret nz			; $4add
+
+	; Delay done, give treasure to Link
+
+	call interactionIncState2		; $4ade
+	call objectSetVisible80		; $4ae1
+	call @giveTreasure		; $4ae4
+	ldbc $81,$00		; $4ae7
+	call @setLinkAnimationAndDeleteIfTextClosed		; $4aea
+	ld a,SND_GETITEM	; $4aed
+	jp playSound		; $4aef
+
+@m6State2:
+	ld a,(wTextIsActive)		; $4af2
+	and $7f			; $4af5
+	ret nz			; $4af7
+	xor a			; $4af8
+	ld (wDisableLinkCollisionsAndMenu),a		; $4af9
+	ld (wDisabledObjects),a		; $4afc
+	jp interactionDelete		; $4aff
+
+
+; Item that's underwater, must dive to get it (only used in seasons dungeon 4)
+@spawnMode4:
+	call @checkLinkTouched		; $4b02
+	ret nc			; $4b05
+	ld a,(wLinkSwimmingState)		; $4b06
+	bit 7,a			; $4b09
+	ret z			; $4b0b
+	call objectSetVisible82		; $4b0c
+	call @giveTreasure		; $4b0f
+	ld a,SND_GETITEM		; $4b12
+	call playSound		; $4b14
+	ld a,$03		; $4b17
+	jp @gotoStateAndAlwaysUpdate		; $4b19
+
+
+; Item that falls to Link's position when [wccaa]=$ff?
+@spawnMode5:
+	ld e,Interaction.state2		; $4b1c
+	ld a,(de)		; $4b1e
+	rst_jumpTable			; $4b1f
+	.dw @m5State0
+	.dw @m5State1
+	.dw @m5State2
+
+@m5State0:
+	ld a,$01		; $4b26
+	ld (de),a		; $4b28
+	call objectGetShortPosition		; $4b29
+	ld (wccaa),a		; $4b2c
+	ret			; $4b2f
+
+@m5State1:
+	ld a,(wScrollMode)		; $4b30
+	and $0c			; $4b33
+	jp nz,interactionDelete		; $4b35
+
+	ld a,(wccaa)		; $4b38
+	inc a			; $4b3b
+	ret nz			; $4b3c
+
+	ld bc,$ff00		; $4b3d
+	call objectSetSpeedZ		; $4b40
+	ld l,Interaction.state2		; $4b43
+	inc (hl)		; $4b45
+	ld a,(w1Link.direction)		; $4b46
+	swap a			; $4b49
+	rrca			; $4b4b
+	ld l,$49		; $4b4c
+	ld (hl),a		; $4b4e
+	ld l,$50		; $4b4f
+	ld (hl),$14		; $4b51
+	jp objectSetVisiblec2		; $4b53
+
+@m5State2:
+	call objectCheckTileCollision_allowHoles		; $4b56
+	call nc,objectApplySpeed		; $4b59
+	ld c,$10		; $4b5c
+	call objectUpdateSpeedZAndBounce		; $4b5e
+	ret nz			; $4b61
+	push af			; $4b62
+	call objectReplaceWithAnimationIfOnHazard		; $4b63
+	pop bc			; $4b66
+	jp c,interactionDelete		; $4b67
+
+	ld a,SND_DROPESSENCE		; $4b6a
+	call playSound		; $4b6c
+	bit 4,c			; $4b6f
+	ret z			; $4b71
+	jp @gotoState2		; $4b72
+
+
+; State 2: done spawning, waiting for Link to grab it
+@state2:
+	call returnIfScrollMode01Unset		; $4b75
+	call @checkLinkTouched		; $4b78
+	ret nc			; $4b7b
+	jp @gotoState3		; $4b7c
+
+
+; State 3: Link just grabbed it
+@state3:
+	ld e,Interaction.var32		; $4b7f
+	ld a,(de)		; $4b81
+	rst_jumpTable			; $4b82
+	.dw interactionDelete
+	.dw @grabMode1
+	.dw @grabMode2
+	.dw @grabMode3
+	.dw @grabMode1
+	.dw @grabMode2
+
+; Hold over head with 1 hand
+@grabMode1:
+	ldbc $80,$fc		; $4b8f
+	jr +			; $4b92
+
+; Hold over head with 2 hands
+@grabMode2:
+	ldbc $81,$00		; $4b94
++
+	ld e,Interaction.state2		; $4b97
+	ld a,(de)		; $4b99
+	or a			; $4b9a
+	jr nz,++		; $4b9b
+
+	inc a			; $4b9d
+	ld (de),a		; $4b9e
+
+;;
+; @param	b	Animation to do (0 = 1-hand grab, 1 = 2-hand grab)
+; @param	c	x-offset to put item relative to Link
+; @addr{4b9f}
+@setLinkAnimationAndDeleteIfTextClosed:
+	ld a,LINK_STATE_04		; $4b9f
+	ld (wLinkForceState),a		; $4ba1
+	ld a,b			; $4ba4
+	ld (wcc50),a		; $4ba5
+	ld hl,wDisabledObjects		; $4ba8
+	set 0,(hl)		; $4bab
+	ld hl,w1Link		; $4bad
+	ld b,$f2		; $4bb0
+	call objectTakePositionWithOffset		; $4bb2
+	call objectSetVisible80		; $4bb5
+	ld a,SND_GETITEM		; $4bb8
+	call playSound		; $4bba
+++
+	call retIfTextIsActive		; $4bbd
+	ld hl,wDisabledObjects		; $4bc0
+	res 0,(hl)		; $4bc3
+	ld a,$0f		; $4bc5
+	ld (wInstrumentsDisabledCounter),a		; $4bc7
+	jp interactionDelete		; $4bca
+
+
+; Performs a spin slash upon obtaining the item
+@grabMode3:
+	ld a,Interaction.var38		; $4bcd
+	ld (wInstrumentsDisabledCounter),a		; $4bcf
+	ld e,Interaction.state2		; $4bd2
+	ld a,(de)		; $4bd4
+	rst_jumpTable			; $4bd5
+	.dw @gm3State0
+	.dw @gm3State1
+	.dw @gm3State2
+	.dw @gm3State3
+
+@gm3State0:
+	ld a,$01		; $4bde
+	ld (de),a		; $4be0
+	inc e			; $4be1
+
+	ld a,$04		; $4be2
+	ld (de),a ; [counter1] = $04
+
+	ld a,$81		; $4be5
+	ld (wDisabledObjects),a		; $4be7
+	ld a,$ff		; $4bea
+	call setLinkForceStateToState08_withParam		; $4bec
+	ld hl,wLinkForceState		; $4bef
+	jp objectSetInvisible		; $4bf2
+
+@gm3State1:
+	call interactionDecCounter1		; $4bf5
+	ret nz			; $4bf8
+
+	ld l,Interaction.state2		; $4bf9
+	inc (hl)		; $4bfb
+
+	; Forces spinslash animation
+	ld a,$ff		; $4bfc
+	ld (wcc63),a		; $4bfe
+	ret			; $4c01
+
+@gm3State2:
+	; Wait for spin to finish
+	ld a,(wcc63)		; $4c02
+	or a			; $4c05
+	ret nz			; $4c06
+
+	ld a,LINK_ANIM_MODE_GETITEM1HAND		; $4c07
+	ld (wcc50),a		; $4c09
+
+	; Calculate x/y position just above Link
+	ld e,Interaction.yh		; $4c0c
+	ld a,(w1Link.yh)		; $4c0e
+	sub $0e			; $4c11
+	ld (de),a		; $4c13
+	ld e,Interaction.xh		; $4c14
+	ld a,(w1Link.xh)		; $4c16
+	sub $04			; $4c19
+	ld (de),a		; $4c1b
+
+	call objectSetVisible		; $4c1c
+	call objectSetVisible80		; $4c1f
+	call interactionIncState2		; $4c22
+	ld a,SND_SWORD_OBTAINED		; $4c25
+	jp playSound		; $4c27
+
+@gm3State3:
+	ld a,(wDisabledObjects)		; $4c2a
+	or a			; $4c2d
+	ret nz			; $4c2e
+	jp interactionDelete		; $4c2f
+
+@giveTreasure:
+	ld e,Interaction.var34		; $4c32
+	ld a,(de)		; $4c34
+	ld c,a			; $4c35
+	ld e,Interaction.var30		; $4c36
+	ld a,(de)		; $4c38
+	ld b,a			; $4c39
+
+	; If this is ore chunks, double the value if wearing an appropriate ring?
+	cp TREASURE_ORE_CHUNKS			; $4c3a
+	jr nz,++		; $4c3c
+
+	ld a,GOLD_JOY_RING		; $4c3e
+	call cpActiveRing		; $4c40
+	jr z,+			; $4c43
+
+	ld a,GREEN_JOY_RING		; $4c45
+	call cpActiveRing		; $4c47
+	jr nz,++		; $4c4a
++
+	inc c			; $4c4c
+++
+	ld a,b			; $4c4d
+	call giveTreasure		; $4c4e
+	ld b,a			; $4c51
+
+	ld e,Interaction.var32		; $4c52
+	ld a,(de)		; $4c54
+	cp $03			; $4c55
+	jr z,+			; $4c57
+
+	ld a,b			; $4c59
+	call playSound		; $4c5a
++
+	ld e,Interaction.var35		; $4c5d
+	ld a,(de)		; $4c5f
+	cp $ff			; $4c60
+	jr z,++			; $4c62
+
+	ld c,a			; $4c64
+	ld b,>TX_0000		; $4c65
+	call showText		; $4c67
+
+	; Determine textbox position (after showText call...?)
+	ldh a,(<hCameraY)	; $4c6a
+	ld b,a			; $4c6c
+	ld a,(w1Link.yh)		; $4c6d
+	sub b			; $4c70
+	sub $10			; $4c71
+	cp $48			; $4c73
+	ld a,$02		; $4c75
+	jr c,+			; $4c77
+	xor a			; $4c79
++
+	ld (wTextboxPosition),a		; $4c7a
+++
+	ld e,Interaction.var33		; $4c7d
+	ld a,(de)		; $4c7f
+	or a			; $4c80
+	ret z			; $4c81
+
+	; Mark item as obtained
+	call getThisRoomFlags		; $4c82
+	set ROOMFLAG_BIT_ITEM,(hl)		; $4c85
+	ret			; $4c87
+
+;;
+; @param[out]	cflag	Set if Link's touched this object so he should collect it
+; @addr{4c88}
+@checkLinkTouched:
+	ld a,(wLinkForceState)		; $4c88
+	or a			; $4c8b
+	ret nz			; $4c8c
+
+	ld a,(wLinkPlayingInstrument)		; $4c8d
+	or a			; $4c90
+	ret nz			; $4c91
+
+	ld a,(w1Link.state)		; $4c92
+	cp LINK_STATE_NORMAL			; $4c95
+	jr z,+			; $4c97
+	cp LINK_STATE_08			; $4c99
+	jr nz,++		; $4c9b
++
+	ld a,(wLinkObjectIndex)		; $4c9d
+	rrca			; $4ca0
+	jr c,++			; $4ca1
+
+	; Check if Link's touched this
+	ld e,Interaction.var2a		; $4ca3
+	ld a,(de)		; $4ca5
+	or a			; $4ca6
+	jp z,objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $4ca7
+	scf			; $4caa
+	ret			; $4cab
+++
+	xor a			; $4cac
+	ret			; $4cad
 
 
 ; ==============================================================================
