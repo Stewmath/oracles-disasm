@@ -43,15 +43,10 @@ endif
 
 CFLAGS += $(DEFINES)
 
-PRECMP_FILE = build/use_precompressed
-NO_PRECMP_FILE = build/no_use_precompressed
-
 ifeq ($(BUILD_VANILLA), true)
-CMP_MODE = $(PRECMP_FILE)
 AGES_BUILD_DIR = build_ages_v
 SEASONS_BUILD_DIR = build_seasons_v
 else
-CMP_MODE = $(NO_PRECMP_FILE)
 AGES_BUILD_DIR = build_ages_e
 SEASONS_BUILD_DIR = build_seasons_e
 endif
@@ -146,7 +141,7 @@ build/linkfile: $(OBJS)
 	@echo "[objects]" > $@
 	@echo "$(OBJS)" | sed 's/ /\n/g' >> $@
 
-build/rooms/%.cmp: rooms/$(GAME)/small/%.bin $(CMP_MODE) | build/rooms
+build/rooms/%.cmp: rooms/$(GAME)/small/%.bin | build/rooms
 	@echo "Compressing $< to $@..."
 	@$(PYTHON) tools/build/compressRoomLayout.py $< $@ $(OPTIMIZE)
 
@@ -173,50 +168,34 @@ build/data/%.s: data/$(GAME)/%.s | build/data
 	@cp $< $@
 
 
-# Build mode management: for when you switch between precompressed & modifiable 
-# modes
-
-$(PRECMP_FILE): | build
-	@[[ ! -f $(NO_PRECMP_FILE) ]] || (\
-		echo "ERROR: the current 'build' directory does not use precompressed data, but the Makefile does. Please run \"./fixbuild.sh\"." && \
-		false )
-	touch $@
-
-$(NO_PRECMP_FILE): | build
-	@[[ ! -f $(PRECMP_FILE) ]] || (\
-		echo "ERROR: the current 'build' directory uses precompressed data, but the Makefile does not. Please run \"./fixbuild.sh\"." && \
-		false )
-	touch $@
-
-
 ifeq ($(BUILD_VANILLA),true)
 
-build/tileset_layouts/%.bin: precompressed/tileset_layouts/$(GAME)/%.bin $(CMP_MODE) | build/tileset_layouts
+build/tileset_layouts/%.bin: precompressed/tileset_layouts/$(GAME)/%.bin | build/tileset_layouts
 	@echo "Copying $< to $@..."
 	@cp $< $@
-build/tileset_layouts/%.cmp: precompressed/tileset_layouts/$(GAME)/%.cmp $(CMP_MODE) | build/tileset_layouts
+build/tileset_layouts/%.cmp: precompressed/tileset_layouts/$(GAME)/%.cmp | build/tileset_layouts
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
-build/rooms/room%.cmp: precompressed/rooms/$(GAME)/room%.cmp $(CMP_MODE) | build/rooms
+build/rooms/room%.cmp: precompressed/rooms/$(GAME)/room%.cmp | build/rooms
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
 # Precompressed graphics (from either game)
-build/gfx/%.cmp: precompressed/gfx_compressible/%.cmp $(CMP_MODE) | build/gfx
+build/gfx/%.cmp: precompressed/gfx_compressible/%.cmp | build/gfx
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
 # Precompressed graphics (from a particular game)
-build/gfx/%.cmp: precompressed/gfx_compressible/$(GAME)/%.cmp $(CMP_MODE) | build/gfx
+build/gfx/%.cmp: precompressed/gfx_compressible/$(GAME)/%.cmp | build/gfx
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
-build/textData.s: precompressed/text/$(GAME)/textData.s $(CMP_MODE) | build
+build/textData.s: precompressed/text/$(GAME)/textData.s | build
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
-build/textDefines.s: precompressed/text/$(GAME)/textDefines.s $(CMP_MODE) | build
+build/textDefines.s: precompressed/text/$(GAME)/textDefines.s | build
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
@@ -237,41 +216,41 @@ build/tileset_layouts/tileMappingAttributeData.bin: build/tileset_layouts/mappin
 
 # mappingsUpdated is a stub file which is just used as a timestamp from the
 # last time parseTilesetLayouts was run.
-build/tileset_layouts/mappingsUpdated: $(wildcard tileset_layouts/$(GAME)/tilesetMappings*.bin) $(CMP_MODE) | build/tileset_layouts
+build/tileset_layouts/mappingsUpdated: $(wildcard tileset_layouts/$(GAME)/tilesetMappings*.bin) | build/tileset_layouts
 	@echo "Compressing tileset mappings..."
 	@$(PYTHON) tools/build/parseTilesetLayouts.py $(GAME)
 	@echo "Done compressing tileset mappings."
 	@touch $@
 
-build/tileset_layouts/tilesetMappings%Indices.cmp: build/tileset_layouts/tilesetMappings%Indices.bin build/tileset_layouts/mappingsDictionary.bin $(CMP_MODE) | build/tileset_layouts
+build/tileset_layouts/tilesetMappings%Indices.cmp: build/tileset_layouts/tilesetMappings%Indices.bin build/tileset_layouts/mappingsDictionary.bin | build/tileset_layouts
 	@echo "Compressing $< to $@..."
 	@$(PYTHON) tools/build/compressTilesetLayoutData.py $< $@ 1 build/tileset_layouts/mappingsDictionary.bin
 
-build/tileset_layouts/tilesetCollisions%.cmp: tileset_layouts/$(GAME)/tilesetCollisions%.bin build/tileset_layouts/collisionsDictionary.bin $(CMP_MODE) | build/tileset_layouts
+build/tileset_layouts/tilesetCollisions%.cmp: tileset_layouts/$(GAME)/tilesetCollisions%.bin build/tileset_layouts/collisionsDictionary.bin | build/tileset_layouts
 	@echo "Compressing $< to $@..."
 	@$(PYTHON) tools/build/compressTilesetLayoutData.py $< $@ 0 build/tileset_layouts/collisionsDictionary.bin
 
-build/rooms/room04%.cmp: rooms/$(GAME)/large/room04%.bin $(CMP_MODE) | build/rooms
+build/rooms/room04%.cmp: rooms/$(GAME)/large/room04%.bin | build/rooms
 	@echo "Compressing $< to $@..."
 	@$(PYTHON) tools/build/compressRoomLayout.py $< $@ -d rooms/$(GAME)/dictionary4.bin
-build/rooms/room05%.cmp: rooms/$(GAME)/large/room05%.bin $(CMP_MODE) | build/rooms
+build/rooms/room05%.cmp: rooms/$(GAME)/large/room05%.bin | build/rooms
 	@echo "Compressing $< to $@..."
 	@$(PYTHON) tools/build/compressRoomLayout.py $< $@ -d rooms/$(GAME)/dictionary5.bin
-build/rooms/room06%.cmp: rooms/$(GAME)/large/room06%.bin $(CMP_MODE) | build/rooms
+build/rooms/room06%.cmp: rooms/$(GAME)/large/room06%.bin | build/rooms
 	@echo "Compressing $< to $@..."
 	@$(PYTHON) tools/build/compressRoomLayout.py $< $@ -d rooms/$(GAME)/dictionary6.bin
 
 # Compress graphics (from either game)
-build/gfx/%.cmp: gfx_compressible/%.bin $(CMP_MODE) | build/gfx
+build/gfx/%.cmp: gfx_compressible/%.bin | build/gfx
 	@echo "Compressing $< to $@..."
 	@$(PYTHON) tools/build/compressGfx.py $< $@
 
 # Compress graphics (from a particular game)
-build/gfx/%.cmp: gfx_compressible/$(GAME)/%.bin $(CMP_MODE) | build/gfx
+build/gfx/%.cmp: gfx_compressible/$(GAME)/%.bin | build/gfx
 	@echo "Compressing $< to $@..."
 	@$(PYTHON) tools/build/compressGfx.py $< $@
 
-build/textData.s: text/$(GAME)/text.yaml text/$(GAME)/dict.yaml tools/build/parseText.py $(CMP_MODE) | build
+build/textData.s: text/$(GAME)/text.yaml text/$(GAME)/dict.yaml tools/build/parseText.py | build
 	@echo "Compressing text..."
 	@$(PYTHON) tools/build/parseText.py text/$(GAME)/dict.yaml $< $@ $$(($(TEXT_INSERT_ADDRESS)))
 
@@ -294,7 +273,7 @@ build/doc: | build
 	mkdir build/doc
 
 clean:
-	-rm -R build_ages/ build_seasons/ doc/ ages.gbc seasons.gbc
+	-rm -R build_ages_v/ build_ages_e/ build_seasons_v/ build_seasons_e/ doc/ ages.gbc seasons.gbc
 
 run: ages
 	$(GBEMU) ages.gbc 2>/dev/null
