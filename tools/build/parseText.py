@@ -663,8 +663,8 @@ def parseTextFile(textFile, isDictionary):
         groupTextDataSize = 0
         for textStruct in textGroup.textStructs:
             if totalTextDataSize >= 0x10000:
-                print(hex(textGroup.index)) # Debugging
-                print(textStruct.getPrimaryName())
+                #print(hex(textGroup.index)) # Debugging
+                #print(textStruct.getPrimaryName())
                 if textOffsetSplitIndex != 0xff:
                     raise Exception("Too much text; Drenn needs to add 2nd textOffsetSplitIndex to parser")
                 textOffsetSplitIndex = textGroup.index
