@@ -6,7 +6,7 @@ from common import *
 
 if len(sys.argv) < 3:
     print('Usage: ' + sys.argv[0] + ' gfxFile outFile')
-    sys.exit()
+    sys.exit(1)
 
 
 def mode3FindLastBasePos(compressedData):

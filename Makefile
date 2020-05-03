@@ -54,12 +54,13 @@ endif
 
 OBJS = build/$(GAME).o build/audio.o
 
-GFXFILES = $(wildcard gfx/*.bin)
-GFXFILES += $(wildcard gfx/$(GAME)/*.bin)
-GFXFILES += $(wildcard gfx_compressible/*.bin)
-GFXFILES += $(wildcard gfx_compressible/$(GAME)/*.bin)
-GFXFILES := $(GFXFILES:.bin=.cmp)
-GFXFILES := $(foreach file,$(GFXFILES),build/gfx/$(notdir $(file)))
+
+UNCMP_GFX_FILES  = $(shell find gfx/              -name '*.bin' -or -name '*.png' | grep -v '/$(OTHERGAME)/')
+CMP_GFX_FILES    = $(shell find gfx_compressible/ -name '*.bin' -or -name '*.png' | grep -v '/$(OTHERGAME)/')
+PRECMP_GFX_FILES = $(shell find precompressed/gfx_compressible/ -name '*.cmp' -or -name '*.png' | grep -v '/$(OTHERGAME)/')
+
+GFXFILES := $(foreach file,$(CMP_GFX_FILES) $(UNCMP_GFX_FILES),build/gfx/$(notdir $(file)))
+GFXFILES := $(foreach file,$(GFXFILES),$(basename $(file)).cmp)
 
 ROOMLAYOUTFILES = $(wildcard rooms/$(GAME)/small/*.bin)
 ROOMLAYOUTFILES += $(wildcard rooms/$(GAME)/large/*.bin)
@@ -90,7 +91,9 @@ OPTIMIZE := -o
 endif
 
 
-.PRECIOUS: build/%.o
+# Removal of temporary files is annoying, disable it.
+.SECONDARY:
+
 .PHONY: all ages seasons clean run force
 
 
@@ -145,18 +148,6 @@ build/rooms/%.cmp: rooms/$(GAME)/small/%.bin | build/rooms
 	@echo "Compressing $< to $@..."
 	@$(PYTHON) tools/build/compressRoomLayout.py $< $@ $(OPTIMIZE)
 
-# Uncompressed graphics (from either game)
-build/gfx/%.cmp: gfx/%.bin | build/gfx
-	@echo "Copying $< to $@..."
-	@dd if=/dev/zero bs=1 count=1 of=$@ 2>/dev/null
-	@cat $< >> $@
-
-# Uncompressed graphics (from a particular game)
-build/gfx/%.cmp: gfx/$(GAME)/%.bin | build/gfx
-	@echo "Copying $< to $@..."
-	@dd if=/dev/zero bs=1 count=1 of=$@ 2>/dev/null
-	@cat $< >> $@
-
 build/tileset_layouts/collisionsDictionary.bin: precompressed/tileset_layouts/$(GAME)/collisionsDictionary.bin | build/tileset_layouts
 	@echo "Copying $< to $@..."
 	@cp $< $@
@@ -166,6 +157,57 @@ build/tileset_layouts/collisionsDictionary.bin: precompressed/tileset_layouts/$(
 build/data/%.s: data/$(GAME)/%.s | build/data
 	@echo "Copying $< to $@..."
 	@cp $< $@
+
+
+
+# GFX rules
+# ================================================================================
+
+# I'm using defines and 'eval'ing them due to difficulties constructing rules when the source
+# graphics file could be in any number of locations. Kind of ugly, but it works.
+
+
+# Rules for copying GFX files to build/gfx directory
+define define_copy_gfx_rules
+build/gfx/$(notdir $(1)): $(1) | build/gfx
+	@cp $$< $$@
+	@echo "Copying $$< to build/gfx/..."
+endef
+
+# Rules for handling uncompressible files
+define define_uncmp_gfx_rules
+build/gfx/$(basename $(notdir $(1))).cmp: build/gfx/$(basename $(notdir $(1))).bin
+	@dd if=/dev/zero bs=1 count=1 of=$$@ 2>/dev/null
+	@cat $$< >> $$@
+endef
+
+# Rules for handling compressible files
+define define_cmp_gfx_rules
+build/gfx/$(basename $(notdir $(1))).cmp: build/gfx/$(basename $(notdir $(1))).bin
+	@echo "Compressing $$<..."
+	@$(PYTHON) tools/build/compressGfx.py $$< $$@
+endef
+
+# Define the gfx rules for the files which need them
+$(foreach filename,$(UNCMP_GFX_FILES),$(eval $(call define_copy_gfx_rules,$(filename))))
+$(foreach filename,$(UNCMP_GFX_FILES),$(eval $(call define_uncmp_gfx_rules,$(filename))))
+
+ifeq ($(BUILD_VANILLA),true)
+
+# Copy precompressed gfx files to build/gfx
+$(foreach filename,$(PRECMP_GFX_FILES),$(eval $(call define_copy_gfx_rules,$(filename))))
+
+else
+
+# Copy compressible gfx files to build/gfx
+$(foreach filename,$(CMP_GFX_FILES),$(eval $(call define_copy_gfx_rules,$(filename))))
+# Define rules for compression of these files
+$(foreach filename,$(CMP_GFX_FILES),$(eval $(call define_cmp_gfx_rules,$(filename))))
+
+endif
+
+
+# ================================================================================
 
 
 ifeq ($(BUILD_VANILLA),true)
@@ -178,16 +220,6 @@ build/tileset_layouts/%.cmp: precompressed/tileset_layouts/$(GAME)/%.cmp | build
 	@cp $< $@
 
 build/rooms/room%.cmp: precompressed/rooms/$(GAME)/room%.cmp | build/rooms
-	@echo "Copying $< to $@..."
-	@cp $< $@
-
-# Precompressed graphics (from either game)
-build/gfx/%.cmp: precompressed/gfx_compressible/%.cmp | build/gfx
-	@echo "Copying $< to $@..."
-	@cp $< $@
-
-# Precompressed graphics (from a particular game)
-build/gfx/%.cmp: precompressed/gfx_compressible/$(GAME)/%.cmp | build/gfx
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
@@ -240,16 +272,7 @@ build/rooms/room06%.cmp: rooms/$(GAME)/large/room06%.bin | build/rooms
 	@echo "Compressing $< to $@..."
 	@$(PYTHON) tools/build/compressRoomLayout.py $< $@ -d rooms/$(GAME)/dictionary6.bin
 
-# Compress graphics (from either game)
-build/gfx/%.cmp: gfx_compressible/%.bin | build/gfx
-	@echo "Compressing $< to $@..."
-	@$(PYTHON) tools/build/compressGfx.py $< $@
-
-# Compress graphics (from a particular game)
-build/gfx/%.cmp: gfx_compressible/$(GAME)/%.bin | build/gfx
-	@echo "Compressing $< to $@..."
-	@$(PYTHON) tools/build/compressGfx.py $< $@
-
+# Parse & compress text
 build/textData.s: text/$(GAME)/text.yaml text/$(GAME)/dict.yaml tools/build/parseText.py | build
 	@echo "Compressing text..."
 	@$(PYTHON) tools/build/parseText.py text/$(GAME)/dict.yaml $< $@ $$(($(TEXT_INSERT_ADDRESS)))
