@@ -903,7 +903,7 @@ script49fb:
 	showtextlowindex $3e
 	jumpifobjectbyteeq $76, $01, script4a08
 	showtextlowindex $3b
-	asm15 scriptHlp.seasonsFunc_15_490f
+	asm15 scriptHlp.vasu_giveRingBox
 	wait 1
 script4a08:
 	setdisabledobjectsto11
@@ -918,21 +918,21 @@ script4a0e:
 script4a16:
 	jumpifobjectbyteeq $76, $01, script4a23
 	showtextlowindex $3b
-	asm15 scriptHlp.seasonsFunc_15_490f
+	asm15 scriptHlp.vasu_giveRingBox
 	wait 1
 	setdisabledobjectsto11
 	checktext
 script4a23:
 	showtextlowindex $3f
-	asm15 scriptHlp.seasonsFunc_15_49a6
+	asm15 scriptHlp.vasu_giveFriendshipRing
 	wait 1
 	setdisabledobjectsto11
 	checktext
 	showtextlowindex $33
-	asm15 scriptHlp.seasonsFunc_15_4927, $00
+	asm15 scriptHlp.vasu_openRingMenu, $00
 	wait 10
 	showtextlowindex $13
-	asm15 scriptHlp.seasonsFunc_15_4927, $01
+	asm15 scriptHlp.vasu_openRingMenu, $01
 	wait 10
 	showtextlowindex $08
 script4a3b:
@@ -941,7 +941,7 @@ script4a3b:
 	enableinput
 	jump2byte script49e6
 script4a44:
-	asm15 scriptHlp.seasonsFunc_15_496b
+	asm15 scriptHlp.vasu_checkEarnedSpecialRing
 	jumptable_objectbyte $7b
 	.dw script4a51
 	.dw script4a55
@@ -957,7 +957,7 @@ script4a59:
 	showtextlowindex $39
 script4a5b:
 	checktext
-	asm15 scriptHlp.seasonsFunc_15_49ae
+	asm15 scriptHlp.vasu_giveRingInVar3a
 	jump2byte script49e6
 script4a61:
 	showtextnonexitablelowindex $03
@@ -968,11 +968,11 @@ script4a61:
 	jump2byte script49e6
 script4a70:
 	jumpifobjectbyteeq $77, $00, script4a98
-	asm15 scriptHlp.seasonsFunc_15_4927, $00
+	asm15 scriptHlp.vasu_openRingMenu, $00
 	jump2byte script4a84
 script4a7b:
 	jumpifobjectbyteeq $78, $00, script4a9c
-	asm15 scriptHlp.seasonsFunc_15_4927, $01
+	asm15 scriptHlp.vasu_openRingMenu, $01
 script4a84:
 	wait 10
 	jumpifglobalflagset $09, script4a8e
@@ -983,7 +983,7 @@ script4a8e:
 	showtextlowindex $38
 	checktext
 	setglobalflag $89
-	asm15 scriptHlp.seasonsFunc_15_49aa
+	asm15 scriptHlp.vasu_giveHundredthRing
 	jump2byte script49e6
 script4a98:
 	showtextlowindex $14
@@ -1018,7 +1018,7 @@ script4aca:
 	jumpiftextoptioneq $02, script4ad6
 script4ad0:
 	setdisabledobjectsto11
-	asm15 scriptHlp.seasonsFunc_15_4944
+	asm15 scriptHlp.blueSnake_linkOrFortune
 	wait 1
 	scriptend
 script4ad6:
@@ -1037,13 +1037,13 @@ script4ae2:
 	showtextnonexitablelowindex $18
 	jumpiftextoptioneq $02, script4b04
 	jumpiftextoptioneq $00, script4af7
-	asm15 scriptHlp.seasonsFunc_15_4939
+	asm15 scriptHlp.redSnake_generateRingSecret
 script4aef:
 	showtextnonexitablelowindex $1d
 	jumpiftextoptioneq $00, script4aef
 	jump2byte script4b04
 script4af7:
-	asm15 scriptHlp.seasonsFunc_15_4934
+	asm15 scriptHlp.redSnake_openSecretInputMenu
 	wait 1
 	jumpifmemoryeq $cca3, $00, script4b07
 	showtextlowindex $1e
@@ -1057,7 +1057,7 @@ script4b07:
 script4b0a:
 	setdisabledobjectsto11
 	showtextlowindex $23
-	asm15 scriptHlp.seasonsFunc_15_49ae
+	asm15 scriptHlp.vasu_giveRingInVar3a
 	wait 1
 	checktext
 	enableallobjects
@@ -1069,7 +1069,7 @@ script4b17:
 	wait 30
 	showtext TX_550d
 	jumpiftextoptioneq $00, script4b28
-	asm15 scriptHlp.seasonsFunc_15_49b7
+	asm15 scriptHlp.gameCompleteDialog_markGameAsComplete
 	asm15 saveFile
 	wait 30
 	jump2byte script4b30

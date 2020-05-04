@@ -1,5 +1,140 @@
+; ==============================================================================
+; INTERACID_BOMB_FLOWER
+; ==============================================================================
 interactionCode6f:
+.ifdef ROM_AGES
 	jp interactionDelete		; $4000
+.else
+	ld e,Interaction.subid		; $4340
+	ld a,(de)		; $4342
+	rst_jumpTable			; $4343
+	.dw _bomb_flower_subid0
+	.dw _bomb_flower_subid1
+
+_bomb_flower_subid0:
+	ld e,Interaction.state		; $4348
+	ld a,(de)		; $434a
+	rst_jumpTable			; $434b
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
+	ld a,$01		; $4352
+	ld (de),a		; $4354
+
+	call getThisRoomFlags		; $4355
+	bit 5,(hl)		; $4358
+	jr nz,+			; $435a
+
+	ld a,TREASURE_BOMB_FLOWER		; $435c
+	call checkTreasureObtained		; $435e
+	jr c,+			; $4361
+
+	ld a,$04		; $4363
+	call objectSetCollideRadius		; $4365
+	call interactionInitGraphics		; $4368
+	jp objectSetVisible82		; $436b
++
+	jp interactionDelete		; $436e
+
+@state1:
+	call objectGetTileAtPosition		; $4371
+	ld (hl),$00		; $4374
+	call objectPreventLinkFromPassing		; $4376
+	jp objectAddToGrabbableObjectBuffer		; $4379
+
+@state2:
+	ld e,Interaction.state2		; $437c
+	ld a,(de)		; $437e
+	rst_jumpTable			; $437f
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+
+@substate0:
+	call interactionIncState2		; $4388
+	ld a,$1c		; $438b
+	ld (wDisabledObjects),a		; $438d
+	xor a			; $4390
+	ld (wLinkGrabState2),a		; $4391
+	call interactionSetAnimation		; $4394
+	call objectSetVisible81		; $4397
+	call objectGetShortPosition		; $439a
+	ld c,a			; $439d
+	ld a,TILEINDEX_DUG_HOLE		; $439e
+	jp setTile		; $43a0
+
+@substate1:
+	ld a,(wLinkGrabState)		; $43a3
+	cp $83			; $43a6
+	ret nz			; $43a8
+
+	ld a,(wLinkDeathTrigger)		; $43a9
+	or a			; $43ac
+	ret nz			; $43ad
+
+	ld a,$81		; $43ae
+	ld (wDisabledObjects),a		; $43b0
+	ld (wMenuDisabled),a		; $43b3
+	call dropLinkHeldItem		; $43b6
+
+	ld e,Interaction.state2		; $43b9
+	ld a,$02		; $43bb
+	ld (de),a		; $43bd
+
+	call getThisRoomFlags		; $43be
+	set 5,(hl)		; $43c1
+	ld a,LINK_STATE_04		; $43c3
+	ld (wLinkForceState),a		; $43c5
+	ld a,$01		; $43c8
+	ld (wcc50),a		; $43ca
+	ld bc,TX_003c		; $43cd
+	call showText		; $43d0
+	ld a,TREASURE_BOMB_FLOWER		; $43d3
+	jp giveTreasure		; $43d5
+
+@substate2:
+@substate3:
+	call retIfTextIsActive		; $43d8
+	xor a			; $43db
+	ld (wDisabledObjects),a		; $43dc
+	ld (wMenuDisabled),a		; $43df
+	call updateLinkLocalRespawnPosition		; $43e2
+	jp interactionDelete		; $43e5
+
+_bomb_flower_subid1:
+	ld e,Interaction.state		; $43e8
+	ld a,(de)		; $43ea
+	rst_jumpTable			; $43eb
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+
+@state0:
+	ld a,$01		; $43f4
+	ld (de),a		; $43f6
+
+	ld hl,bombflower_unblockAutumnTemple		; $43f7
+	call interactionSetScript		; $43fa
+	call interactionInitGraphics		; $43fd
+	xor a			; $4400
+	call interactionSetAnimation		; $4401
+	jp objectSetVisible82		; $4404
+
+@state2:
+	call interactionAnimate		; $4407
+
+@state1:
+	call interactionAnimate		; $440a
+	jp interactionRunScript		; $440d
+
+@state3:
+	call objectSetInvisible		; $4410
+	jp interactionRunScript		; $4413
+.endif
 
 
 ; ==============================================================================
@@ -535,7 +670,6 @@ interactionCode7a:
 	jp objectPreventLinkFromPassing		; $42a9
 
 
-
 ; ==============================================================================
 ; INTERACID_SPINNER
 ;
@@ -900,6 +1034,9 @@ interactionCode7e:
 	rst_jumpTable			; $4455
 	.dw @subid00
 	.dw @subid01
+.ifdef ROM_SEASONS
+	.dw @subid02
+.endif
 
 
 ; Subid $00: miniboss portals
@@ -1028,6 +1165,7 @@ interactionCode7e:
 ; is the dungeon entrance (the two locations of the portal).
 ; If bit 7 is set in the miniboss room's flags, the portal is enabled.
 @dungeonRoomTable:
+.ifdef ROM_AGES
 	.db $01 $04
 	.db $18 $24
 	.db $34 $46
@@ -1037,6 +1175,17 @@ interactionCode7e:
 	.db $12 $26
 	.db $4d $56
 	.db $82 $aa
+.else
+	.db $01 $01
+	.db $0b $15
+	.db $21 $39
+	.db $48 $4b
+	.db $6a $81
+	.db $a2 $a7
+	.db $c8 $ba
+	.db $42 $5b
+	.db $72 $87
+.endif
 
 
 @spinLink:
@@ -1068,6 +1217,7 @@ interactionCode7e:
 	.dw @herosCaveState3
 
 @herosCaveState0:
+.ifdef ROM_AGES
 	call interactionDeleteAndRetIfEnabled02		; $4542
 	ld e,Interaction.xh		; $4545
 	ld a,(de)		; $4547
@@ -1084,12 +1234,18 @@ interactionCode7e:
 	ld l,e			; $4558
 	ld a,(de)		; $4559
 	call setShortPosition		; $455a
+.else
+	ld a,(wc64a)		; $4957
+	or a			; $495a
+	jp z,interactionDelete		; $495b
+.endif
 	jp @commonState0		; $455d
 
 @herosCaveState3:
 	call @spinLink		; $4560
 	ret nz			; $4563
 
+.ifdef ROM_AGES
 	; Initiate the warp
 	ld e,Interaction.var03		; $4564
 	ld a,(de)		; $4566
@@ -1098,6 +1254,30 @@ interactionCode7e:
 	ld a,$84		; $456c
 	ld (wWarpDestGroup),a		; $456e
 	ret			; $4571
+.else
+	ld a,(wc64a)		; $4965
+	jr @initHerosCaveWarp		; $4968
+
+@subid02:
+	ld e,Interaction.state		; $496a
+	ld a,(de)		; $496c
+	rst_jumpTable			; $496d
+	.dw @herosCave2State0
+	.dw @state1
+	.dw @state2
+	.dw @herosCave2State3
+
+@herosCave2State0:
+	call getThisRoomFlags		; $4976
+	and $20			; $4979
+	jp z,interactionDelete		; $497b
+	jp @commonState0		; $497e
+
+@herosCave2State3:
+	call @spinLink		; $4981
+	ret nz			; $4984
+	xor a			; $4985
+.endif
 
 @initHerosCaveWarp:
 	ld hl,@herosCaveWarps		; $4572
@@ -1118,6 +1298,7 @@ interactionCode7e:
 ; Each row corresponds to a value for bits 0-3 of "X" (later var03).
 ; First byte is "wWarpDestRoom" (room index), second is "wWarpDestPos".
 @herosCaveWarps:
+.ifdef ROM_AGES
 	.db $c2 $11
 	.db $c3 $2c
 	.db $c4 $11
@@ -1126,6 +1307,14 @@ interactionCode7e:
 	.db $c9 $86
 	.db $ce $57
 	.db $cf $91
+.else
+	.db $30 $37
+	.db $31 $9d
+	.db $2f $95
+	.db $28 $59
+	.db $24 $57
+	.db $34 $17
+.endif
 
 
 ; ==============================================================================

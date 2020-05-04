@@ -262,6 +262,76 @@ shopkeeper_take10Rupees:
 	jp removeRupeeValue		; $411e
 
 
+.ifdef ROM_SEASONS
+;;
+; Located elsewhere in Ages
+; @param	d	Interaction index (should be of type INTERACID_TREASURE)
+; @addr{451e}
+interactionLoadTreasureData:
+	ld e,Interaction.subid	; $451e
+	ld a,(de)		; $4520
+	ld e,Interaction.var30		; $4521
+	ld (de),a		; $4523
+	ld hl,treasureObjectData		; $4524
+--
+	call multiplyABy4		; $4527
+	add hl,bc		; $452a
+	bit 7,(hl)		; $452b
+	jr z,+			; $452d
+
+	inc hl			; $452f
+	ldi a,(hl)		; $4530
+	ld h,(hl)		; $4531
+	ld l,a			; $4532
+	ld e,Interaction.var03		; $4533
+	ld a,(de)		; $4535
+	jr --			; $4536
++
+	; var31 = spawn mode
+	ldi a,(hl)		; $4538
+	ld b,a			; $4539
+	swap a			; $453a
+	and $07			; $453c
+	ld e,Interaction.var31		; $453e
+	ld (de),a		; $4540
+
+	; var32 = collect mode
+	ld a,b			; $4541
+	and $07			; $4542
+	inc e			; $4544
+	ld (de),a		; $4545
+
+	; var33 = ?
+	ld a,b			; $4546
+	and $08			; $4547
+	inc e			; $4549
+	ld (de),a		; $454a
+
+	; var34 = parameter (value of 'c' for "giveTreasure")
+	ldi a,(hl)		; $454b
+	inc e			; $454c
+	ld (de),a		; $454d
+
+	; var35 = low text ID
+	ldi a,(hl)		; $454e
+	inc e			; $454f
+	ld (de),a		; $4550
+
+	; subid = graphics to use
+	ldi a,(hl)		; $4551
+	ld e,Interaction.subid		; $4552
+	ld (de),a		; $4554
+	ret			; $4555
+
+
+createBossDeathExplosion:
+	call getFreePartSlot		; $4677
+	ret nz			; $467a
+	ld (hl),PARTID_BOSS_DEATH_EXPLOSION		; $467b
+	jp objectCopyPosition		; $467d
+.endif
+
+
 ; ==============================================================================
 ; INTERACID_MOVING_PLATFORM
 ; ==============================================================================
@@ -276,7 +346,11 @@ movingPlatform_loadScript:
 	jr nz,@inDungeon	; $4126
 
 	; Not in dungeon
+.ifdef ROM_AGES
 	ld hl,_movingPlatform_scriptTable		; $4128
+.else
+	ld hl,_movingPlatform_nonDungeonScriptTable
+.endif
 	jr @loadScript		; $412b
 
 @inDungeon:
@@ -736,10 +810,12 @@ gameCompleteDialog_markGameAsComplete:
 	ld (wMapleKillCounter),a		; $42ff
 	inc a			; $4302
 	ld (wFileIsCompleted),a		; $4303
+.ifdef ROM_AGES
 	ld a,<TX_051c		; $4306
 	ld (wMakuMapTextPresent),a		; $4308
 	ld a,<TX_058c		; $430b
 	ld (wMakuMapTextPast),a		; $430d
+.endif
 	ld a,GLOBALFLAG_FINISHEDGAME		; $4310
 	jp setGlobalFlag		; $4312
 

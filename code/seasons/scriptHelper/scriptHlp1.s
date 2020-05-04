@@ -261,7 +261,10 @@ shopkeeper_take10Rupees:
 	ld a,RUPEEVAL_10		; $411c
 	jp removeRupeeValue		; $411e
 
+
+.ifdef ROM_SEASONS
 ;;
+; Located elsewhere in Ages
 ; @param	d	Interaction index (should be of type INTERACID_TREASURE)
 ; @addr{451e}
 interactionLoadTreasureData:
@@ -326,667 +329,726 @@ createBossDeathExplosion:
 	ret nz			; $467a
 	ld (hl),PARTID_BOSS_DEATH_EXPLOSION		; $467b
 	jp objectCopyPosition		; $467d
+.endif
 
 
-seasonsFunc_15_4680:
-	ld a,(wDungeonIndex)		; $4680
-	ld b,a			; $4683
-	inc a			; $4684
-	jr nz,+			; $4685
-	ld hl,seasonsTable_15_471d		; $4687
-	jr ++			; $468a
-+
-	ld a,b			; $468c
-	ld hl,seasonsTable_15_4723		; $468d
-	rst_addDoubleIndex			; $4690
-	ldi a,(hl)		; $4691
-	ld h,(hl)		; $4692
-	ld l,a			; $4693
-++
-	ld e,$72		; $4694
-	ld a,(de)		; $4696
-	rst_addDoubleIndex			; $4697
-	ldi a,(hl)		; $4698
-	ld h,(hl)		; $4699
-	ld l,a			; $469a
-	jr seasonsFunc_15_4715		; $469b
-	ld e,Interaction.relatedObj2		; $469d
-	ld a,(de)		; $469f
-	ld l,a			; $46a0
-	inc e			; $46a1
-	ld a,(de)		; $46a2
-	ld h,a			; $46a3
-seasonsFunc_15_46a4:
-	ldi a,(hl)		; $46a4
-	push hl			; $46a5
-	rst_jumpTable			; $46a6
-	.dw seasonsFunc_15_46bf
-	.dw seasonsFunc_15_46ca
-	.dw seasonsFunc_15_46d6
-	.dw seasonsFunc_15_46dd
-	.dw seasonsFunc_15_46e4
-	.dw seasonsFunc_15_46ec
-	.dw seasonsFunc_15_46bf
-	.dw seasonsFunc_15_46bf
-	.dw seasonsFunc_15_4702
-	.dw seasonsFunc_15_4706
-	.dw seasonsFunc_15_470a
-	.dw seasonsFunc_15_470e
+; ==============================================================================
+; INTERACID_MOVING_PLATFORM
+; ==============================================================================
 
-seasonsFunc_15_46bf:
-	pop hl			; $46bf
-	ldi a,(hl)		; $46c0
-	ld e,$46		; $46c1
-	ld (de),a		; $46c3
-	ld e,$45		; $46c4
-	xor a			; $46c6
-	ld (de),a		; $46c7
-	jr seasonsFunc_15_4715		; $46c8
+;;
+; The moving platform has a custom "script format".
+; @addr{4121}
+movingPlatform_loadScript:
+	ld a,(wDungeonIndex)		; $4121
+	ld b,a			; $4124
+	inc a			; $4125
+	jr nz,@inDungeon	; $4126
 
-seasonsFunc_15_46ca:
-	pop hl			; $46ca
-	ldi a,(hl)		; $46cb
-	ld e,$46		; $46cc
-	ld (de),a		; $46ce
-	ld e,$45		; $46cf
-	ld a,$01		; $46d1
-	ld (de),a		; $46d3
-	jr seasonsFunc_15_4715		; $46d4
+	; Not in dungeon
+.ifdef ROM_AGES
+	ld hl,_movingPlatform_scriptTable		; $4128
+.else
+	ld hl,_movingPlatform_nonDungeonScriptTable
+.endif
+	jr @loadScript		; $412b
 
-seasonsFunc_15_46d6:
-	pop hl			; $46d6
-	ldi a,(hl)		; $46d7
-	ld e,$49		; $46d8
-	ld (de),a		; $46da
-	jr seasonsFunc_15_46a4		; $46db
+@inDungeon:
+	ld a,b			; $412d
+	ld hl,_movingPlatform_scriptTable		; $412e
+	rst_addDoubleIndex			; $4131
+	ldi a,(hl)		; $4132
+	ld h,(hl)		; $4133
+	ld l,a			; $4134
 
-seasonsFunc_15_46dd:
-	pop hl			; $46dd
-	ldi a,(hl)		; $46de
-	ld e,$50		; $46df
-	ld (de),a		; $46e1
-	jr seasonsFunc_15_46a4		; $46e2
+@loadScript:
+	ld e,Interaction.var32		; $4135
+	ld a,(de)		; $4137
+	rst_addDoubleIndex			; $4138
+	ldi a,(hl)		; $4139
+	ld h,(hl)		; $413a
+	ld l,a			; $413b
+	jr _movingPlatform_setScript		; $413c
 
-seasonsFunc_15_46e4:
-	pop hl			; $46e4
-	ld a,(hl)		; $46e5
-	call s8ToS16		; $46e6
-	add hl,bc		; $46e9
-	jr seasonsFunc_15_46a4		; $46ea
+movingPlatform_runScript:
+	ld e,Interaction.scriptPtr		; $413e
+	ld a,(de)		; $4140
+	ld l,a			; $4141
+	inc e			; $4142
+	ld a,(de)		; $4143
+	ld h,a			; $4144
 
-seasonsFunc_15_46ec:
-	pop hl			; $46ec
-	ld a,($ccb0)		; $46ed
-	cp d			; $46f0
-	jr nz,_label_15_051	; $46f1
-	inc hl			; $46f3
-	jr seasonsFunc_15_46a4		; $46f4
-_label_15_051:
-	dec hl			; $46f6
-	ld a,$01		; $46f7
-	ld e,$46		; $46f9
-	ld (de),a		; $46fb
-	xor a			; $46fc
-	ld e,$45		; $46fd
-	ld (de),a		; $46ff
-	jr seasonsFunc_15_4715		; $4700
+@nextOpcode:
+	ldi a,(hl)		; $4145
+	push hl			; $4146
+	rst_jumpTable			; $4147
+	.dw @opcode00
+	.dw @opcode01
+	.dw @opcode02
+	.dw @opcode03
+	.dw @opcode04
+	.dw @opcode05
+	.dw @opcode06
+	.dw @opcode07
+	.dw @opcode08
+	.dw @opcode09
+	.dw @opcode0a
+	.dw @opcode0b
 
-seasonsFunc_15_4702:
-	ld a,$00		; $4702
-	jr _label_15_052		; $4704
+; Wait for the given number of frames
+@opcode00:
+@opcode06:
+@opcode07:
+	pop hl			; $4160
+	ldi a,(hl)		; $4161
+	ld e,Interaction.counter1		; $4162
+	ld (de),a		; $4164
+	ld e,Interaction.state2		; $4165
+	xor a			; $4167
+	ld (de),a		; $4168
+	jr _movingPlatform_setScript		; $4169
 
-seasonsFunc_15_4706:
-	ld a,$08		; $4706
-	jr _label_15_052		; $4708
+; Move at the current angle for the given number of frames
+@opcode01:
+	pop hl			; $416b
+	ldi a,(hl)		; $416c
+	ld e,Interaction.counter1		; $416d
+	ld (de),a		; $416f
+	ld e,Interaction.state2		; $4170
+	ld a,$01		; $4172
+	ld (de),a		; $4174
+	jr _movingPlatform_setScript		; $4175
 
-seasonsFunc_15_470a:
-	ld a,$10		; $470a
-	jr _label_15_052		; $470c
+; Set angle
+@opcode02:
+	pop hl			; $4177
+	ldi a,(hl)		; $4178
+	ld e,Interaction.angle		; $4179
+	ld (de),a		; $417b
+	jr @nextOpcode		; $417c
 
-seasonsFunc_15_470e:
-	ld a,$18		; $470e
-_label_15_052:
-	ld e,$49		; $4710
-	ld (de),a		; $4712
-	jr seasonsFunc_15_46ca		; $4713
+; Set speed
+@opcode03:
+	pop hl			; $417e
+	ldi a,(hl)		; $417f
+	ld e,Interaction.speed		; $4180
+	ld (de),a		; $4182
+	jr @nextOpcode		; $4183
 
-seasonsFunc_15_4715:
-	ld e,Interaction.relatedObj2		; $4715
-	ld a,l			; $4717
-	ld (de),a		; $4718
-	inc e			; $4719
-	ld a,h			; $471a
-	ld (de),a		; $471b
-	ret			; $471c
+; Jump somewhere (used for looping)
+@opcode04:
+	pop hl			; $4185
+	ld a,(hl)		; $4186
+	call s8ToS16		; $4187
+	add hl,bc		; $418a
+	jr @nextOpcode		; $418b
 
-seasonsTable_15_471d:
-.DB $d3				; $471d
-	ld c,b			; $471e
-.DB $ed				; $471f
-	ld c,b			; $4720
-	rst $30			; $4721
-	ld c,b			; $4722
+; Hold execution until Link is on
+@opcode05:
+	pop hl			; $418d
+	ld a,(wLinkRidingObject)		; $418e
+	cp d			; $4191
+	jr nz,@@linkNotOn	; $4192
+	inc hl			; $4194
+	jr @nextOpcode		; $4195
 
-seasonsTable_15_4723:
-	dec (hl)		; $4723
-	ld b,a			; $4724
-	dec (hl)		; $4725
-	ld b,a			; $4726
-	dec (hl)		; $4727
-	ld b,a			; $4728
-	and c			; $4729
-	ld b,a			; $472a
-	ret			; $472b
-	ld b,a			; $472c
-	dec (hl)		; $472d
-	ld b,a			; $472e
-	rst $20			; $472f
-	ld b,a			; $4730
-	ld b,c			; $4731
-	ld c,b			; $4732
-	or a			; $4733
-	ld c,b			; $4734
-	ld b,e			; $4735
-	ld b,a			; $4736
-	ld d,c			; $4737
-	ld b,a			; $4738
-	ld e,a			; $4739
-	ld b,a			; $473a
-	ld l,l			; $473b
-	ld b,a			; $473c
-	ld a,l			; $473d
-	ld b,a			; $473e
-	adc c			; $473f
-	ld b,a			; $4740
-	sub l			; $4741
-	ld b,a			; $4742
-	nop			; $4743
-	stop			; $4744
-	dec bc			; $4745
-	ld b,b			; $4746
-	nop			; $4747
-	stop			; $4748
-	add hl,bc		; $4749
-	and b			; $474a
-	nop			; $474b
-	stop			; $474c
-	dec bc			; $474d
-	and b			; $474e
-	inc b			; $474f
-	rst $30			; $4750
-	nop			; $4751
-	stop			; $4752
-	ld ($0040),sp		; $4753
-	stop			; $4756
-	ld a,(bc)		; $4757
-	and b			; $4758
-	nop			; $4759
-	stop			; $475a
-	ld ($04a0),sp		; $475b
-	rst $30			; $475e
-	nop			; $475f
-	stop			; $4760
-	add hl,bc		; $4761
-	ld b,b			; $4762
-	nop			; $4763
-	stop			; $4764
-	dec bc			; $4765
-	and b			; $4766
-	nop			; $4767
-	stop			; $4768
-	add hl,bc		; $4769
-	and b			; $476a
-	inc b			; $476b
-	rst $30			; $476c
-	inc bc			; $476d
-	jr z,_label_15_054	; $476e
-_label_15_054:
-	jr nz,_label_15_055	; $4770
-	ld b,b			; $4772
-	nop			; $4773
-	jr nz,_label_15_056	; $4774
-	ld d,b			; $4776
-	nop			; $4777
-	jr nz,_label_15_057	; $4778
-	ld d,b			; $477a
-	inc b			; $477b
-	rst $30			; $477c
-_label_15_055:
-	add hl,bc		; $477d
-	ret nz			; $477e
-_label_15_056:
-	nop			; $477f
-	stop			; $4780
-	dec bc			; $4781
-	ld ($ff00+$00),a	; $4782
-	stop			; $4784
-_label_15_057:
-	add hl,bc		; $4785
-	ld ($ff00+$04),a	; $4786
-	rst $30			; $4788
-	dec bc			; $4789
-	ld d,b			; $478a
-	nop			; $478b
-	stop			; $478c
-	add hl,bc		; $478d
-	ld ($ff00+$00),a	; $478e
-	stop			; $4790
-	dec bc			; $4791
-	ld ($ff00+$04),a	; $4792
-	rst $30			; $4794
-	add hl,bc		; $4795
-	ld d,b			; $4796
-	nop			; $4797
-	stop			; $4798
-	dec bc			; $4799
-	ld ($ff00+$00),a	; $479a
-	stop			; $479c
-	add hl,bc		; $479d
-	ld ($ff00+$04),a	; $479e
-	rst $30			; $47a0
-	and a			; $47a1
-	ld b,a			; $47a2
-	or e			; $47a3
-	ld b,a			; $47a4
-	cp a			; $47a5
-	ld b,a			; $47a6
-	add hl,bc		; $47a7
-	ld b,b			; $47a8
-	nop			; $47a9
-	jr nz,$0b		; $47aa
-	add b			; $47ac
-	nop			; $47ad
-	jr nz,_label_15_058	; $47ae
-	add b			; $47b0
-	inc b			; $47b1
-	rst $30			; $47b2
-	ld a,(bc)		; $47b3
-	ld h,b			; $47b4
-	nop			; $47b5
-	ld ($c008),sp		; $47b6
-_label_15_058:
-	nop			; $47b9
-	ld ($c00a),sp		; $47ba
-	inc b			; $47bd
-	rst $30			; $47be
-	dec bc			; $47bf
-	ld h,b			; $47c0
-	nop			; $47c1
-	jr nz,_label_15_060	; $47c2
-	ld h,b			; $47c4
-	nop			; $47c5
-	jr nz,_label_15_059	; $47c6
-	rst $30			; $47c8
-	bit 0,a			; $47c9
-	inc bc			; $47cb
-_label_15_059:
-	ld d,b			; $47cc
-_label_15_060:
-	nop			; $47cd
-	inc a			; $47ce
-	dec bc			; $47cf
-	jr nc,_label_15_061	; $47d0
-	jr c,_label_15_063	; $47d2
-	jr z,_label_15_064	; $47d4
-	jr c,$09		; $47d6
-	jr z,_label_15_065	; $47d8
-_label_15_061:
-	jr c,_label_15_066	; $47da
-	jr z,_label_15_062	; $47dc
-_label_15_062:
-	inc a			; $47de
-_label_15_063:
-	ld a,(bc)		; $47df
-_label_15_064:
-	jr _label_15_067		; $47e0
-_label_15_065:
-	ld ($200a),sp		; $47e2
-_label_15_066:
-	inc b			; $47e5
-	rst $20			; $47e6
-	ei			; $47e7
-	ld b,a			; $47e8
-	dec b			; $47e9
-	ld c,b			; $47ea
-_label_15_067:
-	rrca			; $47eb
-	ld c,b			; $47ec
-	rrca			; $47ed
-	ld c,b			; $47ee
-	add hl,de		; $47ef
-	ld c,b			; $47f0
-	inc hl			; $47f1
-	ld c,b			; $47f2
-	dec l			; $47f3
-	ld c,b			; $47f4
-	dec l			; $47f5
-	ld c,b			; $47f6
-	scf			; $47f7
-	ld c,b			; $47f8
-	dec sp			; $47f9
-	ld c,b			; $47fa
-	add hl,bc		; $47fb
-	ld h,b			; $47fc
-	nop			; $47fd
-	stop			; $47fe
-	dec bc			; $47ff
-	ld h,b			; $4800
-	nop			; $4801
-	stop			; $4802
-	inc b			; $4803
-	rst $30			; $4804
-	ld a,(bc)		; $4805
-	add b			; $4806
-	nop			; $4807
-	stop			; $4808
-	ld ($0080),sp		; $4809
-	stop			; $480c
-	inc b			; $480d
-	rst $30			; $480e
-	ld ($0020),sp		; $480f
-	stop			; $4812
-	ld a,(bc)		; $4813
-	jr nz,_label_15_068	; $4814
-_label_15_068:
-	stop			; $4816
-	inc b			; $4817
-	rst $30			; $4818
-	ld (jpHl),sp		; $4819
-	stop			; $481c
-	ld a,(bc)		; $481d
-	and b			; $481e
-	nop			; $481f
-	stop			; $4820
-	inc b			; $4821
-	rst $30			; $4822
-	ld ($00c0),sp		; $4823
-	stop			; $4826
-	ld a,(bc)		; $4827
-	ret nz			; $4828
-	nop			; $4829
-	stop			; $482a
-	inc b			; $482b
-	rst $30			; $482c
-	dec bc			; $482d
-	ld h,b			; $482e
-	nop			; $482f
-	stop			; $4830
-	add hl,bc		; $4831
-	ld h,b			; $4832
-	nop			; $4833
-	stop			; $4834
-	inc b			; $4835
-	rst $30			; $4836
-	ld a,(bc)		; $4837
-	ld ($ff00+$00),a	; $4838
-	stop			; $483a
-	ld ($00e0),sp		; $483b
-	stop			; $483e
-	inc b			; $483f
-	rst $30			; $4840
-	ld c,l			; $4841
-	ld c,b			; $4842
-	ld (hl),c		; $4843
-	ld c,b			; $4844
-	ld a,e			; $4845
-	ld c,b			; $4846
-	adc a			; $4847
-	ld c,b			; $4848
-	sbc e			; $4849
-	ld c,b			; $484a
-	xor l			; $484b
-	ld c,b			; $484c
-	inc bc			; $484d
-	ld d,b			; $484e
-	nop			; $484f
-	inc a			; $4850
-	ld a,(bc)		; $4851
-	jr nz,$0b		; $4852
-	ld c,b			; $4854
-	ld ($0920),sp		; $4855
-	jr _label_15_069		; $4858
-	ld ($1809),sp		; $485a
-	ld ($0018),sp		; $485d
-	jr z,_label_15_070	; $4860
-	jr $0b			; $4862
-_label_15_069:
-	jr $08			; $4864
-	ld (makeActiveObjectFollowLink),sp		; $4866
-	ld a,(bc)		; $4869
-	jr nz,_label_15_071	; $486a
-_label_15_070:
-	ld c,b			; $486c
-	ld ($0420),sp		; $486d
-	rst_addDoubleIndex			; $4870
-	nop			; $4871
-	ld ($8009),sp		; $4872
-_label_15_071:
-	nop			; $4875
-	ld ($800b),sp		; $4876
-	inc b			; $4879
-	rst $30			; $487a
-	inc bc			; $487b
-	ld d,b			; $487c
-	nop			; $487d
-	ld ($380b),sp		; $487e
-	nop			; $4881
-	ld ($3008),sp		; $4882
-	nop			; $4885
-	ld ($3809),sp		; $4886
-	nop			; $4889
-	ld ($300a),sp		; $488a
-	inc b			; $488d
-	rst $28			; $488e
-	ld a,(bc)		; $488f
-	ld h,b			; $4890
-	nop			; $4891
-	ld ($8008),sp		; $4892
-	nop			; $4895
-	ld ($800a),sp		; $4896
-	inc b			; $4899
-	rst $30			; $489a
-	nop			; $489b
-	ld ($a00b),sp		; $489c
-	nop			; $489f
-	ld ($a008),sp		; $48a0
-	nop			; $48a3
-	ld ($a009),sp		; $48a4
-	nop			; $48a7
-	ld ($a00a),sp		; $48a8
-	inc b			; $48ab
-	rst $28			; $48ac
-	nop			; $48ad
-	ld ($8008),sp		; $48ae
-	nop			; $48b1
-	ld ($800a),sp		; $48b2
-	inc b			; $48b5
-	rst $30			; $48b6
-	cp a			; $48b7
-	ld c,b			; $48b8
-	ret			; $48b9
-	ld c,b			; $48ba
-	cp a			; $48bb
-	ld c,b			; $48bc
-	ret			; $48bd
-	ld c,b			; $48be
-	add hl,bc		; $48bf
-	ld ($ff00+$00),a	; $48c0
-	stop			; $48c2
-	dec bc			; $48c3
-	ld ($ff00+$00),a	; $48c4
-	stop			; $48c6
-	inc b			; $48c7
-	rst $30			; $48c8
-	dec bc			; $48c9
-	ld ($ff00+$00),a	; $48ca
-	stop			; $48cc
-	add hl,bc		; $48cd
-	ld ($ff00+$00),a	; $48ce
-	stop			; $48d0
-	inc b			; $48d1
-	rst $30			; $48d2
-	inc bc			; $48d3
-	ld d,b			; $48d4
-	nop			; $48d5
-	inc a			; $48d6
-	dec bc			; $48d7
-	inc e			; $48d8
-	nop			; $48d9
-	rrca			; $48da
-	ld ($0030),sp		; $48db
-	rrca			; $48de
-	add hl,bc		; $48df
-	jr c,_label_15_072	; $48e0
-_label_15_072:
-	rrca			; $48e2
-	ld a,(bc)		; $48e3
-	jr nc,_label_15_073	; $48e4
-_label_15_073:
-	rrca			; $48e6
-	dec bc			; $48e7
-	inc e			; $48e8
-	nop			; $48e9
-	inc a			; $48ea
-	inc b			; $48eb
-	jp hl			; $48ec
-	nop			; $48ed
-	ld ($4009),sp		; $48ee
-	nop			; $48f1
-	ld ($400b),sp		; $48f2
-	inc b			; $48f5
-	rst $30			; $48f6
-	nop			; $48f7
-	ld ($400b),sp		; $48f8
-	nop			; $48fb
-	ld ($4009),sp		; $48fc
-	inc b			; $48ff
-	rst $30			; $4900
+@@linkNotOn:
+	dec hl			; $4197
+	ld a,$01		; $4198
+	ld e,Interaction.counter1		; $419a
+	ld (de),a		; $419c
+	xor a			; $419d
+	ld e,Interaction.state2		; $419e
+	ld (de),a		; $41a0
+	jr _movingPlatform_setScript		; $41a1
 
+; Move up
+@opcode08:
+	ld a,$00		; $41a3
+	jr @moveAtAngle		; $41a5
+
+; Move right
+@opcode09:
+	ld a,$08		; $41a7
+	jr @moveAtAngle		; $41a9
+
+ ; Move down
+@opcode0a:
+	ld a,$10		; $41ab
+	jr @moveAtAngle		; $41ad
+
+ ; Move left
+@opcode0b:
+	ld a,$18		; $41af
+
+@moveAtAngle:
+	ld e,Interaction.angle		; $41b1
+	ld (de),a		; $41b3
+	jr @opcode01		; $41b4
+
+;;
+; @addr{41b6}
+_movingPlatform_setScript:
+	ld e,Interaction.scriptPtr		; $41b6
+	ld a,l			; $41b8
+	ld (de),a		; $41b9
+	inc e			; $41ba
+	ld a,h			; $41bb
+	ld (de),a		; $41bc
+	ret			; $41bd
+
+
+.macro plat_wait
+	.db $00, \1
+.endm
+.macro plat_move
+	.db $01, \1
+.endm
+.macro plat_setangle
+	.db $02, \1
+.endm
+.macro plat_setspeed
+	.db $03, \1
+.endm
+.macro plat_jump
+	.db $04, (\1-CADDR)&$ff
+.endm
+.macro plat_waitforlink
+	.db $05
+.endm
+.macro plat_up
+	.db $08, \1
+.endm
+.macro plat_right
+	.db $09, \1
+.endm
+.macro plat_down
+	.db $0a, \1
+.endm
+.macro plat_left
+	.db $0b, \1
+.endm
+
+_movingPlatform_nonDungeonScriptTable:
+	.dw _movingPlatform_nonDungeon00
+	.dw _movingPlatform_nonDungeon01
+	.dw _movingPlatform_nonDungeon02
+
+_movingPlatform_scriptTable:
+	.dw @dungeon00
+	.dw @dungeon01
+	.dw @dungeon02
+	.dw @dungeon03
+	.dw @dungeon04
+	.dw @dungeon05
+	.dw @dungeon06
+	.dw @dungeon07
+	.dw @dungeon08
+
+@dungeon00:
+@dungeon01:
+@dungeon02:
+@dungeon05:
+	.dw @@platform0
+	.dw @@platform1
+	.dw @@platform2
+	.dw @@platform3
+	.dw @@platform4
+	.dw @@platform5
+	.dw @@platform6
+
+@@platform0:
+	plat_wait  $10
+	plat_left  $40
+--
+	plat_wait  $10
+	plat_right $a0
+	plat_wait  $10
+	plat_left  $a0
+	plat_jump --
+
+@@platform1:
+	plat_wait  $10
+	plat_up    $40
+--
+	plat_wait  $10
+	plat_down  $a0
+	plat_wait  $10
+	plat_up    $a0
+	plat_jump --
+
+@@platform2:
+	plat_wait  $10
+	plat_right $40
+--
+	plat_wait  $10
+	plat_left  $a0
+	plat_wait  $10
+	plat_right $a0
+	plat_jump --
+
+@@platform3:
+	plat_setspeed $28
+	plat_wait  $20
+	plat_left  $40
+--
+	plat_wait  $20
+	plat_right $50
+	plat_wait  $20
+	plat_left  $50
+	plat_jump --
+
+@@platform4:
+	plat_right $c0
+--
+	plat_wait  $10
+	plat_left  $e0
+	plat_wait  $10
+	plat_right $e0
+	plat_jump --
+
+@@platform5:
+	plat_left  $50
+--
+	plat_wait  $10
+	plat_right $e0
+	plat_wait  $10
+	plat_left  $e0
+	plat_jump --
+
+@@platform6:
+	plat_right $50
+--
+	plat_wait  $10
+	plat_left  $e0
+	plat_wait  $10
+	plat_right $e0
+	plat_jump --
+
+@dungeon03:
+	.dw @@platform00
+	.dw @@platform01
+	.dw @@platform02
+
+@@platform00:
+	plat_right $40
+--
+	plat_wait  $20
+	plat_left  $80
+	plat_wait  $20
+	plat_right $80
+	plat_jump --
+
+@@platform01:
+	plat_down  $60
+--
+	plat_wait  $08
+	plat_up    $c0
+	plat_wait  $08
+	plat_down  $c0
+	plat_jump --
+
+@@platform02:
+	plat_left  $60
+	plat_wait  $20
+	plat_right $60
+	plat_wait  $20
+	plat_jump @@platform02
+
+@dungeon04:
+	.dw @@platform00
+
+@@platform00:
+	plat_setspeed $50
+--
+	plat_wait  $3c
+	plat_left  $30
+	plat_up    $38
+	plat_left  $28
+	plat_down  $38
+	plat_right $28
+	plat_up    $38
+	plat_right $28
+	plat_wait  $3c
+	plat_down  $18
+	plat_right $08
+	plat_down  $20
+	plat_jump --
+
+@dungeon06:
+	.dw @@platform00
+	.dw @@platform01
+	.dw @@platform02
+	.dw @@platform03
+	.dw @@platform04
+	.dw @@platform05
+	.dw @@platform06
+	.dw @@platform07
+	.dw @@platform08
+	.dw @@platform09
+
+@@platform00:
+	plat_right $60
+	plat_wait  $10
+	plat_left  $60
+	plat_wait  $10
+	plat_jump @@platform00
+
+@@platform01:
+	plat_down  $80
+	plat_wait  $10
+	plat_up    $80
+	plat_wait  $10
+	plat_jump @@platform01
+
+@@platform02:
+@@platform03:
+	plat_up    $20
+	plat_wait  $10
+	plat_down  $20
+	plat_wait  $10
+	plat_jump @@platform02
+
+@@platform04:
+	plat_up    $a0
+	plat_wait  $10
+	plat_down  $a0
+	plat_wait  $10
+	plat_jump @@platform04
+
+@@platform05:
+	plat_up    $c0
+	plat_wait  $10
+	plat_down  $c0
+	plat_wait  $10
+	plat_jump @@platform05
+
+@@platform06:
+@@platform07:
+	plat_left  $60
+	plat_wait  $10
+	plat_right $60
+	plat_wait  $10
+	plat_jump @@platform06
+
+@@platform08:
+	plat_down  $e0
+	plat_wait  $10
+
+@@platform09:
+	plat_up    $e0
+	plat_wait  $10
+	plat_jump @@platform08
+
+@dungeon07:
+	.dw @@platform00
+	.dw @@platform01
+	.dw @@platform02
+	.dw @@platform03
+	.dw @@platform04
+	.dw @@platform05
+
+@@platform00:
+	plat_setspeed $50
+--
+	plat_wait  $3c
+	plat_down  $20
+	plat_left  $48
+	plat_up    $20
+	plat_right $18
+	plat_down  $08
+	plat_right $18
+	plat_up    $18
+	plat_wait  $28
+	plat_down  $18
+	plat_left  $18
+	plat_up    $08
+	plat_left  $18
+	plat_down  $20
+	plat_right $48
+	plat_up    $20
+	plat_jump --
+
+@@platform01:
+	plat_wait  $08
+	plat_right $80
+	plat_wait  $08
+	plat_left  $80
+	plat_jump @@platform01
+
+@@platform02:
+	plat_setspeed $50
+--
+	plat_wait  $08
+	plat_left  $38
+	plat_wait  $08
+	plat_up    $30
+	plat_wait  $08
+	plat_right $38
+	plat_wait  $08
+	plat_down  $30
+	plat_jump --
+
+@@platform03:
+	plat_down  $60
+--
+	plat_wait  $08
+	plat_up    $80
+	plat_wait  $08
+	plat_down  $80
+	plat_jump --
+
+@@platform04:
+	plat_wait  $08
+	plat_left  $a0
+	plat_wait  $08
+	plat_up    $a0
+	plat_wait  $08
+	plat_right $a0
+	plat_wait  $08
+	plat_down  $a0
+	plat_jump @@platform04
+
+@@platform05:
+	plat_wait  $08
+	plat_up    $80
+	plat_wait  $08
+	plat_down  $80
+	plat_jump @@platform05
+
+@dungeon08:
+	.dw @@platform00
+	.dw @@platform01
+	.dw @@platform02
+	.dw @@platform03
+
+@@platform00:
+@@platform02:
+	plat_right $e0
+	plat_wait  $10
+	plat_left  $e0
+	plat_wait  $10
+	plat_jump @@platform00
+
+@@platform01:
+@@platform03:
+	plat_left  $e0
+	plat_wait  $10
+	plat_right $e0
+	plat_wait  $10
+	plat_jump @@platform01
+
+_movingPlatform_nonDungeon00:
+	plat_setspeed $50
+--
+	plat_wait  $3c
+	plat_left  $1c
+	plat_wait  $0f
+	plat_up    $30
+	plat_wait  $0f
+	plat_right $38
+	plat_wait  $0f
+	plat_down  $30
+	plat_wait  $0f
+	plat_left  $1c
+	plat_wait  $3c
+	plat_jump --
+
+_movingPlatform_nonDungeon01:
+	plat_wait  $08
+	plat_right $40
+	plat_wait  $08
+	plat_left  $40
+	plat_jump _movingPlatform_nonDungeon01
+
+_movingPlatform_nonDungeon02:
+	plat_wait  $08
+	plat_left  $40
+	plat_wait  $08
+	plat_right $40
+	plat_jump _movingPlatform_nonDungeon02
+
+
+; ==============================================================================
+; INTERACID_ESSENCE
+; ==============================================================================
+
+;;
+; @addr{4248}
 essence_createEnergySwirl:
-	call objectGetPosition		; $4901
-	ld a,$ff		; $4904
-	jp createEnergySwirlGoingIn		; $4906
+	call objectGetPosition		; $4248
+	ld a,$ff		; $424b
+	jp createEnergySwirlGoingIn		; $424d
 
+;;
+; @addr{4250}
 essence_stopEnergySwirl:
-	ld a,$01		; $4909
-	ld ($cd2d),a		; $490b
-	ret			; $490e
+	ld a,$01		; $4250
+	ld (wDeleteEnergyBeads),a		; $4252
+	ret			; $4255
 
-seasonsFunc_15_490f:
-	call getFreeInteractionSlot		; $490f
-	ld bc,$2c00		; $4912
-	ld (hl),$60		; $4915
-	inc l			; $4917
-	ld (hl),b		; $4918
-	inc l			; $4919
-	ld (hl),c		; $491a
-	ld l,$4b		; $491b
-	ld a,($d00b)		; $491d
-	ldi (hl),a		; $4920
-	inc l			; $4921
-	ld a,($d00d)		; $4922
-	ld (hl),a		; $4925
-	ret			; $4926
+; ==============================================================================
+; INTERACID_VASU
+; ==============================================================================
 
-seasonsFunc_15_4927:
-	ld ($cbd3),a		; $4927
-	ld a,$01		; $492a
-	ld ($cca4),a		; $492c
-	ld a,$04		; $492f
-	jp openMenu		; $4931
+;;
+; @addr{4256}
+vasu_giveRingBox:
+	call getFreeInteractionSlot		; $4256
+	ldbc TREASURE_RING_BOX, $00		; $4259
+	ld (hl),INTERACID_TREASURE		; $425c
+	inc l			; $425e
+	ld (hl),b		; $425f
+	inc l			; $4260
+	ld (hl),c		; $4261
+	ld l,Interaction.yh		; $4262
+	ld a,(w1Link.yh)		; $4264
+	ldi (hl),a		; $4267
+	inc l			; $4268
+	ld a,(w1Link.xh)		; $4269
+	ld (hl),a		; $426c
+	ret			; $426d
 
-seasonsFunc_15_4934:
-	ld a,$02		; $4934
-	jp openSecretInputMenu		; $4936
+;;
+; @param	a	$00 to display unappraised rings, $01 for appraised ring list
+; @addr{426e}
+vasu_openRingMenu:
+	ld (wRingMenu_mode),a		; $426e
+	ld a,$01		; $4271
+	ld (wDisabledObjects),a		; $4273
+	ld a,$04		; $4276
+	jp openMenu		; $4278
 
-seasonsFunc_15_4939:
-	ld a,$31		; $4939
-	call setGlobalFlag		; $493b
-	ld bc,$0002		; $493e
-	jp secretFunctionCaller		; $4941
+;;
+; @addr{427b}
+redSnake_openSecretInputMenu:
+	ld a,$02		; $427b
+	jp openSecretInputMenu		; $427d
 
-seasonsFunc_15_4944:
-	ld e,$44		; $4944
-	ld a,$05		; $4946
-	ld (de),a		; $4948
-	xor a			; $4949
-	inc e			; $494a
-	ld (de),a		; $494b
-	ld b,$03		; $494c
-	call secretFunctionCaller		; $494e
-	call serialFunc_0c85		; $4951
-	ld a,($cba5)		; $4954
-	ld e,$79		; $4957
-	ld (de),a		; $4959
-	ld bc,$300e		; $495a
-	or a			; $495d
-	jr z,_label_15_074	; $495e
-	ld e,$45		; $4960
-	ld a,$03		; $4962
-	ld (de),a		; $4964
-	ld bc,$3028		; $4965
-_label_15_074:
-	jp showText		; $4968
+;;
+; @addr{4280}
+redSnake_generateRingSecret:
+	ld a,GLOBALFLAG_RING_SECRET_GENERATED		; $4280
+	call setGlobalFlag		; $4282
+	ldbc SECRETFUNC_GENERATE_SECRET, $02		; $4285
+	jp secretFunctionCaller		; $4288
 
-seasonsFunc_15_496b:
-	ld a,$00		; $496b
-	call $498d		; $496d
-	jr nz,_label_15_076	; $4970
-	ld a,$01		; $4972
-	call $498d		; $4974
-	jr nz,_label_15_076	; $4977
-	ld a,$02		; $4979
-	call $498d		; $497b
-	jr nz,_label_15_076	; $497e
-	ld a,$03		; $4980
-_label_15_075:
-	ld e,$7b		; $4982
-	ld (de),a		; $4984
-	ret			; $4985
-_label_15_076:
-	ld e,$7a		; $4986
-	ld (de),a		; $4988
-	sub $34			; $4989
-	jr _label_15_075		; $498b
-	ld c,a			; $498d
-	call checkGlobalFlag		; $498e
-	jr z,_label_15_077	; $4991
-	ld a,c			; $4993
-	add $04			; $4994
-	ld c,a			; $4996
-	call checkGlobalFlag		; $4997
-	jr nz,_label_15_077	; $499a
-	ld a,c			; $499c
-	call setGlobalFlag		; $499d
-	ld a,c			; $49a0
-	add $30			; $49a1
-	ret			; $49a3
-_label_15_077:
-	xor a			; $49a4
-	ret			; $49a5
+;;
+; @addr{428b}
+blueSnake_linkOrFortune:
+	ld e,Interaction.state		; $428b
+	ld a,$05		; $428d
+	ld (de),a		; $428f
+	xor a			; $4290
+	inc e			; $4291
+	ld (de),a		; $4292
 
-seasonsFunc_15_49a6:
-	ld a,$00		; $49a6
-	jr _label_15_078		; $49a8
+	; Initialize gameID if necessary
+	ld b,$03		; $4293
+	call secretFunctionCaller		; $4295
 
-seasonsFunc_15_49aa:
-	ld a,$38		; $49aa
-	jr _label_15_078		; $49ac
+	call serialFunc_0c85		; $4298
+	ld a,(wSelectedTextOption)		; $429b
+	ld e,Interaction.var39		; $429e
+	ld (de),a		; $42a0
 
-seasonsFunc_15_49ae:
-	ld e,$7a		; $49ae
-	ld a,(de)		; $49b0
-_label_15_078:
-	ld b,a			; $49b1
-	ld c,$00		; $49b2
-	jp giveRingToLink		; $49b4
+	ld bc,TX_300e		; $42a1
+	or a			; $42a4
+	jr z,@showText	; $42a5
 
-seasonsFunc_15_49b7:
-	xor a			; $49b7
-	ld ($c63e),a		; $49b8
-	inc a			; $49bb
-	ld ($c614),a		; $49bc
-	ld a,$28		; $49bf
-	jp setGlobalFlag		; $49c1
+	ld e,Interaction.state2		; $42a7
+	ld a,$03		; $42a9
+	ld (de),a		; $42ab
+	ld bc,TX_3028		; $42ac
+@showText:
+	jp showText		; $42af
 
-.ends
+;;
+; Checks for 1000 enemies ring, 1000 rupee ring, victory ring. Writes a value to var3b
+; indicating the action to be taken, and a ring index to var3a if applicable.
+; @addr{42b2}
+vasu_checkEarnedSpecialRing:
+	ld a,GLOBALFLAG_1000_ENEMIES_KILLED		; $42b2
+	call @checkFlagSet		; $42b4
+	jr nz,@setRingAndAction	; $42b7
+
+	ld a,GLOBALFLAG_10000_RUPEES_COLLECTED		; $42b9
+	call @checkFlagSet		; $42bb
+	jr nz,@setRingAndAction	; $42be
+
+	ld a,GLOBALFLAG_BEAT_GANON		; $42c0
+	call @checkFlagSet		; $42c2
+	jr nz,@setRingAndAction	; $42c5
+
+	ld a,$03		; $42c7
+@setAction:
+	ld e,Interaction.var3b		; $42c9
+	ld (de),a		; $42cb
+	ret			; $42cc
+
+@setRingAndAction:
+	ld e,Interaction.var3a		; $42cd
+	ld (de),a		; $42cf
+	sub SLAYERS_RING ; WEALTH_RING should be right after
+	jr @setAction		; $42d2
+
+; @param[otu]	a	Ring to give (if earned)
+; @param[out]	zflag	nz if ring should be given
+@checkFlagSet:
+	; Check if ring earned
+	ld c,a			; $42d4
+	call checkGlobalFlag		; $42d5
+	jr z,@flagNotSet	; $42d8
+
+	; Check if ring obtained already
+	ld a,c			; $42da
+	add $04			; $42db
+	ld c,a			; $42dd
+	call checkGlobalFlag		; $42de
+	jr nz,@flagNotSet	; $42e1
+	ld a,c			; $42e3
+	call setGlobalFlag		; $42e4
+	ld a,c			; $42e7
+	add $30			; $42e8
+	ret			; $42ea
+@flagNotSet:
+	xor a			; $42eb
+	ret			; $42ec
+
+;;
+; @addr{42ed}
+vasu_giveFriendshipRing:
+	ld a,FRIENDSHIP_RING		; $42ed
+	jr ++		; $42ef
+
+vasu_giveHundredthRing:
+	ld a,HUNDREDTH_RING		; $42f1
+	jr ++		; $42f3
+
+vasu_giveRingInVar3a:
+	ld e,Interaction.var3a		; $42f5
+	ld a,(de)		; $42f7
+++
+	ld b,a			; $42f8
+	ld c,$00		; $42f9
+	jp giveRingToLink		; $42fb
+
+
+; ==============================================================================
+; INTERACID_GAME_COMPLETE_DIALOG
+; ==============================================================================
+gameCompleteDialog_markGameAsComplete:
+	xor a			; $42fe
+	ld (wMapleKillCounter),a		; $42ff
+	inc a			; $4302
+	ld (wFileIsCompleted),a		; $4303
+.ifdef ROM_AGES
+	ld a,<TX_051c		; $4306
+	ld (wMakuMapTextPresent),a		; $4308
+	ld a,<TX_058c		; $430b
+	ld (wMakuMapTextPast),a		; $430d
+.endif
+	ld a,GLOBALFLAG_FINISHEDGAME		; $4310
+	jp setGlobalFlag		; $4312
+
+.ENDS

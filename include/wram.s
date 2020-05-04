@@ -557,7 +557,7 @@ wCompanionTutorialTextShown: ; $c649
 ; Bit 4: Moosh fluttering
 ; bit 5: Moosh's buttstomp
 	db
-wc64a: ; $c64a
+wc64a: ; $c64a/$c647
 	db
 wc64b: ; $c64b
 	db
