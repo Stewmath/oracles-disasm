@@ -210,7 +210,7 @@
 .define PARTID_CUCCO_ATTACKER			$22
 
 ;;
-.define PARTID_23				$23
+.define PARTID_FIRE_PIPES			$23
 
 ;;
 .define PARTID_GROTTO_CRYSTAL			$24
@@ -225,8 +225,7 @@
 .define PARTID_LIGHTNING			$27
 
 ;;
-; Some kind of item?
-.define PARTID_28				$28
+.define PARTID_SMALL_FAIRY			$28
 
 ;;
 .define PARTID_BEAM				$29

@@ -10,8 +10,13 @@
 .define TILEINDEX_GRAVE_STATIONARY	$02 ; Overworld only
 .define TILEINDEX_UNLIT_TORCH		$08
 .define TILEINDEX_LIT_TORCH		$09
-.define TILEINDEX_OVERWORLD_SWITCH_OFF	$9e ; Overworld oldy
-.define TILEINDEX_OVERWORLD_SWITCH_ON	$9f ; Overworld oldy
+.ifdef ROM_AGES
+	.define TILEINDEX_OVERWORLD_SWITCH_OFF	$9e ; Overworld only
+	.define TILEINDEX_OVERWORLD_SWITCH_ON	$9f ; Overworld only
+.else
+	.define TILEINDEX_OVERWORLD_SWITCH_OFF	$b1 ; Overworld only
+	.define TILEINDEX_OVERWORLD_SWITCH_ON	$b0 ; Overworld only
+.endif
 .define TILEINDEX_MOVING_POT		$10
 .define TILEINDEX_OVERWORLD_DUG_DIRT	$1c ; Overworld only
 .define TILEINDEX_HORIZONTAL_BRIDGE_TOP		$1d ; Overworld only

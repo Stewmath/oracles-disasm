@@ -2189,15 +2189,15 @@ wccb0: ; $ccb0/$ccc7
 ; Tile position being poked or slashed at?
 	db
 
-.ifdef ROM_AGES
 wccb1: ; $ccb1
 ; Disables PARTID_BUTTON when nonzero?
 	db
-.endif
 
+.ifdef ROM_AGES
 wDisableWarps: ; $ccb2
 ; Used by INTERACID_BLACK_TOWER_DOOR_HANDLER to stop the warp from sending you anywhere.
 	db
+.endif
 
 .ifdef ROM_SEASONS
 wInBoxingMatch: ; -/$ccc9

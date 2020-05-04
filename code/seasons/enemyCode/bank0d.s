@@ -1,78 +1,115 @@
 .include "code/enemyCode/group2.s"
 
-; unknown use
-seasonsTable_0d_6b30:
-	.dw @index0
-	.dw @index1
-	.dw @index2
-	.dw @index3
-	.dw @index4
-	.dw @index5
-	.dw @index6
-	.dw @index7
-	.dw @index8
-	.dw @index9
-	.dw @indexA
+orbMovementScript:
+	.dw @subid00
+	.dw @subid01
+	.dw @subid02
+	.dw @subid03
+	.dw @subid04
+	.dw @subid05
+	.dw @subid06
+	.dw @subid07
+	.dw @subid08
+	.dw @subid09
+	.dw @subid0A
 
-@index0:
-	.db $14 $00 $02 $38
-	.db $05 $14 $04 $18
-	.db $05 $14 $00 $48
-	.db $6b
+@subid00:
+	.db SPEED_80
+	.db DIR_UP
+@@loop:
+	ms_right $38
+	ms_wait  $14
+	ms_left  $18
+	ms_wait  $14
+	ms_loop  @@loop
 
-@index1:
-	.db $3c $00 $02 $48
-	.db $05 $14 $04 $18
-	.db $05 $14 $00 $55
-	.db $6b
+@subid01:
+	.db SPEED_180
+	.db DIR_UP
+@@loop:
+	ms_right $48
+	ms_wait  $14
+	ms_left  $18
+	ms_wait  $14
+	ms_loop  @@loop
 
-@index2:
-	.db $28 $00 $02 $48
-	.db $05 $14 $04 $18
-	.db $05 $14 $00 $62
-	.db $6b
+@subid02:
+	.db SPEED_100
+	.db DIR_UP
+@@loop:
+	ms_right $48
+	ms_wait  $14
+	ms_left  $18
+	ms_wait  $14
+	ms_loop  @@loop
 
-@index3:
-	.db $14 $00 $02 $48
-	.db $05 $14 $04 $18
-	.db $05 $14 $00 $6f
-	.db $6b
+@subid03:
+	.db SPEED_80
+	.db DIR_UP
+@@loop:
+	ms_right $48
+	ms_wait  $14
+	ms_left  $18
+	ms_wait  $14
+	ms_loop  @@loop
 
-@index4:
-	.db $14 $00 $02 $d8
-	.db $05 $14 $04 $b8
-	.db $05 $14 $00 $7c
-	.db $6b
+@subid04:
+	.db SPEED_80
+	.db DIR_UP
+@@loop:
+	ms_right $d8
+	ms_wait  $14
+	ms_left  $b8
+	ms_wait  $14
+	ms_loop  @@loop
 
-@index5:
-	.db $78 $00 $02 $78
-	.db $04 $38 $00 $89
-	.db $6b
+@subid05:
+	.db SPEED_300
+	.db DIR_UP
+@@loop:
+	ms_right $78
+	ms_left  $38
+	ms_loop  @@loop
 
-@index6:
-	.db $73 $00 $02 $78
-	.db $04 $38 $00 $92
-	.db $6b
+@subid06:
+	.db SPEED_2e0
+	.db DIR_UP
+@@loop:
+	ms_right $78
+	ms_left  $38
+	ms_loop  @@loop
 
-@index7:
-	.db $6e $00 $02 $78
-	.db $04 $38 $00 $9b
-	.db $6b
+@subid07:
+	.db SPEED_2c0
+	.db DIR_UP
+@@loop:
+	ms_right $78
+	ms_left  $38
+	ms_loop  @@loop
 
-@index8:
-	.db $69 $00 $02 $78
-	.db $04 $38 $00 $a4
-	.db $6b
+@subid08:
+	.db SPEED_2a0
+	.db DIR_UP
+@@loop:
+	ms_right $78
+	ms_left  $38
+	ms_loop  @@loop
 
-@index9:
-	.db $64 $00 $02 $78
-	.db $04 $38 $00 $ad
-	.db $6b
+@subid09:
+	.db SPEED_280
+	.db DIR_UP
+@@loop:
+	ms_right $78
+	ms_left  $38
+	ms_loop  @@loop
 
-@indexA:
-	.db $5f $00 $02 $78
-	.db $04 $38 $00 $b6
-	.db $6b
+@subid0A:
+	.db SPEED_260
+	.db DIR_UP
+@@loop:
+	ms_right $78
+	ms_left  $38
+	ms_loop  @@loop
 
 
 ; ==============================================================================
