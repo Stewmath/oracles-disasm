@@ -1372,7 +1372,7 @@ puddleAnimationFrames:
 
 .include "code/serialFunctions.s"
 
-	.include "code/seasons/scriptHelper/scriptHlp1.s"
+	.include "scripts/commonScriptHelper.s"
 	.include "code/seasons/interactionCode/bank15_1.s"
 
 	.include "code/staticObjects.s"
@@ -1381,7 +1381,7 @@ puddleAnimationFrames:
 
 	.include "build/data/treasureObjectData.s"
 
-	.include "code/seasons/scriptHelper/scriptHlp2.s"
+	.include "scripts/seasons/scriptHelper.s"
 	.include "code/seasons/interactionCode/bank15_2.s"
 
 	.include "data/seasons/partAnimations.s"

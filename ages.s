@@ -1356,7 +1356,7 @@ puddleAnimationFrames:
 .BANK $15 SLOT 1
 .ORG 0
 
-.include "code/ages/scriptHelper/scriptHlp1.s"
+.include "scripts/commonScriptHelper.s"
 
  m_section_free "Object_Pointers" namespace "objectData"
 
@@ -1384,7 +1384,7 @@ getObjectDataAddress:
 
 .ENDS
 
-.include "code/ages/scriptHelper/scriptHlp2.s"
+.include "scripts/ages/scriptHelper.s"
 
 
 .BANK $16 SLOT 1
