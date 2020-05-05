@@ -281,7 +281,7 @@ interactionCode91:
 	or a			; $41ea
 	ld e,$44		; $41eb
 	ld a,(de)		; $41ed
-	jp nz,$4261		; $41ee
+	jp nz,seasonsFunc_0a_4261		; $41ee
 	or a			; $41f1
 	jr z,_label_0a_009	; $41f2
 	call $4284		; $41f4
@@ -344,6 +344,8 @@ _label_0a_011:
 	ld e,$49		; $425b
 	ld (de),a		; $425d
 	jp objectSetVisible81		; $425e
+
+seasonsFunc_0a_4261:
 	or a			; $4261
 	jr z,_label_0a_012	; $4262
 	ld a,$24		; $4264
@@ -363,7 +365,7 @@ _label_0a_012:
 	ret			; $4283
 	ld a,($cc50)		; $4284
 	and $20			; $4287
-	jp nz,$429d		; $4289
+	jp nz,seasonsFunc_0a_429d		; $4289
 	call interactionDecCounter2		; $428c
 	ld a,(hl)		; $428f
 	cp $3c			; $4290
@@ -376,6 +378,8 @@ _label_0a_012:
 	xor $80			; $4299
 	ld (hl),a		; $429b
 	ret			; $429c
+
+seasonsFunc_0a_429d:
 	call objectGetTileAtPosition		; $429d
 	ld hl,hazardCollisionTable		; $42a0
 	call lookupCollisionTable		; $42a3
@@ -4840,11 +4844,11 @@ _label_0a_184:
 	ret z			; $5c41
 	ld a,($cc48)		; $5c42
 	cp $d0			; $5c45
-	jp nz,$5d18		; $5c47
+	jp nz,seasonsFunc_0a_5d18		; $5c47
 	call checkLinkID0AndControlNormal		; $5c4a
-	jp nc,$5d18		; $5c4d
+	jp nc,seasonsFunc_0a_5d18		; $5c4d
 	call objectCheckCollidedWithLink		; $5c50
-	jp nc,$5d18		; $5c53
+	jp nc,seasonsFunc_0a_5d18		; $5c53
 	ld e,$44		; $5c56
 	ld a,$03		; $5c58
 	ld (de),a		; $5c5a
@@ -4945,7 +4949,10 @@ _label_0a_186:
 	rst $38			; $5d12
 	ld bc,$01f0		; $5d13
 	nop			; $5d16
-	ld bc,$441e		; $5d17
+	.db $01		; $5d17
+
+seasonsFunc_0a_5d18:
+	ld e,$44		; $5d18
 	ld a,$01		; $5d1a
 	ld (de),a		; $5d1c
 	dec a			; $5d1d
@@ -5154,7 +5161,7 @@ _label_0a_195:
 _label_0a_196:
 	ld a,($cba0)		; $5eb1
 	or a			; $5eb4
-	call nz,$6710		; $5eb5
+	call nz,seasonsFunc_0a_6710		; $5eb5
 	call interactionAnimateAsNpc		; $5eb8
 	ld e,$47		; $5ebb
 	ld a,(de)		; $5ebd
@@ -6265,23 +6272,16 @@ interactionCodea5:
 	ld e,$42		; $64d3
 	ld a,(de)		; $64d5
 	rst_jumpTable			; $64d6
-.DB $eb				; $64d7
-	ld h,h			; $64d8
-	ld h,d			; $64d9
-	ld h,l			; $64da
-	ld a,($0565)		; $64db
-	ld h,(hl)		; $64de
-	jr c,$66		; $64df
-	cp b			; $64e1
-	dec h			; $64e2
-	ld (hl),d		; $64e3
-	ld h,(hl)		; $64e4
-	ld a,b			; $64e5
-	ld h,(hl)		; $64e6
-.DB $dd				; $64e7
-	ld h,(hl)		; $64e8
-.DB $ed				; $64e9
-	ld h,(hl)		; $64ea
+	.dw $64eb
+	.dw $6562
+	.dw $65fa
+	.dw $6605
+	.dw $6638
+	.dw $25b8
+	.dw $6672
+	.dw $6678
+	.dw $66dd
+	.dw $66ed
 	ld e,$45		; $64eb
 	ld a,(de)		; $64ed
 	rst_jumpTable			; $64ee
@@ -6508,7 +6508,7 @@ _label_0a_243:
 	call interactionSetAnimation		; $6698
 	jp $6717		; $669b
 	call interactionDecCounter1		; $669e
-	jp nz,$6710		; $66a1
+	jp nz,seasonsFunc_0a_6710		; $66a1
 	call interactionIncState2		; $66a4
 	xor a			; $66a7
 	ld l,$4f		; $66a8
@@ -6561,6 +6561,8 @@ _label_0a_246:
 	nop			; $670d
 	ld b,h			; $670e
 	add e			; $670f
+
+seasonsFunc_0a_6710:
 	ld c,$20		; $6710
 	call objectUpdateSpeedZ_paramC		; $6712
 	ret nz			; $6715
@@ -7218,7 +7220,7 @@ _label_0a_265:
 	ld e,$43		; $6b4d
 	ld a,(de)		; $6b4f
 	or a			; $6b50
-	jp nz,$6c91		; $6b51
+	jp nz,seasonsFunc_0a_6c91		; $6b51
 	ld a,($c4ab)		; $6b54
 	or a			; $6b57
 	ret nz			; $6b58
@@ -7435,6 +7437,8 @@ _label_0a_271:
 	or a			; $6c8c
 	ret nz			; $6c8d
 	jp $6c4d		; $6c8e
+
+seasonsFunc_0a_6c91:
 	ld a,($c4ab)		; $6c91
 	or a			; $6c94
 	ret nz			; $6c95
@@ -8127,8 +8131,7 @@ interactionCodeb4:
 	ld e,$45		; $70d4
 	ld a,(de)		; $70d6
 	rst_jumpTable			; $70d7
-	ld ($ff00+c),a		; $70d8
-	ld (hl),b		; $70d9
+	.dw $70e2
 	dec d			; $70da
 	ld (hl),c		; $70db
 	ld (hl),$71		; $70dc
@@ -8140,7 +8143,7 @@ interactionCodeb4:
 	call $7220		; $70e5
 	call $720a		; $70e8
 	call c,$7232		; $70eb
-	jp nc,$71b7		; $70ee
+	jp nc,_label_0a_311		; $70ee
 	ld h,d			; $70f1
 	ld l,$45		; $70f2
 	ld (hl),$01		; $70f4
@@ -8161,9 +8164,9 @@ _label_0a_304:
 	ld a,$02		; $710d
 _label_0a_305:
 	call interactionSetAnimation		; $710f
-	jp $71b7		; $7112
+	jp _label_0a_311		; $7112
 	call $71ce		; $7115
-	call $71b7		; $7118
+	call _label_0a_311		; $7118
 	call interactionDecCounter2		; $711b
 	ret nz			; $711e
 	ld l,$45		; $711f
@@ -8180,7 +8183,7 @@ _label_0a_305:
 	set 0,(hl)		; $7133
 	ret			; $7135
 	call $71ce		; $7136
-	call $71b7		; $7139
+	call _label_0a_311		; $7139
 	ld a,($cfc0)		; $713c
 	bit 0,a			; $713f
 	ret nz			; $7141
@@ -8228,7 +8231,7 @@ _label_0a_310:
 	ld l,$45		; $718f
 	inc (hl)		; $7191
 	ret			; $7192
-	jp $71b7		; $7193
+	jp _label_0a_311		; $7193
 	ld e,$45		; $7196
 	ld a,(de)		; $7198
 	rst_jumpTable			; $7199
@@ -8237,7 +8240,7 @@ _label_0a_310:
 	or d			; $719c
 	ld (hl),c		; $719d
 	call $71ce		; $719e
-	call $71b7		; $71a1
+	call _label_0a_311		; $71a1
 	ld a,($cfc0)		; $71a4
 	bit 0,a			; $71a7
 	ret z			; $71a9
@@ -8246,7 +8249,7 @@ _label_0a_310:
 	ld (hl),$ff		; $71af
 	ret			; $71b1
 	jr _label_0a_306		; $71b2
-	jp $71b7		; $71b4
+	jp _label_0a_311		; $71b4
 _label_0a_311:
 	jp interactionAnimate		; $71b7
 	ld e,$42		; $71ba

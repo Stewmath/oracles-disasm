@@ -1095,7 +1095,7 @@ _label_0f_347:
 	call checkTreasureObtained		; $7aa9
 	jr nc,_label_0f_349	; $7aac
 	cp $03			; $7aae
-	jp nc,$7ab9		; $7ab0
+	jp nc,_label_0f_349		; $7ab0
 	sub $01			; $7ab3
 _label_0f_348:
 	ld e,$43		; $7ab5
@@ -1463,7 +1463,7 @@ _label_0f_359:
 	jr nz,_label_0f_359	; $7d00
 	ret			; $7d02
 	inc e			; $7d03
-	jr nz,_label_0f_360	; $7d04
+	jr nz,$1c	; $7d04
 	ld b,b			; $7d06
 	inc e			; $7d07
 	ld h,b			; $7d08
@@ -1489,11 +1489,8 @@ interactionCodecc:
 	ld e,$44		; $7d1d
 	ld a,(de)		; $7d1f
 	rst_jumpTable			; $7d20
-	dec h			; $7d21
-_label_0f_360:
-	ld a,l			; $7d22
-	ld l,l			; $7d23
-	ld a,l			; $7d24
+	.dw $7d25
+	.dw $7d6d
 	ld a,$28		; $7d25
 	call checkGlobalFlag		; $7d27
 	jp z,interactionDelete		; $7d2a
@@ -1505,7 +1502,7 @@ _label_0f_360:
 	and $03			; $7d38
 	or a			; $7d3a
 	jr z,_label_0f_362	; $7d3b
-	ld hl,$7dc7		; $7d3d
+	ld hl,seasonsTable_0f_7dc7		; $7d3d
 	rst_addDoubleIndex			; $7d40
 	ldi a,(hl)		; $7d41
 _label_0f_361:
@@ -1529,11 +1526,11 @@ _label_0f_364:
 _label_0f_365:
 	call interactionSetScript		; $7d61
 	call interactionInitGraphics		; $7d64
-	call $7dc1		; $7d67
+	call seasonsFunc_0f_7dc1		; $7d67
 	call interactionSetAlwaysUpdateBit		; $7d6a
 	call interactionAnimateAsNpc		; $7d6d
 	call interactionRunScript		; $7d70
-	call $7dac		; $7d73
+	call seasonsFunc_0f_7dac		; $7d73
 	call checkInteractionState2		; $7d76
 	ret nz			; $7d79
 	call $7d95		; $7d7a
@@ -1567,6 +1564,8 @@ _label_0f_367:
 	inc l			; $7da9
 	inc (hl)		; $7daa
 	ret			; $7dab
+
+seasonsFunc_0f_7dac:
 	call getThisRoomFlags		; $7dac
 	and $03			; $7daf
 	or a			; $7db1
@@ -1579,14 +1578,16 @@ _label_0f_367:
 	ld c,$20		; $7dbb
 	call objectUpdateSpeedZ_paramC		; $7dbd
 	ret nz			; $7dc0
+
+seasonsFunc_0f_7dc1:
 	ld bc,$ff40		; $7dc1
 	jp objectSetSpeedZ		; $7dc4
+
+seasonsTable_0f_7dc7:
 	jp nz,$007c		; $7dc7
-	ld a,l			; $7dca
-	add a			; $7dcb
-	ld a,l			; $7dcc
-	nop			; $7dcd
-	ld a,l			; $7dce
+	.db $7d $87
+	.db $7d $00
+	.db $7d
 
 interactionCodecd:
 	ld e,$44		; $7dcf

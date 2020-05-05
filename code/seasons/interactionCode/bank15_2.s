@@ -158,16 +158,12 @@ _label_15_269:
 	ld e,$44		; $66dd
 	ld a,(de)		; $66df
 	rst_jumpTable			; $66e0
-	sbc e			; $66e1
-	inc hl			; $66e2
-.DB $ed				; $66e3
-	ld h,(hl)		; $66e4
-	ld a,($1666)		; $66e5
-	ld h,a			; $66e8
-	rra			; $66e9
-	ld h,a			; $66ea
-	add hl,sp		; $66eb
-	ld h,a			; $66ec
+	.dw interactionIncState
+	.dw $66ed
+	.dw $66fa
+	.dw $6716
+	.dw $671f
+	.dw $6739
 _label_15_270:
 	ld a,($ccba)		; $66ed
 	or a			; $66f0

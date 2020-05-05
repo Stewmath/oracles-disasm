@@ -189,7 +189,7 @@ interactionCode5f:
 	jr c,_label_09_056	; $4d0d
 	ld a,($d100)		; $4d0f
 	or a			; $4d12
-	jp nz,$4e2b		; $4d13
+	jp nz,_label_09_060		; $4d13
 _label_09_055:
 	ld a,(de)		; $4d16
 	rst_jumpTable			; $4d17
@@ -214,12 +214,12 @@ _label_09_056:
 	cp $0e			; $4d2f
 	jr nc,_label_09_057	; $4d31
 	cp $0a			; $4d33
-	jp nz,$4e2b		; $4d35
+	jp nz,_label_09_060		; $4d35
 _label_09_057:
 	ld a,($cc50)		; $4d38
 	and $81			; $4d3b
 	cp $01			; $4d3d
-	jp nz,$4e2b		; $4d3f
+	jp nz,_label_09_060		; $4d3f
 	ld bc,$510f		; $4d42
 	ld a,($c6af)		; $4d45
 	or a			; $4d48
@@ -230,7 +230,7 @@ _label_09_057:
 	jp z,$4e21		; $4d55
 	ld a,($d100)		; $4d58
 	or a			; $4d5b
-	jp nz,$4e2b		; $4d5c
+	jp nz,_label_09_060		; $4d5c
 	ld e,$7e		; $4d5f
 	ld hl,$d00b		; $4d61
 	ldi a,(hl)		; $4d64
@@ -625,7 +625,7 @@ _label_09_070:
 	call setTile		; $4fe9
 	ld a,($cfd9)		; $4fec
 	or a			; $4fef
-	jp nz,$5076		; $4ff0
+	jp nz,_label_09_073		; $4ff0
 	call objectPreventLinkFromPassing		; $4ff3
 	ld a,($ccbc)		; $4ff6
 	or a			; $4ff9
@@ -4466,7 +4466,7 @@ _label_09_196:
 	ld b,a			; $6a11
 	ld a,($cc4c)		; $6a12
 	cp b			; $6a15
-	jp nz,$698f		; $6a16
+	jp nz,_label_09_195		; $6a16
 	jp $6964		; $6a19
 	ld d,c			; $6a1c
 	ld h,c			; $6a1d
@@ -5065,7 +5065,7 @@ _label_09_216:
 	ld l,(hl)		; $6e32
 	ld a,($c643)		; $6e33
 	and $80			; $6e36
-	jp nz,$6f1f		; $6e38
+	jp nz,_label_09_218		; $6e38
 	ld a,$01		; $6e3b
 	ld (de),a		; $6e3d
 	ld e,$79		; $6e3e
@@ -5810,7 +5810,7 @@ interactionCode76:
 	ld (de),a		; $7334
 	ld a,$28		; $7335
 	call checkGlobalFlag		; $7337
-	jp nz,$73eb		; $733a
+	jp nz,_label_09_248		; $733a
 	ld a,($c644)		; $733d
 	and $40			; $7340
 	jr z,_label_09_246	; $7342

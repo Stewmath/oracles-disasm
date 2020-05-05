@@ -4631,7 +4631,7 @@ _label_10_178:
 	call objectGetRelatedObject1Var		; $59b6
 	ld a,(hl)		; $59b9
 	cp $0d			; $59ba
-	jp nc,$5a4e		; $59bc
+	jp nc,seasonsFunc_10_5a4e		; $59bc
 	ld e,$c4		; $59bf
 	ld a,(de)		; $59c1
 	rst_jumpTable			; $59c2
@@ -4714,6 +4714,8 @@ _label_10_183:
 	call playSound		; $5a48
 _label_10_184:
 	jp partDelete		; $5a4b
+
+seasonsFunc_10_5a4e:
 	call objectCreatePuff		; $5a4e
 	jp partDelete		; $5a51
 

@@ -310,7 +310,7 @@ partCode16:
 	jr z,_label_10_258	; $6474
 	ld a,($cc34)		; $6476
 	or a			; $6479
-	jp nz,$6498		; $647a
+	jp nz,_label_10_259		; $647a
 	call $6515		; $647d
 	inc a			; $6480
 	ld ($ccab),a		; $6481
@@ -371,7 +371,7 @@ _label_10_260:
 	jr z,_label_10_261	; $64e3
 	ld a,($cc34)		; $64e5
 	or a			; $64e8
-	jp nz,$64fc		; $64e9
+	jp nz,_label_10_261		; $64e9
 	call $6515		; $64ec
 	inc a			; $64ef
 	ld ($ccab),a		; $64f0
@@ -635,15 +635,14 @@ _label_10_271:
 	.db $f8		; $6670
 
 partCode26:
-	.db $28		; $6671
-	ld a,(bc)		; $6672
+	jr z,$0a		; $6671
 	ld e,$ea		; $6673
 	ld a,(de)		; $6675
 	res 7,a			; $6676
 	cp $03			; $6678
-	jp nc,$670c		; $667a
+	jp nc,seasonsFunc_10_670c		; $667a
 	call $66e7		; $667d
-	jp c,$670c		; $6680
+	jp c,seasonsFunc_10_670c		; $6680
 	ld e,$c4		; $6683
 	ld a,(de)		; $6685
 	rst_jumpTable			; $6686
@@ -735,6 +734,8 @@ _label_10_273:
 	inc c			; $6709
 	cp c			; $670a
 	ret			; $670b
+
+seasonsFunc_10_670c:
 	call objectCreatePuff		; $670c
 	jp partDelete		; $670f
 
@@ -766,7 +767,7 @@ partCode2d:
 	ld h,d			; $6735
 	ld l,$f0		; $6736
 	bit 0,(hl)		; $6738
-	jp nz,$67cc		; $673a
+	jp nz,seasonsFunc_10_67cc		; $673a
 	inc (hl)		; $673d
 	ld l,$e9		; $673e
 	ld (hl),$00		; $6740
@@ -854,6 +855,8 @@ _label_10_281:
 	ld l,$c9		; $67c8
 	ld (hl),a		; $67ca
 	ret			; $67cb
+
+seasonsFunc_10_67cc:
 	call partCommon_decCounter1IfNonzero		; $67cc
 	jp z,partDelete		; $67cf
 	ld a,(hl)		; $67d2
@@ -1015,7 +1018,7 @@ _label_10_287:
 	jr nz,_label_10_288	; $68c1
 	call objectApplySpeed		; $68c3
 	call partCommon_decCounter1IfNonzero		; $68c6
-	jp nz,$68e0		; $68c9
+	jp nz,seasonsFunc_10_68e0		; $68c9
 	ld h,d			; $68cc
 	ld l,$c5		; $68cd
 	inc (hl)		; $68cf
@@ -1028,6 +1031,8 @@ _label_10_288:
 	inc a			; $68db
 	jp z,partDelete		; $68dc
 	ret			; $68df
+
+seasonsFunc_10_68e0:
 	ld h,d			; $68e0
 	ld l,$c7		; $68e1
 	dec (hl)		; $68e3
@@ -1551,7 +1556,7 @@ _label_10_310:
 	inc a			; $6c42
 _label_10_311:
 	add a			; $6c43
-	ld hl,$6c5b		; $6c44
+	ld hl,seasonsTable_10_6c5b		; $6c44
 	rst_addDoubleIndex			; $6c47
 	ld e,$cb		; $6c48
 	ldi a,(hl)		; $6c4a
@@ -1569,17 +1574,15 @@ _label_10_311:
 	ld (de),a		; $6c58
 	xor a			; $6c59
 	ret			; $6c5a
-	ld hl,sp+$06		; $6c5b
-	ld b,$02		; $6c5d
-	ld (bc),a		; $6c5f
-	inc c			; $6c60
-	ld (bc),a		; $6c61
-	ld b,$09		; $6c62
-	ld a,($0206)		; $6c64
-	ld (bc),a		; $6c67
-.DB $f4				; $6c68
-	ld (bc),a		; $6c69
-	.db $06		; $6c6a
+seasonsTable_10_6c5b:
+	.db $f8 $06
+	.db $06 $02
+	.db $02 $0c
+	.db $02 $06
+	.db $09 $fa
+	.db $06 $02
+	.db $02 $f4
+	.db $02 $06
 
 partCode3c:
 	.db $1e		; $6c6b
@@ -1807,7 +1810,7 @@ _label_10_321:
 	ld e,$c2		; $6de1
 	ld a,(de)		; $6de3
 	or a			; $6de4
-	jp nz,$6e6a		; $6de5
+	jp nz,seasonsFunc_10_6e6a		; $6de5
 	call partAnimate		; $6de8
 	jr _label_10_323		; $6deb
 _label_10_322:
@@ -1888,6 +1891,8 @@ _label_10_324:
 	call playSound		; $6e65
 	scf			; $6e68
 	ret			; $6e69
+
+seasonsFunc_10_6e6a:
 	call objectAddToGrabbableObjectBuffer		; $6e6a
 	jp objectPushLinkAwayOnCollision		; $6e6d
 	ld a,$01		; $6e70
@@ -2565,6 +2570,8 @@ _label_10_349:
 	ld a,(de)		; $72ae
 	or a			; $72af
 	jr z,_label_10_350	; $72b0
+
+seasonsFunc_10_72b2:
 	call $407e		; $72b2
 	jp z,partDelete		; $72b5
 	call objectApplyComponentSpeed		; $72b8
@@ -2626,7 +2633,7 @@ _label_10_351:
 	jp partSetAnimation		; $7324
 	ld a,(de)		; $7327
 	or a			; $7328
-	jp nz,$72b2		; $7329
+	jp nz,seasonsFunc_10_72b2		; $7329
 	ld h,d			; $732c
 	ld l,e			; $732d
 	inc (hl)		; $732e

@@ -406,7 +406,7 @@ _label_16_020:
 	jp $43f5		; $42c2
 _label_16_021:
 	cp $b0			; $42c5
-	jp nz,$43e0		; $42c7
+	jp nz,_label_16_027		; $42c7
 	ld a,($d9e7)		; $42ca
 	ldh (<hActiveFileSlot),a	; $42cd
 	cp $03			; $42cf

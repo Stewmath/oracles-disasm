@@ -1593,7 +1593,7 @@ _label_0e_106:
 	ld (hl),$3c		; $4f9e
 	jp $5071		; $4fa0
 	call _ecom_decCounter1		; $4fa3
-	jp nz,$506b		; $4fa6
+	jp nz,seasonsFunc_0e_506b		; $4fa6
 	ld l,e			; $4fa9
 	inc (hl)		; $4faa
 	ld l,$a4		; $4fab
@@ -1604,11 +1604,11 @@ _label_0e_106:
 	ld (hl),$08		; $4fb5
 	jp objectSetVisible81		; $4fb7
 	call _ecom_decCounter1		; $4fba
-	jp nz,$506b		; $4fbd
+	jp nz,seasonsFunc_0e_506b		; $4fbd
 	inc (hl)		; $4fc0
 	ld b,$39		; $4fc1
 	call _ecom_spawnProjectile		; $4fc3
-	jp nz,$506b		; $4fc6
+	jp nz,seasonsFunc_0e_506b		; $4fc6
 	ld h,d			; $4fc9
 	ld l,$86		; $4fca
 	ld (hl),$98		; $4fcc
@@ -1616,7 +1616,7 @@ _label_0e_106:
 	inc (hl)		; $4fd0
 	ret			; $4fd1
 	call _ecom_decCounter1		; $4fd2
-	jp nz,$50cf		; $4fd5
+	jp nz,seasonsFunc_0e_50cf		; $4fd5
 	ld h,d			; $4fd8
 	ld l,$84		; $4fd9
 	inc (hl)		; $4fdb
@@ -1715,6 +1715,8 @@ _label_0e_110:
 	or b			; $5068
 	add b			; $5069
 	or b			; $506a
+
+seasonsFunc_0e_506b:
 	ld a,(wFrameCounter)		; $506b
 	and $07			; $506e
 	ret nz			; $5070
@@ -1782,6 +1784,8 @@ _label_0e_115:
 _label_0e_116:
 	nop			; $50cd
 	inc bc			; $50ce
+
+seasonsFunc_0e_50cf:
 	call $50f2		; $50cf
 	ld e,$b4		; $50d2
 	ld a,b			; $50d4
@@ -2071,7 +2075,7 @@ _label_0e_127:
 	jr z,_label_0e_128	; $5295
 	ld c,$12		; $5297
 	call objectUpdateSpeedZ_paramC		; $5299
-	jp nz,$5523		; $529c
+	jp nz,seasonsFunc_0e_5523		; $529c
 	ld a,$8f		; $529f
 	call playSound		; $52a1
 	ld h,d			; $52a4
@@ -2109,7 +2113,7 @@ _label_0e_128:
 	ld a,$03		; $52d1
 	call $5512		; $52d3
 	call _ecom_decCounter1		; $52d6
-	jp nz,$557b		; $52d9
+	jp nz,seasonsFunc_0e_557b		; $52d9
 	ld (hl),$78		; $52dc
 	inc l			; $52de
 	ld (hl),$02		; $52df
@@ -2148,7 +2152,7 @@ _label_0e_128:
 	ld (hl),$78		; $5314
 	ld a,$03		; $5316
 	call $5512		; $5318
-	call $557b		; $531b
+	call seasonsFunc_0e_557b		; $531b
 	call _ecom_decCounter1		; $531e
 	ret nz			; $5321
 	ld l,$85		; $5322
@@ -2177,7 +2181,7 @@ _label_0e_128:
 	ld (de),a		; $5343
 	ret			; $5344
 	call _ecom_decCounter1		; $5345
-	jp nz,$5365		; $5348
+	jp nz,_label_0e_129		; $5348
 	ld e,$b1		; $534b
 	ld a,(de)		; $534d
 	ld l,a			; $534e
@@ -2201,7 +2205,7 @@ _label_0e_129:
 	call _ecom_bounceOffWallsAndHoles		; $5368
 	call objectApplySpeed		; $536b
 	call $556f		; $536e
-	jp $557b		; $5371
+	jp seasonsFunc_0e_557b		; $5371
 	inc e			; $5374
 	ld a,(de)		; $5375
 	rst_jumpTable			; $5376
@@ -2265,7 +2269,7 @@ _label_0e_131:
 	jp $5512		; $53ca
 	ld c,$12		; $53cd
 	call objectUpdateSpeedZ_paramC		; $53cf
-	jp nz,$5518		; $53d2
+	jp nz,seasonsFunc_0e_5518		; $53d2
 	ld l,$85		; $53d5
 	inc (hl)		; $53d7
 	inc l			; $53d8
@@ -2453,11 +2457,15 @@ _label_0e_138:
 	ld e,$b0		; $5512
 	ld (de),a		; $5514
 	jp enemySetAnimation		; $5515
+
+seasonsFunc_0e_5518:
 	call enemyAnimate		; $5518
 	ld h,d			; $551b
 	ld l,$b6		; $551c
 	call _ecom_readPositionVars		; $551e
 	jr _label_0e_139		; $5521
+
+seasonsFunc_0e_5523:
 	call enemyAnimate		; $5523
 	ld bc,$3878		; $5526
 	ld h,d			; $5529
@@ -2513,6 +2521,8 @@ _label_0e_140:
 	ld a,(de)		; $5578
 	ld (hl),a		; $5579
 	ret			; $557a
+
+seasonsFunc_0e_557b:
 	call enemyAnimate		; $557b
 	call $5563		; $557e
 	ld e,$a1		; $5581
@@ -2837,7 +2847,7 @@ _label_0e_149:
 	ld (hl),$28		; $5750
 	ret			; $5752
 	call _ecom_decCounter1		; $5753
-	jp nz,$5b72		; $5756
+	jp nz,seasonsFunc_0e_5b72		; $5756
 	ld l,e			; $5759
 	inc (hl)		; $575a
 	ld l,$90		; $575b
@@ -2853,12 +2863,12 @@ _label_0e_149:
 	and $1f			; $576e
 	ld (de),a		; $5770
 	call $5b11		; $5771
-	jp nc,$5aff		; $5774
+	jp nc,seasonsFunc_0e_5aff		; $5774
 	call _ecom_decCounter1		; $5777
 	ld a,(hl)		; $577a
 	and $1f			; $577b
 	call z,$5b8d		; $577d
-	jp $5b72		; $5780
+	jp seasonsFunc_0e_5b72		; $5780
 	inc e			; $5783
 	ld a,(de)		; $5784
 	rst_jumpTable			; $5785
@@ -2892,7 +2902,7 @@ _label_0e_150:
 	call z,$5b94		; $57b2
 _label_0e_151:
 	call $5b78		; $57b5
-	jp nc,$5b1d		; $57b8
+	jp nc,seasonsFunc_0e_5b1d		; $57b8
 _label_0e_152:
 	ld l,$85		; $57bb
 	inc (hl)		; $57bd
@@ -2906,8 +2916,8 @@ _label_0e_152:
 	or a			; $57cf
 	jr nz,_label_0e_153	; $57d0
 	call $5b11		; $57d2
-	jp nc,$5aff		; $57d5
-	jp $5b72		; $57d8
+	jp nc,seasonsFunc_0e_5aff		; $57d5
+	jp seasonsFunc_0e_5b72		; $57d8
 _label_0e_153:
 	ld l,e			; $57db
 	inc (hl)		; $57dc
@@ -2915,13 +2925,13 @@ _label_0e_153:
 _label_0e_154:
 	jp enemyAnimate		; $57e0
 	call $5b11		; $57e3
-	jp nc,$5aff		; $57e6
+	jp nc,seasonsFunc_0e_5aff		; $57e6
 	call _ecom_decCounter1		; $57e9
 	ld a,(hl)		; $57ec
 	and $1f			; $57ed
 	ld b,$01		; $57ef
 	call z,$5b94		; $57f1
-	jp $5b72		; $57f4
+	jp seasonsFunc_0e_5b72		; $57f4
 	inc e			; $57f7
 	ld a,(de)		; $57f8
 	rst_jumpTable			; $57f9
@@ -2939,7 +2949,7 @@ _label_0e_154:
 	ld (hl),$28		; $580a
 	ret			; $580c
 	call _ecom_decCounter1		; $580d
-	jp nz,$5b72		; $5810
+	jp nz,seasonsFunc_0e_5b72		; $5810
 	ld (hl),$0c		; $5813
 	ld l,e			; $5815
 	inc (hl)		; $5816
@@ -2959,8 +2969,8 @@ _label_0e_154:
 _label_0e_155:
 	jp enemyAnimate		; $582f
 	call $5b11		; $5832
-	jp nc,$5aff		; $5835
-	jp $5b72		; $5838
+	jp nc,seasonsFunc_0e_5aff		; $5835
+	jp seasonsFunc_0e_5b72		; $5838
 	inc e			; $583b
 	ld a,(de)		; $583c
 	rst_jumpTable			; $583d
@@ -2987,7 +2997,7 @@ _label_0e_155:
 	call z,$5b94		; $585b
 _label_0e_156:
 	call $5b78		; $585e
-	jp nc,$5b1d		; $5861
+	jp nc,seasonsFunc_0e_5b1d		; $5861
 _label_0e_157:
 	ld l,$85		; $5864
 	inc (hl)		; $5866
@@ -3010,10 +3020,10 @@ _label_0e_158:
 	jr _label_0e_158		; $5884
 _label_0e_159:
 	call $5b11		; $5886
-	jp nc,$5aff		; $5889
-	jp $5b72		; $588c
+	jp nc,seasonsFunc_0e_5aff		; $5889
+	jp seasonsFunc_0e_5b72		; $588c
 	call _ecom_decCounter1		; $588f
-	jp nz,$5b72		; $5892
+	jp nz,seasonsFunc_0e_5b72		; $5892
 	ld (hl),$0c		; $5895
 	ld l,e			; $5897
 	inc (hl)		; $5898
@@ -3031,8 +3041,8 @@ _label_0e_159:
 	call _ecom_updateCardinalAngleAwayFromTarget		; $58b0
 	jr _label_0e_158		; $58b3
 	call $5b11		; $58b5
-	jp nc,$5aff		; $58b8
-	jp $5b72		; $58bb
+	jp nc,seasonsFunc_0e_5aff		; $58b8
+	jp seasonsFunc_0e_5b72		; $58bb
 	inc e			; $58be
 	ld a,(de)		; $58bf
 	rst_jumpTable			; $58c0
@@ -3378,6 +3388,8 @@ _label_0e_171:
 	adc b			; $5afc
 	sub b			; $5afd
 	nop			; $5afe
+
+seasonsFunc_0e_5aff:
 	ld h,d			; $5aff
 	ld l,$84		; $5b00
 	ld (hl),$09		; $5b02
@@ -3396,6 +3408,8 @@ _label_0e_171:
 	ld a,(de)		; $5b19
 	cp $f0			; $5b1a
 	ret			; $5b1c
+
+seasonsFunc_0e_5b1d:
 	ldh a,(<hCameraY)	; $5b1d
 	add $44			; $5b1f
 	ld b,a			; $5b21
@@ -3456,6 +3470,8 @@ _label_0e_175:
 	ld e,$90		; $5b6d
 	ld a,$23		; $5b6f
 	ld (de),a		; $5b71
+
+seasonsFunc_0e_5b72:
 	call objectApplySpeed		; $5b72
 	jp enemyAnimate		; $5b75
 	ld h,d			; $5b78
@@ -4593,6 +4609,8 @@ _label_0e_219:
 	ld e,$ab		; $6279
 	ld a,(de)		; $627b
 	or a			; $627c
+
+seasonsFunc_0e_627d:
 	jr z,_label_0e_220	; $627d
 	pop bc			; $627f
 	ret			; $6280
@@ -8386,7 +8404,7 @@ _label_0e_342:
 	stop			; $7527
 	ld c,$0c		; $7528
 	call objectUpdateSpeedZ_paramC		; $752a
-	jp nz,$76de		; $752d
+	jp nz,_label_0e_350		; $752d
 	ld a,$85		; $7530
 	call playSound		; $7532
 	call objectSetVisible82		; $7535
@@ -9633,21 +9651,15 @@ _label_0e_392:
 	inc e			; $7d07
 	ld a,(de)		; $7d08
 	rst_jumpTable			; $7d09
-	ld a,(de)		; $7d0a
-	ld a,l			; $7d0b
-	inc h			; $7d0c
-	ld a,l			; $7d0d
-	ld c,l			; $7d0e
-	ld a,l			; $7d0f
-	ld e,d			; $7d10
-	ld a,l			; $7d11
-	ld l,e			; $7d12
-	ld a,l			; $7d13
-	ld a,(hl)		; $7d14
-	ld a,l			; $7d15
-	sub d			; $7d16
-	ld a,l			; $7d17
-	jp nz,$627d		; $7d18
+	.dw $7d1a
+	.dw $7d24
+	.dw $7d4d
+	.dw $7d5a
+	.dw $7d6b
+	.dw $7d7e
+	.dw $7d92
+	.dw $7dc2
+	ld h,d		; $7d1a
 	ld l,e			; $7d1b
 	inc (hl)		; $7d1c
 	inc l			; $7d1d
@@ -9848,7 +9860,7 @@ _label_0e_399:
 	ld a,$03		; $7e71
 	jp enemySetAnimation		; $7e73
 	call _ecom_decCounter1		; $7e76
-	jp nz,$7e27		; $7e79
+	jp nz,_label_0e_397		; $7e79
 	ld l,e			; $7e7c
 	xor a			; $7e7d
 	ldd (hl),a		; $7e7e

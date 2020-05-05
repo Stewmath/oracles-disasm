@@ -1580,6 +1580,8 @@ _label_15_241:
 	ld a,$3d		; $5e4a
 	rra			; $5e4c
 	ld a,(de)		; $5e4d
+
+seasonsFunc_15_5e4e:
 	call getFreePartSlot		; $5e4e
 	ret nz			; $5e51
 	ld (hl),$0e		; $5e52
@@ -1588,6 +1590,7 @@ _label_15_241:
 	ldi (hl),a		; $5e58
 	ld (hl),d		; $5e59
 	jp objectCopyPosition		; $5e5a
+
 	call getFreeInteractionSlot		; $5e5d
 	ret nz			; $5e60
 	ld (hl),$6e		; $5e61
@@ -1598,6 +1601,7 @@ _label_15_241:
 	ld a,($d00d)		; $5e6a
 	ld (hl),a		; $5e6d
 	ret			; $5e6e
+
 	call setLinkForceStateToState08		; $5e6f
 	jp putLinkOnGround		; $5e72
 	ld bc,$30a8		; $5e75
@@ -1662,6 +1666,8 @@ _label_15_242:
 	ld e,$7b		; $5ee8
 	ld (de),a		; $5eea
 	ret			; $5eeb
+
+seasonsFunc_15_5eec:
 	call objectGetAngleTowardLink		; $5eec
 	ld e,$49		; $5eef
 	ld (de),a		; $5ef1
@@ -1683,10 +1689,10 @@ _label_15_242:
 	xor $0f			; $5f16
 	ldh (<hFF8C),a	; $5f18
 	ld a,($cc49)		; $5f1a
-	ld hl,$5f6f		; $5f1d
+	ld hl,seasonsTable_15_5f6f		; $5f1d
 	cp $04			; $5f20
 	jr z,_label_15_243	; $5f22
-	ld hl,$5f85		; $5f24
+	ld hl,seasonsTable_5f85		; $5f24
 _label_15_243:
 	ld a,($cc4c)		; $5f27
 	ld e,a			; $5f2a
@@ -1736,20 +1742,13 @@ _label_15_248:
 	ld a,$03		; $5f69
 	ld ($cc6b),a		; $5f6b
 	ret			; $5f6e
-	ld a,$98		; $5f6f
-	ld e,a			; $5f71
-	ccf			; $5f72
-	xor (hl)		; $5f73
-	ld e,a			; $5f74
-	ld b,e			; $5f75
-	call nz,$b45f		; $5f76
-	jp c,$c15f		; $5f79
-	ld a,($ff00+$5f)	; $5f7c
-	jp nz,$6006		; $5f7e
-.DB $d3				; $5f81
-	inc e			; $5f82
-	ld h,b			; $5f83
-	nop			; $5f84
+
+seasonsTable_15_5f6f:
+	.db $3e $98 $5f $3f $ae $5f $43 $c4
+	.db $5f $b4 $da $5f $c1 $f0 $5f $c2
+	.db $06 $60 $d3 $1c $60 $00
+
+seasonsTable_5f85:
 	scf			; $5f85
 	ldd (hl),a		; $5f86
 	ld h,b			; $5f87

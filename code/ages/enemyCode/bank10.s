@@ -43,7 +43,11 @@ enemyCode01:
 	ld (hl),a		; $45b3
 
 	ld l,Enemy.collisionType		; $45b4
+.ifdef ROM_AGES
 	ld (hl),$ff		; $45b6
+.else
+	ld (hl),$87		; $45b6
+.endif
 
 	ld a,$09		; $45b8
 	jp enemySetAnimation		; $45ba

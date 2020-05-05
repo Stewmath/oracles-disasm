@@ -1980,7 +1980,7 @@ _label_08_165:
 	ld e,$77		; $5d44
 	ld a,(de)		; $5d46
 	or a			; $5d47
-	jp nz,$5df7		; $5d48
+	jp nz,seasonsFunc_08_5df7		; $5d48
 	ld l,$76		; $5d4b
 	ld (hl),$3c		; $5d4d
 	ld l,$45		; $5d4f
@@ -2014,7 +2014,7 @@ _label_08_166:
 	call $5e04		; $5d76
 	jp objectSetVisible		; $5d79
 	call interactionAnimateAsNpc		; $5d7c
-	call $5df7		; $5d7f
+	call seasonsFunc_08_5df7		; $5d7f
 	ld a,(wFrameCounter)		; $5d82
 	and $07			; $5d85
 	call z,$5e04		; $5d87
@@ -2053,7 +2053,7 @@ _label_08_166:
 	call $5dfe		; $5dc8
 	jp $5e04		; $5dcb
 	call interactionAnimateAsNpc		; $5dce
-	call $5df7		; $5dd1
+	call seasonsFunc_08_5df7		; $5dd1
 	ld a,(wFrameCounter)		; $5dd4
 	and $07			; $5dd7
 	call z,$5e04		; $5dd9
@@ -2070,6 +2070,8 @@ _label_08_166:
 	ld l,$76		; $5df3
 	dec (hl)		; $5df5
 	ret			; $5df6
+
+seasonsFunc_08_5df7:
 	ld c,$20		; $5df7
 	call objectUpdateSpeedZ_paramC		; $5df9
 	ret nz			; $5dfc
@@ -3713,7 +3715,7 @@ _label_08_231:
 
 interactionCode3e:
 	call checkInteractionState		; $6828
-	jp nz,$68f5		; $682b
+	jp nz,seasonsFunc_08_68f5		; $682b
 	ld a,$01		; $682e
 	ld (de),a		; $6830
 	ld h,d			; $6831
@@ -3832,6 +3834,8 @@ _label_08_237:
 	ld l,$76		; $68f1
 	ld (hl),a		; $68f3
 	ret			; $68f4
+
+seasonsFunc_08_68f5:
 	ld e,$43		; $68f5
 	ld a,(de)		; $68f7
 	rst_jumpTable			; $68f8
@@ -3882,13 +3886,13 @@ _label_08_239:
 	ld (hl),a		; $694d
 	call $5dfe		; $694e
 _label_08_240:
-	call $5df7		; $6951
+	call seasonsFunc_08_5df7		; $6951
 _label_08_241:
 	call interactionRunScript		; $6954
 	jp interactionAnimateAsNpc		; $6957
 	ld a,($cc4e)		; $695a
 	cp $00			; $695d
-	jp nz,$6954		; $695f
+	jp nz,_label_08_241		; $695f
 	ld e,$45		; $6962
 	ld a,(de)		; $6964
 	rst_jumpTable			; $6965
@@ -3923,7 +3927,7 @@ _label_08_242:
 	ld (hl),$0c		; $6988
 _label_08_243:
 	call $6ac1		; $698a
-	jp nz,$6ab6		; $698d
+	jp nz,_label_08_251		; $698d
 	call objectApplySpeed		; $6990
 	cp $4b			; $6993
 	jr c,_label_08_244	; $6995
@@ -3996,7 +4000,7 @@ _label_08_244:
 	ld (hl),$0c		; $6a29
 _label_08_245:
 	call $6ac1		; $6a2b
-	jp nz,$6ab6		; $6a2e
+	jp nz,_label_08_251		; $6a2e
 	call objectApplySpeed		; $6a31
 	ld e,$4b		; $6a34
 	ld a,(de)		; $6a36
@@ -5672,7 +5676,7 @@ interactionCode4e:
 	jr nz,_label_08_313	; $7528
 	call getThisRoomFlags		; $752a
 	and $40			; $752d
-	jp nz,$754c		; $752f
+	jp nz,seasonsFunc_08_754c		; $752f
 	ld hl,$7e4e		; $7532
 	call parseGivenObjectData		; $7535
 	ld hl,$cc1d		; $7538
@@ -5686,6 +5690,8 @@ interactionCode4e:
 	ld (hl),a		; $7546
 	ld a,$03		; $7547
 	call setMusicVolume		; $7549
+
+seasonsFunc_08_754c:
 	jp interactionDelete		; $754c
 _label_08_313:
 	call interactionInitGraphics		; $754f
@@ -5709,7 +5715,7 @@ _label_08_314:
 	ld e,$42		; $756c
 	ld a,(de)		; $756e
 	cp $07			; $756f
-	jp nz,$757a		; $7571
+	jp nz,_label_08_315		; $7571
 	call interactionSetAlwaysUpdateBit		; $7574
 	jp objectSetVisible80		; $7577
 _label_08_315:
@@ -5757,6 +5763,8 @@ _label_08_317:
 	ld (hl),l		; $75b0
 	ld ($0575),a		; $75b1
 	halt			; $75b4
+
+seasonsFunc_08_75b5:
 	ld a,($cfd0)		; $75b5
 	or a			; $75b8
 	call nz,interactionIncState2		; $75b9
@@ -5826,26 +5834,20 @@ _label_08_319:
 	ld e,$45		; $762c
 	ld a,(de)		; $762e
 	rst_jumpTable			; $762f
-	ld a,$76		; $7630
-	ld c,a			; $7632
-	halt			; $7633
-	ld e,(hl)		; $7634
-	halt			; $7635
-	ld a,h			; $7636
-	halt			; $7637
-	add a			; $7638
-	halt			; $7639
-	sub l			; $763a
-	halt			; $763b
-	and a			; $763c
-	halt			; $763d
+	.dw $763e
+	.dw $764f
+	.dw $765e
+	.dw $767c
+	.dw $7687
+	.dw $7695
+	.dw $76a7
 	ld a,($cfd3)		; $763e
 	cp $3f			; $7641
-	jp nz,$75b5		; $7643
+	jp nz,seasonsFunc_08_75b5		; $7643
 	call interactionIncState2		; $7646
 	ld hl,$612d		; $7649
 	call interactionSetScript		; $764c
-	call $75b5		; $764f
+	call seasonsFunc_08_75b5		; $764f
 	ld a,($cfd3)		; $7652
 	and $40			; $7655
 	ret z			; $7657

@@ -542,10 +542,12 @@ _label_06_233:
 	call objectApplySpeed		; $6d62
 	ld c,$20		; $6d65
 	call objectUpdateSpeedZAndBounce		; $6d67
-	jp nc,$6d74		; $6d6a
+	jp nc,seasonsFunc_06_6d74		; $6d6a
 	call itemIncState2		; $6d6d
 	ld l,$20		; $6d70
 	ld (hl),$01		; $6d72
+
+seasonsFunc_06_6d74:
 	jp specialObjectAnimate		; $6d74
 	ret			; $6d77
 	ld hl,$6da8		; $6d78

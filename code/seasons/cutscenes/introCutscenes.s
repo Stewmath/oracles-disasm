@@ -235,7 +235,10 @@ seasonsTable_03_74d1:
 	.db $14 $04 $78 $88
 	.db $14 $08 $70 $70
 	.db $14 $00 $40 $40
-	.db $ff $10 $70 $18
+	.db $ff
+
+seasonsTable_03_74fa:
+	.db $10 $70 $18
 	
 cutscene06Func5:
 	ld a,($c4ab)		; $74fd
@@ -329,7 +332,7 @@ cutscene06Func6:
 cutscene06Func7:
 	call retIfTextIsActive		; $757a
 	call seasonsFunc_03_7a66		; $757d
-	ld hl,$74fa		; $7580
+	ld hl,seasonsTable_03_74fa		; $7580
 	jp seasonsFunc_03_74b6		; $7583
 	
 cutscene06Func8:
@@ -549,7 +552,7 @@ cutscene07Func5:
 	call seasonsFunc_03_7a6b		; $770b
 	ld a,$81		; $770e
 	ld ($cbcb),a		; $7710
-	call $7a88		; $7713
+	call seasonsFunc_03_7a88		; $7713
 	ld bc,$1e05		; $7716
 	call showText		; $7719
 	ld a,$0d		; $771c
@@ -799,9 +802,7 @@ cutscene08Func8:
 	ld ($c2ee),a		; $78fa
 	ld ($c2ef),a		; $78fd
 	ld c,a			; $7900
-	ld hl,$5d0d		; $7901
-	ld e,$01		; $7904
-	jp interBankCall		; $7906
+	jpab bank1.loadDeathRespawnBufferPreset
 
 seasonsFunc_03_7909:
 	ld hl,$cbb4		; $7909
@@ -994,7 +995,7 @@ seasonsFunc_03_7a3b:
 	ld a,(hl)		; $7a41
 	and $03			; $7a42
 	ld (hl),a		; $7a44
-	ld hl,$7a5e		; $7a45
+	ld hl,seasonsTable_03_7a5e		; $7a45
 	rst_addDoubleIndex			; $7a48
 	ldi a,(hl)		; $7a49
 	ld h,(hl)		; $7a4a
@@ -1008,13 +1009,12 @@ seasonsFunc_03_7a3b:
 	ld hl,$cbb8		; $7a58
 +
 	jp func_35ec		; $7a5b
-	or b			; $7a5e
-	ld c,c			; $7a5f
-	stop			; $7a60
-	ld c,d			; $7a61
-	ld ($ff00+R_OBP1),a	; $7a62
-	ld b,b			; $7a64
-	ld c,d			; $7a65
+
+seasonsTable_03_7a5e:
+	.db $b0 $49
+	.db $10 $4a
+	.db $e0 $49
+	.db $40 $4a
 	
 seasonsFunc_03_7a66:
 	ld hl,$cc03		; $7a66
