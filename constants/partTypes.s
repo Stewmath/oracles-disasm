@@ -462,5 +462,10 @@
 ; @subid_81{Low health}
 .define PARTID_MOTHULA_PROJECTILE_2		$42
 
+; relating to General Onox boss fight?
+.define PARTID_47				$47
+.define PARTID_48				$48
+.define PARTID_49				$49
+
 
 .endif

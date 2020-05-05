@@ -9,7 +9,7 @@ multiIntroCutsceneHandler:
 
 cutsceneDinDancing:
 	call cutsceneDinDancingHandler		; $730b
-	ld hl,$cc03		; $730e
+	ld hl,wCutsceneState		; $730e
 	ld a,(hl)		; $7311
 	cp $02			; $7312
 	ret z			; $7314
@@ -18,7 +18,7 @@ cutsceneDinDancing:
 	jp updateAllObjects		; $7318
 
 cutsceneDinDancingHandler:
-	ld de,$cc03		; $731b
+	ld de,wCutsceneState		; $731b
 	ld a,(de)		; $731e
 	rst_jumpTable			; $731f
 	.dw cutscene06Func0
@@ -44,7 +44,7 @@ cutscene06Func0:
 	call playSound		; $7345
 cutscene06Func1:
 	ld a,$ff		; $7348
-	ld ($cd25),a		; $734a
+	ld (wTilesetAnimation),a		; $734a
 	ld a,$01		; $734d
 	ld ($cfd0),a		; $734f
 	ld hl,$cc02		; $7352
@@ -65,7 +65,7 @@ cutscene06Func1:
 	ld hl,$cbb6		; $7376
 	ld (hl),$28		; $7379
 	call fastFadeinFromWhite		; $737b
-	call seasonsFunc_03_7a66		; $737e
+	call incCutsceneState		; $737e
 	ld hl,$cbb5		; $7381
 	ld (hl),$02		; $7384
 	
@@ -119,7 +119,7 @@ seasonsOamData_03_7397:
 	.db $90 $3c $46 $06
 
 cutscene06Func2:
-	ld a,($c4ab)		; $7428
+	ld a,(wPaletteThread_mode)		; $7428
 	or a			; $742b
 	jp nz,seasonsFunc_03_7386		; $742c
 	call seasonsFunc_03_7458		; $742f
@@ -139,7 +139,7 @@ cutscene06Func2:
 +
 	ld a,SND_CLOSEMENU		; $744d
 	call playSound		; $744f
-	call seasonsFunc_03_7a66		; $7452
+	call incCutsceneState		; $7452
 	jp fastFadeoutToWhite		; $7455
 	
 seasonsFunc_03_7458:
@@ -155,16 +155,16 @@ seasonsFunc_03_7458:
 	inc (hl)		; $7468
 	ret			; $7469
 cutscene06Func3:
-	ld a,($c4ab)		; $746a
+	ld a,(wPaletteThread_mode)		; $746a
 	or a			; $746d
 	jp nz,seasonsFunc_03_7386		; $746e
 	xor a			; $7471
-	ld ($cd25),a		; $7472
+	ld (wTilesetAnimation),a		; $7472
 	ld hl,$d01a		; $7475
 	set 7,(hl)		; $7478
 	xor a			; $747a
 	ld ($cfd0),a		; $747b
-	call seasonsFunc_03_7a66		; $747e
+	call incCutsceneState		; $747e
 	jp reloadGraphicsOnExitMenu		; $7481
 
 cutscene06Func4:
@@ -180,7 +180,7 @@ cutscene06Func4:
 	call func_13c6		; $7498
 	ld a,SNDCTRL_STOPMUSIC		; $749b
 	call playSound		; $749d
-	jp seasonsFunc_03_7a66		; $74a0
+	jp incCutsceneState		; $74a0
 
 seasonsFunc_03_74a3:
 	call decCbb3		; $74a3
@@ -241,7 +241,7 @@ seasonsTable_03_74fa:
 	.db $10 $70 $18
 	
 cutscene06Func5:
-	ld a,($c4ab)		; $74fd
+	ld a,(wPaletteThread_mode)		; $74fd
 	or a			; $7500
 	ret nz			; $7501
 	ld hl,$cfd0		; $7502
@@ -251,7 +251,7 @@ cutscene06Func5:
 	ret nz			; $750d
 	ld hl,$cbb3		; $750e
 	ld (hl),$3c		; $7511
-	jp seasonsFunc_03_7a66		; $7513
+	jp incCutsceneState		; $7513
 
 seasonsFunc_03_7516:
 	ld de,$cfd2		; $7516
@@ -321,7 +321,7 @@ cutsceneDinDancing_loadListOfTiles:
 cutscene06Func6:
 	call decCbb3		; $7565
 	ret nz			; $7568
-	call seasonsFunc_03_7a66		; $7569
+	call incCutsceneState		; $7569
 	ld bc,$0c08		; $756c
 	call checkIsLinkedGame		; $756f
 	jr z,+	; $7572
@@ -331,7 +331,7 @@ cutscene06Func6:
 	
 cutscene06Func7:
 	call retIfTextIsActive		; $757a
-	call seasonsFunc_03_7a66		; $757d
+	call incCutsceneState		; $757d
 	ld hl,seasonsTable_03_74fa		; $7580
 	jp seasonsFunc_03_74b6		; $7583
 	
@@ -346,7 +346,7 @@ cutscene06Func8:
 	inc l			; $7594
 	ld (hl),$07		; $7595
 +
-	jp seasonsFunc_03_7a66		; $7597
+	jp incCutsceneState		; $7597
 	
 cutscene06Func9:
 	ld c,$09		; $759a
@@ -362,7 +362,7 @@ seasonsFunc_03_75a5:
 	ld a,(hl)		; $75a9
 	cp b			; $75aa
 	ret nz			; $75ab
-	call seasonsFunc_03_7a66		; $75ac
+	call incCutsceneState		; $75ac
 	ld b,$0c		; $75af
 	jp showText		; $75b1
 	
@@ -370,7 +370,7 @@ cutscene06Funca:
 	call retIfTextIsActive		; $75b4
 	ld hl,$cfd0		; $75b7
 	ld (hl),$06		; $75ba
-	jp seasonsFunc_03_7a66		; $75bc
+	jp incCutsceneState		; $75bc
 	
 cutscene06Funcb:
 	ld a,$08		; $75bf
@@ -381,14 +381,14 @@ cutscene06Funcc:
 	call retIfTextIsActive		; $75c6
 	ld hl,$cbb3		; $75c9
 	ld (hl),$1e		; $75cc
-	jp seasonsFunc_03_7a66		; $75ce
+	jp incCutsceneState		; $75ce
 	
 cutscene06Funcd:
 	call decCbb3		; $75d1
 	ret nz			; $75d4
 	ld hl,$cfd0		; $75d5
 	ld (hl),$09		; $75d8
-	jp seasonsFunc_03_7a66		; $75da
+	jp incCutsceneState		; $75da
 	
 cutscene06Funce:
 	ld hl,$cfd0		; $75dd
@@ -397,7 +397,7 @@ cutscene06Funce:
 	ret nz			; $75e3
 	ld hl,$cbb3		; $75e4
 	ld (hl),$3c		; $75e7
-	jp seasonsFunc_03_7a66		; $75e9
+	jp incCutsceneState		; $75e9
 	
 cutscene06Funcf:
 	call decCbb3		; $75ec
@@ -405,17 +405,17 @@ cutscene06Funcf:
 	call clearOam		; $75f0
 	call _cutscene_clearObjects		; $75f3
 	ld a,$07		; $75f6
-	ld ($c2ef),a		; $75f8
+	ld (wCutsceneIndex),a		; $75f8
 	xor a			; $75fb
 	ld ($cc02),a		; $75fc
-	ld ($cc03),a		; $75ff
+	ld (wCutsceneState),a		; $75ff
 	ld a,$30		; $7602
 	call unsetGlobalFlag		; $7604
 	jp fadeoutToWhite		; $7607
 
 
 cutsceneDinImprisoned:
-	ld de,$cc03		; $760a
+	ld de,wCutsceneState		; $760a
 	ld a,(de)		; $760d
 	rst_jumpTable			; $760e
 	.dw cutscene07Func0
@@ -428,8 +428,9 @@ cutsceneDinImprisoned:
 	.dw cutscene07Func7
 	.dw cutscene07Func8
 	.dw cutscene07Func9
+
 cutscene07Func0:
-	ld a,($c4ab)		; $7623
+	ld a,(wPaletteThread_mode)		; $7623
 	or a			; $7626
 	ret nz			; $7627
 	ld a,$01		; $7628
@@ -446,23 +447,24 @@ cutscene07Func0:
 	ld a,MUS_ONOX_CASTLE		; $763f
 	call playSound		; $7641
 	jp fadeinFromWhite		; $7644
+
 cutscene07Func1:
-	ld a,($c4ab)		; $7647
+	ld a,(wPaletteThread_mode)		; $7647
 	or a			; $764a
 	ret nz			; $764b
 	ld hl,$cbb3		; $764c
 	call decHlRef16WithCap		; $764f
 	jr nz,+	; $7652
 	xor a			; $7654
-	ld ($c486),a		; $7655
-	call seasonsFunc_03_7a66		; $7658
+	ld (wGfxRegs1.SCY),a		; $7655
+	call incCutsceneState		; $7658
 	jp fadeoutToWhite		; $765b
 +
 	ld hl,$cbb3		; $765e
 	ld a,(hl)		; $7661
 	and $01			; $7662
 	ret nz			; $7664
-	ld hl,$c486		; $7665
+	ld hl,wGfxRegs1.SCY		; $7665
 	ld a,(hl)		; $7668
 	or a			; $7669
 	ret z			; $766a
@@ -470,42 +472,43 @@ cutscene07Func1:
 	ld (hl),a		; $766c
 	ldh (<hCameraY),a	; $766d
 	ret			; $766f
+
 cutscene07Func2:
-	ld a,($c4ab)		; $7670
+	ld a,(wPaletteThread_mode)		; $7670
 	or a			; $7673
 	ret nz			; $7674
-	call seasonsFunc_03_7a66		; $7675
+	call incCutsceneState		; $7675
 	ld a,$0a		; $7678
 	ld ($cfd0),a		; $767a
 	call disableLcd		; $767d
 	xor a			; $7680
-	ld ($cd08),a		; $7681
-	ld ($cd09),a		; $7684
+	ld (wScreenOffsetY),a		; $7681
+	ld (wScreenOffsetX),a		; $7684
 	ld a,GFXH_2e		; $7687
 	call loadGfxHeader		; $7689
 	ld a,SEASONS_PALH_97		; $768c
 	call loadPaletteHeader		; $768e
 	ld a,$01		; $7691
-	ld ($cd00),a		; $7693
+	ld (wScrollMode),a		; $7693
 	ld a,$18		; $7696
-	ld ($cd25),a		; $7698
+	ld (wTilesetAnimation),a		; $7698
 	call loadAnimationData		; $769b
 	call getFreeInteractionSlot		; $769e
 	jr nz,+	; $76a1
-	ld a,$4f		; $76a3
+	ld a,INTERACID_4f		; $76a3
 	ldi (hl),a		; $76a5
 	ld (hl),$00		; $76a6
 	ld ($cc1d),a		; $76a8
 	call getFreeInteractionSlot		; $76ab
 	jr nz,+	; $76ae
-	ld (hl),$4f		; $76b0
+	ld (hl),INTERACID_4f		; $76b0
 	inc l			; $76b2
 	ld (hl),$01		; $76b3
 +
 	call refreshObjectGfx		; $76b5
 	ld a,$0d		; $76b8
 	call loadGfxRegisterStateIndex		; $76ba
-	ld hl,$c486		; $76bd
+	ld hl,wGfxRegs1.SCY		; $76bd
 	ldi a,(hl)		; $76c0
 	ldh (<hCameraY),a	; $76c1
 	ld a,(hl)		; $76c3
@@ -520,7 +523,7 @@ cutscene07Func3:
 -
 	call getFreeInteractionSlot		; $76d2
 	jr nz,+	; $76d5
-	ld (hl),$4f		; $76d7
+	ld (hl),INTERACID_4f		; $76d7
 	inc l			; $76d9
 	ld (hl),$02		; $76da
 	inc l			; $76dc
@@ -529,7 +532,8 @@ cutscene07Func3:
 	ld (hl),a		; $76df
 	jr nz,-	; $76e0
 +
-	jp seasonsFunc_03_7a66		; $76e2
+	jp incCutsceneState		; $76e2
+
 cutscene07Func4:
 	ld a,($cfd0)		; $76e5
 	sub $0c			; $76e8
@@ -537,7 +541,8 @@ cutscene07Func4:
 	ld ($cbb3),a		; $76eb
 	dec a			; $76ee
 	ld ($cbba),a		; $76ef
-	jp seasonsFunc_03_7a66		; $76f2
+	jp incCutsceneState		; $76f2
+
 cutscene07Func5:
 	ld hl,$cbb3		; $76f5
 	ld b,$01		; $76f8
@@ -553,18 +558,19 @@ cutscene07Func5:
 	ld a,$81		; $770e
 	ld ($cbcb),a		; $7710
 	call seasonsFunc_03_7a88		; $7713
-	ld bc,$1e05		; $7716
+	ld bc,TX_1e05		; $7716
 	call showText		; $7719
 	ld a,$0d		; $771c
 	call loadGfxRegisterStateIndex		; $771e
-	ld hl,$c486		; $7721
+	ld hl,wGfxRegs1.SCY		; $7721
 	ldi a,(hl)		; $7724
 	ldh (<hCameraY),a	; $7725
 	ld a,(hl)		; $7727
 	ldh (<hCameraX),a	; $7728
 	ld hl,$cfd0		; $772a
 	ld (hl),$0d		; $772d
-	jp seasonsFunc_03_7a66		; $772f
+	jp incCutsceneState		; $772f
+
 cutscene07Func6:
 	call retIfTextIsActive		; $7732
 	call disableLcd		; $7735
@@ -579,46 +585,50 @@ cutscene07Func6:
 	ld (hl),$f0		; $774d
 	xor a			; $774f
 	ld ($cbcb),a		; $7750
-	jp seasonsFunc_03_7a66		; $7753
+	jp incCutsceneState		; $7753
+
 cutscene07Func7:
-	ld a,($c4ab)		; $7756
+	ld a,(wPaletteThread_mode)		; $7756
 	or a			; $7759
 	ret nz			; $775a
 	call decCbb3		; $775b
 	ret nz			; $775e
-	call seasonsFunc_03_7a66		; $775f
+	call incCutsceneState		; $775f
 	jp fadeoutToWhite		; $7762
+
 cutscene07Func8:
-	ld a,($c4ab)		; $7765
+	ld a,(wPaletteThread_mode)		; $7765
 	or a			; $7768
 	ret nz			; $7769
-	call seasonsFunc_03_7a66		; $776a
+	call incCutsceneState		; $776a
 	ld a,$ff		; $776d
-	ld ($cd25),a		; $776f
+	ld (wTilesetAnimation),a		; $776f
 	ld a,$0e		; $7772
 	ld ($cfd0),a		; $7774
 	ld a,$07		; $7777
 	ld b,$01		; $7779
 	call seasonsFunc_03_7aa9		; $777b
 	jp fadeinFromWhite		; $777e
+
 cutscene07Func9:
-	ld a,($c4ab)		; $7781
+	ld a,(wPaletteThread_mode)		; $7781
 	or a			; $7784
 	ret nz			; $7785
 	ld hl,$cfd0		; $7786
 	ld a,(hl)		; $7789
 	cp $0f			; $778a
 	ret nz			; $778c
+
 	call clearDynamicInteractions		; $778d
 	ld a,$08		; $7790
-	ld ($c2ef),a		; $7792
+	ld (wCutsceneIndex),a		; $7792
 	xor a			; $7795
-	ld ($cc03),a		; $7796
+	ld (wCutsceneState),a		; $7796
 	jp fadeoutToWhite		; $7799
 
 
 cutsceneTempleSinking:
-	ld de,$cc03		; $779c
+	ld de,wCutsceneState		; $779c
 	ld a,(de)		; $779f
 	rst_jumpTable			; $77a0
 	.dw cutscene08Func0
@@ -631,7 +641,7 @@ cutsceneTempleSinking:
 	.dw cutscene08Func7
 	.dw cutscene08Func8
 cutscene08Func0:
-	ld a,($c4ab)		; $77b3
+	ld a,(wPaletteThread_mode)		; $77b3
 	or a			; $77b6
 	ret nz			; $77b7
 	ld a,$01		; $77b8
@@ -653,7 +663,7 @@ cutscene08Func0:
 	call loadPaletteHeader		; $77d3
 	ld a,$0e		; $77d6
 	call loadGfxRegisterStateIndex		; $77d8
-	ld hl,$c486		; $77db
+	ld hl,wGfxRegs1.SCY		; $77db
 	ldi a,(hl)		; $77de
 	ldh (<hCameraY),a	; $77df
 	ldi a,(hl)		; $77e1
@@ -674,7 +684,7 @@ cutscene08Func0:
 	call playSound		; $77fb
 	jp fadeinFromWhite		; $77fe
 cutscene08Func1:
-	ld a,($c4ab)		; $7801
+	ld a,(wPaletteThread_mode)		; $7801
 	or a			; $7804
 	jp nz,seasonsFunc_03_7827		; $7805
 	call decCbb3		; $7808
@@ -694,7 +704,7 @@ cutscene08Func1:
 	ld (hl),$b4		; $781f
 	inc hl			; $7821
 	ld (hl),$00		; $7822
-	call seasonsFunc_03_7a66		; $7824
+	call incCutsceneState		; $7824
 
 seasonsFunc_03_7827:
 	jp seasonsFunc_03_7981		; $7827
@@ -709,7 +719,7 @@ cutscene08Func2:
 	ld hl,$cfd3		; $783a
 	inc (hl)		; $783d
 	set 7,(hl)		; $783e
-	jp seasonsFunc_03_7a66		; $7840
+	jp incCutsceneState		; $7840
 +
 	call seasonsFunc_03_7909		; $7843
 	jp seasonsFunc_03_7981		; $7846
@@ -739,7 +749,7 @@ cutscene08Func3:
 	ld hl,$cfd3		; $7876
 	inc (hl)		; $7879
 	res 7,(hl)		; $787a
-	jp seasonsFunc_03_7a66		; $787c
+	jp incCutsceneState		; $787c
 cutscene08Func4:
 	call decCbb3		; $787f
 	jr nz,+	; $7882
@@ -750,7 +760,7 @@ cutscene08Func4:
 	call seasonsFunc_03_7917		; $788b
 	ld hl,$cfd3		; $788e
 	ld (hl),$ff		; $7891
-	call seasonsFunc_03_7a66		; $7893
+	call incCutsceneState		; $7893
 	ld hl,$cbba		; $7896
 	ld (hl),$02		; $7899
 	ld hl,$cbb8		; $789b
@@ -777,7 +787,7 @@ cutscene08Func5:
 	ld b,$01		; $78c5
 	call seasonsFunc_03_7aa9		; $78c7
 	call clearPaletteFadeVariablesAndRefreshPalettes		; $78ca
-	jp seasonsFunc_03_7a66		; $78cd
+	jp incCutsceneState		; $78cd
 cutscene08Func6:
 	call decCbb3		; $78d0
 	ret nz			; $78d3
@@ -785,22 +795,22 @@ cutscene08Func6:
 	ld ($cc02),a		; $78d6
 	ld bc,$1e04		; $78d9
 	call showText		; $78dc
-	jp seasonsFunc_03_7a66		; $78df
+	jp incCutsceneState		; $78df
 cutscene08Func7:
 	call retIfTextIsActive		; $78e2
-	call seasonsFunc_03_7a66		; $78e5
+	call incCutsceneState		; $78e5
 	ld hl,$cbb3		; $78e8
 	ld (hl),$5a		; $78eb
 	jp fadeoutToBlack		; $78ed
 cutscene08Func8:
-	ld a,($c4ab)		; $78f0
+	ld a,(wPaletteThread_mode)		; $78f0
 	or a			; $78f3
 	ret nz			; $78f4
 	call decCbb3		; $78f5
 	ret nz			; $78f8
 	xor a			; $78f9
 	ld ($c2ee),a		; $78fa
-	ld ($c2ef),a		; $78fd
+	ld (wCutsceneIndex),a		; $78fd
 	ld c,a			; $7900
 	jpab bank1.loadDeathRespawnBufferPreset
 
@@ -897,7 +907,7 @@ seasonsFunc_03_7981:
 	ld b,$01		; $79ad
 
 seasonsFunc_03_79af:
-	ld de,$c486		; $79af
+	ld de,wGfxRegs1.SCY		; $79af
 	dec b			; $79b2
 	jr nz,+	; $79b3
 	ld de,$c488		; $79b5
@@ -905,7 +915,7 @@ seasonsFunc_03_79af:
 	jp seasonsFunc_03_79cd		; $79b8
 
 seasonsFunc_03_79bb:
-	ld hl,$c486		; $79bb
+	ld hl,wGfxRegs1.SCY		; $79bb
 	ldh a,(<hCameraY)	; $79be
 	ldi (hl),a		; $79c0
 	ldh a,(<hCameraX)	; $79c1
@@ -1005,7 +1015,7 @@ seasonsFunc_03_7a3b:
 	ld hl,$de90		; $7a4e
 	call func_13c6		; $7a51
 	xor a			; $7a54
-	ld ($c4ab),a		; $7a55
+	ld (wPaletteThread_mode),a		; $7a55
 	ld hl,$cbb8		; $7a58
 +
 	jp func_35ec		; $7a5b
@@ -1016,8 +1026,8 @@ seasonsTable_03_7a5e:
 	.db $e0 $49
 	.db $40 $4a
 	
-seasonsFunc_03_7a66:
-	ld hl,$cc03		; $7a66
+incCutsceneState:
+	ld hl,wCutsceneState		; $7a66
 	inc (hl)		; $7a69
 	ret			; $7a6a
 
@@ -1066,14 +1076,14 @@ seasonsFunc_03_7aa9:
 	call loadPaletteHeader		; $7abc
 	pop de			; $7abf
 	call getFreeInteractionSlot		; $7ac0
-	jr nz,+	; $7ac3
-	ld (hl),$88		; $7ac5
+	jr nz,+			; $7ac3
+	ld (hl),INTERACID_88		; $7ac5
 	inc l			; $7ac7
 	ld (hl),e		; $7ac8
 +
 	ld a,d			; $7ac9
 	call loadGfxRegisterStateIndex		; $7aca
-	ld hl,$c486		; $7acd
+	ld hl,wGfxRegs1.SCY		; $7acd
 	ldi a,(hl)		; $7ad0
 	ldh (<hCameraY),a	; $7ad1
 	ld a,(hl)		; $7ad3
@@ -1085,7 +1095,7 @@ cutscenePregameIntro:
 	jp updateAllObjects		; $7ada
 
 cutscenePregameIntroHandler:
-	ld de,$cc03		; $7add
+	ld de,wCutsceneState		; $7add
 	ld a,(de)		; $7ae0
 	rst_jumpTable			; $7ae1
 	.dw cutscene0dFunc0
@@ -1104,7 +1114,7 @@ cutscenePregameIntroHandler:
 	.dw cutscene0dFuncc
 
 cutscene0dFunc0:
-	ld a,($c4ab)		; $7afc
+	ld a,(wPaletteThread_mode)		; $7afc
 	or a			; $7aff
 	ret nz			; $7b00
 	call checkIsLinkedGame		; $7b01
@@ -1141,14 +1151,14 @@ cutscene0dFunc0:
 	xor a			; $7b3c
 	ldh (<hCameraY),a	; $7b3d
 	ld a,$00		; $7b3f
-	ld ($cd00),a		; $7b41
+	ld (wScrollMode),a		; $7b41
 	jp _clearFadingPalettes		; $7b44
 cutscene0dFunc1:
 	ld e,$96		; $7b47
 -
 	call decCbb3		; $7b49
 	ret nz			; $7b4c
-	call seasonsFunc_03_7a66		; $7b4d
+	call incCutsceneState		; $7b4d
 	ld hl,$cbb3		; $7b50
 	ld (hl),e		; $7b53
 	ld a,SND_CREEPY_LAUGH		; $7b54
@@ -1159,7 +1169,7 @@ cutscene0dFunc2:
 cutscene0dFunc3:
 	call decCbb3		; $7b5d
 	ret nz			; $7b60
-	call seasonsFunc_03_7a66		; $7b61
+	call incCutsceneState		; $7b61
 	call fastFadeinFromBlack		; $7b64
 	ld a,$10		; $7b67
 	ld ($c4b2),a		; $7b69
@@ -1170,10 +1180,10 @@ cutscene0dFunc3:
 	ld a,SND_LIGHTTORCH		; $7b77
 	jp playSound		; $7b79
 cutscene0dFunc4:
-	ld a,($c4ab)		; $7b7c
+	ld a,(wPaletteThread_mode)		; $7b7c
 	or a			; $7b7f
 	ret nz			; $7b80
-	call seasonsFunc_03_7a66		; $7b81
+	call incCutsceneState		; $7b81
 	ld a,$0e		; $7b84
 	ld ($cbb3),a		; $7b86
 	call fadeinFromBlack		; $7b89
@@ -1188,14 +1198,14 @@ cutscene0dFunc5:
 	call decCbb3		; $7b9d
 	ret nz			; $7ba0
 	xor a			; $7ba1
-	ld ($c4ab),a		; $7ba2
+	ld (wPaletteThread_mode),a		; $7ba2
 	ld a,$78		; $7ba5
 	ld ($cbb3),a		; $7ba7
-	jp seasonsFunc_03_7a66		; $7baa
+	jp incCutsceneState		; $7baa
 cutscene0dFunc6:
 	call decCbb3		; $7bad
 	ret nz			; $7bb0
-	call seasonsFunc_03_7a66		; $7bb1
+	call incCutsceneState		; $7bb1
 	ld a,$08		; $7bb4
 	ld ($cbae),a		; $7bb6
 	ld a,$03		; $7bb9
@@ -1204,7 +1214,7 @@ cutscene0dFunc6:
 	jp showText		; $7bc1
 cutscene0dFunc7:
 	call retIfTextIsActive		; $7bc4
-	call seasonsFunc_03_7a66		; $7bc7
+	call incCutsceneState		; $7bc7
 	ld ($cbb3),a		; $7bca
 	dec a			; $7bcd
 	ld ($cbba),a		; $7bce
@@ -1216,25 +1226,25 @@ cutscene0dFunc8:
 	ld b,$03		; $7bdc
 	call flashScreen		; $7bde
 	ret z			; $7be1
-	call seasonsFunc_03_7a66		; $7be2
+	call incCutsceneState		; $7be2
 	ld a,$3c		; $7be5
 	ld ($cbb3),a		; $7be7
 	ld a,$02		; $7bea
 	jp fadeoutToWhiteWithDelay		; $7bec
 cutscene0dFunc9:
-	ld a,($c4ab)		; $7bef
+	ld a,(wPaletteThread_mode)		; $7bef
 	or a			; $7bf2
 	ret nz			; $7bf3
 	call decCbb3		; $7bf4
 	ret nz			; $7bf7
-	jp seasonsFunc_03_7a66		; $7bf8
+	jp incCutsceneState		; $7bf8
 
 cutsceneOnoxTaunting:
 	call cutsceneOnoxTauntingHandler		; $7bfb
 	jp updateInteractionsAndDrawAllSprites		; $7bfe
 
 cutsceneOnoxTauntingHandler:
-	ld de,$cc03		; $7c01
+	ld de,wCutsceneState		; $7c01
 	ld a,(de)		; $7c04
 	rst_jumpTable			; $7c05
 	.dw cutscene0eFunc0
@@ -1246,7 +1256,7 @@ cutsceneOnoxTauntingHandler:
 	.dw cutscene0eFunc6
 	.dw cutscene0eFunc7
 cutscene0eFunc0:
-	ld a,($c4ab)		; $7c16
+	ld a,(wPaletteThread_mode)		; $7c16
 	or a			; $7c19
 	ret nz			; $7c1a
 	call hideStatusBar		; $7c1b
@@ -1259,12 +1269,12 @@ cutscene0eFunc0:
 	res 7,(hl)		; $7c2e
 	xor a			; $7c30
 	ld ($cfc0),a		; $7c31
-	jp seasonsFunc_03_7a66		; $7c34
+	jp incCutsceneState		; $7c34
 cutscene0eFunc1:
 	call decCbb3		; $7c37
 	ret nz			; $7c3a
 	ld (hl),$14		; $7c3b
-	call seasonsFunc_03_7a66		; $7c3d
+	call incCutsceneState		; $7c3d
 	ld hl,$cbae		; $7c40
 	ld (hl),$04		; $7c43
 	ld bc,$1719		; $7c45
@@ -1283,26 +1293,26 @@ cutscene0eFunc2:
 	call refreshObjectGfx		; $7c62
 +
 	xor a			; $7c65
-	ld ($cd08),a		; $7c66
-	ld ($cd09),a		; $7c69
+	ld (wScreenOffsetY),a		; $7c66
+	ld (wScreenOffsetX),a		; $7c69
 	ld a,GFXH_2e		; $7c6c
 	call loadGfxHeader		; $7c6e
 	ld a,SEASONS_PALH_97		; $7c71
 	call loadPaletteHeader		; $7c73
 	ld a,$01		; $7c76
-	ld ($cd00),a		; $7c78
+	ld (wScrollMode),a		; $7c78
 	ld a,$18		; $7c7b
-	ld ($cd25),a		; $7c7d
+	ld (wTilesetAnimation),a		; $7c7d
 	call loadAnimationData		; $7c80
 	ld a,$0d		; $7c83
 	call loadGfxRegisterStateIndex		; $7c85
-	ld hl,$c486		; $7c88
+	ld hl,wGfxRegs1.SCY		; $7c88
 	ldi a,(hl)		; $7c8b
 	ldh (<hCameraY),a	; $7c8c
 	ld a,(hl)		; $7c8e
 	ldh (<hCameraX),a	; $7c8f
 	ld a,$18		; $7c91
-	ld ($cd25),a		; $7c93
+	ld (wTilesetAnimation),a		; $7c93
 	call loadAnimationData		; $7c96
 	xor a			; $7c99
 	ld ($cbb3),a		; $7c9a
@@ -1310,7 +1320,7 @@ cutscene0eFunc2:
 	ld ($cbba),a		; $7c9e
 	ld a,SND_LIGHTNING		; $7ca1
 	call playSound		; $7ca3
-	jp seasonsFunc_03_7a66		; $7ca6
+	jp incCutsceneState		; $7ca6
 cutscene0eFunc3:
 	ld hl,$cbb3		; $7ca9
 	ld b,$01		; $7cac
@@ -1331,7 +1341,7 @@ cutscene0eFunc3:
 	ld (hl),$3c		; $7ccb
 	ld a,MUS_DISASTER		; $7ccd
 	call playSound		; $7ccf
-	jp seasonsFunc_03_7a66		; $7cd2
+	jp incCutsceneState		; $7cd2
 cutscene0eFunc4:
 	call decCbb3		; $7cd5
 	ret nz			; $7cd8
@@ -1343,9 +1353,9 @@ cutscene0eFunc4:
 	xor a			; $7ce6
 	ld ($c4b1),a		; $7ce7
 	ld ($c4b3),a		; $7cea
-	jp seasonsFunc_03_7a66		; $7ced
+	jp incCutsceneState		; $7ced
 cutscene0eFunc5:
-	ld a,($c4ab)		; $7cf0
+	ld a,(wPaletteThread_mode)		; $7cf0
 	or a			; $7cf3
 	ret nz			; $7cf4
 	call decCbb3		; $7cf5
@@ -1357,7 +1367,7 @@ cutscene0eFunc5:
 	ld a,$ff		; $7d03
 	ld ($c4b1),a		; $7d05
 	ld ($c4b3),a		; $7d08
-	jp seasonsFunc_03_7a66		; $7d0b
+	jp incCutsceneState		; $7d0b
 cutscene0eFunc6:
 	call decCbb3		; $7d0e
 	ret nz			; $7d11
@@ -1367,7 +1377,7 @@ cutscene0eFunc6:
 	inc l			; $7d19
 	ld (hl),$05		; $7d1a
 +
-	jp seasonsFunc_03_7a66		; $7d1c
+	jp incCutsceneState		; $7d1c
 cutscene0eFunc7:
 	ld a,($cfc0)		; $7d1f
 	or a			; $7d22
@@ -1414,8 +1424,8 @@ cutscene0dFunca:
 	ld l,$02		; $7d7a
 	ld (hl),$0a		; $7d7c
 	ld a,$00		; $7d7e
-	ld ($cd00),a		; $7d80
-	call seasonsFunc_03_7a66		; $7d83
+	ld (wScrollMode),a		; $7d80
+	call incCutsceneState		; $7d83
 	call clearPaletteFadeVariablesAndRefreshPalettes		; $7d86
 	xor a			; $7d89
 	ldh (<hCameraY),a	; $7d8a
@@ -1429,7 +1439,7 @@ cutscene0dFuncb:
 	call clearLinkObject		; $7d99
 	ld hl,$cbb3		; $7d9c
 	ld (hl),$3c		; $7d9f
-	jp seasonsFunc_03_7a66		; $7da1
+	jp incCutsceneState		; $7da1
 cutscene0dFuncc:
 	call decCbb3		; $7da4
 	ret nz			; $7da7

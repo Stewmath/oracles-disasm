@@ -3159,26 +3159,27 @@ enemyCode00:
 
 
 ; ==============================================================================
-; ENEMYID_???
+; ENEMYID_GENERAL_ONOX
 ; ==============================================================================
 enemyCode02:
-	jr z,_label_0f_142	; $5835
-	sub $03			; $5837
+	jr z,@normalStatus	; $5835
+	sub ENEMYSTATUS_NO_HEALTH			; $5837
 	ret c			; $5839
-	jr nz,_label_0f_141	; $583a
+	jr nz,@justHit	; $583a
+	; dead
 	ld e,$a4		; $583c
 	ld a,(de)		; $583e
 	or a			; $583f
-	jr z,_label_0f_139	; $5840
+	jr z,@dying	; $5840
 	ld a,$f0		; $5842
 	call playSound		; $5844
-_label_0f_139:
+@dying:
 	ld e,$b2		; $5847
 	ld a,(de)		; $5849
 	or a			; $584a
-	jr nz,_label_0f_140	; $584b
+	jr nz,@dead	; $584b
 	call checkLinkCollisionsEnabled		; $584d
-	jr nc,_label_0f_140	; $5850
+	jr nc,@dead	; $5850
 	ld a,$ff		; $5852
 	ld ($cbca),a		; $5854
 	ld ($cc02),a		; $5857
@@ -3191,44 +3192,36 @@ _label_0f_139:
 	ld (hl),$78		; $5864
 	ld a,$67		; $5866
 	call playSound		; $5868
-_label_0f_140:
+@dead:
 	jp _enemyBoss_dead		; $586b
-_label_0f_141:
+@justHit:
 	ld e,$82		; $586e
 	ld a,(de)		; $5870
 	or a			; $5871
-	call z,$5c75		; $5872
-_label_0f_142:
+	call z,_generalOnox_func_5c75		; $5872
+@normalStatus:
 	call _ecom_getSubidAndCpStateTo08		; $5875
-	jr nc,_label_0f_143	; $5878
+	jr nc,+			; $5878
 	rst_jumpTable			; $587a
-	sub e			; $587b
-	ld e,b			; $587c
-	push bc			; $587d
-	ld e,b			; $587e
-	push bc			; $587f
-	ld e,b			; $5880
-	push bc			; $5881
-	ld e,b			; $5882
-	push bc			; $5883
-	ld e,b			; $5884
-	push bc			; $5885
-	ld e,b			; $5886
-	push bc			; $5887
-	ld e,b			; $5888
-	push bc			; $5889
-	ld e,b			; $588a
-_label_0f_143:
+	.dw @state0
+	.dw @stateStub
+	.dw @stateStub
+	.dw @stateStub
+	.dw @stateStub
+	.dw @stateStub
+	.dw @stateStub
+	.dw @stateStub
++
 	ld a,b			; $588b
 	rst_jumpTable			; $588c
-	add $58			; $588d
-	ld e,l			; $588f
-	ld e,d			; $5890
-	and (hl)		; $5891
-	ld e,e			; $5892
+	.dw _generalOnox_subid0
+	.dw _generalOnox_subid1
+	.dw _generalOnox_subid2
+
+@state0:
 	ld a,b			; $5893
 	cp $02			; $5894
-	jr z,_label_0f_144	; $5896
+	jr z,+			; $5896
 	ld bc,$0210		; $5898
 	call _enemyBoss_spawnShadow		; $589b
 	ret nz			; $589e
@@ -3239,7 +3232,7 @@ _label_0f_143:
 	ld ($cc17),a		; $58a8
 	ld a,$0a		; $58ab
 	jp _ecom_setSpeedAndState8		; $58ad
-_label_0f_144:
++
 	ld a,$89		; $58b0
 	call loadPaletteHeader		; $58b2
 	ld a,$01		; $58b5
@@ -3248,18 +3241,22 @@ _label_0f_144:
 	call _ecom_setSpeedAndState8		; $58bd
 	ld a,$53		; $58c0
 	jp playSound		; $58c2
+	
+@stateStub:
 	ret			; $58c5
+	
+_generalOnox_subid0:
 	ld a,(de)		; $58c6
 	sub $08			; $58c7
 	rst_jumpTable			; $58c9
-	call nc,$ed58		; $58ca
-	ld e,b			; $58cd
-	ld e,a			; $58ce
-	ld e,c			; $58cf
-	ld l,h			; $58d0
-	ld e,c			; $58d1
-	ld e,$5a		; $58d2
-	ld b,$47		; $58d4
+	.dw @state8
+	.dw @state9
+	.dw @stateA
+	.dw @stateB
+	.dw @stateC
+
+@state8:
+	ld b,PARTID_47		; $58d4
 	call _ecom_spawnProjectile		; $58d6
 	ret nz			; $58d9
 	ld h,d			; $58da
@@ -3272,16 +3269,17 @@ _label_0f_144:
 	ld l,$8d		; $58e6
 	ld (hl),$78		; $58e8
 	jp objectSetVisible83		; $58ea
+
+@state9:
 	inc e			; $58ed
 	ld a,(de)		; $58ee
 	rst_jumpTable			; $58ef
-	ld hl,sp+$58		; $58f0
-	add hl,bc		; $58f2
-	ld e,c			; $58f3
-	add hl,hl		; $58f4
-	ld e,c			; $58f5
-	inc a			; $58f6
-	ld e,c			; $58f7
+	.dw @@substate0
+	.dw @@substate1
+	.dw @@substate2
+	.dw @@substate3
+
+@@substate0:
 	ld a,$05		; $58f8
 	call objectGetRelatedObject2Var		; $58fa
 	ld a,(hl)		; $58fd
@@ -3292,6 +3290,8 @@ _label_0f_144:
 	inc (hl)		; $5904
 	ld l,$87		; $5905
 	ld (hl),$1e		; $5907
+	
+@@substate1:
 	call _ecom_decCounter2		; $5909
 	ret nz			; $590c
 	ld a,(wFrameCounter)		; $590d
@@ -3308,16 +3308,20 @@ _label_0f_144:
 	inc (hl)		; $5925
 	inc l			; $5926
 	ld (hl),$08		; $5927
+	
+@@substate2:
 	call _ecom_decCounter1		; $5929
 	ret nz			; $592c
 	ld l,e			; $592d
 	inc (hl)		; $592e
-	ld bc,$501c		; $592f
+	ld bc,TX_501c		; $592f
 	call checkIsLinkedGame		; $5932
-	jr z,_label_0f_145	; $5935
-	ld c,$20		; $5937
-_label_0f_145:
+	jr z,+			; $5935
+	ld c,<TX_5020		; $5937
++
 	jp showText		; $5939
+	
+@@substate3:
 	ld e,$90		; $593c
 	ld a,$0f		; $593e
 	ld (de),a		; $5940
@@ -3327,6 +3331,8 @@ _label_0f_145:
 	ld a,$04		; $5949
 	call objectGetRelatedObject2Var		; $594b
 	inc (hl)		; $594e
+
+@func_594f:
 	ld h,d			; $594f
 	ld l,$84		; $5950
 	ld (hl),$0a		; $5952
@@ -3336,6 +3342,8 @@ _label_0f_145:
 	ld (hl),$2d		; $5958
 	ld a,$02		; $595a
 	jp enemySetAnimation		; $595c
+	
+@stateA:
 	call _ecom_decCounter1		; $595f
 	ret nz			; $5962
 	ld (hl),$b4		; $5963
@@ -3343,16 +3351,19 @@ _label_0f_145:
 	ld (hl),$0a		; $5966
 	ld l,e			; $5968
 	inc (hl)		; $5969
-	jr _label_0f_148		; $596a
+	jr @stateB@func_59c0		; $596a
+	
+@stateB:
 	inc e			; $596c
 	ld a,(de)		; $596d
 	rst_jumpTable			; $596e
-	ld (hl),l		; $596f
-	ld e,c			; $5970
-	jp $fe59		; $5971
-	ld e,c			; $5974
+	.dw @@substate0
+	.dw @@substate1
+	.dw @@substate2
+
+@@substate0:
 	call _ecom_decCounter1		; $5975
-	jr nz,_label_0f_146	; $5978
+	jr nz,@@func_598b	; $5978
 	ld a,$24		; $597a
 	call objectGetRelatedObject2Var		; $597c
 	res 7,(hl)		; $597f
@@ -3360,19 +3371,20 @@ _label_0f_145:
 	res 7,(hl)		; $5983
 	ld l,$c4		; $5985
 	ld (hl),$08		; $5987
-	jr _label_0f_149		; $5989
-_label_0f_146:
+	jr @func_5a06		; $5989
+
+@@func_598b:
 	call $5c3b		; $598b
-	jr nc,_label_0f_147	; $598e
+	jr nc,+			; $598e
 	call enemyAnimate		; $5990
 	call _ecom_decCounter2		; $5993
-	jr nz,_label_0f_148	; $5996
+	jr nz,@@func_59c0	; $5996
 	ld a,$09		; $5998
 	call objectGetRelatedObject2Var		; $599a
 	ld a,(hl)		; $599d
 	sub $0e			; $599e
 	cp $07			; $59a0
-	jr nc,_label_0f_148	; $59a2
+	jr nc,@@func_59c0	; $59a2
 	ld l,$c4		; $59a4
 	inc (hl)		; $59a6
 	ld e,$85		; $59a7
@@ -3380,15 +3392,18 @@ _label_0f_146:
 	ld (de),a		; $59ab
 	ld a,$05		; $59ac
 	jp enemySetAnimation		; $59ae
-_label_0f_147:
++
 	ld l,$87		; $59b1
 	ld (hl),$0a		; $59b3
 	ld a,(wFrameCounter)		; $59b5
 	and $07			; $59b8
-	call z,$5c4e		; $59ba
+	call z,_generalOnox_func_59c0		; $59ba
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $59bd
-_label_0f_148:
+
+@@func_59c0:
 	jp enemyAnimate		; $59c0
+
+@@substate1:
 	ld a,$09		; $59c3
 	call objectGetRelatedObject2Var		; $59c5
 	ld a,(hl)		; $59c8
@@ -3423,14 +3438,16 @@ _label_0f_148:
 	ld (de),a		; $59f9
 	inc a			; $59fa
 	jp enemySetAnimation		; $59fb
+
+@@substate2:
 	ld a,$24		; $59fe
 	call objectGetRelatedObject2Var		; $5a00
 	bit 7,(hl)		; $5a03
 	ret nz			; $5a05
-_label_0f_149:
+@func_5a06:
 	call getRandomNumber_noPreserveVars		; $5a06
 	cp $8c			; $5a09
-	jp c,$594f		; $5a0b
+	jp c,@func_594f		; $5a0b
 	ld h,d			; $5a0e
 	ld l,$84		; $5a0f
 	inc (hl)		; $5a11
@@ -3440,15 +3457,16 @@ _label_0f_149:
 	ld (hl),$10		; $5a17
 	ld a,$04		; $5a19
 	jp enemySetAnimation		; $5a1b
+	
+@stateC:
 	inc e			; $5a1e
 	ld a,(de)		; $5a1f
 	rst_jumpTable			; $5a20
-	daa			; $5a21
-	ld e,d			; $5a22
-	inc a			; $5a23
-	ld e,d			; $5a24
-	ld d,(hl)		; $5a25
-	ld e,d			; $5a26
+	.dw @@substate0
+	.dw @@substate1
+	.dw @@substate2
+
+@@substate0:
 	call _ecom_decCounter1		; $5a27
 	ret nz			; $5a2a
 	ld l,e			; $5a2b
@@ -3460,6 +3478,8 @@ _label_0f_149:
 	ld a,$81		; $5a34
 	call playSound		; $5a36
 	jp objectSetVisible81		; $5a39
+
+@@substate1:
 	ld c,$20		; $5a3c
 	call objectUpdateSpeedZ_paramC		; $5a3e
 	ret nz			; $5a41
@@ -3472,26 +3492,26 @@ _label_0f_149:
 	call objectSetVisible83		; $5a4c
 	call getFreePartSlot		; $5a4f
 	ret nz			; $5a52
-	ld (hl),$48		; $5a53
+	ld (hl),PARTID_48		; $5a53
 	ret			; $5a55
+
+@@substate2:
 	call _ecom_decCounter1		; $5a56
 	ret nz			; $5a59
-	jp $594f		; $5a5a
+	jp @func_594f		; $5a5a
+	
+_generalOnox_subid1:
 	ld a,(de)		; $5a5d
 	sub $08			; $5a5e
 	rst_jumpTable			; $5a60
-	ld l,l			; $5a61
-	ld e,d			; $5a62
-	adc h			; $5a63
-	ld e,d			; $5a64
-	ld e,a			; $5a65
-	ld e,c			; $5a66
-.DB $fc				; $5a67
-	ld e,d			; $5a68
-	ld e,e			; $5a69
-	ld e,e			; $5a6a
-	ld l,e			; $5a6b
-	ld e,e			; $5a6c
+	.dw @state8
+	.dw @state9
+	.dw _generalOnox_subid0@stateA
+	.dw @stateB
+	.dw @stateC
+	.dw @stateD
+
+@state8:
 	ld c,$20		; $5a6d
 	call objectUpdateSpeedZ_paramC		; $5a6f
 	ret nz			; $5a72
@@ -3509,14 +3529,16 @@ _label_0f_149:
 	ld a,$01		; $5a84
 	call enemySetAnimation		; $5a86
 	jp objectSetVisible83		; $5a89
+
+@state9:
 	inc e			; $5a8c
 	ld a,(de)		; $5a8d
 	rst_jumpTable			; $5a8e
-	sub l			; $5a8f
-	ld e,d			; $5a90
-	xor a			; $5a91
-	ld e,d			; $5a92
-	sub $5a			; $5a93
+	.dw @@substate0
+	.dw @@substate1
+	.dw @@substate2
+
+@@substate0:
 	ld e,$ab		; $5a95
 	ld a,(de)		; $5a97
 	or a			; $5a98
@@ -3529,8 +3551,10 @@ _label_0f_149:
 	ld ($cbca),a		; $5aa3
 	ld e,$85		; $5aa6
 	ld (de),a		; $5aa8
-	ld bc,$501d		; $5aa9
+	ld bc,TX_501d		; $5aa9
 	jp showText		; $5aac
+
+@@substate1:
 	ld h,d			; $5aaf
 	ld l,e			; $5ab0
 	inc (hl)		; $5ab1
@@ -3555,6 +3579,8 @@ _label_0f_149:
 	ld l,$c4		; $5ad2
 	inc (hl)		; $5ad4
 	ret			; $5ad5
+
+@@substate2:
 	call _ecom_decCounter1		; $5ad6
 	ret nz			; $5ad9
 	ld l,$a4		; $5ada
@@ -3562,7 +3588,8 @@ _label_0f_149:
 	xor a			; $5ade
 	ld ($cca4),a		; $5adf
 	ld ($cbca),a		; $5ae2
-_label_0f_150:
+
+@func_5ae5:
 	ld h,d			; $5ae5
 	ld l,$84		; $5ae6
 	ld (hl),$0a		; $5ae8
@@ -3576,15 +3603,18 @@ _label_0f_150:
 	ld (hl),$00		; $5af5
 	ld a,$02		; $5af7
 	jp enemySetAnimation		; $5af9
+
+@stateB:
 	inc e			; $5afc
 	ld a,(de)		; $5afd
 	rst_jumpTable			; $5afe
-	dec b			; $5aff
-	ld e,e			; $5b00
-	jp $1a59		; $5b01
-	ld e,e			; $5b04
+	.dw @@substate0
+	.dw _generalOnox_subid0@stateB@substate1
+	.dw @@substate2
+
+@@substate0:
 	call _ecom_decCounter1		; $5b05
-	jp nz,_label_0f_146		; $5b08
+	jp nz,_generalOnox_subid0@stateB@func_598b		; $5b08
 	ld a,$24		; $5b0b
 	call objectGetRelatedObject2Var		; $5b0d
 	res 7,(hl)		; $5b10
@@ -3592,20 +3622,24 @@ _label_0f_150:
 	res 7,(hl)		; $5b14
 	ld l,$c4		; $5b16
 	ld (hl),$08		; $5b18
+
+@@substate2:
 	ld a,$24		; $5b1a
 	call objectGetRelatedObject2Var		; $5b1c
 	bit 7,(hl)		; $5b1f
 	ret nz			; $5b21
+
+@func_5b22:
 	ld h,d			; $5b22
 	ld l,$b0		; $5b23
 	ldi a,(hl)		; $5b25
 	cp (hl)			; $5b26
 	ld l,$85		; $5b27
 	ld (hl),$00		; $5b29
-	jr z,_label_0f_151	; $5b2b
+	jr z,+			; $5b2b
 	call getRandomNumber		; $5b2d
 	rrca			; $5b30
-	jr c,_label_0f_150	; $5b31
+	jr c,@func_5ae5	; $5b31
 	ld h,d			; $5b33
 	dec l			; $5b34
 	ld (hl),$0d		; $5b35
@@ -3613,14 +3647,14 @@ _label_0f_150:
 	ldd a,(hl)		; $5b39
 	ldi (hl),a		; $5b3a
 	ld (hl),$02		; $5b3b
-	call $5c63		; $5b3d
+	call _generalOnox_func_5c63		; $5b3d
 	ld e,$86		; $5b40
 	ld a,(de)		; $5b42
 	dec a			; $5b43
 	ret z			; $5b44
 	xor a			; $5b45
 	jp enemySetAnimation		; $5b46
-_label_0f_151:
++
 	dec l			; $5b49
 	ld (hl),$0c		; $5b4a
 	ld l,$86		; $5b4c
@@ -3631,29 +3665,31 @@ _label_0f_151:
 	ld (hl),$01		; $5b54
 	ld a,$04		; $5b56
 	jp enemySetAnimation		; $5b58
+
+@stateC:
 	inc e			; $5b5b
 	ld a,(de)		; $5b5c
 	rst_jumpTable			; $5b5d
-	daa			; $5b5e
-	ld e,d			; $5b5f
-	inc a			; $5b60
-	ld e,d			; $5b61
-	ld h,h			; $5b62
-	ld e,e			; $5b63
+	.dw _generalOnox_subid0@stateC@substate0
+	.dw _generalOnox_subid0@stateC@substate1
+	.dw @@substate2
+
+@@substate2:
 	call _ecom_decCounter1		; $5b64
 	ret nz			; $5b67
-	jp $5ae5		; $5b68
+	jp @func_5ae5		; $5b68
+
+@stateD:
 	inc e			; $5b6b
 	ld a,(de)		; $5b6c
 	rst_jumpTable			; $5b6d
-	ld (hl),h		; $5b6e
-	ld e,e			; $5b6f
-	adc l			; $5b70
-	ld e,e			; $5b71
-	ldi (hl),a		; $5b72
-	ld e,e			; $5b73
+	.dw @@substate0
+	.dw @@substate1
+	.dw @func_5b22
+
+@@substate0:
 	call _ecom_decCounter1		; $5b74
-	jr nz,_label_0f_152	; $5b77
+	jr nz,+			; $5b77
 	inc (hl)		; $5b79
 	inc l			; $5b7a
 	ld (hl),$04		; $5b7b
@@ -3661,37 +3697,39 @@ _label_0f_151:
 	inc (hl)		; $5b7e
 	ld a,$03		; $5b7f
 	jp enemySetAnimation		; $5b81
-_label_0f_152:
++
 	call _ecom_updateAngleTowardTarget		; $5b84
 	call objectApplySpeed		; $5b87
 	jp enemyAnimate		; $5b8a
+
+@@substate1:
 	call _ecom_decCounter1		; $5b8d
 	ret nz			; $5b90
 	ld (hl),$2d		; $5b91
 	inc l			; $5b93
 	dec (hl)		; $5b94
-	jr z,_label_0f_153	; $5b95
+	jr z,+			; $5b95
 	call getFreePartSlot		; $5b97
 	ret nz			; $5b9a
-	ld (hl),$49		; $5b9b
+	ld (hl),PARTID_49		; $5b9b
 	ld bc,$19f9		; $5b9d
 	jp objectCopyPositionWithOffset		; $5ba0
-_label_0f_153:
++
 	ld l,e			; $5ba3
 	inc (hl)		; $5ba4
 	ret			; $5ba5
+	
+_generalOnox_subid2:
 	ld a,(de)		; $5ba6
 	sub $08			; $5ba7
 	rst_jumpTable			; $5ba9
-	or h			; $5baa
-	ld e,e			; $5bab
-	ld ($ff00+$5b),a	; $5bac
-	di			; $5bae
-	ld e,e			; $5baf
-	daa			; $5bb0
-	ld e,h			; $5bb1
-	cpl			; $5bb2
-	ld e,h			; $5bb3
+	.dw @state8
+	.dw @state9
+	.dw @stateA
+	.dw @stateB
+	.dw @stateC
+
+@state8:
 	ld a,($cc77)		; $5bb4
 	or a			; $5bb7
 	ret nz			; $5bb8
@@ -3703,7 +3741,7 @@ _label_0f_153:
 	ld (hl),$50		; $5bc3
 	ld l,$8d		; $5bc5
 	ld (hl),$50		; $5bc7
-	ld bc,$0b02		; $5bc9
+	ldbc INTERACID_0b $02		; $5bc9
 	call objectCreateInteraction		; $5bcc
 	ret nz			; $5bcf
 	ld e,$98		; $5bd0
@@ -3716,6 +3754,8 @@ _label_0f_153:
 	ld a,$09		; $5bda
 	ld (de),a		; $5bdc
 	jp clearAllParentItems		; $5bdd
+
+@state9:
 	ld a,$21		; $5be0
 	call objectGetRelatedObject2Var		; $5be2
 	bit 7,(hl)		; $5be5
@@ -3726,19 +3766,21 @@ _label_0f_153:
 	ld l,$86		; $5bec
 	ld (hl),$5a		; $5bee
 	call objectSetVisible82		; $5bf0
+
+@stateA:
 	call _ecom_decCounter1		; $5bf3
-	jr z,_label_0f_154	; $5bf6
+	jr z,+			; $5bf6
 	ld a,(hl)		; $5bf8
 	and $1c			; $5bf9
 	rrca			; $5bfb
 	rrca			; $5bfc
-	ld hl,$5c1f		; $5bfd
+	ld hl,@table_5c1f		; $5bfd
 	rst_addAToHl			; $5c00
-	ld e,$8b		; $5c01
+	ld e,Enemy.yh		; $5c01
 	ld a,(hl)		; $5c03
 	ld (de),a		; $5c04
 	ret			; $5c05
-_label_0f_154:
++
 	ld (hl),$5a		; $5c06
 	ld l,e			; $5c08
 	inc (hl)		; $5c09
@@ -3748,20 +3790,26 @@ _label_0f_154:
 	ld ($cbae),a		; $5c11
 	ld a,$06		; $5c14
 	ld ($cbac),a		; $5c16
-	ld bc,$5022		; $5c19
+	ld bc,TX_5022		; $5c19
 	jp showText		; $5c1c
-	ld d,b			; $5c1f
-	ld d,c			; $5c20
-	ld d,d			; $5c21
-	ld d,e			; $5c22
-	ld d,d			; $5c23
-	ld d,c			; $5c24
-	ld d,b			; $5c25
-	ld c,a			; $5c26
+
+@table_5c1f:
+	.db $50
+	.db $51
+	.db $52
+	.db $53
+	.db $52
+	.db $51
+	.db $50
+	.db $4f
+
+@stateB:
 	ld e,$84		; $5c27
 	ld a,$0c		; $5c29
 	ld (de),a		; $5c2b
 	jp fadeoutToWhite		; $5c2c
+
+@stateC:
 	ld a,($c4ab)		; $5c2f
 	or a			; $5c32
 	ret nz			; $5c33
@@ -3780,12 +3828,14 @@ _label_0f_154:
 	add $10			; $5c49
 	cp $21			; $5c4b
 	ret			; $5c4d
+
+_generalOnox_func_59c0:
 	ldh a,(<hEnemyTargetY)	; $5c4e
 	sub $18			; $5c50
 	cp $98			; $5c52
-	jr c,_label_0f_155	; $5c54
+	jr c,+			; $5c54
 	ld a,$10		; $5c56
-_label_0f_155:
++
 	ld b,a			; $5c58
 	ldh a,(<hEnemyTargetX)	; $5c59
 	ld c,a			; $5c5b
@@ -3793,16 +3843,24 @@ _label_0f_155:
 	ld e,$89		; $5c5f
 	ld (de),a		; $5c61
 	ret			; $5c62
+
+_generalOnox_func_5c63:
 	call getRandomNumber_noPreserveVars		; $5c63
 	and $03			; $5c66
-	ld hl,$5c71		; $5c68
+	ld hl,@table_5c71		; $5c68
 	rst_addAToHl			; $5c6b
 	ld e,$86		; $5c6c
 	ld a,(hl)		; $5c6e
 	ld (de),a		; $5c6f
 	ret			; $5c70
-	ld bc,$3c1e		; $5c71
-	ld e,d			; $5c74
+
+@table_5c71:
+	.db $01
+	.db $1e
+	.db $3c
+	.db $5a
+	
+_generalOnox_func_5c75:
 	ld e,$a9		; $5c75
 	ld a,(de)		; $5c77
 	cp $28			; $5c78
@@ -3823,6 +3881,7 @@ _label_0f_155:
 	ld (hl),$08		; $5c94
 	ld a,$67		; $5c96
 	jp playSound		; $5c98
+
 
 ; ==============================================================================
 ; ENEMYID_DRAGON_ONOX

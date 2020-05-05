@@ -7532,10 +7532,12 @@ _label_09_318:
 	ld (hl),a		; $7e24
 	ret			; $7e25
 
+
+; INTERACID_88
 interactionCode88:
 	call checkInteractionState		; $7e26
-	jr nz,_label_09_321	; $7e29
-	ld a,($c4ab)		; $7e2b
+	jr nz,@nonZeroState	; $7e29
+	ld a,(wPaletteThread_mode)		; $7e2b
 	or a			; $7e2e
 	ret nz			; $7e2f
 	ld a,$01		; $7e30
@@ -7550,39 +7552,39 @@ interactionCode88:
 	ld e,Interaction.subid		; $7e42
 	ld a,(de)		; $7e44
 	or a			; $7e45
-	jr z,_label_09_319	; $7e46
-	ld a,($c486)		; $7e48
+	jr z,+			; $7e46
+	ld a,(wGfxRegs1.SCY)		; $7e48
 	cpl			; $7e4b
 	inc a			; $7e4c
-_label_09_319:
++
 	add $28			; $7e4d
 	ld l,$4b		; $7e4f
 	ld (hl),a		; $7e51
 	ld e,Interaction.subid		; $7e52
 	ld a,(de)		; $7e54
 	or a			; $7e55
-	jr nz,_label_09_320	; $7e56
+	jr nz,+			; $7e56
 	call interactionIncState2		; $7e58
-	ld hl,$7f33		; $7e5b
-	jp $7f01		; $7e5e
-_label_09_320:
-	ld a,$30		; $7e61
+	ld hl,_seasonsTable_09_7f33		; $7e5b
+	jp _seasonsFunc_09_7f01		; $7e5e
++
+	ld a,GLOBALFLAG_S_30		; $7e61
 	call checkGlobalFlag		; $7e63
 	jp nz,interactionDelete		; $7e66
 	ld e,$46		; $7e69
 	ld a,$3c		; $7e6b
 	ld (de),a		; $7e6d
 	ret			; $7e6e
-_label_09_321:
-	ld a,$0a		; $7e6f
+@nonZeroState:
+	ld a,GLOBALFLAG_INTRO_DONE		; $7e6f
 	call checkGlobalFlag		; $7e71
-	jr nz,_label_09_322	; $7e74
-	ld a,($c4ab)		; $7e76
+	jr nz,+			; $7e74
+	ld a,(wPaletteThread_mode)		; $7e76
 	or a			; $7e79
 	jp nz,interactionDelete		; $7e7a
-_label_09_322:
++
 	call checkInteractionState2		; $7e7d
-	jr nz,_label_09_323	; $7e80
+	jr nz,+			; $7e80
 	call interactionDecCounter1		; $7e82
 	ret nz			; $7e85
 	ld l,$46		; $7e86
@@ -7593,22 +7595,22 @@ _label_09_322:
 	call interactionIncState2		; $7e90
 	call getRandomNumber_noPreserveVars		; $7e93
 	and $03			; $7e96
-	ld hl,$7f2b		; $7e98
+	ld hl,_seasonsTable_09_7f2b		; $7e98
 	rst_addDoubleIndex			; $7e9b
 	ldi a,(hl)		; $7e9c
 	ld h,(hl)		; $7e9d
 	ld l,a			; $7e9e
-	jp $7f01		; $7e9f
-_label_09_323:
+	jp _seasonsFunc_09_7f01		; $7e9f
++
 	ld e,$70		; $7ea2
 	ld a,(de)		; $7ea4
 	or a			; $7ea5
-	jr nz,_label_09_326	; $7ea6
+	jr nz,_seasonsFunc_09_7ee2	; $7ea6
 	ld a,$01		; $7ea8
 	ld (de),a		; $7eaa
 	ld e,$47		; $7eab
 	ld a,(de)		; $7ead
-	ld hl,$7f28		; $7eae
+	ld hl,_seasonsTable_09_7f28		; $7eae
 	rst_addAToHl			; $7eb1
 	ld a,(hl)		; $7eb2
 	call loadPaletteHeader		; $7eb3
@@ -7620,34 +7622,35 @@ _label_09_323:
 	call nz,playSound		; $7ebf
 	ld a,(de)		; $7ec2
 	cp $02			; $7ec3
-	jr z,_label_09_324	; $7ec5
+	jr z,+			; $7ec5
 	call objectSetInvisible		; $7ec7
-	jr _label_09_326		; $7eca
-_label_09_324:
+	jr _seasonsFunc_09_7ee2		; $7eca
++
 	call getRandomNumber		; $7ecc
 	and $01			; $7ecf
 	ld b,a			; $7ed1
 	ld a,$13		; $7ed2
-	jr z,_label_09_325	; $7ed4
+	jr z,+			; $7ed4
 	ld a,$8d		; $7ed6
-_label_09_325:
++
 	ld e,$4d		; $7ed8
 	ld (de),a		; $7eda
 	ld a,b			; $7edb
 	call interactionSetAnimation		; $7edc
 	call objectSetVisible		; $7edf
-_label_09_326:
+
+_seasonsFunc_09_7ee2:
 	ld e,$47		; $7ee2
 	ld a,(de)		; $7ee4
 	cp $02			; $7ee5
-	jr nz,_label_09_327	; $7ee7
+	jr nz,+			; $7ee7
 	call interactionAnimate		; $7ee9
 	ld e,$61		; $7eec
 	ld a,(de)		; $7eee
 	inc a			; $7eef
-	jr nz,_label_09_327	; $7ef0
+	jr nz,+			; $7ef0
 	call objectSetInvisible		; $7ef2
-_label_09_327:
++
 	call interactionDecCounter1		; $7ef5
 	ret nz			; $7ef8
 	ld h,d			; $7ef9
@@ -7657,7 +7660,9 @@ _label_09_327:
 	ld h,a			; $7efe
 	inc hl			; $7eff
 	inc hl			; $7f00
-	ld e,$58		; $7f01
+
+_seasonsFunc_09_7f01:
+	ld e,Interaction.relatedObj2		; $7f01
 	ld a,h			; $7f03
 	ld (de),a		; $7f04
 	inc e			; $7f05
@@ -7665,7 +7670,7 @@ _label_09_327:
 	ld (de),a		; $7f07
 	ldi a,(hl)		; $7f08
 	inc a			; $7f09
-	jr z,_label_09_328	; $7f0a
+	jr z,_seasonsFunc_09_7f17	; $7f0a
 	ld e,$46		; $7f0c
 	ld (de),a		; $7f0e
 	inc e			; $7f0f
@@ -7675,7 +7680,8 @@ _label_09_327:
 	xor a			; $7f14
 	ld (de),a		; $7f15
 	ret			; $7f16
-_label_09_328:
+
+_seasonsFunc_09_7f17:
 	ld h,d			; $7f17
 	ld l,$42		; $7f18
 	ld a,(hl)		; $7f1a
@@ -7686,33 +7692,30 @@ _label_09_328:
 	ld l,$46		; $7f23
 	ld (hl),$3c		; $7f25
 	ret			; $7f27
-	dec sp			; $7f28
-	sbc c			; $7f29
-	sbc d			; $7f2a
-	inc sp			; $7f2b
-	ld a,a			; $7f2c
-	inc sp			; $7f2d
-	ld a,a			; $7f2e
-	inc sp			; $7f2f
-	ld a,a			; $7f30
-	inc sp			; $7f31
-	ld a,a			; $7f32
-	inc a			; $7f33
-	nop			; $7f34
-	ld (bc),a		; $7f35
-	ld bc,$0004		; $7f36
-	ld (bc),a		; $7f39
-	ld (bc),a		; $7f3a
-	ld a,b			; $7f3b
-	nop			; $7f3c
-	ld (bc),a		; $7f3d
-	ld bc,$0002		; $7f3e
-	ld (bc),a		; $7f41
-	ld bc,$0002		; $7f42
-	inc bc			; $7f45
-	ld bc,$0001		; $7f46
-	inc c			; $7f49
-	ld (bc),a		; $7f4a
-	inc a			; $7f4b
-	nop			; $7f4c
-	rst $38			; $7f4d
+
+_seasonsTable_09_7f28:
+	.db SEASONS_PALH_3b
+	.db SEASONS_PALH_99
+	.db SEASONS_PALH_9a
+
+_seasonsTable_09_7f2b:
+	.dw _seasonsTable_09_7f33
+	.dw _seasonsTable_09_7f33
+	.dw _seasonsTable_09_7f33
+	.dw _seasonsTable_09_7f33
+
+_seasonsTable_09_7f33:
+	.db $3c $00
+	.db $02 $01
+	.db $04 $00
+	.db $02 $02
+	.db $78 $00
+	.db $02 $01
+	.db $02 $00
+	.db $02 $01
+	.db $02 $00
+	.db $03 $01
+	.db $01 $00
+	.db $0c $02
+	.db $3c $00
+	.db $ff

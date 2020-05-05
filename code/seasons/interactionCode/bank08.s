@@ -5955,36 +5955,41 @@ _label_08_321:
 	ld c,d			; $771e
 	ld h,c			; $771f
 
+
+; INTERACID_4f
 interactionCode4f:
-	ld e,$44		; $7720
+	ld e,Interaction.state		; $7720
 	ld a,(de)		; $7722
 	rst_jumpTable			; $7723
-	jr z,_label_08_324	; $7724
-	call nz,$cd77		; $7726
-	sbc e			; $7729
-	inc hl			; $772a
+	.dw @state0
+	.dw @state1
+
+@state0:
+	call interactionIncState		; $7728
 	call interactionInitGraphics		; $772b
-	ld e,$42		; $772e
+	ld e,Interaction.subid		; $772e
 	ld a,(de)		; $7730
 	rst_jumpTable			; $7731
-	ld a,$77		; $7732
-	ld b,a			; $7734
-	ld (hl),a		; $7735
-	ld e,$1e		; $7736
-	ld d,b			; $7738
-	ld (hl),a		; $7739
-	ld l,d			; $773a
-	ld (hl),a		; $773b
-	ld a,e			; $773c
-	ld (hl),a		; $773d
-	ld hl,$6160		; $773e
+	.dw @substate0
+	.dw @substate1
+	.dw objectSetVisible81
+	.dw @substate3
+	.dw @substate4
+	.dw @substate5
+
+@substate0:
+	ld hl,script6160		; $773e
 	call interactionSetScript		; $7741
 	jp objectSetVisiblec2		; $7744
-	ld hl,$6164		; $7747
+
+@substate1:
+	ld hl,script6164		; $7747
 	call interactionSetScript		; $774a
 	jp objectSetVisible82		; $774d
-	call $77ba		; $7750
-	ld e,$43		; $7753
+
+@substate3:
+	call @setCounter2Between1To8		; $7750
+	ld e,Interaction.var03		; $7753
 	ld a,(de)		; $7755
 	add a			; $7756
 	add a			; $7757
@@ -5997,18 +6002,24 @@ interactionCode4f:
 	ld (de),a		; $7763
 	call objectSetVisible80		; $7764
 	jp objectSetInvisible		; $7767
-	ld e,$43		; $776a
+
+@substate4:
+	ld e,Interaction.var03		; $776a
 	ld a,(de)		; $776c
 	or a			; $776d
-	jr z,_label_08_322	; $776e
+	jr z,+			; $776e
 	ld a,$05		; $7770
 	call interactionSetAnimation		; $7772
 	jp objectSetVisible82		; $7775
-_label_08_322:
++
 	jp objectSetVisible83		; $7778
-	ld hl,$6172		; $777b
+
+@substate5:
+	ld hl,script6172		; $777b
 	call interactionSetScript		; $777e
 	jp objectSetVisible82		; $7781
+
+@func_7784:
 	ld e,$43		; $7784
 	ld a,(de)		; $7786
 	add $06			; $7787
@@ -6017,17 +6028,18 @@ _label_08_322:
 	ld a,(de)		; $778c
 	or a			; $778d
 	ld a,b			; $778e
-	jr z,_label_08_323	; $778f
+	jr z,+			; $778f
 	add $0b			; $7791
-_label_08_323:
++
 	jp interactionSetAnimation		; $7793
+
+@func_7796:
 	ld h,d			; $7796
 	ld l,$70		; $7797
 	ld e,$72		; $7799
 	ld a,(de)		; $779b
 	or a			; $779c
-_label_08_324:
-	jr nz,_label_08_325	; $779d
+	jr nz,+			; $779d
 	ld e,$43		; $779f
 	ld a,(de)		; $77a1
 	add a			; $77a2
@@ -6040,7 +6052,7 @@ _label_08_324:
 	ld a,$38		; $77aa
 	ld e,$48		; $77ac
 	jp objectSetPositionInCircleArc		; $77ae
-_label_08_325:
++
 	ld e,$4b		; $77b1
 	ldi a,(hl)		; $77b3
 	ld (de),a		; $77b4
@@ -6049,31 +6061,34 @@ _label_08_325:
 	ld a,(hl)		; $77b7
 	ld (de),a		; $77b8
 	ret			; $77b9
+
+@setCounter2Between1To8:
 	call getRandomNumber		; $77ba
 	and $07			; $77bd
 	inc a			; $77bf
-	ld e,$47		; $77c0
+	ld e,Interaction.counter2		; $77c0
 	ld (de),a		; $77c2
 	ret			; $77c3
-	ld e,$42		; $77c4
+
+@state1:
+	ld e,Interaction.subid		; $77c4
 	ld a,(de)		; $77c6
 	rst_jumpTable			; $77c7
-	call nc,$e977		; $77c8
-	ld a,c			; $77cb
-	cp $77			; $77cc
-	sbc d			; $77ce
-	ld a,c			; $77cf
-	pop de			; $77d0
-	ld a,c			; $77d1
-	inc (hl)		; $77d2
-	ld a,d			; $77d3
+	.dw @subid0
+	.dw @subid1
+	.dw @subid2
+	.dw @subid3
+	.dw @subid4
+	.dw @subid5
+
+@subid0:
 	ld a,($cfd0)		; $77d4
 	cp $0e			; $77d7
 	jp z,interactionDelete		; $77d9
 	cp $0d			; $77dc
-	jr nz,_label_08_327	; $77de
+	jr nz,++		; $77de
 	call checkInteractionState2		; $77e0
-	jr nz,_label_08_326	; $77e3
+	jr nz,+			; $77e3
 	call interactionIncState2		; $77e5
 	ld l,$4b		; $77e8
 	ld (hl),$4a		; $77ea
@@ -6082,37 +6097,34 @@ _label_08_325:
 	ld (hl),$81		; $77ee
 	ld a,$0e		; $77f0
 	call interactionSetAnimation		; $77f2
-_label_08_326:
++
 	call objectOscillateZ		; $77f5
-_label_08_327:
+++
 	call interactionAnimate		; $77f8
 	jp interactionRunScript		; $77fb
-	ld e,$45		; $77fe
+
+@subid2:
+	ld e,Interaction.state2		; $77fe
 	ld a,(de)		; $7800
 	rst_jumpTable			; $7801
-	inc d			; $7802
-	ld a,b			; $7803
-	dec sp			; $7804
-	ld a,b			; $7805
-	ld e,(hl)		; $7806
-	ld a,b			; $7807
-	ld l,d			; $7808
-	ld a,b			; $7809
-	add a			; $780a
-	ld a,b			; $780b
-	and b			; $780c
-	ld a,b			; $780d
-	push bc			; $780e
-	ld a,b			; $780f
-	ld bc,$1579		; $7810
-	ld a,c			; $7813
+	.dw @@substate0
+	.dw @@substate1
+	.dw @@substate2
+	.dw @@substate3
+	.dw @@substate4
+	.dw @@substate5
+	.dw @@substate6
+	.dw @@substate7
+	.dw @@substate8
+
+@@substate0:
 	call interactionIncState2		; $7814
 	ld a,$7c		; $7817
-	call $7957		; $7819
-	ld e,$43		; $781c
+	call @func_7957		; $7819
+	ld e,Interaction.var03		; $781c
 	ld a,(de)		; $781e
 	add a			; $781f
-	ld hl,$784e		; $7820
+	ld hl,@@table_784e		; $7820
 	rst_addDoubleIndex			; $7823
 	ld e,$49		; $7824
 	ldi a,(hl)		; $7826
@@ -6127,36 +6139,32 @@ _label_08_327:
 	ld a,(hl)		; $7830
 	ld (de),a		; $7831
 	xor a			; $7832
-	call $791f		; $7833
+	call @func_791f		; $7833
 	ld e,$46		; $7836
 	ld a,$3c		; $7838
 	ld (de),a		; $783a
+
+@@substate1:
 	call interactionDecCounter1		; $783b
 	ld e,$5a		; $783e
-	jr nz,_label_08_328	; $7840
+	jr nz,+			; $7840
 	ld a,(de)		; $7842
 	or $80			; $7843
 	ld (de),a		; $7845
 	jp interactionIncState2		; $7846
-_label_08_328:
++
 	ld a,(de)		; $7849
 	xor $80			; $784a
 	ld (de),a		; $784c
 	ret			; $784d
-	inc e			; $784e
-	jr nc,$3c		; $784f
-	ld e,d			; $7851
-	inc b			; $7852
-	jr nc,$46		; $7853
-	ld d,b			; $7855
-	inc e			; $7856
-	ld h,b			; $7857
-	ld d,b			; $7858
-	ld b,(hl)		; $7859
-	inc b			; $785a
-	ld h,b			; $785b
-	ld e,d			; $785c
-	inc a			; $785d
+
+@@table_784e:
+	.db $1c $30 $3c $5a
+	.db $04 $30 $46 $50
+	.db $1c $60 $50 $46
+	.db $04 $60 $5a $3c
+
+@@substate2:
 	ld h,d			; $785e
 	ld l,$71		; $785f
 	dec (hl)		; $7861
@@ -6164,6 +6172,8 @@ _label_08_328:
 	ld l,$50		; $7863
 	ld (hl),$78		; $7865
 	jp interactionIncState2		; $7867
+
+@@substate3:
 	call objectApplySpeed		; $786a
 	ld e,$70		; $786d
 	ld a,(de)		; $786f
@@ -6174,14 +6184,16 @@ _label_08_328:
 	cp b			; $7875
 	ld e,$43		; $7876
 	ld a,(de)		; $7878
-	jr nc,_label_08_329	; $7879
+	jr nc,+			; $7879
 	xor a			; $787b
-	call $7941		; $787c
+	call @func_7941		; $787c
 	jp interactionIncState2		; $787f
-_label_08_329:
++
 	or a			; $7882
 	ret nz			; $7883
-	jp $7a1e		; $7884
+	jp @func_7a1e		; $7884
+
+@@substate4:
 	ld h,d			; $7887
 	ld l,$72		; $7888
 	dec (hl)		; $788a
@@ -6194,17 +6206,19 @@ _label_08_329:
 	or a			; $7896
 	ld bc,$4882		; $7897
 	ld a,$fe		; $789a
-	call z,$7968		; $789c
+	call z,@func_7968		; $789c
 	ret			; $789f
+
+@@substate5:
 	call interactionDecCounter1		; $78a0
-	jr nz,_label_08_330	; $78a3
+	jr nz,+			; $78a3
 	call objectSetVisible		; $78a5
 	ld l,$46		; $78a8
 	ld (hl),$28		; $78aa
 	ld a,$04		; $78ac
-	call $791f		; $78ae
+	call @func_791f		; $78ae
 	jp interactionIncState2		; $78b1
-_label_08_330:
++
 	ld l,$49		; $78b4
 	inc (hl)		; $78b6
 	ld a,(hl)		; $78b7
@@ -6214,6 +6228,8 @@ _label_08_330:
 	ld e,$49		; $78bd
 	ld bc,$4882		; $78bf
 	jp objectSetPositionInCircleArc		; $78c2
+
+@@substate6:
 	call interactionDecCounter1		; $78c5
 	ret nz			; $78c8
 	ld l,$50		; $78c9
@@ -6221,12 +6237,12 @@ _label_08_330:
 	ld l,$46		; $78cd
 	ld (hl),$3c		; $78cf
 	ld a,$04		; $78d1
-	call $7941		; $78d3
+	call @func_7941		; $78d3
 	ld b,$02		; $78d6
-_label_08_331:
+--
 	call getFreeInteractionSlot		; $78d8
-	jr nz,_label_08_333	; $78db
-	ld (hl),$4f		; $78dd
+	jr nz,++		; $78db
+	ld (hl),INTERACID_4f		; $78dd
 	inc l			; $78df
 	ld (hl),$04		; $78e0
 	inc l			; $78e2
@@ -6235,9 +6251,9 @@ _label_08_331:
 	ld (hl),a		; $78e5
 	ld l,$46		; $78e6
 	ld (hl),$0a		; $78e8
-	jr z,_label_08_332	; $78ea
+	jr z,+			; $78ea
 	ld (hl),$14		; $78ec
-_label_08_332:
++
 	call objectCopyPosition		; $78ee
 	ld e,$49		; $78f1
 	ld l,e			; $78f3
@@ -6248,27 +6264,33 @@ _label_08_332:
 	ld a,(de)		; $78f9
 	ld (hl),a		; $78fa
 	dec b			; $78fb
-	jr nz,_label_08_331	; $78fc
-_label_08_333:
+	jr nz,--		; $78fc
+++
 	jp interactionIncState2		; $78fe
+
+@@substate7:
 	call objectApplySpeed		; $7901
 	call interactionDecCounter1		; $7904
 	ret nz			; $7907
 	ld hl,$cfd0		; $7908
 	ld (hl),$0c		; $790b
 	ld a,$79		; $790d
-	call $7957		; $790f
+	call @func_7957		; $790f
 	jp interactionIncState2		; $7912
+
+@@substate8:
 	ld hl,$cfd0		; $7915
 	ld a,(hl)		; $7918
 	cp $0d			; $7919
 	ret nz			; $791b
 	jp interactionDelete		; $791c
+
+@func_791f:
 	ld b,a			; $791f
 	ld e,$43		; $7920
 	ld a,(de)		; $7922
 	add b			; $7923
-	ld hl,$7931		; $7924
+	ld hl,@table_7931		; $7924
 	rst_addDoubleIndex			; $7927
 	ld e,$4b		; $7928
 	ldi a,(hl)		; $792a
@@ -6278,38 +6300,40 @@ _label_08_333:
 	ldi a,(hl)		; $792e
 	ld (de),a		; $792f
 	ret			; $7930
-	ld h,b			; $7931
-	sbc b			; $7932
-	ld h,b			; $7933
-	ld l,b			; $7934
-	sub b			; $7935
-	sbc b			; $7936
-	sub b			; $7937
-	ld l,b			; $7938
-	jr nc,$68		; $7939
-	jr nc,-$68		; $793b
-	ld h,b			; $793d
-	ld l,b			; $793e
-	ld h,b			; $793f
-	sbc b			; $7940
+
+@table_7931:
+	.db $60 $98
+	.db $60 $68
+	.db $90 $98
+	.db $90 $68
+	.db $30 $68
+	.db $30 $98
+	.db $60 $68
+	.db $60 $98
+
+@func_7941:
 	ld b,a			; $7941
 	ld e,$43		; $7942
 	ld a,(de)		; $7944
 	add b			; $7945
-	ld hl,$794f		; $7946
+	ld hl,@table_794f		; $7946
 	rst_addAToHl			; $7949
 	ld e,$49		; $794a
 	ld a,(hl)		; $794c
 	ld (de),a		; $794d
 	ret			; $794e
-	inc e			; $794f
-	inc b			; $7950
-	inc d			; $7951
-	inc c			; $7952
-	inc c			; $7953
-	inc d			; $7954
-	inc b			; $7955
-	inc e			; $7956
+
+@table_794f:
+	.db $1c
+	.db $04
+	.db $14
+	.db $0c
+	.db $0c
+	.db $14
+	.db $04
+	.db $1c
+
+@func_7957:
 	ld b,a			; $7957
 	ld e,$43		; $7958
 	ld a,(de)		; $795a
@@ -6319,17 +6343,19 @@ _label_08_333:
 	jp playSound		; $795e
 	ld hl,$ff8c		; $7961
 	ld (hl),$01		; $7964
-	jr _label_08_334		; $7966
+	jr +			; $7966
+
+@func_7968:
 	ld hl,$ff8c		; $7968
 	ld (hl),$00		; $796b
-_label_08_334:
++
 	ldh (<hFF8B),a	; $796d
 	ld a,$08		; $796f
 	ldh (<hFF8D),a	; $7971
-_label_08_335:
+-
 	call getFreeInteractionSlot		; $7973
 	ret nz			; $7976
-	ld (hl),$4f		; $7977
+	ld (hl),INTERACID_4f		; $7977
 	inc l			; $7979
 	ld (hl),$03		; $797a
 	ld l,$46		; $797c
@@ -6347,28 +6373,30 @@ _label_08_335:
 	ldh (<hFF8D),a	; $798e
 	ld l,$43		; $7990
 	ld (hl),a		; $7992
-	jr nz,_label_08_335	; $7993
+	jr nz,-			; $7993
 	ld a,$5c		; $7995
 	jp playSound		; $7997
+
+@subid3:
 	ld h,d			; $799a
 	ld l,$46		; $799b
 	ld a,(hl)		; $799d
 	inc a			; $799e
-	jr z,_label_08_336	; $799f
+	jr z,+			; $799f
 	dec (hl)		; $79a1
 	jp z,interactionDelete		; $79a2
-_label_08_336:
++
 	ld e,$45		; $79a5
 	ld a,(de)		; $79a7
 	or a			; $79a8
-	jr nz,_label_08_337	; $79a9
+	jr nz,+			; $79a9
 	call interactionDecCounter2		; $79ab
 	ret nz			; $79ae
-	call $7784		; $79af
-	call $7796		; $79b2
+	call @func_7784		; $79af
+	call @func_7796		; $79b2
 	call objectSetVisible		; $79b5
 	jp interactionIncState2		; $79b8
-_label_08_337:
++
 	call objectApplySpeed		; $79bb
 	call interactionAnimate		; $79be
 	ld e,$61		; $79c1
@@ -6378,35 +6406,39 @@ _label_08_337:
 	ld h,d			; $79c6
 	ld l,$45		; $79c7
 	ld (hl),$00		; $79c9
-	call $77ba		; $79cb
+	call @setCounter2Between1To8		; $79cb
 	jp objectSetInvisible		; $79ce
+
+@subid4:
 	call checkInteractionState2		; $79d1
-	jr nz,_label_08_338	; $79d4
+	jr nz,+			; $79d4
 	call interactionDecCounter1		; $79d6
 	ret nz			; $79d9
 	jp interactionIncState2		; $79da
-_label_08_338:
++
 	ld hl,$cfd0		; $79dd
 	ld a,(hl)		; $79e0
 	cp $0c			; $79e1
 	jp z,interactionDelete		; $79e3
 	jp objectApplySpeed		; $79e6
-	ld e,$45		; $79e9
+
+@subid1:
+	ld e,Interaction.state2		; $79e9
 	ld a,(de)		; $79eb
 	rst_jumpTable			; $79ec
-	di			; $79ed
-	ld a,c			; $79ee
-	inc c			; $79ef
-	ld a,d			; $79f0
-	inc c			; $79f1
-	dec h			; $79f2
+	.dw @@substate0
+	.dw @@substate1
+	.dw interactionRunScript
+
+@@substate0:
 	call interactionRunScript		; $79f3
-	jr c,_label_08_339	; $79f6
+	jr c,+			; $79f6
 	call interactionAnimate		; $79f8
-	jr _label_08_340		; $79fb
-_label_08_339:
+	jr @@func_7a00			; $79fb
++
 	jp interactionIncState2		; $79fd
-_label_08_340:
+
+@@func_7a00:
 	ld h,d			; $7a00
 	ld l,$61		; $7a01
 	ld a,(hl)		; $7a03
@@ -6414,13 +6446,17 @@ _label_08_340:
 	ld (hl),$00		; $7a06
 	ret nz			; $7a08
 	jp playSound		; $7a09
+
+@@substate1:
 	ld a,($cfd0)		; $7a0c
 	cp $0e			; $7a0f
 	ret nz			; $7a11
 	call objectSetInvisible		; $7a12
-	ld hl,$6168		; $7a15
+	ld hl,script6168		; $7a15
 	call interactionSetScript		; $7a18
 	jp interactionIncState2		; $7a1b
+
+@func_7a1e:
 	ld a,($c486)		; $7a1e
 	ld b,a			; $7a21
 	ld a,c			; $7a22
@@ -6434,9 +6470,12 @@ _label_08_340:
 	ld ($c486),a		; $7a2e
 	ldh (<hCameraY),a	; $7a31
 	ret			; $7a33
+
+@subid5:
 	call interactionAnimate		; $7a34
-	call $7a00		; $7a37
+	call @subid1@func_7a00		; $7a37
 	jp interactionRunScript		; $7a3a
+
 
 interactionCode51:
 	call checkInteractionState		; $7a3d

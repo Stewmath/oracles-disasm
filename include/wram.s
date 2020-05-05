@@ -2276,7 +2276,7 @@ wIsSeedShooterInUse: ; $ccda/$ccf1
 ; Set when there is a seed shooter (or slingshot) seed on-screen
 	db
 
-wIsLinkBeingShocked: ; $ccdb
+wIsLinkBeingShocked: ; $ccdb/$ccf2
 	db
 wLinkShockCounter: ; $ccdc
 	db

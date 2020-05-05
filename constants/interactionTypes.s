@@ -1906,6 +1906,7 @@
 .ifdef ROM_SEASONS
 
 .define INTERACID_RUPEE_ROOM_RUPEES	$1d
+.define INTERACID_4f			$4f
 .define INTERACID_SEASONS_FAIRY		$50
 
 ;;
@@ -1918,6 +1919,8 @@
 .define INTERACID_BOMB_FLOWER		$6f
 
 .define INTERACID_TRAMPOLINE		$7c
+
+.define INTERACID_88			$88
 
 ;;
 ; @subid_00{Rooster on top of d4}

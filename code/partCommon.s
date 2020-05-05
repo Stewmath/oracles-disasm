@@ -128,7 +128,7 @@ _partCommon_checkTileCollisionOrOutOfBounds:
 ;;
 ; @param[out]	zflag	z if out of bounds
 ; @addr{407e}
-_partCommon_checkOutOfBounds:
+partCommon_checkOutOfBounds:
 	ld h,d			; $407e
 	ld l,Part.yh		; $407f
 	ld b,(hl)		; $4081

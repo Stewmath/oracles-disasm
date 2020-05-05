@@ -3248,7 +3248,7 @@ _label_11_112:
 	inc (hl)		; $512c
 	jr _label_11_112		; $512d
 _label_11_113:
-	call _partCommon_checkOutOfBounds		; $512f
+	call partCommon_checkOutOfBounds		; $512f
 	jr z,_label_11_115	; $5132
 _label_11_114:
 	jp objectApplySpeed		; $5134
@@ -4876,7 +4876,7 @@ partCode4d:
 ; Moving
 @state2:
 	call objectApplySpeed		; $59b8
-	call _partCommon_checkOutOfBounds		; $59bb
+	call partCommon_checkOutOfBounds		; $59bb
 	jr z,@delete	; $59be
 @animate:
 	jp partAnimate		; $59c0
@@ -5368,7 +5368,7 @@ partCode52:
 	call playSound		; $5c8e
 	ld a,$02		; $5c91
 	call partSetAnimation		; $5c93
-	call _partCommon_checkOutOfBounds		; $5c96
+	call partCommon_checkOutOfBounds		; $5c96
 	jp z,partDelete		; $5c99
 	call objectApplySpeed		; $5c9c
 _label_11_198:

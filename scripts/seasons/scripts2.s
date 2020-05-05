@@ -441,8 +441,8 @@ script_14_4a4b:
 script_14_4a6d:
 	setcoords $e0 $80
 	delay 6
-	setspeed $28
-	setangle $00
+	setspeed SPEED_100
+	setangle ANGLE_UP
 	setanimation $02
 	applyspeed $58
 	setanimation $01

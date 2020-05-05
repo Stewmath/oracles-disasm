@@ -577,7 +577,7 @@ partCode2d:
 	ld a,(de)		; $62b4
 	or a			; $62b5
 	jr z,_label_11_242	; $62b6
-	call _partCommon_checkOutOfBounds		; $62b8
+	call partCommon_checkOutOfBounds		; $62b8
 	jr z,_label_11_244	; $62bb
 	call objectApplySpeed		; $62bd
 	jp partAnimate		; $62c0
@@ -907,7 +907,7 @@ _label_11_257:
 	call objectGetAngleTowardEnemyTarget		; $64a8
 	call objectNudgeAngleTowards		; $64ab
 _label_11_258:
-	call _partCommon_checkOutOfBounds		; $64ae
+	call partCommon_checkOutOfBounds		; $64ae
 	jr z,_label_11_261	; $64b1
 	call objectApplySpeed		; $64b3
 _label_11_259:
@@ -2269,7 +2269,7 @@ partCode3a:
 	or a			; $6ce8
 	jr z,_label_11_319	; $6ce9
 _label_11_318:
-	call _partCommon_checkOutOfBounds		; $6ceb
+	call partCommon_checkOutOfBounds		; $6ceb
 	jp z,partDelete		; $6cee
 	call objectApplySpeed		; $6cf1
 	jp partAnimate		; $6cf4
@@ -2617,7 +2617,7 @@ partCode3c:
 	ld a,(de)		; $6f31
 	or a			; $6f32
 	jr z,_label_11_334	; $6f33
-	call _partCommon_checkOutOfBounds		; $6f35
+	call partCommon_checkOutOfBounds		; $6f35
 	jp z,partDelete		; $6f38
 	call partCommon_decCounter1IfNonzero		; $6f3b
 	jr nz,_label_11_333	; $6f3e
@@ -2856,7 +2856,7 @@ _blueStalfosProjectile_subid1:
 	jr z,_blueStalfosProjectile_subid1_uninitialized	; $7056
 
 _blueStalfosProjectile_applySpeedAndDeleteIfOffScreen:
-	call _partCommon_checkOutOfBounds		; $7058
+	call partCommon_checkOutOfBounds		; $7058
 	jp z,partDelete		; $705b
 
 _blueStalfosProjectile_applySpeed:
@@ -3707,7 +3707,7 @@ partCode43:
 
 @updateMovement:
 	call objectApplySpeed		; $7485
-	call _partCommon_checkOutOfBounds		; $7488
+	call partCommon_checkOutOfBounds		; $7488
 	jp nz,partAnimate		; $748b
 	jr @delete		; $748e
 
