@@ -4277,7 +4277,11 @@ interactionCodea1:
 	.dw _movingPlatform_stateC
 
 @state0To7:
+.ifdef ROM_AGES
 	ld hl,bank0e.movingSidescrollPlatformScriptTable		; $5832
+.else
+	ld hl,movingSidescrollPlatformScriptTable
+.endif
 	call objectLoadMovementScript		; $5835
 	call interactionInitGraphics		; $5838
 	ld e,Interaction.direction		; $583b
@@ -4402,7 +4406,11 @@ interactionCodea2:
 	.dw _movingPlatform_stateC
 
 @state0To7:
+.ifdef ROM_AGES
 	ld hl,bank0e.movingSidescrollConveyorScriptTable		; $58ec
+.else
+	ld hl,movingSidescrollConveyorScriptTable
+.endif
 	call objectLoadMovementScript		; $58ef
 	call interactionInitGraphics		; $58f2
 	ld h,d			; $58f5

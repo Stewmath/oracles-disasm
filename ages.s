@@ -1172,6 +1172,11 @@ specialObjectLoadAnimationFrameToBuffer:
  m_section_free Enemy_Code_Bank0e NAMESPACE bank0e
 
 	.include "code/enemyCommon.s"
+	.include "code/enemyCode/group2.s"
+
+        .include "build/data/orbMovementScript.s"
+        .include "code/objectMovementScript.s"
+
 	.include "code/ages/enemyCode/bank0e.s"
 	.include "build/data/movingSidescrollPlatform.s"
 

@@ -5443,555 +5443,692 @@ _label_0a_212:
 	ld a,$02		; $6070
 	jp setScreenShakeCounter		; $6072
 
+
+; ==============================================================================
+; INTERACID_MOVING_SIDESCROLL_PLATFORM
+; ==============================================================================
 interactionCodea1:
-	call $6358		; $6075
-	call $607e		; $6078
-	jp $624c		; $607b
-	ld e,$44		; $607e
-	ld a,(de)		; $6080
-	sub $08			; $6081
-	jr c,_label_0a_213	; $6083
-	rst_jumpTable			; $6085
-	cp d			; $6086
-	ld h,b			; $6087
-	bit 4,b			; $6088
-	add sp,$60		; $608a
-	dec b			; $608c
-	ld h,c			; $608d
-	ldi (hl),a		; $608e
-	ld h,c			; $608f
-_label_0a_213:
-	ld hl,$7a3c		; $6090
-	call objectLoadMovementScript		; $6093
-	call interactionInitGraphics		; $6096
-	ld e,$48		; $6099
-	ld a,(de)		; $609b
-	ld hl,$60b0		; $609c
-	rst_addDoubleIndex			; $609f
-	ld e,$66		; $60a0
-	ldi a,(hl)		; $60a2
-	ld (de),a		; $60a3
-	inc e			; $60a4
-	ld a,(hl)		; $60a5
-	ld (de),a		; $60a6
-	ld e,$48		; $60a7
-	ld a,(de)		; $60a9
-	call interactionSetAnimation		; $60aa
-	jp objectSetVisible82		; $60ad
-	add hl,bc		; $60b0
-	rrca			; $60b1
-	add hl,bc		; $60b2
-	rla			; $60b3
-	add hl,de		; $60b4
-	rlca			; $60b5
-	add hl,de		; $60b6
-	rrca			; $60b7
-	add hl,bc		; $60b8
-	rlca			; $60b9
-	ld e,$72		; $60ba
-	ld a,(de)		; $60bc
-	ld h,d			; $60bd
-	ld l,$4b		; $60be
-	cp (hl)			; $60c0
-	jr nc,_label_0a_214	; $60c1
-	jp objectApplySpeed		; $60c3
-_label_0a_214:
-	ld a,(de)		; $60c6
-	ld (hl),a		; $60c7
-	jp $63d5		; $60c8
-	ld e,$4d		; $60cb
-	ld a,(de)		; $60cd
-	ld h,d			; $60ce
-	ld l,$73		; $60cf
-	cp (hl)			; $60d1
-	jr nc,_label_0a_215	; $60d2
-	ld l,$50		; $60d4
-	ld b,(hl)		; $60d6
-	ld c,$08		; $60d7
-	ld a,($ccb0)		; $60d9
-	cp d			; $60dc
-	call z,updateLinkPositionGivenVelocity		; $60dd
-	jp objectApplySpeed		; $60e0
-_label_0a_215:
-	ld a,(hl)		; $60e3
-	ld (de),a		; $60e4
-	jp $63d5		; $60e5
-	ld e,$4b		; $60e8
-	ld a,(de)		; $60ea
-	ld h,d			; $60eb
-	ld l,$72		; $60ec
-	cp (hl)			; $60ee
-	jr nc,_label_0a_216	; $60ef
-	ld l,$50		; $60f1
-	ld b,(hl)		; $60f3
-	ld c,$10		; $60f4
-	ld a,($ccb0)		; $60f6
-	cp d			; $60f9
-	call z,updateLinkPositionGivenVelocity		; $60fa
-	jp objectApplySpeed		; $60fd
-_label_0a_216:
-	ld a,(hl)		; $6100
-	ld (de),a		; $6101
-	jp $63d5		; $6102
-	ld e,$73		; $6105
-	ld a,(de)		; $6107
-	ld h,d			; $6108
-	ld l,$4d		; $6109
-	cp (hl)			; $610b
-	jr nc,_label_0a_217	; $610c
-	ld l,$50		; $610e
-	ld b,(hl)		; $6110
-	ld c,$18		; $6111
-	ld a,($ccb0)		; $6113
-	cp d			; $6116
-	call z,updateLinkPositionGivenVelocity		; $6117
-	jp objectApplySpeed		; $611a
-_label_0a_217:
-	ld a,(de)		; $611d
-	ld (hl),a		; $611e
-	jp $63d5		; $611f
-	call interactionDecCounter1		; $6122
-	ret nz			; $6125
-	jp $63d5		; $6126
+	call _sidescrollPlatform_checkLinkOnPlatform		; $5817
+	call @updateSubid		; $581a
+	jp _sidescrollingPlatformCommon		; $581d
 
+@updateSubid:
+	ld e,Interaction.state		; $5820
+	ld a,(de)		; $5822
+	sub $08			; $5823
+	jr c,@state0To7		; $5825
+	rst_jumpTable			; $5827
+	.dw @state8
+	.dw @state9
+	.dw @stateA
+	.dw @stateB
+	.dw _movingPlatform_stateC
+
+@state0To7:
+.ifdef ROM_AGES
+	ld hl,bank0e.movingSidescrollPlatformScriptTable		; $5832
+.else
+	ld hl,movingSidescrollPlatformScriptTable
+.endif
+	call objectLoadMovementScript		; $5835
+	call interactionInitGraphics		; $5838
+	ld e,Interaction.direction		; $583b
+	ld a,(de)		; $583d
+	ld hl,@collisionRadii		; $583e
+	rst_addDoubleIndex			; $5841
+	ld e,Interaction.collisionRadiusY		; $5842
+	ldi a,(hl)		; $5844
+	ld (de),a		; $5845
+	inc e			; $5846
+	ld a,(hl)		; $5847
+	ld (de),a		; $5848
+	ld e,Interaction.direction		; $5849
+	ld a,(de)		; $584b
+	call interactionSetAnimation		; $584c
+	jp objectSetVisible82		; $584f
+
+@collisionRadii:
+	.db $09 $0f
+	.db $09 $17
+	.db $19 $07
+	.db $19 $0f
+	.db $09 $07
+
+@state8:
+	ld e,Interaction.var32		; $585c
+	ld a,(de)		; $585e
+	ld h,d			; $585f
+	ld l,Interaction.yh		; $5860
+	cp (hl)			; $5862
+	jr nc,+			; $5863
+	jp objectApplySpeed		; $5865
++
+	ld a,(de)		; $5868
+	ld (hl),a		; $5869
+	jp _sidescrollPlatformFunc_5bfc		; $586a
+
+@state9:
+	ld e,Interaction.xh		; $586d
+	ld a,(de)		; $586f
+	ld h,d			; $5870
+	ld l,Interaction.var33		; $5871
+	cp (hl)			; $5873
+	jr nc,++		; $5874
+	ld l,Interaction.speed		; $5876
+	ld b,(hl)		; $5878
+	ld c,ANGLE_RIGHT		; $5879
+	ld a,(wLinkRidingObject)		; $587b
+	cp d			; $587e
+	call z,updateLinkPositionGivenVelocity		; $587f
+	jp objectApplySpeed		; $5882
+++
+	ld a,(hl)		; $5885
+	ld (de),a		; $5886
+	jp _sidescrollPlatformFunc_5bfc		; $5887
+
+@stateA:
+	ld e,Interaction.yh		; $588a
+	ld a,(de)		; $588c
+	ld h,d			; $588d
+	ld l,Interaction.var32		; $588e
+	cp (hl)			; $5890
+	jr nc,++		; $5891
+	ld l,Interaction.speed		; $5893
+	ld b,(hl)		; $5895
+	ld c,ANGLE_DOWN		; $5896
+	ld a,(wLinkRidingObject)		; $5898
+	cp d			; $589b
+	call z,updateLinkPositionGivenVelocity		; $589c
+	jp objectApplySpeed		; $589f
+++
+	ld a,(hl)		; $58a2
+	ld (de),a		; $58a3
+	jp _sidescrollPlatformFunc_5bfc		; $58a4
+
+@stateB:
+	ld e,Interaction.var33		; $58a7
+	ld a,(de)		; $58a9
+	ld h,d			; $58aa
+	ld l,Interaction.xh		; $58ab
+	cp (hl)			; $58ad
+	jr nc,++		; $58ae
+	ld l,Interaction.speed		; $58b0
+	ld b,(hl)		; $58b2
+	ld c,ANGLE_LEFT		; $58b3
+	ld a,(wLinkRidingObject)		; $58b5
+	cp d			; $58b8
+	call z,updateLinkPositionGivenVelocity		; $58b9
+	jp objectApplySpeed		; $58bc
+++
+	ld a,(de)		; $58bf
+	ld (hl),a		; $58c0
+	jp _sidescrollPlatformFunc_5bfc		; $58c1
+
+
+_movingPlatform_stateC:
+	call interactionDecCounter1		; $58c4
+	ret nz			; $58c7
+	jp _sidescrollPlatformFunc_5bfc		; $58c8
+
+
+; ==============================================================================
+; INTERACID_MOVING_SIDESCROLL_CONVEYOR
+; ==============================================================================
 interactionCodea2:
-	call interactionAnimate		; $6129
-	call $6358		; $612c
-	call nz,$638d		; $612f
-	call $6138		; $6132
-	jp $624c		; $6135
-	ld e,$44		; $6138
-	ld a,(de)		; $613a
-	sub $08			; $613b
-	jr c,_label_0a_218	; $613d
-	rst_jumpTable			; $613f
-	ld h,h			; $6140
-	ld h,c			; $6141
-	ld (hl),d		; $6142
-	ld h,c			; $6143
-	add b			; $6144
-	ld h,c			; $6145
-	sbc h			; $6146
-	ld h,c			; $6147
-	ldi (hl),a		; $6148
-	ld h,c			; $6149
-_label_0a_218:
-	ld hl,$7b2f		; $614a
-	call objectLoadMovementScript		; $614d
-	call interactionInitGraphics		; $6150
-	ld h,d			; $6153
-	ld l,$66		; $6154
-	ld (hl),$08		; $6156
-	inc l			; $6158
-	ld (hl),$0c		; $6159
-	ld e,$48		; $615b
-	ld a,(de)		; $615d
-	call interactionSetAnimation		; $615e
-	jp objectSetVisible82		; $6161
-	ld e,$72		; $6164
-	ld a,(de)		; $6166
-	ld h,d			; $6167
-	ld l,$4b		; $6168
-	cp (hl)			; $616a
-	jr c,_label_0a_220	; $616b
-	ld a,(de)		; $616d
-	ld (hl),a		; $616e
-	jp $63d5		; $616f
-	ld e,$4d		; $6172
-	ld a,(de)		; $6174
-	ld h,d			; $6175
-	ld l,$73		; $6176
-	cp (hl)			; $6178
-	jr c,_label_0a_220	; $6179
-	ld a,(hl)		; $617b
-	ld (de),a		; $617c
-	jp $63d5		; $617d
-	ld e,$4b		; $6180
-	ld a,(de)		; $6182
-	ld h,d			; $6183
-	ld l,$72		; $6184
-	cp (hl)			; $6186
-	jr nc,_label_0a_219	; $6187
-	ld l,$50		; $6189
-	ld b,(hl)		; $618b
-	ld c,$10		; $618c
-	ld a,($ccb0)		; $618e
-	cp d			; $6191
-	call z,updateLinkPositionGivenVelocity		; $6192
-	jr _label_0a_220		; $6195
-_label_0a_219:
-	ld a,(hl)		; $6197
-	ld (de),a		; $6198
-	jp $63d5		; $6199
-	ld e,$73		; $619c
-	ld a,(de)		; $619e
-	ld h,d			; $619f
-	ld l,$4d		; $61a0
-	cp (hl)			; $61a2
-	jr c,_label_0a_220	; $61a3
-	ld a,(de)		; $61a5
-	ld (hl),a		; $61a6
-	jp $63d5		; $61a7
-_label_0a_220:
-	call objectApplySpeed		; $61aa
-	ld a,($ccb0)		; $61ad
-	cp d			; $61b0
-	ret nz			; $61b1
-	ld e,$49		; $61b2
-	ld a,(de)		; $61b4
-	rrca			; $61b5
-	rrca			; $61b6
-	ld b,a			; $61b7
-	ld e,$48		; $61b8
-	ld a,(de)		; $61ba
-	add b			; $61bb
-	ld hl,$61c6		; $61bc
-	rst_addDoubleIndex			; $61bf
-	ldi a,(hl)		; $61c0
-	ld c,a			; $61c1
-	ld b,(hl)		; $61c2
-	jp updateLinkPositionGivenVelocity		; $61c3
-	.db $08 $14 $18 $14 $08 $28 $18 $0f
-	.db $08 $14 $18 $14 $08 $0f $18 $28
+	call interactionAnimate		; $58cb
+	call _sidescrollPlatform_checkLinkOnPlatform		; $58ce
+	call nz,_sidescrollPlatform_updateLinkKnockbackForConveyor		; $58d1
+	call @updateState		; $58d4
+	jp _sidescrollingPlatformCommon		; $58d7
 
+@updateState:
+	ld e,Interaction.state		; $58da
+	ld a,(de)		; $58dc
+	sub $08			; $58dd
+	jr c,@state0To7		; $58df
+	rst_jumpTable			; $58e1
+	.dw @state8
+	.dw @state9
+	.dw @stateA
+	.dw @stateB
+	.dw _movingPlatform_stateC
+
+@state0To7:
+.ifdef ROM_AGES
+	ld hl,bank0e.movingSidescrollConveyorScriptTable		; $58ec
+.else
+	ld hl,movingSidescrollConveyorScriptTable
+.endif
+	call objectLoadMovementScript		; $58ef
+	call interactionInitGraphics		; $58f2
+	ld h,d			; $58f5
+	ld l,Interaction.collisionRadiusY		; $58f6
+	ld (hl),$08		; $58f8
+	inc l			; $58fa
+	ld (hl),$0c		; $58fb
+	ld e,Interaction.direction		; $58fd
+	ld a,(de)		; $58ff
+	call interactionSetAnimation		; $5900
+	jp objectSetVisible82		; $5903
+
+@state8:
+	ld e,Interaction.var32		; $5906
+	ld a,(de)		; $5908
+	ld h,d			; $5909
+	ld l,Interaction.yh		; $590a
+	cp (hl)			; $590c
+	jr c,@applySpeed	; $590d
+	ld a,(de)		; $590f
+	ld (hl),a		; $5910
+	jp _sidescrollPlatformFunc_5bfc		; $5911
+
+@state9:
+	ld e,Interaction.xh		; $5914
+	ld a,(de)		; $5916
+	ld h,d			; $5917
+	ld l,Interaction.var33		; $5918
+	cp (hl)			; $591a
+	jr c,@applySpeed	; $591b
+	ld a,(hl)		; $591d
+	ld (de),a		; $591e
+	jp _sidescrollPlatformFunc_5bfc		; $591f
+
+@stateA:
+	ld e,Interaction.yh		; $5922
+	ld a,(de)		; $5924
+	ld h,d			; $5925
+	ld l,Interaction.var32		; $5926
+	cp (hl)			; $5928
+	jr nc,++		; $5929
+	ld l,Interaction.speed		; $592b
+	ld b,(hl)		; $592d
+	ld c,ANGLE_DOWN		; $592e
+	ld a,(wLinkRidingObject)		; $5930
+	cp d			; $5933
+	call z,updateLinkPositionGivenVelocity		; $5934
+	jr @applySpeed		; $5937
+++
+	ld a,(hl)		; $5939
+	ld (de),a		; $593a
+	jp _sidescrollPlatformFunc_5bfc		; $593b
+
+@stateB:
+	ld e,Interaction.var33		; $593e
+	ld a,(de)		; $5940
+	ld h,d			; $5941
+	ld l,Interaction.xh		; $5942
+	cp (hl)			; $5944
+	jr c,@applySpeed	; $5945
+	ld a,(de)		; $5947
+	ld (hl),a		; $5948
+	jp _sidescrollPlatformFunc_5bfc		; $5949
+
+@applySpeed:
+	call objectApplySpeed		; $594c
+	ld a,(wLinkRidingObject)		; $594f
+	cp d			; $5952
+	ret nz			; $5953
+
+	ld e,Interaction.angle		; $5954
+	ld a,(de)		; $5956
+	rrca			; $5957
+	rrca			; $5958
+	ld b,a			; $5959
+	ld e,Interaction.direction		; $595a
+	ld a,(de)		; $595c
+	add b			; $595d
+	ld hl,@directions		; $595e
+	rst_addDoubleIndex			; $5961
+	ldi a,(hl)		; $5962
+	ld c,a			; $5963
+	ld b,(hl)		; $5964
+	jp updateLinkPositionGivenVelocity		; $5965
+
+@directions:
+	.db ANGLE_RIGHT, SPEED_080
+	.db ANGLE_LEFT,  SPEED_080
+	.db ANGLE_RIGHT, SPEED_100
+	.db ANGLE_LEFT,  SPEED_060
+	.db ANGLE_RIGHT, SPEED_080
+	.db ANGLE_LEFT,  SPEED_080
+	.db ANGLE_RIGHT, SPEED_060
+	.db ANGLE_LEFT,  SPEED_100
+
+
+; ==============================================================================
+; INTERACID_DISAPPEARING_SIDESCROLL_PLATFORM
+; ==============================================================================
 interactionCodea3:
-	ld e,$44		; $61d6
-	ld a,(de)		; $61d8
-	cp $03			; $61d9
-	jr z,_label_0a_221	; $61db
-	call $6358		; $61dd
-	call $624c		; $61e0
-_label_0a_221:
-	ld e,$44		; $61e3
-	ld a,(de)		; $61e5
-	rst_jumpTable			; $61e6
-	pop af			; $61e7
-	ld h,c			; $61e8
-	add hl,de		; $61e9
-	ld h,d			; $61ea
-	inc hl			; $61eb
-	ld h,d			; $61ec
-	ld (hl),$62		; $61ed
-	ccf			; $61ef
-	ld h,d			; $61f0
-	ld e,$42		; $61f1
-	ld a,(de)		; $61f3
-	ld hl,$6213		; $61f4
-	rst_addDoubleIndex			; $61f7
-	ld e,$44		; $61f8
-	ldi a,(hl)		; $61fa
-	ld (de),a		; $61fb
-	ld e,$46		; $61fc
-	ld a,(hl)		; $61fe
-	ld (de),a		; $61ff
-	ld e,$66		; $6200
-	ld a,$08		; $6202
-	ld (de),a		; $6204
-	inc e			; $6205
-	ld (de),a		; $6206
-	call interactionInitGraphics		; $6207
-	ld e,$42		; $620a
-	ld a,(de)		; $620c
-	cp $02			; $620d
-	jp z,objectSetVisible83		; $620f
-	ret			; $6212
-	inc b			; $6213
-	inc a			; $6214
-	inc bc			; $6215
-	ld a,b			; $6216
-	ld bc,$cd3c		; $6217
-	and a			; $621a
-	ld h,e			; $621b
-	ret nz			; $621c
-	ld (hl),$1e		; $621d
-	ld l,e			; $621f
-	inc (hl)		; $6220
-	xor a			; $6221
-	ret			; $6222
-	call $63a7		; $6223
-	jr nz,_label_0a_222	; $6226
-	ld (hl),$96		; $6228
-	ld l,e			; $622a
-	inc (hl)		; $622b
-	jp objectSetInvisible		; $622c
-_label_0a_222:
-	ld e,$5a		; $622f
-	ld a,(de)		; $6231
-	xor $80			; $6232
-	ld (de),a		; $6234
-	ret			; $6235
-	call $6219		; $6236
-	ret nz			; $6239
-	ld a,$7b		; $623a
-	jp playSound		; $623c
-	call $63a7		; $623f
-	jr nz,_label_0a_222	; $6242
-	ld (hl),$78		; $6244
-	ld l,e			; $6246
-	ld (hl),$01		; $6247
-	jp objectSetVisible83		; $6249
-	ld a,($d004)		; $624c
-	cp $01			; $624f
-	ret nz			; $6251
-	call objectCheckCollidedWithLink		; $6252
-	ret nc			; $6255
-	call $62dd		; $6256
-	jr c,_label_0a_223	; $6259
-	call $630b		; $625b
-	jp z,$63bd		; $625e
-	call $62a8		; $6261
-	ret c			; $6264
-	ld e,$4b		; $6265
-	ld a,(de)		; $6267
-	ld b,a			; $6268
-	ld a,($d00b)		; $6269
-	cp b			; $626c
-	ld c,$00		; $626d
-	jr nc,_label_0a_226	; $626f
-	ld c,$10		; $6271
-	jr _label_0a_226		; $6273
-_label_0a_223:
-	call $632a		; $6275
-	ld a,(hl)		; $6278
-	or a			; $6279
-	jp z,$63af		; $627a
-	call $62a8		; $627d
-	ret c			; $6280
-	ld a,($ccb0)		; $6281
-	cp d			; $6284
-	jr nz,_label_0a_224	; $6285
-	ldh a,(<hFF8B)	; $6287
-	cp $03			; $6289
-	jr z,_label_0a_224	; $628b
-	push af			; $628d
-	call $63af		; $628e
-	pop af			; $6291
-	rrca			; $6292
-	jr _label_0a_225		; $6293
-_label_0a_224:
-	ld e,$4d		; $6295
-	ld a,(de)		; $6297
-	ld b,a			; $6298
-	ld a,($d00d)		; $6299
-	cp b			; $629c
-_label_0a_225:
-	ld c,$08		; $629d
-	jr nc,_label_0a_226	; $629f
-	ld c,$18		; $62a1
-_label_0a_226:
-	ld b,$14		; $62a3
-	jp updateLinkPositionGivenVelocity		; $62a5
-	ld h,d			; $62a8
-	ld l,$66		; $62a9
-	ld a,(hl)		; $62ab
-	ld b,a			; $62ac
-	add a			; $62ad
-	inc a			; $62ae
-	ld c,a			; $62af
-	ld l,$4b		; $62b0
-	ld a,($d00b)		; $62b2
-	sub (hl)		; $62b5
-	add b			; $62b6
-	cp c			; $62b7
-	ret nc			; $62b8
-	ld l,$67		; $62b9
-	ld a,(hl)		; $62bb
-	add $02			; $62bc
-	ld b,a			; $62be
-	add a			; $62bf
-	inc a			; $62c0
-	ld c,a			; $62c1
-	ld l,$4d		; $62c2
-	ld a,($d00d)		; $62c4
-	sub (hl)		; $62c7
-	add b			; $62c8
-	cp c			; $62c9
-	ret nc			; $62ca
-	xor a			; $62cb
-	ld l,$49		; $62cc
-	bit 3,(hl)		; $62ce
-	jr nz,_label_0a_227	; $62d0
-	inc a			; $62d2
-_label_0a_227:
-	ld ($cc6b),a		; $62d3
-	ld a,$11		; $62d6
-	ld ($cc6a),a		; $62d8
-	scf			; $62db
-	ret			; $62dc
-	ld a,($cc77)		; $62dd
-	or a			; $62e0
-	ld b,$05		; $62e1
-	jr z,_label_0a_228	; $62e3
-	dec b			; $62e5
-_label_0a_228:
-	ld h,d			; $62e6
-	ld l,$67		; $62e7
-	ld a,(hl)		; $62e9
-	add b			; $62ea
-	ld b,a			; $62eb
-	add a			; $62ec
-	inc a			; $62ed
-	ld c,a			; $62ee
-	ld l,$4d		; $62ef
-	ld a,($d00d)		; $62f1
-	sub (hl)		; $62f4
-	add b			; $62f5
-	cp c			; $62f6
-	ret nc			; $62f7
-	ld l,$66		; $62f8
-	ld a,(hl)		; $62fa
-	sub $02			; $62fb
-	ld b,a			; $62fd
-	add a			; $62fe
-	inc a			; $62ff
-	ld c,a			; $6300
-	ld l,$4b		; $6301
-	ld a,($d00b)		; $6303
-	sub (hl)		; $6306
-	add b			; $6307
-	cp c			; $6308
-	ccf			; $6309
-	ret			; $630a
-	ld l,$4d		; $630b
-	ld a,($d00d)		; $630d
-	cp (hl)			; $6310
-	ld b,$fb		; $6311
-	jr c,_label_0a_229	; $6313
-	ld b,$04		; $6315
-_label_0a_229:
-	add b			; $6317
-	ld c,a			; $6318
-	ld a,($d00b)		; $6319
-	sub $04			; $631c
-	ld b,a			; $631e
-	call getTileCollisionsAtPosition		; $631f
-	ret nz			; $6322
-	ld a,b			; $6323
-	add $08			; $6324
-	ld b,a			; $6326
-	jp getTileCollisionsAtPosition		; $6327
-	ld h,d			; $632a
-	ld l,$4b		; $632b
-	ld a,($d00b)		; $632d
-	cp (hl)			; $6330
-	ld b,$fa		; $6331
-	jr c,_label_0a_230	; $6333
-	ld b,$09		; $6335
-_label_0a_230:
-	add b			; $6337
-	ld b,a			; $6338
-	ld a,($d00d)		; $6339
-	sub $03			; $633c
-	ld c,a			; $633e
-	call getTileCollisionsAtPosition		; $633f
-	ld hl,$ff8b		; $6342
-	ld (hl),$00		; $6345
-	jr z,_label_0a_231	; $6347
-	set 1,(hl)		; $6349
-_label_0a_231:
-	ld a,c			; $634b
-	add $05			; $634c
-	ld c,a			; $634e
-	call getTileCollisionsAtPosition		; $634f
-	ld hl,$ff8b		; $6352
-	ret z			; $6355
-	inc (hl)		; $6356
-	ret			; $6357
-	call objectCheckCollidedWithLink		; $6358
-	jr nc,_label_0a_233	; $635b
-	ld h,d			; $635d
-	ld l,$4b		; $635e
-	ld a,(hl)		; $6360
-	ld l,$66		; $6361
-	sub (hl)		; $6363
-	sub $02			; $6364
-	ld b,a			; $6366
-	ld a,($d00b)		; $6367
-	cp b			; $636a
-	jr nc,_label_0a_233	; $636b
-	call $62dd		; $636d
-	jr nc,_label_0a_233	; $6370
-	ld e,$74		; $6372
-	ld a,(de)		; $6374
-	or a			; $6375
-	jr nz,_label_0a_232	; $6376
-	ld a,$01		; $6378
-	ld (de),a		; $637a
-	call $63dd		; $637b
-_label_0a_232:
-	ld a,d			; $637e
-	ld ($ccb0),a		; $637f
-	xor a			; $6382
-	ret			; $6383
-_label_0a_233:
-	ld e,$74		; $6384
-	ld a,(de)		; $6386
-	or a			; $6387
-	ret z			; $6388
-	ld a,$00		; $6389
-	ld (de),a		; $638b
-	ret			; $638c
-	ld e,$49		; $638d
-	ld a,(de)		; $638f
-	bit 3,a			; $6390
-	ret z			; $6392
-	ld hl,$d02c		; $6393
-	ld e,$48		; $6396
-	ld a,(de)		; $6398
-	swap a			; $6399
-	add $08			; $639b
-	ld (hl),a		; $639d
-	ld l,$2b		; $639e
-	ld (hl),$fc		; $63a0
-	ld l,$2d		; $63a2
-	ld (hl),$0c		; $63a4
-	ret			; $63a6
-	ld h,d			; $63a7
-	ld l,$46		; $63a8
-	ld a,(hl)		; $63aa
-	or a			; $63ab
-	ret z			; $63ac
-	dec (hl)		; $63ad
-	ret			; $63ae
-	ld hl,$d026		; $63af
-	ld e,$66		; $63b2
-	ld a,(de)		; $63b4
-	add (hl)		; $63b5
-	ld b,a			; $63b6
-	ld l,$0b		; $63b7
-	ld e,$4b		; $63b9
-	jr _label_0a_234		; $63bb
-	ld hl,$d027		; $63bd
-	ld e,$67		; $63c0
-	ld a,(de)		; $63c2
-	add (hl)		; $63c3
-	ld b,a			; $63c4
-	ld l,$0d		; $63c5
-	ld e,$4d		; $63c7
-_label_0a_234:
-	ld a,(de)		; $63c9
-	cp (hl)			; $63ca
-	jr c,_label_0a_235	; $63cb
-	ld a,b			; $63cd
-	cpl			; $63ce
-	inc a			; $63cf
-	ld b,a			; $63d0
-_label_0a_235:
-	ld a,(de)		; $63d1
-	add b			; $63d2
-	ld (hl),a		; $63d3
-	ret			; $63d4
-	call objectRunMovementScript		; $63d5
-	ld a,($ccb0)		; $63d8
-	cp d			; $63db
-	ret nz			; $63dc
-	ld e,$4a		; $63dd
-	ld a,(de)		; $63df
-	ld ($d00a),a		; $63e0
-	ld e,$4c		; $63e3
-	ld a,(de)		; $63e5
-	ld ($d00c),a		; $63e6
-	ret			; $63e9
+	ld e,Interaction.state		; $5978
+	ld a,(de)		; $597a
+	cp $03			; $597b
+	jr z,++			; $597d
+
+	; Only do this if the platform isn't invisible
+	call _sidescrollPlatform_checkLinkOnPlatform		; $597f
+	call _sidescrollingPlatformCommon		; $5982
+++
+	ld e,Interaction.state		; $5985
+	ld a,(de)		; $5987
+	rst_jumpTable			; $5988
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+
+@state0:
+	ld e,Interaction.subid		; $5993
+	ld a,(de)		; $5995
+	ld hl,@subidData		; $5996
+	rst_addDoubleIndex			; $5999
+
+	ld e,Interaction.state		; $599a
+	ldi a,(hl)		; $599c
+	ld (de),a		; $599d
+	ld e,Interaction.counter1		; $599e
+	ld a,(hl)		; $59a0
+	ld (de),a		; $59a1
+
+	ld e,Interaction.collisionRadiusY		; $59a2
+	ld a,$08		; $59a4
+	ld (de),a		; $59a6
+	inc e			; $59a7
+	ld (de),a		; $59a8
+	call interactionInitGraphics		; $59a9
+	ld e,Interaction.subid		; $59ac
+	ld a,(de)		; $59ae
+	cp $02			; $59af
+	jp z,objectSetVisible83		; $59b1
+	ret			; $59b4
+
+@subidData:
+	.db $04,  60
+	.db $03, 120
+	.db $01,  60
+
+@state1:
+	call _sidescrollPlatform_decCounter1		; $59bb
+	ret nz			; $59be
+	ld (hl),30		; $59bf
+	ld l,e			; $59c1
+	inc (hl)		; $59c2
+	xor a			; $59c3
+	ret			; $59c4
+
+@state2:
+	call _sidescrollPlatform_decCounter1		; $59c5
+	jr nz,@flickerVisibility		; $59c8
+	ld (hl),150		; $59ca
+	ld l,e			; $59cc
+	inc (hl)		; $59cd
+	jp objectSetInvisible		; $59ce
+
+@flickerVisibility
+	ld e,Interaction.visible		; $59d1
+	ld a,(de)		; $59d3
+	xor $80			; $59d4
+	ld (de),a		; $59d6
+	ret			; $59d7
+
+@state3:
+	call @state1		; $59d8
+	ret nz			; $59db
+	ld a,SND_MYSTERY_SEED		; $59dc
+	jp playSound		; $59de
+
+@state4:
+	call _sidescrollPlatform_decCounter1		; $59e1
+	jr nz,@flickerVisibility	; $59e4
+	ld (hl),120		; $59e6
+	ld l,e			; $59e8
+	ld (hl),$01		; $59e9
+	jp objectSetVisible83		; $59eb
+
+
+;;
+; Used by:
+; * INTERACID_DISAPPEARING_SIDESCROLL_PLATFORM
+_sidescrollingPlatformCommon:
+	ld a,(w1Link.state)		; $5a73
+	cp LINK_STATE_NORMAL			; $5a76
+	ret nz			; $5a78
+	call objectCheckCollidedWithLink		; $5a79
+	ret nc			; $5a7c
+
+	; Platform has collided with Link.
+
+	call _sidescrollPlatform_checkLinkIsClose		; $5a7d
+	jr c,@label_0b_183	; $5a80
+	call _sidescrollPlatform_getTileCollisionBehindLink		; $5a82
+	jp z,_sidescrollPlatform_pushLinkAwayHorizontal		; $5a85
+
+	call _sidescrollPlatform_checkLinkSquished		; $5a88
+	ret c			; $5a8b
+
+	ld e,Interaction.yh		; $5a8c
+	ld a,(de)		; $5a8e
+	ld b,a			; $5a8f
+	ld a,(w1Link.yh)		; $5a90
+	cp b			; $5a93
+	ld c,ANGLE_UP		; $5a94
+	jr nc,@moveLinkAtAngle	; $5a96
+	ld c,ANGLE_DOWN		; $5a98
+	jr @moveLinkAtAngle		; $5a9a
+
+@label_0b_183:
+	call _sidescrollPlatformFunc_5b51		; $5a9c
+	ld a,(hl)		; $5a9f
+	or a			; $5aa0
+	jp z,_sidescrollPlatform_pushLinkAwayVertical		; $5aa1
+
+	call _sidescrollPlatform_checkLinkSquished		; $5aa4
+	ret c			; $5aa7
+	ld a,(wLinkRidingObject)		; $5aa8
+	cp d			; $5aab
+	jr nz,@label_0b_184	; $5aac
+	ldh a,(<hFF8B)	; $5aae
+	cp $03			; $5ab0
+	jr z,@label_0b_184	; $5ab2
+
+	push af			; $5ab4
+	call _sidescrollPlatform_pushLinkAwayVertical		; $5ab5
+	pop af			; $5ab8
+	rrca			; $5ab9
+	jr ++			; $5aba
+
+@label_0b_184:
+	ld e,Interaction.xh		; $5abc
+	ld a,(de)		; $5abe
+	ld b,a			; $5abf
+	ld a,(w1Link.xh)		; $5ac0
+	cp b			; $5ac3
+++
+	ld c,ANGLE_RIGHT		; $5ac4
+	jr nc,@moveLinkAtAngle	; $5ac6
+	ld c,ANGLE_LEFT		; $5ac8
+
+;;
+; @param	c	Angle
+; @addr{5aca}
+@moveLinkAtAngle:
+	ld b,SPEED_80		; $5aca
+	jp updateLinkPositionGivenVelocity		; $5acc
+
+;;
+; @param[out]	cflag	c if Link got squished
+; @addr{5acf}
+_sidescrollPlatform_checkLinkSquished:
+	ld h,d			; $5acf
+	ld l,Interaction.collisionRadiusY		; $5ad0
+	ld a,(hl)		; $5ad2
+	ld b,a			; $5ad3
+	add a			; $5ad4
+	inc a			; $5ad5
+	ld c,a			; $5ad6
+	ld l,Interaction.yh		; $5ad7
+	ld a,(w1Link.yh)		; $5ad9
+	sub (hl)		; $5adc
+	add b			; $5add
+	cp c			; $5ade
+	ret nc			; $5adf
+
+	ld l,Interaction.collisionRadiusX		; $5ae0
+	ld a,(hl)		; $5ae2
+	add $02			; $5ae3
+	ld b,a			; $5ae5
+	add a			; $5ae6
+	inc a			; $5ae7
+	ld c,a			; $5ae8
+	ld l,Interaction.xh		; $5ae9
+	ld a,(w1Link.xh)		; $5aeb
+	sub (hl)		; $5aee
+	add b			; $5aef
+	cp c			; $5af0
+	ret nc			; $5af1
+
+	xor a			; $5af2
+	ld l,Interaction.angle		; $5af3
+	bit 3,(hl)		; $5af5
+	jr nz,+			; $5af7
+	inc a			; $5af9
++
+	ld (wcc50),a		; $5afa
+	ld a,LINK_STATE_SQUISHED		; $5afd
+	ld (wLinkForceState),a		; $5aff
+	scf			; $5b02
+	ret			; $5b03
+
+;;
+; @param[out]	cflag	c if Link's close enough to the platform?
+; @addr{5b04}
+_sidescrollPlatform_checkLinkIsClose:
+	ld a,(wLinkInAir)		; $5b04
+	or a			; $5b07
+	ld b,$05		; $5b08
+	jr z,+			; $5b0a
+	dec b			; $5b0c
++
+	ld h,d			; $5b0d
+	ld l,Interaction.collisionRadiusX		; $5b0e
+	ld a,(hl)		; $5b10
+	add b			; $5b11
+
+	ld b,a			; $5b12
+	add a			; $5b13
+	inc a			; $5b14
+	ld c,a			; $5b15
+	ld l,Interaction.xh		; $5b16
+	ld a,(w1Link.xh)		; $5b18
+	sub (hl)		; $5b1b
+	add b			; $5b1c
+	cp c			; $5b1d
+	ret nc			; $5b1e
+
+	ld l,Interaction.collisionRadiusY		; $5b1f
+	ld a,(hl)		; $5b21
+	sub $02			; $5b22
+	ld b,a			; $5b24
+	add a			; $5b25
+	inc a			; $5b26
+	ld c,a			; $5b27
+	ld l,Interaction.yh		; $5b28
+	ld a,(w1Link.yh)		; $5b2a
+	sub (hl)		; $5b2d
+	add b			; $5b2e
+	cp c			; $5b2f
+	ccf			; $5b30
+	ret			; $5b31
+
+;;
+; @param[out]	a	Collision value
+; @param[out]	zflag	nz if a valid collision value is returned
+; @addr{5b32}
+_sidescrollPlatform_getTileCollisionBehindLink:
+	ld l,Interaction.xh		; $5b32
+	ld a,(w1Link.xh)		; $5b34
+	cp (hl)			; $5b37
+	ld b,-$05		; $5b38
+	jr c,+			; $5b3a
+	ld b,$04		; $5b3c
++
+	add b			; $5b3e
+	ld c,a			; $5b3f
+	ld a,(w1Link.yh)		; $5b40
+	sub $04			; $5b43
+	ld b,a			; $5b45
+	call getTileCollisionsAtPosition		; $5b46
+	ret nz			; $5b49
+	ld a,b			; $5b4a
+	add $08			; $5b4b
+	ld b,a			; $5b4d
+	jp getTileCollisionsAtPosition		; $5b4e
+
+;;
+; @param[out]	hl
+; @addr{5b51}
+_sidescrollPlatformFunc_5b51:
+	ld h,d			; $5b51
+	ld l,Interaction.yh		; $5b52
+	ld a,(w1Link.yh)		; $5b54
+	cp (hl)			; $5b57
+	ld b,-$06		; $5b58
+	jr c,+			; $5b5a
+	ld b,$09		; $5b5c
++
+	add b			; $5b5e
+	ld b,a			; $5b5f
+	ld a,(w1Link.xh)		; $5b60
+	sub $03			; $5b63
+	ld c,a			; $5b65
+	call getTileCollisionsAtPosition		; $5b66
+	ld hl,hFF8B		; $5b69
+	ld (hl),$00		; $5b6c
+	jr z,+			; $5b6e
+	set 1,(hl)		; $5b70
++
+	ld a,c			; $5b72
+	add $05			; $5b73
+	ld c,a			; $5b75
+	call getTileCollisionsAtPosition		; $5b76
+	ld hl,hFF8B		; $5b79
+	ret z			; $5b7c
+	inc (hl)		; $5b7d
+	ret			; $5b7e
+
+;;
+; Checks if Link's on the platform, updates wLinkRidingObject if so.
+;
+; @param[out]	zflag	nz if Link is standing on the platform
+; @addr{5b7f}
+_sidescrollPlatform_checkLinkOnPlatform:
+	call objectCheckCollidedWithLink		; $5b7f
+	jr nc,@notOnPlatform	; $5b82
+
+	ld h,d			; $5b84
+	ld l,Interaction.yh		; $5b85
+	ld a,(hl)		; $5b87
+	ld l,Interaction.collisionRadiusY		; $5b88
+	sub (hl)		; $5b8a
+	sub $02			; $5b8b
+	ld b,a			; $5b8d
+	ld a,(w1Link.yh)		; $5b8e
+	cp b			; $5b91
+	jr nc,@notOnPlatform	; $5b92
+
+	call _sidescrollPlatform_checkLinkIsClose		; $5b94
+	jr nc,@notOnPlatform	; $5b97
+
+	ld e,Interaction.var34		; $5b99
+	ld a,(de)		; $5b9b
+	or a			; $5b9c
+	jr nz,@onPlatform		; $5b9d
+	ld a,$01		; $5b9f
+	ld (de),a		; $5ba1
+	call _sidescrollPlatform_updateLinkSubpixels		; $5ba2
+
+@onPlatform:
+	ld a,d			; $5ba5
+	ld (wLinkRidingObject),a		; $5ba6
+	xor a			; $5ba9
+	ret			; $5baa
+
+@notOnPlatform:
+	ld e,Interaction.var34		; $5bab
+	ld a,(de)		; $5bad
+	or a			; $5bae
+	ret z			; $5baf
+	ld a,$00		; $5bb0
+	ld (de),a		; $5bb2
+	ret			; $5bb3
+
+;;
+; @addr{5bb4}
+_sidescrollPlatform_updateLinkKnockbackForConveyor:
+	ld e,Interaction.angle		; $5bb4
+	ld a,(de)		; $5bb6
+	bit 3,a			; $5bb7
+	ret z			; $5bb9
+
+	ld hl,w1Link.knockbackAngle		; $5bba
+	ld e,Interaction.direction		; $5bbd
+	ld a,(de)		; $5bbf
+	swap a			; $5bc0
+	add $08			; $5bc2
+	ld (hl),a		; $5bc4
+	ld l,<w1Link.invincibilityCounter		; $5bc5
+	ld (hl),$fc		; $5bc7
+	ld l,<w1Link.knockbackCounter		; $5bc9
+	ld (hl),$0c		; $5bcb
+	ret			; $5bcd
+
+;;
+; @param[out]	hl	counter1
+; @addr{5bce}
+_sidescrollPlatform_decCounter1:
+	ld h,d			; $5bce
+	ld l,Interaction.counter1		; $5bcf
+	ld a,(hl)		; $5bd1
+	or a			; $5bd2
+	ret z			; $5bd3
+	dec (hl)		; $5bd4
+	ret			; $5bd5
+
+;;
+; @addr{5bd6}
+_sidescrollPlatform_pushLinkAwayVertical:
+	ld hl,w1Link.collisionRadiusY		; $5bd6
+	ld e,Interaction.collisionRadiusY		; $5bd9
+	ld a,(de)		; $5bdb
+	add (hl)		; $5bdc
+	ld b,a			; $5bdd
+	ld l,<w1Link.yh		; $5bde
+	ld e,Interaction.yh		; $5be0
+	jr +++			; $5be2
+
+;;
+; @addr{5be4}
+_sidescrollPlatform_pushLinkAwayHorizontal:
+	ld hl,w1Link.collisionRadiusX		; $5be4
+	ld e,Interaction.collisionRadiusX		; $5be7
+	ld a,(de)		; $5be9
+	add (hl)		; $5bea
+	ld b,a			; $5beb
+	ld l,<w1Link.xh		; $5bec
+	ld e,Interaction.xh		; $5bee
++++
+	ld a,(de)		; $5bf0
+	cp (hl)			; $5bf1
+	jr c,++			; $5bf2
+	ld a,b			; $5bf4
+	cpl			; $5bf5
+	inc a			; $5bf6
+	ld b,a			; $5bf7
+++
+	ld a,(de)		; $5bf8
+	add b			; $5bf9
+	ld (hl),a		; $5bfa
+	ret			; $5bfb
+
+;;
+; @addr{5bfc}
+_sidescrollPlatformFunc_5bfc:
+	call objectRunMovementScript		; $5bfc
+	ld a,(wLinkRidingObject)		; $5bff
+	cp d			; $5c02
+	ret nz			; $5c03
+
+;;
+; @addr{5c04}
+_sidescrollPlatform_updateLinkSubpixels:
+	ld e,Interaction.y		; $5c04
+	ld a,(de)		; $5c06
+	ld (w1Link.y),a		; $5c07
+	ld e,Interaction.x		; $5c0a
+	ld a,(de)		; $5c0c
+	ld (w1Link.x),a		; $5c0d
+	ret			; $5c10
+
 
 interactionCodea4:
 	ld e,$44		; $63ea
