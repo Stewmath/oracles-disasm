@@ -2579,218 +2579,243 @@ partCode13:
 ; @addr{4d13}
 partCode14:
 partCode15:
-	ld e,$c2		; $4d13
-	jr z,_label_11_086	; $4d15
-	cp $02			; $4d17
-	jp z,$4e20		; $4d19
+	ld e,Part.subid		; $4d13
+	jr z,@normalStatus	; $4d15
+	cp PARTSTATUS_DEAD			; $4d17
+	jp z,@linkCollectedItem		; $4d19
+
+	; PARTSTATUS_JUST_HIT
 	ld h,d			; $4d1c
-	ld l,$c2		; $4d1d
+	ld l,Part.subid		; $4d1d
 	set 7,(hl)		; $4d1f
-	ld l,$c4		; $4d21
+	ld l,Part.state		; $4d21
 	ld (hl),$03		; $4d23
 	inc l			; $4d25
 	ld (hl),$00		; $4d26
-_label_11_086:
-	ld e,$c4		; $4d28
+
+@normalStatus:
+	ld e,Part.state		; $4d28
 	ld a,(de)		; $4d2a
 	rst_jumpTable			; $4d2b
-.dw $4d36
-.dw $4d83
-.dw objectReplaceWithAnimationIfOnHazard
-.dw $4d9b
-.dw $4dcc
+	.dw @state0
+	.dw @state1
+	.dw objectReplaceWithAnimationIfOnHazard
+	.dw @state3 ; just hit
+	.dw @state4
 
+@state0:
 	ld h,d			; $4d36
 	ld l,e			; $4d37
 	inc (hl)		; $4d38
-	ld l,$e6		; $4d39
+
+	ld l,Part.collisionRadiusY		; $4d39
 	ld a,$06		; $4d3b
 	ldi (hl),a		; $4d3d
+	; collisionRadiusX
 	ld (hl),a		; $4d3e
+
 	call getRandomNumber		; $4d3f
 	ld b,a			; $4d42
 	and $70			; $4d43
 	swap a			; $4d45
-	ld hl,$4d6b		; $4d47
+	ld hl,@speedValues		; $4d47
 	rst_addAToHl			; $4d4a
-	ld e,$d0		; $4d4b
+	ld e,Part.speed		; $4d4b
 	ld a,(hl)		; $4d4d
 	ld (de),a		; $4d4e
+
 	ld a,b			; $4d4f
 	and $0e			; $4d50
-	ld hl,$4d73		; $4d52
+	ld hl,@speedZValues		; $4d52
 	rst_addAToHl			; $4d55
-	ld e,$d4		; $4d56
+	ld e,Part.speedZ		; $4d56
 	ldi a,(hl)		; $4d58
 	ld (de),a		; $4d59
 	inc e			; $4d5a
 	ldi a,(hl)		; $4d5b
 	ld (de),a		; $4d5c
+
 	call getRandomNumber		; $4d5d
-	ld e,$c9		; $4d60
+	ld e,Part.angle		; $4d60
 	and $1f			; $4d62
 	ld (de),a		; $4d64
-	call $4ec0		; $4d65
+	call @setOamData		; $4d65
 	jp objectSetVisiblec3		; $4d68
-	inc d			; $4d6b
-	ld e,$28		; $4d6c
-	ldd (hl),a		; $4d6e
-	inc a			; $4d6f
-	ld b,(hl)		; $4d70
-	ld d,b			; $4d71
-	ld e,d			; $4d72
-	add b			; $4d73
-	cp $40			; $4d74
-	cp $00			; $4d76
-	cp $c0			; $4d78
-.DB $fd				; $4d7a
-	add b			; $4d7b
-.DB $fd				; $4d7c
-	ld b,b			; $4d7d
-.DB $fd				; $4d7e
-	nop			; $4d7f
-.DB $fd				; $4d80
-	ret nz			; $4d81
-.DB $fc				; $4d82
+
+@speedValues:
+	.db SPEED_080
+	.db SPEED_0c0
+	.db SPEED_100
+	.db SPEED_140
+	.db SPEED_180
+	.db SPEED_1c0
+	.db SPEED_200
+	.db SPEED_240
+
+@speedZValues:
+	.dw -$180
+	.dw -$1c0
+	.dw -$200
+	.dw -$240
+	.dw -$280
+	.dw -$2c0
+	.dw -$300
+	.dw -$340
+
+@state1:
 	call objectApplySpeed		; $4d83
-	call $4f03		; $4d86
+	call @setDroppedItemPosition		; $4d86
 	ld c,$20		; $4d89
 	call objectUpdateSpeedZAndBounce		; $4d8b
-	jr nc,_label_11_087	; $4d8e
+	jr nc,+			; $4d8e
 	ld h,d			; $4d90
-	ld l,$e4		; $4d91
+	ld l,Part.collisionType		; $4d91
 	set 7,(hl)		; $4d93
-	ld l,$c4		; $4d95
+	ld l,Part.state		; $4d95
 	inc (hl)		; $4d97
-_label_11_087:
++
 	jp objectReplaceWithAnimationIfOnHazard		; $4d98
+
+@state3:
 	inc e			; $4d9b
 	ld a,(de)		; $4d9c
 	or a			; $4d9d
-	jr nz,_label_11_088	; $4d9e
+	jr nz,+			; $4d9e
 	ld h,d			; $4da0
 	ld l,e			; $4da1
 	inc (hl)		; $4da2
-	ld l,$cf		; $4da3
+	ld l,Part.zh		; $4da3
 	ld (hl),$00		; $4da5
 	ld a,$01		; $4da7
 	call objectGetRelatedObject1Var		; $4da9
 	ld a,(hl)		; $4dac
-	ld e,$f0		; $4dad
+	ld e,Part.var30		; $4dad
 	ld (de),a		; $4daf
 	call objectSetVisible80		; $4db0
-_label_11_088:
++
 	call objectCheckCollidedWithLink		; $4db3
-	jp c,$4e20		; $4db6
+	jp c,@linkCollectedItem		; $4db6
 	ld a,$00		; $4db9
 	call objectGetRelatedObject1Var		; $4dbb
 	ldi a,(hl)		; $4dbe
 	or a			; $4dbf
-	jr z,_label_11_089	; $4dc0
-	ld e,$f0		; $4dc2
+	jr z,+			; $4dc0
+	ld e,Part.var30		; $4dc2
 	ld a,(de)		; $4dc4
 	cp (hl)			; $4dc5
 	jp z,objectTakePosition		; $4dc6
-_label_11_089:
++
 	jp partDelete		; $4dc9
+
+@state4:
 	inc e			; $4dcc
 	ld a,(de)		; $4dcd
 	rst_jumpTable			; $4dce
-.dw $4dd7
-.dw $4de6
-.dw $4dfe
-.dw $4e18
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	
+@substate0:
 	ld h,d			; $4dd7
 	ld l,e			; $4dd8
 	inc (hl)		; $4dd9
-	ld a,($d128)		; $4dda
+	ld a,(w1Companion.damage)		; $4dda
 	dec a			; $4ddd
-	ld l,$d0		; $4dde
-	ld (hl),$14		; $4de0
-	jr z,_label_11_090	; $4de2
-	ld (hl),$28		; $4de4
-_label_11_090:
-	ld hl,$d128		; $4de6
+	ld l,Part.speed		; $4dde
+	ld (hl),SPEED_80		; $4de0
+	jr z,@substate1		; $4de2
+	ld (hl),SPEED_100		; $4de4
+	
+@substate1:
+	ld hl,w1Companion.damage		; $4de6
 	ld a,(hl)		; $4de9
 	or a			; $4dea
-	jr z,_label_11_091	; $4deb
-	call $4f2f		; $4ded
+	jr z,+			; $4deb
+	call @moveToMaple		; $4ded
 	ret nz			; $4df0
-	ld l,$c5		; $4df1
+	ld l,Part.state2		; $4df1
 	inc (hl)		; $4df3
-	ld l,$e4		; $4df4
+	ld l,Part.collisionType		; $4df4
 	res 7,(hl)		; $4df6
-	ld bc,$ffc0		; $4df8
+	ld bc,-$40		; $4df8
 	jp objectSetSpeedZ		; $4dfb
+	
+@substate2:
 	ld c,$00		; $4dfe
 	call objectUpdateSpeedZ_paramC		; $4e00
-	ld e,$cf		; $4e03
+	ld e,Part.zh		; $4e03
 	ld a,(de)		; $4e05
 	cp $f7			; $4e06
 	ret nc			; $4e08
-_label_11_091:
++
 	ld a,$01		; $4e09
-	ld ($d125),a		; $4e0b
+	ld (w1Companion.damageToApply),a		; $4e0b
 	ld h,d			; $4e0e
-	ld l,$c5		; $4e0f
+	ld l,Part.state2		; $4e0f
 	ld (hl),$03		; $4e11
-	ld l,$c3		; $4e13
+	ld l,Part.var03		; $4e13
 	ld (hl),$00		; $4e15
 	ret			; $4e17
-	ld e,$c3		; $4e18
+	
+@substate3:
+	ld e,Part.var03		; $4e18
 	ld a,(de)		; $4e1a
 	rlca			; $4e1b
 	ret nc			; $4e1c
 	jp partDelete		; $4e1d
+
+@linkCollectedItem:
 	ld a,(wDisabledObjects)		; $4e20
 	bit 0,a			; $4e23
 	ret nz			; $4e25
-	ld e,$c2		; $4e26
+	ld e,Part.subid		; $4e26
 	ld a,(de)		; $4e28
 	and $7f			; $4e29
-	ld hl,$4f4a		; $4e2b
+	ld hl,@obtainedValue		; $4e2b
 	rst_addAToHl			; $4e2e
-	ld a,($d12a)		; $4e2f
+	ld a,(w1Companion.var2a)		; $4e2f
 	add (hl)		; $4e32
-	ld ($d12a),a		; $4e33
+	ld (w1Companion.var2a),a		; $4e33
 	ld a,(de)		; $4e36
 	and $7f			; $4e37
-	jr z,_label_11_097	; $4e39
+	jr z,@func_4e6e	; $4e39
 	add a			; $4e3b
-	ld hl,$4e88		; $4e3c
+	ld hl,@itemDropTreasureTable		; $4e3c
 	rst_addDoubleIndex			; $4e3f
 	ldi a,(hl)		; $4e40
 	ld b,a			; $4e41
-	ld a,$26		; $4e42
+	ld a,GOLD_JOY_RING		; $4e42
 	call cpActiveRing		; $4e44
 	ldi a,(hl)		; $4e47
-	jr z,_label_11_093	; $4e48
+	jr z,+			; $4e48
 	cp $ff			; $4e4a
-	jr z,_label_11_094	; $4e4c
+	jr z,++			; $4e4c
 	call cpActiveRing		; $4e4e
-	jr nz,_label_11_094	; $4e51
-_label_11_093:
+	jr nz,++		; $4e51
++
 	inc hl			; $4e53
-_label_11_094:
+++
 	ld c,(hl)		; $4e54
 	ld a,b			; $4e55
 	cp TREASURE_RING			; $4e56
-	jr nz,_label_11_095	; $4e58
+	jr nz,+			; $4e58
 	call getRandomRingOfGivenTier		; $4e5a
-_label_11_095:
++
 	cp TREASURE_POTION			; $4e5d
-	jr nz,_label_11_096	; $4e5f
+	jr nz,+			; $4e5f
 	ld a,SND_GETSEED		; $4e61
 	call playSound		; $4e63
 	ld a,TREASURE_POTION		; $4e66
-_label_11_096:
++
 	call giveTreasure		; $4e68
 	jp partDelete		; $4e6b
-_label_11_097:
-	ld bc,$2b02		; $4e6e
+
+@func_4e6e:
+	ldbc TREASURE_HEART_PIECE $02		; $4e6e
 	call createTreasure		; $4e71
 	ret nz			; $4e74
-	ld l,$4b		; $4e75
+	ld l,Interaction.yh		; $4e75
 	ld a,(w1Link.yh)		; $4e77
 	ldi (hl),a		; $4e7a
 	inc l			; $4e7b
@@ -2799,136 +2824,113 @@ _label_11_097:
 	ld hl,wMapleState		; $4e80
 	set 7,(hl)		; $4e83
 	jp partDelete		; $4e85
-	dec hl			; $4e88
-	rst $38			; $4e89
-	ld bc,$3401		; $4e8a
-	rst $38			; $4e8d
-	ld bc,$2d01		; $4e8e
-	rst $38			; $4e91
-	ld bc,$2d01		; $4e92
-	rst $38			; $4e95
-	ld (bc),a		; $4e96
-	ld (bc),a		; $4e97
-	cpl			; $4e98
-	rst $38			; $4e99
-	ld bc,$2001		; $4e9a
-	rst $38			; $4e9d
-	dec b			; $4e9e
-	ld a,(bc)		; $4e9f
-	ld hl,$05ff		; $4ea0
-	ld a,(bc)		; $4ea3
-	ldi (hl),a		; $4ea4
-	rst $38			; $4ea5
-	dec b			; $4ea6
-	ld a,(bc)		; $4ea7
-	inc hl			; $4ea8
-	rst $38			; $4ea9
-	dec b			; $4eaa
-	ld a,(bc)		; $4eab
-	inc h			; $4eac
-	rst $38			; $4ead
-	dec b			; $4eae
-	ld a,(bc)		; $4eaf
-	inc bc			; $4eb0
-	rst $38			; $4eb1
-	inc b			; $4eb2
-	ld ($2529),sp		; $4eb3
-	inc b			; $4eb6
-	ld ($2428),sp		; $4eb7
-	inc bc			; $4eba
-	inc b			; $4ebb
-	jr z,_label_11_098	; $4ebc
-	ld bc,$1e02		; $4ebe
-	jp nz,$4f1a		; $4ec1
+
+; Data format:
+;   b0: Treasure to give
+;   b1: Ring to check for (in addition to gold joy ring)
+;   b2: Amount to give without ring
+;   b3: Amount to give with ring
+@itemDropTreasureTable:
+	.db TREASURE_HEART_PIECE,   $ff            $01 $01
+	.db TREASURE_GASHA_SEED,    $ff            $01 $01
+	.db TREASURE_RING,          $ff            $01 $01
+	.db TREASURE_RING,          $ff            $02 $02
+	.db TREASURE_POTION,        $ff            $01 $01
+	.db TREASURE_EMBER_SEEDS,   $ff            $05 $0a
+	.db TREASURE_SCENT_SEEDS,   $ff            $05 $0a
+	.db TREASURE_PEGASUS_SEEDS, $ff            $05 $0a
+	.db TREASURE_GALE_SEEDS,    $ff            $05 $0a
+	.db TREASURE_MYSTERY_SEEDS, $ff            $05 $0a
+	.db TREASURE_BOMBS,         $ff            $04 $08
+	.db TREASURE_HEART_REFILL,  BLUE_JOY_RING, $04 $08
+	.db TREASURE_RUPEES,        RED_JOY_RING,  RUPEEVAL_005 RUPEEVAL_010
+	.db TREASURE_RUPEES,        RED_JOY_RING,  RUPEEVAL_001 RUPEEVAL_002
+
+@setOamData:
+	ld e,Part.subid		; $4ec0
+	ld a,(de)		; $4ec2
+	ld c,a			; $4ec3
 	add a			; $4ec4
 	add c			; $4ec5
-	ld hl,$4ed9		; $4ec6
+	ld hl,@oamData		; $4ec6
 	rst_addAToHl			; $4ec9
-	ld e,$dd		; $4eca
+	ld e,Part.oamTileIndexBase		; $4eca
 	ld a,(de)		; $4ecc
 	add (hl)		; $4ecd
 	ld (de),a		; $4ece
 	inc hl			; $4ecf
+	; oamFlags
 	dec e			; $4ed0
 	ldi a,(hl)		; $4ed1
 	ld (de),a		; $4ed2
+	; oamFlagsBackup
 	dec e			; $4ed3
 	ld (de),a		; $4ed4
 	ld a,(hl)		; $4ed5
 	jp partSetAnimation		; $4ed6
-	stop			; $4ed9
-	ld (bc),a		; $4eda
-	stop			; $4edb
-	ld a,(bc)		; $4edc
-	ld bc,$0800		; $4edd
-	nop			; $4ee0
-	nop			; $4ee1
-_label_11_098:
-	ld ($0000),sp		; $4ee2
-	nop			; $4ee5
-	ld (bc),a		; $4ee6
-	rrca			; $4ee7
-	ld (de),a		; $4ee8
-	ld (bc),a		; $4ee9
-	dec b			; $4eea
-	inc d			; $4eeb
-	inc bc			; $4eec
-	ld b,$16		; $4eed
-	ld bc,$1807		; $4eef
-	ld bc,$1a08		; $4ef2
-	nop			; $4ef5
-	ld ($0410),sp		; $4ef6
-	inc b			; $4ef9
-	ld (bc),a		; $4efa
-	dec b			; $4efb
-	ld bc,$0506		; $4efc
-	inc bc			; $4eff
-	inc b			; $4f00
-	nop			; $4f01
-	ld (bc),a		; $4f02
+
+@oamData:
+	.db $10 $02 $10
+	.db $0a $01 $00
+	.db $08 $00 $00
+	.db $08 $00 $00
+	.db $00 $02 $0f
+	.db $12 $02 $05
+	.db $14 $03 $06
+	.db $16 $01 $07
+	.db $18 $01 $08
+	.db $1a $00 $08
+	.db $10 $04 $04
+	.db $02 $05 $01
+	.db $06 $05 $03
+	.db $04 $00 $02
+
+@setDroppedItemPosition:
 	ld h,d			; $4f03
-	ld l,$cb		; $4f04
+	ld l,Part.yh		; $4f04
 	ld a,(hl)		; $4f06
 	cp $f0			; $4f07
-	jr c,_label_11_099	; $4f09
+	jr c,+			; $4f09
 	xor a			; $4f0b
-_label_11_099:
++
 	cp $20			; $4f0c
-	jr nc,_label_11_100	; $4f0e
+	jr nc,+			; $4f0e
 	ld (hl),$20		; $4f10
-	jr _label_11_101		; $4f12
-_label_11_100:
+	jr ++			; $4f12
++
 	cp $78			; $4f14
-	jr c,_label_11_101	; $4f16
+	jr c,++			; $4f16
 	ld (hl),$78		; $4f18
-_label_11_101:
-	ld l,$cd		; $4f1a
+++
+	ld l,Part.xh		; $4f1a
 	ld a,(hl)		; $4f1c
 	cp $f0			; $4f1d
-	jr c,_label_11_102	; $4f1f
+	jr c,+			; $4f1f
 	xor a			; $4f21
-_label_11_102:
++
 	cp $08			; $4f22
-	jr nc,_label_11_103	; $4f24
+	jr nc,+			; $4f24
 	ld (hl),$08		; $4f26
 	ret			; $4f28
-_label_11_103:
++
 	cp $98			; $4f29
 	ret c			; $4f2b
 	ld (hl),$98		; $4f2c
 	ret			; $4f2e
-	ld l,$0b		; $4f2f
+	
+@moveToMaple:
+	ld l,<w1Companion.yh		; $4f2f
 	ld b,(hl)		; $4f31
-	ld l,$0d		; $4f32
+	ld l,<w1Companion.xh		; $4f32
 	ld c,(hl)		; $4f34
 	push bc			; $4f35
 	call objectGetRelativeAngle		; $4f36
-	ld e,$c9		; $4f39
+	ld e,Part.angle		; $4f39
 	ld (de),a		; $4f3b
 	call objectApplySpeed		; $4f3c
 	pop bc			; $4f3f
 	ld h,d			; $4f40
-	ld l,$cb		; $4f41
+	ld l,Part.yh		; $4f41
 	ldi a,(hl)		; $4f43
 	cp b			; $4f44
 	ret nz			; $4f45
@@ -2936,18 +2938,10 @@ _label_11_103:
 	ld a,(hl)		; $4f47
 	cp c			; $4f48
 	ret			; $4f49
-	inc a			; $4f4a
-	rrca			; $4f4b
-	ld a,(bc)		; $4f4c
-	ld ($0506),sp		; $4f4d
-	dec b			; $4f50
-	dec b			; $4f51
-	dec b			; $4f52
-	dec b			; $4f53
-	inc b			; $4f54
-	inc bc			; $4f55
-	ld (bc),a		; $4f56
-.db $01 $00
+
+@obtainedValue:
+	.db $3c $0f $0a $08 $06 $05 $05 $05
+	.db $05 $05 $04 $03 $02 $01 $00
 
 
 ; ==============================================================================
@@ -2955,116 +2949,131 @@ _label_11_103:
 ; ==============================================================================
 ; @addr{4f59}
 partCode17:
-	jr z,_label_11_104	; $4f59
-	ld e,$c2		; $4f5b
+	jr z,@normalStatus	; $4f59
+	ld e,Part.subid		; $4f5b
 	ld a,(de)		; $4f5d
 	add a			; $4f5e
-	ld hl,$501e		; $4f5f
+	ld hl,_table_501e		; $4f5f
 	rst_addDoubleIndex			; $4f62
-	ld e,$ea		; $4f63
+	ld e,Part.var2a		; $4f63
 	ld a,(de)		; $4f65
 	and $1f			; $4f66
 	call checkFlag		; $4f68
-	jr z,_label_11_104	; $4f6b
+	jr z,@normalStatus	; $4f6b
 	call checkLinkVulnerable		; $4f6d
-	jr nc,_label_11_104	; $4f70
+	jr nc,@normalStatus	; $4f70
 	ld h,d			; $4f72
-	ld l,$c4		; $4f73
+	ld l,Part.state		; $4f73
 	ld (hl),$02		; $4f75
-	ld l,$e4		; $4f77
+	ld l,Part.collisionType		; $4f77
 	res 7,(hl)		; $4f79
-	ld l,$c2		; $4f7b
+	ld l,Part.subid		; $4f7b
 	ld a,(hl)		; $4f7d
 	or a			; $4f7e
-	jr z,_label_11_104	; $4f7f
+	jr z,@normalStatus	; $4f7f
 	ld a,$2a		; $4f81
 	call objectGetRelatedObject1Var		; $4f83
 	ld (hl),$ff		; $4f86
-_label_11_104:
-	ld e,$c4		; $4f88
+
+@normalStatus:
+	ld e,Part.state		; $4f88
 	ld a,(de)		; $4f8a
 	rst_jumpTable			; $4f8b
-.dw $4f92
-.dw $4fab
-.dw $4fbc
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
 	ld a,$01		; $4f92
 	ld (de),a		; $4f94
 	ld a,$26		; $4f95
 	call objectGetRelatedObject1Var		; $4f97
-	ld e,$e6		; $4f9a
+	ld e,Part.collisionRadiusY		; $4f9a
 	ldi a,(hl)		; $4f9c
 	ld (de),a		; $4f9d
+	; collisionRadiusX
 	inc e			; $4f9e
 	ld a,(hl)		; $4f9f
 	ld (de),a		; $4fa0
 	call objectTakePosition		; $4fa1
-	ld e,$f0		; $4fa4
+	ld e,Part.var30		; $4fa4
 	ld l,$41		; $4fa6
 	ld a,(hl)		; $4fa8
 	ld (de),a		; $4fa9
 	ret			; $4faa
-	call $4fb2		; $4fab
+
+@state1:
+	call @func_4fb2		; $4fab
 	ret z			; $4fae
 	jp partDelete		; $4faf
+
+@func_4fb2:
 	ld a,$01		; $4fb2
 	call objectGetRelatedObject1Var		; $4fb4
-	ld e,$f0		; $4fb7
+	ld e,Part.var30		; $4fb7
 	ld a,(de)		; $4fb9
 	cp (hl)			; $4fba
 	ret			; $4fbb
-	call $4fb2		; $4fbc
+
+@state2:
+	call @func_4fb2		; $4fbc
 	jp nz,partDelete		; $4fbf
-	ld e,$c5		; $4fc2
+	ld e,Part.state2		; $4fc2
 	ld a,(de)		; $4fc4
 	rst_jumpTable			; $4fc5
-.dw $4fcc
-.dw $4fec
-.dw $5003
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+
+@substate0:
 	ld h,d			; $4fcc
 	ld l,e			; $4fcd
 	inc (hl)		; $4fce
-	ld l,$d0		; $4fcf
-	ld (hl),$28		; $4fd1
+	ld l,Part.speed		; $4fcf
+	ld (hl),SPEED_100		; $4fd1
 	ld a,$1a		; $4fd3
 	call objectGetRelatedObject1Var		; $4fd5
 	set 6,(hl)		; $4fd8
-	ld e,$c2		; $4fda
+	ld e,Part.subid		; $4fda
 	ld a,(de)		; $4fdc
 	or a			; $4fdd
 	ld a,$10		; $4fde
 	call nz,objectGetAngleTowardLink		; $4fe0
-	ld e,$c9		; $4fe3
+	ld e,Part.angle		; $4fe3
 	ld (de),a		; $4fe5
-	ld bc,$fec0		; $4fe6
+	ld bc,-$140		; $4fe6
 	jp objectSetSpeedZ		; $4fe9
+
+@substate1:
 	ld c,$18		; $4fec
 	call objectUpdateSpeedZAndBounce		; $4fee
-	jr z,_label_11_105	; $4ff1
+	jr z,+			; $4ff1
 	call objectApplySpeed		; $4ff3
 	ld a,$00		; $4ff6
 	call objectGetRelatedObject1Var		; $4ff8
 	jp objectCopyPosition		; $4ffb
-_label_11_105:
-	ld e,$c5		; $4ffe
++
+	ld e,Part.state2		; $4ffe
 	ld a,$02		; $5000
 	ld (de),a		; $5002
+
+@substate2:
 	ld c,$18		; $5003
 	call objectUpdateSpeedZAndBounce		; $5005
-	jr nc,_label_11_106	; $5008
-	call $5010		; $500a
+	jr nc,_func_5010	; $5008
+	call _func_5010		; $500a
 	jp partDelete		; $500d
-_label_11_106:
+
+_func_5010:
 	call objectCheckTileCollision_allowHoles		; $5010
 	call nc,objectApplySpeed		; $5013
 	ld a,$00		; $5016
 	call objectGetRelatedObject1Var		; $5018
 	jp objectCopyPosition		; $501b
-	ld a,($ff00+$03)	; $501e
-	nop			; $5020
-	nop			; $5021
-	ld a,($ff00+$03)	; $5022
-	nop			; $5024
-	nop			; $5025
+
+_table_501e:
+	.db $f0 $03 $00 $00
+	.db $f0 $03 $00 $00
 
 
 ; ==============================================================================
@@ -4008,7 +4017,7 @@ partCode27:
 	inc a			; $5594
 	jp z,partDelete		; $5595
 
-	call func_55a6		; $5598
+	call @func_55a6		; $5598
 	ld e,Part.var03		; $559b
 	ld a,(de)		; $559d
 	or a			; $559e
@@ -4023,16 +4032,16 @@ partCode27:
 	ld ($cfd2),a		; $55a2
 	ret			; $55a5
 
-func_55a6:
+@func_55a6:
 	ld e,Part.animParameter		; $55a6
 	ld a,(de)		; $55a8
 	bit 7,a			; $55a9
-	call nz,func_55e7		; $55ab
+	call nz,@func_55e7		; $55ab
 	ld e,Part.animParameter		; $55ae
 	ld a,(de)		; $55b0
 	and $0e			; $55b1
 
-	ld hl,table_55da		; $55b3
+	ld hl,@table_55da		; $55b3
 	rst_addAToHl			; $55b6
 	ld e,$e6		; $55b7
 	ldi a,(hl)		; $55b9
@@ -4040,11 +4049,11 @@ func_55a6:
 	inc e			; $55bb
 	ld a,(hl)		; $55bc
 	ld (de),a		; $55bd
-	ld e,$e1		; $55be
+	ld e,Part.animParameter		; $55be
 	ld a,(de)		; $55c0
 	and $70			; $55c1
 	swap a			; $55c3
-	ld hl,table_55e2		; $55c5
+	ld hl,@table_55e2		; $55c5
 	rst_addAToHl			; $55c8
 	ld e,$cf		; $55c9
 	ld a,(hl)		; $55cb
@@ -4058,18 +4067,18 @@ func_55a6:
 	ld a,$06		; $55d5
 	jp setScreenShakeCounter		; $55d7
 
-table_55da:
+@table_55da:
 	.db $02 $02
 	.db $04 $06
 	.db $05 $09
 	.db $04 $05
 
-table_55e2:
+@table_55e2:
 	.db $c0 $d0
 	.db $e0 $f0
 	.db $00
 
-func_55e7:
+@func_55e7:
 	res 7,a			; $55e7
 	ld (de),a		; $55e9
 	and $0e			; $55ea
@@ -4078,7 +4087,7 @@ func_55e7:
 	ld e,Part.var30		; $55ef
 	ld a,(de)		; $55f1
 	add b			; $55f2
-	ld hl,table_5603		; $55f3
+	ld hl,@table_5603		; $55f3
 	rst_addAToHl			; $55f6
 	ldi a,(hl)		; $55f7
 	ld c,(hl)		; $55f8
@@ -4088,7 +4097,7 @@ func_55e7:
 	ld (hl),$08		; $55fe
 	jp objectCopyPositionWithOffset		; $5600
 
-table_5603:
+@table_5603:
 	.db $02 $06
 	.db $00 $fb
 	.db $ff $07
@@ -5536,7 +5545,7 @@ _label_11_204:
 	ld l,$c3		; $5dad
 	add (hl)		; $5daf
 	call partSetAnimation		; $5db0
-	call $5e1a		; $5db3
+	call _func_5e1a		; $5db3
 	jp objectSetVisible		; $5db6
 _label_11_205:
 	call objectApplySpeed		; $5db9
@@ -5585,7 +5594,6 @@ createEnergySwirlGoingOut_body:
 ; @param	bc	Center of the swirl
 ; @param	l	Duration of swirl ($ff and $00 are infinite)?
 ; @addr{5df4}
-func_11_5df4:
 createEnergySwirlGoingIn_body:
 	xor a			; $5df4
 ++
@@ -5626,27 +5634,28 @@ createEnergySwirlGoingIn_body:
 	ld a,SND_ENERGYTHING		; $5e15
 	jp playSound		; $5e17
 
+_func_5e1a:
 	ld h,d			; $5e1a
-	ld l,$f2		; $5e1b
+	ld l,Part.var32		; $5e1b
 	ldd a,(hl)		; $5e1d
 	or a			; $5e1e
-	jr nz,_label_11_211	; $5e1f
-	ld e,$c3		; $5e21
+	jr nz,+			; $5e1f
+	ld e,Part.var03		; $5e21
 	ld a,(de)		; $5e23
 	add a			; $5e24
 	add a			; $5e25
-	ld e,$c8		; $5e26
+	ld e,Part.direction		; $5e26
 	ld (de),a		; $5e28
 	ld c,(hl)		; $5e29
 	dec l			; $5e2a
 	ld b,(hl)		; $5e2b
 	ld a,$38		; $5e2c
 	jp objectSetPositionInCircleArc		; $5e2e
-_label_11_211:
-	ld e,$cd		; $5e31
++
+	ld e,Part.xh		; $5e31
 	ldd a,(hl)		; $5e33
 	ld (de),a		; $5e34
-	ld e,$cb		; $5e35
+	ld e,Part.yh		; $5e35
 	ld a,(hl)		; $5e37
 	ld (de),a		; $5e38
 	ret			; $5e39
@@ -5663,25 +5672,25 @@ _label_11_211:
 _label_11_212:
 	ld d,$d0		; $5e3a
 	ld a,d			; $5e3c
-_label_11_213:
+-
 	ldh (<hActiveObject),a	; $5e3d
 	ld e,$c0		; $5e3f
 	ld a,(de)		; $5e41
 	or a			; $5e42
-	jr z,_label_11_215	; $5e43
+	jr z,++			; $5e43
 	rlca			; $5e45
-	jr c,_label_11_214	; $5e46
+	jr c,+			; $5e46
 	ld e,$c4		; $5e48
 	ld a,(de)		; $5e4a
 	or a			; $5e4b
-	jr nz,_label_11_215	; $5e4c
-_label_11_214:
+	jr nz,++		; $5e4c
++
 	call _func_11_5e8a		; $5e4e
-_label_11_215:
+++
 	inc d			; $5e51
 	ld a,d			; $5e52
 	cp $e0			; $5e53
-	jr c,_label_11_213	; $5e55
+	jr c,-			; $5e55
 	ret			; $5e57
 
 ;;

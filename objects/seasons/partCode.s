@@ -1,8 +1,5 @@
 ; ==============================================================================
 ; PARTID_HOLES_FLOORTRAP
-;   subid $00 - D3 hallway to miniboss room
-;   subid $04 - D6 room where button destroys floor tiles
-;
 ; Variables:
 ;   var30 - pointer to tile at part's position
 ;   $ccbf - set to 1 when button in hallway to D3 miniboss is pressed

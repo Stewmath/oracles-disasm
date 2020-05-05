@@ -441,6 +441,9 @@
 
 .ifdef ROM_SEASONS
 
+;;
+; @subid_00{D3 hallway to miniboss room}
+; @subid_04{D6 room where button destroys floor tiles}
 .define PARTID_HOLES_FLOORTRAP			$0a
 
 ;;
