@@ -550,12 +550,12 @@ _label_06_233:
 seasonsFunc_06_6d74:
 	jp specialObjectAnimate		; $6d74
 	ret			; $6d77
-	ld hl,$6da8		; $6d78
+	ld hl,seasonsTable_06_6da8		; $6d78
 	rst_addDoubleIndex			; $6d7b
 	ldi a,(hl)		; $6d7c
 	ld h,(hl)		; $6d7d
 	ld l,a			; $6d7e
-	call $6da0		; $6d7f
+	call seasonsFunc_06_6da0		; $6d7f
 	ld b,a			; $6d82
 	rst_addAToHl			; $6d83
 	ld a,(hl)		; $6d84
@@ -575,55 +575,27 @@ seasonsFunc_06_6d74:
 	ld l,$36		; $6d9a
 	add (hl)		; $6d9c
 	jp specialObjectSetAnimation		; $6d9d
+
+seasonsFunc_06_6da0:
 	ld e,$09		; $6da0
 	ld a,(de)		; $6da2
 	dec a			; $6da3
 	and $1f			; $6da4
 	ld (de),a		; $6da6
 	ret			; $6da7
-	xor h			; $6da8
-	ld l,l			; $6da9
-	call z,$066d		; $6daa
-	ld b,$06		; $6dad
-	ld b,$07		; $6daf
-	ld ($0a09),sp		; $6db1
-	dec bc			; $6db4
-	ld a,(bc)		; $6db5
-	add hl,bc		; $6db6
-	ld ($0607),sp		; $6db7
-	ld b,$06		; $6dba
-	ld b,$06		; $6dbc
-	ld b,$06		; $6dbe
-	rlca			; $6dc0
-	ld ($0a09),sp		; $6dc1
-	dec bc			; $6dc4
-	ld a,(bc)		; $6dc5
-	add hl,bc		; $6dc6
-	ld ($0607),sp		; $6dc7
-	ld b,$06		; $6dca
-	ld (bc),a		; $6dcc
-	ld (bc),a		; $6dcd
-	ld (bc),a		; $6dce
-	ld (bc),a		; $6dcf
-	inc b			; $6dd0
-	ld b,$08		; $6dd1
-	ld a,(bc)		; $6dd3
-	dec c			; $6dd4
-	ld a,(bc)		; $6dd5
-	ld ($0406),sp		; $6dd6
-	ld (bc),a		; $6dd9
-	ld (bc),a		; $6dda
-	ld (bc),a		; $6ddb
-	ld (bc),a		; $6ddc
-	ld (bc),a		; $6ddd
-	ld (bc),a		; $6dde
-	ld (bc),a		; $6ddf
-	inc b			; $6de0
-	ld b,$08		; $6de1
-	ld a,(bc)		; $6de3
-	dec c			; $6de4
-	ld a,(bc)		; $6de5
-	ld ($0406),sp		; $6de6
-	ld (bc),a		; $6de9
-	ld (bc),a		; $6dea
-	ld (bc),a		; $6deb
+
+seasonsTable_06_6da8:
+	.dw seasonsTable_06_6dac
+	.dw seasonsTable_06_6dcc
+
+seasonsTable_06_6dac:
+	.db $06 $06 $06 $06 $07 $08 $09 $0a
+	.db $0b $0a $09 $08 $07 $06 $06 $06
+	.db $06 $06 $06 $06 $07 $08 $09 $0a
+	.db $0b $0a $09 $08 $07 $06 $06 $06
+
+seasonsTable_06_6dcc:
+	.db $02 $02 $02 $02 $04 $06 $08 $0a
+	.db $0d $0a $08 $06 $04 $02 $02 $02
+	.db $02 $02 $02 $02 $04 $06 $08 $0a
+	.db $0d $0a $08 $06 $04 $02 $02 $02

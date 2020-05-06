@@ -180,7 +180,7 @@ cutscene14:
 	ld a,LINK_STATE_NORMAL		; $625c
 	ld (wLinkForceState),a		; $625e
 
-	ld hl,$7e40		; $6261
+	ld hl,objectData.objectData7e40		; $6261
 	call parseGivenObjectData		; $6264
 
 	ld a,CUTSCENE_S_INGAME		; $6267

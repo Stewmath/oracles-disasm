@@ -344,21 +344,21 @@ tileReplacement_group5Map67:
 	call getARoomFlags		; $62e2
 	bit 6,(hl)		; $62e5
 	jr z,+			; $62e7
-	ld hl,$630c		; $62e9
+	ld hl,@topLeftLava		; $62e9
 	call d8LavaRoomsFillTilesWithLava		; $62ec
 +
 	ld a,<ROOM_SEASONS_566		; $62ef
 	call getARoomFlags		; $62f1
 	bit 6,(hl)		; $62f4
 	jr z,+			; $62f6
-	ld hl,$632d		; $62f8
+	ld hl,@topRightLava		; $62f8
 	call d8LavaRoomsFillTilesWithLava		; $62fb
 +
 	ld a,<ROOM_SEASONS_56a		; $62fe
 	call getARoomFlags		; $6300
 	bit 6,(hl)		; $6303
 	ret z			; $6305
-	ld hl,$6340		; $6306
+	ld hl,@bottomLava		; $6306
 	jp d8LavaRoomsFillTilesWithLava		; $6309
 @topLeftLava:
 	.db $d7
@@ -551,9 +551,9 @@ tileReplacement_group0Map71:
 	call getARoomFlags		; $646f
 	bit 7,(hl)		; $6472
 	ret nz			; $6474
-	ld hl,$6481		; $6475
+	ld hl,@rect1		; $6475
 	call fillRectInRoomLayout		; $6478
-	ld hl,$6485		; $647b
+	ld hl,@rect2		; $647b
 	jp fillRectInRoomLayout		; $647e
 @rect1:
 	.db $00 $04 $07 TILEINDEX_WATER

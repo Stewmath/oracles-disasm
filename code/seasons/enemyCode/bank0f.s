@@ -978,2184 +978,2667 @@ _mergedTwinrova_decVar3bIfNonzero:
 
 ; ==============================================================================
 ; ENEMYID_TWINROVA
+;
+; Variables:
+;   var03: If bit 0 is unset, this acts as the "spawner" for the other twinrova object.
+;          Bit 7: ?
+;   relatedObj1: Reference to other twinrova object
+;   relatedObj2: Reference to INTERACID_PUFF
+;   var30: Anglular velocity (amount to add to angle)
+;   var31: Counter used for z-position bobbing
+;   var32: Bit 0: Nonzero while projectile is being fired?
+;          Bit 1: Signal in merging cutscene
+;          Bit 2: Signal to fire a projectile
+;          Bit 3: Enable/disable z-position bobbing
+;          Bit 4: Signal in merging cutscene
+;          Bit 5: ?
+;          Bit 6: Signal to do "death cutscene" if health is 0. Set by
+;                 PARTID_RED_TWINROVA_PROJECTILE or PARTID_BLUE_TWINROVA_PROJECTILE.
+;          Bit 7: If set, updates draw layer relative to Link
+;   var33: Movement pattern (0-3)
+;   var34: Position index (within the movement pattern)
+;   var35/var36: Target position?
+;   var37: Counter to update facing direction when it reaches 0?
+;   var38: Index in "attack pattern"? (0-7)
+;   var39: Some kind of counter?
 ; ==============================================================================
 enemyCode03:
-	jr z,_label_0f_065	; $4a65
-	sub $03			; $4a67
-	ret c			; $4a69
-	jr nz,_label_0f_065	; $4a6a
-	ld h,d			; $4a6c
-	ld l,$b2		; $4a6d
-	bit 6,(hl)		; $4a6f
-	jr z,_label_0f_065	; $4a71
-	ld l,$a9		; $4a73
-	ld (hl),$7f		; $4a75
-	ld l,$a4		; $4a77
-	res 7,(hl)		; $4a79
-	ld l,$84		; $4a7b
-	ld (hl),$0d		; $4a7d
-	ld a,$29		; $4a7f
-	call objectGetRelatedObject1Var		; $4a81
-	ld (hl),$7f		; $4a84
-	ld l,$a4		; $4a86
-	res 7,(hl)		; $4a88
-	ld l,$84		; $4a8a
-	ld (hl),$0f		; $4a8c
-	ld a,$f0		; $4a8e
-	call playSound		; $4a90
-_label_0f_065:
-	call $4e54		; $4a93
-	call $4aa2		; $4a96
-	ld e,$b2		; $4a99
-	ld a,(de)		; $4a9b
-	bit 7,a			; $4a9c
-	jp nz,objectSetPriorityRelativeToLink_withTerrainEffects		; $4a9e
-	ret			; $4aa1
-	call $4e7b		; $4aa2
-	call _ecom_getSubidAndCpStateTo08		; $4aa5
-	jr nc,_label_0f_066	; $4aa8
-	rst_jumpTable			; $4aaa
-	.dw $4ac1
-	ld ($ff00+c),a		; $4aad
-	ld c,d			; $4aae
-	rrca			; $4aaf
-	ld c,e			; $4ab0
-	rrca			; $4ab1
-	ld c,e			; $4ab2
-	rrca			; $4ab3
-	ld c,e			; $4ab4
-	rrca			; $4ab5
-	ld c,e			; $4ab6
-	rrca			; $4ab7
-	ld c,e			; $4ab8
-	rrca			; $4ab9
-	ld c,e			; $4aba
-_label_0f_066:
-	ld a,b			; $4abb
-	rst_jumpTable			; $4abc
-	.dw $4b10
-	.dw $4dce
-	ld a,$03		; $4ac1
-	ld ($cc1c),a		; $4ac3
-	ld a,$01		; $4ac6
-	ld ($cc17),a		; $4ac8
-	ld h,d			; $4acb
-	ld l,$83		; $4acc
-	bit 0,(hl)		; $4ace
-	ld a,$28		; $4ad0
-	jp nz,seasonsFunc_0f_4e10		; $4ad2
-	ld l,e			; $4ad5
-	inc (hl)		; $4ad6
-	xor a			; $4ad7
-	ld ($d008),a		; $4ad8
-	inc a			; $4adb
-	ld ($cca4),a		; $4adc
-	ld ($cc02),a		; $4adf
-	ld b,$03		; $4ae2
-	call _ecom_spawnUncountedEnemyWithSubid01		; $4ae4
-	ret nz			; $4ae7
-	inc l			; $4ae8
-	ld e,l			; $4ae9
-	ld a,(de)		; $4aea
-	inc a			; $4aeb
-	ld (hl),a		; $4aec
-	ld l,$96		; $4aed
-	ld e,l			; $4aef
-	ld a,$80		; $4af0
-	ld (de),a		; $4af2
-	ldi (hl),a		; $4af3
-	inc e			; $4af4
-	ld a,h			; $4af5
-	ld (de),a		; $4af6
-	ld (hl),d		; $4af7
-	ld a,h			; $4af8
-	cp d			; $4af9
-	ld a,$28		; $4afa
-	jp nc,seasonsFunc_0f_4e10		; $4afc
-	ld l,$80		; $4aff
-	ld e,l			; $4b01
+	jr z,@normalStatus	; $4a57
+	sub ENEMYSTATUS_NO_HEALTH			; $4a59
+	ret c			; $4a5b
+	jr nz,@normalStatus	; $4a5c
+
+	; Dead
+	ld h,d			; $4a5e
+	ld l,Enemy.var32		; $4a5f
+	bit 6,(hl)		; $4a61
+	jr z,@normalStatus	; $4a63
+
+	ld l,Enemy.health		; $4a65
+	ld (hl),$7f		; $4a67
+	ld l,Enemy.collisionType		; $4a69
+	res 7,(hl)		; $4a6b
+
+	ld l,Enemy.state		; $4a6d
+	ld (hl),$0d		; $4a6f
+
+	; Set variables in relatedObj1 (other twinrova)
+	ld a,Object.health		; $4a71
+	call objectGetRelatedObject1Var		; $4a73
+	ld (hl),$7f		; $4a76
+	ld l,Enemy.collisionType		; $4a78
+	res 7,(hl)		; $4a7a
+	ld l,Enemy.state		; $4a7c
+	ld (hl),$0f		; $4a7e
+
+	ld a,SNDCTRL_STOPMUSIC		; $4a80
+	call playSound		; $4a82
+
+@normalStatus:
+	call _twinrova_updateZPosition		; $4a85
+	call @runState		; $4a88
+	ld e,Enemy.var32		; $4a8b
+	ld a,(de)		; $4a8d
+	bit 7,a			; $4a8e
+	jp nz,objectSetPriorityRelativeToLink_withTerrainEffects		; $4a90
+	ret			; $4a93
+
+@runState:
+	call _twinrova_checkFireProjectile		; $4a94
+	call _ecom_getSubidAndCpStateTo08		; $4a97
+	jr nc,@state8OrHigher		; $4a9a
+	rst_jumpTable			; $4a9c
+	.dw _twinrova_state_uninitialized
+	.dw _twinrova_state_spawner
+	.dw _twinrova_state_stub
+	.dw _twinrova_state_stub
+	.dw _twinrova_state_stub
+	.dw _twinrova_state_stub
+	.dw _twinrova_state_stub
+	.dw _twinrova_state_stub
+
+@state8OrHigher:
+	ld a,b			; $4aad
+	rst_jumpTable		; $44ae
+	.dw _twinrova_subid0
+	.dw _twinrova_subid1
+
+
+_twinrova_state_uninitialized:
+	ld a,ENEMYID_TWINROVA		; $4ab3
+	ld (wEnemyIDToLoadExtraGfx),a		; $4ab5
+	ld a,$01		; $4ab8
+	ld (wLoadedTreeGfxIndex),a		; $4aba
+
+	ld h,d			; $4abd
+	ld l,Enemy.var03		; $4abe
+	bit 0,(hl)		; $4ac0
+	ld a,SPEED_100		; $4ac2
+	jp nz,_twinrova_initialize		; $4ac4
+
+	ld l,e			; $4ac7
+	inc (hl) ; [state] = 1
+
+	xor a			; $4ac9
+	ld (w1Link.direction),a		; $4aca
+	inc a			; $4acd
+	ld (wDisabledObjects),a		; $4ace
+	ld (wMenuDisabled),a		; $4ad1
+
+
+_twinrova_state_spawner:
+	ld b,ENEMYID_TWINROVA		; $4ad4
+	call _ecom_spawnUncountedEnemyWithSubid01		; $4ad6
+	ret nz			; $4ad9
+
+	; [child.var03] = [this.var03] + 1
+	inc l			; $4ada
+	ld e,l			; $4adb
+	ld a,(de)		; $4adc
+	inc a			; $4add
+	ld (hl),a		; $4ade
+
+	; [this.relatedObj1] = child
+	; [child.relatedObj1] = this
+	ld l,Enemy.relatedObj1		; $4adf
+	ld e,l			; $4ae1
+	ld a,Enemy.start		; $4ae2
+	ld (de),a		; $4ae4
+	ldi (hl),a		; $4ae5
+	inc e			; $4ae6
+	ld a,h			; $4ae7
+	ld (de),a		; $4ae8
+	ld (hl),d		; $4ae9
+
+	ld a,h			; $4aea
+	cp d			; $4aeb
+	ld a,SPEED_100		; $4aec
+	jp nc,_twinrova_initialize		; $4aee
+
+	; Swap the twinrova objects; subid 0 must come before subid 1?
+	ld l,Enemy.enabled		; $4af1
+	ld e,l			; $4af3
+	ld a,(de)		; $4af4
+	ld (hl),a		; $4af5
+
+	ld l,Enemy.subid		; $4af6
+	dec (hl) ; [child.subid] = 0
+	ld h,d			; $4af9
+	inc (hl) ; [this.subid] = 1
+	inc l			; $4afb
+	inc (hl) ; [this.var03] = 1
+	ld l,Enemy.state		; $4afd
+	dec (hl) ; [this.state] = 0
+	ret			; $4b00
+
+
+_twinrova_state_stub:
+	ret			; $4b01
+
+
+_twinrova_subid0:
 	ld a,(de)		; $4b02
-	ld (hl),a		; $4b03
-	ld l,$82		; $4b04
-	dec (hl)		; $4b06
-	ld h,d			; $4b07
-	inc (hl)		; $4b08
-	inc l			; $4b09
-	inc (hl)		; $4b0a
-	ld l,$84		; $4b0b
-	dec (hl)		; $4b0d
-	ret			; $4b0e
-	ret			; $4b0f
-	ld a,(de)		; $4b10
-	sub $08			; $4b11
-	rst_jumpTable			; $4b13
-	ld h,$4b		; $4b14
-	ld l,h			; $4b16
-	ld c,e			; $4b17
-	ld (bc),a		; $4b18
-	ld c,h			; $4b19
-	stop			; $4b1a
-	ld c,h			; $4b1b
-	ld b,c			; $4b1c
-	ld c,h			; $4b1d
-	ld d,a			; $4b1e
-	ld c,h			; $4b1f
-	ld l,(hl)		; $4b20
-	ld c,h			; $4b21
-	adc e			; $4b22
-	ld c,h			; $4b23
-	xor l			; $4b24
-	ld c,h			; $4b25
-	ld h,d			; $4b26
-	ld l,e			; $4b27
-	inc (hl)		; $4b28
-	ld l,$b2		; $4b29
-	set 3,(hl)		; $4b2b
-	set 7,(hl)		; $4b2d
-	ld l,$86		; $4b2f
-	ld (hl),$6a		; $4b31
-	ld l,$8b		; $4b33
-	ld (hl),$08		; $4b35
-	ld l,$82		; $4b37
-	ld a,(hl)		; $4b39
-	add a			; $4b3a
-	ld hl,$4b64		; $4b3b
-	rst_addDoubleIndex			; $4b3e
-	ld e,$8d		; $4b3f
-	ldi a,(hl)		; $4b41
+	sub $08			; $4b03
+	rst_jumpTable			; $4b05
+	.dw _twinrova_state8
+	.dw _twinrova_state9
+	.dw _twinrova_subid0_stateA
+	.dw _twinrova_subid0_stateB
+	.dw _twinrova_subid0_stateC
+	.dw _twinrova_stateD
+	.dw _twinrova_stateE
+	.dw _twinrova_stateF
+	.dw _twinrova_state10
+
+
+; Cutscene before fight
+_twinrova_state8:
+	ld h,d			; $4b18
+	ld l,e			; $4b19
+	inc (hl) ; [state] = 9
+
+	ld l,Enemy.var32		; $4b1b
+	set 3,(hl)		; $4b1d
+	set 7,(hl)		; $4b1f
+
+	ld l,Enemy.counter1		; $4b21
+	ld (hl),106		; $4b23
+
+	ld l,Enemy.yh		; $4b25
+	ld (hl),$08		; $4b27
+
+	; Set initial x-position, oam flags, angle, and var30 based on subid
+	ld l,Enemy.subid		; $4b29
+	ld a,(hl)		; $4b2b
+	add a			; $4b2c
+	ld hl,@data		; $4b2d
+	rst_addDoubleIndex			; $4b30
+
+	ld e,Enemy.xh		; $4b31
+	ldi a,(hl)		; $4b33
+	ld (de),a		; $4b34
+	ld e,Enemy.oamFlagsBackup		; $4b35
+	ldi a,(hl)		; $4b37
+	ld (de),a		; $4b38
+	inc e			; $4b39
+	ld (de),a		; $4b3a
+
+	ld e,Enemy.angle		; $4b3b
+	ldi a,(hl)		; $4b3d
+	ld (de),a		; $4b3e
+	ld e,Enemy.var30		; $4b3f
+	ld a,(hl)		; $4b41
 	ld (de),a		; $4b42
-	ld e,$9b		; $4b43
-	ldi a,(hl)		; $4b45
-	ld (de),a		; $4b46
-	inc e			; $4b47
-	ld (de),a		; $4b48
-	ld e,$89		; $4b49
-	ldi a,(hl)		; $4b4b
-	ld (de),a		; $4b4c
-	ld e,$b0		; $4b4d
-	ld a,(hl)		; $4b4f
-	ld (de),a		; $4b50
-	ld e,$82		; $4b51
-	ld a,(de)		; $4b53
-	or a			; $4b54
-	ld bc,$2f04		; $4b55
-	call z,showText		; $4b58
-	call getRandomNumber_noPreserveVars		; $4b5b
-	ld e,$b1		; $4b5e
-	ld (de),a		; $4b60
-	jp $4ee0		; $4b61
-	ret nz			; $4b64
-	ld (bc),a		; $4b65
-	ld de,$3001		; $4b66
-	ld bc,$ff0f		; $4b69
-	inc e			; $4b6c
-	ld a,(de)		; $4b6d
-	rst_jumpTable			; $4b6e
-	ld a,c			; $4b6f
-	ld c,e			; $4b70
-	add a			; $4b71
-	ld c,e			; $4b72
-	or e			; $4b73
-	ld c,e			; $4b74
-	push bc			; $4b75
-	ld c,e			; $4b76
-.DB $dd				; $4b77
-	ld c,e			; $4b78
+
+	; Subid 0 only: show text
+	ld e,Enemy.subid		; $4b43
+	ld a,(de)		; $4b45
+	or a			; $4b46
+	ld bc,TX_2f04		; $4b47
+	call z,showText		; $4b4a
+
+	call getRandomNumber_noPreserveVars		; $4b4d
+	ld e,Enemy.var31		; $4b50
+	ld (de),a		; $4b52
+	jp _twinrova_updateAnimationFromAngle		; $4b53
+
+; Data per subid: x-position, oam flags, angle, var30
+@data:
+	.db $c0 $02 $11 $01 ; Subid 0
+	.db $30 $01 $0f $ff ; Subid 1
+
+
+; Moving down the screen in the pre-fight cutscene
+_twinrova_state9:
+	inc e			; $4b5e
+	ld a,(de)		; $4b5f
+	rst_jumpTable			; $4b60
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw @substate4
+
+@substate0:
+	call _ecom_decCounter1		; $4b6b
+	jr nz,@applySpeed	; $4b6e
+
+	ld (hl),$08 ; [counter1]
+	inc l			; $4b72
+	ld (hl),$12 ; [counter2]
+	ld l,e			; $4b75
+	inc (hl) ; [state2] = 1
+	jr @animate		; $4b77
+
+@substate1:
 	call _ecom_decCounter1		; $4b79
-	jr nz,_label_0f_068	; $4b7c
-	ld (hl),$08		; $4b7e
+	jr nz,@applySpeed	; $4b7c
+
+	ld (hl),$08 ; [counter1]
 	inc l			; $4b80
-	ld (hl),$12		; $4b81
-	ld l,e			; $4b83
-	inc (hl)		; $4b84
-	jr _label_0f_069		; $4b85
-	call _ecom_decCounter1		; $4b87
-	jr nz,_label_0f_068	; $4b8a
-	ld (hl),$08		; $4b8c
-	inc l			; $4b8e
-	dec (hl)		; $4b8f
-	jr nz,_label_0f_067	; $4b90
-	ld l,e			; $4b92
-	inc (hl)		; $4b93
-	inc l			; $4b94
-	ld (hl),$1e		; $4b95
-	call _ecom_updateAngleTowardTarget		; $4b97
-	call $4f05		; $4b9a
-	ld (hl),a		; $4b9d
-	jp enemySetAnimation		; $4b9e
-_label_0f_067:
-	ld e,$89		; $4ba1
-	ld l,$b0		; $4ba3
-	ld a,(de)		; $4ba5
-	add (hl)		; $4ba6
-	and $1f			; $4ba7
-	ld (de),a		; $4ba9
-	call $4ee0		; $4baa
-_label_0f_068:
-	call objectApplySpeed		; $4bad
-_label_0f_069:
-	jp enemyAnimate		; $4bb0
-	call _ecom_decCounter1		; $4bb3
-	jr nz,_label_0f_069	; $4bb6
-	ld l,e			; $4bb8
-	inc (hl)		; $4bb9
-	ld e,$82		; $4bba
-	ld a,(de)		; $4bbc
-	or a			; $4bbd
-	ret nz			; $4bbe
-	ld bc,$2f05		; $4bbf
-	jp showText		; $4bc2
-	ld bc,$0502		; $4bc5
-	call objectCreateInteraction		; $4bc8
-	ret nz			; $4bcb
-	ld a,h			; $4bcc
-	ld h,d			; $4bcd
-	ld l,$99		; $4bce
-	ldd (hl),a		; $4bd0
-	ld (hl),$40		; $4bd1
-	ld l,$85		; $4bd3
-	inc (hl)		; $4bd5
-	ld l,$b2		; $4bd6
-	res 7,(hl)		; $4bd8
-	jp objectSetInvisible		; $4bda
-	ld a,$21		; $4bdd
-	call objectGetRelatedObject2Var		; $4bdf
-	bit 7,(hl)		; $4be2
-	ret z			; $4be4
-	ld h,d			; $4be5
-	ld l,$b2		; $4be6
-	set 7,(hl)		; $4be8
-	xor a			; $4bea
-	ld ($cca4),a		; $4beb
-	ld ($cc02),a		; $4bee
-	ld a,$18		; $4bf1
-	ld ($cc04),a		; $4bf3
-	call _ecom_updateAngleTowardTarget		; $4bf6
-	call $4f05		; $4bf9
-	add $04			; $4bfc
-	ld (hl),a		; $4bfe
-	jp enemySetAnimation		; $4bff
-	ld h,d			; $4c02
-	ld l,e			; $4c03
-	inc (hl)		; $4c04
-	ld a,$33		; $4c05
-	ld (wActiveMusic),a		; $4c07
-	call playSound		; $4c0a
-	jp $4f1a		; $4c0d
-	ld a,(wFrameCounter)		; $4c10
-	and $7f			; $4c13
-	ld a,$91		; $4c15
-	call z,playSound		; $4c17
-	call $4f3d		; $4c1a
-	ret nc			; $4c1d
-	call $4f1a		; $4c1e
-	jr nz,_label_0f_070	; $4c21
-	call _ecom_incState		; $4c23
-	ld l,$86		; $4c26
-	ld (hl),$1e		; $4c28
-	ret			; $4c2a
-_label_0f_070:
-	call $4f6e		; $4c2b
-	ret nz			; $4c2e
-	ld e,$b8		; $4c2f
-	ld a,(de)		; $4c31
-	inc a			; $4c32
-	and $07			; $4c33
-	ld (de),a		; $4c35
-	ld hl,$4c40		; $4c36
-	call checkFlag		; $4c39
-	jp nz,seasonsFunc_0f_4f5b		; $4c3c
-	ret			; $4c3f
-	ld (hl),l		; $4c40
-	call _ecom_decCounter1		; $4c41
-	jp nz,enemyAnimate		; $4c44
-	ld l,e			; $4c47
-	dec (hl)		; $4c48
-	call getRandomNumber_noPreserveVars		; $4c49
-	and $03			; $4c4c
-	ld e,$b3		; $4c4e
-	ld (de),a		; $4c50
-	inc e			; $4c51
-	xor a			; $4c52
-	ld (de),a		; $4c53
-	jp $4f1a		; $4c54
-	ld h,d			; $4c57
-	ld l,e			; $4c58
-	inc (hl)		; $4c59
-	ld l,$8f		; $4c5a
-	ld (hl),$00		; $4c5c
-	ld l,$b2		; $4c5e
-	res 3,(hl)		; $4c60
-	ld l,$89		; $4c62
-	bit 4,(hl)		; $4c64
-	ld a,$0a		; $4c66
-	jr z,_label_0f_071	; $4c68
-	inc a			; $4c6a
-_label_0f_071:
-	jp enemySetAnimation		; $4c6b
-	ld e,$a1		; $4c6e
-	ld a,(de)		; $4c70
-	inc a			; $4c71
-	jr nz,_label_0f_072	; $4c72
-	ld e,$88		; $4c74
-	ld a,(de)		; $4c76
-	add $04			; $4c77
-	call enemySetAnimation		; $4c79
-	call _ecom_incState		; $4c7c
-	ld l,$8f		; $4c7f
-	dec (hl)		; $4c81
-	ld bc,$2f09		; $4c82
-	call showText		; $4c85
-_label_0f_072:
-	jp enemyAnimate		; $4c88
-	call $4f88		; $4c8b
-	jr nz,_label_0f_072	; $4c8e
-	ld a,$32		; $4c90
-	call objectGetRelatedObject1Var		; $4c92
-	bit 4,(hl)		; $4c95
-	jr nz,_label_0f_073	; $4c97
-	call _ecom_updateAngleTowardTarget		; $4c99
-	call $4eeb		; $4c9c
-	jr _label_0f_072		; $4c9f
-_label_0f_073:
-	call _ecom_incState		; $4ca1
-	inc l			; $4ca4
-	ld (hl),$00		; $4ca5
-	ld l,$b2		; $4ca7
-	res 3,(hl)		; $4ca9
-	jr _label_0f_072		; $4cab
-	inc e			; $4cad
-	ld a,(de)		; $4cae
-	rst_jumpTable			; $4caf
-	ret nz			; $4cb0
-	ld c,h			; $4cb1
-	sbc $4c			; $4cb2
-	inc c			; $4cb4
-	ld c,l			; $4cb5
-	rra			; $4cb6
-	ld c,l			; $4cb7
-	ld b,e			; $4cb8
-	ld c,l			; $4cb9
-	ld (hl),c		; $4cba
-	ld c,l			; $4cbb
-	sbc h			; $4cbc
-	ld c,l			; $4cbd
-	xor a			; $4cbe
-	ld c,l			; $4cbf
-	ld h,d			; $4cc0
-	ld l,e			; $4cc1
-	inc (hl)		; $4cc2
-	ld l,$b2		; $4cc3
-	res 1,(hl)		; $4cc5
-	res 0,(hl)		; $4cc7
-	ld l,$88		; $4cc9
-	ld (hl),$00		; $4ccb
-	ld bc,$fc20		; $4ccd
-	call objectSetSpeedZ		; $4cd0
-	ld e,$82		; $4cd3
-	ld a,(de)		; $4cd5
-	or a			; $4cd6
-	ret nz			; $4cd7
-	ld bc,$2f0a		; $4cd8
-	jp showText		; $4cdb
-	ld c,$08		; $4cde
-	call objectUpdateSpeedZ_paramC		; $4ce0
-	ldh a,(<hCameraY)	; $4ce3
-	ld b,a			; $4ce5
-	ld l,$8b		; $4ce6
-	ld a,(hl)		; $4ce8
-	sub b			; $4ce9
-	jr nc,_label_0f_074	; $4cea
-	ld a,(hl)		; $4cec
-_label_0f_074:
-	ld b,a			; $4ced
-	ld l,$8f		; $4cee
-	ld a,(hl)		; $4cf0
-	cp $80			; $4cf1
-	jr c,_label_0f_075	; $4cf3
-	add b			; $4cf5
-	cp $f0			; $4cf6
-	jr c,_label_0f_077	; $4cf8
-_label_0f_075:
-	ld l,$85		; $4cfa
-	inc (hl)		; $4cfc
-	ld l,$b2		; $4cfd
-	set 1,(hl)		; $4cff
-	ld l,$b2		; $4d01
-	res 7,(hl)		; $4d03
-	ld l,$86		; $4d05
-	ld (hl),$3c		; $4d07
-	jp objectSetInvisible		; $4d09
-	ld e,$82		; $4d0c
-	ld a,(de)		; $4d0e
-	or a			; $4d0f
-	ret nz			; $4d10
-	ld a,$32		; $4d11
-	call objectGetRelatedObject1Var		; $4d13
-	bit 1,(hl)		; $4d16
-	ret z			; $4d18
-	ld l,$85		; $4d19
-	inc (hl)		; $4d1b
-	ld h,d			; $4d1c
-	inc (hl)		; $4d1d
-	ret			; $4d1e
-	call _ecom_decCounter1		; $4d1f
-	ret nz			; $4d22
-	ld (hl),$30		; $4d23
-	ld l,e			; $4d25
-	inc (hl)		; $4d26
-	ld l,$8f		; $4d27
-	ld (hl),$a0		; $4d29
-	ld l,$89		; $4d2b
-	ld e,$82		; $4d2d
-	ld a,(de)		; $4d2f
-	or a			; $4d30
-	ld (hl),$08		; $4d31
-	jr z,_label_0f_076	; $4d33
-	ld (hl),$18		; $4d35
-_label_0f_076:
-	ld l,$b2		; $4d37
-	set 7,(hl)		; $4d39
-	call objectSetVisiblec2		; $4d3b
-	ld a,$d3		; $4d3e
-	call playSound		; $4d40
-	ld bc,$5878		; $4d43
-	ld e,$86		; $4d46
-	ld a,(de)		; $4d48
-	ld e,$89		; $4d49
-	call objectSetPositionInCircleArc		; $4d4b
-	ld e,$89		; $4d4e
-	ld a,(de)		; $4d50
-	add $08			; $4d51
-	and $1f			; $4d53
-	call $4eee		; $4d55
-	ld h,d			; $4d58
-	ld l,$8f		; $4d59
-	inc (hl)		; $4d5b
-	ld a,(hl)		; $4d5c
-	rrca			; $4d5d
-	jr c,_label_0f_077	; $4d5e
-	ld l,$89		; $4d60
-	ld a,(hl)		; $4d62
-	inc a			; $4d63
-	and $1f			; $4d64
-	ld (hl),a		; $4d66
-	ld l,$86		; $4d67
-	dec (hl)		; $4d69
-	jr nz,_label_0f_077	; $4d6a
-	dec l			; $4d6c
-	inc (hl)		; $4d6d
-_label_0f_077:
-	jp enemyAnimate		; $4d6e
-	ld e,$82		; $4d71
-	ld a,(de)		; $4d73
-	or a			; $4d74
-	jp nz,enemyDelete		; $4d75
-	ld a,($cc34)		; $4d78
-	or a			; $4d7b
-	ret nz			; $4d7c
-	inc a			; $4d7d
-	ld ($cca4),a		; $4d7e
-	ld ($cbca),a		; $4d81
-	ld h,d			; $4d84
-	ld l,$85		; $4d85
-	inc (hl)		; $4d87
-	ld l,$9b		; $4d88
-	xor a			; $4d8a
-	ldi (hl),a		; $4d8b
-	ld (hl),a		; $4d8c
-	ld a,$0c		; $4d8d
-	call enemySetAnimation		; $4d8f
-	ld a,$c0		; $4d92
-	call playSound		; $4d94
-	ld a,$02		; $4d97
-	jp fadeinFromWhiteWithDelay		; $4d99
-	ld a,($c4ab)		; $4d9c
-	or a			; $4d9f
-	ret nz			; $4da0
+	dec (hl) ; [counter2]
+	jr nz,@updateAngle	; $4b82
+
+	ld l,e			; $4b84
+	inc (hl) ; [state2] = 3
+	inc l			; $4b86
+	ld (hl),30 ; [counter1]
+
+	call _ecom_updateAngleTowardTarget		; $4b89
+	call _twinrova_calculateAnimationFromAngle		; $4b8c
+	ld (hl),a		; $4b8f
+	jp enemySetAnimation		; $4b90
+
+@updateAngle:
+	ld e,Enemy.angle		; $4b93
+	ld l,Enemy.var30		; $4b95
+	ld a,(de)		; $4b97
+	add (hl)		; $4b98
+	and $1f			; $4b99
+	ld (de),a		; $4b9b
+	call _twinrova_updateAnimationFromAngle		; $4b9c
+
+@applySpeed:
+	call objectApplySpeed		; $4b9f
+@animate:
+	jp enemyAnimate		; $4ba2
+
+@substate2:
+	call _ecom_decCounter1		; $4ba5
+	jr nz,@animate	; $4ba8
+
+	ld l,e			; $4baa
+	inc (hl) ; [state2] = 3
+
+	ld e,Enemy.subid		; $4bac
+	ld a,(de)		; $4bae
+	or a			; $4baf
+	ret nz			; $4bb0
+	ld bc,TX_2f05		; $4bb1
+	jp showText		; $4bb4
+
+@substate3:
+	ldbc INTERACID_PUFF,$02		; $4bb7
+	call objectCreateInteraction		; $4bba
+	ret nz			; $4bbd
+	ld a,h			; $4bbe
+	ld h,d			; $4bbf
+	ld l,Enemy.relatedObj2+1		; $4bc0
+	ldd (hl),a		; $4bc2
+	ld (hl),Interaction.start		; $4bc3
+
+	ld l,Enemy.state2		; $4bc5
+	inc (hl) ; [state2] = 4
+
+	ld l,Enemy.var32		; $4bc8
+	res 7,(hl)		; $4bca
+	jp objectSetInvisible		; $4bcc
+
+@substate4:
+	; Wait for puff to finish
+	ld a,Object.animParameter		; $4bcf
+	call objectGetRelatedObject2Var		; $4bd1
+	bit 7,(hl)		; $4bd4
+	ret z			; $4bd6
+
+	ld h,d			; $4bd7
+	ld l,Enemy.var32		; $4bd8
+	set 7,(hl)		; $4bda
+	xor a			; $4bdc
+	ld (wDisabledObjects),a		; $4bdd
+	ld (wMenuDisabled),a		; $4be0
+
+	ld a,CUTSCENE_FLAMES_FLICKERING		; $4be3
+	ld (wCutsceneTrigger),a		; $4be5
+
+	call _ecom_updateAngleTowardTarget		; $4be8
+	call _twinrova_calculateAnimationFromAngle		; $4beb
+	add $04			; $4bee
+	ld (hl),a		; $4bf0
+	jp enemySetAnimation		; $4bf1
+
+
+; Fight just starting
+_twinrova_subid0_stateA:
+	ld h,d			; $4bf4
+	ld l,e			; $4bf5
+	inc (hl) ; [state] = $0b
+
+	ld a,MUS_TWINROVA		; $4bf7
+	ld (wActiveMusic),a		; $4bf9
+	call playSound		; $4bfc
+	jp _twinrova_subid0_updateTargetPosition		; $4bff
+
+
+; Moving normally
+_twinrova_subid0_stateB:
+	ld a,(wFrameCounter)		; $4c02
+	and $7f			; $4c05
+	ld a,SND_FAIRYCUTSCENE		; $4c07
+	call z,playSound		; $4c09
+
+	call _twinrova_moveTowardTargetPosition		; $4c0c
+	ret nc			; $4c0f
+	call _twinrova_subid0_updateTargetPosition		; $4c10
+	jr nz,@waypointChanged	; $4c13
+
+	; Done this movement pattern
+	call _ecom_incState ; [state] = $0c
+	ld l,Enemy.counter1		; $4c18
+	ld (hl),30		; $4c1a
+	ret			; $4c1c
+
+@waypointChanged:
+	call _twinrova_checkAttackInProgress		; $4c1d
+	ret nz			; $4c20
+
+	ld e,Enemy.var38		; $4c21
+	ld a,(de)		; $4c23
+	inc a			; $4c24
+	and $07			; $4c25
+	ld (de),a		; $4c27
+	ld hl,@attackPattern		; $4c28
+	call checkFlag		; $4c2b
+	jp nz,_twinrova_chooseObjectToAttack		; $4c2e
+	ret			; $4c31
+
+@attackPattern:
+	.db %01110101
+
+
+; Delay before choosing new movement pattern and returning to state $0b
+_twinrova_subid0_stateC:
+	call _ecom_decCounter1		; $4c33
+	jp nz,enemyAnimate		; $4c36
+
+	ld l,e			; $4c39
+	dec (hl) ; [state] = $0b
+
+	; Choose random movement pattern
+	call getRandomNumber_noPreserveVars		; $4c3b
+	and $03			; $4c3e
+	ld e,Enemy.var33		; $4c40
+	ld (de),a		; $4c42
+	inc e			; $4c43
+	xor a			; $4c44
+	ld (de),a ; [var34]
+
+	jp _twinrova_subid0_updateTargetPosition		; $4c46
+
+
+; Health just reached 0
+_twinrova_stateD:
+	ld h,d			; $4c49
+	ld l,e			; $4c4a
+	inc (hl) ; [state] = $0e
+
+	ld l,Enemy.zh		; $4c4c
+	ld (hl),$00		; $4c4e
+	ld l,Enemy.var32		; $4c50
+	res 3,(hl)		; $4c52
+
+	ld l,Enemy.angle		; $4c54
+	bit 4,(hl)		; $4c56
+	ld a,$0a		; $4c58
+	jr z,+			; $4c5a
+	inc a			; $4c5c
++
+	jp enemySetAnimation		; $4c5d
+
+
+; Delay before showing text
+_twinrova_stateE:
+	ld e,Enemy.animParameter		; $4c60
+	ld a,(de)		; $4c62
+	inc a			; $4c63
+	jr nz,_twinrova_animate	; $4c64
+
+	ld e,Enemy.direction		; $4c66
+	ld a,(de)		; $4c68
+	add $04			; $4c69
+	call enemySetAnimation		; $4c6b
+
+	call _ecom_incState		; $4c6e
+	ld l,Enemy.zh		; $4c71
+	dec (hl)		; $4c73
+	ld bc,TX_2f09		; $4c74
+	call showText		; $4c77
+_twinrova_animate:
+	jp enemyAnimate		; $4c7a
+
+
+_twinrova_stateF:
+	call _twinrova_rise2PixelsAboveGround		; $4c7d
+	jr nz,_twinrova_animate	; $4c80
+
+	; Wait for signal that twin has risen
+	ld a,Object.var32		; $4c82
+	call objectGetRelatedObject1Var		; $4c84
+	bit 4,(hl)		; $4c87
+	jr nz,@nextState	; $4c89
+
+	call _ecom_updateAngleTowardTarget		; $4c8b
+	call _twinrova_updateMovingAnimation		; $4c8e
+	jr _twinrova_animate		; $4c91
+
+@nextState:
+	call _ecom_incState		; $4c93
+	inc l			; $4c96
+	ld (hl),$00 ; [state2] = 0
+
+	ld l,Enemy.var32		; $4c99
+	res 3,(hl)		; $4c9b
+	jr _twinrova_animate		; $4c9d
+
+
+; Merging into one
+_twinrova_state10:
+	inc e			; $4c9f
+	ld a,(de)		; $4ca0
+	rst_jumpTable			; $4ca1
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw @substate4
+	.dw @substate5
+	.dw @substate6
+	.dw @substate7
+
+; Showing more text
+@substate0:
+	ld h,d			; $4cb2
+	ld l,e			; $4cb3
+	inc (hl) ; [state2] = 1
+
+	ld l,Enemy.var32		; $4cb5
+	res 1,(hl)		; $4cb7
+	res 0,(hl)		; $4cb9
+
+	ld l,Enemy.direction		; $4cbb
+	ld (hl),$00		; $4cbd
+
+	ld bc,-$3e0		; $4cbf
+	call objectSetSpeedZ		; $4cc2
+
+	ld e,Enemy.subid		; $4cc5
+	ld a,(de)		; $4cc7
+	or a			; $4cc8
+	ret nz			; $4cc9
+	ld bc,TX_2f0a		; $4cca
+	jp showText		; $4ccd
+
+; Rising up above screen
+@substate1:
+	ld c,$08		; $4cd0
+	call objectUpdateSpeedZ_paramC		; $4cd2
+	ldh a,(<hCameraY)	; $4cd5
+	ld b,a			; $4cd7
+	ld l,Enemy.yh		; $4cd8
+	ld a,(hl)		; $4cda
+	sub b			; $4cdb
+	jr nc,+			; $4cdc
+	ld a,(hl)		; $4cde
++
+	ld b,a			; $4cdf
+	ld l,Enemy.zh		; $4ce0
+	ld a,(hl)		; $4ce2
+	cp $80			; $4ce3
+	jr c,++			; $4ce5
+
+	add b			; $4ce7
+	cp $f0			; $4ce8
+	jr c,@animate	; $4cea
+++
+	ld l,Enemy.state2		; $4cec
+	inc (hl) ; [state2] = 2
+
+	ld l,Enemy.var32		; $4cef
+	set 1,(hl)		; $4cf1
+	ld l,Enemy.var32		; $4cf3
+	res 7,(hl)		; $4cf5
+
+	ld l,Enemy.counter1		; $4cf7
+	ld (hl),60		; $4cf9
+	jp objectSetInvisible		; $4cfb
+
+; Waiting for both twins to finish substate 1 (rise above screen)
+@substate2:
+	ld e,Enemy.subid		; $4cfe
+	ld a,(de)		; $4d00
+	or a			; $4d01
+	ret nz			; $4d02
+
+	; Subid 0 only: wait for twin to finish substate 1
+	ld a,Object.var32		; $4d03
+	call objectGetRelatedObject1Var		; $4d05
+	bit 1,(hl)		; $4d08
+	ret z			; $4d0a
+
+	; Increment state2 for both (now synchronized)
+	ld l,Enemy.state2		; $4d0b
+	inc (hl)		; $4d0d
+	ld h,d			; $4d0e
+	inc (hl)		; $4d0f
+	ret			; $4d10
+
+; Delay before coming back down
+@substate3:
+	call _ecom_decCounter1		; $4d11
+	ret nz			; $4d14
+
+	ld (hl),48 ; [counter1]
+	ld l,e			; $4d17
+	inc (hl) ; [state2] = 4
+
+	ld l,Enemy.zh		; $4d19
+	ld (hl),$a0		; $4d1b
+
+	ld l,Enemy.angle		; $4d1d
+	ld e,Enemy.subid		; $4d1f
+	ld a,(de)		; $4d21
+	or a			; $4d22
+	ld (hl),$08		; $4d23
+	jr z,+			; $4d25
+	ld (hl),$18		; $4d27
++
+	ld l,Enemy.var32		; $4d29
+	set 7,(hl)		; $4d2b
+	call objectSetVisiblec2		; $4d2d
+	ld a,SND_WIND		; $4d30
+	call playSound		; $4d32
+
+; Circling down to ground
+@substate4:
+	ld bc,$5878		; $4d35
+	ld e,Enemy.counter1		; $4d38
+	ld a,(de)		; $4d3a
+	ld e,Enemy.angle		; $4d3b
+	call objectSetPositionInCircleArc		; $4d3d
+
+	ld e,Enemy.angle		; $4d40
+	ld a,(de)		; $4d42
+	add $08			; $4d43
+	and $1f			; $4d45
+	call _twinrova_updateMovingAnimationGivenAngle		; $4d47
+
+	ld h,d			; $4d4a
+	ld l,Enemy.zh		; $4d4b
+	inc (hl)		; $4d4d
+	ld a,(hl)		; $4d4e
+	rrca			; $4d4f
+	jr c,@animate	; $4d50
+
+	; Every other frame, increment angle
+	ld l,Enemy.angle		; $4d52
+	ld a,(hl)		; $4d54
+	inc a			; $4d55
+	and $1f			; $4d56
+	ld (hl),a		; $4d58
+	ld l,Enemy.counter1		; $4d59
+	dec (hl)		; $4d5b
+	jr nz,@animate	; $4d5c
+
+	dec l			; $4d5e
+	inc (hl) ; [state2] = 5
+@animate:
+	jp enemyAnimate		; $4d60
+
+; Reached ground
+@substate5:
+	; Delete subid 1 (subid 0 will remain)
+	ld e,Enemy.subid		; $4d63
+	ld a,(de)		; $4d65
+	or a			; $4d66
+	jp nz,enemyDelete		; $4d67
+
+	ld a,(wLinkDeathTrigger)		; $4d6a
+	or a			; $4d6d
+	ret nz			; $4d6e
+
+	inc a			; $4d6f
+	ld (wDisabledObjects),a		; $4d70
+	ld (wDisableLinkCollisionsAndMenu),a		; $4d73
+
+	ld h,d			; $4d76
+	ld l,Enemy.state2		; $4d77
+	inc (hl) ; [state2] = 6
+
+	ld l,Enemy.oamFlagsBackup		; $4d7a
+	xor a			; $4d7c
+	ldi (hl),a		; $4d7d
+	ld (hl),a		; $4d7e
+
+	ld a,$0c		; $4d7f
+	call enemySetAnimation		; $4d81
+	ld a,SND_TRANSFORM		; $4d84
+	call playSound		; $4d86
+
+	ld a,$02		; $4d89
+	jp fadeinFromWhiteWithDelay		; $4d8b
+
+; Waiting for screen to fade back in from white
+@substate6:
+	ld a,(wPaletteThread_mode)		; $4d8e
+	or a			; $4d91
+	ret nz			; $4d92
+
+	ld h,d			; $4d93
+	ld l,Enemy.state2		; $4d94
+	inc (hl) ; [state2] = 7
+
+	ld l,Enemy.var32		; $4d97
+	res 0,(hl)		; $4d99
+
+	ld a,$01		; $4d9b
+	ld (wLoadedTreeGfxIndex),a		; $4d9d
+	ret			; $4da0
+
+; Initiating next phase of fight
+@substate7:
+	; Find a free enemy slot. (Why does it do this manually instead of using
+	; "getFreeEnemySlot"?)
 	ld h,d			; $4da1
-	ld l,$85		; $4da2
-	inc (hl)		; $4da4
-	ld l,$b2		; $4da5
-	res 0,(hl)		; $4da7
-	ld a,$01		; $4da9
-	ld ($cc17),a		; $4dab
-	ret			; $4dae
-	ld h,d			; $4daf
-	ld l,$80		; $4db0
-	inc h			; $4db2
-_label_0f_078:
-	ld a,(hl)		; $4db3
-	or a			; $4db4
-	jr z,_label_0f_079	; $4db5
-	inc h			; $4db7
-	ld a,h			; $4db8
-	cp $e0			; $4db9
-	jr c,_label_0f_078	; $4dbb
-	ret			; $4dbd
-_label_0f_079:
-	ld e,l			; $4dbe
-	ld a,(de)		; $4dbf
-	ldi (hl),a		; $4dc0
-	ld (hl),$01		; $4dc1
-	call objectCopyPosition		; $4dc3
-	ld a,$01		; $4dc6
-	ld ($cc17),a		; $4dc8
-	jp enemyDelete		; $4dcb
-	ld a,(de)		; $4dce
-	sub $08			; $4dcf
-	rst_jumpTable			; $4dd1
-	ld h,$4b		; $4dd2
-	ld l,h			; $4dd4
-	ld c,e			; $4dd5
-.DB $e4				; $4dd6
-	ld c,l			; $4dd7
-	ld ($fa4d),a		; $4dd8
-	ld c,l			; $4ddb
-	ld d,a			; $4ddc
-	ld c,h			; $4ddd
-	ld l,(hl)		; $4dde
-	ld c,h			; $4ddf
-	adc e			; $4de0
-	ld c,h			; $4de1
-	xor l			; $4de2
-	ld c,h			; $4de3
-	ld a,$0b		; $4de4
-	ld (de),a		; $4de6
-	jp $4f1f		; $4de7
-	call $4f3d		; $4dea
-	ret nc			; $4ded
-	call $4f1f		; $4dee
-	ret nz			; $4df1
-	call _ecom_incState		; $4df2
-	ld l,$86		; $4df5
-	ld (hl),$1e		; $4df7
-	ret			; $4df9
-	call _ecom_decCounter1		; $4dfa
-	jp nz,enemyAnimate		; $4dfd
-	ld l,e			; $4e00
-	dec (hl)		; $4e01
-	call getRandomNumber_noPreserveVars		; $4e02
-	and $03			; $4e05
-	ld e,$b3		; $4e07
-	ld (de),a		; $4e09
-	inc e			; $4e0a
-	xor a			; $4e0b
-	ld (de),a		; $4e0c
-	jp $4f1f		; $4e0d
+	ld l,Enemy.enabled		; $4da2
+	inc h			; $4da4
+@nextEnemy:
+	ld a,(hl)		; $4da5
+	or a			; $4da6
+	jr z,@foundFreeSlot	; $4da7
+	inc h			; $4da9
+	ld a,h			; $4daa
+	cp LAST_ENEMY_INDEX+1			; $4dab
+	jr c,@nextEnemy	; $4dad
+	ret			; $4daf
 
-seasonsFunc_0f_4e10:
-	ld h,d			; $4e10
-	ld l,$83		; $4e11
-	bit 7,(hl)		; $4e13
-	jp z,_ecom_setSpeedAndState8		; $4e15
-	xor a			; $4e18
-	ld ($cca4),a		; $4e19
-	ld ($cc02),a		; $4e1c
-	ld l,$8b		; $4e1f
-	ld (hl),$56		; $4e21
-	ld l,$8d		; $4e23
-	ld (hl),$60		; $4e25
-	ld e,$82		; $4e27
-	ld a,(de)		; $4e29
-	or a			; $4e2a
-	ld a,$02		; $4e2b
-	jr z,_label_0f_080	; $4e2d
-	ld (hl),$90		; $4e2f
-	dec a			; $4e31
-_label_0f_080:
-	ld l,$9b		; $4e32
-	ldi (hl),a		; $4e34
-	ld (hl),a		; $4e35
-	ld l,$84		; $4e36
-	ld (hl),$0a		; $4e38
-	ld l,$88		; $4e3a
-	ld (hl),$ff		; $4e3c
-	ld l,$90		; $4e3e
-	ld (hl),$32		; $4e40
-	ld l,$b2		; $4e42
-	set 3,(hl)		; $4e44
-	set 7,(hl)		; $4e46
-	call _ecom_updateAngleTowardTarget		; $4e48
-	call $4f05		; $4e4b
-	add $04			; $4e4e
-	ld (hl),a		; $4e50
-	jp enemySetAnimation		; $4e51
-	ld h,d			; $4e54
-	ld l,$b7		; $4e55
-	ld a,(hl)		; $4e57
-	or a			; $4e58
-	jr z,_label_0f_081	; $4e59
-	dec (hl)		; $4e5b
-_label_0f_081:
-	ld l,$b2		; $4e5c
-	bit 3,(hl)		; $4e5e
-	ret z			; $4e60
-	ld l,$b1		; $4e61
-	dec (hl)		; $4e63
-	ld a,(hl)		; $4e64
-	and $07			; $4e65
-	ret nz			; $4e67
-	ld a,(hl)		; $4e68
-	and $18			; $4e69
-	swap a			; $4e6b
-	rlca			; $4e6d
-	ld hl,$4e77		; $4e6e
-	rst_addAToHl			; $4e71
-	ld e,$8f		; $4e72
-	ld a,(hl)		; $4e74
-	ld (de),a		; $4e75
-	ret			; $4e76
-.DB $fd				; $4e77
-.DB $fc				; $4e78
-	ei			; $4e79
-.DB $fc				; $4e7a
-	ld h,d			; $4e7b
-	ld l,$b2		; $4e7c
-	bit 0,(hl)		; $4e7e
-	ret z			; $4e80
-	bit 2,(hl)		; $4e81
-	jr nz,_label_0f_083	; $4e83
-	ld l,$a4		; $4e85
-	bit 7,(hl)		; $4e87
-	ret z			; $4e89
-	ld l,$b9		; $4e8a
-	ld a,(hl)		; $4e8c
-	or a			; $4e8d
-	ld e,$a1		; $4e8e
-	jr z,_label_0f_082	; $4e90
-	dec (hl)		; $4e92
-	ld a,(de)		; $4e93
-	inc a			; $4e94
-	ret nz			; $4e95
-_label_0f_082:
-	dec a			; $4e96
-	ld (de),a		; $4e97
-	ld e,$89		; $4e98
-	ld a,(de)		; $4e9a
-	call $4f05		; $4e9b
-	ld (hl),a		; $4e9e
-	add $04			; $4e9f
-	jp enemySetAnimation		; $4ea1
-_label_0f_083:
-	res 2,(hl)		; $4ea4
-	ld l,$88		; $4ea6
-	ld (hl),$ff		; $4ea8
-	ld l,$b9		; $4eaa
-	ld (hl),$f0		; $4eac
-	call $4ec0		; $4eae
-	call objectGetAngleTowardEnemyTarget		; $4eb1
-	cp $10			; $4eb4
-	ld a,$00		; $4eb6
-	jr c,_label_0f_084	; $4eb8
-	inc a			; $4eba
-_label_0f_084:
-	add $08			; $4ebb
-	jp enemySetAnimation		; $4ebd
-	ld b,$4b		; $4ec0
-	ld e,$82		; $4ec2
-	ld a,(de)		; $4ec4
-	or a			; $4ec5
-	jr z,_label_0f_085	; $4ec6
-	ld b,$4d		; $4ec8
-_label_0f_085:
-	jp _ecom_spawnProjectile		; $4eca
-	ld l,$8b		; $4ecd
-	ld e,l			; $4ecf
-	ld b,(hl)		; $4ed0
-	ld a,(de)		; $4ed1
-	ldh (<hFF8F),a	; $4ed2
-	ld l,$8d		; $4ed4
-	ld e,l			; $4ed6
-	ld c,(hl)		; $4ed7
-	ld a,(de)		; $4ed8
-	ldh (<hFF8E),a	; $4ed9
-	call _ecom_moveTowardPosition		; $4edb
-	jr _label_0f_086		; $4ede
-	ld e,$89		; $4ee0
-	ld a,(de)		; $4ee2
-	call $4f05		; $4ee3
-	ret z			; $4ee6
-	ld (hl),a		; $4ee7
-	jp enemySetAnimation		; $4ee8
-_label_0f_086:
-	ld e,$89		; $4eeb
-	ld a,(de)		; $4eed
-	call $4f05		; $4eee
-	ret z			; $4ef1
-	bit 7,(hl)		; $4ef2
-	ret nz			; $4ef4
-	ld b,a			; $4ef5
-	ld e,$b7		; $4ef6
-	ld a,(de)		; $4ef8
-	or a			; $4ef9
-	ret nz			; $4efa
-	ld a,$1e		; $4efb
-	ld (de),a		; $4efd
-	ld a,b			; $4efe
-	ld (hl),a		; $4eff
-	add $04			; $4f00
-	jp enemySetAnimation		; $4f02
-	ld c,a			; $4f05
-	add $04			; $4f06
-	and $18			; $4f08
-	swap a			; $4f0a
-	rlca			; $4f0c
-	ld b,a			; $4f0d
-	ld h,d			; $4f0e
-	ld l,$88		; $4f0f
-	ld a,c			; $4f11
-	and $07			; $4f12
-	cp $04			; $4f14
-	ld a,b			; $4f16
-	ret z			; $4f17
-	cp (hl)			; $4f18
-	ret			; $4f19
-	ld hl,$4fa3		; $4f1a
-	jr _label_0f_087		; $4f1d
-	ld hl,$5007		; $4f1f
-_label_0f_087:
-	ld e,$b7		; $4f22
-	xor a			; $4f24
-	ld (de),a		; $4f25
-	ld e,$b4		; $4f26
-	ld a,(de)		; $4f28
-	ld b,a			; $4f29
-	inc a			; $4f2a
+@foundFreeSlot:
+	ld e,l			; $4db0
+	ld a,(de)		; $4db1
+	ldi (hl),a ; [child.enabled] = [this.enabled]
+	ld (hl),ENEMYID_MERGED_TWINROVA ; [child.id]
+	call objectCopyPosition		; $4db5
+
+	ld a,$01		; $4db8
+	ld (wLoadedTreeGfxIndex),a		; $4dba
+
+	jp enemyDelete		; $4dbd
+
+
+; Subid 1 is nearly identical to subid 0, it just doesn't do a few things like playing
+; sound effects.
+_twinrova_subid1:
+	ld a,(de)		; $4dc0
+	sub $08			; $4dc1
+	rst_jumpTable			; $4dc3
+	.dw _twinrova_state8
+	.dw _twinrova_state9
+	.dw _twinrova_subid1_stateA
+	.dw _twinrova_subid1_stateB
+	.dw _twinrova_subid1_stateC
+	.dw _twinrova_stateD
+	.dw _twinrova_stateE
+	.dw _twinrova_stateF
+	.dw _twinrova_state10
+
+
+; Fight just starting
+_twinrova_subid1_stateA:
+	ld a,$0b		; $4dd6
+	ld (de),a ; [state] = $0b
+	jp _twinrova_subid1_updateTargetPosition		; $4dd9
+
+
+; Moving normally
+_twinrova_subid1_stateB:
+	call _twinrova_moveTowardTargetPosition		; $4ddc
+	ret nc			; $4ddf
+	call _twinrova_subid1_updateTargetPosition		; $4de0
+	ret nz			; $4de3
+
+	; Done this movement pattern
+	call _ecom_incState		; $4de4
+	ld l,Enemy.counter1		; $4de7
+	ld (hl),30		; $4de9
+	ret			; $4deb
+
+
+; Delay before choosing new movement pattern and returning to state $0b
+_twinrova_subid1_stateC:
+	call _ecom_decCounter1		; $4dec
+	jp nz,enemyAnimate		; $4def
+
+	ld l,e			; $4df2
+	dec (hl) ; [state] = $0b
+
+	; Choose random movement pattern
+	call getRandomNumber_noPreserveVars		; $4df4
+	and $03			; $4df7
+	ld e,Enemy.var33		; $4df9
+	ld (de),a		; $4dfb
+	inc e			; $4dfc
+	xor a			; $4dfd
+	ld (de),a ; [var34]
+
+	jp _twinrova_subid1_updateTargetPosition		; $4dff
+
+
+;;
+; @param	a	Speed
+; @addr{4e02}
+_twinrova_initialize:
+	ld h,d			; $4e02
+	ld l,Enemy.var03		; $4e03
+	bit 7,(hl)		; $4e05
+	jp z,_ecom_setSpeedAndState8		; $4e07
+
+	xor a			; $4e0a
+	ld (wDisabledObjects),a		; $4e0b
+	ld (wMenuDisabled),a		; $4e0e
+	ld l,Enemy.yh		; $4e11
+	ld (hl),$56		; $4e13
+	ld l,Enemy.xh		; $4e15
+	ld (hl),$60		; $4e17
+
+	ld e,Enemy.subid		; $4e19
+	ld a,(de)		; $4e1b
+	or a			; $4e1c
+	ld a,$02		; $4e1d
+	jr z,++			; $4e1f
+	ld (hl),$90 ; [xh]
+	dec a			; $4e23
+++
+	ld l,Enemy.oamFlagsBackup		; $4e24
+	ldi (hl),a		; $4e26
+	ld (hl),a		; $4e27
+
+	ld l,Enemy.state		; $4e28
+	ld (hl),$0a		; $4e2a
+
+	ld l,Enemy.direction		; $4e2c
+	ld (hl),$ff		; $4e2e
+	ld l,Enemy.speed		; $4e30
+	ld (hl),SPEED_140		; $4e32
+
+	ld l,Enemy.var32		; $4e34
+	set 3,(hl)		; $4e36
+	set 7,(hl)		; $4e38
+
+	call _ecom_updateAngleTowardTarget		; $4e3a
+	call _twinrova_calculateAnimationFromAngle		; $4e3d
+	add $04			; $4e40
+	ld (hl),a		; $4e42
+	jp enemySetAnimation		; $4e43
+
+;;
+; @addr{4e46}
+_twinrova_updateZPosition:
+	ld h,d			; $4e46
+	ld l,Enemy.var37		; $4e47
+	ld a,(hl)		; $4e49
+	or a			; $4e4a
+	jr z,+			; $4e4b
+	dec (hl)		; $4e4d
++
+	ld l,Enemy.var32		; $4e4e
+	bit 3,(hl)		; $4e50
+	ret z			; $4e52
+
+	ld l,Enemy.var31		; $4e53
+	dec (hl)		; $4e55
+	ld a,(hl)		; $4e56
+	and $07			; $4e57
+	ret nz			; $4e59
+
+	ld a,(hl)		; $4e5a
+	and $18			; $4e5b
+	swap a			; $4e5d
+	rlca			; $4e5f
+	ld hl,@levitationZPositions		; $4e60
+	rst_addAToHl			; $4e63
+	ld e,Enemy.zh		; $4e64
+	ld a,(hl)		; $4e66
+	ld (de),a		; $4e67
+	ret			; $4e68
+
+@levitationZPositions:
+	.db -3, -4, -5, -4
+
+;;
+; @addr{4e6d}
+_twinrova_checkFireProjectile:
+	ld h,d			; $4e6d
+	ld l,Enemy.var32		; $4e6e
+	bit 0,(hl)		; $4e70
+	ret z			; $4e72
+
+	bit 2,(hl)		; $4e73
+	jr nz,@fireProjectile	; $4e75
+
+	ld l,Enemy.collisionType		; $4e77
+	bit 7,(hl)		; $4e79
+	ret z			; $4e7b
+
+	ld l,Enemy.var39		; $4e7c
+	ld a,(hl)		; $4e7e
+	or a			; $4e7f
+	ld e,Enemy.animParameter		; $4e80
+	jr z,@var39Zero	; $4e82
+
+	dec (hl) ; [var39]
+	ld a,(de) ; [animParameter]
+	inc a			; $4e86
+	ret nz			; $4e87
+
+@var39Zero:
+	dec a			; $4e88
+	ld (de),a ; [animParameter] = $ff
+
+	ld e,Enemy.angle		; $4e8a
+	ld a,(de)		; $4e8c
+	call _twinrova_calculateAnimationFromAngle		; $4e8d
+	ld (hl),a		; $4e90
+	add $04			; $4e91
+	jp enemySetAnimation		; $4e93
+
+@fireProjectile:
+	res 2,(hl) ; [var32]
+
+	ld l,Enemy.direction		; $4e98
+	ld (hl),$ff		; $4e9a
+	ld l,Enemy.var39		; $4e9c
+	ld (hl),240		; $4e9e
+
+	call @spawnProjectile		; $4ea0
+	call objectGetAngleTowardEnemyTarget		; $4ea3
+	cp $10			; $4ea6
+	ld a,$00		; $4ea8
+	jr c,+			; $4eaa
+	inc a			; $4eac
++
+	add $08			; $4ead
+	jp enemySetAnimation		; $4eaf
+
+;;
+; @addr{4eb2}
+@spawnProjectile:
+	ld b,PARTID_RED_TWINROVA_PROJECTILE		; $4eb2
+	ld e,Enemy.subid		; $4eb4
+	ld a,(de)		; $4eb6
+	or a			; $4eb7
+	jr z,+			; $4eb8
+	ld b,PARTID_BLUE_TWINROVA_PROJECTILE		; $4eba
++
+	jp _ecom_spawnProjectile		; $4ebc
+
+;;
+; Unused?
+;
+; @param	h	Object to set target position to
+; @addr{4ebf}
+_twinrova_setTargetPositionToObject:
+	ld l,Enemy.yh		; $4ebf
+	ld e,l			; $4ec1
+	ld b,(hl)		; $4ec2
+	ld a,(de)		; $4ec3
+	ldh (<hFF8F),a	; $4ec4
+	ld l,Enemy.xh		; $4ec6
+	ld e,l			; $4ec8
+	ld c,(hl)		; $4ec9
+	ld a,(de)		; $4eca
+	ldh (<hFF8E),a	; $4ecb
+	call _ecom_moveTowardPosition		; $4ecd
+	jr _twinrova_updateMovingAnimation		; $4ed0
+
+
+;;
+; @addr{4ed2}
+_twinrova_updateAnimationFromAngle:
+	ld e,Enemy.angle		; $4ed2
+	ld a,(de)		; $4ed4
+	call _twinrova_calculateAnimationFromAngle		; $4ed5
+	ret z			; $4ed8
+	ld (hl),a		; $4ed9
+	jp enemySetAnimation		; $4eda
+
+;;
+; @addr{4edd}
+_twinrova_updateMovingAnimation:
+	ld e,Enemy.angle		; $4edd
+	ld a,(de)		; $4edf
+
+;;
+; @param	a	angle
+; @addr{4ee0}
+_twinrova_updateMovingAnimationGivenAngle:
+	call _twinrova_calculateAnimationFromAngle		; $4ee0
+	ret z			; $4ee3
+
+	bit 7,(hl)		; $4ee4
+	ret nz			; $4ee6
+
+	ld b,a			; $4ee7
+	ld e,Enemy.var37		; $4ee8
+	ld a,(de)		; $4eea
+	or a			; $4eeb
+	ret nz			; $4eec
+
+	ld a,30		; $4eed
+	ld (de),a ; [var37]
+
+	ld a,b			; $4ef0
+	ld (hl),a ; [direction]
+	add $04			; $4ef2
+	jp enemySetAnimation		; $4ef4
+
+
+;;
+; @param	a	Angle value
+; @param[out]	hl	Enemy.direction
+; @param[out]	zflag	z if calculated animation is the same as current animation
+; @addr{4ef7}
+_twinrova_calculateAnimationFromAngle:
+	ld c,a			; $4ef7
+	add $04			; $4ef8
+	and $18			; $4efa
+	swap a			; $4efc
+	rlca			; $4efe
+	ld b,a			; $4eff
+	ld h,d			; $4f00
+	ld l,Enemy.direction		; $4f01
+	ld a,c			; $4f03
+	and $07			; $4f04
+	cp $04			; $4f06
+	ld a,b			; $4f08
+	ret z			; $4f09
+	cp (hl)			; $4f0a
+	ret			; $4f0b
+
+;;
+; @param[out]	zflag	z if reached the end of the movement pattern
+; @addr{4f0c}
+_twinrova_subid0_updateTargetPosition:
+	ld hl,_twinrova_subid0_targetPositions		; $4f0c
+	jr ++			; $4f0f
+
+;;
+; @addr{4f11}
+_twinrova_subid1_updateTargetPosition:
+	ld hl,_twinrova_subid1_targetPositions		; $4f11
+++
+	ld e,Enemy.var37		; $4f14
+	xor a			; $4f16
+	ld (de),a		; $4f17
+
+	ld e,Enemy.var34		; $4f18
+	ld a,(de)		; $4f1a
+	ld b,a			; $4f1b
+	inc a			; $4f1c
+	ld (de),a		; $4f1d
+
+	dec e			; $4f1e
+	ld a,(de) ; [var33]
+	rst_addDoubleIndex			; $4f20
+	ldi a,(hl)		; $4f21
+	ld h,(hl)		; $4f22
+	ld l,a			; $4f23
+
+	ld a,b			; $4f24
+	rst_addDoubleIndex			; $4f25
+	ld e,Enemy.var35		; $4f26
+	ldi a,(hl)		; $4f28
+	or a			; $4f29
+	ret z			; $4f2a
+
 	ld (de),a		; $4f2b
-	dec e			; $4f2c
-	ld a,(de)		; $4f2d
-	rst_addDoubleIndex			; $4f2e
-	ldi a,(hl)		; $4f2f
-	ld h,(hl)		; $4f30
-	ld l,a			; $4f31
-	ld a,b			; $4f32
-	rst_addDoubleIndex			; $4f33
-	ld e,$b5		; $4f34
-	ldi a,(hl)		; $4f36
-	or a			; $4f37
-	ret z			; $4f38
-	ld (de),a		; $4f39
-	inc e			; $4f3a
-	ld a,(hl)		; $4f3b
-	ld (de),a		; $4f3c
-	ld h,d			; $4f3d
-	ld l,$b5		; $4f3e
-	call _ecom_readPositionVars		; $4f40
-	sub c			; $4f43
-	inc a			; $4f44
-	cp $03			; $4f45
-	jr nc,_label_0f_088	; $4f47
-	ldh a,(<hFF8F)	; $4f49
-	sub b			; $4f4b
-	inc a			; $4f4c
-	cp $03			; $4f4d
-	ret c			; $4f4f
-_label_0f_088:
-	call _ecom_moveTowardPosition		; $4f50
-	call $4eeb		; $4f53
-	call enemyAnimate		; $4f56
-	or d			; $4f59
-	ret			; $4f5a
+	inc e			; $4f2c
+	ld a,(hl)		; $4f2d
+	ld (de),a		; $4f2e
 
-seasonsFunc_0f_4f5b:
-	call getRandomNumber_noPreserveVars		; $4f5b
-	rrca			; $4f5e
-	ld h,d			; $4f5f
-	ld l,$b2		; $4f60
-	jr nc,_label_0f_090	; $4f62
-	ld a,$32		; $4f64
-_label_0f_089:
-	call objectGetRelatedObject1Var		; $4f66
-_label_0f_090:
-	ld a,(hl)		; $4f69
-	or $05			; $4f6a
-	ld (hl),a		; $4f6c
-_label_0f_091:
-	ret			; $4f6d
-	ld h,d			; $4f6e
-	ld l,$b2		; $4f6f
-	bit 0,(hl)		; $4f71
-	jr nz,_label_0f_092	; $4f73
-	ld a,$32		; $4f75
-	call objectGetRelatedObject1Var		; $4f77
-	bit 0,(hl)		; $4f7a
-	ret z			; $4f7c
-_label_0f_092:
-	ld l,$88		; $4f7d
-	bit 7,(hl)		; $4f7f
-	ret nz			; $4f81
-	ld l,$b2		; $4f82
-_label_0f_093:
-	res 0,(hl)		; $4f84
-	or d			; $4f86
-	ret			; $4f87
-	ld h,d			; $4f88
-_label_0f_094:
-	ld l,$8f		; $4f89
-	ld a,(hl)		; $4f8b
-	cp $fe			; $4f8c
-	jr c,_label_0f_095	; $4f8e
-	dec (hl)		; $4f90
-	ret			; $4f91
-_label_0f_095:
-	ld l,$b2		; $4f92
-_label_0f_096:
-	ld a,(hl)		; $4f94
-	or $18			; $4f95
-	ld (hl),a		; $4f97
-	xor a			; $4f98
-	ret			; $4f99
-	ld a,$05		; $4f9a
-	call objectGetRelatedObject1Var		; $4f9c
-	inc (hl)		; $4f9f
-	ld h,d			; $4fa0
-	inc (hl)		; $4fa1
-	ret			; $4fa2
-	xor e			; $4fa3
-	ld c,a			; $4fa4
-	jp nz,$dd4f		; $4fa5
-	ld c,a			; $4fa8
-	xor $4f			; $4fa9
-_label_0f_097:
-	ld d,b			; $4fab
-	ld e,b			; $4fac
-	sub b			; $4fad
-	and b			; $4fae
-	sub b			; $4faf
-	cp b			; $4fb0
-	ld e,b			; $4fb1
-	ret nc			; $4fb2
-	jr nz,_label_0f_091	; $4fb3
-	jr nz,-$60		; $4fb5
-	sub b			; $4fb7
-	ld b,b			; $4fb8
-	sub b			; $4fb9
-	jr z,_label_0f_107	; $4fba
-	jr _label_0f_100		; $4fbc
-	jr z,_label_0f_101	; $4fbe
-	ld b,b			; $4fc0
-	nop			; $4fc1
-	ld d,b			; $4fc2
-	ld e,b			; $4fc3
-	ld (hl),b		; $4fc4
-	ret nz			; $4fc5
-	add b			; $4fc6
-	ret nz			; $4fc7
-	sub b			; $4fc8
-	sub b			; $4fc9
-	sub b			; $4fca
-	ld h,b			; $4fcb
-_label_0f_098:
-	add b			; $4fcc
-	jr nc,_label_0f_111	; $4fcd
-	jr nc,_label_0f_106	; $4fcf
-	ret nz			; $4fd1
-	jr nc,_label_0f_096	; $4fd2
-	jr nz,_label_0f_089	; $4fd4
-	jr nz,$60		; $4fd6
-	jr nc,$30		; $4fd8
-	ld b,b			; $4fda
-	jr nc,_label_0f_099	; $4fdb
-_label_0f_099:
-	ld d,b			; $4fdd
-_label_0f_100:
-	ld e,b			; $4fde
-	add b			; $4fdf
-_label_0f_101:
-	add b			; $4fe0
-	add b			; $4fe1
-	and b			; $4fe2
-	ld l,b			; $4fe3
-	ret nz			; $4fe4
-	jr c,-$40		; $4fe5
-	jr nz,_label_0f_094	; $4fe7
-	jr nz,$50		; $4fe9
-_label_0f_102:
-	jr nc,_label_0f_109	; $4feb
-	nop			; $4fed
-	ld d,b			; $4fee
-_label_0f_103:
-	ld e,b			; $4fef
-	ld h,b			; $4ff0
-	ld (hl),b		; $4ff1
-	add b			; $4ff2
-	ld (hl),b		; $4ff3
-	sub b			; $4ff4
-	ld b,b			; $4ff5
-	ld h,b			; $4ff6
-	jr z,$50		; $4ff7
-	ld e,b			; $4ff9
-	ld d,b			; $4ffa
-	sbc b			; $4ffb
-	ld h,b			; $4ffc
-	ret z			; $4ffd
-_label_0f_104:
-	adc b			; $4ffe
-	cp b			; $4fff
-	adc b			; $5000
-_label_0f_105:
-	and b			; $5001
-	jr nz,_label_0f_093	; $5002
-	jr nz,_label_0f_113	; $5004
-	nop			; $5006
-	rrca			; $5007
-	ld d,b			; $5008
-	ld h,$50		; $5009
-	ld b,c			; $500b
-	ld d,b			; $500c
-	ld d,d			; $500d
-	ld d,b			; $500e
-	ld d,b			; $500f
-	sbc b			; $5010
-_label_0f_106:
-	sub b			; $5011
-	ld d,b			; $5012
-	sub b			; $5013
-_label_0f_107:
-	jr c,$58		; $5014
-	jr nz,$20		; $5016
-	jr c,_label_0f_110	; $5018
-_label_0f_108:
-	ld d,b			; $501a
-	sub b			; $501b
-	cp b			; $501c
-	sub b			; $501d
-	ret z			; $501e
-	ld e,b			; $501f
-	ret c			; $5020
-	jr nz,_label_0f_102	; $5021
-	jr nz,_label_0f_099	; $5023
-	nop			; $5025
-	ld d,b			; $5026
-	sbc b			; $5027
-	ld (hl),b		; $5028
-	jr nc,_label_0f_097	; $5029
-	jr nc,-$70		; $502b
-_label_0f_109:
-	ld h,b			; $502d
-	sub b			; $502e
-	sub b			; $502f
-	add b			; $5030
-	ret nz			; $5031
-	ld (hl),b		; $5032
-	ret nz			; $5033
-	ld b,b			; $5034
-	jr nc,$30		; $5035
-	jr nc,_label_0f_112	; $5037
-	ld h,b			; $5039
-_label_0f_110:
-	jr nz,_label_0f_098	; $503a
-	jr nc,_label_0f_104	; $503c
-	ld b,b			; $503e
-_label_0f_111:
-	ret nz			; $503f
-	nop			; $5040
-	ld d,b			; $5041
-	sbc b			; $5042
-	add b			; $5043
-	ld (hl),b		; $5044
-	add b			; $5045
-	ld d,b			; $5046
-	ld l,b			; $5047
-	jr nc,_label_0f_114	; $5048
-	jr nc,$20		; $504a
-	ld d,b			; $504c
-	jr nz,_label_0f_103	; $504d
-	jr nc,_label_0f_105	; $504f
-	nop			; $5051
-	ld d,b			; $5052
-	sbc b			; $5053
-	ld d,b			; $5054
-	ld e,b			; $5055
-	ld a,b			; $5056
-	ld c,b			; $5057
-	sub b			; $5058
-_label_0f_112:
-	ld a,b			; $5059
-	ld a,b			; $505a
-	xor b			; $505b
-	ld d,b			; $505c
-	jr nz,_label_0f_115	; $505d
-	jr nz,$28		; $505f
-	ld b,b			; $5061
-	ld h,b			; $5062
-	and b			; $5063
-	ld d,b			; $5064
-	ret nc			; $5065
-	jr nc,-$30		; $5066
-	jr z,_label_0f_108	; $5068
-	nop			; $506a
+;;
+; @param[out]	cflag	c if reached target position
+; @addr{4f2f}
+_twinrova_moveTowardTargetPosition:
+	ld h,d			; $4f2f
+	ld l,Enemy.var35		; $4f30
+	call _ecom_readPositionVars		; $4f32
+	sub c			; $4f35
+	inc a			; $4f36
+	cp $03			; $4f37
+	jr nc,@moveToward	; $4f39
+
+	ldh a,(<hFF8F)	; $4f3b
+	sub b			; $4f3d
+	inc a			; $4f3e
+	cp $03			; $4f3f
+	ret c			; $4f41
+
+@moveToward:
+	call _ecom_moveTowardPosition		; $4f42
+	call _twinrova_updateMovingAnimation		; $4f45
+	call enemyAnimate		; $4f48
+	or d			; $4f4b
+	ret			; $4f4c
+
+;;
+; Randomly chooses either this object or its twin to begin an attack
+; @addr{4f4d}
+_twinrova_chooseObjectToAttack:
+	call getRandomNumber_noPreserveVars		; $4f4d
+	rrca			; $4f50
+	ld h,d			; $4f51
+	ld l,Enemy.var32		; $4f52
+	jr nc,++		; $4f54
+
+	ld a,Object.var32		; $4f56
+	call objectGetRelatedObject1Var		; $4f58
+++
+	ld a,(hl)		; $4f5b
+	or $05			; $4f5c
+	ld (hl),a		; $4f5e
+	ret			; $4f5f
+
+
+;;
+; Checks if an attack is in progress, unsets bit 0 of var32 when attack is done?
+;
+; @param[out]	zflag	nz if either twinrova is currently doing an attack
+; @addr{4f60}
+_twinrova_checkAttackInProgress:
+	ld h,d			; $4f60
+	ld l,Enemy.var32		; $4f61
+	bit 0,(hl)		; $4f63
+	jr nz,++		; $4f65
+
+	ld a,Object.var32		; $4f67
+	call objectGetRelatedObject1Var		; $4f69
+	bit 0,(hl)		; $4f6c
+	ret z			; $4f6e
+++
+	ld l,Enemy.direction		; $4f6f
+	bit 7,(hl)		; $4f71
+	ret nz			; $4f73
+
+	ld l,Enemy.var32		; $4f74
+	res 0,(hl)		; $4f76
+	or d			; $4f78
+	ret			; $4f79
+
+;;
+; @param[out]	zflag	z if Twinrova's risen to the desired height (-2)
+; @addr{4f7a}
+_twinrova_rise2PixelsAboveGround:
+	ld h,d			; $4f7a
+	ld l,Enemy.zh		; $4f7b
+	ld a,(hl)		; $4f7d
+	cp $fe			; $4f7e
+	jr c,++			; $4f80
+	dec (hl)		; $4f82
+	ret			; $4f83
+++
+	ld l,Enemy.var32		; $4f84
+	ld a,(hl)		; $4f86
+	or $18			; $4f87
+	ld (hl),a		; $4f89
+	xor a			; $4f8a
+	ret			; $4f8b
+
+;;
+; Unused?
+; @addr{4f8c}
+_twinrova_incState2ForSelfAndTwin:
+	ld a,Object.state2		; $4f8c
+	call objectGetRelatedObject1Var		; $4f8e
+	inc (hl)		; $4f91
+	ld h,d			; $4f92
+	inc (hl)		; $4f93
+	ret			; $4f94
+
+
+_twinrova_subid0_targetPositions:
+	.dw @pattern0
+	.dw @pattern1
+	.dw @pattern2
+	.dw @pattern3
+
+@pattern0:
+	.db $50 $58
+	.db $90 $a0
+	.db $90 $b8
+	.db $58 $d0
+	.db $20 $b8
+	.db $20 $a0
+	.db $90 $40
+	.db $90 $28
+	.db $58 $18
+	.db $20 $28
+	.db $20 $40
+	.db $00
+@pattern1:
+	.db $50 $58
+	.db $70 $c0
+	.db $80 $c0
+	.db $90 $90
+	.db $90 $60
+	.db $80 $30
+	.db $70 $30
+	.db $40 $c0
+	.db $30 $c0
+	.db $20 $90
+	.db $20 $60
+	.db $30 $30
+	.db $40 $30
+	.db $00
+@pattern2:
+	.db $50 $58
+	.db $80 $80
+	.db $80 $a0
+	.db $68 $c0
+	.db $38 $c0
+	.db $20 $a0
+	.db $20 $50
+	.db $30 $40
+	.db $00
+@pattern3:
+	.db $50 $58
+	.db $60 $70
+	.db $80 $70
+	.db $90 $40
+	.db $60 $28
+	.db $50 $58
+	.db $50 $98
+	.db $60 $c8
+	.db $88 $b8
+	.db $88 $a0
+	.db $20 $80
+	.db $20 $70
+	.db $00
+
+
+_twinrova_subid1_targetPositions:
+	.dw @pattern0
+	.dw @pattern1
+	.dw @pattern2
+	.dw @pattern3
+
+@pattern0:
+	.db $50 $98
+	.db $90 $50
+	.db $90 $38
+	.db $58 $20
+	.db $20 $38
+	.db $20 $50
+	.db $90 $b8
+	.db $90 $c8
+	.db $58 $d8
+	.db $20 $c8
+	.db $20 $b8
+	.db $00
+@pattern1:
+	.db $50 $98
+	.db $70 $30
+	.db $80 $30
+	.db $90 $60
+	.db $90 $90
+	.db $80 $c0
+	.db $70 $c0
+	.db $40 $30
+	.db $30 $30
+	.db $20 $60
+	.db $20 $90
+	.db $30 $c0
+	.db $40 $c0
+	.db $00
+@pattern2:
+	.db $50 $98
+	.db $80 $70
+	.db $80 $50
+	.db $68 $30
+	.db $38 $30
+	.db $20 $50
+	.db $20 $a0
+	.db $30 $b0
+	.db $00
+@pattern3:
+	.db $50 $98
+	.db $50 $58
+	.db $78 $48
+	.db $90 $78
+	.db $78 $a8
+	.db $50 $20
+	.db $30 $20
+	.db $28 $40
+	.db $60 $a0
+	.db $50 $d0
+	.db $30 $d0
+	.db $28 $b0
+	.db $00
+
 
 ; ==============================================================================
 ; ENEMYID_GANON
+;
+; Variables:
+;   relatedObj1: ENEMYID_GANON_REVIVAL_CUTSCENE
+;   relatedObj2: PARTID_SHADOW object
+;   var30: Base x-position during teleport
+;   var32: Related to animation for state A?
+;   var35+: Pointer to sequence of attack states to iterate through
 ; ==============================================================================
 enemyCode04:
-	jr z,_label_0f_116	; $506b
-	sub $03			; $506d
-	ret c			; $506f
-	jr nz,_label_0f_116	; $5070
-	call checkLinkVulnerable		; $5072
-	ret nc			; $5075
-_label_0f_113:
-	ld h,d			; $5076
-	ld l,$a9		; $5077
-	ld (hl),$40		; $5079
-	ld l,$84		; $507b
-	ld (hl),$0e		; $507d
-	inc l			; $507f
-	ld (hl),$00		; $5080
-_label_0f_114:
-	inc l			; $5082
-	ld (hl),$78		; $5083
-	ld a,$01		; $5085
-	ld ($cbca),a		; $5087
-	ld a,$67		; $508a
-	call playSound		; $508c
-_label_0f_115:
-	ld a,$b4		; $508f
-	call $56ec		; $5091
-	ld a,$0e		; $5094
-	call enemySetAnimation		; $5096
-	call getThisRoomFlags		; $5099
-	set 7,(hl)		; $509c
-	ld l,$9a		; $509e
-	set 7,(hl)		; $50a0
-	ld l,$9e		; $50a2
-	set 7,(hl)		; $50a4
-	ld a,$f0		; $50a6
-	call playSound		; $50a8
-	ld bc,$2f0e		; $50ab
-	jp showText		; $50ae
-_label_0f_116:
-	ld e,$84		; $50b1
-	ld a,(de)		; $50b3
-	rst_jumpTable			; $50b4
-.DB $d3				; $50b5
-	ld d,b			; $50b6
-	ld h,b			; $50b7
-	ld d,c			; $50b8
-	ld (hl),h		; $50b9
-	ld d,c			; $50ba
-	adc l			; $50bb
-	ld d,c			; $50bc
-	xor a			; $50bd
-	ld d,c			; $50be
-	rst_addAToHl			; $50bf
-	ld d,c			; $50c0
-	or $51			; $50c1
-	add hl,de		; $50c3
-	ld d,d			; $50c4
-	inc h			; $50c5
-	ld d,d			; $50c6
-	push bc			; $50c7
-	ld d,d			; $50c8
-	ld h,d			; $50c9
-	ld d,e			; $50ca
-	daa			; $50cb
-	ld d,h			; $50cc
-	add hl,hl		; $50cd
-	ld d,l			; $50ce
-	ld e,e			; $50cf
-	ld d,(hl)		; $50d0
-	ld a,c			; $50d1
-	ld d,(hl)		; $50d2
-	ld h,d			; $50d3
-	ld l,e			; $50d4
-	inc (hl)		; $50d5
-	ld l,$9d		; $50d6
-	ld (hl),$00		; $50d8
-	ld l,$8b		; $50da
-	ld (hl),$48		; $50dc
-	ld l,$8d		; $50de
-	ld (hl),$78		; $50e0
-	ld l,$8f		; $50e2
-	dec (hl)		; $50e4
-	ld hl,$d00b		; $50e5
-	ld (hl),$88		; $50e8
-	ld l,$0d		; $50ea
-	ld (hl),$78		; $50ec
-	ld l,$08		; $50ee
-	ld (hl),$00		; $50f0
-	ld l,$00		; $50f2
-	ld (hl),$03		; $50f4
-	ld hl,$cc07		; $50f6
-	ld a,$01		; $50f9
-	ld (hl),$16		; $50fb
-	inc l			; $50fd
-	ldi (hl),a		; $50fe
-	ld (hl),$18		; $50ff
-	inc l			; $5101
+	jr z,@normalStatus	; $505d
+	sub ENEMYSTATUS_NO_HEALTH			; $505f
+	ret c			; $5061
+	jr nz,@normalStatus	; $5062
+
+	; Dead
+	call checkLinkVulnerable		; $5064
+	ret nc			; $5067
+	ld h,d			; $5068
+	ld l,Enemy.health		; $5069
+	ld (hl),$40		; $506b
+	ld l,Enemy.state		; $506d
+	ld (hl),$0e		; $506f
+	inc l			; $5071
+	ld (hl),$00 ; [state2]
+	inc l			; $5074
+	ld (hl),120 ; [counter1]
+
+	ld a,$01		; $5077
+	ld (wDisableLinkCollisionsAndMenu),a		; $5079
+
+	ld a,SND_BOSS_DEAD		; $507c
+	call playSound		; $507e
+
+	ld a,GFXH_b4		; $5081
+	call ganon_loadGfxHeader		; $5083
+
+	ld a,$0e		; $5086
+	call enemySetAnimation		; $5088
+
+	call getThisRoomFlags		; $508b
+	set 7,(hl)		; $508e
+.ifdef ROOM_AGES
+	ld l,<ROOM_AGES_5f1		; $5090
+.else
+	ld l,<ROOM_SEASONS_59a
+.endif
+	set 7,(hl)		; $5092
+	ld l,<ROOM_TWINROVA_FIGHT		; $5094
+	set 7,(hl)		; $5096
+
+	ld a,SNDCTRL_STOPMUSIC		; $5098
+	call playSound		; $509a
+	ld bc,TX_2f0e		; $509d
+	jp showText		; $50a0
+
+@normalStatus:
+	ld e,Enemy.state		; $50a3
+	ld a,(de)		; $50a5
+	rst_jumpTable			; $50a6
+	.dw _ganon_state_uninitialized
+	.dw _ganon_state1
+	.dw _ganon_state2
+	.dw _ganon_state3
+	.dw _ganon_state4
+	.dw _ganon_state5
+	.dw _ganon_state6
+	.dw _ganon_state7
+	.dw _ganon_state8
+	.dw _ganon_state9
+	.dw _ganon_stateA
+	.dw _ganon_stateB
+	.dw _ganon_stateC
+	.dw _ganon_stateD
+	.dw _ganon_stateE
+
+
+_ganon_state_uninitialized:
+	ld h,d			; $50c5
+	ld l,e			; $50c6
+	inc (hl) ; [state] = 1
+
+	ld l,Enemy.oamTileIndexBase		; $50c8
+	ld (hl),$00		; $50ca
+	ld l,Enemy.yh		; $50cc
+	ld (hl),$48		; $50ce
+	ld l,Enemy.xh		; $50d0
+	ld (hl),$78		; $50d2
+	ld l,Enemy.zh		; $50d4
+	dec (hl)		; $50d6
+
+	ld hl,w1Link.yh		; $50d7
+	ld (hl),$88		; $50da
+	ld l,<w1Link.xh		; $50dc
+	ld (hl),$78		; $50de
+	ld l,<w1Link.direction		; $50e0
+	ld (hl),DIR_UP		; $50e2
+	ld l,<w1Link.enabled		; $50e4
+	ld (hl),$03		; $50e6
+
+	; Load extra graphics for ganon
+	ld hl,wLoadedObjectGfx		; $50e8
+	ld a,$01		; $50eb
+	ld (hl),OBJGFXH_16		; $50ed
+	inc l			; $50ef
+	ldi (hl),a		; $50f0
+	ld (hl),OBJGFXH_18		; $50f1
+	inc l			; $50f3
+	ldi (hl),a		; $50f4
+	ld (hl),OBJGFXH_19		; $50f5
+	inc l			; $50f7
+	ldi (hl),a		; $50f8
+	ld (hl),OBJGFXH_1a		; $50f9
+	inc l			; $50fb
+	ldi (hl),a		; $50fc
+	ld (hl),OBJGFXH_1b		; $50fd
+	inc l			; $50ff
+	ldi (hl),a		; $5100
+	xor a			; $5101
 	ldi (hl),a		; $5102
-	ld (hl),$19		; $5103
-	inc l			; $5105
+	ldi (hl),a		; $5103
+	ldi (hl),a		; $5104
+	ldi (hl),a		; $5105
 	ldi (hl),a		; $5106
-	ld (hl),$1a		; $5107
-	inc l			; $5109
-	ldi (hl),a		; $510a
-	ld (hl),$1b		; $510b
-	inc l			; $510d
-	ldi (hl),a		; $510e
-	xor a			; $510f
-	ldi (hl),a		; $5110
-	ldi (hl),a		; $5111
-	ldi (hl),a		; $5112
-	ldi (hl),a		; $5113
-	ldi (hl),a		; $5114
-	ldi (hl),a		; $5115
-	ld bc,$0012		; $5116
-	call _enemyBoss_spawnShadow		; $5119
-	ld e,$98		; $511c
-	ld a,$c0		; $511e
-	ld (de),a		; $5120
-	inc e			; $5121
-	ld a,h			; $5122
-	ld (de),a		; $5123
-	call disableLcd		; $5124
-	ld a,$9e		; $5127
-	ld ($cc4c),a		; $5129
-	ld a,$03		; $512c
-	ld ($ccc4),a		; $512e
-	call loadScreenMusicAndSetRoomPack		; $5131
-	call loadTilesetData		; $5134
-	call loadTilesetGraphics		; $5137
-	call func_131f		; $513a
-	call resetCamera		; $513d
-	call loadCommonGraphics		; $5140
-	ld a,$8b		; $5143
-	call loadPaletteHeader		; $5145
-	ld a,$b1		; $5148
-	ld ($cbe3),a		; $514a
-	ld a,$b0		; $514d
-	call loadGfxHeader		; $514f
-	ld a,$02		; $5152
-	call loadGfxRegisterStateIndex		; $5154
-	ldh a,(<hActiveObject)	; $5157
-	ld d,a			; $5159
-	call objectSetVisible83		; $515a
-	jp fadeinFromWhite		; $515d
-	call getFreeEnemySlot_uncounted		; $5160
-	ret nz			; $5163
-	ld (hl),$60		; $5164
-	ld l,$96		; $5166
-	ld (hl),$80		; $5168
-	inc l			; $516a
-	ld (hl),d		; $516b
-	call _ecom_incState		; $516c
-	ld l,$87		; $516f
-	ld (hl),$3c		; $5171
-	ret			; $5173
-	ld e,$86		; $5174
-	ld a,(de)		; $5176
-	or a			; $5177
-	ret z			; $5178
-	call _ecom_decCounter2		; $5179
-	jp nz,_ecom_flickerVisibility		; $517c
-	dec l			; $517f
-	ld (hl),$c1		; $5180
-	ld l,$84		; $5182
-	inc (hl)		; $5184
-	ld a,$0d		; $5185
-	call enemySetAnimation		; $5187
-	jp objectSetVisible83		; $518a
-	call _ecom_decCounter1		; $518d
-	jr z,_label_0f_117	; $5190
-	ld a,(hl)		; $5192
-	and $3f			; $5193
-	ld a,$b8		; $5195
-	call z,playSound		; $5197
-	jp enemyAnimate		; $519a
-_label_0f_117:
-	ld l,e			; $519d
-	inc (hl)		; $519e
-	ld l,$8f		; $519f
-	ld (hl),$00		; $51a1
-	ld a,$02		; $51a3
-	call objectGetRelatedObject2Var		; $51a5
-	ld (hl),$02		; $51a8
-	ld a,$01		; $51aa
-	jp enemySetAnimation		; $51ac
-	ld e,$a1		; $51af
-	ld a,(de)		; $51b1
-	inc a			; $51b2
-	jp nz,enemyAnimate		; $51b3
-	call _ecom_incState		; $51b6
-	ld l,$86		; $51b9
-	ld (hl),$0f		; $51bb
-	ld a,$b1		; $51bd
-	call loadGfxHeader		; $51bf
-	ld a,UNCMP_GFXH_32		; $51c2
-	call loadUncompressedGfxHeader		; $51c4
-	ld hl,$cc09		; $51c7
-	ld (hl),$17		; $51ca
-	inc l			; $51cc
-	ld (hl),$01		; $51cd
-	ldh a,(<hActiveObject)	; $51cf
-	ld d,a			; $51d1
-	ld a,$02		; $51d2
-	jp enemySetAnimation		; $51d4
-	call _ecom_decCounter1		; $51d7
-	ret nz			; $51da
-	ld a,$78		; $51db
-	ld (hl),a		; $51dd
-	ld ($cd18),a		; $51de
-	ld l,e			; $51e1
-	inc (hl)		; $51e2
-	ld a,$67		; $51e3
-	call playSound		; $51e5
-	ld a,$03		; $51e8
-	call enemySetAnimation		; $51ea
-	call showStatusBar		; $51ed
-	ldh a,(<hActiveObject)	; $51f0
-	ld d,a			; $51f2
-	jp clearPaletteFadeVariablesAndRefreshPalettes		; $51f3
-	call _ecom_decCounter1		; $51f6
-	jp nz,enemyAnimate		; $51f9
-	ld (hl),$1e		; $51fc
-	ld l,e			; $51fe
-	inc (hl)		; $51ff
-	ld hl,$cc0d		; $5200
-	xor a			; $5203
-	ldi (hl),a		; $5204
-	ldi (hl),a		; $5205
-	ldi (hl),a		; $5206
-	ldi (hl),a		; $5207
-	ld ($cbca),a		; $5208
-	ld ($cca4),a		; $520b
-	ld bc,$2f0d		; $520e
-	call showText		; $5211
-	ld a,$02		; $5214
-	jp enemySetAnimation		; $5216
-	ld a,$34		; $5219
-	ld (wActiveMusic),a		; $521b
-	call playSound		; $521e
-	jp $574e		; $5221
-	inc e			; $5224
-	ld a,(de)		; $5225
-	rst_jumpTable			; $5226
-	scf			; $5227
-	ld d,d			; $5228
-	ld a,$52		; $5229
-	ld c,h			; $522b
-	ld d,d			; $522c
-	ld d,l			; $522d
-	ld d,d			; $522e
-	ld l,h			; $522f
-	ld d,d			; $5230
-	ld a,c			; $5231
-	ld d,d			; $5232
-	adc (hl)		; $5233
-	ld d,d			; $5234
-	cp (hl)			; $5235
-	ld d,d			; $5236
-	call $571b		; $5237
-	ld l,$85		; $523a
-	inc (hl)		; $523c
-	ret			; $523d
+	ldi (hl),a		; $5107
+
+	; Shadow as relatedObj2
+	ld bc,$0012		; $5108
+	call _enemyBoss_spawnShadow		; $510b
+	ld e,Enemy.relatedObj2		; $510e
+	ld a,Part.start		; $5110
+	ld (de),a		; $5112
+	inc e			; $5113
+	ld a,h			; $5114
+	ld (de),a		; $5115
+
+	call disableLcd		; $5116
+	ld a,<ROOM_TWINROVA_FIGHT		; $5119
+	ld (wActiveRoom),a		; $511b
+	ld a,$03		; $511e
+	ld (wTwinrovaTileReplacementMode),a		; $5120
+
+	call loadScreenMusicAndSetRoomPack		; $5123
+	call loadTilesetData		; $5126
+	call loadTilesetGraphics		; $5129
+	call func_131f		; $512c
+	call resetCamera		; $512f
+	call loadCommonGraphics		; $5132
+
+.ifdef ROM_AGES
+	ld a,PALH_8b		; $5135
+.else
+	ld a,SEASONS_PALH_8b
+.endif
+	call loadPaletteHeader		; $5137
+.ifdef ROM_AGES
+	ld a,PALH_b1		; $513a
+.else
+	ld a,SEASONS_PALH_b1
+.endif
+	ld (wExtraBgPaletteHeader),a		; $513c
+	ld a,GFXH_b0		; $513f
+	call loadGfxHeader		; $5141
+	ld a,$02		; $5144
+	call loadGfxRegisterStateIndex		; $5146
+
+	ldh a,(<hActiveObject)	; $5149
+	ld d,a			; $514b
+	call objectSetVisible83		; $514c
+
+	jp fadeinFromWhite		; $514f
+
+
+; Spawning ENEMYID_GANON_REVIVAL_CUTSCENE
+_ganon_state1:
+	call getFreeEnemySlot_uncounted		; $5152
+	ret nz			; $5155
+	ld (hl),ENEMYID_GANON_REVIVAL_CUTSCENE		; $5156
+	ld l,Enemy.relatedObj1		; $5158
+	ld (hl),Enemy.start		; $515a
+	inc l			; $515c
+	ld (hl),d		; $515d
+
+	call _ecom_incState		; $515e
+	ld l,Enemy.counter2		; $5161
+	ld (hl),60		; $5163
+	ret			; $5165
+
+
+_ganon_state2:
+	; Wait for signal?
+	ld e,Enemy.counter1		; $5166
+	ld a,(de)		; $5168
+	or a			; $5169
+	ret z			; $516a
+	call _ecom_decCounter2		; $516b
+	jp nz,_ecom_flickerVisibility		; $516e
+
+	dec l			; $5171
+	ld (hl),193 ; [counter1]
+	ld l,Enemy.state		; $5174
+	inc (hl)		; $5176
+	ld a,$0d		; $5177
+	call enemySetAnimation		; $5179
+	jp objectSetVisible83		; $517c
+
+
+; Rumbling while "skull" is on-screen
+_ganon_state3:
+	call _ecom_decCounter1		; $517f
+	jr z,@nextState	; $5182
+
+	ld a,(hl) ; [counter1]
+	and $3f			; $5185
+	ld a,SND_RUMBLE2		; $5187
+	call z,playSound		; $5189
+	jp enemyAnimate		; $518c
+
+@nextState:
+	ld l,e			; $518f
+	inc (hl)		; $5190
+	ld l,$8f		; $5191
+	ld (hl),$00		; $5193
+	ld a,$02		; $5195
+	call objectGetRelatedObject2Var		; $5197
+	ld (hl),$02		; $519a
+	ld a,$01		; $519c
+	jp enemySetAnimation		; $519e
+
+
+; "Ball-like" animation, then ganon himself appears
+_ganon_state4:
+	ld e,Enemy.animParameter		; $51a1
+	ld a,(de)		; $51a3
+	inc a			; $51a4
+	jp nz,enemyAnimate		; $51a5
+
+	call _ecom_incState		; $51a8
+	ld l,Enemy.counter1		; $51ab
+	ld (hl),15		; $51ad
+
+	ld a,GFXH_b1		; $51af
+	call loadGfxHeader		; $51b1
+	ld a,UNCMP_GFXH_32		; $51b4
+	call loadUncompressedGfxHeader		; $51b6
+
+	ld hl,wLoadedObjectGfx+2		; $51b9
+	ld (hl),OBJGFXH_17		; $51bc
+	inc l			; $51be
+	ld (hl),$01		; $51bf
+
+	ldh a,(<hActiveObject)	; $51c1
+	ld d,a			; $51c3
+	ld a,$02		; $51c4
+	jp enemySetAnimation		; $51c6
+
+
+; Brief delay
+_ganon_state5:
+	call _ecom_decCounter1		; $51c9
+	ret nz			; $51cc
+
+	ld a,120		; $51cd
+	ld (hl),a ; [counter1]
+	ld (wScreenShakeCounterY),a		; $51d0
+
+	ld l,e			; $51d3
+	inc (hl) ; [state] = 6
+
+	ld a,SND_BOSS_DEAD	; $51d5
+	call playSound		; $51d7
+
+	ld a,$03		; $51da
+	call enemySetAnimation		; $51dc
+
+	call showStatusBar		; $51df
+	ldh a,(<hActiveObject)	; $51e2
+	ld d,a			; $51e4
+	jp clearPaletteFadeVariablesAndRefreshPalettes		; $51e5
+
+
+; "Roaring" as fight is about to begin
+_ganon_state6:
+	call _ecom_decCounter1		; $51e8
+	jp nz,enemyAnimate		; $51eb
+
+	ld (hl),30 ; [counter1]		; $51ee
+	ld l,e			; $51f0
+	inc (hl) ; [state] = 7
+
+	ld hl,wLoadedObjectGfx+6		; $51f2
+	xor a			; $51f5
+	ldi (hl),a		; $51f6
+	ldi (hl),a		; $51f7
+	ldi (hl),a		; $51f8
+	ldi (hl),a		; $51f9
+
+	ld (wDisableLinkCollisionsAndMenu),a		; $51fa
+	ld (wDisabledObjects),a		; $51fd
+
+	ld bc,TX_2f0d		; $5200
+	call showText		; $5203
+
+	ld a,$02		; $5206
+	jp enemySetAnimation		; $5208
+
+
+; Fight begins
+_ganon_state7:
+	ld a,MUS_GANON		; $520b
+	ld (wActiveMusic),a		; $520d
+	call playSound		; $5210
+	jp _ganon_decideNextMove		; $5213
+
+
+; 3-projectile attack
+_ganon_state8:
+	inc e			; $5216
+	ld a,(de) ; [state2]
+	rst_jumpTable			; $5218
+	.dw _ganon_state8_substate0
+	.dw _ganon_state8_substate1
+	.dw _ganon_state8_substate2
+	.dw _ganon_state8_substate3
+	.dw _ganon_state8_substate4
+	.dw _ganon_state8_substate5
+	.dw _ganon_state8_substate6
+	.dw _ganon_state8_substate7
+
+; Also used by state D
+_ganon_state8_substate0:
+	call _ganon_updateTeleportVarsAndPlaySound		; $5229
+	ld l,Enemy.state2		; $522c
+	inc (hl)		; $522e
+	ret			; $522f
+
+; Disappearing. Also used by state D
+_ganon_state8_substate1:
+	call _ecom_decCounter1		; $5230
+	jp nz,_ganon_updateTeleportAnimationGoingOut		; $5233
+	ld l,e			; $5236
+	inc (hl) ; [state2]
+	call _ganon_decideTeleportLocationAndCounter		; $5238
+	jp objectSetInvisible		; $523b
+
+; Delay before reappearing. Also used by state 9, C, D
+_ganon_state8_substate2:
 	call _ecom_decCounter1		; $523e
-	jp nz,seasonsFunc_0f_5704		; $5241
-	ld l,e			; $5244
-	inc (hl)		; $5245
-	call $5795		; $5246
-	jp objectSetInvisible		; $5249
-	call _ecom_decCounter1		; $524c
-	ret nz			; $524f
-	ld l,e			; $5250
-	inc (hl)		; $5251
-	jp $571b		; $5252
-	call _ecom_decCounter1		; $5255
-	jp nz,seasonsFunc_0f_5730		; $5258
-	ld (hl),$08		; $525b
-	ld l,e			; $525d
-	inc (hl)		; $525e
-	ld l,$b0		; $525f
-	ld a,(hl)		; $5261
-	ld l,$8d		; $5262
-	ld (hl),a		; $5264
-	ld l,$a4		; $5265
-	set 7,(hl)		; $5267
-	jp objectSetVisible83		; $5269
-	call _ecom_decCounter1		; $526c
-	ret nz			; $526f
-	ld (hl),$02		; $5270
-	ld l,e			; $5272
-	inc (hl)		; $5273
-	ld a,$b3		; $5274
-	jp $56ec		; $5276
-	call _ecom_decCounter1		; $5279
-	ret nz			; $527c
-	ld (hl),$2d		; $527d
-	ld l,e			; $527f
-	inc (hl)		; $5280
-	ld a,$05		; $5281
-	call enemySetAnimation		; $5283
-	call _ecom_updateAngleTowardTarget		; $5286
-	ld bc,$003c		; $5289
-	jr _label_0f_119		; $528c
-	call _ecom_decCounter1		; $528e
-	jr nz,_label_0f_118	; $5291
-	ld (hl),$3c		; $5293
-	ld l,e			; $5295
-	inc (hl)		; $5296
-	ld a,$02		; $5297
-	jp enemySetAnimation		; $5299
-_label_0f_118:
-	ld a,(hl)		; $529c
-	cp $19			; $529d
-	ret nz			; $529f
-	ld bc,$0264		; $52a0
-	call $52a9		; $52a3
-	ld bc,$fe64		; $52a6
-_label_0f_119:
-	ld e,$52		; $52a9
-	call $57d2		; $52ab
-	ret nz			; $52ae
-	ld l,$c9		; $52af
-	ld e,$89		; $52b1
-	ld a,(de)		; $52b3
-	add b			; $52b4
-	and $1f			; $52b5
-	ld (hl),a		; $52b7
-	ld l,$d0		; $52b8
-	ld (hl),c		; $52ba
-	jp objectCopyPosition		; $52bb
-	call _ecom_decCounter1		; $52be
-	ret nz			; $52c1
-	jp $5736		; $52c2
-	inc e			; $52c5
-	ld a,(de)		; $52c6
-	rst_jumpTable			; $52c7
-	ret c			; $52c8
-	ld d,d			; $52c9
-	rst_addDoubleIndex			; $52ca
-	ld d,d			; $52cb
-	ld c,h			; $52cc
-	ld d,d			; $52cd
-.DB $f4				; $52ce
-	ld d,d			; $52cf
-	dec b			; $52d0
-	ld d,e			; $52d1
-	inc a			; $52d2
-	ld d,e			; $52d3
-	ld c,(hl)		; $52d4
-	ld d,e			; $52d5
-	ld e,e			; $52d6
-	ld d,e			; $52d7
-	call $571b		; $52d8
-	ld l,$85		; $52db
-	inc (hl)		; $52dd
-	ret			; $52de
-	call _ecom_decCounter1		; $52df
-	jp nz,seasonsFunc_0f_5704		; $52e2
-	ld (hl),$78		; $52e5
-	ld l,e			; $52e7
-	inc (hl)		; $52e8
-	ld l,$8b		; $52e9
-	ld (hl),$58		; $52eb
-	ld l,$8d		; $52ed
-	ld (hl),$78		; $52ef
-	jp objectSetInvisible		; $52f1
-	call _ecom_decCounter1		; $52f4
-	jp nz,seasonsFunc_0f_5730		; $52f7
-	ld (hl),$08		; $52fa
-	ld l,e			; $52fc
-	inc (hl)		; $52fd
-	ld l,$a4		; $52fe
-	set 7,(hl)		; $5300
-	jp objectSetVisible83		; $5302
-	call _ecom_decCounter1		; $5305
-	ret nz			; $5308
-	ld (hl),$28		; $5309
-	ld l,e			; $530b
-	inc (hl)		; $530c
-	ld a,$b6		; $530d
-	call $56ec		; $530f
-	ld a,$09		; $5312
-	call enemySetAnimation		; $5314
-	ld b,$1c		; $5317
-	call $5328		; $5319
-	ld b,$14		; $531c
-	call $5328		; $531e
-	ld b,$0c		; $5321
-	call $5328		; $5323
-	ld b,$04		; $5326
-	ld e,$52		; $5328
-	call $57d2		; $532a
-	ld l,$c2		; $532d
-	inc (hl)		; $532f
-	ld l,$c9		; $5330
-	ld (hl),b		; $5332
-	ld l,$d7		; $5333
-	ld (hl),d		; $5335
-	dec l			; $5336
-	ld (hl),$80		; $5337
-	jp objectCopyPosition		; $5339
-	call _ecom_decCounter1		; $533c
-	ret nz			; $533f
-	ld (hl),$28		; $5340
-	ld l,e			; $5342
-	inc (hl)		; $5343
-	ld a,$b2		; $5344
-	call $56ec		; $5346
-	ld a,$07		; $5349
-	jp enemySetAnimation		; $534b
-	call _ecom_decCounter1		; $534e
-	ret nz			; $5351
-	ld (hl),$50		; $5352
-	ld l,e			; $5354
-	inc (hl)		; $5355
-	ld a,$02		; $5356
-	jp enemySetAnimation		; $5358
-	call _ecom_decCounter1		; $535b
-	ret nz			; $535e
-	jp $5736		; $535f
-	inc e			; $5362
-	ld a,(de)		; $5363
-	rst_jumpTable			; $5364
-	ret c			; $5365
-	ld d,d			; $5366
-	ld (hl),l		; $5367
-	ld d,e			; $5368
-	add d			; $5369
-	ld d,e			; $536a
-	or l			; $536b
-	ld d,e			; $536c
-	jp nc,$e753		; $536d
-	ld d,e			; $5370
-.DB $fd				; $5371
-	ld d,e			; $5372
-	dec de			; $5373
-	ld d,h			; $5374
-	call _ecom_decCounter1		; $5375
-	jp nz,seasonsFunc_0f_5704		; $5378
-	ld (hl),$78		; $537b
-	ld l,e			; $537d
-	inc (hl)		; $537e
-	jp objectSetInvisible		; $537f
-	call _ecom_decCounter1		; $5382
-	ret nz			; $5385
-	ld l,e			; $5386
-	inc (hl)		; $5387
-	ldh a,(<hEnemyTargetX)	; $5388
-	cp $78			; $538a
-	ld bc,$0328		; $538c
-	jr c,_label_0f_120	; $538f
-	ld bc,$00d8		; $5391
-_label_0f_120:
-	ld l,$b2		; $5394
-	ld (hl),b		; $5396
-	add c			; $5397
-	ld l,$8d		; $5398
-	ldd (hl),a		; $539a
-	ldh a,(<hEnemyTargetY)	; $539b
-	cp $30			; $539d
-	jr c,_label_0f_121	; $539f
-	sub $18			; $53a1
-_label_0f_121:
-	dec l			; $53a3
-	ld (hl),a		; $53a4
-	ld a,$b2		; $53a5
-	call $56ec		; $53a7
-	ld e,$b2		; $53aa
-	ld a,(de)		; $53ac
-	add $07			; $53ad
-	call enemySetAnimation		; $53af
-	jp $571b		; $53b2
-	call _ecom_decCounter1		; $53b5
-	jp nz,seasonsFunc_0f_5730		; $53b8
-	ld (hl),$02		; $53bb
-	ld l,e			; $53bd
-	inc (hl)		; $53be
-	ld l,$a4		; $53bf
-	set 7,(hl)		; $53c1
-	ld l,$90		; $53c3
-	ld (hl),$78		; $53c5
-	call _ecom_updateAngleTowardTarget		; $53c7
-	ld e,$50		; $53ca
-	call $57d2		; $53cc
-	jp objectSetVisible83		; $53cf
-	call _ecom_decCounter1		; $53d2
-	ret nz			; $53d5
-	ld (hl),$04		; $53d6
-	ld l,e			; $53d8
-	inc (hl)		; $53d9
-	ld a,$b7		; $53da
-	call $56ec		; $53dc
-	ld e,$b2		; $53df
-	ld a,(de)		; $53e1
-	add $08			; $53e2
-	call enemySetAnimation		; $53e4
-	call _ecom_decCounter1		; $53e7
-	jr nz,_label_0f_122	; $53ea
-	ld (hl),$10		; $53ec
-	ld l,e			; $53ee
-	inc (hl)		; $53ef
-	ld a,$b6		; $53f0
-	call $56ec		; $53f2
-	ld e,$b2		; $53f5
-	ld a,(de)		; $53f7
-	add $09			; $53f8
-	jp enemySetAnimation		; $53fa
-	call _ecom_decCounter1		; $53fd
-	jr nz,_label_0f_122	; $5400
-	ld l,e			; $5402
-	inc (hl)		; $5403
-	inc l			; $5404
-	ld (hl),$1e		; $5405
-	ret			; $5407
-_label_0f_122:
-	ld e,$8b		; $5408
-	ld a,(de)		; $540a
-	sub $18			; $540b
-	cp $80			; $540d
-	ret nc			; $540f
-	ld e,$8d		; $5410
-	ld a,(de)		; $5412
-	sub $18			; $5413
-	cp $c0			; $5415
-	ret nc			; $5417
-	jp objectApplySpeed		; $5418
-	call _ecom_decCounter1		; $541b
-	ret nz			; $541e
-	ld a,$02		; $541f
-	call enemySetAnimation		; $5421
-	jp $5736		; $5424
-	inc e			; $5427
-	ld a,(de)		; $5428
-	rst_jumpTable			; $5429
-	ret c			; $542a
-	ld d,d			; $542b
-	ld b,b			; $542c
-	ld d,h			; $542d
-	ld c,l			; $542e
-	ld d,h			; $542f
-	ld l,b			; $5430
-	ld d,h			; $5431
-	add l			; $5432
-	ld d,h			; $5433
-	sbc h			; $5434
-	ld d,h			; $5435
-	call nz,$e954		; $5436
-	ld d,h			; $5439
-	nop			; $543a
-	ld d,l			; $543b
-	dec d			; $543c
-	ld d,l			; $543d
-	ldi (hl),a		; $543e
-	ld d,l			; $543f
-	call _ecom_decCounter1		; $5440
-	jp nz,seasonsFunc_0f_5704		; $5443
-	ld (hl),$b4		; $5446
-	ld l,e			; $5448
-	inc (hl)		; $5449
-	jp objectSetInvisible		; $544a
-	call _ecom_decCounter1		; $544d
-	ret nz			; $5450
-	ld l,e			; $5451
-	inc (hl)		; $5452
-	ld l,$8b		; $5453
-	ld (hl),$28		; $5455
-	ld l,$8d		; $5457
-	ld (hl),$78		; $5459
-	ld a,$b2		; $545b
-	call $56ec		; $545d
-	ld a,$04		; $5460
-	call enemySetAnimation		; $5462
-	jp $571b		; $5465
-	call _ecom_decCounter1		; $5468
-	jp nz,seasonsFunc_0f_5730		; $546b
-	ld (hl),$40		; $546e
-	ld l,e			; $5470
-	inc (hl)		; $5471
-	ld l,$a4		; $5472
-	set 7,(hl)		; $5474
-	call objectSetVisible83		; $5476
-	ld e,$51		; $5479
-	call $57d2		; $547b
-	ret nz			; $547e
-	ld bc,$f810		; $547f
-	jp objectCopyPositionWithOffset		; $5482
-	call _ecom_decCounter1		; $5485
-	ret nz			; $5488
-	ld l,e			; $5489
-	inc (hl)		; $548a
-	ld l,$94		; $548b
-	ld a,$40		; $548d
-	ldi (hl),a		; $548f
-	ld (hl),$fe		; $5490
-	ld a,$b3		; $5492
-	call $56ec		; $5494
-	ld a,$05		; $5497
-	jp enemySetAnimation		; $5499
-	ld c,$20		; $549c
-	call objectUpdateSpeedZ_paramC		; $549e
-	jr z,_label_0f_123	; $54a1
-	ldd a,(hl)		; $54a3
-	or a			; $54a4
-	ret nz			; $54a5
-	ld a,(hl)		; $54a6
-	cp $c0			; $54a7
-	ret nz			; $54a9
-	ld a,$b5		; $54aa
-	call $56ec		; $54ac
-	ld a,$06		; $54af
-	jp enemySetAnimation		; $54b1
-_label_0f_123:
-	ld l,$86		; $54b4
-	ld a,$78		; $54b6
-	ld (hl),a		; $54b8
-	ld ($cd18),a		; $54b9
-	ld l,$85		; $54bc
-	inc (hl)		; $54be
-	ld a,$6f		; $54bf
-	jp playSound		; $54c1
-	call _ecom_decCounter1		; $54c4
-	jr z,_label_0f_124	; $54c7
-	ld a,(hl)		; $54c9
-	cp $69			; $54ca
-	ret c			; $54cc
-	ld a,($d00f)		; $54cd
-	rlca			; $54d0
-	ret c			; $54d1
-	ld hl,$cc6a		; $54d2
-	ld a,$14		; $54d5
-	ldi (hl),a		; $54d7
-	ld (hl),$00		; $54d8
-	ret			; $54da
-_label_0f_124:
-	ld (hl),$04		; $54db
-	ld l,e			; $54dd
-	inc (hl)		; $54de
-	ld a,$b2		; $54df
-	call $56ec		; $54e1
-	ld a,$04		; $54e4
-	jp enemySetAnimation		; $54e6
-	call _ecom_decCounter1		; $54e9
-	ret nz			; $54ec
-	ld (hl),$18		; $54ed
-	ld l,e			; $54ef
-	inc (hl)		; $54f0
-	ld e,$51		; $54f1
-	call $57d2		; $54f3
-	ret nz			; $54f6
-	ld l,$c2		; $54f7
-	inc (hl)		; $54f9
-	ld bc,$f810		; $54fa
-	jp objectCopyPositionWithOffset		; $54fd
-	call _ecom_decCounter1		; $5500
-	ret nz			; $5503
-	ld (hl),$3c		; $5504
-	ld l,e			; $5506
-	inc (hl)		; $5507
-	call objectCreatePuff		; $5508
-	ld a,$b3		; $550b
-	call $56ec		; $550d
-	ld a,$05		; $5510
-	jp enemySetAnimation		; $5512
-	call _ecom_decCounter1		; $5515
-	ret nz			; $5518
-	ld (hl),$3c		; $5519
-	ld l,e			; $551b
-	inc (hl)		; $551c
-	ld a,$02		; $551d
-	jp enemySetAnimation		; $551f
-	call _ecom_decCounter1		; $5522
-	ret nz			; $5525
-	jp $5736		; $5526
-	inc e			; $5529
-	ld a,(de)		; $552a
-	rst_jumpTable			; $552b
-	ret c			; $552c
-	ld d,d			; $552d
-	ld b,d			; $552e
-	ld d,l			; $552f
-	ld c,h			; $5530
-	ld d,d			; $5531
-	ld d,a			; $5532
-	ld d,l			; $5533
-	ld l,l			; $5534
-	ld d,l			; $5535
-	sub a			; $5536
-	ld d,l			; $5537
-	and a			; $5538
-	ld d,l			; $5539
-	call $0555		; $553a
-	ld d,(hl)		; $553d
-	dec sp			; $553e
-	ld d,(hl)		; $553f
-	ld d,b			; $5540
-	ld d,(hl)		; $5541
-	call _ecom_decCounter1		; $5542
-	jp nz,seasonsFunc_0f_5704		; $5545
-	ld (hl),$5a		; $5548
-	ld l,e			; $554a
-	inc (hl)		; $554b
-	ld l,$8b		; $554c
-	ld (hl),$58		; $554e
-	ld l,$8d		; $5550
-	ld (hl),$78		; $5552
-	jp objectSetInvisible		; $5554
-	call _ecom_decCounter1		; $5557
-	jp nz,seasonsFunc_0f_5730		; $555a
-	ld (hl),$5a		; $555d
-	ld l,e			; $555f
-	inc (hl)		; $5560
-	ld l,$a4		; $5561
-	set 7,(hl)		; $5563
-	call objectSetVisible83		; $5565
-	ld a,$b4		; $5568
-	jp playSound		; $556a
-	call _ecom_decCounter1		; $556d
-	jr z,_label_0f_125	; $5570
-	ld a,(hl)		; $5572
-	cp $3c			; $5573
-	ret nc			; $5575
-	and $03			; $5576
-	ret nz			; $5578
-	ld l,$9b		; $5579
-	ld a,(hl)		; $557b
-	xor $05			; $557c
-	ldi (hl),a		; $557e
-	ld (hl),a		; $557f
-	ret			; $5580
-_label_0f_125:
-	ld l,$a9		; $5581
-	ld a,(hl)		; $5583
-	or a			; $5584
-	ret z			; $5585
-	ld l,e			; $5586
-	inc (hl)		; $5587
-	ld l,$a4		; $5588
-	res 7,(hl)		; $558a
-	ld l,$9b		; $558c
-	ld a,$01		; $558e
-	ldi (hl),a		; $5590
-	ld (hl),a		; $5591
-	ld a,$02		; $5592
-	jp fadeoutToBlackWithDelay		; $5594
-	ld a,($c4ab)		; $5597
-	or a			; $559a
-	ret nz			; $559b
-	ld a,$06		; $559c
-	ld (de),a		; $559e
-	ld a,$04		; $559f
-	call $582a		; $55a1
-	jp $57df		; $55a4
-	ld h,d			; $55a7
-	ld l,e			; $55a8
-	inc (hl)		; $55a9
-	inc l			; $55aa
-	ld (hl),$3c		; $55ab
-	ld l,$a4		; $55ad
-	set 7,(hl)		; $55af
-	ld l,$90		; $55b1
-	ld (hl),$14		; $55b3
-	call getRandomNumber_noPreserveVars		; $55b5
-	and $07			; $55b8
-	ld hl,$55c5		; $55ba
-	rst_addAToHl			; $55bd
-	ld e,$87		; $55be
-	ld a,(hl)		; $55c0
-	ld (de),a		; $55c1
-	jp fadeinFromBlack		; $55c2
-	ldd (hl),a		; $55c5
-	ld d,b			; $55c6
-	ld d,b			; $55c7
-	ld e,d			; $55c8
-	ld e,d			; $55c9
-	ld e,d			; $55ca
-	ld e,d			; $55cb
-	sub (hl)		; $55cc
-	ld a,$02		; $55cd
-	ld ($cbc3),a		; $55cf
-	ld a,(wFrameCounter)		; $55d2
-	and $03			; $55d5
-	jr nz,_label_0f_126	; $55d7
-	call _ecom_decCounter2		; $55d9
-	jr nz,_label_0f_126	; $55dc
-	ld l,$85		; $55de
-	inc (hl)		; $55e0
-	inc (hl)		; $55e1
-	ld l,$a4		; $55e2
-	res 7,(hl)		; $55e4
-	jp fastFadeoutToWhite		; $55e6
-_label_0f_126:
-	call _ecom_decCounter1		; $55e9
-	jr nz,_label_0f_127	; $55ec
-	ld l,e			; $55ee
-	inc (hl)		; $55ef
-	ld l,$86		; $55f0
-	ld (hl),$50		; $55f2
-	ld a,$b3		; $55f4
-	jp $56ec		; $55f6
-_label_0f_127:
-	call _ecom_updateAngleTowardTarget		; $55f9
-	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $55fc
-	call enemyAnimate		; $55ff
-	jp $580b		; $5602
-	ld a,$02		; $5605
-	ld ($cbc3),a		; $5607
-	call $580b		; $560a
-	ld a,(wFrameCounter)		; $560d
-	and $03			; $5610
-	call z,_ecom_decCounter2		; $5612
-	call _ecom_decCounter1		; $5615
-	jr z,_label_0f_128	; $5618
-	ld a,(hl)		; $561a
-	cp $3c			; $561b
-	ret nz			; $561d
-	ld a,$05		; $561e
-	call enemySetAnimation		; $5620
-	ld e,$52		; $5623
-	call $57d2		; $5625
-	ret nz			; $5628
-	ld l,$c2		; $5629
-	ld (hl),$02		; $562b
-	jp objectCopyPosition		; $562d
-_label_0f_128:
-	ld l,$85		; $5630
-	dec (hl)		; $5632
-	inc l			; $5633
-	ld (hl),$3c		; $5634
-	ld a,$02		; $5636
-	jp enemySetAnimation		; $5638
-	ld a,($c4ab)		; $563b
-	or a			; $563e
-	ret nz			; $563f
-	ld a,$0a		; $5640
-	ld (de),a		; $5642
-	ld a,$03		; $5643
-	call $582a		; $5645
-	ld a,$b1		; $5648
-	ld ($cbe3),a		; $564a
-	jp loadPaletteHeader		; $564d
-	ld h,d			; $5650
-	ld l,$a4		; $5651
-	set 7,(hl)		; $5653
-	call clearPaletteFadeVariablesAndRefreshPalettes		; $5655
-	jp $5736		; $5658
-	inc e			; $565b
-	ld a,(de)		; $565c
-	rst_jumpTable			; $565d
-	scf			; $565e
-	ld d,d			; $565f
-	ld a,$52		; $5660
-	ld c,h			; $5662
-	ld d,d			; $5663
-	ld l,b			; $5664
-	ld d,(hl)		; $5665
-	ld (hl),$57		; $5666
-	call _ecom_decCounter1		; $5668
-	jp nz,seasonsFunc_0f_5730		; $566b
-	ld l,e			; $566e
-	inc (hl)		; $566f
-	ld l,$b0		; $5670
-	ld a,(hl)		; $5672
-	ld l,$8d		; $5673
-	ld (hl),a		; $5675
-	jp objectSetVisible83		; $5676
-	inc e			; $5679
-	ld a,(de)		; $567a
-	rst_jumpTable			; $567b
-	add h			; $567c
-	ld d,(hl)		; $567d
-	or e			; $567e
-	ld d,(hl)		; $567f
-	push bc			; $5680
-	ld d,(hl)		; $5681
-	reti			; $5682
-	ld d,(hl)		; $5683
-	call _ecom_decCounter1		; $5684
-	jp nz,_ecom_flickerVisibility		; $5687
-	inc (hl)		; $568a
-	ld e,$04		; $568b
-	call $57d2		; $568d
-	ret nz			; $5690
-	ld l,$c2		; $5691
-	inc (hl)		; $5693
-	call objectCopyPosition		; $5694
-	ld e,$98		; $5697
-	ld a,$c0		; $5699
-	ld (de),a		; $569b
-	inc e			; $569c
-	ld a,h			; $569d
-	ld (de),a		; $569e
-	ld hl,$cc30		; $569f
-	inc (hl)		; $56a2
-	ld h,d			; $56a3
-	ld l,$85		; $56a4
-	inc (hl)		; $56a6
-	ld l,$8f		; $56a7
-	ld (hl),$00		; $56a9
-	call objectSetInvisible		; $56ab
-	ld a,$bc		; $56ae
-	jp playSound		; $56b0
-	ld a,$21		; $56b3
-	call objectGetRelatedObject2Var		; $56b5
-	bit 7,(hl)		; $56b8
-	ret z			; $56ba
-	ld h,d			; $56bb
-	ld l,$85		; $56bc
-	inc (hl)		; $56be
-	inc l			; $56bf
-	ld (hl),$08		; $56c0
-	jp fastFadeoutToWhite		; $56c2
-	call _ecom_decCounter1		; $56c5
-	ret nz			; $56c8
-	ld (hl),$1e		; $56c9
-	ld l,e			; $56cb
-	inc (hl)		; $56cc
-	xor a			; $56cd
-	ld ($cbe3),a		; $56ce
-	call $582a		; $56d1
-	ld a,$02		; $56d4
-	jp fadeinFromWhiteWithDelay		; $56d6
-	ld a,($c4ab)		; $56d9
-	or a			; $56dc
-	ret nz			; $56dd
-	call _ecom_decCounter1		; $56de
-	ret nz			; $56e1
-	xor a			; $56e2
-	ld ($cbca),a		; $56e3
-	call decNumEnemies		; $56e6
-	jp enemyDelete		; $56e9
-	push af			; $56ec
-	call loadGfxHeader		; $56ed
-	ld a,UNCMP_GFXH_33		; $56f0
-	call loadUncompressedGfxHeader		; $56f2
-	pop af			; $56f5
-	sub $b2			; $56f6
-	add $1e			; $56f8
-	ld hl,$cc0b		; $56fa
-	ldi (hl),a		; $56fd
-	ld (hl),$01		; $56fe
-	ldh a,(<hActiveObject)	; $5700
-	ld d,a			; $5702
-	ret			; $5703
+	ret nz			; $5241
+	ld l,e			; $5242
+	inc (hl) ; [state2]
+	jp _ganon_updateTeleportVarsAndPlaySound		; $5244
 
-seasonsFunc_0f_5704:
-	ld a,(hl)		; $5704
-	and $3e			; $5705
-	rrca			; $5707
-	ld b,a			; $5708
-	ld a,$20		; $5709
-	sub b			; $570b
-_label_0f_129:
-	bit 1,(hl)		; $570c
-	jr z,_label_0f_130	; $570e
-	cpl			; $5710
-	inc a			; $5711
-_label_0f_130:
-	ld l,$b0		; $5712
-	add (hl)		; $5714
-	ld l,$8d		; $5715
-	ld (hl),a		; $5717
-	jp _ecom_flickerVisibility		; $5718
-	ld a,$8d		; $571b
-	call playSound		; $571d
-	ld h,d			; $5720
-	ld l,$a4		; $5721
-	res 7,(hl)		; $5723
-	ld l,$86		; $5725
-	ld (hl),$3c		; $5727
-	ld l,$8d		; $5729
-	ld a,(hl)		; $572b
-	ld l,$b0		; $572c
-	ld (hl),a		; $572e
-	ret			; $572f
+; Reappearing.
+_ganon_state8_substate3:
+	call _ecom_decCounter1		; $5247
+	jp nz,_ganon_updateTeleportAnimationComingIn		; $524a
 
-seasonsFunc_0f_5730:
-	ld a,(hl)		; $5730
-	and $3e			; $5731
-	rrca			; $5733
-	jr _label_0f_129		; $5734
-	ld h,d			; $5736
-	ld l,$b5		; $5737
-	ldi a,(hl)		; $5739
-	ld h,(hl)		; $573a
-	ld l,a			; $573b
-	ldi a,(hl)		; $573c
-	or a			; $573d
-	jr z,_label_0f_132	; $573e
-_label_0f_131:
-	ld e,$84		; $5740
-	ld (de),a		; $5742
-	inc e			; $5743
-	xor a			; $5744
-	ld (de),a		; $5745
-	ld e,$b5		; $5746
-	ld a,l			; $5748
-	ld (de),a		; $5749
-	inc e			; $574a
-	ld a,h			; $574b
-	ld (de),a		; $574c
-	ret			; $574d
-_label_0f_132:
-	ld e,$a9		; $574e
-	ld a,(de)		; $5750
-	cp $41			; $5751
-	ld c,$00		; $5753
-	jr nc,_label_0f_133	; $5755
-	ld c,$04		; $5757
-_label_0f_133:
-	call getRandomNumber		; $5759
-	and $03			; $575c
-	add c			; $575e
-	ld hl,$5769		; $575f
-	rst_addDoubleIndex			; $5762
-	ldi a,(hl)		; $5763
-	ld h,(hl)		; $5764
-	ld l,a			; $5765
-	ldi a,(hl)		; $5766
-	jr _label_0f_131		; $5767
-	ld a,c			; $5769
-	ld d,a			; $576a
-	ld a,l			; $576b
-	ld d,a			; $576c
-	ld a,a			; $576d
-	ld d,a			; $576e
-	add h			; $576f
-_label_0f_134:
-	ld d,a			; $5770
-	add a			; $5771
-	ld d,a			; $5772
-	adc c			; $5773
-	ld d,a			; $5774
-	adc (hl)		; $5775
-	ld d,a			; $5776
-	sub e			; $5777
-	ld d,a			; $5778
-	ld ($090a),sp		; $5779
-	nop			; $577c
-	add hl,bc		; $577d
-	nop			; $577e
-	ld a,(bc)		; $577f
-	ld ($0a09),sp		; $5780
-	nop			; $5783
-	ld a,(bc)		; $5784
-	ld ($0c00),sp		; $5785
-	nop			; $5788
-	dec bc			; $5789
-	dec c			; $578a
-	ld ($000a),sp		; $578b
-	dec bc			; $578e
-	inc c			; $578f
-	add hl,bc		; $5790
-	ld a,(bc)		; $5791
-	nop			; $5792
-	dec c			; $5793
-	nop			; $5794
-	ld bc,$0e0f		; $5795
-	call _ecom_randomBitwiseAndBCE		; $5798
-	ld a,b			; $579b
-	ld hl,$57b2		; $579c
-	rst_addAToHl			; $579f
-	ld e,$8b		; $57a0
-	ldi a,(hl)		; $57a2
-	ld (de),a		; $57a3
-	ld e,$8d		; $57a4
-	ld a,(hl)		; $57a6
-	ld (de),a		; $57a7
-	ld a,c			; $57a8
-	ld hl,$57c2		; $57a9
-	rst_addAToHl			; $57ac
-	ld e,$86		; $57ad
-	ld a,(hl)		; $57af
-	ld (de),a		; $57b0
-	ret			; $57b1
-	jr nc,$38		; $57b2
-	jr nc,$78		; $57b4
-	jr nc,_label_0f_134	; $57b6
-	ld e,b			; $57b8
-	ld e,b			; $57b9
-	ld e,b			; $57ba
-	sbc b			; $57bb
-	add b			; $57bc
-	jr c,-$80		; $57bd
-	ld a,b			; $57bf
-	add b			; $57c0
-	cp b			; $57c1
-	jr z,$28		; $57c2
-	jr z,$3c		; $57c4
-	inc a			; $57c6
-	inc a			; $57c7
-	inc a			; $57c8
-	inc a			; $57c9
-	inc a			; $57ca
-	ld e,d			; $57cb
-	ld e,d			; $57cc
-	ld e,d			; $57cd
-	ld e,d			; $57ce
-	ld e,d			; $57cf
-	ld a,b			; $57d0
-	ld a,b			; $57d1
-	call getFreePartSlot		; $57d2
-	ret nz			; $57d5
-	ld (hl),e		; $57d6
-	ld l,$d6		; $57d7
-	ld (hl),$80		; $57d9
-	inc l			; $57db
-	ld (hl),d		; $57dc
-	xor a			; $57dd
-	ret			; $57de
-	ld hl,$ce10		; $57df
-	ld b,$09		; $57e2
-_label_0f_135:
-	ld (hl),$0f		; $57e4
-	ld a,l			; $57e6
-	add $10			; $57e7
-	ld l,a			; $57e9
-	dec b			; $57ea
-	jr nz,_label_0f_135	; $57eb
-	ld l,$1e		; $57ed
-	ld b,$09		; $57ef
-_label_0f_136:
-	ld (hl),$0f		; $57f1
-	ld a,l			; $57f3
-	add $10			; $57f4
-	ld l,a			; $57f6
-	dec b			; $57f7
-	jr nz,_label_0f_136	; $57f8
-	ld l,$00		; $57fa
-	ld a,$0f		; $57fc
-	ld b,a			; $57fe
-_label_0f_137:
-	ldi (hl),a		; $57ff
-	dec b			; $5800
-	jr nz,_label_0f_137	; $5801
-	ld l,$a0		; $5803
-	ld b,a			; $5805
-_label_0f_138:
-	ldi (hl),a		; $5806
-	dec b			; $5807
-	jr nz,_label_0f_138	; $5808
-	ret			; $580a
-	ld a,($cd00)		; $580b
-	and $01			; $580e
-	ret z			; $5810
-	ld a,($c4ab)		; $5811
-	or a			; $5814
-	ret nz			; $5815
-	ld a,(wFrameCounter)		; $5816
-	rrca			; $5819
-	ret c			; $581a
-	ld h,d			; $581b
-	ld l,$b7		; $581c
-	ld a,(hl)		; $581e
-	inc (hl)		; $581f
-	and $07			; $5820
-	add $b1			; $5822
-	ld ($cbe3),a		; $5824
-	jp loadPaletteHeader		; $5827
-	ld ($ccc4),a		; $582a
-	call func_131f		; $582d
-	ldh a,(<hActiveObject)	; $5830
-	ld d,a			; $5832
-	ret			; $5833
+	; Done teleporting, he will become solid again
+	ld (hl),$08 ; [counter1]
+	ld l,e			; $524f
+	inc (hl) ; [state2]
+
+	ld l,Enemy.var30		; $5251
+	ld a,(hl)		; $5253
+	ld l,Enemy.xh		; $5254
+	ld (hl),a		; $5256
+
+	ld l,Enemy.collisionType		; $5257
+	set 7,(hl)		; $5259
+	jp objectSetVisible83		; $525b
+
+_ganon_state8_substate4:
+	call _ecom_decCounter1		; $525e
+	ret nz			; $5261
+	ld (hl),$02		; $5262
+	ld l,e			; $5264
+	inc (hl) ; [state2]
+	ld a,GFXH_b3		; $5266
+	jp ganon_loadGfxHeader		; $5268
+
+_ganon_state8_substate5:
+	call _ecom_decCounter1		; $526b
+	ret nz			; $526e
+	ld (hl),45		; $526f
+	ld l,e			; $5271
+	inc (hl)		; $5272
+	ld a,$05		; $5273
+	call enemySetAnimation		; $5275
+	call _ecom_updateAngleTowardTarget		; $5278
+	ldbc $00,SPEED_180		; $527b
+	jr _ganon_state8_spawnProjectile		; $527e
+
+_ganon_state8_substate6:
+	call _ecom_decCounter1		; $5280
+	jr nz,++		; $5283
+	ld (hl),60		; $5285
+	ld l,e			; $5287
+	inc (hl) ; [state2]
+	ld a,$02		; $5289
+	jp enemySetAnimation		; $528b
+++
+	ld a,(hl)		; $528e
+	cp $19			; $528f
+	ret nz			; $5291
+
+	ldbc $02,SPEED_280		; $5292
+	call _ganon_state8_spawnProjectile		; $5295
+
+	ldbc $fe,SPEED_280		; $5298
+
+_ganon_state8_spawnProjectile:
+	ld e,PARTID_52		; $529b
+	call _ganon_spawnPart		; $529d
+	ret nz			; $52a0
+	ld l,Part.angle		; $52a1
+	ld e,Enemy.angle		; $52a3
+	ld a,(de)		; $52a5
+	add b			; $52a6
+	and $1f			; $52a7
+	ld (hl),a		; $52a9
+	ld l,Part.speed		; $52aa
+	ld (hl),c		; $52ac
+	jp objectCopyPosition		; $52ad
+
+_ganon_state8_substate7:
+	call _ecom_decCounter1		; $52b0
+	ret nz			; $52b3
+	jp _ganon_finishAttack		; $52b4
 
 
+; Projectile attack (4 projectiles turn into 3 smaller ones each)
+_ganon_state9:
+	inc e			; $52b7
+	ld a,(de)		; $52b8
+	rst_jumpTable			; $52b9
+	.dw _ganon_state9_substate0
+	.dw _ganon_state9_substate1
+	.dw _ganon_state8_substate2
+	.dw _ganon_state9_substate3
+	.dw _ganon_state9_substate4
+	.dw _ganon_state9_substate5
+	.dw _ganon_state9_substate6
+	.dw _ganon_state9_substate7
+
+; Also used by state A, B, C
+_ganon_state9_substate0:
+	call _ganon_updateTeleportVarsAndPlaySound		; $52ca
+	ld l,Enemy.state2		; $52cd
+	inc (hl)		; $52cf
+	ret			; $52d0
+
+_ganon_state9_substate1:
+	call _ecom_decCounter1		; $52d1
+	jp nz,_ganon_updateTeleportAnimationGoingOut		; $52d4
+	ld (hl),120 ; [counter1]
+	ld l,e			; $52d9
+	inc (hl) ; [state2]
+	ld l,Enemy.yh		; $52db
+	ld (hl),$58		; $52dd
+	ld l,Enemy.xh		; $52df
+	ld (hl),$78		; $52e1
+	jp objectSetInvisible		; $52e3
+
+_ganon_state9_substate3:
+	call _ecom_decCounter1		; $52e6
+	jp nz,_ganon_updateTeleportAnimationComingIn		; $52e9
+	ld (hl),$08 ; [counter1]
+	ld l,e			; $52ee
+	inc (hl) ; [state2]
+	ld l,Enemy.collisionType		; $52f0
+	set 7,(hl)		; $52f2
+	jp objectSetVisible83		; $52f4
+
+_ganon_state9_substate4:
+	call _ecom_decCounter1		; $52f7
+	ret nz			; $52fa
+	ld (hl),40 ; [counter1]
+	ld l,e			; $52fd
+	inc (hl) ; [state2]
+	ld a,GFXH_b6		; $52ff
+	call ganon_loadGfxHeader		; $5301
+	ld a,$09		; $5304
+	call enemySetAnimation		; $5306
+
+	ld b,$1c		; $5309
+	call @spawnProjectile		; $530b
+	ld b,$14		; $530e
+	call @spawnProjectile		; $5310
+	ld b,$0c		; $5313
+	call @spawnProjectile		; $5315
+	ld b,$04		; $5318
+
+@spawnProjectile:
+	ld e,PARTID_52		; $531a
+	call _ganon_spawnPart		; $531c
+	ld l,Part.subid		; $531f
+	inc (hl) ; [subid] = 1
+	ld l,Part.angle		; $5322
+	ld (hl),b		; $5324
+	ld l,Part.relatedObj1+1		; $5325
+	ld (hl),d		; $5327
+	dec l			; $5328
+	ld (hl),Enemy.start		; $5329
+	jp objectCopyPosition		; $532b
+
+_ganon_state9_substate5:
+	call _ecom_decCounter1		; $532e
+	ret nz			; $5331
+	ld (hl),40 ; [counter1]
+	ld l,e			; $5334
+	inc (hl)		; $5335
+	ld a,GFXH_b2		; $5336
+	call ganon_loadGfxHeader		; $5338
+	ld a,$07		; $533b
+	jp enemySetAnimation		; $533d
+
+_ganon_state9_substate6:
+	call _ecom_decCounter1		; $5340
+	ret nz			; $5343
+	ld (hl),80		; $5344
+	ld l,e			; $5346
+	inc (hl)		; $5347
+	ld a,$02		; $5348
+	jp enemySetAnimation		; $534a
+
+_ganon_state9_substate7:
+	call _ecom_decCounter1		; $534d
+	ret nz			; $5350
+	jp _ganon_finishAttack		; $5351
+
+
+; "Slash" move
+_ganon_stateA:
+	inc e			; $5354
+	ld a,(de) ; [state2]
+	rst_jumpTable			; $5356
+	.dw _ganon_state9_substate0
+	.dw _ganon_stateA_substate1
+	.dw _ganon_stateA_substate2
+	.dw _ganon_stateA_substate3
+	.dw _ganon_stateA_substate4
+	.dw _ganon_stateA_substate5
+	.dw _ganon_stateA_substate6
+	.dw _ganon_stateA_substate7
+
+; Teleporting out
+_ganon_stateA_substate1:
+	call _ecom_decCounter1		; $5367
+	jp nz,_ganon_updateTeleportAnimationGoingOut		; $536a
+
+	ld (hl),120		; $536d
+	ld l,e			; $536f
+	inc (hl) ; [state2]
+	jp objectSetInvisible		; $5371
+
+; Delay before reappearing
+_ganon_stateA_substate2:
+	call _ecom_decCounter1		; $5374
+	ret nz			; $5377
+
+	ld l,e			; $5378
+	inc (hl) ; [state2]
+
+	ldh a,(<hEnemyTargetX)	; $537a
+	cp (LARGE_ROOM_WIDTH<<4)/2			; $537c
+	ldbc $03,$28		; $537e
+	jr c,+			; $5381
+	ldbc $00,-$28		; $5383
++
+	ld l,Enemy.var32		; $5386
+	ld (hl),b		; $5388
+	add c			; $5389
+	ld l,Enemy.xh		; $538a
+	ldd (hl),a		; $538c
+	ldh a,(<hEnemyTargetY)	; $538d
+	cp $30			; $538f
+	jr c,+			; $5391
+	sub $18			; $5393
++
+	dec l			; $5395
+	ld (hl),a ; [yh]
+
+	ld a,GFXH_b2		; $5397
+	call ganon_loadGfxHeader		; $5399
+	ld e,Enemy.var32		; $539c
+	ld a,(de)		; $539e
+	add $07			; $539f
+	call enemySetAnimation		; $53a1
+	jp _ganon_updateTeleportVarsAndPlaySound		; $53a4
+
+_ganon_stateA_substate3:
+	call _ecom_decCounter1		; $53a7
+	jp nz,_ganon_updateTeleportAnimationComingIn		; $53aa
+	ld (hl),$02		; $53ad
+	ld l,e			; $53af
+	inc (hl) ; [state2]
+	ld l,Enemy.collisionType		; $53b1
+	set 7,(hl)		; $53b3
+	ld l,Enemy.speed		; $53b5
+	ld (hl),SPEED_300		; $53b7
+	call _ecom_updateAngleTowardTarget		; $53b9
+	ld e,PARTID_50		; $53bc
+	call _ganon_spawnPart		; $53be
+	jp objectSetVisible83		; $53c1
+
+_ganon_stateA_substate4:
+	call _ecom_decCounter1		; $53c4
+	ret nz			; $53c7
+	ld (hl),$04		; $53c8
+	ld l,e			; $53ca
+	inc (hl) ; [state2]
+	ld a,Enemy.var37		; $53cc
+	call ganon_loadGfxHeader		; $53ce
+	ld e,Enemy.var32		; $53d1
+	ld a,(de)		; $53d3
+	add $08			; $53d4
+	call enemySetAnimation		; $53d6
+
+_ganon_stateA_substate5:
+	call _ecom_decCounter1		; $53d9
+	jr nz,+++		; $53dc
+	ld (hl),16		; $53de
+	ld l,e			; $53e0
+	inc (hl) ; [state2]
+	ld a,GFXH_b6		; $53e2
+	call ganon_loadGfxHeader		; $53e4
+	ld e,Enemy.var32		; $53e7
+	ld a,(de)		; $53e9
+	add $09			; $53ea
+	jp enemySetAnimation		; $53ec
+
+_ganon_stateA_substate6:
+	call _ecom_decCounter1		; $53ef
+	jr nz,+++		; $53f2
+	ld l,e			; $53f4
+	inc (hl) ; [state2]
+	inc l			; $53f6
+	ld (hl),30 ; [counter1]
+	ret			; $53f9
++++
+	ld e,Enemy.yh		; $53fa
+	ld a,(de)		; $53fc
+	sub $18			; $53fd
+	cp $80			; $53ff
+	ret nc			; $5401
+	ld e,Enemy.xh		; $5402
+	ld a,(de)		; $5404
+	sub $18			; $5405
+	cp $c0			; $5407
+	ret nc			; $5409
+	jp objectApplySpeed		; $540a
+
+_ganon_stateA_substate7:
+	call _ecom_decCounter1		; $540d
+	ret nz			; $5410
+	ld a,$02		; $5411
+	call enemySetAnimation		; $5413
+	jp _ganon_finishAttack		; $5416
+
+
+; The attack with the big exploding ball
+_ganon_stateB:
+	inc e			; $5419
+	ld a,(de)		; $541a
+	rst_jumpTable			; $541b
+	.dw _ganon_state9_substate0
+	.dw _ganon_stateB_substate1
+	.dw _ganon_stateB_substate2
+	.dw _ganon_stateB_substate3
+	.dw _ganon_stateB_substate4
+	.dw _ganon_stateB_substate5
+	.dw _ganon_stateB_substate6
+	.dw _ganon_stateB_substate7
+	.dw _ganon_stateB_substate8
+	.dw _ganon_stateB_substate9
+	.dw _ganon_stateB_substateA
+
+_ganon_stateB_substate1:
+	call _ecom_decCounter1		; $5432
+	jp nz,_ganon_updateTeleportAnimationGoingOut		; $5435
+	ld (hl),180		; $5438
+	ld l,e			; $543a
+	inc (hl) ; [state2]
+	jp objectSetInvisible		; $543c
+
+_ganon_stateB_substate2:
+	call _ecom_decCounter1		; $543f
+	ret nz			; $5442
+	ld l,e			; $5443
+	inc (hl) ; [state2]
+	ld l,Enemy.yh		; $5445
+	ld (hl),$28		; $5447
+	ld l,Enemy.xh		; $5449
+	ld (hl),$78		; $544b
+	ld a,GFXH_b2		; $544d
+	call ganon_loadGfxHeader		; $544f
+	ld a,$04		; $5452
+	call enemySetAnimation		; $5454
+	jp _ganon_updateTeleportVarsAndPlaySound		; $5457
+
+_ganon_stateB_substate3:
+	call _ecom_decCounter1		; $545a
+	jp nz,_ganon_updateTeleportAnimationComingIn		; $545d
+	ld (hl),$40 ; [counter1]
+	ld l,e			; $5462
+	inc (hl) ; [state2]
+	ld l,Enemy.collisionType		; $5464
+	set 7,(hl)		; $5466
+	call objectSetVisible83		; $5468
+	ld e,PARTID_51		; $546b
+	call _ganon_spawnPart		; $546d
+	ret nz			; $5470
+	ld bc,$f810		; $5471
+	jp objectCopyPositionWithOffset		; $5474
+
+_ganon_stateB_substate4:
+	call _ecom_decCounter1		; $5477
+	ret nz			; $547a
+	ld l,e			; $547b
+	inc (hl) ; [state2]
+	ld l,Enemy.speedZ		; $547d
+	ld a,<(-$1c0)		; $547f
+	ldi (hl),a		; $5481
+	ld (hl),>(-$1c0)		; $5482
+	ld a,GFXH_b3		; $5484
+	call ganon_loadGfxHeader		; $5486
+	ld a,$05		; $5489
+	jp enemySetAnimation		; $548b
+
+_ganon_stateB_substate5:
+	ld c,$20		; $548e
+	call objectUpdateSpeedZ_paramC		; $5490
+	jr z,++			; $5493
+	ldd a,(hl)		; $5495
+	or a			; $5496
+	ret nz			; $5497
+	ld a,(hl)		; $5498
+	cp $c0			; $5499
+	ret nz			; $549b
+	ld a,GFXH_b5		; $549c
+	call ganon_loadGfxHeader		; $549e
+	ld a,$06		; $54a1
+	jp enemySetAnimation		; $54a3
+++
+	ld l,Enemy.counter1		; $54a6
+	ld a,120		; $54a8
+	ld (hl),a		; $54aa
+	ld (wScreenShakeCounterY),a		; $54ab
+	ld l,Enemy.state2		; $54ae
+	inc (hl)		; $54b0
+	ld a,SND_EXPLOSION		; $54b1
+	jp playSound		; $54b3
+
+_ganon_stateB_substate6:
+	call _ecom_decCounter1		; $54b6
+	jr z,++			; $54b9
+	ld a,(hl)		; $54bb
+	cp 105			; $54bc
+	ret c			; $54be
+	ld a,(w1Link.zh)		; $54bf
+	rlca			; $54c2
+	ret c			; $54c3
+	ld hl,wLinkForceState		; $54c4
+	ld a,LINK_STATE_COLLAPSED		; $54c7
+	ldi (hl),a		; $54c9
+	ld (hl),$00 ; [wcc50]
+	ret			; $54cc
+++
+	ld (hl),$04		; $54cd
+	ld l,e			; $54cf
+	inc (hl)		; $54d0
+	ld a,GFXH_b2		; $54d1
+	call ganon_loadGfxHeader		; $54d3
+	ld a,$04		; $54d6
+	jp enemySetAnimation		; $54d8
+
+_ganon_stateB_substate7:
+	call _ecom_decCounter1		; $54db
+	ret nz			; $54de
+	ld (hl),24 ; [counter1]
+	ld l,e			; $54e1
+	inc (hl) ; [state2]
+	ld e,PARTID_51		; $54e3
+	call _ganon_spawnPart		; $54e5
+	ret nz			; $54e8
+	ld l,Part.subid		; $54e9
+	inc (hl)		; $54eb
+	ld bc,$f810		; $54ec
+	jp objectCopyPositionWithOffset		; $54ef
+
+_ganon_stateB_substate8:
+	call _ecom_decCounter1		; $54f2
+	ret nz			; $54f5
+	ld (hl),60		; $54f6
+	ld l,e			; $54f8
+	inc (hl) ; [state2]
+	call objectCreatePuff		; $54fa
+	ld a,GFXH_b3		; $54fd
+	call ganon_loadGfxHeader		; $54ff
+	ld a,$05		; $5502
+	jp enemySetAnimation		; $5504
+
+_ganon_stateB_substate9:
+	call _ecom_decCounter1		; $5507
+	ret nz			; $550a
+	ld (hl),60		; $550b
+	ld l,e			; $550d
+	inc (hl)		; $550e
+	ld a,$02		; $550f
+	jp enemySetAnimation		; $5511
+
+_ganon_stateB_substateA:
+	call _ecom_decCounter1		; $5514
+	ret nz			; $5517
+	jp _ganon_finishAttack		; $5518
+
+
+; Inverted controls
+_ganon_stateC:
+	inc e			; $551b
+	ld a,(de)		; $551c
+	rst_jumpTable			; $551d
+	.dw _ganon_state9_substate0
+	.dw _ganon_stateC_substate1
+	.dw _ganon_state8_substate2
+	.dw _ganon_stateC_substate3
+	.dw _ganon_stateC_substate4
+	.dw _ganon_stateC_substate5
+	.dw _ganon_stateC_substate6
+	.dw _ganon_stateC_substate7
+	.dw _ganon_stateC_substate8
+	.dw _ganon_stateC_substate9
+	.dw _ganon_stateC_substateA
+
+_ganon_stateC_substate1:
+	call _ecom_decCounter1		; $5534
+	jp nz,_ganon_updateTeleportAnimationGoingOut		; $5537
+	ld (hl),90 ; [counter1]
+	ld l,e			; $553c
+	inc (hl) ; [state2]
+	ld l,Enemy.yh		; $553e
+	ld (hl),$58		; $5540
+	ld l,Enemy.xh		; $5542
+	ld (hl),$78		; $5544
+	jp objectSetInvisible		; $5546
+
+_ganon_stateC_substate3:
+	call _ecom_decCounter1		; $5549
+	jp nz,_ganon_updateTeleportAnimationComingIn		; $554c
+	ld (hl),90 ; [counter1]
+	ld l,e			; $5551
+	inc (hl) ; [state2]
+	ld l,Enemy.collisionType		; $5553
+	set 7,(hl)		; $5555
+	call objectSetVisible83		; $5557
+	ld a,SND_FADEOUT		; $555a
+	jp playSound		; $555c
+
+_ganon_stateC_substate4:
+	call _ecom_decCounter1		; $555f
+	jr z,@nextSubstate	; $5562
+	ld a,(hl) ; [counter1]
+	cp 60			; $5565
+	ret nc			; $5567
+
+	and $03			; $5568
+	ret nz			; $556a
+	ld l,Enemy.oamFlagsBackup		; $556b
+	ld a,(hl)		; $556d
+	xor $05			; $556e
+	ldi (hl),a		; $5570
+	ld (hl),a		; $5571
+	ret			; $5572
+
+@nextSubstate:
+	ld l,Enemy.health		; $5573
+	ld a,(hl)		; $5575
+	or a			; $5576
+	ret z			; $5577
+
+	ld l,e			; $5578
+	inc (hl) ; [state2]
+	ld l,Enemy.collisionType		; $557a
+	res 7,(hl)		; $557c
+	ld l,Enemy.oamFlagsBackup		; $557e
+	ld a,$01		; $5580
+	ldi (hl),a		; $5582
+	ld (hl),a		; $5583
+	ld a,$02		; $5584
+	jp fadeoutToBlackWithDelay		; $5586
+
+_ganon_stateC_substate5:
+	ld a,(wPaletteThread_mode)		; $5589
+	or a			; $558c
+	ret nz			; $558d
+	ld a,$06		; $558e
+	ld (de),a ; [state2]
+	ld a,$04		; $5591
+	call _ganon_setTileReplacementMode		; $5593
+	jp _ganon_makeRoomBoundarySolid		; $5596
+
+_ganon_stateC_substate6:
+	ld h,d			; $5599
+	ld l,e			; $559a
+	inc (hl) ; [state2]
+	inc l			; $559c
+	ld (hl),60 ; [counter1]
+
+	ld l,Enemy.collisionType		; $559f
+	set 7,(hl)		; $55a1
+	ld l,Enemy.speed		; $55a3
+	ld (hl),SPEED_80		; $55a5
+
+	call getRandomNumber_noPreserveVars		; $55a7
+	and $07			; $55aa
+	ld hl,@counter2Vals		; $55ac
+	rst_addAToHl			; $55af
+	ld e,Enemy.counter2		; $55b0
+	ld a,(hl)		; $55b2
+	ld (de),a		; $55b3
+	jp fadeinFromBlack		; $55b4
+
+@counter2Vals:
+	.db 50,80,80,90,90,90,90,150
+
+_ganon_stateC_substate7:
+	ld a,$02		; $55bf
+	ld (wUseSimulatedInput),a		; $55c1
+	ld a,(wFrameCounter)		; $55c4
+	and $03			; $55c7
+	jr nz,++		; $55c9
+	call _ecom_decCounter2		; $55cb
+	jr nz,++		; $55ce
+
+	ld l,Enemy.state2		; $55d0
+	inc (hl)		; $55d2
+	inc (hl) ; [state2] = 9
+	ld l,Enemy.collisionType		; $55d4
+	res 7,(hl)		; $55d6
+	jp fastFadeoutToWhite		; $55d8
+++
+	call _ecom_decCounter1		; $55db
+	jr nz,++		; $55de
+	ld l,e			; $55e0
+	inc (hl) ; [state2] = 8
+	ld l,Enemy.counter1		; $55e2
+	ld (hl),80		; $55e4
+	ld a,GFXH_b3		; $55e6
+	jp ganon_loadGfxHeader		; $55e8
+++
+	call _ecom_updateAngleTowardTarget		; $55eb
+	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $55ee
+	call enemyAnimate		; $55f1
+	jp _ganon_updateSeizurePalette		; $55f4
+
+_ganon_stateC_substate8:
+	ld a,$02		; $55f7
+	ld (wUseSimulatedInput),a		; $55f9
+	call _ganon_updateSeizurePalette		; $55fc
+
+	ld a,(wFrameCounter)		; $55ff
+	and $03			; $5602
+	call z,_ecom_decCounter2		; $5604
+	call _ecom_decCounter1		; $5607
+	jr z,@nextSubstate	; $560a
+
+	ld a,(hl) ; [counter1]
+	cp 60			; $560d
+	ret nz			; $560f
+
+	ld a,$05		; $5610
+	call enemySetAnimation		; $5612
+	ld e,PARTID_52		; $5615
+	call _ganon_spawnPart		; $5617
+	ret nz			; $561a
+	ld l,Part.subid		; $561b
+	ld (hl),$02		; $561d
+	jp objectCopyPosition		; $561f
+
+@nextSubstate:
+	ld l,Enemy.state2		; $5622
+	dec (hl)		; $5624
+	inc l			; $5625
+	ld (hl),60		; $5626
+	ld a,$02		; $5628
+	jp enemySetAnimation		; $562a
+
+_ganon_stateC_substate9:
+	ld a,(wPaletteThread_mode)		; $562d
+	or a			; $5630
+	ret nz			; $5631
+	ld a,$0a		; $5632
+	ld (de),a ; [state2]
+	ld a,$03		; $5635
+	call _ganon_setTileReplacementMode		; $5637
+.ifdef ROM_AGES
+	ld a,PALH_b1		; $563a
+.else
+	ld a,SEASONS_PALH_b1
+.endif
+	ld (wExtraBgPaletteHeader),a		; $563c
+	jp loadPaletteHeader		; $563f
+
+_ganon_stateC_substateA:
+	ld h,d			; $5642
+	ld l,Enemy.collisionType		; $5643
+	set 7,(hl)		; $5645
+	call clearPaletteFadeVariablesAndRefreshPalettes		; $5647
+	jp _ganon_finishAttack		; $564a
+
+
+; Teleports in an out without doing anything
+_ganon_stateD:
+	inc e			; $564d
+	ld a,(de)		; $564e
+	rst_jumpTable			; $564f
+	.dw _ganon_state8_substate0
+	.dw _ganon_state8_substate1
+	.dw _ganon_state8_substate2
+	.dw _ganon_stateD_substate3
+	.dw _ganon_finishAttack
+
+_ganon_stateD_substate3:
+	call _ecom_decCounter1		; $565a
+	jp nz,_ganon_updateTeleportAnimationComingIn		; $565d
+	ld l,e			; $5660
+	inc (hl) ; [state2]
+	ld l,Enemy.var30		; $5662
+	ld a,(hl)		; $5664
+	ld l,Enemy.xh		; $5665
+	ld (hl),a		; $5667
+	jp objectSetVisible83		; $5668
+
+
+; Just died
+_ganon_stateE:
+	inc e			; $566b
+	ld a,(de) ; [state2]
+	rst_jumpTable			; $566d
+	.dw _ganon_stateE_substate0
+	.dw _ganon_stateE_substate1
+	.dw _ganon_stateE_substate2
+	.dw _ganon_stateE_substate3
+
+_ganon_stateE_substate0:
+	call _ecom_decCounter1		; $5676
+	jp nz,_ecom_flickerVisibility		; $5679
+
+	inc (hl)		; $567c
+	ld e,PARTID_BOSS_DEATH_EXPLOSION		; $567d
+	call _ganon_spawnPart		; $567f
+	ret nz			; $5682
+	ld l,Part.subid		; $5683
+	inc (hl) ; [subid] = 1
+	call objectCopyPosition		; $5686
+	ld e,Enemy.relatedObj2		; $5689
+	ld a,Part.start		; $568b
+	ld (de),a		; $568d
+	inc e			; $568e
+	ld a,h			; $568f
+	ld (de),a		; $5690
+	ld hl,wNumEnemies		; $5691
+	inc (hl)		; $5694
+
+	ld h,d			; $5695
+	ld l,Enemy.state2		; $5696
+	inc (hl)		; $5698
+	ld l,Enemy.zh		; $5699
+	ld (hl),$00		; $569b
+
+	call objectSetInvisible		; $569d
+	ld a,SND_BIG_EXPLOSION_2		; $56a0
+	jp playSound		; $56a2
+
+_ganon_stateE_substate1:
+	ld a,Object.animParameter		; $56a5
+	call objectGetRelatedObject2Var		; $56a7
+	bit 7,(hl)		; $56aa
+	ret z			; $56ac
+	ld h,d			; $56ad
+	ld l,Enemy.state2		; $56ae
+	inc (hl)		; $56b0
+	inc l			; $56b1
+	ld (hl),$08 ; [counter1]
+	jp fastFadeoutToWhite		; $56b4
+
+_ganon_stateE_substate2:
+	call _ecom_decCounter1		; $56b7
+	ret nz			; $56ba
+	ld (hl),30 ; [counter1]
+	ld l,e			; $56bd
+	inc (hl) ; [state2]
+	xor a			; $56bf
+	ld (wExtraBgPaletteHeader),a		; $56c0
+	call _ganon_setTileReplacementMode		; $56c3
+	ld a,$02		; $56c6
+	jp fadeinFromWhiteWithDelay		; $56c8
+
+_ganon_stateE_substate3:
+	ld a,(wPaletteThread_mode)		; $56cb
+	or a			; $56ce
+	ret nz			; $56cf
+	call _ecom_decCounter1		; $56d0
+	ret nz			; $56d3
+	xor a			; $56d4
+	ld (wDisableLinkCollisionsAndMenu),a		; $56d5
+	call decNumEnemies		; $56d8
+	jp enemyDelete		; $56db
+
+;;
+; @addr{56de}
+ganon_loadGfxHeader:
+	push af			; $56de
+	call loadGfxHeader		; $56df
+	ld a,UNCMP_GFXH_33		; $56e2
+	call loadUncompressedGfxHeader		; $56e4
+	pop af			; $56e7
+	sub GFXH_b2			; $56e8
+	add OBJGFXH_1e			; $56ea
+	ld hl,wLoadedObjectGfx+4		; $56ec
+	ldi (hl),a		; $56ef
+	ld (hl),$01		; $56f0
+	ldh a,(<hActiveObject)	; $56f2
+	ld d,a			; $56f4
+	ret			; $56f5
+
+;;
+; X-position alternates left & right each frame while teleporting.
+;
+; @param	hl	counter1?
+; @addr{56f6}
+_ganon_updateTeleportAnimationGoingOut:
+	ld a,(hl)		; $56f6
+	and $3e			; $56f7
+	rrca			; $56f9
+	ld b,a			; $56fa
+	ld a,$20		; $56fb
+	sub b			; $56fd
+
+_ganon_updateFlickeringXPosition:
+	bit 1,(hl)		; $56fe
+	jr z,+			; $5700
+	cpl			; $5702
+	inc a			; $5703
++
+	ld l,Enemy.var30		; $5704
+	add (hl)		; $5706
+	ld l,Enemy.xh		; $5707
+	ld (hl),a		; $5709
+	jp _ecom_flickerVisibility		; $570a
+
+;;
+; @addr{570d}
+_ganon_updateTeleportVarsAndPlaySound:
+	ld a,SND_TELEPORT		; $570d
+	call playSound		; $570f
+
+	ld h,d			; $5712
+	ld l,Enemy.collisionType		; $5713
+	res 7,(hl)		; $5715
+
+	ld l,Enemy.counter1		; $5717
+	ld (hl),60		; $5719
+	ld l,Enemy.xh		; $571b
+	ld a,(hl)		; $571d
+	ld l,Enemy.var30		; $571e
+	ld (hl),a		; $5720
+	ret			; $5721
+
+;;
+; @param	hl	counter1?
+; @addr{5722}
+_ganon_updateTeleportAnimationComingIn:
+	ld a,(hl)		; $5722
+	and $3e			; $5723
+	rrca			; $5725
+	jr _ganon_updateFlickeringXPosition		; $5726
+
+;;
+; @addr{5728}
+_ganon_finishAttack:
+	ld h,d			; $5728
+	ld l,Enemy.var35		; $5729
+	ldi a,(hl)		; $572b
+	ld h,(hl)		; $572c
+	ld l,a			; $572d
+	ldi a,(hl)		; $572e
+	or a			; $572f
+	jr z,_ganon_decideNextMove	; $5730
+
+_label_10_135:
+	ld e,Enemy.state		; $5732
+	ld (de),a		; $5734
+	inc e			; $5735
+	xor a			; $5736
+	ld (de),a ; [state2]
+	ld e,Enemy.var35		; $5738
+	ld a,l			; $573a
+	ld (de),a		; $573b
+	inc e			; $573c
+	ld a,h			; $573d
+	ld (de),a		; $573e
+	ret			; $573f
+
+
+;;
+; Sets state to something randomly?
+; @addr{5740}
+_ganon_decideNextMove:
+	ld e,Enemy.health		; $5740
+	ld a,(de)		; $5742
+	cp $41			; $5743
+	ld c,$00		; $5745
+	jr nc,+			; $5747
+	ld c,$04		; $5749
++
+	call getRandomNumber		; $574b
+	and $03			; $574e
+	add c			; $5750
+	ld hl,@stateTable		; $5751
+	rst_addDoubleIndex			; $5754
+	ldi a,(hl)		; $5755
+	ld h,(hl)		; $5756
+	ld l,a			; $5757
+	ldi a,(hl)		; $5758
+	jr _label_10_135		; $5759
+
+@stateTable:
+	.dw @choice0
+	.dw @choice1
+	.dw @choice2
+	.dw @choice3
+	.dw @choice4
+	.dw @choice5
+	.dw @choice6
+	.dw @choice7
+
+; This is a list of states (attack parts) to iterate through. When it reaches the 0 terminator, it
+; calls the above function again to make a new choice.
+;
+; 0-3 are for Ganon at high health.
+@choice0:
+	.db $08 $0a $09
+	.db $00
+@choice1:
+	.db $09
+	.db $00
+@choice2:
+	.db $0a $08 $09 $0a
+	.db $00
+@choice3:
+	.db $0a $08
+	.db $00
+
+; 4-7 are for Ganon at low health.
+@choice4:
+	.db $0c
+	.db $00
+@choice5:
+	.db $0b $0d $08 $0a
+	.db $00
+@choice6:
+	.db $0b $0c $09 $0a
+	.db $00
+@choice7:
+	.db $0d
+	.db $00
+
+
+;;
+; @addr{5787}
+_ganon_decideTeleportLocationAndCounter:
+	ld bc,$0e0f		; $5787
+	call _ecom_randomBitwiseAndBCE		; $578a
+	ld a,b			; $578d
+	ld hl,@teleportTargetTable		; $578e
+	rst_addAToHl			; $5791
+	ld e,Enemy.yh		; $5792
+	ldi a,(hl)		; $5794
+	ld (de),a		; $5795
+	ld e,Enemy.xh		; $5796
+	ld a,(hl)		; $5798
+	ld (de),a		; $5799
+
+	ld a,c			; $579a
+	ld hl,@counter1Vals		; $579b
+	rst_addAToHl			; $579e
+	ld e,Enemy.counter1		; $579f
+	ld a,(hl)		; $57a1
+	ld (de),a		; $57a2
+	ret			; $57a3
+
+; List of valid positions to teleport to
+@teleportTargetTable:
+	.db $30 $38
+	.db $30 $78
+	.db $30 $b8
+	.db $58 $58
+	.db $58 $98
+	.db $80 $38
+	.db $80 $78
+	.db $80 $b8
+
+@counter1Vals:
+	.db 40 40 40 60 60 60 60 60
+	.db 60 90 90 90 90 90 120 120
+
+
+;;
+; @param	e	Part ID
+; @addr{57c4}
+_ganon_spawnPart:
+	call getFreePartSlot		; $57c4
+	ret nz			; $57c7
+	ld (hl),e		; $57c8
+	ld l,Part.relatedObj1		; $57c9
+	ld (hl),Enemy.start		; $57cb
+	inc l			; $57cd
+	ld (hl),d		; $57ce
+	xor a			; $57cf
+	ret			; $57d0
+
+;;
+; Sets the boundaries of the room to be solid when "reversed controls" happen; most likely because
+; the wall tiles are removed when in this state, so collisions must be set manually.
+; @addr{57d1}
+_ganon_makeRoomBoundarySolid:
+	ld hl,wRoomCollisions+$10		; $57d1
+	ld b,LARGE_ROOM_HEIGHT-2		; $57d4
+--
+	ld (hl),$0f		; $57d6
+	ld a,l			; $57d8
+	add $10			; $57d9
+	ld l,a			; $57db
+	dec b			; $57dc
+	jr nz,--
+
+	ld l,$0f + LARGE_ROOM_WIDTH		; $57df
+	ld b,LARGE_ROOM_HEIGHT-2		; $57e1
+--
+	ld (hl),$0f		; $57e3
+	ld a,l			; $57e5
+	add $10			; $57e6
+	ld l,a			; $57e8
+	dec b			; $57e9
+	jr nz,--
+
+	ld l,$00		; $57ec
+	ld a,$0f		; $57ee
+	ld b,a ; LARGE_ROOM_WIDTH
+--
+	ldi (hl),a		; $57f1
+	dec b			; $57f2
+	jr nz,--
+
+	ld l,(LARGE_ROOM_HEIGHT-1)<<4		; $57f5
+	ld b,a			; $57f7
+--
+	ldi (hl),a		; $57f8
+	dec b			; $57f9
+	jr nz,--		; $57fa
+	ret			; $57fc
+
+;;
+; Updates palettes in reversed-control mode
+; @addr{57fd}
+_ganon_updateSeizurePalette:
+	ld a,(wScrollMode)		; $57fd
+	and $01			; $5800
+	ret z			; $5802
+	ld a,(wPaletteThread_mode)		; $5803
+	or a			; $5806
+	ret nz			; $5807
+	ld a,(wFrameCounter)		; $5808
+	rrca			; $580b
+	ret c			; $580c
+	ld h,d			; $580d
+	ld l,$b7		; $580e
+	ld a,(hl)		; $5810
+	inc (hl)		; $5811
+	and $07			; $5812
+.ifdef ROM_AGES
+	add a,PALH_b1		; $5814
+.else
+	add a,SEASONS_PALH_b1
+.endif
+	ld (wExtraBgPaletteHeader),a		; $5816
+	jp loadPaletteHeader		; $5819
+
+
+;;
+; @addr{581c}
+_ganon_setTileReplacementMode:
+	ld (wTwinrovaTileReplacementMode),a		; $581c
+	call func_131f		; $581f
+	ldh a,(<hActiveObject)	; $5822
+	ld d,a			; $5824
+	ret			; $5825
+
+;;
+; @addr{5826}
 enemyCode00:
-	ret			; $5834
+	ret			; $5826
 
 
 ; ==============================================================================
@@ -7004,14 +7487,11 @@ _label_0f_261:
 	inc e			; $6e60
 	ld a,(de)		; $6e61
 	rst_jumpTable			; $6e62
-	ld l,l			; $6e63
-	ld l,(hl)		; $6e64
-	and a			; $6e65
-	ld l,(hl)		; $6e66
-	ret z			; $6e67
-	ld l,(hl)		; $6e68
-	call c,$1f6e		; $6e69
-	ld l,a			; $6e6c
+	.dw $6e6d
+	.dw $6ea7
+	.dw $6ec8
+	.dw $6edc
+	.dw $6f1f
 	call checkLinkCollisionsEnabled		; $6e6d
 	ret nc			; $6e70
 	ld h,d			; $6e71
@@ -7082,7 +7562,7 @@ _label_0f_263:
 	inc l			; $6ee1
 	ld a,(hl)		; $6ee2
 	dec a			; $6ee3
-	ld hl,$6f13		; $6ee4
+	ld hl,_table_6f13		; $6ee4
 	rst_addDoubleIndex			; $6ee7
 	ldi a,(hl)		; $6ee8
 	ld c,(hl)		; $6ee9
@@ -7109,13 +7589,18 @@ _label_0f_263:
 	ld a,$01		; $6f0d
 	ld ($cfc0),a		; $6f0f
 	ret			; $6f12
-	ld ($0c78),sp		; $6f13
-	jr c,$0a		; $6f16
-	ld h,b			; $6f18
-	ld ($0448),sp		; $6f19
-	inc h			; $6f1c
-	ld b,$5a		; $6f1d
+
+_table_6f13:
+	.db $08 $78
+	.db $0c $38
+	.db $0a $60
+	.db $08 $48
+	.db $04 $24
+	.db $06 $5a
+
+
 	ret			; $6f1f
+
 	dec a			; $6f20
 	ld hl,$6f2a		; $6f21
 	rst_addAToHl			; $6f24
@@ -7158,7 +7643,7 @@ _label_0f_264:
 _label_0f_265:
 	ld e,$a1		; $6f5b
 	ld a,(de)		; $6f5d
-	ld hl,$6f6f		; $6f5e
+	ld hl,_table_6f6f		; $6f5e
 	rst_addDoubleIndex			; $6f61
 	ldi a,(hl)		; $6f62
 	ld b,a			; $6f63
@@ -7168,6 +7653,8 @@ _label_0f_265:
 	call objectCopyPositionWithOffset		; $6f6a
 	or d			; $6f6d
 	ret			; $6f6e
-	ld ($f600),sp		; $6f6f
-	nop			; $6f72
-	xor $00			; $6f73
+
+_table_6f6f:
+	.db $08 $00
+	.db $f6 $00
+	.db $ee $00

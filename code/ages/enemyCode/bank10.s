@@ -2233,6 +2233,7 @@ _twinrova_subid1_targetPositions:
 	.db $28 $b0
 	.db $00
 
+
 ; ==============================================================================
 ; ENEMYID_GANON
 ;
@@ -2276,7 +2277,11 @@ enemyCode04:
 
 	call getThisRoomFlags		; $508b
 	set 7,(hl)		; $508e
+.ifdef ROM_AGES
 	ld l,<ROOM_AGES_5f1		; $5090
+.else
+	ld l,<ROOM_SEASONS_59a
+.endif
 	set 7,(hl)		; $5092
 	ld l,<ROOM_TWINROVA_FIGHT		; $5094
 	set 7,(hl)		; $5096
@@ -2379,9 +2384,17 @@ _ganon_state_uninitialized:
 	call resetCamera		; $512f
 	call loadCommonGraphics		; $5132
 
+.ifdef ROM_AGES
 	ld a,PALH_8b		; $5135
+.else
+	ld a,SEASONS_PALH_8b
+.endif
 	call loadPaletteHeader		; $5137
+.ifdef ROM_AGES
 	ld a,PALH_b1		; $513a
+.else
+	ld a,SEASONS_PALH_b1
+.endif
 	ld (wExtraBgPaletteHeader),a		; $513c
 	ld a,GFXH_b0		; $513f
 	call loadGfxHeader		; $5141
@@ -3218,7 +3231,11 @@ _ganon_stateC_substate9:
 	ld (de),a ; [state2]
 	ld a,$03		; $5635
 	call _ganon_setTileReplacementMode		; $5637
+.ifdef ROM_AGES
 	ld a,PALH_b1		; $563a
+.else
+	ld a,SEASONS_PALH_b1
+.endif
 	ld (wExtraBgPaletteHeader),a		; $563c
 	jp loadPaletteHeader		; $563f
 
@@ -3600,7 +3617,11 @@ _ganon_updateSeizurePalette:
 	ld a,(hl)		; $5810
 	inc (hl)		; $5811
 	and $07			; $5812
-	add PALH_b1			; $5814
+.ifdef ROM_AGES
+	add a,PALH_b1		; $5814
+.else
+	add a,SEASONS_PALH_b1
+.endif
 	ld (wExtraBgPaletteHeader),a		; $5816
 	jp loadPaletteHeader		; $5819
 

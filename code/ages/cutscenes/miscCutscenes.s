@@ -1343,7 +1343,7 @@ _label_03_097:
 	ld ($cfde),a		; $5eb7
 	cp $04			; $5eba
 	jr nc,_label_03_098	; $5ebc
-	ld hl,$5f1c		; $5ebe
+	ld hl,_table_5f1c		; $5ebe
 	rst_addDoubleIndex			; $5ec1
 	ld b,(hl)		; $5ec2
 	inc hl			; $5ec3
@@ -1351,7 +1351,7 @@ _label_03_097:
 	ld a,$00		; $5ec5
 	call func_36f6		; $5ec7
 	ld a,($cfde)		; $5eca
-	ld hl,$5f24		; $5ecd
+	ld hl,_table_5f24		; $5ecd
 	rst_addAToHl			; $5ed0
 	ldi a,(hl)		; $5ed1
 	call loadUncompressedGfxHeader		; $5ed2
@@ -1375,7 +1375,7 @@ _label_03_099:
 	ld (wTilesetAnimation),a		; $5ef3
 	call loadAnimationData		; $5ef6
 	ld a,c			; $5ef9
-	ld hl,$5f28		; $5efa
+	ld hl,_table_5f28		; $5efa
 	rst_addAToHl			; $5efd
 	ldi a,(hl)		; $5efe
 	call loadPaletteHeader		; $5eff
@@ -1390,21 +1390,23 @@ _label_03_099:
 	ld a,$04		; $5f14
 	call loadGfxRegisterStateIndex		; $5f16
 	jp fadeinFromWhite		; $5f19
-	nop			; $5f1c
-	jr c,_label_03_100	; $5f1d
-_label_03_100:
-	ldd a,(hl)		; $5f1f
-	nop			; $5f20
-	ld c,d			; $5f21
-	ld bc,$2d16		; $5f22
-	rrca			; $5f25
-	dec l			; $5f26
-	rrca			; $5f27
-	jr nc,_label_03_101	; $5f28
-	dec l			; $5f2a
-	daa			; $5f2b
-	jp z,$caca		; $5f2c
-	xor (hl)		; $5f2f
+
+_table_5f1c:
+	.db $00 $38
+	.db $00 $3a
+	.db $00 $4a
+	.db $01 $16
+
+_table_5f24:
+	.db $2d $0f
+	.db $2d $0f
+
+_table_5f28:
+	.db $30 $2d
+	.db $2d $27
+	.db $ca $ca
+	.db $ca $ae
+
 	ld a,(wPaletteThread_mode)		; $5f30
 	or a			; $5f33
 	ret nz			; $5f34
@@ -2316,7 +2318,7 @@ _label_03_120:
 	call clearScreenVariablesAndWramBank1		; $65d8
 	call clearOam		; $65db
 	ld a,($cbb8)		; $65de
-	ld hl,$6625		; $65e1
+	ld hl,_table_6625		; $65e1
 	rst_addDoubleIndex			; $65e4
 	ldi a,(hl)		; $65e5
 	push hl			; $65e6
@@ -2348,13 +2350,13 @@ _label_03_121:
 	call clearMemory		; $661d
 	ld a,$09		; $6620
 	jp loadGfxRegisterStateIndex		; $6622
-	add d			; $6625
-	cpl			; $6626
-	add c			; $6627
-	ld l,$80		; $6628
-	ld l,$cd		; $662a
-	rst $30			; $662c
-	ld l,(hl)		; $662d
+
+_table_6625:
+	.db $82 $2f
+	.db $81 $2e
+	.db $80 $2e
+
+	call $6ef7		; $662b
 	call $6f44		; $662e
 	ld a,(wPaletteThread_mode)		; $6631
 	or a			; $6634
@@ -3477,7 +3479,7 @@ _label_03_143:
 ; @param[out]	c
 ; @addr{6fd6}
 _cutscene_getObjectSetIndexAndSomething:
-	ld hl,$6fe3		; $6fd6
+	ld hl,@data		; $6fd6
 	rst_addDoubleIndex			; $6fd9
 	ld b,(hl)		; $6fda
 	inc hl			; $6fdb
@@ -4027,30 +4029,30 @@ _label_03_163:
 	nop			; $742e
 	nop			; $742f
 	nop			; $7430
+
+
 	push hl			; $7431
 	ld a,($cbb8)		; $7432
 	and $07			; $7435
-	ld hl,$7440		; $7437
+	ld hl,_table_7440		; $7437
 	rst_addDoubleIndex			; $743a
 	ldi a,(hl)		; $743b
 	ld e,(hl)		; $743c
 	ld d,a			; $743d
 	pop hl			; $743e
 	ret			; $743f
-.DB $dd				; $7440
-	rst $38			; $7441
-.DB $dd				; $7442
-	cp e			; $7443
-	ld d,l			; $7444
-	cp e			; $7445
-	ld d,l			; $7446
-	xor d			; $7447
-	ld de,$11aa		; $7448
-	adc b			; $744b
-	nop			; $744c
-	adc b			; $744d
-	nop			; $744e
-	nop			; $744f
+
+_table_7440:
+	.db $dd $ff
+	.db $dd $bb
+	.db $55 $bb
+	.db $55 $aa
+	.db $11 $aa
+	.db $11 $88
+	.db $00 $88
+	.db $00 $00
+
+
 	ld b,$2f		; $7450
 	ld c,$06		; $7452
 	jr _label_03_164		; $7454
@@ -4106,9 +4108,9 @@ _label_03_166:
 func_03_7493:
 	ld a,(wCutsceneState)		; $7493
 	rst_jumpTable			; $7496
-.dw $749d
-.dw $74de
-.dw $7529
+	.dw $749d
+	.dw $74de
+	.dw $7529
 
 	ld a,(wPaletteThread_mode)		; $749d
 	or a			; $74a0
@@ -4145,7 +4147,7 @@ func_03_7493:
 	ret nz			; $74ee
 	ld (hl),$3e		; $74ef
 	ld a,(wTmpcbbd)		; $74f1
-	ld hl,$7513		; $74f4
+	ld hl,_table_7513		; $74f4
 	rst_addDoubleIndex			; $74f7
 	ldi a,(hl)		; $74f8
 	ld b,(hl)		; $74f9
@@ -4163,13 +4165,13 @@ func_03_7493:
 	ld l,$70		; $750d
 	ld (hl),c		; $750f
 	jp $748e		; $7510
-	inc sp			; $7513
-	stop			; $7514
-	inc (hl)		; $7515
-	nop			; $7516
-	dec (hl)		; $7517
-	stop			; $7518
-	ld (hl),$00		; $7519
+
+_table_7513:
+	.db $33 $10
+	.db $34 $00
+	.db $35 $10
+	.db $36 $00
+
 	call $7483		; $751b
 	ret nz			; $751e
 	ld (hl),$1e		; $751f
