@@ -3081,7 +3081,7 @@ _table_501e:
 ; ==============================================================================
 ; @addr{5026}
 partCode18:
-	jr z,_label_11_107	; $5026
+	jr z,@normalStatus	; $5026
 	ld e,$ea		; $5028
 	ld a,(de)		; $502a
 	cp $80			; $502b
@@ -3090,32 +3090,39 @@ partCode18:
 	ld l,$c4		; $5031
 	ld a,(hl)		; $5033
 	cp $02			; $5034
-	jr nc,_label_11_107	; $5036
+	jr nc,@normalStatus	; $5036
 	ld (hl),$02		; $5038
-_label_11_107:
+
+@normalStatus:
 	ld e,$c4		; $503a
 	ld a,(de)		; $503c
 	rst_jumpTable			; $503d
-.dw $5046
-.dw $5050
-.dw $5066
-.dw _partCommon_updateSpeedAndDeleteWhenCounter1Is0
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw _partCommon_updateSpeedAndDeleteWhenCounter1Is0
+	
+@state0:
 	ld h,d			; $5046
 	ld l,e			; $5047
 	inc (hl)		; $5048
 	ld l,$d0		; $5049
 	ld (hl),$50		; $504b
 	jp objectSetVisible81		; $504d
+	
+@state1:
 	call objectCheckWithinScreenBoundary		; $5050
 	jp nc,partDelete		; $5053
 	call _partCommon_checkTileCollisionOrOutOfBounds		; $5056
-	jr nc,_label_11_108	; $5059
+	jr nc,+			; $5059
 	jp z,partDelete		; $505b
 	ld e,$c4		; $505e
 	ld a,$02		; $5060
 	ld (de),a		; $5062
-_label_11_108:
++
 	jp objectApplySpeed		; $5063
+	
+@state2:
 	ld a,$03		; $5066
 	ld (de),a		; $5068
 	xor a			; $5069
@@ -3133,9 +3140,11 @@ partCode31:
 	ld e,$c4		; $5070
 	ld a,(de)		; $5072
 	rst_jumpTable			; $5073
-.dw $507a
-.dw $5088
-.dw $50a8
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	
+@state0:
 	ld h,d			; $507a
 	ld l,e			; $507b
 	inc (hl)		; $507c
@@ -3144,13 +3153,15 @@ partCode31:
 	ld l,$d0		; $5081
 	ld (hl),$3c		; $5083
 	jp objectSetVisible81		; $5085
+	
+@state1:
 	call partCommon_decCounter1IfNonzero		; $5088
 	ret nz			; $508b
 	ld l,e			; $508c
 	inc (hl)		; $508d
 	ld l,$c2		; $508e
 	bit 0,(hl)		; $5090
-	jr z,_label_11_109	; $5092
+	jr z,+			; $5092
 	ldh a,(<hFFB2)	; $5094
 	ld b,a			; $5096
 	ldh a,(<hFFB3)	; $5097
@@ -3159,19 +3170,21 @@ partCode31:
 	ld e,$c9		; $509d
 	ld (de),a		; $509f
 	ret			; $50a0
-_label_11_109:
++
 	call objectGetAngleTowardEnemyTarget		; $50a1
 	ld e,$c9		; $50a4
 	ld (de),a		; $50a6
 	ret			; $50a7
+	
+@state2:
 	ld a,(wFrameCounter)		; $50a8
 	and $03			; $50ab
-	jr nz,_label_11_110	; $50ad
+	jr nz,+			; $50ad
 	ld e,$dc		; $50af
 	ld a,(de)		; $50b1
 	xor $07			; $50b2
 	ld (de),a		; $50b4
-_label_11_110:
++
 	call objectApplySpeed		; $50b5
 	call objectCheckWithinScreenBoundary		; $50b8
 	jp nc,partDelete		; $50bb
@@ -3183,24 +3196,28 @@ _label_11_110:
 ; ==============================================================================
 ; @addr{50c1}
 partCode1a:
-	jr z,_label_11_111	; $50c1
+	jr z,@normalStatus	; $50c1
 	ld e,$ea		; $50c3
 	ld a,(de)		; $50c5
 	cp $80			; $50c6
-	jr z,_label_11_115	; $50c8
-	jr _label_11_116		; $50ca
-_label_11_111:
+	jr z,@partDelete	; $50c8
+	jr @func_11_513a		; $50ca
+@normalStatus:
 	ld e,$c2		; $50cc
 	ld a,(de)		; $50ce
 	rst_jumpTable			; $50cf
-.dw $50d4
-.dw $5103
+	.dw @subid0
+	.dw @subid1
+
+@subid0:
 	ld e,$c4		; $50d4
 	ld a,(de)		; $50d6
 	rst_jumpTable			; $50d7
-.dw $50de
-.dw $50fa
-.dw _partCommon_updateSpeedAndDeleteWhenCounter1Is0
+	.dw @@state0
+	.dw @@state1
+	.dw _partCommon_updateSpeedAndDeleteWhenCounter1Is0
+
+@@state0:
 	ld h,d			; $50de
 	ld l,e			; $50df
 	inc (hl)		; $50e0
@@ -3217,18 +3234,23 @@ _label_11_111:
 	rlca			; $50f3
 	call partSetAnimation		; $50f4
 	jp objectSetVisible81		; $50f7
-_label_11_112:
+
+@@state1:
 	call _partCommon_checkTileCollisionOrOutOfBounds		; $50fa
-	jr nc,_label_11_114	; $50fd
-	jr z,_label_11_115	; $50ff
-	jr _label_11_116		; $5101
+	jr nc,@objectApplySpeed	; $50fd
+	jr z,@partDelete	; $50ff
+	jr @func_11_513a		; $5101
+
+@subid1:
 	ld e,$c4		; $5103
 	ld a,(de)		; $5105
 	rst_jumpTable			; $5106
-.dw $510f
-.dw $5126
-	ld a,($cf50)		; $510b
-	ld b,b			; $510e
+	.dw @@state0
+	.dw @@state1
+	.dw @subid0@state1
+	.dw _partCommon_updateSpeedAndDeleteWhenCounter1Is0
+	
+@@state0:
 	ld h,d			; $510f
 	ld l,e			; $5110
 	inc (hl)		; $5111
@@ -3242,26 +3264,28 @@ _label_11_112:
 	rlca			; $511f
 	call partSetAnimation		; $5120
 	jp objectSetVisible81		; $5123
+	
+@@state1:
 	call partCommon_decCounter1IfNonzero		; $5126
-	jr nz,_label_11_113	; $5129
+	jr nz,+			; $5129
 	ld l,e			; $512b
 	inc (hl)		; $512c
-	jr _label_11_112		; $512d
-_label_11_113:
+	jr @subid0@state1		; $512d
++
 	call partCommon_checkOutOfBounds		; $512f
-	jr z,_label_11_115	; $5132
-_label_11_114:
+	jr z,@partDelete	; $5132
+@objectApplySpeed:
 	jp objectApplySpeed		; $5134
-_label_11_115:
+@partDelete:
 	jp partDelete		; $5137
-_label_11_116:
+@func_11_513a:
 	ld e,$c2		; $513a
 	ld a,(de)		; $513c
 	or a			; $513d
 	ld a,$02		; $513e
-	jr z,_label_11_117	; $5140
+	jr z,+			; $5140
 	ld a,$03		; $5142
-_label_11_117:
++
 	ld e,$c4		; $5144
 	ld (de),a		; $5146
 	ld a,$04		; $5147
@@ -3273,17 +3297,17 @@ _label_11_117:
 ; ==============================================================================
 ; @addr{514c}
 partCode1b:
-	jr z,_label_11_118	; $514c
+	jr z,@normalStatus	; $514c
 	ld e,$ea		; $514e
 	ld a,(de)		; $5150
 	res 7,a			; $5151
 	cp $04			; $5153
 	jp c,partDelete		; $5155
-_label_11_118:
+@normalStatus:
 	ld e,$c4		; $5158
 	ld a,(de)		; $515a
 	or a			; $515b
-	jr z,_label_11_119	; $515c
+	jr z,+			; $515c
 	call objectCheckWithinScreenBoundary		; $515e
 	jp nc,partDelete		; $5161
 	call objectApplySpeed		; $5164
@@ -3295,7 +3319,7 @@ _label_11_118:
 	xor $07			; $5170
 	ld (de),a		; $5172
 	ret			; $5173
-_label_11_119:
++
 	ld h,d			; $5174
 	ld l,e			; $5175
 	inc (hl)		; $5176
@@ -3319,19 +3343,22 @@ _label_11_119:
 ; ==============================================================================
 ; @addr{5190}
 partCode1c:
-	jr z,_label_11_120	; $5190
+	jr z,@normalStatus	; $5190
 	ld e,$ea		; $5192
 	ld a,(de)		; $5194
 	cp $80			; $5195
-	jr z,_label_11_121	; $5197
-	jr _label_11_123		; $5199
-_label_11_120:
+	jr z,@partDelete	; $5197
+	jr @func_11_51dd		; $5199
+
+@normalStatus:
 	ld e,$c4		; $519b
 	ld a,(de)		; $519d
 	rst_jumpTable			; $519e
-.dw $51a5
-.dw $51b5
-.dw $51c6
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	
+@state0:
 	ld h,d			; $51a5
 	ld l,e			; $51a6
 	inc (hl)		; $51a7
@@ -3341,15 +3368,20 @@ _label_11_120:
 	ld e,$c9		; $51af
 	ld (de),a		; $51b1
 	jp objectSetVisible81		; $51b2
+	
+@state1:
 	call _partCommon_checkTileCollisionOrOutOfBounds		; $51b5
-	jr c,_label_11_122	; $51b8
+	jr c,+			; $51b8
 	call objectApplySpeed		; $51ba
 	call objectCheckWithinScreenBoundary		; $51bd
 	jp c,partAnimate		; $51c0
-_label_11_121:
+
+@partDelete:
 	jp partDelete		; $51c3
+	
+@state2:
 	call partCommon_decCounter1IfNonzero		; $51c6
-	jr z,_label_11_121	; $51c9
+	jr z,@partDelete	; $51c9
 	ld c,$0e		; $51cb
 	call objectUpdateSpeedZ_paramC		; $51cd
 	call objectApplySpeed		; $51d0
@@ -3357,9 +3389,9 @@ _label_11_121:
 	rrca			; $51d6
 	ret c			; $51d7
 	jp partAnimate		; $51d8
-_label_11_122:
-	jr z,_label_11_121	; $51db
-_label_11_123:
++
+	jr z,@partDelete	; $51db
+@func_11_51dd:
 	ld e,$c4		; $51dd
 	ld a,$02		; $51df
 	ld (de),a		; $51e1
@@ -3372,22 +3404,22 @@ _label_11_123:
 ; ==============================================================================
 ; @addr{51e6}
 partCode1d:
-	jr z,_label_11_125	; $51e6
+	jr z,@normalStatus	; $51e6
 	ld e,$ea		; $51e8
 	ld a,(de)		; $51ea
 	cp $80			; $51eb
-	jr z,_label_11_125	; $51ed
+	jr z,@normalStatus	; $51ed
 	cp $8a			; $51ef
-	jr z,_label_11_125	; $51f1
+	jr z,@normalStatus	; $51f1
 	ld a,$2b		; $51f3
 	call objectGetRelatedObject1Var		; $51f5
 	ld a,(hl)		; $51f8
 	or a			; $51f9
-	jr nz,_label_11_124	; $51fa
+	jr nz,+			; $51fa
 	ld e,$eb		; $51fc
 	ld a,(de)		; $51fe
 	ld (hl),a		; $51ff
-_label_11_124:
++
 	ld e,$ec		; $5200
 	ld a,(de)		; $5202
 	inc l			; $5203
@@ -3395,17 +3427,18 @@ _label_11_124:
 	ld e,$ed		; $5205
 	ld a,(de)		; $5207
 	ld (hl),a		; $5208
-_label_11_125:
+@normalStatus:
 	ld e,$c4		; $5209
 	ld a,(de)		; $520b
 	or a			; $520c
-	jr z,_label_11_127	; $520d
+	jr z,@func_5261	; $520d
 	ld h,d			; $520f
 	ld l,$e4		; $5210
 	set 7,(hl)		; $5212
-	call $5273		; $5214
+	call @func_5273		; $5214
 	jp nz,partDelete		; $5217
-_label_11_126:
+
+@func_521a:
 	ld l,$8b		; $521a
 	ld b,(hl)		; $521c
 	ld l,$8d		; $521d
@@ -3419,7 +3452,7 @@ _label_11_126:
 	ld l,$a1		; $522a
 	add (hl)		; $522c
 	add (hl)		; $522d
-	ld hl,$524d		; $522e
+	ld hl,@table_524d		; $522e
 	rst_addAToHl			; $5231
 	ld e,$cb		; $5232
 	ldi a,(hl)		; $5234
@@ -3432,7 +3465,7 @@ _label_11_126:
 	ldh a,(<hFF8B)	; $523c
 	rrca			; $523e
 	and $02			; $523f
-	ld hl,$525d		; $5241
+	ld hl,@table_525d		; $5241
 	rst_addAToHl			; $5244
 	ld e,$e6		; $5245
 	ldi a,(hl)		; $5247
@@ -3441,25 +3474,22 @@ _label_11_126:
 	ld a,(hl)		; $524a
 	ld (de),a		; $524b
 	ret			; $524c
-	ld hl,sp+$04		; $524d
-	or $04			; $524f
-	inc b			; $5251
-	rlca			; $5252
-	inc b			; $5253
-	add hl,bc		; $5254
-	rlca			; $5255
-.DB $fc				; $5256
-	add hl,bc		; $5257
-.DB $fc				; $5258
-	inc b			; $5259
-	ld sp,hl		; $525a
-	inc b			; $525b
-	rst $30			; $525c
-	dec b			; $525d
-	ld (bc),a		; $525e
-	ld (bc),a		; $525f
-	dec b			; $5260
-_label_11_127:
+
+@table_524d:
+	.db $f8 $04
+	.db $f6 $04
+	.db $04 $07
+	.db $04 $09
+	.db $07 $fc
+	.db $09 $fc
+	.db $04 $f9
+	.db $04 $f7
+
+@table_525d:
+	.db $05 $02
+	.db $02 $05
+
+@func_5261:
 	ld h,d			; $5261
 	ld l,e			; $5262
 	inc (hl)		; $5263
@@ -3470,7 +3500,9 @@ _label_11_127:
 	ld e,$f0		; $526d
 	ld a,(hl)		; $526f
 	ld (de),a		; $5270
-	jr _label_11_126		; $5271
+	jr @func_521a		; $5271
+
+@func_5273:
 	ld a,$01		; $5273
 	call objectGetRelatedObject1Var		; $5275
 	ld e,$f0		; $5278
@@ -3479,19 +3511,19 @@ _label_11_127:
 	ret nz			; $527c
 	ld l,$b0		; $527d
 	bit 0,(hl)		; $527f
-	jr nz,_label_11_128	; $5281
+	jr nz,+			; $5281
 	ld l,$a9		; $5283
 	ld a,(hl)		; $5285
 	or a			; $5286
-	jr z,_label_11_128	; $5287
+	jr z,+			; $5287
 	ld l,$ae		; $5289
 	ld a,(hl)		; $528b
 	or a			; $528c
-	jr nz,_label_11_128	; $528d
+	jr nz,+			; $528d
 	ld l,$bf		; $528f
 	bit 1,(hl)		; $5291
 	ret z			; $5293
-_label_11_128:
++
 	ld e,$e4		; $5294
 	ld a,(de)		; $5296
 	res 7,a			; $5297
@@ -3505,27 +3537,29 @@ _label_11_128:
 ; ==============================================================================
 ; @addr{529c}
 partCode1e:
-	jr z,_label_11_129	; $529c
+	jr z,@normalStatus	; $529c
 	ld e,$ea		; $529e
 	ld a,(de)		; $52a0
 	cp $80			; $52a1
-	jr z,_label_11_129	; $52a3
-	call $52fd		; $52a5
+	jr z,@normalStatus	; $52a3
+	call _func_52fd		; $52a5
 	ld h,d			; $52a8
 	ld l,$c4		; $52a9
 	ld (hl),$03		; $52ab
 	ld l,$e4		; $52ad
 	res 7,(hl)		; $52af
-_label_11_129:
+@normalStatus:
 	ld e,$c4		; $52b1
 	ld a,(de)		; $52b3
 	rst_jumpTable			; $52b4
-.dw $52c1
-.dw $52d4
-.dw $52db
-.dw $52ec
-.dw _partCommon_updateSpeedAndDeleteWhenCounter1Is0
-.dw $52f1
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw _partCommon_updateSpeedAndDeleteWhenCounter1Is0
+	.dw @state5
+
+@state0:
 	ld h,d			; $52c1
 	ld l,e			; $52c2
 	inc (hl)		; $52c3
@@ -3536,68 +3570,75 @@ _label_11_129:
 	ld a,SND_STRIKE		; $52cc
 	call playSound		; $52ce
 	jp objectSetVisible81		; $52d1
+
+@state1:
 	call partCommon_decCounter1IfNonzero		; $52d4
-	jr nz,_label_11_131	; $52d7
+	jr nz,+			; $52d7
 	ld l,e			; $52d9
 	inc (hl)		; $52da
-_label_11_130:
+
+@state2:
 	call _partCommon_checkTileCollisionOrOutOfBounds		; $52db
-	jr nc,_label_11_131	; $52de
-	jr nz,_label_11_133	; $52e0
-	jr _label_11_132		; $52e2
-_label_11_131:
+	jr nc,+			; $52de
+	jr nz,_func_52f4	; $52e0
+	jr @state5		; $52e2
++
 	call objectCheckWithinScreenBoundary		; $52e4
 	jp c,objectApplySpeed		; $52e7
-	jr _label_11_132		; $52ea
-	call $5336		; $52ec
-	jr _label_11_130		; $52ef
-_label_11_132:
+	jr @state5		; $52ea
+
+@state3:
+	call _func_5336		; $52ec
+	jr @state2		; $52ef
+
+@state5:
 	jp partDelete		; $52f1
-_label_11_133:
+
+_func_52f4:
 	ld e,$c4		; $52f4
 	ld a,$04		; $52f6
 	ld (de),a		; $52f8
 	xor a			; $52f9
 	jp _partCommon_bounceWhenCollisionsEnabled		; $52fa
+
+_func_52fd:
 	ld e,$c9		; $52fd
 	ld a,(de)		; $52ff
 	bit 2,a			; $5300
-	jr nz,_label_11_134	; $5302
+	jr nz,_func_5313			; $5302
 	sub $08			; $5304
 	rrca			; $5306
 	ld b,a			; $5307
 	ld a,(w1Link.direction)		; $5308
 	add b			; $530b
-	ld hl,$532a		; $530c
+	ld hl,_table_532a		; $530c
 	rst_addAToHl			; $530f
 	ld a,(hl)		; $5310
 	ld (de),a		; $5311
 	ret			; $5312
-_label_11_134:
+
+_func_5313:
 	sub $0c			; $5313
 	rrca			; $5315
 	ld b,a			; $5316
 	ld a,(w1Link.direction)		; $5317
 	add b			; $531a
-	ld hl,$5322		; $531b
+	ld hl,_table_5322		; $531b
 	rst_addAToHl			; $531e
 	ld a,(hl)		; $531f
 	ld (de),a		; $5320
 	ret			; $5321
-	inc b			; $5322
-	ld ($1410),sp		; $5323
-	inc e			; $5326
-	inc c			; $5327
-	stop			; $5328
-	jr _label_11_135		; $5329
-	ld ($180c),sp		; $532b
-	nop			; $532e
-_label_11_135:
-	inc c			; $532f
-	stop			; $5330
-	inc d			; $5331
-	inc e			; $5332
-	ld ($1814),sp		; $5333
+
+_table_5322:
+	.db $04 $08 $10 $14
+	.db $1c $0c $10 $18
+
+_table_532a:
+	.db $04 $08 $0c $18
+	.db $00 $0c $10 $14
+	.db $1c $08 $14 $18
+
+_func_5336:
 	ld a,$24		; $5336
 	call objectGetRelatedObject1Var		; $5338
 	bit 7,(hl)		; $533b
@@ -3621,18 +3662,19 @@ _label_11_135:
 ; ==============================================================================
 ; @addr{5353}
 partCode1f:
-	jr nz,_label_11_136	; $5353
+	jr nz,@normalStatus	; $5353
 	ld e,$c4		; $5355
 	ld a,(de)		; $5357
 	or a			; $5358
-	jr z,_label_11_137	; $5359
+	jr z,_func_5369	; $5359
 	call objectCheckWithinScreenBoundary		; $535b
-	jr nc,_label_11_136	; $535e
+	jr nc,@normalStatus	; $535e
 	call _partCommon_checkTileCollisionOrOutOfBounds		; $5360
 	jp nc,objectApplySpeed		; $5363
-_label_11_136:
+@normalStatus:
 	jp partDelete		; $5366
-_label_11_137:
+	
+_func_5369:
 	ld h,d			; $5369
 	ld l,e			; $536a
 	inc (hl)		; $536b
@@ -3655,11 +3697,12 @@ partCode20:
 	ld e,$c4		; $537c
 	ld a,(de)		; $537e
 	or a			; $537f
-	jr z,_label_11_138	; $5380
+	jr z,@state0	; $5380
 	call partCommon_decCounter1IfNonzero		; $5382
 	jp z,partDelete		; $5385
 	jp partAnimate		; $5388
-_label_11_138:
+
+@state0:
 	ld h,d			; $538b
 	ld l,e			; $538c
 	inc (hl)		; $538d
@@ -3673,27 +3716,30 @@ _label_11_138:
 ; ==============================================================================
 ; @addr{5395}
 partCode21:
-	jr z,_label_11_139	; $5395
+	jr z,@normalStatus	; $5395
 	ld e,$ea		; $5397
 	ld a,(de)		; $5399
 	res 7,a			; $539a
 	sub $01			; $539c
 	cp $03			; $539e
-	jr nc,_label_11_139	; $53a0
+	jr nc,@normalStatus	; $53a0
 	ld e,$c4		; $53a2
 	ld a,$02		; $53a4
 	ld (de),a		; $53a6
-_label_11_139:
+
+@normalStatus:
 	ld e,$d7		; $53a7
 	ld a,(de)		; $53a9
 	inc a			; $53aa
-	jr z,_label_11_142	; $53ab
+	jr z,@partDelete	; $53ab
 	ld e,$c4		; $53ad
 	ld a,(de)		; $53af
 	rst_jumpTable			; $53b0
-.dw $53b7
-.dw $53c8
-.dw $53db
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
 	ld h,d			; $53b7
 	ld l,e			; $53b8
 	inc (hl)		; $53b9
@@ -3704,30 +3750,37 @@ _label_11_139:
 	ld l,$d0		; $53c1
 	ld (hl),$50		; $53c3
 	jp objectSetVisible81		; $53c5
+
+@state1:
 	call objectCheckSimpleCollision		; $53c8
-	jr nz,_label_11_143	; $53cb
+	jr nz,@func_53ee	; $53cb
 	call partCommon_decCounter1IfNonzero		; $53cd
-	jr z,_label_11_143	; $53d0
-	call $542a		; $53d2
-_label_11_140:
+	jr z,@func_53ee	; $53d0
+	call _func_542a		; $53d2
+@objectApplySpeed:
 	call objectApplySpeed		; $53d5
-_label_11_141:
+@animate:
 	jp partAnimate		; $53d8
-	call $541a		; $53db
-	call $53f5		; $53de
-	jr nc,_label_11_140	; $53e1
+
+@state2:
+	call _func_541a		; $53db
+	call _func_53f5		; $53de
+	jr nc,@objectApplySpeed		; $53e1
 	ld a,$18		; $53e3
 	call objectGetRelatedObject1Var		; $53e5
 	xor a			; $53e8
 	ldi (hl),a		; $53e9
 	ld (hl),a		; $53ea
-_label_11_142:
+@partDelete:
 	jp partDelete		; $53eb
-_label_11_143:
+
+@func_53ee:
 	ld e,$c4		; $53ee
 	ld a,$02		; $53f0
 	ld (de),a		; $53f2
-	jr _label_11_141		; $53f3
+	jr @animate		; $53f3
+
+_func_53f5:
 	ld a,$0b		; $53f5
 	call objectGetRelatedObject1Var		; $53f7
 	push hl			; $53fa
@@ -3751,6 +3804,8 @@ _label_11_143:
 	add $04			; $5415
 	cp $09			; $5417
 	ret			; $5419
+
+_func_541a:
 	ld a,(wFrameCounter)		; $541a
 	and $03			; $541d
 	ret nz			; $541f
@@ -3761,6 +3816,8 @@ _label_11_143:
 	ret nc			; $5427
 	ld (de),a		; $5428
 	ret			; $5429
+
+_func_542a:
 	ld h,d			; $542a
 	ld l,$c7		; $542b
 	dec (hl)		; $542d
@@ -3887,32 +3944,39 @@ partCode23:
 	ld e,$c2		; $54de
 	ld a,(de)		; $54e0
 	ld e,$c4		; $54e1
-_label_11_147:
 	rst_jumpTable			; $54e3
-.dw $54ea
-.dw $54f9
-.dw $5515
+	.dw @subid0
+	.dw @subid1
+	.dw @subid2
+
+@subid0:
 	ld a,(de)		; $54ea
 	or a			; $54eb
-	jr z,_label_11_148	; $54ec
+	jr z,@func_54f6			; $54ec
 	call partCommon_decCounter1IfNonzero		; $54ee
 	ret nz			; $54f1
+.ifdef ROM_AGES
 	ld (hl),$78		; $54f2
-	jr _label_11_149		; $54f4
-_label_11_148:
+.else
+	ld (hl),$3c
+.endif
+	jr ++			; $54f4
+@func_54f6:
 	inc a			; $54f6
 	ld (de),a		; $54f7
 	ret			; $54f8
+
+@subid1:
 	ld a,(de)		; $54f9
 	or a			; $54fa
-	jr z,_label_11_148	; $54fb
+	jr z,@func_54f6	; $54fb
 	call partCommon_decCounter1IfNonzero		; $54fd
 	ret nz			; $5500
-	call $553f		; $5501
-_label_11_149:
+	call _func_553f		; $5501
+++
 	call getFreePartSlot		; $5504
 	ret nz			; $5507
-	ld (hl),$23		; $5508
+	ld (hl),PARTID_FIRE_PIPES		; $5508
 	inc l			; $550a
 	ld (hl),$02		; $550b
 	ld l,$f0		; $550d
@@ -3920,9 +3984,11 @@ _label_11_149:
 	ld a,(de)		; $5510
 	ld (hl),a		; $5511
 	jp objectCopyPosition		; $5512
+
+@subid2:
 	ld a,(de)		; $5515
 	or a			; $5516
-	jr z,_label_11_150	; $5517
+	jr z,_func_5535			; $5517
 	ld h,d			; $5519
 	ld l,$cb		; $551a
 	ld a,(hl)		; $551c
@@ -3939,27 +4005,35 @@ _label_11_149:
 	adc $00			; $552f
 	ld (hl),a		; $5531
 	jp partAnimate		; $5532
-_label_11_150:
+
+_func_5535:
 	ld h,d			; $5535
 	ld l,e			; $5536
 	inc (hl)		; $5537
 	ld l,$e4		; $5538
 	set 7,(hl)		; $553a
 	jp objectSetVisible81		; $553c
+
+_func_553f:
 	ld e,$87		; $553f
 	ld a,(de)		; $5541
 	inc a			; $5542
 	and $03			; $5543
 	ld (de),a		; $5545
-	ld hl,$554f		; $5546
+	ld hl,_table_554f		; $5546
 	rst_addAToHl			; $5549
 	ld e,$c6		; $554a
 	ld a,(hl)		; $554c
 	ld (de),a		; $554d
 	ret			; $554e
-	ld a,b			; $554f
-	ld a,b			; $5550
-	ld e,$1e		; $5551
+
+_table_554f:
+.ifdef ROM_AGES
+	.db $78 $78
+.else
+	.db $3c $3c
+.endif
+	.db $1e $1e
 
 
 ; ==============================================================================
@@ -4110,19 +4184,21 @@ partCode27:
 ; ==============================================================================
 ; @addr{560d}
 partCode28:
-	jr z,_label_11_151	; $560d
+	jr z,@normalStatus	; $560d
 	cp $02			; $560f
-	jp z,$569c		; $5611
+	jp z,@collected		; $5611
 	ld e,$c4		; $5614
 	ld a,$02		; $5616
 	ld (de),a		; $5618
-_label_11_151:
+@normalStatus:
 	ld e,$c4		; $5619
 	ld a,(de)		; $561b
 	rst_jumpTable			; $561c
-.dw $5623
-.dw $5638
-.dw $566a
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
 	ld h,d			; $5623
 	ld l,$c4		; $5624
 	inc (hl)		; $5626
@@ -4136,11 +4212,13 @@ _label_11_151:
 	ld a,(de)		; $5633
 	ld (hl),a		; $5634
 	jp objectSetVisiblec2		; $5635
+
+@state1:
 	call partCommon_decCounter1IfNonzero		; $5638
-	jr z,_label_11_152	; $563b
-	call $56cd		; $563d
+	jr z,+			; $563b
+	call _func_56cd		; $563d
 	jp c,objectApplySpeed		; $5640
-_label_11_152:
++
 	call getRandomNumber_noPreserveVars		; $5643
 	and $3e			; $5646
 	add $08			; $5648
@@ -4148,7 +4226,7 @@ _label_11_152:
 	ld (de),a		; $564c
 	call getRandomNumber_noPreserveVars		; $564d
 	and $03			; $5650
-	ld hl,$5666		; $5652
+	ld hl,@table_5666		; $5652
 	rst_addAToHl			; $5655
 	ld e,$d0		; $5656
 	ld a,(hl)		; $5658
@@ -4158,14 +4236,19 @@ _label_11_152:
 	ld h,d			; $565f
 	ld l,$c9		; $5660
 	ld (hl),a		; $5662
-	jp $56b6		; $5663
-	ld a,(bc)		; $5666
-	inc d			; $5667
-	ld e,$28		; $5668
+	jp _func_56b6		; $5663
+
+@table_5666:
+	.db $0a
+	.db $14
+	.db $1e
+	.db $28
+
+@state2:
 	ld e,$c5		; $566a
 	ld a,(de)		; $566c
 	or a			; $566d
-	jr nz,_label_11_154	; $566e
+	jr nz,+			; $566e
 	ld h,d			; $5670
 	ld l,e			; $5671
 	inc (hl)		; $5672
@@ -4177,33 +4260,37 @@ _label_11_152:
 	ld e,$f0		; $567d
 	ld (de),a		; $567f
 	call objectSetVisible80		; $5680
-_label_11_154:
++
 	call objectCheckCollidedWithLink		; $5683
-	jp c,$569c		; $5686
+	jp c,@collected		; $5686
 	ld a,$00		; $5689
 	call objectGetRelatedObject1Var		; $568b
 	ldi a,(hl)		; $568e
 	or a			; $568f
-	jr z,_label_11_155	; $5690
+	jr z,+			; $5690
 	ld e,$f0		; $5692
 	ld a,(de)		; $5694
 	cp (hl)			; $5695
 	jp z,objectTakePosition		; $5696
-_label_11_155:
++
 	jp partDelete		; $5699
+
+@collected:
 	ld a,$26		; $569c
 	call cpActiveRing		; $569e
 	ld c,$18		; $56a1
-	jr z,_label_11_156	; $56a3
+	jr z,+			; $56a3
 	ld a,$25		; $56a5
 	call cpActiveRing		; $56a7
-	jr nz,_label_11_157	; $56aa
-_label_11_156:
+	jr nz,++		; $56aa
++
 	ld c,$30		; $56ac
-_label_11_157:
+++
 	ld a,$29		; $56ae
 	call giveTreasure		; $56b0
 	jp partDelete		; $56b3
+
+_func_56b6:
 	ld e,$c9		; $56b6
 	ld a,(de)		; $56b8
 	and $0f			; $56b9
@@ -4211,26 +4298,28 @@ _label_11_157:
 	ld a,(de)		; $56bc
 	cp $10			; $56bd
 	ld a,$00		; $56bf
-	jr nc,_label_11_158	; $56c1
+	jr nc,+			; $56c1
 	inc a			; $56c3
-_label_11_158:
++
 	ld h,d			; $56c4
 	ld l,$c8		; $56c5
 	cp (hl)			; $56c7
 	ret z			; $56c8
 	ld (hl),a		; $56c9
 	jp partSetAnimation		; $56ca
+
+_func_56cd:
 	ld e,$c9		; $56cd
 	ld a,(de)		; $56cf
 	and $07			; $56d0
 	ld a,(de)		; $56d2
-	jr z,_label_11_159	; $56d3
+	jr z,+			; $56d3
 	and $18			; $56d5
 	add $04			; $56d7
-_label_11_159:
++
 	and $1c			; $56d9
 	rrca			; $56db
-	ld hl,$56f5		; $56dc
+	ld hl,_table_56f5		; $56dc
 	rst_addAToHl			; $56df
 	ld e,$cb		; $56e0
 	ld a,(de)		; $56e2
@@ -4247,22 +4336,12 @@ _label_11_159:
 	sub $18			; $56f0
 	cp $50			; $56f2
 	ret			; $56f4
-.DB $fc				; $56f5
-	nop			; $56f6
-.DB $fc				; $56f7
-	inc b			; $56f8
-	nop			; $56f9
-	inc b			; $56fa
-	inc b			; $56fb
-	inc b			; $56fc
-	inc b			; $56fd
-	nop			; $56fe
-	inc b			; $56ff
-.DB $fc				; $5700
-	nop			; $5701
-.DB $fc				; $5702
-.DB $fc				; $5703
-.DB $fc				; $5704
+
+_table_56f5:
+	.db $fc $00 $fc $04
+	.db $00 $04 $04 $04
+	.db $04 $00 $04 $fc
+	.db $00 $fc $fc $fc
 
 
 ; ==============================================================================
@@ -4270,18 +4349,20 @@ _label_11_159:
 ; ==============================================================================
 ; @addr{5705}
 partCode29:
-	jr z,_label_11_160	; $5705
+	jr z,@normalStatus	; $5705
 	ld e,$ea		; $5707
 	ld a,(de)		; $5709
 	cp $83			; $570a
 	jp z,partDelete		; $570c
-_label_11_160:
+@normalStatus:
 	ld e,$c4		; $570f
 	ld a,(de)		; $5711
 	rst_jumpTable			; $5712
-.dw $5719
-.dw $5747
-.dw $574e
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
 	ld h,d			; $5719
 	ld l,e			; $571a
 	inc (hl)		; $571b
@@ -4295,31 +4376,30 @@ _label_11_160:
 	ld e,$c9		; $572a
 	ld a,(de)		; $572c
 	and $0f			; $572d
-	ld hl,$5737		; $572f
+	ld hl,@table_5737		; $572f
 	rst_addAToHl			; $5732
 	ld a,(hl)		; $5733
 	jp partSetAnimation		; $5734
-	nop			; $5737
-	nop			; $5738
-	ld bc,$0202		; $5739
-	ld (bc),a		; $573c
-	inc bc			; $573d
-	inc b			; $573e
-	inc b			; $573f
-	inc b			; $5740
-	dec b			; $5741
-	ld b,$06		; $5742
-	ld b,$07		; $5744
-	nop			; $5746
+
+@table_5737:
+	.db $00 $00 $01 $02
+	.db $02 $02 $03 $04
+	.db $04 $04 $05 $06
+	.db $06 $06 $07 $00
+
+@state1:
 	call partCommon_decCounter1IfNonzero		; $5747
-	jr nz,_label_11_161	; $574a
+	jr nz,_func_5758	; $574a
 	ld l,e			; $574c
 	inc (hl)		; $574d
-	call $5758		; $574e
+
+@state2:
+	call _func_5758		; $574e
 	call _partCommon_checkTileCollisionOrOutOfBounds		; $5751
 	jp c,partDelete		; $5754
 	ret			; $5757
-_label_11_161:
+
+_func_5758:
 	call objectApplyComponentSpeed		; $5758
 	ld e,$c2		; $575b
 	ld a,(de)		; $575d
@@ -4727,14 +4807,14 @@ partCode30:
 	ld e,$c4		; $58f3
 	ld a,(de)		; $58f5
 	or a			; $58f6
-	jr nz,_label_11_170	; $58f7
+	jr nz,+			; $58f7
 	ld h,d			; $58f9
 	ld l,e			; $58fa
 	inc (hl)		; $58fb
 	ld l,$c6		; $58fc
 	ld (hl),$03		; $58fe
 	call objectSetVisible81		; $5900
-_label_11_170:
++
 	ldh a,(<hEnemyTargetY)	; $5903
 	ld b,a			; $5905
 	ldh a,(<hEnemyTargetX)	; $5906
@@ -4918,26 +4998,26 @@ partCode4d:
 ; ==============================================================================
 ; @addr{59ee}
 partCode4c:
-	jr z,_label_11_178	; $59ee
+	jr z,@normalStatus	; $59ee
 	ld e,$ea		; $59f0
 	ld a,(de)		; $59f2
 	cp $80			; $59f3
 	jp nz,partDelete		; $59f5
-_label_11_178:
+@normalStatus:
 	ld e,$c2		; $59f8
 	ld a,(de)		; $59fa
 	or a			; $59fb
 	ld e,$c4		; $59fc
 	ld a,(de)		; $59fe
-	jr z,_label_11_180	; $59ff
+	jr z,@subid0	; $59ff
 	or a			; $5a01
-	jr z,_label_11_179	; $5a02
+	jr z,+			; $5a02
 	call partAnimate		; $5a04
 	call objectApplySpeed		; $5a07
 	call _partCommon_checkTileCollisionOrOutOfBounds		; $5a0a
 	ret nz			; $5a0d
 	jp partDelete		; $5a0e
-_label_11_179:
++
 	ld h,d			; $5a11
 	ld l,e			; $5a12
 	inc (hl)		; $5a13
@@ -4956,11 +5036,14 @@ _label_11_179:
 	ld a,$01		; $5a29
 	call partSetAnimation		; $5a2b
 	jp objectSetVisible82		; $5a2e
-_label_11_180:
+
+@subid0:
 	rst_jumpTable			; $5a31
-.dw $5a38
-.dw $5a46
-.dw $5a54
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
 	ld h,d			; $5a38
 	ld l,e			; $5a39
 	inc (hl)		; $5a3a
@@ -4969,6 +5052,8 @@ _label_11_180:
 	ld l,$c6		; $5a3f
 	ld (hl),$1e		; $5a41
 	jp objectSetVisible82		; $5a43
+
+@state1:
 	call partCommon_decCounter1IfNonzero		; $5a46
 	jp nz,partAnimate		; $5a49
 	ld l,e			; $5a4c
@@ -4976,6 +5061,8 @@ _label_11_180:
 	call objectGetAngleTowardEnemyTarget		; $5a4e
 	ld e,$c9		; $5a51
 	ld (de),a		; $5a53
+
+@state2:
 	call partAnimate		; $5a54
 	call objectApplySpeed		; $5a57
 	call _partCommon_checkTileCollisionOrOutOfBounds		; $5a5a
@@ -4985,22 +5072,22 @@ _label_11_180:
 	and $1f			; $5a63
 	ld c,a			; $5a65
 	ld b,$03		; $5a66
-_label_11_181:
+-
 	call getFreePartSlot		; $5a68
-	jr nz,_label_11_182	; $5a6b
-	ld (hl),$4c		; $5a6d
+	jr nz,+			; $5a6b
+	ld (hl),PARTID_TWINROVA_FLAME		; $5a6d
 	inc l			; $5a6f
 	inc (hl)		; $5a70
 	ld l,$c9		; $5a71
 	ld (hl),c		; $5a73
 	call objectCopyPosition		; $5a74
-_label_11_182:
++
 	ld a,c			; $5a77
 	add $02			; $5a78
 	and $1f			; $5a7a
 	ld c,a			; $5a7c
 	dec b			; $5a7d
-	jr nz,_label_11_181	; $5a7e
+	jr nz,-			; $5a7e
 	call objectCreatePuff		; $5a80
 	jp partDelete		; $5a83
 
@@ -5097,9 +5184,11 @@ partCode50:
 	ld e,$c4		; $5aec
 	ld a,(de)		; $5aee
 	rst_jumpTable			; $5aef
-.dw $5af6
-.dw $5b08
-.dw $5b1e
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
 	ld a,$01		; $5af6
 	ld (de),a		; $5af8
 	pop hl			; $5af9
@@ -5107,15 +5196,17 @@ partCode50:
 	ld l,$b2		; $5afd
 	ld a,(hl)		; $5aff
 	or a			; $5b00
-	jr z,_label_11_187	; $5b01
+	jr z,+			; $5b01
 	ld a,$01		; $5b03
-_label_11_187:
++
 	jp partSetAnimation		; $5b05
+
+@state1:
 	call partAnimate		; $5b08
 	ld e,$e1		; $5b0b
 	ld a,(de)		; $5b0d
 	inc a			; $5b0e
-	jr nz,_label_11_188	; $5b0f
+	jr nz,_func_5b2b	; $5b0f
 	ld h,d			; $5b11
 	ld l,$c4		; $5b12
 	inc (hl)		; $5b14
@@ -5124,6 +5215,8 @@ _label_11_187:
 	ldi (hl),a		; $5b19
 	ld (hl),a		; $5b1a
 	call objectSetInvisible		; $5b1b
+
+@state2:
 	pop hl			; $5b1e
 	inc l			; $5b1f
 	ld a,(hl)		; $5b20
@@ -5131,20 +5224,21 @@ _label_11_187:
 	jp z,partDelete		; $5b22
 	ld bc,$2000		; $5b25
 	jp objectTakePositionWithOffset		; $5b28
-_label_11_188:
+
+_func_5b2b:
 	ld h,d			; $5b2b
 	ld l,e			; $5b2c
 	bit 7,(hl)		; $5b2d
-	jr z,_label_11_189	; $5b2f
+	jr z, +			; $5b2f
 	res 7,(hl)		; $5b31
 	call objectSetVisible82		; $5b33
 	ld a,SND_BIGSWORD		; $5b36
 	call playSound		; $5b38
 	ld h,d			; $5b3b
 	ld l,$e1		; $5b3c
-_label_11_189:
++
 	ld a,(hl)		; $5b3e
-	ld hl,$5b5b		; $5b3f
+	ld hl,_table_5b5b		; $5b3f
 	rst_addAToHl			; $5b42
 	ld e,$e6		; $5b43
 	ldi a,(hl)		; $5b45
@@ -5159,24 +5253,18 @@ _label_11_189:
 	ld l,$b2		; $5b4e
 	ld a,(hl)		; $5b50
 	or a			; $5b51
-	jr z,_label_11_190	; $5b52
+	jr z,+			; $5b52
 	ld a,c			; $5b54
 	cpl			; $5b55
 	inc a			; $5b56
 	ld c,a			; $5b57
-_label_11_190:
++
 	jp objectTakePositionWithOffset		; $5b58
-	rlca			; $5b5b
-	rlca			; $5b5c
-	ret c			; $5b5d
-	pop af			; $5b5e
-	dec bc			; $5b5f
-	rlca			; $5b60
-	rst $20			; $5b61
-	ld a,(de)		; $5b62
-	jr nz,$0c		; $5b63
-	rst $30			; $5b65
-	add hl,de		; $5b66
+
+_table_5b5b:
+	.db $07 $07 $d8 $f1
+	.db $0b $07 $e7 $1a
+	.db $20 $0c $f7 $19
 
 
 ; ==============================================================================
@@ -5194,12 +5282,14 @@ partCode51:
 	ld a,(de)		; $5b74
 	ld e,$c4		; $5b75
 	rst_jumpTable			; $5b77
-.dw $5b7e
-.dw $5be2
-.dw $5b9e
+	.dw @subid0
+	.dw @subid1
+	.dw @subid2
+
+@subid0:
 	ld a,(de)		; $5b7e
 	or a			; $5b7f
-	jr nz,_label_11_191	; $5b80
+	jr nz,+			; $5b80
 	ld h,d			; $5b82
 	ld l,e			; $5b83
 	inc (hl)		; $5b84
@@ -5211,24 +5301,26 @@ partCode51:
 	ld (hl),$02		; $5b8f
 	ld a,SND_ENERGYTHING		; $5b91
 	call playSound		; $5b93
-_label_11_191:
++
 	call partCommon_decCounter1IfNonzero		; $5b96
 	jp z,partDelete		; $5b99
-	jr _label_11_192		; $5b9c
+	jr +			; $5b9c
+
+@subid2:
 	ld a,(de)		; $5b9e
 	or a			; $5b9f
-	jr z,_label_11_193	; $5ba0
+	jr z,++			; $5ba0
 	ld e,$e1		; $5ba2
 	ld a,(de)		; $5ba4
 	rlca			; $5ba5
 	jp c,partDelete		; $5ba6
-_label_11_192:
++
 	ld e,$da		; $5ba9
 	ld a,(de)		; $5bab
 	xor $80			; $5bac
 	ld (de),a		; $5bae
 	jp partAnimate		; $5baf
-_label_11_193:
+++
 	ld h,d			; $5bb2
 	ld l,e			; $5bb3
 	inc (hl)		; $5bb4
@@ -5238,16 +5330,16 @@ _label_11_193:
 	ld a,(hl)		; $5bbb
 	ld b,$01		; $5bbc
 	cp $0c			; $5bbe
-	jr c,_label_11_194	; $5bc0
+	jr c,+			; $5bc0
 	inc b			; $5bc2
 	cp $19			; $5bc3
-	jr c,_label_11_194	; $5bc5
+	jr c,+			; $5bc5
 	inc b			; $5bc7
-_label_11_194:
++
 	ld a,b			; $5bc8
 	dec a			; $5bc9
 	and $01			; $5bca
-	ld hl,$5bde		; $5bcc
+	ld hl,@table_5bde		; $5bcc
 	rst_addDoubleIndex			; $5bcf
 	ld e,$e6		; $5bd0
 	ldi a,(hl)		; $5bd2
@@ -5258,13 +5350,19 @@ _label_11_194:
 	ld a,b			; $5bd7
 	call partSetAnimation		; $5bd8
 	jp objectSetVisible83		; $5bdb
-	ld ($0a0a),sp		; $5bde
-	ld a,(bc)		; $5be1
+
+@table_5bde:
+	.db $08 $0a
+	.db $0a $0a
+
+@subid1:
 	ld a,(de)		; $5be2
 	rst_jumpTable			; $5be3
-.dw $5bea
-.dw $5bff
-.dw $5c2a
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
 	ld h,d			; $5bea
 	ld l,e			; $5beb
 	inc (hl)		; $5bec
@@ -5277,8 +5375,10 @@ _label_11_194:
 	ld a,$04		; $5bf7
 	call partSetAnimation		; $5bf9
 	jp objectSetVisible82		; $5bfc
+
+@state1:
 	call partCommon_decCounter1IfNonzero		; $5bff
-	jr nz,_label_11_197	; $5c02
+	jr nz,@animate	; $5c02
 	dec (hl)		; $5c04
 	ld l,e			; $5c05
 	inc (hl)		; $5c06
@@ -5303,21 +5403,23 @@ _label_11_194:
 	ld b,$50		; $5c23
 	ld a,$02		; $5c25
 	jp objectSetComponentSpeedByScaledVelocity		; $5c27
+
+@state2:
 	call _partCommon_checkTileCollisionOrOutOfBounds		; $5c2a
-	jr nc,_label_11_195	; $5c2d
-	ld b,$56		; $5c2f
+	jr nc,+			; $5c2d
+	ld b,INTERACID_EXPLOSION		; $5c2f
 	call objectCreateInteractionWithSubid00		; $5c31
 	ld a,$3c		; $5c34
 	call z,setScreenShakeCounter		; $5c36
 	jp partDelete		; $5c39
-_label_11_195:
++
 	call partCommon_decCounter1IfNonzero		; $5c3c
 	ld a,(hl)		; $5c3f
 	and $07			; $5c40
-	jr nz,_label_11_196	; $5c42
+	jr nz,+			; $5c42
 	call getFreePartSlot		; $5c44
-	jr nz,_label_11_196	; $5c47
-	ld (hl),$51		; $5c49
+	jr nz,+			; $5c47
+	ld (hl),PARTID_51		; $5c49
 	inc l			; $5c4b
 	ld (hl),$02		; $5c4c
 	ld l,$c9		; $5c4e
@@ -5325,9 +5427,9 @@ _label_11_195:
 	ld a,(de)		; $5c51
 	ld (hl),a		; $5c52
 	call objectCopyPosition		; $5c53
-_label_11_196:
++
 	call objectApplyComponentSpeed		; $5c56
-_label_11_197:
+@animate:
 	jp partAnimate		; $5c59
 
 
@@ -5346,39 +5448,51 @@ partCode52:
 	ld a,(de)		; $5c69
 	ld e,$c4		; $5c6a
 	rst_jumpTable			; $5c6c
-.dw $5c73
-.dw $5ca2
-.dw $5d46
+	.dw @subid0
+	.dw @subid1
+	.dw @subid2
+
+@subid0:
 	ld a,(de)		; $5c73
 	rst_jumpTable			; $5c74
-.dw $5c7b
-.dw $5c85
-.dw $5c96
+	.dw @@state0
+	.dw @@state1
+	.dw @@state2
+
+@@state0:
 	ld h,d			; $5c7b
 	ld l,e			; $5c7c
 	inc (hl)		; $5c7d
 	ld l,$c6		; $5c7e
 	ld (hl),$0a		; $5c80
 	jp objectSetVisible82		; $5c82
+
+@@state1:
 	call partCommon_decCounter1IfNonzero		; $5c85
-	jr nz,_label_11_198	; $5c88
+	jr nz,+			; $5c88
 	ld l,e			; $5c8a
 	inc (hl)		; $5c8b
 	ld a,SND_BEAM		; $5c8c
 	call playSound		; $5c8e
 	ld a,$02		; $5c91
 	call partSetAnimation		; $5c93
+
+@@state2:
 	call partCommon_checkOutOfBounds		; $5c96
 	jp z,partDelete		; $5c99
 	call objectApplySpeed		; $5c9c
-_label_11_198:
++
 	jp partAnimate		; $5c9f
+
+@subid1:
 	ld a,(de)		; $5ca2
 	rst_jumpTable			; $5ca3
-.dw $5cac
-.dw $5ce0
-.dw $5d11
-.dw $5c96
+	.dw @@state0
+	.dw @@state1
+	.dw @@state2
+	.dw @subid0@state2
+
+@@state0:
 	ld h,d			; $5cac
 	ld l,$d0		; $5cad
 	ld (hl),$50		; $5caf
@@ -5387,14 +5501,14 @@ _label_11_198:
 	ld e,$c3		; $5cb5
 	ld a,(de)		; $5cb7
 	or a			; $5cb8
-	jr z,_label_11_199	; $5cb9
+	jr z,+			; $5cb9
 	ld (hl),$03		; $5cbb
 	ld l,$e6		; $5cbd
 	ld a,$02		; $5cbf
 	ldi (hl),a		; $5cc1
 	ld (hl),a		; $5cc2
 	ret			; $5cc3
-_label_11_199:
++
 	inc (hl)		; $5cc4
 	ld l,$c6		; $5cc5
 	ld (hl),$28		; $5cc7
@@ -5412,17 +5526,19 @@ _label_11_199:
 	ld (hl),a		; $5cda
 	ld a,$01		; $5cdb
 	call partSetAnimation		; $5cdd
+
+@@state1:
 	call partCommon_decCounter1IfNonzero		; $5ce0
-	jr z,_label_11_201	; $5ce3
+	jr z,++			; $5ce3
 	ld a,(hl)		; $5ce5
 	rrca			; $5ce6
 	ld e,$c9		; $5ce7
-	jr c,_label_11_200	; $5ce9
+	jr c,+			; $5ce9
 	ld a,(de)		; $5ceb
 	inc a			; $5cec
 	and $1f			; $5ced
 	ld (de),a		; $5cef
-_label_11_200:
++
 	ld l,$da		; $5cf0
 	ld a,(hl)		; $5cf2
 	xor $80			; $5cf3
@@ -5433,21 +5549,23 @@ _label_11_200:
 	ld c,(hl)		; $5cfa
 	ld a,$08		; $5cfb
 	call objectSetPositionInCircleArc		; $5cfd
-	jr _label_11_202		; $5d00
-_label_11_201:
+	jr @@animate	; $5d00
+++
 	ld (hl),$0a		; $5d02
 	ld l,e			; $5d04
 	inc (hl)		; $5d05
 	ld a,SND_VERAN_PROJECTILE		; $5d06
 	call playSound		; $5d08
 	call objectSetVisible82		; $5d0b
-_label_11_202:
+@@animate:
 	jp partAnimate		; $5d0e
+
+@@state2:
 	call partCommon_decCounter1IfNonzero		; $5d11
-	jr z,_label_11_203	; $5d14
+	jr z,+			; $5d14
 	call objectApplySpeed		; $5d16
-	jr _label_11_202		; $5d19
-_label_11_203:
+	jr @@animate		; $5d19
++
 	ld l,e			; $5d1b
 	inc (hl)		; $5d1c
 	ld l,$e6		; $5d1d
@@ -5458,11 +5576,13 @@ _label_11_203:
 	call partSetAnimation		; $5d24
 	call objectCreatePuff		; $5d27
 	ld b,$fd		; $5d2a
-	call $5d31		; $5d2c
+	call @func_5d31		; $5d2c
 	ld b,$03		; $5d2f
+
+@func_5d31:
 	call getFreePartSlot		; $5d31
 	ret nz			; $5d34
-	ld (hl),$52		; $5d35
+	ld (hl),PARTID_52		; $5d35
 	inc l			; $5d37
 	inc (hl)		; $5d38
 	inc l			; $5d39
@@ -5474,18 +5594,24 @@ _label_11_203:
 	and $1f			; $5d40
 	ld (hl),a		; $5d42
 	jp objectCopyPosition		; $5d43
+
+@subid2:
 	ld a,(de)		; $5d46
 	rst_jumpTable			; $5d47
-.dw $5d50
-.dw $5d5a
-.dw $5d6e
-.dw $5c96
+	.dw @@state0
+	.dw @@state1
+	.dw @@state2
+	.dw @subid0@state2
+
+@@state0:
 	ld h,d			; $5d50
 	ld l,e			; $5d51
 	inc (hl)		; $5d52
 	ld l,$c6		; $5d53
 	ld (hl),$0f		; $5d55
 	jp objectSetVisible82		; $5d57
+
+@@state1:
 	call partCommon_decCounter1IfNonzero		; $5d5a
 	jp nz,partAnimate		; $5d5d
 	ld (hl),$0f		; $5d60
@@ -5495,6 +5621,8 @@ _label_11_203:
 	call playSound		; $5d66
 	ld a,$01		; $5d69
 	jp partSetAnimation		; $5d6b
+
+@@state2:
 	call partCommon_decCounter1IfNonzero		; $5d6e
 	jp nz,partAnimate		; $5d71
 	ld l,e			; $5d74
@@ -5517,7 +5645,7 @@ partCode53:
 	ld e,$c4		; $5d85
 	ld a,(de)		; $5d87
 	or a			; $5d88
-	jr z,_label_11_206	; $5d89
+	jr z,@state0	; $5d89
 	ld a,(wDeleteEnergyBeads)		; $5d8b
 	or a			; $5d8e
 	jp nz,partDelete		; $5d8f
@@ -5525,14 +5653,14 @@ partCode53:
 	ld l,$c6		; $5d93
 	ld a,(hl)		; $5d95
 	inc a			; $5d96
-	jr z,_label_11_204	; $5d97
+	jr z,+			; $5d97
 	dec (hl)		; $5d99
 	jp z,partDelete		; $5d9a
-_label_11_204:
++
 	inc e			; $5d9d
 	ld a,(de)		; $5d9e
 	or a			; $5d9f
-	jr nz,_label_11_205	; $5da0
+	jr nz,+			; $5da0
 	inc l			; $5da2
 	dec (hl)		; $5da3
 	ret nz			; $5da4
@@ -5547,7 +5675,7 @@ _label_11_204:
 	call partSetAnimation		; $5db0
 	call _func_5e1a		; $5db3
 	jp objectSetVisible		; $5db6
-_label_11_205:
++
 	call objectApplySpeed		; $5db9
 	call partAnimate		; $5dbc
 	ld e,$e1		; $5dbf
@@ -5558,8 +5686,8 @@ _label_11_205:
 	ld l,$c5		; $5dc5
 	dec (hl)		; $5dc7
 	call objectSetInvisible		; $5dc8
-	jr _label_11_207		; $5dcb
-_label_11_206:
+	jr +			; $5dcb
+@state0:
 	ld h,d			; $5dcd
 	ld l,e			; $5dce
 	inc (hl)		; $5dcf
@@ -5576,7 +5704,7 @@ _label_11_206:
 	ld (hl),a		; $5de1
 	xor a			; $5de2
 	ld (wDeleteEnergyBeads),a		; $5de3
-_label_11_207:
++
 	call getRandomNumber_noPreserveVars		; $5de6
 	and $07			; $5de9
 	inc a			; $5deb

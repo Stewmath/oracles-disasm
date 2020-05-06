@@ -2476,8 +2476,9 @@ partCode12:
 	jp objectSetVisible80		; $4c91
 
 
-;;
-; Owl statue
+; ==============================================================================
+; PARTID_OWL_STATUE
+; ==============================================================================
 ; @addr{4c94}
 partCode13:
 	jr z,@normalStatus	; $4c94
@@ -3075,869 +3076,964 @@ _table_501e:
 	.db $f0 $03 $00 $00
 
 
+; ==============================================================================
+; PARTID_OCTOROK_PROJECTILE
+; ==============================================================================
+; @addr{5026}
 partCode18:
-	jr z,_label_10_114	; $5089
-	ld e,$ea		; $508b
-	ld a,(de)		; $508d
-	cp $80			; $508e
-	jp z,partDelete		; $5090
-	ld h,d			; $5093
-	ld l,$c4		; $5094
-	ld a,(hl)		; $5096
-	cp $02			; $5097
-	jr nc,_label_10_114	; $5099
-	ld (hl),$02		; $509b
-_label_10_114:
-	ld e,$c4		; $509d
-	ld a,(de)		; $509f
-	rst_jumpTable			; $50a0
-	xor c			; $50a1
-	ld d,b			; $50a2
-	or e			; $50a3
-	ld d,b			; $50a4
-	ret			; $50a5
-	ld d,b			; $50a6
-	rst $8			; $50a7
-	ld b,b			; $50a8
-	ld h,d			; $50a9
-	ld l,e			; $50aa
-	inc (hl)		; $50ab
-	ld l,$d0		; $50ac
-	ld (hl),$50		; $50ae
-	jp objectSetVisible81		; $50b0
-	call objectCheckWithinScreenBoundary		; $50b3
-	jp nc,partDelete		; $50b6
-	call $4072		; $50b9
-	jr nc,_label_10_115	; $50bc
-	jp z,partDelete		; $50be
-	ld e,$c4		; $50c1
-	ld a,$02		; $50c3
-	ld (de),a		; $50c5
-_label_10_115:
-	jp objectApplySpeed		; $50c6
-	ld a,$03		; $50c9
-	ld (de),a		; $50cb
-	xor a			; $50cc
-	jp $40af		; $50cd
+	jr z,@normalStatus	; $5026
+	ld e,$ea		; $5028
+	ld a,(de)		; $502a
+	cp $80			; $502b
+	jp z,partDelete		; $502d
+	ld h,d			; $5030
+	ld l,$c4		; $5031
+	ld a,(hl)		; $5033
+	cp $02			; $5034
+	jr nc,@normalStatus	; $5036
+	ld (hl),$02		; $5038
 
+@normalStatus:
+	ld e,$c4		; $503a
+	ld a,(de)		; $503c
+	rst_jumpTable			; $503d
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw _partCommon_updateSpeedAndDeleteWhenCounter1Is0
+
+@state0:
+	ld h,d			; $5046
+	ld l,e			; $5047
+	inc (hl)		; $5048
+	ld l,$d0		; $5049
+	ld (hl),$50		; $504b
+	jp objectSetVisible81		; $504d
+
+@state1:
+	call objectCheckWithinScreenBoundary		; $5050
+	jp nc,partDelete		; $5053
+	call _partCommon_checkTileCollisionOrOutOfBounds		; $5056
+	jr nc,+			; $5059
+	jp z,partDelete		; $505b
+	ld e,$c4		; $505e
+	ld a,$02		; $5060
+	ld (de),a		; $5062
++
+	jp objectApplySpeed		; $5063
+
+@state2:
+	ld a,$03		; $5066
+	ld (de),a		; $5068
+	xor a			; $5069
+	jp _partCommon_bounceWhenCollisionsEnabled		; $506a
+
+
+; ==============================================================================
+; PARTID_ZORA_FIRE
+; PARTID_GOPONGA_PROJECTILE
+; ==============================================================================
+; @addr{506d}
 partCode19:
 partCode31:
-	jp nz,partDelete		; $50d0
-	ld e,$c4		; $50d3
-	ld a,(de)		; $50d5
-	rst_jumpTable			; $50d6
-.DB $dd				; $50d7
-	ld d,b			; $50d8
-.DB $eb				; $50d9
-	ld d,b			; $50da
-	dec bc			; $50db
-	ld d,c			; $50dc
-	ld h,d			; $50dd
-	ld l,e			; $50de
-	inc (hl)		; $50df
-	ld l,$c6		; $50e0
-	ld (hl),$08		; $50e2
-	ld l,$d0		; $50e4
-	ld (hl),$3c		; $50e6
-	jp objectSetVisible81		; $50e8
-	call partCommon_decCounter1IfNonzero		; $50eb
-	ret nz			; $50ee
-	ld l,e			; $50ef
-	inc (hl)		; $50f0
-	ld l,$c2		; $50f1
-	bit 0,(hl)		; $50f3
-	jr z,_label_10_116	; $50f5
-	ldh a,(<hFFB2)	; $50f7
-	ld b,a			; $50f9
-	ldh a,(<hFFB3)	; $50fa
-	ld c,a			; $50fc
-	call objectGetRelativeAngle		; $50fd
-	ld e,$c9		; $5100
-	ld (de),a		; $5102
-	ret			; $5103
-_label_10_116:
-	call objectGetAngleTowardEnemyTarget		; $5104
-	ld e,$c9		; $5107
-	ld (de),a		; $5109
-	ret			; $510a
-	ld a,(wFrameCounter)		; $510b
-	and $03			; $510e
-	jr nz,_label_10_117	; $5110
-	ld e,$dc		; $5112
-	ld a,(de)		; $5114
-	xor $07			; $5115
-	ld (de),a		; $5117
-_label_10_117:
-	call objectApplySpeed		; $5118
-	call objectCheckWithinScreenBoundary		; $511b
-	jp nc,partDelete		; $511e
-	jp partAnimate		; $5121
+	jp nz,partDelete		; $506d
+	ld e,$c4		; $5070
+	ld a,(de)		; $5072
+	rst_jumpTable			; $5073
+	.dw @state0
+	.dw @state1
+	.dw @state2
 
+@state0:
+	ld h,d			; $507a
+	ld l,e			; $507b
+	inc (hl)		; $507c
+	ld l,$c6		; $507d
+	ld (hl),$08		; $507f
+	ld l,$d0		; $5081
+	ld (hl),$3c		; $5083
+	jp objectSetVisible81		; $5085
+
+@state1:
+	call partCommon_decCounter1IfNonzero		; $5088
+	ret nz			; $508b
+	ld l,e			; $508c
+	inc (hl)		; $508d
+	ld l,$c2		; $508e
+	bit 0,(hl)		; $5090
+	jr z,+			; $5092
+	ldh a,(<hFFB2)	; $5094
+	ld b,a			; $5096
+	ldh a,(<hFFB3)	; $5097
+	ld c,a			; $5099
+	call objectGetRelativeAngle		; $509a
+	ld e,$c9		; $509d
+	ld (de),a		; $509f
+	ret			; $50a0
++
+	call objectGetAngleTowardEnemyTarget		; $50a1
+	ld e,$c9		; $50a4
+	ld (de),a		; $50a6
+	ret			; $50a7
+
+@state2:
+	ld a,(wFrameCounter)		; $50a8
+	and $03			; $50ab
+	jr nz,+			; $50ad
+	ld e,$dc		; $50af
+	ld a,(de)		; $50b1
+	xor $07			; $50b2
+	ld (de),a		; $50b4
++
+	call objectApplySpeed		; $50b5
+	call objectCheckWithinScreenBoundary		; $50b8
+	jp nc,partDelete		; $50bb
+	jp partAnimate		; $50be
+
+
+; ==============================================================================
+; PARTID_ENEMY_ARROW
+; ==============================================================================
+; @addr{50c1}
 partCode1a:
-	jr z,_label_10_118	; $5124
-	ld e,$ea		; $5126
-	ld a,(de)		; $5128
-	cp $80			; $5129
-	jr z,_label_10_122	; $512b
-	jr _label_10_123		; $512d
-_label_10_118:
-	ld e,$c2		; $512f
-	ld a,(de)		; $5131
-	rst_jumpTable			; $5132
-	scf			; $5133
-	ld d,c			; $5134
-	ld h,(hl)		; $5135
-	ld d,c			; $5136
-	ld e,$c4		; $5137
-	ld a,(de)		; $5139
-	rst_jumpTable			; $513a
-	ld b,c			; $513b
-	ld d,c			; $513c
-	ld e,l			; $513d
-	ld d,c			; $513e
-	rst $8			; $513f
-	ld b,b			; $5140
-	ld h,d			; $5141
-	ld l,e			; $5142
-	inc (hl)		; $5143
-	ld l,$d0		; $5144
-	ld (hl),$50		; $5146
-	ld l,$cb		; $5148
-	ld b,(hl)		; $514a
-	ld l,$cd		; $514b
-	ld c,(hl)		; $514d
-	call $40e0		; $514e
-	ld e,$c9		; $5151
-	ld a,(de)		; $5153
-	swap a			; $5154
-	rlca			; $5156
-	call partSetAnimation		; $5157
-	jp objectSetVisible81		; $515a
-_label_10_119:
-	call $4072		; $515d
-	jr nc,_label_10_121	; $5160
-	jr z,_label_10_122	; $5162
-	jr _label_10_123		; $5164
-	ld e,$c4		; $5166
-	ld a,(de)		; $5168
-	rst_jumpTable			; $5169
-	ld (hl),d		; $516a
-	ld d,c			; $516b
-	adc c			; $516c
-	ld d,c			; $516d
-	ld e,l			; $516e
-	ld d,c			; $516f
-	rst $8			; $5170
-	ld b,b			; $5171
-	ld h,d			; $5172
-	ld l,e			; $5173
-	inc (hl)		; $5174
-	ld l,$c6		; $5175
-	ld (hl),$08		; $5177
-	ld l,$d0		; $5179
-	ld (hl),$50		; $517b
-	ld e,$c9		; $517d
-	ld a,(de)		; $517f
-	swap a			; $5180
-	rlca			; $5182
-	call partSetAnimation		; $5183
-	jp objectSetVisible81		; $5186
-	call partCommon_decCounter1IfNonzero		; $5189
-	jr nz,_label_10_120	; $518c
-	ld l,e			; $518e
-	inc (hl)		; $518f
-	jr _label_10_119		; $5190
-_label_10_120:
-	call $407e		; $5192
-	jr z,_label_10_122	; $5195
-_label_10_121:
-	jp objectApplySpeed		; $5197
-_label_10_122:
-	jp partDelete		; $519a
-_label_10_123:
-	ld e,$c2		; $519d
-	ld a,(de)		; $519f
-	or a			; $51a0
-	ld a,$02		; $51a1
-	jr z,_label_10_124	; $51a3
-	ld a,$03		; $51a5
-_label_10_124:
-	ld e,$c4		; $51a7
-	ld (de),a		; $51a9
-	ld a,$04		; $51aa
-	jp $40af		; $51ac
+	jr z,@normalStatus	; $50c1
+	ld e,$ea		; $50c3
+	ld a,(de)		; $50c5
+	cp $80			; $50c6
+	jr z,@partDelete	; $50c8
+	jr @func_11_513a		; $50ca
+@normalStatus:
+	ld e,$c2		; $50cc
+	ld a,(de)		; $50ce
+	rst_jumpTable			; $50cf
+	.dw @subid0
+	.dw @subid1
 
+@subid0:
+	ld e,$c4		; $50d4
+	ld a,(de)		; $50d6
+	rst_jumpTable			; $50d7
+	.dw @@state0
+	.dw @@state1
+	.dw _partCommon_updateSpeedAndDeleteWhenCounter1Is0
+
+@@state0:
+	ld h,d			; $50de
+	ld l,e			; $50df
+	inc (hl)		; $50e0
+	ld l,$d0		; $50e1
+	ld (hl),$50		; $50e3
+	ld l,$cb		; $50e5
+	ld b,(hl)		; $50e7
+	ld l,$cd		; $50e8
+	ld c,(hl)		; $50ea
+	call _partCommon_setPositionOffsetAndRadiusFromAngle		; $50eb
+	ld e,$c9		; $50ee
+	ld a,(de)		; $50f0
+	swap a			; $50f1
+	rlca			; $50f3
+	call partSetAnimation		; $50f4
+	jp objectSetVisible81		; $50f7
+
+@@state1:
+	call _partCommon_checkTileCollisionOrOutOfBounds		; $50fa
+	jr nc,@objectApplySpeed	; $50fd
+	jr z,@partDelete	; $50ff
+	jr @func_11_513a		; $5101
+
+@subid1:
+	ld e,$c4		; $5103
+	ld a,(de)		; $5105
+	rst_jumpTable			; $5106
+	.dw @@state0
+	.dw @@state1
+	.dw @subid0@state1
+	.dw _partCommon_updateSpeedAndDeleteWhenCounter1Is0
+
+@@state0:
+	ld h,d			; $510f
+	ld l,e			; $5110
+	inc (hl)		; $5111
+	ld l,$c6		; $5112
+	ld (hl),$08		; $5114
+	ld l,$d0		; $5116
+	ld (hl),$50		; $5118
+	ld e,$c9		; $511a
+	ld a,(de)		; $511c
+	swap a			; $511d
+	rlca			; $511f
+	call partSetAnimation		; $5120
+	jp objectSetVisible81		; $5123
+
+@@state1:
+	call partCommon_decCounter1IfNonzero		; $5126
+	jr nz,+			; $5129
+	ld l,e			; $512b
+	inc (hl)		; $512c
+	jr @subid0@state1		; $512d
++
+	call partCommon_checkOutOfBounds		; $512f
+	jr z,@partDelete	; $5132
+@objectApplySpeed:
+	jp objectApplySpeed		; $5134
+@partDelete:
+	jp partDelete		; $5137
+@func_11_513a:
+	ld e,$c2		; $513a
+	ld a,(de)		; $513c
+	or a			; $513d
+	ld a,$02		; $513e
+	jr z,+			; $5140
+	ld a,$03		; $5142
++
+	ld e,$c4		; $5144
+	ld (de),a		; $5146
+	ld a,$04		; $5147
+	jp _partCommon_bounceWhenCollisionsEnabled		; $5149
+
+
+; ==============================================================================
+; PARTID_LYNEL_BEAM
+; ==============================================================================
+; @addr{514c}
 partCode1b:
-	jr z,_label_10_125	; $51af
-	ld e,$ea		; $51b1
-	ld a,(de)		; $51b3
-	res 7,a			; $51b4
-	cp $04			; $51b6
-	jp c,partDelete		; $51b8
-_label_10_125:
-	ld e,$c4		; $51bb
-	ld a,(de)		; $51bd
-	or a			; $51be
-	jr z,_label_10_126	; $51bf
-	call objectCheckWithinScreenBoundary		; $51c1
-	jp nc,partDelete		; $51c4
-	call objectApplySpeed		; $51c7
-	ld a,(wFrameCounter)		; $51ca
-	and $03			; $51cd
-	ret nz			; $51cf
-	ld e,$dc		; $51d0
-	ld a,(de)		; $51d2
-	xor $07			; $51d3
-	ld (de),a		; $51d5
-	ret			; $51d6
-_label_10_126:
-	ld h,d			; $51d7
-	ld l,e			; $51d8
-	inc (hl)		; $51d9
-	ld l,$d0		; $51da
-	ld (hl),$78		; $51dc
-	ld l,$cb		; $51de
-	ld b,(hl)		; $51e0
-	ld l,$cd		; $51e1
-	ld c,(hl)		; $51e3
-	call $40e0		; $51e4
-	ld e,$c9		; $51e7
-	ld a,(de)		; $51e9
-	swap a			; $51ea
-	rlca			; $51ec
-	call partSetAnimation		; $51ed
-	jp objectSetVisible81		; $51f0
+	jr z,@normalStatus	; $514c
+	ld e,$ea		; $514e
+	ld a,(de)		; $5150
+	res 7,a			; $5151
+	cp $04			; $5153
+	jp c,partDelete		; $5155
+@normalStatus:
+	ld e,$c4		; $5158
+	ld a,(de)		; $515a
+	or a			; $515b
+	jr z,+			; $515c
+	call objectCheckWithinScreenBoundary		; $515e
+	jp nc,partDelete		; $5161
+	call objectApplySpeed		; $5164
+	ld a,(wFrameCounter)		; $5167
+	and $03			; $516a
+	ret nz			; $516c
+	ld e,$dc		; $516d
+	ld a,(de)		; $516f
+	xor $07			; $5170
+	ld (de),a		; $5172
+	ret			; $5173
++
+	ld h,d			; $5174
+	ld l,e			; $5175
+	inc (hl)		; $5176
+	ld l,$d0		; $5177
+	ld (hl),$78		; $5179
+	ld l,$cb		; $517b
+	ld b,(hl)		; $517d
+	ld l,$cd		; $517e
+	ld c,(hl)		; $5180
+	call _partCommon_setPositionOffsetAndRadiusFromAngle		; $5181
+	ld e,$c9		; $5184
+	ld a,(de)		; $5186
+	swap a			; $5187
+	rlca			; $5189
+	call partSetAnimation		; $518a
+	jp objectSetVisible81		; $518d
 
+
+; ==============================================================================
+; PARTID_STALFOS_BONE
+; ==============================================================================
+; @addr{5190}
 partCode1c:
-	jr z,_label_10_127	; $51f3
-	ld e,$ea		; $51f5
-	ld a,(de)		; $51f7
-	cp $80			; $51f8
-	jr z,_label_10_128	; $51fa
-	jr _label_10_130		; $51fc
-_label_10_127:
-	ld e,$c4		; $51fe
-	ld a,(de)		; $5200
-	rst_jumpTable			; $5201
-	ld ($1852),sp		; $5202
-	ld d,d			; $5205
-	add hl,hl		; $5206
-	ld d,d			; $5207
-	ld h,d			; $5208
-	ld l,e			; $5209
-	inc (hl)		; $520a
-	ld l,$d0		; $520b
-	ld (hl),$3c		; $520d
-	call objectGetAngleTowardEnemyTarget		; $520f
-	ld e,$c9		; $5212
-	ld (de),a		; $5214
-	jp objectSetVisible81		; $5215
-	call $4072		; $5218
-	jr c,_label_10_129	; $521b
-	call objectApplySpeed		; $521d
-	call objectCheckWithinScreenBoundary		; $5220
-	jp c,partAnimate		; $5223
-_label_10_128:
-	jp partDelete		; $5226
-	call partCommon_decCounter1IfNonzero		; $5229
-	jr z,_label_10_128	; $522c
-	ld c,$0e		; $522e
-	call objectUpdateSpeedZ_paramC		; $5230
-	call objectApplySpeed		; $5233
-	ld a,(wFrameCounter)		; $5236
-	rrca			; $5239
-	ret c			; $523a
-	jp partAnimate		; $523b
-_label_10_129:
-	jr z,_label_10_128	; $523e
-_label_10_130:
-	ld e,$c4		; $5240
-	ld a,$02		; $5242
-	ld (de),a		; $5244
-	xor a			; $5245
-	jp $40af		; $5246
+	jr z,@normalStatus	; $5190
+	ld e,$ea		; $5192
+	ld a,(de)		; $5194
+	cp $80			; $5195
+	jr z,@partDelete	; $5197
+	jr @func_11_51dd		; $5199
 
+@normalStatus:
+	ld e,$c4		; $519b
+	ld a,(de)		; $519d
+	rst_jumpTable			; $519e
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
+	ld h,d			; $51a5
+	ld l,e			; $51a6
+	inc (hl)		; $51a7
+	ld l,$d0		; $51a8
+	ld (hl),$3c		; $51aa
+	call objectGetAngleTowardEnemyTarget		; $51ac
+	ld e,$c9		; $51af
+	ld (de),a		; $51b1
+	jp objectSetVisible81		; $51b2
+
+@state1:
+	call _partCommon_checkTileCollisionOrOutOfBounds		; $51b5
+	jr c,+			; $51b8
+	call objectApplySpeed		; $51ba
+	call objectCheckWithinScreenBoundary		; $51bd
+	jp c,partAnimate		; $51c0
+
+@partDelete:
+	jp partDelete		; $51c3
+
+@state2:
+	call partCommon_decCounter1IfNonzero		; $51c6
+	jr z,@partDelete	; $51c9
+	ld c,$0e		; $51cb
+	call objectUpdateSpeedZ_paramC		; $51cd
+	call objectApplySpeed		; $51d0
+	ld a,(wFrameCounter)		; $51d3
+	rrca			; $51d6
+	ret c			; $51d7
+	jp partAnimate		; $51d8
++
+	jr z,@partDelete	; $51db
+@func_11_51dd:
+	ld e,$c4		; $51dd
+	ld a,$02		; $51df
+	ld (de),a		; $51e1
+	xor a			; $51e2
+	jp _partCommon_bounceWhenCollisionsEnabled		; $51e3
+
+
+; ==============================================================================
+; PARTID_ENEMY_SWORD
+; ==============================================================================
+; @addr{51e6}
 partCode1d:
-	jr z,_label_10_132	; $5249
-	ld e,$ea		; $524b
-	ld a,(de)		; $524d
-	cp $80			; $524e
-	jr z,_label_10_132	; $5250
-	cp $8a			; $5252
-	jr z,_label_10_132	; $5254
-	ld a,$2b		; $5256
-	call objectGetRelatedObject1Var		; $5258
-	ld a,(hl)		; $525b
-	or a			; $525c
-	jr nz,_label_10_131	; $525d
-	ld e,$eb		; $525f
-	ld a,(de)		; $5261
-	ld (hl),a		; $5262
-_label_10_131:
-	ld e,$ec		; $5263
-	ld a,(de)		; $5265
-	inc l			; $5266
-	ldi (hl),a		; $5267
-	ld e,$ed		; $5268
-	ld a,(de)		; $526a
-	ld (hl),a		; $526b
-_label_10_132:
-	ld e,$c4		; $526c
-	ld a,(de)		; $526e
-	or a			; $526f
-	jr z,_label_10_134	; $5270
-	ld h,d			; $5272
-	ld l,$e4		; $5273
-	set 7,(hl)		; $5275
-	call $52d6		; $5277
-	jp nz,partDelete		; $527a
-_label_10_133:
-	ld l,$8b		; $527d
-	ld b,(hl)		; $527f
-	ld l,$8d		; $5280
-	ld c,(hl)		; $5282
-	ld l,$89		; $5283
+	jr z,@normalStatus	; $51e6
+	ld e,$ea		; $51e8
+	ld a,(de)		; $51ea
+	cp $80			; $51eb
+	jr z,@normalStatus	; $51ed
+	cp $8a			; $51ef
+	jr z,@normalStatus	; $51f1
+	ld a,$2b		; $51f3
+	call objectGetRelatedObject1Var		; $51f5
+	ld a,(hl)		; $51f8
+	or a			; $51f9
+	jr nz,+			; $51fa
+	ld e,$eb		; $51fc
+	ld a,(de)		; $51fe
+	ld (hl),a		; $51ff
++
+	ld e,$ec		; $5200
+	ld a,(de)		; $5202
+	inc l			; $5203
+	ldi (hl),a		; $5204
+	ld e,$ed		; $5205
+	ld a,(de)		; $5207
+	ld (hl),a		; $5208
+@normalStatus:
+	ld e,$c4		; $5209
+	ld a,(de)		; $520b
+	or a			; $520c
+	jr z,@func_5261	; $520d
+	ld h,d			; $520f
+	ld l,$e4		; $5210
+	set 7,(hl)		; $5212
+	call @func_5273		; $5214
+	jp nz,partDelete		; $5217
+
+@func_521a:
+	ld l,$8b		; $521a
+	ld b,(hl)		; $521c
+	ld l,$8d		; $521d
+	ld c,(hl)		; $521f
+	ld l,$89		; $5220
+	ld a,(hl)		; $5222
+	add $04			; $5223
+	and $18			; $5225
+	rrca			; $5227
+	ldh (<hFF8B),a	; $5228
+	ld l,$a1		; $522a
+	add (hl)		; $522c
+	add (hl)		; $522d
+	ld hl,@table_524d		; $522e
+	rst_addAToHl			; $5231
+	ld e,$cb		; $5232
+	ldi a,(hl)		; $5234
+	add b			; $5235
+	ld (de),a		; $5236
+	ld e,$cd		; $5237
+	ld a,(hl)		; $5239
+	add c			; $523a
+	ld (de),a		; $523b
+	ldh a,(<hFF8B)	; $523c
+	rrca			; $523e
+	and $02			; $523f
+	ld hl,@table_525d		; $5241
+	rst_addAToHl			; $5244
+	ld e,$e6		; $5245
+	ldi a,(hl)		; $5247
+	ld (de),a		; $5248
+	inc e			; $5249
+	ld a,(hl)		; $524a
+	ld (de),a		; $524b
+	ret			; $524c
+
+@table_524d:
+	.db $f8 $04
+	.db $f6 $04
+	.db $04 $07
+	.db $04 $09
+	.db $07 $fc
+	.db $09 $fc
+	.db $04 $f9
+	.db $04 $f7
+
+@table_525d:
+	.db $05 $02
+	.db $02 $05
+
+@func_5261:
+	ld h,d			; $5261
+	ld l,e			; $5262
+	inc (hl)		; $5263
+	ld l,$fe		; $5264
+	ld (hl),$04		; $5266
+	ld a,$01		; $5268
+	call objectGetRelatedObject1Var		; $526a
+	ld e,$f0		; $526d
+	ld a,(hl)		; $526f
+	ld (de),a		; $5270
+	jr @func_521a		; $5271
+
+@func_5273:
+	ld a,$01		; $5273
+	call objectGetRelatedObject1Var		; $5275
+	ld e,$f0		; $5278
+	ld a,(de)		; $527a
+	cp (hl)			; $527b
+	ret nz			; $527c
+	ld l,$b0		; $527d
+	bit 0,(hl)		; $527f
+	jr nz,+			; $5281
+	ld l,$a9		; $5283
 	ld a,(hl)		; $5285
-	add $04			; $5286
-	and $18			; $5288
-	rrca			; $528a
-	ldh (<hFF8B),a	; $528b
-	ld l,$a1		; $528d
-	add (hl)		; $528f
-	add (hl)		; $5290
-	ld hl,$52b0		; $5291
-	rst_addAToHl			; $5294
-	ld e,$cb		; $5295
-	ldi a,(hl)		; $5297
-	add b			; $5298
+	or a			; $5286
+	jr z,+			; $5287
+	ld l,$ae		; $5289
+	ld a,(hl)		; $528b
+	or a			; $528c
+	jr nz,+			; $528d
+	ld l,$bf		; $528f
+	bit 1,(hl)		; $5291
+	ret z			; $5293
++
+	ld e,$e4		; $5294
+	ld a,(de)		; $5296
+	res 7,a			; $5297
 	ld (de),a		; $5299
-	ld e,$cd		; $529a
-	ld a,(hl)		; $529c
-	add c			; $529d
-	ld (de),a		; $529e
-	ldh a,(<hFF8B)	; $529f
-	rrca			; $52a1
-	and $02			; $52a2
-	ld hl,$52c0		; $52a4
-	rst_addAToHl			; $52a7
-	ld e,$e6		; $52a8
-	ldi a,(hl)		; $52aa
-	ld (de),a		; $52ab
-	inc e			; $52ac
-	ld a,(hl)		; $52ad
-	ld (de),a		; $52ae
-	ret			; $52af
-	ld hl,sp+$04		; $52b0
-	or $04			; $52b2
-	inc b			; $52b4
-	rlca			; $52b5
-	inc b			; $52b6
-	add hl,bc		; $52b7
-	rlca			; $52b8
-.DB $fc				; $52b9
-	add hl,bc		; $52ba
-.DB $fc				; $52bb
-	inc b			; $52bc
-	ld sp,hl		; $52bd
-	inc b			; $52be
-	rst $30			; $52bf
-	dec b			; $52c0
-	ld (bc),a		; $52c1
-	ld (bc),a		; $52c2
-	dec b			; $52c3
-_label_10_134:
-	ld h,d			; $52c4
-	ld l,e			; $52c5
-	inc (hl)		; $52c6
-	ld l,$fe		; $52c7
-	ld (hl),$04		; $52c9
-	ld a,$01		; $52cb
-	call objectGetRelatedObject1Var		; $52cd
-	ld e,$f0		; $52d0
-	ld a,(hl)		; $52d2
-	ld (de),a		; $52d3
-	jr _label_10_133		; $52d4
-	ld a,$01		; $52d6
-	call objectGetRelatedObject1Var		; $52d8
-	ld e,$f0		; $52db
-	ld a,(de)		; $52dd
-	cp (hl)			; $52de
-	ret nz			; $52df
-	ld l,$b0		; $52e0
-	bit 0,(hl)		; $52e2
-	jr nz,_label_10_135	; $52e4
-	ld l,$a9		; $52e6
-	ld a,(hl)		; $52e8
-	or a			; $52e9
-	jr z,_label_10_135	; $52ea
-	ld l,$ae		; $52ec
-	ld a,(hl)		; $52ee
-	or a			; $52ef
-	jr nz,_label_10_135	; $52f0
-	ld l,$bf		; $52f2
-	bit 1,(hl)		; $52f4
-	ret z			; $52f6
-_label_10_135:
-	ld e,$e4		; $52f7
-	ld a,(de)		; $52f9
-	res 7,a			; $52fa
-	ld (de),a		; $52fc
-	xor a			; $52fd
-	ret			; $52fe
+	xor a			; $529a
+	ret			; $529b
 
+
+; ==============================================================================
+; PARTID_DEKU_SCRUB_PROJECTILE
+; ==============================================================================
+; @addr{529c}
 partCode1e:
-	jr z,_label_10_136	; $52ff
-	ld e,$ea		; $5301
-	ld a,(de)		; $5303
-	cp $80			; $5304
-	jr z,_label_10_136	; $5306
-	call $5360		; $5308
-	ld h,d			; $530b
-	ld l,$c4		; $530c
-	ld (hl),$03		; $530e
-	ld l,$e4		; $5310
-	res 7,(hl)		; $5312
-_label_10_136:
-	ld e,$c4		; $5314
-	ld a,(de)		; $5316
-	rst_jumpTable			; $5317
-	inc h			; $5318
-	ld d,e			; $5319
-	scf			; $531a
-	ld d,e			; $531b
-	ld a,$53		; $531c
-	ld c,a			; $531e
-	ld d,e			; $531f
-	rst $8			; $5320
-	ld b,b			; $5321
-	ld d,h			; $5322
-	ld d,e			; $5323
-	ld h,d			; $5324
-	ld l,e			; $5325
-	inc (hl)		; $5326
-	ld l,$d0		; $5327
-	ld (hl),$50		; $5329
-	ld l,$c6		; $532b
-	ld (hl),$08		; $532d
-	ld a,$a6		; $532f
-	call playSound		; $5331
-	jp objectSetVisible81		; $5334
-	call partCommon_decCounter1IfNonzero		; $5337
-	jr nz,_label_10_138	; $533a
-	ld l,e			; $533c
-	inc (hl)		; $533d
-_label_10_137:
-	call $4072		; $533e
-	jr nc,_label_10_138	; $5341
-	jr nz,_label_10_140	; $5343
-	jr _label_10_139		; $5345
-_label_10_138:
-	call objectCheckWithinScreenBoundary		; $5347
-	jp c,objectApplySpeed		; $534a
-	jr _label_10_139		; $534d
-	call $5399		; $534f
-	jr _label_10_137		; $5352
-_label_10_139:
-	jp partDelete		; $5354
-_label_10_140:
-	ld e,$c4		; $5357
-	ld a,$04		; $5359
-	ld (de),a		; $535b
-	xor a			; $535c
-	jp $40af		; $535d
-	ld e,$c9		; $5360
-	ld a,(de)		; $5362
-	bit 2,a			; $5363
-	jr nz,_label_10_141	; $5365
-	sub $08			; $5367
-	rrca			; $5369
-	ld b,a			; $536a
-	ld a,($d008)		; $536b
-	add b			; $536e
-	ld hl,$538d		; $536f
-	rst_addAToHl			; $5372
-	ld a,(hl)		; $5373
-	ld (de),a		; $5374
-	ret			; $5375
-_label_10_141:
-	sub $0c			; $5376
-	rrca			; $5378
-	ld b,a			; $5379
-	ld a,($d008)		; $537a
-	add b			; $537d
-	ld hl,$5385		; $537e
-	rst_addAToHl			; $5381
-	ld a,(hl)		; $5382
-	ld (de),a		; $5383
-	ret			; $5384
-	inc b			; $5385
-	ld ($1410),sp		; $5386
-	inc e			; $5389
-	inc c			; $538a
-	stop			; $538b
-	jr _label_10_142		; $538c
-	ld ($180c),sp		; $538e
-	nop			; $5391
-_label_10_142:
-	inc c			; $5392
-	stop			; $5393
-	inc d			; $5394
-	inc e			; $5395
-	ld ($1814),sp		; $5396
-	ld a,$24		; $5399
-	call objectGetRelatedObject1Var		; $539b
-	bit 7,(hl)		; $539e
-	ret z			; $53a0
-	call checkObjectsCollided		; $53a1
-	ret nc			; $53a4
-	ld l,$aa		; $53a5
-	ld (hl),$82		; $53a7
-	ld l,$b0		; $53a9
-	dec (hl)		; $53ab
-	ld l,$ab		; $53ac
-	ld (hl),$0c		; $53ae
-	ld e,$c4		; $53b0
-	ld a,$04		; $53b2
-	ld (de),a		; $53b4
-	ret			; $53b5
+	jr z,@normalStatus	; $529c
+	ld e,$ea		; $529e
+	ld a,(de)		; $52a0
+	cp $80			; $52a1
+	jr z,@normalStatus	; $52a3
+	call _func_52fd		; $52a5
+	ld h,d			; $52a8
+	ld l,$c4		; $52a9
+	ld (hl),$03		; $52ab
+	ld l,$e4		; $52ad
+	res 7,(hl)		; $52af
+@normalStatus:
+	ld e,$c4		; $52b1
+	ld a,(de)		; $52b3
+	rst_jumpTable			; $52b4
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw _partCommon_updateSpeedAndDeleteWhenCounter1Is0
+	.dw @state5
 
+@state0:
+	ld h,d			; $52c1
+	ld l,e			; $52c2
+	inc (hl)		; $52c3
+	ld l,$d0		; $52c4
+	ld (hl),$50		; $52c6
+	ld l,$c6		; $52c8
+	ld (hl),$08		; $52ca
+	ld a,SND_STRIKE		; $52cc
+	call playSound		; $52ce
+	jp objectSetVisible81		; $52d1
+
+@state1:
+	call partCommon_decCounter1IfNonzero		; $52d4
+	jr nz,+			; $52d7
+	ld l,e			; $52d9
+	inc (hl)		; $52da
+
+@state2:
+	call _partCommon_checkTileCollisionOrOutOfBounds		; $52db
+	jr nc,+			; $52de
+	jr nz,_func_52f4	; $52e0
+	jr @state5		; $52e2
++
+	call objectCheckWithinScreenBoundary		; $52e4
+	jp c,objectApplySpeed		; $52e7
+	jr @state5		; $52ea
+
+@state3:
+	call _func_5336		; $52ec
+	jr @state2		; $52ef
+
+@state5:
+	jp partDelete		; $52f1
+
+_func_52f4:
+	ld e,$c4		; $52f4
+	ld a,$04		; $52f6
+	ld (de),a		; $52f8
+	xor a			; $52f9
+	jp _partCommon_bounceWhenCollisionsEnabled		; $52fa
+
+_func_52fd:
+	ld e,$c9		; $52fd
+	ld a,(de)		; $52ff
+	bit 2,a			; $5300
+	jr nz,_func_5313			; $5302
+	sub $08			; $5304
+	rrca			; $5306
+	ld b,a			; $5307
+	ld a,(w1Link.direction)		; $5308
+	add b			; $530b
+	ld hl,_table_532a		; $530c
+	rst_addAToHl			; $530f
+	ld a,(hl)		; $5310
+	ld (de),a		; $5311
+	ret			; $5312
+
+_func_5313:
+	sub $0c			; $5313
+	rrca			; $5315
+	ld b,a			; $5316
+	ld a,(w1Link.direction)		; $5317
+	add b			; $531a
+	ld hl,_table_5322		; $531b
+	rst_addAToHl			; $531e
+	ld a,(hl)		; $531f
+	ld (de),a		; $5320
+	ret			; $5321
+
+_table_5322:
+	.db $04 $08 $10 $14
+	.db $1c $0c $10 $18
+
+_table_532a:
+	.db $04 $08 $0c $18
+	.db $00 $0c $10 $14
+	.db $1c $08 $14 $18
+
+_func_5336:
+	ld a,$24		; $5336
+	call objectGetRelatedObject1Var		; $5338
+	bit 7,(hl)		; $533b
+	ret z			; $533d
+	call checkObjectsCollided		; $533e
+	ret nc			; $5341
+	ld l,$aa		; $5342
+	ld (hl),$82		; $5344
+	ld l,$b0		; $5346
+	dec (hl)		; $5348
+	ld l,$ab		; $5349
+	ld (hl),$0c		; $534b
+	ld e,$c4		; $534d
+	ld a,$04		; $534f
+	ld (de),a		; $5351
+	ret			; $5352
+
+
+; ==============================================================================
+; PARTID_WIZZROBE_PROJECTILE
+; ==============================================================================
+; @addr{5353}
 partCode1f:
-	jr nz,_label_10_143	; $53b6
-	ld e,$c4		; $53b8
-	ld a,(de)		; $53ba
-	or a			; $53bb
-	jr z,_label_10_144	; $53bc
-	call objectCheckWithinScreenBoundary		; $53be
-	jr nc,_label_10_143	; $53c1
-	call $4072		; $53c3
-	jp nc,objectApplySpeed		; $53c6
-_label_10_143:
-	jp partDelete		; $53c9
-_label_10_144:
-	ld h,d			; $53cc
-	ld l,e			; $53cd
-	inc (hl)		; $53ce
-	ld l,$d0		; $53cf
-	ld (hl),$50		; $53d1
-	ld e,$c9		; $53d3
-	ld a,(de)		; $53d5
-	swap a			; $53d6
-	rlca			; $53d8
-	call partSetAnimation		; $53d9
-	jp objectSetVisible81		; $53dc
+	jr nz,@normalStatus	; $5353
+	ld e,$c4		; $5355
+	ld a,(de)		; $5357
+	or a			; $5358
+	jr z,_func_5369	; $5359
+	call objectCheckWithinScreenBoundary		; $535b
+	jr nc,@normalStatus	; $535e
+	call _partCommon_checkTileCollisionOrOutOfBounds		; $5360
+	jp nc,objectApplySpeed		; $5363
+@normalStatus:
+	jp partDelete		; $5366
 
+_func_5369:
+	ld h,d			; $5369
+	ld l,e			; $536a
+	inc (hl)		; $536b
+	ld l,$d0		; $536c
+	ld (hl),$50		; $536e
+	ld e,$c9		; $5370
+	ld a,(de)		; $5372
+	swap a			; $5373
+	rlca			; $5375
+	call partSetAnimation		; $5376
+	jp objectSetVisible81		; $5379
+
+
+; ==============================================================================
+; PARTID_FIRE
+; Created by fire keese
+; ==============================================================================
+; @addr{537c}
 partCode20:
-	ld e,$c4		; $53df
-	ld a,(de)		; $53e1
-	or a			; $53e2
-	jr z,_label_10_145	; $53e3
-	call partCommon_decCounter1IfNonzero		; $53e5
-	jp z,partDelete		; $53e8
-	jp partAnimate		; $53eb
-_label_10_145:
-	ld h,d			; $53ee
-	ld l,e			; $53ef
-	inc (hl)		; $53f0
-	ld l,$c6		; $53f1
-	ld (hl),$b4		; $53f3
-	jp objectSetVisible82		; $53f5
+	ld e,$c4		; $537c
+	ld a,(de)		; $537e
+	or a			; $537f
+	jr z,@state0	; $5380
+	call partCommon_decCounter1IfNonzero		; $5382
+	jp z,partDelete		; $5385
+	jp partAnimate		; $5388
 
+@state0:
+	ld h,d			; $538b
+	ld l,e			; $538c
+	inc (hl)		; $538d
+	ld l,$c6		; $538e
+	ld (hl),$b4		; $5390
+	jp objectSetVisible82		; $5392
+
+
+; ==============================================================================
+; PARTID_MOBLIN_BOOMERANG
+; ==============================================================================
+; @addr{5395}
 partCode21:
-	jr z,_label_10_146	; $53f8
-	ld e,$ea		; $53fa
-	ld a,(de)		; $53fc
-	res 7,a			; $53fd
-	sub $01			; $53ff
-	cp $03			; $5401
-	jr nc,_label_10_146	; $5403
-	ld e,$c4		; $5405
-	ld a,$02		; $5407
-	ld (de),a		; $5409
-_label_10_146:
-	ld e,$d7		; $540a
-	ld a,(de)		; $540c
-	inc a			; $540d
-	jr z,_label_10_149	; $540e
-	ld e,$c4		; $5410
-	ld a,(de)		; $5412
-	rst_jumpTable			; $5413
-	ld a,(de)		; $5414
-	ld d,h			; $5415
-	dec hl			; $5416
-	ld d,h			; $5417
-	ld a,$54		; $5418
-	ld h,d			; $541a
-	ld l,e			; $541b
-	inc (hl)		; $541c
-	ld l,$c6		; $541d
-	ld (hl),$2d		; $541f
-	inc l			; $5421
-	ld (hl),$06		; $5422
-	ld l,$d0		; $5424
-	ld (hl),$50		; $5426
-	jp objectSetVisible81		; $5428
-	call objectCheckSimpleCollision		; $542b
-	jr nz,_label_10_150	; $542e
-	call partCommon_decCounter1IfNonzero		; $5430
-	jr z,_label_10_150	; $5433
-	call $548d		; $5435
-_label_10_147:
-	call objectApplySpeed		; $5438
-_label_10_148:
-	jp partAnimate		; $543b
-	call $547d		; $543e
-	call $5458		; $5441
-	jr nc,_label_10_147	; $5444
-	ld a,$18		; $5446
-	call objectGetRelatedObject1Var		; $5448
-	xor a			; $544b
-	ldi (hl),a		; $544c
-	ld (hl),a		; $544d
-_label_10_149:
-	jp partDelete		; $544e
-_label_10_150:
-	ld e,$c4		; $5451
-	ld a,$02		; $5453
-	ld (de),a		; $5455
-	jr _label_10_148		; $5456
-	ld a,$0b		; $5458
-	call objectGetRelatedObject1Var		; $545a
-	push hl			; $545d
-	ld b,(hl)		; $545e
-	ld l,$8d		; $545f
-	ld c,(hl)		; $5461
-	call objectGetRelativeAngle		; $5462
-	ld e,$c9		; $5465
-	ld (de),a		; $5467
-	pop hl			; $5468
-	ld e,$cb		; $5469
-	ld a,(de)		; $546b
-	sub (hl)		; $546c
-	add $04			; $546d
-	cp $09			; $546f
-	ret nc			; $5471
-	ld l,$8d		; $5472
-	ld e,$cd		; $5474
-	ld a,(de)		; $5476
-	sub (hl)		; $5477
-	add $04			; $5478
-	cp $09			; $547a
-	ret			; $547c
-	ld a,(wFrameCounter)		; $547d
-	and $03			; $5480
-	ret nz			; $5482
-	ld e,$d0		; $5483
-	ld a,(de)		; $5485
-	add $05			; $5486
-	cp $50			; $5488
-	ret nc			; $548a
-	ld (de),a		; $548b
-	ret			; $548c
-	ld h,d			; $548d
-	ld l,$c7		; $548e
-	dec (hl)		; $5490
-	ret nz			; $5491
-	ld (hl),$06		; $5492
-	ld e,$d0		; $5494
-	ld a,(de)		; $5496
-	sub $05			; $5497
-	ret c			; $5499
-	ld (de),a		; $549a
-	ret			; $549b
+	jr z,@normalStatus	; $5395
+	ld e,$ea		; $5397
+	ld a,(de)		; $5399
+	res 7,a			; $539a
+	sub $01			; $539c
+	cp $03			; $539e
+	jr nc,@normalStatus	; $53a0
+	ld e,$c4		; $53a2
+	ld a,$02		; $53a4
+	ld (de),a		; $53a6
 
+@normalStatus:
+	ld e,$d7		; $53a7
+	ld a,(de)		; $53a9
+	inc a			; $53aa
+	jr z,@partDelete	; $53ab
+	ld e,$c4		; $53ad
+	ld a,(de)		; $53af
+	rst_jumpTable			; $53b0
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
+	ld h,d			; $53b7
+	ld l,e			; $53b8
+	inc (hl)		; $53b9
+	ld l,$c6		; $53ba
+	ld (hl),$2d		; $53bc
+	inc l			; $53be
+	ld (hl),$06		; $53bf
+	ld l,$d0		; $53c1
+	ld (hl),$50		; $53c3
+	jp objectSetVisible81		; $53c5
+
+@state1:
+	call objectCheckSimpleCollision		; $53c8
+	jr nz,@func_53ee	; $53cb
+	call partCommon_decCounter1IfNonzero		; $53cd
+	jr z,@func_53ee	; $53d0
+	call _func_542a		; $53d2
+@objectApplySpeed:
+	call objectApplySpeed		; $53d5
+@animate:
+	jp partAnimate		; $53d8
+
+@state2:
+	call _func_541a		; $53db
+	call _func_53f5		; $53de
+	jr nc,@objectApplySpeed		; $53e1
+	ld a,$18		; $53e3
+	call objectGetRelatedObject1Var		; $53e5
+	xor a			; $53e8
+	ldi (hl),a		; $53e9
+	ld (hl),a		; $53ea
+@partDelete:
+	jp partDelete		; $53eb
+
+@func_53ee:
+	ld e,$c4		; $53ee
+	ld a,$02		; $53f0
+	ld (de),a		; $53f2
+	jr @animate		; $53f3
+
+_func_53f5:
+	ld a,$0b		; $53f5
+	call objectGetRelatedObject1Var		; $53f7
+	push hl			; $53fa
+	ld b,(hl)		; $53fb
+	ld l,$8d		; $53fc
+	ld c,(hl)		; $53fe
+	call objectGetRelativeAngle		; $53ff
+	ld e,$c9		; $5402
+	ld (de),a		; $5404
+	pop hl			; $5405
+	ld e,$cb		; $5406
+	ld a,(de)		; $5408
+	sub (hl)		; $5409
+	add $04			; $540a
+	cp $09			; $540c
+	ret nc			; $540e
+	ld l,$8d		; $540f
+	ld e,$cd		; $5411
+	ld a,(de)		; $5413
+	sub (hl)		; $5414
+	add $04			; $5415
+	cp $09			; $5417
+	ret			; $5419
+
+_func_541a:
+	ld a,(wFrameCounter)		; $541a
+	and $03			; $541d
+	ret nz			; $541f
+	ld e,$d0		; $5420
+	ld a,(de)		; $5422
+	add $05			; $5423
+	cp $50			; $5425
+	ret nc			; $5427
+	ld (de),a		; $5428
+	ret			; $5429
+
+_func_542a:
+	ld h,d			; $542a
+	ld l,$c7		; $542b
+	dec (hl)		; $542d
+	ret nz			; $542e
+	ld (hl),$06		; $542f
+	ld e,$d0		; $5431
+	ld a,(de)		; $5433
+	sub $05			; $5434
+	ret c			; $5436
+	ld (de),a		; $5437
+	ret			; $5438
+
+
+; ==============================================================================
+; PARTID_CUCCO_ATTACKER
+; ==============================================================================
 partCode22:
-	ld e,$c4		; $549c
-	ld a,(de)		; $549e
-	rst_jumpTable			; $549f
-	and (hl)		; $54a0
-	ld d,h			; $54a1
-	rst $38			; $54a2
-	ld d,h			; $54a3
-	ld ($6255),sp		; $54a4
-	ld l,e			; $54a7
-	inc (hl)		; $54a8
-	ld l,$c6		; $54a9
-	ld (hl),$18		; $54ab
-	ld l,$cf		; $54ad
-	ld (hl),$fa		; $54af
-	ld a,$30		; $54b1
-	call objectGetRelatedObject1Var		; $54b3
-	ld a,(hl)		; $54b6
-	sub $10			; $54b7
-	and $1e			; $54b9
-	rrca			; $54bb
-	ld hl,$5538		; $54bc
-	rst_addAToHl			; $54bf
-	ld e,$d0		; $54c0
-	ld a,(hl)		; $54c2
-	ld (de),a		; $54c3
-	call objectSetVisiblec1		; $54c4
-	call getRandomNumber_noPreserveVars		; $54c7
-	ld c,a			; $54ca
-	and $30			; $54cb
-	ld b,a			; $54cd
-	swap b			; $54ce
-	and $10			; $54d0
-	ld hl,$5518		; $54d2
-	rst_addAToHl			; $54d5
-	ld a,c			; $54d6
-	and $0f			; $54d7
-	rst_addAToHl			; $54d9
-	bit 0,b			; $54da
-	ld e,$cb		; $54dc
-	ld c,$cd		; $54de
-	jr nz,_label_10_151	; $54e0
-	ld e,c			; $54e2
-	ld c,$cb		; $54e3
-_label_10_151:
-	ld a,(hl)		; $54e5
-	ld (de),a		; $54e6
-	ld a,b			; $54e7
-	ld hl,$5514		; $54e8
-	rst_addAToHl			; $54eb
-	ld e,c			; $54ec
-	ld a,(hl)		; $54ed
-	ld (de),a		; $54ee
-	call objectGetAngleTowardEnemyTarget		; $54ef
-	ld e,$c9		; $54f2
-	ld (de),a		; $54f4
-	cp $11			; $54f5
-	ld a,$00		; $54f7
-	jr nc,_label_10_152	; $54f9
-	inc a			; $54fb
-_label_10_152:
-	jp partSetAnimation		; $54fc
-	call partCommon_decCounter1IfNonzero		; $54ff
-	jr nz,_label_10_153	; $5502
-	ld l,e			; $5504
-	inc (hl)		; $5505
-	jr _label_10_153		; $5506
-	call objectCheckWithinScreenBoundary		; $5508
-	jp nc,partDelete		; $550b
-_label_10_153:
-	call objectApplySpeed		; $550e
-	jp partAnimate		; $5511
-	ld ($8898),sp		; $5514
-	ld ($0e05),sp		; $5517
-	rla			; $551a
-	jr nz,_label_10_154	; $551b
-	ldd (hl),a		; $551d
-	dec sp			; $551e
-	ld b,h			; $551f
-	ld c,l			; $5520
-	ld d,(hl)		; $5521
-	ld e,a			; $5522
-	ld l,b			; $5523
-	ld (hl),c		; $5524
-	ld a,d			; $5525
-	add e			; $5526
-	adc h			; $5527
-	dec b			; $5528
-	rrca			; $5529
-	add hl,de		; $552a
-	inc hl			; $552b
-	dec l			; $552c
-	scf			; $552d
-	ld b,c			; $552e
-	ld c,e			; $552f
-	ld d,l			; $5530
-	ld e,a			; $5531
-	ld l,c			; $5532
-	ld (hl),e		; $5533
-	ld a,l			; $5534
-	add a			; $5535
-	sub c			; $5536
-	sbc e			; $5537
-	ldd (hl),a		; $5538
-	inc a			; $5539
-	ld b,(hl)		; $553a
-	ld d,b			; $553b
-	ld e,d			; $553c
-	ld e,d			; $553d
-	ld h,h			; $553e
-	ld l,(hl)		; $553f
-	ld a,b			; $5540
+	ld e,Part.state		; $5439
+	ld a,(de)		; $543b
+	rst_jumpTable			; $543c
+	.dw @state0
+	.dw @state1
+	.dw @state2
 
+@state0:
+	ld h,d			; $5443
+	ld l,e			; $5444
+	inc (hl) ; [state]
+
+	ld l,Part.counter1		; $5446
+	ld (hl),$18		; $5448
+	ld l,Part.zh		; $544a
+	ld (hl),$fa		; $544c
+
+	ld a,Object.var30		; $544e
+	call objectGetRelatedObject1Var		; $5450
+	ld a,(hl)		; $5453
+	sub $10			; $5454
+	and $1e			; $5456
+	rrca			; $5458
+	ld hl,@speedVals		; $5459
+	rst_addAToHl			; $545c
+	ld e,Part.speed		; $545d
+	ld a,(hl)		; $545f
+	ld (de),a		; $5460
+
+	call objectSetVisiblec1		; $5461
+
+	call getRandomNumber_noPreserveVars		; $5464
+	ld c,a			; $5467
+	and $30			; $5468
+	ld b,a			; $546a
+	swap b			; $546b
+	and $10			; $546d
+	ld hl,@xOrYVals		; $546f
+	rst_addAToHl			; $5472
+	ld a,c			; $5473
+	and $0f			; $5474
+	rst_addAToHl			; $5476
+	bit 0,b			; $5477
+	ld e,Part.yh		; $5479
+	ld c,Part.xh		; $547b
+	jr nz,+			; $547d
+	ld e,c			; $547f
+	ld c,Part.yh		; $5480
++
+	ld a,(hl)		; $5482
+	ld (de),a		; $5483
+
+	ld a,b			; $5484
+	ld hl,@screenEdgePositions		; $5485
+	rst_addAToHl			; $5488
+	ld e,c			; $5489
+	ld a,(hl)		; $548a
+	ld (de),a		; $548b
+	call objectGetAngleTowardEnemyTarget		; $548c
+	ld e,Part.angle		; $548f
+	ld (de),a		; $5491
+
+	; Decide animation based on angle
+	cp $11			; $5492
+	ld a,$00		; $5494
+	jr nc,+			; $5496
+	inc a			; $5498
++
+	jp partSetAnimation		; $5499
+
+
+@state1:
+	call partCommon_decCounter1IfNonzero		; $549c
+	jr nz,@applySpeedAndAnimate	; $549f
+	ld l,e			; $54a1
+	inc (hl)		; $54a2
+	jr @applySpeedAndAnimate		; $54a3
+
+
+@state2:
+	call objectCheckWithinScreenBoundary		; $54a5
+	jp nc,partDelete		; $54a8
+@applySpeedAndAnimate:
+	call objectApplySpeed		; $54ab
+	jp partAnimate		; $54ae
+
+@screenEdgePositions:
+	.db $08 $98 $88 $08
+
+@xOrYVals:
+	.db $05 $0e $17 $20 $29 $32 $3b $44
+	.db $4d $56 $5f $68 $71 $7a $83 $8c
+	.db $05 $0f $19 $23 $2d $37 $41 $4b
+	.db $55 $5f $69 $73 $7d $87 $91 $9b
+
+@speedVals:
+	.db SPEED_140 SPEED_180 SPEED_1c0 SPEED_200
+	.db SPEED_240 SPEED_240 SPEED_280 SPEED_2c0
+	.db SPEED_300
+
+
+; ==============================================================================
+; PARTID_FIRE_PIPES
+; ==============================================================================
+; @addr{54de}
 partCode23:
-	ld e,$c2		; $5541
-	ld a,(de)		; $5543
-	ld e,$c4		; $5544
-_label_10_154:
-	rst_jumpTable			; $5546
-	ld c,l			; $5547
-	ld d,l			; $5548
-	ld e,h			; $5549
-	ld d,l			; $554a
-	ld a,b			; $554b
-	ld d,l			; $554c
-	ld a,(de)		; $554d
-	or a			; $554e
-	jr z,_label_10_155	; $554f
-	call partCommon_decCounter1IfNonzero		; $5551
-	ret nz			; $5554
-	ld (hl),$3c		; $5555
-	jr _label_10_156		; $5557
-_label_10_155:
-	inc a			; $5559
-	ld (de),a		; $555a
-	ret			; $555b
-	ld a,(de)		; $555c
-	or a			; $555d
-	jr z,_label_10_155	; $555e
-	call partCommon_decCounter1IfNonzero		; $5560
-	ret nz			; $5563
-	call $55a2		; $5564
-_label_10_156:
-	call getFreePartSlot		; $5567
-	ret nz			; $556a
-	ld (hl),$23		; $556b
-	inc l			; $556d
-	ld (hl),$02		; $556e
-	ld l,$f0		; $5570
-	ld e,l			; $5572
-	ld a,(de)		; $5573
-	ld (hl),a		; $5574
-	jp objectCopyPosition		; $5575
-	ld a,(de)		; $5578
-	or a			; $5579
-	jr z,_label_10_157	; $557a
-	ld h,d			; $557c
-	ld l,$cb		; $557d
-	ld a,(hl)		; $557f
-	cp $b0			; $5580
-	jp nc,partDelete		; $5582
-	ld l,$d0		; $5585
-	ld e,$ca		; $5587
-	call add16BitRefs		; $5589
-	dec l			; $558c
-	ld a,(hl)		; $558d
-	add $10			; $558e
-	ldi (hl),a		; $5590
-	ld a,(hl)		; $5591
-	adc $00			; $5592
-	ld (hl),a		; $5594
-	jp partAnimate		; $5595
-_label_10_157:
-	ld h,d			; $5598
-	ld l,e			; $5599
-	inc (hl)		; $559a
-	ld l,$e4		; $559b
-	set 7,(hl)		; $559d
-	jp objectSetVisible81		; $559f
-	ld e,$87		; $55a2
-	ld a,(de)		; $55a4
-	inc a			; $55a5
-	and $03			; $55a6
-	ld (de),a		; $55a8
-	ld hl,$55b2		; $55a9
-	rst_addAToHl			; $55ac
-	ld e,$c6		; $55ad
-	ld a,(hl)		; $55af
-	ld (de),a		; $55b0
-	ret			; $55b1
-	inc a			; $55b2
-	inc a			; $55b3
-	ld e,$1e		; $55b4
+	ld e,$c2		; $54de
+	ld a,(de)		; $54e0
+	ld e,$c4		; $54e1
+	rst_jumpTable			; $54e3
+	.dw @subid0
+	.dw @subid1
+	.dw @subid2
+
+@subid0:
+	ld a,(de)		; $54ea
+	or a			; $54eb
+	jr z,@func_54f6			; $54ec
+	call partCommon_decCounter1IfNonzero		; $54ee
+	ret nz			; $54f1
+.ifdef ROM_AGES
+	ld (hl),$78		; $54f2
+.else
+	ld (hl),$3c
+.endif
+	jr ++			; $54f4
+@func_54f6:
+	inc a			; $54f6
+	ld (de),a		; $54f7
+	ret			; $54f8
+
+@subid1:
+	ld a,(de)		; $54f9
+	or a			; $54fa
+	jr z,@func_54f6	; $54fb
+	call partCommon_decCounter1IfNonzero		; $54fd
+	ret nz			; $5500
+	call _func_553f		; $5501
+++
+	call getFreePartSlot		; $5504
+	ret nz			; $5507
+	ld (hl),PARTID_FIRE_PIPES		; $5508
+	inc l			; $550a
+	ld (hl),$02		; $550b
+	ld l,$f0		; $550d
+	ld e,l			; $550f
+	ld a,(de)		; $5510
+	ld (hl),a		; $5511
+	jp objectCopyPosition		; $5512
+
+@subid2:
+	ld a,(de)		; $5515
+	or a			; $5516
+	jr z,_func_5535			; $5517
+	ld h,d			; $5519
+	ld l,$cb		; $551a
+	ld a,(hl)		; $551c
+	cp $b0			; $551d
+	jp nc,partDelete		; $551f
+	ld l,$d0		; $5522
+	ld e,$ca		; $5524
+	call add16BitRefs		; $5526
+	dec l			; $5529
+	ld a,(hl)		; $552a
+	add $10			; $552b
+	ldi (hl),a		; $552d
+	ld a,(hl)		; $552e
+	adc $00			; $552f
+	ld (hl),a		; $5531
+	jp partAnimate		; $5532
+
+_func_5535:
+	ld h,d			; $5535
+	ld l,e			; $5536
+	inc (hl)		; $5537
+	ld l,$e4		; $5538
+	set 7,(hl)		; $553a
+	jp objectSetVisible81		; $553c
+
+_func_553f:
+	ld e,$87		; $553f
+	ld a,(de)		; $5541
+	inc a			; $5542
+	and $03			; $5543
+	ld (de),a		; $5545
+	ld hl,_table_554f		; $5546
+	rst_addAToHl			; $5549
+	ld e,$c6		; $554a
+	ld a,(hl)		; $554c
+	ld (de),a		; $554d
+	ret			; $554e
+
+_table_554f:
+.ifdef ROM_AGES
+	.db $78 $78
+.else
+	.db $3c $3c
+.endif
+	.db $1e $1e
 
 
 ; ==============================================================================
@@ -4083,1210 +4179,1461 @@ partCode27:
 	.db $00 $05
 
 
+; ==============================================================================
+; PARTID_SMALL_FAIRY
+; ==============================================================================
+; @addr{560d}
 partCode28:
-	jr z,_label_10_158	; $5673
-	cp $02			; $5675
-	jp z,$5702		; $5677
-	ld e,$c4		; $567a
-	ld a,$02		; $567c
-	ld (de),a		; $567e
-_label_10_158:
-	ld e,$c4		; $567f
-	ld a,(de)		; $5681
-	rst_jumpTable			; $5682
-	adc c			; $5683
-	ld d,(hl)		; $5684
-	sbc (hl)		; $5685
-	ld d,(hl)		; $5686
-	ret nc			; $5687
-	ld d,(hl)		; $5688
-	ld h,d			; $5689
-	ld l,$c4		; $568a
-	inc (hl)		; $568c
-	ld l,$cf		; $568d
-	ld (hl),$fa		; $568f
-	ld l,$f1		; $5691
-	ld e,$cb		; $5693
-	ld a,(de)		; $5695
-	ldi (hl),a		; $5696
-	ld e,$cd		; $5697
-	ld a,(de)		; $5699
-	ld (hl),a		; $569a
-	jp objectSetVisiblec2		; $569b
-	call partCommon_decCounter1IfNonzero		; $569e
-	jr z,_label_10_159	; $56a1
-	call $5733		; $56a3
-	jp c,objectApplySpeed		; $56a6
-_label_10_159:
-	call getRandomNumber_noPreserveVars		; $56a9
-	and $3e			; $56ac
-	add $08			; $56ae
-	ld e,$c6		; $56b0
-	ld (de),a		; $56b2
-	call getRandomNumber_noPreserveVars		; $56b3
-	and $03			; $56b6
-	ld hl,$56cc		; $56b8
-	rst_addAToHl			; $56bb
-	ld e,$d0		; $56bc
-	ld a,(hl)		; $56be
-	ld (de),a		; $56bf
-	call getRandomNumber_noPreserveVars		; $56c0
-	and $1e			; $56c3
-	ld h,d			; $56c5
-	ld l,$c9		; $56c6
-	ld (hl),a		; $56c8
-	jp $571c		; $56c9
-	ld a,(bc)		; $56cc
-	inc d			; $56cd
-	ld e,$28		; $56ce
-	ld e,$c5		; $56d0
+	jr z,@normalStatus	; $560d
+	cp $02			; $560f
+	jp z,@collected		; $5611
+	ld e,$c4		; $5614
+	ld a,$02		; $5616
+	ld (de),a		; $5618
+@normalStatus:
+	ld e,$c4		; $5619
+	ld a,(de)		; $561b
+	rst_jumpTable			; $561c
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
+	ld h,d			; $5623
+	ld l,$c4		; $5624
+	inc (hl)		; $5626
+	ld l,$cf		; $5627
+	ld (hl),$fa		; $5629
+	ld l,$f1		; $562b
+	ld e,$cb		; $562d
+	ld a,(de)		; $562f
+	ldi (hl),a		; $5630
+	ld e,$cd		; $5631
+	ld a,(de)		; $5633
+	ld (hl),a		; $5634
+	jp objectSetVisiblec2		; $5635
+
+@state1:
+	call partCommon_decCounter1IfNonzero		; $5638
+	jr z,+			; $563b
+	call _func_56cd		; $563d
+	jp c,objectApplySpeed		; $5640
++
+	call getRandomNumber_noPreserveVars		; $5643
+	and $3e			; $5646
+	add $08			; $5648
+	ld e,$c6		; $564a
+	ld (de),a		; $564c
+	call getRandomNumber_noPreserveVars		; $564d
+	and $03			; $5650
+	ld hl,@table_5666		; $5652
+	rst_addAToHl			; $5655
+	ld e,$d0		; $5656
+	ld a,(hl)		; $5658
+	ld (de),a		; $5659
+	call getRandomNumber_noPreserveVars		; $565a
+	and $1e			; $565d
+	ld h,d			; $565f
+	ld l,$c9		; $5660
+	ld (hl),a		; $5662
+	jp _func_56b6		; $5663
+
+@table_5666:
+	.db $0a
+	.db $14
+	.db $1e
+	.db $28
+
+@state2:
+	ld e,$c5		; $566a
+	ld a,(de)		; $566c
+	or a			; $566d
+	jr nz,+			; $566e
+	ld h,d			; $5670
+	ld l,e			; $5671
+	inc (hl)		; $5672
+	ld l,$cf		; $5673
+	ld (hl),$00		; $5675
+	ld a,$01		; $5677
+	call objectGetRelatedObject1Var		; $5679
+	ld a,(hl)		; $567c
+	ld e,$f0		; $567d
+	ld (de),a		; $567f
+	call objectSetVisible80		; $5680
++
+	call objectCheckCollidedWithLink		; $5683
+	jp c,@collected		; $5686
+	ld a,$00		; $5689
+	call objectGetRelatedObject1Var		; $568b
+	ldi a,(hl)		; $568e
+	or a			; $568f
+	jr z,+			; $5690
+	ld e,$f0		; $5692
+	ld a,(de)		; $5694
+	cp (hl)			; $5695
+	jp z,objectTakePosition		; $5696
++
+	jp partDelete		; $5699
+
+@collected:
+	ld a,$26		; $569c
+	call cpActiveRing		; $569e
+	ld c,$18		; $56a1
+	jr z,+			; $56a3
+	ld a,$25		; $56a5
+	call cpActiveRing		; $56a7
+	jr nz,++		; $56aa
++
+	ld c,$30		; $56ac
+++
+	ld a,$29		; $56ae
+	call giveTreasure		; $56b0
+	jp partDelete		; $56b3
+
+_func_56b6:
+	ld e,$c9		; $56b6
+	ld a,(de)		; $56b8
+	and $0f			; $56b9
+	ret z			; $56bb
+	ld a,(de)		; $56bc
+	cp $10			; $56bd
+	ld a,$00		; $56bf
+	jr nc,+			; $56c1
+	inc a			; $56c3
++
+	ld h,d			; $56c4
+	ld l,$c8		; $56c5
+	cp (hl)			; $56c7
+	ret z			; $56c8
+	ld (hl),a		; $56c9
+	jp partSetAnimation		; $56ca
+
+_func_56cd:
+	ld e,$c9		; $56cd
+	ld a,(de)		; $56cf
+	and $07			; $56d0
 	ld a,(de)		; $56d2
-	or a			; $56d3
-	jr nz,_label_10_160	; $56d4
-	ld h,d			; $56d6
-	ld l,e			; $56d7
-	inc (hl)		; $56d8
-	ld l,$cf		; $56d9
-	ld (hl),$00		; $56db
-	ld a,$01		; $56dd
-	call objectGetRelatedObject1Var		; $56df
-	ld a,(hl)		; $56e2
-	ld e,$f0		; $56e3
-	ld (de),a		; $56e5
-	call objectSetVisible80		; $56e6
-_label_10_160:
-	call objectCheckCollidedWithLink		; $56e9
-	jp c,$5702		; $56ec
-	ld a,$00		; $56ef
-	call objectGetRelatedObject1Var		; $56f1
-	ldi a,(hl)		; $56f4
-	or a			; $56f5
-	jr z,_label_10_161	; $56f6
-	ld e,$f0		; $56f8
-	ld a,(de)		; $56fa
-	cp (hl)			; $56fb
-	jp z,objectTakePosition		; $56fc
-_label_10_161:
-	jp partDelete		; $56ff
-	ld a,$26		; $5702
-	call cpActiveRing		; $5704
-	ld c,$18		; $5707
-	jr z,_label_10_162	; $5709
-	ld a,$25		; $570b
-	call cpActiveRing		; $570d
-	jr nz,_label_10_163	; $5710
-_label_10_162:
-	ld c,$30		; $5712
-_label_10_163:
-	ld a,$29		; $5714
-	call giveTreasure		; $5716
-	jp partDelete		; $5719
-	ld e,$c9		; $571c
-	ld a,(de)		; $571e
-	and $0f			; $571f
-	ret z			; $5721
-	ld a,(de)		; $5722
-	cp $10			; $5723
-	ld a,$00		; $5725
-	jr nc,_label_10_164	; $5727
-	inc a			; $5729
-_label_10_164:
-	ld h,d			; $572a
-	ld l,$c8		; $572b
-	cp (hl)			; $572d
-	ret z			; $572e
-	ld (hl),a		; $572f
-	jp partSetAnimation		; $5730
-	ld e,$c9		; $5733
-	ld a,(de)		; $5735
-	and $07			; $5736
-	ld a,(de)		; $5738
-	jr z,_label_10_165	; $5739
-	and $18			; $573b
-	add $04			; $573d
-_label_10_165:
-	and $1c			; $573f
-	rrca			; $5741
-	ld hl,$575b		; $5742
-	rst_addAToHl			; $5745
-	ld e,$cb		; $5746
-	ld a,(de)		; $5748
-	add (hl)		; $5749
-	ld b,a			; $574a
-	ld e,$cd		; $574b
-	inc hl			; $574d
-	ld a,(de)		; $574e
-	add (hl)		; $574f
-	sub $38			; $5750
-	cp $80			; $5752
-	ret nc			; $5754
-	ld a,b			; $5755
-	sub $18			; $5756
-	cp $50			; $5758
-	ret			; $575a
-.DB $fc				; $575b
-	nop			; $575c
-.DB $fc				; $575d
-	inc b			; $575e
-	nop			; $575f
-	inc b			; $5760
-	inc b			; $5761
-	inc b			; $5762
-	inc b			; $5763
-	nop			; $5764
-	inc b			; $5765
-.DB $fc				; $5766
-	nop			; $5767
-.DB $fc				; $5768
-.DB $fc				; $5769
-.DB $fc				; $576a
+	jr z,+			; $56d3
+	and $18			; $56d5
+	add $04			; $56d7
++
+	and $1c			; $56d9
+	rrca			; $56db
+	ld hl,_table_56f5		; $56dc
+	rst_addAToHl			; $56df
+	ld e,$cb		; $56e0
+	ld a,(de)		; $56e2
+	add (hl)		; $56e3
+	ld b,a			; $56e4
+	ld e,$cd		; $56e5
+	inc hl			; $56e7
+	ld a,(de)		; $56e8
+	add (hl)		; $56e9
+	sub $38			; $56ea
+	cp $80			; $56ec
+	ret nc			; $56ee
+	ld a,b			; $56ef
+	sub $18			; $56f0
+	cp $50			; $56f2
+	ret			; $56f4
 
+_table_56f5:
+	.db $fc $00 $fc $04
+	.db $00 $04 $04 $04
+	.db $04 $00 $04 $fc
+	.db $00 $fc $fc $fc
+
+
+; ==============================================================================
+; PARTID_BEAM
+; ==============================================================================
+; @addr{5705}
 partCode29:
-	jr z,_label_10_166	; $576b
-	ld e,$ea		; $576d
-	ld a,(de)		; $576f
-	cp $83			; $5770
-	jp z,partDelete		; $5772
-_label_10_166:
-	ld e,$c4		; $5775
-	ld a,(de)		; $5777
-	rst_jumpTable			; $5778
-	ld a,a			; $5779
-	ld d,a			; $577a
-	xor l			; $577b
-	ld d,a			; $577c
-	or h			; $577d
-	ld d,a			; $577e
-	ld h,d			; $577f
-	ld l,e			; $5780
-	inc (hl)		; $5781
-	ld l,$c6		; $5782
-	ld (hl),$02		; $5784
-	ld l,$c9		; $5786
-	ld c,(hl)		; $5788
-	ld b,$50		; $5789
-	ld a,$04		; $578b
-	call objectSetComponentSpeedByScaledVelocity		; $578d
-	ld e,$c9		; $5790
-	ld a,(de)		; $5792
-	and $0f			; $5793
-	ld hl,$579d		; $5795
-	rst_addAToHl			; $5798
-	ld a,(hl)		; $5799
-	jp partSetAnimation		; $579a
-	nop			; $579d
-	nop			; $579e
-	ld bc,$0202		; $579f
-	ld (bc),a		; $57a2
-	inc bc			; $57a3
-	inc b			; $57a4
-	inc b			; $57a5
-	inc b			; $57a6
-	dec b			; $57a7
-	ld b,$06		; $57a8
-	ld b,$07		; $57aa
-	nop			; $57ac
-	call partCommon_decCounter1IfNonzero		; $57ad
-	jr nz,_label_10_167	; $57b0
-	ld l,e			; $57b2
-	inc (hl)		; $57b3
-	call $57be		; $57b4
-	call $4072		; $57b7
-	jp c,partDelete		; $57ba
-	ret			; $57bd
-_label_10_167:
-	call objectApplyComponentSpeed		; $57be
-	ld e,$c2		; $57c1
-	ld a,(de)		; $57c3
-	ld b,a			; $57c4
-	ld a,(wFrameCounter)		; $57c5
-	and b			; $57c8
-	jp z,objectSetVisible81		; $57c9
-	jp objectSetInvisible		; $57cc
+	jr z,@normalStatus	; $5705
+	ld e,$ea		; $5707
+	ld a,(de)		; $5709
+	cp $83			; $570a
+	jp z,partDelete		; $570c
+@normalStatus:
+	ld e,$c4		; $570f
+	ld a,(de)		; $5711
+	rst_jumpTable			; $5712
+	.dw @state0
+	.dw @state1
+	.dw @state2
 
+@state0:
+	ld h,d			; $5719
+	ld l,e			; $571a
+	inc (hl)		; $571b
+	ld l,$c6		; $571c
+	ld (hl),$02		; $571e
+	ld l,$c9		; $5720
+	ld c,(hl)		; $5722
+	ld b,$50		; $5723
+	ld a,$04		; $5725
+	call objectSetComponentSpeedByScaledVelocity		; $5727
+	ld e,$c9		; $572a
+	ld a,(de)		; $572c
+	and $0f			; $572d
+	ld hl,@table_5737		; $572f
+	rst_addAToHl			; $5732
+	ld a,(hl)		; $5733
+	jp partSetAnimation		; $5734
+
+@table_5737:
+	.db $00 $00 $01 $02
+	.db $02 $02 $03 $04
+	.db $04 $04 $05 $06
+	.db $06 $06 $07 $00
+
+@state1:
+	call partCommon_decCounter1IfNonzero		; $5747
+	jr nz,_func_5758	; $574a
+	ld l,e			; $574c
+	inc (hl)		; $574d
+
+@state2:
+	call _func_5758		; $574e
+	call _partCommon_checkTileCollisionOrOutOfBounds		; $5751
+	jp c,partDelete		; $5754
+	ret			; $5757
+
+_func_5758:
+	call objectApplyComponentSpeed		; $5758
+	ld e,$c2		; $575b
+	ld a,(de)		; $575d
+	ld b,a			; $575e
+	ld a,(wFrameCounter)		; $575f
+	and b			; $5762
+	jp z,objectSetVisible81		; $5763
+	jp objectSetInvisible		; $5766
+
+
+; ==============================================================================
+; PARTID_SPIKED_BALL
+;
+; Variables:
+;   speed: Nonstandard usage; it's a 16-bit variable which gets added to var30 (distance
+;          away from origin).
+;   relatedObj1: ENEMYID_BALL_AND_CHAIN_SOLDIER (for the head / subid 0),
+;                or PARTID_SPIKED_BALL (the head; for subids 1-3).
+;   var30: Distance away from origin point
+; ==============================================================================
 partCode2a:
-	jr z,_label_10_169	; $57cf
-	ld e,$ea		; $57d1
-	ld a,(de)		; $57d3
-	res 7,a			; $57d4
-	sub $01			; $57d6
-	cp $09			; $57d8
-	jr nc,_label_10_169	; $57da
-	ld a,$2b		; $57dc
-	call objectGetRelatedObject1Var		; $57de
-	ld a,(hl)		; $57e1
-	or a			; $57e2
-	jr nz,_label_10_168	; $57e3
-	ld (hl),$f4		; $57e5
-_label_10_168:
-	ld h,d			; $57e7
-	ld l,$d5		; $57e8
-	ld a,(hl)		; $57ea
-	rlca			; $57eb
-	jr c,_label_10_169	; $57ec
-	xor a			; $57ee
-	ldd (hl),a		; $57ef
-	ld (hl),a		; $57f0
-_label_10_169:
-	ld e,$c2		; $57f1
-	ld a,(de)		; $57f3
-	ld b,a			; $57f4
-	ld e,$c4		; $57f5
-	ld a,b			; $57f7
-	rst_jumpTable			; $57f8
-	ld bc,$a358		; $57f9
-	ld e,b			; $57fc
-	and e			; $57fd
-	ld e,b			; $57fe
-	and e			; $57ff
-	ld e,b			; $5800
-	ld a,$01		; $5801
-	call objectGetRelatedObject1Var		; $5803
-	ld a,(hl)		; $5806
-	cp $4b			; $5807
-	jp nz,partDelete		; $5809
-	ld b,h			; $580c
-	call $590b		; $580d
-	ld e,$c4		; $5810
-	ld a,(de)		; $5812
-	rst_jumpTable			; $5813
-	jr nz,_label_10_172	; $5814
-	ldi a,(hl)		; $5816
-	ld e,b			; $5817
-	inc sp			; $5818
-	ld e,b			; $5819
-	ld c,e			; $581a
-	ld e,b			; $581b
-	ld a,l			; $581c
-	ld e,b			; $581d
-	sbc d			; $581e
-	ld e,b			; $581f
-	ld h,d			; $5820
-	ld l,e			; $5821
-	inc (hl)		; $5822
-	ld l,$e4		; $5823
-	set 7,(hl)		; $5825
-	call objectSetVisible81		; $5827
-	ld e,$c9		; $582a
-	ld a,(de)		; $582c
-	inc a			; $582d
-	and $1f			; $582e
-	ld (de),a		; $5830
-	jr _label_10_171		; $5831
-_label_10_170:
-	ld e,$c9		; $5833
-	ld a,(de)		; $5835
-	add $02			; $5836
-	and $1f			; $5838
-	ld (de),a		; $583a
-_label_10_171:
-	ld e,$f0		; $583b
-	ld a,$0a		; $583d
-	ld (de),a		; $583f
-	call $58c8		; $5840
-	ld e,$f0		; $5843
-	ld a,(de)		; $5845
-	ld e,$c9		; $5846
-	jp objectSetPositionInCircleArc		; $5848
-	call $58c8		; $584b
-	ldh a,(<hEnemyTargetY)	; $584e
-	ldh (<hFF8F),a	; $5850
-	ldh a,(<hEnemyTargetX)	; $5852
-	ldh (<hFF8E),a	; $5854
-	push hl			; $5856
-	call objectGetRelativeAngleWithTempVars		; $5857
-	pop bc			; $585a
-	xor $10			; $585b
-	ld e,a			; $585d
-	sub $06			; $585e
-	and $1f			; $5860
-	ld h,d			; $5862
-	ld l,$c9		; $5863
-	sub (hl)		; $5865
-	inc a			; $5866
-	and $1f			; $5867
-	cp $03			; $5869
-	jr nc,_label_10_170	; $586b
-	ld a,e			; $586d
-_label_10_172:
-	sub $03			; $586e
-	and $1f			; $5870
-	ld (hl),a		; $5872
-	ld l,$c4		; $5873
-	inc (hl)		; $5875
-	ld l,$f0		; $5876
-	ld (hl),$0d		; $5878
-	jp $5840		; $587a
-	ld h,d			; $587d
-	ld l,e			; $587e
-	inc (hl)		; $587f
-	ld l,$c6		; $5880
-	ld (hl),$00		; $5882
-	ld l,$c9		; $5884
-	ld a,(hl)		; $5886
-	add $03			; $5887
-	and $1f			; $5889
-	ld (hl),a		; $588b
-	ld l,$f0		; $588c
-	ld (hl),$12		; $588e
-	ld l,$d0		; $5890
-	ld a,$40		; $5892
-	ldi (hl),a		; $5894
-	ld (hl),$03		; $5895
-	jp $5840		; $5897
-	call $58da		; $589a
-	call $58ed		; $589d
-	jp $5840		; $58a0
-	ld a,(de)		; $58a3
-	or a			; $58a4
-	jr nz,_label_10_173	; $58a5
-	inc a			; $58a7
-	ld (de),a		; $58a8
-	call partSetAnimation		; $58a9
-	call objectSetVisible81		; $58ac
-_label_10_173:
-	ld a,$01		; $58af
-	call objectGetRelatedObject1Var		; $58b1
-	ld a,(hl)		; $58b4
-	cp $2a			; $58b5
-	jp nz,partDelete		; $58b7
-	ld l,$c9		; $58ba
-	ld e,l			; $58bc
-	ld a,(hl)		; $58bd
-	ld (de),a		; $58be
-	call $592b		; $58bf
-	ld l,$d7		; $58c2
-	ld b,(hl)		; $58c4
-	jp $5840		; $58c5
-	ld h,b			; $58c8
-	ld l,$8b		; $58c9
-	ldi a,(hl)		; $58cb
-	sub $05			; $58cc
-	ld b,a			; $58ce
-	inc l			; $58cf
-	ldi a,(hl)		; $58d0
-	sub $05			; $58d1
-	ld c,a			; $58d3
-	inc l			; $58d4
+	jr z,@normalStatus	; $5769
+
+	; Check for sword or shield collision
+	ld e,Part.var2a		; $576b
+	ld a,(de)		; $576d
+	res 7,a			; $576e
+	sub ITEMCOLLISION_L1_SHIELD			; $5770
+	cp ITEMCOLLISION_SWORD_HELD-ITEMCOLLISION_L1_SHIELD + 1
+	jr nc,@normalStatus	; $5774
+
+	; Make "parent" immune since the ball blocked the attack
+	ld a,Object.invincibilityCounter		; $5776
+	call objectGetRelatedObject1Var		; $5778
+	ld a,(hl)		; $577b
+	or a			; $577c
+	jr nz,+			; $577d
+	ld (hl),$f4		; $577f
++
+	; If speedZ is positive, make it 0?
+	ld h,d			; $5781
+	ld l,Part.speedZ+1		; $5782
+	ld a,(hl)		; $5784
+	rlca			; $5785
+	jr c,@normalStatus	; $5786
+	xor a			; $5788
+	ldd (hl),a		; $5789
+	ld (hl),a		; $578a
+
+@normalStatus:
+	ld e,Part.subid		; $578b
+	ld a,(de)		; $578d
+	ld b,a			; $578e
+	ld e,Part.state		; $578f
+	ld a,b			; $5791
+	rst_jumpTable			; $5792
+	.dw _spikedBall_head
+	.dw _spikedBall_chain
+	.dw _spikedBall_chain
+	.dw _spikedBall_chain
+
+
+; The main part of the spiked ball (actually has collisions, etc)
+_spikedBall_head:
+	; Check if parent was deleted
+	ld a,Object.id		; $579b
+	call objectGetRelatedObject1Var		; $579d
+	ld a,(hl)		; $57a0
+	cp ENEMYID_BALL_AND_CHAIN_SOLDIER			; $57a1
+	jp nz,partDelete		; $57a3
+
+	ld b,h			; $57a6
+	call _spikedBall_updateStateFromParent		; $57a7
+	ld e,Part.state		; $57aa
+	ld a,(de)		; $57ac
+	rst_jumpTable			; $57ad
+	.dw _spikedBall_head_state0
+	.dw _spikedBall_head_state1
+	.dw _spikedBall_head_state2
+	.dw _spikedBall_head_state3
+	.dw _spikedBall_head_state4
+	.dw _spikedBall_head_state5
+
+
+; Initialization
+_spikedBall_head_state0:
+	ld h,d			; $57ba
+	ld l,e			; $57bb
+	inc (hl) ; [state]
+
+	ld l,Part.collisionType		; $57bd
+	set 7,(hl)		; $57bf
+	call objectSetVisible81		; $57c1
+
+
+; Rotating slowly
+_spikedBall_head_state1:
+	ld e,Part.angle		; $57c4
+	ld a,(de)		; $57c6
+	inc a			; $57c7
+	and $1f			; $57c8
+	ld (de),a		; $57ca
+	jr _spikedBall_head_setDefaultDistanceAway		; $57cb
+
+
+; Rotating faster
+_spikedBall_head_state2:
+	ld e,Part.angle		; $57cd
+	ld a,(de)		; $57cf
+	add $02			; $57d0
+	and $1f			; $57d2
+	ld (de),a		; $57d4
+
+_spikedBall_head_setDefaultDistanceAway:
+	ld e,Part.var30		; $57d5
+	ld a,$0a		; $57d7
+	ld (de),a		; $57d9
+
+;;
+; @param	b	Enemy object
+; @addr{57da}
+_spikedBall_updatePosition:
+	call _spikedBall_copyParentPosition		; $57da
+	ld e,Part.var30		; $57dd
+	ld a,(de)		; $57df
+	ld e,Part.angle		; $57e0
+	jp objectSetPositionInCircleArc		; $57e2
+
+
+; About to throw the ball; waiting for it to rotate into a good position for throwing.
+_spikedBall_head_state3:
+	call _spikedBall_copyParentPosition		; $57e5
+
+	; Compare the ball's angle with Link; must keep rotating it until it's aligned
+	; perfectly.
+	ldh a,(<hEnemyTargetY)	; $57e8
+	ldh (<hFF8F),a	; $57ea
+	ldh a,(<hEnemyTargetX)	; $57ec
+	ldh (<hFF8E),a	; $57ee
+	push hl			; $57f0
+	call objectGetRelativeAngleWithTempVars		; $57f1
+	pop bc			; $57f4
+	xor $10			; $57f5
+	ld e,a			; $57f7
+	sub $06			; $57f8
+	and $1f			; $57fa
+	ld h,d			; $57fc
+	ld l,Part.angle		; $57fd
+	sub (hl)		; $57ff
+	inc a			; $5800
+	and $1f			; $5801
+	cp $03			; $5803
+	jr nc,_spikedBall_head_state2 ; keep rotating
+
+	; It's aligned perfectly; begin throwing it.
+	ld a,e			; $5807
+	sub $03			; $5808
+	and $1f			; $580a
+	ld (hl),a ; [angle]
+
+	ld l,Part.state		; $580d
+	inc (hl)		; $580f
+
+	ld l,Part.var30		; $5810
+	ld (hl),$0d		; $5812
+	jp _spikedBall_updatePosition		; $5814
+
+
+; Ball has just been released
+_spikedBall_head_state4:
+	ld h,d			; $5817
+	ld l,e			; $5818
+	inc (hl) ; [state]
+
+	ld l,Part.counter1		; $581a
+	ld (hl),$00		; $581c
+
+	ld l,Part.angle		; $581e
+	ld a,(hl)		; $5820
+	add $03			; $5821
+	and $1f			; $5823
+	ld (hl),a		; $5825
+
+	; Distance from origin
+	ld l,Part.var30		; $5826
+	ld (hl),$12		; $5828
+
+	; speed variable is used in a nonstandard way (added to var30, aka distance from
+	; origin)
+	ld l,Part.speed		; $582a
+	ld a,<($0340)		; $582c
+	ldi (hl),a		; $582e
+	ld (hl),>($0340)		; $582f
+
+	jp _spikedBall_updatePosition		; $5831
+
+
+_spikedBall_head_state5:
+	call _spikedBall_checkCollisionWithItem		; $5834
+	call _spikedBall_head_updateDistanceFromOrigin		; $5837
+	jp _spikedBall_updatePosition		; $583a
+
+
+; The chain part of the ball (just decorative)
+_spikedBall_chain:
+	ld a,(de)		; $583d
+	or a			; $583e
+	jr nz,@state1	; $583f
+
+@state0:
+	inc a			; $5841
+	ld (de),a ; [state]
+	call partSetAnimation		; $5843
+	call objectSetVisible81		; $5846
+
+@state1:
+	ld a,Object.id		; $5849
+	call objectGetRelatedObject1Var		; $584b
+	ld a,(hl)		; $584e
+	cp PARTID_SPIKED_BALL			; $584f
+	jp nz,partDelete		; $5851
+
+	; Copy parent's angle
+	ld l,Part.angle		; $5854
+	ld e,l			; $5856
+	ld a,(hl)		; $5857
+	ld (de),a		; $5858
+
+	call _spikedBall_chain_updateDistanceFromOrigin		; $5859
+	ld l,Part.relatedObj1+1		; $585c
+	ld b,(hl)		; $585e
+	jp _spikedBall_updatePosition		; $585f
+
+
+;;
+; @param	b	Enemy object
+; @addr{5862}
+_spikedBall_copyParentPosition:
+	ld h,b			; $5862
+	ld l,Enemy.yh		; $5863
+	ldi a,(hl)		; $5865
+	sub $05			; $5866
+	ld b,a			; $5868
+	inc l			; $5869
+	ldi a,(hl)		; $586a
+	sub $05			; $586b
+	ld c,a			; $586d
+	inc l			; $586e
+	ld a,(hl)		; $586f
+	ld e,Part.zh		; $5870
+	ld (de),a		; $5872
+	ret			; $5873
+
+
+;;
+; If the ball collides with any item other than Link, this sets its speed to 0 (begins
+; retracting earlier).
+; @addr{5874}
+_spikedBall_checkCollisionWithItem:
+	; Check for collision with any item other than Link himself
+	ld h,d			; $5874
+	ld l,Part.var2a		; $5875
+	bit 7,(hl)		; $5877
+	ret z			; $5879
+	ld a,(hl)		; $587a
+	cp $80|ITEMCOLLISION_LINK			; $587b
+	ret z			; $587d
+
+	ld l,Part.speed+1		; $587e
+	bit 7,(hl)		; $5880
+	ret nz			; $5882
+	xor a			; $5883
+	ldd (hl),a		; $5884
+	ld (hl),a		; $5885
+	ret			; $5886
+
+
+;;
+; @addr{5887}
+_spikedBall_head_updateDistanceFromOrigin:
+	ld h,d			; $5887
+	ld e,Part.var30		; $5888
+	ld l,Part.speed+1		; $588a
+	ld a,(de)		; $588c
+	add (hl)		; $588d
+	cp $0a			; $588e
+	jr c,@fullyRetracted	; $5890
+
+	ld (de),a		; $5892
+
+	; Deceleration
+	dec l			; $5893
+	ld a,(hl)		; $5894
+	sub <($0020)			; $5895
+	ldi (hl),a		; $5897
+	ld a,(hl)		; $5898
+	sbc >($0020)			; $5899
+	ld (hl),a		; $589b
+	ret			; $589c
+
+@fullyRetracted:
+	; Tell parent (ENEMYID_BALL_AND_CHAIN_SOLDIER) we're fully retracted
+	ld a,Object.counter1		; $589d
+	call objectGetRelatedObject1Var		; $589f
+	ld (hl),$00		; $58a2
+	ret			; $58a4
+
+
+;;
+; Reads parent's var30 to decide whether to update state>
+; @addr{58a5}
+_spikedBall_updateStateFromParent:
+	ld l,Enemy.var30		; $58a5
+
+	; Check state between 1-3
+	ld e,Part.state		; $58a7
+	ld a,(de)		; $58a9
+	dec a			; $58aa
+	cp $03			; $58ab
+	jr c,++			; $58ad
+
+	; If uninitialized (state 0), return
+	inc a			; $58af
+	ret z			; $58b0
+
+	; State is 4 or above (ball is being thrown).
+	; Continue if [parent.var30] != 2 (signal to throw ball)
+	ld a,(hl)		; $58b1
+	cp $02			; $58b2
+	ret z			; $58b4
+++
+	; Set state to:
+	; * 1 if [parent.var30] == 0 (ball rotates slowly)
+	; * 2 if [parent.var30] == 1 (ball rotates quickly)
+	; * 3 if [parent.var30] >= 2 (ball should be thrown)
+	ld a,(hl)		; $58b5
+	or a			; $58b6
+	ld c,$01		; $58b7
+	jr z,++			; $58b9
+	inc c			; $58bb
+	dec a			; $58bc
+	jr z,++			; $58bd
+	inc c			; $58bf
+++
+	ld e,Part.state		; $58c0
+	ld a,c			; $58c2
+	ld (de),a		; $58c3
+	ret			; $58c4
+
+;;
+; @param	h	Parent object (the actual ball)
+; @addr{58c5}
+_spikedBall_chain_updateDistanceFromOrigin:
+	ld l,Part.var30		; $58c5
+	push hl			; $58c7
+	ld e,Part.subid		; $58c8
+	ld a,(de)		; $58ca
+	dec a			; $58cb
+	rst_jumpTable			; $58cc
+	.dw @subid1
+	.dw @subid2
+	.dw @subid3
+
+@subid1:
+	; [var30] = [parent.var30] * 3/4
+	pop hl			; $58d3
+	ld e,l			; $58d4
 	ld a,(hl)		; $58d5
-	ld e,$cf		; $58d6
-	ld (de),a		; $58d8
-	ret			; $58d9
-	ld h,d			; $58da
-	ld l,$ea		; $58db
-	bit 7,(hl)		; $58dd
-	ret z			; $58df
-	ld a,(hl)		; $58e0
-	cp $80			; $58e1
-	ret z			; $58e3
-	ld l,$d1		; $58e4
-	bit 7,(hl)		; $58e6
-	ret nz			; $58e8
-	xor a			; $58e9
-	ldd (hl),a		; $58ea
-	ld (hl),a		; $58eb
-	ret			; $58ec
-	ld h,d			; $58ed
-	ld e,$f0		; $58ee
-	ld l,$d1		; $58f0
-	ld a,(de)		; $58f2
-	add (hl)		; $58f3
-	cp $0a			; $58f4
-	jr c,_label_10_174	; $58f6
-	ld (de),a		; $58f8
-	dec l			; $58f9
-	ld a,(hl)		; $58fa
-	sub $20			; $58fb
-	ldi (hl),a		; $58fd
-	ld a,(hl)		; $58fe
-	sbc $00			; $58ff
-	ld (hl),a		; $5901
-	ret			; $5902
-_label_10_174:
-	ld a,$06		; $5903
-	call objectGetRelatedObject1Var		; $5905
-	ld (hl),$00		; $5908
-	ret			; $590a
-	ld l,$b0		; $590b
-	ld e,$c4		; $590d
-	ld a,(de)		; $590f
-	dec a			; $5910
-	cp $03			; $5911
-	jr c,_label_10_175	; $5913
-	inc a			; $5915
-	ret z			; $5916
-	ld a,(hl)		; $5917
-	cp $02			; $5918
-	ret z			; $591a
-_label_10_175:
-	ld a,(hl)		; $591b
-	or a			; $591c
-	ld c,$01		; $591d
-	jr z,_label_10_176	; $591f
-	inc c			; $5921
-	dec a			; $5922
-	jr z,_label_10_176	; $5923
-	inc c			; $5925
-_label_10_176:
-	ld e,$c4		; $5926
-	ld a,c			; $5928
-	ld (de),a		; $5929
-	ret			; $592a
-	ld l,$f0		; $592b
-	push hl			; $592d
-	ld e,$c2		; $592e
-	ld a,(de)		; $5930
-	dec a			; $5931
-	rst_jumpTable			; $5932
-	add hl,sp		; $5933
-	ld e,c			; $5934
-	ld b,(hl)		; $5935
-	ld e,c			; $5936
-	ld d,b			; $5937
-	ld e,c			; $5938
-	pop hl			; $5939
-	ld e,l			; $593a
-	ld a,(hl)		; $593b
-	srl a			; $593c
-	srl a			; $593e
-	ld b,a			; $5940
-	add a			; $5941
-	add b			; $5942
-	inc a			; $5943
-	ld (de),a		; $5944
-	ret			; $5945
-	pop hl			; $5946
-	ld e,l			; $5947
-	ld a,(hl)		; $5948
-	srl a			; $5949
-	srl a			; $594b
-	add a			; $594d
-	ld (de),a		; $594e
-	ret			; $594f
-	pop hl			; $5950
-	ld e,l			; $5951
-	ld a,(hl)		; $5952
-	srl a			; $5953
-	srl a			; $5955
-	ld (de),a		; $5957
-	ret			; $5958
+	srl a			; $58d6
+	srl a			; $58d8
+	ld b,a			; $58da
+	add a			; $58db
+	add b			; $58dc
+	inc a			; $58dd
+	ld (de),a		; $58de
+	ret			; $58df
 
+@subid2:
+	; [var30] = [parent.var30] * 2/4
+	pop hl			; $58e0
+	ld e,l			; $58e1
+	ld a,(hl)		; $58e2
+	srl a			; $58e3
+	srl a			; $58e5
+	add a			; $58e7
+	ld (de),a		; $58e8
+	ret			; $58e9
+
+@subid3:
+	; [var30] = [parent.var30] * 1/4
+	pop hl			; $58ea
+	ld e,l			; $58eb
+	ld a,(hl)		; $58ec
+	srl a			; $58ed
+	srl a			; $58ef
+	ld (de),a		; $58f1
+	ret			; $58f2
+
+
+; ==============================================================================
+; PARTID_GREAT_FAIRY_HEART
+; ==============================================================================
+; @addr{58f3}
 partCode30:
-	ld e,$c4		; $5959
-	ld a,(de)		; $595b
-	or a			; $595c
-	jr nz,_label_10_177	; $595d
-	ld h,d			; $595f
-	ld l,e			; $5960
-	inc (hl)		; $5961
-	ld l,$c6		; $5962
-	ld (hl),$03		; $5964
-	call objectSetVisible81		; $5966
-_label_10_177:
-	ldh a,(<hEnemyTargetY)	; $5969
-	ld b,a			; $596b
-	ldh a,(<hEnemyTargetX)	; $596c
-	ld c,a			; $596e
-	ld a,$20		; $596f
-	ld e,$c9		; $5971
-	call objectSetPositionInCircleArc		; $5973
-	call partCommon_decCounter1IfNonzero		; $5976
-	ret nz			; $5979
-	ld (hl),$03		; $597a
-	ld l,$c9		; $597c
-	ld a,(hl)		; $597e
-	dec a			; $597f
-	and $1f			; $5980
-	ld (hl),a		; $5982
-	ret nz			; $5983
-	ld hl,$c6a3		; $5984
-	ld a,($cbe4)		; $5987
-	cp (hl)			; $598a
-	ret nz			; $598b
-	ld a,$31		; $598c
-	call objectGetRelatedObject1Var		; $598e
-	dec (hl)		; $5991
-	jp partDelete		; $5992
+	ld e,$c4		; $58f3
+	ld a,(de)		; $58f5
+	or a			; $58f6
+	jr nz,+			; $58f7
+	ld h,d			; $58f9
+	ld l,e			; $58fa
+	inc (hl)		; $58fb
+	ld l,$c6		; $58fc
+	ld (hl),$03		; $58fe
+	call objectSetVisible81		; $5900
++
+	ldh a,(<hEnemyTargetY)	; $5903
+	ld b,a			; $5905
+	ldh a,(<hEnemyTargetX)	; $5906
+	ld c,a			; $5908
+	ld a,$20		; $5909
+	ld e,$c9		; $590b
+	call objectSetPositionInCircleArc		; $590d
+	call partCommon_decCounter1IfNonzero		; $5910
+	ret nz			; $5913
+	ld (hl),$03		; $5914
+	ld l,$c9		; $5916
+	ld a,(hl)		; $5918
+	dec a			; $5919
+	and $1f			; $591a
+	ld (hl),a		; $591c
+	ret nz			; $591d
+	ld hl,wLinkMaxHealth		; $591e
+	ld a,(wDisplayedHearts)		; $5921
+	cp (hl)			; $5924
+	ret nz			; $5925
+	ld a,$31		; $5926
+	call objectGetRelatedObject1Var		; $5928
+	dec (hl)		; $592b
+	jp partDelete		; $592c
 
+
+; ==============================================================================
+; PARTID_RED_TWINROVA_PROJECTILE
+; PARTID_BLUE_TWINROVA_PROJECTILE
+;
+; Variables:
+;   relatedObj1: Instance of ENEMYID_TWINROVA that fired the projectile
+;   relatedObj2: Instance of ENEMYID_TWINROVA that could be hit by the projectile
+; ==============================================================================
 partCode4b:
 partCode4d:
-	jr z,_label_10_178	; $5995
-	ld e,$ea		; $5997
-	ld a,(de)		; $5999
-	cp $83			; $599a
-	jp z,partDelete		; $599c
-	cp $80			; $599f
-	jr z,_label_10_178	; $59a1
-	call objectGetAngleTowardEnemyTarget		; $59a3
-	xor $10			; $59a6
-	ld h,d			; $59a8
-	ld l,$c9		; $59a9
-	ld (hl),a		; $59ab
-	ld l,$c4		; $59ac
-	ld (hl),$03		; $59ae
-	ld l,$d0		; $59b0
-	ld (hl),$64		; $59b2
-_label_10_178:
-	ld a,$04		; $59b4
-	call objectGetRelatedObject1Var		; $59b6
-	ld a,(hl)		; $59b9
-	cp $0d			; $59ba
-	jp nc,seasonsFunc_10_5a4e		; $59bc
-	ld e,$c4		; $59bf
-	ld a,(de)		; $59c1
-	rst_jumpTable			; $59c2
-	bit 3,c			; $59c3
-.DB $fc				; $59c5
-	ld e,c			; $59c6
-	ld e,$5a		; $59c7
-	add hl,hl		; $59c9
-	ld e,d			; $59ca
-	ld h,d			; $59cb
-	ld l,e			; $59cc
-	inc (hl)		; $59cd
-	ld l,$c6		; $59ce
-	ld (hl),$1e		; $59d0
-	ld l,$d0		; $59d2
-	ld (hl),$50		; $59d4
-	ld l,$cf		; $59d6
-	ld a,(hl)		; $59d8
-	ld (hl),$00		; $59d9
-	ld l,$cb		; $59db
-	add (hl)		; $59dd
-	ld (hl),a		; $59de
-	ld a,$16		; $59df
-	call objectGetRelatedObject1Var		; $59e1
-	ld e,$d8		; $59e4
-	ldi a,(hl)		; $59e6
-	ld (de),a		; $59e7
-	inc e			; $59e8
-	ld a,(hl)		; $59e9
-	ld (de),a		; $59ea
-	ld e,$c1		; $59eb
-	ld a,(de)		; $59ed
-	cp $4b			; $59ee
-	ld a,$ba		; $59f0
-	jr z,_label_10_179	; $59f2
-	ld a,$bb		; $59f4
-_label_10_179:
-	call playSound		; $59f6
-	call objectSetVisible81		; $59f9
-	call partCommon_decCounter1IfNonzero		; $59fc
-	jr z,_label_10_180	; $59ff
-	ld a,$0b		; $5a01
-	call objectGetRelatedObject1Var		; $5a03
-	ld bc,$ea00		; $5a06
-	call objectTakePositionWithOffset		; $5a09
-	xor a			; $5a0c
-	ld (de),a		; $5a0d
-	jr _label_10_182		; $5a0e
-_label_10_180:
-	call objectGetAngleTowardEnemyTarget		; $5a10
-	ld e,$c9		; $5a13
-	ld (de),a		; $5a15
-	ld h,d			; $5a16
-	ld l,$c4		; $5a17
-	inc (hl)		; $5a19
-	ld l,$e4		; $5a1a
-	set 7,(hl)		; $5a1c
-_label_10_181:
-	call objectApplySpeed		; $5a1e
-	call $407e		; $5a21
-	jr z,_label_10_184	; $5a24
-_label_10_182:
-	jp partAnimate		; $5a26
-	ld a,$00		; $5a29
-	call objectGetRelatedObject2Var		; $5a2b
-	call checkObjectsCollided		; $5a2e
-	jr nc,_label_10_181	; $5a31
-	ld l,$ab		; $5a33
-	ld (hl),$14		; $5a35
-	ld l,$a9		; $5a37
-	dec (hl)		; $5a39
-	jr nz,_label_10_183	; $5a3a
-	ld l,$b2		; $5a3c
-	set 6,(hl)		; $5a3e
-_label_10_183:
-	ld a,$29		; $5a40
-	call objectGetRelatedObject1Var		; $5a42
-	dec (hl)		; $5a45
-	ld a,$63		; $5a46
-	call playSound		; $5a48
-_label_10_184:
-	jp partDelete		; $5a4b
+	jr z,@normalStatus	; $592f
 
-seasonsFunc_10_5a4e:
-	call objectCreatePuff		; $5a4e
-	jp partDelete		; $5a51
+	ld e,Part.var2a		; $5931
+	ld a,(de)		; $5933
+	cp $80|ITEMCOLLISION_L3_SHIELD			; $5934
+	jp z,partDelete		; $5936
 
+	cp $80|ITEMCOLLISION_LINK			; $5939
+	jr z,@normalStatus	; $593b
+
+	; Gets reflected
+	call objectGetAngleTowardEnemyTarget		; $593d
+	xor $10			; $5940
+	ld h,d			; $5942
+	ld l,Part.angle		; $5943
+	ld (hl),a		; $5945
+	ld l,Part.state		; $5946
+	ld (hl),$03		; $5948
+	ld l,Part.speed		; $594a
+	ld (hl),SPEED_280		; $594c
+
+@normalStatus:
+	; Check if twinrova is dead
+	ld a,Object.state		; $594e
+	call objectGetRelatedObject1Var		; $5950
+	ld a,(hl)		; $5953
+	cp $0d			; $5954
+	jp nc,@deleteWithPoof		; $5956
+
+	ld e,Part.state		; $5959
+	ld a,(de)		; $595b
+	rst_jumpTable			; $595c
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+
+@state0:
+	ld h,d			; $5965
+	ld l,e			; $5966
+	inc (hl) ; [state] = 1
+
+	ld l,Part.counter1		; $5968
+	ld (hl),30		; $596a
+	ld l,Part.speed		; $596c
+	ld (hl),SPEED_200		; $596e
+
+	; Transfer z-position to y-position
+	ld l,Part.zh		; $5970
+	ld a,(hl)		; $5972
+	ld (hl),$00		; $5973
+	ld l,Part.yh		; $5975
+	add (hl)		; $5977
+	ld (hl),a		; $5978
+
+	; Get the other twinrova object, put it in relatedObj2
+	ld a,Object.relatedObj1		; $5979
+	call objectGetRelatedObject1Var		; $597b
+	ld e,Part.relatedObj2		; $597e
+	ldi a,(hl)		; $5980
+	ld (de),a		; $5981
+	inc e			; $5982
+	ld a,(hl)		; $5983
+	ld (de),a		; $5984
+
+	; Play sound depending which one it is
+	ld e,Part.id		; $5985
+	ld a,(de)		; $5987
+	cp PARTID_RED_TWINROVA_PROJECTILE			; $5988
+	ld a,SND_BEAM1		; $598a
+	jr z,+			; $598c
+	ld a,SND_BEAM2		; $598e
++
+	call playSound		; $5990
+	call objectSetVisible81		; $5993
+
+; Being charged up
+@state1:
+	call partCommon_decCounter1IfNonzero		; $5996
+	jr z,@fire	; $5999
+
+	; Copy parent's position
+	ld a,Object.yh		; $599b
+	call objectGetRelatedObject1Var		; $599d
+	ld bc,$ea00		; $59a0
+	call objectTakePositionWithOffset		; $59a3
+	xor a			; $59a6
+	ld (de),a ; [zh] = 0
+	jr @animate		; $59a8
+
+@fire:
+	call objectGetAngleTowardEnemyTarget		; $59aa
+	ld e,Part.angle		; $59ad
+	ld (de),a		; $59af
+
+	ld h,d			; $59b0
+	ld l,Part.state		; $59b1
+	inc (hl) ; [state] = 2
+
+	ld l,Part.collisionType		; $59b4
+	set 7,(hl)		; $59b6
+
+; Moving
+@state2:
+	call objectApplySpeed		; $59b8
+	call partCommon_checkOutOfBounds		; $59bb
+	jr z,@delete	; $59be
+@animate:
+	jp partAnimate		; $59c0
+
+@state3:
+	ld a,$00		; $59c3
+	call objectGetRelatedObject2Var		; $59c5
+	call checkObjectsCollided		; $59c8
+	jr nc,@state2	; $59cb
+
+	; Collided with opposite-color twinrova
+	ld l,Enemy.invincibilityCounter		; $59cd
+	ld (hl),20		; $59cf
+	ld l,Enemy.health		; $59d1
+	dec (hl)		; $59d3
+	jr nz,++		; $59d4
+
+	; Other twinrova's health is 0; set a signal.
+	ld l,Enemy.var32		; $59d6
+	set 6,(hl)		; $59d8
+++
+	; Decrement health of same-color twinrova as well
+	ld a,Object.health		; $59da
+	call objectGetRelatedObject1Var		; $59dc
+	dec (hl)		; $59df
+
+	ld a,SND_BOSS_DAMAGE		; $59e0
+	call playSound		; $59e2
+@delete:
+	jp partDelete		; $59e5
+
+@deleteWithPoof:
+	call objectCreatePuff		; $59e8
+	jp partDelete		; $59eb
+
+
+; ==============================================================================
+; PARTID_TWINROVA_FLAME
+; ==============================================================================
+; @addr{59ee}
 partCode4c:
-	jr z,_label_10_185	; $5a54
-	ld e,$ea		; $5a56
-	ld a,(de)		; $5a58
-	cp $80			; $5a59
-	jp nz,partDelete		; $5a5b
-_label_10_185:
-	ld e,$c2		; $5a5e
-	ld a,(de)		; $5a60
-	or a			; $5a61
-	ld e,$c4		; $5a62
-	ld a,(de)		; $5a64
-	jr z,_label_10_187	; $5a65
-	or a			; $5a67
-	jr z,_label_10_186	; $5a68
-	call partAnimate		; $5a6a
-	call objectApplySpeed		; $5a6d
-	call $4072		; $5a70
-	ret nz			; $5a73
-	jp partDelete		; $5a74
-_label_10_186:
-	ld h,d			; $5a77
-	ld l,e			; $5a78
-	inc (hl)		; $5a79
-	ld l,$d0		; $5a7a
-	ld (hl),$50		; $5a7c
-	ld l,$db		; $5a7e
-	ld a,$05		; $5a80
-	ldi (hl),a		; $5a82
-	ld (hl),a		; $5a83
-	ld l,$e6		; $5a84
-	ld a,$02		; $5a86
-	ldi (hl),a		; $5a88
-	ld (hl),a		; $5a89
-	ld a,$bb		; $5a8a
-	call playSound		; $5a8c
-	ld a,$01		; $5a8f
-	call partSetAnimation		; $5a91
-	jp objectSetVisible82		; $5a94
-_label_10_187:
-	rst_jumpTable			; $5a97
-	sbc (hl)		; $5a98
-	ld e,d			; $5a99
-	xor h			; $5a9a
-	ld e,d			; $5a9b
-	cp d			; $5a9c
-	ld e,d			; $5a9d
-	ld h,d			; $5a9e
-	ld l,e			; $5a9f
-	inc (hl)		; $5aa0
-	ld l,$d0		; $5aa1
-	ld (hl),$46		; $5aa3
-	ld l,$c6		; $5aa5
-	ld (hl),$1e		; $5aa7
-	jp objectSetVisible82		; $5aa9
-	call partCommon_decCounter1IfNonzero		; $5aac
-	jp nz,partAnimate		; $5aaf
-	ld l,e			; $5ab2
-	inc (hl)		; $5ab3
-	call objectGetAngleTowardEnemyTarget		; $5ab4
-	ld e,$c9		; $5ab7
-	ld (de),a		; $5ab9
-	call partAnimate		; $5aba
-	call objectApplySpeed		; $5abd
-	call $4072		; $5ac0
-	ret nc			; $5ac3
-	call objectGetAngleTowardEnemyTarget		; $5ac4
-	sub $02			; $5ac7
-	and $1f			; $5ac9
-	ld c,a			; $5acb
-	ld b,$03		; $5acc
-_label_10_188:
-	call getFreePartSlot		; $5ace
-	jr nz,_label_10_189	; $5ad1
-	ld (hl),$4c		; $5ad3
-	inc l			; $5ad5
-	inc (hl)		; $5ad6
-	ld l,$c9		; $5ad7
-	ld (hl),c		; $5ad9
-	call objectCopyPosition		; $5ada
-_label_10_189:
-	ld a,c			; $5add
-	add $02			; $5ade
-	and $1f			; $5ae0
-	ld c,a			; $5ae2
-	dec b			; $5ae3
-	jr nz,_label_10_188	; $5ae4
-	call objectCreatePuff		; $5ae6
-	jp partDelete		; $5ae9
+	jr z,@normalStatus	; $59ee
+	ld e,$ea		; $59f0
+	ld a,(de)		; $59f2
+	cp $80			; $59f3
+	jp nz,partDelete		; $59f5
+@normalStatus:
+	ld e,$c2		; $59f8
+	ld a,(de)		; $59fa
+	or a			; $59fb
+	ld e,$c4		; $59fc
+	ld a,(de)		; $59fe
+	jr z,@subid0	; $59ff
+	or a			; $5a01
+	jr z,+			; $5a02
+	call partAnimate		; $5a04
+	call objectApplySpeed		; $5a07
+	call _partCommon_checkTileCollisionOrOutOfBounds		; $5a0a
+	ret nz			; $5a0d
+	jp partDelete		; $5a0e
++
+	ld h,d			; $5a11
+	ld l,e			; $5a12
+	inc (hl)		; $5a13
+	ld l,$d0		; $5a14
+	ld (hl),$50		; $5a16
+	ld l,$db		; $5a18
+	ld a,$05		; $5a1a
+	ldi (hl),a		; $5a1c
+	ld (hl),a		; $5a1d
+	ld l,$e6		; $5a1e
+	ld a,$02		; $5a20
+	ldi (hl),a		; $5a22
+	ld (hl),a		; $5a23
+	ld a,SND_BEAM2		; $5a24
+	call playSound		; $5a26
+	ld a,$01		; $5a29
+	call partSetAnimation		; $5a2b
+	jp objectSetVisible82		; $5a2e
 
+@subid0:
+	rst_jumpTable			; $5a31
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
+	ld h,d			; $5a38
+	ld l,e			; $5a39
+	inc (hl)		; $5a3a
+	ld l,$d0		; $5a3b
+	ld (hl),$46		; $5a3d
+	ld l,$c6		; $5a3f
+	ld (hl),$1e		; $5a41
+	jp objectSetVisible82		; $5a43
+
+@state1:
+	call partCommon_decCounter1IfNonzero		; $5a46
+	jp nz,partAnimate		; $5a49
+	ld l,e			; $5a4c
+	inc (hl)		; $5a4d
+	call objectGetAngleTowardEnemyTarget		; $5a4e
+	ld e,$c9		; $5a51
+	ld (de),a		; $5a53
+
+@state2:
+	call partAnimate		; $5a54
+	call objectApplySpeed		; $5a57
+	call _partCommon_checkTileCollisionOrOutOfBounds		; $5a5a
+	ret nc			; $5a5d
+	call objectGetAngleTowardEnemyTarget		; $5a5e
+	sub $02			; $5a61
+	and $1f			; $5a63
+	ld c,a			; $5a65
+	ld b,$03		; $5a66
+-
+	call getFreePartSlot		; $5a68
+	jr nz,+			; $5a6b
+	ld (hl),PARTID_TWINROVA_FLAME		; $5a6d
+	inc l			; $5a6f
+	inc (hl)		; $5a70
+	ld l,$c9		; $5a71
+	ld (hl),c		; $5a73
+	call objectCopyPosition		; $5a74
++
+	ld a,c			; $5a77
+	add $02			; $5a78
+	and $1f			; $5a7a
+	ld c,a			; $5a7c
+	dec b			; $5a7d
+	jr nz,-			; $5a7e
+	call objectCreatePuff		; $5a80
+	jp partDelete		; $5a83
+
+
+; ==============================================================================
+; PARTID_TWINROVA_SNOWBALL
+; ==============================================================================
 partCode4e:
-	jr z,_label_10_190	; $5aec
-	ld e,$ea		; $5aee
-	ld a,(de)		; $5af0
-	cp $83			; $5af1
-	jr z,_label_10_193	; $5af3
-	res 7,a			; $5af5
-	sub $05			; $5af7
-	cp $04			; $5af9
-	jp c,$5b3e		; $5afb
-_label_10_190:
-	ld e,$c4		; $5afe
-	ld a,(de)		; $5b00
-	rst_jumpTable			; $5b01
-	ld ($1b5b),sp		; $5b02
-	ld e,e			; $5b05
-	scf			; $5b06
-	ld e,e			; $5b07
-	ld h,d			; $5b08
-	ld l,e			; $5b09
-	inc (hl)		; $5b0a
-	ld l,$c6		; $5b0b
-	ld (hl),$1e		; $5b0d
-	ld l,$d0		; $5b0f
-	ld (hl),$5a		; $5b11
-	ld a,$8d		; $5b13
-	call playSound		; $5b15
-	jp objectSetVisible82		; $5b18
-	call partCommon_decCounter1IfNonzero		; $5b1b
-	jr z,_label_10_192	; $5b1e
-	ld l,$e1		; $5b20
-	bit 0,(hl)		; $5b22
-	jr z,_label_10_191	; $5b24
-	ld (hl),$00		; $5b26
-	ld l,$e4		; $5b28
-	set 7,(hl)		; $5b2a
-_label_10_191:
-	jp partAnimate		; $5b2c
-_label_10_192:
-	ld l,e			; $5b2f
-	inc (hl)		; $5b30
-	call objectGetAngleTowardEnemyTarget		; $5b31
-	ld e,$c9		; $5b34
-	ld (de),a		; $5b36
-	call objectApplySpeed		; $5b37
-	call $4072		; $5b3a
-	ret nc			; $5b3d
-_label_10_193:
-	ld b,$09		; $5b3e
-	call objectCreateInteractionWithSubid00		; $5b40
-	jp partDelete		; $5b43
+	jr z,@normalStatus	; $5a86
 
+	; Hit something
+	ld e,Part.var2a		; $5a88
+	ld a,(de)		; $5a8a
+	cp $80|ITEMCOLLISION_L3_SHIELD			; $5a8b
+	jr z,@destroy	; $5a8d
+
+	res 7,a			; $5a8f
+	sub ITEMCOLLISION_L2_SWORD			; $5a91
+	cp ITEMCOLLISION_SWORDSPIN - ITEMCOLLISION_L2_SWORD + 1			; $5a93
+	jp c,@destroy		; $5a95
+
+@normalStatus:
+	ld e,Part.state		; $5a98
+	ld a,(de)		; $5a9a
+	rst_jumpTable			; $5a9b
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
+	ld h,d			; $5aa2
+	ld l,e			; $5aa3
+	inc (hl) ; [state] = 1
+
+	ld l,Part.counter1		; $5aa5
+	ld (hl),30		; $5aa7
+
+	ld l,Part.speed		; $5aa9
+	ld (hl),SPEED_240		; $5aab
+
+	ld a,SND_TELEPORT		; $5aad
+	call playSound		; $5aaf
+	jp objectSetVisible82		; $5ab2
+
+
+; Spawning in, not moving yet
+@state1:
+	call partCommon_decCounter1IfNonzero		; $5ab5
+	jr z,@beginMoving	; $5ab8
+
+	ld l,Part.animParameter		; $5aba
+	bit 0,(hl)		; $5abc
+	jr z,@animate	; $5abe
+
+	ld (hl),$00		; $5ac0
+	ld l,Part.collisionType		; $5ac2
+	set 7,(hl)		; $5ac4
+@animate:
+	jp partAnimate		; $5ac6
+
+@beginMoving:
+	ld l,e			; $5ac9
+	inc (hl) ; [state] = 2
+
+	call objectGetAngleTowardEnemyTarget		; $5acb
+	ld e,Part.angle		; $5ace
+	ld (de),a		; $5ad0
+
+
+; Moving toward Link
+@state2:
+	call objectApplySpeed		; $5ad1
+	call _partCommon_checkTileCollisionOrOutOfBounds		; $5ad4
+	ret nc			; $5ad7
+
+@destroy:
+	ld b,INTERACID_SNOWDEBRIS		; $5ad8
+	call objectCreateInteractionWithSubid00		; $5ada
+	jp partDelete		; $5add
+
+
+; ==============================================================================
+; PARTID_50
+; Used by Ganon
+; ==============================================================================
+; @addr{5ae0}
 partCode50:
-	ld a,$04		; $5b46
-	call objectGetRelatedObject1Var		; $5b48
-	ld a,(hl)		; $5b4b
-	cp $0e			; $5b4c
-	jp z,partDelete		; $5b4e
-	push hl			; $5b51
-	ld e,$c4		; $5b52
-	ld a,(de)		; $5b54
-	rst_jumpTable			; $5b55
-	ld e,h			; $5b56
-	ld e,e			; $5b57
-	ld l,(hl)		; $5b58
-	ld e,e			; $5b59
-	add h			; $5b5a
-	ld e,e			; $5b5b
-	ld a,$01		; $5b5c
-	ld (de),a		; $5b5e
-	pop hl			; $5b5f
-	call objectTakePosition		; $5b60
-	ld l,$b2		; $5b63
-	ld a,(hl)		; $5b65
-	or a			; $5b66
-	jr z,_label_10_194	; $5b67
-	ld a,$01		; $5b69
-_label_10_194:
-	jp partSetAnimation		; $5b6b
-	call partAnimate		; $5b6e
-	ld e,$e1		; $5b71
-	ld a,(de)		; $5b73
-	inc a			; $5b74
-	jr nz,_label_10_195	; $5b75
-	ld h,d			; $5b77
-	ld l,$c4		; $5b78
-	inc (hl)		; $5b7a
-	ld l,$e6		; $5b7b
-	ld a,$07		; $5b7d
-	ldi (hl),a		; $5b7f
-	ld (hl),a		; $5b80
-	call objectSetInvisible		; $5b81
-	pop hl			; $5b84
-	inc l			; $5b85
-	ld a,(hl)		; $5b86
-	or a			; $5b87
-	jp z,partDelete		; $5b88
-	ld bc,$2000		; $5b8b
-	jp objectTakePositionWithOffset		; $5b8e
-_label_10_195:
-	ld h,d			; $5b91
-	ld l,e			; $5b92
-	bit 7,(hl)		; $5b93
-	jr z,_label_10_196	; $5b95
-	res 7,(hl)		; $5b97
-	call objectSetVisible82		; $5b99
-	ld a,$b1		; $5b9c
-	call playSound		; $5b9e
-	ld h,d			; $5ba1
-	ld l,$e1		; $5ba2
-_label_10_196:
-	ld a,(hl)		; $5ba4
-	ld hl,$5bc1		; $5ba5
-	rst_addAToHl			; $5ba8
-	ld e,$e6		; $5ba9
-	ldi a,(hl)		; $5bab
-	ld (de),a		; $5bac
-	inc e			; $5bad
-	ldi a,(hl)		; $5bae
-	ld (de),a		; $5baf
-	ldi a,(hl)		; $5bb0
-	ld b,a			; $5bb1
-	ld c,(hl)		; $5bb2
-	pop hl			; $5bb3
-	ld l,$b2		; $5bb4
-	ld a,(hl)		; $5bb6
-	or a			; $5bb7
-	jr z,_label_10_197	; $5bb8
-	ld a,c			; $5bba
-	cpl			; $5bbb
-	inc a			; $5bbc
-	ld c,a			; $5bbd
-_label_10_197:
-	jp objectTakePositionWithOffset		; $5bbe
-	rlca			; $5bc1
-	rlca			; $5bc2
-	ret c			; $5bc3
-	pop af			; $5bc4
-	dec bc			; $5bc5
-	rlca			; $5bc6
-	rst $20			; $5bc7
-	ld a,(de)		; $5bc8
-	jr nz,$0c		; $5bc9
-	rst $30			; $5bcb
-	add hl,de		; $5bcc
+	ld a,$04		; $5ae0
+	call objectGetRelatedObject1Var		; $5ae2
+	ld a,(hl)		; $5ae5
+	cp $0e			; $5ae6
+	jp z,partDelete		; $5ae8
+	push hl			; $5aeb
+	ld e,$c4		; $5aec
+	ld a,(de)		; $5aee
+	rst_jumpTable			; $5aef
+	.dw @state0
+	.dw @state1
+	.dw @state2
 
+@state0:
+	ld a,$01		; $5af6
+	ld (de),a		; $5af8
+	pop hl			; $5af9
+	call objectTakePosition		; $5afa
+	ld l,$b2		; $5afd
+	ld a,(hl)		; $5aff
+	or a			; $5b00
+	jr z,+			; $5b01
+	ld a,$01		; $5b03
++
+	jp partSetAnimation		; $5b05
+
+@state1:
+	call partAnimate		; $5b08
+	ld e,$e1		; $5b0b
+	ld a,(de)		; $5b0d
+	inc a			; $5b0e
+	jr nz,_func_5b2b	; $5b0f
+	ld h,d			; $5b11
+	ld l,$c4		; $5b12
+	inc (hl)		; $5b14
+	ld l,$e6		; $5b15
+	ld a,$07		; $5b17
+	ldi (hl),a		; $5b19
+	ld (hl),a		; $5b1a
+	call objectSetInvisible		; $5b1b
+
+@state2:
+	pop hl			; $5b1e
+	inc l			; $5b1f
+	ld a,(hl)		; $5b20
+	or a			; $5b21
+	jp z,partDelete		; $5b22
+	ld bc,$2000		; $5b25
+	jp objectTakePositionWithOffset		; $5b28
+
+_func_5b2b:
+	ld h,d			; $5b2b
+	ld l,e			; $5b2c
+	bit 7,(hl)		; $5b2d
+	jr z, +			; $5b2f
+	res 7,(hl)		; $5b31
+	call objectSetVisible82		; $5b33
+	ld a,SND_BIGSWORD		; $5b36
+	call playSound		; $5b38
+	ld h,d			; $5b3b
+	ld l,$e1		; $5b3c
++
+	ld a,(hl)		; $5b3e
+	ld hl,_table_5b5b		; $5b3f
+	rst_addAToHl			; $5b42
+	ld e,$e6		; $5b43
+	ldi a,(hl)		; $5b45
+	ld (de),a		; $5b46
+	inc e			; $5b47
+	ldi a,(hl)		; $5b48
+	ld (de),a		; $5b49
+	ldi a,(hl)		; $5b4a
+	ld b,a			; $5b4b
+	ld c,(hl)		; $5b4c
+	pop hl			; $5b4d
+	ld l,$b2		; $5b4e
+	ld a,(hl)		; $5b50
+	or a			; $5b51
+	jr z,+			; $5b52
+	ld a,c			; $5b54
+	cpl			; $5b55
+	inc a			; $5b56
+	ld c,a			; $5b57
++
+	jp objectTakePositionWithOffset		; $5b58
+
+_table_5b5b:
+	.db $07 $07 $d8 $f1
+	.db $0b $07 $e7 $1a
+	.db $20 $0c $f7 $19
+
+
+; ==============================================================================
+; PARTID_51
+; Used by Ganon
+; ==============================================================================
+; @addr{5b67}
 partCode51:
-	ld a,$04		; $5bcd
-	call objectGetRelatedObject1Var		; $5bcf
-	ld a,(hl)		; $5bd2
-	cp $0e			; $5bd3
-	jp z,partDelete		; $5bd5
-	ld e,$c2		; $5bd8
-	ld a,(de)		; $5bda
-	ld e,$c4		; $5bdb
-	rst_jumpTable			; $5bdd
-.DB $e4				; $5bde
-	ld e,e			; $5bdf
-	ld c,b			; $5be0
-	ld e,h			; $5be1
-	inc b			; $5be2
-	ld e,h			; $5be3
-	ld a,(de)		; $5be4
-	or a			; $5be5
-	jr nz,_label_10_198	; $5be6
-	ld h,d			; $5be8
-	ld l,e			; $5be9
-	inc (hl)		; $5bea
-	ld l,$c6		; $5beb
-	ld (hl),$40		; $5bed
-	ld l,$e8		; $5bef
-	ld (hl),$f0		; $5bf1
-	ld l,$da		; $5bf3
-	ld (hl),$02		; $5bf5
-	ld a,$5c		; $5bf7
-	call playSound		; $5bf9
-_label_10_198:
-	call partCommon_decCounter1IfNonzero		; $5bfc
-	jp z,partDelete		; $5bff
-	jr _label_10_199		; $5c02
-	ld a,(de)		; $5c04
-	or a			; $5c05
-	jr z,_label_10_200	; $5c06
-	ld e,$e1		; $5c08
-	ld a,(de)		; $5c0a
-	rlca			; $5c0b
-	jp c,partDelete		; $5c0c
-_label_10_199:
-	ld e,$da		; $5c0f
-	ld a,(de)		; $5c11
-	xor $80			; $5c12
-	ld (de),a		; $5c14
-	jp partAnimate		; $5c15
-_label_10_200:
-	ld h,d			; $5c18
-	ld l,e			; $5c19
-	inc (hl)		; $5c1a
-	ld l,$e4		; $5c1b
-	set 7,(hl)		; $5c1d
-	ld l,$c9		; $5c1f
-	ld a,(hl)		; $5c21
-	ld b,$01		; $5c22
-	cp $0c			; $5c24
-	jr c,_label_10_201	; $5c26
-	inc b			; $5c28
-	cp $19			; $5c29
-	jr c,_label_10_201	; $5c2b
-	inc b			; $5c2d
-_label_10_201:
-	ld a,b			; $5c2e
-	dec a			; $5c2f
-	and $01			; $5c30
-	ld hl,$5c44		; $5c32
-	rst_addDoubleIndex			; $5c35
-	ld e,$e6		; $5c36
-	ldi a,(hl)		; $5c38
-	ld (de),a		; $5c39
-	inc e			; $5c3a
-	ld a,(hl)		; $5c3b
-	ld (de),a		; $5c3c
-	ld a,b			; $5c3d
-	call partSetAnimation		; $5c3e
-	jp objectSetVisible83		; $5c41
-	ld ($0a0a),sp		; $5c44
-	ld a,(bc)		; $5c47
-	ld a,(de)		; $5c48
-	rst_jumpTable			; $5c49
-	ld d,b			; $5c4a
-	ld e,h			; $5c4b
-	ld h,l			; $5c4c
-	ld e,h			; $5c4d
-	sub b			; $5c4e
-	ld e,h			; $5c4f
-	ld h,d			; $5c50
-	ld l,e			; $5c51
-	inc (hl)		; $5c52
-	ld l,$dd		; $5c53
-	ld a,(hl)		; $5c55
-	add $0e			; $5c56
-	ld (hl),a		; $5c58
-	ld l,$c6		; $5c59
-	ld (hl),$18		; $5c5b
-	ld a,$04		; $5c5d
-	call partSetAnimation		; $5c5f
-	jp objectSetVisible82		; $5c62
-	call partCommon_decCounter1IfNonzero		; $5c65
-	jr nz,_label_10_204	; $5c68
-	dec (hl)		; $5c6a
-	ld l,e			; $5c6b
-	inc (hl)		; $5c6c
-	ld l,$e4		; $5c6d
-	set 7,(hl)		; $5c6f
-	ld l,$db		; $5c71
-	ld a,$05		; $5c73
-	ldi (hl),a		; $5c75
-	ld (hl),a		; $5c76
-	ld l,$cb		; $5c77
-	ld a,(hl)		; $5c79
-	add $08			; $5c7a
-	ldi (hl),a		; $5c7c
-	inc l			; $5c7d
-	ld a,(hl)		; $5c7e
-	sub $10			; $5c7f
-	ld (hl),a		; $5c81
-	call objectGetAngleTowardLink		; $5c82
-	ld e,$c9		; $5c85
-	ld (de),a		; $5c87
-	ld c,a			; $5c88
-	ld b,$50		; $5c89
-	ld a,$02		; $5c8b
-	jp objectSetComponentSpeedByScaledVelocity		; $5c8d
-	call $4072		; $5c90
-	jr nc,_label_10_202	; $5c93
-	ld b,$56		; $5c95
-	call objectCreateInteractionWithSubid00		; $5c97
-	ld a,$3c		; $5c9a
-	call z,setScreenShakeCounter		; $5c9c
-	jp partDelete		; $5c9f
-_label_10_202:
-	call partCommon_decCounter1IfNonzero		; $5ca2
-	ld a,(hl)		; $5ca5
-	and $07			; $5ca6
-	jr nz,_label_10_203	; $5ca8
-	call getFreePartSlot		; $5caa
-	jr nz,_label_10_203	; $5cad
-	ld (hl),$51		; $5caf
-	inc l			; $5cb1
-	ld (hl),$02		; $5cb2
-	ld l,$c9		; $5cb4
-	ld e,l			; $5cb6
-	ld a,(de)		; $5cb7
-	ld (hl),a		; $5cb8
-	call objectCopyPosition		; $5cb9
-_label_10_203:
-	call objectApplyComponentSpeed		; $5cbc
-_label_10_204:
-	jp partAnimate		; $5cbf
+	ld a,$04		; $5b67
+	call objectGetRelatedObject1Var		; $5b69
+	ld a,(hl)		; $5b6c
+	cp $0e			; $5b6d
+	jp z,partDelete		; $5b6f
+	ld e,$c2		; $5b72
+	ld a,(de)		; $5b74
+	ld e,$c4		; $5b75
+	rst_jumpTable			; $5b77
+	.dw @subid0
+	.dw @subid1
+	.dw @subid2
 
+@subid0:
+	ld a,(de)		; $5b7e
+	or a			; $5b7f
+	jr nz,+			; $5b80
+	ld h,d			; $5b82
+	ld l,e			; $5b83
+	inc (hl)		; $5b84
+	ld l,$c6		; $5b85
+	ld (hl),$40		; $5b87
+	ld l,$e8		; $5b89
+	ld (hl),$f0		; $5b8b
+	ld l,$da		; $5b8d
+	ld (hl),$02		; $5b8f
+	ld a,SND_ENERGYTHING		; $5b91
+	call playSound		; $5b93
++
+	call partCommon_decCounter1IfNonzero		; $5b96
+	jp z,partDelete		; $5b99
+	jr +			; $5b9c
+
+@subid2:
+	ld a,(de)		; $5b9e
+	or a			; $5b9f
+	jr z,++			; $5ba0
+	ld e,$e1		; $5ba2
+	ld a,(de)		; $5ba4
+	rlca			; $5ba5
+	jp c,partDelete		; $5ba6
++
+	ld e,$da		; $5ba9
+	ld a,(de)		; $5bab
+	xor $80			; $5bac
+	ld (de),a		; $5bae
+	jp partAnimate		; $5baf
+++
+	ld h,d			; $5bb2
+	ld l,e			; $5bb3
+	inc (hl)		; $5bb4
+	ld l,$e4		; $5bb5
+	set 7,(hl)		; $5bb7
+	ld l,$c9		; $5bb9
+	ld a,(hl)		; $5bbb
+	ld b,$01		; $5bbc
+	cp $0c			; $5bbe
+	jr c,+			; $5bc0
+	inc b			; $5bc2
+	cp $19			; $5bc3
+	jr c,+			; $5bc5
+	inc b			; $5bc7
++
+	ld a,b			; $5bc8
+	dec a			; $5bc9
+	and $01			; $5bca
+	ld hl,@table_5bde		; $5bcc
+	rst_addDoubleIndex			; $5bcf
+	ld e,$e6		; $5bd0
+	ldi a,(hl)		; $5bd2
+	ld (de),a		; $5bd3
+	inc e			; $5bd4
+	ld a,(hl)		; $5bd5
+	ld (de),a		; $5bd6
+	ld a,b			; $5bd7
+	call partSetAnimation		; $5bd8
+	jp objectSetVisible83		; $5bdb
+
+@table_5bde:
+	.db $08 $0a
+	.db $0a $0a
+
+@subid1:
+	ld a,(de)		; $5be2
+	rst_jumpTable			; $5be3
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
+	ld h,d			; $5bea
+	ld l,e			; $5beb
+	inc (hl)		; $5bec
+	ld l,$dd		; $5bed
+	ld a,(hl)		; $5bef
+	add $0e			; $5bf0
+	ld (hl),a		; $5bf2
+	ld l,$c6		; $5bf3
+	ld (hl),$18		; $5bf5
+	ld a,$04		; $5bf7
+	call partSetAnimation		; $5bf9
+	jp objectSetVisible82		; $5bfc
+
+@state1:
+	call partCommon_decCounter1IfNonzero		; $5bff
+	jr nz,@animate	; $5c02
+	dec (hl)		; $5c04
+	ld l,e			; $5c05
+	inc (hl)		; $5c06
+	ld l,$e4		; $5c07
+	set 7,(hl)		; $5c09
+	ld l,$db		; $5c0b
+	ld a,$05		; $5c0d
+	ldi (hl),a		; $5c0f
+	ld (hl),a		; $5c10
+	ld l,$cb		; $5c11
+	ld a,(hl)		; $5c13
+	add $08			; $5c14
+	ldi (hl),a		; $5c16
+	inc l			; $5c17
+	ld a,(hl)		; $5c18
+	sub $10			; $5c19
+	ld (hl),a		; $5c1b
+	call objectGetAngleTowardLink		; $5c1c
+	ld e,$c9		; $5c1f
+	ld (de),a		; $5c21
+	ld c,a			; $5c22
+	ld b,$50		; $5c23
+	ld a,$02		; $5c25
+	jp objectSetComponentSpeedByScaledVelocity		; $5c27
+
+@state2:
+	call _partCommon_checkTileCollisionOrOutOfBounds		; $5c2a
+	jr nc,+			; $5c2d
+	ld b,INTERACID_EXPLOSION		; $5c2f
+	call objectCreateInteractionWithSubid00		; $5c31
+	ld a,$3c		; $5c34
+	call z,setScreenShakeCounter		; $5c36
+	jp partDelete		; $5c39
++
+	call partCommon_decCounter1IfNonzero		; $5c3c
+	ld a,(hl)		; $5c3f
+	and $07			; $5c40
+	jr nz,+			; $5c42
+	call getFreePartSlot		; $5c44
+	jr nz,+			; $5c47
+	ld (hl),PARTID_51		; $5c49
+	inc l			; $5c4b
+	ld (hl),$02		; $5c4c
+	ld l,$c9		; $5c4e
+	ld e,l			; $5c50
+	ld a,(de)		; $5c51
+	ld (hl),a		; $5c52
+	call objectCopyPosition		; $5c53
++
+	call objectApplyComponentSpeed		; $5c56
+@animate:
+	jp partAnimate		; $5c59
+
+
+; ==============================================================================
+; PARTID_52
+; Used by Ganon
+; ==============================================================================
+; @addr{5c5c}
 partCode52:
-	ld a,$04		; $5cc2
-	call objectGetRelatedObject1Var		; $5cc4
-	ld a,(hl)		; $5cc7
-	cp $0e			; $5cc8
-	jp z,partDelete		; $5cca
-	ld e,$c2		; $5ccd
-	ld a,(de)		; $5ccf
-	ld e,$c4		; $5cd0
-	rst_jumpTable			; $5cd2
-	reti			; $5cd3
-	ld e,h			; $5cd4
-	ld ($ac5d),sp		; $5cd5
-	ld e,l			; $5cd8
+	ld a,$04		; $5c5c
+	call objectGetRelatedObject1Var		; $5c5e
+	ld a,(hl)		; $5c61
+	cp $0e			; $5c62
+	jp z,partDelete		; $5c64
+	ld e,$c2		; $5c67
+	ld a,(de)		; $5c69
+	ld e,$c4		; $5c6a
+	rst_jumpTable			; $5c6c
+	.dw @subid0
+	.dw @subid1
+	.dw @subid2
+
+@subid0:
+	ld a,(de)		; $5c73
+	rst_jumpTable			; $5c74
+	.dw @@state0
+	.dw @@state1
+	.dw @@state2
+
+@@state0:
+	ld h,d			; $5c7b
+	ld l,e			; $5c7c
+	inc (hl)		; $5c7d
+	ld l,$c6		; $5c7e
+	ld (hl),$0a		; $5c80
+	jp objectSetVisible82		; $5c82
+
+@@state1:
+	call partCommon_decCounter1IfNonzero		; $5c85
+	jr nz,+			; $5c88
+	ld l,e			; $5c8a
+	inc (hl)		; $5c8b
+	ld a,SND_BEAM		; $5c8c
+	call playSound		; $5c8e
+	ld a,$02		; $5c91
+	call partSetAnimation		; $5c93
+
+@@state2:
+	call partCommon_checkOutOfBounds		; $5c96
+	jp z,partDelete		; $5c99
+	call objectApplySpeed		; $5c9c
++
+	jp partAnimate		; $5c9f
+
+@subid1:
+	ld a,(de)		; $5ca2
+	rst_jumpTable			; $5ca3
+	.dw @@state0
+	.dw @@state1
+	.dw @@state2
+	.dw @subid0@state2
+
+@@state0:
+	ld h,d			; $5cac
+	ld l,$d0		; $5cad
+	ld (hl),$50		; $5caf
+	ld l,e			; $5cb1
+	call objectSetVisible82		; $5cb2
+	ld e,$c3		; $5cb5
+	ld a,(de)		; $5cb7
+	or a			; $5cb8
+	jr z,+			; $5cb9
+	ld (hl),$03		; $5cbb
+	ld l,$e6		; $5cbd
+	ld a,$02		; $5cbf
+	ldi (hl),a		; $5cc1
+	ld (hl),a		; $5cc2
+	ret			; $5cc3
++
+	inc (hl)		; $5cc4
+	ld l,$c6		; $5cc5
+	ld (hl),$28		; $5cc7
+	ld l,$e6		; $5cc9
+	ld a,$04		; $5ccb
+	ldi (hl),a		; $5ccd
+	ld (hl),a		; $5cce
+	ld e,$cb		; $5ccf
+	ld l,$f0		; $5cd1
+	ld a,(de)		; $5cd3
+	add $20			; $5cd4
+	ldi (hl),a		; $5cd6
+	ld e,$cd		; $5cd7
 	ld a,(de)		; $5cd9
-	rst_jumpTable			; $5cda
-	pop hl			; $5cdb
-	ld e,h			; $5cdc
-.DB $eb				; $5cdd
-	ld e,h			; $5cde
-.DB $fc				; $5cdf
-	ld e,h			; $5ce0
-	ld h,d			; $5ce1
-	ld l,e			; $5ce2
-	inc (hl)		; $5ce3
-	ld l,$c6		; $5ce4
-	ld (hl),$0a		; $5ce6
-	jp objectSetVisible82		; $5ce8
-	call partCommon_decCounter1IfNonzero		; $5ceb
-	jr nz,_label_10_205	; $5cee
-	ld l,e			; $5cf0
-	inc (hl)		; $5cf1
-	ld a,$a4		; $5cf2
-	call playSound		; $5cf4
-	ld a,$02		; $5cf7
-	call partSetAnimation		; $5cf9
-	call $407e		; $5cfc
-	jp z,partDelete		; $5cff
-	call objectApplySpeed		; $5d02
-_label_10_205:
-	jp partAnimate		; $5d05
-	ld a,(de)		; $5d08
-	rst_jumpTable			; $5d09
-	ld (de),a		; $5d0a
-	ld e,l			; $5d0b
-	ld b,(hl)		; $5d0c
-	ld e,l			; $5d0d
-	ld (hl),a		; $5d0e
-	ld e,l			; $5d0f
-.DB $fc				; $5d10
-	ld e,h			; $5d11
-	ld h,d			; $5d12
-	ld l,$d0		; $5d13
-	ld (hl),$50		; $5d15
-	ld l,e			; $5d17
-	call objectSetVisible82		; $5d18
-	ld e,$c3		; $5d1b
-	ld a,(de)		; $5d1d
-	or a			; $5d1e
-	jr z,_label_10_206	; $5d1f
-	ld (hl),$03		; $5d21
-	ld l,$e6		; $5d23
-	ld a,$02		; $5d25
-	ldi (hl),a		; $5d27
-	ld (hl),a		; $5d28
-	ret			; $5d29
-_label_10_206:
-	inc (hl)		; $5d2a
-	ld l,$c6		; $5d2b
-	ld (hl),$28		; $5d2d
-	ld l,$e6		; $5d2f
-	ld a,$04		; $5d31
-	ldi (hl),a		; $5d33
-	ld (hl),a		; $5d34
-	ld e,$cb		; $5d35
-	ld l,$f0		; $5d37
-	ld a,(de)		; $5d39
-	add $20			; $5d3a
-	ldi (hl),a		; $5d3c
-	ld e,$cd		; $5d3d
-	ld a,(de)		; $5d3f
-	ld (hl),a		; $5d40
-	ld a,$01		; $5d41
-	call partSetAnimation		; $5d43
-	call partCommon_decCounter1IfNonzero		; $5d46
-	jr z,_label_10_208	; $5d49
-	ld a,(hl)		; $5d4b
-	rrca			; $5d4c
-	ld e,$c9		; $5d4d
-	jr c,_label_10_207	; $5d4f
-	ld a,(de)		; $5d51
-	inc a			; $5d52
-	and $1f			; $5d53
-	ld (de),a		; $5d55
-_label_10_207:
-	ld l,$da		; $5d56
-	ld a,(hl)		; $5d58
-	xor $80			; $5d59
-	ld (hl),a		; $5d5b
-	ld l,$f0		; $5d5c
-	ld b,(hl)		; $5d5e
-	inc l			; $5d5f
-	ld c,(hl)		; $5d60
-	ld a,$08		; $5d61
-	call objectSetPositionInCircleArc		; $5d63
-	jr _label_10_209		; $5d66
-_label_10_208:
-	ld (hl),$0a		; $5d68
-	ld l,e			; $5d6a
-	inc (hl)		; $5d6b
-	ld a,$be		; $5d6c
-	call playSound		; $5d6e
-	call objectSetVisible82		; $5d71
-_label_10_209:
-	jp partAnimate		; $5d74
-	call partCommon_decCounter1IfNonzero		; $5d77
-	jr z,_label_10_210	; $5d7a
-	call objectApplySpeed		; $5d7c
-	jr _label_10_209		; $5d7f
-_label_10_210:
-	ld l,e			; $5d81
-	inc (hl)		; $5d82
-	ld l,$e6		; $5d83
-	ld a,$02		; $5d85
-	ldi (hl),a		; $5d87
-	ld (hl),a		; $5d88
-	xor a			; $5d89
-	call partSetAnimation		; $5d8a
-	call objectCreatePuff		; $5d8d
-	ld b,$fd		; $5d90
-	call $5d97		; $5d92
-	ld b,$03		; $5d95
-	call getFreePartSlot		; $5d97
-	ret nz			; $5d9a
-	ld (hl),$52		; $5d9b
-	inc l			; $5d9d
-	inc (hl)		; $5d9e
-	inc l			; $5d9f
-	inc (hl)		; $5da0
-	ld l,$c9		; $5da1
-	ld e,l			; $5da3
-	ld a,(de)		; $5da4
-	add b			; $5da5
-	and $1f			; $5da6
-	ld (hl),a		; $5da8
-	jp objectCopyPosition		; $5da9
-	ld a,(de)		; $5dac
-	rst_jumpTable			; $5dad
-	or (hl)			; $5dae
-	ld e,l			; $5daf
-	ret nz			; $5db0
-	ld e,l			; $5db1
-	call nc,$fc5d		; $5db2
-	ld e,h			; $5db5
-	ld h,d			; $5db6
-	ld l,e			; $5db7
-	inc (hl)		; $5db8
-	ld l,$c6		; $5db9
-	ld (hl),$0f		; $5dbb
-	jp objectSetVisible82		; $5dbd
-	call partCommon_decCounter1IfNonzero		; $5dc0
-	jp nz,partAnimate		; $5dc3
-	ld (hl),$0f		; $5dc6
-	ld l,e			; $5dc8
-	inc (hl)		; $5dc9
-	ld a,$a8		; $5dca
-	call playSound		; $5dcc
-	ld a,$01		; $5dcf
-	jp partSetAnimation		; $5dd1
-	call partCommon_decCounter1IfNonzero		; $5dd4
-	jp nz,partAnimate		; $5dd7
-	ld l,e			; $5dda
-	inc (hl)		; $5ddb
-	ld l,$d0		; $5ddc
-	ld (hl),$5a		; $5dde
-	call objectGetAngleTowardLink		; $5de0
-	ld e,$c9		; $5de3
-	ld (de),a		; $5de5
-	ld a,$02		; $5de6
-	jp partSetAnimation		; $5de8
+	ld (hl),a		; $5cda
+	ld a,$01		; $5cdb
+	call partSetAnimation		; $5cdd
+
+@@state1:
+	call partCommon_decCounter1IfNonzero		; $5ce0
+	jr z,++			; $5ce3
+	ld a,(hl)		; $5ce5
+	rrca			; $5ce6
+	ld e,$c9		; $5ce7
+	jr c,+			; $5ce9
+	ld a,(de)		; $5ceb
+	inc a			; $5cec
+	and $1f			; $5ced
+	ld (de),a		; $5cef
++
+	ld l,$da		; $5cf0
+	ld a,(hl)		; $5cf2
+	xor $80			; $5cf3
+	ld (hl),a		; $5cf5
+	ld l,$f0		; $5cf6
+	ld b,(hl)		; $5cf8
+	inc l			; $5cf9
+	ld c,(hl)		; $5cfa
+	ld a,$08		; $5cfb
+	call objectSetPositionInCircleArc		; $5cfd
+	jr @@animate	; $5d00
+++
+	ld (hl),$0a		; $5d02
+	ld l,e			; $5d04
+	inc (hl)		; $5d05
+	ld a,SND_VERAN_PROJECTILE		; $5d06
+	call playSound		; $5d08
+	call objectSetVisible82		; $5d0b
+@@animate:
+	jp partAnimate		; $5d0e
+
+@@state2:
+	call partCommon_decCounter1IfNonzero		; $5d11
+	jr z,+			; $5d14
+	call objectApplySpeed		; $5d16
+	jr @@animate		; $5d19
++
+	ld l,e			; $5d1b
+	inc (hl)		; $5d1c
+	ld l,$e6		; $5d1d
+	ld a,$02		; $5d1f
+	ldi (hl),a		; $5d21
+	ld (hl),a		; $5d22
+	xor a			; $5d23
+	call partSetAnimation		; $5d24
+	call objectCreatePuff		; $5d27
+	ld b,$fd		; $5d2a
+	call @func_5d31		; $5d2c
+	ld b,$03		; $5d2f
+
+@func_5d31:
+	call getFreePartSlot		; $5d31
+	ret nz			; $5d34
+	ld (hl),PARTID_52		; $5d35
+	inc l			; $5d37
+	inc (hl)		; $5d38
+	inc l			; $5d39
+	inc (hl)		; $5d3a
+	ld l,$c9		; $5d3b
+	ld e,l			; $5d3d
+	ld a,(de)		; $5d3e
+	add b			; $5d3f
+	and $1f			; $5d40
+	ld (hl),a		; $5d42
+	jp objectCopyPosition		; $5d43
+
+@subid2:
+	ld a,(de)		; $5d46
+	rst_jumpTable			; $5d47
+	.dw @@state0
+	.dw @@state1
+	.dw @@state2
+	.dw @subid0@state2
+
+@@state0:
+	ld h,d			; $5d50
+	ld l,e			; $5d51
+	inc (hl)		; $5d52
+	ld l,$c6		; $5d53
+	ld (hl),$0f		; $5d55
+	jp objectSetVisible82		; $5d57
+
+@@state1:
+	call partCommon_decCounter1IfNonzero		; $5d5a
+	jp nz,partAnimate		; $5d5d
+	ld (hl),$0f		; $5d60
+	ld l,e			; $5d62
+	inc (hl)		; $5d63
+	ld a,SND_VERAN_FAIRY_ATTACK		; $5d64
+	call playSound		; $5d66
+	ld a,$01		; $5d69
+	jp partSetAnimation		; $5d6b
+
+@@state2:
+	call partCommon_decCounter1IfNonzero		; $5d6e
+	jp nz,partAnimate		; $5d71
+	ld l,e			; $5d74
+	inc (hl)		; $5d75
+	ld l,$d0		; $5d76
+	ld (hl),$5a		; $5d78
+	call objectGetAngleTowardLink		; $5d7a
+	ld e,$c9		; $5d7d
+	ld (de),a		; $5d7f
+	ld a,$02		; $5d80
+	jp partSetAnimation		; $5d82
 
 
 ; ==============================================================================
@@ -5298,7 +5645,7 @@ partCode53:
 	ld e,$c4		; $5d85
 	ld a,(de)		; $5d87
 	or a			; $5d88
-	jr z,_label_11_206	; $5d89
+	jr z,@state0	; $5d89
 	ld a,(wDeleteEnergyBeads)		; $5d8b
 	or a			; $5d8e
 	jp nz,partDelete		; $5d8f
@@ -5306,14 +5653,14 @@ partCode53:
 	ld l,$c6		; $5d93
 	ld a,(hl)		; $5d95
 	inc a			; $5d96
-	jr z,_label_11_204	; $5d97
+	jr z,+			; $5d97
 	dec (hl)		; $5d99
 	jp z,partDelete		; $5d9a
-_label_11_204:
++
 	inc e			; $5d9d
 	ld a,(de)		; $5d9e
 	or a			; $5d9f
-	jr nz,_label_11_205	; $5da0
+	jr nz,+			; $5da0
 	inc l			; $5da2
 	dec (hl)		; $5da3
 	ret nz			; $5da4
@@ -5328,7 +5675,7 @@ _label_11_204:
 	call partSetAnimation		; $5db0
 	call _func_5e1a		; $5db3
 	jp objectSetVisible		; $5db6
-_label_11_205:
++
 	call objectApplySpeed		; $5db9
 	call partAnimate		; $5dbc
 	ld e,$e1		; $5dbf
@@ -5339,8 +5686,8 @@ _label_11_205:
 	ld l,$c5		; $5dc5
 	dec (hl)		; $5dc7
 	call objectSetInvisible		; $5dc8
-	jr _label_11_207		; $5dcb
-_label_11_206:
+	jr +			; $5dcb
+@state0:
 	ld h,d			; $5dcd
 	ld l,e			; $5dce
 	inc (hl)		; $5dcf
@@ -5357,7 +5704,7 @@ _label_11_206:
 	ld (hl),a		; $5de1
 	xor a			; $5de2
 	ld (wDeleteEnergyBeads),a		; $5de3
-_label_11_207:
++
 	call getRandomNumber_noPreserveVars		; $5de6
 	and $07			; $5de9
 	inc a			; $5deb
