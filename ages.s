@@ -1227,8 +1227,9 @@ specialObjectLoadAnimationFrameToBuffer:
  m_section_force "Bank_11" NAMESPACE "partCode"
 
 	.include "code/partCommon.s"
-	.include "code/ages/partCode.s"
-
+	.include "objects/commonPartCode.s"
+        .include "data/partCodeTable.s"
+	.include "objects/ages/partCode.s"
 	.include "code/ages/garbage/bank11End.s"
 
 .ends

@@ -970,7 +970,9 @@ _linkItemAnimationTable:
  m_section_force "Part_Code" NAMESPACE "partCode"
 
 	.include "code/partCommon.s"
-	.include "code/seasons/partCode.s"
+	.include "objects/commonPartCode.s"
+        .include "data/partCodeTable.s"
+	.include "objects/seasons/partCode.s"
 
 .ends
 

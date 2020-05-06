@@ -617,7 +617,7 @@ _itemDrop_moveTowardPoint:
 	call objectApplyGivenSpeed		; $4419
 	xor a			; $441c
 	ret			; $441d
-	
+
 .ifdef ROM_SEASONS
 _itemDrop_pullOreChunksWithMagnetGloves:
 	ld e,Part.subid		; $4434
@@ -2715,7 +2715,7 @@ partCode15:
 	.dw @substate1
 	.dw @substate2
 	.dw @substate3
-	
+
 @substate0:
 	ld h,d			; $4dd7
 	ld l,e			; $4dd8
@@ -2726,7 +2726,7 @@ partCode15:
 	ld (hl),SPEED_80		; $4de0
 	jr z,@substate1		; $4de2
 	ld (hl),SPEED_100		; $4de4
-	
+
 @substate1:
 	ld hl,w1Companion.damage		; $4de6
 	ld a,(hl)		; $4de9
@@ -2740,7 +2740,7 @@ partCode15:
 	res 7,(hl)		; $4df6
 	ld bc,-$40		; $4df8
 	jp objectSetSpeedZ		; $4dfb
-	
+
 @substate2:
 	ld c,$00		; $4dfe
 	call objectUpdateSpeedZ_paramC		; $4e00
@@ -2757,7 +2757,7 @@ partCode15:
 	ld l,Part.var03		; $4e13
 	ld (hl),$00		; $4e15
 	ret			; $4e17
-	
+
 @substate3:
 	ld e,Part.var03		; $4e18
 	ld a,(de)		; $4e1a
@@ -2917,7 +2917,7 @@ partCode15:
 	ret c			; $4f2b
 	ld (hl),$98		; $4f2c
 	ret			; $4f2e
-	
+
 @moveToMaple:
 	ld l,<w1Companion.yh		; $4f2f
 	ld b,(hl)		; $4f31
@@ -3101,7 +3101,7 @@ partCode18:
 	.dw @state1
 	.dw @state2
 	.dw _partCommon_updateSpeedAndDeleteWhenCounter1Is0
-	
+
 @state0:
 	ld h,d			; $5046
 	ld l,e			; $5047
@@ -3109,7 +3109,7 @@ partCode18:
 	ld l,$d0		; $5049
 	ld (hl),$50		; $504b
 	jp objectSetVisible81		; $504d
-	
+
 @state1:
 	call objectCheckWithinScreenBoundary		; $5050
 	jp nc,partDelete		; $5053
@@ -3121,7 +3121,7 @@ partCode18:
 	ld (de),a		; $5062
 +
 	jp objectApplySpeed		; $5063
-	
+
 @state2:
 	ld a,$03		; $5066
 	ld (de),a		; $5068
@@ -3143,7 +3143,7 @@ partCode31:
 	.dw @state0
 	.dw @state1
 	.dw @state2
-	
+
 @state0:
 	ld h,d			; $507a
 	ld l,e			; $507b
@@ -3153,7 +3153,7 @@ partCode31:
 	ld l,$d0		; $5081
 	ld (hl),$3c		; $5083
 	jp objectSetVisible81		; $5085
-	
+
 @state1:
 	call partCommon_decCounter1IfNonzero		; $5088
 	ret nz			; $508b
@@ -3175,7 +3175,7 @@ partCode31:
 	ld e,$c9		; $50a4
 	ld (de),a		; $50a6
 	ret			; $50a7
-	
+
 @state2:
 	ld a,(wFrameCounter)		; $50a8
 	and $03			; $50ab
@@ -3249,7 +3249,7 @@ partCode1a:
 	.dw @@state1
 	.dw @subid0@state1
 	.dw _partCommon_updateSpeedAndDeleteWhenCounter1Is0
-	
+
 @@state0:
 	ld h,d			; $510f
 	ld l,e			; $5110
@@ -3264,7 +3264,7 @@ partCode1a:
 	rlca			; $511f
 	call partSetAnimation		; $5120
 	jp objectSetVisible81		; $5123
-	
+
 @@state1:
 	call partCommon_decCounter1IfNonzero		; $5126
 	jr nz,+			; $5129
@@ -3357,7 +3357,7 @@ partCode1c:
 	.dw @state0
 	.dw @state1
 	.dw @state2
-	
+
 @state0:
 	ld h,d			; $51a5
 	ld l,e			; $51a6
@@ -3368,7 +3368,7 @@ partCode1c:
 	ld e,$c9		; $51af
 	ld (de),a		; $51b1
 	jp objectSetVisible81		; $51b2
-	
+
 @state1:
 	call _partCommon_checkTileCollisionOrOutOfBounds		; $51b5
 	jr c,+			; $51b8
@@ -3378,7 +3378,7 @@ partCode1c:
 
 @partDelete:
 	jp partDelete		; $51c3
-	
+
 @state2:
 	call partCommon_decCounter1IfNonzero		; $51c6
 	jr z,@partDelete	; $51c9
@@ -3673,7 +3673,7 @@ partCode1f:
 	jp nc,objectApplySpeed		; $5363
 @normalStatus:
 	jp partDelete		; $5366
-	
+
 _func_5369:
 	ld h,d			; $5369
 	ld l,e			; $536a
@@ -5879,108 +5879,3 @@ _func_11_5e8a:
 	ld a,c			; $5e9c
 	or a			; $5e9d
 	jp hl			; $5e9e
-
-partCodeTable:
-	.dw partCode00 ; 0x00
-	.dw partCode01 ; 0x01
-	.dw partCode02 ; 0x02
-	.dw partCode03 ; 0x03
-	.dw partCode04 ; 0x04
-	.dw partCode05 ; 0x05
-	.dw partCode06 ; 0x06
-	.dw partCode07 ; 0x07
-	.dw partCode08 ; 0x08
-	.dw partCode09 ; 0x09
-	.dw partCodeNil ; 0x0a
-	.dw partCode0b ; 0x0b
-	.dw partCode0c ; 0x0c
-	.dw partCodeNil ; 0x0d
-	.dw partCode0e ; 0x0e
-	.dw partCode0f ; 0x0f
-	.dw partCode10 ; 0x10
-	.dw partCode11 ; 0x11
-	.dw partCode12 ; 0x12
-	.dw partCode13 ; 0x13
-	.dw partCode14 ; 0x14
-	.dw partCode15 ; 0x15
-	.dw partCode16 ; 0x16
-	.dw partCode17 ; 0x17
-	.dw partCode18 ; 0x18
-	.dw partCode19 ; 0x19
-	.dw partCode1a ; 0x1a
-	.dw partCode1b ; 0x1b
-	.dw partCode1c ; 0x1c
-	.dw partCode1d ; 0x1d
-	.dw partCode1e ; 0x1e
-	.dw partCode1f ; 0x1f
-	.dw partCode20 ; 0x20
-	.dw partCode21 ; 0x21
-	.dw partCode22 ; 0x22
-	.dw partCode23 ; 0x23
-	.dw partCode24 ; 0x24
-	.dw partCode25 ; 0x25
-	.dw partCode26 ; 0x26
-	.dw partCode27 ; 0x27
-	.dw partCode28 ; 0x28
-	.dw partCode29 ; 0x29
-	.dw partCode2a ; 0x2a
-	.dw partCode2b ; 0x2b
-	.dw partCode2c ; 0x2c
-	.dw partCode2d ; 0x2d
-	.dw partCode2e ; 0x2e
-	.dw partCode2f ; 0x2f
-	.dw partCode30 ; 0x30
-	.dw partCode31 ; 0x31
-	.dw partCode32 ; 0x32
-	.dw partCode33 ; 0x33
-	.dw partCode34 ; 0x34
-	.dw partCode35 ; 0x35
-	.dw partCode36 ; 0x36
-	.dw partCode37 ; 0x37
-	.dw partCode38 ; 0x38
-	.dw partCode39 ; 0x39
-	.dw partCode3a ; 0x3a
-	.dw partCode3b ; 0x3b
-	.dw partCode3c ; 0x3c
-	.dw partCode3d ; 0x3d
-	.dw partCode3e ; 0x3e
-	.dw partCode3f ; 0x3f
-	.dw partCode40 ; 0x40
-	.dw partCode41 ; 0x41
-	.dw partCode42 ; 0x42
-	.dw partCode43 ; 0x43
-	.dw partCode44 ; 0x44
-	.dw partCode45 ; 0x45
-	.dw partCode46 ; 0x46
-	.dw partCode47 ; 0x47
-	.dw partCode48 ; 0x48
-	.dw partCode49 ; 0x49
-	.dw partCode4a ; 0x4a
-	.dw partCode4b ; 0x4b
-	.dw partCode4c ; 0x4c
-	.dw partCode4d ; 0x4d
-	.dw partCode4e ; 0x4e
-	.dw partCode4f ; 0x4f
-	.dw partCode50 ; 0x50
-	.dw partCode51 ; 0x51
-	.dw partCode52 ; 0x52
-	.dw partCode53 ; 0x53
-	.dw partCode54 ; 0x54
-	.dw partCode55 ; 0x55
-	.dw partCode56 ; 0x56
-	.dw partCode57 ; 0x57
-	.dw partCode58 ; 0x58
-	.dw partCode59 ; 0x59
-	.dw partCode5a ; 0x5a
-
-;;
-; @addr{5f55}
-partCodeNil:
-	ret			; $5f55
-
-;;
-; @addr{5f56}
-partCode00:
-	jp partDelete		; $5f56
-
-.include "objects/ages/partCode.s"
