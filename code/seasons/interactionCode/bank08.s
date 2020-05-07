@@ -6954,44 +6954,50 @@ _label_08_357:
 	jp c,interactionDelete		; $7e8c
 	ret			; $7e8f
 
+
+; ==============================================================================
+; INTERACID_BLAINO_SCRIPT
+; ==============================================================================
 interactionCode5a:
-	ld e,$44		; $7e90
+	ld e,Interaction.state		; $7e90
 	ld a,(de)		; $7e92
 	rst_jumpTable			; $7e93
-	sbc h			; $7e94
-	ld a,(hl)		; $7e95
-	xor l			; $7e96
-	ld a,(hl)		; $7e97
-	ret z			; $7e98
-	ld a,(hl)		; $7e99
-	inc c			; $7e9a
-	dec h			; $7e9b
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw interactionRunScript
+
+@state0:
 	ld a,$01		; $7e9c
 	ld (de),a		; $7e9e
 	call interactionSetAlwaysUpdateBit		; $7e9f
-	ld a,$23		; $7ea2
+	ld a,>TX_2300		; $7ea2
 	call interactionSetHighTextIndex		; $7ea4
-	ld hl,$6425		; $7ea7
+	ld hl,blainoScript		; $7ea7
 	call interactionSetScript		; $7eaa
+
+@state1:
 	call interactionRunScript		; $7ead
 	ret nc			; $7eb0
 	ld h,d			; $7eb1
-	ld l,$40		; $7eb2
+	ld l,Interaction.enabled		; $7eb2
 	ld (hl),$01		; $7eb4
-	ld l,$44		; $7eb6
+	ld l,Interaction.state		; $7eb6
 	ld (hl),$02		; $7eb8
 	ld a,$02		; $7eba
 	ld ($cced),a		; $7ebc
 	xor a			; $7ebf
 	ld ($ccec),a		; $7ec0
 	inc a			; $7ec3
-	ld ($ccc9),a		; $7ec4
+	ld (wInBoxingMatch),a		; $7ec4
 	ret			; $7ec7
-	call $7eef		; $7ec8
+
+@state2:
+	call @checkFightDone		; $7ec8
 	ret z			; $7ecb
 	call restartSound		; $7ecc
 	call interactionSetAlwaysUpdateBit		; $7ecf
-	ld l,$44		; $7ed2
+	ld l,Interaction.state		; $7ed2
 	ld (hl),$03		; $7ed4
 	ld a,$03		; $7ed6
 	ld ($cced),a		; $7ed8
@@ -6999,31 +7005,38 @@ interactionCode5a:
 	ld ($cca7),a		; $7edc
 	call resetLinkInvincibility		; $7edf
 	xor a			; $7ee2
-	ld ($ccc9),a		; $7ee3
-	ld hl,$649a		; $7ee6
+	ld (wInBoxingMatch),a		; $7ee3
+	ld hl,blainoFightDoneScript		; $7ee6
 	call interactionSetScript		; $7ee9
 	jp interactionRunScript		; $7eec
-	ld hl,$c680		; $7eef
+
+@checkFightDone:
+	ld hl,wInventoryB		; $7eef
 	ld a,($cca7)		; $7ef2
 	or (hl)			; $7ef5
 	inc l			; $7ef6
 	or (hl)			; $7ef7
 	ld a,$03		; $7ef8
-	jr nz,_label_08_358	; $7efa
-	ld a,$0b		; $7efc
+	; equipped items (cheated)
+	jr nz,+			; $7efa
+	ld a,Object.yh		; $7efc
 	call objectGetRelatedObject1Var		; $7efe
-	call $7f18		; $7f01
+	call @checkOutsideRing		; $7f01
+	; won
 	ld a,$01		; $7f04
-	jr nc,_label_08_358	; $7f06
-	ld hl,$d00b		; $7f08
-	call $7f18		; $7f0b
+	jr nc,+			; $7f06
+	ld hl,w1Link.yh		; $7f08
+	call @checkOutsideRing		; $7f0b
+	; lost
 	ld a,$02		; $7f0e
-	jr nc,_label_08_358	; $7f10
+	jr nc,+			; $7f10
 	xor a			; $7f12
-_label_08_358:
++
 	ld ($ccec),a		; $7f13
 	or a			; $7f16
 	ret			; $7f17
+
+@checkOutsideRing:
 	ldi a,(hl)		; $7f18
 	sub $16			; $7f19
 	cp $4c			; $7f1b
@@ -7033,6 +7046,7 @@ _label_08_358:
 	sub $22			; $7f20
 	cp $5c			; $7f22
 	ret			; $7f24
+
 
 interactionCode5b:
 	ld e,$44		; $7f25

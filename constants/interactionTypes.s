@@ -1913,11 +1913,14 @@
 ; The subrosian trying to blow up the volcano leading to d8
 .define INTERACID_SUBROSIAN_AT_D8	$55
 
+.define INTERACID_BLAINO_SCRIPT		$5a
+
 ;;
 ; @subid_00{grabbable treasure}
 ; @subid_01{unblocking the Temple of Autumn}
 .define INTERACID_BOMB_FLOWER		$6f
 
+.define INTERACID_BLAINO		$72
 .define INTERACID_TRAMPOLINE		$7c
 
 .define INTERACID_88			$88

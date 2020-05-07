@@ -5243,106 +5243,128 @@ _label_09_220:
 	ld (de),a		; $6f88
 	jp interactionInitGraphics		; $6f89
 
+
+; ==============================================================================
+; INTERACID_BLAINO
+; var37 - 0 if enough rupees, else 1
+; var38 - RUPEEVAL_10 if cheated, otherwise RUPEEVAL_20
+; var39 - pointer to Blaino / script ???
+; $cca7 - ???
+; $ccec - result of fight - $01 if won, $02 if lost, $03 if cheated
+; $cced - $00 on init, $01 when starting fight, $03 when fight done
+; ==============================================================================
 interactionCode72:
 	ld e,Interaction.subid		; $6f8c
 	ld a,(de)		; $6f8e
 	or a			; $6f8f
-	jr nz,_label_09_225	; $6f90
+	jr nz,_blainoSubid01	; $6f90
+	; subid00
 	ld e,Interaction.state		; $6f92
 	ld a,(de)		; $6f94
 	rst_jumpTable			; $6f95
-	sbc h			; $6f96
-	ld l,a			; $6f97
-	pop de			; $6f98
-	ld l,a			; $6f99
-	reti			; $6f9a
-	ldd a,(hl)		; $6f9b
+	.dw @state0
+	.dw @state1
+	.dw interactionDelete
+
+@state0:
 	call interactionIncState		; $6f9c
 	ld a,($cced)		; $6f9f
 	cp $00			; $6fa2
-	jr z,_label_09_221	; $6fa4
+	jr z,+			; $6fa4
 	cp $01			; $6fa6
-	jr z,_label_09_222	; $6fa8
+	jr z,++			; $6fa8
 	cp $03			; $6faa
-	jr z,_label_09_221	; $6fac
-_label_09_221:
-	ld l,$78		; $6fae
+	jr z,+			; $6fac
++
+	ld l,Interaction.var38		; $6fae
 	ld (hl),$01		; $6fb0
-	ld l,$77		; $6fb2
+	ld l,Interaction.var37		; $6fb2
 	ld (hl),$02		; $6fb4
 	ld a,$06		; $6fb6
 	call objectSetCollideRadius		; $6fb8
-	call $7055		; $6fbb
+	call _seasonsFunc_09_7055		; $6fbb
 	call interactionInitGraphics		; $6fbe
-	jr _label_09_223		; $6fc1
-_label_09_222:
-	ld l,$78		; $6fc3
+	jr @animate		; $6fc1
+++
+	ld l,Interaction.var38		; $6fc3
 	ld (hl),$00		; $6fc5
 	call interactionInitGraphics		; $6fc7
 	ld a,$01		; $6fca
 	jp interactionSetAnimation		; $6fcc
-	jr _label_09_224		; $6fcf
-	ld e,$78		; $6fd1
+	jr +			; $6fcf
+
+@state1:
+	ld e,Interaction.var38		; $6fd1
 	ld a,(de)		; $6fd3
 	or a			; $6fd4
-	jr z,_label_09_224	; $6fd5
-	call $7036		; $6fd7
-	call $704f		; $6fda
-_label_09_223:
+	jr z,+			; $6fd5
+	call _seasonsFunc_09_7036		; $6fd7
+	call _seasonsFunc_09_704f		; $6fda
+@animate:
 	call interactionAnimate		; $6fdd
-_label_09_224:
++
 	call objectPreventLinkFromPassing		; $6fe0
 	jp objectSetPriorityRelativeToLink_withTerrainEffects		; $6fe3
-_label_09_225:
+
+_blainoSubid01:
 	ld e,Interaction.state		; $6fe6
 	ld a,(de)		; $6fe8
 	rst_jumpTable			; $6fe9
-	xor $6f			; $6fea
-.DB $fc				; $6fec
-	ld l,a			; $6fed
+	.dw @state0
+	.dw @state1
+
+@state0:
 	ld a,$01		; $6fee
 	ld (de),a		; $6ff0
 	call interactionInitGraphics		; $6ff1
 	ld a,$04		; $6ff4
 	call interactionSetAnimation		; $6ff6
 	jp objectSetVisiblec1		; $6ff9
+
+@state1:
 	ld e,Interaction.state2		; $6ffc
 	ld a,(de)		; $6ffe
 	rst_jumpTable			; $6fff
-	ld b,$70		; $7000
-	inc e			; $7002
-	ld (hl),b		; $7003
-	add hl,hl		; $7004
-	ld (hl),b		; $7005
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+
+@substate0:
 	ld a,($cbb5)		; $7006
 	or a			; $7009
-	jr z,_label_09_227	; $700a
+	jr z,@substate2	; $700a
 	ld h,d			; $700c
-	ld l,$45		; $700d
+	ld l,Interaction.state2		; $700d
 	inc (hl)		; $700f
-	ld l,$60		; $7010
+	ld l,Interaction.animCounter		; $7010
 	ld (hl),$01		; $7012
 	xor a			; $7014
-	ld l,$4e		; $7015
+	ld l,Interaction.z		; $7015
 	ldi (hl),a		; $7017
+	; zh
 	ld (hl),a		; $7018
 	jp interactionAnimate		; $7019
+
+@substate1:
 	ld h,d			; $701c
-	ld l,$61		; $701d
+	ld l,Interaction.animParameter		; $701d
 	ld a,(hl)		; $701f
 	or a			; $7020
-	jr z,_label_09_226	; $7021
-	ld l,$45		; $7023
+	jr z,+			; $7021
+	ld l,Interaction.state2		; $7023
 	inc (hl)		; $7025
-_label_09_226:
++
 	jp interactionAnimate		; $7026
-_label_09_227:
+
+@substate2:
 	ld c,$20		; $7029
 	call objectUpdateSpeedZ_paramC		; $702b
 	ret nz			; $702e
 	ld h,d			; $702f
 	ld bc,$ff40		; $7030
 	jp objectSetSpeedZ		; $7033
+
+_seasonsFunc_09_7036:
 	ld a,(wFrameCounter)		; $7036
 	and $07			; $7039
 	ret nz			; $703b
@@ -5352,21 +5374,26 @@ _label_09_227:
 	swap a			; $7043
 	rlca			; $7045
 	ld h,d			; $7046
-	ld l,$77		; $7047
+	ld l,Interaction.var37		; $7047
 	cp (hl)			; $7049
 	ret z			; $704a
 	ld (hl),a		; $704b
 	jp interactionSetAnimation		; $704c
+
+_seasonsFunc_09_704f:
 	ld c,$0e		; $704f
 	call objectUpdateSpeedZ_paramC		; $7051
 	ret nz			; $7054
-	ld e,$54		; $7055
+
+_seasonsFunc_09_7055:
+	ld e,Interaction.speedZ		; $7055
 	ld a,$80		; $7057
 	ld (de),a		; $7059
 	inc e			; $705a
 	ld a,$ff		; $705b
 	ld (de),a		; $705d
 	ret			; $705e
+
 
 interactionCode73:
 	ld h,d			; $705f

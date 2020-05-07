@@ -812,6 +812,9 @@
 ; @subid_81{}
 .define ENEMYID_MOTHULA_CHILD			$47
 
+
+.define ENEMYID_BLAINO				$54
+
 ;;
 ; @subid_00{Spawner {use this})
 ; @subid_01{Body hitbox + general logic}

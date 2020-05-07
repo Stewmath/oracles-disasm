@@ -4359,74 +4359,95 @@ script641e:
 	giveitem $0502
 	giveitem $0505
 	retscript
-script6425:
+
+
+; ==============================================================================
+; INTERACID_BLAINO_SCRIPT
+; INTERACID_BLAINO
+; ENEMYID_BLAINO
+; ==============================================================================
+blainoScript:
 	initcollisions
-	asm15 $5c9b
-script6429:
-	asm15 $5c00
-	asm15 $5c29
-	jumpifroomflagset $40, script643d
+	asm15 scriptHlp.blainoScript_spawnBlaino
+
+@waitUntilSpokenTo:
+	asm15 scriptHlp.blainoScript_saveVariables
+	asm15 scriptHlp.blainoScript_adjustRupeesInText
+	jumpifroomflagset $40, @beatenOnce
 	checkabutton
 	setdisabledobjectsto91
-	showtextlowindex $00
-	jumpiftextoptioneq $00, script6455
-	jump2byte script644f
-script643d:
+	showtextlowindex <TX_2300
+	jumpiftextoptioneq $00, @acceptedFight
+	jump2byte @choseNotToFight
+
+@beatenOnce:
 	checkabutton
 	setdisabledobjectsto91
-	showtextlowindex $0a
-	jumpiftextoptioneq $00, script6455
-	jump2byte script644f
-script6447:
+	showtextlowindex <TX_230a
+	jumpiftextoptioneq $00, @acceptedFight
+	jump2byte @choseNotToFight
+
+@promptCost:
 	checkabutton
 	setdisabledobjectsto91
-	showtextlowindex $01
-	jumpiftextoptioneq $00, script6455
-script644f:
+	showtextlowindex <TX_2301
+	jumpiftextoptioneq $00, @acceptedFight
+
+@choseNotToFight:
 	wait 30
-	showtextlowindex $02
+	showtextlowindex <TX_2302
 	enableallobjects
-	jump2byte script6447
-script6455:
+	jump2byte @promptCost
+
+@acceptedFight:
 	wait 30
-script6456:
-	jumpifobjectbyteeq $77, $00, script6461
-script645b:
-	showtextlowindex $04
+
+@checkRupees:
+	jumpifobjectbyteeq Interaction.var37, $00, @acceptedWithEnoughRupees
+
+@notEnoughRupees:
+	showtextlowindex <TX_2304
 	enableallobjects
 	checkabutton
-	jump2byte script645b
-script6461:
+	jump2byte @notEnoughRupees
+
+@acceptedWithEnoughRupees:
 	disableinput
-script6462:
-	jumpifobjectbyteeq $78, $05, script646b
-	showtextlowindex $03
-	jump2byte script646d
-script646b:
-	showtextlowindex $0d
-script646d:
-	jumpiftextoptioneq $00, script6474
+
+@rulesExplanation:
+	jumpifobjectbyteeq Interaction.var38, $05, @cheatedExplanation
+	showtextlowindex <TX_2303
+	jump2byte @checkIfUnderstoodRules
+
+@cheatedExplanation:
+	showtextlowindex <TX_230d
+
+@checkIfUnderstoodRules:
+	jumpiftextoptioneq $00, @beginFight
 	wait 30
-	jump2byte script6462
-script6474:
-	asm15 $5c23
+	jump2byte @rulesExplanation
+
+@beginFight:
+	asm15 scriptHlp.blainoScript_takeRupees
 	asm15 fadeoutToWhite
 	checkpalettefadedone
 	setdisabledobjectsto11
 	writememory $cced, $01
-	asm15 $5c3d
-	asm15 $5c49
-	asm15 $5c61
-	asm15 $5cb0, $00
+	asm15 scriptHlp.blainoScript_clearItemsAndPegasusSeeds
+	asm15 scriptHlp.blainoScript_setLinkPositionAndState
+	asm15 scriptHlp.blainoScript_spawnBlainoEnemy
+	asm15 scriptHlp.blainoScript_putAwayLinksItems, $00
 	wait 4
 	asm15 fadeinFromWhite
 	checkpalettefadedone
-	showtextlowindex $05
+	showtextlowindex <TX_2305
 	playsound SND_DING
 	setmusic MUS_MINIBOSS
 	enableinput
 	scriptend
-script649a:
+
+
+blainoFightDoneScript:
 	disableinput
 	wait 20
 	playsound SND_DING
@@ -4438,62 +4459,73 @@ script649a:
 	asm15 fadeoutToWhite
 	checkpalettefadedone
 	setdisabledobjectsto11
-	asm15 $5c80
-	asm15 $5c49
+	asm15 scriptHlp.blainoScript_setBlainoPosition
+	asm15 scriptHlp.blainoScript_setLinkPositionAndState
 	wait 4
 	asm15 fadeinFromWhite
 	checkpalettefadedone
 	resetmusic
-	writeobjectbyte $71, $00
+	writeobjectbyte Interaction.pressedAButton, $00
 	jumptable_memoryaddress $ccec
-	.dw script64c5
-	.dw script64c5
-	.dw script64dc
-	.dw script64e4
-script64c5:
-	jumpifroomflagset $40, script64d3
-	showtextlowindex $06
-	giveitem $4800
+	.dw @fightWon
+	.dw @fightWon
+	.dw @fightLost
+	.dw @cheated
+
+@fightWon:
+	jumpifroomflagset $40, @give30Rupees
+	showtextlowindex <TX_2306
+	giveitem TREASURE_RICKY_GLOVES $00
 	orroomflag $40
 	enableinput
-	jump2byte script64d9
-script64d3:
-	showtextlowindex $0b
-	asm15 $5c36
+	jump2byte @finishedTalking
+
+@give30Rupees:
+	showtextlowindex <TX_230b
+	asm15 scriptHlp.blainoScript_give30Rupees
 	enableinput
-script64d9:
+
+@finishedTalking:
 	checkabutton
-	jump2byte script6429
-script64dc:
-	showtextlowindex $08
-	jumpiftextoptioneq $00, script64ee
-	jump2byte script64f4
-script64e4:
-	setglobalflag $1a
-script64e6:
-	showtextlowindex $09
-	jumpiftextoptioneq $00, script64ee
-	jump2byte script64fd
-script64ee:
-	asm15 $5c00
+	jump2byte blainoScript@waitUntilSpokenTo
+
+@fightLost:
+	showtextlowindex <TX_2308
+	jumpiftextoptioneq $00, @rematch
+	jump2byte @declinedRematch
+
+@cheated:
+	setglobalflag GLOBALFLAG_CHEATED_BLAINO
+
+@cheatedText:
+	showtextlowindex <TX_2309
+	jumpiftextoptioneq $00, @rematch
+	jump2byte @declinedRematchAfterCheating
+
+@rematch:
+	asm15 scriptHlp.blainoScript_saveVariables
 	enableinput
-	jump2byte script6456
-script64f4:
+	jump2byte blainoScript@checkRupees
+
+@declinedRematch:
 	wait 30
-	showtextlowindex $02
+	showtextlowindex <TX_2302
 	wait 30
 	enableinput
 	checkabutton
 	disableinput
-	jump2byte script64dc
-script64fd:
+	jump2byte @fightLost
+
+@declinedRematchAfterCheating:
 	wait 30
-	showtextlowindex $02
+	showtextlowindex <TX_2302
 	wait 30
 	enableinput
 	checkabutton
 	disableinput
-	jump2byte script64e6
+	jump2byte @cheatedText
+
+
 script6506:
 	setcollisionradii $20, $30
 	checkcollidedwithlink_onground

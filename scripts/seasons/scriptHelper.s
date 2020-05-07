@@ -1249,67 +1249,87 @@ _label_15_225:
 	ld l,$7d		; $5bfb
 	ld (hl),$01		; $5bfd
 	ret			; $5bff
-	ld a,$1a		; $5c00
+
+
+; ==============================================================================
+; INTERACID_BLAINO_SCRIPT
+; INTERACID_BLAINO
+; ENEMYID_BLAINO
+; ==============================================================================
+blainoScript_saveVariables:
+	ld a,GLOBALFLAG_CHEATED_BLAINO		; $5c00
 	call checkGlobalFlag		; $5c02
 	ld a,$04		; $5c05
-	jr z,_label_15_226	; $5c07
+	jr z,+			; $5c07
 	ld a,$05		; $5c09
-_label_15_226:
-	ld e,$78		; $5c0b
++
+	ld e,Interaction.var38		; $5c0b
 	ld (de),a		; $5c0d
 	call cpRupeeValue		; $5c0e
-	ld e,$77		; $5c11
+	ld e,Interaction.var37		; $5c11
 	ld (de),a		; $5c13
 	ld a,$00		; $5c14
 	ld ($cced),a		; $5c16
 	xor a			; $5c19
-	ld e,$71		; $5c1a
+	ld e,Interaction.var31		; $5c1a
 	ld (de),a		; $5c1c
-	ld e,$44		; $5c1d
+	ld e,Interaction.state		; $5c1d
 	ld a,$01		; $5c1f
 	ld (de),a		; $5c21
 	ret			; $5c22
-	ld e,$78		; $5c23
+
+blainoScript_takeRupees:
+	ld e,Interaction.var38		; $5c23
 	ld a,(de)		; $5c25
 	jp removeRupeeValue		; $5c26
-	ld e,$78		; $5c29
+
+blainoScript_adjustRupeesInText:
+	ld e,Interaction.var38		; $5c29
 	ld a,(de)		; $5c2b
 	call getRupeeValue		; $5c2c
-	ld hl,$cba8		; $5c2f
+	ld hl,wTextNumberSubstitution		; $5c2f
 	ld (hl),c		; $5c32
 	inc hl			; $5c33
 	ld (hl),b		; $5c34
 	ret			; $5c35
-	ld c,$07		; $5c36
-	ld a,$28		; $5c38
+
+blainoScript_give30Rupees:
+	ld c,RUPEEVAL_030		; $5c36
+	ld a,TREASURE_RUPEES		; $5c38
 	jp giveTreasure		; $5c3a
+
+blainoScript_clearItemsAndPegasusSeeds:
 	call clearPegasusSeedCounter		; $5c3d
 	call clearAllParentItems		; $5c40
 	call dropLinkHeldItem		; $5c43
 	jp clearItems		; $5c46
+
+blainoScript_setLinkPositionAndState:
 	call setLinkForceStateToState08		; $5c49
-	ld hl,$d008		; $5c4c
-	ld (hl),$03		; $5c4f
-	ld l,$0b		; $5c51
+	ld hl,w1Link.direction		; $5c4c
+	ld (hl),DIR_LEFT		; $5c4f
+	ld l,<w1Link.yh		; $5c51
 	ld (hl),$40		; $5c53
-	ld l,$0d		; $5c55
+	ld l,<w1Link.xh		; $5c55
 	ld (hl),$60		; $5c57
 	xor a			; $5c59
-	ld l,$0f		; $5c5a
+	ld l,<w1Link.zh		; $5c5a
 	ld (hl),a		; $5c5c
-	ld ($cc77),a		; $5c5d
+	ld (wLinkInAir),a		; $5c5d
 	ret			; $5c60
-	ld e,$79		; $5c61
+
+blainoScript_spawnBlainoEnemy:
+	ld e,Interaction.var39		; $5c61
 	ld a,(de)		; $5c63
 	ld h,a			; $5c64
-	ld l,$44		; $5c65
+	ld l,Interaction.state		; $5c65
 	ld (hl),$02		; $5c67
 	call getFreeEnemySlot		; $5c69
 	ret nz			; $5c6c
-	ld (hl),$54		; $5c6d
-	ld l,$8b		; $5c6f
+	ld (hl),ENEMYID_BLAINO		; $5c6d
+	ld l,Enemy.yh		; $5c6f
 	ld (hl),$40		; $5c71
-	ld l,$8d		; $5c73
+	ld l,Enemy.xh		; $5c73
 	ld (hl),$40		; $5c75
 	ld e,$56		; $5c77
 	ld a,$80		; $5c79
@@ -1318,73 +1338,86 @@ _label_15_226:
 	ld a,h			; $5c7d
 	ld (de),a		; $5c7e
 	ret			; $5c7f
+
+blainoScript_setBlainoPosition:
 	push de			; $5c80
 	call clearEnemies		; $5c81
 	pop de			; $5c84
 	ld bc,$4040		; $5c85
-	call $5c9e		; $5c88
+	call _spawnBlainoAtPosition		; $5c88
 	ret nz			; $5c8b
-	ld l,$4b		; $5c8c
+	ld l,Interaction.yh		; $5c8c
 	ld b,(hl)		; $5c8e
-	ld l,$4d		; $5c8f
+	ld l,Interaction.xh		; $5c8f
 	ld c,(hl)		; $5c91
-	ld e,$4b		; $5c92
+	ld e,Interaction.yh		; $5c92
 	ld a,b			; $5c94
 	ld (de),a		; $5c95
-	ld e,$4d		; $5c96
+	ld e,Interaction.xh		; $5c96
 	ld a,c			; $5c98
 	ld (de),a		; $5c99
 	ret			; $5c9a
+
+blainoScript_spawnBlaino:
 	ld bc,$4050		; $5c9b
+_spawnBlainoAtPosition:
 	call getFreeInteractionSlot		; $5c9e
 	ret nz			; $5ca1
-	ld (hl),$72		; $5ca2
-	ld l,$4b		; $5ca4
+	ld (hl),INTERACID_BLAINO	; $5ca2
+	ld l,Interaction.yh		; $5ca4
 	ld (hl),b		; $5ca6
-	ld l,$4d		; $5ca7
+	ld l,Interaction.xh		; $5ca7
 	ld (hl),c		; $5ca9
-	ld e,$79		; $5caa
+	ld e,Interaction.var39		; $5caa
 	ld a,h			; $5cac
 	ld (de),a		; $5cad
 	xor a			; $5cae
 	ret			; $5caf
+
+blainoScript_putAwayLinksItems:
 	ldh (<hFF8B),a	; $5cb0
 	ld a,$ff		; $5cb2
-	ld ($cbea),a		; $5cb4
-	ld hl,$c680		; $5cb7
-	ld e,$df		; $5cba
+	ld (wStatusBarNeedsRefresh),a		; $5cb4
+	ld hl,wInventoryB		; $5cb7
+	ld e,<$cfdf		; $5cba
 	ldh a,(<hFF8B)	; $5cbc
 	and $0f			; $5cbe
-	call $5cdc		; $5cc0
-	call $5cdf		; $5cc3
-	ld l,$81		; $5cc6
+	call @saveItemToB		; $5cc0
+	call @storeItemInInventory		; $5cc3
+	ld l,<wInventoryA		; $5cc6
 	ldh a,(<hFF8B)	; $5cc8
 	swap a			; $5cca
 	and $0f			; $5ccc
-	ld e,$de		; $5cce
-	call $5cdc		; $5cd0
+	ld e,<$cfde		; $5cce
+	call @saveItemToB		; $5cd0
 	ld a,b			; $5cd3
-	cp $0c			; $5cd4
-	call nz,$5cdf		; $5cd6
+	cp ITEMID_BIGGORON_SWORD			; $5cd4
+	call nz,@storeItemInInventory		; $5cd6
 	jp disableActiveRing		; $5cd9
+
+@saveItemToB:
 	ld b,(hl)		; $5cdc
 	ld (hl),a		; $5cdd
 	ret			; $5cde
+
+@storeItemInInventory:
 	push de			; $5cdf
 	ld d,$cf		; $5ce0
-	ld l,$82		; $5ce2
-_label_15_227:
+	ld l,<wInventoryStorage		; $5ce2
+-
 	ld a,(hl)		; $5ce4
 	or a			; $5ce5
-	jr z,_label_15_228	; $5ce6
+	jr z,+			; $5ce6
 	inc l			; $5ce8
-	jr _label_15_227		; $5ce9
-_label_15_228:
+	jr -			; $5ce9
++
 	ld (hl),b		; $5ceb
 	ld a,l			; $5cec
 	ld (de),a		; $5ced
 	pop de			; $5cee
 	ret			; $5cef
+
+
 	ld a,($ccec)		; $5cf0
 	cp $03			; $5cf3
 	jr z,_label_15_229	; $5cf5

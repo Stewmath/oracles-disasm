@@ -120,7 +120,7 @@
 	GLOBALFLAG_PIRATE_SHIP_DOCKED		db ; $17: Pirate ship moved
 	GLOBALFLAG_S_18				db ; $18: Met maku tree?
 	GLOBALFLAG_S_19				db ; $19
-	GLOBALFLAG_S_1a				db ; $1a
+	GLOBALFLAG_CHEATED_BLAINO		db ; $1a
 	GLOBALFLAG_S_1b				db ; $1b
 	GLOBALFLAG_S_1c				db ; $1c
 	GLOBALFLAG_S_1d				db ; $1d

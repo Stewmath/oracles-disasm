@@ -829,12 +829,13 @@ seasonsFunc_0d_7089:
 	ld (hl),a		; $7095
 	jp enemySetAnimation		; $7096
 
+
 ; ==============================================================================
-; ENEMYID_???
+; ENEMYID_BLAINO
 ; ==============================================================================
 enemyCode54:
-	jr z,+			; $7099
-	sub $03			; $709b
+	jr z,@normalStatus			; $7099
+	sub ENEMYSTATUS_NO_HEALTH			; $709b
 	ret c			; $709d
 	jp z,enemyDelete		; $709e
 	dec a			; $70a1
@@ -844,7 +845,7 @@ enemyCode54:
 	res 7,a			; $70a8
 	sub $0a			; $70aa
 	cp $02			; $70ac
-	jr nc,+			; $70ae
+	jr nc,@normalStatus			; $70ae
 	call seasonsFunc_0d_73df		; $70b0
 	ld h,d			; $70b3
 	ld l,$a9		; $70b4
@@ -856,7 +857,7 @@ enemyCode54:
 	ld l,$84		; $70be
 	ld a,$0f		; $70c0
 	cp (hl)			; $70c2
-	jr z,+			; $70c3
+	jr z,@normalStatus			; $70c3
 	ld (hl),a		; $70c5
 	ld l,$87		; $70c6
 	ld (hl),$00		; $70c8
@@ -867,9 +868,10 @@ enemyCode54:
 	ld a,$24		; $70d2
 	call objectGetRelatedObject2Var		; $70d4
 	res 7,(hl)		; $70d7
-	ld l,$84		; $70d9
+	ld l,Enemy.state		; $70d9
 	ld (hl),$03		; $70db
-+
+
+@normalStatus:
 	call seasonsFunc_0d_7323		; $70dd
 	ld a,($cced)		; $70e0
 	cp $02			; $70e3
