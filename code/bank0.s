@@ -14336,7 +14336,7 @@ seasonsFunc_3d30:
 seasonsFunc_3d3d:
 	ldh a,(<hRomBank)	; $3d3d
 	push af			; $3d3f
-	callfrombank0 seasonsFunc_0a_7a7b		; $3d40
+	callfrombank0 interactionCodec4@checkGotMakuSeedDidNotSeeZeldaKidnapped		; $3d40
 	push af			; $3d4a
 	pop bc			; $3d4b
 	pop af			; $3d4c
@@ -14710,11 +14710,12 @@ seasonsFunc_3e07:
 	setrombank		; $3e1a
 	ret			; $3e1f
 
-seasonsFunc_3e20:
+; When Maku tree speaks from other screens?
+setMakuTreeStageAndMapText:
 	ldh a,(<hRomBank)	; $3e20
 	push af			; $3e22
-	callfrombank0 seasonsFunc_09_7d8b		; $3e23
-	callfrombank0 scriptHlp.seasonsFunc_15_60fc		; $3e2d
+	callfrombank0 interactionCode87@setAppropriateStage		; $3e23
+	callfrombank0 scriptHlp.makuTree_setMapTextBasedOnStage		; $3e2d
 	pop af			; $3e37
 	setrombank		; $3e38
 	ret			; $3e3d

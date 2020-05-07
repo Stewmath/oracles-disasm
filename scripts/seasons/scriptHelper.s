@@ -490,44 +490,55 @@ _createLightableTorches:
 	ret			; $5719
 
 
+seasonsFunc_15_571a:
 	call fadeoutToBlackWithDelay		; $571a
-	jr _label_15_202		; $571d
+	jr +			; $571d
+
 	call fadeinFromBlackWithDelay		; $571f
-_label_15_202:
++
 	ld a,$ff		; $5722
-	ld ($c4b1),a		; $5724
-	ld ($c4b3),a		; $5727
+	ld (wDirtyFadeBgPalettes),a		; $5724
+	ld (wFadeBgPaletteSources),a		; $5727
 	ld a,$01		; $572a
-	ld ($c4b2),a		; $572c
+	ld (wDirtyFadeSprPalettes),a		; $572c
 	ld a,$fe		; $572f
-	ld ($c4b4),a		; $5731
+	ld (wFadeSprPaletteSources),a		; $5731
 	ret			; $5734
+
+seasonsFunc_15_5735:
 	ld c,a			; $5735
 	call checkIsLinkedGame		; $5736
-	jr z,_label_15_203	; $5739
+	jr z,+			; $5739
 	ld a,c			; $573b
 	add $1b			; $573c
 	ld c,a			; $573e
-_label_15_203:
-	ld b,$17		; $573f
++
+	ld b,<TX_1717		; $573f
 	jp showText		; $5741
+
+; var3f is $01 if a == var3e else $00
+seasonsFunc_15_5744:
 	ld a,$10		; $5744
-	jr _label_15_204		; $5746
+	jr +			; $5746
+seasonsFunc_15_5748:
 	ld a,$08		; $5748
-_label_15_204:
++
 	ld h,d			; $574a
-	ld l,$7e		; $574b
+	ld l,Interaction.var3e		; $574b
 	ld b,(hl)		; $574d
 	and b			; $574e
-	ld l,$7f		; $574f
+	ld l,Interaction.var3f		; $574f
 	ld (hl),$01		; $5751
 	ret nz			; $5753
 	ld (hl),$00		; $5754
 	ret			; $5756
-	ld a,($d601)		; $5757
-	cp $05			; $575a
+
+
+makuTree_checkGateHit:
+	ld a,(w1WeaponItem.id)		; $5757
+	cp ITEMID_SWORD			; $575a
 	ret nz			; $575c
-	ld a,($cc7e)		; $575d
+	ld a,(wcc63)		; $575d
 	or a			; $5760
 	ret nz			; $5761
 	call objectCheckCollidedWithLink_notDead		; $5762
@@ -535,22 +546,28 @@ _label_15_204:
 	ld a,$01		; $5766
 	ld ($cfc0),a		; $5768
 	ret			; $576b
-	ld e,$42		; $576c
+
+
+seasonsFunc_15_576c:
+	ld e,Interaction.subid		; $576c
 	ld a,(de)		; $576e
 	cp $04			; $576f
 	ret nz			; $5771
 	call checkIsLinkedGame		; $5772
 	ret z			; $5775
+	; not linked, or not outside d5
 	call getFreeInteractionSlot		; $5776
 	ret nz			; $5779
-	ld (hl),$b3		; $577a
+	ld (hl),INTERACID_LINKED_CUTSCENE		; $577a
 	inc l			; $577c
 	ld (hl),$04		; $577d
-	ld l,$4a		; $577f
+	ld l,Interaction.y		; $577f
 	ld (hl),$28		; $5781
-	ld l,$4c		; $5783
+	ld l,Interaction.x		; $5783
 	ld (hl),$58		; $5785
 	ret			; $5787
+
+
 	ld e,$57		; $5788
 	ld a,(de)		; $578a
 	ld h,a			; $578b
@@ -2111,40 +2128,41 @@ seasonsTable_5f85:
 	rst $38			; $60e0
 	rst $38			; $60e1
 
-seasonsFunc_15_60e2:
-	ld hl,$c6e5		; $60e2
+makuTree_setMakuMapText:
+	ld hl,wMakuMapTextPresent		; $60e2
 	ld (hl),a		; $60e5
 	ret			; $60e6
 
-seasonsFunc_15_60e7:
+makuTree_showTextBasedOnVar:
 	ld c,a			; $60e7
-	jr _label_15_249		; $60e8
+	jr +		; $60e8
 
-seasonsFunc_15_60ea:
-	call $60fc		; $60ea
-	jr _label_15_249		; $60ed
+makuTree_showTextAndSetMapTextBasedOnStage:
+	call makuTree_setMapTextBasedOnStage		; $60ea
+	jr +		; $60ed
 
-seasonsFunc_15_60ef:
-	call $6104		; $60ef
-	jr _label_15_249		; $60f2
+makuTree_showTextAndSetMapText:
+	call _makuTree_setMapText		; $60ef
+	jr +		; $60f2
 
-seasonsFunc_15_60f4:
-	call $610c		; $60f4
-_label_15_249:
-	ld b,$17		; $60f7
+makuTree_showText:
+	call _makuTree_add1bToLowTextIfLinked		; $60f4
++
+	ld b,>TX_1700		; $60f7
 	jp showText		; $60f9
 
-seasonsFunc_15_60fc:
+makuTree_setMapTextBasedOnStage:
 	ld a,(ws_cc39)		; $60fc
-	ld hl,seasonsTable_15_6116		; $60ff
+	ld hl,makuTreeTextIndices		; $60ff
 	rst_addAToHl			; $6102
 	ld a,(hl)		; $6103
-	call seasonsFunc_15_610c		; $6104
+_makuTree_setMapText:
+	call _makuTree_add1bToLowTextIfLinked		; $6104
 	ld hl,wMakuMapTextPresent		; $6107
 	ld (hl),c		; $610a
 	ret			; $610b
 
-seasonsFunc_15_610c:
+_makuTree_add1bToLowTextIfLinked:
 	ld c,a			; $610c
 	call checkIsLinkedGame		; $610d
 	ret z			; $6110
@@ -2153,65 +2171,62 @@ seasonsFunc_15_610c:
 	ld c,a			; $6114
 	ret			; $6115
 
-seasonsTable_15_6116:
-	inc bc			; $6116
-	dec b			; $6117
-	ld ($0c0a),sp		; $6118
-	ld de,$1513		; $611b
-	rla			; $611e
-	ld b,$0e		; $611f
-	.db $11		; $6121
-	.db $18		; $6122
+makuTreeTextIndices:
+	.db $03 $05 $08 $0a
+	.db $0c $11 $13 $15
+	.db $17 $06 $0e $11
+	.db $18
 
-seasonsFunc_15_6123:
-	.db $fe		; $6123
-	nop			; $6124
-	jr nz,_label_15_250	; $6125
-	call $615f		; $6127
+makuTree_storeIntoVar37SpawnBubbleIf0:
+	cp $00			; $6123
+	jr nz,+			; $6125
+	call _makuTree_spawnBubble		; $6127
 	ld a,$00		; $612a
-_label_15_250:
-	ld e,$77		; $612c
++
+	ld e,Interaction.var37		; $612c
 	ld (de),a		; $612e
 	jp interactionSetAnimation		; $612f
 
-seasonsFunc_15_6132:
+makuTree_dropGnarledKey:
 	call getFreeInteractionSlot		; $6132
 	ret nz			; $6135
-	ld (hl),$60		; $6136
+	ld (hl),INTERACID_TREASURE		; $6136
 	inc l			; $6138
-	ld (hl),$42		; $6139
+	ld (hl),TREASURE_GNARLED_KEY		; $6139
 	inc l			; $613b
 	ld (hl),$00		; $613c
-	ld l,$4b		; $613e
+	ld l,Interaction.yh		; $613e
 	ld (hl),$60		; $6140
-	ld a,($d00d)		; $6142
+	ld a,(w1Link.xh)		; $6142
 	ld b,$50		; $6145
 	cp $64			; $6147
-	jr nc,_label_15_251	; $6149
+	jr nc,+			; $6149
 	cp $3c			; $614b
-	jr c,_label_15_251	; $614d
+	jr c,+			; $614d
 	ld b,$40		; $614f
 	cp $50			; $6151
-	jr nc,_label_15_251	; $6153
+	jr nc,+			; $6153
 	ld b,$60		; $6155
-_label_15_251:
-	ld l,$4d		; $6157
++
+	ld l,Interaction.xh		; $6157
 	ld (hl),b		; $6159
 	ld a,b			; $615a
-	ld ($c6e0),a		; $615b
+	ld (ws_c6e0),a		; $615b
 	ret			; $615e
+
+_makuTree_spawnBubble:
 	call getFreeEnemySlot		; $615f
 	ret nz			; $6162
-	ld (hl),$56		; $6163
+	ld (hl),ENEMYID_MAKU_TREE_BUBBLE	; $6163
 	inc l			; $6165
-	ld e,$42		; $6166
+	ld e,Interaction.subid		; $6166
 	ld a,(de)		; $6168
 	ld (hl),a		; $6169
-	ld l,$98		; $616a
+	ld l,Enemy.relatedObj2		; $616a
 	ld a,$40		; $616c
 	ldi (hl),a		; $616e
 	ld (hl),d		; $616f
-	ld e,$56		; $6170
+	ld e,Interaction.relatedObj1		; $6170
 	ld a,$80		; $6172
 	ld (de),a		; $6174
 	inc e			; $6175
@@ -2221,22 +2236,22 @@ _label_15_251:
 	res 7,(hl)		; $617b
 	ret			; $617d
 
-seasonsFunc_15_617e:
-	ld bc,$9301		; $617e
+makuTree_dropMakuSeed:
+	ldbc INTERACID_93 $01		; $617e
 	jp objectCreateInteraction		; $6181
 
-seasonsFunc_15_6184:
-	ld a,$0e		; $6184
-	ld ($cc04),a		; $6186
-	ld a,$19		; $6189
+makuTree_OnoxTauntingAfterMakuSeedGet:
+	ld a,CUTSCENE_S_ONOX_TAUNTING		; $6184
+	ld (wCutsceneTrigger),a		; $6186
+	ld a,GLOBALFLAG_GOT_MAKU_SEED		; $6189
 	jp setGlobalFlag		; $618b
 
-seasonsFunc_15_618e:
+makuTree_disableEverythingIfUnlinked:
 	call checkIsLinkedGame		; $618e
 	ret nz			; $6191
 	xor a			; $6192
-	ld ($cc02),a		; $6193
-	ld ($cca4),a		; $6196
+	ld (wMenuDisabled),a		; $6193
+	ld (wDisabledObjects),a		; $6196
 	ret			; $6199
 
 seasonsFunc_15_619a:

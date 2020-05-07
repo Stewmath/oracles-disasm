@@ -8492,7 +8492,7 @@ _label_0e_345:
 	ld a,(de)		; $7648
 	ld c,a			; $7649
 _label_0e_346:
-	ld b,$55		; $764a
+	ld b,ENEMYID_MINI_DIGDOGGER		; $764a
 	call _ecom_spawnUncountedEnemyWithSubid01		; $764c
 	call objectCopyPosition		; $764f
 	ld l,$96		; $7652

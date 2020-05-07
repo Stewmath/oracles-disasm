@@ -3333,51 +3333,56 @@ interactionCode92:
 	.db $24 $34 $6c $7c
 
 
+; TODO: Maku seed dropping down?
 interactionCode93:
-	ld e,$42		; $525f
+	ld e,Interaction.subid		; $525f
 	ld a,(de)		; $5261
 	rst_jumpTable			; $5262
-	ld h,a			; $5263
-	ld d,d			; $5264
-	and e			; $5265
-	ld d,d			; $5266
+	.dw @subid0
+	.dw @subid1
+
+@subid0:
 	call checkInteractionState		; $5267
 	ret nz			; $526a
-	call $5298		; $526b
+	call @func_5298		; $526b
 	call objectSetVisible80		; $526e
-	ld a,($c6df)		; $5271
+	ld a,(wc6e5)		; $5271
 	ld b,$04		; $5274
 	cp $06			; $5276
-	jr z,_label_0a_142	; $5278
+	jr z,+			; $5278
 	cp $07			; $527a
 	jp nz,interactionDelete		; $527c
 	ld a,$01		; $527f
 	call interactionSetAnimation		; $5281
 	ld b,$08		; $5284
-_label_0a_142:
++
 	call getFreeInteractionSlot		; $5286
 	ret nz			; $5289
-	ld (hl),$84		; $528a
+	ld (hl),INTERACID_SPARKLE		; $528a
 	inc l			; $528c
 	ld (hl),$04		; $528d
 	call objectCopyPosition		; $528f
-	ld l,$4b		; $5292
+	ld l,Interaction.yh		; $5292
 	ld a,(hl)		; $5294
 	add b			; $5295
 	ld (hl),a		; $5296
 	ret			; $5297
+
+@func_5298:
 	ld a,$ab		; $5298
 	call loadPaletteHeader		; $529a
 	call interactionInitGraphics		; $529d
 	jp interactionIncState		; $52a0
-	ld e,$44		; $52a3
+
+@subid1:
+	ld e,Interaction.state		; $52a3
 	ld a,(de)		; $52a5
 	rst_jumpTable			; $52a6
-	xor e			; $52a7
-	ld d,d			; $52a8
-	jp z,$cd52		; $52a9
-	sbc b			; $52ac
-	ld d,d			; $52ad
+	.dw @state0
+	.dw @state1
+
+@state0:
+	call @func_5298		; $52ab
 	ld l,$4b		; $52ae
 	ld (hl),$65		; $52b0
 	ld l,$4d		; $52b2
@@ -3391,7 +3396,9 @@ _label_0a_142:
 	inc a			; $52c3
 	ld e,$78		; $52c4
 	ld (de),a		; $52c6
-	call $5338		; $52c7
+	call @func_5338		; $52c7
+
+@state1:
 	ld h,d			; $52ca
 	ld l,$4f		; $52cb
 	ldd a,(hl)		; $52cd
@@ -3409,15 +3416,17 @@ _label_0a_142:
 	add (hl)		; $52e1
 	push af			; $52e2
 	and $0f			; $52e3
-	call z,$52f3		; $52e5
+	call z,@func_52f3		; $52e5
 	pop af			; $52e8
 	and $3f			; $52e9
 	ld a,$83		; $52eb
 	call z,playSound		; $52ed
 	jp objectSetPriorityRelativeToLink_withTerrainEffects		; $52f0
+
+@func_52f3:
 	call getFreeInteractionSlot		; $52f3
 	ret nz			; $52f6
-	ld (hl),$84		; $52f7
+	ld (hl),INTERACID_SPARKLE		; $52f7
 	inc l			; $52f9
 	ld (hl),$03		; $52fa
 	ld e,$4b		; $52fc
@@ -3431,41 +3440,45 @@ _label_0a_142:
 	ldi (hl),a		; $5306
 	ld e,$4f		; $5307
 	ld l,$4b		; $5309
-	call $1fd3		; $530b
+	call objectApplyComponentSpeed@addSpeedComponent		; $530b
 	call getRandomNumber		; $530e
 	and $07			; $5311
 	add a			; $5313
 	push de			; $5314
-	ld de,$5328		; $5315
+	ld de,@table_5328		; $5315
 	call addAToDe		; $5318
 	ld a,(de)		; $531b
-	ld l,$4b		; $531c
+	ld l,Interaction.yh		; $531c
 	add (hl)		; $531e
 	ld (hl),a		; $531f
 	inc de			; $5320
 	ld a,(de)		; $5321
-	ld l,$4d		; $5322
+	ld l,Interaction.xh		; $5322
 	add (hl)		; $5324
 	ld (hl),a		; $5325
 	pop de			; $5326
 	ret			; $5327
-	stop			; $5328
-	ld (bc),a		; $5329
-	stop			; $532a
-	cp $08			; $532b
-	dec b			; $532d
-	ld ($0cfb),sp		; $532e
-	ld ($f80c),sp		; $5331
-	ld b,$0b		; $5334
-	ld b,$f5		; $5336
-	ld bc,$8408		; $5338
+
+@table_5328:
+	.db $10 $02
+	.db $10 $fe
+	.db $08 $05
+	.db $08 $fb
+	.db $0c $08
+	.db $0c $f8
+	.db $06 $0b
+	.db $06 $f5
+
+@func_5338:
+	ldbc INTERACID_SPARKLE $08		; $5338
 	call objectCreateInteraction		; $533b
 	ret nz			; $533e
-	ld l,$56		; $533f
+	ld l,Interaction.relatedObj1		; $533f
 	ld a,$40		; $5341
 	ldi (hl),a		; $5343
 	ld (hl),d		; $5344
 	ret			; $5345
+
 
 interactionCode94:
 	ld e,$44		; $5346
@@ -5015,7 +5028,7 @@ _label_0a_188:
 	jr _label_0a_192		; $5d83
 	call $7a68		; $5d85
 	jp nz,interactionDelete		; $5d88
-	call $7a7b		; $5d8b
+	call interactionCodec4@checkGotMakuSeedDidNotSeeZeldaKidnapped		; $5d8b
 	jp nz,interactionDelete		; $5d8e
 	ld a,$22		; $5d91
 	call checkGlobalFlag		; $5d93
@@ -5044,7 +5057,7 @@ _label_0a_190:
 	call interactionSetAnimation		; $5dc6
 	ld a,$08		; $5dc9
 	jr _label_0a_191		; $5dcb
-	call $7a7b		; $5dcd
+	call interactionCodec4@checkGotMakuSeedDidNotSeeZeldaKidnapped		; $5dcd
 	jp z,interactionDelete		; $5dd0
 	ld a,$09		; $5dd3
 _label_0a_191:
@@ -7952,89 +7965,101 @@ _label_0a_301:
 	and b			; $6f87
 	ld a,c			; $6f88
 
+
+; ==============================================================================
+; INTERACID_LINKED_CUTSCENE
+; ==============================================================================
 interactionCodeb3:
-	ld e,$44		; $6f89
+	ld e,Interaction.state		; $6f89
 	ld a,(de)		; $6f8b
 	rst_jumpTable			; $6f8c
-	sub c			; $6f8d
-	ld l,a			; $6f8e
-	add hl,de		; $6f8f
-	ld (hl),b		; $6f90
-	ld e,$42		; $6f91
+	.dw @state0
+	.dw @state1
+
+@state0:
+	ld e,Interaction.subid		; $6f91
 	ld a,(de)		; $6f93
 	rst_jumpTable			; $6f94
-	sbc a			; $6f95
-	ld l,a			; $6f96
-	xor a			; $6f97
-	ld l,a			; $6f98
-	rst_jumpTable			; $6f99
-	ld l,a			; $6f9a
-	rst_addAToHl			; $6f9b
-	ld l,a			; $6f9c
-	rst $28			; $6f9d
-	ld l,a			; $6f9e
+	.dw @subid0
+	.dw @subid1
+	.dw @subid2
+	.dw @subid3
+	.dw @subid4
+
+@subid0:
 	call checkIsLinkedGame		; $6f9f
 	jp nz,interactionDelete		; $6fa2
-	ld a,$1c		; $6fa5
+	ld a,GLOBALFLAG_WITCHES_1_SEEN		; $6fa5
 	call checkGlobalFlag		; $6fa7
 	jp nz,interactionDelete		; $6faa
-	jr _label_0a_302		; $6fad
+	jr @postCutscene		; $6fad
+
+@subid1:
 	call checkIsLinkedGame		; $6faf
 	jp nz,interactionDelete		; $6fb2
-	ld a,$1d		; $6fb5
+	ld a,GLOBALFLAG_WITCHES_2_SEEN		; $6fb5
 	call checkGlobalFlag		; $6fb7
 	jp nz,interactionDelete		; $6fba
-	ld a,$36		; $6fbd
+	ld a,TREASURE_MAKU_SEED		; $6fbd
 	call checkTreasureObtained		; $6fbf
 	jp nc,interactionDelete		; $6fc2
-	jr _label_0a_302		; $6fc5
+	jr @postCutscene		; $6fc5
+
+@subid2:
 	call checkIsLinkedGame		; $6fc7
 	jp z,interactionDelete		; $6fca
-	ld a,$1e		; $6fcd
+	ld a,GLOBALFLAG_ZELDA_VILLAGERS_SEEN		; $6fcd
 	call checkGlobalFlag		; $6fcf
 	jp nz,interactionDelete		; $6fd2
-	jr _label_0a_302		; $6fd5
+	jr @postCutscene		; $6fd5
+
+@subid3:
 	call checkIsLinkedGame		; $6fd7
 	jp z,interactionDelete		; $6fda
-	ld a,$1f		; $6fdd
+	ld a,GLOBALFLAG_ZELDA_KIDNAPPED_SEEN		; $6fdd
 	call checkGlobalFlag		; $6fdf
 	jp nz,interactionDelete		; $6fe2
-	ld a,$36		; $6fe5
+	ld a,TREASURE_MAKU_SEED		; $6fe5
 	call checkTreasureObtained		; $6fe7
 	jp nc,interactionDelete		; $6fea
-	jr _label_0a_302		; $6fed
+	jr @postCutscene		; $6fed
+
+@subid4:
 	call checkIsLinkedGame		; $6fef
 	jp z,interactionDelete		; $6ff2
-	ld a,$20		; $6ff5
+	ld a,GLOBALFLAG_FLAMES_OF_DESTRUCTION_SEEN		; $6ff5
 	call checkGlobalFlag		; $6ff7
 	jp nz,interactionDelete		; $6ffa
-_label_0a_302:
+
+@postCutscene:
 	ld h,d			; $6ffd
-	ld l,$44		; $6ffe
+	ld l,Interaction.state		; $6ffe
 	ld (hl),$01		; $7000
 	ld hl,$cfc0		; $7002
 	ld (hl),$00		; $7005
-	ld a,$50		; $7007
+	ld a,>TX_5000		; $7007
 	call interactionSetHighTextIndex		; $7009
-	ld e,$42		; $700c
+	ld e,Interaction.subid		; $700c
 	ld a,(de)		; $700e
-	ld hl,$7020		; $700f
+	ld hl,@scriptTable		; $700f
 	rst_addDoubleIndex			; $7012
 	ldi a,(hl)		; $7013
 	ld h,(hl)		; $7014
 	ld l,a			; $7015
 	call interactionSetScript		; $7016
+
+@state1:
 	call interactionRunScript		; $7019
 	jp c,interactionDelete		; $701c
 	ret			; $701f
-	or h			; $7020
-	ld a,c			; $7021
-	ld ($2a79),a		; $7022
-	ld a,d			; $7025
-	scf			; $7026
-	ld a,d			; $7027
-	inc a			; $7028
-	ld a,d			; $7029
+
+@scriptTable:
+	.dw linkedCutsceneScript_witches1
+	.dw linkedCutsceneScript_witches2
+	.dw linkedCutsceneScript_zeldaVillagers
+	.dw linkedCutsceneScript_zeldaKidnapped
+	.dw linkedCutsceneScript_flamesOfDestruction
+
 
 interactionCodeb4:
 	ld e,$44		; $702a
@@ -8482,9 +8507,9 @@ _label_0a_318:
 	ld d,c			; $72ed
 	stop			; $72ee
 	ld h,c			; $72ef
-	jr _label_0a_321		; $72f0
+	jr $71		; $72f0
 	jr z,$77		; $72f2
-	jr c,_label_0a_322	; $72f4
+	jr c,$79	; $72f4
 	ld c,b			; $72f6
 	ld (hl),a		; $72f7
 	ld e,b			; $72f8
@@ -8512,7 +8537,7 @@ _label_0a_319:
 	ld (hl),a		; $730f
 	ld c,b			; $7310
 	ld (hl),c		; $7311
-	jr c,_label_0a_323	; $7312
+	jr c,$61	; $7312
 	jr z,$5d		; $7314
 	sub b			; $7316
 	ld c,l			; $7317
@@ -8532,58 +8557,66 @@ _label_0a_320:
 	jr z,$29		; $7326
 	ld b,b			; $7328
 
+
+; TODO: in first room of twinrova dungeon
+; Variables:
+;   $cbb3: substate0 = $00
+;   $cbba: substate0 = $ff
 interactionCodeb5:
-	ld e,$44		; $7329
+	ld e,Interaction.state		; $7329
 	ld a,(de)		; $732b
 	rst_jumpTable			; $732c
-	ld sp,$5573		; $732d
-	ld (hl),e		; $7330
+	.dw @state0
+	.dw @state1
+
+@state0:
 	ld a,$01		; $7331
 	ld (de),a		; $7333
 	call getThisRoomFlags		; $7334
 	bit 6,a			; $7337
 	jp nz,interactionDelete		; $7339
 	set 6,(hl)		; $733c
+
 	call setDeathRespawnPoint		; $733e
 	ld a,$09		; $7341
-	ld ($c6df),a		; $7343
+	ld (wc6e5),a		; $7343
 	xor a			; $7346
-	ld ($cba0),a		; $7347
+	ld (wTextIsActive),a		; $7347
 	ld a,$78		; $734a
-	ld e,$46		; $734c
+	ld e,Interaction.counter1		; $734c
 	ld (de),a		; $734e
-	ld bc,$5878		; $734f
+	ldbc $58 $78		; $734f
 	jp createEnergySwirlGoingIn		; $7352
-	ld e,$45		; $7355
+
+@state1:
+	ld e,Interaction.state2		; $7355
 	ld a,(de)		; $7357
 	rst_jumpTable			; $7358
-	ld e,a			; $7359
-	ld (hl),e		; $735a
-	ld (hl),l		; $735b
-	ld (hl),e		; $735c
-	sub a			; $735d
-	ld (hl),e		; $735e
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+
+@substate0:
 	call interactionDecCounter1		; $735f
 	ret nz			; $7362
-_label_0a_321:
 	call interactionIncState2		; $7363
-	ld l,$46		; $7366
+	ld l,Interaction.counter1		; $7366
 	ld (hl),$08		; $7368
 	ld hl,$cbb3		; $736a
 	ld (hl),$00		; $736d
-_label_0a_322:
 	ld hl,$cbba		; $736f
 	ld (hl),$ff		; $7372
 	ret			; $7374
-_label_0a_323:
-	ld e,$46		; $7375
+
+@substate1:
+	ld e,Interaction.counter1		; $7375
 	ld a,(de)		; $7377
 	or a			; $7378
-	jr nz,_label_0a_324	; $7379
+	jr nz,+			; $7379
 	call setLinkForceStateToState08		; $737b
-	ld hl,$d01a		; $737e
+	ld hl,w1Link.visible		; $737e
 	set 7,(hl)		; $7381
-_label_0a_324:
++
 	call interactionDecCounter1		; $7383
 	ld hl,$cbb3		; $7386
 	ld b,$01		; $7389
@@ -8592,13 +8625,16 @@ _label_0a_324:
 	call interactionIncState2		; $738f
 	ld a,$03		; $7392
 	jp fadeinFromWhiteWithDelay		; $7394
-	ld a,($c4ab)		; $7397
+
+@substate2:
+	ld a,(wPaletteThread_mode)		; $7397
 	or a			; $739a
 	ret nz			; $739b
 	xor a			; $739c
-	ld ($cca4),a		; $739d
-	ld ($cc02),a		; $73a0
+	ld (wDisabledObjects),a		; $739d
+	ld (wMenuDisabled),a		; $73a0
 	jp interactionDelete		; $73a3
+
 
 interactionCodeb8:
 	ld e,$44		; $73a6
@@ -9610,15 +9646,19 @@ _label_0a_351:
 	call interactionSetScript		; $7a2c
 	jp interactionRunScript		; $7a2f
 
+
+; ==============================================================================
+; INTERACID_ZELDA_VILLAGERS_ROOM
+; ==============================================================================
 interactionCodec4:
-	call $7a68		; $7a32
+	call @checkZeldaVillagersSeenButNoMakuSeed		; $7a32
 	ld a,$00		; $7a35
-	jr nz,_label_0a_352	; $7a37
-	call $7a7b		; $7a39
+	jr nz,+			; $7a37
+	call @checkGotMakuSeedDidNotSeeZeldaKidnapped		; $7a39
 	jp z,interactionDelete		; $7a3c
 	ld a,$01		; $7a3f
-_label_0a_352:
-	ld hl,$7a8e		; $7a41
++
+	ld hl,@interactionsTableLookup		; $7a41
 	rst_addDoubleIndex			; $7a44
 	ldi a,(hl)		; $7a45
 	ld h,(hl)		; $7a46
@@ -9628,16 +9668,16 @@ _label_0a_352:
 	push de			; $7a4a
 	ld d,h			; $7a4b
 	ld e,l			; $7a4c
-_label_0a_353:
+-
 	call getFreeInteractionSlot		; $7a4d
-	jr nz,_label_0a_354	; $7a50
+	jr nz,+			; $7a50
 	ld a,(de)		; $7a52
 	ldi (hl),a		; $7a53
 	inc de			; $7a54
 	ld a,(de)		; $7a55
 	ld (hl),a		; $7a56
 	inc de			; $7a57
-	ld l,$4b		; $7a58
+	ld l,Interaction.yh		; $7a58
 	ld a,(de)		; $7a5a
 	ldi (hl),a		; $7a5b
 	inc de			; $7a5c
@@ -9646,62 +9686,57 @@ _label_0a_353:
 	ld (hl),a		; $7a5f
 	inc de			; $7a60
 	dec b			; $7a61
-	jr nz,_label_0a_353	; $7a62
-_label_0a_354:
+	jr nz,-			; $7a62
++
 	pop de			; $7a64
 	jp interactionDelete		; $7a65
+
+@checkZeldaVillagersSeenButNoMakuSeed:
 	call checkIsLinkedGame		; $7a68
 	ret z			; $7a6b
-	ld a,$19		; $7a6c
-_label_0a_355:
+	ld a,GLOBALFLAG_GOT_MAKU_SEED		; $7a6c
 	call checkGlobalFlag		; $7a6e
-	jp z,$7a76		; $7a71
+	jp z,@checkZeldaVillagersSeen		; $7a71
 	xor a			; $7a74
 	ret			; $7a75
-	ld a,$1e		; $7a76
+
+@checkZeldaVillagersSeen:
+	ld a,GLOBALFLAG_ZELDA_VILLAGERS_SEEN		; $7a76
 	jp checkGlobalFlag		; $7a78
 
-seasonsFunc_0a_7a7b:
+@checkGotMakuSeedDidNotSeeZeldaKidnapped:
 	call checkIsLinkedGame		; $7a7b
 	ret z			; $7a7e
-
-	ld a,GLOBALFLAG_S_1f		; $7a7f
+	ld a,GLOBALFLAG_ZELDA_KIDNAPPED_SEEN		; $7a7f
 	call checkGlobalFlag		; $7a81
-	jp z,seasonsFunc_0a_7a89		; $7a84
+	jp z,@checkGotMakuSeed		; $7a84
 	xor a			; $7a87
 	ret			; $7a88
 
-seasonsFunc_0a_7a89:
-	ld a,GLOBALFLAG_S_19		; $7a89
+@checkGotMakuSeed:
+	ld a,GLOBALFLAG_GOT_MAKU_SEED		; $7a89
 	jp checkGlobalFlag		; $7a8b
-	sub d			; $7a8e
-	ld a,d			; $7a8f
-	and a			; $7a90
-	ld a,d			; $7a91
-	dec b			; $7a92
-	ld b,h			; $7a93
-	rlca			; $7a94
-	jr z,$48		; $7a95
-	sbc l			; $7a97
-	ld (bc),a		; $7a98
-	jr nc,_label_0a_357	; $7a99
-	cp h			; $7a9b
-	ld bc,$6048		; $7a9c
-	cp (hl)			; $7a9f
-	ld bc,parseGivenObjectData		; $7aa0
-	cp l			; $7aa3
-	ld bc,$3030		; $7aa4
-	inc bc			; $7aa7
-	cp h			; $7aa8
-	ld (bc),a		; $7aa9
-	ld c,b			; $7aaa
-	ld h,b			; $7aab
-	cp (hl)			; $7aac
-	ld (bc),a		; $7aad
-	ld c,b			; $7aae
-	jr nc,_label_0a_355	; $7aaf
-	ld (bc),a		; $7ab1
-	jr nc,_label_0a_356	; $7ab2
+
+
+@interactionsTableLookup:
+	.dw @villagersSeenInteractions ; checkZeldaVillagersSeenButNoMakuSeed
+	.dw @gotMakuSeedInteractions ; checkGotMakuSeedDidNotSeeZeldaKidnapped
+
+@villagersSeenInteractions:
+	.db $05
+	; interactioncode - subid - yh - xh
+	.db INTERACID_ZELDA $07 $28 $48
+	.db INTERACID_9d $02 $30 $60
+	.db INTERACID_bc $01 $48 $60
+	.db INTERACID_be $01 $48 $30
+	.db INTERACID_bd $01 $30 $30
+
+@gotMakuSeedInteractions:
+	.db $03
+	.db INTERACID_bc $02 $48 $60
+	.db INTERACID_be $02 $48 $30
+	.db INTERACID_bd $02 $30 $30
+
 
 interactionCodec5:
 	ld e,$44		; $7ab4
@@ -9730,7 +9765,6 @@ interactionCodec5:
 	ld a,$20		; $7ae0
 	ld (de),a		; $7ae2
 	dec e			; $7ae3
-_label_0a_356:
 	ld a,$10		; $7ae4
 	ld (de),a		; $7ae6
 	jp interactionIncState		; $7ae7
@@ -9743,7 +9777,7 @@ _label_0a_356:
 	call interactionDecCounter1		; $7af7
 	ret nz			; $7afa
 
-_label_0a_357:
+
 	inc l			; $7afb
 	ldd a,(hl)		; $7afc
 	ldi (hl),a		; $7afd

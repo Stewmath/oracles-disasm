@@ -904,12 +904,13 @@ enemyCode54:
 @state0:
 	call getFreeEnemySlot_uncounted		; $7112
 	ret nz			; $7115
-	ld (hl),$5f		; $7116
-	ld l,$96		; $7118
+	ld (hl),ENEMYID_BLAINOS_GLOVES		; $7116
+	ld l,Enemy.relatedObj1		; $7118
 	ld a,$80		; $711a
 	ldi (hl),a		; $711c
 	ld (hl),d		; $711d
-	ld e,$98		; $711e
+
+	ld e,Enemy.relatedObj2		; $711e
 	ld (de),a		; $7120
 	inc e			; $7121
 	ld a,h			; $7122
@@ -1419,7 +1420,7 @@ seasonsFunc_0d_73df:
 	ret			; $73e8
 
 ; ==============================================================================
-; ENEMYID_???
+; ENEMYID_MINI_DIGDOGGER
 ; ==============================================================================
 enemyCode55:
 	jr z,+++		; $73e9
@@ -1662,16 +1663,20 @@ seasonsFunc_0d_7547:
 	ld a,$a3		; $754d
 	jp playSound		; $754f
 
+
 ; ==============================================================================
-; ENEMYID_???
+; ENEMYID_MAKU_TREE_BUBBLE
+;
+; Variables:
+;   $cfc0: bit 7 set when popped
 ; ==============================================================================
 enemyCode56:
-	jr z,+			; $7552
-	ld e,$84		; $7554
+	jr z,@normalStatus			; $7552
+	ld e,Enemy.state		; $7554
 	ld a,$02		; $7556
 	ld (de),a		; $7558
-+
-	ld e,$84		; $7559
+@normalStatus:
+	ld e,Enemy.state		; $7559
 	ld a,(de)		; $755b
 	rst_jumpTable			; $755c
 	.dw @state0
@@ -1683,68 +1688,68 @@ enemyCode56:
 	ld a,$01		; $7565
 	ld (de),a		; $7567
 	call objectSetVisible80		; $7568
-	jr @seasonsFunc_0d_7581		; $756b
+	jr @snore		; $756b
 
 @state1:
-	ld e,$82		; $756d
+	ld e,Enemy.subid		; $756d
 	ld a,(de)		; $756f
 	jr z,+			; $7570
 	ld hl,$cfc0		; $7572
 	bit 7,(hl)		; $7575
 	jr z,+			; $7577
-	ld e,$84		; $7579
+	ld e,Enemy.state		; $7579
 	ld a,$02		; $757b
 	ld (de),a		; $757d
 +
 	call enemyAnimate		; $757e
 
-@seasonsFunc_0d_7581:
-	ld a,$0b		; $7581
+@snore:
+	ld a,Object.yh		; $7581
 	call objectGetRelatedObject2Var		; $7583
 	ldi a,(hl)		; $7586
 	ld b,a			; $7587
 	inc l			; $7588
 	ld c,(hl)		; $7589
-	ld e,$84		; $758a
+	ld e,Enemy.state		; $758a
 	ld a,(de)		; $758c
 	cp $01			; $758d
 	jr nz,+			; $758f
-	ld e,$a1		; $7591
+	ld e,Enemy.animParameter		; $7591
 	ld a,(de)		; $7593
 	or a			; $7594
 	jr nz,++		; $7595
-	ld e,$a0		; $7597
+	ld e,Enemy.animCounter		; $7597
 	ld a,(de)		; $7599
 	cp $01			; $759a
 	jr nz,+			; $759c
-	ld a,$92		; $759e
+	ld a,SND_MAKU_TREE_SNORE		; $759e
 	call playSound		; $75a0
 +
-	ld e,$a1		; $75a3
+	ld e,Enemy.animParameter		; $75a3
 	ld a,(de)		; $75a5
 ++
 	add a			; $75a6
-	ld hl,@seasonsTable_0d_75c1		; $75a7
+	ld hl,@bubbleOffsetAndCollisionRadius		; $75a7
 	rst_addDoubleIndex			; $75aa
-	ld e,$8b		; $75ab
+	ld e,Enemy.yh		; $75ab
 	ldi a,(hl)		; $75ad
 	add b			; $75ae
 	ld (de),a		; $75af
-	ld e,$8d		; $75b0
+	ld e,Enemy.xh		; $75b0
 	ldi a,(hl)		; $75b2
 	add c			; $75b3
 	ld (de),a		; $75b4
-	ld e,$8f		; $75b5
+	ld e,Enemy.zh		; $75b5
 	ld a,$f8		; $75b7
 	ld (de),a		; $75b9
-	ld e,$a6		; $75ba
+	ld e,Enemy.collisionRadiusY		; $75ba
 	ldi a,(hl)		; $75bc
 	ld (de),a		; $75bd
 	inc e			; $75be
 	ld (de),a		; $75bf
 	ret			; $75c0
 
-@seasonsTable_0d_75c1:
+@bubbleOffsetAndCollisionRadius:
 	.db $d8 $e0 $00 $00
 	.db $06 $f6 $00 $00
 	.db $08 $f0 $06 $00
@@ -1754,48 +1759,51 @@ enemyCode56:
 
 @state2:
 	ld h,d			; $75d9
-	ld l,$85		; $75da
+	ld l,Enemy.state2		; $75da
 	ld a,(hl)		; $75dc
 	or a			; $75dd
 	jr nz,+			; $75de
 	inc (hl)		; $75e0
-	ld l,$a4		; $75e1
-	ld b,$0b		; $75e3
+	ld l,Enemy.collisionType		; $75e1
+	ld b,Enemy.var2f-Enemy.collisionType		; $75e3
+	; all counters, collision, damage and health
 	call clearMemory		; $75e5
-	ld l,$a9		; $75e8
+	ld l,Enemy.health		; $75e8
 	inc (hl)		; $75ea
-	ld l,$9b		; $75eb
+	ld l,Enemy.oamFlagsBackup		; $75eb
 	ld a,$01		; $75ed
 	ldi (hl),a		; $75ef
+	; oamFlags
 	ld (hl),a		; $75f0
 	ld a,$01		; $75f1
 	call enemySetAnimation		; $75f3
 	ld hl,$cfc0		; $75f6
 	set 7,(hl)		; $75f9
-	jr @seasonsFunc_0d_7581		; $75fb
+	jr @snore		; $75fb
 +
-	ld l,$a1		; $75fd
+	ld l,Enemy.animParameter		; $75fd
 	bit 7,(hl)		; $75ff
 	jp z,enemyAnimate		; $7601
 	xor a			; $7604
 	ld (hl),a		; $7605
-	ld l,$85		; $7606
+	ld l,Enemy.state2		; $7606
 	ldd (hl),a		; $7608
 	inc (hl)		; $7609
-	jp @seasonsFunc_0d_7581		; $760a
+	jp @snore		; $760a
 
 @state3:
 	call enemyAnimate		; $760d
-	ld e,$a1		; $7610
+	ld e,Enemy.animParameter		; $7610
 	ld a,(de)		; $7612
 	or a			; $7613
 	ret z			; $7614
 	rlca			; $7615
 	jp c,enemyDelete		; $7616
 	ld h,d			; $7619
-	ld l,$8b		; $761a
+	ld l,Enemy.yh		; $761a
 	inc (hl)		; $761c
 	ret			; $761d
+
 
 ; ==============================================================================
 ; ENEMYID_???
@@ -1864,7 +1872,7 @@ enemyCode5c:
 	jp objectCopyPositionWithOffset		; $766e
 
 ; ==============================================================================
-; ENEMYID_???
+; ENEMYID_BLAINOS_GLOVES
 ; ==============================================================================
 enemyCode5f:
 	jr z,++			; $7671

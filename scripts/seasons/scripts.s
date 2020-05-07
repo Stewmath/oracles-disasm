@@ -1122,14 +1122,20 @@ script4dea:
 	orroomflag $80
 	incstate
 	scriptend
-script4df7:
+
+
+; ==============================================================================
+; INTERACID_MAKU_CUTSCENES
+; ==============================================================================
+makuTreeScript_remoteCutscene:
 	disableinput
 	orroomflag $40
+makuTreeScript_remoteCutsceneDontSetRoomFlag:
 	writememory $cbae, $04
 	setmusic MUS_MAKU_TREE
 	wait 40
 	asm15 hideStatusBar
-	asm15 $571a, $02
+	asm15 scriptHlp.seasonsFunc_15_571a, $02
 	checkpalettefadedone
 	spawninteraction $4800, $40, $50
 	wait 240
@@ -1141,79 +1147,83 @@ script4df7:
 	checkpalettefadedone
 	resetmusic
 	enableinput
-	asm15 $576c
+	asm15 scriptHlp.seasonsFunc_15_576c
 	scriptend
 script4e25:
-	jumptable_objectbyte $42
-	.dw script4e3d
-	.dw script4e42
-	.dw script4e47
-	.dw script4e4c
-	.dw script4e5e
-	.dw script4e70
-	.dw script4e75
-	.dw script4e7a
-	.dw script4e7f
+	jumptable_objectbyte Interaction.subid
+	.dw @outsideDungeon1
+	.dw @outsideDungeon2
+	.dw @outsideDungeon3
+	.dw @outsideDungeon4
+	.dw @outsideDungeon5
+	.dw @outsideDungeon6
+	.dw @outsideDungeon7
+	.dw @outsideDungeon8
+	.dw @outsideWinterTemple
 	.dw script4e83
-	.dw script4e7a
-script4e3d:
-	asm15 $5735, $04
+	.dw @outsideDungeon8
+@outsideDungeon1:
+	asm15 scriptHlp.seasonsFunc_15_5735, <TX_1704
 	retscript
-script4e42:
-	asm15 $5735, $07
+@outsideDungeon2:
+	asm15 scriptHlp.seasonsFunc_15_5735, <TX_1707
 	retscript
-script4e47:
-	asm15 $5735, $09
+@outsideDungeon3:
+	asm15 scriptHlp.seasonsFunc_15_5735, <TX_1709 ; / TX_1724
 	retscript
-script4e4c:
-	asm15 $5744
-	jumpifobjectbyteeq $7f, $01, script4e59
-	asm15 $5735, $0b
+@outsideDungeon4:
+	asm15 scriptHlp.seasonsFunc_15_5744
+	jumpifobjectbyteeq Interaction.var3f, $01, @@dungeon5AfterDungeon4
+	asm15 scriptHlp.seasonsFunc_15_5735, <TX_170b
 	retscript
-script4e59:
-	asm15 $5735, $10
+@@dungeon5AfterDungeon4:
+	asm15 scriptHlp.seasonsFunc_15_5735, <TX_1710
 	retscript
-script4e5e:
-	asm15 $5748
-	jumpifobjectbyteeq $7f, $01, script4e6b
-	asm15 $5735, $0d
+@outsideDungeon5:
+	asm15 scriptHlp.seasonsFunc_15_5748
+	jumpifobjectbyteeq Interaction.var3f, $01, @@dungeon5AfterDungeon4
+	asm15 scriptHlp.seasonsFunc_15_5735, <TX_170d
 	retscript
-script4e6b:
-	asm15 $5735, $0f
+@@dungeon5AfterDungeon4:
+	asm15 scriptHlp.seasonsFunc_15_5735, <TX_170f
 	retscript
-script4e70:
-	asm15 $5735, $12
+@outsideDungeon6:
+	asm15 scriptHlp.seasonsFunc_15_5735, <TX_1712
 	retscript
-script4e75:
-	asm15 $5735, $14
+@outsideDungeon7:
+	asm15 scriptHlp.seasonsFunc_15_5735, <TX_1714
 	retscript
-script4e7a:
-	asm15 $5735, $16
+@outsideDungeon8:
+	asm15 scriptHlp.seasonsFunc_15_5735, <TX_1716
 	retscript
-script4e7f:
+@outsideWinterTemple:
 	showtext TX_1736
 	retscript
-script4e83:
+script4e83: ; twinrova is behind onox
 	showtext TX_5007
 	retscript
-script4e87:
+
+
+makuTreeScript_gateHit:
 	setcollisionradii $14, $20
-script4e8a:
-	asm15 $5757
+@checkLinkHitGateWithSword:
+	asm15 scriptHlp.makuTree_checkGateHit
 	jumptable_memoryaddress $cfc0
-	.dw script4e8a
-	.dw script4e94
-script4e94:
-	giveitem $0503
+	.dw @checkLinkHitGateWithSword
+	.dw @gateHit
+@gateHit:
+	giveitem ITEMID_SWORD $03
 	disableinput
 	wait 60
 	incstate
 	orroomflag $80
-	checkobjectbyteeq $44, $01
+	checkobjectbyteeq Interaction.state, $01
 	playsound SND_SOLVEPUZZLE
 	wait 60
 	enableinput
 	scriptend
+	
+	
 script4ea5:
 	loadscript script_14_4830
 script4ea9:
@@ -6120,30 +6130,35 @@ script7102:
 	setdisabledobjectsto11
 	writeobjectbyte $7d, $01
 	retscript
+
+
+; ==============================================================================
+; INTERACID_MAKU_TREE
+; ==============================================================================
 script710b:
 	jumptable_memoryaddress wIsLinkedGame
-	.dw script7112
-	.dw script7133
-script7112:
+	.dw _unlinked
+	.dw _linked
+_unlinked:
 	jumptable_memoryaddress $cc39
-	.dw script7154
+	.dw _stage0
 	.dw script71a2
 	.dw script71a2
 	.dw script71a2
 	.dw script71a2
-	.dw script71a2
+	.dw script71a2 ; finished dungeon 5 after dungeon 4
 	.dw script71a2
 	.dw script71b1
 	.dw script71c8
 	.dw script71a2
-	.dw script71a2
-	.dw script71a2
-	.dw script71ff
-	.dw script7223
-	.dw script7242
-script7133:
+	.dw script71a2 ; dungeons 1 to 5 except 4
+	.dw script71a2 ; as above, but finally did 4
+	.dw _stageMakuSeedGotten
+	.dw script7223 ; highest essence gotten is 8, but wc6e5 is not $09
+	.dw _stageFinishedGame
+_linked:
 	jumptable_memoryaddress $cc39
-	.dw script7154
+	.dw _stage0
 	.dw script71a2
 	.dw script71a2
 	.dw script71b1
@@ -6155,156 +6170,173 @@ script7133:
 	.dw script71a2
 	.dw script71b1
 	.dw script71b1
-	.dw script71ff
+	.dw _stageMakuSeedGotten
 	.dw script7223
-	.dw script7242
-script7154:
-	asm15 scriptHlp.seasonsFunc_15_6123, $00
-	asm15 scriptHlp.seasonsFunc_15_60e2, $03
-	jumpifroomflagset $40, script7196
-	callscript script727d
+	.dw _stageFinishedGame
+_stage0:
+	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $00
+	asm15 scriptHlp.makuTree_setMakuMapText, $03
+	jumpifroomflagset $40, _gnarledKeySpawned@loop
+	callscript makuTreeScript_waitForBubblePopped
 	disableinput
-	jumpifglobalflagset $18, script717c
-	setglobalflag $18
-	asm15 scriptHlp.seasonsFunc_15_60f4, $00
+	jumpifglobalflagset GLOBALFLAG_S_18, _givenGnarledKey
+	setglobalflag GLOBALFLAG_S_18
+	asm15 scriptHlp.makuTree_showText, <TX_1700
 	wait 30
-script716f:
-	asm15 scriptHlp.seasonsFunc_15_60f4, $01
+_longText:
+	asm15 scriptHlp.makuTree_showText, <TX_1701
 	wait 1
-	jumpiftextoptioneq $01, script717b
+	jumpiftextoptioneq $01, _acceptedQuest
 	wait 30
-	jump2byte script716f
-script717b:
+	jump2byte _longText
+_acceptedQuest:
 	wait 30
-script717c:
-	asm15 scriptHlp.seasonsFunc_15_60f4, $02
+_givenGnarledKey:
+	asm15 scriptHlp.makuTree_showText, <TX_1702
 	wait 1
-	jumpifroomflagset $80, script718a
+	jumpifroomflagset $80, _gnarledKeySpawned
 	orroomflag $80
-	asm15 scriptHlp.seasonsFunc_15_6132
-script718a:
-	asm15 scriptHlp.seasonsFunc_15_6123, $02
-	checkobjectbyteeq $61, $ff
-	asm15 scriptHlp.seasonsFunc_15_6123, $00
+	asm15 scriptHlp.makuTree_dropGnarledKey
+_gnarledKeySpawned:
+	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $02
+	checkobjectbyteeq Interaction.animParameter, $ff
+	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $00
 	enableinput
-script7196:
-	callscript script727d
-	asm15 scriptHlp.seasonsFunc_15_60ef, $03
+@loop:
+	callscript makuTreeScript_waitForBubblePopped
+	asm15 scriptHlp.makuTree_showTextAndSetMapText, <TX_1703
 	callscript script729c
-	jump2byte script7196
+	jump2byte @loop
+	
+	
 script71a2:
-	asm15 scriptHlp.seasonsFunc_15_6123, $00
-script71a6:
-	callscript script727d
-	asm15 scriptHlp.seasonsFunc_15_60ea
+	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $00
+@loop:
+	callscript makuTreeScript_waitForBubblePopped
+	asm15 scriptHlp.makuTree_showTextAndSetMapTextBasedOnStage
 	callscript script729c
-	jump2byte script71a6
+	jump2byte @loop
+
 script71b1:
-	asm15 scriptHlp.seasonsFunc_15_6123, $04
+	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $04
 	setcollisionradii $24, $10
 	makeabuttonsensitive
-script71b9:
+@loop:
 	checkabutton
-	asm15 scriptHlp.seasonsFunc_15_6123, $01
-	asm15 scriptHlp.seasonsFunc_15_60ea
+	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $01
+	asm15 scriptHlp.makuTree_showTextAndSetMapTextBasedOnStage
 	wait 1
-	asm15 scriptHlp.seasonsFunc_15_6123, $04
-	jump2byte script71b9
+	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $04
+	jump2byte @loop
+
 script71c8:
-	asm15 scriptHlp.seasonsFunc_15_6123, $04
+	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $04
 	checkflagset $00, $cd00
 	disableinput
 	wait 30
-	asm15 scriptHlp.seasonsFunc_15_6123, $01
-	asm15 scriptHlp.seasonsFunc_15_60e7, $17
+	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $01
+	asm15 scriptHlp.makuTree_showTextBasedOnVar, <TX_1717 ; take this seed
 	wait 1
-	asm15 scriptHlp.seasonsFunc_15_6123, $04
-	asm15 scriptHlp.seasonsFunc_15_617e
+	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $04
+	asm15 scriptHlp.makuTree_dropMakuSeed
 	setcounter1 $61
 	setcounter1 $61
 	playsound SND_GETSEED
-	giveitem $3600
+	giveitem TREASURE_MAKU_SEED $00
 	wait 40
-	asm15 scriptHlp.seasonsFunc_15_6123, $01
-	asm15 scriptHlp.seasonsFunc_15_60ef, $18
+	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $01
+	asm15 scriptHlp.makuTree_showTextAndSetMapText, <TX_1718 ; you can defeat Onox
 	wait 40
 	asm15 fadeoutToBlackWithDelay, $01
-	asm15 scriptHlp.seasonsFunc_15_6184
+	asm15 scriptHlp.makuTree_OnoxTauntingAfterMakuSeedGet
 	setcounter1 $ff
 	scriptend
-script71ff:
-	asm15 scriptHlp.seasonsFunc_15_6123, $04
+	
+	
+_stageMakuSeedGotten:
+	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $04
 	asm15 scriptHlp.seasonsFunc_15_619a
 	setmusic MUS_MAKU_TREE
-	asm15 scriptHlp.seasonsFunc_15_60e2, $18
+	asm15 scriptHlp.makuTree_setMakuMapText, <TX_1718
 	setcollisionradii $24, $10
 	makeabuttonsensitive
-	asm15 scriptHlp.seasonsFunc_15_618e
-script7213:
+	asm15 scriptHlp.makuTree_disableEverythingIfUnlinked
+@loop:
 	checkabutton
-	asm15 scriptHlp.seasonsFunc_15_6123, $01
-	asm15 scriptHlp.seasonsFunc_15_60ef, $18
+	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $01
+	asm15 scriptHlp.makuTree_showTextAndSetMapText, <TX_1718 ; /TX_1733
 	wait 1
-	asm15 scriptHlp.seasonsFunc_15_6123, $04
-	jump2byte script7213
+	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $04
+	jump2byte @loop
+
 script7223:
-	asm15 scriptHlp.seasonsFunc_15_6123, $04
+	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $04
 	asm15 scriptHlp.seasonsFunc_15_619a
 	setmusic MUS_MAKU_TREE
-	asm15 scriptHlp.seasonsFunc_15_60e2, $38
+	asm15 scriptHlp.makuTree_setMakuMapText, <TX_1738
 	setcollisionradii $24, $10
 	makeabuttonsensitive
-script7234:
+@loop:
 	checkabutton
-	asm15 scriptHlp.seasonsFunc_15_6123, $01
-	showtext TX_1738
-	asm15 scriptHlp.seasonsFunc_15_6123, $04
-	jump2byte script7234
-script7242:
-	asm15 scriptHlp.seasonsFunc_15_6123, $00
-	asm15 scriptHlp.seasonsFunc_15_60e2, $39
-script724a:
-	callscript script727d
+	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $01
+	showtext TX_1738 ; passage at my roots leads to Twinrova
+	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $04
+	jump2byte @loop
+
+_stageFinishedGame:
+	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $00
+	asm15 scriptHlp.makuTree_setMakuMapText, <TX_1739
+@loop:
+	callscript makuTreeScript_waitForBubblePopped
 	showtext TX_1739
 	callscript script729c
-	jump2byte script724a
+	jump2byte @loop
+
+
 script7255:
-	asm15 scriptHlp.seasonsFunc_15_6123, $00
+	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $00
 	checkcfc0bit 7
 	playsound SND_POOF
-	asm15 scriptHlp.seasonsFunc_15_6123, $03
+	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $03
 	scriptend
+
+
 script7261:
-	asm15 scriptHlp.seasonsFunc_15_6123, $04
+	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $04
 	checkmemoryeq $cfc0, $02
-	asm15 scriptHlp.seasonsFunc_15_6123, $01
+	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $01
 	showtext TX_3d07
 	wait 1
-	asm15 scriptHlp.seasonsFunc_15_6123, $04
+	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $04
 	wait 60
 	writememory $cfc0, $03
 	setcounter1 $ff
 	scriptend
-script727d:
+
+
+makuTreeScript_waitForBubblePopped:
 	checkcfc0bit 7
 	disablemenu
-	writememory $ccaf, $80
+	writememory wcc95, $80
 	playsound SND_POOF
-	asm15 scriptHlp.seasonsFunc_15_6123, $03
-	checkmemoryeq $ccaf, $ff
+	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $03
+	checkmemoryeq wcc95, $ff
 	setdisabledobjectsto11
 	checkobjectbyteeq $61, $ff
 	setdisabledobjectsto91
-	writememory $ccaf, $00
-	asm15 scriptHlp.seasonsFunc_15_6123, $01
+	writememory wcc95, $00
+	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $01
 	enablemenu
 	retscript
+
 script729c:
 	enableallobjects
-	asm15 scriptHlp.seasonsFunc_15_6123, $02
-	checkobjectbyteeq $61, $ff
-	asm15 scriptHlp.seasonsFunc_15_6123, $00
+	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $02
+	checkobjectbyteeq Interaction.animParameter, $ff
+	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $00
 	retscript
+
+
 script72a9:
 	initcollisions
 script72aa:
@@ -7360,8 +7392,10 @@ script79a0:
 	enableinput
 	incstate
 	rungenericnpclowindex $14
-script79b4:
-	checkflagset $00, $cd00
+
+
+linkedCutsceneScript_witches1:
+	checkflagset $00, wScrollMode
 	disablemenu
 	setdisabledobjects $35
 	wait 40
@@ -7369,7 +7403,7 @@ script79b4:
 	asm15 restartSound
 	asm15 scriptHlp.seasonsFunc_15_632f
 	checkpalettefadedone
-	showtextlowindex $00
+	showtextlowindex <TX_5000
 	wait 30
 	asm15 scriptHlp.seasonsFunc_15_6347
 	wait 40
@@ -7380,7 +7414,7 @@ script79b4:
 	wait 90
 	xorcfc0bit 0
 	wait 10
-	showtextlowindex $01
+	showtextlowindex <TX_5001
 	wait 30
 	createpuff
 	xorcfc0bit 1
@@ -7390,11 +7424,13 @@ script79b4:
 	asm15 scriptHlp.seasonsFunc_15_6334
 	checkpalettefadedone
 	resetmusic
-	setglobalflag $1c
+	setglobalflag GLOBALFLAG_WITCHES_1_SEEN
 	enableinput
 	scriptend
-script79ea:
-	checkflagset $00, $cd00
+
+
+linkedCutsceneScript_witches2:
+	checkflagset $00, wScrollMode
 	disablemenu
 	setdisabledobjects $35
 	setcoords $18, $50
@@ -7407,7 +7443,7 @@ script79ea:
 	wait 4
 	asm15 scriptHlp.seasonsFunc_15_6363
 	wait 90
-	showtextlowindex $02
+	showtextlowindex <TX_5002
 	wait 30
 	createpuff
 	xorcfc0bit 7
@@ -7418,30 +7454,38 @@ script79ea:
 	setmusic MUS_DISASTER
 	checkcfc0bit 0
 	setdisabledobjectsto91
-	showtextlowindex $03
-	showtextlowindex $04
-	showtextlowindex $05
-	showtextlowindex $06
+	showtextlowindex <TX_5003
+	showtextlowindex <TX_5004
+	showtextlowindex <TX_5005
+	showtextlowindex <TX_5006
 	xorcfc0bit 0
 	wait 40
 	playsound SND_BEAM2
 	checkcfc0bit 0
 	wait 60
 	asm15 scriptHlp.seasonsFunc_15_63a6
-	setglobalflag $1d
+	setglobalflag GLOBALFLAG_WITCHES_2_SEEN
 	scriptend
-script7a2a:
-	writememory $ccaa, $01
+
+
+linkedCutsceneScript_zeldaVillagers:
+	writememory wcc90, $01
 	setcollisionradii $02, $02
 	checkcollidedwithlink_onground
-	writememory $cc04, $11
+	writememory wCutsceneTrigger, CUTSCENE_S_ZELDA_VILLAGERS
 	scriptend
-script7a37:
-	writememory $cc04, $12
+
+
+linkedCutsceneScript_zeldaKidnapped:
+	writememory wCutsceneTrigger, CUTSCENE_S_ZELDA_KIDNAPPED
 	scriptend
-script7a3c:
-	writememory $cc04, $10
+
+
+linkedCutsceneScript_flamesOfDestruction:
+	writememory wCutsceneTrigger, CUTSCENE_S_FLAME_OF_DESTRUCTION
 	scriptend
+
+
 script7a41:
 	initcollisions
 script7a42:

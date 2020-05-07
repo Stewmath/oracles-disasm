@@ -185,7 +185,7 @@ flameOfDestructionCutscene_state1:
 	ret nz			; $6f3a
 	xor a			; $6f3b
 	ld (wMenuDisabled),a		; $6f3c
-	ld a,GLOBALFLAG_S_20		; $6f3f
+	ld a,GLOBALFLAG_FLAMES_OF_DESTRUCTION_SEEN		; $6f3f
 	call setGlobalFlag		; $6f41
 	ld a,$03		; $6f44
 	ld (wRoomStateModifier),a		; $6f46
@@ -276,7 +276,7 @@ zeldaAndVillagersCutscene_state1:
 	ret nz			; $6fde
 	xor a			; $6fdf
 	ld (wMenuDisabled),a		; $6fe0
-	ld a,GLOBALFLAG_S_1e		; $6fe3
+	ld a,GLOBALFLAG_ZELDA_VILLAGERS_SEEN		; $6fe3
 	call setGlobalFlag		; $6fe5
 	ld hl,@warpDest		; $6fe8
 	jp setWarpDestVariables		; $6feb
@@ -521,7 +521,7 @@ zeldaKidnappedCutscene_state1Handler:
 	ret nz			; $7192
 	xor a			; $7193
 	ld (wMenuDisabled),a		; $7194
-	ld a,GLOBALFLAG_S_1f		; $7197
+	ld a,GLOBALFLAG_ZELDA_KIDNAPPED_SEEN		; $7197
 	call setGlobalFlag		; $7199
 	ld a,$03		; $719c
 	ld (wRoomStateModifier),a		; $719e
@@ -682,20 +682,20 @@ loadGroupOfInteractions:
 	.db INTERACID_ZELDA $02 $00 $18 $18
 	.db $00
 @interacGroup2:
-	.db $bd $00 $01 $28 $38
-	.db $be $00 $01 $40 $38
+	.db INTERACID_bd $00 $01 $28 $38
+	.db INTERACID_be $00 $01 $40 $38
 	.db INTERACID_ZELDA $03 $00 $20 $50
-	.db $bc $00 $00 $48 $50
-	.db $ba $00 $03 $28 $68
-	.db $bb $00 $00 $40 $68
+	.db INTERACID_bc $00 $00 $48 $50
+	.db INTERACID_ba $00 $03 $28 $68
+	.db INTERACID_bb $00 $00 $40 $68
 	.db $00
 @interacGroup3:
-	.db $bd $00 $01 $2c $38
-	.db $be $00 $00 $44 $40
+	.db INTERACID_bd $00 $01 $2c $38
+	.db INTERACID_be $00 $00 $44 $40
 	.db INTERACID_ZELDA $03 $00 $20 $50
-	.db $bc $00 $00 $50 $58
-	.db $ba $00 $02 $20 $64
-	.db $bb $00 $03 $38 $68
+	.db INTERACID_bc $00 $00 $50 $58
+	.db INTERACID_ba $00 $02 $20 $64
+	.db INTERACID_bb $00 $03 $38 $68
 	.db $00
 
 cutscene_func_03_72af:
@@ -725,7 +725,7 @@ loadInteracIdb4_subid6And7:
 loadInteracIdb4:
 	call getFreeInteractionSlot		; $72d9
 	ret nz			; $72dc
-	ld (hl),$b4		; $72dd
+	ld (hl),INTERACID_b4		; $72dd
 	inc l			; $72df
 	ld a,(bc)		; $72e0
 	inc bc			; $72e1

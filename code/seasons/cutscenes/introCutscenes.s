@@ -418,18 +418,18 @@ cutsceneDinImprisoned:
 	ld de,wCutsceneState		; $760a
 	ld a,(de)		; $760d
 	rst_jumpTable			; $760e
-	.dw cutscene07Func0
-	.dw cutscene07Func1
-	.dw cutscene07Func2
-	.dw cutscene07Func3
-	.dw cutscene07Func4
-	.dw cutscene07Func5
-	.dw cutscene07Func6
-	.dw cutscene07Func7
-	.dw cutscene07Func8
-	.dw cutscene07Func9
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+	.dw @state5
+	.dw @state6
+	.dw @state7
+	.dw @state8
+	.dw @state9
 
-cutscene07Func0:
+@state0:
 	ld a,(wPaletteThread_mode)		; $7623
 	or a			; $7626
 	ret nz			; $7627
@@ -448,7 +448,7 @@ cutscene07Func0:
 	call playSound		; $7641
 	jp fadeinFromWhite		; $7644
 
-cutscene07Func1:
+@state1:
 	ld a,(wPaletteThread_mode)		; $7647
 	or a			; $764a
 	ret nz			; $764b
@@ -473,7 +473,7 @@ cutscene07Func1:
 	ldh (<hCameraY),a	; $766d
 	ret			; $766f
 
-cutscene07Func2:
+@state2:
 	ld a,(wPaletteThread_mode)		; $7670
 	or a			; $7673
 	ret nz			; $7674
@@ -514,7 +514,7 @@ cutscene07Func2:
 	ld a,(hl)		; $76c3
 	ldh (<hCameraX),a	; $76c4
 	jp fadeinFromWhite		; $76c6
-cutscene07Func3:
+@state3:
 	ld hl,$cfd0		; $76c9
 	ld a,(hl)		; $76cc
 	cp $0b			; $76cd
@@ -534,7 +534,7 @@ cutscene07Func3:
 +
 	jp incCutsceneState		; $76e2
 
-cutscene07Func4:
+@state4:
 	ld a,($cfd0)		; $76e5
 	sub $0c			; $76e8
 	ret nz			; $76ea
@@ -543,7 +543,7 @@ cutscene07Func4:
 	ld ($cbba),a		; $76ef
 	jp incCutsceneState		; $76f2
 
-cutscene07Func5:
+@state5:
 	ld hl,$cbb3		; $76f5
 	ld b,$01		; $76f8
 	call flashScreen		; $76fa
@@ -571,7 +571,7 @@ cutscene07Func5:
 	ld (hl),$0d		; $772d
 	jp incCutsceneState		; $772f
 
-cutscene07Func6:
+@state6:
 	call retIfTextIsActive		; $7732
 	call disableLcd		; $7735
 	ld a,UNCMP_GFXH_0e		; $7738
@@ -587,7 +587,7 @@ cutscene07Func6:
 	ld ($cbcb),a		; $7750
 	jp incCutsceneState		; $7753
 
-cutscene07Func7:
+@state7:
 	ld a,(wPaletteThread_mode)		; $7756
 	or a			; $7759
 	ret nz			; $775a
@@ -596,7 +596,7 @@ cutscene07Func7:
 	call incCutsceneState		; $775f
 	jp fadeoutToWhite		; $7762
 
-cutscene07Func8:
+@state8:
 	ld a,(wPaletteThread_mode)		; $7765
 	or a			; $7768
 	ret nz			; $7769
@@ -610,7 +610,7 @@ cutscene07Func8:
 	call seasonsFunc_03_7aa9		; $777b
 	jp fadeinFromWhite		; $777e
 
-cutscene07Func9:
+@state9:
 	ld a,(wPaletteThread_mode)		; $7781
 	or a			; $7784
 	ret nz			; $7785

@@ -1906,6 +1906,8 @@
 .ifdef ROM_SEASONS
 
 .define INTERACID_RUPEE_ROOM_RUPEES	$1d
+.define INTERACID_MAKU_CUTSCENES	$22
+.define INTERACID_48			$48
 .define INTERACID_4f			$4f
 .define INTERACID_SEASONS_FAIRY		$50
 
@@ -1941,6 +1943,23 @@
 ;;
 ; Jewels in place in tarm ruins (visual only)
 .define INTERACID_JEWEL			$92
+
+; Maku seed?
+.define INTERACID_93			$93
+
+; Sokra?
+.define INTERACID_9d			$9d
+.define INTERACID_LINKED_CUTSCENE	$b3
+.define INTERACID_b4			$b4
+
+; the following animals are 5 that hang around Zelda
+.define INTERACID_ba			$ba
+.define INTERACID_bb			$bb
+.define INTERACID_bc			$bc
+.define INTERACID_bd			$bd
+.define INTERACID_be			$be
+
+.define INTERACID_ZELDA_VILLAGERS_ROOM	$c4
 
 ;;
 ; Interaction to start cutscene of getting Rod of Seasons

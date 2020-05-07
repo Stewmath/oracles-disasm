@@ -7369,8 +7369,8 @@ _label_09_302:
 	add c			; $7cea
 	adc d			; $7ceb
 	nop			; $7cec
-	jr c,_label_09_309	; $7ced
-	jr nz,_label_09_305	; $7cef
+	jr c,$6c	; $7ced
+	jr nz,$48	; $7cef
 	ld b,b			; $7cf1
 	inc a			; $7cf2
 	sub c			; $7cf3
@@ -7381,10 +7381,10 @@ _label_09_302:
 	ld e,$9e		; $7cf8
 	ld d,b			; $7cfa
 	ld l,(hl)		; $7cfb
-	jr z,_label_09_304	; $7cfc
+	jr z,$24	; $7cfc
 	ld h,b			; $7cfe
-	jr nz,_label_09_303	; $7cff
-	jr _label_09_306		; $7d01
+	jr nz,$1c	; $7cff
+	jr $44		; $7d01
 	ld h,h			; $7d03
 	nop			; $7d04
 	ld e,h			; $7d05
@@ -7402,135 +7402,158 @@ _label_09_302:
 	add c			; $7d12
 	add b			; $7d13
 
+
+; ==============================================================================
+; INTERACID_MAKU_TREE
+; TODO: finish
+; Variables:
+;   $cc39: Maku tree stage
+;   $c6df/wc6e5: ???
+;   $c6eo/ws_c6e0: ???
+; ==============================================================================
 interactionCode87:
 	ld e,Interaction.state		; $7d14
 	ld a,(de)		; $7d16
 	rst_jumpTable			; $7d17
-	jr nz,$7d		; $7d18
-	add d			; $7d1a
-	ld a,l			; $7d1b
-	add l			; $7d1c
-_label_09_303:
-	ld a,l			; $7d1d
-	adc b			; $7d1e
-	ld a,l			; $7d1f
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+
+@state0:
 	ld e,Interaction.subid		; $7d20
-_label_09_304:
 	ld a,(de)		; $7d22
 	rst_jumpTable			; $7d23
-	ldi a,(hl)		; $7d24
-	ld a,l			; $7d25
-	ld d,a			; $7d26
-	ld a,l			; $7d27
-	ld l,e			; $7d28
-	ld a,l			; $7d29
+	.dw @subid0
+	.dw @subid1
+	.dw @subid2
+
+@subid0:
 	call interactionInitGraphics		; $7d2a
 	call objectSetVisible83		; $7d2d
 	call interactionSetAlwaysUpdateBit		; $7d30
-	call $7d8b		; $7d33
-	call $7e05		; $7d36
-_label_09_305:
-	ld hl,$710b		; $7d39
+	call @setAppropriateStage		; $7d33
+	call @spawnGnarledKey		; $7d36
+	ld hl,script710b		; $7d39
 	call interactionSetScript		; $7d3c
 	ld a,($cc39)		; $7d3f
 	or a			; $7d42
-	jr nz,_label_09_307	; $7d43
+	jr nz,+			; $7d43
 	ld a,$01		; $7d45
-_label_09_306:
-	jr _label_09_308		; $7d47
-_label_09_307:
+	jr ++		; $7d47
++
 	ld a,$02		; $7d49
-_label_09_308:
+++
 	ld e,Interaction.state		; $7d4b
 	ld (de),a		; $7d4d
 	call interactionRunScript		; $7d4e
 	call interactionRunScript		; $7d51
 	jp interactionRunScript		; $7d54
+
+@subid1:
 	ld e,Interaction.state		; $7d57
 	ld a,$02		; $7d59
-_label_09_309:
 	ld (de),a		; $7d5b
 	call interactionInitGraphics		; $7d5c
 	call objectSetVisible83		; $7d5f
-	ld hl,$7255		; $7d62
+	ld hl,script7255		; $7d62
 	call interactionSetScript		; $7d65
 	jp interactionRunScript		; $7d68
+
+@subid2:
 	ld e,Interaction.state		; $7d6b
 	ld a,$02		; $7d6d
 	ld (de),a		; $7d6f
 	call interactionInitGraphics		; $7d70
 	call objectSetVisible83		; $7d73
 	call interactionSetAlwaysUpdateBit		; $7d76
-	ld hl,$7261		; $7d79
+	ld hl,script7261		; $7d79
 	call interactionSetScript		; $7d7c
 	jp interactionRunScript		; $7d7f
-	call $7df6		; $7d82
+
+@state1:
+	call @setRoomFlag40OnGnarledKeyGet		; $7d82
+
+@state2:
 	call interactionRunScript		; $7d85
+
+@state3:
 	jp interactionAnimate		; $7d88
 
-seasonsFunc_09_7d8b:
+@setAppropriateStage:
 	ld a,GLOBALFLAG_FINISHEDGAME		; $7d8b
 	call checkGlobalFlag		; $7d8d
-	jp nz,seasonsFunc_09_7df0		; $7d90
+	jp nz,@setStageToLast		; $7d90
 	ld a,TREASURE_ESSENCE		; $7d93
 	call checkTreasureObtained		; $7d95
 	jr c,+			; $7d98
 	xor a			; $7d9a
 +
+	; dungeon 1,2,3,5?
 	cp $17			; $7d9b
-	jr z,_label_09_313	; $7d9d
+	jr z,@highestEssenceIs5Except4	; $7d9d
+	; dungeon 1 to 5?
 	cp $1f			; $7d9f
-	jr z,_label_09_314	; $7da1
+	jr z,@highestEssenceIs5	; $7da1
 	call getHighestSetBit		; $7da3
-	jr nc,_label_09_311	; $7da6
+	jr nc,+			; $7da6
 	inc a			; $7da8
-_label_09_311:
-	call $7df2		; $7da9
++
+	; 0 if no essences, 1-8 based on highest essence, otherwise
+	call @setStage		; $7da9
 	cp $01			; $7dac
-	jr z,_label_09_312	; $7dae
+	jr z,@highestEssenceIs1	; $7dae
 	cp $08			; $7db0
-	jr z,_label_09_316	; $7db2
+	jr z,@highestEssenceIs8	; $7db2
 	ret			; $7db4
-_label_09_312:
-	ld a,$01		; $7db5
-	ld b,$2a		; $7db7
+	
+@highestEssenceIs1:
+	; highest essence is 1st essence
+	ld a,>ROOM_SEASONS_12a		; $7db5
+	ld b,<ROOM_SEASONS_12a		; $7db7
 	call getRoomFlags		; $7db9
 	and $40			; $7dbc
 	ret z			; $7dbe
 	ld a,$09		; $7dbf
-	jr _label_09_318		; $7dc1
-_label_09_313:
-	ld a,$27		; $7dc3
+	jr @setStage		; $7dc1
+	
+@highestEssenceIs5Except4:
+	ld a,GLOBALFLAG_S_27		; $7dc3
 	call setGlobalFlag		; $7dc5
 	ld a,$0a		; $7dc8
-	jr _label_09_318		; $7dca
-_label_09_314:
-	ld a,$27		; $7dcc
+	jr @setStage		; $7dca
+	
+@highestEssenceIs5:
+	ld a,GLOBALFLAG_S_27		; $7dcc
 	call checkGlobalFlag		; $7dce
-	jr nz,_label_09_315	; $7dd1
+	jr nz,+			; $7dd1
 	ld a,$05		; $7dd3
-	jr _label_09_318		; $7dd5
-_label_09_315:
+	jr @setStage		; $7dd5
++
 	ld a,$0b		; $7dd7
-	jr _label_09_318		; $7dd9
-_label_09_316:
-	ld a,($c6df)		; $7ddb
+	jr @setStage		; $7dd9
+	
+@highestEssenceIs8:
+	ld a,(wc6e5)		; $7ddb
 	cp $09			; $7dde
-	jr z,_label_09_317	; $7de0
-	ld a,$19		; $7de2
+	jr z,@all8Essences	; $7de0
+	ld a,GLOBALFLAG_GOT_MAKU_SEED		; $7de2
 	call checkGlobalFlag		; $7de4
 	ret z			; $7de7
 	ld a,$0c		; $7de8
-	jr _label_09_318		; $7dea
-_label_09_317:
-	ld a,$0d		; $7dec
-	jr _label_09_318		; $7dee
+	jr @setStage		; $7dea
 
-seasonsFunc_09_7df0:
+@all8Essences:
+	ld a,$0d		; $7dec
+	jr @setStage		; $7dee
+
+@setStageToLast:
 	ld a,$0e		; $7df0
-_label_09_318:
+@setStage:
 	ld ($cc39),a		; $7df2
 	ret			; $7df5
+
+@setRoomFlag40OnGnarledKeyGet:
 	call getThisRoomFlags		; $7df6
 	and $40			; $7df9
 	ret nz			; $7dfb
@@ -7539,22 +7562,25 @@ _label_09_318:
 	ret nc			; $7e01
 	set 6,(hl)		; $7e02
 	ret			; $7e04
+
+@spawnGnarledKey:
 	call getThisRoomFlags		; $7e05
 	bit 6,a			; $7e08
 	ret nz			; $7e0a
+	; not yet gotten gnarled key
 	bit 7,a			; $7e0b
 	ret z			; $7e0d
 	call getFreeInteractionSlot		; $7e0e
 	ret nz			; $7e11
-	ld (hl),$60		; $7e12
+	ld (hl),INTERACID_TREASURE		; $7e12
 	inc l			; $7e14
-	ld (hl),$42		; $7e15
+	ld (hl),TREASURE_GNARLED_KEY		; $7e15
 	inc l			; $7e17
 	ld (hl),$01		; $7e18
-	ld l,$4b		; $7e1a
+	ld l,Interaction.yh		; $7e1a
 	ld a,$58		; $7e1c
 	ldi (hl),a		; $7e1e
-	ld a,($c6e0)		; $7e1f
+	ld a,(ws_c6e0)		; $7e1f
 	ld l,$4d		; $7e22
 	ld (hl),a		; $7e24
 	ret			; $7e25

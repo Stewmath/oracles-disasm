@@ -774,7 +774,7 @@ wChildPersonality: ; $c6e4/$c6de
 ;   2: Arborist
 ;   3: Singer
 	db
-wc6e5: ; $c6e5/$c6df
+wc6e5: ; $c6e5/$c6df ; In seasons, growth of Maku tree
 	db
 
 .ifdef ROM_SEASONS
@@ -1885,7 +1885,7 @@ wLinkImmobilized: ; $cc61/$cc7c
 wcc62: ; $cc62
 	db
 
-wcc63: ; $cc63
+wcc63: ; $cc63/$cc7c
 ; $cc63: set when link is holding a sword out?
 ; When bit 7 is set, item usage is disabled; when it equals $ff, Link is forced to do
 ; a sword spin. Maybe used when getting the sword in Seasons?
