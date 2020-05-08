@@ -439,7 +439,9 @@
 
 ; TODO: Separate ages/seasons stuff properly.
 
+
 .ifdef ROM_SEASONS
+
 
 ;;
 ; @subid_00{D3 hallway to miniboss room}

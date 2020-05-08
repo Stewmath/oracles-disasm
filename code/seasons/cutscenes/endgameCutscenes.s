@@ -77,7 +77,7 @@ _endgameCutsceneHandler_09_stage0_body:
 @state0Func0:
 	call getFreeInteractionSlot		; $55ad
 	jr nz,+			; $55b0
-	ld a,$a5		; $55b2
+	ld a,INTERACID_a5		; $55b2
 	ld (wInteractionIDToLoadExtraGfx),a		; $55b4
 	ldi (hl),a		; $55b7
 	ld (hl),c		; $55b8
@@ -321,7 +321,7 @@ _endgameCutsceneHandler_09_stage0_body:
 -
 	call getFreeInteractionSlot		; $5774
 	jr nz,+			; $5777
-	ld (hl),$b0		; $5779
+	ld (hl),INTERACID_TWINROVA_FLAME		; $5779
 	inc l			; $577b
 	dec b			; $577c
 	ld (hl),b		; $577d
@@ -566,7 +566,7 @@ _endgameCutsceneHandler_09_stage0_body:
 -
 	call getFreeInteractionSlot		; $5944
 	jr nz,+			; $5947
-	ld (hl),$b0		; $5949
+	ld (hl),INTERACID_TWINROVA_FLAME		; $5949
 	inc l			; $594b
 	ld a,$05		; $594c
 	add b			; $594e
@@ -1071,13 +1071,13 @@ seasonsFunc_03_5d00:
 seasonsFunc_03_5d0b:
 	call getFreePartSlot		; $5d0b
 	ret nz			; $5d0e
-	ld (hl),$48		; $5d0f
+	ld (hl),PARTID_48		; $5d0f
 	ret			; $5d11
 
 seasonsFunc_03_5d12:
 	call getFreeInteractionSlot		; $5d12
 	ret nz			; $5d15
-	ld (hl),$48		; $5d16
+	ld (hl),INTERACID_48		; $5d16
 	inc l			; $5d18
 	ld (hl),$00		; $5d19
 	inc l			; $5d1b
@@ -1484,7 +1484,7 @@ _endgameCutsceneHandler_0a_stage1:
 	call incCbc2		; $601a
 	call getFreeInteractionSlot		; $601d
 	ret nz			; $6020
-	ld (hl),$ae		; $6021
+	ld (hl),INTERACID_CREDITS_TEXT_HORIZONTAL		; $6021
 	inc l			; $6023
 	ld a,($cbb4)		; $6024
 	sub $04			; $6027
@@ -1566,7 +1566,7 @@ _endgameCutsceneHandler_0a_stage2:
 	call fadeinFromWhite		; $60ab
 	call getFreeInteractionSlot		; $60ae
 	ret nz			; $60b1
-	ld (hl),$af		; $60b2
+	ld (hl),INTERACID_CREDITS_TEXT_VERTICAL		; $60b2
 	ld l,$4b		; $60b4
 	ld (hl),$e8		; $60b6
 	inc l			; $60b8
@@ -1608,7 +1608,7 @@ _endgameCutsceneHandler_0a_stage2:
 -
 	call getFreeInteractionSlot		; $60fc
 	jr nz,+			; $60ff
-	ld (hl),$4a		; $6101
+	ld (hl),INTERACID_INTRO_SPRITES_1		; $6101
 	inc l			; $6103
 	ld (hl),$09		; $6104
 	inc l			; $6106
@@ -1657,7 +1657,7 @@ _endgameCutsceneHandler_0a_stage2:
 -
 	call getFreeInteractionSlot		; $6151
 	jr nz,+			; $6154
-	ld (hl),$cf		; $6156
+	ld (hl),INTERACID_cf		; $6156
 	inc l			; $6158
 	dec b			; $6159
 	ld (hl),b		; $615a
@@ -1914,7 +1914,7 @@ _endgameCutsceneHandler_0a_stage3:
 	jr nz,+			; $6338
 	call getFreeInteractionSlot		; $633a
 	jr nz,+			; $633d
-	ld (hl),$d1		; $633f
+	ld (hl),INTERACID_d1		; $633f
 	xor a			; $6341
 	ld ($cfde),a		; $6342
 +

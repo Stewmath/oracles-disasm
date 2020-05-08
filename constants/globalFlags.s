@@ -234,6 +234,8 @@
 	GLOBALFLAG_BEGAN_ELDER_SECRET		db ; $6c
 	GLOBALFLAG_BEGAN_SYMMETRY_SECRET	db ; $6d
 
+	GLOBALFLAG_FIRST_SEASONS_BEGAN_SECRET	.db
+
 	; Set when the sidequest is completed and Link has obtained the item.
 	; In Seasons, he obtains the item from Farore.
 	; In Ages, he obtains the item from an NPC.
@@ -247,6 +249,8 @@
 	GLOBALFLAG_DONE_TINGLE_SECRET		db ; $75
 	GLOBALFLAG_DONE_ELDER_SECRET		db ; $76
 	GLOBALFLAG_DONE_SYMMETRY_SECRET		db ; $77
+
+	GLOBALFLAG_FIRST_SEASONS_DONE_SECRET	.db
 
 	; Unused?
 	GLOBALFLAG_78				db ; $78

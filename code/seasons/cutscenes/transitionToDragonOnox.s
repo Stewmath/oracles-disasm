@@ -26,7 +26,7 @@ seasonsFunc_0f_6f75:
 	ld (hl),$02		; $6f99
 
 	call getFreePartSlot		; $6f9b
-	ld (hl),$48		; $6f9e
+	ld (hl),PARTID_48		; $6f9e
 	inc l			; $6fa0
 	ld (hl),$04		; $6fa1
 

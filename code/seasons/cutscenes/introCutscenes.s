@@ -342,7 +342,7 @@ cutscene06Func8:
 	ret z			; $758c
 	call getFreeInteractionSlot		; $758d
 	jr nz,+	; $7590
-	ld (hl),$4e		; $7592
+	ld (hl),INTERACID_4e		; $7592
 	inc l			; $7594
 	ld (hl),$07		; $7595
 +
@@ -650,7 +650,7 @@ cutscene08Func0:
 -
 	call getFreeInteractionSlot		; $77bd
 	jr nz,+	; $77c0
-	ld (hl),$77		; $77c2
+	ld (hl),INTERACID_77		; $77c2
 	inc l			; $77c4
 	dec b			; $77c5
 	ld (hl),b		; $77c6
@@ -693,7 +693,7 @@ cutscene08Func1:
 -
 	call getFreeInteractionSlot		; $780f
 	jr nz,+	; $7812
-	ld (hl),$86		; $7814
+	ld (hl),INTERACID_86		; $7814
 	inc l			; $7816
 	dec b			; $7817
 	ld a,b			; $7818
@@ -1134,7 +1134,7 @@ cutscene0dFunc0:
 -
 	call getFreeInteractionSlot		; $7b1c
 	jr nz,+	; $7b1f
-	ld (hl),$b0		; $7b21
+	ld (hl),INTERACID_TWINROVA_FLAME		; $7b21
 	inc l			; $7b23
 	ld (hl),b		; $7b24
 	dec b			; $7b25
@@ -1286,7 +1286,7 @@ cutscene0eFunc2:
 	call disableLcd		; $7c52
 	call getFreeInteractionSlot		; $7c55
 	jr nz,+	; $7c58
-	ld a,$a5		; $7c5a
+	ld a,INTERACID_a5		; $7c5a
 	ld ($cc1d),a		; $7c5c
 	ldi (hl),a		; $7c5f
 	ld (hl),$06		; $7c60
@@ -1373,7 +1373,7 @@ cutscene0eFunc6:
 	ret nz			; $7d11
 	call getFreeInteractionSlot		; $7d12
 	jr nz,+	; $7d15
-	ld (hl),$4f		; $7d17
+	ld (hl),INTERACID_4f		; $7d17
 	inc l			; $7d19
 	ld (hl),$05		; $7d1a
 +

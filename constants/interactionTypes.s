@@ -1440,7 +1440,11 @@
 ; @subid_00-02{?}
 ; @subid_03-05{?}
 ; @subid_06-09{?}
+.ifdef ROM_AGES
 .define INTERACID_TWINROVA_FLAME		$a9
+.else
+.define INTERACID_TWINROVA_FLAME		$b0
+.endif
 
 ;;
 ; @subid_00{?}
@@ -1908,6 +1912,7 @@
 .define INTERACID_RUPEE_ROOM_RUPEES	$1d
 .define INTERACID_MAKU_CUTSCENES	$22
 .define INTERACID_48			$48
+.define INTERACID_4e			$4e
 .define INTERACID_4f			$4f
 .define INTERACID_SEASONS_FAIRY		$50
 
@@ -1923,8 +1928,10 @@
 .define INTERACID_BOMB_FLOWER		$6f
 
 .define INTERACID_BLAINO		$72
+.define INTERACID_77			$77
 .define INTERACID_TRAMPOLINE		$7c
 
+.define INTERACID_86			$86
 .define INTERACID_88			$88
 
 ;;
@@ -1949,6 +1956,7 @@
 
 ; Sokra?
 .define INTERACID_9d			$9d
+.define INTERACID_a5			$a5
 .define INTERACID_LINKED_CUTSCENE	$b3
 .define INTERACID_b4			$b4
 
@@ -1960,6 +1968,9 @@
 .define INTERACID_be			$be
 
 .define INTERACID_ZELDA_VILLAGERS_ROOM	$c4
+
+.define INTERACID_d1			$d1
+.define INTERACID_dc			$dc
 
 ;;
 ; Interaction to start cutscene of getting Rod of Seasons

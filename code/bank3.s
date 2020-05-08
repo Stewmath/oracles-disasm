@@ -1089,11 +1089,7 @@ _twinrovaCutscene_deleteAllInteractionsExceptFlames:
 	or a			; $4c13
 	jr z,+			; $4c14
 	ldi a,(hl)		; $4c16
-.ifdef ROM_AGES
 	cp INTERACID_TWINROVA_FLAME			; $4c17
-.else
-	cp INTERACID_TWINROVA_IN_CUTSCENE			; $4c17
-.endif
 	call z,@delete		; $4c19
 +
 	inc h			; $4c1c

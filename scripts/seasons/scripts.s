@@ -888,222 +888,307 @@ essenceScript_essenceGetCutscene:
 	scriptend
 
 
-script49e2:
+; ==============================================================================
+; INTERACID_VASU
+; ==============================================================================
+
+vasuScript:
 	setcollisionradii $12, $06
 	makeabuttonsensitive
-script49e6:
+
+@npcLoop:
 	enableinput
 	checkabutton
 	disableinput
-	jumpifglobalflagset $08, script4a44
-	jumpifmemoryeq wIsLinkedGame, $00, script4a0c
-	jumpifmemoryset $c615, $01, script49fb
-	jump2byte script4a0c
-script49fb:
-	showtextlowindex $3e
-	jumpifobjectbyteeq $76, $01, script4a08
-	showtextlowindex $3b
+	jumpifglobalflagset GLOBALFLAG_OBTAINED_RING_BOX, @alreadyGaveRingBox
+	jumpifmemoryeq wIsLinkedGame, $00, @firstTime
+	jumpifmemoryset wObtainedRingBox, $01, @linkedGameFirstTime
+	jump2byte @firstTime
+
+@linkedGameFirstTime:
+	showtextlowindex <TX_303e
+	jumpifobjectbyteeq Interaction.var36, $01, ++ ; Check TREASURE_RING_BOX
+
+	; Give ring box in linked game
+	showtextlowindex <TX_303b
 	asm15 scriptHlp.vasu_giveRingBox
 	wait 1
-script4a08:
+++
 	setdisabledobjectsto11
 	checktext
-	jump2byte script4a3b
-script4a0c:
-	showtextnonexitablelowindex $00
-script4a0e:
-	jumpiftextoptioneq $00, script4a16
-	showtextnonexitablelowindex $3a
-	jump2byte script4a0e
-script4a16:
-	jumpifobjectbyteeq $76, $01, script4a23
-	showtextlowindex $3b
+	jump2byte @justGaveRingBox
+
+@firstTime:
+	showtextnonexitablelowindex <TX_3000
+@giveExplanation:
+	jumpiftextoptioneq $00, @explanationDone
+	showtextnonexitablelowindex <TX_303a
+	jump2byte @giveExplanation
+@explanationDone:
+	jumpifobjectbyteeq Interaction.var36, $01, ++ ; Check TREASURE_RING_BOX
+
+	; Give ring box in unlinked game
+	showtextlowindex <TX_303b
 	asm15 scriptHlp.vasu_giveRingBox
 	wait 1
 	setdisabledobjectsto11
 	checktext
-script4a23:
-	showtextlowindex $3f
+++
+	; Give friendship ring
+	showtextlowindex <TX_303f
 	asm15 scriptHlp.vasu_giveFriendshipRing
 	wait 1
 	setdisabledobjectsto11
 	checktext
-	showtextlowindex $33
+
+	; Force Link to appraise it
+	showtextlowindex <TX_3033
 	asm15 scriptHlp.vasu_openRingMenu, $00
 	wait 10
-	showtextlowindex $13
+
+	; Open ring list
+	showtextlowindex <TX_3013
 	asm15 scriptHlp.vasu_openRingMenu, $01
 	wait 10
-	showtextlowindex $08
-script4a3b:
-	setglobalflag $08
-	ormemory $c615, $01
+	showtextlowindex <TX_3008
+
+@justGaveRingBox:
+	setglobalflag GLOBALFLAG_OBTAINED_RING_BOX
+	ormemory wObtainedRingBox, $01
 	enableinput
-	jump2byte script49e6
-script4a44:
+	jump2byte @npcLoop
+
+
+@alreadyGaveRingBox:
+	; Check whether to give special rings
 	asm15 scriptHlp.vasu_checkEarnedSpecialRing
-	jumptable_objectbyte $7b
-	.dw script4a51
-	.dw script4a55
-	.dw script4a59
-	.dw script4a61
-script4a51:
-	showtextlowindex $36
-	jump2byte script4a5b
-script4a55:
-	showtextlowindex $37
-	jump2byte script4a5b
-script4a59:
-	showtextlowindex $39
-script4a5b:
+	jumptable_objectbyte Interaction.var3b
+	.dw @giveSlayersRing
+	.dw @giveWealthRing
+	.dw @giveVictoryRing
+	.dw @noSpecialRing
+
+@giveSlayersRing:
+	showtextlowindex <TX_3036
+	jump2byte @giveSpecialRing
+
+@giveWealthRing:
+	showtextlowindex <TX_3037
+	jump2byte @giveSpecialRing
+
+@giveVictoryRing:
+	showtextlowindex <TX_3039
+@giveSpecialRing:
 	checktext
 	asm15 scriptHlp.vasu_giveRingInVar3a
-	jump2byte script49e6
-script4a61:
-	showtextnonexitablelowindex $03
-	jumpiftextoptioneq $00, script4a70
-	jumpiftextoptioneq $01, script4a7b
+	jump2byte @npcLoop
+
+
+; Just show normal welcome text
+@noSpecialRing:
+	showtextnonexitablelowindex <TX_3003
+	jumpiftextoptioneq $00, @appraise
+	jumpiftextoptioneq $01, @list
+
+	; Selected "Quit"
 	enableinput
-	showtextlowindex $08
-	jump2byte script49e6
-script4a70:
-	jumpifobjectbyteeq $77, $00, script4a98
+	showtextlowindex <TX_3008
+	jump2byte @npcLoop
+
+@appraise:
+	jumpifobjectbyteeq Interaction.var37, $00, @noUnappraisedRings
 	asm15 scriptHlp.vasu_openRingMenu, $00
-	jump2byte script4a84
-script4a7b:
-	jumpifobjectbyteeq $78, $00, script4a9c
+	jump2byte @exitedRingMenu
+
+@list:
+	jumpifobjectbyteeq Interaction.var38, $00, @noAppraisedRings
 	asm15 scriptHlp.vasu_openRingMenu, $01
-script4a84:
+
+@exitedRingMenu:
 	wait 10
-	jumpifglobalflagset $09, script4a8e
-	showtextlowindex $08
+	jumpifglobalflagset GLOBALFLAG_APPRAISED_HUNDREDTH_RING, @giveHundredthRing
+
+	showtextlowindex <TX_3008
 	enableinput
-	jump2byte script49e6
-script4a8e:
-	showtextlowindex $38
+	jump2byte @npcLoop
+
+@giveHundredthRing:
+	showtextlowindex <TX_3038
 	checktext
-	setglobalflag $89
+	unsetglobalflag GLOBALFLAG_APPRAISED_HUNDREDTH_RING
 	asm15 scriptHlp.vasu_giveHundredthRing
-	jump2byte script49e6
-script4a98:
-	showtextlowindex $14
-	jump2byte script49e6
-script4a9c:
-	showtextlowindex $15
-	jump2byte script49e6
-script4aa0:
-	showtextnonexitablelowindex $09
-	jumpiftextoptioneq $00, script4aac
-	writememory $cba0, $01
+	jump2byte @npcLoop
+
+
+@noUnappraisedRings:
+	showtextlowindex <TX_3014
+	jump2byte @npcLoop
+
+@noAppraisedRings:
+	showtextlowindex <TX_3015
+	jump2byte @npcLoop
+
+
+; Red snake before beating unlinked game
+redSnakeScript_preLinked:
+	showtextnonexitablelowindex <TX_3009
+	jumpiftextoptioneq $00, _redSnake_explain
+
+	writememory wTextIsActive, $01
 	enableinput
 	scriptend
-script4aac:
+
+_redSnake_explain:
 	wait 30
-	showtextnonexitablelowindex $0a
-	jumpiftextoptioneq $01, script4ab7
-	showtextnonexitablelowindex $0b
-	jump2byte script4ab9
-script4ab7:
-	showtextnonexitablelowindex $0c
-script4ab9:
-	jumpiftextoptioneq $00, script4aac
-	writememory $cba0, $01
+	showtextnonexitablelowindex <TX_300a
+	jumpiftextoptioneq $01, @explainBox
+
+@explainAppraisal:
+	showtextnonexitablelowindex <TX_300b
+	jump2byte ++
+
+@explainBox:
+	showtextnonexitablelowindex <TX_300c
+++
+	jumpiftextoptioneq $00, _redSnake_explain
+	writememory wTextIsActive, $01
 	scriptend
-script4ac2:
-	showtextnonexitablelowindex $1f
-	jumpiftextoptioneq $01, script4ad6
-	jump2byte script4ad0
-script4aca:
-	showtextnonexitablelowindex $24
-	jumpiftextoptioneq $02, script4ad6
-script4ad0:
+
+
+; Blue snake before beating unlinked game
+blueSnakeScript_preLinked:
+	showtextnonexitablelowindex <TX_301f
+	jumpiftextoptioneq $01, blueSnakeScript_doNotRemoveCable
+	jump2byte _blueSnake_linkOrFortune
+
+; Blue snake after beating linked game
+blueSnakeScript_linked:
+	showtextnonexitablelowindex <TX_3024
+	jumpiftextoptioneq $02, blueSnakeScript_doNotRemoveCable
+
+_blueSnake_linkOrFortune:
 	setdisabledobjectsto11
 	asm15 scriptHlp.blueSnake_linkOrFortune
 	wait 1
 	scriptend
-script4ad6:
-	showtextlowindex $2e
+
+blueSnakeScript_doNotRemoveCable:
+	showtextlowindex <TX_302e
 	scriptend
-script4ad9:
-	showtextlowindex $0f
+blueSnakeExitScript_cableNotConnected:
+	showtextlowindex <TX_300f
 	scriptend
-script4adc:
-	showtextlowindex $31
+blueSnakeExitScript_linkFailed:
+	showtextlowindex <TX_3031
 	scriptend
-script4adf:
-	showtextlowindex $2a
+blueSnakeExitScript_noValidFile:
+	showtextlowindex <TX_302a
 	scriptend
-script4ae2:
-	showtextnonexitablelowindex $18
-	jumpiftextoptioneq $02, script4b04
-	jumpiftextoptioneq $00, script4af7
+
+
+; Red snake after beating linked game
+redSnakeScript_linked:
+	showtextnonexitablelowindex <TX_3018
+	jumpiftextoptioneq $02, @quit
+	jumpiftextoptioneq $00, @tellSecretToSnake
+
+	; Generate a secret
 	asm15 scriptHlp.redSnake_generateRingSecret
-script4aef:
-	showtextnonexitablelowindex $1d
-	jumpiftextoptioneq $00, script4aef
-	jump2byte script4b04
-script4af7:
+@tellSecretToLink:
+	showtextnonexitablelowindex <TX_301d
+	jumpiftextoptioneq $00, @tellSecretToLink
+	jump2byte @quit
+
+@tellSecretToSnake:
 	asm15 scriptHlp.redSnake_openSecretInputMenu
 	wait 1
-	jumpifmemoryeq $cca3, $00, script4b07
-	showtextlowindex $1e
+	jumpifmemoryeq wTextInputResult, $00, @toldValidSecret
+
+	; Told invalid secret
+	showtextlowindex <TX_301e
 	scriptend
-script4b04:
-	showtextlowindex $10
+
+@quit:
+	showtextlowindex <TX_3010
 	scriptend
-script4b07:
-	showtextlowindex $27
+
+@toldValidSecret:
+	showtextlowindex <TX_3027
 	scriptend
-script4b0a:
+
+
+blueSnakeScript_successfulFortune:
 	setdisabledobjectsto11
-	showtextlowindex $23
+	showtextlowindex <TX_3023
 	asm15 scriptHlp.vasu_giveRingInVar3a
 	wait 1
 	checktext
 	enableallobjects
 	scriptend
-script4b14:
-	showtextlowindex $27
+
+blueSnakeScript_successfulRingTransfer:
+	showtextlowindex <TX_3027
 	scriptend
-script4b17:
+
+
+; ==============================================================================
+; INTERACID_GAME_COMPLETE_DIALOG
+; ==============================================================================
+gameCompleteDialogScript:
 	wait 30
 	showtext TX_550d
-	jumpiftextoptioneq $00, script4b28
+	jumpiftextoptioneq $00, @dontSave
+
+	; Save
 	asm15 scriptHlp.gameCompleteDialog_markGameAsComplete
 	asm15 saveFile
 	wait 30
-	jump2byte script4b30
-script4b28:
+	jump2byte ++
+
+@dontSave:
 	wait 30
 	showtext TX_550e
-	jumpiftextoptioneq $00, script4b17
-script4b30:
-	writememory $cfde, $01
+	jumpiftextoptioneq $00, gameCompleteDialogScript
+++
+	writememory wTmpcfc0.genericCutscene.cfde, $01
 	scriptend
-script4b35:
-	writememory $cba0, $01
-script4b39:
+
+
+; ==============================================================================
+; INTERACID_RING_HELP_BOOK
+; ==============================================================================
+
+ringHelpBookSubid1Reset:
+	writememory wTextIsActive, $01
+
+ringHelpBookSubid1Script:
 	checkabutton
-	showtextnonexitablelowindex $19
-	jumpiftextoptioneq $01, script4b35
-	showtextlowindex $1a
-	jump2byte script4b39
-script4b44:
-	writememory $cba0, $01
+	showtextnonexitablelowindex <TX_3019
+	jumpiftextoptioneq $01, ringHelpBookSubid1Reset
+	showtextlowindex <TX_301a
+	jump2byte ringHelpBookSubid1Script
+
+
+ringHelpBookSubid0Reset:
+	writememory wTextIsActive, $01
+
+ringHelpBookSubid0Script:
 	checkabutton
-	showtextnonexitablelowindex $20
-	jumpiftextoptioneq $01, script4b44
-script4b4f:
-	showtextnonexitablelowindex $25
-	jumpiftextoptioneq $01, script4b61
-	jumpiftextoptioneq $02, script4b44
-	showtextnonexitablelowindex $3d
-	jumpiftextoptioneq $01, script4b44
-	jump2byte script4b4f
-script4b61:
-	showtextnonexitablelowindex $26
-	jumpiftextoptioneq $01, script4b44
-	jump2byte script4b4f
+	showtextnonexitablelowindex <TX_3020
+	jumpiftextoptioneq $01, ringHelpBookSubid0Reset
+
+@showAgain:
+	showtextnonexitablelowindex <TX_3025
+	jumpiftextoptioneq $01, @option1
+@option0:
+	jumpiftextoptioneq $02, ringHelpBookSubid0Reset
+	showtextnonexitablelowindex <TX_303d
+	jumpiftextoptioneq $01, ringHelpBookSubid0Reset
+	jump2byte @showAgain
+@option1:
+	showtextnonexitablelowindex <TX_3026
+	jumpiftextoptioneq $01, ringHelpBookSubid0Reset
+	jump2byte @showAgain
 
 
 ; ==============================================================================

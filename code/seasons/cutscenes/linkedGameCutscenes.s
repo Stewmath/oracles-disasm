@@ -66,7 +66,7 @@ flameOfDestructionCutscene_state1:
 	call bank3CutsceneLoadRoomOfRites		; $6e5a
 	call getFreeInteractionSlot		; $6e5d
 	jr nz,+	; $6e60
-	ld (hl),$b0		; $6e62
+	ld (hl),INTERACID_TWINROVA_FLAME		; $6e62
 	inc l			; $6e64
 	ld (hl),$03		; $6e65
 +
@@ -92,7 +92,7 @@ flameOfDestructionCutscene_state1:
 @changePalettes:
 	call getFreeInteractionSlot		; $6e8e
 	jr nz,+	; $6e91
-	ld (hl),$b0		; $6e93
+	ld (hl),INTERACID_TWINROVA_FLAME		; $6e93
 	inc l			; $6e95
 	ld (hl),$04		; $6e96
 +
@@ -489,7 +489,7 @@ zeldaKidnappedCutscene_state1Handler:
 	call loadInteracIdb4_subid6And7		; $715a
 	call getFreeInteractionSlot		; $715d
 	jr nz,+	; $7160
-	ld (hl),$b0		; $7162
+	ld (hl),INTERACID_TWINROVA_FLAME		; $7162
 +
 	ld a,$13		; $7164
 	call loadGfxRegisterStateIndex		; $7166
@@ -623,7 +623,7 @@ loadInteracIdb0:
 -
 	call getFreeInteractionSlot		; $7233
 	ret nz			; $7236
-	ld (hl),$b0		; $7237
+	ld (hl),INTERACID_TWINROVA_FLAME		; $7237
 	inc l			; $7239
 	ld a,$02		; $723a
 	add b			; $723c

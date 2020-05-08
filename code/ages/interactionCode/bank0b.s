@@ -222,7 +222,11 @@ interactionCodeac:
 	call @checkUpdateState		; $4103
 	call _spawnBipinBlossomFamilyObjects		; $4106
 	ld hl,wSeedTreeRefilledBitset		; $4109
+.ifdef ROM_AGES
 	res 1,(hl)		; $410c
+.else
+	res 0,(hl)		; $410c
+.endif
 	jp interactionDelete		; $410e
 
 
@@ -232,7 +236,11 @@ interactionCodeac:
 ; Also checks that Link has enough essences for certain stages of development.
 @checkUpdateState:
 	ld a,(wSeedTreeRefilledBitset)		; $4111
+.ifdef ROM_AGES
 	bit 1,a			; $4114
+.else
+	bit 0,a			; $4114
+.endif
 	ret z			; $4116
 
 	ld hl,wNextChildStage		; $4117
@@ -1268,6 +1276,7 @@ interactionCodeb6:
 	ld hl,wGashaSpotsPlantedBitset		; $46c7
 	call unsetFlag		; $46ca
 
+.ifdef ROM_AGES
 	; Overwrite the 4 tiles making up the gasha tree in wRoomLayout
 	ld a,TILEINDEX_GASHA_TREE_TL	; $46cd
 	call findTileInRoom		; $46cf
@@ -1288,11 +1297,14 @@ interactionCodeb6:
 	ld a,b			; $46e5
 	ldi (hl),a		; $46e6
 	ld (hl),a		; $46e7
+.endif
 	jp interactionDelete		; $46e8
 
+.ifdef ROM_AGES
 @tileReplacements:
 	.db $3a $1b $1b $3a $3a $bf $3a $bf
 	.db $1b $3a $3a $1b $3a $3a $3a $bf
+.endif
 
 
 ; These are values compared with "wGashaMaturity" which set the ranges for gasha prize
@@ -1320,6 +1332,7 @@ interactionCodeb6:
 
 ; Each row defines which type of gasha spot each subid is (rank 0 = best).
 @gashaSpotRanks:
+.ifdef ROM_AGES
 	.db @rank1Spot-CADDR ; $00
 	.db @rank2Spot-CADDR ; $01
 	.db @rank2Spot-CADDR ; $02
@@ -1336,6 +1349,24 @@ interactionCodeb6:
 	.db @rank3Spot-CADDR ; $0d
 	.db @rank1Spot-CADDR ; $0e
 	.db @rank0Spot-CADDR ; $0f
+.else
+	.db @rank1Spot-CADDR ; $4991
+	.db @rank0Spot-CADDR ; $4992
+	.db @rank0Spot-CADDR ; $4993
+	.db @rank3Spot-CADDR ; $4994
+	.db @rank2Spot-CADDR ; $4995
+	.db @rank3Spot-CADDR ; $4996
+	.db @rank2Spot-CADDR ; $4997
+	.db @rank4Spot-CADDR ; $4998
+	.db @rank1Spot-CADDR ; $4999
+	.db @rank2Spot-CADDR ; $499a
+	.db @rank4Spot-CADDR ; $499b
+	.db @rank3Spot-CADDR ; $499c
+	.db @rank2Spot-CADDR ; $499d
+	.db @rank2Spot-CADDR ; $499e
+	.db @rank3Spot-CADDR ; $499f
+	.db @rank4Spot-CADDR ; $49a0
+.endif
 
 
 ; Each row corresponds to a certain range for "wGashaMaturity". The first row is the most
@@ -1429,8 +1460,13 @@ interactionCodeb6:
 
 ; Each subid loads one of 3 gfx headers while the tree disappears.
 @gfxHeaderToLoadWhenTreeDisappears:
+.ifdef ROM_AGES
 	.db GFXH_3d GFXH_3f GFXH_3f GFXH_3d GFXH_3d GFXH_3e GFXH_3d GFXH_3e
 	.db GFXH_3f GFXH_3d GFXH_3d GFXH_3f GFXH_3d GFXH_3d GFXH_3d GFXH_3e
+.else
+	.db GFXH_3d GFXH_3d GFXH_3d GFXH_3d GFXH_3f GFXH_3d GFXH_3d GFXH_3d
+	.db GFXH_3d GFXH_3d GFXH_3d GFXH_3d GFXH_3d GFXH_3e GFXH_3d GFXH_3d
+.endif
 
 
 ; ==============================================================================
@@ -1606,6 +1642,29 @@ interactionCodece:
 	ld (de),a		; $4969
 	call interactionSetAlwaysUpdateBit		; $496a
 
+.ifdef ROM_SEASONS
+	ld e,Interaction.subid		; $7410
+	ld a,(de)		; $7412
+	; Sells cheap shield
+	cp $06			; $7413
+	jr nz,+++		; $7415
+
+	ld hl,w1Companion		; $7417
+	ldi a,(hl)		; $741a
+	or a			; $741b
+	jr z,@noCompanion	; $741c
+	ld a,(hl)		; $741e
+	cp SPECIALOBJECTID_MOOSH			; $741f
+	jr z,@moosh		; $7421
+@noCompanion:
+	ld a,(wEssencesObtained)		; $7423
+	bit 3,a			; $7426
+	jr nz,+++		; $7428
+@moosh:
+	jp interactionDelete		; $742a
++++
+.endif
+
 	ld e,Interaction.subid		; $496d
 	ld a,(de)		; $496f
 	bit 7,a			; $4970
@@ -1664,7 +1723,11 @@ interactionCodece:
 	or a			; $49c0
 	ld a,TILEINDEX_OVERWORLD_BUSH_1		; $49c1
 	jr z,+			; $49c3
+.ifdef ROM_AGES
 	ld a,TILEINDEX_OVERWORLD_BUSH_1		; $49c5
+.else
+	ld a,$20		; $49c5
+.endif
 +
 	call objectMimicBgTile		; $49c7
 	ld a,$05		; $49ca
@@ -1848,6 +1911,7 @@ interactionCodece:
 	.db $20 $50 $99
 
 @offerItemTextIndices:
+.ifdef ROM_AGES
 	.db <TX_4509
 	.db <TX_4509
 	.db <TX_4509
@@ -1857,6 +1921,19 @@ interactionCodece:
 	.db <TX_4509
 	.db <TX_4509
 	.db <TX_4509
+.else
+	.db <TX_4509
+	.db <TX_4509
+	.db <TX_4509
+	.db <TX_450b
+	.db <TX_450b
+	.db <TX_450b
+	.db <TX_4502
+	.db <TX_4502
+	.db <TX_4502
+	.db <TX_450d
+	.db <TX_450c
+.endif
 
 @bushYOffsets:
 	.db $00 ; Normally
@@ -1865,6 +1942,7 @@ interactionCodece:
 
 ; This should match with "@itemPrices" below
 @rupeeValues:
+.ifdef ROM_AGES
 	.db RUPEEVAL_50
 	.db RUPEEVAL_100
 	.db RUPEEVAL_150
@@ -1874,6 +1952,19 @@ interactionCodece:
 	.db RUPEEVAL_10
 	.db RUPEEVAL_20
 	.db RUPEEVAL_40
+.else
+	.db RUPEEVAL_050
+	.db RUPEEVAL_100
+	.db RUPEEVAL_150
+	.db RUPEEVAL_050
+	.db RUPEEVAL_100
+	.db RUPEEVAL_150
+	.db RUPEEVAL_050
+	.db RUPEEVAL_100
+	.db RUPEEVAL_150
+	.db RUPEEVAL_030
+	.db RUPEEVAL_020
+.endif
 
 @treasuresToSell:
 	.db TREASURE_SHIELD      $01
@@ -1890,6 +1981,7 @@ interactionCodece:
 
 ; This should match with "@rupeeValues" above
 @itemPrices:
+.ifdef ROM_AGES
 	.dw $0050
 	.dw $0100
 	.dw $0150
@@ -1899,6 +1991,17 @@ interactionCodece:
 	.dw $0010
 	.dw $0020
 	.dw $0040
+.else
+	.dw $0050
+	.dw $0100
+	.dw $0150
+	.dw $0050
+	.dw $0100
+	.dw $0150
+	.dw $0050
+	.dw $0100
+	.dw $0150
+.endif
 
 
 ; ==============================================================================
@@ -2018,15 +2121,24 @@ interactionCoded0:
 	ld e,Interaction.subid		; $4b9c
 	ld a,(de)		; $4b9e
 	rst_jumpTable			; $4b9f
-	.dw @subid0
-	.dw @subid1
-	.dw @subid2
-	.dw @subid3
-	.dw @subid4
-	.dw @subid5
+.ifdef ROM_AGES
+	.dw @setFlagAndDeleteWhenCompanionIsBelowOrRight
+	.dw @setFlagAndDeleteWhenCompanionIsAbove
+	.dw @setFlagAndDeleteWhenCompanionIsBelow
+	.dw @setFlagAndDeleteWhenCompanionIsAboveAndLinkInXRange
+	.dw @setFlagAndDeleteWhenCompanionIsLeft
+	.dw @setFlagAndDeleteWhenCompanionIsBelow
+.else
+	.dw @setFlagAndDeleteWhenCompanionIsBelow
+	.dw @setFlagAndDeleteWhenCompanionIsAbove
+	.dw @goToDelete
+	.dw @setFlagAndDeleteWhenCompanionIsAboveAndVar38NonZero
+	.dw @setFlagAndDeleteWhenCompanionIsBelow
+	.dw @goToDelete
+	.dw @setFlagAndDeleteWhenCompanionIsAbove
+.endif
 
-@subid2:
-@subid5:
+@setFlagAndDeleteWhenCompanionIsBelow:
 	ld e,Interaction.yh		; $4bac
 	ld a,(de)		; $4bae
 	ld hl,w1Companion.yh		; $4baf
@@ -2034,12 +2146,11 @@ interactionCoded0:
 	ret nc			; $4bb3
 	jr @setFlagAndDelete		; $4bb4
 
-@func_4bb6: ; unused
+@setFlagAndDeleteWhenCompanionIsAboveAndVar38NonZero:
 	ld a,(w1Companion.var38)		; $4bb6
 	or a			; $4bb9
 	ret z			; $4bba
 
-@subid1:
 @setFlagAndDeleteWhenCompanionIsAbove:
 	call @cpYToCompanion		; $4bbb
 	ret c			; $4bbe
@@ -2052,14 +2163,17 @@ interactionCoded0:
 	ld a,(hl)		; $4bc6
 	ld hl,wCompanionTutorialTextShown		; $4bc7
 	call setFlag		; $4bca
+
+@goToDelete:
 	jr @delete		; $4bcd
 
-@subid3:
+.ifdef ROM_AGES
+@setFlagAndDeleteWhenCompanionIsAboveAndLinkInXRange:
 	call @checkLinkInXRange		; $4bcf
 	ret nz			; $4bd2
 	jr @setFlagAndDeleteWhenCompanionIsAbove		; $4bd3
 
-@subid4:
+@setFlagAndDeleteWhenCompanionIsLeft:
 	ld e,Interaction.xh		; $4bd5
 	ld a,(de)		; $4bd7
 	ld hl,w1Companion.xh		; $4bd8
@@ -2067,7 +2181,7 @@ interactionCoded0:
 	ret nc			; $4bdc
 	jr @setFlagAndDelete		; $4bdd
 
-@subid0:
+@setFlagAndDeleteWhenCompanionIsBelowOrRight:
 	call @cpYToCompanion		; $4bdf
 	jr c,@setFlagAndDelete	; $4be2
 	ld e,Interaction.xh		; $4be4
@@ -2076,6 +2190,7 @@ interactionCoded0:
 	cp (hl)			; $4bea
 	ret c			; $4beb
 	jr @setFlagAndDelete		; $4bec
+.endif
 
 ;;
 ; @addr{4bee}
@@ -2116,6 +2231,7 @@ interactionCoded0:
 	or d			; $4c16
 	ret			; $4c17
 
+.ifdef ROM_AGES
 @rooms:
 	.db <ROOM_AGES_036
 	.db <ROOM_AGES_037
@@ -2136,6 +2252,29 @@ interactionCoded0:
 
 @flagNumbers:
 	.db $00 $01 $00 $03 $04 $00
+.else
+@rooms:
+	.db <ROOM_SEASONS_036
+	.db <ROOM_SEASONS_037
+	.db <ROOM_SEASONS_027
+
+@xRanges:
+	.db $40 $70
+	.db $10 $30
+	.db $40 $80
+
+@tutorialTextToShow:
+	.dw TX_200d
+	.dw TX_200e
+	.dw TX_2121
+	.dw TX_2122
+	.dw TX_2218
+	.dw TX_2217
+	.dw TX_2218
+
+@flagNumbers:
+	.db $00 $01 $02 $03 $04 $05 $04
+.endif
 
 
 ; ==============================================================================
@@ -2504,7 +2643,11 @@ _interactiond9_state0:
 	ld e,Interaction.subid		; $4de9
 	ld a,(de)		; $4deb
 	ld b,a			; $4dec
+.ifdef ROM_AGES
 	add GLOBALFLAG_FIRST_AGES_DONE_SECRET			; $4ded
+.else
+	add GLOBALFLAG_FIRST_SEASONS_BEGAN_SECRET			; $4ded
+.endif
 	call checkGlobalFlag		; $4def
 	jr z,@secretNotTold			; $4df2
 
@@ -2578,7 +2721,7 @@ _interactiond9_state1:
 	ld a,$01		; $4e41
 	ld (de),a		; $4e43
 	xor a			; $4e44
-	ld ($cca2),a		; $4e45
+	ld (wcca2),a		; $4e45
 
 	call _interactiond9_getItemID		; $4e48
 	ld a,b			; $4e4b
@@ -2616,7 +2759,7 @@ _interactiond9_state1:
 
 @substate3:
 	; Wait for the chest to be opened
-	ld a,($cca2)		; $4e7c
+	ld a,(wcca2)		; $4e7c
 	or a			; $4e7f
 	ret z			; $4e80
 
@@ -2763,7 +2906,11 @@ _interactiond9_state2:
 
 @satchelUpgrade:
 	ld a,(wSeedSatchelLevel)		; $4f5a
+.ifdef ROM_AGES
 	ldbc TREASURE_SEED_SATCHEL, $04		; $4f5d
+.else
+	ldbc TREASURE_SEED_SATCHEL, $01		; $4f5d
+.endif
 	jr @createTreasureAndIncState2		; $4f60
 
 @label_0b_135:
@@ -2830,11 +2977,14 @@ _interactiond9_state2:
 _interactiond9_markSecretAsTold:
 	ld e,Interaction.subid		; $4fb5
 	ld a,(de)		; $4fb7
+.ifdef ROM_AGES
 	add GLOBALFLAG_FIRST_AGES_DONE_SECRET			; $4fb8
+.else
+	add GLOBALFLAG_FIRST_SEASONS_BEGAN_SECRET			; $4fb8
+.endif
 	call setGlobalFlag		; $4fba
 	ld a,GLOBALFLAG_SECRET_CHEST_WAITING		; $4fbd
 	jp unsetGlobalFlag		; $4fbf
-
 
 
 ; ==============================================================================
@@ -2853,7 +3003,11 @@ interactionCodeda:
 	call getThisRoomFlags		; $4fcd
 	and ROOMFLAG_80			; $4fd0
 	jp nz,interactionDelete		; $4fd2
+.ifdef ROM_AGES
 	ld a,PALH_ac		; $4fd5
+.else
+	ld a,SEASONS_PALH_ac		; $4fd5
+.endif
 	jp loadPaletteHeader		; $4fd7
 
 @state1:
@@ -5587,7 +5741,11 @@ interactionCodea8:
 ; ==============================================================================
 ; INTERACID_TWINROVA_FLAME
 ; ==============================================================================
+.ifdef ROM_AGES
 interactionCodea9:
+.else
+interactionCodeb0:
+.endif
 	ld e,Interaction.state		; $5f4e
 	ld a,(de)		; $5f50
 	rst_jumpTable			; $5f51
@@ -5601,8 +5759,21 @@ interactionCodea9:
 
 	ld e,Interaction.subid		; $5f5b
 	ld a,(de)		; $5f5d
+.ifdef ROM_AGES
 	cp $06			; $5f5e
+.else
+	cp $0b			; $5f5e
+.endif
 	call nc,interactionIncState		; $5f60
+
+.ifdef ROM_SEASONS
+	or a			; $6e08
+	jr nz,+			; $6e09
+	ld a,$b0		; $6e0b
+	ld (wInteractionIDToLoadExtraGfx),a		; $6e0d
+	ld (wLoadedTreeGfxIndex),a		; $6e10
++
+.endif
 
 	call interactionInitGraphics		; $5f63
 	call interactionSetAlwaysUpdateBit		; $5f66
@@ -5610,15 +5781,24 @@ interactionCodea9:
 	ld l,Interaction.subid		; $5f69
 	ld a,(hl)		; $5f6b
 	ld b,a			; $5f6c
+.ifdef ROM_AGES
 	cp $03			; $5f6d
+.else
+	cp $08			; $5f6d
+.endif
 	jr c,++			; $5f6f
 	call getThisRoomFlags		; $5f71
 	and $80			; $5f74
 	jp nz,interactionDelete		; $5f76
 
 	ld a,(de) ; [subid]
+.ifdef ROM_AGES
 ++
 	and $03			; $5f7a
+.else
+	sub $05			; $6e2a
+++
+.endif
 	add a			; $5f7c
 	add a			; $5f7d
 	add a			; $5f7e
@@ -5629,15 +5809,35 @@ interactionCodea9:
 	ld hl,@positions		; $5f84
 	rst_addDoubleIndex			; $5f87
 	ldi a,(hl)		; $5f88
+.ifdef ROM_AGES
 	ld c,(hl)		; $5f89
 	ld b,a			; $5f8a
 	call interactionSetPosition		; $5f8b
+.else
+	ld e,Interaction.yh		; $6e39
+	ld (de),a		; $6e3b
+	inc e			; $6e3c
+	inc e			; $6e3d
+	ld a,(hl)		; $6e3e
+	ld (de),a		; $6e3f
+.endif
 	jp objectSetVisiblec2		; $5f8e
 
 @positions:
+.ifdef ROM_SEASONS
+	.db $32 $78
+	.db $50 $80
+	.db $50 $70
+.endif
+
 	.db $40 $a8
 	.db $40 $48
 	.db $10 $78
+
+.ifdef ROM_SEASONS
+	.db $48 $30
+	.db $48 $70
+.endif
 
 	.db $50 $a8
 	.db $50 $48
@@ -6637,8 +6837,13 @@ interactionCodeae:
 @substate2:
 	call interactionDecCounter1		; $652b
 	ret nz			; $652e
+.ifdef ROM_AGES
 	ld hl,wTmpcfc0.genericCutscene.cfdf		; $652f
 	ld (hl),$ff		; $6532
+.else
+	ld hl,$cfde
+	ld (hl),$01
+.endif
 	jp interactionDelete		; $6534
 
 ;;

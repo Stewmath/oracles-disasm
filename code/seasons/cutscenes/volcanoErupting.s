@@ -177,7 +177,7 @@ _cutsceneHandler_0b_stage3:
 	call seasonsFunc_03_6d8b		; $6ce5
 	call getFreeInteractionSlot		; $6ce8
 	jr nz,+			; $6ceb
-	ld (hl),$dc		; $6ced
+	ld (hl),INTERACID_dc		; $6ced
 	inc l			; $6cef
 	ld (hl),$0e		; $6cf0
 +
@@ -285,7 +285,7 @@ seasonsFunc_03_6db1:
 	ld (hl),a		; $6dba
 	call getFreePartSlot		; $6dbb
 	ret nz			; $6dbe
-	ld (hl),$11		; $6dbf
+	ld (hl),PARTID_VOLCANO_ROCK		; $6dbf
 	inc l			; $6dc1
 	ld (hl),$01		; $6dc2
 	ld l,$cb		; $6dc4
@@ -303,7 +303,7 @@ seasonsFunc_03_6dcb:
 	ld (hl),a		; $6dd4
 	call getFreePartSlot		; $6dd5
 	ret nz			; $6dd8
-	ld (hl),$11		; $6dd9
+	ld (hl),PARTID_VOLCANO_ROCK		; $6dd9
 	inc l			; $6ddb
 	ld (hl),$02		; $6ddc
 	ret			; $6dde
