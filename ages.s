@@ -1030,8 +1030,8 @@ _linkItemAnimationTable:
 	.db $e6  LINK_ANIM_MODE_22	; ITEMID_FOOLS_ORE
 	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_1f
 
-	.include "code/specialObjects/minecart.s"
-	.include "code/specialObjects/raft.s"
+	.include "object_code/common/specialObjects/minecart.s"
+	.include "object_code/common/specialObjects/raft.s"
 
 	.include "build/data/specialObjectAnimationData.s"
 	.include "code/ages/cutscenes/companionCutscenes.s"
@@ -1105,7 +1105,8 @@ specialObjectLoadAnimationFrameToBuffer:
 
  m_section_force Interaction_Code_Bank08 NAMESPACE interactionBank08
 
-	.include "code/ages/interactionCode/bank08.s"
+	.include "object_code/common/interactionCode/group1.s"
+	.include "object_code/ages/interactionCode/bank08.s"
 
 .ends
 
@@ -1115,7 +1116,9 @@ specialObjectLoadAnimationFrameToBuffer:
 
  m_section_force Interaction_Code_Bank09 NAMESPACE interactionBank09
 
-	.include "code/ages/interactionCode/bank09.s"
+	.include "object_code/common/interactionCode/group2.s"
+        .include "object_code/common/interactionCode/treasure.s"
+	.include "object_code/ages/interactionCode/bank09.s"
 
 .ends
 
@@ -1126,7 +1129,9 @@ specialObjectLoadAnimationFrameToBuffer:
 
  m_section_force Interaction_Code_Bank0a NAMESPACE interactionBank0a
 
-	.include "code/ages/interactionCode/bank0a.s"
+	.include "object_code/common/interactionCode/group3.s"
+        .include "object_code/common/interactionCode/group5.s"
+	.include "object_code/ages/interactionCode/bank0a.s"
 
 .ends
 
@@ -1137,7 +1142,10 @@ specialObjectLoadAnimationFrameToBuffer:
 
  m_section_force Interaction_Code_Bank0b NAMESPACE interactionBank0b
 
-	.include "code/ages/interactionCode/bank0b.s"
+	.include "object_code/common/interactionCode/group6.s"
+        .include "object_code/common/interactionCode/group7.s"
+        .include "object_code/common/interactionCode/group4.s"
+	.include "object_code/ages/interactionCode/bank0b.s"
 
 	.include "code/ages/garbage/bank0bEnd.s"
 
@@ -1157,7 +1165,8 @@ specialObjectLoadAnimationFrameToBuffer:
  m_section_free Enemy_Code_Bank0d NAMESPACE bank0d
 
 	.include "code/enemyCommon.s"
-	.include "code/ages/enemyCode/bank0d.s"
+	.include "object_code/common/enemyCode/group1.s"
+	.include "object_code/ages/enemyCode/bank0d.s"
 
 .ends
 
@@ -1172,12 +1181,12 @@ specialObjectLoadAnimationFrameToBuffer:
  m_section_free Enemy_Code_Bank0e NAMESPACE bank0e
 
 	.include "code/enemyCommon.s"
-	.include "code/enemyCode/group2.s"
+	.include "object_code/common/enemyCode/group2.s"
 
         .include "build/data/orbMovementScript.s"
         .include "code/objectMovementScript.s"
 
-	.include "code/ages/enemyCode/bank0e.s"
+	.include "object_code/ages/enemyCode/bank0e.s"
 	.include "build/data/movingSidescrollPlatform.s"
 
 	.include "code/ages/garbage/bank0eEnd.s"
@@ -1191,7 +1200,7 @@ specialObjectLoadAnimationFrameToBuffer:
 
 	.include "code/enemyCommon.s"
 	.include "code/enemyBossCommon.s"
-	.include "code/ages/enemyCode/bank0f.s"
+	.include "object_code/ages/enemyCode/bank0f.s"
 
 .ends
 
@@ -1202,7 +1211,8 @@ specialObjectLoadAnimationFrameToBuffer:
 
 	.include "code/enemyCommon.s"
 	.include "code/enemyBossCommon.s"
-	.include "code/ages/enemyCode/bank10.s"
+	.include "object_code/common/enemyCode/group3.s"
+	.include "object_code/ages/enemyCode/bank10.s"
 
 .ends
 
@@ -1213,7 +1223,7 @@ specialObjectLoadAnimationFrameToBuffer:
 
  m_section_force Interaction_Code_Bank10 NAMESPACE interactionBank10
 
-	.include "code/ages/interactionCode/bank10.s"
+	.include "object_code/ages/interactionCode/bank10.s"
 
 .ends
 
@@ -1227,9 +1237,9 @@ specialObjectLoadAnimationFrameToBuffer:
  m_section_force "Bank_11" NAMESPACE "partCode"
 
 	.include "code/partCommon.s"
-	.include "objects/commonPartCode.s"
+	.include "object_code/common/partCode.s"
         .include "data/partCodeTable.s"
-	.include "objects/ages/partCode.s"
+	.include "object_code/ages/partCode.s"
 	.include "code/ages/garbage/bank11End.s"
 
 .ends
@@ -1362,7 +1372,7 @@ puddleAnimationFrames:
 .BANK $15 SLOT 1
 .ORG 0
 
-.include "scripts/commonScriptHelper.s"
+.include "scripts/common/scriptHelper.s"
 
  m_section_free "Object_Pointers" namespace "objectData"
 
@@ -2134,7 +2144,7 @@ oamData_7249:
 	.db $60 $40 $4c $00
 
 
-.include "code/ages/interactionCode/bank3f.s"
+.include "object_code/ages/interactionCode/bank3f.s"
 
 .include "code/ages/garbage/bank3fEnd.s"
 

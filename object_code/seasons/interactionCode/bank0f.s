@@ -1,6 +1,3 @@
-.include "code/interactionCode/group7.s"
-
-
 interactionCodec8:
 	ld e,$44		; $7884
 	ld a,(de)		; $7886

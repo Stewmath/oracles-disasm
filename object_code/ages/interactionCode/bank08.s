@@ -1,6 +1,3 @@
-.include "code/interactionCode/group1.s"
-
-
 ; ==============================================================================
 ; INTERACID_TOGGLE_FLOOR: red/yellow/blue floor tiles that change color when jumped over.
 ; ==============================================================================

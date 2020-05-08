@@ -1,7 +1,3 @@
-.include "code/interactionCode/group5.s"
-.include "code/interactionCode/group6.s"
-
-
 interactionCode8a:
 interactionCode8b:
 interactionCode8d:

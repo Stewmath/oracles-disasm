@@ -1,8 +1,3 @@
-.include "code/interactionCode/group6.s"
-.include "code/interactionCode/group7.s"
-.include "code/interactionCode/group4.s"
-
-
 ; ==============================================================================
 ; INTERACID_EXPLOSION_WITH_DEBRIS
 ; ==============================================================================

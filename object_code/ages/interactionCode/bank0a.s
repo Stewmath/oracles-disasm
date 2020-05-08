@@ -1,7 +1,3 @@
-.include "code/interactionCode/group3.s"
-.include "code/interactionCode/group5.s"
-
-
 ; ==============================================================================
 ; INTERACID_COMPANION_SPAWNER
 ; ==============================================================================

@@ -1,5 +1,3 @@
-.include "code/enemyCode/group3.s"
-
 ; ==============================================================================
 ; ENEMYID_VERAN_FINAL_FORM
 ;

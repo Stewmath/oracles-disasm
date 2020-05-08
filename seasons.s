@@ -832,8 +832,8 @@ _linkItemAnimationTable:
 	.db $e6  LINK_ANIM_MODE_22	; ITEMID_FOOLS_ORE
 	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_1f
 
-	.include "code/specialObjects/minecart.s"
-	.include "code/specialObjects/raft.s"
+	.include "object_code/common/specialObjects/minecart.s"
+	.include "object_code/common/specialObjects/raft.s"
 
 	.include "data/seasons/specialObjectAnimationData.s"
 	.include "code/seasons/cutscenes/companionCutscenes.s"
@@ -885,17 +885,23 @@ _linkItemAnimationTable:
 .BANK $08 SLOT 1
 .ORG 0
 
-	.include "code/seasons/interactionCode/bank08.s"
+	.include "object_code/common/interactionCode/group1.s"
+        .include "object_code/common/interactionCode/group2.s"
+	.include "object_code/seasons/interactionCode/bank08.s"
 
 .BANK $09 SLOT 1
 .ORG 0
 
-	.include "code/seasons/interactionCode/bank09.s"
+	.include "object_code/common/interactionCode/treasure.s"
+        .include "object_code/common/interactionCode/group3.s"
+	.include "object_code/seasons/interactionCode/bank09.s"
 
 .BANK $0a SLOT 1
 .ORG 0
 
-	.include "code/seasons/interactionCode/bank0a.s"
+	.include "object_code/common/interactionCode/group5.s"
+        .include "object_code/common/interactionCode/group6.s"
+	.include "object_code/seasons/interactionCode/bank0a.s"
 
 .BANK $0b SLOT 1
 .ORG 0
@@ -910,7 +916,8 @@ _linkItemAnimationTable:
 .section Enemy_Code_Bank0c
 
 	.include "code/enemyCommon.s"
-	.include "code/seasons/enemyCode/bank0c.s"
+	.include "object_code/common/enemyCode/group1.s"
+	.include "object_code/seasons/enemyCode/bank0c.s"
 	.include "data/seasons/enemyAnimations.s"
 
 .ends
@@ -921,11 +928,11 @@ _linkItemAnimationTable:
 .section Enemy_Code_Bank0d
 
 	.include "code/enemyCommon.s"
-	.include "code/enemyCode/group2.s"
+	.include "object_code/common/enemyCode/group2.s"
 
         .include "build/data/orbMovementScript.s"
 
-	.include "code/seasons/enemyCode/bank0d.s"
+	.include "object_code/seasons/enemyCode/bank0d.s"
 
 	.include "code/objectMovementScript.s"
 	.include "build/data/movingSidescrollPlatform.s"
@@ -939,7 +946,7 @@ _linkItemAnimationTable:
 
 	.include "code/enemyCommon.s"
 	.include "code/enemyBossCommon.s"
-	.include "code/seasons/enemyCode/bank0e.s"
+	.include "object_code/seasons/enemyCode/bank0e.s"
 
 .ends
 
@@ -950,14 +957,16 @@ _linkItemAnimationTable:
 
 	.include "code/enemyCommon.s"
 	.include "code/enemyBossCommon.s"
-	.include "code/seasons/enemyCode/bank0f.s"
+	.include "object_code/common/enemyCode/group3.s"
+	.include "object_code/seasons/enemyCode/bank0f.s"
 	.include "code/seasons/cutscenes/transitionToDragonOnox.s"
 
 	.REPT $87
 	.db $0f ; emptyfill
 	.ENDR
 
-	.include "code/seasons/interactionCode/bank0f.s"
+	.include "object_code/common/interactionCode/group7.s"
+	.include "object_code/seasons/interactionCode/bank0f.s"
 
 .ends
 
@@ -970,9 +979,9 @@ _linkItemAnimationTable:
  m_section_force "Part_Code" NAMESPACE "partCode"
 
 	.include "code/partCommon.s"
-	.include "objects/commonPartCode.s"
+	.include "object_code/common/partCode.s"
         .include "data/partCodeTable.s"
-	.include "objects/seasons/partCode.s"
+	.include "object_code/seasons/partCode.s"
 
 .ends
 
@@ -1095,8 +1104,9 @@ puddleAnimationFrames:
 
 .include "code/serialFunctions.s"
 
-	.include "scripts/commonScriptHelper.s"
-	.include "code/seasons/interactionCode/bank15_1.s"
+	.include "scripts/common/scriptHelper.s"
+	.include "object_code/common/interactionCode/group4.s"
+	.include "object_code/seasons/interactionCode/bank15_1.s"
 
 	.include "code/staticObjects.s"
 	.include "build/data/staticDungeonObjects.s"
@@ -1105,7 +1115,7 @@ puddleAnimationFrames:
 	.include "build/data/treasureObjectData.s"
 
 	.include "scripts/seasons/scriptHelper.s"
-	.include "code/seasons/interactionCode/bank15_2.s"
+	.include "object_code/seasons/interactionCode/bank15_2.s"
 
 	.include "data/seasons/partAnimations.s"
 
@@ -1208,7 +1218,7 @@ puddleAnimationFrames:
 	.include "code/loadGraphics.s"
 	.include "code/treasureAndDrops.s"
 	.include "code/textbox.s"
-	.include "code/interactionCode/faroreMakeChest.s"
+	.include "object_code/common/interactionCode/faroreMakeChest.s"
 
 	.include "build/data/objectGfxHeaders.s"
 	.include "build/data/treeGfxHeaders.s"

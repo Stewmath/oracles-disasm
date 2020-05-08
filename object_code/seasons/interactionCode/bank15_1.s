@@ -1,6 +1,3 @@
-.include "code/interactionCode/group4.s"
-
-
 interactionCodee0:
 	ld e,$44		; $4c06
 	ld a,(de)		; $4c08

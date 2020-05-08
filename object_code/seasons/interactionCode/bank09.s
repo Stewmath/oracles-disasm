@@ -1,7 +1,3 @@
-.include "code/interactionCode/treasure.s"
-.include "code/interactionCode/group3.s"
-
-
 interactionCode5e:
 	call returnIfScrollMode01Unset		; $4bce
 	ld e,Interaction.state		; $4bd1

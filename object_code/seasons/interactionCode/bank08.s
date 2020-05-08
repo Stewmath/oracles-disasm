@@ -1,7 +1,3 @@
-.include "code/interactionCode/group1.s"
-.include "code/interactionCode/group2.s"
-
-
 interactionCode15:
 	ld a,(wMenuDisabled)		; $5138
 	ld b,a			; $513b

@@ -327,7 +327,7 @@ interactionCode10:
 
 
 .ifdef ROM_AGES
-.include "code/interactionCode/faroreMakeChest.s"
+.include "object_code/common/interactionCode/faroreMakeChest.s"
 .else
 interactionCode11_caller:
 	jpab bank3f.interactionCode11
@@ -1324,7 +1324,7 @@ interactionCode1c:
 
 
 .ifdef ROM_SEASONS
-.include "code/interactionCode/rupeeRoomRupees.s"
+.include "object_code/common/interactionCode/rupeeRoomRupees.s"
 .endif
 
 

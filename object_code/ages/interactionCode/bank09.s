@@ -1,7 +1,3 @@
-.include "code/interactionCode/group2.s"
-.include "code/interactionCode/treasure.s"
-
-
 ; ==============================================================================
 ; INTERACID_GHOST_VERAN
 ; ==============================================================================
