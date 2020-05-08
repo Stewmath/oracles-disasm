@@ -264,7 +264,7 @@
 .define PARTID_GREAT_FAIRY_HEART		$30
 
 ;;
-; Also used by ENEMYID_PODOBOO_TOWER, ENEMYID_FIREBALL_SHOOTER
+; Also used by ENEMYID_PODOBOO_TOWER, ENEMYID_FIREBALL_SHOOTER, ENEMYID_MAGUNESU, ENEMYID_MANHANDLA
 .define PARTID_GOPONGA_PROJECTILE		$31
 
 ;;
@@ -448,11 +448,19 @@
 ; @subid_04{D6 room where button destroys floor tiles}
 .define PARTID_HOLES_FLOORTRAP			$0a
 
+.define PARTID_26				$26
+.define PARTID_2e				$2e
+
 ;;
 ; TODO: Is this the same as PARTID_GOPONGA_PROJECTILE?
 ; @subid_80{Normal}
 ; @subid_81{Low health}
 .define PARTID_MOTHULA_PROJECTILE_1		$31
+
+.define PARTID_33				$33
+.define PARTID_38				$38
+.define PARTID_39				$39
+.define PARTID_3d				$3d
 
 ;;
 .define PARTID_AQUAMENTUS_PROJECTILE		$40
@@ -464,10 +472,15 @@
 ; @subid_81{Low health}
 .define PARTID_MOTHULA_PROJECTILE_2		$42
 
+.define PARTID_43				$43
+.define PARTID_44				$44
+
 ; relating to General Onox boss fight?
 .define PARTID_47				$47
 .define PARTID_48				$48
 .define PARTID_49				$49
+
+.define PARTID_4a				$4a
 
 
 .endif

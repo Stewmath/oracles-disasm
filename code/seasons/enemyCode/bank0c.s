@@ -45,7 +45,7 @@ enemyCode0f:
 	call checkBEnemySlotsAvailable		; $6854
 	ret nz			; $6857
 	call copyVar03ToVar30	; $6858
-	ld b,$0f		; $685b
+	ld b,ENEMYID_ROLLING_SPIKE_TRAP		; $685b
 	call _ecom_spawnUncountedEnemyWithSubid01		; $685d
 	ld (hl),$08		; $6860
 	call seasonsFunc_0c_68c8		; $6862
@@ -174,7 +174,7 @@ seasonsFunc_0c_68fa:
 	push de			; $690a
 	call seasonsFunc_0c_6925		; $690b
 	push bc			; $690e
-	ld b,$0f		; $690f
+	ld b,ENEMYID_ROLLING_SPIKE_TRAP		; $690f
 	call _ecom_spawnEnemyWithSubid01		; $6911
 	ld (hl),$09		; $6914
 	pop bc			; $6916
@@ -450,7 +450,7 @@ _pokey_state_0:
 	ld b,$04		; $6a80
 	call checkBEnemySlotsAvailable		; $6a82
 	ret nz			; $6a85
-	ld b,$11		; $6a86
+	ld b,ENEMYID_POKEY		; $6a86
 	call _ecom_spawnUncountedEnemyWithSubid01		; $6a88
 	ld (hl),$05		; $6a8b
 	ld l,$96		; $6a8d
@@ -1039,7 +1039,7 @@ _ironMask_magnetGloveCheck:
 	ld (hl),$50		; $6dbf
 	ld a,$04		; $6dc1
 	call enemySetAnimation		; $6dc3
-	ld b,$1c		; $6dc6
+	ld b,ENEMYID_IRON_MASK		; $6dc6
 	call _ecom_spawnUncountedEnemyWithSubid01		; $6dc8
 	ret nz			; $6dcb
 	jp objectCopyPosition		; $6dcc

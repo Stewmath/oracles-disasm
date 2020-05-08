@@ -3597,7 +3597,14 @@ _vire_mainForm_state8:
 	ld (wDisabledObjects),a		; $5675
 	ld (wDisableLinkCollisionsAndMenu),a		; $5678
 
+.ifdef ROM_AGES
 	call _ecom_incState		; $567b
+.else
+	ld h,d			; $56f2
+	ld l,Enemy.state		; $56f3
+	inc (hl)		; $56f5
+.endif
+
 	inc l			; $567e
 	ldi (hl),a ; [state2] = 0
 	ld (hl),90 ; [counter1]
@@ -4216,7 +4223,14 @@ _vire_batForm_stateA:
 	or a			; $59bb
 	jr nz,++		; $59bc
 
+.ifdef ROM_AGES
 	call _ecom_incState		; $59be
+.else
+	ld h,d			; $5a36
+	ld l,Enemy.state	; $5a37
+	inc (hl)		; $5a39
+.endif
+
 	ld l,Enemy.counter1		; $59c1
 	ld (hl),$08		; $59c3
 	ret			; $59c5

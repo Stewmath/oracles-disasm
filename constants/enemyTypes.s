@@ -780,6 +780,18 @@
 .else; ROM_SEASONS
 
 .define ENEMYID_GENERAL_ONOX			$02
+
+;;
+; @subid_00{Body part spawner}
+; @subid_01{Main body with tail}
+; @subid_02{Left shoulder}
+; @subid_03{Right shoulder}
+; @subid_04{Left claw}
+; @subid_05{Right claw}
+; @subid_06{Left arm part close to claw}
+; @subid_07{Right arm part close to claw}
+; @subid_08{Left arm part close to shoulder}
+; @subid_08{Right arm part close to shoulder}
 .define ENEMYID_DRAGON_ONOX			$05
 
 .define ENEMYID_GLEEOK				$06

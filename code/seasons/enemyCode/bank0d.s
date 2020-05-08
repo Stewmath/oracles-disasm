@@ -170,7 +170,7 @@ magunesuFunc_0d_6cb7:
 	ret nz			; $6cbe
 	call getFreePartSlot		; $6cbf
 	ret nz			; $6cc2
-	ld (hl),$31		; $6cc3
+	ld (hl),PARTID_GOPONGA_PROJECTILE		; $6cc3
 	ld bc,$0400		; $6cc5
 	call objectCopyPositionWithOffset		; $6cc8
 	or d			; $6ccb
@@ -713,7 +713,7 @@ enemyCode47:
 	call addAToBc		; $6ff3
 -
 	push bc			; $6ff6
-	ld b,$47		; $6ff7
+	ld b,ENEMYID_MOTHULA_CHILD		; $6ff7
 	call _ecom_spawnUncountedEnemyWithSubid01		; $6ff9
 	dec (hl)		; $6ffc
 	call objectCopyPosition		; $6ffd
@@ -1867,7 +1867,7 @@ enemyCode5c:
 	ld (hl),$10		; $7663
 	call getFreePartSlot		; $7665
 	ret nz			; $7668
-	ld (hl),$26		; $7669
+	ld (hl),PARTID_26		; $7669
 	ld bc,$0600		; $766b
 	jp objectCopyPositionWithOffset		; $766e
 
