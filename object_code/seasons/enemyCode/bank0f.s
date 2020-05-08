@@ -214,7 +214,7 @@ _generalOnox_subid0:
 	jr @func_5a06		; $5989
 
 @@func_598b:
-	call $5c3b		; $598b
+	call _generalOnox_subid2@func_5c3b		; $598b
 	jr nc,+			; $598e
 	call enemyAnimate		; $5990
 	call _ecom_decCounter2		; $5993
@@ -656,6 +656,8 @@ _generalOnox_subid2:
 	ld hl,$cfc8		; $5c34
 	inc (hl)		; $5c37
 	jp enemyDelete		; $5c38
+
+@func_5c3b:
 	ld h,d			; $5c3b
 	ld l,$8b		; $5c3c
 	ldh a,(<hEnemyTargetY)	; $5c3e
@@ -3891,10 +3893,10 @@ enemyCode07:
 	ld a,(de)		; $6e61
 	rst_jumpTable			; $6e62
 	.dw @substate0
-	.dw $6ea7
-	.dw $6ec8
-	.dw $6edc
-	.dw $6f1f
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw @substateStub
 	
 @substate0:
 	call checkLinkCollisionsEnabled		; $6e6d
@@ -3974,7 +3976,7 @@ enemyCode07:
 	inc l			; $6ee1
 	ld a,(hl)		; $6ee2
 	dec a			; $6ee3
-	ld hl,_table_6f13		; $6ee4
+	ld hl,@table_6f13		; $6ee4
 	rst_addDoubleIndex			; $6ee7
 	ldi a,(hl)		; $6ee8
 	ld c,(hl)		; $6ee9
@@ -4002,7 +4004,7 @@ enemyCode07:
 	ld ($cfc0),a		; $6f0f
 	ret			; $6f12
 
-_table_6f13:
+@table_6f13:
 	.db $08 $78
 	.db $0c $38
 	.db $0a $60

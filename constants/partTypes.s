@@ -216,7 +216,11 @@
 .define PARTID_GROTTO_CRYSTAL			$24
 
 ;;
-.define PARTID_25				$25
+; @subid_00{Shoots up}
+; @subid_01{Shoots right}
+; @subid_02{Shoots down}
+; @subid_03{Shoots left}
+.define PARTID_WALL_ARROW_SHOOTER		$25
 
 ;;
 .define PARTID_SPARKLE				$26
@@ -448,7 +452,38 @@
 ; @subid_04{D6 room where button destroys floor tiles}
 .define PARTID_HOLES_FLOORTRAP			$0a
 
-.define PARTID_26				$26
+;;
+; @subid_00{1 of 3 requiring Hyper Slingshot}
+; @subid_01{1 of 3 requiring Hyper Slingshot}
+; @subid_02{1 of 3 requiring Hyper Slingshot}
+; @subid_80{Hit by any slingshot}
+.define PARTID_SLINGSHOT_EYE_STATUE		$0d
+
+; Part of object data, spawned by interaction $95, in Moblin's rest house
+.define PARTID_S_16				$16
+
+.define PARTID_SHOOTING_DRAGON_HEAD		$24
+
+;;
+.define PARTID_WALL_FLAME_SHOOTERS_FLAMES	$26
+
+;;
+.define PARTID_BURIED_MOLDORM			$2b
+
+;;
+; @subid_00{Shoots up}
+; @subid_01{Shoots right}
+; @subid_02{Shoots down}
+; @subid_03{Shoots left}
+.define PARTID_CANNON_ARROW_SHOOTER		$2c
+
+;;
+; @subid_00{Faces right}
+; @subid_01{Faces left}
+.define PARTID_KING_MOBLINS_CANNONS		$2d
+
+;;
+; created by facade - holes?
 .define PARTID_2e				$2e
 
 ;;
@@ -457,9 +492,25 @@
 ; @subid_81{Low health}
 .define PARTID_MOTHULA_PROJECTILE_1		$31
 
+; Exists just in the side-scrolling ice room in D8 with 3 1-block platforms
+.define PARTID_32		1		$32
+
+;;
+; created by dragon onox
 .define PARTID_33				$33
+
+;;
+; created by goriya brothers
 .define PARTID_38				$38
+
+;;
+; created by agunima - the balls?
 .define PARTID_39				$39
+
+.define PARTID_3a				$3a
+
+;;
+; created by frypolar
 .define PARTID_3d				$3d
 
 ;;
@@ -472,15 +523,29 @@
 ; @subid_81{Low health}
 .define PARTID_MOTHULA_PROJECTILE_2		$42
 
+;;
+; created by Gleeok - projectiles?
 .define PARTID_43				$43
+
+;;
+; created by medusa head
 .define PARTID_44				$44
+
+.define PARTID_S_45				$45
+
+.define PARTID_S_46				$46
 
 ; relating to General Onox boss fight?
 .define PARTID_47				$47
 .define PARTID_48				$48
 .define PARTID_49				$49
 
+;;
+; created by dragon onox
 .define PARTID_4a				$4a
+
+; located in Onox's room
+.define PARTID_S_4f				$4f
 
 
 .endif

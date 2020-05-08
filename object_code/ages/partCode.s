@@ -144,13 +144,15 @@ _label_11_224:
 	ld (hl),$0a		; $602e
 	jp objectSetVisible83		; $6030
 
-;;
-; @addr{6033}
+
+; ==============================================================================
+; PARTID_WALL_ARROW_SHOOTER
+; ==============================================================================
 partCode25:
 	ld e,$c4		; $6033
 	ld a,(de)		; $6035
 	or a			; $6036
-	jr nz,_label_11_225	; $6037
+	jr nz,+			; $6037
 	ld h,d			; $6039
 	ld l,e			; $603a
 	inc (hl)		; $603b
@@ -160,7 +162,7 @@ partCode25:
 	rrca			; $6041
 	ld l,$c9		; $6042
 	ld (hl),a		; $6044
-_label_11_225:
++
 	call partCommon_decCounter1IfNonzero		; $6045
 	ret nz			; $6048
 	ld e,$c2		; $6049
@@ -168,10 +170,10 @@ _label_11_225:
 	bit 0,a			; $604c
 	ld e,$cd		; $604e
 	ldh a,(<hEnemyTargetX)	; $6050
-	jr z,_label_11_226	; $6052
+	jr z,+			; $6052
 	ld e,$cb		; $6054
 	ldh a,(<hEnemyTargetY)	; $6056
-_label_11_226:
++
 	ld b,a			; $6058
 	ld a,(de)		; $6059
 	sub b			; $605a
@@ -181,7 +183,8 @@ _label_11_226:
 	ld e,$c6		; $6060
 	ld a,$21		; $6062
 	ld (de),a		; $6064
-	ld hl,$6080		; $6065
+	ld hl,_table_6080		; $6065
+	
 	ld e,$c2		; $6068
 	ld a,(de)		; $606a
 	rst_addDoubleIndex			; $606b
@@ -190,7 +193,7 @@ _label_11_226:
 	ld c,(hl)		; $606e
 	call getFreePartSlot		; $606f
 	ret nz			; $6072
-	ld (hl),$1a		; $6073
+	ld (hl),PARTID_ENEMY_ARROW		; $6073
 	inc l			; $6075
 	inc (hl)		; $6076
 	call objectCopyPositionWithOffset		; $6077
@@ -199,14 +202,14 @@ _label_11_226:
 	ld a,(de)		; $607d
 	ld (hl),a		; $607e
 	ret			; $607f
-.DB $fc				; $6080
-	nop			; $6081
-	nop			; $6082
-	inc b			; $6083
-	inc b			; $6084
-	nop			; $6085
-	nop			; $6086
-.DB $fc				; $6087
+
+_table_6080:
+	.db $fc $00 ; shooting up
+	.db $00 $04 ; shooting right
+	.db $04 $00 ; shooting down
+	.db $00 $fc ; shooting left
+
+
 ;;
 ; @addr{6088}
 partCode26:
@@ -1911,7 +1914,7 @@ _veranProjectile_subid1:
 ; Just moving normally
 @state2:
 	call objectApplySpeed		; $6a7c
-	call _partCommon_checkTileCollisionOrOutOfBounds		; $6a7f
+	call partCommon_checkTileCollisionOrOutOfBounds		; $6a7f
 	ret nz			; $6a82
 	jp partDelete		; $6a83
 
@@ -1981,7 +1984,7 @@ _label_11_303:
 	nop			; $6ae6
 	call objectCheckWithinScreenBoundary		; $6ae7
 	jp nc,$6c17		; $6aea
-	call _partCommon_checkTileCollisionOrOutOfBounds		; $6aed
+	call partCommon_checkTileCollisionOrOutOfBounds		; $6aed
 	jr nc,_label_11_304	; $6af0
 	call $6b00		; $6af2
 	jr nc,_label_11_304	; $6af5
@@ -2018,7 +2021,7 @@ _label_11_305:
 	jp nc,$6c17		; $6b27
 	ld b,$ff		; $6b2a
 	call $6b5f		; $6b2c
-	call _partCommon_checkTileCollisionOrOutOfBounds		; $6b2f
+	call partCommon_checkTileCollisionOrOutOfBounds		; $6b2f
 	jr nc,_label_11_306	; $6b32
 	call $6b00		; $6b34
 	jr nc,_label_11_306	; $6b37
@@ -2027,7 +2030,7 @@ _label_11_305:
 _label_11_306:
 	ld b,$02		; $6b3f
 	call $6b5f		; $6b41
-	call _partCommon_checkTileCollisionOrOutOfBounds		; $6b44
+	call partCommon_checkTileCollisionOrOutOfBounds		; $6b44
 	jr nc,_label_11_307	; $6b47
 	call $6b00		; $6b49
 	jr nc,_label_11_307	; $6b4c
@@ -3076,7 +3079,7 @@ partCode3f:
 	ld a,(de)		; $7155
 	rst_jumpTable			; $7156
 	.dw _kingMoblinBomb_state0
-	.dw _kingMoblinBomb_state1
+	.dw _common_kingMoblinBomb_state1
 	.dw _kingMoblinBomb_state2
 	.dw _kingMoblinBomb_state3
 	.dw _kingMoblinBomb_state4
@@ -3128,7 +3131,7 @@ _kingMoblinBomb_state0:
 
 ; Bomb isn't doing anything except waiting to explode.
 ; This state's code is called by other states (2-4).
-_kingMoblinBomb_state1:
+_common_kingMoblinBomb_state1:
 	ld e,Part.counter1		; $719f
 	ld a,(de)		; $71a1
 	or a			; $71a2
@@ -3164,6 +3167,11 @@ _kingMoblinBomb_explode:
 	ld l,Part.state		; $71c4
 	ld (hl),$05		; $71c6
 
+.ifdef ROM_SEASONS
+	ld l,Part.collisionType		; $6fd2
+	res 7,(hl)		; $6fd4
+.endif
+
 	ld l,Part.oamFlagsBackup		; $71c8
 	ld a,$0a		; $71ca
 	ldi (hl),a		; $71cc
@@ -3194,10 +3202,14 @@ _kingMoblinBomb_state2:
 	ld (de),a ; [state2] = 1
 	xor a			; $71ed
 	ld (wLinkGrabState2),a		; $71ee
+.ifdef ROM_AGES
 	call objectSetVisiblec1		; $71f1
+.else
+	jp objectSetVisiblec1
+.endif
 
 @beingHeld:
-	call _kingMoblinBomb_state1		; $71f4
+	call _common_kingMoblinBomb_state1		; $71f4
 	ret nz			; $71f7
 	jp dropLinkHeldItem		; $71f8
 
@@ -3224,7 +3236,7 @@ _kingMoblinBomb_state2:
 	ld l,Item.speed		; $7213
 	ld (hl),SPEED_40		; $7215
 
-	jp _kingMoblinBomb_state1		; $7217
+	jp _common_kingMoblinBomb_state1		; $7217
 
 @atRest:
 	ld e,Part.state		; $721a
@@ -3237,7 +3249,7 @@ _kingMoblinBomb_state2:
 
 ; Being thrown. (King moblin sets the state to this.)
 _kingMoblinBomb_state3:
-	call _kingMoblinBomb_state1		; $7224
+	call _common_kingMoblinBomb_state1		; $7224
 	ret z			; $7227
 
 	ld c,$20		; $7228
@@ -3258,7 +3270,7 @@ _kingMoblinBomb_state3:
 
 ; Waiting to be picked up (by link or king moblin)
 _kingMoblinBomb_state4:
-	call _kingMoblinBomb_state1		; $7240
+	call _common_kingMoblinBomb_state1		; $7240
 	ret z			; $7243
 	jp objectAddToGrabbableObjectBuffer		; $7244
 
@@ -3391,6 +3403,7 @@ _kingMoblinBomb_checkCollisionWithKingMoblin:
 	ld l,Enemy.health		; $72d9
 	dec (hl)		; $72db
 	ret			; $72dc
+
 
 ;;
 ; @addr{72dd}
@@ -3646,7 +3659,7 @@ _label_11_361:
 _label_11_362:
 	call partAnimate		; $7436
 	call objectApplySpeed		; $7439
-	call _partCommon_checkTileCollisionOrOutOfBounds		; $743c
+	call partCommon_checkTileCollisionOrOutOfBounds		; $743c
 	ret nc			; $743f
 	jp partDelete		; $7440
 
@@ -4067,7 +4080,7 @@ _octogonDepthCharge_subid1:
 
 @state1:
 	call objectApplySpeed		; $7657
-	call _partCommon_checkTileCollisionOrOutOfBounds		; $765a
+	call partCommon_checkTileCollisionOrOutOfBounds		; $765a
 	jp nz,partAnimate		; $765d
 	jp partDelete		; $7660
 
@@ -5187,7 +5200,7 @@ _label_11_426:
 	ld (hl),d		; $7cac
 	call objectCopyPosition		; $7cad
 _label_11_427:
-	call _partCommon_checkTileCollisionOrOutOfBounds		; $7cb0
+	call partCommon_checkTileCollisionOrOutOfBounds		; $7cb0
 	jp nc,objectApplySpeed		; $7cb3
 _label_11_428:
 	ld h,d			; $7cb6

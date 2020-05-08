@@ -116,7 +116,7 @@ partCommon_standardUpdate:
 ;
 ; @param[out]	zflag	z if collision occurred
 ; @addr{4072}
-_partCommon_checkTileCollisionOrOutOfBounds:
+partCommon_checkTileCollisionOrOutOfBounds:
 	call objectGetTileCollisions		; $4072
 	add $01 ; Check for SPECIALCOLLISION_SCREEN_BOUNDARY
 	ret z			; $4077

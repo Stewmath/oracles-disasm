@@ -563,17 +563,17 @@ _pokey_6b05:
 
 _pokey_6b2e:
 	ld b,$f3		; $6b2e
-	call $6b8e		; $6b30
+	call _pokeyFunc_0c_6b8e		; $6b30
 	jr +			; $6b33
 
 _pokey_6b35:
 	ld b,$e6		; $6b35
-	call $6b8e		; $6b37
+	call _pokeyFunc_0c_6b8e		; $6b37
 	jr +			; $6b3a
 
 _pokey_6b3c:
 	ld b,$d9		; $6b3c
-	call $6b8e		; $6b3e
+	call _pokeyFunc_0c_6b8e		; $6b3e
 
 +
 	ld a,$06		; $6b41
@@ -620,6 +620,7 @@ _pokeyFunc_0c_6b82:
 	dec a			; $6b8a
 	jr nz,-			; $6b8b
 	ret			; $6b8d
+_pokeyFunc_0c_6b8e:
 	ld h,d			; $6b8e
 	ld l,$8f		; $6b8f
 	ld a,(hl)		; $6b91

@@ -266,7 +266,7 @@ enemyCode70:
 	or a			; $4726
 	jr z,+			; $4727
 	dec a			; $4729
-	call z,$47a5		; $472a
+	call z,_func_47a5		; $472a
 	jr @@animate2		; $472d
 +
 	ld a,$19		; $472f
@@ -349,6 +349,8 @@ _func_4797:
 	sub $40			; $47a0
 	cp $70			; $47a2
 	ret			; $47a4
+
+_func_47a5:
 	ld a,(wFrameCounter)		; $47a5
 	and $07			; $47a8
 	ret nz			; $47aa
@@ -4085,7 +4087,7 @@ enemyCode76:
 	ld (de),a		; $5c67
 	ld (hl),d		; $5c68
 	ld h,d			; $5c69
-	jp $5dd5		; $5c6a
+	jp enemyCode7e@func_5dd5		; $5c6a
 @func5c6d:
 	ld l,$84		; $5c6d
 	ld (hl),$0b		; $5c6f
@@ -4262,8 +4264,9 @@ enemyCode7e:
 	call _poeSister5fc2		; $5d7c
 	ret z			; $5d7f
 @normalStatus:
-	call $5d86		; $5d80
+	call @func_5d86		; $5d80
 	jp _func_5fec		; $5d83
+@func_5d86:
 	call _poeSister604b		; $5d86
 	call _poeSister602e		; $5d89
 	ld e,$84		; $5d8c
@@ -4305,7 +4308,9 @@ enemyCode7e:
 	ld e,$82		; $5dce
 	ld a,(de)		; $5dd0
 	or a			; $5dd1
-	jp z,$5c6d		; $5dd2
+	jp z,enemyCode76@func5c6d		; $5dd2
+
+@func_5dd5:
 	ld l,$84		; $5dd5
 	ld (hl),$08		; $5dd7
 	ld l,$a9		; $5dd9

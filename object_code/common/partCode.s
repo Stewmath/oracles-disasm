@@ -3113,7 +3113,7 @@ partCode18:
 @state1:
 	call objectCheckWithinScreenBoundary		; $5050
 	jp nc,partDelete		; $5053
-	call _partCommon_checkTileCollisionOrOutOfBounds		; $5056
+	call partCommon_checkTileCollisionOrOutOfBounds		; $5056
 	jr nc,+			; $5059
 	jp z,partDelete		; $505b
 	ld e,$c4		; $505e
@@ -3236,7 +3236,7 @@ partCode1a:
 	jp objectSetVisible81		; $50f7
 
 @@state1:
-	call _partCommon_checkTileCollisionOrOutOfBounds		; $50fa
+	call partCommon_checkTileCollisionOrOutOfBounds		; $50fa
 	jr nc,@objectApplySpeed	; $50fd
 	jr z,@partDelete	; $50ff
 	jr @func_11_513a		; $5101
@@ -3370,7 +3370,7 @@ partCode1c:
 	jp objectSetVisible81		; $51b2
 
 @state1:
-	call _partCommon_checkTileCollisionOrOutOfBounds		; $51b5
+	call partCommon_checkTileCollisionOrOutOfBounds		; $51b5
 	jr c,+			; $51b8
 	call objectApplySpeed		; $51ba
 	call objectCheckWithinScreenBoundary		; $51bd
@@ -3578,7 +3578,7 @@ partCode1e:
 	inc (hl)		; $52da
 
 @state2:
-	call _partCommon_checkTileCollisionOrOutOfBounds		; $52db
+	call partCommon_checkTileCollisionOrOutOfBounds		; $52db
 	jr nc,+			; $52de
 	jr nz,_func_52f4	; $52e0
 	jr @state5		; $52e2
@@ -3669,7 +3669,7 @@ partCode1f:
 	jr z,_func_5369	; $5359
 	call objectCheckWithinScreenBoundary		; $535b
 	jr nc,@normalStatus	; $535e
-	call _partCommon_checkTileCollisionOrOutOfBounds		; $5360
+	call partCommon_checkTileCollisionOrOutOfBounds		; $5360
 	jp nc,objectApplySpeed		; $5363
 @normalStatus:
 	jp partDelete		; $5366
@@ -4395,7 +4395,7 @@ partCode29:
 
 @state2:
 	call _func_5758		; $574e
-	call _partCommon_checkTileCollisionOrOutOfBounds		; $5751
+	call partCommon_checkTileCollisionOrOutOfBounds		; $5751
 	jp c,partDelete		; $5754
 	ret			; $5757
 
@@ -5014,7 +5014,7 @@ partCode4c:
 	jr z,+			; $5a02
 	call partAnimate		; $5a04
 	call objectApplySpeed		; $5a07
-	call _partCommon_checkTileCollisionOrOutOfBounds		; $5a0a
+	call partCommon_checkTileCollisionOrOutOfBounds		; $5a0a
 	ret nz			; $5a0d
 	jp partDelete		; $5a0e
 +
@@ -5065,7 +5065,7 @@ partCode4c:
 @state2:
 	call partAnimate		; $5a54
 	call objectApplySpeed		; $5a57
-	call _partCommon_checkTileCollisionOrOutOfBounds		; $5a5a
+	call partCommon_checkTileCollisionOrOutOfBounds		; $5a5a
 	ret nc			; $5a5d
 	call objectGetAngleTowardEnemyTarget		; $5a5e
 	sub $02			; $5a61
@@ -5160,7 +5160,7 @@ partCode4e:
 ; Moving toward Link
 @state2:
 	call objectApplySpeed		; $5ad1
-	call _partCommon_checkTileCollisionOrOutOfBounds		; $5ad4
+	call partCommon_checkTileCollisionOrOutOfBounds		; $5ad4
 	ret nc			; $5ad7
 
 @destroy:
@@ -5405,7 +5405,7 @@ partCode51:
 	jp objectSetComponentSpeedByScaledVelocity		; $5c27
 
 @state2:
-	call _partCommon_checkTileCollisionOrOutOfBounds		; $5c2a
+	call partCommon_checkTileCollisionOrOutOfBounds		; $5c2a
 	jr nc,+			; $5c2d
 	ld b,INTERACID_EXPLOSION		; $5c2f
 	call objectCreateInteractionWithSubid00		; $5c31

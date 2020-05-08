@@ -1867,7 +1867,7 @@ enemyCode5c:
 	ld (hl),$10		; $7663
 	call getFreePartSlot		; $7665
 	ret nz			; $7668
-	ld (hl),PARTID_26		; $7669
+	ld (hl),PARTID_WALL_FLAME_SHOOTERS_FLAMES		; $7669
 	ld bc,$0600		; $766b
 	jp objectCopyPositionWithOffset		; $766e
 
