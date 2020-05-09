@@ -67,12 +67,12 @@ objectGfxHeaderTable:
 	/* $41 */ m_ObjectGfxHeader gfx_mailman_wiseman $00
 	/* $42 */ m_ObjectGfxHeader gfx_hobos $00
 	/* $43 */ m_ObjectGfxHeader gfx_mustacheguy_cat_weirdo $00
-	/* $44 */ m_ObjectGfxHeader gfx_zora_plen_whitemustache $00
-	/* $45 */ m_ObjectGfxHeader gfx_exclamations_other_kid $00
-	/* $46 */ m_ObjectGfxHeader gfx_pipin_glassesguy $00
-	/* $47 */ m_ObjectGfxHeader gfx_blossom $00
-	/* $48 */ m_ObjectGfxHeader gfx_bipin_son $00
-	/* $49 */ m_ObjectGfxHeader gfx_bipin_son_and_lady $00
+	/* $44 */ m_ObjectGfxHeader gfx_villagezora_plen_whitemustache $00
+	/* $45 */ m_ObjectGfxHeader gfx_zz_bubble_exclamation_heart_kid $00
+	/* $46 */ m_ObjectGfxHeader spr_bipin_glassesguy $00
+	/* $47 */ m_ObjectGfxHeader gfx_blossom_otherlady $00
+	/* $48 */ m_ObjectGfxHeader spr_bipsom_1 $00
+	/* $49 */ m_ObjectGfxHeader gfx_bipsom_2_and_lady $00
 	/* $4a */ m_ObjectGfxHeader gfx_lady_butterfly_pickaxeworker $00
 	/* $4b */ m_ObjectGfxHeader gfx_fairy_toilethand $00
 	/* $4c */ m_ObjectGfxHeader gfx_chickens_dog_forestfairy_other $00
@@ -114,12 +114,12 @@ objectGfxHeaderTable:
 	/* $70 */ m_ObjectGfxHeader gfx_present_past_symbols $00
 	/* $71 */ m_ObjectGfxHeader gfx_tentthing_seasonsymbols $00
 	/* $72 */ m_ObjectGfxHeader spr_dungeon_sprites $00
-	/* $73 */ m_ObjectGfxHeader gfx_spinner_sprites $00
+	/* $73 */ m_ObjectGfxHeader spr_spinner_seedbouncer $00
 	/* $74 */ m_ObjectGfxHeader gfx_roller_owl_barrier_orb $00
 	/* $75 */ m_ObjectGfxHeader gfx_rollingplatform_d8stuff $00
 	/* $76 */ m_ObjectGfxHeader gfx_pedestal_flame_crystal $00
 	/* $77 */ m_ObjectGfxHeader gfx_colored_cube $00
-	/* $78 */ m_ObjectGfxHeader gfx_common_items $00
+	/* $78 */ m_ObjectGfxHeader spr_common_items $00
 	/* $79 */ m_ObjectGfxHeader gfx_quest_items_5 $00
 	/* $7a */ m_ObjectGfxHeader gfx_map_compass_keys_bookofseals $00
 	/* $7b */ m_ObjectGfxHeader gfx_blank $00

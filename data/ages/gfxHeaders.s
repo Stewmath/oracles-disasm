@@ -215,7 +215,7 @@ gfxHeader04:
 	m_GfxHeaderForceMode gfx_capcom_nintendo $8800 $7f|$80 $00
 	m_GfxHeaderForceMode gfx_capcom_nintendo $9000 $7f|$80 $00
 gfxHeader05:
-	m_GfxHeader gfx_map_icons $8000 $1f|$80
+	m_GfxHeader spr_minimap_icons $8000 $1f|$80
 	m_GfxHeader gfx_0e264f $8700 $2f|$80
 	m_GfxHeader unk_0e28a8 $9c00 $3f|$80
 	m_GfxHeader unk_0e2a57 $9c01 $3f
@@ -259,24 +259,24 @@ gfxHeader0c:
 	m_GfxHeader unk_0cc630 $9800 $23|$80
 	m_GfxHeader unk_0cc7eb $9801 $23
 gfxHeader0d:
-	m_GfxHeader         gfx_map_tiles_present_1  $8801           $6f|$80
-	m_GfxHeader         gfx_map_tiles_common     $9001           $5f|$80
-	m_GfxHeader         gfx_map_tiles_present_2  $9601           $1f|$80
-	m_GfxHeader         gfx_map_icons            $8000           $6b|$80
-	m_GfxHeader         gfx_dungeon_map_tiles    $8800           $3f|$80
-	m_GfxHeaderDestRam  map_present_minimap      w4TileMap       $23|$80
-	m_GfxHeaderDestRam  flg_present_minimap      w4AttributeMap  $23
+	m_GfxHeader         gfx_minimap_tiles_present_1  $8801           $6f|$80
+	m_GfxHeader         gfx_minimap_tiles_common     $9001           $5f|$80
+	m_GfxHeader         gfx_minimap_tiles_present_2  $9601           $1f|$80
+	m_GfxHeader         spr_minimap_icons            $8000           $6b|$80
+	m_GfxHeader         gfx_minimap_tiles_dungeon    $8800           $3f|$80
+	m_GfxHeaderDestRam  map_present_minimap          w4TileMap       $23|$80
+	m_GfxHeaderDestRam  flg_present_minimap          w4AttributeMap  $23
 gfxHeader0e:
-	m_GfxHeader         gfx_map_tiles_past_1   $8801           $5f|$80
-	m_GfxHeader         gfx_map_tiles_common   $9001           $5f|$80
-	m_GfxHeader         gfx_map_tiles_past_2   $9601           $1f|$80
-	m_GfxHeader         gfx_map_icons          $8000           $6b|$80
-	m_GfxHeader         gfx_dungeon_map_tiles  $8800           $3f|$80
-	m_GfxHeaderDestRam  map_past_minimap       w4TileMap       $23|$80
-	m_GfxHeaderDestRam  flg_past_minimap       w4AttributeMap  $23
+	m_GfxHeader         gfx_minimap_tiles_past_1   $8801           $5f|$80
+	m_GfxHeader         gfx_minimap_tiles_common   $9001           $5f|$80
+	m_GfxHeader         gfx_minimap_tiles_past_2   $9601           $1f|$80
+	m_GfxHeader         spr_minimap_icons          $8000           $6b|$80
+	m_GfxHeader         gfx_minimap_tiles_dungeon  $8800           $3f|$80
+	m_GfxHeaderDestRam  map_past_minimap           w4TileMap       $23|$80
+	m_GfxHeaderDestRam  flg_past_minimap           w4AttributeMap  $23
 gfxHeader0f:
 	m_GfxHeader         gfx_map_compass_keys_bookofseals  $8000           $1f|$80
-	m_GfxHeader         gfx_dungeon_map_tiles             $8800           $3f|$80
+	m_GfxHeader         gfx_minimap_tiles_dungeon             $8800           $3f|$80
 	m_GfxHeaderDestRam  map_dungeon_minimap               w4TileMap       $23|$80
 	m_GfxHeaderDestRam  flg_dungeon_minimap               w4AttributeMap  $23
 gfxHeader10:

@@ -1,6 +1,6 @@
 	m_GfxData spr_common_sprites ; $0a3f3b
 	m_GfxData gfx_seaweed_cut ; $0a42b2
-	m_GfxData gfx_common_items ; $0a42c1
+	m_GfxData spr_common_items ; $0a42c1
 	m_GfxData gfx_quest_items_5 ; $0a440a
 	m_GfxData gfx_map_compass_keys_bookofseals ; $0a4598
 	m_GfxData gfx_blank ; $0a4715
@@ -48,18 +48,18 @@
 	m_GfxData gfx_blurb_blacktowerturret ; $0a6589
 	m_GfxData gfx_blurb_roomofrites ; $0a66cc
 	m_GfxData gfx_blurb_heroscave ; $0a67dd
-	m_GfxData gfx_map_icons ; $0a6919
-	m_GfxData gfx_dungeon_map_tiles ; $0a6dd7
-	m_GfxData gfx_map_tiles_common ; $0a6f67
-	m_GfxData gfx_map_tiles_present_2 ; $0a739a
-	m_GfxData gfx_map_tiles_present_1 ; $0a74ff
+	m_GfxData spr_minimap_icons ; $0a6919
+	m_GfxData gfx_minimap_tiles_dungeon ; $0a6dd7
+	m_GfxData gfx_minimap_tiles_common ; $0a6f67
+	m_GfxData gfx_minimap_tiles_present_2 ; $0a739a
+	m_GfxData gfx_minimap_tiles_present_1 ; $0a74ff
 	m_GfxData map_present_minimap ; $0a7a39
 	m_GfxData flg_present_minimap ; $0a7bc9
-	m_GfxData gfx_map_tiles_past_2 ; $0a7c4c
-	m_GfxData gfx_map_tiles_past_1 ; $0a7dcc
+	m_GfxData gfx_minimap_tiles_past_2 ; $0a7c4c
+	m_GfxData gfx_minimap_tiles_past_1 ; $0a7dcc
 	m_GfxData map_past_minimap ; $0a81ed
 	m_GfxData flg_past_minimap ; $0a8352
-	m_GfxData gfx_spinner_sprites ; $0a83d1
+	m_GfxData spr_spinner_seedbouncer ; $0a83d1
 	m_GfxData gfx_roller_owl_barrier_orb ; $0a84fe
 	m_GfxData gfx_rollingplatform_d8stuff ; $0a8640
 	m_GfxData gfx_pedestal_flame_crystal ; $0a87ad
@@ -71,12 +71,12 @@
 	m_GfxData gfx_mailman_wiseman ; $0a8f39
 	m_GfxData gfx_hobos ; $0a9107
 	m_GfxData gfx_mustacheguy_cat_weirdo ; $0a9307
-	m_GfxData gfx_zora_plen_whitemustache ; $0a9467
-	m_GfxData gfx_exclamations_other_kid ; $0a9630
-	m_GfxData gfx_pipin_glassesguy ; $0a978b
-	m_GfxData gfx_blossom ; $0a9954
-	m_GfxData gfx_bipin_son ; $0a9afd
-	m_GfxData gfx_bipin_son_and_lady ; $0a9cb4
+	m_GfxData gfx_villagezora_plen_whitemustache ; $0a9467
+	m_GfxData gfx_zz_bubble_exclamation_heart_kid ; $0a9630
+	m_GfxData spr_bipin_glassesguy ; $0a978b
+	m_GfxData gfx_blossom_otherlady ; $0a9954
+	m_GfxData spr_bipsom_1 ; $0a9afd
+	m_GfxData gfx_bipsom_2_and_lady ; $0a9cb4
 	m_GfxData gfx_lady_butterfly_pickaxeworker ; $0a9e86
 	m_GfxData gfx_fairy_toilethand ; $0aa01b
 	m_GfxData gfx_chickens_dog_forestfairy_other ; $0aa182
