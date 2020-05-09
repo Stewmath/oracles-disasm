@@ -921,17 +921,17 @@ gfxHeaderb0:
 gfxHeaderb1:
 	m_GfxHeader spr_ganon_2 $d002 $1d
 gfxHeaderb2:
-	m_GfxHeader tmp_ganon_5 $d002 $1f
+	m_GfxHeader spr_ganon_5 $d002 $1f
 gfxHeaderb3:
-	m_GfxHeader tmp_ganon_6 $d002 $11
+	m_GfxHeader spr_ganon_6 $d002 $11
 gfxHeaderb4:
-	m_GfxHeader tmp_ganon_7 $d002 $17
+	m_GfxHeader spr_ganon_7 $d002 $17
 gfxHeaderb5:
-	m_GfxHeader tmp_ganon_8 $d002 $1f
+	m_GfxHeader spr_ganon_8 $d002 $1f
 gfxHeaderb6:
-	m_GfxHeader tmp_ganon_9 $d002 $1f
+	m_GfxHeader spr_ganon_9 $d002 $1f
 gfxHeaderb7:
-	m_GfxHeader tmp_ganon_10 $d002 $1f
+	m_GfxHeader spr_ganon_10 $d002 $1f
 gfxHeaderb8:
 	m_GfxHeader unk_0e2aa2 $cf00 $0a
 gfxHeaderb9:
