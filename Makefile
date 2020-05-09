@@ -92,7 +92,7 @@ endif
 
 
 # Removal of temporary files is annoying, disable it.
-.SECONDARY:
+.PRECIOUS:
 
 .PHONY: all ages seasons clean run force
 
