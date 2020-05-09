@@ -27,14 +27,14 @@ objectGfxHeaderTable: ; $fdafb
 	/* $19 */ m_ObjectGfxHeader spr_twinrova_sacrifice_2 $00
 	/* $1a */ m_ObjectGfxHeader spr_twinrova_sacrifice_3 $00
 	/* $1b */ m_ObjectGfxHeader spr_twinrova_sacrifice_4 $00
-	/* $1c */ m_ObjectGfxHeader spr_ganon_unknown_1 $00
-	/* $1d */ m_ObjectGfxHeader spr_ganon_unknown_2 $00
-	/* $1e */ m_ObjectGfxHeader spr_ganon_6 $00
-	/* $1f */ m_ObjectGfxHeader spr_ganon_7 $00
-	/* $20 */ m_ObjectGfxHeader spr_ganon_8 $00
-	/* $21 */ m_ObjectGfxHeader spr_ganon_3 $00
-	/* $22 */ m_ObjectGfxHeader spr_ganon_4 $00
-	/* $23 */ m_ObjectGfxHeader spr_ganon_5 $00
+	/* $1c */ m_ObjectGfxHeader tmp_ganon_3 $00
+	/* $1d */ m_ObjectGfxHeader tmp_ganon_4 $00
+	/* $1e */ m_ObjectGfxHeader tmp_ganon_5 $00
+	/* $1f */ m_ObjectGfxHeader tmp_ganon_6 $00
+	/* $20 */ m_ObjectGfxHeader tmp_ganon_7 $00
+	/* $21 */ m_ObjectGfxHeader tmp_ganon_8 $00
+	/* $22 */ m_ObjectGfxHeader tmp_ganon_9 $00
+	/* $23 */ m_ObjectGfxHeader tmp_ganon_10 $00
 	/* $24 */ m_ObjectGfxHeader spr_twinrovamerged_1 $00
 	/* $25 */ m_ObjectGfxHeader spr_twinrova_1 $00
 	/* $26 */ m_ObjectGfxHeader spr_twinrova_2 $00
@@ -114,7 +114,7 @@ objectGfxHeaderTable: ; $fdafb
 	/* $70 */ m_ObjectGfxHeader spr_0dedc0 $00
 	/* $71 */ m_ObjectGfxHeader spr_hostilescrub $00
 	/* $72 */ m_ObjectGfxHeader spr_polsvoice_hardhatbeetle_spikedbeetle_beamon $00
-	/* $73 */ m_ObjectGfxHeader spr_projectiles $00
+	/* $73 */ m_ObjectGfxHeader tmp_projectiles_1 $00
 	/* $74 */ m_ObjectGfxHeader spr_octorok_leever_tektite_zora $00
 	/* $75 */ m_ObjectGfxHeader spr_moblin_ghini $00
 	/* $76 */ m_ObjectGfxHeader spr_moblin $00
@@ -141,7 +141,7 @@ objectGfxHeaderTable: ; $fdafb
 	/* $8b */ m_ObjectGfxHeader spr_magunesu $00
 	/* $8c */ m_ObjectGfxHeader spr_thwomps $00
 	/* $8d */ m_ObjectGfxHeader spr_fireball_cheepcheep $00
-	/* $8e */ m_ObjectGfxHeader spr_unknown_maybe_frypolar $00
+	/* $8e */ m_ObjectGfxHeader spr_projectiles_2 $00
 	/* $8f */ m_ObjectGfxHeader spr_projectiles_3 $00
 	/* $90 */ m_ObjectGfxHeader spr_0ab0a2 $00
 	/* $91 */ m_ObjectGfxHeader spr_kingmoblin_2 $00

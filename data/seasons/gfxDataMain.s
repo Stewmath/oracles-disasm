@@ -146,8 +146,8 @@
 	m_GfxData spr_magunesu ; $0aaa1f
 	m_GfxData spr_thwomps ; $0aab5a
 	m_GfxData spr_fireball_cheepcheep ; $0aac5c
-	m_GfxData spr_projectiles ; $0aad1b
-	m_GfxData spr_unknown_maybe_frypolar ; $0aae1f
+	m_GfxData tmp_projectiles_1 ; $0aad1b
+	m_GfxData spr_projectiles_2 ; $0aae1f
 	m_GfxData spr_projectiles_3 ; $0aafa9
 	m_GfxData spr_0ab0a2 ; $0ab0a2
 	m_GfxData spr_goriyabros ; $0ab11d
@@ -219,14 +219,14 @@
 	m_GfxData spr_twinrova_sacrifice_2 ; $0b14a3
 	m_GfxData spr_twinrova_sacrifice_3 ; $0b15a0
 	m_GfxData spr_twinrova_sacrifice_4 ; $0b16f7
-	m_GfxData spr_ganon_unknown_1 ; $0b18d7
-	m_GfxData spr_ganon_unknown_2 ; $0b19af
-	m_GfxData spr_ganon_6 ; $0b1ac9
-	m_GfxData spr_ganon_7 ; $0b1caa
-	m_GfxData spr_ganon_8 ; $0b1dbb
-	m_GfxData spr_ganon_3 ; $0b1f19
-	m_GfxData spr_ganon_4 ; $0b210d
-	m_GfxData spr_ganon_5 ; $0b230d
+	m_GfxData tmp_ganon_3 ; $0b18d7
+	m_GfxData tmp_ganon_4 ; $0b19af
+	m_GfxData tmp_ganon_5 ; $0b1ac9
+	m_GfxData tmp_ganon_6 ; $0b1caa
+	m_GfxData tmp_ganon_7 ; $0b1dbb
+	m_GfxData tmp_ganon_8 ; $0b1f19
+	m_GfxData tmp_ganon_9 ; $0b210d
+	m_GfxData tmp_ganon_10 ; $0b230d
 	m_GfxData gfx_tileset_0b24e1 ; $0b24e1
 	m_GfxData gfx_tileset_0b2646 ; $0b2646
 	m_GfxData gfx_tileset_0b27a5 ; $0b27a5

@@ -27,16 +27,16 @@ objectGfxHeaderTable:
 	/* $19 */ m_ObjectGfxHeader spr_twinrova_sacrifice_2 $00
 	/* $1a */ m_ObjectGfxHeader spr_twinrova_sacrifice_3 $00
 	/* $1b */ m_ObjectGfxHeader spr_twinrova_sacrifice_4 $00
-	/* $1c */ m_ObjectGfxHeader spr_ganon_unknown_1 $00
-	/* $1d */ m_ObjectGfxHeader spr_ganon_unknown_2 $00
-	/* $1e */ m_ObjectGfxHeader spr_ganon_6 $00
-	/* $1f */ m_ObjectGfxHeader spr_ganon_7 $00
-	/* $20 */ m_ObjectGfxHeader spr_ganon_8 $00
-	/* $21 */ m_ObjectGfxHeader spr_ganon_3 $00
-	/* $22 */ m_ObjectGfxHeader spr_ganon_4 $00
-	/* $23 */ m_ObjectGfxHeader spr_ganon_5 $00
-	/* $24 */ m_ObjectGfxHeader spr_ralph_2 $00
-	/* $25 */ m_ObjectGfxHeader spr_ralph_1 $80
+	/* $1c */ m_ObjectGfxHeader tmp_ganon_3 $00
+	/* $1d */ m_ObjectGfxHeader tmp_ganon_4 $00
+	/* $1e */ m_ObjectGfxHeader tmp_ganon_5 $00
+	/* $1f */ m_ObjectGfxHeader tmp_ganon_6 $00
+	/* $20 */ m_ObjectGfxHeader tmp_ganon_7 $00
+	/* $21 */ m_ObjectGfxHeader tmp_ganon_8 $00
+	/* $22 */ m_ObjectGfxHeader tmp_ganon_9 $00
+	/* $23 */ m_ObjectGfxHeader tmp_ganon_10 $00
+	/* $24 */ m_ObjectGfxHeader tmp_ralph_1 $00
+	/* $25 */ m_ObjectGfxHeader tmp_ralph_2 $80
 	/* $26 */ m_ObjectGfxHeader spr_nayru_1 $00
 	/* $27 */ m_ObjectGfxHeader spr_nayru_2 $80
 	/* $28 */ m_ObjectGfxHeader spr_tokay $00
@@ -141,7 +141,7 @@ objectGfxHeaderTable:
 	/* $8b */ m_ObjectGfxHeader spr_0dedc0 $00
 	/* $8c */ m_ObjectGfxHeader spr_polsvoice_hardhatbeetle_spikedbeetle_beamon $00
 	/* $8d */ m_ObjectGfxHeader spr_hostilescrub $00
-	/* $8e */ m_ObjectGfxHeader spr_projectiles $00
+	/* $8e */ m_ObjectGfxHeader tmp_projectiles_1 $00
 	/* $8f */ m_ObjectGfxHeader spr_octorok_leever_tektite_zora $00
 	/* $90 */ m_ObjectGfxHeader spr_moblin_ghini $00
 	/* $91 */ m_ObjectGfxHeader spr_moblin $00
@@ -172,8 +172,8 @@ objectGfxHeaderTable:
 	/* $aa */ m_ObjectGfxHeader spr_kingmoblin_3 $00
 	/* $ab */ m_ObjectGfxHeader spr_kingmoblin_4 $00
 	/* $ac */ m_ObjectGfxHeader spr_kingmoblin_5 $80
-	/* $ad */ m_ObjectGfxHeader spr_giantghini_2 $00
-	/* $ae */ m_ObjectGfxHeader spr_giantghini $80
+	/* $ad */ m_ObjectGfxHeader tmp_giantghini_1 $00
+	/* $ae */ m_ObjectGfxHeader tmp_giantghini_2 $80
 	/* $af */ m_ObjectGfxHeader spr_swoop $00
 	/* $b0 */ m_ObjectGfxHeader spr_pound $80
 	/* $b1 */ m_ObjectGfxHeader spr_subterror_1 $00
@@ -184,17 +184,17 @@ objectGfxHeaderTable:
 	/* $b6 */ m_ObjectGfxHeader spr_armoswarriorsword $80
 	/* $b7 */ m_ObjectGfxHeader spr_smasher $00
 	/* $b8 */ m_ObjectGfxHeader spr_anglerfish $00
-	/* $b9 */ m_ObjectGfxHeader spr_bluestalfos_3 $00
-	/* $ba */ m_ObjectGfxHeader spr_bluestalfos_1 $00
-	/* $bb */ m_ObjectGfxHeader spr_bluestalfos_2 $80
-	/* $bc */ m_ObjectGfxHeader spr_pumpkinhead $00
+	/* $b9 */ m_ObjectGfxHeader tmp_bluestalfos_1 $00
+	/* $ba */ m_ObjectGfxHeader tmp_bluestalfos_2 $00
+	/* $bb */ m_ObjectGfxHeader tmp_bluestalfos_3 $80
+	/* $bc */ m_ObjectGfxHeader tmp_pumpkinhead_1 $00
 	/* $bd */ m_ObjectGfxHeader spr_pumpkinhead_2 $00
 	/* $be */ m_ObjectGfxHeader spr_pumpkinhead_3 $80
 	/* $bf */ m_ObjectGfxHeader spr_headthwomp_1 $00
 	/* $c0 */ m_ObjectGfxHeader spr_headthwomp_2 $00
 	/* $c1 */ m_ObjectGfxHeader spr_headthwomp_3 $80
-	/* $c2 */ m_ObjectGfxHeader spr_shadowhag_2 $00
-	/* $c3 */ m_ObjectGfxHeader spr_shadowhag_1 $80
+	/* $c2 */ m_ObjectGfxHeader tmp_shadowhag_1 $00
+	/* $c3 */ m_ObjectGfxHeader tmp_shadowhag_2 $80
 	/* $c4 */ m_ObjectGfxHeader spr_smog_1 $00
 	/* $c5 */ m_ObjectGfxHeader spr_smog_2 $00
 	/* $c6 */ m_ObjectGfxHeader spr_smog_3 $00

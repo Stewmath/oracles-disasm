@@ -89,8 +89,8 @@
 	m_GfxData spr_mamamu_dog ; $0aad85
 	m_GfxData spr_goron ; $0aaf04
 	m_GfxData spr_gorondance_tingle_write ; $0ab069
-	m_GfxData spr_ralph_2 ; $0ab20b
-	m_GfxData spr_ralph_1 ; $0ab3d5
+	m_GfxData tmp_ralph_1 ; $0ab20b
+	m_GfxData tmp_ralph_2 ; $0ab3d5
 	m_GfxData spr_navi_ambi ; $0ab495
 	m_GfxData gfx_blank_2 ; $0ab5ff (unused)
 	m_GfxData spr_farore_1 ; $0ab605
@@ -154,12 +154,12 @@
 	m_GfxData spr_thwomps ; $0b02a9
 	m_GfxData spr_fireball_cheepcheep ; $0b03ab
 	m_GfxData spr_waterbubble ; $0b046a
-	m_GfxData spr_projectiles ; $0b055e
+	m_GfxData tmp_projectiles_1 ; $0b055e
 	m_GfxData spr_projectiles_2 ; $0b0662
 	m_GfxData spr_projectiles_3 ; $0b0806
 	m_GfxData spr_unknownfireball ; $0b08ff
-	m_GfxData spr_giantghini_2 ; $0b09e8
-	m_GfxData spr_giantghini ; $0b0b3c
+	m_GfxData tmp_giantghini_1 ; $0b09e8
+	m_GfxData tmp_giantghini_2 ; $0b0b3c
 	m_GfxData spr_swoop ; $0b0c6e
 	m_GfxData spr_pound ; $0b0db6
 	m_GfxData spr_subterror_1 ; $0b0e17
@@ -171,17 +171,17 @@
 	m_GfxData spr_smasher ; $0b1627
 	m_GfxData spr_vire ; $0b16f8
 	m_GfxData spr_anglerfish ; $0b17dd
-	m_GfxData spr_bluestalfos_3 ; $0b19ba
-	m_GfxData spr_bluestalfos_1 ; $0b1b16
-	m_GfxData spr_bluestalfos_2 ; $0b1ca3
-	m_GfxData spr_pumpkinhead ; $0b1d70
+	m_GfxData tmp_bluestalfos_1 ; $0b19ba
+	m_GfxData tmp_bluestalfos_2 ; $0b1b16
+	m_GfxData tmp_bluestalfos_3 ; $0b1ca3
+	m_GfxData tmp_pumpkinhead_1 ; $0b1d70
 	m_GfxData spr_pumpkinhead_2 ; $0b1f0e
 	m_GfxData spr_pumpkinhead_3 ; $0b20a6
 	m_GfxData spr_headthwomp_1 ; $0b21c8
 	m_GfxData spr_headthwomp_2 ; $0b232b
 	m_GfxData spr_headthwomp_3 ; $0b251e
-	m_GfxData spr_shadowhag_2 ; $0b253a
-	m_GfxData spr_shadowhag_1 ; $0b26ee
+	m_GfxData tmp_shadowhag_1 ; $0b253a
+	m_GfxData tmp_shadowhag_2 ; $0b26ee
 	m_GfxData spr_smog_1 ; $0b2823
 	m_GfxData spr_smog_2 ; $0b2950
 	m_GfxData spr_smog_3 ; $0b2ad5
@@ -225,14 +225,14 @@
 	m_GfxData spr_twinrova_sacrifice_2 ; $0b60c4
 	m_GfxData spr_twinrova_sacrifice_3 ; $0b61c1
 	m_GfxData spr_twinrova_sacrifice_4 ; $0b6318
-	m_GfxData spr_ganon_unknown_1 ; $0b64f8
-	m_GfxData spr_ganon_unknown_2 ; $0b65d0
-	m_GfxData spr_ganon_6 ; $0b66ea
-	m_GfxData spr_ganon_7 ; $0b68cb
-	m_GfxData spr_ganon_8 ; $0b69dc
-	m_GfxData spr_ganon_3 ; $0b6b3a
-	m_GfxData spr_ganon_4 ; $0b6d2e
-	m_GfxData spr_ganon_5 ; $0b6f2e
+	m_GfxData tmp_ganon_3 ; $0b64f8
+	m_GfxData tmp_ganon_4 ; $0b65d0
+	m_GfxData tmp_ganon_5 ; $0b66ea
+	m_GfxData tmp_ganon_6 ; $0b68cb
+	m_GfxData tmp_ganon_7 ; $0b69dc
+	m_GfxData tmp_ganon_8 ; $0b6b3a
+	m_GfxData tmp_ganon_9 ; $0b6d2e
+	m_GfxData tmp_ganon_10 ; $0b6f2e
 	m_GfxData gfx_gasha_tree ; $0b7102
 	m_GfxData spr_grass_tuft ; $0b753b
 	m_GfxData gfx_sand ; $0b755d
