@@ -14,9 +14,18 @@ interactionCodee0:
 	ld a,$01		; $6f0c
 	ld (de),a ; [state]
 
+.ifdef ROM_AGES
 	ld a,(wTilesetFlags)		; $6f0f
 	and TILESETFLAG_PAST			; $6f12
 	rlca			; $6f14
+.else
+	ld a,(wLoadingRoomPack)		; $4c15
+	inc a			; $4c18
+	jr z,+			; $4c19
+	ld a,(wRoomStateModifier)		; $4c1b
++
+.endif
+
 	ld e,Interaction.subid		; $6f15
 	ld (de),a		; $6f17
 

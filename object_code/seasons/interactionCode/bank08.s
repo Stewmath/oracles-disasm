@@ -27,6 +27,10 @@ _label_08_094:
 +
 	jp interactionDelete		; $5169
 
+
+; ==============================================================================
+; INTERACID_SPECIAL_WARP
+; ==============================================================================
 interactionCode1f:
 	ld e,$42		; $516c
 	ld a,(de)		; $516e
@@ -379,6 +383,10 @@ interactionCode20:
 	.dw herosCaveScript_allButtonsPressedAndEnemiesDefeated
 	.dw herosCaveScript_spawnChestOn2TorchesLit
 
+
+; ==============================================================================
+; INTERACID_GANRLED_KEYHOLE
+; ==============================================================================
 interactionCode21:
 	ld e,$44		; $53c3
 	ld a,(de)		; $53c5
@@ -861,6 +869,8 @@ _table_56af:
 _table_56b3:
 	.dw script4ea5
 
+
+; Misc NPCs
 interactionCode24:
 interactionCode29:
 interactionCode2c:
@@ -1443,6 +1453,7 @@ _table_5a0c:
 	.dw script51f1
 
 
+; Cat on tree interactions
 interactionCode25:
 interactionCode26:
 	ld e,$44		; $5a0e
@@ -1567,6 +1578,10 @@ _label_08_153:
 	ld a,$02		; $5af7
 	jp interactionSetAnimation		; $5af9
 
+
+; ==============================================================================
+; INTERACID_SOKRA
+; ==============================================================================
 interactionCode27:
 	ld e,$44		; $5afc
 	ld a,(de)		; $5afe
@@ -1804,6 +1819,8 @@ _table_5c87:
 	.dw script5393
 	.dw script5393
 
+
+; Know-it-all birds? Different code in ages
 interactionCode2a:
 	call checkInteractionState		; $5c9b
 	jr nz,_label_08_163	; $5c9e
@@ -2020,6 +2037,10 @@ seasonsFunc_08_5df7:
 	cp c			; $5e2d
 	ret			; $5e2e
 
+
+; ==============================================================================
+; INTERACID_BLOSSOM
+; ==============================================================================
 interactionCode2b:
 	ld e,$44		; $5e2f
 	ld a,(de)		; $5e31
@@ -2077,6 +2098,8 @@ _table_5e86:
 	.dw script55c3
 	.dw script55d5
 
+
+; 2 screens of Sunken City NPCs? or their version of dragonflies?
 interactionCode2e:
 	ld e,$44		; $5e9a
 	ld a,(de)		; $5e9c
@@ -2218,6 +2241,10 @@ _table_5f7e:
 	.dw script55f5
 	.dw script55ea
 
+
+; ==============================================================================
+; INTERACID_SUBROSIAN
+; ==============================================================================
 interactionCode30:
 	ld e,$44		; $5f88
 	ld a,(de)		; $5f8a
@@ -2428,6 +2455,8 @@ _label_08_180:
 	cp l			; $60cb
 	ld d,a			; $60cc
 
+
+; subrosia beach entrance and rosa screen (her ribbon event?)
 interactionCode31:
 	ld e,$42		; $60cd
 	ld a,(de)		; $60cf
@@ -2773,6 +2802,10 @@ _label_08_191:
 	call setGlobalFlag		; $6311
 	jr _label_08_190		; $6314
 
+
+; ==============================================================================
+; INTERACID_SUBROSIAN_WITH_BUCKETS
+; ==============================================================================
 interactionCode32:
 	ld e,$44		; $6316
 	ld a,(de)		; $6318
@@ -2837,6 +2870,10 @@ _label_08_194:
 	ld h,c			; $6377
 	ld e,b			; $6378
 
+
+; ==============================================================================
+; INTERACID_SUBROSIAN_SMITHS
+; ==============================================================================
 interactionCode34:
 	call checkInteractionState		; $6379
 	jr nz,_label_08_195	; $637c
@@ -2852,6 +2889,8 @@ _label_08_195:
 	ld a,$50		; $638d
 	jp playSound		; $638f
 
+
+; spawned from objectData
 interactionCode35:
 	ld e,$44		; $6392
 	ld a,(de)		; $6394
@@ -3444,6 +3483,10 @@ _label_08_221:
 	ld a,d			; $66fc
 	ld e,b			; $66fd
 
+
+; ==============================================================================
+; INTERACID_GORON
+; ==============================================================================
 interactionCode3b:
 	call checkInteractionState		; $66fe
 	jr nz,_label_08_225	; $6701
@@ -3620,6 +3663,8 @@ _table_6818:
 	.dw script5bf2
 	.dw script5c28
 
+
+; dragonflies?
 interactionCode3e:
 	call checkInteractionState		; $6828
 	jp nz,seasonsFunc_08_68f5		; $682b
@@ -4042,6 +4087,7 @@ _table_6b13:
 	.dw script5ce6
 
 
+; pirates
 interactionCode40:
 interactionCode41:
 	ld e,$44		; $6b1d
@@ -4326,6 +4372,8 @@ _table_6cbf:
 	.dw script5ec9
 	.dw script5ee5
 
+
+; pirate captain and a pirate upstairs
 interactionCode42:
 	ld e,$44		; $6cdd
 	ld a,(de)		; $6cdf
@@ -4362,6 +4410,10 @@ _table_6d14:
 	.dw script5f1c
 	.dw script5f1f
 
+
+; ==============================================================================
+; INTERACID_SYRUP
+; ==============================================================================
 interactionCode43:
 	call checkReloadShopItemTiles		; $6d18
 	call $6d21		; $6d1b
@@ -4489,6 +4541,10 @@ _label_08_280:
 	ld (de),a		; $6dea
 	ret			; $6deb
 
+
+; ==============================================================================
+; INTERACID_ZELDA
+; ==============================================================================
 interactionCode44:
 	ld e,$44		; $6dec
 	ld a,(de)		; $6dee
@@ -4609,6 +4665,10 @@ _table_6ea3:
 	.dw script601f
 	.dw script6056
 
+
+; ==============================================================================
+; INTERACID_TALON
+; ==============================================================================
 interactionCode45:
 	ld e,$44		; $6eb7
 	ld a,(de)		; $6eb9
@@ -4882,6 +4942,7 @@ interactionCode48:
 	.db $ff
 
 
+; wanders in Syrup's shop (rooster?)
 interactionCode49:
 	call $707b		; $7075
 	jp $7089		; $7078
@@ -5165,6 +5226,8 @@ interactionCode4b:
 .db $00 $01 $02 $03 $04 $05 $06 $07
 .db $01 $02 $03 $05 $06 $07 $02 $06
 
+
+; hangs out on maku tree branches and village fountain
 interactionCode4c:
 	ld e,Interaction.subid	; $7280
 	ld a,(de)		; $7282
@@ -5289,6 +5352,10 @@ _label_08_306:
 	call playSound		; $7368
 	jp interactionDelete		; $736b
 
+
+; ==============================================================================
+; INTERACID_PIRATE_SKULL
+; ==============================================================================
 interactionCode4d:
 	ld e,$42		; $736e
 	ld a,(de)		; $7370
@@ -5525,6 +5592,8 @@ _label_08_312:
 	call objectCreatePuff		; $7512
 	jp interactionDelete		; $7515
 
+
+; an animal?
 interactionCode4e:
 	ld e,$44		; $7518
 	ld a,(de)		; $751a
@@ -6337,6 +6406,9 @@ _interactionCode4f_state1:
 	jp interactionRunScript		; $7a3a
 
 
+; ==============================================================================
+; INTERACID_SMALL_VOLCANO
+; ==============================================================================
 interactionCode51:
 	call checkInteractionState		; $7a3d
 	jr z,_label_08_343	; $7a40
@@ -6467,6 +6539,10 @@ _table_7ae8:
 	.db $00 $ff
 	.db $ff
 
+
+; ==============================================================================
+; INTERACID_BIGGORON
+; ==============================================================================
 interactionCode52:
 	ld e,$44		; $7b05
 	ld a,(de)		; $7b07
@@ -6487,6 +6563,10 @@ interactionCode52:
 	call interactionAnimate		; $7b24
 	jp interactionRunScript		; $7b27
 
+
+; ==============================================================================
+; INTERACID_HEAD_SMELTER
+; ==============================================================================
 interactionCode53:
 	ld e,$42		; $7b2a
 	ld a,(de)		; $7b2c
@@ -6799,6 +6879,10 @@ _subrosianAtD8_getNumEssences:
 	ld a,($c6bb)		; $7d1c
 	jp getNumSetBits		; $7d1f
 
+
+; ==============================================================================
+; INTERACID_INGO
+; ==============================================================================
 interactionCode57:
 	ld e,$44		; $7d22
 	ld a,(de)		; $7d24
@@ -6866,6 +6950,10 @@ _label_08_352:
 	call objectPreventLinkFromPassing		; $7d99
 	jp objectSetPriorityRelativeToLink_withTerrainEffects		; $7d9c
 
+
+; ==============================================================================
+; INTERACID_GURU_GURU
+; ==============================================================================
 interactionCode58:
 	ld e,$44		; $7d9f
 	ld a,(de)		; $7da1
@@ -6966,6 +7054,10 @@ _label_08_356:
 	ld (hl),$78		; $7e48
 	ret			; $7e4a
 
+
+; ==============================================================================
+; INTERACID_LOST_WOODS_SWORD
+; ==============================================================================
 interactionCode59:
 	ld e,$44		; $7e4b
 	ld a,(de)		; $7e4d
@@ -7136,6 +7228,10 @@ interactionCode5b:
 	jp playSound		; $7f6a
 	ret			; $7f6d
 
+
+; ==============================================================================
+; INTERACID_LAVA_SOUP_SUBROSIAN
+; ==============================================================================
 interactionCode5c:
 	ld e,$44		; $7f6e
 	ld a,(de)		; $7f70
@@ -7160,6 +7256,8 @@ interactionCode5c:
 	call interactionAnimate		; $7f95
 	jp objectSetPriorityRelativeToLink_withTerrainEffects		; $7f98
 
+
+; spawned when waking Talon and trading fish - megaphone?
 interactionCode5d:
 	ld e,$44		; $7f9b
 	ld a,(de)		; $7f9d

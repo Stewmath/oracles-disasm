@@ -140,7 +140,7 @@
 	GLOBALFLAG_S_2b				db ; $2b
 	GLOBALFLAG_SECRET_CHEST_WAITING		db ; $2c
 	GLOBALFLAG_S_2d				db ; $2d
-	GLOBALFLAG_S_2e				db ; $2e
+	GLOBALFLAG_SWIMMING_CHALLENGE_SUCCEEDED	db ; $2e
 	GLOBALFLAG_S_2f				db ; $2f
 	GLOBALFLAG_S_30				db ; $30: game beaten / season always spring?
 	GLOBALFLAG_RING_SECRET_GENERATED	db ; $31
@@ -219,6 +219,8 @@
 	; LINKED SEASONS SECRETS
 	; ==============================================================================
 
+	GLOBALFLAG_FIRST_SEASONS_BEGAN_SECRET	.db
+
 	; Set when corresponding NPC is spoken to.
 	; In Seasons, that is the NPC who initiates the quest. The flag must be set for
 	; Farore to accept the return secret from Ages.
@@ -234,7 +236,7 @@
 	GLOBALFLAG_BEGAN_ELDER_SECRET		db ; $6c
 	GLOBALFLAG_BEGAN_SYMMETRY_SECRET	db ; $6d
 
-	GLOBALFLAG_FIRST_SEASONS_BEGAN_SECRET	.db
+	GLOBALFLAG_FIRST_SEASONS_DONE_SECRET	.db
 
 	; Set when the sidequest is completed and Link has obtained the item.
 	; In Seasons, he obtains the item from Farore.
@@ -249,8 +251,6 @@
 	GLOBALFLAG_DONE_TINGLE_SECRET		db ; $75
 	GLOBALFLAG_DONE_ELDER_SECRET		db ; $76
 	GLOBALFLAG_DONE_SYMMETRY_SECRET		db ; $77
-
-	GLOBALFLAG_FIRST_SEASONS_DONE_SECRET	.db
 
 	; Unused?
 	GLOBALFLAG_78				db ; $78

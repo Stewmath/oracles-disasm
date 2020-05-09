@@ -4550,7 +4550,7 @@ interactionCodea7:
 	call interactionSetAnimation		; $678e
 	call getFreeInteractionSlot		; $6791
 	ret nz			; $6794
-	ld (hl),$35		; $6795
+	ld (hl),INTERACID_35		; $6795
 	inc l			; $6797
 	ld a,($c6da)		; $6798
 	ld b,$00		; $679b

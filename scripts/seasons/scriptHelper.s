@@ -831,43 +831,71 @@ _label_15_214:
 	ret			; $58ea
 	ld a,$1e		; $58eb
 	jp giveTreasure		; $58ed
-	ld a,$64		; $58f0
+
+
+; ==============================================================================
+
+linkedNpc_checkSecretBegun:
+	ld a,GLOBALFLAG_FIRST_SEASONS_BEGAN_SECRET		; $58f0
 	ld h,d			; $58f2
-	ld l,$7e		; $58f3
+	ld l,Interaction.var3e		; $58f3
 	add (hl)		; $58f5
 	call checkGlobalFlag		; $58f6
 	ret z			; $58f9
 	ld h,d			; $58fa
-	ld l,$7f		; $58fb
+	ld l,Interaction.var3f		; $58fb
 	ld (hl),$01		; $58fd
 	ret			; $58ff
+
+
+;;
+; @addr{7aa2}
+linkedNpc_generateSecret:
 	ld h,d			; $5900
-	ld l,$7e		; $5901
+	ld l,Interaction.var3e		; $5901
 	ld b,(hl)		; $5903
-	ld a,$64		; $5904
+	ld a,GLOBALFLAG_FIRST_SEASONS_BEGAN_SECRET		; $5904
 	add b			; $5906
 	call setGlobalFlag		; $5907
 	ld a,$00		; $590a
 	add b			; $590c
-	ld ($c6e6),a		; $590d
+	ld (wShortSecretIndex),a		; $590d
 	ld bc,$0003		; $5910
 	jp secretFunctionCaller		; $5913
+
+
+;;
+; @addr{7ab8}
+linkedNpc_initHighTextIndex:
 	ld c,a			; $5916
-	ld a,$53		; $5917
+	ld a,>TX_5300		; $5917
 	call interactionSetHighTextIndex		; $5919
 	ld a,c			; $591c
-	add $00			; $591d
+
+
+;;
+; Loads a text index for linked npcs. Each linked npc has text indices that they say.
+;
+; @param	a	Index of text (0-4)
+; @addr{7abd}
+linkedNpc_calcLowTextIndex:
+	add <TX_5300			; $591d
 	ld c,a			; $591f
-	ld e,$7e		; $5920
+
+	; a = [var3e]*6
+	ld e,Interaction.var3e		; $5920
 	ld a,(de)		; $5922
 	ld b,a			; $5923
 	add a			; $5924
 	add b			; $5925
 	add a			; $5926
+
 	add c			; $5927
-	ld e,$72		; $5928
+	ld e,Interaction.textID		; $5928
 	ld (de),a		; $592a
 	ret			; $592b
+
+
 	ld a,($c626)		; $592c
 	ld b,a			; $592f
 	or a			; $5930
@@ -1391,7 +1419,7 @@ _spawnBlainoAtPosition:
 	xor a			; $5cae
 	ret			; $5caf
 
-blainoScript_putAwayLinksItems:
+putAwayLinksItems:
 	ldh (<hFF8B),a	; $5cb0
 	ld a,$ff		; $5cb2
 	ld (wStatusBarNeedsRefresh),a		; $5cb4
@@ -1438,6 +1466,7 @@ blainoScript_putAwayLinksItems:
 	ld a,($ccec)		; $5cf0
 	cp $03			; $5cf3
 	jr z,_label_15_229	; $5cf5
+seasonsFunc_15_5cf7:
 	push de			; $5cf7
 	ld a,$ff		; $5cf8
 	ld ($cbea),a		; $5cfa
@@ -2609,13 +2638,17 @@ seasonsFunc_15_63a6:
 	ret			; $63b7
 
 seasonsFunc_15_63b8:
-_label_15_259:
 	ld hl,$d008		; $63b8
 	ld a,(hl)		; $63bb
 	xor $02			; $63bc
 	jp interactionSetAnimation		; $63be
 
-seasonsFunc_15_63c1:
+
+; ==============================================================================
+; INTERACID_S_GREAT_FAIRY
+; Temple fairy that awaits a secret
+; ==============================================================================
+linkedScript_giveRing:
 	ld b,a			; $63c1
 	ld c,$00		; $63c2
 	jp giveRingToLink		; $63c4
@@ -2624,6 +2657,7 @@ seasonsFunc_15_63c1:
 	ld l,$02		; $63cc
 	ld (hl),$08		; $63ce
 	ret			; $63d0
+
 
 seasonsFunc_15_63d1:
 	ld hl,$d008		; $63d1
@@ -2660,11 +2694,14 @@ _label_15_260:
 	ld (hl),a		; $640a
 	inc bc			; $640b
 	ret			; $640c
+
+_table_640d:
 	sub l			; $640d
 	dec b			; $640e
 	nop			; $640f
 	inc d			; $6410
 	ld d,b			; $6411
+_table_6412:
 	ld b,h			; $6412
 	ld b,$00		; $6413
 	ld c,b			; $6415
@@ -2674,10 +2711,11 @@ _label_15_260:
 	nop			; $6419
 	adc b			; $641a
 	ld b,b			; $641b
+_table_641c:
 	sub (hl)		; $641c
 	ld b,$00		; $641d
 	ld c,b			; $641f
-	jr c,_label_15_259	; $6420
+	jr c,-$6a	; $6420
 	ld b,$01		; $6422
 	ld c,b			; $6424
 	ld l,b			; $6425
@@ -2688,19 +2726,24 @@ _label_15_260:
 	sub (hl)		; $642b
 	dec b			; $642c
 	inc bc			; $642d
-	jr z,_label_15_261	; $642e
+	jr z,$70	; $642e
 
-seasonsFunc_15_6430:
-	ld a,($ccf8)		; $6430
+
+linkedFunc_15_6430:
+	ld a,(wcce2)		; $6430
 	ld hl,$cbaa		; $6433
 	ldi (hl),a		; $6436
 	ld (hl),$00		; $6437
-	ld a,($ccf9)		; $6439
-	ld hl,$cba8		; $643c
+	ld a,(wcce3)		; $6439
+	ld hl,wTextNumberSubstitution		; $643c
 	ldi (hl),a		; $643f
 	ld (hl),$00		; $6440
 	ret			; $6442
 
+
+; ==============================================================================
+; INTERACID_TROY
+; ==============================================================================
 seasonsFunc_15_6443:
 	ld hl,$ccf7		; $6443
 	xor a			; $6446
@@ -2747,7 +2790,7 @@ seasonsFunc_15_6464:
 	ld (hl),$00		; $648a
 	ret			; $648c
 
-seasonsFunc_15_648d:
+troyMinigame_createSwirlAtLink:
 	ld a,($d00b)		; $648d
 	ld b,a			; $6490
 	ld a,($d00d)		; $6491
@@ -2755,33 +2798,36 @@ seasonsFunc_15_648d:
 	ld a,$6e		; $6495
 	jp createEnergySwirlGoingIn		; $6497
 
-seasonsFunc_15_649a:
-	ld bc,$8400		; $649a
+troyMinigame_createSparkle:
+	ldbc INTERACID_SPARKLE $00		; $649a
 	jp objectCreateInteraction		; $649d
 
+
+; ==============================================================================
+; INTERACID_S_LINKED_GAME_GHINI
+; ==============================================================================
 seasonsFunc_15_64a0:
-_label_15_261:
 	ld h,d			; $64a0
 	ld l,$7c		; $64a1
 	ld a,($cba5)		; $64a3
 	xor $01			; $64a6
 	cp (hl)			; $64a8
 	ld l,$7f		; $64a9
-	jr nz,_label_15_262	; $64ab
+	jr nz,+			; $64ab
 	ld (hl),$00		; $64ad
 	ret			; $64af
-_label_15_262:
++
 	ld (hl),$01		; $64b0
 	ret			; $64b2
 
-seasonsFunc_15_64b3:
+linkedGhini_clearAllAndSetInvisible:
 	call clearAllItemsAndPutLinkOnGround		; $64b3
 	jp objectSetInvisible		; $64b6
 
-seasonsFunc_15_64b9:
+linkedGhini_setVisible:
 	jp objectSetVisible		; $64b9
 
-seasonsFunc_15_64bc:
+linkedGhini_forceLinksPositionAndState:
 	call setLinkForceStateToState08		; $64bc
 	ld hl,$d008		; $64bf
 	ld (hl),$00		; $64c2
@@ -2793,18 +2839,22 @@ seasonsFunc_15_64bc:
 	ld (hl),$00		; $64ce
 	ret			; $64d0
 
-seasonsFunc_15_64d1:
+
+; ==============================================================================
+; INTERACID_GOLDEN_CAVE_SUBROSIAN
+; ==============================================================================
+goldenCaveSubrosian_emptyLinksItemsAndSetPosition:
 	call clearAllParentItems		; $64d1
 	call dropLinkHeldItem		; $64d4
 	call clearItems		; $64d7
 	call setLinkForceStateToState08		; $64da
-	ld hl,$d008		; $64dd
-	ld (hl),$00		; $64e0
+	ld hl,w1Link.direction		; $64dd
+	ld (hl),DIR_UP		; $64e0
 	ret			; $64e2
 
-seasonsFunc_15_64e3:
-	ld hl,$d008		; $64e3
-	ld (hl),$00		; $64e6
+goldenCaveSubrosian_faceLinkUp:
+	ld hl,w1Link.direction		; $64e3
+	ld (hl),DIR_UP		; $64e6
 	ret			; $64e8
 
 seasonsFunc_15_64e9:
@@ -2817,16 +2867,16 @@ seasonsFunc_15_64e9:
 	ld a,(hl)		; $64f1
 	ld b,$00		; $64f2
 	cp $03			; $64f4
-	jr nc,_label_15_263	; $64f6
+	jr nc,+			; $64f6
 	ld b,$01		; $64f8
-_label_15_263:
++
 	ld l,$79		; $64fa
 	ld (hl),b		; $64fc
 	ret			; $64fd
 
-seasonsFunc_15_64fe:
+goldenCaveSubrosian_refreshRoom:
 	ld b,a			; $64fe
-	ld hl,$cc63		; $64ff
+	ld hl,wWarpDestGroup		; $64ff
 	ld a,$84		; $6502
 	ldi (hl),a		; $6504
 	ld a,$f0		; $6505
@@ -2836,9 +2886,9 @@ seasonsFunc_15_64fe:
 	ld a,b			; $650b
 	ldi (hl),a		; $650c
 	ld a,$00		; $650d
-	ld ($cc65),a		; $650f
+	ld (wWarpTransition),a		; $650f
 	ld a,$03		; $6512
-	ld ($cc67),a		; $6514
+	ld (wWarpTransition2),a		; $6514
 	ret			; $6517
 
 seasonsFunc_15_6518:
@@ -2849,9 +2899,9 @@ seasonsFunc_15_6518:
 	call getThisRoomFlags		; $651f
 	and $03			; $6522
 	dec a			; $6524
-	jr z,_label_15_264	; $6525
+	jr z,+			; $6525
 	ld b,$27		; $6527
-_label_15_264:
++
 	ld a,b			; $6529
 	ld e,$72		; $652a
 	ld (de),a		; $652c
@@ -2881,8 +2931,12 @@ seasonsFunc_15_6545:
 	ld (de),a		; $654c
 	ret			; $654d
 
+
+; ==============================================================================
+; INTERACID_S_MASTER_DIVER
+; ==============================================================================
 seasonsFunc_15_654e:
-	ld hl,$ccf7		; $654e
+	ld hl,wcce1		; $654e
 	xor a			; $6551
 	ldi (hl),a		; $6552
 	ldi (hl),a		; $6553
@@ -2894,7 +2948,7 @@ seasonsFunc_15_6558:
 	ld ($cfd1),a		; $6559
 	ret			; $655c
 
-seasonsFunc_15_655d:
+masterDiver_forceLinkState:
 	call setLinkForceStateToState08		; $655d
 	ld hl,$d008		; $6560
 	ld (hl),$00		; $6563
@@ -2906,68 +2960,68 @@ seasonsFunc_15_655d:
 	ld (hl),$00		; $656f
 	ret			; $6571
 
-seasonsFunc_15_6572:
+masterDiver_checkIfDoneIn30Seconds:
 	ld hl,$ccf9		; $6572
 	ldd a,(hl)		; $6575
 	or a			; $6576
-	jr nz,_label_15_265	; $6577
+	jr nz,+			; $6577
 	ld a,(hl)		; $6579
 	cp $31			; $657a
-	jr nc,_label_15_265	; $657c
-	ld a,$2e		; $657e
+	jr nc,+			; $657c
+	ld a,GLOBALFLAG_SWIMMING_CHALLENGE_SUCCEEDED		; $657e
 	jp setGlobalFlag		; $6580
-_label_15_265:
-	ld a,$2e		; $6583
++
+	ld a,GLOBALFLAG_SWIMMING_CHALLENGE_SUCCEEDED		; $6583
 	jp unsetGlobalFlag		; $6585
 
-seasonsFunc_15_6588:
-	ld hl,$6593		; $6588
+masterDiver_retryChallenge:
+	ld hl,@warpDestVariables		; $6588
 	call setWarpDestVariables		; $658b
 	ld a,$8d		; $658e
 	jp playSound		; $6590
-	add a			; $6593
-	add sp,$00		; $6594
-	ld b,$83		; $6596
+@warpDestVariables:
+	m_HardcodedWarpA ROOM_SEASONS_7e8 $00 $06 $83
 
-seasonsFunc_15_6598:
+masterDiver_exitChallenge:
 	ld hl,$65a3		; $6598
 	call setWarpDestVariables		; $659b
 	ld a,$8d		; $659e
 	jp playSound		; $65a0
-	add e			; $65a3
-	or (hl)			; $65a4
-	nop			; $65a5
-	ld b,l			; $65a6
-	add e			; $65a7
+@warpDestVariables:
+	m_HardcodedWarpA ROOM_SEASONS_3b6 $00 $45 $83
 
-seasonsFunc_15_65a8:
-	ld e,$20		; $65a8
-_label_15_266:
+
+; ==============================================================================
+; INTERACID_DEKU_SCRUB
+; ==============================================================================
+dekuScrub_upgradeSatchel:
+	ld e,TREASURE_EMBER_SEEDS		; $65a8
+-
 	ld a,e			; $65aa
 	call checkTreasureObtained		; $65ab
 	ret nc			; $65ae
 	inc e			; $65af
 	ld a,e			; $65b0
 	cp $25			; $65b1
-	jr c,_label_15_266	; $65b3
-	ld a,($c6ae)		; $65b5
-	ld hl,$65ce		; $65b8
+	jr c,-			; $65b3
+	ld a,(wSeedSatchelLevel)		; $65b5
+	ld hl,_table_65cf-1		; $65b8
 	rst_addAToHl			; $65bb
 	ld b,(hl)		; $65bc
-	ld hl,$c6b5		; $65bd
-_label_15_267:
+	ld hl,wNumEmberSeeds		; $65bd
+-
 	ld a,b			; $65c0
 	cp (hl)			; $65c1
 	ret nz			; $65c2
 	inc l			; $65c3
 	ld a,l			; $65c4
 	cp $ba			; $65c5
-	jr c,_label_15_267	; $65c7
+	jr c,-			; $65c7
 	ld h,d			; $65c9
 	ld l,$78		; $65ca
 	ld (hl),$01		; $65cc
 	ret			; $65ce
-	jr nz,$50		; $65cf
-	sbc c			; $65d1
+_table_65cf:
+	.db $20 $50 $99
 
 .ends

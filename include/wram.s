@@ -2296,13 +2296,13 @@ wChangedTileQueueHead: ; $ccdf
 wChangedTileQueueTail: ; $cce0
 	db
 
-wcce1: ; $cce1
+wcce1: ; $cce1/$ccf7
 ; This is used as a marker; all memory from "wDisabledObjects" to here is cleared in one
 ; spot (not including wcce1).
 	db
-wcce2: ; $cce2
+wcce2: ; $cce2/$ccf8
 	db
-wcce3: ; $cce3
+wcce3: ; $cce3/$ccf9
 	db
 
 ; Indices for w2AnimationQueue

@@ -2609,41 +2609,51 @@ script5773:
 	rungenericnpc TX_3e19
 script5776:
 	writeobjectbyte $5c, $03
+
+
+; ==============================================================================
+
+; Used by linked game NPCs that give secrets.
+; The npcs set "var3f" to the "secret index" (corresponds to wShortSecretIndex) before
+; running this script.
+linkedGameNpcScript:
 	initcollisions
-	asm15 $58f0
-	jumpifobjectbyteeq $7f, $01, script57b5
-script5782:
+	asm15 scriptHlp.linkedNpc_checkSecretBegun
+	jumpifobjectbyteeq Interaction.var3f, $01, @secretBegun
+-
 	enableinput
-	asm15 $5916, $00
+	asm15 scriptHlp.linkedNpc_initHighTextIndex, $00
 	checkabutton
 	disableinput
 	showloadedtext
 	wait 20
-	jumpiftextoptioneq $00, script5795
-	addobjectbyte $72, $04
+	jumpiftextoptioneq $00, +
+	addobjectbyte Interaction.textID, $04
 	showloadedtext
-	jump2byte script5782
-script5795:
-	addobjectbyte $72, $01
-script5798:
+	jump2byte -
++
+	addobjectbyte Interaction.textID, $01
+@showTextAndSecret:
 	showloadedtext
-	asm15 $5916, $05
+	asm15 scriptHlp.linkedNpc_initHighTextIndex, $05
 	wait 20
-	jumpiftextoptioneq $01, script5798
-	asm15 $5900
-	asm15 $591d, $02
-script57a9:
+	jumpiftextoptioneq $01, @showTextAndSecret
+	asm15 scriptHlp.linkedNpc_generateSecret
+	asm15 scriptHlp.linkedNpc_calcLowTextIndex, <TX_5302
+-
 	showloadedtext
 	wait 20
-	jumpiftextoptioneq $01, script57a9
-	asm15 $591d, $03
+	jumpiftextoptioneq $01, -
+	asm15 scriptHlp.linkedNpc_calcLowTextIndex, <TX_5303
 	showloadedtext
 	enableinput
-script57b5:
+@secretBegun:
 	checkabutton
 	disableinput
-	asm15 $5916, $05
-	jump2byte script5798
+	asm15 scriptHlp.linkedNpc_initHighTextIndex, $05
+	jump2byte @showTextAndSecret
+	
+	
 script57bd:
 	initcollisions
 	jumpifroomflagset $20, script580c
@@ -4531,7 +4541,7 @@ blainoScript:
 	asm15 scriptHlp.blainoScript_clearItemsAndPegasusSeeds
 	asm15 scriptHlp.blainoScript_setLinkPositionAndState
 	asm15 scriptHlp.blainoScript_spawnBlainoEnemy
-	asm15 scriptHlp.blainoScript_putAwayLinksItems, $00
+	asm15 scriptHlp.putAwayLinksItems, $00
 	wait 4
 	asm15 fadeinFromWhite
 	checkpalettefadedone
@@ -7696,59 +7706,75 @@ script7afb:
 	jump2byte script7afb
 script7aff:
 	loadscript script_14_5246
-script7b03:
+
+
+; ==============================================================================
+;INTERACID_BOOMERANG_SUBROSIAN
+; ==============================================================================
+boomerangSubrosianScript:
 	rungenericnpc TX_3e18
-script7b06:
+
+
+; ==============================================================================
+; INTERACID_TROY
+; ==============================================================================
+troyScript_beginningSecret:
 	initcollisions
-script7b07:
+--
 	enableinput
 	checkabutton
 	disableinput
-	showtextlowindex $00
-	jumpiftextoptioneq $00, script7b17
-	jump2byte script7b12
-script7b12:
+	showtextlowindex <TX_4c00
+	jumpiftextoptioneq $00, @awaitSecret
+	jump2byte +
++
 	wait 30
-	showtextlowindex $01
-	jump2byte script7b07
-script7b17:
+	showtextlowindex <TX_4c01
+	jump2byte --
+@awaitSecret:
 	wait 30
 	askforsecret CLOCK_SHOP_SECRET
 	wait 30
-	jumptable_memoryaddress $cca3
-	.dw script7b26
-	.dw script7b22
-script7b22:
-	showtextlowindex $02
-	jump2byte script7b07
-script7b26:
-	setglobalflag $50
-	showtextlowindex $03
-	jumpiftextoptioneq $00, script7b3f
-	jump2byte script7b3a
-script7b30:
+	jumptable_memoryaddress wTextInputResult
+	.dw @correct
+	.dw @incorrect
+@incorrect:
+	showtextlowindex <TX_4c02
+	jump2byte --
+@correct:
+	setglobalflag GLOBALFLAG_BEGAN_CLOCK_SHOP_SECRET
+	showtextlowindex <TX_4c03
+	jumpiftextoptioneq $00, troyScript_acceptedQuest
+	jump2byte troyScript_rejectedQuest
+
+
+troyScript_beganSecret:
 	initcollisions
-script7b31:
+-
 	enableinput
 	checkabutton
 	disableinput
-	showtextlowindex $0e
-	jumpiftextoptioneq $00, script7b3f
-script7b3a:
+	showtextlowindex <TX_4c0e
+	jumpiftextoptioneq $00, troyScript_acceptedQuest
+	
+troyScript_rejectedQuest:
 	wait 30
-	showtextlowindex $04
-	jump2byte script7b31
-script7b3f:
+	showtextlowindex <TX_4c04
+	jump2byte -
+	
+troyScript_acceptedQuest:
 	wait 30
-	showtextlowindex $05
-	jumpiftextoptioneq $00, script7b48
-	jump2byte script7b3f
-script7b48:
+	showtextlowindex <TX_4c05
+	jumpiftextoptioneq $00, @understoodQuest
+	jump2byte troyScript_acceptedQuest
+	
+@understoodQuest:
 	settileat $9d, $ac
 	wait 15
-script7b4c:
+	
+troyScript_playGame:
 	wait 30
-	showtextlowindex $06
+	showtextlowindex <TX_4c06
 	createpuff
 	wait 4
 	asm15 scriptHlp.seasonsFunc_15_6455
@@ -7760,66 +7786,75 @@ script7b4c:
 	enableinput
 	incstate
 	scriptend
-script7b64:
+	
+	
+troyScript_gameBegun:
 	disableinput
 	resetmusic
 	playsound SND_WHISTLE
-	writeobjectbyte $71, $00
+	writeobjectbyte Interaction.var31, $00
 	asm15 fadeoutToWhite
 	checkpalettefadedone
 	asm15 scriptHlp.seasonsFunc_15_6464
 	wait 30
 	asm15 fadeinFromWhite
 	checkpalettefadedone
-	jumptable_objectbyte $7a
-	.dw script7b7e
-	.dw script7be4
-script7b7e:
-	showtextlowindex $0a
+	jumptable_objectbyte Interaction.var3a
+	.dw @wonGame
+	.dw troyScript_tookTooLong
+	
+@wonGame:
+	showtextlowindex <TX_4c0a
 	createpuff
 	wait 4
 	asm15 scriptHlp.seasonsFunc_15_645d
 	setcounter1 $2d
-	showtextlowindex $0b
+	showtextlowindex <TX_4c0b
 	disableinput
-	callscript script7bc3
-	callscript script7baf
+	callscript troyScript_postGameEffects
+	callscript troyScript_giveReward
 	writememory $cbea, $ff
 	wait 90
 	enableallobjects
 	setdisabledobjectsto91
 	settileat $9d, TILEINDEX_INDOOR_UPSTAIRCASE
 	setcounter1 $2d
-	setglobalflag $5a
-script7b9e:
+	setglobalflag GLOBALFLAG_DONE_CLOCK_SHOP_SECRET
+
+troyScript_generateReturnSecret:
 	generatesecret CLOCK_SHOP_RETURN_SECRET
-script7ba0:
-	showtextlowindex $0c
+-
+	showtextlowindex <TX_4c0c
 	wait 30
-	jumpiftextoptioneq $00, script7ba0
-	showtextlowindex $0d
+	jumpiftextoptioneq $00, -
+	showtextlowindex <TX_4c0d
 	enableinput
 	wait 30
-script7bab:
+
+troyScript_goToGenerateSecret:
 	checkabutton
 	disableinput
-	jump2byte script7b9e
-script7baf:
-	jumptable_objectbyte $43
-	.dw script7bb5
-	.dw script7bbc
-script7bb5:
-	giveitem $0501
-	giveitem $0504
+	jump2byte troyScript_generateReturnSecret
+
+
+troyScript_giveReward:
+	jumptable_objectbyte Interaction.var03
+	.dw @nobleSword
+	.dw @masterSword
+@nobleSword:
+	giveitem TREASURE_SWORD $01
+	giveitem TREASURE_SWORD $04
 	retscript
-script7bbc:
-	giveitem $0502
-	giveitem $0505
+@masterSword:
+	giveitem TREASURE_SWORD $02
+	giveitem TREASURE_SWORD $05
 	retscript
-script7bc3:
-	asm15 scriptHlp.seasonsFunc_15_649a
+	
+	
+troyScript_postGameEffects:
+	asm15 scriptHlp.troyMinigame_createSparkle
 	wait 30
-	asm15 scriptHlp.seasonsFunc_15_648d
+	asm15 scriptHlp.troyMinigame_createSwirlAtLink
 	wait 10
 	playsound SND_FADEOUT
 	asm15 fadeoutToWhite
@@ -7834,191 +7869,214 @@ script7bc3:
 	asm15 fadeinFromWhiteWithDelay, $04
 	checkpalettefadedone
 	retscript
-script7be4:
-	showtextlowindex $08
+	
+	
+troyScript_tookTooLong:
+	showtextlowindex <TX_4c08
 	createpuff
 	wait 4
 	asm15 scriptHlp.seasonsFunc_15_645d
 	setcounter1 $2d
-	showtextlowindex $09
-	jumpiftextoptioneq $00, script7b4c
+	showtextlowindex <TX_4c09
+	jumpiftextoptioneq $00, troyScript_playGame
 	settileat $9d, TILEINDEX_INDOOR_UPSTAIRCASE
 	wait 15
-	writeobjectbyte $71, $00
-	jump2byte script7b3a
-script7bfc:
+	writeobjectbyte Interaction.var31, $00
+	jump2byte troyScript_rejectedQuest
+
+
+troyScript_doneSecret:
 	initcollisions
-	jump2byte script7bab
-script7bff:
+	jump2byte troyScript_goToGenerateSecret
+
+
+; ==============================================================================
+; INTERACID_S_LINKED_GAME_GHINI
+; ==============================================================================
+linkedGhiniScript_beginningSecret:
 	initcollisions
-script7c00:
+-
 	enableinput
 	checkabutton
 	disableinput
-	showtextlowindex $0f
-	jumpiftextoptioneq $00, script7c10
-	jump2byte script7c0b
-script7c0b:
+	showtextlowindex <TX_4c0f
+	jumpiftextoptioneq $00, @answeredYes
+	jump2byte @answeredNo
+@answeredNo:
 	wait 30
-	showtextlowindex $10
-	jump2byte script7c00
-script7c10:
+	showtextlowindex <TX_4c10
+	jump2byte -
+@answeredYes:
 	wait 30
 	askforsecret GRAVEYARD_SECRET
 	wait 30
 	jumptable_memoryaddress $cca3
-	.dw script7c1f
-	.dw script7c1b
-script7c1b:
-	showtextlowindex $12
-	jump2byte script7c00
-script7c1f:
-	setglobalflag $51
-	showtextlowindex $11
-	jumpiftextoptioneq $00, script7c38
-	jump2byte script7c33
-script7c29:
+	.dw @success
+	.dw @failed
+@failed:
+	showtextlowindex <TX_4c12
+	jump2byte -
+@success:
+	setglobalflag GLOBALFLAG_BEGAN_GRAVEYARD_SECRET
+	showtextlowindex <TX_4c11
+	jumpiftextoptioneq $00, linkedGhiniScript_begunSecret@showExplanation
+	jump2byte linkedGhiniScript_begunSecret@shownExit
+
+
+linkedGhiniScript_begunSecret:
 	initcollisions
-script7c2a:
+-
 	enableinput
 	checkabutton
 	disableinput
-	showtextlowindex $14
-	jumpiftextoptioneq $00, script7c38
-script7c33:
+	showtextlowindex <TX_4c14
+	jumpiftextoptioneq $00, @showExplanation
+@shownExit:
 	wait 30
-	showtextlowindex $13
-	jump2byte script7c2a
-script7c38:
+	showtextlowindex <TX_4c13
+	jump2byte -
+@showExplanation:
 	wait 30
-	showtextlowindex $15
-	jumpiftextoptioneq $00, script7c41
-	jump2byte script7c38
-script7c41:
+	showtextlowindex <TX_4c15
+	jumpiftextoptioneq $00, @understoodExplanation
+	jump2byte @showExplanation
+@understoodExplanation:
 	asm15 fadeoutToWhite
 	checkpalettefadedone
 	wait 4
-	asm15 scriptHlp.seasonsFunc_15_64bc
+	asm15 scriptHlp.linkedGhini_forceLinksPositionAndState
 	settileat $61, $a2
 	wait 4
 	asm15 fadeinFromWhite
 	checkpalettefadedone
-script7c51:
+@startGame:
 	wait 30
-	showtextlowindex $16
+	showtextlowindex <TX_4c16
 	createpuff
 	wait 4
-	asm15 scriptHlp.seasonsFunc_15_64b3
+	asm15 scriptHlp.linkedGhini_clearAllAndSetInvisible
 	setcounter1 $2d
 	playsound SND_WHISTLE
 	scriptend
-script7c5e:
+
+
+linkedGhiniScript_startRound:
 	disableinput
 	playsound SND_WHISTLE
 	wait 30
 	createpuff
 	wait 4
-	asm15 scriptHlp.seasonsFunc_15_64b9
+	asm15 scriptHlp.linkedGhini_setVisible
 	setcounter1 $2d
-	showtextlowindex $17
+	showtextlowindex <TX_4c17
 	asm15 scriptHlp.seasonsFunc_15_64a0
 	wait 30
 	jumptable_objectbyte $7f
-	.dw script7c75
-	.dw script7cab
-script7c75:
+	.dw @successfulRound
+	.dw @failedGame
+@successfulRound:
 	jumptable_objectbyte $7a
-	.dw script7c7d
-	.dw script7c7d
-	.dw script7c83
-script7c7d:
+	.dw @succeededOnce
+	.dw @succeededTwice
+	.dw @succeededAll
+@succeededOnce:
+@succeededTwice:
 	playsound SND_GETSEED
-	showtextlowindex $19
-	jump2byte script7c51
-script7c83:
+	showtextlowindex <TX_4c19
+	jump2byte linkedGhiniScript_begunSecret@startGame
+@succeededAll:
 	playsound SND_GETSEED
-	showtextlowindex $1a
+	showtextlowindex <TX_4c1a
 	wait 30
-	giveitem $2a02
+	giveitem TREASURE_HEART_CONTAINER $02
 	wait 60
-	spawninteraction $0500, $68, $18
+	spawninteraction INTERACID_PUFF $00, $68, $18
 	wait 4
 	settileat $61, TILEINDEX_INDOOR_UPSTAIRCASE
 	setcounter1 $2d
-	setglobalflag $5b
-script7c99:
+	setglobalflag GLOBALFLAG_DONE_GRAVEYARD_SECRET
+@generateSecret:
 	generatesecret GRAVEYARD_RETURN_SECRET
-script7c9b:
-	showtextlowindex $1b
+-
+	showtextlowindex <TX_4c1b
 	wait 30
-	jumpiftextoptioneq $00, script7ca4
-	jump2byte script7c9b
-script7ca4:
-	showtextlowindex $1c
+	jumpiftextoptioneq $00, @understoodSecret
+	jump2byte -
+@understoodSecret:
+	showtextlowindex <TX_4c1c
 	enableinput
-script7ca7:
+@goToGenerateSecret:
 	checkabutton
 	disableinput
-	jump2byte script7c99
-script7cab:
+	jump2byte @generateSecret
+@failedGame:
 	playsound SND_ERROR
-	showtextlowindex $18
-	jumpiftextoptioneq $00, script7c51
-	spawninteraction $0500, $68, $18
+	showtextlowindex <TX_4c18
+	jumpiftextoptioneq $00, linkedGhiniScript_begunSecret@startGame
+	spawninteraction INTERACID_PUFF $00, $68, $18
 	wait 4
 	settileat $61, TILEINDEX_INDOOR_UPSTAIRCASE
 	wait 15
-	jump2byte script7c33
-script7cbf:
+	jump2byte linkedGhiniScript_begunSecret@shownExit
+
+
+linkedGhiniScript_doneSecret:
 	initcollisions
-	jump2byte script7ca7
-script7cc2:
+	jump2byte linkedGhiniScript_startRound@goToGenerateSecret
+
+
+; ==============================================================================
+; INTERACID_GOLDEN_CAVE_SUBROSIAN
+; ==============================================================================
+goldenCaveSubrosianScript_beginningSecret:
 	initcollisions
-script7cc3:
+-
 	enableinput
 	checkabutton
 	disableinput
-	showtextlowindex $1e
-	jumpiftextoptioneq $00, script7cd5
+	showtextlowindex <TX_4c1e
+	jumpiftextoptioneq $00, @givingSecret
 	wait 20
-	showtextlowindex $1f
-	jump2byte script7cc3
-script7cd1:
-	showtextlowindex $20
-	jump2byte script7cc3
-script7cd5:
+	showtextlowindex <TX_4c1f
+	jump2byte -
+@failed:
+	showtextlowindex <TX_4c20
+	jump2byte -
+@givingSecret:
 	askforsecret SUBROSIAN_SECRET
 	wait 20
 	jumptable_memoryaddress $cca3
-	.dw script7cdf
-	.dw script7cd1
-script7cdf:
+	.dw @success
+	.dw @failed
+@success:
 	orroomflag $80
-	showtextlowindex $21
-	jumpiftextoptioneq $00, script7cec
+	showtextlowindex <TX_4c21
+	jumpiftextoptioneq $00, @answeredYes
 	wait 20
-	showtextlowindex $22
-	jump2byte script7db2
-script7cec:
+	showtextlowindex <TX_4c22
+	jump2byte goldenCaveSubrosianScript_givenSecret
+@answeredYes:
 	wait 20
-	showtextlowindex $23
-	jumpiftextoptioneq $01, script7cec
+	showtextlowindex <TX_4c23
+	jumpiftextoptioneq $01, @answeredYes
 	wait 20
-	showtextlowindex $24
+	showtextlowindex <TX_4c24
 	wait 20
 	asm15 scriptHlp.seasonsFunc_15_653c, $01
-	asm15 scriptHlp.seasonsFunc_15_64fe, $87
+	asm15 scriptHlp.goldenCaveSubrosian_refreshRoom, $87
 	scriptend
-script7d00:
+	
+	
+goldenCaveSubrosianScript_7d00:
 	initcollisions
 	setcoords $88, $88
 	setangleandanimation $00
 	writeobjectbyte $79, $00
 	setdisabledobjectsto11
-	asm15 scriptHlp.seasonsFunc_15_64d1
+	asm15 scriptHlp.goldenCaveSubrosian_emptyLinksItemsAndSetPosition
 	asm15 scriptHlp.seasonsFunc_15_6545
 	jumpifobjectbyteeq $7c, $03, script7d19
-	asm15 $5cb0, $06
+	asm15 scriptHlp.putAwayLinksItems, TREASURE_BOOMERANG
 script7d19:
 	checkpalettefadedone
 	asm15 scriptHlp.seasonsFunc_15_6518
@@ -8044,302 +8102,344 @@ script7d32:
 	.dw script7d77
 script7d40:
 	setdisabledobjectsto11
-	settextid $4c28
+	settextid TX_4c28
 script7d44:
 	showloadedtext
 	jumpiftextoptioneq $01, script7d56
 	wait 20
-	showtextlowindex $3f
+	showtextlowindex <TX_4c3f
 	wait 20
-	asm15 scriptHlp.seasonsFunc_15_64fe, $87
+	asm15 scriptHlp.goldenCaveSubrosian_refreshRoom, $87
 	asm15 scriptHlp.seasonsFunc_15_653c, $03
 	scriptend
 script7d56:
 	wait 20
-	showtextlowindex $22
+	showtextlowindex <TX_4c22
 	setspeed SPEED_100
 	setangleandanimation $00
 	applyspeed $10
 	wait 8
 	wait 8
 	setangleandanimation $10
-	asm15 $5cf7
+	asm15 scriptHlp.seasonsFunc_15_5cf7
 	asm15 scriptHlp.seasonsFunc_15_652e
-	rungenericnpclowindex $22
+	rungenericnpclowindex <TX_4c22
 script7d6b:
-	showtextlowindex $29
+	showtextlowindex <TX_4c29
 	writeobjectbyte $79, $00
 	jump2byte script7d32
 script7d72:
-	settextid $4c3e
+	settextid TX_4c3e
 	jump2byte script7d44
 script7d77:
 	setdisabledobjectsto11
-	showtextlowindex $2a
+	showtextlowindex <TX_4c2a
 	writeobjectbyte $4f, $00
 	wait 20
 	asm15 scriptHlp.seasonsFunc_15_653c, $02
-	asm15 scriptHlp.seasonsFunc_15_64fe, $57
+	asm15 scriptHlp.goldenCaveSubrosian_refreshRoom, $57
 	scriptend
-script7d87:
+	
+	
+goldenCaveSubrosianScript_7d87:
 	initcollisions
 	setcoords $48, $78
 	setangleandanimation $10
 	disableinput
-	asm15 scriptHlp.seasonsFunc_15_64e3
-	asm15 $5cf7
+	asm15 scriptHlp.goldenCaveSubrosian_faceLinkUp
+	asm15 scriptHlp.seasonsFunc_15_5cf7
 	checkpalettefadedone
-	showtextlowindex $2b
+	showtextlowindex <TX_4c2b
 	wait 20
 	giveitem $0d00
 	wait 20
 script7d9c:
 	generatesecret SUBROSIAN_RETURN_SECRET
 script7d9e:
-	showtextlowindex $2c
+	showtextlowindex <TX_4c2c
 	wait 20
 	jumpiftextoptioneq $01, script7d9e
-	showtextlowindex $2d
+	showtextlowindex <TX_4c2d
 	asm15 scriptHlp.seasonsFunc_15_652e
-	setglobalflag $5c
+	setglobalflag GLOBALFLAG_DONE_SUBROSIAN_SECRET
+script7dac:
 	initcollisions
 	enableinput
 	checkabutton
 	disableinput
 	jump2byte script7d9c
-script7db2:
+	
+	
+goldenCaveSubrosianScript_givenSecret:
 	initcollisions
 	enableinput
 	checkabutton
 	disableinput
-	jump2byte script7cdf
-script7db8:
+	jump2byte goldenCaveSubrosianScript_beginningSecret@success
+	
+	
+; ==============================================================================
+; INTERACID_LINKED_MASTER_DIVER
+; ==============================================================================
+masterDiverScript_beginningSecret:
 	initcollisions
-script7db9:
+-
 	enableinput
 	checkabutton
 	disableinput
-	showtextlowindex $2e
-	jumpiftextoptioneq $00, script7dc9
-	jump2byte script7dc4
-script7dc4:
+	showtextlowindex <TX_4c2e
+	jumpiftextoptioneq $00, @answeredYes
+	jump2byte @answeredNo
+@answeredNo:
 	wait 30
-	showtextlowindex $2f
-	jump2byte script7db9
-script7dc9:
+	showtextlowindex <TX_4c2f
+	jump2byte -
+@answeredYes:
 	wait 30
 	askforsecret DIVER_SECRET
 	wait 30
 	jumptable_memoryaddress $cca3
-	.dw script7dd8
-	.dw script7dd4
-script7dd4:
-	showtextlowindex $30
-	jump2byte script7db9
-script7dd8:
-	setglobalflag $53
-	showtextlowindex $31
-	jumpiftextoptioneq $00, script7df1
-	jump2byte script7dec
-script7de2:
+	.dw @success
+	.dw @failed
+@failed:
+	showtextlowindex <TX_4c30
+	jump2byte -
+@success:
+	setglobalflag GLOBALFLAG_BEGAN_DIVER_SECRET
+	showtextlowindex <TX_4c31
+	jumpiftextoptioneq $00, masterDiverScript_begunSecret@answeredYes
+	jump2byte masterDiverScript_begunSecret@beginningSecret
+	
+	
+masterDiverScript_begunSecret:
 	initcollisions
-script7de3:
+-
 	enableinput
 	checkabutton
 	disableinput
-	showtextlowindex $3c
-	jumpiftextoptioneq $00, script7df1
-script7dec:
+	showtextlowindex <TX_4c3c
+	jumpiftextoptioneq $00, @answeredYes
+@beginningSecret:
 	wait 30
-	showtextlowindex $32
-	jump2byte script7de3
-script7df1:
+	showtextlowindex <TX_4c32
+	jump2byte -
+@answeredYes:
 	wait 30
-	showtextlowindex $33
-script7df4:
+	showtextlowindex <TX_4c33
+-
 	wait 30
-	showtextlowindex $34
-	jumpiftextoptioneq $00, script7dfd
-	jump2byte script7df4
-script7dfd:
-	spawninteraction $0500, $58, $88
+	showtextlowindex <TX_4c34
+	jumpiftextoptioneq $00, @startingChallenge
+	jump2byte -
+@startingChallenge:
+	spawninteraction INTERACID_PUFF $00, $58, $88
 	wait 4
-	settileat $58, $45
+	settileat $58, TILEINDEX_INDOOR_DOWNSTAIRCASE
 	setcounter1 $2d
-script7e08:
-	showtextlowindex $35
+-
+	showtextlowindex <TX_4c35
 	enableinput
 	checkabutton
 	disableinput
-	jump2byte script7e08
-script7e0f:
+	jump2byte -
+	
+	
+masterDiverScript_swimmingChallengeText:
 	disableinput
 	wait 40
-	showtextlowindex $36
+	showtextlowindex <TX_4c36
 	asm15 scriptHlp.seasonsFunc_15_654e
 	setcounter1 $2d
 	playsound SND_WHISTLE
 	enableinput
-script7e1b:
-	jumpifitemobtained $60, script7e21
-	jump2byte script7e1b
-script7e21:
+-
+	jumpifitemobtained TREASURE_60, @finishedChallenge
+	jump2byte -
+@finishedChallenge:
 	disableinput
 	orroomflag $40
 	playsound SND_WHISTLE
-	asm15 scriptHlp.seasonsFunc_15_6572
-	asm15 scriptHlp.seasonsFunc_15_6430
+	asm15 scriptHlp.masterDiver_checkIfDoneIn30Seconds
+	asm15 scriptHlp.linkedFunc_15_6430
 	wait 30
-	jumpifglobalflagset $2e, script7e42
-	showtextlowindex $37
-	jumpiftextoptioneq $00, script7e3b
-	asm15 scriptHlp.seasonsFunc_15_6598
+	jumpifglobalflagset GLOBALFLAG_SWIMMING_CHALLENGE_SUCCEEDED, @finishedInTime
+	showtextlowindex <TX_4c37
+	jumpiftextoptioneq $00, @retry
+	asm15 scriptHlp.masterDiver_exitChallenge
 	scriptend
-script7e3b:
+@retry:
 	asm15 scriptHlp.seasonsFunc_15_6558
-	asm15 scriptHlp.seasonsFunc_15_6588
+	asm15 scriptHlp.masterDiver_retryChallenge
 	scriptend
-script7e42:
-	showtextlowindex $38
-	asm15 scriptHlp.seasonsFunc_15_6598
+@finishedInTime:
+	showtextlowindex <TX_4c38
+	asm15 scriptHlp.masterDiver_exitChallenge
 	scriptend
-script7e48:
+	
+
+masterDiverScript_swimmingChallengeDone:
 	disableinput
 	initcollisions
-	asm15 scriptHlp.seasonsFunc_15_655d
-	jumpifglobalflagset $2e, script7e53
-	jump2byte script7e65
-script7e53:
+	asm15 scriptHlp.masterDiver_forceLinkState
+	jumpifglobalflagset GLOBALFLAG_SWIMMING_CHALLENGE_SUCCEEDED, @finishedInTime
+	jump2byte @failed
+@finishedInTime:
 	wait 40
-	showtextlowindex $39
-	asm15 scriptHlp.seasonsFunc_15_63c1, $15
+	showtextlowindex <TX_4c39
+	asm15 scriptHlp.linkedScript_giveRing, SWIMMERS_RING
 	setcounter1 $02
-	setglobalflag $5d
-script7e5e:
-	showtextlowindex $3a
+	setglobalflag GLOBALFLAG_DONE_DIVER_SECRET
+-
+	showtextlowindex <TX_4c3a
 	enableinput
-script7e61:
+@showDoneText:
 	checkabutton
 	disableinput
-	jump2byte script7e5e
-script7e65:
-	showtextlowindex $30
+	jump2byte -
+@failed:
+	showtextlowindex <TX_4c30
 	enableinput
 	checkabutton
 	disableinput
-	jump2byte script7e65
-script7e6c:
+	jump2byte @failed
+	
+	
+masterDiverScript_secretDone:
 	initcollisions
-	jump2byte script7e61
-script7e6f:
+	jump2byte masterDiverScript_swimmingChallengeDone@showDoneText
+	
+	
+masterDiverScript_spawnFakeStarOre:
 	spawnitem TREASURE_60 $01
 	scriptend
-script7e73:
+	
+	
+; ==============================================================================
+; INTERACID_S_GREAT_FAIRY
+; Temple fairy that awaits a secret
+; ==============================================================================
+templeGreatFairyScript_beginningSecret:
 	initcollisions
-script7e74:
+-
 	enableinput
 	checkabutton
 	disableinput
-	showtextlowindex $01
-	jumpiftextoptioneq $00, script7e82
-script7e7d:
+	showtextlowindex <TX_4101
+	jumpiftextoptioneq $00, @tellSecret
+@failedSecret:
 	wait 30
-	showtextlowindex $02
-	jump2byte script7e74
-script7e82:
+	showtextlowindex <TX_4102
+	jump2byte -
+@tellSecret:
 	askforsecret TEMPLE_SECRET
 	wait 30
 	jumptable_memoryaddress $cca3
-	.dw script7e8c
-	.dw script7e7d
-script7e8c:
-	showtextlowindex $03
+	.dw @success
+	.dw @failedSecret
+@success:
+	showtextlowindex <TX_4103
 	wait 30
-	asm15 scriptHlp.seasonsFunc_15_63c1, $13
+	asm15 scriptHlp.linkedScript_giveRing, HEART_RING_L1
 	wait 30
-script7e94:
-	showtextlowindex $04
-	setglobalflag $60
+-
+	showtextlowindex <TX_4104
+	setglobalflag GLOBALFLAG_DONE_TEMPLE_SECRET
 	enableinput
+	
+
+templeGreatFairyScript_doneSecret:
 	initcollisions
 	checkabutton
-	jump2byte script7e94
-script7e9d:
+	jump2byte -
+
+
+; ==============================================================================
+; INTERACID_DEKU_SCRUB
+; ==============================================================================
+dekuScrubScript_notFinishedGame:
 	initcollisions
-script7e9e:
+-
 	enableinput
 	checkabutton
 	disableinput
-	showtextlowindex $48
+	showtextlowindex <TX_4c48
 	wait 20
-	jumpiftextoptioneq $00, script7eac
-	showtextlowindex $41
-	jump2byte script7e9e
-script7eac:
-	showtextlowindex $49
+	jumpiftextoptioneq $00, @refillSatchel
+	showtextlowindex <TX_4c41
+	jump2byte -
+@refillSatchel:
+	showtextlowindex <TX_4c49
 	asm15 refillSeedSatchel
 	wait 20
-script7eb2:
-	showtextlowindex $4a
+-
+	showtextlowindex <TX_4c4a
 	enableinput
 	checkabutton
 	disableinput
-	jump2byte script7eb2
-script7eb9:
+	jump2byte -
+
+
+dekuScrubScript_beginningSecret:
 	initcollisions
-script7eba:
+-
 	enableinput
 	checkabutton
 	disableinput
-	showtextlowindex $40
-	jumpiftextoptioneq $00, script7ec8
-script7ec3:
+	showtextlowindex <TX_4c40
+	jumpiftextoptioneq $00, @linkKnowsSong
+@failedSecret:
 	wait 20
-	showtextlowindex $41
-	jump2byte script7eba
-script7ec8:
+	showtextlowindex <TX_4c41
+	jump2byte -
+@linkKnowsSong:
 	askforsecret DEKU_SECRET
-	jumptable_memoryaddress $cca3
-	.dw script7ed1
-	.dw script7ec3
-script7ed1:
+	jumptable_memoryaddress wTextInputResult
+	.dw @success
+	.dw @failedSecret
+@success:
 	orroomflag $80
 	wait 20
-	showtextlowindex $42
+	showtextlowindex <TX_4c42
 	wait 20
-script7ed7:
-	asm15 scriptHlp.seasonsFunc_15_65a8
-	jumpifobjectbyteeq $78, $00, script7f01
-	showtextlowindex $44
+_dekuScrubScript_finishSecret:
+	asm15 scriptHlp.dekuScrub_upgradeSatchel
+	jumpifobjectbyteeq Interaction.var38, $00, dekuScrubScript_gaveSecret
+	showtextlowindex <TX_4c44
 	wait 20
-	giveitem $6200
+	giveitem TREASURE_SATCHEL_UPGRADE $00
 	asm15 refillSeedSatchel
 	wait 20
-	showtextlowindex $45
+	showtextlowindex <TX_4c45
 	wait 20
-	setglobalflag $61
-	jump2byte script7ef3
-script7ef0:
+	setglobalflag GLOBALFLAG_DONE_DEKU_SECRET
+	jump2byte _dekuScrubScript_giveReturnSecret
+
+
+dekuScrubScript_doneSecret:
 	initcollisions
-script7ef1:
+--
 	checkabutton
 	disableinput
-script7ef3:
+_dekuScrubScript_giveReturnSecret:
 	generatesecret DEKU_RETURN_SECRET
-	showtextlowindex $46
+	showtextlowindex <TX_4c46
 	wait 20
-	jumpiftextoptioneq $00, script7ef3
-	showtextlowindex $47
+	jumpiftextoptioneq $00, _dekuScrubScript_giveReturnSecret
+	showtextlowindex <TX_4c47
 	enableinput
-	jump2byte script7ef1
-script7f01:
+	jump2byte --
+
+
+dekuScrubScript_gaveSecret:
 	initcollisions
 	enableinput
 	checkabutton
 	disableinput
-	showtextlowindex $43
+	showtextlowindex <TX_4c43
 	wait 30
-	jump2byte script7ed7
+	jump2byte _dekuScrubScript_finishSecret
+
+
 script7f0a:
 	initcollisions
 script7f0b:

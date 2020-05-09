@@ -751,8 +751,8 @@ _endgameCutsceneHandler_09_stage1_body:
 	jr +			; $5aa0
 
 @seasonsFunc_03_5aa2:
-	ld hl,$4da3		; $5aa2
-	ld e,$15		; $5aa5
+	ld hl,oamData_15_4da3		; $5aa2
+	ld e,:oamData_15_4da3		; $5aa5
 	ld bc,$3038		; $5aa7
 	xor a			; $5aaa
 	ldh (<hOamTail),a	; $5aab
@@ -1965,8 +1965,8 @@ _endgameCutsceneHandler_0a_stage3:
 	ld (hl),$b4		; $639c
 	jp incCbc2		; $639e
 @state9Func0:
-	ld hl,$4e0c		; $63a1
-	ld e,$15		; $63a4
+	ld hl,oamData_15_4e0c		; $63a1
+	ld e,:oamData_15_4e0c		; $63a4
 	ld bc,$3038		; $63a6
 	xor a			; $63a9
 	ldh (<hOamTail),a	; $63aa

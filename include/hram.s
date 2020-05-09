@@ -93,7 +93,7 @@
 	hMusicQueueTail			db	; $ffb5
 
 	; 0-3; when bit 7 is set, volume needs updating.
-	hMusicVolume			db	; $ffb6
+	hMusicVolume			db	; $ffb6/$ffb4
 
 	; ffb7: if bit 3 is set, playSound doesn't do anything.
 	;       if bit 0 is set, the game is currently running sound routines?

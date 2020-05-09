@@ -20,7 +20,7 @@ _interactiond9_state0:
 .ifdef ROM_AGES
 	add GLOBALFLAG_FIRST_AGES_DONE_SECRET			; $4ded
 .else
-	add GLOBALFLAG_FIRST_SEASONS_BEGAN_SECRET			; $4ded
+	add GLOBALFLAG_FIRST_SEASONS_DONE_SECRET			; $4ded
 .endif
 	call checkGlobalFlag		; $4def
 	jr z,@secretNotTold			; $4df2
@@ -354,7 +354,7 @@ _interactiond9_markSecretAsTold:
 .ifdef ROM_AGES
 	add GLOBALFLAG_FIRST_AGES_DONE_SECRET			; $4fb8
 .else
-	add GLOBALFLAG_FIRST_SEASONS_BEGAN_SECRET			; $4fb8
+	add GLOBALFLAG_FIRST_SEASONS_DONE_SECRET			; $4fb8
 .endif
 	call setGlobalFlag		; $4fba
 	ld a,GLOBALFLAG_SECRET_CHEST_WAITING		; $4fbd

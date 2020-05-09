@@ -662,7 +662,11 @@
 ;   02: Subrosian in goron dancing game (var03 is 0 or 1 for green or red npcs)
 ;   03: Linked game NPC telling you the subrosian secret (for bombchus)
 ;   04: Linked game NPC telling you the smith secret (for shield upgrade)
+.ifdef ROM_AGES
 .define INTERACID_SUBROSIAN		$4e
+.else
+.define INTERACID_SUBROSIAN		$30
+.endif
 
 ; Impa as an npc at various stages in the game. There's also INTERACID_IMPA_IN_CUTSCENE.
 ; Subid:
@@ -769,7 +773,11 @@
 .define INTERACID_SWORD			$5e
 
 ; Not maple syrup, syrup the witch
+.ifdef ROM_AGES
 .define INTERACID_SYRUP			$5f
+.else
+.define INTERACID_SYRUP			$43
+.endif
 
 ; This is an object that Link can collect.
 ;   Subid: treasure index (see constants/treasure.s)
@@ -853,7 +861,11 @@
 ; @subid_0e{Generic npc like subid $0c, but naps when Link isn't near.}
 ; @subid_0f{Linked NPC telling you the biggoron secret.}
 ; @subid_10{Clairvoyant goron who gives you tips.}
+.ifdef ROM_AGES
 .define INTERACID_GORON			$66
+.else
+.define INTERACID_GORON			$3b
+.endif
 
 
 .ifdef ROM_AGES
@@ -1910,17 +1922,33 @@
 .ifdef ROM_SEASONS
 
 .define INTERACID_RUPEE_ROOM_RUPEES	$1d
+.define INTERACID_GANRLED_KEYHOLE	$21
 .define INTERACID_MAKU_CUTSCENES	$22
+; located in a couple group5 underground rooms
+.define INTERACID_23			$23
+.define INTERACID_SOKRA			$27
+.define INTERACID_SUBROSIAN_WITH_BUCKETS	$32
+.define INTERACID_SUBROSIAN_SMITHS	$34
+.define INTERACID_35			$35
+.define INTERACID_TALON			$45
 .define INTERACID_48			$48
+.define INTERACID_PIRATE_SKULL		$4d
 .define INTERACID_4e			$4e
 .define INTERACID_4f			$4f
 .define INTERACID_SEASONS_FAIRY		$50
+.define INTERACID_SMALL_VOLCANO		$51
+.define INTERACID_BIGGORON		$52
+.define INTERACID_HEAD_SMELTER		$53
 
 ;;
 ; The subrosian trying to blow up the volcano leading to d8
 .define INTERACID_SUBROSIAN_AT_D8	$55
 
+.define INTERACID_INGO			$57
+.define INTERACID_GURU_GURU		$58
+.define INTERACID_LOST_WOODS_SWORD	$59
 .define INTERACID_BLAINO_SCRIPT		$5a
+.define INTERACID_LAVA_SOUP_SUBROSIAN	$5c
 
 ;;
 ; @subid_00{grabbable treasure}
@@ -1954,7 +1982,6 @@
 ; Maku seed?
 .define INTERACID_93			$93
 
-; Sokra?
 .define INTERACID_9d			$9d
 .define INTERACID_a5			$a5
 .define INTERACID_LINKED_CUTSCENE	$b3
@@ -1968,8 +1995,32 @@
 .define INTERACID_be			$be
 
 .define INTERACID_ZELDA_VILLAGERS_ROOM	$c4
+.define INTERACID_BOOMERANG_SUBROSIAN	$c8
+.define INTERACID_BOOMERANG		$c9
+
+;;
+; @subid_00{Beneath grave, awaiting secret}
+; @subid_01{Red/Blue(?) ghini during minigame}
+; @subid_02{Red/Blue(?) ghini during minigame}
+; @subid_03{In Western Coast house, giving secret}
+.define INTERACID_S_LINKED_GAME_GHINI	$cb
+
+.define INTERACID_GOLDEN_CAVE_SUBROSIAN	$cc
+
+;;
+;;
+; @subid_00{Inside house, awaiting a secret}
+; @subid_01{Shows text swimming challenge cave}
+; @subid_02{Shows treasure inside swimming challenge cave}
+.define INTERACID_LINKED_MASTER_DIVER	$cd
 
 .define INTERACID_d1			$d1
+
+;;
+; @subid_00{In Temple of Seasons, awaiting a secret}
+; @subid_01{Linked game NPC near d2 (gives a secret)}
+.define INTERACID_S_GREAT_FAIRY		$d5
+
 .define INTERACID_dc			$dc
 
 ;;
