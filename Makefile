@@ -79,7 +79,7 @@ MAPPINGINDICESFILES := $(MAPPINGINDICESFILES:.bin=Indices.cmp)
 GAMEDATAFILES = $(wildcard data/$(GAME)/*.s)
 GAMEDATAFILES := $(foreach file,$(GAMEDATAFILES),build/data/$(notdir $(file)))
 
-MAIN_ASM_FILES = $(shell find code/ objects/ scripts/ -name '*.s' | grep -v '/$(OTHERGAME)/')
+MAIN_ASM_FILES = $(shell find code/ object_code/ objects/ scripts/ -name '*.s' | grep -v '/$(OTHERGAME)/')
 AUDIO_FILES = $(shell find audio/ -name '*.s' -o -name '*.bin' | grep -v '/$(OTHERGAME)/')
 COMMON_INCLUDE_FILES = $(shell find constants/ include/ -name '*.s' | grep -v '/$(OTHERGAME)/')
 
