@@ -635,7 +635,7 @@
 .define INTERACID_RABBIT			$4b
 
 ;;
-; Not to be confused with INTERACID_KNOWITALL_BIRD
+; Not to be confused with INTERACID_KNOW_IT_ALL_BIRD
 ; Subid:
 ;   00: Listening to Nayru at the start of the game
 ;   01-03: Different colored birds that do nothing but hop? Used in a cutscene?
