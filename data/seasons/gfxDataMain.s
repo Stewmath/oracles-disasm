@@ -10,16 +10,16 @@
 	m_GfxData gfx_mystery_tree ; $09fb46
 	m_GfxData spr_common_sprites ; $09fbf2
 	m_GfxData spr_common_items ; $09ff69
-	m_GfxData gfx_quest_items_5 ; $0a009d
-	m_GfxData gfx_map_compass_keys ; $0a01b9
+	m_GfxData spr_quest_items_5 ; $0a009d
+	m_GfxData spr_map_compass_keys ; $0a01b9
 	m_GfxData gfx_blank ; $0a02d7
 	m_GfxData gfx_rings ; $0a02dd
-	m_GfxData gfx_item_icons_1_spr ; $0a0637
-	m_GfxData gfx_essences ; $0a0786
-	m_GfxData gfx_quest_items_1 ; $0a08fa
-	m_GfxData gfx_quest_items_2 ; $0a0a47
-	m_GfxData gfx_quest_items_3 ; $0a0c09
-	m_GfxData gfx_quest_items_4 ; $0a0d57
+	m_GfxData spr_item_icons_1_spr ; $0a0637
+	m_GfxData spr_essences ; $0a0786
+	m_GfxData spr_quest_items_1 ; $0a08fa
+	m_GfxData spr_quest_items_2 ; $0a0a47
+	m_GfxData spr_quest_items_3 ; $0a0c09
+	m_GfxData spr_quest_items_4 ; $0a0d57
 	m_GfxData gfx_hud ; $0a0eab
 	m_GfxData gfx_inventory_hud_1 ; $0a0fa0
 	m_GfxData gfx_inventory_hud_2 ; $0a1083
@@ -69,17 +69,17 @@
 	m_GfxData spr_roller_owl_magnetspinner ; $0a3f70
 	m_GfxData spr_conveyorplatform ; $0a40e0
 	m_GfxData spr_pedestal_ice ; $0a41b1
-	m_GfxData gfx_season_symbols ; $0a42b0
-	m_GfxData gfx_boy ; $0a43d9
-	m_GfxData gfx_sokra_masterdiver ; $0a455c
-	m_GfxData gfx_shopkeeper_dekuscrub ; $0a46db
-	m_GfxData gfx_talon_oldman ; $0a487a
-	m_GfxData gfx_oldshopkeeper_gardener_villager ; $0a4a42
-	m_GfxData gfx_mittens_malon ; $0a4bdf
-	m_GfxData gfx_mrs_ruul_villagers ; $0a4db1
+	m_GfxData spr_season_symbols ; $0a42b0
+	m_GfxData spr_boy ; $0a43d9
+	m_GfxData spr_sokra_masterdiver ; $0a455c
+	m_GfxData spr_shopkeeper_dekuscrub ; $0a46db
+	m_GfxData spr_talon_oldman ; $0a487a
+	m_GfxData spr_oldshopkeeper_gardener_villager ; $0a4a42
+	m_GfxData spr_mittens_malon ; $0a4bdf
+	m_GfxData spr_mrs_ruul_villagers ; $0a4db1
 	m_GfxData spr_zz_bubble_exclamation_heart ; $0a4f56
 	m_GfxData spr_bipin ; $0a4ff0
-	m_GfxData gfx_blossom ; $0a5159
+	m_GfxData spr_blossom ; $0a5159
 	m_GfxData spr_bipsom_1 ; $0a52be
 	m_GfxData spr_bipsom_2 ; $0a5477
 	m_GfxData spr_secretnpcs_butterfly_dragonfly ; $0a5605
@@ -90,7 +90,7 @@
 	m_GfxData spr_guruguru ; $0a5cb9
 	m_GfxData spr_vasu_floodgatekeeper ; $0a5e3e
 	m_GfxData spr_ingo ; $0a5fd3
-	m_GfxData gfx_talon_lady ; $0a617b
+	m_GfxData spr_talon_lady ; $0a617b
 	m_GfxData spr_goron_parrot ; $0a633f
 	m_GfxData spr_bluecucco ; $0a64df
 	m_GfxData spr_piratians ; $0a65c6
@@ -98,8 +98,8 @@
 	m_GfxData spr_seasonfairy_ambi ; $0a690b
 	m_GfxData spr_nayru ; $0a6a50
 	m_GfxData spr_farore_ralph ; $0a6bcb
-	m_GfxData gfx_villagezora ; $0a6d3a
-	m_GfxData gfx_subrosian_2 ; $0a6e78
+	m_GfxData spr_villagezora ; $0a6d3a
+	m_GfxData spr_subrosian_2 ; $0a6e78
 	m_GfxData spr_zelda_1 ; $0a6fed
 	m_GfxData spr_zelda_2 ; $0a7191
 	m_GfxData spr_impa ; $0a72ba
@@ -107,9 +107,9 @@
 	m_GfxData spr_maku_tree_1 ; $0a74a7
 	m_GfxData spr_maku_tree_2 ; $0a75dd
 	m_GfxData spr_maku_tree_3 ; $0a775e
-	m_GfxData gfx_din_crystal ; $0a7807
+	m_GfxData spr_din_crystal ; $0a7807
 	m_GfxData spr_din_1 ; $0a79e5
-	m_GfxData gfx_din_2 ; $0a7b60
+	m_GfxData spr_din_2 ; $0a7b60
 	m_GfxData spr_windmill_l2sword ; $0a7d12
 	m_GfxData spr_portal_unknown ; $0a7e3a
 	m_GfxData spr_triforce_sparkle ; $0a7fa4
@@ -132,7 +132,7 @@
 	m_GfxData spr_darknut ; $0a9726
 	m_GfxData spr_blaino_tornado ; $0a9848
 	m_GfxData spr_giantcucco ; $0a9a08
-	m_GfxData spr_gibdostalfosropewhispsparkbubblebeetle ; $0a9aff
+	m_GfxData spr_gibdo_stalfos_rope_whisp_spark_bubble_beetle ; $0a9aff
 	m_GfxData spr_polsvoice_hardhatbeetle_spikedbeetle_beamon ; $0a9cc6
 	m_GfxData spr_shroudedstalfos_tile ; $0a9e35
 	m_GfxData spr_keese_firekeese_unknownbeams ; $0a9f8a
@@ -165,11 +165,11 @@
 	m_GfxData spr_frypolar_2 ; $0ac12d
 	m_GfxData spr_frypolar_3 ; $0ac2b3
 	m_GfxData spr_vire ; $0ac3cd
-	m_GfxData gfx_aquamentus_1 ; $0ac4b2
-	m_GfxData gfx_aquamentus_2 ; $0ac673
-	m_GfxData gfx_aquamentus_3 ; $0ac851
-	m_GfxData gfx_aquamentus_4 ; $0ac9f7
-	m_GfxData gfx_aquamentus_5 ; $0acb98
+	m_GfxData spr_aquamentus_1 ; $0ac4b2
+	m_GfxData spr_aquamentus_2 ; $0ac673
+	m_GfxData spr_aquamentus_3 ; $0ac851
+	m_GfxData spr_aquamentus_4 ; $0ac9f7
+	m_GfxData spr_aquamentus_5 ; $0acb98
 	m_GfxData spr_king_dodongo_1 ; $0acd63
 	m_GfxData spr_king_dodongo_2 ; $0acf05
 	m_GfxData spr_king_dodongo_3 ; $0ad0ce
@@ -202,8 +202,8 @@
 	m_GfxData spr_onox_4 ; $0afc23
 	m_GfxData spr_dragononox_1 ; $0afd6c
 	m_GfxData spr_dragononox_2 ; $0aff33
-	m_GfxData spr_twinrovamerged ; $0afff3
-	m_GfxData spr_twinrova ; $0b00f3
+	m_GfxData spr_twinrovamerged_1 ; $0afff3
+	m_GfxData spr_twinrova_1 ; $0b00f3
 	m_GfxData spr_twinrova_2 ; $0b022e
 	m_GfxData spr_twinrova_3 ; $0b0397
 	m_GfxData spr_twinrova_4 ; $0b055c
@@ -215,7 +215,7 @@
 	m_GfxData spr_twinrovamerged_2 ; $0b0e00
 	m_GfxData spr_ganon_1 ; $0b0fa6
 	m_GfxData spr_ganon_2 ; $0b11a6
-	m_GfxData spr_twinrova_sacrifice ; $0b1324
+	m_GfxData spr_twinrova_sacrifice_1 ; $0b1324
 	m_GfxData spr_twinrova_sacrifice_2 ; $0b14a3
 	m_GfxData spr_twinrova_sacrifice_3 ; $0b15a0
 	m_GfxData spr_twinrova_sacrifice_4 ; $0b16f7

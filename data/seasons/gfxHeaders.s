@@ -222,21 +222,21 @@ gfxHeader07: ; $6b2c
 	m_GfxHeader gfx_error $8801 $1f
 gfxHeader08: ; $6b32
 	m_GfxHeader gfx_inventory_hud_1 $8000 $1f|$80
-	m_GfxHeader gfx_season_symbols $8200 $1f|$80
-	m_GfxHeader gfx_quest_items_5 $8400 $1f|$80
-	m_GfxHeader gfx_map_compass_keys $8600 $1f|$80
+	m_GfxHeader spr_season_symbols $8200 $1f|$80
+	m_GfxHeader spr_quest_items_5 $8400 $1f|$80
+	m_GfxHeader spr_map_compass_keys $8600 $1f|$80
 	m_GfxHeader gfx_save $8600 $07|$80
 	m_GfxHeader gfx_blank $8800 $1f|$80
 	m_GfxHeader gfx_rings $8a00 $3f|$80
 	m_GfxHeader gfx_inventory_hud_2 $8e00 $1f|$80
-	m_GfxHeader gfx_item_icons_1_spr $8001 $1f|$80
+	m_GfxHeader spr_item_icons_1_spr $8001 $1f|$80
 	m_GfxHeader spr_item_icons_2 $8201 $1f|$80
 	m_GfxHeader spr_item_icons_3 $8401 $1f|$80
-	m_GfxHeader gfx_essences $8601 $17|$80
-	m_GfxHeader gfx_quest_items_1 $8801 $1f|$80
-	m_GfxHeader gfx_quest_items_2 $8a01 $1f|$80
-	m_GfxHeader gfx_quest_items_3 $8c01 $1f|$80
-	m_GfxHeader gfx_quest_items_4 $8e01 $1f|$80
+	m_GfxHeader spr_essences $8601 $17|$80
+	m_GfxHeader spr_quest_items_1 $8801 $1f|$80
+	m_GfxHeader spr_quest_items_2 $8a01 $1f|$80
+	m_GfxHeader spr_quest_items_3 $8c01 $1f|$80
+	m_GfxHeader spr_quest_items_4 $8e01 $1f|$80
 	m_GfxHeader map_inventory_textbar $d1e4 $05|$80
 	m_GfxHeader flg_inventory_textbar $d5e4 $05|$80
 gfxHeader09: ; $6b9e
@@ -269,7 +269,7 @@ gfxHeader0e: ; $6c0a
 	m_GfxHeader map_subrosia_minimap $d004 $23|$80
 	m_GfxHeader flg_subrosia_minimap $d404 $23
 gfxHeader0f: ; $6c28
-	m_GfxHeader gfx_map_compass_keys $8000 $1f|$80
+	m_GfxHeader spr_map_compass_keys $8000 $1f|$80
 	m_GfxHeader gfx_minimap_tiles_dungeon $8800 $3f|$80
 	m_GfxHeader map_dungeon_minimap $d004 $23|$80
 	m_GfxHeader flg_dungeon_minimap $d404 $23
@@ -433,7 +433,7 @@ gfxHeader3b: ; $6ee6
 	m_GfxHeader map_10 $d004 $23|$80
 	m_GfxHeader map_0a $d404 $23|$80
 	m_GfxHeader gfx_inventory_hud_1 $8000 $1f|$80
-	m_GfxHeader gfx_quest_items_5 $8400 $1f|$80
+	m_GfxHeader spr_quest_items_5 $8400 $1f|$80
 	m_GfxHeader gfx_rings $8a00 $3f|$80
 	m_GfxHeader gfx_inventory_hud_2 $8e00 $1f|$80
 	m_GfxHeader gfx_inventory_hud_1 $9000 $1f
@@ -979,7 +979,7 @@ gfxHeaderaf: ; $78f4
 	m_GfxHeader gfx_quit $8a01 $13
 gfxHeaderb0: ; $78fa
 	m_GfxHeader spr_ganon_1 $8000 $1f|$80
-	m_GfxHeader spr_twinrova_sacrifice $8200 $1f|$80
+	m_GfxHeader spr_twinrova_sacrifice_1 $8200 $1f|$80
 	m_GfxHeader spr_twinrova_sacrifice_2 $8400 $1f|$80
 	m_GfxHeader spr_twinrova_sacrifice_3 $8600 $1f|$80
 	m_GfxHeader spr_twinrova_sacrifice_4 $8800 $1d

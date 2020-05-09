@@ -225,21 +225,21 @@ gfxHeader07:
 	m_GfxHeader gfx_error $8801 $1f
 gfxHeader08:
 	m_GfxHeader gfx_inventory_hud_1 $8000 $2f|$80
-	m_GfxHeader gfx_present_past_symbols $8300 $0f|$80
-	m_GfxHeader gfx_quest_items_5 $8400 $1f|$80
-	m_GfxHeader gfx_map_compass_keys_bookofseals $8600 $1f|$80
+	m_GfxHeader spr_present_past_symbols $8300 $0f|$80
+	m_GfxHeader spr_quest_items_5 $8400 $1f|$80
+	m_GfxHeader spr_map_compass_keys_bookofseals $8600 $1f|$80
 	m_GfxHeader gfx_save $8600 $07|$80
 	m_GfxHeader gfx_blank $8800 $1f|$80
 	m_GfxHeader gfx_rings $8a00 $3f|$80
 	m_GfxHeader gfx_inventory_hud_2 $8e00 $1f|$80
-	m_GfxHeader gfx_item_icons_1_spr $8001 $1f|$80
+	m_GfxHeader spr_item_icons_1_spr $8001 $1f|$80
 	m_GfxHeader spr_item_icons_2 $8201 $1f|$80
 	m_GfxHeader spr_item_icons_3 $8401 $1f|$80
-	m_GfxHeader gfx_essences $8601 $17|$80
-	m_GfxHeader gfx_quest_items_1 $8801 $1f|$80
-	m_GfxHeader gfx_quest_items_2 $8a01 $1f|$80
-	m_GfxHeader gfx_quest_items_3 $8c01 $1f|$80
-	m_GfxHeader gfx_quest_items_4 $8e01 $1f|$80
+	m_GfxHeader spr_essences $8601 $17|$80
+	m_GfxHeader spr_quest_items_1 $8801 $1f|$80
+	m_GfxHeader spr_quest_items_2 $8a01 $1f|$80
+	m_GfxHeader spr_quest_items_3 $8c01 $1f|$80
+	m_GfxHeader spr_quest_items_4 $8e01 $1f|$80
 	m_GfxHeader map_inventory_textbar $d1e4 $05|$80
 	m_GfxHeader flg_inventory_textbar $d5e4 $05|$80
 gfxHeader09:
@@ -275,7 +275,7 @@ gfxHeader0e:
 	m_GfxHeaderDestRam  map_past_minimap           w4TileMap       $23|$80
 	m_GfxHeaderDestRam  flg_past_minimap           w4AttributeMap  $23
 gfxHeader0f:
-	m_GfxHeader         gfx_map_compass_keys_bookofseals  $8000           $1f|$80
+	m_GfxHeader         spr_map_compass_keys_bookofseals  $8000           $1f|$80
 	m_GfxHeader         gfx_minimap_tiles_dungeon             $8800           $3f|$80
 	m_GfxHeaderDestRam  map_dungeon_minimap               w4TileMap       $23|$80
 	m_GfxHeaderDestRam  flg_dungeon_minimap               w4AttributeMap  $23
@@ -404,7 +404,7 @@ gfxHeader3b:
 	m_GfxHeader map_10 $d004 $23|$80
 	m_GfxHeader map_0a $d404 $23|$80
 	m_GfxHeader gfx_inventory_hud_1 $8000 $2f|$80
-	m_GfxHeader gfx_quest_items_5 $8400 $1f|$80
+	m_GfxHeader spr_quest_items_5 $8400 $1f|$80
 	m_GfxHeader gfx_rings $8a00 $3f|$80
 	m_GfxHeader gfx_inventory_hud_2 $8e00 $1f|$80
 	m_GfxHeader gfx_inventory_hud_1 $9000 $2f
@@ -449,7 +449,7 @@ gfxHeader43:
 	m_GfxHeader gfx_tileset_0bcd33 $9501 $1f|$80
 	m_GfxHeader gfx_tileset_0bcf33 $9701 $0f
 gfxHeader44:
-	m_GfxHeader gfx_seaweed_cut $8001 $01
+	m_GfxHeader spr_seaweed_cut $8001 $01
 gfxHeader45:
 gfxHeader46:
 gfxHeader47:
@@ -723,7 +723,7 @@ gfxHeader95:
 	m_GfxHeader spr_credits_font $8000 $3b|$80
 	m_GfxHeader spr_credits_sprites_1 $8400 $3f|$80
 	m_GfxHeader spr_credits_sprites_2 $8001 $73|$80
-	m_GfxHeader gfx_triforce_sparkle_vineseed_bookofseals $d004 $1f|$80
+	m_GfxHeader spr_triforce_sparkle_vineseed_bookofseals $d004 $1f|$80
 	m_GfxHeader gfx_credits_bg_1 $8800 $7f|$80
 	m_GfxHeader gfx_credits_bg_2 $9000 $7f|$80
 	m_GfxHeader gfx_credits_bg_3 $8801 $7f|$80
@@ -832,7 +832,7 @@ gfxHeaderba:
 	m_GfxHeader unk_0e205d $d644 $07|$80
 gfxHeadera1:
 	m_GfxHeader spr_din_1 $8001 $05|$80
-	m_GfxHeader gfx_nayru_1 $8061 $03|$80
+	m_GfxHeader spr_nayru_1 $8061 $03|$80
 	m_GfxHeader gfx_messagespeed $9200 $1f|$80
 	m_GfxHeader gfx_pickafile_2 $8801 $1f|$80
 	m_GfxHeader gfx_copy $8a01 $09|$80
@@ -914,7 +914,7 @@ gfxHeaderaf:
 	m_GfxHeader gfx_quit $8a01 $13
 gfxHeaderb0:
 	m_GfxHeader spr_ganon_1 $8000 $1f|$80
-	m_GfxHeader spr_twinrova_sacrifice $8200 $1f|$80
+	m_GfxHeader spr_twinrova_sacrifice_1 $8200 $1f|$80
 	m_GfxHeader spr_twinrova_sacrifice_2 $8400 $1f|$80
 	m_GfxHeader spr_twinrova_sacrifice_3 $8600 $1f|$80
 	m_GfxHeader spr_twinrova_sacrifice_4 $8800 $1d

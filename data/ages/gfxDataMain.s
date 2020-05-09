@@ -1,16 +1,16 @@
 	m_GfxData spr_common_sprites ; $0a3f3b
-	m_GfxData gfx_seaweed_cut ; $0a42b2
+	m_GfxData spr_seaweed_cut ; $0a42b2
 	m_GfxData spr_common_items ; $0a42c1
-	m_GfxData gfx_quest_items_5 ; $0a440a
-	m_GfxData gfx_map_compass_keys_bookofseals ; $0a4598
+	m_GfxData spr_quest_items_5 ; $0a440a
+	m_GfxData spr_map_compass_keys_bookofseals ; $0a4598
 	m_GfxData gfx_blank ; $0a4715
 	m_GfxData gfx_rings ; $0a471b
-	m_GfxData gfx_item_icons_1_spr ; $0a4a75
-	m_GfxData gfx_essences ; $0a4b90
-	m_GfxData gfx_quest_items_1 ; $0a4cf9
-	m_GfxData gfx_quest_items_2 ; $0a4e82
-	m_GfxData gfx_quest_items_3 ; $0a5048
-	m_GfxData gfx_quest_items_4 ; $0a5216
+	m_GfxData spr_item_icons_1_spr ; $0a4a75
+	m_GfxData spr_essences ; $0a4b90
+	m_GfxData spr_quest_items_1 ; $0a4cf9
+	m_GfxData spr_quest_items_2 ; $0a4e82
+	m_GfxData spr_quest_items_3 ; $0a5048
+	m_GfxData spr_quest_items_4 ; $0a5216
 	m_GfxData gfx_hud ; $0a5363
 	m_GfxData gfx_inventory_hud_1 ; $0a5469
 	m_GfxData gfx_inventory_hud_2 ; $0a5595
@@ -60,75 +60,75 @@
 	m_GfxData map_past_minimap ; $0a81ed
 	m_GfxData flg_past_minimap ; $0a8352
 	m_GfxData spr_spinner_seedbouncer ; $0a83d1
-	m_GfxData gfx_roller_owl_barrier_orb ; $0a84fe
-	m_GfxData gfx_rollingplatform_d8stuff ; $0a8640
-	m_GfxData gfx_pedestal_flame_crystal ; $0a87ad
-	m_GfxData gfx_present_past_symbols ; $0a88a4
-	m_GfxData gfx_colored_cube ; $0a898e
-	m_GfxData gfx_kids ; $0a8a93
-	m_GfxData gfx_ladies_and_diver ; $0a8c0d
-	m_GfxData gfx_gymnast_troy_scrub ; $0a8db3
-	m_GfxData gfx_mailman_wiseman ; $0a8f39
-	m_GfxData gfx_hobos ; $0a9107
-	m_GfxData gfx_mustacheguy_cat_weirdo ; $0a9307
-	m_GfxData gfx_villagezora_plen_whitemustache ; $0a9467
-	m_GfxData gfx_zz_bubble_exclamation_heart_kid ; $0a9630
+	m_GfxData spr_roller_owl_barrier_orb ; $0a84fe
+	m_GfxData spr_rollingplatform_d8stuff ; $0a8640
+	m_GfxData spr_pedestal_flame_crystal ; $0a87ad
+	m_GfxData spr_present_past_symbols ; $0a88a4
+	m_GfxData spr_colored_cube ; $0a898e
+	m_GfxData spr_kids ; $0a8a93
+	m_GfxData spr_ladies_and_diver ; $0a8c0d
+	m_GfxData spr_gymnast_troy_scrub ; $0a8db3
+	m_GfxData spr_mailman_wiseman ; $0a8f39
+	m_GfxData spr_hobos ; $0a9107
+	m_GfxData spr_mustacheguy_cat_weirdo ; $0a9307
+	m_GfxData spr_villagezora_plen_whitemustache ; $0a9467
+	m_GfxData spr_zz_bubble_exclamation_heart_kid ; $0a9630
 	m_GfxData spr_bipin_glassesguy ; $0a978b
-	m_GfxData gfx_blossom_otherlady ; $0a9954
+	m_GfxData spr_blossom_otherlady ; $0a9954
 	m_GfxData spr_bipsom_1 ; $0a9afd
-	m_GfxData gfx_bipsom_2_and_lady ; $0a9cb4
-	m_GfxData gfx_lady_butterfly_pickaxeworker ; $0a9e86
-	m_GfxData gfx_fairy_toilethand ; $0aa01b
-	m_GfxData gfx_chickens_dog_forestfairy_other ; $0aa182
-	m_GfxData gfx_soldier ; $0aa33c
-	m_GfxData gfx_bear_monkey ; $0aa480
-	m_GfxData gfx_syrup_teenager ; $0aa65d
-	m_GfxData gfx_bunny_parrot ; $0aa836
-	m_GfxData gfx_vasu_snake_deadbunny ; $0aaa16
-	m_GfxData gfx_patch ; $0aaba5
-	m_GfxData gfx_mamamu_dog ; $0aad85
-	m_GfxData gfx_goron ; $0aaf04
-	m_GfxData gfx_gorondance_tingle_write ; $0ab069
-	m_GfxData gfx_ralph_2 ; $0ab20b
-	m_GfxData gfx_ralph_1 ; $0ab3d5
-	m_GfxData gfx_navi_ambi ; $0ab495
+	m_GfxData spr_bipsom_2_and_lady ; $0a9cb4
+	m_GfxData spr_lady_butterfly_pickaxeworker ; $0a9e86
+	m_GfxData spr_fairy_toilethand ; $0aa01b
+	m_GfxData spr_chickens_dog_forestfairy_other ; $0aa182
+	m_GfxData spr_soldier ; $0aa33c
+	m_GfxData spr_bear_monkey ; $0aa480
+	m_GfxData spr_syrup_teenager ; $0aa65d
+	m_GfxData spr_bunny_parrot ; $0aa836
+	m_GfxData spr_vasu_snake_deadbunny ; $0aaa16
+	m_GfxData spr_patch ; $0aaba5
+	m_GfxData spr_mamamu_dog ; $0aad85
+	m_GfxData spr_goron ; $0aaf04
+	m_GfxData spr_gorondance_tingle_write ; $0ab069
+	m_GfxData spr_ralph_2 ; $0ab20b
+	m_GfxData spr_ralph_1 ; $0ab3d5
+	m_GfxData spr_navi_ambi ; $0ab495
 	m_GfxData gfx_blank_2 ; $0ab5ff (unused)
-	m_GfxData gfx_farore_1 ; $0ab605
-	m_GfxData gfx_nayru_1 ; $0ab652
-	m_GfxData gfx_nayru_2 ; $0ab7d6
-	m_GfxData gfx_lady_guitarist ; $0ab94c
-	m_GfxData gfx_oldzora_cheval ; $0aba61
-	m_GfxData gfx_goronelder_raft ; $0abc32
-	m_GfxData gfx_constructionworker_shootinggalleryguy ; $0abdb3
-	m_GfxData gfx_pastlady_genericguy ; $0abfa1
-	m_GfxData gfx_friendlyghost ; $0ac14e
-	m_GfxData gfx_masksalesman_rafton ; $0ac29a
-	m_GfxData gfx_kingzora_tokkey ; $0ac3fd
-	m_GfxData gfx_tokay ; $0ac578
-	m_GfxData gfx_carpenters ; $0ac736
-	m_GfxData gfx_pirateship ; $0ac8e1
-	m_GfxData gfx_shopkeeper_oldzoramaybe_veranmask ; $0aca23
-	m_GfxData gfx_piratians ; $0acbed
+	m_GfxData spr_farore_1 ; $0ab605
+	m_GfxData spr_nayru_1 ; $0ab652
+	m_GfxData spr_nayru_2 ; $0ab7d6
+	m_GfxData spr_lady_guitarist ; $0ab94c
+	m_GfxData spr_oldzora_cheval ; $0aba61
+	m_GfxData spr_goronelder_raft ; $0abc32
+	m_GfxData spr_constructionworker_shootinggalleryguy ; $0abdb3
+	m_GfxData spr_pastlady_genericguy ; $0abfa1
+	m_GfxData spr_friendlyghost ; $0ac14e
+	m_GfxData spr_masksalesman_rafton ; $0ac29a
+	m_GfxData spr_kingzora_tokkey ; $0ac3fd
+	m_GfxData spr_tokay ; $0ac578
+	m_GfxData spr_carpenters ; $0ac736
+	m_GfxData spr_pirateship ; $0ac8e1
+	m_GfxData spr_shopkeeper_oldzoramaybe_veranmask ; $0aca23
+	m_GfxData spr_piratians ; $0acbed
 	m_GfxData spr_zelda_1 ; $0acd4f
 	m_GfxData spr_zelda_2 ; $0acef3
-	m_GfxData gfx_jabuchild ; $0ad01c
+	m_GfxData spr_jabuchild ; $0ad01c
 	m_GfxData spr_impa ; $0ad0f1
-	m_GfxData gfx_impafainted ; $0ad2cd
-	m_GfxData gfx_makuadultsprites_1 ; $0ad30d
-	m_GfxData gfx_makuadultsprites_2 ; $0ad468
+	m_GfxData spr_impafainted ; $0ad2cd
+	m_GfxData spr_makuadultsprites_1 ; $0ad30d
+	m_GfxData spr_makuadultsprites_2 ; $0ad468
 	m_GfxData gfx_blank_3 ; $0ad5b5 (unused)
-	m_GfxData gfx_maku_child ; $0ad5bb
+	m_GfxData spr_maku_child ; $0ad5bb
 	m_GfxData gfx_blank_4 ; $0ad6f4 (unused)
 	m_GfxData spr_din_1 ; $0ad6fa
-	m_GfxData gfx_din_2 ; $0ad875
-	m_GfxData gfx_moblinflag_bomb_portal ; $0ad94c
-	m_GfxData gfx_timeportal ; $0ada7a
-	m_GfxData gfx_triforce_sparkle_vineseed_bookofseals ; $0adb88
-	m_GfxData gfx_makuflower_book_seedling_weirdswirl_block ; $0adcbe
-	m_GfxData gfx_linkstatue ; $0ade8a
-	m_GfxData gfx_unknown_2 ; $0ae009
-	m_GfxData gfx_unknown ; $0ae101
-	m_GfxData gfx_tentthing_seasonsymbols ; $0ae200
+	m_GfxData spr_din_2 ; $0ad875
+	m_GfxData spr_moblinflag_bomb_portal ; $0ad94c
+	m_GfxData spr_timeportal ; $0ada7a
+	m_GfxData spr_triforce_sparkle_vineseed_bookofseals ; $0adb88
+	m_GfxData spr_makuflower_book_seedling_weirdswirl_block ; $0adcbe
+	m_GfxData spr_linkstatue ; $0ade8a
+	m_GfxData spr_unknown_2 ; $0ae009
+	m_GfxData spr_fountain ; $0ae101
+	m_GfxData spr_tentthing_seasonsymbols ; $0ae200
 	m_GfxData spr_flame ; $0ae309
 	m_GfxData spr_evilflame ; $0ae4b4
 	m_GfxData spr_circlethingsunknown ; $0ae673
@@ -138,78 +138,78 @@
 	m_GfxData spr_crab_fish_goponga_beetle ; $0aebf6
 	m_GfxData spr_lynel ; $0aed9e
 	m_GfxData spr_boulder ; $0aef4e
-	m_GfxData gfx_zol_peahat_watertektite_moldorm_gel ; $0af081
+	m_GfxData spr_zol_peahat_watertektite_moldorm_gel ; $0af081
 	m_GfxData spr_darknut ; $0af1f9
 	m_GfxData spr_giantcucco ; $0af31b
-	m_GfxData spr_gibdostalfosropewhispsparkbubblebeetle ; $0af412
+	m_GfxData spr_gibdo_stalfos_rope_whisp_spark_bubble_beetle ; $0af412
 	m_GfxData spr_polsvoice_hardhatbeetle_spikedbeetle_beamon ; $0af5d9
-	m_GfxData gfx_shroudedstalfos_tile_candle ; $0af748
+	m_GfxData spr_shroudedstalfos_tile_candle ; $0af748
 	m_GfxData spr_keese_firekeese_unknownbeams ; $0af8e7
 	m_GfxData spr_bladetraps ; $0afa1e
 	m_GfxData gfx_wizzrobe ; $0afb9d
 	m_GfxData spr_ironmask ; $0afc6b
-	m_GfxData gfx_armmimic_spikedroller_bari_biri ; $0afe35
+	m_GfxData spr_armmimic_spikedroller_bari_biri ; $0afe35
 	m_GfxData spr_hostilescrub ; $0affaa
 	m_GfxData spr_floormaster ; $0b0112
 	m_GfxData spr_thwomps ; $0b02a9
 	m_GfxData spr_fireball_cheepcheep ; $0b03ab
-	m_GfxData gfx_waterbubble ; $0b046a
+	m_GfxData spr_waterbubble ; $0b046a
 	m_GfxData spr_projectiles ; $0b055e
-	m_GfxData gfx_projectiles_2 ; $0b0662
+	m_GfxData spr_projectiles_2 ; $0b0662
 	m_GfxData spr_projectiles_3 ; $0b0806
-	m_GfxData gfx_unknownfireball ; $0b08ff
-	m_GfxData gfx_giantghini_2 ; $0b09e8
-	m_GfxData gfx_giantghini ; $0b0b3c
-	m_GfxData gfx_swoop ; $0b0c6e
-	m_GfxData gfx_pound ; $0b0db6
-	m_GfxData gfx_subterror ; $0b0e17
-	m_GfxData gfx_subterror_2 ; $0b0fb9
-	m_GfxData gfx_subterror_3 ; $0b1127
-	m_GfxData gfx_armoswarrior_1 ; $0b11be
-	m_GfxData gfx_armoswarriorshield ; $0b1342
-	m_GfxData gfx_armoswarriorsword ; $0b14df
-	m_GfxData gfx_smasher ; $0b1627
+	m_GfxData spr_unknownfireball ; $0b08ff
+	m_GfxData spr_giantghini_2 ; $0b09e8
+	m_GfxData spr_giantghini ; $0b0b3c
+	m_GfxData spr_swoop ; $0b0c6e
+	m_GfxData spr_pound ; $0b0db6
+	m_GfxData spr_subterror_1 ; $0b0e17
+	m_GfxData spr_subterror_2 ; $0b0fb9
+	m_GfxData spr_subterror_3 ; $0b1127
+	m_GfxData spr_armoswarrior_1 ; $0b11be
+	m_GfxData spr_armoswarriorshield ; $0b1342
+	m_GfxData spr_armoswarriorsword ; $0b14df
+	m_GfxData spr_smasher ; $0b1627
 	m_GfxData spr_vire ; $0b16f8
-	m_GfxData gfx_anglerfish ; $0b17dd
-	m_GfxData gfx_bluestalfos_3 ; $0b19ba
-	m_GfxData gfx_bluestalfos_1 ; $0b1b16
-	m_GfxData gfx_bluestalfos_2 ; $0b1ca3
-	m_GfxData gfx_pumpkinhead ; $0b1d70
-	m_GfxData gfx_pumpkinhead_2 ; $0b1f0e
-	m_GfxData gfx_pumpkinhead_3 ; $0b20a6
-	m_GfxData gfx_headthwomp_1 ; $0b21c8
-	m_GfxData gfx_headthwomp_2 ; $0b232b
-	m_GfxData gfx_headthwomp_3 ; $0b251e
-	m_GfxData gfx_shadowhag_2 ; $0b253a
-	m_GfxData gfx_shadowhag_1 ; $0b26ee
-	m_GfxData gfx_smog_1 ; $0b2823
-	m_GfxData gfx_smog_2 ; $0b2950
-	m_GfxData gfx_smog_3 ; $0b2ad5
-	m_GfxData gfx_smog_projectiles ; $0b2c32
-	m_GfxData gfx_octogon_1 ; $0b2cfe
-	m_GfxData gfx_octogon_2 ; $0b2ee4
-	m_GfxData gfx_octogon_3 ; $0b30ac
-	m_GfxData gfx_plasmarine_1 ; $0b31a3
-	m_GfxData gfx_plasmarine_2 ; $0b32dc
-	m_GfxData gfx_plasmarine_3 ; $0b33b5
-	m_GfxData gfx_ramrock_1 ; $0b3462
-	m_GfxData gfx_ramrock_2 ; $0b3551
-	m_GfxData gfx_nayru_ambi_possessed ; $0b3720
-	m_GfxData gfx_veran_human ; $0b38c8
-	m_GfxData gfx_wtf_darklink ; $0b3a2b
-	m_GfxData gfx_veranbeetleandwing ; $0b3bc3
-	m_GfxData gfx_fairyveran_1 ; $0b3c5e
-	m_GfxData gfx_beetleveran_1 ; $0b3dd2
-	m_GfxData gfx_spiderveran_1 ; $0b3f3d
-	m_GfxData gfx_spiderbeeveran ; $0b40f0
-	m_GfxData gfx_spiderbeeveran_2 ; $0b42c7
-	m_GfxData gfx_kingmoblin_1 ; $0b43db
-	m_GfxData gfx_kingmoblin_2 ; $0b4548
+	m_GfxData spr_anglerfish ; $0b17dd
+	m_GfxData spr_bluestalfos_3 ; $0b19ba
+	m_GfxData spr_bluestalfos_1 ; $0b1b16
+	m_GfxData spr_bluestalfos_2 ; $0b1ca3
+	m_GfxData spr_pumpkinhead ; $0b1d70
+	m_GfxData spr_pumpkinhead_2 ; $0b1f0e
+	m_GfxData spr_pumpkinhead_3 ; $0b20a6
+	m_GfxData spr_headthwomp_1 ; $0b21c8
+	m_GfxData spr_headthwomp_2 ; $0b232b
+	m_GfxData spr_headthwomp_3 ; $0b251e
+	m_GfxData spr_shadowhag_2 ; $0b253a
+	m_GfxData spr_shadowhag_1 ; $0b26ee
+	m_GfxData spr_smog_1 ; $0b2823
+	m_GfxData spr_smog_2 ; $0b2950
+	m_GfxData spr_smog_3 ; $0b2ad5
+	m_GfxData spr_smog_projectiles ; $0b2c32
+	m_GfxData spr_octogon_1 ; $0b2cfe
+	m_GfxData spr_octogon_2 ; $0b2ee4
+	m_GfxData spr_octogon_3 ; $0b30ac
+	m_GfxData spr_plasmarine_1 ; $0b31a3
+	m_GfxData spr_plasmarine_2 ; $0b32dc
+	m_GfxData spr_plasmarine_3 ; $0b33b5
+	m_GfxData spr_ramrock_1 ; $0b3462
+	m_GfxData spr_ramrock_2 ; $0b3551
+	m_GfxData spr_nayru_ambi_possessed ; $0b3720
+	m_GfxData spr_veran_human ; $0b38c8
+	m_GfxData spr_darklink ; $0b3a2b
+	m_GfxData spr_veranbeetleandwing ; $0b3bc3
+	m_GfxData spr_fairyveran_1 ; $0b3c5e
+	m_GfxData spr_beetleveran_1 ; $0b3dd2
+	m_GfxData spr_spiderveran_1 ; $0b3f3d
+	m_GfxData spr_spiderbeeveran_1 ; $0b40f0
+	m_GfxData spr_spiderbeeveran_2 ; $0b42c7
+	m_GfxData spr_kingmoblin_1 ; $0b43db
+	m_GfxData spr_kingmoblin_2 ; $0b4548
 	m_GfxData spr_kingmoblin_3 ; $0b4735
 	m_GfxData spr_kingmoblin_4 ; $0b48fb
-	m_GfxData gfx_kingmoblin_5 ; $0b4a9a
-	m_GfxData spr_twinrovamerged ; $0b4c14
-	m_GfxData spr_twinrova ; $0b4d14
+	m_GfxData spr_kingmoblin_5 ; $0b4a9a
+	m_GfxData spr_twinrovamerged_1 ; $0b4c14
+	m_GfxData spr_twinrova_1 ; $0b4d14
 	m_GfxData spr_twinrova_2 ; $0b4e4f
 	m_GfxData spr_twinrova_3 ; $0b4fb8
 	m_GfxData spr_twinrova_4 ; $0b517d
@@ -221,7 +221,7 @@
 	m_GfxData spr_twinrovamerged_2 ; $0b5a21
 	m_GfxData spr_ganon_1 ; $0b5bc7
 	m_GfxData spr_ganon_2 ; $0b5dc7
-	m_GfxData spr_twinrova_sacrifice ; $0b5f45
+	m_GfxData spr_twinrova_sacrifice_1 ; $0b5f45
 	m_GfxData spr_twinrova_sacrifice_2 ; $0b60c4
 	m_GfxData spr_twinrova_sacrifice_3 ; $0b61c1
 	m_GfxData spr_twinrova_sacrifice_4 ; $0b6318
@@ -406,7 +406,7 @@
 	m_GfxData gfx_intro_outside_castle_1 ; $0ca57f
 	m_GfxData gfx_intro_outside_castle_2 ; $0caaf2
 	m_GfxData gfx_intro_outside_castle_3 ; $0cb146
-	m_GfxData spr_0cb5d9 ; $0cb5d9
+	m_GfxData spr_triforcestone ; $0cb5d9
 	m_GfxData spr_0cb62e ; $0cb62e
 	m_GfxData gfx_0cb866 ; $0cb866
 	m_GfxData gfx_0cbec1 ; $0cbec1
