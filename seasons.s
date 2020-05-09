@@ -1156,7 +1156,7 @@ puddleAnimationFrames:
 	m_GfxDataSimple gfx_063940
 
 	; Compressed graphics file, for some reason doesn't go in gfxDataMain.s.
-	m_GfxDataSimple gfx_credits_sprites_2
+	m_GfxDataSimple spr_credits_sprites_2
 
 
 .BANK $19 SLOT 1

@@ -3436,7 +3436,7 @@ _loadEquippedItemSpriteData:
 	ld b,a			; $5328
 
 	; Comparion differs between ages/seasons. See the respective games'
-	; "gfx_item_icons_1.bin". This comparison changes the palette used for the seed
+	; "spr_item_icons_1.bin". This comparison changes the palette used for the seed
 	; satchel, seed shooter, slingshot, and hyper slingshot.
 .ifdef ROM_AGES
 	cp $84			; $5329
@@ -3912,8 +3912,8 @@ _drawHeartDisplay:
 ;;
 ; Loads two tiles for an equipped item's graphics ($40 bytes loaded total).
 ;
-; @param	b	Left sprite index (tile index for gfx_item_icons)
-; @param	c	Right sprite index (tile index for gfx_item_icons)
+; @param	b	Left sprite index (tile index for spr_item_icons)
+; @param	c	Right sprite index (tile index for spr_item_icons)
 ; @param	e	Low byte of where to load graphics (should be w4ItemIconGfx+XX)
 ; @addr{54b7}
 _loadItemIconGfx:
@@ -3933,7 +3933,7 @@ _loadItemIconGfx:
 
 .ifdef ROM_AGES
 	; Special behaviour for harp song icons: add 2 to the index so that the "smaller
-	; version" of the icon is drawn. (gfx_item_icons_3.bin has two versions of each
+	; version" of the icon is drawn. (spr_item_icons_3.bin has two versions of each
 	; song)
 	cp $a3			; $54c3
 	jr c,+			; $54c5
@@ -3943,9 +3943,9 @@ _loadItemIconGfx:
 
 	add a			; $54c9
 	call multiplyABy16		; $54ca
-	ld hl,gfx_item_icons_1
+	ld hl,spr_item_icons_1
 	add hl,bc		; $54d0
-	ld b,:gfx_item_icons_1
+	ld b,:spr_item_icons_1
 	jp copy20BytesFromBank		; $54d3
 @clear:
 	ld h,d			; $54d6

@@ -125,21 +125,21 @@ uncmpGfxHeader16: ; $6836
 uncmpGfxHeader17: ; $6842
 	m_GfxHeaderRam $07 $d200 $9201 $1f
 uncmpGfxHeader18: ; $6848
-	m_GfxHeader gfx_boomerang $84e1 $03
+	m_GfxHeader spr_boomerang $84e1 $03
 uncmpGfxHeader19: ; $684e
-	m_GfxHeader gfx_boomerang $84e1 $03 $40
+	m_GfxHeader spr_boomerang $84e1 $03 $40
 uncmpGfxHeader1a: ; $6854
-	m_GfxHeader gfx_swords $8521 $09
+	m_GfxHeader spr_swords $8521 $09
 uncmpGfxHeader1b: ; $685a
-	m_GfxHeader gfx_swords $8521 $0d $a0
+	m_GfxHeader spr_swords $8521 $0d $a0
 uncmpGfxHeader1c: ; $6860
-	m_GfxHeader gfx_rod_of_seasons $8521 $09
+	m_GfxHeader spr_rod_of_seasons $8521 $09
 uncmpGfxHeader1d: ; $6866
-	m_GfxHeader gfx_slingshot $8521 $07
+	m_GfxHeader spr_slingshot $8521 $07
 uncmpGfxHeader1e: ; $686c
-	m_GfxHeader gfx_magnet_gloves $8521 $07
+	m_GfxHeader spr_magnet_gloves $8521 $07
 uncmpGfxHeader1f: ; $6872
-	m_GfxHeader gfx_item_icons_2 $8521 $01 $140
+	m_GfxHeader spr_item_icons_2 $8521 $01 $140
 uncmpGfxHeader20: ; $6878
 	m_GfxHeaderRam $07 $d800 $9200 $0f
 uncmpGfxHeader21: ; $687e

@@ -217,7 +217,7 @@ _getSpecialObjectGraphicsFrame:
 	; Bit 0: bank select
 	ld a,l			; $4544
 	and $01			; $4545
-	add :gfx_link		; $4547
+	add :spr_link		; $4547
 	ld c,a			; $4549
 
 	; Bits 1-4: size (divided by 16)
