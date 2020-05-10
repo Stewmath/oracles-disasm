@@ -41,3 +41,55 @@ Type "make doc" to generate documentation, which may or may not work at this poi
 * Perl
 * Doxygen
 * Graphviz for call graphs
+
+
+# Graphics files
+
+Graphics are stored as 4-color indexed PNG files. When editing them, you should
+attempt to ensure that they remain indexed images, and that only color indexes
+0-3 are used. Editors such as Aseprite, which show you the color palette, are
+great for this.
+
+Some graphics have a corresponding ".properties" file (ie. "spr\_link.png" has
+"spr\_link.properties"). These are YAML files which specify certain properties
+about how they should be converted from PNG format to BIN (raw) format, and
+vice-versa.
+
+The following parameters are accepted in ".properties" files:
+
+* width (int): Width of the resulting PNG file, in tiles. Only affects .BIN ->
+  .PNG conversion.
+* interleave (bool): Whether to treat the image with an 8x16 layout instead of
+  an 8x8 layout (mainly for sprites).
+* invert (bool): Whether to invert the color order of the PNG palettes. When
+  "false", the order is light-to-dark. When "true", the order is dark-to-light.
+  Only affects .BIN -> .PNG conversion.
+* tile\_padding: Number of tiles of padding at the end of the image. These will
+  be truncated before conversion to ".BIN" format. Affects both .BIN -> .PNG and
+  .PNG -> .BIN conversion.
+* format (string): Set this to "1bpp" for 1 bit-per-pixel files (only the font
+  uses this).
+
+Sprite graphics files (files beginning with "spr\_" instead of "gfx\_") are
+assumed to have the properties "invert: true" and "interleave: true". However,
+these can be overridden by creating a ".properties" file.
+
+If you wish to edit the files in raw .BIN format with an editor such as YY-CHR,
+run the following command from the root of the repository (using `spr\_link.png`
+as an example):
+
+```
+python3 tools/gfx/gfx.py auto gfx/spr_link.png
+```
+
+This will create `gfx/spr_link.bin`, a raw 2bpp gameboy image. You can simply
+remove "gfx/spr\_link.png", in which case the disassembly will read from
+`gfx/spr\_link.bin` instead. Or, you may convert it back to PNG when you're
+done:
+
+```
+python3 tools/gfx/gfx.py png gfx/spr_link.bin
+```
+
+Both of these commands will check the ".properties" file, if it exists, to
+decode and encode the image properly.
