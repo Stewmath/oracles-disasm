@@ -829,8 +829,8 @@ outFile.close()
 
 # Debug output: if this is equivalent to the debug output from "dumpText.py", then the text was at
 # least parsed correctly.
-outFile = open('text/test2.bin','wb')
-for group in groupDict.values():
-    for textStruct in group.textStructs:
-        outFile.write(bytes(textStruct.data))
-outFile.close()
+#outFile = open('text/test2.bin','wb')
+#for group in groupDict.values():
+#    for textStruct in group.textStructs:
+#        outFile.write(bytes(textStruct.data))
+#outFile.close()
