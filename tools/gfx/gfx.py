@@ -1,4 +1,8 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
+#
+# Borrowed from https://github.com/pret/pokered. Converted to python3 & further modified for
+# use with the Oracle games.
 
 import os
 import sys
@@ -6,8 +10,6 @@ import png
 from math import sqrt, floor, ceil
 import argparse
 import operator
-
-from lz import Compressed, Decompressed
 
 
 def split(list_, interval):
@@ -176,24 +178,6 @@ def to_file(filename, data):
     for byte in data:
         file.write(bytearray([byte]))
     file.close()
-
-
-def decompress_file(filein, fileout=None):
-    image = bytearray(open(filein).read())
-    de = Decompressed(image)
-
-    if fileout == None:
-        fileout = os.path.splitext(filein)[0]
-    to_file(fileout, de.output)
-
-
-def compress_file(filein, fileout=None):
-    image = bytearray(open(filein).read())
-    lz = Compressed(image)
-
-    if fileout == None:
-        fileout = filein + '.lz'
-    to_file(fileout, lz.output)
 
 
 def bin_to_rgb(word):
@@ -375,7 +359,7 @@ def read_filename_arguments(filename):
     return parsed_arguments
 
 
-def export_2bpp_to_png(filein, fileout=None, pal_file=None, height=0, width=0, tile_padding=0, pic_dimensions=None, **kwargs):
+def export_2bpp_to_png(filein, fileout=None, pal_file=None, height=0, width=0, tile_padding=0, pic_dimensions=None, invert=False, **kwargs):
 
     if fileout == None:
         fileout = os.path.splitext(filein)[0] + '.png'
@@ -390,21 +374,25 @@ def export_2bpp_to_png(filein, fileout=None, pal_file=None, height=0, width=0, t
         'pic_dimensions': pic_dimensions,
     }
     arguments.update(read_filename_arguments(filein))
+    arguments.update(kwargs)
 
     if pal_file == None:
         if os.path.exists(os.path.splitext(fileout)[0]+'.pal'):
             arguments['pal_file'] = os.path.splitext(fileout)[0]+'.pal'
 
     result = convert_2bpp_to_png(image, **arguments)
-    width, height, palette, greyscale, bitdepth, px_map = result
+    width, height, palette, greyscale, bitdepth, px_map, padding = result
+
+    if invert:
+        palette = palette[::-1]
 
     w = png.Writer(
         width,
         height,
         palette=palette,
         compression=9,
-        greyscale=greyscale,
-        bitdepth=bitdepth
+        bitdepth=bitdepth,
+        #transparent=0
     )
     with open(fileout, 'wb') as f:
         w.write(f, px_map)
@@ -427,7 +415,8 @@ def convert_2bpp_to_png(image, **kwargs):
     interleave     = kwargs.get('interleave', False)
 
     # Width must be specified to interleave.
-    if interleave and width:
+    if interleave:
+        assert width, "Must have 'width' defined to use 'interleave'."
         image = interleave_tiles(image, width // 8)
 
     # Pad the image by a given number of tiles if asked.
@@ -454,6 +443,9 @@ def convert_2bpp_to_png(image, **kwargs):
         return len(img) * 4
     def tile_length(img):
         return len(img) * 4 // (8*8)
+
+    if not width and not height:
+        width = 8 * 16
 
     if width and height:
         tile_width = width // 8
@@ -492,10 +484,10 @@ def convert_2bpp_to_png(image, **kwargs):
     lines = to_lines(flatten(image), width)
 
     if pal_file == None:
-        palette   = None
-        greyscale = True
+        palette   = ((0xff, 0xff, 0xff), (0xaa, 0xaa, 0xaa), (0x55, 0x55, 0x55), (0, 0, 0))
+        greyscale = False
         bitdepth  = 2
-        px_map    = [[3 - pixel for pixel in line] for line in lines]
+        px_map    = [[pixel for pixel in line] for line in lines]
 
     else: # gbc color
         palette   = pal_to_png(pal_file)
@@ -503,7 +495,7 @@ def convert_2bpp_to_png(image, **kwargs):
         bitdepth  = 8
         px_map    = [[pixel for pixel in line] for line in lines]
 
-    return width, height, palette, greyscale, bitdepth, px_map
+    return width, height, palette, greyscale, bitdepth, px_map, more_tile_padding + tile_padding
 
 
 def get_pic_animation(tmap, w, h):
@@ -553,8 +545,8 @@ def export_png_to_2bpp(filein, fileout=None, palout=None, **kwargs):
         'animate': False,
         'stupid_bitmask_hack': [],
     }
-    arguments.update(kwargs)
     arguments.update(read_filename_arguments(filein))
+    arguments.update(kwargs)
 
     image, arguments = png_to_2bpp(filein, **arguments)
 
@@ -635,47 +627,61 @@ def png_to_2bpp(filein, **kwargs):
 
     #assert type(filein) is file # Doesn't work in python3
 
-    width, height, rgba, info = png.Reader(filein).asRGBA8()
+    width, height, rgba, info = png.Reader(filein).read()
 
-    # png.Reader returns flat pixel data. Nested is easier to work with
-    len_px  = len('rgba')
-    image   = []
-    palette = []
-    for line in rgba:
-        newline = []
-        for px in range(0, len(line), len_px):
-            color = dict(list(zip('rgba', line[px:px+len_px])))
-            if color not in palette:
-                if len(palette) < 4:
-                    palette += [color]
-                else:
-                    # TODO Find the nearest match
-                    print('WARNING: %s: Color %s truncated to' % (filein, color), end=' ')
-                    color = sorted(palette, key=lambda x: sum(x.values()))[0]
-                    print(color)
-            newline += [color]
-        image += [newline]
+    if 'palette' in info:
+        image   = []
+        palette = info['palette']
+        for line in rgba:
+            newline = []
+            for px in line:
+                assert px >= 0 and px <= 3, "Invalid pixel index " + str(px)
+                newline += [palette[px]]
+            image += [newline]
+    else: # Based on RGBA8
+        print('WARNING: Bitmap not indexed, trying to match with palette')
 
-    assert len(palette) <= 4, '%s: palette should be 4 colors, is really %d (%s)' % (filein, len(palette), palette)
+        width, height, rgba, info = png.Reader(filein).asRGBA8()
 
-    # Pad out smaller palettes with greyscale colors
-    greyscale = {
-        'black': { 'r': 0x00, 'g': 0x00, 'b': 0x00, 'a': 0xff },
-        'grey':  { 'r': 0x55, 'g': 0x55, 'b': 0x55, 'a': 0xff },
-        'gray':  { 'r': 0xaa, 'g': 0xaa, 'b': 0xaa, 'a': 0xff },
-        'white': { 'r': 0xff, 'g': 0xff, 'b': 0xff, 'a': 0xff },
-    }
-    preference = 'white', 'black', 'grey', 'gray'
-    for hue in map(greyscale.get, preference):
-        if len(palette) >= 4:
-            break
-        if hue not in palette:
-            palette += [hue]
+        # png.Reader returns flat pixel data. Nested is easier to work with
+        len_px  = len('rgba')
+        image   = []
+        palette = []
+        for line in rgba:
+            newline = []
+            for px in range(0, len(line), len_px):
+                color = dict(list(zip('rgba', line[px:px+len_px])))
+                if color not in palette:
+                    if len(palette) < 4:
+                        palette += [color]
+                    else:
+                        # TODO Find the nearest match
+                        print('WARNING: %s: Color %s truncated to' % (filein, color), end=' ')
+                        color = sorted(palette, key=lambda x: sum(x.values()))[0]
+                        print(color)
+                newline += [color]
+            image += [newline]
 
-    palette.sort(key=lambda x: sum(x.values()))
+        assert len(palette) <= 4, '%s: palette should be 4 colors, is really %d (%s)' % (filein, len(palette), palette)
 
-    # Game Boy palette order
-    palette.reverse()
+        # Pad out smaller palettes with greyscale colors
+        greyscale = {
+            'black': { 'r': 0x00, 'g': 0x00, 'b': 0x00, 'a': 0xff },
+            'grey':  { 'r': 0x55, 'g': 0x55, 'b': 0x55, 'a': 0xff },
+            'gray':  { 'r': 0xaa, 'g': 0xaa, 'b': 0xaa, 'a': 0xff },
+            'white': { 'r': 0xff, 'g': 0xff, 'b': 0xff, 'a': 0xff },
+        }
+        preference = 'white', 'black', 'grey', 'gray'
+        for hue in map(greyscale.get, preference):
+            if len(palette) >= 4:
+                break
+            if hue not in palette:
+                palette += [hue]
+
+        palette.sort(key=lambda x: sum(x.values()))
+
+        # Game Boy palette order
+        palette.reverse()
 
     # Map pixels to quaternary color ids
     padding = get_image_padding(width, height)
@@ -781,15 +787,6 @@ def export_palette(palette, filename):
             out.write(text)
 
 
-def png_to_lz(filein):
-
-    name = os.path.splitext(filein)[0]
-
-    export_png_to_2bpp(filein)
-    image = open(name+'.2bpp', 'rb').read()
-    to_file(name+'.2bpp'+'.lz', Compressed(image).output)
-
-
 def convert_2bpp_to_1bpp(data):
     """
     Convert planar 2bpp image data to 1bpp. Assume images are two colors.
@@ -852,87 +849,78 @@ def png_to_1bpp(filename, **kwargs):
     return convert_2bpp_to_1bpp(image)
 
 
-def convert_to_2bpp(filenames=[]):
-    for filename in filenames:
-        filename, name, extension = try_decompress(filename)
-        if extension == '.1bpp':
-            export_1bpp_to_2bpp(filename)
-        elif extension == '.2bpp':
-            pass
-        elif extension == '.png':
-            export_png_to_2bpp(filename)
-        else:
-            raise Exception("Don't know how to convert {} to 2bpp!".format(filename))
-
-def convert_to_1bpp(filenames=[]):
-    for filename in filenames:
-        filename, name, extension = try_decompress(filename)
-        if extension == '.1bpp':
-            pass
-        elif extension == '.2bpp':
-            export_2bpp_to_1bpp(filename)
-        elif extension == '.png':
-            export_png_to_1bpp(filename)
-        else:
-            raise Exception("Don't know how to convert {} to 1bpp!".format(filename))
-
-def convert_to_png(filenames=[]):
-    for filename in filenames:
-        filename, name, extension = try_decompress(filename)
-        if extension == '.1bpp':
-            export_1bpp_to_png(filename)
-        elif extension == '.2bpp':
-            export_2bpp_to_png(filename)
-        elif extension == '.png':
-            pass
-        else:
-            raise Exception("Don't know how to convert {} to png!".format(filename))
-
-def compress(filenames=[]):
-    for filename in filenames:
-        data = open(filename, 'rb').read()
-        lz_data = Compressed(data).output
-        to_file(filename + '.lz', lz_data)
-
-def decompress(filenames=[]):
-    for filename in filenames:
-        name, extension = os.path.splitext(filename)
-        lz_data = open(filename, 'rb').read()
-        data = Decompressed(lz_data).output
-        to_file(name, data)
-
-def try_decompress(filename):
-    """
-    Try to decompress a graphic when determining the filetype.
-    This skips the manual unlz step when attempting
-    to convert lz-compressed graphics to png.
-    """
+def convert_to_2bpp(filename, fromFormat, **kwargs):
     name, extension = os.path.splitext(filename)
-    if extension == '.lz':
-        decompress([filename])
-        filename = name
-        name, extension = os.path.splitext(filename)
-    return filename, name, extension
+    if fromFormat == '1bpp':
+        export_1bpp_to_2bpp(filename, **kwargs)
+    elif fromFormat == '2bpp':
+        pass
+    elif fromFormat == 'png':
+        export_png_to_2bpp(filename, **kwargs)
+    else:
+        raise Exception("Don't know how to convert {} to 2bpp!".format(filename))
+
+def convert_to_1bpp(filename, fromFormat, **kwargs):
+    name, extension = os.path.splitext(filename)
+    if fromFormat == '1bpp':
+        pass
+    elif fromFormat == '2bpp':
+        export_2bpp_to_1bpp(filename, **kwargs)
+    elif fromFormat == 'png':
+        export_png_to_1bpp(filename, **kwargs)
+    else:
+        raise Exception("Don't know how to convert {} to 1bpp!".format(filename))
+
+def convert_to_png(filename, fromFormat, **kwargs):
+    if fromFormat == '1bpp':
+        export_1bpp_to_png(filename, **kwargs)
+    elif fromFormat == '2bpp':
+        export_2bpp_to_png(filename, **kwargs)
+    elif fromFormat == 'png':
+        pass
+    else:
+        raise Exception("Don't know how to convert {} to png!".format(filename))
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('mode')
+    ap.add_argument('--from', dest='fromFormat')
+    ap.add_argument('--width', dest='width', type=int)
+    ap.add_argument('--interleave', dest='interleave', action='store_true')
+    ap.add_argument('--invert', dest='invert', action='store_true')
     ap.add_argument('filenames', nargs='*')
     args = ap.parse_args()
 
-    method = {
+    methods = {
         '2bpp': convert_to_2bpp,
         '1bpp': convert_to_1bpp,
         'png':  convert_to_png,
-        'lz':   compress,
-        'unlz': decompress,
-    }.get(args.mode, None)
+    }
+
+    method = methods.get(args.mode, None)
+
+    if args.width == -1:
+        args.width = 'sprite' # Special handler
 
     if method == None:
         raise Exception("Unknown conversion method!")
 
-    method(args.filenames)
+    for filename in args.filenames:
+        name, extension = os.path.splitext(filename)
+
+        fromFormat = args.fromFormat or ext
+
+        width = args.width
+        if width == 'sprite': # Special handler for determining width for sprites
+            assert(fromFormat == '2bpp')
+            size = os.path.getsize(filename) # Assumes 2bpp
+            print(filename)
+            assert(size % 16 == 0)
+            numTiles = size // 16
+            width = min(8*16, numTiles * 16 // 4)
+
+        method(filename, fromFormat, width=width, invert=args.invert, interleave=args.interleave)
 
 if __name__ == "__main__":
     main()
