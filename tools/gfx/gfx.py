@@ -380,11 +380,13 @@ def export_2bpp_to_png(filein, fileout=None, write_properties=False, **kwargs):
     if write_properties:
         properties = {'invert': kwargs.get('invert', None),
                 'tile_padding': padding,
-                'interleave':  kwargs.get('interleave', None)}
+                'interleave':  kwargs.get('interleave', None),
+                'width':       kwargs.get('width', None)}
 
         # Only write properties that aren't apparent based on the filename
         default_properties = read_filename_arguments(filein, read_properties=False)
         default_properties['tile_padding'] = 0
+        default_properties['width'] = 0
 
         if default_properties != properties:
             for p in list(properties.keys()):
@@ -935,6 +937,8 @@ def main():
         elif kwargs['mode'] == 'auto': # autodetect
             kwargs['mode'] = kwargs['format']
             kwargs['fromFormat'] = extension
+            if not 'fileout' in kwargs:
+                kwargs['fileout'] = name + '.bin'
         else:
             kwargs['fromFormat'] = extension
 
