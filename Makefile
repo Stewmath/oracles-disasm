@@ -97,7 +97,7 @@ endif
 # Removal of temporary files is annoying, disable it.
 .PRECIOUS:
 
-.PHONY: all ages seasons clean run force
+.PHONY: all ages seasons clean run force test-gfx
 
 
 all:
@@ -319,3 +319,15 @@ doc: $(DOCFILES) | build/doc
 
 build/%-s.c: %.s | build/doc
 	cd build/doc/; $(TOPDIR)/tools/build/asm4doxy.pl -ns ../../$<
+
+
+# --------------------------------------------------------------------------------
+# Testing graphics encoding: ensure that pngs are encoded correctly.
+# --------------------------------------------------------------------------------
+
+test-gfx:
+	@$(PYTHON) tools/gfx/gfx.py auto gfx_compressible/*.png gfx_compressible/ages/*.png gfx_compressible/seasons/*.png
+	@echo "Running diff against gfx files in 'test/gfx_compressible_encoded'..."
+	@for f in $$(cd gfx_compressible; find -name 'gfx_*.bin' -or -name 'spr_*.bin'); do \
+		diff gfx_compressible/$$f test/gfx_compressible_encoded/$$f; \
+	done
