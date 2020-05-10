@@ -6,7 +6,7 @@ jobs:
   # none of the stable releases of WLA actually build the disassembly properly.
   build-wla:
     docker:
-      - image: stewmat/oracles-disasm-builder:0.1
+      - image: stewmat/oracles-disasm-builder:0.2
     steps:
       - restore_cache:
           key: wla-dx-master
@@ -25,7 +25,7 @@ jobs:
 
   build-game:
     docker:
-      - image: stewmat/oracles-disasm-builder:0.1
+      - image: stewmat/oracles-disasm-builder:0.2
     parameters:
       game:
         type: string
