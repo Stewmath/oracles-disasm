@@ -210,8 +210,6 @@ $(foreach filename,$(PRECMP_GFX_FILES),$(eval $(call define_copy_gfx_rules,$(fil
 
 else
 
-# Copy compressible gfx files to build/gfx
-$(foreach filename,$(CMP_GFX_FILES),$(eval $(call define_copy_gfx_rules,$(filename))))
 # Define rules for compression of these files
 $(foreach filename,$(CMP_GFX_FILES),$(eval $(call define_cmp_gfx_rules,$(filename))))
 
