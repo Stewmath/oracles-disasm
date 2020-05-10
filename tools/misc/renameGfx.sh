@@ -44,7 +44,7 @@ function replace {
     try_replace gfx/$game $oldname $newname
     try_replace gfx_compressible/$game $oldname $newname
     try_replace precompressed/gfx_compressible/$game $oldname $newname
-    try_replace test/gfx_compressible/$game $oldname $newname
+    try_replace test/gfx_compressible_encoded/$game $oldname $newname
 }
 
 replace
