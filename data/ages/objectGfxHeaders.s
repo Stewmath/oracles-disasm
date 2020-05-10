@@ -158,7 +158,7 @@ objectGfxHeaderTable:
 	/* $9c */ m_ObjectGfxHeader spr_shroudedstalfos_tile_candle $00
 	/* $9d */ m_ObjectGfxHeader spr_keese_firekeese_unknownbeams $00
 	/* $9e */ m_ObjectGfxHeader spr_bladetraps $00
-	/* $9f */ m_ObjectGfxHeader gfx_wizzrobe $00
+	/* $9f */ m_ObjectGfxHeader spr_wizzrobe $00
 	/* $a0 */ m_ObjectGfxHeader spr_ironmask $00
 	/* $a1 */ m_ObjectGfxHeader spr_armmimic_spikedroller_bari_biri $00
 	/* $a2 */ m_ObjectGfxHeader spr_floormaster $00

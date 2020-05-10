@@ -146,7 +146,7 @@
 	m_GfxData spr_shroudedstalfos_tile_candle ; $0af748
 	m_GfxData spr_keese_firekeese_unknownbeams ; $0af8e7
 	m_GfxData spr_bladetraps ; $0afa1e
-	m_GfxData gfx_wizzrobe ; $0afb9d
+	m_GfxData spr_wizzrobe ; $0afb9d
 	m_GfxData spr_ironmask ; $0afc6b
 	m_GfxData spr_armmimic_spikedroller_bari_biri ; $0afe35
 	m_GfxData spr_hostilescrub ; $0affaa
