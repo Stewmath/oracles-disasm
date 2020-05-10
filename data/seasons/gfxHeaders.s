@@ -438,7 +438,7 @@ gfxHeader3b: ; $6ee6
 	m_GfxHeader gfx_inventory_hud_2 $8e00 $1f|$80
 	m_GfxHeader gfx_inventory_hud_1 $9000 $1f
 gfxHeader3c: ; $6f10
-	m_GfxHeader gfx_credits_makutree $8000 $37|$80
+	m_GfxHeader spr_credits_makutree $8000 $37|$80
 	m_GfxHeader gfx_credits_makutree_1 $8800 $7f|$80
 	m_GfxHeader gfx_credits_makutree_2 $9000 $7f|$80
 	m_GfxHeader gfx_credits_gametitle $8801 $6a|$80

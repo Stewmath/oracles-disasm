@@ -450,7 +450,7 @@
 	m_GfxData gfx_twinrova_closeup_2 ; $0d1c06
 	m_GfxData map_twinrova_closeup ; $0d1e72
 	m_GfxData flg_twinrova_closeup ; $0d1fa2
-	m_GfxData gfx_credits_makutree ; $0d1fe5
+	m_GfxData spr_credits_makutree ; $0d1fe5
 	m_GfxData gfx_credits_makutree_1 ; $0d21d5
 	m_GfxData gfx_credits_makutree_2 ; $0d2880
 	m_GfxData unk_0d2f6e ; $0d2f6e
