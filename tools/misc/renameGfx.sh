@@ -24,17 +24,27 @@ do
 	sed -i "s/\\<$oldname\\>/$newname/" $f
 done
 
+function try_replace {
+    old=$1/$2
+    new=$1/$3
+
+    [ -f $old.bin ] && \
+        git mv $old.bin $new.bin
+    [ -f $old.cmp ] && \
+        git mv $old.cmp $new.cmp
+    [ -f $old.png ] && \
+        git mv $old.png $new.png
+    [ -f $old.properties ] && \
+        git mv $old.properties $new.properties
+}
+
 function replace {
     game=$1
 
-    [ -f gfx/$game/$oldname\.bin ] && \
-        git mv gfx/$game/$oldname\.bin gfx/$game/$newname\.bin
-
-    [ -f gfx_compressible/$game/$oldname\.bin ] && \
-        git mv gfx_compressible/$game/$oldname\.bin gfx_compressible/$game/$newname\.bin
-
-    [ -f precompressed/gfx_compressible/$game/$oldname\.cmp ] && \
-        git mv precompressed/gfx_compressible/$game/$oldname\.cmp precompressed/gfx_compressible/$game/$newname\.cmp
+    try_replace gfx/$game $oldname $newname
+    try_replace gfx_compressible/$game $oldname $newname
+    try_replace precompressed/gfx_compressible/$game $oldname $newname
+    try_replace test/gfx_compressible/$game $oldname $newname
 }
 
 replace
