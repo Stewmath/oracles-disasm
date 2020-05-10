@@ -6,6 +6,7 @@
 
 import os
 import sys
+import yaml
 import png
 from math import sqrt, floor, ceil
 import argparse
@@ -319,71 +320,50 @@ def png_to_rgb(palette):
     return output
 
 
-def read_filename_arguments(filename):
+def read_filename_arguments(filename, read_properties=True):
     """
     Infer graphics conversion arguments given a filename.
 
-    Arguments are separated with '.'.
+    Files starting with "spr_" have the "interleave" and "invert" properties set
+    by default.
+
+    This also reads a ".properties" file (ie. "gfx_text.properties") which is
+    a YAML file which can have arguments set in it. This can, for example,
+    override the color inversion for sprites ("invert: False").
     """
     parsed_arguments = {}
 
-    int_arguments = {
-        'w': 'width',
-        'h': 'height',
-        't': 'tile_padding',
-    }
-    arguments = os.path.splitext(filename)[0].lstrip('.').split('.')[1:]
-    for argument in arguments:
+    if os.path.basename(filename).startswith('spr_'):
+        parsed_arguments['interleave'] = True
+        parsed_arguments['invert'] = True
+    else:
+        parsed_arguments['interleave'] = None
+        parsed_arguments['invert'] = None
 
-        # Check for integer arguments first (i.e. "w128").
-        arg   = argument[0]
-        param = argument[1:]
-        if param.isdigit():
-            arg = int_arguments.get(arg, False)
-            if arg:
-                parsed_arguments[arg] = int(param)
-
-        elif argument == 'arrange':
-            parsed_arguments['norepeat'] = True
-            parsed_arguments['tilemap']  = True
-
-        # Pic dimensions (i.e. "6x6").
-        elif 'x' in argument and any(map(str.isdigit, argument)):
-            w, h = argument.split('x')
-            if w.isdigit() and h.isdigit():
-                parsed_arguments['pic_dimensions'] = (int(w), int(h))
-
-        else:
-            parsed_arguments[argument] = True
+    if read_properties:
+        # Load ".properties" file
+        name, ext = os.path.splitext(filename)
+        name += '.properties'
+        if os.path.isfile(name):
+            yamlFile = open(name, 'r')
+            d = yaml.safe_load(yamlFile)
+            yamlFile.close()
+            parsed_arguments.update(d)
 
     return parsed_arguments
 
 
-def export_2bpp_to_png(filein, fileout=None, pal_file=None, height=0, width=0, tile_padding=0, pic_dimensions=None, invert=False, **kwargs):
+def export_2bpp_to_png(filein, fileout=None, write_properties=False, **kwargs):
 
     if fileout == None:
         fileout = os.path.splitext(filein)[0] + '.png'
 
     image = open(filein, 'rb').read()
 
-    arguments = {
-        'width': width,
-        'height': height,
-        'pal_file': pal_file,
-        'tile_padding': tile_padding,
-        'pic_dimensions': pic_dimensions,
-    }
-    arguments.update(read_filename_arguments(filein))
-    arguments.update(kwargs)
-
-    if pal_file == None:
-        if os.path.exists(os.path.splitext(fileout)[0]+'.pal'):
-            arguments['pal_file'] = os.path.splitext(fileout)[0]+'.pal'
-
-    result = convert_2bpp_to_png(image, **arguments)
+    result = convert_2bpp_to_png(image, **kwargs)
     width, height, palette, greyscale, bitdepth, px_map, padding = result
 
-    if invert:
+    if kwargs.get('invert', False):
         palette = palette[::-1]
 
     w = png.Writer(
@@ -396,6 +376,31 @@ def export_2bpp_to_png(filein, fileout=None, pal_file=None, height=0, width=0, t
     )
     with open(fileout, 'wb') as f:
         w.write(f, px_map)
+
+    if write_properties:
+        properties = {'invert': kwargs.get('invert', None),
+                'tile_padding': padding,
+                'interleave':  kwargs.get('interleave', None)}
+
+        # Only write properties that aren't apparent based on the filename
+        default_properties = read_filename_arguments(filein, read_properties=False)
+        default_properties['tile_padding'] = 0
+
+        if default_properties != properties:
+            for p in list(properties.keys()):
+                if p in default_properties and default_properties[p] == properties[p]:
+                    del properties[p]
+
+            prop_filename = os.path.splitext(fileout)[0] + '.properties'
+            if False and os.path.isfile(prop_filename):
+                print('WARNING: Properties file ' + prop_filename + ' exists already, not writing properties')
+            else:
+                print('Writing properties file ' + prop_filename)
+                f = open(prop_filename, 'w')
+                f.write(yaml.dump(properties))
+                f.close()
+    elif padding != 0:
+        print('WARNING: Padding is nonzero for ' + filein + ', should use --properties flag to create .properties file')
 
 
 def convert_2bpp_to_png(image, **kwargs):
@@ -414,13 +419,25 @@ def convert_2bpp_to_png(image, **kwargs):
     pal_file       = kwargs.get('pal_file', None)
     interleave     = kwargs.get('interleave', False)
 
-    # Width must be specified to interleave.
+    if width == 0:
+        max_width = len(image) // 2
+        if interleave:
+            max_width //= 2
+        width = min(8*16, max_width)
+
+    interleave_padding = 0
     if interleave:
-        assert width, "Must have 'width' defined to use 'interleave'."
+        # For interleaved gfx, add padding to ensure deinterleaving works properly
+        if len(image) % (width * 4) != 0:
+            interleave_padding = width * 4 - (len(image) % (width * 4))
+            image += bytearray(interleave_padding)
+            interleave_padding = interleave_padding // 16
         image = interleave_tiles(image, width // 8)
 
-    # Pad the image by a given number of tiles if asked.
-    image += pad_color * 0x10 * tile_padding
+    # We IGNORE the tile_padding parameter. I see no need for it for 2bpp -> png
+    # conversion, only the other way around. Padding will be automatically added
+    # as necessary.
+    #image += pad_color * 0x10 * tile_padding
 
     # Some images are transposed in blocks.
     if pic_dimensions:
@@ -444,9 +461,6 @@ def convert_2bpp_to_png(image, **kwargs):
     def tile_length(img):
         return len(img) * 4 // (8*8)
 
-    if not width and not height:
-        width = 8 * 16
-
     if width and height:
         tile_width = width // 8
         more_tile_padding = (tile_width - (tile_length(image) % tile_width or tile_width))
@@ -466,6 +480,7 @@ def convert_2bpp_to_png(image, **kwargs):
 
     # at least one dimension should be given
     if width * height != px_length(image):
+        print('Warning: width, height not a perfect match')
         # look for possible combos of width/height that would form a rectangle
         matches = []
         # Height need not be divisible by 8, but width must.
@@ -495,7 +510,7 @@ def convert_2bpp_to_png(image, **kwargs):
         bitdepth  = 8
         px_map    = [[pixel for pixel in line] for line in lines]
 
-    return width, height, palette, greyscale, bitdepth, px_map, more_tile_padding + tile_padding
+    return width, height, palette, greyscale, bitdepth, px_map, more_tile_padding + interleave_padding
 
 
 def get_pic_animation(tmap, w, h):
@@ -538,14 +553,12 @@ def get_pic_animation(tmap, w, h):
 
 
 def export_png_to_2bpp(filein, fileout=None, palout=None, **kwargs):
-
     arguments = {
         'tile_padding': 0,
         'pic_dimensions': None,
         'animate': False,
         'stupid_bitmask_hack': [],
     }
-    arguments.update(read_filename_arguments(filein))
     arguments.update(kwargs)
 
     image, arguments = png_to_2bpp(filein, **arguments)
@@ -748,13 +761,13 @@ def png_to_2bpp(filein, **kwargs):
         new_image += tiles[len(tiles) - trailing:]
         image = connect(new_image)
 
-    # Remove any tile padding used to make the png rectangular.
-    image = image[:len(image) - arguments['tile_padding'] * 0x10]
-
     tmap = None
 
     if arguments['interleave']:
         image = deinterleave_tiles(image, num_columns)
+
+    # Remove any tile padding used to make the png rectangular.
+    image = image[:len(image) - arguments['tile_padding'] * 0x10]
 
     if arguments['pic_dimensions']:
         image, tmap = condense_image_to_map(image, w * h)
@@ -816,31 +829,28 @@ def export_1bpp_to_2bpp(filename):
     to_file(name + '.2bpp', image)
 
 
-def export_1bpp_to_png(filename, fileout=None):
+def export_1bpp_to_png(filename, fileout=None, **kwargs):
 
     if fileout == None:
         fileout = os.path.splitext(filename)[0] + '.png'
 
-    arguments = read_filename_arguments(filename)
-
     image = open(filename, 'rb').read()
     image = convert_1bpp_to_2bpp(image)
 
-    result = convert_2bpp_to_png(image, **arguments)
-    width, height, palette, greyscale, bitdepth, px_map = result
+    result = convert_2bpp_to_png(image, **kwargs)
+    width, height, palette, greyscale, bitdepth, px_map, padding = result
 
     w = png.Writer(width, height, palette=palette, compression=9, greyscale=greyscale, bitdepth=bitdepth)
     with open(fileout, 'wb') as f:
         w.write(f, px_map)
 
 
-def export_png_to_1bpp(filename, fileout=None):
+def export_png_to_1bpp(filename, fileout=None, **kwargs):
 
     if fileout == None:
         fileout = os.path.splitext(filename)[0] + '.1bpp'
 
-    arguments = read_filename_arguments(filename)
-    image = png_to_1bpp(filename, **arguments)
+    image = png_to_1bpp(filename, **kwargs)
 
     to_file(fileout, image)
 
@@ -885,12 +895,17 @@ def convert_to_png(filename, fromFormat, **kwargs):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('mode')
+    ap.add_argument('--out', dest='fileout')
     ap.add_argument('--from', dest='fromFormat')
+    ap.add_argument('--properties', dest='write_properties', action='store_true')
     ap.add_argument('--width', dest='width', type=int)
-    ap.add_argument('--interleave', dest='interleave', action='store_true')
-    ap.add_argument('--invert', dest='invert', action='store_true')
+    ap.add_argument('--interleave', dest='interleave', action='store_const', const=True)
+    ap.add_argument('--invert', dest='invert', action='store_const', const=True)
     ap.add_argument('filenames', nargs='*')
-    args = ap.parse_args()
+
+    parsed_args = ap.parse_args()
+    parsed_args_vars = vars(parsed_args)
+
 
     methods = {
         '2bpp': convert_to_2bpp,
@@ -898,29 +913,38 @@ def main():
         'png':  convert_to_png,
     }
 
-    method = methods.get(args.mode, None)
+    for filename in parsed_args.filenames:
+        kwargs = read_filename_arguments(filename)
+        kwargs.update({a:parsed_args_vars[a] for a in parsed_args_vars if parsed_args_vars[a] != None})
 
-    if args.width == -1:
-        args.width = 'sprite' # Special handler
+        # Default values
+        if not 'format' in kwargs:
+            kwargs['format'] = '2bpp'
 
-    if method == None:
-        raise Exception("Unknown conversion method!")
-
-    for filename in args.filenames:
         name, extension = os.path.splitext(filename)
+        extension = extension[1:]
 
-        fromFormat = args.fromFormat or ext
+        # Determine format to convert from and to
+        if kwargs['mode'] == 'png':
+            if 'fromFormat' in kwargs:
+                pass
+            elif 'format' in kwargs:
+                kwargs['fromFormat'] = kwargs['format']
+            else:
+                kwargs['fromFormat'] = '2bpp'
+        elif kwargs['mode'] == 'auto': # autodetect
+            kwargs['mode'] = kwargs['format']
+            kwargs['fromFormat'] = extension
+        else:
+            kwargs['fromFormat'] = extension
 
-        width = args.width
-        if width == 'sprite': # Special handler for determining width for sprites
-            assert(fromFormat == '2bpp')
-            size = os.path.getsize(filename) # Assumes 2bpp
-            print(filename)
-            assert(size % 16 == 0)
-            numTiles = size // 16
-            width = min(8*16, numTiles * 16 // 4)
+        method = methods.get(kwargs['mode'], None)
+        del kwargs['mode']
 
-        method(filename, fromFormat, width=width, invert=args.invert, interleave=args.interleave)
+        if method == None:
+            raise Exception("Unknown conversion method!")
+
+        method(filename, **kwargs)
 
 if __name__ == "__main__":
     main()

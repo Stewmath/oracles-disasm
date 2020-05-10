@@ -55,6 +55,9 @@ endif
 OBJS = build/$(GAME).o build/audio.o
 
 
+BIN_GFX_FILES  = $(shell find gfx/ gfx_compressible/ -name '*.bin' | grep -v '/$(OTHERGAME)/')
+PNG_GFX_FILES  = $(shell find gfx/ gfx_compressible/ -name '*.png' | grep -v '/$(OTHERGAME)/')
+
 UNCMP_GFX_FILES  = $(shell find gfx/              -name '*.bin' -or -name '*.png' | grep -v '/$(OTHERGAME)/')
 CMP_GFX_FILES    = $(shell find gfx_compressible/ -name '*.bin' -or -name '*.png' | grep -v '/$(OTHERGAME)/')
 PRECMP_GFX_FILES = $(shell find precompressed/gfx_compressible/ -name '*.cmp' -or -name '*.png' | grep -v '/$(OTHERGAME)/')
@@ -167,29 +170,37 @@ build/data/%.s: data/$(GAME)/%.s | build/data
 # graphics file could be in any number of locations. Kind of ugly, but it works.
 
 
-# Rules for copying GFX files to build/gfx directory
+# Rule for copying GFX files to build/gfx directory
 define define_copy_gfx_rules
 build/gfx/$(notdir $(1)): $(1) | build/gfx
 	@cp $$< $$@
 	@echo "Copying $$< to build/gfx/..."
 endef
 
-# Rules for handling uncompressible files
+# Rule for conversion of .PNG files to .BIN files
+define define_png_gfx_rules
+build/gfx/$(basename $(notdir $(1))).bin: $(1) | build/gfx
+	@echo "Converting $$<..."
+	@$$(PYTHON) tools/gfx/gfx.py --out $$@ auto $$<
+endef
+
+# Rule for handling uncompressible files
 define define_uncmp_gfx_rules
 build/gfx/$(basename $(notdir $(1))).cmp: build/gfx/$(basename $(notdir $(1))).bin
 	@dd if=/dev/zero bs=1 count=1 of=$$@ 2>/dev/null
 	@cat $$< >> $$@
 endef
 
-# Rules for handling compressible files
+# Rule for handling compressible files
 define define_cmp_gfx_rules
 build/gfx/$(basename $(notdir $(1))).cmp: build/gfx/$(basename $(notdir $(1))).bin
 	@echo "Compressing $$<..."
-	@$(PYTHON) tools/build/compressGfx.py $$< $$@
+	@$$(PYTHON) tools/build/compressGfx.py $$< $$@
 endef
 
-# Define the gfx rules for the files which need them
-$(foreach filename,$(UNCMP_GFX_FILES),$(eval $(call define_copy_gfx_rules,$(filename))))
+# Define the gfx rules for the specific files which need them
+$(foreach filename,$(BIN_GFX_FILES),  $(eval $(call define_copy_gfx_rules,$(filename))))
+$(foreach filename,$(PNG_GFX_FILES),  $(eval $(call define_png_gfx_rules,$(filename))))
 $(foreach filename,$(UNCMP_GFX_FILES),$(eval $(call define_uncmp_gfx_rules,$(filename))))
 
 ifeq ($(BUILD_VANILLA),true)

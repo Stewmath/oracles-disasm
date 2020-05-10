@@ -1,4 +1,6 @@
-* text eol=lf
+* text=auto eol=lf
 
+*.s text
+*.png binary
 *.bin binary
 *.cmp binary
