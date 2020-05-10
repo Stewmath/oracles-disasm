@@ -437,7 +437,7 @@
 	m_GfxData unk_0cf804 ; $0cf804
 	m_GfxData unk_0cf98e ; $0cf98e
 	m_GfxData gfx_0cfa28 ; $0cfa28
-	m_GfxData gfx_0cfd18 ; $0cfd18
+	m_GfxData spr_0cfd18 ; $0cfd18
 	m_GfxData gfx_0d0053 ; $0d0053
 	m_GfxData gfx_0d0754 ; $0d0754
 	m_GfxData unk_0d0e3c ; $0d0e3c

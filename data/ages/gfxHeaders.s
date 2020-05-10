@@ -340,7 +340,7 @@ gfxHeader2b:
 	m_GfxHeader unk_0cf804 $d803 $23|$80
 	m_GfxHeader unk_0cf98e $dc03 $23
 gfxHeader2c:
-	m_GfxHeader gfx_0cfd18 $8000 $49|$80
+	m_GfxHeader spr_0cfd18 $8000 $49|$80
 	m_GfxHeader gfx_0cfa28 $8800 $39|$80
 	m_GfxHeader gfx_0d0053 $8801 $7f|$80
 	m_GfxHeader gfx_0d0754 $9001 $7f|$80
