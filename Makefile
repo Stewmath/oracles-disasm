@@ -326,7 +326,7 @@ build/%-s.c: %.s | build/doc
 # --------------------------------------------------------------------------------
 
 test-gfx:
-	@$(PYTHON) tools/gfx/gfx.py auto gfx_compressible/*.png gfx_compressible/ages/*.png gfx_compressible/seasons/*.png
+	@$(PYTHON) tools/gfx/gfx.py auto gfx_compressible/common/*.png gfx_compressible/ages/*.png gfx_compressible/seasons/*.png
 	@echo "Running diff against gfx files in 'test/gfx_compressible_encoded'..."
 	@for f in $$(cd gfx_compressible; find -name 'gfx_*.bin' -or -name 'spr_*.bin'); do \
 		diff gfx_compressible/$$f test/gfx_compressible_encoded/$$f; \

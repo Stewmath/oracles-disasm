@@ -47,6 +47,6 @@ function replace {
     try_replace test/gfx_compressible_encoded/$game $oldname $newname
 }
 
-replace
+replace common
 replace ages
 replace seasons
