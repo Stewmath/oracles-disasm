@@ -67,9 +67,9 @@ The following parameters are accepted in `.properties` files:
 * invert (bool): Whether to invert the color order of the PNG palettes. When
   "false", the order is light-to-dark. When "true", the order is dark-to-light.
   Only affects .BIN -> .PNG conversion.
-* tile\_padding: Number of tiles of padding at the end of the image. These will
-  be truncated before conversion to `.BIN` format. Affects both .BIN -> .PNG and
-  .PNG -> .BIN conversion.
+* tile\_padding (int): Number of tiles of padding at the end of the image. This
+  many tiles will be truncated before conversion to `.BIN` format, or this many
+  tiles will be added during conversion to .PNG format.
 * format (string): Set this to "1bpp" for 1 bit-per-pixel files (only the font
   uses this).
 
