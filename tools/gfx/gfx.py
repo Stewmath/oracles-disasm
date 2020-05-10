@@ -386,7 +386,7 @@ def export_2bpp_to_png(filein, fileout=None, write_properties=False, **kwargs):
         # Only write properties that aren't apparent based on the filename
         default_properties = read_filename_arguments(filein, read_properties=False)
         default_properties['tile_padding'] = 0
-        default_properties['width'] = 0
+        default_properties['width'] = None
 
         if default_properties != properties:
             for p in list(properties.keys()):
@@ -420,6 +420,14 @@ def convert_2bpp_to_png(image, **kwargs):
     pic_dimensions = kwargs.get('pic_dimensions', None)
     pal_file       = kwargs.get('pal_file', None)
     interleave     = kwargs.get('interleave', False)
+
+    if width == None:
+        width = 0
+    if height == None:
+        height = 0
+
+    width *= 8 # Measure in tiles
+    height *= 8
 
     if width == 0:
         max_width = len(image) // 2
