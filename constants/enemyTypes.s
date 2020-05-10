@@ -555,7 +555,10 @@
 ; @postype{none}
 .define ENEMYID_SEEDS_ON_TREE			$5a
 
-.define ENEMYID_STUB_5b				$5b
+;;
+; Spawned during Seasons pirate ship departing cutscene when ship is burying under the sand
+.define ENEMYID_SAND_PUFF			$5b
+
 .define ENEMYID_STUB_5c				$5c
 
 ;;

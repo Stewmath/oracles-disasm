@@ -770,7 +770,7 @@ warpSource763f:
 warpSource764b:
 	m_PointedWarp $00 $57 $01 $4 $9
 	m_PointedWarp $80 $54 $00 $4 $4
-warpSource7653: ; Unused
+warpSource7653: ; $52 retrieved through getLinkedHerosCaveSideEntranceRoom
 	m_PointedWarp $00 $57 $52 $5 $9
 warpSource7657:
 	m_PointedWarp $00 $24 $03 $4 $4

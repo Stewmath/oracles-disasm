@@ -177,7 +177,7 @@ _cutsceneHandler_0b_stage3:
 	call seasonsFunc_03_6d8b		; $6ce5
 	call getFreeInteractionSlot		; $6ce8
 	jr nz,+			; $6ceb
-	ld (hl),INTERACID_dc		; $6ced
+	ld (hl),INTERACID_S_MISC_PUZZLES		; $6ced
 	inc l			; $6cef
 	ld (hl),$0e		; $6cf0
 +

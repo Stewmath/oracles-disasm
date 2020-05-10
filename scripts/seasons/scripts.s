@@ -7709,7 +7709,7 @@ script7aff:
 
 
 ; ==============================================================================
-;INTERACID_BOOMERANG_SUBROSIAN
+; INTERACID_BOOMERANG_SUBROSIAN
 ; ==============================================================================
 boomerangSubrosianScript:
 	rungenericnpc TX_3e18
@@ -8153,12 +8153,12 @@ goldenCaveSubrosianScript_7d87:
 	wait 20
 	giveitem $0d00
 	wait 20
-script7d9c:
+--
 	generatesecret SUBROSIAN_RETURN_SECRET
-script7d9e:
+-
 	showtextlowindex <TX_4c2c
 	wait 20
-	jumpiftextoptioneq $01, script7d9e
+	jumpiftextoptioneq $01, -
 	showtextlowindex <TX_4c2d
 	asm15 scriptHlp.seasonsFunc_15_652e
 	setglobalflag GLOBALFLAG_DONE_SUBROSIAN_SECRET
@@ -8167,7 +8167,7 @@ script7dac:
 	enableinput
 	checkabutton
 	disableinput
-	jump2byte script7d9c
+	jump2byte --
 	
 	
 goldenCaveSubrosianScript_givenSecret:
@@ -8440,67 +8440,80 @@ dekuScrubScript_gaveSecret:
 	jump2byte _dekuScrubScript_finishSecret
 
 
-script7f0a:
+; ==============================================================================
+; INTERACID_GOLDEN_BEAST_OLD_MAN
+; ==============================================================================
+goldenBeastOldManScript:
 	initcollisions
-script7f0b:
+-
 	checkabutton
-	asm15 seasonsFunc_15_6abf
+	asm15 checkGoldenBeastsKilled
 	jumptable_memoryaddress $cfc1
-	.dw script7f16
-	.dw script7f1a
-script7f16:
-	showtextlowindex $04
-	jump2byte script7f0b
-script7f1a:
-	showtextlowindex $05
+	.dw @notSlayed4Beasts
+	.dw @slayed4Beasts
+@notSlayed4Beasts:
+	showtextlowindex <TX_1f04
+	jump2byte -
+@slayed4Beasts:
+	showtextlowindex <TX_1f05
 	disableinput
-	asm15 seasonsFunc_15_6ad9
+	asm15 giveRedRing
 	wait 20
-	showtextlowindex $06
+	showtextlowindex <TX_1f06
 	wait 20
 	orroomflag $40
 	enableinput
 	createpuff
 	scriptend
-script7f29:
+
+
+; ==============================================================================
+; INTERACID_S_VIRE
+; ==============================================================================
+vireScript:
 	wait 30
 	showtext TX_2f10
 	wait 30
 	showtext TX_2f11
 	wait 30
 	scriptend
-script7f33:
+
+
+; ==============================================================================
+; INTERACID_LINKED_HEROS_CAVE_OLD_MAN
+; ==============================================================================
+linkedHerosCaveOldManScript:
 	initcollisions
-	jumpifroomflagset $80, script7f64
-script7f38:
+	jumpifroomflagset $80, @puzzleDone
+-
 	checkabutton
-	showtextlowindex $03
-	jumpiftextoptioneq $00, script7f47
-	showtextlowindex $05
-	jump2byte script7f38
-script7f43:
-	showtextlowindex $06
-	jump2byte script7f38
-script7f47:
-	asm15 seasonsFunc_15_6f49
+	showtextlowindex <TX_3303
+	jumpiftextoptioneq $00, @answeredYes
+	showtextlowindex <TX_3305
+	jump2byte -
+@notEnoughRupees:
+	showtextlowindex <TX_3306
+	jump2byte -
+@answeredYes:
+	asm15 linkedHerosCaveOldMan_takeRupees
 	jumptable_memoryaddress $cfd0
-	.dw script7f43
-	.dw script7f51
-script7f51:
+	.dw @notEnoughRupees
+	.dw @hasEnoughRupees
+@hasEnoughRupees:
 	disableinput
-	asm15 seasonsFunc_15_6f14
+	asm15 linkedHerosCaveOldMan_spawnChests
 	wait 60
-	showtextlowindex $04
+	showtextlowindex <TX_3304
 	enableinput
-script7f59:
+-
 	checkabutton
-	jumpifroomflagset $80, script7f62
-	showtextlowindex $04
-	jump2byte script7f59
-script7f62:
-	showtextlowindex $07
-script7f64:
-	rungenericnpclowindex $07
+	jumpifroomflagset $80, @puzzleSucceeded
+	showtextlowindex <TX_3304
+	jump2byte -
+@puzzleSucceeded:
+	showtextlowindex <TX_3307
+@puzzleDone:
+	rungenericnpclowindex <TX_3307
 
 
 ; ==============================================================================

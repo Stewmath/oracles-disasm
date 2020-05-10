@@ -734,7 +734,7 @@ wNumUnappraisedRingsBcd: ; $c6cd
 wNumRingsAppraised: ; $c6ce
 ; Once this reaches 100, Vasu gives you the 100th ring.
 	db
-wKilledGoldenEnemies: ; $c6cf
+wKilledGoldenEnemies: ; $c6cf/$c6c9
 ; Bit 0: killed golden octorok
 ; Bit 1: killed golden moblin
 ; Bit 2: killed golden darknut

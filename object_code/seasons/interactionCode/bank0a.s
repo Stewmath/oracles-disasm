@@ -1543,7 +1543,7 @@ interactionCode95:
 	ld (de),a		; $547c
 _label_0a_146:
 	call $5517		; $547d
-	ld hl,$7ea0		; $5480
+	ld hl,objectData.objectData7ea0		; $5480
 	call parseGivenObjectData		; $5483
 	call objectSetVisible83		; $5486
 	xor a			; $5489
@@ -6223,6 +6223,7 @@ _label_0a_311:
 	ld bc,$0102		; $71c7
 	nop			; $71ca
 	ld bc,$0102		; $71cb
+seasonsFunc_0a_71ce:
 	ld a,(wFrameCounter)		; $71ce
 	and $07			; $71d1
 	ret nz			; $71d3

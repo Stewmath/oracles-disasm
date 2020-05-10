@@ -14779,14 +14779,14 @@ interactionFunc_3e6d:
 
 .ifdef ROM_SEASONS
 
-seasonsFunc_3e8f:
+getLinkedHerosCaveSideEntranceRoom:
 	ldh a,(<hRomBank)	; $3e8f
 	push af			; $3e91
 	ld a,$04		; $3e92
 	setrombank
 	ld hl,$7655		; $3e99
 	ld a,(hl)		; $3e9c
-	; ROOM_SEASONS_052
+	; ROOM_SEASONS_552
 	ld (wWarpDestRoom),a		; $3e9d
 	pop af			; $3ea0
 	setrombank		; $3ea1

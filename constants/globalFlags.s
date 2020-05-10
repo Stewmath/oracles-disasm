@@ -139,7 +139,7 @@
 	GLOBALFLAG_3d				db ; $2a: same as GLOBALFLAG_3d from ages?
 	GLOBALFLAG_S_2b				db ; $2b
 	GLOBALFLAG_SECRET_CHEST_WAITING		db ; $2c
-	GLOBALFLAG_S_2d				db ; $2d
+	GLOBALFLAG_S_2d				db ; $2d: Talked to King Moblin in Sunken City?
 	GLOBALFLAG_SWIMMING_CHALLENGE_SUCCEEDED	db ; $2e
 	GLOBALFLAG_S_2f				db ; $2f
 	GLOBALFLAG_S_30				db ; $30: game beaten / season always spring?

@@ -2225,7 +2225,11 @@ interactionCodedf:
 	or a			; $7caa
 	call z,interactionAnimate		; $7cab
 
+.ifdef ROM_AGES
 	ld l,Interaction.var38		; $7cae
+.else
+	ld l,Interaction.var37		; $7cae
+.endif
 	dec (hl)		; $7cb0
 	ret nz			; $7cb1
 
@@ -2245,7 +2249,11 @@ interactionCodedf:
 	and $03			; $7cc3
 	swap a			; $7cc5
 	add $20			; $7cc7
+.ifdef ROM_AGES
 	ld e,Interaction.var38		; $7cc9
+.else
+	ld e,Interaction.var37		; $7cc9
+.endif
 	ld (de),a		; $7ccb
 	ret			; $7ccc
 

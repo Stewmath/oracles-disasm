@@ -2517,7 +2517,7 @@ interactionCode6a:
 	ld b,$20		; $5bf7
 	ld hl,$cfc0		; $5bf9
 	call clearMemory		; $5bfc
-	ld hl,$7e6c		; $5bff
+	ld hl,objectData.objectData7e6c		; $5bff
 	call parseGivenObjectData		; $5c02
 	jp interactionDelete		; $5c05
 	ld e,Interaction.state		; $5c08
@@ -3282,7 +3282,7 @@ interactionCode6b:
 	.dw $660e
 	.dw $6614
 	.dw $6644
-	.dw $6653
+	.dw interactionCode6bSubid1d
 	.dw $6677
 	.dw $66aa
 	.dw $66b0
@@ -3946,6 +3946,9 @@ _label_09_174:
 	ld a,l			; $664d
 	ld ($ccc5),a		; $664e
 	jr _label_09_174		; $6651
+
+
+interactionCode6bSubid1d:
 	call checkInteractionState		; $6653
 	jr nz,_label_09_175	; $6656
 	ld a,$01		; $6658
@@ -3953,7 +3956,7 @@ _label_09_174:
 	call getThisRoomFlags		; $665b
 	bit 7,(hl)		; $665e
 	jp nz,interactionDelete		; $6660
-	ld hl,$7e96		; $6663
+	ld hl,objectData.objectData7e96		; $6663
 	jp parseGivenObjectData		; $6666
 _label_09_175:
 	ld a,($cca9)		; $6669

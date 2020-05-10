@@ -84,7 +84,7 @@ _cutsceneHandler_0c_stage1:
 
 @state2:
 	call retIfTextIsActive		; $679e
-	ld hl,$7dd9		; $67a1
+	ld hl,objectData.objectData7dd9		; $67a1
 	call parseGivenObjectData		; $67a4
 	ld a,MUS_TRIUMPHANT		; $67a7
 	call playSound		; $67a9
@@ -232,7 +232,7 @@ _cutsceneHandler_0c_stage2:
 	or a			; $68c0
 	ret nz			; $68c1
 	call @seasonsFunc_03_688c		; $68c2
-	ld hl,$7e14		; $68c5
+	ld hl,objectData.objectData7e14		; $68c5
 	jp parseGivenObjectData		; $68c8
 
 @state1:
@@ -273,7 +273,7 @@ _cutsceneHandler_0c_stage3:
 	call loadObjectGfxHeaderToSlot4		; $690d
 	ld a,$52		; $6910
 	call loadGfxHeader		; $6912
-	ld hl,$7df0		; $6915
+	ld hl,objectData.objectData7df0		; $6915
 	call parseGivenObjectData		; $6918
 	ld a,$11		; $691b
 	jr @state0Func1		; $691d
@@ -295,7 +295,7 @@ _cutsceneHandler_0c_stage3:
 	pop af			; $693f
 	jp loadGfxRegisterStateIndex		; $6940
 @state0Func2:
-	ld hl,$6953		; $6943
+	ld hl,@state0Table0		; $6943
 -
 	ldi a,(hl)		; $6946
 	cp $ff			; $6947
@@ -307,6 +307,7 @@ _cutsceneHandler_0c_stage3:
 	pop hl			; $6950
 	jr -			; $6951
 @state0Table0:
+	; position - tile - position - tile
 	.db $05 $ad $06 $ad
 	.db $08 $ae $09 $ae
 	.db $15 $ad $16 $ad
@@ -388,7 +389,7 @@ _cutsceneHandler_0c_stage4:
 	call _cutsceneHandler_0c_stage2@seasonsFunc_03_688c		; $69f2
 	xor a			; $69f5
 	ld ($cfc0),a		; $69f6
-	ld hl,$7e2e		; $69f9
+	ld hl,objectData.objectData7e2e		; $69f9
 	jp parseGivenObjectData		; $69fc
 
 @state1:
@@ -431,7 +432,7 @@ _cutsceneHandler_0c_stage5:
 	call loadGfxHeader		; $6a47
 	ld a,$54		; $6a4a
 	call loadGfxHeader		; $6a4c
-	ld hl,$7dfa		; $6a4f
+	ld hl,objectData.objectData7dfa		; $6a4f
 	call parseGivenObjectData		; $6a52
 	ld a,$12		; $6a55
 	jp _cutsceneHandler_0c_stage3@state0Func1		; $6a57

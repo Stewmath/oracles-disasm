@@ -1632,7 +1632,7 @@ _label_08_155:
 	call interactionSetScript		; $5b54
 	jr _label_08_154		; $5b57
 _label_08_156:
-	ld hl,$7e4a		; $5b59
+	ld hl,objectData.objectData7e4a		; $5b59
 	call parseGivenObjectData		; $5b5c
 	jp interactionDelete		; $5b5f
 	call getThisRoomFlags		; $5b62
@@ -5610,7 +5610,7 @@ interactionCode4e:
 	call getThisRoomFlags		; $752a
 	and $40			; $752d
 	jp nz,seasonsFunc_08_754c		; $752f
-	ld hl,$7e4e		; $7532
+	ld hl,objectData.objectData7e4e		; $7532
 	call parseGivenObjectData		; $7535
 	ld hl,$cc1d		; $7538
 	ld (hl),$4e		; $753b

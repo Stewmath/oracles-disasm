@@ -1777,7 +1777,11 @@
 ;
 ; @subid_00{Maku seed (spawns the other subids)}
 ; @subid_01-08{Essences}
+.ifdef ROM_AGES
 .define INTERACID_MAKU_SEED_AND_ESSENCES	$d7
+.else
+.define INTERACID_MAKU_SEED_AND_ESSENCES	$de
+.endif
 
 ;;
 ; Handles events in rooms where pulling a lever fills lava with walkable terrain.
@@ -1854,10 +1858,6 @@
 ; A time portal created with the Tune of Currents or Tune of Ages.
 ; (TODO: wrap in ifdef)
 .define INTERACID_TIMEPORTAL		$de
-
-.ifdef ROM_SEASONS
-.define INTERACID_DE			$de
-.endif
 
 ;;
 ; Nayru grocery shopping with Ralph in the credits.
@@ -1972,7 +1972,8 @@
 
 ;;
 ; @subid_00{Tarm ruins entrance script (spawn jewels)}
-; @subid_01-07{?}
+; @subid_01-06{?}
+; @subid_07{Created by linked Vire interaction}
 .define INTERACID_JEWEL_HELPER		$90
 
 ;;
@@ -2008,7 +2009,6 @@
 .define INTERACID_GOLDEN_CAVE_SUBROSIAN	$cc
 
 ;;
-;;
 ; @subid_00{Inside house, awaiting a secret}
 ; @subid_01{Shows text swimming challenge cave}
 ; @subid_02{Shows treasure inside swimming challenge cave}
@@ -2021,10 +2021,57 @@
 ; @subid_01{Linked game NPC near d2 (gives a secret)}
 .define INTERACID_S_GREAT_FAIRY		$d5
 
-.define INTERACID_dc			$dc
+;;
+; Gives Fairy secret
+.define INTERACID_LINKED_FOUNTAIN_LADY	$d8
+
+;;
+; @subid_00{Friendly Moblin (Tokay secret)}
+; @subid_01{Mamayu Yan's mother (Mamamu secret)}
+; @subid_02{Holly's friend (Symmetry secret)}
+.define INTERACID_LINKED_SECRET_GIVERS	$db
+
+;;
+; Mostly Hero's cave, also reuses code for a peg-button-bridge room, and has code for volcano erupting cutscene, etc
+; @subid_00{In cave with button opening bridge, requiring peg seeds to cross - creates bridge}
+; @subid_01{Sets Hero's cave main entrance to linked entrance}
+; @subid_02{Sets Hero's cave side entrance to linked entrance}
+; @subid_03{Linked hero's cave, some multi-buttons rooms - sets bit 7 of wActiveTriggers if all set}
+; @subid_04{In some linked hero's cave rooms with portals - spawns the portals}
+; @subid_05{In linked heros's cave room with 5 buttons, a chest, and a portal - spawns bridge}
+; @subid_06{In hero's cave magic boomerang puzzle room - drops small key}
+; @subid_07{Hero's cave puzzle with 8 buttons and spawned enemies}
+; @subid_08{Hero's cave puzzle with old man and dungeon chests}
+; @subid_09{Same room as above - spawns portal}
+; @subid_0a{Linked hero cave entrance - sets bit 4 of normal hero cave's entrance}
+; @subid_0b{In Horon village screen with stump/Subrosia pirate house screen}
+; @subid_0c{2 stairs leading out from D2 - shows Snake Remains text on entry}
+; @subid_0d{Linked hero's cave, room above entrance - initializes dungeon on side entrance entry}
+; @subid_0e{In most screens of Temple Remains, replaces some lava tiles with animated lava?}
+; @subid_0f{Creates a chest on a purple tile in a linked hero's cave room}
+.define INTERACID_S_MISC_PUZZLES	$dc
+
+.define INTERACID_GOLDEN_BEAST_OLD_MAN	$dd
+
+;;
+; @subid_00{To and from Subrosia}
+; @subid_01{Others, eg in Linked hero's cave and to Twinrova's dungeon}
+.define INTERACID_PORTAL_SPAWNER	$e1
+
+;;
+; In linked game, places pyramid jewel
+.define INTERACID_S_VIRE		$e3
+
+.define INTERACID_LINKED_HEROS_CAVE_OLD_MAN	$e3
 
 ;;
 ; Interaction to start cutscene of getting Rod of Seasons
+; @subid_00{Spawns other subid's, and runs script}
+; @subid_01{Colored sparkles coming from the seasons}
+; @subid_02{Rod of seasons}
+; @subid_03{Aura around Rod of seasons}
 .define INTERACID_GET_ROD_OF_SEASONS	$e6
+
+.define INTERACID_LONE_ZORA		$e7
 
 .endif
