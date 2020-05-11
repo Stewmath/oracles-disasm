@@ -1623,16 +1623,16 @@ _cutscene_clearCFC0ToCFDF:
 ;;
 ; @addr{60a6}
 _cutscene_resetOamWithSomething1:
-	ld hl,$4f73		; $60a6
-	ld e,$16		; $60a9
+	ld hl,bank16.oamData_4f73		; $60a6
+	ld e,:bank16.oamData_4f73		; $60a9
 	ld bc,$3038		; $60ab
 	jr _cutscene_resetOamWithData			; $60ae
 
 ;;
 ; @addr{60b0}
 _cutscene_resetOamWithSomething2:
-	ld hl,$4e37		; $60b0
-	ld e,$16		; $60b3
+	ld hl,bank16.oamData_4e37		; $60b0
+	ld e,:bank16.oamData_4e37		; $60b3
 	ld bc,$3038		; $60b5
 
 ;;
@@ -3401,6 +3401,7 @@ _label_03_142:
 	call loadUncompressedGfxHeader		; $6f3e
 	or $01			; $6f41
 	ret			; $6f43
+
 	ld a,(wGfxRegs1.SCY)		; $6f44
 	cpl			; $6f47
 	inc a			; $6f48
@@ -3417,12 +3418,14 @@ _label_03_142:
 	ld hl,bank3f.oamData_714c		; $6f58
 	ld e,:bank3f.oamData_714c		; $6f5b
 	jp addSpritesFromBankToOam_withOffset		; $6f5d
+
 	ld hl,bank3f.oamData_718d		; $6f60
 	ld e,:bank3f.oamData_718d		; $6f63
 	call addSpritesFromBankToOam_withOffset		; $6f65
 	ld hl,bank3f.oamData_71ce		; $6f68
 	ld e,:bank3f.oamData_71ce		; $6f6b
 	jp addSpritesFromBankToOam_withOffset		; $6f6d
+
 	ld hl,bank3f.oamData_71f7		; $6f70
 	ld e,:bank3f.oamData_71f7		; $6f73
 	call addSpritesFromBankToOam_withOffset		; $6f75
@@ -3435,6 +3438,7 @@ _label_03_142:
 	ld e,:bank3f.oamData_7220		; $6f87
 _label_03_143:
 	jp addSpritesFromBankToOam_withOffset		; $6f89
+
 	ld hl,wCutsceneState		; $6f8c
 	inc (hl)		; $6f8f
 	ret			; $6f90

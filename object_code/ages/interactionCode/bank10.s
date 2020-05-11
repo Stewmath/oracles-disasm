@@ -526,8 +526,8 @@ _label_10_295:
 	and $01			; $720d
 	jr nz,_label_10_296	; $720f
 	ld c,a			; $7211
-	ld hl,$4ed8		; $7212
-	ld e,$16		; $7215
+	ld hl,bank16.oamData_4ed8		; $7212
+	ld e,:bank16.oamData_4ed8		; $7215
 	call addSpritesFromBankToOam_withOffset		; $7217
 _label_10_296:
 	ld a,(wGfxRegs1.SCY)		; $721a
@@ -537,16 +537,16 @@ _label_10_296:
 	add b			; $7221
 	ld b,a			; $7222
 	ld c,$38		; $7223
-	ld hl,$4f21		; $7225
-	ld e,$16		; $7228
+	ld hl,bank16.oamData_4f21		; $7225
+	ld e,:bank16.oamData_4f21		; $7228
 	push bc			; $722a
 	call addSpritesFromBankToOam_withOffset		; $722b
 	pop bc			; $722e
 	ld a,(wGfxRegs1.SCY)		; $722f
 	cp $60			; $7232
 	ret c			; $7234
-	ld hl,$4f56		; $7235
-	ld e,$16		; $7238
+	ld hl,bank16.oamData_4f56		; $7235
+	ld e,:bank16.oamData_4f56		; $7238
 	jp addSpritesFromBankToOam_withOffset		; $723a
 	call $71fd		; $723d
 	ld a,(wPaletteThread_mode)		; $7240
@@ -791,6 +791,7 @@ _label_10_305:
 	call fadeinFromWhite		; $7438
 	ld a,$04		; $743b
 	jp loadGfxRegisterStateIndex		; $743d
+
 	call $7450		; $7440
 	ld a,(wPaletteThread_mode)		; $7443
 	or a			; $7446
@@ -798,12 +799,14 @@ _label_10_305:
 	ld hl,wTmpcbb3		; $7448
 	ld (hl),$b4		; $744b
 	jp incCbc2		; $744d
-	ld hl,$4fec		; $7450
-	ld e,$16		; $7453
+
+	ld hl,bank16.oamData_4fec		; $7450
+	ld e,:bank16.oamData_4fec		; $7453
 	ld bc,$3038		; $7455
 	xor a			; $7458
 	ldh (<hOamTail),a	; $7459
 	jp addSpritesFromBankToOam_withOffset		; $745b
+
 	call $7450		; $745e
 	ld hl,wTmpcbb3		; $7461
 	ld a,(hl)		; $7464
@@ -811,6 +814,7 @@ _label_10_305:
 	jr z,_label_10_306	; $7466
 	dec (hl)		; $7468
 	ret			; $7469
+
 _label_10_306:
 	ld a,(wKeysJustPressed)		; $746a
 	and $01			; $746d

@@ -385,8 +385,7 @@ _loadDinsTroupeTileChanges:
 @done:
 	pop bc			; $690e
 	ld a,b			; $690f
-	ldh (<hRomBank),a	; $6910
-	ld ($2222),a		; $6912
+	setrombank
 	ld a,c			; $6915
 	ld ($ff00+R_SVBK),a	; $6916
 	ld a,TREE_GFXH_02		; $6918

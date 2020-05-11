@@ -72,8 +72,8 @@ interactionCodec9:
 	ld e,$44		; $78ea
 	ld a,(de)		; $78ec
 	rst_jumpTable			; $78ed
-	.dw $78f2
-	.dw $7909
+	.dw @state0
+	.dw @state1
 @state0:
 	ld a,$01		; $78f2
 	ld (de),a		; $78f4
@@ -497,7 +497,7 @@ interactionCodecb:
 	ld l,$7f		; $7bb4
 	ld a,(hl)		; $7bb6
 	cp $00			; $7bb7
-	jp z,$7c15		; $7bb9
+	jp z,_func_71c5		; $7bb9
 	jp _func_7c0f		; $7bbc
 @state2:
 	call interactionAnimate		; $7bbf
@@ -556,6 +556,7 @@ _func_7c0f:
 	xor a			; $7c11
 	ld (de),a		; $7c12
 	jr ++			; $7c13
+_func_71c5:
 	ld e,$7a		; $7c15
 	ld a,(de)		; $7c17
 	inc a			; $7c18

@@ -18,7 +18,7 @@ _cutsceneHandler_0b_stage0:
 	call clearScreenVariablesAndWramBank1		; $6ba1
 	ld a,$03		; $6ba4
 	ld (wRoomStateModifier),a		; $6ba6
-	ld bc,$0103		; $6ba9
+	ld bc,ROOM_SEASONS_103		; $6ba9
 	call seasonsFunc_03_6de4		; $6bac
 	ld a,$78		; $6baf
 	ld ($cbb4),a		; $6bb1
@@ -140,7 +140,7 @@ _cutsceneHandler_0b_stage3:
 	call setScreenShakeCounter		; $6c9c
 	call disableLcd		; $6c9f
 	call clearScreenVariablesAndWramBank1		; $6ca2
-	ld bc,$0015		; $6ca5
+	ld bc,ROOM_SEASONS_015		; $6ca5
 	call seasonsFunc_03_6de4		; $6ca8
 	ld a,$1e		; $6cab
 	ld ($cbb4),a		; $6cad
@@ -214,7 +214,7 @@ _cutsceneHandler_0b_stage4:
 	call clearScreenVariablesAndWramBank1		; $6d29
 	ld a,GLOBALFLAG_S_15		; $6d2c
 	call unsetGlobalFlag		; $6d2e
-	ld bc,$0027		; $6d31
+	ld bc,ROOM_SEASONS_027		; $6d31
 	call seasonsFunc_03_6de4		; $6d34
 	ld a,$1e		; $6d37
 	ld ($cbb4),a		; $6d39
@@ -240,7 +240,7 @@ _cutsceneHandler_0b_stage5:
 	call clearScreenVariablesAndWramBank1		; $6d5c
 	ld a,GLOBALFLAG_S_15		; $6d5f
 	call unsetGlobalFlag		; $6d61
-	ld bc,$0017		; $6d64
+	ld bc,ROOM_SEASONS_017		; $6d64
 	call seasonsFunc_03_6de4		; $6d67
 	ld a,$1e		; $6d6a
 	ld ($cbb4),a		; $6d6c

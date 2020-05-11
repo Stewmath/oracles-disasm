@@ -339,7 +339,7 @@ seasonsFunc_0f_7182:
 	ret z			; $71af
 	call getRandomNumber_noPreserveVars		; $71b0
 	and $03			; $71b3
-	ld hl,$71cb		; $71b5
+	ld hl,_table_71cb		; $71b5
 	rst_addAToHl			; $71b8
 	ld a,($c490)		; $71b9
 	add (hl)		; $71bc
@@ -350,9 +350,8 @@ seasonsFunc_0f_7182:
 	sub (hl)		; $71c6
 	ld ($c4a0),a		; $71c7
 	ret			; $71ca
-	rst $38			; $71cb
-	cp $01			; $71cc
-	ld (bc),a		; $71ce
+_table_71cb:
+	.db $ff $fe $01 $02
 
 ;;
 ; @param	a	$cfca value 0 to 5
@@ -431,7 +430,7 @@ seasons_func_0f_722f:
 	ld b,a			; $7259
 	push bc			; $725a
 	ld a,($cfcb)		; $725b
-	ld hl,$7291		; $725e
+	ld hl,_table_7291		; $725e
 	rst_addAToHl			; $7261
 	ld a,(hl)		; $7262
 	ldh (<hFF8B),a	; $7263
@@ -456,6 +455,7 @@ seasons_func_0f_722f:
 	call seasons_func_0f_7325		; $7289
 	ld a,UNCMP_GFXH_2f		; $728c
 	jp loadUncompressedGfxHeader		; $728e
+_table_7291:
 	.db $07 $05 $04 $05 $07 $08
 	
 ;;

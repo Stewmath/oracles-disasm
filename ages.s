@@ -47,29 +47,29 @@
 
 .include "code/bank4.s"
 
+	; These 2 includes must be in the same bank
+	.include "build/data/roomPacks.s"
+	.include "build/data/musicAssignments.s"
 
-; These 2 includes must be in the same bank
-.include "build/data/roomPacks.s"
-.include "build/data/musicAssignments.s"
+	.include "build/data/roomLayoutGroupTable.s"
+	.include "build/data/tilesets.s"
+	.include "build/data/tilesetAssignments.s"
 
-.include "build/data/roomLayoutGroupTable.s"
-.include "build/data/tilesets.s"
-.include "build/data/tilesetAssignments.s"
+	.include "code/animations.s"
 
-.include "code/animations.s"
+	.include "build/data/uniqueGfxHeaders.s"
+	.include "build/data/uniqueGfxHeaderPointers.s"
+	.include "build/data/animationGroups.s"
+	.include "build/data/animationGfxHeaders.s"
+	.include "build/data/animationData.s"
 
-.include "build/data/uniqueGfxHeaders.s"
-.include "build/data/uniqueGfxHeaderPointers.s"
-.include "build/data/animationGroups.s"
-.include "build/data/animationGfxHeaders.s"
-.include "build/data/animationData.s"
-
-.include "code/ages/tileSubstitutions.s"
-.include "build/data/singleTileChanges.s"
-.include "code/ages/roomSpecificTileChanges.s"
+	.include "code/ages/tileSubstitutions.s"
+	.include "build/data/singleTileChanges.s"
+	.include "code/ages/roomSpecificTileChanges.s"
 
 ;;
-; Unused?
+; Left-over garbage from Seasons (d8LavaRoomsFillTilesWithLava), can be used
+; for other tiles, not just lava
 ; @addr{6ba8}
 func_04_6ba8:
 	ld d,>wRoomLayout		; $6ba8
@@ -154,379 +154,7 @@ drawRectInRoomLayout:
 	jr nz,---		; $6bee
 	ret			; $6bf0
 
-;;
-; Generate the buffers at w3VramTiles and w3VramAttributes based on the tiles
-; loaded in wRoomLayout.
-; @addr{6bf1}
-generateW3VramTilesAndAttributes:
-	ld a,:w3VramTiles		; $6bf1
-	ld ($ff00+R_SVBK),a	; $6bf3
-	ld hl,wRoomLayout		; $6bf5
-	ld de,w3VramTiles		; $6bf8
-	ld c,$0b		; $6bfb
----
-	ld b,$10		; $6bfd
---
-	push bc			; $6bff
-	ldi a,(hl)		; $6c00
-	push hl			; $6c01
-	call setHlToTileMappingDataPlusATimes8		; $6c02
-	push de			; $6c05
-	call write4BytesToVramLayout		; $6c06
-	pop de			; $6c09
-	set 2,d			; $6c0a
-	call write4BytesToVramLayout		; $6c0c
-	res 2,d			; $6c0f
-	ld a,e			; $6c11
-	sub $1f			; $6c12
-	ld e,a			; $6c14
-	pop hl			; $6c15
-	pop bc			; $6c16
-	dec b			; $6c17
-	jr nz,--		; $6c18
-
-	ld a,$20		; $6c1a
-	call addAToDe		; $6c1c
-	dec c			; $6c1f
-	jr nz,---		; $6c20
-	ret			; $6c22
-
-;;
-; Take 4 bytes from hl, write 2 to de, write the next 2 $20 bytes later.
-; @addr{6c23}
-write4BytesToVramLayout:
-	ldi a,(hl)		; $6c23
-	ld (de),a		; $6c24
-	inc e			; $6c25
-	ldi a,(hl)		; $6c26
-	ld (de),a		; $6c27
-	ld a,$1f		; $6c28
-	add e			; $6c2a
-	ld e,a			; $6c2b
-	ldi a,(hl)		; $6c2c
-	ld (de),a		; $6c2d
-	inc e			; $6c2e
-	ldi a,(hl)		; $6c2f
-	ld (de),a		; $6c30
-	ret			; $6c31
-
-;;
-; This updates up to 4 entries in w2ChangedTileQueue by writing a command to the vblank
-; queue.
-;
-; @addr{6c32}
-updateChangedTileQueue:
-	ld a,(wScrollMode)		; $6c32
-	and $0e			; $6c35
-	ret nz			; $6c37
-
-	; Update up to 4 tiles per frame
-	ld b,$04		; $6c38
---
-	push bc			; $6c3a
-	call @handleSingleEntry		; $6c3b
-	pop bc			; $6c3e
-	dec b			; $6c3f
-	jr nz,--		; $6c40
-
-	xor a			; $6c42
-	ld ($ff00+R_SVBK),a	; $6c43
-	ret			; $6c45
-
-;;
-; @addr{6c46}
-@handleSingleEntry:
-	ld a,(wChangedTileQueueHead)		; $6c46
-	ld b,a			; $6c49
-	ld a,(wChangedTileQueueTail)		; $6c4a
-	cp b			; $6c4d
-	ret z			; $6c4e
-
-	inc b			; $6c4f
-	ld a,b			; $6c50
-	and $1f			; $6c51
-	ld (wChangedTileQueueHead),a		; $6c53
-	ld hl,w2ChangedTileQueue		; $6c56
-	rst_addDoubleIndex			; $6c59
-
-	ld a,:w2ChangedTileQueue		; $6c5a
-	ld ($ff00+R_SVBK),a	; $6c5c
-
-	; b = New value of tile
-	; c = position of tile
-	ldi a,(hl)		; $6c5e
-	ld c,(hl)		; $6c5f
-	ld b,a			; $6c60
-
-	ld a,c			; $6c61
-	ldh (<hFF8C),a	; $6c62
-
-	ld a,($ff00+R_SVBK)	; $6c64
-	push af			; $6c66
-	ld a,:w3VramTiles		; $6c67
-	ld ($ff00+R_SVBK),a	; $6c69
-	call getVramSubtileAddressOfTile		; $6c6b
-
-	ld a,b			; $6c6e
-	call setHlToTileMappingDataPlusATimes8		; $6c6f
-	push hl			; $6c72
-
-	; Write tile data
-	push de			; $6c73
-	call write4BytesToVramLayout		; $6c74
-	pop de			; $6c77
-
-	; Write mapping data
-	ld a,$04		; $6c78
-	add d			; $6c7a
-	ld d,a			; $6c7b
-	call write4BytesToVramLayout		; $6c7c
-
-	ldh a,(<hFF8C)	; $6c7f
-	pop hl			; $6c81
-	call queueTileWriteAtVBlank		; $6c82
-
-	pop af			; $6c85
-	ld ($ff00+R_SVBK),a	; $6c86
-	ret			; $6c88
-
-;;
-; @param	c	Tile index
-; @param[out]	de	Address of tile c's top-left subtile in w3VramTiles
-; @addr{6c89}
-getVramSubtileAddressOfTile:
-	ld a,c			; $6c89
-	swap a			; $6c8a
-	and $0f			; $6c8c
-	ld hl,@addresses	; $6c8e
-	rst_addDoubleIndex			; $6c91
-	ldi a,(hl)		; $6c92
-	ld h,(hl)		; $6c93
-	ld l,a			; $6c94
-
-	ld a,c			; $6c95
-	and $0f			; $6c96
-	add a			; $6c98
-	rst_addAToHl			; $6c99
-	ld e,l			; $6c9a
-	ld d,h			; $6c9b
-	ret			; $6c9c
-
-@addresses:
-	.dw w3VramTiles+$000
-	.dw w3VramTiles+$040
-	.dw w3VramTiles+$080
-	.dw w3VramTiles+$0c0
-	.dw w3VramTiles+$100
-	.dw w3VramTiles+$140
-	.dw w3VramTiles+$180
-	.dw w3VramTiles+$1c0
-	.dw w3VramTiles+$200
-	.dw w3VramTiles+$240
-	.dw w3VramTiles+$280
-
-;;
-; Called from "setInterleavedTile" in bank 0.
-;
-; Mixes two tiles together by using some subtiles from one, and some subtiles from the
-; other. Used for example by shutter doors, which would combine the door and floor tiles
-; for the partway-closed part of the animation.
-;
-; Tile 2 uses its tiles from the same "half" that tile 1 uses. For example, if tile 1 was
-; placed on the right side, both tiles would use the right halves of their subtiles.
-;
-; @param	a	0: Top is tile 2, bottom is tile 1
-;			1: Left is tile 1, right is tile 2
-;			2: Top is tile 1, bottom is tile 2
-;			3: Left is tile 2, right is tile 1
-; @param	hFF8C	Position of tile to change
-; @param	hFF8F	Tile index 1
-; @param	hFF8E	Tile index 2
-; @addr{6cb3}
-setInterleavedTile_body:
-	ldh (<hFF8B),a	; $6cb3
-
-	ld a,($ff00+R_SVBK)	; $6cb5
-	push af			; $6cb7
-	ld a,:w3TileMappingData		; $6cb8
-	ld ($ff00+R_SVBK),a	; $6cba
-
-	ldh a,(<hFF8F)	; $6cbc
-	call setHlToTileMappingDataPlusATimes8		; $6cbe
-	ld de,$cec8		; $6cc1
-	ld b,$08		; $6cc4
--
-	ldi a,(hl)		; $6cc6
-	ld (de),a		; $6cc7
-	inc de			; $6cc8
-	dec b			; $6cc9
-	jr nz,-			; $6cca
-
-	ldh a,(<hFF8E)	; $6ccc
-	call setHlToTileMappingDataPlusATimes8		; $6cce
-	ld de,$cec8		; $6cd1
-	ldh a,(<hFF8B)	; $6cd4
-	bit 0,a			; $6cd6
-	jr nz,@interleaveDiagonally		; $6cd8
-
-	bit 1,a			; $6cda
-	jr nz,+			; $6cdc
-
-	inc hl			; $6cde
-	inc hl			; $6cdf
-	call @copy2Bytes		; $6ce0
-	jr ++			; $6ce3
-+
-	inc de			; $6ce5
-	inc de			; $6ce6
-	call @copy2Bytes		; $6ce7
-++
-	inc hl			; $6cea
-	inc hl			; $6ceb
-	inc de			; $6cec
-	inc de			; $6ced
-	call @copy2Bytes		; $6cee
-	jr @queueWrite			; $6cf1
-
-@copy2Bytes:
-	ldi a,(hl)		; $6cf3
-	ld (de),a		; $6cf4
-	inc de			; $6cf5
-	ldi a,(hl)		; $6cf6
-	ld (de),a		; $6cf7
-	inc de			; $6cf8
-	ret			; $6cf9
-
-@interleaveDiagonally:
-	bit 1,a			; $6cfa
-	jr nz,+			; $6cfc
-
-	inc de			; $6cfe
-	call @copy2BytesSeparated		; $6cff
-	jr ++			; $6d02
-+
-	inc hl			; $6d04
-	call @copy2BytesSeparated		; $6d05
-++
-	inc hl			; $6d08
-	inc de			; $6d09
-	call @copy2BytesSeparated		; $6d0a
-	jr @queueWrite			; $6d0d
-
-;;
-; @addr{6d0f}
-@copy2BytesSeparated:
-	ldi a,(hl)		; $6d0f
-	ld (de),a		; $6d10
-	inc de			; $6d11
-	inc hl			; $6d12
-	inc de			; $6d13
-	ldi a,(hl)		; $6d14
-	ld (de),a		; $6d15
-	inc de			; $6d16
-	ret			; $6d17
-
-;;
-; @param	hFF8C	The position of the tile to refresh
-; @param	$cec8	The data to write for that tile
-; @addr{6d18}
-@queueWrite:
-	ldh a,(<hFF8C)	; $6d18
-	ld hl,$cec8		; $6d1a
-	call queueTileWriteAtVBlank		; $6d1d
-	pop af			; $6d20
-	ld ($ff00+R_SVBK),a	; $6d21
-	ret			; $6d23
-
-;;
-; Set wram bank to 3 (or wherever hl is pointing to) before calling this.
-;
-; @param	a	Tile position
-; @param	hl	Pointer to 8 bytes of tile data (usually somewhere in
-;			w3TileMappingData)
-; @addr{6d24}
-queueTileWriteAtVBlank:
-	push hl			; $6d24
-	call @getTilePositionInVram		; $6d25
-	add $20			; $6d28
-	ld c,a			; $6d2a
-
-	; Add a command to the vblank queue.
-	ldh a,(<hVBlankFunctionQueueTail)	; $6d2b
-	ld l,a			; $6d2d
-	ld h,>wVBlankFunctionQueue
-	ld a,(vblankCopyTileFunctionOffset)		; $6d30
-	ldi (hl),a		; $6d33
-	ld (hl),e		; $6d34
-	inc l			; $6d35
-	ld (hl),d		; $6d36
-	inc l			; $6d37
-
-	ld e,l			; $6d38
-	ld d,h			; $6d39
-	pop hl			; $6d3a
-	ld b,$02		; $6d3b
---
-	; Write 2 bytes to the command
-	call @copy2Bytes		; $6d3d
-
-	; Then give it the address for the lower half of the tile
-	ld a,c			; $6d40
-	ld (de),a		; $6d41
-	inc e			; $6d42
-
-	; Then write the next 2 bytes
-	call @copy2Bytes		; $6d43
-	dec b			; $6d46
-	jr nz,--		; $6d47
-
-	; Update the tail of the vblank queue
-	ld a,e			; $6d49
-	ldh (<hVBlankFunctionQueueTail),a	; $6d4a
-	ret			; $6d4c
-
-;;
-; @addr{6d4d}
-@copy2Bytes:
-	ldi a,(hl)		; $6d4d
-	ld (de),a		; $6d4e
-	inc e			; $6d4f
-	ldi a,(hl)		; $6d50
-	ld (de),a		; $6d51
-	inc e			; $6d52
-	ret			; $6d53
-
-;;
-; @param	a	Tile position
-; @param[out]	a	Same as 'e'
-; @param[out]	de	Somewhere in the vram bg map
-; @addr{6d54}
-@getTilePositionInVram:
-	ld e,a			; $6d54
-	and $f0			; $6d55
-	swap a			; $6d57
-	ld d,a			; $6d59
-	ld a,e			; $6d5a
-	and $0f			; $6d5b
-	add a			; $6d5d
-	ld e,a			; $6d5e
-	ld a,(wScreenOffsetX)		; $6d5f
-	swap a			; $6d62
-	add a			; $6d64
-	add e			; $6d65
-	and $1f			; $6d66
-	ld e,a			; $6d68
-	ld a,(wScreenOffsetY)		; $6d69
-	swap a			; $6d6c
-	add d			; $6d6e
-	and $0f			; $6d6f
-	ld hl,vramBgMapTable		; $6d71
-	rst_addDoubleIndex			; $6d74
-	ldi a,(hl)		; $6d75
-	add e			; $6d76
-	ld e,a			; $6d77
-	ld d,(hl)		; $6d78
-	ret			; $6d79
+.include "code/loadTilesToRam.s"
 
 ;;
 ; Called from loadTilesetData in bank 0.
@@ -534,6 +162,7 @@ queueTileWriteAtVBlank:
 ; @addr{6d7a}
 loadTilesetData_body:
 	call getAdjustedRoomGroup		; $6d7a
+
 	ld hl,roomTilesetsGroupTable
 	rst_addDoubleIndex			; $6d80
 	ldi a,(hl)		; $6d81
@@ -551,10 +180,12 @@ loadTilesetData_body:
 	and $80			; $6d94
 	ldh (<hFF8B),a	; $6d96
 	ldh a,(<hFF8D)	; $6d98
+
 	and $7f			; $6d9a
 	call multiplyABy8		; $6d9c
 	ld hl,tilesetData
 	add hl,bc		; $6da2
+
 	ldi a,(hl)		; $6da3
 	ld e,a			; $6da4
 	ldi a,(hl)		; $6da5
@@ -671,8 +302,6 @@ func_6de7:
 ; @param[out]	cflag	Set if the current room is flooded in jabu-jabu?
 ; @addr{6e28}
 @checkJabuFlooded:
-
-.ifdef ROM_AGES
 	ld a,(wDungeonIndex)		; $6e28
 	cp $07			; $6e2b
 	jr nz,++		; $6e2d
@@ -708,8 +337,6 @@ func_6de7:
 ; @addr{6e60}
 @data:
 	.db $00 $01 $03
-
-.endif
 
 ;;
 ; Ages only: For tiles 0x40-0x7f, in the past, replace blue palettes (6) with red palettes (0). This
@@ -883,10 +510,9 @@ func_04_6f31:
 
 ; .ORGA $6f5b
 
-.include "build/data/warpData.s"
+	.include "build/data/warpData.s"
 
-
-.include "code/ages/garbage/bank04End.s"
+	.include "code/ages/garbage/bank04End.s"
 
 
 .BANK $05 SLOT 1
@@ -894,11 +520,11 @@ func_04_6f31:
 
  m_section_force "Bank_5" NAMESPACE bank5
 
-.include "code/bank5.s"
-.include "build/data/tileTypeMappings.s"
-.include "build/data/cliffTilesTable.s"
+	.include "code/bank5.s"
+	.include "build/data/tileTypeMappings.s"
+	.include "build/data/cliffTilesTable.s"
 
-.include "code/ages/garbage/bank05End.s"
+	.include "code/ages/garbage/bank05End.s"
 
 .ends
 
@@ -1290,79 +916,7 @@ specialObjectLoadAnimationFrameToBuffer:
 .ORG 0
 
  m_section_superfree "Terrain_Effects" NAMESPACE "terrainEffects"
-
-; @addr{4000}
-shadowAnimation:
-	.db $01
-	.db $13 $04 $20 $08
-
-; @addr{4005}
-greenGrassAnimationFrame0:
-	.db $02
-	.db $11 $01 $24 $08
-	.db $11 $07 $24 $08
-
-; @addr{400e}
-blueGrassAnimationFrame0:
-	.db $02
-	.db $11 $01 $24 $09
-	.db $11 $07 $24 $09
-
-; @addr{4017}
-_puddleAnimationFrame0:
-	.db $02
-	.db $16 $03 $22 $08
-	.db $16 $05 $22 $28
-
-; @addr{4020}
-orangeGrassAnimationFrame0:
-	.db $02
-	.db $11 $01 $24 $0b
-	.db $11 $07 $24 $0b
-
-; @addr{4029}
-greenGrassAnimationFrame1:
-	.db $02
-	.db $11 $01 $24 $28
-	.db $11 $07 $24 $28
-
-; @addr{4032}
-blueGrassAnimationFrame1:
-	.db $02
-	.db $11 $01 $24 $29
-	.db $11 $07 $24 $29
-
-; @addr{403b}
-_puddleAnimationFrame1:
-	.db $02
-	.db $16 $02 $22 $08
-	.db $16 $06 $22 $28
-
-; @addr{4044}
-orangeGrassAnimationFrame1:
-	.db $02
-	.db $11 $01 $24 $2b
-	.db $11 $07 $24 $2b
-
-; @addr{404d}
-_puddleAnimationFrame2:
-	.db $02
-	.db $17 $01 $22 $08
-	.db $17 $07 $22 $28
-
-; @addr{4056}
-_puddleAnimationFrame3:
-	.db $02
-	.db $18 $00 $22 $08
-	.db $18 $08 $22 $28
-
-; @addr{405f}
-puddleAnimationFrames:
-	.dw _puddleAnimationFrame0
-	.dw _puddleAnimationFrame1
-	.dw _puddleAnimationFrame2
-	.dw _puddleAnimationFrame3
-
+	.include "data/terrainEffects.s"
 .ends
 
 .include "build/data/interactionOamData.s"
@@ -1471,234 +1025,7 @@ interactionLoadTreasureData:
 
 
 .include "build/data/data_4556.s"
-
-; Used in CUTSCENE_BLACK_TOWER_ESCAPE
-; @addr{4d05}
-oamData_4d05:
-	.db $26
-	.db $e0 $10 $02 $01
-	.db $e0 $18 $04 $01
-	.db $e0 $20 $06 $01
-	.db $e0 $28 $08 $01
-	.db $f0 $08 $14 $01
-	.db $f0 $10 $16 $01
-	.db $f0 $18 $18 $01
-	.db $f0 $20 $1a $01
-	.db $f0 $28 $1c $01
-	.db $00 $08 $28 $01
-	.db $00 $10 $2a $01
-	.db $00 $18 $2c $01
-	.db $00 $20 $2e $01
-	.db $00 $28 $30 $01
-	.db $10 $08 $3a $01
-	.db $10 $10 $3c $01
-	.db $10 $18 $3e $01
-	.db $10 $20 $40 $01
-	.db $10 $28 $42 $01
-	.db $20 $08 $00 $01
-	.db $20 $10 $0a $01
-	.db $20 $18 $0c $01
-	.db $20 $20 $0e $01
-	.db $20 $28 $10 $01
-	.db $30 $08 $1e $01
-	.db $30 $10 $20 $01
-	.db $30 $18 $22 $01
-	.db $30 $20 $24 $01
-	.db $30 $28 $26 $01
-	.db $40 $08 $32 $01
-	.db $40 $10 $34 $01
-	.db $40 $18 $36 $01
-	.db $50 $08 $44 $01
-	.db $50 $10 $46 $01
-	.db $50 $18 $48 $01
-	.db $40 $20 $38 $01
-	.db $60 $08 $00 $01
-	.db $60 $10 $12 $01
-
-; Used by CUTSCENE_BLACK_TOWER_ESCAPE
-; @addr{4d9e}
-oamData_4d9e:
-	.db $26
-	.db $e0 $f8 $02 $21
-	.db $e0 $f0 $04 $21
-	.db $e0 $e8 $06 $21
-	.db $e0 $e0 $08 $21
-	.db $f0 $00 $14 $21
-	.db $f0 $f8 $16 $21
-	.db $f0 $f0 $18 $21
-	.db $f0 $e8 $1a $21
-	.db $f0 $e0 $1c $21
-	.db $00 $00 $28 $21
-	.db $00 $f8 $2a $21
-	.db $00 $f0 $2c $21
-	.db $00 $e8 $2e $21
-	.db $00 $e0 $30 $21
-	.db $10 $00 $3a $21
-	.db $10 $f8 $3c $21
-	.db $10 $f0 $3e $21
-	.db $10 $e8 $40 $21
-	.db $10 $e0 $42 $21
-	.db $20 $00 $00 $21
-	.db $20 $f8 $0a $21
-	.db $20 $f0 $0c $21
-	.db $20 $e8 $0e $21
-	.db $20 $e0 $10 $21
-	.db $30 $00 $1e $21
-	.db $30 $f8 $20 $21
-	.db $30 $f0 $22 $21
-	.db $30 $e8 $24 $21
-	.db $30 $e0 $26 $21
-	.db $40 $00 $32 $21
-	.db $40 $f8 $34 $21
-	.db $40 $f0 $36 $21
-	.db $50 $00 $44 $21
-	.db $50 $f8 $46 $21
-	.db $50 $f0 $48 $21
-	.db $40 $e8 $38 $21
-	.db $60 $00 $00 $21
-	.db $60 $f8 $12 $21
-
-; @addr{4e37}
-_oamData_4e37:
-	.db $28
-	.db $44 $21 $00 $00
-	.db $44 $29 $02 $00
-	.db $54 $29 $04 $00
-	.db $34 $1b $06 $00
-	.db $50 $d9 $08 $00
-	.db $08 $e0 $0a $00
-	.db $30 $d8 $0c $01
-	.db $20 $d1 $0e $00
-	.db $fb $ee $10 $02
-	.db $fb $f6 $12 $02
-	.db $0b $e6 $14 $02
-	.db $0b $ee $16 $02
-	.db $1b $e6 $18 $02
-	.db $1b $ee $1a $02
-	.db $00 $48 $1c $01
-	.db $58 $40 $1e $00
-	.db $10 $58 $22 $01
-	.db $00 $50 $20 $01
-	.db $38 $50 $24 $01
-	.db $28 $50 $26 $03
-	.db $28 $58 $28 $03
-	.db $16 $4a $2a $04
-	.db $16 $52 $2c $04
-	.db $e8 $d0 $2e $01
-	.db $f8 $d0 $30 $04
-	.db $f8 $d8 $32 $04
-	.db $00 $da $34 $02
-	.db $e8 $e5 $36 $01
-	.db $20 $0f $38 $04
-	.db $20 $20 $3a $04
-	.db $db $38 $40 $07
-	.db $db $40 $42 $07
-	.db $e8 $35 $44 $07
-	.db $e8 $3d $46 $07
-	.db $fc $30 $48 $07
-	.db $f8 $38 $4a $07
-	.db $00 $40 $4c $07
-	.db $18 $38 $4e $07
-	.db $10 $40 $50 $07
-	.db $20 $40 $52 $07
-
-; @addr{4ed8}
-_oamData_4ed8:
-	.db $12
-	.db $10 $08 $00 $0c
-	.db $10 $10 $02 $0c
-	.db $10 $18 $04 $0c
-	.db $20 $08 $0c $0c
-	.db $20 $10 $0e $0c
-	.db $20 $18 $10 $0c
-	.db $31 $23 $06 $0d
-	.db $31 $2b $08 $0d
-	.db $31 $3b $06 $2d
-	.db $31 $33 $08 $2d
-	.db $41 $23 $06 $4d
-	.db $41 $2b $08 $4d
-	.db $41 $3b $06 $6d
-	.db $41 $33 $08 $6d
-	.db $2c $1d $0a $0d
-	.db $2c $25 $0a $2d
-	.db $4c $3a $0a $0d
-	.db $4c $42 $0a $2d
-
-; @addr{4f21}
-_oamData_4f21:
-	.db $0d
-	.db $38 $d3 $02 $03
-	.db $32 $f8 $0c $01
-	.db $f8 $d8 $10 $07
-	.db $f8 $e0 $12 $07
-	.db $f8 $e8 $14 $07
-	.db $f7 $f7 $16 $07
-	.db $22 $f8 $1a $03
-	.db $1a $00 $1c $03
-	.db $11 $e2 $1e $00
-	.db $11 $ea $20 $00
-	.db $01 $ea $22 $00
-	.db $11 $f2 $26 $00
-	.db $01 $f2 $24 $00
-
-; @addr{4f56}
-_oamData_4f56:
-	.db $07
-	.db $60 $f8 $00 $02
-	.db $48 $d3 $04 $03
-	.db $40 $e0 $06 $07
-	.db $40 $e8 $08 $07
-	.db $40 $f0 $0a $07
-	.db $42 $f8 $0e $01
-	.db $68 $e0 $18 $02
-
-; @addr{4f73}
-_oamData_4f73:
-	.db $1e
-	.db $e8 $e8 $00 $06
-	.db $e8 $f0 $02 $06
-	.db $f8 $e0 $04 $06
-	.db $00 $d8 $06 $06
-	.db $08 $e8 $08 $06
-	.db $08 $f0 $0a $06
-	.db $f8 $f6 $0c $06
-	.db $10 $e0 $0e $06
-	.db $18 $e8 $10 $07
-	.db $18 $da $12 $04
-	.db $18 $e2 $14 $04
-	.db $08 $d0 $16 $06
-	.db $40 $d8 $18 $06
-	.db $30 $f8 $1a $04
-	.db $28 $d3 $1c $00
-	.db $f0 $f8 $1e $00
-	.db $48 $f8 $20 $04
-	.db $36 $f5 $22 $04
-	.db $58 $00 $24 $05
-	.db $3b $18 $26 $05
-	.db $3b $20 $28 $05
-	.db $38 $3c $2a $03
-	.db $14 $38 $2c $05
-	.db $28 $48 $2e $00
-	.db $30 $51 $30 $00
-	.db $30 $60 $32 $00
-	.db $28 $68 $34 $04
-	.db $f8 $40 $36 $00
-	.db $00 $48 $38 $00
-	.db $00 $50 $3a $05
-
-; @addr{4fec}
-_oamData_4fec:
-	.db $0a
-	.db $48 $4d $88 $05
-	.db $48 $55 $8a $05
-	.db $47 $45 $84 $03
-	.db $47 $4d $86 $03
-	.db $39 $4e $90 $03
-	.db $43 $59 $8c $03
-	.db $39 $46 $8e $03
-	.db $3b $3c $92 $03
-	.db $49 $4c $80 $02
-	.db $49 $54 $82 $02
+.include "build/data/endgameCutsceneOamData.s"
 
 .ends
 
