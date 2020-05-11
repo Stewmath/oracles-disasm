@@ -650,60 +650,47 @@ def png_to_2bpp(filein, **kwargs):
 
     #assert type(filein) is file # Doesn't work in python3
 
-    width, height, rgba, info = png.Reader(filein).read()
+    width, height, rgba, info = png.Reader(filein).asRGBA8()
 
-    if 'palette' in info:
-        image   = []
-        palette = info['palette']
-        for line in rgba:
-            newline = []
-            for px in line:
-                assert px >= 0 and px <= 3, "Invalid pixel index " + str(px)
-                newline += [palette[px]]
-            image += [newline]
-    else: # Based on RGBA8
-        print('WARNING: Bitmap not indexed, trying to match with palette')
+    # png.Reader returns flat pixel data. Nested is easier to work with
+    len_px  = len('rgba')
+    image   = []
+    palette = []
+    for line in rgba:
+        newline = []
+        for px in range(0, len(line), len_px):
+            color = dict(list(zip('rgba', line[px:px+len_px])))
+            if color not in palette:
+                if len(palette) < 4:
+                    palette += [color]
+                else:
+                    # TODO Find the nearest match
+                    print('WARNING: %s: Color %s truncated to' % (filein, color), end=' ')
+                    color = sorted(palette, key=lambda x: sum(x.values()))[0]
+                    print(color)
+            newline += [color]
+        image += [newline]
 
-        width, height, rgba, info = png.Reader(filein).asRGBA8()
+    assert len(palette) <= 4, '%s: palette should be 4 colors, is really %d (%s)' % (filein, len(palette), palette)
 
-        # png.Reader returns flat pixel data. Nested is easier to work with
-        len_px  = len('rgba')
-        image   = []
-        palette = []
-        for line in rgba:
-            newline = []
-            for px in range(0, len(line), len_px):
-                color = dict(list(zip('rgba', line[px:px+len_px])))
-                if color not in palette:
-                    if len(palette) < 4:
-                        palette += [color]
-                    else:
-                        # TODO Find the nearest match
-                        print('WARNING: %s: Color %s truncated to' % (filein, color), end=' ')
-                        color = sorted(palette, key=lambda x: sum(x.values()))[0]
-                        print(color)
-                newline += [color]
-            image += [newline]
+    # Pad out smaller palettes with greyscale colors
+    greyscale = {
+        'black': { 'r': 0x00, 'g': 0x00, 'b': 0x00, 'a': 0xff },
+        'grey':  { 'r': 0x55, 'g': 0x55, 'b': 0x55, 'a': 0xff },
+        'gray':  { 'r': 0xaa, 'g': 0xaa, 'b': 0xaa, 'a': 0xff },
+        'white': { 'r': 0xff, 'g': 0xff, 'b': 0xff, 'a': 0xff },
+    }
+    preference = 'white', 'black', 'grey', 'gray'
+    for hue in map(greyscale.get, preference):
+        if len(palette) >= 4:
+            break
+        if hue not in palette:
+            palette += [hue]
 
-        assert len(palette) <= 4, '%s: palette should be 4 colors, is really %d (%s)' % (filein, len(palette), palette)
+    palette.sort(key=lambda x: sum(x.values()))
 
-        # Pad out smaller palettes with greyscale colors
-        greyscale = {
-            'black': { 'r': 0x00, 'g': 0x00, 'b': 0x00, 'a': 0xff },
-            'grey':  { 'r': 0x55, 'g': 0x55, 'b': 0x55, 'a': 0xff },
-            'gray':  { 'r': 0xaa, 'g': 0xaa, 'b': 0xaa, 'a': 0xff },
-            'white': { 'r': 0xff, 'g': 0xff, 'b': 0xff, 'a': 0xff },
-        }
-        preference = 'white', 'black', 'grey', 'gray'
-        for hue in map(greyscale.get, preference):
-            if len(palette) >= 4:
-                break
-            if hue not in palette:
-                palette += [hue]
-
-        palette.sort(key=lambda x: sum(x.values()))
-
-        # Game Boy palette order
+    # Game Boy palette order
+    if not kwargs['invert']:
         palette.reverse()
 
     # Map pixels to quaternary color ids
