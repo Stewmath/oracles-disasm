@@ -110,26 +110,26 @@ script_14_4801:
 	scriptend
 
 
-script_14_4830:
+seasonsSpirits_enteringTempleCutscene:
 	stopifroomflag40set
 	setcollisionradii $08 $20
 	checkcollidedwithlink_onground
 	disableinput
 	setmusic $0d
-	showtextlowindex $00
+	showtextlowindex <TX_0800
 	delay 6
-	showtextlowindex $01
+	showtextlowindex <TX_0801
 	delay 6
-	showtextlowindex $02
+	showtextlowindex <TX_0802
 	delay 6
-	showtextlowindex $03
+	showtextlowindex <TX_0803
 	resetmusic
 	orroomflag $40
 	enableinput
 	scriptend
 
 
-script_14_4849:
+seasonsSpirits_createBridgeOnOrbHit:
 	stopifroomflag40set
 	checkmemoryeq w1Link.state LINK_STATE_NORMAL
 	delay 3

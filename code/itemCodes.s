@@ -4613,14 +4613,13 @@ itemCode18:
 .else
 ; ITEMID_ROD_OF_SEASONS
 itemCode07:
-	call $4a0a		; $5b49
-	ld e,$04		; $5b4c
+	call _itemTransferKnockbackToLink		; $5b49
+	ld e,Object.state		; $5b4c
 	ld a,(de)		; $5b4e
 	rst_jumpTable			; $5b4f
-	ld d,h			; $5b50
-	ld e,e			; $5b51
-	ld (hl),b		; $5b52
-	ld e,e			; $5b53
+	.dw @state0
+	.dw @state1
+@state0:
 	ld a,$01		; $5b54
 	ld (de),a		; $5b56
 	ld h,d			; $5b57
@@ -4634,16 +4633,17 @@ itemCode07:
 	call loadWeaponGfx		; $5b67
 	call _itemLoadAttributesAndGraphics		; $5b6a
 	jp objectSetVisible82		; $5b6d
+@state1:
 	ld h,d			; $5b70
 	ld l,$06		; $5b71
 	dec (hl)		; $5b73
 	ret nz			; $5b74
-	ld a,($ccb6)		; $5b75
+	ld a,(wActiveTileType)		; $5b75
 	cp $08			; $5b78
 	ret nz			; $5b7a
 	call getFreeInteractionSlot		; $5b7b
 	ret nz			; $5b7e
-	ld (hl),$15		; $5b7f
+	ld (hl),INTERACID_USED_ROD_OF_SEASONS		; $5b7f
 	ld e,$09		; $5b81
 	ld l,$49		; $5b83
 	ld a,(de)		; $5b85

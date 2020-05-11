@@ -568,6 +568,7 @@ seasonsFunc_15_576c:
 	ret			; $5787
 
 
+seasonsSpirit_createSwirl:
 	ld e,$57		; $5788
 	ld a,(de)		; $578a
 	ld h,a			; $578b
@@ -577,13 +578,19 @@ seasonsFunc_15_576c:
 	ld c,(hl)		; $5791
 	ld a,$6e		; $5792
 	jp createEnergySwirlGoingIn		; $5794
+
+
+spawnSeasonsSpiritSubId00:
 	ld b,$00		; $5797
-	jr _label_15_205		; $5799
+	jr +		; $5799
+
+
+spawnSeasonsSpiritSubId01:
 	ld b,$01		; $579b
-_label_15_205:
++
 	call getFreeInteractionSlot		; $579d
 	ret nz			; $57a0
-	ld (hl),$50		; $57a1
+	ld (hl),INTERACID_SEASONS_FAIRY		; $57a1
 	ld e,$43		; $57a3
 	ld a,(de)		; $57a5
 	inc l			; $57a6
@@ -597,7 +604,10 @@ _label_15_205:
 	ld a,h			; $57b3
 	ld (de),a		; $57b4
 	ret			; $57b5
-	ld a,($c6b0)		; $57b6
+
+
+seasonsSpirits_checkPostSeasonGetText:
+	ld a,(wObtainedSeasons)		; $57b6
 	add a			; $57b9
 	call getNumSetBits		; $57ba
 	ld h,d			; $57bd
@@ -606,24 +616,30 @@ _label_15_205:
 	cp $04			; $57c2
 	ret nz			; $57c4
 	inc (hl)		; $57c5
-	ld a,($cc4c)		; $57c6
+	ld a,(wActiveRoom)		; $57c6
 	cp $f5			; $57c9
 	ret z			; $57cb
 	inc (hl)		; $57cc
 	ret			; $57cd
-	ld a,$05		; $57ce
-	ld b,$b6		; $57d0
+
+
+checkTalonReturned:
+	ld a,>ROOM_SEASONS_5b6		; $57ce
+	ld b,<ROOM_SEASONS_5b6		; $57d0
 	call getRoomFlags		; $57d2
 	and $40			; $57d5
 	ld a,$01		; $57d7
-	jr nz,_label_15_206	; $57d9
+	jr nz,+			; $57d9
 	xor a			; $57db
-_label_15_206:
++
 	ld e,$7c		; $57dc
 	ld (de),a		; $57de
 	ret			; $57df
+
+
+dungeonWiseOldMan_setLinksInvincibilityCounterTo0:
 	xor a			; $57e0
-	ld ($d02b),a		; $57e1
+	ld (w1Link.invincibilityCounter),a		; $57e1
 	ret			; $57e4
 
 seasonsFunc_15_57e5:
@@ -980,18 +996,23 @@ _label_15_217:
 	ld c,a			; $59be
 	ld a,$28		; $59bf
 	jp giveTreasure		; $59c1
-	ld a,($c6c6)		; $59c4
+
+
+getNextRingboxLevel:
+	ld a,(wRingBoxLevel)		; $59c4
 	dec a			; $59c7
 	ld c,$03		; $59c8
-	jr z,_label_15_218	; $59ca
+	jr z,+			; $59ca
 	ld c,$05		; $59cc
-_label_15_218:
++
 	ld b,$00		; $59ce
-	ld hl,$cba8		; $59d0
+	ld hl,wTextNumberSubstitution		; $59d0
 	ld (hl),c		; $59d3
 	inc hl			; $59d4
 	ld (hl),b		; $59d5
 	ret			; $59d6
+
+
 	ld b,a			; $59d7
 	ld e,$42		; $59d8
 	ld a,(de)		; $59da

@@ -1197,7 +1197,10 @@ ringHelpBookSubid0Script:
 .include "scripts/seasons/dungeonScripts.s"
 
 
-script4dea:
+; ==============================================================================
+; INTERACID_GANRLED_KEYHOLE
+; ==============================================================================
+gnarledKeyholeScript:
 	checkcfc0bit 0
 	disableinput
 	setmusic SNDCTRL_STOPMUSIC
@@ -1309,41 +1312,47 @@ makuTreeScript_gateHit:
 	scriptend
 	
 	
-script4ea5:
-	loadscript script_14_4830
-script4ea9:
-	loadscript script_14_4849
-script4ead:
-	jumpifroomflagset $40, script4f1b
-	jumpifitemobtained $7, script4ed2
+; ==============================================================================
+; INTERACID_SEASON_SPIRITS_SCRIPTS
+; ==============================================================================
+seasonsSpiritsScript_enteringTempleArea:
+	loadscript seasonsSpirits_enteringTempleCutscene
+	
+seasonsSpiritsScript_winterTempleOrbBridge:
+	loadscript seasonsSpirits_createBridgeOnOrbHit
+	
+seasonsSpiritsScript_spiritStatue:
+	jumpifroomflagset $40, _seasonsSpiritsScript_seasonsGotten
+	jumpifitemobtained TREASURE_ROD_OF_SEASONS, @haveRodOfSeasons
 	setcoords $28, $70
 	setcollisionradii $04, $10
 	makeabuttonsensitive
-script4ebc:
+-
+	; no rod of seasons
 	checkabutton
 	disableinput
 	writememory $cfc0, $00
-	asm15 $579b
+	asm15 scriptHlp.spawnSeasonsSpiritSubId01
 	xorcfc0bit 0
 	playsound SND_CIRCLING
 	checkcfc0bit 1
 	wait 40
-	showtextlowindex $11
+	showtextlowindex <TX_0811
 	wait 8
 	xorcfc0bit 2
 	wait 30
 	enableinput
-	jump2byte script4ebc
-script4ed2:
+	jump2byte -
+@haveRodOfSeasons:
 	setcollisionradii $08, $04
 	checkcollidedwithlink_onground
 	disableinput
-	asm15 $5797
+	asm15 scriptHlp.spawnSeasonsSpiritSubId00
 	xorcfc0bit 0
 	playsound SND_CIRCLING
 	checkcfc0bit 1
-	callscript script4f90
-	asm15 $5788
+	callscript _seasonsSpiritsScript_showIntroText
+	asm15 scriptHlp.seasonsSpirit_createSwirl
 	wait 10
 	playsound SND_FADEOUT
 	asm15 fadeoutToWhite
@@ -1358,260 +1367,283 @@ script4ed2:
 	wait 20
 	asm15 fadeinFromWhiteWithDelay, $04
 	checkpalettefadedone
-	callscript script4faa
-	asm15 $57b6
+	callscript _seasonsSpiritsScript_imbueSeason
+	asm15 scriptHlp.seasonsSpirits_checkPostSeasonGetText
 	jumptable_objectbyte $7f
-	.dw script4f18
-	.dw script4f0c
-	.dw script4f11
-script4f0c:
+	.dw @@notAllSeasonsGotten
+	.dw @@allSeasonsGotten_nonAutumnText
+	.dw @@allSeasonsGotten_autumnText
+@@allSeasonsGotten_nonAutumnText:
 	wait 30
-	showtextlowindex $0e
-	jump2byte script4f18
-script4f11:
+	showtextlowindex <TX_080e
+	jump2byte @@notAllSeasonsGotten
+@@allSeasonsGotten_autumnText:
 	wait 30
-	writememory $cbae, $10
-	showtextlowindex $0f
-script4f18:
+	writememory wTextboxFlags, TEXTBOXFLAG_ALTPALETTE2
+	showtextlowindex <TX_080f
+@@notAllSeasonsGotten:
 	orroomflag $40
 	enableinput
-script4f1b:
+_seasonsSpiritsScript_seasonsGotten:
 	setcoords $28, $70
 	setcollisionradii $04, $10
 	makeabuttonsensitive
-script4f22:
+-
 	checkabutton
 	disableinput
 	writememory $cfc0, $00
-	asm15 $579b
+	asm15 scriptHlp.spawnSeasonsSpiritSubId01
 	xorcfc0bit 0
 	playsound SND_CIRCLING
 	checkcfc0bit 1
 	wait 40
-	callscript script4f39
+	callscript _seasonsSpirits_postSeasonGetText
 	wait 8
 	xorcfc0bit 2
 	wait 30
 	enableinput
-	jump2byte script4f22
-script4f39:
-	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, script4f5c
-	jumpifobjectbyteeq $7e, $01, script4f76
+	jump2byte -
+
+_seasonsSpirits_postSeasonGetText:
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, _seasonsSpirits_lastTextGameFinished
+	jumpifobjectbyteeq $7e, $01, _seasonsSpirits_lastTextSaveZeldaText
 	jumptable_objectbyte $43
-	.dw script4f4c
-	.dw script4f4f
-	.dw script4f52
-	.dw script4f59
-script4f4c:
-	showtextlowindex $09
+	.dw @spring
+	.dw @summer
+	.dw @autumn
+	.dw @winter
+@spring:
+	showtextlowindex <TX_0809
 	retscript
-script4f4f:
-	showtextlowindex $07
+@summer:
+	showtextlowindex <TX_0807
 	retscript
-script4f52:
-	writememory $cbae, $10
-	showtextlowindex $0b
+@autumn:
+	writememory wTextboxFlags, TEXTBOXFLAG_ALTPALETTE2
+	showtextlowindex <TX_080b
 	retscript
-script4f59:
-	showtextlowindex $05
+@winter:
+	showtextlowindex <TX_0805
 	retscript
-script4f5c:
+
+_seasonsSpirits_lastTextGameFinished:
 	jumptable_objectbyte $43
-	.dw script4f66
-	.dw script4f69
-	.dw script4f6c
-	.dw script4f73
-script4f66:
-	showtextlowindex $18
+	.dw @spring
+	.dw @summer
+	.dw @autumn
+	.dw @winter
+@spring:
+	showtextlowindex <TX_0818
 	retscript
-script4f69:
-	showtextlowindex $19
+@summer:
+	showtextlowindex <TX_0819
 	retscript
-script4f6c:
-	writememory $cbae, $10
-	showtextlowindex $1a
+@autumn:
+	writememory wTextboxFlags, TEXTBOXFLAG_ALTPALETTE2
+	showtextlowindex <TX_081a
 	retscript
-script4f73:
-	showtextlowindex $1b
+@winter:
+	showtextlowindex <TX_081b
 	retscript
-script4f76:
+	
+_seasonsSpirits_lastTextSaveZeldaText:
 	jumptable_objectbyte $43
 	.dw script4f80
 	.dw script4f83
 	.dw script4f86
 	.dw script4f8d
 script4f80:
-	showtextlowindex $14
+	showtextlowindex <TX_0814
 	retscript
 script4f83:
-	showtextlowindex $15
+	showtextlowindex <TX_0815
 	retscript
 script4f86:
-	writememory $cbae, $10
-	showtextlowindex $16
+	writememory wTextboxFlags, TEXTBOXFLAG_ALTPALETTE2
+	showtextlowindex <TX_0816
 	retscript
 script4f8d:
-	showtextlowindex $17
+	showtextlowindex <TX_0817
 	retscript
-script4f90:
+
+_seasonsSpiritsScript_showIntroText:
 	jumptable_objectbyte $43
-	.dw script4f9a
-	.dw script4f9d
-	.dw script4fa0
-	.dw script4fa7
-script4f9a:
-	showtextlowindex $08
+	.dw @spring
+	.dw @summer
+	.dw @autumn
+	.dw @winter
+@spring:
+	showtextlowindex <TX_0808
 	retscript
-script4f9d:
-	showtextlowindex $06
+@summer:
+	showtextlowindex <TX_0806
 	retscript
-script4fa0:
-	writememory $cbae, $10
-	showtextlowindex $0a
+@autumn:
+	writememory wTextboxFlags, TEXTBOXFLAG_ALTPALETTE2
+	showtextlowindex <TX_080a
 	retscript
-script4fa7:
-	showtextlowindex $04
+@winter:
+	showtextlowindex <TX_0804
 	retscript
-script4faa:
+
+_seasonsSpiritsScript_imbueSeason:
 	jumptable_objectbyte $43
-	.dw script4fb4
-	.dw script4fb8
-	.dw script4fbc
-	.dw script4fc4
-script4fb4:
-	giveitem $0702
+	.dw @spring
+	.dw @summer
+	.dw @autumn
+	.dw @winter
+@spring:
+	giveitem TREASURE_ROD_OF_SEASONS $02
 	retscript
-script4fb8:
-	giveitem $0703
+@summer:
+	giveitem TREASURE_ROD_OF_SEASONS $03
 	retscript
-script4fbc:
-	writememory $cbae, $10
-	giveitem $0704
+@autumn:
+	writememory wTextboxFlags, TEXTBOXFLAG_ALTPALETTE2
+	giveitem TREASURE_ROD_OF_SEASONS $04
 	retscript
-script4fc4:
-	giveitem $0705
+@winter:
+	giveitem TREASURE_ROD_OF_SEASONS $05
 	retscript
-script4fc8:
+
+
+; ==============================================================================
+; INTERACID_MAYORS_HOUSE_NPC
+; ==============================================================================
+mayorsScript:
 	initcollisions
-script4fc9:
+-
 	enableinput
 	checkabutton
 	disableinput
-	jumpifroomflagset $20, script4fd9
+	jumpifroomflagset $20, +
 	showtext TX_310b
 	wait 20
-	giveitem $3404
-	jump2byte script4fde
-script4fd9:
+	giveitem TREASURE_GASHA_SEED $04
+	jump2byte ++
++
+; unused?
 	showtextlowindex $31
 	scriptend
-script4fdc:
-	jump2byte script4fc9
-script4fde:
+; unused?
+	jump2byte -
+++
 	wait 20
 	showtext TX_310c
-	jump2byte script4fc9
-script4fe4:
+	jump2byte -
+
+
+mayorsHouseLadyScript:
 	initcollisions
-script4fe5:
+@waitUntilTalkedTo:
 	enableinput
 	checkabutton
 	disableinput
-	jumpifglobalflagset $63, script5030
+	jumpifglobalflagset GLOBALFLAG_DONE_RUUL_SECRET, @doneSecret
 	showtext TX_3102
-	jumpiftextoptioneq $00, script4fff
+	jumpiftextoptioneq $00, @answeredYes
 	wait 20
 	showtext TX_3103
-	jump2byte script4fe5
-script4ff9:
+	jump2byte @waitUntilTalkedTo
+@wrongSecret:
 	wait 20
 	showtext TX_3104
-	jump2byte script4fe5
-script4fff:
+	jump2byte @waitUntilTalkedTo
+@answeredYes:
 	askforsecret RUUL_SECRET
 	wait 20
 	jumptable_memoryaddress $cca3
-	.dw script5009
-	.dw script4ff9
-script5009:
+	.dw @correctSecret
+	.dw @wrongSecret
+@correctSecret:
 	showtext TX_3105
 	wait 20
-	jumpifitemobtained $2c, script501a
+	jumpifitemobtained TREASURE_RING_BOX, @upgradeRingbox
 	showtext TX_3109
 	wait 20
-	giveitem $2c03
-	jump2byte script502f
-script501a:
+	giveitem TREASURE_RING_BOX $03
+	jump2byte @provideReturnSecret
+@upgradeRingbox:
 	showtext TX_3108
 	wait 20
-	asm15 $59c4
-	jumpifmemoryeq $cba8, $05, script502c
-	giveitem $2c01
-	jump2byte script502f
-script502c:
-	giveitem $2c02
-script502f:
+	asm15 scriptHlp.getNextRingboxLevel
+	jumpifmemoryeq wTextNumberSubstitution, $05, @upgradeTo5
+	giveitem TREASURE_RING_BOX $01
+	jump2byte @provideReturnSecret
+@upgradeTo5:
+	giveitem TREASURE_RING_BOX $02
+@provideReturnSecret:
 	wait 20
-script5030:
+@doneSecret:
 	generatesecret RUUL_RETURN_SECRET
-script5032:
+-
 	showtext TX_3106
 	wait 20
-	jumpiftextoptioneq $01, script5032
-	setglobalflag $63
+	jumpiftextoptioneq $01, -
+	setglobalflag GLOBALFLAG_DONE_RUUL_SECRET
 	showtext TX_3107
-	jump2byte script4fe5
-script5041:
+	jump2byte @waitUntilTalkedTo
+
+	
+; ==============================================================================
+; INTERACID_MRS_RUUL
+; ==============================================================================
+mrsRuulScript:
 	initcollisions
-	jumpifroomflagset $40, script506c
-script5046:
+	jumpifroomflagset $40, @gaveDoll
+-
 	checkabutton
 	showtext TX_0b1a
-	jumpiftradeitemeq $02, script5050
-	jump2byte script5046
-script5050:
+	jumpiftradeitemeq $02, @hasDoll
+	jump2byte -
+@hasDoll:
 	disableinput
 	wait 30
-script5052:
+-
 	showtext TX_0b1b
-	jumpiftextoptioneq $00, script5062
+	jumpiftextoptioneq $00, @givingDoll
 	wait 30
 	showtext TX_0b1e
 	enableinput
 	checkabutton
 	disableinput
-	jump2byte script5052
-script5062:
+	jump2byte -
+@givingDoll:
 	wait 30
 	showtext TX_0b1c
-	giveitem $4103
+	giveitem TREASURE_TRADEITEM $03
 	orroomflag $40
 	enableinput
-script506c:
+@gaveDoll:
 	checkabutton
 	showtext TX_0b1d
-	jump2byte script506c
-script5072:
+	jump2byte @gaveDoll
+	
+
+; ==============================================================================
+; INTERACID_MR_WRITE
+; ==============================================================================
+mrWriteScript:
 	setcollisionradii $0a, $06
 	makeabuttonsensitive
-	jumpifroomflagset $40, script5099
-script507a:
+	jumpifroomflagset $40, @alreadyLitTorch
+-
 	jumptable_memoryaddress wNumTorchesLit
-	.dw script5081
-	.dw script508e
-script5081:
-	jumpifobjectbyteeq $71, $00, script507a
+	.dw @unlitTorch
+	.dw @litTorch
+@unlitTorch:
+	jumpifobjectbyteeq $71, $00, -
 	writeobjectbyte $71, $00
 	showtext TX_0b00
-	jump2byte script507a
-script508e:
+	jump2byte -
+@litTorch:
 	disableinput
 	wait 40
 	showtext TX_0b01
-	giveitem $4100
+	giveitem TREASURE_TRADEITEM $00
 	orroomflag $40
 	enableinput
-script5099:
+@alreadyLitTorch:
 	checkabutton
 	disableinput
 	writeobjectbyte $73, $0b
@@ -1619,247 +1651,321 @@ script5099:
 	addobjectbyte $72, $02
 	showloadedtext
 	enableinput
-	jump2byte script5099
-script50a8:
+	jump2byte @alreadyLitTorch
+	
+	
+; ==============================================================================
+; INTERACID_FICKLE_LADY
+; ==============================================================================
+fickleLadyScript_text1:
 	rungenericnpc TX_1600
-script50ab:
+fickleLadyScript_text2:
 	rungenericnpc TX_1602
-script50ae:
+fickleLadyScript_text3:
 	rungenericnpc TX_1603
-script50b1:
+fickleLadyScript_text4:
 	rungenericnpc TX_1604
-script50b4:
+fickleLadyScript_text5:
 	rungenericnpc TX_1605
-script50b7:
+fickleLadyScript_text6:
 	rungenericnpc TX_1606
-script50ba:
+fickleLadyScript_text7:
 	rungenericnpc TX_1607
-script50bd:
+	
+	
+; ==============================================================================
+; INTERACID_MALON
+; ==============================================================================
+malonScript:
 	initcollisions
-	jumpifroomflagset $40, script50e8
-script50c2:
+	jumpifroomflagset $40, @gaveCuccodex
+-
 	checkabutton
 	showtext TX_0b12
-	jumpiftradeitemeq $00, script50cc
-	jump2byte script50c2
-script50cc:
+	jumpiftradeitemeq $00, @haveCuccodex
+	jump2byte -
+@haveCuccodex:
 	disableinput
 	wait 30
-script50ce:
+-
 	showtext TX_0b13
-	jumpiftextoptioneq $00, script50de
+	jumpiftextoptioneq $00, @givingCuccodex
 	wait 30
 	showtext TX_0b16
 	enableinput
 	checkabutton
 	disableinput
-	jump2byte script50ce
-script50de:
+	jump2byte -
+@givingCuccodex:
 	wait 30
 	showtext TX_0b14
-	giveitem $4101
+	giveitem TREASURE_TRADEITEM $01
 	orroomflag $40
 	enableinput
-script50e8:
-	asm15 $57ce
+@gaveCuccodex:
+	asm15 scriptHlp.checkTalonReturned
 	jumptable_objectbyte $7c
-	.dw script50f1
-	.dw script50f7
-script50f1:
+	.dw @talonNotReturned
+	.dw @talonReturned
+@talonNotReturned:
 	checkabutton
 	showtext TX_0b15
-	jump2byte script50f1
-script50f7:
-	spawninteraction $4501, $68, $78
-script50fc:
+	jump2byte @talonNotReturned
+@talonReturned:
+	spawninteraction INTERACID_TALON $01, $68, $78
+-
 	checkabutton
 	showtext TX_0b17
-	jump2byte script50fc
-script5102:
+	jump2byte -
+	
+	
+; ==============================================================================
+; INTERACID_BATHING_SUBROSIANS
+; ==============================================================================
+bathingSubrosianScript_text1:
 	writeobjectbyte $5c, $01
 	rungenericnpc TX_3e05
-script5108:
+	
+bathingSubrosianScript_stub:
 	wait 240
-	jump2byte script5108
-script510b:
+	jump2byte bathingSubrosianScript_stub
+	
+bathingSubrosianScript_2:
 	writeobjectbyte $5c, $01
-script510e:
+-
 	wait 240
-	jump2byte script510e
-script5111:
+	jump2byte -
+
+bathingSubrosianScript_text3:
 	rungenericnpc TX_3e07
-script5114:
-	settextid $1903
-	jumpifglobalflagset $16, script511e
-	settextid $1900
-script511e:
+	
+	
+; ==============================================================================
+; INTERACID_MASTER_DIVERS_SON
+; ==============================================================================
+masterDiversSonScript:
+	settextid TX_1903
+	jumpifglobalflagset GLOBALFLAG_MOBLINS_KEEP_DESTROYED, @commonInit
+	settextid TX_1900
+@commonInit:
 	initcollisions
-script511f:
+@commonInitShowText:
 	checkabutton
 	setdisabledobjectsto11
 	cplinkx $49
 	setanimationfromobjectbyte $49
 	showloadedtext
 	enableallobjects
-	jump2byte script511f
-script512a:
-	jumpifglobalflagset $16, script5134
+	jump2byte @commonInitShowText
+	
+masterDiversSonScript_4thEssenceGotten:
+	jumpifglobalflagset GLOBALFLAG_MOBLINS_KEEP_DESTROYED, @moblinKeepDestroyed
 	initcollisions
-script512f:
-	settextid $1901
-	jump2byte script511f
-script5134:
+-
+	settextid TX_1901
+	jump2byte masterDiversSonScript@commonInitShowText
+@moblinKeepDestroyed:
 	setcoords $58, $38
 	initcollisions
-	settextid $1903
+	settextid TX_1903
 	checkabutton
 	setdisabledobjectsto11
 	cplinkx $49
 	setanimationfromobjectbyte $49
 	showloadedtext
 	enableallobjects
-	jump2byte script512f
-script5146:
-	settextid $1902
-	jump2byte script511e
-script514b:
-	settextid $1904
-	jump2byte script511e
-script5150:
-	settextid $1905
-	jump2byte script511e
-script5155:
+	jump2byte -
+	
+masterDiversSonScript_8thEssenceGotten:
+	settextid TX_1902
+	jump2byte masterDiversSonScript@commonInit
+	
+masterDiversSonScript_ZeldaKidnapped:
+	settextid TX_1904
+	jump2byte masterDiversSonScript@commonInit
+	
+masterDiversSonScript_gameFinished:
+	settextid TX_1905
+	jump2byte masterDiversSonScript@commonInit
+	
+
+; ==============================================================================
+; INTERACID_FICKLE_MAN
+; ==============================================================================
+ficklManScript_text1:
 	rungenericnpc TX_0f00
-script5158:
+ficklManScript_text2:
 	rungenericnpc TX_0f01
-script515b:
+ficklManScript_text3:
 	rungenericnpc TX_0f03
-script515e:
+ficklManScript_text4:
 	rungenericnpc TX_0f02
-script5161:
+ficklManScript_text5:
 	rungenericnpc TX_0f04
-script5164:
+ficklManScript_text6:
 	rungenericnpc TX_0f05
-script5167:
+ficklManScript_text7:
 	rungenericnpc TX_0f06
-script516a:
+ficklManScript_text8:
 	rungenericnpc TX_0f07
-script516d:
+ficklManScript_text9:
 	rungenericnpc TX_0f08
-script5170:
+ficklManScript_textA:
 	writeobjectbyte $5c, $02
 	rungenericnpc TX_0e21
-script5176:
+	
+	
+; ==============================================================================
+; INTERACID_DUNGEON_WISE_OLD_MAN
+; ==============================================================================
+dungeonWiseOldManScript:
 	initcollisions
-script5177:
+-
 	checkabutton
 	showloadedtext
-	asm15 $57e0
-	jump2byte script5177
-script517e:
+	asm15 scriptHlp.dungeonWiseOldMan_setLinksInvincibilityCounterTo0
+	jump2byte -
+	
+
+; ==============================================================================
+; INTERACID_TREASURE_HUNTER
+; ==============================================================================
+treasureHunterScript_text1:
 	rungenericnpc TX_1b00
-script5181:
+treasureHunterScript_text2:
 	rungenericnpc TX_1b01
-script5184:
+treasureHunterScript_text3:
 	rungenericnpc TX_1b02
-script5187:
+treasureHunterScript_text4:
 	rungenericnpc TX_1b03
-script518a:
+	
+	
+; ==============================================================================
+; INTERACID_OLD_LADY_FARMER
+; ==============================================================================
+oldLadyFarmerScript_text1:
 	rungenericnpc TX_1200
-script518d:
+	
+oldLadyFarmerScript_text2:
 	initcollisions
-script518e:
+-
 	checkabutton
 	setdisabledobjectsto91
 	showtext TX_1201
-	jumpiftextoptioneq $01, script519d
+	jumpiftextoptioneq $01, @answeredYes
 	wait 30
 	showtext TX_1202
-	jump2byte script51a1
-script519d:
+	jump2byte @answeredNo
+@answeredYes:
 	wait 30
 	showtext TX_1203
-script51a1:
+@answeredNo:
 	enableallobjects
-	jump2byte script518e
-script51a4:
+	jump2byte -
+	
+oldLadyFarmerScript_text3:
 	rungenericnpc TX_1204
-script51a7:
+	
+oldLadyFarmerScript_text4:
 	rungenericnpc TX_1205
-script51aa:
+	
+oldLadyFarmerScript_text5:
 	rungenericnpc TX_1206
-script51ad:
+	
+oldLadyFarmerScript_text6:
 	rungenericnpc TX_1206
-script51b0:
+	
+oldLadyFarmerScript_text7:
 	rungenericnpc TX_1208
-script51b3:
-	settextid $1000
-	jumpifmemoryeq wIsLinkedGame, $01, script51c4
-script51bc:
+	
+
+; ==============================================================================
+; INTERACID_FOUNTAIN_OLD_MAN
+; ==============================================================================
+fountainOldManScript_text1:
+	settextid TX_1000
+	jumpifmemoryeq wIsLinkedGame, $01, fountainOldManScript_text2
+_fountainOldManScript_showText:
 	setcollisionradii $03, $0b
 	makeabuttonsensitive
-script51c0:
+-
 	checkabutton
 	showloadedtext
-	jump2byte script51c0
-script51c4:
-	settextid $1001
-	jump2byte script51bc
-script51c9:
-	settextid $1002
-	jump2byte script51bc
-script51ce:
-	settextid $1003
-	jump2byte script51bc
-script51d3:
-	settextid $1004
-	jump2byte script51bc
-script51d8:
-	settextid $1005
-	jump2byte script51bc
-script51dd:
-	settextid $1006
-	jump2byte script51bc
-script51e2:
-	settextid $1007
-	jump2byte script51bc
-script51e7:
-	settextid $1008
-	jump2byte script51bc
-script51ec:
-	settextid $1009
-	jump2byte script51bc
-script51f1:
+	jump2byte -
+	
+fountainOldManScript_text2:
+	settextid TX_1001
+	jump2byte _fountainOldManScript_showText
+	
+fountainOldManScript_text3:
+	settextid TX_1002
+	jump2byte _fountainOldManScript_showText
+	
+fountainOldManScript_text4:
+	settextid TX_1003
+	jump2byte _fountainOldManScript_showText
+	
+fountainOldManScript_text5:
+	settextid TX_1004
+	jump2byte _fountainOldManScript_showText
+	
+fountainOldManScript_text6:
+	settextid TX_1005
+	jump2byte _fountainOldManScript_showText
+	
+fountainOldManScript_text7:
+	settextid TX_1006
+	jump2byte _fountainOldManScript_showText
+	
+fountainOldManScript_text8:
+	settextid TX_1007
+	jump2byte _fountainOldManScript_showText
+	
+fountainOldManScript_text9:
+	settextid TX_1008
+	jump2byte _fountainOldManScript_showText
+	
+fountainOldManScript_textA:
+	settextid TX_1009
+	jump2byte _fountainOldManScript_showText
+	
+	
+; ==============================================================================
+; INTERACID_TICK_TOCK
+; ==============================================================================
+tickTockScript:
 	setcollisionradii $0f, $06
 	makeabuttonsensitive
-	jumpifroomflagset $40, script521f
-script51f9:
+	jumpifroomflagset $40, @gaveEngineGrease
+-
 	checkabutton
 	showtext TX_0b43
-	jumpiftradeitemeq $09, script5203
-	jump2byte script51f9
-script5203:
+	jumpiftradeitemeq $09, @haveEngineGrease
+	jump2byte -
+@haveEngineGrease:
 	disableinput
 	wait 30
-script5205:
+-
 	showtext TX_0b44
-	jumpiftextoptioneq $00, script5215
+	jumpiftextoptioneq $00, @givingEngineGrease
 	wait 30
 	showtext TX_0b47
 	enableinput
 	checkabutton
 	disableinput
-	jump2byte script5205
-script5215:
+	jump2byte -
+@givingEngineGrease:
 	wait 30
 	showtext TX_0b45
-	giveitem $410a
+	giveitem TREASURE_TRADEITEM $0a
 	orroomflag $40
 	enableinput
-script521f:
+@gaveEngineGrease:
 	checkabutton
 	showtext TX_0b46
-	jump2byte script521f
+	jump2byte @gaveEngineGrease
+	
+	
 script5225:
 	rungenericnpclowindex $34
 script5227:

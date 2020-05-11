@@ -1921,17 +1921,113 @@
 
 .ifdef ROM_SEASONS
 
+;;
+; Called by Rod of Seasons item code, and sets the next available season
+.define INTERACID_USED_ROD_OF_SEASONS	$15
+
+;;
+; Handles interaction with rupee tiles, giving random rupees
+; @subid_00{D2 rupee room}
+; @subid_01{D6 rupee room}
 .define INTERACID_RUPEE_ROOM_RUPEES	$1d
+
+;;
+; @subid_00{Holly's chimney}
+; @subid_01{???}
+; @subid_02{Into Sunken City left waterfall}
+; @subid_03{Into Sunken City right waterfall}
+; @subid_04{Into Natzu River waterfall}
+; @subid_05{From Sunken City left waterfall}
+; @subid_06{From Sunken City right waterfall}
+; @subid_07{From Natzu River waterfall}
+; @subid_08{Mt. Cucco dive spot to Sunken City}
+; @subid_09{Sunken City north dive spot}
+; @subid_0a{Dive spot outside D4}
+; @subid_0b{ROOM_SEASONS_4f4, desert?}
+; @subid_0c{ROOM_SEASONS_4f5, desert?}
+; @subid_0d{Sunken City south dive spot}
+.define INTERACID_S_SPECIAL_WARP	$1f
+
+;;
 .define INTERACID_GANRLED_KEYHOLE	$21
+
+;;
+; TODO: subids
 .define INTERACID_MAKU_CUTSCENES	$22
-; located in a couple group5 underground rooms
-.define INTERACID_23			$23
+
+;;
+; @subid_01{In Spring season room}
+; @subid_11{In Summer season room}
+; @subid_21{In Autumn season room}
+; @subid_31{In Winter season room}
+; @subid_30{Winter temple orb puzzle}
+; @subid_40{Cutscene entering Temple area}
+.define INTERACID_SEASON_SPIRITS_SCRIPTS	$23
+
+;;
+; @subid_00{Mayor}
+; @subid_01{Linked woman}
+.define INTERACID_MAYORS_HOUSE_NPC	$24
+
 .define INTERACID_SOKRA			$27
+
+;;
+.define INTERACID_MRS_RUUL		$29
+
+;;
+.define INTERACID_MR_WRITE		$2c
+
+;;
+; Moves around horon village a lot based on game stage
+; @subid_80-86{}
+.define INTERACID_FICKLE_LADY		$2d
+
+;;
+.define INTERACID_MALON		$2f
+
 .define INTERACID_SUBROSIAN_WITH_BUCKETS	$32
+
+;;
+; Bathing subrosians
+; @subid_80-82{By 50 ore chunk spot}
+; @subid_83-85{Above dancing minigame entrance}
+.define INTERACID_BATHING_SUBROSIANS	$33
+
 .define INTERACID_SUBROSIAN_SMITHS	$34
 .define INTERACID_35			$35
+
+;;
+; Moves around sunken city a lot based on game stage
+; @subid_80-84{}
+.define INTERACID_MASTER_DIVERS_SON	$36
+
+;;
+; Moves around horon village a lot based on game stage
+; @subid_80-86{}
+.define INTERACID_FICKLE_MAN		$37
+
+;;
+.define INTERACID_DUNGEON_WISE_OLD_MAN	$38
+
+;;
+; Moves around his house in sunken city a lot based on game stage
+; @subid_80-84{}
+.define INTERACID_TREASURE_HUNTER	$39
+
+.define INTERACID_3a			$3a
+
+;;
+.define INTERACID_OLD_LADY_FARMER	$3c
+
+;;
+.define INTERACID_FOUNTAIN_OLD_MAN	$3d
+
+;;
+.define INTERACID_TICK_TOCK		$3f
+
 .define INTERACID_TALON			$45
 .define INTERACID_48			$48
+.define INTERACID_4b			$4b
 .define INTERACID_PIRATE_SKULL		$4d
 .define INTERACID_4e			$4e
 .define INTERACID_4f			$4f

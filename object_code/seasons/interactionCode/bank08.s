@@ -1,3 +1,6 @@
+; ==============================================================================
+; INTERACID_USED_ROD_OF_SEASONS
+; ==============================================================================
 interactionCode15:
 	ld a,(wMenuDisabled)		; $5138
 	ld b,a			; $513b
@@ -12,14 +15,14 @@ interactionCode15:
 	add a			; $514c
 	jr z,+			; $514d
 	ld a,(wRoomStateModifier)		; $514f
-_label_08_094:
+-
 	inc a			; $5152
 	and $03			; $5153
 	ld b,a			; $5155
 	call checkFlag		; $5156
 	ld a,b			; $5159
-	jr z,_label_08_094	; $515a
-	call seasonsFunc_3a9c		; $515c
+	jr z,-			; $515a
+	call setSeason		; $515c
 	ld a,SND_ENERGYTHING		; $515f
 	call playSound		; $5161
 	ld a,$02		; $5164
@@ -29,28 +32,31 @@ _label_08_094:
 
 
 ; ==============================================================================
-; INTERACID_SPECIAL_WARP
+; INTERACID_S_SPECIAL_WARP
 ; ==============================================================================
 interactionCode1f:
 	ld e,$42		; $516c
 	ld a,(de)		; $516e
 	rst_jumpTable			; $516f
-	.dw $518c
-	.dw $518c
-	.dw $51b6
-	.dw $51b6
-	.dw $51b6
-	.dw $5235
-	.dw $5235
-	.dw $5235
-	.dw $526b
-	.dw $526b
-	.dw $526b
-	.dw $526b
-	.dw $526b
-	.dw $52ae
+	.dw _specialWarp_subid0
+	.dw _specialWarp_subid1
+	.dw _specialWarp_subid2
+	.dw _specialWarp_subid3
+	.dw _specialWarp_subid4
+	.dw _specialWarp_subid5
+	.dw _specialWarp_subid6
+	.dw _specialWarp_subid7
+	.dw _specialWarp_subid8
+	.dw _specialWarp_subid9
+	.dw _specialWarp_subidA
+	.dw _specialWarp_subidB
+	.dw _specialWarp_subidC
+	.dw _specialWarp_subidD
+
+_specialWarp_subid0:
+_specialWarp_subid1:
 	call checkInteractionState		; $518c
-	jr nz,_label_08_096	; $518f
+	jr nz,+			; $518f
 	ld a,($cd00)		; $5191
 	and $01			; $5194
 	ret z			; $5196
@@ -58,7 +64,7 @@ interactionCode1f:
 	ld (de),a		; $5199
 	call objectGetTileAtPosition		; $519a
 	ld (hl),$20		; $519d
-_label_08_096:
++
 	ld a,($cc77)		; $519f
 	or a			; $51a2
 	ret nz			; $51a3
@@ -70,17 +76,22 @@ _label_08_096:
 	ld a,$81		; $51ae
 	ld ($cca4),a		; $51b0
 	jp interactionDelete		; $51b3
+
+_specialWarp_subid2:
+_specialWarp_subid3:
+_specialWarp_subid4:
 	ld e,$44		; $51b6
 	ld a,(de)		; $51b8
 	rst_jumpTable			; $51b9
-	.dw $51c0
-	.dw $51fd
-	.dw $522b
+	.dw @state0
+	.dw @state1
+	.dw @state2
+@state0:
 	ld e,$42		; $51c0
 	ld a,(de)		; $51c2
 	sub $02			; $51c3
 	add a			; $51c5
-	ld hl,_table_51e5		; $51c6
+	ld hl,@table_51e5		; $51c6
 	rst_addDoubleIndex			; $51c9
 	ld e,$70		; $51ca
 	ld b,$03		; $51cc
@@ -93,21 +104,23 @@ _label_08_096:
 	ld (de),a		; $51d8
 	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $51d9
 	ld a,$01		; $51dc
-	jr nc,_label_08_097	; $51de
+	jr nc,+			; $51de
 	inc a			; $51e0
-_label_08_097:
++
 	ld e,$44		; $51e1
 	ld (de),a		; $51e3
 	ret			; $51e4
 
-_table_51e5:
+@table_51e5:
 	.db $05 $bc $97 $10
 	.db $05 $bd $97 $18
 	.db $05 $0d $97 $18
+
 	.db $00 $2e $61 $00
 	.db $00 $2e $75 $00
 	.db $00 $5a $54 $00
 
+@state1:
 	ld a,d			; $51fd
 	ld ($ccaa),a		; $51fe
 	ld a,($cc48)		; $5201
@@ -117,36 +130,45 @@ _table_51e5:
 	ret nc			; $520a
 	xor a			; $520b
 	ld ($cc65),a		; $520c
-_label_08_099:
+@setWarpVariables:
 	ld h,d			; $520f
 	ld l,$70		; $5210
 	ldi a,(hl)		; $5212
-	ld ($cc63),a		; $5213
+	ld (wWarpDestGroup),a		; $5213
 	ldi a,(hl)		; $5216
-	ld ($cc64),a		; $5217
+	ld (wWarpDestRoom),a		; $5217
 	ld a,(hl)		; $521a
-	ld ($cc66),a		; $521b
+	ld (wWarpDestPos),a		; $521b
 	ld a,$03		; $521e
-	ld ($cc67),a		; $5220
+	ld (wWarpTransition2),a		; $5220
 	ld a,$01		; $5223
-	ld ($cd00),a		; $5225
+	ld (wScrollMode),a		; $5225
 	jp interactionDelete		; $5228
+
+@state2:
 	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $522b
 	ret c			; $522e
 	ld e,$44		; $522f
 	ld a,$01		; $5231
 	ld (de),a		; $5233
 	ret			; $5234
+
+_specialWarp_subid5:
+_specialWarp_subid6:
+_specialWarp_subid7:
 	ld e,$44		; $5235
 	ld a,(de)		; $5237
 	rst_jumpTable			; $5238
-	.dw $523f
-	.dw $5249
-	.dw $5249
-	call $51c0		; $523f
+	.dw @state0
+	.dw @state1
+	.dw @state2
+@state0:
+	call _specialWarp_subid4@state0		; $523f
 	xor a			; $5242
 	ld (wActiveMusic),a		; $5243
 	jp interactionSetAlwaysUpdateBit		; $5246
+@state1:
+@state2:
 	ld a,d			; $5249
 	ld ($ccab),a		; $524a
 	ld a,($cc48)		; $524d
@@ -162,14 +184,20 @@ _label_08_099:
 	ld a,$ff		; $5261
 	ld ($cca4),a		; $5263
 	ld (wActiveMusic),a		; $5266
-	jr _label_08_099		; $5269
+	jr _specialWarp_subid4@setWarpVariables		; $5269
+
+_specialWarp_subid8:
+_specialWarp_subid9:
+_specialWarp_subidA:
+_specialWarp_subidB:
+_specialWarp_subidC:
 	call checkInteractionState		; $526b
-	jr nz,_label_08_100	; $526e
+	jr nz,+			; $526e
 	ld a,$01		; $5270
 	ld (de),a		; $5272
 	ld a,$02		; $5273
 	call objectSetCollideRadius		; $5275
-_label_08_100:
++
 	ld a,($cc78)		; $5278
 	rlca			; $527b
 	ret nc			; $527c
@@ -181,16 +209,16 @@ _label_08_100:
 	ld hl,_table_52a4		; $5286
 	rst_addDoubleIndex			; $5289
 	ldi a,(hl)		; $528a
-	ld ($cc64),a		; $528b
+	ld (wWarpDestRoom),a		; $528b
 	ld a,(hl)		; $528e
-	ld ($cc66),a		; $528f
+	ld (wWarpDestPos),a		; $528f
 	ld a,$87		; $5292
-	ld ($cc63),a		; $5294
+	ld (wWarpDestGroup),a		; $5294
 	ld a,$01		; $5297
-	ld ($cc65),a		; $5299
-_label_08_101:
+	ld (wWarpTransition),a		; $5299
+@fadeoutTransition:
 	ld a,$03		; $529c
-	ld ($cc67),a		; $529e
+	ld (wWarpTransition2),a		; $529e
 	jp interactionDelete		; $52a1
 
 _table_52a4:
@@ -200,14 +228,14 @@ _table_52a4:
 	.db $e6 $02
 	.db $e7 $0d
 
-
+_specialWarp_subidD:
 	call checkInteractionState		; $52ae
-	jr nz,_label_08_102	; $52b1
+	jr nz,+			; $52b1
 	ld a,$01		; $52b3
 	ld (de),a		; $52b5
 	ld a,$02		; $52b6
 	call objectSetCollideRadius		; $52b8
-_label_08_102:
++
 	ld a,($cc78)		; $52bb
 	rlca			; $52be
 	ret nc			; $52bf
@@ -221,7 +249,7 @@ _label_08_102:
 	ld (hl),$05		; $52cd
 	inc l			; $52cf
 	ld (hl),$29		; $52d0
-	jr _label_08_101		; $52d2
+	jr _specialWarp_subidC@fadeoutTransition		; $52d2
 
 
 ; ==============================================================================
@@ -391,11 +419,12 @@ interactionCode21:
 	ld e,$44		; $53c3
 	ld a,(de)		; $53c5
 	rst_jumpTable			; $53c6
-	.dw $53d1
+	.dw @state0
 	.dw interactionRunScript
-	.dw $53ec
-	.dw $5401
-	.dw $5437
+	.dw @state2
+	.dw @state3
+	.dw @state4
+@state0:
 	call getThisRoomFlags		; $53d1
 	bit 7,a			; $53d4
 	jp nz,interactionDelete		; $53d6
@@ -404,9 +433,10 @@ interactionCode21:
 	ld (de),a		; $53dd
 	ld a,$01		; $53de
 	ld ($ccaa),a		; $53e0
-	call $5469		; $53e3
-	ld hl,$4dea		; $53e6
+	call _func_5469		; $53e3
+	ld hl,gnarledKeyholeScript		; $53e6
 	jp interactionSetScript		; $53e9
+@state2:
 	call interactionIncState		; $53ec
 	ld l,$46		; $53ef
 	ld (hl),$1e		; $53f1
@@ -414,45 +444,46 @@ interactionCode21:
 	ld a,($cca4)		; $53f6
 	or $80			; $53f9
 	ld ($cca4),a		; $53fb
-	call $545d		; $53fe
-	call $54ae		; $5401
+	call _func_545d		; $53fe
+@state3:
+	call _func_54ae		; $5401
 	call interactionDecCounter1		; $5404
-	jr nz,_label_08_106	; $5407
+	jr nz,_func_545d	; $5407
 	ld l,$47		; $5409
 	ld a,(hl)		; $540b
 	cp $04			; $540c
-	jr nc,_label_08_104	; $540e
+	jr nc,+			; $540e
 	inc (hl)		; $5410
 	ld a,(hl)		; $5411
-	call $549d		; $5412
+	call _func_549d		; $5412
 	ld a,$82		; $5415
 	call playSound		; $5417
 	ld e,$47		; $541a
 	ld a,(de)		; $541c
-	ld hl,_table_542d		; $541d
+	ld hl,@table_542d		; $541d
 	rst_addDoubleIndex			; $5420
 	dec e			; $5421
 	ldi a,(hl)		; $5422
 	ld (de),a		; $5423
 	ld a,(hl)		; $5424
 	or a			; $5425
-	jr z,_label_08_107	; $5426
-_label_08_104:
+	jr z,_func_5463	; $5426
++
 	ld l,$44		; $5428
 	inc (hl)		; $542a
-	jr _label_08_107		; $542b
-
-_table_542d:
+	jr _func_5463		; $542b
+@table_542d:
+	; counter1
 	.db $1e $00
 	.db $3c $00
 	.db $2d $00
 	.db $28 $00
 	.db $23 $00
-
+@state4:
 	ld a,$09		; $5437
-	ld hl,$5482		; $5439
-	ld bc,$5494		; $543c
-	call $5471		; $543f
+	ld hl,_table_5482		; $5439
+	ld bc,_table_5494		; $543c
+	call _func_5471		; $543f
 	xor a			; $5442
 	ld ($ccaa),a		; $5443
 	ld ($cca4),a		; $5446
@@ -463,20 +494,25 @@ _table_542d:
 	ld (wActiveMusic),a		; $5454
 	call playSound		; $5457
 	jp interactionDelete		; $545a
-_label_08_106:
+
+_func_545d:
 	ld a,$0f		; $545d
-	ld ($cd19),a		; $545f
+	ld (wScreenShakeCounterX),a		; $545f
 	ret			; $5462
-_label_08_107:
+
+_func_5463:
 	ld a,$04		; $5463
-	ld ($cd18),a		; $5465
+	ld (wScreenShakeCounterY),a		; $5465
 	ret			; $5468
+
+_func_5469:
 	ld a,$09		; $5469
-	ld hl,$5482		; $546b
-	ld bc,$548b		; $546e
-	ld d,$ce		; $5471
+	ld hl,_table_5482		; $546b
+	ld bc,_table_548b		; $546e
+_func_5471:
+	ld d,>wRoomCollisions		; $5471
 	ld e,a			; $5473
-_label_08_108:
+-
 	push de			; $5474
 	ldi a,(hl)		; $5475
 	ld e,a			; $5476
@@ -485,46 +521,35 @@ _label_08_108:
 	ld (de),a		; $5479
 	pop de			; $547a
 	dec e			; $547b
-	jr nz,_label_08_108	; $547c
+	jr nz,-			; $547c
 	ldh a,(<hActiveObject)	; $547e
 	ld d,a			; $5480
 	ret			; $5481
-	inc hl			; $5482
-	inc h			; $5483
-	dec h			; $5484
-	inc sp			; $5485
-	inc (hl)		; $5486
-	dec (hl)		; $5487
-	ld b,e			; $5488
-	ld b,h			; $5489
-	ld b,l			; $548a
-	nop			; $548b
-	nop			; $548c
-	nop			; $548d
-	nop			; $548e
-	nop			; $548f
-	nop			; $5490
-	inc b			; $5491
-	inc c			; $5492
-	ld ($0301),sp		; $5493
-	ld (bc),a		; $5496
-	rrca			; $5497
-	rrca			; $5498
-	rrca			; $5499
-	rrca			; $549a
-	inc c			; $549b
-	rrca			; $549c
-	ld hl,$54a9		; $549d
+_table_5482:
+	.db $23 $24 $25
+	.db $33 $34 $35
+	.db $43 $44 $45
+_table_548b:
+	; initial collisions
+	.db $00 $00 $00
+	.db $00 $00 $00
+	.db $04 $0c $08
+_table_5494:
+	; collisions after rising
+	.db $01 $03 $02
+	.db $0f $0f $0f
+	.db $0f $0c $0f
+_func_549d:
+	ld hl,_table_54a9		; $549d
 	rst_addAToHl			; $54a0
 	ld a,(hl)		; $54a1
 	call uniqueGfxFunc_380b		; $54a2
 	ldh a,(<hActiveObject)	; $54a5
 	ld d,a			; $54a7
 	ret			; $54a8
-	jr nz,_label_08_109	; $54a9
-	ldi (hl),a		; $54ab
-	inc hl			; $54ac
-	inc b			; $54ad
+_table_54a9:
+	.db $20 $21 $22 $23 $04
+_func_54ae:
 	ld a,(wFrameCounter)		; $54ae
 	and $01			; $54b1
 	ret nz			; $54b3
@@ -532,15 +557,14 @@ _label_08_108:
 	ld e,a			; $54b7
 	call getFreeInteractionSlot		; $54b8
 	ret nz			; $54bb
-	ld (hl),$4b		; $54bc
+	ld (hl),INTERACID_4b		; $54bc
 	inc l			; $54be
 	ld a,(wFrameCounter)		; $54bf
 	and $06			; $54c2
 	rrca			; $54c4
-	ld bc,$54e4		; $54c5
+	ld bc,_table_54e4		; $54c5
 	call addAToBc		; $54c8
 	ld a,(bc)		; $54cb
-_label_08_109:
 	ld (hl),a		; $54cc
 	ld l,$4b		; $54cd
 	ld a,e			; $54cf
@@ -557,8 +581,8 @@ _label_08_109:
 	add $48			; $54e0
 	ld (hl),a		; $54e2
 	ret			; $54e3
-	nop			; $54e4
-	ld bc,$0000		; $54e5
+_table_54e4:
+	.db $00 $01 $00 $00
 
 
 ; ==============================================================================
@@ -811,17 +835,19 @@ interactionCode22:
 	.dw makuTreeScript_gateHit
 
 
+; ==============================================================================
+; INTERACID_SEASON_SPIRITS_SCRIPTS
+; ==============================================================================
 interactionCode23:
 	ld e,$45		; $5665
 	ld a,(de)		; $5667
 	rst_jumpTable			; $5668
-	ld l,l			; $5669
-	ld d,(hl)		; $566a
-	sbc (hl)		; $566b
-	ld d,(hl)		; $566c
+	.dw @substate0
+	.dw @substate1
+@substate0:
 	ld a,$01		; $566d
 	ld (de),a		; $566f
-	ld a,$08		; $5670
+	ld a,>TX_0800		; $5670
 	call interactionSetHighTextIndex		; $5672
 	ld e,$42		; $5675
 	ld a,(de)		; $5677
@@ -840,17 +866,17 @@ interactionCode23:
 	rst_addDoubleIndex			; $568a
 	ldi a,(hl)		; $568b
 	ld h,(hl)		; $568c
-_label_08_122:
 	ld l,a			; $568d
 	call interactionSetScript		; $568e
 	ld e,$7e		; $5691
-	ld a,($c6df)		; $5693
+	ld a,(wc6e5)		; $5693
 	cp $09			; $5696
 	ld a,$00		; $5698
-	jr c,_label_08_123	; $569a
+	jr c,+			; $569a
 	inc a			; $569c
-_label_08_123:
++
 	ld (de),a		; $569d
+@substate1:
 	call interactionRunScript		; $569e
 	jp c,interactionDelete		; $56a1
 	ret			; $56a4
@@ -863,72 +889,111 @@ _table_56a5:
 	.dw _table_56b3
 
 _table_56af:
-	.dw script4ea9
-	.dw script4ead
+	.dw seasonsSpiritsScript_winterTempleOrbBridge
+	.dw seasonsSpiritsScript_spiritStatue
 
 _table_56b3:
-	.dw script4ea5
+	.dw seasonsSpiritsScript_enteringTempleArea
 
 
-; Misc NPCs
+; ==============================================================================
+; INTERACID_MAYORS_HOUSE_NPC
+; ==============================================================================
 interactionCode24:
+; ==============================================================================
+; INTERACID_MRS_RUUL
+; ==============================================================================
 interactionCode29:
+; ==============================================================================
+; INTERACID_MR_WRITE
+; ==============================================================================
 interactionCode2c:
+; ==============================================================================
+; INTERACID_FICKLE_LADY
+; ==============================================================================
 interactionCode2d:
+; ==============================================================================
+; INTERACID_MALON
+; ==============================================================================
 interactionCode2f:
+; ==============================================================================
+; INTERACID_BATHING_SUBROSIANS
+; ==============================================================================
 interactionCode33:
+; ==============================================================================
+; INTERACID_MASTER_DIVERS_SON
+; ==============================================================================
 interactionCode36:
+; ==============================================================================
+; INTERACID_FICKLE_MAN
+; ==============================================================================
 interactionCode37:
+; ==============================================================================
+; INTERACID_DUNGEON_WISE_OLD_MAN
+; ==============================================================================
 interactionCode38:
+; ==============================================================================
+; INTERACID_TREASURE_HUNTER
+; ==============================================================================
 interactionCode39:
+; Unused
 interactionCode3a:
+; ==============================================================================
+; INTERACID_OLD_LADY_FARMER
+; ==============================================================================
 interactionCode3c:
+; ==============================================================================
+; INTERACID_FOUNTAIN_OLD_MAN
+; ==============================================================================
 interactionCode3d:
+; ==============================================================================
+; INTERACID_TICK_TOCK
+; ==============================================================================
 interactionCode3f:
 	ld e,$44		; $56b5
 	ld a,(de)		; $56b7
 	rst_jumpTable			; $56b8
-	cp l			; $56b9
-	ld d,(hl)		; $56ba
-	xor e			; $56bb
-	ld d,a			; $56bc
+	.dw _miscNPC_state0
+	.dw _miscNPC_state1
+_miscNPC_state0:
 	ld a,$01		; $56bd
 	ld (de),a		; $56bf
 	ld h,d			; $56c0
 	ld l,$42		; $56c1
 	ldi a,(hl)		; $56c3
 	bit 7,a			; $56c4
-	jr z,_label_08_126	; $56c6
+	jr z,+			; $56c6
+	; bit 7 in subid checked for in state1
 	ldd (hl),a		; $56c8
 	and $7f			; $56c9
 	ld (hl),a		; $56cb
-_label_08_126:
-	call $57b9		; $56cc
-	jr nz,_label_08_127	; $56cf
++
+	call _checkHoronVillageNPCShouldBeSeen		; $56cc
+	jr nz,+			; $56cf
 	jp nc,interactionDelete		; $56d1
-	jr _label_08_128		; $56d4
-_label_08_127:
-	call $5866		; $56d6
-	jr nz,_label_08_129	; $56d9
+	jr ++			; $56d4
++
+	call getSunkenCityNPCVisibleSubId		; $56d6
+	jr nz,+++		; $56d9
 	ld e,$42		; $56db
 	ld a,(de)		; $56dd
 	cp b			; $56de
 	jp nz,interactionDelete		; $56df
-_label_08_128:
+++
 	ld e,$42		; $56e2
 	ld a,b			; $56e4
 	ld (de),a		; $56e5
-_label_08_129:
++++
 	call interactionInitGraphics		; $56e6
 	ld e,$41		; $56e9
 	ld a,(de)		; $56eb
-	cp $24			; $56ec
-	jr nz,_label_08_130	; $56ee
-	call $5777		; $56f0
+	cp INTERACID_MAYORS_HOUSE_NPC			; $56ec
+	jr nz,+			; $56ee
+	call _checkMayorsHouseNPCshouldBeSeen		; $56f0
 	jp z,interactionDelete		; $56f3
-_label_08_130:
++
 	sub $24			; $56f6
-	ld hl,_table_594a		; $56f8
+	ld hl,_miscNPC_scriptTable		; $56f8
 	rst_addDoubleIndex			; $56fb
 	ldi a,(hl)		; $56fc
 	ld h,(hl)		; $56fd
@@ -942,135 +1007,159 @@ _label_08_130:
 	call interactionSetScript		; $5706
 	ld e,$41		; $5709
 	ld a,(de)		; $570b
-	cp $38			; $570c
-	jp z,$574e		; $570e
-	cp $2c			; $5711
-	jp z,$5732		; $5713
-	cp $33			; $5716
-	call z,$572c		; $5718
+	cp INTERACID_DUNGEON_WISE_OLD_MAN			; $570c
+	jp z,_dungeonWiseOldMan_textLookup		; $570e
+	cp INTERACID_MR_WRITE			; $5711
+	jp z,_mrWrite_spawnLightableTorch		; $5713
+	cp INTERACID_BATHING_SUBROSIANS			; $5716
+	call z,_func_572c		; $5718
 	ld e,$41		; $571b
 	ld a,(de)		; $571d
-	cp $36			; $571e
-	call z,$572c		; $5720
+	cp INTERACID_MASTER_DIVERS_SON			; $571e
+	call z,_func_572c		; $5720
+_func_5723:
 	xor a			; $5723
 	ld h,d			; $5724
 	ld l,$78		; $5725
 	ldi (hl),a		; $5727
 	ld (hl),a		; $5728
 	jp interactionAnimateAsNpc		; $5729
+
+_func_572c:
 	call interactionRunScript		; $572c
 	jp interactionRunScript		; $572f
+
+_mrWrite_spawnLightableTorch:
 	call getThisRoomFlags		; $5732
 	and $40			; $5735
-	jr z,_label_08_131	; $5737
-	jp $5723		; $5739
-_label_08_131:
+	jr z,+			; $5737
+	jp _func_5723		; $5739
++
 	call getFreePartSlot		; $573c
-	jr nz,_label_08_132	; $573f
-	ld (hl),$06		; $5741
+	jr nz,+			; $573f
+	ld (hl),PARTID_LIGHTABLE_TORCH		; $5741
 	ld l,$cb		; $5743
 	ld (hl),$38		; $5745
 	ld l,$cd		; $5747
 	ld (hl),$68		; $5749
-_label_08_132:
-	jp $5723		; $574b
++
+	jp _func_5723		; $574b
+
+_dungeonWiseOldMan_textLookup:
 	ld e,$42		; $574e
 	ld a,(de)		; $5750
 	or a			; $5751
-	jr nz,_label_08_134	; $5752
-	ld a,($cc55)		; $5754
+	jr nz,@ret	; $5752
+	ld a,(wDungeonIndex)		; $5754
 	dec a			; $5757
 	bit 7,a			; $5758
-	jr z,_label_08_133	; $575a
+	jr z,+			; $575a
 	xor a			; $575c
-_label_08_133:
-	ld hl,$576c		; $575d
++
+	ld hl,@textLookup		; $575d
 	rst_addAToHl			; $5760
 	ld e,$72		; $5761
 	ld a,(hl)		; $5763
 	ld (de),a		; $5764
 	inc e			; $5765
-	ld a,$33		; $5766
+	ld a,>TX_3300		; $5766
 	ld (de),a		; $5768
-_label_08_134:
-	jp $5723		; $5769
-	nop			; $576c
-	nop			; $576d
-	nop			; $576e
-	ld bc,$0000		; $576f
-	nop			; $5772
-	nop			; $5773
-	nop			; $5774
-	nop			; $5775
-	ld (bc),a		; $5776
+@ret:
+	jp _func_5723		; $5769
+@textLookup:
+	.db <TX_3300 $00 $00 <TX_3301
+	.db $00 $00 $00 $00
+	.db $00 $00 <TX_3302
+
+;;
+; param[out]	zflag	set if NPC should not be seen
+_checkMayorsHouseNPCshouldBeSeen:
+	; mayor disappears if unlinked game beat
+	; or seen villagers, but not zelda kidnapped
 	ld e,$42		; $5777
 	ld a,(de)		; $5779
 	ld b,a			; $577a
 	call checkIsLinkedGame		; $577b
-	jr z,_label_08_135	; $577e
-	ld a,$1e		; $5780
+	jr z,@unlinked	; $577e
+	ld a,GLOBALFLAG_ZELDA_VILLAGERS_SEEN		; $5780
 	call checkGlobalFlag		; $5782
-	jr z,_label_08_136	; $5785
-	ld a,$1f		; $5787
+	jr z,@xor01IfMayorElsexorA	; $5785
+	ld a,GLOBALFLAG_ZELDA_KIDNAPPED_SEEN		; $5787
 	call checkGlobalFlag		; $5789
-	jr z,_label_08_138	; $578c
-	jr _label_08_136		; $578e
-_label_08_135:
-	ld a,$28		; $5790
+	jr z,@xorARet		; $578c
+	jr @xor01IfMayorElsexorA		; $578e
+@unlinked:
+	ld a,GLOBALFLAG_FINISHEDGAME		; $5790
 	call checkGlobalFlag		; $5792
-	jr z,_label_08_136	; $5795
+	jr z,@xor01IfMayorElsexorA	; $5795
 	ld a,b			; $5797
 	cp $03			; $5798
-	jr nz,_label_08_138	; $579a
-	jr _label_08_137		; $579c
-_label_08_136:
+	jr nz,@xorARet		; $579a
+	; unlinked game beat - woman in mayor's house
+	jr @xor01	; $579c
+@xor01IfMayorElsexorA:
 	ld a,b			; $579e
 	cp $03			; $579f
-	jr z,_label_08_138	; $57a1
-_label_08_137:
+	jr z,@xorARet		; $57a1
+@xor01:
 	ld e,$41		; $57a3
 	ld a,(de)		; $57a5
 	xor $01			; $57a6
 	ret			; $57a8
-_label_08_138:
+@xorARet:
 	xor a			; $57a9
 	ret			; $57aa
+
+_miscNPC_state1:
 	call interactionRunScript		; $57ab
 	ld e,$43		; $57ae
 	ld a,(de)		; $57b0
 	and $80			; $57b1
 	jp nz,interactionAnimateAsNpc		; $57b3
 	jp npcFaceLinkAndAnimate		; $57b6
+
+_checkHoronVillageNPCShouldBeSeen:
 	ld e,$41		; $57b9
 	ld a,(de)		; $57bb
 	ld b,$00		; $57bc
-	cp $2d			; $57be
-	jr z,_label_08_140	; $57c0
+	cp INTERACID_FICKLE_LADY			; $57be
+	jr z,checkHoronVillageNPCShouldBeSeen_body@main	; $57c0
 	inc b			; $57c2
-	cp $37			; $57c3
-	jr nz,_label_08_139	; $57c5
+	cp INTERACID_FICKLE_MAN			; $57c3
+	jr nz,checkHoronVillageNPCShouldBeSeen_body	; $57c5
 	ld e,$42		; $57c7
 	ld a,(de)		; $57c9
 	cp $06			; $57ca
-	jr nz,_label_08_140	; $57cc
+	jr nz,checkHoronVillageNPCShouldBeSeen_body@main	; $57cc
 	ld b,$0b		; $57ce
-	jr _label_08_142		; $57d0
-_label_08_139:
+	jr checkHoronVillageNPCShouldBeSeen_body@scf		; $57d0
+
+;;
+; param[out]	cflag	set if NPC is conditional and should be seen at current stage of the game
+; param[out]	zflag	unset if NPC is non-conditional
+checkHoronVillageNPCShouldBeSeen_body:
+	; non interactioncode2d/37 - b = $01
 	inc b			; $57d2
 	cp $3c			; $57d3
-	jr z,_label_08_140	; $57d5
+	jr z,@main			; $57d5
 	inc b			; $57d7
 	cp $3d			; $57d8
 	ret nz			; $57da
-_label_08_140:
+@main:
+	; interactioncode2d - b = $00
+	; interactioncode37 (except in advance shop) - b = $01
+	; interactioncode3c - b = $02
+	; interactioncode3d - b = $03
+	; from interactioncode3e - b = $05/$06/$07 ?
+	; from interactioncode80 - b = $07
 	ld a,b			; $57db
-	ld hl,_table_58a7		; $57dc
+	ld hl,_conditionalNPCLookupTable		; $57dc
 	rst_addDoubleIndex			; $57df
 	ldi a,(hl)		; $57e0
 	ld h,(hl)		; $57e1
 	ld l,a			; $57e2
 	push hl			; $57e3
-	call _func_57f8		; $57e4
+	call checkNPCStage		; $57e4
 	pop hl			; $57e7
 	ld e,$42		; $57e8
 	ld a,(de)		; $57ea
@@ -1078,34 +1167,47 @@ _label_08_140:
 	ldi a,(hl)		; $57ec
 	ld h,(hl)		; $57ed
 	ld l,a			; $57ee
-_label_08_141:
+-
 	ldi a,(hl)		; $57ef
 	or a			; $57f0
 	ret z			; $57f1
 	dec a			; $57f2
 	cp b			; $57f3
-	jr nz,_label_08_141	; $57f4
-_label_08_142:
+	jr nz,-			; $57f4
+@scf:
+	; interactioncode37 in advance shop - b = $0b
 	scf			; $57f6
 	ret			; $57f7
 
-_func_57f8:
-	ld a,$28		; $57f8
+;;
+; param[out]	b	$0a if game finished
+;			$09 if at least 2nd essence gotten, less than 5 essences gotten, and not saved Zelda from Vire
+;			$08 if zelda kidnapped
+;			$07 if got maku seed
+;			$06 if zelda villagers seen
+;			$05 if 8th essence gotten
+;			$04 if 5 essences gotten
+;			$03 if at least 2nd essence gotten, and saved Zelda from Vire if linked
+;			$02 if at least 1st essence gotten
+;			$01 if no essences, but met maku tree
+;			$00 if no essences, and not met maku tree
+checkNPCStage:
+	ld a,GLOBALFLAG_FINISHEDGAME		; $57f8
 	call checkGlobalFlag		; $57fa
 	ld b,$0a		; $57fd
-	jr nz,_label_08_143	; $57ff
-	ld a,$40		; $5801
+	jr nz,+			; $57ff
+	ld a,TREASURE_ESSENCE		; $5801
 	call checkTreasureObtained		; $5803
-	jr c,_label_08_144	; $5806
-	ld a,$18		; $5808
+	jr c,@essenceGotten		; $5806
+	ld a,GLOBALFLAG_S_18		; $5808
 	call checkGlobalFlag		; $580a
 	ld b,$01		; $580d
-	jr nz,_label_08_143	; $580f
+	jr nz,+			; $580f
 	ld b,$00		; $5811
-_label_08_143:
++
 	xor a			; $5813
 	ret			; $5814
-_label_08_144:
+@essenceGotten:
 	ld c,a			; $5815
 	call getNumSetBits		; $5816
 	ldh (<hFF8B),a	; $5819
@@ -1113,8 +1215,8 @@ _label_08_144:
 	call getHighestSetBit		; $581c
 	ld c,a			; $581f
 	call checkIsLinkedGame		; $5820
-	jr nz,_label_08_146	; $5823
-_label_08_145:
+	jr nz,@linkedGameCheck	; $5823
+@regularCheck:
 	ld a,c			; $5825
 	ld b,$05		; $5826
 	cp $07			; $5828
@@ -1129,58 +1231,72 @@ _label_08_145:
 	ret nc			; $5835
 	dec b			; $5836
 	ret			; $5837
-_label_08_146:
-	ld a,$1f		; $5838
+@linkedGameCheck:
+	ld a,GLOBALFLAG_ZELDA_KIDNAPPED_SEEN		; $5838
 	call checkGlobalFlag		; $583a
 	ld b,$08		; $583d
 	ret nz			; $583f
-	ld a,$19		; $5840
+	ld a,GLOBALFLAG_GOT_MAKU_SEED		; $5840
 	call checkGlobalFlag		; $5842
 	ld b,$07		; $5845
 	ret nz			; $5847
-	ld a,$1e		; $5848
+	ld a,GLOBALFLAG_ZELDA_VILLAGERS_SEEN		; $5848
 	call checkGlobalFlag		; $584a
 	ld b,$06		; $584d
 	ret nz			; $584f
+
 	ld a,c			; $5850
 	cp $00			; $5851
-	jr z,_label_08_145	; $5853
+	jr z,@regularCheck	; $5853
 	ldh a,(<hFF8B)	; $5855
 	cp $05			; $5857
-	jr nc,_label_08_145	; $5859
+	jr nc,@regularCheck	; $5859
 	ld b,$09		; $585b
-	ld a,$23		; $585d
+	ld a,GLOBALFLAG_ZELDA_SAVED_FROM_VIRE		; $585d
 	call checkGlobalFlag		; $585f
 	ret z			; $5862
 	ld b,$03		; $5863
 	ret			; $5865
 
-
+;;
+; param[out]	zflag	unset if not interactioncode36/39
+; param[out]	b	$04 if game finished
+;			$03 if zelda kidnapped seen
+;			$02 if 8th essence gotten
+;			$01 if 4th essence gotten
+;			$00 if none of the above
+getSunkenCityNPCVisibleSubId:
+	; returns b = $04 if game finished
+	; b = $03 is zelda kidnapped seen
+	; b = $02 if 8th essence gotten
+	; b = $01 if 4th essence gotten
+	; b = $00 if no essences, or none of the above
+	; a = $ff if not interactioncode36 or 39
 	ld e,$41		; $5866
 	ld a,(de)		; $5868
-	cp $36			; $5869
-	jr z,_label_08_147	; $586b
-	cp $39			; $586d
-	jr z,_label_08_147	; $586f
+	cp INTERACID_MASTER_DIVERS_SON			; $5869
+	jr z,@main		; $586b
+	cp INTERACID_TREASURE_HUNTER			; $586d
+	jr z,@main		; $586f
 	ld a,$ff		; $5871
 	ret			; $5873
-_label_08_147:
-	ld a,$28		; $5874
+@main:
+	ld a,GLOBALFLAG_FINISHEDGAME		; $5874
 	call checkGlobalFlag		; $5876
 	ld b,$04		; $5879
-	jr nz,_label_08_149	; $587b
-	ld a,$1f		; $587d
+	jr nz,@xorARet		; $587b
+	ld a,GLOBALFLAG_ZELDA_KIDNAPPED_SEEN		; $587d
 	call checkGlobalFlag		; $587f
 	ld b,$03		; $5882
-	jr nz,_label_08_149	; $5884
-	ld a,$40		; $5886
+	jr nz,@xorARet		; $5884
+	ld a,TREASURE_ESSENCE		; $5886
 	call checkTreasureObtained		; $5888
 	ld b,$00		; $588b
-	jr nc,_label_08_149	; $588d
+	jr nc,@xorARet		; $588d
 	ld c,a			; $588f
 	call checkIsLinkedGame		; $5890
-	jr z,_label_08_148	; $5893
-_label_08_148:
+	jr z,+			; $5893
++
 	ld a,c			; $5895
 	call getHighestSetBit		; $5896
 	ld b,$02		; $5899
@@ -1189,78 +1305,67 @@ _label_08_148:
 	dec b			; $589e
 	ld a,c			; $589f
 	and $08			; $58a0
-	jr nz,_label_08_149	; $58a2
+	jr nz,@xorARet		; $58a2
 	dec b			; $58a4
-_label_08_149:
+@xorARet:
 	xor a			; $58a5
 	ret			; $58a6
 
-_table_58a7:
-	.dw _table_58b7
-	.dw _table_58d7
-	.dw _table_58f4
-	.dw _table_58f4
+_conditionalNPCLookupTable:
+	.dw @fickleLady
+	.dw @fickleMan
+	.dw @oldLadyFarmer
+	.dw @fountainOldMan
 	.dw _table_5919
 	.dw _table_5902
 	.dw _table_58f4
 	.dw _table_5933
 
-_table_58b7:
-	.dw __table_58c5
-	.dw __table_58c7
-	.dw __table_58cc
-	.dw __table_58ce
-	.dw __table_58d0
-	.dw __table_58d3
-	.dw __table_58d5
-
-__table_58c5:
+@fickleLady:
+	.dw @@subid0
+	.dw @@subid1
+	.dw @@subid2
+	.dw @@subid3
+	.dw @@subid4
+	.dw @@subid5
+	.dw @@subid6
+@@subid0:
 	.db $01 $00
-
-__table_58c7:
+@@subid1:
 	.db $02 $03 $04 $0a $00
-
-__table_58cc:
+@@subid2:
 	.db $05 $00
-
-__table_58ce:
+@@subid3:
 	.db $06 $00
-
-__table_58d0:
+@@subid4:
 	.db $07 $08 $00
-
-__table_58d3:
+@@subid5:
 	.db $09 $00
-
-__table_58d5:
+@@subid6:
 	.db $0b $00
 
-_table_58d7:
-	.dw __table_58e3
-	.dw __table_58e7
-	.dw __table_58e9
-	.dw __table_58eb
-	.dw __table_58ed
-	.dw __table_58ef
-
-__table_58e3:
+@fickleMan:
+	.dw @@subid0
+	.dw @@subid1
+	.dw @@subid2
+	.dw @@subid3
+	.dw @@subid4
+	.dw @@subid5
+@@subid0:
 	.db $01 $02 $0b $00
-
-__table_58e7:
+@@subid1:
 	.db $03 $00
-
-__table_58e9:
+@@subid2:
 	.db $04 $00
-
-__table_58eb:
+@@subid3:
 	.db $0a $00
-
-__table_58ed:
+@@subid4:
 	.db $05 $00
-
-__table_58ef:
+@@subid5:
 	.db $06 $07 $08 $09 $00
 
+@oldLadyFarmer:
+@fountainOldMan:
 _table_58f4:
 	.dw __table_58f6
 
@@ -1326,131 +1431,132 @@ __table_5943:
 __table_5948:
 	.db $0b $00
 
-_table_594a:
-	.dw _table_5982
-	.dw _table_5982
-	.dw _table_5982
-	.dw _table_5982
-	.dw _table_5982
-	.dw _table_598a
-	.dw _table_5982
-	.dw _table_5982
-	.dw _table_598c
-	.dw _table_598e
-	.dw _table_5982
-	.dw _table_59a4
-	.dw _table_5982
-	.dw _table_5982
-	.dw _table_5982
-	.dw _table_59a6
-	.dw _table_5982
-	.dw _table_5982
-	.dw _table_59b2
-	.dw _table_59bc
-	.dw _table_59d4
-	.dw _table_59d6
-	.dw _table_5982
-	.dw _table_5982
-	.dw _table_59e0
-	.dw _table_59f6
-	.dw _table_5982
-	.dw _table_5a0c
+_miscNPC_scriptTable:
+	.dw @mayorsHouseScripts
+	.dw @stub
+	.dw @stub
+	.dw @stub
+	.dw @stub
+	.dw @mrsRuulScripts
+	.dw @stub
+	.dw @stub
+	.dw @mrWriteScripts
+	.dw @fickleLadyScripts
+	.dw @stub
+	.dw @malonScripts
+	.dw @stub
+	.dw @stub
+	.dw @stub
+	.dw @bathingSubrosiansScripts
+	.dw @stub
+	.dw @stub
+	.dw @masterDiversSonScripts
+	.dw @fickleManScripts
+	.dw @dungeonWiseOldManScripts
+	.dw @sunkenCityTreasureHunterScripts
+	.dw @stub
+	.dw @stub
+	.dw @villageFarmerScripts
+	.dw @villageFountainManScripts
+	.dw @stub
+	.dw @tickTockScripts
 	
-_table_5982:
-	.dw script4fc8
-	.dw script4fc8
-	.dw script4fc8
-	.dw script4fe4
+@mayorsHouseScripts:
+@stub:
+	.dw mayorsScript
+	.dw mayorsScript
+	.dw mayorsScript
+	.dw mayorsHouseLadyScript
 
-_table_598a:
-	.dw script5041
+@mrsRuulScripts:
+	.dw mrsRuulScript
 
-_table_598c:
-	.dw script5072
+@mrWriteScripts:
+	.dw mrWriteScript
 
-_table_598e:
-	.dw script50a8
-	.dw script50ab
-	.dw script50ab
-	.dw script50ab
-	.dw script50ae
-	.dw script50b1
-	.dw script50b4
-	.dw script50b4
-	.dw script50b7
-	.dw script50ab
-	.dw script50ba
+@fickleLadyScripts:
+	.dw fickleLadyScript_text1
+	.dw fickleLadyScript_text2
+	.dw fickleLadyScript_text2
+	.dw fickleLadyScript_text2
+	.dw fickleLadyScript_text3
+	.dw fickleLadyScript_text4
+	.dw fickleLadyScript_text5
+	.dw fickleLadyScript_text5
+	.dw fickleLadyScript_text6
+	.dw fickleLadyScript_text2
+	.dw fickleLadyScript_text7
 
-_table_59a4:
-	.dw script50bd
+@malonScripts:
+	.dw malonScript
 
-_table_59a6:
-	.dw script5102
-	.dw script5108
-	.dw script510b
-	.dw script5111
-	.dw script5108
-	.dw script5108
+@bathingSubrosiansScripts:
+	.dw bathingSubrosianScript_text1
+	.dw bathingSubrosianScript_stub
+	.dw bathingSubrosianScript_2
+	.dw bathingSubrosianScript_text3
+	.dw bathingSubrosianScript_stub
+	.dw bathingSubrosianScript_stub
 
-_table_59b2:
-	.dw script5114
-	.dw script512a
-	.dw script5146
-	.dw script514b
-	.dw script5150
+@masterDiversSonScripts:
+	.dw masterDiversSonScript
+	.dw masterDiversSonScript_4thEssenceGotten
+	.dw masterDiversSonScript_8thEssenceGotten
+	.dw masterDiversSonScript_ZeldaKidnapped
+	.dw masterDiversSonScript_gameFinished
 
-_table_59bc:
-	.dw script5155
-	.dw script5155
-	.dw script5158
-	.dw script515e
-	.dw script5161
-	.dw script5164
-	.dw script5167
-	.dw script5167
-	.dw script516a
-	.dw script515b
-	.dw script516d
-	.dw script5170
+@fickleManScripts:
+	.dw ficklManScript_text1
+	.dw ficklManScript_text1
+	.dw ficklManScript_text2
+	.dw ficklManScript_text4
+	.dw ficklManScript_text5
+	.dw ficklManScript_text6
+	.dw ficklManScript_text7
+	.dw ficklManScript_text7
+	.dw ficklManScript_text8
+	.dw ficklManScript_text3
+	.dw ficklManScript_text9
+	.dw ficklManScript_textA
 
-_table_59d4:
-	.dw script5176
+@dungeonWiseOldManScripts:
+	.dw dungeonWiseOldManScript
 
-_table_59d6:
-	.dw script517e
-	.dw script5181
-	.dw script5184
-	.dw script5187
-	.dw script5184
+@sunkenCityTreasureHunterScripts:
+	.dw treasureHunterScript_text1
+	.dw treasureHunterScript_text2
+	.dw treasureHunterScript_text3
+	.dw treasureHunterScript_text4
+	.dw treasureHunterScript_text3
 
-_table_59e0:
-	.dw script518a
-	.dw script518a
-	.dw script518d
-	.dw script518d
-	.dw script51a4
-	.dw script51a7
-	.dw script51aa
-	.dw script51aa
-	.dw script51ad
-	.dw script518d
-	.dw script51b0
+@villageFarmerScripts:
+	.dw oldLadyFarmerScript_text1
+	.dw oldLadyFarmerScript_text1
+	.dw oldLadyFarmerScript_text2
+	.dw oldLadyFarmerScript_text2
+	.dw oldLadyFarmerScript_text3
+	.dw oldLadyFarmerScript_text4
+	.dw oldLadyFarmerScript_text5
+	.dw oldLadyFarmerScript_text5
+	.dw oldLadyFarmerScript_text6
+	.dw oldLadyFarmerScript_text2
+	.dw oldLadyFarmerScript_text7
 
-_table_59f6:
-	.dw script51b3
-	.dw script51c4
-	.dw script51c9
-	.dw script51ce
-	.dw script51d8
-	.dw script51dd
-	.dw script51e2
-	.dw script51e2
-	.dw script51e7
-	.dw script51d3
-	.dw script51ec
+@villageFountainManScripts:
+	.dw fountainOldManScript_text1
+	.dw fountainOldManScript_text2
+	.dw fountainOldManScript_text3
+	.dw fountainOldManScript_text4
+	.dw fountainOldManScript_text6
+	.dw fountainOldManScript_text7
+	.dw fountainOldManScript_text8
+	.dw fountainOldManScript_text8
+	.dw fountainOldManScript_text9
+	.dw fountainOldManScript_text5
+	.dw fountainOldManScript_textA
 
-_table_5a0c:
-	.dw script51f1
+@tickTockScripts:
+	.dw tickTockScript
 
 
 ; Cat on tree interactions
@@ -1459,11 +1565,10 @@ interactionCode26:
 	ld e,$44		; $5a0e
 	ld a,(de)		; $5a10
 	rst_jumpTable			; $5a11
-	jr $5a			; $5a12
-	add e			; $5a14
-	ld e,d			; $5a15
-	sub e			; $5a16
-	ld e,d			; $5a17
+	.dw $5a18
+	.dw $5a83
+	.dw $5a93
+@state0:
 	call interactionInitGraphics		; $5a18
 	ld a,$0b		; $5a1b
 	call interactionSetHighTextIndex		; $5a1d
@@ -1516,12 +1621,14 @@ _label_08_153:
 	ld (hl),$02		; $5a7b
 	ld hl,$5227		; $5a7d
 	jp interactionSetScript		; $5a80
+@state1:
 	call interactionRunScript		; $5a83
 	ld a,($cceb)		; $5a86
 	or a			; $5a89
 	jp z,npcFaceLinkAndAnimate		; $5a8a
 	call $5a99		; $5a8d
 	jp $5a96		; $5a90
+@state2:
 	call interactionRunScript		; $5a93
 	jp interactionAnimateAsNpc		; $5a96
 	ld e,$78		; $5a99
@@ -3702,7 +3809,7 @@ _label_08_232:
 _label_08_233:
 	add $04			; $6865
 	ld b,a			; $6867
-	call $57db		; $6868
+	call checkHoronVillageNPCShouldBeSeen_body@main		; $6868
 	jp nc,interactionDelete		; $686b
 _label_08_234:
 	ld e,$42		; $686e
@@ -5133,6 +5240,8 @@ _label_08_300:
 	ld (hl),a		; $71c7
 	jp interactionSetAnimation		; $71c8
 
+
+; the stones that shoot out when D1 is rising?
 interactionCode4b:
 	ld e,$44		; $71cb
 	ld a,(de)		; $71cd
@@ -7257,21 +7366,21 @@ interactionCode5c:
 	jp objectSetPriorityRelativeToLink_withTerrainEffects		; $7f98
 
 
-; spawned when waking Talon and trading fish - megaphone?
+; ?
 interactionCode5d:
 	ld e,$44		; $7f9b
 	ld a,(de)		; $7f9d
 	rst_jumpTable			; $7f9e
-	and e			; $7f9f
-	ld a,a			; $7fa0
-	or c			; $7fa1
-	ld a,a			; $7fa2
+	.dw @state0
+	.dw @state1
+@state0:
 	call interactionInitGraphics		; $7fa3
 	ld a,$06		; $7fa6
 	call objectSetCollideRadius		; $7fa8
 	ld l,$44		; $7fab
 	inc (hl)		; $7fad
 	jp objectSetVisiblec0		; $7fae
+@state1:
 	ld e,$42		; $7fb1
 	ld a,(de)		; $7fb3
 	ld hl,$cfde		; $7fb4

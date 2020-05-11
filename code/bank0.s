@@ -14130,7 +14130,7 @@ setInterleavedTile:
 
 .ifdef ROM_SEASONS
 
-seasonsFunc_3a9c:
+setSeason:
 	ld b,a			; $3a9c
 	ld a,(wActiveGroup)		; $3a9d
 	or a			; $3aa0
@@ -14140,7 +14140,7 @@ seasonsFunc_3a9c:
 	cp $f1			; $3aa5
 	ret nc			; $3aa7
 
-	; Natzu
+	; Not Natzu
 	ld a,b			; $3aa8
 	ld (wRoomStateModifier),a		; $3aa9
 	ld a,$02		; $3aac
@@ -14148,12 +14148,11 @@ seasonsFunc_3a9c:
 	ret			; $3ab1
 
 checkRoomPackAfterWarp:
-	ld a,($ff00+$97)	; $3ab2
+	ldh a,(<hRomBank)	; $3ab2
 	push af			; $3ab4
 	callfrombank0 bank1.checkRoomPackAfterWarp_body		; $3abc
 	pop af			; $3abf
-	ld ($ff00+$97),a	; $3ac0
-	ld ($2222),a		; $3ac2
+	setrombank
 	ret			; $3ac5
 
 .endif
@@ -14698,10 +14697,12 @@ setLinkDirection:
 
 .else ; ROM_SEASONS
 
+;;
+; param[out]	c	$01 if NPC should be seen, otherwise $00
 seasonsFunc_3e07:
 	ldh a,(<hRomBank)	; $3e07
 	push af			; $3e09
-	callfrombank0 _label_08_140		; $3e0a
+	callfrombank0 checkHoronVillageNPCShouldBeSeen_body@main		; $3e0a
 	ld c,$01		; $3e14
 	jr c,+			; $3e16
 	dec c			; $3e18
@@ -14720,10 +14721,11 @@ setMakuTreeStageAndMapText:
 	setrombank		; $3e38
 	ret			; $3e3d
 
+; called from interactioncode8a/8b/8d
 seasonsFunc_3e3e:
 	ldh a,(<hRomBank)	; $3e3e
 	push af			; $3e40
-	callfrombank0 _label_08_147		; $3e41
+	callfrombank0 getSunkenCityNPCVisibleSubId@main		; $3e41
 	pop af			; $3e4b
 	setrombank		; $3e4c
 	ret			; $3e51
