@@ -1966,63 +1966,76 @@ tickTockScript:
 	jump2byte @gaveEngineGrease
 	
 	
-script5225:
-	rungenericnpclowindex $34
-script5227:
+; ==============================================================================
+; INTERACID_MITTENS
+; ==============================================================================
+mittensScript:
+	rungenericnpclowindex <TX_0b34
+	
+	
+; ==============================================================================
+; INTERACID_MITTENS_OWNER
+; ==============================================================================
+mittensOwnerScript:
 	initcollisions
-	jumpifroomflagset $40, script5268
-script522c:
+	jumpifroomflagset $40, @mittensCameDown
+-
 	checkabutton
 	disableinput
-	showtextlowindex $31
-	jumpiftradeitemeq $06, script5237
+	showtextlowindex <TX_0b31
+	jumpiftradeitemeq $06, @hasMegaphone
 	enableinput
-	jump2byte script522c
-script5237:
+	jump2byte -
+@hasMegaphone:
 	wait 30
-script5238:
-	showtextlowindex $32
-	jumpiftextoptioneq $00, script5246
+-
+	showtextlowindex <TX_0b32
+	jumpiftextoptioneq $00, @givingMegaphone
 	wait 30
-	showtextlowindex $37
+	showtextlowindex <TX_0b37
 	enableinput
 	checkabutton
 	disableinput
-	jump2byte script5238
-script5246:
+	jump2byte -
+@givingMegaphone:
 	wait 30
 	writememory $cfde, $00
-	spawninteraction $5d06, $44, $68
-	showtextlowindex $33
+	spawninteraction INTERACID_5d $06, $44, $68
+	showtextlowindex <TX_0b33
 	ormemory $cceb, $01
-	showtextlowindex $34
+	showtextlowindex <TX_0b34
 	setcounter1 $20
 	setanimation $02
 	writememory $cfde, $40
-	showtextlowindex $35
-	giveitem $4107
+	showtextlowindex <TX_0b35
+	giveitem TREASURE_TRADEITEM $07
 	orroomflag $40
 	enableinput
-script5268:
+@mittensCameDown:
 	checkabutton
-	showtextlowindex $36
-	jump2byte script5268
-script526d:
+	showtextlowindex <TX_0b36
+	jump2byte @mittensCameDown
+
+
+; ==============================================================================
+; INTERACID_SOKRA
+; ==============================================================================
+sokraScript_inVillage:
 	initcollisions
-	jumpifitemobtained $7, script52e3
-	jumpifroomflagset $40, script52d3
-script5276:
+	jumpifitemobtained TREASURE_ROD_OF_SEASONS, @haveRodOfSeasons
+	jumpifroomflagset $40, @alreadyInformed
+-
 	wait 1
-	jumpifobjectbyteeq $77, $01, script528b
-	jumpifobjectbyteeq $71, $00, script5286
+	jumpifobjectbyteeq $77, $01, @canDoEvent
+	jumpifobjectbyteeq $71, $00, @sleeping
 	writeobjectbyte $71, $00
-	showtextlowindex $02
-script5286:
-	asm15 seasonsFunc_3d30
-	jump2byte script5276
-script528b:
+	showtextlowindex <TX_5202
+@sleeping:
+	asm15 createSokraSnore
+	jump2byte -
+@canDoEvent:
 	disableinput
-	asm15 scriptHlp.seasonsFunc_15_57e5
+	asm15 scriptHlp.sokra_alert
 	playsound SND_CLINK
 	setcounter1 $40
 	setcollisionradii $00, $00
@@ -2032,20 +2045,20 @@ script528b:
 	applyspeed $10
 	wait 10
 	setangle $10
-script52a1:
+-
 	wait 1
-	asm15 $57f3
-	jumpifobjectbyteeq $76, $00, script52a1
+	asm15 scriptHlp.villageSokra_waitUntilLinkInPosition
+	jumpifobjectbyteeq $76, $00, -
 	wait 20
 	writememory $d008, $00
-	showtextlowindex $00
+	showtextlowindex <TX_5200
 	wait 20
 	setangle $00
 	setanimation $07
-script52b6:
+-
 	wait 1
 	asm15 scriptHlp.seasonsFunc_15_5812, $28
-	jumpifobjectbyteeq $76, $01, script52b6
+	jumpifobjectbyteeq $76, $01, -
 	setangle $08
 	applyspeed $10
 	orroomflag $40
@@ -2057,90 +2070,92 @@ script52b6:
 	enableinput
 	wait 30
 	setanimation $00
-script52d3:
+@alreadyInformed:
 	wait 1
-	asm15 seasonsFunc_3d30
-	jumpifobjectbyteeq $71, $00, script52d3
+	asm15 createSokraSnore
+	jumpifobjectbyteeq $71, $00, @alreadyInformed
 	writeobjectbyte $71, $00
-	showtextlowindex $02
-	jump2byte script52d3
-script52e3:
+	showtextlowindex <TX_5202
+	jump2byte @alreadyInformed
+@haveRodOfSeasons:
 	setanimation $02
 	writeobjectbyte $43, $01
-	asm15 scriptHlp.seasonsFunc_15_5821
+	asm15 scriptHlp.villageSokra_checkStageInGame
 	jumptable_memoryaddress $cfc0
-	.dw script52f4
-	.dw script52f6
-	.dw script52f8
-script52f4:
-	rungenericnpclowindex $01
-script52f6:
-	rungenericnpclowindex $03
-script52f8:
-	rungenericnpclowindex $0a
-script52fa:
-	jumpifobjectbyteeq $77, $01, script5305
+	.dw @noEssences
+	.dw @firstEssenceGotten
+	.dw @ZeldaTaken
+@noEssences:
+	rungenericnpclowindex <TX_5201
+@firstEssenceGotten:
+	rungenericnpclowindex <TX_5203
+@ZeldaTaken:
+	rungenericnpclowindex <TX_520a
+	
+sokraScript_easternSuburbsPortal:
+	jumpifobjectbyteeq $77, $01, @canDoEvent
 	wait 1
-	asm15 seasonsFunc_3d30
-	jump2byte script52fa
-script5305:
+	asm15 createSokraSnore
+	jump2byte sokraScript_easternSuburbsPortal
+@canDoEvent:
 	disableinput
-	asm15 scriptHlp.seasonsFunc_15_57e5
+	asm15 scriptHlp.sokra_alert
 	playsound SND_CLINK
 	setcounter1 $40
-	showtextlowindex $04
+	showtextlowindex <TX_5204
 	wait 40
 	setanimation $06
 	setspeed SPEED_100
-	setangle $10
-script5316:
+	setangle ANGLE_DOWN
+-
 	wait 1
-	asm15 scriptHlp.seasonsFunc_15_5838
-	jumpifobjectbyteeq $4f, $00, script5321
-	jump2byte script5316
-script5321:
+	asm15 scriptHlp.suburbsSokra_jumpOffStump
+	jumpifobjectbyteeq $4f, $00, @moveLeft
+	jump2byte -
+@moveLeft:
 	wait 30
-	setangle $18
+	setangle ANGLE_LEFT
 	applyspeed $24
 	wait 10
 	asm15 scriptHlp.seasonsFunc_15_5840
-script532a:
+-
 	wait 1
 	asm15 scriptHlp.seasonsFunc_15_5802
-	jumpifobjectbyteeq $76, $00, script532a
+	jumpifobjectbyteeq $76, $00, -
 	wait 20
 	writememory $d008, $01
-	showtextlowindex $05
-script533a:
+	showtextlowindex <TX_5205
+-
 	wait 20
-	showtextlowindex $06
-	jumpiftextoptioneq $01, script533a
+	showtextlowindex <TX_5206
+	jumpiftextoptioneq $01, -
 	wait 20
-	showtextlowindex $07
+	showtextlowindex <TX_5207
 	setangle $10
 	setanimation $06
 	setspeed SPEED_100
-script534a:
+-
 	wait 1
 	asm15 scriptHlp.seasonsFunc_15_5812, $88
-	jumpifobjectbyteeq $76, $01, script534a
+	jumpifobjectbyteeq $76, $01, -
 	enableinput
 	orroomflag $40
 	scriptend
-script5358:
+	
+sokraScript_needSummerForD3:
 	initcollisions
-	settextid $5208
+	settextid TX_5208
 	checkabutton
 	disableinput
-	callscript script536c
-	settextid $5209
-script5364:
+	callscript @displayText
+	settextid TX_5209
+-
 	enableinput
 	checkabutton
 	disableinput
-	callscript script536c
-	jump2byte script5364
-script536c:
+	callscript @displayText
+	jump2byte -
+@displayText:
 	cplinkx $48
 	addobjectbyte $48, $08
 	setanimationfromobjectbyte $48
@@ -2150,479 +2165,613 @@ script536c:
 	addobjectbyte $48, $f8
 	setanimationfromobjectbyte $48
 	retscript
-script537e:
+	
+
+; ==============================================================================
+; INTERACID_BIPIN
+; ==============================================================================
+
+; Running around when baby just born
+bipinScript0:
 	setcollisionradii $06, $06
 	makeabuttonsensitive
-script5382:
+@loop:
 	checkabutton
-	jumpifmemoryeq $c60f, $00, script538e
+	jumpifmemoryeq wChildStatus, $00, @stillUnnamed
 	showtext TX_4301
-	jump2byte script5382
-script538e:
+	jump2byte @loop
+@stillUnnamed:
 	showtext TX_4300
-	jump2byte script5382
-script5393:
+	jump2byte @loop
+
+
+; Bipin gives you a random tip
+bipinScript1:
 	initcollisions
-script5394:
+@loop:
 	checkabutton
 	setdisabledobjectsto91
 	setanimation $02
 	asm15 scriptHlp.bipin_showText_subid1To9
 	wait 30
-	callscript script53ab
+	callscript _bipinSayRandomTip
 	enableallobjects
-	jump2byte script5394
-script53a2:
+	jump2byte @loop
+
+
+; Bipin just moved to Labrynna/Holodrum?
+bipinScript2:
 	initcollisions
-script53a3:
+@loop:
 	checkabutton
 	setdisabledobjectsto91
 	asm15 scriptHlp.bipin_showText_subid1To9
 	enableallobjects
-	jump2byte script53a3
-script53ab:
-	writeobjectbyte $73, $43
-	getrandombits $72, $07
-	addobjectbyte $72, $09
+	jump2byte @loop
+
+_bipinSayRandomTip:
+	; Show a random text index from TX_4309-TX_4310
+	writeobjectbyte  Interaction.textID+1, >TX_4300
+	getrandombits    Interaction.textID,   $07
+	addobjectbyte    Interaction.textID,   <TX_4309
 	showloadedtext
+
 	setanimation $03
 	retscript
-script53b8:
+
+
+.ifdef ROM_AGES
+; "Past" version of Bipin who gives you a gasha seed
+bipinScript3:
+	loadscript scriptHlp.bipinScript3
+.endif
+
+
+; ==============================================================================
+; INTERACID_S_BIRD
+; ==============================================================================
+knowItAllBirdScript:
 	setcollisionradii $08, $08
 	makeabuttonsensitive
-script53bc:
+@loop:
 	checkabutton
 	setdisabledobjectsto91
-	cplinkx $48
-	writeobjectbyte $77, $01
+	cplinkx Interaction.direction
+	writeobjectbyte Interaction.var37, $01 ; Signal to start spazzing out
 	showloadedtext
-	jumpiftextoptioneq $01, script53d0
+	jumpiftextoptioneq $01, @doneTalking
+
 	wait 30
-	addobjectbyte $72, $0a
+	addobjectbyte Interaction.textID, $0a
 	showloadedtext
-	addobjectbyte $72, $f6
-script53d0:
+	addobjectbyte Interaction.textID, -$0a
+
+@doneTalking:
 	enableallobjects
-	writeobjectbyte $77, $00
-	jump2byte script53bc
-script53d6:
+	writeobjectbyte Interaction.var37, $00
+	jump2byte @loop
+
+
+panickingBirdScript:
 	setcollisionradii $06, $06
 	makeabuttonsensitive
-script53da:
+@loop:
 	checkabutton
 	setdisabledobjectsto11
-	cplinkx $48
-	writeobjectbyte $77, $01
+	cplinkx Interaction.direction
+	writeobjectbyte Interaction.var37, $01 ; Signal to start spazzing out
 	showtext TX_0503
 	writeobjectbyte $77, $00
 	enableallobjects
-	jump2byte script53da
-script53ea:
+	jump2byte @loop
+
+
+; ==============================================================================
+; INTERACID_BLOSSOM
+; ==============================================================================
+
+; Blossom asking you to name her child
+blossomScript0:
 	initcollisions
 	asm15 scriptHlp.checkc6e2BitSet, $00
-	jumpifobjectbyteeq $7b, $01, script5421
-script53f4:
+	jumpifobjectbyteeq Interaction.var3b, $01, @nameAlreadyGiven
+@loop:
 	checkabutton
 	setdisabledobjectsto91
-	showtextlowindex $00
-script53f8:
-	asm15 $58a7
+	showtextlowindex <TX_4400
+
+@askForName:
+	asm15 scriptHlp.blossom_openNameEntryMenu
 	wait 30
-	jumptable_memoryaddress $cca3
-	.dw script5408
-	.dw script5403
-script5403:
-	showtextlowindex $0a
+	jumptable_memoryaddress wTextInputResult
+	.dw @validName
+	.dw @invalidName
+
+@invalidName:
+	showtextlowindex <TX_440a
 	enableinput
-	jump2byte script53f4
-script5408:
-	showtextlowindex $07
+	jump2byte @loop
+
+@validName:
+	showtextlowindex <TX_4407
 	disableinput
-	jumptable_memoryaddress $cba5
-	.dw script5412
-	.dw script53f8
-script5412:
-	asm15 $588d
+	jumptable_memoryaddress wSelectedTextOption
+	.dw @nameConfirmed
+	.dw @askForName
+
+@nameConfirmed:
+	asm15 scriptHlp.blossom_decideInitialChildStatus
 	asm15 scriptHlp.setc6e2Bit, $00
 	asm15 scriptHlp.setNextChildStage, $01
 	wait 30
-	showtextlowindex $08
+	showtextlowindex <TX_4408
 	enableinput
-script5421:
+
+@nameAlreadyGiven:
 	checkabutton
-	showtextlowindex $09
-	jump2byte script5421
-script5426:
+	showtextlowindex <TX_4409
+	jump2byte @nameAlreadyGiven
+
+
+; Blossom asking for money to see a doctor
+blossomScript1:
 	initcollisions
 	asm15 scriptHlp.checkc6e2BitSet, $01
-	jumpifobjectbyteeq $7b, $01, script54cd
-script5430:
+	jumpifobjectbyteeq Interaction.var3b, $01, @alreadyGaveMoney
+@loop:
 	checkabutton
 	setdisabledobjectsto91
-	showtextlowindex $0b
-	jumptable_memoryaddress $cba5
-	.dw script543b
-	.dw script54c7
-script543b:
+	showtextlowindex <TX_440b
+	jumptable_memoryaddress wSelectedTextOption
+	.dw @selectedYes
+	.dw @selectedNo
+@selectedYes:
 	wait 30
-	showtextlowindex $0c
-	jumptable_memoryaddress $cba5
-	.dw script5449
-	.dw script5468
-	.dw script5487
-	.dw script54a6
-script5449:
-	asm15 $5880, $0f
-	jumpifobjectbyteeq $7c, $01, script54c1
-	asm15 removeRupeeValue, $0f
-	asm15 $5887, $08
+	showtextlowindex <TX_440c
+	jumptable_memoryaddress wSelectedTextOption
+	.dw @give150Rupees
+	.dw @give50Rupees
+	.dw @give10Rupees
+	.dw @give1Rupee
+
+@give150Rupees:
+	asm15 scriptHlp.blossom_checkHasRupees, RUPEEVAL_150
+	jumpifobjectbyteeq Interaction.var3c, $01, @notEnoughRupees
+	asm15 removeRupeeValue, RUPEEVAL_150
+	asm15 scriptHlp.blossom_addValueToChildStatus, $08
 	asm15 scriptHlp.setc6e2Bit, $01
 	asm15 scriptHlp.setNextChildStage, $02
 	enableallobjects
-script5463:
-	showtextlowindex $0d
+@gave150RupeesLoop:
+	showtextlowindex <TX_440d
 	checkabutton
-	jump2byte script5463
-script5468:
-	asm15 $5880, $0b
-	jumpifobjectbyteeq $7c, $01, script54c1
-	asm15 removeRupeeValue, $0b
-	asm15 $5887, $05
+	jump2byte @gave150RupeesLoop
+
+@give50Rupees:
+	asm15 scriptHlp.blossom_checkHasRupees, RUPEEVAL_050
+	jumpifobjectbyteeq Interaction.var3c, $01, @notEnoughRupees
+	asm15 removeRupeeValue, RUPEEVAL_050
+	asm15 scriptHlp.blossom_addValueToChildStatus, $05
 	asm15 scriptHlp.setc6e2Bit, $01
 	asm15 scriptHlp.setNextChildStage, $02
 	enableallobjects
-script5482:
-	showtextlowindex $0e
+@gave50RupeesLoop:
+	showtextlowindex <TX_440e
 	checkabutton
-	jump2byte script5482
-script5487:
-	asm15 $5880, $04
-	jumpifobjectbyteeq $7c, $01, script54c1
-	asm15 removeRupeeValue, $04
-	asm15 $5887, $02
+	jump2byte @gave50RupeesLoop
+
+@give10Rupees:
+	asm15 scriptHlp.blossom_checkHasRupees, RUPEEVAL_010
+	jumpifobjectbyteeq Interaction.var3c, $01, @notEnoughRupees
+	asm15 removeRupeeValue, RUPEEVAL_010
+	asm15 scriptHlp.blossom_addValueToChildStatus, $02
 	asm15 scriptHlp.setc6e2Bit, $01
 	asm15 scriptHlp.setNextChildStage, $02
 	enableallobjects
-script54a1:
-	showtextlowindex $0f
+@gave10RupeesLoop:
+	showtextlowindex <TX_440f
 	checkabutton
-	jump2byte script54a1
-script54a6:
-	asm15 $5880, $01
-	jumpifobjectbyteeq $7c, $01, script54c1
-	asm15 removeRupeeValue, $01
+	jump2byte @gave10RupeesLoop
+
+@give1Rupee:
+	asm15 scriptHlp.blossom_checkHasRupees, RUPEEVAL_001
+	jumpifobjectbyteeq Interaction.var3c, $01, @notEnoughRupees
+	asm15 removeRupeeValue, RUPEEVAL_001
 	asm15 scriptHlp.setc6e2Bit, $01
 	asm15 scriptHlp.setNextChildStage, $02
 	enableallobjects
-script54bc:
-	showtextlowindex $10
+@gave1RupeeLoop:
+	showtextlowindex <TX_4410
 	checkabutton
-	jump2byte script54bc
-script54c1:
+	jump2byte @gave1RupeeLoop
+
+@notEnoughRupees:
 	wait 30
-	showtextlowindex $32
+	showtextlowindex <TX_4432
 	enableallobjects
-	jump2byte script5430
-script54c7:
+	jump2byte @loop
+
+@selectedNo:
 	wait 30
-	showtextlowindex $11
+	showtextlowindex <TX_4411
 	enableallobjects
-	jump2byte script5430
-script54cd:
+	jump2byte @loop
+
+@alreadyGaveMoney:
 	checkabutton
-	showtextlowindex $31
-	jump2byte script54cd
-script54d2:
+	showtextlowindex <TX_4431
+	jump2byte @alreadyGaveMoney
+
+
+; Blossom tells you that the baby has gotten better
+blossomScript2:
 	initcollisions
-script54d3:
+script4e08:
 	checkabutton
 	setdisabledobjectsto91
-	showtextlowindex $12
+	showtextlowindex <TX_4412
 	asm15 scriptHlp.setNextChildStage, $03
 	enableallobjects
-	jump2byte script54d3
-script54de:
+	jump2byte script4e08
+
+
+; Blossom asks you how to get the baby to sleep
+blossomScript3:
 	initcollisions
 	asm15 scriptHlp.checkc6e2BitSet, $02
-	jumpifobjectbyteeq $7b, $01, script5509
+	jumpifobjectbyteeq Interaction.var3b, $01, @alreadyGaveAdvice
 	checkabutton
+
 	setdisabledobjectsto91
-	showtextlowindex $13
+	showtextlowindex <TX_4413
+
 	asm15 scriptHlp.setc6e2Bit, $02
 	asm15 scriptHlp.setNextChildStage, $04
-	jumptable_memoryaddress $cba5
-	.dw script54fb
-	.dw script5501
-script54fb:
+
+	jumptable_memoryaddress wSelectedTextOption
+	.dw @sing
+	.dw @play
+
+@sing:
 	wait 30
-	showtextlowindex $14
+	showtextlowindex <TX_4414
 	enableallobjects
-	jump2byte script5509
-script5501:
+	jump2byte @alreadyGaveAdvice
+@play:
 	wait 30
-	showtextlowindex $15
-	asm15 $5887, $0a
+	showtextlowindex <TX_4415
+	asm15 scriptHlp.blossom_addValueToChildStatus, $0a
 	enableallobjects
-script5509:
+
+@alreadyGaveAdvice:
 	checkabutton
-	showtextlowindex $16
-	jump2byte script5509
-script550e:
-	rungenericnpclowindex $17
-script5510:
-	rungenericnpclowindex $18
-script5512:
+	showtextlowindex <TX_4416
+	jump2byte @alreadyGaveAdvice
+
+
+; Blossom tells you that the child has grown
+blossomScript4:
+	rungenericnpclowindex <TX_4417
+
+
+; Blossom says "we meet again" (linked file?)
+blossomScript5:
+	rungenericnpclowindex <TX_4418
+
+
+; Blossom asks Link what he was like when he was a kid. (var03 is set to the child's
+; current personality.)
+blossomScript6:
 	initcollisions
 	asm15 scriptHlp.checkc6e2BitSet, $03
-	jumptable_objectbyte $43
-	.dw script551f
-	.dw script5536
-	.dw script554d
-script551f:
-	jumpifobjectbyteeq $7b, $01, script5531
-script5524:
+	jumptable_objectbyte Interaction.var03
+	.dw @hyperactive
+	.dw @shy
+	.dw @curious
+
+@hyperactive:
+	jumpifobjectbyteeq Interaction.var3b, $01, @hyperactiveResponseReceived
+
+@hyperactiveLoop1:
 	checkabutton
 	setdisabledobjectsto91
-	showtextlowindex $19
-	callscript script5564
+	showtextlowindex <TX_4419
+	callscript @askAboutLinksBehaviour
 	enableallobjects
-	jumpifobjectbyteeq $7a, $00, script5524
-script5531:
+	jumpifobjectbyteeq Interaction.var3a, $00, @hyperactiveLoop1
+
+@hyperactiveResponseReceived:
 	checkabutton
-	showtextlowindex $22
-	jump2byte script5531
-script5536:
-	jumpifobjectbyteeq $7b, $01, script5548
-script553b:
+	showtextlowindex <TX_4422
+	jump2byte @hyperactiveResponseReceived
+
+
+@shy:
+	jumpifobjectbyteeq Interaction.var3b, $01, @shyReponseReceived
+
+@shyLoop1:
 	checkabutton
 	setdisabledobjectsto91
-	showtextlowindex $1a
-	callscript script5564
+	showtextlowindex <TX_441a
+	callscript @askAboutLinksBehaviour
 	enableallobjects
-	jumpifobjectbyteeq $7a, $00, script553b
-script5548:
+	jumpifobjectbyteeq Interaction.var3a, $00, @shyLoop1
+
+@shyReponseReceived:
 	checkabutton
-	showtextlowindex $23
-	jump2byte script5548
-script554d:
-	jumpifobjectbyteeq $7b, $01, script555f
-script5552:
+	showtextlowindex <TX_4423
+	jump2byte @shyReponseReceived
+
+
+@curious:
+	jumpifobjectbyteeq Interaction.var3b, $01, @curiousResponseReceived
+
+@curiousLoop1:
 	checkabutton
 	setdisabledobjectsto91
-	showtextlowindex $1b
-	callscript script5564
+	showtextlowindex <TX_441b
+	callscript @askAboutLinksBehaviour
 	enableallobjects
-	jumpifobjectbyteeq $7a, $00, script5552
-script555f:
+	jumpifobjectbyteeq Interaction.var3a, $00, @curiousLoop1
+
+@curiousResponseReceived:
 	checkabutton
-	showtextlowindex $24
-	jump2byte script555f
-script5564:
-	jumptable_memoryaddress $cba5
-	.dw script556b
-	.dw script557a
-script556b:
+	showtextlowindex <TX_4424
+	jump2byte @curiousResponseReceived
+
+
+; Blossom asks about how Link was as a child. She asks a few things before giving up.
+; If Link said yes to something, var3a will be set to 1, indicating to the script that she
+; got a response.
+@askAboutLinksBehaviour:
+	jumptable_memoryaddress wSelectedTextOption
+	.dw @selectedYes_1
+	.dw @selectedNo_1
+
+@selectedYes_1:
 	wait 30
-	showtextlowindex $1c
+	showtextlowindex <TX_441c
 	asm15 scriptHlp.setc6e2Bit, $03
-	writeobjectbyte $7a, $01
-	asm15 $5887, $08
+	writeobjectbyte Interaction.var3a, $01
+	asm15 scriptHlp.blossom_addValueToChildStatus, $08
 	retscript
-script557a:
+
+@selectedNo_1: ; Quiet, perhaps?
 	wait 30
-	showtextlowindex $1d
-	jumptable_memoryaddress $cba5
-	.dw script5584
-	.dw script5593
-script5584:
+	showtextlowindex <TX_441d
+	jumptable_memoryaddress wSelectedTextOption
+	.dw @selectedYes_2
+	.dw @selectedNo_2
+
+@selectedYes_2:
 	wait 30
-	showtextlowindex $1e
+	showtextlowindex <TX_441e
 	asm15 scriptHlp.setc6e2Bit, $03
-	writeobjectbyte $7a, $01
-	asm15 $5887, $05
+	writeobjectbyte Interaction.var3a, $01
+	asm15 scriptHlp.blossom_addValueToChildStatus, $05
 	retscript
-script5593:
+
+@selectedNo_2: ; Were you weird?
 	wait 30
-	showtextlowindex $1f
-	jumptable_memoryaddress $cba5
-	.dw script559d
-	.dw script55ac
-script559d:
+	showtextlowindex <TX_441f
+	jumptable_memoryaddress wSelectedTextOption
+	.dw @selectedYes_3
+	.dw @selectedNo_3
+
+@selectedYes_3:
 	wait 30
-	showtextlowindex $20
+	showtextlowindex <TX_4420
 	asm15 scriptHlp.setc6e2Bit, $03
-	writeobjectbyte $7a, $01
-	asm15 $5887, $01
+	writeobjectbyte Interaction.var3a, $01
+	asm15 scriptHlp.blossom_addValueToChildStatus, $01
 	retscript
-script55ac:
+
+@selectedNo_3: ; She gives up asking (but she'll ask again next time you talk)
 	wait 30
-	showtextlowindex $21
+	showtextlowindex <TX_4421
 	wait 30
 	retscript
-script55b1:
-	jumptable_objectbyte $43
-	.dw script55bb
-	.dw script55bd
-	.dw script55bf
-	.dw script55c1
-script55bb:
-	rungenericnpclowindex $25
-script55bd:
-	rungenericnpclowindex $26
-script55bf:
-	rungenericnpclowindex $27
-script55c1:
-	rungenericnpclowindex $28
-script55c3:
-	jumptable_objectbyte $43
-	.dw script55cd
-	.dw script55cf
-	.dw script55d1
-	.dw script55d3
-script55cd:
-	rungenericnpclowindex $29
-script55cf:
-	rungenericnpclowindex $2a
-script55d1:
-	rungenericnpclowindex $2b
-script55d3:
-	rungenericnpclowindex $2c
-script55d5:
-	jumptable_objectbyte $43
-	.dw script55df
-	.dw script55e1
-	.dw script55e3
-	.dw script55e5
-script55df:
-	rungenericnpclowindex $2d
-script55e1:
-	rungenericnpclowindex $2e
-script55e3:
-	rungenericnpclowindex $2f
-script55e5:
-	rungenericnpclowindex $30
-script55e7:
+
+
+; Blossom tells you about how her son's grown?
+blossomScript7:
+	jumptable_objectbyte Interaction.var03
+	.dw @slacker
+	.dw @warrior
+	.dw @arborist
+	.dw @singer
+@slacker:
+	rungenericnpclowindex <TX_4425
+@warrior:
+	rungenericnpclowindex <TX_4426
+@arborist:
+	rungenericnpclowindex <TX_4427
+@singer:
+	rungenericnpclowindex <TX_4428
+
+
+; Blossom tells you more specifically about her son's ambitions?
+blossomScript8:
+	jumptable_objectbyte Interaction.var03
+	.dw @slacker
+	.dw @warrior
+	.dw @arborist
+	.dw @singer
+@slacker:
+	rungenericnpclowindex <TX_4429
+@warrior:
+	rungenericnpclowindex <TX_442a
+@arborist:
+	rungenericnpclowindex <TX_442b
+@singer:
+	rungenericnpclowindex <TX_442c
+
+
+; Blossom tells you about what her son has accomplished?
+blossomScript9:
+	jumptable_objectbyte Interaction.var03
+	.dw @slacker
+	.dw @warrior
+	.dw @arborist
+	.dw @singer
+@slacker:
+	rungenericnpclowindex <TX_442d
+@warrior:
+	rungenericnpclowindex <TX_442e
+@arborist:
+	rungenericnpclowindex <TX_442f
+@singer:
+	rungenericnpclowindex <TX_4430
+
+
+; ==============================================================================
+; INTERACID_FICKLE_GIRL
+; ==============================================================================
+sunkenCityFickleGirlScript_text1:
 	rungenericnpc TX_1c00
-script55ea:
+
+sunkenCityFickleGirlScript_text2:
 	initcollisions
-script55eb:
+-
 	checkabutton
 	showtext TX_1c01
 	checkabutton
 	showtext TX_1c02
-	jump2byte script55eb
-script55f5:
+	jump2byte -
+
+sunkenCityFickleGirlScript_text3:
 	rungenericnpc TX_1c03
-script55f8:
+
+
+; ==============================================================================
+; INTERACID_S_SUBROSIAN
+; ==============================================================================
+subrosianScript_smelterByAutumnTemple:
 	stopifroomflag80set
-	asm15 $58ac
+	asm15 scriptHlp.subrosianFunc_58ac
 	rungenericnpc TX_2705
-script55ff:
-	jumpifglobalflagset $0d, script5606
+
+subrosianScript_smelterText1:
+	jumpifglobalflagset GLOBALFLAG_UNBLOCKED_AUTUMN_TEMPLE, @autumnTempleHint
 	rungenericnpc TX_2700
-script5606:
+@autumnTempleHint:
 	rungenericnpc TX_270b
-script5609:
+	
+subrosianScript_smelterText2:
 	rungenericnpc TX_2701
-script560c:
-	asm15 $58ac
+
+subrosianScript_smelterText3:
+	asm15 scriptHlp.subrosianFunc_58ac
 	rungenericnpc TX_2702
-script5612:
-	asm15 $58b1
+
+subrosianScript_smelterText4:
+	asm15 scriptHlp.subrosianFunc_58b1
 	rungenericnpc TX_2703
-script5618:
-	jumpifglobalflagset $0b, script5626
-	jumpifglobalflagset $0c, script5623
+
+subrosianScript_beachText1:
+	jumpifglobalflagset GLOBALFLAG_DATING_ROSA, @datingRosa
+	jumpifglobalflagset GLOBALFLAG_DATED_ROSA, @datedRosa
 	rungenericnpc TX_290c
-script5623:
+@datedRosa:
 	rungenericnpc TX_2912
-script5626:
-	settextid $2917
-	jump2byte script5674
-script562b:
-	jumpifglobalflagset $0b, script5639
-	jumpifglobalflagset $0c, script5636
+@datingRosa:
+	settextid TX_2917
+	jump2byte _subrosian_jump
+	
+subrosianScript_beachText2:
+	jumpifglobalflagset GLOBALFLAG_DATING_ROSA, @datingRosa
+	jumpifglobalflagset GLOBALFLAG_DATED_ROSA, @datedRosa
 	rungenericnpc TX_290d
-script5636:
+@datedRosa:
 	rungenericnpc TX_2913
-script5639:
+@datingRosa:
 	settextid $2918
-	jump2byte script5674
-script563e:
-	jumpifglobalflagset $0b, script5646
-	jumpifglobalflagset $0c, script5649
-script5646:
+	jump2byte _subrosian_jump
+	
+subrosianScript_beachText3:
+	jumpifglobalflagset GLOBALFLAG_DATING_ROSA, @datingRosa
+	jumpifglobalflagset GLOBALFLAG_DATED_ROSA, @datedRosa
+@datingRosa:
 	rungenericnpc TX_290e
-script5649:
+@datedRosa:
 	rungenericnpc TX_2914
-script564c:
-	jumpifglobalflagset $0b, script5654
-	jumpifglobalflagset $0c, script5657
-script5654:
+	
+subrosianScript_beachText4:
+	jumpifglobalflagset GLOBALFLAG_DATING_ROSA, @datingRosa
+	jumpifglobalflagset GLOBALFLAG_DATED_ROSA, @datedRosa
+@datingRosa:
 	rungenericnpc TX_290f
-script5657:
+@datedRosa:
 	rungenericnpc TX_2915
-script565a:
-	jumpifglobalflagset $0b, script5662
-	jumpifglobalflagset $0c, script5665
-script5662:
+	
+subrosianScript_villageText1:
+	jumpifglobalflagset GLOBALFLAG_DATING_ROSA, @datingRosa
+	jumpifglobalflagset GLOBALFLAG_DATED_ROSA, @datedRosa
+@datingRosa:
 	rungenericnpc TX_2910
-script5665:
+@datedRosa:
 	rungenericnpc TX_2916
-script5668:
-	jumpifglobalflagset $0b, script566f
+
+subrosianScript_villageText2:
+	jumpifglobalflagset GLOBALFLAG_DATING_ROSA, @datingRosa
 	rungenericnpc TX_2911
-script566f:
-	settextid $2919
-	jump2byte script5674
-script5674:
+@datingRosa:
+	settextid TX_2919
+	jump2byte _subrosian_jump
+	
+_subrosian_jump:
 	initcollisions
-script5675:
+-
 	checkabutton
 	setdisabledobjectsto11
 	setzspeed -$01c0
 	wait 60
 	showloadedtext
 	enableallobjects
-	jump2byte script5675
-script567f:
+	jump2byte -
+	
+subrosianScript_shopkeeper:
 	writememory $ccea, $05
 	initcollisions
-script5684:
+-
 	checkabutton
 	jumpifmemoryeq $ccea, $00, script5690
 	showtext TX_2b0f
-	jump2byte script5684
+	jump2byte -
 script5690:
 	showtext TX_2b11
-script5693:
+-
 	checkabutton
 	showtext TX_2b11
-	jump2byte script5693
-script5699:
-	jumpifitemobtained $17, script56a0
+	jump2byte -
+	
+subrosianScript_wildsText1:
+	jumpifitemobtained TREASURE_FEATHER, @gotFeatherBack
 	rungenericnpc TX_2807
-script56a0:
+@gotFeatherBack:
 	rungenericnpc TX_280a
-script56a3:
-	jumpifitemobtained $17, script56aa
+
+subrosianScript_wildsText2:
+	jumpifitemobtained TREASURE_FEATHER, @gotFeatherBack
 	rungenericnpc TX_2808
-script56aa:
+@gotFeatherBack:
 	rungenericnpc TX_280b
-script56ad:
+
+subrosianScript_wildsText3:
 	rungenericnpc TX_2809
-script56b0:
+
+subrosianScript_strangeBrother1_stealingFeather:
 	stopifroomflag40set
 	writeobjectbyte $5c, $02
-	callscript script56eb
+	callscript subrosianScript_runLeft
 	checkcfc0bit 0
 	orroomflag $40
-	asm15 $58c4
+	asm15 scriptHlp.subrosianFunc_58c4
 	applyspeed $68
 	checkcfc0bit 2
 	setspeed SPEED_100
 	setangle $08
-	asm15 $58d4
+	asm15 scriptHlp.subrosianFunc_58d4
 	setanimation $01
 	setcounter1 $10
 	showtext TX_2800
@@ -2638,82 +2787,104 @@ script56b0:
 	setanimation $03
 	setspeed SPEED_200
 	setangle $18
-	asm15 $5968
+	asm15 scriptHlp.subrosianFunc_5968
 	wait 4
 	scriptend
-script56e7:
-	loadscript script_14_4861
-script56eb:
+subrosianScript_strangeBrother2_stealingFeather:
+	loadscript subrosianScript_steaLinksFeather
+
+subrosianScript_runLeft:
 	writeobjectbyte $40, $81
 	setstate $02
 	setcollisionradii $06, $06
 	setspeed SPEED_200
 	setangleandanimation $18
 	retscript
-script56f8:
-	loadscript script_14_489a
-script56fc:
-	jumpifglobalflagset $0f, stubScript
+
+subrosianScript_strangeBrother1_inHouse:
+	loadscript subrosianScript_inHouseRunFromLink
+
+subrosianScript_strangeBrother2_inHouse:
+	jumpifglobalflagset GLOBALFLAG_SAW_STRANGE_BROTHERS_IN_HOUSE, stubScript
 	writeobjectbyte $5c, $01
-	callscript script56eb
+	callscript subrosianScript_runLeft
 	checkcfc0bit 0
 	setzspeed -$0300
 	showtext TX_2802
 	xorcfc0bit 1
 	setcounter1 $02
 	applyspeed $40
-	setglobalflag $0f
+	setglobalflag GLOBALFLAG_SAW_STRANGE_BROTHERS_IN_HOUSE
 	enableallobjects
 	scriptend
-script5716:
+
+subrosianScript_5716:
 	writeobjectbyte $5c, $01
 	rungenericnpc TX_3e00
-script571c:
+
+subrosianScript_westVolcanoesText1:
 	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, stubScript
 	rungenericnpc TX_3e01
-script5723:
+
+subrosianScript_westVolcanoesText2:
 	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, stubScript
 	writeobjectbyte $5c, $01
 	rungenericnpc TX_3e02
-script572d:
+
+subrosianScript_eastVolcanoesText1:
 	rungenericnpc TX_3e03
-script5730:
+
+subrosianScript_eastVolcanoesText2:
 	rungenericnpc TX_3e04
-script5733:
+
+subrosianScript_southOfExitToSuburbsPortal:
 	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, stubScript
 	writeobjectbyte $5c, $01
 	rungenericnpc TX_3e08
-script573d:
+
+subrosianScript_nearExitToTempleRemainsNorthsPortal:
 	rungenericnpc TX_3e0a
-script5740:
+
+subrosianScript_wildsNearLockedDoor:
 	rungenericnpc TX_3e0b
-script5743:
+
+subrosianScript_boomerangSubrosianFriend:
 	writeobjectbyte $5c, $02
 	rungenericnpc TX_3e0d
-script5749:
+
+subrosianScript_screenRightOfBoomerangSubrosian:
 	writeobjectbyte $5c, $01
 	rungenericnpc TX_3e10
-script574f:
+
+subrosianScript_wildsInAreaWithOre:
 	writeobjectbyte $5c, $01
 	rungenericnpc TX_3e11
-script5755:
+	
+subrosianScript_wildsOtherSideOfTreesToOre:
 	rungenericnpc TX_3e13
-script5758:
+	
+subrosianScript_wildsNorthOfStrangeBrothersHouse:
 	writeobjectbyte $5c, $01
 	rungenericnpc TX_3e14
-script575e:
+	
+subrosianScript_wildsOutsideStrangeBrothersHouse:
 	writeobjectbyte $5c, $01
-	jumpifmemoryset $c860, $20, script576a
+	; Place where roc's feather is gotten
+	jumpifmemoryset wPastRoomFlags|<ROOM_SEASONS_160, $20, @gotFeatherBack
 	rungenericnpc TX_3e29
-script576a:
+@gotFeatherBack:
 	rungenericnpc TX_3e16
-script576d:
+	
+subrosianScript_villageSouthOfShop:
 	rungenericnpc TX_3e17
-script5770:
+
+subrosianScript_hasLavaPoolInHouse:
 	rungenericnpc TX_3e0c
-script5773:
+
+subrosianScript_beachText5:
 	rungenericnpc TX_3e19
-script5776:
+
+subrosianScript_goldenByBombFlower:
 	writeobjectbyte $5c, $03
 
 
@@ -2759,56 +2930,61 @@ linkedGameNpcScript:
 	asm15 scriptHlp.linkedNpc_initHighTextIndex, $05
 	jump2byte @showTextAndSecret
 	
-	
-script57bd:
+
+; ==============================================================================
+; INTERACID_S_SUBROSIAN (cont.)
+; ==============================================================================
+subrosianScript_signsGuy:
 	initcollisions
-	jumpifroomflagset $20, script580c
-	asm15 $592c
+	jumpifroomflagset $20, @ringGotten
+	asm15 scriptHlp.subrosian_checkSignsDestroyed
 	jumptable_memoryaddress $cfc0
-	.dw script57d4
-	.dw script57db
-	.dw script57e2
-	.dw script57e9
-	.dw script57f0
-	.dw script57f7
-script57d4:
+	.dw @0signsBroken
+	.dw @lessThan20SignsBroken
+	.dw @lessThan50SignsBroken
+	.dw @lessThan90SignsBroken
+	.dw @lessThan100SignsBroken
+	.dw @100orMoreSignsBroken
+@0signsBroken:
 	checkabutton
 	showtext TX_3e23
 	rungenericnpc TX_3e1b
-script57db:
+@lessThan20SignsBroken:
 	checkabutton
 	showtext TX_3e24
 	rungenericnpc TX_3e1c
-script57e2:
+@lessThan50SignsBroken:
 	checkabutton
 	showtext TX_3e25
 	rungenericnpc TX_3e1d
-script57e9:
+@lessThan90SignsBroken:
 	checkabutton
 	showtext TX_3e26
 	rungenericnpc TX_3e1e
-script57f0:
+@lessThan100SignsBroken:
 	checkabutton
 	showtext TX_3e27
 	rungenericnpc TX_3e1f
-script57f7:
+@100orMoreSignsBroken:
 	checkabutton
 	disableinput
 	showtext TX_3e20
 	wait 30
-	asm15 $5963
+	asm15 scriptHlp.subrosian_fakeReset
 	wait 10
 	checkpalettefadedone
 	showtext TX_3e21
 	wait 30
-	asm15 $595d
+	asm15 scriptHlp.subrosian_giveSignRing
 	enableinput
-	jump2byte script5810
-script580c:
+	jump2byte @areYouTreatingSignsProperly
+@ringGotten:
 	checkabutton
 	showtext TX_3e28
-script5810:
+@areYouTreatingSignsProperly:
 	rungenericnpc TX_3e22
+
+
 script5813:
 	initcollisions
 	jumpifglobalflagset $0c, script5840
@@ -5464,11 +5640,13 @@ script6a20:
 	setangleandanimation $08
 	wait 30
 	jump2byte script6a19
+
+
 script6a28:
 	setcollisionradii $12, $30
 	checkcollidedwithlink_onground
 	disableinput
-	asm15 $5e6f
+	asm15 scriptHlp.seasonsFunc_15_5e6f
 	playsound SND_WHISTLE
 	wait 8
 	playsound SND_WHISTLE
@@ -5483,7 +5661,7 @@ script6a28:
 	writememory $d008, $01
 	checkcfc0bit 1
 	playsound SND_SCENT_SEED
-	asm15 $5e5d
+	asm15 scriptHlp.seasonsFunc_15_5e5d
 	setspeed SPEED_100
 	setangle $04
 	incstate

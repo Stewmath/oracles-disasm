@@ -2873,9 +2873,8 @@ interactionCode9d:
 	ld e,$44		; $5d2e
 	ld a,(de)		; $5d30
 	rst_jumpTable			; $5d31
-	ld (hl),$5d		; $5d32
-	ld b,a			; $5d34
-	ld e,(hl)		; $5d35
+	.dw $5d36
+	.dw $5e47
 	ld a,$01		; $5d36
 	ld (de),a		; $5d38
 	ld a,$28		; $5d39
@@ -2886,16 +2885,12 @@ interactionCode9d:
 	ld e,$42		; $5d47
 	ld a,(de)		; $5d49
 	rst_jumpTable			; $5d4a
-	ld d,a			; $5d4b
-	ld e,l			; $5d4c
-	add l			; $5d4d
-	ld e,l			; $5d4e
-	cp e			; $5d4f
-	ld e,l			; $5d50
-	call $df5d		; $5d51
-	ld e,l			; $5d54
-	inc sp			; $5d55
-	ld e,(hl)		; $5d56
+	.dw $5d57
+	.dw $5d85
+	.dw $5dbb
+	.dw $5dcd
+	.dw $5ddf
+	.dw $5e33
 	ld a,$40		; $5d57
 	call checkTreasureObtained		; $5d59
 	jp c,interactionDelete		; $5d5c
@@ -2961,6 +2956,7 @@ _label_0a_191:
 	ld l,a			; $5ddb
 _label_0a_192:
 	jp interactionSetScript		; $5ddc
+
 	call checkIsLinkedGame		; $5ddf
 	jp z,interactionDelete		; $5de2
 	ld a,$40		; $5de5
@@ -2968,7 +2964,7 @@ _label_0a_192:
 	jp nc,interactionDelete		; $5dea
 	and $02			; $5ded
 	jp z,interactionDelete		; $5def
-	ld a,$22		; $5df2
+	ld a,GLOBALFLAG_IMPA_ASKED_TO_SAVE_ZELDA		; $5df2
 	call checkGlobalFlag		; $5df4
 	jp nz,interactionDelete		; $5df7
 	ld bc,$ff00		; $5dfa
@@ -2985,7 +2981,7 @@ _label_0a_192:
 	ld (hl),$56		; $5e11
 	call getFreeInteractionSlot		; $5e13
 	jr nz,_label_0a_193	; $5e16
-	ld (hl),$2a		; $5e18
+	ld (hl),INTERACID_S_BIRD		; $5e18
 	inc l			; $5e1a
 	ld (hl),$0a		; $5e1b
 	ld l,$56		; $5e1d

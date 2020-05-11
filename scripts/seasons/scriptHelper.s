@@ -568,6 +568,9 @@ seasonsFunc_15_576c:
 	ret			; $5787
 
 
+; ==============================================================================
+; INTERACID_SEASON_SPIRITS_SCRIPTS
+; ==============================================================================
 seasonsSpirit_createSwirl:
 	ld e,$57		; $5788
 	ld a,(de)		; $578a
@@ -623,6 +626,9 @@ seasonsSpirits_checkPostSeasonGetText:
 	ret			; $57cd
 
 
+; ==============================================================================
+; INTERACID_MALON
+; ==============================================================================
 checkTalonReturned:
 	ld a,>ROOM_SEASONS_5b6		; $57ce
 	ld b,<ROOM_SEASONS_5b6		; $57d0
@@ -637,18 +643,27 @@ checkTalonReturned:
 	ret			; $57df
 
 
+; ==============================================================================
+; INTERACID_DUNGEON_WISE_OLD_MAN
+; ==============================================================================
 dungeonWiseOldMan_setLinksInvincibilityCounterTo0:
 	xor a			; $57e0
 	ld (w1Link.invincibilityCounter),a		; $57e1
 	ret			; $57e4
 
-seasonsFunc_15_57e5:
+
+; ==============================================================================
+; INTERACID_SOKRA
+; ==============================================================================
+sokra_alert:
 	ld a,$04		; $57e5
 	call interactionSetAnimation		; $57e7
 	ld b,$f0		; $57ea
 	ld c,$fc		; $57ec
 	ld a,$40		; $57ee
 	jp objectCreateExclamationMark		; $57f0
+
+villageSokra_waitUntilLinkInPosition:
 	call objectApplySpeed		; $57f3
 	ld c,$10		; $57f6
 	call objectCheckLinkWithinDistance		; $57f8
@@ -682,22 +697,22 @@ seasonsFunc_15_5812:
 	ld (de),a		; $581f
 	ret			; $5820
 
-seasonsFunc_15_5821:
+villageSokra_checkStageInGame:
 	ld b,$00		; $5821
-	ld a,($c6bb)		; $5823
+	ld a,(wEssencesObtained)		; $5823
 	bit 1,a			; $5826
-	jr z,_label_15_207	; $5828
+	jr z,+			; $5828
 	inc b			; $582a
-	ld a,$30		; $582b
+	ld a,GLOBALFLAG_S_30		; $582b
 	call checkGlobalFlag		; $582d
-	jr z,_label_15_207	; $5830
+	jr z,+			; $5830
 	inc b			; $5832
-_label_15_207:
++
 	ld hl,$cfc0		; $5833
 	ld (hl),b		; $5836
 	ret			; $5837
 
-seasonsFunc_15_5838:
+suburbsSokra_jumpOffStump:
 	call objectApplySpeed		; $5838
 	ld c,$10		; $583b
 	jp objectUpdateSpeedZ_paramC		; $583d
@@ -779,73 +794,109 @@ checkc6e2BitSet:
 	ld (de),a		; $4ff9
 	ret			; $4ffa
 
-	call cpRupeeValue		; $5880
-	ld e,$7c		; $5883
-	ld (de),a		; $5885
-	ret			; $5886
-	ld hl,$c60f		; $5887
-	add (hl)		; $588a
-	ld (hl),a		; $588b
-	ret			; $588c
-	ld hl,$c609		; $588d
-	ld b,$00		; $5890
-_label_15_210:
-	ldi a,(hl)		; $5892
-	or a			; $5893
-	jr z,_label_15_211	; $5894
-	and $0f			; $5896
-	add b			; $5898
-	ld b,a			; $5899
-	jr _label_15_210		; $589a
-_label_15_211:
-	ld a,b			; $589c
-_label_15_212:
-	sub $03			; $589d
-	jr nc,_label_15_212	; $589f
-	add $04			; $58a1
-	ld ($c60f),a		; $58a3
-	ret			; $58a6
-	ld a,$07		; $58a7
-	jp openMenu		; $58a9
+;;
+; @param	a	Rupee value (see constants/rupeeValues.s)
+; @addr{4ffb}
+blossom_checkHasRupees:
+	call cpRupeeValue		; $4ffb
+	ld e,Interaction.var3c		; $4ffe
+	ld (de),a		; $5000
+	ret			; $5001
+
+;;
+; @addr{5002}
+blossom_addValueToChildStatus:
+	ld hl,wChildStatus		; $5002
+	add (hl)		; $5005
+	ld (hl),a		; $5006
+	ret			; $5007
+
+;;
+; After naming the child, wChildStatus gets set to a random value from $01-$03.
+; @addr{5008}
+blossom_decideInitialChildStatus:
+	ld hl,wKidName		; $5008
+	ld b,$00		; $500b
+@nextChar:
+	ldi a,(hl)		; $500d
+	or a			; $500e
+	jr z,@parsedName		; $500f
+	and $0f			; $5011
+	add b			; $5013
+	ld b,a			; $5014
+	jr @nextChar		; $5015
+@parsedName:
+	ld a,b			; $5017
+--
+	sub $03			; $5018
+	jr nc,--		; $501a
+	add $04			; $501c
+	ld (wChildStatus),a		; $501e
+	ret			; $5021
+
+;;
+; @addr{5022}
+blossom_openNameEntryMenu:
+	ld a,$07		; $5022
+	jp openMenu		; $5024
+
+
+; ==============================================================================
+; INTERACID_S_SUBROSIAN
+; ==============================================================================
+subrosianFunc_58ac:
 	ld hl,$cfde		; $58ac
-	jr _label_15_213		; $58af
+	jr +			; $58af
+subrosianFunc_58b1:
 	ld hl,$cfdc		; $58b1
-_label_15_213:
++
 	ld (hl),d		; $58b4
 	inc hl			; $58b5
 	ld (hl),$58		; $58b6
 	ret			; $58b8
+
+subrosian_knockLinkOut:
 	ld a,$10		; $58b9
 	ld ($cc6b),a		; $58bb
 	ld hl,$d008		; $58be
 	ld (hl),$03		; $58c1
 	ret			; $58c3
+
+subrosianFunc_58c4:
 	ld a,($d00b)		; $58c4
 	ld e,$4b		; $58c7
 	ld (de),a		; $58c9
 	ret			; $58ca
+
+subrosian_setYAboveLink:
 	ld a,($d00b)		; $58cb
 	sub $08			; $58ce
 	ld e,$4b		; $58d0
 	ld (de),a		; $58d2
 	ret			; $58d3
+
+subrosianFunc_58d4:
 	ld e,$4d		; $58d4
 	ld a,(de)		; $58d6
 	ld b,a			; $58d7
 	ld c,$f2		; $58d8
-	jr _label_15_214		; $58da
+	jr +			; $58da
+
+subrosianFunc_58dc:
 	ld e,$4d		; $58dc
 	ld a,(de)		; $58de
 	ld b,a			; $58df
 	ld c,$0e		; $58e0
-_label_15_214:
++
 	ld a,($cfc1)		; $58e2
 	add c			; $58e5
 	sub b			; $58e6
 	ld e,$47		; $58e7
 	ld (de),a		; $58e9
 	ret			; $58ea
-	ld a,$1e		; $58eb
+
+subrosian_giveFoolsOre:
+	ld a,TREASURE_FOOLS_ORE		; $58eb
 	jp giveTreasure		; $58ed
 
 
@@ -912,39 +963,51 @@ linkedNpc_calcLowTextIndex:
 	ret			; $592b
 
 
-	ld a,($c626)		; $592c
+; ==============================================================================
+; INTERACID_S_SUBROSIAN (cont.)
+; ==============================================================================
+subrosian_checkSignsDestroyed:
+	ld a,(wTotalSignsDestroyed)		; $592c
 	ld b,a			; $592f
 	or a			; $5930
-	ld c,$00		; $5931
-	jr z,_label_15_215	; $5933
+	ld c,0			; $5931
+	jr z,+			; $5933
 	inc c			; $5935
-	cp $14			; $5936
-	jr c,_label_15_215	; $5938
+	cp 20			; $5936
+	jr c,+			; $5938
 	inc c			; $593a
-	cp $32			; $593b
-	jr c,_label_15_215	; $593d
+	cp 50			; $593b
+	jr c,+			; $593d
 	inc c			; $593f
-	cp $5a			; $5940
-	jr c,_label_15_215	; $5942
+	cp 90			; $5940
+	jr c,+			; $5942
 	inc c			; $5944
-	cp $64			; $5945
-	jr c,_label_15_215	; $5947
+	cp 100			; $5945
+	jr c,+			; $5947
 	inc c			; $5949
-_label_15_215:
++
 	ld a,c			; $594a
 	ld ($cfc0),a		; $594b
 	ld a,b			; $594e
 	call hexToDec		; $594f
 	swap c			; $5952
 	or c			; $5954
-	ld ($cba8),a		; $5955
+	ld (wTextNumberSubstitution),a		; $5955
 	ld a,b			; $5958
-	ld ($cba9),a		; $5959
+	ld (wTextNumberSubstitution+1),a		; $5959
 	ret			; $595c
-	ld bc,$3700		; $595d
+
+subrosian_giveSignRing:
+	ldbc SIGN_RING $00		; $595d
 	jp giveRingToLink		; $5960
+
+subrosian_fakeReset:
+	; fake reset
 	ld a,$09		; $5963
 	jp openMenu		; $5965
+
+
+subrosianFunc_5968:
 	ld e,$4d		; $5968
 	ld a,(de)		; $596a
 	srl a			; $596b
@@ -952,6 +1015,7 @@ _label_15_215:
 	ld e,$47		; $596f
 	ld (de),a		; $5971
 	ret			; $5972
+
 	ld e,$77		; $5973
 	xor a			; $5975
 	ld (de),a		; $5976
@@ -1684,16 +1748,17 @@ _label_15_241:
 seasonsFunc_15_5e4e:
 	call getFreePartSlot		; $5e4e
 	ret nz			; $5e51
-	ld (hl),$0e		; $5e52
+	ld (hl),PARTID_DETECTION_HELPER		; $5e52
 	ld l,$d6		; $5e54
 	ld a,$40		; $5e56
 	ldi (hl),a		; $5e58
 	ld (hl),d		; $5e59
 	jp objectCopyPosition		; $5e5a
 
+seasonsFunc_15_5e5d:
 	call getFreeInteractionSlot		; $5e5d
 	ret nz			; $5e60
-	ld (hl),$6e		; $5e61
+	ld (hl),INTERACID_6e		; $5e61
 	ld l,$4b		; $5e63
 	ld a,($d00b)		; $5e65
 	ldi (hl),a		; $5e68
@@ -1702,16 +1767,18 @@ seasonsFunc_15_5e4e:
 	ld (hl),a		; $5e6d
 	ret			; $5e6e
 
+seasonsFunc_15_5e6f:
 	call setLinkForceStateToState08		; $5e6f
 	jp putLinkOnGround		; $5e72
 	ld bc,$30a8		; $5e75
 	ld e,$10		; $5e78
-	call $5e82		; $5e7a
+	call _func_5e82		; $5e7a
 	ld bc,$34b8		; $5e7d
 	ld e,$11		; $5e80
+_func_5e82:
 	call getFreeInteractionSlot		; $5e82
 	ret nz			; $5e85
-	ld (hl),$30		; $5e86
+	ld (hl),INTERACID_S_SUBROSIAN		; $5e86
 	inc l			; $5e88
 	ld (hl),e		; $5e89
 	ld l,$4b		; $5e8a

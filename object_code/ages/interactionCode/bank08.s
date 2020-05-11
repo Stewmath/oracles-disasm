@@ -2133,7 +2133,9 @@ interactionCode28:
 	.dw @bipin1
 	.dw @bipin1
 	.dw @bipin1
+.ifdef ROM_AGES
 	.dw @bipin3
+.endif
 
 
 ; Bipin running around, baby just born
@@ -2166,11 +2168,13 @@ interactionCode28:
 	jp @updateCollisionAndVisibility		; $53db
 
 
+.ifdef ROM_AGES
 ; "Past" version of Bipin who gives you a gasha seed
 @bipin3:
 	ld a,$09		; $53de
 	call interactionSetAnimation		; $53e0
 	jp @updateCollisionAndVisibility		; $53e3
+.endif
 
 
 @state1:
@@ -2187,7 +2191,9 @@ interactionCode28:
 	.dw @runScriptAndAnimate
 	.dw @runScriptAndAnimate
 	.dw @runScriptAndAnimate
+.ifdef ROM_AGES
 	.dw @runScriptAndAnimate
+.endif
 
 @bipinSubid0:
 	call @updateSpeed		; $5400
@@ -2238,7 +2244,9 @@ interactionCode28:
 	.dw bipinScript1
 	.dw bipinScript1
 	.dw bipinScript1
+.ifdef ROM_AGES
 	.dw bipinScript3
+.endif
 
 
 ; ==============================================================================

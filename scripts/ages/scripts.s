@@ -1229,9 +1229,11 @@ _bipinSayRandomTip:
 	retscript
 
 
+.ifdef ROM_AGES
 ; "Past" version of Bipin who gives you a gasha seed
 bipinScript3:
 	loadscript scriptHlp.bipinScript3
+.endif
 
 
 ; ==============================================================================

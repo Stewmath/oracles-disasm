@@ -662,11 +662,7 @@
 ;   02: Subrosian in goron dancing game (var03 is 0 or 1 for green or red npcs)
 ;   03: Linked game NPC telling you the subrosian secret (for bombchus)
 ;   04: Linked game NPC telling you the smith secret (for shield upgrade)
-.ifdef ROM_AGES
 .define INTERACID_SUBROSIAN		$4e
-.else
-.define INTERACID_SUBROSIAN		$30
-.endif
 
 ; Impa as an npc at various stages in the game. There's also INTERACID_IMPA_IN_CUTSCENE.
 ; Subid:
@@ -1969,10 +1965,30 @@
 ; @subid_01{Linked woman}
 .define INTERACID_MAYORS_HOUSE_NPC	$24
 
+;;
+; @subid_00{Not saved Mittens}
+; @subid_01{Saved Mittens}
+.define INTERACID_MITTENS			$25
+
+;;
+; @subid_00{Not saved Mittens}
+; @subid_01{Saved Mittens}
+.define INTERACID_MITTENS_OWNER			$26
+
+;;
+; @subid_00{South of Maku tree}
+; @subid_01{By Eastern Suburbs portal}
+; @subid_02{Near Floodgate keyhole}
 .define INTERACID_SOKRA			$27
 
 ;;
 .define INTERACID_MRS_RUUL		$29
+
+;;
+; @subid_00-09{Know-it-all birds}
+; @subid_0a{Bird with Impa when Zelda gets kidnapped}
+; @subid_0b{Panicking bird in Horon village entrance screen}
+.define INTERACID_S_BIRD		$2a
 
 ;;
 .define INTERACID_MR_WRITE		$2c
@@ -1983,7 +1999,53 @@
 .define INTERACID_FICKLE_LADY		$2d
 
 ;;
-.define INTERACID_MALON		$2f
+; @subid_00-04{Girl in Sunken City}
+.define INTERACID_FICKLE_GIRL		$2e
+
+;;
+.define INTERACID_MALON			$2f
+
+;;
+; @subid_00{Standing by head smelter in front of Autumn temple}
+; @subid_01{unused???}
+; @subid_02{1st room of furnace - bottom right}
+; @subid_03{1st room of furnace - top left}
+; @subid_04{2nd room of furnace - bottom right}
+; @subid_05{2nd room of furnace - leftmost}
+; @subid_06{Bottom-center screen of subrosian beach}
+; @subid_07{Top-left screen of subrosian beach}
+; @subid_08{Top-center screen of subrosian beach}
+; @subid_09{Bottom-left screen of subrosian beach}
+; @subid_0a{Screen above beach - bottom right}
+; @subid_0b{Screen above beach - top left}
+; @subid_0c{Shopkeeper}
+; @subid_0d{Has gasha seed in house across a tile-wide river of lava}
+; @subid_0e{Screen above portal near strange brothers}
+; @subid_0f{Screen right of portal near strange brothers}
+; @subid_10{Strange brother when stealing your feather - top-left}
+; @subid_11{Strange brother when stealing your feather - bottom-right}
+; @subid_12{Strange brothers house 1st screen - left}
+; @subid_13{Strange brothers house 1st screen - right}
+; @subid_14{TODO: Says "I still haven't been that way, what's there?"}
+; @subid_15{Screen with entrance to cave you can start the erupting cutscene - left}
+; @subid_16{Screen with entrance to cave you can start the erupting cutscene - right}
+; @subid_17{From suburbs portal - left}
+; @subid_18{From suburbs portal - right}
+; @subid_19{Screen south of suburbs portal entry}
+; @subid_1a{Same screen as portal 2 screens south of D8}
+; @subid_1b{Screen south of NW locked door}
+; @subid_1c{Just above boomerang subrosian}
+; @subid_1d{Screen right of boomerang subrosian}
+; @subid_1e{Across a pit leading to area with W ore}
+; @subid_1f{Same screen as chest right of W ore}
+; @subid_20{Screen above strange brother's house}
+; @subid_21{Same screen as strange brother's house}
+; @subid_22{Screen south of shop}
+; @subid_23{In house with lava pool to the top-left}
+; @subid_24{Top-right screen of subrosian beach}
+; @subid_25{Golden subrosian giving secret}
+; @subid_26{Signs guy}
+.define INTERACID_S_SUBROSIAN		$30
 
 .define INTERACID_SUBROSIAN_WITH_BUCKETS	$32
 
@@ -2046,6 +2108,15 @@
 .define INTERACID_BLAINO_SCRIPT		$5a
 .define INTERACID_LAVA_SOUP_SUBROSIAN	$5c
 
+.define INTERACID_5d			$5d
+
+;;
+; related to event where you lose your feather
+; @subid_00{}
+; @subid_01{}
+; @subid_02{}
+.define INTERACID_6e			$6e
+
 ;;
 ; @subid_00{grabbable treasure}
 ; @subid_01{unblocking the Temple of Autumn}
@@ -2062,6 +2133,9 @@
 ; @subid_00{Rooster on top of d4}
 ; @subid_01{Rooster that leads to spring banana}
 .define INTERACID_FLYING_ROOSTER	$8c
+
+; bubbles?
+.define INTERACID_8e			$8e
 
 ;;
 .define INTERACID_OLD_MAN_WITH_JEWEL	$8f

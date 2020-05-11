@@ -4629,19 +4629,17 @@ interactionCode6e:
 	ld e,Interaction.subid		; $6b22
 	ld a,(de)		; $6b24
 	rst_jumpTable			; $6b25
-	inc l			; $6b26
-	ld l,e			; $6b27
-	cp d			; $6b28
-	ld l,e			; $6b29
-	jr z,_label_09_203	; $6b2a
+	.dw @subid0
+	.dw @subid1
+	.dw @subid2
+@subid0:
 	ld e,Interaction.state		; $6b2c
 	ld a,(de)		; $6b2e
 	rst_jumpTable			; $6b2f
-	ld (hl),$6b		; $6b30
-	ld e,c			; $6b32
-	ld l,e			; $6b33
-	adc c			; $6b34
-	ld l,e			; $6b35
+	.dw @@state0
+	.dw @@state1
+	.dw @@state2
+@@state0:
 	ld a,$01		; $6b36
 	ld (de),a		; $6b38
 	call interactionInitGraphics		; $6b39
@@ -4657,14 +4655,15 @@ interactionCode6e:
 	ld (hl),$3c		; $6b51
 	call interactionSetAlwaysUpdateBit		; $6b53
 	jp objectSetVisiblec0		; $6b56
+@@state1:
 	call objectApplySpeed		; $6b59
 	ld h,d			; $6b5c
 	ld l,$4d		; $6b5d
 	ld a,$18		; $6b5f
 	cp (hl)			; $6b61
-	jr c,_label_09_202	; $6b62
+	jr c,+			; $6b62
 	ld (hl),a		; $6b64
-_label_09_202:
++
 	call interactionAnimate		; $6b65
 	ld c,$14		; $6b68
 	call objectUpdateSpeedZ_paramC		; $6b6a
@@ -4683,6 +4682,7 @@ _label_09_202:
 	set 2,(hl)		; $6b83
 	xor a			; $6b85
 	call interactionSetAnimation		; $6b86
+@@state2:
 	ld hl,$cfc0		; $6b89
 	bit 7,(hl)		; $6b8c
 	jp nz,interactionDelete		; $6b8e
@@ -4690,12 +4690,11 @@ _label_09_202:
 	and $03			; $6b94
 	ret nz			; $6b96
 	ld h,d			; $6b97
-_label_09_203:
 	ld l,$46		; $6b98
 	inc (hl)		; $6b9a
 	ld a,(hl)		; $6b9b
 	and $0f			; $6b9c
-	ld hl,$6baa		; $6b9e
+	ld hl,@@table_6baa		; $6b9e
 	rst_addAToHl			; $6ba1
 	ld e,$52		; $6ba2
 	ld a,(de)		; $6ba4
@@ -4703,40 +4702,31 @@ _label_09_203:
 	ld e,$4f		; $6ba6
 	ld (de),a		; $6ba8
 	ret			; $6ba9
-	nop			; $6baa
-	nop			; $6bab
-	rst $38			; $6bac
-	rst $38			; $6bad
-	rst $38			; $6bae
-	cp $fe			; $6baf
-	cp $fe			; $6bb1
-	cp $fe			; $6bb3
-	rst $38			; $6bb5
-	rst $38			; $6bb6
-	rst $38			; $6bb7
-	rst $38			; $6bb8
-	nop			; $6bb9
+@@table_6baa:
+	.db $00 $00 $ff $ff $ff $fe $fe $fe
+	.db $fe $fe $fe $ff $ff $ff $ff $00
+@subid1:
 	ld e,Interaction.state		; $6bba
 	ld a,(de)		; $6bbc
 	rst_jumpTable			; $6bbd
-	call nz,$0c6b		; $6bbe
-	dec h			; $6bc1
-	push de			; $6bc2
-	ld l,e			; $6bc3
+	.dw @@state0
+	.dw interactionRunScript
+	.dw @@state2
+@@state0:
 	ld a,$01		; $6bc4
 	ld (de),a		; $6bc6
 	call getThisRoomFlags		; $6bc7
 	bit 6,(hl)		; $6bca
 	jp nz,interactionDelete		; $6bcc
-	ld hl,$6a28		; $6bcf
+	ld hl,script6a28		; $6bcf
 	jp interactionSetScript		; $6bd2
+@@state2:
 	ld e,Interaction.state2		; $6bd5
 	ld a,(de)		; $6bd7
 	rst_jumpTable			; $6bd8
-.DB $dd				; $6bd9
-	ld l,e			; $6bda
-	pop af			; $6bdb
-	ld l,e			; $6bdc
+	.dw @@substate0
+	.dw @@substate1
+@@substate0:
 	ld a,$01		; $6bdd
 	ld (de),a		; $6bdf
 	ld bc,$fe00		; $6be0
@@ -4747,34 +4737,37 @@ _label_09_203:
 	inc l			; $6bec
 	ld a,($d00d)		; $6bed
 	ld (hl),a		; $6bf0
+@@substate1:
 	ld a,(wFrameCounter)		; $6bf1
 	rrca			; $6bf4
-	call c,$6c19		; $6bf5
+	call c,@@func_6c19		; $6bf5
 	call objectApplySpeed		; $6bf8
 	ld e,$4b		; $6bfb
 	ld a,(de)		; $6bfd
 	cp $08			; $6bfe
-	jr nc,_label_09_204	; $6c00
+	jr nc,+			; $6c00
 	ld e,$49		; $6c02
 	ld a,$0c		; $6c04
 	ld (de),a		; $6c06
-_label_09_204:
++
 	ld c,$40		; $6c07
 	call objectUpdateSpeedZAndBounce		; $6c09
-	jr nc,_label_09_205	; $6c0c
-	call $6c22		; $6c0e
+	jr nc,@@func_6c22	; $6c0c
+	call @@func_6c22		; $6c0e
 	ld a,$02		; $6c11
 	ld ($cc6b),a		; $6c13
 	jp interactionDelete		; $6c16
+@@func_6c19:
 	ld hl,$d008		; $6c19
 	ld a,(hl)		; $6c1c
 	inc a			; $6c1d
 	and $03			; $6c1e
 	ld (hl),a		; $6c20
 	ret			; $6c21
-_label_09_205:
+@@func_6c22:
 	ld hl,$d000		; $6c22
 	jp objectCopyPosition		; $6c25
+@subid2:
 	ld a,$0f		; $6c28
 	call unsetGlobalFlag		; $6c2a
 	ld a,$10		; $6c2d

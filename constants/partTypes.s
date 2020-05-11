@@ -493,7 +493,8 @@
 .define PARTID_MOTHULA_PROJECTILE_1		$31
 
 ; Exists just in the side-scrolling ice room in D8 with 3 1-block platforms
-.define PARTID_32		1		$32
+; and from fickle girl in Sunken City
+.define PARTID_32				$32
 
 ;;
 ; created by dragon onox

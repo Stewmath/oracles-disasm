@@ -144,44 +144,42 @@ seasonsSpirits_createBridgeOnOrbHit:
 	scriptend
 
 
-; fool's ore thieves stealing feather
-script_14_4861:
+subrosianScript_steaLinksFeather:
 	stopifroomflag40set
 	writeobjectbyte Interaction.oamFlags $01
-	callscript $56eb
+	callscript subrosianScript_runLeft
 	checkcfc0bit 0
-	asm15 $58cb
+	asm15 scriptHlp.subrosian_setYAboveLink
 	applyspeed $68
 	checkcfc0bit 2
 	asm15 objectSetVisiblec1
 	setspeed $28
 	setangle ANGLE_RIGHT
-	asm15 $58dc
+	asm15 scriptHlp.subrosianFunc_58dc
 	checkcfc0bit 3
 	setanimation $01
 	setstate $03
 	checkcollidedwithlink_onground
 	setstate $02
-	asm15 $58eb
+	asm15 scriptHlp.subrosian_giveFoolsOre
 	delay 6
 	xorcfc0bit 4
 	setanimation $03
 	setspeed $50
 	setangle ANGLE_LEFT
-	asm15 $5968
+	asm15 scriptHlp.subrosianFunc_5968
 	delay 1
-	asm15 $58b9
+	asm15 scriptHlp.subrosian_knockLinkOut
 	showtext TX_0036
 	enableinput
 	resetmusic
 	scriptend
 
 
-; fool's ore thieves in house
-script_14_489a:
-	jumpifglobalflagset GLOBALFLAG_S_0f $45d8
+subrosianScript_inHouseRunFromLink:
+	jumpifglobalflagset GLOBALFLAG_SAW_STRANGE_BROTHERS_IN_HOUSE stubScript
 	writeobjectbyte Interaction.oamFlags $02
-	callscript $56eb
+	callscript subrosianScript_runLeft
 	setanimation $02
 	setdisabledobjectsto11
 	delay 8

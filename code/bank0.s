@@ -14324,7 +14324,7 @@ updateInteraction:
 
 .ifdef ROM_SEASONS
 
-seasonsFunc_3d30:
+createSokraSnore:
 	ld a,(wFrameCounter)		; $3d30
 	and $3f			; $3d33
 	ret nz			; $3d35
