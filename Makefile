@@ -179,7 +179,7 @@ endef
 
 # Rule for conversion of .PNG files to .BIN files
 define define_png_gfx_rules
-build/gfx/$(basename $(notdir $(1))).bin: $(1) | build/gfx
+build/gfx/$(basename $(notdir $(1))).bin: $(1) $(wildcard $(basename $(1)).properties) | build/gfx
 	@echo "Converting $$<..."
 	@$$(PYTHON) tools/gfx/gfx.py --out $$@ auto $$<
 endef
