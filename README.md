@@ -48,10 +48,10 @@ Type "make doc" to generate documentation, which may or may not work at this poi
 (Note: ensure that you've run `./swapbuild.sh` as mentioned above before
 attempting to edit graphics in the `gfx_compressible` folder)
 
-Graphics are stored as 4-color indexed PNG files. When editing them, you should
-attempt to ensure that they remain indexed images, and that only color indexes
-0-3 are used. Editors such as Aseprite, which show you the color palette, are
-great for this.
+Graphics are stored as 4-color indexed PNG files. Other formats (RGB) are
+supported, as long as you stick to using the original 4 colors. But the indexed
+format works particularly well with editors such as Aseprite, which show you the
+4-color palette available to you.
 
 Some graphics have a corresponding `.properties` file (ie. `spr_link.png` has
 `spr_link.properties`). These are YAML files which specify certain properties
@@ -65,8 +65,8 @@ The following parameters are accepted in `.properties` files:
 * interleave (bool): Whether to treat the image with an 8x16 layout instead of
   an 8x8 layout (mainly for sprites).
 * invert (bool): Whether to invert the color order of the PNG palettes. When
-  "false", the order is light-to-dark. When "true", the order is dark-to-light.
-  Only affects .BIN -> .PNG conversion.
+  "false", the order is light-to-dark (white = color 0). When "true", the order
+  is dark-to-light (black = color 0).
 * tile\_padding (int): Number of tiles of padding at the end of the image. This
   many tiles will be truncated before conversion to `.BIN` format, or this many
   tiles will be added during conversion to .PNG format.
@@ -82,16 +82,18 @@ run the following command from the root of the repository (using `spr_link.png`
 as an example):
 
 ```
-python3 tools/gfx/gfx.py auto gfx/spr_link.png
+python3 tools/gfx/gfx.py auto gfx/common/spr_link.png
 ```
 
-This will create `gfx/spr_link.bin`, a raw 2bpp gameboy image. You can simply
-remove `gfx/spr_link.png`, in which case the disassembly will read from
-`gfx/spr_link.bin` instead. Or, you may convert it back to PNG when you're
-done:
+This will create `gfx/common/spr_link.bin`, a raw 2bpp gameboy image. However
+you shouldn't have both a `.bin` and `.png` file with the same name; this will
+confuse the Makefile rules. You can simply remove `gfx/spr_link.png`, in which
+case the disassembly will read from `gfx/spr_link.bin` instead. Or, you may
+convert it back to PNG when you're done, then delete the `.bin` file. The
+following command will convert the `.bin` file back to `.png`:
 
 ```
-python3 tools/gfx/gfx.py png gfx/spr_link.bin
+python3 tools/gfx/gfx.py png gfx/common/spr_link.bin
 ```
 
 Both of these commands will check the `.properties` file, if it exists, to
