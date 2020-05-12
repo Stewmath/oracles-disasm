@@ -2985,424 +2985,526 @@ subrosianScript_signsGuy:
 	rungenericnpc TX_3e22
 
 
-script5813:
+; ==============================================================================
+; INTERACID_DATING_ROSA_EVENT
+; ==============================================================================
+rosaScript_goOnDate:
 	initcollisions
-	jumpifglobalflagset $0c, script5840
-	jumpifitemobtained $46, script581e
-	rungenericnpclowindex $00
-script581e:
+	jumpifglobalflagset GLOBALFLAG_DATED_ROSA, @datedRosa
+	jumpifitemobtained TREASURE_RIBBON, @haveRibbon
+	rungenericnpclowindex <TX_2900
+@haveRibbon:
 	checkabutton
-	showtextlowindex $01
-	jumpiftextoptioneq $00, script5829
-	showtextlowindex $02
-	jump2byte script581e
-script5829:
+	showtextlowindex <TX_2901
+	jumpiftextoptioneq $00, @givingRibbon
+	showtextlowindex <TX_2902
+	jump2byte @haveRibbon
+@givingRibbon:
 	disableinput
-	setglobalflag $0c
-	showtextlowindex $03
+	setglobalflag GLOBALFLAG_DATED_ROSA
+	showtextlowindex <TX_2903
 	wait 10
 	playsound SND_GETSEED
-	asm15 $5973
+	asm15 scriptHlp.rosa_tradeRibbon
 	setanimation $02
 	wait 60
-	showtextlowindex $04
-	setglobalflag $0b
-	asm15 $597c
+	showtextlowindex <TX_2904
+	setglobalflag GLOBALFLAG_DATING_ROSA
+	asm15 scriptHlp.rosa_startDate
 	enableinput
 	scriptend
-script5840:
+@datedRosa:
 	checkabutton
-	showtextlowindex $05
-	jumpiftextoptioneq $00, script584b
-	showtextlowindex $07
-	jump2byte script5840
-script584b:
+	showtextlowindex <TX_2905
+	jumpiftextoptioneq $00, @acceptDate
+	showtextlowindex <TX_2907
+	jump2byte @datedRosa
+@acceptDate:
 	disableinput
-	setglobalflag $0b
-	showtextlowindex $06
-	asm15 $597c
+	setglobalflag GLOBALFLAG_DATING_ROSA
+	showtextlowindex <TX_2906
+	asm15 scriptHlp.rosa_startDate
 	enableinput
 	scriptend
-script5855:
+
+
+rosaScript_dateEnded:
 	setspeed SPEED_100
 	movedown $20
 	setanimation $00
 	wait 30
-	showtextlowindex $1a
+	showtextlowindex <TX_291a
 	setanimation $02
 	scriptend
-script5861:
+
+
+; ==============================================================================
+; INTERACID_SUBROSIAN_WITH_BUCKETS
+; ==============================================================================
+bucketSubrosianScript_text1:
 	rungenericnpc TX_2706
-script5864:
+
+bucketSubrosianScript_text2:
 	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, stubScript
 	rungenericnpc TX_3e06
-script586b:
+
+bucketSubrosianScript_text3:
 	writeobjectbyte $5c, $01
 	rungenericnpc TX_3e09
-script5871:
+
+bucketSubrosianScript_text4:
 	rungenericnpc TX_3e0f
-script5874:
+
+bucketSubrosianScript_text5:
 	rungenericnpc TX_3e12
-script5877:
+
+bucketSubrosianScript_text6:
 	rungenericnpc TX_3e15
-script587a:
+
+
+; ==============================================================================
+; INTERACID_CHILD
+; ==============================================================================
+
+; For a summary of the child's behaviour, see:
+; http://wiki.zeldahacking.net/oracle/Bipin_and_Blossom's_son
+
+childScript00:
 	scriptend
-script587b:
+
+childScript_stage4_hyperactive:
 	initcollisions
-script587c:
+@loop:
 	checkabutton
 	showtext TX_4700
-	jump2byte script587c
-script5882:
+	jump2byte @loop
+
+childScript_stage4_shy:
 	initcollisions
-script5883:
+@loop:
 	checkabutton
 	showtext TX_4200
-	jump2byte script5883
-script5889:
+	jump2byte @loop
+
+childScript_stage4_curious:
 	initcollisions
-script588a:
+@loop:
 	checkabutton
 	showtext TX_4900
-	jump2byte script588a
-script5890:
+	jump2byte @loop
+
+
+childScript_stage5_hyperactive:
 	initcollisions
-script5891:
+@loop:
 	checkabutton
 	showtext TX_4701
 	asm15 scriptHlp.setNextChildStage, $06
-	jump2byte script5891
-script589b:
+	jump2byte @loop
+
+childScript_stage5_shy:
 	initcollisions
-script589c:
+@loop:
 	checkabutton
 	showtext TX_4201
 	asm15 scriptHlp.setNextChildStage, $06
-	jump2byte script589c
-script58a6:
+	jump2byte @loop
+
+childScript_stage5_curious:
 	initcollisions
-script58a7:
+@loop:
 	checkabutton
 	showtext TX_4901
 	asm15 scriptHlp.setNextChildStage, $06
-	jump2byte script58a7
-script58b1:
+	jump2byte @loop
+
+
+; Stage 6: the child asks a question. The question differs based on his personality, but
+; the result is always the same: wChildStatus is incremented by 4 if you answer yes.
+
+childScript_stage6_hyperactive:
 	initcollisions
 	asm15 scriptHlp.checkc6e2BitSet, $04
-	jumpifobjectbyteeq $7b, $01, script58df
+	jumpifobjectbyteeq Interaction.var3b, $01, @alreadyAnswered
 	checkabutton
 	disableinput
 	showtext TX_4702
 	asm15 scriptHlp.setc6e2Bit, $04
 	asm15 scriptHlp.setNextChildStage, $07
-	jumptable_memoryaddress $cba5
-	.dw script58cf
-	.dw script58da
-script58cf:
+	jumptable_memoryaddress wSelectedTextOption
+	.dw @answeredYes
+	.dw @answeredNo
+
+@answeredYes:
 	wait 30
 	showtext TX_4703
-	asm15 $598e, $04
+	asm15 scriptHlp.child_addValueToChildStatus, $04
 	enableinput
-	jump2byte script58df
-script58da:
+	jump2byte @alreadyAnswered
+
+@answeredNo:
 	wait 30
 	showtext TX_4704
 	enableinput
-script58df:
+
+@alreadyAnswered:
 	checkabutton
 	showtext TX_4705
-	jump2byte script58df
-script58e5:
+	jump2byte @alreadyAnswered
+
+
+childScript_stage6_shy:
 	initcollisions
 	asm15 scriptHlp.checkc6e2BitSet, $04
-	jumpifobjectbyteeq $7b, $01, script5913
+	jumpifobjectbyteeq Interaction.var3b, $01, @alreadyAnswered
 	checkabutton
 	disableinput
 	showtext TX_4202
 	asm15 scriptHlp.setc6e2Bit, $04
 	asm15 scriptHlp.setNextChildStage, $07
-	jumptable_memoryaddress $cba5
-	.dw script5903
-	.dw script590e
-script5903:
+	jumptable_memoryaddress wSelectedTextOption
+	.dw @answeredYes
+	.dw @answeredNo
+
+@answeredYes:
 	wait 30
 	showtext TX_4203
-	asm15 $598e, $04
+	asm15 scriptHlp.child_addValueToChildStatus, $04
 	enableinput
-	jump2byte script5913
-script590e:
+	jump2byte @alreadyAnswered
+
+@answeredNo:
 	wait 30
 	showtext TX_4204
 	enableinput
-script5913:
+
+@alreadyAnswered:
 	checkabutton
 	showtext TX_4205
-	jump2byte script5913
-script5919:
+	jump2byte @alreadyAnswered
+
+
+childScript_stage6_curious:
 	initcollisions
 	asm15 scriptHlp.checkc6e2BitSet, $04
-	jumpifobjectbyteeq $7b, $01, script5947
+	jumpifobjectbyteeq Interaction.var3b, $01, @alreadyAnswered
 	checkabutton
 	disableinput
 	showtext TX_4902
 	asm15 scriptHlp.setc6e2Bit, $04
 	asm15 scriptHlp.setNextChildStage, $07
-	jumptable_memoryaddress $cba5
-	.dw script5937
-	.dw script5942
-script5937:
+	jumptable_memoryaddress wSelectedTextOption
+	.dw @answeredChicken
+	.dw @answeredEgg
+
+@answeredChicken:
 	wait 30
 	showtext TX_4903
-	asm15 $598e, $04
+	asm15 scriptHlp.child_addValueToChildStatus, $04
 	enableinput
-	jump2byte script5947
-script5942:
+	jump2byte @alreadyAnswered
+
+@answeredEgg:
 	wait 30
 	showtext TX_4904
 	enableinput
-script5947:
+
+@alreadyAnswered:
 	checkabutton
 	showtext TX_4905
-	jump2byte script5947
-script594d:
+	jump2byte @alreadyAnswered
+
+
+; Stage 7: just says some text.
+
+childScript_stage7_slacker:
 	initcollisions
-script594e:
+@loop:
 	checkabutton
 	showtext TX_4b00
 	asm15 scriptHlp.setNextChildStage, $08
-	jump2byte script594e
-script5958:
+	jump2byte @loop
+
+childScript_stage7_warrior:
 	initcollisions
-script5959:
+@loop:
 	checkabutton
 	showtext TX_4a00
 	asm15 scriptHlp.setNextChildStage, $08
-	jump2byte script5959
-script5963:
+	jump2byte @loop
+
+childScript_stage7_arborist:
 	initcollisions
-script5964:
+@loop:
 	checkabutton
 	showtext TX_4800
 	asm15 scriptHlp.setNextChildStage, $08
-	jump2byte script5964
-script596e:
+	jump2byte @loop
+
+childScript_stage7_singer:
 	initcollisions
-script596f:
+@loop:
 	checkabutton
 	showtext TX_4600
 	asm15 scriptHlp.setNextChildStage, $08
-	jump2byte script596f
-script5979:
+	jump2byte @loop
+
+
+; Stage 8: asks a question or makes a request. This affects what he will do in stage 9.
+
+childScript_stage8_slacker:
 	initcollisions
 	asm15 scriptHlp.checkc6e2BitSet, $05
-	jumpifobjectbyteeq $7b, $01, script5a30
-script5983:
+	jumpifobjectbyteeq Interaction.var3b, $01, @alreadyAnswered
+
+@loop:
 	checkabutton
 	disableinput
 	showtext TX_4b01
-	jumptable_memoryaddress $cba5
-	.dw script598f
-	.dw script5a29
-script598f:
+	jumptable_memoryaddress wSelectedTextOption
+	.dw @answeredYes
+	.dw @answeredNo
+
+@answeredYes:
 	wait 30
 	showtext TX_4b02
-	jumptable_memoryaddress $cba5
-	.dw script599e
-	.dw script59bf
-	.dw script59e0
-	.dw script5a01
-script599e:
-	asm15 $5994, $0c
-	jumpifobjectbyteeq $7c, $01, script5a22
-	asm15 removeRupeeValue, $0c
-	asm15 $599f, $00
+	jumptable_memoryaddress wSelectedTextOption
+	.dw @answered100Rupees
+	.dw @answered50Rupees
+	.dw @answered10Rupees
+	.dw @answered0Rupees
+
+@answered100Rupees:
+	asm15 scriptHlp.child_checkHasRupees, RUPEEVAL_100
+	jumpifobjectbyteeq Interaction.var3c, $01, @notEnoughRupees
+	asm15 removeRupeeValue, RUPEEVAL_100
+	asm15 scriptHlp.child_setStage8Response, $00
 	asm15 scriptHlp.setc6e2Bit, $05
 	asm15 scriptHlp.setNextChildStage, $09
 	wait 30
 	enableinput
-script59b9:
+@answered100Loop:
 	showtext TX_4b04
 	checkabutton
-	jump2byte script59b9
-script59bf:
-	asm15 $5994, $0b
-	jumpifobjectbyteeq $7c, $01, script5a22
-	asm15 removeRupeeValue, $0b
-	asm15 $599f, $01
+	jump2byte @answered100Loop
+
+@answered50Rupees:
+	asm15 scriptHlp.child_checkHasRupees, RUPEEVAL_050
+	jumpifobjectbyteeq Interaction.var3c, $01, @notEnoughRupees
+	asm15 removeRupeeValue, RUPEEVAL_050
+	asm15 scriptHlp.child_setStage8Response, $01
 	asm15 scriptHlp.setc6e2Bit, $05
 	asm15 scriptHlp.setNextChildStage, $09
 	wait 30
 	enableinput
-script59da:
+@answered50Loop:
 	showtext TX_4b05
 	checkabutton
-	jump2byte script59da
-script59e0:
-	asm15 $5994, $04
-	jumpifobjectbyteeq $7c, $01, script5a22
-	asm15 removeRupeeValue, $04
-	asm15 $599f, $02
+	jump2byte @answered50Loop
+
+@answered10Rupees:
+	asm15 scriptHlp.child_checkHasRupees, RUPEEVAL_010
+	jumpifobjectbyteeq Interaction.var3c, $01, @notEnoughRupees
+	asm15 removeRupeeValue, RUPEEVAL_010
+	asm15 scriptHlp.child_setStage8Response, $02
 	asm15 scriptHlp.setc6e2Bit, $05
 	asm15 scriptHlp.setNextChildStage, $09
 	wait 30
 	enableinput
-script59fb:
+@answered10Loop:
 	showtext TX_4b06
 	checkabutton
-	jump2byte script59fb
-script5a01:
-	asm15 $5994, $01
-	jumpifobjectbyteeq $7c, $01, script5a22
-	asm15 removeRupeeValue, $01
-	asm15 $599f, $03
+	jump2byte @answered10Loop
+
+@answered0Rupees: ; He takes 1 rupee anyway...
+	asm15 scriptHlp.child_checkHasRupees, RUPEEVAL_001
+	jumpifobjectbyteeq Interaction.var3c, $01, @notEnoughRupees
+	asm15 removeRupeeValue, RUPEEVAL_001
+	asm15 scriptHlp.child_setStage8Response, $03
 	asm15 scriptHlp.setc6e2Bit, $05
 	asm15 scriptHlp.setNextChildStage, $09
 	wait 30
 	enableinput
-script5a1c:
+@answered0Loop:
 	showtext TX_4b07
 	checkabutton
-	jump2byte script5a1c
-script5a22:
+	jump2byte @answered0Loop
+
+@notEnoughRupees:
 	wait 30
 	showtext TX_4b08
 	enableinput
-	jump2byte script5983
-script5a29:
+	jump2byte @loop
+
+@answeredNo:
 	wait 30
 	showtext TX_4b03
 	enableinput
-	jump2byte script5983
-script5a30:
+	jump2byte @loop
+
+@alreadyAnswered:
 	checkabutton
 	showtext TX_4b09
-	jump2byte script5a30
-script5a36:
+	jump2byte @alreadyAnswered
+
+
+; Asks Link what will make him mightiest.
+childScript_stage8_warrior:
 	initcollisions
 	asm15 scriptHlp.checkc6e2BitSet, $05
-	jumpifobjectbyteeq $7b, $01, script5a94
+	jumpifobjectbyteeq Interaction.var3b, $01, @alreadyAnswered
 	checkabutton
 	disableinput
 	showtext TX_4a01
-	jumptable_memoryaddress $cba5
-	.dw script5a76
-	.dw script5a4c
-script5a4c:
+	jumptable_memoryaddress wSelectedTextOption
+	.dw @answeredDailyTraining
+	.dw @answeredNo_1
+
+@answeredNo_1:
 	wait 30
 	showtext TX_4a02
-	jumptable_memoryaddress $cba5
-	.dw script5a7c
-	.dw script5a57
-script5a57:
+	jumptable_memoryaddress wSelectedTextOption
+	.dw @answeredNaturalTalent
+	.dw @answeredNo_2
+
+@answeredNo_2:
 	wait 30
 	showtext TX_4a03
-	jumptable_memoryaddress $cba5
-	.dw script5a82
-	.dw script5a62
-script5a62:
-	asm15 $599f, $03
+	jumptable_memoryaddress wSelectedTextOption
+	.dw @answeredCaringHeart
+	.dw @answeredNo_3
+
+@answeredNo_3: ; He gives up asking
+	asm15 scriptHlp.child_setStage8Response, $03
 	asm15 scriptHlp.setc6e2Bit, $05
 	asm15 scriptHlp.setNextChildStage, $09
 	wait 30
 	showtext TX_4a04
 	enableinput
 	wait 30
-	jump2byte script5a94
-script5a76:
-	asm15 $599f, $00
-	jump2byte script5a86
-script5a7c:
-	asm15 $599f, $01
-	jump2byte script5a86
-script5a82:
-	asm15 $599f, $02
-script5a86:
+	jump2byte @alreadyAnswered
+
+@answeredDailyTraining:
+	asm15 scriptHlp.child_setStage8Response, $00
+	jump2byte @gaveResponse
+
+@answeredNaturalTalent:
+	asm15 scriptHlp.child_setStage8Response, $01
+	jump2byte @gaveResponse
+
+@answeredCaringHeart:
+	asm15 scriptHlp.child_setStage8Response, $02
+
+@gaveResponse:
 	asm15 scriptHlp.setc6e2Bit, $05
 	asm15 scriptHlp.setNextChildStage, $09
 	wait 30
 	showtext TX_4a05
 	wait 30
 	enableinput
-script5a94:
+
+@alreadyAnswered:
 	checkabutton
 	showtext TX_4a08
-	jump2byte script5a94
-script5a9a:
+	jump2byte @alreadyAnswered
+
+
+; Gives Link a gasha seed.
+childScript_stage8_arborist:
 	initcollisions
 	asm15 scriptHlp.checkc6e2BitSet, $05
-	jumpifobjectbyteeq $7b, $01, script5aba
+	jumpifobjectbyteeq Interaction.var3b, $01, @alreadyGaveSeed
+
 	checkabutton
 	disableinput
 	showtext TX_4801
-	giveitem $3403
+	giveitem TREASURE_GASHA_SEED, $03
 	asm15 scriptHlp.setc6e2Bit, $05
 	asm15 scriptHlp.setNextChildStage, $09
 	wait 30
 	showtext TX_4802
 	wait 30
 	enableinput
-script5aba:
+
+@alreadyGaveSeed:
 	checkabutton
 	showtext TX_4803
-	jump2byte script5aba
-script5ac0:
+	jump2byte @alreadyGaveSeed
+
+
+; Asks link what's more important, love or courage.
+childScript_stage8_singer:
 	initcollisions
 	asm15 scriptHlp.checkc6e2BitSet, $05
-	jumpifobjectbyteeq $7b, $01, script5adf
+	jumpifobjectbyteeq Interaction.var3b, $01, @alreadyAnswered
+
 	checkabutton
 	disableinput
 	showtext TX_4601
-	asm15 $599b, $00
+	asm15 scriptHlp.child_setStage8ResponseToSelectedTextOption, $00
 	asm15 scriptHlp.setc6e2Bit, $05
 	asm15 scriptHlp.setNextChildStage, $09
 	wait 30
 	enableinput
-	jump2byte script5ae0
-script5adf:
+	jump2byte @showResponseText
+
+@alreadyAnswered:
 	checkabutton
-script5ae0:
+@showResponseText:
 	showtext TX_4602
-	jump2byte script5adf
-script5ae5:
+	jump2byte @alreadyAnswered
+
+
+; Stage 9: the child gives a reward based on your response in stage 8.
+
+childScript_stage9_slacker:
 	initcollisions
 	asm15 scriptHlp.checkc6e2BitSet, $06
-	jumpifobjectbyteeq $7b, $01, script5b21
+	jumpifobjectbyteeq Interaction.var3b, $01, @alreadyGaveReward
 	checkabutton
 	disableinput
 	showtext TX_4b0a
 	asm15 scriptHlp.setc6e2Bit, $06
 	wait 30
-	jumptable_memoryaddress $c6dd
-	.dw script5b04
-	.dw script5b0c
-	.dw script5b15
-	.dw script5b1a
-script5b04:
+	jumptable_memoryaddress wChildStage8Response
+	.dw @fillSatchel
+	.dw @give200Rupees
+	.dw @giveGashaSeed
+	.dw @give10Bombs
+
+@fillSatchel:
 	asm15 refillSeedSatchel
 	showtext TX_0052
-	jump2byte script5b1d
-script5b0c:
-	asm15 $59be, $0d
+	jump2byte @justGaveReward
+
+@give200Rupees:
+	asm15 scriptHlp.child_giveRupees, RUPEEVAL_200
 	showtext TX_0009
-	jump2byte script5b1d
-script5b15:
-	giveitem $3403
-	jump2byte script5b1d
-script5b1a:
-	giveitem $0302
-script5b1d:
+	jump2byte @justGaveReward
+
+@giveGashaSeed:
+	giveitem TREASURE_GASHA_SEED, $03
+	jump2byte @justGaveReward
+
+@give10Bombs:
+	giveitem TREASURE_BOMBS, $02
+
+@justGaveReward:
 	wait 30
 	enableinput
-	jump2byte script5b22
-script5b21:
+	jump2byte @showTextAfterGiving
+
+@alreadyGaveReward:
 	checkabutton
-script5b22:
+@showTextAfterGiving:
 	showtext TX_4b0b
-	jump2byte script5b21
-script5b27:
+	jump2byte @alreadyGaveReward
+
+
+childScript_stage9_warrior:
 	initcollisions
 	asm15 scriptHlp.checkc6e2BitSet, $06
-	jumpifobjectbyteeq $7b, $01, script5b6f
+	jumpifobjectbyteeq Interaction.var3b, $01, @alreadyGaveReward
 	checkabutton
 	disableinput
 	showtext TX_4a06
@@ -3410,507 +3512,554 @@ script5b27:
 	showtext TX_4a07
 	asm15 scriptHlp.setc6e2Bit, $06
 	wait 30
-	jumptable_memoryaddress $c6dd
-	.dw script5b4a
-	.dw script5b53
-	.dw script5b5c
-	.dw script5b64
-script5b4a:
-	asm15 $59be, $0c
+	jumptable_memoryaddress wChildStage8Response
+	.dw @give100Rupees
+	.dw @give1Heart
+	.dw @restoreHealth
+	.dw @give1Rupee
+
+@give100Rupees:
+	asm15 scriptHlp.child_giveRupees, RUPEEVAL_100
 	showtext TX_0007
-	jump2byte script5b6b
-script5b53:
-	asm15 $59b7, $01
+	jump2byte @justGaveReward
+
+@give1Heart:
+	asm15 scriptHlp.child_giveOneHeart, $01
 	showtext TX_0051
-	jump2byte script5b6b
-script5b5c:
-	asm15 $59b3
+	jump2byte @justGaveReward
+
+@restoreHealth:
+	asm15 scriptHlp.child_giveHeartRefill
 	showtext TX_0053
-	jump2byte script5b6b
-script5b64:
-	asm15 $59be, $01
+	jump2byte @justGaveReward
+
+@give1Rupee:
+	asm15 scriptHlp.child_giveRupees, RUPEEVAL_001
 	showtext TX_0001
-script5b6b:
+
+@justGaveReward:
 	wait 30
 	enableinput
-	jump2byte script5b70
-script5b6f:
+	jump2byte @showTextAfterGiving
+
+@alreadyGaveReward:
 	checkabutton
-script5b70:
+@showTextAfterGiving:
 	showtext TX_4a08
-	jump2byte script5b6f
-script5b75:
+	jump2byte @alreadyGaveReward
+
+
+childScript_stage9_arborist:
 	initcollisions
-script5b76:
+@loop:
 	checkabutton
 	disableinput
 	showtext TX_4804
 	wait 30
-	callscript script5b82
+	callscript @showTip
 	enableinput
-	jump2byte script5b76
-script5b82:
-	writeobjectbyte $73, $48
-	getrandombits $72, $07
-	addobjectbyte $72, $05
+	jump2byte @loop
+
+@showTip:
+	writeobjectbyte Interaction.textID+1, >TX_4800
+	getrandombits   Interaction.textID,   $07
+	addobjectbyte   Interaction.textID,   <TX_4805
 	showloadedtext
 	retscript
-script5b8d:
+
+
+childScript_stage9_singer:
 	initcollisions
-script5b8e:
+@loop:
 	checkabutton
 	disableinput
 	showtext TX_4603
-	jumptable_memoryaddress $cba5
-	.dw script5b9a
-	.dw script5ba8
-script5b9a:
-	asm15 $59a3
-	asm15 $59b3
+	jumptable_memoryaddress wSelectedTextOption
+	.dw @selectedYes
+	.dw @selectedNo
+
+@selectedYes:
+	asm15 scriptHlp.child_playMusic
+	asm15 scriptHlp.child_giveHeartRefill
 	wait 30
 	enableinput
-script5ba2:
+
+@singingLoop:
 	showtext TX_4604
 	checkabutton
-	jump2byte script5ba2
-script5ba8:
+	jump2byte @singingLoop
+
+@selectedNo:
 	wait 30
 	showtext TX_4605
 	enableinput
-	jump2byte script5b8e
-script5baf:
+	jump2byte @loop
+
+
+; ==============================================================================
+; INTERACID_S_GORON
+; ==============================================================================
+goronScript_pacingLeftAndRight:
 	initcollisions
 	setspeed SPEED_080
 	writeobjectbyte $76, $03
-	setangle $18
+	setangle ANGLE_LEFT
 	setanimationfromangle
 	applyspeed $a0
 	wait 20
-script5bbc:
+-
 	writeobjectbyte $76, $01
-	setangle $08
+	setangle ANGLE_RIGHT
 	setanimationfromangle
 	applyspeed $e0
 	wait 20
 	writeobjectbyte $76, $03
-	setangle $18
+	setangle ANGLE_LEFT
 	setanimationfromangle
 	applyspeed $e0
 	wait 20
-	jump2byte script5bbc
-script5bd2:
-	rungenericnpclowindex $01
-script5bd4:
-	rungenericnpclowindex $06
-script5bd6:
-	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, script5bdc
-	rungenericnpclowindex $02
-script5bdc:
-	rungenericnpclowindex $0e
-script5bde:
-	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, script5bea
-	rungenericnpclowindex $03
-script5be4:
-	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, script5bea
-	rungenericnpclowindex $07
-script5bea:
-	rungenericnpclowindex $0f
-script5bec:
-	rungenericnpclowindex $04
-script5bee:
-	rungenericnpclowindex $08
-script5bf0:
-	rungenericnpclowindex $05
-script5bf2:
+	jump2byte -
+
+goronScript_text1_biggoronSick:
+	rungenericnpclowindex <TX_3701
+goronScript_text1_biggoronHealed:
+	rungenericnpclowindex <TX_3706
+
+goronScript_text2:
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, @finishedGame
+	rungenericnpclowindex <TX_3702
+@finishedGame:
+	rungenericnpclowindex <TX_370e
+
+goronScript_text3_biggoronSick:
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, goronScript_text3_finishedGame
+	rungenericnpclowindex <TX_3703
+goronScript_text3_biggoronHealed:
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, goronScript_text3_finishedGame
+	rungenericnpclowindex <TX_3707
+goronScript_text3_finishedGame:
+	rungenericnpclowindex <TX_370f
+
+goronScript_text4_biggoronSick:
+	rungenericnpclowindex <TX_3704
+
+goronScript_text4_biggoronHealed:
+	rungenericnpclowindex <TX_3708
+
+goronScript_text5:
+	rungenericnpclowindex <TX_3705
+
+goronScript_upgradeRingBox:
 	initcollisions
-	jumpifroomflagset $40, script5c20
+	jumpifroomflagset $40, @alreadyGivenRingBox
 	checkabutton
 	setdisabledobjectsto91
-	showtextlowindex $09
-	jumpiftextoptioneq $01, script5c22
-	jumpifitemobtained $2c, script5c09
+	showtextlowindex <TX_3709
+	jumpiftextoptioneq $01, @answeredNo
+	jumpifitemobtained TREASURE_RING_BOX, @haveRingBox
 	wait 30
-	showtextlowindex $0d
+	showtextlowindex <TX_370d
 	enableallobjects
-	rungenericnpclowindex $0d
-script5c09:
+	rungenericnpclowindex <TX_370d
+@haveRingBox:
 	wait 30
-	showtextlowindex $0a
-	asm15 $59c4
-	jumpifmemoryeq $cba8, $05, script5c1a
-	giveitem $2c01
-	jump2byte script5c1d
-script5c1a:
-	giveitem $2c02
-script5c1d:
+	showtextlowindex <TX_370a
+	asm15 scriptHlp.getNextRingboxLevel
+	jumpifmemoryeq $cba8, $05, @upgradeTo5
+	giveitem TREASURE_RING_BOX $01
+	jump2byte @finishedGivingRingBox
+@upgradeTo5:
+	giveitem TREASURE_RING_BOX $02
+@finishedGivingRingBox:
 	orroomflag $40
 	enableallobjects
-script5c20:
-	rungenericnpclowindex $0b
-script5c22:
+@alreadyGivenRingBox:
+	rungenericnpclowindex <TX_370b
+@answeredNo:
 	wait 30
-	showtextlowindex $0c
+	showtextlowindex <TX_370c
 	enableallobjects
-	rungenericnpclowindex $0c
-script5c28:
+	rungenericnpclowindex <TX_370c
+
+goronScript_giveSubrosianSecret:
 	initcollisions
-script5c29:
+--
 	enableinput
 	checkabutton
 	disableinput
-	showtextlowindex $30
+	showtextlowindex <TX_5330
 	wait 20
-	jumpiftextoptioneq $00, script5c37
-	showtextlowindex $35
-	jump2byte script5c29
-script5c37:
-	setglobalflag $6c
+	jumpiftextoptioneq $00, @answeredYes
+	showtextlowindex <TX_5335
+	jump2byte --
+@answeredYes:
+	setglobalflag GLOBALFLAG_BEGAN_ELDER_SECRET
 	 ; This should be "generatesecret SUBROSIAN_SECRET" but, for some reason, this is the only opcode in
 	 ; seasons where the parameter doesn't have "| $30" applied? This may change the xor cipher,
 	 ; but nothing else?
 	 ; TODO: figure out what's up (does this cause any problems?)
 	.db $86, $08
-script5c3b:
-	showtextlowindex $33
+-
+	showtextlowindex <TX_5333
 	wait 20
-	jumpiftextoptioneq $01, script5c3b
-	showtextlowindex $34
-	jump2byte script5c29
-script5c46:
+	jumpiftextoptioneq $01, -
+	showtextlowindex <TX_5334
+	jump2byte --
+	
+
+; ==============================================================================
+; INTERACID_MISC_BOY_NPCS
+; ==============================================================================
+boyWithDogScript_text1:
 	rungenericnpc TX_1500
-script5c49:
+boyWithDogScript_text2:
 	initcollisions
-script5c4a:
+-
 	checkabutton
 	showtext TX_1501
 	checkabutton
 	showtext TX_1502
-	jump2byte script5c4a
-script5c54:
+	jump2byte -
+boyWithDogScript_text3:
 	rungenericnpc TX_1406
-script5c57:
+boyWithDogScript_text4:
 	rungenericnpc TX_1503
-script5c5a:
+boyWithDogScript_text5:
 	rungenericnpc TX_1504
-script5c5d:
+boyWithDogScript_text6:
 	rungenericnpc TX_1505
-script5c60:
+boyWithDogScript_text7:
 	rungenericnpc TX_1506
-script5c63:
+
+horonVillageBoyScript_text1:
 	initcollisions
-script5c64:
+-
 	checkabutton
 	showtext TX_1400
 	checkabutton
 	showtext TX_1401
-	jump2byte script5c64
-script5c6e:
+	jump2byte -
+horonVillageBoyScript_text2:
 	initcollisions
-script5c6f:
+-
 	checkabutton
 	setdisabledobjectsto91
 	showtext TX_1402
-	jumpiftextoptioneq $01, script5c7e
+	jumpiftextoptioneq $01, @dontKnowAboutOwls
 	wait 30
 	showtext TX_1403
-	jump2byte script5c82
-script5c7e:
+	jump2byte @knowAboutOwls
+@dontKnowAboutOwls:
 	wait 30
 	showtext TX_1404
-script5c82:
+@knowAboutOwls:
 	enableallobjects
-	jump2byte script5c6f
-script5c85:
+	jump2byte -
+horonVillageBoyScript_text3:
 	rungenericnpc TX_1405
-script5c88:
+horonVillageBoyScript_text4:
 	rungenericnpc TX_1406
-script5c8b:
+horonVillageBoyScript_text5:
 	setanimation $00
-	settextid $1407
+	settextid TX_1407
 	writeobjectbyte $7b, $00
-script5c93:
+--
 	initcollisions
-script5c94:
+-
 	checkabutton
 	asm15 scriptHlp.seasonsFunc_15_63b8
 	showloadedtext
 	wait 10
 	setanimationfromobjectbyte $7b
-	jump2byte script5c94
-script5c9f:
+	jump2byte -
+horonVillageBoyScript_text6:
 	setanimation $02
-	settextid $1408
+	settextid TX_1408
 	writeobjectbyte $7b, $02
-	jump2byte script5c93
-script5ca9:
+	jump2byte --
+horonVillageBoyScript_text7:
 	initcollisions
-script5caa:
+-
 	checkabutton
 	showtext TX_1409
 	writeobjectbyte $45, $00
-	jump2byte script5caa
-script5cb3:
-	jumptable_memoryaddress $cc4e
-	.dw script5cbc
-	.dw script5cbf
-	.dw script5cc2
-script5cbc:
+	jump2byte -
+	
+springBloomBoyScript_text1:
+	jumptable_memoryaddress wRoomStateModifier
+	.dw @spring
+	.dw @summer
+	.dw @autumn
+@spring:
 	rungenericnpc TX_1300
-script5cbf:
+@summer:
 	rungenericnpc TX_1301
-script5cc2:
+@autumn:
 	rungenericnpc TX_1302
-script5cc5:
+springBloomBoyScript_text2:
 	rungenericnpc TX_1303
-script5cc8:
+springBloomBoyScript_text3:
 	rungenericnpc TX_1304
-script5ccb:
-	jumpifglobalflagset $16, script5ce3
+	
+sunkenCityBoyScript_text1:
+	jumpifglobalflagset GLOBALFLAG_MOBLINS_KEEP_DESTROYED, _sunkenCityBoyScript_text1_moblinsKeepDestroyed
 	rungenericnpc TX_1a00
-script5cd2:
-	jumpifglobalflagset $16, script5cd8
-	jump2byte script5ce6
-script5cd8:
+sunkenCityBoyScript_text2:
+	jumpifglobalflagset GLOBALFLAG_MOBLINS_KEEP_DESTROYED, _sunkenCityBoyScript_text2_moblinsKeepDestroyed
+	jump2byte sunkenCityBoyScript_text3
+_sunkenCityBoyScript_text2_moblinsKeepDestroyed:
 	initcollisions
 	checkabutton
 	showtext TX_1a02
 	checkabutton
 	showtext TX_1a01
-	jump2byte script5cd8
-script5ce3:
+	jump2byte _sunkenCityBoyScript_text2_moblinsKeepDestroyed
+_sunkenCityBoyScript_text1_moblinsKeepDestroyed:
 	rungenericnpc TX_1a02
-script5ce6:
+sunkenCityBoyScript_text3:
 	rungenericnpc TX_1a01
-script5ce9:
+sunkenCityBoyScript_text4:
 	rungenericnpc TX_1a03
-script5cec:
+
+
+; ==============================================================================
+; INTERACID_PIRATIAN
+; INTERACID_PIRATIAN_CAPTAIN
+; ==============================================================================
+piratianCaptainScript_inHouse:
 	initcollisions
-	jumpifobjectbyteeq $7a, $01, script5cfd
+	jumpifobjectbyteeq $7a, $01, @6thEssenceGotten
 	checkabutton
-	showtextlowindex $17
+	showtextlowindex <TX_3a17
 	disableinput
 	wait 30
 	enableinput
-script5cf8:
+-
 	checkabutton
-	showtextlowindex $18
-	jump2byte script5cf8
-script5cfd:
+	showtextlowindex <TX_3a18
+	jump2byte -
+@6thEssenceGotten:
 	jumptable_objectbyte $7b
-	.dw script5d05
-	.dw script5d14
-	.dw script5d23
-script5d05:
+	.dw @noPiratesBell
+	.dw @haveRustedPiratesBell
+	.dw @haveFixedPiratesBell
+@noPiratesBell:
 	checkabutton
-	showtextlowindex $19
+	showtextlowindex <TX_3a19
 	disableinput
-	writememory $c6e4, $01
+	writememory wTalkedToPirationCaptainState, $01
 	wait 30
 	enableinput
-script5d0f:
+-
 	checkabutton
-	showtextlowindex $1a
-	jump2byte script5d0f
-script5d14:
+	showtextlowindex <TX_3a1a
+	jump2byte -
+@haveRustedPiratesBell:
 	checkabutton
-	showtextlowindex $1c
+	showtextlowindex <TX_3a1c
 	disableinput
-	writememory $c6e4, $02
+	writememory wTalkedToPirationCaptainState, $02
 	wait 30
 	enableinput
-script5d1e:
+-
 	checkabutton
-	showtextlowindex $1d
-	jump2byte script5d1e
-script5d23:
+	showtextlowindex <TX_3a1d
+	jump2byte -
+@haveFixedPiratesBell:
 	checkabutton
 	disableinput
-	showtextlowindex $1e
+	showtextlowindex <TX_3a1e
 	wait 30
-	showtextlowindex $1f
+	showtextlowindex <TX_3a1f
 	wait 30
-	writememory $c6e4, $02
+	writememory wTalkedToPirationCaptainState, $02
 	jumptable_memoryaddress wIsLinkedGame
-	.dw script5d36
-	.dw script5d44
-script5d36:
-	showtextlowindex $14
+	.dw @unlinkedCaptain
+	.dw @linkedCaptain
+@unlinkedCaptain:
+	showtextlowindex <TX_3a14
 	wait 30
 	xorcfc0bit 0
 	setcounter1 $64
 	enableinput
-	asm15 $5a0c
-script5d40:
+	asm15 scriptHlp.headToPirateShip
+-
 	setcounter1 $ff
-	jump2byte script5d40
-script5d44:
+	jump2byte -
+@linkedCaptain:
 	wait 60
-	showtextlowindex $26
-	asm15 $5a33
+	showtextlowindex <TX_3a26
+	asm15 scriptHlp.linkedGame_spawnAmbi
 	checkcfc0bit 1
 	wait 30
-	showtextlowindex $27
+	showtextlowindex <TX_3a27
 	wait 30
 	writeobjectbyte $7c, $01
 	setspeed SPEED_100
-	asm15 $5a70
+	asm15 scriptHlp.seasonsFunc_15_5a70
 	jumptable_objectbyte $79
 	.dw script5d7f
 	.dw script5d5f
 	.dw script5d6f
 script5d5f:
 	setanimation $02
-	setangle $18
+	setangle ANGLE_LEFT
 	applyspeed $0d
 	movedown $21
 	setanimation $02
-	setangle $08
+	setangle ANGLE_RIGHT
 	applyspeed $0d
-	jump2byte script5d81
+	jump2byte ++
 script5d6f:
 	setanimation $02
-	setangle $08
+	setangle ANGLE_RIGHT
 	applyspeed $0d
 	movedown $21
 	setanimation $02
-	setangle $18
+	setangle ANGLE_LEFT
 	applyspeed $0d
-	jump2byte script5d81
+	jump2byte ++
 script5d7f:
 	movedown $21
-script5d81:
-	loadscript script_14_48b5
-script5d85:
+++
+	loadscript linkedPirateCaptainScript_sayingByeToAmbi
+
+piratian1FScript_text1BasedOnD6Beaten:
 	initcollisions
-script5d86:
-	jumptable_memoryaddress $c6e4
-	.dw script5d8f
-	.dw script5d8f
-	.dw script5d9e
-script5d8f:
-	jumpifobjectbyteeq $71, $00, script5d86
+--
+	jumptable_memoryaddress wTalkedToPirationCaptainState
+	.dw @noFixedPiratesBell
+	.dw @noFixedPiratesBell
+	.dw @haveFixedPiratesBell
+@noFixedPiratesBell:
+	jumpifobjectbyteeq $71, $00, --
 	writeobjectbyte $71, $00
-	asm15 $59d7, $00
+	asm15 scriptHlp.showPiratianTextBasedOnD6Done, $00
 	wait 1
-	jump2byte script5d86
-script5d9e:
-	jumpifobjectbyteeq $71, $01, script5dab
-	jumpifmemoryset $cfc0, $01, script5db5
-	jump2byte script5d9e
-script5dab:
+	jump2byte --
+@haveFixedPiratesBell:
+	jumpifobjectbyteeq $71, $01, @talkedTo
+	jumpifmemoryset $cfc0, $01, @readyToLeave
+	jump2byte @haveFixedPiratesBell
+@talkedTo:
 	writeobjectbyte $71, $00
-	asm15 $59d7, $01
+	asm15 scriptHlp.showPiratianTextBasedOnD6Done, $01
 	wait 1
-	jump2byte script5d9e
-script5db5:
-	callscript script5f0a
-script5db8:
+	jump2byte @haveFixedPiratesBell
+@readyToLeave:
+	callscript piratianScript_jump
+-
 	setcounter1 $ff
-	jump2byte script5db8
-script5dbc:
+	jump2byte -
+
+piratian1FScript_text2BasedOnD6Beaten:
 	initcollisions
-script5dbd:
-	jumpifobjectbyteeq $71, $01, script5dca
-	jumpifmemoryset $cfc0, $01, script5dd6
-	jump2byte script5dbd
-script5dca:
+--
+	jumpifobjectbyteeq $71, $01, @talkedTo
+	jumpifmemoryset $cfc0, $01, @readyToLeave
+	jump2byte --
+@talkedTo:
 	setdisabledobjectsto91
 	writeobjectbyte $71, $00
-	asm15 $59d7, $00
+	asm15 scriptHlp.showPiratianTextBasedOnD6Done, $00
 	wait 1
 	enableallobjects
-	jump2byte script5dbd
-script5dd6:
-	callscript script5f0a
-script5dd9:
+	jump2byte --
+@readyToLeave:
+	callscript piratianScript_jump
+-
 	setcounter1 $ff
-	jump2byte script5dd9
-script5ddd:
+	jump2byte -
+
+unluckySailorScript:
 	initcollisions
-	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, script5df0
-	jumpifglobalflagset $13, script5deb
-script5de6:
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, @finishedGame
+	jumpifglobalflagset GLOBALFLAG_PIRATES_LEFT_FOR_SHIP, @piratesLeft
+-
 	checkabutton
-	showtextlowindex $0a
-	jump2byte script5de6
-script5deb:
+	showtextlowindex <TX_3a0a
+	jump2byte -
+@piratesLeft:
 	checkabutton
-	showtextlowindex $0b
-	jump2byte script5deb
-script5df0:
-	jumpifglobalflagset $5f, script5e47
-	jumpifglobalflagset $55, script5e18
-script5df8:
+	showtextlowindex <TX_3a0b
+	jump2byte @piratesLeft
+@finishedGame:
+	jumpifglobalflagset GLOBALFLAG_DONE_PIRATE_SECRET, @finishedPiratesSecret
+	jumpifglobalflagset GLOBALFLAG_BEGAN_PIRATE_SECRET, @beganPiratesSecret
+--
 	checkabutton
 	disableinput
-	showtextlowindex $2c
-	jumpiftextoptioneq $00, script5e06
+	showtextlowindex <TX_3a2c
+	jumpiftextoptioneq $00, @knowSecret
 	wait 30
-	showtextlowindex $2d
+	showtextlowindex <TX_3a2d
 	enableinput
-	jump2byte script5df8
-script5e06:
+	jump2byte --
+@knowSecret:
 	wait 30
-	showtextlowindex $2e
+	showtextlowindex <TX_3a2e
 	askforsecret PIRATE_SECRET
 	wait 30
 	jumptable_memoryaddress $cca3
-	.dw script5e1a
-	.dw script5e13
-script5e13:
-	showtextlowindex $2d
+	.dw @incorrectSecret
+	.dw @correctSecret
+@correctSecret:
+	showtextlowindex <TX_3a2d
 	enableinput
-	jump2byte script5df8
-script5e18:
+	jump2byte --
+@beganPiratesSecret:
 	checkabutton
 	disableinput
-script5e1a:
-	setglobalflag $55
-	showtextlowindex $2f
+@incorrectSecret:
+	setglobalflag GLOBALFLAG_BEGAN_PIRATE_SECRET
+	showtextlowindex <TX_3a2f
 	wait 30
-	asm15 $5a8e
-	jumpifobjectbyteeq $79, $01, script5e2e
-script5e27:
-	showtextlowindex $31
+	asm15 scriptHlp.unluckySailor_checkHave777OreChunks
+	jumpifobjectbyteeq $79, $01, @have777OreChunks
+-
+	showtextlowindex <TX_3a31
 	enableinput
 	checkabutton
 	disableinput
-	jump2byte script5e27
-script5e2e:
-	showtextlowindex $32
-	asm15 $5aa1
-	giveitem $6100
+	jump2byte -
+@have777OreChunks:
+	showtextlowindex <TX_3a32
+	asm15 scriptHlp.unluckySailor_increaseBombCapacityAndCount
+	giveitem TREASURE_BOMB_UPGRADE $00
 	wait 60
-	setglobalflag $5f
-script5e39:
+	setglobalflag GLOBALFLAG_DONE_PIRATE_SECRET
+--
 	generatesecret PIRATE_RETURN_SECRET
-script5e3b:
-	showtextlowindex $33
+-
+	showtextlowindex <TX_3a33
 	wait 30
-	jumpiftextoptioneq $00, script5e44
-	jump2byte script5e3b
-script5e44:
-	showtextlowindex $34
+	jumpiftextoptioneq $00, @gotSecret
+	jump2byte -
+@gotSecret:
+	showtextlowindex <TX_3a34
 	enableinput
-script5e47:
+@finishedPiratesSecret:
 	checkabutton
 	disableinput
-	jump2byte script5e39
-script5e4b:
+	jump2byte --
+
+piratian2FScript_textBasedOnD6Beaten:
 	initcollisions
-	jumpifglobalflagset $13, script5e54
-	loadscript script_14_48dc
-script5e54:
+	jumpifglobalflagset GLOBALFLAG_PIRATES_LEFT_FOR_SHIP, @piratesLeft
+@showGateCombo:
+	loadscript showSamasaGateCombination
+@piratesLeft:
 	checkabutton
-	showtextlowindex $0e
-	jump2byte script5e54
-script5e59:
+	showtextlowindex <TX_3a0e
+	jump2byte @piratesLeft
+	
+pirationScript_closeOpenCupboard:
 	setspeed SPEED_100
 	moveup $07
-	asm15 $59ff, $db
+	asm15 scriptHlp.piratian_replaceTileAtPiratian, $db
 	playsound SND_DOORCLOSE
 	wait 10
-	asm15 $59ff, $d9
+	asm15 scriptHlp.piratian_replaceTileAtPiratian, $d9
 	playsound SND_DOORCLOSE
 	setanimation $00
 	setangle $10
@@ -3918,30 +4067,34 @@ script5e59:
 	setspeed SPEED_200
 	wait 4
 	retscript
-script5e74:
-	rungenericnpclowindex $0f
-script5e76:
+	
+piratianRoofScript:
+	rungenericnpclowindex <TX_3a0f
+	
+samasaGatePiratianScript:
 	initcollisions
-	jumptable_memoryaddress $c6e4
-	.dw script5e80
-	.dw script5e85
-	.dw script5e85
-script5e80:
+	jumptable_memoryaddress wTalkedToPirationCaptainState
+	.dw @notTalkedToPirateCaptainAfterD6
+	.dw @talkedToPirateCaptainAfterD6
+	.dw @talkedToPirateCaptainAfterD6
+@notTalkedToPirateCaptainAfterD6:
 	checkabutton
-	showtextlowindex $12
-	jump2byte script5e80
-script5e85:
+	showtextlowindex <TX_3a12
+	jump2byte @notTalkedToPirateCaptainAfterD6
+@talkedToPirateCaptainAfterD6:
 	checkabutton
-	showtextlowindex $13
+	showtextlowindex <TX_3a13
 	wait 40
 	writeobjectbyte $7c, $01
 	setspeed SPEED_200
 	moveleft $39
 	orroomflag $40
 	scriptend
-script5e93:
-	loadscript script_14_4930
-script5e97:
+
+piratianCaptainByShipScript:
+	loadscript piratianCaptain_preCutsceneScene
+
+piratianFromShipScript:
 	writeobjectbyte $7c, $01
 	asm15 objectSetVisible80
 	setspeed SPEED_080
@@ -3958,7 +4111,7 @@ script5e97:
 	setspeed SPEED_080
 	moveup $11
 	wait 30
-	showtextlowindex $15
+	showtextlowindex <TX_3a15
 	wait 30
 	xorcfc0bit 0
 	checkcfc0bit 1
@@ -3968,9 +4121,10 @@ script5e97:
 	wait 4
 	setspeed SPEED_100
 	moveup $27
-	callscript script5f01
+	callscript piratianScript_moveUpPauseThenUp
 	scriptend
-script5ec9:
+
+piratianByCaptainWhenDeparting1Script:
 	checkcfc0bit 1
 	wait 20
 	setcounter1 $6a
@@ -3987,7 +4141,8 @@ script5ec9:
 	applyspeed $03
 	wait 20
 	scriptend
-script5ee5:
+
+piratianByCaptainWhenDeparting2Script:
 	checkcfc0bit 1
 	wait 4
 	setcounter1 $6a
@@ -4001,114 +4156,169 @@ script5ee5:
 	moveright $11
 	wait 4
 	moveup $0f
-	callscript script5f01
+	callscript piratianScript_moveUpPauseThenUp
 	scriptend
-script5f01:
+	
+piratianScript_moveUpPauseThenUp:
 	setspeed SPEED_080
 	moveup $03
 	wait 20
 	applyspeed $03
 	wait 20
 	retscript
-script5f0a:
+
+piratianScript_jump:
 	writeobjectbyte $50, $28
 	setzspeed -$0200
 	playsound SND_JUMP
-script5f12:
-	asm15 $59f3
+-
+	asm15 scriptHlp.piratian_waitUntilJumpDone
 	wait 1
-	jumpifobjectbyteeq $7d, $00, script5f12
+	jumpifobjectbyteeq $7d, $00, -
 	retscript
-script5f1c:
+
+
+; ==============================================================================
+; INTERACID_PIRATE_HOUSE_SUBROSIAN
+; ==============================================================================
+pirateHouseSubrosianScript_piratesAround:
 	rungenericnpc TX_3a10
-script5f1f:
+pirateHouseSubrosianScript_piratesLeft:
 	rungenericnpc TX_3a11
-script5f22:
+
+
+; ==============================================================================
+; INTERACID_SYRUP
+; ==============================================================================
+syrupScript_notTradedMushroomYet:
 	checkabutton
 	showtext TX_0b3e
-	jumpiftradeitemeq $08, script5f2c
-	jump2byte script5f22
-script5f2c:
+	jumpiftradeitemeq $08, @haveMushroom
+	jump2byte syrupScript_notTradedMushroomYet
+@haveMushroom:
 	setdisabledobjectsto91
 	wait 30
-script5f2e:
+-
 	showtext TX_0b3f
-	jumpiftextoptioneq $00, script5f3e
+	jumpiftextoptioneq $00, @tradingMushroom
 	wait 30
 	showtext TX_0b42
 	enableallobjects
 	checkabutton
 	setdisabledobjectsto91
-	jump2byte script5f2e
-script5f3e:
+	jump2byte -
+@tradingMushroom:
 	wait 30
 	disableinput
-	giveitem $4109
+	giveitem TREASURE_TRADEITEM $09
 	wait 30
 	showtext TX_0b40
 	orroomflag $40
 	enableinput
-script5f4a:
+-
 	checkabutton
 	showtext TX_0b41
-	jump2byte script5f4a
-script5f50:
-	spawninteraction $470b, $28, $44
-	spawninteraction $4707, $28, $4c
-	spawninteraction $4708, $28, $74
+	jump2byte -
+
+syrupScript_spawnShopItems:
+	spawninteraction INTERACID_SHOP_ITEM, $0b, $28, $44
+	spawninteraction INTERACID_SHOP_ITEM, $07, $28, $4c
+	spawninteraction INTERACID_SHOP_ITEM, $08, $28, $74
 	scriptend
-script5f60:
+
+syrupScript_showWelcomeText:
 	showtext TX_0d00
 	scriptend
-script5f64:
+
+; "We're closed"
+syrupScript_showClosedText:
 	showtext TX_0d0b
 	scriptend
-script5f68:
-	jumptable_objectbyte $78
-	.dw script5f74
-	.dw script5f79
-	.dw script5f74
-	.dw script5f79
-	.dw script5f7e
-script5f74:
-	showtextnonexitable $0d01
-	jump2byte script5f83
-script5f79:
-	showtextnonexitable $0d05
-	jump2byte script5f83
-script5f7e:
-	showtextnonexitable $0d0a
-	jump2byte script5f83
-script5f83:
-	jumpiftextoptioneq $00, script5f93
-	writeobjectbyte $7b, $ff
-	writememory $cbad, $03
-	writememory $cba0, $01
+
+syrupScript_purchaseItem:
+.ifdef ROM_AGES
+	jumptable_objectbyte Interaction.var37
+.else
+	jumptable_objectbyte Interaction.var38
+.endif
+	.dw @buyMagicPotion
+	.dw @buyGashaSeed
+	.dw @buyMagicPotion
+	.dw @buyGashaSeed
+	.dw @buyBombchus
+
+@buyMagicPotion:
+	showtextnonexitable TX_0d01
+	jump2byte @checkAcceptPurchase
+
+@buyGashaSeed:
+	showtextnonexitable TX_0d05
+	jump2byte @checkAcceptPurchase
+
+@buyBombchus:
+	showtextnonexitable TX_0d0a
+.ifdef ROM_SEASONS
+	jump2byte @checkAcceptPurchase
+.endif
+
+@checkAcceptPurchase:
+	jumpiftextoptioneq $00, @tryToPurchase
+
+	; Said "no" when asked to purchase
+.ifdef ROM_AGES
+	writeobjectbyte Interaction.var3a, $ff
+.else
+	writeobjectbyte Interaction.var3b, $ff
+.endif
+	writememory wcbad, $03
+	writememory wTextIsActive, $01
 	scriptend
-script5f93:
-	jumptable_objectbyte $79
-	.dw script5fa5
-	.dw script5f99
-script5f99:
-	writeobjectbyte $7b, $ff
-	writememory $cbad, $01
-	writememory $cba0, $01
+
+@tryToPurchase:
+.ifdef ROM_AGES
+	jumpifmemoryeq wShopHaveEnoughRupees, $00, @enoughRupees
+	writeobjectbyte Interaction.var3a, $ff
+.else
+	jumptable_objectbyte Interaction.var39
+	.dw @enoughRupees
+	.dw @notEnoughRupees
+@notEnoughRupees:
+	writeobjectbyte Interaction.var3b, $ff
+.endif
+	writememory wcbad, $01
+	writememory wTextIsActive, $01
 	scriptend
-script5fa5:
-	jumptable_objectbyte $7a
-	.dw script5fab
-	.dw script5fb7
-script5fab:
-	writeobjectbyte $7b, $01
-	writememory $cbad, $00
-	writememory $cba0, $01
+
+@enoughRupees:
+.ifdef ROM_AGES
+	jumptable_objectbyte Interaction.var38
+	.dw @buy
+	.dw _shopkeeperCantBuy
+@buy:
+	writeobjectbyte Interaction.var3a, $01
+.else
+	jumptable_objectbyte Interaction.var3a
+	.dw @buy
+	.dw @shopkeeperCantBuy
+@buy:
+	writeobjectbyte Interaction.var3b, $01
+.endif
+	writememory wcbad, $00
+	writememory wTextIsActive, $01
 	scriptend
-script5fb7:
-	writeobjectbyte $7b, $ff
-	writememory $cbad, $02
-	writememory $cba0, $01
+.ifdef ROM_SEASONS
+@shopkeeperCantBuy:
+	writeobjectbyte Interaction.var3b, $ff
+	writememory wcbad, $02
+	writememory wTextIsActive, $01
 	scriptend
-script5fc3:
+.endif
+
+
+; ==============================================================================
+; INTERACID_S_ZELDA
+; ==============================================================================
+zeldaScript_ganonBeat:
 	setcollisionradii $08, $04
 	makeabuttonsensitive
 	checkabutton
@@ -4121,14 +4331,19 @@ script5fc3:
 	wait 60
 	writememory $cc04, $0f
 	scriptend
-script5fde:
-	loadscript script_14_4973
-script5fe2:
-	loadscript script_14_4999
+
+zeldaScript_afterEscapingRoomOfRites:
+	loadscript zelda_triforceOnHandText
+
+zeldaScript_zeldaKidnapped:
+	loadscript zelda_kidnapped
+
 script5fe6:
 	loadscript script_14_49b6
+
 script5fea:
 	loadscript script_14_49c8
+
 script5fee:
 	checkmemoryeq $cfc0, $01
 	setanimation $02
@@ -4147,10 +4362,12 @@ script5fee:
 	checkmemoryeq $cfc0, $0b
 	movedown $49
 	scriptend
-script601c:
+
+zeldaScript_withAnimalsHopefulText:
 	rungenericnpc TX_5010
-script601f:
-	jumpifglobalflagset $26, script6048
+
+zeldaScript_blessingBeforeFightingOnox:
+	jumpifglobalflagset GLOBALFLAG_TALKED_TO_ZELDA_BEFORE_ONOX_FIGHT, @talkedToZelda
 	setdisabledobjectsto11
 	setspeed SPEED_100
 	setangleandanimation $00
@@ -4162,44 +4379,47 @@ script601f:
 	wait 60
 	applyspeed $20
 	wait 30
-	asm15 scriptHlp.seasonsFunc_15_63d1, $01
+	asm15 scriptHlp.forceLinkState8AndSetDirection, DIR_RIGHT
 	showtext TX_0607
-	asm15 $59b3
+	asm15 scriptHlp.child_giveHeartRefill
 	checkheartdisplayupdated
 	wait 30
 	setangle $08
 	applyspeed $20
 	wait 20
-	setglobalflag $26
+	setglobalflag GLOBALFLAG_TALKED_TO_ZELDA_BEFORE_ONOX_FIGHT
 	enableinput
-script6048:
+@talkedToZelda:
 	setcoords $68, $68
 	initcollisions
-script604c:
+-
 	checkabutton
 	showtext TX_0608
-	asm15 $59b3
+	asm15 scriptHlp.child_giveHeartRefill
 	checkheartdisplayupdated
-	jump2byte script604c
-script6056:
+	jump2byte -
+
+zeldaScript_healLinkIfNeeded:
 	initcollisions
 	checkabutton
-	asm15 $5aac
-	jumpifobjectbyteeq $7f, $01, script606b
+	asm15 scriptHlp.zelda_checkIfLinkFullyHealed
+	jumpifobjectbyteeq $7f, $01, @fullyHealedAlready
 	showtext TX_050c
 	disableinput
-	asm15 $59b3
+	asm15 scriptHlp.child_giveHeartRefill
 	checkheartdisplayupdated
 	enableinput
-	jump2byte script606e
-script606b:
+	jump2byte @comeBackText
+@fullyHealedAlready:
 	showtext TX_050d
-script606e:
+@comeBackText:
 	wait 30
-script606f:
+-
 	checkabutton
 	showtext TX_050e
-	jump2byte script606f
+	jump2byte -
+
+
 script6075:
 	writememory $cfde, $00
 	writememory $cfdf, $00

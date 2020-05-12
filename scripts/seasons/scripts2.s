@@ -1,3 +1,6 @@
+; ==============================================================================
+; INTERACID_DUNGEON_SCRIPT
+; ==============================================================================
 explorersCrypt_firesGoingOut_1:
 	delay 5
 	playsound SND_GHOST
@@ -110,6 +113,9 @@ script_14_4801:
 	scriptend
 
 
+; ==============================================================================
+; INTERACID_SEASON_SPIRITS_SCRIPTS
+; ==============================================================================
 seasonsSpirits_enteringTempleCutscene:
 	stopifroomflag40set
 	setcollisionradii $08 $20
@@ -144,6 +150,9 @@ seasonsSpirits_createBridgeOnOrbHit:
 	scriptend
 
 
+; ==============================================================================
+; INTERACID_S_SUBROSIAN
+; ==============================================================================
 subrosianScript_steaLinksFeather:
 	stopifroomflag40set
 	writeobjectbyte Interaction.oamFlags $01
@@ -192,36 +201,38 @@ subrosianScript_inHouseRunFromLink:
 	scriptend
 
 
-script_14_48b5:
-	asm15 $63d1 $02
+; ==============================================================================
+; INTERACID_PIRATIAN_CAPTAIN
+; ==============================================================================
+linkedPirateCaptainScript_sayingByeToAmbi:
+	asm15 scriptHlp.forceLinkState8AndSetDirection DIR_DOWN
 	delay 6
-	showtextlowindex $20
+	showtextlowindex <TX_3a20
 	delay 6
-	showtextlowindex $21
+	showtextlowindex <TX_3a21
 	delay 6
-	showtextlowindex $28
+	showtextlowindex <TX_3a28
 	delay 6
-	showtextlowindex $22
+	showtextlowindex <TX_3a22
 	delay 6
-	showtextlowindex $29
+	showtextlowindex <TX_3a29
 	delay 6
-	showtextlowindex $23
+	showtextlowindex <TX_3a23
 	asm15 objectSetVisible81
 	setspeed SPEED_80
 	movedown $09
 	delay 6
-	showtextlowindex $2a
+	showtextlowindex <TX_3a2a
 	xorcfc0bit 2
 	delay 6
-	showtextlowindex $24
+	showtextlowindex <TX_3a24
 	delay 6
-	jump2byte $5d36
+	jump2byte scriptHlp.seasonsFunc_15_5d36
 
-
-script_14_48dc:
+showSamasaGateCombination:
 	checkabutton
 	setdisabledobjectsto91
-	showtextlowindex $0c
+	showtextlowindex <TX_3a0c
 	delay 6
 	writeobjectbyte Interaction.var3c $01
 	setspeed SPEED_200
@@ -231,26 +242,26 @@ script_14_48dc:
 	setangle ANGLE_RIGHT
 	applyspeed $09
 	delay 1
-	callscript $5e59
-	callscript $5e59
+	callscript pirationScript_closeOpenCupboard
+	callscript pirationScript_closeOpenCupboard
 	setanimation $00
 	setangle ANGLE_LEFT
 	applyspeed $09
 	delay 1
-	callscript $5e59
+	callscript pirationScript_closeOpenCupboard
 	setanimation $00
 	setangle ANGLE_LEFT
 	applyspeed $09
 	delay 1
-	callscript $5e59
-	callscript $5e59
+	callscript pirationScript_closeOpenCupboard
+	callscript pirationScript_closeOpenCupboard
 	setanimation $00
 	setangle ANGLE_RIGHT
 	applyspeed $19
 	delay 1
-	callscript $5e59
-	callscript $5e59
-	callscript $5e59
+	callscript pirationScript_closeOpenCupboard
+	callscript pirationScript_closeOpenCupboard
+	callscript pirationScript_closeOpenCupboard
 	setanimation $00
 	setangle ANGLE_LEFT
 	applyspeed $11
@@ -258,22 +269,21 @@ script_14_48dc:
 	movedown $15
 	writeobjectbyte Interaction.var3c $00
 	delay 6
-	showtextlowindex $0d
+	showtextlowindex <TX_3a0d
 	delay 6
 	enableallobjects
-	jump2byte $5e50
+	jump2byte piratian2FScript_textBasedOnD6Beaten@showGateCombo
 
-
-script_14_4930:
+piratianCaptain_preCutsceneScene:
 	disableinput
-	asm15 $5a67
+	asm15 scriptHlp.pirateCaptain_freezeLinkForCutscene
 	writememory wcc90 $01
 	delay 8
-	asm15 $5a21
+	asm15 scriptHlp.piratesDeparting_spawnPirateFromShip
 	checkcfc0bit 0
-	callscript $5f0a
+	callscript piratianScript_jump
 	delay 6
-	showtextlowindex $25
+	showtextlowindex <TX_3a25
 	delay 6
 	xorcfc0bit 1
 	writeobjectbyte Interaction.var3c $01
@@ -283,15 +293,15 @@ script_14_4930:
 	delay 1
 	setspeed SPEED_100
 	moveup $1f
-	callscript $5f01
-	asm15 $5a61
+	callscript piratianScript_moveUpPauseThenUp
+	asm15 scriptHlp.piratianCaptain_setInvisible
 	checkcfc0bit 2
-	asm15 $5a45
+	asm15 scriptHlp.piratianCaptain_simulatedInput
 	enableallobjects
 	checkflagset $07 $cbc3
 	setdisabledobjectsto91
 	delay 5
-	asm15 $5a5b
+	asm15 scriptHlp.piratianCaptain_setLinkInvisible
 	writememory $cbc3 $00
 	delay 8
 	setdisabledobjectsto11
@@ -299,7 +309,10 @@ script_14_4930:
 	scriptend
 
 
-script_14_4973:
+; ==============================================================================
+; INTERACID_S_ZELDA
+; ==============================================================================
+zelda_triforceOnHandText:
 	asm15 objectSetInvisible
 	checkmemoryeq $cfc0 $01
 	asm15 objectSetVisible
@@ -316,8 +329,7 @@ script_14_4973:
 	writememory $cfc0 $08
 	scriptend
 
-
-script_14_4999:
+zelda_kidnapped:
 	delay 8
 	setcoords $18 $18
 	setspeed SPEED_100
@@ -329,12 +341,11 @@ script_14_4999:
 	delay 1
 	showtext TX_500d ; Zelda! No!
 	delay 6
-	spawninteraction $ba $01 $18 $18
+	spawninteraction INTERACID_ba $01 $18 $18
 	checkcfc0bit 0
 	applyspeed $51
 	xorcfc0bit 1
 	scriptend
-
 
 script_14_49b6:
 	setanimation $02
@@ -345,10 +356,9 @@ script_14_49b6:
 	delay 4
 	setanimation $02
 	checkcfc0bit 5
-	asm15 $5ac8
+	asm15 scriptHlp.zelda_createExclamationMark
 	playsound SND_CLINK
 	scriptend
-
 
 script_14_49c8:
 	setanimation $03

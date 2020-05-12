@@ -6210,7 +6210,11 @@ syrupScript_showClosedText:
 	scriptend
 
 syrupScript_purchaseItem:
+.ifdef ROM_AGES
 	jumptable_objectbyte Interaction.var37
+.else
+	jumptable_objectbyte Interaction.var38
+.endif
 	.dw @buyMagicPotion
 	.dw @buyGashaSeed
 	.dw @buyMagicPotion
@@ -6227,32 +6231,62 @@ syrupScript_purchaseItem:
 
 @buyBombchus:
 	showtextnonexitable TX_0d0a
+.ifdef ROM_SEASONS
+	jump2byte @checkAcceptPurchase
+.endif
 
 @checkAcceptPurchase:
 	jumpiftextoptioneq $00, @tryToPurchase
 
 	; Said "no" when asked to purchase
+.ifdef ROM_AGES
 	writeobjectbyte Interaction.var3a, $ff
+.else
+	writeobjectbyte Interaction.var3b, $ff
+.endif
 	writememory wcbad, $03
 	writememory wTextIsActive, $01
 	scriptend
 
 @tryToPurchase:
+.ifdef ROM_AGES
 	jumpifmemoryeq wShopHaveEnoughRupees, $00, @enoughRupees
 	writeobjectbyte Interaction.var3a, $ff
+.else
+	jumptable_objectbyte Interaction.var39
+	.dw @enoughRupees
+	.dw @notEnoughRupees
+@notEnoughRupees:
+	writeobjectbyte Interaction.var3b, $ff
+.endif
 	writememory wcbad, $01
 	writememory wTextIsActive, $01
 	scriptend
 
 @enoughRupees:
+.ifdef ROM_AGES
 	jumptable_objectbyte Interaction.var38
 	.dw @buy
 	.dw _shopkeeperCantBuy
 @buy:
 	writeobjectbyte Interaction.var3a, $01
+.else
+	jumptable_objectbyte Interaction.var3a
+	.dw @buy
+	.dw @shopkeeperCantBuy
+@buy:
+	writeobjectbyte Interaction.var3b, $01
+.endif
 	writememory wcbad, $00
 	writememory wTextIsActive, $01
 	scriptend
+.ifdef ROM_SEASONS
+@shopkeeperCantBuy:
+	writeobjectbyte Interaction.var3b, $ff
+	writememory wcbad, $02
+	writememory wTextIsActive, $01
+	scriptend
+.endif
 
 
 ; ==============================================================================

@@ -4546,7 +4546,7 @@ interactionCodea7:
 	call interactionSetAnimation		; $678e
 	call getFreeInteractionSlot		; $6791
 	ret nz			; $6794
-	ld (hl),INTERACID_35		; $6795
+	ld (hl),INTERACID_CHILD		; $6795
 	inc l			; $6797
 	ld a,($c6da)		; $6798
 	ld b,$00		; $679b
@@ -7656,7 +7656,7 @@ interactionCodec4:
 @villagersSeenInteractions:
 	.db $05
 	; interactioncode - subid - yh - xh
-	.db INTERACID_ZELDA $07 $28 $48
+	.db INTERACID_S_ZELDA $07 $28 $48
 	.db INTERACID_9d $02 $30 $60
 	.db INTERACID_bc $01 $48 $60
 	.db INTERACID_be $01 $48 $30

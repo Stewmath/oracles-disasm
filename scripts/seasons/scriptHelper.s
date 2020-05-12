@@ -1006,7 +1006,6 @@ subrosian_fakeReset:
 	ld a,$09		; $5963
 	jp openMenu		; $5965
 
-
 subrosianFunc_5968:
 	ld e,$4d		; $5968
 	ld a,(de)		; $596a
@@ -1016,11 +1015,18 @@ subrosianFunc_5968:
 	ld (de),a		; $5971
 	ret			; $5972
 
+
+; ==============================================================================
+; INTERACID_DATING_ROSA_EVENT
+; ==============================================================================
+rosa_tradeRibbon:
 	ld e,$77		; $5973
 	xor a			; $5975
 	ld (de),a		; $5976
-	ld a,$46		; $5977
+	ld a,TREASURE_RIBBON		; $5977
 	jp loseTreasure		; $5979
+
+rosa_startDate:
 	ld h,d			; $597c
 	ld l,$42		; $597d
 	ld (hl),$01		; $597f
@@ -1031,37 +1037,79 @@ subrosianFunc_5968:
 	ld a,$27		; $5986
 	ld (wActiveMusic),a		; $5988
 	jp playSound		; $598b
-	ld hl,$c60f		; $598e
-	add (hl)		; $5991
-	ld (hl),a		; $5992
-	ret			; $5993
-	call cpRupeeValue		; $5994
-	ld e,$7c		; $5997
-	ld (de),a		; $5999
-	ret			; $599a
-	ld hl,$cba5		; $599b
-	add (hl)		; $599e
-	ld ($c6dd),a		; $599f
-	ret			; $59a2
-	ld a,($c6dd)		; $59a3
-	or a			; $59a6
-	jr nz,_label_15_216	; $59a7
-	ld a,$38		; $59a9
-	jp playSound		; $59ab
-_label_15_216:
-	ld a,$4a		; $59ae
-	jp playSound		; $59b0
-	ld c,$40		; $59b3
-	jr _label_15_217		; $59b5
-	ld c,$04		; $59b7
-_label_15_217:
-	ld a,$29		; $59b9
-	jp giveTreasure		; $59bb
-	ld c,a			; $59be
-	ld a,$28		; $59bf
-	jp giveTreasure		; $59c1
 
 
+; ==============================================================================
+; INTERACID_CHILD
+; ==============================================================================
+
+;;
+; @param	a	Value to add
+; @addr{5457}
+child_addValueToChildStatus:
+	ld hl,wChildStatus		; $5457
+	add (hl)		; $545a
+	ld (hl),a		; $545b
+	ret			; $545c
+
+child_checkHasRupees:
+	call cpRupeeValue		; $545d
+	ld e,Interaction.var3c		; $5460
+	ld (de),a		; $5462
+	ret			; $5463
+
+;;
+; Stores the response to the "love or courage" question.
+; @addr{5464}
+child_setStage8ResponseToSelectedTextOption:
+	ld hl,wSelectedTextOption		; $5464
+	add (hl)		; $5467
+
+;;
+; @addr{5468}
+child_setStage8Response:
+	ld (wChildStage8Response),a		; $5468
+	ret			; $546b
+
+;;
+; @addr{546c}
+child_playMusic:
+	ld a,(wChildStage8Response)		; $546c
+	or a			; $546f
+	jr nz,+			; $5470
+	ld a,MUS_ZELDA_SAVED		; $5472
+	jp playSound		; $5474
++
+	ld a,MUS_PRECREDITS		; $5477
+	jp playSound		; $5479
+
+;;
+; @addr{547c}
+child_giveHeartRefill:
+	ld c,$40		; $547c
+	jr ++			; $547e
+
+;;
+; @addr{5480}
+child_giveOneHeart:
+	ld c,$04		; $5480
+++
+	ld a,TREASURE_HEART_REFILL		; $5482
+	jp giveTreasure		; $5484
+
+;;
+; @param	a	Rupee value
+; @addr{5487}
+child_giveRupees:
+	ld c,a			; $5487
+	ld a,TREASURE_RUPEES		; $5488
+	jp giveTreasure		; $548a
+
+
+; ==============================================================================
+; INTERACID_MAYORS_HOUSE_NPC
+; INTERACID_S_GORON
+; ==============================================================================
 getNextRingboxLevel:
 	ld a,(wRingBoxLevel)		; $59c4
 	dec a			; $59c7
@@ -1077,23 +1125,31 @@ getNextRingboxLevel:
 	ret			; $59d6
 
 
+; ==============================================================================
+; INTERACID_PIRATIAN
+; INTERACID_PIRATIAN_CAPTAIN
+; ==============================================================================
+showPiratianTextBasedOnD6Done:
 	ld b,a			; $59d7
 	ld e,$42		; $59d8
 	ld a,(de)		; $59da
 	add a			; $59db
 	add b			; $59dc
-	ld hl,$59e5		; $59dd
+	ld hl,@subidTable-2		; $59dd
 	rst_addAToHl			; $59e0
-	ld b,$3a		; $59e1
+	ld b,>TX_3a00		; $59e1
 	ld c,(hl)		; $59e3
 	jp showText		; $59e4
-	nop			; $59e7
-	ld bc,$0302		; $59e8
-	inc b			; $59eb
-	dec b			; $59ec
-	ld b,$07		; $59ed
-	ld ($0908),sp		; $59ef
-	add hl,bc		; $59f2
+@subidTable:
+	; D6 not done - D6 done
+	.db <TX_3a00 <TX_3a01
+	.db <TX_3a02 <TX_3a03
+	.db <TX_3a04 <TX_3a05
+	.db <TX_3a06 <TX_3a07
+	.db <TX_3a08 <TX_3a08
+	.db <TX_3a09 <TX_3a09
+
+piratian_waitUntilJumpDone:
 	ld c,$30		; $59f3
 	call objectUpdateSpeedZ_paramC		; $59f5
 	ret nz			; $59f8
@@ -1101,6 +1157,10 @@ getNextRingboxLevel:
 	ld l,$7d		; $59fa
 	ld (hl),$01		; $59fc
 	ret			; $59fe
+
+;;
+; @param	b	Tile index
+piratian_replaceTileAtPiratian:
 	ld b,a			; $59ff
 	ld e,$4d		; $5a00
 	ld a,(de)		; $5a02
@@ -1109,20 +1169,21 @@ getNextRingboxLevel:
 	ld c,a			; $5a07
 	ld a,b			; $5a08
 	jp setTile		; $5a09
-	ld a,$13		; $5a0c
+
+headToPirateShip:
+	ld a,GLOBALFLAG_PIRATES_LEFT_FOR_SHIP		; $5a0c
 	call setGlobalFlag		; $5a0e
-	ld hl,$5a1c		; $5a11
+	ld hl,@warpDestVariables		; $5a11
 	call setWarpDestVariables		; $5a14
 	ld a,$8d		; $5a17
 	jp playSound		; $5a19
-	add c			; $5a1c
-	ld (hl),h		; $5a1d
-	nop			; $5a1e
-	ld b,d			; $5a1f
-	add e			; $5a20
+@warpDestVariables:
+	m_HardcodedWarpA ROOM_SEASONS_174 $00 $42 $83
+
+piratesDeparting_spawnPirateFromShip:
 	call getFreeInteractionSlot		; $5a21
 	ret nz			; $5a24
-	ld (hl),$40		; $5a25
+	ld (hl),INTERACID_PIRATIAN		; $5a25
 	inc l			; $5a27
 	ld (hl),$0c		; $5a28
 	ld l,$4b		; $5a2a
@@ -1130,9 +1191,11 @@ getNextRingboxLevel:
 	ld l,$4d		; $5a2e
 	ld (hl),$78		; $5a30
 	ret			; $5a32
+
+linkedGame_spawnAmbi:
 	call getFreeInteractionSlot		; $5a33
 	ret nz			; $5a36
-	ld (hl),$b8		; $5a37
+	ld (hl),INTERACID_S_AMBI		; $5a37
 	inc l			; $5a39
 	ld (hl),$03		; $5a3a
 	ld l,$4b		; $5a3c
@@ -1140,32 +1203,36 @@ getNextRingboxLevel:
 	ld l,$4d		; $5a40
 	ld (hl),$50		; $5a42
 	ret			; $5a44
-	ld hl,$5a4d		; $5a45
-	ld a,$15		; $5a48
+
+piratianCaptain_simulatedInput:
+	ld hl,@simulatedInput		; $5a45
+	ld a,:@simulatedInput		; $5a48
 	jp setSimulatedInputAddress		; $5a4a
-	ld d,b			; $5a4d
-	nop			; $5a4e
-	stop			; $5a4f
-	inc b			; $5a50
-	nop			; $5a51
-	nop			; $5a52
-	jr nz,_label_15_219	; $5a53
-_label_15_219:
-	ld b,b			; $5a55
-	ld ($0000),sp		; $5a56
-	rst $38			; $5a59
-	rst $38			; $5a5a
+@simulatedInput:
+	dwb 80 BTN_RIGHT
+	dwb  4 $00
+	dwb 32 BTN_UP
+	dwb  8 $00
+	.dw $ffff
+
+piratianCaptain_setLinkInvisible:
 	ld hl,$d01a		; $5a5b
 	res 7,(hl)		; $5a5e
 	ret			; $5a60
+
+piratianCaptain_setInvisible:
 	ld h,d			; $5a61
 	ld l,$5a		; $5a62
 	res 7,(hl)		; $5a64
 	ret			; $5a66
+
+pirateCaptain_freezeLinkForCutscene:
 	call setLinkForceStateToState08		; $5a67
 	ld hl,$d008		; $5a6a
 	ld (hl),$01		; $5a6d
 	ret			; $5a6f
+
+seasonsFunc_15_5a70:
 	ld e,$4d		; $5a70
 	ld a,(de)		; $5a72
 	ld hl,$d00d		; $5a73
@@ -1180,16 +1247,18 @@ _label_15_219:
 	ld a,b			; $5a83
 	sub (hl)		; $5a84
 	ld a,$01		; $5a85
-	jr nc,_label_15_220	; $5a87
+	jr nc,+			; $5a87
 	inc a			; $5a89
-_label_15_220:
++
 	ld e,$79		; $5a8a
 	ld (de),a		; $5a8c
 	ret			; $5a8d
+
+unluckySailor_checkHave777OreChunks:
 	xor a			; $5a8e
 	ld e,$79		; $5a8f
 	ld (de),a		; $5a91
-	ld hl,$c6a7		; $5a92
+	ld hl,wNumOreChunks		; $5a92
 	ldi a,(hl)		; $5a95
 	cp $77			; $5a96
 	ret nz			; $5a98
@@ -1199,20 +1268,30 @@ _label_15_220:
 	ld a,$01		; $5a9d
 	ld (de),a		; $5a9f
 	ret			; $5aa0
-	ld hl,$c6ab		; $5aa1
+
+unluckySailor_increaseBombCapacityAndCount:
+	ld hl,wMaxBombs		; $5aa1
 	ld a,(hl)		; $5aa4
 	add $20			; $5aa5
 	ldd (hl),a		; $5aa7
 	ld (hl),a		; $5aa8
 	jp setStatusBarNeedsRefreshBit1		; $5aa9
-	ld hl,$c6a3		; $5aac
-	ld a,($c6a2)		; $5aaf
+
+
+; ==============================================================================
+; INTERACID_S_ZELDA
+; ==============================================================================
+zelda_checkIfLinkFullyHealed:
+	ld hl,wLinkMaxHealth		; $5aac
+	ld a,(wLinkHealth)		; $5aaf
 	cp (hl)			; $5ab2
 	ret nz			; $5ab3
 	ld e,$7f		; $5ab4
 	ld a,$01		; $5ab6
 	ld (de),a		; $5ab8
 	ret			; $5ab9
+
+
 	ld hl,$c6a2		; $5aba
 	ld a,($cbe4)		; $5abd
 	cp (hl)			; $5ac0
@@ -1221,6 +1300,9 @@ _label_15_220:
 	ld a,$01		; $5ac4
 	ld (de),a		; $5ac6
 	ret			; $5ac7
+
+
+zelda_createExclamationMark:
 	ld b,$f8		; $5ac8
 	ld c,$10		; $5aca
 	ld a,$28		; $5acc
@@ -1228,6 +1310,8 @@ _label_15_220:
 	call getThisRoomFlags		; $5ad1
 	res 5,(hl)		; $5ad4
 	ret			; $5ad6
+
+
 	ld hl,$d008		; $5ad7
 	ld a,(hl)		; $5ada
 	xor $02			; $5adb
@@ -1587,6 +1671,9 @@ _label_15_229:
 	jr _label_15_230		; $5d30
 	ld a,$05		; $5d32
 	jr _label_15_230		; $5d34
+
+
+seasonsFunc_15_5d36:
 	ld a,$03		; $5d36
 _label_15_230:
 	ld ($cfd4),a		; $5d38
@@ -1595,6 +1682,8 @@ _label_15_230:
 	ld hl,$cfda		; $5d40
 	inc (hl)		; $5d43
 	ret			; $5d44
+
+
 	ld e,$54		; $5d45
 	ld a,$80		; $5d47
 	ld (de),a		; $5d49
@@ -2747,10 +2836,12 @@ linkedScript_giveRing:
 	ret			; $63d0
 
 
-seasonsFunc_15_63d1:
-	ld hl,$d008		; $63d1
+forceLinkState8AndSetDirection:
+	ld hl,w1Link.direction	; $63d1
 	ld (hl),a		; $63d4
 	jp setLinkForceStateToState08		; $63d5
+
+
 	ld bc,$6417		; $63d8
 	jr _label_15_260		; $63db
 	ld bc,$640d		; $63dd

@@ -14332,7 +14332,7 @@ createSokraSnore:
 	ld c,$fc		; $3d38
 	jp objectCreateFloatingSnore		; $3d3a
 
-seasonsFunc_3d3d:
+checkGotMakuSeedDidNotSeeZeldaKidnapped:
 	ldh a,(<hRomBank)	; $3d3d
 	push af			; $3d3f
 	callfrombank0 interactionCodec4@checkGotMakuSeedDidNotSeeZeldaKidnapped		; $3d40

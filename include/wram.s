@@ -785,7 +785,12 @@ wInsertedJewels: ; -/$c6e1
 ; Bitset of jewels inserted into tarm ruins entrance.
 	db
 ws_c6e2: ; TODO: figure out what this is
-	dsb 3
+	dsb 2
+wTalkedToPirationCaptainState: ; -/$c6e4
+; 0: Not yet talked to him after D6 beaten
+; 1: Talked to him without a bell
+; 2: Talked to him with a bell (either rusty or fixed)
+	db
 
 .endif
 
@@ -1972,7 +1977,7 @@ wGrabbableObjectBuffer: ; $cc74
 wGrabbableObjectBufferEnd: ; $cc84
 	.db
 
-wcc84: ; $cc84
+wcc84: ; $cc84/$cc9e
 	db
 wcc85: ; $cc85/$cc9f
 ; Relates to maple?

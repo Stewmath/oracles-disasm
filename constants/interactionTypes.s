@@ -857,11 +857,7 @@
 ; @subid_0e{Generic npc like subid $0c, but naps when Link isn't near.}
 ; @subid_0f{Linked NPC telling you the biggoron secret.}
 ; @subid_10{Clairvoyant goron who gives you tips.}
-.ifdef ROM_AGES
 .define INTERACID_GORON			$66
-.else
-.define INTERACID_GORON			$3b
-.endif
 
 
 .ifdef ROM_AGES
@@ -1497,8 +1493,6 @@
 ; @subid_01{Right side of house}
 .define INTERACID_BIPIN_BLOSSOM_FAMILY_SPAWNER	$ac
 
-
-.ifdef ROM_AGES
 ;;
 ; @subid_00{Zelda in room of rites}
 ; @subid_01{}
@@ -1512,11 +1506,6 @@
 ; @subid_09{}
 ; @subid_0a{}
 .define INTERACID_ZELDA				$ad
-
-.else; ROM_SEASONS
-
-.define INTERACID_ZELDA				$44 ; TODO: organize this better
-.endif
 
 ;;
 ; Used for the credits text in between the mini-cutscenes.
@@ -2047,6 +2036,21 @@
 ; @subid_26{Signs guy}
 .define INTERACID_S_SUBROSIAN		$30
 
+;;
+; @subid_00{Rosa}
+; @subid_01{Rosa following you}
+; @subid_02{Spawns star ore}
+; @subid_03{same code as subid_00???}
+.define INTERACID_DATING_ROSA_EVENT	$31
+
+;;
+; @subid_00{South of autumn temple}
+; @subid_01{Outside cave SE of D8}
+; @subid_02{Path west of Temple of seasons near small erupting volcanoes}
+; @subid_03{Near boomerang subrosian}
+; @subid_04{Path southwest of Temple of seasons - gap to village}
+; @subid_05{In village, screen north of portal}
+; @subid_06-07{Unused?}
 .define INTERACID_SUBROSIAN_WITH_BUCKETS	$32
 
 ;;
@@ -2055,8 +2059,8 @@
 ; @subid_83-85{Above dancing minigame entrance}
 .define INTERACID_BATHING_SUBROSIANS	$33
 
+;;
 .define INTERACID_SUBROSIAN_SMITHS	$34
-.define INTERACID_35			$35
 
 ;;
 ; Moves around sunken city a lot based on game stage
@@ -2079,13 +2083,75 @@
 .define INTERACID_3a			$3a
 
 ;;
+; upper nybble of subid goes into var03
+; @var03_00{Initially looks forward}
+; @var03_01{Initially resting until you're near}
+; @var03_02{Pushes Link away while walking}
+;
+; @subid_20{Pacing goron}
+; @subid_11{Regular goron - 1F}
+; @subid_02{Regular goron - 1F}
+; @subid_13{Regular goron - 1F}
+; @subid_14{Regular goron - 2F}
+; @subid_15{Regular goron - 2F}
+; @subid_16{Red goron who upgrades ringbox}
+; @subid_07{Red goron giving secret}
+.define INTERACID_S_GORON		$3b
+
+;;
 .define INTERACID_OLD_LADY_FARMER	$3c
 
 ;;
 .define INTERACID_FOUNTAIN_OLD_MAN	$3d
 
 ;;
+; upper nybble of subid goes into var03, and determines type of NPC
+; subids are replaced with the current game stage (different for Horon Village and Sunken City)
+; @subid_00-04{Throws dog a ball}
+; @subid_10-13{Simple Horon Village boy}
+; @subid_20{Disappears in winter. In Spring, plays with Horon village flower}
+; @subid_30,32-34{Sunken City boy}
+; @subid_31{In Sunken City, ROOM_SEASONS_06e when Moblins keep destroyed, else ROOM_SEASONS_05e}
+.define INTERACID_MISC_BOY_NPCS		$3e
+
+;;
 .define INTERACID_TICK_TOCK		$3f
+
+;;
+; subid_00 and subid_0b belongs to captain
+; code just determines looks, subids determine the script
+; @subid_01-06{In the house, 1F}
+; @subid_07{In the house, 2F - NPC Unlucky Sailor awaiting secret}
+; @subid_08{In the house, 2F}
+; @subid_09{Roof of house by portal}
+; @subid_0a{By samasa desert gates}
+; @subid_0c{Spawned by captain subid_0b from ship when leaving Subrosia}
+; @subid_0d-0e{By captain subid_0b, by ship in Subrosia}
+.define INTERACID_PIRATIAN		$40
+
+;;
+; @subid_00{In the house}
+; @subid_0b{By the ship in Subrosia}
+.define INTERACID_PIRATIAN_CAPTAIN	$41
+
+;;
+; 1 subrosian that moves downstairs when pirates leave
+; @subid_00{2F}
+; @subid_01{1F}
+.define INTERACID_PIRATE_HOUSE_SUBROSIAN	$42
+
+;;
+; @subid_00{In Room of Rites}
+; @subid_01{By Maku tree after escaping Room of Rites}
+; @subid_02{Being kidnapped}
+; @subid_03{TODO: With animals/people in cutscenes}
+; @subid_04{Same script as above - unused?}
+; @subid_05{TODO: With a triforce interaction}
+; @subid_06{TODO: Script has her pace around - before getting kidnapped?}
+; @subid_07{After Zelda Villagers cutscene, she's there with animals}
+; @subid_08{By Maku tree, before fighting Onox}
+; @subid_09{In Impa's house after saving her from vire}
+.define INTERACID_S_ZELDA		$44
 
 .define INTERACID_TALON			$45
 .define INTERACID_48			$48
@@ -2126,6 +2192,8 @@
 .define INTERACID_77			$77
 .define INTERACID_TRAMPOLINE		$7c
 
+; dog that boy throws ball for?
+.define INTERACID_83			$83
 .define INTERACID_86			$86
 .define INTERACID_88			$88
 
@@ -2157,6 +2225,10 @@
 .define INTERACID_a5			$a5
 .define INTERACID_LINKED_CUTSCENE	$b3
 .define INTERACID_b4			$b4
+
+;;
+; Shows up in a linked game when handing captain the pirate's bell
+.define INTERACID_S_AMBI		$b8
 
 ; the following animals are 5 that hang around Zelda
 .define INTERACID_ba			$ba

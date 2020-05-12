@@ -1150,7 +1150,7 @@ checkHoronVillageNPCShouldBeSeen_body:
 	; interactioncode37 (except in advance shop) - b = $01
 	; interactioncode3c - b = $02
 	; interactioncode3d - b = $03
-	; from interactioncode3e - b = $05/$06/$07 ?
+	; from interactioncode3e - b = $04/$05/$06
 	; from interactioncode80 - b = $07
 	ld a,b			; $57db
 	ld hl,_conditionalNPCLookupTable		; $57dc
@@ -1316,9 +1316,9 @@ _conditionalNPCLookupTable:
 	.dw @fickleMan
 	.dw @oldLadyFarmer
 	.dw @fountainOldMan
-	.dw _table_5919
-	.dw _table_5902
-	.dw _table_58f4
+	.dw @boyWithDog
+	.dw @horonVillageBoy
+	.dw @boyPlaysWithSpringBloomFlower
 	.dw _table_5933
 
 @fickleLady:
@@ -1366,69 +1366,69 @@ _conditionalNPCLookupTable:
 
 @oldLadyFarmer:
 @fountainOldMan:
-_table_58f4:
-	.dw __table_58f6
+@boyPlaysWithSpringBloomFlower:
+	.dw @@subid0
 
-__table_58f6:
+@@subid0:
 	.db $01 $02 $03 $04 $0a $05 $06 $07
 	.db $08 $09 $0b $00
 
-_table_5902:
-	.dw __table_590a
-	.dw __table_590d
-	.dw __table_5914
-	.dw __table_5917
+@horonVillageBoy:
+	.dw @@table_590a
+	.dw @@table_590d
+	.dw @@table_5914
+	.dw @@table_5917
 
-__table_590a:
+@@table_590a:
 	.db $01 $02 $00
 
-__table_590d:
+@@table_590d:
 	.db $03 $04 $0a $05 $06 $0b $00
 
-__table_5914:
+@@table_5914:
 	.db $07 $08 $00
 
-__table_5917:
+@@table_5917:
 	.db $09 $00
 
-_table_5919:
-	.dw __table_5923
-	.dw __table_5927
-	.dw __table_5929
-	.dw __table_592b
-	.dw __table_592f
+@boyWithDog:
+	.dw @@table_5923
+	.dw @@table_5927
+	.dw @@table_5929
+	.dw @@table_592b
+	.dw @@table_592f
 
-__table_5923:
+@@table_5923:
 	.db $01 $02 $03 $00
 
-__table_5927:
+@@table_5927:
 	.db $04 $00
 
-__table_5929:
+@@table_5929:
 	.db $0a $00
 
-__table_592b:
+@@table_592b:
 	.db $05 $06 $0b $00
 
-__table_592f:
+@@table_592f:
 	.db $07 $08 $09 $00
 
 _table_5933:
-	.dw __table_593b
-	.dw __table_5941
-	.dw __table_5943
-	.dw __table_5948
+	.dw @@table_593b
+	.dw @@table_5941
+	.dw @@table_5943
+	.dw @@table_5948
 
-__table_593b:
+@@table_593b:
 	.db $01 $02 $03 $04 $0a $00
 
-__table_5941:
+@@table_5941:
 	.db $05 $00
 
-__table_5943:
+@@table_5943:
 	.db $06 $07 $08 $09 $00
 
-__table_5948:
+@@table_5948:
 	.db $0b $00
 
 _miscNPC_scriptTable:
@@ -2630,29 +2630,29 @@ _table_607f:
 	/* $26 */ .dw subrosianScript_signsGuy
 
 
-; subrosia beach entrance and rosa screen (her ribbon event?)
+; ==============================================================================
+; INTERACID_DATING_ROSA_EVENT
+; ==============================================================================
 interactionCode31:
 	ld e,$42		; $60cd
 	ld a,(de)		; $60cf
 	rst_jumpTable			; $60d0
-	reti			; $60d1
-	ld h,b			; $60d2
-	inc e			; $60d3
-	ld h,c			; $60d4
-	sbc d			; $60d5
-	ld h,d			; $60d6
-	reti			; $60d7
-	ld h,b			; $60d8
+	.dw @subid0
+	.dw @subid1
+	.dw @subid2
+	.dw @subid3
+@subid0:
+@subid3:
 	ld e,$44		; $60d9
 	ld a,(de)		; $60db
 	rst_jumpTable			; $60dc
-	pop hl			; $60dd
-	ld h,b			; $60de
-	ld d,$61		; $60df
+	.dw @@state0
+	.dw @@state1
+@@state0:
 	ld a,$01		; $60e1
 	ld (de),a		; $60e3
 	call interactionInitGraphics		; $60e4
-	ld a,$0b		; $60e7
+	ld a,GLOBALFLAG_DATING_ROSA		; $60e7
 	call checkGlobalFlag		; $60e9
 	jp nz,interactionDelete		; $60ec
 	ld h,d			; $60ef
@@ -2660,33 +2660,33 @@ interactionCode31:
 	ld (hl),$00		; $60f2
 	ld l,$49		; $60f4
 	ld (hl),$ff		; $60f6
-	ld a,$0c		; $60f8
+	ld a,GLOBALFLAG_DATED_ROSA		; $60f8
 	call checkGlobalFlag		; $60fa
-	jr nz,_label_08_182	; $60fd
+	jr nz,+			; $60fd
 	ld e,$77		; $60ff
 	ld a,$04		; $6101
 	ld (de),a		; $6103
-_label_08_182:
-	ld hl,$5813		; $6104
++
+	ld hl,rosaScript_goOnDate		; $6104
 	call interactionSetScript		; $6107
-	ld a,$29		; $610a
+	ld a,>TX_2900		; $610a
 	call interactionSetHighTextIndex		; $610c
 	call objectGetTileAtPosition		; $610f
 	ld (hl),$00		; $6112
-	jr _label_08_183		; $6114
+	jr +			; $6114
+@@state1:
 	call interactionRunScript		; $6116
-_label_08_183:
++
 	jp npcFaceLinkAndAnimate		; $6119
+@subid1:
 	ld e,$44		; $611c
 	ld a,(de)		; $611e
 	rst_jumpTable			; $611f
-	jr z,_label_08_185	; $6120
-	ld d,(hl)		; $6122
-	ld h,c			; $6123
-	ei			; $6124
-	ld h,c			; $6125
-	ld l,h			; $6126
-	ld h,d			; $6127
+	.dw @@state0
+	.dw @@state1
+	.dw @@state2
+	.dw @@state3
+@@state0:
 	ld a,$01		; $6128
 	ld (de),a		; $612a
 	call interactionInitGraphics		; $612b
@@ -2709,43 +2709,44 @@ _label_08_183:
 	call interactionSetAnimation		; $614d
 	call objectSetVisiblec3		; $6150
 	jp objectSetPriorityRelativeToLink_withTerrainEffects		; $6153
+@@state1:
 	call objectSetPriorityRelativeToLink_withTerrainEffects		; $6156
-	call $61a4		; $6159
+	call @@func_61a4		; $6159
 	ret c			; $615c
 	ld c,$20		; $615d
 	call objectUpdateSpeedZ_paramC		; $615f
-	call z,$6182		; $6162
-	call $628e		; $6165
+	call z,@@func_6182		; $6162
+	call @@func_628e		; $6165
 	ld h,d			; $6168
 	ld l,$4b		; $6169
 	ld a,(hl)		; $616b
 	ld b,a			; $616c
 	ld l,$70		; $616d
 	cp (hl)			; $616f
-	jr nz,_label_08_184	; $6170
+	jr nz,+			; $6170
 	ld l,$4d		; $6172
 	ld a,(hl)		; $6174
 	ld c,a			; $6175
 	ld l,$71		; $6176
 	cp (hl)			; $6178
 	ret z			; $6179
-_label_08_184:
++
 	ld l,$70		; $617a
 	ld (hl),b		; $617c
 	inc l			; $617d
 	ld (hl),c		; $617e
 	jp interactionAnimate		; $617f
+@@func_6182:
 	ld h,d			; $6182
-_label_08_185:
 	ld l,$46		; $6183
 	ld a,(hl)		; $6185
 	or a			; $6186
-	jr z,_label_08_186	; $6187
+	jr z,+			; $6187
 	dec (hl)		; $6189
 	ret nz			; $618a
 	ld bc,$fe40		; $618b
 	jp objectSetSpeedZ		; $618e
-_label_08_186:
++
 	ld a,($cc77)		; $6191
 	or a			; $6194
 	ret z			; $6195
@@ -2757,78 +2758,86 @@ _label_08_186:
 	ret nz			; $61a0
 	ld (hl),$10		; $61a1
 	ret			; $61a3
-	ld a,($cc49)		; $61a4
+@@func_61a4:
+	ld a,(wActiveGroup)		; $61a4
 	cp $06			; $61a7
-	jr nc,_label_08_188	; $61a9
-	ld a,($cc4c)		; $61ab
-	ld hl,$61dd		; $61ae
+	jr nc,@@goToState3	; $61a9
+	ld a,(wActiveRoom)		; $61ab
+	ld hl,@@roomTable_61dd		; $61ae
 	call findRoomSpecificData		; $61b1
 	ret nc			; $61b4
 	rst_jumpTable			; $61b5
-	cp h			; $61b6
-	ld h,c			; $61b7
-	jp nc,$d761		; $61b8
-	ld h,c			; $61bb
+	.dw @@screenAboveRosa
+	.dw @@beachEntranceScreen
+	.dw @@goToState3
+@@screenAboveRosa:
 	ld e,$73		; $61bc
 	ld a,(de)		; $61be
 	or a			; $61bf
-	jr nz,_label_08_187	; $61c0
+	jr nz,+			; $61c0
 	ld a,($cd00)		; $61c2
 	and $01			; $61c5
-	jr z,_label_08_187	; $61c7
+	jr z,+			; $61c7
 	ld e,$44		; $61c9
 	ld a,$02		; $61cb
 	ld (de),a		; $61cd
 	scf			; $61ce
 	ret			; $61cf
-_label_08_187:
++
 	xor a			; $61d0
 	ret			; $61d1
+@@beachEntranceScreen:
 	ld e,$73		; $61d2
 	xor a			; $61d4
 	ld (de),a		; $61d5
 	ret			; $61d6
-_label_08_188:
+@@goToState3:
 	ld e,$44		; $61d7
 	ld a,$03		; $61d9
 	ld (de),a		; $61db
 	ret			; $61dc
-.DB $ed				; $61dd
-	ld h,c			; $61de
-	xor $61			; $61df
-.DB $ed				; $61e1
-	ld h,c			; $61e2
-	di			; $61e3
-	ld h,c			; $61e4
-	ld hl,sp+$61		; $61e5
-	ld a,($ed61)		; $61e7
-	ld h,c			; $61ea
-.DB $ed				; $61eb
-	ld h,c			; $61ec
-	nop			; $61ed
-	ld h,a			; $61ee
-	ld bc,$0077		; $61ef
-	nop			; $61f2
-	adc d			; $61f3
-	ld (bc),a		; $61f4
-	or c			; $61f5
-	ld (bc),a		; $61f6
-	nop			; $61f7
-	ld a,($ff00+$02)	; $61f8
-	nop			; $61fa
+@@roomTable_61dd:
+	.dw @@group0
+	.dw @@group1
+	.dw @@group2
+	.dw @@group3
+	.dw @@group4
+	.dw @@group5
+	.dw @@group6
+	.dw @@group7
+@@group0:
+@@group2:
+@@group6:
+@@group7:
+	.db $00
+@@group1:
+	; beach entrance
+	.db <ROOM_SEASONS_167 $01
+	.db <ROOM_SEASONS_177 $00
+	.db $00
+@@group3:
+	; 1F pirate house
+	.db <ROOM_SEASONS_38a $02
+	; Left room of Strange brother's house
+	.db <ROOM_SEASONS_3b1 $02
+	.db $00
+@@group4:
+	.db <ROOM_SEASONS_4f0 $02
+@@group5:
+	.db $00
+
+@@state2:
 	ld e,$45		; $61fb
 	ld a,(de)		; $61fd
 	rst_jumpTable			; $61fe
-	dec b			; $61ff
-	ld h,d			; $6200
-	dec h			; $6201
-	ld h,d			; $6202
-	ld b,e			; $6203
-	ld h,d			; $6204
+	.dw @@@substate0
+	.dw @@@substate1
+	.dw @@@substate2
+@@@substate0:
 	ld a,$01		; $6205
 	ld (de),a		; $6207
 	call clearFollowingLinkObject		; $6208
-	ld a,$0b		; $620b
+	ld a,GLOBALFLAG_DATING_ROSA		; $620b
 	call unsetGlobalFlag		; $620d
 	ld a,$01		; $6210
 	ld ($cca4),a		; $6212
@@ -2836,8 +2845,9 @@ _label_08_188:
 	ld ($d008),a		; $6217
 	ld a,$29		; $621a
 	call interactionSetHighTextIndex		; $621c
-	ld hl,$5855		; $621f
+	ld hl,rosaScript_dateEnded		; $621f
 	jp interactionSetScript		; $6222
+@@@substate1:
 	ld c,$20		; $6225
 	call objectUpdateSpeedZ_paramC		; $6227
 	call interactionAnimate		; $622a
@@ -2852,6 +2862,7 @@ _label_08_188:
 	ld e,$49		; $623f
 	ld (de),a		; $6241
 	ret			; $6242
+@@@substate2:
 	call interactionAnimate		; $6243
 	call objectApplySpeed		; $6246
 	ld e,$4b		; $6249
@@ -2871,23 +2882,25 @@ _label_08_188:
 	ld a,$28		; $6264
 	ld (wActiveMusic),a		; $6266
 	jp playSound		; $6269
+@@state3:
 	call returnIfScrollMode01Unset		; $626c
 	ld e,$45		; $626f
 	ld a,(de)		; $6271
 	rst_jumpTable			; $6272
-	ld (hl),a		; $6273
-	ld h,d			; $6274
-	adc b			; $6275
-	ld h,d			; $6276
+	.dw @@@substate0
+	.dw @@@substate1
+@@@substate0:
 	ld a,$01		; $6277
 	ld (de),a		; $6279
 	call clearFollowingLinkObject		; $627a
-	ld a,$0b		; $627d
+	ld a,GLOBALFLAG_DATING_ROSA		; $627d
 	call unsetGlobalFlag		; $627f
-	ld bc,$291a		; $6282
+	ld bc,TX_291a		; $6282
 	jp showText		; $6285
+@@@substate1:
 	call retIfTextIsActive		; $6288
 	jp interactionDelete		; $628b
+@@func_628e:
 	ld h,d			; $628e
 	ld l,$48		; $628f
 	ld a,(hl)		; $6291
@@ -2896,29 +2909,29 @@ _label_08_188:
 	ret z			; $6295
 	ld (hl),a		; $6296
 	jp interactionSetAnimation		; $6297
+@subid2:
 	ld e,$44		; $629a
 	ld a,(de)		; $629c
 	rst_jumpTable			; $629d
-	and d			; $629e
-	ld h,d			; $629f
-.DB $db				; $62a0
-	ld h,d			; $62a1
+	.dw @@state0
+	.dw @@state1
+@@state0:
 	ld a,$01		; $62a2
 	ld (de),a		; $62a4
-	ld a,$0e		; $62a5
+	ld a,GLOBALFLAG_STAR_ORE_FOUND		; $62a5
 	call checkGlobalFlag		; $62a7
 	jp nz,interactionDelete		; $62aa
-	ld a,($cc9e)		; $62ad
+	ld a,(wcc84)		; $62ad
 	or a			; $62b0
 	jp nz,interactionDelete		; $62b1
 	ld a,d			; $62b4
-	ld ($cc9e),a		; $62b5
+	ld (wcc84),a		; $62b5
 	ld h,d			; $62b8
 	ld l,$40		; $62b9
 	set 1,(hl)		; $62bb
 	call getRandomNumber		; $62bd
 	and $03			; $62c0
-	ld hl,$62d3		; $62c2
+	ld hl,@@table_62d3		; $62c2
 	rst_addDoubleIndex			; $62c5
 	ld e,$70		; $62c6
 	ldi a,(hl)		; $62c8
@@ -2930,18 +2943,17 @@ _label_08_188:
 	ld e,$72		; $62cf
 	ld (de),a		; $62d1
 	ret			; $62d2
-	ld h,l			; $62d3
-	ld d,a			; $62d4
-	ld h,(hl)		; $62d5
-	ld d,(hl)		; $62d6
-	ld (hl),l		; $62d7
-	daa			; $62d8
-	halt			; $62d9
-	inc h			; $62da
+@@table_62d3:
+	; var30 - var31
+	.db $65 $57
+	.db $66 $56
+	.db $75 $27
+	.db $76 $24
+@@state1:
 	ld e,$72		; $62db
 	ld a,(de)		; $62dd
 	ld b,a			; $62de
-	ld a,($cc4c)		; $62df
+	ld a,(wActiveRoom)		; $62df
 	cp b			; $62e2
 	ret z			; $62e3
 	ld (de),a		; $62e4
@@ -2949,31 +2961,31 @@ _label_08_188:
 	ld e,$70		; $62e6
 	ld a,(de)		; $62e8
 	cp b			; $62e9
-	jr nz,_label_08_189	; $62ea
+	jr nz,+			; $62ea
 	call getFreeInteractionSlot		; $62ec
 	ret nz			; $62ef
-	ld (hl),$60		; $62f0
+	ld (hl),INTERACID_TREASURE		; $62f0
 	inc l			; $62f2
-	ld (hl),$45		; $62f3
+	ld (hl),TREASURE_STAR_ORE		; $62f3
 	ld e,$71		; $62f5
 	ld a,(de)		; $62f7
 	ld l,$4b		; $62f8
 	jp setShortPosition		; $62fa
-_label_08_189:
-	ld a,$45		; $62fd
++
+	ld a,TREASURE_STAR_ORE		; $62fd
 	call checkTreasureObtained		; $62ff
-	jr c,_label_08_191	; $6302
+	jr c,+			; $6302
 	ld a,b			; $6304
 	cp $60			; $6305
 	ret nc			; $6307
-_label_08_190:
+-
 	xor a			; $6308
-	ld ($cc9e),a		; $6309
+	ld (wcc84),a		; $6309
 	jp interactionDelete		; $630c
-_label_08_191:
-	ld a,$0e		; $630f
++
+	ld a,GLOBALFLAG_STAR_ORE_FOUND		; $630f
 	call setGlobalFlag		; $6311
-	jr _label_08_190		; $6314
+	jr -			; $6314
 
 
 ; ==============================================================================
@@ -2983,9 +2995,9 @@ interactionCode32:
 	ld e,$44		; $6316
 	ld a,(de)		; $6318
 	rst_jumpTable			; $6319
-	ld e,$63		; $631a
-	ld b,l			; $631c
-	ld h,e			; $631d
+	.dw @state0
+	.dw @state1
+@state0:
 	ld a,$01		; $631e
 	ld (de),a		; $6320
 	call interactionInitGraphics		; $6321
@@ -2996,7 +3008,7 @@ interactionCode32:
 	ld (hl),$ff		; $632b
 	ld l,$42		; $632d
 	ld a,(hl)		; $632f
-	ld hl,$6369		; $6330
+	ld hl,@scriptTable		; $6330
 	rst_addDoubleIndex			; $6333
 	ldi a,(hl)		; $6334
 	ld h,(hl)		; $6335
@@ -3005,43 +3017,37 @@ interactionCode32:
 	call interactionRunScript		; $633a
 	call interactionRunScript		; $633d
 	jp c,interactionDelete		; $6340
-	jr _label_08_194		; $6343
-	ld a,($cc49)		; $6345
+	jr @animateAsNpc		; $6343
+@state1:
+	ld a,(wActiveGroup)		; $6345
 	dec a			; $6348
-	jr nz,_label_08_192	; $6349
+	jr nz,+			; $6349
 	call objectGetTileAtPosition		; $634b
 	ld (hl),$00		; $634e
-_label_08_192:
++
 	call interactionRunScript		; $6350
 	ld c,$28		; $6353
 	call objectCheckLinkWithinDistance		; $6355
-	jr c,_label_08_193	; $6358
+	jr c,+			; $6358
 	ld a,$04		; $635a
-_label_08_193:
++
 	ld l,$49		; $635c
 	cp (hl)			; $635e
-	jr z,_label_08_194	; $635f
+	jr z,@animateAsNpc	; $635f
 	ld (hl),a		; $6361
 	rrca			; $6362
 	call interactionSetAnimation		; $6363
-_label_08_194:
+@animateAsNpc:
 	jp interactionAnimateAsNpc		; $6366
-	ld h,c			; $6369
-	ld e,b			; $636a
-	ld h,h			; $636b
-	ld e,b			; $636c
-	ld l,e			; $636d
-	ld e,b			; $636e
-	ld (hl),c		; $636f
-	ld e,b			; $6370
-	ld (hl),h		; $6371
-	ld e,b			; $6372
-	ld (hl),a		; $6373
-	ld e,b			; $6374
-	ld h,c			; $6375
-	ld e,b			; $6376
-	ld h,c			; $6377
-	ld e,b			; $6378
+@scriptTable:
+	.dw bucketSubrosianScript_text1
+	.dw bucketSubrosianScript_text2
+	.dw bucketSubrosianScript_text3
+	.dw bucketSubrosianScript_text4
+	.dw bucketSubrosianScript_text5
+	.dw bucketSubrosianScript_text6
+	.dw bucketSubrosianScript_text1
+	.dw bucketSubrosianScript_text1
 
 
 ; ==============================================================================
@@ -3049,11 +3055,11 @@ _label_08_194:
 ; ==============================================================================
 interactionCode34:
 	call checkInteractionState		; $6379
-	jr nz,_label_08_195	; $637c
+	jr nz,+			; $637c
 	ld a,$01		; $637e
 	ld (de),a		; $6380
 	call interactionInitGraphics		; $6381
-_label_08_195:
++
 	call interactionAnimateAsNpc		; $6384
 	ld e,$61		; $6387
 	ld a,(de)		; $6389
@@ -3063,618 +3069,677 @@ _label_08_195:
 	jp playSound		; $638f
 
 
-; spawned from objectData
+; ==============================================================================
+; INTERACID_CHILD
+;
+; Variables:
+;   subid: personality type (0-6)
+;   var03: index of script and code to run (changes based on personality and growth stage)
+;   var37: animation base (depends on subid, or his personality type)
+;   var39: $00 is normal; $01 gives "light" solidity (when he moves); $02 gives no solidity.
+;   var3a: animation index? (added to base)
+;   var3b: scratch variable for scripts
+;   var3c: current index in "position list" data
+;   var3d: number of entries in "position list" data (minus one)?
+;   var3e/3f: pointer to "position list" data for when the child moves around
+; ==============================================================================
 interactionCode35:
-	ld e,$44		; $6392
-	ld a,(de)		; $6394
-	rst_jumpTable			; $6395
-	sbc d			; $6396
-	ld h,e			; $6397
-	ld l,b			; $6398
-	ld h,h			; $6399
-	call $6537		; $639a
-	call interactionInitGraphics		; $639d
-	call interactionIncState		; $63a0
-	ld e,$43		; $63a3
-	ld a,(de)		; $63a5
-	ld hl,$66c4		; $63a6
-	rst_addDoubleIndex			; $63a9
-	ldi a,(hl)		; $63aa
-	ld h,(hl)		; $63ab
-	ld l,a			; $63ac
-	call interactionSetScript		; $63ad
-	ld e,$43		; $63b0
-	ld a,(de)		; $63b2
-	rst_jumpTable			; $63b3
-	xor $63			; $63b4
-.DB $fc				; $63b6
-	ld h,e			; $63b7
-	ld hl,$3a64		; $63b8
-	ld h,h			; $63bb
-.DB $fc				; $63bc
-	ld h,e			; $63bd
-	ld hl,$3a64		; $63be
-	ld h,h			; $63c1
-	rst $30			; $63c2
-	ld h,e			; $63c3
-	jr z,_label_08_197	; $63c4
-	ldd a,(hl)		; $63c6
-	ld h,h			; $63c7
-	ld b,e			; $63c8
-	ld h,h			; $63c9
-	ld b,a			; $63ca
-	ld h,h			; $63cb
-	ld h,b			; $63cc
-	ld h,h			; $63cd
-	ld h,h			; $63ce
-	ld h,h			; $63cf
-	ld b,e			; $63d0
-	ld h,h			; $63d1
-	ld c,(hl)		; $63d2
-	ld h,h			; $63d3
-	ld h,b			; $63d4
-	ld h,h			; $63d5
-	ld h,h			; $63d6
-	ld h,h			; $63d7
-	ld b,e			; $63d8
-	ld h,h			; $63d9
-	ld b,a			; $63da
-	ld h,h			; $63db
-	ld h,b			; $63dc
-	ld h,h			; $63dd
-	ld h,h			; $63de
-	ld h,h			; $63df
-	jr $64			; $63e0
-	xor $63			; $63e2
-	ldd a,(hl)		; $63e4
-	ld h,h			; $63e5
-	ld b,e			; $63e6
-	ld h,h			; $63e7
-	xor $63			; $63e8
-	xor $63			; $63ea
-	ld h,h			; $63ec
-	ld h,h			; $63ed
-	ld e,$77		; $63ee
-	ld a,(de)		; $63f0
-	call interactionSetAnimation		; $63f1
-	jp $651f		; $63f4
-	ld a,$02		; $63f7
-	call $6618		; $63f9
-	ld h,d			; $63fc
-	ld l,$79		; $63fd
-	ld (hl),$01		; $63ff
-	ld l,$50		; $6401
-	ld (hl),$3c		; $6403
-	ld l,$49		; $6405
-	ld (hl),$18		; $6407
-	ld a,$00		; $6409
-_label_08_196:
-	ld h,d			; $640b
-	ld l,$7a		; $640c
-	ld (hl),a		; $640e
-	ld l,$77		; $640f
-	add (hl)		; $6411
-	call interactionSetAnimation		; $6412
-	jp $651f		; $6415
-	call $63fc		; $6418
-	ld h,d			; $641b
-	ld l,$50		; $641c
-	ld (hl),$28		; $641e
-	ret			; $6420
-	ld a,$00		; $6421
-	call $6618		; $6423
-	jr _label_08_198		; $6426
-	ld a,$01		; $6428
-_label_08_197:
-	call $6618		; $642a
-_label_08_198:
-	ld h,d			; $642d
-	ld l,$79		; $642e
-	ld (hl),$01		; $6430
-	ld l,$50		; $6432
-	ld (hl),$50		; $6434
-	ld a,$00		; $6436
-	jr _label_08_196		; $6438
-	ld h,d			; $643a
-	ld l,$79		; $643b
-	ld (hl),$02		; $643d
-	ld a,$00		; $643f
-	jr _label_08_196		; $6441
-	ld a,$00		; $6443
-	jr _label_08_196		; $6445
-	ld a,$03		; $6447
-	call $6618		; $6449
-	jr _label_08_199		; $644c
-	ld a,$04		; $644e
-	call $6618		; $6450
-_label_08_199:
-	ld h,d			; $6453
-	ld l,$79		; $6454
-	ld (hl),$01		; $6456
-	ld l,$50		; $6458
-	ld (hl),$14		; $645a
-	ld a,$00		; $645c
-	jr _label_08_196		; $645e
-	ld a,$03		; $6460
-	jr _label_08_196		; $6462
-	ld a,$00		; $6464
-	jr _label_08_196		; $6466
-	ld e,$43		; $6468
-	ld a,(de)		; $646a
-	rst_jumpTable			; $646b
-	or d			; $646c
-	ld h,h			; $646d
-	and (hl)		; $646e
-	ld h,h			; $646f
-	cp e			; $6470
-	ld h,h			; $6471
-	jp c,$a664		; $6472
-	ld h,h			; $6475
-	cp e			; $6476
-	ld h,h			; $6477
-	jp c,$c664		; $6478
-	ld h,h			; $647b
-	cp e			; $647c
-	ld h,h			; $647d
-	jp c,$e764		; $647e
-	ld h,h			; $6481
-	add $64			; $6482
-	xor a			; $6484
-	ld h,h			; $6485
-	nop			; $6486
-	ld h,l			; $6487
-	rst $20			; $6488
-	ld h,h			; $6489
-	add $64			; $648a
-	xor a			; $648c
-	ld h,h			; $648d
-	nop			; $648e
-	ld h,l			; $648f
-	rst $20			; $6490
-	ld h,h			; $6491
-	add $64			; $6492
-	xor a			; $6494
-	ld h,h			; $6495
-	nop			; $6496
-	ld h,l			; $6497
-	or l			; $6498
-	ld h,h			; $6499
-	or d			; $649a
-	ld h,h			; $649b
-.DB $e4				; $649c
-	ld h,h			; $649d
-	rst $20			; $649e
-	ld h,h			; $649f
-	or d			; $64a0
-	ld h,h			; $64a1
-	or d			; $64a2
-	ld h,h			; $64a3
-	nop			; $64a4
-	ld h,l			; $64a5
-	ld e,$46		; $64a6
-	ld a,(de)		; $64a8
-	or a			; $64a9
-	jr nz,_label_08_200	; $64aa
-	call $654b		; $64ac
-_label_08_200:
-	call interactionRunScript		; $64af
-	jp $651c		; $64b2
-	call $657f		; $64b5
-	jp $651c		; $64b8
-	ld e,$46		; $64bb
-	ld a,(de)		; $64bd
-	or a			; $64be
-	jr nz,_label_08_201	; $64bf
-	call $6593		; $64c1
-_label_08_201:
-	jr _label_08_206		; $64c4
-	ld e,$46		; $64c6
-	ld a,(de)		; $64c8
-	or a			; $64c9
-	jr nz,_label_08_202	; $64ca
-	call $65b3		; $64cc
-	call $65f4		; $64cf
-	call $65cf		; $64d2
-	call c,$660c		; $64d5
-_label_08_202:
-	jr _label_08_206		; $64d8
-	call $667b		; $64da
-	ld e,$7d		; $64dd
-	ld a,(de)		; $64df
-	or a			; $64e0
-	call z,interactionRunScript		; $64e1
-	jp $651c		; $64e4
-	ld a,(wFrameCounter)		; $64e7
-	and $1f			; $64ea
-	jr nz,_label_08_204	; $64ec
-	ld e,$61		; $64ee
-	ld a,(de)		; $64f0
-	and $01			; $64f1
-	ld c,$08		; $64f3
-	jr nz,_label_08_203	; $64f5
-	ld c,$fc		; $64f7
-_label_08_203:
-	ld b,$f4		; $64f9
-	call objectCreateFloatingMusicNote		; $64fb
-_label_08_204:
-	jr _label_08_206		; $64fe
-	ld a,(wFrameCounter)		; $6500
-	and $1f			; $6503
-	jr nz,_label_08_206	; $6505
-	ld e,$48		; $6507
-	ld a,(de)		; $6509
-	or a			; $650a
-	ld c,$fc		; $650b
-	jr z,_label_08_205	; $650d
-	ld c,$00		; $650f
-_label_08_205:
-	ld b,$fc		; $6511
-	call objectCreateFloatingMusicNote		; $6513
-_label_08_206:
-	call interactionRunScript		; $6516
-	jp $651c		; $6519
-	call interactionAnimate		; $651c
-	ld e,$79		; $651f
-	ld a,(de)		; $6521
-	cp $01			; $6522
-	jr z,_label_08_207	; $6524
-	cp $02			; $6526
-	jp z,objectSetPriorityRelativeToLink_withTerrainEffects		; $6528
-	call objectPreventLinkFromPassing		; $652b
-	jp objectSetPriorityRelativeToLink_withTerrainEffects		; $652e
-_label_08_207:
-	call objectPushLinkAwayOnCollision		; $6531
-	jp objectSetPriorityRelativeToLink_withTerrainEffects		; $6534
-	ld e,$42		; $6537
-	ld a,(de)		; $6539
-	ld hl,$6543		; $653a
-	rst_addAToHl			; $653d
-	ld a,(hl)		; $653e
-	ld e,$77		; $653f
-	ld (de),a		; $6541
-	ret			; $6542
-	nop			; $6543
-	ld (bc),a		; $6544
-	dec b			; $6545
-	ld ($110b),sp		; $6546
-	dec d			; $6549
-	rla			; $654a
-	call objectApplySpeed		; $654b
-	ld h,d			; $654e
-	ld l,$4d		; $654f
-	ld a,(hl)		; $6551
-	sub $29			; $6552
-	cp $40			; $6554
-	ret c			; $6556
-	bit 7,a			; $6557
-	jr nz,_label_08_208	; $6559
-	dec (hl)		; $655b
-	dec (hl)		; $655c
-_label_08_208:
-	inc (hl)		; $655d
-	ld l,$7c		; $655e
-	ld a,(hl)		; $6560
-	inc a			; $6561
-	and $03			; $6562
-	ld (hl),a		; $6564
-	ld bc,$657b		; $6565
-	call addAToBc		; $6568
-	ld a,(bc)		; $656b
-	ld l,$49		; $656c
-	ld (hl),a		; $656e
-_label_08_209:
-	ld l,$7a		; $656f
-	ld a,(hl)		; $6571
-	xor $01			; $6572
-	ld (hl),a		; $6574
-	ld l,$77		; $6575
-	add (hl)		; $6577
-	jp interactionSetAnimation		; $6578
-	jr _label_08_211		; $657b
-	jr _label_08_210		; $657d
-	call objectApplySpeed		; $657f
-	ld e,$4d		; $6582
-	ld a,(de)		; $6584
-_label_08_210:
-	sub $14			; $6585
-_label_08_211:
-	cp $28			; $6587
-	ret c			; $6589
-	ld h,d			; $658a
-	ld l,$49		; $658b
-	ld a,(hl)		; $658d
-	xor $10			; $658e
-	ld (hl),a		; $6590
-	jr _label_08_209		; $6591
-	ld e,$45		; $6593
-	ld a,(de)		; $6595
-	rst_jumpTable			; $6596
-	sbc e			; $6597
-	ld h,l			; $6598
-	and h			; $6599
-	ld h,l			; $659a
-	ld c,$18		; $659b
-	call objectCheckLinkWithinDistance		; $659d
-	ret nc			; $65a0
-	call interactionIncState2		; $65a1
-	call $65b3		; $65a4
-	call $65cf		; $65a7
-	ret nc			; $65aa
-	ld h,d			; $65ab
-	ld l,$45		; $65ac
-	ld (hl),$00		; $65ae
-	jp $660c		; $65b0
-	ld h,d			; $65b3
-	ld l,$7c		; $65b4
-	ld a,(hl)		; $65b6
-	add a			; $65b7
-	ld b,a			; $65b8
-	ld e,$7f		; $65b9
-	ld a,(de)		; $65bb
-	ld l,a			; $65bc
-	ld e,$7e		; $65bd
-	ld a,(de)		; $65bf
-	ld h,a			; $65c0
-	ld a,b			; $65c1
-	rst_addAToHl			; $65c2
-	ld b,(hl)		; $65c3
-	inc hl			; $65c4
-	ld c,(hl)		; $65c5
-	call objectGetRelativeAngle		; $65c6
-	ld e,$49		; $65c9
-	ld (de),a		; $65cb
-	jp objectApplySpeed		; $65cc
-	ld h,d			; $65cf
-	ld l,$7c		; $65d0
-	ld a,(hl)		; $65d2
-	add a			; $65d3
-	push af			; $65d4
-	ld e,$7f		; $65d5
-	ld a,(de)		; $65d7
-	ld c,a			; $65d8
-	ld e,$7e		; $65d9
-	ld a,(de)		; $65db
-	ld b,a			; $65dc
-	pop af			; $65dd
-	call addAToBc		; $65de
-	ld l,$4b		; $65e1
-	ld a,(bc)		; $65e3
-	sub (hl)		; $65e4
-	add $01			; $65e5
-	cp $03			; $65e7
-	ret nc			; $65e9
-	inc bc			; $65ea
-	ld l,$4d		; $65eb
-	ld a,(bc)		; $65ed
-	sub (hl)		; $65ee
-	add $01			; $65ef
-	cp $03			; $65f1
-	ret			; $65f3
-	ld h,d			; $65f4
-	ld l,$49		; $65f5
-	ld a,(hl)		; $65f7
-	swap a			; $65f8
-	and $01			; $65fa
-	xor $01			; $65fc
-	ld l,$48		; $65fe
-	cp (hl)			; $6600
-	ret z			; $6601
-	ld (hl),a		; $6602
-	ld l,$7a		; $6603
-	add (hl)		; $6605
-	ld l,$77		; $6606
-	add (hl)		; $6608
-	jp interactionSetAnimation		; $6609
-	ld h,d			; $660c
-	ld l,$7d		; $660d
-	ld a,(hl)		; $660f
-	ld l,$7c		; $6610
-	inc (hl)		; $6612
-	cp (hl)			; $6613
-	ret nc			; $6614
-	ld (hl),$00		; $6615
-	ret			; $6617
-	add a			; $6618
-	add a			; $6619
-	ld hl,$662b		; $661a
-	rst_addAToHl			; $661d
-	ld e,$7f		; $661e
-	ldi a,(hl)		; $6620
-	ld (de),a		; $6621
-	ld e,$7e		; $6622
-	ldi a,(hl)		; $6624
-	ld (de),a		; $6625
-	ld e,$7d		; $6626
-	ldi a,(hl)		; $6628
-	ld (de),a		; $6629
-	ret			; $662a
-	ccf			; $662b
-	ld h,(hl)		; $662c
-	rlca			; $662d
-	nop			; $662e
-	ld c,a			; $662f
-	ld h,(hl)		; $6630
-	inc bc			; $6631
-	nop			; $6632
-	ld d,a			; $6633
-	ld h,(hl)		; $6634
-	dec bc			; $6635
-	nop			; $6636
-	ld l,a			; $6637
-	ld h,(hl)		; $6638
-	ld bc,$7300		; $6639
-	ld h,(hl)		; $663c
-	inc bc			; $663d
-	nop			; $663e
-	ld l,b			; $663f
-	jr $68			; $6640
-	ld l,b			; $6642
-	jr z,$68		; $6643
-	ld l,b			; $6645
-	jr _label_08_213		; $6646
-	jr _label_08_217		; $6648
-	ld l,b			; $664a
-	jr z,$68		; $664b
-	jr c,$18		; $664d
-	jr $18			; $664f
-	ld e,b			; $6651
-	jr $58			; $6652
-	ld c,b			; $6654
-	jr $48			; $6655
-	jr z,$48		; $6657
-	jr $44			; $6659
-	jr _label_08_214		; $665b
-	jr nz,$18		; $665d
-	inc l			; $665f
-	inc c			; $6660
-	jr c,_label_08_212	; $6661
-	ld b,h			; $6663
-	inc c			; $6664
-	ld d,b			; $6665
-	jr _label_08_219		; $6666
-	jr z,_label_08_220	; $6668
-	ld b,h			; $666a
-_label_08_212:
-	ld c,b			; $666b
-	ld c,b			; $666c
-	jr c,_label_08_218	; $666d
-	ld c,b			; $666f
-	jr $48			; $6670
-	ld l,b			; $6672
-	jr _label_08_216		; $6673
-	ld e,b			; $6675
-	jr nc,_label_08_221	; $6676
-	ld c,b			; $6678
-	jr $48			; $6679
-	ld e,$45		; $667b
-	ld a,(de)		; $667d
-	rst_jumpTable			; $667e
-	add l			; $667f
-_label_08_213:
-	ld h,(hl)		; $6680
-	and e			; $6681
-	ld h,(hl)		; $6682
-	cp l			; $6683
-	ld h,(hl)		; $6684
-_label_08_214:
-	ld h,d			; $6685
-	ld l,$50		; $6686
-	ld (hl),$28		; $6688
-	ld l,$49		; $668a
-	ld (hl),$18		; $668c
-_label_08_215:
-	ld h,d			; $668e
-	ld l,$45		; $668f
-	ld (hl),$01		; $6691
-	ld l,$7d		; $6693
-	ld (hl),$01		; $6695
-	ld l,$54		; $6697
-	ld (hl),$00		; $6699
-	inc hl			; $669b
-	ld (hl),$fb		; $669c
-	ld a,$53		; $669e
-	jp playSound		; $66a0
-	ld c,$50		; $66a3
-_label_08_216:
-	call objectUpdateSpeedZ_paramC		; $66a5
-	jp nz,objectApplySpeed		; $66a8
-	call interactionIncState2		; $66ab
-	ld l,$7d		; $66ae
-	ld (hl),$00		; $66b0
-_label_08_217:
-	ld l,$7c		; $66b2
-	ld (hl),$78		; $66b4
-	ld l,$49		; $66b6
-	ld a,(hl)		; $66b8
-	xor $10			; $66b9
-_label_08_218:
-	ld (hl),a		; $66bb
-	ret			; $66bc
-	ld h,d			; $66bd
-	ld l,$7c		; $66be
-_label_08_219:
-	dec (hl)		; $66c0
-	ret nz			; $66c1
-_label_08_220:
-	jr _label_08_215		; $66c2
-	ld a,d			; $66c4
-	ld e,b			; $66c5
-	ld a,e			; $66c6
-	ld e,b			; $66c7
-	add d			; $66c8
-	ld e,b			; $66c9
-	adc c			; $66ca
-	ld e,b			; $66cb
-	sub b			; $66cc
-	ld e,b			; $66cd
-	sbc e			; $66ce
-	ld e,b			; $66cf
-_label_08_221:
-	and (hl)		; $66d0
-	ld e,b			; $66d1
-	or c			; $66d2
-	ld e,b			; $66d3
-	push hl			; $66d4
-	ld e,b			; $66d5
-	add hl,de		; $66d6
-	ld e,c			; $66d7
-	ld c,l			; $66d8
-	ld e,c			; $66d9
-	ld e,b			; $66da
-	ld e,c			; $66db
-	ld h,e			; $66dc
-	ld e,c			; $66dd
-	ld l,(hl)		; $66de
-	ld e,c			; $66df
-	ld a,c			; $66e0
-	ld e,c			; $66e1
-	ld (hl),$5a		; $66e2
-	sbc d			; $66e4
-	ld e,d			; $66e5
-	ret nz			; $66e6
-	ld e,d			; $66e7
-	push hl			; $66e8
-	ld e,d			; $66e9
-	daa			; $66ea
-	ld e,e			; $66eb
-	ld (hl),l		; $66ec
-	ld e,e			; $66ed
-	adc l			; $66ee
-	ld e,e			; $66ef
-	ld a,d			; $66f0
-	ld e,b			; $66f1
-	ld a,d			; $66f2
-	ld e,b			; $66f3
-	ld a,d			; $66f4
-	ld e,b			; $66f5
-	ld a,d			; $66f6
-	ld e,b			; $66f7
-	ld a,d			; $66f8
-	ld e,b			; $66f9
-	ld a,d			; $66fa
-	ld e,b			; $66fb
-	ld a,d			; $66fc
-	ld e,b			; $66fd
+	ld e,Interaction.state		; $650f
+	ld a,(de)		; $6511
+	rst_jumpTable			; $6512
+	.dw @state0
+	.dw _interac65_state1
+
+@state0:
+	call _childDetermineAnimationBase		; $6517
+	call interactionInitGraphics		; $651a
+	call interactionIncState		; $651d
+
+	ld e,Interaction.var03		; $6520
+	ld a,(de)		; $6522
+	ld hl,_childScriptTable		; $6523
+	rst_addDoubleIndex			; $6526
+	ldi a,(hl)		; $6527
+	ld h,(hl)		; $6528
+	ld l,a			; $6529
+	call interactionSetScript		; $652a
+
+	ld e,Interaction.var03		; $652d
+	ld a,(de)		; $652f
+	rst_jumpTable			; $6530
+
+	/* $00 */ .dw @initAnimation
+	/* $01 */ .dw @hyperactiveStage4Or5
+	/* $02 */ .dw @shyStage4Or5
+	/* $03 */ .dw @curious
+	/* $04 */ .dw @hyperactiveStage4Or5
+	/* $05 */ .dw @shyStage4Or5
+	/* $06 */ .dw @curious
+	/* $07 */ .dw @hyperactiveStage6
+	/* $08 */ .dw @shyStage6
+	/* $09 */ .dw @curious
+	/* $0a */ .dw @slacker
+	/* $0b */ .dw @warrior
+	/* $0c */ .dw @arborist
+	/* $0d */ .dw @singer
+	/* $0e */ .dw @slacker
+	/* $0f */ .dw @script0f
+	/* $10 */ .dw @arborist
+	/* $11 */ .dw @singer
+	/* $12 */ .dw @slacker
+	/* $13 */ .dw @warrior
+	/* $14 */ .dw @arborist
+	/* $15 */ .dw @singer
+	/* $16 */ .dw @val16
+	/* $17 */ .dw @initAnimation
+	/* $18 */ .dw @curious
+	/* $19 */ .dw @slacker
+	/* $1a */ .dw @initAnimation
+	/* $1b */ .dw @initAnimation
+	/* $1c */ .dw @singer
+
+@initAnimation:
+	ld e,Interaction.var37		; $656b
+	ld a,(de)		; $656d
+	call interactionSetAnimation		; $656e
+	jp _childUpdateSolidityAndVisibility		; $6571
+
+@hyperactiveStage6:
+	ld a,$02		; $6574
+	call _childLoadPositionListPointer		; $6576
+
+@hyperactiveStage4Or5:
+	ld h,d			; $6579
+	ld l,Interaction.var39		; $657a
+	ld (hl),$01		; $657c
+
+	ld l,Interaction.speed		; $657e
+	ld (hl),SPEED_180		; $6580
+	ld l,Interaction.angle		; $6582
+	ld (hl),$18		; $6584
+
+	ld a,$00		; $6586
+
+@setAnimation:
+	ld h,d			; $6588
+	ld l,Interaction.var3a		; $6589
+	ld (hl),a		; $658b
+	ld l,Interaction.var37		; $658c
+	add (hl)		; $658e
+	call interactionSetAnimation		; $658f
+	jp _childUpdateSolidityAndVisibility		; $6592
+
+@val16:
+	call @hyperactiveStage4Or5		; $6595
+	ld h,d			; $6598
+	ld l,Interaction.speed		; $6599
+	ld (hl),SPEED_100		; $659b
+	ret			; $659d
+
+@shyStage4Or5:
+	ld a,$00		; $659e
+	call _childLoadPositionListPointer		; $65a0
+	jr ++			; $65a3
+
+@shyStage6:
+	ld a,$01		; $65a5
+	call _childLoadPositionListPointer		; $65a7
+++
+	ld h,d			; $65aa
+	ld l,Interaction.var39		; $65ab
+	ld (hl),$01		; $65ad
+	ld l,Interaction.speed		; $65af
+	ld (hl),SPEED_200		; $65b1
+	ld a,$00		; $65b3
+	jr @setAnimation		; $65b5
+
+@curious:
+	ld h,d			; $65b7
+	ld l,Interaction.var39		; $65b8
+	ld (hl),$02		; $65ba
+	ld a,$00		; $65bc
+	jr @setAnimation		; $65be
+
+@slacker:
+	ld a,$00		; $65c0
+	jr @setAnimation		; $65c2
+
+@warrior:
+	ld a,$03		; $65c4
+	call _childLoadPositionListPointer		; $65c6
+	jr ++			; $65c9
+
+@script0f:
+	ld a,$04		; $65cb
+	call _childLoadPositionListPointer		; $65cd
+++
+	ld h,d			; $65d0
+	ld l,Interaction.var39		; $65d1
+	ld (hl),$01		; $65d3
+	ld l,Interaction.speed		; $65d5
+	ld (hl),SPEED_80		; $65d7
+	ld a,$00		; $65d9
+	jr @setAnimation		; $65db
+
+@arborist:
+	ld a,$03		; $65dd
+	jr @setAnimation		; $65df
+
+@singer:
+	ld a,$00		; $65e1
+	jr @setAnimation		; $65e3
+
+
+_interac65_state1:
+	ld e,Interaction.var03		; $65e5
+	ld a,(de)		; $65e7
+	rst_jumpTable			; $65e8
+
+	/* $00 */ .dw @updateAnimationAndSolidity
+	/* $01 */ .dw @hyperactiveMovement
+	/* $02 */ .dw @shyMovement
+	/* $03 */ .dw @curiousMovement
+	/* $04 */ .dw @hyperactiveMovement
+	/* $05 */ .dw @shyMovement
+	/* $06 */ .dw @curiousMovement
+	/* $07 */ .dw @usePositionList
+	/* $08 */ .dw @shyMovement
+	/* $09 */ .dw @curiousMovement
+	/* $0a */ .dw @slackerMovement
+	/* $0b */ .dw @usePositionList
+	/* $0c */ .dw @arboristMovement
+	/* $0d */ .dw @singerMovement
+	/* $0e */ .dw @slackerMovement
+	/* $0f */ .dw @usePositionList
+	/* $10 */ .dw @arboristMovement
+	/* $11 */ .dw @singerMovement
+	/* $12 */ .dw @slackerMovement
+	/* $13 */ .dw @usePositionList
+	/* $14 */ .dw @arboristMovement
+	/* $15 */ .dw @singerMovement
+	/* $16 */ .dw @val16
+	/* $17 */ .dw @updateAnimationAndSolidity
+	/* $18 */ .dw @val1b
+	/* $19 */ .dw @slackerMovement
+	/* $1a */ .dw @updateAnimationAndSolidity
+	/* $1b */ .dw @updateAnimationAndSolidity
+	/* $1c */ .dw @singerMovement
+
+@hyperactiveMovement:
+	ld e,Interaction.counter1		; $6623
+	ld a,(de)		; $6625
+	or a			; $6626
+	jr nz,+			; $6627
+	call _childUpdateHyperactiveMovement		; $6629
++
+
+@arboristMovement:
+	call interactionRunScript		; $662c
+
+@updateAnimationAndSolidity:
+	jp _childUpdateAnimationAndSolidity		; $662f
+
+@val16:
+	call _childUpdateUnknownMovement		; $6632
+	jp _childUpdateAnimationAndSolidity		; $6635
+
+@shyMovement:
+	ld e,Interaction.counter1		; $6638
+	ld a,(de)		; $663a
+	or a			; $663b
+	jr nz,+			; $663c
+	call _childUpdateShyMovement		; $663e
++
+	jr @runScriptAndUpdateAnimation		; $6641
+
+@usePositionList:
+	ld e,Interaction.counter1		; $6643
+	ld a,(de)		; $6645
+	or a			; $6646
+	jr nz,++		; $6647
+	call _childUpdateAngleAndApplySpeed		; $6649
+	call _childCheckAnimationDirectionChanged		; $664c
+	call _childCheckReachedDestination		; $664f
+	call c,_childIncPositionIndex		; $6652
+++
+	jr @runScriptAndUpdateAnimation		; $6655
+
+@curiousMovement:
+	call _childUpdateCuriousMovement		; $6657
+	ld e,Interaction.var3d		; $665a
+	ld a,(de)		; $665c
+	or a			; $665d
+	call z,interactionRunScript		; $665e
+
+@val1b:
+	jp _childUpdateAnimationAndSolidity		; $6661
+
+@slackerMovement:
+	ld a,(wFrameCounter)		; $6664
+	and $1f			; $6667
+	jr nz,++		; $6669
+	ld e,Interaction.animParameter		; $666b
+	ld a,(de)		; $666d
+	and $01			; $666e
+	ld c,$08		; $6670
+	jr nz,+			; $6672
+	ld c,$fc		; $6674
++
+	ld b,$f4		; $6676
+	call objectCreateFloatingMusicNote		; $6678
+++
+	jr @runScriptAndUpdateAnimation		; $667b
+
+@singerMovement:
+	ld a,(wFrameCounter)		; $667d
+	and $1f			; $6680
+	jr nz,@runScriptAndUpdateAnimation	; $6682
+	ld e,Interaction.direction		; $6684
+	ld a,(de)		; $6686
+	or a			; $6687
+	ld c,$fc		; $6688
+	jr z,+			; $668a
+	ld c,$00		; $668c
++
+	ld b,$fc		; $668e
+	call objectCreateFloatingMusicNote		; $6690
+
+@runScriptAndUpdateAnimation:
+	call interactionRunScript		; $6693
+	jp _childUpdateAnimationAndSolidity		; $6696
+
+
+;;
+; @addr{6699}
+_childUpdateAnimationAndSolidity:
+	call interactionAnimate		; $6699
+
+;;
+; @addr{669c}
+_childUpdateSolidityAndVisibility:
+	ld e,Interaction.var39		; $669c
+	ld a,(de)		; $669e
+	cp $01			; $669f
+	jr z,++			; $66a1
+	cp $02			; $66a3
+	jp z,objectSetPriorityRelativeToLink_withTerrainEffects		; $66a5
+	call objectPreventLinkFromPassing		; $66a8
+	jp objectSetPriorityRelativeToLink_withTerrainEffects		; $66ab
+++
+	call objectPushLinkAwayOnCollision		; $66ae
+	jp objectSetPriorityRelativeToLink_withTerrainEffects		; $66b1
+
+;;
+; Writes the "base" animation index to var37 based on subid (personality type)?
+; @addr{66b4}
+_childDetermineAnimationBase:
+	ld e,Interaction.subid		; $66b4
+	ld a,(de)		; $66b6
+	ld hl,@animations		; $66b7
+	rst_addAToHl			; $66ba
+	ld a,(hl)		; $66bb
+	ld e,Interaction.var37		; $66bc
+	ld (de),a		; $66be
+	ret			; $66bf
+
+@animations:
+	.db $00 $02 $05 $08 $0b $11 $15 $17
+
+;;
+; @addr{66c8}
+_childUpdateHyperactiveMovement:
+	call objectApplySpeed		; $66c8
+	ld h,d			; $66cb
+	ld l,Interaction.xh		; $66cc
+	ld a,(hl)		; $66ce
+	sub $29			; $66cf
+	cp $40			; $66d1
+	ret c			; $66d3
+	bit 7,a			; $66d4
+	jr nz,+			; $66d6
+	dec (hl)		; $66d8
+	dec (hl)		; $66d9
++
+	inc (hl)		; $66da
+	ld l,Interaction.var3c		; $66db
+	ld a,(hl)		; $66dd
+	inc a			; $66de
+	and $03			; $66df
+	ld (hl),a		; $66e1
+	ld bc,_childHyperactiveMovementAngles		; $66e2
+	call addAToBc		; $66e5
+	ld a,(bc)		; $66e8
+	ld l,Interaction.angle		; $66e9
+	ld (hl),a		; $66eb
+
+_childFlipAnimation:
+	ld l,Interaction.var3a		; $66ec
+	ld a,(hl)		; $66ee
+	xor $01			; $66ef
+	ld (hl),a		; $66f1
+	ld l,Interaction.var37		; $66f2
+	add (hl)		; $66f4
+	jp interactionSetAnimation		; $66f5
+
+_childHyperactiveMovementAngles:
+	.db $18 $0a $18 $06
+
+;;
+; @addr{66fc}
+_childUpdateUnknownMovement:
+	call objectApplySpeed		; $66fc
+	ld e,Interaction.xh		; $66ff
+	ld a,(de)		; $6701
+	sub $14			; $6702
+	cp $28			; $6704
+	ret c			; $6706
+	ld h,d			; $6707
+	ld l,Interaction.angle		; $6708
+	ld a,(hl)		; $670a
+	xor $10			; $670b
+	ld (hl),a		; $670d
+	jr _childFlipAnimation		; $670e
+
+;;
+; Updates movement for "shy" personality type (runs away when Link approaches)
+; @addr{6710}
+_childUpdateShyMovement:
+	ld e,Interaction.state2		; $6710
+	ld a,(de)		; $6712
+	rst_jumpTable			; $6713
+	.dw @substate0
+	.dw @substate1
+
+@substate0:
+	ld c,$18		; $6718
+	call objectCheckLinkWithinDistance		; $671a
+	ret nc			; $671d
+
+	call interactionIncState2		; $671e
+
+@substate1:
+	call _childUpdateAngleAndApplySpeed		; $6721
+	call _childCheckReachedDestination		; $6724
+	ret nc			; $6727
+
+	ld h,d			; $6728
+	ld l,Interaction.state2		; $6729
+	ld (hl),$00		; $672b
+	jp _childIncPositionIndex		; $672d
+
+;;
+; @addr{6730}
+_childUpdateAngleAndApplySpeed:
+	ld h,d			; $6730
+	ld l,Interaction.var3c		; $6731
+	ld a,(hl)		; $6733
+	add a			; $6734
+	ld b,a			; $6735
+	ld e,Interaction.var3f		; $6736
+	ld a,(de)		; $6738
+	ld l,a			; $6739
+	ld e,Interaction.var3e		; $673a
+	ld a,(de)		; $673c
+	ld h,a			; $673d
+	ld a,b			; $673e
+	rst_addAToHl			; $673f
+	ld b,(hl)		; $6740
+	inc hl			; $6741
+	ld c,(hl)		; $6742
+	call objectGetRelativeAngle		; $6743
+	ld e,Interaction.angle		; $6746
+	ld (de),a		; $6748
+	jp objectApplySpeed		; $6749
+
+;;
+; @param[out]	cflag	Set if the child's reached the position he's moving toward (or is
+;			within 1 pixel from the destination on both axes)
+; @addr{674c}
+_childCheckReachedDestination:
+	ld h,d			; $674c
+	ld l,Interaction.var3c		; $674d
+	ld a,(hl)		; $674f
+	add a			; $6750
+	push af			; $6751
+
+	ld e,Interaction.var3f		; $6752
+	ld a,(de)		; $6754
+	ld c,a			; $6755
+	ld e,Interaction.var3e		; $6756
+	ld a,(de)		; $6758
+	ld b,a			; $6759
+
+	pop af			; $675a
+	call addAToBc		; $675b
+	ld l,Interaction.yh		; $675e
+	ld a,(bc)		; $6760
+	sub (hl)		; $6761
+	add $01			; $6762
+	cp $03			; $6764
+	ret nc			; $6766
+	inc bc			; $6767
+	ld l,Interaction.xh		; $6768
+	ld a,(bc)		; $676a
+	sub (hl)		; $676b
+	add $01			; $676c
+	cp $03			; $676e
+	ret			; $6770
+
+;;
+; Updates animation if the child's direction has changed?
+; @addr{6771}
+_childCheckAnimationDirectionChanged:
+	ld h,d			; $6771
+	ld l,Interaction.angle		; $6772
+	ld a,(hl)		; $6774
+	swap a			; $6775
+	and $01			; $6777
+	xor $01			; $6779
+	ld l,Interaction.direction		; $677b
+	cp (hl)			; $677d
+	ret z			; $677e
+	ld (hl),a		; $677f
+	ld l,Interaction.var3a		; $6780
+	add (hl)		; $6782
+	ld l,Interaction.var37		; $6783
+	add (hl)		; $6785
+	jp interactionSetAnimation		; $6786
+
+;;
+; @addr{6789}
+_childIncPositionIndex:
+	ld h,d			; $6789
+	ld l,Interaction.var3d		; $678a
+	ld a,(hl)		; $678c
+	ld l,Interaction.var3c		; $678d
+	inc (hl)		; $678f
+	cp (hl)			; $6790
+	ret nc			; $6791
+	ld (hl),$00		; $6792
+	ret			; $6794
+
+;;
+; Loads address of position list into var3e/var3f, and the number of positions to loop
+; through (minus one) into var3d.
+;
+; @param	a	Data index
+; @addr{6795}
+_childLoadPositionListPointer:
+	add a			; $6795
+	add a			; $6796
+	ld hl,@positionTable		; $6797
+	rst_addAToHl			; $679a
+	ld e,Interaction.var3f		; $679b
+	ldi a,(hl)		; $679d
+	ld (de),a		; $679e
+	ld e,Interaction.var3e		; $679f
+	ldi a,(hl)		; $67a1
+	ld (de),a		; $67a2
+	ld e,Interaction.var3d		; $67a3
+	ldi a,(hl)		; $67a5
+	ld (de),a		; $67a6
+	ret			; $67a7
+
+
+; Data format:
+;  word: pointer to position list
+;  byte: number of entries in the list (minus one)
+;  byte: unused
+@positionTable:
+	dwbb @list0 $07 $00
+	dwbb @list1 $03 $00
+	dwbb @list2 $0b $00
+	dwbb @list3 $01 $00
+	dwbb @list4 $03 $00
+
+; Each 2 bytes is a position the child will move to.
+@list0:
+	.db $68 $18
+	.db $68 $68
+	.db $28 $68
+	.db $68 $18
+	.db $38 $18
+	.db $68 $68
+	.db $28 $68
+	.db $38 $18
+
+@list1:
+	.db $18 $18
+	.db $58 $18
+	.db $58 $48
+	.db $18 $48
+
+@list2:
+	.db $28 $48
+	.db $18 $44
+	.db $18 $28
+	.db $20 $18
+	.db $2c $0c
+	.db $38 $08
+	.db $44 $0c
+	.db $50 $18
+	.db $58 $28
+	.db $58 $44
+	.db $48 $48
+	.db $38 $4c
+
+@list3:
+	.db $48 $18
+	.db $48 $68
+@list4:
+	.db $18 $30
+	.db $58 $30
+	.db $58 $48
+	.db $18 $48
+
+;;
+; @addr{67f8}
+_childUpdateCuriousMovement:
+	ld e,Interaction.state2		; $67f8
+	ld a,(de)		; $67fa
+	rst_jumpTable			; $67fb
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+
+@substate0:
+	ld h,d			; $6802
+	ld l,Interaction.speed		; $6803
+	ld (hl),SPEED_100		; $6805
+	ld l,Interaction.angle		; $6807
+	ld (hl),$18		; $6809
+
+@gotoSubstate1AndJump:
+	ld h,d			; $680b
+	ld l,Interaction.state2		; $680c
+	ld (hl),$01		; $680e
+	ld l,Interaction.var3d		; $6810
+	ld (hl),$01		; $6812
+
+	ld l,Interaction.speedZ		; $6814
+	ld (hl),$00		; $6816
+	inc hl			; $6818
+	ld (hl),$fb		; $6819
+	ld a,SND_JUMP		; $681b
+	jp playSound		; $681d
+
+@substate1:
+	ld c,$50		; $6820
+	call objectUpdateSpeedZ_paramC		; $6822
+	jp nz,objectApplySpeed		; $6825
+
+	call interactionIncState2		; $6828
+
+	ld l,Interaction.var3d		; $682b
+	ld (hl),$00		; $682d
+	ld l,Interaction.var3c		; $682f
+	ld (hl),$78		; $6831
+
+	ld l,Interaction.angle		; $6833
+	ld a,(hl)		; $6835
+	xor $10			; $6836
+	ld (hl),a		; $6838
+	ret			; $6839
+
+@substate2:
+	ld h,d			; $683a
+	ld l,Interaction.var3c		; $683b
+	dec (hl)		; $683d
+	ret nz			; $683e
+	jr @gotoSubstate1AndJump		; $683f
+
+
+_childScriptTable:
+	.dw childScript00
+	.dw childScript_stage4_hyperactive
+	.dw childScript_stage4_shy
+	.dw childScript_stage4_curious
+	.dw childScript_stage5_hyperactive
+	.dw childScript_stage5_shy
+	.dw childScript_stage5_curious
+	.dw childScript_stage6_hyperactive
+	.dw childScript_stage6_shy
+	.dw childScript_stage6_curious
+	.dw childScript_stage7_slacker
+	.dw childScript_stage7_warrior
+	.dw childScript_stage7_arborist
+	.dw childScript_stage7_singer
+	.dw childScript_stage8_slacker
+	.dw childScript_stage8_warrior
+	.dw childScript_stage8_arborist
+	.dw childScript_stage8_singer
+	.dw childScript_stage9_slacker
+	.dw childScript_stage9_warrior
+	.dw childScript_stage9_arborist
+	.dw childScript_stage9_singer
+	.dw childScript00
+	.dw childScript00
+	.dw childScript00
+	.dw childScript00
+	.dw childScript00
+	.dw childScript00
+	.dw childScript00
 
 
 ; ==============================================================================
-; INTERACID_GORON
+; INTERACID_S_GORON
 ; ==============================================================================
 interactionCode3b:
 	call checkInteractionState		; $66fe
-	jr nz,_label_08_225	; $6701
+	jr nz,@state1	; $6701
 	ld a,$01		; $6703
 	ld (de),a		; $6705
 	xor a			; $6706
 	ldh (<hFF8D),a	; $6707
-	ld a,$41		; $6709
+	ld a,TREASURE_TRADEITEM		; $6709
 	call checkTreasureObtained		; $670b
-	jr nc,_label_08_222	; $670e
+	jr nc,+			; $670e
+	; Got Goron vase
 	cp $05			; $6710
-	jr c,_label_08_222	; $6712
+	jr c,+			; $6712
 	ld a,$01		; $6714
 	ldh (<hFF8D),a	; $6716
-_label_08_222:
++
 	ld h,d			; $6718
 	ld l,$42		; $6719
 	ld a,(hl)		; $671b
@@ -3685,27 +3750,29 @@ _label_08_222:
 	ld a,b			; $6721
 	swap a			; $6722
 	and $0f			; $6724
+	; upper nybble of subid goes into var03
 	ld (hl),a		; $6726
 	ld a,c			; $6727
-	ld c,$37		; $6728
+	ld c,>TX_3700		; $6728
 	cp $07			; $672a
-	jr nz,_label_08_223	; $672c
-	ld a,($cc01)		; $672e
+	jr nz,+			; $672c
+	; subid_07
+	ld a,(wIsLinkedGame)		; $672e
 	ld b,a			; $6731
 	ldh a,(<hFF8D)	; $6732
 	and b			; $6734
 	jp z,interactionDelete		; $6735
-	ld c,$53		; $6738
-_label_08_223:
+	ld c,>TX_5300		; $6738
++
 	ld a,c			; $673a
 	call interactionSetHighTextIndex		; $673b
 	call interactionInitGraphics		; $673e
-	ld hl,$6808		; $6741
+	ld hl,@biggoronColdNotHealed		; $6741
 	ldh a,(<hFF8D)	; $6744
 	or a			; $6746
-	jr z,_label_08_224	; $6747
-	ld hl,_table_6818		; $6749
-_label_08_224:
+	jr z,+			; $6747
+	ld hl,@biggoronColdHealed		; $6749
++
 	ld e,$42		; $674c
 	ld a,(de)		; $674e
 	rst_addDoubleIndex			; $674f
@@ -3713,75 +3780,75 @@ _label_08_224:
 	ld h,(hl)		; $6751
 	ld l,a			; $6752
 	call interactionSetScript		; $6753
-_label_08_225:
+@state1:
 	ld e,$43		; $6756
 	ld a,(de)		; $6758
 	rst_jumpTable			; $6759
-	ld h,b			; $675a
-	ld h,a			; $675b
-	ld h,(hl)		; $675c
-	ld h,a			; $675d
-	cp (hl)			; $675e
-	ld h,a			; $675f
+	.dw @var03_00
+	.dw @var03_01
+	.dw @var03_02
+@var03_00:
 	call interactionRunScript		; $6760
 	jp npcFaceLinkAndAnimate		; $6763
+@var03_01:
 	call interactionRunScript		; $6766
 	ld e,$45		; $6769
 	ld a,(de)		; $676b
 	rst_jumpTable			; $676c
-	ld (hl),l		; $676d
-	ld h,a			; $676e
-	adc d			; $676f
-	ld h,a			; $6770
-	sbc d			; $6771
-	ld h,a			; $6772
-	or c			; $6773
-	ld h,a			; $6774
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+@substate0:
 	ld c,$28		; $6775
 	call objectCheckLinkWithinDistance		; $6777
-	jr nc,_label_08_226	; $677a
+	jr nc,+			; $677a
 	call interactionIncState2		; $677c
-	call $67fc		; $677f
+	call @func_67fc		; $677f
 	add $06			; $6782
 	call interactionSetAnimation		; $6784
-_label_08_226:
++
 	jp interactionAnimateAsNpc		; $6787
+@substate1:
 	ld e,$61		; $678a
 	ld a,(de)		; $678c
 	inc a			; $678d
-	jr nz,_label_08_227	; $678e
+	jr nz,+			; $678e
 	call interactionIncState2		; $6790
 	ld l,$49		; $6793
 	ld (hl),$ff		; $6795
-_label_08_227:
++
 	jp interactionAnimateAsNpc		; $6797
+@substate2:
 	ld c,$28		; $679a
 	call objectCheckLinkWithinDistance		; $679c
-	jr c,_label_08_228	; $679f
+	jr c,+			; $679f
 	call interactionIncState2		; $67a1
-	call $67fc		; $67a4
+	call @func_67fc		; $67a4
 	add $07			; $67a7
 	call interactionSetAnimation		; $67a9
-	jr _label_08_229		; $67ac
-_label_08_228:
+	jr @animateAsNPC		; $67ac
++
 	jp npcFaceLinkAndAnimate		; $67ae
+@substate3:
 	ld e,$61		; $67b1
 	ld a,(de)		; $67b3
 	inc a			; $67b4
-	jr nz,_label_08_229	; $67b5
+	jr nz,@animateAsNPC			; $67b5
 	ld e,$45		; $67b7
 	xor a			; $67b9
 	ld (de),a		; $67ba
-_label_08_229:
+@animateAsNPC:
 	jp interactionAnimateAsNpc		; $67bb
+@var03_02:
 	call interactionAnimate		; $67be
 	call interactionAnimate		; $67c1
 	call checkInteractionState2		; $67c4
-	jr nz,_label_08_231	; $67c7
-	ld e,$71		; $67c9
+	jr nz,@func_67f0	; $67c7
+	ld e,Interaction.pressedAButton		; $67c9
 	ld a,(de)		; $67cb
 	or a			; $67cc
-	jr z,_label_08_230	; $67cd
+	jr z,@runScriptPushLinkAwayUpdateDrawPriority	; $67cd
 	xor a			; $67cf
 	ld (de),a		; $67d0
 	call objectGetAngleTowardLink		; $67d1
@@ -3792,20 +3859,23 @@ _label_08_229:
 	ld e,$48		; $67db
 	ld (de),a		; $67dd
 	call interactionSetAnimation		; $67de
-	ld bc,$3700		; $67e1
+	ld bc,TX_3700		; $67e1
 	call showText		; $67e4
 	call interactionIncState2		; $67e7
-_label_08_230:
+@runScriptPushLinkAwayUpdateDrawPriority:
 	call interactionRunScript		; $67ea
 	jp interactionPushLinkAwayAndUpdateDrawPriority		; $67ed
-_label_08_231:
+
+@func_67f0:
 	ld e,$76		; $67f0
 	ld a,(de)		; $67f2
 	call interactionSetAnimation		; $67f3
 	ld e,$45		; $67f6
 	xor a			; $67f8
 	ld (de),a		; $67f9
-	jr _label_08_230		; $67fa
+	jr @runScriptPushLinkAwayUpdateDrawPriority		; $67fa
+	
+@func_67fc:
 	ld e,$4d		; $67fc
 	ld a,(de)		; $67fe
 	ld hl,$d00d		; $67ff
@@ -3814,33 +3884,34 @@ _label_08_231:
 	ret c			; $6805
 	xor a			; $6806
 	ret			; $6807
-	xor a			; $6808
-	ld e,e			; $6809
-	jp nc,$d65b		; $680a
-	ld e,e			; $680d
-	sbc $5b			; $680e
-.DB $ec				; $6810
-	ld e,e			; $6811
-	ld a,($ff00+$5b)	; $6812
-	ld a,($ff00+c)		; $6814
-	ld e,e			; $6815
-	jr z,_label_08_235	; $6816
 
-_table_6818:
-	.dw script5baf
-	.dw script5bd4
-	.dw script5bd6
-	.dw script5be4
-	.dw script5bee
-	.dw script5bf0
-	.dw script5bf2
-	.dw script5c28
+@biggoronColdNotHealed:
+	.dw goronScript_pacingLeftAndRight
+	.dw goronScript_text1_biggoronSick
+	.dw goronScript_text2
+	.dw goronScript_text3_biggoronSick
+	.dw goronScript_text4_biggoronSick
+	.dw goronScript_text5
+	.dw goronScript_upgradeRingBox
+	.dw goronScript_giveSubrosianSecret
+
+@biggoronColdHealed:
+	.dw goronScript_pacingLeftAndRight
+	.dw goronScript_text1_biggoronHealed
+	.dw goronScript_text2
+	.dw goronScript_text3_biggoronHealed
+	.dw goronScript_text4_biggoronHealed
+	.dw goronScript_text5
+	.dw goronScript_upgradeRingBox
+	.dw goronScript_giveSubrosianSecret
 
 
-; NPC in sunken city
+; ==============================================================================
+; INTERACID_MISC_BOY_NPCS
+; ==============================================================================
 interactionCode3e:
 	call checkInteractionState		; $6828
-	jp nz,seasonsFunc_08_68f5		; $682b
+	jp nz,@state1		; $682b
 	ld a,$01		; $682e
 	ld (de),a		; $6830
 	ld h,d			; $6831
@@ -3854,47 +3925,46 @@ interactionCode3e:
 	swap a			; $683c
 	ld (hl),a		; $683e
 	cp $03			; $683f
-	jr nz,_label_08_233	; $6841
+	jr nz,@nonVar03_03	; $6841
+	; subid30-34
 	call getSunkenCityNPCVisibleSubId@main		; $6843
 	ld e,$42		; $6846
 	ld a,(de)		; $6848
 	cp b			; $6849
 	jp nz,interactionDelete		; $684a
 	cp $01			; $684d
-	jr nz,_label_08_234	; $684f
-	ld a,$16		; $6851
+	jr nz,@continue		; $684f
+	ld a,GLOBALFLAG_MOBLINS_KEEP_DESTROYED		; $6851
 	call checkGlobalFlag		; $6853
-	ld a,$6e		; $6856
-	jr nz,_label_08_232	; $6858
-	ld a,$5e		; $685a
-_label_08_232:
-	ld hl,$cc4c		; $685c
+	ld a,<ROOM_SEASONS_06e		; $6856
+	jr nz,+			; $6858
+	ld a,<ROOM_SEASONS_05e		; $685a
++
+	ld hl,wActiveRoom		; $685c
 	cp (hl)			; $685f
 	jp nz,interactionDelete		; $6860
-	jr _label_08_234		; $6863
-_label_08_233:
+	jr @continue		; $6863
+@nonVar03_03:
 	add $04			; $6865
 	ld b,a			; $6867
 	call checkHoronVillageNPCShouldBeSeen_body@main		; $6868
 	jp nc,interactionDelete		; $686b
-_label_08_234:
+@continue:
 	ld e,$42		; $686e
 	ld a,b			; $6870
 	ld (de),a		; $6871
 	inc e			; $6872
 	ld a,(de)		; $6873
-_label_08_235:
 	rst_jumpTable			; $6874
-	ld a,l			; $6875
-	ld l,b			; $6876
-	sbc e			; $6877
-	ld l,b			; $6878
-	jp nz,$9b68		; $6879
-	ld l,b			; $687c
-	call $689b		; $687d
+	.dw @@var03_00
+	.dw @@var03_01
+	.dw @@var03_02
+	.dw @@var03_03
+@@var03_00:
+	call @@var03_03		; $687d
 	call getFreeInteractionSlot		; $6880
-	jr nz,_label_08_236	; $6883
-	ld (hl),$83		; $6885
+	jr nz,+			; $6883
+	ld (hl),INTERACID_83		; $6885
 	ld bc,$00fd		; $6887
 	call objectCopyPositionWithOffset		; $688a
 	ld l,$4b		; $688d
@@ -3905,8 +3975,10 @@ _label_08_235:
 	ld a,(hl)		; $6895
 	ld l,$77		; $6896
 	ld (hl),a		; $6898
-_label_08_236:
-	jr _label_08_237		; $6899
++
+	jr @func_68e9		; $6899
+@@var03_01:
+@@var03_03:
 	ld h,d			; $689b
 	ld l,$42		; $689c
 	ldi a,(hl)		; $689e
@@ -3933,12 +4005,13 @@ _label_08_236:
 	call interactionSetScript		; $68b9
 	call interactionRunScript		; $68bc
 	jp objectSetVisible82		; $68bf
-	ld a,($cc4e)		; $68c2
-	cp $03			; $68c5
+@@var03_02:
+	ld a,(wRoomStateModifier)		; $68c2
+	cp SEASON_WINTER			; $68c5
 	jp z,interactionDelete		; $68c7
-	call $689b		; $68ca
-	ld a,($cc4e)		; $68cd
-	cp $00			; $68d0
+	call @@var03_03		; $68ca
+	ld a,(wRoomStateModifier)		; $68cd
+	cp SEASON_SPRING			; $68d0
 	ret nz			; $68d2
 	ld h,d			; $68d3
 	ld l,$49		; $68d4
@@ -3951,7 +4024,7 @@ _label_08_236:
 	ld (hl),$28		; $68e2
 	ld a,$06		; $68e4
 	jp interactionSetAnimation		; $68e6
-_label_08_237:
+@func_68e9:
 	call getRandomNumber		; $68e9
 	and $3f			; $68ec
 	add $78			; $68ee
@@ -3960,102 +4033,94 @@ _label_08_237:
 	ld (hl),a		; $68f3
 	ret			; $68f4
 
-seasonsFunc_08_68f5:
+@state1:
 	ld e,$43		; $68f5
 	ld a,(de)		; $68f7
 	rst_jumpTable			; $68f8
-	ld bc,$3969		; $68f9
-	ld l,c			; $68fc
-	ld e,d			; $68fd
-	ld l,c			; $68fe
-	ld d,h			; $68ff
-	ld l,c			; $6900
+	.dw @@var03_00
+	.dw @@var03_01
+	.dw @@var03_02
+	.dw @@var03_03
+@@var03_00:
 	ld e,$45		; $6901
 	ld a,(de)		; $6903
 	rst_jumpTable			; $6904
-	add hl,bc		; $6905
-	ld l,c			; $6906
-	jr nz,_label_08_242	; $6907
-	call $6abc		; $6909
-	jr nz,_label_08_238	; $690c
+	.dw @@@substate0
+	.dw @@@substate1
+@@@substate0:
+	call _func_6abc		; $6909
+	jr nz,+			; $690c
 	ld l,$60		; $690e
 	ld (hl),$01		; $6910
 	call interactionIncState2		; $6912
 	ld hl,$cceb		; $6915
 	ld (hl),$01		; $6918
 	call interactionAnimate		; $691a
-_label_08_238:
-	jp $6933		; $691d
++
+	jp @@@runScriptPushLinkAwayUpdateDrawPriority		; $691d
+@@@substate1:
 	ld a,($cceb)		; $6920
 	cp $02			; $6923
-	jr nz,_label_08_239	; $6925
-	call $68e9		; $6927
+	jr nz,@@@runScriptPushLinkAwayUpdateDrawPriority	; $6925
+	call @func_68e9		; $6927
 	ld l,$45		; $692a
 	ld (hl),$00		; $692c
 	ld a,$08		; $692e
 	call interactionSetAnimation		; $6930
-_label_08_239:
+@@@runScriptPushLinkAwayUpdateDrawPriority:
 	call interactionRunScript		; $6933
 	jp interactionPushLinkAwayAndUpdateDrawPriority		; $6936
+@@var03_01:
 	ld h,d			; $6939
 	ld l,$42		; $693a
 	ld a,(hl)		; $693c
 	cp $02			; $693d
-	jr c,_label_08_241	; $693f
+	jr c,@@var03_03	; $693f
 	call checkInteractionState2		; $6941
-	jr nz,_label_08_240	; $6944
+	jr nz,+			; $6944
 	call interactionIncState2		; $6946
 	xor a			; $6949
 	ld l,$4e		; $694a
 	ldi (hl),a		; $694c
 	ld (hl),a		; $694d
 	call _beginJump		; $694e
-_label_08_240:
++
 	call _updateSpeedZ		; $6951
-_label_08_241:
+@@var03_03:
 	call interactionRunScript		; $6954
 	jp interactionAnimateAsNpc		; $6957
-	ld a,($cc4e)		; $695a
-	cp $00			; $695d
-	jp nz,_label_08_241		; $695f
+@@var03_02:
+	ld a,(wRoomStateModifier)		; $695a
+	cp SEASON_SPRING			; $695d
+	jp nz,@@var03_03		; $695f
 	ld e,$45		; $6962
 	ld a,(de)		; $6964
 	rst_jumpTable			; $6965
-	add b			; $6966
-	ld l,c			; $6967
-	xor h			; $6968
-	ld l,c			; $6969
-	cp e			; $696a
-	ld l,c			; $696b
-	ret c			; $696c
-	ld l,c			; $696d
-.DB $e4				; $696e
-	ld l,c			; $696f
-	ld b,$6a		; $6970
-_label_08_242:
-	ld a,(de)		; $6972
-	ld l,d			; $6973
-	ld hl,$496a		; $6974
-	ld l,d			; $6977
-	ld e,e			; $6978
-	ld l,d			; $6979
-	ld c,c			; $697a
-	ld l,d			; $697b
-	ld a,a			; $697c
-	ld l,d			; $697d
-	and (hl)		; $697e
-	ld l,d			; $697f
+	.dw @@@substate0
+	.dw @@@substate1
+	.dw @@@substate2
+	.dw @@@substate3
+	.dw @@@substate4
+	.dw @@@substate5
+	.dw @@@substate6
+	.dw @@@substate7
+	.dw @@@substate8
+	.dw @@@substate9
+	.dw @@@substateA
+	.dw @@@substateB
+	.dw @@@substateC
+@@@substate0:
 	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $6980
-	jr nc,_label_08_243	; $6983
+	jr nc,+			; $6983
 	ld h,d			; $6985
 	ld l,$77		; $6986
 	ld (hl),$0c		; $6988
-_label_08_243:
-	call $6ac1		; $698a
-	jp nz,_label_08_251		; $698d
++
+	call _func_6ac1		; $698a
+	jp nz,_runScriptSetPriorityRelativeToLink_withTerrainEffects		; $698d
 	call objectApplySpeed		; $6990
 	cp $4b			; $6993
-	jr c,_label_08_244	; $6995
+	jr c,+			; $6995
 	call interactionIncState2		; $6997
 	ld bc,$fe80		; $699a
 	call objectSetSpeedZ		; $699d
@@ -4063,8 +4128,9 @@ _label_08_243:
 	ld (hl),$14		; $69a2
 	ld a,$09		; $69a4
 	call interactionSetAnimation		; $69a6
-_label_08_244:
-	jp $6ab3		; $69a9
++
+	jp _animateRunScript		; $69a9
+@@@substate1:
 	ld a,($ccc3)		; $69ac
 	or a			; $69af
 	ret nz			; $69b0
@@ -4072,6 +4138,7 @@ _label_08_244:
 	ld ($ccc3),a		; $69b2
 	call interactionIncState2		; $69b5
 	jp objectSetVisiblec2		; $69b8
+@@@substate2:
 	ld c,$20		; $69bb
 	call objectUpdateSpeedZ_paramC		; $69bd
 	jp nz,objectApplySpeed		; $69c0
@@ -4085,11 +4152,13 @@ _label_08_244:
 	ld (hl),a		; $69d2
 	ld a,$06		; $69d3
 	jp interactionSetAnimation		; $69d5
-	call $6abc		; $69d8
+@@@substate3:
+	call _func_6abc		; $69d8
 	ret nz			; $69db
 	call interactionIncState2		; $69dc
 	ld a,$05		; $69df
 	jp interactionSetAnimation		; $69e1
+@@@substate4:
 	ld e,$4f		; $69e4
 	ld a,($ccc3)		; $69e6
 	ld (de),a		; $69e9
@@ -4106,6 +4175,7 @@ _label_08_244:
 	ld (hl),$00		; $69ff
 	ld a,$53		; $6a01
 	jp playSound		; $6a03
+@@@substate5:
 	ld c,$20		; $6a06
 	call objectUpdateSpeedZ_paramC		; $6a08
 	jp nz,objectApplySpeed		; $6a0b
@@ -4115,30 +4185,34 @@ _label_08_244:
 	ld l,$71		; $6a15
 	ld (hl),$00		; $6a17
 	ret			; $6a19
-	call $6abc		; $6a1a
+@@@substate6:
+	call _func_6abc		; $6a1a
 	ret nz			; $6a1d
 	jp interactionIncState2		; $6a1e
+@@@substate7:
 	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $6a21
-	jr nc,_label_08_245	; $6a24
+	jr nc,+			; $6a24
 	ld h,d			; $6a26
 	ld l,$77		; $6a27
 	ld (hl),$0c		; $6a29
-_label_08_245:
-	call $6ac1		; $6a2b
-	jp nz,_label_08_251		; $6a2e
++
+	call _func_6ac1		; $6a2b
+	jp nz,_runScriptSetPriorityRelativeToLink_withTerrainEffects		; $6a2e
 	call objectApplySpeed		; $6a31
 	ld e,$4b		; $6a34
 	ld a,(de)		; $6a36
 	cp $28			; $6a37
-	jr nc,_label_08_246	; $6a39
+	jr nc,+			; $6a39
 	call interactionIncState2		; $6a3b
 	ld l,$76		; $6a3e
 	ld (hl),$06		; $6a40
 	ld l,$49		; $6a42
 	ld (hl),$18		; $6a44
-_label_08_246:
-	jp $6ab3		; $6a46
-	call $6abc		; $6a49
++
+	jp _animateRunScript		; $6a46
+@@@substate8:
+@@@substateA:
+	call _func_6abc		; $6a49
 	ret nz			; $6a4c
 	ld l,$49		; $6a4d
 	ld a,(hl)		; $6a4f
@@ -4147,58 +4221,68 @@ _label_08_246:
 	add $05			; $6a53
 	call interactionSetAnimation		; $6a55
 	jp interactionIncState2		; $6a58
+@@@substate9:
 	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $6a5b
-	jr nc,_label_08_247	; $6a5e
+	jr nc,+			; $6a5e
 	ld h,d			; $6a60
 	ld l,$77		; $6a61
 	ld (hl),$0c		; $6a63
-_label_08_247:
-	call $6ac1		; $6a65
-	jr nz,_label_08_251	; $6a68
++
+	call _func_6ac1		; $6a65
+	jr nz,_runScriptSetPriorityRelativeToLink_withTerrainEffects	; $6a68
 	call objectApplySpeed		; $6a6a
 	cp $18			; $6a6d
-	jr nc,_label_08_248	; $6a6f
+	jr nc,+			; $6a6f
 	call interactionIncState2		; $6a71
 	ld l,$76		; $6a74
 	ld (hl),$06		; $6a76
 	ld l,$49		; $6a78
 	ld (hl),$10		; $6a7a
-_label_08_248:
-	jp $6ab3		; $6a7c
++
+	jp _animateRunScript		; $6a7c
+@@@substateB:
 	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $6a7f
-	jr nc,_label_08_249	; $6a82
+	jr nc,+			; $6a82
 	ld h,d			; $6a84
 	ld l,$77		; $6a85
 	ld (hl),$0c		; $6a87
-_label_08_249:
-	call $6ac1		; $6a89
-	jr nz,_label_08_251	; $6a8c
++
+	call _func_6ac1		; $6a89
+	jr nz,_runScriptSetPriorityRelativeToLink_withTerrainEffects	; $6a8c
 	call objectApplySpeed		; $6a8e
 	ld e,$4b		; $6a91
 	ld a,(de)		; $6a93
 	cp $62			; $6a94
-	jr c,_label_08_250	; $6a96
+	jr c,+			; $6a96
 	call interactionIncState2		; $6a98
 	ld l,$76		; $6a9b
 	ld (hl),$06		; $6a9d
 	ld l,$49		; $6a9f
 	ld (hl),$08		; $6aa1
-_label_08_250:
-	jp $6ab3		; $6aa3
-	call $6abc		; $6aa6
++
+	jp _animateRunScript		; $6aa3
+@@@substateC:
+	call _func_6abc		; $6aa6
 	ret nz			; $6aa9
 	ld l,$45		; $6aaa
 	ld (hl),$00		; $6aac
 	ld a,$06		; $6aae
 	jp interactionSetAnimation		; $6ab0
+
+_animateRunScript:
 	call interactionAnimate		; $6ab3
-_label_08_251:
+
+_runScriptSetPriorityRelativeToLink_withTerrainEffects:
 	call interactionRunScript		; $6ab6
 	jp objectSetPriorityRelativeToLink_withTerrainEffects		; $6ab9
+
+_func_6abc:
 	ld h,d			; $6abc
 	ld l,$76		; $6abd
 	dec (hl)		; $6abf
 	ret			; $6ac0
+	
+_func_6ac1:
 	ld h,d			; $6ac1
 	ld l,$77		; $6ac2
 	ld a,(hl)		; $6ac4
@@ -4208,140 +4292,146 @@ _label_08_251:
 	ret			; $6ac8
 
 _table_6ac9:
-	.dw _table_6ad1
-	.dw _table_6ae7
-	.dw _table_6afd
-	.dw _table_6b13
+	.dw @var03_00
+	.dw @var03_01
+	.dw @var03_02
+	.dw @var03_03
 
-_table_6ad1:
-	.dw script5c46
-	.dw script5c49
-	.dw script5c49
-	.dw script5c54
-	.dw script5c5a
-	.dw script5c5a
-	.dw script5c5d
-	.dw script5c5d
-	.dw script5c60
-	.dw script5c57
-	.dw script5c5a
+@var03_00:
+	.dw boyWithDogScript_text1
+	.dw boyWithDogScript_text2
+	.dw boyWithDogScript_text2
+	.dw boyWithDogScript_text3
+	.dw boyWithDogScript_text5
+	.dw boyWithDogScript_text5
+	.dw boyWithDogScript_text6
+	.dw boyWithDogScript_text6
+	.dw boyWithDogScript_text7
+	.dw boyWithDogScript_text4
+	.dw boyWithDogScript_text5
 
-_table_6ae7:
-	.dw script5c63
-	.dw script5c63
-	.dw script5c6e
-	.dw script5c6e
-	.dw script5c85
-	.dw script5c88
-	.dw script5c8b
-	.dw script5c9f
-	.dw script5ca9
-	.dw script5c6e
-	.dw script5c88
+@var03_01:
+	.dw horonVillageBoyScript_text1
+	.dw horonVillageBoyScript_text1
+	.dw horonVillageBoyScript_text2
+	.dw horonVillageBoyScript_text2
+	.dw horonVillageBoyScript_text3
+	.dw horonVillageBoyScript_text4
+	.dw horonVillageBoyScript_text5
+	.dw horonVillageBoyScript_text6
+	.dw horonVillageBoyScript_text7
+	.dw horonVillageBoyScript_text2
+	.dw horonVillageBoyScript_text4
 
-_table_6afd:
-	.dw script5cb3
-	.dw script5cb3
-	.dw script5cb3
-	.dw script5cb3
-	.dw script5cc5
-	.dw script5cc5
-	.dw script5cc5
-	.dw script5cc5
-	.dw script5cc5
-	.dw script5cb3
-	.dw script5cc8
+@var03_02:
+	.dw springBloomBoyScript_text1
+	.dw springBloomBoyScript_text1
+	.dw springBloomBoyScript_text1
+	.dw springBloomBoyScript_text1
+	.dw springBloomBoyScript_text2
+	.dw springBloomBoyScript_text2
+	.dw springBloomBoyScript_text2
+	.dw springBloomBoyScript_text2
+	.dw springBloomBoyScript_text2
+	.dw springBloomBoyScript_text1
+	.dw springBloomBoyScript_text3
 
-_table_6b13:
-	.dw script5ccb
-	.dw script5cd2
-	.dw script5ce6
-	.dw script5ce9
-	.dw script5ce6
+@var03_03:
+	.dw sunkenCityBoyScript_text1
+	.dw sunkenCityBoyScript_text2
+	.dw sunkenCityBoyScript_text3
+	.dw sunkenCityBoyScript_text4
+	.dw sunkenCityBoyScript_text3
 
 
-; pirates
+; ==============================================================================
+; INTERACID_PIRATIAN
+; ==============================================================================
 interactionCode40:
+; ==============================================================================
+; INTERACID_PIRATIAN_CAPTAIN
+; ==============================================================================
 interactionCode41:
 	ld e,$44		; $6b1d
 	ld a,(de)		; $6b1f
 	rst_jumpTable			; $6b20
-	dec h			; $6b21
-	ld l,e			; $6b22
-	or c			; $6b23
-	ld l,e			; $6b24
+	.dw @state0
+	.dw @state1
+@state0:
 	ld e,$42		; $6b25
 	ld a,(de)		; $6b27
 	rst_jumpTable			; $6b28
-	ld b,a			; $6b29
-	ld l,e			; $6b2a
-	ld c,d			; $6b2b
-	ld l,e			; $6b2c
-	ld c,d			; $6b2d
-	ld l,e			; $6b2e
-	ld c,d			; $6b2f
-	ld l,e			; $6b30
-	ld c,d			; $6b31
-	ld l,e			; $6b32
-	ld c,d			; $6b33
-	ld l,e			; $6b34
-	ld c,d			; $6b35
-	ld l,e			; $6b36
-	ld d,a			; $6b37
-	ld l,e			; $6b38
-	ld d,a			; $6b39
-	ld l,e			; $6b3a
-	ld c,d			; $6b3b
-	ld l,e			; $6b3c
-	ld a,(hl)		; $6b3d
-	ld l,e			; $6b3e
-	ld e,(hl)		; $6b3f
-	ld l,e			; $6b40
-	ld e,(hl)		; $6b41
-	ld l,e			; $6b42
-	ld e,(hl)		; $6b43
-	ld l,e			; $6b44
-	ld e,(hl)		; $6b45
-	ld l,e			; $6b46
-	call $6c3c		; $6b47
-	ld a,$13		; $6b4a
+	.dw @@subid0
+	.dw @@subid1
+	.dw @@subid2
+	.dw @@subid3
+	.dw @@subid4
+	.dw @@subid5
+	.dw @@subid6
+	.dw @@subid7
+	.dw @@subid8
+	.dw @@subid9
+	.dw @@subidA
+	.dw @@subidB
+	.dw @@subidC
+	.dw @@subidD
+	.dw @@subidE
+@@subid0:
+	call _func_6c3c		; $6b47
+
+@@subid1:
+@@subid2:
+@@subid3:
+@@subid4:
+@@subid5:
+@@subid6:
+@@subid9:
+	ld a,GLOBALFLAG_PIRATES_LEFT_FOR_SHIP		; $6b4a
 	call checkGlobalFlag		; $6b4c
 	jp nz,interactionDelete		; $6b4f
 	call objectGetTileAtPosition		; $6b52
 	ld (hl),$00		; $6b55
-	call $6b91		; $6b57
+@@subid7:
+@@subid8:
+	call @func_6b91		; $6b57
 	ld a,$04		; $6b5a
-	jr _label_08_253		; $6b5c
-	ld a,$13		; $6b5e
+	jr @func_6b8b		; $6b5c
+@@subidB:
+@@subidC:
+@@subidD:
+@@subidE:
+	ld a,GLOBALFLAG_PIRATES_LEFT_FOR_SHIP		; $6b5e
 	call checkGlobalFlag		; $6b60
 	jp z,interactionDelete		; $6b63
-	ld a,$17		; $6b66
+	ld a,GLOBALFLAG_PIRATE_SHIP_DOCKED		; $6b66
 	call checkGlobalFlag		; $6b68
 	jp nz,interactionDelete		; $6b6b
-	call $6b91		; $6b6e
+	call @func_6b91		; $6b6e
 	ld e,$42		; $6b71
 	ld a,(de)		; $6b73
 	cp $0d			; $6b74
 	ld a,$00		; $6b76
-	jr z,_label_08_252	; $6b78
+	jr z,+			; $6b78
 	ld a,$04		; $6b7a
-_label_08_252:
-	jr _label_08_253		; $6b7c
++
+	jr @func_6b8b		; $6b7c
+@@subidA:
 	call getThisRoomFlags		; $6b7e
 	bit 6,(hl)		; $6b81
 	jp nz,interactionDelete		; $6b83
-	call $6b91		; $6b86
+	call @func_6b91		; $6b86
 	ld a,$04		; $6b89
-_label_08_253:
+@func_6b8b:
 	call interactionSetAnimation		; $6b8b
-	jp $6bc4		; $6b8e
+	jp _func_6bc4		; $6b8e
+@func_6b91:
 	call interactionInitGraphics		; $6b91
 	ld h,d			; $6b94
 	ld l,$44		; $6b95
 	ld (hl),$01		; $6b97
-	ld a,$3a		; $6b99
+	ld a,>TX_3a00		; $6b99
 	call interactionSetHighTextIndex		; $6b9b
-	call $6c29		; $6b9e
+	call _func_6c29		; $6b9e
 	ld e,$42		; $6ba1
 	ld a,(de)		; $6ba3
 	ld hl,_table_6cbf		; $6ba4
@@ -4351,127 +4441,110 @@ _label_08_253:
 	ld l,a			; $6baa
 	call interactionSetScript		; $6bab
 	jp interactionRunScript		; $6bae
+@state1:
 	ld e,$42		; $6bb1
 	ld a,(de)		; $6bb3
 	cp $08			; $6bb4
-	jr nz,_label_08_254	; $6bb6
-	call $6c51		; $6bb8
-_label_08_254:
+	jr nz,+			; $6bb6
+	call _func_6c51		; $6bb8
++
 	call interactionRunScript		; $6bbb
 	jp c,interactionDelete		; $6bbe
-	jp $6bc4		; $6bc1
+	jp _func_6bc4		; $6bc1
+_func_6bc4:
 	call interactionAnimate		; $6bc4
 	ld e,$7c		; $6bc7
 	ld a,(de)		; $6bc9
 	or a			; $6bca
-	jr nz,_label_08_256	; $6bcb
+	jr nz,_func_6be9	; $6bcb
 	ld e,$60		; $6bcd
 	ld a,(de)		; $6bcf
 	dec a			; $6bd0
-	jr nz,_label_08_255	; $6bd1
+	jr nz,+			; $6bd1
 	call getRandomNumber_noPreserveVars		; $6bd3
 	and $1f			; $6bd6
-	ld hl,$6c09		; $6bd8
+	ld hl,_table_6c09		; $6bd8
 	rst_addAToHl			; $6bdb
 	ld a,(hl)		; $6bdc
 	or a			; $6bdd
-	jr z,_label_08_255	; $6bde
+	jr z,+			; $6bde
 	ld e,$60		; $6be0
 	ld (de),a		; $6be2
-_label_08_255:
++
 	call objectPreventLinkFromPassing		; $6be3
 	jp objectSetPriorityRelativeToLink_withTerrainEffects		; $6be6
-_label_08_256:
+_func_6be9:
 	ld e,$50		; $6be9
 	ld a,(de)		; $6beb
 	cp $28			; $6bec
-	jr z,_label_08_257	; $6bee
+	jr z,+			; $6bee
 	cp $50			; $6bf0
-	jr z,_label_08_258	; $6bf2
+	jr z,++			; $6bf2
 	ret			; $6bf4
-_label_08_257:
++
 	ld e,$60		; $6bf5
 	ld a,(de)		; $6bf7
 	cp $09			; $6bf8
 	ret nz			; $6bfa
-	jr _label_08_259		; $6bfb
-_label_08_258:
+	jr +++			; $6bfb
+++
 	ld e,$60		; $6bfd
 	ld a,(de)		; $6bff
 	cp $0c			; $6c00
 	ret nz			; $6c02
-_label_08_259:
++++
 	ld e,$60		; $6c03
 	ld a,$01		; $6c05
 	ld (de),a		; $6c07
 	ret			; $6c08
-	nop			; $6c09
-	nop			; $6c0a
-	inc b			; $6c0b
-	inc b			; $6c0c
-	nop			; $6c0d
-	nop			; $6c0e
-	ld ($0008),sp		; $6c0f
-	nop			; $6c12
-	nop			; $6c13
-	nop			; $6c14
-	inc b			; $6c15
-	inc b			; $6c16
-	nop			; $6c17
-	nop			; $6c18
-	nop			; $6c19
-	ld ($0008),sp		; $6c1a
-	nop			; $6c1d
-	nop			; $6c1e
-	stop			; $6c1f
-	stop			; $6c20
-	nop			; $6c21
-	nop			; $6c22
-	nop			; $6c23
-	jr nz,_label_08_262	; $6c24
-	nop			; $6c26
-	nop			; $6c27
-	nop			; $6c28
-	ld a,$40		; $6c29
+_table_6c09:
+	.db $00 $00 $04 $04 $00 $00 $08 $08
+	.db $00 $00 $00 $00 $04 $04 $00 $00
+	.db $00 $08 $08 $00 $00 $00 $10 $10
+	.db $00 $00 $00 $20 $20 $00 $00 $00
+_func_6c29:
+	ld a,TREASURE_ESSENCE		; $6c29
 	call checkTreasureObtained		; $6c2b
-	jr c,_label_08_260	; $6c2e
+	jr c,+			; $6c2e
 	xor a			; $6c30
-_label_08_260:
++
 	cp $20			; $6c31
 	ld a,$01		; $6c33
-	jr nc,_label_08_261	; $6c35
+	jr nc,+			; $6c35
 	xor a			; $6c37
-_label_08_261:
++
 	ld e,$7a		; $6c38
 	ld (de),a		; $6c3a
 	ret			; $6c3b
-	ld a,$4a		; $6c3c
+_func_6c3c:
+	ld a,TREASURE_PIRATES_BELL		; $6c3c
 	call checkTreasureObtained		; $6c3e
-	jr c,_label_08_262	; $6c41
+	jr c,+			; $6c41
 	xor a			; $6c43
-	jr _label_08_263		; $6c44
-_label_08_262:
+	jr ++			; $6c44
++
 	or a			; $6c46
 	ld a,$01		; $6c47
-	jr z,_label_08_263	; $6c49
+	jr z,++			; $6c49
 	ld a,$02		; $6c4b
-_label_08_263:
+++
 	ld e,$7b		; $6c4d
 	ld (de),a		; $6c4f
 	ret			; $6c50
-	call $6c8b		; $6c51
-	jr z,_label_08_265	; $6c54
+_func_6c51:
+	call _func_6c8b		; $6c51
+	jr z,++			; $6c54
 	ld a,($cc46)		; $6c56
 	bit 6,a			; $6c59
-	jr z,_label_08_264	; $6c5b
+	jr z,+			; $6c5b
 	ld c,$01		; $6c5d
 	ld b,$db		; $6c5f
-	jp $6c78		; $6c61
-_label_08_264:
+	jp _func_6c78		; $6c61
++
 	ld a,($cc45)		; $6c64
 	bit 6,a			; $6c67
 	ret nz			; $6c69
-_label_08_265:
+++
 	ld h,d			; $6c6a
 	ld l,$7e		; $6c6b
 	ld a,$00		; $6c6d
@@ -4479,7 +4552,8 @@ _label_08_265:
 	ret z			; $6c70
 	ld c,$00		; $6c71
 	ld b,$d9		; $6c73
-	jp $6c78		; $6c75
+	jp _func_6c78		; $6c75
+_func_6c78:
 	ld h,d			; $6c78
 	ld l,$7e		; $6c79
 	ld (hl),c		; $6c7b
@@ -4491,75 +4565,75 @@ _label_08_265:
 	call setTile		; $6c83
 	ld a,$70		; $6c86
 	jp playSound		; $6c88
-	ld hl,$6cb2		; $6c8b
+_func_6c8b:
+	ld hl,_table_6cb2		; $6c8b
 	ld a,($d00b)		; $6c8e
 	ld c,a			; $6c91
 	ld a,($d00d)		; $6c92
 	ld b,a			; $6c95
-_label_08_266:
+---
 	ldi a,(hl)		; $6c96
 	or a			; $6c97
 	ret z			; $6c98
 	add $04			; $6c99
 	sub c			; $6c9b
 	cp $09			; $6c9c
-	jr nc,_label_08_267	; $6c9e
+	jr nc,+			; $6c9e
 	ldi a,(hl)		; $6ca0
 	add $03			; $6ca1
 	sub b			; $6ca3
 	cp $07			; $6ca4
-	jr nc,_label_08_268	; $6ca6
+	jr nc,++		; $6ca6
 	ld a,(hl)		; $6ca8
 	ld e,$7f		; $6ca9
 	ld (de),a		; $6cab
 	or d			; $6cac
 	ret			; $6cad
-_label_08_267:
++
 	inc hl			; $6cae
-_label_08_268:
+++
 	inc hl			; $6caf
-	jr _label_08_266		; $6cb0
-	jr $58			; $6cb2
-	nop			; $6cb4
-	jr $68			; $6cb5
-	ld bc,$7818		; $6cb7
-	ld (bc),a		; $6cba
-	jr -$78			; $6cbb
-	inc bc			; $6cbd
-	nop			; $6cbe
+	jr ---		; $6cb0
+_table_6cb2:
+	.db $18 $58 $00 $18
+	.db $68 $01 $18 $78
+	.db $02 $18 $88 $03
+	.db $00
 
 _table_6cbf:
-	.dw script5cec
-	.dw script5d85
-	.dw script5d85
-	.dw script5d85
-	.dw script5d85
-	.dw script5dbc
-	.dw script5dbc
-	.dw script5ddd
-	.dw script5e4b
-	.dw script5e74
-	.dw script5e76
-	.dw script5e93
-	.dw script5e97
-	.dw script5ec9
-	.dw script5ee5
+	.dw piratianCaptainScript_inHouse
+	.dw piratian1FScript_text1BasedOnD6Beaten
+	.dw piratian1FScript_text1BasedOnD6Beaten
+	.dw piratian1FScript_text1BasedOnD6Beaten
+	.dw piratian1FScript_text1BasedOnD6Beaten
+	.dw piratian1FScript_text2BasedOnD6Beaten
+	.dw piratian1FScript_text2BasedOnD6Beaten
+	.dw unluckySailorScript
+	.dw piratian2FScript_textBasedOnD6Beaten
+	.dw piratianRoofScript
+	.dw samasaGatePiratianScript
+	.dw piratianCaptainByShipScript
+	.dw piratianFromShipScript
+	.dw piratianByCaptainWhenDeparting1Script
+	.dw piratianByCaptainWhenDeparting2Script
 
 
-; pirate captain and a pirate upstairs
+; ==============================================================================
+; INTERACID_PIRATE_HOUSE_SUBROSIAN
+; ==============================================================================
 interactionCode42:
 	ld e,$44		; $6cdd
 	ld a,(de)		; $6cdf
 	rst_jumpTable			; $6ce0
-	push hl			; $6ce1
-	ld l,h			; $6ce2
-	ld c,$6d		; $6ce3
-	ld a,$13		; $6ce5
+	.dw @state0
+	.dw @state1
+@state0:
+	ld a,GLOBALFLAG_PIRATES_LEFT_FOR_SHIP		; $6ce5
 	call checkGlobalFlag		; $6ce7
 	ld b,$00		; $6cea
-	jr nz,_label_08_269	; $6cec
+	jr nz,+			; $6cec
 	inc b			; $6cee
-_label_08_269:
++
 	ld e,$42		; $6cef
 	ld a,(de)		; $6cf1
 	cp b			; $6cf2
@@ -4576,156 +4650,244 @@ _label_08_269:
 	call interactionSetScript		; $6d06
 	ld a,$02		; $6d09
 	call interactionSetAnimation		; $6d0b
+@state1:
 	call interactionRunScript		; $6d0e
 	jp npcFaceLinkAndAnimate		; $6d11
 
 _table_6d14:
-	.dw script5f1c
-	.dw script5f1f
+	.dw pirateHouseSubrosianScript_piratesAround
+	.dw pirateHouseSubrosianScript_piratesLeft
 
 
 ; ==============================================================================
 ; INTERACID_SYRUP
+;
+; Variables:
+;   var38: Item being bought
+;   var39: Set to 0 if Link has enough rupees (instead of wShopHaveEnoughRupees)
+;   var3a: Set to 1 if Link can't purchase an item (because he has too many of it)
+;   var3b: "Return value" from purchase script (if $ff, the purchase failed)
+;   var3c: Object index of item that Link is holding
 ; ==============================================================================
 interactionCode43:
+.ifdef ROM_AGES
+	callab checkReloadShopItemTiles		; $6e96
+.else
 	call checkReloadShopItemTiles		; $6d18
-	call $6d21		; $6d1b
-	jp interactionAnimateAsNpc		; $6d1e
-	ld e,$44		; $6d21
-	ld a,(de)		; $6d23
-	rst_jumpTable			; $6d24
-	dec hl			; $6d25
-	ld l,l			; $6d26
-	ld c,a			; $6d27
-	ld l,l			; $6d28
-	push bc			; $6d29
-	ld l,l			; $6d2a
-	ld a,$01		; $6d2b
-	ld (de),a		; $6d2d
-	call interactionInitGraphics		; $6d2e
-	call interactionSetAlwaysUpdateBit		; $6d31
-	ld l,$66		; $6d34
-	ld (hl),$12		; $6d36
-	inc l			; $6d38
-	ld (hl),$07		; $6d39
-	ld e,$71		; $6d3b
-	call objectAddToAButtonSensitiveObjectList		; $6d3d
+.endif
+	call @runState		; $6d1b
+	jp interactionAnimateAsNpc		; $6ea1
+
+@runState:
+	ld e,Interaction.state		; $6ea4
+	ld a,(de)		; $6ea6
+	rst_jumpTable			; $6ea7
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
+	ld a,$01		; $6eae
+	ld (de),a		; $6eb0
+
+	call interactionInitGraphics		; $6eb1
+	call interactionSetAlwaysUpdateBit		; $6eb4
+
+	ld l,Interaction.collisionRadiusY		; $6eb7
+	ld (hl),$12		; $6eb9
+	inc l			; $6ebb
+	ld (hl),$07		; $6ebc
+
+	ld e,Interaction.pressedAButton		; $6ebe
+	call objectAddToAButtonSensitiveObjectList		; $6ec0
+.ifdef ROM_SEASONS
 	call getThisRoomFlags		; $6d40
 	and $40			; $6d43
-	ld hl,$5f22		; $6d45
-	jr z,_label_08_270	; $6d48
-	ld hl,$5f50		; $6d4a
-_label_08_270:
-	jr _label_08_278		; $6d4d
-	ld e,$71		; $6d4f
-	ld a,(de)		; $6d51
-	or a			; $6d52
-	ret z			; $6d53
-	xor a			; $6d54
-	ld (de),a		; $6d55
-	ld a,$81		; $6d56
-	ld ($cca4),a		; $6d58
-	ld a,($cc75)		; $6d5b
-	or a			; $6d5e
-	jr z,_label_08_276	; $6d5f
-	ld a,($d019)		; $6d61
-	ld h,a			; $6d64
-	ld e,$7c		; $6d65
-	ld (de),a		; $6d67
-	ld l,$42		; $6d68
-	ld a,(hl)		; $6d6a
-	push af			; $6d6b
-	ld b,a			; $6d6c
-	sub $07			; $6d6d
-	ld e,$78		; $6d6f
-	ld (de),a		; $6d71
-	ld a,b			; $6d72
-	ld hl,_shopItemPrices		; $6d73
-	rst_addAToHl			; $6d76
-	ld a,(hl)		; $6d77
-	call cpRupeeValue		; $6d78
-	ld e,$79		; $6d7b
-	ld (de),a		; $6d7d
-	ld ($cbad),a		; $6d7e
-	pop af			; $6d81
-	cp $07			; $6d82
-	jr z,_label_08_273	; $6d84
-	cp $09			; $6d86
-	jr z,_label_08_273	; $6d88
-	cp $0b			; $6d8a
-	jr z,_label_08_271	; $6d8c
-	ld a,($c6ba)		; $6d8e
-	jr _label_08_272		; $6d91
-_label_08_271:
-	ld a,($c6ad)		; $6d93
-_label_08_272:
-	cp $99			; $6d96
-	ld a,$01		; $6d98
-	jr nc,_label_08_275	; $6d9a
-	jr _label_08_274		; $6d9c
-_label_08_273:
-	ld a,$2f		; $6d9e
-	call checkTreasureObtained		; $6da0
-	ld a,$01		; $6da3
-	jr c,_label_08_275	; $6da5
-_label_08_274:
-	xor a			; $6da7
-_label_08_275:
-	ld e,$7a		; $6da8
-	ld (de),a		; $6daa
-	ld hl,$5f68		; $6dab
-	jr _label_08_278		; $6dae
-_label_08_276:
-	call _shopkeeperCheckAllItemsBought		; $6db0
-	jr z,_label_08_277	; $6db3
-	ld hl,$5f64		; $6db5
-	jr _label_08_278		; $6db8
-_label_08_277:
-	ld hl,$5f60		; $6dba
-_label_08_278:
-	ld e,$44		; $6dbd
-	ld a,$02		; $6dbf
-	ld (de),a		; $6dc1
-	jp interactionSetScript		; $6dc2
-	call interactionRunScript		; $6dc5
-	ret nc			; $6dc8
-	xor a			; $6dc9
-	ld ($cca4),a		; $6dca
-	ld e,$7b		; $6dcd
-	ld a,(de)		; $6dcf
-	or a			; $6dd0
-	jr z,_label_08_280	; $6dd1
-	inc a			; $6dd3
-	ld c,$03		; $6dd4
-	jr nz,_label_08_279	; $6dd6
-	ld c,$04		; $6dd8
-_label_08_279:
-	xor a			; $6dda
-	ld (de),a		; $6ddb
-	ld e,$7c		; $6ddc
-	ld a,(de)		; $6dde
-	ld h,a			; $6ddf
-	ld l,$44		; $6de0
-	ld (hl),c		; $6de2
-	call dropLinkHeldItem		; $6de3
-_label_08_280:
-	ld e,$44		; $6de6
-	ld a,$01		; $6de8
-	ld (de),a		; $6dea
-	ret			; $6deb
+	ld hl,syrupScript_notTradedMushroomYet		; $6d45
+	jr z,+			; $6d48
+.endif
+	ld hl,syrupScript_spawnShopItems		; $6d4a
++
+	jr @setScriptAndGotoState2		; $6d4d
+
+
+; State 1: Waiting for Link to talk to her
+@state1:
+	ld e,Interaction.pressedAButton		; $6ec8
+	ld a,(de)		; $6eca
+	or a			; $6ecb
+	ret z			; $6ecc
+
+	xor a			; $6ecd
+	ld (de),a		; $6ece
+
+	ld a,$81		; $6ecf
+	ld (wDisabledObjects),a		; $6ed1
+
+	ld a,(wLinkGrabState)		; $6ed4
+	or a			; $6ed7
+	jr z,@talkToSyrupWithoutItem	; $6ed8
+
+	; Get the object that Link is holding
+	ld a,(w1Link.relatedObj2+1)		; $6eda
+	ld h,a			; $6edd
+.ifdef ROM_AGES
+	ld e,Interaction.var3b		; $6ede
+.else
+	ld e,Interaction.var3c		; $6ede
+.endif
+	ld (de),a		; $6ee0
+
+	; Assume he's holding an INTERACID_SHOP_ITEM. Subids $07-$0c are for syrup's shop.
+	ld l,Interaction.subid		; $6ee1
+	ld a,(hl)		; $6ee3
+	push af			; $6ee4
+	ld b,a			; $6ee5
+	sub $07			; $6ee6
+
+.ifdef ROM_AGES
+	ld e,Interaction.var37		; $6ee8
+.else
+	ld e,Interaction.var38		; $6ee8
+.endif
+	ld (de),a		; $6eea
+
+	; Check if Link has the rupees for it
+	ld a,b			; $6eeb
+	ld hl,_shopItemPrices		; $6eec
+	rst_addAToHl			; $6eef
+	ld a,(hl)		; $6ef0
+	call cpRupeeValue		; $6ef1
+.ifdef ROM_AGES
+	ld (wShopHaveEnoughRupees),a		; $6ef4
+.else
+	ld e,Interaction.var39
+	ld (de),a
+.endif
+	ld ($cbad),a		; $6ef7
+
+	; Check the item type, see if Link is allowed to buy any more than he already has
+	pop af			; $6efa
+	cp $07			; $6efb
+	jr z,@checkPotion	; $6efd
+	cp $09			; $6eff
+	jr z,@checkPotion	; $6f01
+
+	cp $0b			; $6f03
+	jr z,@checkBombchus	; $6f05
+
+	ld a,(wNumGashaSeeds)		; $6f07
+	jr @checkQuantity		; $6f0a
+
+@checkBombchus:
+	ld a,(wNumBombchus)		; $6f0c
+
+@checkQuantity:
+	; For bombchus and gasha seeds, amount caps at 99
+	cp $99			; $6f0f
+	ld a,$01		; $6f11
+	jr nc,@setCanPurchase	; $6f13
+	jr @canPurchase		; $6f15
+
+@checkPotion:
+	ld a,TREASURE_POTION		; $6f17
+	call checkTreasureObtained		; $6f19
+	ld a,$01		; $6f1c
+	jr c,@setCanPurchase	; $6f1e
+
+@canPurchase:
+	xor a			; $6f20
+
+@setCanPurchase:
+	; Set var38 to 1 if Link can't purchase the item because he has too much of it
+.ifdef ROM_AGES
+	ld e,Interaction.var38		; $6f21
+.else
+	ld e,Interaction.var3a		; $6f21
+.endif
+	ld (de),a		; $6f23
+
+	ld hl,syrupScript_purchaseItem		; $6f24
+	jr @setScriptAndGotoState2		; $6f27
+
+@talkToSyrupWithoutItem:
+	call _shopkeeperCheckAllItemsBought		; $6f29
+	jr z,@showWelcomeText	; $6f2c
+
+	ld hl,syrupScript_showClosedText		; $6f2e
+	jr @setScriptAndGotoState2		; $6f31
+
+@showWelcomeText:
+	ld hl,syrupScript_showWelcomeText		; $6f33
+
+@setScriptAndGotoState2:
+	ld e,Interaction.state		; $6f36
+	ld a,$02		; $6f38
+	ld (de),a		; $6f3a
+	jp interactionSetScript		; $6f3b
+
+
+; State 2: running a script
+@state2:
+	call interactionRunScript		; $6f3e
+	ret nc			; $6f41
+
+	; Script done
+
+	xor a			; $6f42
+	ld (wDisabledObjects),a		; $6f43
+
+	; Check response from script (was purchase successful?)
+.ifdef ROM_AGES
+	ld e,Interaction.var3a		; $6f46
+.else
+	ld e,Interaction.var3b		; $6f46
+.endif
+	ld a,(de)		; $6f48
+	or a			; $6f49
+	jr z,@gotoState1 ; Skip below code if he was holding nothing to begin with
+
+	; If purchase was successful, set the held item (INTERACID_SHOP_ITEM) to state
+	; 3 (link obtains it)
+	inc a			; $6f4c
+	ld c,$03		; $6f4d
+	jr nz,++		; $6f4f
+
+	; If purchase was not successful, set the held item to state 4 (return to display
+	; area)
+	ld c,$04		; $6f51
+++
+	xor a			; $6f53
+	ld (de),a		; $6f54
+.ifdef ROM_AGES
+	ld e,Interaction.var3b		; $6ede
+.else
+	ld e,Interaction.var3c		; $6ede
+.endif
+	ld a,(de)		; $6f57
+	ld h,a			; $6f58
+	ld l,Interaction.state		; $6f59
+	ld (hl),c		; $6f5b
+	call dropLinkHeldItem		; $6f5c
+
+@gotoState1:
+	ld e,Interaction.state		; $6f5f
+	ld a,$01		; $6f61
+	ld (de),a		; $6f63
+	ret			; $6f64
 
 
 ; ==============================================================================
-; INTERACID_ZELDA
+; INTERACID_S_ZELDA
 ; ==============================================================================
 interactionCode44:
 	ld e,$44		; $6dec
 	ld a,(de)		; $6dee
 	rst_jumpTable			; $6def
-.DB $f4				; $6df0
-	ld l,l			; $6df1
-	ld h,d			; $6df2
-	ld l,(hl)		; $6df3
+	.dw _zelda_state0
+	.dw _zelda_state1
+
+_zelda_state0:
 	ld a,$01		; $6df4
 	ld (de),a		; $6df6
 	ld e,$42		; $6df7
@@ -4739,104 +4901,106 @@ interactionCode44:
 	call interactionSetScript		; $6e02
 	ld a,b			; $6e05
 	or a			; $6e06
-	jr z,_label_08_282	; $6e07
+	jr z,@subid0	; $6e07
 	cp $08			; $6e09
-	jr z,_label_08_284	; $6e0b
+	jr z,@subid8	; $6e0b
 	cp $09			; $6e0d
-	jr z,_label_08_285	; $6e0f
-_label_08_281:
+	jr z,@subid9	; $6e0f
+
+@setVisibleInitGraphicsIncState:
 	call objectSetVisible82		; $6e11
 	call interactionInitGraphics		; $6e14
-	jr _label_08_286		; $6e17
-_label_08_282:
+	jr _zelda_state1		; $6e17
+
+@subid0:
 	ld a,$b0		; $6e19
 	ld ($cc1d),a		; $6e1b
 	ld ($cc17),a		; $6e1e
+	
 	call getThisRoomFlags		; $6e21
 	bit 7,a			; $6e24
-	jr z,_label_08_283	; $6e26
+	jr z,+			; $6e26
 	ld a,$01		; $6e28
 	ld ($ccab),a		; $6e2a
 	ld a,(wActiveMusic)		; $6e2d
 	or a			; $6e30
-	jr z,_label_08_283	; $6e31
+	jr z,+			; $6e31
 	xor a			; $6e33
 	ld (wActiveMusic),a		; $6e34
 	ld a,$38		; $6e37
 	call playSound		; $6e39
-_label_08_283:
++
 	ld hl,$cbb3		; $6e3c
 	ld b,$10		; $6e3f
 	call clearMemory		; $6e41
-	jr _label_08_281		; $6e44
-_label_08_284:
-	call seasonsFunc_3d3d		; $6e46
+	jr @setVisibleInitGraphicsIncState		; $6e44
+@subid8:
+	call checkGotMakuSeedDidNotSeeZeldaKidnapped		; $6e46
 	bit 7,c			; $6e49
 	jp nz,interactionDelete		; $6e4b
-	jr _label_08_281		; $6e4e
-_label_08_285:
-	ld a,$23		; $6e50
+	jr @setVisibleInitGraphicsIncState		; $6e4e
+@subid9:
+	ld a,GLOBALFLAG_ZELDA_SAVED_FROM_VIRE		; $6e50
 	call checkGlobalFlag		; $6e52
 	jp z,interactionDelete		; $6e55
-	ld a,$1e		; $6e58
+	ld a,GLOBALFLAG_ZELDA_VILLAGERS_SEEN		; $6e58
 	call checkGlobalFlag		; $6e5a
 	jp nz,interactionDelete		; $6e5d
-	jr _label_08_281		; $6e60
-_label_08_286:
+	jr @setVisibleInitGraphicsIncState		; $6e60
+
+_zelda_state1:
 	ld e,$42		; $6e62
 	ld a,(de)		; $6e64
 	rst_jumpTable			; $6e65
-	ld a,d			; $6e66
-	ld l,(hl)		; $6e67
-	ld a,d			; $6e68
-	ld l,(hl)		; $6e69
-	ld a,d			; $6e6a
-	ld l,(hl)		; $6e6b
-	ld a,d			; $6e6c
-	ld l,(hl)		; $6e6d
-	ld a,d			; $6e6e
-	ld l,(hl)		; $6e6f
-	add b			; $6e70
-	ld l,(hl)		; $6e71
-	adc e			; $6e72
-	ld l,(hl)		; $6e73
-	sub h			; $6e74
-	ld l,(hl)		; $6e75
-	sbc d			; $6e76
-	ld l,(hl)		; $6e77
-	sub h			; $6e78
-	ld l,(hl)		; $6e79
-_label_08_287:
+	.dw @animateAndRunScript
+	.dw @animateAndRunScript
+	.dw @animateAndRunScript
+	.dw @animateAndRunScript
+	.dw @animateAndRunScript
+	.dw @runSubid5
+	.dw @runSubid6
+	.dw @faceLinkAndRunScript
+	.dw @runSubid8
+	.dw @faceLinkAndRunScript
+
+@animateAndRunScript:
 	call interactionRunScript		; $6e7a
 	jp interactionAnimate		; $6e7d
+
+@runSubid5:
 	call interactionRunScript		; $6e80
 	ld e,$47		; $6e83
 	ld a,(de)		; $6e85
 	or a			; $6e86
 	jp nz,interactionAnimate		; $6e87
 	ret			; $6e8a
+
+@runSubid6:
 	call interactionRunScript		; $6e8b
 	jp c,interactionDelete		; $6e8e
 	jp interactionAnimate		; $6e91
-_label_08_288:
+
+@faceLinkAndRunScript:
 	call interactionRunScript		; $6e94
 	jp npcFaceLinkAndAnimate		; $6e97
-	ld a,$26		; $6e9a
+
+@runSubid8:
+	ld a,GLOBALFLAG_TALKED_TO_ZELDA_BEFORE_ONOX_FIGHT		; $6e9a
 	call checkGlobalFlag		; $6e9c
-	jr nz,_label_08_288	; $6e9f
-	jr _label_08_287		; $6ea1
+	jr nz,@faceLinkAndRunScript	; $6e9f
+	jr @animateAndRunScript		; $6ea1
 
 _table_6ea3:
-	.dw script5fc3
-	.dw script5fde
-	.dw script5fe2
+	.dw zeldaScript_ganonBeat
+	.dw zeldaScript_afterEscapingRoomOfRites
+	.dw zeldaScript_zeldaKidnapped
 	.dw script5fe6
 	.dw script5fe6
 	.dw script5fea
 	.dw script5fee
-	.dw script601c
-	.dw script601f
-	.dw script6056
+	.dw zeldaScript_withAnimalsHopefulText
+	.dw zeldaScript_blessingBeforeFightingOnox
+	.dw zeldaScript_healLinkIfNeeded
 
 
 ; ==============================================================================
@@ -5768,14 +5932,13 @@ _label_08_312:
 	jp interactionDelete		; $7515
 
 
-; an animal?
+; subid $0b spawns troupe?
 interactionCode4e:
 	ld e,$44		; $7518
 	ld a,(de)		; $751a
 	rst_jumpTable			; $751b
-	jr nz,_label_08_316	; $751c
-	ld a,l			; $751e
-	ld (hl),l		; $751f
+	.dw $7520
+	.dw $757d
 	ld a,$01		; $7520
 	ld (de),a		; $7522
 	ld e,$42		; $7523
@@ -5849,7 +6012,6 @@ _label_08_315:
 	halt			; $7590
 	xor c			; $7591
 	ld (hl),l		; $7592
-_label_08_316:
 	xor c			; $7593
 	ld (hl),l		; $7594
 	rst $30			; $7595
@@ -6847,20 +7009,21 @@ _label_08_346:
 	ld (hl),$01		; $7bd9
 	ret			; $7bdb
 
+
+; The items the subrosian throws into the volcano hole
 interactionCode54:
 	ld e,$44		; $7bdc
 	ld a,(de)		; $7bde
 	rst_jumpTable			; $7bdf
-	and $7b			; $7be0
-	ld a,(de)		; $7be2
-	ld a,h			; $7be3
-	daa			; $7be4
-	ld e,$3e		; $7be5
-	ld bc,$cd12		; $7be7
-	ld a,(de)		; $7bea
-	inc b			; $7beb
+	.dw @state0
+	.dw @state1
+	.dw objectSetVisible82
+@state0:
+	ld a,$01		; $7be6
+	ld (de),a		; $7be8
+	call getRandomNumber	; $7be9
 	and $0f			; $7bec
-	ld hl,$7c0a		; $7bee
+	ld hl,@table_7c0a		; $7bee
 	rst_addAToHl			; $7bf1
 	ld a,(hl)		; $7bf2
 	ld e,$42		; $7bf3
@@ -6873,19 +7036,24 @@ interactionCode54:
 	ld (hl),$08		; $7c02
 	call interactionInitGraphics		; $7c04
 	jp objectSetVisiblec1		; $7c07
-	dec c			; $7c0a
-	ld c,$10		; $7c0b
-	ldd a,(hl)		; $7c0d
-	ld b,b			; $7c0e
-	ld d,h			; $7c0f
-	halt			; $7c10
-	ld d,a			; $7c11
-	dec de			; $7c12
-	ld e,l			; $7c13
-	ld b,e			; $7c14
-	inc bc			; $7c15
-	ld sp,$2e13		; $7c16
-	inc hl			; $7c19
+@table_7c0a:
+	.db $0d ; Gasha seed
+	.db $0e ; Ring
+	.db $10 ; Lvl 1 Sword
+	.db $3a ; Heart piece
+	.db $40 ; Treasure map
+	.db $54 ; Banana
+	.db $76 ; Fish
+	.db $57 ; Star ore
+	.db $1b ; Shovel
+	.db $5d ; Blaino's gloves
+	.db $43 ; Big key
+	.db $03 ; 1 ore chunk
+	.db $31 ; Flippers
+	.db $13 ; Lvl 1 shield
+	.db $2e ; 200 rupees
+	.db $23 ; Flute
+@state1:
 	call objectApplySpeed		; $7c1a
 	ld c,$20		; $7c1d
 	call objectUpdateSpeedZ_paramC		; $7c1f
@@ -7361,6 +7529,7 @@ interactionCode5a:
 	ret			; $7f24
 
 
+; deku scrub you play song for
 interactionCode5b:
 	ld e,$44		; $7f25
 	ld a,(de)		; $7f27
@@ -7432,7 +7601,7 @@ interactionCode5c:
 	jp objectSetPriorityRelativeToLink_withTerrainEffects		; $7f98
 
 
-; ?
+; trade item, eg megaphone spawned when waking Talon, and mushroom spawned when he gives it to you
 interactionCode5d:
 	ld e,$44		; $7f9b
 	ld a,(de)		; $7f9d

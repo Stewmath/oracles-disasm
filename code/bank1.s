@@ -2348,7 +2348,11 @@ cutscene17:
 	jr z,+			; $4b15
 
 	ldi a,(hl)		; $4b17
+.ifdef ROM_AGES
 	cp INTERACID_ZELDA			; $4b18
+.else
+	cp INTERACID_S_ZELDA			; $4b18
+.endif
 	jr z,++			; $4b1a
 +
 	inc h			; $4b1c

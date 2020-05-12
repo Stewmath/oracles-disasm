@@ -6248,13 +6248,18 @@ interactionCode5e:
 ; INTERACID_SYRUP
 ;
 ; Variables:
+;   var37: Item being bought
 ;   var38: Set to 1 if Link can't purchase an item (because he has too many of it)
 ;   var3a: "Return value" from purchase script (if $ff, the purchase failed)
 ;   var3b: Object index of item that Link is holding
 ; ==============================================================================
 interactionCode5f:
+.ifdef ROM_AGES
 	callab checkReloadShopItemTiles		; $6e96
-	call @runState		; $6e9e
+.else
+	call checkReloadShopItemTiles		; $6d18
+.endif
+	call @runState		; $6d1b
 	jp interactionAnimateAsNpc		; $6ea1
 
 @runState:
@@ -6279,8 +6284,15 @@ interactionCode5f:
 
 	ld e,Interaction.pressedAButton		; $6ebe
 	call objectAddToAButtonSensitiveObjectList		; $6ec0
-	ld hl,syrupScript_spawnShopItems		; $6ec3
-	jr @setScriptAndGotoState2		; $6ec6
+.ifdef ROM_SEASONS
+	call getThisRoomFlags		; $6d40
+	and $40			; $6d43
+	ld hl,syrupScript_notTradedMushroomYet		; $6d45
+	jr z,+			; $6d48
+.endif
+	ld hl,syrupScript_spawnShopItems		; $6d4a
++
+	jr @setScriptAndGotoState2		; $6d4d
 
 
 ; State 1: Waiting for Link to talk to her
@@ -6303,7 +6315,11 @@ interactionCode5f:
 	; Get the object that Link is holding
 	ld a,(w1Link.relatedObj2+1)		; $6eda
 	ld h,a			; $6edd
+.ifdef ROM_AGES
 	ld e,Interaction.var3b		; $6ede
+.else
+	ld e,Interaction.var3c		; $6ede
+.endif
 	ld (de),a		; $6ee0
 
 	; Assume he's holding an INTERACID_SHOP_ITEM. Subids $07-$0c are for syrup's shop.
@@ -6313,7 +6329,11 @@ interactionCode5f:
 	ld b,a			; $6ee5
 	sub $07			; $6ee6
 
+.ifdef ROM_AGES
 	ld e,Interaction.var37		; $6ee8
+.else
+	ld e,Interaction.var38		; $6ee8
+.endif
 	ld (de),a		; $6eea
 
 	; Check if Link has the rupees for it
@@ -6322,7 +6342,12 @@ interactionCode5f:
 	rst_addAToHl			; $6eef
 	ld a,(hl)		; $6ef0
 	call cpRupeeValue		; $6ef1
+.ifdef ROM_AGES
 	ld (wShopHaveEnoughRupees),a		; $6ef4
+.else
+	ld e,Interaction.var39
+	ld (de),a
+.endif
 	ld ($cbad),a		; $6ef7
 
 	; Check the item type, see if Link is allowed to buy any more than he already has
@@ -6359,7 +6384,11 @@ interactionCode5f:
 
 @setCanPurchase:
 	; Set var38 to 1 if Link can't purchase the item because he has too much of it
+.ifdef ROM_AGES
 	ld e,Interaction.var38		; $6f21
+.else
+	ld e,Interaction.var3a		; $6f21
+.endif
 	ld (de),a		; $6f23
 
 	ld hl,syrupScript_purchaseItem		; $6f24
@@ -6393,7 +6422,11 @@ interactionCode5f:
 	ld (wDisabledObjects),a		; $6f43
 
 	; Check response from script (was purchase successful?)
+.ifdef ROM_AGES
 	ld e,Interaction.var3a		; $6f46
+.else
+	ld e,Interaction.var3b		; $6f46
+.endif
 	ld a,(de)		; $6f48
 	or a			; $6f49
 	jr z,@gotoState1 ; Skip below code if he was holding nothing to begin with
@@ -6410,7 +6443,11 @@ interactionCode5f:
 ++
 	xor a			; $6f53
 	ld (de),a		; $6f54
-	ld e,Interaction.var3b		; $6f55
+.ifdef ROM_AGES
+	ld e,Interaction.var3b		; $6ede
+.else
+	ld e,Interaction.var3c		; $6ede
+.endif
 	ld a,(de)		; $6f57
 	ld h,a			; $6f58
 	ld l,Interaction.state		; $6f59
