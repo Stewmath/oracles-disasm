@@ -5261,14 +5261,17 @@ lavaSoupSubrosianScript:
 	setdisabledobjectsto91
 	jump2byte -
 @fillingPot:
-	loadscript script_14_4b8e
+	loadscript lavaSoupSubrosianScript_fillPot
 @filledPot:
 	checkabutton
 	showtextlowindex <TX_0b24
 	jump2byte @filledPot
 	
 	
-script6571:
+; ==============================================================================
+; INTERACID_D8_ARMOS_PATTERN_PUZZLE
+; ==============================================================================
+d8ArmosScript_pattern1:
 	setspeed SPEED_080
 	wait 30
 	setangle $00
@@ -5289,14 +5292,16 @@ script6571:
 	applyspeed $20
 	setangle $00
 	applyspeed $20
-script6598:
+
+_d8Armos_finishedMoving:
 	wait 30
 	createpuff
 	enableallobjects
 	asm15 setCameraFocusedObjectToLink
 	setstate $03
 	scriptend
-script65a1:
+	
+d8ArmosScript_pattern2:
 	setspeed SPEED_080
 	wait 30
 	setangle $00
@@ -5311,8 +5316,9 @@ script65a1:
 	applyspeed $60
 	setangle $08
 	applyspeed $40
-	jump2byte script6598
-script65be:
+	jump2byte _d8Armos_finishedMoving
+	
+d8ArmosScript_pattern3:
 	setspeed SPEED_080
 	wait 30
 	setangle $18
@@ -5333,8 +5339,9 @@ script65be:
 	applyspeed $20
 	setangle $18
 	applyspeed $20
-	jump2byte script6598
-script65e7:
+	jump2byte _d8Armos_finishedMoving
+	
+d8ArmosScript_pattern4:
 	setspeed SPEED_080
 	wait 30
 	setangle $00
@@ -5353,55 +5360,72 @@ script65e7:
 	applyspeed $a0
 	setangle $08
 	applyspeed $40
-	jump2byte script6598
-script660c:
+	jump2byte _d8Armos_finishedMoving
+
+d8ArmosScript_giveKey:
 	setcoords $58, $b8
 	spawnitem TREASURE_SMALL_KEY $01
 	scriptend
-script6613:
+
+
+; ==============================================================================
+; INTERACID_DANCE_HALL_MINIGAME
+; ==============================================================================
+dancecLeaderScript_promptToStartDancing:
 	initcollisions
-	jumpifroomflagset $80, script6623
+	jumpifroomflagset $80, @dancedBefore
 	checkabutton
 	showtext TX_0100
-	jumpiftextoptioneq $00, script6630
+	jumpiftextoptioneq $00, @beginDance
 	showtext TX_0103
-script6623:
+@dancedBefore:
 	checkabutton
 	showtext TX_0101
-	jumpiftextoptioneq $00, script6630
+	jumpiftextoptioneq $00, @beginDance
 	showtext TX_0103
-	jump2byte script6623
-script6630:
-	loadscript script_14_4be4
-script6634:
+	jump2byte @dancedBefore
+@beginDance:
+	loadscript danceLeaderScript_moveIntoPosition
+
+danceLeaderScript_promptForTutorial:
 	showtext TX_0115
-	jumpiftextoptioneq $01, script6641
+	jumpiftextoptioneq $01, @needTutorial
+@danceLeaderScript_readyToDance:
 	asm15 fastFadeoutToWhite
 	setstate2 $ff
 	scriptend
-script6641:
-	loadscript script_14_4c06
-script6645:
-	giveitem $0600
-	jump2byte script6657
-script664a:
-	giveitem $0e00
-	jump2byte script6657
-script664f:
-	giveitem $3400
-	jump2byte script6657
-script6654:
-	giveitem $3700
-script6657:
+@needTutorial:
+	loadscript danceLeaderScript_danceTutorial
+
+danceLeaderScript_boomerang:
+	giveitem TREASURE_BOOMERANG $00
+	jump2byte _danceLeaderScript_itemGiven
+
+danceLeaderScript_giveFlute:
+	giveitem TREASURE_FLUTE $00
+	jump2byte _danceLeaderScript_itemGiven
+
+danceLeaderScript_gashaSeed:
+	giveitem TREASURE_GASHA_SEED $00
+	jump2byte _danceLeaderScript_itemGiven
+
+danceLeaderScript_giveOreChunks:
+	giveitem TREASURE_ORE_CHUNKS $00
+
+_danceLeaderScript_itemGiven:
 	wait 30
 	resetmusic
 	enableinput
 	setstate2 $ff
+
+danceLeaderScript_showLoadedText:
 	initcollisions
-script665e:
+-
 	checkabutton
 	showloadedtext
-	jump2byte script665e
+	jump2byte -
+
+
 script6662:
 	rungenericnpc TX_3e03
 script6665:

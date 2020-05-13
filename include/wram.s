@@ -2144,7 +2144,7 @@ wChestContentsOverride: ; $cca3/$ccbd
 wEyePuzzleCorrectDirection: ; $cca5
 ; Correct direction to move in for the scrambled rooms in the final dungeon
 	db
-wBlockPushAngle: ; $cca6
+wBlockPushAngle: ; $cca6/$ccc0
 ; The angle a block is being pushed toward? bit 7 does something?
 	db
 wcca7: ; $cca7

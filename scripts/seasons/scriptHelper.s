@@ -1527,8 +1527,6 @@ ingo_jump:
 
 ; ==============================================================================
 ; INTERACID_BLAINO_SCRIPT
-; INTERACID_BLAINO
-; ENEMYID_BLAINO
 ; ==============================================================================
 blainoScript_saveVariables:
 	ld a,GLOBALFLAG_CHEATED_BLAINO		; $5c00
@@ -1692,9 +1690,11 @@ putAwayLinksItems:
 	ret			; $5cef
 
 
+; unknown
+seasonsFunc_15_5cf0:
 	ld a,($ccec)		; $5cf0
 	cp $03			; $5cf3
-	jr z,_label_15_229	; $5cf5
+	jr z,+			; $5cf5
 seasonsFunc_15_5cf7:
 	push de			; $5cf7
 	ld a,$ff		; $5cf8
@@ -1702,13 +1702,14 @@ seasonsFunc_15_5cf7:
 	ld h,$c6		; $5cfd
 	ld de,$cfdf		; $5cff
 	ld c,$80		; $5d02
-	call $5d12		; $5d04
+	call seasonsFunc_15_5d12		; $5d04
 	ld e,$de		; $5d07
 	ld c,$81		; $5d09
-	call $5d12		; $5d0b
+	call seasonsFunc_15_5d12		; $5d0b
 	pop de			; $5d0e
-_label_15_229:
++
 	jp enableActiveRing		; $5d0f
+seasonsFunc_15_5d12:
 	ld a,(de)		; $5d12
 	or a			; $5d13
 	ret z			; $5d14
@@ -1721,21 +1722,30 @@ _label_15_229:
 	ret nz			; $5d1d
 	ld (hl),a		; $5d1e
 	ret			; $5d1f
+
+
+; ==============================================================================
+; INTERACID_DANCE_HALL_MINIGAME
+; ==============================================================================
+seasonsFunc_15_5d20:
 	ld a,$01		; $5d20
 	ld ($cfd2),a		; $5d22
 	ld a,$04		; $5d25
-	jr _label_15_230		; $5d27
+	jr +++		; $5d27
+
+seasonsFunc_15_5d29:
 	ld a,$ff		; $5d29
 	ld ($cfd2),a		; $5d2b
 	ld a,$04		; $5d2e
-	jr _label_15_230		; $5d30
+	jr +++		; $5d30
+	
+seasonsFunc_15_5d32:
 	ld a,$05		; $5d32
-	jr _label_15_230		; $5d34
+	jr +++		; $5d34
 
-
-seasonsFunc_15_5d36:
+; unknown
 	ld a,$03		; $5d36
-_label_15_230:
++++
 	ld ($cfd4),a		; $5d38
 	ld a,$09		; $5d3b
 	ld ($cfd1),a		; $5d3d
@@ -1743,7 +1753,7 @@ _label_15_230:
 	inc (hl)		; $5d43
 	ret			; $5d44
 
-
+seasonsFunc_15_5d45:
 	ld e,$54		; $5d45
 	ld a,$80		; $5d47
 	ld (de),a		; $5d49
@@ -1754,6 +1764,8 @@ _label_15_230:
 	ld a,$01		; $5d50
 	ld (de),a		; $5d52
 	ret			; $5d53
+
+
 	call getThisRoomFlags		; $5d54
 	bit 7,(hl)		; $5d57
 	ld a,$03		; $5d59
@@ -1862,37 +1874,38 @@ _label_15_239:
 	inc l			; $5e1c
 	inc (hl)		; $5e1d
 	jr _label_15_238		; $5e1e
+
+seasonsFunc_15_5e20:
 	call getRandomNumber		; $5e20
 	and $03			; $5e23
 	ld c,a			; $5e25
 	ld b,$04		; $5e26
-_label_15_240:
+-
 	push bc			; $5e28
 	ld a,c			; $5e29
-	ld bc,$5e4a		; $5e2a
+	ld bc,_table_5e4a		; $5e2a
 	call addAToBc		; $5e2d
 	ld a,(bc)		; $5e30
-	ld hl,$c616		; $5e31
+	ld hl,wRingsObtained		; $5e31
 	call checkFlag		; $5e34
-	jr z,_label_15_241	; $5e37
+	jr z,+			; $5e37
 	pop bc			; $5e39
 	ld a,c			; $5e3a
 	inc a			; $5e3b
 	and $03			; $5e3c
 	ld c,a			; $5e3e
 	dec b			; $5e3f
-	jr nz,_label_15_240	; $5e40
+	jr nz,-			; $5e40
 	ld b,$80		; $5e42
 	scf			; $5e44
 	ret			; $5e45
-_label_15_241:
++
 	ld a,(bc)		; $5e46
 	pop bc			; $5e47
 	ld b,a			; $5e48
 	ret			; $5e49
-	ld a,$3d		; $5e4a
-	rra			; $5e4c
-	ld a,(de)		; $5e4d
+_table_5e4a:
+	.db $3e $3d $1f $1a
 
 seasonsFunc_15_5e4e:
 	call getFreePartSlot		; $5e4e

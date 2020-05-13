@@ -1,7 +1,11 @@
 ; ==============================================================================
 ; INTERACID_COMPANION_SPAWNER
 ; ==============================================================================
+.ifdef ROM_AGES
 interactionCode67:
+.else
+interactionCode5f:
+.endif
 	ld e,Interaction.subid		; $4a5d
 	ld a,(de)		; $4a5f
 	cp $06			; $4a60
@@ -22,6 +26,9 @@ interactionCode67:
 	.dw @subid03
 	.dw @subid04
 	.dw @subid05
+.ifdef ROM_SEASONS
+	.dw @subid06
+.endif
 
 @fluteCall:
 	ld a,(w1Companion.enabled)		; $4a7d
@@ -40,7 +47,11 @@ interactionCode67:
 
 @label_0a_047:
 	ld a,(wTilesetFlags)		; $4a8f
+.ifdef ROM_AGES
 	and (TILESETFLAG_PAST | TILESETFLAG_OUTDOORS)			; $4a92
+.else
+	and (TILESETFLAG_SUBROSIA | TILESETFLAG_OUTDOORS)			; $4a92
+.endif
 	cp TILESETFLAG_OUTDOORS			; $4a94
 	jp nz,@deleteSelf		; $4a96
 
@@ -167,15 +178,28 @@ interactionCode67:
 	push hl			; $4b4d
 	pop de			; $4b4e
 	ld hl,wLastAnimalMountPointY		; $4b4f
+.ifdef ROM_AGES
 	ld (hl),d		; $4b52
 	inc l			; $4b53
 	ld (hl),e		; $4b54
+.else
+	ldh (<hFF8B),a	; $4dfb
+	ld a,d			; $4dfd
+	ldi (hl),a		; $4dfe
+	ld a,e			; $4dff
+	ld (hl),a		; $4e00
+	ldh a,(<hFF8B)	; $4e01
+.endif
 	pop de			; $4b55
 
 	ld hl,w1Companion.direction		; $4b56
 	ldi (hl),a		; $4b59
 	swap a			; $4b5a
+.ifdef ROM_AGES
 	rrca			; $4b5c
+.else
+	srl a
+.endif
 	ldi (hl),a		; $4b5d
 
 	inc l			; $4b5e
@@ -207,7 +231,7 @@ interactionCode67:
 @deleteSelf:
 	jp interactionDelete		; $4b7c
 
-
+.ifdef ROM_AGES
 ; Moosh being attacked by ghosts
 @subid00:
 	ld hl,wMooshState		; $4b7f
@@ -273,6 +297,79 @@ interactionCode67:
 	call checkGlobalFlag		; $4bd4
 	jr nz,@deleteSelf	; $4bd7
 	jr @loadCompanionPreset		; $4bd9
+.else
+@subid05:
+	ld hl,wMooshState		; $4e2e
+	ld a,(wEssencesObtained)		; $4e31
+	bit 3,a			; $4e34
+	jp z,@loadCompanionPresetIfHasntLeft		; $4e36
+	set 6,(hl)		; $4e39
+	jr @deleteSelf		; $4e3b
+
+; dimitri after being saved
+@subid04:
+	ld a,(wEssencesObtained)		; $4e3d
+	bit 2,a			; $4e40
+	jr z,@deleteSelf	; $4e42
+	ld a,(wDimitriState)		; $4e44
+	and $20			; $4e47
+	jr z,@deleteSelf	; $4e49
+	ld a,(wAnimalCompanion)		; $4e4b
+	cp SPECIALOBJECTID_DIMITRI			; $4e4e
+	jr z,@deleteSelf	; $4e50
+	ld hl,wDimitriState		; $4e52
+	ld a,TREASURE_FLIPPERS		; $4e55
+	call checkTreasureObtained		; $4e57
+	jr nc,@loadCompanionPresetIfHasntLeft	; $4e5a
+	set 6,(hl)		; $4e5c
+	jr @deleteSelf		; $4e5e
+
+@subid02:
+	ld a,(wAnimalCompanion)		; $4e60
+	cp SPECIALOBJECTID_DIMITRI			; $4e63
+	jr nz,@deleteSelf	; $4e65
+	ld hl,wDimitriState		; $4e67
+	jr @deleteSelfIfBit7OfAnimalStateSet		; $4e6a
+
+@subid01:
+	ld hl,wRickyState		; $4e6c
+	ld a,(wEssencesObtained)		; $4e6f
+	bit 1,a			; $4e72
+	jr z,@deleteSelf	; $4e74
+	ld a,(wAnimalCompanion)		; $4e76
+	cp SPECIALOBJECTID_RICKY			; $4e79
+	jr z,@deleteSelfIfBit7OfAnimalStateSet	; $4e7b
+	ld a,(hl)		; $4e7d
+	bit 6,a			; $4e7e
+	jr z,@loadCompanionPresetIfHasntLeft	; $4e80
+	jr @deleteSelf		; $4e82
+
+@subid06:
+	ld hl,wRickyState		; $4e84
+	ld a,(wAnimalCompanion)		; $4e87
+	cp SPECIALOBJECTID_RICKY			; $4e8a
+	jr z,@deleteSelf2	; $4e8c
+	ld a,(wFluteIcon)		; $4e8e
+	or a			; $4e91
+	jr z,@deleteSelf	; $4e92
+	set 6,(hl)		; $4e94
+
+@deleteSelf2:
+	jr @deleteSelf		; $4e96
+
+@subid03:
+	ld a,(wAnimalCompanion)		; $4e98
+	cp SPECIALOBJECTID_MOOSH			; $4e9b
+	jr nz,@deleteSelf	; $4e9d
+	ld hl,wMooshState		; $4e9f
+	ld a,(hl)		; $4ea2
+	and $a0			; $4ea3
+	jr nz,@deleteSelf	; $4ea5
+
+@deleteSelfIfBit7OfAnimalStateSet:
+	bit 7,(hl)		; $4ea7
+	jr nz,@deleteSelf2	; $4ea9
+.endif
 
 
 @loadCompanionPresetIfHasntLeft:
@@ -282,6 +379,9 @@ interactionCode67:
 	jr nz,@deleteSelf2	; $4bde
 
 ; Load a companion's ID and position from a table of presets based on subid.
+.ifdef ROM_SEASONS
+@subid00:
+.endif
 @loadCompanionPreset:
 	ld e,Interaction.subid		; $4be0
 	ld a,(de)		; $4be2
@@ -296,10 +396,12 @@ interactionCode67:
 	; Get companion, either from the table, or from wAnimalCompanion
 	inc c			; $4bee
 	ldi a,(hl)		; $4bef
+.ifdef ROM_AGES
 	or a			; $4bf0
 	jr nz,+			; $4bf1
 	ld a,(wAnimalCompanion)		; $4bf3
 +
+.endif
 	ld (bc),a		; $4bf6
 
 	; Set Y/X
@@ -415,12 +517,21 @@ interactionCode67:
 ;   b2: X-position to spawn at
 ;   b3: Unused
 @presetCompanionData:
+.ifdef ROM_AGES
 	.db SPECIALOBJECTID_MOOSH,   $28, $58, $00 ; $00 == [subid]
 	.db SPECIALOBJECTID_MOOSH,   $48, $38, $00 ; $01
 	.db SPECIALOBJECTID_RICKY,   $40, $50, $00 ; $02
 	.db SPECIALOBJECTID_DIMITRI, $48, $30, $00 ; $03
 	.db $00,                     $58, $50, $00 ; $04
 	.db $00,                     $48, $68, $00 ; $05
+.else
+	.db SPECIALOBJECTID_MAPLE,   $18, $b8, $00
+	.db SPECIALOBJECTID_RICKY,   $38, $50, $00
+	.db SPECIALOBJECTID_DIMITRI, $18, $5f, $00
+	.db SPECIALOBJECTID_MOOSH,   $18, $30, $00
+	.db SPECIALOBJECTID_DIMITRI, $28, $60, $00
+	.db SPECIALOBJECTID_MOOSH,   $58, $40, $00
+.endif
 
 
 .include "build/data/companionCallableRooms.s"

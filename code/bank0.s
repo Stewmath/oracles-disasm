@@ -13164,12 +13164,11 @@ loadAnimationData:
 .ifdef ROM_SEASONS
 
 roomTileChangesAfterLoad02:
-	ld a,($ff00+$97)	; $364f
+	ldh a,(<hRomBank)	; $364f
 	push af			; $3651
 	callfrombank0 roomTileChangesAfterLoad02_body
 	pop af			; $365c
-	ld ($ff00+$97),a	; $365d
-	ld ($2222),a		; $365f
+	setrombank
 	ret			; $3662
 
 .endif

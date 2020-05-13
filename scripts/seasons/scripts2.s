@@ -94,22 +94,21 @@ explorersCrypt_secondPoeSister:
 	scriptend
 
 
-; d6 crystal trap room
-script_14_4801:
-	spawninteraction $1e $13 $30 $00
-	spawninteraction $05 $00 $18 $48
+startCrystalTrapRoomSequence:
+	spawninteraction INTERACID_DOOR_CONTROLLER $13 $30 $00
+	spawninteraction INTERACID_PUFF $00 $18 $48
 	delay 4
 	settileat $14 TILEINDEX_STANDARD_FLOOR
-	spawninteraction $05 $00 $38 $48
+	spawninteraction INTERACID_PUFF $00 $38 $48
 	delay 4
 	settileat $34 TILEINDEX_STANDARD_FLOOR
-	spawninteraction $05 $00 $28 $48
+	spawninteraction INTERACID_PUFF $00 $28 $48
 	delay 4
 	settileat $24 TILEINDEX_STANDARD_FLOOR
-	spawninteraction $05 $00 $48 $48
+	spawninteraction INTERACID_PUFF $00 $48 $48
 	delay 4
 	settileat $44 TILEINDEX_STANDARD_FLOOR
-	spawninteraction $65 $00 $00 $00
+	spawninteraction INTERACID_D6_CRYSTAL_TRAP_ROOM $00 $00 $00
 	scriptend
 
 
@@ -227,7 +226,7 @@ linkedPirateCaptainScript_sayingByeToAmbi:
 	delay 6
 	showtextlowindex <TX_3a24
 	delay 6
-	jump2byte scriptHlp.seasonsFunc_15_5d36
+	jump2byte piratianCaptainScript_inHouse@unlinkedCaptain
 
 showSamasaGateCombination:
 	checkabutton
@@ -613,9 +612,12 @@ headSmelterScript_blowUpRocks:
 	scriptend
 
 
-script_14_4b8e:
+; ==============================================================================
+; INTERACID_LAVA_SOUP_SUBROSIAN
+; ==============================================================================
+lavaSoupSubrosianScript_fillPot:
 	delay 6
-	showtextlowindex $21
+	showtextlowindex <TX_0b21
 	writeobjectbyte Interaction.var3f $01
 	setspeed $50
 	moveleft $11
@@ -648,19 +650,21 @@ script_14_4b8e:
 	setspeed $50
 	applyspeed $11
 	setanimation $00
-	showtextlowindex $22
+	showtextlowindex <TX_0b22
 	setanimation $02
-	showtextlowindex $23
+	showtextlowindex <TX_0b23
 	disableinput
 	giveitem TREASURE_TRADEITEM $04
 	orroomflag $40
 	writeobjectbyte Interaction.var3f $00
 	enableinput
-	jump2byte $656c
+	jump2byte lavaSoupSubrosianScript@filledPot
 
 
-; subrosia dancing minigame invite
-script_14_4be4:
+; ==============================================================================
+; INTERACID_DANCE_HALL_MINIGAME
+; ==============================================================================
+danceLeaderScript_moveIntoPosition:
 	showtext TX_0102
 	orroomflag $80
 	setdisabledobjectsto91
@@ -671,7 +675,7 @@ script_14_4be4:
 	setangleandanimation $10
 	delay 6
 	setspeed $28
-	asm15 $5d45
+	asm15 scriptHlp.seasonsFunc_15_5d45
 	applyspeed $0a
 	setanimation $04
 	delay 6
@@ -679,18 +683,16 @@ script_14_4be4:
 	incstate
 	scriptend
 
-
-; subrosia dancing minigame tutorial
-script_14_4c06:
+danceLeaderScript_danceTutorial:
 	writememory $cfdf $00
-	spawninteraction $6a $03 $00 $00
+	spawninteraction INTERACID_DANCE_HALL_MINIGAME $03 $00 $00
 	setanimation $05
 	writememory $cfdf $01
 	delay 2
 	showtext TX_0105
 	setanimation $05
 	playsound $ca
-	asm15 $5d20
+	asm15 scriptHlp.seasonsFunc_15_5d20
 	checkmemoryeq $cfd1 $00
 	setcounter1 $32
 	setanimation $06
@@ -699,7 +701,7 @@ script_14_4c06:
 	showtext TX_0106
 	setanimation $06
 	playsound $cb
-	asm15 $5d29
+	asm15 scriptHlp.seasonsFunc_15_5d29
 	checkmemoryeq $cfd1 $00
 	setcounter1 $32
 	setanimation $04
@@ -708,7 +710,7 @@ script_14_4c06:
 	showtext TX_0107
 	setanimation $04
 	playsound $cd
-	asm15 $5d32
+	asm15 scriptHlp.seasonsFunc_15_5d32
 	checkmemoryeq $cfd1 $00
 	setcounter1 $32
 	writememory $cfdf $ff
@@ -717,7 +719,7 @@ script_14_4c06:
 	jumpiftextoptioneq $01 $6641
 	showtext TX_0109
 	checkmemoryeq $cba0 $00
-	jump2byte $663b
+	jump2byte danceLeaderScript_promptForTutorial@danceLeaderScript_readyToDance
 
 
 ; unblocking d3 dam

@@ -2269,6 +2269,56 @@
 .define INTERACID_TRADE_ITEM		$5d
 
 ;;
+; subid_00{Regular quicksand that deals damage}
+; subid_01-04{The four that could lead to pirate's bell}
+; subid_05{Leads to SW treasure chest}
+.define INTERACID_QUICKSAND		$5e
+
+;;
+; subid_00{Spawns subid01 4 times with var03 of 0-3}
+; subid_01{Handles chests and contents, and opening order}
+.define INTERACID_D5_4_CHEST_PUZZLE	$62
+
+;;
+.define INTERACID_D5_REVERSE_MOVING_ARMOS	$63
+
+;;
+.define INTERACID_D5_FALLING_MAGNET_BALL	$64
+
+;;
+; @subid_00{Created when trap rupee touched, inits stuff and spawns subid $01 and $02}
+; @subid_01{}
+; @subid_02{}
+.define INTERACID_D6_CRYSTAL_TRAP_ROOM	$65
+
+;;
+; @subid_00{}
+; @subid_01{created by subid_00}
+.define INTERACID_D7_4_ARMOS_BUTTON_PUZZLE	$66
+
+;;
+.define INTERACID_D8_ARMOS_PATTERN_PUZZLE	$67
+
+;;
+.define INTERACID_D8_GRABBABLE_ICE	$68
+
+;;
+; TODO:
+; @subid_00{}
+; @subid_01{spawned from subid_00}
+; @subid_02{spawned from subid_01}
+; @subid_03{spawned from subid_01}
+; @subid_04{spawned from subid_00}
+.define INTERACID_D8_FREEZING_LAVA_EVENT	$69
+
+;;
+; @subid_00{Spawns subid_01 and subid_02}
+; @subid_01{Dance leader}
+; @subid_02{Dancer}
+; @subid_03{spawned during tutorial}
+.define INTERACID_DANCE_HALL_MINIGAME	$6a
+
+;;
 ; related to event where you lose your feather
 ; @subid_00{}
 ; @subid_01{}

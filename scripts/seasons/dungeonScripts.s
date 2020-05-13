@@ -284,7 +284,7 @@ ancientRuinsScript_crystalTrapRoom:
 	wait 8
 	jump2byte @waitUntilRupeeGotten
 @rupeeGotten:
-	loadscript script_14_4801
+	loadscript startCrystalTrapRoomSequence
 
 
 ancientRuinsScript_spawnChestAfterCrystalTrapRoom:
