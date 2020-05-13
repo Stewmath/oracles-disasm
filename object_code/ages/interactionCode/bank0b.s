@@ -6837,7 +6837,11 @@ interactionCodec8:
 ;   var3d: Animation index?
 ;   var3e: Also an animation index?
 ; ==============================================================================
+.ifdef ROM_AGES
 interactionCodec9:
+.else
+interactionCode49:
+.endif
 	call @runState		; $760a
 	jp @updateAnimation		; $760d
 
@@ -6855,10 +6859,22 @@ interactionCodec9:
 	ld e,Interaction.var3d		; $761e
 	ld a,(de)		; $7620
 	or a			; $7621
+.ifdef ROM_AGES
 	ret z			; $7622
 	jp interactionAnimate		; $7623
+.else
+	jr z,+			; $708d
+	call interactionAnimate		; $708f
++
+	jp objectSetVisible80		; $7092
+.endif
 
 @state0:
+.ifdef ROM_SEASONS
+	call getThisRoomFlags		; $7095
+	and $40			; $7098
+	jp z,interactionDelete		; $709a
+.endif
 	ld a,$01		; $7626
 	ld (de),a ; [state]
 	call interactionInitGraphics		; $7629
@@ -6874,7 +6890,9 @@ interactionCodec9:
 	call @beginHop		; $7638
 	ld e,Interaction.pressedAButton		; $763b
 	call objectAddToAButtonSensitiveObjectList		; $763d
+.ifdef ROM_AGES
 	call objectSetVisible80		; $7640
+.endif
 	jp @func_7710		; $7643
 
 @state1:
@@ -6926,11 +6944,11 @@ interactionCodec9:
 	ld h,a			; $7682
 	ld e,Interaction.var3a		; $7683
 	ld (de),a		; $7685
-	ld hl,syrupCuccoScript_triedToSteal		; $7686
+	ld hl,syrupCuccoScript_awaitingMushroomText		; $7686
 	jp @setScriptAndGotoState4			; $7689
 
 @gotoState4:
-	ld hl,syrupCuccoScript_triedToSteal		; $768c
+	ld hl,syrupCuccoScript_awaitingMushroomText		; $768c
 
 @setScriptAndGotoState4:
 	ld e,Interaction.state		; $768f

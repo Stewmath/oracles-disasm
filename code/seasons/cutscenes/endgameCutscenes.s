@@ -1077,7 +1077,7 @@ seasonsFunc_03_5d0b:
 seasonsFunc_03_5d12:
 	call getFreeInteractionSlot		; $5d12
 	ret nz			; $5d15
-	ld (hl),INTERACID_48		; $5d16
+	ld (hl),INTERACID_MAKU_LEAF		; $5d16
 	inc l			; $5d18
 	ld (hl),$00		; $5d19
 	inc l			; $5d1b

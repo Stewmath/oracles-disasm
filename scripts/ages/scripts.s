@@ -10266,6 +10266,7 @@ tingleScript:
 ; ==============================================================================
 ; INTERACID_SYRUP_CUCCO
 ; ==============================================================================
+syrupCuccoScript_awaitingMushroomText:
 syrupCuccoScript_triedToSteal:
 	showtext TX_0d09
 	scriptend

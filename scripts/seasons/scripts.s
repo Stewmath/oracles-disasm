@@ -1225,7 +1225,7 @@ makuTreeScript_remoteCutsceneDontSetRoomFlag:
 	asm15 hideStatusBar
 	asm15 scriptHlp.seasonsFunc_15_571a, $02
 	checkpalettefadedone
-	spawninteraction $4800, $40, $50
+	spawninteraction INTERACID_MAKU_LEAF $00, $40, $50
 	wait 240
 	wait 60
 	callscript script4e25
@@ -1983,24 +1983,24 @@ mittensOwnerScript:
 	checkabutton
 	disableinput
 	showtextlowindex <TX_0b31
-	jumpiftradeitemeq $06, @hasMegaphone
+	jumpiftradeitemeq $06, @hasFish
 	enableinput
 	jump2byte -
-@hasMegaphone:
+@hasFish:
 	wait 30
 -
 	showtextlowindex <TX_0b32
-	jumpiftextoptioneq $00, @givingMegaphone
+	jumpiftextoptioneq $00, @givingFish
 	wait 30
 	showtextlowindex <TX_0b37
 	enableinput
 	checkabutton
 	disableinput
 	jump2byte -
-@givingMegaphone:
+@givingFish:
 	wait 30
 	writememory $cfde, $00
-	spawninteraction INTERACID_5d $06, $44, $68
+	spawninteraction INTERACID_TRADE_ITEM $06, $44, $68
 	showtextlowindex <TX_0b33
 	ormemory $cceb, $01
 	showtextlowindex <TX_0b34
@@ -4420,69 +4420,90 @@ zeldaScript_healLinkIfNeeded:
 	jump2byte -
 
 
-script6075:
+; ==============================================================================
+; INTERACID_TALON
+; ==============================================================================
+caveTalonScript:
 	writememory $cfde, $00
 	writememory $cfdf, $00
-	spawninteraction $5d08, $68, $48
+	spawninteraction INTERACID_TRADE_ITEM $08, $68, $48
 	initcollisions
-script6083:
+-
 	checkabutton
 	setdisabledobjectsto91
-	showtextlowindex $38
-	jumpiftradeitemeq $07, script6091
+	showtextlowindex <TX_0b38
+	jumpiftradeitemeq $07, @haveMegaphone
 	wait 30
-	showtextlowindex $39
+	showtextlowindex <TX_0b39
 	enableallobjects
-	jump2byte script6083
-script6091:
+	jump2byte -
+@haveMegaphone:
 	wait 30
-script6092:
-	showtextlowindex $3a
-	jumpiftextoptioneq $00, script60a0
+-
+	showtextlowindex <TX_0b3a
+	jumpiftextoptioneq $00, @usingMegaphone
 	wait 30
-	showtextlowindex $3c
+	showtextlowindex <TX_0b3c
 	enableallobjects
 	checkabutton
 	setdisabledobjectsto91
-	jump2byte script6092
-script60a0:
-	loadscript script_14_49db
-script60a4:
-	rungenericnpclowindex $18
-script60a6:
+	jump2byte -
+@usingMegaphone:
+	loadscript talon_giveMushroomAfterWaking
+	
+returnedTalonScript:
+	rungenericnpclowindex <TX_0b18
+
+
+; ==============================================================================
+; INTERACID_SYRUP_CUCCO
+; ==============================================================================
+syrupCuccoScript_awaitingMushroomText:
 	showtext TX_0b3d
 	scriptend
-script60aa:
+
+syrupCuccoScript_triedToSteal:
 	showtext TX_0d09
 	scriptend
-script60ae:
+
+
+; ==============================================================================
+; INTERACID_PIRATE_SKULL
+; ==============================================================================
+pirateSkullScript_notYetCarried:
 	initcollisions
 	checkabutton
-	jumpifitemobtained $4a, script60c3
-	jumpifroomflagset $40, script60be
-	showtextlowindex $02
+	jumpifitemobtained TREASURE_PIRATES_BELL, @obtainedPiratesBell
+	jumpifroomflagset $40, @canCarrySkull
+	showtextlowindex <TX_4d02
 	orroomflag $40
-	jump2byte script60c0
-script60be:
-	showtextlowindex $03
-script60c0:
+	jump2byte @setState2ff
+@canCarrySkull:
+	showtextlowindex <TX_4d03
+@setState2ff:
 	setstate2 $ff
 	scriptend
-script60c3:
-	showtextlowindex $05
-	jump2byte script60c0
-script60c7:
+@obtainedPiratesBell:
+	showtextlowindex <TX_4d05
+	jump2byte @setState2ff
+	
+
+; ==============================================================================
+; INTERACID_DIN_DANCING_EVENT
+; ==============================================================================
+troupeScript1:
 	initcollisions
-	asm15 $5ae2, $00
-script60cc:
+	asm15 scriptHlp.dinDancingEvent_setTextAdd_0a_ifLinked, <TX_0c00
+-
 	checkabutton
 	showloadedtext
 	ormemory $cfd3, $01
-	jump2byte script60cc
-script60d4:
+	jump2byte -
+
+troupeScript2:
 	initcollisions
-	asm15 $5ae2, $01
-script60d9:
+	asm15 scriptHlp.dinDancingEvent_setTextAdd_0a_ifLinked, <TX_0c01
+-
 	checkabutton
 	setdisabledobjectsto11
 	cplinkx $48
@@ -4490,66 +4511,75 @@ script60d9:
 	showloadedtext
 	ormemory $cfd3, $02
 	enableallobjects
-	jump2byte script60d9
-script60e8:
+	jump2byte -
+
+troupeScript3:
 	initcollisions
-	asm15 $5ae2, $02
-script60ed:
+	asm15 scriptHlp.dinDancingEvent_setTextAdd_0a_ifLinked, <TX_0c02
+-
 	checkabutton
 	showloadedtext
 	ormemory $cfd3, $04
-	jump2byte script60ed
-script60f5:
+	jump2byte -
+
+troupeScript4:
 	initcollisions
-	asm15 $5ae2, $03
-script60fa:
+	asm15 scriptHlp.dinDancingEvent_setTextAdd_0a_ifLinked, <TX_0c03
+-
 	checkabutton
 	showloadedtext
 	ormemory $cfd3, $08
-	jump2byte script60fa
-script6102:
+	jump2byte -
+
+troupeScript_Impa:
 	initcollisions
-	asm15 $5ae2, $04
+	asm15 scriptHlp.dinDancingEvent_setTextAdd_0a_ifLinked, <TX_0c04
 	checkabutton
-	asm15 $5ad7
+	asm15 scriptHlp.dinDancing_spinLink
 	showloadedtext
 	ormemory $cfd3, $10
-	asm15 $5ae2, $05
-script6114:
+	asm15 scriptHlp.dinDancingEvent_setTextAdd_0a_ifLinked, <TX_0c05
+-
 	checkabutton
-	asm15 $5ad7
+	asm15 scriptHlp.dinDancing_spinLink
 	showloadedtext
-	jump2byte script6114
-script611b:
+	jump2byte -
+
+troupeScript_stub:
+troupeScript_Din:
 	setcollisionradii $12, $04
 	makeabuttonsensitive
-	asm15 $5ae2, $06
-script6123:
+	asm15 scriptHlp.dinDancingEvent_setTextAdd_0a_ifLinked, <TX_0c06
+-
 	checkabutton
 	setanimation $06
 	showloadedtext
 	ormemory $cfd3, $20
-	jump2byte script6123
-script612d:
+	jump2byte -
+
+troupeScript_startDanceScene:
 	setcollisionradii $12, $04
 	makeabuttonsensitive
-	asm15 $5ae2, $07
-script6135:
+	asm15 scriptHlp.dinDancingEvent_setTextAdd_0a_ifLinked, <TX_0c07
+-
 	checkabutton
 	setdisabledobjectsto11
 	setanimation $06
 	showloadedtext
 	ormemory $cfd3, $40
 	orroomflag $40
-	jump2byte script6135
-script6142:
-	loadscript script_14_4a0f
-script6146:
-	loadscript script_14_4a4b
-script614a:
+	jump2byte -
+
+troupeScript_tornadoStart:
+	loadscript tornadoScript_startDestruction
+
+troupeScript_tornadoEnd:
+	loadscript tornadoScript_endDestruction
+
+troupeScript_inHoronVillage:
 	initcollisions
-	settextid $3d19
-script614e:
+	settextid TX_3d19
+-
 	checkabutton
 	setdisabledobjectsto11
 	cplinkx $48
@@ -4559,146 +4589,165 @@ script614e:
 	writeobjectbyte $48, $01
 	setanimationfromobjectbyte $48
 	enableallobjects
-	jump2byte script614e
-script6160:
+	jump2byte -
+
+
+; ==============================================================================
+; INTERACID_DIN_IMPRISONED_EVENT
+; ==============================================================================
+dinImprisonedScript_setDinCoords:
 	setcoords $53, $82
 	scriptend
-script6164:
-	loadscript script_14_4a6d
-script6168:
+
+dinImprisonedScript_OnoxExplainsMotive:
+	loadscript dinImprisoned_OnoxExplainsMotive
+
+dinImprisonedScript_OnoxSendsTempleDown:
 	wait 60
 	showtext TX_1e06
 	wait 60
 	writememory $cfd0, $0f
 	scriptend
-script6172:
-	loadscript script_14_4a91
-script6176:
+
+dinImprisonedScript_OnoxSaysComeIfYouDare:
+	loadscript dinImprisoned_OnoxSaysComeIfYouDare
+
+
+; ==============================================================================
+; INTERACID_BIGGORON
+; ==============================================================================
+biggoronScript:
 	setcollisionradii $22, $20
 	makeabuttonsensitive
-	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, script61ee
-script617e:
-	jumpifroomflagset $40, script61d7
-	asm15 $5af5, $0b
-script6186:
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, @finishedGame
+@haventGivenSoup:
+	jumpifroomflagset $40, @coldHealed
+	asm15 scriptHlp.biggoron_loadAnimationData, $0b
+-
 	checkabutton
 	disableinput
-	asm15 $5af5, $0d
-	showtextlowindex $26
-	asm15 $5af5, $0b
-	jumpiftradeitemeq $04, script6199
+	asm15 scriptHlp.biggoron_loadAnimationData, $0d
+	showtextlowindex <TX_0b26
+	asm15 scriptHlp.biggoron_loadAnimationData, $0b
+	jumpiftradeitemeq $04, @haveLavaSoup
 	enableinput
-	jump2byte script6186
-script6199:
+	jump2byte -
+@haveLavaSoup:
 	wait 30
-script619a:
+-
 	setanimation $02
-	asm15 $5af5, $0d
-	showtextlowindex $27
-	asm15 $5af5, $0b
-	jumpiftextoptioneq $00, script61bc
+	asm15 scriptHlp.biggoron_loadAnimationData, $0d
+	showtextlowindex <TX_0b27
+	asm15 scriptHlp.biggoron_loadAnimationData, $0b
+	jumpiftextoptioneq $00, @givingSoup
 	wait 30
 	setanimation $00
-	asm15 $5af5, $0d
-	showtextlowindex $2a
-	asm15 $5af5, $0b
+	asm15 scriptHlp.biggoron_loadAnimationData, $0d
+	showtextlowindex <TX_0b2a
+	asm15 scriptHlp.biggoron_loadAnimationData, $0b
 	enableinput
 	checkabutton
 	disableinput
-	jump2byte script619a
-script61bc:
+	jump2byte -
+@givingSoup:
 	wait 30
 	setanimation $03
-	asm15 $5af5, $0b
+	asm15 scriptHlp.biggoron_loadAnimationData, $0b
 	wait 60
 	setanimation $02
-	asm15 $5af5, $0c
+	asm15 scriptHlp.biggoron_loadAnimationData, $0c
 	wait 60
-	asm15 $5af5, $0d
-	showtextlowindex $28
+	asm15 scriptHlp.biggoron_loadAnimationData, $0d
+	showtextlowindex <TX_0b28
 	disableinput
-	giveitem $4105
+	giveitem TREASURE_TRADEITEM $05
 	orroomflag $40
-script61d7:
+@coldHealed:
 	disableinput
 	setanimation $01
-	asm15 $5af5, $0b
+	asm15 scriptHlp.biggoron_loadAnimationData, $0b
 	enableinput
-script61df:
+-
 	checkabutton
 	disableinput
-	asm15 $5af5, $0d
-	showtextlowindex $29
-	asm15 $5af5, $0b
+	asm15 scriptHlp.biggoron_loadAnimationData, $0d
+	showtextlowindex <TX_0b29
+	asm15 scriptHlp.biggoron_loadAnimationData, $0b
 	enableinput
-	jump2byte script61df
-script61ee:
-	asm15 $5af8
-	jumpifobjectbyteeq $7f, $00, script617e
+	jump2byte -
+@finishedGame:
+	asm15 scriptHlp.biggoron_checkSoupGiven
+	jumpifobjectbyteeq $7f, $00, @haventGivenSoup
 	setanimation $01
-	asm15 $5af5, $0b
-	jumpifglobalflagset $62, script6260
-script6200:
+	asm15 scriptHlp.biggoron_loadAnimationData, $0b
+	jumpifglobalflagset GLOBALFLAG_DONE_BIGGORON_SECRET, @doneBiggoronSecret
+@promptSecret:
 	checkabutton
 	disableinput
-	asm15 $5af5, $0d
-	showtextlowindex $52
-	asm15 $5af5, $0b
-	jumpiftextoptioneq $00, script621e
+	asm15 scriptHlp.biggoron_loadAnimationData, $0d
+	showtextlowindex <TX_0b52
+	asm15 scriptHlp.biggoron_loadAnimationData, $0b
+	jumpiftextoptioneq $00, @biggoronSecretKnown
 	wait 30
-	asm15 $5af5, $0d
-	showtextlowindex $53
-	asm15 $5af5, $0b
+	asm15 scriptHlp.biggoron_loadAnimationData, $0d
+	showtextlowindex <TX_0b53
+	asm15 scriptHlp.biggoron_loadAnimationData, $0b
 	enableinput
-	jump2byte script6200
-script621e:
+	jump2byte @promptSecret
+@biggoronSecretKnown:
 	wait 30
-	asm15 $5af5, $0d
-	showtextlowindex $54
-	asm15 $5af5, $0b
+	asm15 scriptHlp.biggoron_loadAnimationData, $0d
+	showtextlowindex <TX_0b54
+	asm15 scriptHlp.biggoron_loadAnimationData, $0b
 	askforsecret BIGGORON_SECRET
 	wait 30
 	jumptable_memoryaddress $cca3
-	.dw script6240
-	.dw script6233
-script6233:
-	asm15 $5af5, $0d
-	showtextlowindex $56
-	asm15 $5af5, $0b
+	.dw @correctSecret
+	.dw @incorrectSecret
+@incorrectSecret:
+	asm15 scriptHlp.biggoron_loadAnimationData, $0d
+	showtextlowindex <TX_0b56
+	asm15 scriptHlp.biggoron_loadAnimationData, $0b
 	enableinput
-	jump2byte script6200
-script6240:
-	loadscript script_14_4aa3
-script6244:
+	jump2byte @promptSecret
+@correctSecret:
+	loadscript biggoronScript_giveBiggoronSword
+@generateSecret:
 	generatesecret BIGGORON_RETURN_SECRET
-script6246:
-	asm15 $5af5, $0d
-	showtextlowindex $58
-	asm15 $5af5, $0b
+-
+	asm15 scriptHlp.biggoron_loadAnimationData, $0d
+	showtextlowindex <TX_0b58
+	asm15 scriptHlp.biggoron_loadAnimationData, $0b
 	wait 30
-	jumpiftextoptioneq $00, script6246
-	asm15 $5af5, $0d
-	showtextlowindex $59
-	asm15 $5af5, $0b
+	jumpiftextoptioneq $00, -
+	asm15 scriptHlp.biggoron_loadAnimationData, $0d
+	showtextlowindex <TX_0b59
+	asm15 scriptHlp.biggoron_loadAnimationData, $0b
 	enableinput
-script6260:
+@doneBiggoronSecret:
 	checkabutton
 	disableinput
-	jump2byte script6244
-script6264:
+	jump2byte @generateSecret
+	
+	
+; ==============================================================================
+; INTERACID_HEAD_SMELTER
+; ==============================================================================
+headSmelterAtTempleScript:
 	initcollisions
-script6265:
+-
 	checkabutton
 	disablemenu
-	asm15 $5bcc
-	jumpifitemobtained $49, script6277
+	asm15 scriptHlp.headSmelter_disableScreenTransitions
+	jumpifitemobtained TREASURE_BOMB_FLOWER, @haveBombFlower
 	showtext TX_2707
-	asm15 $5bd5
+	asm15 scriptHlp.headSmelter_enableScreenTransitions
 	enablemenu
-	jump2byte script6265
-script6277:
-	loadscript script_14_4b4c
-script627b:
+	jump2byte -
+@haveBombFlower:
+	loadscript headSmelterScript_blowUpRocks
+	
+headSmelterAtTempleScript_hideFromBomb:
 	checkcfc0bit 0
 	setstate $04
 	setspeed SPEED_200
@@ -4709,26 +4758,29 @@ script627b:
 	checkcfc0bit 2
 	movedown $21
 	scriptend
-script628b:
-	jumpifroomflagset $40, script62ae
-	jumpifitemobtained $51, script6296
-script6293:
+	
+headSmelterAtFurnaceScript:
+	jumpifroomflagset $40, @oresAlreadySmelted
+	jumpifitemobtained TREASURE_BLUE_ORE, @haveBlueOre
+-
 	rungenericnpc TX_270a
-script6296:
-	jumpifitemobtained $50, script629c
-	jump2byte script6293
-script629c:
+@haveBlueOre:
+	jumpifitemobtained TREASURE_RED_ORE, @haveBothOres
+	jump2byte -
+@haveBothOres:
 	initcollisions
-script629d:
+-
 	checkabutton
 	showtext TX_2a00
-	jumpiftextoptioneq $00, script62aa
+	jumpiftextoptioneq $00, @startSmeltingOres
 	showtext TX_2a01
-	jump2byte script629d
-script62aa:
+	jump2byte -
+@startSmeltingOres:
 	loadscript script_14_4aea
-script62ae:
+@oresAlreadySmelted:
 	rungenericnpc TX_2a05
+
+; coordinate dancing?
 script62b1:
 	xorcfc0bit 0
 	wait 20
@@ -4751,7 +4803,8 @@ script62b1:
 	xorcfc0bit 0
 	wait 20
 	retscript
-script62c9:
+
+headSmelter_danceMovementText1:
 	setspeed SPEED_100
 	setstate $04
 	moveup $31
@@ -4761,7 +4814,8 @@ script62c9:
 	movedown $31
 	setstate $01
 	rungenericnpc TX_2702
-script62db:
+
+headSmelter_danceMovementText2:
 	setspeed SPEED_100
 	setstate $04
 	moveup $11
@@ -4778,13 +4832,12 @@ script62db:
 ; ==============================================================================
 ; INTERACID_SUBROSIAN_AT_D8
 ; ==============================================================================
-
 subrosianAtD8Script_tossItemIntoHole:
 	callscript @spin2win
 	callscript @spin2win
 	setspeed SPEED_200
 	applyspeed $04
-	asm15 $5bd8 ; TODO
+	asm15 scriptHlp.subrosianAtD8_spawnitem
 	setangle $18
 	applyspeed $04
 	scriptend
@@ -4814,45 +4867,49 @@ subrosianAtD8Script:
 	rungenericnpc TX_3c01
 
 
-script6325:
+; ==============================================================================
+; INTERACID_INGO
+; ==============================================================================
+ingoScript_tradingVase:
 	initcollisions
-	jumpifroomflagset $40, script635d
-script632a:
+	jumpifroomflagset $40, @tradedVase
+-
 	checkabutton
 	setdisabledobjectsto91
 	setanimation $05
-	showtextlowindex $2b
+	showtextlowindex <TX_0b2b
 	setanimationfromangle
-	jumpiftradeitemeq $05, script6339
+	jumpiftradeitemeq $05, @haveVase
 	enableallobjects
-	jump2byte script632a
-script6339:
+	jump2byte -
+@haveVase:
 	wait 30
-script633a:
-	showtextlowindex $2c
-	jumpiftextoptioneq $00, script6348
+-
+	showtextlowindex <TX_0b2c
+	jumpiftextoptioneq $00, @tradingVase
 	wait 30
-	showtextlowindex $2f
+	showtextlowindex <TX_0b2f
 	enableallobjects
 	checkabutton
 	setdisabledobjectsto91
-	jump2byte script633a
-script6348:
+	jump2byte -
+@tradingVase:
 	wait 30
-	callscript script63a0
-	showtextlowindex $51
+	callscript _ingoScript_yahoo
+	showtextlowindex <TX_0b51
 	wait 30
-	showtextlowindex $2d
+	showtextlowindex <TX_0b2d
 	disableinput
-	giveitem $4106
-	spawninteraction $4c09, $08, $58
+	giveitem TREASURE_TRADEITEM $06
+	spawninteraction INTERACID_MISC_STATIC_OBJECTS $09, $08, $58
 	orroomflag $40
 	enableinput
-script635d:
+@tradedVase:
 	checkabutton
 	showtextlowindex $2e
-	jump2byte script635d
-script6362:
+	jump2byte @tradedVase
+
+ingoScript_LinkApproachingVases:
 	writeobjectbyte $7e, $01
 	setspeed SPEED_200
 	moveup $14
@@ -4861,20 +4918,20 @@ script6362:
 	writeobjectbyte $7e, $00
 	wait 10
 	setanimation $05
-	showtextlowindex $30
+	showtextlowindex <TX_0b30
 	writeobjectbyte $7e, $01
 	getrandombits $7f, $01
 	jumptable_objectbyte $7f
-	.dw script6380
-	.dw script638a
-script6380:
+	.dw @blockEntrance1
+	.dw @blockEntrance2
+@blockEntrance1:
 	moveright $11
 	wait 4
 	movedown $14
 	writeobjectbyte $7e, $00
 	enableinput
 	scriptend
-script638a:
+@blockEntrance2:
 	movedown $14
 	wait 4
 	moveleft $19
@@ -4889,89 +4946,98 @@ script638a:
 	writeobjectbyte $7e, $00
 	enableinput
 	scriptend
-script63a0:
-	asm15 $5be3
-script63a3:
-	asm15 $5bf4
+
+_ingoScript_yahoo:
+	asm15 scriptHlp.ingo_animatePlaySound
+-
+	asm15 scriptHlp.ingo_jump
 	wait 1
-	jumpifobjectbyteeq $7d, $00, script63a3
+	jumpifobjectbyteeq $7d, $00, -
 	retscript
-script63ad:
+
+
+; ==============================================================================
+; INTERACID_GURU_GURU
+; ==============================================================================
+guruGuruScript:
 	initcollisions
-	jumpifroomflagset $40, script63f2
-script63b2:
+	jumpifroomflagset $40, @alreadyTradedGrease
+-
 	checkabutton
 	disableinput
 	writeobjectbyte $7b, $00
-	showtextlowindex $48
-	jumpiftradeitemeq $0a, script63c3
+	showtextlowindex <TX_0b48
+	jumpiftradeitemeq $0a, @haveGrease
 	writeobjectbyte $7b, $01
 	enableinput
-	jump2byte script63b2
-script63c3:
+	jump2byte -
+@haveGrease:
 	wait 30
-script63c4:
-	showtextlowindex $49
-	jumpiftextoptioneq $00, script63d8
+-
+	showtextlowindex <TX_0b49
+	jumpiftextoptioneq $00, @tradingGrease
 	wait 30
-	showtextlowindex $4c
+	showtextlowindex <TX_0b4c
 	writeobjectbyte $7b, $01
 	enableinput
 	checkabutton
 	disableinput
 	writeobjectbyte $7b, $00
-	jump2byte script63c4
-script63d8:
+	jump2byte -
+@tradingGrease:
 	wait 30
-	showtextlowindex $4a
+	showtextlowindex <TX_0b4a
 	disableinput
 	cplinkx $48
 	addobjectbyte $48, $06
 	setanimationfromobjectbyte $48
-	giveitem $410b
+	giveitem TREASURE_TRADEITEM $0b
 	orroomflag $40
 	writeobjectbyte $79, $01
 	setcounter1 $32
 	writeobjectbyte $7b, $01
 	enableinput
-script63f2:
+@alreadyTradedGrease:
 	checkabutton
 	disableinput
 	writeobjectbyte $7b, $00
-	showtextlowindex $4b
+	showtextlowindex <TX_0b4b
 	writeobjectbyte $7b, $01
 	enableinput
-	jump2byte script63f2
-script63ff:
+	jump2byte @alreadyTradedGrease
+
+
+; ==============================================================================
+; INTERACID_LOST_WOODS_SWORD
+; ==============================================================================
+lostWoodsSwordScript:
 	setcollisionradii $0c, $06
 	makeabuttonsensitive
 	checkabutton
 	disableinput
 	asm15 objectSetInvisible
 	xorcfc0bit 0
-	callscript script6411
+	callscript @giveSword
 	orroomflag $40
 	wait 90
 	enableinput
 	scriptend
-script6411:
+@giveSword:
 	jumptable_objectbyte $42
-	.dw script6417
-	.dw script641e
-script6417:
-	giveitem $0501
-	giveitem $0504
+	.dw @giveNobleSword
+	.dw @giveMasterSword
+@giveNobleSword:
+	giveitem TREASURE_SWORD $01
+	giveitem TREASURE_SWORD $04
 	retscript
-script641e:
-	giveitem $0502
-	giveitem $0505
+@giveMasterSword:
+	giveitem TREASURE_SWORD $02
+	giveitem TREASURE_SWORD $05
 	retscript
 
 
 ; ==============================================================================
 ; INTERACID_BLAINO_SCRIPT
-; INTERACID_BLAINO
-; ENEMYID_BLAINO
 ; ==============================================================================
 blainoScript:
 	initcollisions
@@ -5133,7 +5199,10 @@ blainoFightDoneScript:
 	jump2byte @cheatedText
 
 
-script6506:
+; ==============================================================================
+; INTERACID_LOST_WOODS_DEKU_SCRUB
+; ==============================================================================
+lostWoodsDekuScrubScript:
 	setcollisionradii $20, $30
 	checkcollidedwithlink_onground
 	setdisabledobjectsto91
@@ -5142,56 +5211,63 @@ script6506:
 	setanimation $01
 	checkobjectbyteeq $61, $ff
 	writeobjectbyte $77, $02
-	jumpiftradeitemeq $0b, script652c
-	showtextlowindex $4d
-script651f:
+	jumpiftradeitemeq $0b, @havePhonograph
+	showtextlowindex <TX_0b4d
+--
 	writeobjectbyte $77, $03
 	setanimation $03
 	checkobjectbyteeq $61, $ff
 	writeobjectbyte $77, $00
 	enableallobjects
 	scriptend
-script652c:
-	showtextlowindex $4e
+@havePhonograph:
+	showtextlowindex <TX_0b4e
 	wait 30
-	showtextlowindex $4f
-	jumpiftextoptioneq $00, script6537
-	jump2byte script651f
-script6537:
+	showtextlowindex <TX_0b4f
+	jumpiftextoptioneq $00, @playingPhonograph
+	jump2byte --
+@playingPhonograph:
 	wait 30
 	writeobjectbyte $77, $04
 	setanimation $04
 	writeobjectbyte $4f, $ff
-	showtextlowindex $50
+	showtextlowindex <TX_0b50
 	checkobjectbyteeq $61, $ff
 	writeobjectbyte $4f, $00
-	jump2byte script651f
-script654a:
+	jump2byte --
+
+
+; ==============================================================================
+; INTERACID_LAVA_SOUP_SUBROSIAN
+; ==============================================================================
+lavaSoupSubrosianScript:
 	initcollisions
-	jumpifroomflagset $40, script656c
-script654f:
+	jumpifroomflagset $40, @filledPot
+-
 	checkabutton
-	showtextlowindex $1f
-	jumpiftradeitemeq $03, script6558
-	jump2byte script654f
-script6558:
+	showtextlowindex <TX_0b1f
+	jumpiftradeitemeq $03, @havePot
+	jump2byte -
+@havePot:
 	setdisabledobjectsto91
 	wait 30
-script655a:
-	showtextlowindex $20
-	jumpiftextoptioneq $00, script6568
+-
+	showtextlowindex <TX_0b20
+	jumpiftextoptioneq $00, @fillingPot
 	wait 30
-	showtextlowindex $25
+	showtextlowindex <TX_0b25
 	enableallobjects
 	checkabutton
 	setdisabledobjectsto91
-	jump2byte script655a
-script6568:
+	jump2byte -
+@fillingPot:
 	loadscript script_14_4b8e
-script656c:
+@filledPot:
 	checkabutton
-	showtextlowindex $24
-	jump2byte script656c
+	showtextlowindex <TX_0b24
+	jump2byte @filledPot
+	
+	
 script6571:
 	setspeed SPEED_080
 	wait 30
@@ -8335,7 +8411,7 @@ troyScript_generateReturnSecret:
 	enableinput
 	wait 30
 
-troyScript_goToGenerateSecret:
+troyScript_doneBiggoronSecret:
 	checkabutton
 	disableinput
 	jump2byte troyScript_generateReturnSecret
@@ -8358,7 +8434,7 @@ troyScript_giveReward:
 troyScript_postGameEffects:
 	asm15 scriptHlp.troyMinigame_createSparkle
 	wait 30
-	asm15 scriptHlp.troyMinigame_createSwirlAtLink
+	asm15 scriptHlp.createSwirlAtLink
 	wait 10
 	playsound SND_FADEOUT
 	asm15 fadeoutToWhite
@@ -8391,7 +8467,7 @@ troyScript_tookTooLong:
 
 troyScript_doneSecret:
 	initcollisions
-	jump2byte troyScript_goToGenerateSecret
+	jump2byte troyScript_doneBiggoronSecret
 
 
 ; ==============================================================================
@@ -8509,7 +8585,7 @@ linkedGhiniScript_startRound:
 @understoodSecret:
 	showtextlowindex <TX_4c1c
 	enableinput
-@goToGenerateSecret:
+@doneBiggoronSecret:
 	checkabutton
 	disableinput
 	jump2byte @generateSecret
@@ -8526,7 +8602,7 @@ linkedGhiniScript_startRound:
 
 linkedGhiniScript_doneSecret:
 	initcollisions
-	jump2byte linkedGhiniScript_startRound@goToGenerateSecret
+	jump2byte linkedGhiniScript_startRound@doneBiggoronSecret
 
 
 ; ==============================================================================

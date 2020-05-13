@@ -1307,57 +1307,86 @@ zelda_createExclamationMark:
 	ld c,$10		; $5aca
 	ld a,$28		; $5acc
 	jp objectCreateExclamationMark		; $5ace
+
+
+resetBit5ofRoomFlags:
 	call getThisRoomFlags		; $5ad1
 	res 5,(hl)		; $5ad4
 	ret			; $5ad6
 
 
-	ld hl,$d008		; $5ad7
+; ==============================================================================
+; INTERACID_DIN_DANCING_EVENT
+; ==============================================================================
+dinDancing_spinLink:
+	ld hl,w1Link.direction		; $5ad7
 	ld a,(hl)		; $5ada
 	xor $02			; $5adb
 	add $09			; $5add
 	jp interactionSetAnimation		; $5adf
+
+dinDancingEvent_setTextAdd_0a_ifLinked:
 	ld b,a			; $5ae2
 	ld c,$00		; $5ae3
 	call checkIsLinkedGame		; $5ae5
-	jr z,_label_15_221	; $5ae8
+	jr z,+			; $5ae8
 	ld c,$0a		; $5aea
-_label_15_221:
++
 	ld a,b			; $5aec
 	add c			; $5aed
 	ld h,d			; $5aee
-	ld l,$72		; $5aef
+	ld l,Interaction.textID		; $5aef
 	ldi (hl),a		; $5af1
-	ld (hl),$0c		; $5af2
+	ld (hl),>TX_0c00		; $5af2
 	ret			; $5af4
+
+
+; ==============================================================================
+; INTERACID_BIGGORON
+; ==============================================================================
+biggoron_loadAnimationData:
 	jp loadAnimationData		; $5af5
-	ld a,$41		; $5af8
+
+biggoron_checkSoupGiven:
+	ld a,TREASURE_TRADEITEM		; $5af8
 	call checkTreasureObtained		; $5afa
 	ld h,d			; $5afd
 	ld l,$7f		; $5afe
-	jr nc,_label_15_222	; $5b00
+	jr nc,+			; $5b00
 	cp $05			; $5b02
-	jr c,_label_15_222	; $5b04
+	jr c,+			; $5b04
 	ld (hl),$01		; $5b06
 	ret			; $5b08
-_label_15_222:
++
 	ld (hl),$00		; $5b09
 	ret			; $5b0b
+
+biggoron_createSparkleAtLink:
 	call getFreeInteractionSlot		; $5b0c
 	ret nz			; $5b0f
-	ld (hl),$84		; $5b10
+	ld (hl),INTERACID_SPARKLE		; $5b10
 	push de			; $5b12
 	ld de,$d00b		; $5b13
 	call objectCopyPosition_rawAddress		; $5b16
 	pop de			; $5b19
 	ret			; $5b1a
-	ld a,$58		; $5b1b
+	
+	
+; ==============================================================================
+; INTERACID_HEAD_SMELTER
+; ==============================================================================
+headSmelter_loseBombFlower:
+	ld a,TREASURE_58		; $5b1b
 	call loseTreasure		; $5b1d
-	ld a,$49		; $5b20
+	ld a,TREASURE_BOMB_FLOWER		; $5b20
 	jp loseTreasure		; $5b22
+
+headSmelter_loadHideFromBombScript:
 	ld hl,$cfde		; $5b25
-	ld bc,$627b		; $5b28
-	jr _label_15_223		; $5b2b
+	ld bc,headSmelterAtTempleScript_hideFromBomb		; $5b28
+	jr _headSmelter_loadScriptIntoWram		; $5b2b
+
+headSmelter_loadDanceMovements:
 	ld a,$0b		; $5b2d
 	ld ($cc6a),a		; $5b2f
 	ld hl,$d00b		; $5b32
@@ -1369,11 +1398,12 @@ _label_15_222:
 	ld l,$09		; $5b3f
 	ld (hl),$10		; $5b41
 	ld hl,$cfde		; $5b43
-	ld bc,$62c9		; $5b46
-	call $5b52		; $5b49
+	ld bc,headSmelter_danceMovementText1		; $5b46
+	call _headSmelter_loadScriptIntoWram		; $5b49
 	ld hl,$cfdc		; $5b4c
-	ld bc,$62db		; $5b4f
-_label_15_223:
+	ld bc,headSmelter_danceMovementText2		; $5b4f
+
+_headSmelter_loadScriptIntoWram:
 	ldi a,(hl)		; $5b52
 	ld l,(hl)		; $5b53
 	ld h,a			; $5b54
@@ -1381,34 +1411,44 @@ _label_15_223:
 	inc l			; $5b56
 	ld (hl),b		; $5b57
 	ret			; $5b58
+
+headSmelter_throwRedOreIn:
 	ld c,$04		; $5b59
-	jr _label_15_224		; $5b5b
+	jr ++		; $5b5b
+	
+headSmelter_throwBlueOreIn:
 	ld c,$05		; $5b5d
-_label_15_224:
-	ld b,$4c		; $5b5f
+++
+	ld b,INTERACID_MISC_STATIC_OBJECTS		; $5b5f
 	jp objectCreateInteraction		; $5b61
+
+headSmelter_smeltingDone:
 	call getFreePartSlot		; $5b64
 	ret nz			; $5b67
-	ld (hl),$04		; $5b68
+	ld (hl),PARTID_BOSS_DEATH_EXPLOSION		; $5b68
 	ld l,$cb		; $5b6a
 	ld (hl),$1c		; $5b6c
 	ld l,$cd		; $5b6e
 	ld (hl),$70		; $5b70
 	ret			; $5b72
-	ld a,$50		; $5b73
+
+headSmelter_giveHardOre:
+	ld a,TREASURE_RED_ORE		; $5b73
 	call loseTreasure		; $5b75
-	ld a,$51		; $5b78
+	ld a,TREASURE_BLUE_ORE		; $5b78
 	call loseTreasure		; $5b7a
 	call getFreeInteractionSlot		; $5b7d
 	ret nz			; $5b80
-	ld (hl),$60		; $5b81
+	ld (hl),INTERACID_TREASURE		; $5b81
 	inc l			; $5b83
-	ld (hl),$52		; $5b84
+	ld (hl),TREASURE_HARD_ORE		; $5b84
 	ld l,$4b		; $5b86
 	ld (hl),$1c		; $5b88
 	ld l,$4d		; $5b8a
 	ld (hl),$70		; $5b8c
 	ret			; $5b8e
+
+headSmelter_setTiles:
 	ld a,$e8		; $5b8f
 	ld c,$06		; $5b91
 	call setTile		; $5b93
@@ -1423,6 +1463,8 @@ _label_15_224:
 	call setTile		; $5ba8
 	ld a,$70		; $5bab
 	jp playSound		; $5bad
+
+headSmelter_resetTiles:
 	ld a,$e4		; $5bb0
 	ld c,$06		; $5bb2
 	call setTile		; $5bb4
@@ -1435,18 +1477,34 @@ _label_15_224:
 	ld a,$e7		; $5bc5
 	ld c,$17		; $5bc7
 	jp setTile		; $5bc9
+	
+headSmelter_disableScreenTransitions:
 	ld a,$01		; $5bcc
-_label_15_225:
-	ld ($ccab),a		; $5bce
-	ld ($ccea),a		; $5bd1
+--
+	ld (wDisableScreenTransitions),a		; $5bce
+	ld (wInShop),a		; $5bd1
 	ret			; $5bd4
+	
+headSmelter_enableScreenTransitions:
 	xor a			; $5bd5
-	jr _label_15_225		; $5bd6
+	jr --		; $5bd6
+
+
+; ==============================================================================
+; INTERACID_SUBROSIAN_AT_D8
+; ==============================================================================
+subrosianAtD8_spawnitem:
 	call refreshObjectGfx		; $5bd8
 	ldh a,(<hActiveObject)	; $5bdb
 	ld d,a			; $5bdd
-	ld b,$54		; $5bde
+	ld b,INTERACID_SUBROSIAN_AT_D8_ITEMS		; $5bde
 	jp objectCreateInteractionWithSubid00		; $5be0
+
+
+; ==============================================================================
+; INTERACID_INGO
+; ==============================================================================
+ingo_animatePlaySound:
 	ld h,d			; $5be3
 	ld l,$50		; $5be4
 	ld (hl),$28		; $5be6
@@ -1456,6 +1514,8 @@ _label_15_225:
 	ld (hl),$fe		; $5bed
 	ld a,$53		; $5bef
 	jp playSound		; $5bf1
+
+ingo_jump:
 	ld c,$30		; $5bf4
 	call objectUpdateSpeedZ_paramC		; $5bf6
 	ret nz			; $5bf9
@@ -2969,7 +3029,7 @@ seasonsFunc_15_6464:
 	ld (hl),$00		; $648a
 	ret			; $648c
 
-troyMinigame_createSwirlAtLink:
+createSwirlAtLink:
 	ld a,($d00b)		; $648d
 	ld b,a			; $6490
 	ld a,($d00d)		; $6491

@@ -1668,7 +1668,11 @@
 ;;
 ; Cucco in Syrup's hut that prevents you from stealing. (Not to be confused with ENEMYID_CUCCO,
 ; which is a more normal cucco.)
+.ifdef ROM_AGES
 .define INTERACID_SYRUP_CUCCO		$c9
+.else
+.define INTERACID_SYRUP_CUCCO		$49
+.endif
 
 ;;
 ; @subid_00{Troy at target carts (postgame)}
@@ -2153,28 +2157,116 @@
 ; @subid_09{In Impa's house after saving her from vire}
 .define INTERACID_S_ZELDA		$44
 
+;;
+; @subid_00{In cave, sleeping}
+; @subid_01{Returned to Malong}
 .define INTERACID_TALON			$45
-.define INTERACID_48			$48
-.define INTERACID_4b			$4b
+
+;;
+; TODO: subids
+.define INTERACID_MAKU_LEAF		$48
+
+;;
+; @subid_00{}
+; @subid_01{}
+; @subid_02{TODO: spawned by interactionCodebb}
+.define INTERACID_D1_RISING_STONES	$4b
+
+;;
+; @subid_00{Windmill blades}
+; @subid_01{Gasha sprouts in mayor's house}
+; @subid_02{Left half of cloud}
+; @subid_03{Right half of cloud}
+; @subid_04{Red ore thrown into furnace}
+; @subid_05{Blue ore thrown into furnace}
+; @subid_06{TODO: level 2 sword in podium?}
+; @subid_07{Water ring around fountain}
+; @subid_08{Water spurting up from fountain}
+; @subid_09{Goron vase in Ingo's house after trading it}
+; @subid_0a{Spring emblem in Temple of Seasons}
+; @subid_0b{Summer emblem in Temple of Seasons}
+; @subid_0c{Winter emblem in Temple of Seasons}
+; @subid_0d{Autumn emblem in Temple of Seasons}
+.define INTERACID_MISC_STATIC_OBJECTS	$4c
+
+;;
+; @subid_00{Talkable skull in the desert}
+; @subid_01{Drops from quicksand}
 .define INTERACID_PIRATE_SKULL		$4d
-.define INTERACID_4e			$4e
-.define INTERACID_4f			$4f
+
+;;
+; @subid_00{Troupe 1 - green beer guy}
+; @subid_01{Troupe 2 - blue hair}
+; @subid_02{Troupe 3 - guitar guy}
+; @subid_03{Troupe 4 - red beer guy}
+; @subid_04{Impa}
+; @subid_05{Campfire}
+; @subid_06{Din}
+; @subid_07{Tornado}
+; @subid_08-09{Din during ending cutscenes}
+; @subid_0a{Troupe in Horon Village}
+; @subid_0b{Spawns subids $00 to $06}
+.define INTERACID_DIN_DANCING_EVENT	$4e
+
+;;
+; TODO: subids
+; @subid_00{Din}
+; @subid_01{Onox?}
+; @subid_02{Crystals?}
+; @subid_03{Circling thing?}
+; @subid_04{Crystals?}
+; @subid_05{Onox?}
+.define INTERACID_DIN_IMPRISONED_EVENT	$4f
+
+;;
 .define INTERACID_SEASONS_FAIRY		$50
+
+;;
+; TODO: subids determine how active the volcano is and subid of INTERACID_VOLCANO_ROCK
+; @subid_00{}
+; @subid_01{}
 .define INTERACID_SMALL_VOLCANO		$51
+
+;;
 .define INTERACID_BIGGORON		$52
+
+;;
+; @subid_00{By temple of autumn}
+; @subid_01{By furnace}
 .define INTERACID_HEAD_SMELTER		$53
+
+;;
+.define INTERACID_SUBROSIAN_AT_D8_ITEMS	$54
 
 ;;
 ; The subrosian trying to blow up the volcano leading to d8
 .define INTERACID_SUBROSIAN_AT_D8	$55
 
+;;
 .define INTERACID_INGO			$57
+
+;;
 .define INTERACID_GURU_GURU		$58
+
+;;
+; Overrides subid depending on sword gotten
 .define INTERACID_LOST_WOODS_SWORD	$59
+
+;;
 .define INTERACID_BLAINO_SCRIPT		$5a
+
+;;
+.define INTERACID_LOST_WOODS_DEKU_SCRUB	$5b
+
+;;
 .define INTERACID_LAVA_SOUP_SUBROSIAN	$5c
 
-.define INTERACID_5d			$5d
+;;
+; subids indexed same as trade item subid, the ones used are
+; @subid_06{Fish}
+; @subid_07{Megaphone}
+; @subid_08{Mushroom}
+.define INTERACID_TRADE_ITEM		$5d
 
 ;;
 ; related to event where you lose your feather

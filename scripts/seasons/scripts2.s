@@ -373,20 +373,23 @@ script_14_49c8:
 	scriptend
 
 
-script_14_49db:
+; ==============================================================================
+; INTERACID_TALON
+; ==============================================================================
+talon_giveMushroomAfterWaking:
 	disableinput
-	spawninteraction $5d $07 $68 $58
+	spawninteraction INTERACID_TRADE_ITEM $07 $68 $58
 	writeobjectbyte Interaction.var39 $00
 	playsound $69
 	setanimation $04
 	delay 7
 	writememory $cfde $80
 	setanimation $02
-	showtextlowindex $3b
+	showtextlowindex <TX_0b3b
 	writememory $cfdf $01
 	giveitem TREASURE_TRADEITEM $08
 	orroomflag $40
-	asm15 $5ad1
+	asm15 scriptHlp.resetBit5ofRoomFlags
 	delay 6
 	writeobjectbyte Interaction.var3a $01
 	setspeed SPEED_200
@@ -399,7 +402,10 @@ script_14_49db:
 	scriptend
 
 
-script_14_4a0f:
+; ==============================================================================
+; INTERACID_DIN_DANCING_EVENT
+; ==============================================================================
+tornadoScript_startDestruction:
 	setcoords $70 $18
 	setspeed $50
 	setmusic $21
@@ -429,8 +435,7 @@ script_14_4a0f:
 	ormemory $cfd1 $01
 	scriptend
 
-
-script_14_4a4b:
+tornadoScript_endDestruction:
 	setangle $08
 	applyspeed $14
 	ormemory $cfd1 $40
@@ -446,7 +451,10 @@ script_14_4a4b:
 	scriptend
 
 
-script_14_4a6d:
+; ==============================================================================
+; INTERACID_DIN_IMPRISONED_EVENT
+; ==============================================================================
+dinImprisoned_OnoxExplainsMotive:
 	setcoords $e0 $80
 	delay 6
 	setspeed SPEED_100
@@ -466,8 +474,7 @@ script_14_4a6d:
 	writememory $cfd0 $0b
 	scriptend
 
-
-script_14_4a91:
+dinImprisoned_OnoxSaysComeIfYouDare:
 	setcoords $00 $60
 	setspeed $14
 	setangle $10
@@ -480,22 +487,25 @@ script_14_4a91:
 	scriptend
 
 
-script_14_4aa3:
+; ==============================================================================
+; INTERACID_BIGGORON
+; ==============================================================================
+biggoronScript_giveBiggoronSword:
 	setglobalflag GLOBALFLAG_BEGAN_BIGGORON_SECRET
-	asm15 $5af5 $0d
-	showtextlowindex $55
-	asm15 $5af5 $0b
+	asm15 scriptHlp.biggoron_loadAnimationData $0d
+	showtextlowindex <TX_0b55
+	asm15 scriptHlp.biggoron_loadAnimationData $0b
 	asm15 fadeoutToWhite
 	checkpalettefadedone
 	delay 8
 	asm15 fadeinFromWhite
 	checkpalettefadedone
-	asm15 $5af5 $0d
-	showtextlowindex $57
-	asm15 $5af5 $0b
-	asm15 $5b0c
+	asm15 scriptHlp.biggoron_loadAnimationData $0d
+	showtextlowindex <TX_0b57
+	asm15 scriptHlp.biggoron_loadAnimationData $0b
+	asm15 scriptHlp.biggoron_createSparkleAtLink
 	delay 6
-	asm15 $648d
+	asm15 scriptHlp.createSwirlAtLink
 	delay 3
 	playsound $b4
 	asm15 fadeoutToWhite
@@ -512,9 +522,12 @@ script_14_4aa3:
 	giveitem TREASURE_BIGGORON_SWORD $00
 	delay 8
 	setglobalflag GLOBALFLAG_DONE_BIGGORON_SECRET
-	jump2byte $6244
+	jump2byte biggoronScript@generateSecret
 
 
+; ==============================================================================
+; INTERACID_HEAD_SMELTER
+; ==============================================================================
 script_14_4aea:
 	disablemenu
 	setdisabledobjectsto11
@@ -525,13 +538,13 @@ script_14_4aea:
 	moveright $11
 	moveup $21
 	delay 7
-	asm15 $5b59
+	asm15 scriptHlp.headSmelter_throwRedOreIn
 	delay 7
-	asm15 $5b5d
+	asm15 scriptHlp.headSmelter_throwBlueOreIn
 	delay 8
 	setangleandanimation $10
-	asm15 $5b8f
-	asm15 $5b2d
+	asm15 scriptHlp.headSmelter_setTiles
+	asm15 scriptHlp.headSmelter_loadDanceMovements
 	movedown $11
 	delay 6
 	writememory $d008 $00
@@ -540,16 +553,16 @@ script_14_4aea:
 	setmusic $31
 	setcounter1 $7d
 	setstate $03
-	callscript $62b1
-	callscript $62b1
+	callscript script62b1
+	callscript script62b1
 	setcounter1 $c6
-	callscript $62b1
-	callscript $62b1
-	asm15 $5b64
+	callscript script62b1
+	callscript script62b1
+	asm15 scriptHlp.headSmelter_smeltingDone
 	playsound $79
 	delay 6
-	asm15 $5bb0
-	asm15 $5b73
+	asm15 scriptHlp.headSmelter_resetTiles
+	asm15 scriptHlp.headSmelter_giveHardOre
 	setmusic $f0
 	delay 8
 	playsound $4d
@@ -562,15 +575,14 @@ script_14_4aea:
 	resetmusic
 	orroomflag $40
 	enableinput
-	rungenericnpc $2a05
+	rungenericnpc TX_2a05
 
-
-script_14_4b4c:
+headSmelterScript_blowUpRocks:
 	showtext TX_2708
-	asm15 $5b1b
+	asm15 scriptHlp.headSmelter_loseBombFlower
 	setanimation $00
 	delay 8
-	spawninteraction $6f $01 $38 $38
+	spawninteraction INTERACID_BOMB_FLOWER $01 $38 $38
 	playsound $6c
 	delay 4
 	incstate
@@ -580,7 +592,7 @@ script_14_4b4c:
 	delay 4
 	setangleandanimation $18
 	checkcfc0bit 0
-	asm15 $5b25
+	asm15 scriptHlp.headSmelter_loadHideFromBombScript
 	writememory $d008 $00
 	moveleft $19
 	moveup $19
@@ -597,7 +609,7 @@ script_14_4b4c:
 	applyspeed $31
 	writememory $d008 $02
 	enableinput
-	asm15 $5bd5
+	asm15 scriptHlp.headSmelter_enableScreenTransitions
 	scriptend
 
 

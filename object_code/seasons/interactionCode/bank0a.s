@@ -6954,6 +6954,7 @@ interactionCodebb:
 	ld l,$7c		; $75f9
 	ld (hl),$0a		; $75fb
 	jp $78c3		; $75fd
+
 	call interactionRunScript		; $7600
 	call $7886		; $7603
 	call $7862		; $7606
@@ -7239,53 +7240,45 @@ interactionCodebe:
 	ld e,$42		; $77f1
 	ld a,(de)		; $77f3
 	rst_jumpTable			; $77f4
-	jp $ff75		; $77f5
-	ld (hl),a		; $77f8
-	rra			; $77f9
-	ld a,b			; $77fa
-	inc l			; $77fb
-	halt			; $77fc
-	inc (hl)		; $77fd
-	ld a,b			; $77fe
+	.dw $75c3
+	.dw $77ff
+	.dw $781f
+	.dw $762c
+	.dw $7834
 	ld e,$44		; $77ff
 	ld a,(de)		; $7801
 	rst_jumpTable			; $7802
-	rlca			; $7803
-	ld a,b			; $7804
-	add hl,de		; $7805
-	ld a,b			; $7806
+	.dw $7807
+	.dw $7819
 	call $7867		; $7807
 	ld e,$41		; $780a
 	ld a,(de)		; $780c
 	cp $bd			; $780d
-	jr nz,_label_0a_346	; $780f
+	jr nz,@runScriptAnimateAsNPC	; $780f
 	ld a,$01		; $7811
 	ld e,$7b		; $7813
 	ld (de),a		; $7815
 	call interactionSetAnimation		; $7816
-_label_0a_346:
+@runScriptAnimateAsNPC:
 	call interactionRunScript		; $7819
 	jp interactionAnimateAsNpc		; $781c
+
 	ld e,$44		; $781f
 	ld a,(de)		; $7821
 	rst_jumpTable			; $7822
-	daa			; $7823
-	ld a,b			; $7824
-	add hl,de		; $7825
-	ld a,b			; $7826
+	.dw $7827
+	.dw $7819
 	call $7867		; $7827
 	ld a,$02		; $782a
 	ld e,$7b		; $782c
 	ld (de),a		; $782e
 	call interactionSetAnimation		; $782f
-	jr _label_0a_346		; $7832
+	jr @runScriptAnimateAsNPC		; $7832
 	ld e,$44		; $7834
 	ld a,(de)		; $7836
 	rst_jumpTable			; $7837
-	inc a			; $7838
-	ld a,b			; $7839
-	ld e,h			; $783a
-	ld a,b			; $783b
+	.dw $783c
+	.dw $785c
 	call checkIsLinkedGame		; $783c
 	jp z,interactionDelete		; $783f
 	call $78ce		; $7842
@@ -7331,7 +7324,7 @@ _label_0a_346:
 	ld e,$41		; $788e
 	ld a,(de)		; $7890
 	sub $ba			; $7891
-	ld hl,$78a9		; $7893
+	ld hl,_table_78a9		; $7893
 	rst_addDoubleIndex			; $7896
 	ldi a,(hl)		; $7897
 	ld e,$7c		; $7898
@@ -7344,17 +7337,17 @@ _label_0a_346:
 	swap a			; $78a3
 	rlca			; $78a5
 	jp interactionSetAnimation		; $78a6
-	ld d,b			; $78a9
-	ld e,$01		; $78aa
-	ld (bc),a		; $78ac
-	inc a			; $78ad
-	ld d,$28		; $78ae
-	inc e			; $78b0
-	ld a,b			; $78b1
-	jr -$33			; $78b2
-	add $3a			; $78b4
+
+_table_78a9:
+	.db $50 $1e
+	.db $01 $02
+	.db $3c $16
+	.db $28 $1c
+	.db $78 $18
+
+	call getFreeInteractionSlot ; $78b3
 	ret nz			; $78b6
-	ld (hl),$4b		; $78b7
+	ld (hl),INTERACID_D1_RISING_STONES		; $78b7
 	inc l			; $78b9
 	ld (hl),$02		; $78ba
 	ld l,$46		; $78bc
@@ -7366,6 +7359,7 @@ _label_0a_346:
 	inc l			; $78c9
 	inc (hl)		; $78ca
 	jp objectCopyPosition		; $78cb
+
 	ld a,$40		; $78ce
 	call checkTreasureObtained		; $78d0
 	jr c,_label_0a_347	; $78d3
@@ -7378,6 +7372,7 @@ _label_0a_347:
 	ret c			; $78dd
 	ld (hl),$01		; $78de
 	ret			; $78e0
+
 .DB $eb				; $78e1
 	ld a,b			; $78e2
 	di			; $78e3

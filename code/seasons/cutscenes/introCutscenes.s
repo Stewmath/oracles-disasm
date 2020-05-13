@@ -342,7 +342,7 @@ cutscene06Func8:
 	ret z			; $758c
 	call getFreeInteractionSlot		; $758d
 	jr nz,+	; $7590
-	ld (hl),INTERACID_4e		; $7592
+	ld (hl),INTERACID_DIN_DANCING_EVENT		; $7592
 	inc l			; $7594
 	ld (hl),$07		; $7595
 +
@@ -495,13 +495,13 @@ cutsceneDinImprisoned:
 	call loadAnimationData		; $769b
 	call getFreeInteractionSlot		; $769e
 	jr nz,+	; $76a1
-	ld a,INTERACID_4f		; $76a3
+	ld a,INTERACID_DIN_IMPRISONED_EVENT		; $76a3
 	ldi (hl),a		; $76a5
 	ld (hl),$00		; $76a6
 	ld ($cc1d),a		; $76a8
 	call getFreeInteractionSlot		; $76ab
 	jr nz,+	; $76ae
-	ld (hl),INTERACID_4f		; $76b0
+	ld (hl),INTERACID_DIN_IMPRISONED_EVENT		; $76b0
 	inc l			; $76b2
 	ld (hl),$01		; $76b3
 +
@@ -523,7 +523,7 @@ cutsceneDinImprisoned:
 -
 	call getFreeInteractionSlot		; $76d2
 	jr nz,+	; $76d5
-	ld (hl),INTERACID_4f		; $76d7
+	ld (hl),INTERACID_DIN_IMPRISONED_EVENT		; $76d7
 	inc l			; $76d9
 	ld (hl),$02		; $76da
 	inc l			; $76dc
@@ -1373,7 +1373,7 @@ cutscene0eFunc6:
 	ret nz			; $7d11
 	call getFreeInteractionSlot		; $7d12
 	jr nz,+	; $7d15
-	ld (hl),INTERACID_4f		; $7d17
+	ld (hl),INTERACID_DIN_IMPRISONED_EVENT		; $7d17
 	inc l			; $7d19
 	ld (hl),$05		; $7d1a
 +
