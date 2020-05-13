@@ -1489,7 +1489,7 @@ script_14_521b:
 	delay 3
 	writeobjectbyte Interaction.var38 $01
 	delay 8
-	setglobalflag GLOBALFLAG_S_30
+	setglobalflag GLOBALFLAG_DRAGON_ONOX_BEATEN
 	orroomflag $40
 	scriptend
 

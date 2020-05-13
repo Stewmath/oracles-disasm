@@ -212,7 +212,7 @@ _cutsceneHandler_0b_stage4:
 	call setScreenShakeCounter		; $6d23
 	call disableLcd		; $6d26
 	call clearScreenVariablesAndWramBank1		; $6d29
-	ld a,GLOBALFLAG_S_15		; $6d2c
+	ld a,GLOBALFLAG_TEMPLE_REMAINS_FILLED_WITH_LAVA		; $6d2c
 	call unsetGlobalFlag		; $6d2e
 	ld bc,ROOM_SEASONS_027		; $6d31
 	call seasonsFunc_03_6de4		; $6d34
@@ -238,7 +238,7 @@ _cutsceneHandler_0b_stage5:
 	call setScreenShakeCounter		; $6d56
 	call disableLcd		; $6d59
 	call clearScreenVariablesAndWramBank1		; $6d5c
-	ld a,GLOBALFLAG_S_15		; $6d5f
+	ld a,GLOBALFLAG_TEMPLE_REMAINS_FILLED_WITH_LAVA		; $6d5f
 	call unsetGlobalFlag		; $6d61
 	ld bc,ROOM_SEASONS_017		; $6d64
 	call seasonsFunc_03_6de4		; $6d67
@@ -261,7 +261,7 @@ _cutsceneHandler_0b_stage5:
 seasonsFunc_03_6d8b:
 	call disableLcd		; $6d8b
 	call clearScreenVariablesAndWramBank1		; $6d8e
-	ld a,GLOBALFLAG_S_15		; $6d91
+	ld a,GLOBALFLAG_TEMPLE_REMAINS_FILLED_WITH_LAVA		; $6d91
 	call setGlobalFlag		; $6d93
 	call loadTilesetData		; $6d96
 	call loadTilesetGraphics		; $6d99

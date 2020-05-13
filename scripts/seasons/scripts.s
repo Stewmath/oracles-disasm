@@ -6878,8 +6878,8 @@ _stage0:
 	jumpifroomflagset $40, _gnarledKeySpawned@loop
 	callscript makuTreeScript_waitForBubblePopped
 	disableinput
-	jumpifglobalflagset GLOBALFLAG_S_18, _givenGnarledKey
-	setglobalflag GLOBALFLAG_S_18
+	jumpifglobalflagset GLOBALFLAG_GNARLED_KEY_GIVEN, _givenGnarledKey
+	setglobalflag GLOBALFLAG_GNARLED_KEY_GIVEN
 	asm15 scriptHlp.makuTree_showText, <TX_1700
 	wait 30
 _longText:

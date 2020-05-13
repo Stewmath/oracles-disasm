@@ -718,23 +718,7 @@ interactionCode5f:
 .endif
 
 
-companionCallableRooms:
-	dbrev %00000000 %00000000
-	dbrev %00000000 %00000000
-	dbrev %00000000 %00000000
-	dbrev %00000000 %00000000
-	dbrev %00000111 %11111000
-	dbrev %00001101 %11100000
-	dbrev %11101101 %11100000
-	dbrev %11111111 %11101111
-	dbrev %10111111 %11111111
-	dbrev %11111111 %11111111
-	dbrev %11111111 %11111111
-	dbrev %11111111 %11111000
-	dbrev %11111111 %10111000
-	dbrev %00011111 %11110000
-	dbrev %00011111 %11110000
-	dbrev %00011111 %11000000
+.include "build/data/companionCallableRooms.s"
 
 
 ; ==============================================================================
@@ -7489,13 +7473,13 @@ interactionCode87:
 	jr @setStage		; $7dc1
 	
 @highestEssenceIs5Except4:
-	ld a,GLOBALFLAG_S_27		; $7dc3
+	ld a,GLOBALFLAG_MET_MAKU_WITH_FIRST_5_ESSENCES_EXCEPT_4TH		; $7dc3
 	call setGlobalFlag		; $7dc5
 	ld a,$0a		; $7dc8
 	jr @setStage		; $7dca
 	
 @highestEssenceIs5:
-	ld a,GLOBALFLAG_S_27		; $7dcc
+	ld a,GLOBALFLAG_MET_MAKU_WITH_FIRST_5_ESSENCES_EXCEPT_4TH		; $7dcc
 	call checkGlobalFlag		; $7dce
 	jr nz,+			; $7dd1
 	ld a,$05		; $7dd3
@@ -7593,7 +7577,7 @@ interactionCode88:
 	ld hl,_seasonsTable_09_7f33		; $7e5b
 	jp _seasonsFunc_09_7f01		; $7e5e
 +
-	ld a,GLOBALFLAG_S_30		; $7e61
+	ld a,GLOBALFLAG_DRAGON_ONOX_BEATEN		; $7e61
 	call checkGlobalFlag		; $7e63
 	jp nz,interactionDelete		; $7e66
 	ld e,$46		; $7e69

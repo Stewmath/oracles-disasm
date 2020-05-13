@@ -217,7 +217,7 @@ loadTilesetData_body:
 	ret			; $6ce5
 
 getTempleRemainsSeasonsTilesetData:
-	ld a,GLOBALFLAG_S_15		; $6ce6
+	ld a,GLOBALFLAG_TEMPLE_REMAINS_FILLED_WITH_LAVA		; $6ce6
 	call checkGlobalFlag		; $6ce8
 	ret z			; $6ceb
 

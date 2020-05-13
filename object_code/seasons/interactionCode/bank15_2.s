@@ -10,7 +10,7 @@ interactionCoded8:
 @state0:
 	call checkIsLinkedGame		; $65da
 	jp z,interactionDelete		; $65dd
-	ld a,GLOBALFLAG_S_18		; $65e0
+	ld a,GLOBALFLAG_GNARLED_KEY_GIVEN		; $65e0
 	call checkGlobalFlag		; $65e2
 	jp z,interactionDelete		; $65e5
 	call interactionInitGraphics		; $65e8

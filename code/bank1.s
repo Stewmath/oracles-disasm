@@ -5766,7 +5766,7 @@ _determineSeasonForRoomPack:
 	cp $f0			; $7e09
 	jr nc,_determineCompanionRegionSeason	; $7e0b
 
-	ld a,GLOBALFLAG_S_30		; $7e0d
+	ld a,GLOBALFLAG_DRAGON_ONOX_BEATEN		; $7e0d
 	call checkGlobalFlag		; $7e0f
 	ld a,(wLoadingRoomPack)		; $7e12
 	jr z,+			; $7e15
@@ -5784,7 +5784,7 @@ _setSeason:
 
 
 	; Unused code snipped?
-	ld a,GLOBALFLAG_S_30		; $7e24
+	ld a,GLOBALFLAG_DRAGON_ONOX_BEATEN		; $7e24
 	call checkGlobalFlag		; $7e26
 	ret z			; $7e29
 	scf			; $7e2a
@@ -5793,7 +5793,7 @@ _setSeason:
 ;;
 ; Set a random season for horon village (unless it's spring).
 _setHoronVillageSeason:
-	ld a,GLOBALFLAG_S_30		; $7e2c
+	ld a,GLOBALFLAG_DRAGON_ONOX_BEATEN		; $7e2c
 	call checkGlobalFlag		; $7e2e
 	ld a,$00		; $7e31
 	jr nz,_setSeason	; $7e33
@@ -5825,7 +5825,7 @@ _roomPackSeasonTable:
 ; Similar to "checkRoomPack" function, but called after a "warp" transition (ie. exited
 ; building or subrosia portal).
 checkRoomPackAfterWarp_body:
-	ld a,GLOBALFLAG_S_30		; $7e6e
+	ld a,GLOBALFLAG_DRAGON_ONOX_BEATEN		; $7e6e
 	call checkGlobalFlag		; $7e70
 	ld a,(wRoomPack)		; $7e73
 	jp nz,_determineSeasonForRoomPack		; $7e76

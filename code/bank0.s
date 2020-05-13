@@ -13600,7 +13600,7 @@ loadTilesetAndRoomLayout:
 .ifdef ROM_SEASONS
 
 seasonsFunc_3870:
-	ld a,GLOBALFLAG_S_15		; $3870
+	ld a,GLOBALFLAG_TEMPLE_REMAINS_FILLED_WITH_LAVA		; $3870
 	call checkGlobalFlag		; $3872
 	ret z			; $3875
 

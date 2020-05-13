@@ -112,7 +112,7 @@ cutscene14:
 	ld (wCutsceneIndex),a		; $61e7
 	ld a,$03		; $61ea
 	ldh (<hNextLcdInterruptBehaviour),a	; $61ec
-	ld a,GLOBALFLAG_S_24		; $61ee
+	ld a,GLOBALFLAG_ONOX_CASTLE_BARRIER_GONE		; $61ee
 	call setGlobalFlag		; $61f0
 
 	ld a,SNDCTRL_STOPSFX		; $61f3

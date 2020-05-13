@@ -6913,7 +6913,7 @@ _mapGetRoomText:
 
 .ifdef ROM_SEASONS
 	; Check if Link has met the maku tree
-	ld a,GLOBALFLAG_S_18
+	ld a,GLOBALFLAG_GNARLED_KEY_GIVEN
 	call checkGlobalFlag
 	ld c,<TX_0317
 	ret z

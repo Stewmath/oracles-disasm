@@ -1199,7 +1199,7 @@ checkNPCStage:
 	ld a,TREASURE_ESSENCE		; $5801
 	call checkTreasureObtained		; $5803
 	jr c,@essenceGotten		; $5806
-	ld a,GLOBALFLAG_S_18		; $5808
+	ld a,GLOBALFLAG_GNARLED_KEY_GIVEN		; $5808
 	call checkGlobalFlag		; $580a
 	ld b,$01		; $580d
 	jr nz,+			; $580f

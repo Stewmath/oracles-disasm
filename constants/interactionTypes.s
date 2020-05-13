@@ -1992,7 +1992,8 @@
 .define INTERACID_FICKLE_LADY		$2d
 
 ;;
-; @subid_00-04{Girl in Sunken City}
+; Girl in Sunken City
+; @subid_00-04{}
 .define INTERACID_FICKLE_GIRL		$2e
 
 ;;
@@ -2077,6 +2078,7 @@
 .define INTERACID_FICKLE_MAN		$37
 
 ;;
+; D1, D4 and linked Hero's cave
 .define INTERACID_DUNGEON_WISE_OLD_MAN	$38
 
 ;;
@@ -2084,6 +2086,8 @@
 ; @subid_80-84{}
 .define INTERACID_TREASURE_HUNTER	$39
 
+;;
+; Seems to be unused
 .define INTERACID_3a			$3a
 
 ;;
@@ -2271,7 +2275,7 @@
 ;;
 ; subid_00{Regular quicksand that deals damage}
 ; subid_01-04{The four that could lead to pirate's bell}
-; subid_05{Leads to SW treasure chest}
+; subid_05{Leads to SE samasa treasure chest}
 .define INTERACID_QUICKSAND		$5e
 
 ;;
@@ -2286,12 +2290,14 @@
 .define INTERACID_D5_FALLING_MAGNET_BALL	$64
 
 ;;
+; TODO:
 ; @subid_00{Created when trap rupee touched, inits stuff and spawns subid $01 and $02}
 ; @subid_01{}
 ; @subid_02{}
 .define INTERACID_D6_CRYSTAL_TRAP_ROOM	$65
 
 ;;
+; TODO:
 ; @subid_00{}
 ; @subid_01{created by subid_00}
 .define INTERACID_D7_4_ARMOS_BUTTON_PUZZLE	$66
@@ -2304,7 +2310,7 @@
 
 ;;
 ; TODO:
-; @subid_00{}
+; @subid_00{Located in the 4 rooms where lava is spewed}
 ; @subid_01{spawned from subid_00}
 ; @subid_02{spawned from subid_01}
 ; @subid_03{spawned from subid_01}
@@ -2315,7 +2321,7 @@
 ; @subid_00{Spawns subid_01 and subid_02}
 ; @subid_01{Dance leader}
 ; @subid_02{Dancer}
-; @subid_03{spawned during tutorial}
+; @subid_03{TODO: spawned during tutorial}
 .define INTERACID_DANCE_HALL_MINIGAME	$6a
 
 ;;

@@ -663,7 +663,7 @@ tileReplacement_group0Map6f:
 	and $c0			; $6519
 	ret z			; $651b
 	ld de,@ruinedHouse		; $651c
-	ld a,GLOBALFLAG_S_12		; $651f
+	ld a,GLOBALFLAG_DESTROYED_MOBLIN_HOUSE_REPAIRED		; $651f
 	call checkGlobalFlag		; $6521
 	jr nz,++		; $6524
 	ld a,(wSeedTreeRefilledBitset)		; $6526
@@ -672,7 +672,7 @@ tileReplacement_group0Map6f:
 	ld de,@destroyedHouse		; $652d
 	jr ++			; $6530
 +
-	ld a,GLOBALFLAG_S_12		; $6532
+	ld a,GLOBALFLAG_DESTROYED_MOBLIN_HOUSE_REPAIRED		; $6532
 	call setGlobalFlag		; $6534
 ++
 	ld hl,wRoomLayout+$36		; $6537

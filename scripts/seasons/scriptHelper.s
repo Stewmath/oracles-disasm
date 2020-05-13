@@ -703,7 +703,7 @@ villageSokra_checkStageInGame:
 	bit 1,a			; $5826
 	jr z,+			; $5828
 	inc b			; $582a
-	ld a,GLOBALFLAG_S_30		; $582b
+	ld a,GLOBALFLAG_DRAGON_ONOX_BEATEN		; $582b
 	call checkGlobalFlag		; $582d
 	jr z,+			; $5830
 	inc b			; $5832
