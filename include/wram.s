@@ -1890,7 +1890,7 @@ wLinkImmobilized: ; $cc61/$cc7c
 wcc62: ; $cc62
 	db
 
-wcc63: ; $cc63/$cc7c
+wcc63: ; $cc63/$cc7e
 ; $cc63: set when link is holding a sword out?
 ; When bit 7 is set, item usage is disabled; when it equals $ff, Link is forced to do
 ; a sword spin. Maybe used when getting the sword in Seasons?
@@ -1932,7 +1932,7 @@ wPushingAgainstTileCounter: ; $cc6a/$cc84
 ; blocks, key doors, etc.
 	db
 
-wInstrumentsDisabledCounter: ; $cc6b
+wInstrumentsDisabledCounter: ; $cc6b/$cc85
 ; While this is nonzero, Link cannot play the harp or his flute.
 ; This is set during screen transitions, after closing the menu, and in a bunch of other
 ; places. It ticks down each frame.

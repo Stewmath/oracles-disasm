@@ -2325,18 +2325,99 @@
 .define INTERACID_DANCE_HALL_MINIGAME	$6a
 
 ;;
-; related to event where you lose your feather
-; @subid_00{}
-; @subid_01{}
-; @subid_02{}
-.define INTERACID_6e			$6e
+; @subid_00{Floodgate Keeper}
+; @subid_01{Floodgate Keeper Switch}
+; @subid_02{Floodgate keyhole}
+; @subid_03{D4 keyhole}
+; @subid_04{Floodgate key}
+; @subid_05{Dragon key}
+; @subid_06{Tarm Ruins Armos unlocking stairs when pushed}
+; @subid_07{Tarm Ruins Armos' next to stump}
+; @subid_08{Tarm event when exited Lost Woods to the north}
+; @subid_09{50 ore chunk dig spots, also spawned by Strange Brothers}
+; @subid_0a{Static heart pieces}
+; @subid_0b{Permanently removable objects, eg boulders, ember trees}
+; @subid_0c{Object handler when falling with skull into pirate's bell room}
+; @subid_0d{Green joy ring puzzle in Mt Cucco}
+; @subid_0e{Master Diver 4 statue puzzle}
+; @subid_0f{Pirate's bell}
+; @subid_10{Armos blocking way to D6 - handler}
+; @subid_11{Switch to Natzu}
+; @subid_12{Onox Castle Cutscene}
+; @subid_13{Prevents no enemies south of 1st North Horon seed tree when saving Zelda}
+; @subid_14{Unblocking D3 dam - spawned by subid_02}
+; @subid_15{Replace pirate ship with quicksand}
+; @subid_16{Handle stolen feather - spawned by strange brothers}
+; @subid_17{Horon village portal bridge spawner}
+; @subid_18{Dig spots with random rings}
+; @subid_19{Static gasha seed}
+; @subid_1a{Underwater gasha seed}
+; @subid_1b{Tick Tock secret entrance}
+; @subid_1c{West Coast grave secret entrance}
+; @subid_1d{TODO:}
+; @subid_1e{Sent back by Onox Castle barrier}
+; @subid_1f{Sidescrolling static gasha seed}
+; @subid_20{Sidescrolling static seed satchel}
+; @subid_21{Mt Cucco banana tree}
+; @subid_22{Hard ore}
+; @subid_23{TODO:}
+; @subid_24{TODO:}
+; @subid_25{TODO:}
+; @subid_26{TODO:}
+.define INTERACID_S_MISCELLANEOUS_1			$6b
+
+;;
+; @subid_00{Event starter}
+; @subid_01{Rosa herself}
+.define INTERACID_ROSA_HIDING		$6c
+
+;;
+; @subid_00{Event starter}
+; @subid_01{Brother 1}
+; @subid_02{Brother 2}
+.define INTERACID_STRANGE_BROTHERS_HIDING	$6d
+
+;;
+; TODO:
+; @subid_00{spawned by subid_01}
+; @subid_01{located in screen where feather is lost}
+; @subid_02{located at strange brothers house entrance}
+.define INTERACID_STEALING_FEATHER	$6e
 
 ;;
 ; @subid_00{grabbable treasure}
 ; @subid_01{unblocking the Temple of Autumn}
 .define INTERACID_BOMB_FLOWER		$6f
 
+;;
+; @subid_00{Holly}
+; @subid_01{Room outside for detecting snow shovelled}
+.define INTERACID_HOLLY			$70
+
+;;
+; @subid_00{Ricky running off after jumping up cliff in North Horon}
+; @subid_01{Moosh being bullied in Spool}
+; @subid_02{Taking animal to Sunken City}
+; @subid_03{Ricky in North Horon}
+; @subid_04{Dimitri in Spool Swamp}
+; @subid_05{Dimitri being bullied}
+; @subid_06{Moosh in Mt Cucco}
+; @subid_07{Moblin rest house - point where bullies will appear}
+; @subid_08{Leaving Sunken City with Dimitri}
+; @subid_09{1st screen of North Horon from eyeglass lake - determining animal companion}
+.define INTERACID_S_COMPANION_SCRIPTS	$71
+
 .define INTERACID_BLAINO		$72
+
+;;
+; @subid_00{}
+; @subid_01{}
+; @subid_02{}
+; @subid_03{}
+; @subid_04{}
+; @subid_05{}
+.define INTERACID_SPOOL_SWAMP_ANIMALS_BULLIED	$73
+
 .define INTERACID_77			$77
 .define INTERACID_TRAMPOLINE		$7c
 
@@ -2384,6 +2465,8 @@
 .define INTERACID_bc			$bc
 .define INTERACID_bd			$bd
 .define INTERACID_be			$be
+
+.define INTERACID_bf			$bf
 
 .define INTERACID_ZELDA_VILLAGERS_ROOM	$c4
 .define INTERACID_BOOMERANG_SUBROSIAN	$c8

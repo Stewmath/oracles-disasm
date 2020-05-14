@@ -213,7 +213,7 @@ D7randomlyPlaceNonEnemyArmos_body:
 	call getFreeEnemySlot		; $5591
 	ret nz			; $5594
 
-	ld (hl),$1d		; $5595
+	ld (hl),ENEMYID_ARMOS		; $5595
 	inc l			; $5597
 	ld (hl),$00		; $5598
 	ld l,$8b		; $559a
@@ -302,7 +302,7 @@ D8armosCheckIfWillMove:
 
 	call getFreeEnemySlot		; $5611
 	jr nz,+			; $5614
-	ld (hl),$1d		; $5616
+	ld (hl),ENEMYID_ARMOS		; $5616
 	ld l,Enemy.yh		; $5618
 	ld (hl),$27		; $561a
 	ld l,Enemy.xh		; $561c
@@ -394,7 +394,7 @@ D6RandomButtonSpawnRopes:
 -
 	call getFreeEnemySlot		; $5694
 	ret nz			; $5697
-	ld (hl),$10		; $5698
+	ld (hl),ENEMYID_ROPE		; $5698
 	inc l			; $569a
 	ld (hl),$01		; $569b
 	call $56a4		; $569d
@@ -1766,114 +1766,142 @@ seasonsFunc_15_5d45:
 	ret			; $5d53
 
 
+; ==============================================================================
+; INTERACID_S_MISCELLANEOUS_1
+; ==============================================================================
+floodgateKeeper_checkStage:
 	call getThisRoomFlags		; $5d54
 	bit 7,(hl)		; $5d57
 	ld a,$03		; $5d59
-	jr nz,_label_15_231	; $5d5b
-	ld hl,$c781		; $5d5d
+	jr nz,+			; $5d5b
+	ld hl,wPresentRoomFlags|<ROOM_SEASONS_081	; $5d5d
 	bit 7,(hl)		; $5d60
 	ld a,$02		; $5d62
-	jr nz,_label_15_231	; $5d64
+	jr nz,+			; $5d64
 	call getThisRoomFlags		; $5d66
 	bit 5,(hl)		; $5d69
 	ld a,$01		; $5d6b
-	jr nz,_label_15_231	; $5d6d
+	jr nz,+			; $5d6d
 	dec a			; $5d6f
-_label_15_231:
++
 	ld ($cfc1),a		; $5d70
 	ret			; $5d73
+
+d4Keyhole_setState0eDisableAllSorts:
 	ld a,$0e		; $5d74
 	ld ($cc6a),a		; $5d76
+d4KeyHolw_disableAllSorts:
 	ld a,$01		; $5d79
 	ld ($cc02),a		; $5d7b
 	ld ($cca5),a		; $5d7e
 	ld a,$ff		; $5d81
 	ld ($cca4),a		; $5d83
 	jp interactionSetAlwaysUpdateBit		; $5d86
+
+floodgate_disableObjectsScreenTransition:
 	ld a,$11		; $5d89
-	ld ($ccab),a		; $5d8b
-	ld ($cca4),a		; $5d8e
+	ld (wDisableScreenTransitions),a		; $5d8b
+	ld (wDisabledObjects),a		; $5d8e
 	ret			; $5d91
+
+floodgate_enableObjects:
 	xor a			; $5d92
-	ld ($ccab),a		; $5d93
-	ld ($cc32),a		; $5d96
+	ld (wDisableScreenTransitions),a		; $5d93
+	ld (wSwitchState),a		; $5d96
 	ret			; $5d99
+
+
+; ==============================================================================
+; INTERACID_ROSA_HIDING
+; INTERACID_STRANGE_BROTHERS_HIDING
+; ==============================================================================
+strangeBrothersFunc_15_5d9a:
 	ld h,$d7		; $5d9a
-_label_15_232:
+--
 	ld l,$01		; $5d9c
 	ld a,(hl)		; $5d9e
 	sub $03			; $5d9f
-	jr nz,_label_15_233	; $5da1
+	jr nz,+			; $5da1
 	ld l,$1a		; $5da3
 	ld (hl),a		; $5da5
 	ld l,$2f		; $5da6
 	set 5,(hl)		; $5da8
-_label_15_233:
++
 	inc h			; $5daa
 	ld a,h			; $5dab
 	cp $dc			; $5dac
-	jr c,_label_15_232	; $5dae
+	jr c,--			; $5dae
 	ret			; $5db0
+
+subrosianHiding_store02Intocc9e:
 	ld a,$02		; $5db1
 	ld ($cc9e),a		; $5db3
 	ret			; $5db6
-	ld hl,$c7cb		; $5db7
+
+rosaHiding_hidingFinishedSetInitialRoomsFlags:
+	ld hl,wPresentRoomFlags|<ROOM_SEASONS_0cb	; $5db7
 	set 7,(hl)		; $5dba
 	xor a			; $5dbc
 	ld ($cc9e),a		; $5dbd
 	ld ($cc9f),a		; $5dc0
 	ret			; $5dc3
+
+strangeBrothersFunc_15_5dc4:
 	ld a,$1e		; $5dc4
 	call addToGashaMaturity		; $5dc6
 	ld hl,$c6e3		; $5dc9
 	call incHlRefWithCap		; $5dcc
 	call getThisRoomFlags		; $5dcf
 	bit 5,(hl)		; $5dd2
-	jr nz,_label_15_234	; $5dd4
-	ld bc,loseTreasure		; $5dd6
-	jr _label_15_237		; $5dd9
-_label_15_234:
+	jr nz,_strangeBrothersFunc_15_5ddb	; $5dd4
+	ldbc TREASURE_FEATHER $02		; $5dd6
+	jr _strangeBrothersFunc_15_5e00		; $5dd9
+	
+_strangeBrothersFunc_15_5ddb:
 	ld a,($c6e3)		; $5ddb
 	cp $08			; $5dde
-	jr z,_label_15_236	; $5de0
+	jr z,_strangeBrothersFunc_15_5dee	; $5de0
 	call getRandomNumber		; $5de2
 	cp $60			; $5de5
-	jr nc,_label_15_239	; $5de7
-_label_15_235:
-	ld bc,$3402		; $5de9
-	jr _label_15_237		; $5dec
-_label_15_236:
-	call $5e20		; $5dee
-	jr c,_label_15_235	; $5df1
+	jr nc,_strangeBrothersFunc_15_5e13	; $5de7
+--
+	ldbc TREASURE_GASHA_SEED $02		; $5de9
+	jr _strangeBrothersFunc_15_5e00		; $5dec
+	
+_strangeBrothersFunc_15_5dee:
+	call seasonsFunc_15_5e20		; $5dee
+	jr c,--			; $5df1
 	ld c,$03		; $5df3
 	call createRingTreasure		; $5df5
-	call $5e0a		; $5df8
-	ld a,$14		; $5dfb
+	call _strangeBrothersFunc_15_5e0a		; $5df8
+	ld a,GLOBALFLAG_S_14		; $5dfb
 	jp setGlobalFlag		; $5dfd
-_label_15_237:
+
+_strangeBrothersFunc_15_5e00:
 	call getFreeInteractionSlot		; $5e00
 	ret nz			; $5e03
-	ld (hl),$60		; $5e04
+	ld (hl),INTERACID_TREASURE		; $5e04
 	inc l			; $5e06
 	ld (hl),b		; $5e07
 	inc l			; $5e08
 	ld (hl),c		; $5e09
-_label_15_238:
+_strangeBrothersFunc_15_5e0a:
 	ld l,$4b		; $5e0a
 	ld (hl),$48		; $5e0c
 	inc l			; $5e0e
 	inc l			; $5e0f
 	ld (hl),$28		; $5e10
 	ret			; $5e12
-_label_15_239:
+
+_strangeBrothersFunc_15_5e13:
 	call getFreeInteractionSlot		; $5e13
 	ret nz			; $5e16
-	ld (hl),$6b		; $5e17
+	ld (hl),INTERACID_S_MISCELLANEOUS_1		; $5e17
 	inc l			; $5e19
 	ld (hl),$09		; $5e1a
 	inc l			; $5e1c
 	inc (hl)		; $5e1d
-	jr _label_15_238		; $5e1e
+	jr _strangeBrothersFunc_15_5e0a		; $5e1e
 
 seasonsFunc_15_5e20:
 	call getRandomNumber		; $5e20
@@ -1883,7 +1911,7 @@ seasonsFunc_15_5e20:
 -
 	push bc			; $5e28
 	ld a,c			; $5e29
-	ld bc,_table_5e4a		; $5e2a
+	ld bc,@table_5e4a		; $5e2a
 	call addAToBc		; $5e2d
 	ld a,(bc)		; $5e30
 	ld hl,wRingsObtained		; $5e31
@@ -1904,10 +1932,10 @@ seasonsFunc_15_5e20:
 	pop bc			; $5e47
 	ld b,a			; $5e48
 	ret			; $5e49
-_table_5e4a:
+@table_5e4a:
 	.db $3e $3d $1f $1a
 
-seasonsFunc_15_5e4e:
+subrosianHiding_createDetectionHelper:
 	call getFreePartSlot		; $5e4e
 	ret nz			; $5e51
 	ld (hl),PARTID_DETECTION_HELPER		; $5e52
@@ -1917,10 +1945,14 @@ seasonsFunc_15_5e4e:
 	ld (hl),d		; $5e59
 	jp objectCopyPosition		; $5e5a
 
-seasonsFunc_15_5e5d:
+
+; ==============================================================================
+; INTERACID_STEALING_FEATHER
+; ==============================================================================
+stealingFeather_spawnSelfWithSubId0:
 	call getFreeInteractionSlot		; $5e5d
 	ret nz			; $5e60
-	ld (hl),INTERACID_6e		; $5e61
+	ld (hl),INTERACID_STEALING_FEATHER		; $5e61
 	ld l,$4b		; $5e63
 	ld a,($d00b)		; $5e65
 	ldi (hl),a		; $5e68
@@ -1929,7 +1961,7 @@ seasonsFunc_15_5e5d:
 	ld (hl),a		; $5e6d
 	ret			; $5e6e
 
-seasonsFunc_15_5e6f:
+stealingFeather_spawnStrangeBrothers:
 	call setLinkForceStateToState08		; $5e6f
 	jp putLinkOnGround		; $5e72
 	ld bc,$30a8		; $5e75
@@ -1948,6 +1980,12 @@ _func_5e82:
 	ld l,$4d		; $5e8d
 	ld (hl),c		; $5e8f
 	ret			; $5e90
+
+
+; ==============================================================================
+; INTERACID_S_COMPANION_SCRIPTS
+; ==============================================================================
+seasonsFunc_15_5e91:
 	ld hl,$d114		; $5e91
 	ld (hl),$c0		; $5e94
 	inc l			; $5e96
@@ -1959,6 +1997,8 @@ _func_5e82:
 	ld l,$1c		; $5ea1
 	ld (hl),$09		; $5ea3
 	ret			; $5ea5
+
+seasonsFunc_15_5ea6:
 	ld hl,$d103		; $5ea6
 	ld (hl),$04		; $5ea9
 	ld l,$1a		; $5eab
@@ -1966,8 +2006,10 @@ _func_5e82:
 	ld l,$3f		; $5eaf
 	ld (hl),$19		; $5eb1
 	ret			; $5eb3
+
+seasonsFunc_15_5eb4:
 	ld a,$18		; $5eb4
-	ld ($cc47),a		; $5eb6
+	ld (wLinkAngle),a		; $5eb6
 	ld hl,$d009		; $5eb9
 	ld (hl),a		; $5ebc
 	ld l,$10		; $5ebd
@@ -1975,6 +2017,8 @@ _func_5e82:
 	ld a,$1d		; $5ec1
 	ld ($d13f),a		; $5ec3
 	ret			; $5ec6
+
+seasonsFunc_15_5ec7:
 	ld a,$02		; $5ec7
 	ld ($d008),a		; $5ec9
 	ld hl,$d108		; $5ecc
@@ -1986,12 +2030,14 @@ _func_5e82:
 	ld a,$03		; $5ed8
 	ld ($d13f),a		; $5eda
 	ret			; $5edd
-	ld a,($c610)		; $5ede
-	cp $0d			; $5ee1
+
+seasonsFunc_15_5ede:
+	ld a,(wAnimalCompanion)		; $5ede
+	cp SPECIALOBJECTID_MOOSH			; $5ee1
 	ld a,$01		; $5ee3
-	jr z,_label_15_242	; $5ee5
+	jr z,+			; $5ee5
 	xor a			; $5ee7
-_label_15_242:
++
 	ld e,$7b		; $5ee8
 	ld (de),a		; $5eea
 	ret			; $5eeb
@@ -2547,6 +2593,9 @@ seasonsFunc_15_619a:
 	ld l,$0f		; $61af
 	ld (hl),$00		; $61b1
 	ret			; $61b3
+
+
+; unknown
 	ld bc,$61ca		; $61b4
 	call addDoubleIndexToBc		; $61b7
 	call getFreeInteractionSlot		; $61ba
@@ -2560,6 +2609,7 @@ seasonsFunc_15_619a:
 	ld a,(bc)		; $61c7
 	ld (hl),a		; $61c8
 	ret			; $61c9
+_table_61ca:
 	ld h,$26		; $61ca
 	ld h,$30		; $61cc
 	ld h,$3a		; $61ce
@@ -2570,6 +2620,8 @@ seasonsFunc_15_619a:
 	ld h,$3a		; $61d7
 	jr nc,$3a		; $61d9
 	ldd a,(hl)		; $61db
+
+
 	call getFreeEnemySlot		; $61dc
 	ret nz			; $61df
 	ld (hl),$4f		; $61e0
@@ -2578,6 +2630,8 @@ seasonsFunc_15_619a:
 	ld l,$8d		; $61e6
 	ld (hl),$30		; $61e8
 	ret			; $61ea
+
+
 	ld a,$01		; $61eb
 	call interactionSetAnimation		; $61ed
 	ld h,d			; $61f0
@@ -2588,10 +2642,11 @@ seasonsFunc_15_619a:
 	ld (hl),$78		; $61f7
 	ret			; $61f9
 
+
 seasonsFunc_15_61fa:
 	call getFreeEnemySlot		; $61fa
 	ret nz			; $61fd
-	ld (hl),$20		; $61fe
+	ld (hl),ENEMYID_MASKED_MOBLIN		; $61fe
 	inc l			; $6200
 	ld (hl),$01		; $6201
 	jp objectCopyPosition		; $6203
@@ -2599,7 +2654,7 @@ seasonsFunc_15_61fa:
 seasonsFunc_15_6206:
 	call getFreeEnemySlot		; $6206
 	ret nz			; $6209
-	ld (hl),$4a		; $620a
+	ld (hl),ENEMYID_SWORD_MASKED_MOBLIN		; $620a
 	jp objectCopyPosition		; $620c
 
 seasonsFunc_15_620f:
@@ -2808,14 +2863,14 @@ _label_15_255:
 
 seasonsFunc_15_6347:
 	ld bc,$5838		; $6347
-	jr _label_15_256		; $634a
+	jr ++			; $634a
 
 seasonsFunc_15_634c:
 	ld bc,$1850		; $634c
-_label_15_256:
+++
 	call getFreePartSlot		; $634f
 	ret nz			; $6352
-	ld (hl),$27		; $6353
+	ld (hl),PARTID_LIGHTNING		; $6353
 	inc l			; $6355
 	inc (hl)		; $6356
 	ld l,$cb		; $6357
@@ -2825,24 +2880,26 @@ _label_15_256:
 	ret			; $635d
 
 seasonsFunc_15_635e:
-	ld bc,$6372		; $635e
-	jr _label_15_257		; $6361
+	ld bc,seasonsTable_15_6372		; $635e
+	jr ++			; $6361
 
 seasonsFunc_15_6363:
-	ld bc,$6375		; $6363
-_label_15_257:
+	ld bc,seasonsTable_15_6375		; $6363
+++
 	call getFreeInteractionSlot		; $6366
 	ret nz			; $6369
-	ld (hl),$bf		; $636a
+	ld (hl),INTERACID_bf		; $636a
 	inc l			; $636c
 	ld a,(bc)		; $636d
 	inc bc			; $636e
 	ld (hl),a		; $636f
-	jr _label_15_258		; $6370
-	nop			; $6372
-	ld h,b			; $6373
-	jr c,$01		; $6374
-	jr nz,$50		; $6376
+	jr seasonsFunc_15_6396		; $6370
+
+seasonsTable_15_6372:
+	.db $00 $60 $38
+
+seasonsTable_15_6375:
+	.db $01 $20 $50
 
 seasonsFunc_15_6378:
 	ld a,$01		; $6378
@@ -2852,17 +2909,18 @@ seasonsFunc_15_6378:
 	ret			; $6382
 
 seasonsFunc_15_6383:
-	ld bc,$63a0		; $6383
-	call $638c		; $6386
-	ld bc,$63a3		; $6389
+	ld bc,seasonsTable_15_63a0		; $6383
+	call seasonsFunc_15_638c		; $6386
+	ld bc,seasonsTable_15_63a3		; $6389
+seasonsFunc_15_638c:
 	call getFreeInteractionSlot		; $638c
 	ret nz			; $638f
-	ld (hl),$b4		; $6390
+	ld (hl),INTERACID_b4		; $6390
 	inc l			; $6392
 	ld a,(bc)		; $6393
 	inc bc			; $6394
 	ld (hl),a		; $6395
-_label_15_258:
+seasonsFunc_15_6396:
 	ld l,$4b		; $6396
 	ld a,(bc)		; $6398
 	inc bc			; $6399
@@ -2871,14 +2929,17 @@ _label_15_258:
 	ld a,(bc)		; $639d
 	ld (hl),a		; $639e
 	ret			; $639f
-	nop			; $63a0
-	jr z,$50		; $63a1
-	ld bc,$5028		; $63a3
+
+seasonsTable_15_63a0:
+	.db $00 $28 $50
+
+seasonsTable_15_63a3:
+	.db $01 $28 $50
 
 seasonsFunc_15_63a6:
 	call getFreeInteractionSlot		; $63a6
 	ret nz			; $63a9
-	ld (hl),$22		; $63aa
+	ld (hl),INTERACID_MAKU_CUTSCENES		; $63aa
 	inc l			; $63ac
 	ld (hl),$09		; $63ad
 	ld l,$4b		; $63af
@@ -2915,6 +2976,7 @@ forceLinkState8AndSetDirection:
 	jp setLinkForceStateToState08		; $63d5
 
 
+; unknown
 	ld bc,$6417		; $63d8
 	jr _label_15_260		; $63db
 	ld bc,$640d		; $63dd

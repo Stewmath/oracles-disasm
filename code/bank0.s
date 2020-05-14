@@ -4308,18 +4308,18 @@ loadTilesetAnimation:
 
 ;;
 ; Seasons-only function
-;
+; Called when displaying D4 entrance after water shuts off in screen above
 ; @addr{1383}
 func_1383:
 
 .ifdef ROM_SEASONS
 	push de			; $1324
-	ld ($cc4c),a		; $1325
+	ld (wActiveRoom),a		; $1325
 	ld a,b			; $1328
 	ld (wScreenTransitionDirection),a		; $1329
-	ld a,($ff00+$70)	; $132c
+	ld a,($ff00+R_SVBK)	; $132c
 	ld c,a			; $132e
-	ld a,($ff00+$97)	; $132f
+	ldh a,(<hRomBank)	; $132f
 	ld b,a			; $1331
 	push bc			; $1332
 	ld a,$08		; $1333
@@ -4335,17 +4335,16 @@ func_1383:
 	call bank1.setObjectsEnabledTo2		; $134e
 	call loadScreenMusic		; $1351
 	call loadTilesetData		; $1354
-	ld a,($cc4c)		; $1357
-	ld ($cc4b),a		; $135a
+	ld a,(wActiveRoom)		; $1357
+	ld (wLoadingRoom),a		; $135a
 	call loadTilesetAndRoomLayout		; $135d
 	call loadRoomCollisions		; $1360
 	call generateVramTilesWithRoomChanges		; $1363
 	pop bc			; $1366
 	ld a,b			; $1367
-	ld ($ff00+$97),a	; $1368
-	ld ($2222),a		; $136a
+	setrombank
 	ld a,c			; $136d
-	ld ($ff00+$70),a	; $136e
+	ld ($ff00+R_SVBK),a	; $136e
 	pop de			; $1370
 	ret			; $1371
 

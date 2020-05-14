@@ -5426,51 +5426,57 @@ danceLeaderScript_showLoadedText:
 	jump2byte -
 
 
-script6662:
+; ==============================================================================
+; INTERACID_S_MISCELLANEOUS_1
+; ==============================================================================
+subrosianScript_templeFallenText:
 	rungenericnpc TX_3e03
-script6665:
+
+floodgateKeeperScript:
 	initcollisions
-	asm15 $5d54
+	asm15 scriptHlp.floodgateKeeper_checkStage
 	jumptable_memoryaddress $cfc1
-	.dw script6674
-	.dw script6686
-	.dw script6690
-	.dw script669b
-script6674:
-	jumpifroomflagset $20, script6678
-script6678:
+	.dw @noFloodgateKey
+	.dw @gotFloodgateKey
+	.dw @floodgateKeyUsed
+	.dw @bit7OfRoomFlagSet
+@noFloodgateKey:
+	jumpifroomflagset $20, @noFloodgateKey_body
+@noFloodgateKey_body:
 	checkabutton
-	jumpifitemobtained $43, script6686
+	jumpifitemobtained TREASURE_FLOODGATE_KEY, @gotFloodgateKey
 	setanimation $01
 	showtext TX_2400
 	setanimation $00
-	jump2byte script6678
-script6686:
+	jump2byte @noFloodgateKey_body
+@gotFloodgateKey:
 	checkabutton
 	setanimation $01
 	showtext TX_2402
 	setanimation $00
-	jump2byte script6686
-script6690:
+	jump2byte @gotFloodgateKey
+@floodgateKeyUsed:
 	checkabutton
 	orroomflag $80
 	setanimation $01
 	showtext TX_2403
 	setanimation $00
 	wait 30
-script669b:
+@bit7OfRoomFlagSet:
 	checkabutton
 	setanimation $01
 	showtext $2404 ; TODO: why is TX_2404 not defined?
 	setanimation $00
-	jump2byte script669b
-script66a5:
+	jump2byte @bit7OfRoomFlagSet
+	
+floodgateKeyScript_keeperNoticesKey:
 	showtext TX_2401
 	enableinput
 	scriptend
-script66aa:
-	checkmemoryeq $cc32, $01
-	asm15 $5d89
+
+floodgateSwitchScript:
+	checkmemoryeq wSwitchState, $01
+	asm15 scriptHlp.floodgate_disableObjectsScreenTransition
 	wait 8
 	disableinput
 	wait 30
@@ -5482,10 +5488,11 @@ script66aa:
 	settilehere $aa
 	playsound SNDCTRL_STOPSFX
 	playsound SND_SOLVEPUZZLE
-	asm15 $5d92
+	asm15 scriptHlp.floodgate_enableObjects
 	enableinput
 	scriptend
-script66ca:
+
+floodgateKeyholeScript_keyEntered:
 	checkcfc0bit 0
 	disableinput
 	wait 60
@@ -5494,12 +5501,13 @@ script66ca:
 	wait 60
 	writememory $d008, $01
 	orroomflag $80
-	spawninteraction $6b14, $00, $00
+	spawninteraction INTERACID_S_MISCELLANEOUS_1 $14, $00, $00
 	incstate
 	scriptend
-script66e0:
+
+d4Keyhole_disableThingsAndScreenShake:
 	checkcfc0bit 0
-	asm15 $5d74
+	asm15 scriptHlp.d4Keyhole_setState0eDisableAllSorts
 	playsound SNDCTRL_STOPMUSIC
 	wait 60
 	playsound SND_RUMBLE2
@@ -5508,7 +5516,8 @@ script66e0:
 	writememory $d008, $02
 	orroomflag $80
 	scriptend
-script66f3:
+
+masterDiverPuzzleScript_solved:
 	disableinput
 	playsound SND_SOLVEPUZZLE
 	settilehere $53
@@ -5516,69 +5525,82 @@ script66f3:
 	orroomflag $40
 	enableinput
 	scriptend
-script66fd:
+
+tarmArmosUnlockingStairsScript:
 	orroomflag $40
 	wait 30
 	playsound SND_SOLVEPUZZLE
 	wait 20
 	setcoords $08, $28
 	createpuff
-	settilehere $d0
+	settilehere TILEINDEX_STAIRS
 	settileat $01, $6b
 	settileat $03, $45
 	scriptend
-script6710:
+
+piratesBellRoomDroppingInScript:
 	wait 30
 	showtext TX_4d08
 	xorcfc0bit 0
 	enableinput
 	scriptend
-script6717:
-	jumpifroomflagset $40, script671f
-	loadscript script_14_4e3f
-script671f:
-	loadscript script_14_4e56
-script6723:
+
+
+; ==============================================================================
+; INTERACID_ROSA_HIDING
+; ==============================================================================
+rosaHidingScript_1stScreen:
+	jumpifroomflagset $40, @seenRosaOnce
+	loadscript rosaHidingScript_firstEncounterIntro
+@seenRosaOnce:
+	loadscript rosaHidingScript_secondEncounterOnwardsIntro
+rosaHidingScript_afterInitialScreenText:
 	xorcfc0bit 0
-	asm15 $5db1
+	asm15 scriptHlp.subrosianHiding_store02Intocc9e
 	setstate2 $03
 	moveup $30
 	enableinput
 	scriptend
-script672d:
-	asm15 $5e4e
+
+rosaHidingScript_2ndScreen:
+	asm15 scriptHlp.subrosianHiding_createDetectionHelper
 	setstate2 $04
 	setspeed SPEED_100
-	jumprandom script6739, script673d
-script6739:
-	loadscript script_14_4e62
-script673d:
-	loadscript script_14_4e79
-script6741:
-	asm15 $5e4e
+	jumprandom @pattern1, @pattern2
+@pattern1:
+	loadscript rosaHidingScript_2ndScreenPattern1
+@pattern2:
+	loadscript rosaHidingScript_2ndScreenPattern2
+
+rosaHidingScript_3rdScreen:
+	asm15 scriptHlp.subrosianHiding_createDetectionHelper
 	setstate2 $04
 	setspeed SPEED_100
-	jumprandom script674d, script6751
-script674d:
-	loadscript script_14_4e97
-script6751:
-	loadscript script_14_4ec1
-script6755:
-	asm15 $5e4e
+	jumprandom @pattern1, @pattern2
+@pattern1:
+	loadscript rosaHidingScript_3rdScreenPattern1
+@pattern2:
+	loadscript rosaHidingScript_3rdScreenPattern2
+	
+rosaHidingScript_4thScreen:
+	asm15 scriptHlp.subrosianHiding_createDetectionHelper
 	setstate2 $04
 	setspeed SPEED_100
-	jumprandom script6761, script6765
-script6761:
-	loadscript script_14_4ee6
-script6765:
-	loadscript script_14_4f02
-script6769:
-	loadscript script_14_4f1b
-script676d:
-	loadscript script_14_4f26
-script6771:
-	loadscript script_14_4f44
-script6775:
+	jumprandom @pattern1, @pattern2
+@pattern1:
+	loadscript rosaHidingScript_4thScreenPattern1
+@pattern2:
+	loadscript rosaHidingScript_4thScreenPattern2
+rosaHidingScript_pokeBackOut:
+	loadscript rosaHidingScript_pokeBackOut_body
+	
+rosaHidingScript_portalScreen:
+	loadscript rosaHidingScript_portalScreen_body
+	
+rosaHidingScript_caught:
+	loadscript rosaHidingScript_caught_body
+
+rosaHidingScript_lookDownLeftRight:
 	wait 30
 	setangleandanimation $10
 	wait 30
@@ -5587,7 +5609,8 @@ script6775:
 	setangleandanimation $08
 	wait 30
 	retscript
-script6780:
+	
+rosaHidingScript_lookLeftUpDown:
 	wait 30
 	setangleandanimation $18
 	wait 30
@@ -5596,7 +5619,8 @@ script6780:
 	setangleandanimation $10
 	wait 30
 	retscript
-script678b:
+	
+rosaHidingScript_lookUpRightLeft:
 	wait 30
 	setangleandanimation $00
 	wait 30
@@ -5605,7 +5629,8 @@ script678b:
 	setangleandanimation $18
 	wait 30
 	retscript
-script6796:
+	
+rosaHidingScript_lookRightDownUp:
 	wait 30
 	setangleandanimation $08
 	wait 30
@@ -5614,125 +5639,134 @@ script6796:
 	setangleandanimation $00
 	wait 30
 	retscript
-script67a1:
+
+
+; ==============================================================================
+; INTERACID_STRANGE_BROTHERS_HIDING
+; ==============================================================================
+strangeBrother1Script_1stScreen:
 	jumptable_memoryaddress $cfd0
-	.dw script67a8
-	.dw script67be
-script67a8:
+	.dw @halfChanceWhenFeatherNotGotten
+	.dw @otherPattern
+@halfChanceWhenFeatherNotGotten:
 	setcoords $18, $48
 	setangleandanimation $18
-	callscript script67dd
+	callscript _strangeBrother1Script_1stScreenInit
 	moveleft $30
-	callscript script6a13
+	callscript _strangeBrotherScript_lookRightLeftUpDown
 	movedown $60
-	callscript script6a0b
+	callscript _strangeBrotherScript_lookUpDownRightLeft
 	movedown $20
 	xorcfc0bit 0
 	scriptend
-script67be:
+@otherPattern:
 	setcoords $48, $18
 	setangleandanimation $00
-	callscript script67dd
+	callscript _strangeBrother1Script_1stScreenInit
 	moveup $30
-	callscript script69fe
+	callscript _strangeBrotherScript_lookDownUpRightLeft
 	moveright $30
 	movedown $10
 	moveright $10
-	callscript script6a20
+	callscript _strangeBrotherScript_lookLeftRightUpDown
 	movedown $50
-	callscript script6a0b
+	callscript _strangeBrotherScript_lookUpDownRightLeft
 	movedown $20
 	xorcfc0bit 0
 	scriptend
-script67dd:
-	jumpifglobalflagset $11, script67e9
-script67e1:
-	asm15 $5db1
+	
+_strangeBrother1Script_1stScreenInit:
+	jumpifglobalflagset GLOBALFLAG_JUST_CAUGHT_BY_STRANGE_BROTHERS, +
+_strangeBrotherScript_1stScreenInit:
+	asm15 scriptHlp.subrosianHiding_store02Intocc9e
 	wait 60
-	asm15 $5e4e
+	asm15 scriptHlp.subrosianHiding_createDetectionHelper
 	retscript
-script67e9:
++
 	disableinput
 	showtext TX_2805
 	showtext TX_2806
 	enableinput
 	xorcfc0bit 0
-	jump2byte script67e1
-script67f4:
-	jumpifglobalflagset $11, script67fa
-	jump2byte script67e1
-script67fa:
+	jump2byte _strangeBrotherScript_1stScreenInit
+	
+_toStrangeBrotherScript_1stScreenInit:
+	jumpifglobalflagset GLOBALFLAG_JUST_CAUGHT_BY_STRANGE_BROTHERS, @seenBefore
+	jump2byte _strangeBrotherScript_1stScreenInit
+@seenBefore:
 	checkcfc0bit 0
-	jump2byte script67e1
-script67fd:
+	jump2byte _strangeBrotherScript_1stScreenInit
+
+strangeBrother1Script_2ndScreen:
 	jumptable_memoryaddress $cfd0
-	.dw script6804
-	.dw script682a
-script6804:
+	.dw @pattern1
+	.dw @pattern2
+@pattern1:
 	setcoords $28, $78
-	asm15 $5e4e
+	asm15 scriptHlp.subrosianHiding_createDetectionHelper
 	setangleandanimation $10
 	wait 60
 	movedown $30
-	callscript script6a0b
+	callscript _strangeBrotherScript_lookUpDownRightLeft
 	wait 180
 	moveleft $30
 	moveup $30
-	callscript script6a0b
+	callscript _strangeBrotherScript_lookUpDownRightLeft
 	moveright $30
 	movedown $30
 	wait 120
 	moveleft $10
 	movedown $20
-	callscript script6a0b
+	callscript _strangeBrotherScript_lookUpDownRightLeft
 	movedown $20
 	xorcfc0bit 0
 	scriptend
-script682a:
+@pattern2:
 	setcoords $78, $28
-	asm15 $5e4e
+	asm15 scriptHlp.subrosianHiding_createDetectionHelper
 	setangleandanimation $18
 	wait 60
 	moveleft $10
 	moveup $30
 	setcounter1 $96
 	moveright $20
-	callscript script6a20
+	callscript _strangeBrotherScript_lookLeftRightUpDown
 	moveup $30
 	moveleft $20
-	callscript script6a13
+	callscript _strangeBrotherScript_lookRightLeftUpDown
 	wait 120
 	moveright $30
 	movedown $60
-	callscript script6a0b
+	callscript _strangeBrotherScript_lookUpDownRightLeft
 	movedown $20
 	xorcfc0bit 0
 	scriptend
-script6851:
+	
+strangeBrother1Script_3rdScreen:
 	jumptable_memoryaddress $cfd0
-	.dw script6858
-	.dw script687c
-script6858:
+	.dw @pattern1
+	.dw @pattern2
+@pattern1:
 	setcoords $38, $78
-	asm15 $5e4e
+	asm15 scriptHlp.subrosianHiding_createDetectionHelper
 	setangleandanimation $18
 	wait 60
 	moveleft $60
-	callscript script6a13
+	callscript _strangeBrotherScript_lookRightLeftUpDown
 	moveup $20
-	callscript script69fe
+	callscript _strangeBrotherScript_lookDownUpRightLeft
 	moveup $10
 	moveright $40
 	movedown $30
-	callscript script6a0b
+	callscript _strangeBrotherScript_lookUpDownRightLeft
 	moveleft $40
 	movedown $10
 	moveleft $30
 	xorcfc0bit 0
 	scriptend
-script687c:
+@pattern2:
 	setcoords $38, $48
-	asm15 $5e4e
+	asm15 scriptHlp.subrosianHiding_createDetectionHelper
 	setangleandanimation $18
 	setcounter1 $7a
 	setangleandanimation $10
@@ -5746,227 +5780,245 @@ script687c:
 	moveleft $30
 	xorcfc0bit 0
 	scriptend
-script689a:
+	
+strangeBrother1Script_4thScreen:
 	jumptable_memoryaddress $cfd0
-	.dw script68a1
-	.dw script68be
-script68a1:
+	.dw @pattern1
+	.dw @pattern2
+@pattern1:
 	setcoords $38, $38
-	asm15 $5e4e
+	asm15 scriptHlp.subrosianHiding_createDetectionHelper
 	setangleandanimation $18
 	wait 60
 	moveleft $20
-	callscript script6a13
+	callscript _strangeBrotherScript_lookRightLeftUpDown
 	moveup $20
 	moveright $30
 	moveright $30
 	moveup $10
-	callscript script69fe
+	callscript _strangeBrotherScript_lookDownUpRightLeft
 	moveup $20
 	xorcfc0bit 0
 	scriptend
-script68be:
+@pattern2:
 	setcoords $18, $18
-	asm15 $5e4e
+	asm15 scriptHlp.subrosianHiding_createDetectionHelper
 	setangleandanimation $10
 	wait 60
 	movedown $30
-	callscript script6a0b
+	callscript _strangeBrotherScript_lookUpDownRightLeft
 	moveright $50
-	callscript script6a20
+	callscript _strangeBrotherScript_lookLeftRightUpDown
 	moveup $10
 	moveright $20
-	callscript script6a20
+	callscript _strangeBrotherScript_lookLeftRightUpDown
 	moveup $50
 	xorcfc0bit 0
 	scriptend
-script68dc:
+	
+strangeBrother1Script_5thScreen:
 	jumptable_memoryaddress $cfd0
-	.dw script68e3
-	.dw script6905
-script68e3:
+	.dw @pattern1
+	.dw @pattern2
+@pattern1:
 	setcoords $08, $48
-	asm15 $5e4e
+	asm15 scriptHlp.subrosianHiding_createDetectionHelper
 	setangleandanimation $08
 	wait 60
 	moveright $40
 	movedown $10
-	callscript script6a0b
+	callscript _strangeBrotherScript_lookUpDownRightLeft
 	movedown $20
 	moveleft $60
-	callscript script6a20
+	callscript _strangeBrotherScript_lookLeftRightUpDown
 	moveup $30
 	moveright $40
-	callscript script6a13
+	callscript _strangeBrotherScript_lookRightLeftUpDown
 	moveup $20
 	xorcfc0bit 0
 	scriptend
-script6905:
+@pattern2:
 	setcoords $08, $78
-	asm15 $5e4e
+	asm15 scriptHlp.subrosianHiding_createDetectionHelper
 	setangleandanimation $18
 	wait 60
 	movedown $60
-	callscript script6a0b
+	callscript _strangeBrotherScript_lookUpDownRightLeft
 	moveleft $30
-	callscript script6a13
+	callscript _strangeBrotherScript_lookRightLeftUpDown
 	moveup $30
-	callscript script69fe
+	callscript _strangeBrotherScript_lookDownUpRightLeft
 	moveright $40
-	callscript script6a20
+	callscript _strangeBrotherScript_lookLeftRightUpDown
 	moveup $50
 	xorcfc0bit 0
 	scriptend
-script6926:
+	
+strangeBrother1Script_6thScreen:
 	jumptable_memoryaddress $cfd0
-	.dw script692d
-	.dw script694f
-script692d:
+	.dw @pattern1
+	.dw @pattern2
+@pattern1:
 	setcoords $18, $18
-	asm15 $5e4e
+	asm15 scriptHlp.subrosianHiding_createDetectionHelper
 	setangleandanimation $10
 	wait 60
 	movedown $60
-	callscript script6a0b
+	callscript _strangeBrotherScript_lookUpDownRightLeft
 	moveright $30
-	callscript script6a20
+	callscript _strangeBrotherScript_lookLeftRightUpDown
 	moveup $30
 	moveleft $10
 	moveup $30
-	callscript script69fe
+	callscript _strangeBrotherScript_lookDownUpRightLeft
 	moveleft $20
 	movedown $80
 	xorcfc0bit 0
 	scriptend
-script694f:
+@pattern2:
 	setcoords $18, $18
-	asm15 $5e4e
+	asm15 scriptHlp.subrosianHiding_createDetectionHelper
 	setangleandanimation $10
 	wait 60
 	movedown $30
 	moveright $30
-	callscript script6a20
+	callscript _strangeBrotherScript_lookLeftRightUpDown
 	movedown $30
-	callscript script6a0b
+	callscript _strangeBrotherScript_lookUpDownRightLeft
 	moveleft $30
 	moveup $30
 	moveright $30
 	movedown $50
 	xorcfc0bit 0
 	scriptend
-script696e:
+
+strangeBrother1Script_finishedScreen:
 	disableinput
 	setcoords $48, $18
 	setanimation $01
 	playsound SND_SOLVEPUZZLE
 	checkflagset $00, $cd00
-	asm15 $5d9a
+	asm15 scriptHlp.strangeBrothersFunc_15_5d9a
 	wait 60
 	showtext TX_2803
 	xorcfc0bit 0
 	movedown $50
 	resetmusic
-	spawninteraction $6b16, $48, $28
-	asm15 $5dc4
+	spawninteraction INTERACID_S_MISCELLANEOUS_1 $16, $48, $28
+	asm15 scriptHlp.strangeBrothersFunc_15_5dc4
 	enableinput
 	scriptend
-script6990:
+
+strangeBrother2Script_1stScreen:
 	jumptable_memoryaddress $cfd0
-	.dw script6997
-	.dw script69a3
-script6997:
+	.dw @halfChanceWhenFeatherNotGotten
+	.dw @otherPattern
+@halfChanceWhenFeatherNotGotten:
 	setcoords $28, $18
 	setangleandanimation $10
-	callscript script67f4
-	loadscript script_14_4f51
-script69a3:
+	callscript _toStrangeBrotherScript_1stScreenInit
+	loadscript strangeBrother2Script_1stScreenPattern1
+@otherPattern:
 	setcoords $48, $28
 	setangleandanimation $00
-	callscript script67f4
-	loadscript script_14_4f64
-script69af:
+	callscript _toStrangeBrotherScript_1stScreenInit
+	loadscript strangeBrother2Script_1stScreenPattern2
+
+strangeBrother2Script_2ndScreen:
 	jumptable_memoryaddress $cfd0
-	.dw script69b6
-	.dw script69ba
-script69b6:
-	loadscript script_14_4f7f
-script69ba:
-	loadscript script_14_4fa9
-script69be:
+	.dw @pattern1
+	.dw @pattern2
+@pattern1:
+	loadscript strangeBrother2Script_2ndScreenPattern1
+@pattern2:
+	loadscript strangeBrother2Script_2ndScreenPattern2
+	
+strangeBrother2Script_3rdScreen:
 	jumptable_memoryaddress $cfd0
-	.dw script69c5
-	.dw script69c9
-script69c5:
-	loadscript script_14_4fcb
-script69c9:
-	loadscript script_14_4fe9
-script69cd:
+	.dw @pattern1
+	.dw @pattern2
+@pattern1:
+	loadscript strangeBrother2Script_3rdScreenPattern1
+@pattern2:
+	loadscript strangeBrother2Script_3rdScreenPattern2
+	
+strangeBrother2Script_4thScreen:
 	jumptable_memoryaddress $cfd0
-	.dw script69d4
-	.dw script69d8
-script69d4:
-	loadscript script_14_5013
-script69d8:
-	loadscript script_14_503a
-script69dc:
+	.dw @pattern1
+	.dw @pattern2
+@pattern1:
+	loadscript strangeBrother2Script_4thScreenPattern1
+@pattern2:
+	loadscript strangeBrother2Script_4thScreenPattern2
+	
+strangeBrother2Script_5thScreen:
 	jumptable_memoryaddress $cfd0
-	.dw script69e3
-	.dw script69e7
-script69e3:
-	loadscript script_14_504f
-script69e7:
-	loadscript script_14_506d
-script69eb:
+	.dw @pattern1
+	.dw @pattern2
+@pattern1:
+	loadscript strangeBrother2Script_5thScreenPattern1
+@pattern2:
+	loadscript strangeBrother2Script_5thScreenPattern2
+	
+strangeBrother2Script_6thScreen:
 	jumptable_memoryaddress $cfd0
-	.dw script69f2
-	.dw script69f6
-script69f2:
-	loadscript script_14_5089
-script69f6:
-	loadscript script_14_50ab
-script69fa:
-	loadscript script_14_50ca
-script69fe:
+	.dw @pattern1
+	.dw @pattern2
+@pattern1:
+	loadscript strangeBrother2Script_6thScreenPattern1
+@pattern2:
+	loadscript strangeBrother2Script_6thScreenPattern2
+	
+strangeBrother2Script_finishedScreen:
+	loadscript strangeBrother2Script_finishedScreenPattern2
+	
+_strangeBrotherScript_lookDownUpRightLeft:
 	setangleandanimation $10
 	wait 30
 	setangleandanimation $00
 	wait 30
-script6a04:
+--
 	setangleandanimation $08
 	wait 30
 	setangleandanimation $18
 	wait 30
 	retscript
-script6a0b:
+	
+_strangeBrotherScript_lookUpDownRightLeft:
 	setangleandanimation $00
 	wait 30
 	setangleandanimation $10
 	wait 30
-	jump2byte script6a04
-script6a13:
+	jump2byte --
+	
+_strangeBrotherScript_lookRightLeftUpDown:
 	setangleandanimation $08
 	wait 30
 	setangleandanimation $18
 	wait 30
-script6a19:
+--
 	setangleandanimation $00
 	wait 30
 	setangleandanimation $10
 	wait 30
 	retscript
-script6a20:
+	
+_strangeBrotherScript_lookLeftRightUpDown:
 	setangleandanimation $18
 	wait 30
 	setangleandanimation $08
 	wait 30
-	jump2byte script6a19
+	jump2byte --
 
 
-script6a28:
+; ==============================================================================
+; INTERACID_STEALING_FEATHER
+; ==============================================================================
+stealingFeatherScript:
 	setcollisionradii $12, $30
 	checkcollidedwithlink_onground
 	disableinput
-	asm15 scriptHlp.seasonsFunc_15_5e6f
+	asm15 scriptHlp.stealingFeather_spawnStrangeBrothers
 	playsound SND_WHISTLE
 	wait 8
 	playsound SND_WHISTLE
@@ -5981,164 +6033,178 @@ script6a28:
 	writememory $d008, $01
 	checkcfc0bit 1
 	playsound SND_SCENT_SEED
-	asm15 scriptHlp.seasonsFunc_15_5e5d
+	asm15 scriptHlp.stealingFeather_spawnSelfWithSubId0
 	setspeed SPEED_100
 	setangle $04
 	incstate
+	
+	
+; ==============================================================================
+; INTERACID_HOLLY
+; ==============================================================================
+hollyScript_enteredFromChimney:
 	initcollisions
 	wait 120
 	setzspeed -$0100
-	jumpifroomflagset $20, script6a6f
-	jump2byte script6a66
-script6a61:
+	jumpifroomflagset $20, _hollyScript_shovelGiven
+	jump2byte _hollyScript_shovelNotYetGiven
+	
+hollyScript_enteredNormally:
 	initcollisions
-	jumpifroomflagset $20, script6a6f
-script6a66:
+	jumpifroomflagset $20, _hollyScript_shovelGiven
+_hollyScript_shovelNotYetGiven:
 	checkabutton
 	showtext TX_2c00
 	disableinput
-	giveitem $1500
+	giveitem TREASURE_SHOVEL $00
 	enablemenu
-script6a6f:
+_hollyScript_shovelGiven:
 	enableallobjects
 	checkabutton
 	setdisabledobjectsto91
-	jumpifglobalflagset $25, script6a7b
+	jumpifglobalflagset GLOBALFLAG_ALL_HOLLYS_SNOW_SHOVELLED, @snowAlreadyShovelled
 	showtext TX_2c01
-	jump2byte script6a6f
-script6a7b:
+	jump2byte _hollyScript_shovelGiven
+@snowAlreadyShovelled:
 	showtext TX_2c02
-	jump2byte script6a6f
-script6a80:
-	jumpifc6xxset $45, $02, script6ad9
-	jumpifc6xxset $45, $01, script6ab8
-	jumpifmemoryset $d13e, $04, script6a92
-	jump2byte script6a80
-script6a92:
+	jump2byte _hollyScript_shovelGiven
+
+
+; ==============================================================================
+; INTERACID_S_COMPANION_SCRIPTS
+; ==============================================================================
+companionScript_mooshInSpoolSwamp:
+	jumpifc6xxset <wMooshState, $02, @talkedToMooshAfterSavingHere
+	jumpifc6xxset <wMooshState, $01, @savedMooshHere
+	jumpifmemoryset $d13e, $04, +
+	jump2byte companionScript_mooshInSpoolSwamp
++
 	disablemenu
 	writeobjectbyte $5a, $00
-script6a96:
-	jumpifmemoryset $d13e, $20, script6a9e
-	jump2byte script6a96
-script6a9e:
+-
+	jumpifmemoryset $d13e, $20, +
+	jump2byte -
++
 	checkmemoryeq $d12b, $00
-	asm15 $5e91
+	asm15 scriptHlp.seasonsFunc_15_5e91
 	checkmemoryeq $d115, $00
 	writememory $d106, $20
 	checkmemoryeq $d106, $00
-	asm15 $5ea6
+	asm15 scriptHlp.seasonsFunc_15_5ea6
 	checkflagset $07, $d121
-script6ab8:
+@savedMooshHere:
 	writememory $d103, $05
 	writememory $d13f, $03
 	enablemenu
 	checkmemoryeq $d13d, $01
 	disablemenu
 	writememory $d13d, $00
-	jumpifmemoryeq wIsLinkedGame, $00, script6ad5
+	jumpifmemoryeq wIsLinkedGame, $00, @unlinked1
 	showtext TX_2214
-	jump2byte script6ad9
-script6ad5:
+	jump2byte @talkedToMooshAfterSavingHere
+@unlinked1:
 	disablemenu
 	showtext TX_220a
-script6ad9:
+@talkedToMooshAfterSavingHere:
 	disablemenu
 	writememory $d13f, $03
 	writememory $d103, $06
-	ormemory $c645, $02
+	ormemory wMooshState, $02
 	checkflagset $02, $c645
 	writememory $d13f, $03
 	writememory $d103, $06
 	writememory $d13d, $00
 	checkmemoryeq $d13d, $01
 	disablemenu
-	jumpifmemoryeq wIsLinkedGame, $00, script6b0c
+	jumpifmemoryeq wIsLinkedGame, $00, @unlinked2
 	showtext TX_2215
 	writeobjectbyte $44, $02
 	showtext TX_003a
-	jump2byte script6b15
-script6b0c:
+	jump2byte +
+@unlinked2:
 	showtext TX_220d
 	writeobjectbyte $44, $02
 	showtext TX_006a
-script6b15:
++
 	showtext TX_2213
-	ormemory $c645, $20
+	ormemory wMooshState, $20
 	checkmemoryeq $cc48, $d1
 	showtext TX_2212
 	enablemenu
 	enableallobjects
 	scriptend
-script6b26:
+
+companionScript_RickyInNorthHoron:
 	checkmemoryeq $d13d, $01
 	disablemenu
 	setdisabledobjectsto11
-	jumpifitemobtained $48, script6b55
+	jumpifitemobtained TREASURE_RICKY_GLOVES, @hasRickysGloves
 	enablemenu
-	jumpifmemoryeq wIsLinkedGame, $00, script6b47
-	jumpifmemoryset wRickyState, $10, script6b42
+	jumpifmemoryeq wIsLinkedGame, $00, @unlinked
+	jumpifmemoryset wRickyState, $10, @talkedToRickyBefore
 	showtext TX_200a
-	jump2byte script6b4a
-script6b42:
+	jump2byte @next
+@talkedToRickyBefore:
 	showtext TX_200b
-	jump2byte script6b4a
-script6b47:
+	jump2byte @next
+@unlinked:
 	showtext TX_2000
-script6b4a:
+@next:
 	writememory $d13d, $00
 	ormemory wRickyState, $10
 	enableallobjects
-	jump2byte script6b26
-script6b55:
-	jumpifmemoryeq wIsLinkedGame, $00, script6b6b
-	jumpifmemoryset wRickyState, $10, script6b66
+	jump2byte companionScript_RickyInNorthHoron
+@hasRickysGloves:
+	jumpifmemoryeq wIsLinkedGame, $00, @unlinked2
+	jumpifmemoryset wRickyState, $10, @talkedToRickyBefore2
 	showtext TX_200a
-	jump2byte script6b6e
-script6b66:
+	jump2byte @next2
+@talkedToRickyBefore2:
 	showtext TX_200b
-	jump2byte script6b6e
-script6b6b:
+	jump2byte @next2
+@unlinked2:
 	showtext TX_2000
-script6b6e:
+@next2:
 	wait 30
 	showtext TX_2001
 	wait 30
 	writememory $d13d, $00
-	jumpifmemoryeq $c610, $0b, script6b85
+	jumpifmemoryeq wAnimalCompanion, $0b, @RickyIsCompanion
 	showtext TX_2002
 	writeobjectbyte $44, $02
-	jump2byte script6b9c
-script6b85:
-	jumpifmemoryeq wIsLinkedGame, $00, script6b90
+	jump2byte @last
+@RickyIsCompanion:
+	jumpifmemoryeq wIsLinkedGame, $00, @unlinked3
 	showtext TX_200c
-	jump2byte script6b93
-script6b90:
+	jump2byte +
+@unlinked3:
 	showtext TX_2006
-script6b93:
++
 	writeobjectbyte $44, $02
 	showtext TX_0038
 	showtext TX_2008
-script6b9c:
+@last:
 	writememory $d103, $01
 	checkmemoryeq $cc48, $d1
 	showtext TX_2005
 	enableallobjects
 	scriptend
-script6ba9:
+
+companionScript_RickyLeavingYouInSpoolSwamp:
 	disablemenu
 	writememory $d13f, $01
-	jumpifmemoryset $d13e, $01, script6bb6
-	jump2byte script6ba9
-script6bb6:
+	jumpifmemoryset $d13e, $01, +
+	jump2byte companionScript_RickyLeavingYouInSpoolSwamp
++
 	writememory $d108, $03
 	setcounter1 $10
 	writememory $d13f, $08
 	writememory $d103, $04
-script6bc4:
-	jumpifmemoryset $d13e, $02, script6bcc
-	jump2byte script6bc4
-script6bcc:
-	asm15 $5eb4
+-
+	jumpifmemoryset $d13e, $02, +
+	jump2byte -
++
+	asm15 scriptHlp.seasonsFunc_15_5eb4
 	enableallobjects
 	checkmemoryeq $cc77, $00
 	writememory $d008, $01
@@ -6147,11 +6213,11 @@ script6bcc:
 	setcounter1 $10
 	showtext TX_2003
 	setdisabledobjectsto11
-	asm15 $5ec7
-script6be6:
-	jumpifmemoryset $d13e, $04, script6bee
-	jump2byte script6be6
-script6bee:
+	asm15 scriptHlp.seasonsFunc_15_5ec7
+-
+	jumpifmemoryset $d13e, $04, +
+	jump2byte -
++
 	writememory $d108, $00
 	writememory $d13f, $18
 	writememory $d103, $07
@@ -6161,24 +6227,25 @@ script6bee:
 	writememory $d103, $06
 	enablemenu
 	scriptend
-script6c0a:
+
+companionScript_dimitriInSpoolSwamp:
 	checkmemoryeq $d13d, $01
-	jumpifmemoryset $c644, $08, script6c1d
+	jumpifmemoryset wDimitriState, $08, +
 	showtext TX_2103
 	writememory $d13d, $00
-	jump2byte script6c0a
-script6c1d:
+	jump2byte companionScript_dimitriInSpoolSwamp
++
 	disablemenu
-	jumpifmemoryeq wIsLinkedGame, $00, script6c2f
+	jumpifmemoryeq wIsLinkedGame, $00, @unlinked
 	showtext TX_2115
 	writeobjectbyte $44, $02
 	showtext TX_0039
-	jump2byte script6c38
-script6c2f:
+	jump2byte _companionScript_dimitriTutorial
+@unlinked:
 	showtext TX_210b
 	writeobjectbyte $44, $02
 	showtext TX_0069
-script6c38:
+_companionScript_dimitriTutorial:
 	showtext TX_211f
 	writememory $d126, $06
 	writememory $d127, $08
@@ -6188,26 +6255,28 @@ script6c38:
 	enableallobjects
 	enablemenu
 	scriptend
-script6c51:
+
+companionScript_dimitriBeingBullied:
 	checkmemoryeq $d13d, $01
-	jumpifmemoryset $c644, $08, script6c64
+	jumpifmemoryset $c644, $08, +
 	showtext TX_2103
 	writememory $d13d, $00
-	jump2byte script6c51
-script6c64:
+	jump2byte companionScript_dimitriBeingBullied
++
 	disablemenu
 	showtext TX_2120
-	jump2byte script6c38
-script6c6a:
+	jump2byte _companionScript_dimitriTutorial
+
+companionScript_mooshEnteringSunkenCity:
 	writememory $d13f, $14
 	writememory $d108, $00
 	checkpalettefadedone
 	disablemenu
 	writememory $d103, $09
-script6c78:
-	jumpifmemoryset $d13e, $01, script6c80
-	jump2byte script6c78
-script6c80:
+-
+	jumpifmemoryset $d13e, $01, +
+	jump2byte -
++
 	writememory $d13f, $16
 	setcounter1 $20
 	writememory $d13f, $14
@@ -6220,166 +6289,176 @@ script6c80:
 	setcounter1 $20
 	ormemory $d13e, $02
 	scriptend
-script6ca3:
+
+companionScript_mooshInMtCucco:
 	checkmemoryeq $d13d, $01
 	jumptable_objectbyte $78
-	.dw script6cd8
-	.dw script6cad
-script6cad:
+	.dw @noSpringBanana
+	.dw @hasSpringBanana
+@hasSpringBanana:
 	showtext TX_2211
 	writeobjectbyte $44, $02
-	asm15 $5ede
+	asm15 scriptHlp.seasonsFunc_15_5ede
 	jumptable_objectbyte $7b
-	.dw script6cc1
-	.dw script6cbc
-script6cbc:
+	.dw @mooshIsNotCompanion
+	.dw @mooshIsCompanion
+@mooshIsCompanion:
 	showtext TX_2219
-	jump2byte script6cc4
-script6cc1:
+	jump2byte +
+@mooshIsNotCompanion:
 	showtext TX_2216
-script6cc4:
++
 	writememory $c645, $80
 	enableallobjects
 	checkmemoryeq $cc48, $d1
 	jumptable_objectbyte $7b
-	.dw script6cd3
-	.dw script6cd6
-script6cd3:
+	.dw @mooshIsNotCompanion2
+	.dw @mooshIsCompanion2
+@mooshIsNotCompanion2:
 	showtext TX_2212
-script6cd6:
+@mooshIsCompanion2:
 	enablemenu
 	scriptend
-script6cd8:
+@noSpringBanana:
 	showtext TX_2210
 	writememory $d13d, $00
 	enableallobjects
 	enablemenu
-	jump2byte script6ca3
-script6ce3:
+	jump2byte companionScript_mooshInMtCucco
+
+
+; ==============================================================================
+; INTERACID_SPOOL_SWAMP_ANIMALS_BULLIED
+; ==============================================================================
+animalBulliedScript_dimitriBullied:
 	writememory $ccab, $01
 	makeabuttonsensitive
-	jumpifc6xxset $44, $04, script6d15
+	jumpifc6xxset <wDimitriState, $04, @promptForPayment
 	disablemenu
 	setdisabledobjectsto11
 	writememory $ccab, $00
-	callscript script6f43
-script6cf6:
+	callscript _animalBulliedScript_hop
+@animalBulliedInitDone:
 	jumptable_objectbyte $77
-	.dw script6cf6
-	.dw script6cfc
-script6cfc:
+	.dw @animalBulliedInitDone
+	.dw @next
+@next:
 	showtext TX_2100
 	ormemory $c644, $01
 	setangleandanimation $00
 	checkabutton
-	showtextnonexitable $2104
-	jumpiftextoptioneq $00, script6d29
-script6d0d:
+	showtextnonexitable TX_2104
+	jumpiftextoptioneq $00, @paying50Rupees
+@notPayingRupees:
 	showtext TX_2107
-	jump2byte script6d15
-script6d12:
+	jump2byte @promptForPayment
+@notEnoughRupees:
 	showtext TX_211b
-script6d15:
+@promptForPayment:
 	writememory $ccab, $00
 	setangleandanimation $00
-	jumpifglobalflagset $2b, script6d2f
+	jumpifglobalflagset GLOBALFLAG_S_2b, @paid50Rupees
 	checkabutton
-	showtextnonexitable $2104
-	jumpiftextoptioneq $00, script6d29
-	jump2byte script6d0d
-script6d29:
+	showtextnonexitable TX_2104
+	jumpiftextoptioneq $00, @paying50Rupees
+	jump2byte @notPayingRupees
+@paying50Rupees:
 	jumptable_objectbyte $79
-	.dw script6d12
-	.dw script6d35
-script6d2f:
+	.dw @notEnoughRupees
+	.dw @have50Rupees
+@paid50Rupees:
 	checkabutton
-	showtextnonexitable $2106
-	jump2byte script6d3d
-script6d35:
-	setglobalflag $2b
+	showtextnonexitable TX_2106
+	jump2byte +
+@have50Rupees:
+	setglobalflag GLOBALFLAG_S_2b
 	writeobjectbyte $7a, $0b
-	showtextnonexitable $2106
-script6d3d:
-	jumpiftextoptioneq $00, script6d43
-	jump2byte script6d0d
-script6d43:
+	showtextnonexitable TX_2106
++
+	jumpiftextoptioneq $00, @paying30MoreRupees
+	jump2byte @notPayingRupees
+@paying30MoreRupees:
 	jumptable_objectbyte $78
-	.dw script6d12
-	.dw script6d49
-script6d49:
+	.dw @notEnoughRupees
+	.dw @haveTheLastRupees
+@haveTheLastRupees:
 	writeobjectbyte $7a, $07
 	disablemenu
 	showtext TX_2108
 	setdisabledobjectsto11
-	ormemory $c644, $08
+	ormemory wDimitriState, $08
 	scriptend
-script6d56:
+
+animalBulliedScript_bully1:
 	makeabuttonsensitive
-script6d57:
-	jumpifc6xxset $44, $04, script6d74
-	jumpifc6xxset $44, $01, script6d63
-	jump2byte script6d57
-script6d63:
-	callscript script6f43
-script6d66:
+-
+	jumpifc6xxset <wDimitriState, $04, @boughtDimitri
+	jumpifc6xxset <wDimitriState, $01, +
+	jump2byte -
++
+	callscript _animalBulliedScript_hop
+-
 	jumptable_objectbyte $77
-	.dw script6d66
-	.dw script6d6c
-script6d6c:
+	.dw -
+	.dw +
++
 	showtext TX_2101
 	setdisabledobjectsto11
 	ormemory $c644, $02
-script6d74:
+@boughtDimitri:
 	setangleandanimation $18
 	checkabutton
 	showtext TX_210c
-	jump2byte script6d74
-script6d7c:
+	jump2byte @boughtDimitri
+	
+animalBulliedScript_bully2:
 	makeabuttonsensitive
-script6d7d:
-	jumpifc6xxset $44, $04, script6d9b
-	jumpifc6xxset $44, $02, script6d89
-	jump2byte script6d7d
-script6d89:
-	callscript script6f43
-script6d8c:
+-
+	jumpifc6xxset $44, $04, @boughtDimitri
+	jumpifc6xxset $44, $02, +
+	jump2byte -
++
+	callscript _animalBulliedScript_hop
+-
 	jumptable_objectbyte $77
-	.dw script6d8c
-	.dw script6d92
-script6d92:
+	.dw -
+	.dw +
++
 	showtext TX_2102
 	ormemory $c644, $04
 	enablemenu
 	enableallobjects
-script6d9b:
+@boughtDimitri:
 	setangleandanimation $00
 	checkabutton
 	showtext TX_210d
-	jump2byte script6d9b
-script6da3:
-	jumpifc6xxset $44, $20, script6daa
-	jump2byte script6da3
-script6daa:
+	jump2byte @boughtDimitri
+
+animalBulliedScript2_dimitriBullied:
+	jumpifc6xxset $44, $20, +
+	jump2byte animalBulliedScript2_dimitriBullied
++
 	movedown $1c
 	moveleft $1a
 	movedown $18
 	moveleft $1c
 	movedown $20
 	scriptend
-script6db5:
+
+animalBulliedScript2_bully1:
 	setangleandanimation $10
-	callscript script6f43
-script6dba:
+	callscript _animalBulliedScript_hop
+-
 	jumptable_objectbyte $77
-	.dw script6dba
-	.dw script6dc0
-script6dc0:
+	.dw -
+	.dw +
++
 	showtext TX_2109
 	ormemory $c644, $10
-script6dc7:
-	jumpifc6xxset $44, $20, script6dce
-	jump2byte script6dc7
-script6dce:
+-
+	jumpifc6xxset $44, $20, +
+	jump2byte -
++
 	movedown $28
 	moveleft $28
 	movedown $18
@@ -6388,17 +6467,18 @@ script6dce:
 	enableallobjects
 	enablemenu
 	scriptend
-script6ddb:
-	jumpifc6xxset $44, $10, script6de2
-	jump2byte script6ddb
-script6de2:
+
+animalBulliedScript2_bully2:
+	jumpifc6xxset $44, $10, +
+	jump2byte animalBulliedScript2_bully2
++
 	setangleandanimation $10
-	callscript script6f43
-script6de7:
+	callscript _animalBulliedScript_hop
+-
 	jumptable_objectbyte $77
-	.dw script6de7
-	.dw script6ded
-script6ded:
+	.dw -
+	.dw +
++
 	showtext TX_210a
 	setdisabledobjectsto11
 	ormemory $c644, $20
@@ -6408,37 +6488,38 @@ script6ded:
 	moveleft $18
 	movedown $20
 	scriptend
-script6e00:
-	jumpifc6xxset $45, $02, script6e62
-	jumpifc6xxset $45, $01, script6e5b
+
+animalBulliedScript_mooshBullied:
+	jumpifc6xxset $45, $02, @startFight
+	jumpifc6xxset $45, $01, @waitToStartFight
 	setdisabledobjectsto11
-	callscript script6f43
+	callscript _animalBulliedScript_hop
 	jumptable_objectbyte $77
-	.dw script6cf6
-	.dw script6e14
-script6e14:
+	.dw animalBulliedScript_dimitriBullied@animalBulliedInitDone
+	.dw +
++
 	showtext TX_2200
 	ormemory $d13e, $01
 	setangleandanimation $00
-script6e1d:
-	jumpifmemoryset $d13e, $04, script6e25
-	jump2byte script6e1d
-script6e25:
+-
+	jumpifmemoryset $d13e, $04, +
+	jump2byte -
++
 	setcounter1 $20
 	showtext TX_2203
-	callscript script6f43
-script6e2d:
+	callscript _animalBulliedScript_hop
+-
 	jumptable_objectbyte $77
-	.dw script6e2d
-	.dw script6e33
-script6e33:
+	.dw -
+	.dw +
++
 	showtext TX_2204
 	setdisabledobjectsto11
 	ormemory $d13e, $10
-script6e3b:
-	jumpifmemoryset $d13e, $40, script6e43
-	jump2byte script6e3b
-script6e43:
+-
+	jumpifmemoryset $d13e, $40, +
+	jump2byte -
++
 	playsound SND_DOORCLOSE
 	setangle $08
 	setspeed SPEED_280
@@ -6451,35 +6532,35 @@ script6e43:
 	ormemory $c645, $01
 	moveright $30
 	enableallobjects
-script6e5b:
-	jumpifc6xxset $45, $02, script6e6f
-	jump2byte script6e5b
-script6e62:
+@waitToStartFight:
+	jumpifc6xxset $45, $02, @revengeWanted
+	jump2byte @waitToStartFight
+@startFight:
 	setdisabledobjectsto11
 	moveleft $30
-	callscript script6e9d
+	callscript _animalBulliedScript_spawnMoblins
 	setcounter1 $70
 	showtext TX_220e
-	jump2byte script6e7a
-script6e6f:
+	jump2byte @moblinsSpawned
+@revengeWanted:
 	setdisabledobjectsto11
 	moveleft $30
-	callscript script6e9d
+	callscript _animalBulliedScript_spawnMoblins
 	setcounter1 $70
 	showtext TX_220b
-script6e7a:
-	jumpifc6xxset $45, $08, script6e81
-	jump2byte script6e7a
-script6e81:
+@moblinsSpawned:
+	jumpifc6xxset $45, $08, +
+	jump2byte @moblinsSpawned
++
 	enablemenu
 	enableallobjects
 	ormemory $d13e, $80
 	moveright $30
-script6e89:
+-
 	jumptable_objectbyte $7b
-	.dw script6e8f
-	.dw script6e89
-script6e8f:
+	.dw +
+	.dw -
++
 	setdisabledobjectsto11
 	moveleft $30
 	showtext TX_220c
@@ -6487,30 +6568,32 @@ script6e8f:
 	enableallobjects
 	ormemory $c645, $04
 	scriptend
-script6e9d:
-	spawninteraction $7303, $88, $30
-	spawninteraction $7304, $88, $50
-	spawninteraction $7305, $18, $b0
+	
+_animalBulliedScript_spawnMoblins:
+	spawninteraction INTERACID_SPOOL_SWAMP_ANIMALS_BULLIED $03, $88, $30
+	spawninteraction INTERACID_SPOOL_SWAMP_ANIMALS_BULLIED $04, $88, $50
+	spawninteraction INTERACID_SPOOL_SWAMP_ANIMALS_BULLIED $05, $18, $b0
 	retscript
-script6ead:
-	jumpifc6xxset $45, $01, script6ef5
-	jumpifmemoryset $d13e, $01, script6eba
-	jump2byte script6ead
-script6eba:
-	callscript script6f43
-script6ebd:
+
+animalBulliedScript3_bully1:
+	jumpifc6xxset $45, $01, @scriptEnd
+	jumpifmemoryset $d13e, $01, +
+	jump2byte animalBulliedScript3_bully1
++
+	callscript _animalBulliedScript_hop
+-
 	jumptable_objectbyte $77
-	.dw script6ebd
-	.dw script6ec3
-script6ec3:
+	.dw -
+	.dw +
++
 	showtext TX_2201
 	setdisabledobjectsto11
 	ormemory $d13e, $02
 	setangleandanimation $18
-script6ecd:
-	jumpifmemoryset $d13e, $10, script6ed5
-	jump2byte script6ecd
-script6ed5:
+-
+	jumpifmemoryset $d13e, $10, +
+	jump2byte -
++
 	showtext TX_2205
 	setdisabledobjectsto11
 	applyspeed $10
@@ -6518,60 +6601,67 @@ script6ed5:
 	setangle $08
 	applyspeed $10
 	ormemory $d13e, $20
-script6ee7:
-	jumpifmemoryset $d13e, $40, script6eef
-	jump2byte script6ee7
-script6eef:
+-
+	jumpifmemoryset $d13e, $40, +
+	jump2byte -
++
 	setspeed SPEED_280
 	setangle $04
 	applyspeed $20
-script6ef5:
+@scriptEnd:
 	scriptend
-script6ef6:
-	jumpifc6xxset $45, $01, script6f22
-	jumpifmemoryset $d13e, $02, script6f03
-	jump2byte script6ef6
-script6f03:
-	callscript script6f43
-script6f06:
+
+animalBulliedScript3_bully2:
+	jumpifc6xxset $45, $01, @scriptEnd
+	jumpifmemoryset $d13e, $02, +
+	jump2byte animalBulliedScript3_bully2
++
+	callscript _animalBulliedScript_hop
+-
 	jumptable_objectbyte $77
-	.dw script6f06
-	.dw script6f0c
-script6f0c:
+	.dw -
+	.dw +
++
 	showtext TX_2202
 	setdisabledobjectsto11
 	ormemory $d13e, $04
-script6f14:
-	jumpifmemoryset $d13e, $40, script6f1c
-	jump2byte script6f14
-script6f1c:
+-
+	jumpifmemoryset $d13e, $40, +
+	jump2byte -
++
 	setspeed SPEED_280
 	setangle $18
 	applyspeed $20
-script6f22:
+@scriptEnd:
 	scriptend
-script6f23:
+
+animalBulliedScript_maskedMoblin1MovingUp:
 	setangle $00
 	applyspeed $30
 	ormemory $c645, $08
-script6f2b:
-	jumpifmemoryset $d13e, $80, script6f33
-	jump2byte script6f2b
-script6f33:
-	spawnenemyhere $2000
+_animalBulliedScript_spawnMoblin
+	jumpifmemoryset $d13e, $80, +
+	jump2byte _animalBulliedScript_spawnMoblin
++
+	spawnenemyhere ENEMYID_MASKED_MOBLIN $00
 	scriptend
-script6f37:
+
+animalBulliedScript_maskedMoblin2MovingUp:
 	setangle $00
 	applyspeed $2f
-	jump2byte script6f2b
-script6f3d:
+	jump2byte _animalBulliedScript_spawnMoblin
+
+animalBulliedScript_maskedMoblinMovingLeft:
 	setangle $18
 	applyspeed $2f
-	jump2byte script6f2b
-script6f43:
+	jump2byte _animalBulliedScript_spawnMoblin
+	
+_animalBulliedScript_hop:
 	setzspeed -$0300
 	wait 8
 	retscript
+
+
 script6f48:
 	setcoords $44, $50
 	setcounter1 $c8
@@ -6588,7 +6678,7 @@ script6f5c:
 	jumpifc6xxset $44, $04, script6f73
 	disablemenu
 	setdisabledobjectsto11
-	callscript script6f43
+	callscript _animalBulliedScript_hop
 script6f67:
 	jumptable_objectbyte $77
 	.dw script6f67
@@ -6637,7 +6727,7 @@ script6fa7:
 	jumpifc6xxset $44, $01, script6fb3
 	jump2byte script6fa7
 script6fb3:
-	callscript script6f43
+	callscript _animalBulliedScript_hop
 script6fb6:
 	jumptable_objectbyte $77
 	.dw script6fb6
@@ -6658,7 +6748,7 @@ script6fcd:
 	jumpifc6xxset $44, $02, script6fd9
 	jump2byte script6fcd
 script6fd9:
-	callscript script6f43
+	callscript _animalBulliedScript_hop
 script6fdc:
 	jumptable_objectbyte $77
 	.dw script6fdc
@@ -6682,7 +6772,7 @@ script6ffb:
 	setanimationfromangle
 	applyspeed $f0
 	setangleandanimation $10
-	callscript script6f43
+	callscript _animalBulliedScript_hop
 script7006:
 	jumpifc6xxset $44, $10, script700d
 	jump2byte script7006
@@ -6691,7 +6781,7 @@ script700d:
 	setanimationfromangle
 	applyspeed $f0
 	setangleandanimation $10
-	callscript script6f43
+	callscript _animalBulliedScript_hop
 script7018:
 	jumptable_objectbyte $77
 	.dw script7018
