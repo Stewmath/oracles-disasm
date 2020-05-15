@@ -14696,8 +14696,9 @@ setLinkDirection:
 .else ; ROM_SEASONS
 
 ;;
+; param		b	index into _conditionalHoronNPCLookupTable
 ; param[out]	c	$01 if NPC should be seen, otherwise $00
-seasonsFunc_3e07:
+checkIfHoronVillageNPCShouldBeSeen:
 	ldh a,(<hRomBank)	; $3e07
 	push af			; $3e09
 	callfrombank0 checkHoronVillageNPCShouldBeSeen_body@main		; $3e0a

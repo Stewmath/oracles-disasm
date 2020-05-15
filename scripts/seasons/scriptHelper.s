@@ -2042,7 +2042,11 @@ seasonsFunc_15_5ede:
 	ld (de),a		; $5eea
 	ret			; $5eeb
 
-seasonsFunc_15_5eec:
+
+; ==============================================================================
+; INTERACID_SUNKEN_CITY_BULLIES
+; ==============================================================================
+sunkenCityBullies_lookToLink:
 	call objectGetAngleTowardLink		; $5eec
 	ld e,$49		; $5eef
 	ld (de),a		; $5ef1
@@ -2050,8 +2054,14 @@ seasonsFunc_15_5eec:
 	ld e,$48		; $5ef5
 	ld (de),a		; $5ef7
 	jp interactionSetAnimation		; $5ef8
-	ld a,$09		; $5efb
-	ld ($cc6a),a		; $5efd
+
+
+; ==============================================================================
+; INTERACID_TRAMPOLINE
+; ==============================================================================
+trampoline_bounce:
+	ld a,LINK_STATE_BOUNCING_ON_TRAMPOLINE		; $5efb
+	ld (wLinkForceState),a		; $5efd
 	ld hl,$d00b		; $5f00
 	call objectCopyPosition		; $5f03
 	ld a,($d00b)		; $5f06
@@ -2063,24 +2073,24 @@ seasonsFunc_15_5eec:
 	and $0f			; $5f14
 	xor $0f			; $5f16
 	ldh (<hFF8C),a	; $5f18
-	ld a,($cc49)		; $5f1a
-	ld hl,seasonsTable_15_5f6f		; $5f1d
+	ld a,(wActiveGroup)		; $5f1a
+	ld hl,_trampoline_group4Warps		; $5f1d
 	cp $04			; $5f20
-	jr z,_label_15_243	; $5f22
-	ld hl,seasonsTable_5f85		; $5f24
-_label_15_243:
-	ld a,($cc4c)		; $5f27
+	jr z,+			; $5f22
+	ld hl,_trampoline_group5Warps		; $5f24
++
+	ld a,(wActiveRoom)		; $5f27
 	ld e,a			; $5f2a
-_label_15_244:
+-
 	ldi a,(hl)		; $5f2b
 	or a			; $5f2c
-	jr z,_label_15_248	; $5f2d
+	jr z,_trampoline_couldntFindRoom	; $5f2d
 	cp e			; $5f2f
-	jr z,_label_15_245	; $5f30
+	jr z,_trampoline_foundRoom	; $5f30
 	inc hl			; $5f32
 	inc hl			; $5f33
-	jr _label_15_244		; $5f34
-_label_15_245:
+	jr -			; $5f34
+_trampoline_foundRoom:
 	ldi a,(hl)		; $5f36
 	ld h,(hl)		; $5f37
 	ld l,a			; $5f38
@@ -2090,12 +2100,12 @@ _label_15_245:
 	ldh a,(<hFF8C)	; $5f3d
 	call checkFlag		; $5f3f
 	ld c,$01		; $5f42
-	jr nz,_label_15_246	; $5f44
+	jr nz,++		; $5f44
 	ld c,$00		; $5f46
 	ld e,$42		; $5f48
 	ld a,(de)		; $5f4a
 	or a			; $5f4b
-	jr z,_label_15_246	; $5f4c
+	jr z,++		; $5f4c
 	pop hl			; $5f4e
 	ld bc,$0016		; $5f4f
 	add hl,bc		; $5f52
@@ -2104,355 +2114,236 @@ _label_15_245:
 	ldh a,(<hFF8C)	; $5f56
 	call checkFlag		; $5f58
 	ld c,$80		; $5f5b
-	jr z,_label_15_247	; $5f5d
+	jr z,+++		; $5f5d
 	ld c,$82		; $5f5f
-	jr _label_15_247		; $5f61
-_label_15_246:
+	jr +++			; $5f61
+++
 	pop hl			; $5f63
-_label_15_247:
++++
 	ld a,c			; $5f64
 	ld ($cc6b),a		; $5f65
 	ret			; $5f68
-_label_15_248:
+_trampoline_couldntFindRoom:
 	ld a,$03		; $5f69
 	ld ($cc6b),a		; $5f6b
 	ret			; $5f6e
 
-seasonsTable_15_5f6f:
-	.db $3e $98 $5f $3f $ae $5f $43 $c4
-	.db $5f $b4 $da $5f $c1 $f0 $5f $c2
-	.db $06 $60 $d3 $1c $60 $00
+_trampoline_group4Warps:
+	dbw $3e _trampoline_group4Room3e
+	dbw $3f _trampoline_group4Room3f
+	dbw $43 _trampoline_group4Room43
+	dbw $b4 _trampoline_group4Roomb4
+	dbw $c1 _trampoline_group4Roomc1
+	dbw $c2 _trampoline_group4Roomc2
+	dbw $d3 _trampoline_group4Roomd3
+	.db $00
 
-seasonsTable_5f85:
-	scf			; $5f85
-	ldd (hl),a		; $5f86
-	ld h,b			; $5f87
-	jr c,$48		; $5f88
-	ld h,b			; $5f8a
-	ldd a,(hl)		; $5f8b
-	ld (hl),h		; $5f8c
-	ld h,b			; $5f8d
-	ld b,l			; $5f8e
-	and b			; $5f8f
-	ld h,b			; $5f90
-	ld c,c			; $5f91
-	or (hl)			; $5f92
-	ld h,b			; $5f93
-	ld c,l			; $5f94
-	call z,$0060		; $5f95
-	rst $38			; $5f98
-	rst $38			; $5f99
-	rst $38			; $5f9a
-	rst $38			; $5f9b
-	rst $38			; $5f9c
-	rst $38			; $5f9d
-	rst $38			; $5f9e
-	ei			; $5f9f
-	rst $38			; $5fa0
-	rst $38			; $5fa1
-	rst $38			; $5fa2
-	rst $38			; $5fa3
-	rst $38			; $5fa4
-	rst $38			; $5fa5
-	cp a			; $5fa6
-	rst $38			; $5fa7
-	rst $38			; $5fa8
-	rst $38			; $5fa9
-	rst $38			; $5faa
-	rst $38			; $5fab
-	rst $38			; $5fac
-	rst $38			; $5fad
-	rst $38			; $5fae
-	rst $38			; $5faf
-	rst $38			; $5fb0
-	rst $38			; $5fb1
-	rst $38			; $5fb2
-	rst $38			; $5fb3
-	rst $38			; $5fb4
-	rst $38			; $5fb5
-	rst $38			; $5fb6
-	rst $38			; $5fb7
-	rst $30			; $5fb8
-	rst $38			; $5fb9
-	rst $38			; $5fba
-	rst $38			; $5fbb
-	rst $38			; $5fbc
-	rst $38			; $5fbd
-	rst $38			; $5fbe
-	rst $38			; $5fbf
-	rst $38			; $5fc0
-	rst $38			; $5fc1
-	rst $38			; $5fc2
-	rst $38			; $5fc3
-	rst $38			; $5fc4
-	rst $38			; $5fc5
-	rst $38			; $5fc6
-	rst $38			; $5fc7
-	rst $38			; $5fc8
-	rst $38			; $5fc9
-	rrca			; $5fca
-	ld ($ff00+$ef),a	; $5fcb
-	xor $ef			; $5fcd
-	xor $0f			; $5fcf
-	ld ($ff00+$ff),a	; $5fd1
-	rst $38			; $5fd3
-	rst $38			; $5fd4
-	rst $38			; $5fd5
-	rst $38			; $5fd6
-	rst $38			; $5fd7
-	rst $38			; $5fd8
-	rst $38			; $5fd9
-	rst $38			; $5fda
-	rst $38			; $5fdb
-	rst $38			; $5fdc
-	sbc a			; $5fdd
-	rst $38			; $5fde
-	cp a			; $5fdf
-	rst $38			; $5fe0
-	rst $38			; $5fe1
-	rst $38			; $5fe2
-	rst $38			; $5fe3
-	rst $38			; $5fe4
-	rst $38			; $5fe5
-	rst $38			; $5fe6
-	rst $38			; $5fe7
-	rst $38			; $5fe8
-	rst $38			; $5fe9
-	rst $38			; $5fea
-	rst $38			; $5feb
-	rst $38			; $5fec
-	rst $38			; $5fed
-	rst $38			; $5fee
-	rst $38			; $5fef
-	rst $38			; $5ff0
-	rst $38			; $5ff1
-.DB $e3				; $5ff2
-	rst $38			; $5ff3
-.DB $e3				; $5ff4
-	rst $38			; $5ff5
-	rst $38			; $5ff6
-	rst $38			; $5ff7
-	rst $38			; $5ff8
-	rst $38			; $5ff9
-	rst $38			; $5ffa
-	rst $38			; $5ffb
-	rst $38			; $5ffc
-	rst $38			; $5ffd
-	rst $38			; $5ffe
-	rst $38			; $5fff
-	rst $38			; $6000
-	rst $38			; $6001
-	rst $38			; $6002
-	rst $38			; $6003
-	rst $38			; $6004
-	rst $38			; $6005
-	rst $38			; $6006
-	rst $38			; $6007
-	rst $38			; $6008
-	rst $38			; $6009
-	rst $38			; $600a
-	rst $38			; $600b
-	rst $38			; $600c
-	rst $38			; $600d
-	rst $38			; $600e
-	rst $38			; $600f
-	rst $38			; $6010
-	rst $38			; $6011
-	rst $38			; $6012
-	rst $38			; $6013
-	rst $38			; $6014
-	rst $38			; $6015
-	rst $8			; $6016
-	sbc a			; $6017
-	rst $8			; $6018
-	sbc a			; $6019
-	rst $38			; $601a
-	rst $38			; $601b
-	rst $38			; $601c
-	rst $38			; $601d
-	rst $38			; $601e
-	rst $38			; $601f
-	rst $38			; $6020
-	rst $38			; $6021
-	rst $38			; $6022
-	rst $38			; $6023
-	rst $38			; $6024
-	rst $38			; $6025
-	rst $38			; $6026
-	rst $38			; $6027
-	rst $38			; $6028
-	rst $38			; $6029
-	rst $38			; $602a
-	rst $38			; $602b
-	rst $38			; $602c
-	rst $38			; $602d
-	ld h,a			; $602e
-.DB $fc				; $602f
-	rst $38			; $6030
-	rst $38			; $6031
-	rst $38			; $6032
-	rst $38			; $6033
-	di			; $6034
-	rst $38			; $6035
-	di			; $6036
-	rst $38			; $6037
-	di			; $6038
-	rst $38			; $6039
-	di			; $603a
-	rst $38			; $603b
-	di			; $603c
-	rst $38			; $603d
-	rst $38			; $603e
-	rst $38			; $603f
-	di			; $6040
-	rst $38			; $6041
-	di			; $6042
-	rst $38			; $6043
-	di			; $6044
-	rst $38			; $6045
-	rst $38			; $6046
-	rst $38			; $6047
-	rst $38			; $6048
-	rst $38			; $6049
-	rra			; $604a
-	rst $38			; $604b
-	rst $38			; $604c
-	rst $38			; $604d
-	rst $38			; $604e
-	rst $38			; $604f
-	rst $38			; $6050
-	rst $38			; $6051
-	rst $38			; $6052
-	add a			; $6053
-	rst $38			; $6054
-	add a			; $6055
-	rst $38			; $6056
-	rst $38			; $6057
-	rst $38			; $6058
-	rst $38			; $6059
-	rst $38			; $605a
-	rst $38			; $605b
-	rst $38			; $605c
-	rst $38			; $605d
-	rst $38			; $605e
-	rst $38			; $605f
-	rst $38			; $6060
-	rst $38			; $6061
-	rst $38			; $6062
-	rst $38			; $6063
-	rst $38			; $6064
-	rst $38			; $6065
-	rst $38			; $6066
-	rst $38			; $6067
-	rst $38			; $6068
-	add a			; $6069
-	rst $38			; $606a
-	add a			; $606b
-	rst $38			; $606c
-	rst $38			; $606d
-	rst $38			; $606e
-	rst $38			; $606f
-	rst $38			; $6070
-	rst $38			; $6071
-	rst $38			; $6072
-	rst $38			; $6073
-	rst $38			; $6074
-	rst $38			; $6075
-	rst $38			; $6076
-	rst $38			; $6077
-	rra			; $6078
-	ld a,($ff00+$1f)	; $6079
-	ld a,($ff00+$1f)	; $607b
-	ld a,($ff00+$1f)	; $607d
-	ld a,($ff00+$1f)	; $607f
-	ld a,($ff00+$1f)	; $6081
-	ld a,($ff00+$1f)	; $6083
-	ld a,($ff00+$ff)	; $6085
-	rst $38			; $6087
-	rst $38			; $6088
-	rst $38			; $6089
-	rst $38			; $608a
-	rst $38			; $608b
-	rst $38			; $608c
-	rst $38			; $608d
-	rra			; $608e
-	ld a,($ff00+$1f)	; $608f
-	ld a,($ff00+$1f)	; $6091
-	ld a,($ff00+$1f)	; $6093
-	ld a,($ff00+$1f)	; $6095
-	ld a,($ff00+$1f)	; $6097
-	ld a,($ff00+$1f)	; $6099
-	ld a,($ff00+$ff)	; $609b
-	rst $38			; $609d
-	rst $38			; $609e
-	rst $38			; $609f
-	rst $38			; $60a0
-	rst $38			; $60a1
-	rst $38			; $60a2
-	rst $38			; $60a3
-	rst $38			; $60a4
-	rst $30			; $60a5
-	rst $38			; $60a6
-	rst $38			; $60a7
-	rst $38			; $60a8
-	add c			; $60a9
-	rst $38			; $60aa
-	sub c			; $60ab
-	rst $38			; $60ac
-	add c			; $60ad
-	rst $38			; $60ae
-	add c			; $60af
-	rst $38			; $60b0
-	add c			; $60b1
-	rst $38			; $60b2
-	add c			; $60b3
-	rst $38			; $60b4
-	rst $38			; $60b5
-	rst $38			; $60b6
-	rst $38			; $60b7
-	rst $38			; $60b8
-	adc a			; $60b9
-	rst $38			; $60ba
-	rst $38			; $60bb
-	rst $38			; $60bc
-	rst $38			; $60bd
-	rst $38			; $60be
-	rst $38			; $60bf
-	rst $38			; $60c0
-	rst $38			; $60c1
-	rst $38			; $60c2
-	rst $38			; $60c3
-	rst $38			; $60c4
-	rst $38			; $60c5
-	rst $38			; $60c6
-	rst $38			; $60c7
-	rst $38			; $60c8
-	rst $38			; $60c9
-	rst $38			; $60ca
-	rst $38			; $60cb
-	rst $38			; $60cc
-	rst $38			; $60cd
-	rst $38			; $60ce
-	rst $38			; $60cf
-	rst $38			; $60d0
-	rst $38			; $60d1
-	rst $38			; $60d2
-	rst $38			; $60d3
-	ld a,a			; $60d4
-.DB $f4				; $60d5
-	ld a,a			; $60d6
-.DB $fc				; $60d7
-	ld a,a			; $60d8
-.DB $fc				; $60d9
-	rst $38			; $60da
-	rst $38			; $60db
-	rst $38			; $60dc
-	rst $38			; $60dd
-	rst $38			; $60de
-	rst $38			; $60df
-	rst $38			; $60e0
-	rst $38			; $60e1
+_trampoline_group5Warps:
+	dbw $37 _trampoline_group5Room37
+	dbw $38 _trampoline_group5Room38
+	dbw $3a _trampoline_group5Room3a
+	dbw $45 _trampoline_group5Room45
+	dbw $49 _trampoline_group5Room49
+	dbw $4d _trampoline_group5Room4d
+	.db $00
 
+_trampoline_group4Room3e:
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111101111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111110111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+
+_trampoline_group4Room3f:
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111110111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+
+_trampoline_group4Room43:
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1110000000001111
+	.dw %1110111011101111
+	.dw %1110111011101111
+	.dw %1110000000001111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+
+_trampoline_group4Roomb4:
+	.dw %1111111111111111
+	.dw %1001111111111111
+	.dw %1011111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+
+_trampoline_group4Roomc1:
+	.dw %1111111111111111
+	.dw %1111111111100011
+	.dw %1111111111100011
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+
+_trampoline_group4Roomc2:
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1001111111001111
+	.dw %1001111111001111
+	.dw %1111111111111111
+
+_trampoline_group4Roomd3:
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111110001100111
+	.dw %1111111111111111
+
+_trampoline_group5Room37:
+	.dw %1111111111111111
+	.dw %1111111111110011
+	.dw %1111111111110011
+	.dw %1111111111110011
+	.dw %1111111111110011
+	.dw %1111111111110011
+	.dw %1111111111111111
+	.dw %1111111111110011
+	.dw %1111111111110011
+	.dw %1111111111110011
+	.dw %1111111111111111
+
+_trampoline_group5Room38:
+	.dw %1111111111111111
+	.dw %1111111100011111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1000011111111111
+	.dw %1000011111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1000011111111111
+	.dw %1000011111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+
+_trampoline_group5Room3a:
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111000000011111
+	.dw %1111000000011111
+	.dw %1111000000011111
+	.dw %1111000000011111
+	.dw %1111000000011111
+	.dw %1111000000011111
+	.dw %1111000000011111
+	.dw %1111111111111111
+	.dw %1111111111111111
+
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111000000011111
+	.dw %1111000000011111
+	.dw %1111000000011111
+	.dw %1111000000011111
+	.dw %1111000000011111
+	.dw %1111000000011111
+	.dw %1111000000011111
+	.dw %1111111111111111
+	.dw %1111111111111111
+
+_trampoline_group5Room45:
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111011111111111
+	.dw %1111111111111111
+	.dw %1000000111111111
+	.dw %1001000111111111
+	.dw %1000000111111111
+	.dw %1000000111111111
+	.dw %1000000111111111
+	.dw %1000000111111111
+	.dw %1111111111111111
+
+_trampoline_group5Room49:
+	.dw %1111111111111111
+	.dw %1000111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+
+_trampoline_group5Room4d:
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111010001111111
+	.dw %1111110001111111
+	.dw %1111110001111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+	.dw %1111111111111111
+
+
+; ==============================================================================
+; INTERACID_MAKU_TREE
+; ==============================================================================
 makuTree_setMakuMapText:
 	ld hl,wMakuMapTextPresent		; $60e2
 	ld (hl),a		; $60e5

@@ -1153,7 +1153,7 @@ checkHoronVillageNPCShouldBeSeen_body:
 	; from interactioncode3e - b = $04/$05/$06
 	; from interactioncode80 - b = $07
 	ld a,b			; $57db
-	ld hl,_conditionalNPCLookupTable		; $57dc
+	ld hl,_conditionalHoronNPCLookupTable		; $57dc
 	rst_addDoubleIndex			; $57df
 	ldi a,(hl)		; $57e0
 	ld h,(hl)		; $57e1
@@ -1311,7 +1311,7 @@ getSunkenCityNPCVisibleSubId:
 	xor a			; $58a5
 	ret			; $58a6
 
-_conditionalNPCLookupTable:
+_conditionalHoronNPCLookupTable:
 	.dw @fickleLady
 	.dw @fickleMan
 	.dw @oldLadyFarmer
@@ -1319,7 +1319,7 @@ _conditionalNPCLookupTable:
 	.dw @boyWithDog
 	.dw @horonVillageBoy
 	.dw @boyPlaysWithSpringBloomFlower
-	.dw _table_5933
+	.dw @otherOldMan
 
 @fickleLady:
 	.dw @@subid0
@@ -1413,7 +1413,7 @@ _conditionalNPCLookupTable:
 @@table_592f:
 	.db $07 $08 $09 $00
 
-_table_5933:
+@otherOldMan:
 	.dw @@table_593b
 	.dw @@table_5941
 	.dw @@table_5943
@@ -3964,7 +3964,7 @@ interactionCode3e:
 	call @@var03_03		; $687d
 	call getFreeInteractionSlot		; $6880
 	jr nz,+			; $6883
-	ld (hl),INTERACID_83		; $6885
+	ld (hl),INTERACID_BALL_THROWN_TO_DOG		; $6885
 	ld bc,$00fd		; $6887
 	call objectCopyPositionWithOffset		; $688a
 	ld l,$4b		; $688d

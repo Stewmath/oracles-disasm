@@ -3903,6 +3903,8 @@ _checkForUnderwaterTransition:
 .endif
 
 .ifdef ROM_SEASONS
+; Bouncing from trampoline, hitting the ceiling,
+; or setting warp to floor above
 _linkState09:
 	call retIfTextIsActive		; $4fc4
 	ld e,SpecialObject.state2	; $4fc7

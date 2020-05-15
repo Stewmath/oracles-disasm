@@ -20,9 +20,13 @@
 	; Link stays in this state as long as [wDisabledObjects] is nonzero.
 	LINK_STATE_08				db ; $08
 
+.ifdef ROM_AGES
 	; State for the cutscene where Ambi is unpossessed, Link moves back, then jumps to
 	; avoid Veran.
 	LINK_STATE_AMBI_UNPOSSESSED_CUTSCENE	db ; $09
+.else
+	LINK_STATE_BOUNCING_ON_TRAMPOLINE	db ; $09
+.endif
 
 	; Link is in this state while doing a screen transition.
 	LINK_STATE_WARPING			db ; $0a

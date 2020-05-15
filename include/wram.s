@@ -522,7 +522,16 @@ wMapleState: ; $c644/$c641
 ; Bit 5:    Set if the touching book has been exchanged (permanently set)
 ; Bit 7:    Set if maple's heart piece has been obtained
 	db
-wc645: ; $c645
+
+wBoughtSubrosianShopItems: ; $c645/$c642
+; Bit 0: Bought Ribbon
+; Bit 1: Bought piece of heart
+; Bit 2: Bought bomb upgrade
+; Bit 3: Bought gasha seed
+; Bit 4: Bought ring 1
+; Bit 5: Bought ring 2
+; Bit 6: Bought ring 3
+; Bit 7: Bought ring 4
 	db
 
 wCompanionStates: ; $c646
@@ -535,17 +544,34 @@ wRickyState: ; $c646/$c643
 ;     7: set if you have Ricky's flute
 	db
 wDimitriState: ; $c647/$c644
+; ages:
 ; bit 0: set if you've seen the initial cutscene of the tokays discussing eating dimitri
 ;     1: set if you've driven off the tokays harassing Dimitri
 ;     2:
 ;     5: set if you've talked to Dimitri after saving him from the tokays
 ;     6: set if Dimitri should disappear from Tokay Island.
 ;     7: set if you have Dimitri's flute
+; seasons:
+; bit 0: 1st bully in Spool/Sunken spoke (signal to 2nd to speak)
+;     1: 2nd bully in Spool/Sunken spoke (signal to 3rd to speak)
+;     2: 3rd bully in Spool/Sunken spoke (signal to 1st to prompt for payment)
+;     3: set when Dimitri is saved from bullies in Spool/Sunken (signal to 2nd to speak)
+;     4: after above, set by bully 2 (signal to 3rd to speak) / in Sunken, set by bully 3
+;        (signal for all 3 to leave)
+;     5: after above, set by bully 3 (signal for all 3 to leave) / set in moblin rest house
+;        (signal for bullies to appear 2 screens left)
+;     7: tutorial on Dimitri's usage given
 	db
 wMooshState: ; $c648/$c645
+; ages:
 ; bit 5:
 ;     6: set if he's left after you finished helping him
 ;     7: set if you have Moosh's flute
+; seasons:
+; bit 0: attacked moblin bully
+;     1: talked to Moosh after above
+;     2: moblins lost and fleed
+;     3: left after above, came back, and reinforcements arrived
 	db
 wCompanionTutorialTextShown: ; $c649
 ; Bits here are used by INTERACID_COMPANION_TUTORIAL to remember which pieces of
@@ -562,12 +588,12 @@ wc64a: ; $c64a/$c647
 wc64b: ; $c64b
 	db
 
-wGashaSpotFlags	 ; $c64c/$c649
+wGashaSpotFlags:	 ; $c64c/$c649
 ; Bit 0 is set if you've harvested at least one gasha nut before. The first gasha nut
 ; always gives you a "class 1" ring (one of the weak, common ones).
 ; Bit 1 is set if you've obtained the heart piece from one of the gasha spots.
 	db
-wGashaSpotsPlantedBitset ; $c64d/$c64a
+wGashaSpotsPlantedBitset: ; $c64d/$c64a
 ; 2 bytes (1 bit for each spot)
 	dsb NUM_GASHA_SPOTS/8
 wGashaSpotKillCounters: ; $c64f/$c64c
@@ -1906,7 +1932,7 @@ wLinkPushingDirection: ; $cc65
 ; When he's not pushing something, this equals $ff.
 	db
 
-wForceLinkPushAnimation: ; $cc66
+wForceLinkPushAnimation: ; $cc66/$cc81
 ; If $01, link always does a pushing animation; if bit 7 is set, he never does
 	db
 

@@ -693,7 +693,7 @@ cutscene08Func1:
 -
 	call getFreeInteractionSlot		; $780f
 	jr nz,+	; $7812
-	ld (hl),INTERACID_86		; $7814
+	ld (hl),INTERACID_TEMPLE_SINKING_EXPLOSION		; $7814
 	inc l			; $7816
 	dec b			; $7817
 	ld a,b			; $7818

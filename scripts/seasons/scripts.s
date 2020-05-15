@@ -6110,7 +6110,7 @@ companionScript_mooshInSpoolSwamp:
 	writememory $d13f, $03
 	writememory $d103, $06
 	ormemory wMooshState, $02
-	checkflagset $02, $c645
+	checkflagset $02, wMooshState
 	writememory $d13f, $03
 	writememory $d103, $06
 	writememory $d13d, $00
@@ -6249,7 +6249,7 @@ _companionScript_dimitriTutorial:
 	showtext TX_211f
 	writememory $d126, $06
 	writememory $d127, $08
-	ormemory $c644, $80
+	ormemory wDimitriState, $80
 	checkmemoryeq $cc48, $d1
 	showtext TX_211d
 	enableallobjects
@@ -6258,7 +6258,7 @@ _companionScript_dimitriTutorial:
 
 companionScript_dimitriBeingBullied:
 	checkmemoryeq $d13d, $01
-	jumpifmemoryset $c644, $08, +
+	jumpifmemoryset wDimitriState, $08, +
 	showtext TX_2103
 	writememory $d13d, $00
 	jump2byte companionScript_dimitriBeingBullied
@@ -6308,7 +6308,7 @@ companionScript_mooshInMtCucco:
 @mooshIsNotCompanion:
 	showtext TX_2216
 +
-	writememory $c645, $80
+	writememory wMooshState, $80
 	enableallobjects
 	checkmemoryeq $cc48, $d1
 	jumptable_objectbyte $7b
@@ -6328,23 +6328,23 @@ companionScript_mooshInMtCucco:
 
 
 ; ==============================================================================
-; INTERACID_SPOOL_SWAMP_ANIMALS_BULLIED
+; INTERACID_ANIMAL_MOBLIN_BULLIES
 ; ==============================================================================
-animalBulliedScript_dimitriBullied:
+moblinBulliesScript_dimitriBully1BeforeSaving:
 	writememory $ccab, $01
 	makeabuttonsensitive
 	jumpifc6xxset <wDimitriState, $04, @promptForPayment
 	disablemenu
 	setdisabledobjectsto11
 	writememory $ccab, $00
-	callscript _animalBulliedScript_hop
+	callscript _moblinBulliesScript_hop
 @animalBulliedInitDone:
 	jumptable_objectbyte $77
 	.dw @animalBulliedInitDone
 	.dw @next
 @next:
 	showtext TX_2100
-	ormemory $c644, $01
+	ormemory wDimitriState, $01
 	setangleandanimation $00
 	checkabutton
 	showtextnonexitable TX_2104
@@ -6357,7 +6357,7 @@ animalBulliedScript_dimitriBullied:
 @promptForPayment:
 	writememory $ccab, $00
 	setangleandanimation $00
-	jumpifglobalflagset GLOBALFLAG_S_2b, @paid50Rupees
+	jumpifglobalflagset GLOBALFLAG_PAID_50_RUPEES_TO_DIMITRI_BULLIES, @paid50Rupees
 	checkabutton
 	showtextnonexitable TX_2104
 	jumpiftextoptioneq $00, @paying50Rupees
@@ -6371,7 +6371,7 @@ animalBulliedScript_dimitriBullied:
 	showtextnonexitable TX_2106
 	jump2byte +
 @have50Rupees:
-	setglobalflag GLOBALFLAG_S_2b
+	setglobalflag GLOBALFLAG_PAID_50_RUPEES_TO_DIMITRI_BULLIES
 	writeobjectbyte $7a, $0b
 	showtextnonexitable TX_2106
 +
@@ -6389,14 +6389,14 @@ animalBulliedScript_dimitriBullied:
 	ormemory wDimitriState, $08
 	scriptend
 
-animalBulliedScript_bully1:
+moblinBulliesScript_dimitriBully2BeforeSaving:
 	makeabuttonsensitive
 -
 	jumpifc6xxset <wDimitriState, $04, @boughtDimitri
 	jumpifc6xxset <wDimitriState, $01, +
 	jump2byte -
 +
-	callscript _animalBulliedScript_hop
+	callscript _moblinBulliesScript_hop
 -
 	jumptable_objectbyte $77
 	.dw -
@@ -6404,28 +6404,28 @@ animalBulliedScript_bully1:
 +
 	showtext TX_2101
 	setdisabledobjectsto11
-	ormemory $c644, $02
+	ormemory wDimitriState, $02
 @boughtDimitri:
 	setangleandanimation $18
 	checkabutton
 	showtext TX_210c
 	jump2byte @boughtDimitri
 	
-animalBulliedScript_bully2:
+moblinBulliesScript_dimitriBully3BeforeSaving:
 	makeabuttonsensitive
 -
-	jumpifc6xxset $44, $04, @boughtDimitri
-	jumpifc6xxset $44, $02, +
+	jumpifc6xxset <wDimitriState, $04, @boughtDimitri
+	jumpifc6xxset <wDimitriState, $02, +
 	jump2byte -
 +
-	callscript _animalBulliedScript_hop
+	callscript _moblinBulliesScript_hop
 -
 	jumptable_objectbyte $77
 	.dw -
 	.dw +
 +
 	showtext TX_2102
-	ormemory $c644, $04
+	ormemory wDimitriState, $04
 	enablemenu
 	enableallobjects
 @boughtDimitri:
@@ -6434,9 +6434,9 @@ animalBulliedScript_bully2:
 	showtext TX_210d
 	jump2byte @boughtDimitri
 
-animalBulliedScript2_dimitriBullied:
-	jumpifc6xxset $44, $20, +
-	jump2byte animalBulliedScript2_dimitriBullied
+moblinBulliesScript_dimitriBully1AfterSaving:
+	jumpifc6xxset <wDimitriState, $20, +
+	jump2byte moblinBulliesScript_dimitriBully1AfterSaving
 +
 	movedown $1c
 	moveleft $1a
@@ -6445,18 +6445,18 @@ animalBulliedScript2_dimitriBullied:
 	movedown $20
 	scriptend
 
-animalBulliedScript2_bully1:
+moblinBulliesScript_dimitriBully2AfterSaving:
 	setangleandanimation $10
-	callscript _animalBulliedScript_hop
+	callscript _moblinBulliesScript_hop
 -
 	jumptable_objectbyte $77
 	.dw -
 	.dw +
 +
 	showtext TX_2109
-	ormemory $c644, $10
+	ormemory wDimitriState, $10
 -
-	jumpifc6xxset $44, $20, +
+	jumpifc6xxset <wDimitriState, $20, +
 	jump2byte -
 +
 	movedown $28
@@ -6468,12 +6468,12 @@ animalBulliedScript2_bully1:
 	enablemenu
 	scriptend
 
-animalBulliedScript2_bully2:
-	jumpifc6xxset $44, $10, +
-	jump2byte animalBulliedScript2_bully2
+moblinBulliesScript_dimitriBully3AfterSaving:
+	jumpifc6xxset <wDimitriState, $10, +
+	jump2byte moblinBulliesScript_dimitriBully3AfterSaving
 +
 	setangleandanimation $10
-	callscript _animalBulliedScript_hop
+	callscript _moblinBulliesScript_hop
 -
 	jumptable_objectbyte $77
 	.dw -
@@ -6481,7 +6481,7 @@ animalBulliedScript2_bully2:
 +
 	showtext TX_210a
 	setdisabledobjectsto11
-	ormemory $c644, $20
+	ormemory wDimitriState, $20
 	movedown $1c
 	moveleft $0f
 	movedown $18
@@ -6489,13 +6489,13 @@ animalBulliedScript2_bully2:
 	movedown $20
 	scriptend
 
-animalBulliedScript_mooshBullied:
-	jumpifc6xxset $45, $02, @startFight
-	jumpifc6xxset $45, $01, @waitToStartFight
+moblinBulliesScript_mooshBully1:
+	jumpifc6xxset <wMooshState, $02, @startFight
+	jumpifc6xxset <wMooshState, $01, @waitToStartFight
 	setdisabledobjectsto11
-	callscript _animalBulliedScript_hop
+	callscript _moblinBulliesScript_hop
 	jumptable_objectbyte $77
-	.dw animalBulliedScript_dimitriBullied@animalBulliedInitDone
+	.dw moblinBulliesScript_dimitriBully1BeforeSaving@animalBulliedInitDone
 	.dw +
 +
 	showtext TX_2200
@@ -6507,7 +6507,7 @@ animalBulliedScript_mooshBullied:
 +
 	setcounter1 $20
 	showtext TX_2203
-	callscript _animalBulliedScript_hop
+	callscript _moblinBulliesScript_hop
 -
 	jumptable_objectbyte $77
 	.dw -
@@ -6529,27 +6529,27 @@ animalBulliedScript_mooshBullied:
 	moveleft $30
 	showtext TX_2209
 	setdisabledobjectsto11
-	ormemory $c645, $01
+	ormemory wMooshState, $01
 	moveright $30
 	enableallobjects
 @waitToStartFight:
-	jumpifc6xxset $45, $02, @revengeWanted
+	jumpifc6xxset <wMooshState, $02, @revengeWanted
 	jump2byte @waitToStartFight
 @startFight:
 	setdisabledobjectsto11
 	moveleft $30
-	callscript _animalBulliedScript_spawnMoblins
+	callscript _moblinBulliesScript_spawnMoblins
 	setcounter1 $70
 	showtext TX_220e
 	jump2byte @moblinsSpawned
 @revengeWanted:
 	setdisabledobjectsto11
 	moveleft $30
-	callscript _animalBulliedScript_spawnMoblins
+	callscript _moblinBulliesScript_spawnMoblins
 	setcounter1 $70
 	showtext TX_220b
 @moblinsSpawned:
-	jumpifc6xxset $45, $08, +
+	jumpifc6xxset <wMooshState, $08, +
 	jump2byte @moblinsSpawned
 +
 	enablemenu
@@ -6566,21 +6566,21 @@ animalBulliedScript_mooshBullied:
 	showtext TX_220c
 	moveright $30
 	enableallobjects
-	ormemory $c645, $04
+	ormemory wMooshState, $04
 	scriptend
 	
-_animalBulliedScript_spawnMoblins:
-	spawninteraction INTERACID_SPOOL_SWAMP_ANIMALS_BULLIED $03, $88, $30
-	spawninteraction INTERACID_SPOOL_SWAMP_ANIMALS_BULLIED $04, $88, $50
-	spawninteraction INTERACID_SPOOL_SWAMP_ANIMALS_BULLIED $05, $18, $b0
+_moblinBulliesScript_spawnMoblins:
+	spawninteraction INTERACID_ANIMAL_MOBLIN_BULLIES $03, $88, $30
+	spawninteraction INTERACID_ANIMAL_MOBLIN_BULLIES $04, $88, $50
+	spawninteraction INTERACID_ANIMAL_MOBLIN_BULLIES $05, $18, $b0
 	retscript
 
-animalBulliedScript3_bully1:
-	jumpifc6xxset $45, $01, @scriptEnd
+moblinBulliesScript_mooshBully2:
+	jumpifc6xxset <wMooshState, $01, @scriptEnd
 	jumpifmemoryset $d13e, $01, +
-	jump2byte animalBulliedScript3_bully1
+	jump2byte moblinBulliesScript_mooshBully2
 +
-	callscript _animalBulliedScript_hop
+	callscript _moblinBulliesScript_hop
 -
 	jumptable_objectbyte $77
 	.dw -
@@ -6611,12 +6611,12 @@ animalBulliedScript3_bully1:
 @scriptEnd:
 	scriptend
 
-animalBulliedScript3_bully2:
-	jumpifc6xxset $45, $01, @scriptEnd
+moblinBulliesScript_mooshBully3:
+	jumpifc6xxset <wMooshState, $01, @scriptEnd
 	jumpifmemoryset $d13e, $02, +
-	jump2byte animalBulliedScript3_bully2
+	jump2byte moblinBulliesScript_mooshBully3
 +
-	callscript _animalBulliedScript_hop
+	callscript _moblinBulliesScript_hop
 -
 	jumptable_objectbyte $77
 	.dw -
@@ -6635,33 +6635,34 @@ animalBulliedScript3_bully2:
 @scriptEnd:
 	scriptend
 
-animalBulliedScript_maskedMoblin1MovingUp:
+moblinBulliesScript_maskedMoblin1MovingUp:
 	setangle $00
 	applyspeed $30
-	ormemory $c645, $08
-_animalBulliedScript_spawnMoblin
+	ormemory wMooshState, $08
+_moblinBulliesScript_spawnMoblin:
 	jumpifmemoryset $d13e, $80, +
-	jump2byte _animalBulliedScript_spawnMoblin
+	jump2byte _moblinBulliesScript_spawnMoblin
 +
 	spawnenemyhere ENEMYID_MASKED_MOBLIN $00
 	scriptend
 
-animalBulliedScript_maskedMoblin2MovingUp:
+moblinBulliesScript_maskedMoblin2MovingUp:
 	setangle $00
 	applyspeed $2f
-	jump2byte _animalBulliedScript_spawnMoblin
+	jump2byte _moblinBulliesScript_spawnMoblin
 
-animalBulliedScript_maskedMoblinMovingLeft:
+moblinBulliesScript_maskedMoblinMovingLeft:
 	setangle $18
 	applyspeed $2f
-	jump2byte _animalBulliedScript_spawnMoblin
+	jump2byte _moblinBulliesScript_spawnMoblin
 	
-_animalBulliedScript_hop:
+_moblinBulliesScript_hop:
 	setzspeed -$0300
 	wait 8
 	retscript
 
 
+; interacid_75
 script6f48:
 	setcoords $44, $50
 	setcounter1 $c8
@@ -6673,247 +6674,287 @@ script6f48:
 	setanimation $03
 	setcounter1 $7a
 	scriptend
-script6f5c:
+
+
+; ==============================================================================
+; INTERACID_SUNKEN_CITY_BULLIES
+; ==============================================================================
+sunkenCityBulliesScript1_bully1:
 	makeabuttonsensitive
-	jumpifc6xxset $44, $04, script6f73
+	jumpifc6xxset <wDimitriState, $04, @promptForPayment
 	disablemenu
 	setdisabledobjectsto11
-	callscript _animalBulliedScript_hop
-script6f67:
+	callscript _moblinBulliesScript_hop
+-
 	jumptable_objectbyte $77
-	.dw script6f67
-	.dw script6f6d
-script6f6d:
-	showtextlowindex $0e
-	ormemory $c644, $01
-script6f73:
+	.dw -
+	.dw +
++
+	showtextlowindex <TX_210e
+	ormemory wDimitriState, $01
+@promptForPayment:
 	setangleandanimation $00
 	checkabutton
-	asm15 $5eec
+	asm15 scriptHlp.sunkenCityBullies_lookToLink
 	disablemenu
-	showtextlowindex $11
+	showtextlowindex <TX_2111
 	setdisabledobjectsto11
 	jumptable_objectbyte $78
-	.dw script6f90
-	.dw script6f83
-script6f83:
+	.dw @doesntHaveBombs
+	.dw @hasBombs
+@hasBombs:
 	wait 30
-	showtextnonexitablelowindex $1c
-	jumpiftextoptioneq $00, script6f95
-script6f8a:
-	showtextlowindex $14
+	showtextnonexitablelowindex <TX_211c
+	jumpiftextoptioneq $00, @givingBombs
+@notGivingBombs:
+	showtextlowindex <TX_2114
 	enablemenu
 	enableallobjects
-	jump2byte script6f73
-script6f90:
+	jump2byte @promptForPayment
+@doesntHaveBombs:
 	enablemenu
 	enableallobjects
 	wait 30
-	jump2byte script6f73
-script6f95:
+	jump2byte @promptForPayment
+@givingBombs:
 	jumptable_objectbyte $78
-	.dw script6f8a
-	.dw script6f9b
-script6f9b:
+	.dw @notGivingBombs
+	.dw +
++
 	writeobjectbyte $79, $01
-	showtextlowindex $12
+	showtextlowindex <TX_2112
 	setdisabledobjectsto11
-	ormemory $c644, $08
+	ormemory wDimitriState, $08
 	scriptend
-script6fa6:
+
+sunkenCityBulliesScript1_bully2:
 	makeabuttonsensitive
-script6fa7:
-	jumpifc6xxset $44, $04, script6fc2
-	jumpifc6xxset $44, $01, script6fb3
-	jump2byte script6fa7
-script6fb3:
-	callscript _animalBulliedScript_hop
-script6fb6:
+-
+	jumpifc6xxset <wDimitriState, $04, @talkedToBullies
+	jumpifc6xxset <wDimitriState, $01, @initialHop
+	jump2byte -
+@initialHop:
+	callscript _moblinBulliesScript_hop
+-
 	jumptable_objectbyte $77
-	.dw script6fb6
-	.dw script6fbc
-script6fbc:
-	showtextlowindex $0f
-	ormemory $c644, $02
-script6fc2:
+	.dw -
+	.dw +
++
+	showtextlowindex <TX_210f
+	ormemory wDimitriState, $02
+@talkedToBullies:
 	setangleandanimation $00
 	checkabutton
-	asm15 $5eec
-	showtextlowindex $16
-	jump2byte script6fc2
-script6fcc:
+	asm15 scriptHlp.sunkenCityBullies_lookToLink
+	showtextlowindex <TX_2116
+	jump2byte @talkedToBullies
+	
+sunkenCityBulliesScript1_bully3:
 	makeabuttonsensitive
-script6fcd:
-	jumpifc6xxset $44, $04, script6fea
-	jumpifc6xxset $44, $02, script6fd9
-	jump2byte script6fcd
-script6fd9:
-	callscript _animalBulliedScript_hop
-script6fdc:
+-
+	jumpifc6xxset <wDimitriState, $04, @talkedToBullies
+	jumpifc6xxset <wDimitriState, $02, @initialHop
+	jump2byte -
+@initialHop:
+	callscript _moblinBulliesScript_hop
+-
 	jumptable_objectbyte $77
-	.dw script6fdc
-	.dw script6fe2
-script6fe2:
-	showtextlowindex $10
-	ormemory $c644, $04
+	.dw -
+	.dw +
++
+	showtextlowindex <TX_2110
+	ormemory wDimitriState, $04
 	enablemenu
 	enableallobjects
-script6fea:
+@talkedToBullies:
 	setangleandanimation $08
 	checkabutton
-	asm15 $5eec
-	showtextlowindex $17
-	jump2byte script6fea
-script6ff4:
-	jumpifc6xxset $44, $10, script6ffb
-	jump2byte script6ff4
-script6ffb:
+	asm15 scriptHlp.sunkenCityBullies_lookToLink
+	showtextlowindex <TX_2117
+	jump2byte @talkedToBullies
+	
+sunkenCityBulliesScript2_bully1:
+	jumpifc6xxset <wDimitriState, $10, +
+	jump2byte sunkenCityBulliesScript2_bully1
++
 	setangle $04
 	setanimationfromangle
 	applyspeed $f0
+	
+sunkenCityBulliesScript2_bully2:
 	setangleandanimation $10
-	callscript _animalBulliedScript_hop
-script7006:
-	jumpifc6xxset $44, $10, script700d
-	jump2byte script7006
-script700d:
+	callscript _moblinBulliesScript_hop
+-
+	jumpifc6xxset <wDimitriState, $10, +
+	jump2byte -
++
 	setangle $04
 	setanimationfromangle
 	applyspeed $f0
+	
+sunkenCityBulliesScript2_bully3:
 	setangleandanimation $10
-	callscript _animalBulliedScript_hop
-script7018:
+	callscript _moblinBulliesScript_hop
+-
 	jumptable_objectbyte $77
-	.dw script7018
-	.dw script701e
-script701e:
-	showtextlowindex $13
+	.dw -
+	.dw +
++
+	showtextlowindex <TX_2113
 	setdisabledobjectsto11
-	ormemory $c644, $10
+	ormemory wDimitriState, $10
 	setangle $04
 	setanimationfromangle
 	applyspeed $f0
 	scriptend
-script702c:
+	
+sunkenCityBulliesScript3_bully1:
 	makeabuttonsensitive
-script702d:
+-
 	setangleandanimation $10
 	checkabutton
-	showtextlowindex $18
-	jump2byte script702d
-script7034:
+	showtextlowindex <TX_2118
+	jump2byte -
+	
+sunkenCityBulliesScript3_bully2:
 	makeabuttonsensitive
-script7035:
+-
 	setangleandanimation $10
 	checkabutton
-	showtextlowindex $19
-	jump2byte script7035
-script703c:
+	showtextlowindex <TX_2119
+	jump2byte -
+	
+sunkenCityBulliesScript3_bully3:
 	makeabuttonsensitive
-script703d:
+-
 	setangleandanimation $00
 	checkabutton
-	showtextlowindex $1a
-	jump2byte script703d
-script7044:
+	showtextlowindex <TX_211a
+	jump2byte -
+
+
+; ==============================================================================
+; INTERACID_FICKLE_OLD_MAN
+; ==============================================================================
+fickleOldManScript_text1:
 	rungenericnpc TX_1100
-script7047:
+fickleOldManScript_text2:
 	rungenericnpc TX_1101
-script704a:
+fickleOldManScript_text3:
 	rungenericnpc TX_1102
-script704d:
+fickleOldManScript_text4:
 	rungenericnpc TX_1103
-script7050:
+fickleOldManScript_text5:
 	rungenericnpc TX_1104
-script7053:
+fickleOldManScript_text6:
 	rungenericnpc TX_1105
-script7056:
-	showtextnonexitable $2b00
-	callscript script70dc
-	ormemory $c642, $01
+
+
+; ==============================================================================
+; INTERACID_SUBROSIAN_SHOP
+; ==============================================================================
+subrosianShopScript_ribbon:
+	showtextnonexitable TX_2b00
+	callscript _subrosianShopScript_buyItem
+	ormemory wBoughtSubrosianShopItems, $01
 	scriptend
-script7061:
-	showtextnonexitable $2b02
-	callscript script70dc
-	ormemory $c642, $04
+	
+subrosianShopScript_bombUpgrade:
+	showtextnonexitable TX_2b02
+	callscript _subrosianShopScript_buyItem
+	ormemory wBoughtSubrosianShopItems, $04
 	showtext TX_2b0d
 	setdisabledobjectsto11
 	scriptend
-script7070:
-	showtextnonexitable $2b04
-	callscript script70dc
-	ormemory $c642, $08
+	
+subrosianShopScript_gashaSeed:
+	showtextnonexitable TX_2b04
+	callscript _subrosianShopScript_buyItem
+	ormemory wBoughtSubrosianShopItems, $08
 	scriptend
-script707b:
-	showtextnonexitable $2b01
-	callscript script70dc
-	ormemory $c642, $02
+	
+subrosianShopScript_pieceOfHeart:
+	showtextnonexitable TX_2b01
+	callscript _subrosianShopScript_buyItem
+	ormemory wBoughtSubrosianShopItems, $02
 	scriptend
-script7086:
-	showtextnonexitable $2b03
-	callscript script70dc
-	ormemory $c642, $10
+	
+subrosianShopScript_ring1:
+	showtextnonexitable TX_2b03
+	callscript _subrosianShopScript_buyItem
+	ormemory wBoughtSubrosianShopItems, $10
 	scriptend
-script7091:
-	showtextnonexitable $2b03
-	callscript script70dc
-	ormemory $c642, $20
+	
+subrosianShopScript_ring2:
+	showtextnonexitable TX_2b03
+	callscript _subrosianShopScript_buyItem
+	ormemory wBoughtSubrosianShopItems, $20
 	scriptend
-script709c:
-	showtextnonexitable $2b03
-	callscript script70dc
-	ormemory $c642, $40
+	
+subrosianShopScript_ring3:
+	showtextnonexitable TX_2b03
+	callscript _subrosianShopScript_buyItem
+	ormemory wBoughtSubrosianShopItems, $40
 	scriptend
-script70a7:
-	showtextnonexitable $2b03
-	callscript script70dc
-	ormemory $c642, $80
+	
+subrosianShopScript_ring4:
+	showtextnonexitable TX_2b03
+	callscript _subrosianShopScript_buyItem
+	ormemory wBoughtSubrosianShopItems, $80
 	scriptend
-script70b2:
-	showtextnonexitable $2b09
-	callscript script70dc
+	
+subrosianShopScript_emberSeeds:
+	showtextnonexitable TX_2b09
+	callscript _subrosianShopScript_buyItem
 	scriptend
-script70b9:
-	showtextnonexitable $2b05
-	callscript script70dc
+	
+subrosianShopScript_shield:
+	showtextnonexitable TX_2b05
+	callscript _subrosianShopScript_buyItem
 	scriptend
-script70c0:
-	showtextnonexitable $2b0a
-	callscript script70dc
+	
+subrosianShopScript_pegasusSeeds:
+	showtextnonexitable TX_2b0a
+	callscript _subrosianShopScript_buyItem
 	scriptend
-script70c7:
-	showtextnonexitable $2b06
-	callscript script70dc
+	
+subrosianShopScript_heartRefill:
+	showtextnonexitable TX_2b06
+	callscript _subrosianShopScript_buyItem
 	scriptend
-script70ce:
-	showtextnonexitable $2b10
-	callscript script70dc
+	
+subrosianShopScript_membersCard:
+	showtextnonexitable TX_2b10
+	callscript _subrosianShopScript_buyItem
 	scriptend
-script70d5:
-	showtextnonexitable $2b08
-	callscript script70dc
+	
+subrosianShopScript_oreChunks:
+	showtextnonexitable TX_2b08
+	callscript _subrosianShopScript_buyItem
 	scriptend
-script70dc:
-	jumpiftextoptioneq $00, script70e8
+	
+_subrosianShopScript_buyItem:
+	jumpiftextoptioneq $00, @buying
 	writememory $cba0, $01
 	writeobjectbyte $7d, $ff
 	scriptend
-script70e8:
+@buying:
 	jumptable_objectbyte $7b
-	.dw script70ee
-	.dw script70f7
-script70ee:
+	.dw @notEnoughCurrency
+	.dw @enoughCurrency
+@notEnoughCurrency:
 	playsound SND_ERROR
 	showtext TX_2b12
 	writeobjectbyte $7d, $ff
 	scriptend
-script70f7:
+@enoughCurrency:
 	jumptable_objectbyte $7c
 	.dw script7102
 script70fb:
 	showtext TX_2b0c
 	writeobjectbyte $7d, $ff
 	scriptend
+
 script7102:
 	writememory $cba0, $01
 	setdisabledobjectsto11
@@ -7081,14 +7122,12 @@ _stageFinishedGame:
 	callscript script729c
 	jump2byte @loop
 
-
 script7255:
 	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $00
 	checkcfc0bit 7
 	playsound SND_POOF
 	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $03
 	scriptend
-
 
 script7261:
 	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $04
@@ -7101,7 +7140,6 @@ script7261:
 	writememory $cfc0, $03
 	setcounter1 $ff
 	scriptend
-
 
 makuTreeScript_waitForBubblePopped:
 	checkcfc0bit 7

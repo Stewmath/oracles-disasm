@@ -2354,7 +2354,7 @@
 ; @subid_1a{Underwater gasha seed}
 ; @subid_1b{Tick Tock secret entrance}
 ; @subid_1c{West Coast grave secret entrance}
-; @subid_1d{TODO:}
+; @subid_1d{D4 miniboss room - torch/darkness/N door interactions}
 ; @subid_1e{Sent back by Onox Castle barrier}
 ; @subid_1f{Sidescrolling static gasha seed}
 ; @subid_20{Sidescrolling static seed satchel}
@@ -2410,20 +2410,85 @@
 .define INTERACID_BLAINO		$72
 
 ;;
+; @subid_00-02{Moosh's/Dimitri's 3 bullies}
+; @subid_03-05{Spawned moblin bullies for Moosh event}
+.define INTERACID_ANIMAL_MOBLIN_BULLIES	$73
+
+;;
 ; @subid_00{}
 ; @subid_01{}
 ; @subid_02{}
 ; @subid_03{}
 ; @subid_04{}
 ; @subid_05{}
-.define INTERACID_SPOOL_SWAMP_ANIMALS_BULLIED	$73
+; @subid_06{}
+; @subid_07{}
+; @subid_08{}
+; @subid_09{}
+; @subid_0a{spawned by subid_02 and subid_04}
+; @subid_0b{spawned by subid_02 and subid_04}
+; @subid_0c{Moblin Keep flag?}
+.define INTERACID_74			$74
 
+;;
+; @subid_00{}
+; @subid_01{}
+; @subid_02{}
+.define INTERACID_75			$75
+
+;;
+; @subid_00-02{The 3 bullies}
+.define INTERACID_SUNKEN_CITY_BULLIES	$76
+
+;;
 .define INTERACID_77			$77
+
+;;
+.define INTERACID_MAGNET_SPINNER	$7b
+
+;;
+; TODO:
+; @subid_00{}
+; @subid_01{}
 .define INTERACID_TRAMPOLINE		$7c
 
-; dog that boy throws ball for?
-.define INTERACID_83			$83
-.define INTERACID_86			$86
+;;
+; @subid_00-03{}
+.define INTERACID_FICKLE_OLD_MAN	$80
+
+;;
+; @subid_00{Ribbon}
+; @subid_01{Bomb upgrade}
+; @subid_02-03{Gasha seed}
+; @subid_04{Piece of heart}
+; @subid_05-08{Ring}
+; @subid_09{4 ember seeds}
+; @subid_0a{Shield}
+; @subid_0b{10 pegasus seeds}
+; @subid_0c{3 hearts}
+; @subid_0d{Member's card}
+; @subid_0e{10 ore chunks}
+.define INTERACID_SUBROSIAN_SHOP	$81
+
+;;
+.define INTERACID_DOG_PLAYING_WITH_BOY	$82
+
+;;
+.define INTERACID_BALL_THROWN_TO_DOG	$83
+
+;;
+; Plays carnival music in the screen before Din dancing
+.define INTERACID_INTRO_SCENE_MUSIC	$85
+
+;;
+; TODO: each subid is 1 of the 5 explosions in each screen?
+; @subid_00{}
+; @subid_01{}
+; @subid_02{}
+; @subid_03{}
+; @subid_04{}
+.define INTERACID_TEMPLE_SINKING_EXPLOSION	$86
+
 .define INTERACID_88			$88
 
 ;;
