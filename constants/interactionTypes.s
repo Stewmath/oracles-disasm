@@ -1416,12 +1416,10 @@
 .define INTERACID_MAKU_SEED			$a6
 
 ;;
-; Relates to bipin & blossom's child?
-;
 ; @subid_00{?}
 ; @subid_01{?}
-; @subid_02{?}
-.define INTERACID_a7				$a7
+; @subid_02{The child}
+.define INTERACID_ENDGAME_CUTSCENE_BIPSOM_FAMILY	$a7
 
 ;;
 ; Responsible for controlling various credits cutscenes? High nibble of subid seems to be an index
@@ -2541,13 +2539,14 @@
 ; @subid_00{}
 ; @subid_01{}
 ; @subid_02{}
-; @subid_03{}
-; @subid_04{Rushes south}
+; @subid_03{spawned from INTERACID_MOBLIN_KEEP_SCENES - when coming down from Natzu}
+; @subid_04{spawned from seasonsFunc_3e52 (after moblin keep destroyed?) Rushes south}
 ; @subid_05{Moves up, down, up?}
 .define INTERACID_KING_MOBLIN		$95
 
 ;;
 ; TODO: @subid_00-06{}
+; subid04 spawned by INTERACID_MOBLIN_KEEP_SCENES
 .define INTERACID_S_MOBLIN		$96
 
 ;;
@@ -2562,8 +2561,52 @@
 ; subid_03{spawned by subid_02}
 .define INTERACID_9a			$9a
 
-.define INTERACID_9d			$9d
-.define INTERACID_a5			$a5
+;;
+.define INTERACID_SPRINGBLOOM_FLOWER	$9c
+
+;;
+; TODO:
+; @subid_00-05{}
+.define INTERACID_IMPA			$9d
+
+;;
+.define INTERACID_SAMASA_DESERT_GATE	$9e
+
+;;
+.define INTERACID_SUBROSIAN_SMITHY	$a4
+
+;;
+; @subid_00{TODO: 1st Din after Dragon Onox beat - the one descending?}
+; @subid_01{TODO: Other Din after Dragon Onox beat - outside crystal}
+; @subid_02-07{TODO: all part of objectData, so ending cutscenes?}
+; @subid_06{TODO: part of intro cutscenes (after being captured by Onox?)
+; @subid_08{Horon village field, after game beat}
+; @subid_09{1st Din (sees you collapsed)}
+.define INTERACID_S_DIN			$a5
+
+;;
+; @subid_00-04{subid determines angle that each of the 4 fade towards}
+.define INTERACID_DINS_CRYSTAL_FADING	$a6
+
+;;
+; TODO: post-linked game?
+; @subid_00{Impa}
+; @subid_01{Zelda}
+; @subid_02{Nayru - this and Impa subid_03 in same objectData}
+; @subid_03{Impa}
+.define INTERACID_aa			$aa
+
+;;
+; @subid_00{Right of moblin keep - handles when shooting the cannons at you}
+; @subid_01{Inside King Moblin boss room - pre-spawning the enemy king moblin}
+; @subid_02{Moblin keep itself - after it's destroyed}
+.define INTERACID_MOBLIN_KEEP_SCENES	$ab
+
+;;
+; NPCs in 1 credits cutscene with Din and Maple?
+; @subid_00-04{}
+.define INTERACID_ad			$ad
+
 .define INTERACID_LINKED_CUTSCENE	$b3
 .define INTERACID_b4			$b4
 

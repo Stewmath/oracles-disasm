@@ -1403,7 +1403,10 @@ kingMoblin_trapLinkInBombedHouse:
 	scriptend
 
 
-script_14_51c5:
+; ==============================================================================
+; INTERACID_IMPA
+; ==============================================================================
+impaScript_askedToSaveZeldaButHavent_body:
 	delay 11
 	setspeed $28
 	setangleandanimation $10
@@ -1429,7 +1432,10 @@ script_14_51c5:
 	scriptend
 
 
-script_14_51f0:
+; ==============================================================================
+; INTERACID_S_DIN
+; ==============================================================================
+dinScript_subid2Init_body:
 	delay 8
 	setspeed $28
 	setangleandanimation $10
@@ -1442,8 +1448,7 @@ script_14_51f0:
 	writememory $cfdf $01
 	scriptend
 
-
-script_14_520a:
+dinScript_subid4Init_body:
 	setspeed $28
 	setangleandanimation $00
 	applyspeed $80
@@ -1453,17 +1458,16 @@ script_14_520a:
 	setanimation $07
 	scriptend
 
-
-script_14_521b:
+dinScript_discoverLinkCollapsed_body:
 	checkmemoryeq $d00f $00
 	delay 10
 	setspeed $14
 	movedown $3c
 	delay 3
 	writeobjectbyte Interaction.var38 $80
-	asm15 $62d3 $1e
+	asm15 scriptHlp.din_createExclamationMark $1e
 	delay 7
-	callscript $5f0a
+	callscript piratianScript_jump
 	setcounter1 $06
 	writeobjectbyte Interaction.var38 $01
 	setspeed $28
@@ -1472,7 +1476,7 @@ script_14_521b:
 	delay 3
 	writeobjectbyte Interaction.var38 $01
 	delay 8
-	setglobalflag GLOBALFLAG_DRAGON_ONOX_BEATEN
+	setglobalflag GLOBALFLAG_SEASON_ALWAYS_SPRING
 	orroomflag $40
 	scriptend
 
@@ -1549,6 +1553,9 @@ script_14_5246:
 	scriptend
 
 
+; ==============================================================================
+; INTERACID_GET_ROD_OF_SEASONS
+; ==============================================================================
 gettingRodOfSeasons_body:
 	setcoords $40 $50
 	setcollisionradii $02 $04

@@ -703,7 +703,7 @@ villageSokra_checkStageInGame:
 	bit 1,a			; $5826
 	jr z,+			; $5828
 	inc b			; $582a
-	ld a,GLOBALFLAG_DRAGON_ONOX_BEATEN		; $582b
+	ld a,GLOBALFLAG_SEASON_ALWAYS_SPRING		; $582b
 	call checkGlobalFlag		; $582d
 	jr z,+			; $5830
 	inc b			; $5832
@@ -2597,31 +2597,38 @@ _oldMan_rupeeValues:
 	.db RUPEEVAL_100
 
 
-seasonsFunc_15_623b:
-	ld a,$40		; $623b
+; ==============================================================================
+; INTERACID_IMPA
+; ==============================================================================
+impa_checkIf4thEssenceGotten:
+	ld a,TREASURE_ESSENCE		; $623b
 	call checkTreasureObtained		; $623d
 	and $08			; $6240
 	ld b,$00		; $6242
-	jr nz,_label_15_252	; $6244
+	jr nz,@got4thEssence	; $6244
 	inc b			; $6246
-_label_15_252:
+@got4thEssence:
 	ld hl,$cfc0		; $6247
 	ld (hl),b		; $624a
 	ret			; $624b
 
-seasonsFunc_15_624c:
-	call $624f		; $624c
 
-seasonsFunc_15_624f:
+; ==============================================================================
+; INTERACID_SAMASA_DESERT_GATE
+; ==============================================================================
+samasaDesertGate_createNext2Puffs:
+	call samasaDesertGate_createNextPuff		; $624c
+
+samasaDesertGate_createNextPuff:
 	ld h,d			; $624f
 	ld l,$7e		; $6250
 	ld a,(hl)		; $6252
 	inc (hl)		; $6253
-	ld bc,$626a		; $6254
+	ld bc,_samasaDesertGate_puffLocations		; $6254
 	call addDoubleIndexToBc		; $6257
 	call getFreeInteractionSlot		; $625a
 	ret nz			; $625d
-	ld (hl),$05		; $625e
+	ld (hl),INTERACID_PUFF		; $625e
 	ld l,$4b		; $6260
 	ld a,(bc)		; $6262
 	ld (hl),a		; $6263
@@ -2630,59 +2637,65 @@ seasonsFunc_15_624f:
 	ld a,(bc)		; $6267
 	ld (hl),a		; $6268
 	ret			; $6269
-	ld e,$2e		; $626a
-	ld e,$42		; $626c
-	ld h,$38		; $626e
-	ld d,$2e		; $6270
-	ld d,$42		; $6272
-	ld c,$38		; $6274
-	ld a,(de)		; $6276
-	jr c,$1e		; $6277
-	ld a,$1e		; $6279
-	ld d,d			; $627b
-	ld h,$48		; $627c
-	ld d,$3e		; $627e
-	ld d,$52		; $6280
-	ld c,$48		; $6282
-	ld a,(de)		; $6284
-	ld c,b			; $6285
-	ld e,$4e		; $6286
-	ld e,$62		; $6288
-	ld h,$58		; $628a
-	ld d,$4e		; $628c
-	ld d,$62		; $628e
-	ld c,$58		; $6290
-	ld a,(de)		; $6292
-	ld e,b			; $6293
-	ld e,$5e		; $6294
-	ld e,$72		; $6296
-	ld h,$68		; $6298
-	ld d,$5e		; $629a
-	ld d,$72		; $629c
-	ld c,$68		; $629e
-	ld a,(de)		; $62a0
-	ld l,b			; $62a1
 
-seasonsFunc_15_62a2:
-	ld a,$52		; $62a2
+_samasaDesertGate_puffLocations:
+	; yh - xh of puffs
+	.db $1e $2e
+	.db $1e $42
+	.db $26 $38
+	.db $16 $2e
+	.db $16 $42
+	.db $0e $38
+	.db $1a $38
+
+	.db $1e $3e
+	.db $1e $52
+	.db $26 $48
+	.db $16 $3e
+	.db $16 $52
+	.db $0e $48
+	.db $1a $48
+
+	.db $1e $4e
+	.db $1e $62
+	.db $26 $58
+	.db $16 $4e
+	.db $16 $62
+	.db $0e $58
+	.db $1a $58
+
+	.db $1e $5e
+	.db $1e $72
+	.db $26 $68
+	.db $16 $5e
+	.db $16 $72
+	.db $0e $68
+	.db $1a $68
+
+
+; ==============================================================================
+; INTERACID_SUBROSIAN_SMITHY
+; ==============================================================================
+subrosianSmith_takeHardOre:
+	ld a,TREASURE_HARD_ORE		; $62a2
 	call loseTreasure		; $62a4
 
-seasonsFunc_15_62a7:
-	ld a,$01		; $62a7
+subrosianSmith_giveUpgradedShield:
+	ld a,TREASURE_SHIELD		; $62a7
 	call checkTreasureObtained		; $62a9
-	jr c,_label_15_253	; $62ac
+	jr c,@haveShield	; $62ac
 	xor a			; $62ae
-_label_15_253:
+@haveShield:
 	cp $03			; $62af
-	jr c,_label_15_254	; $62b1
+	jr c,+			; $62b1
 	ld a,$02		; $62b3
-_label_15_254:
++
 	ld c,a			; $62b5
 	call getFreeInteractionSlot		; $62b6
 	ret nz			; $62b9
-	ld (hl),$60		; $62ba
+	ld (hl),INTERACID_TREASURE		; $62ba
 	inc l			; $62bc
-	ld (hl),$01		; $62bd
+	ld (hl),TREASURE_SHIELD		; $62bd
 	inc l			; $62bf
 	ld (hl),c		; $62c0
 	push de			; $62c1
@@ -2691,42 +2704,52 @@ _label_15_254:
 	pop de			; $62c8
 	ret			; $62c9
 
-seasonsFunc_15_62ca:
+
+; ==============================================================================
+; INTERACID_S_DIN
+; ==============================================================================
+din_animateAndLookAtLink:
 	call objectGetAngleTowardLink		; $62ca
 	call convertAngleToDirection		; $62cd
 	jp interactionSetAnimation		; $62d0
+
+din_createExclamationMark:
 	ld bc,$f300		; $62d3
 	jp objectCreateExclamationMark		; $62d6
 
+
+; interactionCodeaa
 seasonsFunc_15_62d9:
 	ld b,$f8		; $62d9
 	ld c,$f0		; $62db
 	ld a,$40		; $62dd
 	jp objectCreateExclamationMark		; $62df
 
-seasonsFunc_15_62e2:
-	ld a,$16		; $62e2
+
+; ==============================================================================
+; INTERACID_MOBLIN_KEEP_SCENES
+; ==============================================================================
+moblinKeepScene_warpOutOfMoblinKeep:
+	ld a,GLOBALFLAG_MOBLINS_KEEP_DESTROYED		; $62e2
 	call setGlobalFlag		; $62e4
-	ld a,$2f		; $62e7
+	ld a,GLOBALFLAG_S_2f		; $62e7
 	call setGlobalFlag		; $62e9
-	ld hl,$62f7		; $62ec
+	ld hl,@warpDestVariables		; $62ec
 	call setWarpDestVariables		; $62ef
 	ld a,$bc		; $62f2
 	jp playSound		; $62f4
-	add b			; $62f7
-	ld e,e			; $62f8
-	nop			; $62f9
-	inc d			; $62fa
-	add e			; $62fb
+@warpDestVariables:
+	m_HardcodedWarpA ROOM_SEASONS_05b $00 $14 $83
 
-seasonsFunc_15_62fc:
-	ld a,$00		; $62fc
-	ld ($d008),a		; $62fe
+moblinKeepScene_faceLinkUp:
+	ld a,DIR_UP		; $62fc
+	ld (w1Link.direction),a		; $62fe
 	jp setLinkForceStateToState08		; $6301
 
-seasonsFunc_15_6304:
+moblinKeepScene_putLinkOnGround:
 	call setLinkForceStateToState08		; $6304
 	jp putLinkOnGround		; $6307
+
 
 seasonsFunc_15_630a:
 	ld hl,$cbb3		; $630a

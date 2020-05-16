@@ -7670,7 +7670,7 @@ interactionCode88:
 	ld hl,_seasonsTable_09_7f33		; $7e5b
 	jp _seasonsFunc_09_7f01		; $7e5e
 +
-	ld a,GLOBALFLAG_DRAGON_ONOX_BEATEN		; $7e61
+	ld a,GLOBALFLAG_SEASON_ALWAYS_SPRING		; $7e61
 	call checkGlobalFlag		; $7e63
 	jp nz,interactionDelete		; $7e66
 	ld e,$46		; $7e69

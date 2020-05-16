@@ -2434,7 +2434,7 @@ interactionCodea6:
 
 
 ; ==============================================================================
-; INTERACID_a7
+; INTERACID_ENDGAME_CUTSCENE_BIPSOM_FAMILY
 ; ==============================================================================
 interactionCodea7:
 	ld e,Interaction.state		; $5dcb
@@ -2629,7 +2629,7 @@ interactionCodea8:
 	jr @beginSimulatedInput		; $5edd
 
 
-; Unused? (address $5edf)
+; Seasons-only (address $5edf)
 @unusedInputData:
 	dwb 60 $00
 	dwb 32 BTN_DOWN

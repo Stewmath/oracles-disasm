@@ -4167,6 +4167,7 @@ piratianScript_moveUpPauseThenUp:
 	wait 20
 	retscript
 
+; also used by Din when she's discovered you
 piratianScript_jump:
 	writeobjectbyte $50, $28
 	setzspeed -$0200
@@ -7550,9 +7551,12 @@ oldManScript_takesRupees:
 	jump2byte @alreadyTookMoney
 
 
-script74a9:
+; ==============================================================================
+; INTERACID_IMPA
+; ==============================================================================
+impaScript_afterOnoxTakesDin:
 	initcollisions
-	jumpifroomflagset $40, script74ef
+	jumpifroomflagset $40, @impaIntroDone
 	disableinput
 	setspeed SPEED_100
 	wait 120
@@ -7564,12 +7568,12 @@ script74a9:
 	writememory $cfd0, $01
 	checkmemoryeq $cfd0, $02
 	wait 30
-	jumpifmemoryeq wIsLinkedGame, $01, script74d0
+	jumpifmemoryeq wIsLinkedGame, $01, @linkedText
 	showtext TX_2500
-	jump2byte script74d3
-script74d0:
+	jump2byte +
+@linkedText:
 	showtext TX_2501
-script74d3:
++
 	setmusic SNDCTRL_FAST_FADEOUT
 	setangleandanimation $18
 	setcounter1 $06
@@ -7582,51 +7586,62 @@ script74d3:
 	wait 30
 	writememory $cfd0, $03
 	orroomflag $40
-	setglobalflag $0a
+	setglobalflag GLOBALFLAG_INTRO_DONE
 	enableinput
-script74ef:
-	jumpifglobalflagset $18, script74f6
+@impaIntroDone:
+	jumpifglobalflagset GLOBALFLAG_GNARLED_KEY_GIVEN, @messageTakenToMakuTree
 	rungenericnpc TX_2503
-script74f6:
+@messageTakenToMakuTree:
 	rungenericnpc TX_2505
-script74f9:
-	jumpifitemobtained $7, script7500
+	
+	
+impaScript_after1stEssence:
+	jumpifitemobtained TREASURE_ROD_OF_SEASONS, @gotRodOfSeasons
 	rungenericnpc TX_2510
-script7500:
+@gotRodOfSeasons:
 	rungenericnpc TX_2506
-script7503:
+	
+impaScript_after2ndEssence:
 	rungenericnpc TX_2507
-script7506:
-	jumpifitemobtained $2e, script750d
+	
+impaScript_after3rdEssence:
+	jumpifitemobtained TREASURE_FLIPPERS, @gotFlippers
 	rungenericnpc TX_2508
-script750d:
+@gotFlippers:
 	rungenericnpc TX_2509
-script7510:
+	
+impaScript_after4thEssence:
 	rungenericnpc TX_250a
-script7513:
-	asm15 scriptHlp.seasonsFunc_15_623b
+	
+impaScript_after5thEssence:
+	asm15 scriptHlp.impa_checkIf4thEssenceGotten
 	jumptable_memoryaddress $cfc0
-	.dw script751d
-	.dw script750d
-script751d:
+	.dw @got4thEssence
+	.dw impaScript_after3rdEssence@gotFlippers
+@got4thEssence:
 	rungenericnpc TX_250b
-script7520:
+	
+impaScript_after6thEssence:
 	rungenericnpc TX_250c
-script7523:
+	
+impaScript_after7thEssence:
 	rungenericnpc TX_250d
-script7526:
+	
+impaScript_after8thEssence:
 	rungenericnpc TX_250e
-script7529:
+	
+impaScript_villagersSeenButNoMakuSeed:
 	initcollisions
-script752a:
+-
 	checkabutton
 	asm15 scriptHlp.seasonsFunc_15_63b8
 	showtext TX_0600
 	wait 10
 	setanimationfromobjectbyte $7b
-	jump2byte script752a
-script7537:
-	jumpifglobalflagset $26, script7546
+	jump2byte -
+	
+impaScript_gotMakuSeedDidntSeeZeldaKidnapped:
+	jumpifglobalflagset GLOBALFLAG_TALKED_TO_ZELDA_BEFORE_ONOX_FIGHT, @talkedToZeldaBeforeOnoxFight
 	setspeed SPEED_100
 	setangleandanimation $00
 	wait 60
@@ -7634,168 +7649,190 @@ script7537:
 	wait 10
 	setangleandanimation $18
 	wait 60
-script7546:
+@talkedToZeldaBeforeOnoxFight:
 	setcoords $78, $68
 	rungenericnpc TX_0609
-script754c:
-	loadscript script_14_51c5
-script7550:
+	
+impaScript_askingToSaveZelda:
+	loadscript impaScript_askedToSaveZeldaButHavent_body
+	
+impaScript_askedToSaveZeldaButHavent:
 	rungenericnpc TX_0502
-script7553:
+	
+impaScript_afterZeldaKidnapped:
 	rungenericnpc TX_250f
+	
+
+; ==============================================================================
+; INTERACID_SAMASA_DESERT_GATE
+; ==============================================================================
 script7556:
 	playsound SND_RUMBLE2
-	callscript script756f
+	callscript _samasaDesertGateScript_createNext7Puffs
 	setcounter1 $23
-	callscript script756f
+	callscript _samasaDesertGateScript_createNext7Puffs
 	setcounter1 $23
 	playsound SND_RUMBLE2
-	callscript script756f
+	callscript _samasaDesertGateScript_createNext7Puffs
 	setcounter1 $23
-	callscript script756f
+	callscript _samasaDesertGateScript_createNext7Puffs
 	setcounter1 $ff
 	scriptend
-script756f:
+
+_samasaDesertGateScript_createNext7Puffs:
 	playsound SND_KILLENEMY
-	asm15 scriptHlp.seasonsFunc_15_624c
+	asm15 scriptHlp.samasaDesertGate_createNext2Puffs
 	setcounter1 $05
 	playsound SND_KILLENEMY
-	asm15 scriptHlp.seasonsFunc_15_624f
+	asm15 scriptHlp.samasaDesertGate_createNextPuff
 	setcounter1 $05
 	playsound SND_KILLENEMY
-	asm15 scriptHlp.seasonsFunc_15_624c
+	asm15 scriptHlp.samasaDesertGate_createNext2Puffs
 	setcounter1 $05
 	playsound SND_KILLENEMY
-	asm15 scriptHlp.seasonsFunc_15_624c
+	asm15 scriptHlp.samasaDesertGate_createNext2Puffs
 	retscript
-script758a:
+
+
+; ==============================================================================
+; INTERACID_SUBROSIAN_SMITHY
+; ==============================================================================
+subrosianSmithyScript:
 	setcollisionradii $12, $06
 	makeabuttonsensitive
 	jumptable_objectbyte $7f
-	.dw script7598
-	.dw script759d
-	.dw script75c1
-	.dw script75f0
-script7598:
+	.dw @nothingToProvide
+	.dw @haveRustyBell
+	.dw @haveHardOre
+	.dw @finishedGame
+	
+@nothingToProvide:
 	checkabutton
-	showtextlowindex $00
-	jump2byte script7598
-script759d:
+	showtextlowindex <TX_3b00
+	jump2byte @nothingToProvide
+	
+@haveRustyBell:
 	checkabutton
 	disableinput
-	callscript script7642
-	showtextlowindex $03
-	jumpiftextoptioneq $00, script75b8
+	callscript _smithyScript_introText
+	showtextlowindex <TX_3b03
+	jumpiftextoptioneq $00, @please
+	; Do it!
 	wait 30
-	showtextlowindex $06
+	showtextlowindex <TX_3b06
 	setanimation $01
 	wait 30
-	showtextlowindex $07
-	callscript script7650
-	giveitem $4a02
-	jump2byte script7675
-script75b8:
+	showtextlowindex <TX_3b07
+	callscript _smithyScript_smithItem
+	giveitem TREASURE_PIRATES_BELL $02
+	jump2byte _smithyScript_smithingDone
+@please:
 	wait 30
-	showtextlowindex $04
+	showtextlowindex <TX_3b04
 	enableinput
-script75bc:
+-
 	checkabutton
-	showtextlowindex $05
-	jump2byte script75bc
-script75c1:
+	showtextlowindex <TX_3b05
+	jump2byte -
+
+@haveHardOre:
 	checkabutton
 	disableinput
-	callscript script7642
-	jumpifitemobtained $1, script75cc
-	jump2byte script75eb
-script75cc:
-	showtextlowindex $0a
-	jumpiftextoptioneq $00, script75e2
+	callscript _smithyScript_introText
+	jumpifitemobtained TREASURE_SHIELD, @haveShield
+	jump2byte @noShield
+@haveShield:
+	showtextlowindex <TX_3b0a
+	jumpiftextoptioneq $00, @makeItFine
+	; Do whatever
 	wait 30
-	showtextlowindex $0c
+	showtextlowindex <TX_3b0c
 	setanimation $01
 	wait 30
-	showtextlowindex $0d
-	callscript script7650
-	asm15 scriptHlp.seasonsFunc_15_62a2
-	jump2byte script7675
-script75e2:
+	showtextlowindex <TX_3b0d
+	callscript _smithyScript_smithItem
+	asm15 scriptHlp.subrosianSmith_takeHardOre
+	jump2byte _smithyScript_smithingDone
+@makeItFine:
 	wait 30
-	showtextlowindex $0b
+	showtextlowindex <TX_3b0b
 	enableinput
-script75e6:
+@tryAgainLater:
 	checkabutton
-	showtextlowindex $05
-	jump2byte script75e6
-script75eb:
-	showtextlowindex $13
+	showtextlowindex <TX_3b05
+	jump2byte @tryAgainLater
+@noShield:
+	showtextlowindex <TX_3b13
 	enableinput
-	jump2byte script75e6
-script75f0:
-	jumpifglobalflagset $5e, script763e
-script75f4:
+	jump2byte @tryAgainLater
+	
+@finishedGame:
+	jumpifglobalflagset GLOBALFLAG_DONE_SMITH_SECRET, @doneSecret
+@notDoneSecret:
 	checkabutton
 	disableinput
-	callscript script7642
-	jumpifitemobtained $1, script7603
+	callscript _smithyScript_introText
+	jumpifitemobtained TREASURE_SHIELD, @finishedGameHaveShield
 	enableinput
-script75fe:
-	showtextlowindex $18
+-
+	showtextlowindex <TX_3b18
 	checkabutton
-	jump2byte script75fe
-script7603:
-	showtextlowindex $0e
-	jumpiftextoptioneq $00, script7611
+	jump2byte -
+@finishedGameHaveShield:
+	showtextlowindex <TX_3b0e
+	jumpiftextoptioneq $00, @beenToldSecret
 	wait 30
-	showtextlowindex $10
+	showtextlowindex <TX_3b10
 	enableinput
 	checkabutton
 	disableinput
-	jump2byte script7603
-script7611:
+	jump2byte @finishedGameHaveShield
+@beenToldSecret:
 	wait 30
 	showtextlowindex $0f
 	askforsecret SMITH_SECRET
 	wait 30
 	jumptable_memoryaddress $cca3
-	.dw script7623
-	.dw script761e
-script761e:
-	showtextlowindex $11
+	.dw @correctSecret
+	.dw @incorrectSecret
+@incorrectSecret:
+	showtextlowindex <TX_3b11
 	enableinput
-	jump2byte script75f4
-script7623:
-	setglobalflag $54
-	showtextlowindex $12
-	callscript script7650
-	asm15 scriptHlp.seasonsFunc_15_62a7
-	setglobalflag $5e
+	jump2byte @notDoneSecret
+@correctSecret:
+	setglobalflag GLOBALFLAG_BEGAN_SMITH_SECRET
+	showtextlowindex <TX_3b12
+	callscript _smithyScript_smithItem
+	asm15 scriptHlp.subrosianSmith_giveUpgradedShield
+	setglobalflag GLOBALFLAG_DONE_SMITH_SECRET
 	wait 30
-script7630:
+@generateReturnSecret:
 	generatesecret SMITH_RETURN_SECRET
-script7632:
-	showtextlowindex $16
+-
+	showtextlowindex <TX_3b16
 	wait 30
-	jumpiftextoptioneq $00, script763b
-	jump2byte script7632
-script763b:
-	showtextlowindex $17
+	jumpiftextoptioneq $00, @gotReturnSecret
+	jump2byte -
+@gotReturnSecret:
+	showtextlowindex <TX_3b17
 	enableinput
-script763e:
+@doneSecret:
 	checkabutton
 	disableinput
-	jump2byte script7630
-script7642:
-	showtextlowindex $00
+	jump2byte @generateReturnSecret
+	
+_smithyScript_introText:
+	showtextlowindex <TX_3b00
 	wait 30
-	showtextlowindex $01
+	showtextlowindex <TX_3b01
 	setanimation $01
 	wait 30
-	showtextlowindex $02
+	showtextlowindex <TX_3b02
 	setanimation $02
 	wait 30
 	retscript
-script7650:
+	
+_smithyScript_smithItem:
 	asm15 fadeoutToWhite
 	checkpalettefadedone
 	setcoords $50, $70
@@ -7815,48 +7852,63 @@ script7650:
 	wait 4
 	setanimation $02
 	wait 30
-	showtextlowindex $08
+	showtextlowindex <TX_3b08
 	retscript
-script7675:
+	
+_smithyScript_smithingDone:
 	wait 4
 	enableinput
-script7677:
+-
 	checkabutton
-	showtextlowindex $09
-	jump2byte script7677
-script767c:
-	loadscript script_14_51f0
-script7680:
-	loadscript script_14_520a
-script7684:
+	showtextlowindex <TX_3b09
+	jump2byte -
+	
+
+; ==============================================================================
+; INTERACID_S_DIN
+; ==============================================================================
+dinScript_subid2Init:
+	loadscript dinScript_subid2Init_body
+
+dinScript_subid4Init:
+	loadscript dinScript_subid4Init_body
+
+dinScript_stubInit:
 	scriptend
-script7685:
+
+dinScript_subid8Init:
 	initcollisions
-script7686:
+-
 	checkabutton
 	disableinput
 	wait 10
 	writeobjectbyte $78, $01
-	asm15 scriptHlp.seasonsFunc_15_62ca
+	asm15 scriptHlp.din_animateAndLookAtLink
 	wait 8
 	showtext TX_3d18
 	enableinput
 	writeobjectbyte $78, $00
 	setanimation $06
-	jump2byte script7686
-script769b:
-	loadscript script_14_521b
+	jump2byte -
+
+dinScript_discoverLinkCollapsed:
+	loadscript dinScript_discoverLinkCollapsed_body
+
+
+; interactionCodeaa
 script769f:
 	checkmemoryeq $cfc0, $01
 	setanimation $01
 	checkobjectbyteeq $61, $01
 	writememory $cfc0, $02
 	scriptend
+
 script76ad:
 	checkmemoryeq $cfc0, $02
 	asm15 scriptHlp.seasonsFunc_15_62d9
 	setanimation $03
 	scriptend
+
 script76b7:
 	checkmemoryeq $cfc0, $03
 	setangle $18
@@ -7876,6 +7928,7 @@ script76b7:
 	writememory $cfc0, $04
 	setcounter1 $80
 	scriptend
+
 script76dc:
 	checkmemoryeq $cfc0, $05
 	setangle $18
@@ -7896,36 +7949,42 @@ script76dc:
 	setcounter1 $80
 	writememory $cfc0, $06
 	scriptend
-script7705:
+
+
+; ==============================================================================
+; INTERACID_MOBLIN_KEEP_SCENES
+; ==============================================================================
+moblinKeepSceneScript_linkSeenOnRightSide:
 	setcoords $40, $70
 	setcollisionradii $1c, $1c
 	checkcollidedwithlink_ignorez
 	setdisabledobjectsto91
-	asm15 scriptHlp.seasonsFunc_15_6304
+	asm15 scriptHlp.moblinKeepScene_putLinkOnGround
 	jumptable_memoryaddress wIsLinkedGame
-	.dw script7717
-	.dw script7725
-script7717:
-	jumpifroomflagset $40, script7721
-	showtextlowindex $00
+	.dw @unlinked
+	.dw @linked
+@unlinked:
+	jumpifroomflagset $40, @beenHereBefore
+	showtextlowindex <TX_3f00
 	orroomflag $40
 	enableallobjects
 	scriptend
-script7721:
-	showtextlowindex $01
+@beenHereBefore:
+	showtextlowindex <TX_3f01
 	enableallobjects
 	scriptend
-script7725:
-	jumpifroomflagset $40, script772f
-	showtextlowindex $02
+@linked:
+	jumpifroomflagset $40, @linkedBeenHereBefore
+	showtextlowindex <TX_3f02
 	orroomflag $40
 	enableallobjects
 	scriptend
-script772f:
-	showtextlowindex $03
+@linkedBeenHereBefore:
+	showtextlowindex <TX_3f03
 	enableallobjects
 	scriptend
-script7733:
+
+moblinKeepSceneScript_settingUpFight:
 	setcoords $68, $88
 	setcollisionradii $08, $08
 	checknotcollidedwithlink_ignorez
@@ -7937,9 +7996,9 @@ script7733:
 	setcollisionradii $28, $08
 	checkcollidedwithlink_ignorez
 	setdisabledobjectsto91
-	asm15 scriptHlp.seasonsFunc_15_6304
-	asm15 scriptHlp.seasonsFunc_15_62fc
-	showtextlowindex $04
+	asm15 scriptHlp.moblinKeepScene_putLinkOnGround
+	asm15 scriptHlp.moblinKeepScene_faceLinkUp
+	showtextlowindex <TX_3f04
 	playsound SND_BOOMERANG
 	wait 30
 	setmusic MUS_MINIBOSS
@@ -7947,17 +8006,17 @@ script7733:
 	enableallobjects
 	checkcfc0bit 0
 	setdisabledobjectsto91
-	callscript script7776
-	callscript script7776
-	callscript script7783
-	callscript script7783
-	callscript script7783
-	callscript script7783
-	callscript script7783
-	callscript script7783
-	asm15 scriptHlp.seasonsFunc_15_62e2
+	callscript @slowExplosions
+	callscript @slowExplosions
+	callscript @quickExplosions
+	callscript @quickExplosions
+	callscript @quickExplosions
+	callscript @quickExplosions
+	callscript @quickExplosions
+	callscript @quickExplosions
+	asm15 scriptHlp.moblinKeepScene_warpOutOfMoblinKeep
 	scriptend
-script7776:
+@slowExplosions:
 	playsound SND_BIG_EXPLOSION_2
 	asm15 clearFadingPalettes
 	wait 8
@@ -7965,7 +8024,7 @@ script7776:
 	asm15 clearPaletteFadeVariablesAndRefreshPalettes
 	wait 8
 	retscript
-script7783:
+@quickExplosions:
 	playsound SND_BIG_EXPLOSION_2
 	asm15 clearFadingPalettes
 	wait 4
@@ -7973,22 +8032,28 @@ script7783:
 	asm15 clearPaletteFadeVariablesAndRefreshPalettes
 	wait 4
 	retscript
-script7790:
+
+moblinKeepSceneScript_postKeepDestruction:
 	stopifroomflag40set
 	disableinput
-	asm15 seasonsFunc_3e52
-	showtextlowindex $05
+	asm15 setUpCharactersAfterMoblinKeepDestroyed
+	showtextlowindex <TX_3f05
 	xorcfc0bit 0
 	setcounter1 $4b
 	orroomflag $40
 	enableinput
 	scriptend
+
+
+; interactionCodead
 script779e:
 	setspeed SPEED_0a0
-script77a0:
+-
 	applyspeed $0e
 	setcounter1 $50
-	jump2byte script77a0
+	jump2byte -
+
+
 script77a6:
 	wait 30
 	jump2byte script77a6

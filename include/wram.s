@@ -2178,7 +2178,7 @@ wcca7: ; $cca7
 wcca8: ; $cca8/$ccc2
 	db
 
-.ifdef ROM_SEASONS ; TODO: figure out what this is, where it goes
+.ifdef ROM_SEASONS ; TODO: related to springbloom flower state
 wUnknown: ; -/$ccc3
 	db
 .endif

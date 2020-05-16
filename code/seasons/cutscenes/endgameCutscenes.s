@@ -77,7 +77,7 @@ _endgameCutsceneHandler_09_stage0_body:
 @state0Func0:
 	call getFreeInteractionSlot		; $55ad
 	jr nz,+			; $55b0
-	ld a,INTERACID_a5		; $55b2
+	ld a,INTERACID_S_DIN		; $55b2
 	ld (wInteractionIDToLoadExtraGfx),a		; $55b4
 	ldi (hl),a		; $55b7
 	ld (hl),c		; $55b8

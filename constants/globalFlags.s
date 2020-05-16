@@ -142,7 +142,7 @@
 	GLOBALFLAG_S_2d				db ; $2d: Saw King Moblin in Sunken City
 	GLOBALFLAG_SWIMMING_CHALLENGE_SUCCEEDED	db ; $2e
 	GLOBALFLAG_S_2f				db ; $2f
-	GLOBALFLAG_DRAGON_ONOX_BEATEN		db ; $30
+	GLOBALFLAG_SEASON_ALWAYS_SPRING		db ; $30 ; Before Din captured, after Dragon Onox beaten
 	GLOBALFLAG_RING_SECRET_GENERATED	db ; $31
 	GLOBALFLAG_S_32				db ; $32
 	GLOBALFLAG_S_33				db ; $33

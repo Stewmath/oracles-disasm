@@ -264,7 +264,7 @@ seasons_func_0f_712a:
 	ld hl,$ca91		; $713e
 	set 7,(hl)		; $7141
 	; game beaten / season always spring?
-	ld a,GLOBALFLAG_DRAGON_ONOX_BEATEN		; $7143
+	ld a,GLOBALFLAG_SEASON_ALWAYS_SPRING		; $7143
 	call setGlobalFlag		; $7145
 	jp fadeoutToWhite		; $7148
 

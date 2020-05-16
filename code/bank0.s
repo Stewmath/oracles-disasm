@@ -14730,13 +14730,13 @@ getSunkenCityNPCVisibleSubId_caller:
 	setrombank		; $3e4c
 	ret			; $3e51
 
-seasonsFunc_3e52:
+setUpCharactersAfterMoblinKeepDestroyed:
 	ldh a,(<hRomBank)	; $3e52
 	push af			; $3e54
-	callfrombank0 seasonsFunc_0a_69d4 		; $3e55
+	callfrombank0 moblinKeepScene_setLinkDirectionAndPositionAfterDestroyed 		; $3e55
 	ld a,$01		; $3e5f
-	call seasonsFunc_0a_69e7		; $3e61
-	call seasonsFunc_0a_6a0a		; $3e64
+	call moblinKeepScene_spawnKingMoblin		; $3e61
+	call moblinKeepScene_spawn2MoblinsAfterKeepDestroyed		; $3e64
 	pop af			; $3e67
 	setrombank		; $3e68
 	ret			; $3e6d
