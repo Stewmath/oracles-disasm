@@ -51,7 +51,7 @@ objectData7e4a:
 	obj_End
 
 
-; In interactioncode4e code
+; Din dancing NPCs
 objectData7e4e:
 	obj_Interaction $4e00 $29 $18
 	obj_Interaction $4e01 $59 $52
@@ -63,7 +63,7 @@ objectData7e4e:
 	obj_End
 
 
-; In interactioncode6a code
+; Subrosian dancers
 objectData7e6c:
 	obj_Interaction $6a01 $38 $88
 	obj_Interaction $6a02 $21 $00
@@ -78,14 +78,14 @@ objectData7e6c:
 	obj_End
 
 
-; Spawned by interaction $6b1d in ROOM_SEASONS_439
+; D4 miniboss room - N door controller and dark room handler
 objectData7e96:
 	obj_Interaction $1e14 $07 $00
 	obj_Part $0800 $00
 	obj_End
 
 
-; Spawned by interactioncode95 in ROOM_SEASONS_1aa
+; Spawned by interactioncode95 inside King Moblin rest house
 objectData7ea0:
 	obj_Interaction $9b00
 	obj_Interaction $9600 $28 $28

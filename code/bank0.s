@@ -14720,8 +14720,9 @@ setMakuTreeStageAndMapText:
 	setrombank		; $3e38
 	ret			; $3e3d
 
-; called from interactioncode8a/8b/8d
-seasonsFunc_3e3e:
+;;
+; @param[out]	b	the subid that fickle Sunken City NPCs will be visible with
+getSunkenCityNPCVisibleSubId_caller:
 	ldh a,(<hRomBank)	; $3e3e
 	push af			; $3e40
 	callfrombank0 getSunkenCityNPCVisibleSubId@main		; $3e41

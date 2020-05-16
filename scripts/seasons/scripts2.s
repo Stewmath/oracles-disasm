@@ -1300,7 +1300,10 @@ strangeBrother2Script_finishedScreenPattern2:
 	scriptend
 
 
-script_14_50d3:
+; ==============================================================================
+; INTERACID_JEWEL_HELPER
+; ==============================================================================
+jewelHelperScript_jewelMoldorm_body:
 	stopifroomflag40set
 	checkcfc0bit 0
 	writememory $ccab $01
@@ -1308,36 +1311,36 @@ script_14_50d3:
 	playsound $4d
 	delay 8
 	playsound $73
-	asm15 $61b4 $04
+	asm15 scriptHlp.jewelHelper_createPuff $04
 	delay 3
 	playsound $73
-	asm15 $61b4 $05
-	asm15 $61b4 $03
+	asm15 scriptHlp.jewelHelper_createPuff $05
+	asm15 scriptHlp.jewelHelper_createPuff $03
 	delay 3
 	playsound $73
-	asm15 $61b4 $01
-	asm15 $61b4 $07
+	asm15 scriptHlp.jewelHelper_createPuff $01
+	asm15 scriptHlp.jewelHelper_createPuff $07
 	delay 3
 	playsound $73
-	asm15 $61b4 $00
-	asm15 $61b4 $08
+	asm15 scriptHlp.jewelHelper_createPuff $00
+	asm15 scriptHlp.jewelHelper_createPuff $08
 	delay 3
 	playsound $73
-	asm15 $61b4 $02
-	asm15 $61b4 $06
+	asm15 scriptHlp.jewelHelper_createPuff $02
+	asm15 scriptHlp.jewelHelper_createPuff $06
 	delay 3
 	playsound $73
-	asm15 $61b4 $01
-	asm15 $61b4 $05
-	asm15 $61b4 $03
-	asm15 $61b4 $07
+	asm15 scriptHlp.jewelHelper_createPuff $01
+	asm15 scriptHlp.jewelHelper_createPuff $05
+	asm15 scriptHlp.jewelHelper_createPuff $03
+	asm15 scriptHlp.jewelHelper_createPuff $07
 	delay 3
 	playsound $73
-	asm15 $61b4 $04
-	asm15 $61b4 $00
-	asm15 $61b4 $02
-	asm15 $61b4 $06
-	asm15 $61b4 $08
+	asm15 scriptHlp.jewelHelper_createPuff $04
+	asm15 scriptHlp.jewelHelper_createPuff $00
+	asm15 scriptHlp.jewelHelper_createPuff $02
+	asm15 scriptHlp.jewelHelper_createPuff $06
+	asm15 scriptHlp.jewelHelper_createPuff $08
 	settileat $22 $0f
 	settileat $23 $11
 	settileat $32 $11
@@ -1345,20 +1348,20 @@ script_14_50d3:
 	settileat $34 $11
 	delay 4
 	playsound $73
-	asm15 $61b4 $01
-	asm15 $61b4 $05
-	asm15 $61b4 $03
-	asm15 $61b4 $07
+	asm15 scriptHlp.jewelHelper_createPuff $01
+	asm15 scriptHlp.jewelHelper_createPuff $05
+	asm15 scriptHlp.jewelHelper_createPuff $03
+	asm15 scriptHlp.jewelHelper_createPuff $07
 	setcounter1 $06
 	playsound $67
 	writememory $cfc0 $00
-	asm15 $61dc
+	asm15 scriptHlp.jewelHelper_createMoldorm
 	playsound $73
-	asm15 $61b4 $04
-	asm15 $61b4 $00
-	asm15 $61b4 $02
-	asm15 $61b4 $06
-	asm15 $61b4 $08
+	asm15 scriptHlp.jewelHelper_createPuff $04
+	asm15 scriptHlp.jewelHelper_createPuff $00
+	asm15 scriptHlp.jewelHelper_createPuff $02
+	asm15 scriptHlp.jewelHelper_createPuff $06
+	asm15 scriptHlp.jewelHelper_createPuff $08
 	setmusic $2d
 	writememory $ccab $00
 	checkcfc0bit 0
@@ -1373,7 +1376,10 @@ script_14_50d3:
 	scriptend
 
 
-script_14_5190:
+; ==============================================================================
+; INTERACID_KING_MOBLIN
+; ==============================================================================
+kingMoblin_trapLinkInBombedHouse:
 	writeobjectbyte Interaction.var37 $01
 	setspeed $50
 	settileat $16 $a2
@@ -1382,7 +1388,7 @@ script_14_5190:
 	settileat $26 $a2
 	settileat $27 $a2
 	settileat $28 $a2
-	asm15 $61eb
+	asm15 scriptHlp.kingMoblin_func_61eb
 	setcounter1 $50
 	showtext TX_3804
 	writeobjectbyte Interaction.var37 $00

@@ -7164,76 +7164,95 @@ script729c:
 	retscript
 
 
-script72a9:
+; ==============================================================================
+; INTERACID_FLOODED_HOUSE_GIRL
+; INTERACID_MASTER_DIVERS_WIFE
+; INTERACID_S_MASTER_DIVER
+; ==============================================================================
+floodedHouseGirlScript_text1:
 	initcollisions
-script72aa:
+-
 	checkabutton
 	showtext TX_1d00
 	checkabutton
 	showtext TX_1d01
-	jump2byte script72aa
-script72b4:
+	jump2byte -
+	
+floodedHouseGirlScript_text2:
 	rungenericnpc TX_1d02
-script72b7:
+	
+floodedHouseGirlScript_text3:
 	rungenericnpc TX_1d03
-script72ba:
+	
+floodedHouseGirlScript_text4:
 	rungenericnpc TX_1d04
-script72bd:
+	
+floodedHouseGirlScript_text5:
 	rungenericnpc TX_1d05
-script72c0:
+	
+masterDiversWifeScript_text1:
 	initcollisions
-	jumpifglobalflagset $16, script72e0
-	jumpifitemobtained $2e, script72dd
+	jumpifglobalflagset GLOBALFLAG_MOBLINS_KEEP_DESTROYED, _masterDiversWifeScript_cityQuietText
+	jumpifitemobtained TREASURE_FLIPPERS, _masterDiversWifeScript_metMasterDiverText
 	rungenericnpc TX_1800
-script72cc:
+	
+masterDiversWifeScript_text2:
 	initcollisions
-	jumpifglobalflagset $16, script72d3
-	jump2byte script72dd
-script72d3:
+	jumpifglobalflagset GLOBALFLAG_MOBLINS_KEEP_DESTROYED, _masterDiversWifeScript_text2_moblinsKeepDestroyed
+	jump2byte _masterDiversWifeScript_metMasterDiverText
+_masterDiversWifeScript_text2_moblinsKeepDestroyed:
 	checkabutton
 	showtext TX_1802
 	checkabutton
 	showtext TX_1801
-	jump2byte script72d3
-script72dd:
+	jump2byte _masterDiversWifeScript_text2_moblinsKeepDestroyed
+_masterDiversWifeScript_metMasterDiverText:
 	rungenericnpc TX_1801
-script72e0:
+_masterDiversWifeScript_cityQuietText:
 	rungenericnpc TX_1802
-script72e3:
+	
+masterDiversWifeScript_text3:
 	rungenericnpc TX_1803
-script72e6:
+
+masterDiversWifeScript_text4:
 	rungenericnpc TX_1804
-script72e9:
+
+masterDiversWifeScript_text5:
 	rungenericnpc TX_1805
-script72ec:
+
+masterDiverScript_text1:
 	initcollisions
-script72ed:
+--
 	enableinput
 	checkabutton
 	disableinput
-	jumpifitemobtained $2e, script7311
-	jumpifitemobtained $54, script72ff
+	jumpifitemobtained TREASURE_FLIPPERS, @gotFlippers
+	jumpifitemobtained TREASURE_MASTERS_PLAQUE, @gotMastersPlaque
 	showtext TX_3400
 	orroomflag $40
-	jump2byte script72ed
-script72ff:
-	jumpifroomflagset $40, script7309
+	jump2byte --
+@gotMastersPlaque:
+	jumpifroomflagset $40, @seenIntroText
 	showtext TX_3400
 	orroomflag $40
 	wait 30
-script7309:
+@seenIntroText:
 	showtext TX_3401
 	wait 20
-	giveitem $2e00
+	giveitem TREASURE_FLIPPERS $00
 	wait 20
-script7311:
+@gotFlippers:
 	showtext TX_3404
-	jump2byte script72ed
-script7316:
+	jump2byte --
+	
+masterDiverScript_text2:
+masterDiverScript_text3:
 	rungenericnpc TX_3402
-script7319:
+	
+masterDiverScript_text4:
 	rungenericnpc TX_3403
-script731c:
+	
+masterDiverScript_text5:
 	scriptend
 
 
@@ -7281,23 +7300,24 @@ jewelHelperScript_insertedAllJewels:
 	orroomflag $80
 	scriptend
 
-script7345:
+jewelHelperScript_underwaterPyramidJewel:
 	stopifitemflagset
 	jumptable_memoryaddress wIsLinkedGame
-	.dw script734d
-	.dw script7357
-script734d:
+	.dw @unlinked
+	.dw @linked
+@unlinked:
 	spawnitem TREASURE_PYRAMID_JEWEL $00
-script7350:
-	jumpifitemobtained $4d, script7356
-	jump2byte script7350
-script7356:
+-
+	jumpifitemobtained TREASURE_PYRAMID_JEWEL, @end
+	jump2byte -
+@end:
 	scriptend
-script7357:
+@linked:
 	spawnitem TREASURE_RUPEES RUPEEVAL_100
 	scriptend
-script735b:
-	jumpifroomflagset $40, script737a
+	
+jewelHelperScript_createBridgeToXJewelMoldorm:
+	jumpifroomflagset $40, @relightTorch
 	checkmemoryeq wNumTorchesLit, $01
 	orroomflag $40
 	wait 40
@@ -7312,56 +7332,71 @@ script735b:
 	wait 15
 	playsound SND_BIGSWORD
 	scriptend
-script737a:
-	settileat $77, $a1
+@relightTorch:
+	settileat $77, TILEINDEX_OVERWORLD_LIT_TORCH
 	scriptend
-script737e:
-	loadscript script_14_50d3
-script7382:
+	
+jewelHelperScript_XjewelMoldorm:
+	loadscript jewelHelperScript_jewelMoldorm_body
+
+jewelHelperScript_spoolSwampSquareJewel:
 	stopifitemflagset
 	jumptable_memoryaddress wIsLinkedGame
-	.dw script7392
-	.dw script739e
-script738a:
+	.dw _jewelHelperScript_squareJewel
+	.dw _jewelHelperScript_40Rupees
+
+jewelHelperScript_eyeglassLakeSquareJewel:
 	stopifitemflagset
 	jumptable_memoryaddress wIsLinkedGame
-	.dw script739e
-	.dw script7392
-script7392:
-	writememory $ccbd, $4e
+	.dw _jewelHelperScript_40Rupees
+	.dw _jewelHelperScript_squareJewel
+
+_jewelHelperScript_squareJewel:
+	writememory $ccbd, TREASURE_SQUARE_JEWEL
 	writememory $ccbe, $00
-	settileat $57, $f1
+	settileat $57, TILEINDEX_CHEST
 	scriptend
-script739e:
-	writememory $ccbd, $28
-	writememory $ccbe, $06
-	settileat $57, $f1
+
+_jewelHelperScript_40Rupees:
+	writememory $ccbd, TREASURE_RUPEES
+	writememory $ccbe, RUPEEVAL_040
+	settileat $57, TILEINDEX_CHEST
 	scriptend
-script73aa:
+
+jewelHelperScript_stub:
 	scriptend
+
+
+; ==============================================================================
+; INTERACID_KING_MOBLIN
+; ==============================================================================
 script73ab:
 	setcollisionradii $11, $0e
 	makeabuttonsensitive
-script73af:
+-
 	checkabutton
 	showtext TX_3802
-	jump2byte script73af
+	jump2byte -
+
 script73b5:
 	setcollisionradii $0b, $0e
 	makeabuttonsensitive
-script73b9:
+-
 	checkabutton
 	showtext TX_3803
-	jump2byte script73b9
+	jump2byte -
+
 script73bf:
 	setcollisionradii $0b, $0e
 	makeabuttonsensitive
-script73c3:
+-
 	checkabutton
 	showtext TX_3805
-	jump2byte script73c3
-script73c9:
-	loadscript script_14_5190
+	jump2byte -
+
+kingMoblinScript_trapLinkInBombedHouse:
+	loadscript kingMoblin_trapLinkInBombedHouse
+
 script73cd:
 	checkcfc0bit 0
 	setspeed SPEED_200
@@ -7370,6 +7405,7 @@ script73cd:
 	applyspeed $21
 	wait 40
 	scriptend
+
 script73d8:
 	setspeed SPEED_100
 	checkmemoryeq $cfc0, $02
@@ -7382,15 +7418,21 @@ script73d8:
 	setangle $00
 	applyspeed $25
 	scriptend
+
+
+; ==============================================================================
+; INTERACID_S_MOBLIN
+; ==============================================================================
 script73f3:
 	rungenericnpc TX_3800
+
 script73f6:
 	setcoords $40, $7e
 	initcollisions
 	setspeed SPEED_080
 	setangle $1f
 	setanimationfromangle
-script7400:
+--
 	checkcfc0bit 0
 	writeobjectbyte $5a, $82
 	applyspeed $10
@@ -7411,7 +7453,8 @@ script7400:
 	setanimationfromangle
 	applyspeed $20
 	setcoords $40, $7e
-	jump2byte script7400
+	jump2byte --
+
 script7421:
 	checkcfc0bit 0
 	wait 10
@@ -7422,6 +7465,7 @@ script7421:
 	setangle $10
 	applyspeed $1a
 	scriptend
+
 script7430:
 	jumpifobjectbyteeq $43, $01, script743c
 	setanimation $01
@@ -7433,65 +7477,79 @@ script743c:
 	setangle $18
 	applyspeed $09
 	retscript
+
 script7443:
 	setspeed SPEED_100
 	checkmemoryeq $cfc0, $01
 	moveleft $29
 	setanimation $09
 	checkmemoryeq $cfc0, $03
-	asm15 scriptHlp.seasonsFunc_15_6206
+	asm15 scriptHlp.moblin_spawnSwordMaskedMoblin
 	wait 1
 	scriptend
+
 script7456:
 	setspeed SPEED_100
 	checkmemoryeq $cfc0, $01
 	moveright $29
 	setanimation $09
 	checkmemoryeq $cfc0, $03
-	asm15 scriptHlp.seasonsFunc_15_6206
+	asm15 scriptHlp.moblin_spawnSwordMaskedMoblin
 	wait 1
 	scriptend
+
 script7469:
 	checkmemoryeq $cfc0, $03
-	asm15 scriptHlp.seasonsFunc_15_61fa
+	asm15 scriptHlp.moblin_spawnMaskedMoblin
 	wait 1
 	scriptend
-script7472:
+
+
+; ==============================================================================
+; INTERACID_S_OLD_MAN_WITH_RUPEES
+; ==============================================================================
+oldManScript_givesRupees:
 	initcollisions
-	jumpifroomflagset $40, script7483
+	jumpifroomflagset $40, @alreadyGaveMoney
 	checkabutton
 	disableinput
-	showtextlowindex $03
-	asm15 scriptHlp.seasonsFunc_15_6226
+	showtextlowindex <TX_1f03
+	asm15 scriptHlp.oldMan_giveRupees
 	wait 8
 	checkrupeedisplayupdated
 	orroomflag $40
 	enableinput
-script7483:
+	
+@alreadyGaveMoney:
 	checkabutton
-	showtextlowindex $07
-	jump2byte script7483
-script7488:
+	showtextlowindex <TX_1f07
+	jump2byte @alreadyGaveMoney
+	
+oldManScript_takesRupees:
 	initcollisions
-	jumpifroomflagset $40, script749e
+	jumpifroomflagset $40, @alreadyTookMoney
 	checkabutton
 	disableinput
-	showtextlowindex $00
-	asm15 scriptHlp.seasonsFunc_15_620f
-	jumpifobjectbyteeq $7f, $00, script74a3
+	showtextlowindex <TX_1f00
+	asm15 scriptHlp.oldMan_takeRupees
+	jumpifobjectbyteeq $7f, $00, @linkIsBroke
 	wait 8
 	checkrupeedisplayupdated
 	orroomflag $40
 	enableinput
-script749e:
+
+@alreadyTookMoney:
 	checkabutton
-	showtextlowindex $01
-	jump2byte script749e
-script74a3:
+	showtextlowindex <TX_1f01
+	jump2byte @alreadyTookMoney
+
+@linkIsBroke:
 	wait 30
-	showtextlowindex $02
+	showtextlowindex <TX_1f02
 	enableinput
-	jump2byte script749e
+	jump2byte @alreadyTookMoney
+
+
 script74a9:
 	initcollisions
 	jumpifroomflagset $40, script74ef

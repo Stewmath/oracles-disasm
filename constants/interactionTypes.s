@@ -1297,7 +1297,6 @@
 ; @subid_06-07{Something in endgame just before Ganon's being revived?}
 .define INTERACID_TWINROVA		$93
 
-.ifdef ROM_AGES
 ;;
 ; The restoration guru.
 ; @subid_00{Patch in the upstairs room}
@@ -1309,9 +1308,6 @@
 ; @subid_06{Fixed tuni nut sprite}
 ; @subid_07{Fixed sword sprite}
 .define INTERACID_PATCH			$94
-.else
-.define INTERACID_GHASTLY_DOLL		$94
-.endif
 
 ;;
 ; Ball used by villagers. Subid is controlled by $cfd3.
@@ -2496,6 +2492,18 @@
 ; @subid_01{Rooster that leads to spring banana}
 .define INTERACID_FLYING_ROOSTER	$8c
 
+;;
+; @subid_00-04{}
+.define INTERACID_FLOODED_HOUSE_GIRL	$8a
+
+;;
+; @subid_00-04{}
+.define INTERACID_MASTER_DIVERS_WIFE	$8b
+
+;;
+; @subid_00-04{}
+.define INTERACID_S_MASTER_DIVER	$8d
+
 ; bubbles?
 .define INTERACID_8e			$8e
 
@@ -2504,7 +2512,12 @@
 
 ;;
 ; @subid_00{Tarm ruins entrance script (spawn jewels)}
-; @subid_01-06{?}
+; @subid_01{Underwater pyramid jewel}
+; @subid_02{Handles bridge creation to X jewel island}
+; @subid_03{Handles event with X jewel moldorm}
+; @subid_04{Determines chest contents in Spool Swamp's jewel cave}
+; @subid_05{Determines chest contents in Eyeglass Lake's jewel cave}
+; @subid_06{???}
 ; @subid_07{Created by linked Vire interaction}
 .define INTERACID_JEWEL_HELPER		$90
 
@@ -2512,8 +2525,42 @@
 ; Jewels in place in tarm ruins (visual only)
 .define INTERACID_JEWEL			$92
 
-; Maku seed?
-.define INTERACID_93			$93
+;;
+; @subid_00{Hanging on Maku tree}
+; @subid_01{Given by Maku tree}
+.define INTERACID_S_MAKU_SEED		$93
+
+;;
+; Given by Maple
+.define INTERACID_GHASTLY_DOLL		$94
+
+;;
+; In rest house
+; TODO: interactions $95, $96, maybe $97, $9a, $9b all interact with each other
+;   for moblin rest house-related events
+; @subid_00{}
+; @subid_01{}
+; @subid_02{}
+; @subid_03{}
+; @subid_04{Rushes south}
+; @subid_05{Moves up, down, up?}
+.define INTERACID_KING_MOBLIN		$95
+
+;;
+; TODO: @subid_00-06{}
+.define INTERACID_S_MOBLIN		$96
+
+;;
+; TODO: subid_00-07{}
+.define INTERACID_S_OLD_MAN_WITH_RUPEES	$99
+
+;;
+; TODO:
+; subid_00{spawned in func _func_5a82}
+; subid_01{spawned by subid_02 4 times}
+; subid_02{same room as moblin rest house}
+; subid_03{spawned by subid_02}
+.define INTERACID_9a			$9a
 
 .define INTERACID_9d			$9d
 .define INTERACID_a5			$a5

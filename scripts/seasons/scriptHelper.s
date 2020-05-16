@@ -2453,7 +2453,7 @@ _makuTree_spawnBubble:
 	ret			; $617d
 
 makuTree_dropMakuSeed:
-	ldbc INTERACID_93 $01		; $617e
+	ldbc INTERACID_S_MAKU_SEED $01		; $617e
 	jp objectCreateInteraction		; $6181
 
 makuTree_OnoxTauntingAfterMakuSeedGet:
@@ -2486,12 +2486,15 @@ seasonsFunc_15_619a:
 	ret			; $61b3
 
 
-; unknown
-	ld bc,$61ca		; $61b4
+; ==============================================================================
+; INTERACID_JEWEL_HELPER
+; ==============================================================================
+jewelHelper_createPuff:
+	ld bc,_table_61ca		; $61b4
 	call addDoubleIndexToBc		; $61b7
 	call getFreeInteractionSlot		; $61ba
 	ret nz			; $61bd
-	ld (hl),$05		; $61be
+	ld (hl),INTERACID_PUFF		; $61be
 	ld l,$4b		; $61c0
 	ld a,(bc)		; $61c2
 	ld (hl),a		; $61c3
@@ -2501,21 +2504,20 @@ seasonsFunc_15_619a:
 	ld (hl),a		; $61c8
 	ret			; $61c9
 _table_61ca:
-	ld h,$26		; $61ca
-	ld h,$30		; $61cc
-	ld h,$3a		; $61ce
-	jr nc,$26		; $61d0
-	jr nc,$30		; $61d2
-	jr nc,$3a		; $61d4
-	ldd a,(hl)		; $61d6
-	ld h,$3a		; $61d7
-	jr nc,$3a		; $61d9
-	ldd a,(hl)		; $61db
+	.db $26 $26
+	.db $26 $30
+	.db $26 $3a
+	.db $30 $26
+	.db $30 $30
+	.db $30 $3a
+	.db $3a $26
+	.db $3a $30
+	.db $3a $3a
 
-
+jewelHelper_createMoldorm:
 	call getFreeEnemySlot		; $61dc
 	ret nz			; $61df
-	ld (hl),$4f		; $61e0
+	ld (hl),ENEMYID_MOLDORM		; $61e0
 	ld l,$8b		; $61e2
 	ld (hl),$30		; $61e4
 	ld l,$8d		; $61e6
@@ -2523,6 +2525,10 @@ _table_61ca:
 	ret			; $61ea
 
 
+; ==============================================================================
+; INTERACID_KING_MOBLIN
+; ==============================================================================
+kingMoblin_func_61eb:
 	ld a,$01		; $61eb
 	call interactionSetAnimation		; $61ed
 	ld h,d			; $61f0
@@ -2534,7 +2540,10 @@ _table_61ca:
 	ret			; $61f9
 
 
-seasonsFunc_15_61fa:
+; ==============================================================================
+; INTERACID_S_MOBLIN
+; ==============================================================================
+moblin_spawnMaskedMoblin:
 	call getFreeEnemySlot		; $61fa
 	ret nz			; $61fd
 	ld (hl),ENEMYID_MASKED_MOBLIN		; $61fe
@@ -2542,13 +2551,17 @@ seasonsFunc_15_61fa:
 	ld (hl),$01		; $6201
 	jp objectCopyPosition		; $6203
 
-seasonsFunc_15_6206:
+moblin_spawnSwordMaskedMoblin:
 	call getFreeEnemySlot		; $6206
 	ret nz			; $6209
 	ld (hl),ENEMYID_SWORD_MASKED_MOBLIN		; $620a
 	jp objectCopyPosition		; $620c
 
-seasonsFunc_15_620f:
+
+; ==============================================================================
+; INTERACID_S_OLD_MAN_WITH_RUPEES
+; ==============================================================================
+oldMan_takeRupees:
 	ld hl,$c6a5		; $620f
 	ldi a,(hl)		; $6212
 	or (hl)			; $6213
@@ -2559,27 +2572,30 @@ seasonsFunc_15_620f:
 	ld (de),a		; $621a
 	ld e,$42		; $621b
 	ld a,(de)		; $621d
-	ld hl,$6233		; $621e
+	ld hl,_oldMan_rupeeValues		; $621e
 	rst_addAToHl			; $6221
 	ld a,(hl)		; $6222
 	jp removeRupeeValue		; $6223
 
-seasonsFunc_15_6226:
+oldMan_giveRupees:
 	ld e,$42		; $6226
 	ld a,(de)		; $6228
-	ld hl,$6233		; $6229
+	ld hl,_oldMan_rupeeValues		; $6229
 	rst_addAToHl			; $622c
 	ld c,(hl)		; $622d
 	ld a,$28		; $622e
 	jp giveTreasure		; $6230
-	stop			; $6233
-	dec c			; $6234
-	inc c			; $6235
-	stop			; $6236
-	inc c			; $6237
-	dec c			; $6238
-	dec bc			; $6239
-	inc c			; $623a
+
+_oldMan_rupeeValues:
+	.db RUPEEVAL_300
+	.db RUPEEVAL_200
+	.db RUPEEVAL_100
+	.db RUPEEVAL_300
+	.db RUPEEVAL_100
+	.db RUPEEVAL_200
+	.db RUPEEVAL_050
+	.db RUPEEVAL_100
+
 
 seasonsFunc_15_623b:
 	ld a,$40		; $623b

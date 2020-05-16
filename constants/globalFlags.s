@@ -139,7 +139,7 @@
 	GLOBALFLAG_3d				db ; $2a: same as GLOBALFLAG_3d from ages?
 	GLOBALFLAG_PAID_50_RUPEES_TO_DIMITRI_BULLIES	db ; $2b
 	GLOBALFLAG_SECRET_CHEST_WAITING		db ; $2c
-	GLOBALFLAG_S_2d				db ; $2d: Talked to King Moblin in Sunken City?
+	GLOBALFLAG_S_2d				db ; $2d: Saw King Moblin in Sunken City
 	GLOBALFLAG_SWIMMING_CHALLENGE_SUCCEEDED	db ; $2e
 	GLOBALFLAG_S_2f				db ; $2f
 	GLOBALFLAG_DRAGON_ONOX_BEATEN		db ; $30

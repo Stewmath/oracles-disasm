@@ -2167,7 +2167,7 @@ wChestContentsOverride: ; $cca3/$ccbd
 ; Used for farore's secrets, maybe also the chest minigame?
 	dw
 
-wEyePuzzleCorrectDirection: ; $cca5
+wEyePuzzleCorrectDirection: ; $cca5/$ccbe
 ; Correct direction to move in for the scrambled rooms in the final dungeon
 	db
 wBlockPushAngle: ; $cca6/$ccc0
