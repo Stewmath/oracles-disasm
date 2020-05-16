@@ -39,7 +39,7 @@ function insert() {
 # Rebuild with FORCE_SECTIONS defined.
 # This should keep the addresses the same as the vanilla rom, provided nothing was
 # altered too drastically.
-rm build_ages/ages.o
+rm build_ages_e/ages.o
 FORCE_SECTIONS=1 make ages
 
 [[ $? != 0 ]] && exit 1
@@ -55,6 +55,8 @@ insert $((0x69da)) $((0x7870))
 insert $((0xfda8a)) $((0xfdd4b))
 # Unique gfx headers
 insert $((0x119d0)) $((0x11b52))
+# Text offset split index
+insert $((0xfcf8e)) $((0xfcf8f))
 # Text offset pointers
 insert $((0xfcfb3)) $((0xfcff5))
 
