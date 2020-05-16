@@ -716,7 +716,7 @@ danceLeaderScript_danceTutorial:
 	writememory $cfdf $ff
 	setanimation $01
 	showtext TX_0108
-	jumpiftextoptioneq $01 $6641
+	jumpiftextoptioneq $01 danceLeaderScript_promptForTutorial@needTutorial
 	showtext TX_0109
 	checkmemoryeq $cba0 $00
 	jump2byte danceLeaderScript_promptForTutorial@danceLeaderScript_readyToDance
@@ -1481,7 +1481,10 @@ dinScript_discoverLinkCollapsed_body:
 	scriptend
 
 
-script_14_5246:
+; ==============================================================================
+; INTERACID_ZELDA_KIDNAPPED_ROOM
+; ==============================================================================
+ZeldaBeingKidnappedEvent_body:
 	disableinput
 	writememory $ccab $01
 	delay 6
@@ -1514,10 +1517,10 @@ script_14_5246:
 	playsound $c8
 	delay 6
 	writememory $cfc0 $04
-	asm15 $63c7
+	asm15 scriptHlp.playLinkCutscene2
 	checkmemoryeq $d001 $00
 	delay 6
-	asm15 $63d1 $00
+	asm15 scriptHlp.forceLinkState8AndSetDirection DIR_UP
 	setmusic $39
 	writememory $cfc0 $05
 	setcounter1 $42
@@ -1526,21 +1529,21 @@ script_14_5246:
 	setcounter1 $24
 	writememory $cfc0 $07
 	delay 5
-	asm15 $63d1 $03
+	asm15 scriptHlp.forceLinkState8AndSetDirection DIR_LEFT
 	setcounter1 $46
 	showtext TX_0507
-	asm15 $63d8
+	asm15 scriptHlp.zeldaKidnappedRoom_loadImpa
 	writememory $cfc0 $08
 	delay 7
 	writememory $cfc0 $09
-	asm15 $63d1 $02
+	asm15 scriptHlp.forceLinkState8AndSetDirection DIR_DOWN
 	setcounter1 $32
 	showtext TX_0508
 	writememory $cfc0 $0a
 	delay 6
 	showtext TX_0509
 	delay 3
-	asm15 $63c1 $25
+	asm15 scriptHlp.linkedScript_giveRing BLUE_JOY_RING
 	delay 6
 	showtext TX_050a
 	delay 6

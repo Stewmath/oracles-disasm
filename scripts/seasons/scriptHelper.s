@@ -1,5 +1,9 @@
  m_section_force Script_Helper2 NAMESPACE scriptHlp
 
+
+; ==============================================================================
+; INTERACID_DUNGEON_SCRIPT
+; ==============================================================================
 D3spawnPitSpreader:
 	; Part $0a, subid $00, yh $72
 	ld bc,$0072		; $5481
@@ -490,6 +494,9 @@ _createLightableTorches:
 	ret			; $5719
 
 
+; ==============================================================================
+; INTERACID_MAKU_CUTSCENES
+; ==============================================================================
 seasonsFunc_15_571a:
 	call fadeoutToBlackWithDelay		; $571a
 	jr +			; $571d
@@ -2732,7 +2739,7 @@ seasonsFunc_15_62d9:
 moblinKeepScene_warpOutOfMoblinKeep:
 	ld a,GLOBALFLAG_MOBLINS_KEEP_DESTROYED		; $62e2
 	call setGlobalFlag		; $62e4
-	ld a,GLOBALFLAG_S_2f		; $62e7
+	ld a,GLOBALFLAG_DONT_DISPLAY_SEASON_INFO		; $62e7
 	call setGlobalFlag		; $62e9
 	ld hl,@warpDestVariables		; $62ec
 	call setWarpDestVariables		; $62ef
@@ -2751,38 +2758,46 @@ moblinKeepScene_putLinkOnGround:
 	jp putLinkOnGround		; $6307
 
 
-seasonsFunc_15_630a:
+; ==============================================================================
+; INTERACID_SHIP_PIRATIAN
+; INTERACID_SHIP_PIRATIAN_CAPTAIN
+; ==============================================================================
+shipPiratian_incCbb3:
 	ld hl,$cbb3		; $630a
 	inc (hl)		; $630d
 	ret			; $630e
 
-seasonsFunc_15_630f:
+shipPiratian_setRandomAnimation:
 	call getRandomNumber		; $630f
 	and $03			; $6312
 	jp interactionSetAnimation		; $6314
 
-seasonsFunc_15_6317:
+shipPiratian_linkBoarding:
 	call setLinkForceStateToState08		; $6317
 	ld hl,$d008		; $631a
-	ld (hl),$01		; $631d
+	ld (hl),DIR_RIGHT		; $631d
 	ld l,$1a		; $631f
 	set 7,(hl)		; $6321
 	ret			; $6323
 
-seasonsFunc_15_6324:
+shipPiratian_setAnimationIfLinkNear:
 	ld c,$10		; $6324
 	call objectCheckLinkWithinDistance		; $6326
 	rrca			; $6329
 	and $03			; $632a
 	jp interactionSetAnimation		; $632c
 
+
+; ==============================================================================
+; INTERACID_LINKED_CUTSCENE
+; ==============================================================================
 seasonsFunc_15_632f:
 	call darkenRoom		; $632f
-	jr _label_15_255		; $6332
+	jr ++			; $6332
 
 seasonsFunc_15_6334:
 	call brightenRoom		; $6334
-_label_15_255:
+++
 	xor a			; $6337
 	ld ($c4b2),a		; $6338
 	ld ($c4b4),a		; $633b
@@ -2878,27 +2893,27 @@ seasonsFunc_15_63a6:
 	ld (hl),$50		; $63b5
 	ret			; $63b7
 
-seasonsFunc_15_63b8:
-	ld hl,$d008		; $63b8
+
+; ==============================================================================
+; Generic
+; ==============================================================================
+faceOppositeDirectionAsLink:
+	ld hl,w1Link.direction		; $63b8
 	ld a,(hl)		; $63bb
 	xor $02			; $63bc
 	jp interactionSetAnimation		; $63be
 
-
-; ==============================================================================
-; INTERACID_S_GREAT_FAIRY
-; Temple fairy that awaits a secret
-; ==============================================================================
 linkedScript_giveRing:
 	ld b,a			; $63c1
 	ld c,$00		; $63c2
 	jp giveRingToLink		; $63c4
-	ld a,$08		; $63c7
+
+playLinkCutscene2:
+	ld a,SPECIALOBJECTID_LINK_CUTSCENE		; $63c7
 	call setLinkIDOverride		; $63c9
 	ld l,$02		; $63cc
 	ld (hl),$08		; $63ce
 	ret			; $63d0
-
 
 forceLinkState8AndSetDirection:
 	ld hl,w1Link.direction	; $63d1
@@ -2906,18 +2921,26 @@ forceLinkState8AndSetDirection:
 	jp setLinkForceStateToState08		; $63d5
 
 
-; unknown
-	ld bc,$6417		; $63d8
-	jr _label_15_260		; $63db
-	ld bc,$640d		; $63dd
-	call $63f5		; $63e0
-	ld bc,$6412		; $63e3
-	call $63f5		; $63e6
-	ld bc,$641c		; $63e9
-	call $63f5		; $63ec
-	call $63f5		; $63ef
-	call $63f5		; $63f2
-_label_15_260:
+; ==============================================================================
+; INTERACID_ZELDA_KIDNAPPED_ROOM
+; ==============================================================================
+zeldaKidnappedRoom_loadImpa:
+	ld bc,_zeldaKidnapped_impaData		; $63d8
+	jr _zeldaKidnapped_spawnInteraction		; $63db
+	
+zeldaKidnappedRoom_loadZeldaAndMoblins:
+	ld bc,_zeldaKidnapped_kingMoblinData		; $63dd
+	call _zeldaKidnapped_spawnInteraction		; $63e0
+	
+	ld bc,_zeldaKidnapped_zeldaData		; $63e3
+	call _zeldaKidnapped_spawnInteraction		; $63e6
+	
+	ld bc,_zeldaKidnapped_moblinData		; $63e9
+	call _zeldaKidnapped_spawnInteraction		; $63ec
+	call _zeldaKidnapped_spawnInteraction		; $63ef
+	call _zeldaKidnapped_spawnInteraction		; $63f2
+	
+_zeldaKidnapped_spawnInteraction:
 	call getFreeInteractionSlot		; $63f5
 	ret nz			; $63f8
 	ld a,(bc)		; $63f9
@@ -2939,38 +2962,21 @@ _label_15_260:
 	inc bc			; $640b
 	ret			; $640c
 
-_table_640d:
-	sub l			; $640d
-	dec b			; $640e
-	nop			; $640f
-	inc d			; $6410
-	ld d,b			; $6411
-_table_6412:
-	ld b,h			; $6412
-	ld b,$00		; $6413
-	ld c,b			; $6415
-	ld d,b			; $6416
-	cp d			; $6417
-	inc bc			; $6418
-	nop			; $6419
-	adc b			; $641a
-	ld b,b			; $641b
-_table_641c:
-	sub (hl)		; $641c
-	ld b,$00		; $641d
-	ld c,b			; $641f
-	jr c,-$6a	; $6420
-	ld b,$01		; $6422
-	ld c,b			; $6424
-	ld l,b			; $6425
-	sub (hl)		; $6426
-	dec b			; $6427
-	ld (bc),a		; $6428
-	jr z,$30		; $6429
-	sub (hl)		; $642b
-	dec b			; $642c
-	inc bc			; $642d
-	jr z,$70	; $642e
+; id - subid - var03 - yh - xh
+_zeldaKidnapped_kingMoblinData:
+	.db INTERACID_KING_MOBLIN, $05 $00 $14 $50
+
+_zeldaKidnapped_zeldaData:
+	.db INTERACID_S_ZELDA,     $06 $00 $48 $50
+
+_zeldaKidnapped_impaData:
+	.db INTERACID_ba,          $03 $00 $88 $40
+
+_zeldaKidnapped_moblinData:
+	.db INTERACID_S_MOBLIN,    $06 $00 $48 $38
+	.db INTERACID_S_MOBLIN,    $06 $01 $48 $68
+	.db INTERACID_S_MOBLIN,    $05 $02 $28 $30
+	.db INTERACID_S_MOBLIN,    $05 $03 $28 $70
 
 
 linkedFunc_15_6430:

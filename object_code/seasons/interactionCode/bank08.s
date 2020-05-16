@@ -5818,7 +5818,7 @@ interactionCode4d:
 @@state0:
 	ld a,$01		; $7380
 	ld (de),a		; $7382
-	ld a,GLOBALFLAG_S_1b		; $7383
+	ld a,GLOBALFLAG_TALKED_WITH_GHOST_PIRATE		; $7383
 	call checkGlobalFlag		; $7385
 	jp z,interactionDelete		; $7388
 	ld c,INTERACID_PIRATE_SKULL		; $738b

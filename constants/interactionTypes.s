@@ -2149,7 +2149,7 @@
 ; @subid_03{TODO: With animals/people in cutscenes}
 ; @subid_04{Same script as above - unused?}
 ; @subid_05{TODO: With a triforce interaction}
-; @subid_06{TODO: Script has her pace around - before getting kidnapped?}
+; @subid_06{Pacing around in North Horon about to be kidnapped}
 ; @subid_07{After Zelda Villagers cutscene, she's there with animals}
 ; @subid_08{By Maku tree, before fighting Onox}
 ; @subid_09{In Impa's house after saving her from vire}
@@ -2541,12 +2541,13 @@
 ; @subid_02{}
 ; @subid_03{spawned from INTERACID_MOBLIN_KEEP_SCENES - when coming down from Natzu}
 ; @subid_04{spawned from seasonsFunc_3e52 (after moblin keep destroyed?) Rushes south}
-; @subid_05{Moves up, down, up?}
+; @subid_05{spawned from interactionCodec3 as part of the spawned minions, Moves up, down, up?}
 .define INTERACID_KING_MOBLIN		$95
 
 ;;
 ; TODO: @subid_00-06{}
 ; subid04 spawned by INTERACID_MOBLIN_KEEP_SCENES
+; subid05-06 spawned by interactionCodec3 as part of the spawned minions
 .define INTERACID_S_MOBLIN		$96
 
 ;;
@@ -2607,23 +2608,94 @@
 ; @subid_00-04{}
 .define INTERACID_ad			$ad
 
+;;
+; @subid_00{}
+; @subid_01{spawned by subid_00}
+.define INTERACID_af			$af
+
+; regular piratian in cutscene?
+; @subid_00{Unused??}
+; @subid_01{1st scene in pirate ship, text handler for pirate coming down stairs}
+; @subid_02{The actual piratian spawned from subid_01}
+; @subid_03{1st scene in pirate ship, standing around}
+; @subid_04-06{Unused?? possibly due to 4 in ship all using subid_03}
+; @subid_07{Text handler when leaving Samasa desert}
+; @subid_08{Text for the 1st dizzy pirate from above (spawns the actual pirate - subid_0a)}
+; @subid_09{Focused invisible object moving left and right, to sway ship}
+; @subid_0a{1st piratian coming inside ship when it's swaying}
+; @subid_0b{2nd piratian coming inside ship when it's swaying}
+; @subid_0c{3rd piratian coming inside ship when it's swaying}
+; @subid_0d{Sick piratian already inside ship}
+; @subid_0e{Sick piratian already inside ship}
+; @subid_0f{Unused??}
+; @subid_10{Actual NPC at West Coast ship - top half}
+; @subid_11{Actual NPC at West Coast ship - bottom half}
+; @subid_12-16{Inside pirate ship once docked in West Coast}
+; @subid_17{Unused??}
+; @subid_18{Ghost piratian}
+; @subid_19{Handles text when above and left of boxes above ghost piratian}
+; @subid_1a{Handles text when above and right of boxes above ghost piratian}
+.define INTERACID_SHIP_PIRATIAN		$b1
+
+; piratian captain in cutscene?
+; @subid_00{1st scene in pirate ship, leaving Subrosia}
+; @subid_01{2nd scene in pirate ship, dizzy and sick}
+; @subid_02{Text handler at west coast ship}
+; @subid_03{Actual NPC at West Coast ship - top half}
+.define INTERACID_SHIP_PIRATIAN_CAPTAIN	$b2
+
 .define INTERACID_LINKED_CUTSCENE	$b3
+
+;;
+; Twinrova witches
+; @subid_00-07{}
 .define INTERACID_b4			$b4
 
 ;;
-; Shows up in a linked game when handing captain the pirate's bell
+; Linked game only
+; @subid_00{Mrs Ruul's house}
+; @subid_01{Outside Syrup Hut}
+; @subid_02{On the way to Samasa desert gate}
+; @subid_03{When pirates are leaving for West Coast}
+; @subid_04{Pirate house 1F}
 .define INTERACID_S_AMBI		$b8
 
-; the following animals are 5 that hang around Zelda
-.define INTERACID_ba			$ba
-.define INTERACID_bb			$bb
-.define INTERACID_bc			$bc
-.define INTERACID_bd			$bd
-.define INTERACID_be			$be
+;;
+; @subid_00-07{}
+.define INTERACID_b9			$b9
 
+; TODO: the following people are 5 that hang around Zelda
+; @subid_00-03{}
+.define INTERACID_ba			$ba ; Impa? - subid03 spawned by interactionCodec3
+; @subid_00-02{}
+.define INTERACID_bb			$bb ; boy?
+; @subid_00-04{}
+.define INTERACID_bc			$bc ; boy?
+; @subid_00-02{}
+.define INTERACID_bd			$bd ; talon/old man?
+; @subid_00-02{}
+.define INTERACID_be			$be ; talon/old man?
+
+;;
+; @subid_00{}
+; @subid_01{}
 .define INTERACID_bf			$bf
 
+;;
+.define INTERACID_MAYORS_HOUSE_UNLINKED_GIRL	$c2
+
+;;
+.define INTERACID_ZELDA_KIDNAPPED_ROOM	$c3
+
+;;
 .define INTERACID_ZELDA_VILLAGERS_ROOM	$c4
+
+;;
+.define INTERACID_D4_HOLES_FLOORTRAP_ROOM	$c5
+
+;;
+.define INTERACID_HEROS_CAVE_SWORD_CHEST	$c6
+
 .define INTERACID_BOOMERANG_SUBROSIAN	$c8
 .define INTERACID_BOOMERANG		$c9
 

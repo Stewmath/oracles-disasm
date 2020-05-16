@@ -3,12 +3,12 @@
 _cutsceneHandler_0c:
 	ld a,(wCutsceneState)		; $66ff
 	rst_jumpTable			; $6702
-	.dw _cutsceneHandler_0c_stage0
-	.dw _cutsceneHandler_0c_stage1
-	.dw _cutsceneHandler_0c_stage2
-	.dw _cutsceneHandler_0c_stage3
-	.dw _cutsceneHandler_0c_stage4
-	.dw _cutsceneHandler_0c_stage5
+	.dw _cutsceneHandler_0c_stage0 ; initial
+	.dw _cutsceneHandler_0c_stage1 ; digging through subrosia
+	.dw _cutsceneHandler_0c_stage2 ; inside ship
+	.dw _cutsceneHandler_0c_stage3 ; out in samasa desert
+	.dw _cutsceneHandler_0c_stage4 ; back inside ship
+	.dw _cutsceneHandler_0c_stage5 ; approaching west coast
 
 _cutsceneHandler_0c_stage0:
 	ld b,$10		; $670f
@@ -41,7 +41,7 @@ _cutsceneHandler_0c_stage1:
 	.dw @state5
 
 @state0:
-	call seasonsFunc_03_6815		; $674b
+	call _incCbb3		; $674b
 	ld a,$08		; $674e
 	ld ($cbb8),a		; $6750
 	ld a,$04		; $6753
@@ -55,7 +55,7 @@ _cutsceneHandler_0c_stage1:
 	call seasonsFunc_03_681a		; $6766
 	jp seasonsFunc_03_67f8		; $6769
 @state0Func0:
-	ld hl,@state0Table0		; $676c
+	ld hl,@subrosianSandReplacementPositions	; $676c
 	ld d,$0f		; $676f
 -
 	ldi a,(hl)		; $6771
@@ -67,11 +67,10 @@ _cutsceneHandler_0c_stage1:
 	dec d			; $677a
 	jr nz,-			; $677b
 	ret			; $677d
-@state0Table0:
-	.db $04 $05 $06 $07
-	.db $08 $14 $15 $16
-	.db $17 $18 $24 $25
-	.db $26 $27 $28
+@subrosianSandReplacementPositions:
+	.db $04 $05 $06 $07 $08
+	.db $14 $15 $16 $17 $18
+	.db $24 $25 $26 $27 $28
 
 @state1:
 	ld hl,$cbb4		; $678d
@@ -80,38 +79,38 @@ _cutsceneHandler_0c_stage1:
 	ld bc,TX_4e00		; $6792
 	call showText		; $6795
 	call @state0Func0		; $6798
-	jp seasonsFunc_03_6815		; $679b
+	jp _incCbb3		; $679b
 
 @state2:
 	call retIfTextIsActive		; $679e
-	ld hl,objectData.objectData7dd9		; $67a1
+	ld hl,objectData.objectData_sandPuffsFromShipDigging		; $67a1
 	call parseGivenObjectData		; $67a4
 	ld a,MUS_TRIUMPHANT		; $67a7
 	call playSound		; $67a9
-	jp seasonsFunc_03_6815		; $67ac
+	jp _incCbb3		; $67ac
 
 @state3:
-	call seasonsFunc_03_6b77		; $67af
+	call _incCbbfAndCbb8		; $67af
 	ld a,(hl)		; $67b2
 	cp $10			; $67b3
 	jr c,+			; $67b5
 	call seasonsFunc_03_681a		; $67b7
 	jr nz,+			; $67ba
-	call seasonsFunc_03_6815		; $67bc
+	call _incCbb3		; $67bc
 +
 	jp seasonsFunc_03_67f8		; $67bf
 
 @state4:
-	call seasonsFunc_03_6b77		; $67c2
+	call _incCbbfAndCbb8		; $67c2
 	ld a,(hl)		; $67c5
 	cp $30			; $67c6
 	jr c,seasonsFunc_03_67f8	; $67c8
 	call fadeoutToWhite		; $67ca
-	call seasonsFunc_03_6815		; $67cd
+	call _incCbb3		; $67cd
 	jr seasonsFunc_03_67f8		; $67d0
 
 @state5:
-	call seasonsFunc_03_6b77		; $67d2
+	call _incCbbfAndCbb8		; $67d2
 	ld a,(wPaletteThread_mode)		; $67d5
 	or a			; $67d8
 	jr nz,seasonsFunc_03_67f8	; $67d9
@@ -142,7 +141,7 @@ seasonsFunc_03_67f8:
 	ld ($cbbc),a		; $6810
 	jr seasonsFunc_03_684c		; $6813
 
-seasonsFunc_03_6815:
+_incCbb3:
 	ld hl,$cbb3		; $6815
 	inc (hl)		; $6818
 	ret			; $6819
@@ -208,9 +207,9 @@ _cutsceneHandler_0c_stage2:
 @seasonsFunc_03_688c:
 	call disableLcd			; $688c
 	call clearScreenVariablesAndWramBank1		; $688f
-	call seasonsFunc_03_6815		; $6892
-	ld bc,$05d4		; $6895
-	call _cutsceneHandler_0c_stage3@state0Func0		; $6898
+	call _incCbb3		; $6892
+	ld bc,ROOM_SEASONS_5d4		; $6895
+	call _cutsceneHandler_0c_stage3@loadNewRoom		; $6898
 	ld hl,$d000		; $689b
 	ld (hl),$03		; $689e
 	ld l,$0b		; $68a0
@@ -232,7 +231,7 @@ _cutsceneHandler_0c_stage2:
 	or a			; $68c0
 	ret nz			; $68c1
 	call @seasonsFunc_03_688c		; $68c2
-	ld hl,objectData.objectData7e14		; $68c5
+	ld hl,objectData.objectData_insidePirateShipLeavingSubrosia		; $68c5
 	jp parseGivenObjectData		; $68c8
 
 @state1:
@@ -258,7 +257,7 @@ _cutsceneHandler_0c_stage3:
 	ret nz			; $68e6
 	call disableLcd		; $68e7
 	call clearScreenVariablesAndWramBank1		; $68ea
-	call seasonsFunc_03_6815		; $68ed
+	call _incCbb3		; $68ed
 	ld a,$40		; $68f0
 	ld ($cbb8),a		; $68f2
 	ld ($cbbf),a		; $68f5
@@ -266,18 +265,18 @@ _cutsceneHandler_0c_stage3:
 	ld ($cbb4),a		; $68fa
 	ld a,$01		; $68fd
 	ld (wRoomStateModifier),a		; $68ff
-	ld bc,$00fe		; $6902
-	call @state0Func0		; $6905
+	ld bc,ROOM_SEASONS_0fe		; $6902
+	call @loadNewRoom		; $6905
 	call @state0Func2		; $6908
 	ld e,$0c		; $690b
 	call loadObjectGfxHeaderToSlot4		; $690d
 	ld a,$52		; $6910
 	call loadGfxHeader		; $6912
-	ld hl,objectData.objectData7df0		; $6915
+	ld hl,objectData.objectData_leavingSamasaDesert		; $6915
 	call parseGivenObjectData		; $6918
 	ld a,$11		; $691b
 	jr @state0Func1		; $691d
-@state0Func0:
+@loadNewRoom:
 	ld a,b			; $691f
 	ld (wActiveGroup),a		; $6920
 	ld a,c			; $6923
@@ -322,7 +321,7 @@ _cutsceneHandler_0c_stage3:
 	ld hl,$cbb4		; $6974
 	dec (hl)		; $6977
 	ret nz			; $6978
-	call seasonsFunc_03_6815		; $6979
+	call _incCbb3		; $6979
 	xor a			; $697c
 	ldh (<hCameraY),a	; $697d
 	ldh (<hCameraX),a	; $697f
@@ -333,27 +332,27 @@ _cutsceneHandler_0c_stage3:
 	call retIfTextIsActive		; $6987
 	ld a,$ff		; $698a
 	ld ($cfc0),a		; $698c
-	jp seasonsFunc_03_6815		; $698f
+	jp _incCbb3		; $698f
 
 @state3:
 	ld a,(wFrameCounter)		; $6992
 	and $07			; $6995
 	ret nz			; $6997
-	call seasonsFunc_03_6b77		; $6998
+	call _incCbbfAndCbb8		; $6998
 	ld a,(hl)		; $699b
 	cp $70			; $699c
 	jr c,seasonsFunc_03_69d1			; $699e
 	call fadeoutToWhite		; $69a0
 	ld a,$fb		; $69a3
 	call playSound		; $69a5
-	call seasonsFunc_03_6815		; $69a8
+	call _incCbb3		; $69a8
 	jr seasonsFunc_03_69d1			; $69ab
 
 @state4:
 	ld a,(wFrameCounter)		; $69ad
 	and $07			; $69b0
 	ret nz			; $69b2
-	call seasonsFunc_03_6b77		; $69b3
+	call _incCbbfAndCbb8		; $69b3
 	ld a,(wPaletteThread_mode)		; $69b6
 	or a			; $69b9
 	jr nz,seasonsFunc_03_69d1		; $69ba
@@ -389,7 +388,7 @@ _cutsceneHandler_0c_stage4:
 	call _cutsceneHandler_0c_stage2@seasonsFunc_03_688c		; $69f2
 	xor a			; $69f5
 	ld ($cfc0),a		; $69f6
-	ld hl,objectData.objectData7e2e		; $69f9
+	ld hl,objectData.objectData_sickPiratiansInShip		; $69f9
 	jp parseGivenObjectData		; $69fc
 
 @state1:
@@ -414,7 +413,7 @@ _cutsceneHandler_0c_stage5:
 	ret nz			; $6a19
 	call disableLcd		; $6a1a
 	call clearScreenVariablesAndWramBank1		; $6a1d
-	call seasonsFunc_03_6815		; $6a20
+	call _incCbb3		; $6a20
 	ld a,$90		; $6a23
 	ld ($cbb8),a		; $6a25
 	ld ($cbbf),a		; $6a28
@@ -422,8 +421,8 @@ _cutsceneHandler_0c_stage5:
 	ld ($cbbd),a		; $6a2d
 	ld a,$03		; $6a30
 	ld (wRoomStateModifier),a		; $6a32
-	ld bc,$00f2		; $6a35
-	call _cutsceneHandler_0c_stage3@state0Func0		; $6a38
+	ld bc,ROOM_SEASONS_0f2		; $6a35
+	call _cutsceneHandler_0c_stage3@loadNewRoom		; $6a38
 	ld a,$ff		; $6a3b
 	ld ($cd25),a		; $6a3d
 	ld e,$00		; $6a40
@@ -432,7 +431,7 @@ _cutsceneHandler_0c_stage5:
 	call loadGfxHeader		; $6a47
 	ld a,$54		; $6a4a
 	call loadGfxHeader		; $6a4c
-	ld hl,objectData.objectData7dfa		; $6a4f
+	ld hl,objectData.objectData_pirateShipEnteringWestCoast		; $6a4f
 	call parseGivenObjectData		; $6a52
 	ld a,$12		; $6a55
 	jp _cutsceneHandler_0c_stage3@state0Func1		; $6a57
@@ -441,12 +440,12 @@ _cutsceneHandler_0c_stage5:
 	ld a,(wFrameCounter)		; $6a5a
 	and $03			; $6a5d
 	jr nz,@state1Func0	; $6a5f
-	call seasonsFunc_03_6b80		; $6a61
+	call _decCbbfAndCbb8		; $6a61
 	ld a,(hl)		; $6a64
 	cp $09			; $6a65
 	jp nc,@state1Func0		; $6a67
 	call seasonsFunc_03_6b30		; $6a6a
-	call seasonsFunc_03_6815		; $6a6d
+	call _incCbb3		; $6a6d
 @state1Func0:
 	call seasonsFunc_03_69d1		; $6a70
 	jr seasonsFunc_03_6aca		; $6a73
@@ -455,7 +454,7 @@ _cutsceneHandler_0c_stage5:
 	ld a,(wFrameCounter)		; $6a75
 	and $07			; $6a78
 	jr nz,@state1Func0	; $6a7a
-	call seasonsFunc_03_6b80		; $6a7c
+	call _decCbbfAndCbb8		; $6a7c
 	ld a,(hl)		; $6a7f
 	cp $09			; $6a80
 	jr nc,@state1Func0	; $6a82
@@ -582,21 +581,21 @@ seasonsTable_03_6b59:
 	.db $ff
 
 seasonsFunc_03_6b6c:
-	ld hl,seasonsOamData_03_6b72		; $6b6c
+	ld hl,_oamData_03_6b72		; $6b6c
 	jp addSpritesToOam	; $6b6f
 
-seasonsOamData_03_6b72:
+_oamData_03_6b72:
 	.db $01			; $6b72
 	.db $10 $a6 $4c $09	; $6b73
 
-seasonsFunc_03_6b77:
+_incCbbfAndCbb8:
 	ld hl,$cbbf		; $6b77
 	inc (hl)		; $6b7a
 	ld hl,$cbb8		; $6b7b
 	inc (hl)		; $6b7e
 	ret			; $6b7f
 
-seasonsFunc_03_6b80:
+_decCbbfAndCbb8:
 	ld hl,$cbbf		; $6b80
 	dec (hl)		; $6b83
 	ld hl,$cbb8		; $6b84

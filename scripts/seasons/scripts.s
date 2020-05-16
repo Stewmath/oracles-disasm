@@ -3767,7 +3767,7 @@ horonVillageBoyScript_text5:
 	initcollisions
 -
 	checkabutton
-	asm15 scriptHlp.seasonsFunc_15_63b8
+	asm15 scriptHlp.faceOppositeDirectionAsLink
 	showloadedtext
 	wait 10
 	setanimationfromobjectbyte $7b
@@ -7634,7 +7634,7 @@ impaScript_villagersSeenButNoMakuSeed:
 	initcollisions
 -
 	checkabutton
-	asm15 scriptHlp.seasonsFunc_15_63b8
+	asm15 scriptHlp.faceOppositeDirectionAsLink
 	showtext TX_0600
 	wait 10
 	setanimationfromobjectbyte $7b
@@ -8054,37 +8054,43 @@ script779e:
 	jump2byte -
 
 
-script77a6:
+; ==============================================================================
+; INTERACID_SHIP_PIRATIAN
+; INTERACID_SHIP_PIRATIAN_CAPTAIN
+; ==============================================================================
+_pirateShipLoop:
 	wait 30
-	jump2byte script77a6
-script77a9:
+	jump2byte _pirateShipLoop
+
+shipPirationScript_piratianComingDownHandler:
 	setstate $03
 	setdisabledobjectsto11
 	wait 240
-	spawninteraction $b102, $98, $78
+	spawninteraction INTERACID_SHIP_PIRATIAN $02, $98, $78
 	checkcfc0bit 0
 	xorcfc0bit 0
 	wait 240
-	writememory $ccae, $02
+	writememory wScreenShakeMagnitude, $02
 	playsound SND_BIG_EXPLOSION
 	wait 60
 	setstate $02
 	xorcfc0bit 2
 	checkcfc0bit 0
-	asm15 scriptHlp.seasonsFunc_15_630a
+	asm15 scriptHlp.shipPiratian_incCbb3
 	scriptend
-script77c4:
+
+shipPiratianScript_piratianFromAbove:
 	setstate $02
 	setspeed SPEED_100
-	callscript script7801
+	callscript @moveLeftThenUp
 	asm15 objectSetVisiblec1
 	setzspeed -$01c0
 	wait 30
-	showtextlowindex $01
-	callscript script7809
-	showtextlowindex $03
-	callscript script7809
-	showtextlowindex $05
+	showtextlowindex <TX_4e01
+	callscript @passConvoToPirateCaptain
+	showtextlowindex <TX_4e03
+	callscript @passConvoToPirateCaptain
+	showtextlowindex <TX_4e05
 	movedown $30
 	moveright $10
 	wait 30
@@ -8094,57 +8100,61 @@ script77c4:
 	xorcfc0bit 2
 	setangleandanimation $18
 	setcoords $98, $78
-	callscript script7801
+	callscript @moveLeftThenUp
 	setzspeed -$01c0
 	wait 30
-	showtextlowindex $06
-	callscript script7809
+	showtextlowindex <TX_4e06
+	callscript @passConvoToPirateCaptain
 	xorcfc0bit 7
 	wait 30
-	showtextlowindex $08
+	showtextlowindex <TX_4e08
 	xorcfc0bit 0
-	jump2byte script77a6
-script7801:
+	jump2byte _pirateShipLoop
+@moveLeftThenUp:
 	setangleandanimation $18
 	wait 30
 	applyspeed $10
 	moveup $30
 	retscript
-script7809:
+@passConvoToPirateCaptain:
 	xorcfc0bit 1
 	checkcfc0bit 2
 	xorcfc0bit 2
 	setzspeed -$01c0
 	wait 30
 	retscript
-script7811:
+
+shipPirationScript_inShipLeavingSubrosia:
 	setstate $02
-	asm15 scriptHlp.seasonsFunc_15_630f
+	asm15 scriptHlp.shipPiratian_setRandomAnimation
 	checkcfc0bit 1
 	setzspeed -$01c0
 	setangleandanimation $10
 	checkcfc0bit 7
 	setzspeed -$01c0
-	jump2byte script77a6
-script7822:
+	jump2byte _pirateShipLoop
+
+shipPiratianScript_leavingSamasaDesert:
 	setcoords $f8, $f8
 	checkcfc0bit 0
-script7826:
+-
 	playsound SND_PIRATE_BELL
 	wait 60
-	jump2byte script7826
-script782b:
+	jump2byte -
+
+shipPiratianScript_dizzyPirate1Spawner:
 	setstate $02
 	setdisabledobjectsto11
 	wait 180
 	setmusic MUS_PIRATES
-	spawninteraction $b10a, $98, $78
+	spawninteraction INTERACID_SHIP_PIRATIAN $0a, $98, $78
 	checkcfc0bit 7
 	wait 30
-	showtextlowindex $11
-	asm15 scriptHlp.seasonsFunc_15_630a
+	showtextlowindex <TX_4e11
+	asm15 scriptHlp.shipPiratian_incCbb3
 	scriptend
-script783e:
+
+shipPiratianScript_swapShip:
 	setstate $02
 	wait 10
 	asm15 objectSetInvisible
@@ -8152,28 +8162,30 @@ script783e:
 	asm15 setCameraFocusedObject
 	setspeed SPEED_040
 	moveright $20
-script784e:
+-
 	moveleft $40
 	moveright $40
 	playsound SND_WAVE
-	jump2byte script784e
-script7856:
-	callscript script7891
-	showtextlowindex $0a
-	callscript script7880
-	callscript script7880
-	callscript script7880
+	jump2byte -
+
+shipPiratianScript_1stDizzyPirateDescending:
+	callscript _shipPiratian_spinAround
+	showtextlowindex <TX_4e0a
+	callscript _shipPiratian_spinFromDizziness
+	callscript _shipPiratian_spinFromDizziness
+	callscript _shipPiratian_spinFromDizziness
 	writememory $d008, $03
-	callscript script7880
-	callscript script7880
+	callscript _shipPiratian_spinFromDizziness
+	callscript _shipPiratian_spinFromDizziness
 	writememory $d008, $00
 	wait 30
-	showtextlowindex $0b
-	spawninteraction $b10b, $98, $78
+	showtextlowindex <TX_4e0b
+	spawninteraction INTERACID_SHIP_PIRATIAN $0b, $98, $78
 	checkcfc0bit 7
 	setzspeed -$01c0
-	jump2byte script77a6
-script7880:
+	jump2byte _pirateShipLoop
+
+_shipPiratian_spinFromDizziness:
 	setangle $19
 	applyspeed $10
 	setangle $04
@@ -8183,28 +8195,30 @@ script7880:
 	setangle $00
 	applyspeed $10
 	retscript
-script7891:
+
+_shipPiratian_spinAround:
 	setstate $04
 	setspeed SPEED_080
 	wait 60
 	retscript
-script7897:
-	callscript script7891
-	showtextlowindex $0c
+
+shipPirationScript_2ndDizzyPirateDescending:
+	callscript _shipPiratian_spinAround
+	showtextlowindex <TX_4e0c
 	writememory $d008, $02
-	callscript script78c2
-	callscript script78c2
-	callscript script78c2
+	callscript @moveAroundUncontrollably
+	callscript @moveAroundUncontrollably
+	callscript @moveAroundUncontrollably
 	writememory $d008, $01
-	callscript script78c2
+	callscript @moveAroundUncontrollably
 	writememory $d008, $00
 	wait 30
-	showtextlowindex $0d
-	spawninteraction $b10c, $98, $78
+	showtextlowindex <TX_4e0d
+	spawninteraction INTERACID_SHIP_PIRATIAN $0c, $98, $78
 	checkcfc0bit 7
 	setzspeed -$01c0
-	jump2byte script77a6
-script78c2:
+	jump2byte _pirateShipLoop
+@moveAroundUncontrollably:
 	setangle $07
 	applyspeed $0f
 	setangle $1b
@@ -8214,49 +8228,59 @@ script78c2:
 	setangle $00
 	applyspeed $10
 	retscript
-script78d3:
-	callscript script7891
-	showtextlowindex $0e
+
+shipPirationScript_3rdDizzyPirateDescending:
+	callscript _shipPiratian_spinAround
+	showtextlowindex <TX_4e0e
 	writememory $d008, $02
-	callscript script7880
-	callscript script7880
-	callscript script7880
+	callscript _shipPiratian_spinFromDizziness
+	callscript _shipPiratian_spinFromDizziness
+	callscript _shipPiratian_spinFromDizziness
 	wait 30
 	writememory $d008, $03
-	showtextlowindex $0f
-	spawninteraction $b201, $98, $78
+	showtextlowindex <TX_4e0f
+	spawninteraction INTERACID_SHIP_PIRATIAN_CAPTAIN $01, $98, $78
 	checkcfc0bit 7
 	setzspeed -$01c0
-	jump2byte script77a6
-script78f7:
+	jump2byte _pirateShipLoop
+
+shipPiratianScript_dizzyPiratiansAlreadyInside:
 	setstate $04
 	checkcfc0bit 7
 	setzspeed -$01c0
-	jump2byte script77a6
-script78ff:
-	jumpifroomflagset $40, script7904
+	jump2byte _pirateShipLoop
+
+shipPiratianScript_landedInWestCoast_shipTopHalf:
+	jumpifroomflagset $40, @landedInWestCoast
 	scriptend
-script7904:
-	rungenericnpclowindex $15
-script7906:
-	jumpifglobalflagset $17, script790b
+@landedInWestCoast:
+	rungenericnpclowindex <TX_4e15
+	
+shipPiratianScript_landedInWestCoast_shipBottomHalf:
+	jumpifglobalflagset GLOBALFLAG_PIRATE_SHIP_DOCKED, @alreadyDocked
 	scriptend
-script790b:
-	rungenericnpclowindex $16
-script790d:
-	rungenericnpclowindex $17
-script790f:
-	rungenericnpclowindex $18
-script7911:
-	rungenericnpclowindex $19
-script7913:
-	rungenericnpclowindex $1a
-script7915:
-	rungenericnpclowindex $1b
-script7917:
+@alreadyDocked:
+	rungenericnpclowindex <TX_4e16
+
+shipPiratianScript_insideDockedShip1:
+	rungenericnpclowindex <TX_4e17
+
+shipPiratianScript_insideDockedShip2:
+	rungenericnpclowindex <TX_4e18
+
+shipPiratianScript_insideDockedShip3:
+	rungenericnpclowindex <TX_4e19
+
+shipPiratianScript_insideDockedShip4:
+	rungenericnpclowindex <TX_4e1a
+
+shipPiratianScript_insideDockedShip5:
+	rungenericnpclowindex <TX_4e1b
+
+shipPiratianScript_ghostPiratian:
 	setstate $02
 	asm15 objectSetInvisible
-	jumpifglobalflagset $1b, stubScript
+	jumpifglobalflagset GLOBALFLAG_TALKED_WITH_GHOST_PIRATE, stubScript
 	setcollisionradii $38, $30
 	checkcollidedwithlink_onground
 	createpuff
@@ -8265,85 +8289,94 @@ script7917:
 	setstate $05
 	asm15 interactionSetAlwaysUpdateBit
 	checkabutton
-	asm15 scriptHlp.seasonsFunc_15_6324
-	showtextlowindex $01
+	asm15 scriptHlp.shipPiratian_setAnimationIfLinkNear
+	showtextlowindex <TX_4d01
 	setdisabledobjectsto11
 	wait 30
 	createpuff
-	setglobalflag $1b
+	setglobalflag GLOBALFLAG_TALKED_WITH_GHOST_PIRATE
 	enableallobjects
-script793a:
+--
 	xorcfc0bit 0
 	scriptend
-script793c:
+
+shipPiratianScript_NWofGhostPiration:
 	setstate $06
 	asm15 objectSetInvisible
 	setcollisionradii $06, $0a
-script7944:
-	jumpifglobalflagset $1b, stubScript
+-
+	jumpifglobalflagset GLOBALFLAG_TALKED_WITH_GHOST_PIRATE, stubScript
 	checkcollidedwithlink_onground
-	showtextlowindex $00
-	jump2byte script793a
-script794d:
+	showtextlowindex <TX_4d00
+	jump2byte --
+
+shipPiratianScript_NEofGhostPiration:
 	setstate $06
 	asm15 objectSetInvisible
 	initcollisions
-	jump2byte script7944
-script7955:
-	callscript script796d
-	showtextlowindex $02
+	jump2byte -
+
+shipPiratianCaptainScript_leavingSubrosia:
+	callscript @hop
+	showtextlowindex <TX_4e02
 	xorcfc0bit 2
-	callscript script796d
-	showtextlowindex $04
+	callscript @hop
+	showtextlowindex <TX_4e04
 	xorcfc0bit 2
-	callscript script796d
-	showtextlowindex $07
+	callscript @hop
+	showtextlowindex <TX_4e07
 	xorcfc0bit 2
 	checkcfc0bit 7
 	setzspeed -$01c0
-	jump2byte script77a6
-script796d:
+	jump2byte _pirateShipLoop
+@hop:
 	checkcfc0bit 1
 	xorcfc0bit 1
 	setzspeed -$01c0
 	wait 30
 	retscript
-script7974:
+
+shipPiratianCaptainScript_gettingSick:
 	setspeed SPEED_080
-	callscript script7880
-	callscript script7880
+	callscript _shipPiratian_spinFromDizziness
+	callscript _shipPiratian_spinFromDizziness
 	writememory $d008, $02
-	showtextlowindex $10
+	showtextlowindex <TX_4e10
 	xorcfc0bit 7
-	jump2byte script77a6
-script7985:
-	jumpifroomflagset $40, script7999
+	jump2byte _pirateShipLoop
+
+shipPiratianCaptainScript_arrivingInWestCoast:
+	jumpifroomflagset $40, @arrived
 	asm15 objectSetInvisible
 	wait 4
 	wait 60
-	showtextlowindex $12
+	showtextlowindex <TX_4e12
 	wait 60
-	spawninteraction $b203, $68, $68
+	spawninteraction INTERACID_SHIP_PIRATIAN_CAPTAIN $03, $68, $68
 	orroomflag $40
 	scriptend
-script7999:
+@arrived:
 	incstate
 	setcoords $68, $78
-	rungenericnpclowindex $14
-script79a0:
+	rungenericnpclowindex <TX_4e14
+
+shipPiratianCaptainScript_inWestCoast:
 	setspeed SPEED_100
 	setangle $08
 	applyspeed $10
-	asm15 scriptHlp.seasonsFunc_15_6317
+	asm15 scriptHlp.shipPiratian_linkBoarding
 	setdisabledobjectsto11
 	wait 60
-	showtextlowindex $13
+	showtextlowindex <TX_4e13
 	resetmusic
 	enableinput
 	incstate
-	rungenericnpclowindex $14
+	rungenericnpclowindex <TX_4e14
 
 
+; ==============================================================================
+; INTERACID_LINKED_CUTSCENE
+; ==============================================================================
 linkedCutsceneScript_witches1:
 	checkflagset $00, wScrollMode
 	disablemenu
@@ -8377,7 +8410,6 @@ linkedCutsceneScript_witches1:
 	setglobalflag GLOBALFLAG_WITCHES_1_SEEN
 	enableinput
 	scriptend
-
 
 linkedCutsceneScript_witches2:
 	checkflagset $00, wScrollMode
@@ -8417,7 +8449,6 @@ linkedCutsceneScript_witches2:
 	setglobalflag GLOBALFLAG_WITCHES_2_SEEN
 	scriptend
 
-
 linkedCutsceneScript_zeldaVillagers:
 	writememory wcc90, $01
 	setcollisionradii $02, $02
@@ -8425,51 +8456,55 @@ linkedCutsceneScript_zeldaVillagers:
 	writememory wCutsceneTrigger, CUTSCENE_S_ZELDA_VILLAGERS
 	scriptend
 
-
 linkedCutsceneScript_zeldaKidnapped:
 	writememory wCutsceneTrigger, CUTSCENE_S_ZELDA_KIDNAPPED
 	scriptend
-
 
 linkedCutsceneScript_flamesOfDestruction:
 	writememory wCutsceneTrigger, CUTSCENE_S_FLAME_OF_DESTRUCTION
 	scriptend
 
 
-script7a41:
+; ==============================================================================
+; INTERACID_S_AMBI
+; ==============================================================================
+ambiScript_mrsRuulsHouse:
 	initcollisions
-script7a42:
+--
 	checkabutton
-	jumpifglobalflagset $29, script7a4d
-	setglobalflag $29
-	showtextlowindex $39
-	jump2byte script7a42
-script7a4d:
-	showtextlowindex $36
-	jump2byte script7a42
-script7a51:
+	jumpifglobalflagset GLOBALFLAG_TALKED_TO_AMBI, @talkedToAmbi
+	setglobalflag GLOBALFLAG_TALKED_TO_AMBI
+	showtextlowindex <TX_3a39
+	jump2byte --
+@talkedToAmbi:
+	showtextlowindex <TX_3a36
+	jump2byte --
+	
+ambiScript_outsideSyrupHut:
 	initcollisions
-script7a52:
+--
 	checkabutton
-	jumpifglobalflagset $29, script7a5d
-	setglobalflag $29
-	showtextlowindex $3a
-	jump2byte script7a52
-script7a5d:
-	showtextlowindex $37
-	jump2byte script7a52
-script7a61:
+	jumpifglobalflagset GLOBALFLAG_TALKED_TO_AMBI, @talkedToAmbi
+	setglobalflag GLOBALFLAG_TALKED_TO_AMBI
+	showtextlowindex <TX_3a3a
+	jump2byte --
+@talkedToAmbi:
+	showtextlowindex <TX_3a37
+	jump2byte --
+	
+ambiScript_samasaShore:
 	initcollisions
-script7a62:
+--
 	checkabutton
-	jumpifglobalflagset $29, script7a6d
-	setglobalflag $29
-	showtextlowindex $3b
-	jump2byte script7a62
-script7a6d:
-	showtextlowindex $38
-	jump2byte script7a62
-script7a71:
+	jumpifglobalflagset GLOBALFLAG_TALKED_TO_AMBI, @talkedToAmbi
+	setglobalflag GLOBALFLAG_TALKED_TO_AMBI
+	showtextlowindex <TX_3a3b
+	jump2byte --
+@talkedToAmbi:
+	showtextlowindex <TX_3a38
+	jump2byte --
+	
+ambiScript_enteringPirateHouseBeforePiratesLeave:
 	writeobjectbyte $7f, $01
 	setspeed SPEED_080
 	moveup $41
@@ -8478,22 +8513,33 @@ script7a71:
 	applyspeed $09
 	setcounter1 $ff
 	scriptend
-script7a7f:
-	rungenericnpclowindex $2b
+	
+ambiScript_pirateHouseAfterTheyLeft:
+	rungenericnpclowindex <TX_3a2b
+
+
+; interactionCodeb9
+; goron subid7?
 script7a81:
 	setspeed SPEED_080
 	wait 180
-script7a84:
+-
 	setangle $18
 	applyspeed $18
 	setcounter1 $06
 	setangle $08
 	applyspeed $14
 	wait 120
-	jump2byte script7a84
-script7a91:
+	jump2byte -
+	
+	
+; ==============================================================================
+; INTERACID_ba
+; ==============================================================================
+zeldaNPCScript_stub:
 	scriptend
-script7a92:
+	
+zeldaNPCScript_ba_subid1:
 	setcoords $18, $18
 	setspeed SPEED_200
 	movedown $19
@@ -8515,52 +8561,76 @@ script7a92:
 	setanimation $02
 	setcounter1 $ff
 	scriptend
-script7ab7:
+	
+zeldaNPCScript_ba_subid3:
 	checkmemoryeq $cfc0, $08
 	setspeed SPEED_100
 	moveup $31
 	checkmemoryeq $cfc0, $0b
 	movedown $31
 	scriptend
-script7ac6:
-	settextid $0601
-script7ac9:
+	
+	
+; ==============================================================================
+; INTERACID_bc
+; INTERACID_bd
+; INTERACID_be
+; ==============================================================================
+zeldaNPCScript_bc_subid1:
+	settextid TX_0601
+	
+_zeldaNPCScript_faceLinkShowText:
 	initcollisions
-script7aca:
+-
 	checkabutton
-	asm15 scriptHlp.seasonsFunc_15_63b8
+	asm15 scriptHlp.faceOppositeDirectionAsLink
 	showloadedtext
 	wait 10
 	setanimationfromobjectbyte $7b
-	jump2byte script7aca
-script7ad5:
-	settextid $0604
-	jump2byte script7ac9
-script7ada:
-	settextid $0603
-	jump2byte script7ac9
-script7adf:
-	settextid $0606
-	jump2byte script7ac9
-script7ae4:
-	settextid $0602
-	jump2byte script7ac9
-script7ae9:
-	settextid $0605
-	jump2byte script7ac9
-script7aee:
+	jump2byte -
+	
+zeldaNPCScript_bc_subid2:
+	settextid TX_0604
+	jump2byte _zeldaNPCScript_faceLinkShowText
+	
+zeldaNPCScript_bd_subid1:
+	settextid TX_0603
+	jump2byte _zeldaNPCScript_faceLinkShowText
+	
+zeldaNPCScript_bd_subid2:
+	settextid TX_0606
+	jump2byte _zeldaNPCScript_faceLinkShowText
+	
+zeldaNPCScript_be_subid1:
+	settextid TX_0602
+	jump2byte _zeldaNPCScript_faceLinkShowText
+	
+zeldaNPCScript_be_subid2:
+	settextid TX_0605
+	jump2byte _zeldaNPCScript_faceLinkShowText
+	
+	
+; ==============================================================================
+; INTERACID_MAYORS_HOUSE_UNLINKED_GIRL
+; ==============================================================================
+mayorsHouseGirlScript:
 	initcollisions
-	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, script7af8
-	settextid $3101
-	jump2byte script7afb
-script7af8:
-	settextid $310a
-script7afb:
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, @finishedGame
+	settextid TX_3101
+	jump2byte @showLoadedText
+@finishedGame:
+	settextid TX_310a
+@showLoadedText:
 	checkabutton
 	showloadedtext
-	jump2byte script7afb
-script7aff:
-	loadscript script_14_5246
+	jump2byte @showLoadedText
+
+
+; ==============================================================================
+; INTERACID_ZELDA_KIDNAPPED_ROOM
+; ==============================================================================
+ZeldaBeingKidnappedScript:
+	loadscript ZeldaBeingKidnappedEvent_body
 
 
 ; ==============================================================================

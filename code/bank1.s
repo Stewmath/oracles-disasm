@@ -4221,10 +4221,10 @@ func_5d41:
 ;;
 ; For some reason, Ages's version of this function is further down than Season's version.
 checkDisplayEraOrSeasonInfo:
-	ld a,GLOBALFLAG_S_2f
+	ld a,GLOBALFLAG_DONT_DISPLAY_SEASON_INFO
 	call checkGlobalFlag
 	jr z,+
-	ld a,GLOBALFLAG_S_2f
+	ld a,GLOBALFLAG_DONT_DISPLAY_SEASON_INFO
 	jp unsetGlobalFlag
 +
 	ld a,(wActiveGroup)

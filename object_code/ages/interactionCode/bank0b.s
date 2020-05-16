@@ -6146,7 +6146,11 @@ interactionCodec1:
 	dec (hl)		; $7232
 	ret nz			; $7233
 	ld (hl),$06 ; [var36]
+.ifdef ROM_AGES
 	ldbc INTERACID_SPARKLE, $09		; $7236
+.else
+	ldbc INTERACID_SPARKLE, $05		; $7236
+.endif
 	jp objectCreateInteraction		; $7239
 
 

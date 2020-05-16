@@ -1,5 +1,5 @@
 ; Pirate ship departing
-objectData7dd9:
+objectData_sandPuffsFromShipDigging:
 	obj_SpecificEnemyA $02 $5b00 $34 $44
 	obj_SpecificEnemyA     $5b00 $30 $56
 	obj_SpecificEnemyA     $5b00 $30 $68
@@ -7,12 +7,12 @@ objectData7dd9:
 	obj_SpecificEnemyA     $5b00 $34 $8c
 	obj_End
 
-objectData7df0:
+objectData_leavingSamasaDesert:
 	obj_Interaction $7400 $28 $78
 	obj_Interaction $b107 $f8 $f8
 	obj_End
 
-objectData7dfa:
+objectData_pirateShipEnteringWestCoast:
 	obj_Interaction $7401 $f8 $68
 	obj_Interaction $7403 $78 $68
 	obj_Interaction $7408 $a8 $50
@@ -21,7 +21,7 @@ objectData7dfa:
 	obj_Interaction $7406 $18 $98
 	obj_End
 
-objectData7e14:
+objectData_insidePirateShipLeavingSubrosia:
 	obj_Interaction $b101 $00 $00
 	obj_Interaction $b200 $58 $60
 	obj_Interaction $b103 $48 $88
@@ -30,7 +30,7 @@ objectData7e14:
 	obj_Interaction $b103 $28 $88
 	obj_End
 
-objectData7e2e:
+objectData_sickPiratiansInShip:
 	obj_Interaction $b108 $f8 $00
 	obj_Interaction $b109 $f8 $00
 	obj_Interaction $b10d $28 $78
