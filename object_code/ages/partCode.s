@@ -2037,7 +2037,7 @@ _veranProjectile_subid1:
 ; Ball for the shooting gallery
 ; ==============================================================================
 partCode38:
-	jr z,_label_11_301	; $6a86
+	jr z,@normalStatus	; $6a86
 	ld e,$ea		; $6a88
 	ld a,(de)		; $6a8a
 	cp $80			; $6a8b
@@ -2046,24 +2046,26 @@ partCode38:
 	ld l,$c4		; $6a91
 	ld a,(hl)		; $6a93
 	cp $02			; $6a94
-	jr nc,_label_11_301	; $6a96
+	jr nc,@normalStatus	; $6a96
 	ld (hl),$02		; $6a98
-_label_11_301:
+@normalStatus:
 	ld h,d			; $6a9a
 	ld l,$c6		; $6a9b
 	ld a,(hl)		; $6a9d
 	or a			; $6a9e
-	jr z,_label_11_302	; $6a9f
+	jr z,+			; $6a9f
 	dec (hl)		; $6aa1
 	ret			; $6aa2
-_label_11_302:
++
 	ld e,$c4		; $6aa3
 	ld a,(de)		; $6aa5
 	rst_jumpTable			; $6aa6
-.dw $6aaf
-.dw $6ae7
-.dw $6b0c
-.dw $6b24
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	
+@state0:
 	ld h,d			; $6aaf
 	ld l,e			; $6ab0
 	inc (hl)		; $6ab1
@@ -2072,53 +2074,54 @@ _label_11_302:
 	call objectSetVisible81		; $6ab6
 	call getRandomNumber		; $6ab9
 	and $0f			; $6abc
-	ld hl,$6ad7		; $6abe
+	ld hl,@table_6ad7		; $6abe
 	rst_addAToHl			; $6ac1
 	ld a,(hl)		; $6ac2
 	ld h,d			; $6ac3
 	ld l,$d0		; $6ac4
 	or a			; $6ac6
-	jr nz,_label_11_303	; $6ac7
+	jr nz,@func_6ad0	; $6ac7
 	ld (hl),$64		; $6ac9
 	ld a,SND_THROW		; $6acb
 	jp playSound		; $6acd
-_label_11_303:
+; 1/4 chance of being a slow ball
+@func_6ad0:
 	ld (hl),$3c		; $6ad0
 	ld a,SND_FALLINHOLE		; $6ad2
 	jp playSound		; $6ad4
-	ld bc,$0101		; $6ad7
-	ld bc,$0000		; $6ada
-	nop			; $6add
-	nop			; $6ade
-	nop			; $6adf
-	nop			; $6ae0
-	nop			; $6ae1
-	nop			; $6ae2
-	nop			; $6ae3
-	nop			; $6ae4
-	nop			; $6ae5
-	nop			; $6ae6
+@table_6ad7:
+	.db $01 $01 $01 $01
+	.db $00 $00 $00 $00
+	.db $00 $00 $00 $00
+	.db $00 $00 $00 $00
+	
+@state1:
 	call objectCheckWithinScreenBoundary		; $6ae7
-	jp nc,$6c17		; $6aea
+	jp nc,_func_6c17		; $6aea
 	call partCommon_checkTileCollisionOrOutOfBounds		; $6aed
-	jr nc,_label_11_304	; $6af0
-	call $6b00		; $6af2
-	jr nc,_label_11_304	; $6af5
-	jp z,$6c17		; $6af7
-	jp $6bf6		; $6afa
-_label_11_304:
+	jr nc,@objectApplySpeed	; $6af0
+	call @func_6b00		; $6af2
+	jr nc,@objectApplySpeed	; $6af5
+	jp z,_func_6c17		; $6af7
+	jp _func_6bf6		; $6afa
+	
+@objectApplySpeed:
 	jp objectApplySpeed		; $6afd
+	
+@func_6b00:
 	scf			; $6b00
 	push af			; $6b01
 	ld a,(hl)		; $6b02
 	cp $0f			; $6b03
-	jr z,_label_11_305	; $6b05
+	jr z,+			; $6b05
 	pop af			; $6b07
 	ccf			; $6b08
 	ret			; $6b09
-_label_11_305:
++
 	pop af			; $6b0a
 	ret			; $6b0b
+	
+@state2:
 	ld a,$03		; $6b0c
 	ld (de),a		; $6b0e
 	ld a,SND_CLINK		; $6b0f
@@ -2133,79 +2136,93 @@ _label_11_305:
 	ld l,$c9		; $6b20
 	ld (hl),a		; $6b22
 	ret			; $6b23
+	
+@state3:
 	call objectCheckWithinScreenBoundary		; $6b24
-	jp nc,$6c17		; $6b27
+	jp nc,_func_6c17		; $6b27
 	ld b,$ff		; $6b2a
-	call $6b5f		; $6b2c
+	call _func_6b5f		; $6b2c
 	call partCommon_checkTileCollisionOrOutOfBounds		; $6b2f
-	jr nc,_label_11_306	; $6b32
-	call $6b00		; $6b34
-	jr nc,_label_11_306	; $6b37
-	jp z,$6c17		; $6b39
-	call $6c02		; $6b3c
-_label_11_306:
+	jr nc,+			; $6b32
+	call @func_6b00		; $6b34
+	jr nc,+			; $6b37
+	jp z,_func_6c17		; $6b39
+	call _func_6c02		; $6b3c
++
 	ld b,$02		; $6b3f
-	call $6b5f		; $6b41
+	call _func_6b5f		; $6b41
 	call partCommon_checkTileCollisionOrOutOfBounds		; $6b44
-	jr nc,_label_11_307	; $6b47
-	call $6b00		; $6b49
-	jr nc,_label_11_307	; $6b4c
-	jp z,$6c17		; $6b4e
-	call $6c08		; $6b51
-_label_11_307:
+	jr nc,+			; $6b47
+	call @func_6b00		; $6b49
+	jr nc,+			; $6b4c
+	jp z,_func_6c17		; $6b4e
+	call _func_6c08		; $6b51
++
 	ld b,$ff		; $6b54
-	call $6b5f		; $6b56
+	call _func_6b5f		; $6b56
 	call partAnimate		; $6b59
 	jp objectApplySpeed		; $6b5c
+	
+_func_6b5f:
 	ld e,$cd		; $6b5f
 	ld a,(de)		; $6b61
 	add b			; $6b62
 	ld (de),a		; $6b63
 	ret			; $6b64
+	
+_func_6b65:
 	call objectGetTileAtPosition		; $6b65
 	ld a,l			; $6b68
 	ldh (<hFF8C),a	; $6b69
 	ld c,(hl)		; $6b6b
-	call $6b71		; $6b6c
-	jr _label_11_311		; $6b6f
+	call _func_6b71		; $6b6c
+	jr _func_6bca		; $6b6f
+	
+_func_6b71:
 	ld a,$ff		; $6b71
 	ld ($cfd5),a		; $6b73
 	xor a			; $6b76
-_label_11_308:
+_func_6b77:
 	ldh (<hFF8B),a	; $6b77
-	ld hl,$6bab		; $6b79
+	ld hl,_table_6bab		; $6b79
 	rst_addAToHl			; $6b7c
 	ld a,(hl)		; $6b7d
 	cp c			; $6b7e
-	jr nz,_label_11_310	; $6b7f
+	jr nz,_func_6b9f	; $6b7f
 	ld a,($ccd6)		; $6b81
 	and $7f			; $6b84
 	cp $01			; $6b86
 	ldh a,(<hFF8B)	; $6b88
 	ld ($cfd5),a		; $6b8a
-	jr z,_label_11_309	; $6b8d
+	jr z,+			; $6b8d
 	add $04			; $6b8f
-_label_11_309:
++
 	ld hl,bitTable		; $6b91
 	add l			; $6b94
 	ld l,a			; $6b95
 	ld a,($ccd4)		; $6b96
 	or (hl)			; $6b99
 	ld ($ccd4),a		; $6b9a
-	jr $10			; $6b9d
-_label_11_310:
+	jr _func_6baf			; $6b9d
+
+_func_6b9f:
 	ldh a,(<hFF8B)	; $6b9f
 	inc a			; $6ba1
 	cp $04			; $6ba2
-	jr nz,_label_11_308	; $6ba4
+	jr nz,_func_6b77	; $6ba4
 	ld hl,$ccd6		; $6ba6
 	dec (hl)		; $6ba9
 	ret			; $6baa
-	reti			; $6bab
-	rst_addAToHl			; $6bac
-	call c,$cdd8		; $6bad
-	sub (hl)		; $6bb0
-	jr nz,_label_11_315	; $6bb1
+	
+_table_6bab:
+	.db $d9		; $6baf
+	.db $d7		; $6baf
+	.db $dc		; $6baf
+	.db $d8		; $6baf
+
+_func_6baf:
+	call objectGetShortPosition	; $6baf
+	ld c,a			; $6bb2
 	ld a,$a0		; $6bb3
 	call setTile		; $6bb5
 	ld h,d			; $6bb8
@@ -2217,21 +2234,22 @@ _label_11_310:
 	ret nz			; $6bc4
 	ld a,SND_SWITCH		; $6bc5
 	jp playSound		; $6bc7
-_label_11_311:
+
+_func_6bca:
 	ld a,($cfd5)		; $6bca
 	cp $ff			; $6bcd
 	ret z			; $6bcf
 	ld a,$04		; $6bd0
-_label_11_312:
+--
 	ldh (<hFF8B),a	; $6bd2
-	ld bc,$9204		; $6bd4
+	ldbc, INTERACID_FALLING_ROCK $04		; $6bd4
 	ld a,($cfd5)		; $6bd7
 	cp $02			; $6bda
-	jr c,_label_11_313	; $6bdc
-	ld bc,$9205		; $6bde
-_label_11_313:
+	jr c,+			; $6bdc
+	ldbc, INTERACID_FALLING_ROCK $05		; $6bde
++
 	call objectCreateInteraction		; $6be1
-	jr nz,_label_11_314	; $6be4
+	jr nz,+			; $6be4
 	ld l,$4b		; $6be6
 	ldh a,(<hFF8C)	; $6be8
 	call setShortPosition		; $6bea
@@ -2239,32 +2257,41 @@ _label_11_313:
 	ldh a,(<hFF8B)	; $6bef
 	dec a			; $6bf1
 	ld (hl),a		; $6bf2
-	jr nz,_label_11_312	; $6bf3
-_label_11_314:
+	jr nz,--		; $6bf3
++
 	ret			; $6bf5
+
+_func_6bf6:
 	ld a,SND_STRIKE		; $6bf6
 	call playSound		; $6bf8
 	ld a,$01		; $6bfb
 	ld ($cfd6),a		; $6bfd
-	jr _label_11_316		; $6c00
-_label_11_315:
-	call $6c0e		; $6c02
-	jp $6b65		; $6c05
-	call $6c0e		; $6c08
-	jp $6b65		; $6c0b
+	jr _func_6c27		; $6c00
+
+_func_6c02:
+	call _func_6c0e		; $6c02
+	jp _func_6b65		; $6c05
+	
+_func_6c08:
+	call _func_6c0e		; $6c08
+	jp _func_6b65		; $6c0b
+
+_func_6c0e:
 	xor a			; $6c0e
 	ld ($cfd6),a		; $6c0f
 	ld hl,$ccd6		; $6c12
 	inc (hl)		; $6c15
 	ret			; $6c16
+	
+_func_6c17:
 	xor a			; $6c17
 	ld ($cfd6),a		; $6c18
 	ld a,($ccd6)		; $6c1b
 	and $7f			; $6c1e
-	jr nz,_label_11_316	; $6c20
+	jr nz,_func_6c27	; $6c20
 	ld a,SND_ERROR		; $6c22
 	call playSound		; $6c24
-_label_11_316:
+_func_6c27:
 	ld hl,$ccd6		; $6c27
 	set 7,(hl)		; $6c2a
 	jp partDelete		; $6c2c
