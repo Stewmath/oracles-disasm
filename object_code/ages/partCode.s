@@ -2304,9 +2304,10 @@ partCode39:
 	ld e,$c4		; $6c2f
 	ld a,(de)		; $6c31
 	rst_jumpTable			; $6c32
-.dw $6c39
-.dw $6c6a
-.dw $6caa
+	.dw @state0
+	.dw @state1
+	.dw @state2
+@state0:
 	ld h,d			; $6c39
 	ld l,e			; $6c3a
 	inc (hl)		; $6c3b
@@ -2323,7 +2324,7 @@ partCode39:
 	ld (de),a		; $6c50
 	call getRandomNumber_noPreserveVars		; $6c51
 	and $03			; $6c54
-	ld hl,$6c66		; $6c56
+	ld hl,@table_6c66		; $6c56
 	rst_addAToHl			; $6c59
 	ld e,$d0		; $6c5a
 	ld a,(hl)		; $6c5c
@@ -2331,10 +2332,9 @@ partCode39:
 	call objectSetVisible82		; $6c5e
 	ld a,SND_FALLINHOLE		; $6c61
 	jp playSound		; $6c63
-	rrca			; $6c66
-	add hl,de		; $6c67
-	inc hl			; $6c68
-	dec l			; $6c69
+@table_6c66:
+	.db $0f $19 $23 $2d
+@state1:
 	call objectApplySpeed		; $6c6a
 	ld h,d			; $6c6d
 	ld l,$d4		; $6c6e
@@ -2348,7 +2348,7 @@ partCode39:
 	adc $00			; $6c7b
 	ld (hl),a		; $6c7d
 	call partCommon_decCounter1IfNonzero		; $6c7e
-	jr nz,_label_11_317	; $6c81
+	jr nz,@animate	; $6c81
 	ld a,(de)		; $6c83
 	cp $b0			; $6c84
 	jp nc,partDelete		; $6c86
@@ -2357,7 +2357,7 @@ partCode39:
 	ld l,$cd		; $6c8c
 	ld c,(hl)		; $6c8e
 	call checkTileCollisionAt_allowHoles		; $6c8f
-	jr nc,_label_11_317	; $6c92
+	jr nc,@animate	; $6c92
 	ld h,d			; $6c94
 	ld l,$c4		; $6c95
 	inc (hl)		; $6c97
@@ -2370,11 +2370,12 @@ partCode39:
 	call partSetAnimation		; $6ca2
 	ld a,SND_BREAK_ROCK		; $6ca5
 	jp playSound		; $6ca7
+@state2:
 	ld e,$e1		; $6caa
 	ld a,(de)		; $6cac
 	bit 7,a			; $6cad
 	jp nz,partDelete		; $6caf
-	ld hl,$6cc0		; $6cb2
+	ld hl,@table_6cc0		; $6cb2
 	rst_addAToHl			; $6cb5
 	ld e,$e6		; $6cb6
 	ldi a,(hl)		; $6cb8
@@ -2382,17 +2383,14 @@ partCode39:
 	inc e			; $6cba
 	ld a,(hl)		; $6cbb
 	ld (de),a		; $6cbc
-_label_11_317:
+@animate:
 	jp partAnimate		; $6cbd
-	inc b			; $6cc0
-	add hl,bc		; $6cc1
-	ld b,$0b		; $6cc2
-	add hl,bc		; $6cc4
-	inc c			; $6cc5
-	ld a,(bc)		; $6cc6
-	dec c			; $6cc7
-	dec bc			; $6cc8
-	.db $0e
+@table_6cc0:
+	.db $04 $09
+	.db $06 $0b
+	.db $09 $0c
+	.db $0a $0d
+	.db $0b $0e
 
 
 ; ==============================================================================
