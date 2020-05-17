@@ -6,10 +6,11 @@ partCode16:
 	ld e,$c4		; $5f59
 	ld a,(de)		; $5f5b
 	rst_jumpTable			; $5f5c
-.dw $5f65
-.dw $5fab
-.dw $5fbc
-.dw $5fd4
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+@state0:
 	ld h,d			; $5f65
 	ld l,e			; $5f66
 	inc (hl)		; $5f67
@@ -19,9 +20,9 @@ partCode16:
 	ld a,(hl)		; $5f6e
 	cp $50			; $5f6f
 	ld bc,$ff80		; $5f71
-	jr c,_label_11_218	; $5f74
+	jr c,+			; $5f74
 	ld bc,$0080		; $5f76
-_label_11_218:
++
 	ld l,$d2		; $5f79
 	ld (hl),c		; $5f7b
 	inc l			; $5f7c
@@ -35,44 +36,44 @@ _label_11_218:
 	and $18			; $5f88
 	swap a			; $5f8a
 	rlca			; $5f8c
-	ld hl,$5fa7		; $5f8d
+	ld hl,@table_5fa7		; $5f8d
 	rst_addAToHl			; $5f90
 	ld e,$d0		; $5f91
 	ld a,(hl)		; $5f93
 	ld (de),a		; $5f94
 	ld a,b			; $5f95
-_label_11_219:
 	and $e0			; $5f96
 	swap a			; $5f98
 	add a			; $5f9a
 	ld e,$c7		; $5f9b
 	ld (de),a		; $5f9d
 	ld e,$c2		; $5f9e
-_label_11_220:
 	ld a,(de)		; $5fa0
 	call partSetAnimation		; $5fa1
 	jp objectSetVisible82		; $5fa4
-	ld e,$28		; $5fa7
-	ldd (hl),a		; $5fa9
-	inc a			; $5faa
+@table_5fa7:
+	.db $1e $28
+	.db $32 $3c
+@state1:
 	call partCommon_decCounter1IfNonzero		; $5fab
-	jr nz,_label_11_221	; $5fae
+	jr nz,+			; $5fae
 	inc l			; $5fb0
 	ldd a,(hl)		; $5fb1
 	ld (hl),a		; $5fb2
 	ld l,e			; $5fb3
 	inc (hl)		; $5fb4
-_label_11_221:
++
 	ld l,$da		; $5fb5
 	ld a,(hl)		; $5fb7
 	xor $80			; $5fb8
 	ld (hl),a		; $5fba
 	ret			; $5fbb
+@state2:
 	call partCommon_decCounter1IfNonzero		; $5fbc
-	jr nz,_label_11_222	; $5fbf
+	jr nz,+			; $5fbf
 	ld l,e			; $5fc1
 	inc (hl)		; $5fc2
-_label_11_222:
++
 	ld l,$d2		; $5fc3
 	ldi a,(hl)		; $5fc5
 	ld b,(hl)		; $5fc6
@@ -88,6 +89,7 @@ _label_11_222:
 	inc e			; $5fd1
 	ld a,h			; $5fd2
 	ld (de),a		; $5fd3
+@state3:
 	call objectApplySpeed		; $5fd4
 	ld e,$cb		; $5fd7
 	ld a,(de)		; $5fd9
