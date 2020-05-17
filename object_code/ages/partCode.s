@@ -117,7 +117,7 @@ partCode16:
 ; PARTID_GROTTO_CRYSTAL
 ; ==============================================================================
 partCode24:
-	jr z,_label_11_223	; $5ff6
+	jr z,@normalStatus	; $5ff6
 	ld a,(wSwitchState)		; $5ff8
 	ld h,d			; $5ffb
 	ld l,$c2		; $5ffc
@@ -127,9 +127,10 @@ partCode24:
 	res 7,(hl)		; $6004
 	ld a,$01		; $6006
 	call partSetAnimation		; $6008
-	ld bc,$8280		; $600b
+	; sarcophagus when it breaks
+	ldbc, INTERACID_SARCOPHAGUS $80		; $600b
 	jp objectCreateInteraction		; $600e
-_label_11_223:
+@normalStatus:
 	ld e,$c4		; $6011
 	ld a,(de)		; $6013
 	or a			; $6014
@@ -138,13 +139,13 @@ _label_11_223:
 	ld (de),a		; $6017
 	call getThisRoomFlags		; $6018
 	bit 6,(hl)		; $601b
-	jr z,_label_11_224	; $601d
+	jr z,+			; $601d
 	ld h,d			; $601f
 	ld l,$e4		; $6020
 	res 7,(hl)		; $6022
 	ld a,$01		; $6024
 	call partSetAnimation		; $6026
-_label_11_224:
++
 	call objectMakeTileSolid		; $6029
 	ld h,$cf		; $602c
 	ld (hl),$0a		; $602e
