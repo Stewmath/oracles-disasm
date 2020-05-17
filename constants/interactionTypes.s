@@ -306,7 +306,7 @@
 ;   5: Like subid 4, but for linked game
 ;   6: ?
 ;   7: Tells you that Zelda's been kidnapped by vire
-;   8: ?
+;   8: During Zelda kidnapped event
 ;   9: Tells you that Zelda's been kidnapped by twinrova
 ;   a: ? (doesn't have a script)
 .define INTERACID_IMPA_IN_CUTSCENE			$31
@@ -425,7 +425,7 @@
 ;   0b: Villager being restored from stone, resumes playing catch
 ;   0c: Villager playing catch with son
 ;   0d: Cutscene when you first enter the past
-;   0e: Stone villager?
+;   0e: Stone villager - during Zelda kidnapped event
 .define INTERACID_VILLAGER		$3a
 
 ; Like male villager, this person's appearance changes based on subid, with present and
@@ -458,7 +458,7 @@
 ;   0c: Cutscene where kid's dad gets restored from stone
 ;   0d: Kid with grandma who's either stone or was restored from stone
 ;   0e: NPC playing catch with dad, or standing next to his stone dad
-;   0f: Cutscene where kid runs away?
+;   0f: Cutscene where kid runs away - during Zelda kidnapped event
 ;   10: Listening to Nayru sing in endgame
 .define INTERACID_BOY			$3c
 
@@ -521,7 +521,7 @@
 ;   04: Guy in a cutscene (stuck as stone?)
 ;   05: Guy in a cutscene (being restored from stone?)
 ;   06: Guy watching family play catch (or is stone)
-;   07: Guy turned to stone?
+;   07: Guy turned to stone - during Zelda kidnapped event
 .define INTERACID_PAST_GUY		$43
 
 ; Subid:
@@ -1320,8 +1320,8 @@
 .define INTERACID_MOBLIN		$96
 
 ;;
-; @subid_00{Create "poofs" around this object randomly}
-; @subid_01{Spawns "bubbles" (PARTID_16) that seem to be blown to the north?}
+; @subid_00{Create "poofs" around this object randomly - spawned during D2 collapse}
+; @subid_01{Spawns "bubbles" (PARTID_16) that seem to be blown to the north? - spawned when Jabu Open}
 .define INTERACID_97			$97
 
 ;;
@@ -1497,7 +1497,7 @@
 ; @subid_06{Zelda in cutscene after being rescued from vire}
 ; @subid_07{In Nayru's house after saving her from vire}
 ; @subid_08{Zelda standing outside black tower after reveal about ralph?}
-; @subid_09{}
+; @subid_09{During Zelda kidnapped event}
 ; @subid_0a{}
 .define INTERACID_ZELDA				$ad
 
@@ -1832,7 +1832,7 @@
 ; The warp animation that occurs when entering a time portal.
 ; @subid_00{Initiating a warp (entered a portal from the source screen)}
 ; @subid_01{Completing a warp (warping in to the destination screen)}
-; @subid_02{?}
+; @subid_02{TODO: func_03_7244@state2@cbb3_02}
 ; @subid_03{?}
 ; @subid_04{?}
 .define INTERACID_TIMEWARP		$dd

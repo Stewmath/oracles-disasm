@@ -5591,6 +5591,7 @@ _warpTileTable:
 
 .ifdef ROM_AGES
 ;;
+; CUTSCENE_FAIRIES_HIDE
 ; @addr{7b6e}
 cutscene13:
 	callab func_03_6103		; $7b6e
@@ -5598,6 +5599,7 @@ cutscene13:
 	jp updateAllObjects		; $7b79
 
 ;;
+; CUTSCENE_BOOTED_FROM_PALACE
 ; @addr{7b7c}
 cutscene14:
 	callab func_03_6275		; $7b7c
@@ -5874,6 +5876,7 @@ checkUpdateToggleBlocks:
 	.include "code/ages/pirateShip.s"
 
 ;;
+; CUTSCENE_BLACK_TOWER_ESCAPE_ATTEMPT
 ; @addr{7f15}
 cutscene1f:
 	callab func_03_7cb7		; $7f15

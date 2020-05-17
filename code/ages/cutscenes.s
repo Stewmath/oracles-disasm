@@ -4,7 +4,7 @@
 cutscene06:
 	call func_1613		; $5d4e
 	ld c,$00		; $5d51
-	jpab func_03_6306		; $5d53
+	jpab miscCutsceneHandler		; $5d53
 
 ;;
 ; CUTSCENE_MAKU_TREE_DISAPPEARING
@@ -15,7 +15,7 @@ _func_5d5d:
 	ld a,(wWarpTransition2)		; $5d5d
 	or a			; $5d60
 	jp nz,func_5e0e		; $5d61
-	jpab func_03_6306		; $5d64
+	jpab miscCutsceneHandler		; $5d64
 
 ;;
 ; CUTSCENE_BLACK_TOWER_EXPLANATION
@@ -78,7 +78,7 @@ cutscene20:
 cutscene0d:
 	call func_1613		; $5da2
 	ld c,$06		; $5da5
-	jpab func_03_6306		; $5da7
+	jpab miscCutsceneHandler		; $5da7
 
 ;;
 ; CUTSCENE_TWINROVA_REVEAL
@@ -90,7 +90,7 @@ cutscene0e:
 	jr nz,func_5e0e	; $5db6
 
 	ld c,$05		; $5db8
-	jpab func_03_6306		; $5dba
+	jpab miscCutsceneHandler		; $5dba
 
 ;;
 ; CUTSCENE_BLACK_TOWER_COMPLETE

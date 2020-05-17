@@ -413,6 +413,7 @@
 
 ;;
 ; Some kind of boulder?
+; Falls from above when escaping Room of Rites collapse
 .define PARTID_54				$54
 
 ;;

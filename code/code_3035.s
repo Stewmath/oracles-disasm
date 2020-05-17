@@ -118,7 +118,7 @@ disableLcdAndLoadRoom:
 playWaveSoundAtRandomIntervals:
 	ldh a,(<hRomBank)	; $30c4
 	push af			; $30c6
-	callfrombank0 interactionBank10.playWaveSoundAtRandomIntervals_body		; $30c7
+	callfrombank0 interactionBank10.agesFunc_10_7298@playWaveSoundAtRandomIntervals_body		; $30c7
 	pop af			; $30d1
 	setrombank		; $30d2
 	ret			; $30d7

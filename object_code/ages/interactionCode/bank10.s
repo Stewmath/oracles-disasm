@@ -388,21 +388,23 @@ blackTowerEscape_simulatedInput4:
 	dwb 256 $00
 	.dw $ffff
 
+
 agesFunc_10_70f6:
 	xor a			; $70f6
 	ldh (<hOamTail),a	; $70f7
 	ld de,$cbc2		; $70f9
 	ld a,(de)		; $70fc
 	rst_jumpTable			; $70fd
-.dw $7110
-.dw $7146
-.dw $7156
-.dw $719c
-.dw $71b8
-.dw $71c4
-.dw $723d
-.dw $7251
-.dw $727f
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw @substate4
+	.dw @substate5
+	.dw @substate6
+	.dw @substate7
+	.dw @substate8
+@substate0:
 	ld a,(wPaletteThread_mode)		; $7110
 	or a			; $7113
 	ret nz			; $7114
@@ -421,13 +423,14 @@ agesFunc_10_70f6:
 	call fadeinFromWhite		; $7134
 	call getFreeInteractionSlot		; $7137
 	ret nz			; $713a
-	ld (hl),$af		; $713b
+	ld (hl),INTERACID_CREDITS_TEXT_VERTICAL		; $713b
 	ld l,$4b		; $713d
 	ld (hl),$e8		; $713f
 	inc l			; $7141
 	inc l			; $7142
 	ld (hl),$50		; $7143
 	ret			; $7145
+@substate1:
 	ld a,($cfdf)		; $7146
 	or a			; $7149
 	ret z			; $714a
@@ -436,17 +439,18 @@ agesFunc_10_70f6:
 	inc hl			; $7150
 	ld (hl),$01		; $7151
 	jp incCbc2		; $7153
+@substate2:
 	ld hl,wTmpcbb3		; $7156
 	call decHlRef16WithCap		; $7159
 	ret nz			; $715c
 	call checkIsLinkedGame		; $715d
-	jr nz,_label_10_290	; $7160
+	jr nz,@func_7174	; $7160
 	callab cutscene_clearTmpCBB3		; $7162
 	ld a,$03		; $716a
 	ld ($cbc1),a		; $716c
 	ld a,$04		; $716f
 	jp fadeoutToWhiteWithDelay		; $7171
-_label_10_290:
+@func_7174:
 	ld a,$04		; $7174
 	ld (wTmpcbb3),a		; $7176
 	ld a,(wGfxRegs1.SCY)		; $7179
@@ -456,25 +460,26 @@ _label_10_290:
 	ld a,PALH_0b		; $7183
 	call loadPaletteHeader		; $7185
 	ld b,$03		; $7188
-_label_10_291:
+-
 	call getFreeInteractionSlot		; $718a
-	jr nz,_label_10_292	; $718d
-	ld (hl),$4a		; $718f
+	jr nz,+			; $718d
+	ld (hl),INTERACID_INTRO_SPRITES_1		; $718f
 	inc l			; $7191
 	ld (hl),$09		; $7192
 	inc l			; $7194
 	dec b			; $7195
 	ld (hl),b		; $7196
-	jr nz,_label_10_291	; $7197
-_label_10_292:
+	jr nz,-			; $7197
++
 	jp incCbc2		; $7199
+@substate3:
 	ld a,(wGfxRegs1.SCY)		; $719c
 	or a			; $719f
-	jr nz,_label_10_293	; $71a0
+	jr nz,@func_71aa	; $71a0
 	ld a,$78		; $71a2
 	ld (wTmpcbb3),a		; $71a4
 	jp incCbc2		; $71a7
-_label_10_293:
+@func_71aa:
 	call decCbb3		; $71aa
 	ret nz			; $71ad
 	ld (hl),$04		; $71ae
@@ -483,11 +488,13 @@ _label_10_293:
 	ld a,(hl)		; $71b4
 	ldh (<hCameraY),a	; $71b5
 	ret			; $71b7
+@substate4:
 	call decCbb3		; $71b8
 	ret nz			; $71bb
 	ld a,$ff		; $71bc
 	ld (wTmpcbba),a		; $71be
 	jp incCbc2		; $71c1
+@substate5:
 	ld hl,wTmpcbb3		; $71c4
 	ld b,$01		; $71c7
 	call flashScreen		; $71c9
@@ -499,15 +506,15 @@ _label_10_293:
 	call loadPaletteHeader		; $71d7
 	call clearDynamicInteractions		; $71da
 	ld b,$03		; $71dd
-_label_10_294:
+-
 	call getFreeInteractionSlot		; $71df
-	jr nz,_label_10_295	; $71e2
-	ld (hl),$cf		; $71e4
+	jr nz,+			; $71e2
+	ld (hl),INTERACID_cf		; $71e4
 	inc l			; $71e6
 	dec b			; $71e7
 	ld (hl),b		; $71e8
-	jr nz,_label_10_294	; $71e9
-_label_10_295:
+	jr nz,-			; $71e9
++
 	ld a,$04		; $71eb
 	call loadGfxRegisterStateIndex		; $71ed
 	ld a,$04		; $71f0
@@ -515,22 +522,23 @@ _label_10_295:
 	call incCbc2		; $71f5
 	ld a,$f0		; $71f8
 	ld (wTmpcbb3),a		; $71fa
+@func_71fd:
 	xor a			; $71fd
 	ldh (<hOamTail),a	; $71fe
 	ld a,(wGfxRegs1.SCY)		; $7200
 	cp $60			; $7203
-	jr nc,_label_10_296	; $7205
+	jr nc,+			; $7205
 	cpl			; $7207
 	inc a			; $7208
 	ld b,a			; $7209
 	ld a,(wFrameCounter)		; $720a
 	and $01			; $720d
-	jr nz,_label_10_296	; $720f
+	jr nz,+			; $720f
 	ld c,a			; $7211
 	ld hl,bank16.oamData_4ed8		; $7212
 	ld e,:bank16.oamData_4ed8		; $7215
 	call addSpritesFromBankToOam_withOffset		; $7217
-_label_10_296:
++
 	ld a,(wGfxRegs1.SCY)		; $721a
 	cpl			; $721d
 	inc a			; $721e
@@ -549,7 +557,8 @@ _label_10_296:
 	ld hl,bank16.oamData_4f56		; $7235
 	ld e,:bank16.oamData_4f56		; $7238
 	jp addSpritesFromBankToOam_withOffset		; $723a
-	call $71fd		; $723d
+@substate6:
+	call @func_71fd		; $723d
 	ld a,(wPaletteThread_mode)		; $7240
 	or a			; $7243
 	ret nz			; $7244
@@ -558,29 +567,31 @@ _label_10_296:
 	ld a,$04		; $7249
 	ld (wTmpcbb3),a		; $724b
 	jp incCbc2		; $724e
+@substate7:
 	ld a,(wGfxRegs1.SCY)		; $7251
 	cp $98			; $7254
-	jr nz,_label_10_297	; $7256
+	jr nz,@func_7262	; $7256
 	ld a,$f0		; $7258
 	ld (wTmpcbb3),a		; $725a
 	call incCbc2		; $725d
-	jr _label_10_298		; $7260
-_label_10_297:
+	jr ++			; $7260
+@func_7262:
 	call decCbb3		; $7262
-	jr nz,_label_10_298	; $7265
+	jr nz,++		; $7265
 	ld (hl),$04		; $7267
 	ld hl,wGfxRegs1.SCY		; $7269
 	inc (hl)		; $726c
 	ld a,(hl)		; $726d
 	ldh (<hCameraY),a	; $726e
 	cp $60			; $7270
-	jr nz,_label_10_298	; $7272
+	jr nz,++		; $7272
 	call clearDynamicInteractions		; $7274
 	ld a,UNCMP_GFXH_2c		; $7277
 	call loadUncompressedGfxHeader		; $7279
-_label_10_298:
-	jp $71fd		; $727c
-	call $71fd		; $727f
+++
+	jp @func_71fd		; $727c
+@substate8:
+	call @func_71fd		; $727f
 	call decCbb3		; $7282
 	ret nz			; $7285
 	callab cutscene_clearTmpCBB3		; $7286
@@ -589,24 +600,26 @@ _label_10_298:
 	ld a,$04		; $7293
 	jp fadeoutToWhiteWithDelay		; $7295
 
+
 agesFunc_10_7298:
 	ld de,$cbc2		; $7298
 	ld a,(de)		; $729b
 	rst_jumpTable			; $729c
-.dw $72b5
-.dw $7313
-.dw $7341
-.dw $734b
-.dw $7362
-.dw $73c1
-.dw $73dd
-.dw $73f7
-.dw $7417
-.dw $7440
-.dw $745e
-.dw $7476
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw @substate4
+	.dw @substate5
+	.dw @substate6
+	.dw @substate7
+	.dw @substate8
+	.dw @substate9
+	.dw @substateA
+	.dw @substateB
+@substate0:
 	call checkIsLinkedGame		; $72b5
-	call nz,$71fd		; $72b8
+	call nz,agesFunc_10_70f6@func_71fd		; $72b8
 	ld a,(wPaletteThread_mode)		; $72bb
 	or a			; $72be
 	ret nz			; $72bf
@@ -616,19 +629,20 @@ agesFunc_10_7298:
 	call clearDynamicInteractions		; $72ce
 	call clearOam		; $72d1
 	call checkIsLinkedGame		; $72d4
-	jp z,$72ec		; $72d7
+	jp z,@func_72ec		; $72d7
 	ld a,$99		; $72da
 	call loadGfxHeader		; $72dc
 	ld a,PALH_aa		; $72df
 	call loadPaletteHeader		; $72e1
 	ld hl,objectData.objectData5574		; $72e4
 	call parseGivenObjectData		; $72e7
-	jr _label_10_299		; $72ea
+	jr ++			; $72ea
+@func_72ec:
 	ld a,$98		; $72ec
 	call loadGfxHeader		; $72ee
 	ld a,PALH_a9		; $72f1
 	call loadPaletteHeader		; $72f3
-_label_10_299:
+++
 	ld a,$04		; $72f6
 	call loadGfxRegisterStateIndex		; $72f8
 	xor a			; $72fb
@@ -644,16 +658,18 @@ _label_10_299:
 	call playSound		; $730b
 	ld a,$04		; $730e
 	jp fadeinFromWhiteWithDelay		; $7310
+@substate1:
 	ld a,(wPaletteThread_mode)		; $7313
 	or a			; $7316
 	ret nz			; $7317
 	call incCbc2		; $7318
+@func_731b:
 	call checkIsLinkedGame		; $731b
 	ret z			; $731e
 	ld hl,wTmpcbb4		; $731f
 	ld a,(hl)		; $7322
 	or a			; $7323
-	jr z,playWaveSoundAtRandomIntervals_body	; $7324
+	jr z,@playWaveSoundAtRandomIntervals_body	; $7324
 	dec (hl)		; $7326
 	ret			; $7327
 
@@ -666,37 +682,40 @@ _label_10_299:
 ; @param	hl	Place to write a counter to (how many frames until calling this
 ;			again)
 ; @addr{7328}
-playWaveSoundAtRandomIntervals_body:
+@playWaveSoundAtRandomIntervals_body:
 	push hl			; $7328
 	ld a,SND_WAVE		; $7329
 	call playSound		; $732b
 	pop hl			; $732e
 	call getRandomNumber		; $732f
 	and $03			; $7332
-	ld bc,@data		; $7334
+	ld bc,@@data		; $7334
 	call addAToBc		; $7337
 	ld a,(bc)		; $733a
 	ld (hl),a		; $733b
 	ret			; $733c
 
-@data:
+@@data:
 	.db $a0 $c8 $10 $f0
 
-	call $731b		; $7341
+@substate2:
+	call @func_731b		; $7341
 	call decCbb3		; $7344
 	ret nz			; $7347
 	call incCbc2		; $7348
-	call $731b		; $734b
+@substate3:
+	call @func_731b		; $734b
 	ld hl,wFileIsLinkedGame		; $734e
 	ldi a,(hl)		; $7351
 	add (hl)		; $7352
 	cp $02			; $7353
 	ret z			; $7355
 	ld a,(wKeysJustPressed)		; $7356
-	and $0b			; $7359
+	and (BTN_A|BTN_B|BTN_START)	; $7359
 	ret z			; $735b
 	call incCbc2		; $735c
 	jp fadeoutToWhite		; $735f
+@substate4:
 	ld a,(wPaletteThread_mode)		; $7362
 	or a			; $7365
 	ret nz			; $7366
@@ -705,6 +724,7 @@ playWaveSoundAtRandomIntervals_body:
 	callab generateGameTransferSecret		; $736d
 	ld a,$ff		; $7375
 	ld (wTmpcbba),a		; $7377
+	
 	ld a,($ff00+R_SVBK)	; $737a
 	push af			; $737c
 	ld a,TEXT_BANK		; $737d
@@ -712,13 +732,14 @@ playWaveSoundAtRandomIntervals_body:
 	ld hl,w7SecretText1		; $7381
 	ld de,$d800		; $7384
 	ld bc,$1800		; $7387
-_label_10_301:
+-
 	ldi a,(hl)		; $738a
 	call copyTextCharacterGfx		; $738b
 	dec b			; $738e
-	jr nz,_label_10_301	; $738f
+	jr nz,-			; $738f
 	pop af			; $7391
 	ld ($ff00+R_SVBK),a	; $7392
+	
 	ld a,$97		; $7394
 	call loadGfxHeader		; $7396
 	ld a,PALH_05		; $7399
@@ -736,6 +757,7 @@ _label_10_301:
 	ld (hl),$3c		; $73b9
 	call fileSelect_redrawDecorations		; $73bb
 	jp fadeinFromWhite		; $73be
+@substate5:
 	call fileSelect_redrawDecorations		; $73c1
 	ld a,(wPaletteThread_mode)		; $73c4
 	or a			; $73c7
@@ -745,39 +767,42 @@ _label_10_301:
 	ld hl,wTmpcbb3		; $73cd
 	ld b,$3c		; $73d0
 	call checkIsLinkedGame		; $73d2
-	jr z,_label_10_302	; $73d5
+	jr z,+			; $73d5
 	ld b,$b4		; $73d7
-_label_10_302:
++
 	ld (hl),b		; $73d9
 	jp incCbc2		; $73da
+@substate6:
 	call fileSelect_redrawDecorations		; $73dd
 	call decCbb3		; $73e0
 	ret nz			; $73e3
 	call checkIsLinkedGame		; $73e4
-	jr nz,_label_10_303	; $73e7
+	jr nz,+			; $73e7
 	call getFreeInteractionSlot		; $73e9
-	jr nz,_label_10_303	; $73ec
+	jr nz,+			; $73ec
 	ld (hl),$d1		; $73ee
 	xor a			; $73f0
 	ld ($cfde),a		; $73f1
-_label_10_303:
++
 	jp incCbc2		; $73f4
+@substate7:
 	call fileSelect_redrawDecorations		; $73f7
 	call checkIsLinkedGame		; $73fa
-	jr z,_label_10_304	; $73fd
+	jr z,@func_7407	; $73fd
 	ld a,(wKeysJustPressed)		; $73ff
 	and $01			; $7402
-	jr nz,_label_10_305	; $7404
+	jr nz,++		; $7404
 	ret			; $7406
-_label_10_304:
+@func_7407:
 	ld a,($cfde)		; $7407
 	or a			; $740a
 	ret z			; $740b
-_label_10_305:
+++
 	call incCbc2		; $740c
 	ld a,SNDCTRL_FAST_FADEOUT		; $740f
 	call playSound		; $7411
 	jp fadeoutToWhite		; $7414
+@substate8:
 	call fileSelect_redrawDecorations		; $7417
 	ld a,(wPaletteThread_mode)		; $741a
 	or a			; $741d
@@ -794,37 +819,37 @@ _label_10_305:
 	call fadeinFromWhite		; $7438
 	ld a,$04		; $743b
 	jp loadGfxRegisterStateIndex		; $743d
-
-	call $7450		; $7440
+@substate9:
+	call @func_7450		; $7440
 	ld a,(wPaletteThread_mode)		; $7443
 	or a			; $7446
 	ret nz			; $7447
 	ld hl,wTmpcbb3		; $7448
 	ld (hl),$b4		; $744b
 	jp incCbc2		; $744d
-
+@func_7450:
 	ld hl,bank16.oamData_4fec		; $7450
 	ld e,:bank16.oamData_4fec		; $7453
 	ld bc,$3038		; $7455
 	xor a			; $7458
 	ldh (<hOamTail),a	; $7459
 	jp addSpritesFromBankToOam_withOffset		; $745b
-
-	call $7450		; $745e
+@substateA:
+	call @func_7450		; $745e
 	ld hl,wTmpcbb3		; $7461
 	ld a,(hl)		; $7464
 	or a			; $7465
-	jr z,_label_10_306	; $7466
+	jr z,@func_746a		; $7466
 	dec (hl)		; $7468
 	ret			; $7469
-
-_label_10_306:
+@func_746a:
 	ld a,(wKeysJustPressed)		; $746a
-	and $01			; $746d
+	and BTN_A			; $746d
 	ret z			; $746f
 	call incCbc2		; $7470
 	jp fadeoutToWhite		; $7473
-	call $7450		; $7476
+@substateB:
+	call @func_7450		; $7476
 	ld a,(wPaletteThread_mode)		; $7479
 	or a			; $747c
 	ret nz			; $747d
