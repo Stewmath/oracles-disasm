@@ -631,7 +631,7 @@ partCode2e:
 
 	inc a			; $62e4
 	ld (de),a		; $62e5
-	jp $6361		; $62e6
+	jp @setCounter1To20		; $62e6
 
 @initialized:
 	ld a,(w1Link.state)		; $62e9
@@ -675,12 +675,13 @@ partCode2e:
 --
 	ld hl,hFF8B		; $631e
 	dec (hl)		; $6321
-	jr z,_label_11_249	; $6322
+	jr z,@applyCurrentsDirection		; $6322
+
 	ld h,d			; $6324
-	ld l,$c7		; $6325
+	ld l,Part.counter2	; $6325
 	dec (hl)		; $6327
 	ld a,(hl)		; $6328
-	ld hl,$63fc		; $6329
+	ld hl,@positionOffsets		; $6329
 	rst_addDoubleIndex			; $632c
 	ldi a,(hl)		; $632d
 	add b			; $632e
@@ -692,31 +693,34 @@ partCode2e:
 	ld e,a			; $6336
 	ld a,l			; $6337
 	ldh (<hFF8A),a	; $6338
-	ld hl,$6418		; $633a
+	ld hl,harmfulWaterTilesCollisionTable		; $633a
 	call lookupCollisionTable_paramE		; $633d
 	jr nc,--		; $6340
 
 	rst_jumpTable			; $6342
-.dw $6367
-.dw $6398
-.dw $63a3
+	.dw @collision0
+	.dw @collision1
+	.dw @collision2
 
-_label_11_249:
+@applyCurrentsDirection:
 	ld a,(wTilesetFlags)		; $6349
-	and $01			; $634c
-	jr z,_label_11_250	; $634e
+	and TILESETFLAG_OUTDOORS	; $634c
+	jr z,@setCounter1To20	; $634e
 	call objectGetTileAtPosition		; $6350
-	ld hl,$6437		; $6353
+	ld hl,currentsCollisionTable		; $6353
 	call lookupCollisionTable		; $6356
-	jr nc,_label_11_250	; $6359
+	jr nc,@setCounter1To20	; $6359
 	ld c,a			; $635b
 	ld b,$3c		; $635c
 	call updateLinkPositionGivenVelocity		; $635e
-_label_11_250:
+
+@setCounter1To20:
 	ld e,$c6		; $6361
 	ld a,$20		; $6363
 	ld (de),a		; $6365
 	ret			; $6366
+
+@collision0:
 	ldh a,(<hFF8A)	; $6367
 	call convertShortToLongPosition		; $6369
 	ld e,$cb		; $636c
@@ -745,13 +749,16 @@ _label_11_250:
 	ld (hl),$fe		; $6391
 	ld a,SND_DAMAGE_LINK		; $6393
 	jp playSound		; $6395
+
+@collision1:
 	ld a,(wLinkObjectIndex)		; $6398
 	rrca			; $639b
-	jr c,_label_11_251	; $639c
+	jr c,@collision2	; $639c
 	ld a,(wLinkSwimmingState)		; $639e
 	or a			; $63a1
 	ret z			; $63a2
-_label_11_251:
+
+@collision2:
 	ldh a,(<hFF8A)	; $63a3
 	call convertShortToLongPosition		; $63a5
 	ld e,$cb		; $63a8
@@ -763,12 +770,12 @@ _label_11_251:
 	sub c			; $63b2
 	inc a			; $63b3
 	cp $03			; $63b4
-	jr nc,_label_11_252	; $63b6
+	jr nc,@func_63d6	; $63b6
 	ldh a,(<hFF8F)	; $63b8
 	sub b			; $63ba
 	inc a			; $63bb
 	cp $03			; $63bc
-	jr nc,_label_11_252	; $63be
+	jr nc,@func_63d6	; $63be
 	ld a,(wLinkObjectIndex)		; $63c0
 	ld h,a			; $63c3
 	ld l,$0b		; $63c4
@@ -780,7 +787,8 @@ _label_11_251:
 	xor a			; $63cf
 	ld (wLinkStateParameter),a		; $63d0
 	jp clearAllParentItems		; $63d3
-_label_11_252:
+
+@func_63d6:
 	ld a,$ff		; $63d6
 	ld (wDisableScreenTransitions),a		; $63d8
 	call objectGetRelativeAngleWithTempVars		; $63db
@@ -790,94 +798,81 @@ _label_11_252:
 	and $1c			; $63e3
 	rrca			; $63e5
 	rrca			; $63e6
-	ld hl,$6410		; $63e7
+	ld hl,@speedValues		; $63e7
 	rst_addAToHl			; $63ea
 	ld a,(hl)		; $63eb
 	ld b,a			; $63ec
 	cp $19			; $63ed
-	jr c,_label_11_253	; $63ef
+	jr c,+			; $63ef
 	ld a,(wLinkObjectIndex)		; $63f1
 	ld h,a			; $63f4
-	ld l,$10		; $63f5
+	ld l,Object.speed		; $63f5
 	ld (hl),$00		; $63f7
-_label_11_253:
++
 	jp updateLinkPositionGivenVelocity		; $63f9
-	nop			; $63fc
-	rst $30			; $63fd
-	ld a,(bc)		; $63fe
-	nop			; $63ff
-	nop			; $6400
-	add hl,bc		; $6401
-.DB $fd				; $6402
-	ei			; $6403
-	nop			; $6404
-	nop			; $6405
-	nop			; $6406
-	push af			; $6407
-	dec bc			; $6408
-	nop			; $6409
-	nop			; $640a
-	dec bc			; $640b
-	ld a,($00fa)		; $640c
-	nop			; $640f
-	inc a			; $6410
-	ldd (hl),a		; $6411
-	jr z,_label_11_254	; $6412
-	add hl,de		; $6414
-	inc d			; $6415
-	rrca			; $6416
-	ld a,(bc)		; $6417
-	inc h			; $6418
-	ld h,h			; $6419
-	jr z,$64		; $641a
-	ld l,$64		; $641c
-	jr z,_label_11_257	; $641e
-	add hl,hl		; $6420
-	ld h,h			; $6421
-	ld l,$64		; $6422
-.DB $eb				; $6424
-	nop			; $6425
-	jp hl			; $6426
-	ld bc,$eb00		; $6427
-	nop			; $642a
-	jp hl			; $642b
-	ld (bc),a		; $642c
-	nop			; $642d
-	inc a			; $642e
-	ld (bc),a		; $642f
-	dec a			; $6430
-	ld (bc),a		; $6431
-_label_11_254:
-	ld a,$02		; $6432
-	ccf			; $6434
-	ld (bc),a		; $6435
-_label_11_255:
-	nop			; $6436
-	ld c,h			; $6437
-	ld h,h			; $6438
-	ld d,h			; $6439
-	ld h,h			; $643a
-	ld b,e			; $643b
-	ld h,h			; $643c
-	ld d,h			; $643d
-	ld h,h			; $643e
-	ld d,h			; $643f
-	ld h,h			; $6440
-	ld b,e			; $6441
-	ld h,h			; $6442
-	ld d,h			; $6443
-	nop			; $6444
-	ld d,l			; $6445
-	ld ($1056),sp		; $6446
-	ld d,a			; $6449
-	jr _label_11_256		; $644a
-_label_11_256:
-	ld ($ff00+R_P1),a	; $644c
-	pop hl			; $644e
-	stop			; $644f
-	ld ($ff00+c),a		; $6450
-	jr _label_11_255		; $6451
-	.db $08 $00
+
+@positionOffsets:
+	.db $00 $f7
+	.db $0a $00
+	.db $00 $09
+	.db $fd $fb
+	.db $00 $00
+	.db $00 $f5
+	.db $0b $00
+	.db $00 $0b
+	.db $fa $fa
+	.db $00 $00
+
+@speedValues:
+	.db $3c $32 $28 $1e
+	.db $19 $14 $0f $0a
+	
+harmfulWaterTilesCollisionTable:
+	.dw @overworld
+	.dw @stub
+	.dw @dungeon
+	.dw @stub
+	.dw @underwater
+	.dw @dungeon
+@overworld:
+	.db TILEINDEX_POLLUTION $00
+	.db TILEINDEX_WHIRLPOOL $01
+@stub:
+	.db $00
+@underwater:
+	.db TILEINDEX_POLLUTION $00
+	.db TILEINDEX_WHIRLPOOL $02
+	.db $00
+@dungeon:
+	; 4 different variants of the currents pits in underwater dungeons
+	.db $3c $02
+	.db $3d $02
+	.db $3e $02
+	.db $3f $02
+	.db $00
+	
+;;
+; Entries are the 4 directional currents tiles
+currentsCollisionTable:
+	.dw @overworld
+	.dw @stub
+	.dw @dungeon
+	.dw @stub
+	.dw @stub
+	.dw @dungeon
+@dungeon:
+	.db $54 ANGLE_UP
+	.db $55 ANGLE_RIGHT
+	.db $56 ANGLE_DOWN
+	.db $57 ANGLE_LEFT
+	.db $00
+@overworld:
+	.db $e0 ANGLE_UP
+	.db $e1 ANGLE_DOWN
+	.db $e2 ANGLE_LEFT
+	.db $e3 ANGLE_RIGHT
+@stub:
+	.db $00
 
 
 ; ==============================================================================

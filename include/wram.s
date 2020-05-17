@@ -1702,7 +1702,7 @@ wActiveCollisions: ; $cc33/$cc4f
 	db
 
 wTilesetFlags: ; $cc34/$cc50
-; See constants/tilesetFlags.
+; See constants/areaFlags.
 	db
 
 wActiveMusic: ; $cc35/$cc51

@@ -71,6 +71,7 @@
 .define TILEINDEX_CURRENT_RIGHT		$e3
 .define TILEINDEX_OVERWORLD_LAVA_1	$e4 ; overworld only
 .define TILEINDEX_WHIRLPOOL		$e9
+.define TILEINDEX_POLLUTION		$eb
 .define TILEINDEX_DUNGEON_DOOR_1	$ee ; overworld only
 .define TILEINDEX_DUNGEON_DOOR_2	$ef ; overworld only
 .define TILEINDEX_CHEST_OPENED		$f0
