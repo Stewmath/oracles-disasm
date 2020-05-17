@@ -224,9 +224,9 @@ partCode26:
 	ld e,$c4		; $6088
 	ld a,(de)		; $608a
 	or a			; $608b
-	jr z,_label_11_229	; $608c
+	jr z,@state0		; $608c
 	call partCommon_decCounter1IfNonzero		; $608e
-	jr nz,_label_11_227	; $6091
+	jr nz,@counter1NonZero	; $6091
 	inc l			; $6093
 	ldd a,(hl)		; $6094
 	ld (hl),a		; $6095
@@ -239,8 +239,8 @@ partCode26:
 	cpl			; $609e
 	adc $00			; $609f
 	ld (hl),a		; $60a1
-_label_11_227:
-	ld e,$cd		; $60a2
+@counter1NonZero:
+	ld e,Part.xh		; $60a2
 	ld a,(de)		; $60a4
 	ld b,a			; $60a5
 	dec e			; $60a6
@@ -285,14 +285,14 @@ _label_11_227:
 	jp z,partDelete		; $60d3
 	ld (hl),a		; $60d6
 	cp $e8			; $60d7
-	jr c,_label_11_228	; $60d9
+	jr c,@animate	; $60d9
 	ld l,$da		; $60db
 	ld a,(hl)		; $60dd
 	xor $80			; $60de
 	ld (hl),a		; $60e0
-_label_11_228:
+@animate:
 	jp partAnimate		; $60e1
-_label_11_229:
+@state0:
 	ld h,d			; $60e4
 	ld l,e			; $60e5
 	inc (hl)		; $60e6
@@ -302,43 +302,40 @@ _label_11_229:
 	ld e,$c3		; $60ed
 	ld a,(de)		; $60ef
 	or a			; $60f0
-	jr z,_label_11_230	; $60f1
+	jr z,@var03_00	; $60f1
 	ld (hl),$f0		; $60f3
-_label_11_230:
+@var03_00:
 	call getRandomNumber_noPreserveVars		; $60f5
 	and $0c			; $60f8
-	ld hl,$6114		; $60fa
+	ld hl,_table_6114		; $60fa
 	rst_addAToHl			; $60fd
-	ld e,$f0		; $60fe
+	ld e,Part.var30		; $60fe
 	ldi a,(hl)		; $6100
 	ld (de),a		; $6101
+
+	; Part.var31
 	inc e			; $6102
 	ldi a,(hl)		; $6103
 	ld (de),a		; $6104
-	ld e,$d4		; $6105
+
+	ld e,Part.speedZ		; $6105
 	ldi a,(hl)		; $6107
 	ld (de),a		; $6108
-	ld e,$c6		; $6109
+
+	ld e,Part.counter1		; $6109
 	ld a,(hl)		; $610b
 	ld (de),a		; $610c
+
 	inc e			; $610d
 	dec a			; $610e
 	add a			; $610f
 	ld (de),a		; $6110
 	jp objectSetVisible81		; $6111
-	ld a,($56ff)		; $6114
-	inc c			; $6117
-	rst $30			; $6118
-	rst $38			; $6119
-	ld d,h			; $611a
-	ld a,(bc)		; $611b
-	ld a,($ff00+c)		; $611c
-	rst $38			; $611d
-	ld e,h			; $611e
-	ld c,$f5		; $611f
-	rst $38			; $6121
-	ld e,b			; $6122
-	stop			; $6123
+_table_6114:
+	.db $fa $ff $56 $0c
+	.db $f7 $ff $54 $0a
+	.db $f2 $ff $5c $0e
+	.db $f5 $ff $58 $10
 
 
 ; ==============================================================================
