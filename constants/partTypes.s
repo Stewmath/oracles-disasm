@@ -248,7 +248,10 @@
 
 ;;
 ; Used by INTERACID_VIRE (flame used in "donkey kong" minigame?)
-.define PARTID_2c				$2c
+; subid determines movement pattern
+; @subid_00{2nd screen with Zelda}
+; @subid_01{1st screen}
+.define PARTID_DONKEY_KONG_FLAME		$2c
 
 ;;
 ; Used by ENEMYID_VERAN_FAIRY

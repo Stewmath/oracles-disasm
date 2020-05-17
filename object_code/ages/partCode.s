@@ -346,13 +346,13 @@ partCode2b:
 	ld e,$c4		; $6124
 	ld a,(de)		; $6126
 	or a			; $6127
-	jr nz,_label_11_231	; $6128
+	jr nz,@state1	; $6128
 	inc a			; $612a
 	ld (de),a		; $612b
 	ld h,d			; $612c
 	ld l,$c0		; $612d
 	set 7,(hl)		; $612f
-_label_11_231:
+@state1:
 	call objectApplySpeed		; $6131
 	ld e,$cb		; $6134
 	ld a,(de)		; $6136
@@ -365,10 +365,10 @@ _label_11_231:
 	cp $03			; $6144
 	ld e,$c2		; $6146
 	ld a,(de)		; $6148
-	jr c,_label_11_232	; $6149
+	jr c,@relatedObj1_stateLessThan3	; $6149
 	bit 1,a			; $614b
 	jp nz,partDelete		; $614d
-_label_11_232:
+@relatedObj1_stateLessThan3:
 	ld l,$61		; $6150
 	xor (hl)		; $6152
 	rrca			; $6153
@@ -377,59 +377,64 @@ _label_11_232:
 
 
 ; ==============================================================================
-; PARTID_2c
-; Used by INTERACID_VIRE (flame used in "donkey kong" minigame?)
+; PARTID_DONKEY_KONG_FLAME
 ; ==============================================================================
 partCode2c:
 	jp nz,partDelete		; $615a
 	ld a,($cfd0)		; $615d
 	or a			; $6160
-	jr z,_label_11_233	; $6161
+	jr z,+			; $6161
 	call objectCreatePuff		; $6163
 	jp partDelete		; $6166
-_label_11_233:
++
 	ld e,$c4		; $6169
 	ld a,(de)		; $616b
 	rst_jumpTable			; $616c
-.dw $6177
-.dw $61ac
-.dw $61c2
-.dw $61d2
-.dw $61ff
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+@state0:
 	ld h,d			; $6177
 	ld l,e			; $6178
 	inc (hl)		; $6179
-	ld l,$d0		; $617a
+
+	ld l,Part.speed		; $617a
 	ld (hl),$1e		; $617c
-	ld e,$c2		; $617e
+
+	ld e,Part.subid		; $617e
 	ld a,(de)		; $6180
 	swap a			; $6181
 	add $08			; $6183
-	ld l,$c9		; $6185
+	ld l,Part.angle		; $6185
 	ld (hl),a		; $6187
+
 	bit 4,a			; $6188
-	jr z,_label_11_234	; $618a
+	jr z,+			; $618a
 	ld l,$cb		; $618c
 	ld (hl),$fe		; $618e
 	call getRandomNumber_noPreserveVars		; $6190
 	and $07			; $6193
-	ld hl,$629f		; $6195
+	ld hl,_table_629f		; $6195
 	rst_addAToHl			; $6198
 	ld a,(hl)		; $6199
-	ld hl,$61aa		; $619a
+	ld hl,@table_61aa		; $619a
 	rst_addAToHl			; $619d
 	ld e,$cd		; $619e
 	ld a,(hl)		; $61a0
 	ld (de),a		; $61a1
 	ld a,$01		; $61a2
 	call partSetAnimation		; $61a4
-_label_11_234:
++
 	jp objectSetVisible82		; $61a7
-	ret c			; $61aa
-	cp b			; $61ab
+@table_61aa:
+	; xh vals, 3/8 chance of $b8, 5/8 chance of $d8
+	.db $d8 $b8
+@state1:
 	ld a,$20		; $61ac
 	call objectUpdateSpeedZ_sidescroll		; $61ae
-	jr nc,_label_11_235	; $61b1
+	jr nc,@animate	; $61b1
 	ld h,d			; $61b3
 	ld l,$c4		; $61b4
 	inc (hl)		; $61b6
@@ -439,36 +444,38 @@ _label_11_234:
 	xor a			; $61bd
 	ldi (hl),a		; $61be
 	ld (hl),a		; $61bf
-	jr _label_11_235		; $61c0
+	jr @animate		; $61c0
+@state2:
 	ld h,d			; $61c2
 	ld l,$f1		; $61c3
 	dec (hl)		; $61c5
-	jr nz,_label_11_235	; $61c6
+	jr nz,@animate	; $61c6
 	ld (hl),$04		; $61c8
 	ld l,e			; $61ca
 	inc (hl)		; $61cb
 	inc l			; $61cc
 	ld (hl),$00		; $61cd
-_label_11_235:
+@animate:
 	jp partAnimate		; $61cf
+@state3:
 	ld e,$c5		; $61d2
 	ld a,(de)		; $61d4
 	rst_jumpTable			; $61d5
-.dw $61da
-.dw $61e6
-
-_label_11_236:
-	call $6248		; $61da
-	call $6270		; $61dd
+	.dw @substate0
+	.dw @substate1
+@substate0:
+	call _func_6248		; $61da
+	call _func_6270		; $61dd
 	ret c			; $61e0
 	ld h,d			; $61e1
 	ld l,$c4		; $61e2
 	inc (hl)		; $61e4
 	ret			; $61e5
+@substate1:
 	ld bc,$1000		; $61e6
 	call objectGetRelativeTile		; $61e9
 	cp $19			; $61ec
-	jp z,$6248		; $61ee
+	jp z,_func_6248		; $61ee
 	ld h,d			; $61f1
 	ld l,$c5		; $61f2
 	dec (hl)		; $61f4
@@ -478,32 +485,33 @@ _label_11_236:
 	ld l,$d4		; $61f9
 	ldi (hl),a		; $61fb
 	ld (hl),a		; $61fc
-	jr _label_11_236		; $61fd
+	jr @substate0		; $61fd
+@state4:
 	ld e,$cb		; $61ff
 	ld a,(de)		; $6201
 	cp $b0			; $6202
 	jp nc,partDelete		; $6204
-	call $6248		; $6207
-	call $6270		; $620a
+	call _func_6248		; $6207
+	call _func_6270		; $620a
 	ret nc			; $620d
 	ld h,d			; $620e
 	ld l,$c4		; $620f
 	ld (hl),$02		; $6211
 	xor a			; $6213
 	ld l,$d4		; $6214
-_label_11_237:
 	ldi (hl),a		; $6216
 	ld (hl),a		; $6217
 	ld l,$c6		; $6218
 	ld (hl),a		; $621a
-	ld e,$c2		; $621b
+
+	ld e,Part.subid		; $621b
 	ld a,(de)		; $621d
 	swap a			; $621e
 	rrca			; $6220
 	inc l			; $6221
 	add (hl)		; $6222
 	inc (hl)		; $6223
-	ld bc,$6238		; $6224
+	ld bc,_table_6238		; $6224
 	call addAToBc		; $6227
 	ld l,$c9		; $622a
 	ld a,(bc)		; $622c
@@ -514,28 +522,24 @@ _label_11_237:
 	ret z			; $6233
 	ld (hl),a		; $6234
 	jp partSetAnimation		; $6235
-	ld ($1818),sp		; $6238
-	ld ($ff08),sp		; $623b
-	rst $38			; $623e
-	rst $38			; $623f
-	jr $18			; $6240
-	ld ($1808),sp		; $6242
-	jr $18			; $6245
-	jr _label_11_237		; $6247
-	sub (hl)		; $6249
-_label_11_238:
-	jr nz,_label_11_238	; $624a
-	sub c			; $624c
-	jr nz,_label_11_239	; $624d
+_table_6238:
+	; angle vals
+	.db $08 $18 $18 $08 $08 $ff $ff $ff
+	.db $18 $18 $08 $08 $18 $18 $18 $18
+
+_func_6248:
+	call objectGetShortPosition	; $6248
+	cp $91		; $624b
+	jr nz,_func_6256	; $624d
 	pop hl			; $624f
 	call objectCreatePuff		; $6250
 	jp partDelete		; $6253
-_label_11_239:
+_func_6256:
 	call _partCommon_getTileCollisionInFront		; $6256
-	jr nz,_label_11_240	; $6259
+	jr nz,_func_6261	; $6259
 	call objectApplySpeed		; $625b
 	jp partAnimate		; $625e
-_label_11_240:
+_func_6261:
 	ld e,$c9		; $6261
 	ld a,(de)		; $6263
 	xor $10			; $6264
@@ -545,16 +549,17 @@ _label_11_240:
 	xor $01			; $626a
 	ld (de),a		; $626c
 	jp partSetAnimation		; $626d
+_func_6270:
 	ld a,$20		; $6270
 	call objectUpdateSpeedZ_sidescroll		; $6272
 	ret c			; $6275
 	ld a,(hl)		; $6276
 	cp $02			; $6277
-	jr c,_label_11_241	; $6279
+	jr c,+			; $6279
 	ld (hl),$02		; $627b
 	dec l			; $627d
 	ld (hl),$00		; $627e
-_label_11_241:
++
 	call partCommon_decCounter1IfNonzero		; $6280
 	ret nz			; $6283
 	ld (hl),$10		; $6284
@@ -565,18 +570,16 @@ _label_11_241:
 	ret nz			; $628f
 	call getRandomNumber		; $6290
 	and $07			; $6293
-	ld hl,$629f		; $6295
+	ld hl,_table_629f		; $6295
 	rst_addAToHl			; $6298
 	ld e,$c5		; $6299
 	ld a,(hl)		; $629b
 	ld (de),a		; $629c
 	rrca			; $629d
 	ret			; $629e
-	nop			; $629f
-	nop			; $62a0
-	ld bc,$0100		; $62a1
-	nop			; $62a4
-	.db $01 $00
+_table_629f:
+	.db $00 $00 $01 $00
+	.db $01 $00 $01 $00
 
 
 ; ==============================================================================

@@ -4896,7 +4896,7 @@ _vire_subid1:
 @spawnFireball:
 	call getFreePartSlot		; $6b6d
 	jr nz,_vire_setRandomCounter1	; $6b70
-	ld (hl),PARTID_2c		; $6b72
+	ld (hl),PARTID_DONKEY_KONG_FLAME		; $6b72
 	inc l			; $6b74
 	inc (hl) ; [subid] = 1
 
@@ -4986,7 +4986,7 @@ _vire_subid2:
 
 	call getFreePartSlot		; $6bef
 	jr nz,++		; $6bf2
-	ld (hl),PARTID_2c		; $6bf4
+	ld (hl),PARTID_DONKEY_KONG_FLAME		; $6bf4
 	call objectCopyPosition		; $6bf6
 	ld e,Interaction.direction		; $6bf9
 	ld a,$01		; $6bfb
