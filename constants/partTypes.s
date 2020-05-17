@@ -284,7 +284,7 @@
 
 ;;
 ; Used by Ramrock (seed form)
-.define PARTID_34				$34
+.define PARTID_RAMROCK_SEED_FORM_ORB		$34
 
 ;;
 ; Used by Ramrock (bomb form)

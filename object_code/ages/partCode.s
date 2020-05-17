@@ -1170,94 +1170,110 @@ _func_65d5:
 
 
 ; ==============================================================================
-; PARTID_34
-; Used by Ramrock (seed form)
+; PARTID_RAMROCK_SEED_FORM_ORB
 ; ==============================================================================
 partCode34:
-	ld e,$c4		; $65e9
+	ld e,Part.state		; $65e9
 	ld a,(de)		; $65eb
 	cp $03			; $65ec
-	jr nc,_label_11_272	; $65ee
-	ld a,$0d		; $65f0
+	; moving towards you in state3
+	jr nc,+			; $65ee
+	ld a,Object.xh		; $65f0
 	call objectGetRelatedObject1Var		; $65f2
 	ld a,(hl)		; $65f5
-	ld e,$cd		; $65f6
+	ld e,Part.xh		; $65f6
 	ld (de),a		; $65f8
-_label_11_272:
-	ld e,$c7		; $65f9
++
+	ld e,Part.counter2		; $65f9
 	ld a,(de)		; $65fb
 	dec a			; $65fc
 	ld (de),a		; $65fd
 	and $03			; $65fe
-	jr nz,_label_11_273	; $6600
-	ld e,$dc		; $6602
+	; pulsate between red and blue
+	jr nz,+			; $6600
+	ld e,Part.oamFlags		; $6602
 	ld a,(de)		; $6604
 	xor $01			; $6605
 	ld (de),a		; $6607
-_label_11_273:
-	ld e,$c4		; $6608
++
+	ld e,Part.state		; $6608
 	ld a,(de)		; $660a
 	rst_jumpTable			; $660b
-.dw $6616
-.dw $662c
-.dw $665c
-.dw $666f
-.dw partDelete
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw partDelete
+@state0:
 	ld a,$01		; $6616
 	ld (de),a		; $6618
+
 	ld h,d			; $6619
-	ld l,$d0		; $661a
-	ld (hl),$6e		; $661c
-	ld l,$c9		; $661e
-	ld (hl),$10		; $6620
-	ld l,$c6		; $6622
+	ld l,Part.speed		; $661a
+	ld (hl),SPEED_2c0		; $661c
+	ld l,Part.angle		; $661e
+	ld (hl),ANGLE_DOWN		; $6620
+
+	; counter1 - $07, counter2 - $03
+	ld l,Part.counter1		; $6622
 	ld a,$07		; $6624
 	ldi (hl),a		; $6626
 	ld (hl),$03		; $6627
 	call objectSetVisible80		; $6629
-	ld e,$c3		; $662c
+
+@state1:
+	ld e,Part.var03		; $662c
 	ld a,(de)		; $662e
 	or a			; $662f
-	jr z,_label_11_274	; $6630
+	jr z,+			; $6630
 	call partCommon_decCounter1IfNonzero		; $6632
 	jp nz,objectApplySpeed		; $6635
-_label_11_274:
-	ld e,$c3		; $6638
++
+	ld e,Part.var03		; $6638
 	ld a,(de)		; $663a
 	cp $06			; $663b
-	jr z,_label_11_275	; $663d
+	jr z,+			; $663d
 	call getFreePartSlot		; $663f
 	ret nz			; $6642
-	ld (hl),$34		; $6643
+
+	; spawn self with var03+1
+	ld (hl),PARTID_RAMROCK_SEED_FORM_ORB		; $6643
 	inc l			; $6645
 	ld (hl),$0e		; $6646
 	ld l,e			; $6648
 	ld a,(de)		; $6649
 	inc a			; $664a
 	ld (hl),a		; $664b
-	ld e,$d6		; $664c
+
+	ld e,Part.relatedObj1		; $664c
 	ld l,e			; $664e
-	ld a,$c0		; $664f
+	ld a,Part		; $664f
 	ldi (hl),a		; $6651
 	ld a,d			; $6652
 	ld (hl),a		; $6653
 	call objectCopyPosition		; $6654
-_label_11_275:
-	ld e,$c4		; $6657
++
+	ld e,Part.state		; $6657
 	ld a,$02		; $6659
 	ld (de),a		; $665b
-	ld a,$02		; $665c
+
+@state2:
+	ld a,Object.subid		; $665c
 	call objectGetRelatedObject1Var		; $665e
 	ld a,(hl)		; $6661
 	cp $0e			; $6662
 	ret z			; $6664
-	ld e,$c4		; $6665
+
+	ld e,Part.state		; $6665
 	ld a,$03		; $6667
 	ld (de),a		; $6669
+
 	ld e,$c6		; $666a
 	ld a,$07		; $666c
 	ld (de),a		; $666e
-	ld e,$c3		; $666f
+
+@state3:
+	ld e,Part.var03		; $666f
 	ld a,(de)		; $6671
 	cp $06			; $6672
 	jp z,partDelete		; $6674
@@ -1265,7 +1281,8 @@ _label_11_275:
 	jp nz,objectApplySpeed		; $667a
 	ld e,$c2		; $667d
 	ld (de),a		; $667f
-	ld e,$c4		; $6680
+
+	ld e,Part.state		; $6680
 	ld a,$04		; $6682
 	ld (de),a		; $6684
 	ret			; $6685

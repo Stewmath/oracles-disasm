@@ -3496,7 +3496,7 @@ _ramrock_seedPhase_substate3:
 	inc l			; $6b0d
 	ld (hl),30 ; [counter2]
 
-	ld b,PARTID_34		; $6b10
+	ld b,PARTID_RAMROCK_SEED_FORM_ORB		; $6b10
 	call _ecom_spawnProjectile		; $6b12
 	ld l,Part.subid		; $6b15
 	ld (hl),$0e		; $6b17
