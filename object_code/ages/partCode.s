@@ -1170,7 +1170,7 @@ _func_65d5:
 
 
 ; ==============================================================================
-; PARTID_RAMROCK_SEED_FORM_ORB
+; PARTID_RAMROCK_SEED_FORM_LASER
 ; ==============================================================================
 partCode34:
 	ld e,Part.state		; $65e9
@@ -1237,7 +1237,7 @@ partCode34:
 	ret nz			; $6642
 
 	; spawn self with var03+1
-	ld (hl),PARTID_RAMROCK_SEED_FORM_ORB		; $6643
+	ld (hl),PARTID_RAMROCK_SEED_FORM_LASER		; $6643
 	inc l			; $6645
 	ld (hl),$0e		; $6646
 	ld l,e			; $6648
@@ -1289,76 +1289,77 @@ partCode34:
 
 
 ; ==============================================================================
-; PARTID_35
-; Used by Ramrock (bomb form)
+; PARTID_RAMROCK_GLOVE_FORM_ARM
 ; ==============================================================================
 partCode35:
-	ld a,$29		; $6686
+	ld a,Object.health		; $6686
 	call objectGetRelatedObject1Var		; $6688
 	ld a,(hl)		; $668b
 	or a			; $668c
 	jp z,partDelete		; $668d
-	ld e,$c2		; $6690
+	ld e,Part.subid		; $6690
 	ld a,(de)		; $6692
 	rlca			; $6693
-	jr c,_label_11_276	; $6694
+	jr c,@subidBit7SetArm	; $6694
 	ld a,(wLinkGrabState)		; $6696
 	or a			; $6699
 	call z,objectPushLinkAwayOnCollision		; $669a
 	ld e,$c4		; $669d
 	ld a,(de)		; $669f
 	rst_jumpTable			; $66a0
-.dw $66d2
-.dw $673a
-.dw $677c
-.dw $680f
-.dw $686d
-.dw $68e2
-.dw $6924
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+	.dw @state5
+	.dw @state6
 
-_label_11_276:
+@subidBit7SetArm:
 	ld e,$c6		; $66af
 	ld a,(de)		; $66b1
 	or a			; $66b2
-	jr nz,_label_11_277	; $66b3
+	jr nz,+			; $66b3
 	ld e,$c4		; $66b5
 	ld a,(de)		; $66b7
 	cp $04			; $66b8
-	jr z,_label_11_277	; $66ba
+	jr z,+			; $66ba
 	ld e,$da		; $66bc
 	ld a,(de)		; $66be
 	xor $80			; $66bf
 	ld (de),a		; $66c1
-_label_11_277:
++
 	ld e,$c4		; $66c2
 	ld a,(de)		; $66c4
 	rst_jumpTable			; $66c5
-.dw $6705
-.dw $6747
-.dw $67f1
-.dw $680f
-.dw $68c3
-.dw $690c
-	call $6731		; $66d2
+	.dw @subidBit7SetArm_state0
+	.dw @subidBit7SetArm_state1
+	.dw @subidBit7SetArm_state2
+	.dw @state3
+	.dw @subidBit7SetArm_state4
+	.dw @subidBit7SetArm_state5
+
+@state0:
+	call @state0func_6731		; $66d2
 	ld e,$d7		; $66d5
 	ld a,(de)		; $66d7
 	ld e,$f0		; $66d8
 	ld (de),a		; $66da
-	call $6956		; $66db
+	call _state0func_6956		; $66db
 	ld a,(de)		; $66de
 	swap a			; $66df
 	ld (de),a		; $66e1
 	or $80			; $66e2
 	ld (hl),a		; $66e4
-	call $6992		; $66e5
+	call _state0func_6992		; $66e5
 	ld l,$d6		; $66e8
 	ld a,$c0		; $66ea
 	ldi (hl),a		; $66ec
 	ld (hl),d		; $66ed
-	ld e,$c2		; $66ee
+	ld e,Part.subid		; $66ee
 	ld a,(de)		; $66f0
 	swap a			; $66f1
-	ld hl,$6703		; $66f3
+	ld hl,@@table_6703		; $66f3
 	rst_addAToHl			; $66f6
 	ld a,(hl)		; $66f7
 	ld e,$c9		; $66f8
@@ -1366,10 +1367,13 @@ _label_11_277:
 	ld a,SND_THROW		; $66fb
 	call playSound		; $66fd
 	jp objectSetVisiblec0		; $6700
-	jr $08			; $6703
-	call $6731		; $6705
-	call $6956		; $6708
-	call $6992		; $670b
+@@table_6703:
+	.db ANGLE_LEFT, ANGLE_RIGHT
+
+@subidBit7SetArm_state0:
+	call @state0func_6731		; $6705
+	call _state0func_6956		; $6708
+	call _state0func_6992		; $670b
 	ld l,$d6		; $670e
 	ld a,$c0		; $6710
 	ldi (hl),a		; $6712
@@ -1380,7 +1384,7 @@ _label_11_277:
 	ld (hl),a		; $6718
 	ld a,$01		; $6719
 	call partSetAnimation		; $671b
-	ld e,$c2		; $671e
+	ld e,Part.subid		; $671e
 	ld a,(de)		; $6720
 	and $0f			; $6721
 	add $0a			; $6723
@@ -1391,20 +1395,26 @@ _label_11_277:
 	res 7,a			; $672b
 	ld (de),a		; $672d
 	jp objectSetVisiblec1		; $672e
+
+@state0func_6731:
 	ld a,$01		; $6731
 	ld (de),a		; $6733
 	ld e,$cf		; $6734
 	ld a,$81		; $6736
 	ld (de),a		; $6738
 	ret			; $6739
+
+@state1:
 	ld c,$10		; $673a
 	call objectUpdateSpeedZ_paramC		; $673c
 	ret nz			; $673f
 	ld e,$f1		; $6740
 	ld a,(de)		; $6742
 	or a			; $6743
-	jr nz,_label_11_278	; $6744
+	jr nz,@func_675e	; $6744
 	ret			; $6746
+
+@subidBit7SetArm_state1:
 	call partCommon_decCounter1IfNonzero		; $6747
 	ret nz			; $674a
 	ld c,$10		; $674b
@@ -1413,15 +1423,18 @@ _label_11_277:
 	ld l,$c7		; $6751
 	ld a,(hl)		; $6753
 	or a			; $6754
-	jr nz,_label_11_278	; $6755
+	jr nz,@func_675e	; $6755
 	inc (hl)		; $6757
 	ld bc,$fe80		; $6758
 	jp objectSetSpeedZ		; $675b
-_label_11_278:
+	
+@func_675e:
 	ld a,$78		; $675e
-	jr _label_11_279		; $6760
+	jr ++			; $6760
+
+@func_6762:
 	ld a,$14		; $6762
-_label_11_279:
+++
 	ld e,$d0		; $6764
 	ld (de),a		; $6766
 	ld a,$31		; $6767
@@ -1430,18 +1443,21 @@ _label_11_279:
 	ld e,$c4		; $676d
 	ld a,$03		; $676f
 	ld (de),a		; $6771
-	call $693b		; $6772
+	call _func_693b		; $6772
 	call objectGetRelativeAngle		; $6775
 	ld e,$c9		; $6778
 	ld (de),a		; $677a
 	ret			; $677b
+
+@state2:
 	inc e			; $677c
 	ld a,(de)		; $677d
 	rst_jumpTable			; $677e
-.dw $6787
-.dw $67b7
-.dw $67b0
-.dw $67b0
+	.dw @@substate0
+	.dw @@substate1
+	.dw @@substate2
+	.dw @@substate3
+@@substate0:
 	ld h,d			; $6787
 	ld l,e			; $6788
 	inc (hl)		; $6789
@@ -1456,48 +1472,52 @@ _label_11_279:
 	ld (hl),$14		; $679a
 	ld l,$c7		; $679c
 	ld (hl),$60		; $679e
-	call $69a5		; $67a0
+	call _func_69a5		; $67a0
 	ld l,$b7		; $67a3
-	ld e,$c2		; $67a5
+	ld e,Part.subid		; $67a5
 	ld a,(de)		; $67a7
 	swap a			; $67a8
 	jp unsetFlag		; $67aa
-_label_11_280:
+@@dropLinkHeldItem:
 	call dropLinkHeldItem		; $67ad
+@@substate2:
+@@substate3:
 	ld a,SND_BIGSWORD		; $67b0
 	call playSound		; $67b2
-	jr _label_11_278		; $67b5
-	call $69a5		; $67b7
+	jr @func_675e		; $67b5
+@@substate1:
+	call _func_69a5		; $67b7
 	ldi a,(hl)		; $67ba
 	cp $11			; $67bb
-	jr z,_label_11_280	; $67bd
+	jr z,@@dropLinkHeldItem	; $67bd
 	ld a,($d221)		; $67bf
 	or a			; $67c2
-	jr nz,_label_11_281	; $67c3
+	jr nz,@state2func_67c9	; $67c3
 	ld e,$f3		; $67c5
 	ld (de),a		; $67c7
 	ret			; $67c8
-_label_11_281:
+
+@state2func_67c9:
 	ld h,d			; $67c9
 	ld l,$c7		; $67ca
 	ld a,(hl)		; $67cc
 	or a			; $67cd
 	ret z			; $67ce
 	dec (hl)		; $67cf
-	jr nz,_label_11_282	; $67d0
+	jr nz,+			; $67d0
 	dec l			; $67d2
 	ld (hl),$14		; $67d3
 	ld l,$f2		; $67d5
 	inc (hl)		; $67d7
-_label_11_282:
++
 	ld l,$f3		; $67d8
 	ld a,(hl)		; $67da
 	or a			; $67db
-	jr nz,_label_11_283	; $67dc
+	jr nz,+			; $67dc
 	ld a,SND_MOVEBLOCK		; $67de
 	ld (hl),a		; $67e0
 	call playSound		; $67e1
-_label_11_283:
++
 	ld h,d			; $67e4
 	ld l,$c9		; $67e5
 	ld c,(hl)		; $67e7
@@ -1505,6 +1525,8 @@ _label_11_283:
 	ld b,(hl)		; $67ea
 	call updateLinkPositionGivenVelocity		; $67eb
 	jp objectApplySpeed		; $67ee
+
+@subidBit7SetArm_state2:
 	ld a,$0b		; $67f1
 	call objectGetRelatedObject1Var		; $67f3
 	ld e,$cb		; $67f6
@@ -1513,90 +1535,96 @@ _label_11_283:
 	cpl			; $67fa
 	inc a			; $67fb
 	cp $10			; $67fc
-	jr c,_label_11_284	; $67fe
+	jr c,+			; $67fe
 	ld a,(de)		; $6800
 	inc a			; $6801
 	ld (de),a		; $6802
-_label_11_284:
++
 	ld a,$04		; $6803
 	call objectGetRelatedObject1Var		; $6805
 	ld a,(hl)		; $6808
 	cp $02			; $6809
 	ret z			; $680b
-	jp $675e		; $680c
+	jp @func_675e		; $680c
+
+@state3:
 	ld e,$c6		; $680f
 	ld a,(de)		; $6811
 	or a			; $6812
-	jr z,_label_11_285	; $6813
+	jr z,@state3func_681a	; $6813
 	dec a			; $6815
 	ld (de),a		; $6816
 	jp objectApplySpeed		; $6817
-_label_11_285:
-	call $693b		; $681a
+	
+@state3func_681a:
+	call _func_693b		; $681a
 	call objectGetRelativeAngle		; $681d
 	ld e,$c9		; $6820
 	ld (de),a		; $6822
 	call objectApplySpeed		; $6823
-	call $6970		; $6826
+	call _state3func_6970		; $6826
 	ret nz			; $6829
-	ld e,$c2		; $682a
+	ld e,Part.subid		; $682a
 	ld a,(de)		; $682c
 	rlca			; $682d
-	jr c,_label_11_287	; $682e
+	jr c,@state3func_6864	; $682e
 	ld h,d			; $6830
 	ld l,$e4		; $6831
 	set 7,(hl)		; $6833
 	ld e,$f2		; $6835
 	ld a,(de)		; $6837
 	or a			; $6838
-	jr z,_label_11_286	; $6839
+	jr z,+			; $6839
 	xor a			; $683b
 	ld (de),a		; $683c
-	call $69a5		; $683d
+	call _func_69a5		; $683d
 	ld l,$ab		; $6840
 	ld a,(hl)		; $6842
 	or a			; $6843
-	jr nz,_label_11_286	; $6844
+	jr nz,+			; $6844
 	ld (hl),$3c		; $6846
 	ld l,$b5		; $6848
 	inc (hl)		; $684a
 	ld a,SND_BOSS_DAMAGE		; $684b
 	call playSound		; $684d
-_label_11_286:
++
 	ld e,$c6		; $6850
 	ld a,$3c		; $6852
 	ld (de),a		; $6854
-	call $69a5		; $6855
+	call _func_69a5		; $6855
 	ld l,$b7		; $6858
-	ld e,$c2		; $685a
+	ld e,Part.subid		; $685a
 	ld a,(de)		; $685c
 	swap a			; $685d
 	call setFlag		; $685f
-	jr _label_11_288		; $6862
-_label_11_287:
+	jr ++			; $6862
+	
+@state3func_6864:
 	call objectSetInvisible		; $6864
-_label_11_288:
+++
 	ld e,$c4		; $6867
 	ld a,$04		; $6869
 	ld (de),a		; $686b
 	ret			; $686c
+
+@state4:
 	ld h,d			; $686d
 	ld l,$e4		; $686e
 	set 7,(hl)		; $6870
-	call $68d7		; $6872
+	call @state4func_68d7		; $6872
 	call partCommon_decCounter1IfNonzero		; $6875
 	ret nz			; $6878
-	call $69a5		; $6879
+	call _func_69a5		; $6879
 	ldi a,(hl)		; $687c
 	cp $12			; $687d
 	ret nz			; $687f
 	ld a,(hl)		; $6880
 	bit 5,a			; $6881
-	jr nz,_label_11_289	; $6883
-	ld e,$c2		; $6885
+	jr nz,@state4func_689e	; $6883
+	ld e,Part.subid		; $6885
 	ld a,(de)		; $6887
 	cp (hl)			; $6888
-	jr z,_label_11_289	; $6889
+	jr z,@state4func_689e	; $6889
 	call objectGetAngleTowardLink		; $688b
 	cp $10			; $688e
 	ret nz			; $6890
@@ -1607,7 +1635,8 @@ _label_11_288:
 	ld l,$e4		; $6897
 	res 7,(hl)		; $6899
 	jp objectAddToGrabbableObjectBuffer		; $689b
-_label_11_289:
+	
+@state4func_689e:
 	ld a,SND_EXPLOSION		; $689e
 	call playSound		; $68a0
 	call objectGetAngleTowardLink		; $68a3
@@ -1620,17 +1649,19 @@ _label_11_289:
 	ld (hl),$02		; $68b0
 	ld l,$d0		; $68b2
 	ld (hl),$78		; $68b4
-	call $69a5		; $68b6
+	call _func_69a5		; $68b6
 	ld l,$b7		; $68b9
-	ld e,$c2		; $68bb
+	ld e,Part.subid		; $68bb
 	ld a,(de)		; $68bd
 	swap a			; $68be
 	jp unsetFlag		; $68c0
+
+@subidBit7SetArm_state4:
 	ld a,$04		; $68c3
 	call objectGetRelatedObject1Var		; $68c5
 	ld a,(hl)		; $68c8
 	cp $04			; $68c9
-	jr z,_label_11_290	; $68cb
+	jr z,@state4func_68d7	; $68cb
 	ld e,l			; $68cd
 	ld (de),a		; $68ce
 	ld l,$c9		; $68cf
@@ -1638,16 +1669,19 @@ _label_11_289:
 	ld a,(hl)		; $68d2
 	ld (de),a		; $68d3
 	jp objectSetVisible		; $68d4
-_label_11_290:
-	call $693b		; $68d7
+
+@state4func_68d7:
+	call _func_693b		; $68d7
 	ld h,d			; $68da
 	ld l,$cb		; $68db
 	ld (hl),b		; $68dd
 	ld l,$cd		; $68de
 	ld (hl),c		; $68e0
 	ret			; $68e1
+
+@state5:
 	call _partCommon_getTileCollisionInFront		; $68e2
-	jr nz,_label_11_292	; $68e5
+	jr nz,@state5func_68fe	; $68e5
 	call objectApplySpeed		; $68e7
 	call partCommon_decCounter1IfNonzero		; $68ea
 	ret nz			; $68ed
@@ -1655,14 +1689,15 @@ _label_11_290:
 	ld e,$d0		; $68f0
 	ld a,(de)		; $68f2
 	or a			; $68f3
-	jp z,$68fe		; $68f4
+	jp z,@state5func_68fe		; $68f4
 	sub $0a			; $68f7
-	jr nc,_label_11_291	; $68f9
+	jr nc,+			; $68f9
 	xor a			; $68fb
-_label_11_291:
++
 	ld (de),a		; $68fc
 	ret			; $68fd
-_label_11_292:
+
+@state5func_68fe:
 	ld h,d			; $68fe
 	ld l,$c4		; $68ff
 	ld (hl),$06		; $6901
@@ -1671,41 +1706,47 @@ _label_11_292:
 	ld l,$d0		; $6907
 	ld (hl),$00		; $6909
 	ret			; $690b
+
+@subidBit7SetArm_state5:
 	ld a,$10		; $690c
 	call objectGetRelatedObject1Var		; $690e
 	ld e,l			; $6911
 	ld a,(hl)		; $6912
 	sub $19			; $6913
-	jr nc,_label_11_293	; $6915
+	jr nc,+			; $6915
 	xor a			; $6917
-_label_11_293:
++
 	ld (de),a		; $6918
 	ld l,$c4		; $6919
 	ld a,(hl)		; $691b
 	cp $03			; $691c
 	jp nz,objectApplySpeed		; $691e
-	jp $6762		; $6921
+	jp @func_6762		; $6921
+
+@state6:
 	call partCommon_decCounter1IfNonzero		; $6924
 	ret nz			; $6927
 	ld l,$e4		; $6928
 	res 7,(hl)		; $692a
-	call $69a5		; $692c
+	call _func_69a5		; $692c
 	inc l			; $692f
 	ld a,(hl)		; $6930
 	bit 5,a			; $6931
-	jr z,_label_11_294	; $6933
+	jr z,+			; $6933
 	ld a,$80		; $6935
 	ld (hl),a		; $6937
-_label_11_294:
-	jp $6762		; $6938
-	ld e,$c2		; $693b
++
+	jp @func_6762		; $6938
+	
+_func_693b:
+	ld e,Part.subid		; $693b
 	ld a,(de)		; $693d
 	swap a			; $693e
 	ld c,$0c		; $6940
 	rrca			; $6942
-	jr nc,_label_11_295	; $6943
+	jr nc,+			; $6943
 	ld c,$f4		; $6945
-_label_11_295:
++
 	ld e,$f0		; $6947
 	ld a,(de)		; $6949
 	ld h,a			; $694a
@@ -1718,13 +1759,15 @@ _label_11_295:
 	add c			; $6953
 	ld c,a			; $6954
 	ret			; $6955
-	ld e,$c2		; $6956
+
+_state0func_6956:
+	ld e,Part.subid		; $6956
 	ld a,(de)		; $6958
 	and $0f			; $6959
 	cp $02			; $695b
 	ret z			; $695d
 	call getFreePartSlot		; $695e
-	ld a,$35		; $6961
+	ld a,PARTID_RAMROCK_GLOVE_FORM_ARM		; $6961
 	ldi (hl),a		; $6963
 	ld a,(de)		; $6964
 	inc a			; $6965
@@ -1733,46 +1776,53 @@ _label_11_295:
 	ld l,e			; $6969
 	ld a,(de)		; $696a
 	ld (hl),a		; $696b
-	ld l,$c2		; $696c
+	ld l,Part.subid		; $696c
 	ld e,l			; $696e
 	ret			; $696f
-	call $693b		; $6970
+
+_state3func_6970:
+	call _func_693b		; $6970
 	ld e,$03		; $6973
 	ld h,d			; $6975
 	ld l,$cb		; $6976
 	ld a,e			; $6978
 	add b			; $6979
 	cp (hl)			; $697a
-	jr c,_label_11_296	; $697b
+	jr c,++			; $697b
 	sub e			; $697d
 	sub e			; $697e
 	cp (hl)			; $697f
-	jr nc,_label_11_296	; $6980
+	jr nc,++		; $6980
 	ld l,$cd		; $6982
 	ld a,e			; $6984
 	add c			; $6985
 	cp (hl)			; $6986
-	jr c,_label_11_296	; $6987
+	jr c,++			; $6987
 	sub e			; $6989
 	sub e			; $698a
 	cp (hl)			; $698b
-	jr nc,_label_11_296	; $698c
+	jr nc,++		; $698c
 	xor a			; $698e
 	ret			; $698f
-_label_11_296:
+++
 	or d			; $6990
 	ret			; $6991
+
+_state0func_6992:
 	push hl			; $6992
 	ld a,(hl)		; $6993
 	and $10			; $6994
 	swap a			; $6996
-	ld hl,$69a3		; $6998
+	ld hl,@table_69a3		; $6998
 	rst_addAToHl			; $699b
 	ld c,(hl)		; $699c
 	ld b,$fc		; $699d
 	pop hl			; $699f
 	jp objectCopyPositionWithOffset		; $69a0
-	ld hl,sp+$08		; $69a3
+@table_69a3:
+	.db $f8 $08
+
+_func_69a5:
 	ld e,$f0		; $69a5
 	ld a,(de)		; $69a7
 	ld h,a			; $69a8
@@ -4901,7 +4951,7 @@ partCode4a:
 
 
 ; ==============================================================================
-; PARTID_4f
+; PARTID_RAMROCK_SEED_FORM_ORB
 ; Used by Ramrock (seed form)
 ; ==============================================================================
 partCode4f:

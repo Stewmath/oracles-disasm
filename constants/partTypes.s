@@ -284,11 +284,16 @@
 
 ;;
 ; Used by Ramrock (seed form)
-.define PARTID_RAMROCK_SEED_FORM_ORB		$34
+.define PARTID_RAMROCK_SEED_FORM_LASER		$34
 
 ;;
-; Used by Ramrock (bomb form)
-.define PARTID_35				$35
+; Used by Ramrock (glove form)
+; TODO:
+; @subid_00{Right hand/shoulder}
+; @subid_01{Left hand/shoulder}
+; @subid_80{Right hand/shoulder}
+; @subid_81{Left hand/shoulder}
+.define PARTID_RAMROCK_GLOVE_FORM_ARM		$35
 
 ;;
 ; Flame animation used exclusively by ENEMYID_CANDLE. Expects relatedObj1 to point to its
@@ -396,7 +401,7 @@
 
 ;;
 ; Used by Ramrock (seed form)
-.define PARTID_4f				$4f
+.define PARTID_RAMROCK_SEED_FORM_ORB				$4f
 
 ;;
 ; Used by Ganon

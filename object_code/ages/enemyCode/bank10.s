@@ -3466,7 +3466,7 @@ _ramrock_seedPhase_substate2:
 	ld l,Enemy.counter1		; $6adc
 	ld (hl),60		; $6ade
 
-	ld b,PARTID_4f		; $6ae0
+	ld b,PARTID_RAMROCK_SEED_FORM_ORB		; $6ae0
 	call _ecom_spawnProjectile		; $6ae2
 	ld bc,$1000		; $6ae5
 	call objectCopyPositionWithOffset		; $6ae8
@@ -3496,7 +3496,7 @@ _ramrock_seedPhase_substate3:
 	inc l			; $6b0d
 	ld (hl),30 ; [counter2]
 
-	ld b,PARTID_RAMROCK_SEED_FORM_ORB		; $6b10
+	ld b,PARTID_RAMROCK_SEED_FORM_LASER		; $6b10
 	call _ecom_spawnProjectile		; $6b12
 	ld l,Part.subid		; $6b15
 	ld (hl),$0e		; $6b17
@@ -3572,7 +3572,7 @@ _ramrock_glovePhase_substate0:
 	ld bc,$e001		; $6b7a
 @spawnArm:
 	push bc			; $6b7d
-	ld b,PARTID_35		; $6b7e
+	ld b,PARTID_RAMROCK_GLOVE_FORM_ARM		; $6b7e
 	call _ecom_spawnProjectile		; $6b80
 	ld l,Part.subid		; $6b83
 	ld (hl),c		; $6b85

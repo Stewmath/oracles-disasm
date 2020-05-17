@@ -3929,7 +3929,7 @@ _seasonsFunc_10_79ab:
 	jp objectApplySpeed		; $79b7
 
 
-; PARTID_4f
+; PARTID_S_4f
 partCode4f:
 	jr z,@normalStatus	; $79ba
 	ld e,Part.state		; $79bc
@@ -4037,7 +4037,7 @@ partCode4f:
 	ld bc,$0404		; $7a5d
 -
 	call getFreePartSlot		; $7a60
-	ld (hl),PARTID_4f		; $7a63
+	ld (hl),PARTID_S_4f		; $7a63
 	inc l			; $7a65
 	inc (hl)		; $7a66
 	ld l,Part.angle		; $7a67
