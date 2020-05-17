@@ -949,12 +949,14 @@ partCode32:
 	ld e,$c4		; $64bf
 	ld a,(de)		; $64c1
 	rst_jumpTable			; $64c2
-.dw $64c7
-.dw $64cf
+	.dw @state0
+	.dw @state1
+@state0:
 	ld a,$01		; $64c7
 	ld (de),a		; $64c9
 	ld a,SND_DIG		; $64ca
 	call playSound		; $64cc
+@state1:
 	call partAnimate		; $64cf
 	ld e,$e1		; $64d2
 	ld a,(de)		; $64d4
