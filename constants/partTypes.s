@@ -254,8 +254,8 @@
 .define PARTID_DONKEY_KONG_FLAME		$2c
 
 ;;
-; Used by ENEMYID_VERAN_FAIRY
-.define PARTID_2d				$2d
+; Used by ENEMYID_VERAN_FAIRY - the blue projectile often used
+.define PARTID_VERAN_FAIRY_PROJECTILE		$2d
 
 ;;
 ; When this object exists, it applies the effects of whirlpool and pollution tiles.

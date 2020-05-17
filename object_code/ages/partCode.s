@@ -583,25 +583,24 @@ _table_629f:
 
 
 ; ==============================================================================
-; PARTID_2d
-; Used by ENEMYID_VERAN_FAIRY
+; PARTID_VERAN_FAIRY_PROJECTILE
 ; ==============================================================================
 partCode2d:
-	jr nz,_label_11_244	; $42a7
+	jr nz,@notNormalStatus	; $42a7
 	ld a,$29		; $62a9
 	call objectGetRelatedObject1Var		; $62ab
 	ld a,(hl)		; $62ae
 	or a			; $62af
-	jr z,_label_11_243	; $62b0
+	jr z,@noRelatedObj	; $62b0
 	ld e,$c4		; $62b2
 	ld a,(de)		; $62b4
 	or a			; $62b5
-	jr z,_label_11_242	; $62b6
+	jr z,@state0	; $62b6
 	call partCommon_checkOutOfBounds		; $62b8
-	jr z,_label_11_244	; $62bb
+	jr z,@notNormalStatus	; $62bb
 	call objectApplySpeed		; $62bd
 	jp partAnimate		; $62c0
-_label_11_242:
+@state0:
 	ld h,d			; $62c3
 	ld l,e			; $62c4
 	inc (hl)		; $62c5
@@ -613,9 +612,9 @@ _label_11_242:
 	call objectSetVisible82		; $62d0
 	ld a,SND_VERAN_FAIRY_ATTACK		; $62d3
 	jp playSound		; $62d5
-_label_11_243:
+@noRelatedObj:
 	call objectCreatePuff		; $62d8
-_label_11_244:
+@notNormalStatus:
 	jp partDelete		; $62db
 
 

@@ -2825,7 +2825,7 @@ attack0:
 	ld l,Enemy.counter1		; $6736
 	ld (hl),30		; $6738
 
-	ld b,PARTID_2d		; $673a
+	ld b,PARTID_VERAN_FAIRY_PROJECTILE		; $673a
 	call _ecom_spawnProjectile		; $673c
 	ld a,$06		; $673f
 	jp enemySetAnimation		; $6741
