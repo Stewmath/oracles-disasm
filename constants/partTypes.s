@@ -317,6 +317,7 @@
 
 ;;
 ; relatedObj2 is ENEMYID_VIRE
+; @subid_00-02{TODO:}
 .define PARTID_VIRE_PROJECTILE			$3a
 
 ;;

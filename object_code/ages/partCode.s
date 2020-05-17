@@ -2403,36 +2403,40 @@ partCode3a:
 	res 7,a			; $6ccf
 	cp $04			; $6cd1
 	jp c,partDelete		; $6cd3
-	jp $6e4a		; $6cd6
+	jp _func_6e4a		; $6cd6
 +
 	ld e,$c2		; $6cd9
 	ld a,(de)		; $6cdb
 	ld e,$c4		; $6cdc
 	rst_jumpTable			; $6cde
-.dw $6ce7
-.dw $6d06
-.dw $6d39
-.dw $6dfd
+	.dw @subid0
+	.dw @subid1
+	.dw @subid2
+	.dw @subid3
+	
+@subid0:
 	ld a,(de)		; $6ce7
 	or a			; $6ce8
-	jr z,_label_11_319	; $6ce9
-_label_11_318:
+	jr z,@subid0_state0	; $6ce9
+@func_6ceb:
 	call partCommon_checkOutOfBounds		; $6ceb
 	jp z,partDelete		; $6cee
 	call objectApplySpeed		; $6cf1
 	jp partAnimate		; $6cf4
-_label_11_319:
-	call $6e50		; $6cf7
+@subid0_state0:
+	call _func_6e50		; $6cf7
 	call objectGetAngleTowardEnemyTarget		; $6cfa
 	ld e,$c9		; $6cfd
 	ld (de),a		; $6cff
-	call $6e5d		; $6d00
+	call _func_6e5d		; $6d00
 	jp objectSetVisible80		; $6d03
+	
+@subid1:
 	ld a,(de)		; $6d06
 	or a			; $6d07
-	jr nz,_label_11_318	; $6d08
-	call $6e50		; $6d0a
-	call $6e2f		; $6d0d
+	jr nz,@func_6ceb	; $6d08
+	call _func_6e50		; $6d0a
+	call _func_6e2f		; $6d0d
 	ld e,$c3		; $6d10
 	ld a,(de)		; $6d12
 	or a			; $6d13
@@ -2444,8 +2448,12 @@ _label_11_319:
 	and $1f			; $6d1d
 	ld b,a			; $6d1f
 	ld e,$01		; $6d20
+;;
+; @param	b	angle of new part
+; @param	e	subid of new part
+@func_6d22:
 	call getFreePartSlot		; $6d22
-	ld (hl),$3a		; $6d25
+	ld (hl),PARTID_VIRE_PROJECTILE		; $6d25
 	inc l			; $6d27
 	ld (hl),e		; $6d28
 	inc l			; $6d29
@@ -2460,12 +2468,15 @@ _label_11_319:
 	ld a,(de)		; $6d34
 	ld (hl),a		; $6d35
 	jp objectCopyPosition		; $6d36
+
+@subid2:
 	ld a,(de)		; $6d39
 	rst_jumpTable			; $6d3a
-.dw $6d43
-.dw $6d84
-.dw $6dc6
-.dw $6ceb
+	.dw @subid2_state0
+	.dw @subid2_state1
+	.dw @subid2_state2
+	.dw @func_6ceb
+@subid2_state0:
 	ld h,d			; $6d43
 	ld l,$db		; $6d44
 	ld a,$03		; $6d46
@@ -2474,15 +2485,16 @@ _label_11_319:
 	ld l,$c3		; $6d4a
 	ld a,(hl)		; $6d4c
 	or a			; $6d4d
-	jr z,_label_11_320	; $6d4e
+	jr z,@fimc_6d5e	; $6d4e
 	ld l,e			; $6d50
 	ld (hl),$03		; $6d51
-	call $6e5d		; $6d53
+	call _func_6e5d		; $6d53
 	ld a,$01		; $6d56
 	call partSetAnimation		; $6d58
 	jp objectSetVisible82		; $6d5b
-_label_11_320:
-	call $6e50		; $6d5e
+	
+@fimc_6d5e:
+	call _func_6e50		; $6d5e
 	ld l,$f0		; $6d61
 	ldh a,(<hEnemyTargetY)	; $6d63
 	ldi (hl),a		; $6d65
@@ -2493,16 +2505,18 @@ _label_11_320:
 	ld a,(hl)		; $6d6e
 	ld b,$19		; $6d6f
 	cp $10			; $6d71
-	jr nc,_label_11_321	; $6d73
+	jr nc,+			; $6d73
 	ld b,$2d		; $6d75
 	cp $0a			; $6d77
-	jr nc,_label_11_321	; $6d79
+	jr nc,+			; $6d79
 	ld b,$41		; $6d7b
-_label_11_321:
++
 	ld e,$d0		; $6d7d
 	ld a,b			; $6d7f
 	ld (de),a		; $6d80
 	jp objectSetVisible80		; $6d81
+	
+@subid2_state1:
 	ld h,d			; $6d84
 	ld l,$f0		; $6d85
 	ld b,(hl)		; $6d87
@@ -2517,13 +2531,13 @@ _label_11_321:
 	sub c			; $6d93
 	add $02			; $6d94
 	cp $05			; $6d96
-	jr nc,_label_11_322	; $6d98
+	jr nc,@func_6dba	; $6d98
 	ldh a,(<hFF8F)	; $6d9a
 	sub b			; $6d9c
 	add $02			; $6d9d
 	cp $05			; $6d9f
-	jr nc,_label_11_322	; $6da1
-	ld bc,$0502		; $6da3
+	jr nc,@func_6dba	; $6da1
+	ldbc INTERACID_PUFF $02		; $6da3
 	call objectCreateInteraction		; $6da6
 	ret nz			; $6da9
 	ld e,$d8		; $6daa
@@ -2536,12 +2550,15 @@ _label_11_321:
 	ld a,$02		; $6db4
 	ld (de),a		; $6db6
 	jp objectSetInvisible		; $6db7
-_label_11_322:
+
+@func_6dba:
 	call objectGetRelativeAngleWithTempVars		; $6dba
 	ld e,$c9		; $6dbd
 	ld (de),a		; $6dbf
 	call objectApplySpeed		; $6dc0
 	jp partAnimate		; $6dc3
+	
+@subid2_state2:
 	ld a,$21		; $6dc6
 	call objectGetRelatedObject2Var		; $6dc8
 	bit 7,(hl)		; $6dcb
@@ -2550,43 +2567,46 @@ _label_11_322:
 	call checkBPartSlotsAvailable		; $6dd0
 	ret nz			; $6dd3
 	ld c,$05		; $6dd4
-_label_11_323:
+-
 	ld a,c			; $6dd6
 	dec a			; $6dd7
-	ld hl,$6df8		; $6dd8
+	ld hl,@table_6df8		; $6dd8
 	rst_addAToHl			; $6ddb
 	ld b,(hl)		; $6ddc
 	ld e,$02		; $6ddd
-	call $6d22		; $6ddf
+	call @func_6d22		; $6ddf
 	dec c			; $6de2
-	jr nz,_label_11_323	; $6de3
+	jr nz,-			; $6de3
 	ld h,d			; $6de5
 	ld l,$c4		; $6de6
 	inc (hl)		; $6de8
 	ld l,$c9		; $6de9
 	ld (hl),$1d		; $6deb
-	call $6e5d		; $6ded
+	call _func_6e5d		; $6ded
 	ld a,$01		; $6df0
 	call partSetAnimation		; $6df2
 	jp objectSetVisible82		; $6df5
-	inc bc			; $6df8
-	ld ($130d),sp		; $6df9
-	jr $1a			; $6dfc
+@table_6df8:
+	.db $03 $08 $0d $13 $18
+	
+@subid3:
+	ld a,(de)			; $6dfd
 	or a			; $6dfe
-	jr z,_label_11_325	; $6dff
+	jr z,@subid3_state0	; $6dff
 	call partCommon_decCounter1IfNonzero		; $6e01
-	jp z,$6e4a		; $6e04
+	jp z,_func_6e4a		; $6e04
 	inc l			; $6e07
 	dec (hl)		; $6e08
-	jr nz,_label_11_324	; $6e09
+	jr nz,+			; $6e09
 	ld (hl),$07		; $6e0b
 	call objectGetAngleTowardEnemyTarget		; $6e0d
 	call objectNudgeAngleTowards		; $6e10
-_label_11_324:
++
 	call objectApplySpeed		; $6e13
 	jp partAnimate		; $6e16
-_label_11_325:
-	call $6e50		; $6e19
+
+@subid3_state0:
+	call _func_6e50		; $6e19
 	ld l,$c6		; $6e1c
 	ld (hl),$f0		; $6e1e
 	inc l			; $6e20
@@ -2598,23 +2618,29 @@ _label_11_325:
 	call objectGetAngleTowardEnemyTarget		; $6e29
 	ld e,$c9		; $6e2c
 	ld (de),a		; $6e2e
+	
+_func_6e2f:
 	ld a,$29		; $6e2f
 	call objectGetRelatedObject1Var		; $6e31
 	ld a,(hl)		; $6e34
 	ld b,$1e		; $6e35
 	cp $10			; $6e37
-	jr nc,_label_11_326	; $6e39
+	jr nc,+			; $6e39
 	ld b,$2d		; $6e3b
 	cp $0a			; $6e3d
-	jr nc,_label_11_326	; $6e3f
+	jr nc,+			; $6e3f
 	ld b,$3c		; $6e41
-_label_11_326:
++
 	ld e,$d0		; $6e43
 	ld a,b			; $6e45
 	ld (de),a		; $6e46
 	jp objectSetVisible80		; $6e47
+
+_func_6e4a:
 	call objectCreatePuff		; $6e4a
 	jp partDelete		; $6e4d
+
+_func_6e50:
 	ld h,d			; $6e50
 	ld l,e			; $6e51
 	inc (hl)		; $6e52
@@ -2625,17 +2651,19 @@ _label_11_326:
 	add (hl)		; $6e5a
 	ld (hl),a		; $6e5b
 	ret			; $6e5c
+	
+_func_6e5d:
 	ld a,$29		; $6e5d
 	call objectGetRelatedObject1Var		; $6e5f
 	ld a,(hl)		; $6e62
 	ld b,$3c		; $6e63
 	cp $10			; $6e65
-	jr nc,_label_11_327	; $6e67
+	jr nc,+			; $6e67
 	ld b,$5a		; $6e69
 	cp $0a			; $6e6b
-	jr nc,_label_11_327	; $6e6d
+	jr nc,+			; $6e6d
 	ld b,$78		; $6e6f
-_label_11_327:
++
 	ld e,$d0		; $6e71
 	ld a,b			; $6e73
 	ld (de),a		; $6e74
