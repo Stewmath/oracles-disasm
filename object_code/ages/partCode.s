@@ -977,52 +977,55 @@ partCode33:
 	and $03			; $64e1
 	ld e,$c4		; $64e3
 	rst_jumpTable			; $64e5
-.dw $64ee
-.dw $653e
-.dw $6566
-.dw $65c0
+	.dw @subid0
+	.dw @subid1
+	.dw @subid2
+	.dw @subid3
+	
+@subid0:
 	ld a,(de)		; $64ee
 	or a			; $64ef
-	jr z,_label_11_263	; $64f0
-_label_11_262:
+	jr z,@subid0_state0	; $64f0
+@func_64f2:
 	call partCommon_decCounter1IfNonzero		; $64f2
 	ret nz			; $64f5
 	ld e,$f0		; $64f6
 	ld a,(de)		; $64f8
 	ld (hl),a		; $64f9
-	jp $657e		; $64fa
-_label_11_263:
+	jp @func_657e		; $64fa
+@subid0_state0:
 	ld c,b			; $64fd
 	rlc c			; $64fe
 	ld a,$01		; $6500
-	jr nc,_label_11_264	; $6502
+	jr nc,+			; $6502
 	ld a,$ff		; $6504
-_label_11_264:
++
 	ld h,d			; $6506
 	ld l,$f1		; $6507
 	ldd (hl),a		; $6509
 	rlc c			; $650a
 	ld a,$3c		; $650c
-	jr nc,_label_11_265	; $650e
+	jr nc,+			; $650e
 	add a			; $6510
-_label_11_265:
++
 	ld (hl),a		; $6511
 	ld l,$c6		; $6512
 	ld (hl),a		; $6514
+@func_6515:
 	ld a,b			; $6515
 	rrca			; $6516
 	rrca			; $6517
 	and $03			; $6518
 	ld e,$c8		; $651a
 	ld (de),a		; $651c
-	call $6588		; $651d
+	call @func_6588		; $651d
 	call objectMakeTileSolid		; $6520
 	ld h,$cf		; $6523
 	ld (hl),$0a		; $6525
 	call objectSetVisible83		; $6527
 	call getFreePartSlot		; $652a
 	ret nz			; $652d
-	ld (hl),$33		; $652e
+	ld (hl),PARTID_ROTATABLE_SEED_THING		; $652e
 	inc l			; $6530
 	ld (hl),$03		; $6531
 	ld l,$d6		; $6533
@@ -1033,8 +1036,10 @@ _label_11_265:
 	ld l,$c4		; $653a
 	inc (hl)		; $653c
 	ret			; $653d
+	
+@subid1:
 	ld a,(de)		; $653e
-	jr z,_label_11_266	; $653f
+	jr z,@@state0		; $653f
 	ld h,d			; $6541
 	ld l,$c3		; $6542
 	ld a,(hl)		; $6544
@@ -1044,16 +1049,17 @@ _label_11_265:
 	ld l,a			; $6549
 	and (hl)		; $654a
 	ret z			; $654b
-	jr _label_11_262		; $654c
-_label_11_266:
-	call $64fd		; $654e
+	jr @func_64f2	; $654c
+@@state0:
+	call @subid0_state0		; $654e
+@func_6551:
 	ld e,$c2		; $6551
 	ld a,(de)		; $6553
 	bit 4,a			; $6554
 	ld hl,wToggleBlocksState		; $6556
-	jr z,_label_11_267	; $6559
+	jr z,+			; $6559
 	ld hl,wActiveTriggers		; $655b
-_label_11_267:
++
 	ld e,$d8		; $655e
 	ld a,l			; $6560
 	ld (de),a		; $6561
@@ -1061,9 +1067,11 @@ _label_11_267:
 	ld a,h			; $6563
 	ld (de),a		; $6564
 	ret			; $6565
+	
+@subid2:
 	ld a,(de)		; $6566
 	or a			; $6567
-	jr z,_label_11_268	; $6568
+	jr z,@subid2_state0	; $6568
 	ld h,d			; $656a
 	ld l,$f2		; $656b
 	ld e,l			; $656d
@@ -1081,6 +1089,7 @@ _label_11_267:
 	ret z			; $657b
 	ld a,c			; $657c
 	ld (de),a		; $657d
+@func_657e:
 	ld h,d			; $657e
 	ld l,$f1		; $657f
 	ld e,$c8		; $6581
@@ -1088,8 +1097,9 @@ _label_11_267:
 	add (hl)		; $6584
 	and $03			; $6585
 	ld (de),a		; $6587
+@func_6588:
 	ld b,a			; $6588
-	ld hl,$6598		; $6589
+	ld hl,@table_6598		; $6589
 	rst_addDoubleIndex			; $658c
 	ld e,$e6		; $658d
 	ldi a,(hl)		; $658f
@@ -1099,37 +1109,39 @@ _label_11_267:
 	ld (de),a		; $6593
 	ld a,b			; $6594
 	jp partSetAnimation		; $6595
-	ld b,$04		; $6598
-	inc b			; $659a
-	inc b			; $659b
-	inc b			; $659c
-	ld b,$04		; $659d
-	inc b			; $659f
-_label_11_268:
+	
+@table_6598:
+	.db $06 $04
+	.db $04 $04
+	.db $04 $06
+	.db $04 $04
+
+@subid2_state0:
 	ld c,b			; $65a0
 	rlc c			; $65a1
 	ld a,$01		; $65a3
-	jr nc,_label_11_269	; $65a5
+	jr nc,+			; $65a5
 	ld a,$ff		; $65a7
-_label_11_269:
++
 	rlc c			; $65a9
-	jr nc,_label_11_270	; $65ab
+	jr nc,+			; $65ab
 	add a			; $65ad
-_label_11_270:
++
 	ld h,d			; $65ae
 	ld l,$f1		; $65af
 	ld (hl),a		; $65b1
-	call $6515		; $65b2
-	call $6551		; $65b5
+	call @func_6515		; $65b2
+	call @func_6551		; $65b5
 	ld e,$c3		; $65b8
 	ld a,(de)		; $65ba
 	and (hl)		; $65bb
 	ld e,$f2		; $65bc
 	ld (de),a		; $65be
 	ret			; $65bf
+@subid3:
 	ld a,(de)		; $65c0
 	or a			; $65c1
-	jr z,_label_11_271	; $65c2
+	jr z,_func_65d5	; $65c2
 	ld a,$21		; $65c4
 	call objectGetRelatedObject1Var		; $65c6
 	ld e,l			; $65c9
@@ -1143,7 +1155,8 @@ _label_11_270:
 	ld a,(hl)		; $65d2
 	ld (de),a		; $65d3
 	ret			; $65d4
-_label_11_271:
+
+_func_65d5:
 	ld a,$0b		; $65d5
 	call objectGetRelatedObject1Var		; $65d7
 	ld bc,$0c00		; $65da
