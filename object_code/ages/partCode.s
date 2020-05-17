@@ -2679,14 +2679,16 @@ partCode3b:
 	ld a,(de)		; $6e78
 	ld e,$c4		; $6e79
 	or a			; $6e7b
-	jr z,_label_11_328	; $6e7c
-	jp $6ef3		; $6e7e
-_label_11_328:
+	jr z,@subid0	; $6e7c
+	jp @subid1		; $6e7e
+	
+@subid0:
 	ld a,(de)		; $6e81
 	rst_jumpTable			; $6e82
-.dw $6e89
-.dw $6eae
-.dw $6ed3
+	.dw @@state0
+	.dw @@state1
+	.dw @@state2
+@@state0:
 	ld h,d			; $6e89
 	ld l,e			; $6e8a
 	inc (hl)		; $6e8b
@@ -2698,7 +2700,7 @@ _label_11_328:
 	inc l			; $6e95
 	ld a,(hl)		; $6e96
 	or a			; $6e97
-	jr nz,_label_11_329	; $6e98
+	jr nz,+			; $6e98
 	call getRandomNumber_noPreserveVars		; $6e9a
 	and $7c			; $6e9d
 	ld b,a			; $6e9f
@@ -2706,18 +2708,19 @@ _label_11_328:
 	add b			; $6ea2
 	ld e,$cd		; $6ea3
 	ld (de),a		; $6ea5
-_label_11_329:
++
 	call objectSetVisible82		; $6ea6
 	ld a,SND_FALLINHOLE		; $6ea9
 	jp playSound		; $6eab
+@@state1:
 	ld a,$20		; $6eae
 	call objectUpdateSpeedZ_sidescroll		; $6eb0
-	jr c,_label_11_330	; $6eb3
+	jr c,@@func_6ebd	; $6eb3
 	ld a,(de)		; $6eb5
 	cp $b0			; $6eb6
-	jr c,_label_11_331	; $6eb8
+	jr c,@@animate	; $6eb8
 	jp partDelete		; $6eba
-_label_11_330:
+@@func_6ebd:
 	ld h,d			; $6ebd
 	ld l,$c4		; $6ebe
 	inc (hl)		; $6ec0
@@ -2730,11 +2733,12 @@ _label_11_330:
 	call partSetAnimation		; $6ecb
 	ld a,SND_BREAK_ROCK		; $6ece
 	jp playSound		; $6ed0
+@@state2:
 	ld e,$e1		; $6ed3
 	ld a,(de)		; $6ed5
 	bit 7,a			; $6ed6
 	jp nz,partDelete		; $6ed8
-	ld hl,$6ee9		; $6edb
+	ld hl,@@table_6ee9		; $6edb
 	rst_addAToHl			; $6ede
 	ld e,$e6		; $6edf
 	ldi a,(hl)		; $6ee1
@@ -2742,21 +2746,19 @@ _label_11_330:
 	inc e			; $6ee3
 	ld a,(hl)		; $6ee4
 	ld (de),a		; $6ee5
-_label_11_331:
+@@animate:
 	jp partAnimate		; $6ee6
-	inc b			; $6ee9
-	add hl,bc		; $6eea
-	ld b,$0b		; $6eeb
-	add hl,bc		; $6eed
-	inc c			; $6eee
-	ld a,(bc)		; $6eef
-	dec c			; $6ef0
-	dec bc			; $6ef1
-	ld c,$1a		; $6ef2
+@@table_6ee9:
+	.db $04 $09 $06 $0b $09
+	.db $0c $0a $0d $0b $0e
+	
+@subid1:
+	ld a,(de)		; $6ef3
 	rst_jumpTable			; $6ef4
-.dw $6efb
-.dw $6f23
-.dw $6ed3
+	.dw @@state0
+	.dw @@state1
+	.dw @subid0@state2
+@@state0:
 	ld h,d			; $6efb
 	ld l,e			; $6efc
 	inc (hl)		; $6efd
@@ -2766,7 +2768,7 @@ _label_11_331:
 	ldi a,(hl)		; $6f04
 	inc l			; $6f05
 	or (hl)			; $6f06
-	jr nz,_label_11_332	; $6f07
+	jr nz,@@setVisiblec2	; $6f07
 	call getRandomNumber_noPreserveVars		; $6f09
 	and $7c			; $6f0c
 	ld b,a			; $6f0e
@@ -2781,12 +2783,13 @@ _label_11_331:
 	ldh a,(<hCameraX)	; $6f1c
 	add c			; $6f1e
 	ld (de),a		; $6f1f
-_label_11_332:
+@@setVisiblec2:
 	jp objectSetVisiblec2		; $6f20
+@@state1:
 	ld c,$20		; $6f23
 	call objectUpdateSpeedZ_paramC		; $6f25
-	jr nz,_label_11_331	; $6f28
-	jr _label_11_330		; $6f2a
+	jr nz,@subid0@animate	; $6f28
+	jr @subid0@func_6ebd		; $6f2a
 
 
 ; ==============================================================================
