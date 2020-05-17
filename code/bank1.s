@@ -589,16 +589,18 @@ _screenTransitionState3:
 	call loadTilesetAnimation
 	call checkDarkenRoom
 
-	; Decide whether to proceed to state 4 or 5
+	; HACK-BASE: Modified for the expanded tilesets patch.
+	; Originally decided to go to state 4 if bit 7 of "wTilesetUniqueGfx" was unset (signal to
+	; reload before screen transition instead of after).
+	; Now, if necessary, graphics are loaded in a single function call and state 4 is always
+	; skipped.
 	ld b,$05
-	ld a,(wTilesetUniqueGfx)
+	ld a,(wTilesetIndex)
 	bit 7,a
 	jr nz,+
-	or a
-	jr z,+
 
-	call loadUniqueGfxHeader
-	ld b,$04
+	call loadTilesetGfx
+	ld b,$05
 +
 	ld hl,wScreenTransitionState
 	ld a,b
@@ -662,24 +664,9 @@ checkBrightenRoom:
 ;;
 ; State 4: reload unique gfx / palettes, then proceed to state 5?
 ;
+; HACK-BASE: Deleted for expanded tilesets patch.
 _screenTransitionState4:
-	call updateTilesetUniqueGfx
-	ret c
-
-	ld a,(wTilesetUniqueGfx)
-	ld (wLoadedTilesetUniqueGfx),a
-	xor a
-	ld (wTilesetUniqueGfx),a
-
-	call func_47fc
-	call nc,updateTilesetPalette
-	ld hl,wScreenTransitionState
-	ld a,$05
-	ldi (hl),a
-	xor a
-	ld (hl),a
-	ld (wScreenTransitionState3),a
-	ret
+	jp panic
 
 ;;
 ; State 5: Scrolling between 2 screens
@@ -1085,25 +1072,18 @@ _screenTransitionState5Substate2:
 	ld hl,wScreenTransitionState3
 	inc (hl)
 
-	; Go to state 4 if wTilesetUniqueGfx is nonzero, otherwise go to state 5
-	ld a,(wTilesetUniqueGfx)
-	or a
-	jp nz,loadUniqueGfxHeader
+	; HACK-BASE: Modified for expanded tilesets patch. Originally skipped state 4 only if there
+	; was no "unique gfx" to load; now, it always skips state 4.
 	inc (hl)
+	ld a,(wTilesetIndex)
+	and $80
+	call nz,loadTilesetGfx
 	ret
 
 ;;
+; HACK-BASE: State 4 deleted for expanded tilesets patch.
 @state4:
-	; Load one entry from the unique gfx per frame
-	call updateTilesetUniqueGfx
-	ret c
-
-	; Finished loading unique gfx
-
-	ld a,(wTilesetUniqueGfx)
-	ld (wLoadedTilesetUniqueGfx),a
-	xor a
-	ld (wTilesetUniqueGfx),a
+	jp panic
 ;;
 @state5:
 	call checkBrightenRoom
@@ -1280,25 +1260,18 @@ _screenTransitionState5Substate1:
 	ld hl,wScreenTransitionState3
 	inc (hl)
 
-	; Go to state 4 if wTilesetUniqueGfx is nonzero, otherwise go to state 5
-	ld a,(wTilesetUniqueGfx)
-	or a
-	jp nz,loadUniqueGfxHeader
+	; HACK-BASE: Modified for expanded tilesets patch. Originally skipped state 4 only if there
+	; was no "unique gfx" to load; now, it always skips state 4.
 	inc (hl)
+	ld a,(wTilesetIndex)
+	and $80
+	call nz,loadTilesetGfx
 	ret
 
 ;;
+; HACK-BASE: State 4 deleted for expanded tilesets patch.
 @state4:
-	; Load one entry from the unique gfx per frame
-	call updateTilesetUniqueGfx
-	ret c
-
-	; Finished loading unique gfx
-
-	ld a,(wTilesetUniqueGfx)
-	ld (wLoadedTilesetUniqueGfx),a
-	xor a
-	ld (wTilesetUniqueGfx),a
+	jp panic
 ;;
 @state5:
 	call checkBrightenRoom
@@ -5432,7 +5405,9 @@ _warpTileTable:
 	.include "build/data/paletteHeaders.s"
 	.include "build/data/uncmpGfxHeaders.s"
 	.include "build/data/gfxHeaders.s"
-	.include "build/data/tilesetHeaders.s"
+
+	; HACK-BASE: Removed for expanded tilesets patch
+	;.include "build/data/tilesetHeaders.s"
 
 .ends
 

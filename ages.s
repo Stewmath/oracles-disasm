@@ -203,8 +203,9 @@ loadTilesetData_body:
 	and $07
 	ld (wActiveCollisions),a
 
+	; HACK-BASE: This has been modified for the expanded tilesets patch.
 	ld b,$06
-	ld de,wTilesetUniqueGfx
+	ld de,wTilesetIndex
 @copyloop:
 	ldi a,(hl)
 	ld (de),a
@@ -212,11 +213,8 @@ loadTilesetData_body:
 	dec b
 	jr nz,@copyloop
 
-	ld e,wTilesetUniqueGfx&$ff
-	ld a,(de)
-	ld b,a
-	ldh a,(<hFF8B)
-	or b
+	ldh a,(<hFF8D)
+	ld e,<wTilesetIndex
 	ld (de),a
 	ret
 
@@ -1098,36 +1096,17 @@ loadD6ChangingFloorPatternToBigBuffer:
 .ORG 0
 
 	.include "build/data/paletteData.s"
-	.include "build/data/tilesetCollisions.s"
+
+	; HACK-BASE: Removed for expanded tilesets patch
+	;.include "build/data/tilesetCollisions.s"
+
 	.include "build/data/smallRoomLayoutTables.s"
 
 .ifdef ROM_AGES
 	.include "code/ages/garbage/bank17End.s"
 .endif
 
-.BANK $18 SLOT 1 ; Seasons: should be bank $17
-.ORG 0
-
- m_section_superfree Tile_Mappings
-
-	tileMappingIndexDataPointer:
-		.dw tileMappingIndexData
-	tileMappingAttributeDataPointer:
-		.dw tileMappingAttributeData
-
-	tileMappingTable:
-		.incbin "build/tileset_layouts/tileMappingTable.bin"
-	tileMappingIndexData:
-		.incbin "build/tileset_layouts/tileMappingIndexData.bin"
-	tileMappingAttributeData:
-		.incbin "build/tileset_layouts/tileMappingAttributeData.bin"
-
-.ifdef ROM_AGES
-	.include "code/ages/garbage/bank18End.s"
-.endif
-
-.ends
-
+; HACK-BASE: Bank $18 is repurposed for the expanded tilesets patch.
 
 .BANK $19 SLOT 1
 .ORG 0
@@ -1136,9 +1115,7 @@ loadD6ChangingFloorPatternToBigBuffer:
 	.include "data/ages/gfxDataBank19_1.s"
 .ends
 
- m_section_superfree "Tile_mappings"
-	.include "build/data/tilesetMappings.s"
-.ends
+; HACK-BASE: Deleted tileMappings.s include for expanded tilesets patch.
 
  m_section_superfree "Gfx_19_2" ALIGN $10
 	.include "data/ages/gfxDataBank19_2.s"
@@ -1451,3 +1428,7 @@ oamData_7249:
 .include "code/ages/garbage/bank3fEnd.s"
 
 .ends
+
+
+; HACK-BASE: Expanded tileset data
+.include "build/data/expandedTilesets.s"

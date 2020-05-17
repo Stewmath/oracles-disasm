@@ -2,10 +2,10 @@
 # "precompressed" folder, and sections will be marked with "FORCE" instead of
 # "FREE" or "SUPERFREE". This is all to make sure the rom builds as an exact
 # copy of the original game.
-BUILD_VANILLA = true
+BUILD_VANILLA = false
 
 # Sets the default target. Can be "ages", "seasons", or "all" (both).
-.DEFAULT_GOAL = all
+.DEFAULT_GOAL = ages
 
 SHELL := /bin/bash
 
@@ -70,14 +70,6 @@ ROOMLAYOUTFILES += $(wildcard rooms/$(GAME)/large/*.bin)
 ROOMLAYOUTFILES := $(ROOMLAYOUTFILES:.bin=.cmp)
 ROOMLAYOUTFILES := $(foreach file,$(ROOMLAYOUTFILES),build/rooms/$(notdir $(file)))
 
-COLLISIONFILES = $(wildcard tileset_layouts/$(GAME)/tilesetCollisions*.bin)
-COLLISIONFILES := $(COLLISIONFILES:.bin=.cmp)
-COLLISIONFILES := $(foreach file,$(COLLISIONFILES),build/tileset_layouts/$(notdir $(file)))
-
-MAPPINGINDICESFILES = $(wildcard tileset_layouts/$(GAME)/tilesetMappings*.bin)
-MAPPINGINDICESFILES := $(foreach file,$(MAPPINGINDICESFILES),build/tileset_layouts/$(notdir $(file)))
-MAPPINGINDICESFILES := $(MAPPINGINDICESFILES:.bin=Indices.cmp)
-
 # Game-specific data files
 GAMEDATAFILES = $(wildcard data/$(GAME)/*.s)
 GAMEDATAFILES := $(foreach file,$(GAMEDATAFILES),build/data/$(notdir $(file)))
@@ -126,12 +118,8 @@ $(GAME).gbc: $(OBJS) linkfile_$(GAME)
 	@-tools/build/verify-checksum.sh $(GAME)
 
 
-$(MAPPINGINDICESFILES): build/tileset_layouts/mappingsDictionary.bin
-$(COLLISIONFILES): build/tileset_layouts/collisionsDictionary.bin
-
 build/$(GAME).o: $(MAIN_ASM_FILES)
 build/$(GAME).o: $(GFXFILES) $(ROOMLAYOUTFILES) $(COLLISIONFILES) $(MAPPINGINDICESFILES) $(GAMEDATAFILES)
-build/$(GAME).o: build/tileset_layouts/tileMappingTable.bin build/tileset_layouts/tileMappingIndexData.bin build/tileset_layouts/tileMappingAttributeData.bin
 build/$(GAME).o: rooms/$(GAME)/*.bin
 
 build/audio.o: $(AUDIO_FILES)
@@ -147,9 +135,6 @@ build/rooms/%.cmp: rooms/$(GAME)/small/%.bin | build/rooms
 	@echo "Compressing $< to $@..."
 	@$(PYTHON) tools/build/compressRoomLayout.py $< $@ $(OPTIMIZE)
 
-build/tileset_layouts/collisionsDictionary.bin: precompressed/tileset_layouts/$(GAME)/collisionsDictionary.bin | build/tileset_layouts
-	@echo "Copying $< to $@..."
-	@cp $< $@
 
 # Data folder: copied from game-specific directory into a constant directory, so that the
 # game's code knows where to look
@@ -238,35 +223,6 @@ build/textDefines.s: precompressed/text/$(GAME)/textDefines.s | build
 
 else
 
-# The parseTilesetLayouts script generates all of these files.
-# They need dummy rules in their recipes to convince make that they've been changed?
-$(MAPPINGINDICESFILES:.cmp=.bin): build/tileset_layouts/mappingsUpdated
-	@sleep 0
-build/tileset_layouts/mappingsDictionary.bin: build/tileset_layouts/mappingsUpdated
-	@sleep 0
-build/tileset_layouts/tileMappingTable.bin: build/tileset_layouts/mappingsUpdated
-	@sleep 0
-build/tileset_layouts/tileMappingIndexData.bin: build/tileset_layouts/mappingsUpdated
-	@sleep 0
-build/tileset_layouts/tileMappingAttributeData.bin: build/tileset_layouts/mappingsUpdated
-	@sleep 0
-
-# mappingsUpdated is a stub file which is just used as a timestamp from the
-# last time parseTilesetLayouts was run.
-build/tileset_layouts/mappingsUpdated: $(wildcard tileset_layouts/$(GAME)/tilesetMappings*.bin) | build/tileset_layouts
-	@echo "Compressing tileset mappings..."
-	@$(PYTHON) tools/build/parseTilesetLayouts.py $(GAME)
-	@echo "Done compressing tileset mappings."
-	@touch $@
-
-build/tileset_layouts/tilesetMappings%Indices.cmp: build/tileset_layouts/tilesetMappings%Indices.bin build/tileset_layouts/mappingsDictionary.bin | build/tileset_layouts
-	@echo "Compressing $< to $@..."
-	@$(PYTHON) tools/build/compressTilesetLayoutData.py $< $@ 1 build/tileset_layouts/mappingsDictionary.bin
-
-build/tileset_layouts/tilesetCollisions%.cmp: tileset_layouts/$(GAME)/tilesetCollisions%.bin build/tileset_layouts/collisionsDictionary.bin | build/tileset_layouts
-	@echo "Compressing $< to $@..."
-	@$(PYTHON) tools/build/compressTilesetLayoutData.py $< $@ 0 build/tileset_layouts/collisionsDictionary.bin
-
 build/rooms/room04%.cmp: rooms/$(GAME)/large/room04%.bin | build/rooms
 	@echo "Compressing $< to $@..."
 	@$(PYTHON) tools/build/compressRoomLayout.py $< $@ -d rooms/$(GAME)/dictionary4.bin
@@ -295,8 +251,6 @@ build/rooms: | build
 	mkdir build/rooms
 build/debug: | build
 	mkdir build/debug
-build/tileset_layouts: | build
-	mkdir build/tileset_layouts
 build/doc: | build
 	mkdir build/doc
 

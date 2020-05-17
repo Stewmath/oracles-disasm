@@ -2495,7 +2495,10 @@ wObjectTileIndex: ; $cd1f
 ; This is set when calling "objectCheckIsOverHazard". Might be ages-exclusive?
 	db
 
-wTilesetUniqueGfx: ; $cd20
+wTilesetIndex: ; $cd20
+; New variable or the expanded-tilesets branch. This is the index of the loaded area.
+; Replaces "wTilesetUniqueGfx".
+; Bit 7 is set if (?) (just like "wTilesetUniqueGfx").
 	db
 wTilesetGfx: ; $cd21
 	db

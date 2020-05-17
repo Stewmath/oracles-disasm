@@ -1514,187 +1514,11 @@ readByteSequential:
 	ret
 
 ;;
+; HACK-BASE: This function has been deleted for the expanded tilesets patch.
+;
 ; @param	a	Tileset to load (tilesets include collision data and tile indices)
 loadTileset:
-	ld e,a
-	ld a,($ff00+R_SVBK)
-	ld c,a
-	ldh a,(<hRomBank)
-	ld b,a
-	push bc
-
-	ld a,:tilesetLayoutTable
-	setrombank
-	ld a,e
-	ld hl,tilesetLayoutTable
-	rst_addDoubleIndex
-	ldi a,(hl)
-	ld h,(hl)
-	ld l,a
---
-	ldi a,(hl)
-	push hl
-	ld hl,tilesetLayoutDictionaryTable
-	rst_addDoubleIndex
-	ldi a,(hl)
-	ld h,(hl)
-	ld l,a
-	ldi a,(hl)
-	ldh (<hFF8F),a
-	ldi a,(hl)
-	ldh (<hFF91),a
-	ldi a,(hl)
-	ldh (<hFF90),a
-	pop hl
-
-	; Get source data bank
-	ldi a,(hl)
-	ldh (<hFF8E),a
-
-	; Load data pointer to stack for later use
-	ldi a,(hl)
-	ld d,a
-	ldi a,(hl)
-	ld e,a
-	push de
-
-	; Load destination in de
-	ldi a,(hl)
-	ld d,a
-	ldi a,(hl)
-	ld e,a
-
-	; Write data size into ff8c
-	ldi a,(hl)
-	and $7f
-	ldh (<hFF8D),a
-	ldd a,(hl)
-	ldh (<hFF8C),a
-
-	; Store header position into ff92
-	ld a,h
-	ldh (<hFF93),a
-	ld a,l
-	ldh (<hFF92),a
-
-	; Data pointer in hl
-	pop hl
-	call loadTilesetHlpr
-
-	ld a,:tilesetLayoutTable
-	setrombank
-
-	; Retrieve header position
-	ldh a,(<hFF93)
-	ld h,a
-	ldh a,(<hFF92)
-	ld l,a
-
-	; Check if repeat bit is set
-	ldi a,(hl)
-	inc hl
-	add a
-	jr c,--
-
-	pop bc
-	ld a,b
-	setrombank
-	ld a,c
-	ld ($ff00+R_SVBK),a
-	ret
-
-;;
-; @param	hl	pointer to compressed data
-; @param	[ff8e]	bank of compressed data
-loadTilesetHlpr:
-
-; Internal variables:
-; ff8a: size of chunk to read from dictionary
-; ff8b: "key" byte (sorry bad at explaining)
-
-	ld a,e
-	and $0f
-	ld ($ff00+R_VBK),a
-	ld ($ff00+R_SVBK),a
-	xor e
-	ld e,a
-----
-	ldh a,(<hFF8E)
-	setrombank
-	ldi a,(hl)
-	ldh (<hFF8B),a
-	ld b,$08
----
-	ldh a,(<hFF8E)
-	setrombank
-	ldh a,(<hFF8B)
-	rrca
-	ldh (<hFF8B),a
-	jr c,++
-
-	ldi a,(hl)
-	ld (de),a
-	inc de
-	call dec16_ff8c
-	ret z
-	dec b
-	jr nz,---
-	jr ----
-++
-	push bc
-	ldh a,(<hFF8F)
-	bit 7,a
-	jr nz,+
-
-	ldi a,(hl)
-	ld c,a
-	ldi a,(hl)
-	ldh (<hFF8A),a
-	and $0f
-	ld b,a
-	ldh a,(<hFF8A)
-	swap a
-	and $0f
-	add $03
-	ldh (<hFF8A),a
-	jr ++
-+
-	ldi a,(hl)
-	ldh (<hFF8A),a
-	ldi a,(hl)
-	ld c,a
-	ldi a,(hl)
-	ld b,a
-++
-	push hl
-	ld hl,hFF90
-	ldi a,(hl)
-	ld h,(hl)
-	ld l,a
-	add hl,bc
-	ldh a,(<hFF8A)
-	ld b,a
-	ldh a,(<hFF8F)
-	and $3f
-	setrombank
--
-	ldi a,(hl)
-	ld (de),a
-	inc de
-	call dec16_ff8c
-	jr z,+++
-	dec b
-	jr nz,-
-
-	pop hl
-	pop bc
-	dec b
-	jr nz,---
-	jr ----
-+++
-	pop hl
-	pop bc
-	ret
+	jp panic
 
 ;;
 dec16_ff8c:
@@ -4143,8 +3967,11 @@ func_131f:
 ++
 	ld a,(wTilesetPalette)
 	ld (wLoadedTilesetPalette),a
-	ld a,(wTilesetUniqueGfx)
-	ld (wLoadedTilesetUniqueGfx),a
+
+	; HACK-BASE: Removed for expanded tilesets patch
+	;ld a,(wTilesetUniqueGfx)
+	;ld (wLoadedTilesetUniqueGfx),a
+
 	pop af
 	setrombank
 	ret
@@ -12674,124 +12501,81 @@ func_36f6:
 ; End result: w3TileMappingData is loaded with the tile indices and attributes for all
 ; tiles in the tileset.
 ;
+; HACK-BASE: This function has been rewritten for the expanded tilesets patch.
 loadTilesetLayout:
-	ld a,(wTilesetLayout)
-	call loadTileset
-	ld a,:tileMappingTable
-	setrombank
-
 	ld a,:w3TileMappingData
-	ld ($ff00+R_SVBK),a
-	ld hl,w3TileMappingIndices
-	ld de,w3TileMappingData
-	ld b,$00
--
-	push bc
-	call @helper
-	pop bc
-	dec b
-	jr nz,-
+	ldh (<R_SVBK),a
 
-.ifdef ROM_SEASONS
+	; Load mappings
+	ld a,:expandedTilesetMappingsTable
+	setrombank
+	ld a,(wTilesetIndex)
+	and $7f
+	ld b,a
+	ld hl,expandedTilesetMappingsTable
+	rst_addDoubleIndex
+	ld a,b
+	rst_addAToHl
+	ldi a,(hl)
+	ld c,a
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	ld a,c
+	setrombank
+	ld de,w3TileMappingData
+	ld bc,$0800
+	call copyMemoryBc
+
+	; Load collisions
+	ld a,:expandedTilesetMappingsTable
+	setrombank
+	ld a,(wTilesetIndex)
+	and $7f
+	ld b,a
+	ld hl,expandedTilesetCollisionsTable
+	rst_addDoubleIndex
+	ld a,b
+	rst_addAToHl
+	ldi a,(hl)
+	ld c,a
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	ld a,c
+	setrombank
+	ld de,w3TileCollisions
+	ld b,$00
+	call copyMemory
+
 	xor a
 	ld ($ff00+R_SVBK),a
-	ret
-
-.else ; ROM_AGES
-	jpab setPastCliffPalettesToRed
-.endif
-
-;;
-@helper:
-	; bc = tile mapping index
-	ldi a,(hl)
-	ld c,a
-	ldi a,(hl)
-	ld b,a
-
-	; Get address of pointers to tile indices / attributes
-	push hl
-	ld hl, tileMappingTable
-	add hl,bc
-	add hl,bc
-	add hl,bc
-
-	; Load tile indices
-	ldi a,(hl)
-	ld c,a
-	ld a,(hl)
-	swap a
-	and $0f
-	ld b,a
-	push hl
-	ld hl,tileMappingIndexDataPointer
-	ldi a,(hl)
-	ld h,(hl)
-	ld l,a
-	add hl,bc
-	add hl,bc
-	add hl,bc
-	add hl,bc
-	ld b,$04
-	call copyMemory
-
-	; Load tile attributes
-	pop hl
-	ldi a,(hl)
-	and $0f
-	ld b,a
-	ld c,(hl)
-	ld hl,tileMappingAttributeDataPointer
-	ldi a,(hl)
-	ld h,(hl)
-	ld l,a
-	add hl,bc
-	add hl,bc
-	add hl,bc
-	add hl,bc
-	ld b,$04
-	call copyMemory
-
-	pop hl
 	ret
 
 
 ;;
 ; Loads the address of unique header gfx (a&$7f) into wUniqueGfxHeaderAddress.
 ;
+; HACK-BASE: Function removed for expanded tilesets patch.
+;
 ; @param	a	Unique gfx header (see constants/uniqueGfxHeaders.s).
 ;			Bit 7 is ignored.
 loadUniqueGfxHeader:
-	and $7f
-	ld b,a
-	ldh a,(<hRomBank)
-	push af
-	ld a,:uniqueGfxHeaderTable
-	setrombank
-	ld a,b
-	ld hl,uniqueGfxHeaderTable
-	rst_addDoubleIndex
-	ldi a,(hl)
-	ld (wUniqueGfxHeaderAddress),a
-	ld a,(hl)
-	ld (wUniqueGfxHeaderAddress+1),a
-	pop af
-	setrombank
-	ret
+	jp panic
 
 ;;
 ; Load all graphics based on wTileset variables.
 ;
+; HACK-BASE: Modified this function for the expanded tilesets patch.
 loadTilesetGraphics:
 	ldh a,(<hRomBank)
 	push af
 
-	ld a,(wTilesetGfx)
-	call loadGfxHeader
 	ld a,(wTilesetPalette)
 	call loadPaletteHeader
 
-	call          loadTilesetUniqueGfx
+	call          loadTilesetGfx
+
 	callfrombank0 initializeAnimations
 
 .ifdef ROM_AGES
@@ -12799,8 +12583,10 @@ loadTilesetGraphics:
 	callab        roomGfxChanges.checkLoadPastSignAndChestGfx
 .endif
 
-	ld a,(wTilesetUniqueGfx)
-	ld (wLoadedTilesetUniqueGfx),a
+	; HACK-BASE: Removed for expanded tilesets patch
+	;ld a,(wTilesetUniqueGfx)
+	;ld (wLoadedTilesetUniqueGfx),a
+
 	ld a,(wTilesetPalette)
 	ld (wLoadedTilesetPalette),a
 	ld a,(wTilesetAnimation)
@@ -12816,139 +12602,88 @@ loadTilesetGraphics:
 ; This should be called repeatedly (once per frame, to avoid overloading vblank) until all
 ; entries in the header are read.
 ;
+; HACK-BASE: This function has been removed for the expanded tilesets patch.
+;
 ; @param	wUniqueGfxHeaderAddress	Where to read the header from (will be updated)
 ; @param[out]	cflag			Set if there are more entries to load.
 updateTilesetUniqueGfx:
-	ld a,(wTilesetUniqueGfx)
-	or a
-	ret z
-
-	ld b,a
-	ld a,(wLoadedTilesetUniqueGfx)
-	cp b
-	ret z
-
-	ldh a,(<hRomBank)
-	push af
-
-	ld hl,wUniqueGfxHeaderAddress
-	ldi a,(hl)
-	ld h,(hl)
-	ld l,a
-	ld a,:uniqueGfxHeadersStart
-	setrombank
-	call loadUniqueGfxHeaderEntry
-	ld c,a
-	ld a,l
-	ld (wUniqueGfxHeaderAddress),a
-	ld a,h
-	ld (wUniqueGfxHeaderAddress+1),a
-
-	pop af
-	setrombank
-	ld a,c
-	add a
-	ret
+	jp panic
 
 ;;
 ; Load just the first entry of a unique gfx header?
 ;
 ; Unused?
 ;
+; HACK-BASE: This function has been removed for the expanded tilesets patch.
+;
 ; @param	a	Unique gfx header index
 uniqueGfxFunc_380b:
-	ld b,a
+	jp panic
+
+;;
+; HACK-BASE: The "loadTilesetUniqueGfx" function has been replaced with a function that reloads all
+; graphics, for the expanded tilesets patch.
+loadTilesetGfx:
 	ldh a,(<hRomBank)
 	push af
 
-	ld a,:uniqueGfxHeadersStart
-	setrombank
-	ld a,b
-	ld hl,uniqueGfxHeaderTable
+	; Get tileset index (annoyingly it's not stored in ram anywhere, so we had to add it
+	; ourselves by replacing the "wTilesetUniqueGfx" variable)
+	ld a,(wTilesetIndex)
+	and $7f
+	ld hl,expandedTilesetGfxTable
+	ld b,a
 	rst_addDoubleIndex
+	ld a,b
+	rst_addAToHl
+	ld a,:expandedTilesetGfxTable
+	setrombank
+
+	; Get address of expanded tileset graphics
+	ldi a,(hl)
+	ld c,a
 	ldi a,(hl)
 	ld h,(hl)
 	ld l,a
-	call loadUniqueGfxHeaderEntry
+
+	; We do the DMA transfer in 3 goes. A single transfer can take $80 tiles, so 2 goes is
+	; possible. But using the full capacity in a single frame causes small graphical artifacts,
+	; so we do it in 3 instead.
+
+	push hl
+	ld de,$8801
+	ld b,$5f
+	call queueDmaTransfer
+
+	; Wait 1 frame if the LCD is on
+	call c,resumeThreadNextFrame
+
+	pop hl
+	ld a,h
+	add $06
+	ld h,a
+	push hl
+	ld d,$8e
+	call queueDmaTransfer
+
+	call c,resumeThreadNextFrame
+
+	pop hl
+	ld a,h
+	add $06
+	ld h,a
+	ld d,$94
+	ld b,$3f
+	call queueDmaTransfer
+
+	; If LCD is on, wait 1 frame before returning. Otherwise there are issues due to the fact
+	; that we're going to use tons of vblank time (ie. palettes don't get updated properly).
+	; It might not be a problem now that we're doing 3 separate transfers instead of 2, but
+	; better safe than sorry, I guess.
+	call c,resumeThreadNextFrame
 
 	pop af
 	setrombank
-	ret
-
-;;
-loadTilesetUniqueGfx:
-	ld a,:uniqueGfxHeaderTable
-	setrombank
-	ld a,(wTilesetUniqueGfx)
-	and $7f
-	ret z
-
-	ld hl,uniqueGfxHeaderTable
-	rst_addDoubleIndex
-	ldi a,(hl)
-	ld h,(hl)
-	ld l,a
--
-	call loadUniqueGfxHeaderEntry
-	add a
-	jr c,-
-	ret
-
-;;
-; Loads a single gfx header entry at hl. This should be called multiple times until all
-; entries are read.
-;
-; If the first byte (bank+mode) is zero, it loads a palette instead.
-;
-; @param[out]	a	Last byte of the entry (bit 7 set if there's another entry)
-loadUniqueGfxHeaderEntry:
-	ldi a,(hl)
-	or a
-	jr z,@loadPaletteIndex
-
-	ld c,a
-	ldh (<hFF8C),a
-	ldi a,(hl)
-	ld b,a
-	ldi a,(hl)
-	ld c,a
-	ldi a,(hl)
-	ld d,a
-	ldi a,(hl)
-	ld e,a
-	ld a,(hl)
-	and $7f
-	ldh (<hFF8D),a
-	push hl
-	push de
-	ld l,c
-	ld h,b
-	ld b,a
-	ldh a,(<hFF8C)
-	ld c,a
-	ld de,$d807
-	call decompressGraphics
-	pop de
-	ld hl,$d800
-	ld c,$07
-	ldh a,(<hFF8D)
-	ld b,a
-	call queueDmaTransfer
-	pop hl
-	ld a,$00
-	ld ($ff00+R_SVBK),a
-	ld a,:uniqueGfxHeaderTable
-	setrombank
-	ldi a,(hl)
-	ret
-
-@loadPaletteIndex:
-	push hl
-	ld a,(hl)
-	and $7f
-	call loadPaletteHeader
-	pop hl
-	ldi a,(hl)
 	ret
 
 ;;
@@ -14244,6 +13979,9 @@ func_3ee4:
 	ret
 
 .endif
+
+
+.include "code/debug.s"
 
 
 .ENDS
