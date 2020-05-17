@@ -881,18 +881,19 @@ currentsCollisionTable:
 ; ==============================================================================
 partCode2f:
 	jp nz,partDelete		; $6455
-	ld a,$29 		; $6458
+	ld a,Object.health 		; $6458
 	call objectGetRelatedObject1Var		; $645a
 	ld a,(hl)		; $645d
 	or a			; $645e
-	jr z,_label_11_260	; $645f
+	jr z,@veranFairyBeat	; $645f
 	ld b,h			; $6461
-	ld e,$c4		; $6462
+	ld e,Part.state		; $6462
 	ld a,(de)		; $6464
 	rst_jumpTable			; $6465
-.dw $646c
-.dw $647f
-.dw $6493
+	.dw @state0
+	.dw @state1
+	.dw @state2
+@state0:
 	ld h,d			; $646c
 	ld l,e			; $646d
 	inc (hl)		; $646e
@@ -903,9 +904,9 @@ partCode2f:
 	ld a,SND_CHARGE		; $6477
 	call playSound		; $6479
 	jp objectSetVisible82		; $647c
+@state1:
 	call partCommon_decCounter1IfNonzero		; $647f
-	jr nz,_label_11_259	; $6482
-_label_11_257:
+	jr nz,@animate	; $6482
 	ld l,e			; $6484
 	inc (hl)		; $6485
 	call objectGetAngleTowardEnemyTarget		; $6486
@@ -913,29 +914,31 @@ _label_11_257:
 	ld (de),a		; $648b
 	ld a,SND_BEAM2		; $648c
 	call playSound		; $648e
-	jr _label_11_259		; $6491
-	ld c,$84		; $6493
+	jr @animate		; $6491
+@state2:
+	ld c,Enemy.state		; $6493
 	ld a,(bc)		; $6495
 	cp $03			; $6496
-	jr nz,_label_11_258	; $6498
-	ld c,$83		; $649a
+	jr nz,@applySpeed	; $6498
+	; Veran Fairy moving and attacking
+	ld c,Enemy.var03		; $649a
 	ld a,(bc)		; $649c
 	cp $02			; $649d
-	jr nz,_label_11_258	; $649f
+	jr nz,@applySpeed	; $649f
 	ld a,(wFrameCounter)		; $64a1
 	and $0f			; $64a4
-	jr nz,_label_11_258	; $64a6
+	jr nz,@applySpeed	; $64a6
 	call objectGetAngleTowardEnemyTarget		; $64a8
 	call objectNudgeAngleTowards		; $64ab
-_label_11_258:
+@applySpeed:
 	call partCommon_checkOutOfBounds		; $64ae
-	jr z,_label_11_261	; $64b1
+	jr z,@delete		; $64b1
 	call objectApplySpeed		; $64b3
-_label_11_259:
+@animate:
 	jp partAnimate		; $64b6
-_label_11_260:
+@veranFairyBeat:
 	call objectCreatePuff		; $64b9
-_label_11_261:
+@delete:
 	jp partDelete		; $64bc
 
 
