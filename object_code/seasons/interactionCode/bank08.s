@@ -6244,7 +6244,7 @@ interactionCode4e:
 	ret nz			; $7662
 	ld a,$80		; $7663
 	ld ($cfd3),a		; $7665
-	ld a,$06		; $7668
+	ld a,CUTSCENE_S_DIN_DANCING		; $7668
 	ld ($cc04),a		; $766a
 	ld a,$08		; $766d
 	call setLinkIDOverride		; $766f

@@ -5544,9 +5544,7 @@ partCode59:
 	jr _label_11_444		; $7ee5
 	call partCommon_decCounter1IfNonzero		; $7ee7
 	jr nz,_label_11_444	; $7eea
-	ld hl,$6dbc		; $7eec
-	ld e,$10		; $7eef
-	call interBankCall		; $7ef1
+	callab bank10.agesFunc_10_6dbc
 	ld h,d			; $7ef4
 	ld l,$c4		; $7ef5
 	inc (hl)		; $7ef7

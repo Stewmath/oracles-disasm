@@ -173,7 +173,7 @@ reloadObjectGfx:
 	ld a,(wLoadedItemGraphic2)		; $412c
 	or a			; $412f
 	call nz,loadUncompressedGfxHeader		; $4130
-
+agesFunc_3f_4133:
 	ld hl,wLoadedObjectGfx		; $4133
 --
 	ldi a,(hl)		; $4136

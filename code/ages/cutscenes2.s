@@ -1,4 +1,5 @@
 ;;
+; CUTSCENE_TOGGLE_BLOCKS
 ; @addr{7c80}
 cutscene02:
 	call @handleRaisingFloorsCutscene		; $7c80
@@ -164,18 +165,21 @@ cutscene02:
 
 
 ;;
+; CUTSCENE_WALL_RETRACTION
 ; @addr{7d6b}
 cutscene0b:
 	callab func_701d		; $7d6b
 	jp updateAllObjects		; $7d73
 
 ;;
+; CUTSCENE_D2_COLLAPSE
 ; @addr{7d76}
 cutscene1a:
 	callab func_7168		; $7d76
 	jp updateAllObjects		; $7d7e
 
 ;;
+; CUTSCENE_TIMEWARP
 ; @addr{7d81}
 cutscene1b:
 	ld a,($ff00+R_SVBK)	; $7d81
@@ -195,6 +199,7 @@ warpToMoblinKeepUnderground:
 	m_HardcodedWarpA ROOM_AGES_701, $00, $03, $03
 
 ;;
+; CUTSCENE_AMBI_PASSAGE_OPEN
 ; @addr{7d9d}
 cutscene1c:
 	callab func_03_7493		; $7d9d
@@ -202,6 +207,7 @@ cutscene1c:
 	jp updateStatusBar		; $7da8
 
 ;;
+; CUTSCENE_JABU_OPEN
 ; @addr{7dab}
 cutscene1d:
 	callab func_03_7565		; $7dab
@@ -209,6 +215,7 @@ cutscene1d:
 	jp updateAllObjects		; $7dbb
 
 ;;
+; CUTSCENE_CLEAN_SEAS
 ; @addr{7dbe}
 cutscene1e:
 	callab func_03_7619		; $7dbe

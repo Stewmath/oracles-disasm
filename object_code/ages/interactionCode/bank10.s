@@ -388,6 +388,7 @@ blackTowerEscape_simulatedInput4:
 	dwb 256 $00
 	.dw $ffff
 
+agesFunc_10_70f6:
 	xor a			; $70f6
 	ldh (<hOamTail),a	; $70f7
 	ld de,$cbc2		; $70f9
@@ -587,6 +588,8 @@ _label_10_298:
 	ld ($cbc1),a		; $7290
 	ld a,$04		; $7293
 	jp fadeoutToWhiteWithDelay		; $7295
+
+agesFunc_10_7298:
 	ld de,$cbc2		; $7298
 	ld a,(de)		; $729b
 	rst_jumpTable			; $729c
@@ -2333,9 +2336,7 @@ interactionCodee1:
 	call getThisRoomFlags		; $7d30
 	set 1,(hl)		; $7d33
 ++
-	ld hl,interactionBeginTimewarp		; $7d35
-	ld e,:interactionBeginTimewarp		; $7d38
-	jp interBankCall		; $7d3a
+	jpab interactionBeginTimewarp
 	; Above call will delete this object
 
 @state0:

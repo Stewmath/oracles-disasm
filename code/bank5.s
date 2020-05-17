@@ -2808,7 +2808,7 @@ _warpTransition8:
 	ld (wDisabledObjects),a		; $4c46
 	ld a,$80		; $4c49
 	ld (wMenuDisabled),a		; $4c4b
-	ld a,$15		; $4c4e
+	ld a,CUTSCENE_S_15		; $4c4e
 	ld (wCutsceneTrigger),a		; $4c50
 
 	ld bc,$ff60		; $4c53
@@ -3703,7 +3703,7 @@ _linkState02:
 	ld a,(wDungeonIndex)		; $4f3c
 	cp $09			; $4f3f
 	jr nz,+			; $4f41
-	ld a,$13		; $4f43
+	ld a,CUTSCENE_S_ONOX_FINAL_FORM		; $4f43
 	ld (wCutsceneTrigger),a		; $4f45
 	ret			; $4f48
 +
@@ -11561,7 +11561,7 @@ _rickyStateASubstateA:
 	ld a,(de)		; $7132
 	cp $38			; $7133
 	jr c,-	; $7135
-	ld bc,$2004		; $7137
+	ld bc,TX_2004		; $7137
 	call showText		; $713a
 .endif
 

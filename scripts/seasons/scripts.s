@@ -2685,7 +2685,7 @@ subrosianScript_beachText2:
 @datedRosa:
 	rungenericnpc TX_2913
 @datingRosa:
-	settextid $2918
+	settextid TX_2918
 	jump2byte _subrosian_jump
 	
 subrosianScript_beachText3:

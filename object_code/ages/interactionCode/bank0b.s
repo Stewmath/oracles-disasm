@@ -4184,9 +4184,7 @@ _twinrovaInCutscene_loadScript:
 ; INTERACID_TUNI_NUT
 ; ==============================================================================
 interactionCodeb1:
-	ld hl,bank3f.interactionCodeb1_body		; $6771
-	ld e,:bank3f.interactionCodeb1_body		; $6774
-	jp interBankCall		; $6776
+	jpab bank3f.interactionCodeb1_body
 
 
 ; ==============================================================================

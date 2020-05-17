@@ -7,6 +7,7 @@ cutscene06:
 	jpab func_03_6306		; $5d53
 
 ;;
+; CUTSCENE_MAKU_TREE_DISAPPEARING
 ; @addr{5d5b}
 cutscene07:
 	ld c,$01		; $5d5b
@@ -17,17 +18,22 @@ _func_5d5d:
 	jpab func_03_6306		; $5d64
 
 ;;
+; CUTSCENE_BLACK_TOWER_EXPLANATION
 ; @addr{5d6c}
 cutscene08:
 	ld c,$02		; $5d6c
 	jr _func_5d5d			; $5d6e
+
 ;;
+; CUTSCENE_NAYRU_WARP_TO_MAKU_TREE
 ; @addr{5d70}
 cutscene0c:
 	call func_1613		; $5d70
 	ld c,$03		; $5d73
 	jr _func_5d5d			; $5d75
+
 ;;
+; CUTSCENE_BLACK_TOWER_ESCAPE
 ; @addr{5d77}
 cutscene09:
 	call func_1613		; $5d77
@@ -44,17 +50,22 @@ cutscene09:
 	jp func_5e0e		; $5d8b
 
 ;;
+; CUTSCENE_ROOM_OF_RITES_COLLAPSE
 ; @addr{5d8e}
 cutscene0f:
 	call func_1613		; $5d8e
 	ld e,$02		; $5d91
 	jp endgameCutsceneHandler		; $5d93
+
 ;;
+; CUTSCENE_CREDITS
 ; @addr{5d96}
 cutscene0a:
 	ld e,$01		; $5d96
 	jp endgameCutsceneHandler		; $5d98
+
 ;;
+; CUTSCENE_FLAME_OF_DESPAIR
 ; @addr{5d9b}
 cutscene20:
 	call func_1613		; $5d9b
@@ -62,12 +73,15 @@ cutscene20:
 	jr ---			; $5da0
 
 ;;
+; CUTSCENE_PREGAME_INTRO
 ; @addr{5da2}
 cutscene0d:
 	call func_1613		; $5da2
 	ld c,$06		; $5da5
 	jpab func_03_6306		; $5da7
+
 ;;
+; CUTSCENE_TWINROVA_REVEAL
 ; @addr{5daf}
 cutscene0e:
 	call func_1613		; $5daf
@@ -79,6 +93,7 @@ cutscene0e:
 	jpab func_03_6306		; $5dba
 
 ;;
+; CUTSCENE_BLACK_TOWER_COMPLETE
 ; @addr{5dc2}
 cutscene21:
 	ld a,(wCutsceneTrigger)		; $5dc2
@@ -89,18 +104,21 @@ cutscene21:
 	jr _func_5d5d			; $5dcb
 
 ;;
+; CUTSCENE_TURN_TO_STONE
 ; @addr{5dcd}
 cutscene10:
 	ld c,$04		; $5dcd
 	jr _func_5d5d			; $5dcf
 
 ;;
+; CUTSCENE_FLAME_OF_SORROW
 ; @addr{5dd1}
 cutscene11:
 	call func_3ed0		; $5dd1
 	jp func_5d41		; $5dd4
 
 ;;
+; CUTSCENE_ZELDA_KIDNAPPED
 ; @addr{5dd7}
 cutscene12:
 	ld a,(wCutsceneTrigger)		; $5dd7
@@ -111,6 +129,7 @@ cutscene12:
 	jp func_5d41		; $5de1
 
 ;;
+; CUTSCENE_16
 ; @addr{5de4}
 cutscene16:
 	call updateMenus		; $5de4

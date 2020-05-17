@@ -1494,12 +1494,8 @@ _label_03_103:
 	ld ($cbc1),a		; $5fcf
 _label_03_104:
 	jp fadeoutToWhite		; $5fd2
-	ld hl,$70f6		; $5fd5
-	ld e,$10		; $5fd8
-	jp interBankCall		; $5fda
-	ld hl,$7298		; $5fdd
-	ld e,$10		; $5fe0
-	jp interBankCall		; $5fe2
+	jpab interactionBank10.agesFunc_10_70f6
+	jpab interactionBank10.agesFunc_10_7298
 
 ;;
 ; Called from disableLcdAndLoadRoom in bank 0.
@@ -2846,9 +2842,7 @@ _label_03_134:
 	call $6f8c		; $6a5b
 	ld a,$10		; $6a5e
 	ld ($cfde),a		; $6a60
-	ld hl,_cutscene_loadObjectSetAndFadein		; $6a63
-	ld e,$03		; $6a66
-	call interBankCall		; $6a68
+	callab _cutscene_loadObjectSetAndFadein
 	call showStatusBar		; $6a6b
 	ld a,MUS_DISASTER		; $6a6e
 	call playSound		; $6a70
@@ -3825,9 +3819,7 @@ func_03_7244:
 	ld (wScrollMode),a		; $726a
 	ld a,$08		; $726d
 	ld ($cbb7),a		; $726f
-	ld hl,$4133		; $7272
-	ld e,$3f		; $7275
-	call interBankCall		; $7277
+	callab bank3f.agesFunc_3f_4133
 	callab bank6.specialObjectLoadAnimationFrameToBuffer		; $727a
 	ld a,$6f		; $7282
 	call loadGfxHeader		; $7284

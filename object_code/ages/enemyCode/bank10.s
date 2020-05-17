@@ -4027,6 +4027,7 @@ _kingMoblinMinion_stateA:
 	ld (hl),$01		; $6db7
 	jp enemyDelete		; $6db9
 
+agesFunc_10_6dbc:
 	ld e,$c2		; $6dbc
 	ld a,(de)		; $6dbe
 	ld hl,@table		; $6dbf
