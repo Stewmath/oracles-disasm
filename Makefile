@@ -121,8 +121,8 @@ seasons:
 	@ROM_SEASONS=1 $(MAKE) seasons.gbc
 
 
-$(GAME).gbc: $(OBJS) build/linkfile
-	$(LD) -S build/linkfile $@
+$(GAME).gbc: $(OBJS) linkfile_$(GAME)
+	$(LD) -S linkfile_$(GAME) $@
 	@-tools/build/verify-checksum.sh $(GAME)
 
 
@@ -142,10 +142,6 @@ build/$(GAME).o: $(GAME).s build/textData.s build/textDefines.s Makefile | build
 
 build/%.o: code/%.s | build
 	$(CC) -o $@ $(CFLAGS) $<
-
-build/linkfile: $(OBJS)
-	@echo "[objects]" > $@
-	@echo "$(OBJS)" | sed 's/ /\n/g' >> $@
 
 build/rooms/%.cmp: rooms/$(GAME)/small/%.bin | build/rooms
 	@echo "Compressing $< to $@..."

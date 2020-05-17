@@ -2,8 +2,11 @@
 ;
 ; When 2 addresses are listed (ie. $c6b9/$c6b5), the first address is for ages, the second
 ; is for seasons. If only one is listed, assume it's for ages.
+;
+; The RAMSECTION names are referenced in the linkfiles (linkfile_ages, linkfile_seasons) in order to
+; place them at the correct addresses. Their banks and slots are also set in the linkfile.
 
-.enum $c000 export
+.RAMSECTION "Wram0_c000"
 
 wMusicReadFunction: ; $c000
 ; Function copied to RAM to read a byte from another bank.
@@ -120,9 +123,13 @@ wChannelVolumes: ; $c07d
 
 ; $c085-$c09f unused?
 
-.ende
+.ENDS
 
-.enum $c0a0 export
+
+; TODO: Make this a ramsection. Currently it creates annoying warnings when made a ramsection due to
+; some strange arithmetic done between slots; the warning needs to be muted in wla-dx.
+;.RAMSECTION "Wram0_c0a0"
+.ENUM $c0a0
 
 wMusicQueue: ; $c0a0
 	dsb $10
@@ -146,7 +153,8 @@ wThreadStateBuffer: ; $c2e0
 ; $20 byte buffer (with a few 2-byte gaps)
 	dsb $20
 
-.ende
+.ENDE
+
 
 .define NUM_THREADS	4
 
@@ -184,7 +192,7 @@ wThreadStateBuffer: ; $c2e0
 .define wPaletteThread_fadeOffset	wThreadStateBuffer + $1f ; $c2ff
 
 
-.enum $c300 export
+.RAMSECTION "Wram0_c300"
 
 wBigBuffer: ; $c300
 ; General purpose $100 byte buffer. This has several, mutually exclusive uses:
@@ -305,10 +313,10 @@ wPuddleAnimationPointer: ; $c4ba
 
 ; $c4bb-$c4bf unused?
 
-.ende
+.ENDS
 
 
-.enum $c4c0 export
+.RAMSECTION "Wram0_c4c0"
 
 wTerrainEffectsBuffer: ; $c4c0
 ; This might only be used for drawing objects' shadows, though in theory it could also be
@@ -322,17 +330,15 @@ wObjectsToDraw: ; $c500
 ; y-position.
 	dsb $40
 
-wc540:
 ; $c540-$c5af unused?
-	dsb $70
 
-.ende
+.ENDS
 
 ; ========================================================================================
 ; Everything from this point ($c5b0) up to $caff goes into the save data ($550 bytes).
 ; ========================================================================================
 
-.enum $c5b0 export
+.RAMSECTION "Wram0_c5b0"
 
 wFileStart: ; $c5b0
 ; Start of file data (same address as checksum)
@@ -349,10 +355,10 @@ wSavefileString: ; $c5b2
 
 ; $c5ba-$c5bf unused?
 
-.ende
+.ENDS
 
 
-.enum $c5c0 export
+.RAMSECTION "Wram0_c5c0"
 
 wUnappraisedRings: ; $c5c0
 ; List of unappraised rings. each byte always seems to have bit 6 set, indicating that the
@@ -363,14 +369,9 @@ wUnappraisedRings: ; $c5c0
 wUnappraisedRingsEnd: ; $c600
 	.db
 
-
-.ende
-
 ; ========================================================================================
 ; C6xx block: deals largely with inventory, also global flags
 ; ========================================================================================
-
-.enum $c600 export
 
 wc600Block: ; $c600
 	.db
@@ -883,12 +884,12 @@ wSecretType: ; $c6fe
 ; 3: 5-letter secret
 	db
 
-.ende
+.ENDS
 
 .define wSeedsAndHarpSongsObtained	wObtainedTreasureFlags+TREASURE_EMBER_SEEDS/8
 
 
-.enum $c700 export
+.RAMSECTION "Wram0_c700"
 
 ; Flags shared for above water and underwater
 wPresentRoomFlags: ; $c700
@@ -901,7 +902,7 @@ wGroup4Flags: ; $c900
 wGroup5Flags: ; $ca00
 	dsb $100
 
-.ende
+.ENDS
 
 ; Ages indoors in respective time's map. Seasons' Holodrum indoors in Subrosia's map
 .ifdef ROM_AGES
@@ -920,7 +921,7 @@ wGroup5Flags: ; $ca00
 ; $cb00: END of data that goes into the save file
 ; ========================================================================================
 
-.enum $cb00 export
+.RAMSECTION "Wram0_cb00"
 
 wOam: ; $cb00
 	dsb $a0
@@ -1521,9 +1522,10 @@ wAItemSpriteXOffset: ; $cbf2
 wAItemDisplayMode: ; $cbf3
 	db
 
-.ende
+.ENDS
 
-.enum $cc00 export
+
+.RAMSECTION "Wram0_cc00"
 
 wcc00Block: ; $cc00
 	.db
@@ -1601,16 +1603,26 @@ wInteractionIDToLoadExtraGfx: ; $cc1e/$cc1d
 ; Same as above, but for interactions.
 	db
 
-.ende
+.ifdef ROM_SEASONS
 
-; Ages: $cc1f-$cc20 unused.
-; Seasons: $cc1f-$cc3c are occupied by data which, in ages, is at $cdc0.
-
-.ifdef ROM_AGES
-	.enum $cc21 export
-.else
-	.enum $cc3d export
+wcc1e: ; -/$cc1e
+; Unused?
+	db
 .endif
+
+.ENDS
+
+
+; This section is at a different location depending on the game.
+; Ages: Starts at $cc1f. Appended to "Wram0_cc00" section just above
+; Seasons: Starts at $cc3b. Appended to "Wram0_FloatingSection2" section.
+;          (Addrs $cc1f-$cc3a are used but defined later, in the aforementioned section.)
+
+.RAMSECTION "Wram0_FloatingSection1"
+
+wcc1f: ; $cc1f/$cc3b
+; Used in Seasons during a cutscene?
+	dw
 
 ; Point to respawn after falling in hole or w/e
 wLinkLocalRespawnY: ; $cc21/$cc3d
@@ -1791,7 +1803,7 @@ wWarpTransition2: ; $cc4b/$cc67
 ; Does bit 7 do something?
 	db
 
-wWarpDestVariablesEnd: ; $cc4c;$cc68
+wWarpDestVariablesEnd: ; $cc4c/$cc68
 	.db
 
 wcc4c: ; $cc4c/$cc68
@@ -2356,13 +2368,14 @@ wcce9: ; $cce9
 ; This might be a marker for the end of data in the $cc00 block?
 	.db
 
-.ende
+.ENDS
 
 
 ; These $30 bytes at $cd00 are treated as a unit in a certain place
 .define wScreenVariables.size $30
 
-.enum $cd00 export
+
+.RAMSECTION "Wram0_cd00"
 
 wScreenVariables: ; $cd00
 	.db
@@ -2517,10 +2530,10 @@ wDeleteEnergyBeads: ; $cd2d
 
 ; $cd2e-$cd2f unused?
 
-.ende
+.ENDS
 
 
-.enum $cd30 export
+.RAMSECTION "Wram0_cd30"
 
 wAnimationState: ; $cd30
 ; Bits 0-3 determine whether to use animation data 1-4
@@ -2548,9 +2561,10 @@ wAnimationPointer4: ; $cd3b
 
 ; $cd3d-$cd3f unused?
 
-.ende
+.ENDS
 
-.enum $cd40 export
+
+.RAMSECTION "Wram0_cd40"
 
 wTmpVramBuffer: ; $cd40
 ; Used temporarily for vram transfers, dma, etc.
@@ -2566,16 +2580,14 @@ wStaticObjects: ; $cd80
 	dsb $80
 .endif
 
-.ende
+.ENDS
 
-; Data here occupies different spots in ages and seasons.
-; TODO: organize this better?
 
-.ifdef ROM_AGES
-	.enum $cdc0 export
-.else; ROM_SEASONS
-	.enum $cc1f export
-.endif
+; This section is at a different location depending on the game.
+; Ages: Starts at $cdc0. Appended to "Wram0_cd40" section just above
+; Seasons: Starts at $cc1f. Appended to "Wram0_cc00" section from a bit earlier.
+
+.RAMSECTION "Wram0_FloatingSection2"
 
 wEnemiesKilledList: ; $cdc0/$cc1f
 ; This remembers the enemies that have been killed in the last 8 visited rooms.
@@ -2685,10 +2697,10 @@ wcde4: ; $cde4
 ; $cde5-$ceff unused?
 
 .endif ; ROM_AGES
-.ende
+.ENDS
 
 
-.enum $ce00 export
+.RAMSECTION "Wram0_ce00"
 
 wRoomCollisions: ; $ce00
 ; $10 bytes larger than it needs to be?
@@ -2699,20 +2711,20 @@ wRoomCollisionsEnd: ; $cec0
 wTmpcec0: ; $cec0
 	.db
 
-.ende
-
 
 ; Data at $cec0-$ceff has several different uses depending on context.
 ; Aside from the uses listed below, it's also used for:
 ; * Functions which apply an object's speed ($cec0-$cec3)
 ; * Checking enough torches are lit to open a door ($cec0 only)
 ; * Unpacking secrets
+wEnemyPlacement: instanceof EnemyPlacementStruct
 
-.enum $cec0 export
-	wEnemyPlacement: instanceof EnemyPlacementStruct
-.ende
+.ENDS
 
-.enum $cee0 export
+
+.RAMSECTION "Wram0_cee0"
+
+.union
 	wShootingGalleryTileLayoutsToShow: ; $cee0
 	; This consists of the numbers 0-9. As the game progresses, a number is read from
 	; a random position in this buffer, then the buffer is decreased in size by one
@@ -2721,18 +2733,21 @@ wTmpcec0: ; $cec0
 	;
 	; The goron dance also uses this in exactly the same way.
 		dsb 10
-.ende
 
-.enum $cee0 export
+.nextu
+
 	wWizzrobePositionReservations: ; $cee0
 	; Each 2 bytes are the position and object index of a wizzrobe. Keeps track of
 	; their positions so multiple red wizzrobes don't spawn on top of each other.
 	; A red could still spawn on top of a green, though.
 		dsb $10
-.ende
+.endu
+
+.ENDS
 
 
-.enum $cf00 export
+
+.RAMSECTION "Wram0_cf00"
 
 wRoomLayout: ; $cf00
 ; $10 bytes larger than it needs to be; the row below the last row is reserved and filled
@@ -3112,7 +3127,7 @@ wRoomLayoutEnd: ; $cfc0
 .endu
 .endu
 
-.ende
+.ENDS
 
 
 ; ========================================================================================
@@ -3549,5 +3564,3 @@ w6SpecialObjectGfxBuffer:	dsb $100	; $d600
 ; $d5e0: Used at some point for unknown purpose
 
 .define w7d800			$d800 ; $300 bytes? Secret text gets written here?
-
-; Manually define the bank number for now
