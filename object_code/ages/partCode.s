@@ -5010,15 +5010,16 @@ partCode4a:
 
 ; ==============================================================================
 ; PARTID_RAMROCK_SEED_FORM_ORB
-; Used by Ramrock (seed form)
 ; ==============================================================================
 partCode4f:
 	ld e,$c4		; $7a5f
 	ld a,(de)		; $7a61
 	rst_jumpTable			; $7a62
-.dw $7a69
-.dw $7a78
-.dw $7a99
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	
+@state0:
 	ld a,$01		; $7a69
 	ld (de),a		; $7a6b
 	inc a			; $7a6c
@@ -5027,12 +5028,14 @@ partCode4f:
 	ld a,$28		; $7a72
 	ld (de),a		; $7a74
 	jp objectSetVisible80		; $7a75
+	
+@state1:
 	call partAnimate		; $7a78
 	ld a,$02		; $7a7b
 	call objectGetRelatedObject1Var		; $7a7d
 	ld a,(hl)		; $7a80
 	cp $0f			; $7a81
-	jr nz,_label_11_414	; $7a83
+	jr nz,@delete	; $7a83
 	call partCommon_decCounter1IfNonzero		; $7a85
 	ret nz			; $7a88
 	call objectGetAngleTowardLink		; $7a89
@@ -5044,17 +5047,20 @@ partCode4f:
 	ld e,$c4		; $7a94
 	ld a,$02		; $7a96
 	ld (de),a		; $7a98
+	
+@state2:
 	call partAnimate		; $7a99
 	call partCommon_decCounter1IfNonzero		; $7a9c
-	jr nz,_label_11_413	; $7a9f
+	jr nz,@func_7aa9	; $7a9f
 	ld (hl),$0a		; $7aa1
 	call objectGetAngleTowardLink		; $7aa3
 	jp objectNudgeAngleTowards		; $7aa6
-_label_11_413:
+
+@func_7aa9:
 	call objectApplySpeed		; $7aa9
 	call objectCheckWithinScreenBoundary		; $7aac
 	ret c			; $7aaf
-_label_11_414:
+@delete:
 	jp partDelete		; $7ab0
 
 
