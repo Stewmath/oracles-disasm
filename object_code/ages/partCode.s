@@ -5259,11 +5259,11 @@ partCode55:
 ; PARTID_VERAN_SPIDERWEB
 ; ==============================================================================
 partCode56:
-	jr z,_label_11_421	; $7bab
+	jr z,@normalStatus	; $7bab
 	ld e,$ea		; $7bad
 	ld a,(de)		; $7baf
 	cp $80			; $7bb0
-	jr nz,_label_11_421	; $7bb2
+	jr nz,@normalStatus	; $7bb2
 	ld hl,$d031		; $7bb4
 	ld (hl),$10		; $7bb7
 	ld l,$30		; $7bb9
@@ -5278,29 +5278,31 @@ partCode56:
 	ld l,$c4		; $7bcc
 	ldi a,(hl)		; $7bce
 	dec a			; $7bcf
-	jr nz,_label_11_421	; $7bd0
+	jr nz,@normalStatus	; $7bd0
 	inc l			; $7bd2
 	ld a,$01		; $7bd3
 	ldi (hl),a		; $7bd5
 	ld (hl),a		; $7bd6
-_label_11_421:
+@normalStatus:
 	ld e,$c2		; $7bd7
 	ld a,(de)		; $7bd9
 	ld e,$c4		; $7bda
 	rst_jumpTable			; $7bdc
-.dw $7be5
-.dw $7c3c
-.dw $7d1f
-.dw $7d42
+	.dw @subid0
+	.dw @subid1
+	.dw @subid2
+	.dw @subid3
+	
+@subid0:
 	ld a,(de)		; $7be5
 	or a			; $7be6
-	jr z,_label_11_424	; $7be7
+	jr z,@func_7c2e		; $7be7
 	call partCommon_decCounter1IfNonzero		; $7be9
-	jr nz,_label_11_422	; $7bec
+	jr nz,++		; $7bec
 	ld (hl),$04		; $7bee
 	call getFreePartSlot		; $7bf0
-	jr nz,_label_11_422	; $7bf3
-	ld (hl),$56		; $7bf5
+	jr nz,++		; $7bf3
+	ld (hl),PARTID_VERAN_SPIDERWEB		; $7bf5
 	inc l			; $7bf7
 	ld (hl),$02		; $7bf8
 	ld l,$d6		; $7bfa
@@ -5311,12 +5313,12 @@ _label_11_421:
 	ld a,(de)		; $7c00
 	ld (hl),a		; $7c01
 	call objectCopyPosition		; $7c02
-_label_11_422:
+++
 	ld a,$02		; $7c05
 	call objectGetRelatedObject1Var		; $7c07
 	ld a,(hl)		; $7c0a
 	dec a			; $7c0b
-	jp nz,$7c28		; $7c0c
+	jp nz,@func_7c28		; $7c0c
 	ld c,h			; $7c0f
 	ldh a,(<hCameraY)	; $7c10
 	ld b,a			; $7c12
@@ -5334,36 +5336,42 @@ _label_11_422:
 	ld l,$b8		; $7c22
 	inc (hl)		; $7c24
 	jp partDelete		; $7c25
-_label_11_423:
+
+@func_7c28:
 	call objectCreatePuff		; $7c28
 	jp partDelete		; $7c2b
-_label_11_424:
+	
+@func_7c2e:
 	ld h,d			; $7c2e
 	ld l,e			; $7c2f
 	inc (hl)		; $7c30
 	ld l,$c6		; $7c31
 	inc (hl)		; $7c33
 	call objectSetVisible80		; $7c34
-_label_11_425:
+@beamSound:
 	ld a,SND_BEAM2		; $7c37
 	jp playSound		; $7c39
+	
+@subid1:
 	ld a,$02		; $7c3c
 	call objectGetRelatedObject1Var		; $7c3e
 	ld a,(hl)		; $7c41
 	dec a			; $7c42
-	jr nz,_label_11_423	; $7c43
+	jr nz,@func_7c28	; $7c43
 	ld l,$ad		; $7c45
 	ld a,(hl)		; $7c47
 	or a			; $7c48
-	jr nz,_label_11_423	; $7c49
+	jr nz,@func_7c28	; $7c49
 	ld e,$c4		; $7c4b
 	ld a,(de)		; $7c4d
 	rst_jumpTable			; $7c4e
-.dw $7c59
-.dw $7c92
-.dw $7cc9
-.dw $7cd1
-.dw $7d10
+	.dw @@state0
+	.dw @@state1
+	.dw @@state2
+	.dw @@state3
+	.dw @@state4
+	
+@@state0:
 	ld h,d			; $7c59
 	ld l,e			; $7c5a
 	inc (hl)		; $7c5b
@@ -5387,26 +5395,28 @@ _label_11_425:
 	call objectGetAngleTowardLink		; $7c78
 	cp $0e			; $7c7b
 	ld b,$0c		; $7c7d
-	jr c,_label_11_426	; $7c7f
+	jr c,+			; $7c7f
 	ld b,$10		; $7c81
 	cp $13			; $7c83
-	jr c,_label_11_426	; $7c85
+	jr c,+			; $7c85
 	ld b,$14		; $7c87
-_label_11_426:
++
 	ld e,$c9		; $7c89
 	ld a,b			; $7c8b
 	ld (de),a		; $7c8c
 	call objectSetVisible81		; $7c8d
-	jr _label_11_425		; $7c90
+	jr @beamSound		; $7c90
+	
+@@state1:
 	call partCommon_decCounter1IfNonzero		; $7c92
-	jr nz,_label_11_427	; $7c95
+	jr nz,+			; $7c95
 	ld (hl),$08		; $7c97
 	inc l			; $7c99
 	dec (hl)		; $7c9a
-	jr z,_label_11_428	; $7c9b
+	jr z,++			; $7c9b
 	call getFreePartSlot		; $7c9d
-	jr nz,_label_11_427	; $7ca0
-	ld (hl),$56		; $7ca2
+	jr nz,+			; $7ca0
+	ld (hl),PARTID_VERAN_SPIDERWEB		; $7ca2
 	inc l			; $7ca4
 	ld (hl),$03		; $7ca5
 	ld l,$d6		; $7ca7
@@ -5414,10 +5424,10 @@ _label_11_426:
 	ldi (hl),a		; $7cab
 	ld (hl),d		; $7cac
 	call objectCopyPosition		; $7cad
-_label_11_427:
++
 	call partCommon_checkTileCollisionOrOutOfBounds		; $7cb0
 	jp nc,objectApplySpeed		; $7cb3
-_label_11_428:
+++
 	ld h,d			; $7cb6
 	ld l,$c4		; $7cb7
 	inc (hl)		; $7cb9
@@ -5430,20 +5440,24 @@ _label_11_428:
 	xor $10			; $7cc5
 	ld (hl),a		; $7cc7
 	ret			; $7cc8
+	
+@@state2:
 	call partCommon_decCounter1IfNonzero		; $7cc9
 	ret nz			; $7ccc
 	ld l,$c4		; $7ccd
 	inc (hl)		; $7ccf
 	ret			; $7cd0
+	
+@@state3:
 	call objectApplySpeed		; $7cd1
 	ld e,$f0		; $7cd4
 	ld a,(de)		; $7cd6
 	or a			; $7cd7
-	jr z,_label_11_429	; $7cd8
+	jr z,+			; $7cd8
 	ld bc,$fa00		; $7cda
 	ld hl,$d000		; $7cdd
 	call objectCopyPositionWithOffset		; $7ce0
-_label_11_429:
++
 	ld h,d			; $7ce3
 	ld l,$f1		; $7ce4
 	ld e,$cb		; $7ce6
@@ -5472,19 +5486,23 @@ _label_11_429:
 	ld l,$c4		; $7d0c
 	inc (hl)		; $7d0e
 	ret			; $7d0f
+	
+@@state4:
 	ld hl,$d005		; $7d10
 	ld a,(hl)		; $7d13
 	cp $02			; $7d14
 	jp z,partDelete		; $7d16
 	ld bc,$0600		; $7d19
 	jp objectTakePositionWithOffset		; $7d1c
+	
+@subid2:
 	ld a,(de)		; $7d1f
 	or a			; $7d20
-	jr z,_label_11_431	; $7d21
+	jr z,@func_7d39		; $7d21
 	ld a,$1a		; $7d23
 	call objectGetRelatedObject1Var		; $7d25
 	bit 7,(hl)		; $7d28
-	jr z,_label_11_430	; $7d2a
+	jr z,@@delete		; $7d2a
 	ld l,$8f		; $7d2c
 	ld b,(hl)		; $7d2e
 	dec b			; $7d2f
@@ -5493,30 +5511,34 @@ _label_11_429:
 	dec a			; $7d33
 	cp b			; $7d34
 	ret c			; $7d35
-_label_11_430:
+@@delete:
 	jp partDelete		; $7d36
-_label_11_431:
+	
+@func_7d39:
 	inc a			; $7d39
 	ld (de),a		; $7d3a
 	inc a			; $7d3b
 	call partSetAnimation		; $7d3c
 	jp objectSetVisible80		; $7d3f
+	
+@subid3:
 	ld a,(de)		; $7d42
 	or a			; $7d43
-	jr z,_label_11_433	; $7d44
+	jr z,@func_7d59		; $7d44
 	ld a,$01		; $7d46
 	call objectGetRelatedObject1Var		; $7d48
 	ld a,(hl)		; $7d4b
 	cp $56			; $7d4c
-	jr nz,_label_11_432	; $7d4e
+	jr nz,@@delete		; $7d4e
 	ld l,$cb		; $7d50
 	ld e,l			; $7d52
 	ld a,(de)		; $7d53
 	cp (hl)			; $7d54
 	ret c			; $7d55
-_label_11_432:
+@@delete:
 	jp partDelete		; $7d56
-_label_11_433:
+
+@func_7d59:
 	inc a			; $7d59
 	ld (de),a		; $7d5a
 	ld a,$09		; $7d5b
