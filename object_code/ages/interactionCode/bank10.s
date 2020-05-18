@@ -1863,7 +1863,7 @@ _timewarp_subid0_state2:
 
 	call getFreePartSlot		; $7a69
 	ret nz			; $7a6c
-	ld (hl),PARTID_2b		; $7a6d
+	ld (hl),PARTID_TIMEWARP_ANIMATION		; $7a6d
 	inc l			; $7a6f
 	ld (hl),e ; [subid]
 

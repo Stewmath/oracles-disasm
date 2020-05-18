@@ -9428,7 +9428,7 @@ _interaction97_subid01:
 	ld e,(hl)		; $7dac
 	call getFreePartSlot		; $7dad
 	ret nz			; $7db0
-	ld (hl),PARTID_16		; $7db1
+	ld (hl),PARTID_JABU_JABUS_BUBBLES		; $7db1
 	inc l			; $7db3
 	ld (hl),e		; $7db4
 	ld l,Part.yh		; $7db5
@@ -9461,7 +9461,7 @@ _interaction97_subid01:
 ; Data format:
 ;   b0: Y
 ;   b1: X
-;   b2: Subid for PARTID_16
+;   b2: Subid for PARTID_JABU_JABUS_BUBBLES
 @positions:
 	.db $40 $2f $00
 	.db $42 $31 $00

@@ -1320,8 +1320,8 @@
 .define INTERACID_MOBLIN		$96
 
 ;;
-; @subid_00{Create "poofs" around this object randomly - spawned during D2 collapse}
-; @subid_01{Spawns "bubbles" (PARTID_16) that seem to be blown to the north? - spawned when Jabu Open}
+; @subid_00{Create "poofs" around this object randomly when Present D2 collapses}
+; @subid_01{Spawns "bubbles" (PARTID_JABU_JABUS_BUBBLES) that blow to the north when Jabu Jabu's mouth opens}
 .define INTERACID_97			$97
 
 ;;

@@ -10158,7 +10158,7 @@ enemyCode7f:
 	ld (hl),$00		; $7c9d
 	or a			; $7c9f
 	jr z,@@animate	; $7ca0
-	ld b,PARTID_46		; $7ca2
+	ld b,PARTID_S_46		; $7ca2
 	call _ecom_spawnProjectile		; $7ca4
 	ld a,$01		; $7ca7
 	jp enemySetAnimation		; $7ca9
@@ -10515,7 +10515,7 @@ _func_7eb5:
 	cp $60			; $7ebf
 	ret nc			; $7ec1
 	ld (hl),$5a		; $7ec2
-	ld b,PARTID_46		; $7ec4
+	ld b,PARTID_S_46		; $7ec4
 	call _ecom_spawnProjectile		; $7ec6
 	ld a,$01		; $7ec9
 	jp enemySetAnimation		; $7ecb

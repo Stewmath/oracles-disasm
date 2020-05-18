@@ -87,9 +87,6 @@
 .define PARTID_BUTTON				$09
 
 ;;
-.define PARTID_STUB_0a				$0a
-
-;;
 ; Orb that moves back and forth horizontally. Only used in Seasons?
 ;
 ; @var03{Bitmask for wToggleBlocksState}
@@ -104,9 +101,6 @@
 ;
 ; Y: starting position (short-form)
 .define PARTID_BRIDGE_SPAWNER			$0c
-
-;;
-.define PARTID_STUB_0d				$0d
 
 ;;
 ; This is used by ENEMYID_AMBI_GUARD to detect Link. This is an "invisible projectile"
@@ -165,8 +159,8 @@
 .define PARTID_ITEM_FROM_MAPLE_2		$15
 
 ;;
-; Looks like a bubble or something?
-.define PARTID_16				$16
+; Looks like a bubble
+.define PARTID_JABU_JABUS_BUBBLES		$16
 
 ;;
 .define PARTID_GASHA_TREE			$17
@@ -244,7 +238,7 @@
 
 ;;
 ; Used by INTERACID_TIMEWARP
-.define PARTID_2b				$2b
+.define PARTID_TIMEWARP_ANIMATION		$2b
 
 ;;
 ; Used by INTERACID_VIRE (flame used in "donkey kong" minigame?)
@@ -368,7 +362,9 @@
 .define PARTID_FALLING_BOULDER_SPAWNER		$45
 
 ;;
-.define PARTID_46				$46
+; subids determine bit set/unset of wActiveTriggers when hit
+; @subid_00-03{}
+.define PARTID_SEED_SHOOTER_EYE_STATUE		$46
 
 ;;
 ; Bomb used by PARTID_KING_MOBLIN_MINION.
