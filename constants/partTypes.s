@@ -444,7 +444,11 @@
 .define PARTID_VERAN_BEE_PROJECTILE		$58
 
 ;;
-.define PARTID_59				$59
+; @subid_00{Left flame}
+; @subid_01{Top flame}
+; @subid_02{Right flame}
+; @subid_03{Bottom flame}
+.define PARTID_BLACK_TOWER_MOVING_FLAMES	$59
 
 ; The stone that's pushed at the start of the game. This only applies after it's moved;
 ; before it's moved, the stone is handled by INTERACID_TRIFORCE_STONE instead.

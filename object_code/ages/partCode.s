@@ -5759,18 +5759,24 @@ partCode58:
 
 
 ; ==============================================================================
-; PARTID_59
+; PARTID_BLACK_TOWER_MOVING_FLAMES
+;
+; Variables:
+;   var30: next yh to move to
+;   var31: next xh to move to
 ; ==============================================================================
 partCode59:
 	ld e,$c4		; $7e9a
 	ld a,(de)		; $7e9c
 	rst_jumpTable			; $7e9d
-.dw $7eaa
-.dw $7ec1
-.dw $7edc
-.dw $7ee7
-.dw $7f03
-.dw $7f30
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+	.dw @state5
+
+@state0:
 	ld h,d			; $7eaa
 	ld l,e			; $7eab
 	inc (hl)		; $7eac
@@ -5778,14 +5784,17 @@ partCode59:
 	ld (hl),$14		; $7eaf
 	ld l,$c2		; $7eb1
 	ld a,(hl)		; $7eb3
-	ld hl,$7ebd		; $7eb4
+	ld hl,@table_7ebd		; $7eb4
 	rst_addAToHl			; $7eb7
 	ld e,$c6		; $7eb8
 	ld a,(hl)		; $7eba
 	ld (de),a		; $7ebb
 	ret			; $7ebc
-	ld bc,$2814		; $7ebd
-	inc a			; $7ec0
+
+@table_7ebd:
+	.db $01 $14 $28 $3c
+	
+@state1:
 	call partCommon_decCounter1IfNonzero		; $7ec1
 	ret nz			; $7ec4
 	ld l,e			; $7ec5
@@ -5793,7 +5802,7 @@ partCode59:
 	ld l,$c2		; $7ec7
 	ld a,(hl)		; $7ec9
 	xor $03			; $7eca
-	ld hl,$7ebd		; $7ecc
+	ld hl,@table_7ebd		; $7ecc
 	rst_addAToHl			; $7ecf
 	ld e,$c6		; $7ed0
 	ld a,(hl)		; $7ed2
@@ -5801,25 +5810,31 @@ partCode59:
 	ld a,SND_LIGHTTORCH		; $7ed4
 	call playSound		; $7ed6
 	jp objectSetVisible83		; $7ed9
+	
+@state2:
 	call partCommon_decCounter1IfNonzero		; $7edc
-	jr nz,_label_11_444	; $7edf
+	jr nz,@animate		; $7edf
 	ld (hl),$14		; $7ee1
 	ld l,e			; $7ee3
 	inc (hl)		; $7ee4
-	jr _label_11_444		; $7ee5
+	jr @animate		; $7ee5
+	
+@state3:
 	call partCommon_decCounter1IfNonzero		; $7ee7
-	jr nz,_label_11_444	; $7eea
-	callab bank10.agesFunc_10_6dbc
+	jr nz,@animate		; $7eea
+	callab bank10.blackTower_getMovingFlamesNextTileCoords
 	ld h,d			; $7ef4
 	ld l,$c4		; $7ef5
 	inc (hl)		; $7ef7
 	ld a,b			; $7ef8
 	or a			; $7ef9
-	jr nz,_label_11_444	; $7efa
+	jr nz,@animate		; $7efa
 	inc (hl)		; $7efc
 	ld l,$c6		; $7efd
 	ld (hl),$10		; $7eff
-	jr _label_11_444		; $7f01
+	jr @animate		; $7f01
+	
+@state4:
 	ld h,d			; $7f03
 	ld l,$f0		; $7f04
 	ldi a,(hl)		; $7f06
@@ -5827,31 +5842,34 @@ partCode59:
 	ld c,(hl)		; $7f08
 	ld l,$cb		; $7f09
 	ldi a,(hl)		; $7f0b
-	ldh (<hFF8F),a	; $7f0c
+	ldh (<hFF8F),a		; $7f0c
 	inc l			; $7f0e
 	ld a,(hl)		; $7f0f
-	ldh (<hFF8E),a	; $7f10
+	ldh (<hFF8E),a		; $7f10
 	cp c			; $7f12
-	jr nz,_label_11_442	; $7f13
-	ldh a,(<hFF8F)	; $7f15
+	jr nz,@moveToBC		; $7f13
+	ldh a,(<hFF8F)		; $7f15
 	cp b			; $7f17
-	jr nz,_label_11_442	; $7f18
+	jr nz,@moveToBC		; $7f18
 	ld l,e			; $7f1a
 	dec (hl)		; $7f1b
 	ld l,$c6		; $7f1c
 	ld (hl),$10		; $7f1e
 	inc l			; $7f20
 	inc (hl)		; $7f21
-	jr _label_11_444		; $7f22
-_label_11_442:
+	jr @animate		; $7f22
+	
+@moveToBC:
 	call objectGetRelativeAngleWithTempVars		; $7f24
 	ld e,$c9		; $7f27
 	ld (de),a		; $7f29
 	call objectApplySpeed		; $7f2a
-_label_11_444:
+@animate:
 	jp partAnimate		; $7f2d
+	
+@state5:
 	call partCommon_decCounter1IfNonzero		; $7f30
-	jr nz,_label_11_444	; $7f33
+	jr nz,@animate	; $7f33
 	call objectCreatePuff		; $7f35
 	jp partDelete		; $7f38
 

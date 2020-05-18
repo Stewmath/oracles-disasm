@@ -4027,7 +4027,8 @@ _kingMoblinMinion_stateA:
 	ld (hl),$01		; $6db7
 	jp enemyDelete		; $6db9
 
-agesFunc_10_6dbc:
+
+blackTower_getMovingFlamesNextTileCoords:
 	ld e,$c2		; $6dbc
 	ld a,(de)		; $6dbe
 	ld hl,@table		; $6dbf
@@ -4054,28 +4055,28 @@ agesFunc_10_6dbc:
 
 ; @addr{6ddd}
 @table:
-	.dw @data0
-	.dw @data1
-	.dw @data2
-	.dw @data3
+	.dw @leftFlame
+	.dw @topFlame
+	.dw @rightFlame
+	.dw @bottomFlame
 
 ; @addr{6de5}
-@data0:
+@leftFlame:
 	.db $51 $91 $93 $13 $19 $39 $3d $9d
 	.db $97 $77 $7a $8a $00
 
 ; @addr{6df2}
-@data1:
+@topFlame:
 	.db $17 $13 $73 $7d $3d $39 $99 $91
 	.db $61 $62 $00
 
 ; @addr{6dfd}
-@data2:
+@rightFlame:
 	.db $5d $9d $95 $55 $51 $11 $1b $3b
 	.db $35 $25 $26 $00
 
 ; @addr{6e09}
-@data3:
+@bottomFlame:
 	.db $97 $99 $79 $7d $9d $9b $3b $3d
 	.db $1d $1b $3b $35 $55 $53 $93 $98
 	.db $88 $00
