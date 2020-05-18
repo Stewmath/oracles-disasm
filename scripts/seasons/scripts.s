@@ -6019,7 +6019,7 @@ stealingFeatherScript:
 	setcollisionradii $12, $30
 	checkcollidedwithlink_onground
 	disableinput
-	asm15 scriptHlp.stealingFeather_spawnStrangeBrothers
+	asm15 scriptHlp.stealingFeather_putLinkOnGround
 	playsound SND_WHISTLE
 	wait 8
 	playsound SND_WHISTLE
@@ -6028,7 +6028,7 @@ stealingFeatherScript:
 	wait 30
 	writememory $d008, $01
 	setmusic MUS_HIDE_AND_SEEK
-	asm15 $5e75
+	asm15 scriptHlp.stealingFeather_spawnStrangeBrothers
 	xorcfc0bit 0
 	wait 20
 	writememory $d008, $01
@@ -9076,7 +9076,7 @@ goldenCaveSubrosianScript_7d87:
 	checkpalettefadedone
 	showtextlowindex <TX_4c2b
 	wait 20
-	giveitem $0d00
+	giveitem TREASURE_BOMBCHUS $00
 	wait 20
 --
 	generatesecret SUBROSIAN_RETURN_SECRET

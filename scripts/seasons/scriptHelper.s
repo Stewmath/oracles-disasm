@@ -401,7 +401,7 @@ D6RandomButtonSpawnRopes:
 	ld (hl),ENEMYID_ROPE		; $5698
 	inc l			; $569a
 	ld (hl),$01		; $569b
-	call $56a4		; $569d
+	call @spawnRopeAtRandomPosition		; $569d
 	dec e			; $56a0
 	jr nz,-			; $56a1
 	ret			; $56a3
@@ -1968,9 +1968,11 @@ stealingFeather_spawnSelfWithSubId0:
 	ld (hl),a		; $5e6d
 	ret			; $5e6e
 
-stealingFeather_spawnStrangeBrothers:
+stealingFeather_putLinkOnGround:
 	call setLinkForceStateToState08		; $5e6f
 	jp putLinkOnGround		; $5e72
+
+stealingFeather_spawnStrangeBrothers:
 	ld bc,$30a8		; $5e75
 	ld e,$10		; $5e78
 	call _func_5e82		; $5e7a
@@ -3233,7 +3235,7 @@ masterDiver_retryChallenge:
 	m_HardcodedWarpA ROOM_SEASONS_7e8 $00 $06 $83
 
 masterDiver_exitChallenge:
-	ld hl,$65a3		; $6598
+	ld hl,@warpDestVariables		; $6598
 	call setWarpDestVariables		; $659b
 	ld a,$8d		; $659e
 	jp playSound		; $65a0

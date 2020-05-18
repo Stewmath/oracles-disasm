@@ -5543,7 +5543,7 @@ _func_7c83:
 	ld (hl),$16		; $7c90
 	ld l,$46		; $7c92
 	ld (hl),$78		; $7c94
-	jp $7c09		; $7c96
+	jp _func_7c09		; $7c96
 
 
 _blackTowerEscapeAttempt_incState:

@@ -513,6 +513,8 @@ _updateLinkInvincibilityCounter:
 	dec (hl)		; $4283
 	jr z,@normalFlags	; $4284
 
+@func_4244:
+
 	ld a,(wFrameCounter)		; $4286
 	bit 2,a			; $4289
 	jr nz,@normalFlags	; $428b
@@ -13821,7 +13823,7 @@ _mooshStateASubstate2:
 	dec a			; $7aac
 	ld (de),a		; $7aad
 	ld h,d			; $7aae
-	jp $4244		; $7aaf
+	jp _updateLinkInvincibilityCounter@func_4244		; $7aaf
 
 _mooshStateASubstate3:
 	call _companionSetAnimationToVar3f		; $7ab2

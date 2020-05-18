@@ -12643,7 +12643,7 @@ applyWarpDest:
 	callfrombank0 applyWarpDest_b04		; $32c1
 
 .ifdef ROM_SEASONS
-	callfrombank0 $01 $578d		; $32cb
+	callfrombank0 bank1.checkUpdateDungeonMinimap		; $32cb
 .endif
 
 	pop af			; $32d5
@@ -14784,9 +14784,9 @@ interactionFunc_3e6d:
 getLinkedHerosCaveSideEntranceRoom:
 	ldh a,(<hRomBank)	; $3e8f
 	push af			; $3e91
-	ld a,$04		; $3e92
+	ld a,:(warpSource7653+2)		; $3e92
 	setrombank
-	ld hl,$7655		; $3e99
+	ld hl,warpSource7653+2		; $3e99
 	ld a,(hl)		; $3e9c
 	; ROOM_SEASONS_552
 	ld (wWarpDestRoom),a		; $3e9d
