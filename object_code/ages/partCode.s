@@ -5680,11 +5680,11 @@ partCode57:
 ; PARTID_VERAN_BEE_PROJECTILE
 ; ==============================================================================
 partCode58:
-	jr z,_label_11_438	; $7e1c
+	jr z,@normalStatus	; $7e1c
 	ld e,$ea		; $7e1e
 	ld a,(de)		; $7e20
 	cp $80			; $7e21
-	jr nz,_label_11_438	; $7e23
+	jr nz,@normalStatus	; $7e23
 	ld h,d			; $7e25
 	ld l,$e4		; $7e26
 	res 7,(hl)		; $7e28
@@ -5693,14 +5693,16 @@ partCode58:
 	ld l,$c6		; $7e2e
 	ld (hl),$f0		; $7e30
 	call objectSetInvisible		; $7e32
-_label_11_438:
+@normalStatus:
 	ld e,$c4		; $7e35
 	ld a,(de)		; $7e37
 	rst_jumpTable			; $7e38
-.dw $7e41
-.dw $7e58
-.dw $7e6a
-.dw $7e76
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+
+@state0:
 	ld h,d			; $7e41
 	ld l,e			; $7e42
 	inc (hl)		; $7e43
@@ -5713,33 +5715,39 @@ _label_11_438:
 	ld a,SND_BEAM		; $7e50
 	call playSound		; $7e52
 	call objectSetVisible83		; $7e55
+	
+@state1:
 	call partCommon_decCounter1IfNonzero		; $7e58
-	jr z,_label_11_439	; $7e5b
+	jr z,@@incState	; $7e5b
 	ld a,$0b		; $7e5d
 	call objectGetRelatedObject1Var		; $7e5f
 	ld bc,$1400		; $7e62
 	jp objectTakePositionWithOffset		; $7e65
-_label_11_439:
+@@incState:
 	ld l,e			; $7e68
 	inc (hl)		; $7e69
+	
+@state2:
 	call objectApplySpeed		; $7e6a
 	ld e,$cb		; $7e6d
 	ld a,(de)		; $7e6f
 	cp $b0			; $7e70
 	ret c			; $7e72
 	jp partDelete		; $7e73
+	
+@state3:
 	call partCommon_decCounter1IfNonzero		; $7e76
 	jp z,partDelete		; $7e79
 	ld a,(wGameKeysJustPressed)		; $7e7c
 	or a			; $7e7f
-	jr z,_label_11_441	; $7e80
+	jr z,++			; $7e80
 	ld a,(hl)		; $7e82
 	sub $0a			; $7e83
-	jr nc,_label_11_440	; $7e85
+	jr nc,+			; $7e85
 	ld a,$01		; $7e87
-_label_11_440:
++
 	ld (hl),a		; $7e89
-_label_11_441:
+++
 	ld hl,wccd8		; $7e8a
 	set 5,(hl)		; $7e8d
 	ld a,(wFrameCounter)		; $7e8f
