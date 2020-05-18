@@ -3180,75 +3180,89 @@ _blueStalfosProjectile_hitLink:
 
 ; ==============================================================================
 ; PARTID_3e
+;
+; Variables:
+;   var30-3f: stores enemy index of every loaded Ambi Guard
 ; ==============================================================================
 partCode3e:
 	ld e,$c4		; $70ed
 	ld a,(de)		; $70ef
 	rst_jumpTable			; $70f0
-.dw $70f9
-.dw $7110
-.dw $7129
-.dw $714b
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+@state0:
 	ld h,d			; $70f9
 	ld l,e			; $70fa
 	inc (hl)		; $70fb
-	ld e,$f0		; $70fc
-	ld hl,$d081		; $70fe
-_label_11_343:
+	ld e,Part.var30		; $70fc
+	ldhl FIRST_ENEMY_INDEX, Enemy.id	; $70fe
+-
 	ld a,(hl)		; $7101
-	cp $54			; $7102
-	jr nz,_label_11_344	; $7104
+	cp ENEMYID_AMBI_GUARD	; $7102
+	jr nz,+			; $7104
 	ld a,h			; $7106
 	ld (de),a		; $7107
 	inc e			; $7108
-_label_11_344:
++
 	inc h			; $7109
 	ld a,h			; $710a
-	cp $e0			; $710b
-	jr c,_label_11_343	; $710d
+	cp LAST_ENEMY_INDEX+1	; $710b
+	jr c,-			; $710d
 	ret			; $710f
+
+@state1:
 	ld hl,$d700		; $7110
-_label_11_345:
-	ld l,$24		; $7113
+-
+	ld l,Object.collisionType		; $7113
 	ld a,(hl)		; $7115
 	cp $98			; $7116
-	jr z,_label_11_346	; $7118
+	jr z,+			; $7118
 	inc h			; $711a
 	ld a,h			; $711b
 	cp $dc			; $711c
-	jr c,_label_11_345	; $711e
+	jr c,-			; $711e
 	ret			; $7120
-_label_11_346:
++
 	ld a,$02		; $7121
 	ld (de),a		; $7123
-	ld e,$d9		; $7124
+
+	ld e,Part.relatedObj2+1		; $7124
 	ld a,h			; $7126
 	ld (de),a		; $7127
 	ret			; $7128
+
+@state2:
 	ld h,d			; $7129
-	ld l,$c4		; $712a
+	ld l,Part.state		; $712a
 	inc (hl)		; $712c
-	ld l,$c6		; $712d
+
+	ld l,Part.counter1		; $712d
 	ld (hl),$3c		; $712f
-	ld l,$d9		; $7131
+
+	ld l,Part.relatedObj2+1		; $7131
 	ld b,(hl)		; $7133
-	ld e,$f0		; $7134
-_label_11_347:
+	ld e,Part.var30		; $7134
+-
 	ld a,(de)		; $7136
 	or a			; $7137
 	ret z			; $7138
+
 	ld h,a			; $7139
-	ld l,$ba		; $713a
+	ld l,Enemy.var3a		; $713a
 	ld (hl),$ff		; $713c
-	ld l,$98		; $713e
+	ld l,Enemy.relatedObj2		; $713e
 	ld (hl),$00		; $7140
 	inc l			; $7142
 	ld (hl),b		; $7143
 	inc e			; $7144
 	ld a,e			; $7145
-	cp $f4			; $7146
-	jr c,_label_11_347	; $7148
+	cp Part.var34			; $7146
+	jr c,-			; $7148
 	ret			; $714a
+
+@state3:
 	call partCommon_decCounter1IfNonzero		; $714b
 	ret nz			; $714e
 	ld l,e			; $714f
