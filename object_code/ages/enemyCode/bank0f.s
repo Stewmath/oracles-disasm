@@ -7973,7 +7973,7 @@ _headThwomp_checkShootProjectile:
 	; Spawn bomb drop "physics" object?
 	ld b,h			; $6b5c
 	call getFreePartSlot		; $6b5d
-	ld (hl),PARTID_40		; $6b60
+	ld (hl),PARTID_HEAD_THWOMP_BOMB_DROPPER		; $6b60
 
 	ld l,Part.relatedObj1		; $6b62
 	ld a,Part.start		; $6b64

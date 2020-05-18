@@ -3610,9 +3610,7 @@ _kingMoblinBomb_checkCollisionWithKingMoblin:
 
 
 ; ==============================================================================
-; PARTID_40
-; Used with bomb drop with head thwomp?
-; relatedObj1 is a reference to a PARTID_ITEM_DROP instance.
+; PARTID_HEAD_THWOMP_BOMB_DROPPER
 ; ==============================================================================
 partCode40:
 	ld a,$01		; $72dd
@@ -3623,7 +3621,7 @@ partCode40:
 	ld e,$c4		; $72e8
 	ld a,(de)		; $72ea
 	or a			; $72eb
-	jr z,_label_11_356	; $72ec
+	jr z,@state0		; $72ec
 	ld a,$20		; $72ee
 	call objectUpdateSpeedZ_sidescroll		; $72f0
 	jp c,partDelete		; $72f3
@@ -3631,14 +3629,15 @@ partCode40:
 	ld a,$00		; $72f9
 	call objectGetRelatedObject1Var		; $72fb
 	jp objectCopyPosition		; $72fe
-_label_11_356:
+
+@state0:
 	ld h,d			; $7301
 	ld l,e			; $7302
 	inc (hl)		; $7303
 	call getRandomNumber_noPreserveVars		; $7304
 	ld b,a			; $7307
 	and $03			; $7308
-	ld hl,$732c		; $730a
+	ld hl,@speedVals		; $730a
 	rst_addAToHl			; $730d
 	ld e,$d0		; $730e
 	ld a,(hl)		; $7310
@@ -3646,7 +3645,7 @@ _label_11_356:
 	ld a,b			; $7312
 	and $60			; $7313
 	swap a			; $7315
-	ld hl,$7330		; $7317
+	ld hl,@speedZVals		; $7317
 	rst_addAToHl			; $731a
 	ld e,$d4		; $731b
 	ldi a,(hl)		; $731d
@@ -3660,16 +3659,18 @@ _label_11_356:
 	ld e,$c9		; $7328
 	ld (de),a		; $732a
 	ret			; $732b
-	inc d			; $732c
-	add hl,de		; $732d
-	ld e,$23		; $732e
-	nop			; $7330
-.DB $fd				; $7331
-	ld ($ff00+$fc),a	; $7332
-	ret nz			; $7334
-.DB $fc				; $7335
-	and b			; $7336
-.DB $fc				; $7337
+
+@speedVals:
+	.db SPEED_080
+	.db SPEED_0a0
+	.db SPEED_0c0
+	.db SPEED_0e0
+
+@speedZVals:
+	.dw -$300
+	.dw -$320
+	.dw -$340
+	.dw -$360
 
 
 ; ==============================================================================

@@ -342,9 +342,10 @@
 .define PARTID_KING_MOBLIN_BOMB			$3f
 
 ;;
-; Used with bomb drop with head thwomp?
+; Used with bomb drop with head thwomp
+; Does not create bomb drop, but configures its speed and angle
 ; relatedObj1 is a reference to a PARTID_ITEM_DROP instance.
-.define PARTID_40				$40
+.define PARTID_HEAD_THWOMP_BOMB_DROPPER				$40
 
 .define PARTID_SHADOW_HAG_SHADOW		$41
 
