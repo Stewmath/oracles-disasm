@@ -3789,9 +3789,11 @@ partCode42:
 	ld e,$c4		; $73bd
 	ld a,(de)		; $73bf
 	rst_jumpTable			; $73c0
-.dw $73c7
-.dw $742c
-.dw $7436
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
 	ld h,d			; $73c7
 	ld l,e			; $73c8
 	inc (hl)		; $73c9
@@ -3807,7 +3809,7 @@ partCode42:
 	ld (hl),$00		; $73d9
 	ld e,$c2		; $73db
 	ld a,(de)		; $73dd
-	ld bc,$7421		; $73de
+	ld bc,@table_7421		; $73de
 	call addAToBc		; $73e1
 	ld l,$c9		; $73e4
 	ld a,(bc)		; $73e6
@@ -3816,11 +3818,11 @@ partCode42:
 	ld (hl),a		; $73ea
 	ld a,(de)		; $73eb
 	or a			; $73ec
-	jr nz,_label_11_361	; $73ed
+	jr nz,++		; $73ed
 	ld a,(hl)		; $73ef
 	rrca			; $73f0
 	rrca			; $73f1
-	ld hl,$7424		; $73f2
+	ld hl,@table_7424		; $73f2
 	rst_addAToHl			; $73f5
 	ld e,$cb		; $73f6
 	ld a,(de)		; $73f8
@@ -3832,10 +3834,10 @@ partCode42:
 	add (hl)		; $73ff
 	ld (de),a		; $7400
 	ld b,$02		; $7401
-_label_11_360:
+-
 	call getFreePartSlot		; $7403
-	jr nz,_label_11_361	; $7406
-	ld (hl),$42		; $7408
+	jr nz,++		; $7406
+	ld (hl),PARTID_PUMPKIN_HEAD_PROJECTILE		; $7408
 	inc l			; $740a
 	ld (hl),b		; $740b
 	ld l,$c9		; $740c
@@ -3844,29 +3846,29 @@ _label_11_360:
 	ld (hl),a		; $7410
 	call objectCopyPosition		; $7411
 	dec b			; $7414
-	jr nz,_label_11_360	; $7415
-_label_11_361:
+	jr nz,-			; $7415
+++
 	ld e,$c9		; $7417
 	ld a,(de)		; $7419
 	or a			; $741a
 	jp z,objectSetVisible82		; $741b
 	jp objectSetVisible81		; $741e
-	nop			; $7421
-	ld (bc),a		; $7422
-	cp $fc			; $7423
-	nop			; $7425
-	ld (bc),a		; $7426
-	inc b			; $7427
-	inc b			; $7428
-	nop			; $7429
-	ld (bc),a		; $742a
-.DB $fc				; $742b
+
+@table_7421:
+	.db $00 $02 $fe
+
+@table_7424:
+	.db $fc $00 $02 $04
+	.db $04 $00 $02 $fc
+
+@state1:
 	call partCommon_decCounter1IfNonzero		; $742c
-	jr nz,_label_11_362	; $742f
+	jr nz,@state2	; $742f
 	ld l,e			; $7431
 	inc (hl)		; $7432
 	call objectSetVisible82		; $7433
-_label_11_362:
+
+@state2:
 	call partAnimate		; $7436
 	call objectApplySpeed		; $7439
 	call partCommon_checkTileCollisionOrOutOfBounds		; $743c

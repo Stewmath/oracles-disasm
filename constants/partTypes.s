@@ -333,7 +333,7 @@
 .define PARTID_BLUE_STALFOS_PROJECTILE		$3d
 
 ;;
-; Part that gets Ambi guards in the castle to swarm you?
+; Part that affects PARTID_DETECTION_HELPER created by Ambi Guards
 .define PARTID_3e				$3e
 
 ;;
