@@ -437,7 +437,7 @@
 
 ;;
 ; Used by ENEMYID_VERAN_FINAL_FORM
-.define PARTID_57				$57
+.define PARTID_VERAN_ACID_POOL			$57
 
 ;;
 ; Used by ENEMYID_VERAN_FINAL_FORM (bee)

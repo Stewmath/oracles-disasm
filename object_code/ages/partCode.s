@@ -5553,20 +5553,21 @@ partCode56:
 
 
 ; ==============================================================================
-; PARTID_57
-; Used by ENEMYID_VERAN_FINAL_FORM
+; PARTID_VERAN_ACID_POOL
 ; ==============================================================================
 partCode57:
 	ld e,$c4		; $7d6c
 	ld a,(de)		; $7d6e
 	rst_jumpTable			; $7d6f
-.dw $7d7e
-.dw $7d9c
-.dw $7dad
-.dw $7dc7
-.dw $7dcf
-.dw $7dd6
-.dw $7e10
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+	.dw @state5
+	.dw @state6
+
+@state0:
 	call objectCenterOnTile		; $7d7e
 	call objectGetShortPosition		; $7d81
 	ld e,$f0		; $7d84
@@ -5576,28 +5577,32 @@ partCode57:
 	ld (de),a		; $7d8b
 	ld a,SND_UNKNOWN3		; $7d8c
 	call playSound		; $7d8e
-	ld hl,$7d98		; $7d91
+	ld hl,@table_7d98		; $7d91
 	ld a,$60		; $7d94
-	jr _label_11_434		; $7d96
-	ld a,($ff00+R_IE)	; $7d98
-	ld bc,wScreenScrollRow		; $7d9a
-	and a			; $7d9d
-	ld b,b			; $7d9e
+	jr @func_7de1		; $7d96
+
+@table_7d98:
+	.db $f0 $ff $01 $10
+
+@state1:
+	call partCommon_decCounter1IfNonzero	; $7d9c
 	ret nz			; $7d9f
 	ld (hl),$04		; $7da0
-	ld hl,$7da9		; $7da2
+	ld hl,@table_7da9		; $7da2
 	ld a,$60		; $7da5
-	jr _label_11_434		; $7da7
-	rst $28			; $7da9
-	pop af			; $7daa
-	rrca			; $7dab
-	ld de,$a7cd		; $7dac
-	ld b,b			; $7daf
+	jr @func_7de1		; $7da7
+
+@table_7da9:
+	.db $ef $f1 $0f $11
+
+@state2:
+	call partCommon_decCounter1IfNonzero	; $7dad
 	ret nz			; $7db0
 	ld (hl),$2d		; $7db1
 	ld l,e			; $7db3
 	inc (hl)		; $7db4
 	ld l,$60		; $7db5
+@func_7db7:
 	ld e,$f0		; $7db7
 	ld a,(de)		; $7db9
 	ld c,a			; $7dba
@@ -5608,26 +5613,32 @@ partCode57:
 	ret c			; $7dc2
 	ld a,l			; $7dc3
 	jp setTile		; $7dc4
+
+@state3:
 	call partCommon_decCounter1IfNonzero		; $7dc7
 	ret nz			; $7dca
 	ld (hl),$04		; $7dcb
 	ld l,e			; $7dcd
 	inc (hl)		; $7dce
-	ld hl,$7da9		; $7dcf
+
+@state4:
+	ld hl,@table_7da9		; $7dcf
 	ld a,$a0		; $7dd2
-	jr _label_11_434		; $7dd4
+	jr @func_7de1		; $7dd4
+
+@state5:
 	call partCommon_decCounter1IfNonzero		; $7dd6
 	ret nz			; $7dd9
 	ld (hl),$04		; $7dda
-	ld hl,$7d98		; $7ddc
+	ld hl,@table_7d98		; $7ddc
 	ld a,$a0		; $7ddf
-_label_11_434:
+@func_7de1:
 	ldh (<hFF8B),a	; $7de1
 	ld e,$f0		; $7de3
 	ld a,(de)		; $7de5
 	ld c,a			; $7de6
 	ld b,$04		; $7de7
-_label_11_435:
+---
 	push bc			; $7de9
 	ldi a,(hl)		; $7dea
 	add c			; $7deb
@@ -5635,31 +5646,33 @@ _label_11_435:
 	ld b,$cf		; $7ded
 	ld a,(bc)		; $7def
 	cp $da			; $7df0
-	jr z,_label_11_436	; $7df2
+	jr z,+			; $7df2
 	sub $02			; $7df4
 	cp $03			; $7df6
-	jr c,_label_11_437	; $7df8
+	jr c,++			; $7df8
 	ld b,$ce		; $7dfa
 	ld a,(bc)		; $7dfc
 	or a			; $7dfd
-	jr nz,_label_11_437	; $7dfe
-_label_11_436:
-	ldh a,(<hFF8B)	; $7e00
+	jr nz,++		; $7dfe
++
+	ldh a,(<hFF8B)		; $7e00
 	push hl			; $7e02
 	call setTile		; $7e03
 	pop hl			; $7e06
-_label_11_437:
+++
 	pop bc			; $7e07
 	dec b			; $7e08
-	jr nz,_label_11_435	; $7e09
+	jr nz,---		; $7e09
 	ld h,d			; $7e0b
 	ld l,$c4		; $7e0c
 	inc (hl)		; $7e0e
 	ret			; $7e0f
+
+@state6:
 	call partCommon_decCounter1IfNonzero		; $7e10
 	ret nz			; $7e13
 	ld l,$a0		; $7e14
-	call $7db7		; $7e16
+	call @func_7db7		; $7e16
 	jp partDelete		; $7e19
 
 

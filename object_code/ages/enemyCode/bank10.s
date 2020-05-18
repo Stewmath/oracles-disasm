@@ -249,7 +249,7 @@ _veranFinal_turtleForm_state4:
 	call objectSetVisible83		; $5982
 	ld a,SND_POOF		; $5985
 	call playSound		; $5987
-	ld b,PARTID_57		; $598a
+	ld b,PARTID_VERAN_ACID_POOL		; $598a
 	jp _ecom_spawnProjectile		; $598c
 
 
