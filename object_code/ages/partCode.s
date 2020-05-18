@@ -4504,71 +4504,82 @@ partCode49:
 	ld e,$c4		; $7735
 	ld a,(de)		; $7737
 	rst_jumpTable			; $7738
-.dw $7745
-.dw $7765
-.dw $7788
-.dw $77a2
-.dw $77cf
-.dw $77e0
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+	.dw @state5
+	
+@state0:
 	ld h,d			; $7745
 	ld l,$c2		; $7746
 	ld a,(hl)		; $7748
 	cp $ff			; $7749
-	jr nz,_label_11_388	; $774b
+	jr nz,@func_7754	; $774b
 	ld l,$c4		; $774d
 	ld (hl),$05		; $774f
-	jp $77f0		; $7751
-_label_11_388:
+	jp _func_77f0		; $7751
+@func_7754:
 	ld l,$c4		; $7754
 	inc (hl)		; $7756
-	call $78e3		; $7757
-	call $793b		; $775a
+	call _func_78e3		; $7757
+	call _func_793b		; $775a
 	ld a,SND_POOF		; $775d
 	call playSound		; $775f
 	call objectSetVisiblec1		; $7762
+	
+@state1:
 	call objectApplySpeed		; $7765
 	ld h,d			; $7768
 	ld l,$f1		; $7769
 	ld c,(hl)		; $776b
 	call objectUpdateSpeedZAndBounce		; $776c
-	jr c,_label_11_390	; $776f
-	jr nz,_label_11_389	; $7771
+	jr c,@@noBounce		; $776f
+	jr nz,@@inAir		; $7771
 	ld e,$d0		; $7773
 	ld a,(de)		; $7775
 	srl a			; $7776
 	ld (de),a		; $7778
-_label_11_389:
+@@inAir:
 	jp partAnimate		; $7779
-_label_11_390:
+@@noBounce:
 	ld h,d			; $777c
 	ld l,$c4		; $777d
 	ld (hl),$03		; $777f
 	ld l,$c6		; $7781
 	ld (hl),$14		; $7783
 	jp partAnimate		; $7785
+	
+@state2:
 	inc e			; $7788
 	ld a,(de)		; $7789
 	rst_jumpTable			; $778a
-.dw $7793
-.dw $779c
-.dw $779c
-.dw $779d
+	.dw @@substate0
+	.dw @@substateStub
+	.dw @@substateStub
+	.dw @@substate3
+@@substate0:
 	xor a			; $7793
 	ld (wLinkGrabState2),a		; $7794
 	inc a			; $7797
 	ld (de),a		; $7798
 	jp objectSetVisiblec1		; $7799
+@@substateStub:
 	ret			; $779c
+@@substate3:
 	call objectSetVisiblec2		; $779d
-	jr _label_11_391		; $77a0
+	jr @func_77b1		; $77a0
+	
+@state3:
 	ld h,d			; $77a2
 	ld l,$c6		; $77a3
 	dec (hl)		; $77a5
-	jr z,_label_11_391	; $77a6
+	jr z,@func_77b1	; $77a6
 	call partAnimate		; $77a8
-	call $79ab		; $77ab
+	call _func_79ab		; $77ab
 	jp objectAddToGrabbableObjectBuffer		; $77ae
-_label_11_391:
+@func_77b1:
 	ld h,d			; $77b1
 	ld l,$c4		; $77b2
 	ld (hl),$04		; $77b4
@@ -4584,6 +4595,8 @@ _label_11_391:
 	ld a,SND_EXPLOSION		; $77c7
 	call playSound		; $77c9
 	jp objectSetVisible83		; $77cc
+	
+@state4:
 	call partAnimate		; $77cf
 	ld e,$e1		; $77d2
 	ld a,(de)		; $77d4
@@ -4595,27 +4608,32 @@ _label_11_391:
 	inc e			; $77dd
 	ld (de),a		; $77de
 	ret			; $77df
+	
+@state5:
 	ld h,d			; $77e0
 	ld l,$f0		; $77e1
 	dec (hl)		; $77e3
 	ret nz			; $77e4
 	ld l,$c6		; $77e5
 	inc (hl)		; $77e7
-	call $77f0		; $77e8
+	call _func_77f0		; $77e8
 	jp z,partDelete		; $77eb
-	jr _label_11_393		; $77ee
+	jr _func_7858		; $77ee
+	
+_func_77f0:
 	ld h,d			; $77f0
 	ld l,$c6		; $77f1
 	ld a,(hl)		; $77f3
-	ld bc,$780f		; $77f4
+	ld bc,_table_780f		; $77f4
 	call addDoubleIndexToBc		; $77f7
 	ld a,(bc)		; $77fa
 	cp $ff			; $77fb
-	jr nz,_label_11_392	; $77fd
+	jr nz,_func_7805	; $77fd
 	ld a,$01		; $77ff
 	ld ($cfc0),a		; $7801
 	ret			; $7804
-_label_11_392:
+	
+_func_7805:
 	ld l,$f0		; $7805
 	ld (hl),a		; $7807
 	inc bc			; $7808
@@ -4624,79 +4642,69 @@ _label_11_392:
 	ld (hl),a		; $780c
 	or d			; $780d
 	ret			; $780e
-	inc a			; $780f
-	ld bc,$013c		; $7810
-	inc a			; $7813
-	ld bc,$013c		; $7814
-	inc a			; $7817
-	ld bc,$013c		; $7818
-	jr z,$01		; $781b
-	jr z,$01		; $781d
-	jr z,$01		; $781f
-	jr z,$01		; $7821
-	jr z,$01		; $7823
-	ld e,$01		; $7825
-	ld e,$01		; $7827
-	ld e,$01		; $7829
-	ld e,$01		; $782b
-	ld e,$01		; $782d
-	inc d			; $782f
-	ld bc,$0114		; $7830
-	inc d			; $7833
-	ld bc,$0114		; $7834
-	inc d			; $7837
-	ld bc,$0214		; $7838
-	inc d			; $783b
-	ld (bc),a		; $783c
-	inc d			; $783d
-	ld (bc),a		; $783e
-	inc d			; $783f
-	ld (bc),a		; $7840
-	inc d			; $7841
-	ld (bc),a		; $7842
-	inc d			; $7843
-	ld (bc),a		; $7844
-	inc d			; $7845
-	ld (bc),a		; $7846
-	inc d			; $7847
-	ld (bc),a		; $7848
-	inc d			; $7849
-	ld (bc),a		; $784a
-	inc d			; $784b
-	ld (bc),a		; $784c
-	inc d			; $784d
-	ld (bc),a		; $784e
-	inc d			; $784f
-	ld (bc),a		; $7850
-	inc d			; $7851
-	ld (bc),a		; $7852
-	inc d			; $7853
-	ld (bc),a		; $7854
-	or h			; $7855
-	ld (bc),a		; $7856
-	rst $38			; $7857
-_label_11_393:
+	
+_table_780f:
+	.db $3c $01
+	.db $3c $01
+	.db $3c $01
+	.db $3c $01
+	.db $3c $01
+	.db $3c $01
+	.db $28 $01
+	.db $28 $01
+	.db $28 $01
+	.db $28 $01
+	.db $28 $01
+	.db $1e $01
+	.db $1e $01
+	.db $1e $01
+	.db $1e $01
+	.db $1e $01
+	.db $14 $01
+	.db $14 $01
+	.db $14 $01
+	.db $14 $01
+	.db $14 $01
+	.db $14 $02
+	.db $14 $02
+	.db $14 $02
+	.db $14 $02
+	.db $14 $02
+	.db $14 $02
+	.db $14 $02
+	.db $14 $02
+	.db $14 $02
+	.db $14 $02
+	.db $14 $02
+	.db $14 $02
+	.db $14 $02
+	.db $14 $02
+	.db $b4 $02
+	.db $ff
+	
+_func_7858:
 	xor a			; $7858
 	ld e,$f2		; $7859
 	ld (de),a		; $785b
 	inc e			; $785c
 	ld (de),a		; $785d
-	call $78bd		; $785e
+	call _func_78bd		; $785e
 	ld e,$f5		; $7861
 	ld a,(de)		; $7863
-_label_11_394:
+-
 	ldh (<hFF92),a	; $7864
-	call $786f		; $7866
+	call _func_786f		; $7866
 	ldh a,(<hFF92)	; $7869
 	dec a			; $786b
-	jr nz,_label_11_394	; $786c
+	jr nz,-			; $786c
 	ret			; $786e
-_label_11_395:
+
+_func_786f:
 	ld e,$f4		; $786f
 	ld a,(de)		; $7871
 	add a			; $7872
 	add a			; $7873
-	ld bc,$789d		; $7874
+	ld bc,_table_789d		; $7874
 	call addDoubleIndexToBc		; $7877
 	call getRandomNumber		; $787a
 	and $07			; $787d
@@ -4706,67 +4714,56 @@ _label_11_395:
 	ld h,d			; $7885
 	ld l,$f2		; $7886
 	call checkFlag		; $7888
-	jr nz,_label_11_395	; $788b
+	jr nz,_func_786f	; $788b
 	call getFreePartSlot		; $788d
 	ret nz			; $7890
-	ld (hl),$49		; $7891
+	ld (hl),PARTID_BIGBANG_BOMB_SPAWNER		; $7891
 	inc l			; $7893
 	ldh a,(<hFF8B)	; $7894
 	ld (hl),a		; $7896
 	ld h,d			; $7897
 	ld l,$f2		; $7898
 	jp setFlag		; $789a
-	nop			; $789d
-	ld bc,$0605		; $789e
-	ld a,(bc)		; $78a1
-	dec bc			; $78a2
-	rrca			; $78a3
-	nop			; $78a4
-	ld bc,$0602		; $78a5
-	rlca			; $78a8
-	dec bc			; $78a9
-	inc c			; $78aa
-	dec c			; $78ab
-	ld bc,$0403		; $78ac
-	dec b			; $78af
-	add hl,bc		; $78b0
-	ld a,(bc)		; $78b1
-	ld c,$0f		; $78b2
-_label_11_396:
-	inc bc			; $78b4
-	ld (bc),a		; $78b5
-	inc bc			; $78b6
-	rlca			; $78b7
-	ld ($0d09),sp		; $78b8
-	ld c,$02		; $78bb
+	
+_table_789d:
+	.db $00 $01 $05 $06 $0a $0b $0f $00
+	.db $01 $02 $06 $07 $0b $0c $0d $01
+	.db $03 $04 $05 $09 $0a $0e $0f $03
+	.db $02 $03 $07 $08 $09 $0d $0e $02
+
+_func_78bd:
 	ld a,(w1Link.xh)		; $78bd
 	cp $50			; $78c0
-	jr nc,_label_11_399	; $78c2
+	jr nc,_func_78d2	; $78c2
 	ld a,(w1Link.yh)		; $78c4
-_label_11_397:
 	cp $40			; $78c7
-	jr nc,_label_11_398	; $78c9
+	jr nc,_func_78ce	; $78c9
 	xor a			; $78cb
-	jr _label_11_401		; $78cc
-_label_11_398:
+	jr ++			; $78cc
+	
+_func_78ce:
 	ld a,$01		; $78ce
-	jr _label_11_401		; $78d0
-_label_11_399:
+	jr ++			; $78d0
+
+_func_78d2:
 	ld a,(w1Link.yh)		; $78d2
 	cp $40			; $78d5
-	jr nc,_label_11_400	; $78d7
+	jr nc,_func_78dd	; $78d7
 	ld a,$02		; $78d9
-	jr _label_11_401		; $78db
-_label_11_400:
+	jr ++			; $78db
+	
+_func_78dd:
 	ld a,$03		; $78dd
-_label_11_401:
+++
 	ld e,$f4		; $78df
 	ld (de),a		; $78e1
 	ret			; $78e2
+
+_func_78e3:
 	ld h,d			; $78e3
 	ld l,$c2		; $78e4
 	ld a,(hl)		; $78e6
-	ld hl,$791b		; $78e7
+	ld hl,_table_791b		; $78e7
 	rst_addDoubleIndex			; $78ea
 	ld e,$cb		; $78eb
 	ldi a,(hl)		; $78ed
@@ -4779,7 +4776,7 @@ _label_11_401:
 	ld (de),a		; $78f8
 	call getRandomNumber		; $78f9
 	and $0f			; $78fc
-	ld hl,$790b		; $78fe
+	ld hl,_table_790b		; $78fe
 	rst_addAToHl			; $7901
 	ld b,(hl)		; $7902
 	ld e,$c9		; $7903
@@ -4788,57 +4785,43 @@ _label_11_401:
 	and $1f			; $7907
 	ld (de),a		; $7909
 	ret			; $790a
-	ld bc,$0302		; $790b
-	rst $38			; $790e
-	cp $fd			; $790f
-	nop			; $7911
-	nop			; $7912
-	ld bc,$0202		; $7913
-	rst $38			; $7916
-	cp $00			; $7917
-	nop			; $7919
-	nop			; $791a
-	nop			; $791b
-	nop			; $791c
-	nop			; $791d
-	jr z,_label_11_402	; $791e
-_label_11_402:
-	ld d,b			; $7920
-	nop			; $7921
-	ld a,b			; $7922
-	nop			; $7923
-	and b			; $7924
-	jr nz,_label_11_397	; $7925
-	ld b,b			; $7927
-	and b			; $7928
-	ld h,b			; $7929
-	and b			; $792a
-	add b			; $792b
-	and b			; $792c
-	add b			; $792d
-	ld a,b			; $792e
-	add b			; $792f
-	ld d,b			; $7930
-	add b			; $7931
-	jr z,_label_11_396	; $7932
-	nop			; $7934
-	ld h,b			; $7935
-	nop			; $7936
-	ld b,b			; $7937
-	nop			; $7938
-	jr nz,_label_11_403	; $7939
-_label_11_403:
-	call $78bd		; $793b
+
+_table_790b:
+	.db $01 $02 $03 $ff
+	.db $fe $fd $00 $00
+	.db $01 $02 $02 $ff
+	.db $fe $00 $00 $00
+
+_table_791b:
+	.db $00 $00
+	.db $00 $28
+	.db $00 $50
+	.db $00 $78
+	.db $00 $a0
+	.db $20 $a0
+	.db $40 $a0
+	.db $60 $a0
+	.db $80 $a0
+	.db $80 $78
+	.db $80 $50
+	.db $80 $28
+	.db $80 $00
+	.db $60 $00
+	.db $40 $00
+	.db $20 $00
+
+_func_793b:
+	call _func_78bd		; $793b
 	ld e,$c2		; $793e
 	ld a,(de)		; $7940
 	add a			; $7941
-	ld hl,$7962		; $7942
+	ld hl,_table_7962		; $7942
 	rst_addDoubleIndex			; $7945
 	ld e,$f4		; $7946
 	ld a,(de)		; $7948
 	rst_addAToHl			; $7949
 	ld a,(hl)		; $794a
-	ld bc,$79a2		; $794b
+	ld bc,_table_79a2		; $794b
 	call addAToBc		; $794e
 	ld a,(bc)		; $7951
 	ld h,d			; $7952
@@ -4851,95 +4834,71 @@ _label_11_403:
 	inc l			; $795e
 	ld (hl),$fd		; $795f
 	ret			; $7961
-	ld bc,$0504		; $7962
-	ld ($0300),sp		; $7965
-	inc b			; $7968
-	dec b			; $7969
-	nop			; $796a
-	inc b			; $796b
-	nop			; $796c
-	inc b			; $796d
-	inc bc			; $796e
-	dec b			; $796f
-	nop			; $7970
-	inc b			; $7971
-	dec b			; $7972
-	ld ($0401),sp		; $7973
-	dec b			; $7976
-	ld b,$00		; $7977
-	ld (bc),a		; $7979
-	dec b			; $797a
-	dec b			; $797b
-	nop			; $797c
-	nop			; $797d
-	ld b,$05		; $797e
-	ld (bc),a		; $7980
-	nop			; $7981
-	ld ($0405),sp		; $7982
-	ld bc,$0305		; $7985
-	inc b			; $7988
-	nop			; $7989
-	inc b			; $798a
-	nop			; $798b
-	inc b			; $798c
-	nop			; $798d
-	inc b			; $798e
-	nop			; $798f
-	dec b			; $7990
-	inc bc			; $7991
-	inc b			; $7992
-	ld bc,$0508		; $7993
-	ld (bc),a		; $7996
-	nop			; $7997
-	ld b,$05		; $7998
-	nop			; $799a
-	nop			; $799b
-	inc b			; $799c
-	inc b			; $799d
-	nop			; $799e
-	ld (bc),a		; $799f
-	dec b			; $79a0
-	ld b,$28		; $79a1
-	ldd (hl),a		; $79a3
-	inc a			; $79a4
-	ld b,(hl)		; $79a5
-	ld d,b			; $79a6
-	ld e,d			; $79a7
-	ld h,h			; $79a8
-	ld l,(hl)		; $79a9
-	ld a,b			; $79aa
+
+_table_7962:
+	.db $01 $04 $05 $08
+	.db $00 $03 $04 $05
+	.db $00 $04 $00 $04
+	.db $03 $05 $00 $04
+	.db $05 $08 $01 $04
+	.db $05 $06 $00 $02
+	.db $05 $05 $00 $00
+	.db $06 $05 $02 $00
+	.db $08 $05 $04 $01
+	.db $05 $03 $04 $00
+	.db $04 $00 $04 $00
+	.db $04 $00 $05 $03
+	.db $04 $01 $08 $05
+	.db $02 $00 $06 $05
+	.db $00 $00 $04 $04
+	.db $00 $02 $05 $06
+
+_table_79a2:
+	.db $28 $32 $3c
+	.db $46 $50 $5a
+	.db $64 $6e $78
+
+_func_79ab:
 	call objectGetShortPosition		; $79ab
 	ld hl,wRoomLayout		; $79ae
 	rst_addAToHl			; $79b1
 	ld a,(hl)		; $79b2
 	cp $54			; $79b3
-	jr z,_label_11_404	; $79b5
+	jr z,_func_79c4	; $79b5
 	cp $55			; $79b7
-	jr z,_label_11_405	; $79b9
+	jr z,_func_79cb	; $79b9
 	cp $56			; $79bb
-	jr z,_label_11_406	; $79bd
+	jr z,_func_79d2	; $79bd
 	cp $57			; $79bf
-	jr z,_label_11_407	; $79c1
+	jr z,_func_79d9	; $79c1
 	ret			; $79c3
-_label_11_404:
-	ld hl,$79e3		; $79c4
+	
+_func_79c4:
+	ld hl,_table_79e3		; $79c4
 	ld e,$ca		; $79c7
-	jr _label_11_408		; $79c9
-_label_11_405:
-	ld hl,$79e1		; $79cb
+	jr ++			; $79c9
+	
+_func_79cb:
+	ld hl,_table_79e1		; $79cb
 	ld e,$cc		; $79ce
-	jr _label_11_408		; $79d0
-_label_11_406:
-	ld hl,$79e1		; $79d2
+	jr ++			; $79d0
+	
+_func_79d2:
+	ld hl,_table_79e1		; $79d2
 	ld e,$ca		; $79d5
-	jr _label_11_408		; $79d7
-_label_11_407:
-	ld hl,$79e3		; $79d9
+	jr ++			; $79d7
+	
+_func_79d9:
+	ld hl,_table_79e3		; $79d9
 	ld e,$cc		; $79dc
-_label_11_408:
+++
 	jp add16BitRefs		; $79de
-	nop			; $79e1
-	ld bc,$ff00		; $79e2
+
+_table_79e1:
+	.db $00 $01
+
+_table_79e3:
+	.db $00 $ff
 
 
 ; ==============================================================================
