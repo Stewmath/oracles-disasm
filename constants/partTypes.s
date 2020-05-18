@@ -365,7 +365,7 @@
 ; All subids used per screen, they determine initial time before spawning,
 ; so that they fall one after the other
 ; @subid_00-03{}
-.define PART_FALLING_BOULDER_SPAWNER		$45
+.define PARTID_FALLING_BOULDER_SPAWNER		$45
 
 ;;
 .define PARTID_46				$46
@@ -426,9 +426,7 @@
 .define PARTID_BLUE_ENERGY_BEAD			$53
 
 ;;
-; Some kind of boulder?
-; Falls from above when escaping Room of Rites collapse
-.define PARTID_54				$54
+.define PARTID_ROOM_OF_RITES_FALLING_BOULDER	$54
 
 ;;
 .define PARTID_OCTOGON_BUBBLE			$55

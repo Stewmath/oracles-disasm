@@ -1171,7 +1171,7 @@ _endgameCutsceneHandler_0f:
 @@func_5cb0:
 	call getFreePartSlot		; $5cb0
 	ret nz			; $5cb3
-	ld (hl),PARTID_54		; $5cb4
+	ld (hl),PARTID_ROOM_OF_RITES_FALLING_BOULDER		; $5cb4
 	ret			; $5cb6
 @@func_5cb7:
 	call getFreeInteractionSlot		; $5cb7

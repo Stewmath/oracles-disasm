@@ -4068,7 +4068,7 @@ partCode44:
 
 
 ; ==============================================================================
-; PART_FALLING_BOULDER_SPAWNER
+; PARTID_FALLING_BOULDER_SPAWNER
 ;
 ; Variables:
 ;   var30: yh to spawn boulder at
@@ -5065,18 +5065,17 @@ partCode4f:
 
 
 ; ==============================================================================
-; PARTID_54
-; Boulder - falls from above when escaping Room of Rites collapse
+; PARTID_ROOM_OF_RITES_FALLING_BOULDER
 ; ==============================================================================
 partCode54:
 	ld e,$c2		; $7ab3
 	ld a,(de)		; $7ab5
 	or a			; $7ab6
 	ld e,$c4		; $7ab7
-	jp nz,$7adb		; $7ab9
+	jp nz,_func_7adb		; $7ab9
 	ld a,(de)		; $7abc
 	or a			; $7abd
-	jr z,_label_11_415	; $7abe
+	jr z,_func_7ad3	; $7abe
 	call partCommon_decCounter1IfNonzero		; $7ac0
 	jp z,partDelete		; $7ac3
 	ld a,(hl)		; $7ac6
@@ -5084,20 +5083,23 @@ partCode54:
 	ret nz			; $7ac9
 	call getFreePartSlot		; $7aca
 	ret nz			; $7acd
-	ld (hl),$54		; $7ace
+	ld (hl),PARTID_ROOM_OF_RITES_FALLING_BOULDER		; $7ace
 	inc l			; $7ad0
 	inc (hl)		; $7ad1
 	ret			; $7ad2
-_label_11_415:
+	
+_func_7ad3:
 	ld h,d			; $7ad3
 	ld l,e			; $7ad4
 	inc (hl)		; $7ad5
 	ld l,$c6		; $7ad6
 	ld (hl),$96		; $7ad8
 	ret			; $7ada
+	
+_func_7adb:
 	ld a,(de)		; $7adb
 	or a			; $7adc
-	jr nz,_label_11_416	; $7add
+	jr nz,_func_7b0a	; $7add
 	inc a			; $7adf
 	ld (de),a		; $7ae0
 	ldh a,(<hCameraY)	; $7ae1
@@ -5126,15 +5128,16 @@ _label_11_415:
 	ld e,$cf		; $7b04
 	ld (de),a		; $7b06
 	jp objectSetVisiblec1		; $7b07
-_label_11_416:
+	
+_func_7b0a:
 	ld c,$20		; $7b0a
 	call objectUpdateSpeedZ_paramC		; $7b0c
 	jp nz,partAnimate		; $7b0f
 	call objectReplaceWithAnimationIfOnHazard		; $7b12
-	jr c,_label_11_417	; $7b15
-	ld b,$06		; $7b17
+	jr c,@delete		; $7b15
+	ld b,INTERACID_ROCKDEBRIS		; $7b17
 	call objectCreateInteractionWithSubid00		; $7b19
-_label_11_417:
+@delete:
 	jp partDelete		; $7b1c
 
 
