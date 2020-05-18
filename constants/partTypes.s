@@ -361,8 +361,11 @@
 .define PARTID_TINGLE_BALLOON			$44
 
 ;;
-; Falling boulder spawner?
-.define PARTID_45				$45
+; Spawns boulders when climbing up to Patch
+; All subids used per screen, they determine initial time before spawning,
+; so that they fall one after the other
+; @subid_00-03{}
+.define PART_FALLING_BOULDER_SPAWNER		$45
 
 ;;
 .define PARTID_46				$46

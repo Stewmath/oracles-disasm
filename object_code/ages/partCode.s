@@ -4068,85 +4068,104 @@ partCode44:
 
 
 ; ==============================================================================
-; PARTID_45
-; Falling boulder spawner?
+; PART_FALLING_BOULDER_SPAWNER
+;
+; Variables:
+;   var30: yh to spawn boulder at
+;   var31: xh to spawn boulder at
 ; ==============================================================================
 partCode45:
-	ld e,$c4		; $7530
+	ld e,Part.state		; $7530
 	ld a,(de)		; $7532
 	rst_jumpTable			; $7533
-.dw $753a
-.dw $7562
-.dw $758b
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
 	ld h,d			; $753a
 	ld l,e			; $753b
 	inc (hl)		; $753c
-	ld l,$d0		; $753d
+
+	ld l,Part.speed		; $753d
 	ld (hl),$32		; $753f
-	ld l,$cb		; $7541
+
+	ld l,Part.yh		; $7541
 	ld a,(hl)		; $7543
 	sub $08			; $7544
-	jr z,_label_11_374	; $7546
+	jr z,+			; $7546
 	add $04			; $7548
-_label_11_374:
++
 	ldi (hl),a		; $754a
-	ld e,$f0		; $754b
+	ld e,Part.var30		; $754b
 	ld (de),a		; $754d
 	inc e			; $754e
 	inc l			; $754f
 	ld a,(hl)		; $7550
 	ld (de),a		; $7551
-	ld e,$c2		; $7552
+
+	ld e,Part.subid		; $7552
 	ld a,(de)		; $7554
-	ld hl,$755e		; $7555
+	ld hl,@initialTimeToAppear		; $7555
 	rst_addAToHl			; $7558
-	ld e,$c6		; $7559
+	ld e,Part.counter1		; $7559
 	ld a,(hl)		; $755b
 	ld (de),a		; $755c
 	ret			; $755d
-	dec l			; $755e
-	ld e,d			; $755f
-	add a			; $7560
-	or h			; $7561
+
+@initialTimeToAppear:
+	.db $2d $5a $87 $b4
+
+@state1:
 	call partCommon_decCounter1IfNonzero		; $7562
 	ret nz			; $7565
+	
 	ld l,e			; $7566
 	inc (hl)		; $7567
-	ld l,$e4		; $7568
+	ld l,Part.collisionType		; $7568
 	set 7,(hl)		; $756a
-	ld l,$d4		; $756c
-	ld a,$60		; $756e
+@bounceRandomlyDownwards:
+	ld l,Part.speedZ		; $756c
+	ld a,<(-$1a0)		; $756e
 	ldi (hl),a		; $7570
-	ld (hl),$fe		; $7571
-_label_11_375:
+	ld (hl),>(-$1a0)		; $7571
+-
 	call getRandomNumber_noPreserveVars		; $7573
 	and $07			; $7576
 	cp $07			; $7578
-	jr nc,_label_11_375	; $757a
+	jr nc,-			; $757a
 	sub $03			; $757c
 	add $10			; $757e
-	ld e,$c9		; $7580
+	ld e,Part.angle		; $7580
 	ld (de),a		; $7582
 	call objectSetVisiblec1		; $7583
 	ld a,SND_RUMBLE		; $7586
 	jp playSound		; $7588
+
+; Boulder falls until it hits the wall, then bounces again
+; Once it's below the screen, it reappears in its original position
+@state2:
 	ld c,$20		; $758b
 	call objectUpdateSpeedZ_paramC		; $758d
-	call z,$756c		; $7590
+	call z,@bounceRandomlyDownwards		; $7590
 	call objectApplySpeed		; $7593
-	ld e,$cb		; $7596
+	
+	ld e,Part.yh		; $7596
 	ld a,(de)		; $7598
 	cp $88			; $7599
 	jp c,partAnimate		; $759b
+	
 	ld h,d			; $759e
-	ld l,$c4		; $759f
+	ld l,Part.state		; $759f
 	dec (hl)		; $75a1
-	ld l,$e4		; $75a2
+	
+	ld l,Part.collisionType		; $75a2
 	res 7,(hl)		; $75a4
-	ld l,$c6		; $75a6
+	
+	ld l,Part.counter1		; $75a6
 	ld (hl),$b4		; $75a8
-	ld e,$f0		; $75aa
-	ld l,$cb		; $75ac
+	ld e,Part.var30		; $75aa
+	ld l,Part.yh		; $75ac
 	ld a,(de)		; $75ae
 	ldi (hl),a		; $75af
 	inc e			; $75b0

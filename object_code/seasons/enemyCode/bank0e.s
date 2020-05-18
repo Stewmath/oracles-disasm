@@ -10293,7 +10293,7 @@ enemyCode7f:
 	ld (hl),$05		; $7d70
 	ld l,e			; $7d72
 	inc (hl)		; $7d73
-	ld b,PARTID_45		; $7d74
+	ld b,PARTID_S_45		; $7d74
 	call _ecom_spawnProjectile		; $7d76
 	ld a,$02		; $7d79
 	jp enemySetAnimation		; $7d7b
