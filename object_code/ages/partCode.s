@@ -4179,7 +4179,7 @@ partCode45:
 ; PARTID_46
 ; ==============================================================================
 partCode46:
-	jr z,_label_11_376	; $75b7
+	jr z,@normalStatus	; $75b7
 	ld h,d			; $75b9
 	ld l,$c6		; $75ba
 	ld (hl),$2d		; $75bc
@@ -4189,11 +4189,11 @@ partCode46:
 	ld hl,wActiveTriggers		; $75c3
 	call setFlag		; $75c6
 	call objectSetVisible83		; $75c9
-_label_11_376:
+@normalStatus:
 	ld e,$c4		; $75cc
 	ld a,(de)		; $75ce
 	or a			; $75cf
-	jr z,_label_11_377	; $75d0
+	jr z,@state0		; $75d0
 	call partCommon_decCounter1IfNonzero		; $75d2
 	ret nz			; $75d5
 	ld e,$c2		; $75d6
@@ -4201,7 +4201,8 @@ _label_11_376:
 	ld hl,wActiveTriggers		; $75d9
 	call unsetFlag		; $75dc
 	jp objectSetInvisible		; $75df
-_label_11_377:
+
+@state0:
 	inc a			; $75e2
 	ld (de),a		; $75e3
 	ret			; $75e4
