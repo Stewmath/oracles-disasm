@@ -2793,21 +2793,22 @@ partCode3b:
 
 
 ; ==============================================================================
-; PARTID_3c
-; Used by head thwomp
+; PARTID_HEAD_THWOMP_CIRCULAR_PROJECTILE
 ; ==============================================================================
 partCode3c:
 	jp nz,partDelete		; $6f2c
-	ld e,$c4		; $6f2f
+	ld e,Part.state		; $6f2f
 	ld a,(de)		; $6f31
 	or a			; $6f32
-	jr z,_label_11_334	; $6f33
+	jr z,@state0	; $6f33
+
 	call partCommon_checkOutOfBounds		; $6f35
 	jp z,partDelete		; $6f38
 	call partCommon_decCounter1IfNonzero		; $6f3b
-	jr nz,_label_11_333	; $6f3e
+	jr nz,@counter1NonZero	; $6f3e
+
 	inc l			; $6f40
-	ld e,$f0		; $6f41
+	ld e,Part.var30		; $6f41
 	ld a,(de)		; $6f43
 	inc a			; $6f44
 	and $01			; $6f45
@@ -2815,25 +2816,30 @@ partCode3c:
 	add (hl)		; $6f48
 	ldd (hl),a		; $6f49
 	ld (hl),a		; $6f4a
-	ld l,$c9		; $6f4b
-	ld e,$c2		; $6f4d
+
+	ld l,Part.angle		; $6f4b
+	ld e,Part.subid		; $6f4d
 	ld a,(de)		; $6f4f
 	add (hl)		; $6f50
 	and $1f			; $6f51
 	ld (hl),a		; $6f53
-_label_11_333:
+
+@counter1NonZero:
 	call objectApplySpeed		; $6f54
 	jp partAnimate		; $6f57
-_label_11_334:
+
+@state0:
 	ld h,d			; $6f5a
 	ld l,e			; $6f5b
 	inc (hl)		; $6f5c
-	ld l,$c6		; $6f5d
+
+	ld l,Part.counter1	; $6f5d
 	ld a,$02		; $6f5f
 	ldi (hl),a		; $6f61
 	ld (hl),a		; $6f62
-	ld l,$d0		; $6f63
-	ld (hl),$64		; $6f65
+
+	ld l,Part.speed		; $6f63
+	ld (hl),SPEED_280	; $6f65
 	call objectSetVisible82		; $6f67
 	ld a,SND_BEAM		; $6f6a
 	jp playSound		; $6f6c

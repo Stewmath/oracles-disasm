@@ -326,7 +326,7 @@
 
 ;;
 ; Used by head thwomp
-.define PARTID_3c				$3c
+.define PARTID_HEAD_THWOMP_CIRCULAR_PROJECTILE				$3c
 
 ;;
 ; Subid: ?
@@ -519,6 +519,10 @@
 .define PARTID_39				$39
 
 .define PARTID_3a				$3a
+
+;;
+; created by Poe sister 2
+.define PARTID_3c				$3c
 
 ;;
 ; created by frypolar

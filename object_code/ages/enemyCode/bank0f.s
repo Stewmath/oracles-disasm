@@ -7189,7 +7189,7 @@ _pumpkinHead_noHealth:
 ;   var30: "Spin counter" used when bomb is thrown into head
 ;   var31: Which head the thwomp will settle on after throwing bomb in?
 ;   var32: Bit 0 triggers the effect of a bomb being thrown into head thwomp.
-;   var33: ?
+;   var33: Determines the initial angle of the circular projectiles' initial angle
 ;   var34: Counter which determines when head thwomp starts shooting fireballs / bombs
 ; ==============================================================================
 enemyCode79:
@@ -7518,7 +7518,7 @@ _headThwomp_stateE:
 
 	call getFreePartSlot		; $6943
 	jr nz,++		; $6946
-	ld (hl),PARTID_3c		; $6948
+	ld (hl),PARTID_HEAD_THWOMP_CIRCULAR_PROJECTILE		; $6948
 	inc l			; $694a
 	ld e,Enemy.var33		; $694b
 	ld a,(de)		; $694d
