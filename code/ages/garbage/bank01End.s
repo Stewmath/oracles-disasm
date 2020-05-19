@@ -70,9 +70,9 @@ func_7f55:
 ; Another garbage function calling invalid addresses
 ; @addr{7f90}
 func_7f90:
-	callab $03 $7d20		; $7f90
-	call $1aca		; $7f98
-	jp $34ad		; $7f9b
+	callab $03 $7d20
+	call $1aca
+	jp $34ad
 
 ; @addr{7f9d}
 @data:
@@ -84,8 +84,8 @@ func_7f90:
 ; Another garbage function calling invalid addresses
 ; @addr{7fb5}
 func_7fb5:
-	callab $03 $7d20	; $7fb5
-	call $1ae4		; $7fbd
-	jp $34c7		; $7fc0
+	callab $03 $7d20
+	call $1ae4
+	jp $34c7
 
 .endif ; BUILD_VANILLA

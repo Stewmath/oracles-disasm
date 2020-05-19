@@ -1,11 +1,11 @@
 ;;
 ; @addr{5872}
 runRoomSpecificCode: ; 5872
-	ld a,(wActiveRoom)		; $5872
+	ld a,(wActiveRoom)
 	ld hl, _roomSpecificCodeGroupTable
-	call findRoomSpecificData		; $5878
-	ret nc			; $587b
-	rst_jumpTable			; $587c
+	call findRoomSpecificData
+	ret nc
+	rst_jumpTable
 .dw _roomSpecificCode0
 .dw _roomSpecificCode1
 .dw _roomSpecificCode2
@@ -67,156 +67,156 @@ _roomSpecificCodeGroup7Table: ; 58c9
 ;;
 ; @addr{58ca}
 _roomSpecificCode0: ; 58ca
-	ld a,GLOBALFLAG_WON_FAIRY_HIDING_GAME		; $58ca
-	call checkGlobalFlag		; $58cc
-	ret nz			; $58cf
-	ld hl,$cfd0		; $58d0
-	ld b,$10		; $58d3
-	jp clearMemory		; $58d5
+	ld a,GLOBALFLAG_WON_FAIRY_HIDING_GAME
+	call checkGlobalFlag
+	ret nz
+	ld hl,$cfd0
+	ld b,$10
+	jp clearMemory
 
 ;;
 ; @addr{5cd8}
 _roomSpecificCode1: ; 5cd8
-	ld a, GLOBALFLAG_D3_CRYSTALS	; $5cd8
-	call checkGlobalFlag		; $58da
-	ret nz			; $58dd
+	ld a, GLOBALFLAG_D3_CRYSTALS
+	call checkGlobalFlag
+	ret nz
 ---
 	; Create spinner object
-	call getFreeInteractionSlot		; $58de
-	ret nz			; $58e1
-	ld (hl),$7d		; $58e2
+	call getFreeInteractionSlot
+	ret nz
+	ld (hl),$7d
 	ld l,Interaction.yh
-	ld (hl),$57		; $58e6
+	ld (hl),$57
 	ld l,Interaction.xh
-	ld (hl),$01		; $58ea
-	ret			; $58ec
+	ld (hl),$01
+	ret
 
 ;;
 ; @addr{58ed}
 _roomSpecificCode2: ; 58ed
-	ld a,GLOBALFLAG_D3_CRYSTALS	; $58ed
-	call checkGlobalFlag		; $58ef
-	ret z			; $58f2
+	ld a,GLOBALFLAG_D3_CRYSTALS
+	call checkGlobalFlag
+	ret z
 	; Create spinner if the flag is UNset
 	jr ---
 
 ;;
 ; @addr{58f5}
 _roomSpecificCode3: ; 58f5
-	call getThisRoomFlags		; $58f5
-	bit 6,a			; $58f8
-	ret nz			; $58fa
-	ld a,TREASURE_MYSTERY_SEEDS		; $58fb
-	call checkTreasureObtained		; $58fd
-	ret nc			; $5900
-	ld hl,wcc05		; $5901
-	res 1,(hl)		; $5904
-	call getFreeInteractionSlot		; $5906
-	ret nz			; $5909
-	ld (hl),$40		; $590a
-	inc l			; $590c
-	ld (hl),$0a		; $590d
-	ld a,$01		; $590f
-	ld (wDiggingUpEnemiesForbidden),a		; $5911
-	ret			; $5914
+	call getThisRoomFlags
+	bit 6,a
+	ret nz
+	ld a,TREASURE_MYSTERY_SEEDS
+	call checkTreasureObtained
+	ret nc
+	ld hl,wcc05
+	res 1,(hl)
+	call getFreeInteractionSlot
+	ret nz
+	ld (hl),$40
+	inc l
+	ld (hl),$0a
+	ld a,$01
+	ld (wDiggingUpEnemiesForbidden),a
+	ret
 
 ;;
 ; @addr{5915}
 _roomSpecificCode7: ; 5915
-	ld a,GLOBALFLAG_GAVE_ROPE_TO_RAFTON	; $5915
-	call checkGlobalFlag		; $5917
-	ret z			; $591a
-	call getThisRoomFlags		; $591b
-	bit 6,a			; $591e
-	ret nz			; $5920
+	ld a,GLOBALFLAG_GAVE_ROPE_TO_RAFTON
+	call checkGlobalFlag
+	ret z
+	call getThisRoomFlags
+	bit 6,a
+	ret nz
 .ifdef ROM_AGES
 	ld a,MUS_RALPH
 .else
 	ld a,$35
 .endif
-	ld (wActiveMusic2),a		; $5923
-	ret			; $5926
+	ld (wActiveMusic2),a
+	ret
 
 ;;
 ; @addr{5927}
 _roomSpecificCode5: ; 5927
-	ld a,GLOBALFLAG_SAVED_NAYRU	; $5927
-	call checkGlobalFlag		; $5929
-	ret nz			; $592c
+	ld a,GLOBALFLAG_SAVED_NAYRU
+	call checkGlobalFlag
+	ret nz
 	ld a,MUS_SADNESS
-	ld (wActiveMusic2),a		; $592f
-	ret			; $5932
+	ld (wActiveMusic2),a
+	ret
 
 ;;
 ; Something in ambi's palace
 ; @addr{5933}
 _roomSpecificCode4: ; 5933
-	ld a,$06		; $5933
-	ld (wMinimapRoom),a		; $5935
+	ld a,$06
+	ld (wMinimapRoom),a
 	ld hl,wPastRoomFlags+$06
-	set 4,(hl)		; $593b
-	ret			; $593d
+	set 4,(hl)
+	ret
 
 ;;
 ; Check to play ralph music for ralph entering portal cutscene
 ; @addr{593e}
 _roomSpecificCode8: ; 593e
-	ld a,(wScreenTransitionDirection)		; $593e
-	cp DIR_RIGHT			; $5941
-	ret nz			; $5943
+	ld a,(wScreenTransitionDirection)
+	cp DIR_RIGHT
+	ret nz
 	ld a, GLOBALFLAG_RALPH_ENTERED_PORTAL
-	call checkGlobalFlag		; $5946
-	ret nz			; $5949
+	call checkGlobalFlag
+	ret nz
 .ifdef ROM_AGES
 	ld a, MUS_RALPH
 .else
 	ld a,$35
 .endif
-	ld (wActiveMusic2),a		; $594c
-	ret			; $594f
+	ld (wActiveMusic2),a
+	ret
 
 ;;
 ; Play nayru music on impa's house screen, for some reason
 ; @addr{5950}
 _roomSpecificCode9: ; 5950
-	ld a,GLOBALFLAG_FINISHEDGAME		; $5950
-	call checkGlobalFlag		; $5952
-	ret z			; $5955
+	ld a,GLOBALFLAG_FINISHEDGAME
+	call checkGlobalFlag
+	ret z
 .ifdef ROM_AGES
 	ld a, MUS_NAYRU
 .else
 	ld a,$08
 .endif
-	ld (wActiveMusic2),a		; $5958
-	ret			; $595b
+	ld (wActiveMusic2),a
+	ret
 
 ;;
 ; Correct minimap in mermaid's cave present
 ; @addr{595c}
 _roomSpecificCodeA: ; 595c
-	ld hl,wMinimapGroup		; $595c
-	ld (hl),$00		; $595f
-	inc l			; $5961
-	ld (hl),$3c		; $5962
-	ret			; $5964
+	ld hl,wMinimapGroup
+	ld (hl),$00
+	inc l
+	ld (hl),$3c
+	ret
 
 ;;
 ; Correct minimap in mermaid's cave past
 ; @addr{5965}
 _roomSpecificCodeB: ; 5965
-	ld hl,wMinimapGroup		; $5965
-	ld (hl),$01		; $5968
-	inc l			; $596a
-	ld (hl),$3c		; $596b
-	ret			; $596d
+	ld hl,wMinimapGroup
+	ld (hl),$01
+	inc l
+	ld (hl),$3c
+	ret
 
 ;;
 ; Something happening on vire black tower screen
 ; @addr{596e}
 _roomSpecificCodeC: ; 596e
-	ld hl,wActiveMusic		; $596e
-	ld a,(hl)		; $5971
-	or a			; $5972
-	ret nz			; $5973
-	ld (hl),$ff		; $5974
-	ret			; $5976
+	ld hl,wActiveMusic
+	ld a,(hl)
+	or a
+	ret nz
+	ld (hl),$ff
+	ret

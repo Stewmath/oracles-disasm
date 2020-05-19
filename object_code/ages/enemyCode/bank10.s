@@ -15,72 +15,72 @@
 ;   var39: Bee form: quadrant the bee entered the screen from
 ; ==============================================================================
 enemyCode02:
-	jr z,@normalStatus	; $5827
-	sub ENEMYSTATUS_NO_HEALTH			; $5829
-	ret c			; $582b
-	jr z,@dead	; $582c
-	dec a			; $582e
-	jr z,@justHit	; $582f
+	jr z,@normalStatus
+	sub ENEMYSTATUS_NO_HEALTH
+	ret c
+	jr z,@dead
+	dec a
+	jr z,@justHit
 
 	; ENEMYSTATUS_KNOCKBACK
-	ld c,$20		; $5831
-	call objectUpdateSpeedZ_paramC		; $5833
-	jp _ecom_updateKnockback		; $5836
+	ld c,$20
+	call objectUpdateSpeedZ_paramC
+	jp _ecom_updateKnockback
 
 @justHit:
-	ld h,d			; $5839
-	ld l,Enemy.subid		; $583a
-	ld a,(hl)		; $583c
-	or a			; $583d
-	jr nz,@notTurtleForm	; $583e
+	ld h,d
+	ld l,Enemy.subid
+	ld a,(hl)
+	or a
+	jr nz,@notTurtleForm
 
-	ld l,Enemy.invincibilityCounter		; $5840
-	ld a,(hl)		; $5842
-	or a			; $5843
-	jr z,@normalStatus	; $5844
+	ld l,Enemy.invincibilityCounter
+	ld a,(hl)
+	or a
+	jr z,@normalStatus
 
 	; Note that turtle veran's been hit and should transform soon
-	ld l,Enemy.var33		; $5846
-	ld (hl),$01		; $5848
-	jr @normalStatus		; $584a
+	ld l,Enemy.var33
+	ld (hl),$01
+	jr @normalStatus
 
 @notTurtleForm:
-	ld l,Enemy.knockbackCounter		; $584c
-	ld a,(hl)		; $584e
-	or a			; $584f
-	jr z,@normalStatus	; $5850
+	ld l,Enemy.knockbackCounter
+	ld a,(hl)
+	or a
+	jr z,@normalStatus
 
 	; Only spider form takes knockback
-	ld l,Enemy.state		; $5852
-	ld (hl),$03		; $5854
-	ld l,Enemy.counter1		; $5856
-	ld (hl),105		; $5858
-	ld l,Enemy.enemyCollisionMode		; $585a
-	ld (hl),ENEMYCOLLISION_VERAN_SPIDER_FORM_VULNERABLE		; $585c
+	ld l,Enemy.state
+	ld (hl),$03
+	ld l,Enemy.counter1
+	ld (hl),105
+	ld l,Enemy.enemyCollisionMode
+	ld (hl),ENEMYCOLLISION_VERAN_SPIDER_FORM_VULNERABLE
 
-	ld a,(w1Link.state)		; $585e
-	cp LINK_STATE_GRABBED			; $5861
-	call z,_veranFinal_grabbingLink		; $5863
+	ld a,(w1Link.state)
+	cp LINK_STATE_GRABBED
+	call z,_veranFinal_grabbingLink
 
-	ld a,$06		; $5866
-	jp enemySetAnimation		; $5868
+	ld a,$06
+	jp enemySetAnimation
 
 @dead:
-	call _veranFinal_dead		; $586b
+	call _veranFinal_dead
 
 @normalStatus:
-	ld e,Enemy.subid		; $586e
-	ld a,(de)		; $5870
-	ld e,Enemy.state		; $5871
-	rst_jumpTable			; $5873
+	ld e,Enemy.subid
+	ld a,(de)
+	ld e,Enemy.state
+	rst_jumpTable
 	.dw _veranFinal_turtleForm
 	.dw _veranFinal_spiderForm
 	.dw _veranFinal_beeForm
 
 
 _veranFinal_turtleForm:
-	ld a,(de)		; $587a
-	rst_jumpTable			; $587b
+	ld a,(de)
+	rst_jumpTable
 	.dw _veranFinal_turtleForm_state0
 	.dw _veranFinal_turtleForm_state1
 	.dw _veranFinal_turtleForm_state2
@@ -95,213 +95,213 @@ _veranFinal_turtleForm:
 
 
 _veranFinal_turtleForm_state0:
-	ld a,$02		; $5892
-	ld (wEnemyIDToLoadExtraGfx),a		; $5894
-	ld a,PALH_87		; $5897
-	call loadPaletteHeader		; $5899
-	ld a,SNDCTRL_STOPMUSIC		; $589c
-	call playSound		; $589e
-	ld a,$01		; $58a1
-	ld (wDisabledObjects),a		; $58a3
-	ld (wMenuDisabled),a		; $58a6
+	ld a,$02
+	ld (wEnemyIDToLoadExtraGfx),a
+	ld a,PALH_87
+	call loadPaletteHeader
+	ld a,SNDCTRL_STOPMUSIC
+	call playSound
+	ld a,$01
+	ld (wDisabledObjects),a
+	ld (wMenuDisabled),a
 
-	ld bc,$0208		; $58a9
-	call _enemyBoss_spawnShadow		; $58ac
-	ret nz			; $58af
-	call _ecom_incState		; $58b0
+	ld bc,$0208
+	call _enemyBoss_spawnShadow
+	ret nz
+	call _ecom_incState
 
-	call checkIsLinkedGame		; $58b3
-	ld l,Enemy.health		; $58b6
-	ld a,(hl)		; $58b8
-	ld bc,$0c18		; $58b9
-	jr nz,++		; $58bc
+	call checkIsLinkedGame
+	ld l,Enemy.health
+	ld a,(hl)
+	ld bc,$0c18
+	jr nz,++
 
 	; Unlinked: less health (for all forms)
-	ld a,$14		; $58be
-	ld (hl),a		; $58c0
-	ld bc,$080f		; $58c1
+	ld a,$14
+	ld (hl),a
+	ld bc,$080f
 ++
-	ld l,Enemy.var30		; $58c4
-	ldi (hl),a		; $58c6
+	ld l,Enemy.var30
+	ldi (hl),a
 	ld (hl),b ; [var31]
-	inc l			; $58c8
+	inc l
 	ld (hl),c ; [var32]
-	jp objectSetVisible83		; $58ca
+	jp objectSetVisible83
 
 
 ; Showing text before fight starts
 _veranFinal_turtleForm_state1:
-	inc e			; $58cd
+	inc e
 	ld a,(de) ; [state2]
-	rst_jumpTable			; $58cf
+	rst_jumpTable
 	.dw @substate0
 	.dw @substate1
 	.dw @substate2
 
 @substate0:
-	ld a,(wPaletteThread_mode)		; $58d6
-	or a			; $58d9
-	ret nz			; $58da
-	ld a,SND_LIGHTNING		; $58db
-	call playSound		; $58dd
-	ld bc,TX_5614		; $58e0
-	call showText		; $58e3
-	jp _ecom_incState2		; $58e6
+	ld a,(wPaletteThread_mode)
+	or a
+	ret nz
+	ld a,SND_LIGHTNING
+	call playSound
+	ld bc,TX_5614
+	call showText
+	jp _ecom_incState2
 
 @substate1:
-	ld h,d			; $58e9
-	ld l,e			; $58ea
+	ld h,d
+	ld l,e
 	inc (hl) ; [state2]
-	xor a			; $58ec
-	ld (wDisabledObjects),a		; $58ed
-	ld (wMenuDisabled),a		; $58f0
-	ld a,$03		; $58f3
-	call enemySetAnimation		; $58f5
-	ld a,MUS_FINAL_BOSS		; $58f8
-	ld (wActiveMusic),a		; $58fa
-	jp playSound		; $58fd
+	xor a
+	ld (wDisabledObjects),a
+	ld (wMenuDisabled),a
+	ld a,$03
+	call enemySetAnimation
+	ld a,MUS_FINAL_BOSS
+	ld (wActiveMusic),a
+	jp playSound
 
 @substate2:
-	call enemyAnimate		; $5900
-	ld e,Enemy.animParameter		; $5903
-	ld a,(de)		; $5905
-	inc a			; $5906
-	ret nz			; $5907
-	call _ecom_incState		; $5908
-	ld l,Enemy.counter1		; $590b
-	ld (hl),30		; $590d
-	ld l,Enemy.speed		; $590f
-	ld (hl),SPEED_1c0		; $5911
-	inc a			; $5913
-	jp enemySetAnimation		; $5914
+	call enemyAnimate
+	ld e,Enemy.animParameter
+	ld a,(de)
+	inc a
+	ret nz
+	call _ecom_incState
+	ld l,Enemy.counter1
+	ld (hl),30
+	ld l,Enemy.speed
+	ld (hl),SPEED_1c0
+	inc a
+	jp enemySetAnimation
 
 
 ; About to jump
 _veranFinal_turtleForm_state2:
-	ld e,Enemy.animParameter		; $5917
-	ld a,(de)		; $5919
-	or a			; $591a
-	jp nz,enemyAnimate		; $591b
+	ld e,Enemy.animParameter
+	ld a,(de)
+	or a
+	jp nz,enemyAnimate
 
-	call _ecom_decCounter1		; $591e
-	ret nz			; $5921
-	ld l,Enemy.state		; $5922
-	inc (hl)		; $5924
-	ld l,Enemy.speedZ		; $5925
-	ld (hl),<(-$400)		; $5927
-	inc l			; $5929
-	ld (hl),>(-$400)		; $592a
-	call _ecom_updateAngleTowardTarget		; $592c
-	call objectSetVisible81		; $592f
-	ld a,SND_UNKNOWN4		; $5932
-	call playSound		; $5934
-	ld a,$02		; $5937
-	jp enemySetAnimation		; $5939
+	call _ecom_decCounter1
+	ret nz
+	ld l,Enemy.state
+	inc (hl)
+	ld l,Enemy.speedZ
+	ld (hl),<(-$400)
+	inc l
+	ld (hl),>(-$400)
+	call _ecom_updateAngleTowardTarget
+	call objectSetVisible81
+	ld a,SND_UNKNOWN4
+	call playSound
+	ld a,$02
+	jp enemySetAnimation
 
 
 ; Jumping (until starts moving down)
 _veranFinal_turtleForm_state3:
-	ld c,$20		; $593c
-	call objectUpdateSpeedZ_paramC		; $593e
-	ldd a,(hl)		; $5941
-	or (hl)			; $5942
-	jp nz,_ecom_applyVelocityForTopDownEnemyNoHoles		; $5943
+	ld c,$20
+	call objectUpdateSpeedZ_paramC
+	ldd a,(hl)
+	or (hl)
+	jp nz,_ecom_applyVelocityForTopDownEnemyNoHoles
 
-	inc l			; $5946
+	inc l
 	inc (hl) ; [speedZ] = $0100
 
-	ld l,Enemy.state		; $5948
-	inc (hl)		; $594a
-	ld l,Enemy.speed		; $594b
-	ld (hl),SPEED_300		; $594d
-	ld l,Enemy.var36		; $594f
-	ldh a,(<hEnemyTargetY)	; $5951
-	and $f0			; $5953
-	add $08			; $5955
-	ldi (hl),a		; $5957
-	ldh a,(<hEnemyTargetX)	; $5958
-	and $f0			; $595a
-	add $08			; $595c
+	ld l,Enemy.state
+	inc (hl)
+	ld l,Enemy.speed
+	ld (hl),SPEED_300
+	ld l,Enemy.var36
+	ldh a,(<hEnemyTargetY)
+	and $f0
+	add $08
+	ldi (hl),a
+	ldh a,(<hEnemyTargetX)
+	and $f0
+	add $08
 	ld (hl),a ; [var37]
-	ld a,$01		; $595f
-	jp enemySetAnimation		; $5961
+	ld a,$01
+	jp enemySetAnimation
 
 
 ; Falling and homing in on a position
 _veranFinal_turtleForm_state4:
-	ld c,$10		; $5964
-	call objectUpdateSpeedZ_paramC		; $5966
-	jr z,@nextState	; $5969
-	call _veranFinal_moveTowardTargetPosition		; $596b
-	ret nc			; $596e
-	ld l,Enemy.yh		; $596f
-	ld (hl),b		; $5971
-	ld l,Enemy.xh		; $5972
-	ld (hl),c		; $5974
-	ret			; $5975
+	ld c,$10
+	call objectUpdateSpeedZ_paramC
+	jr z,@nextState
+	call _veranFinal_moveTowardTargetPosition
+	ret nc
+	ld l,Enemy.yh
+	ld (hl),b
+	ld l,Enemy.xh
+	ld (hl),c
+	ret
 
 @nextState:
-	ld a,$10		; $5976
-	call setScreenShakeCounter		; $5978
-	call _ecom_incState		; $597b
-	ld l,Enemy.counter1		; $597e
-	ld (hl),$0c		; $5980
-	call objectSetVisible83		; $5982
-	ld a,SND_POOF		; $5985
-	call playSound		; $5987
-	ld b,PARTID_VERAN_ACID_POOL		; $598a
-	jp _ecom_spawnProjectile		; $598c
+	ld a,$10
+	call setScreenShakeCounter
+	call _ecom_incState
+	ld l,Enemy.counter1
+	ld (hl),$0c
+	call objectSetVisible83
+	ld a,SND_POOF
+	call playSound
+	ld b,PARTID_VERAN_ACID_POOL
+	jp _ecom_spawnProjectile
 
 
 ; Landed
 _veranFinal_turtleForm_state5:
-	call _ecom_decCounter1		; $598f
-	ret nz			; $5992
+	call _ecom_decCounter1
+	ret nz
 
-	ld l,Enemy.speed		; $5993
-	ld (hl),SPEED_1c0		; $5995
-	ld l,Enemy.var33		; $5997
-	bit 0,(hl)		; $5999
-	ld l,Enemy.var34		; $599b
-	jr z,+			; $599d
-	inc (hl)		; $599f
+	ld l,Enemy.speed
+	ld (hl),SPEED_1c0
+	ld l,Enemy.var33
+	bit 0,(hl)
+	ld l,Enemy.var34
+	jr z,+
+	inc (hl)
 +
-	ld a,(hl)		; $59a0
-	ld bc,@transformProbabilities		; $59a1
-	call addAToBc		; $59a4
-	ld a,(bc)		; $59a7
-	ld b,a			; $59a8
-	inc a			; $59a9
-	ld l,e			; $59aa
-	jr z,++			; $59ab
+	ld a,(hl)
+	ld bc,@transformProbabilities
+	call addAToBc
+	ld a,(bc)
+	ld b,a
+	inc a
+	ld l,e
+	jr z,++
 
-	call getRandomNumber		; $59ad
-	and b			; $59b0
-	jp z,_veranFinal_transformToBeeOrSpider		; $59b1
+	call getRandomNumber
+	and b
+	jp z,_veranFinal_transformToBeeOrSpider
 
-	ld e,Enemy.var33		; $59b4
-	ld a,(de)		; $59b6
-	rrca			; $59b7
-	jr c,@jumpAgain		; $59b8
+	ld e,Enemy.var33
+	ld a,(de)
+	rrca
+	jr c,@jumpAgain
 ++
-	call getRandomNumber		; $59ba
-	cp 90			; $59bd
-	jr nc,@jumpAgain		; $59bf
+	call getRandomNumber
+	cp 90
+	jr nc,@jumpAgain
 
 	; Open face
 	inc (hl) ; [state2] = $06
-	ld l,Enemy.counter1		; $59c2
-	ld (hl),$08		; $59c4
-	ld a,SND_GORON		; $59c6
-	call playSound		; $59c8
-	ld a,$04		; $59cb
-	jp enemySetAnimation		; $59cd
+	ld l,Enemy.counter1
+	ld (hl),$08
+	ld a,SND_GORON
+	call playSound
+	ld a,$04
+	jp enemySetAnimation
 
 @jumpAgain
 	ld (hl),$02 ; [state]
-	ld l,Enemy.counter1		; $59d2
-	ld (hl),30		; $59d4
-	ret			; $59d6
+	ld l,Enemy.counter1
+	ld (hl),30
+	ret
 
 @transformProbabilities:
 	.db $ff $03 $03 $01 $00
@@ -309,154 +309,154 @@ _veranFinal_turtleForm_state5:
 
 ; Face is opening
 _veranFinal_turtleForm_state6:
-	call enemyAnimate		; $59dc
-	ld h,d			; $59df
-	ld l,Enemy.animParameter		; $59e0
-	bit 7,(hl)		; $59e2
-	jr nz,@nextState	; $59e4
-	bit 0,(hl)		; $59e6
-	ret z			; $59e8
-	ld l,Enemy.enemyCollisionMode		; $59e9
-	ld (hl),ENEMYCOLLISION_VERAN_TURTLE_FORM_VULNERABLE		; $59eb
-	ret			; $59ed
+	call enemyAnimate
+	ld h,d
+	ld l,Enemy.animParameter
+	bit 7,(hl)
+	jr nz,@nextState
+	bit 0,(hl)
+	ret z
+	ld l,Enemy.enemyCollisionMode
+	ld (hl),ENEMYCOLLISION_VERAN_TURTLE_FORM_VULNERABLE
+	ret
 
 @nextState:
-	ld l,Enemy.state		; $59ee
-	inc (hl)		; $59f0
-	ld l,Enemy.counter1		; $59f1
-	ld (hl),90		; $59f3
-	xor a			; $59f5
-	jp enemySetAnimation		; $59f6
+	ld l,Enemy.state
+	inc (hl)
+	ld l,Enemy.counter1
+	ld (hl),90
+	xor a
+	jp enemySetAnimation
 
 
 _veranFinal_turtleForm_state7:
-	call _ecom_decCounter1		; $59f9
-	jp nz,enemyAnimate		; $59fc
-	ld l,e			; $59ff
+	call _ecom_decCounter1
+	jp nz,enemyAnimate
+	ld l,e
 	inc (hl) ; [state]
-	ld a,$03		; $5a01
-	jp enemySetAnimation		; $5a03
+	ld a,$03
+	jp enemySetAnimation
 
 
 _veranFinal_turtleForm_state8:
-	call enemyAnimate		; $5a06
-	ld h,d			; $5a09
-	ld l,Enemy.animParameter		; $5a0a
-	bit 7,(hl)		; $5a0c
-	jr nz,@nextState	; $5a0e
-	bit 0,(hl)		; $5a10
-	ret z			; $5a12
-	ld l,Enemy.enemyCollisionMode		; $5a13
-	ld (hl),ENEMYCOLLISION_VERAN_TURTLE_FORM		; $5a15
-	ret			; $5a17
+	call enemyAnimate
+	ld h,d
+	ld l,Enemy.animParameter
+	bit 7,(hl)
+	jr nz,@nextState
+	bit 0,(hl)
+	ret z
+	ld l,Enemy.enemyCollisionMode
+	ld (hl),ENEMYCOLLISION_VERAN_TURTLE_FORM
+	ret
 
 @nextState:
-	ld l,Enemy.state		; $5a18
-	ld (hl),$02		; $5a1a
-	ld l,Enemy.counter1		; $5a1c
-	ld (hl),30		; $5a1e
-	ld a,$01		; $5a20
-	jp enemySetAnimation		; $5a22
+	ld l,Enemy.state
+	ld (hl),$02
+	ld l,Enemy.counter1
+	ld (hl),30
+	ld a,$01
+	jp enemySetAnimation
 
 
 ; Just transformed back from being a spider or bee
 _veranFinal_turtleForm_state9:
-	call enemyAnimate		; $5a25
-	ld e,Enemy.animParameter		; $5a28
-	ld a,(de)		; $5a2a
-	inc a			; $5a2b
-	ret nz			; $5a2c
+	call enemyAnimate
+	ld e,Enemy.animParameter
+	ld a,(de)
+	inc a
+	ret nz
 
-	ld h,d			; $5a2d
-	ld l,Enemy.var33		; $5a2e
+	ld h,d
+	ld l,Enemy.var33
 	ldi (hl),a ; [var33] = 0
 	ld (hl),a  ; [var34] = 0
 
-	ld l,Enemy.state		; $5a32
-	dec (hl)		; $5a34
-	ld l,Enemy.collisionType		; $5a35
+	ld l,Enemy.state
+	dec (hl)
+	ld l,Enemy.collisionType
 	ld (hl),$80|ENEMYID_VERAN_FINAL_FORM
-	inc l			; $5a39
+	inc l
 	ld (hl),ENEMYCOLLISION_VERAN_TURTLE_FORM_VULNERABLE ; [enemyCollisionType]
 
-	ld l,Enemy.oamFlagsBackup		; $5a3c
-	ld a,$06		; $5a3e
-	ldi (hl),a		; $5a40
-	ld (hl),a		; $5a41
-	ld a,$03		; $5a42
-	jp enemySetAnimation		; $5a44
+	ld l,Enemy.oamFlagsBackup
+	ld a,$06
+	ldi (hl),a
+	ld (hl),a
+	ld a,$03
+	jp enemySetAnimation
 
 
 ; Dead
 _veranFinal_turtleForm_stateA:
-	inc e			; $5a47
-	ld a,(de)		; $5a48
-	rst_jumpTable			; $5a49
+	inc e
+	ld a,(de)
+	rst_jumpTable
 	.dw @substate0
 	.dw @substate1
 	.dw @substate2
 	.dw @substate3
 
 @substate0:
-	ld e,Enemy.invincibilityCounter		; $5a52
-	ld a,(de)		; $5a54
-	or a			; $5a55
-	ret nz			; $5a56
-	call checkLinkVulnerable		; $5a57
-	ret nc			; $5a5a
+	ld e,Enemy.invincibilityCounter
+	ld a,(de)
+	or a
+	ret nz
+	call checkLinkVulnerable
+	ret nc
 
-	ld a,$01		; $5a5b
-	ld (wMenuDisabled),a		; $5a5d
-	ld (wDisabledObjects),a		; $5a60
+	ld a,$01
+	ld (wMenuDisabled),a
+	ld (wDisabledObjects),a
 
-	call dropLinkHeldItem		; $5a63
-	call clearAllParentItems		; $5a66
-	call _ecom_incState2		; $5a69
+	call dropLinkHeldItem
+	call clearAllParentItems
+	call _ecom_incState2
 
-	call checkIsLinkedGame		; $5a6c
-	ld bc,TX_5615		; $5a6f
-	jr z,+			; $5a72
-	ld bc,TX_5616		; $5a74
+	call checkIsLinkedGame
+	ld bc,TX_5615
+	jr z,+
+	ld bc,TX_5616
 +
-	jp showText		; $5a77
+	jp showText
 
 @substate1:
-	ld a,(wTextIsActive)		; $5a7a
-	or a			; $5a7d
-	ret nz			; $5a7e
-	call _ecom_incState2		; $5a7f
-	ld l,Enemy.counter2		; $5a82
-	ld (hl),40		; $5a84
-	ld l,Enemy.yh		; $5a86
-	ld b,(hl)		; $5a88
-	ld l,Enemy.xh		; $5a89
-	ld c,(hl)		; $5a8b
-	ld a,$ff		; $5a8c
-	jp createEnergySwirlGoingOut		; $5a8e
+	ld a,(wTextIsActive)
+	or a
+	ret nz
+	call _ecom_incState2
+	ld l,Enemy.counter2
+	ld (hl),40
+	ld l,Enemy.yh
+	ld b,(hl)
+	ld l,Enemy.xh
+	ld c,(hl)
+	ld a,$ff
+	jp createEnergySwirlGoingOut
 
 @substate2:
-	call _ecom_decCounter2		; $5a91
-	ret nz			; $5a94
-	ldbc INTERACID_MISC_PUZZLES, $21		; $5a95
-	call objectCreateInteraction		; $5a98
-	ret nz			; $5a9b
-	jp _ecom_incState2		; $5a9c
+	call _ecom_decCounter2
+	ret nz
+	ldbc INTERACID_MISC_PUZZLES, $21
+	call objectCreateInteraction
+	ret nz
+	jp _ecom_incState2
 
 @substate3:
-	ld a,(wPaletteThread_mode)		; $5a9f
-	or a			; $5aa2
-	ret nz			; $5aa3
-	ld hl,wGroup4Flags+(<ROOM_AGES_4fc)		; $5aa4
-	set 7,(hl)		; $5aa7
-	ld a,CUTSCENE_BLACK_TOWER_ESCAPE		; $5aa9
-	ld (wCutsceneTrigger),a		; $5aab
-	call incMakuTreeState		; $5aae
-	jp enemyDelete		; $5ab1
+	ld a,(wPaletteThread_mode)
+	or a
+	ret nz
+	ld hl,wGroup4Flags+(<ROOM_AGES_4fc)
+	set 7,(hl)
+	ld a,CUTSCENE_BLACK_TOWER_ESCAPE
+	ld (wCutsceneTrigger),a
+	call incMakuTreeState
+	jp enemyDelete
 
 
 _veranFinal_spiderForm:
-	ld a,(de)		; $5ab4
-	rst_jumpTable			; $5ab5
+	ld a,(de)
+	rst_jumpTable
 	.dw _veranFinal_spiderOrBeeForm_state0
 	.dw _veranFinal_spiderForm_state1
 	.dw _veranFinal_spiderForm_state2
@@ -465,100 +465,100 @@ _veranFinal_spiderForm:
 
 
 _veranFinal_spiderOrBeeForm_state0:
-	ret			; $5ac0
+	ret
 
 
 _veranFinal_spiderForm_state1:
-	call enemyAnimate		; $5ac1
-	ld e,Enemy.animParameter		; $5ac4
-	ld a,(de)		; $5ac6
-	inc a			; $5ac7
-	ret nz			; $5ac8
+	call enemyAnimate
+	ld e,Enemy.animParameter
+	ld a,(de)
+	inc a
+	ret nz
 
-	ld bc,$1010		; $5ac9
-	ld e,ENEMYCOLLISION_VERAN_SPIDER_FORM		; $5acc
-	ld l,Enemy.var31		; $5ace
-	call _veranFinal_initializeForm		; $5ad0
-	ld a,$05		; $5ad3
-	call enemySetAnimation		; $5ad5
+	ld bc,$1010
+	ld e,ENEMYCOLLISION_VERAN_SPIDER_FORM
+	ld l,Enemy.var31
+	call _veranFinal_initializeForm
+	ld a,$05
+	call enemySetAnimation
 
 _veranFinal_spiderForm_setCounter2AndInitState2:
-	ld e,Enemy.counter2		; $5ad8
-	ld a,120		; $5ada
-	ld (de),a		; $5adc
+	ld e,Enemy.counter2
+	ld a,120
+	ld (de),a
 
 _veranFinal_spiderForm_initState2:
-	ld h,d			; $5add
-	ld l,Enemy.state		; $5ade
-	ld (hl),$02		; $5ae0
-	ld l,Enemy.speed		; $5ae2
-	ld (hl),SPEED_c0		; $5ae4
+	ld h,d
+	ld l,Enemy.state
+	ld (hl),$02
+	ld l,Enemy.speed
+	ld (hl),SPEED_c0
 
-	call getRandomNumber_noPreserveVars		; $5ae6
-	and $03			; $5ae9
-	ld hl,@counter1Vals		; $5aeb
-	rst_addAToHl			; $5aee
-	ld e,Enemy.counter1		; $5aef
-	ld a,(hl)		; $5af1
-	ld (de),a		; $5af2
-	call _veranFinal_spiderForm_decideAngle		; $5af3
-	jr _veranFinal_spiderForm_animate		; $5af6
+	call getRandomNumber_noPreserveVars
+	and $03
+	ld hl,@counter1Vals
+	rst_addAToHl
+	ld e,Enemy.counter1
+	ld a,(hl)
+	ld (de),a
+	call _veranFinal_spiderForm_decideAngle
+	jr _veranFinal_spiderForm_animate
 
 @counter1Vals:
 	.db 60,80,100,120
 
 
 _veranFinal_spiderForm_state2:
-	call _ecom_decCounter2		; $5afc
-	jr nz,++		; $5aff
-	ld (hl),120		; $5b01
-	call _veranFinal_spiderForm_decideWhetherToAttack		; $5b03
-	ret c			; $5b06
+	call _ecom_decCounter2
+	jr nz,++
+	ld (hl),120
+	call _veranFinal_spiderForm_decideWhetherToAttack
+	ret c
 ++
-	call _ecom_decCounter1		; $5b07
-	jr z,_veranFinal_spiderForm_initState2	; $5b0a
+	call _ecom_decCounter1
+	jr z,_veranFinal_spiderForm_initState2
 
 _veranFinal_spiderForm_updateMovement:
-	call _ecom_bounceOffWallsAndHoles		; $5b0c
-	call objectApplySpeed		; $5b0f
+	call _ecom_bounceOffWallsAndHoles
+	call objectApplySpeed
 
 _veranFinal_spiderForm_animate:
-	jp enemyAnimate		; $5b12
+	jp enemyAnimate
 
 
 _veranFinal_spiderForm_state3:
-	ld e,Enemy.zh		; $5b15
-	ld a,(de)		; $5b17
-	rlca			; $5b18
-	ld c,$20		; $5b19
-	jp c,objectUpdateSpeedZ_paramC		; $5b1b
+	ld e,Enemy.zh
+	ld a,(de)
+	rlca
+	ld c,$20
+	jp c,objectUpdateSpeedZ_paramC
 
-	call _ecom_decCounter1		; $5b1e
-	jr z,@gotoState2	; $5b21
+	call _ecom_decCounter1
+	jr z,@gotoState2
 
-	ld a,(hl)		; $5b23
-	rrca			; $5b24
-	ret c			; $5b25
-	ld l,Enemy.zh		; $5b26
-	ld a,(hl)		; $5b28
-	xor $02			; $5b29
-	ld (hl),a		; $5b2b
-	ret			; $5b2c
+	ld a,(hl)
+	rrca
+	ret c
+	ld l,Enemy.zh
+	ld a,(hl)
+	xor $02
+	ld (hl),a
+	ret
 
 @gotoState2:
-	ld l,Enemy.zh		; $5b2d
-	ld (hl),$00		; $5b2f
-	call objectSetVisible83		; $5b31
-	call _veranFinal_spiderForm_resetCollisionData		; $5b34
-	jr _veranFinal_spiderForm_initState2		; $5b37
+	ld l,Enemy.zh
+	ld (hl),$00
+	call objectSetVisible83
+	call _veranFinal_spiderForm_resetCollisionData
+	jr _veranFinal_spiderForm_initState2
 
 
 ; Doing an attack
 _veranFinal_spiderForm_state4:
-	ld e,Enemy.var03		; $5b39
-	ld a,(de)		; $5b3b
-	ld e,Enemy.state2		; $5b3c
-	rst_jumpTable			; $5b3e
+	ld e,Enemy.var03
+	ld a,(de)
+	ld e,Enemy.state2
+	rst_jumpTable
 	.dw _veranFinal_spiderForm_rushAttack
 	.dw _veranFinal_spiderForm_jumpAttack
 	.dw _veranFinal_spiderForm_webAttack
@@ -566,34 +566,34 @@ _veranFinal_spiderForm_state4:
 
 ; Rush toward Link for 1 second
 _veranFinal_spiderForm_rushAttack:
-	ld a,(de)		; $5b45
-	or a			; $5b46
-	jr z,@substate0	; $5b47
+	ld a,(de)
+	or a
+	jr z,@substate0
 
 @substate1:
-	call _ecom_decCounter1		; $5b49
-	jr z,_veranFinal_spiderForm_setCounter2AndInitState2	; $5b4c
-	call _veranFinal_spiderForm_updateMovement		; $5b4e
-	jp enemyAnimate		; $5b51
+	call _ecom_decCounter1
+	jr z,_veranFinal_spiderForm_setCounter2AndInitState2
+	call _veranFinal_spiderForm_updateMovement
+	jp enemyAnimate
 
 @substate0:
-	call _ecom_incState2		; $5b54
-	inc l			; $5b57
+	call _ecom_incState2
+	inc l
 	ld (hl),60 ; [counter1]
-	ld l,Enemy.speed		; $5b5a
-	ld (hl),SPEED_180		; $5b5c
+	ld l,Enemy.speed
+	ld (hl),SPEED_180
 
-	call _ecom_updateAngleTowardTarget		; $5b5e
-	and $18			; $5b61
-	add $04			; $5b63
-	ld (de),a		; $5b65
-	jr _veranFinal_spiderForm_animate		; $5b66
+	call _ecom_updateAngleTowardTarget
+	and $18
+	add $04
+	ld (de),a
+	jr _veranFinal_spiderForm_animate
 
 
 ; Jumps up and crashes back down onto the ground
 _veranFinal_spiderForm_jumpAttack:
-	ld a,(de)		; $5b68
-	rst_jumpTable			; $5b69
+	ld a,(de)
+	rst_jumpTable
 	.dw @substate0
 	.dw @substate1
 	.dw @substate2
@@ -601,101 +601,101 @@ _veranFinal_spiderForm_jumpAttack:
 	.dw @substate4
 
 @substate0:
-	ld b,PARTID_VERAN_SPIDERWEB		; $5b74
-	call _ecom_spawnProjectile		; $5b76
-	ret nz			; $5b79
-	call _ecom_incState2		; $5b7a
-	ld l,Enemy.var38		; $5b7d
-	ld (hl),$00		; $5b7f
-	call _veranFinal_spiderForm_setVulnerableCollisionData		; $5b81
-	jp objectSetVisible81		; $5b84
+	ld b,PARTID_VERAN_SPIDERWEB
+	call _ecom_spawnProjectile
+	ret nz
+	call _ecom_incState2
+	ld l,Enemy.var38
+	ld (hl),$00
+	call _veranFinal_spiderForm_setVulnerableCollisionData
+	jp objectSetVisible81
 
 @substate1:
 	; Wait for signal from child object?
-	ld e,Enemy.var38		; $5b87
-	ld a,(de)		; $5b89
-	or a			; $5b8a
-	ret z			; $5b8b
+	ld e,Enemy.var38
+	ld a,(de)
+	or a
+	ret z
 
-	ld h,d			; $5b8c
-	ld l,Enemy.zh		; $5b8d
-	ld a,(hl)		; $5b8f
-	sub $03			; $5b90
-	ld (hl),a		; $5b92
-	bit 7,a			; $5b93
-	jr z,++			; $5b95
+	ld h,d
+	ld l,Enemy.zh
+	ld a,(hl)
+	sub $03
+	ld (hl),a
+	bit 7,a
+	jr z,++
 
-	cp $e0			; $5b97
-	ret nc			; $5b99
+	cp $e0
+	ret nc
 
-	ldh a,(<hCameraY)	; $5b9a
-	ld b,a			; $5b9c
-	ld a,(hl)		; $5b9d
-	ld l,Enemy.yh		; $5b9e
-	add (hl)		; $5ba0
-	sub b			; $5ba1
-	cp $b0			; $5ba2
-	ret c			; $5ba4
+	ldh a,(<hCameraY)
+	ld b,a
+	ld a,(hl)
+	ld l,Enemy.yh
+	add (hl)
+	sub b
+	cp $b0
+	ret c
 ++
-	ld l,Enemy.state2		; $5ba5
-	inc (hl)		; $5ba7
-	inc l			; $5ba8
+	ld l,Enemy.state2
+	inc (hl)
+	inc l
 	ld (hl),90 ; [counter1]
-	ld l,Enemy.collisionType		; $5bab
-	res 7,(hl)		; $5bad
-	ld l,Enemy.zh		; $5baf
-	ld (hl),$00		; $5bb1
-	jp objectSetInvisible		; $5bb3
+	ld l,Enemy.collisionType
+	res 7,(hl)
+	ld l,Enemy.zh
+	ld (hl),$00
+	jp objectSetInvisible
 
 @substate2:
-	call _ecom_decCounter1		; $5bb6
-	ret nz			; $5bb9
-	ld l,e			; $5bba
+	call _ecom_decCounter1
+	ret nz
+	ld l,e
 	inc (hl) ; [state2]
-	ld l,Enemy.collisionType		; $5bbc
-	set 7,(hl)		; $5bbe
-	ld l,Enemy.speedZ		; $5bc0
-	xor a			; $5bc2
-	ldi (hl),a		; $5bc3
-	ld (hl),$01		; $5bc4
+	ld l,Enemy.collisionType
+	set 7,(hl)
+	ld l,Enemy.speedZ
+	xor a
+	ldi (hl),a
+	ld (hl),$01
 
-	ld l,Enemy.yh		; $5bc6
-	ldh a,(<hEnemyTargetY)	; $5bc8
-	ldi (hl),a		; $5bca
-	inc l			; $5bcb
-	ldh a,(<hEnemyTargetX)	; $5bcc
-	ld (hl),a		; $5bce
-	ld c,$08		; $5bcf
-	call _ecom_setZAboveScreen		; $5bd1
-	call _veranFinal_spiderForm_resetCollisionData		; $5bd4
-	jp objectSetVisible81		; $5bd7
+	ld l,Enemy.yh
+	ldh a,(<hEnemyTargetY)
+	ldi (hl),a
+	inc l
+	ldh a,(<hEnemyTargetX)
+	ld (hl),a
+	ld c,$08
+	call _ecom_setZAboveScreen
+	call _veranFinal_spiderForm_resetCollisionData
+	jp objectSetVisible81
 
 @substate3:
-	ld c,$20		; $5bda
-	call objectUpdateSpeedZ_paramC		; $5bdc
-	ret nz			; $5bdf
+	ld c,$20
+	call objectUpdateSpeedZ_paramC
+	ret nz
 
 	; Landed
-	ld l,Enemy.state2		; $5be0
-	inc (hl)		; $5be2
-	inc l			; $5be3
+	ld l,Enemy.state2
+	inc (hl)
+	inc l
 	ld (hl),120 ; [counter1]
-	ld a,SND_STRONG_POUND		; $5be6
-	call playSound		; $5be8
-	ld a,90		; $5beb
-	call setScreenShakeCounter		; $5bed
-	jp objectSetVisible83		; $5bf0
+	ld a,SND_STRONG_POUND
+	call playSound
+	ld a,90
+	call setScreenShakeCounter
+	jp objectSetVisible83
 
 @substate4:
-	call _ecom_decCounter1		; $5bf3
-	ret nz			; $5bf6
-	jp _veranFinal_spiderForm_setCounter2AndInitState2		; $5bf7
+	call _ecom_decCounter1
+	ret nz
+	jp _veranFinal_spiderForm_setCounter2AndInitState2
 
 
 ; Shoots out web to try and catch Link
 _veranFinal_spiderForm_webAttack:
-	ld a,(de)		; $5bfa
-	rst_jumpTable			; $5bfb
+	ld a,(de)
+	rst_jumpTable
 	.dw _veranFinal_spiderForm_webAttack_substate0
 	.dw _veranFinal_spiderForm_webAttack_substate1
 	.dw _veranFinal_spiderForm_webAttack_substate2
@@ -707,156 +707,156 @@ _veranFinal_spiderForm_webAttack:
 
 
 _veranFinal_spiderForm_webAttack_substate0:
-	ld h,d			; $5c0c
-	ld l,e			; $5c0d
+	ld h,d
+	ld l,e
 	inc (hl) ; [state2]
-	inc l			; $5c0f
+	inc l
 	ld (hl),30 ; [counter1]
-	ld l,Enemy.var38		; $5c12
-	ld (hl),$00		; $5c14
+	ld l,Enemy.var38
+	ld (hl),$00
 
 _veranFinal_spiderForm_resetCollisionData:
-	ld h,d			; $5c16
-	ld l,Enemy.enemyCollisionMode		; $5c17
-	ld (hl),ENEMYCOLLISION_VERAN_SPIDER_FORM		; $5c19
-	ld l,Enemy.collisionRadiusY		; $5c1b
-	ld (hl),$10		; $5c1d
-	ld a,$05		; $5c1f
-	jp enemySetAnimation		; $5c21
+	ld h,d
+	ld l,Enemy.enemyCollisionMode
+	ld (hl),ENEMYCOLLISION_VERAN_SPIDER_FORM
+	ld l,Enemy.collisionRadiusY
+	ld (hl),$10
+	ld a,$05
+	jp enemySetAnimation
 
 
 _veranFinal_spiderForm_webAttack_substate1:
-	call _ecom_decCounter1		; $5c24
-	ret nz			; $5c27
-	inc l			; $5c28
+	call _ecom_decCounter1
+	ret nz
+	inc l
 	ld (hl),$08 ; [counter2]
-	ld l,e			; $5c2b
+	ld l,e
 	inc (hl) ; [state2]
 
 _veranFinal_spiderForm_setVulnerableCollisionData:
-	ld h,d			; $5c2d
-	ld l,Enemy.enemyCollisionMode		; $5c2e
-	ld (hl),ENEMYCOLLISION_VERAN_SPIDER_FORM_VULNERABLE		; $5c30
-	ld l,Enemy.collisionRadiusY		; $5c32
-	ld (hl),$08		; $5c34
-	ld a,$06		; $5c36
-	jp enemySetAnimation		; $5c38
+	ld h,d
+	ld l,Enemy.enemyCollisionMode
+	ld (hl),ENEMYCOLLISION_VERAN_SPIDER_FORM_VULNERABLE
+	ld l,Enemy.collisionRadiusY
+	ld (hl),$08
+	ld a,$06
+	jp enemySetAnimation
 
 
 _veranFinal_spiderForm_webAttack_substate2:
-	call _ecom_decCounter2		; $5c3b
-	ret nz			; $5c3e
+	call _ecom_decCounter2
+	ret nz
 
-	ld b,PARTID_VERAN_SPIDERWEB		; $5c3f
-	call _ecom_spawnProjectile		; $5c41
-	ret nz			; $5c44
-	ld l,Part.subid		; $5c45
+	ld b,PARTID_VERAN_SPIDERWEB
+	call _ecom_spawnProjectile
+	ret nz
+	ld l,Part.subid
 	inc (hl) ; [subid] = 1
-	call _ecom_incState2		; $5c48
-	inc l			; $5c4b
+	call _ecom_incState2
+	inc l
 	ld (hl),90 ; [counter1]
-	jr _veranFinal_spiderForm_resetCollisionData		; $5c4e
+	jr _veranFinal_spiderForm_resetCollisionData
 
 
 ; Web coming back?
 _veranFinal_spiderForm_webAttack_substate3:
-	ld e,Enemy.var38		; $5c50
-	ld a,(de)		; $5c52
-	or a			; $5c53
-	ret z			; $5c54
+	ld e,Enemy.var38
+	ld a,(de)
+	or a
+	ret z
 
-	call _ecom_decCounter1		; $5c55
-	ret nz			; $5c58
+	call _ecom_decCounter1
+	ret nz
 
-	ld a,(w1Link.state)		; $5c59
-	cp LINK_STATE_GRABBED			; $5c5c
-	jp nz,_veranFinal_spiderForm_setCounter2AndInitState2		; $5c5e
+	ld a,(w1Link.state)
+	cp LINK_STATE_GRABBED
+	jp nz,_veranFinal_spiderForm_setCounter2AndInitState2
 
 	; Grabbed
-	call _ecom_incState2		; $5c61
-	inc l			; $5c64
-	ld (hl),$10		; $5c65
-	ld a,$06		; $5c67
-	call enemySetAnimation		; $5c69
-	ld b,$f8		; $5c6c
+	call _ecom_incState2
+	inc l
+	ld (hl),$10
+	ld a,$06
+	call enemySetAnimation
+	ld b,$f8
 
 _veranFinal_spiderForm_webAttack_updateLinkPosition:
-	ld hl,w1Link		; $5c6e
-	ld c,$00		; $5c71
-	jp objectCopyPositionWithOffset		; $5c73
+	ld hl,w1Link
+	ld c,$00
+	jp objectCopyPositionWithOffset
 
 
 _veranFinal_spiderForm_webAttack_substate4:
-	call _ecom_decCounter1		; $5c76
-	ret nz			; $5c79
+	call _ecom_decCounter1
+	ret nz
 
 	ld (hl),$04 ; [counter1]
-	ld l,e			; $5c7c
+	ld l,e
 	inc (hl) ; [state2]
-	ld a,$05		; $5c7e
-	call enemySetAnimation		; $5c80
-	ld a,$04		; $5c83
-	call setScreenShakeCounter		; $5c85
-	ld b,$14		; $5c88
-	call _veranFinal_spiderForm_webAttack_updateLinkPosition		; $5c8a
-	ldbc -6,$08		; $5c8d
+	ld a,$05
+	call enemySetAnimation
+	ld a,$04
+	call setScreenShakeCounter
+	ld b,$14
+	call _veranFinal_spiderForm_webAttack_updateLinkPosition
+	ldbc -6,$08
 
 _veranFinal_spiderForm_webAttack_applyDamageToLink:
-	ld l,<w1Link.damageToApply		; $5c90
-	ld (hl),b		; $5c92
-	ld l,<w1Link.invincibilityCounter		; $5c93
-	ld (hl),c		; $5c95
-	ld a,SND_STRONG_POUND		; $5c96
-	jp playSound		; $5c98
+	ld l,<w1Link.damageToApply
+	ld (hl),b
+	ld l,<w1Link.invincibilityCounter
+	ld (hl),c
+	ld a,SND_STRONG_POUND
+	jp playSound
 
 
 _veranFinal_spiderForm_webAttack_substate5:
-	call _ecom_decCounter1		; $5c9b
-	ret nz			; $5c9e
-	ld (hl),$08		; $5c9f
-	ld l,e			; $5ca1
-	inc (hl)		; $5ca2
-	ld a,$06		; $5ca3
-	call enemySetAnimation		; $5ca5
-	ld b,$f6		; $5ca8
-	jr _veranFinal_spiderForm_webAttack_updateLinkPosition		; $5caa
+	call _ecom_decCounter1
+	ret nz
+	ld (hl),$08
+	ld l,e
+	inc (hl)
+	ld a,$06
+	call enemySetAnimation
+	ld b,$f6
+	jr _veranFinal_spiderForm_webAttack_updateLinkPosition
 
 
 _veranFinal_spiderForm_webAttack_substate6:
-	call _ecom_decCounter1		; $5cac
-	ret nz			; $5caf
-	ld (hl),$0f		; $5cb0
-	ld l,e			; $5cb2
-	inc (hl)		; $5cb3
-	ld a,$05		; $5cb4
-	call enemySetAnimation		; $5cb6
-	ld a,$14		; $5cb9
-	call setScreenShakeCounter		; $5cbb
-	ld b,$14		; $5cbe
-	call _veranFinal_spiderForm_webAttack_updateLinkPosition		; $5cc0
-	ldbc -10,$18		; $5cc3
-	jr _veranFinal_spiderForm_webAttack_applyDamageToLink		; $5cc6
+	call _ecom_decCounter1
+	ret nz
+	ld (hl),$0f
+	ld l,e
+	inc (hl)
+	ld a,$05
+	call enemySetAnimation
+	ld a,$14
+	call setScreenShakeCounter
+	ld b,$14
+	call _veranFinal_spiderForm_webAttack_updateLinkPosition
+	ldbc -10,$18
+	jr _veranFinal_spiderForm_webAttack_applyDamageToLink
 
 
 _veranFinal_spiderForm_webAttack_substate7:
-	call _ecom_decCounter1		; $5cc8
-	ret nz			; $5ccb
-	ld l,Enemy.collisionType		; $5ccc
-	set 7,(hl)		; $5cce
-	call _veranFinal_spiderForm_setCounter2AndInitState2		; $5cd0
+	call _ecom_decCounter1
+	ret nz
+	ld l,Enemy.collisionType
+	set 7,(hl)
+	call _veranFinal_spiderForm_setCounter2AndInitState2
 
 
 _veranFinal_grabbingLink:
-	ld hl,w1Link.state2		; $5cd3
-	ld (hl),$02		; $5cd6
-	ld l,<w1Link.collisionType		; $5cd8
-	set 7,(hl)		; $5cda
-	ret			; $5cdc
+	ld hl,w1Link.state2
+	ld (hl),$02
+	ld l,<w1Link.collisionType
+	set 7,(hl)
+	ret
 
 
 _veranFinal_beeForm:
-	ld a,(de)		; $5cdd
-	rst_jumpTable			; $5cde
+	ld a,(de)
+	rst_jumpTable
 	.dw _veranFinal_spiderOrBeeForm_state0
 	.dw _veranFinal_beeForm_state1
 	.dw _veranFinal_beeForm_state2
@@ -872,19 +872,19 @@ _veranFinal_beeForm:
 
 
 _veranFinal_beeForm_state1:
-	call enemyAnimate		; $5cf7
-	ld e,Enemy.animParameter		; $5cfa
-	ld a,(de)		; $5cfc
-	inc a			; $5cfd
-	ret nz			; $5cfe
-	ld a,$07		; $5cff
-	call enemySetAnimation		; $5d01
-	call _ecom_incState		; $5d04
-	ld l,Enemy.speed		; $5d07
-	ld (hl),SPEED_200		; $5d09
-	ld bc,$100c		; $5d0b
-	ld e,ENEMYCOLLISION_VERAN_SPIDER_FORM_VULNERABLE		; $5d0e
-	ld l,Enemy.var32		; $5d10
+	call enemyAnimate
+	ld e,Enemy.animParameter
+	ld a,(de)
+	inc a
+	ret nz
+	ld a,$07
+	call enemySetAnimation
+	call _ecom_incState
+	ld l,Enemy.speed
+	ld (hl),SPEED_200
+	ld bc,$100c
+	ld e,ENEMYCOLLISION_VERAN_SPIDER_FORM_VULNERABLE
+	ld l,Enemy.var32
 
 
 ;;
@@ -893,305 +893,305 @@ _veranFinal_beeForm_state1:
 ; @param	l	Pointer to health value
 ; @addr{5d12}
 _veranFinal_initializeForm:
-	ld h,d			; $5d12
-	ld a,(hl)		; $5d13
-	ld l,Enemy.health		; $5d14
-	ld (hl),a		; $5d16
+	ld h,d
+	ld a,(hl)
+	ld l,Enemy.health
+	ld (hl),a
 
-	ld l,Enemy.collisionType		; $5d17
+	ld l,Enemy.collisionType
 	ld (hl),$80|ENEMYID_VERAN_FINAL_FORM
-	inc l			; $5d1b
-	ld (hl),e		; $5d1c
+	inc l
+	ld (hl),e
 
-	ld l,Enemy.collisionRadiusY		; $5d1d
-	ld (hl),b		; $5d1f
-	inc l			; $5d20
-	ld (hl),c		; $5d21
+	ld l,Enemy.collisionRadiusY
+	ld (hl),b
+	inc l
+	ld (hl),c
 
-	ld l,Enemy.oamFlagsBackup		; $5d22
-	ld a,$06		; $5d24
-	ldi (hl),a		; $5d26
-	ld (hl),a		; $5d27
-	ret			; $5d28
+	ld l,Enemy.oamFlagsBackup
+	ld a,$06
+	ldi (hl),a
+	ld (hl),a
+	ret
 
 
 _veranFinal_beeForm_state2:
-	ld e,Enemy.yh		; $5d29
-	ld a,(de)		; $5d2b
-	ldh (<hFF8F),a	; $5d2c
-	ld e,Enemy.xh		; $5d2e
-	ld a,(de)		; $5d30
-	ldh (<hFF8E),a	; $5d31
-	ldbc LARGE_ROOM_HEIGHT<<3, LARGE_ROOM_WIDTH<<3		; $5d33
-	sub c			; $5d36
-	add $02			; $5d37
-	cp $05			; $5d39
-	jr nc,@updateMovement	; $5d3b
-	ldh a,(<hFF8F)	; $5d3d
-	sub b			; $5d3f
-	add $02			; $5d40
-	cp $05			; $5d42
-	jr nc,@updateMovement	; $5d44
+	ld e,Enemy.yh
+	ld a,(de)
+	ldh (<hFF8F),a
+	ld e,Enemy.xh
+	ld a,(de)
+	ldh (<hFF8E),a
+	ldbc LARGE_ROOM_HEIGHT<<3, LARGE_ROOM_WIDTH<<3
+	sub c
+	add $02
+	cp $05
+	jr nc,@updateMovement
+	ldh a,(<hFF8F)
+	sub b
+	add $02
+	cp $05
+	jr nc,@updateMovement
 
 	; In middle of room
-	call _ecom_incState		; $5d46
-	jp _veranFinal_beeForm_chooseRandomTargetPosition		; $5d49
+	call _ecom_incState
+	jp _veranFinal_beeForm_chooseRandomTargetPosition
 
 @updateMovement:
-	call _ecom_moveTowardPosition		; $5d4c
+	call _ecom_moveTowardPosition
 
 _veranFinal_beeForm_animate:
-	jp enemyAnimate		; $5d4f
+	jp enemyAnimate
 
 
 _veranFinal_beeForm_state3:
-	call _veranFinal_moveTowardTargetPosition		; $5d52
-	jr nc,_veranFinal_beeForm_animate	; $5d55
+	call _veranFinal_moveTowardTargetPosition
+	jr nc,_veranFinal_beeForm_animate
 
-	ld l,Enemy.yh		; $5d57
-	ld (hl),b		; $5d59
-	ld l,Enemy.xh		; $5d5a
-	ld (hl),c		; $5d5c
-	call _veranFinal_beeForm_nextTargetPosition		; $5d5d
-	call _ecom_decCounter2		; $5d60
-	jr nz,_veranFinal_beeForm_animate	; $5d63
+	ld l,Enemy.yh
+	ld (hl),b
+	ld l,Enemy.xh
+	ld (hl),c
+	call _veranFinal_beeForm_nextTargetPosition
+	call _ecom_decCounter2
+	jr nz,_veranFinal_beeForm_animate
 
 	; Time to move off screen
-	ld l,Enemy.state		; $5d65
-	inc (hl)		; $5d67
-	ld l,Enemy.counter1		; $5d68
-	ld (hl),$01		; $5d6a
-	ld l,Enemy.xh		; $5d6c
-	bit 7,(hl)		; $5d6e
-	ld a,$00		; $5d70
-	jr nz,+			; $5d72
-	ld a,$f0		; $5d74
+	ld l,Enemy.state
+	inc (hl)
+	ld l,Enemy.counter1
+	ld (hl),$01
+	ld l,Enemy.xh
+	bit 7,(hl)
+	ld a,$00
+	jr nz,+
+	ld a,$f0
 +
-	ld l,Enemy.var37		; $5d76
-	ldd (hl),a		; $5d78
-	ld (hl),$e0		; $5d79
-	jr _veranFinal_beeForm_animate		; $5d7b
+	ld l,Enemy.var37
+	ldd (hl),a
+	ld (hl),$e0
+	jr _veranFinal_beeForm_animate
 
 
 ; Moving off screen
 _veranFinal_beeForm_state4:
-	call _ecom_decCounter1		; $5d7d
-	jr nz,++		; $5d80
+	call _ecom_decCounter1
+	jr nz,++
 
 	ld (hl),$06 ; [counter1]
-	ld l,Enemy.var36		; $5d84
-	call _ecom_readPositionVars		; $5d86
-	call objectGetRelativeAngleWithTempVars		; $5d89
-	call objectNudgeAngleTowards		; $5d8c
+	ld l,Enemy.var36
+	call _ecom_readPositionVars
+	call objectGetRelativeAngleWithTempVars
+	call objectNudgeAngleTowards
 ++
-	call objectApplySpeed		; $5d8f
-	ld e,Enemy.yh		; $5d92
-	ld a,(de)		; $5d94
-	cp (LARGE_ROOM_HEIGHT+1)<<4			; $5d95
-	jr c,_veranFinal_beeForm_animate	; $5d97
+	call objectApplySpeed
+	ld e,Enemy.yh
+	ld a,(de)
+	cp (LARGE_ROOM_HEIGHT+1)<<4
+	jr c,_veranFinal_beeForm_animate
 
 	; Off screen
-	call _ecom_incState		; $5d99
-	ld l,Enemy.counter1		; $5d9c
-	ld (hl),30		; $5d9e
-	jp objectSetInvisible		; $5da0
+	call _ecom_incState
+	ld l,Enemy.counter1
+	ld (hl),30
+	jp objectSetInvisible
 
 
 ; About to re-emerge on screen
 _veranFinal_beeForm_state5:
-	call _ecom_decCounter1		; $5da3
-	ret nz			; $5da6
+	call _ecom_decCounter1
+	ret nz
 
 	ld (hl),$0f ; [counter1]
-	ld l,e			; $5da9
+	ld l,e
 	inc (hl) ; [state]
-	ld l,Enemy.yh		; $5dab
-	ld (hl),$20		; $5dad
+	ld l,Enemy.yh
+	ld (hl),$20
 
-	call getRandomNumber		; $5daf
-	and $10			; $5db2
-	ldbc $08,$e8		; $5db4
-	jr z,++			; $5db7
-	ld b,c			; $5db9
-	ld c,$08		; $5dba
+	call getRandomNumber
+	and $10
+	ldbc $08,$e8
+	jr z,++
+	ld b,c
+	ld c,$08
 ++
-	add $08			; $5dbc
-	ld l,Enemy.angle		; $5dbe
-	ld (hl),a		; $5dc0
-	ld l,Enemy.xh		; $5dc1
-	ld (hl),b		; $5dc3
-	ld l,Enemy.var37		; $5dc4
-	ld (hl),c		; $5dc6
-	jp objectSetVisible83		; $5dc7
+	add $08
+	ld l,Enemy.angle
+	ld (hl),a
+	ld l,Enemy.xh
+	ld (hl),b
+	ld l,Enemy.var37
+	ld (hl),c
+	jp objectSetVisible83
 
 
 ; Moving horizontally across screen while attacking
 _veranFinal_beeForm_state6:
-	call _ecom_decCounter1		; $5dca
-	jr nz,++		; $5dcd
+	call _ecom_decCounter1
+	jr nz,++
 	ld (hl),$0f ; [counter1]
-	ld b,PARTID_VERAN_BEE_PROJECTILE		; $5dd1
-	call _ecom_spawnProjectile		; $5dd3
+	ld b,PARTID_VERAN_BEE_PROJECTILE
+	call _ecom_spawnProjectile
 ++
-	call objectApplySpeed		; $5dd6
-	ld e,Enemy.xh		; $5dd9
-	ld a,(de)		; $5ddb
-	ld h,d			; $5ddc
-	ld l,Enemy.var37		; $5ddd
-	sub (hl)		; $5ddf
-	inc a			; $5de0
-	cp $03			; $5de1
-	jp nc,enemyAnimate		; $5de3
+	call objectApplySpeed
+	ld e,Enemy.xh
+	ld a,(de)
+	ld h,d
+	ld l,Enemy.var37
+	sub (hl)
+	inc a
+	cp $03
+	jp nc,enemyAnimate
 
 	; Reached other side
-	call _ecom_incState		; $5de6
-	ld l,Enemy.counter1		; $5de9
-	ld (hl),60		; $5deb
-	ld l,Enemy.collisionType		; $5ded
-	res 7,(hl)		; $5def
-	jp objectSetInvisible		; $5df1
+	call _ecom_incState
+	ld l,Enemy.counter1
+	ld (hl),60
+	ld l,Enemy.collisionType
+	res 7,(hl)
+	jp objectSetInvisible
 
 
 ; About to re-emerge from some corner of the screen
 _veranFinal_beeForm_state7:
-	call _ecom_decCounter1		; $5df4
-	ret nz			; $5df7
+	call _ecom_decCounter1
+	ret nz
 
 	; Choose which corner to emerge from (not the current one)
-	call _veranFinal_getQuadrant		; $5df8
+	call _veranFinal_getQuadrant
 --
-	call getRandomNumber		; $5dfb
-	ld c,a			; $5dfe
-	and $03			; $5dff
-	cp b			; $5e01
-	jr z,--			; $5e02
+	call getRandomNumber
+	ld c,a
+	and $03
+	cp b
+	jr z,--
 
-	ld e,Enemy.var39		; $5e04
-	ld (de),a		; $5e06
-	add a			; $5e07
-	ld hl,_veranFinal_beeForm_screenCornerEntrances		; $5e08
-	rst_addDoubleIndex			; $5e0b
-	ld e,Enemy.var36		; $5e0c
-	ldi a,(hl)		; $5e0e
-	ld (de),a		; $5e0f
-	inc e			; $5e10
-	ldi a,(hl)		; $5e11
-	ld (de),a		; $5e12
+	ld e,Enemy.var39
+	ld (de),a
+	add a
+	ld hl,_veranFinal_beeForm_screenCornerEntrances
+	rst_addDoubleIndex
+	ld e,Enemy.var36
+	ldi a,(hl)
+	ld (de),a
+	inc e
+	ldi a,(hl)
+	ld (de),a
 
-	ld e,Enemy.yh		; $5e13
-	ldi a,(hl)		; $5e15
-	ld (de),a		; $5e16
-	ld e,Enemy.xh		; $5e17
-	ld a,(hl)		; $5e19
-	ld (de),a		; $5e1a
+	ld e,Enemy.yh
+	ldi a,(hl)
+	ld (de),a
+	ld e,Enemy.xh
+	ld a,(hl)
+	ld (de),a
 
-	ld a,c			; $5e1b
-	and $30			; $5e1c
-	swap a			; $5e1e
-	add $02			; $5e20
-	ld e,Enemy.counter2		; $5e22
-	ld (de),a		; $5e24
+	ld a,c
+	and $30
+	swap a
+	add $02
+	ld e,Enemy.counter2
+	ld (de),a
 
-	call _ecom_incState		; $5e25
-	ld l,Enemy.collisionType		; $5e28
-	set 7,(hl)		; $5e2a
-	jp objectSetVisible83		; $5e2c
+	call _ecom_incState
+	ld l,Enemy.collisionType
+	set 7,(hl)
+	jp objectSetVisible83
 
 
 _veranFinal_beeForm_state8:
-	call _veranFinal_moveTowardTargetPosition		; $5e2f
-	jr nc,_veranFinal_beeForm_animate2	; $5e32
-	ld l,Enemy.yh		; $5e34
-	ld (hl),b		; $5e36
-	ld l,Enemy.xh		; $5e37
-	ld (hl),c		; $5e39
-	ld l,Enemy.state		; $5e3a
-	inc (hl)		; $5e3c
-	ld l,Enemy.counter1		; $5e3d
-	ld (hl),30		; $5e3f
-	jr _veranFinal_beeForm_animate2		; $5e41
+	call _veranFinal_moveTowardTargetPosition
+	jr nc,_veranFinal_beeForm_animate2
+	ld l,Enemy.yh
+	ld (hl),b
+	ld l,Enemy.xh
+	ld (hl),c
+	ld l,Enemy.state
+	inc (hl)
+	ld l,Enemy.counter1
+	ld (hl),30
+	jr _veranFinal_beeForm_animate2
 
 
 _veranFinal_beeForm_state9:
-	call _ecom_decCounter1		; $5e43
-	jr nz,_veranFinal_beeForm_animate2	; $5e46
+	call _ecom_decCounter1
+	jr nz,_veranFinal_beeForm_animate2
 	ld (hl),25 ; [counter1]
-	ld l,e			; $5e4a
+	ld l,e
 	inc (hl) ; [state2]
 
 _veranFinal_beeForm_animate2:
-	jp enemyAnimate		; $5e4c
+	jp enemyAnimate
 
 
 ; Shooting out bees
 _veranFinal_beeForm_stateA:
-	call _ecom_decCounter1		; $5e4f
-	jr z,_label_10_173	; $5e52
+	call _ecom_decCounter1
+	jr z,_label_10_173
 
 	ld a,(hl) ; [counter1]
-	and $07			; $5e55
-	jr nz,_veranFinal_beeForm_animate2	; $5e57
+	and $07
+	jr nz,_veranFinal_beeForm_animate2
 
 	; Spawn child bee
-	ld a,(hl)		; $5e59
-	and $18			; $5e5a
-	swap a			; $5e5c
-	rlca			; $5e5e
-	dec a			; $5e5f
-	ld b,a			; $5e60
-	call getFreeEnemySlot		; $5e61
-	jr nz,_veranFinal_beeForm_animate2	; $5e64
+	ld a,(hl)
+	and $18
+	swap a
+	rlca
+	dec a
+	ld b,a
+	call getFreeEnemySlot
+	jr nz,_veranFinal_beeForm_animate2
 
-	ld (hl),ENEMYID_VERAN_CHILD_BEE		; $5e66
-	inc l			; $5e68
+	ld (hl),ENEMYID_VERAN_CHILD_BEE
+	inc l
 	ld (hl),b ; [child.subid]
-	call objectCopyPosition		; $5e6a
-	ld a,SND_BEAM1		; $5e6d
-	call playSound		; $5e6f
-	jr _veranFinal_beeForm_animate2		; $5e72
+	call objectCopyPosition
+	ld a,SND_BEAM1
+	call playSound
+	jr _veranFinal_beeForm_animate2
 
 _label_10_173:
 	ld (hl),20 ; [counter1]
-	inc l			; $5e76
+	inc l
 	dec (hl) ; [counter2]
-	ld l,e			; $5e78
-	jr z,+			; $5e79
+	ld l,e
+	jr z,+
 	inc (hl) ; [state] = $0b
-	jr _veranFinal_beeForm_animate2		; $5e7c
+	jr _veranFinal_beeForm_animate2
 +
 	ld (hl),$02 ; [state] = $02
-	jr _veranFinal_beeForm_animate2		; $5e80
+	jr _veranFinal_beeForm_animate2
 
 
 _veranFinal_beeForm_stateB:
-	call _ecom_decCounter1		; $5e82
-	jr nz,_veranFinal_beeForm_animate2	; $5e85
+	call _ecom_decCounter1
+	jr nz,_veranFinal_beeForm_animate2
 
-	ld l,e			; $5e87
+	ld l,e
 	ld (hl),$08 ; [state]
 
-	call _veranFinal_getQuadrant		; $5e8a
+	call _veranFinal_getQuadrant
 @chooseQuadrant:
-	call getRandomNumber		; $5e8d
-	and $03			; $5e90
-	cp b			; $5e92
-	jr z,@chooseQuadrant	; $5e93
-	ld h,d			; $5e95
-	ld l,Enemy.var39		; $5e96
-	cp (hl)			; $5e98
-	jr z,@chooseQuadrant	; $5e99
+	call getRandomNumber
+	and $03
+	cp b
+	jr z,@chooseQuadrant
+	ld h,d
+	ld l,Enemy.var39
+	cp (hl)
+	jr z,@chooseQuadrant
 
 	ld (hl),a ; [var39]
-	add a			; $5e9c
-	ld hl,_veranFinal_beeForm_screenCornerEntrances		; $5e9d
-	rst_addDoubleIndex			; $5ea0
-	ld e,Enemy.var36		; $5ea1
-	ldi a,(hl)		; $5ea3
-	ld (de),a		; $5ea4
-	inc e			; $5ea5
-	ld a,(hl)		; $5ea6
-	ld (de),a		; $5ea7
-	jr _veranFinal_beeForm_animate2		; $5ea8
+	add a
+	ld hl,_veranFinal_beeForm_screenCornerEntrances
+	rst_addDoubleIndex
+	ld e,Enemy.var36
+	ldi a,(hl)
+	ld (de),a
+	inc e
+	ld a,(hl)
+	ld (de),a
+	jr _veranFinal_beeForm_animate2
 
 
 _veranFinal_beeForm_screenCornerEntrances:
@@ -1205,46 +1205,46 @@ _veranFinal_beeForm_screenCornerEntrances:
 ; @param	hl	Enemy.state
 ; @addr{5eba}
 _veranFinal_transformToBeeOrSpider:
-	ld (hl),$01		; $5eba
-	ld l,Enemy.collisionType		; $5ebc
-	ld (hl),$80|ENEMYID_BEAMOS		; $5ebe
+	ld (hl),$01
+	ld l,Enemy.collisionType
+	ld (hl),$80|ENEMYID_BEAMOS
 
-	ld l,Enemy.health		; $5ec0
-	ld a,(hl)		; $5ec2
-	ld l,Enemy.var30		; $5ec3
-	ld (hl),a		; $5ec5
+	ld l,Enemy.health
+	ld a,(hl)
+	ld l,Enemy.var30
+	ld (hl),a
 
-	ld l,Enemy.oamFlagsBackup		; $5ec6
-	ld a,$07		; $5ec8
-	ldi (hl),a		; $5eca
-	ld (hl),a		; $5ecb
+	ld l,Enemy.oamFlagsBackup
+	ld a,$07
+	ldi (hl),a
+	ld (hl),a
 
-	call getRandomNumber_noPreserveVars		; $5ecc
-	and $03			; $5ecf
-	ld b,a			; $5ed1
-	ld e,Enemy.var35		; $5ed2
-	ld a,(de)		; $5ed4
-	ld c,a			; $5ed5
-	inc a			; $5ed6
-	and $07			; $5ed7
-	ld (de),a		; $5ed9
+	call getRandomNumber_noPreserveVars
+	and $03
+	ld b,a
+	ld e,Enemy.var35
+	ld a,(de)
+	ld c,a
+	inc a
+	and $07
+	ld (de),a
 
-	ld a,c			; $5eda
-	add a			; $5edb
-	add a			; $5edc
-	add b			; $5edd
-	ld hl,@transformSequence		; $5ede
-	call checkFlag		; $5ee1
-	jr z,+			; $5ee4
-	ld a,$01		; $5ee6
+	ld a,c
+	add a
+	add a
+	add b
+	ld hl,@transformSequence
+	call checkFlag
+	jr z,+
+	ld a,$01
 +
-	inc a			; $5ee8
-	ld e,Enemy.subid		; $5ee9
-	ld (de),a		; $5eeb
-	add $09			; $5eec
-	call enemySetAnimation		; $5eee
-	ld a,SND_TRANSFORM		; $5ef1
-	jp playSound		; $5ef3
+	inc a
+	ld e,Enemy.subid
+	ld (de),a
+	add $09
+	call enemySetAnimation
+	ld a,SND_TRANSFORM
+	jp playSound
 
 ; Each 4 bits is a set of possible values (0=spider, 1=bee).
 ; [var35] determines which set of 4 bits is randomly chosen from.
@@ -1258,158 +1258,158 @@ _veranFinal_transformToBeeOrSpider:
 ; @param[out]	cflag	c if Link is within 'b' pixels of self
 ; @addr{5efa}
 _veranFinal_spiderForm_checkLinkWithinDistance:
-	ld a,b			; $5efa
-	add a			; $5efb
-	inc a			; $5efc
-	ld c,a			; $5efd
-	ld a,(w1Link.yh)		; $5efe
-	ld h,d			; $5f01
-	ld l,Enemy.yh		; $5f02
-	sub (hl)		; $5f04
-	add b			; $5f05
-	cp c			; $5f06
-	ret nc			; $5f07
-	ld a,(w1Link.xh)		; $5f08
-	ld l,Enemy.xh		; $5f0b
-	sub (hl)		; $5f0d
-	add b			; $5f0e
-	cp c			; $5f0f
-	ret			; $5f10
+	ld a,b
+	add a
+	inc a
+	ld c,a
+	ld a,(w1Link.yh)
+	ld h,d
+	ld l,Enemy.yh
+	sub (hl)
+	add b
+	cp c
+	ret nc
+	ld a,(w1Link.xh)
+	ld l,Enemy.xh
+	sub (hl)
+	add b
+	cp c
+	ret
 
 
 ;;
 ; @param[out]	cflag	c if will do an attack (state changed to 4)
 ; @addr{5f11}
 _veranFinal_spiderForm_decideWhetherToAttack:
-	call objectGetAngleTowardLink		; $5f11
-	ld e,a			; $5f14
+	call objectGetAngleTowardLink
+	ld e,a
 
 @considerRushAttack:
-	ld b,$60		; $5f15
-	call _veranFinal_spiderForm_checkLinkWithinDistance		; $5f17
-	jr nc,@considerJumpAttack	; $5f1a
+	ld b,$60
+	call _veranFinal_spiderForm_checkLinkWithinDistance
+	jr nc,@considerJumpAttack
 
 	; BUG: is this supposed to 'ld a,e' first? This would check that Link is at a relatively
 	; diagonal angle. Instead, this seems to compare their difference in x-positions modulo 8.
-	and $07			; $5f1c
-	sub $03			; $5f1e
-	cp $03			; $5f20
-	ld a,$00		; $5f22
-	jr c,@doAttack	; $5f24
+	and $07
+	sub $03
+	cp $03
+	ld a,$00
+	jr c,@doAttack
 
 @considerJumpAttack:
-	ld b,$50		; $5f26
-	call _veranFinal_spiderForm_checkLinkWithinDistance		; $5f28
-	jr c,@considerGrabAttack	; $5f2b
+	ld b,$50
+	call _veranFinal_spiderForm_checkLinkWithinDistance
+	jr c,@considerGrabAttack
 
 	; Check that Link is diagonal relative to the spider.
 	; That shouldn't really matter for this attack, though...
-	ld a,e			; $5f2d
-	and $07			; $5f2e
-	sub $03			; $5f30
-	cp $03			; $5f32
-	ccf			; $5f34
-	ld a,$01		; $5f35
-	jr c,@doAttack	; $5f37
+	ld a,e
+	and $07
+	sub $03
+	cp $03
+	ccf
+	ld a,$01
+	jr c,@doAttack
 
 @considerGrabAttack:
 	; Check that Link is below the spider
-	ld a,e			; $5f39
-	sub $0c			; $5f3a
-	cp $09			; $5f3c
-	ret nc			; $5f3e
+	ld a,e
+	sub $0c
+	cp $09
+	ret nc
 
 	; Grab attack
-	ld a,$02		; $5f3f
+	ld a,$02
 
 @doAttack:
-	ld e,Enemy.var03		; $5f41
-	ld (de),a		; $5f43
-	ld h,d			; $5f44
-	ld l,Enemy.state		; $5f45
-	ld (hl),$04		; $5f47
-	inc l			; $5f49
+	ld e,Enemy.var03
+	ld (de),a
+	ld h,d
+	ld l,Enemy.state
+	ld (hl),$04
+	inc l
 	ld (hl),$00 ; [state2]
-	scf			; $5f4c
-	ret			; $5f4d
+	scf
+	ret
 
 
 ;;
 ; @addr{5f4e}
 _veranFinal_dead:
-	ld e,Enemy.subid		; $5f4e
-	ld a,(de)		; $5f50
-	or a			; $5f51
-	jr nz,@transformed	; $5f52
+	ld e,Enemy.subid
+	ld a,(de)
+	or a
+	jr nz,@transformed
 
 	; Not transformed; dead for real
-	ld h,d			; $5f54
-	ld l,Enemy.state		; $5f55
-	ld (hl),$0a		; $5f57
-	inc l			; $5f59
-	ld (hl),$00		; $5f5a
-	ld l,Enemy.health		; $5f5c
-	inc (hl)		; $5f5e
-	ld a,SNDCTRL_STOPMUSIC		; $5f5f
-	jp playSound		; $5f61
+	ld h,d
+	ld l,Enemy.state
+	ld (hl),$0a
+	inc l
+	ld (hl),$00
+	ld l,Enemy.health
+	inc (hl)
+	ld a,SNDCTRL_STOPMUSIC
+	jp playSound
 
 @transformed:
-	ld b,a			; $5f64
-	ld h,d			; $5f65
-	ld l,e			; $5f66
+	ld b,a
+	ld h,d
+	ld l,e
 	ld (hl),$00 ; [subid]
-	ld l,Enemy.state		; $5f69
-	ld (hl),$09		; $5f6b
+	ld l,Enemy.state
+	ld (hl),$09
 
 	; Restore turtle health
-	ld l,Enemy.var30		; $5f6d
-	ld a,(hl)		; $5f6f
-	ld l,Enemy.health		; $5f70
-	ld (hl),a		; $5f72
+	ld l,Enemy.var30
+	ld a,(hl)
+	ld l,Enemy.health
+	ld (hl),a
 
-	ld l,Enemy.collisionType		; $5f73
-	ld (hl),$80|ENEMYID_BEAMOS		; $5f75
+	ld l,Enemy.collisionType
+	ld (hl),$80|ENEMYID_BEAMOS
 
-	ld l,Enemy.collisionRadiusY		; $5f77
-	ld (hl),$08		; $5f79
-	inc l			; $5f7b
+	ld l,Enemy.collisionRadiusY
+	ld (hl),$08
+	inc l
 	ld (hl),$0a ; [collisionRadiusX]
 
-	ld l,Enemy.oamFlagsBackup		; $5f7e
-	ld a,$07		; $5f80
-	ldi (hl),a		; $5f82
-	ld (hl),a		; $5f83
+	ld l,Enemy.oamFlagsBackup
+	ld a,$07
+	ldi (hl),a
+	ld (hl),a
 
 	ld a,b ; [subid]
-	add $07			; $5f85
-	call enemySetAnimation		; $5f87
-	ld a,SND_TRANSFORM		; $5f8a
-	jp playSound		; $5f8c
+	add $07
+	call enemySetAnimation
+	ld a,SND_TRANSFORM
+	jp playSound
 
 
 _veranFinal_spiderForm_decideAngle:
-	ld b,$00		; $5f8f
-	ld e,Enemy.yh		; $5f91
-	ld a,(de)		; $5f93
+	ld b,$00
+	ld e,Enemy.yh
+	ld a,(de)
 	cp (LARGE_ROOM_HEIGHT<<4)/2
-	jr c,+			; $5f96
-	ld b,$10		; $5f98
+	jr c,+
+	ld b,$10
 +
-	ld e,Enemy.xh		; $5f9a
-	ld a,(de)		; $5f9c
+	ld e,Enemy.xh
+	ld a,(de)
 	cp (LARGE_ROOM_WIDTH<<4)/2
-	jr c,+			; $5f9f
-	set 3,b			; $5fa1
+	jr c,+
+	set 3,b
 +
-	call getRandomNumber		; $5fa3
-	and $07			; $5fa6
-	add b			; $5fa8
-	ld hl,@angles		; $5fa9
-	rst_addAToHl			; $5fac
-	ld e,Enemy.angle		; $5fad
-	ld a,(hl)		; $5faf
-	ld (de),a		; $5fb0
-	ret			; $5fb1
+	call getRandomNumber
+	and $07
+	add b
+	ld hl,@angles
+	rst_addAToHl
+	ld e,Enemy.angle
+	ld a,(hl)
+	ld (de),a
+	ret
 
 @angles:
 	.db $04 $04 $0c $0c $0c $14 $14 $1c
@@ -1420,38 +1420,38 @@ _veranFinal_spiderForm_decideAngle:
 ;;
 ; @addr{5fd2}
 _veranFinal_beeForm_chooseRandomTargetPosition:
-	ld bc,$0801		; $5fd2
-	call _ecom_randomBitwiseAndBCE		; $5fd5
-	ld e,Enemy.counter1		; $5fd8
-	ld a,b			; $5fda
-	ld (de),a		; $5fdb
+	ld bc,$0801
+	call _ecom_randomBitwiseAndBCE
+	ld e,Enemy.counter1
+	ld a,b
+	ld (de),a
 
-	ld a,c			; $5fdc
-	ld hl,_veranFinal_beeForm_counter2Vals		; $5fdd
-	rst_addAToHl			; $5fe0
-	ld e,Enemy.counter2		; $5fe1
-	ld a,(hl)		; $5fe3
-	ld (de),a		; $5fe4
+	ld a,c
+	ld hl,_veranFinal_beeForm_counter2Vals
+	rst_addAToHl
+	ld e,Enemy.counter2
+	ld a,(hl)
+	ld (de),a
 
 ;;
 ; @addr{5fe5}
 _veranFinal_beeForm_nextTargetPosition:
-	ld e,Enemy.counter1		; $5fe5
-	ld a,(de)		; $5fe7
-	ld b,a			; $5fe8
-	inc a			; $5fe9
-	and $0f			; $5fea
-	ld (de),a		; $5fec
-	ld a,b			; $5fed
-	ld hl,_veranFinal_beeForm_targetPositions		; $5fee
-	rst_addDoubleIndex			; $5ff1
-	ld e,Enemy.var36		; $5ff2
-	ldi a,(hl)		; $5ff4
-	ld (de),a		; $5ff5
-	inc e			; $5ff6
-	ld a,(hl)		; $5ff7
+	ld e,Enemy.counter1
+	ld a,(de)
+	ld b,a
+	inc a
+	and $0f
+	ld (de),a
+	ld a,b
+	ld hl,_veranFinal_beeForm_targetPositions
+	rst_addDoubleIndex
+	ld e,Enemy.var36
+	ldi a,(hl)
+	ld (de),a
+	inc e
+	ld a,(hl)
 	ld (de),a ; [var37]
-	ret			; $5ff9
+	ret
 
 _veranFinal_beeForm_counter2Vals:
 	.db $14 $24
@@ -1478,38 +1478,38 @@ _veranFinal_beeForm_targetPositions:
 ;;
 ; @addr{601c}
 _veranFinal_moveTowardTargetPosition:
-	ld h,d			; $601c
-	ld l,Enemy.var36		; $601d
-	call _ecom_readPositionVars		; $601f
-	sub c			; $6022
-	add $02			; $6023
-	cp $05			; $6025
-	jr nc,++		; $6027
-	ldh a,(<hFF8F)	; $6029
-	sub b			; $602b
-	add $02			; $602c
-	cp $05			; $602e
-	ret c			; $6030
+	ld h,d
+	ld l,Enemy.var36
+	call _ecom_readPositionVars
+	sub c
+	add $02
+	cp $05
+	jr nc,++
+	ldh a,(<hFF8F)
+	sub b
+	add $02
+	cp $05
+	ret c
 ++
-	call _ecom_moveTowardPosition		; $6031
-	or d			; $6034
-	ret			; $6035
+	call _ecom_moveTowardPosition
+	or d
+	ret
 
 ;;
 ; @param[out]	b	Value from 0-3 corresponding to screen quadrant
 ; @addr{6036}
 _veranFinal_getQuadrant:
-	ld b,$00		; $6036
-	ldh a,(<hEnemyTargetY)	; $6038
-	cp LARGE_ROOM_HEIGHT*16/2			; $603a
-	jr c,+			; $603c
-	ld b,$02		; $603e
+	ld b,$00
+	ldh a,(<hEnemyTargetY)
+	cp LARGE_ROOM_HEIGHT*16/2
+	jr c,+
+	ld b,$02
 +
-	ldh a,(<hEnemyTargetX)	; $6040
-	cp LARGE_ROOM_WIDTH*16/2			; $6042
-	ret c			; $6044
-	inc b			; $6045
-	ret			; $6046
+	ldh a,(<hEnemyTargetX)
+	cp LARGE_ROOM_WIDTH*16/2
+	ret c
+	inc b
+	ret
 
 
 ; ==============================================================================
@@ -1526,9 +1526,9 @@ _veranFinal_getQuadrant:
 ;   var38: Used by bomb phase?
 ; ==============================================================================
 enemyCode05:
-	ld e,Enemy.state		; $6047
-	ld a,(de)		; $6049
-	rst_jumpTable			; $604a
+	ld e,Enemy.state
+	ld a,(de)
+	rst_jumpTable
 	.dw _ramrockArm_state0
 	.dw _ramrockArm_state_stub
 	.dw _ramrockArm_state_stub
@@ -1540,10 +1540,10 @@ enemyCode05:
 	.dw _ramrockArm_state8
 
 _ramrockArm_state0:
-	ld e,Enemy.subid		; $605d
-	ld a,(de)		; $605f
-	and $7f			; $6060
-	rst_jumpTable			; $6062
+	ld e,Enemy.subid
+	ld a,(de)
+	and $7f
+	rst_jumpTable
 	.dw @initSubid0
 	.dw @initSubid0
 	.dw @initSubid2
@@ -1552,83 +1552,83 @@ _ramrockArm_state0:
 	.dw @initSubid4
 
 @initSubid0:
-	ld a,(de)		; $606f
-	ld b,a			; $6070
+	ld a,(de)
+	ld b,a
 
-	ld hl,_ramrockArm_subid0And1XPositions		; $6071
-	rst_addAToHl			; $6074
-	ld a,(hl)		; $6075
-	ld h,d			; $6076
-	ld l,Enemy.xh		; $6077
-	ld (hl),a		; $6079
-	ld l,Enemy.yh		; $607a
-	ld (hl),$10		; $607c
-	ld l,Enemy.zh		; $607e
-	ld (hl),$f9		; $6080
+	ld hl,_ramrockArm_subid0And1XPositions
+	rst_addAToHl
+	ld a,(hl)
+	ld h,d
+	ld l,Enemy.xh
+	ld (hl),a
+	ld l,Enemy.yh
+	ld (hl),$10
+	ld l,Enemy.zh
+	ld (hl),$f9
 
-	ld l,Enemy.angle		; $6082
-	ld (hl),ANGLE_DOWN		; $6084
-	ld l,Enemy.counter1		; $6086
-	ld (hl),$08		; $6088
-	ld a,$00		; $608a
-	add b			; $608c
-	call enemySetAnimation		; $608d
-	ld a,SPEED_180		; $6090
+	ld l,Enemy.angle
+	ld (hl),ANGLE_DOWN
+	ld l,Enemy.counter1
+	ld (hl),$08
+	ld a,$00
+	add b
+	call enemySetAnimation
+	ld a,SPEED_180
 
 @commonInit:
-	call _ecom_setSpeedAndState8		; $6092
-	jp objectSetVisiblec0		; $6095
+	call _ecom_setSpeedAndState8
+	jp objectSetVisiblec0
 
 @initSubid2:
-	ld a,(de)		; $6098
+	ld a,(de)
 	add $02 ; [subid]
-	call enemySetAnimation		; $609b
-	call _ramrockArm_setRelativePosition		; $609e
-	ld l,Enemy.zh		; $60a1
-	ld (hl),$81		; $60a3
-	jr @commonInit		; $60a5
+	call enemySetAnimation
+	call _ramrockArm_setRelativePosition
+	ld l,Enemy.zh
+	ld (hl),$81
+	jr @commonInit
 
 @initSubid4:
-	ld a,(de)		; $60a7
-	sub $04			; $60a8
-	ld b,a			; $60aa
-	ld hl,_ramrockArm_subid4And5Angles		; $60ab
-	rst_addAToHl			; $60ae
-	ld c,(hl)		; $60af
+	ld a,(de)
+	sub $04
+	ld b,a
+	ld hl,_ramrockArm_subid4And5Angles
+	rst_addAToHl
+	ld c,(hl)
 
-	ld a,b			; $60b0
-	ld hl,_ramrockArm_subid4And5XPositions		; $60b1
-	rst_addAToHl			; $60b4
-	ld a,(hl)		; $60b5
-	ld h,d			; $60b6
-	ld l,Enemy.xh		; $60b7
-	ldd (hl),a		; $60b9
-	dec l			; $60ba
+	ld a,b
+	ld hl,_ramrockArm_subid4And5XPositions
+	rst_addAToHl
+	ld a,(hl)
+	ld h,d
+	ld l,Enemy.xh
+	ldd (hl),a
+	dec l
 	ld (hl),$4e ; [yh]
 
-	ld l,Enemy.angle		; $60bd
-	ld (hl),c		; $60bf
-	ld l,Enemy.zh		; $60c0
-	ld (hl),$81		; $60c2
+	ld l,Enemy.angle
+	ld (hl),c
+	ld l,Enemy.zh
+	ld (hl),$81
 
-	ld l,Enemy.var32		; $60c4
-	ld (hl),$04		; $60c6
+	ld l,Enemy.var32
+	ld (hl),$04
 
 	ld a,(de) ; [subid]
-	add $02			; $60c9
-	call enemySetAnimation		; $60cb
-	jr @commonInit		; $60ce
+	add $02
+	call enemySetAnimation
+	jr @commonInit
 
 
 _ramrockArm_state_stub:
-	ret			; $60d0
+	ret
 
 
 _ramrockArm_state8:
-	ld e,Enemy.subid		; $60d1
-	ld a,(de)		; $60d3
-	and $7f			; $60d4
-	rst_jumpTable			; $60d6
+	ld e,Enemy.subid
+	ld a,(de)
+	and $7f
+	rst_jumpTable
 	.dw _ramrockArm_subid0
 	.dw _ramrockArm_subid0
 	.dw _ramrockArm_subid2
@@ -1639,30 +1639,30 @@ _ramrockArm_state8:
 
 ; "Shields" in first phase
 _ramrockArm_subid0:
-	ld a,Object.subid		; $60e3
-	call objectGetRelatedObject1Var		; $60e5
-	ld a,(hl)		; $60e8
-	cp $04			; $60e9
-	jr nz,@runStates	; $60eb
+	ld a,Object.subid
+	call objectGetRelatedObject1Var
+	ld a,(hl)
+	cp $04
+	jr nz,@runStates
 
-	ld e,Enemy.var31		; $60ed
-	ld a,(de)		; $60ef
-	or a			; $60f0
-	jr nz,@runStates	; $60f1
+	ld e,Enemy.var31
+	ld a,(de)
+	or a
+	jr nz,@runStates
 
-	inc a			; $60f3
-	ld (de),a		; $60f4
-	ld e,Enemy.state2		; $60f5
-	ld a,$06		; $60f7
-	ld (de),a		; $60f9
-	ld a,60		; $60fa
-	ld e,Enemy.counter1		; $60fc
-	ld (de),a		; $60fe
+	inc a
+	ld (de),a
+	ld e,Enemy.state2
+	ld a,$06
+	ld (de),a
+	ld a,60
+	ld e,Enemy.counter1
+	ld (de),a
 
 @runStates:
-	ld e,Enemy.state2		; $60ff
-	ld a,(de)		; $6101
-	rst_jumpTable			; $6102
+	ld e,Enemy.state2
+	ld a,(de)
+	rst_jumpTable
 	.dw _ramrockArm_subid0_substate0
 	.dw _ramrockArm_subid0_substate1
 	.dw _ramrockArm_subid0_substate2
@@ -1673,336 +1673,336 @@ _ramrockArm_subid0:
 
 
 _ramrockArm_subid0_substate0:
-	call enemyAnimate		; $6111
-	call objectApplySpeed		; $6114
-	call _ecom_decCounter1		; $6117
-	ret nz			; $611a
+	call enemyAnimate
+	call objectApplySpeed
+	call _ecom_decCounter1
+	ret nz
 
 	ld (hl),$08 ; [counter1]
-	ld e,Enemy.subid		; $611d
-	ld a,(de)		; $611f
-	or a			; $6120
-	jr nz,+			; $6121
-	dec a			; $6123
+	ld e,Enemy.subid
+	ld a,(de)
+	or a
+	jr nz,+
+	dec a
 +
-	ld l,Enemy.angle		; $6124
-	add (hl)		; $6126
-	and $1f			; $6127
-	ld (hl),a		; $6129
-	and $0f			; $612a
-	cp $08			; $612c
-	ret nz			; $612e
+	ld l,Enemy.angle
+	add (hl)
+	and $1f
+	ld (hl),a
+	and $0f
+	cp $08
+	ret nz
 
 	; Angle is now directly left or right
-	ld l,Enemy.state2		; $612f
-	inc (hl)		; $6131
-	ld l,Enemy.subid		; $6132
-	ld b,(hl)		; $6134
-	ld l,Enemy.relatedObj1+1		; $6135
-	ld h,(hl)		; $6137
-	ld l,Enemy.subid		; $6138
-	inc (hl)		; $613a
-	ld a,$02		; $613b
-	add b			; $613d
-	jp enemySetAnimation		; $613e
+	ld l,Enemy.state2
+	inc (hl)
+	ld l,Enemy.subid
+	ld b,(hl)
+	ld l,Enemy.relatedObj1+1
+	ld h,(hl)
+	ld l,Enemy.subid
+	inc (hl)
+	ld a,$02
+	add b
+	jp enemySetAnimation
 
 
 _ramrockArm_subid0_substate1:
-	call enemyAnimate		; $6141
-	call _ramrockArm_setRelativePosition		; $6144
-	ld l,Enemy.relatedObj1+1		; $6147
-	ld h,(hl)		; $6149
-	ld l,Enemy.subid		; $614a
-	ld a,$03		; $614c
-	cp (hl)			; $614e
-	ret nz			; $614f
-	jr _ramrockArm_subid0_moveBackToRamrock		; $6150
+	call enemyAnimate
+	call _ramrockArm_setRelativePosition
+	ld l,Enemy.relatedObj1+1
+	ld h,(hl)
+	ld l,Enemy.subid
+	ld a,$03
+	cp (hl)
+	ret nz
+	jr _ramrockArm_subid0_moveBackToRamrock
 
 
 _ramrockArm_subid0_substate2:
-	call enemyAnimate		; $6152
-	call _ramrockArm_setRelativePosition		; $6155
-	call _ecom_decCounter2		; $6158
-	ret nz			; $615b
+	call enemyAnimate
+	call _ramrockArm_setRelativePosition
+	call _ecom_decCounter2
+	ret nz
 
-	ld b,$04		; $615c
-	call objectCheckCenteredWithLink		; $615e
-	ret nc			; $6161
-	call objectGetAngleTowardLink		; $6162
-	cp $10			; $6165
-	ret nz			; $6167
+	ld b,$04
+	call objectCheckCenteredWithLink
+	ret nc
+	call objectGetAngleTowardLink
+	cp $10
+	ret nz
 
-	call _ecom_incState2		; $6168
-	ld l,Enemy.angle		; $616b
-	ld (hl),a		; $616d
-	ld l,Enemy.counter1		; $616e
-	ld (hl),$06		; $6170
-	ld l,Enemy.var30		; $6172
-	ld (hl),$00		; $6174
-	ld l,Enemy.speed		; $6176
-	ld (hl),SPEED_100		; $6178
-	ld l,Enemy.subid		; $617a
-	ld a,$00		; $617c
-	add (hl)		; $617e
-	call enemySetAnimation		; $617f
-	ld a,SND_BIGSWORD		; $6182
-	jp playSound		; $6184
+	call _ecom_incState2
+	ld l,Enemy.angle
+	ld (hl),a
+	ld l,Enemy.counter1
+	ld (hl),$06
+	ld l,Enemy.var30
+	ld (hl),$00
+	ld l,Enemy.speed
+	ld (hl),SPEED_100
+	ld l,Enemy.subid
+	ld a,$00
+	add (hl)
+	call enemySetAnimation
+	ld a,SND_BIGSWORD
+	jp playSound
 
 
 _ramrockArm_subid0_substate3:
-	call objectApplySpeed		; $6187
-	ld e,Enemy.var2a		; $618a
-	ld a,(de)		; $618c
+	call objectApplySpeed
+	ld e,Enemy.var2a
+	ld a,(de)
 	cp $80|ITEMCOLLISION_LINK
-	jr z,_ramrockArm_subid0_moveBackToRamrock	; $618f
+	jr z,_ramrockArm_subid0_moveBackToRamrock
 	cp $80|ITEMCOLLISION_L1_SWORD
-	jr z,@sword	; $6193
+	jr z,@sword
 	cp $80|ITEMCOLLISION_L2_SWORD
-	jr z,@sword	; $6197
+	jr z,@sword
 	cp $80|ITEMCOLLISION_L3_SWORD
-	jr nz,@moveTowardLink	; $619b
+	jr nz,@moveTowardLink
 
 @sword:
-	ld e,Enemy.state2		; $619d
-	ld a,$05		; $619f
-	ld (de),a		; $61a1
+	ld e,Enemy.state2
+	ld a,$05
+	ld (de),a
 
-	ld a,SPEED_200		; $61a2
-	ld e,Enemy.speed		; $61a4
-	ld (de),a		; $61a6
-	ld e,Enemy.angle		; $61a7
-	ld a,(de)		; $61a9
-	xor $10			; $61aa
-	ld (de),a		; $61ac
-	ret			; $61ad
+	ld a,SPEED_200
+	ld e,Enemy.speed
+	ld (de),a
+	ld e,Enemy.angle
+	ld a,(de)
+	xor $10
+	ld (de),a
+	ret
 
 @moveTowardLink:
-	call _ecom_getSideviewAdjacentWallsBitset		; $61ae
-	jr nz,_ramrockArm_subid0_moveBackToRamrock	; $61b1
-	call _ecom_decCounter1		; $61b3
-	ret nz			; $61b6
-	ld (hl),$06		; $61b7
-	call objectGetAngleTowardLink		; $61b9
-	jp objectNudgeAngleTowards		; $61bc
+	call _ecom_getSideviewAdjacentWallsBitset
+	jr nz,_ramrockArm_subid0_moveBackToRamrock
+	call _ecom_decCounter1
+	ret nz
+	ld (hl),$06
+	call objectGetAngleTowardLink
+	jp objectNudgeAngleTowards
 
 
 _ramrockArm_subid0_moveBackToRamrock:
-	ld e,Enemy.state2		; $61bf
-	ld a,$04		; $61c1
-	ld (de),a		; $61c3
-	ld e,Enemy.speed		; $61c4
-	ld a,SPEED_180		; $61c6
-	ld (de),a		; $61c8
+	ld e,Enemy.state2
+	ld a,$04
+	ld (de),a
+	ld e,Enemy.speed
+	ld a,SPEED_180
+	ld (de),a
 
 _ramrockArm_subid0_setAngleTowardRamrock:
-	call _ramrockArm_getRelativePosition		; $61c9
-	call objectGetRelativeAngle		; $61cc
-	ld e,Enemy.angle		; $61cf
-	ld (de),a		; $61d1
-	ret			; $61d2
+	call _ramrockArm_getRelativePosition
+	call objectGetRelativeAngle
+	ld e,Enemy.angle
+	ld (de),a
+	ret
 
 
 ; Moving back towards Ramrock
 _ramrockArm_subid0_substate4:
-	call objectApplySpeed		; $61d3
-	call _ramrockArm_subid0_setAngleTowardRamrock		; $61d6
-	call _ramrockArm_subid0_checkReachedRamrock		; $61d9
-	ret nz			; $61dc
-	ld a,SND_BOMB_LAND		; $61dd
-	call playSound		; $61df
-	ld e,Enemy.state2		; $61e2
-	ld a,$02		; $61e4
-	ld (de),a		; $61e6
-	ld e,Enemy.counter2		; $61e7
-	ld a,60		; $61e9
-	ld (de),a		; $61eb
-	ld e,Enemy.subid		; $61ec
-	ld a,(de)		; $61ee
-	add $02			; $61ef
-	jp enemySetAnimation		; $61f1
+	call objectApplySpeed
+	call _ramrockArm_subid0_setAngleTowardRamrock
+	call _ramrockArm_subid0_checkReachedRamrock
+	ret nz
+	ld a,SND_BOMB_LAND
+	call playSound
+	ld e,Enemy.state2
+	ld a,$02
+	ld (de),a
+	ld e,Enemy.counter2
+	ld a,60
+	ld (de),a
+	ld e,Enemy.subid
+	ld a,(de)
+	add $02
+	jp enemySetAnimation
 
 
 ; Being knocked back after hit by sword
 _ramrockArm_subid0_substate5:
-	call enemyAnimate		; $61f4
-	ld e,Enemy.var30		; $61f7
-	ld a,(de)		; $61f9
-	or a			; $61fa
-	jr nz,@noDamage	; $61fb
-	ld a,Object.start		; $61fd
-	call objectGetRelatedObject1Var		; $61ff
-	call checkObjectsCollided		; $6202
-	jr nc,@noDamage	; $6205
+	call enemyAnimate
+	ld e,Enemy.var30
+	ld a,(de)
+	or a
+	jr nz,@noDamage
+	ld a,Object.start
+	call objectGetRelatedObject1Var
+	call checkObjectsCollided
+	jr nc,@noDamage
 
-	ld e,Enemy.var30		; $6207
-	ld a,$01		; $6209
-	ld (de),a		; $620b
+	ld e,Enemy.var30
+	ld a,$01
+	ld (de),a
 
-	ld l,Enemy.invincibilityCounter		; $620c
-	ld a,(hl)		; $620e
-	or a			; $620f
-	jr nz,@noDamage	; $6210
+	ld l,Enemy.invincibilityCounter
+	ld a,(hl)
+	or a
+	jr nz,@noDamage
 
-	ld (hl),60		; $6212
-	ld l,Enemy.var35		; $6214
-	inc (hl)		; $6216
-	ld a,SND_BOSS_DAMAGE		; $6217
-	call playSound		; $6219
+	ld (hl),60
+	ld l,Enemy.var35
+	inc (hl)
+	ld a,SND_BOSS_DAMAGE
+	call playSound
 
 @noDamage:
-	xor a			; $621c
-	call _ecom_getSideviewAdjacentWallsBitset		; $621d
-	jp z,objectApplySpeed		; $6220
+	xor a
+	call _ecom_getSideviewAdjacentWallsBitset
+	jp z,objectApplySpeed
 
-	ld e,Enemy.animParameter		; $6223
-	ld a,(de)		; $6225
-	or a			; $6226
-	ret z			; $6227
-	jr _ramrockArm_subid0_moveBackToRamrock		; $6228
+	ld e,Enemy.animParameter
+	ld a,(de)
+	or a
+	ret z
+	jr _ramrockArm_subid0_moveBackToRamrock
 
 
 _ramrockArm_subid0_substate6:
-	ld e,Enemy.subid		; $622a
-	ld a,(de)		; $622c
-	add $04			; $622d
-	ld b,a			; $622f
-	ld a,Object.subid		; $6230
-	call objectGetRelatedObject1Var		; $6232
-	ld a,(hl)		; $6235
-	cp b			; $6236
-	ret nz			; $6237
-	call _ecom_decCounter1		; $6238
-	ret nz			; $623b
+	ld e,Enemy.subid
+	ld a,(de)
+	add $04
+	ld b,a
+	ld a,Object.subid
+	call objectGetRelatedObject1Var
+	ld a,(hl)
+	cp b
+	ret nz
+	call _ecom_decCounter1
+	ret nz
 
-	call objectCreatePuff		; $623c
-	ld a,Object.subid		; $623f
-	call objectGetRelatedObject1Var		; $6241
-	inc (hl)		; $6244
-	jp _ramrockArm_deleteSelf		; $6245
+	call objectCreatePuff
+	ld a,Object.subid
+	call objectGetRelatedObject1Var
+	inc (hl)
+	jp _ramrockArm_deleteSelf
 
 
 ; Bomb grabber hands
 _ramrockArm_subid2:
-	ld e,Enemy.state2		; $6248
-	ld a,(de)		; $624a
-	rst_jumpTable			; $624b
+	ld e,Enemy.state2
+	ld a,(de)
+	rst_jumpTable
 	.dw _ramrockArm_subid2_substate0
 	.dw _ramrockArm_subid2_substate1
 	.dw _ramrockArm_subid2_substate2
 
 _ramrockArm_subid2_substate0:
-	ld c,$10		; $6252
-	call objectUpdateSpeedZ_paramC		; $6254
-	ret nz			; $6257
+	ld c,$10
+	call objectUpdateSpeedZ_paramC
+	ret nz
 
-	ld a,Object.subid		; $6258
-	call objectGetRelatedObject1Var		; $625a
-	ld (hl),$07		; $625d
+	ld a,Object.subid
+	call objectGetRelatedObject1Var
+	ld (hl),$07
 
-	ld a,SND_SCENT_SEED		; $625f
-	call playSound		; $6261
-	jp _ecom_incState2		; $6264
+	ld a,SND_SCENT_SEED
+	call playSound
+	jp _ecom_incState2
 
 _ramrockArm_subid2_substate1:
-	ld a,Object.subid		; $6267
-	call objectGetRelatedObject1Var		; $6269
-	ld a,(hl)		; $626c
-	cp $08			; $626d
-	ret nz			; $626f
+	ld a,Object.subid
+	call objectGetRelatedObject1Var
+	ld a,(hl)
+	cp $08
+	ret nz
 
-	ld h,d			; $6270
-	ld a,(hl)		; $6271
-	rrca			; $6272
-	jr c,_ramrockArm_deleteSelf	; $6273
+	ld h,d
+	ld a,(hl)
+	rrca
+	jr c,_ramrockArm_deleteSelf
 
-	ld l,Enemy.visible		; $6275
-	res 7,(hl)		; $6277
-	jp _ecom_incState2		; $6279
+	ld l,Enemy.visible
+	res 7,(hl)
+	jp _ecom_incState2
 
 _ramrockArm_subid2_substate2:
-	call _ramrockArm_subid2_copyRamrockPosition		; $627c
-	ld l,Enemy.collisionType		; $627f
-	res 7,(hl)		; $6281
+	call _ramrockArm_subid2_copyRamrockPosition
+	ld l,Enemy.collisionType
+	res 7,(hl)
 
-	ld a,Object.subid		; $6283
-	call objectGetRelatedObject1Var		; $6285
-	ld a,(hl)		; $6288
-	cp $0a			; $6289
-	jr z,@relatedSubid0a	; $628b
-	cp $09			; $628d
-	ret nz			; $628f
+	ld a,Object.subid
+	call objectGetRelatedObject1Var
+	ld a,(hl)
+	cp $0a
+	jr z,@relatedSubid0a
+	cp $09
+	ret nz
 
 @relatedSubid09:
-	ld h,d			; $6290
-	ld l,Enemy.collisionType		; $6291
-	set 7,(hl)		; $6293
+	ld h,d
+	ld l,Enemy.collisionType
+	set 7,(hl)
 
-	ld c,ITEMID_BOMB		; $6295
-	call findItemWithID		; $6297
-	ret nz			; $629a
+	ld c,ITEMID_BOMB
+	call findItemWithID
+	ret nz
 
-	ld l,Item.yh		; $629b
-	ld b,(hl)		; $629d
-	ld l,Item.xh		; $629e
-	ld c,(hl)		; $62a0
-	push hl			; $62a1
-	ld e,$06		; $62a2
-	call _ramrockArm_checkPositionAtRamrock		; $62a4
-	pop hl			; $62a7
-	ret nz			; $62a8
+	ld l,Item.yh
+	ld b,(hl)
+	ld l,Item.xh
+	ld c,(hl)
+	push hl
+	ld e,$06
+	call _ramrockArm_checkPositionAtRamrock
+	pop hl
+	ret nz
 
-	ld l,Item.zh		; $62a9
-	ld a,(hl)		; $62ab
-	or a			; $62ac
-	jr z,++			; $62ad
-	cp $fc			; $62af
-	ret c			; $62b1
+	ld l,Item.zh
+	ld a,(hl)
+	or a
+	jr z,++
+	cp $fc
+	ret c
 ++
 	; Bomb is close enough
-	ld l,Item.var2f		; $62b2
+	ld l,Item.var2f
 	set 4,(hl) ; Delete bomb
 
-	ld a,Object.invincibilityCounter		; $62b6
-	call objectGetRelatedObject1Var		; $62b8
-	ld a,(hl)		; $62bb
-	or a			; $62bc
-	ret nz			; $62bd
-	ld (hl),60		; $62be
-	ld l,Enemy.var35		; $62c0
-	inc (hl)		; $62c2
-	ret			; $62c3
+	ld a,Object.invincibilityCounter
+	call objectGetRelatedObject1Var
+	ld a,(hl)
+	or a
+	ret nz
+	ld (hl),60
+	ld l,Enemy.var35
+	inc (hl)
+	ret
 
 ; Time to die
 @relatedSubid0a:
-	ld e,Enemy.subid		; $62c4
-	ld a,$01		; $62c6
-	ld (de),a		; $62c8
+	ld e,Enemy.subid
+	ld a,$01
+	ld (de),a
 @nextPuff:
-	call getFreeInteractionSlot		; $62c9
-	ld (hl),INTERACID_PUFF		; $62cc
-	push hl			; $62ce
-	call _ramrockArm_setRelativePosition		; $62cf
-	pop hl			; $62d2
-	call objectCopyPosition		; $62d3
-	ld e,Enemy.subid		; $62d6
-	ld a,(de)		; $62d8
-	dec a			; $62d9
-	ld (de),a		; $62da
-	jr z,@nextPuff	; $62db
+	call getFreeInteractionSlot
+	ld (hl),INTERACID_PUFF
+	push hl
+	call _ramrockArm_setRelativePosition
+	pop hl
+	call objectCopyPosition
+	ld e,Enemy.subid
+	ld a,(de)
+	dec a
+	ld (de),a
+	jr z,@nextPuff
 
-	ld a,$02		; $62dd
+	ld a,$02
 	ld (de),a ; [this.subid]
 
 _ramrockArm_deleteSelf:
-	call decNumEnemies		; $62e0
-	jp enemyDelete		; $62e3
+	call decNumEnemies
+	jp enemyDelete
 
 
 ; Shield hands
 _ramrockArm_subid4:
-	ld e,Enemy.state2		; $62e6
-	ld a,(de)		; $62e8
-	rst_jumpTable			; $62e9
+	ld e,Enemy.state2
+	ld a,(de)
+	rst_jumpTable
 	.dw _ramrockArm_subid4_substate0
 	.dw _ramrockArm_subid4_substate1
 	.dw _ramrockArm_subid4_substate2
@@ -2010,226 +2010,226 @@ _ramrockArm_subid4:
 
 
 _ramrockArm_subid4_substate0:
-	ld c,$10		; $62f2
-	call objectUpdateSpeedZ_paramC		; $62f4
-	ret nz			; $62f7
-	ld a,$06		; $62f8
-	call objectSetCollideRadius		; $62fa
-	ld bc,-$80		; $62fd
-	call objectSetSpeedZ		; $6300
-	ld l,Enemy.speed		; $6303
-	ld (hl),SPEED_100		; $6305
-	ld l,Enemy.counter2		; $6307
-	ld (hl),62		; $6309
-	jp _ecom_incState2		; $630b
+	ld c,$10
+	call objectUpdateSpeedZ_paramC
+	ret nz
+	ld a,$06
+	call objectSetCollideRadius
+	ld bc,-$80
+	call objectSetSpeedZ
+	ld l,Enemy.speed
+	ld (hl),SPEED_100
+	ld l,Enemy.counter2
+	ld (hl),62
+	jp _ecom_incState2
 
 
 _ramrockArm_subid4_substate1:
-	ld e,Enemy.zh		; $630e
-	ld a,(de)		; $6310
-	cp $f9			; $6311
-	ld c,$00		; $6313
-	jp nz,objectUpdateSpeedZ_paramC		; $6315
-	call _ecom_decCounter2		; $6318
-	jp nz,objectApplySpeed		; $631b
+	ld e,Enemy.zh
+	ld a,(de)
+	cp $f9
+	ld c,$00
+	jp nz,objectUpdateSpeedZ_paramC
+	call _ecom_decCounter2
+	jp nz,objectApplySpeed
 
-	call _ecom_incState2		; $631e
-	ld e,Enemy.subid		; $6321
-	ld a,(de)		; $6323
-	rrca			; $6324
-	ret nc			; $6325
+	call _ecom_incState2
+	ld e,Enemy.subid
+	ld a,(de)
+	rrca
+	ret nc
 
-	ld a,Object.subid		; $6326
-	call objectGetRelatedObject1Var		; $6328
-	ld (hl),$0c		; $632b
+	ld a,Object.subid
+	call objectGetRelatedObject1Var
+	ld (hl),$0c
 
-	ld a,PALH_84		; $632d
-	jp loadPaletteHeader		; $632f
+	ld a,PALH_84
+	jp loadPaletteHeader
 
 
 _ramrockArm_subid4_substate2:
-	ld a,Object.state2		; $6332
-	call objectGetRelatedObject1Var		; $6334
-	ld a,(hl)		; $6337
-	dec a			; $6338
-	jr z,@updateXPosition	; $6339
+	ld a,Object.state2
+	call objectGetRelatedObject1Var
+	ld a,(hl)
+	dec a
+	jr z,@updateXPosition
 
-	ld e,Enemy.var2a		; $633b
-	ld a,(de)		; $633d
-	rlca			; $633e
-	jr c,_ramrockArm_subid4_collisionOccurred	; $633f
+	ld e,Enemy.var2a
+	ld a,(de)
+	rlca
+	jr c,_ramrockArm_subid4_collisionOccurred
 
-	ld a,$02		; $6341
-	call objectGetRelatedObject1Var		; $6343
-	ld a,(hl)		; $6346
-	cp $0d			; $6347
-	jr z,_ramrockArm_subid4_collisionOccurred	; $6349
+	ld a,$02
+	call objectGetRelatedObject1Var
+	ld a,(hl)
+	cp $0d
+	jr z,_ramrockArm_subid4_collisionOccurred
 
-	cp $10			; $634b
-	jr nz,@updateXPosition	; $634d
+	cp $10
+	jr nz,@updateXPosition
 
-	call objectCreatePuff		; $634f
-	jr _ramrockArm_deleteSelf		; $6352
+	call objectCreatePuff
+	jr _ramrockArm_deleteSelf
 
 @updateXPosition:
-	ld e,Enemy.var32		; $6354
-	ld a,(de)		; $6356
-	ld b,a			; $6357
-	cp $0c			; $6358
-	jr z,_ramrockArm_subid4_updateXPosition			; $635a
-	inc a			; $635c
-	ld (de),a		; $635d
-	ld b,a			; $635e
+	ld e,Enemy.var32
+	ld a,(de)
+	ld b,a
+	cp $0c
+	jr z,_ramrockArm_subid4_updateXPosition
+	inc a
+	ld (de),a
+	ld b,a
 
 ; @param	b	X-offset
 _ramrockArm_subid4_updateXPosition:
-	ld e,Enemy.subid		; $635f
-	ld a,(de)		; $6361
-	rrca			; $6362
-	jr c,++			; $6363
-	ld a,b			; $6365
-	cpl			; $6366
-	inc a			; $6367
-	ld b,a			; $6368
+	ld e,Enemy.subid
+	ld a,(de)
+	rrca
+	jr c,++
+	ld a,b
+	cpl
+	inc a
+	ld b,a
 ++
-	ld a,Object.xh		; $6369
-	call objectGetRelatedObject1Var		; $636b
-	ld a,(hl)		; $636e
-	add b			; $636f
-	ld e,l			; $6370
-	ld (de),a		; $6371
-	ret			; $6372
+	ld a,Object.xh
+	call objectGetRelatedObject1Var
+	ld a,(hl)
+	add b
+	ld e,l
+	ld (de),a
+	ret
 
 _ramrockArm_subid4_collisionOccurred:
-	ld a,Object.subid		; $6373
-	call objectGetRelatedObject1Var		; $6375
-	ld (hl),Object.xh		; $6378
-	ld l,Enemy.var36		; $637a
-	ld (hl),$10		; $637c
-	jp _ecom_incState2		; $637e
+	ld a,Object.subid
+	call objectGetRelatedObject1Var
+	ld (hl),Object.xh
+	ld l,Enemy.var36
+	ld (hl),$10
+	jp _ecom_incState2
 
 
 _ramrockArm_subid4_substate3:
-	ld e,Enemy.var2a		; $6381
-	ld a,(de)		; $6383
-	rlca			; $6384
-	jr nc,++		; $6385
+	ld e,Enemy.var2a
+	ld a,(de)
+	rlca
+	jr nc,++
 
-	ld a,Object.var36		; $6387
-	call objectGetRelatedObject1Var		; $6389
-	ld (hl),$10		; $638c
+	ld a,Object.var36
+	call objectGetRelatedObject1Var
+	ld (hl),$10
 ++
-	ld e,Enemy.var32		; $638e
-	ld a,(de)		; $6390
-	sub $02			; $6391
-	cp $04			; $6393
-	jr nc,+			; $6395
-	ld b,$04		; $6397
-	jr ++			; $6399
+	ld e,Enemy.var32
+	ld a,(de)
+	sub $02
+	cp $04
+	jr nc,+
+	ld b,$04
+	jr ++
 +
-	ld (de),a		; $639b
-	ld b,a			; $639c
-	jr _ramrockArm_subid4_updateXPosition		; $639d
+	ld (de),a
+	ld b,a
+	jr _ramrockArm_subid4_updateXPosition
 ++
-	ld a,Object.subid		; $639f
-	call objectGetRelatedObject1Var		; $63a1
-	ld a,(hl)		; $63a4
-	cp $0d			; $63a5
-	jr z,_ramrockArm_subid4_updateXPosition	; $63a7
+	ld a,Object.subid
+	call objectGetRelatedObject1Var
+	ld a,(hl)
+	cp $0d
+	jr z,_ramrockArm_subid4_updateXPosition
 
-	ld e,Enemy.state2		; $63a9
-	ld a,$02		; $63ab
-	ld (de),a		; $63ad
-	jr _ramrockArm_subid4_updateXPosition		; $63ae
+	ld e,Enemy.state2
+	ld a,$02
+	ld (de),a
+	jr _ramrockArm_subid4_updateXPosition
 
 
 ;;
 ; @addr{63b0}
 _ramrockArm_setRelativePosition:
-	call _ramrockArm_getRelativePosition		; $63b0
-	ld h,d			; $63b3
-	ld l,Enemy.yh		; $63b4
-	ld (hl),b		; $63b6
-	ld l,Enemy.xh		; $63b7
-	ld (hl),c		; $63b9
-	ret			; $63ba
+	call _ramrockArm_getRelativePosition
+	ld h,d
+	ld l,Enemy.yh
+	ld (hl),b
+	ld l,Enemy.xh
+	ld (hl),c
+	ret
 
 ;;
 ; @param[out]	zflag
 ; @addr{63bb}
 _ramrockArm_subid0_checkReachedRamrock:
-	call _ramrockArm_getRelativePosition		; $63bb
-	ld e,$02		; $63be
+	call _ramrockArm_getRelativePosition
+	ld e,$02
 
 ;;
 ; @param	bc	Position
 ; @param	e
 ; @addr{63c0}
 _ramrockArm_checkPositionAtRamrock:
-	ld h,d			; $63c0
-	ld l,Enemy.yh		; $63c1
-	ld a,e			; $63c3
-	add b			; $63c4
-	cp (hl)			; $63c5
-	jr c,_label_10_212	; $63c6
-	sub e			; $63c8
+	ld h,d
+	ld l,Enemy.yh
+	ld a,e
+	add b
+	cp (hl)
+	jr c,_label_10_212
+	sub e
 _label_10_211:
-	sub e			; $63c9
-	cp (hl)			; $63ca
-	jr nc,_label_10_212	; $63cb
-	ld l,Enemy.xh		; $63cd
-	ld a,e			; $63cf
-	add c			; $63d0
-	cp (hl)			; $63d1
-	jr c,_label_10_212	; $63d2
-	sub e			; $63d4
-	sub e			; $63d5
-	cp (hl)			; $63d6
-	jr nc,_label_10_212	; $63d7
-	xor a			; $63d9
-	ret			; $63da
+	sub e
+	cp (hl)
+	jr nc,_label_10_212
+	ld l,Enemy.xh
+	ld a,e
+	add c
+	cp (hl)
+	jr c,_label_10_212
+	sub e
+	sub e
+	cp (hl)
+	jr nc,_label_10_212
+	xor a
+	ret
 _label_10_212:
-	or d			; $63db
-	ret			; $63dc
+	or d
+	ret
 
 ;;
 ; @param[out]	bc	Relative position
 ; @addr{63dd}
 _ramrockArm_getRelativePosition:
-	ld e,Enemy.subid		; $63dd
-	ld a,(de)		; $63df
-	ld c,$0e		; $63e0
-	rrca			; $63e2
-	jr nc,+			; $63e3
-	ld c,-$0e		; $63e5
+	ld e,Enemy.subid
+	ld a,(de)
+	ld c,$0e
+	rrca
+	jr nc,+
+	ld c,-$0e
 +
-	ld a,Object.yh		; $63e7
-	call objectGetRelatedObject1Var		; $63e9
-	ldi a,(hl)		; $63ec
-	add $08			; $63ed
-	ld b,a			; $63ef
-	inc l			; $63f0
+	ld a,Object.yh
+	call objectGetRelatedObject1Var
+	ldi a,(hl)
+	add $08
+	ld b,a
+	inc l
 	ld a,(hl) ; [object.xh]
-	add c			; $63f2
-	ld c,a			; $63f3
-	ret			; $63f4
+	add c
+	ld c,a
+	ret
 
 ;;
 ; @addr{63f5}
 _ramrockArm_subid2_copyRamrockPosition:
-	ld a,Object.yh		; $63f5
-	call objectGetRelatedObject1Var		; $63f7
-	ldi a,(hl)		; $63fa
-	add $08			; $63fb
-	ld b,a			; $63fd
-	inc l			; $63fe
-	ld a,(hl)		; $63ff
-	ld h,d			; $6400
-	ld l,Enemy.xh		; $6401
-	ldd (hl),a		; $6403
-	dec l			; $6404
-	ld (hl),b		; $6405
-	ret			; $6406
+	ld a,Object.yh
+	call objectGetRelatedObject1Var
+	ldi a,(hl)
+	add $08
+	ld b,a
+	inc l
+	ld a,(hl)
+	ld h,d
+	ld l,Enemy.xh
+	ldd (hl),a
+	dec l
+	ld (hl),b
+	ret
 
 _ramrockArm_subid0And1XPositions:
 	.db $30 $c0
@@ -2254,44 +2254,44 @@ _ramrockArm_subid4And5Angles:
 ;   var38: Timer to stay still after doing a movement pattern
 ; ==============================================================================
 enemyCode06:
-	jr z,@normalStatus	; $640d
-	sub ENEMYSTATUS_NO_HEALTH			; $640f
-	ret c			; $6411
-	jr nz,@justHit	; $6412
+	jr z,@normalStatus
+	sub ENEMYSTATUS_NO_HEALTH
+	ret c
+	jr nz,@justHit
 
 	; No health
-	ld e,Enemy.invincibilityCounter		; $6414
-	ld a,(de)		; $6416
-	ret nz			; $6417
-	call checkLinkCollisionsEnabled		; $6418
-	ret nc			; $641b
+	ld e,Enemy.invincibilityCounter
+	ld a,(de)
+	ret nz
+	call checkLinkCollisionsEnabled
+	ret nc
 
-	ld a,DISABLE_LINK		; $641c
-	ld (wDisabledObjects),a		; $641e
-	ld (wMenuDisabled),a		; $6421
-	ld h,d			; $6424
-	ld l,Enemy.health		; $6425
-	inc (hl)		; $6427
-	ld l,Enemy.state		; $6428
-	ld (hl),$05		; $642a
-	inc l			; $642c
+	ld a,DISABLE_LINK
+	ld (wDisabledObjects),a
+	ld (wMenuDisabled),a
+	ld h,d
+	ld l,Enemy.health
+	inc (hl)
+	ld l,Enemy.state
+	ld (hl),$05
+	inc l
 	ld (hl),$00 ; [state2]
-	ld l,Enemy.counter1		; $642f
-	ld (hl),60		; $6431
-	jr @normalStatus		; $6433
+	ld l,Enemy.counter1
+	ld (hl),60
+	jr @normalStatus
 
 @justHit:
-	call _veranFairy_updateVar35BasedOnHealth		; $6435
-	ld hl,_veranFairy_speedTable		; $6438
-	rst_addAToHl			; $643b
-	ld e,Enemy.speed		; $643c
-	ld a,(hl)		; $643e
-	ld (de),a		; $643f
+	call _veranFairy_updateVar35BasedOnHealth
+	ld hl,_veranFairy_speedTable
+	rst_addAToHl
+	ld e,Enemy.speed
+	ld a,(hl)
+	ld (de),a
 
 @normalStatus:
-	ld e,Enemy.state		; $6440
-	ld a,(de)		; $6442
-	rst_jumpTable			; $6443
+	ld e,Enemy.state
+	ld a,(de)
+	rst_jumpTable
 	.dw _veranFairy_state0
 	.dw _veranFairy_state1
 	.dw _veranFairy_state2
@@ -2300,24 +2300,24 @@ enemyCode06:
 	.dw _veranFairy_state5
 
 _veranFairy_state0:
-	ld a,ENEMYID_VERAN_FAIRY		; $6450
-	ld (wEnemyIDToLoadExtraGfx),a		; $6452
-	call _ecom_incState		; $6455
-	ld l,Enemy.counter1		; $6458
-	ld (hl),60		; $645a
-	ld l,Enemy.speed		; $645c
-	ld (hl),SPEED_140		; $645e
-	ld l,Enemy.var30		; $6460
-	dec (hl)		; $6462
-	ld a,$02		; $6463
-	call enemySetAnimation		; $6465
-	jp objectSetVisible82		; $6468
+	ld a,ENEMYID_VERAN_FAIRY
+	ld (wEnemyIDToLoadExtraGfx),a
+	call _ecom_incState
+	ld l,Enemy.counter1
+	ld (hl),60
+	ld l,Enemy.speed
+	ld (hl),SPEED_140
+	ld l,Enemy.var30
+	dec (hl)
+	ld a,$02
+	call enemySetAnimation
+	jp objectSetVisible82
 
 ; Cutscene just prior to fairy form
 _veranFairy_state1:
-	inc e			; $646b
-	ld a,(de)		; $646c
-	rst_jumpTable			; $646d
+	inc e
+	ld a,(de)
+	rst_jumpTable
 	.dw @substate0
 	.dw @substate1
 	.dw @substate2
@@ -2333,86 +2333,86 @@ _veranFairy_state1:
 	.dw @substateC
 
 @substate0:
-	call _ecom_decCounter1		; $6488
-	jp nz,_ecom_flickerVisibility		; $648b
-	ld (hl),$08		; $648e
-	ld l,e			; $6490
+	call _ecom_decCounter1
+	jp nz,_ecom_flickerVisibility
+	ld (hl),$08
+	ld l,e
 	inc (hl) ; [state2]
-	jp objectSetVisible83		; $6492
+	jp objectSetVisible83
 
 @substate1:
-	call _ecom_decCounter1		; $6495
-	ret nz			; $6498
-	ld l,e			; $6499
+	call _ecom_decCounter1
+	ret nz
+	ld l,e
 	inc (hl) ; [state2]
-	ld bc,TX_560f		; $649b
-	jp showText		; $649e
+	ld bc,TX_560f
+	jp showText
 
 @substate2:
-	call _ecom_incState2		; $64a1
-	ld l,Enemy.counter1		; $64a4
-	ld (hl),30		; $64a6
-	ld a,$04		; $64a8
-	jp enemySetAnimation		; $64aa
+	call _ecom_incState2
+	ld l,Enemy.counter1
+	ld (hl),30
+	ld a,$04
+	jp enemySetAnimation
 
 @substate3:
-	ld c,$33		; $64ad
+	ld c,$33
 
 @strikeLightningAfterCountdown:
-	call _ecom_decCounter1		; $64af
-	ret nz			; $64b2
+	call _ecom_decCounter1
+	ret nz
 	ld (hl),10 ; [counter1]
-	ld l,e			; $64b5
+	ld l,e
 	inc (hl) ; [state2]
 
 @strikeLightning:
-	call getFreePartSlot		; $64b7
-	ret nz			; $64ba
-	ld (hl),PARTID_LIGHTNING		; $64bb
-	ld l,Part.yh		; $64bd
-	jp setShortPosition_paramC		; $64bf
+	call getFreePartSlot
+	ret nz
+	ld (hl),PARTID_LIGHTNING
+	ld l,Part.yh
+	jp setShortPosition_paramC
 
 @substate4:
-	ld c,$7b		; $64c2
-	jr @strikeLightningAfterCountdown		; $64c4
+	ld c,$7b
+	jr @strikeLightningAfterCountdown
 
 @substate5:
-	ld c,$55		; $64c6
-	jr @strikeLightningAfterCountdown		; $64c8
+	ld c,$55
+	jr @strikeLightningAfterCountdown
 
 @substate6:
-	ld c,$3b		; $64ca
-	jr @strikeLightningAfterCountdown		; $64cc
+	ld c,$3b
+	jr @strikeLightningAfterCountdown
 
 @substate7:
-	ld c,$73		; $64ce
-	jr @strikeLightningAfterCountdown		; $64d0
+	ld c,$73
+	jr @strikeLightningAfterCountdown
 
 @substate8:
-	call _ecom_decCounter1		; $64d2
-	ret nz			; $64d5
-	ld l,e			; $64d6
+	call _ecom_decCounter1
+	ret nz
+	ld l,e
 	inc (hl) ; [state2]
-	ld c,$59		; $64d8
-	call @strikeLightning		; $64da
-	jp fadeoutToWhite		; $64dd
+	ld c,$59
+	call @strikeLightning
+	jp fadeoutToWhite
 
 ; Remove pillar tiles
 @substate9:
-	ld b,$0c		; $64e0
-	ld hl,@pillarPositions		; $64e2
+	ld b,$0c
+	ld hl,@pillarPositions
 @loop
-	push bc			; $64e5
-	ldi a,(hl)		; $64e6
-	ld c,a			; $64e7
-	ld a,$a5		; $64e8
-	push hl			; $64ea
-	call setTile		; $64eb
-	pop hl			; $64ee
-	pop bc			; $64ef
-	dec b			; $64f0
-	jr nz,@loop	; $64f1
-	jp _ecom_incState2		; $64f3
+	push bc
+	ldi a,(hl)
+	ld c,a
+	ld a,$a5
+	push hl
+	call setTile
+	pop hl
+	pop bc
+	dec b
+	jr nz,@loop
+	jp _ecom_incState2
 
 @pillarPositions:
 	.db $23 $33 $63 $73 $45 $55 $49 $59
@@ -2420,234 +2420,234 @@ _veranFairy_state1:
 
 ; Spawn mimics
 @substateA:
-	ld b,$04		; $6502
-	ld hl,@mimicPositions		; $6504
+	ld b,$04
+	ld hl,@mimicPositions
 
 @nextMimic:
-	ldi a,(hl)		; $6507
-	ld c,a			; $6508
-	push hl			; $6509
-	call getFreeEnemySlot		; $650a
-	jr nz,++		; $650d
-	ld (hl),ENEMYID_LINK_MIMIC		; $650f
-	ld l,Enemy.yh		; $6511
-	call setShortPosition_paramC		; $6513
+	ldi a,(hl)
+	ld c,a
+	push hl
+	call getFreeEnemySlot
+	jr nz,++
+	ld (hl),ENEMYID_LINK_MIMIC
+	ld l,Enemy.yh
+	call setShortPosition_paramC
 ++
-	pop hl			; $6516
-	dec b			; $6517
-	jr nz,@nextMimic	; $6518
+	pop hl
+	dec b
+	jr nz,@nextMimic
 
-	call _ecom_incState2		; $651a
-	ld l,Enemy.counter1		; $651d
-	ld (hl),30		; $651f
+	call _ecom_incState2
+	ld l,Enemy.counter1
+	ld (hl),30
 
-	ld l,Enemy.oamFlagsBackup		; $6521
-	xor a			; $6523
-	ldi (hl),a		; $6524
-	ld (hl),a		; $6525
+	ld l,Enemy.oamFlagsBackup
+	xor a
+	ldi (hl),a
+	ld (hl),a
 
-	ld l,Enemy.zh		; $6526
-	dec (hl)		; $6528
-	call objectSetVisible83		; $6529
-	ld a,$05		; $652c
-	call enemySetAnimation		; $652e
-	ld a,$04		; $6531
-	jp fadeinFromWhiteWithDelay		; $6533
+	ld l,Enemy.zh
+	dec (hl)
+	call objectSetVisible83
+	ld a,$05
+	call enemySetAnimation
+	ld a,$04
+	jp fadeinFromWhiteWithDelay
 
 @mimicPositions:
 	.db $33 $73 $3b $7b
 
 @substateB:
-	ld a,(wPaletteThread_mode)		; $653a
-	or a			; $653d
-	ret nz			; $653e
-	call _ecom_decCounter1		; $653f
-	ret nz			; $6542
-	ld l,e			; $6543
-	inc (hl)		; $6544
-	ld bc,TX_5610		; $6545
-	jp showText		; $6548
+	ld a,(wPaletteThread_mode)
+	or a
+	ret nz
+	call _ecom_decCounter1
+	ret nz
+	ld l,e
+	inc (hl)
+	ld bc,TX_5610
+	jp showText
 
 @substateC:
-	ld h,d			; $654b
-	ld l,Enemy.state		; $654c
-	inc (hl)		; $654e
-	ld l,Enemy.counter2		; $654f
-	ld (hl),120		; $6551
-	jp _enemyBoss_beginBoss		; $6553
+	ld h,d
+	ld l,Enemy.state
+	inc (hl)
+	ld l,Enemy.counter2
+	ld (hl),120
+	jp _enemyBoss_beginBoss
 
 
 ; Choosing a movement pattern and attack
 _veranFairy_state2:
-	call getRandomNumber_noPreserveVars		; $6556
-	and $07			; $6559
-	ld b,a			; $655b
-	ld e,Enemy.var35		; $655c
-	ld a,(de)		; $655e
-	swap a			; $655f
-	rrca			; $6561
-	add b			; $6562
-	ld hl,_veranFairy_attackTable		; $6563
-	rst_addAToHl			; $6566
-	ld e,Enemy.var03		; $6567
-	ld a,(hl)		; $6569
-	ld (de),a		; $656a
+	call getRandomNumber_noPreserveVars
+	and $07
+	ld b,a
+	ld e,Enemy.var35
+	ld a,(de)
+	swap a
+	rrca
+	add b
+	ld hl,_veranFairy_attackTable
+	rst_addAToHl
+	ld e,Enemy.var03
+	ld a,(hl)
+	ld (de),a
 
-	call _ecom_incState		; $656b
-	ld l,Enemy.var38		; $656e
-	ld (hl),60		; $6570
-	ld l,Enemy.var36		; $6572
-	ld (hl),$00		; $6574
+	call _ecom_incState
+	ld l,Enemy.var38
+	ld (hl),60
+	ld l,Enemy.var36
+	ld (hl),$00
 --
-	call getRandomNumber		; $6576
-	and $03			; $6579
-	ld l,Enemy.var30		; $657b
-	cp (hl)			; $657d
-	jr z,--			; $657e
-	ld (hl),a		; $6580
+	call getRandomNumber
+	and $03
+	ld l,Enemy.var30
+	cp (hl)
+	jr z,--
+	ld (hl),a
 
-	ld hl,_veranFairy_movementPatternTable		; $6581
-	rst_addDoubleIndex			; $6584
-	ldi a,(hl)		; $6585
-	ld h,(hl)		; $6586
-	ld l,a			; $6587
-	ld e,Enemy.var33		; $6588
-	ldi a,(hl)		; $658a
-	ld (de),a		; $658b
-	inc e			; $658c
+	ld hl,_veranFairy_movementPatternTable
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	ld e,Enemy.var33
+	ldi a,(hl)
+	ld (de),a
+	inc e
 	ldi a,(hl) ; [var34]
-	ld (de),a		; $658e
+	ld (de),a
 
 _veranFairy_saveMovementPatternPointer:
-	ld e,Enemy.var31		; $658f
-	ld a,l			; $6591
-	ld (de),a		; $6592
-	inc e			; $6593
-	ld a,h			; $6594
-	ld (de),a		; $6595
-	ret			; $6596
+	ld e,Enemy.var31
+	ld a,l
+	ld (de),a
+	inc e
+	ld a,h
+	ld (de),a
+	ret
 
 
 ; Moving and attacking
 _veranFairy_state3:
-	call _veranFairy_66ed		; $6597
+	call _veranFairy_66ed
 
-	ld h,d			; $659a
-	ld l,Enemy.var33		; $659b
-	call _ecom_readPositionVars		; $659d
-	sub c			; $65a0
-	add $02			; $65a1
-	cp $05			; $65a3
-	jr nc,@updateMovement	; $65a5
-	ldh a,(<hFF8F)	; $65a7
-	sub b			; $65a9
-	add $02			; $65aa
-	cp $05			; $65ac
-	jr nc,@updateMovement	; $65ae
+	ld h,d
+	ld l,Enemy.var33
+	call _ecom_readPositionVars
+	sub c
+	add $02
+	cp $05
+	jr nc,@updateMovement
+	ldh a,(<hFF8F)
+	sub b
+	add $02
+	cp $05
+	jr nc,@updateMovement
 
 	; Reached target position
-	ld l,Enemy.yh		; $65b0
-	ld (hl),b		; $65b2
-	ld l,Enemy.xh		; $65b3
-	ld (hl),c		; $65b5
-	call _veranFairy_checkLoopAroundScreen		; $65b6
+	ld l,Enemy.yh
+	ld (hl),b
+	ld l,Enemy.xh
+	ld (hl),c
+	call _veranFairy_checkLoopAroundScreen
 
 	; Get next target position
-	ld h,d			; $65b9
-	ld l,Enemy.var31		; $65ba
-	ldi a,(hl)		; $65bc
-	ld h,(hl)		; $65bd
-	ld l,a			; $65be
-	ldi a,(hl)		; $65bf
-	or a			; $65c0
-	jr nz,++			; $65c1
-	ld a,$05		; $65c3
-	call enemySetAnimation		; $65c5
-	jp _ecom_incState		; $65c8
+	ld h,d
+	ld l,Enemy.var31
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	ldi a,(hl)
+	or a
+	jr nz,++
+	ld a,$05
+	call enemySetAnimation
+	jp _ecom_incState
 ++
-	ld e,Enemy.var33		; $65cb
-	ld (de),a		; $65cd
-	ld b,a			; $65ce
-	inc e			; $65cf
-	ldi a,(hl)		; $65d0
+	ld e,Enemy.var33
+	ld (de),a
+	ld b,a
+	inc e
+	ldi a,(hl)
 	ld (de),a ; [var34]
-	ld c,a			; $65d2
-	call _veranFairy_saveMovementPatternPointer		; $65d3
+	ld c,a
+	call _veranFairy_saveMovementPatternPointer
 @updateMovement:
-	call _ecom_moveTowardPosition		; $65d6
+	call _ecom_moveTowardPosition
 _veranFairy_animate:
-	jp enemyAnimate		; $65d9
+	jp enemyAnimate
 
 
 _veranFairy_state4:
-	ld h,d			; $65dc
-	ld l,Enemy.var38		; $65dd
-	dec (hl)		; $65df
-	jr nz,_veranFairy_animate	; $65e0
-	ld l,e			; $65e2
+	ld h,d
+	ld l,Enemy.var38
+	dec (hl)
+	jr nz,_veranFairy_animate
+	ld l,e
 	ld (hl),$02 ; [state]
-	jr _veranFairy_animate		; $65e5
+	jr _veranFairy_animate
 
 
 ; Dead
 _veranFairy_state5:
-	inc e			; $65e7
-	ld a,(de)		; $65e8
-	rst_jumpTable			; $65e9
+	inc e
+	ld a,(de)
+	rst_jumpTable
 	.dw @substate0
 	.dw @substate1
 	.dw @substate2
 
 @substate0:
-	call _ecom_decCounter1		; $65f0
-	jp nz,_ecom_flickerVisibility		; $65f3
-	ld l,e			; $65f6
-	inc (hl)		; $65f7
-	jp objectSetVisible82		; $65f8
+	call _ecom_decCounter1
+	jp nz,_ecom_flickerVisibility
+	ld l,e
+	inc (hl)
+	jp objectSetVisible82
 
 @substate1:
-	call _ecom_incState2		; $65fb
-	ld l,Enemy.counter2		; $65fe
-	ld (hl),65		; $6600
-	ld bc,TX_5612		; $6602
-	jp showText		; $6605
+	call _ecom_incState2
+	ld l,Enemy.counter2
+	ld (hl),65
+	ld bc,TX_5612
+	jp showText
 
 @substate2:
-	call _ecom_decCounter2		; $6608
-	jr z,@triggerCutscene	; $660b
+	call _ecom_decCounter2
+	jr z,@triggerCutscene
 
 	ld a,(hl) ; [counter2]
-	and $0f			; $660e
-	ret nz			; $6610
+	and $0f
+	ret nz
 	ld a,(hl) ; [counter2]
-	and $f0			; $6612
-	swap a			; $6614
-	dec a			; $6616
-	push af			; $6617
-	dec a			; $6618
-	call z,fadeoutToWhite		; $6619
-	pop af			; $661c
-	ld hl,@explosionPositions		; $661d
-	rst_addDoubleIndex			; $6620
-	ldi a,(hl)		; $6621
-	ld c,(hl)		; $6622
-	ld b,a			; $6623
-	call getFreeInteractionSlot		; $6624
-	ret nz			; $6627
-	ld (hl),INTERACID_EXPLOSION		; $6628
-	ld l,Interaction.var03		; $662a
+	and $f0
+	swap a
+	dec a
+	push af
+	dec a
+	call z,fadeoutToWhite
+	pop af
+	ld hl,@explosionPositions
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld c,(hl)
+	ld b,a
+	call getFreeInteractionSlot
+	ret nz
+	ld (hl),INTERACID_EXPLOSION
+	ld l,Interaction.var03
 	inc (hl) ; [explosion.var03] = $01
-	jp objectCopyPositionWithOffset		; $662d
+	jp objectCopyPositionWithOffset
 
 @triggerCutscene:
-	ld a,(wPaletteThread_mode)		; $6630
-	or a			; $6633
-	ret nz			; $6634
-	call clearAllParentItems		; $6635
-	call dropLinkHeldItem		; $6638
-	ld a,CUTSCENE_BLACK_TOWER_ESCAPE_ATTEMPT		; $663b
-	ld (wCutsceneTrigger),a		; $663d
-	jp enemyDelete		; $6640
+	ld a,(wPaletteThread_mode)
+	or a
+	ret nz
+	call clearAllParentItems
+	call dropLinkHeldItem
+	ld a,CUTSCENE_BLACK_TOWER_ESCAPE_ATTEMPT
+	ld (wCutsceneTrigger),a
+	jp enemyDelete
 
 @explosionPositions:
 	.db $f0 $f0
@@ -2705,23 +2705,23 @@ _veranFairy_speedTable:
 ;;
 ; @addr{6698}
 _veranFairy_checkLoopAroundScreen:
-	call objectGetShortPosition		; $6698
-	ld e,a			; $669b
-	ld hl,@data1		; $669c
-	call lookupKey		; $669f
-	ret nc			; $66a2
+	call objectGetShortPosition
+	ld e,a
+	ld hl,@data1
+	call lookupKey
+	ret nc
 
-	ld hl,@data2		; $66a3
-	rst_addAToHl			; $66a6
-	ld e,Enemy.yh		; $66a7
-	ldi a,(hl)		; $66a9
-	ld (de),a		; $66aa
-	ldh (<hFF8F),a	; $66ab
-	ld e,Enemy.xh		; $66ad
-	ld a,(hl)		; $66af
-	ld (de),a		; $66b0
-	ldh (<hFF8E),a	; $66b1
-	ret			; $66b3
+	ld hl,@data2
+	rst_addAToHl
+	ld e,Enemy.yh
+	ldi a,(hl)
+	ld (de),a
+	ldh (<hFF8F),a
+	ld e,Enemy.xh
+	ld a,(hl)
+	ld (de),a
+	ldh (<hFF8E),a
+	ret
 
 @data1:
 	.db $07 $00
@@ -2750,183 +2750,183 @@ _veranFairy_checkLoopAroundScreen:
 ; @param[out]	a	Value written to var35
 ; @addr{66d9}
 _veranFairy_updateVar35BasedOnHealth:
-	ld b,$00		; $66d9
-	ld e,Enemy.health		; $66db
-	ld a,(de)		; $66dd
-	cp 20			; $66de
-	jr nc,++		; $66e0
-	inc b			; $66e2
-	cp 10			; $66e3
-	jr nc,++		; $66e5
-	inc b			; $66e7
+	ld b,$00
+	ld e,Enemy.health
+	ld a,(de)
+	cp 20
+	jr nc,++
+	inc b
+	cp 10
+	jr nc,++
+	inc b
 ++
-	ld e,Enemy.var35		; $66e8
-	ld a,b			; $66ea
-	ld (de),a		; $66eb
-	ret			; $66ec
+	ld e,Enemy.var35
+	ld a,b
+	ld (de),a
+	ret
 
 ;;
 ; @addr{66ed}
 _veranFairy_66ed:
-	call _ecom_decCounter2		; $66ed
-	ret nz			; $66f0
-	ld e,Enemy.var03		; $66f1
-	ld a,(de)		; $66f3
-	rst_jumpTable			; $66f4
+	call _ecom_decCounter2
+	ret nz
+	ld e,Enemy.var03
+	ld a,(de)
+	rst_jumpTable
 	.dw attack0
 	.dw attack1
 	.dw attack2
 
 ; Shooting occasional projectiles
 attack0:
-	ld e,Enemy.var36		; $66fb
-	ld a,(de)		; $66fd
-	or a			; $66fe
-	jr nz,@label_10_227	; $66ff
+	ld e,Enemy.var36
+	ld a,(de)
+	or a
+	jr nz,@label_10_227
 
-	call getRandomNumber_noPreserveVars		; $6701
-	and $0f			; $6704
-	ld b,a			; $6706
-	ld h,d			; $6707
-	ld l,Enemy.var35		; $6708
-	ld a,(hl)		; $670a
-	add a			; $670b
-	add $08			; $670c
-	cp b			; $670e
-	ld l,Enemy.counter2		; $670f
-	ld (hl),60		; $6711
-	ret nc			; $6713
+	call getRandomNumber_noPreserveVars
+	and $0f
+	ld b,a
+	ld h,d
+	ld l,Enemy.var35
+	ld a,(hl)
+	add a
+	add $08
+	cp b
+	ld l,Enemy.counter2
+	ld (hl),60
+	ret nc
 
-	xor a			; $6714
-	ldd (hl),a		; $6715
-	inc a			; $6716
-	ld (hl),a		; $6717
-	ld l,Enemy.var36		; $6718
-	ld (hl),a		; $671a
-	ld l,Enemy.var37		; $671b
-	ld (hl),$04		; $671d
+	xor a
+	ldd (hl),a
+	inc a
+	ld (hl),a
+	ld l,Enemy.var36
+	ld (hl),a
+	ld l,Enemy.var37
+	ld (hl),$04
 
 @label_10_227:
-	call _ecom_decCounter1		; $671f
-	jr z,@label_10_228	; $6722
-	ld a,(hl)		; $6724
-	cp $0e			; $6725
-	ret nz			; $6727
-	ld a,$05		; $6728
-	jp enemySetAnimation		; $672a
+	call _ecom_decCounter1
+	jr z,@label_10_228
+	ld a,(hl)
+	cp $0e
+	ret nz
+	ld a,$05
+	jp enemySetAnimation
 
 @label_10_228:
-	call _veranFairy_checkWithinBoundary		; $672d
-	ret nc			; $6730
-	ld l,Enemy.var37		; $6731
-	dec (hl)		; $6733
-	jr z,@label_10_229	; $6734
+	call _veranFairy_checkWithinBoundary
+	ret nc
+	ld l,Enemy.var37
+	dec (hl)
+	jr z,@label_10_229
 
-	ld l,Enemy.counter1		; $6736
-	ld (hl),30		; $6738
+	ld l,Enemy.counter1
+	ld (hl),30
 
-	ld b,PARTID_VERAN_FAIRY_PROJECTILE		; $673a
-	call _ecom_spawnProjectile		; $673c
-	ld a,$06		; $673f
-	jp enemySetAnimation		; $6741
+	ld b,PARTID_VERAN_FAIRY_PROJECTILE
+	call _ecom_spawnProjectile
+	ld a,$06
+	jp enemySetAnimation
 
 @label_10_229:
-	ld l,Enemy.counter2		; $6744
-	ld (hl),90		; $6746
-	ld l,Enemy.var36		; $6748
-	ld (hl),$00		; $674a
-	ret			; $674c
+	ld l,Enemy.counter2
+	ld (hl),90
+	ld l,Enemy.var36
+	ld (hl),$00
+	ret
 
 ; Circular projectile attack
 attack1:
-	ld e,Enemy.var36		; $674d
-	ld a,(de)		; $674f
-	or a			; $6750
-	jr nz,@label_10_230	; $6751
+	ld e,Enemy.var36
+	ld a,(de)
+	or a
+	jr nz,@label_10_230
 
-	call _veranFairy_checkWithinBoundary		; $6753
-	ret nc			; $6756
+	call _veranFairy_checkWithinBoundary
+	ret nc
 
-	call getRandomNumber_noPreserveVars		; $6757
-	and $0f			; $675a
-	ld b,a			; $675c
-	ld h,d			; $675d
-	ld l,Enemy.var35		; $675e
-	ld a,(hl)		; $6760
-	add a			; $6761
-	add $06			; $6762
-	cp b			; $6764
-	ld l,Enemy.counter2		; $6765
-	ld (hl),90		; $6767
-	ret nc			; $6769
+	call getRandomNumber_noPreserveVars
+	and $0f
+	ld b,a
+	ld h,d
+	ld l,Enemy.var35
+	ld a,(hl)
+	add a
+	add $06
+	cp b
+	ld l,Enemy.counter2
+	ld (hl),90
+	ret nc
 
 	ld (hl),$00 ; [counter2]
-	dec l			; $676c
+	dec l
 	ld (hl),180 ; [counter1]
-	ld l,Enemy.var36		; $676f
-	ld (hl),$01		; $6771
+	ld l,Enemy.var36
+	ld (hl),$01
 
-	ld b,PARTID_VERAN_PROJECTILE		; $6773
-	call _ecom_spawnProjectile		; $6775
-	ld a,$06		; $6778
-	call enemySetAnimation		; $677a
+	ld b,PARTID_VERAN_PROJECTILE
+	call _ecom_spawnProjectile
+	ld a,$06
+	call enemySetAnimation
 
 @label_10_230:
-	pop hl			; $677d
-	call _ecom_decCounter1		; $677e
-	jp nz,enemyAnimate		; $6781
+	pop hl
+	call _ecom_decCounter1
+	jp nz,enemyAnimate
 
-	inc l			; $6784
+	inc l
 	ld (hl),120 ; [counter2]
-	ld l,Enemy.var36		; $6787
-	ld (hl),$00		; $6789
-	ld a,$05		; $678b
-	jp enemySetAnimation		; $678d
+	ld l,Enemy.var36
+	ld (hl),$00
+	ld a,$05
+	jp enemySetAnimation
 
 ; Baby ball attack
 attack2:
-	ld h,d			; $6790
-	ld l,Enemy.var36		; $6791
-	bit 0,(hl)		; $6793
-	jr nz,@label_10_231	; $6795
+	ld h,d
+	ld l,Enemy.var36
+	bit 0,(hl)
+	jr nz,@label_10_231
 
-	call _veranFairy_checkWithinBoundary		; $6797
-	ret nc			; $679a
+	call _veranFairy_checkWithinBoundary
+	ret nc
 
-	ld (hl),$01		; $679b
-	ld l,Enemy.counter1		; $679d
-	ld (hl),30		; $679f
-	ld b,PARTID_BABY_BALL		; $67a1
-	call _ecom_spawnProjectile		; $67a3
-	ld a,$06		; $67a6
-	call enemySetAnimation		; $67a8
+	ld (hl),$01
+	ld l,Enemy.counter1
+	ld (hl),30
+	ld b,PARTID_BABY_BALL
+	call _ecom_spawnProjectile
+	ld a,$06
+	call enemySetAnimation
 
 @label_10_231:
-	pop hl			; $67ab
-	call _ecom_decCounter1		; $67ac
-	jp nz,enemyAnimate		; $67af
+	pop hl
+	call _ecom_decCounter1
+	jp nz,enemyAnimate
 
-	inc l			; $67b2
-	ld (hl),$f0		; $67b3
-	ld l,Enemy.var36		; $67b5
-	ld (hl),$00		; $67b7
-	ld a,$05		; $67b9
-	jp enemySetAnimation		; $67bb
+	inc l
+	ld (hl),$f0
+	ld l,Enemy.var36
+	ld (hl),$00
+	ld a,$05
+	jp enemySetAnimation
 
 ;;
 ; @param[out]	cflag	nc if veran is outside the room boundary
 ; @addr{67be}
 _veranFairy_checkWithinBoundary:
-	ld e,Enemy.yh		; $67be
-	ld a,(de)		; $67c0
-	sub $10			; $67c1
-	cp $90			; $67c3
-	ret nc			; $67c5
-	ld e,Enemy.xh		; $67c6
-	ld a,(de)		; $67c8
-	sub $10			; $67c9
-	cp $d0			; $67cb
-	ret			; $67cd
+	ld e,Enemy.yh
+	ld a,(de)
+	sub $10
+	cp $90
+	ret nc
+	ld e,Enemy.xh
+	ld a,(de)
+	sub $10
+	cp $d0
+	ret
 
 
 ; ==============================================================================
@@ -2938,9 +2938,9 @@ _veranFairy_checkWithinBoundary:
 ;   var36: Written to by shield hands?
 ; ==============================================================================
 enemyCode07:
-	ld e,Enemy.state		; $67ce
-	ld a,(de)		; $67d0
-	rst_jumpTable			; $67d1
+	ld e,Enemy.state
+	ld a,(de)
+	rst_jumpTable
 	.dw _ramrock_state0
 	.dw _ramrock_state_stub
 	.dw _ramrock_state_stub
@@ -2957,28 +2957,28 @@ enemyCode07:
 
 
 _ramrock_state0:
-	ld a,ENEMYID_RAMROCK		; $67ec
-	ld b,PALH_83		; $67ee
-	call _enemyBoss_initializeRoom		; $67f0
-	ld a,SPEED_100		; $67f3
-	call _ecom_setSpeedAndState8		; $67f5
-	ld a,$04		; $67f8
-	call enemySetAnimation		; $67fa
-	ld b,$00		; $67fd
-	ld c,$0c		; $67ff
-	call _enemyBoss_spawnShadow		; $6801
-	jp objectSetVisible81		; $6804
+	ld a,ENEMYID_RAMROCK
+	ld b,PALH_83
+	call _enemyBoss_initializeRoom
+	ld a,SPEED_100
+	call _ecom_setSpeedAndState8
+	ld a,$04
+	call enemySetAnimation
+	ld b,$00
+	ld c,$0c
+	call _enemyBoss_spawnShadow
+	jp objectSetVisible81
 
 
 _ramrock_state_stub:
-	ret			; $6807
+	ret
 
 
 ; Cutscene before fight
 _ramrock_state8:
-	inc e			; $6808
-	ld a,(de)		; $6809
-	rst_jumpTable			; $680a
+	inc e
+	ld a,(de)
+	rst_jumpTable
 	.dw _ramrock_state8_substate0
 	.dw _ramrock_state8_substate1
 	.dw _ramrock_state8_substate2
@@ -2987,154 +2987,154 @@ _ramrock_state8:
 	.dw _ramrock_state8_substate5
 
 _ramrock_state8_substate0:
-	ld a,DISABLE_LINK		; $6817
-	ld (wDisabledObjects),a		; $6819
-	ld (wMenuDisabled),a		; $681c
-	ld a,($cc93)		; $681f
-	or a			; $6822
-	ret nz			; $6823
+	ld a,DISABLE_LINK
+	ld (wDisabledObjects),a
+	ld (wMenuDisabled),a
+	ld a,($cc93)
+	or a
+	ret nz
 
-	ld e,Enemy.stunCounter		; $6824
-	ld a,60		; $6826
-	ld (de),a		; $6828
-	jp _ecom_incState2		; $6829
+	ld e,Enemy.stunCounter
+	ld a,60
+	ld (de),a
+	jp _ecom_incState2
 
 _ramrock_state8_substate1:
-	ld e,Enemy.stunCounter		; $682c
-	ld a,(de)		; $682e
-	or a			; $682f
-	ret nz			; $6830
+	ld e,Enemy.stunCounter
+	ld a,(de)
+	or a
+	ret nz
 
-	ld bc,-$80		; $6831
-	call objectSetSpeedZ		; $6834
-	ld c,$00		; $6837
-	call objectUpdateSpeedZ_paramC		; $6839
-	ld e,Enemy.zh		; $683c
-	ld a,(de)		; $683e
-	cp $f9			; $683f
-	ret nz			; $6841
+	ld bc,-$80
+	call objectSetSpeedZ
+	ld c,$00
+	call objectUpdateSpeedZ_paramC
+	ld e,Enemy.zh
+	ld a,(de)
+	cp $f9
+	ret nz
 
-	ld c,$01		; $6842
+	ld c,$01
 @spawnArm:
-	ld b,ENEMYID_RAMROCK_ARMS		; $6844
-	call _ecom_spawnEnemyWithSubid01		; $6846
-	ld l,Enemy.subid		; $6849
-	ld (hl),c		; $684b
-	ld l,Enemy.relatedObj1		; $684c
-	ld (hl),Enemy.start		; $684e
-	inc l			; $6850
-	ld (hl),d		; $6851
-	dec c			; $6852
-	jr z,@spawnArm	; $6853
+	ld b,ENEMYID_RAMROCK_ARMS
+	call _ecom_spawnEnemyWithSubid01
+	ld l,Enemy.subid
+	ld (hl),c
+	ld l,Enemy.relatedObj1
+	ld (hl),Enemy.start
+	inc l
+	ld (hl),d
+	dec c
+	jr z,@spawnArm
 
-	jp _ecom_incState2		; $6855
+	jp _ecom_incState2
 
 _ramrock_state8_substate2:
-	ld e,Enemy.subid		; $6858
-	ld a,(de)		; $685a
-	cp $02			; $685b
-	ret nz			; $685d
-	ld e,Enemy.counter1		; $685e
-	ld a,$02		; $6860
-	ld (de),a		; $6862
-	call _ecom_incState2		; $6863
-	ld a,PALH_84		; $6866
-	jp loadPaletteHeader		; $6868
+	ld e,Enemy.subid
+	ld a,(de)
+	cp $02
+	ret nz
+	ld e,Enemy.counter1
+	ld a,$02
+	ld (de),a
+	call _ecom_incState2
+	ld a,PALH_84
+	jp loadPaletteHeader
 
 _ramrock_state8_substate3:
-	call _ecom_decCounter1		; $686b
-	ret nz			; $686e
-	call _ecom_incState2		; $686f
-	ld a,SND_SWORD_OBTAINED		; $6872
-	call playSound		; $6874
-	ld l,Enemy.subid		; $6877
-	inc (hl)		; $6879
-	ld a,PALH_83		; $687a
-	jp loadPaletteHeader		; $687c
+	call _ecom_decCounter1
+	ret nz
+	call _ecom_incState2
+	ld a,SND_SWORD_OBTAINED
+	call playSound
+	ld l,Enemy.subid
+	inc (hl)
+	ld a,PALH_83
+	jp loadPaletteHeader
 
 _ramrock_state8_substate4:
-	call enemyAnimate		; $687f
-	ld e,Enemy.animParameter		; $6882
-	ld a,(de)		; $6884
-	or a			; $6885
-	ret z			; $6886
-	call _ecom_incState2		; $6887
-	ld l,Enemy.angle		; $688a
-	ld (hl),$00		; $688c
-	ld a,$00		; $688e
-	call enemySetAnimation		; $6890
+	call enemyAnimate
+	ld e,Enemy.animParameter
+	ld a,(de)
+	or a
+	ret z
+	call _ecom_incState2
+	ld l,Enemy.angle
+	ld (hl),$00
+	ld a,$00
+	call enemySetAnimation
 
 _ramrock_state8_substate5:
-	call enemyAnimate		; $6893
-	call objectApplySpeed		; $6896
-	ld e,Enemy.yh		; $6899
-	ld a,(de)		; $689b
-	cp $41			; $689c
-	ret nc			; $689e
+	call enemyAnimate
+	call objectApplySpeed
+	ld e,Enemy.yh
+	ld a,(de)
+	cp $41
+	ret nc
 
 	; Fight begins
-	xor a			; $689f
-	ld (wDisabledObjects),a		; $68a0
-	ld (wMenuDisabled),a		; $68a3
-	call _ecom_incState		; $68a6
-	ld l,$89		; $68a9
-	ld (hl),$08		; $68ab
-	ld l,$82		; $68ad
-	ld (hl),$03		; $68af
-	ld a,MUS_BOSS		; $68b1
-	jp playSound		; $68b3
+	xor a
+	ld (wDisabledObjects),a
+	ld (wMenuDisabled),a
+	call _ecom_incState
+	ld l,$89
+	ld (hl),$08
+	ld l,$82
+	ld (hl),$03
+	ld a,MUS_BOSS
+	jp playSound
 
 
 ; "Fist" phase
 _ramrock_swordPhase:
-	call enemyAnimate		; $68b6
-	ld e,Enemy.var35		; $68b9
-	ld a,(de)		; $68bb
-	cp $03			; $68bc
-	jr nc,+			; $68be
-	jp _ramrock_updateHorizontalMovement		; $68c0
+	call enemyAnimate
+	ld e,Enemy.var35
+	ld a,(de)
+	cp $03
+	jr nc,+
+	jp _ramrock_updateHorizontalMovement
 +
-	xor a			; $68c3
-	ld (de),a		; $68c4
-	ld bc,$0000		; $68c5
-	call objectSetSpeedZ		; $68c8
-	call _ecom_incState		; $68cb
-	inc l			; $68ce
-	ld (hl),$00		; $68cf
-	ld l,Enemy.subid		; $68d1
-	inc (hl)		; $68d3
-	ld l,Enemy.counter2		; $68d4
-	ld (hl),30		; $68d6
-	ld a,$04		; $68d8
-	jp enemySetAnimation		; $68da
+	xor a
+	ld (de),a
+	ld bc,$0000
+	call objectSetSpeedZ
+	call _ecom_incState
+	inc l
+	ld (hl),$00
+	ld l,Enemy.subid
+	inc (hl)
+	ld l,Enemy.counter2
+	ld (hl),30
+	ld a,$04
+	jp enemySetAnimation
 
 
 ; "Bomb" phase
 _ramrock_bombPhase:
-	call @func_68fe		; $68dd
+	call @func_68fe
 
 	; Stop movement of any bombs that touch ramrock
-	ld c,ITEMID_BOMB		; $68e0
-	call findItemWithID		; $68e2
-	ret nz			; $68e5
-	call checkObjectsCollided		; $68e6
-	jr nc,++		; $68e9
-	ld l,Item.angle		; $68eb
-	ld (hl),$ff		; $68ed
+	ld c,ITEMID_BOMB
+	call findItemWithID
+	ret nz
+	call checkObjectsCollided
+	jr nc,++
+	ld l,Item.angle
+	ld (hl),$ff
 ++
-	ld c,ITEMID_BOMB		; $68ef
-	call findItemWithID_startingAfterH		; $68f1
-	ret nz			; $68f4
-	call checkObjectsCollided		; $68f5
-	ret nc			; $68f8
-	ld l,Item.angle		; $68f9
-	ld (hl),$ff		; $68fb
-	ret			; $68fd
+	ld c,ITEMID_BOMB
+	call findItemWithID_startingAfterH
+	ret nz
+	call checkObjectsCollided
+	ret nc
+	ld l,Item.angle
+	ld (hl),$ff
+	ret
 
 @func_68fe:
-	inc e			; $68fe
-	ld a,(de)		; $68ff
-	rst_jumpTable			; $6900
+	inc e
+	ld a,(de)
+	rst_jumpTable
 	.dw _ramrock_bombPhase_substate0
 	.dw _ramrock_bombPhase_substate1
 	.dw _ramrock_bombPhase_substate2
@@ -3142,202 +3142,202 @@ _ramrock_bombPhase:
 	.dw _ramrock_bombPhase_substate4
 
 _ramrock_bombPhase_substate0:
-	ld c,$10		; $690b
-	call objectUpdateSpeedZ_paramC		; $690d
-	ld e,Enemy.subid		; $6910
-	ld a,(de)		; $6912
-	cp $06			; $6913
-	ret nz			; $6915
-	call _ecom_decCounter2		; $6916
-	ret nz			; $6919
+	ld c,$10
+	call objectUpdateSpeedZ_paramC
+	ld e,Enemy.subid
+	ld a,(de)
+	cp $06
+	ret nz
+	call _ecom_decCounter2
+	ret nz
 
 	; Spawn arms
-	ld b,ENEMYID_RAMROCK_ARMS		; $691a
-	call _ecom_spawnEnemyWithSubid01		; $691c
-	ld l,Enemy.subid		; $691f
-	ld (hl),$02		; $6921
-	ld l,Enemy.relatedObj1		; $6923
-	ld (hl),Enemy.start		; $6925
-	inc l			; $6927
-	ld (hl),d		; $6928
+	ld b,ENEMYID_RAMROCK_ARMS
+	call _ecom_spawnEnemyWithSubid01
+	ld l,Enemy.subid
+	ld (hl),$02
+	ld l,Enemy.relatedObj1
+	ld (hl),Enemy.start
+	inc l
+	ld (hl),d
 
-	ld b,ENEMYID_RAMROCK_ARMS		; $6929
-	call _ecom_spawnEnemyWithSubid01		; $692b
-	ld l,Enemy.subid		; $692e
-	ld (hl),$03		; $6930
-	ld l,Enemy.relatedObj1		; $6932
-	ld (hl),Enemy.start		; $6934
-	inc l			; $6936
-	ld (hl),d		; $6937
+	ld b,ENEMYID_RAMROCK_ARMS
+	call _ecom_spawnEnemyWithSubid01
+	ld l,Enemy.subid
+	ld (hl),$03
+	ld l,Enemy.relatedObj1
+	ld (hl),Enemy.start
+	inc l
+	ld (hl),d
 
-	jp _ecom_incState2		; $6938
+	jp _ecom_incState2
 
 _ramrock_bombPhase_substate1:
-	ld e,Enemy.subid		; $693b
-	ld a,(de)		; $693d
-	cp $07			; $693e
-	ret nz			; $6940
+	ld e,Enemy.subid
+	ld a,(de)
+	cp $07
+	ret nz
 
-	call enemyAnimate		; $6941
-	ld e,Enemy.animParameter		; $6944
-	ld a,(de)		; $6946
-	or a			; $6947
-	ret z			; $6948
-	ld bc,-$80		; $6949
-	call objectSetSpeedZ		; $694c
-	ld l,Enemy.subid		; $694f
-	ld (hl),$08		; $6951
-	ld a,$01		; $6953
-	call enemySetAnimation		; $6955
-	jp _ecom_incState2		; $6958
+	call enemyAnimate
+	ld e,Enemy.animParameter
+	ld a,(de)
+	or a
+	ret z
+	ld bc,-$80
+	call objectSetSpeedZ
+	ld l,Enemy.subid
+	ld (hl),$08
+	ld a,$01
+	call enemySetAnimation
+	jp _ecom_incState2
 
 _ramrock_bombPhase_substate2:
-	ld c,$00		; $695b
-	call objectUpdateSpeedZ_paramC		; $695d
-	ld e,Enemy.zh		; $6960
-	ld a,(de)		; $6962
-	cp $f9			; $6963
-	ret nz			; $6965
+	ld c,$00
+	call objectUpdateSpeedZ_paramC
+	ld e,Enemy.zh
+	ld a,(de)
+	cp $f9
+	ret nz
 
-	ld a,SND_SWORD_OBTAINED		; $6966
-	call playSound		; $6968
+	ld a,SND_SWORD_OBTAINED
+	call playSound
 
 _ramrock_bombPhase_gotoSubstate3:
-	ld h,d			; $696b
-	ld l,Enemy.counter1		; $696c
-	ld a,$04		; $696e
-	ldi (hl),a		; $6970
+	ld h,d
+	ld l,Enemy.counter1
+	ld a,$04
+	ldi (hl),a
 	ld (hl),50 ; [counter2]
-	ld l,Enemy.state2		; $6973
-	ld (hl),$03		; $6975
-	ret			; $6977
+	ld l,Enemy.state2
+	ld (hl),$03
+	ret
 
 _ramrock_bombPhase_substate3:
-	ld e,Enemy.var38		; $6978
-	ld a,(de)		; $697a
-	sub $01			; $697b
-	ld (de),a		; $697d
-	jr nc,++		; $697e
-	ld a,30			; $6980
-	ld (de),a		; $6982
-	ld a,SND_BEAM1		; $6983
-	call playSound		; $6985
+	ld e,Enemy.var38
+	ld a,(de)
+	sub $01
+	ld (de),a
+	jr nc,++
+	ld a,30
+	ld (de),a
+	ld a,SND_BEAM1
+	call playSound
 ++
-	ld e,Enemy.var35		; $6988
-	ld a,(de)		; $698a
-	cp $03			; $698b
-	jr nc,_label_10_237	; $698d
+	ld e,Enemy.var35
+	ld a,(de)
+	cp $03
+	jr nc,_label_10_237
 
-	call enemyAnimate		; $698f
-	call _ecom_applyVelocityForSideviewEnemy		; $6992
-	call _ecom_decCounter2		; $6995
-	jr z,_label_10_236	; $6998
+	call enemyAnimate
+	call _ecom_applyVelocityForSideviewEnemy
+	call _ecom_decCounter2
+	jr z,_label_10_236
 
-	call _ecom_decCounter1		; $699a
-	ret nz			; $699d
+	call _ecom_decCounter1
+	ret nz
 
-	ld (hl),$04		; $699e
-	call objectGetAngleTowardLink		; $69a0
-	jp objectNudgeAngleTowards		; $69a3
+	ld (hl),$04
+	call objectGetAngleTowardLink
+	jp objectNudgeAngleTowards
 
 _label_10_236:
-	call _ecom_incState2		; $69a6
-	ld a,$02		; $69a9
-	jp enemySetAnimation		; $69ab
+	call _ecom_incState2
+	ld a,$02
+	jp enemySetAnimation
 
 _label_10_237:
-	call _ecom_incState		; $69ae
-	inc l			; $69b1
-	xor a			; $69b2
-	ld (hl),a		; $69b3
-	ld l,Enemy.var35		; $69b4
-	ld (hl),a		; $69b6
-	ld l,Enemy.subid		; $69b7
-	ld (hl),$0a		; $69b9
-	ld a,$04		; $69bb
-	jp enemySetAnimation		; $69bd
+	call _ecom_incState
+	inc l
+	xor a
+	ld (hl),a
+	ld l,Enemy.var35
+	ld (hl),a
+	ld l,Enemy.subid
+	ld (hl),$0a
+	ld a,$04
+	jp enemySetAnimation
 
 _ramrock_bombPhase_substate4:
-	call enemyAnimate		; $69c0
-	ld h,d			; $69c3
-	ld l,Enemy.subid		; $69c4
-	ld (hl),$08		; $69c6
-	ld e,Enemy.animParameter		; $69c8
-	ld a,(de)		; $69ca
-	cp $01			; $69cb
-	jr nz,++		; $69cd
-	ld l,Enemy.subid		; $69cf
-	ld (hl),$09		; $69d1
-	ld a,SND_STRONG_POUND		; $69d3
-	jp playSound		; $69d5
+	call enemyAnimate
+	ld h,d
+	ld l,Enemy.subid
+	ld (hl),$08
+	ld e,Enemy.animParameter
+	ld a,(de)
+	cp $01
+	jr nz,++
+	ld l,Enemy.subid
+	ld (hl),$09
+	ld a,SND_STRONG_POUND
+	jp playSound
 ++
-	rla			; $69d8
-	ret nc			; $69d9
-	ld a,$01		; $69da
-	call enemySetAnimation		; $69dc
-	jp _ramrock_bombPhase_gotoSubstate3		; $69df
+	rla
+	ret nc
+	ld a,$01
+	call enemySetAnimation
+	jp _ramrock_bombPhase_gotoSubstate3
 
 
 ; "Seed" phase
 _ramrock_seedPhase:
-	ld h,d			; $69e2
-	ld l,Enemy.state2		; $69e3
-	ld a,(hl)		; $69e5
-	or a			; $69e6
-	jr z,@runSubstate	; $69e7
-	dec a			; $69e9
-	jr z,@runSubstate	; $69ea
+	ld h,d
+	ld l,Enemy.state2
+	ld a,(hl)
+	or a
+	jr z,@runSubstate
+	dec a
+	jr z,@runSubstate
 
-	ld e,Enemy.var2a		; $69ec
-	ld a,(de)		; $69ee
-	cp $80|ITEMCOLLISION_MYSTERY_SEED			; $69ef
-	jr c,@noSeedCollision	; $69f1
-	cp $80|ITEMCOLLISION_GALE_SEED+1			; $69f3
-	jr c,@seedCollision	; $69f5
+	ld e,Enemy.var2a
+	ld a,(de)
+	cp $80|ITEMCOLLISION_MYSTERY_SEED
+	jr c,@noSeedCollision
+	cp $80|ITEMCOLLISION_GALE_SEED+1
+	jr c,@seedCollision
 
 @noSeedCollision:
-	rlca			; $69f7
-	jr nc,@noCollision	; $69f8
+	rlca
+	jr nc,@noCollision
 
 @otherCollision:
-	ld l,Enemy.subid		; $69fa
-	ld (hl),$0d		; $69fc
-	ld l,Enemy.var36		; $69fe
-	ld (hl),$10		; $6a00
-	jr @runSubstate		; $6a02
+	ld l,Enemy.subid
+	ld (hl),$0d
+	ld l,Enemy.var36
+	ld (hl),$10
+	jr @runSubstate
 
 @seedCollision:
-	ld l,Enemy.invincibilityCounter		; $6a04
-	ld a,(hl)		; $6a06
-	or a			; $6a07
-	jr nz,@otherCollision	; $6a08
+	ld l,Enemy.invincibilityCounter
+	ld a,(hl)
+	or a
+	jr nz,@otherCollision
 
 	ld (hl),60 ; [invincibilityCounter]
-	ld l,Enemy.var35		; $6a0c
-	ld a,(hl)		; $6a0e
-	cp $03			; $6a0f
-	jr z,@seedPhaseEnd	; $6a11
+	ld l,Enemy.var35
+	ld a,(hl)
+	cp $03
+	jr z,@seedPhaseEnd
 
-	inc (hl)		; $6a13
-	ld a,SND_BOSS_DAMAGE		; $6a14
-	call playSound		; $6a16
-	jr @runSubstate		; $6a19
+	inc (hl)
+	ld a,SND_BOSS_DAMAGE
+	call playSound
+	jr @runSubstate
 
 @noCollision:
-	ld l,Enemy.var36		; $6a1b
-	ld a,(hl)		; $6a1d
-	or a			; $6a1e
-	jr z,@runSubstate	; $6a1f
-	dec (hl)		; $6a21
-	jr nz,@runSubstate	; $6a22
+	ld l,Enemy.var36
+	ld a,(hl)
+	or a
+	jr z,@runSubstate
+	dec (hl)
+	jr nz,@runSubstate
 
-	ld l,Enemy.subid		; $6a24
-	ld (hl),$0c		; $6a26
+	ld l,Enemy.subid
+	ld (hl),$0c
 
 @runSubstate:
-	ld e,Enemy.state2		; $6a28
-	ld a,(de)		; $6a2a
-	rst_jumpTable			; $6a2b
+	ld e,Enemy.state2
+	ld a,(de)
+	rst_jumpTable
 	.dw _ramrock_seedPhase_substate0
 	.dw _ramrock_seedPhase_substate1
 	.dw _ramrock_seedPhase_substate2
@@ -3347,208 +3347,208 @@ _ramrock_seedPhase:
 	.dw _ramrock_seedPhase_substate6
 
 @seedPhaseEnd:
-	ld l,Enemy.subid		; $6a3a
-	ld (hl),$10		; $6a3c
-	call _ecom_incState		; $6a3e
-	inc l			; $6a41
-	xor a			; $6a42
-	ld (hl),a		; $6a43
-	ld l,Enemy.var35		; $6a44
-	ld (hl),a		; $6a46
-	ret			; $6a47
+	ld l,Enemy.subid
+	ld (hl),$10
+	call _ecom_incState
+	inc l
+	xor a
+	ld (hl),a
+	ld l,Enemy.var35
+	ld (hl),a
+	ret
 
 _ramrock_seedPhase_substate0:
-	ld h,d			; $6a48
-	ld bc,$4878		; $6a49
-	ld l,Enemy.yh		; $6a4c
-	ldi a,(hl)		; $6a4e
-	cp b			; $6a4f
-	jr nz,@updateMovement	; $6a50
+	ld h,d
+	ld bc,$4878
+	ld l,Enemy.yh
+	ldi a,(hl)
+	cp b
+	jr nz,@updateMovement
 
-	inc l			; $6a52
-	ld a,(hl)		; $6a53
-	cp c			; $6a54
-	jr nz,@updateMovement	; $6a55
+	inc l
+	ld a,(hl)
+	cp c
+	jr nz,@updateMovement
 
-	ld l,Enemy.subid		; $6a57
-	inc (hl)		; $6a59
-	ld l,Enemy.counter2		; $6a5a
-	ld (hl),$02		; $6a5c
+	ld l,Enemy.subid
+	inc (hl)
+	ld l,Enemy.counter2
+	ld (hl),$02
 
-	ld c,$04		; $6a5e
+	ld c,$04
 @spawnArm:
-	ld b,ENEMYID_RAMROCK_ARMS		; $6a60
-	call _ecom_spawnEnemyWithSubid01		; $6a62
-	ld l,Enemy.subid		; $6a65
-	ld (hl),c		; $6a67
-	ld l,Enemy.relatedObj1		; $6a68
-	ld (hl),Enemy.start		; $6a6a
-	inc l			; $6a6c
-	ld (hl),d		; $6a6d
-	inc c			; $6a6e
-	ld a,c			; $6a6f
-	cp $05			; $6a70
-	jr z,@spawnArm	; $6a72
+	ld b,ENEMYID_RAMROCK_ARMS
+	call _ecom_spawnEnemyWithSubid01
+	ld l,Enemy.subid
+	ld (hl),c
+	ld l,Enemy.relatedObj1
+	ld (hl),Enemy.start
+	inc l
+	ld (hl),d
+	inc c
+	ld a,c
+	cp $05
+	jr z,@spawnArm
 
-	jp _ecom_incState2		; $6a74
+	jp _ecom_incState2
 
 @updateMovement:
-	call objectGetRelativeAngle		; $6a77
-	ld e,Enemy.angle		; $6a7a
-	ld (de),a		; $6a7c
-	jp objectApplySpeed		; $6a7d
+	call objectGetRelativeAngle
+	ld e,Enemy.angle
+	ld (de),a
+	jp objectApplySpeed
 
 _ramrock_seedPhase_substate1:
-	ld e,Enemy.subid		; $6a80
-	ld a,(de)		; $6a82
-	cp $0c			; $6a83
-	ret nz			; $6a85
+	ld e,Enemy.subid
+	ld a,(de)
+	cp $0c
+	ret nz
 
-	ld e,Enemy.counter2		; $6a86
-	ld a,(de)		; $6a88
-	or a			; $6a89
-	jr nz,_label_10_248	; $6a8a
+	ld e,Enemy.counter2
+	ld a,(de)
+	or a
+	jr nz,_label_10_248
 
-	call enemyAnimate		; $6a8c
-	ld e,Enemy.animParameter		; $6a8f
-	ld a,(de)		; $6a91
-	or a			; $6a92
-	ret z			; $6a93
+	call enemyAnimate
+	ld e,Enemy.animParameter
+	ld a,(de)
+	or a
+	ret z
 
 _ramrock_seedPhase_6a94:
-	ld e,Enemy.subid		; $6a94
-	ld a,$0c		; $6a96
-	ld (de),a		; $6a98
+	ld e,Enemy.subid
+	ld a,$0c
+	ld (de),a
 
 _ramrock_seedPhase_resumeNormalMovement:
-	ld h,d			; $6a99
-	ld l,Enemy.state2		; $6a9a
-	ld (hl),$02		; $6a9c
-	ld l,Enemy.counter2		; $6a9e
-	ld (hl),120		; $6aa0
-	ld a,$00		; $6aa2
-	jp enemySetAnimation		; $6aa4
+	ld h,d
+	ld l,Enemy.state2
+	ld (hl),$02
+	ld l,Enemy.counter2
+	ld (hl),120
+	ld a,$00
+	jp enemySetAnimation
 
 _label_10_248:
-	call _ecom_decCounter2		; $6aa7
-	ret nz			; $6aaa
-	ld l,Enemy.angle		; $6aab
-	ld (hl),$08		; $6aad
-	ld a,PALH_83		; $6aaf
-	call loadPaletteHeader		; $6ab1
-	ld a,SND_SWORD_OBTAINED		; $6ab4
-	jp playSound		; $6ab6
+	call _ecom_decCounter2
+	ret nz
+	ld l,Enemy.angle
+	ld (hl),$08
+	ld a,PALH_83
+	call loadPaletteHeader
+	ld a,SND_SWORD_OBTAINED
+	jp playSound
 
 ; Moving normally
 _ramrock_seedPhase_substate2:
-	call enemyAnimate		; $6ab9
-	call _ramrock_updateHorizontalMovement		; $6abc
+	call enemyAnimate
+	call _ramrock_updateHorizontalMovement
 
-	call getRandomNumber		; $6abf
-	rrca			; $6ac2
-	ret nc			; $6ac3
-	call _ecom_decCounter2		; $6ac4
-	ret nz			; $6ac7
+	call getRandomNumber
+	rrca
+	ret nc
+	call _ecom_decCounter2
+	ret nz
 
-	ld e,Enemy.subid		; $6ac8
-	ld a,(de)		; $6aca
-	cp $0c			; $6acb
-	ret nz			; $6acd
+	ld e,Enemy.subid
+	ld a,(de)
+	cp $0c
+	ret nz
 
-	call getRandomNumber		; $6ace
-	and $03			; $6ad1
-	ld l,e			; $6ad3
-	jr z,@gotoNextSubstate	; $6ad4
+	call getRandomNumber
+	and $03
+	ld l,e
+	jr z,@gotoNextSubstate
 
 	ld (hl),$0f ; [counter2]
-	ld l,Enemy.state2		; $6ad8
-	ld (hl),$06		; $6ada
-	ld l,Enemy.counter1		; $6adc
-	ld (hl),60		; $6ade
+	ld l,Enemy.state2
+	ld (hl),$06
+	ld l,Enemy.counter1
+	ld (hl),60
 
-	ld b,PARTID_RAMROCK_SEED_FORM_ORB		; $6ae0
-	call _ecom_spawnProjectile		; $6ae2
-	ld bc,$1000		; $6ae5
-	call objectCopyPositionWithOffset		; $6ae8
-	jr @setAnimation0		; $6aeb
+	ld b,PARTID_RAMROCK_SEED_FORM_ORB
+	call _ecom_spawnProjectile
+	ld bc,$1000
+	call objectCopyPositionWithOffset
+	jr @setAnimation0
 
 @gotoNextSubstate:
-	ld (hl),$0e		; $6aed
-	ld l,Enemy.angle		; $6aef
-	ld (hl),$18		; $6af1
-	call _ecom_incState2		; $6af3
+	ld (hl),$0e
+	ld l,Enemy.angle
+	ld (hl),$18
+	call _ecom_incState2
 
 @setAnimation0:
-	ld a,$00		; $6af6
-	jp enemySetAnimation		; $6af8
+	ld a,$00
+	jp enemySetAnimation
 
 _ramrock_seedPhase_substate3:
-	ld e,Enemy.subid		; $6afb
-	ld a,(de)		; $6afd
-	cp $0e			; $6afe
-	jr nz,_ramrock_seedPhase_resumeNormalMovement	; $6b00
-	call _ramrock_updateHorizontalMovement		; $6b02
-	ret nz			; $6b05
+	ld e,Enemy.subid
+	ld a,(de)
+	cp $0e
+	jr nz,_ramrock_seedPhase_resumeNormalMovement
+	call _ramrock_updateHorizontalMovement
+	ret nz
 
-	call _ecom_incState2		; $6b06
-	ld l,Enemy.counter1		; $6b09
-	ld (hl),180		; $6b0b
-	inc l			; $6b0d
+	call _ecom_incState2
+	ld l,Enemy.counter1
+	ld (hl),180
+	inc l
 	ld (hl),30 ; [counter2]
 
-	ld b,PARTID_RAMROCK_SEED_FORM_LASER		; $6b10
-	call _ecom_spawnProjectile		; $6b12
-	ld l,Part.subid		; $6b15
-	ld (hl),$0e		; $6b17
-	ld bc,$0400		; $6b19
-	jp objectCopyPositionWithOffset		; $6b1c
+	ld b,PARTID_RAMROCK_SEED_FORM_LASER
+	call _ecom_spawnProjectile
+	ld l,Part.subid
+	ld (hl),$0e
+	ld bc,$0400
+	jp objectCopyPositionWithOffset
 
 ; Firing energy beam
 _ramrock_seedPhase_substate4:
-	ld e,Enemy.subid		; $6b1f
-	ld a,(de)		; $6b21
-	cp $0e			; $6b22
-	jp nz,_ramrock_seedPhase_resumeNormalMovement		; $6b24
+	ld e,Enemy.subid
+	ld a,(de)
+	cp $0e
+	jp nz,_ramrock_seedPhase_resumeNormalMovement
 
-	call _ecom_decCounter2		; $6b27
-	ret nz			; $6b2a
-	call _ecom_decCounter1		; $6b2b
-	jr z,@gotoNextSubstate	; $6b2e
+	call _ecom_decCounter2
+	ret nz
+	call _ecom_decCounter1
+	jr z,@gotoNextSubstate
 
-	ld a,(hl)		; $6b30
-	and $07			; $6b31
-	ld a,SND_SWORDBEAM		; $6b33
-	call z,playSound		; $6b35
-	jp _ramrock_updateHorizontalMovement		; $6b38
+	ld a,(hl)
+	and $07
+	ld a,SND_SWORDBEAM
+	call z,playSound
+	jp _ramrock_updateHorizontalMovement
 
 @gotoNextSubstate:
-	call _ecom_incState2		; $6b3b
-	ld l,Enemy.counter1		; $6b3e
-	ld (hl),90		; $6b40
-	ld l,Enemy.subid		; $6b42
-	ld (hl),$0c		; $6b44
+	call _ecom_incState2
+	ld l,Enemy.counter1
+	ld (hl),90
+	ld l,Enemy.subid
+	ld (hl),$0c
 
 _ramrock_seedPhase_substate5:
-	call _ecom_decCounter1		; $6b46
-	ret nz			; $6b49
-	jp _ramrock_seedPhase_resumeNormalMovement		; $6b4a
+	call _ecom_decCounter1
+	ret nz
+	jp _ramrock_seedPhase_resumeNormalMovement
 
 _ramrock_seedPhase_substate6:
-	ld e,Enemy.subid		; $6b4d
-	ld a,(de)		; $6b4f
-	cp $0f			; $6b50
-	jr nz,++		; $6b52
-	call _ecom_decCounter1		; $6b54
-	ret nz			; $6b57
+	ld e,Enemy.subid
+	ld a,(de)
+	cp $0f
+	jr nz,++
+	call _ecom_decCounter1
+	ret nz
 ++
-	jp _ramrock_seedPhase_6a94		; $6b58
+	jp _ramrock_seedPhase_6a94
 
 
 ; "Bomb" phase
 _ramrock_glovePhase:
-	inc e			; $6b5b
-	ld a,(de)		; $6b5c
-	rst_jumpTable			; $6b5d
+	inc e
+	ld a,(de)
+	rst_jumpTable
 	.dw _ramrock_glovePhase_substate0
 	.dw _ramrock_glovePhase_substate1
 	.dw _ramrock_glovePhase_substate2
@@ -3556,208 +3556,208 @@ _ramrock_glovePhase:
 	.dw _ramrock_glovePhase_substate4
 
 _ramrock_glovePhase_substate0:
-	ld h,d			; $6b68
-	ld bc,$4878		; $6b69
-	ld l,Enemy.yh		; $6b6c
-	ldi a,(hl)		; $6b6e
-	cp b			; $6b6f
-	jr nz,@updateMovement	; $6b70
+	ld h,d
+	ld bc,$4878
+	ld l,Enemy.yh
+	ldi a,(hl)
+	cp b
+	jr nz,@updateMovement
 
-	inc l			; $6b72
-	ld a,(hl)		; $6b73
-	cp c			; $6b74
-	jr nz,@updateMovement	; $6b75
-	call _ecom_incState2		; $6b77
+	inc l
+	ld a,(hl)
+	cp c
+	jr nz,@updateMovement
+	call _ecom_incState2
 
-	ld bc,$e001		; $6b7a
+	ld bc,$e001
 @spawnArm:
-	push bc			; $6b7d
-	ld b,PARTID_RAMROCK_GLOVE_FORM_ARM		; $6b7e
-	call _ecom_spawnProjectile		; $6b80
-	ld l,Part.subid		; $6b83
-	ld (hl),c		; $6b85
-	pop bc			; $6b86
-	push bc			; $6b87
-	ld c,b			; $6b88
-	ld b,$18		; $6b89
-	call objectCopyPositionWithOffset		; $6b8b
-	pop bc			; $6b8e
-	dec c			; $6b8f
-	ld a,$04		; $6b90
-	jp nz,enemySetAnimation		; $6b92
-	ld a,b			; $6b95
-	cpl			; $6b96
-	inc a			; $6b97
-	ld b,a			; $6b98
-	jr @spawnArm		; $6b99
+	push bc
+	ld b,PARTID_RAMROCK_GLOVE_FORM_ARM
+	call _ecom_spawnProjectile
+	ld l,Part.subid
+	ld (hl),c
+	pop bc
+	push bc
+	ld c,b
+	ld b,$18
+	call objectCopyPositionWithOffset
+	pop bc
+	dec c
+	ld a,$04
+	jp nz,enemySetAnimation
+	ld a,b
+	cpl
+	inc a
+	ld b,a
+	jr @spawnArm
 
 @updateMovement:
-	call objectGetRelativeAngle		; $6b9b
-	ld e,Enemy.angle		; $6b9e
-	ld (de),a		; $6ba0
-	jp objectApplySpeed		; $6ba1
+	call objectGetRelativeAngle
+	ld e,Enemy.angle
+	ld (de),a
+	jp objectApplySpeed
 
 _ramrock_glovePhase_substate1:
-	ld c,$10		; $6ba4
-	call objectUpdateSpeedZ_paramC		; $6ba6
-	ld e,Enemy.var37		; $6ba9
-	ld a,(de)		; $6bab
-	cp $03			; $6bac
-	ret nz			; $6bae
-	call _ecom_incState2		; $6baf
-	ld l,Enemy.counter2		; $6bb2
-	ld (hl),$02		; $6bb4
-	ld a,PALH_84		; $6bb6
-	jp loadPaletteHeader		; $6bb8
+	ld c,$10
+	call objectUpdateSpeedZ_paramC
+	ld e,Enemy.var37
+	ld a,(de)
+	cp $03
+	ret nz
+	call _ecom_incState2
+	ld l,Enemy.counter2
+	ld (hl),$02
+	ld a,PALH_84
+	jp loadPaletteHeader
 
 _ramrock_glovePhase_substate2:
-	call _ecom_decCounter2		; $6bbb
-	jr z,++			; $6bbe
-	ld a,SND_SWORD_OBTAINED		; $6bc0
-	call playSound		; $6bc2
-	ld a,PALH_83		; $6bc5
-	call loadPaletteHeader		; $6bc7
+	call _ecom_decCounter2
+	jr z,++
+	ld a,SND_SWORD_OBTAINED
+	call playSound
+	ld a,PALH_83
+	call loadPaletteHeader
 ++
-	call enemyAnimate		; $6bca
-	ld e,Enemy.animParameter		; $6bcd
-	ld a,(de)		; $6bcf
-	or a			; $6bd0
-	ret nz			; $6bd1
-	ld a,$03		; $6bd2
-	call enemySetAnimation		; $6bd4
+	call enemyAnimate
+	ld e,Enemy.animParameter
+	ld a,(de)
+	or a
+	ret nz
+	ld a,$03
+	call enemySetAnimation
 
 _ramrock_glovePhase_gotoSubstate3:
-	ld bc,-$80		; $6bd7
-	call objectSetSpeedZ		; $6bda
-	ld l,Enemy.subid		; $6bdd
-	ld (hl),$11		; $6bdf
-	ld l,Enemy.state2		; $6be1
-	ld (hl),$03		; $6be3
-	ld l,Enemy.angle		; $6be5
-	ld (hl),$08		; $6be7
-	ld l,Enemy.counter2		; $6be9
-	ld (hl),120		; $6beb
-	ret			; $6bed
+	ld bc,-$80
+	call objectSetSpeedZ
+	ld l,Enemy.subid
+	ld (hl),$11
+	ld l,Enemy.state2
+	ld (hl),$03
+	ld l,Enemy.angle
+	ld (hl),$08
+	ld l,Enemy.counter2
+	ld (hl),120
+	ret
 
 _ramrock_glovePhase_substate3:
-	call enemyAnimate		; $6bee
-	ld e,Enemy.zh		; $6bf1
-	ld a,(de)		; $6bf3
-	cp $f9			; $6bf4
-	ld c,$00		; $6bf6
-	call nz,objectUpdateSpeedZ_paramC		; $6bf8
+	call enemyAnimate
+	ld e,Enemy.zh
+	ld a,(de)
+	cp $f9
+	ld c,$00
+	call nz,objectUpdateSpeedZ_paramC
 
-	call _ramrock_glovePhase_updateMovement		; $6bfb
-	call _ecom_decCounter2		; $6bfe
-	jr nz,_ramrock_glovePhase_reverseDirection	; $6c01
+	call _ramrock_glovePhase_updateMovement
+	call _ecom_decCounter2
+	jr nz,_ramrock_glovePhase_reverseDirection
 
-	ld c,$50		; $6c03
-	call objectCheckLinkWithinDistance		; $6c05
-	jr nc,_ramrock_glovePhase_reverseDirection	; $6c08
+	ld c,$50
+	call objectCheckLinkWithinDistance
+	jr nc,_ramrock_glovePhase_reverseDirection
 
-	ld h,d			; $6c0a
-	ld l,Enemy.subid		; $6c0b
-	ld a,$12		; $6c0d
-	ldi (hl),a		; $6c0f
-	call getRandomNumber		; $6c10
-	and $01			; $6c13
-	swap a			; $6c15
-	ld (hl),a		; $6c17
-	call getRandomNumber		; $6c18
-	and $0f			; $6c1b
-	jr nz,+			; $6c1d
-	set 5,(hl)		; $6c1f
+	ld h,d
+	ld l,Enemy.subid
+	ld a,$12
+	ldi (hl),a
+	call getRandomNumber
+	and $01
+	swap a
+	ld (hl),a
+	call getRandomNumber
+	and $0f
+	jr nz,+
+	set 5,(hl)
 +
-	ld l,Enemy.state2		; $6c21
-	ld (hl),$04		; $6c23
-	ret			; $6c25
+	ld l,Enemy.state2
+	ld (hl),$04
+	ret
 
 _ramrock_glovePhase_substate4:
-	ld e,Enemy.var35		; $6c26
-	ld a,(de)		; $6c28
-	cp $03			; $6c29
-	jr z,@dead	; $6c2b
+	ld e,Enemy.var35
+	ld a,(de)
+	cp $03
+	jr z,@dead
 
-	call enemyAnimate		; $6c2d
-	ld e,Enemy.var37		; $6c30
-	ld a,(de)		; $6c32
-	cp $03			; $6c33
-	ret nz			; $6c35
-	jr _ramrock_glovePhase_gotoSubstate3		; $6c36
+	call enemyAnimate
+	ld e,Enemy.var37
+	ld a,(de)
+	cp $03
+	ret nz
+	jr _ramrock_glovePhase_gotoSubstate3
 
 @dead:
-	ld e,Enemy.health		; $6c38
-	xor a			; $6c3a
-	ld (de),a		; $6c3b
-	jp _enemyBoss_dead		; $6c3c
+	ld e,Enemy.health
+	xor a
+	ld (de),a
+	jp _enemyBoss_dead
 
 ;;
 ; Moves from side to side of the screen
 ; @addr{6c3f}
 _ramrock_updateHorizontalMovement:
-	call _ecom_applyVelocityForSideviewEnemy		; $6c3f
-	ret nz			; $6c42
-	ld e,Enemy.angle		; $6c43
-	ld a,(de)		; $6c45
-	xor $10			; $6c46
-	ld (de),a		; $6c48
-	xor a			; $6c49
-	ret			; $6c4a
+	call _ecom_applyVelocityForSideviewEnemy
+	ret nz
+	ld e,Enemy.angle
+	ld a,(de)
+	xor $10
+	ld (de),a
+	xor a
+	ret
 
 _ramrock_glovePhase_reverseDirection:
-	ld h,d			; $6c4b
-	ld l,Enemy.xh		; $6c4c
-	ld a,$c0		; $6c4e
-	cp (hl)			; $6c50
-	jr c,++			; $6c51
-	ld a,$28		; $6c53
-	cp (hl)			; $6c55
-	jr c,@applySpeed	; $6c56
-	inc a			; $6c58
+	ld h,d
+	ld l,Enemy.xh
+	ld a,$c0
+	cp (hl)
+	jr c,++
+	ld a,$28
+	cp (hl)
+	jr c,@applySpeed
+	inc a
 ++
 	ld (hl),a ; [xh]
-	ld e,Enemy.angle		; $6c5a
-	ld a,(de)		; $6c5c
-	xor $10			; $6c5d
-	ld (de),a		; $6c5f
-	xor a			; $6c60
+	ld e,Enemy.angle
+	ld a,(de)
+	xor $10
+	ld (de),a
+	xor a
 @applySpeed:
-	jp objectApplySpeed		; $6c61
+	jp objectApplySpeed
 
 ;;
 ; @addr{6c64}
 _ramrock_glovePhase_updateMovement:
-	ld hl,w1Link.yh		; $6c64
-	ld e,Enemy.yh		; $6c67
-	ld a,(de)		; $6c69
-	cp (hl)			; $6c6a
-	jr nc,@label_10_262	; $6c6b
+	ld hl,w1Link.yh
+	ld e,Enemy.yh
+	ld a,(de)
+	cp (hl)
+	jr nc,@label_10_262
 
-	ld c,a			; $6c6d
-	ld a,(hl)		; $6c6e
-	sub c			; $6c6f
-	cp $40			; $6c70
-	jr z,@ret	; $6c72
-	jr c,@label_10_262	; $6c74
+	ld c,a
+	ld a,(hl)
+	sub c
+	cp $40
+	jr z,@ret
+	jr c,@label_10_262
 
-	ld a,(de)		; $6c76
-	cp $50			; $6c77
-	ld c,ANGLE_DOWN		; $6c79
-	jr nc,@ret	; $6c7b
-	jr @moveInDirection		; $6c7d
+	ld a,(de)
+	cp $50
+	ld c,ANGLE_DOWN
+	jr nc,@ret
+	jr @moveInDirection
 
 @label_10_262:
 	ld a,(de) ; [yh]
-	cp $41			; $6c80
-	ld c,ANGLE_UP		; $6c82
-	jr c,@ret	; $6c84
+	cp $41
+	ld c,ANGLE_UP
+	jr c,@ret
 
 @moveInDirection:
-	ld b,SPEED_80		; $6c86
-	ld e,Enemy.angle		; $6c88
-	call objectApplyGivenSpeed		; $6c8a
+	ld b,SPEED_80
+	ld e,Enemy.angle
+	call objectApplyGivenSpeed
 @ret:
-	ret			; $6c8d
+	ret
 
 
 ; ==============================================================================
@@ -3768,9 +3768,9 @@ _ramrock_glovePhase_updateMovement:
 ;   relatedObj2: Instance of PARTID_BOMB (smaller bomb thrown by this object)
 ; ==============================================================================
 enemyCode56_body:
-	ld e,Enemy.state		; $6c8e
-	ld a,(de)		; $6c90
-	rst_jumpTable			; $6c91
+	ld e,Enemy.state
+	ld a,(de)
+	rst_jumpTable
 	.dw _kingMoblinMinion_state0
 	.dw enemyAnimate
 	.dw _kingMoblinMinion_state2
@@ -3785,35 +3785,35 @@ enemyCode56_body:
 
 
 _kingMoblinMinion_state0:
-	ld h,d			; $6ca8
-	ld l,e			; $6ca9
+	ld h,d
+	ld l,e
 	inc (hl) ; [state] = 1
 
-	ld l,Enemy.speed		; $6cab
-	ld (hl),SPEED_200		; $6cad
+	ld l,Enemy.speed
+	ld (hl),SPEED_200
 
-	ld e,Enemy.subid		; $6caf
-	ld a,(de)		; $6cb1
-	add a			; $6cb2
-	ld hl,@data		; $6cb3
-	rst_addDoubleIndex			; $6cb6
+	ld e,Enemy.subid
+	ld a,(de)
+	add a
+	ld hl,@data
+	rst_addDoubleIndex
 
-	ld e,Enemy.counter1		; $6cb7
-	ldi a,(hl)		; $6cb9
-	ld (de),a		; $6cba
-	ld e,Enemy.direction		; $6cbb
-	ldi a,(hl)		; $6cbd
-	ld (de),a		; $6cbe
-	ld e,Enemy.yh		; $6cbf
-	ldi a,(hl)		; $6cc1
-	ld (de),a		; $6cc2
-	ld e,Enemy.xh		; $6cc3
-	ld a,(hl)		; $6cc5
-	ld (de),a		; $6cc6
+	ld e,Enemy.counter1
+	ldi a,(hl)
+	ld (de),a
+	ld e,Enemy.direction
+	ldi a,(hl)
+	ld (de),a
+	ld e,Enemy.yh
+	ldi a,(hl)
+	ld (de),a
+	ld e,Enemy.xh
+	ld a,(hl)
+	ld (de),a
 
-	ld a,$02		; $6cc7
-	call enemySetAnimation		; $6cc9
-	jp objectSetVisiblec2		; $6ccc
+	ld a,$02
+	call enemySetAnimation
+	jp objectSetVisiblec2
 
 ; Data format: counter1, direction, yh, xh
 @data:
@@ -3824,143 +3824,143 @@ _kingMoblinMinion_state0:
 
 ; Fight just started
 _kingMoblinMinion_state2:
-	ld h,d			; $6cd7
-	ld l,e			; $6cd8
+	ld h,d
+	ld l,e
 	inc (hl) ; [state] = 3
 
-	ld l,Enemy.counter2		; $6cda
-	ld (hl),$0c		; $6cdc
-	ld e,Enemy.direction		; $6cde
-	ld a,(de)		; $6ce0
-	jp enemySetAnimation		; $6ce1
+	ld l,Enemy.counter2
+	ld (hl),$0c
+	ld e,Enemy.direction
+	ld a,(de)
+	jp enemySetAnimation
 
 
 ; Delay before spawning bomb
 _kingMoblinMinion_state3:
-	call _ecom_decCounter2		; $6ce4
-	jr nz,_kingMoblinMinion_animate	; $6ce7
+	call _ecom_decCounter2
+	jr nz,_kingMoblinMinion_animate
 
-	ld b,PARTID_BOMB		; $6ce9
-	call _ecom_spawnProjectile		; $6ceb
-	ret nz			; $6cee
+	ld b,PARTID_BOMB
+	call _ecom_spawnProjectile
+	ret nz
 
-	call _ecom_incState		; $6cef
+	call _ecom_incState
 
-	ld a,$02		; $6cf2
-	jp enemySetAnimation		; $6cf4
+	ld a,$02
+	jp enemySetAnimation
 
 
 ; Holding bomb for a bit
 _kingMoblinMinion_state4:
-	call _ecom_decCounter1		; $6cf7
-	ld l,e			; $6cfa
-	jr z,@jump	; $6cfb
+	call _ecom_decCounter1
+	ld l,e
+	jr z,@jump
 
-	ld a,(wScreenShakeCounterY)		; $6cfd
-	or a			; $6d00
-	jr z,_kingMoblinMinion_animate	; $6d01
+	ld a,(wScreenShakeCounterY)
+	or a
+	jr z,_kingMoblinMinion_animate
 
 	ld (hl),$07 ; [counter1]
-	jr _kingMoblinMinion_animate		; $6d05
+	jr _kingMoblinMinion_animate
 
 @jump:
 	inc (hl) ; [state] = 5
-	ld l,Enemy.speedZ		; $6d08
-	ld a,<(-$180)		; $6d0a
-	ldi (hl),a		; $6d0c
-	ld (hl),>(-$180)		; $6d0d
+	ld l,Enemy.speedZ
+	ld a,<(-$180)
+	ldi (hl),a
+	ld (hl),>(-$180)
 
 _kingMoblinMinion_animate:
-	jp enemyAnimate		; $6d0f
+	jp enemyAnimate
 
 
 ; Jumping in air
 _kingMoblinMinion_state5:
-	ld c,$20		; $6d12
-	call objectUpdateSpeedZ_paramC		; $6d14
-	jr z,@landed	; $6d17
+	ld c,$20
+	call objectUpdateSpeedZ_paramC
+	jr z,@landed
 
 	; Check for the peak of the jump
-	ldd a,(hl)		; $6d19
-	or (hl)			; $6d1a
-	ret nz			; $6d1b
+	ldd a,(hl)
+	or (hl)
+	ret nz
 
-	call objectGetAngleTowardEnemyTarget		; $6d1c
-	ld b,a			; $6d1f
+	call objectGetAngleTowardEnemyTarget
+	ld b,a
 
 	; [bomb.state]++
-	ld a,Object.state		; $6d20
-	call objectGetRelatedObject2Var		; $6d22
-	inc (hl)		; $6d25
+	ld a,Object.state
+	call objectGetRelatedObject2Var
+	inc (hl)
 
 	; Set bomb to move toward Link
-	ld l,Part.angle		; $6d26
-	ld (hl),b		; $6d28
-	ret			; $6d29
+	ld l,Part.angle
+	ld (hl),b
+	ret
 
 @landed:
-	ld l,Enemy.state		; $6d2a
+	ld l,Enemy.state
 	inc (hl) ; [state] = 6
 
-	ld l,Enemy.counter1		; $6d2d
-	ld (hl),$10		; $6d2f
-	jr _kingMoblinMinion_animate		; $6d31
+	ld l,Enemy.counter1
+	ld (hl),$10
+	jr _kingMoblinMinion_animate
 
 
 ; Delay before pulling out next bomb
 _kingMoblinMinion_state6:
-	call _ecom_decCounter1		; $6d33
-	jr nz,_kingMoblinMinion_animate	; $6d36
+	call _ecom_decCounter1
+	jr nz,_kingMoblinMinion_animate
 
 	ld (hl),200 ; [counter1]
-	ld l,e			; $6d3a
+	ld l,e
 	ld (hl),$02 ; [state]
 
-	jr _kingMoblinMinion_animate		; $6d3d
+	jr _kingMoblinMinion_animate
 
 
 ; ENEMYID_KING_MOBLIN sets this object's state to 7 when defeated.
 _kingMoblinMinion_state7:
-	ld h,d			; $6d3f
-	ld l,e			; $6d40
+	ld h,d
+	ld l,e
 	inc (hl) ; [state] = 8
 
-	ld l,Enemy.counter1		; $6d42
-	ld (hl),24		; $6d44
+	ld l,Enemy.counter1
+	ld (hl),24
 
 	; Calculate animation, store it in 'c'
-	ld l,Enemy.subid		; $6d46
-	ld a,(hl)		; $6d48
-	add a			; $6d49
-	inc a			; $6d4a
-	ld c,a			; $6d4b
+	ld l,Enemy.subid
+	ld a,(hl)
+	add a
+	inc a
+	ld c,a
 
 	; Get angle to throw bomb at
-	ld a,(hl)		; $6d4c
-	ld hl,@subidBombThrowAngles		; $6d4d
-	rst_addAToHl			; $6d50
-	ld b,(hl)		; $6d51
+	ld a,(hl)
+	ld hl,@subidBombThrowAngles
+	rst_addAToHl
+	ld b,(hl)
 
-	ld a,Object.state		; $6d52
-	call objectGetRelatedObject2Var		; $6d54
-	inc (hl)		; $6d57
+	ld a,Object.state
+	call objectGetRelatedObject2Var
+	inc (hl)
 
-	ld l,Part.angle		; $6d58
-	ld (hl),b		; $6d5a
+	ld l,Part.angle
+	ld (hl),b
 
-	ld l,Part.speed		; $6d5b
-	ld (hl),SPEED_160		; $6d5d
+	ld l,Part.speed
+	ld (hl),SPEED_160
 
-	ld l,Part.speedZ		; $6d5f
-	ld a,<(-$100)		; $6d61
-	ldi (hl),a		; $6d63
-	ld (hl),>(-$100)		; $6d64
+	ld l,Part.speedZ
+	ld a,<(-$100)
+	ldi (hl),a
+	ld (hl),>(-$100)
 
-	ld l,Part.visible		; $6d66
-	ld (hl),$81		; $6d68
+	ld l,Part.visible
+	ld (hl),$81
 
-	ld a,c			; $6d6a
-	jp enemySetAnimation		; $6d6b
+	ld a,c
+	jp enemySetAnimation
 
 @subidBombThrowAngles:
 	.db $0a $16
@@ -3968,90 +3968,90 @@ _kingMoblinMinion_state7:
 
 ; Delay before hopping
 _kingMoblinMinion_state8:
-	call _ecom_decCounter1		; $6d70
-	ret nz			; $6d73
+	call _ecom_decCounter1
+	ret nz
 
-	ld l,e			; $6d74
+	ld l,e
 	inc (hl) ; [state] = 9
 
-	ld l,Enemy.speedZ		; $6d76
-	ld a,<(-$140)		; $6d78
-	ldi (hl),a		; $6d7a
-	ld (hl),>(-$140)		; $6d7b
+	ld l,Enemy.speedZ
+	ld a,<(-$140)
+	ldi (hl),a
+	ld (hl),>(-$140)
 
-	ld l,Enemy.subid		; $6d7d
-	bit 0,(hl)		; $6d7f
-	ld c,$f4		; $6d81
-	jr z,+			; $6d83
-	ld c,$0c		; $6d85
+	ld l,Enemy.subid
+	bit 0,(hl)
+	ld c,$f4
+	jr z,+
+	ld c,$0c
 +
-	ld b,$f8		; $6d87
-	ld a,30		; $6d89
-	call objectCreateExclamationMark		; $6d8b
+	ld b,$f8
+	ld a,30
+	call objectCreateExclamationMark
 
 
 ; Waiting to land on ground
 _kingMoblinMinion_state9:
-	ld c,$20		; $6d8e
-	call objectUpdateSpeedZ_paramC		; $6d90
-	ret nz			; $6d93
+	ld c,$20
+	call objectUpdateSpeedZ_paramC
+	ret nz
 
-	ld l,Enemy.state		; $6d94
+	ld l,Enemy.state
 	inc (hl) ; [state] = $0a
 
-	ld l,Enemy.counter1		; $6d97
-	ld (hl),12		; $6d99
-	inc l			; $6d9b
+	ld l,Enemy.counter1
+	ld (hl),12
+	inc l
 	ld (hl),$08 ; [counter2]
 
-	xor a			; $6d9e
-	jp enemySetAnimation		; $6d9f
+	xor a
+	jp enemySetAnimation
 
 
 ; Running away
 _kingMoblinMinion_stateA:
-	call _ecom_decCounter2		; $6da2
-	jr nz,@animate	; $6da5
+	call _ecom_decCounter2
+	jr nz,@animate
 
-	call _ecom_decCounter1		; $6da7
-	jr z,@delete	; $6daa
+	call _ecom_decCounter1
+	jr z,@delete
 
-	call objectApplySpeed		; $6dac
+	call objectApplySpeed
 @animate:
-	jp enemyAnimate		; $6daf
+	jp enemyAnimate
 
 @delete:
 	; Write to var33 on ENEMYID_KING_MOBLIN to request the screen transition to begin
-	ld a,Object.var33		; $6db2
-	call objectGetRelatedObject1Var		; $6db4
-	ld (hl),$01		; $6db7
-	jp enemyDelete		; $6db9
+	ld a,Object.var33
+	call objectGetRelatedObject1Var
+	ld (hl),$01
+	jp enemyDelete
 
 
 blackTower_getMovingFlamesNextTileCoords:
-	ld e,$c2		; $6dbc
-	ld a,(de)		; $6dbe
-	ld hl,@table		; $6dbf
-	rst_addDoubleIndex			; $6dc2
-	ldi a,(hl)		; $6dc3
-	ld h,(hl)		; $6dc4
-	ld l,a			; $6dc5
-	ld e,$c7		; $6dc6
-	ld a,(de)		; $6dc8
-	rst_addAToHl			; $6dc9
-	ld b,(hl)		; $6dca
-	ld a,b			; $6dcb
-	and $f0			; $6dcc
-	add $08			; $6dce
-	ld e,$f0		; $6dd0
-	ld (de),a		; $6dd2
-	inc e			; $6dd3
-	ld a,b			; $6dd4
-	and $0f			; $6dd5
-	swap a			; $6dd7
-	add $08			; $6dd9
-	ld (de),a		; $6ddb
-	ret			; $6ddc
+	ld e,$c2
+	ld a,(de)
+	ld hl,@table
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	ld e,$c7
+	ld a,(de)
+	rst_addAToHl
+	ld b,(hl)
+	ld a,b
+	and $f0
+	add $08
+	ld e,$f0
+	ld (de),a
+	inc e
+	ld a,b
+	and $0f
+	swap a
+	add $08
+	ld (de),a
+	ret
 
 ; @addr{6ddd}
 @table:

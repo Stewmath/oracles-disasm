@@ -3,8 +3,8 @@
 ; TODO: finish
 
 seasonsFunc_0f_6f75:
-	ld a,($cfc8)		; $6f75
-	rst_jumpTable			; $6f78
+	ld a,($cfc8)
+	rst_jumpTable
 	.dw @state0
 	.dw @return
 	.dw @state2
@@ -13,343 +13,343 @@ seasonsFunc_0f_6f75:
 	.dw seasons_func_0f_712a@state5
 	.dw seasons_func_0f_712a@state6
 @state0:
-	ld a,(wPaletteThread_mode)		; $6f87
-	or a			; $6f8a
-	ret nz			; $6f8b
-	call clearWramBank1		; $6f8c
-	xor a			; $6f8f
-	call setScreenShakeCounter		; $6f90
+	ld a,(wPaletteThread_mode)
+	or a
+	ret nz
+	call clearWramBank1
+	xor a
+	call setScreenShakeCounter
 
-	call getFreeEnemySlot_uncounted		; $6f93
-	ld (hl),ENEMYID_GENERAL_ONOX		; $6f96
-	inc l			; $6f98
-	ld (hl),$02		; $6f99
+	call getFreeEnemySlot_uncounted
+	ld (hl),ENEMYID_GENERAL_ONOX
+	inc l
+	ld (hl),$02
 
-	call getFreePartSlot		; $6f9b
-	ld (hl),PARTID_48		; $6f9e
-	inc l			; $6fa0
-	ld (hl),$04		; $6fa1
+	call getFreePartSlot
+	ld (hl),PARTID_48
+	inc l
+	ld (hl),$04
 
-	ld hl,w1Link		; $6fa3
-	ld (hl),$03		; $6fa6
-	ld l,<w1Link.yh		; $6fa8
-	ld (hl),$28		; $6faa
-	ld l,<w1Link.xh		; $6fac
-	ld (hl),$50		; $6fae
+	ld hl,w1Link
+	ld (hl),$03
+	ld l,<w1Link.yh
+	ld (hl),$28
+	ld l,<w1Link.xh
+	ld (hl),$50
 
-	ld a,$30		; $6fb0
-	ldh (<hCameraY),a	; $6fb2
-	xor a			; $6fb4
-	ldh (<hCameraX),a	; $6fb5
-	ld hl,wRoomCollisions		; $6fb7
-	ld bc,wRoomCollisionsEnd-wRoomCollisions		; $6fba
-	call clearMemoryBc		; $6fbd
+	ld a,$30
+	ldh (<hCameraY),a
+	xor a
+	ldh (<hCameraX),a
+	ld hl,wRoomCollisions
+	ld bc,wRoomCollisionsEnd-wRoomCollisions
+	call clearMemoryBc
 
 	; clear part of wRoomCollisions
-	ld hl,$cea0		; $6fc0
-	ld b,$10		; $6fc3
-	ld a,$0f		; $6fc5
-	call fillMemory		; $6fc7
+	ld hl,$cea0
+	ld b,$10
+	ld a,$0f
+	call fillMemory
 
 	; load data back into wRoomCollisions
-	ld hl,$ce0a		; $6fca
-	ld bc,$0b02		; $6fcd
+	ld hl,$ce0a
+	ld bc,$0b02
 -
-	ld (hl),$0f		; $6fd0
-	ld a,l			; $6fd2
-	add $10			; $6fd3
-	ld l,a			; $6fd5
-	dec b			; $6fd6
-	jr nz,-	; $6fd7
-	ld hl,$ce0f		; $6fd9
-	ld b,$0b		; $6fdc
-	dec c			; $6fde
-	jr nz,-	; $6fdf
+	ld (hl),$0f
+	ld a,l
+	add $10
+	ld l,a
+	dec b
+	jr nz,-
+	ld hl,$ce0f
+	ld b,$0b
+	dec c
+	jr nz,-
 
 	; clear all of wRoomLayout
-	ld hl,wRoomLayout		; $6fe1
-	ld bc,wRoomLayoutEnd-wRoomLayout		; $6fe4
-	call clearMemoryBc		; $6fe7
-	xor a			; $6fea
-	ld ($cfca),a		; $6feb
-	ld ($cfcb),a		; $6fee
-	ld a,$80		; $6ff1
-	ld ($cfce),a		; $6ff3
-	ld (wLinkInAir),a		; $6ff6
-	ld hl,$cfc8		; $6ff9
-	inc (hl)		; $6ffc
-	call disableLcd		; $6ffd
-	call seasonsFunc_0f_70b4_swapGraphics		; $7000
-	xor a			; $7003
-	ld ($ff00+R_SVBK),a	; $7004
-	call loadCommonGraphics		; $7006
-	call fadeinFromWhite		; $7009
-	ld a,$02		; $700c
-	call loadGfxRegisterStateIndex		; $700e
-	ld a,($cfce)		; $7011
-	ld (wGfxRegs2.LYC),a		; $7014
-	ld a,$06		; $7017
-	ldh (<hNextLcdInterruptBehaviour),a	; $7019
+	ld hl,wRoomLayout
+	ld bc,wRoomLayoutEnd-wRoomLayout
+	call clearMemoryBc
+	xor a
+	ld ($cfca),a
+	ld ($cfcb),a
+	ld a,$80
+	ld ($cfce),a
+	ld (wLinkInAir),a
+	ld hl,$cfc8
+	inc (hl)
+	call disableLcd
+	call seasonsFunc_0f_70b4_swapGraphics
+	xor a
+	ld ($ff00+R_SVBK),a
+	call loadCommonGraphics
+	call fadeinFromWhite
+	ld a,$02
+	call loadGfxRegisterStateIndex
+	ld a,($cfce)
+	ld (wGfxRegs2.LYC),a
+	ld a,$06
+	ldh (<hNextLcdInterruptBehaviour),a
 
-	ld hl,wGfxRegs6.LCDC		; $701b
-	ld (hl),$8f		; $701e
+	ld hl,wGfxRegs6.LCDC
+	ld (hl),$8f
 	; SCY
-	inc l			; $7020
-	ld (hl),$58		; $7021
+	inc l
+	ld (hl),$58
 	; SCX
-	inc l			; $7023
-	ld (hl),$00		; $7024
+	inc l
+	ld (hl),$00
 	; WINY & WINX
-	inc l			; $7026
-	ld a,$c7		; $7027
-	ldi (hl),a		; $7029
-	ldi (hl),a		; $702a
+	inc l
+	ld a,$c7
+	ldi (hl),a
+	ldi (hl),a
 	; LYC
-	ld (hl),$80		; $702b
+	ld (hl),$80
 
 @return:
-	ret			; $702d
+	ret
 
 @state2:
-	call clearEnemies		; $702e
-	call getFreeEnemySlot		; $7031
-	ld (hl),ENEMYID_DRAGON_ONOX		; $7034
-	ld hl,$cfca		; $7036
-	call seasons_func_0f_712a		; $7039
-	ld hl,$cfcb		; $703c
-	res 7,(hl)		; $703f
-	call seasons_func_0f_722f		; $7041
-	xor a			; $7044
-	ld ($ff00+R_SVBK),a	; $7045
-	ld a,$03		; $7047
-	ld ($cfc8),a		; $7049
-	ret			; $704c
+	call clearEnemies
+	call getFreeEnemySlot
+	ld (hl),ENEMYID_DRAGON_ONOX
+	ld hl,$cfca
+	call seasons_func_0f_712a
+	ld hl,$cfcb
+	res 7,(hl)
+	call seasons_func_0f_722f
+	xor a
+	ld ($ff00+R_SVBK),a
+	ld a,$03
+	ld ($cfc8),a
+	ret
 
 seasonsFunc_0f_704d:
-	call seasonsFunc_0f_70b4_swapGraphics		; $704d
-	ld hl,$cfca		; $7050
-	call seasons_func_0f_712a		; $7053
+	call seasonsFunc_0f_70b4_swapGraphics
+	ld hl,$cfca
+	call seasons_func_0f_712a
 --
-	ld hl,$cfcb		; $7056
-	res 7,(hl)		; $7059
-	call seasons_func_0f_722f		; $705b
-	xor a			; $705e
-	ld ($ff00+$70),a	; $705f
-	ld a,$02		; $7061
-	call loadGfxRegisterStateIndex		; $7063
-	ld a,($cfce)		; $7066
-	ld ($c490),a		; $7069
-	ld a,$06		; $706c
-	ldh (<hNextLcdInterruptBehaviour),a	; $706e
-	ret			; $7070
+	ld hl,$cfcb
+	res 7,(hl)
+	call seasons_func_0f_722f
+	xor a
+	ld ($ff00+$70),a
+	ld a,$02
+	call loadGfxRegisterStateIndex
+	ld a,($cfce)
+	ld ($c490),a
+	ld a,$06
+	ldh (<hNextLcdInterruptBehaviour),a
+	ret
 
 @state4:
-	ld a,(wTextIsActive)		; $7071
-	cp $80			; $7074
-	ret nz			; $7076
+	ld a,(wTextIsActive)
+	cp $80
+	ret nz
 
-	ld a,(wKeysJustPressed)		; $7077
-	and BTN_A			; $707a
-	ret z			; $707c
+	ld a,(wKeysJustPressed)
+	and BTN_A
+	ret z
 
-	call stopTextThread		; $707d
-	ld a,$05		; $7080
-	ld ($cfc8),a		; $7082
-	call disableLcd		; $7085
+	call stopTextThread
+	ld a,$05
+	ld ($cfc8),a
+	call disableLcd
 
-	xor a			; $7088
-	ld ($ff00+R_VBK),a	; $7089
-	ld hl,$9800		; $708b
-	ld bc,$0400		; $708e
-	call clearMemoryBc		; $7091
+	xor a
+	ld ($ff00+R_VBK),a
+	ld hl,$9800
+	ld bc,$0400
+	call clearMemoryBc
 
-	ld a,$01		; $7094
-	ld ($ff00+R_VBK),a	; $7096
-	ld hl,$9800		; $7098
-	ld bc,$0400		; $709b
-	ld a,$0d		; $709e
-	call fillMemoryBc		; $70a0
+	ld a,$01
+	ld ($ff00+R_VBK),a
+	ld hl,$9800
+	ld bc,$0400
+	ld a,$0d
+	call fillMemoryBc
 
-	ld hl,$9f60		; $70a3
-	ld b,$40		; $70a6
+	ld hl,$9f60
+	ld b,$40
 -
-	ld a,(hl)		; $70a8
-	or $80			; $70a9
-	ldi (hl),a		; $70ab
-	dec b			; $70ac
-	jr nz,-	; $70ad
-	call seasons_func_0f_71fb		; $70af
-	jr --		; $70b2
+	ld a,(hl)
+	or $80
+	ldi (hl),a
+	dec b
+	jr nz,-
+	call seasons_func_0f_71fb
+	jr --
 
 seasonsFunc_0f_70b4_swapGraphics:
-	ld a,SEASONS_PALH_8d		; $70b4
-	call loadPaletteHeader		; $70b6
-	xor a			; $70b9
-	ld ($ff00+R_VBK),a	; $70ba
-	ld hl,$9800		; $70bc
-	ld bc,$0400		; $70bf
-	call clearMemoryBc		; $70c2
+	ld a,SEASONS_PALH_8d
+	call loadPaletteHeader
+	xor a
+	ld ($ff00+R_VBK),a
+	ld hl,$9800
+	ld bc,$0400
+	call clearMemoryBc
 
-	ld hl,$9f20		; $70c5
-	ld b,$a0		; $70c8
-	call clearMemory		; $70ca
+	ld hl,$9f20
+	ld b,$a0
+	call clearMemory
 
-	ld a,$01		; $70cd
-	ld ($ff00+R_VBK),a	; $70cf
-	ld hl,$9800		; $70d1
-	ld bc,$0400		; $70d4
-	ld a,$0d		; $70d7
-	call fillMemoryBc		; $70d9
+	ld a,$01
+	ld ($ff00+R_VBK),a
+	ld hl,$9800
+	ld bc,$0400
+	ld a,$0d
+	call fillMemoryBc
 
-	ld hl,$9f20		; $70dc
-	ld b,$a0		; $70df
-	ld a,$0d		; $70e1
-	call fillMemory		; $70e3
+	ld hl,$9f20
+	ld b,$a0
+	ld a,$0d
+	call fillMemory
 
-	ld a,$03		; $70e6
-	ld ($ff00+R_SVBK),a	; $70e8
-	ld hl,w3VramTiles		; $70ea
-	ld bc,$02c0		; $70ed
-	call clearMemoryBc		; $70f0
+	ld a,$03
+	ld ($ff00+R_SVBK),a
+	ld hl,w3VramTiles
+	ld bc,$02c0
+	call clearMemoryBc
 
-	ld hl,w3TileMappingIndices		; $70f3
-	ld bc,$02c0		; $70f6
-	ld a,$0d		; $70f9
-	call fillMemoryBc		; $70fb
+	ld hl,w3TileMappingIndices
+	ld bc,$02c0
+	ld a,$0d
+	call fillMemoryBc
 
-	ld a,GFXH_96		; $70fe
-	call loadGfxHeader		; $7100
-	ld a,UNCMP_GFXH_30		; $7103
-	jp loadUncompressedGfxHeader		; $7105
+	ld a,GFXH_96
+	call loadGfxHeader
+	ld a,UNCMP_GFXH_30
+	jp loadUncompressedGfxHeader
 
 @state3:
-	ld hl,$cfc9		; $7108
-	bit 7,(hl)		; $710b
-	jr nz,+			; $710d
-	ld l,$cb		; $710f
-	bit 7,(hl)		; $7111
-	ret z			; $7113
-	res 7,(hl)		; $7114
-	call seasons_func_0f_722f		; $7116
-	xor a			; $7119
-	ld ($ff00+R_SVBK),a	; $711a
-	ret			; $711c
+	ld hl,$cfc9
+	bit 7,(hl)
+	jr nz,+
+	ld l,$cb
+	bit 7,(hl)
+	ret z
+	res 7,(hl)
+	call seasons_func_0f_722f
+	xor a
+	ld ($ff00+R_SVBK),a
+	ret
 +
-	ld b,(hl)		; $711d
-	xor a			; $711e
-	ldi (hl),a		; $711f
-	res 7,b			; $7120
-	ld (hl),b		; $7122
-	call seasons_func_0f_712a		; $7123
-	xor a			; $7126
-	ld ($ff00+R_SVBK),a	; $7127
-	ret			; $7129
+	ld b,(hl)
+	xor a
+	ldi (hl),a
+	res 7,b
+	ld (hl),b
+	call seasons_func_0f_712a
+	xor a
+	ld ($ff00+R_SVBK),a
+	ret
 
 ;;
 ; @param	hl	$cfca/$cfc9 in @state3
 ; @addr{736a}
 seasons_func_0f_712a:
-	ld a,(hl)		; $712a
-	cp $06			; $712b
-	jp c,seasonsFunc_0f_71cf_copyw6Filler1IntoWramBank3		; $712d
-	jp seasons_func_0f_71fb		; $7130
+	ld a,(hl)
+	cp $06
+	jp c,seasonsFunc_0f_71cf_copyw6Filler1IntoWramBank3
+	jp seasons_func_0f_71fb
 
 @state5:
-	ld a,($cfcc)		; $7133
-	cp $78			; $7136
-	ret nz			; $7138
-	ld a,$06		; $7139
-	ld ($cfc8),a		; $713b
+	ld a,($cfcc)
+	cp $78
+	ret nz
+	ld a,$06
+	ld ($cfc8),a
 	; Onox phase 1 room flags
-	ld hl,$ca91		; $713e
-	set 7,(hl)		; $7141
+	ld hl,$ca91
+	set 7,(hl)
 	; game beaten / season always spring?
-	ld a,GLOBALFLAG_SEASON_ALWAYS_SPRING		; $7143
-	call setGlobalFlag		; $7145
-	jp fadeoutToWhite		; $7148
+	ld a,GLOBALFLAG_SEASON_ALWAYS_SPRING
+	call setGlobalFlag
+	jp fadeoutToWhite
 
 @state6:
-	ld a,(wPaletteThread_mode)		; $714b
-	or a			; $714e
-	ret nz			; $714f
-	call clearScreenVariablesAndWramBank1		; $7150
-	ld a,CUTSCENE_S_DIN_CRYSTAL_DESCENDING		; $7153
-	ld (wCutsceneTrigger),a		; $7155
-	ret			; $7158
+	ld a,(wPaletteThread_mode)
+	or a
+	ret nz
+	call clearScreenVariablesAndWramBank1
+	ld a,CUTSCENE_S_DIN_CRYSTAL_DESCENDING
+	ld (wCutsceneTrigger),a
+	ret
 
 seasonsFunc_0f_7159:
-	ld a,($cfcf)		; $7159
-	or a			; $715c
-	ret nz			; $715d
-	ld hl,wScreenShakeCounterY		; $715e
-	ld a,(hl)		; $7161
-	or a			; $7162
-	jr z,+	; $7163
-	dec (hl)		; $7165
+	ld a,($cfcf)
+	or a
+	ret nz
+	ld hl,wScreenShakeCounterY
+	ld a,(hl)
+	or a
+	jr z,+
+	dec (hl)
 +
-	inc l			; $7166
-	ld a,(hl)		; $7167
-	or a			; $7168
-	jr z,+	; $7169
-	dec (hl)		; $716b
+	inc l
+	ld a,(hl)
+	or a
+	jr z,+
+	dec (hl)
 +
-	ld hl,hCameraY		; $716c
-	ld a,($d00b)		; $716f
-	sub (hl)		; $7172
-	cp $40			; $7173
-	ret z			; $7175
+	ld hl,hCameraY
+	ld a,($d00b)
+	sub (hl)
+	cp $40
+	ret z
 
-	ld a,(hl)		; $7176
-	jr c,+	; $7177
-	cp $30			; $7179
-	ret nc			; $717b
-	inc (hl)		; $717c
-	ret			; $717d
+	ld a,(hl)
+	jr c,+
+	cp $30
+	ret nc
+	inc (hl)
+	ret
 +
-	or a			; $717e
-	ret z			; $717f
-	dec (hl)		; $7180
-	ret			; $7181
+	or a
+	ret z
+	dec (hl)
+	ret
 
 seasonsFunc_0f_7182:
-	ld hl,$cfcc		; $7182
-	ldh a,(<hCameraY)	; $7185
-	ld b,a			; $7187
-	sub (hl)		; $7188
-	ld ($c48c),a		; $7189
-	inc l			; $718c
-	xor a			; $718d
-	sub (hl)		; $718e
-	ld ($c48d),a		; $718f
-	ld a,b			; $7192
-	add $28			; $7193
-	ld ($c4a0),a		; $7195
-	xor a			; $7198
-	ld ($c4a1),a		; $7199
-	sub b			; $719c
-	sub $50			; $719d
-	cp $90			; $719f
-	jr c,+	; $71a1
-	ld a,$c7		; $71a3
+	ld hl,$cfcc
+	ldh a,(<hCameraY)
+	ld b,a
+	sub (hl)
+	ld ($c48c),a
+	inc l
+	xor a
+	sub (hl)
+	ld ($c48d),a
+	ld a,b
+	add $28
+	ld ($c4a0),a
+	xor a
+	ld ($c4a1),a
+	sub b
+	sub $50
+	cp $90
+	jr c,+
+	ld a,$c7
 +
-	ld ($c490),a		; $71a5
-	ld ($cfce),a		; $71a8
-	ld a,($cd18)		; $71ab
-	or a			; $71ae
-	ret z			; $71af
-	call getRandomNumber_noPreserveVars		; $71b0
-	and $03			; $71b3
-	ld hl,_table_71cb		; $71b5
-	rst_addAToHl			; $71b8
-	ld a,($c490)		; $71b9
-	add (hl)		; $71bc
-	cp $90			; $71bd
-	ret nc			; $71bf
-	ld ($c490),a		; $71c0
-	ld a,($c4a0)		; $71c3
-	sub (hl)		; $71c6
-	ld ($c4a0),a		; $71c7
-	ret			; $71ca
+	ld ($c490),a
+	ld ($cfce),a
+	ld a,($cd18)
+	or a
+	ret z
+	call getRandomNumber_noPreserveVars
+	and $03
+	ld hl,_table_71cb
+	rst_addAToHl
+	ld a,($c490)
+	add (hl)
+	cp $90
+	ret nc
+	ld ($c490),a
+	ld a,($c4a0)
+	sub (hl)
+	ld ($c4a0),a
+	ret
 _table_71cb:
 	.db $ff $fe $01 $02
 
@@ -357,104 +357,104 @@ _table_71cb:
 ; @param	a	$cfca value 0 to 5
 ; @addr{$71cf}
 seasonsFunc_0f_71cf_copyw6Filler1IntoWramBank3:
-	call load5aIntoBc		; $71cf
-	push bc			; $71d2
-	ld hl,$d000		; $71d3
-	add hl,bc		; $71d6
-	ld b,$50		; $71d7
-	call seasonsFunc_0f_7297_copyw6Filler1IntowTmpVramBuffer		; $71d9
-	ld hl,$d802		; $71dc
-	ld c,$00		; $71df
-	call seasonsFunc_0f_72a5_copyFromwTmpVramBufferIntoBank3		; $71e1
-	pop bc			; $71e4
+	call load5aIntoBc
+	push bc
+	ld hl,$d000
+	add hl,bc
+	ld b,$50
+	call seasonsFunc_0f_7297_copyw6Filler1IntowTmpVramBuffer
+	ld hl,$d802
+	ld c,$00
+	call seasonsFunc_0f_72a5_copyFromwTmpVramBufferIntoBank3
+	pop bc
 
-	ld hl,$d400		; $71e5
-	add hl,bc		; $71e8
-	ld b,$50		; $71e9
-	call seasonsFunc_0f_7297_copyw6Filler1IntowTmpVramBuffer		; $71eb
-	ld hl,$dc02		; $71ee
-	ld c,$20		; $71f1
-	call seasonsFunc_0f_72a5_copyFromwTmpVramBufferIntoBank3		; $71f3
-	ld a,UNCMP_GFXH_2e		; $71f6
-	jp loadUncompressedGfxHeader		; $71f8
+	ld hl,$d400
+	add hl,bc
+	ld b,$50
+	call seasonsFunc_0f_7297_copyw6Filler1IntowTmpVramBuffer
+	ld hl,$dc02
+	ld c,$20
+	call seasonsFunc_0f_72a5_copyFromwTmpVramBufferIntoBank3
+	ld a,UNCMP_GFXH_2e
+	jp loadUncompressedGfxHeader
 
 seasons_func_0f_71fb:
-	ld a,($cfca)		; $71fb
-	sub $06			; $71fe
-	cp $03			; $7200
-	jr c,+	; $7202
-	ld a,$02		; $7204
+	ld a,($cfca)
+	sub $06
+	cp $03
+	jr c,+
+	ld a,$02
 +
-	add a			; $7206
-	call load5aIntoBc		; $7207
-	push bc			; $720a
-	ld hl,$d1e0		; $720b
-	add hl,bc		; $720e
-	ld b,$a0		; $720f
-	call seasonsFunc_0f_7297_copyw6Filler1IntowTmpVramBuffer		; $7211
-	ld hl,$d802		; $7214
-	call seasons_func_0f_72d1		; $7217
-	pop bc			; $721a
-	ld hl,$d5e0		; $721b
-	add hl,bc		; $721e
-	ld b,$a0		; $721f
-	call seasonsFunc_0f_7297_copyw6Filler1IntowTmpVramBuffer		; $7221
-	ld hl,$dc02		; $7224
-	call seasons_func_0f_72dc		; $7227
-	ld a,UNCMP_GFXH_2e		; $722a
-	jp loadUncompressedGfxHeader		; $722c
+	add a
+	call load5aIntoBc
+	push bc
+	ld hl,$d1e0
+	add hl,bc
+	ld b,$a0
+	call seasonsFunc_0f_7297_copyw6Filler1IntowTmpVramBuffer
+	ld hl,$d802
+	call seasons_func_0f_72d1
+	pop bc
+	ld hl,$d5e0
+	add hl,bc
+	ld b,$a0
+	call seasonsFunc_0f_7297_copyw6Filler1IntowTmpVramBuffer
+	ld hl,$dc02
+	call seasons_func_0f_72dc
+	ld a,UNCMP_GFXH_2e
+	jp loadUncompressedGfxHeader
 
 seasons_func_0f_722f:
-	ld a,$03		; $722f
-	ld ($ff00+$70),a	; $7231
-	ld hl,$d940		; $7233
-	ld b,$e0		; $7236
-	call clearMemory		; $7238
-	ld hl,$dd40		; $723b
-	ld b,$e0		; $723e
-	ld a,$0d		; $7240
-	call fillMemory		; $7242
-	ld a,($cfcb)		; $7245
-	cp $03			; $7248
-	jr c,+	; $724a
-	sub $03			; $724c
+	ld a,$03
+	ld ($ff00+$70),a
+	ld hl,$d940
+	ld b,$e0
+	call clearMemory
+	ld hl,$dd40
+	ld b,$e0
+	ld a,$0d
+	call fillMemory
+	ld a,($cfcb)
+	cp $03
+	jr c,+
+	sub $03
 +
-	add a			; $724e
-	add a			; $724f
-	swap a			; $7250
-	ld b,a			; $7252
-	and $f0			; $7253
-	ld c,a			; $7255
-	ld a,b			; $7256
-	and $0f			; $7257
-	ld b,a			; $7259
-	push bc			; $725a
-	ld a,($cfcb)		; $725b
-	ld hl,_table_7291		; $725e
-	rst_addAToHl			; $7261
-	ld a,(hl)		; $7262
-	ldh (<hFF8B),a	; $7263
-	ld hl,$d800		; $7265
-	add hl,bc		; $7268
-	ld b,$40		; $7269
-	call seasonsFunc_0f_7297_copyw6Filler1IntowTmpVramBuffer		; $726b
-	ldh a,(<hFF8B)	; $726e
-	add $40			; $7270
-	ld l,a			; $7272
-	ld h,$d9		; $7273
-	call seasons_func_0f_731a		; $7275
-	pop bc			; $7278
-	ld hl,$db00		; $7279
-	add hl,bc		; $727c
-	ld b,$40		; $727d
-	call seasonsFunc_0f_7297_copyw6Filler1IntowTmpVramBuffer		; $727f
-	ldh a,(<hFF8B)	; $7282
-	add $40			; $7284
-	ld l,a			; $7286
-	ld h,$dd		; $7287
-	call seasons_func_0f_7325		; $7289
-	ld a,UNCMP_GFXH_2f		; $728c
-	jp loadUncompressedGfxHeader		; $728e
+	add a
+	add a
+	swap a
+	ld b,a
+	and $f0
+	ld c,a
+	ld a,b
+	and $0f
+	ld b,a
+	push bc
+	ld a,($cfcb)
+	ld hl,_table_7291
+	rst_addAToHl
+	ld a,(hl)
+	ldh (<hFF8B),a
+	ld hl,$d800
+	add hl,bc
+	ld b,$40
+	call seasonsFunc_0f_7297_copyw6Filler1IntowTmpVramBuffer
+	ldh a,(<hFF8B)
+	add $40
+	ld l,a
+	ld h,$d9
+	call seasons_func_0f_731a
+	pop bc
+	ld hl,$db00
+	add hl,bc
+	ld b,$40
+	call seasonsFunc_0f_7297_copyw6Filler1IntowTmpVramBuffer
+	ldh a,(<hFF8B)
+	add $40
+	ld l,a
+	ld h,$dd
+	call seasons_func_0f_7325
+	ld a,UNCMP_GFXH_2f
+	jp loadUncompressedGfxHeader
 _table_7291:
 	.db $07 $05 $04 $05 $07 $08
 	
@@ -463,188 +463,188 @@ _table_7291:
 ; @param	hl	a few values between $d000-$db00 in bank 6 (w6Filler1, etc)
 ; @addr{7297}
 seasonsFunc_0f_7297_copyw6Filler1IntowTmpVramBuffer:
-	ld a,$06		; $7297
-	ld ($ff00+R_SVBK),a	; $7299
-	ld de,wTmpVramBuffer		; $729b
+	ld a,$06
+	ld ($ff00+R_SVBK),a
+	ld de,wTmpVramBuffer
 -
-	ldi a,(hl)		; $729e
-	ld (de),a		; $729f
-	inc e			; $72a0
-	dec b			; $72a1
-	jr nz,-	; $72a2
-	ret			; $72a4
+	ldi a,(hl)
+	ld (de),a
+	inc e
+	dec b
+	jr nz,-
+	ret
 
 ;;
 ; @param	c	$00 for w3VramTiles/$20 for w3TileMappingIndices
 ; @param	hl	$d802(w3VramTiles)/$dc02(w3TileMappingIndices) in bank 3
 ; @addr{72a5}
 seasonsFunc_0f_72a5_copyFromwTmpVramBufferIntoBank3:
-	ld a,$03		; $72a5
-	ld ($ff00+R_SVBK),a	; $72a7
-	ld de,wTmpVramBuffer		; $72a9
+	ld a,$03
+	ld ($ff00+R_SVBK),a
+	ld de,wTmpVramBuffer
 ---
-	ld b,$04		; $72ac
+	ld b,$04
 -
-	ld a,(de)		; $72ae
-	ldi (hl),a		; $72af
-	inc e			; $72b0
-	ld a,(de)		; $72b1
-	ldi (hl),a		; $72b2
-	inc e			; $72b3
-	dec b			; $72b4
-	jr nz,-	; $72b5
+	ld a,(de)
+	ldi (hl),a
+	inc e
+	ld a,(de)
+	ldi (hl),a
+	inc e
+	dec b
+	jr nz,-
 
-	ld b,$04		; $72b7
+	ld b,$04
 -
-	dec e			; $72b9
-	ld a,(de)		; $72ba
-	xor c			; $72bb
-	ldi (hl),a		; $72bc
-	dec e			; $72bd
-	ld a,(de)		; $72be
-	xor c			; $72bf
-	ldi (hl),a		; $72c0
-	dec b			; $72c1
-	jr nz,-	; $72c2
+	dec e
+	ld a,(de)
+	xor c
+	ldi (hl),a
+	dec e
+	ld a,(de)
+	xor c
+	ldi (hl),a
+	dec b
+	jr nz,-
 
 	; e is $40
-	ld a,e			; $72c4
-	add $08			; $72c5
-	ld e,a			; $72c7
-	ld a,$10		; $72c8
-	rst_addAToHl		; $72ca
-	ld a,e			; $72cb
-	cp $90			; $72cc
-	jr nz,---		; $72ce
-	ret			; $72d0
+	ld a,e
+	add $08
+	ld e,a
+	ld a,$10
+	rst_addAToHl
+	ld a,e
+	cp $90
+	jr nz,---
+	ret
 
 seasons_func_0f_72d1:
-	ld a,($cfca)		; $72d1
-	cp $09			; $72d4
-	jr c,++			; $72d6
-	ld c,$00		; $72d8
-	jr +			; $72da
+	ld a,($cfca)
+	cp $09
+	jr c,++
+	ld c,$00
+	jr +
 
 seasons_func_0f_72dc:
-	ld a,($cfca)		; $72dc
-	cp $09			; $72df
-	jr c,++	; $72e1
-	ld c,$20		; $72e3
+	ld a,($cfca)
+	cp $09
+	jr c,++
+	ld c,$20
 +
-	ld a,$03		; $72e5
-	ld ($ff00+$70),a	; $72e7
-	ld de,$cd4f		; $72e9
+	ld a,$03
+	ld ($ff00+$70),a
+	ld de,$cd4f
 --
-	ld b,$10		; $72ec
+	ld b,$10
 -
-	ld a,(de)		; $72ee
-	xor c			; $72ef
-	ldi (hl),a		; $72f0
-	dec e			; $72f1
-	dec b			; $72f2
-	jr nz,-	; $72f3
-	ld a,e			; $72f5
-	add $20			; $72f6
-	ld e,a			; $72f8
-	ld a,$10		; $72f9
-	rst_addAToHl			; $72fb
-	ld a,e			; $72fc
-	cp $ef			; $72fd
-	jr nz,--	; $72ff
-	ret			; $7301
+	ld a,(de)
+	xor c
+	ldi (hl),a
+	dec e
+	dec b
+	jr nz,-
+	ld a,e
+	add $20
+	ld e,a
+	ld a,$10
+	rst_addAToHl
+	ld a,e
+	cp $ef
+	jr nz,--
+	ret
 ++
-	ld a,$03		; $7302
-	ld ($ff00+R_SVBK),a	; $7304
-	ld de,wTmpVramBuffer		; $7306
-	ld c,$0a		; $7309
+	ld a,$03
+	ld ($ff00+R_SVBK),a
+	ld de,wTmpVramBuffer
+	ld c,$0a
 --
-	ld b,$10		; $730b
+	ld b,$10
 -
-	ld a,(de)		; $730d
-	ldi (hl),a		; $730e
-	inc e			; $730f
-	dec b			; $7310
-	jr nz,-	; $7311
-	ld a,$10		; $7313
-	rst_addAToHl			; $7315
-	dec c			; $7316
-	jr nz,--	; $7317
-	ret			; $7319
+	ld a,(de)
+	ldi (hl),a
+	inc e
+	dec b
+	jr nz,-
+	ld a,$10
+	rst_addAToHl
+	dec c
+	jr nz,--
+	ret
 
 seasons_func_0f_731a:
-	ld a,($cfcb)		; $731a
-	cp $03			; $731d
-	jr c,++	; $731f
-	ld c,$00		; $7321
-	jr +		; $7323
+	ld a,($cfcb)
+	cp $03
+	jr c,++
+	ld c,$00
+	jr +
 
 seasons_func_0f_7325:
-	ld a,($cfcb)		; $7325
-	cp $03			; $7328
-	jr c,++	; $732a
-	ld c,$20		; $732c
+	ld a,($cfcb)
+	cp $03
+	jr c,++
+	ld c,$20
 +
-	ld a,$03		; $732e
-	ld ($ff00+R_SVBK),a	; $7330
-	ld de,$cd47		; $7332
+	ld a,$03
+	ld ($ff00+R_SVBK),a
+	ld de,$cd47
 --
-	ld b,$04		; $7335
+	ld b,$04
 -
-	ld a,(de)		; $7337
-	xor c			; $7338
-	ldi (hl),a		; $7339
-	dec e			; $733a
-	ld a,(de)		; $733b
-	xor c			; $733c
-	ldi (hl),a		; $733d
-	dec e			; $733e
-	dec b			; $733f
-	jr nz,-	; $7340
-	ld a,e			; $7342
-	add $10			; $7343
-	ld e,a			; $7345
-	ld a,$18		; $7346
-	rst_addAToHl			; $7348
-	ld a,e			; $7349
-	cp $7f			; $734a
-	jr nz,--	; $734c
-	ret			; $734e
+	ld a,(de)
+	xor c
+	ldi (hl),a
+	dec e
+	ld a,(de)
+	xor c
+	ldi (hl),a
+	dec e
+	dec b
+	jr nz,-
+	ld a,e
+	add $10
+	ld e,a
+	ld a,$18
+	rst_addAToHl
+	ld a,e
+	cp $7f
+	jr nz,--
+	ret
 ++
-	ld a,$03		; $734f
-	ld ($ff00+R_SVBK),a	; $7351
-	ld de,wTmpVramBuffer		; $7353
+	ld a,$03
+	ld ($ff00+R_SVBK),a
+	ld de,wTmpVramBuffer
 --
-	ld b,$04		; $7356
+	ld b,$04
 -
-	ld a,(de)		; $7358
-	ldi (hl),a		; $7359
-	inc e			; $735a
-	ld a,(de)		; $735b
-	ldi (hl),a		; $735c
-	inc e			; $735d
-	dec b			; $735e
-	jr nz,-	; $735f
-	ld a,$18		; $7361
-	rst_addAToHl			; $7363
-	ld a,e			; $7364
-	cp $78			; $7365
-	jr nz,--	; $7367
-	ret			; $7369
+	ld a,(de)
+	ldi (hl),a
+	inc e
+	ld a,(de)
+	ldi (hl),a
+	inc e
+	dec b
+	jr nz,-
+	ld a,$18
+	rst_addAToHl
+	ld a,e
+	cp $78
+	jr nz,--
+	ret
 
 ;;
 ; @param	a	a value
 ; @param[out]	bc	5 * a
 ; @addr{736a}
 load5aIntoBc:
-	ld b,a			; $736a
-	add a			; $736b
-	add a			; $736c
-	add b			; $736d
-	swap a			; $736e
-	ld b,a			; $7370
-	and $f0			; $7371
-	ld c,a			; $7373
-	ld a,b			; $7374
-	and $0f			; $7375
-	ld b,a			; $7377
-	ret			; $7378
+	ld b,a
+	add a
+	add a
+	add b
+	swap a
+	ld b,a
+	and $f0
+	ld c,a
+	ld a,b
+	and $0f
+	ld b,a
+	ret

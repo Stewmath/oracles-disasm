@@ -1,11 +1,11 @@
 ;;
 ; @addr{642c}
 applyRoomSpecificTileChanges:
-	ld a,(wActiveRoom)		; $642c
-	ld hl,roomTileChangerCodeGroupTable		; $642f
-	call findRoomSpecificData		; $6432
-	ret nc			; $6435
-	rst_jumpTable			; $6436
+	ld a,(wActiveRoom)
+	ld hl,roomTileChangerCodeGroupTable
+	call findRoomSpecificData
+	ret nc
+	rst_jumpTable
 	.dw tileReplacement_group5Mapf5 ; $00
 	.dw tileReplacement_group4Map1b ; $01
 	.dw tileReplacement_group2Map7e ; $02
@@ -161,68 +161,68 @@ roomTileChangerCodeGroup7Data:
 ; Opens advance shop
 ; @addr{6533}
 tileReplacement_group1Map58:
-	ldh a,(<hGameboyType)	; $6533
-	rlca			; $6535
-	ret nc			; $6536
-	ld hl,wRoomLayout + $35		; $6537
-	ld (hl),$de		; $653a
-	ret			; $653c
+	ldh a,(<hGameboyType)
+	rlca
+	ret nc
+	ld hl,wRoomLayout + $35
+	ld (hl),$de
+	ret
 
 ;;
 ; Twinrova/ganon fight
 ; @addr{653d}
 tileReplacement_group5Mapf5:
-	ld a,(wTwinrovaTileReplacementMode)		; $653d
-	or a			; $6540
-	ret z			; $6541
-	dec a			; $6542
-	jr z,@val01		; $6543
-	dec a			; $6545
-	jr z,@fillWithIce		; $6546
-	dec a			; $6548
-	jr z,@val03		; $6549
+	ld a,(wTwinrovaTileReplacementMode)
+	or a
+	ret z
+	dec a
+	jr z,@val01
+	dec a
+	jr z,@fillWithIce
+	dec a
+	jr z,@val03
 
 	; Fill the room with the seizure tiles?
-	xor a			; $654b
-	ld (wTwinrovaTileReplacementMode),a		; $654c
-	ld hl,@seizureTiles		; $654f
-	jp fillRectInRoomLayout		; $6552
+	xor a
+	ld (wTwinrovaTileReplacementMode),a
+	ld hl,@seizureTiles
+	jp fillRectInRoomLayout
 
 ; @addr{6555}
 @seizureTiles:
 	.db $00, LARGE_ROOM_HEIGHT, LARGE_ROOM_WIDTH, $aa
 
 @val03:
-	ld (wTwinrovaTileReplacementMode),a		; $6559
-	ld a,GFXH_b9		; $655c
-	jp loadGfxHeader		; $655e
+	ld (wTwinrovaTileReplacementMode),a
+	ld a,GFXH_b9
+	jp loadGfxHeader
 
 @fillWithIce:
-	ld (wTwinrovaTileReplacementMode),a		; $6561
-	ld hl,@iceTiles		; $6564
-	jp fillRectInRoomLayout		; $6567
+	ld (wTwinrovaTileReplacementMode),a
+	ld hl,@iceTiles
+	jp fillRectInRoomLayout
 
 @iceTiles:
 	.db $11, LARGE_ROOM_HEIGHT-2, LARGE_ROOM_WIDTH-2, $8a
 
 @val01:
-	ld (wTwinrovaTileReplacementMode),a		; $656e
-	ld a,GFXH_b8		; $6571
-	jp loadGfxHeader		; $6573
+	ld (wTwinrovaTileReplacementMode),a
+	ld a,GFXH_b8
+	jp loadGfxHeader
 
 ;;
 ; Dungeon 1 in the room where torches light up to make stairs appear
 ; @addr{6576}
 tileReplacement_group4Map1b:
-	call getThisRoomFlags		; $6576
-	and $80			; $6579
-	ret z			; $657b
+	call getThisRoomFlags
+	and $80
+	ret z
 
-	ld hl,wRoomLayout + $1a		; $657c
-	ld a,TILEINDEX_LIT_TORCH		; $657f
-	ldi (hl),a		; $6581
-	inc l			; $6582
-	ld (hl),a		; $6583
+	ld hl,wRoomLayout + $1a
+	ld a,TILEINDEX_LIT_TORCH
+	ldi (hl),a
+	inc l
+	ld (hl),a
 
 	; The programmers forgot a "ret" here! This causes a bug where chests
 	; are inserted into dungeon 1 after buying everything from the secret
@@ -233,21 +233,21 @@ tileReplacement_group4Map1b:
 ; already bought everything.
 ; @addr{6584}
 tileReplacement_group2Map7e:
-	ld a,(wBoughtShopItems1)		; $6584
-	and $0f			; $6587
-	cp $0f			; $6589
-	ret nz			; $658b
+	ld a,(wBoughtShopItems1)
+	and $0f
+	cp $0f
+	ret nz
 
-	ld hl,@data		; $658c
-	call fillRectInRoomLayout		; $658f
-	ld a,TILEINDEX_CHEST		; $6592
-	ld hl,wRoomLayout + $25		; $6594
-	ld (hl),a		; $6597
-	ld l,$27		; $6598
-	ld (hl),a		; $659a
-	ld l,$32		; $659b
-	ld (hl),$a0		; $659d
-	ret			; $659f
+	ld hl,@data
+	call fillRectInRoomLayout
+	ld a,TILEINDEX_CHEST
+	ld hl,wRoomLayout + $25
+	ld (hl),a
+	ld l,$27
+	ld (hl),a
+	ld l,$32
+	ld (hl),$a0
+	ret
 
 @data:
 	.db $13 $03 $06 $a0
@@ -256,91 +256,91 @@ tileReplacement_group2Map7e:
 ; Hero's cave: make a bridge appear
 ; @addr{65a4}
 tileReplacement_group4Mapc9:
-	call getThisRoomFlags		; $65a4
-	and ROOMFLAG_40			; $65a7
-	ret z			; $65a9
+	call getThisRoomFlags
+	and ROOMFLAG_40
+	ret z
 
-	ld hl,wRoomLayout + $27		; $65aa
-	ld a,$6d		; $65ad
-	jp set4Bytes		; $65af
+	ld hl,wRoomLayout + $27
+	ld a,$6d
+	jp set4Bytes
 
 ;;
 ; Hero's cave: make a bridge appear, make another disappear if a switch is set
 ; @addr{65b2}
 tileReplacement_group4Mapc7:
-	ld hl,wSwitchState		; $65b2
-	bit 0,(hl)		; $65b5
-	ret nz			; $65b7
+	ld hl,wSwitchState
+	bit 0,(hl)
+	ret nz
 
-	ld hl,wRoomLayout + $27		; $65b8
-	ld a,$6d		; $65bb
-	call set4Bytes		; $65bd
-	ld a,$f4		; $65c0
-	ld l,$3d		; $65c2
-	ld (hl),a		; $65c4
-	ld l,$4d		; $65c5
-	ld (hl),a		; $65c7
-	ld l,$5d		; $65c8
-	ld (hl),a		; $65ca
-	ld l,$6d		; $65cb
-	ld (hl),a		; $65cd
-	ret			; $65ce
+	ld hl,wRoomLayout + $27
+	ld a,$6d
+	call set4Bytes
+	ld a,$f4
+	ld l,$3d
+	ld (hl),a
+	ld l,$4d
+	ld (hl),a
+	ld l,$5d
+	ld (hl),a
+	ld l,$6d
+	ld (hl),a
+	ret
 
 ;;
 ; D3, left of miniboss: deal with bridges
 ; @addr{65cf}
 tileReplacement_group4Map4c:
-	ld hl,wSwitchState		; $65cf
-	bit 0,(hl)		; $65d2
-	ret nz			; $65d4
+	ld hl,wSwitchState
+	bit 0,(hl)
+	ret nz
 
-	ld hl,wRoomLayout + $43		; $65d5
-	ld a,$6a		; $65d8
-	ld (hl),a		; $65da
-	ld l,$53		; $65db
-	ld (hl),a		; $65dd
-	ld l,$63		; $65de
-	ld (hl),a		; $65e0
-	ld l,$76		; $65e1
-	ld a,$f4		; $65e3
-	jp set4Bytes		; $65e5
+	ld hl,wRoomLayout + $43
+	ld a,$6a
+	ld (hl),a
+	ld l,$53
+	ld (hl),a
+	ld l,$63
+	ld (hl),a
+	ld l,$76
+	ld a,$f4
+	jp set4Bytes
 
 ;;
 ; D3, left, down from miniboss: deal with bridges
 ; @addr{65e8}
 tileReplacement_group4Map4e:
-	ld hl,wSwitchState		; $65e8
-	bit 1,(hl)		; $65eb
-	ret z			; $65ed
+	ld hl,wSwitchState
+	bit 1,(hl)
+	ret z
 
-	ld hl,wRoomLayout + $36		; $65ee
-	ld a,$6d		; $65f1
-	call set4Bytes		; $65f3
-	ld a,$f4		; $65f6
-	ld l,$42		; $65f8
-	ld (hl),a		; $65fa
-	ld l,$52		; $65fb
-	ld (hl),a		; $65fd
-	ld l,$62		; $65fe
-	ld (hl),a		; $6600
-	ld l,$4c		; $6601
-	ld (hl),a		; $6603
-	ld l,$5c		; $6604
-	ld (hl),a		; $6606
-	ld l,$6c		; $6607
-	ld (hl),a		; $6609
-	ret			; $660a
+	ld hl,wRoomLayout + $36
+	ld a,$6d
+	call set4Bytes
+	ld a,$f4
+	ld l,$42
+	ld (hl),a
+	ld l,$52
+	ld (hl),a
+	ld l,$62
+	ld (hl),a
+	ld l,$4c
+	ld (hl),a
+	ld l,$5c
+	ld (hl),a
+	ld l,$6c
+	ld (hl),a
+	ret
 
 ;;
 ; D3, right of seed shooter room: set torch lit
 ; @addr{660b}
 tileReplacement_group4Map59:
-	call getThisRoomFlags		; $660b
-	and $80			; $660e
-	ret z			; $6610
+	call getThisRoomFlags
+	and $80
+	ret z
 
-	ld de,@replacementTiles		; $6611
-	jp replaceTiles		; $6614
+	ld de,@replacementTiles
+	jp replaceTiles
 
 ; @addr{6617}
 @replacementTiles:
@@ -352,29 +352,29 @@ tileReplacement_group4Map59:
 ; interaction itself)
 ; @addr{661a}
 tileReplacement_group4Map60:
-	ld a,GLOBALFLAG_D3_CRYSTALS		; $661a
-	call checkGlobalFlag		; $661c
-	ret z			; $661f
+	ld a,GLOBALFLAG_D3_CRYSTALS
+	call checkGlobalFlag
+	ret z
 
-	ld hl,@rect		; $6620
-	call fillRectInRoomLayout		; $6623
-	call getThisRoomFlags		; $6626
-	and ROOMFLAG_ITEM			; $6629
-	ld a,TILEINDEX_CHEST_OPENED	; $662b
-	jr nz,+			; $662d
-	inc a			; $662f
+	ld hl,@rect
+	call fillRectInRoomLayout
+	call getThisRoomFlags
+	and ROOMFLAG_ITEM
+	ld a,TILEINDEX_CHEST_OPENED
+	jr nz,+
+	inc a
 +
-	ld hl,wRoomLayout + $57		; $6630
-	ld (hl),a		; $6633
-	ld l,$34		; $6634
-	ld (hl),$1d		; $6636
-	ld l,$3a		; $6638
-	ld (hl),$1d		; $663a
-	ld l,$74		; $663c
-	ld (hl),$1d		; $663e
-	ld l,$7a		; $6640
-	ld (hl),$1d		; $6642
-	ret			; $6644
+	ld hl,wRoomLayout + $57
+	ld (hl),a
+	ld l,$34
+	ld (hl),$1d
+	ld l,$3a
+	ld (hl),$1d
+	ld l,$74
+	ld (hl),$1d
+	ld l,$7a
+	ld (hl),$1d
+	ret
 ; @addr{6645}
 @rect:
 	.db $34 $05 $07 $a0
@@ -384,80 +384,80 @@ tileReplacement_group4Map60:
 ; interaction itself)
 ; @addr{6649}
 tileReplacement_group4Map52:
-	ld a,GLOBALFLAG_D3_CRYSTALS		; $6649
-	call checkGlobalFlag		; $664b
-	ret z			; $664e
+	ld a,GLOBALFLAG_D3_CRYSTALS
+	call checkGlobalFlag
+	ret z
 
 	; Load the room above instead of this room
-	ld a,$60		; $664f
-	ld (wLoadingRoom),a		; $6651
-	callab loadRoomLayout		; $6654
-	ret			; $665c
+	ld a,$60
+	ld (wLoadingRoom),a
+	callab loadRoomLayout
+	ret
 
 ;;
 ; Maku tree present
 ; @addr{665d}
 tileReplacement_group0Map38:
-	ld a,GLOBALFLAG_MAKU_TREE_SAVED		; $665d
-	call checkGlobalFlag		; $665f
-	ret z			; $6662
-	jr +			; $6663
+	ld a,GLOBALFLAG_MAKU_TREE_SAVED
+	call checkGlobalFlag
+	ret z
+	jr +
 ;;
 ; Maku tree past
 ; @addr{6665}
 tileReplacement_group1Map38:
-	call getThisRoomFlags		; $6665
-	bit 7,(hl)		; $6668
-	ret z			; $666a
+	call getThisRoomFlags
+	bit 7,(hl)
+	ret z
 +
 	; Clear barrier
-	ld hl,wRoomLayout + $73		; $666b
-	ld a,$f9		; $666e
-	jp set4Bytes		; $6670
+	ld hl,wRoomLayout + $73
+	ld a,$f9
+	jp set4Bytes
 
 ;;
 ; Present: Screen below maku tree
 ; @addr{6673}
 tileReplacement_group0Map48:
-	ld a,GLOBALFLAG_MAKU_TREE_SAVED		; $6673
-	call checkGlobalFlag		; $6675
-	ret z			; $6678
+	ld a,GLOBALFLAG_MAKU_TREE_SAVED
+	call checkGlobalFlag
+	ret z
 
 	; Clear barrier
-	ld hl,wRoomLayout + $03		; $6679
-	ld a,$3a		; $667c
-	jp set4Bytes		; $667e
+	ld hl,wRoomLayout + $03
+	ld a,$3a
+	jp set4Bytes
 
 ;;
 ; D6 before boss room: create bridge
 ; @addr{6681}
 tileReplacement_group5Map38:
-	call getThisRoomFlags		; $6681
-	and ROOMFLAG_40			; $6684
-	ret z			; $6686
+	call getThisRoomFlags
+	and ROOMFLAG_40
+	ret z
 
-	ld a,$6a		; $6687
-	ld hl,wRoomLayout + $39		; $6689
-	ld (hl),a		; $668c
-	ld l,$49		; $668d
-	ld (hl),a		; $668f
-	ld l,$59		; $6690
-	ld (hl),a		; $6692
-	ld l,$69		; $6693
-	ld (hl),a		; $6695
-	ret			; $6696
+	ld a,$6a
+	ld hl,wRoomLayout + $39
+	ld (hl),a
+	ld l,$49
+	ld (hl),a
+	ld l,$59
+	ld (hl),a
+	ld l,$69
+	ld (hl),a
+	ret
 
 ;;
 ; D6 present: screen with retracting wall
 ; @addr{6697}
 tileReplacement_group5Map25:
-	call getThisRoomFlags		; $6697
-	and $40			; $669a
-	ret nz			; $669c
+	call getThisRoomFlags
+	and $40
+	ret nz
 
-	ld hl,_d6RetractingWallRectPresent		; $669d
-	call fillRectInRoomLayout		; $66a0
-	jr ++			; $66a3
+	ld hl,_d6RetractingWallRectPresent
+	call fillRectInRoomLayout
+	jr ++
 
 ; @addr{66a5}
 _d6RetractingWallRectPresent:
@@ -470,17 +470,17 @@ _d6RetractingWallRectPast:
 ; D6 past: screen with retracting walls
 ; @addr{66ad}
 tileReplacement_group5Map43:
-	call getThisRoomFlags		; $66ad
-	and $40			; $66b0
-	jr nz,@pastRetracted		; $66b2
+	call getThisRoomFlags
+	and $40
+	jr nz,@pastRetracted
 
-	ld hl,_d6RetractingWallRectPast		; $66b4
-	call fillRectInRoomLayout		; $66b7
+	ld hl,_d6RetractingWallRectPast
+	call fillRectInRoomLayout
 ++
-	ld hl,@wallEdge1		; $66ba
-	call fillRectInRoomLayout		; $66bd
-	ld hl,@wallEdge2		; $66c0
-	jp fillRectInRoomLayout		; $66c3
+	ld hl,@wallEdge1
+	call fillRectInRoomLayout
+	ld hl,@wallEdge2
+	jp fillRectInRoomLayout
 
 @wallEdge1:
 	.db $1b $09 $01 $b3
@@ -490,8 +490,8 @@ tileReplacement_group5Map43:
 
 ; Light the torches.
 @pastRetracted:
-	ld de,@tilesToReplace		; $66ce
-	jp replaceTiles		; $66d1
+	ld de,@tilesToReplace
+	jp replaceTiles
 
 @tilesToReplace:
 	.db $09 $08 ; Replace unlit torch with lit
@@ -501,18 +501,18 @@ tileReplacement_group5Map43:
 ; D8: room with retracting wall
 ; @addr{66d7}
 tileReplacement_group5Map95:
-	call getThisRoomFlags		; $66d7
-	and $40			; $66da
-	ret nz			; $66dc
+	call getThisRoomFlags
+	and $40
+	ret nz
 
-	ld hl,wRoomLayout + $4d		; $66dd
-	ld (hl),$b4		; $66e0
-	inc l			; $66e2
-	ld (hl),$b2		; $66e3
-	ld hl,@wallInterior		; $66e5
-	call fillRectInRoomLayout		; $66e8
-	ld hl,@wallEdge		; $66eb
-	jp fillRectInRoomLayout		; $66ee
+	ld hl,wRoomLayout + $4d
+	ld (hl),$b4
+	inc l
+	ld (hl),$b2
+	ld hl,@wallInterior
+	call fillRectInRoomLayout
+	ld hl,@wallEdge
+	jp fillRectInRoomLayout
 
 @wallInterior:
 	.db $5e $05 $01 $a7
@@ -524,28 +524,28 @@ tileReplacement_group5Map95:
 ; Gets rid of a boulder and creates a shortcut
 ; @addr{66f9}
 tileReplacement_group5Mapc3:
-	call @func_04_672e		; $66f9
-	call getThisRoomFlags		; $66fc
-	and ROOMFLAG_40			; $66ff
-	ret z			; $6701
+	call @func_04_672e
+	call getThisRoomFlags
+	and ROOMFLAG_40
+	ret z
 
-	ld bc,@boulderReplacementTiles		; $6702
-	ld hl,wRoomLayout + $31		; $6705
-	call @locFunc		; $6708
-	ld l,$41		; $670b
-	call @locFunc		; $670d
-	ld l,$51		; $6710
+	ld bc,@boulderReplacementTiles
+	ld hl,wRoomLayout + $31
+	call @locFunc
+	ld l,$41
+	call @locFunc
+	ld l,$51
 @locFunc:
-	ld a,$05		; $6712
+	ld a,$05
 --
-	ldh (<hFF8D),a	; $6714
-	ld a,(bc)		; $6716
-	inc bc			; $6717
-	ldi (hl),a		; $6718
-	ldh a,(<hFF8D)	; $6719
-	dec a			; $671b
-	jr nz,--		; $671c
-	ret			; $671e
+	ldh (<hFF8D),a
+	ld a,(bc)
+	inc bc
+	ldi (hl),a
+	ldh a,(<hFF8D)
+	dec a
+	jr nz,--
+	ret
 
 ; @addr{671f}
 @boulderReplacementTiles:
@@ -559,35 +559,35 @@ tileReplacement_group5Mapc3:
 ; does not remove the boulder)
 ; @addr{672e}
 @func_04_672e:
-	ld a,$04		; $672e
-	ld hl,wEssencesObtained		; $6730
-	call checkFlag		; $6733
-	ret z			; $6736
+	ld a,$04
+	ld hl,wEssencesObtained
+	call checkFlag
+	ret z
 
-	ld hl,@newTiles		; $6737
-	ld bc,wRoomLayout + $06		; $673a
-	ld a,$04		; $673d
+	ld hl,@newTiles
+	ld bc,wRoomLayout + $06
+	ld a,$04
 ---
-	ldh (<hFF8D),a	; $673f
-	ld a,$04		; $6741
+	ldh (<hFF8D),a
+	ld a,$04
 --
-	ldh (<hFF8C),a	; $6743
-	ldi a,(hl)		; $6745
-	or a			; $6746
-	jr z,+			; $6747
-	ld (bc),a		; $6749
+	ldh (<hFF8C),a
+	ldi a,(hl)
+	or a
+	jr z,+
+	ld (bc),a
 +
-	inc bc			; $674a
-	ldh a,(<hFF8C)	; $674b
-	dec a			; $674d
-	jr nz,--		; $674e
+	inc bc
+	ldh a,(<hFF8C)
+	dec a
+	jr nz,--
 
-	ld a,$0c		; $6750
-	call addAToBc		; $6752
-	ldh a,(<hFF8D)	; $6755
-	dec a			; $6757
-	jr nz,---		; $6758
-	ret			; $675a
+	ld a,$0c
+	call addAToBc
+	ldh a,(<hFF8D)
+	dec a
+	jr nz,---
+	ret
 
 ; 4x4 grid of new tiles to insert ($00 means unchanged).
 ; @addr{675b}
@@ -601,50 +601,50 @@ tileReplacement_group5Mapc3:
 ; Past: cave in goron mountain with 2 chests
 ; @addr{676b}
 tileReplacement_group2Mapf7:
-	call getThisRoomFlags		; $676b
-	bit ROOMFLAG_BIT_ITEM,(hl)		; $676e
-	jr z,++			; $6770
+	call getThisRoomFlags
+	bit ROOMFLAG_BIT_ITEM,(hl)
+	jr z,++
 
-	ld a,TILEINDEX_CHEST_OPENED	; $6772
-	ld c,$14		; $6774
-	call setTile		; $6776
-	ld a,TILEINDEX_CHEST_OPENED	; $6779
-	ld c,$16		; $677b
-	jp setTile		; $677d
+	ld a,TILEINDEX_CHEST_OPENED
+	ld c,$14
+	call setTile
+	ld a,TILEINDEX_CHEST_OPENED
+	ld c,$16
+	jp setTile
 ++
-	ld a,(hl)		; $6780
-	and $c0			; $6781
-	cp $c0			; $6783
-	ret z			; $6785
+	ld a,(hl)
+	and $c0
+	cp $c0
+	ret z
 
-	bit 6,(hl)		; $6786
-	jr z,+			; $6788
+	bit 6,(hl)
+	jr z,+
 
-	ld a,(wSeedTreeRefilledBitset)		; $678a
-	bit 0,a			; $678d
-	ret nz			; $678f
+	ld a,(wSeedTreeRefilledBitset)
+	bit 0,a
+	ret nz
 +
-	ld hl,@wallInsertion	; $6790
-	ld bc,wRoomLayout + $03		; $6793
-	ld a,$04		; $6796
+	ld hl,@wallInsertion
+	ld bc,wRoomLayout + $03
+	ld a,$04
 ---
-	ldh (<hFF8D),a	; $6798
-	ld a,$05		; $679a
+	ldh (<hFF8D),a
+	ld a,$05
 --
-	ldh (<hFF8C),a	; $679c
-	ldi a,(hl)		; $679e
-	ld (bc),a		; $679f
-	inc bc			; $67a0
-	ldh a,(<hFF8C)	; $67a1
-	dec a			; $67a3
-	jr nz,--	; $67a4
+	ldh (<hFF8C),a
+	ldi a,(hl)
+	ld (bc),a
+	inc bc
+	ldh a,(<hFF8C)
+	dec a
+	jr nz,--
 
-	ld a,$0b		; $67a6
-	call addAToBc		; $67a8
-	ldh a,(<hFF8D)	; $67ab
-	dec a			; $67ad
-	jr nz,---		; $67ae
-	ret			; $67b0
+	ld a,$0b
+	call addAToBc
+	ldh a,(<hFF8D)
+	dec a
+	jr nz,---
+	ret
 
 ; @addr{67b1}
 @wallInsertion:
@@ -657,17 +657,17 @@ tileReplacement_group2Mapf7:
 ; D7: 1st platform on floor 1
 ; @addr{67c5}
 tileReplacement_group5Map4c:
-	ld a,(wJabuWaterLevel)		; $67c5
-	and $07			; $67c8
-	ret z			; $67ca
+	ld a,(wJabuWaterLevel)
+	and $07
+	ret z
 
-	ld hl,@rect		; $67cb
-	call fillRectInRoomLayout		; $67ce
+	ld hl,@rect
+	call fillRectInRoomLayout
 
 	; Staircase going down
-	ld l,$57		; $67d1
-	ld (hl),$45		; $67d3
-	ret			; $67d5
+	ld l,$57
+	ld (hl),$45
+	ret
 
 ; @addr{67d6}
 @rect:
@@ -677,12 +677,12 @@ tileReplacement_group5Map4c:
 ; D7: 2nd platform on floor 1
 ; @addr{67da}
 tileReplacement_group5Map4d:
-	ld a,(wJabuWaterLevel)		; $67da
-	and $07			; $67dd
-	ret z			; $67df
+	ld a,(wJabuWaterLevel)
+	and $07
+	ret z
 
-	ld hl,@rect		; $67e0
-	jp fillRectInRoomLayout		; $67e3
+	ld hl,@rect
+	jp fillRectInRoomLayout
 
 ; @addr{67e6}
 @rect:
@@ -693,15 +693,15 @@ tileReplacement_group5Map4d:
 ; level is correct.
 ; @addr{67ea}
 tileReplacement_group5Map5c:
-	ld a,(wDungeonFloor)		; $67ea
-	ld b,a			; $67ed
-	ld a,(wJabuWaterLevel)		; $67ee
-	and $07			; $67f1
-	cp b			; $67f3
-	ret nz			; $67f4
+	ld a,(wDungeonFloor)
+	ld b,a
+	ld a,(wJabuWaterLevel)
+	and $07
+	cp b
+	ret nz
 
-	ld de,@platformRect		; $67f5
-	jp drawRectInRoomLayout		; $67f8
+	ld de,@platformRect
+	jp drawRectInRoomLayout
 
 ; @addr{67fb}
 @platformRect:
@@ -717,15 +717,15 @@ tileReplacement_group5Map5c:
 ; level is correct.
 ; @addr{6817}
 tileReplacement_group5Map5d:
-	ld a,(wDungeonFloor)		; $6817
-	ld b,a			; $681a
-	ld a,(wJabuWaterLevel)		; $681b
-	and $07			; $681e
-	cp b			; $6820
-	ret nz			; $6821
+	ld a,(wDungeonFloor)
+	ld b,a
+	ld a,(wJabuWaterLevel)
+	and $07
+	cp b
+	ret nz
 
-	ld de,@platformRect		; $6822
-	jp drawRectInRoomLayout		; $6825
+	ld de,@platformRect
+	jp drawRectInRoomLayout
 
 @platformRect:
 	.db $12 $05 $05
@@ -740,12 +740,12 @@ tileReplacement_group5Map5d:
 ; Creates a ladder if the miniboss has been murdered.
 ; @addr{6844}
 tileReplacement_group7Map4a:
-	call getThisRoomFlags		; $6844
-	and $80			; $6847
-	ret z			; $6849
+	call getThisRoomFlags
+	and $80
+	ret z
 
-	ld hl,@ladderRect		; $684a
-	jp fillRectInRoomLayout		; $684d
+	ld hl,@ladderRect
+	jp fillRectInRoomLayout
 
 ; @addr{5850}
 @ladderRect:
@@ -755,63 +755,63 @@ tileReplacement_group7Map4a:
 ; Graveyard: Clear the fence if opened
 ; @addr{6854}
 tileReplacement_group0Map5c:
-	call getThisRoomFlags	; $6854
-	and $80			; $6857
-	ret z			; $6859
+	call getThisRoomFlags
+	and $80
+	ret z
 
-	ld hl,wRoomLayout + $34		; $685a
-	ld a,$3a		; $685d
-	ld (hl),a		; $685f
-	ld l,$43		; $6860
-	jp set3Bytes		; $6862
+	ld hl,wRoomLayout + $34
+	ld a,$3a
+	ld (hl),a
+	ld l,$43
+	jp set3Bytes
 
 ;;
 ; Present forest above d2: clear rubble
 ; @addr{6865}
 tileReplacement_group0Map73:
-	call getThisRoomFlags		; $6865
-	and $80			; $6868
-	ret z			; $686a
+	call getThisRoomFlags
+	and $80
+	ret z
 
-	ld hl,wRoomLayout + $73		; $686b
-	ld (hl),$3a		; $686e
-	inc l			; $6870
-	ld (hl),$10		; $6871
-	inc l			; $6873
-	ld (hl),$11		; $6874
-	inc l			; $6876
-	ld (hl),$12		; $6877
-	inc l			; $6879
-	ld (hl),$3a		; $687a
-	ret			; $687c
+	ld hl,wRoomLayout + $73
+	ld (hl),$3a
+	inc l
+	ld (hl),$10
+	inc l
+	ld (hl),$11
+	inc l
+	ld (hl),$12
+	inc l
+	ld (hl),$3a
+	ret
 
 ;;
 ; Present Tokay: remove scent tree if not planted
 ; @addr{687d}
 tileReplacement_group0Mapac:
-	call getThisRoomFlags		; $687d
-	and $80			; $6880
-	ret nz			; $6882
+	call getThisRoomFlags
+	and $80
+	ret nz
 
-	ld hl,wRoomLayout + $33		; $6883
-	ld a,$af		; $6886
-	ldi (hl),a		; $6888
-	ld (hl),a		; $6889
-	ld l,$43		; $688a
-	ldi (hl),a		; $688c
-	ld (hl),a		; $688d
-	ret			; $688e
+	ld hl,wRoomLayout + $33
+	ld a,$af
+	ldi (hl),a
+	ld (hl),a
+	ld l,$43
+	ldi (hl),a
+	ld (hl),a
+	ret
 
 ;;
 ; Rolling ridge present screen with vine
 ; @addr{688f}
 tileReplacement_group0Map2c:
-	ld bc,$0017		; $688f
-	call getVinePosition		; $6892
-	jp nz,setTileToWitheredVine		; $6895
-	ld l,$06		; $6898
-	ld de,@vineEdgeReplacements	; $689a
-	jp replaceVineTiles		; $689d
+	ld bc,$0017
+	call getVinePosition
+	jp nz,setTileToWitheredVine
+	ld l,$06
+	ld de,@vineEdgeReplacements
+	jp replaceVineTiles
 
 ; @addr{68a0}
 @vineEdgeReplacements:
@@ -822,12 +822,12 @@ tileReplacement_group0Map2c:
 ; Rolling ridge present, above the screen with a vine
 ; @addr{68a3}
 tileReplacement_group0Map1c:
-	ld bc,$0017		; $68a3
-	call getVinePosition		; $68a6
-	ret nz			; $68a9
-	ld l,$66		; $68aa
-	ld de,@vineEdgeReplacements		; $68ac
-	jp replaceVineTiles		; $68af
+	ld bc,$0017
+	call getVinePosition
+	ret nz
+	ld l,$66
+	ld de,@vineEdgeReplacements
+	jp replaceVineTiles
 
 ; @addr{68b2}
 @vineEdgeReplacements:
@@ -839,15 +839,15 @@ tileReplacement_group0Map1c:
 ; Tokay island present, D3 entrance screen (has a vine)
 ; @addr{68b7}
 tileReplacement_group0Mapba:
-	ld bc,$0218		; $68b7
-	call getVinePosition		; $68ba
-	jp nz,setTileToWitheredVine		; $68bd
-	ld l,$07		; $68c0
-	ld de,@vineEdgeReplacements		; $68c2
-	call replaceVineTiles		; $68c5
-	ld a,$8b		; $68c8
-	ld (wRoomLayout+$18),a		; $68ca
-	ret			; $68cd
+	ld bc,$0218
+	call getVinePosition
+	jp nz,setTileToWitheredVine
+	ld l,$07
+	ld de,@vineEdgeReplacements
+	call replaceVineTiles
+	ld a,$8b
+	ld (wRoomLayout+$18),a
+	ret
 
 ; @addr{68ce}
 @vineEdgeReplacements:
@@ -858,13 +858,13 @@ tileReplacement_group0Mapba:
 ; Tokay island present, above D3 entrance screen
 ; @addr{68d1}
 tileReplacement_group0Mapaa:
-	ld bc,$0218		; $68d1
-	call getVinePosition		; $68d4
-	ret nz			; $68d7
+	ld bc,$0218
+	call getVinePosition
+	ret nz
 
-	ld l,$77		; $68d8
-	ld de,@vineEdgeReplacements	; $68da
-	jp replaceVineTiles		; $68dd
+	ld l,$77
+	ld de,@vineEdgeReplacements
+	jp replaceVineTiles
 
 ; @addr{68e0}
 @vineEdgeReplacements:
@@ -875,13 +875,13 @@ tileReplacement_group0Mapaa:
 ; Tokay island present, 2nd vine screen
 ; @addr{68e3}
 tileReplacement_group0Mapcc:
-	ld bc,$0311		; $68e3
-	call getVinePosition		; $68e6
-	jp nz,setTileToWitheredVine		; $68e9
+	ld bc,$0311
+	call getVinePosition
+	jp nz,setTileToWitheredVine
 
-	ld l,$00		; $68ec
-	ld de,@vineEdgeReplacements	; $68ee
-	jp replaceVineTiles		; $68f1
+	ld l,$00
+	ld de,@vineEdgeReplacements
+	jp replaceVineTiles
 
 ; @addr{68f4}
 @vineEdgeReplacements:
@@ -892,13 +892,13 @@ tileReplacement_group0Mapcc:
 ; Tokay island present, above 2nd vine screen
 ; @addr{68f7}
 tileReplacement_group0Mapbc:
-	ld bc,$0311		; $68f7
-	call getVinePosition		; $68fa
-	ret nz			; $68fd
+	ld bc,$0311
+	call getVinePosition
+	ret nz
 
-	ld l,$70		; $68fe
-	ld de,@vineEdgeReplacements	; $6900
-	jp replaceVineTiles		; $6903
+	ld l,$70
+	ld de,@vineEdgeReplacements
+	jp replaceVineTiles
 
 ; @addr{6906}
 @vineEdgeReplacements:
@@ -909,13 +909,13 @@ tileReplacement_group0Mapbc:
 ; Tokay island present, 3rd vine screen
 ; @addr{6909}
 tileReplacement_group0Mapda:
-	ld bc,$0418		; $6909
-	call getVinePosition		; $690c
-	jp nz,setTileToWitheredVine		; $690f
+	ld bc,$0418
+	call getVinePosition
+	jp nz,setTileToWitheredVine
 
-	ld l,$07		; $6912
-	ld de,@vineEdgeReplacements	; $6914
-	jp replaceVineTiles		; $6917
+	ld l,$07
+	ld de,@vineEdgeReplacements
+	jp replaceVineTiles
 
 ; @addr{691a}
 @vineEdgeReplacements:
@@ -926,13 +926,13 @@ tileReplacement_group0Mapda:
 ; Tokay island present, above 3rd vine screen
 ; @addr{691d}
 tileReplacement_group0Mapca:
-	ld bc,$0418		; $691d
-	call getVinePosition		; $6920
-	ret nz			; $6923
+	ld bc,$0418
+	call getVinePosition
+	ret nz
 
-	ld l,$77		; $6924
-	ld de,@videEdgeReplacements	; $6926
-	jp replaceVineTiles		; $6929
+	ld l,$77
+	ld de,@videEdgeReplacements
+	jp replaceVineTiles
 
 ; @addr{692c}
 @videEdgeReplacements:
@@ -943,73 +943,73 @@ tileReplacement_group0Mapca:
 ; Talus Peaks Present, has 2 vines
 ; @addr{692f}
 tileReplacement_group0Map61:
-	ld bc,$0122		; $692f
-	call getVinePosition		; $6932
-	jr z,@vine1			; $6935
+	ld bc,$0122
+	call getVinePosition
+	jr z,@vine1
 
-	ld bc,$0127		; $6937
-	call getVinePosition		; $693a
-	jp nz,setTileToWitheredVine		; $693d
+	ld bc,$0127
+	call getVinePosition
+	jp nz,setTileToWitheredVine
 @vine2:
-	ld hl,wRoomLayout + $06		; $6940
-	ld (hl),$4d		; $6943
-	inc l			; $6945
-	ld (hl),$d5		; $6946
-	inc l			; $6948
-	ld (hl),$55		; $6949
-	ld l,$16		; $694b
-	ld (hl),$5d		; $694d
-	inc l			; $694f
-	ld (hl),$d6		; $6950
-	inc l			; $6952
-	ld (hl),$60		; $6953
-	ld l,$27		; $6955
-	ld (hl),$8d		; $6957
-	ret			; $6959
+	ld hl,wRoomLayout + $06
+	ld (hl),$4d
+	inc l
+	ld (hl),$d5
+	inc l
+	ld (hl),$55
+	ld l,$16
+	ld (hl),$5d
+	inc l
+	ld (hl),$d6
+	inc l
+	ld (hl),$60
+	ld l,$27
+	ld (hl),$8d
+	ret
 @vine1:
-	ld hl,wRoomLayout + $01		; $695a
-	ld (hl),$56		; $695d
-	inc l			; $695f
-	ld (hl),$d5		; $6960
-	inc l			; $6962
-	ld (hl),$4d		; $6963
-	ld l,$11		; $6965
-	ld (hl),$61		; $6967
-	inc l			; $6969
-	ld (hl),$d6		; $696a
-	inc l			; $696c
-	ld (hl),$5d		; $696d
-	ld l,$22		; $696f
-	ld (hl),$8d		; $6971
-	ret			; $6973
+	ld hl,wRoomLayout + $01
+	ld (hl),$56
+	inc l
+	ld (hl),$d5
+	inc l
+	ld (hl),$4d
+	ld l,$11
+	ld (hl),$61
+	inc l
+	ld (hl),$d6
+	inc l
+	ld (hl),$5d
+	ld l,$22
+	ld (hl),$8d
+	ret
 
 ;;
 ; Screen above talus peaks vines
 ; @addr{6974}
 tileReplacement_group0Map51:
-	ld bc,$0122		; $6974
-	call getVinePosition		; $6977
-	jr z,@vines1		; $697a
+	ld bc,$0122
+	call getVinePosition
+	jr z,@vines1
 
-	ld bc,$0127		; $697c
-	call getVinePosition		; $697f
-	ret nz			; $6982
+	ld bc,$0127
+	call getVinePosition
+	ret nz
 @vines2:
-	ld hl,wRoomLayout + $76		; $6983
-	ld (hl),$5b		; $6986
-	inc l			; $6988
-	ld (hl),$d4		; $6989
-	inc l			; $698b
-	ld (hl),$45		; $698c
-	ret			; $698e
+	ld hl,wRoomLayout + $76
+	ld (hl),$5b
+	inc l
+	ld (hl),$d4
+	inc l
+	ld (hl),$45
+	ret
 @vines1:
-	ld hl,wRoomLayout + $71		; $698f
-	ld (hl),$46		; $6992
-	inc l			; $6994
-	ld (hl),$d4		; $6995
-	inc l			; $6997
-	ld (hl),$5c		; $6998
-	ret			; $699a
+	ld hl,wRoomLayout + $71
+	ld (hl),$46
+	inc l
+	ld (hl),$d4
+	inc l
+	ld (hl),$5c
+	ret
 
 ;;
 ; Replaces tiles that should be turned into vines.
@@ -1018,37 +1018,37 @@ tileReplacement_group0Map51:
 ; @param l Top-left of where to apply the data at de.
 ; @addr{699b}
 replaceVineTiles:
-	ld h,>wRoomLayout		; $699b
+	ld h,>wRoomLayout
 --
-	ld a,(de)		; $699d
-	or a			; $699e
-	jr z,++			; $699f
+	ld a,(de)
+	or a
+	jr z,++
 
-	ld a,(de)		; $69a1
-	inc de			; $69a2
-	ldi (hl),a		; $69a3
-	inc l			; $69a4
-	ld a,(de)		; $69a5
-	inc de			; $69a6
-	ldi (hl),a		; $69a7
-	ld a,$0d		; $69a8
-	rst_addAToHl			; $69aa
-	jr --			; $69ab
+	ld a,(de)
+	inc de
+	ldi (hl),a
+	inc l
+	ld a,(de)
+	inc de
+	ldi (hl),a
+	ld a,$0d
+	rst_addAToHl
+	jr --
 ++
-	ld de,@vineReplacements		; $69ad
-	call replaceTiles		; $69b0
+	ld de,@vineReplacements
+	call replaceTiles
 
 	; Find the vine base
-	ld a,$d6		; $69b3
-	call findTileInRoom		; $69b5
-	ret nz			; $69b8
+	ld a,$d6
+	call findTileInRoom
+	ret nz
 
 	; Set the tile below that to $8d which completes the vine base
-	ld a,l			; $69b9
-	add $10			; $69ba
-	ld l,a			; $69bc
-	ld (hl),$8d		; $69bd
-	ret			; $69bf
+	ld a,l
+	add $10
+	ld l,a
+	ld (hl),$8d
+	ret
 
 ; @addr{69c0}
 @vineReplacements:
@@ -1063,35 +1063,35 @@ replaceVineTiles:
 ; vine.
 ; @addr{69c7}
 setTileToWitheredVine:
-	ld l,(hl)		; $69c7
-	ld h,>wRoomLayout		; $69c8
-	ld a,(hl)		; $69ca
-	push hl			; $69cb
-	call retrieveTileCollisionValue		; $69cc
-	pop hl			; $69cf
-	or a			; $69d0
-	ret nz			; $69d1
-	ld (hl),$8c		; $69d2
-	ret			; $69d4
+	ld l,(hl)
+	ld h,>wRoomLayout
+	ld a,(hl)
+	push hl
+	call retrieveTileCollisionValue
+	pop hl
+	or a
+	ret nz
+	ld (hl),$8c
+	ret
 
 ;;
 ; Get the position of vine B and compare with C.
 ; @addr{69d5}
 getVinePosition:
-	ld a,b			; $69d5
-	ld hl,wVinePositions		; $69d6
-	rst_addAToHl			; $69d9
-	ld a,(hl)		; $69da
-	cp c			; $69db
-	ret			; $69dc
+	ld a,b
+	ld hl,wVinePositions
+	rst_addAToHl
+	ld a,(hl)
+	cp c
+	ret
 
 ;;
 ; @addr{69dd}
 initializeVinePositions:
-	ld hl,wVinePositions		; $69dd
-	ld de,@defaultVinePositions	; $69e0
-	ld b,$06		; $69e3
-	jp copyMemoryReverse		; $69e5
+	ld hl,wVinePositions
+	ld de,@defaultVinePositions
+	ld b,$06
+	jp copyMemoryReverse
 
 @defaultVinePositions:
 	.include "build/data/defaultVinePositions.s"
@@ -1100,70 +1100,70 @@ initializeVinePositions:
 ; Present, bridge to nuun highlands
 ; @addr{69ee}
 tileReplacement_group0Map54:
-	xor a			; $69ee
-	ld (wSwitchState),a		; $69ef
-	call getThisRoomFlags		; $69f2
-	and $40			; $69f5
-	ret z			; $69f7
+	xor a
+	ld (wSwitchState),a
+	call getThisRoomFlags
+	and $40
+	ret z
 
-	ld a,$1d		; $69f8
-	ld hl,wRoomLayout + $43		; $69fa
-	ldi (hl),a		; $69fd
-	ldi (hl),a		; $69fe
-	ldi (hl),a		; $69ff
-	ld a,$1e		; $6a00
-	ld l,$53		; $6a02
-	ldi (hl),a		; $6a04
-	ldi (hl),a		; $6a05
-	ld (hl),a		; $6a06
-	ld a,$9e		; $6a07
-	ld (wRoomLayout+$68),a		; $6a09
-	ret			; $6a0c
+	ld a,$1d
+	ld hl,wRoomLayout + $43
+	ldi (hl),a
+	ldi (hl),a
+	ldi (hl),a
+	ld a,$1e
+	ld l,$53
+	ldi (hl),a
+	ldi (hl),a
+	ld (hl),a
+	ld a,$9e
+	ld (wRoomLayout+$68),a
+	ret
 
 ;;
 ; Present, right side of bridge to symmetry city
 ; @addr{6a0d}
 tileReplacement_group0Map25:
-	ld a,GLOBALFLAG_SYMMETRY_BRIDGE_BUILT		; $6a0d
-	call checkGlobalFlag		; $6a0f
-	ret z			; $6a12
+	ld a,GLOBALFLAG_SYMMETRY_BRIDGE_BUILT
+	call checkGlobalFlag
+	ret z
 
-	ld a,$1d		; $6a13
-	ld hl,wRoomLayout + $50		; $6a15
-	ldi (hl),a		; $6a18
-	ldi (hl),a		; $6a19
-	ldi (hl),a		; $6a1a
-	ld a,$1e		; $6a1b
-	ld hl,wRoomLayout+$60		; $6a1d
-	ldi (hl),a		; $6a20
-	ldi (hl),a		; $6a21
-	ld (hl),a		; $6a22
-	ret			; $6a23
+	ld a,$1d
+	ld hl,wRoomLayout + $50
+	ldi (hl),a
+	ldi (hl),a
+	ldi (hl),a
+	ld a,$1e
+	ld hl,wRoomLayout+$60
+	ldi (hl),a
+	ldi (hl),a
+	ld (hl),a
+	ret
 
 ;;
 ; Present overworld, impa's house
 ; @addr{6a24}
 tileReplacement_group0Map3a:
-	ld a,GLOBALFLAG_INTRO_DONE		; $6a24
-	call checkGlobalFlag		; $6a26
-	ret z			; $6a29
+	ld a,GLOBALFLAG_INTRO_DONE
+	call checkGlobalFlag
+	ret z
 
 	; Open door
-	ld a,$ee		; $6a2a
-	ld (wRoomLayout+$23),a		; $6a2c
-	ret			; $6a2f
+	ld a,$ee
+	ld (wRoomLayout+$23),a
+	ret
 
 ;;
 ; Present, screen right of d5 where a cave opens up
 ; @addr{6a30}
 tileReplacement_group0Map0b:
-	ld hl,wPresentRoomFlags+$0a		; $6a30
-	bit ROOMFLAG_BIT_40,(hl)		; $6a33
-	ret z			; $6a35
+	ld hl,wPresentRoomFlags+$0a
+	bit ROOMFLAG_BIT_40,(hl)
+	ret z
 
-	ld hl,wRoomLayout+$43		; $6a36
-	ld (hl),$dd		; $6a39
-	ret			; $6a3b
+	ld hl,wRoomLayout+$43
+	ld (hl),$dd
+	ret
 
 ;;
 ; Present cave with goron elder.
@@ -1171,26 +1171,26 @@ tileReplacement_group0Map0b:
 ; @addr{6a3c}
 tileReplacement_group5Mapb9:
 	; Must have beaten dungeon 4
-	ld a,$03		; $6a3c
-	ld hl,wEssencesObtained		; $6a3e
-	call checkFlag		; $6a41
-	ret z			; $6a44
+	ld a,$03
+	ld hl,wEssencesObtained
+	call checkFlag
+	ret z
 
-	ld bc,@replacementTiles		; $6a45
-	ld hl,wRoomLayout+$41		; $6a48
-	call @locFunc		; $6a4b
-	ld l,$51		; $6a4e
+	ld bc,@replacementTiles
+	ld hl,wRoomLayout+$41
+	call @locFunc
+	ld l,$51
 @locFunc:
-	ld a,$05		; $6a50
+	ld a,$05
 --
-	ldh (<hFF8D),a	; $6a52
-	ld a,(bc)		; $6a54
-	inc bc			; $6a55
-	ldi (hl),a		; $6a56
-	ldh a,(<hFF8D)	; $6a57
-	dec a			; $6a59
-	jr nz,--		; $6a5a
-	ret			; $6a5c
+	ldh (<hFF8D),a
+	ld a,(bc)
+	inc bc
+	ldi (hl),a
+	ldh a,(<hFF8D)
+	dec a
+	jr nz,--
+	ret
 
 @replacementTiles:
 	.db $a1 $a1 $a1 $ef $a1
@@ -1200,89 +1200,89 @@ tileReplacement_group5Mapb9:
 ; Past overworld, Ambi's Palace secret passage
 ; @addr{6a67}
 tileReplacement_group1Map27:
-	call getThisRoomFlags		; $6a67
-	ld l,$15		; $6a6a
-	bit 7,(hl)		; $6a6c
-	jr z,+			; $6a6e
+	call getThisRoomFlags
+	ld l,$15
+	bit 7,(hl)
+	jr z,+
 
-	ld de,$3343		; $6a70
-	call @locFunc		; $6a73
+	ld de,$3343
+	call @locFunc
 +
-	ld l,$17		; $6a76
-	bit 7,(hl)		; $6a78
-	jr z,+			; $6a7a
+	ld l,$17
+	bit 7,(hl)
+	jr z,+
 
-	ld de,$3424		; $6a7c
-	call @locFunc		; $6a7f
+	ld de,$3424
+	call @locFunc
 +
-	ld l,$35		; $6a82
-	bit 7,(hl)		; $6a84
-	jr z,+			; $6a86
+	ld l,$35
+	bit 7,(hl)
+	jr z,+
 
-	ld de,$3545		; $6a88
-	call @locFunc		; $6a8b
+	ld de,$3545
+	call @locFunc
 +
-	ld l,$37		; $6a8e
-	bit 7,(hl)		; $6a90
-	ret z			; $6a92
+	ld l,$37
+	bit 7,(hl)
+	ret z
 
-	ld de,$3626		; $6a93
+	ld de,$3626
 @locFunc:
-	ld b,>wRoomLayout		; $6a96
-	ld c,d			; $6a98
-	ld a,$3a		; $6a99
-	ld (bc),a		; $6a9b
-	ld c,e			; $6a9c
-	ld a,$02		; $6a9d
-	ld (bc),a		; $6a9f
-	ret			; $6aa0
+	ld b,>wRoomLayout
+	ld c,d
+	ld a,$3a
+	ld (bc),a
+	ld c,e
+	ld a,$02
+	ld (bc),a
+	ret
 
 ;;
 ; Present cave on the way to rolling ridge
 ; Has a bridge
 ; @addr{6aa1}
 tileReplacement_group5Mapc2:
-	call getThisRoomFlags		; $6aa1
-	and $80			; $6aa4
-	ret z			; $6aa6
+	call getThisRoomFlags
+	and $80
+	ret z
 
-	ld hl,wRoomLayout+$56		; $6aa7
-	ld a,$6d		; $6aaa
+	ld hl,wRoomLayout+$56
+	ld a,$6d
 
 ;;
 ; Sets 4 bytes at hl to the value of a.
 ; @addr{6aac}
 set4Bytes:
-	ldi (hl),a		; $6aac
+	ldi (hl),a
 set3Bytes:
-	ldi (hl),a		; $6aad
-	ldi (hl),a		; $6aae
-	ld (hl),a		; $6aaf
-	ret			; $6ab0
+	ldi (hl),a
+	ldi (hl),a
+	ld (hl),a
+	ret
 
 ;;
 ; Past cave on the way to the d6 area
 ; Has a bridge
 ; @addr{6ab1}
 tileReplacement_group5Mape3:
-	call getThisRoomFlags		; $6ab1
-	and $80			; $6ab4
-	ret z			; $6ab6
+	call getThisRoomFlags
+	and $80
+	ret z
 
-	ld hl,wRoomLayout+$26		; $6ab7
-	ld a,$6d		; $6aba
-	jr set3Bytes		; $6abc
+	ld hl,wRoomLayout+$26
+	ld a,$6d
+	jr set3Bytes
 
 ;;
 ; Underwater, entrance to Jabu
 ; @addr{6abe}
 tileReplacement_group2Map90:
-	call getThisRoomFlags		; $6abe
-	and $02			; $6ac1
-	ret z			; $6ac3
+	call getThisRoomFlags
+	and $02
+	ret z
 
-	ld de,@rect		; $6ac4
-	jp drawRectInRoomLayout		; $6ac7
+	ld de,@rect
+	jp drawRectInRoomLayout
 
 ; @addr{6aca}
 @rect:
@@ -1294,166 +1294,166 @@ tileReplacement_group2Map90:
 ; Past, area beneath the entrance to d8 maze
 ; @addr{6ad9}
 tileReplacement_group1Map8c:
-	call getThisRoomFlags		; $6ad9
-	and $80			; $6adc
-	ret z			; $6ade
+	call getThisRoomFlags
+	and $80
+	ret z
 
-	ld hl,wRoomLayout+$04		; $6adf
-	ld (hl),$30		; $6ae2
-	inc l			; $6ae4
-	ld (hl),$32		; $6ae5
-	ld a,$3a		; $6ae7
-	ld l,$14		; $6ae9
-	ldi (hl),a		; $6aeb
-	ld (hl),a		; $6aec
-	ld l,$34		; $6aed
-	ld (hl),$02		; $6aef
-	inc l			; $6af1
-	ld (hl),$3a		; $6af2
-	ret			; $6af4
+	ld hl,wRoomLayout+$04
+	ld (hl),$30
+	inc l
+	ld (hl),$32
+	ld a,$3a
+	ld l,$14
+	ldi (hl),a
+	ld (hl),a
+	ld l,$34
+	ld (hl),$02
+	inc l
+	ld (hl),$3a
+	ret
 
 ;;
 ; Present, shortcut cave for tingle
 ; @addr{6af5}
 tileReplacement_group2Map9e:
-	xor a			; $6af5
-	ld (wToggleBlocksState),a		; $6af6
-	call getThisRoomFlags		; $6af9
-	and $40			; $6afc
-	ret z			; $6afe
+	xor a
+	ld (wToggleBlocksState),a
+	call getThisRoomFlags
+	and $40
+	ret z
 
-	ld hl,wRoomLayout+$13		; $6aff
-	ld a,$6d		; $6b02
-	call set3Bytes		; $6b04
-	inc l			; $6b07
-	jp set3Bytes		; $6b08
+	ld hl,wRoomLayout+$13
+	ld a,$6d
+	call set3Bytes
+	inc l
+	jp set3Bytes
 
 ;;
 ; Present, on top of maku tree (left end)
 ; @addr{6b0b}
 tileReplacement_group0Mape0:
-	ld a,(wEssencesObtained)		; $6b0b
-	bit 4,a			; $6b0e
-	ld l,$46		; $6b10
-	call nz,_setTileToDoor		; $6b12
-	ld c,$1b		; $6b15
+	ld a,(wEssencesObtained)
+	bit 4,a
+	ld l,$46
+	call nz,_setTileToDoor
+	ld c,$1b
 ;;
 ; @addr{6b17}
 _createInteraction90:
-	call getFreeInteractionSlot		; $6b17
-	ret nz			; $6b1a
+	call getFreeInteractionSlot
+	ret nz
 
-	ld (hl),INTERACID_MISC_PUZZLES		; $6b1b
-	inc l			; $6b1d
-	ld (hl),c		; $6b1e
-	ret			; $6b1f
+	ld (hl),INTERACID_MISC_PUZZLES
+	inc l
+	ld (hl),c
+	ret
 
 ;;
 ; Present, on top of maku tree (middle)
 ; @addr{6b20}
 tileReplacement_group0Mape1:
-	ld c,$1c		; $6b20
-	call _createInteraction90		; $6b22
-	ld a,(wEssencesObtained)		; $6b25
-	rrca			; $6b28
-	ld l,$26		; $6b29
-	call c,_setTileToDoor		; $6b2b
-	rrca			; $6b2e
-	ret nc			; $6b2f
+	ld c,$1c
+	call _createInteraction90
+	ld a,(wEssencesObtained)
+	rrca
+	ld l,$26
+	call c,_setTileToDoor
+	rrca
+	ret nc
 
-	ld l,$53		; $6b30
-	jr _setTileToDoor		; $6b32
+	ld l,$53
+	jr _setTileToDoor
 
 ;;
 ; Present, on top of maku tree (right)
 ; @addr{6b34}
 tileReplacement_group0Mape2:
-	ld c,$1d		; $6b34
-	call _createInteraction90		; $6b36
-	ld a,(wEssencesObtained)		; $6b39
-	bit 2,a			; $6b3c
-	ret z			; $6b3e
+	ld c,$1d
+	call _createInteraction90
+	ld a,(wEssencesObtained)
+	bit 2,a
+	ret z
 
-	ld l,$54		; $6b3f
+	ld l,$54
 
 ;;
 ; @addr{6b41}
 _setTileToDoor:
-	ld h,>wRoomLayout		; $6b41
-	ld (hl),$dd		; $6b43
-	ret			; $6b45
+	ld h,>wRoomLayout
+	ld (hl),$dd
+	ret
 
 ;;
 ; Black Tower, room with 3 doors
 ; @addr{6b46}
 tileReplacement_group4Mapea:
-	call getThisRoomFlags		; $6b46
-	and $40			; $6b49
-	ret z			; $6b4b
+	call getThisRoomFlags
+	and $40
+	ret z
 
-	ld a,$a3		; $6b4c
-	ld hl,wRoomLayout+$33		; $6b4e
-	call set3Bytes		; $6b51
-	ld l,$39		; $6b54
-	call set3Bytes		; $6b56
-	ld a,$b7		; $6b59
-	ld l,$43		; $6b5b
-	call set3Bytes		; $6b5d
-	ld l,$49		; $6b60
-	call set3Bytes		; $6b62
-	ld a,$88		; $6b65
-	ld l,$53		; $6b67
-	call set3Bytes		; $6b69
-	ld l,$59		; $6b6c
-	jp set3Bytes		; $6b6e
+	ld a,$a3
+	ld hl,wRoomLayout+$33
+	call set3Bytes
+	ld l,$39
+	call set3Bytes
+	ld a,$b7
+	ld l,$43
+	call set3Bytes
+	ld l,$49
+	call set3Bytes
+	ld a,$88
+	ld l,$53
+	call set3Bytes
+	ld l,$59
+	jp set3Bytes
 
 ;;
 ; Present, room where you find ricky's gloves
 ; @addr{6b71}
 tileReplacement_group0Map98:
-	ld a,(wRickyState)		; $6b71
-	bit 5,a			; $6b74
-	jr nz,@removeDirt		; $6b76
+	ld a,(wRickyState)
+	bit 5,a
+	jr nz,@removeDirt
 
-	and $01			; $6b78
-	jr z,@removeDirt			; $6b7a
+	and $01
+	jr z,@removeDirt
 
-	ld a,TREASURE_RICKY_GLOVES		; $6b7c
-	call checkTreasureObtained		; $6b7e
-	ret nc			; $6b81
+	ld a,TREASURE_RICKY_GLOVES
+	call checkTreasureObtained
+	ret nc
 
 @removeDirt:
-	ld a,$3a		; $6b82
-	ld (wRoomLayout+$24),a		; $6b84
-	ret			; $6b87
+	ld a,$3a
+	ld (wRoomLayout+$24),a
+	ret
 
 ;;
 ; Present overworld, black tower entrance
 ; @addr{6b88}
 tileReplacement_group0Map76:
-	call checkIsLinkedGame		; $6b88
-	ret z			; $6b8b
+	call checkIsLinkedGame
+	ret z
 
-	call getBlackTowerProgress		; $6b8c
-	dec a			; $6b8f
-	ret nz			; $6b90
+	call getBlackTowerProgress
+	dec a
+	ret nz
 
-	ld hl,wRoomLayout+$54		; $6b91
-	ld a,$a7		; $6b94
-	ldi (hl),a		; $6b96
-	ld (hl),a		; $6b97
-	ret			; $6b98
+	ld hl,wRoomLayout+$54
+	ld a,$a7
+	ldi (hl),a
+	ld (hl),a
+	ret
 
 ;;
 ; Present library
 ; @addr{6b99}
 tileReplacement_group0Mapa5:
-	ld a,(wPastRoomFlags+$a5)		; $6b99
-	bit 7,a			; $6b9c
-	ret z			; $6b9e
+	ld a,(wPastRoomFlags+$a5)
+	bit 7,a
+	ret z
 
-	ld hl,wRoomLayout+$22		; $6b9f
-	ld (hl),$ee		; $6ba2
-	inc l			; $6ba4
-	ld (hl),$ef		; $6ba5
-	ret			; $6ba7
+	ld hl,wRoomLayout+$22
+	ld (hl),$ee
+	inc l
+	ld (hl),$ef
+	ret

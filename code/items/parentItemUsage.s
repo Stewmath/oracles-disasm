@@ -3,8 +3,8 @@
 ; @param c Index of the function to run
 ; @addr{4870}
 functionCaller:
-	ld a,c			; $4870
-	rst_jumpTable			; $4871
+	ld a,c
+	rst_jumpTable
 	.dw _clearAllParentItems
 	.dw _updateParentItemButtonAssignment_body
 	.dw checkUseItems
@@ -13,21 +13,21 @@ functionCaller:
 ; Clears all variables related to items being used?
 ; @addr{4878}
 _clearAllParentItems:
-	push de			; $4878
-	ld d,>w1ParentItem2		; $4879
+	push de
+	ld d,>w1ParentItem2
 --
-	call _clearParentItem		; $487b
-	inc d			; $487e
-	ld a,d			; $487f
-	cp WEAPON_ITEM_INDEX			; $4880
-	jr c,--			; $4882
+	call _clearParentItem
+	inc d
+	ld a,d
+	cp WEAPON_ITEM_INDEX
+	jr c,--
 
-	xor a			; $4884
-	ld (wUsingShield),a		; $4885
-	ld (wcc63),a		; $4888
-	ld (wMagnetGloveState),a		; $488b
-	pop de			; $488e
-	ret			; $488f
+	xor a
+	ld (wUsingShield),a
+	ld (wcc63),a
+	ld (wMagnetGloveState),a
+	pop de
+	ret
 
 ;;
 ; Called from "updateParentItemButtonAssignment" in bank 0.
@@ -37,160 +37,160 @@ _clearAllParentItems:
 ;
 ; @addr{4890}
 _updateParentItemButtonAssignment_body:
-	ld h,>w1ParentItem2		; $4890
+	ld h,>w1ParentItem2
 @itemLoop:
-	ld l,Item.enabled		; $4892
-	ldi a,(hl)		; $4894
-	or a			; $4895
-	jr z,+			; $4896
+	ld l,Item.enabled
+	ldi a,(hl)
+	or a
+	jr z,+
 
 	; Compare Item.id to the B button item
-	ld a,(wInventoryB)		; $4898
-	cp (hl)			; $489b
-	ld a,BTN_B		; $489c
-	jr z,++			; $489e
+	ld a,(wInventoryB)
+	cp (hl)
+	ld a,BTN_B
+	jr z,++
 
 	; Compare Item.id to the A button item
-	ld a,(wInventoryA)		; $48a0
-	cp (hl)			; $48a3
-	ld a,BTN_A		; $48a4
-	jr z,++			; $48a6
+	ld a,(wInventoryA)
+	cp (hl)
+	ld a,BTN_A
+	jr z,++
 +
 	; Doesn't correspond to A or B
-	xor a			; $48a8
+	xor a
 ++
-	ld l,Item.var03		; $48a9
-	ld (hl),a		; $48ab
-	inc h			; $48ac
-	ld a,h			; $48ad
-	cp WEAPON_ITEM_INDEX			; $48ae
-	jr c,@itemLoop		; $48b0
-	ret			; $48b2
+	ld l,Item.var03
+	ld (hl),a
+	inc h
+	ld a,h
+	cp WEAPON_ITEM_INDEX
+	jr c,@itemLoop
+	ret
 
 ;;
 ; Use items if the appropriate buttons are pressed along with other conditions.
 ;
 ; @addr{48b3}
 checkUseItems:
-	xor a			; $48b3
-	ld (wUsingShield),a		; $48b4
-	ld hl,wSwordDisabledCounter		; $48b7
-	ld a,(hl)		; $48ba
-	or a			; $48bb
-	jr z,+			; $48bc
-	dec (hl)		; $48be
+	xor a
+	ld (wUsingShield),a
+	ld hl,wSwordDisabledCounter
+	ld a,(hl)
+	or a
+	jr z,+
+	dec (hl)
 +
-	ld hl,wLinkUsingItem1		; $48bf
-	ld a,(hl)		; $48c2
-	and $0f			; $48c3
-	ld (hl),a		; $48c5
-	ld a,(wcc63)		; $48c6
-	rlca			; $48c9
-	jr c,@itemsDisabled	; $48ca
+	ld hl,wLinkUsingItem1
+	ld a,(hl)
+	and $0f
+	ld (hl),a
+	ld a,(wcc63)
+	rlca
+	jr c,@itemsDisabled
 
-	ld a,(wInShop)		; $48cc
-	or a			; $48cf
-	jp nz,_checkShopInput		; $48d0
+	ld a,(wInShop)
+	or a
+	jp nz,_checkShopInput
 
 	; Set carry flag if in a spinner or bit 7 of wInAir is set.
-	ld a,(wcc95)		; $48d3
-	ld b,a			; $48d6
-	ld a,(wLinkInAir)		; $48d7
-	or b			; $48da
-	rlca			; $48db
-	jr c,@updateParentItems	; $48dc
+	ld a,(wcc95)
+	ld b,a
+	ld a,(wLinkInAir)
+	or b
+	rlca
+	jr c,@updateParentItems
 
-	ld a,(wccd8)		; $48de
-	ld b,a			; $48e1
-	ld a,(wLinkGrabState)		; $48e2
-	or b			; $48e5
-	jr nz,@updateParentItems	; $48e6
+	ld a,(wccd8)
+	ld b,a
+	ld a,(wLinkGrabState)
+	or b
+	jr nz,@updateParentItems
 
-	ld a,(wLinkClimbingVine)		; $48e8
-	inc a			; $48eb
-	jr z,@updateParentItems	; $48ec
+	ld a,(wLinkClimbingVine)
+	inc a
+	jr z,@updateParentItems
 
-	ld a,(wTilesetFlags)		; $48ee
-	bit TILESETFLAG_BIT_SIDESCROLL,a			; $48f1
-	jr nz,@sidescroll	; $48f3
+	ld a,(wTilesetFlags)
+	bit TILESETFLAG_BIT_SIDESCROLL,a
+	jr nz,@sidescroll
 
 .ifdef ROM_AGES
-	bit TILESETFLAG_BIT_UNDERWATER,a			; $48f5
-	jr z,@normal		; $48f7
+	bit TILESETFLAG_BIT_UNDERWATER,a
+	jr z,@normal
 
 	; When underwater, only check the A button
 @underwater:
-	ldde BTN_A, <wInventoryA		; $48f9
-	call _checkItemUsed		; $48fc
-	jr @updateParentItems		; $48ff
+	ldde BTN_A, <wInventoryA
+	call _checkItemUsed
+	jr @updateParentItems
 .endif
 
 	; When in the overworld, only check buttons if not swimming
 @normal:
-	ld a,(wLinkSwimmingState)		; $4901
-	or a			; $4904
-	jr z,@checkAB	; $4905
-	jr @updateParentItems		; $4907
+	ld a,(wLinkSwimmingState)
+	or a
+	jr z,@checkAB
+	jr @updateParentItems
 
 	; If swimming in a sidescrolling area, only check the B button?
 @sidescroll:
-	ld a,(wLinkSwimmingState)		; $4909
-	or a			; $490c
+	ld a,(wLinkSwimmingState)
+	or a
 
 .ifdef ROM_AGES
-	jr z,@checkAB	; $490d
+	jr z,@checkAB
 
-	ld hl,w1Link.var2f		; $490f
-	bit 7,(hl)		; $4912
-	jr z,@checkB	; $4914
+	ld hl,w1Link.var2f
+	bit 7,(hl)
+	jr z,@checkB
 
 .else; ROM_SEASONS
 	jr nz,@checkB
 .endif
 
 @checkAB:
-	ldde BTN_A, <wInventoryA		; $4916
-	call _checkItemUsed		; $4919
+	ldde BTN_A, <wInventoryA
+	call _checkItemUsed
 @checkB:
-	ldde BTN_B, <wInventoryB		; $491c
-	call _checkItemUsed		; $491f
+	ldde BTN_B, <wInventoryB
+	call _checkItemUsed
 
 	; Update all "parent items"
 @updateParentItems:
-	ld de,w1ParentItem2		; $4922
+	ld de,w1ParentItem2
 @parentItemLoop:
-	ld e,Object.enabled		; $4925
-	ld a,(de)		; $4927
-	or a			; $4928
-	call nz,_parentItemUpdate		; $4929
-	inc d			; $492c
-	ld a,d			; $492d
-	cp FIRST_ITEM_INDEX			; $492e
-	jr c,@parentItemLoop		; $4930
+	ld e,Object.enabled
+	ld a,(de)
+	or a
+	call nz,_parentItemUpdate
+	inc d
+	ld a,d
+	cp FIRST_ITEM_INDEX
+	jr c,@parentItemLoop
 
-	lda <w1Link			; $4932
-	ldh (<hActiveObjectType),a	; $4933
-	ld d,>w1Link		; $4935
-	ld a,d			; $4937
-	ldh (<hActiveObject),a	; $4938
-	ret			; $493a
+	lda <w1Link
+	ldh (<hActiveObjectType),a
+	ld d,>w1Link
+	ld a,d
+	ldh (<hActiveObject),a
+	ret
 
 @itemsDisabled:
-	cp $ff			; $493b
-	jr nz,@updateParentItems	; $493d
+	cp $ff
+	jr nz,@updateParentItems
 
 	; If [wcc63] == $ff, force Link to do a sword spin animation?
 
-	call _clearAllParentItems		; $493f
+	call _clearAllParentItems
 
-	ld hl,w1ParentItem2		; $4942
-	ldde $ff, ITEMID_SWORD		; $4945
-	ld c,$f1		; $4948
-	call _initializeParentItem		; $494a
+	ld hl,w1ParentItem2
+	ldde $ff, ITEMID_SWORD
+	ld c,$f1
+	call _initializeParentItem
 
-	ld a,$80		; $494d
-	ld (wcc63),a		; $494f
-	jr @updateParentItems		; $4952
+	ld a,$80
+	ld (wcc63),a
+	jr @updateParentItems
 
 ;;
 ; Creates a parent item object if an item is used.
@@ -199,11 +199,11 @@ checkUseItems:
 ; @param	e	Low byte of inventory item address to check
 ; @addr{4954}
 _checkItemUsed:
-	ld h,>wInventoryB		; $4954
-	ld l,e			; $4956
-	ld a,(hl)		; $4957
-	or a			; $4958
-	jr nz,@checkItem	; $4959
+	ld h,>wInventoryB
+	ld l,e
+	ld a,(hl)
+	or a
+	jr nz,@checkItem
 
 .ifdef ROM_SEASONS
 	ld a,(wInBoxingMatch)
@@ -212,42 +212,42 @@ _checkItemUsed:
 .endif
 
 	; Nothing equipped; return unless Link is wearing a punching ring
-	ld a,(wActiveRing)		; $495b
-	cp EXPERTS_RING			; $495e
-	jr z,@punch		; $4960
-	cp FIST_RING			; $4962
-	ret nz			; $4964
+	ld a,(wActiveRing)
+	cp EXPERTS_RING
+	jr z,@punch
+	cp FIST_RING
+	ret nz
 
 	; Punch if nothing equipped
 @punch:
-	ld l,<wInventoryB		; $4965
-	ldi a,(hl)		; $4967
-	or (hl)			; $4968
-	ret nz			; $4969
+	ld l,<wInventoryB
+	ldi a,(hl)
+	or (hl)
+	ret nz
 
 @forcePunch:
-	ld a,ITEMID_PUNCH		; $496a
+	ld a,ITEMID_PUNCH
 
 @checkItem:
 	; Item IDs $20 and above can't be used directly as items?
-	cp NUM_INVENTORY_ITEMS			; $496c
-	ret nc			; $496e
+	cp NUM_INVENTORY_ITEMS
+	ret nc
 
-	ld e,a			; $496f
-	ld hl,_itemUsageParameterTable		; $4970
-	rst_addDoubleIndex			; $4973
-	ldi a,(hl)		; $4974
-	ld c,a			; $4975
+	ld e,a
+	ld hl,_itemUsageParameterTable
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld c,a
 
 	; Check if button is pressed (reads wGameKeysPressed or wGameKeysJustPressed)
-	ld l,(hl)		; $4976
-	ld h,>wGameKeysPressed		; $4977
-	ld a,(hl)		; $4979
-	and d			; $497a
-	ret z			; $497b
+	ld l,(hl)
+	ld h,>wGameKeysPressed
+	ld a,(hl)
+	and d
+	ret z
 
-	call _chooseParentItemSlot		; $497c
-	ret nz			; $497f
+	call _chooseParentItemSlot
+	ret nz
 
 ;;
 ; Initialize a parent item?
@@ -257,20 +257,20 @@ _checkItemUsed:
 ; @param	e	Item.id
 ; @addr{4980}
 _initializeParentItem:
-	ld a,c			; $4980
-	and $f0			; $4981
-	inc a			; $4983
-	ld l,Item.enabled		; $4984
-	ldi (hl),a		; $4986
+	ld a,c
+	and $f0
+	inc a
+	ld l,Item.enabled
+	ldi (hl),a
 
 	; Set Item.id
-	ld (hl),e		; $4987
+	ld (hl),e
 
 	; Set Item.var03 to the button pressed
-	inc l			; $4988
-	inc l			; $4989
-	ld (hl),d		; $498a
-	ret			; $498b
+	inc l
+	inc l
+	ld (hl),d
+	ret
 
 ;;
 ; Figure out which parent item slot an item should use (if at all).
@@ -283,9 +283,9 @@ _initializeParentItem:
 ; @param[out]	zflag	Set if valid values for 'c' and 'hl' are returned.
 ; @addr{498c
 _chooseParentItemSlot:
-	ld a,c			; $498c
-	and $0f			; $498d
-	rst_jumpTable			; $498f
+	ld a,c
+	and $0f
+	rst_jumpTable
 	.dw @thing0
 	.dw @thing1
 	.dw @thing2
@@ -296,38 +296,38 @@ _chooseParentItemSlot:
 ;;
 ; @addr{499c}
 @thing4:
-	ld a,(w1ParentItem2.enabled)		; $499c
-	or a			; $499f
-	ret nz			; $49a0
+	ld a,(w1ParentItem2.enabled)
+	or a
+	ret nz
 
 ;;
 ; Only one of the item can exist at a time.
 ;
 ; @addr{49a1}
 @thing2:
-	ld hl,w1ParentItem3.id		; $49a1
-	ld a,e			; $49a4
-	cp (hl)			; $49a5
-	jr z,@thing0	; $49a6
+	ld hl,w1ParentItem3.id
+	ld a,e
+	cp (hl)
+	jr z,@thing0
 
 	; Check w1ParentItem4.id
-	inc h			; $49a8
-	cp (hl)			; $49a9
-	jr z,@thing0	; $49aa
+	inc h
+	cp (hl)
+	jr z,@thing0
 
 ;;
 ; @addr{49ac}
 @thing1:
-	ld hl,w1ParentItem3.enabled		; $49ac
-	ld a,(hl)		; $49af
-	or a			; $49b0
-	ret z			; $49b1
+	ld hl,w1ParentItem3.enabled
+	ld a,(hl)
+	or a
+	ret z
 
 	; Check w1ParentItem4.enabled
-	inc h			; $49b2
-	ld a,(hl)		; $49b3
-	or a			; $49b4
-	ret			; $49b5
+	inc h
+	ld a,(hl)
+	or a
+	ret
 
 ;;
 ; Sword, cane, bombs, shovel, bracelet, feather...
@@ -336,39 +336,39 @@ _chooseParentItemSlot:
 @thing3:
 	; If w1ParentItem2 is already in use, continue only if this object's priority is
 	; greater than or equal to the other object's.
-	ld hl,w1ParentItem2.enabled		; $49b6
-	ld a,c			; $49b9
-	and $f0			; $49ba
-	inc a			; $49bc
-	cp (hl)			; $49bd
-	jr c,@thing0	; $49be
+	ld hl,w1ParentItem2.enabled
+	ld a,c
+	and $f0
+	inc a
+	cp (hl)
+	jr c,@thing0
 
-	push de			; $49c0
-	push bc			; $49c1
-	call _clearParentItemH		; $49c2
-	pop bc			; $49c5
-	pop de			; $49c6
-	ld hl,w1ParentItem2		; $49c7
-	xor a			; $49ca
-	ld (wMagnetGloveState),a		; $49cb
-	ld (wcc63),a		; $49ce
-	ret			; $49d1
+	push de
+	push bc
+	call _clearParentItemH
+	pop bc
+	pop de
+	ld hl,w1ParentItem2
+	xor a
+	ld (wMagnetGloveState),a
+	ld (wcc63),a
+	ret
 
 ;;
 ; Used for shield, flute, harp (items that don't create separate objects?)
 ;
 ; @addr{49d2}
 @thing5:
-	ld hl,w1ParentItem5.enabled		; $49d2
-	ld a,(hl)		; $49d5
-	or a			; $49d6
-	ret z			; $49d7
+	ld hl,w1ParentItem5.enabled
+	ld a,(hl)
+	or a
+	ret z
 
 ;;
 ; @addr{49d8}
 @thing0:
-	or h			; $49d8
-	ret			; $49d9
+	or h
+	ret
 
 
 ;;
@@ -376,41 +376,41 @@ _chooseParentItemSlot:
 ;
 ; @addr{49da}
 _checkShopInput:
-	ld a,(wLinkGrabState)		; $49da
-	or a			; $49dd
-	ret nz			; $49de
+	ld a,(wLinkGrabState)
+	or a
+	ret nz
 
-	ld a,(wGameKeysJustPressed)		; $49df
-	and $03			; $49e2
-	ret z			; $49e4
+	ld a,(wGameKeysJustPressed)
+	and $03
+	ret z
 
-	call checkGrabbableObjects		; $49e5
-	ret nc			; $49e8
+	call checkGrabbableObjects
+	ret nc
 
-	ld a,$83		; $49e9
-	ld (wLinkGrabState),a		; $49eb
-	ret			; $49ee
+	ld a,$83
+	ld (wLinkGrabState),a
+	ret
 
 ;;
 ; @param	de	Object to update (e should be $00)
 ; @addr{49ef}
 _parentItemUpdate:
-	ld a,e			; $49ef
-	ldh (<hActiveObjectType),a	; $49f0
-	ld a,d			; $49f2
-	ldh (<hActiveObject),a	; $49f3
+	ld a,e
+	ldh (<hActiveObjectType),a
+	ld a,d
+	ldh (<hActiveObject),a
 
 	; Unset a bit corresponding to the item's index?
-	call _itemIndexToBit		; $49f5
-	ld hl,wcc95		; $49f8
-	cpl			; $49fb
-	and (hl)		; $49fc
-	ld (hl),a		; $49fd
+	call _itemIndexToBit
+	ld hl,wcc95
+	cpl
+	and (hl)
+	ld (hl),a
 
 	; Jump to the item-specific code
-	ld e,Item.id		; $49fe
-	ld a,(de)		; $4a00
-	rst_jumpTable			; $4a01
+	ld e,Item.id
+	ld a,(de)
+	rst_jumpTable
 
 	.dw _parentItemCode_punch		; ITEMID_NONE
 	.dw _parentItemCode_shield		; ITEMID_SHIELD
@@ -448,17 +448,17 @@ _parentItemUpdate:
 ;;
 ; @addr{4a42}
 _clearParentItem:
-	call _clearLinkUsingItem1		; $4a42
-	call _itemEnableLinkTurning		; $4a45
-	call _itemEnableLinkMovement		; $4a48
-	ld e,Item.start		; $4a4b
-	jp objectDelete_de		; $4a4d
+	call _clearLinkUsingItem1
+	call _itemEnableLinkTurning
+	call _itemEnableLinkMovement
+	ld e,Item.start
+	jp objectDelete_de
 
 ;;
 ; @addr{4a50}
 _clearParentItemH:
-	push de			; $4a50
-	ld d,h			; $4a51
-	call _clearParentItem		; $4a52
-	pop de			; $4a55
-	ret			; $4a56
+	push de
+	ld d,h
+	call _clearParentItem
+	pop de
+	ret

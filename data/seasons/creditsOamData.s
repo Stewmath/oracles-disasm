@@ -1,5 +1,5 @@
 seasonsOamData_03_6472:
-	.db $26			; $6472
+	.db $26
         .db $e0 $10 $02 $01
         .db $e0 $18 $04 $01
         .db $e0 $20 $06 $01
@@ -40,7 +40,7 @@ seasonsOamData_03_6472:
         .db $60 $10 $12 $01
 
 seasonsOamData_03_650b:
-	.db $26			; $650b
+	.db $26
         .db $e0 $f8 $02 $21
         .db $e0 $f0 $04 $21
         .db $e0 $e8 $06 $21
@@ -81,7 +81,7 @@ seasonsOamData_03_650b:
         .db $60 $f8 $12 $21
 
 seasonsOamData_03_65a4:
-	.db $27			; $65a4
+	.db $27
         .db $e0 $e8 $00 $01
         .db $e0 $f0 $02 $01
         .db $e0 $f8 $04 $01
@@ -123,7 +123,7 @@ seasonsOamData_03_65a4:
         .db $00 $40 $0e $06
 
 seasonsOamData_03_6641:
-	.db $12			; $6641
+	.db $12
         .db $10 $08 $00 $0c
         .db $10 $10 $02 $0c
         .db $10 $18 $04 $0c
@@ -144,7 +144,7 @@ seasonsOamData_03_6641:
         .db $4c $42 $0a $2d
 
 seasonsOamData_03_668a:
-	.db $0d			; $668a
+	.db $0d
         .db $38 $d3 $02 $03
         .db $32 $f8 $0c $01
         .db $f8 $d8 $10 $07
@@ -160,7 +160,7 @@ seasonsOamData_03_668a:
         .db $01 $f2 $24 $00
 
 seasonsOamData_03_66bf:
-	.db $07			; $66bf
+	.db $07
         .db $60 $f8 $00 $02
         .db $48 $d3 $04 $03
         .db $40 $e0 $06 $07

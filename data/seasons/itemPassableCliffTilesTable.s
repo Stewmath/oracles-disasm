@@ -62,7 +62,7 @@ _itemPassableCliffTilesTable:
 @@right:
 @@down:
 @@left:
-	.db $00		; $4c82
+	.db $00
 
 @collisions4:
 	.db @@up-CADDR

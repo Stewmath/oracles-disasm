@@ -6,282 +6,282 @@
 ;   var39: Set when Link is close to the scrub (he pops out of his bush)
 ; ==============================================================================
 interactionCodece:
-	ld e,Interaction.state		; $495d
-	ld a,(de)		; $495f
-	rst_jumpTable			; $4960
+	ld e,Interaction.state
+	ld a,(de)
+	rst_jumpTable
 	.dw @state0
 	.dw @state1
 	.dw @state2
 
 @state0:
-	ld a,$01		; $4967
-	ld (de),a		; $4969
-	call interactionSetAlwaysUpdateBit		; $496a
+	ld a,$01
+	ld (de),a
+	call interactionSetAlwaysUpdateBit
 
 .ifdef ROM_SEASONS
-	ld e,Interaction.subid		; $7410
-	ld a,(de)		; $7412
+	ld e,Interaction.subid
+	ld a,(de)
 	; Sells cheap shield
-	cp $06			; $7413
-	jr nz,+++		; $7415
+	cp $06
+	jr nz,+++
 
-	ld hl,w1Companion		; $7417
-	ldi a,(hl)		; $741a
-	or a			; $741b
-	jr z,@noCompanion	; $741c
-	ld a,(hl)		; $741e
-	cp SPECIALOBJECTID_MOOSH			; $741f
-	jr z,@moosh		; $7421
+	ld hl,w1Companion
+	ldi a,(hl)
+	or a
+	jr z,@noCompanion
+	ld a,(hl)
+	cp SPECIALOBJECTID_MOOSH
+	jr z,@moosh
 @noCompanion:
-	ld a,(wEssencesObtained)		; $7423
-	bit 3,a			; $7426
-	jr nz,+++		; $7428
+	ld a,(wEssencesObtained)
+	bit 3,a
+	jr nz,+++
 @moosh:
-	jp interactionDelete		; $742a
+	jp interactionDelete
 +++
 .endif
 
-	ld e,Interaction.subid		; $496d
-	ld a,(de)		; $496f
-	bit 7,a			; $4970
-	jr nz,@mimicBush	; $4972
+	ld e,Interaction.subid
+	ld a,(de)
+	bit 7,a
+	jr nz,@mimicBush
 
-	cp $00			; $4974
-	jr z,@sellingShield	; $4976
-	cp $03			; $4978
-	jr z,@sellingShield	; $497a
-	cp $06			; $497c
-	jr nz,+++		; $497e
+	cp $00
+	jr z,@sellingShield
+	cp $03
+	jr z,@sellingShield
+	cp $06
+	jr nz,+++
 
 @sellingShield:
-	ld c,a			; $4980
-	ld a,(wShieldLevel)		; $4981
-	or a			; $4984
-	jr z,+			; $4985
-	dec a			; $4987
+	ld c,a
+	ld a,(wShieldLevel)
+	or a
+	jr z,+
+	dec a
 +
-	add c			; $4988
-	ld (de),a		; $4989
-	ld hl,@itemPrices		; $498a
-	rst_addDoubleIndex			; $498d
-	ldi a,(hl)		; $498e
-	ld b,(hl)		; $498f
-	ld hl,wTextNumberSubstitution		; $4990
-	ldi (hl),a		; $4993
-	ld (hl),b		; $4994
+	add c
+	ld (de),a
+	ld hl,@itemPrices
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld b,(hl)
+	ld hl,wTextNumberSubstitution
+	ldi (hl),a
+	ld (hl),b
 +++
-	ld e,Interaction.collisionRadiusY		; $4995
-	ld a,$06		; $4997
-	ld (de),a		; $4999
-	inc e			; $499a
-	ld (de),a		; $499b
+	ld e,Interaction.collisionRadiusY
+	ld a,$06
+	ld (de),a
+	inc e
+	ld (de),a
 
-	call interactionInitGraphics		; $499c
-	call objectMakeTileSolid		; $499f
-	ld h,>wRoomLayout		; $49a2
-	ld (hl),$00		; $49a4
-	call objectSetVisible80		; $49a6
-	ld e,Interaction.pressedAButton		; $49a9
-	call objectAddToAButtonSensitiveObjectList		; $49ab
+	call interactionInitGraphics
+	call objectMakeTileSolid
+	ld h,>wRoomLayout
+	ld (hl),$00
+	call objectSetVisible80
+	ld e,Interaction.pressedAButton
+	call objectAddToAButtonSensitiveObjectList
 
-	call getFreeInteractionSlot		; $49ae
-	ld a,INTERACID_BUSINESS_SCRUB		; $49b1
-	ldi (hl),a		; $49b3
-	ld a,$80		; $49b4
-	ldi (hl),a		; $49b6
-	ld l,Interaction.relatedObj2		; $49b7
-	ld (hl),d		; $49b9
-	jp objectCopyPosition		; $49ba
+	call getFreeInteractionSlot
+	ld a,INTERACID_BUSINESS_SCRUB
+	ldi (hl),a
+	ld a,$80
+	ldi (hl),a
+	ld l,Interaction.relatedObj2
+	ld (hl),d
+	jp objectCopyPosition
 
 ; Subid $80 initialization (the bush above the scrub)
 @mimicBush:
-	ld a,(wActiveGroup)		; $49bd
-	or a			; $49c0
-	ld a,TILEINDEX_OVERWORLD_BUSH_1		; $49c1
-	jr z,+			; $49c3
+	ld a,(wActiveGroup)
+	or a
+	ld a,TILEINDEX_OVERWORLD_BUSH_1
+	jr z,+
 .ifdef ROM_AGES
-	ld a,TILEINDEX_OVERWORLD_BUSH_1		; $49c5
+	ld a,TILEINDEX_OVERWORLD_BUSH_1
 .else
-	ld a,$20		; $49c5
+	ld a,$20
 .endif
 +
-	call objectMimicBgTile		; $49c7
-	ld a,$05		; $49ca
-	call interactionSetAnimation		; $49cc
-	jp objectSetVisible80		; $49cf
+	call objectMimicBgTile
+	ld a,$05
+	call interactionSetAnimation
+	jp objectSetVisible80
 
 @state1:
-	ld a,(wScrollMode)		; $49d2
-	and SCROLLMODE_08 | SCROLLMODE_04 | SCROLLMODE_02			; $49d5
-	ret nz			; $49d7
+	ld a,(wScrollMode)
+	and SCROLLMODE_08 | SCROLLMODE_04 | SCROLLMODE_02
+	ret nz
 
-	ld e,Interaction.subid		; $49d8
-	ld a,(de)		; $49da
-	bit 7,a			; $49db
-	jr nz,@subid80State1	; $49dd
+	ld e,Interaction.subid
+	ld a,(de)
+	bit 7,a
+	jr nz,@subid80State1
 
-	call objectSetPriorityRelativeToLink_withTerrainEffects		; $49df
-	call interactionAnimate		; $49e2
-	ld c,$20		; $49e5
-	call objectCheckLinkWithinDistance		; $49e7
-	ld e,Interaction.var39		; $49ea
-	jr c,@linkIsClose	; $49ec
+	call objectSetPriorityRelativeToLink_withTerrainEffects
+	call interactionAnimate
+	ld c,$20
+	call objectCheckLinkWithinDistance
+	ld e,Interaction.var39
+	jr c,@linkIsClose
 
 	; Link not close
-	ld a,(de)		; $49ee
-	or a			; $49ef
-	ret z			; $49f0
-	xor a			; $49f1
-	ld (de),a		; $49f2
-	ld a,$03		; $49f3
-	jp interactionSetAnimation		; $49f5
+	ld a,(de)
+	or a
+	ret z
+	xor a
+	ld (de),a
+	ld a,$03
+	jp interactionSetAnimation
 
 @linkIsClose:
-	ld a,(de)		; $49f8
-	or a			; $49f9
-	jr nz,++		; $49fa
-	inc a			; $49fc
-	ld (de),a		; $49fd
-	ld a,$01		; $49fe
-	jp interactionSetAnimation		; $4a00
+	ld a,(de)
+	or a
+	jr nz,++
+	inc a
+	ld (de),a
+	ld a,$01
+	jp interactionSetAnimation
 ++
-	ld e,Interaction.pressedAButton		; $4a03
-	ld a,(de)		; $4a05
-	or a			; $4a06
-	ret z			; $4a07
+	ld e,Interaction.pressedAButton
+	ld a,(de)
+	or a
+	ret z
 
 	; Link talked to the scrub
-	call interactionIncState		; $4a08
-	ld a,$02		; $4a0b
-	call interactionSetAnimation		; $4a0d
-	ld e,Interaction.subid		; $4a10
-	ld a,(de)		; $4a12
-	ld hl,@offerItemTextIndices		; $4a13
-	rst_addAToHl			; $4a16
-	ld c,(hl)		; $4a17
-	ld b,>TX_4500		; $4a18
-	jp showTextNonExitable		; $4a1a
+	call interactionIncState
+	ld a,$02
+	call interactionSetAnimation
+	ld e,Interaction.subid
+	ld a,(de)
+	ld hl,@offerItemTextIndices
+	rst_addAToHl
+	ld c,(hl)
+	ld b,>TX_4500
+	jp showTextNonExitable
 
 ; Subid $80: the bush above the scrub
 @subid80State1:
-	ld e,Interaction.relatedObj2		; $4a1d
-	ld a,(de)		; $4a1f
-	ld h,a			; $4a20
-	ld l,Interaction.visible		; $4a21
-	ld a,(hl)		; $4a23
-	ld e,Interaction.visible		; $4a24
-	ld (de),a		; $4a26
-	ld l,Interaction.yh		; $4a27
-	ld b,(hl)		; $4a29
-	ld l,Interaction.animParameter		; $4a2a
-	ld a,(hl)		; $4a2c
-	ld hl,@bushYOffsets		; $4a2d
-	rst_addAToHl			; $4a30
-	ld e,Interaction.yh		; $4a31
-	ldi a,(hl)		; $4a33
-	add b			; $4a34
-	ld (de),a		; $4a35
-	ret			; $4a36
+	ld e,Interaction.relatedObj2
+	ld a,(de)
+	ld h,a
+	ld l,Interaction.visible
+	ld a,(hl)
+	ld e,Interaction.visible
+	ld (de),a
+	ld l,Interaction.yh
+	ld b,(hl)
+	ld l,Interaction.animParameter
+	ld a,(hl)
+	ld hl,@bushYOffsets
+	rst_addAToHl
+	ld e,Interaction.yh
+	ldi a,(hl)
+	add b
+	ld (de),a
+	ret
 
 @state2:
-	call interactionAnimate		; $4a37
-	ld a,(wTextIsActive)		; $4a3a
-	and $7f			; $4a3d
-	ret nz			; $4a3f
+	call interactionAnimate
+	ld a,(wTextIsActive)
+	and $7f
+	ret nz
 
 	; Link just finished talking to the scrub
-	ld a,(wSelectedTextOption)		; $4a40
-	bit 7,a			; $4a43
-	jr z,@label_0b_103	; $4a45
+	ld a,(wSelectedTextOption)
+	bit 7,a
+	jr z,@label_0b_103
 
-	ld e,Interaction.state		; $4a47
-	ld a,$01		; $4a49
-	ld (de),a		; $4a4b
-	xor a			; $4a4c
-	ld (wTextIsActive),a		; $4a4d
-	ld e,Interaction.pressedAButton		; $4a50
-	ld (de),a		; $4a52
-	dec a			; $4a53
-	ld (wSelectedTextOption),a		; $4a54
-	ld a,$04		; $4a57
-	jp interactionSetAnimation		; $4a59
+	ld e,Interaction.state
+	ld a,$01
+	ld (de),a
+	xor a
+	ld (wTextIsActive),a
+	ld e,Interaction.pressedAButton
+	ld (de),a
+	dec a
+	ld (wSelectedTextOption),a
+	ld a,$04
+	jp interactionSetAnimation
 
 @label_0b_103:
-	ld a,(wSelectedTextOption)		; $4a5c
-	or a			; $4a5f
-	jr z,@agreedToBuy	; $4a60
+	ld a,(wSelectedTextOption)
+	or a
+	jr z,@agreedToBuy
 
 	; Declined to buy
-	ld bc,TX_4506		; $4a62
-	jr @showText		; $4a65
+	ld bc,TX_4506
+	jr @showText
 
 @agreedToBuy:
-	ld e,Interaction.subid		; $4a67
-	ld a,(de)		; $4a69
-	ld hl,@rupeeValues		; $4a6a
-	rst_addAToHl			; $4a6d
-	ld a,(hl)		; $4a6e
-	ld e,Interaction.var38		; $4a6f
-	ld (de),a		; $4a71
-	call cpRupeeValue		; $4a72
-	jr z,@enoughRupees	; $4a75
+	ld e,Interaction.subid
+	ld a,(de)
+	ld hl,@rupeeValues
+	rst_addAToHl
+	ld a,(hl)
+	ld e,Interaction.var38
+	ld (de),a
+	call cpRupeeValue
+	jr z,@enoughRupees
 
 	; Not enough rupees
-	ld bc,TX_4507		; $4a77
-	jr @showText		; $4a7a
+	ld bc,TX_4507
+	jr @showText
 
 @enoughRupees:
-	ld e,Interaction.subid		; $4a7c
-	ld a,(de)		; $4a7e
-	ld hl,@treasuresToSell		; $4a7f
-	rst_addDoubleIndex			; $4a82
-	ld a,(hl)		; $4a83
-	cp TREASURE_BOMBS			; $4a84
-	jr z,@giveBombs	; $4a86
-	cp TREASURE_EMBER_SEEDS			; $4a88
-	jr nz,@giveShield	; $4a8a
+	ld e,Interaction.subid
+	ld a,(de)
+	ld hl,@treasuresToSell
+	rst_addDoubleIndex
+	ld a,(hl)
+	cp TREASURE_BOMBS
+	jr z,@giveBombs
+	cp TREASURE_EMBER_SEEDS
+	jr nz,@giveShield
 
 @giveEmberSeeds:
-	ld a,(wSeedSatchelLevel)		; $4a8c
-	ld bc,@maxSatchelCapacities-1		; $4a8f
-	call addAToBc		; $4a92
-	ld a,(bc)		; $4a95
-	ld c,a			; $4a96
-	ld a,(wNumEmberSeeds)		; $4a97
-	cp c			; $4a9a
-	jr nz,@giveTreasure	; $4a9b
-	jr @alreadyHaveTreasure		; $4a9d
+	ld a,(wSeedSatchelLevel)
+	ld bc,@maxSatchelCapacities-1
+	call addAToBc
+	ld a,(bc)
+	ld c,a
+	ld a,(wNumEmberSeeds)
+	cp c
+	jr nz,@giveTreasure
+	jr @alreadyHaveTreasure
 
 @giveBombs:
-	ld bc,wNumBombs		; $4a9f
-	ld a,(bc)		; $4aa2
-	inc c			; $4aa3
-	ld e,a			; $4aa4
-	ld a,(bc)		; $4aa5
-	cp e			; $4aa6
-	jr nz,@giveTreasure	; $4aa7
-	jr @alreadyHaveTreasure		; $4aa9
+	ld bc,wNumBombs
+	ld a,(bc)
+	inc c
+	ld e,a
+	ld a,(bc)
+	cp e
+	jr nz,@giveTreasure
+	jr @alreadyHaveTreasure
 
 @giveShield:
-	call checkTreasureObtained		; $4aab
-	jr nc,@giveTreasure	; $4aae
+	call checkTreasureObtained
+	jr nc,@giveTreasure
 
 @alreadyHaveTreasure:
-	ld bc,TX_4508		; $4ab0
-	jr @showText		; $4ab3
+	ld bc,TX_4508
+	jr @showText
 
 @giveTreasure:
-	ldi a,(hl)		; $4ab5
-	ld c,(hl)		; $4ab6
-	call giveTreasure		; $4ab7
-	ld e,Interaction.var38		; $4aba
-	ld a,(de)		; $4abc
-	call removeRupeeValue		; $4abd
-	ld a,SND_GETSEED		; $4ac0
-	call playSound		; $4ac2
-	ld bc,TX_4505		; $4ac5
+	ldi a,(hl)
+	ld c,(hl)
+	call giveTreasure
+	ld e,Interaction.var38
+	ld a,(de)
+	call removeRupeeValue
+	ld a,SND_GETSEED
+	call playSound
+	ld bc,TX_4505
 @showText:
-	jp showText		; $4ac8
+	jp showText
 
 @maxSatchelCapacities:
 	.db $20 $50 $99
@@ -384,28 +384,28 @@ interactionCodece:
 ; INTERACID_cf
 ; ==============================================================================
 interactionCodecf:
-	ld e,Interaction.state		; $4b0b
-	ld a,(de)		; $4b0d
-	rst_jumpTable			; $4b0e
+	ld e,Interaction.state
+	ld a,(de)
+	rst_jumpTable
 	.dw @state0
 	.dw @state1
 
 @state0:
-	ld a,$01		; $4b13
-	ld (de),a		; $4b15
-	call interactionInitGraphics		; $4b16
-	ld e,Interaction.subid		; $4b19
-	ld a,(de)		; $4b1b
-	ld hl,@positions		; $4b1c
-	rst_addDoubleIndex			; $4b1f
-	ldi a,(hl)		; $4b20
-	ld e,Interaction.yh		; $4b21
-	ld (de),a		; $4b23
-	inc e			; $4b24
-	inc e			; $4b25
-	ld a,(hl)		; $4b26
-	ld (de),a		; $4b27
-	jp objectSetVisible82		; $4b28
+	ld a,$01
+	ld (de),a
+	call interactionInitGraphics
+	ld e,Interaction.subid
+	ld a,(de)
+	ld hl,@positions
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld e,Interaction.yh
+	ld (de),a
+	inc e
+	inc e
+	ld a,(hl)
+	ld (de),a
+	jp objectSetVisible82
 
 @positions:
 	.db $18 $5c ; 0 == [subid]
@@ -413,90 +413,90 @@ interactionCodecf:
 	.db $38 $88 ; 2
 
 @state1:
-	jp interactionAnimate		; $4b31
+	jp interactionAnimate
 
 
 ; ==============================================================================
 ; INTERACID_COMPANION_TUTORIAL
 ; ==============================================================================
 interactionCoded0:
-	ld e,Interaction.state		; $4b34
-	ld a,(de)		; $4b36
-	rst_jumpTable			; $4b37
+	ld e,Interaction.state
+	ld a,(de)
+	rst_jumpTable
 	.dw @state0
 	.dw @state1
 	.dw @state2
 
 @state0:
-	ld a,$01		; $4b3e
-	ld (de),a		; $4b40
-	ret			; $4b41
+	ld a,$01
+	ld (de),a
+	ret
 
 @state1:
-	ld a,$02		; $4b42
-	ld (de),a		; $4b44
-	ld a,(w1Companion.enabled)		; $4b45
-	or a			; $4b48
-	jr z,@deleteIfSubid2Or5	; $4b49
+	ld a,$02
+	ld (de),a
+	ld a,(w1Companion.enabled)
+	or a
+	jr z,@deleteIfSubid2Or5
 
 	; Verify that the correct companion is on-screen, otherwise delete self
-	ld e,Interaction.subid		; $4b4b
-	ld a,(de)		; $4b4d
-	srl a			; $4b4e
-	add SPECIALOBJECTID_FIRST_COMPANION			; $4b50
-	cp SPECIALOBJECTID_LAST_COMPANION+1			; $4b52
-	jr c,+			; $4b54
-	ld a,SPECIALOBJECTID_MOOSH		; $4b56
+	ld e,Interaction.subid
+	ld a,(de)
+	srl a
+	add SPECIALOBJECTID_FIRST_COMPANION
+	cp SPECIALOBJECTID_LAST_COMPANION+1
+	jr c,+
+	ld a,SPECIALOBJECTID_MOOSH
 +
-	ld hl,w1Companion.id		; $4b58
-	cp (hl)			; $4b5b
-	jr nz,@delete	; $4b5c
+	ld hl,w1Companion.id
+	cp (hl)
+	jr nz,@delete
 
 	; Delete self if tutorial text was already shown
-	ld a,(de)		; $4b5e
-	ld hl,@flagNumbers		; $4b5f
-	rst_addAToHl			; $4b62
-	ld a,(hl)		; $4b63
-	ld hl,wCompanionTutorialTextShown		; $4b64
-	call checkFlag		; $4b67
-	jr nz,@delete	; $4b6a
+	ld a,(de)
+	ld hl,@flagNumbers
+	rst_addAToHl
+	ld a,(hl)
+	ld hl,wCompanionTutorialTextShown
+	call checkFlag
+	jr nz,@delete
 
 	; Check whether to dismount? (subid 2 only)
-	ld a,(de)		; $4b6c
-	cp $02			; $4b6d
-	jr nz,++		; $4b6f
-	ld a,(wLinkObjectIndex)		; $4b71
-	rra			; $4b74
-	ld a,(de)		; $4b75
-	jr nc,++		; $4b76
-	ld (wForceCompanionDismount),a		; $4b78
+	ld a,(de)
+	cp $02
+	jr nz,++
+	ld a,(wLinkObjectIndex)
+	rra
+	ld a,(de)
+	jr nc,++
+	ld (wForceCompanionDismount),a
 ++
-	ld hl,@tutorialTextToShow		; $4b7b
-	rst_addDoubleIndex			; $4b7e
-	ldi a,(hl)		; $4b7f
-	ld c,a			; $4b80
-	ld b,(hl)		; $4b81
-	ld a,(wLinkObjectIndex)		; $4b82
-	bit 0,a			; $4b85
-	call nz,showText		; $4b87
+	ld hl,@tutorialTextToShow
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld c,a
+	ld b,(hl)
+	ld a,(wLinkObjectIndex)
+	bit 0,a
+	call nz,showText
 
 @deleteIfSubid2Or5:
-	ld e,Interaction.subid		; $4b8a
-	ld a,(de)		; $4b8c
-	cp $02			; $4b8d
-	jr z,@delete	; $4b8f
-	cp $05			; $4b91
-	ret nz			; $4b93
+	ld e,Interaction.subid
+	ld a,(de)
+	cp $02
+	jr z,@delete
+	cp $05
+	ret nz
 @delete:
-	jp interactionDelete		; $4b94
+	jp interactionDelete
 
 @state2:
-	ld a,(w1Companion.enabled)		; $4b97
-	or a			; $4b9a
-	ret z			; $4b9b
-	ld e,Interaction.subid		; $4b9c
-	ld a,(de)		; $4b9e
-	rst_jumpTable			; $4b9f
+	ld a,(w1Companion.enabled)
+	or a
+	ret z
+	ld e,Interaction.subid
+	ld a,(de)
+	rst_jumpTable
 .ifdef ROM_AGES
 	.dw @setFlagAndDeleteWhenCompanionIsBelowOrRight
 	.dw @setFlagAndDeleteWhenCompanionIsAbove
@@ -515,97 +515,97 @@ interactionCoded0:
 .endif
 
 @setFlagAndDeleteWhenCompanionIsBelow:
-	ld e,Interaction.yh		; $4bac
-	ld a,(de)		; $4bae
-	ld hl,w1Companion.yh		; $4baf
-	cp (hl)			; $4bb2
-	ret nc			; $4bb3
-	jr @setFlagAndDelete		; $4bb4
+	ld e,Interaction.yh
+	ld a,(de)
+	ld hl,w1Companion.yh
+	cp (hl)
+	ret nc
+	jr @setFlagAndDelete
 
 @setFlagAndDeleteWhenCompanionIsAboveAndVar38NonZero:
-	ld a,(w1Companion.var38)		; $4bb6
-	or a			; $4bb9
-	ret z			; $4bba
+	ld a,(w1Companion.var38)
+	or a
+	ret z
 
 @setFlagAndDeleteWhenCompanionIsAbove:
-	call @cpYToCompanion		; $4bbb
-	ret c			; $4bbe
+	call @cpYToCompanion
+	ret c
 
 @setFlagAndDelete:
-	ld e,Interaction.subid		; $4bbf
-	ld a,(de)		; $4bc1
-	ld hl,@flagNumbers		; $4bc2
-	rst_addAToHl			; $4bc5
-	ld a,(hl)		; $4bc6
-	ld hl,wCompanionTutorialTextShown		; $4bc7
-	call setFlag		; $4bca
+	ld e,Interaction.subid
+	ld a,(de)
+	ld hl,@flagNumbers
+	rst_addAToHl
+	ld a,(hl)
+	ld hl,wCompanionTutorialTextShown
+	call setFlag
 
 @goToDelete:
-	jr @delete		; $4bcd
+	jr @delete
 
 .ifdef ROM_AGES
 @setFlagAndDeleteWhenCompanionIsAboveAndLinkInXRange:
-	call @checkLinkInXRange		; $4bcf
-	ret nz			; $4bd2
-	jr @setFlagAndDeleteWhenCompanionIsAbove		; $4bd3
+	call @checkLinkInXRange
+	ret nz
+	jr @setFlagAndDeleteWhenCompanionIsAbove
 
 @setFlagAndDeleteWhenCompanionIsLeft:
-	ld e,Interaction.xh		; $4bd5
-	ld a,(de)		; $4bd7
-	ld hl,w1Companion.xh		; $4bd8
-	cp (hl)			; $4bdb
-	ret nc			; $4bdc
-	jr @setFlagAndDelete		; $4bdd
+	ld e,Interaction.xh
+	ld a,(de)
+	ld hl,w1Companion.xh
+	cp (hl)
+	ret nc
+	jr @setFlagAndDelete
 
 @setFlagAndDeleteWhenCompanionIsBelowOrRight:
-	call @cpYToCompanion		; $4bdf
-	jr c,@setFlagAndDelete	; $4be2
-	ld e,Interaction.xh		; $4be4
-	ld a,(de)		; $4be6
-	ld hl,w1Companion.xh		; $4be7
-	cp (hl)			; $4bea
-	ret c			; $4beb
-	jr @setFlagAndDelete		; $4bec
+	call @cpYToCompanion
+	jr c,@setFlagAndDelete
+	ld e,Interaction.xh
+	ld a,(de)
+	ld hl,w1Companion.xh
+	cp (hl)
+	ret c
+	jr @setFlagAndDelete
 .endif
 
 ;;
 ; @addr{4bee}
 @cpYToCompanion:
-	ld e,Interaction.yh		; $4bee
-	ld a,(de)		; $4bf0
-	ld hl,w1Companion.yh		; $4bf1
-	cp (hl)			; $4bf4
-	ret			; $4bf5
+	ld e,Interaction.yh
+	ld a,(de)
+	ld hl,w1Companion.yh
+	cp (hl)
+	ret
 
 ;;
 ; @param[out]	zflag	z if Link is within a certain range of X-positions for certain
 ;			rooms?
 ; @addr{4bf6}
 @checkLinkInXRange:
-	ld a,(wActiveRoom)		; $4bf6
-	ld hl,@rooms		; $4bf9
-	ld b,$00		; $4bfc
+	ld a,(wActiveRoom)
+	ld hl,@rooms
+	ld b,$00
 --
-	cp (hl)			; $4bfe
-	jr z,++			; $4bff
-	inc b			; $4c01
-	inc hl			; $4c02
-	jr --			; $4c03
+	cp (hl)
+	jr z,++
+	inc b
+	inc hl
+	jr --
 ++
-	ld a,b			; $4c05
-	ld hl,@xRanges		; $4c06
-	rst_addDoubleIndex			; $4c09
-	ld a,(w1Link.xh)		; $4c0a
-	cp (hl)			; $4c0d
-	jr c,++			; $4c0e
-	inc hl			; $4c10
-	cp (hl)			; $4c11
-	jr nc,++		; $4c12
-	xor a			; $4c14
-	ret			; $4c15
+	ld a,b
+	ld hl,@xRanges
+	rst_addDoubleIndex
+	ld a,(w1Link.xh)
+	cp (hl)
+	jr c,++
+	inc hl
+	cp (hl)
+	jr nc,++
+	xor a
+	ret
 ++
-	or d			; $4c16
-	ret			; $4c17
+	or d
+	ret
 
 .ifdef ROM_AGES
 @rooms:
@@ -657,54 +657,54 @@ interactionCoded0:
 ; INTERACID_GAME_COMPLETE_DIALOG
 ; ==============================================================================
 interactionCoded1:
-	ld e,Interaction.state		; $4c33
-	ld a,(de)		; $4c35
-	rst_jumpTable			; $4c36
+	ld e,Interaction.state
+	ld a,(de)
+	rst_jumpTable
 	.dw @state0
 	.dw interactionRunScript
 
 @state0:
-	ld a,$01		; $4c3b
-	ld (de),a		; $4c3d
-	ld c,a			; $4c3e
-	callab bank1.loadDeathRespawnBufferPreset		; $4c3f
-	ld hl,gameCompleteDialogScript		; $4c47
-	jp interactionSetScript		; $4c4a
+	ld a,$01
+	ld (de),a
+	ld c,a
+	callab bank1.loadDeathRespawnBufferPreset
+	ld hl,gameCompleteDialogScript
+	jp interactionSetScript
 
 
 ; ==============================================================================
 ; INTERACID_TITLESCREEN_CLOUDS
 ; ==============================================================================
 interactionCoded2:
-	ld e,Interaction.state		; $4c4d
-	ld a,(de)		; $4c4f
-	rst_jumpTable			; $4c50
+	ld e,Interaction.state
+	ld a,(de)
+	rst_jumpTable
 	.dw @state0
 	.dw @state1
 
 @state0:
-	ld a,$01		; $4c55
-	ld (de),a		; $4c57
-	call interactionInitGraphics		; $4c58
-	ld e,Interaction.subid		; $4c5b
-	ld a,(de)		; $4c5d
-	ld hl,@positions		; $4c5e
-	rst_addDoubleIndex			; $4c61
-	ldi a,(hl)		; $4c62
-	ld b,(hl)		; $4c63
-	ld h,d			; $4c64
-	ld l,Interaction.var37		; $4c65
-	ld (hl),a		; $4c67
-	ld l,Interaction.yh		; $4c68
-	ldi (hl),a		; $4c6a
-	inc l			; $4c6b
-	ld (hl),b		; $4c6c
+	ld a,$01
+	ld (de),a
+	call interactionInitGraphics
+	ld e,Interaction.subid
+	ld a,(de)
+	ld hl,@positions
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld b,(hl)
+	ld h,d
+	ld l,Interaction.var37
+	ld (hl),a
+	ld l,Interaction.yh
+	ldi (hl),a
+	inc l
+	ld (hl),b
 
-	ld l,Interaction.angle		; $4c6d
-	ld (hl),ANGLE_DOWN		; $4c6f
-	ld l,Interaction.speed		; $4c71
-	ld (hl),SPEED_20		; $4c73
-	ret			; $4c75
+	ld l,Interaction.angle
+	ld (hl),ANGLE_DOWN
+	ld l,Interaction.speed
+	ld (hl),SPEED_20
+	ret
 
 @positions:
 	.db $bf $7c ; 0 == [subid]
@@ -714,192 +714,192 @@ interactionCoded2:
 
 
 @state1:
-	ld a,(wGfxRegs1.SCY)		; $4c7e
-	ld b,a			; $4c81
-	ld e,Interaction.var37		; $4c82
-	ld a,(de)		; $4c84
-	sub b			; $4c85
-	inc e			; $4c86
-	ld e,Interaction.yh		; $4c87
-	ld (de),a		; $4c89
+	ld a,(wGfxRegs1.SCY)
+	ld b,a
+	ld e,Interaction.var37
+	ld a,(de)
+	sub b
+	inc e
+	ld e,Interaction.yh
+	ld (de),a
 
-	call checkInteractionState2		; $4c8a
-	jr nz,@substate1	; $4c8d
+	call checkInteractionState2
+	jr nz,@substate1
 
 @substate0:
-	ld a,(wGfxRegs1.SCY)		; $4c8f
-	cp $e0			; $4c92
-	ret nz			; $4c94
-	call interactionIncState2		; $4c95
-	call objectSetVisible82		; $4c98
+	ld a,(wGfxRegs1.SCY)
+	cp $e0
+	ret nz
+	call interactionIncState2
+	call objectSetVisible82
 
 @substate1:
-	ld a,(wGfxRegs1.SCY)		; $4c9b
-	cp $88			; $4c9e
-	ret z			; $4ca0
+	ld a,(wGfxRegs1.SCY)
+	cp $88
+	ret z
 
 ;;
 ; This is used by INTERACID_TITLESCREEN_CLOUDS and INTERACID_INTRO_BIRD.
 ; @param[out]	a	X position
 ; @addr{4ca1}
 _introObject_applySpeed:
-	ld h,d			; $4ca1
-	ld l,Interaction.angle		; $4ca2
-	ld c,(hl)		; $4ca4
-	ld l,Interaction.speed		; $4ca5
-	ld b,(hl)		; $4ca7
-	call getPositionOffsetForVelocity		; $4ca8
-	ret z			; $4cab
+	ld h,d
+	ld l,Interaction.angle
+	ld c,(hl)
+	ld l,Interaction.speed
+	ld b,(hl)
+	call getPositionOffsetForVelocity
+	ret z
 
-	ld e,Interaction.var36		; $4cac
-	ld a,(de)		; $4cae
-	add (hl)		; $4caf
-	ld (de),a		; $4cb0
-	inc e			; $4cb1
-	inc l			; $4cb2
-	ld a,(de)		; $4cb3
-	adc (hl)		; $4cb4
-	ld (de),a		; $4cb5
+	ld e,Interaction.var36
+	ld a,(de)
+	add (hl)
+	ld (de),a
+	inc e
+	inc l
+	ld a,(de)
+	adc (hl)
+	ld (de),a
 
-	ld e,Interaction.x		; $4cb6
-	inc l			; $4cb8
-	ld a,(de)		; $4cb9
-	add (hl)		; $4cba
-	ld (de),a		; $4cbb
-	inc e			; $4cbc
-	inc l			; $4cbd
-	ld a,(de)		; $4cbe
-	adc (hl)		; $4cbf
-	ld (de),a		; $4cc0
-	ret			; $4cc1
+	ld e,Interaction.x
+	inc l
+	ld a,(de)
+	add (hl)
+	ld (de),a
+	inc e
+	inc l
+	ld a,(de)
+	adc (hl)
+	ld (de),a
+	ret
 
 
 ; ==============================================================================
 ; INTERACID_INTRO_BIRD
 ; ==============================================================================
 interactionCoded3:
-	ld e,Interaction.state		; $4cc2
-	ld a,(de)		; $4cc4
-	rst_jumpTable			; $4cc5
+	ld e,Interaction.state
+	ld a,(de)
+	rst_jumpTable
 	.dw @state0
 	.dw @state1
 
 @state0:
-	ld a,$01		; $4cca
-	ld (de),a		; $4ccc
-	call interactionInitGraphics		; $4ccd
+	ld a,$01
+	ld (de),a
+	call interactionInitGraphics
 
 	; counter2: How long the bird should remain (it will respawn if it goes off-screen
 	; before counter2 reaches 0)
-	ld h,d			; $4cd0
-	ld l,Interaction.counter2		; $4cd1
-	ld (hl),45		; $4cd3
+	ld h,d
+	ld l,Interaction.counter2
+	ld (hl),45
 
 	; Determine direction to move in based on subid
-	ld l,Interaction.subid		; $4cd5
-	ld a,(hl)		; $4cd7
-	ld b,$00		; $4cd8
-	ld c,$1a		; $4cda
-	cp $04			; $4cdc
-	jr c,+			; $4cde
-	inc b			; $4ce0
-	ld c,$06		; $4ce1
+	ld l,Interaction.subid
+	ld a,(hl)
+	ld b,$00
+	ld c,$1a
+	cp $04
+	jr c,+
+	inc b
+	ld c,$06
 +
-	ld l,Interaction.angle		; $4ce3
-	ld (hl),c		; $4ce5
-	ld l,Interaction.speed		; $4ce6
-	ld (hl),SPEED_140		; $4ce8
+	ld l,Interaction.angle
+	ld (hl),c
+	ld l,Interaction.speed
+	ld (hl),SPEED_140
 
-	push af			; $4cea
-	ld a,b			; $4ceb
-	call interactionSetAnimation		; $4cec
+	push af
+	ld a,b
+	call interactionSetAnimation
 
-	pop af			; $4cef
+	pop af
 
 @initializePositionAndCounter1:
-	ld b,a			; $4cf0
-	add a			; $4cf1
-	add b			; $4cf2
-	ld hl,@birdPositionsAndAppearanceDelays		; $4cf3
-	rst_addAToHl			; $4cf6
-	ldi a,(hl)		; $4cf7
-	ld b,(hl)		; $4cf8
-	inc l			; $4cf9
-	ld c,(hl)		; $4cfa
-	ld h,d			; $4cfb
-	ld l,Interaction.var37		; $4cfc
-	ld (hl),a		; $4cfe
-	ld l,Interaction.yh		; $4cff
-	ldi (hl),a		; $4d01
-	inc l			; $4d02
-	ld (hl),b		; $4d03
-	ld l,Interaction.counter1		; $4d04
-	ld (hl),c		; $4d06
-	ret			; $4d07
+	ld b,a
+	add a
+	add b
+	ld hl,@birdPositionsAndAppearanceDelays
+	rst_addAToHl
+	ldi a,(hl)
+	ld b,(hl)
+	inc l
+	ld c,(hl)
+	ld h,d
+	ld l,Interaction.var37
+	ld (hl),a
+	ld l,Interaction.yh
+	ldi (hl),a
+	inc l
+	ld (hl),b
+	ld l,Interaction.counter1
+	ld (hl),c
+	ret
 
 @state1:
 	; Update Y
-	ld a,(wGfxRegs1.SCY)		; $4d08
-	ld b,a			; $4d0b
-	ld e,Interaction.var37		; $4d0c
-	ld a,(de)		; $4d0e
-	sub b			; $4d0f
-	inc e			; $4d10
-	ld e,Interaction.yh		; $4d11
-	ld (de),a		; $4d13
+	ld a,(wGfxRegs1.SCY)
+	ld b,a
+	ld e,Interaction.var37
+	ld a,(de)
+	sub b
+	inc e
+	ld e,Interaction.yh
+	ld (de),a
 
-	ld e,Interaction.state2		; $4d14
-	ld a,(de)		; $4d16
-	rst_jumpTable			; $4d17
+	ld e,Interaction.state2
+	ld a,(de)
+	rst_jumpTable
 	.dw @substate0
 	.dw @substate1
 	.dw @substate2
 
 @substate0:
-	ld a,(wGfxRegs1.SCY)		; $4d1e
-	cp $10			; $4d21
-	ret nz			; $4d23
-	jp interactionIncState2		; $4d24
+	ld a,(wGfxRegs1.SCY)
+	cp $10
+	ret nz
+	jp interactionIncState2
 
 @substate1:
-	call interactionDecCounter1		; $4d27
-	ret nz			; $4d2a
-	call interactionIncState2		; $4d2b
-	jp objectSetVisible82		; $4d2e
+	call interactionDecCounter1
+	ret nz
+	call interactionIncState2
+	jp objectSetVisible82
 
 @substate2:
-	ld e,Interaction.counter2		; $4d31
-	ld a,(de)		; $4d33
-	or a			; $4d34
-	jr z,+			; $4d35
-	dec a			; $4d37
-	ld (de),a		; $4d38
+	ld e,Interaction.counter2
+	ld a,(de)
+	or a
+	jr z,+
+	dec a
+	ld (de),a
 +
-	call interactionAnimate		; $4d39
-	call _introObject_applySpeed		; $4d3c
-	cp $b0			; $4d3f
-	ret c			; $4d41
+	call interactionAnimate
+	call _introObject_applySpeed
+	cp $b0
+	ret c
 
 	; Bird is off-screen; check whether to "reset" the bird or just delete it.
-	ld h,d			; $4d42
-	ld l,Interaction.counter2		; $4d43
-	ld a,(hl)		; $4d45
-	or a			; $4d46
-	jp z,interactionDelete		; $4d47
+	ld h,d
+	ld l,Interaction.counter2
+	ld a,(hl)
+	or a
+	jp z,interactionDelete
 
-	ld l,Interaction.state2		; $4d4a
-	dec (hl)		; $4d4c
-	ld l,Interaction.subid		; $4d4d
-	ld a,(hl)		; $4d4f
-	call @initializePositionAndCounter1		; $4d50
+	ld l,Interaction.state2
+	dec (hl)
+	ld l,Interaction.subid
+	ld a,(hl)
+	call @initializePositionAndCounter1
 
 	; Set counter1 (the delay before reappearing) randomly
-	call getRandomNumber_noPreserveVars		; $4d53
-	and $0f			; $4d56
-	ld h,d			; $4d58
-	ld l,Interaction.counter1		; $4d59
-	ld (hl),a		; $4d5b
-	jp objectSetInvisible		; $4d5c
+	call getRandomNumber_noPreserveVars
+	and $0f
+	ld h,d
+	ld l,Interaction.counter1
+	ld (hl),a
+	jp objectSetInvisible
 
 
 ; Data format:
@@ -921,62 +921,62 @@ interactionCoded3:
 ; INTERACID_LINK_SHIP
 ; ==============================================================================
 interactionCoded4:
-	ld e,Interaction.state		; $4d77
-	ld a,(de)		; $4d79
-	rst_jumpTable			; $4d7a
+	ld e,Interaction.state
+	ld a,(de)
+	rst_jumpTable
 	.dw @state0
 	.dw @state1
 
 @state0:
-	ld a,$01		; $4d7f
-	ld (de),a		; $4d81
-	ld h,d			; $4d82
-	ld l,Interaction.subid		; $4d83
-	ld a,(hl)		; $4d85
-	ld b,a			; $4d86
-	and $0f			; $4d87
-	ld (hl),a		; $4d89
+	ld a,$01
+	ld (de),a
+	ld h,d
+	ld l,Interaction.subid
+	ld a,(hl)
+	ld b,a
+	and $0f
+	ld (hl),a
 
-	ld a,b			; $4d8a
-	swap a			; $4d8b
-	and $0f			; $4d8d
-	add a			; $4d8f
-	add a			; $4d90
-	ld l,Interaction.counter1		; $4d91
-	ld (hl),a		; $4d93
+	ld a,b
+	swap a
+	and $0f
+	add a
+	add a
+	ld l,Interaction.counter1
+	ld (hl),a
 
-	call interactionInitGraphics		; $4d94
-	jp objectSetVisible82		; $4d97
+	call interactionInitGraphics
+	jp objectSetVisible82
 
 @state1:
-	ld e,Interaction.subid		; $4d9a
-	ld a,(de)		; $4d9c
-	cp $02			; $4d9d
-	ret z			; $4d9f
+	ld e,Interaction.subid
+	ld a,(de)
+	cp $02
+	ret z
 
-	call interactionDecCounter1		; $4da0
-	ld e,Interaction.subid		; $4da3
-	ld a,(de)		; $4da5
-	or a			; $4da6
-	jr nz,@seagull	; $4da7
+	call interactionDecCounter1
+	ld e,Interaction.subid
+	ld a,(de)
+	or a
+	jr nz,@seagull
 
 @ship:
 	; Update the "bobbing" of the ship using the Z position (every 32 frames)
-	ld a,(wFrameCounter)		; $4da9
-	ld b,a			; $4dac
-	and $1f			; $4dad
-	ret nz			; $4daf
+	ld a,(wFrameCounter)
+	ld b,a
+	and $1f
+	ret nz
 
-	ld a,b			; $4db0
-	and $e0			; $4db1
-	swap a			; $4db3
-	rrca			; $4db5
-	ld hl,@zPositions		; $4db6
-	rst_addAToHl			; $4db9
-	ld e,Interaction.zh		; $4dba
-	ld a,(hl)		; $4dbc
-	ld (de),a		; $4dbd
-	ret			; $4dbe
+	ld a,b
+	and $e0
+	swap a
+	rrca
+	ld hl,@zPositions
+	rst_addAToHl
+	ld e,Interaction.zh
+	ld a,(hl)
+	ld (de),a
+	ret
 
 @zPositions:
 	.db $00 $ff $ff $00 $00 $01 $01 $00
@@ -985,16 +985,16 @@ interactionCoded4:
 @seagull:
 	; Similarly update the "bobbing" of the seagull, but more frequently
 	ld a,(hl) ; [counter1]
-	and $07			; $4dc8
-	ret nz			; $4dca
+	and $07
+	ret nz
 
-	ld a,(hl)		; $4dcb
-	and $38			; $4dcc
-	swap a			; $4dce
-	rlca			; $4dd0
-	ld hl,@zPositions		; $4dd1
-	rst_addAToHl			; $4dd4
-	ld e,Interaction.zh		; $4dd5
-	ld a,(hl)		; $4dd7
-	ld (de),a		; $4dd8
-	ret			; $4dd9
+	ld a,(hl)
+	and $38
+	swap a
+	rlca
+	ld hl,@zPositions
+	rst_addAToHl
+	ld e,Interaction.zh
+	ld a,(hl)
+	ld (de),a
+	ret

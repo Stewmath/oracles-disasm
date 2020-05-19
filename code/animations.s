@@ -1,180 +1,180 @@
 ;;
 ; @addr{58e4}
 initializeAnimations:
-	ld a,(wTilesetAnimation)		; $58e4
-	cp $ff			; $58e7
-	ret z			; $58e9
+	ld a,(wTilesetAnimation)
+	cp $ff
+	ret z
 
-	call loadAnimationData		; $58ea
+	call loadAnimationData
 .ifdef ROM_AGES
-	call @locFunc		; $58ed
-	ld hl,wAnimationState		; $58f0
-	set 7,(hl)		; $58f3
-	call @locFunc		; $58f5
-	ld hl,wAnimationState		; $58f8
-	set 7,(hl)		; $58fb
+	call @locFunc
+	ld hl,wAnimationState
+	set 7,(hl)
+	call @locFunc
+	ld hl,wAnimationState
+	set 7,(hl)
 .endif
 @locFunc:
-	call updateAnimationData		; $58fd
+	call updateAnimationData
 -
-	call updateAnimationQueue		; $5900
+	call updateAnimationQueue
 	jr nz, -
-	ret			; $5905
+	ret
 
 ;;
 ; @addr{5906}
 updateAnimations:
-	ld hl,wAnimationState		; $5906
-	res 6,(hl)		; $5909
-	ld a,(wTilesetAnimation)		; $590b
-	inc a			; $590e
-	ret z			; $590f
+	ld hl,wAnimationState
+	res 6,(hl)
+	ld a,(wTilesetAnimation)
+	inc a
+	ret z
 
-	ld a,(wScrollMode)		; $5910
-	and $01			; $5913
-	ret z			; $5915
+	ld a,(wScrollMode)
+	and $01
+	ret z
 
-	call updateAnimationQueue		; $5916
-	jr updateAnimationData		; $5919
+	call updateAnimationQueue
+	jr updateAnimationData
 
 ;;
 ; Read the next index off of the animation queue, set zero flag if there's
 ; nothing more to be read.
 ; @addr{591b}
 updateAnimationQueue:
-	ld a,(wAnimationQueueHead)		; $591b
-	ld b,a			; $591e
-	ld a,(wAnimationQueueTail)		; $591f
-	cp b			; $5922
-	ret z			; $5923
+	ld a,(wAnimationQueueHead)
+	ld b,a
+	ld a,(wAnimationQueueTail)
+	cp b
+	ret z
 
-	inc b			; $5924
-	ld a,b			; $5925
-	and $1f			; $5926
-	ld (wAnimationQueueHead),a		; $5928
-	ld hl,w2AnimationQueue		; $592b
-	rst_addAToHl			; $592e
+	inc b
+	ld a,b
+	and $1f
+	ld (wAnimationQueueHead),a
+	ld hl,w2AnimationQueue
+	rst_addAToHl
 	ld a,:w2AnimationQueue
-	ld ($ff00+R_SVBK),a	; $5931
-	ld b,(hl)		; $5933
-	xor a			; $5934
-	ld ($ff00+R_SVBK),a	; $5935
-	ld a,b			; $5937
-	call loadAnimationGfxIndex		; $5938
-	ld hl,wAnimationState		; $593b
-	set 6,(hl)		; $593e
-	or h			; $5940
-	ret			; $5941
+	ld ($ff00+R_SVBK),a
+	ld b,(hl)
+	xor a
+	ld ($ff00+R_SVBK),a
+	ld a,b
+	call loadAnimationGfxIndex
+	ld hl,wAnimationState
+	set 6,(hl)
+	or h
+	ret
 
 ;;
 ; @addr{5942}
 updateAnimationData:
-	ld hl,wAnimationCounter1		; $5942
-	ld a,(wAnimationState)		; $5945
-	bit 0,a			; $5948
-	call nz,updateAnimationDataPointer		; $594a
-	ld hl,wAnimationCounter2		; $594d
-	ld a,(wAnimationState)		; $5950
-	bit 1,a			; $5953
-	call nz,updateAnimationDataPointer		; $5955
-	ld hl,wAnimationCounter3		; $5958
-	ld a,(wAnimationState)		; $595b
-	bit 2,a			; $595e
-	call nz,updateAnimationDataPointer		; $5960
-	ld hl,wAnimationCounter4		; $5963
-	ld a,(wAnimationState)		; $5966
-	bit 3,a			; $5969
-	call nz,updateAnimationDataPointer		; $596b
+	ld hl,wAnimationCounter1
+	ld a,(wAnimationState)
+	bit 0,a
+	call nz,updateAnimationDataPointer
+	ld hl,wAnimationCounter2
+	ld a,(wAnimationState)
+	bit 1,a
+	call nz,updateAnimationDataPointer
+	ld hl,wAnimationCounter3
+	ld a,(wAnimationState)
+	bit 2,a
+	call nz,updateAnimationDataPointer
+	ld hl,wAnimationCounter4
+	ld a,(wAnimationState)
+	bit 3,a
+	call nz,updateAnimationDataPointer
 
 	; Unset force update bit
-	ld a,(wAnimationState)		; $596e
-	and $7f			; $5971
-	ld (wAnimationState),a		; $5973
-	ret			; $5976
+	ld a,(wAnimationState)
+	and $7f
+	ld (wAnimationState),a
+	ret
 
 ;;
 ; Update animation data pointed to by hl
 ; @addr{5977}
 updateAnimationDataPointer:
 	; If bit 7 set, force update
-	ld a,(wAnimationState)		; $5977
-	bit 7,a			; $597a
+	ld a,(wAnimationState)
+	bit 7,a
 	jr nz, +
 
 	; Otherwise, decrement counter
-	dec (hl)		; $597e
-	ret nz			; $597f
+	dec (hl)
+	ret nz
 +
 	; Load hl with a pointer to the animationData structure
-	push hl			; $5980
-	inc hl			; $5981
-	ldi a,(hl)		; $5982
-	ld h,(hl)		; $5983
-	ld l,a			; $5984
+	push hl
+	inc hl
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
 
 	; e = animation gfx index
-	ld e,(hl)		; $5985
-	inc hl			; $5986
+	ld e,(hl)
+	inc hl
 	; If next byte is 0xff, it jumps several bytes back, otherwise the data
 	; structure continues
-	ldi a,(hl)		; $5987
-	cp $ff			; $5988
+	ldi a,(hl)
+	cp $ff
 	jr nz, +
-	ld b,a			; $598c
-	ld c,(hl)		; $598d
-	add hl,bc		; $598e
-	ldi a,(hl)		; $598f
+	ld b,a
+	ld c,(hl)
+	add hl,bc
+	ldi a,(hl)
 +
-	ld c,l			; $5990
-	ld b,h			; $5991
-	pop hl			; $5992
-	ldi (hl),a		; $5993
-	ld (hl),c		; $5994
-	inc hl			; $5995
-	ld (hl),b		; $5996
+	ld c,l
+	ld b,h
+	pop hl
+	ldi (hl),a
+	ld (hl),c
+	inc hl
+	ld (hl),b
 
 	; Set animation index to be loaded
-	ld b,e			; $5997
-	ld a,(wAnimationQueueTail)		; $5998
-	inc a			; $599b
-	and $1f			; $599c
-	ld e,a			; $599e
-	ld a,(wAnimationQueueHead)		; $599f
-	cp e			; $59a2
-	ret z			; $59a3
+	ld b,e
+	ld a,(wAnimationQueueTail)
+	inc a
+	and $1f
+	ld e,a
+	ld a,(wAnimationQueueHead)
+	cp e
+	ret z
 
-	ld a,e			; $59a4
-	ld (wAnimationQueueTail),a		; $59a5
+	ld a,e
+	ld (wAnimationQueueTail),a
 	ld a,:w2AnimationQueue
-	ld ($ff00+R_SVBK),a	; $59aa
-	ld a,e			; $59ac
-	ld hl,w2AnimationQueue		; $59ad
-	rst_addAToHl			; $59b0
-	ld (hl),b		; $59b1
-	xor a			; $59b2
-	ld ($ff00+R_SVBK),a	; $59b3
-	or h			; $59b5
-	ret			; $59b6
+	ld ($ff00+R_SVBK),a
+	ld a,e
+	ld hl,w2AnimationQueue
+	rst_addAToHl
+	ld (hl),b
+	xor a
+	ld ($ff00+R_SVBK),a
+	or h
+	ret
 
 ;;
 ; Load animation index a
 ; @addr{59b7}
 loadAnimationGfxIndex:
-	ld c,$06		; $59b7
-	call multiplyAByC		; $59b9
+	ld c,$06
+	call multiplyAByC
 	ld bc, animationGfxHeaders
-	add hl,bc		; $59bf
-	ldi a,(hl)		; $59c0
-	ld c,a			; $59c1
-	ldi a,(hl)		; $59c2
-	ld d,a			; $59c3
-	ldi a,(hl)		; $59c4
-	ld e,a			; $59c5
-	push de			; $59c6
-	ldi a,(hl)		; $59c7
-	ld d,a			; $59c8
-	ldi a,(hl)		; $59c9
-	ld e,a			; $59ca
-	ld b,(hl)		; $59cb
-	pop hl			; $59cc
-	jp queueDmaTransfer		; $59cd
+	add hl,bc
+	ldi a,(hl)
+	ld c,a
+	ldi a,(hl)
+	ld d,a
+	ldi a,(hl)
+	ld e,a
+	push de
+	ldi a,(hl)
+	ld d,a
+	ldi a,(hl)
+	ld e,a
+	ld b,(hl)
+	pop hl
+	jp queueDmaTransfer

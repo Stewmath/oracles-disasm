@@ -3,56 +3,56 @@
 ; loaded in wRoomLayout.
 ; @addr{6bf1}
 generateW3VramTilesAndAttributes:
-	ld a,:w3VramTiles		; $6bf1
-	ld ($ff00+R_SVBK),a	; $6bf3
-	ld hl,wRoomLayout		; $6bf5
-	ld de,w3VramTiles		; $6bf8
-	ld c,$0b		; $6bfb
+	ld a,:w3VramTiles
+	ld ($ff00+R_SVBK),a
+	ld hl,wRoomLayout
+	ld de,w3VramTiles
+	ld c,$0b
 ---
-	ld b,$10		; $6bfd
+	ld b,$10
 --
-	push bc			; $6bff
-	ldi a,(hl)		; $6c00
-	push hl			; $6c01
-	call setHlToTileMappingDataPlusATimes8		; $6c02
-	push de			; $6c05
-	call write4BytesToVramLayout		; $6c06
-	pop de			; $6c09
-	set 2,d			; $6c0a
-	call write4BytesToVramLayout		; $6c0c
-	res 2,d			; $6c0f
-	ld a,e			; $6c11
-	sub $1f			; $6c12
-	ld e,a			; $6c14
-	pop hl			; $6c15
-	pop bc			; $6c16
-	dec b			; $6c17
-	jr nz,--		; $6c18
+	push bc
+	ldi a,(hl)
+	push hl
+	call setHlToTileMappingDataPlusATimes8
+	push de
+	call write4BytesToVramLayout
+	pop de
+	set 2,d
+	call write4BytesToVramLayout
+	res 2,d
+	ld a,e
+	sub $1f
+	ld e,a
+	pop hl
+	pop bc
+	dec b
+	jr nz,--
 
-	ld a,$20		; $6c1a
-	call addAToDe		; $6c1c
-	dec c			; $6c1f
-	jr nz,---		; $6c20
-	ret			; $6c22
+	ld a,$20
+	call addAToDe
+	dec c
+	jr nz,---
+	ret
 
 ;;
 ; Take 4 bytes from hl, write 2 to de, write the next 2 $20 bytes later.
 ; @addr{6c23}
 write4BytesToVramLayout:
-	ldi a,(hl)		; $6c23
-	ld (de),a		; $6c24
-	inc e			; $6c25
-	ldi a,(hl)		; $6c26
-	ld (de),a		; $6c27
-	ld a,$1f		; $6c28
-	add e			; $6c2a
-	ld e,a			; $6c2b
-	ldi a,(hl)		; $6c2c
-	ld (de),a		; $6c2d
-	inc e			; $6c2e
-	ldi a,(hl)		; $6c2f
-	ld (de),a		; $6c30
-	ret			; $6c31
+	ldi a,(hl)
+	ld (de),a
+	inc e
+	ldi a,(hl)
+	ld (de),a
+	ld a,$1f
+	add e
+	ld e,a
+	ldi a,(hl)
+	ld (de),a
+	inc e
+	ldi a,(hl)
+	ld (de),a
+	ret
 
 ;;
 ; This updates up to 4 entries in w2ChangedTileQueue by writing a command to the vblank
@@ -60,101 +60,101 @@ write4BytesToVramLayout:
 ;
 ; @addr{6c32}
 updateChangedTileQueue:
-	ld a,(wScrollMode)		; $6c32
-	and $0e			; $6c35
-	ret nz			; $6c37
+	ld a,(wScrollMode)
+	and $0e
+	ret nz
 
 	; Update up to 4 tiles per frame
-	ld b,$04		; $6c38
+	ld b,$04
 --
-	push bc			; $6c3a
-	call @handleSingleEntry		; $6c3b
-	pop bc			; $6c3e
-	dec b			; $6c3f
-	jr nz,--		; $6c40
+	push bc
+	call @handleSingleEntry
+	pop bc
+	dec b
+	jr nz,--
 
-	xor a			; $6c42
-	ld ($ff00+R_SVBK),a	; $6c43
-	ret			; $6c45
+	xor a
+	ld ($ff00+R_SVBK),a
+	ret
 
 ;;
 ; @addr{6c46}
 @handleSingleEntry:
-	ld a,(wChangedTileQueueHead)		; $6c46
-	ld b,a			; $6c49
-	ld a,(wChangedTileQueueTail)		; $6c4a
-	cp b			; $6c4d
-	ret z			; $6c4e
+	ld a,(wChangedTileQueueHead)
+	ld b,a
+	ld a,(wChangedTileQueueTail)
+	cp b
+	ret z
 
-	inc b			; $6c4f
-	ld a,b			; $6c50
-	and $1f			; $6c51
-	ld (wChangedTileQueueHead),a		; $6c53
-	ld hl,w2ChangedTileQueue		; $6c56
-	rst_addDoubleIndex			; $6c59
+	inc b
+	ld a,b
+	and $1f
+	ld (wChangedTileQueueHead),a
+	ld hl,w2ChangedTileQueue
+	rst_addDoubleIndex
 
-	ld a,:w2ChangedTileQueue		; $6c5a
-	ld ($ff00+R_SVBK),a	; $6c5c
+	ld a,:w2ChangedTileQueue
+	ld ($ff00+R_SVBK),a
 
 	; b = New value of tile
 	; c = position of tile
-	ldi a,(hl)		; $6c5e
-	ld c,(hl)		; $6c5f
-	ld b,a			; $6c60
+	ldi a,(hl)
+	ld c,(hl)
+	ld b,a
 
-	ld a,c			; $6c61
-	ldh (<hFF8C),a	; $6c62
+	ld a,c
+	ldh (<hFF8C),a
 
-	ld a,($ff00+R_SVBK)	; $6c64
-	push af			; $6c66
-	ld a,:w3VramTiles		; $6c67
-	ld ($ff00+R_SVBK),a	; $6c69
-	call getVramSubtileAddressOfTile		; $6c6b
+	ld a,($ff00+R_SVBK)
+	push af
+	ld a,:w3VramTiles
+	ld ($ff00+R_SVBK),a
+	call getVramSubtileAddressOfTile
 
-	ld a,b			; $6c6e
-	call setHlToTileMappingDataPlusATimes8		; $6c6f
-	push hl			; $6c72
+	ld a,b
+	call setHlToTileMappingDataPlusATimes8
+	push hl
 
 	; Write tile data
-	push de			; $6c73
-	call write4BytesToVramLayout		; $6c74
-	pop de			; $6c77
+	push de
+	call write4BytesToVramLayout
+	pop de
 
 	; Write mapping data
-	ld a,$04		; $6c78
-	add d			; $6c7a
-	ld d,a			; $6c7b
-	call write4BytesToVramLayout		; $6c7c
+	ld a,$04
+	add d
+	ld d,a
+	call write4BytesToVramLayout
 
-	ldh a,(<hFF8C)	; $6c7f
-	pop hl			; $6c81
-	call queueTileWriteAtVBlank		; $6c82
+	ldh a,(<hFF8C)
+	pop hl
+	call queueTileWriteAtVBlank
 
-	pop af			; $6c85
-	ld ($ff00+R_SVBK),a	; $6c86
-	ret			; $6c88
+	pop af
+	ld ($ff00+R_SVBK),a
+	ret
 
 ;;
 ; @param	c	Tile index
 ; @param[out]	de	Address of tile c's top-left subtile in w3VramTiles
 ; @addr{6c89}
 getVramSubtileAddressOfTile:
-	ld a,c			; $6c89
-	swap a			; $6c8a
-	and $0f			; $6c8c
-	ld hl,@addresses	; $6c8e
-	rst_addDoubleIndex			; $6c91
-	ldi a,(hl)		; $6c92
-	ld h,(hl)		; $6c93
-	ld l,a			; $6c94
+	ld a,c
+	swap a
+	and $0f
+	ld hl,@addresses
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
 
-	ld a,c			; $6c95
-	and $0f			; $6c96
-	add a			; $6c98
-	rst_addAToHl			; $6c99
-	ld e,l			; $6c9a
-	ld d,h			; $6c9b
-	ret			; $6c9c
+	ld a,c
+	and $0f
+	add a
+	rst_addAToHl
+	ld e,l
+	ld d,h
+	ret
 
 @addresses:
 	.dw w3VramTiles+$000
@@ -188,99 +188,99 @@ getVramSubtileAddressOfTile:
 ; @param	hFF8E	Tile index 2
 ; @addr{6cb3}
 setInterleavedTile_body:
-	ldh (<hFF8B),a	; $6cb3
+	ldh (<hFF8B),a
 
-	ld a,($ff00+R_SVBK)	; $6cb5
-	push af			; $6cb7
-	ld a,:w3TileMappingData		; $6cb8
-	ld ($ff00+R_SVBK),a	; $6cba
+	ld a,($ff00+R_SVBK)
+	push af
+	ld a,:w3TileMappingData
+	ld ($ff00+R_SVBK),a
 
-	ldh a,(<hFF8F)	; $6cbc
-	call setHlToTileMappingDataPlusATimes8		; $6cbe
-	ld de,$cec8		; $6cc1
-	ld b,$08		; $6cc4
+	ldh a,(<hFF8F)
+	call setHlToTileMappingDataPlusATimes8
+	ld de,$cec8
+	ld b,$08
 -
-	ldi a,(hl)		; $6cc6
-	ld (de),a		; $6cc7
-	inc de			; $6cc8
-	dec b			; $6cc9
-	jr nz,-			; $6cca
+	ldi a,(hl)
+	ld (de),a
+	inc de
+	dec b
+	jr nz,-
 
-	ldh a,(<hFF8E)	; $6ccc
-	call setHlToTileMappingDataPlusATimes8		; $6cce
-	ld de,$cec8		; $6cd1
-	ldh a,(<hFF8B)	; $6cd4
-	bit 0,a			; $6cd6
-	jr nz,@interleaveDiagonally		; $6cd8
+	ldh a,(<hFF8E)
+	call setHlToTileMappingDataPlusATimes8
+	ld de,$cec8
+	ldh a,(<hFF8B)
+	bit 0,a
+	jr nz,@interleaveDiagonally
 
-	bit 1,a			; $6cda
-	jr nz,+			; $6cdc
+	bit 1,a
+	jr nz,+
 
-	inc hl			; $6cde
-	inc hl			; $6cdf
-	call @copy2Bytes		; $6ce0
-	jr ++			; $6ce3
+	inc hl
+	inc hl
+	call @copy2Bytes
+	jr ++
 +
-	inc de			; $6ce5
-	inc de			; $6ce6
-	call @copy2Bytes		; $6ce7
+	inc de
+	inc de
+	call @copy2Bytes
 ++
-	inc hl			; $6cea
-	inc hl			; $6ceb
-	inc de			; $6cec
-	inc de			; $6ced
-	call @copy2Bytes		; $6cee
-	jr @queueWrite			; $6cf1
+	inc hl
+	inc hl
+	inc de
+	inc de
+	call @copy2Bytes
+	jr @queueWrite
 
 @copy2Bytes:
-	ldi a,(hl)		; $6cf3
-	ld (de),a		; $6cf4
-	inc de			; $6cf5
-	ldi a,(hl)		; $6cf6
-	ld (de),a		; $6cf7
-	inc de			; $6cf8
-	ret			; $6cf9
+	ldi a,(hl)
+	ld (de),a
+	inc de
+	ldi a,(hl)
+	ld (de),a
+	inc de
+	ret
 
 @interleaveDiagonally:
-	bit 1,a			; $6cfa
-	jr nz,+			; $6cfc
+	bit 1,a
+	jr nz,+
 
-	inc de			; $6cfe
-	call @copy2BytesSeparated		; $6cff
-	jr ++			; $6d02
+	inc de
+	call @copy2BytesSeparated
+	jr ++
 +
-	inc hl			; $6d04
-	call @copy2BytesSeparated		; $6d05
+	inc hl
+	call @copy2BytesSeparated
 ++
-	inc hl			; $6d08
-	inc de			; $6d09
-	call @copy2BytesSeparated		; $6d0a
-	jr @queueWrite			; $6d0d
+	inc hl
+	inc de
+	call @copy2BytesSeparated
+	jr @queueWrite
 
 ;;
 ; @addr{6d0f}
 @copy2BytesSeparated:
-	ldi a,(hl)		; $6d0f
-	ld (de),a		; $6d10
-	inc de			; $6d11
-	inc hl			; $6d12
-	inc de			; $6d13
-	ldi a,(hl)		; $6d14
-	ld (de),a		; $6d15
-	inc de			; $6d16
-	ret			; $6d17
+	ldi a,(hl)
+	ld (de),a
+	inc de
+	inc hl
+	inc de
+	ldi a,(hl)
+	ld (de),a
+	inc de
+	ret
 
 ;;
 ; @param	hFF8C	The position of the tile to refresh
 ; @param	$cec8	The data to write for that tile
 ; @addr{6d18}
 @queueWrite:
-	ldh a,(<hFF8C)	; $6d18
-	ld hl,$cec8		; $6d1a
-	call queueTileWriteAtVBlank		; $6d1d
-	pop af			; $6d20
-	ld ($ff00+R_SVBK),a	; $6d21
-	ret			; $6d23
+	ldh a,(<hFF8C)
+	ld hl,$cec8
+	call queueTileWriteAtVBlank
+	pop af
+	ld ($ff00+R_SVBK),a
+	ret
 
 ;;
 ; Set wram bank to 3 (or wherever hl is pointing to) before calling this.
@@ -290,55 +290,55 @@ setInterleavedTile_body:
 ;			w3TileMappingData)
 ; @addr{6d24}
 queueTileWriteAtVBlank:
-	push hl			; $6d24
-	call @getTilePositionInVram		; $6d25
-	add $20			; $6d28
-	ld c,a			; $6d2a
+	push hl
+	call @getTilePositionInVram
+	add $20
+	ld c,a
 
 	; Add a command to the vblank queue.
-	ldh a,(<hVBlankFunctionQueueTail)	; $6d2b
-	ld l,a			; $6d2d
+	ldh a,(<hVBlankFunctionQueueTail)
+	ld l,a
 	ld h,>wVBlankFunctionQueue
-	ld a,(vblankCopyTileFunctionOffset)		; $6d30
-	ldi (hl),a		; $6d33
-	ld (hl),e		; $6d34
-	inc l			; $6d35
-	ld (hl),d		; $6d36
-	inc l			; $6d37
+	ld a,(vblankCopyTileFunctionOffset)
+	ldi (hl),a
+	ld (hl),e
+	inc l
+	ld (hl),d
+	inc l
 
-	ld e,l			; $6d38
-	ld d,h			; $6d39
-	pop hl			; $6d3a
-	ld b,$02		; $6d3b
+	ld e,l
+	ld d,h
+	pop hl
+	ld b,$02
 --
 	; Write 2 bytes to the command
-	call @copy2Bytes		; $6d3d
+	call @copy2Bytes
 
 	; Then give it the address for the lower half of the tile
-	ld a,c			; $6d40
-	ld (de),a		; $6d41
-	inc e			; $6d42
+	ld a,c
+	ld (de),a
+	inc e
 
 	; Then write the next 2 bytes
-	call @copy2Bytes		; $6d43
-	dec b			; $6d46
-	jr nz,--		; $6d47
+	call @copy2Bytes
+	dec b
+	jr nz,--
 
 	; Update the tail of the vblank queue
-	ld a,e			; $6d49
-	ldh (<hVBlankFunctionQueueTail),a	; $6d4a
-	ret			; $6d4c
+	ld a,e
+	ldh (<hVBlankFunctionQueueTail),a
+	ret
 
 ;;
 ; @addr{6d4d}
 @copy2Bytes:
-	ldi a,(hl)		; $6d4d
-	ld (de),a		; $6d4e
-	inc e			; $6d4f
-	ldi a,(hl)		; $6d50
-	ld (de),a		; $6d51
-	inc e			; $6d52
-	ret			; $6d53
+	ldi a,(hl)
+	ld (de),a
+	inc e
+	ldi a,(hl)
+	ld (de),a
+	inc e
+	ret
 
 ;;
 ; @param	a	Tile position
@@ -346,28 +346,28 @@ queueTileWriteAtVBlank:
 ; @param[out]	de	Somewhere in the vram bg map
 ; @addr{6d54}
 @getTilePositionInVram:
-	ld e,a			; $6d54
-	and $f0			; $6d55
-	swap a			; $6d57
-	ld d,a			; $6d59
-	ld a,e			; $6d5a
-	and $0f			; $6d5b
-	add a			; $6d5d
-	ld e,a			; $6d5e
-	ld a,(wScreenOffsetX)		; $6d5f
-	swap a			; $6d62
-	add a			; $6d64
-	add e			; $6d65
-	and $1f			; $6d66
-	ld e,a			; $6d68
-	ld a,(wScreenOffsetY)		; $6d69
-	swap a			; $6d6c
-	add d			; $6d6e
-	and $0f			; $6d6f
-	ld hl,vramBgMapTable		; $6d71
-	rst_addDoubleIndex			; $6d74
-	ldi a,(hl)		; $6d75
-	add e			; $6d76
-	ld e,a			; $6d77
-	ld d,(hl)		; $6d78
-	ret			; $6d79
+	ld e,a
+	and $f0
+	swap a
+	ld d,a
+	ld a,e
+	and $0f
+	add a
+	ld e,a
+	ld a,(wScreenOffsetX)
+	swap a
+	add a
+	add e
+	and $1f
+	ld e,a
+	ld a,(wScreenOffsetY)
+	swap a
+	add d
+	and $0f
+	ld hl,vramBgMapTable
+	rst_addDoubleIndex
+	ldi a,(hl)
+	add e
+	ld e,a
+	ld d,(hl)
+	ret

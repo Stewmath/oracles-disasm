@@ -4,69 +4,69 @@
 ;
 ; @addr{626e}
 checkInitUnderwaterWaves:
-	ld a,(wTilesetFlags)		; $626e
-	and TILESETFLAG_UNDERWATER		; $6271
-	ret z			; $6273
+	ld a,(wTilesetFlags)
+	and TILESETFLAG_UNDERWATER
+	ret z
 
-	ld a,$10		; $6274
-	ld (wGfxRegs2.LYC),a		; $6276
-	ld a,$02		; $6279
-	ldh (<hNextLcdInterruptBehaviour),a	; $627b
-	ld a,$02		; $627d
-	call initWaveScrollValues		; $627f
+	ld a,$10
+	ld (wGfxRegs2.LYC),a
+	ld a,$02
+	ldh (<hNextLcdInterruptBehaviour),a
+	ld a,$02
+	call initWaveScrollValues
 
 ;;
 ; Updates wBigBuffer with the values for SCX for next frame.
 ;
 ; @addr{6282}
 checkUpdateUnderwaterWaves:
-	ld a,(wTilesetFlags)		; $6282
-	and TILESETFLAG_UNDERWATER			; $6285
-	ret z			; $6287
+	ld a,(wTilesetFlags)
+	and TILESETFLAG_UNDERWATER
+	ret z
 
-	ld a,:w2WaveScrollValues		; $6288
-	ld ($ff00+R_SVBK),a	; $628a
+	ld a,:w2WaveScrollValues
+	ld ($ff00+R_SVBK),a
 
-	ld a,(wGfxRegs2.SCX)		; $628c
-	ld c,a			; $628f
-	ld a,(wFrameCounter)		; $6290
-	ld b,a			; $6293
-	ld a,(wGfxRegs2.SCY)		; $6294
-	add b			; $6297
-	and $7f			; $6298
-	ld de,w2WaveScrollValues	; $629a
-	call addAToDe		; $629d
-	ld hl,wBigBuffer+$10	; $62a0
-	ld b,$80		; $62a3
+	ld a,(wGfxRegs2.SCX)
+	ld c,a
+	ld a,(wFrameCounter)
+	ld b,a
+	ld a,(wGfxRegs2.SCY)
+	add b
+	and $7f
+	ld de,w2WaveScrollValues
+	call addAToDe
+	ld hl,wBigBuffer+$10
+	ld b,$80
 --
-	ld a,(de)		; $62a5
-	add c			; $62a6
-	ldi (hl),a		; $62a7
-	ld a,e			; $62a8
-	inc a			; $62a9
-	and $7f			; $62aa
-	ld e,a			; $62ac
-	dec b			; $62ad
-	jr nz,--		; $62ae
+	ld a,(de)
+	add c
+	ldi (hl),a
+	ld a,e
+	inc a
+	and $7f
+	ld e,a
+	dec b
+	jr nz,--
 
-	xor a			; $62b0
-	ld ($ff00+R_SVBK),a	; $62b1
-	ret			; $62b3
+	xor a
+	ld ($ff00+R_SVBK),a
+	ret
 
 ;;
 ; Cancels the underwater wave effect momentarily during screen transitions.
 ;
 ; @addr{62b4}
 checkDisableUnderwaterWaves:
-	ld a,(wTilesetFlags)		; $62b4
-	and TILESETFLAG_UNDERWATER			; $62b7
-	ret z			; $62b9
+	ld a,(wTilesetFlags)
+	and TILESETFLAG_UNDERWATER
+	ret z
 
-	ld a,$03		; $62ba
-	ldh (<hNextLcdInterruptBehaviour),a	; $62bc
+	ld a,$03
+	ldh (<hNextLcdInterruptBehaviour),a
 
 	; This should be high enough so the LYC interrupt doesn't trigger
-	ld a,199		; $62be
-	ld (wGfxRegs2.LYC),a		; $62c0
+	ld a,199
+	ld (wGfxRegs2.LYC),a
 
-	ret			; $62c3
+	ret

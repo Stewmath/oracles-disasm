@@ -2,207 +2,207 @@
 ; @addr{57ef}
 specialObjectCode_raft:
 .ifdef ROM_AGES
-	ld a,d			; $57ef
-	ld (wLinkRidingObject),a		; $57f0
-	ld e,Item.state		; $57f3
-	ld a,(de)		; $57f5
-	rst_jumpTable			; $57f6
+	ld a,d
+	ld (wLinkRidingObject),a
+	ld e,Item.state
+	ld a,(de)
+	rst_jumpTable
 	.dw @state0
 	.dw @state1
 	.dw @state2
 	.dw @state3
 
 @state0:
-	callab bank5.specialObjectSetOamVariables		; $57ff
-	xor a			; $5807
-	call specialObjectSetAnimation		; $5808
-	call itemIncState		; $580b
+	callab bank5.specialObjectSetOamVariables
+	xor a
+	call specialObjectSetAnimation
+	call itemIncState
 
-	ld l,SpecialObject.collisionType		; $580e
-	ld a,$80|ITEMCOLLISION_LINK		; $5810
-	ldi (hl),a		; $5812
+	ld l,SpecialObject.collisionType
+	ld a,$80|ITEMCOLLISION_LINK
+	ldi (hl),a
 
 	; collisionRadiusY/X
-	inc l			; $5813
-	ld a,$06		; $5814
-	ldi (hl),a		; $5816
-	ldi (hl),a		; $5817
+	inc l
+	ld a,$06
+	ldi (hl),a
+	ldi (hl),a
 
-	ld l,SpecialObject.counter1		; $5818
-	ld (hl),$0c		; $581a
+	ld l,SpecialObject.counter1
+	ld (hl),$0c
 
-	ld a,d			; $581c
-	ld (wLinkObjectIndex),a		; $581d
-	call setCameraFocusedObjectToLink		; $5820
-	jp @saveRaftPosition		; $5823
+	ld a,d
+	ld (wLinkObjectIndex),a
+	call setCameraFocusedObjectToLink
+	jp @saveRaftPosition
 
 
 ; State 1: riding the raft
 @state1:
-	ld a,(wPaletteThread_mode)		; $5826
-	or a			; $5829
-	ret nz			; $582a
-	call retIfTextIsActive		; $582b
-	ld a,(wScrollMode)		; $582e
-	and $0e			; $5831
-	ret nz			; $5833
-	ld a,(wDisabledObjects)		; $5834
-	and $81			; $5837
-	ret nz			; $5839
+	ld a,(wPaletteThread_mode)
+	or a
+	ret nz
+	call retIfTextIsActive
+	ld a,(wScrollMode)
+	and $0e
+	ret nz
+	ld a,(wDisabledObjects)
+	and $81
+	ret nz
 
-	ld a,(wLinkForceState)		; $583a
-	cp LINK_STATE_RESPAWNING			; $583d
-	jr z,@respawning			; $583f
-	ld a,(w1Link.state)		; $5841
-	cp LINK_STATE_RESPAWNING			; $5844
-	jr nz,++		; $5846
+	ld a,(wLinkForceState)
+	cp LINK_STATE_RESPAWNING
+	jr z,@respawning
+	ld a,(w1Link.state)
+	cp LINK_STATE_RESPAWNING
+	jr nz,++
 
 @respawning:
-	ld hl,wLinkLocalRespawnY		; $5848
-	ld e,SpecialObject.yh		; $584b
-	ldi a,(hl)		; $584d
-	ld (de),a		; $584e
-	ld e,SpecialObject.xh		; $584f
-	ldi a,(hl)		; $5851
-	ld (de),a		; $5852
-	jp objectSetInvisible		; $5853
+	ld hl,wLinkLocalRespawnY
+	ld e,SpecialObject.yh
+	ldi a,(hl)
+	ld (de),a
+	ld e,SpecialObject.xh
+	ldi a,(hl)
+	ld (de),a
+	jp objectSetInvisible
 
 ++
 	; Update direction; if changed, re-initialize animation
-	call updateCompanionDirectionFromAngle		; $5856
-	jr c,+			; $5859
-	call specialObjectAnimate		; $585b
-	jr ++			; $585e
+	call updateCompanionDirectionFromAngle
+	jr c,+
+	call specialObjectAnimate
+	jr ++
 +
-	call specialObjectSetAnimation		; $5860
+	call specialObjectSetAnimation
 ++
-	call @raftCalculateAdjacentWallsBitset		; $5863
-	call @transferKnockbackToLink		; $5866
-	ld hl,w1Link.knockbackCounter		; $5869
-	ld a,(hl)		; $586c
-	or a			; $586d
-	jr z,@updateMovement	; $586e
+	call @raftCalculateAdjacentWallsBitset
+	call @transferKnockbackToLink
+	ld hl,w1Link.knockbackCounter
+	ld a,(hl)
+	or a
+	jr z,@updateMovement
 
 	; Experiencing knockback; decrement counter, apply knockback speed
-	dec (hl)		; $5870
-	dec l			; $5871
-	ld c,(hl)		; $5872
-	ld b,SPEED_100		; $5873
-	callab bank5.specialObjectUpdatePositionGivenVelocity		; $5875
+	dec (hl)
+	dec l
+	ld c,(hl)
+	ld b,SPEED_100
+	callab bank5.specialObjectUpdatePositionGivenVelocity
 
-	ld a,$88		; $587d
-	ld (wcc92),a		; $587f
-	jr @notDismounting		; $5882
+	ld a,$88
+	ld (wcc92),a
+	jr @notDismounting
 
 @updateMovement:
-	ld e,SpecialObject.speed		; $5884
-	ld a,SPEED_e0		; $5886
-	ld (de),a		; $5888
+	ld e,SpecialObject.speed
+	ld a,SPEED_e0
+	ld (de),a
 
-	ld e,SpecialObject.angle		; $5889
-	ld a,(wLinkAngle)		; $588b
-	ld (de),a		; $588e
-	bit 7,a			; $588f
-	jr nz,@notDismounting	; $5891
-	ld a,(wLinkImmobilized)		; $5893
-	or a			; $5896
-	jr nz,@notDismounting	; $5897
+	ld e,SpecialObject.angle
+	ld a,(wLinkAngle)
+	ld (de),a
+	bit 7,a
+	jr nz,@notDismounting
+	ld a,(wLinkImmobilized)
+	or a
+	jr nz,@notDismounting
 
-	callab bank5.specialObjectUpdatePosition	; $5899
-	ld a,c			; $58a1
-	or a			; $58a2
-	jr z,@positionUnchanged	; $58a3
+	callab bank5.specialObjectUpdatePosition
+	ld a,c
+	or a
+	jr z,@positionUnchanged
 
-	ld a,$08		; $58a5
-	ld (wcc92),a		; $58a7
+	ld a,$08
+	ld (wcc92),a
 
 
 	; If not dismounting this frame, reset 'dismounting angle' (var3e) and
 	; 'dismounting counter' (var3f).
 @notDismounting:
-	ld h,d			; $58aa
-	ld l,SpecialObject.var3e		; $58ab
-	ld a,$ff		; $58ad
-	ldi (hl),a		; $58af
+	ld h,d
+	ld l,SpecialObject.var3e
+	ld a,$ff
+	ldi (hl),a
 
 	; [var3f] = $04
-	ld (hl),$04		; $58b0
-	ret			; $58b2
+	ld (hl),$04
+	ret
 
 
 	; If position is unchanged, check whether to dismount
 @positionUnchanged:
 	; Return if "dismount angle" changed from before
-	ld h,d			; $58b3
-	ld e,SpecialObject.angle		; $58b4
-	ld a,(de)		; $58b6
-	ld l,SpecialObject.var3e		; $58b7
-	cp (hl)			; $58b9
-	ldi (hl),a		; $58ba
-	ret nz			; $58bb
+	ld h,d
+	ld e,SpecialObject.angle
+	ld a,(de)
+	ld l,SpecialObject.var3e
+	cp (hl)
+	ldi (hl),a
+	ret nz
 
 	; [var3f]--
-	dec (hl)		; $58bc
-	ret nz			; $58bd
+	dec (hl)
+	ret nz
 
 	; Get angle from var3e
-	dec e			; $58be
-	ld a,(de)		; $58bf
-	ld hl,@dismountTileOffsets		; $58c0
-	rst_addDoubleIndex			; $58c3
+	dec e
+	ld a,(de)
+	ld hl,@dismountTileOffsets
+	rst_addDoubleIndex
 
 	; Get Y/X offset from this object in 'bc'
-	ldi a,(hl)		; $58c4
-	ld c,(hl)		; $58c5
-	ld h,d			; $58c6
-	ld l,SpecialObject.yh		; $58c7
-	add (hl)		; $58c9
-	ld b,a			; $58ca
-	ld l,SpecialObject.xh		; $58cb
-	ld a,(hl)		; $58cd
-	add c			; $58ce
-	ld c,a			; $58cf
+	ldi a,(hl)
+	ld c,(hl)
+	ld h,d
+	ld l,SpecialObject.yh
+	add (hl)
+	ld b,a
+	ld l,SpecialObject.xh
+	ld a,(hl)
+	add c
+	ld c,a
 
 	; If Link can walk on the adjacent tile, check whether to dismount
-	call getTileAtPosition		; $58d0
-	ld h,>wRoomCollisions		; $58d3
-	ld a,(hl)		; $58d5
-	or a			; $58d6
-	jr z,@checkDismount	; $58d7
-	cp SPECIALCOLLISION_STAIRS			; $58d9
-	jr nz,@notDismounting	; $58db
+	call getTileAtPosition
+	ld h,>wRoomCollisions
+	ld a,(hl)
+	or a
+	jr z,@checkDismount
+	cp SPECIALCOLLISION_STAIRS
+	jr nz,@notDismounting
 
 @checkDismount:
-	callab bank5.calculateAdjacentWallsBitset		; $58dd
-	ldh a,(<hFF8B)	; $58e5
-	or a			; $58e7
-	jr nz,@notDismounting	; $58e8
+	callab bank5.calculateAdjacentWallsBitset
+	ldh a,(<hFF8B)
+	or a
+	jr nz,@notDismounting
 
 	; Disable menu, force Link to walk for 14 frames
-	inc a			; $58ea
-	ld (wMenuDisabled),a		; $58eb
-	ld a,LINK_STATE_FORCE_MOVEMENT		; $58ee
-	ld (wLinkForceState),a		; $58f0
-	ld a,14		; $58f3
-	ld (wLinkStateParameter),a		; $58f5
+	inc a
+	ld (wMenuDisabled),a
+	ld a,LINK_STATE_FORCE_MOVEMENT
+	ld (wLinkForceState),a
+	ld a,14
+	ld (wLinkStateParameter),a
 
 	; Update angle; copy direction + angle to Link
-	call itemUpdateAngle		; $58f8
-	ld e,l			; $58fb
-	ld h,>w1Link		; $58fc
-	ld a,(de)		; $58fe
-	ldi (hl),a		; $58ff
-	inc e			; $5900
-	ld a,(de)		; $5901
-	ldi (hl),a		; $5902
+	call itemUpdateAngle
+	ld e,l
+	ld h,>w1Link
+	ld a,(de)
+	ldi (hl),a
+	inc e
+	ld a,(de)
+	ldi (hl),a
 
 	; Link is no longer riding the raft, set object index to $d0
-	ld a,h			; $5903
-	ld (wLinkObjectIndex),a		; $5904
+	ld a,h
+	ld (wLinkObjectIndex),a
 
-	call setCameraFocusedObjectToLink		; $5907
-	call itemIncState		; $590a
-	jr @saveRaftPosition		; $590d
+	call setCameraFocusedObjectToLink
+	call itemIncState
+	jr @saveRaftPosition
 
 
 ; These are offsets from the raft's position at which to check whether the tile there can
@@ -216,44 +216,44 @@ specialObjectCode_raft:
 
 ; State 2: started dismounting
 @state2:
-	ld a,$80		; $5917
-	ld (wcc92),a		; $5919
-	call itemDecCounter1		; $591c
-	ret nz			; $591f
+	ld a,$80
+	ld (wcc92),a
+	call itemDecCounter1
+	ret nz
 
-	xor a			; $5920
-	ld (wMenuDisabled),a		; $5921
-	ld e,SpecialObject.enabled		; $5924
-	inc a			; $5926
-	ld (de),a		; $5927
-	call updateLinkLocalRespawnPosition		; $5928
-	call itemIncState		; $592b
+	xor a
+	ld (wMenuDisabled),a
+	ld e,SpecialObject.enabled
+	inc a
+	ld (de),a
+	call updateLinkLocalRespawnPosition
+	call itemIncState
 
 
 ; State 3: replace self with raft interaction
 @state3:
-	ldbc INTERACID_RAFT, $02		; $592e
-	call objectCreateInteraction		; $5931
-	ret nz			; $5934
-	ld e,SpecialObject.direction		; $5935
-	ld a,(de)		; $5937
-	ld l,Interaction.direction		; $5938
-	ld (hl),a		; $593a
-	jp itemDelete		; $593b
+	ldbc INTERACID_RAFT, $02
+	call objectCreateInteraction
+	ret nz
+	ld e,SpecialObject.direction
+	ld a,(de)
+	ld l,Interaction.direction
+	ld (hl),a
+	jp itemDelete
 
 ;;
 ; @addr{593e}
 @saveRaftPosition:
-	ld bc,wLastAnimalMountPointY		; $593e
-	ld h,d			; $5941
-	ld l,SpecialObject.yh		; $5942
-	ldi a,(hl)		; $5944
-	ld (bc),a		; $5945
-	inc c			; $5946
-	inc l			; $5947
-	ld a,(hl)		; $5948
-	ld (bc),a		; $5949
-	jpab bank5.saveLinkLocalRespawnAndCompanionPosition		; $594a
+	ld bc,wLastAnimalMountPointY
+	ld h,d
+	ld l,SpecialObject.yh
+	ldi a,(hl)
+	ld (bc),a
+	inc c
+	inc l
+	ld a,(hl)
+	ld (bc),a
+	jpab bank5.saveLinkLocalRespawnAndCompanionPosition
 
 ;;
 ; Calculates the "adjacent walls bitset" for the raft specifically, treating everything as
@@ -261,32 +261,32 @@ specialObjectCode_raft:
 ;
 ; @addr{5952}
 @raftCalculateAdjacentWallsBitset:
-	ld a,$01		; $5952
-	ldh (<hFF8B),a	; $5954
-	ld hl,@@wallPositionOffsets		; $5956
+	ld a,$01
+	ldh (<hFF8B),a
+	ld hl,@@wallPositionOffsets
 --
-	ldi a,(hl)		; $5959
-	ld b,a			; $595a
-	ldi a,(hl)		; $595b
-	ld c,a			; $595c
-	push hl			; $595d
-	call objectGetRelativeTile		; $595e
-	or a			; $5961
-	jr z,+			; $5962
-	ld e,a			; $5964
-	ld hl,@@validTiles		; $5965
-	call findByteAtHl		; $5968
-	ccf			; $596b
+	ldi a,(hl)
+	ld b,a
+	ldi a,(hl)
+	ld c,a
+	push hl
+	call objectGetRelativeTile
+	or a
+	jr z,+
+	ld e,a
+	ld hl,@@validTiles
+	call findByteAtHl
+	ccf
 +
-	pop hl			; $596c
-	ldh a,(<hFF8B)	; $596d
-	rla			; $596f
-	ldh (<hFF8B),a	; $5970
-	jr nc,--		; $5972
+	pop hl
+	ldh a,(<hFF8B)
+	rla
+	ldh (<hFF8B),a
+	jr nc,--
 
-	ld e,SpecialObject.adjacentWallsBitset		; $5974
-	ld (de),a		; $5976
-	ret			; $5977
+	ld e,SpecialObject.adjacentWallsBitset
+	ld (de),a
+	ret
 
 ; Offsets at which to check for solid walls (8 positions to check)
 @@wallPositionOffsets:
@@ -316,40 +316,40 @@ specialObjectCode_raft:
 ; @addr{5990}
 @transferKnockbackToLink:
 	; Check Link's invincibilityCounter and var2a
-	ld hl,w1Link.invincibilityCounter		; $5990
-	ldd a,(hl)		; $5993
-	or (hl)			; $5994
-	jr nz,@@end		; $5995
+	ld hl,w1Link.invincibilityCounter
+	ldd a,(hl)
+	or (hl)
+	jr nz,@@end
 
 	; Ret if raft's var2a is zero
-	ld e,l			; $5997
-	ld a,(de)		; $5998
-	or a			; $5999
-	ret z			; $599a
+	ld e,l
+	ld a,(de)
+	or a
+	ret z
 
 	; Transfer raft's var2a, invincibilityCounter, knockbackCounter, knockbackAngle,
 	; and damageToApply to Link.
-	ldi (hl),a		; $599b
-	inc e			; $599c
-	ld a,(de)		; $599d
-	ldi (hl),a		; $599e
-	inc e			; $599f
-	ld a,(de)		; $59a0
-	ldi (hl),a		; $59a1
-	inc e			; $59a2
-	ld a,(de)		; $59a3
-	ldi (hl),a		; $59a4
-	ld e,SpecialObject.damageToApply		; $59a5
-	ld a,(de)		; $59a7
-	ld l,e			; $59a8
-	ld (hl),a		; $59a9
+	ldi (hl),a
+	inc e
+	ld a,(de)
+	ldi (hl),a
+	inc e
+	ld a,(de)
+	ldi (hl),a
+	inc e
+	ld a,(de)
+	ldi (hl),a
+	ld e,SpecialObject.damageToApply
+	ld a,(de)
+	ld l,e
+	ld (hl),a
 
 @@end:
 	; Clear raft's invincibilityCounter and var2a
-	ld e,SpecialObject.var2a		; $59aa
-	xor a			; $59ac
-	ld (de),a		; $59ad
-	inc e			; $59ae
-	ld (de),a		; $59af
-	ret			; $59b0
+	ld e,SpecialObject.var2a
+	xor a
+	ld (de),a
+	inc e
+	ld (de),a
+	ret
 .endif

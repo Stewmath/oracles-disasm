@@ -3,167 +3,167 @@
 ; (Called from bank5._specialObjectCode_minecart)
 ; @addr{563e}
 specialObjectCode_minecart:
-	call _minecartCreateCollisionItem		; $563e
-	ld e,SpecialObject.state		; $5641
-	ld a,(de)		; $5643
-	rst_jumpTable			; $5644
+	call _minecartCreateCollisionItem
+	ld e,SpecialObject.state
+	ld a,(de)
+	rst_jumpTable
 
 	.dw @state0
 	.dw @state1
 
 @state0:
 	; Set state to $01
-	ld a,$01		; $5649
-	ld (de),a		; $564b
+	ld a,$01
+	ld (de),a
 
 	; Setup palette, etc
-	callab bank5.specialObjectSetOamVariables		; $564c
+	callab bank5.specialObjectSetOamVariables
 
-	ld h,d			; $5654
-	ld l,SpecialObject.speed		; $5655
-	ld (hl),SPEED_100		; $5657
+	ld h,d
+	ld l,SpecialObject.speed
+	ld (hl),SPEED_100
 
-	ld l,SpecialObject.direction		; $5659
-	ld a,(hl)		; $565b
-	call specialObjectSetAnimation		; $565c
+	ld l,SpecialObject.direction
+	ld a,(hl)
+	call specialObjectSetAnimation
 
-	ld a,d			; $565f
-	ld (wLinkObjectIndex),a		; $5660
-	call setCameraFocusedObjectToLink		; $5663
+	ld a,d
+	ld (wLinkObjectIndex),a
+	call setCameraFocusedObjectToLink
 
 	; Resets link's animation if he's using an item, maybe?
-	call clearVar3fForParentItems		; $5666
+	call clearVar3fForParentItems
 
-	call clearPegasusSeedCounter		; $5669
+	call clearPegasusSeedCounter
 
-	ld hl,w1Link.z		; $566c
-	xor a			; $566f
-	ldi (hl),a		; $5670
-	ldi (hl),a		; $5671
+	ld hl,w1Link.z
+	xor a
+	ldi (hl),a
+	ldi (hl),a
 
-	jp objectSetVisiblec2		; $5672
+	jp objectSetVisiblec2
 
 @state1:
-	ld a,(wPaletteThread_mode)		; $5675
-	or a			; $5678
-	ret nz			; $5679
+	ld a,(wPaletteThread_mode)
+	or a
+	ret nz
 
-	call retIfTextIsActive		; $567a
+	call retIfTextIsActive
 
-	ld a,(wScrollMode)		; $567d
-	and $0e			; $5680
-	ret nz			; $5682
+	ld a,(wScrollMode)
+	and $0e
+	ret nz
 
-	ld a,(wDisabledObjects)		; $5683
-	and $81			; $5686
-	ret nz			; $5688
+	ld a,(wDisabledObjects)
+	and $81
+	ret nz
 
 	; Disable link's collisions?
-	ld hl,w1Link.collisionType		; $5689
-	res 7,(hl)		; $568c
+	ld hl,w1Link.collisionType
+	res 7,(hl)
 
-	xor a			; $568e
-	ld l,<w1Link.knockbackCounter		; $568f
-	ldi (hl),a		; $5691
+	xor a
+	ld l,<w1Link.knockbackCounter
+	ldi (hl),a
 
 	; Check if on the center of the tile (y)
-	ld h,d			; $5692
-	ld l,SpecialObject.yh		; $5693
-	ldi a,(hl)		; $5695
-	ld b,a			; $5696
-	and $0f			; $5697
-	cp $08			; $5699
-	jr nz,++		; $569b
+	ld h,d
+	ld l,SpecialObject.yh
+	ldi a,(hl)
+	ld b,a
+	and $0f
+	cp $08
+	jr nz,++
 
 	; Check if on the center of the tile (x)
-	inc l			; $569d
-	ldi a,(hl)		; $569e
-	ld c,a			; $569f
-	and $0f			; $56a0
-	cp $08			; $56a2
-	jr nz,++		; $56a4
+	inc l
+	ldi a,(hl)
+	ld c,a
+	and $0f
+	cp $08
+	jr nz,++
 
 	; Minecart is centered on the tile
 
-	call _minecartCheckCollisions		; $56a6
-	jr c,@minecartStopped	; $56a9
+	call _minecartCheckCollisions
+	jr c,@minecartStopped
 
 	; Compare direction to angle, ensure they're synchronized
-	ld h,d			; $56ab
-	ld l,SpecialObject.direction		; $56ac
-	ldi a,(hl)		; $56ae
-	swap a			; $56af
-	rrca			; $56b1
-	cp (hl)			; $56b2
-	jr z,++			; $56b3
+	ld h,d
+	ld l,SpecialObject.direction
+	ldi a,(hl)
+	swap a
+	rrca
+	cp (hl)
+	jr z,++
 
-	ldd (hl),a		; $56b5
-	ld a,(hl)		; $56b6
-	call specialObjectSetAnimation		; $56b7
+	ldd (hl),a
+	ld a,(hl)
+	call specialObjectSetAnimation
 
 ++
-	ld h,d			; $56ba
-	ld l,SpecialObject.var35		; $56bb
-	dec (hl)		; $56bd
-	bit 7,(hl)		; $56be
-	jr z,+			; $56c0
+	ld h,d
+	ld l,SpecialObject.var35
+	dec (hl)
+	bit 7,(hl)
+	jr z,+
 
-	ld (hl),$1a		; $56c2
-	ld a,SND_MINECART		; $56c4
-	call playSound		; $56c6
+	ld (hl),$1a
+	ld a,SND_MINECART
+	call playSound
 +
-	call objectApplySpeed		; $56c9
-	jp specialObjectAnimate		; $56cc
+	call objectApplySpeed
+	jp specialObjectAnimate
 
 @minecartStopped:
 	; Go to state $02.
 	; State $02 doesn't exist, so, good thing this is getting deleted anyway.
-	ld e,SpecialObject.state		; $56cf
-	ld a,$02		; $56d1
-	ld (de),a		; $56d3
+	ld e,SpecialObject.state
+	ld a,$02
+	ld (de),a
 
-	call clearVar3fForParentItems		; $56d4
+	call clearVar3fForParentItems
 
 	; Force link to jump, lock his direction?
-	ld a,$81		; $56d7
-	ld (wLinkInAir),a		; $56d9
+	ld a,$81
+	ld (wLinkInAir),a
 
 	; Copy / initialize various link variables
 
-	ld hl,w1Link.angle		; $56dc
-	ld e,SpecialObject.angle		; $56df
-	ld a,(de)		; $56e1
-	ld (hl),a		; $56e2
+	ld hl,w1Link.angle
+	ld e,SpecialObject.angle
+	ld a,(de)
+	ld (hl),a
 
-	ld l,<w1Link.yh		; $56e3
-	ld a,(hl)		; $56e5
-	add $06			; $56e6
-	ld (hl),a		; $56e8
+	ld l,<w1Link.yh
+	ld a,(hl)
+	add $06
+	ld (hl),a
 
-	ld l,<w1Link.zh		; $56e9
-	ld (hl),$fa		; $56eb
+	ld l,<w1Link.zh
+	ld (hl),$fa
 
-	ld l,<w1Link.speed		; $56ed
-	ld (hl),SPEED_80		; $56ef
+	ld l,<w1Link.speed
+	ld (hl),SPEED_80
 
-	ld l,<w1Link.speedZ		; $56f1
-	ld (hl),$40		; $56f3
-	inc l			; $56f5
-	ld (hl),$fe		; $56f6
+	ld l,<w1Link.speedZ
+	ld (hl),$40
+	inc l
+	ld (hl),$fe
 
 	; Re-enable terrain effects (shadow)
-	ld l,<w1Link.visible		; $56f8
-	set 6,(hl)		; $56fa
+	ld l,<w1Link.visible
+	set 6,(hl)
 
 	; Change main object back to w1Link ($d000) instead of this object ($d100)
-	ld a,>w1Link		; $56fc
-	ld (wLinkObjectIndex),a		; $56fe
-	call setCameraFocusedObjectToLink		; $5701
+	ld a,>w1Link
+	ld (wLinkObjectIndex),a
+	call setCameraFocusedObjectToLink
 
 	; Create the "interaction" minecart to replace the "special object" minecart
-	ld b,INTERACID_MINECART		; $5704
-	call objectCreateInteractionWithSubid00		; $5706
-	jp objectDelete_useActiveObjectType		; $5709
+	ld b,INTERACID_MINECART
+	call objectCreateInteractionWithSubid00
+	jp objectDelete_useActiveObjectType
 
 ;;
 ; Check for collisions, check the track for changing direction.
@@ -171,80 +171,80 @@ specialObjectCode_minecart:
 ; @addr{570c}
 _minecartCheckCollisions:
 	; Get minecart position in c, tile it's on in e
-	call getTileAtPosition		; $570c
-	ld e,a			; $570f
-	ld c,l			; $5710
+	call getTileAtPosition
+	ld e,a
+	ld c,l
 
 	; Try to find the relevant data in @trackData based on the tile the minecart is
 	; currently on.
-	ld h,d			; $5711
-	ld l,SpecialObject.direction		; $5712
-	ld a,(hl)		; $5714
-	swap a			; $5715
-	ld hl,@trackData		; $5717
-	rst_addAToHl			; $571a
+	ld h,d
+	ld l,SpecialObject.direction
+	ld a,(hl)
+	swap a
+	ld hl,@trackData
+	rst_addAToHl
 --
-	ldi a,(hl)		; $571b
-	or a			; $571c
-	jr z,@noTrackFound		; $571d
+	ldi a,(hl)
+	or a
+	jr z,@noTrackFound
 
-	cp e			; $571f
-	jr z,++			; $5720
+	cp e
+	jr z,++
 
-	ld a,$04		; $5722
-	rst_addAToHl			; $5724
-	jr --		; $5725
+	ld a,$04
+	rst_addAToHl
+	jr --
 
 	; Found a matching tile in @trackData
 ++
 	; Add value to c to get the position of the next tile the minecart will move to.
-	ldi a,(hl)		; $5727
-	add c			; $5728
-	ld c,a			; $5729
-	ldh (<hFF8B),a	; $572a
+	ldi a,(hl)
+	add c
+	ld c,a
+	ldh (<hFF8B),a
 
 	; Check for the edge of the room
-	ld b,>wRoomCollisions		; $572c
-	ld a,(bc)		; $572e
-	cp $ff			; $572f
-	ret z			; $5731
+	ld b,>wRoomCollisions
+	ld a,(bc)
+	cp $ff
+	ret z
 
 	; Check for a platform to disembark at
-	ld b,>wRoomLayout		; $5732
-	ld a,(bc)		; $5734
-	cp TILEINDEX_MINECART_PLATFORM			; $5735
-	jr z,@stopMinecart	; $5737
+	ld b,>wRoomLayout
+	ld a,(bc)
+	cp TILEINDEX_MINECART_PLATFORM
+	jr z,@stopMinecart
 
 	; c will now store the value of the next tile.
-	ld c,a			; $5739
+	ld c,a
 
 	; Check the next 3 bytes of @trackData to see if the next track tile is acceptable
-	ld b,$03		; $573a
+	ld b,$03
 --
-	ldi a,(hl)		; $573c
-	cp c			; $573d
-	jr z,@updateDirection	; $573e
-	dec b			; $5740
-	jr nz,--		; $5741
-	jr @noTrackFound		; $5743
+	ldi a,(hl)
+	cp c
+	jr z,@updateDirection
+	dec b
+	jr nz,--
+	jr @noTrackFound
 
 @stopMinecart:
 	; Set carry flag to give the signal that the ride is over.
-	scf			; $5745
-	ret			; $5746
+	scf
+	ret
 
 @updateDirection:
-	ld a,e			; $5747
-	sub TILEINDEX_TRACK_TL		; $5748
-	cp TILEINDEX_MINECART_PLATFORM - TILEINDEX_TRACK_TL	; $574a
-	jr c,++			; $574c
+	ld a,e
+	sub TILEINDEX_TRACK_TL
+	cp TILEINDEX_MINECART_PLATFORM - TILEINDEX_TRACK_TL
+	jr c,++
 
 @noTrackFound:
 	; Index $06 will jump to @notTrack.
-	ld a,$06		; $574e
+	ld a,$06
 ++
-	ld e,SpecialObject.direction		; $5750
-	rst_jumpTable			; $5752
+	ld e,SpecialObject.direction
+	rst_jumpTable
 .dw @trackTL
 .dw @trackBR
 .dw @trackBL
@@ -255,44 +255,44 @@ _minecartCheckCollisions:
 
 @trackTL:
 @trackBR:
-	ld a,(de)		; $5761
-	xor $01			; $5762
-	ld (de),a		; $5764
-	ret			; $5765
+	ld a,(de)
+	xor $01
+	ld (de),a
+	ret
 
 @trackBL:
 @trackTR:
-	ld a,(de)		; $5766
-	xor $03			; $5767
-	ld (de),a		; $5769
-	ret			; $576a
+	ld a,(de)
+	xor $03
+	ld (de),a
+	ret
 
 @trackHorizontal:
-	ld a,(de)		; $576b
-	and $02			; $576c
-	or $01			; $576e
-	ld (de),a		; $5770
-	ret			; $5771
+	ld a,(de)
+	and $02
+	or $01
+	ld (de),a
+	ret
 
 @trackVertical:
-	ld a,(de)		; $5772
-	and $02			; $5773
-	ld (de),a		; $5775
-	ret			; $5776
+	ld a,(de)
+	and $02
+	ld (de),a
+	ret
 
 @notTrack:
-	call @checkMinecartDoor		; $5777
-	jr nc,+			; $577a
+	call @checkMinecartDoor
+	jr nc,+
 
 	; Next tile is a minecart door, keep going
-	xor a			; $577c
-	ret			; $577d
+	xor a
+	ret
 +
 	; Reverse direction
-	ld a,(de)		; $577e
-	xor $02			; $577f
-	ld (de),a		; $5781
-	ret			; $5782
+	ld a,(de)
+	xor $02
+	ld (de),a
+	ret
 
 ; b0: Tile to check for ($00 to end list)
 ; b1: Value to add to position (where the next tile is)
@@ -329,53 +329,53 @@ _minecartCheckCollisions:
 ; @addr{57c3}
 @checkMinecartDoor:
 	; Check if the next tile is a minecart door
-	ld a,c			; $57c3
-	sub TILEINDEX_MINECART_DOOR_UP			; $57c4
-	cp $04			; $57c6
-	ret nc			; $57c8
+	ld a,c
+	sub TILEINDEX_MINECART_DOOR_UP
+	cp $04
+	ret nc
 
 	; Calculate the angle for the interaction to be created (?)
-	add $0c			; $57c9
-	add a			; $57cb
-	ld b,a			; $57cc
+	add $0c
+	add a
+	ld b,a
 
-	call getFreeInteractionSlot		; $57cd
-	ret nz			; $57d0
+	call getFreeInteractionSlot
+	ret nz
 
-	ld (hl),INTERACID_DOOR_CONTROLLER		; $57d1
+	ld (hl),INTERACID_DOOR_CONTROLLER
 
-	ld l,Interaction.angle		; $57d3
-	ld (hl),b		; $57d5
+	ld l,Interaction.angle
+	ld (hl),b
 
 	; Set position (this interaction stuffs both X and Y in the yh variable)
-	ld l,Interaction.yh		; $57d6
-	ldh a,(<hFF8B)	; $57d8
-	ld (hl),a		; $57da
+	ld l,Interaction.yh
+	ldh a,(<hFF8B)
+	ld (hl),a
 
-	scf			; $57db
-	ret			; $57dc
+	scf
+	ret
 
 ;;
 ; Creates an invisible item object which stays with the minecart to give it collision with enemies
 ; @addr{57dd}
 _minecartCreateCollisionItem:
 	; Check if the "item" has been created already
-	ld e,SpecialObject.var36		; $57dd
-	ld a,(de)		; $57df
-	or a			; $57e0
-	ret nz			; $57e1
+	ld e,SpecialObject.var36
+	ld a,(de)
+	or a
+	ret nz
 
-	call getFreeItemSlot		; $57e2
-	ret nz			; $57e5
+	call getFreeItemSlot
+	ret nz
 
 	; Mark it as created
-	ld e,SpecialObject.var36		; $57e6
-	ld a,$01		; $57e8
-	ld (de),a		; $57ea
+	ld e,SpecialObject.var36
+	ld a,$01
+	ld (de),a
 
 	; Set Item.enabled
-	ldi (hl),a		; $57eb
+	ldi (hl),a
 
 	; Set Item.id
-	ld (hl),ITEMID_MINECART_COLLISION		; $57ec
-	ret			; $57ee
+	ld (hl),ITEMID_MINECART_COLLISION
+	ret

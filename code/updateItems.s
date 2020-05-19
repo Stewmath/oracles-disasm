@@ -1,74 +1,74 @@
 ;;
 ; @addr{4872}
 updateItems:
-	ld b,$00		; $4872
+	ld b,$00
 
-	ld a,(wScrollMode)		; $4874
-	cp $08			; $4877
-	jr z,@dontUpdateItems	; $4879
+	ld a,(wScrollMode)
+	cp $08
+	jr z,@dontUpdateItems
 
-	ld a,(wDisabledObjects)		; $487b
-	and $90			; $487e
-	jr nz,@dontUpdateItems	; $4880
+	ld a,(wDisabledObjects)
+	and $90
+	jr nz,@dontUpdateItems
 
-	ld a,(wPaletteThread_mode)		; $4882
-	or a			; $4885
-	jr nz,@dontUpdateItems	; $4886
+	ld a,(wPaletteThread_mode)
+	or a
+	jr nz,@dontUpdateItems
 
-	ld a,(wTextIsActive)		; $4888
-	or a			; $488b
-	jr z,++			; $488c
+	ld a,(wTextIsActive)
+	or a
+	jr z,++
 
 	; Set b to $01, indicating items shouldn't be updated after initialization
 @dontUpdateItems:
-	inc b			; $488e
+	inc b
 ++
-	ld hl,wcc8b		; $488f
-	ld a,(hl)		; $4892
-	and $fe			; $4893
-	or b			; $4895
-	ld (hl),a		; $4896
+	ld hl,wcc8b
+	ld a,(hl)
+	and $fe
+	or b
+	ld (hl),a
 
-	xor a			; $4897
-	ld (wScentSeedActive),a		; $4898
+	xor a
+	ld (wScentSeedActive),a
 
-	ld a,Item.start		; $489b
-	ldh (<hActiveObjectType),a	; $489d
-	ld d,FIRST_ITEM_INDEX		; $489f
-	ld a,d			; $48a1
+	ld a,Item.start
+	ldh (<hActiveObjectType),a
+	ld d,FIRST_ITEM_INDEX
+	ld a,d
 
 @itemLoop:
-	ldh (<hActiveObject),a	; $48a2
-	ld e,Item.start		; $48a4
-	ld a,(de)		; $48a6
-	or a			; $48a7
-	jr z,@nextItem		; $48a8
+	ldh (<hActiveObject),a
+	ld e,Item.start
+	ld a,(de)
+	or a
+	jr z,@nextItem
 
 	; Always update items when uninitialized
-	ld e,Item.state		; $48aa
-	ld a,(de)		; $48ac
-	or a			; $48ad
-	jr z,+			; $48ae
+	ld e,Item.state
+	ld a,(de)
+	or a
+	jr z,+
 
 	; If already initialized, don't update items if this variable is set
-	ld a,(wcc8b)		; $48b0
-	or a			; $48b3
+	ld a,(wcc8b)
+	or a
 +
-	call z,@updateItem		; $48b4
+	call z,@updateItem
 @nextItem:
-	inc d			; $48b7
-	ld a,d			; $48b8
-	cp LAST_ITEM_INDEX+1			; $48b9
-	jr c,@itemLoop		; $48bb
-	ret			; $48bd
+	inc d
+	ld a,d
+	cp LAST_ITEM_INDEX+1
+	jr c,@itemLoop
+	ret
 
 ;;
 ; @param d Item index
 ; @addr{48be}
 @updateItem:
-	ld e,Item.id		; $48be
-	ld a,(de)		; $48c0
-	rst_jumpTable			; $48c1
+	ld e,Item.id
+	ld a,(de)
+	rst_jumpTable
 .ifdef ROM_AGES
 	.dw itemCode00 ; 0x00
 	.dw itemDelete ; 0x01
@@ -168,30 +168,30 @@ updateItems:
 ;
 ; @addr{491a}
 updateItemsPost:
-	lda Item.start			; $491a
-	ldh (<hActiveObjectType),a	; $491b
-	ld d,FIRST_ITEM_INDEX		; $491d
-	ld a,d			; $491f
+	lda Item.start
+	ldh (<hActiveObjectType),a
+	ld d,FIRST_ITEM_INDEX
+	ld a,d
 @itemLoop:
-	ldh (<hActiveObject),a	; $4920
-	ld e,Item.enabled		; $4922
-	ld a,(de)		; $4924
-	or a			; $4925
-	call nz,_updateItemPost		; $4926
-	inc d			; $4929
-	ld a,d			; $492a
-	cp $e0			; $492b
-	jr c,@itemLoop		; $492d
+	ldh (<hActiveObject),a
+	ld e,Item.enabled
+	ld a,(de)
+	or a
+	call nz,_updateItemPost
+	inc d
+	ld a,d
+	cp $e0
+	jr c,@itemLoop
 
 itemCodeNilPost:
-	ret			; $492f
+	ret
 
 ;;
 ; @addr{4930}
 _updateItemPost:
-	ld e,$01		; $4930
-	ld a,(de)		; $4932
-	rst_jumpTable			; $4933
+	ld e,$01
+	ld a,(de)
+	rst_jumpTable
 
 	.dw itemCode00Post	; 0x00
 	.dw itemCodeNilPost	; 0x01
@@ -250,62 +250,62 @@ _updateItemPost:
 ;;
 ; @addr{498c}
 _loadAttributesAndGraphicsAndIncState:
-	call itemIncState		; $498c
-	ld l,Item.enabled		; $498f
-	ld (hl),$03		; $4991
+	call itemIncState
+	ld l,Item.enabled
+	ld (hl),$03
 
 ;;
 ; Loads values for Item.collisionRadiusY/X, Item.damage, Item.health, and loads graphics.
 ; @addr{4993}
 _itemLoadAttributesAndGraphics:
-	ld e,Item.id		; $4993
-	ld a,(de)		; $4995
-	add a			; $4996
-	ld hl,itemAttributes		; $4997
-	rst_addDoubleIndex			; $499a
+	ld e,Item.id
+	ld a,(de)
+	add a
+	ld hl,itemAttributes
+	rst_addDoubleIndex
 
 	; b0: Item.collisionType
-	ld e,Item.collisionType		; $499b
-	ldi a,(hl)		; $499d
-	ld (de),a		; $499e
+	ld e,Item.collisionType
+	ldi a,(hl)
+	ld (de),a
 
 	; b1: Item.collisionRadiusY/X
-	ld e,Item.collisionRadiusY		; $499f
-	ld a,(hl)		; $49a1
-	swap a			; $49a2
-	and $0f			; $49a4
-	ld (de),a		; $49a6
-	inc e			; $49a7
-	ldi a,(hl)		; $49a8
-	and $0f			; $49a9
-	ld (de),a		; $49ab
+	ld e,Item.collisionRadiusY
+	ld a,(hl)
+	swap a
+	and $0f
+	ld (de),a
+	inc e
+	ldi a,(hl)
+	and $0f
+	ld (de),a
 
 	; b2: Item.damage
-	inc e			; $49ac
-	ldi a,(hl)		; $49ad
-	ld (de),a		; $49ae
-	ld c,a			; $49af
+	inc e
+	ldi a,(hl)
+	ld (de),a
+	ld c,a
 
 	; b3: Item.health
-	inc e			; $49b0
-	ldi a,(hl)		; $49b1
-	ld (de),a		; $49b2
+	inc e
+	ldi a,(hl)
+	ld (de),a
 
 	; Write Item.damage to Item.var3a as well?
-	ld e,Item.var3a		; $49b3
-	ld a,c			; $49b5
-	ld (de),a		; $49b6
+	ld e,Item.var3a
+	ld a,c
+	ld (de),a
 
-	call _itemSetVar3cToFF		; $49b7
-	jpab bank3f.itemLoadGraphics		; $49ba
+	call _itemSetVar3cToFF
+	jpab bank3f.itemLoadGraphics
 
 ;;
 ; @addr{49c2}
 _itemSetVar3cToFF:
-	ld e,Item.var3c		; $49c2
-	ld a,$ff		; $49c4
-	ld (de),a		; $49c6
-	ret			; $49c7
+	ld e,Item.var3c
+	ld a,$ff
+	ld (de),a
+	ret
 
 ;;
 ; Reduces the item's health according to the Item.damageToApply variable.
@@ -317,132 +317,132 @@ _itemSetVar3cToFF:
 ; @param[out]	cflag	Set if health went below 0
 ; @addr{49c8}
 _itemUpdateDamageToApply:
-	ld h,d			; $49c8
-	ld l,Item.damageToApply		; $49c9
-	ld a,(hl)		; $49cb
-	ld (hl),$00		; $49cc
+	ld h,d
+	ld l,Item.damageToApply
+	ld a,(hl)
+	ld (hl),$00
 
-	ld l,Item.health		; $49ce
-	add (hl)		; $49d0
-	ld (hl),a		; $49d1
-	rlca			; $49d2
-	ld l,Item.var2a		; $49d3
-	ld a,(hl)		; $49d5
-	dec a			; $49d6
-	inc a			; $49d7
-	ret			; $49d8
+	ld l,Item.health
+	add (hl)
+	ld (hl),a
+	rlca
+	ld l,Item.var2a
+	ld a,(hl)
+	dec a
+	inc a
+	ret
 
 ;;
 ; @addr{49d9}
 itemAnimate:
-	ld h,d			; $49d9
-	ld l,Item.animCounter		; $49da
-	dec (hl)		; $49dc
-	ret nz			; $49dd
+	ld h,d
+	ld l,Item.animCounter
+	dec (hl)
+	ret nz
 
-	ld l,Item.animPointer		; $49de
-	jr _itemNextAnimationFrame		; $49e0
+	ld l,Item.animPointer
+	jr _itemNextAnimationFrame
 
 ;;
 ; @param a Animation index
 ; @addr{49e2}
 itemSetAnimation:
-	add a			; $49e2
-	ld c,a			; $49e3
-	ld b,$00		; $49e4
-	ld e,Item.id		; $49e6
-	ld a,(de)		; $49e8
-	ld hl,itemAnimationTable		; $49e9
-	rst_addDoubleIndex			; $49ec
-	ldi a,(hl)		; $49ed
-	ld h,(hl)		; $49ee
-	ld l,a			; $49ef
-	add hl,bc		; $49f0
+	add a
+	ld c,a
+	ld b,$00
+	ld e,Item.id
+	ld a,(de)
+	ld hl,itemAnimationTable
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	add hl,bc
 
 ;;
 ; @addr{49f1}
 _itemNextAnimationFrame:
-	ldi a,(hl)		; $49f1
-	ld h,(hl)		; $49f2
-	ld l,a			; $49f3
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
 
 	; Byte 0: how many frames to hold it (or $ff to loop)
-	ldi a,(hl)		; $49f4
-	cp $ff			; $49f5
-	jr nz,++		; $49f7
+	ldi a,(hl)
+	cp $ff
+	jr nz,++
 
 	; If $ff, animation loops
-	ld b,a			; $49f9
-	ld c,(hl)		; $49fa
-	add hl,bc		; $49fb
-	ldi a,(hl)		; $49fc
+	ld b,a
+	ld c,(hl)
+	add hl,bc
+	ldi a,(hl)
 ++
-	ld e,Item.animCounter		; $49fd
-	ld (de),a		; $49ff
+	ld e,Item.animCounter
+	ld (de),a
 
 	; Byte 1: frame index (store in bc for now)
-	ldi a,(hl)		; $4a00
-	ld c,a			; $4a01
-	ld b,$00		; $4a02
+	ldi a,(hl)
+	ld c,a
+	ld b,$00
 
 	; Item.animParameter
-	inc e			; $4a04
-	ldi a,(hl)		; $4a05
-	ld (de),a		; $4a06
+	inc e
+	ldi a,(hl)
+	ld (de),a
 
 	; Item.animPointer
-	inc e			; $4a07
+	inc e
 	; Save the current position in the animation
-	ld a,l			; $4a08
-	ld (de),a		; $4a09
-	inc e			; $4a0a
-	ld a,h			; $4a0b
-	ld (de),a		; $4a0c
+	ld a,l
+	ld (de),a
+	inc e
+	ld a,h
+	ld (de),a
 
-	ld e,Item.id		; $4a0d
-	ld a,(de)		; $4a0f
-	ld hl,itemOamDataTable		; $4a10
-	rst_addDoubleIndex			; $4a13
-	ldi a,(hl)		; $4a14
-	ld h,(hl)		; $4a15
-	ld l,a			; $4a16
-	add hl,bc		; $4a17
+	ld e,Item.id
+	ld a,(de)
+	ld hl,itemOamDataTable
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	add hl,bc
 
 	; Set the address of the oam data
-	ld e,Item.oamDataAddress		; $4a18
-	ldi a,(hl)		; $4a1a
-	ld (de),a		; $4a1b
-	inc e			; $4a1c
-	ldi a,(hl)		; $4a1d
-	and $3f			; $4a1e
-	ld (de),a		; $4a20
-	ret			; $4a21
+	ld e,Item.oamDataAddress
+	ldi a,(hl)
+	ld (de),a
+	inc e
+	ldi a,(hl)
+	and $3f
+	ld (de),a
+	ret
 
 ;;
 ; Transfer an item's knockbackCounter and knockbackAngle to Link.
 ; @addr{4a22}
 _itemTransferKnockbackToLink:
-	ld h,d			; $4a22
-	ld l,Item.knockbackCounter		; $4a23
-	ld a,(hl)		; $4a25
-	or a			; $4a26
-	ret z			; $4a27
+	ld h,d
+	ld l,Item.knockbackCounter
+	ld a,(hl)
+	or a
+	ret z
 
-	ld (hl),$00		; $4a28
+	ld (hl),$00
 
 	; b = [Item.knockbackAngle]
-	dec l			; $4a2a
-	ld b,(hl)		; $4a2b
+	dec l
+	ld b,(hl)
 
-	ld hl,w1Link.knockbackCounter		; $4a2c
-	cp (hl)			; $4a2f
-	jr c,+			; $4a30
-	ld (hl),a		; $4a32
+	ld hl,w1Link.knockbackCounter
+	cp (hl)
+	jr c,+
+	ld (hl),a
 +
 	; Set Item.knockbackAngle
-	dec l			; $4a33
-	ld (hl),b		; $4a34
-	ret			; $4a35
+	dec l
+	ld (hl),b
+	ret
 
 ;;
 ; Applies speed based on Item.direction?
@@ -450,36 +450,36 @@ _itemTransferKnockbackToLink:
 ; @param	hl	Table of offsets for Y/X/Z positions based on Item.direction
 ; @addr{4a36}
 _applyOffsetTableHL:
-	ld e,Item.direction		; $4a36
-	ld a,(de)		; $4a38
+	ld e,Item.direction
+	ld a,(de)
 
 	; a *= 3
-	ld e,a			; $4a39
-	add a			; $4a3a
-	add e			; $4a3b
+	ld e,a
+	add a
+	add e
 
-	rst_addAToHl			; $4a3c
+	rst_addAToHl
 
 	; b0: Y offset
-	ld e,Item.yh		; $4a3d
-	ld a,(de)		; $4a3f
-	add (hl)		; $4a40
-	ld (de),a		; $4a41
+	ld e,Item.yh
+	ld a,(de)
+	add (hl)
+	ld (de),a
 
 	; b1: X offset
-	inc hl			; $4a42
-	ld e,Item.xh		; $4a43
-	ld a,(de)		; $4a45
-	add (hl)		; $4a46
-	ld (de),a		; $4a47
+	inc hl
+	ld e,Item.xh
+	ld a,(de)
+	add (hl)
+	ld (de),a
 
 	; b2: Z offset
-	inc hl			; $4a48
-	ld e,Item.zh		; $4a49
-	ld a,(de)		; $4a4b
-	add (hl)		; $4a4c
-	ld (de),a		; $4a4d
-	ret			; $4a4e
+	inc hl
+	ld e,Item.zh
+	ld a,(de)
+	add (hl)
+	ld (de),a
+	ret
 
 ;;
 ; In sidescrolling areas, the Z position and Y position can't both exist.
@@ -488,21 +488,21 @@ _applyOffsetTableHL:
 ; @param[out]	zflag	Set if not in a sidescrolling area
 ; @addr{4a4f}
 _itemMergeZPositionIfSidescrollingArea:
-	ld h,d			; $4a4f
-	ld a,(wTilesetFlags)		; $4a50
-	and TILESETFLAG_SIDESCROLL			; $4a53
-	ret z			; $4a55
+	ld h,d
+	ld a,(wTilesetFlags)
+	and TILESETFLAG_SIDESCROLL
+	ret z
 
-	ld e,Item.yh		; $4a56
-	ld l,Item.zh		; $4a58
-	ld a,(de)		; $4a5a
-	add (hl)		; $4a5b
-	ld (de),a		; $4a5c
-	xor a			; $4a5d
-	ldd (hl),a		; $4a5e
-	ld (hl),a		; $4a5f
-	or d			; $4a60
-	ret			; $4a61
+	ld e,Item.yh
+	ld l,Item.zh
+	ld a,(de)
+	add (hl)
+	ld (de),a
+	xor a
+	ldd (hl),a
+	ld (hl),a
+	or d
+	ret
 
 ;;
 ; Updates Z position if in midair (not if on the ground). If the item falls into a hazard
@@ -512,37 +512,37 @@ _itemMergeZPositionIfSidescrollingArea:
 ; @param	c	Gravity
 ; @addr{4a62}
 _itemUpdateSpeedZAndCheckHazards:
-	ld e,Item.zh		; $4a62
-	ld a,e			; $4a64
-	ldh (<hFF8B),a	; $4a65
-	ld a,(de)		; $4a67
-	rlca			; $4a68
-	jr nc,++		; $4a69
+	ld e,Item.zh
+	ld a,e
+	ldh (<hFF8B),a
+	ld a,(de)
+	rlca
+	jr nc,++
 
 	; If in midair, update z speed
-	rrca			; $4a6b
-	ldh (<hFF8B),a	; $4a6c
-	call objectUpdateSpeedZ_paramC		; $4a6e
-	jr nz,+++		; $4a71
+	rrca
+	ldh (<hFF8B),a
+	call objectUpdateSpeedZ_paramC
+	jr nz,+++
 
 	; Item has hit the ground
 
-	ldh (<hFF8B),a	; $4a73
+	ldh (<hFF8B),a
 ++
-	call objectReplaceWithAnimationIfOnHazard		; $4a75
-	jr nc,+++		; $4a78
+	call objectReplaceWithAnimationIfOnHazard
+	jr nc,+++
 
 	; Return from caller if this was replaced with an animation
-	pop hl			; $4a7a
-	ld a,$ff		; $4a7b
-	ret			; $4a7d
+	pop hl
+	ld a,$ff
+	ret
 
 	; Above ground?
 +++
-	ldh a,(<hFF8B)	; $4a7e
-	rlca			; $4a80
-	or a			; $4a81
-	ret			; $4a82
+	ldh a,(<hFF8B)
+	rlca
+	or a
+	ret
 
 ;;
 ; This function moves a bomb toward a point stored in the item's var31/var32 variables.
@@ -553,41 +553,41 @@ _itemUpdateSpeedZAndCheckHazards:
 ; @param[out]	cflag	Set when the bomb has reached the point (if such a point exists)
 ; @addr{4a83}
 _bombPullTowardPoint:
-	ld h,d			; $4a83
+	ld h,d
 
 	; Return if object is above ground.
-	ld l,Item.zh		; $4a84
-	and $80			; $4a86
-	jr nz,@end		; $4a88
+	ld l,Item.zh
+	and $80
+	jr nz,@end
 
 	; The following code pulls a bomb towards a specific point.
 	; The point is stored in its var31/var32 variables.
 
 	; Load bc with Item.var31/32, and zero out those values
-	ld l,Item.var31		; $4a8a
-	ld b,(hl)		; $4a8c
-	ldi (hl),a		; $4a8d
-	ld c,(hl)		; $4a8e
-	ldi (hl),a		; $4a8f
+	ld l,Item.var31
+	ld b,(hl)
+	ldi (hl),a
+	ld c,(hl)
+	ldi (hl),a
 	; Return if they were already zero
-	or b			; $4a90
-	ret z			; $4a91
+	or b
+	ret z
 
 	; Return if the object contains the point
-	push bc			; $4a92
-	call objectCheckContainsPoint		; $4a93
-	pop bc			; $4a96
-	ret c			; $4a97
+	push bc
+	call objectCheckContainsPoint
+	pop bc
+	ret c
 
 	; If it doesn't contain the point (not there yet), move toward it
-	call objectGetRelativeAngle		; $4a98
-	ld c,a			; $4a9b
-	ld b,$0a		; $4a9c
-	ld e,Item.angle		; $4a9e
-	call objectApplyGivenSpeed		; $4aa0
+	call objectGetRelativeAngle
+	ld c,a
+	ld b,$0a
+	ld e,Item.angle
+	call objectApplyGivenSpeed
 @end:
-	xor a			; $4aa3
-	ret			; $4aa4
+	xor a
+	ret
 
 ;;
 ; Deals with checking whether a thrown item has landed on a hole/water/lava, updating its
@@ -603,163 +603,163 @@ _bombPullTowardPoint:
 ; @addr{4aa5}
 _itemUpdateThrowingVertically:
 	; Jump if in a sidescrolling area
-	call _itemMergeZPositionIfSidescrollingArea		; $4aa5
-	jr nz,@sidescrolling	; $4aa8
+	call _itemMergeZPositionIfSidescrollingArea
+	jr nz,@sidescrolling
 
 	; Update vertical speed, return if the object hasn't landed yet
-	call objectUpdateSpeedZ_paramC		; $4aaa
-	jr nz,@unsetCollision			; $4aad
+	call objectUpdateSpeedZ_paramC
+	jr nz,@unsetCollision
 
 	; Object has landed / is bouncing; need to check for collision with water, holes,
 	; etc.
 
-	call @checkHoleOrWater		; $4aaf
-	bit 4,(hl)		; $4ab2
-	set 4,(hl)		; $4ab4
-	scf			; $4ab6
-	ret			; $4ab7
+	call @checkHoleOrWater
+	bit 4,(hl)
+	set 4,(hl)
+	scf
+	ret
 
 ;;
 ; @param[out]	zflag	Unset.
 ; @param[out]	cflag	Unset.
 ; @addr{4ab8}
 @unsetCollision:
-	ld l,Item.var3b		; $4ab8
-	res 4,(hl)		; $4aba
-	or d			; $4abc
-	ret			; $4abd
+	ld l,Item.var3b
+	res 4,(hl)
+	or d
+	ret
 
 ;;
 ; @param[out]	zflag	Former value of bit 4 of Item.var3b.
 ; @param[out]	cflag	Set.
 ; @addr{4abe}
 @setCollision:
-	ld h,d			; $4abe
-	ld l,Item.var3b		; $4abf
-	bit 4,(hl)		; $4ac1
-	set 4,(hl)		; $4ac3
-	scf			; $4ac5
-	ret			; $4ac6
+	ld h,d
+	ld l,Item.var3b
+	bit 4,(hl)
+	set 4,(hl)
+	scf
+	ret
 
 ;;
 ; Throwing item update code for sidescrolling areas
 ;
 ; @addr{4ac7}
 @sidescrolling:
-	push bc			; $4ac7
-	call @checkHoleOrWater		; $4ac8
+	push bc
+	call @checkHoleOrWater
 
 	; Jump if object is not moving up.
-	ld l,Item.speedZ+1		; $4acb
-	bit 7,(hl)		; $4acd
-	jr z,@notMovingUp		; $4acf
+	ld l,Item.speedZ+1
+	bit 7,(hl)
+	jr z,@notMovingUp
 
 	; Check for collision with the ceiling
-	call objectCheckTileCollision_allowHoles		; $4ad1
-	ld h,d			; $4ad4
-	pop bc			; $4ad5
-	jr nc,@noCeilingCollision	; $4ad6
+	call objectCheckTileCollision_allowHoles
+	ld h,d
+	pop bc
+	jr nc,@noCeilingCollision
 
 	; Object collided with ceiling, so Y position isn't updated (though gravity is)
-	ld b,$03		; $4ad8
-	jr @updateGravity		; $4ada
+	ld b,$03
+	jr @updateGravity
 
 @notMovingUp:
 	; Check for a collision 5 pixels below center
-	ld l,Item.yh		; $4adc
-	ldi a,(hl)		; $4ade
-	add $05			; $4adf
-	ld b,a			; $4ae1
-	inc l			; $4ae2
-	ld c,(hl)		; $4ae3
-	call checkTileCollisionAt_allowHoles		; $4ae4
-	ld h,d			; $4ae7
-	pop bc			; $4ae8
-	jr c,@setCollision		; $4ae9
+	ld l,Item.yh
+	ldi a,(hl)
+	add $05
+	ld b,a
+	inc l
+	ld c,(hl)
+	call checkTileCollisionAt_allowHoles
+	ld h,d
+	pop bc
+	jr c,@setCollision
 
 @noCeilingCollision:
 	; Set maximum gravity = $0300 normally, $0100 when in water
-	ld l,Item.var3b		; $4aeb
-	bit 0,(hl)		; $4aed
-	ld b,$03		; $4aef
-	jr z,+			; $4af1
+	ld l,Item.var3b
+	bit 0,(hl)
+	ld b,$03
+	jr z,+
 
-	ld b,$01		; $4af3
-	bit 7,(hl)		; $4af5
-	jr nz,@unsetCollision	; $4af7
+	ld b,$01
+	bit 7,(hl)
+	jr nz,@unsetCollision
 +
 	; Update Y position based on speedZ (since this is a sidescrolling area)
-	ld e,Item.speedZ		; $4af9
-	ld l,Item.y		; $4afb
-	ld a,(de)		; $4afd
-	add (hl)		; $4afe
-	ldi (hl),a		; $4aff
-	inc e			; $4b00
-	ld a,(de)		; $4b01
-	adc (hl)		; $4b02
-	ldi (hl),a		; $4b03
+	ld e,Item.speedZ
+	ld l,Item.y
+	ld a,(de)
+	add (hl)
+	ldi (hl),a
+	inc e
+	ld a,(de)
+	adc (hl)
+	ldi (hl),a
 
 @updateGravity:
 	; Update speedZ based on gravity
-	ld l,Item.speedZ		; $4b04
-	ld a,(hl)		; $4b06
-	add c			; $4b07
-	ldi (hl),a		; $4b08
-	ld a,(hl)		; $4b09
-	adc $00			; $4b0a
-	ld (hl),a		; $4b0c
+	ld l,Item.speedZ
+	ld a,(hl)
+	add c
+	ldi (hl),a
+	ld a,(hl)
+	adc $00
+	ld (hl),a
 
 	; Return if speedZ is beneath the maximum speed ('b').
-	bit 7,a			; $4b0d
-	jr nz,@unsetCollision	; $4b0f
-	cp b			; $4b11
-	jr c,@unsetCollision	; $4b12
+	bit 7,a
+	jr nz,@unsetCollision
+	cp b
+	jr c,@unsetCollision
 
 	; Set speedZ to the maximum speed 'b'.
-	ld (hl),b		; $4b14
-	dec l			; $4b15
-	ld (hl),$00		; $4b16
-	jr @unsetCollision		; $4b18
+	ld (hl),b
+	dec l
+	ld (hl),$00
+	jr @unsetCollision
 
 ;;
 ; Updates Item.var3b depending whether it's on a hole, lava, water tile.
 ; @addr{4b1a}
 @checkHoleOrWater:
-	call _itemMergeZPositionIfSidescrollingArea		; $4b1a
-	jr nz,@@sidescrolling			; $4b1d
+	call _itemMergeZPositionIfSidescrollingArea
+	jr nz,@@sidescrolling
 
 	; Note: a=0 here
 
 	; If top-down view and object is in midair, skip the "objectCheckIsOverHazard" check
-	ld l,Item.zh		; $4b1f
-	bit 7,(hl)		; $4b21
-	jr nz,++		; $4b23
+	ld l,Item.zh
+	bit 7,(hl)
+	jr nz,++
 
 @@sidescrolling:
-	call objectCheckIsOverHazard		; $4b25
-	ld h,d			; $4b28
+	call objectCheckIsOverHazard
+	ld h,d
 ++
 	; Here, 'a' holds the value for what kind of landing collision has occurred.
 
 	; Update Item.var3b: flip bit 7, clear bit 6, update bits 0-2
-	ld b,a			; $4b29
-	ld l,Item.var3b		; $4b2a
-	ld a,(hl)		; $4b2c
-	ld c,a			; $4b2d
-	and $b8			; $4b2e
-	xor $80			; $4b30
-	or b			; $4b32
-	ld (hl),a		; $4b33
+	ld b,a
+	ld l,Item.var3b
+	ld a,(hl)
+	ld c,a
+	and $b8
+	xor $80
+	or b
+	ld (hl),a
 
 	; Set bit 6 if the item's bit 0 has changed?
 	; (in other words, "landed on water" state has changed)
-	ld a,b			; $4b34
-	xor c			; $4b35
-	rrca			; $4b36
-	jr nc,+			; $4b37
-	set 6,(hl)		; $4b39
+	ld a,b
+	xor c
+	rrca
+	jr nc,+
+	set 6,(hl)
 +
-	ret			; $4b3b
+	ret
 
 ;;
 ; Calls _itemUpdateThrowingVertically and creates an appropriate animation if this item
@@ -771,79 +771,79 @@ _itemUpdateThrowingVertically:
 ; @param[out]	zflag	Set if the object is in midair.
 ; @addr{4b3c}
 _itemUpdateThrowingVerticallyAndCheckHazards:
-	call _itemUpdateThrowingVertically		; $4b3c
-	jr c,@landed			; $4b3f
+	call _itemUpdateThrowingVertically
+	jr c,@landed
 
 	; Object isn't on the ground, so only check for collisions in sidescrolling areas.
 
-	ld a,(wTilesetFlags)		; $4b41
-	and TILESETFLAG_SIDESCROLL			; $4b44
-	jr z,+			; $4b46
+	ld a,(wTilesetFlags)
+	and TILESETFLAG_SIDESCROLL
+	jr z,+
 
-	ld b,INTERACID_LAVASPLASH		; $4b48
-	bit 2,(hl)		; $4b4a
-	jr nz,@createSplash		; $4b4c
+	ld b,INTERACID_LAVASPLASH
+	bit 2,(hl)
+	jr nz,@createSplash
 
-	ld b,INTERACID_SPLASH		; $4b4e
-	bit 6,(hl)		; $4b50
-	call nz,@createSplash		; $4b52
+	ld b,INTERACID_SPLASH
+	bit 6,(hl)
+	call nz,@createSplash
 +
-	xor a			; $4b55
-	ret			; $4b56
+	xor a
+	ret
 
 @landed:
 	; If the item has landed in a sidescrolling area, there's no need to check what it
 	; landed on (since if it had touched water, it would have still been considered
 	; to be in midair).
-	ld a,(wTilesetFlags)		; $4b57
-	and TILESETFLAG_SIDESCROLL			; $4b5a
-	jr nz,@noCollisions		; $4b5c
+	ld a,(wTilesetFlags)
+	and TILESETFLAG_SIDESCROLL
+	jr nz,@noCollisions
 
-	ld h,d			; $4b5e
-	ld l,Item.var3b		; $4b5f
-	ld b,INTERACID_SPLASH		; $4b61
-	bit 0,(hl)		; $4b63
-	jr nz,@createSplash		; $4b65
+	ld h,d
+	ld l,Item.var3b
+	ld b,INTERACID_SPLASH
+	bit 0,(hl)
+	jr nz,@createSplash
 
-	ld b,$0f		; $4b67
-	bit 1,(hl)		; $4b69
-	jr nz,@createHoleAnim	; $4b6b
+	ld b,$0f
+	bit 1,(hl)
+	jr nz,@createHoleAnim
 
-	ld b,INTERACID_LAVASPLASH		; $4b6d
-	bit 2,(hl)		; $4b6f
-	jr nz,@createSplash		; $4b71
+	ld b,INTERACID_LAVASPLASH
+	bit 2,(hl)
+	jr nz,@createSplash
 
 @noCollisions:
-	xor a			; $4b73
-	bit 4,(hl)		; $4b74
-	ret			; $4b76
+	xor a
+	bit 4,(hl)
+	ret
 
 @createSplash:
-	call objectCreateInteractionWithSubid00		; $4b77
-	scf			; $4b7a
-	ret			; $4b7b
+	call objectCreateInteractionWithSubid00
+	scf
+	ret
 
 @createHoleAnim:
-	call objectCreateFallingDownHoleInteraction		; $4b7c
-	scf			; $4b7f
-	ret			; $4b80
+	call objectCreateFallingDownHoleInteraction
+	scf
+	ret
 
 ;;
 ; Creates an interaction to do the clinking animation.
 ; @addr{4b81}
 _objectCreateClinkInteraction:
-	ld b,INTERACID_CLINK		; $4b81
-	jp objectCreateInteractionWithSubid00		; $4b83
+	ld b,INTERACID_CLINK
+	jp objectCreateInteractionWithSubid00
 
 ;;
 ; @addr{4b86}
 _cpRelatedObject1ID:
-	ld a,Object.id		; $4b86
-	call objectGetRelatedObject1Var		; $4b88
-	ld e,Item.id		; $4b8b
-	ld a,(de)		; $4b8d
-	cp (hl)			; $4b8e
-	ret			; $4b8f
+	ld a,Object.id
+	call objectGetRelatedObject1Var
+	ld e,Item.id
+	ld a,(de)
+	cp (hl)
+	ret
 
 ;;
 ; Same as below, but checks the tile at position bc instead of the tile at the object's
@@ -852,8 +852,8 @@ _cpRelatedObject1ID:
 ; @param	bc	Position of tile to check
 ; @addr{4b90}
 _itemCheckCanPassSolidTileAt:
-	call getTileAtPosition		; $4b90
-	jr ++			; $4b93
+	call getTileAtPosition
+	jr ++
 
 ;;
 ; This function checks for exceptions to solid tiles which items (switch hook, seeds) can
@@ -865,50 +865,50 @@ _itemCheckCanPassSolidTileAt:
 ; @param[out]	zflag	Set if there is no collision.
 ; @addr{4b95}
 _itemCheckCanPassSolidTile:
-	call objectGetTileAtPosition		; $4b95
+	call objectGetTileAtPosition
 ++
 	; Check if position / tile has changed? (var3c = position, var3d = tile index)
-	ld e,a			; $4b98
-	ld a,l			; $4b99
-	ld h,d			; $4b9a
-	ld l,Item.var3c		; $4b9b
-	cp (hl)			; $4b9d
-	ldi (hl),a		; $4b9e
-	jr nz,@tileChanged		; $4b9f
+	ld e,a
+	ld a,l
+	ld h,d
+	ld l,Item.var3c
+	cp (hl)
+	ldi (hl),a
+	jr nz,@tileChanged
 
 	; Return if the tile index has not changed
-	ld a,e			; $4ba1
-	cp (hl)			; $4ba2
-	ret z			; $4ba3
+	ld a,e
+	cp (hl)
+	ret z
 
 @tileChanged:
-	ld (hl),e		; $4ba4
-	ld l,Item.angle		; $4ba5
-	ld b,(hl)		; $4ba7
-	call _checkTileIsPassableFromDirection		; $4ba8
-	jr nc,@collision		; $4bab
-	ret z			; $4bad
+	ld (hl),e
+	ld l,Item.angle
+	ld b,(hl)
+	call _checkTileIsPassableFromDirection
+	jr nc,@collision
+	ret z
 
 	; If there was no collision, but the zero flag was not set, the item must move up
 	; or down an elevation level (depending on the value of a from the function call).
-	ld h,d			; $4bae
-	ld l,Item.var3e		; $4baf
-	add (hl)		; $4bb1
-	ld (hl),a		; $4bb2
+	ld h,d
+	ld l,Item.var3e
+	add (hl)
+	ld (hl),a
 
 	; Check if the item has passed to a "negative" elevation, if so, trigger
 	; a collision
-	and $80			; $4bb3
-	ret z			; $4bb5
+	and $80
+	ret z
 
 @collision:
-	ld h,d			; $4bb6
-	ld l,Item.var3c		; $4bb7
-	ld a,$ff		; $4bb9
-	ldi (hl),a		; $4bbb
-	ld (hl),a		; $4bbc
-	or d			; $4bbd
-	ret			; $4bbe
+	ld h,d
+	ld l,Item.var3c
+	ld a,$ff
+	ldi (hl),a
+	ld (hl),a
+	or d
+	ret
 
 ;;
 ; Checks if an item can pass through the given tile with a given angle.
@@ -922,59 +922,59 @@ _itemCheckCanPassSolidTile:
 ; @addr{4bbf}
 _checkTileIsPassableFromDirection:
 	; Check if the tile can be passed by items
-	ld hl,_itemPassableTilesTable		; $4bbf
-	call findByteInCollisionTable_paramE		; $4bc2
-	jr c,@canPassWithoutElevationChange		; $4bc5
+	ld hl,_itemPassableTilesTable
+	call findByteInCollisionTable_paramE
+	jr c,@canPassWithoutElevationChange
 
 	; Retrieve a value based on the given angle to see which directions
 	; should be checked for passability
-	ld a,b			; $4bc7
-	ld hl,angleTable		; $4bc8
-	rst_addAToHl			; $4bcb
-	ld a,(hl)		; $4bcc
-	push af			; $4bcd
+	ld a,b
+	ld hl,angleTable
+	rst_addAToHl
+	ld a,(hl)
+	push af
 
-	ld a,(wActiveCollisions)		; $4bce
-	ld hl,_itemPassableCliffTilesTable		; $4bd1
-	rst_addDoubleIndex			; $4bd4
-	ldi a,(hl)		; $4bd5
-	ld h,(hl)		; $4bd6
-	ld l,a			; $4bd7
+	ld a,(wActiveCollisions)
+	ld hl,_itemPassableCliffTilesTable
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
 
 	; If the value retrieved from angleTable was odd, allow the item to pass
 	; through 2 directions
-	pop af			; $4bd8
-	srl a			; $4bd9
-	jr nc,@checkOneDirectionOnly	; $4bdb
+	pop af
+	srl a
+	jr nc,@checkOneDirectionOnly
 
-	rst_addAToHl			; $4bdd
-	ld a,(hl)		; $4bde
-	push hl			; $4bdf
-	rst_addAToHl			; $4be0
-	call lookupKey		; $4be1
-	pop hl			; $4be4
-	jr c,@canPassWithElevationChange		; $4be5
+	rst_addAToHl
+	ld a,(hl)
+	push hl
+	rst_addAToHl
+	call lookupKey
+	pop hl
+	jr c,@canPassWithElevationChange
 
-	inc hl			; $4be7
-	jr ++			; $4be8
+	inc hl
+	jr ++
 
 @checkOneDirectionOnly:
-	rst_addAToHl			; $4bea
+	rst_addAToHl
 ++
-	ld a,(hl)		; $4beb
-	rst_addAToHl			; $4bec
-	call lookupKey		; $4bed
-	ret nc			; $4bf0
+	ld a,(hl)
+	rst_addAToHl
+	call lookupKey
+	ret nc
 
 @canPassWithElevationChange:
-	or a			; $4bf1
-	scf			; $4bf2
-	ret			; $4bf3
+	or a
+	scf
+	ret
 
 @canPassWithoutElevationChange:
-	xor a			; $4bf4
-	scf			; $4bf5
-	ret			; $4bf6
+	xor a
+	scf
+	ret
 
 ;;
 ; Checks if the item is on a conveyor belt, updates its position if so.
@@ -985,52 +985,52 @@ _checkTileIsPassableFromDirection:
 ; @addr{4bf7}
 _itemUpdateConveyorBelt:
 	; Return if in midair
-	ld e,Item.zh		; $4bf7
-	ld a,(de)		; $4bf9
-	rlca			; $4bfa
-	ret c			; $4bfb
+	ld e,Item.zh
+	ld a,(de)
+	rlca
+	ret c
 
 	; Check if on a conveyor belt; get in 'a' the angle to move in if so
-	ld bc,$0500		; $4bfc
-	call objectGetRelativeTile		; $4bff
-	ld hl,_itemConveyorTilesTable		; $4c02
-	call lookupCollisionTable		; $4c05
-	ret nc			; $4c08
+	ld bc,$0500
+	call objectGetRelativeTile
+	ld hl,_itemConveyorTilesTable
+	call lookupCollisionTable
+	ret nc
 
-	push af			; $4c09
-	rrca			; $4c0a
-	rrca			; $4c0b
-	ld hl,_bombEdgeOffsets		; $4c0c
-	rst_addAToHl			; $4c0f
+	push af
+	rrca
+	rrca
+	ld hl,_bombEdgeOffsets
+	rst_addAToHl
 
 	; Set 'bc' to the item's position + offset (where to check for a wall)
-	ldi a,(hl)		; $4c10
-	ld c,(hl)		; $4c11
-	ld h,d			; $4c12
-	ld l,Item.yh		; $4c13
-	add (hl)		; $4c15
-	ld b,a			; $4c16
-	ld l,Item.xh		; $4c17
-	ld a,(hl)		; $4c19
-	add c			; $4c1a
-	ld c,a			; $4c1b
+	ldi a,(hl)
+	ld c,(hl)
+	ld h,d
+	ld l,Item.yh
+	add (hl)
+	ld b,a
+	ld l,Item.xh
+	ld a,(hl)
+	add c
+	ld c,a
 
-	call getTileCollisionsAtPosition		; $4c1c
-	cp SPECIALCOLLISION_SCREEN_BOUNDARY			; $4c1f
-	jr z,@ret		; $4c21
+	call getTileCollisionsAtPosition
+	cp SPECIALCOLLISION_SCREEN_BOUNDARY
+	jr z,@ret
 
-	call checkGivenCollision_allowHoles		; $4c23
-	jr c,@ret		; $4c26
+	call checkGivenCollision_allowHoles
+	jr c,@ret
 
-	pop af			; $4c28
-	ld c,a			; $4c29
-	ld b,SPEED_80		; $4c2a
-	ld e,Item.angle		; $4c2c
-	jp objectApplyGivenSpeed		; $4c2e
+	pop af
+	ld c,a
+	ld b,SPEED_80
+	ld e,Item.angle
+	jp objectApplyGivenSpeed
 
 @ret:
-	pop af			; $4c31
-	ret			; $4c32
+	pop af
+	ret
 
 
 ; These are offsets from a bomb or bombchu's center to check for wall collisions at.

@@ -73,18 +73,18 @@
 ; for other tiles, not just lava
 ; @addr{6ba8}
 func_04_6ba8:
-	ld d,>wRoomLayout		; $6ba8
-	ldi a,(hl)		; $6baa
-	ld c,a			; $6bab
+	ld d,>wRoomLayout
+	ldi a,(hl)
+	ld c,a
 --
-	ldi a,(hl)		; $6bac
-	cp $ff			; $6bad
-	ret z			; $6baf
+	ldi a,(hl)
+	cp $ff
+	ret z
 
-	ld e,a			; $6bb0
-	ld a,c			; $6bb1
-	ld (de),a		; $6bb2
-	jr --			; $6bb3
+	ld e,a
+	ld a,c
+	ld (de),a
+	jr --
 
 ;;
 ; Fills a square in wRoomLayout using the data at hl.
@@ -95,65 +95,65 @@ func_04_6ba8:
 ; - Tile value
 ; @addr{6bb5}
 fillRectInRoomLayout:
-	ldi a,(hl)		; $6bb5
-	ld e,a			; $6bb6
-	ldi a,(hl)		; $6bb7
-	ld b,a			; $6bb8
-	ldi a,(hl)		; $6bb9
-	ld c,a			; $6bba
-	ldi a,(hl)		; $6bbb
-	ld d,a			; $6bbc
-	ld h,>wRoomLayout		; $6bbd
+	ldi a,(hl)
+	ld e,a
+	ldi a,(hl)
+	ld b,a
+	ldi a,(hl)
+	ld c,a
+	ldi a,(hl)
+	ld d,a
+	ld h,>wRoomLayout
 --
-	ld a,d			; $6bbf
-	ld l,e			; $6bc0
-	push bc			; $6bc1
+	ld a,d
+	ld l,e
+	push bc
 -
-	ldi (hl),a		; $6bc2
-	dec c			; $6bc3
-	jr nz,-			; $6bc4
+	ldi (hl),a
+	dec c
+	jr nz,-
 
-	ld a,e			; $6bc6
-	add $10			; $6bc7
-	ld e,a			; $6bc9
-	pop bc			; $6bca
-	dec b			; $6bcb
-	jr nz,--		; $6bcc
-	ret			; $6bce
+	ld a,e
+	add $10
+	ld e,a
+	pop bc
+	dec b
+	jr nz,--
+	ret
 
 ;;
 ; Like fillRect, but reads a series of bytes for the tile values instead of
 ; just one.
 ; @addr{6bcf}
 drawRectInRoomLayout:
-	ld a,(de)		; $6bcf
-	inc de			; $6bd0
-	ld h,>wRoomLayout		; $6bd1
-	ld l,a			; $6bd3
-	ldh (<hFF8B),a	; $6bd4
-	ld a,(de)		; $6bd6
-	inc de			; $6bd7
-	ld c,a			; $6bd8
-	ld a,(de)		; $6bd9
-	inc de			; $6bda
-	ldh (<hFF8D),a	; $6bdb
+	ld a,(de)
+	inc de
+	ld h,>wRoomLayout
+	ld l,a
+	ldh (<hFF8B),a
+	ld a,(de)
+	inc de
+	ld c,a
+	ld a,(de)
+	inc de
+	ldh (<hFF8D),a
 ---
-	ldh a,(<hFF8D)	; $6bdd
-	ld b,a			; $6bdf
+	ldh a,(<hFF8D)
+	ld b,a
 --
-	ld a,(de)		; $6be0
-	inc de			; $6be1
-	ldi (hl),a		; $6be2
-	dec b			; $6be3
-	jr nz,--		; $6be4
+	ld a,(de)
+	inc de
+	ldi (hl),a
+	dec b
+	jr nz,--
 
-	ldh a,(<hFF8B)	; $6be6
-	add $10			; $6be8
-	ldh (<hFF8B),a	; $6bea
-	ld l,a			; $6bec
-	dec c			; $6bed
-	jr nz,---		; $6bee
-	ret			; $6bf0
+	ldh a,(<hFF8B)
+	add $10
+	ldh (<hFF8B),a
+	ld l,a
+	dec c
+	jr nz,---
+	ret
 
 .include "code/loadTilesToRam.s"
 
@@ -162,67 +162,67 @@ drawRectInRoomLayout:
 ;
 ; @addr{6d7a}
 loadTilesetData_body:
-	call getAdjustedRoomGroup		; $6d7a
+	call getAdjustedRoomGroup
 
 	ld hl,roomTilesetsGroupTable
-	rst_addDoubleIndex			; $6d80
-	ldi a,(hl)		; $6d81
-	ld h,(hl)		; $6d82
-	ld l,a			; $6d83
-	ld a,(wActiveRoom)		; $6d84
-	rst_addAToHl			; $6d87
-	ld a,(hl)		; $6d88
-	ldh (<hFF8D),a	; $6d89
-	call @func_6d94		; $6d8b
-	call func_6de7		; $6d8e
-	ret nc			; $6d91
-	ldh a,(<hFF8D)	; $6d92
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	ld a,(wActiveRoom)
+	rst_addAToHl
+	ld a,(hl)
+	ldh (<hFF8D),a
+	call @func_6d94
+	call func_6de7
+	ret nc
+	ldh a,(<hFF8D)
 @func_6d94:
-	and $80			; $6d94
-	ldh (<hFF8B),a	; $6d96
-	ldh a,(<hFF8D)	; $6d98
+	and $80
+	ldh (<hFF8B),a
+	ldh a,(<hFF8D)
 
-	and $7f			; $6d9a
-	call multiplyABy8		; $6d9c
+	and $7f
+	call multiplyABy8
 	ld hl,tilesetData
-	add hl,bc		; $6da2
+	add hl,bc
 
-	ldi a,(hl)		; $6da3
-	ld e,a			; $6da4
-	ldi a,(hl)		; $6da5
-	ld (wTilesetFlags),a		; $6da6
-	bit TILESETFLAG_BIT_DUNGEON,a			; $6da9
+	ldi a,(hl)
+	ld e,a
+	ldi a,(hl)
+	ld (wTilesetFlags),a
+	bit TILESETFLAG_BIT_DUNGEON,a
 	jr z,+
 
-	ld a,e			; $6dad
-	and $0f			; $6dae
-	ld (wDungeonIndex),a		; $6db0
+	ld a,e
+	and $0f
+	ld (wDungeonIndex),a
 	jr ++
 +
-	ld a,$ff		; $6db5
-	ld (wDungeonIndex),a		; $6db7
+	ld a,$ff
+	ld (wDungeonIndex),a
 ++
-	ld a,e			; $6dba
-	swap a			; $6dbb
-	and $07			; $6dbd
-	ld (wActiveCollisions),a		; $6dbf
+	ld a,e
+	swap a
+	and $07
+	ld (wActiveCollisions),a
 
-	ld b,$06		; $6dc2
-	ld de,wTilesetUniqueGfx		; $6dc4
+	ld b,$06
+	ld de,wTilesetUniqueGfx
 @copyloop:
-	ldi a,(hl)		; $6dc7
-	ld (de),a		; $6dc8
-	inc e			; $6dc9
-	dec b			; $6dca
+	ldi a,(hl)
+	ld (de),a
+	inc e
+	dec b
 	jr nz,@copyloop
 
 	ld e,wTilesetUniqueGfx&$ff
-	ld a,(de)		; $6dcf
-	ld b,a			; $6dd0
-	ldh a,(<hFF8B)	; $6dd1
-	or b			; $6dd3
-	ld (de),a		; $6dd4
-	ret			; $6dd5
+	ld a,(de)
+	ld b,a
+	ldh a,(<hFF8B)
+	or b
+	ld (de),a
+	ret
 
 ;;
 ; Returns the group to load the room layout from, accounting for bit 0 of the room flag
@@ -231,109 +231,109 @@ loadTilesetData_body:
 ; @param[out]	a,b	The corrected group number
 ; @addr{6dd6}
 getAdjustedRoomGroup:
-	ld a,(wActiveGroup)		; $6dd6
-	ld b,a			; $6dd9
-	cp $02			; $6dda
-	ret nc			; $6ddc
-	call getThisRoomFlags		; $6ddd
-	rrca			; $6de0
+	ld a,(wActiveGroup)
+	ld b,a
+	cp $02
+	ret nc
+	call getThisRoomFlags
+	rrca
 	jr nc,+
-	set 1,b			; $6de3
+	set 1,b
 +
-	ld a,b			; $6de5
-	ret			; $6de6
+	ld a,b
+	ret
 
 ;;
 ; Modifies hFF8D to indicate changes to a room (ie. jabu flooding)?
 ; @addr{6de7}
 func_6de7:
-	call @func_04_6e0d		; $6de7
-	ret c			; $6dea
+	call @func_04_6e0d
+	ret c
 
-	call @checkJabuFlooded		; $6deb
-	ret c			; $6dee
+	call @checkJabuFlooded
+	ret c
 
-	ld a,(wActiveGroup)		; $6def
-	or a			; $6df2
-	jr nz,@xor		; $6df3
+	ld a,(wActiveGroup)
+	or a
+	jr nz,@xor
 
-	ld a,(wLoadingRoomPack)		; $6df5
-	cp $7f			; $6df8
-	jr nz,@xor		; $6dfa
+	ld a,(wLoadingRoomPack)
+	cp $7f
+	jr nz,@xor
 
-	ld a,(wAnimalCompanion)		; $6dfc
-	sub SPECIALOBJECTID_RICKY			; $6dff
-	jr z,@xor		; $6e01
+	ld a,(wAnimalCompanion)
+	sub SPECIALOBJECTID_RICKY
+	jr z,@xor
 
-	ld b,a			; $6e03
-	ldh a,(<hFF8D)	; $6e04
-	add b			; $6e06
-	ldh (<hFF8D),a	; $6e07
-	scf			; $6e09
-	ret			; $6e0a
+	ld b,a
+	ldh a,(<hFF8D)
+	add b
+	ldh (<hFF8D),a
+	scf
+	ret
 @xor:
-	xor a			; $6e0b
-	ret			; $6e0c
+	xor a
+	ret
 
 ;;
 ; @addr{6e0d}
 @func_04_6e0d:
-	ld a,(wActiveGroup)		; $6e0d
-	or a			; $6e10
-	ret nz			; $6e11
+	ld a,(wActiveGroup)
+	or a
+	ret nz
 
-	ld a,(wActiveRoom)		; $6e12
-	cp $38			; $6e15
-	jr nz,+			; $6e17
+	ld a,(wActiveRoom)
+	cp $38
+	jr nz,+
 
-	ld a,($c848)		; $6e19
-	and $01			; $6e1c
-	ret z			; $6e1e
+	ld a,($c848)
+	and $01
+	ret z
 
-	ld hl,hFF8D		; $6e1f
-	inc (hl)		; $6e22
-	inc (hl)		; $6e23
-	scf			; $6e24
-	ret			; $6e25
+	ld hl,hFF8D
+	inc (hl)
+	inc (hl)
+	scf
+	ret
 +
-	xor a			; $6e26
-	ret			; $6e27
+	xor a
+	ret
 
 ;;
 ; @param[out]	cflag	Set if the current room is flooded in jabu-jabu?
 ; @addr{6e28}
 @checkJabuFlooded:
-	ld a,(wDungeonIndex)		; $6e28
-	cp $07			; $6e2b
-	jr nz,++		; $6e2d
+	ld a,(wDungeonIndex)
+	cp $07
+	jr nz,++
 
-	ld a,(wTilesetFlags)		; $6e2f
-	and TILESETFLAG_SIDESCROLL			; $6e32
-	jr nz,++		; $6e34
+	ld a,(wTilesetFlags)
+	and TILESETFLAG_SIDESCROLL
+	jr nz,++
 
-	ld a,$11		; $6e36
-	ld (wDungeonFirstLayout),a		; $6e38
-	callab bank1.findActiveRoomInDungeonLayoutWithPointlessBankSwitch		; $6e3b
-	ld a,(wJabuWaterLevel)		; $6e43
-	and $07			; $6e46
-	ld hl,@data		; $6e48
-	rst_addAToHl			; $6e4b
-	ld a,(wDungeonFloor)		; $6e4c
-	ld bc,bitTable		; $6e4f
-	add c			; $6e52
-	ld c,a			; $6e53
-	ld a,(bc)		; $6e54
-	and (hl)		; $6e55
-	ret z			; $6e56
+	ld a,$11
+	ld (wDungeonFirstLayout),a
+	callab bank1.findActiveRoomInDungeonLayoutWithPointlessBankSwitch
+	ld a,(wJabuWaterLevel)
+	and $07
+	ld hl,@data
+	rst_addAToHl
+	ld a,(wDungeonFloor)
+	ld bc,bitTable
+	add c
+	ld c,a
+	ld a,(bc)
+	and (hl)
+	ret z
 
-	ldh a,(<hFF8D)	; $6e57
-	inc a			; $6e59
-	ldh (<hFF8D),a	; $6e5a
-	scf			; $6e5c
-	ret			; $6e5d
+	ldh a,(<hFF8D)
+	inc a
+	ldh (<hFF8D),a
+	scf
+	ret
 ++
-	xor a			; $6e5e
-	ret			; $6e5f
+	xor a
+	ret
 
 ; @addr{6e60}
 @data:
@@ -348,166 +348,166 @@ func_6de7:
 ;
 ; @addr{6e63}
 setPastCliffPalettesToRed:
-	ld a,(wActiveCollisions)		; $6e63
-	or a			; $6e66
-	jr nz,@done		; $6e68
+	ld a,(wActiveCollisions)
+	or a
+	jr nz,@done
 
-	ld a,(wTilesetFlags)		; $6e6a
-	and TILESETFLAG_PAST			; $6e6d
-	jr z,@done		; $6e6e
+	ld a,(wTilesetFlags)
+	and TILESETFLAG_PAST
+	jr z,@done
 
-	ld a,(wActiveRoom)		; $6e70
-	cp <ROOM_AGES_138			; $6e73
-	ret z			; $6e75
+	ld a,(wActiveRoom)
+	cp <ROOM_AGES_138
+	ret z
 
 	; Replace all attributes that have palette "6" with palette "0"
-	ld a,:w3TileMappingData		; $6e76
-	ld ($ff00+R_SVBK),a	; $6e78
-	ld hl,w3TileMappingData + $204		; $6e7a
-	ld d,$06		; $6e7d
+	ld a,:w3TileMappingData
+	ld ($ff00+R_SVBK),a
+	ld hl,w3TileMappingData + $204
+	ld d,$06
 ---
-	ld b,$04		; $6e7f
+	ld b,$04
 --
-	ld a,(hl)		; $6e81
-	and $07			; $6e82
-	cp d			; $6e84
-	jr nz,+			; $6e85
+	ld a,(hl)
+	and $07
+	cp d
+	jr nz,+
 
-	ld a,(hl)		; $6e87
-	and $f8			; $6e88
-	ld (hl),a		; $6e8a
+	ld a,(hl)
+	and $f8
+	ld (hl),a
 +
-	inc hl			; $6e8b
-	dec b			; $6e8c
-	jr nz,--		; $6e8d
+	inc hl
+	dec b
+	jr nz,--
 
-	ld a,$04		; $6e8f
-	rst_addAToHl			; $6e91
-	ld a,h			; $6e92
-	cp $d4			; $6e93
-	jr c,---		; $6e95
+	ld a,$04
+	rst_addAToHl
+	ld a,h
+	cp $d4
+	jr c,---
 @done:
-	xor a			; $6e97
-	ld ($ff00+R_SVBK),a	; $6e98
-	ret			; $6e9a
+	xor a
+	ld ($ff00+R_SVBK),a
+	ret
 
 ;;
 ; @addr{6e9b}
 func_04_6e9b:
-	ld a,$02		; $6e9b
-	ld ($ff00+R_SVBK),a	; $6e9d
-	ld hl,wRoomLayout		; $6e9f
-	ld de,$d000		; $6ea2
-	ld b,$c0		; $6ea5
-	call copyMemory		; $6ea7
-	ld hl,wRoomCollisions		; $6eaa
-	ld de,$d100		; $6ead
-	ld b,$c0		; $6eb0
-	call copyMemory		; $6eb2
-	ld hl,$df00		; $6eb5
-	ld de,$d200		; $6eb8
-	ld b,$c0		; $6ebb
+	ld a,$02
+	ld ($ff00+R_SVBK),a
+	ld hl,wRoomLayout
+	ld de,$d000
+	ld b,$c0
+	call copyMemory
+	ld hl,wRoomCollisions
+	ld de,$d100
+	ld b,$c0
+	call copyMemory
+	ld hl,$df00
+	ld de,$d200
+	ld b,$c0
 --
-	ld a,$03		; $6ebd
-	ld ($ff00+R_SVBK),a	; $6ebf
-	ldi a,(hl)		; $6ec1
-	ld c,a			; $6ec2
-	ld a,$02		; $6ec3
-	ld ($ff00+R_SVBK),a	; $6ec5
-	ld a,c			; $6ec7
-	ld (de),a		; $6ec8
-	inc de			; $6ec9
-	dec b			; $6eca
-	jr nz,--		; $6ecb
+	ld a,$03
+	ld ($ff00+R_SVBK),a
+	ldi a,(hl)
+	ld c,a
+	ld a,$02
+	ld ($ff00+R_SVBK),a
+	ld a,c
+	ld (de),a
+	inc de
+	dec b
+	jr nz,--
 
-	xor a			; $6ecd
-	ld ($ff00+R_SVBK),a	; $6ece
-	ret			; $6ed0
+	xor a
+	ld ($ff00+R_SVBK),a
+	ret
 
 ;;
 ; @addr{6ed1}
 func_04_6ed1:
-	ld a,$02		; $6ed1
-	ld ($ff00+R_SVBK),a	; $6ed3
-	ld hl,wRoomLayout		; $6ed5
-	ld de,$d000		; $6ed8
-	ld b,$c0		; $6edb
-	call copyMemoryReverse		; $6edd
-	ld hl,wRoomCollisions		; $6ee0
-	ld de,$d100		; $6ee3
-	ld b,$c0		; $6ee6
-	call copyMemoryReverse		; $6ee8
-	ld hl,$df00		; $6eeb
-	ld de,$d200		; $6eee
-	ld b,$c0		; $6ef1
+	ld a,$02
+	ld ($ff00+R_SVBK),a
+	ld hl,wRoomLayout
+	ld de,$d000
+	ld b,$c0
+	call copyMemoryReverse
+	ld hl,wRoomCollisions
+	ld de,$d100
+	ld b,$c0
+	call copyMemoryReverse
+	ld hl,$df00
+	ld de,$d200
+	ld b,$c0
 --
-	ld a,$02		; $6ef3
-	ld ($ff00+R_SVBK),a	; $6ef5
-	ld a,(de)		; $6ef7
-	inc de			; $6ef8
-	ld c,a			; $6ef9
-	ld a,$03		; $6efa
-	ld ($ff00+R_SVBK),a	; $6efc
-	ld a,c			; $6efe
-	ldi (hl),a		; $6eff
-	dec b			; $6f00
-	jr nz,--		; $6f01
+	ld a,$02
+	ld ($ff00+R_SVBK),a
+	ld a,(de)
+	inc de
+	ld c,a
+	ld a,$03
+	ld ($ff00+R_SVBK),a
+	ld a,c
+	ldi (hl),a
+	dec b
+	jr nz,--
 
-	xor a			; $6f03
-	ld ($ff00+R_SVBK),a	; $6f04
-	ret			; $6f06
+	xor a
+	ld ($ff00+R_SVBK),a
+	ret
 
 ;;
 ; @addr{6f07}
 func_04_6f07:
-	ld hl,$d800		; $6f07
-	ld de,$dc00		; $6f0a
-	ld bc,$0200		; $6f0d
-	call @locFunc		; $6f10
-	ld hl,$dc00		; $6f13
-	ld de,$de00		; $6f16
-	ld bc,$0200		; $6f19
+	ld hl,$d800
+	ld de,$dc00
+	ld bc,$0200
+	call @locFunc
+	ld hl,$dc00
+	ld de,$de00
+	ld bc,$0200
 @locFunc:
-	ld a,$03		; $6f1c
-	ld ($ff00+R_SVBK),a	; $6f1e
-	ldi a,(hl)		; $6f20
-	ldh (<hFF8B),a	; $6f21
-	ld a,$06		; $6f23
-	ld ($ff00+R_SVBK),a	; $6f25
-	ldh a,(<hFF8B)	; $6f27
-	ld (de),a		; $6f29
-	inc de			; $6f2a
-	dec bc			; $6f2b
-	ld a,b			; $6f2c
-	or c			; $6f2d
-	jr nz,@locFunc		; $6f2e
-	ret			; $6f30
+	ld a,$03
+	ld ($ff00+R_SVBK),a
+	ldi a,(hl)
+	ldh (<hFF8B),a
+	ld a,$06
+	ld ($ff00+R_SVBK),a
+	ldh a,(<hFF8B)
+	ld (de),a
+	inc de
+	dec bc
+	ld a,b
+	or c
+	jr nz,@locFunc
+	ret
 
 ;;
 ; @addr{6f31}
 func_04_6f31:
-	ld hl,$dc00		; $6f31
-	ld de,$d800		; $6f34
-	ld bc,$0200		; $6f37
-	call @locFunc		; $6f3a
-	ld hl,$de00		; $6f3d
-	ld de,$dc00		; $6f40
-	ld bc,$0200		; $6f43
+	ld hl,$dc00
+	ld de,$d800
+	ld bc,$0200
+	call @locFunc
+	ld hl,$de00
+	ld de,$dc00
+	ld bc,$0200
 @locFunc:
-	ld a,$06		; $6f46
-	ld ($ff00+R_SVBK),a	; $6f48
-	ldi a,(hl)		; $6f4a
-	ldh (<hFF8B),a	; $6f4b
-	ld a,$03		; $6f4d
-	ld ($ff00+R_SVBK),a	; $6f4f
-	ldh a,(<hFF8B)	; $6f51
-	ld (de),a		; $6f53
-	inc de			; $6f54
-	dec bc			; $6f55
-	ld a,b			; $6f56
-	or c			; $6f57
-	jr nz,@locFunc	; $6f58
-	ret			; $6f5a
+	ld a,$06
+	ld ($ff00+R_SVBK),a
+	ldi a,(hl)
+	ldh (<hFF8B),a
+	ld a,$03
+	ld ($ff00+R_SVBK),a
+	ldh a,(<hFF8B)
+	ld (de),a
+	inc de
+	dec bc
+	ld a,b
+	or c
+	jr nz,@locFunc
+	ret
 
 ; .ORGA $6f5b
 
@@ -669,20 +669,20 @@ _linkItemAnimationTable:
 ;;
 ; @addr{79dc}
 specialObjectLoadAnimationFrameToBuffer:
-	ld hl,w1Companion.visible		; $79dc
-	bit 7,(hl)		; $79df
-	ret z			; $79e1
+	ld hl,w1Companion.visible
+	bit 7,(hl)
+	ret z
 
-	ld l,<w1Companion.var32		; $79e2
-	ld a,(hl)		; $79e4
-	call _getSpecialObjectGraphicsFrame		; $79e5
-	ret z			; $79e8
+	ld l,<w1Companion.var32
+	ld a,(hl)
+	call _getSpecialObjectGraphicsFrame
+	ret z
 
-	ld a,l			; $79e9
-	and $f0			; $79ea
-	ld l,a			; $79ec
-	ld de,w6SpecialObjectGfxBuffer|(:w6SpecialObjectGfxBuffer)		; $79ed
-	jp copy256BytesFromBank		; $79f0
+	ld a,l
+	and $f0
+	ld l,a
+	ld de,w6SpecialObjectGfxBuffer|(:w6SpecialObjectGfxBuffer)
+	jp copy256BytesFromBank
 
 
 	.include "code/ages/garbage/bank06End.s"
@@ -935,21 +935,21 @@ specialObjectLoadAnimationFrameToBuffer:
 ;;
 ; @addr{4315}
 getObjectDataAddress:
-	ld a,(wActiveGroup)		; $4315
+	ld a,(wActiveGroup)
 	ld hl,objectDataGroupTable
-	rst_addDoubleIndex			; $431b
-	ldi a,(hl)		; $431c
-	ld h,(hl)		; $431d
-	ld l,a			; $431e
-	ld a,(wActiveRoom)		; $431f
-	ld e,a			; $4322
-	ld d,$00		; $4323
-	add hl,de		; $4325
-	add hl,de		; $4326
-	ldi a,(hl)		; $4327
-	ld d,(hl)		; $4328
-	ld e,a			; $4329
-	ret			; $432a
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	ld a,(wActiveRoom)
+	ld e,a
+	ld d,$00
+	add hl,de
+	add hl,de
+	ldi a,(hl)
+	ld d,(hl)
+	ld e,a
+	ret
 
 
 	.include "objects/ages/pointers.s"
@@ -970,60 +970,60 @@ getObjectDataAddress:
 ; @param	d	Interaction index (should be of type INTERACID_TREASURE)
 ; @addr{451e}
 interactionLoadTreasureData:
-	ld e,Interaction.subid	; $451e
-	ld a,(de)		; $4520
-	ld e,Interaction.var30		; $4521
-	ld (de),a		; $4523
-	ld hl,treasureObjectData		; $4524
+	ld e,Interaction.subid
+	ld a,(de)
+	ld e,Interaction.var30
+	ld (de),a
+	ld hl,treasureObjectData
 --
-	call multiplyABy4		; $4527
-	add hl,bc		; $452a
-	bit 7,(hl)		; $452b
-	jr z,+			; $452d
+	call multiplyABy4
+	add hl,bc
+	bit 7,(hl)
+	jr z,+
 
-	inc hl			; $452f
-	ldi a,(hl)		; $4530
-	ld h,(hl)		; $4531
-	ld l,a			; $4532
-	ld e,Interaction.var03		; $4533
-	ld a,(de)		; $4535
-	jr --			; $4536
+	inc hl
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	ld e,Interaction.var03
+	ld a,(de)
+	jr --
 +
 	; var31 = spawn mode
-	ldi a,(hl)		; $4538
-	ld b,a			; $4539
-	swap a			; $453a
-	and $07			; $453c
-	ld e,Interaction.var31		; $453e
-	ld (de),a		; $4540
+	ldi a,(hl)
+	ld b,a
+	swap a
+	and $07
+	ld e,Interaction.var31
+	ld (de),a
 
 	; var32 = collect mode
-	ld a,b			; $4541
-	and $07			; $4542
-	inc e			; $4544
-	ld (de),a		; $4545
+	ld a,b
+	and $07
+	inc e
+	ld (de),a
 
 	; var33 = ?
-	ld a,b			; $4546
-	and $08			; $4547
-	inc e			; $4549
-	ld (de),a		; $454a
+	ld a,b
+	and $08
+	inc e
+	ld (de),a
 
 	; var34 = parameter (value of 'c' for "giveTreasure")
-	ldi a,(hl)		; $454b
-	inc e			; $454c
-	ld (de),a		; $454d
+	ldi a,(hl)
+	inc e
+	ld (de),a
 
 	; var35 = low text ID
-	ldi a,(hl)		; $454e
-	inc e			; $454f
-	ld (de),a		; $4550
+	ldi a,(hl)
+	inc e
+	ld (de),a
 
 	; subid = graphics to use
-	ldi a,(hl)		; $4551
-	ld e,Interaction.subid		; $4552
-	ld (de),a		; $4554
-	ret			; $4555
+	ldi a,(hl)
+	ld e,Interaction.subid
+	ld (de),a
+	ret
 
 
 .include "build/data/data_4556.s"
@@ -1046,31 +1046,31 @@ interactionLoadTreasureData:
 ; @param	b	Floor state (0/1)
 ; @addr{5766}
 loadD6ChangingFloorPatternToBigBuffer:
-	ld a,b			; $5766
-	add a			; $5767
-	ld hl,@changingFloorData		; $5768
-	rst_addDoubleIndex			; $576b
-	push hl			; $576c
-	ldi a,(hl)		; $576d
-	ld d,(hl)		; $576e
-	ld e,a			; $576f
-	ld b,$41		; $5770
-	ld hl,wBigBuffer		; $5772
-	call copyMemoryReverse		; $5775
+	ld a,b
+	add a
+	ld hl,@changingFloorData
+	rst_addDoubleIndex
+	push hl
+	ldi a,(hl)
+	ld d,(hl)
+	ld e,a
+	ld b,$41
+	ld hl,wBigBuffer
+	call copyMemoryReverse
 
-	pop hl			; $5778
-	inc hl			; $5779
-	inc hl			; $577a
-	ldi a,(hl)		; $577b
-	ld d,(hl)		; $577c
-	ld e,a			; $577d
-	ld b,$41		; $577e
-	ld hl,wBigBuffer+$80		; $5780
-	call copyMemoryReverse		; $5783
+	pop hl
+	inc hl
+	inc hl
+	ldi a,(hl)
+	ld d,(hl)
+	ld e,a
+	ld b,$41
+	ld hl,wBigBuffer+$80
+	call copyMemoryReverse
 
-	ldh a,(<hActiveObject)	; $5786
-	ld d,a			; $5788
-	ret			; $5789
+	ldh a,(<hActiveObject)
+	ld d,a
+	ret
 
 @changingFloorData:
 	.dw @tiles0_bottomHalf

@@ -4,24 +4,24 @@
 ; @param	a	Animation (value for SpecialObject.animMode)
 ; @addr{4412}
 specialObjectSetAnimationWithLinkData:
-	ld e,SpecialObject.animMode		; $4412
-	ld (de),a		; $4414
-	add a			; $4415
-	ld c,a			; $4416
-	ld b,$00		; $4417
-	ld a,(w1Link.id)		; $4419
-	jr _label_06_032		; $441c
+	ld e,SpecialObject.animMode
+	ld (de),a
+	add a
+	ld c,a
+	ld b,$00
+	ld a,(w1Link.id)
+	jr _label_06_032
 
 ;;
 ; Same as "specialObjectAnimate" in bank 0, but optimized for this bank?
 ; @addr{441e}
 _specialObjectAnimate:
-	ld h,d			; $441e
-	ld l,SpecialObject.animCounter		; $441f
-	dec (hl)		; $4421
-	ret nz			; $4422
-	ld l,SpecialObject.animPointer		; $4423
-	jr specialObjectNextAnimationFrame		; $4425
+	ld h,d
+	ld l,SpecialObject.animCounter
+	dec (hl)
+	ret nz
+	ld l,SpecialObject.animPointer
+	jr specialObjectNextAnimationFrame
 
 ;;
 ; This is called from bank0.specialObjectSetAnimation.
@@ -31,59 +31,59 @@ _specialObjectAnimate:
 ; @param	d	Object
 ; @addr{4427}
 specialObjectSetAnimation_body:
-	ld e,SpecialObject.id		; $4427
-	ld a,(de)		; $4429
+	ld e,SpecialObject.id
+	ld a,(de)
 
 _label_06_032:
-	ld hl,specialObjectAnimationTable		; $442a
-	rst_addDoubleIndex			; $442d
-	ldi a,(hl)		; $442e
-	ld h,(hl)		; $442f
-	ld l,a			; $4430
-	add hl,bc		; $4431
+	ld hl,specialObjectAnimationTable
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	add hl,bc
 
 ;;
 ; @param	d	Object
 ; @param	hl	Address of pointer to animation data
 ; @addr{4432}
 specialObjectNextAnimationFrame:
-	ldi a,(hl)		; $4432
-	ld h,(hl)		; $4433
-	ld l,a			; $4434
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
 
 	; Check for loop
-	ldi a,(hl)		; $4435
-	cp $ff			; $4436
-	jr nz,+			; $4438
+	ldi a,(hl)
+	cp $ff
+	jr nz,+
 
-	ld c,(hl)		; $443a
-	ld b,a			; $443b
-	add hl,bc		; $443c
+	ld c,(hl)
+	ld b,a
+	add hl,bc
 
-	ldi a,(hl)		; $443d
+	ldi a,(hl)
 +
-	ld e,SpecialObject.animCounter		; $443e
-	ld (de),a		; $4440
+	ld e,SpecialObject.animCounter
+	ld (de),a
 
 	; SpecialObject.animParameter
-	inc e			; $4441
-	ldi a,(hl)		; $4442
-	ld c,a			; $4443
-	ldi a,(hl)		; $4444
-	ld (de),a		; $4445
+	inc e
+	ldi a,(hl)
+	ld c,a
+	ldi a,(hl)
+	ld (de),a
 
 	; SpecialObject.animPointer
-	inc e			; $4446
-	ld a,l			; $4447
-	ld (de),a		; $4448
-	inc e			; $4449
-	ld a,h			; $444a
-	ld (de),a		; $444b
+	inc e
+	ld a,l
+	ld (de),a
+	inc e
+	ld a,h
+	ld (de),a
 
-	ld e,SpecialObject.var31		; $444c
-	ld a,c			; $444e
-	ld (de),a		; $444f
-	ret			; $4450
+	ld e,SpecialObject.var31
+	ld a,c
+	ld (de),a
+	ret
 
 
 	.include "build/data/specialObjectAnimationPointers.s"
@@ -91,56 +91,56 @@ specialObjectNextAnimationFrame:
 ;;
 ; @addr{44c9}
 loadLinkAndCompanionAnimationFrame_body:
-	ld a,$ff		; $44c9
-	ld (wLinkPushingDirection),a		; $44cb
-	ld a,(w1Link.visible)		; $44ce
-	rlca			; $44d1
-	jr nc,++		; $44d2
+	ld a,$ff
+	ld (wLinkPushingDirection),a
+	ld a,(w1Link.visible)
+	rlca
+	jr nc,++
 
-	call _func_4553		; $44d4
-	ld a,(w1Link.id)		; $44d7
-	ld hl,@data		; $44da
-	rst_addAToHl			; $44dd
-	ld a,b			; $44de
-	cp (hl)			; $44df
-	jr c,+			; $44e0
+	call _func_4553
+	ld a,(w1Link.id)
+	ld hl,@data
+	rst_addAToHl
+	ld a,b
+	cp (hl)
+	jr c,+
 
-	ld a,(w1Link.direction)		; $44e2
-	add b			; $44e5
+	ld a,(w1Link.direction)
+	add b
 +
-	ld h,LINK_OBJECT_INDEX		; $44e6
-	call @loadAnimationFrame		; $44e8
+	ld h,LINK_OBJECT_INDEX
+	call @loadAnimationFrame
 
 ++
 	; Companion / maple / whatever
-	ld hl,w1Companion.visible		; $44eb
-	bit 7,(hl)		; $44ee
-	ret z			; $44f0
+	ld hl,w1Companion.visible
+	bit 7,(hl)
+	ret z
 
-	ld l,<w1Companion.var31		; $44f1
-	ld a,(hl)		; $44f3
+	ld l,<w1Companion.var31
+	ld a,(hl)
 
 ;;
 ; @param	a	Frame index?
 ; @param	h	Object (should be LINK_OBJECT_INDEX ($d0) or COMPANION_OBJECT_INDEX ($d1))
 ; @addr{44f4}
 @loadAnimationFrame:
-	ld l,SpecialObject.var32		; $44f4
-	cp (hl)			; $44f6
-	ret z			; $44f7
+	ld l,SpecialObject.var32
+	cp (hl)
+	ret z
 
-	ld (hl),a		; $44f8
-	call _getSpecialObjectGraphicsFrame		; $44f9
-	ret z			; $44fc
+	ld (hl),a
+	call _getSpecialObjectGraphicsFrame
+	ret z
 
-	ld e,SpecialObject.id		; $44fd
-	ld a,(de)		; $44ff
-	cp SPECIALOBJECTID_MINECART			; $4500
-	ld de,$8701		; $4502
-	jr c,+			; $4505
-	ld d,$86		; $4507
+	ld e,SpecialObject.id
+	ld a,(de)
+	cp SPECIALOBJECTID_MINECART
+	ld de,$8701
+	jr c,+
+	ld d,$86
 +
-	jp queueDmaTransfer		; $4509
+	jp queueDmaTransfer
 
 ; These are animation frame indices; frame indices under the given value don't have link's direction
 ; added to them?
@@ -171,112 +171,112 @@ loadLinkAndCompanionAnimationFrame_body:
 ; @param[out]	zflag	Set if there are no graphics to load.
 ; @addr{4516}
 _getSpecialObjectGraphicsFrame:
-	ld c,a			; $4516
-	ld b,$00		; $4517
-	ld d,h			; $4519
-	ld l,<w1Link.id		; $451a
-	ld a,(hl)		; $451c
-	ld e,a			; $451d
-	ld hl,specialObjectGraphicsTable		; $451e
-	rst_addDoubleIndex			; $4521
-	ldi a,(hl)		; $4522
-	ld h,(hl)		; $4523
-	ld l,a			; $4524
-	add hl,bc		; $4525
-	add hl,bc		; $4526
-	add hl,bc		; $4527
+	ld c,a
+	ld b,$00
+	ld d,h
+	ld l,<w1Link.id
+	ld a,(hl)
+	ld e,a
+	ld hl,specialObjectGraphicsTable
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	add hl,bc
+	add hl,bc
+	add hl,bc
 
 	; Byte 0
-	ldi a,(hl)		; $4528
-	push hl			; $4529
-	add a			; $452a
-	ld c,a			; $452b
-	ld a,e			; $452c
-	ld hl,specialObjectOamDataTable		; $452d
-	rst_addDoubleIndex			; $4530
-	ldi a,(hl)		; $4531
-	ld h,(hl)		; $4532
-	ld l,a			; $4533
-	add hl,bc		; $4534
-	ld e,<w1Link.oamDataAddress		; $4535
-	ldi a,(hl)		; $4537
-	ld (de),a		; $4538
-	inc e			; $4539
-	ldi a,(hl)		; $453a
-	and $3f			; $453b
-	ld (de),a		; $453d
+	ldi a,(hl)
+	push hl
+	add a
+	ld c,a
+	ld a,e
+	ld hl,specialObjectOamDataTable
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	add hl,bc
+	ld e,<w1Link.oamDataAddress
+	ldi a,(hl)
+	ld (de),a
+	inc e
+	ldi a,(hl)
+	and $3f
+	ld (de),a
 
 	; Bytes 1-2: address of graphics
-	pop hl			; $453e
-	ldi a,(hl)		; $453f
-	ld h,(hl)		; $4540
-	ld l,a			; $4541
-	or h			; $4542
-	ret z			; $4543
+	pop hl
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	or h
+	ret z
 
 	; Bit 0: bank select
-	ld a,l			; $4544
-	and $01			; $4545
-	add :spr_link		; $4547
-	ld c,a			; $4549
+	ld a,l
+	and $01
+	add :spr_link
+	ld c,a
 
 	; Bits 1-4: size (divided by 16)
-	ld a,l			; $454a
-	and $1e			; $454b
-	dec a			; $454d
-	ld b,a			; $454e
+	ld a,l
+	and $1e
+	dec a
+	ld b,a
 
 	; Clear bit 4 (bits 0-3 will be ignored by dma)
-	res 4,l			; $454f
+	res 4,l
 
 	; Clear zero flag
-	or d			; $4551
-	ret			; $4552
+	or d
+	ret
 
 ;;
 ; @param[out]	b	Frame index to use (not accounting for direction)
 ;
 ; @addr{4553}
 _func_4553:
-	ld a,(w1Link.id)		; $4553
-	or a			; $4556
-	jr z,+			; $4557
+	ld a,(w1Link.id)
+	or a
+	jr z,+
 
-	ld a,(w1Link.var31)		; $4559
-	ld b,a			; $455c
-	ret			; $455d
+	ld a,(w1Link.var31)
+	ld b,a
+	ret
 +
-	ld hl,w1ParentItem2		; $455e
-	ld bc,$0000		; $4561
+	ld hl,w1ParentItem2
+	ld bc,$0000
 --
-	ld l,Item.var3f		; $4564
-	ld a,(hl)		; $4566
-	cp c			; $4567
-	jr c,+			; $4568
+	ld l,Item.var3f
+	ld a,(hl)
+	cp c
+	jr c,+
 
-	ld c,a			; $456a
-	ld l,Item.var31		; $456b
-	ld b,(hl)		; $456d
+	ld c,a
+	ld l,Item.var31
+	ld b,(hl)
 +
-	inc h			; $456e
-	ld a,h			; $456f
-	cp FIRST_ITEM_INDEX			; $4570
-	jr c,--			; $4572
+	inc h
+	ld a,h
+	cp FIRST_ITEM_INDEX
+	jr c,--
 
-	ld a,(w1Link.var3f)		; $4574
-	cp c			; $4577
-	ret c			; $4578
+	ld a,(w1Link.var3f)
+	cp c
+	ret c
 
-	ld a,(w1Link.var31)		; $4579
-	ld b,a			; $457c
-	ld a,(w1Link.animMode)		; $457d
-	cp LINK_ANIM_MODE_WALK			; $4580
-	ret nz			; $4582
+	ld a,(w1Link.var31)
+	ld b,a
+	ld a,(w1Link.animMode)
+	cp LINK_ANIM_MODE_WALK
+	ret nz
 
-	call @getLinkWalkingAnimation		; $4583
-	add b			; $4586
-	ld b,a			; $4587
-	ret			; $4588
+	call @getLinkWalkingAnimation
+	add b
+	ld b,a
+	ret
 
 ;;
 ; Determines what kind of walking animation link should be doing; whether he's pushing
@@ -286,132 +286,132 @@ _func_4553:
 ; @addr{4589}
 @getLinkWalkingAnimation:
 .ifdef ROM_AGES
-	ld c,$0a		; $4589
-	ld a,(wTilesetFlags)		; $458b
-	and TILESETFLAG_UNDERWATER			; $458e
-	jr z,@notUnderwater			; $4590
+	ld c,$0a
+	ld a,(wTilesetFlags)
+	and TILESETFLAG_UNDERWATER
+	jr z,@notUnderwater
 
 @underwater:
-	call checkLinkPushingAgainstWall		; $4592
-	jp nc,@animationFound		; $4595
+	call checkLinkPushingAgainstWall
+	jp nc,@animationFound
 
-	ld a,(w1Link.direction)		; $4598
-	ld (wLinkPushingDirection),a		; $459b
-	jr @animationFound		; $459e
+	ld a,(w1Link.direction)
+	ld (wLinkPushingDirection),a
+	jr @animationFound
 .endif
 
 @notUnderwater:
-	ld c,$00		; $45a0
-	ld a,(wLinkGrabState)		; $45a2
-	bit 6,a			; $45a5
-	ret nz			; $45a7
+	ld c,$00
+	ld a,(wLinkGrabState)
+	bit 6,a
+	ret nz
 
 	; Check if he's holding something
-	or a			; $45a8
-	jr z,+			; $45a9
-	ld c,$02		; $45ab
+	or a
+	jr z,+
+	ld c,$02
 +
 	; Check if he's riding a cart / animal
-	ld a,(wLinkObjectIndex)		; $45ad
-	rrca			; $45b0
-	jr nc,+			; $45b1
+	ld a,(wLinkObjectIndex)
+	rrca
+	jr nc,+
 
 	; Check if he's riding a minecart
-	ld a,(w1Companion.id)		; $45b3
-	cp $0a			; $45b6
-	jr nz,+			; $45b8
-	inc c			; $45ba
+	ld a,(w1Companion.id)
+	cp $0a
+	jr nz,+
+	inc c
 +
 	; Done if holding something or riding a minecart (or both)
-	ld a,c			; $45bb
-	or a			; $45bc
-	jr nz,@animationFound	; $45bd
+	ld a,c
+	or a
+	jr nz,@animationFound
 
 	; Check if using magnet gloves
-	ld a,(wMagnetGloveState)		; $45bf
-	or a			; $45c2
-	jr z,+			; $45c3
+	ld a,(wMagnetGloveState)
+	or a
+	jr z,+
 
-	ld c,$09		; $45c5
-	jr @animationFound		; $45c7
+	ld c,$09
+	jr @animationFound
 +
 	; Check if he's holding out the shield, and what level
-	ld a,(wUsingShield)		; $45c9
-	or a			; $45cc
-	jr z,+			; $45cd
+	ld a,(wUsingShield)
+	or a
+	jr z,+
 
-	ld c,$07		; $45cf
-	cp $02			; $45d1
-	jr c,@animationFound	; $45d3
+	ld c,$07
+	cp $02
+	jr c,@animationFound
 
-	inc c			; $45d5
-	jr @animationFound		; $45d6
+	inc c
+	jr @animationFound
 +
 	; Don't do push animation while holding a sword, cane, etc.
-	ld a,(wLinkTurningDisabled)		; $45d8
-	or a			; $45db
-	jr nz,@standingAnimation	; $45dc
+	ld a,(wLinkTurningDisabled)
+	or a
+	jr nz,@standingAnimation
 
 	; Override to always do push animation?
-	ld a,(wForceLinkPushAnimation)		; $45de
-	dec a			; $45e1
-	jr z,@pushingAnimation	; $45e2
+	ld a,(wForceLinkPushAnimation)
+	dec a
+	jr z,@pushingAnimation
 
 	; Override to never do push animation?
-	ld a,(wForceLinkPushAnimation)		; $45e4
-	rlca			; $45e7
-	jr c,@standingAnimation	; $45e8
+	ld a,(wForceLinkPushAnimation)
+	rlca
+	jr c,@standingAnimation
 
 	; If link is climbing a vine, he always faces up, so don't do push animation
-	ld a,(wLinkClimbingVine)		; $45ea
-	ld l,a			; $45ed
+	ld a,(wLinkClimbingVine)
+	ld l,a
 
 	; Also don't while text is active for some reason?
-	ld a,(wTextIsActive)		; $45ee
-	or l			; $45f1
-	jr nz,@standingAnimation	; $45f2
+	ld a,(wTextIsActive)
+	or l
+	jr nz,@standingAnimation
 
-	call checkLinkPushingAgainstWall		; $45f4
-	jr nc,@standingAnimation	; $45f7
+	call checkLinkPushingAgainstWall
+	jr nc,@standingAnimation
 
 	; Pushing against a wall
 @pushingAnimation:
-	ld a,(w1Link.direction)		; $45f9
-	ld (wLinkPushingDirection),a		; $45fc
-	ld c,$04		; $45ff
-	jr @animationFound		; $4601
+	ld a,(w1Link.direction)
+	ld (wLinkPushingDirection),a
+	ld c,$04
+	jr @animationFound
 
 	; Standard, just walking or standing animation
 @standingAnimation:
-	ld a,(wInventoryA)		; $4603
-	cp ITEMID_SHIELD			; $4606
-	jr z,@shieldEquipped	; $4608
+	ld a,(wInventoryA)
+	cp ITEMID_SHIELD
+	jr z,@shieldEquipped
 
-	ld a,(wInventoryB)		; $460a
-	cp ITEMID_SHIELD			; $460d
-	jr nz,@animationFound	; $460f
+	ld a,(wInventoryB)
+	cp ITEMID_SHIELD
+	jr nz,@animationFound
 
 	; Walking or standing with shield equipped
 @shieldEquipped:
-	ld c,$05		; $4611
-	ld a,(wShieldLevel)		; $4613
-	cp $01			; $4616
-	jr z,@animationFound	; $4618
-	ld c,$06		; $461a
+	ld c,$05
+	ld a,(wShieldLevel)
+	cp $01
+	jr z,@animationFound
+	ld c,$06
 
 @animationFound:
-	ld a,(wLinkClimbingVine)		; $461c
-	or a			; $461f
-	jr z,+			; $4620
+	ld a,(wLinkClimbingVine)
+	or a
+	jr z,+
 
-	xor a			; $4622
-	ld (w1Link.direction),a		; $4623
+	xor a
+	ld (w1Link.direction),a
 +
-	ld a,c			; $4626
-	add a			; $4627
-	add a			; $4628
-	ld (w1Link.var34),a		; $4629
-	ret			; $462c
+	ld a,c
+	add a
+	add a
+	ld (w1Link.var34),a
+	ret
 
 ;;
 ; Gets the ID to use for the Link object based on what transformation rings he's wearing
@@ -420,46 +420,46 @@ _func_4553:
 ; @param[out] b Special object ID to use, based on the ring Link is wearing
 ; @addr{462d}
 getTransformedLinkID:
-	ld hl,wDisableRingTransformations		; $462d
-	ld a,(hl)		; $4630
-	or a			; $4631
-	jr z,+			; $4632
+	ld hl,wDisableRingTransformations
+	ld a,(hl)
+	or a
+	jr z,+
 
-	dec (hl)		; $4634
-	jr ++			; $4635
+	dec (hl)
+	jr ++
 
 	; Check whether Link is wearing a ring
 +
 	; Rings do nothing in sidescrolling, underwater areas
-	ld a,(wTilesetFlags)		; $4637
+	ld a,(wTilesetFlags)
 .ifdef ROM_AGES
-	and TILESETFLAG_UNDERWATER | TILESETFLAG_SIDESCROLL			; $463a
+	and TILESETFLAG_UNDERWATER | TILESETFLAG_SIDESCROLL
 .else
 	and TILESETFLAG_40 | TILESETFLAG_SIDESCROLL
 .endif
-	jr nz,++		; $463c
+	jr nz,++
 
 	; Apparently, you can't be transformed when the menu is disabled
-	ld a,(wMenuDisabled)		; $463e
-	or a			; $4641
-	jr nz,++		; $4642
+	ld a,(wMenuDisabled)
+	or a
+	jr nz,++
 
 	; Can't be transformed in a shop or while holding something
-	ld a,(wInShop)		; $4644
-	ld b,a			; $4647
-	ld a,(wLinkGrabState)		; $4648
-	or b			; $464b
-	jr nz,++		; $464c
+	ld a,(wInShop)
+	ld b,a
+	ld a,(wLinkGrabState)
+	or b
+	jr nz,++
 
-	ld a,(wActiveRing)		; $464e
-	ld e,a			; $4651
-	ld hl,@ringToID		; $4652
-	call lookupKey		; $4655
-	ld b,a			; $4658
-	ret			; $4659
+	ld a,(wActiveRing)
+	ld e,a
+	ld hl,@ringToID
+	call lookupKey
+	ld b,a
+	ret
 ++
-	ld b,$00		; $465a
-	ret			; $465c
+	ld b,$00
+	ret
 
 @ringToID:
 	.db OCTO_RING		SPECIALOBJECTID_LINK_AS_OCTOROK
@@ -474,73 +474,73 @@ getTransformedLinkID:
 ; @param d Link object
 ; @addr{4668}
 linkUpdateDamageToApplyForRings:
-	ld e,SpecialObject.damageToApply		; $4668
-	ld a,(de)		; $466a
-	or a			; $466b
-	ret z			; $466c
+	ld e,SpecialObject.damageToApply
+	ld a,(de)
+	or a
+	ret z
 
-	ld b,a			; $466d
-	ld hl,@ringDamageModifierTable		; $466e
-	ld a,(wActiveRing)		; $4671
-	ld e,a			; $4674
+	ld b,a
+	ld hl,@ringDamageModifierTable
+	ld a,(wActiveRing)
+	ld e,a
 --
-	ldi a,(hl)		; $4675
-	or a			; $4676
-	jr z,@matchingRingNotFound		; $4677
+	ldi a,(hl)
+	or a
+	jr z,@matchingRingNotFound
 
-	cp e			; $4679
-	jr z,@matchingRingFound	; $467a
-	inc hl			; $467c
-	jr --			; $467d
+	cp e
+	jr z,@matchingRingFound
+	inc hl
+	jr --
 
 @matchingRingNotFound:
-	ld a,e			; $467f
-	cp BLUE_RING			; $4680
-	jr z,@blueRing			; $4682
+	ld a,e
+	cp BLUE_RING
+	jr z,@blueRing
 
-	cp GREEN_RING			; $4684
-	jr z,@greenRing			; $4686
+	cp GREEN_RING
+	jr z,@greenRing
 
-	cp CURSED_RING			; $4688
-	ret nz			; $468a
+	cp CURSED_RING
+	ret nz
 
 ; Cursed ring: damage *= 2
-	ld a,b			; $468b
-	add a			; $468c
-	jr @writeDamageToApply		; $468d
+	ld a,b
+	add a
+	jr @writeDamageToApply
 
 ; Blue ring: damage /= 2
 @blueRing:
-	ld a,b			; $468f
-	sra a			; $4690
-	jr @writeDamageToApply		; $4692
+	ld a,b
+	sra a
+	jr @writeDamageToApply
 
 ; Green ring: damage /= 1.5
 @greenRing:
-	ld a,b			; $4694
-	cpl			; $4695
-	inc a			; $4696
-	add a			; $4697
-	add a			; $4698
-	add b			; $4699
-	sra a			; $469a
-	sra a			; $469c
-	cpl			; $469e
-	inc a			; $469f
-	jr @writeDamageToApply		; $46a0
+	ld a,b
+	cpl
+	inc a
+	add a
+	add a
+	add b
+	sra a
+	sra a
+	cpl
+	inc a
+	jr @writeDamageToApply
 
 @matchingRingFound:
-	ld a,(hl)		; $46a2
-	add b			; $46a3
+	ld a,(hl)
+	add b
 
 @writeDamageToApply:
-	bit 7,a			; $46a4
-	jr nz,+			; $46a6
-	ld a,$ff		; $46a8
+	bit 7,a
+	jr nz,+
+	ld a,$ff
 +
-	ld e,SpecialObject.damageToApply		; $46aa
-	ld (de),a		; $46ac
-	ret			; $46ad
+	ld e,SpecialObject.damageToApply
+	ld (de),a
+	ret
 
 ; This is a table of values to add to any amount of damage that Link takes.
 ; @addr{46ae}
@@ -559,112 +559,112 @@ linkUpdateDamageToApplyForRings:
 ; @param d Link object
 ; @addr{46bb}
 linkApplyDamage:
-	ld h,d			; $46bb
-	ld l,SpecialObject.damageToApply		; $46bc
-	ld a,(hl)		; $46be
-	ld (hl),$00		; $46bf
-	or a			; $46c1
-	jr z,++			; $46c2
+	ld h,d
+	ld l,SpecialObject.damageToApply
+	ld a,(hl)
+	ld (hl),$00
+	or a
+	jr z,++
 
 	; Protection ring does fixed damage on each hit
-	ld b,a			; $46c4
-	ld a,PROTECTION_RING		; $46c5
-	call cpActiveRing		; $46c7
-	jr nz,+			; $46ca
-	ld b,$f8		; $46cc
+	ld b,a
+	ld a,PROTECTION_RING
+	call cpActiveRing
+	jr nz,+
+	ld b,$f8
 +
 	; Add the value to w1Link.health. His "real" health variable is at wLinkHealth, so
 	; this appears to be used as part of the calculation to reduce that.
-	ld l,SpecialObject.health		; $46ce
-	ld a,(hl)		; $46d0
-	add b			; $46d1
-	ld (hl),a		; $46d2
+	ld l,SpecialObject.health
+	ld a,(hl)
+	add b
+	ld (hl),a
 ++
-	ld l,SpecialObject.var2a		; $46d3
-	ld a,(hl)		; $46d5
-	or a			; $46d6
-	jr z,+			; $46d7
+	ld l,SpecialObject.var2a
+	ld a,(hl)
+	or a
+	jr z,+
 
 	; Steadfast ring halves knockback
-	ld a,STEADFAST_RING		; $46d9
-	call cpActiveRing		; $46db
-	jr nz,+			; $46de
-	ld l,SpecialObject.knockbackCounter		; $46e0
-	srl (hl)		; $46e2
+	ld a,STEADFAST_RING
+	call cpActiveRing
+	jr nz,+
+	ld l,SpecialObject.knockbackCounter
+	srl (hl)
 +
-	ld hl,wLinkHealth		; $46e4
-	ld e,SpecialObject.health		; $46e7
+	ld hl,wLinkHealth
+	ld e,SpecialObject.health
 
 	; Make sure that w1Link.health is negative. At this point, w1Link.health is
 	; actually being used similarly to w1Link.damageToApply, and doesn't reflect his
 	; actual health.
-	ld a,(de)		; $46e9
-	bit 7,a			; $46ea
-	jr z,++			; $46ec
+	ld a,(de)
+	bit 7,a
+	jr z,++
 
 	; Apply the damage (finally update wLinkHealth)
-	ld a,(de)		; $46ee
+	ld a,(de)
 --
-	dec (hl)		; $46ef
-	add $02			; $46f0
-	jr nc,--		; $46f2
+	dec (hl)
+	add $02
+	jr nc,--
 
-	ld (de),a		; $46f4
+	ld (de),a
 ++
 	; Jump if [wLinkHealth] > 0
-	ld a,(hl)		; $46f5
-	dec a			; $46f6
-	rlca			; $46f7
-	jr nc,++		; $46f8
+	ld a,(hl)
+	dec a
+	rlca
+	jr nc,++
 
 ; Link's health has reached 0.
 
 	; Replenish health if Link has a potion.
-	ld a,TREASURE_POTION		; $46fa
-	call checkTreasureObtained		; $46fc
-	jr nc,@noPotion			; $46ff
+	ld a,TREASURE_POTION
+	call checkTreasureObtained
+	jr nc,@noPotion
 
 	; [wLinkHealth] = [wLinkMaxHealth]
-	ld hl,wLinkMaxHealth		; $4701
-	ldd a,(hl)		; $4704
-	ld (hl),a		; $4705
+	ld hl,wLinkMaxHealth
+	ldd a,(hl)
+	ld (hl),a
 
 	; Set w1Link.health to $01 (again, this doesn't represent his actual health)
-	ld a,$01		; $4706
-	ld (de),a		; $4708
+	ld a,$01
+	ld (de),a
 
-	ld a,TREASURE_POTION		; $4709
-	call loseTreasure		; $470b
-	jr ++			; $470e
+	ld a,TREASURE_POTION
+	call loseTreasure
+	jr ++
 
 ; Link is dead, and has no potion.
 @noPotion:
 	; Clear wLinkHealth and w1Link.health
-	xor a			; $4710
-	ld (de),a		; $4711
-	ld (hl),a		; $4712
-	ld (wUsingShield),a		; $4713
+	xor a
+	ld (de),a
+	ld (hl),a
+	ld (wUsingShield),a
 
-	ld e,SpecialObject.state		; $4716
-	ld a,(de)		; $4718
-	cp LINK_STATE_GRABBED			; $4719
-	jr z,++			; $471b
+	ld e,SpecialObject.state
+	ld a,(de)
+	cp LINK_STATE_GRABBED
+	jr z,++
 
-	ld a,$ff		; $471d
-	ld (wLinkDeathTrigger),a		; $471f
-	call clearAllParentItems		; $4722
+	ld a,$ff
+	ld (wLinkDeathTrigger),a
+	call clearAllParentItems
 ++
 	; Decrement the stun counter every other frame?
-	ld a,(wFrameCounter)		; $4725
-	rrca			; $4728
-	jr nc,++			; $4729
+	ld a,(wFrameCounter)
+	rrca
+	jr nc,++
 
-	ld e,SpecialObject.stunCounter		; $472b
-	ld a,(de)		; $472d
-	or a			; $472e
-	jr z,++			; $472f
+	ld e,SpecialObject.stunCounter
+	ld a,(de)
+	or a
+	jr z,++
 
-	dec a			; $4731
-	ld (de),a		; $4732
+	dec a
+	ld (de),a
 ++
-	ret			; $4733
+	ret

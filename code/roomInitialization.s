@@ -9,46 +9,46 @@
 ; Check the wRememberedCompanion variables to see if a companion is in this room.
 ; @addr{768a}
 loadRememberedCompanion:
-	ld hl,wRememberedCompanionId		; $768a
-	ldi a,(hl)		; $768d
-	or a			; $768e
-	ret z			; $768f
+	ld hl,wRememberedCompanionId
+	ldi a,(hl)
+	or a
+	ret z
 
-	ld c,a			; $7690
+	ld c,a
 
 	; Check [wActiveGroup] == [wRememberedCompanionGroup]
-	ld a,(wActiveGroup)		; $7691
-	cp (hl)			; $7694
-	ret nz			; $7695
+	ld a,(wActiveGroup)
+	cp (hl)
+	ret nz
 
 	; Check [wActiveRoom] == [wRememberedCompanionRoom]
-	inc l			; $7696
-	ld a,(wActiveRoom)		; $7697
-	cp (hl)			; $769a
-	ret nz			; $769b
+	inc l
+	ld a,(wActiveRoom)
+	cp (hl)
+	ret nz
 
-	ld a,(w1Companion.enabled)		; $769c
-	or a			; $769f
-	ret nz			; $76a0
+	ld a,(w1Companion.enabled)
+	or a
+	ret nz
 
-	ld a,c			; $76a1
+	ld a,c
 
 .ifdef ROM_AGES
-	cp SPECIALOBJECTID_RAFT			; $76a2
-	jr z,@raft		; $76a4
+	cp SPECIALOBJECTID_RAFT
+	jr z,@raft
 .endif
 
-	ld (w1Companion.id),a		; $76a6
-	ld a,$01		; $76a9
-	ld (w1Companion.enabled),a		; $76ab
-	inc l			; $76ae
+	ld (w1Companion.id),a
+	ld a,$01
+	ld (w1Companion.enabled),a
+	inc l
 
 	; Set Y/X positions to [wRememberedCompanionY/X]
 .ifdef ROM_AGES
-	ldi a,(hl)		; $76af
-	ld (w1Companion.yh),a		; $76b0
-	ldi a,(hl)		; $76b3
-	ld (w1Companion.xh),a		; $76b4
+	ldi a,(hl)
+	ld (w1Companion.yh),a
+	ldi a,(hl)
+	ld (w1Companion.xh),a
 .else; ROM_SEASONS
 	ldi a,(hl)
 	ld (w1Companion.yh),a
@@ -57,49 +57,49 @@ loadRememberedCompanion:
 	ld (w1Companion.xh),a
 	ld (wLastAnimalMountPointX),a
 .endif
-	ret			; $76b7
+	ret
 
 .ifdef ROM_AGES
 @raft:
-	ld a,(wTilesetFlags)		; $76b8
-	and TILESETFLAG_PAST			; $76bb
-	ret z			; $76bd
+	ld a,(wTilesetFlags)
+	and TILESETFLAG_PAST
+	ret z
 
-	call getFreeInteractionSlot		; $76be
-	ret nz			; $76c1
+	call getFreeInteractionSlot
+	ret nz
 
-	ld (hl),INTERACID_RAFT		; $76c2
-	inc l			; $76c4
-	ld (hl),$02		; $76c5
+	ld (hl),INTERACID_RAFT
+	inc l
+	ld (hl),$02
 
 	; Set Y/X positions
-	ld a,(wRememberedCompanionY)		; $76c7
-	ld l,Interaction.yh		; $76ca
-	ldi (hl),a		; $76cc
-	inc l			; $76cd
-	ld a,(wRememberedCompanionX)		; $76ce
-	ldi (hl),a		; $76d1
-	ret			; $76d2
+	ld a,(wRememberedCompanionY)
+	ld l,Interaction.yh
+	ldi (hl),a
+	inc l
+	ld a,(wRememberedCompanionX)
+	ldi (hl),a
+	ret
 .endif
 
 ;;
 ; Spawn maple if all the conditions meet (enough kills, valid map, etc)
 ; @addr{76d3}
 checkAndSpawnMaple:
-	xor a			; $76d3
-	ld (wIsMaplePresent),a		; $76d4
-	ld a,(wcc85)		; $76d7
-	or a			; $76da
-	ret nz			; $76db
+	xor a
+	ld (wIsMaplePresent),a
+	ld a,(wcc85)
+	or a
+	ret nz
 
 .ifdef ROM_AGES
-	ld a,(wActiveGroup)		; $76dc
-	ld hl,maplePastLocations	; $76df
-	dec a			; $76e2
-	jr z,@startCheck	; $76e3
+	ld a,(wActiveGroup)
+	ld hl,maplePastLocations
+	dec a
+	jr z,@startCheck
 
-	inc a			; $76e5
-	ret nz			; $76e6
+	inc a
+	ret nz
 
 .else; ROM_SEASONS
 
@@ -108,51 +108,51 @@ checkAndSpawnMaple:
 	ret nz
 .endif
 
-	ld a,(w1Companion.enabled)		; $76e7
-	or a			; $76ea
-	ret nz			; $76eb
+	ld a,(w1Companion.enabled)
+	or a
+	ret nz
 
-	ld a,(wAnimalCompanion)		; $76ec
+	ld a,(wAnimalCompanion)
 .ifdef ROM_AGES
-	or a			; $76ef
-	jr z,+			; $76f0
+	or a
+	jr z,+
 .endif
-	sub SPECIALOBJECTID_RICKY			; $76f2
+	sub SPECIALOBJECTID_RICKY
 +
-	ld hl,maplePresentLocationsTable	; $76f4
-	rst_addDoubleIndex			; $76f7
-	ldi a,(hl)		; $76f8
-	ld h,(hl)		; $76f9
-	ld l,a			; $76fa
+	ld hl,maplePresentLocationsTable
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
 @startCheck:
-	ld a,(wActiveRoom)		; $76fb
-	call checkFlag		; $76fe
-	ret nz			; $7701
+	ld a,(wActiveRoom)
+	call checkFlag
+	ret nz
 
-	ld a,MAPLES_RING		; $7702
-	call cpActiveRing		; $7704
-	ld e,30			; $7707
-	jr nz,+			; $7709
-	srl e			; $770b
+	ld a,MAPLES_RING
+	call cpActiveRing
+	ld e,30
+	jr nz,+
+	srl e
 +
-	ld hl,wMapleKillCounter		; $770d
-	ld a,(hl)		; $7710
-	cp e			; $7711
-	ret c			; $7712
+	ld hl,wMapleKillCounter
+	ld a,(hl)
+	cp e
+	ret c
 
 	; Spawn maple
-	ld (hl),$00		; $7713
-	ld hl,w1Companion.enabled	; $7715
-	ld a,$01		; $7718
+	ld (hl),$00
+	ld hl,w1Companion.enabled
+	ld a,$01
 	ld (wcc85),a ; Prevent enemies & item drops from spawning
-	ld (wIsMaplePresent),a		; $771d
-	ldi (hl),a		; $7720
-	ld (hl),$0e		; $7721
-	ld l,<w1Companion.yh		; $7723
-	ld (hl),$18		; $7725
-	ld l,<w1Companion.xh		; $7727
-	ld (hl),$b8		; $7729
-	ret			; $772b
+	ld (wIsMaplePresent),a
+	ldi (hl),a
+	ld (hl),$0e
+	ld l,<w1Companion.yh
+	ld (hl),$18
+	ld l,<w1Companion.xh
+	ld (hl),$b8
+	ret
 
 .include "build/data/mapleLocations.s"
 
@@ -160,48 +160,48 @@ checkAndSpawnMaple:
 .ifdef ROM_SEASONS
 
 updateRosaDateStatus:
-	ld a,GLOBALFLAG_DATING_ROSA		; $5f86
-	call checkGlobalFlag		; $5f88
-	ret z			; $5f8b
+	ld a,GLOBALFLAG_DATING_ROSA
+	call checkGlobalFlag
+	ret z
 
 	; Left subrosia?
-	ld a,(wActiveGroup)		; $5f8c
-	or a			; $5f8f
-	jr nz,@stillDating		; $5f90
+	ld a,(wActiveGroup)
+	or a
+	jr nz,@stillDating
 
 @unset:
-	ld a,GLOBALFLAG_DATING_ROSA		; $5f92
-	jp unsetGlobalFlag		; $5f94
+	ld a,GLOBALFLAG_DATING_ROSA
+	jp unsetGlobalFlag
 
 @stillDating:
-	cp $03			; $5f97
-	jr nz,@spawnIfNotHere	; $5f99
+	cp $03
+	jr nz,@spawnIfNotHere
 
-	ld a,(wActiveRoom)		; $5f9b
+	ld a,(wActiveRoom)
 	cp $95 ; Don't spawn her in dancing room
-	ret z			; $5fa0
+	ret z
 	cp $ab ; Despawn her in pirate portal room
-	jr z,@unset	; $5fa3
+	jr z,@unset
 
 	; Spawn rosa if she's not already here
 @spawnIfNotHere:
-	ld hl,w1ReservedInteraction1.id		; $5fa5
+	ld hl,w1ReservedInteraction1.id
 @nextInteraction:
-	ld a,(hl)		; $5fa8
-	cp INTERACID_ROSA			; $5fa9
-	ret z			; $5fab
+	ld a,(hl)
+	cp INTERACID_ROSA
+	ret z
 
-	inc h			; $5fac
-	ld a,h			; $5fad
-	cp LAST_INTERACTION_INDEX+1			; $5fae
-	jr nz,@nextInteraction	; $5fb0
+	inc h
+	ld a,h
+	cp LAST_INTERACTION_INDEX+1
+	jr nz,@nextInteraction
 
-	call getFreeInteractionSlot		; $5fb2
-	ret nz			; $5fb5
-	ld (hl),INTERACID_ROSA		; $5fb6
-	inc l			; $5fb8
+	call getFreeInteractionSlot
+	ret nz
+	ld (hl),INTERACID_ROSA
+	inc l
 	ld (hl),$01 ; [subid] = 1
-	ret			; $5fbb
+	ret
 .endif
 
 ;;
@@ -211,9 +211,9 @@ updateRosaDateStatus:
 ; @param	l	Gets moved to 'c' before calling the function
 ; @addr{77b2}
 functionCaller:
-	ld c,l			; $77b2
-	ld a,h			; $77b3
-	rst_jumpTable			; $77b4
+	ld c,l
+	ld a,h
+	rst_jumpTable
 	.dw _clearEnemiesKilledList
 	.dw _addRoomToEnemiesKilledList
 	.dw _markEnemyAsKilledInRoom
@@ -228,166 +228,166 @@ functionCaller:
 ; Marks an enemy as killed so it doesn't respawn for a bit.
 ; @addr{77c3}
 _addRoomToEnemiesKilledList:
-	ld hl,wEnemiesKilledList		; $77c3
-	ld a,(wActiveRoom)		; $77c6
-	ld b,$08		; $77c9
+	ld hl,wEnemiesKilledList
+	ld a,(wActiveRoom)
+	ld b,$08
 --
-	cp (hl)			; $77cb
-	jr z,@found		; $77cc
-	inc l			; $77ce
-	inc l			; $77cf
-	dec b			; $77d0
-	jr nz,--		; $77d1
+	cp (hl)
+	jr z,@found
+	inc l
+	inc l
+	dec b
+	jr nz,--
 
 	; Room not found: insert it into wEnemiesKilledList
-	ld a,(wEnemiesKilledListTail)		; $77d3
-	ld b,a			; $77d6
-	inc a			; $77d7
-	inc a			; $77d8
-	and $0f			; $77d9
-	ld (wEnemiesKilledListTail),a		; $77db
-	ld a,b			; $77de
-	and $0f			; $77df
-	add <wEnemiesKilledList			; $77e1
-	ld l,a			; $77e3
-	ld a,(wActiveRoom)		; $77e4
-	ldi (hl),a		; $77e7
+	ld a,(wEnemiesKilledListTail)
+	ld b,a
+	inc a
+	inc a
+	and $0f
+	ld (wEnemiesKilledListTail),a
+	ld a,b
+	and $0f
+	add <wEnemiesKilledList
+	ld l,a
+	ld a,(wActiveRoom)
+	ldi (hl),a
 
-	xor a			; $77e8
-	ld (hl),a		; $77e9
-	ld (wEnemyPlacement.killedEnemiesBitset),a		; $77ea
-	ret			; $77ed
+	xor a
+	ld (hl),a
+	ld (wEnemyPlacement.killedEnemiesBitset),a
+	ret
 
 @found:
-	inc l			; $77ee
-	ld a,(hl)		; $77ef
-	ld (wEnemyPlacement.killedEnemiesBitset),a		; $77f0
-	ret			; $77f3
+	inc l
+	ld a,(hl)
+	ld (wEnemyPlacement.killedEnemiesBitset),a
+	ret
 
 _stub_02_77f4:
-	ret			; $77f4
+	ret
 
 ;;
 ; @param	d	Enemy index
 ; @addr{77f5}
 _markEnemyAsKilledInRoom:
-	ld hl,wEnemiesKilledList		; $77f5
-	ld b,$08		; $77f8
-	ld a,(wActiveRoom)		; $77fa
+	ld hl,wEnemiesKilledList
+	ld b,$08
+	ld a,(wActiveRoom)
 --
-	cp (hl)			; $77fd
-	jr z,@foundRoom			; $77fe
-	inc l			; $7800
-	inc l			; $7801
-	dec b			; $7802
-	jr nz,--		; $7803
-	ret			; $7805
+	cp (hl)
+	jr z,@foundRoom
+	inc l
+	inc l
+	dec b
+	jr nz,--
+	ret
 
 @foundRoom:
-	inc l			; $7806
-	ld e,Enemy.enabled		; $7807
-	ld a,(de)		; $7809
-	and $70			; $780a
-	swap a			; $780c
-	ld bc,bitTable		; $780e
-	add c			; $7811
-	ld c,a			; $7812
-	ld a,(bc)		; $7813
-	or (hl)			; $7814
-	ld (hl),a		; $7815
-	ret			; $7816
+	inc l
+	ld e,Enemy.enabled
+	ld a,(de)
+	and $70
+	swap a
+	ld bc,bitTable
+	add c
+	ld c,a
+	ld a,(bc)
+	or (hl)
+	ld (hl),a
+	ret
 
 ;;
 ; @addr{7817}
 _clearEnemiesKilledList:
-	xor a			; $7817
-	ld (wEnemiesKilledListTail),a		; $7818
-	ld hl,wEnemiesKilledList		; $781b
-	ld b,$10		; $781e
-	jp clearMemory		; $7820
+	xor a
+	ld (wEnemiesKilledListTail),a
+	ld hl,wEnemiesKilledList
+	ld b,$10
+	jp clearMemory
 
 ;;
 ; This places the numbers $00-$ff into w4RandomBuffer in a random order.
 ; @addr{7823}
 generateRandomBuffer:
-	push de			; $7823
+	push de
 
 	; Insert numbers $00-$ff into w4TileMap
-	ld a,:w4RandomBuffer		; $7824
-	ld ($ff00+R_SVBK),a	; $7826
-	ld hl,w4RandomBuffer		; $7828
-	ld b,$00		; $782b
+	ld a,:w4RandomBuffer
+	ld ($ff00+R_SVBK),a
+	ld hl,w4RandomBuffer
+	ld b,$00
 --
-	ld a,b			; $782d
-	ldi (hl),a		; $782e
-	inc b			; $782f
-	jr nz,--		; $7830
+	ld a,b
+	ldi (hl),a
+	inc b
+	jr nz,--
 
 	; Now randomly swap the contents of the buffer 256 times
-	ld hl,w4RandomBuffer+$ff		; $7832
-	ld d,h			; $7835
-	call getRandomNumber		; $7836
-	ld e,a			; $7839
-	call @swapDeHlMemory		; $783a
+	ld hl,w4RandomBuffer+$ff
+	ld d,h
+	call getRandomNumber
+	ld e,a
+	call @swapDeHlMemory
 
-	ld b,$ff		; $783d
+	ld b,$ff
 --
-	call getRandomNumber		; $783f
-	ld c,l			; $7842
-	call multiplyAByC		; $7843
-	ld e,h			; $7846
-	ld l,c			; $7847
-	ld h,>w4RandomBuffer		; $7848
-	call @swapDeHlMemory		; $784a
-	dec l			; $784d
-	jr nz,--		; $784e
+	call getRandomNumber
+	ld c,l
+	call multiplyAByC
+	ld e,h
+	ld l,c
+	ld h,>w4RandomBuffer
+	call @swapDeHlMemory
+	dec l
+	jr nz,--
 
-	ld a,$01		; $7850
-	ld ($ff00+R_SVBK),a	; $7852
-	pop de			; $7854
-	ret			; $7855
+	ld a,$01
+	ld ($ff00+R_SVBK),a
+	pop de
+	ret
 
 @swapDeHlMemory:
-	ld a,(de)		; $7856
-	ld c,a			; $7857
-	ld a,(hl)		; $7858
-	ld (hl),c		; $7859
-	ld (de),a		; $785a
-	ret			; $785b
+	ld a,(de)
+	ld c,a
+	ld a,(hl)
+	ld (hl),c
+	ld (de),a
+	ret
 
 ;;
 ; @param	hFF8B	Flags from object data. (if bit 2 is set, ignore tile solidity.)
 ; @param[out]	cflag	Set on failure
 ; @addr{785c}
 _getRandomPositionForEnemy:
-	ld a,$40		; $785c
-	ld (wEnemyPlacement.randomPlacementAttemptCounter),a		; $785e
+	ld a,$40
+	ld (wEnemyPlacement.randomPlacementAttemptCounter),a
 
 @tryAgain:
-	ld hl,wEnemyPlacement.randomPlacementAttemptCounter		; $7861
-	dec (hl)		; $7864
-	jr z,@giveUp			; $7865
+	ld hl,wEnemyPlacement.randomPlacementAttemptCounter
+	dec (hl)
+	jr z,@giveUp
 
-	call _getCandidatePositionForEnemy		; $7867
-	ld (wEnemyPlacement.enemyPos),a		; $786a
-	ld c,a			; $786d
-	call _checkPositionValidForEnemySpawn		; $786e
-	jr c,@tryAgain		; $7871
+	call _getCandidatePositionForEnemy
+	ld (wEnemyPlacement.enemyPos),a
+	ld c,a
+	call _checkPositionValidForEnemySpawn
+	jr c,@tryAgain
 
 	; If the appropriate flag is set, the tile it's placed on doesn't matter.
-	ldh a,(<hFF8B)	; $7873
-	and $04			; $7875
-	jr nz,+			; $7877
+	ldh a,(<hFF8B)
+	and $04
+	jr nz,+
 
-	call _checkTileValidForEnemySpawn		; $7879
-	jr c,@tryAgain			; $787c
+	call _checkTileValidForEnemySpawn
+	jr c,@tryAgain
 +
-	xor a			; $787e
-	ret			; $787f
+	xor a
+	ret
 
 @giveUp:
-	scf			; $7880
-	ret			; $7881
+	scf
+	ret
 
 ;;
 ; Checks that the tile at a given position is valid to place an enemy on.
@@ -397,21 +397,21 @@ _getRandomPositionForEnemy:
 ; @param[out]	cflag	nc if enemy can be placed here
 ; @addr{7882}
 _checkTileValidForEnemySpawn:
-	ld b,>wRoomCollisions		; $7882
-	ld a,(bc)		; $7884
-	or a			; $7885
-	jr nz,++		; $7886
+	ld b,>wRoomCollisions
+	ld a,(bc)
+	or a
+	jr nz,++
 
 	; If the tile is non-solid, there may still be an exception for it; lookup the
 	; list of nonsolid tiles that enemies can't spawn onto.
-	ld b,>wRoomLayout		; $7888
-	ld a,(bc)		; $788a
-	ld hl,enemyUnspawnableTilesTable		; $788b
-	call lookupCollisionTable		; $788e
-	ret nc			; $7891
+	ld b,>wRoomLayout
+	ld a,(bc)
+	ld hl,enemyUnspawnableTilesTable
+	call lookupCollisionTable
+	ret nc
 ++
-	scf			; $7892
-	ret			; $7893
+	scf
+	ret
 
 ;;
 ; This checks the boundaries of a position to ensure that it's ok to spawn an enemy here.
@@ -429,52 +429,52 @@ _checkTileValidForEnemySpawn:
 _checkPositionValidForEnemySpawn:
 	; Check if this is a standard transition, or a walk-in-from-outside-screen
 	; transition
-	ld a,(wScrollMode)		; $7894
-	and $08			; $7897
-	jr z,@nonScrollingTransition		; $7899
+	ld a,(wScrollMode)
+	and $08
+	jr z,@nonScrollingTransition
 
 	; This is a standard, scrolling screen transition
 
 @scrollingTransition:
-	ld a,(wActiveGroup)		; $789b
-	and $04			; $789e
-	ld hl,@smallRoom		; $78a0
-	jr z,+			; $78a3
-	ld hl,@largeRoom		; $78a5
+	ld a,(wActiveGroup)
+	and $04
+	ld hl,@smallRoom
+	jr z,+
+	ld hl,@largeRoom
 +
-	ld a,(wScreenTransitionDirection)		; $78a8
-	add a			; $78ab
-	rst_addDoubleIndex			; $78ac
+	ld a,(wScreenTransitionDirection)
+	add a
+	rst_addDoubleIndex
 
 	; Check Y is high enough
-	ld a,c			; $78ad
-	and $f0			; $78ae
-	swap a			; $78b0
-	cp (hl)			; $78b2
-	jr c,@fail	; $78b3
+	ld a,c
+	and $f0
+	swap a
+	cp (hl)
+	jr c,@fail
 
 	; Check Y is low enough
-	inc hl			; $78b5
-	cp (hl)			; $78b6
-	jr nc,@fail	; $78b7
+	inc hl
+	cp (hl)
+	jr nc,@fail
 
 	; Check X is high enough
-	ld a,c			; $78b9
-	and $0f			; $78ba
-	inc hl			; $78bc
-	cp (hl)			; $78bd
-	jr c,@fail	; $78be
+	ld a,c
+	and $0f
+	inc hl
+	cp (hl)
+	jr c,@fail
 
 	; Check X is low enough
-	inc hl			; $78c0
-	cp (hl)			; $78c1
-	jr nc,@fail			; $78c2
+	inc hl
+	cp (hl)
+	jr nc,@fail
 
-	xor a			; $78c4
-	ret			; $78c5
+	xor a
+	ret
 @fail:
-	scf			; $78c6
-	ret			; $78c7
+	scf
+	ret
 
 ; Data format:
 ;   b0: minimum enemy y-position (inclusive)
@@ -497,55 +497,55 @@ _checkPositionValidForEnemySpawn:
 
 
 @nonScrollingTransition:
-	lda DIR_UP			; $78e8
-	ld (wScreenTransitionDirection),a		; $78e9
+	lda DIR_UP
+	ld (wScreenTransitionDirection),a
 
 	; Is Link entering from off-screen? If so, treat this the same as a scrolling
 	; transition.
-	ld a,(wWarpDestPos)		; $78ec
-	ld b,a			; $78ef
-	cp $f0			; $78f0
-	jr nc,@scrollingTransition	; $78f2
+	ld a,(wWarpDestPos)
+	ld b,a
+	cp $f0
+	jr nc,@scrollingTransition
 
 	; Otherwise, this is a warp where link just appears at an arbitrary position.
 
-	and $f0			; $78f4
-	swap a			; $78f6
+	and $f0
+	swap a
 	ld h,a ; h = y-position of warp
-	ld a,c			; $78f9
-	and $f0			; $78fa
+	ld a,c
+	and $f0
 	swap a ; a = y-position of candidate position
-	sub h			; $78fe
-	call @getAbsoluteValue		; $78ff
+	sub h
+	call @getAbsoluteValue
 	cp $03 ; enemy should be at least 3 tiles away
-	jr c,++			; $7904
+	jr c,++
 
 @success:
-	xor a			; $7906
-	ret			; $7907
+	xor a
+	ret
 ++
-	ld a,b			; $7908
-	and $0f			; $7909
+	ld a,b
+	and $0f
 	ld h,a ; h = x-position of warp
-	ld a,c			; $790c
+	ld a,c
 	and $0f ; a = x-position of candidate position
-	sub h			; $790f
-	call @getAbsoluteValue		; $7910
-	cp $03			; $7913
-	jr nc,@success		; $7915
+	sub h
+	call @getAbsoluteValue
+	cp $03
+	jr nc,@success
 
 	; Failure (enemy can't be placed here)
-	scf			; $7917
-	ret			; $7918
+	scf
+	ret
 
 ;;
 ; @addr{7919}
 @getAbsoluteValue:
-	bit 7,a			; $7919
-	ret z			; $791b
-	cpl			; $791c
-	inc a			; $791d
-	ret			; $791e
+	bit 7,a
+	ret z
+	cpl
+	inc a
+	ret
 
 
 ; This lists the tiles that an enemy can't spawn on (despite being non-solid).
@@ -643,19 +643,19 @@ enemyUnspawnableTilesTable:
 ; @param[out]	a	Next value from w4RandomBuffer
 ; @addr{7959}
 _getNextValueFromRandomBuffer:
-	ld hl,wEnemyPlacement.randomBufferIndex		; $7959
-	inc (hl)		; $795c
+	ld hl,wEnemyPlacement.randomBufferIndex
+	inc (hl)
 
-	ld a,:w4TileMap		; $795d
-	ld ($ff00+R_SVBK),a	; $795f
-	ld l,(hl)		; $7961
-	ld h,>w4RandomBuffer		; $7962
-	ld h,(hl)		; $7964
+	ld a,:w4TileMap
+	ld ($ff00+R_SVBK),a
+	ld l,(hl)
+	ld h,>w4RandomBuffer
+	ld h,(hl)
 
-	ld a,$01		; $7965
-	ld ($ff00+R_SVBK),a	; $7967
-	ld a,h			; $7969
-	ret			; $796a
+	ld a,$01
+	ld ($ff00+R_SVBK),a
+	ld a,h
+	ret
 
 ;;
 ; Gets a random position within the room's boundaries that does not already have an enemy
@@ -664,79 +664,79 @@ _getNextValueFromRandomBuffer:
 ; @param[out]	a	Candidate position for an enemy
 ; @addr{796b}
 _getCandidatePositionForEnemy:
-	ld a,(wActiveGroup)		; $796b
-	and $04			; $796e
-	jr nz,@dungeon		; $7970
+	ld a,(wActiveGroup)
+	and $04
+	jr nz,@dungeon
 
 @overworld:
-	call _getNextValueFromRandomBuffer		; $7972
-	cp SMALL_ROOM_HEIGHT<<4			; $7975
-	jr nc,@overworld	; $7977
+	call _getNextValueFromRandomBuffer
+	cp SMALL_ROOM_HEIGHT<<4
+	jr nc,@overworld
 
-	ld b,a			; $7979
-	and $0f			; $797a
-	cp SMALL_ROOM_WIDTH			; $797c
-	jr nc,@overworld	; $797e
+	ld b,a
+	and $0f
+	cp SMALL_ROOM_WIDTH
+	jr nc,@overworld
 
-	call _checkEnemyPlacedAtPosition		; $7980
-	jr c,@overworld		; $7983
+	call _checkEnemyPlacedAtPosition
+	jr c,@overworld
 
-	ld a,b			; $7985
-	ret			; $7986
+	ld a,b
+	ret
 
 @dungeon:
-	call _getNextValueFromRandomBuffer		; $7987
-	cp $b0			; $798a
-	jr nc,@dungeon	; $798c
+	call _getNextValueFromRandomBuffer
+	cp $b0
+	jr nc,@dungeon
 
-	ld b,a			; $798e
-	and $f0			; $798f
+	ld b,a
+	and $f0
 	jr z,@dungeon ; First row not allowed
 
-	cp (LARGE_ROOM_HEIGHT-1)<<4			; $7993
+	cp (LARGE_ROOM_HEIGHT-1)<<4
 	jr z,@dungeon ; Last row not allowed
 
-	ld a,b			; $7997
-	and $0f			; $7998
+	ld a,b
+	and $0f
 	jr z,@dungeon ; First column not allowed
 
-	cp LARGE_ROOM_WIDTH-1			; $799c
+	cp LARGE_ROOM_WIDTH-1
 	jr nc,@dungeon ; Last column (and higher) not allowed
 
 	; Can't place multiple enemies in the same position
-	call _checkEnemyPlacedAtPosition		; $79a0
-	jr c,@dungeon	; $79a3
+	call _checkEnemyPlacedAtPosition
+	jr c,@dungeon
 
-	ld a,b			; $79a5
-	ret			; $79a6
+	ld a,b
+	ret
 
 ;;
 ; @param	b	Position to check
 ; @param[out]	cflag	Set if an enemy has been placed at position 'b'.
 ; @addr{79a7}
 _checkEnemyPlacedAtPosition:
-	ld a,(wEnemyPlacement.numEnemies)		; $79a7
-	or a			; $79aa
-	ret z			; $79ab
+	ld a,(wEnemyPlacement.numEnemies)
+	or a
+	ret z
 
-	push bc			; $79ac
-	ld c,a			; $79ad
-	ld hl,wEnemyPlacement.placedEnemyPositions		; $79ae
+	push bc
+	ld c,a
+	ld hl,wEnemyPlacement.placedEnemyPositions
 --
-	ldi a,(hl)		; $79b1
-	cp b			; $79b2
-	jr z,+			; $79b3
+	ldi a,(hl)
+	cp b
+	jr z,+
 
-	dec c			; $79b5
-	jr nz,--		; $79b6
+	dec c
+	jr nz,--
 
-	pop bc			; $79b8
-	xor a			; $79b9
-	ret			; $79ba
+	pop bc
+	xor a
+	ret
 +
-	pop bc			; $79bb
-	scf			; $79bc
-	ret			; $79bd
+	pop bc
+	scf
+	ret
 
 
 .ifdef ROM_AGES
@@ -745,29 +745,29 @@ _checkEnemyPlacedAtPosition:
 ; Checks if the timeportal exists in the current room, and loads the interaction if so.
 ; @addr{79be}
 _checkSpawnTimeportalInteraction:
-	xor a			; $79be
-	ld (wcddd),a		; $79bf
+	xor a
+	ld (wcddd),a
 
 	; Check [wPortalGroup]=[wActiveGroup], [wPortalRoom]=[wActiveRoom].
-	ld hl,wPortalGroup		; $79c2
-	ld a,(wActiveGroup)		; $79c5
-	cp (hl)			; $79c8
-	ret nz			; $79c9
-	inc l			; $79ca
-	ld a,(wActiveRoom)		; $79cb
-	cp (hl)			; $79ce
-	ret nz			; $79cf
+	ld hl,wPortalGroup
+	ld a,(wActiveGroup)
+	cp (hl)
+	ret nz
+	inc l
+	ld a,(wActiveRoom)
+	cp (hl)
+	ret nz
 
-	inc l			; $79d0
+	inc l
 	ld c,(hl) ; hl = wPortalPos
-	call getFreeInteractionSlot		; $79d2
-	ret nz			; $79d5
+	call getFreeInteractionSlot
+	ret nz
 
-	ld (hl),INTERACID_TIMEPORTAL		; $79d6
-	ld a,$01		; $79d8
-	ld (wcddd),a		; $79da
-	ld l,Interaction.yh		; $79dd
-	jp setShortPosition_paramC		; $79df
+	ld (hl),INTERACID_TIMEPORTAL
+	ld a,$01
+	ld (wcddd),a
+	ld l,Interaction.yh
+	jp setShortPosition_paramC
 
 ;;
 ; Determines the value for wRoomStateModifier. (For seasons, it's just the season; for
@@ -776,39 +776,39 @@ _checkSpawnTimeportalInteraction:
 ;
 ; @addr{79e2}
 calculateRoomStateModifier:
-	ld a,(wActiveGroup)		; $79e2
-	or a			; $79e5
-	jr nz,@standard		; $79e6
+	ld a,(wActiveGroup)
+	or a
+	jr nz,@standard
 
 	; Group 0: check for animal companion regions
-	ld a,(wRoomPack)		; $79e8
-	cp $7f			; $79eb
-	jr z,@companionRegion	; $79ed
+	ld a,(wRoomPack)
+	cp $7f
+	jr z,@companionRegion
 
 @standard:
-	ld a,(wTilesetFlags)		; $79ef
-	and TILESETFLAG_UNDERWATER			; $79f2
-	ld b,$00		; $79f4
-	jr z,+			; $79f6
-	inc b			; $79f8
+	ld a,(wTilesetFlags)
+	and TILESETFLAG_UNDERWATER
+	ld b,$00
+	jr z,+
+	inc b
 +
-	call getThisRoomFlags		; $79f9
-	and ROOMFLAG_LAYOUTSWAP			; $79fc
-	jr z,+			; $79fe
-	inc b			; $7a00
+	call getThisRoomFlags
+	and ROOMFLAG_LAYOUTSWAP
+	jr z,+
+	inc b
 +
-	ld a,b			; $7a01
-	ld (wRoomStateModifier),a		; $7a02
-	ret			; $7a05
+	ld a,b
+	ld (wRoomStateModifier),a
+	ret
 
 @companionRegion:
-	ld a,(wAnimalCompanion)		; $7a06
-	or a			; $7a09
-	jr z,@standard		; $7a0a
+	ld a,(wAnimalCompanion)
+	or a
+	jr z,@standard
 
-	sub SPECIALOBJECTID_RICKY			; $7a0c
-	ld (wRoomStateModifier),a		; $7a0e
-	ret			; $7a11
+	sub SPECIALOBJECTID_RICKY
+	ld (wRoomStateModifier),a
+	ret
 
 ;;
 ; If there are whirlpools or pollution tiles on the screen, this creates a part of type
@@ -816,26 +816,26 @@ calculateRoomStateModifier:
 ;
 ; @addr{7a12}
 createSeaEffectsPartIfApplicable:
-	ld a,(wActiveCollisions)		; $7a12
-	ld hl,@table		; $7a15
-	rst_addAToHl			; $7a18
-	ld a,(hl)		; $7a19
-	rst_addAToHl			; $7a1a
+	ld a,(wActiveCollisions)
+	ld hl,@table
+	rst_addAToHl
+	ld a,(hl)
+	rst_addAToHl
 --
-	ldi a,(hl)		; $7a1b
-	or a			; $7a1c
-	ret z			; $7a1d
+	ldi a,(hl)
+	or a
+	ret z
 
-	push hl			; $7a1e
-	call findTileInRoom		; $7a1f
-	pop hl			; $7a22
-	jr nz,--		; $7a23
+	push hl
+	call findTileInRoom
+	pop hl
+	jr nz,--
 
-	call getFreePartSlot		; $7a25
-	ret nz			; $7a28
+	call getFreePartSlot
+	ret nz
 
-	ld (hl),PARTID_SEA_EFFECTS		; $7a29
-	ret			; $7a2b
+	ld (hl),PARTID_SEA_EFFECTS
+	ret
 
 @table:
 	.db @data0-CADDR
@@ -863,22 +863,22 @@ createSeaEffectsPartIfApplicable:
 ;;
 ; @addr{7a3a}
 func_02_7a3a:
-	ld a,(wcddd)		; $7a3a
-	or a			; $7a3d
-	ret z			; $7a3e
-	dec a			; $7a3f
-	jr z,+			; $7a40
+	ld a,(wcddd)
+	or a
+	ret z
+	dec a
+	jr z,+
 
-	ld (wcddd),a		; $7a42
-	ret			; $7a45
+	ld (wcddd),a
+	ret
 +
-	call getFreeInteractionSlot		; $7a46
-	ret nz			; $7a49
+	call getFreeInteractionSlot
+	ret nz
 
-	ld (hl),INTERACID_TIMEPORTAL		; $7a4a
-	ld a,(wPortalPos)		; $7a4c
-	ld l,Interaction.yh		; $7a4f
-	jp setShortPosition		; $7a51
+	ld (hl),INTERACID_TIMEPORTAL
+	ld a,(wPortalPos)
+	ld l,Interaction.yh
+	jp setShortPosition
 
 .endif ; ROM_AGES
 

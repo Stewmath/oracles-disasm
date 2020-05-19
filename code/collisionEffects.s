@@ -3,79 +3,79 @@
 ; @addr{41d1}
 checkEnemyAndPartCollisions:
 	; Calculate shield position
-	ld a,(w1Link.direction)		; $41d1
-	add a			; $41d4
-	add a			; $41d5
-	ld hl,@shieldPositionOffsets		; $41d6
-	rst_addAToHl			; $41d9
-	ld de,wShieldY		; $41da
-	ld a,(w1Link.yh)		; $41dd
-	add (hl)		; $41e0
-	ld (de),a		; $41e1
-	inc hl			; $41e2
-	inc e			; $41e3
-	ld a,(w1Link.xh)		; $41e4
-	add (hl)		; $41e7
-	ld (de),a		; $41e8
+	ld a,(w1Link.direction)
+	add a
+	add a
+	ld hl,@shieldPositionOffsets
+	rst_addAToHl
+	ld de,wShieldY
+	ld a,(w1Link.yh)
+	add (hl)
+	ld (de),a
+	inc hl
+	inc e
+	ld a,(w1Link.xh)
+	add (hl)
+	ld (de),a
 
-	inc hl			; $41e9
-	inc e			; $41ea
-	ldi a,(hl)		; $41eb
-	ld (de),a		; $41ec
-	inc e			; $41ed
-	ldi a,(hl)		; $41ee
-	ld (de),a		; $41ef
+	inc hl
+	inc e
+	ldi a,(hl)
+	ld (de),a
+	inc e
+	ldi a,(hl)
+	ld (de),a
 
 	; Check collisions for all Enemies
-	ld a,Enemy.start		; $41f0
-	ldh (<hActiveObjectType),a	; $41f2
-	ld d,FIRST_ENEMY_INDEX		; $41f4
-	ld a,d			; $41f6
+	ld a,Enemy.start
+	ldh (<hActiveObjectType),a
+	ld d,FIRST_ENEMY_INDEX
+	ld a,d
 @nextEnemy:
-	ldh (<hActiveObject),a	; $41f7
-	ld h,d			; $41f9
-	ld l,Enemy.collisionType		; $41fa
-	bit 7,(hl)		; $41fc
-	jr z,+			; $41fe
+	ldh (<hActiveObject),a
+	ld h,d
+	ld l,Enemy.collisionType
+	bit 7,(hl)
+	jr z,+
 
-	ld a,(hl)		; $4200
-	ld l,Enemy.var2a		; $4201
-	bit 7,(hl)		; $4203
-	call z,_enemyCheckCollisions		; $4205
+	ld a,(hl)
+	ld l,Enemy.var2a
+	bit 7,(hl)
+	call z,_enemyCheckCollisions
 +
-	inc d			; $4208
-	ld a,d			; $4209
-	cp LAST_ENEMY_INDEX+1			; $420a
-	jr c,@nextEnemy		; $420c
+	inc d
+	ld a,d
+	cp LAST_ENEMY_INDEX+1
+	jr c,@nextEnemy
 
 	; Check collisions for all Parts
-	ld a,Part.start		; $420e
-	ldh (<hActiveObjectType),a	; $4210
-	ld d,FIRST_PART_INDEX		; $4212
-	ld a,d			; $4214
+	ld a,Part.start
+	ldh (<hActiveObjectType),a
+	ld d,FIRST_PART_INDEX
+	ld a,d
 @nextPart:
-	ldh (<hActiveObject),a	; $4215
-	ld h,d			; $4217
-	ld l,Part.collisionType		; $4218
-	bit 7,(hl)		; $421a
-	jr z,+			; $421c
+	ldh (<hActiveObject),a
+	ld h,d
+	ld l,Part.collisionType
+	bit 7,(hl)
+	jr z,+
 
-	ld l,Part.var2a		; $421e
-	bit 7,(hl)		; $4220
-	jr nz,+			; $4222
+	ld l,Part.var2a
+	bit 7,(hl)
+	jr nz,+
 
 	; Check Part.invincibilityCounter
-	inc l			; $4224
-	ld a,(hl)		; $4225
-	or a			; $4226
-	call z,_partCheckCollisions		; $4227
+	inc l
+	ld a,(hl)
+	or a
+	call z,_partCheckCollisions
 +
-	inc d			; $422a
-	ld a,d			; $422b
-	cp LAST_PART_INDEX+1			; $422c
-	jr c,@nextPart		; $422e
+	inc d
+	ld a,d
+	cp LAST_PART_INDEX+1
+	jr c,@nextPart
 
-	ret			; $4230
+	ret
 
 ; @addr{4231}
 @shieldPositionOffsets:
@@ -91,11 +91,11 @@ checkEnemyAndPartCollisions:
 ; @param d Part index
 ; @addr{4241}
 _partCheckCollisions:
-	ld e,Part.collisionType		; $4241
-	ld a,(de)		; $4243
-	ld hl,partActiveCollisions		; $4244
-	ld e,Part.yh		; $4247
-	jr ++			; $4249
+	ld e,Part.collisionType
+	ld a,(de)
+	ld hl,partActiveCollisions
+	ld e,Part.yh
+	jr ++
 
 ;;
 ; Check if the given enemy is colliding with an item or link, and do the appropriate
@@ -104,182 +104,182 @@ _partCheckCollisions:
 ; @param d Enemy index
 ; @addr{424b}
 _enemyCheckCollisions:
-	ld hl,enemyActiveCollisions		; $424b
-	ld e,Enemy.yh		; $424e
+	ld hl,enemyActiveCollisions
+	ld e,Enemy.yh
 
 ++
-	add a			; $4250
-	ld c,a			; $4251
-	ld b,$00		; $4252
-	add hl,bc		; $4254
-	add hl,bc		; $4255
+	add a
+	ld c,a
+	ld b,$00
+	add hl,bc
+	add hl,bc
 
 	; Store pointer for later
-	ld a,l			; $4256
-	ldh (<hFF92),a	; $4257
-	ld a,h			; $4259
-	ldh (<hFF93),a	; $425a
+	ld a,l
+	ldh (<hFF92),a
+	ld a,h
+	ldh (<hFF93),a
 
 	; Store X in hFF8E, Y in hFF8F, Z in hFF91
-	ld h,d			; $425c
-	ld l,e			; $425d
-	ldi a,(hl)		; $425e
-	ldh (<hFF8F),a	; $425f
-	inc l			; $4261
-	ldi a,(hl)		; $4262
-	ldh (<hFF8E),a	; $4263
-	inc l			; $4265
-	ld a,(hl)		; $4266
-	ldh (<hFF91),a	; $4267
+	ld h,d
+	ld l,e
+	ldi a,(hl)
+	ldh (<hFF8F),a
+	inc l
+	ldi a,(hl)
+	ldh (<hFF8E),a
+	inc l
+	ld a,(hl)
+	ldh (<hFF91),a
 
 	; Check invincibility
-	ld a,l			; $4269
-	add Object.invincibilityCounter-Object.zh		; $426a
-	ld l,a			; $426c
-	ld a,(hl)		; $426d
-	or a			; $426e
-	jr nz,@doneCheckingItems	; $426f
+	ld a,l
+	add Object.invincibilityCounter-Object.zh
+	ld l,a
+	ld a,(hl)
+	or a
+	jr nz,@doneCheckingItems
 
 	; Check collisions with items
-	ld h,FIRST_ITEM_INDEX		; $4271
+	ld h,FIRST_ITEM_INDEX
 @checkItem:
-	ld l,Item.collisionType		; $4273
-	ld a,(hl)		; $4275
-	bit 7,a			; $4276
-	jr z,@nextItem		; $4278
+	ld l,Item.collisionType
+	ld a,(hl)
+	bit 7,a
+	jr z,@nextItem
 
-	and $7f			; $427a
-	ldh (<hFF90),a	; $427c
-	ld b,a			; $427e
-	ld e,h			; $427f
-	ldh a,(<hFF92)	; $4280
-	ld l,a			; $4282
-	ldh a,(<hFF93)	; $4283
-	ld h,a			; $4285
-	ld a,b			; $4286
-	call @checkFlag		; $4287
-	ld h,e			; $428a
-	jr z,@nextItem		; $428b
+	and $7f
+	ldh (<hFF90),a
+	ld b,a
+	ld e,h
+	ldh a,(<hFF92)
+	ld l,a
+	ldh a,(<hFF93)
+	ld h,a
+	ld a,b
+	call @checkFlag
+	ld h,e
+	jr z,@nextItem
 
-	ld bc,$0e07		; $428d
-	ldh a,(<hFF90)	; $4290
-	cp ITEMCOLLISION_BOMB			; $4292
-	jr nz,++		; $4294
+	ld bc,$0e07
+	ldh a,(<hFF90)
+	cp ITEMCOLLISION_BOMB
+	jr nz,++
 
-	ld l,Item.collisionRadiusY		; $4296
-	ld a,(hl)		; $4298
-	ld c,a			; $4299
-	add a			; $429a
-	ld b,a			; $429b
+	ld l,Item.collisionRadiusY
+	ld a,(hl)
+	ld c,a
+	add a
+	ld b,a
 ++
-	ld l,Item.zh		; $429c
-	ldh a,(<hFF91)	; $429e
-	sub (hl)		; $42a0
-	add c			; $42a1
-	cp b			; $42a2
-	jr nc,@nextItem		; $42a3
+	ld l,Item.zh
+	ldh a,(<hFF91)
+	sub (hl)
+	add c
+	cp b
+	jr nc,@nextItem
 
-	ld l,Item.yh		; $42a5
-	ld b,(hl)		; $42a7
-	ld l,Item.xh		; $42a8
-	ld c,(hl)		; $42aa
-	ld l,Item.collisionRadiusY		; $42ab
-	ldh a,(<hActiveObjectType)	; $42ad
-	add Object.collisionRadiusY			; $42af
-	ld e,a			; $42b1
-	call checkObjectsCollidedFromVariables		; $42b2
-	jp c,@handleCollision		; $42b5
+	ld l,Item.yh
+	ld b,(hl)
+	ld l,Item.xh
+	ld c,(hl)
+	ld l,Item.collisionRadiusY
+	ldh a,(<hActiveObjectType)
+	add Object.collisionRadiusY
+	ld e,a
+	call checkObjectsCollidedFromVariables
+	jp c,@handleCollision
 
 @nextItem:
-	inc h			; $42b8
-	ld a,h			; $42b9
-	cp LAST_STANDARD_ITEM_INDEX+1			; $42ba
-	jr c,@checkItem		; $42bc
+	inc h
+	ld a,h
+	cp LAST_STANDARD_ITEM_INDEX+1
+	jr c,@checkItem
 
 @doneCheckingItems:
-	call checkLinkVulnerable		; $42be
-	ret nc			; $42c1
+	call checkLinkVulnerable
+	ret nc
 
 	; Check for collision with link
 	; (hl points to link object from the call to checkLinkVulnerable)
 
 	; Check if Z positions are within 7 pixels
-	ld l,<w1Link.zh		; $42c2
-	ldh a,(<hFF91)	; $42c4
-	sub (hl)		; $42c6
-	add $07			; $42c7
-	cp $0e			; $42c9
-	ret nc			; $42cb
+	ld l,<w1Link.zh
+	ldh a,(<hFF91)
+	sub (hl)
+	add $07
+	cp $0e
+	ret nc
 
 	; If the shield is out...
-	ld a,(wUsingShield)		; $42cc
-	or a			; $42cf
-	jr z,@checkHitLink		; $42d0
+	ld a,(wUsingShield)
+	or a
+	jr z,@checkHitLink
 
 	; Store shield level as collision type
-	ldh (<hFF90),a	; $42d2
+	ldh (<hFF90),a
 
 	; Check if the shield can defend from this object
-	ldh a,(<hFF92)	; $42d4
-	ld l,a			; $42d6
-	ldh a,(<hFF93)	; $42d7
-	ld h,a			; $42d9
-	ldh a,(<hFF90)	; $42da
-	call @checkFlag		; $42dc
-	jr z,@checkHitLink		; $42df
+	ldh a,(<hFF92)
+	ld l,a
+	ldh a,(<hFF93)
+	ld h,a
+	ldh a,(<hFF90)
+	call @checkFlag
+	jr z,@checkHitLink
 
 	; Check if current object is within the shield's hitbox
-	ld hl,wShieldY		; $42e1
-	ldi a,(hl)		; $42e4
-	ld b,a			; $42e5
-	ldi a,(hl)		; $42e6
-	ld c,a			; $42e7
-	ldh a,(<hActiveObjectType)	; $42e8
-	add <Object.collisionRadiusY			; $42ea
-	ld e,a			; $42ec
-	call checkObjectsCollidedFromVariables		; $42ed
-	ld hl,w1Link		; $42f0
-	jp c,@handleCollision		; $42f3
+	ld hl,wShieldY
+	ldi a,(hl)
+	ld b,a
+	ldi a,(hl)
+	ld c,a
+	ldh a,(<hActiveObjectType)
+	add <Object.collisionRadiusY
+	ld e,a
+	call checkObjectsCollidedFromVariables
+	ld hl,w1Link
+	jp c,@handleCollision
 
 	; Not using shield (or shield is ineffective)
 @checkHitLink:
-	ldh a,(<hActiveObjectType)	; $42f6
-	add Object.stunCounter			; $42f8
-	ld e,a			; $42fa
-	ld a,(de)		; $42fb
-	or a			; $42fc
-	ret nz			; $42fd
+	ldh a,(<hActiveObjectType)
+	add Object.stunCounter
+	ld e,a
+	ld a,(de)
+	or a
+	ret nz
 
 	; Check if the current object responds to link's collisionType
-	ld a,(wLinkObjectIndex)		; $42fe
-	ld h,a			; $4301
-	ld e,a			; $4302
-	ld l,<w1Link.collisionType		; $4303
-	ld a,(hl)		; $4305
-	and $7f			; $4306
-	ldh (<hFF90),a	; $4308
-	ldh a,(<hFF92)	; $430a
-	ld l,a			; $430c
-	ldh a,(<hFF93)	; $430d
-	ld h,a			; $430f
-	ldh a,(<hFF90)	; $4310
-	call @checkFlag		; $4312
-	ret z			; $4315
+	ld a,(wLinkObjectIndex)
+	ld h,a
+	ld e,a
+	ld l,<w1Link.collisionType
+	ld a,(hl)
+	and $7f
+	ldh (<hFF90),a
+	ldh a,(<hFF92)
+	ld l,a
+	ldh a,(<hFF93)
+	ld h,a
+	ldh a,(<hFF90)
+	call @checkFlag
+	ret z
 
 	; If link and the current object collide, damage link
 
-	ld h,e			; $4316
-	ld l,<w1Link.yh		; $4317
-	ld b,(hl)		; $4319
-	ld l,<w1Link.xh		; $431a
-	ld c,(hl)		; $431c
-	ld l,<w1Link.collisionRadiusY		; $431d
-	ldh a,(<hActiveObjectType)	; $431f
-	add Object.collisionRadiusY			; $4321
-	ld e,a			; $4323
-	call checkObjectsCollidedFromVariables		; $4324
-	jp c,@handleCollision		; $4327
-	ret			; $432a
+	ld h,e
+	ld l,<w1Link.yh
+	ld b,(hl)
+	ld l,<w1Link.xh
+	ld c,(hl)
+	ld l,<w1Link.collisionRadiusY
+	ldh a,(<hActiveObjectType)
+	add Object.collisionRadiusY
+	ld e,a
+	call checkObjectsCollidedFromVariables
+	jp c,@handleCollision
+	ret
 
 ;;
 ; This appears to behave identically to the checkFlag function in bank 0.
@@ -288,22 +288,22 @@ _enemyCheckCollisions:
 ; @param hl Start of flags
 ; @addr{432b}
 @checkFlag:
-	ld b,a			; $432b
-	and $f8			; $432c
-	rlca			; $432e
-	swap a			; $432f
-	ld c,a			; $4331
-	ld a,b			; $4332
-	and $07			; $4333
-	ld b,$00		; $4335
-	add hl,bc		; $4337
-	ld c,(hl)		; $4338
-	ld hl,bitTable		; $4339
-	add l			; $433c
-	ld l,a			; $433d
-	ld a,(hl)		; $433e
-	and c			; $433f
-	ret			; $4340
+	ld b,a
+	and $f8
+	rlca
+	swap a
+	ld c,a
+	ld a,b
+	and $07
+	ld b,$00
+	add hl,bc
+	ld c,(hl)
+	ld hl,bitTable
+	add l
+	ld l,a
+	ld a,(hl)
+	and c
+	ret
 
 ;;
 ; @param de Object 1 (Enemy/Part?)
@@ -313,42 +313,42 @@ _enemyCheckCollisions:
 ; @param hFF90 Collision type
 ; @addr{4341}
 @handleCollision:
-	ld a,l			; $4341
-	and $c0			; $4342
-	ld l,a			; $4344
-	push hl			; $4345
-	ld a,WEAPON_ITEM_INDEX		; $4346
-	cp h			; $4348
-	jr nz,@notWeaponItem		; $4349
+	ld a,l
+	and $c0
+	ld l,a
+	push hl
+	ld a,WEAPON_ITEM_INDEX
+	cp h
+	jr nz,@notWeaponItem
 
 @weaponItem:
-	ld a,(w1Link.yh)		; $434b
-	ld b,a			; $434e
-	ld a,(w1Link.xh)		; $434f
-	jr ++			; $4352
+	ld a,(w1Link.yh)
+	ld b,a
+	ld a,(w1Link.xh)
+	jr ++
 
 @notWeaponItem:
-	ldh a,(<hFF8D)	; $4354
-	ld b,a			; $4356
-	ldh a,(<hFF8C)	; $4357
+	ldh a,(<hFF8D)
+	ld b,a
+	ldh a,(<hFF8C)
 
 ++
-	ld c,a			; $4359
-	call objectGetRelativeAngleWithTempVars		; $435a
-	ldh (<hFF8A),a	; $435d
-	ldh a,(<hActiveObjectType)	; $435f
-	add Object.enemyCollisionMode			; $4361
-	ld e,a			; $4363
-	ld a,(de)		; $4364
-	add a			; $4365
-	call multiplyABy16		; $4366
-	ld hl,objectCollisionTable		; $4369
-	add hl,bc		; $436c
-	pop bc			; $436d
-	ldh a,(<hFF90)	; $436e
-	rst_addAToHl			; $4370
-	ld a,(hl)		; $4371
-	rst_jumpTable			; $4372
+	ld c,a
+	call objectGetRelativeAngleWithTempVars
+	ldh (<hFF8A),a
+	ldh a,(<hActiveObjectType)
+	add Object.enemyCollisionMode
+	ld e,a
+	ld a,(de)
+	add a
+	call multiplyABy16
+	ld hl,objectCollisionTable
+	add hl,bc
+	pop bc
+	ldh a,(<hFF90)
+	rst_addAToHl
+	ld a,(hl)
+	rst_jumpTable
 	.dw _collisionEffect00
 	.dw _collisionEffect01
 	.dw _collisionEffect02
@@ -422,7 +422,7 @@ _enemyCheckCollisions:
 ; COLLISIONEFFECT_NONE
 ; @addr{43f3}
 _collisionEffect00:
-	ret			; $43f3
+	ret
 
 ;;
 ; COLLISIONEFFECT_DAMAGE_LINK_WITH_RING_MODIFIER
@@ -431,40 +431,40 @@ _collisionEffect00:
 ; @addr{43f4}
 _collisionEffect3c:
 	; Get Object.id
-	ldh a,(<hActiveObjectType)	; $43f4
-	inc a			; $43f6
-	ld e,a			; $43f7
-	ld a,(de)		; $43f8
-	ld c,a			; $43f9
+	ldh a,(<hActiveObjectType)
+	inc a
+	ld e,a
+	ld a,(de)
+	ld c,a
 
 	; Try to find the id in @ringProtections
-	ld hl,@ringProtections		; $43fa
+	ld hl,@ringProtections
 --
-	ldi a,(hl)		; $43fd
-	or a			; $43fe
-	jr z,_collisionEffect02	; $43ff
+	ldi a,(hl)
+	or a
+	jr z,_collisionEffect02
 
-	cp c			; $4401
-	ldi a,(hl)		; $4402
-	jr nz,--		; $4403
+	cp c
+	ldi a,(hl)
+	jr nz,--
 
 	; If the id was found, check if the corresponding ring is equipped
-	ld c,a			; $4405
-	and $7f			; $4406
-	call cpActiveRing		; $4408
-	jr nz,_collisionEffect02	; $440b
+	ld c,a
+	and $7f
+	call cpActiveRing
+	jr nz,_collisionEffect02
 
 	; If bit 7 is unset, destroy the projectile
-	bit 7,c			; $440d
-	ld a,ENEMYDMG_40		; $440f
-	jp z,_applyDamageToEnemyOrPart		; $4411
+	bit 7,c
+	ld a,ENEMYDMG_40
+	jp z,_applyDamageToEnemyOrPart
 
 	; Else, hit link but halve the damage
-	call _collisionEffect02		; $4414
-	ld h,b			; $4417
-	ld l,<w1Link.damageToApply		; $4418
-	sra (hl)		; $441a
-	ret			; $441c
+	call _collisionEffect02
+	ld h,b
+	ld l,<w1Link.damageToApply
+	sra (hl)
+	ret
 
 ; @addr{441d}
 @ringProtections:
@@ -478,474 +478,474 @@ _collisionEffect3c:
 ; COLLISIONEFFECT_DAMAGE_LINK_LOW_KNOCKBACK
 ; @addr{4426}
 _collisionEffect01:
-	ld e,LINKDMG_00		; $4426
-	jr ++			; $4428
+	ld e,LINKDMG_00
+	jr ++
 
 ;;
 ; COLLISIONEFFECT_DAMAGE_LINK
 ; @addr{442a}
 _collisionEffect02:
-	ld e,LINKDMG_04		; $442a
-	jr ++			; $442c
+	ld e,LINKDMG_04
+	jr ++
 
 ;;
 ; COLLISIONEFFECT_DAMAGE_LINK_HIGH_KNOCKBACK
 ; @addr{442e}
 _collisionEffect03:
-	ld e,LINKDMG_08		; $442e
-	jr ++			; $4430
+	ld e,LINKDMG_08
+	jr ++
 
 ;;
 ; COLLISIONEFFECT_DAMAGE_LINK_NO_KNOCKBACK
 ; @addr{4432}
 _collisionEffect04:
-	ld e,LINKDMG_0c		; $4432
+	ld e,LINKDMG_0c
 ++
-	call _applyDamageToLink_paramE		; $4434
-	ld a,ENEMYDMG_1c		; $4437
-	jp _applyDamageToEnemyOrPart		; $4439
+	call _applyDamageToLink_paramE
+	ld a,ENEMYDMG_1c
+	jp _applyDamageToEnemyOrPart
 
 ;;
 ; COLLISIONEFFECT_SWORD_LOW_KNOCKBACK
 ; @addr{443c}
 _collisionEffect08:
-	ld e,ENEMYDMG_00		; $443c
-	jr _label_07_027		; $443e
+	ld e,ENEMYDMG_00
+	jr _label_07_027
 
 ;;
 ; COLLISIONEFFECT_SWORD
 ; @addr{4440}
 _collisionEffect09:
-	ld e,ENEMYDMG_04		; $4440
-	jr _label_07_027		; $4442
+	ld e,ENEMYDMG_04
+	jr _label_07_027
 
 ;;
 ; COLLISIONEFFECT_SWORD_HIGH_KNOCKBACK
 ; @addr{4440}
 _collisionEffect0a:
-	ld e,ENEMYDMG_08		; $4444
-	jr _label_07_027		; $4446
+	ld e,ENEMYDMG_08
+	jr _label_07_027
 
 ;;
 ; COLLISIONEFFECT_SWORD_NO_KNOCKBACK
 ; @addr{4440}
 _collisionEffect0b:
-	call _func_07_47b7		; $4448
-	ret z			; $444b
-	ld e,ENEMYDMG_0c		; $444c
-	jr _label_07_027		; $444e
+	call _func_07_47b7
+	ret z
+	ld e,ENEMYDMG_0c
+	jr _label_07_027
 
 ;;
 ; COLLISIONEFFECT_21
 ; @addr{4450}
 _collisionEffect21:
-	ld e,ENEMYDMG_30		; $4450
+	ld e,ENEMYDMG_30
 _label_07_027:
-	ldh a,(<hActiveObjectType)	; $4452
-	add Object.var3e			; $4454
-	ld l,a			; $4456
-	ld h,d			; $4457
-	ld c,Item.var2a		; $4458
-	ld a,(bc)		; $445a
-	or (hl)			; $445b
-	ld (bc),a		; $445c
-	ld a,e			; $445d
-	jp _applyDamageToEnemyOrPart		; $445e
+	ldh a,(<hActiveObjectType)
+	add Object.var3e
+	ld l,a
+	ld h,d
+	ld c,Item.var2a
+	ld a,(bc)
+	or (hl)
+	ld (bc),a
+	ld a,e
+	jp _applyDamageToEnemyOrPart
 
 ;;
 ; COLLISIONEFFECT_BUMP_WITH_CLINK_LOW_KNOCKBACK
 ; @addr{4461}
 _collisionEffect12:
-	call _createClinkInteraction		; $4461
+	call _createClinkInteraction
 
 ;;
 ; COLLISIONEFFECT_BUMP_LOW_KNOCKBACK
 ; @addr{4464}
 _collisionEffect0c:
-	ld e,ENEMYDMG_10		; $4464
-	jr _label_07_028		; $4466
+	ld e,ENEMYDMG_10
+	jr _label_07_028
 
 ;;
 ; COLLISIONEFFECT_BUMP_WITH_CLINK
 ; @addr{4468}
 _collisionEffect13:
-	call _createClinkInteraction		; $4468
+	call _createClinkInteraction
 
 ;;
 ; COLLISIONEFFECT_BUMP
 ; @addr{446b}
 _collisionEffect0d:
-	ld e,ENEMYDMG_14		; $446b
-	jr _label_07_028		; $446d
+	ld e,ENEMYDMG_14
+	jr _label_07_028
 
 ;;
 ; COLLISIONEFFECT_BUMP_WITH_CLINK_HIGH_KNOCKBACK
 ; @addr{446f}
 _collisionEffect14:
-	call _createClinkInteraction		; $446f
+	call _createClinkInteraction
 
 ;;
 ; COLLISIONEFFECT_BUMP_HIGH_KNOCKBACK
 ; @addr{4472}
 _collisionEffect0e:
-	ld e,ENEMYDMG_18		; $4472
+	ld e,ENEMYDMG_18
 _label_07_028:
-	ldh a,(<hActiveObjectType)	; $4474
-	add Object.var3e			; $4476
-	ld l,a			; $4478
-	ld h,d			; $4479
-	ld c,Item.var2a		; $447a
-	ld a,(bc)		; $447c
-	or (hl)			; $447d
-	ld (bc),a		; $447e
-	ld a,e			; $447f
-	jp _applyDamageToEnemyOrPart		; $4480
+	ldh a,(<hActiveObjectType)
+	add Object.var3e
+	ld l,a
+	ld h,d
+	ld c,Item.var2a
+	ld a,(bc)
+	or (hl)
+	ld (bc),a
+	ld a,e
+	jp _applyDamageToEnemyOrPart
 
 ;;
 ; COLLISIONEFFECT_05
 ; @addr{4483}
 _collisionEffect05:
-	ldhl LINKDMG_10, ENEMYDMG_1c		; $4483
-	jr _applyDamageToBothObjects		; $4486
+	ldhl LINKDMG_10, ENEMYDMG_1c
+	jr _applyDamageToBothObjects
 
 ;;
 ; COLLISIONEFFECT_06
 ; @addr{4488}
 _collisionEffect06:
-	ldhl LINKDMG_14, ENEMYDMG_1c		; $4488
-	jr _applyDamageToBothObjects		; $448b
+	ldhl LINKDMG_14, ENEMYDMG_1c
+	jr _applyDamageToBothObjects
 
 ;;
 ; COLLISIONEFFECT_07
 ; @addr{448d}
 _collisionEffect07:
-	ldhl LINKDMG_18, ENEMYDMG_1c		; $448d
-	jr _applyDamageToBothObjects		; $4490
+	ldhl LINKDMG_18, ENEMYDMG_1c
+	jr _applyDamageToBothObjects
 
 ;;
 ; COLLISIONEFFECT_SHIELD_BUMP_WITH_CLINK
 ; @addr{4492}
 _collisionEffect18:
-	call _createClinkInteraction		; $4492
+	call _createClinkInteraction
 
 ;;
 ; COLLISIONEFFECT_SHIELD_BUMP
 ; @addr{4495}
 _collisionEffect0f:
-	ldhl LINKDMG_10, ENEMYDMG_10		; $4495
-	jr _applyDamageToBothObjects		; $4498
+	ldhl LINKDMG_10, ENEMYDMG_10
+	jr _applyDamageToBothObjects
 
 ;;
 ; COLLISIONEFFECT_SHIELD_BUMP_WITH_CLINK_HIGH_KNOCKBACK
 ; @addr{449a}
 _collisionEffect19:
-	call _createClinkInteraction		; $449a
+	call _createClinkInteraction
 
 ;;
 ; COLLISIONEFFECT_SHIELD_BUMP_HIGH_KNOCKBACK
 ; @addr{449d}
 _collisionEffect10:
-	ldhl LINKDMG_14, ENEMYDMG_14		; $449d
-	jr _applyDamageToBothObjects		; $44a0
+	ldhl LINKDMG_14, ENEMYDMG_14
+	jr _applyDamageToBothObjects
 
 ;;
 ; COLLISIONEFFECT_15
 ; @addr{44a2}
 _collisionEffect15:
-	call _createClinkInteraction		; $44a2
-	ldhl LINKDMG_10, ENEMYDMG_34		; $44a5
-	jr _applyDamageToBothObjects		; $44a8
+	call _createClinkInteraction
+	ldhl LINKDMG_10, ENEMYDMG_34
+	jr _applyDamageToBothObjects
 
 ;;
 ; COLLISIONEFFECT_16
 ; @addr{44aa}
 _collisionEffect16:
-	call _createClinkInteraction		; $44aa
-	ldhl LINKDMG_14, ENEMYDMG_34		; $44ad
-	jr _applyDamageToBothObjects		; $44b0
+	call _createClinkInteraction
+	ldhl LINKDMG_14, ENEMYDMG_34
+	jr _applyDamageToBothObjects
 
 ;;
 ; COLLISIONEFFECT_17
 ; @addr{44b2}
 _collisionEffect17:
-	call _createClinkInteraction		; $44b2
-	ldhl LINKDMG_18, ENEMYDMG_34		; $44b5
-	jr _applyDamageToBothObjects		; $44b8
+	call _createClinkInteraction
+	ldhl LINKDMG_18, ENEMYDMG_34
+	jr _applyDamageToBothObjects
 
 ;;
 ; COLLISIONEFFECT_1a
 ; @addr{44ba}
 _collisionEffect1a:
-	call _createClinkInteraction		; $44ba
+	call _createClinkInteraction
 
 ;;
 ; COLLISIONEFFECT_11
 ; @addr{44bd}
 _collisionEffect11:
-	ldhl LINKDMG_18, ENEMYDMG_18		; $44bd
-	jr _applyDamageToBothObjects		; $44c0
+	ldhl LINKDMG_18, ENEMYDMG_18
+	jr _applyDamageToBothObjects
 
 ;;
 ; COLLISIONEFFECT_1b
 ; @addr{44c2}
 _collisionEffect1b:
-	call _createClinkInteraction		; $44c2
-	ldhl LINKDMG_1c, ENEMYDMG_28		; $44c5
-	jr _applyDamageToBothObjects		; $44c8
+	call _createClinkInteraction
+	ldhl LINKDMG_1c, ENEMYDMG_28
+	jr _applyDamageToBothObjects
 
 ;;
 ; COLLISIONEFFECT_1d
 ; @addr{44ca}
 _collisionEffect1d:
-	ldhl LINKDMG_0c, ENEMYDMG_04		; $44ca
-	jr _applyDamageToBothObjects		; $44cd
+	ldhl LINKDMG_0c, ENEMYDMG_04
+	jr _applyDamageToBothObjects
 
 ;;
 ; COLLISIONEFFECT_1e
 ; @addr{44cf}
 _collisionEffect1e:
-	ldhl LINKDMG_28, ENEMYDMG_34		; $44cf
-	jr _applyDamageToBothObjects		; $44d2
+	ldhl LINKDMG_28, ENEMYDMG_34
+	jr _applyDamageToBothObjects
 
 ;;
 ; COLLISIONEFFECT_1f
 ; @addr{44d4}
 _collisionEffect1f:
-	ldhl LINKDMG_20, ENEMYDMG_34		; $44d4
-	jr _applyDamageToBothObjects		; $44d7
+	ldhl LINKDMG_20, ENEMYDMG_34
+	jr _applyDamageToBothObjects
 
 ;;
 ; COLLISIONEFFECT_20
 ; @addr{44d9}
 _collisionEffect20:
-	ld h,b			; $44d9
-	ld l,Item.id		; $44da
-	ld a,(hl)		; $44dc
-	cp $28			; $44dd
-	jr nc,+			; $44df
+	ld h,b
+	ld l,Item.id
+	ld a,(hl)
+	cp $28
+	jr nc,+
 
-	ld l,Item.collisionType		; $44e1
-	res 7,(hl)		; $44e3
+	ld l,Item.collisionType
+	res 7,(hl)
 +
-	call _func_07_47b7		; $44e5
-	ret z			; $44e8
+	call _func_07_47b7
+	ret z
 
-	ldhl LINKDMG_24, ENEMYDMG_44		; $44e9
-	jr _applyDamageToBothObjects		; $44ec
+	ldhl LINKDMG_24, ENEMYDMG_44
+	jr _applyDamageToBothObjects
 
 ;;
 ; COLLISIONEFFECT_STUN
 ; @addr{44ee}
 _collisionEffect22:
-	ldhl LINKDMG_1c, ENEMYDMG_24		; $44ee
+	ldhl LINKDMG_1c, ENEMYDMG_24
 
 ;;
 ; @param h Damage type for link ( / item?)
 ; @param l Damage type for enemy / part
 ; @addr{44f1}
 _applyDamageToBothObjects:
-	ld a,h			; $44f1
-	push hl			; $44f2
-	call _applyDamageToLink		; $44f3
-	pop hl			; $44f6
-	ld a,l			; $44f7
-	jp _applyDamageToEnemyOrPart		; $44f8
+	ld a,h
+	push hl
+	call _applyDamageToLink
+	pop hl
+	ld a,l
+	jp _applyDamageToEnemyOrPart
 
 ;;
 ; COLLISIONEFFECT_26
 ; @addr{44fb}
 _collisionEffect26:
-	ldhl LINKDMG_1c, ENEMYDMG_34		; $44fb
-	jr _applyDamageToBothObjects		; $44fe
+	ldhl LINKDMG_1c, ENEMYDMG_34
+	jr _applyDamageToBothObjects
 
 ;;
 ; COLLISIONEFFECT_BURN
 ; @addr{4500}
 _collisionEffect27:
-	ld h,b			; $4500
-	ld l,Item.collisionType		; $4501
-	res 7,(hl)		; $4503
-	call _func_07_47b7		; $4505
-	ret z			; $4508
+	ld h,b
+	ld l,Item.collisionType
+	res 7,(hl)
+	call _func_07_47b7
+	ret z
 
-	call _createFlamePart		; $4509
-	ldhl LINKDMG_1c, ENEMYDMG_2c		; $450c
-	jr _applyDamageToBothObjects		; $450f
+	call _createFlamePart
+	ldhl LINKDMG_1c, ENEMYDMG_2c
+	jr _applyDamageToBothObjects
 
 ;;
 ; COLLISIONEFFECT_PEGASUS_SEED
 ; @addr{4511}
 _collisionEffect28:
-	ld h,b			; $4511
-	ld l,Item.collisionType		; $4512
-	res 7,(hl)		; $4514
-	call _func_07_47b7		; $4516
-	ret z			; $4519
+	ld h,b
+	ld l,Item.collisionType
+	res 7,(hl)
+	call _func_07_47b7
+	ret z
 
-	ldhl LINKDMG_1c, ENEMYDMG_38		; $451a
-	jr _applyDamageToBothObjects		; $451d
+	ldhl LINKDMG_1c, ENEMYDMG_38
+	jr _applyDamageToBothObjects
 
 ;;
 ; COLLISIONEFFECT_3a
 ; Assumes that the first object is an Enemy, not a Part.
 ; @addr{451f}
 _collisionEffect3a:
-	ld e,Enemy.knockbackCounter		; $451f
-	ld a,(de)		; $4521
-	or a			; $4522
-	ret nz			; $4523
+	ld e,Enemy.knockbackCounter
+	ld a,(de)
+	or a
+	ret nz
 
 ;;
 ; COLLISIONEFFECT_LIKELIKE
 ; @addr{4524}
 _collisionEffect3d:
-	ld a,(w1Link.id)		; $4524
-	or a			; $4527
-	ret nz			; $4528
+	ld a,(w1Link.id)
+	or a
+	ret nz
 
-	ld a,(wWarpsDisabled)		; $4529
-	or a			; $452c
-	ret nz			; $452d
+	ld a,(wWarpsDisabled)
+	or a
+	ret nz
 
-	ld a,LINK_STATE_GRABBED		; $452e
-	ld (wLinkForceState),a		; $4530
-	ldhl LINKDMG_2c, ENEMYDMG_1c		; $4533
-	jr _applyDamageToBothObjects		; $4536
+	ld a,LINK_STATE_GRABBED
+	ld (wLinkForceState),a
+	ldhl LINKDMG_2c, ENEMYDMG_1c
+	jr _applyDamageToBothObjects
 
 ;;
 ; COLLISIONEFFECT_2b
 ; @addr{4538}
 _collisionEffect2b:
-	ldhl LINKDMG_1c, ENEMYDMG_3c		; $4538
-	jr _applyDamageToBothObjects		; $453b
+	ldhl LINKDMG_1c, ENEMYDMG_3c
+	jr _applyDamageToBothObjects
 
 ;;
 ; COLLISIONEFFECT_2c
 ; @addr{453d}
 _collisionEffect2c:
-	ldhl LINKDMG_14, ENEMYDMG_30		; $453d
-	jr _applyDamageToBothObjects		; $4540
+	ldhl LINKDMG_14, ENEMYDMG_30
+	jr _applyDamageToBothObjects
 
 ;;
 ; COLLISIONEFFECT_2f
 ; @addr{4542}
 _collisionEffect2f:
-	ldhl LINKDMG_30, ENEMYDMG_04		; $4542
-	jr _applyDamageToBothObjects		; $4545
+	ldhl LINKDMG_30, ENEMYDMG_04
+	jr _applyDamageToBothObjects
 
 ;;
 ; COLLISIONEFFECT_30
 ; @addr{4547}
 _collisionEffect30:
-	ldhl LINKDMG_1c, ENEMYDMG_44		; $4547
-	jr _applyDamageToBothObjects		; $454a
+	ldhl LINKDMG_1c, ENEMYDMG_44
+	jr _applyDamageToBothObjects
 
 ;;
 ; COLLISIONEFFECT_1c
 ; @addr{454c}
 _collisionEffect1c:
-	ldhl LINKDMG_1c, ENEMYDMG_1c		; $454c
-	jr _applyDamageToBothObjects		; $454f
+	ldhl LINKDMG_1c, ENEMYDMG_1c
+	jr _applyDamageToBothObjects
 
 ;;
 ; COLLISIONEFFECT_SWITCH_HOOK
 ; @addr{4551}
 _collisionEffect2e:
-	ld h,d			; $4551
-	ldh a,(<hActiveObjectType)	; $4552
-	add Object.health			; $4554
-	ld l,a			; $4556
-	ld a,(hl)		; $4557
-	or a			; $4558
-	jr z,_collisionEffect1c	; $4559
+	ld h,d
+	ldh a,(<hActiveObjectType)
+	add Object.health
+	ld l,a
+	ld a,(hl)
+	or a
+	jr z,_collisionEffect1c
 
 	; Clear Object.stunCounter, Object.knockbackCounter
-	ld a,l			; $455b
-	add Object.stunCounter-Object.health			; $455c
-	ld l,a			; $455e
-	xor a			; $455f
-	ldd (hl),a		; $4560
-	ldd (hl),a		; $4561
+	ld a,l
+	add Object.stunCounter-Object.health
+	ld l,a
+	xor a
+	ldd (hl),a
+	ldd (hl),a
 
 	; l = Object.knockbackAngle
-	ldh a,(<hFF8A)	; $4562
-	xor $10			; $4564
-	ld (hl),a		; $4566
+	ldh a,(<hFF8A)
+	xor $10
+	ld (hl),a
 
 	; l = Object.collisionType
-	res 3,l			; $4567
-	res 7,(hl)		; $4569
+	res 3,l
+	res 7,(hl)
 
-	ld a,l			; $456b
-	add Object.state-Object.collisionType			; $456c
-	ld l,a			; $456e
-	ld (hl),$03		; $456f
+	ld a,l
+	add Object.state-Object.collisionType
+	ld l,a
+	ld (hl),$03
 
 	; l = Object.state2
-	inc l			; $4571
-	ld (hl),$00		; $4572
+	inc l
+	ld (hl),$00
 
 	; Now do something with link
-	ld h,b			; $4574
-	ld l,<w1Link.var2a		; $4575
-	set 5,(hl)		; $4577
-	ld l,<w1Link.collisionType		; $4579
-	res 7,(hl)		; $457b
-	ld l,<w1Link.relatedObj2		; $457d
-	ldh a,(<hActiveObjectType)	; $457f
-	ldi (hl),a		; $4581
-	ld (hl),d		; $4582
-	ret			; $4583
+	ld h,b
+	ld l,<w1Link.var2a
+	set 5,(hl)
+	ld l,<w1Link.collisionType
+	res 7,(hl)
+	ld l,<w1Link.relatedObj2
+	ldh a,(<hActiveObjectType)
+	ldi (hl),a
+	ld (hl),d
+	ret
 
 ;;
 ; COLLISIONEFFECT_23
 ; @addr{4584}
 _collisionEffect23:
-	ldh a,(<hActiveObjectType)	; $4584
-	add Object.health			; $4586
-	ld l,a			; $4588
-	ld h,d			; $4589
-	ld (hl),$00		; $458a
-	ret			; $458c
+	ldh a,(<hActiveObjectType)
+	add Object.health
+	ld l,a
+	ld h,d
+	ld (hl),$00
+	ret
 
 ;;
 ; COLLISIONEFFECT_24
 ; @addr{458d}
 _collisionEffect24:
-	ldh a,(<hActiveObjectType)	; $458d
-	add Object.var2a			; $458f
-	ld e,a			; $4591
-	ldh a,(<hFF90)	; $4592
-	or $80			; $4594
-	ld (de),a		; $4596
+	ldh a,(<hActiveObjectType)
+	add Object.var2a
+	ld e,a
+	ldh a,(<hFF90)
+	or $80
+	ld (de),a
 
-	ld a,e			; $4597
-	add Object.relatedObj1-Object.var2a			; $4598
-	ld l,a			; $459a
-	ld h,d			; $459b
-	ld (hl),c		; $459c
-	inc l			; $459d
-	ld (hl),b		; $459e
+	ld a,e
+	add Object.relatedObj1-Object.var2a
+	ld l,a
+	ld h,d
+	ld (hl),c
+	inc l
+	ld (hl),b
 
-	ld c,Item.var2a		; $459f
-	ld a,$01		; $45a1
-	ld (bc),a		; $45a3
-	ret			; $45a4
+	ld c,Item.var2a
+	ld a,$01
+	ld (bc),a
+	ret
 
 ;;
 ; COLLISIONEFFECT_25
 ; @addr{45a5}
 _collisionEffect25:
-	call _killEnemyOrPart		; $45a5
-	ld a,l			; $45a8
-	add Object.var3f-Object.collisionType			; $45a9
-	ld l,a			; $45ab
-	set 7,(hl)		; $45ac
+	call _killEnemyOrPart
+	ld a,l
+	add Object.var3f-Object.collisionType
+	ld l,a
+	set 7,(hl)
 
-	ld c,Item.var2a		; $45ae
-	ld a,$02		; $45b0
-	ld (bc),a		; $45b2
-	ret			; $45b3
+	ld c,Item.var2a
+	ld a,$02
+	ld (bc),a
+	ret
 
 ;;
 ; COLLISIONEFFECT_GALE_SEED
@@ -953,319 +953,319 @@ _collisionEffect25:
 ; func_07_47b7 returns nonzero...
 ; @addr{45b4}
 _collisionEffect29:
-	ld h,b			; $45b4
-	ld l,Item.collisionType		; $45b5
-	res 7,(hl)		; $45b7
-	call _func_07_47b7		; $45b9
-	ret z			; $45bc
+	ld h,b
+	ld l,Item.collisionType
+	res 7,(hl)
+	call _func_07_47b7
+	ret z
 
-	ld h,d			; $45bd
-	ld l,Enemy.var2a		; $45be
-	ld (hl),$9e		; $45c0
-	ld l,Enemy.stunCounter		; $45c2
-	ld (hl),$00		; $45c4
-	ld l,Enemy.collisionType		; $45c6
-	res 7,(hl)		; $45c8
-	ld l,Enemy.state		; $45ca
-	ld (hl),$05		; $45cc
+	ld h,d
+	ld l,Enemy.var2a
+	ld (hl),$9e
+	ld l,Enemy.stunCounter
+	ld (hl),$00
+	ld l,Enemy.collisionType
+	res 7,(hl)
+	ld l,Enemy.state
+	ld (hl),$05
 
-	ld l,Enemy.visible		; $45ce
-	ld a,(hl)		; $45d0
-	and $c0			; $45d1
-	or $02			; $45d3
-	ld (hl),a		; $45d5
+	ld l,Enemy.visible
+	ld a,(hl)
+	and $c0
+	or $02
+	ld (hl),a
 
-	ld l,Enemy.counter2		; $45d6
-	ld (hl),$1e		; $45d8
-	ld l,Enemy.speed		; $45da
-	ld (hl),$05		; $45dc
+	ld l,Enemy.counter2
+	ld (hl),$1e
+	ld l,Enemy.speed
+	ld (hl),$05
 
-	ld l,Enemy.speedZ		; $45de
-	ld (hl),$00		; $45e0
-	inc l			; $45e2
-	ld (hl),$fa		; $45e3
+	ld l,Enemy.speedZ
+	ld (hl),$00
+	inc l
+	ld (hl),$fa
 
 	; Copy item's x/y position to enemy
-	ld l,Enemy.yh		; $45e5
-	ld c,Item.yh		; $45e7
-	ld a,(bc)		; $45e9
-	ldi (hl),a		; $45ea
-	inc l			; $45eb
-	ld c,Item.xh		; $45ec
-	ld a,(bc)		; $45ee
-	ldi (hl),a		; $45ef
+	ld l,Enemy.yh
+	ld c,Item.yh
+	ld a,(bc)
+	ldi (hl),a
+	inc l
+	ld c,Item.xh
+	ld a,(bc)
+	ldi (hl),a
 
 	; l = Enemy.zh
-	inc l			; $45f0
-	ld a,(hl)		; $45f1
-	rlca			; $45f2
-	jr c,+			; $45f3
-	ld (hl),$ff		; $45f5
+	inc l
+	ld a,(hl)
+	rlca
+	jr c,+
+	ld (hl),$ff
 +
-	call getRandomNumber		; $45f7
-	and $18			; $45fa
-	ld e,Enemy.angle		; $45fc
-	ld (de),a		; $45fe
-	ld a,LINKDMG_1c		; $45ff
-	jp _applyDamageToLink		; $4601
+	call getRandomNumber
+	and $18
+	ld e,Enemy.angle
+	ld (de),a
+	ld a,LINKDMG_1c
+	jp _applyDamageToLink
 
 ;;
 ; COLLISIONEFFECT_2a
 ; This assumes that the second object is a Part, not an Enemy.
 ; @addr{4604}
 _collisionEffect2a:
-	ld h,b			; $4604
-	ld l,Item.knockbackCounter		; $4605
-	ld a,d			; $4607
-	cp (hl)			; $4608
-	ret z			; $4609
+	ld h,b
+	ld l,Item.knockbackCounter
+	ld a,d
+	cp (hl)
+	ret z
 
-	ldd (hl),a		; $460a
+	ldd (hl),a
 
 	; Write to Item.knockbackAngle
-	ld e,Part.animParameter		; $460b
-	ld a,(de)		; $460d
-	ldd (hl),a		; $460e
+	ld e,Part.animParameter
+	ld a,(de)
+	ldd (hl),a
 
 	; l = Item.var2a
-	dec l			; $460f
-	set 4,(hl)		; $4610
+	dec l
+	set 4,(hl)
 
-	ld e,Part.var2a		; $4612
-	ldh a,(<hFF90)	; $4614
-	or $80			; $4616
-	ld (de),a		; $4618
-	ret			; $4619
+	ld e,Part.var2a
+	ldh a,(<hFF90)
+	or $80
+	ld (de),a
+	ret
 
 ;;
 ; COLLISIONEFFECT_2d
 ; @addr{461a}
 _collisionEffect2d:
-	ld h,b			; $461a
-	ld l,Item.var2f		; $461b
-	set 5,(hl)		; $461d
-	ret			; $461f
+	ld h,b
+	ld l,Item.var2f
+	set 5,(hl)
+	ret
 
 ;;
 ; COLLISIONEFFECT_31
 ; @addr{4620}
 _collisionEffect31:
-	ld a,ENEMYDMG_34		; $4620
-	jp _applyDamageToEnemyOrPart		; $4622
+	ld a,ENEMYDMG_34
+	jp _applyDamageToEnemyOrPart
 
 ;;
 ; COLLISIONEFFECT_32
 ; @addr{4625}
 _collisionEffect32:
-	ldhl LINKDMG_34, ENEMYDMG_48		; $4625
-	jr _label_07_033		; $4628
+	ldhl LINKDMG_34, ENEMYDMG_48
+	jr _label_07_033
 
 ;;
 ; COLLISIONEFFECT_33
 ; @addr{462a}
 _collisionEffect33:
-	ldhl LINKDMG_38, ENEMYDMG_4c		; $462a
+	ldhl LINKDMG_38, ENEMYDMG_4c
 _label_07_033:
-	call _applyDamageToBothObjects		; $462d
-	jp _createClinkInteraction		; $4630
+	call _applyDamageToBothObjects
+	jp _createClinkInteraction
 
 ;;
 ; COLLISIONEFFECT_34
 ; @addr{4633}
 _collisionEffect34:
-	call _createFlamePart		; $4633
-	ld h,b			; $4636
-	ld l,Item.collisionType		; $4637
-	res 7,(hl)		; $4639
-	ldhl LINKDMG_1c, ENEMYDMG_2c		; $463b
-	call _applyDamageToBothObjects		; $463e
-	jr _killEnemyOrPart		; $4641
+	call _createFlamePart
+	ld h,b
+	ld l,Item.collisionType
+	res 7,(hl)
+	ldhl LINKDMG_1c, ENEMYDMG_2c
+	call _applyDamageToBothObjects
+	jr _killEnemyOrPart
 
 ;;
 ; COLLISIONEFFECT_35
 ; @addr{4643}
 _collisionEffect35:
-	ldhl LINKDMG_1c, ENEMYDMG_1c		; $4643
-	call _applyDamageToBothObjects		; $4646
+	ldhl LINKDMG_1c, ENEMYDMG_1c
+	call _applyDamageToBothObjects
 
 ;;
 ; Set the Enemy/Part's health to zero, disable its collisions?
 ; @addr{4649}
 _killEnemyOrPart:
-	ld h,d			; $4649
-	ldh a,(<hActiveObjectType)	; $464a
-	add Object.health			; $464c
-	ld l,a			; $464e
-	ld (hl),$00		; $464f
+	ld h,d
+	ldh a,(<hActiveObjectType)
+	add Object.health
+	ld l,a
+	ld (hl),$00
 
-	add Object.collisionType-Object.health			; $4651
-	ld l,a			; $4653
-	res 7,(hl)		; $4654
-	ret			; $4656
+	add Object.collisionType-Object.health
+	ld l,a
+	res 7,(hl)
+	ret
 
 ;;
 ; COLLISIONEFFECT_ELECTRIC_SHOCK
 ; @addr{4657}
 _collisionEffect36:
-	ld h,d			; $4657
-	ldh a,(<hActiveObjectType)	; $4658
-	add Object.var2a			; $465a
-	ld l,a			; $465c
-	ld (hl),$80|ITEMCOLLISION_ELECTRIC_SHOCK		; $465d
+	ld h,d
+	ldh a,(<hActiveObjectType)
+	add Object.var2a
+	ld l,a
+	ld (hl),$80|ITEMCOLLISION_ELECTRIC_SHOCK
 
-	add Object.collisionType-Object.var2a			; $465f
-	ld l,a			; $4661
-	res 7,(hl)		; $4662
+	add Object.collisionType-Object.var2a
+	ld l,a
+	res 7,(hl)
 
 	; Apply damage if green holy ring is not equipped
-	ld a,GREEN_HOLY_RING		; $4664
-	call cpActiveRing		; $4666
-	ld a,$f8		; $4669
-	jr nz,+			; $466b
-	xor a			; $466d
+	ld a,GREEN_HOLY_RING
+	call cpActiveRing
+	ld a,$f8
+	jr nz,+
+	xor a
 +
-	ld hl,w1Link.damageToApply		; $466e
-	ld (hl),a		; $4671
+	ld hl,w1Link.damageToApply
+	ld (hl),a
 
-	ld l,<w1Link.knockbackAngle		; $4672
-	ldh a,(<hFF8A)	; $4674
-	ld (hl),a		; $4676
+	ld l,<w1Link.knockbackAngle
+	ldh a,(<hFF8A)
+	ld (hl),a
 
-	ld l,<w1Link.knockbackCounter		; $4677
-	ld (hl),$08		; $4679
+	ld l,<w1Link.knockbackCounter
+	ld (hl),$08
 
-	ld l,<w1Link.invincibilityCounter		; $467b
-	ld (hl),$0c		; $467d
+	ld l,<w1Link.invincibilityCounter
+	ld (hl),$0c
 
-	ld a,(wIsLinkBeingShocked)		; $467f
-	or a			; $4682
-	jr nz,+			; $4683
+	ld a,(wIsLinkBeingShocked)
+	or a
+	jr nz,+
 
-	inc a			; $4685
-	ld (wIsLinkBeingShocked),a		; $4686
+	inc a
+	ld (wIsLinkBeingShocked),a
 +
-	ld h,b			; $4689
-	ld l,<Item.collisionType		; $468a
-	res 7,(hl)		; $468c
+	ld h,b
+	ld l,<Item.collisionType
+	res 7,(hl)
 
-	ld a,LINKDMG_1c		; $468e
-	jp _applyDamageToLink		; $4690
+	ld a,LINKDMG_1c
+	jp _applyDamageToLink
 
 ;;
 ; COLLISIONEFFECT_37
 ; @addr{4693}
 _collisionEffect37:
-	ldh a,(<hActiveObjectType)	; $4693
-	add Object.invincibilityCounter			; $4695
-	ld e,a			; $4697
-	ld a,(de)		; $4698
-	or a			; $4699
-	ret nz			; $469a
+	ldh a,(<hActiveObjectType)
+	add Object.invincibilityCounter
+	ld e,a
+	ld a,(de)
+	or a
+	ret nz
 
-	ld a,(wWarpsDisabled)		; $469b
-	or a			; $469e
-	ret nz			; $469f
+	ld a,(wWarpsDisabled)
+	or a
+	ret nz
 
-	ld a,(w1Link.state)		; $46a0
-	cp LINK_STATE_NORMAL			; $46a3
-	ret nz			; $46a5
+	ld a,(w1Link.state)
+	cp LINK_STATE_NORMAL
+	ret nz
 
-	ld a,e			; $46a6
-	add Object.collisionType-Object.invincibilityCounter		; $46a7
-	ld e,a			; $46a9
-	xor a			; $46aa
-	ld (de),a		; $46ab
+	ld a,e
+	add Object.collisionType-Object.invincibilityCounter
+	ld e,a
+	xor a
+	ld (de),a
 
-	ld a,LINK_STATE_GRABBED_BY_WALLMASTER		; $46ac
-	ld (wLinkForceState),a		; $46ae
-	ld a,ENEMYDMG_1c		; $46b1
-	jp _applyDamageToEnemyOrPart		; $46b3
+	ld a,LINK_STATE_GRABBED_BY_WALLMASTER
+	ld (wLinkForceState),a
+	ld a,ENEMYDMG_1c
+	jp _applyDamageToEnemyOrPart
 
 ;;
 ; COLLISIONEFFECT_38
 ; @addr{46b6}
 _collisionEffect38:
-	ld h,d			; $46b6
-	ldh a,(<hActiveObjectType)	; $46b7
-	add Object.collisionType			; $46b9
-	ld l,a			; $46bb
-	res 7,(hl)		; $46bc
+	ld h,d
+	ldh a,(<hActiveObjectType)
+	add Object.collisionType
+	ld l,a
+	res 7,(hl)
 
-	add Object.counter1-Object.collisionType		; $46be
-	ld l,a			; $46c0
-	ld (hl),$60		; $46c1
+	add Object.counter1-Object.collisionType
+	ld l,a
+	ld (hl),$60
 
-	add Object.zh-Object.counter1			; $46c3
-	ld l,a			; $46c5
-	ld (hl),$00		; $46c6
-	ld a,ENEMYDMG_1c		; $46c8
-	jp _applyDamageToEnemyOrPart		; $46ca
+	add Object.zh-Object.counter1
+	ld l,a
+	ld (hl),$00
+	ld a,ENEMYDMG_1c
+	jp _applyDamageToEnemyOrPart
 
 ;;
 ; COLLISIONEFFECT_39
 ; @addr{46cd}
 _collisionEffect39:
-	ret			; $46cd
+	ret
 
 ;;
 ; COLLISIONEFFECT_3b
 ; @addr{46ce}
 _collisionEffect3b:
-	ld a,$02		; $46ce
-	call setLinkIDOverride		; $46d0
-	ld a,ENEMYDMG_1c		; $46d3
-	jp _applyDamageToEnemyOrPart		; $46d5
+	ld a,$02
+	call setLinkIDOverride
+	ld a,ENEMYDMG_1c
+	jp _applyDamageToEnemyOrPart
 
 ;;
 ; COLLISIONEFFECT_3e
 ; @addr{46d8}
 _collisionEffect3e:
-	ret			; $46d8
+	ret
 
 ;;
 ; COLLISIONEFFECT_3f
 ; @addr{46d9}
 _collisionEffect3f:
-	ret			; $46d9
+	ret
 
 ;;
 ; @addr{46da}
 _createFlamePart:
-	call getFreePartSlot		; $46da
-	ret nz			; $46dd
+	call getFreePartSlot
+	ret nz
 
-	ld (hl),PARTID_FLAME		; $46de
-	ld l,Part.relatedObj1		; $46e0
-	ldh a,(<hActiveObjectType)	; $46e2
-	ldi (hl),a		; $46e4
-	ld (hl),d		; $46e5
-	ret			; $46e6
+	ld (hl),PARTID_FLAME
+	ld l,Part.relatedObj1
+	ldh a,(<hActiveObjectType)
+	ldi (hl),a
+	ld (hl),d
+	ret
 
 ;;
 ; @addr{46e7}
 _createClinkInteraction:
-	call getFreeInteractionSlot		; $46e7
-	jr nz,@ret		; $46ea
+	call getFreeInteractionSlot
+	jr nz,@ret
 
-	ld (hl),INTERACID_CLINK		; $46ec
-	ldh a,(<hFF8F)	; $46ee
-	ld l,a			; $46f0
-	ldh a,(<hFF8D)	; $46f1
-	sub l			; $46f3
-	sra a			; $46f4
-	add l			; $46f6
-	ld l,Interaction.yh		; $46f7
-	ldi (hl),a		; $46f9
-	ldh a,(<hFF8E)	; $46fa
-	ld l,a			; $46fc
-	ldh a,(<hFF8C)	; $46fd
-	sub l			; $46ff
-	sra a			; $4700
-	add l			; $4702
-	ld l,Interaction.xh		; $4703
-	ld (hl),a		; $4705
+	ld (hl),INTERACID_CLINK
+	ldh a,(<hFF8F)
+	ld l,a
+	ldh a,(<hFF8D)
+	sub l
+	sra a
+	add l
+	ld l,Interaction.yh
+	ldi (hl),a
+	ldh a,(<hFF8E)
+	ld l,a
+	ldh a,(<hFF8C)
+	sub l
+	sra a
+	add l
+	ld l,Interaction.xh
+	ld (hl),a
 @ret:
-	ret			; $4706
+	ret
 
 ;;
 ; Apply damage to the enemy/part
@@ -1275,87 +1275,87 @@ _createClinkInteraction:
 ; @param	hFF90	CollisionType
 ; @addr{4707}
 _applyDamageToEnemyOrPart:
-	ld hl,@damageTypeTable		; $4707
-	rst_addAToHl			; $470a
-	ldh a,(<hActiveObjectType)	; $470b
-	add Object.health			; $470d
-	ld e,a			; $470f
-	bit 7,(hl)		; $4710
-	jr z,++			; $4712
+	ld hl,@damageTypeTable
+	rst_addAToHl
+	ldh a,(<hActiveObjectType)
+	add Object.health
+	ld e,a
+	bit 7,(hl)
+	jr z,++
 
 	; Apply damage
-	ld c,Item.damage		; $4714
-	ld a,(bc)		; $4716
-	ld c,a			; $4717
-	ld a,(de)		; $4718
-	add c			; $4719
-	jr c,+			; $471a
-	xor a			; $471c
+	ld c,Item.damage
+	ld a,(bc)
+	ld c,a
+	ld a,(de)
+	add c
+	jr c,+
+	xor a
 +
-	ld (de),a		; $471d
-	jr nz,++		; $471e
+	ld (de),a
+	jr nz,++
 
 	; If health reaches zero, disable collisions
-	ld c,e			; $4720
-	ld a,e			; $4721
-	add Object.collisionType-Object.health		; $4722
-	ld e,a			; $4724
-	ld a,(de)		; $4725
-	res 7,a			; $4726
-	ld (de),a		; $4728
-	ld e,c			; $4729
+	ld c,e
+	ld a,e
+	add Object.collisionType-Object.health
+	ld e,a
+	ld a,(de)
+	res 7,a
+	ld (de),a
+	ld e,c
 ++
 	; e = Object.var2a
-	inc e			; $472a
-	ldi a,(hl)		; $472b
-	ld c,a			; $472c
-	bit 6,c			; $472d
-	jr z,+			; $472f
+	inc e
+	ldi a,(hl)
+	ld c,a
+	bit 6,c
+	jr z,+
 
 	; Set var2a to the collisionType of the object it collided with
-	ldh a,(<hFF90)	; $4731
-	or $80			; $4733
-	ld (de),a		; $4735
+	ldh a,(<hFF90)
+	or $80
+	ld (de),a
 +
 	; e = Object.invincibilityCounter
-	inc e			; $4736
-	ldi a,(hl)		; $4737
-	bit 5,c			; $4738
-	jr z,+			; $473a
-	ld (de),a		; $473c
+	inc e
+	ldi a,(hl)
+	bit 5,c
+	jr z,+
+	ld (de),a
 +
 	; e = Object.knockbackCounter
-	inc e			; $473d
-	inc e			; $473e
-	bit 4,c			; $473f
-	ldi a,(hl)		; $4741
-	jr z,++			; $4742
+	inc e
+	inc e
+	bit 4,c
+	ldi a,(hl)
+	jr z,++
 
 	; Apply knockback
-	ld (de),a		; $4744
+	ld (de),a
 
 	; Calculate value for Object.knockbackAngle
-	ldh a,(<hFF8A)	; $4745
-	xor $10			; $4747
-	dec e			; $4749
-	ld (de),a		; $474a
-	inc e			; $474b
+	ldh a,(<hFF8A)
+	xor $10
+	dec e
+	ld (de),a
+	inc e
 ++
 	; e = Object.stunCounter
-	inc e			; $474c
-	ldi a,(hl)		; $474d
-	bit 3,c			; $474e
-	jr z,+			; $4750
-	ld (de),a		; $4752
+	inc e
+	ldi a,(hl)
+	bit 3,c
+	jr z,+
+	ld (de),a
 +
-	ld a,c			; $4753
-	and $07			; $4754
-	ret z			; $4756
+	ld a,c
+	and $07
+	ret z
 
-	ld hl,@soundEffects		; $4757
-	rst_addAToHl			; $475a
-	ld a,(hl)		; $475b
-	jp playSound		; $475c
+	ld hl,@soundEffects
+	rst_addAToHl
+	ld a,(hl)
+	jp playSound
 
 ; Data format:
 ; b0: bit 7: whether to apply damage to the enemy/part
@@ -1430,37 +1430,37 @@ _applyDamageToEnemyOrPart:
 ;;
 ; @addr{47b7}
 _func_07_47b7:
-	ld c,Item.id		; $47b7
-	ld a,(bc)		; $47b9
-	cp ITEMID_MYSTERY_SEED			; $47ba
-	ret nz			; $47bc
+	ld c,Item.id
+	ld a,(bc)
+	cp ITEMID_MYSTERY_SEED
+	ret nz
 
-	ldh a,(<hActiveObjectType)	; $47bd
-	add Object.var3f			; $47bf
-	ld e,a			; $47c1
-	ld a,(de)		; $47c2
-	cpl			; $47c3
-	bit 5,a			; $47c4
-	ret nz			; $47c6
+	ldh a,(<hActiveObjectType)
+	add Object.var3f
+	ld e,a
+	ld a,(de)
+	cpl
+	bit 5,a
+	ret nz
 
-	ld h,b			; $47c7
-	ld l,Item.var2a		; $47c8
-	ld (hl),$40		; $47ca
-	ld l,Item.collisionType		; $47cc
-	res 7,(hl)		; $47ce
+	ld h,b
+	ld l,Item.var2a
+	ld (hl),$40
+	ld l,Item.collisionType
+	res 7,(hl)
 
-	ldh a,(<hActiveObjectType)	; $47d0
-	add Object.var2a			; $47d2
-	ld e,a			; $47d4
-	ld a,$9a		; $47d5
-	ld (de),a		; $47d7
+	ldh a,(<hActiveObjectType)
+	add Object.var2a
+	ld e,a
+	ld a,$9a
+	ld (de),a
 
-	ld a,e			; $47d8
-	add Object.stunCounter-Object.var2a			; $47d9
-	ld e,a			; $47db
-	xor a			; $47dc
-	ld (de),a		; $47dd
-	ret			; $47de
+	ld a,e
+	add Object.stunCounter-Object.var2a
+	ld e,a
+	xor a
+	ld (de),a
+	ret
 
 ;;
 ; This can be called for either Link or an item object. (Perhaps other special objects?)
@@ -1470,75 +1470,75 @@ _func_07_47b7:
 ; @param	e	Link damage type (see enum below)
 ; @addr{47df}
 _applyDamageToLink_paramE:
-	ld a,e			; $47df
+	ld a,e
 
 ;;
 ; @addr{47e0}
 _applyDamageToLink:
-	push af			; $47e0
-	ldh a,(<hActiveObjectType)	; $47e1
-	add Object.var3e			; $47e3
-	ld e,a			; $47e5
-	ld a,(de)		; $47e6
-	ld (wTmpcec0),a		; $47e7
-	pop af			; $47ea
-	ld hl,@damageTypeTable		; $47eb
-	rst_addAToHl			; $47ee
+	push af
+	ldh a,(<hActiveObjectType)
+	add Object.var3e
+	ld e,a
+	ld a,(de)
+	ld (wTmpcec0),a
+	pop af
+	ld hl,@damageTypeTable
+	rst_addAToHl
 
-	bit 7,(hl)		; $47ef
-	jr z,++			; $47f1
+	bit 7,(hl)
+	jr z,++
 
-	ldh a,(<hActiveObjectType)	; $47f3
-	add Object.damage			; $47f5
-	ld e,a			; $47f7
-	ld a,(de)		; $47f8
-	ld c,Item.damageToApply		; $47f9
-	ld (bc),a		; $47fb
+	ldh a,(<hActiveObjectType)
+	add Object.damage
+	ld e,a
+	ld a,(de)
+	ld c,Item.damageToApply
+	ld (bc),a
 ++
-	ldi a,(hl)		; $47fc
-	ld e,a			; $47fd
-	ld c,Item.var2a		; $47fe
-	ld a,(bc)		; $4800
-	ld c,a			; $4801
-	ld a,(wTmpcec0)		; $4802
-	or c			; $4805
-	ld c,Item.var2a		; $4806
-	ld (bc),a		; $4808
+	ldi a,(hl)
+	ld e,a
+	ld c,Item.var2a
+	ld a,(bc)
+	ld c,a
+	ld a,(wTmpcec0)
+	or c
+	ld c,Item.var2a
+	ld (bc),a
 
 	; bc = invincibilityCounter
-	inc c			; $4809
-	ldi a,(hl)		; $480a
-	bit 5,e			; $480b
-	jr z,+			; $480d
-	ld (bc),a		; $480f
+	inc c
+	ldi a,(hl)
+	bit 5,e
+	jr z,+
+	ld (bc),a
 +
 	; bc = knockbackAngle
-	inc c			; $4810
-	ldh a,(<hFF8A)	; $4811
-	ld (bc),a		; $4813
+	inc c
+	ldh a,(<hFF8A)
+	ld (bc),a
 
 	; bc = knockbackCounter
-	inc c			; $4814
-	ldi a,(hl)		; $4815
-	bit 4,e			; $4816
-	jr z,+			; $4818
-	ld (bc),a		; $481a
+	inc c
+	ldi a,(hl)
+	bit 4,e
+	jr z,+
+	ld (bc),a
 +
 	; bc = stunCounter
-	inc c			; $481b
-	ldi a,(hl)		; $481c
-	bit 4,e			; $481d
-	jr z,+			; $481f
-	ld (bc),a		; $4821
+	inc c
+	ldi a,(hl)
+	bit 4,e
+	jr z,+
+	ld (bc),a
 +
-	ld a,e			; $4822
-	and $07			; $4823
-	ret z			; $4825
+	ld a,e
+	and $07
+	ret z
 
-	ld hl,@soundEffects		; $4826
-	rst_addAToHl			; $4829
-	ld a,(hl)		; $482a
-	jp playSound		; $482b
+	ld hl,@soundEffects
+	rst_addAToHl
+	ld a,(hl)
+	jp playSound
 
 ; Data format:
 ; b0: bit 7: whether to apply damage to Link

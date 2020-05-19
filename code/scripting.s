@@ -9,11 +9,11 @@
 ; @param hl Current address of script
 ; @addr{4000}
 runScriptCommand:
-	bit 7,a			; $4000
-	jp z,_scriptCmd_jump2byte		; $4002
-	push hl			; $4005
-	and $7f			; $4006
-	rst_jumpTable			; $4008
+	bit 7,a
+	jp z,_scriptCmd_jump2byte
+	push hl
+	and $7f
+	rst_jumpTable
 	.dw _scriptCmd_setState ; 0x80
 	.dw _scriptCmd_setState2 ; 0x81
 	.dw _scriptCmd_jump2byte ; 0x82
@@ -143,46 +143,46 @@ runScriptCommand:
 ;;
 ; @addr{4103}
 _scriptCmd_none:
-	pop hl			; $4103
-	ret			; $4104
+	pop hl
+	ret
 
 ;;
 ; @addr{4105}
 _scriptCmd_stopIfItemFlagSet:
-	ld b,ROOMFLAG_ITEM	; $4105
-	jr _scriptFunc_checkRoomFlag		; $4107
+	ld b,ROOMFLAG_ITEM
+	jr _scriptFunc_checkRoomFlag
 ;;
 ; @addr{4109}
 _scriptCmd_stopIfRoomFlag40Set:
-	ld b,ROOMFLAG_40	; $4109
-	jr _scriptFunc_checkRoomFlag		; $410b
+	ld b,ROOMFLAG_40
+	jr _scriptFunc_checkRoomFlag
 ;;
 ; @addr{410d}
 _scriptCmd_stopIfRoomFlag80Set:
-	ld b,ROOMFLAG_80	; $410d
+	ld b,ROOMFLAG_80
 _scriptFunc_checkRoomFlag:
-	call getThisRoomFlags		; $410f
-	and b			; $4112
-	jp z,_scriptFunc_popHlAndInc		; $4113
-	pop hl			; $4116
-	ld hl,stubScript		; $4117
-	scf			; $411a
-	ret			; $411b
+	call getThisRoomFlags
+	and b
+	jp z,_scriptFunc_popHlAndInc
+	pop hl
+	ld hl,stubScript
+	scf
+	ret
 
 ;;
 ; @addr{411c}
 _scriptCmd_showPasswordScreen:
-	pop hl			; $411c
-	inc hl			; $411d
-	ldi a,(hl)		; $411e
-	push hl			; $411f
-	cp $ff			; $4120
-	jr z,@openSecretMenu	; $4122
+	pop hl
+	inc hl
+	ldi a,(hl)
+	push hl
+	cp $ff
+	jr z,@openSecretMenu
 
-	ld b,a			; $4124
-	swap a			; $4125
-	and $03			; $4127
-	rst_jumpTable			; $4129
+	ld b,a
+	swap a
+	and $03
+	rst_jumpTable
 
 .ifdef ROM_AGES
 	.dw @askForSecret
@@ -199,115 +199,115 @@ _scriptCmd_showPasswordScreen:
 ;;
 ; @addr{4132}
 @askForSecret:
-	ld a,b			; $4132
-	or $80			; $4133
+	ld a,b
+	or $80
 ;;
 ; @addr{4135}
 @openSecretMenu:
-	call openSecretInputMenu		; $4135
-	jr ++			; $4138
+	call openSecretInputMenu
+	jr ++
 
 ;;
 ; @addr{413a}
 @generateSecret:
-	ld a,b			; $413a
-	ld (wShortSecretIndex),a		; $413b
-	ld bc,$0003		; $413e
-	call secretFunctionCaller		; $4141
+	ld a,b
+	ld (wShortSecretIndex),a
+	ld bc,$0003
+	call secretFunctionCaller
 ++
-	pop hl			; $4144
-	xor a			; $4145
-	ret			; $4146
+	pop hl
+	xor a
+	ret
 
 ;;
 ; @addr{4147}
 _scriptCmd_disableInput:
-	ld a,$81		; $4147
-	ld (wDisabledObjects),a		; $4149
+	ld a,$81
+	ld (wDisabledObjects),a
 _scriptCmd_disableMenu:
-	ld a,$80		; $414c
-	ld (wMenuDisabled),a		; $414e
-	call clearAllParentItems		; $4151
-	call dropLinkHeldItem		; $4154
-	call _func_0c_4177		; $4157
+	ld a,$80
+	ld (wMenuDisabled),a
+	call clearAllParentItems
+	call dropLinkHeldItem
+	call _func_0c_4177
 _scriptFunc_popHlAndInc:
-	pop hl			; $415a
-	inc hl			; $415b
-	scf			; $415c
-	ret			; $415d
+	pop hl
+	inc hl
+	scf
+	ret
 
 ;;
 ; @addr{415e}
 _scriptCmd_enableInput:
-	xor a			; $415e
-	ld (wDisabledObjects),a		; $415f
+	xor a
+	ld (wDisabledObjects),a
 _scriptCmd_enableMenu:
-	xor a			; $4162
-	ld (wMenuDisabled),a		; $4163
-	jr _scriptFunc_popHlAndInc	; $4166
+	xor a
+	ld (wMenuDisabled),a
+	jr _scriptFunc_popHlAndInc
 
 _scriptCmd_setLinkCantMoveTo91:
-	ld a,$91		; $4168
+	ld a,$91
 _scriptFunc_setLinkCantMove:
-	ld (wDisabledObjects),a		; $416a
-	pop hl			; $416d
-	inc hl			; $416e
-	ret			; $416f
+	ld (wDisabledObjects),a
+	pop hl
+	inc hl
+	ret
 
 ;;
 ; @addr{4170}
 _scriptCmd_setLinkCantMoveTo00:
-	xor a			; $4170
-	jr _scriptFunc_setLinkCantMove		; $4171
+	xor a
+	jr _scriptFunc_setLinkCantMove
 ;;
 ; @addr{4173}
 _scriptCmd_setLinkCantMoveTo11:
-	ld a,$11		; $4173
-	jr _scriptFunc_setLinkCantMove		; $4175
+	ld a,$11
+	jr _scriptFunc_setLinkCantMove
 
 ;;
 ; @addr{4177}
 _func_0c_4177:
-	push hl			; $4177
-	ld a,(wLinkObjectIndex)		; $4178
-	ld h,a			; $417b
-	ld l,<w1Link.invincibilityCounter		; $417c
-	ld (hl),$80		; $417e
-	ld l,<w1Link.knockbackCounter		; $4180
-	ld (hl),$00		; $4182
-	pop hl			; $4184
-	ret			; $4185
+	push hl
+	ld a,(wLinkObjectIndex)
+	ld h,a
+	ld l,<w1Link.invincibilityCounter
+	ld (hl),$80
+	ld l,<w1Link.knockbackCounter
+	ld (hl),$00
+	pop hl
+	ret
 
 ;;
 ; @addr{4186}
 _scriptCmd_setState:
-	pop hl			; $4186
-	inc hl			; $4187
-	ld e,Interaction.state	; $4188
+	pop hl
+	inc hl
+	ld e,Interaction.state
 ;;
 ; @addr{418a}
 _scriptFunc_setState:
-	ldi a,(hl)		; $418a
-	cp $ff			; $418b
-	jr z,++			; $418d
+	ldi a,(hl)
+	cp $ff
+	jr z,++
 
-	ld (de),a		; $418f
-	xor a			; $4190
-	ret			; $4191
+	ld (de),a
+	xor a
+	ret
 ++
-	ld a,(de)		; $4192
-	inc a			; $4193
-	ld (de),a		; $4194
-	xor a			; $4195
-	ret			; $4196
+	ld a,(de)
+	inc a
+	ld (de),a
+	xor a
+	ret
 
 ;;
 ; @addr{4197}
 _scriptCmd_setState2:
-	pop hl			; $4197
-	inc hl			; $4198
-	ld e,Interaction.state2	; $4199
-	jr _scriptFunc_setState	; $419b
+	pop hl
+	inc hl
+	ld e,Interaction.state2
+	jr _scriptFunc_setState
 
 ;;
 ; This is for all commands under $80.
@@ -315,65 +315,65 @@ _scriptCmd_setState2:
 _scriptCmd_jump2byte:
 
 .ifdef ROM_AGES
-	ld a,h			; $419d
-	cp $80			; $419e
-	jr c,++			; $41a0
+	ld a,h
+	cp $80
+	jr c,++
 
-	ldh a,(<hScriptAddressL)	; $41a2
-	ld c,a			; $41a4
-	ldh a,(<hScriptAddressH)	; $41a5
-	ld b,a			; $41a7
-	inc hl			; $41a8
-	ldd a,(hl)		; $41a9
-	sub c			; $41aa
-	ld e,a			; $41ab
-	ld a,(hl)		; $41ac
-	sbc b			; $41ad
-	or a			; $41ae
-	jr nz,++		; $41af
+	ldh a,(<hScriptAddressL)
+	ld c,a
+	ldh a,(<hScriptAddressH)
+	ld b,a
+	inc hl
+	ldd a,(hl)
+	sub c
+	ld e,a
+	ld a,(hl)
+	sbc b
+	or a
+	jr nz,++
 
-	ld l,e			; $41b1
-	ld h,>wBigBuffer	; $41b2
-	ret			; $41b4
+	ld l,e
+	ld h,>wBigBuffer
+	ret
 ++
 .endif
-	ldi a,(hl)		; $41b5
-	ld l,(hl)		; $41b6
-	ld h,a			; $41b7
-	scf			; $41b8
-	ret			; $41b9
+	ldi a,(hl)
+	ld l,(hl)
+	ld h,a
+	scf
+	ret
 
 ;;
 ; @addr{41ba}
 _scriptCmd_spawnInteraction:
-	pop hl			; $41ba
-	inc hl			; $41bb
-	call _scriptFunc_loadBcAndDe		; $41bc
-	push hl			; $41bf
-	call getFreeInteractionSlot		; $41c0
-	jr nz,_scriptFunc_restoreActiveObject			; $41c3
+	pop hl
+	inc hl
+	call _scriptFunc_loadBcAndDe
+	push hl
+	call getFreeInteractionSlot
+	jr nz,_scriptFunc_restoreActiveObject
 
-	ld a,Interaction.yh		; $41c5
-	call _scriptFunc_initializeObject		; $41c7
+	ld a,Interaction.yh
+	call _scriptFunc_initializeObject
 _scriptFunc_restoreActiveObject:
-	ldh a,(<hActiveObject)	; $41ca
-	ld d,a			; $41cc
-	pop hl			; $41cd
-	ret			; $41ce
+	ldh a,(<hActiveObject)
+	ld d,a
+	pop hl
+	ret
 
 ;;
 ; Loads bc and de from hl (bc first, de second, big-endian).
 ; @addr{41cf}
 _scriptFunc_loadBcAndDe:
-	ldi a,(hl)		; $41cf
-	ld b,a			; $41d0
-	ldi a,(hl)		; $41d1
-	ld c,a			; $41d2
-	ldi a,(hl)		; $41d3
-	ld d,a			; $41d4
-	ldi a,(hl)		; $41d5
-	ld e,a			; $41d6
-	ret			; $41d7
+	ldi a,(hl)
+	ld b,a
+	ldi a,(hl)
+	ld c,a
+	ldi a,(hl)
+	ld d,a
+	ldi a,(hl)
+	ld e,a
+	ret
 
 ;;
 ; @param[in] a Address of object's YH variable
@@ -382,958 +382,958 @@ _scriptFunc_loadBcAndDe:
 ; @param[in] hl Address of object
 ; @addr{41d8}
 _scriptFunc_initializeObject:
-	ld (hl),b		; $41d8
-	inc l			; $41d9
-	ld (hl),c		; $41da
-	inc l			; $41db
-	ld l,a			; $41dc
-	ld (hl),d		; $41dd
-	inc l			; $41de
-	inc l			; $41df
-	ld (hl),e		; $41e0
-	ret			; $41e1
+	ld (hl),b
+	inc l
+	ld (hl),c
+	inc l
+	ld l,a
+	ld (hl),d
+	inc l
+	inc l
+	ld (hl),e
+	ret
 
 ;;
 ; @addr{41e2}
 _scriptCmd_spawnEnemy:
-	pop hl			; $41e2
-	inc hl			; $41e3
-	call _scriptFunc_loadBcAndDe		; $41e4
-	push hl			; $41e7
-	call getFreeEnemySlot		; $41e8
-	jr nz,_scriptFunc_restoreActiveObject	; $41eb
+	pop hl
+	inc hl
+	call _scriptFunc_loadBcAndDe
+	push hl
+	call getFreeEnemySlot
+	jr nz,_scriptFunc_restoreActiveObject
 
-	ld a,Enemy.yh		; $41ed
-	call _scriptFunc_initializeObject		; $41ef
-	jr _scriptFunc_restoreActiveObject		; $41f2
+	ld a,Enemy.yh
+	call _scriptFunc_initializeObject
+	jr _scriptFunc_restoreActiveObject
 
 _scriptCmd_spawnEnemyHere:
-	pop hl			; $41f4
-	inc hl			; $41f5
-	ldi a,(hl)		; $41f6
-	ld b,a			; $41f7
-	ldi a,(hl)		; $41f8
-	ld c,a			; $41f9
-	push hl			; $41fa
-	ld e,Interaction.yh		; $41fb
-	ld a,(de)		; $41fd
-	ld l,a			; $41fe
-	ld e,Interaction.xh		; $41ff
-	ld a,(de)		; $4201
-	ld e,a			; $4202
-	ld d,l			; $4203
-	call getFreeEnemySlot		; $4204
-	jr nz,_scriptFunc_restoreActiveObject	; $4207
-	ld a,Enemy.yh		; $4209
-	call _scriptFunc_initializeObject		; $420b
-	jr _scriptFunc_restoreActiveObject		; $420e
+	pop hl
+	inc hl
+	ldi a,(hl)
+	ld b,a
+	ldi a,(hl)
+	ld c,a
+	push hl
+	ld e,Interaction.yh
+	ld a,(de)
+	ld l,a
+	ld e,Interaction.xh
+	ld a,(de)
+	ld e,a
+	ld d,l
+	call getFreeEnemySlot
+	jr nz,_scriptFunc_restoreActiveObject
+	ld a,Enemy.yh
+	call _scriptFunc_initializeObject
+	jr _scriptFunc_restoreActiveObject
 
 _scriptCmd_jumpTable_memoryAddress:
-	pop hl			; $4210
-	inc hl			; $4211
-	ldi a,(hl)		; $4212
-	ld c,a			; $4213
-	ldi a,(hl)		; $4214
-	ld b,a			; $4215
-	ld a,(bc)		; $4216
-	rst_addDoubleIndex			; $4217
-	jp scriptFunc_jump		; $4218
+	pop hl
+	inc hl
+	ldi a,(hl)
+	ld c,a
+	ldi a,(hl)
+	ld b,a
+	ld a,(bc)
+	rst_addDoubleIndex
+	jp scriptFunc_jump
 
 _scriptCmd_setCoords:
-	pop hl			; $421b
-	inc hl			; $421c
-	ldi a,(hl)		; $421d
-	ld b,a			; $421e
-	ldi a,(hl)		; $421f
-	ld c,a			; $4220
-	push hl			; $4221
-	ld h,d			; $4222
-	ld l,Interaction.yh		; $4223
-	ld (hl),b		; $4225
-	ld l,Interaction.xh		; $4226
-	ld (hl),c		; $4228
-	pop hl			; $4229
-	ret			; $422a
+	pop hl
+	inc hl
+	ldi a,(hl)
+	ld b,a
+	ldi a,(hl)
+	ld c,a
+	push hl
+	ld h,d
+	ld l,Interaction.yh
+	ld (hl),b
+	ld l,Interaction.xh
+	ld (hl),c
+	pop hl
+	ret
 
 _scriptCmd_setAngle:
-	pop hl			; $422b
-	inc hl			; $422c
-	ldi a,(hl)		; $422d
-	ld e,Interaction.angle	; $422e
-	ld (de),a		; $4230
-	ret			; $4231
+	pop hl
+	inc hl
+	ldi a,(hl)
+	ld e,Interaction.angle
+	ld (de),a
+	ret
 
 _scriptCmd_setSpeed:
-	pop hl			; $4232
-	inc hl			; $4233
-	ldi a,(hl)		; $4234
-	ld e,Interaction.speed	; $4235
-	ld (de),a		; $4237
-	ret			; $4238
+	pop hl
+	inc hl
+	ldi a,(hl)
+	ld e,Interaction.speed
+	ld (de),a
+	ret
 
 _scriptCmd_setZSpeed:
-	pop hl			; $4239
-	inc hl			; $423a
-	ld e,Interaction.speedZ	; $423b
-	ldi a,(hl)		; $423d
-	ld (de),a		; $423e
-	inc e			; $423f
-	ldi a,(hl)		; $4240
-	ld (de),a		; $4241
-	scf			; $4242
-	ret			; $4243
+	pop hl
+	inc hl
+	ld e,Interaction.speedZ
+	ldi a,(hl)
+	ld (de),a
+	inc e
+	ldi a,(hl)
+	ld (de),a
+	scf
+	ret
 
 _scriptCmd_checkCounter2ZeroAndReset:
-	pop hl			; $4244
-	ld e,Interaction.counter2	; $4245
-	ld a,(de)		; $4247
-	or a			; $4248
-	ret nz			; $4249
+	pop hl
+	ld e,Interaction.counter2
+	ld a,(de)
+	or a
+	ret nz
 
-	inc hl			; $424a
-	ldi a,(hl)		; $424b
-	ld (de),a		; $424c
-	ret			; $424d
+	inc hl
+	ldi a,(hl)
+	ld (de),a
+	ret
 
 _scriptCmd_setCollideRadii:
-	pop hl			; $424e
-	inc hl			; $424f
-	ldi a,(hl)		; $4250
-	ld e,Interaction.collisionRadiusY	; $4251
-	ld (de),a		; $4253
-	inc e			; $4254
-	ldi a,(hl)		; $4255
-	ld (de),a		; $4256
-	ret			; $4257
+	pop hl
+	inc hl
+	ldi a,(hl)
+	ld e,Interaction.collisionRadiusY
+	ld (de),a
+	inc e
+	ldi a,(hl)
+	ld (de),a
+	ret
 
 _scriptCmd_writeInteractionByte:
-	pop hl			; $4258
-	inc hl			; $4259
-	ldi a,(hl)		; $425a
-	ld e,a			; $425b
-	ldi a,(hl)		; $425c
-	ld (de),a		; $425d
-	ret			; $425e
+	pop hl
+	inc hl
+	ldi a,(hl)
+	ld e,a
+	ldi a,(hl)
+	ld (de),a
+	ret
 
 _scriptCmd_addinteractionByte:
-	pop hl			; $425f
-	inc hl			; $4260
-	ldi a,(hl)		; $4261
-	ld e,a			; $4262
-	ldi a,(hl)		; $4263
-	ld b,a			; $4264
-	ld a,(de)		; $4265
-	add b			; $4266
-	ld (de),a		; $4267
-	scf			; $4268
-	ret			; $4269
+	pop hl
+	inc hl
+	ldi a,(hl)
+	ld e,a
+	ldi a,(hl)
+	ld b,a
+	ld a,(de)
+	add b
+	ld (de),a
+	scf
+	ret
 
 _scriptCmd_getRandomBits:
-	pop hl			; $426a
-	inc hl			; $426b
-	call getRandomNumber		; $426c
-	ld b,a			; $426f
-	ldi a,(hl)		; $4270
-	ld e,a			; $4271
-	ldi a,(hl)		; $4272
-	and b			; $4273
-	ld (de),a		; $4274
-	ret			; $4275
+	pop hl
+	inc hl
+	call getRandomNumber
+	ld b,a
+	ldi a,(hl)
+	ld e,a
+	ldi a,(hl)
+	and b
+	ld (de),a
+	ret
 
 _scriptCmd_loadSprite:
-	pop hl			; $4276
-	inc hl			; $4277
-	ldi a,(hl)		; $4278
-	cp $ff			; $4279
-	jr nz,+			; $427b
+	pop hl
+	inc hl
+	ldi a,(hl)
+	cp $ff
+	jr nz,+
 
-	ld e,Interaction.angle	; $427d
-	call convertAngleDeToDirection		; $427f
-	jr ++			; $4282
+	ld e,Interaction.angle
+	call convertAngleDeToDirection
+	jr ++
 +
-	cp $fe			; $4284
-	jr nz,++		; $4286
+	cp $fe
+	jr nz,++
 
-	ldi a,(hl)		; $4288
-	ld e,a			; $4289
-	ld a,(de)		; $428a
+	ldi a,(hl)
+	ld e,a
+	ld a,(de)
 ++
-	push hl			; $428b
-	call interactionSetAnimation		; $428c
-	pop hl			; $428f
-	ld a,:_scriptCmd_loadSprite	; $4290
-	setrombank		; $4292
-	ret			; $4297
+	push hl
+	call interactionSetAnimation
+	pop hl
+	ld a,:_scriptCmd_loadSprite
+	setrombank
+	ret
 
 _scriptCmd_8a:
-	call objectGetAngleTowardEnemyTarget		; $4298
-	add $04			; $429b
-	and $18			; $429d
-	swap a			; $429f
-	rlca			; $42a1
-	call interactionSetAnimation		; $42a2
-	jp _scriptFunc_popHlAndInc		; $42a5
+	call objectGetAngleTowardEnemyTarget
+	add $04
+	and $18
+	swap a
+	rlca
+	call interactionSetAnimation
+	jp _scriptFunc_popHlAndInc
 
 _scriptCmd_setAngleAndExtra:
-	pop hl			; $42a8
-	inc hl			; $42a9
-	ldi a,(hl)		; $42aa
-	ld e,Interaction.angle	; $42ab
-	ld (de),a		; $42ad
-	call convertAngleDeToDirection		; $42ae
-	push hl			; $42b1
-	call interactionSetAnimation		; $42b2
-	pop hl			; $42b5
-	scf			; $42b6
-	ret			; $42b7
+	pop hl
+	inc hl
+	ldi a,(hl)
+	ld e,Interaction.angle
+	ld (de),a
+	call convertAngleDeToDirection
+	push hl
+	call interactionSetAnimation
+	pop hl
+	scf
+	ret
 
 _scriptCmd_runGenericNpc:
-	pop hl			; $42b8
-	inc hl			; $42b9
-	call _scriptFunc_getTextIndex		; $42ba
-	ld a,c			; $42bd
-	ld e,Interaction.textID	; $42be
-	ld (de),a		; $42c0
-	ld a,b			; $42c1
-	inc e			; $42c2
-	ld (de),a		; $42c3
-	ld hl,genericNpcScript		; $42c4
-	ret			; $42c7
+	pop hl
+	inc hl
+	call _scriptFunc_getTextIndex
+	ld a,c
+	ld e,Interaction.textID
+	ld (de),a
+	ld a,b
+	inc e
+	ld (de),a
+	ld hl,genericNpcScript
+	ret
 
 ;;
 ; @addr{42c8}
 _scriptFunc_getTextIndex:
-	ld e,Interaction.useTextID	; $42c8
-	ld a,(de)		; $42ca
-	or a			; $42cb
-	jr z,+			; $42cc
+	ld e,Interaction.useTextID
+	ld a,(de)
+	or a
+	jr z,+
 
-	ld e,Interaction.textID+1	; $42ce
-	ld a,(de)		; $42d0
-	ld b,a			; $42d1
-	jr ++			; $42d2
+	ld e,Interaction.textID+1
+	ld a,(de)
+	ld b,a
+	jr ++
 +
-	ldi a,(hl)		; $42d4
-	ld b,a			; $42d5
+	ldi a,(hl)
+	ld b,a
 ++
-	ldi a,(hl)		; $42d6
-	ld c,a			; $42d7
-	ret			; $42d8
+	ldi a,(hl)
+	ld c,a
+	ret
 
 _scriptCmd_showText:
-	pop hl			; $42d9
-	inc hl			; $42da
-	call _scriptFunc_getTextIndex		; $42db
-	push hl			; $42de
-	call showText		; $42df
-	pop hl			; $42e2
-	ret			; $42e3
+	pop hl
+	inc hl
+	call _scriptFunc_getTextIndex
+	push hl
+	call showText
+	pop hl
+	ret
 
 _scriptCmd_showTextDifferentForLinked:
-	pop hl			; $42e4
-	inc hl			; $42e5
-	ldi a,(hl)		; $42e6
-	ld b,a			; $42e7
-	call checkIsLinkedGame		; $42e8
-	jr nz,@linked			; $42eb
+	pop hl
+	inc hl
+	ldi a,(hl)
+	ld b,a
+	call checkIsLinkedGame
+	jr nz,@linked
 @unlinked:
-	ldi a,(hl)		; $42ed
-	inc hl			; $42ee
-	jr ++			; $42ef
+	ldi a,(hl)
+	inc hl
+	jr ++
 @linked:
-	inc hl			; $42f1
-	ldi a,(hl)		; $42f2
+	inc hl
+	ldi a,(hl)
 ++
-	ld c,a			; $42f3
-	push hl			; $42f4
-	call showText		; $42f5
-	pop hl			; $42f8
-	ret			; $42f9
+	ld c,a
+	push hl
+	call showText
+	pop hl
+	ret
 
 _scriptCmd_showTextNonExitable:
-	pop hl			; $42fa
-	inc hl			; $42fb
-	call _scriptFunc_getTextIndex		; $42fc
-	push hl			; $42ff
-	call showTextNonExitable		; $4300
-	pop hl			; $4303
-	ret			; $4304
+	pop hl
+	inc hl
+	call _scriptFunc_getTextIndex
+	push hl
+	call showTextNonExitable
+	pop hl
+	ret
 
 _scriptCmd_waitForText:
-	pop hl			; $4305
-	ld a,(wTextIsActive)		; $4306
-	or a			; $4309
-	ret nz			; $430a
-	inc hl			; $430b
-	ret			; $430c
+	pop hl
+	ld a,(wTextIsActive)
+	or a
+	ret nz
+	inc hl
+	ret
 
 _scriptCmd_setCounter1:
-	pop hl			; $430d
-	inc hl			; $430e
-	ldi a,(hl)		; $430f
+	pop hl
+	inc hl
+	ldi a,(hl)
 _scriptFunc_4310:
-	ld e,Interaction.counter1	; $4310
-	ld (de),a		; $4312
-	xor a			; $4313
-	ret			; $4314
+	ld e,Interaction.counter1
+	ld (de),a
+	xor a
+	ret
 
 _scriptCmd_cpLinkX:
-	pop hl			; $4315
-	inc hl			; $4316
-	push hl			; $4317
-	ld e,Interaction.xh		; $4318
-	ld a,(de)		; $431a
-	ld hl,w1Link.xh		; $431b
-	cp (hl)			; $431e
-	pop hl			; $431f
-	ldi a,(hl)		; $4320
-	ld e,a			; $4321
-	ld a,$00		; $4322
-	jr nc,+			; $4324
-	inc a			; $4326
+	pop hl
+	inc hl
+	push hl
+	ld e,Interaction.xh
+	ld a,(de)
+	ld hl,w1Link.xh
+	cp (hl)
+	pop hl
+	ldi a,(hl)
+	ld e,a
+	ld a,$00
+	jr nc,+
+	inc a
 +
-	ld (de),a		; $4327
-	scf			; $4328
-	ret			; $4329
+	ld (de),a
+	scf
+	ret
 
 _scriptCmd_shakeScreen:
-	pop hl			; $432a
-	inc hl			; $432b
-	ldi a,(hl)		; $432c
-	ld (wScreenShakeCounterX),a		; $432d
-	ret			; $4330
+	pop hl
+	inc hl
+	ldi a,(hl)
+	ld (wScreenShakeCounterX),a
+	ret
 
 _scriptCmd_writeMemory:
-	pop hl			; $4331
-	inc hl			; $4332
-	ldi a,(hl)		; $4333
-	ld c,a			; $4334
-	ldi a,(hl)		; $4335
-	ld b,a			; $4336
-	ldi a,(hl)		; $4337
-	ld (bc),a		; $4338
-	scf			; $4339
-	ret			; $433a
+	pop hl
+	inc hl
+	ldi a,(hl)
+	ld c,a
+	ldi a,(hl)
+	ld b,a
+	ldi a,(hl)
+	ld (bc),a
+	scf
+	ret
 
 _scriptCmd_checkPaletteFadeDone:
-	pop hl			; $433b
-	ld a,(wPaletteThread_mode)		; $433c
-	or a			; $433f
-	ret nz			; $4340
-	inc hl			; $4341
-	ret			; $4342
+	pop hl
+	ld a,(wPaletteThread_mode)
+	or a
+	ret nz
+	inc hl
+	ret
 
 _scriptCmd_checkCFC0Bit:
-	pop hl			; $4343
-	ld a,(hl)		; $4344
-	and $07			; $4345
-	ld bc,bitTable		; $4347
-	add c			; $434a
-	ld c,a			; $434b
-	ld a,(bc)		; $434c
-	ld b,a			; $434d
-	ld a,($cfc0)		; $434e
-	and b			; $4351
-	ret z			; $4352
-	inc hl			; $4353
-	ret			; $4354
+	pop hl
+	ld a,(hl)
+	and $07
+	ld bc,bitTable
+	add c
+	ld c,a
+	ld a,(bc)
+	ld b,a
+	ld a,($cfc0)
+	and b
+	ret z
+	inc hl
+	ret
 
 _scriptCmd_xorCFC0Bit:
-	pop hl			; $4355
-	ld a,(hl)		; $4356
-	and $07			; $4357
-	ld bc,bitTable		; $4359
-	add c			; $435c
-	ld c,a			; $435d
-	ld a,(bc)		; $435e
-	ld b,a			; $435f
-	ld a,($cfc0)		; $4360
-	xor b			; $4363
-	ld ($cfc0),a		; $4364
-	inc hl			; $4367
-	ret			; $4368
+	pop hl
+	ld a,(hl)
+	and $07
+	ld bc,bitTable
+	add c
+	ld c,a
+	ld a,(bc)
+	ld b,a
+	ld a,($cfc0)
+	xor b
+	ld ($cfc0),a
+	inc hl
+	ret
 
 _scriptCmd_jumpIfNoEnemies:
-	pop hl			; $4369
-	ld a,(wNumEnemies)		; $436a
-	or a			; $436d
-	jp nz,scriptFunc_add3ToHl		; $436e
-	inc hl			; $4371
-	jp scriptFunc_jump		; $4372
+	pop hl
+	ld a,(wNumEnemies)
+	or a
+	jp nz,scriptFunc_add3ToHl
+	inc hl
+	jp scriptFunc_jump
 
 _scriptCmd_jumpIfC6xxSet:
-	pop hl			; $4375
-	inc hl			; $4376
-	ld b,$c6		; $4377
-	ld c,(hl)		; $4379
-	inc hl			; $437a
-	ld a,(bc)		; $437b
-	and (hl)		; $437c
-	jp z,scriptFunc_add3ToHl		; $437d
-	inc hl			; $4380
-	jp scriptFunc_jump		; $4381
+	pop hl
+	inc hl
+	ld b,$c6
+	ld c,(hl)
+	inc hl
+	ld a,(bc)
+	and (hl)
+	jp z,scriptFunc_add3ToHl
+	inc hl
+	jp scriptFunc_jump
 
 _scriptCmd_playSound:
-	pop hl			; $4384
-	inc hl			; $4385
-	ldi a,(hl)		; $4386
-	push hl			; $4387
-	call playSound		; $4388
-	pop hl			; $438b
-	ret			; $438c
+	pop hl
+	inc hl
+	ldi a,(hl)
+	push hl
+	call playSound
+	pop hl
+	ret
 
 _scriptCmd_updateLinkLocalRespawnPosition:
-	call updateLinkLocalRespawnPosition		; $438d
-	pop hl			; $4390
-	inc hl			; $4391
-	ret			; $4392
+	call updateLinkLocalRespawnPosition
+	pop hl
+	inc hl
+	ret
 
 _scriptCmd_jumpIfLinkVariableNe:
-	pop hl			; $4393
-	inc hl			; $4394
-	ldi a,(hl)		; $4395
-	ld d,LINK_OBJECT_INDEX	; $4396
-	ld e,a			; $4398
-	ld a,(de)		; $4399
-	cp (hl)			; $439a
-	jr z,+			; $439b
+	pop hl
+	inc hl
+	ldi a,(hl)
+	ld d,LINK_OBJECT_INDEX
+	ld e,a
+	ld a,(de)
+	cp (hl)
+	jr z,+
 
-	inc hl			; $439d
-	jp scriptFunc_jump		; $439e
+	inc hl
+	jp scriptFunc_jump
 +
-	ld bc,$0003		; $43a1
-	add hl,bc		; $43a4
-	ldh a,(<hActiveObject)	; $43a5
-	ld d,a			; $43a7
-	ret			; $43a8
+	ld bc,$0003
+	add hl,bc
+	ldh a,(<hActiveObject)
+	ld d,a
+	ret
 
 _scriptCmd_jumpIfMemoryEq:
-	pop hl			; $43a9
-	inc hl			; $43aa
-	ld c,(hl)		; $43ab
-	inc hl			; $43ac
-	ld b,(hl)		; $43ad
-	inc hl			; $43ae
-	ld a,(bc)		; $43af
+	pop hl
+	inc hl
+	ld c,(hl)
+	inc hl
+	ld b,(hl)
+	inc hl
+	ld a,(bc)
 --
-	cp (hl)			; $43b0
-	jp nz,scriptFunc_add3ToHl_scf		; $43b1
-	inc hl			; $43b4
-	jp scriptFunc_jump_scf		; $43b5
+	cp (hl)
+	jp nz,scriptFunc_add3ToHl_scf
+	inc hl
+	jp scriptFunc_jump_scf
 
 _scriptCmd_jumpIfInteractionByteEq:
-	pop hl			; $43b8
-	inc hl			; $43b9
-	ldi a,(hl)		; $43ba
-	ld e,a			; $43bb
-	ld a,(de)		; $43bc
-	jr --			; $43bd
+	pop hl
+	inc hl
+	ldi a,(hl)
+	ld e,a
+	ld a,(de)
+	jr --
 
 _scriptCmd_jumpIfRoomFlagSet:
-	pop hl			; $43bf
-	inc hl			; $43c0
-	ldi a,(hl)		; $43c1
-	ld b,a			; $43c2
-	push hl			; $43c3
-	call getThisRoomFlags		; $43c4
-	and b			; $43c7
-	jr nz,@flagset		; $43c8
+	pop hl
+	inc hl
+	ldi a,(hl)
+	ld b,a
+	push hl
+	call getThisRoomFlags
+	and b
+	jr nz,@flagset
 @flagunset:
-	pop hl			; $43ca
-	inc hl			; $43cb
-	inc hl			; $43cc
-	scf			; $43cd
-	ret			; $43ce
+	pop hl
+	inc hl
+	inc hl
+	scf
+	ret
 @flagset:
-	pop hl			; $43cf
-	jp scriptFunc_jump_scf		; $43d0
+	pop hl
+	jp scriptFunc_jump_scf
 
 _scriptCmd_orRoomFlags:
-	pop hl			; $43d3
-	inc hl			; $43d4
-	ldi a,(hl)		; $43d5
-	ld b,a			; $43d6
-	push hl			; $43d7
-	call getThisRoomFlags		; $43d8
-	or b			; $43db
-	ld (hl),a		; $43dc
-	pop hl			; $43dd
-	ret			; $43de
+	pop hl
+	inc hl
+	ldi a,(hl)
+	ld b,a
+	push hl
+	call getThisRoomFlags
+	or b
+	ld (hl),a
+	pop hl
+	ret
 
 _scriptCmd_checkSomething:
-	ld e,Interaction.pressedAButton		; $43df
-	call objectAddToAButtonSensitiveObjectList		; $43e1
-	pop hl			; $43e4
-	jr nc,+			; $43e5
-	inc hl			; $43e7
+	ld e,Interaction.pressedAButton
+	call objectAddToAButtonSensitiveObjectList
+	pop hl
+	jr nc,+
+	inc hl
 +
-	ret			; $43e8
+	ret
 
 _scriptCmd_showLoadedText:
-	ld e,Interaction.textID	; $43e9
-	ld a,(de)		; $43eb
-	ld c,a			; $43ec
-	inc e			; $43ed
-	ld a,(de)		; $43ee
-	ld b,a			; $43ef
-	call showText		; $43f0
-	pop hl			; $43f3
-	inc hl			; $43f4
-	ret			; $43f5
+	ld e,Interaction.textID
+	ld a,(de)
+	ld c,a
+	inc e
+	ld a,(de)
+	ld b,a
+	call showText
+	pop hl
+	inc hl
+	ret
 
 _scriptCmd_setTextID:
-	pop hl			; $43f6
-	inc hl			; $43f7
-	ldi a,(hl)		; $43f8
-	ld e,Interaction.textID	; $43f9
-	ld (de),a		; $43fb
-	inc e			; $43fc
-	ldi a,(hl)		; $43fd
-	ld (de),a		; $43fe
-	scf			; $43ff
-	ret			; $4400
+	pop hl
+	inc hl
+	ldi a,(hl)
+	ld e,Interaction.textID
+	ld (de),a
+	inc e
+	ldi a,(hl)
+	ld (de),a
+	scf
+	ret
 
 _scriptCmd_setMusic:
-	pop hl			; $4401
-	inc hl			; $4402
-	ldi a,(hl)		; $4403
-	cp $ff			; $4404
-	jr nz,+			; $4406
-	ld a,(wActiveMusic2)		; $4408
+	pop hl
+	inc hl
+	ldi a,(hl)
+	cp $ff
+	jr nz,+
+	ld a,(wActiveMusic2)
 +
-	ld (wActiveMusic),a		; $440b
-	push hl			; $440e
-	call playSound		; $440f
-	pop hl			; $4412
-	ret			; $4413
+	ld (wActiveMusic),a
+	push hl
+	call playSound
+	pop hl
+	ret
 
 _scriptCmd_orMemory:
-	pop hl			; $4414
-	inc hl			; $4415
-	ldi a,(hl)		; $4416
-	ld c,a			; $4417
-	ldi a,(hl)		; $4418
-	ld b,a			; $4419
-	ld a,(bc)		; $441a
-	or (hl)			; $441b
-	ld (bc),a		; $441c
-	inc hl			; $441d
-	scf			; $441e
-	ret			; $441f
+	pop hl
+	inc hl
+	ldi a,(hl)
+	ld c,a
+	ldi a,(hl)
+	ld b,a
+	ld a,(bc)
+	or (hl)
+	ld (bc),a
+	inc hl
+	scf
+	ret
 
 _scriptCmd_spawnItem:
-	pop hl			; $4420
-	ld e,(hl)		; $4421
-	inc hl			; $4422
-	ldi a,(hl)		; $4423
-	ld b,a			; $4424
-	ldi a,(hl)		; $4425
-	ld c,a			; $4426
-	push hl			; $4427
-	call getFreeInteractionSlot		; $4428
-	jp nz,_scriptFunc_restoreActiveObject		; $442b
-	ld (hl),INTERACID_TREASURE		; $442e
-	inc l			; $4430
-	ld (hl),b		; $4431
-	inc l			; $4432
-	ld (hl),c		; $4433
-	ld a,e			; $4434
-	cp $de			; $4435
-	jr z,+			; $4437
-	call objectCopyPosition		; $4439
-	jp _scriptFunc_restoreActiveObject		; $443c
+	pop hl
+	ld e,(hl)
+	inc hl
+	ldi a,(hl)
+	ld b,a
+	ldi a,(hl)
+	ld c,a
+	push hl
+	call getFreeInteractionSlot
+	jp nz,_scriptFunc_restoreActiveObject
+	ld (hl),INTERACID_TREASURE
+	inc l
+	ld (hl),b
+	inc l
+	ld (hl),c
+	ld a,e
+	cp $de
+	jr z,+
+	call objectCopyPosition
+	jp _scriptFunc_restoreActiveObject
 +
-	ld e,Interaction.counter1	; $443f
-	ld a,$03		; $4441
-	ld (de),a		; $4443
-	ld de,w1Link.yh		; $4444
-	call objectCopyPosition_rawAddress		; $4447
-	jp _scriptFunc_restoreActiveObject		; $444a
+	ld e,Interaction.counter1
+	ld a,$03
+	ld (de),a
+	ld de,w1Link.yh
+	call objectCopyPosition_rawAddress
+	jp _scriptFunc_restoreActiveObject
 
 _scriptCmd_df:
-	pop hl			; $444d
-	inc hl			; $444e
-	ldi a,(hl)		; $444f
-	call checkTreasureObtained		; $4450
-	ld ($cfc1),a		; $4453
-	jr nc,+			; $4456
-	jp scriptFunc_jump		; $4458
+	pop hl
+	inc hl
+	ldi a,(hl)
+	call checkTreasureObtained
+	ld ($cfc1),a
+	jr nc,+
+	jp scriptFunc_jump
 +
-	inc hl			; $445b
-	inc hl			; $445c
-	ret			; $445d
+	inc hl
+	inc hl
+	ret
 
 _scriptCmd_jumpIfSomething:
-	pop hl			; $445e
-	inc hl			; $445f
-	ld a,TREASURE_TRADEITEM		; $4460
-	call checkTreasureObtained		; $4462
-	jr nc,++		; $4465
+	pop hl
+	inc hl
+	ld a,TREASURE_TRADEITEM
+	call checkTreasureObtained
+	jr nc,++
 
-	ld b,a			; $4467
-	ldi a,(hl)		; $4468
-	dec a			; $4469
-	cp b			; $446a
-	jr nz,+++		; $446b
-	jp scriptFunc_jump		; $446d
+	ld b,a
+	ldi a,(hl)
+	dec a
+	cp b
+	jr nz,+++
+	jp scriptFunc_jump
 ++
-	inc hl			; $4470
+	inc hl
 +++
-	inc hl			; $4471
-	inc hl			; $4472
-	ret			; $4473
+	inc hl
+	inc hl
+	ret
 
 _scriptCmd_setLinkCantMove:
-	pop hl			; $4474
-	inc hl			; $4475
-	ldi a,(hl)		; $4476
-	ld (wDisabledObjects),a		; $4477
-	ret			; $447a
+	pop hl
+	inc hl
+	ldi a,(hl)
+	ld (wDisabledObjects),a
+	ret
 
 _scriptCmd_checkCounter2Zero:
-	pop hl			; $447b
-	ld e,Interaction.counter2	; $447c
-	ld a,(de)		; $447e
-	or a			; $447f
-	ret nz			; $4480
-	inc hl			; $4481
-	ret			; $4482
+	pop hl
+	ld e,Interaction.counter2
+	ld a,(de)
+	or a
+	ret nz
+	inc hl
+	ret
 
 _scriptCmd_setTile:
-	pop hl			; $4483
-	inc hl			; $4484
-	ldi a,(hl)		; $4485
+	pop hl
+	inc hl
+	ldi a,(hl)
 --
-	ld c,a			; $4486
-	ldi a,(hl)		; $4487
-	push hl			; $4488
-	call setTile		; $4489
-	pop hl			; $448c
-	scf			; $448d
-	ret			; $448e
+	ld c,a
+	ldi a,(hl)
+	push hl
+	call setTile
+	pop hl
+	scf
+	ret
 
 _scriptCmd_setTileHere:
-	pop hl			; $448f
-	inc hl			; $4490
-	call objectGetShortPosition		; $4491
-	jr --			; $4494
+	pop hl
+	inc hl
+	call objectGetShortPosition
+	jr --
 
 _scriptCmd_callScript:
-	pop hl			; $4496
-	inc hl			; $4497
-	ldi a,(hl)		; $4498
-	ld c,a			; $4499
-	ldi a,(hl)		; $449a
-	ld b,a			; $449b
-	ld e,Interaction.scriptRet	; $449c
-	ld a,l			; $449e
-	ld (de),a		; $449f
-	inc e			; $44a0
-	ld a,h			; $44a1
-	ld (de),a		; $44a2
-	ld l,c			; $44a3
-	ld h,b			; $44a4
-	ret			; $44a5
+	pop hl
+	inc hl
+	ldi a,(hl)
+	ld c,a
+	ldi a,(hl)
+	ld b,a
+	ld e,Interaction.scriptRet
+	ld a,l
+	ld (de),a
+	inc e
+	ld a,h
+	ld (de),a
+	ld l,c
+	ld h,b
+	ret
 
 _scriptCmd_ret:
-	pop hl			; $44a6
-	ld e,Interaction.scriptRet	; $44a7
-	ld a,(de)		; $44a9
-	ld l,a			; $44aa
-	inc e			; $44ab
-	ld a,(de)		; $44ac
-	ld h,a			; $44ad
-	ret			; $44ae
+	pop hl
+	ld e,Interaction.scriptRet
+	ld a,(de)
+	ld l,a
+	inc e
+	ld a,(de)
+	ld h,a
+	ret
 
 --
-	inc hl			; $44af
-	jp scriptFunc_jump_scf		; $44b0
+	inc hl
+	jp scriptFunc_jump_scf
 _scriptCmd_jumpIfCBA5Eq:
-	pop hl			; $44b3
-	inc hl			; $44b4
-	ld a,(wSelectedTextOption)		; $44b5
-	cp (hl)			; $44b8
-	jr z,--			; $44b9
-	jp scriptFunc_add3ToHl_scf		; $44bb
+	pop hl
+	inc hl
+	ld a,(wSelectedTextOption)
+	cp (hl)
+	jr z,--
+	jp scriptFunc_add3ToHl_scf
 
 _scriptCmd_jumpRandom:
 .ifdef ROM_AGES
-	pop hl			; $44be
-	inc hl			; $44bf
-	jp scriptFunc_jump_scf		; $44c0
+	pop hl
+	inc hl
+	jp scriptFunc_jump_scf
 
 .else; ROM_SEASONS
-	pop hl			; $44a6
-	inc hl			; $44a7
-	call getRandomNumber		; $44a8
-	and $01			; $44ab
-	add a			; $44ad
-	rst_addAToHl			; $44ae
-	jp scriptFunc_jump_scf		; $44af
+	pop hl
+	inc hl
+	call getRandomNumber
+	and $01
+	add a
+	rst_addAToHl
+	jp scriptFunc_jump_scf
 .endif
 
 _scriptCmd_jumpTable:
-	pop hl			; $44c3
-	inc hl			; $44c4
-	ldi a,(hl)		; $44c5
-	ld e,a			; $44c6
-	ld a,(de)		; $44c7
-	rst_addDoubleIndex			; $44c8
-	jp scriptFunc_jump		; $44c9
+	pop hl
+	inc hl
+	ldi a,(hl)
+	ld e,a
+	ld a,(de)
+	rst_addDoubleIndex
+	jp scriptFunc_jump
 
 _scriptCmd_jumpIfMemorySet:
-	pop hl			; $44cc
-	inc hl			; $44cd
-	ldi a,(hl)		; $44ce
-	ld b,(hl)		; $44cf
-	ld c,a			; $44d0
-	inc hl			; $44d1
-	ld a,(bc)		; $44d2
-	and (hl)		; $44d3
-	jp z,scriptFunc_add3ToHl		; $44d4
-	inc hl			; $44d7
-	jp scriptFunc_jump_scf		; $44d8
+	pop hl
+	inc hl
+	ldi a,(hl)
+	ld b,(hl)
+	ld c,a
+	inc hl
+	ld a,(bc)
+	and (hl)
+	jp z,scriptFunc_add3ToHl
+	inc hl
+	jp scriptFunc_jump_scf
 
 _scriptCmd_writeC6xx:
-	pop hl			; $44db
-	inc hl			; $44dc
-	ld b,$c6		; $44dd
-	ld c,(hl)		; $44df
-	inc hl			; $44e0
-	ldi a,(hl)		; $44e1
-	ld (bc),a		; $44e2
-	ret			; $44e3
+	pop hl
+	inc hl
+	ld b,$c6
+	ld c,(hl)
+	inc hl
+	ldi a,(hl)
+	ld (bc),a
+	ret
 
 _scriptCmd_checkCollidedWithLink_ignoreZ:
-	call objectCheckCollidedWithLink_ignoreZ		; $44e4
-	pop hl			; $44e7
-	ret nc			; $44e8
-	jr ++			; $44e9
+	call objectCheckCollidedWithLink_ignoreZ
+	pop hl
+	ret nc
+	jr ++
 
 _scriptCmd_checkCollidedWithLink_onGround:
-	call objectCheckCollidedWithLink_onGround		; $44eb
-	pop hl			; $44ee
-	ret nc			; $44ef
+	call objectCheckCollidedWithLink_onGround
+	pop hl
+	ret nc
 ++
-	call _func_0c_4177		; $44f0
-	inc hl			; $44f3
-	ret			; $44f4
+	call _func_0c_4177
+	inc hl
+	ret
 
 _scriptCmd_checkAButton:
-	ld e,Interaction.pressedAButton		; $44f5
-	ld a,(de)		; $44f7
-	or a			; $44f8
-	pop hl			; $44f9
-	ret z			; $44fa
+	ld e,Interaction.pressedAButton
+	ld a,(de)
+	or a
+	pop hl
+	ret z
 
-	xor a			; $44fb
-	ld (de),a		; $44fc
-	call _func_0c_4177		; $44fd
-	inc hl			; $4500
-	scf			; $4501
-	ret			; $4502
+	xor a
+	ld (de),a
+	call _func_0c_4177
+	inc hl
+	scf
+	ret
 
 _scriptCmd_checkNoEnemies:
-	pop hl			; $4503
-	ld a,(wNumEnemies)		; $4504
-	or a			; $4507
-	ret nz			; $4508
-	inc hl			; $4509
-	ret			; $450a
+	pop hl
+	ld a,(wNumEnemies)
+	or a
+	ret nz
+	inc hl
+	ret
 
 _scriptCmd_checkFlagSet:
-	pop hl			; $450b
-	push hl			; $450c
-	inc hl			; $450d
-	ldi a,(hl)		; $450e
-	ld b,a			; $450f
-	ldi a,(hl)		; $4510
-	ld h,(hl)		; $4511
-	ld l,a			; $4512
-	ld a,b			; $4513
-	call checkFlag		; $4514
-	pop hl			; $4517
-	ret z			; $4518
-	ld bc,$0004		; $4519
-	add hl,bc		; $451c
-	scf			; $451d
-	ret			; $451e
+	pop hl
+	push hl
+	inc hl
+	ldi a,(hl)
+	ld b,a
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	ld a,b
+	call checkFlag
+	pop hl
+	ret z
+	ld bc,$0004
+	add hl,bc
+	scf
+	ret
 
 _scriptCmd_checkInteractionByteEq:
-	pop hl			; $451f
-	push hl			; $4520
-	inc hl			; $4521
-	ldi a,(hl)		; $4522
-	ld e,a			; $4523
-	ld a,(de)		; $4524
-	cp (hl)			; $4525
-	jr z,+			; $4526
+	pop hl
+	push hl
+	inc hl
+	ldi a,(hl)
+	ld e,a
+	ld a,(de)
+	cp (hl)
+	jr z,+
 
-	pop hl			; $4528
-	xor a			; $4529
-	ret			; $452a
+	pop hl
+	xor a
+	ret
 +
-	pop bc			; $452b
-	inc hl			; $452c
-	ret			; $452d
+	pop bc
+	inc hl
+	ret
 
 _scriptCmd_checkMemoryEq:
-	pop hl			; $452e
-	push hl			; $452f
-	inc hl			; $4530
-	ldi a,(hl)		; $4531
-	ld c,a			; $4532
-	ldi a,(hl)		; $4533
-	ld b,a			; $4534
-	ld a,(bc)		; $4535
-	cp (hl)			; $4536
-	jr z,+			; $4537
+	pop hl
+	push hl
+	inc hl
+	ldi a,(hl)
+	ld c,a
+	ldi a,(hl)
+	ld b,a
+	ld a,(bc)
+	cp (hl)
+	jr z,+
 
-	pop hl			; $4539
-	xor a			; $453a
-	ret			; $453b
+	pop hl
+	xor a
+	ret
 +
-	pop bc			; $453c
-	inc hl			; $453d
-	ret			; $453e
+	pop bc
+	inc hl
+	ret
 
 _scriptCmd_checkHeartDisplayUpdated:
-	pop hl			; $453f
-	ld a,(wDisplayedHearts)		; $4540
-	ld b,a			; $4543
-	ld a,(wLinkHealth)		; $4544
-	cp b			; $4547
-	jr z,+			; $4548
-	xor a			; $454a
-	ret			; $454b
+	pop hl
+	ld a,(wDisplayedHearts)
+	ld b,a
+	ld a,(wLinkHealth)
+	cp b
+	jr z,+
+	xor a
+	ret
 +
-	inc hl			; $454c
-	scf			; $454d
-	ret			; $454e
+	inc hl
+	scf
+	ret
 
 _scriptCmd_checkRupeeDisplayUpdated:
-	ld hl,wNumRupees		; $454f
-	ld a,(wDisplayedRupees)		; $4552
-	cp (hl)			; $4555
-	jr nz,+			; $4556
+	ld hl,wNumRupees
+	ld a,(wDisplayedRupees)
+	cp (hl)
+	jr nz,+
 
-	inc l			; $4558
-	ld a,(wDisplayedRupees+1)		; $4559
-	cp (hl)			; $455c
-	jp z,_scriptFunc_popHlAndInc		; $455d
+	inc l
+	ld a,(wDisplayedRupees+1)
+	cp (hl)
+	jp z,_scriptFunc_popHlAndInc
 +
-	pop hl			; $4560
-	xor a			; $4561
-	ret			; $4562
+	pop hl
+	xor a
+	ret
 
 _scriptCmd_checkNotCollidedWithLink_ignoreZ:
-	call objectCheckCollidedWithLink_ignoreZ		; $4563
-	pop hl			; $4566
-	jr c,+			; $4567
-	inc hl			; $4569
-	ret			; $456a
+	call objectCheckCollidedWithLink_ignoreZ
+	pop hl
+	jr c,+
+	inc hl
+	ret
 +
-	xor a			; $456b
-	ret			; $456c
+	xor a
+	ret
 
 _scriptCmd_createPuff:
-	call objectCreatePuff		; $456d
-	pop hl			; $4570
-	inc hl			; $4571
-	ret			; $4572
+	call objectCreatePuff
+	pop hl
+	inc hl
+	ret
 
 _scriptCmd_jumpIfGlobalFlagSet:
-	pop hl			; $4573
-	inc hl			; $4574
-	ldi a,(hl)		; $4575
-	push hl			; $4576
-	call checkGlobalFlag		; $4577
-	pop hl			; $457a
-	jr z,+			; $457b
-	jp scriptFunc_jump_scf		; $457d
+	pop hl
+	inc hl
+	ldi a,(hl)
+	push hl
+	call checkGlobalFlag
+	pop hl
+	jr z,+
+	jp scriptFunc_jump_scf
 +
-	inc hl			; $4580
-	inc hl			; $4581
-	scf			; $4582
-	ret			; $4583
+	inc hl
+	inc hl
+	scf
+	ret
 
 _scriptCmd_setOrUnsetGlobalFlag:
-	pop hl			; $4584
-	inc hl			; $4585
-	ldi a,(hl)		; $4586
-	bit 7,a			; $4587
-	jr nz,@unset		; $4589
+	pop hl
+	inc hl
+	ldi a,(hl)
+	bit 7,a
+	jr nz,@unset
 @set:
-	push hl			; $458b
-	call setGlobalFlag		; $458c
-	pop hl			; $458f
-	scf			; $4590
-	ret			; $4591
+	push hl
+	call setGlobalFlag
+	pop hl
+	scf
+	ret
 @unset:
-	and $7f			; $4592
-	push hl			; $4594
-	call unsetGlobalFlag		; $4595
-	pop hl			; $4598
-	scf			; $4599
-	ret			; $459a
+	and $7f
+	push hl
+	call unsetGlobalFlag
+	pop hl
+	scf
+	ret
 
 _scriptCmd_initNpcHitbox:
 .ifdef ROM_AGES
-	ld e,Interaction.collisionRadiusY	; $459b
-	ld a,(de)		; $459d
-	or a			; $459e
-	jr nz,+			; $459f
+	ld e,Interaction.collisionRadiusY
+	ld a,(de)
+	or a
+	jr nz,+
 .endif
 
-	ld a,$06		; $45a1
-	call objectSetCollideRadius		; $45a3
+	ld a,$06
+	call objectSetCollideRadius
 +
-	ld e,Interaction.pressedAButton	; $45a6
-	call objectRemoveFromAButtonSensitiveObjectList		; $45a8
-	ld e,Interaction.pressedAButton	; $45ab
-	call objectAddToAButtonSensitiveObjectList		; $45ad
-	pop hl			; $45b0
-	ret nc			; $45b1
+	ld e,Interaction.pressedAButton
+	call objectRemoveFromAButtonSensitiveObjectList
+	ld e,Interaction.pressedAButton
+	call objectAddToAButtonSensitiveObjectList
+	pop hl
+	ret nc
 
-	inc hl			; $45b2
-	scf			; $45b3
-	ret			; $45b4
+	inc hl
+	scf
+	ret
 
 _scriptCmd_moveNpcUp:
-	ld a,$00		; $45b5
+	ld a,$00
 --
-	ld e,Interaction.angle	; $45b7
-	ld (de),a		; $45b9
-	call convertAngleDeToDirection		; $45ba
-	call interactionSetAnimation		; $45bd
-	pop hl			; $45c0
-	inc hl			; $45c1
-	ldi a,(hl)		; $45c2
-	ld e,Interaction.counter2	; $45c3
-	ld (de),a		; $45c5
-	xor a			; $45c6
-	ret			; $45c7
+	ld e,Interaction.angle
+	ld (de),a
+	call convertAngleDeToDirection
+	call interactionSetAnimation
+	pop hl
+	inc hl
+	ldi a,(hl)
+	ld e,Interaction.counter2
+	ld (de),a
+	xor a
+	ret
 
 _scriptCmd_moveNpcRight:
-	ld a,$08		; $45c8
-	jr --			; $45ca
+	ld a,$08
+	jr --
 
 _scriptCmd_moveNpcDown:
-	ld a,$10		; $45cc
-	jr --			; $45ce
+	ld a,$10
+	jr --
 
 _scriptCmd_moveNpcLeft:
-	ld a,$18		; $45d0
-	jr --			; $45d2
+	ld a,$18
+	jr --
 
 _scriptCmd_delay:
-	pop hl			; $45d4
-	ldi a,(hl)		; $45d5
-	and $0f			; $45d6
-	ld bc,@delayLengths	; $45d8
-	call addAToBc		; $45db
-	ld a,(bc)		; $45de
-	jp _scriptFunc_4310		; $45df
+	pop hl
+	ldi a,(hl)
+	and $0f
+	ld bc,@delayLengths
+	call addAToBc
+	ld a,(bc)
+	jp _scriptFunc_4310
 
 ; @addr{45e2}
 @delayLengths:

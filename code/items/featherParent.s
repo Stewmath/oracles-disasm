@@ -2,68 +2,68 @@
 ; ITEMID_FEATHER ($17)
 ; @addr{52f3}
 _parentItemCode_feather:
-	ld e,Item.state		; $52f3
-	ld a,(de)		; $52f5
-	rst_jumpTable			; $52f6
+	ld e,Item.state
+	ld a,(de)
+	rst_jumpTable
 	.dw @state0
 	.dw @state1
 
 @state0:
 
 .ifdef ROM_AGES
-	call _isLinkUnderwater		; $52fb
-	jr nz,@deleteParent	; $52fe
+	call _isLinkUnderwater
+	jr nz,@deleteParent
 
 	; Can't use the feather while using the switch hook
-	ld a,(w1ParentItem2.id)		; $5300
-	cp ITEMID_SWITCH_HOOK			; $5303
-	jr z,@deleteParent	; $5305
+	ld a,(w1ParentItem2.id)
+	cp ITEMID_SWITCH_HOOK
+	jr z,@deleteParent
 .endif
 
 	; No jumping in minecarts / on companions
-	ld a,(wLinkObjectIndex)		; $5307
-	rrca			; $530a
-	jr c,@deleteParent	; $530b
+	ld a,(wLinkObjectIndex)
+	rrca
+	jr c,@deleteParent
 
 	; No jumping when holding something?
-	ld a,(wLinkGrabState)		; $530d
-	or a			; $5310
-	jr nz,@deleteParent	; $5311
+	ld a,(wLinkGrabState)
+	or a
+	jr nz,@deleteParent
 
-	call _isLinkInHole		; $5313
-	jr c,@deleteParent	; $5316
+	call _isLinkInHole
+	jr c,@deleteParent
 
-	ld hl,wLinkSwimmingState		; $5318
-	ldi a,(hl)		; $531b
+	ld hl,wLinkSwimmingState
+	ldi a,(hl)
 	; Check wMagnetGloveState as well
-	or (hl)			; $531c
-	jr nz,@deleteParent	; $531d
+	or (hl)
+	jr nz,@deleteParent
 
-	ld a,(wLinkInAir)		; $531f
-	add a			; $5322
-	jr c,@deleteParent	; $5323
+	ld a,(wLinkInAir)
+	add a
+	jr c,@deleteParent
 
-	add a			; $5325
-	jr c,@state1		; $5326
-	jr nz,@deleteParent	; $5328
+	add a
+	jr c,@state1
+	jr nz,@deleteParent
 
-	ld a,(w1Link.zh)		; $532a
-	or a			; $532d
-	jr nz,@deleteParent	; $532e
+	ld a,(w1Link.zh)
+	or a
+	jr nz,@deleteParent
 
 	; Jump higher in sidescrolling rooms
-	ld bc,$fe20		; $5330
-	ld a,(wActiveGroup)		; $5333
-	cp $06			; $5336
-	jr c,+			; $5338
-	ld bc,$fdd0		; $533a
+	ld bc,$fe20
+	ld a,(wActiveGroup)
+	cp $06
+	jr c,+
+	ld bc,$fdd0
 +
-	ld hl,w1Link.speedZ		; $533d
-	ld (hl),c		; $5340
-	inc l			; $5341
-	ld (hl),b		; $5342
+	ld hl,w1Link.speedZ
+	ld (hl),c
+	inc l
+	ld (hl),b
 
-	ld a,$01		; $5343
+	ld a,$01
 
 .ifdef ROM_SEASONS
 	ld a,(wFeatherLevel)
@@ -71,23 +71,23 @@ _parentItemCode_feather:
 	ld a,$41
 	jr z,++
 .endif
-	ld a,$01		; $5183
+	ld a,$01
 ++
-	ld (wLinkInAir),a		; $5347
-	jr nz,@deleteParent	; $534a
+	ld (wLinkInAir),a
+	jr nz,@deleteParent
 
-	ld e,Item.state		; $534c
-	ld a,$01		; $534e
-	ld (de),a		; $5350
-	ret			; $5351
+	ld e,Item.state
+	ld a,$01
+	ld (de),a
+	ret
 
 @deleteParent:
-	jp _clearParentItem		; $5352
+	jp _clearParentItem
 
 @state1:
 
 .ifdef ROM_AGES
-	jp _clearParentItem		; $5355
+	jp _clearParentItem
 .else
 	ld a,(wLinkInAir)
 	bit 5,a

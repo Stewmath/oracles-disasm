@@ -82,54 +82,54 @@
 ; - Tile value
 ; @addr{6bb5}
 fillRectInRoomLayout:
-	ldi a,(hl)		; $669d
-	ld e,a			; $669e
-	ldi a,(hl)		; $669f
-	ld b,a			; $66a0
-	ldi a,(hl)		; $66a1
-	ld c,a			; $66a2
-	ldi a,(hl)		; $66a3
-	ld d,a			; $66a4
-	ld h,>wRoomLayout	; $66a5
+	ldi a,(hl)
+	ld e,a
+	ldi a,(hl)
+	ld b,a
+	ldi a,(hl)
+	ld c,a
+	ldi a,(hl)
+	ld d,a
+	ld h,>wRoomLayout
 --
-	ld a,d			; $66a7
-	ld l,e			; $66a8
-	push bc			; $66a9
+	ld a,d
+	ld l,e
+	push bc
 -
-	ldi (hl),a		; $66aa
-	dec c			; $66ab
-	jr nz,-			; $66ac
-	ld a,e			; $66ae
-	add $10			; $66af
-	ld e,a			; $66b1
-	pop bc			; $66b2
-	dec b			; $66b3
-	jr nz,--		; $66b4
-	ret			; $66b6
+	ldi (hl),a
+	dec c
+	jr nz,-
+	ld a,e
+	add $10
+	ld e,a
+	pop bc
+	dec b
+	jr nz,--
+	ret
 
 ;;
 ; @param	bc	$0808
 ; @param	de	$c8f0 - d2 rupee room, $c8f8 - d6 rupee room
 ; @param	hl	top-left tile of rupees
 replaceRupeeRoomRupees:
-	ld a,(de)		; $66b7
-	inc de			; $66b8
-	push bc			; $66b9
+	ld a,(de)
+	inc de
+	push bc
 -
-	rrca			; $66ba
-	jr nc,+			; $66bb
-	ld (hl),TILEINDEX_STANDARD_FLOOR		; $66bd
+	rrca
+	jr nc,+
+	ld (hl),TILEINDEX_STANDARD_FLOOR
 +
-	inc l			; $66bf
-	dec b			; $66c0
-	jr nz,-			; $66c1
-	ld a,l			; $66c3
-	add $08			; $66c4
-	ld l,a			; $66c6
-	pop bc			; $66c7
-	dec c			; $66c8
-	jr nz,replaceRupeeRoomRupees	; $66c9
-	ret			; $66cb
+	inc l
+	dec b
+	jr nz,-
+	ld a,l
+	add $08
+	ld l,a
+	pop bc
+	dec c
+	jr nz,replaceRupeeRoomRupees
+	ret
 
 
 .include "code/seasons/roomGfxChanges.s"
@@ -137,158 +137,158 @@ replaceRupeeRoomRupees:
 
 
 loadTilesetData_body:
-	call getTempleRemainsSeasonsTilesetData		; $6c6d
-	jr c,+			; $6c70
-	call getMoblinKeepSeasonsTilesetData		; $6c72
-	jr c,+			; $6c75
-	ld a,(wActiveGroup)		; $6c77
+	call getTempleRemainsSeasonsTilesetData
+	jr c,+
+	call getMoblinKeepSeasonsTilesetData
+	jr c,+
+	ld a,(wActiveGroup)
 
-	ld hl,roomTilesetsGroupTable		; $6c7a
-	rst_addDoubleIndex			; $6c7d
-	ldi a,(hl)		; $6c7e
-	ld h,(hl)		; $6c7f
-	ld l,a			; $6c80
-	ld a,(wActiveRoom)		; $6c81
-	rst_addAToHl			; $6c84
-	ld a,(hl)		; $6c85
-	and $80			; $6c86
-	ldh (<hFF8B),a	; $6c88
-	ld a,(hl)		; $6c8a
+	ld hl,roomTilesetsGroupTable
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	ld a,(wActiveRoom)
+	rst_addAToHl
+	ld a,(hl)
+	and $80
+	ldh (<hFF8B),a
+	ld a,(hl)
 
-	and $7f			; $6c8b
-	call multiplyABy8		; $6c8d
-	ld hl,tilesetData		; $6c90
-	add hl,bc		; $6c93
+	and $7f
+	call multiplyABy8
+	ld hl,tilesetData
+	add hl,bc
 
-	ld a,(hl)		; $6c94
-	inc a			; $6c95
-	jr nz,+			; $6c96
-	inc hl			; $6c98
-	ldi a,(hl)		; $6c99
-	ld h,(hl)		; $6c9a
-	ld l,a			; $6c9b
-	ld a,(wRoomStateModifier)		; $6c9c
-	call multiplyABy8		; $6c9f
-	add hl,bc		; $6ca2
+	ld a,(hl)
+	inc a
+	jr nz,+
+	inc hl
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	ld a,(wRoomStateModifier)
+	call multiplyABy8
+	add hl,bc
 +
-	ldi a,(hl)		; $6ca3
-	ld e,a			; $6ca4
-	and $0f			; $6ca5
-	cp $0f			; $6ca7
-	jr nz,+			; $6ca9
-	ld a,$ff		; $6cab
+	ldi a,(hl)
+	ld e,a
+	and $0f
+	cp $0f
+	jr nz,+
+	ld a,$ff
 +
-	ld (wDungeonIndex),a		; $6cad
-	ld a,e			; $6cb0
-	swap a			; $6cb1
-	and $0f			; $6cb3
-	ld (wActiveCollisions),a		; $6cb5
+	ld (wDungeonIndex),a
+	ld a,e
+	swap a
+	and $0f
+	ld (wActiveCollisions),a
 
-	ldi a,(hl)		; $6cb8
-	ld (wTilesetFlags),a		; $6cb9
+	ldi a,(hl)
+	ld (wTilesetFlags),a
 
-	ld b,$06		; $6cbc
-	ld de,wTilesetUniqueGfx		; $6cbe
+	ld b,$06
+	ld de,wTilesetUniqueGfx
 @copyloop:
-	ldi a,(hl)		; $6cc1
-	ld (de),a		; $6cc2
-	inc e			; $6cc3
-	dec b			; $6cc4
-	jr nz,@copyloop			; $6cc5
+	ldi a,(hl)
+	ld (de),a
+	inc e
+	dec b
+	jr nz,@copyloop
 
-	ld e,wTilesetUniqueGfx&$ff		; $6cc7
-	ld a,(de)		; $6cc9
-	ld b,a			; $6cca
-	ldh a,(<hFF8B)	; $6ccb
-	or b			; $6ccd
-	ld (de),a		; $6cce
+	ld e,wTilesetUniqueGfx&$ff
+	ld a,(de)
+	ld b,a
+	ldh a,(<hFF8B)
+	or b
+	ld (de),a
 
-	ld a,(wActiveGroup)		; $6ccf
-	or a			; $6cd2
-	ret nz			; $6cd3
-	ld a,(wActiveRoom)		; $6cd4
-	cp <ROOM_SEASONS_096			; $6cd7
-	ret nz			; $6cd9
-	call getThisRoomFlags		; $6cda
-	and $80			; $6cdd
-	ret nz			; $6cdf
-	ld a,$20		; $6ce0
-	ld (wTilesetUniqueGfx),a		; $6ce2
-	ret			; $6ce5
+	ld a,(wActiveGroup)
+	or a
+	ret nz
+	ld a,(wActiveRoom)
+	cp <ROOM_SEASONS_096
+	ret nz
+	call getThisRoomFlags
+	and $80
+	ret nz
+	ld a,$20
+	ld (wTilesetUniqueGfx),a
+	ret
 
 getTempleRemainsSeasonsTilesetData:
-	ld a,GLOBALFLAG_TEMPLE_REMAINS_FILLED_WITH_LAVA		; $6ce6
-	call checkGlobalFlag		; $6ce8
-	ret z			; $6ceb
+	ld a,GLOBALFLAG_TEMPLE_REMAINS_FILLED_WITH_LAVA
+	call checkGlobalFlag
+	ret z
 
-	call checkIsTempleRemains		; $6cec
-	ret nc			; $6cef
+	call checkIsTempleRemains
+	ret nc
 
-	ld a,(wRoomStateModifier)		; $6cf0
-	call multiplyABy8		; $6cf3
-	ld hl,templeRemainsSeasons		; $6cf6
-	add hl,bc		; $6cf9
+	ld a,(wRoomStateModifier)
+	call multiplyABy8
+	ld hl,templeRemainsSeasons
+	add hl,bc
 --
-	xor a			; $6cfa
-	ldh (<hFF8B),a	; $6cfb
-	scf			; $6cfd
-	ret			; $6cfe
+	xor a
+	ldh (<hFF8B),a
+	scf
+	ret
 
 ; @param[out]	cflag	set if active room is temple remains
 checkIsTempleRemains:
-	ld a,(wActiveGroup)		; $6cff
-	or a			; $6d02
-	ret nz			; $6d03
-	ld a,(wActiveRoom)		; $6d04
-	cp $14			; $6d07
-	jr c,+			; $6d09
-	sub $04			; $6d0b
-	cp $30			; $6d0d
-	ret nc			; $6d0f
-	and $0f			; $6d10
-	cp $04			; $6d12
-	ret			; $6d14
+	ld a,(wActiveGroup)
+	or a
+	ret nz
+	ld a,(wActiveRoom)
+	cp $14
+	jr c,+
+	sub $04
+	cp $30
+	ret nc
+	and $0f
+	cp $04
+	ret
 +
-	xor a			; $6d15
-	ret			; $6d16
+	xor a
+	ret
 
 getMoblinKeepSeasonsTilesetData:
-	ld a,(wActiveGroup)		; $6d17
-	or a			; $6d1a
-	ret nz			; $6d1b
+	ld a,(wActiveGroup)
+	or a
+	ret nz
 
-	call getMoblinKeepScreenIndex		; $6d1c
-	ret nc			; $6d1f
+	call getMoblinKeepScreenIndex
+	ret nc
 
-	ld a,GLOBALFLAG_MOBLINS_KEEP_DESTROYED		; $6d20
-	call checkGlobalFlag		; $6d22
-	ret z			; $6d25
+	ld a,GLOBALFLAG_MOBLINS_KEEP_DESTROYED
+	call checkGlobalFlag
+	ret z
 
-	ld a,(wAnimalCompanion)		; $6d26
-	sub $0a			; $6d29
-	and $03			; $6d2b
-	call multiplyABy8		; $6d2d
-	ld hl,moblinKeepSeasons		; $6d30
-	add hl,bc		; $6d33
-	jr --			; $6d34
+	ld a,(wAnimalCompanion)
+	sub $0a
+	and $03
+	call multiplyABy8
+	ld hl,moblinKeepSeasons
+	add hl,bc
+	jr --
 
 ;;
 ; @param[out]	cflag	Set if active room is in Moblin keep
 getMoblinKeepScreenIndex:
-	ld a,(wActiveRoom)		; $6d36
-	ld b,$05		; $6d39
-	ld hl,moblinKeepRooms		; $6d3b
+	ld a,(wActiveRoom)
+	ld b,$05
+	ld hl,moblinKeepRooms
 -
-	cp (hl)			; $6d3e
-	jr z,+			; $6d3f
-	inc hl			; $6d41
-	dec b			; $6d42
-	jr nz,-			; $6d43
-	xor a			; $6d45
-	ret			; $6d46
+	cp (hl)
+	jr z,+
+	inc hl
+	dec b
+	jr nz,-
+	xor a
+	ret
 +
-	scf			; $6d47
-	ret			; $6d48
+	scf
+	ret
 
 moblinKeepRooms:
 	.db $5b $5c $6b $6c $7b

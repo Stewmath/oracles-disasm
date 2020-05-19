@@ -1,10 +1,10 @@
 ;;
 ; @addr{6cec}
 specialObjectCode_companionCutscene:
-	ld hl,w1Companion.id		; $6cec
-	ld a,(hl)		; $6cef
-	sub SPECIALOBJECTID_RICKY_CUTSCENE			; $6cf0
-	rst_jumpTable			; $6cf2
+	ld hl,w1Companion.id
+	ld a,(hl)
+	sub SPECIALOBJECTID_RICKY_CUTSCENE
+	rst_jumpTable
 	.dw _specialObjectCode_rickyCutscene
 	.dw _specialObjectCode_dimitriCutscene
 	.dw _specialObjectCode_mooshCutscene
@@ -13,52 +13,52 @@ specialObjectCode_companionCutscene:
 ;;
 ; @addr{6cfb}
 _specialObjectCode_rickyCutscene:
-	ld e,SpecialObject.state		; $6cfb
-	ld a,(de)		; $6cfd
-	ld a,(de)		; $6cfe
-	rst_jumpTable			; $6cff
+	ld e,SpecialObject.state
+	ld a,(de)
+	ld a,(de)
+	rst_jumpTable
 	.dw @state0
 	.dw _rickyCutscene_state1
 
 @state0:
-	call _companionCutsceneInitOam		; $6d04
-	ld h,d			; $6d07
-	ld l,SpecialObject.speed		; $6d08
-	ld (hl),SPEED_200		; $6d0a
-	ld l,SpecialObject.angle		; $6d0c
-	ld (hl),$08		; $6d0e
+	call _companionCutsceneInitOam
+	ld h,d
+	ld l,SpecialObject.speed
+	ld (hl),SPEED_200
+	ld l,SpecialObject.angle
+	ld (hl),$08
 
 _rickyCutsceneJump:
-	ld bc,$fe00		; $6d10
-	call objectSetSpeedZ		; $6d13
-	ld a,$02		; $6d16
-	jp specialObjectSetAnimation		; $6d18
+	ld bc,$fe00
+	call objectSetSpeedZ
+	ld a,$02
+	jp specialObjectSetAnimation
 
 
 ;;
 ; @param	de	Pointer to Object.state variable
 ; @addr{6d1b}
 _companionCutsceneInitOam:
-	ld a,$01		; $6d1b
-	ld (de),a		; $6d1d
-	callab bank5.specialObjectSetOamVariables		; $6d1e
-	jp objectSetVisiblec0		; $6d26
+	ld a,$01
+	ld (de),a
+	callab bank5.specialObjectSetOamVariables
+	jp objectSetVisiblec0
 
 
 _rickyCutscene_state1:
-	ld e,SpecialObject.subid		; $6d29
-	ld a,(de)		; $6d2b
-	rst_jumpTable			; $6d2c
+	ld e,SpecialObject.subid
+	ld a,(de)
+	rst_jumpTable
 	.dw @subid0
 	.dw @subid1
 
 @subid0:
-	ret			; $6d31
+	ret
 
 @subid1:
-	ld e,SpecialObject.state2		; $6d32
-	ld a,(de)		; $6d34
-	rst_jumpTable			; $6d35
+	ld e,SpecialObject.state2
+	ld a,(de)
+	rst_jumpTable
 	.dw @substate0
 	.dw @substate1
 	.dw @substate2
@@ -72,215 +72,215 @@ _rickyCutscene_state1:
 	.dw @substateA
 
 @substate0:
-	ld l,SpecialObject.state2		; $6d4c
-	inc (hl)		; $6d4e
+	ld l,SpecialObject.state2
+	inc (hl)
 
 @substate1:
-	call objectApplySpeed		; $6d4f
+	call objectApplySpeed
 
-	ld e,SpecialObject.xh		; $6d52
-	ld a,(de)		; $6d54
-	bit 7,a			; $6d55
-	jr nz,++		; $6d57
+	ld e,SpecialObject.xh
+	ld a,(de)
+	bit 7,a
+	jr nz,++
 
-	ld hl,w1Link.xh		; $6d59
-	ld b,(hl)		; $6d5c
-	add $18			; $6d5d
-	cp b			; $6d5f
-	jr c,++			; $6d60
+	ld hl,w1Link.xh
+	ld b,(hl)
+	add $18
+	cp b
+	jr c,++
 
-	call itemIncState2		; $6d62
-	inc (hl)		; $6d65
-	ld l,SpecialObject.z		; $6d66
-	xor a			; $6d68
-	ldi (hl),a		; $6d69
-	ld (hl),a		; $6d6a
-	ld l,SpecialObject.counter1		; $6d6b
-	ld (hl),$3c		; $6d6d
-	jp specialObjectAnimate		; $6d6f
+	call itemIncState2
+	inc (hl)
+	ld l,SpecialObject.z
+	xor a
+	ldi (hl),a
+	ld (hl),a
+	ld l,SpecialObject.counter1
+	ld (hl),$3c
+	jp specialObjectAnimate
 ++
-	ld c,$40		; $6d72
-	call objectUpdateSpeedZ_paramC		; $6d74
-	ret nz			; $6d77
-	call itemIncState2		; $6d78
-	ld l,SpecialObject.counter1		; $6d7b
-	ld (hl),$08		; $6d7d
-	jp specialObjectAnimate		; $6d7f
+	ld c,$40
+	call objectUpdateSpeedZ_paramC
+	ret nz
+	call itemIncState2
+	ld l,SpecialObject.counter1
+	ld (hl),$08
+	jp specialObjectAnimate
 
 @substate2:
-	call itemDecCounter1		; $6d82
-	ret nz			; $6d85
-	ld l,SpecialObject.state2		; $6d86
-	dec (hl)		; $6d88
-	jp _rickyCutsceneJump		; $6d89
+	call itemDecCounter1
+	ret nz
+	ld l,SpecialObject.state2
+	dec (hl)
+	jp _rickyCutsceneJump
 
 @substate3:
-	call itemDecCounter1		; $6d8c
-	ret nz			; $6d8f
-	ld l,SpecialObject.state2		; $6d90
-	inc (hl)		; $6d92
-	ld l,SpecialObject.counter1		; $6d93
-	ld (hl),$5a		; $6d95
-	ld a,$14		; $6d97
-	jp specialObjectSetAnimation		; $6d99
+	call itemDecCounter1
+	ret nz
+	ld l,SpecialObject.state2
+	inc (hl)
+	ld l,SpecialObject.counter1
+	ld (hl),$5a
+	ld a,$14
+	jp specialObjectSetAnimation
 
 @substate4:
-	call specialObjectAnimate		; $6d9c
-	call itemDecCounter1		; $6d9f
-	ret nz			; $6da2
-	ld l,SpecialObject.state2		; $6da3
-	inc (hl)		; $6da5
-	ld l,SpecialObject.counter1		; $6da6
-	ld (hl),$0c		; $6da8
-	ld a,$1f		; $6daa
-	call specialObjectSetAnimation		; $6dac
-	call getFreeInteractionSlot		; $6daf
-	ret nz			; $6db2
+	call specialObjectAnimate
+	call itemDecCounter1
+	ret nz
+	ld l,SpecialObject.state2
+	inc (hl)
+	ld l,SpecialObject.counter1
+	ld (hl),$0c
+	ld a,$1f
+	call specialObjectSetAnimation
+	call getFreeInteractionSlot
+	ret nz
 
-	ld (hl),$07		; $6db3
-	ld bc,$f812		; $6db5
-	jp objectCopyPositionWithOffset		; $6db8
+	ld (hl),$07
+	ld bc,$f812
+	jp objectCopyPositionWithOffset
 
-	ld l,SpecialObject.state2		; $6dbb
-	ld (hl),$00		; $6dbd
-	ld a,$1e		; $6dbf
-	jp specialObjectSetAnimation		; $6dc1
+	ld l,SpecialObject.state2
+	ld (hl),$00
+	ld a,$1e
+	jp specialObjectSetAnimation
 
 @substate5:
-	call itemDecCounter1		; $6dc4
-	ret nz			; $6dc7
-	ld l,SpecialObject.state2		; $6dc8
-	inc (hl)		; $6dca
-	ld l,SpecialObject.counter1		; $6dcb
-	ld (hl),$3c		; $6dcd
-	ld a,$1e		; $6dcf
-	jp specialObjectSetAnimation		; $6dd1
+	call itemDecCounter1
+	ret nz
+	ld l,SpecialObject.state2
+	inc (hl)
+	ld l,SpecialObject.counter1
+	ld (hl),$3c
+	ld a,$1e
+	jp specialObjectSetAnimation
 
 @substate6:
-	call itemDecCounter1		; $6dd4
-	ret nz			; $6dd7
-	ld l,SpecialObject.state2		; $6dd8
-	inc (hl)		; $6dda
+	call itemDecCounter1
+	ret nz
+	ld l,SpecialObject.state2
+	inc (hl)
 
 	; counter1
-	inc l			; $6ddb
-	ld (hl),$1e		; $6ddc
+	inc l
+	ld (hl),$1e
 
-	ld hl,wActiveRing		; $6dde
-	ld (hl),$ff		; $6de1
-	ld a,$81		; $6de3
-	ld (wLinkInAir),a		; $6de5
-	ld hl,w1Link.speed		; $6de8
-	ld (hl),SPEED_80		; $6deb
-	ld l,SpecialObject.speedZ		; $6ded
-	ld (hl),$00		; $6def
-	inc l			; $6df1
-	ld (hl),$fe		; $6df2
+	ld hl,wActiveRing
+	ld (hl),$ff
+	ld a,$81
+	ld (wLinkInAir),a
+	ld hl,w1Link.speed
+	ld (hl),SPEED_80
+	ld l,SpecialObject.speedZ
+	ld (hl),$00
+	inc l
+	ld (hl),$fe
 
-	ld a,$18		; $6df4
-	ld (w1Link.angle),a		; $6df6
-	ld a,SND_JUMP		; $6df9
-	jp playSound		; $6dfb
+	ld a,$18
+	ld (w1Link.angle),a
+	ld a,SND_JUMP
+	jp playSound
 
 @substate7:
-	call itemDecCounter1		; $6dfe
-	ret nz			; $6e01
-	ld l,SpecialObject.state2		; $6e02
-	inc (hl)		; $6e04
-	ld l,SpecialObject.counter1		; $6e05
-	ld (hl),$14		; $6e07
-	xor a			; $6e09
-	ld hl,w1Link.visible		; $6e0a
-	ld (hl),a		; $6e0d
-	inc a			; $6e0e
-	ld (wDisabledObjects),a		; $6e0f
-	ret			; $6e12
+	call itemDecCounter1
+	ret nz
+	ld l,SpecialObject.state2
+	inc (hl)
+	ld l,SpecialObject.counter1
+	ld (hl),$14
+	xor a
+	ld hl,w1Link.visible
+	ld (hl),a
+	inc a
+	ld (wDisabledObjects),a
+	ret
 
 @substate8:
-	call itemDecCounter1		; $6e13
-	ret nz			; $6e16
-	ld l,SpecialObject.state2		; $6e17
-	inc (hl)		; $6e19
-	ld l,SpecialObject.angle		; $6e1a
-	ld (hl),$18		; $6e1c
+	call itemDecCounter1
+	ret nz
+	ld l,SpecialObject.state2
+	inc (hl)
+	ld l,SpecialObject.angle
+	ld (hl),$18
 
 @jump:
-	ld a,$1c		; $6e1e
-	call specialObjectSetAnimation		; $6e20
-	ld bc,$fe00		; $6e23
-	jp objectSetSpeedZ		; $6e26
+	ld a,$1c
+	call specialObjectSetAnimation
+	ld bc,$fe00
+	jp objectSetSpeedZ
 
 @substate9:
-	call objectApplySpeed		; $6e29
-	ld e,SpecialObject.xh		; $6e2c
-	ld a,(de)		; $6e2e
-	sub $10			; $6e2f
-	rlca			; $6e31
-	jr nc,+			; $6e32
-	ld hl,$cfdf		; $6e34
-	ld (hl),$01		; $6e37
-	ret			; $6e39
+	call objectApplySpeed
+	ld e,SpecialObject.xh
+	ld a,(de)
+	sub $10
+	rlca
+	jr nc,+
+	ld hl,$cfdf
+	ld (hl),$01
+	ret
 +
-	ld c,$40		; $6e3a
-	call objectUpdateSpeedZ_paramC		; $6e3c
-	ret nz			; $6e3f
-	call itemIncState2		; $6e40
-	ld l,SpecialObject.counter1		; $6e43
-	ld (hl),$08		; $6e45
-	jp specialObjectAnimate		; $6e47
+	ld c,$40
+	call objectUpdateSpeedZ_paramC
+	ret nz
+	call itemIncState2
+	ld l,SpecialObject.counter1
+	ld (hl),$08
+	jp specialObjectAnimate
 
 @substateA:
-	call itemDecCounter1		; $6e4a
-	ret nz			; $6e4d
-	ld l,SpecialObject.state2		; $6e4e
-	dec (hl)		; $6e50
-	jp @jump		; $6e51
+	call itemDecCounter1
+	ret nz
+	ld l,SpecialObject.state2
+	dec (hl)
+	jp @jump
 
 ;;
 ; @addr{6e54}
 _specialObjectCode_mooshCutscene:
-	ld e,SpecialObject.state		; $6e54
-	ld a,(de)		; $6e56
-	rst_jumpTable			; $6e57
+	ld e,SpecialObject.state
+	ld a,(de)
+	rst_jumpTable
 	.dw @state0
 	.dw @state1
 
 @state0:
-	call _companionCutsceneInitOam		; $6e5c
-	ld h,d			; $6e5f
-	ld l,SpecialObject.counter1		; $6e60
-	ld (hl),$5a		; $6e62
-	ld l,SpecialObject.speed		; $6e64
-	ld (hl),SPEED_160		; $6e66
-	ld l,SpecialObject.var36		; $6e68
-	ld (hl),$05		; $6e6a
-	ld l,SpecialObject.angle		; $6e6c
-	ld (hl),$10		; $6e6e
-	ld l,SpecialObject.z		; $6e70
-	ld (hl),$ff		; $6e72
-	inc l			; $6e74
-	ld (hl),$e0		; $6e75
+	call _companionCutsceneInitOam
+	ld h,d
+	ld l,SpecialObject.counter1
+	ld (hl),$5a
+	ld l,SpecialObject.speed
+	ld (hl),SPEED_160
+	ld l,SpecialObject.var36
+	ld (hl),$05
+	ld l,SpecialObject.angle
+	ld (hl),$10
+	ld l,SpecialObject.z
+	ld (hl),$ff
+	inc l
+	ld (hl),$e0
 
-	call getFreeInteractionSlot		; $6e77
-	jr nz,+			; $6e7a
-	ld (hl),INTERACID_BANANA		; $6e7c
-	ld l,Interaction.relatedObj1+1		; $6e7e
-	ld (hl),d		; $6e80
+	call getFreeInteractionSlot
+	jr nz,+
+	ld (hl),INTERACID_BANANA
+	ld l,Interaction.relatedObj1+1
+	ld (hl),d
 +
-	ld a,$07		; $6e81
-	jp specialObjectSetAnimation		; $6e83
+	ld a,$07
+	jp specialObjectSetAnimation
 
 @state1:
-	ld e,SpecialObject.state2		; $6e86
-	ld a,(de)		; $6e88
-	or a			; $6e89
-	jr z,+			; $6e8a
-	call specialObjectAnimate		; $6e8c
-	call objectApplySpeed		; $6e8f
+	ld e,SpecialObject.state2
+	ld a,(de)
+	or a
+	jr z,+
+	call specialObjectAnimate
+	call objectApplySpeed
 +
-	ld e,SpecialObject.state2		; $6e92
-	ld a,(de)		; $6e94
-	rst_jumpTable			; $6e95
+	ld e,SpecialObject.state2
+	ld a,(de)
+	rst_jumpTable
 	.dw @substate0
 	.dw @substate1
 	.dw @substate2
@@ -288,93 +288,93 @@ _specialObjectCode_mooshCutscene:
 	.dw @substate4
 
 @substate0:
-	call itemDecCounter1		; $6ea0
-	ret nz			; $6ea3
-	ld (hl),$48		; $6ea4
-	ld l,SpecialObject.state2		; $6ea6
-	inc (hl)		; $6ea8
-	ret			; $6ea9
+	call itemDecCounter1
+	ret nz
+	ld (hl),$48
+	ld l,SpecialObject.state2
+	inc (hl)
+	ret
 
 @substate1:
-	call itemDecCounter1		; $6eaa
-	ret nz			; $6ead
-	ld (hl),$06		; $6eae
-	ld l,SpecialObject.state2		; $6eb0
-	inc (hl)		; $6eb2
-	jp _companionCutsceneFunc_7081		; $6eb3
+	call itemDecCounter1
+	ret nz
+	ld (hl),$06
+	ld l,SpecialObject.state2
+	inc (hl)
+	jp _companionCutsceneFunc_7081
 
 @substate2:
-	ld h,d			; $6eb6
-	ld l,SpecialObject.angle		; $6eb7
-	ld a,(hl)		; $6eb9
-	cp $10			; $6eba
-	jr z,@label_6ec2			; $6ebc
-	ld l,SpecialObject.state2		; $6ebe
-	inc (hl)		; $6ec0
-	ret			; $6ec1
+	ld h,d
+	ld l,SpecialObject.angle
+	ld a,(hl)
+	cp $10
+	jr z,@label_6ec2
+	ld l,SpecialObject.state2
+	inc (hl)
+	ret
 
 @label_6ec2:
-	ld l,SpecialObject.counter1		; $6ec2
-	dec (hl)		; $6ec4
-	ret nz			; $6ec5
-	call _companionCutsceneDecAngle		; $6ec6
-	ld (hl),$06		; $6ec9
-	jp _companionCutsceneFunc_7081		; $6ecb
+	ld l,SpecialObject.counter1
+	dec (hl)
+	ret nz
+	call _companionCutsceneDecAngle
+	ld (hl),$06
+	jp _companionCutsceneFunc_7081
 
 @substate3:
-	ld h,d			; $6ece
-	ld l,SpecialObject.angle		; $6ecf
-	ld a,(hl)		; $6ed1
-	cp $10			; $6ed2
-	jr nz,@label_6ec2		; $6ed4
-	ld l,SpecialObject.state2		; $6ed6
-	inc (hl)		; $6ed8
-	ld a,$07		; $6ed9
-	jp specialObjectSetAnimation		; $6edb
+	ld h,d
+	ld l,SpecialObject.angle
+	ld a,(hl)
+	cp $10
+	jr nz,@label_6ec2
+	ld l,SpecialObject.state2
+	inc (hl)
+	ld a,$07
+	jp specialObjectSetAnimation
 
 @substate4:
-	ld e,SpecialObject.yh		; $6ede
-	ld a,(de)		; $6ee0
-	cp $b0			; $6ee1
-	ret c			; $6ee3
+	ld e,SpecialObject.yh
+	ld a,(de)
+	cp $b0
+	ret c
 
-	ld hl,w1Companion.id		; $6ee4
-	ld b,$3f		; $6ee7
-	call clearMemory		; $6ee9
-	ld hl,w1Companion.id		; $6eec
-	ld (hl),SPECIALOBJECTID_DIMITRI_CUTSCENE		; $6eef
-	ld l,SpecialObject.yh		; $6ef1
-	ld (hl),$e8		; $6ef3
-	inc l			; $6ef5
-	inc l			; $6ef6
-	ld (hl),$28		; $6ef7
-	ret			; $6ef9
+	ld hl,w1Companion.id
+	ld b,$3f
+	call clearMemory
+	ld hl,w1Companion.id
+	ld (hl),SPECIALOBJECTID_DIMITRI_CUTSCENE
+	ld l,SpecialObject.yh
+	ld (hl),$e8
+	inc l
+	inc l
+	ld (hl),$28
+	ret
 
 ;;
 ; @addr{6efa}
 _specialObjectCode_dimitriCutscene:
-	ld e,SpecialObject.state		; $6efa
-	ld a,(de)		; $6efc
-	rst_jumpTable			; $6efd
+	ld e,SpecialObject.state
+	ld a,(de)
+	rst_jumpTable
 	.dw @state0
 	.dw @state1
 
 @state0:
-	call _companionCutsceneInitOam		; $6f02
-	ld h,d			; $6f05
-	ld l,SpecialObject.speed		; $6f06
-	ld (hl),SPEED_100		; $6f08
-	ld l,SpecialObject.z		; $6f0a
-	ld (hl),$e0		; $6f0c
-	inc l			; $6f0e
-	ld (hl),$ff		; $6f0f
-	ld a,$19		; $6f11
-	jp specialObjectSetAnimation		; $6f13
+	call _companionCutsceneInitOam
+	ld h,d
+	ld l,SpecialObject.speed
+	ld (hl),SPEED_100
+	ld l,SpecialObject.z
+	ld (hl),$e0
+	inc l
+	ld (hl),$ff
+	ld a,$19
+	jp specialObjectSetAnimation
 
 @state1:
-	ld e,SpecialObject.state2		; $6f16
-	ld a,(de)		; $6f18
-	rst_jumpTable			; $6f19
+	ld e,SpecialObject.state2
+	ld a,(de)
+	rst_jumpTable
 	.dw @substate0
 	.dw @substate1
 	.dw @substate2
@@ -384,31 +384,31 @@ _specialObjectCode_dimitriCutscene:
 	.dw @substate6
 
 @substate0:
-	ld h,d			; $6f28
-	ld l,SpecialObject.state2		; $6f29
-	inc (hl)		; $6f2b
-	ld l,SpecialObject.counter2		; $6f2c
-	ld a,(hl)		; $6f2e
-	cp $02			; $6f2f
-	jr nz,+			; $6f31
+	ld h,d
+	ld l,SpecialObject.state2
+	inc (hl)
+	ld l,SpecialObject.counter2
+	ld a,(hl)
+	cp $02
+	jr nz,+
 
-	push af			; $6f33
-	ld a,$1a		; $6f34
-	call specialObjectSetAnimation		; $6f36
-	pop af			; $6f39
+	push af
+	ld a,$1a
+	call specialObjectSetAnimation
+	pop af
 +
-	ld b,a			; $6f3a
-	add a			; $6f3b
-	add b			; $6f3c
-	ld hl,@@data		; $6f3d
-	rst_addAToHl			; $6f40
-	ldi a,(hl)		; $6f41
-	ld e,SpecialObject.angle		; $6f42
-	ld (de),a		; $6f44
-	ld c,(hl)		; $6f45
-	inc hl			; $6f46
-	ld b,(hl)		; $6f47
-	jp objectSetSpeedZ		; $6f48
+	ld b,a
+	add a
+	add b
+	ld hl,@@data
+	rst_addAToHl
+	ldi a,(hl)
+	ld e,SpecialObject.angle
+	ld (de),a
+	ld c,(hl)
+	inc hl
+	ld b,(hl)
+	jp objectSetSpeedZ
 
 
 ; b0: angle
@@ -420,134 +420,134 @@ _specialObjectCode_dimitriCutscene:
 
 
 @substate1:
-	call specialObjectAnimate		; $6f54
-	call objectApplySpeed		; $6f57
-	ld c,$18		; $6f5a
-	call objectUpdateSpeedZ_paramC		; $6f5c
-	ret nz			; $6f5f
+	call specialObjectAnimate
+	call objectApplySpeed
+	ld c,$18
+	call objectUpdateSpeedZ_paramC
+	ret nz
 
-	ld h,d			; $6f60
-	ld l,SpecialObject.counter2		; $6f61
-	inc (hl)		; $6f63
-	ld a,(hl)		; $6f64
-	ld l,SpecialObject.state2		; $6f65
-	cp $03			; $6f67
-	jr z,+			; $6f69
-	dec (hl)		; $6f6b
-	ld l,SpecialObject.counter1		; $6f6c
-	ld (hl),$08		; $6f6e
-	ret			; $6f70
+	ld h,d
+	ld l,SpecialObject.counter2
+	inc (hl)
+	ld a,(hl)
+	ld l,SpecialObject.state2
+	cp $03
+	jr z,+
+	dec (hl)
+	ld l,SpecialObject.counter1
+	ld (hl),$08
+	ret
 +
-	inc (hl)		; $6f71
-	ld l,SpecialObject.counter1		; $6f72
-	ld (hl),$06		; $6f74
-	ret			; $6f76
+	inc (hl)
+	ld l,SpecialObject.counter1
+	ld (hl),$06
+	ret
 
 @substate2:
-	call itemDecCounter1		; $6f77
-	ret nz			; $6f7a
-	ld l,SpecialObject.state2		; $6f7b
-	inc (hl)		; $6f7d
-	ld l,SpecialObject.counter1		; $6f7e
-	ld (hl),$14		; $6f80
-	ld a,$27		; $6f82
-	jp specialObjectSetAnimation		; $6f84
+	call itemDecCounter1
+	ret nz
+	ld l,SpecialObject.state2
+	inc (hl)
+	ld l,SpecialObject.counter1
+	ld (hl),$14
+	ld a,$27
+	jp specialObjectSetAnimation
 
 @substate3:
-	call itemDecCounter1		; $6f87
-	ret nz			; $6f8a
-	ld l,SpecialObject.state2		; $6f8b
-	inc (hl)		; $6f8d
-	ld l,SpecialObject.counter1		; $6f8e
-	ld (hl),$78		; $6f90
-	ret			; $6f92
+	call itemDecCounter1
+	ret nz
+	ld l,SpecialObject.state2
+	inc (hl)
+	ld l,SpecialObject.counter1
+	ld (hl),$78
+	ret
 
 @substate4:
-	call specialObjectAnimate		; $6f93
-	call itemDecCounter1		; $6f96
-	ret nz			; $6f99
-	ld l,SpecialObject.state2		; $6f9a
-	inc (hl)		; $6f9c
-	ld l,SpecialObject.counter1		; $6f9d
-	ld (hl),$3c		; $6f9f
-	ld l,SpecialObject.angle		; $6fa1
-	ld (hl),$0b		; $6fa3
-	ld l,SpecialObject.speed		; $6fa5
-	ld (hl),SPEED_80		; $6fa7
-	ret			; $6fa9
+	call specialObjectAnimate
+	call itemDecCounter1
+	ret nz
+	ld l,SpecialObject.state2
+	inc (hl)
+	ld l,SpecialObject.counter1
+	ld (hl),$3c
+	ld l,SpecialObject.angle
+	ld (hl),$0b
+	ld l,SpecialObject.speed
+	ld (hl),SPEED_80
+	ret
 
 @substate5:
-	call itemDecCounter1		; $6faa
-	ret nz			; $6fad
-	ld l,SpecialObject.state2		; $6fae
-	inc (hl)		; $6fb0
-	ld a,$26		; $6fb1
-	jp specialObjectSetAnimation		; $6fb3
+	call itemDecCounter1
+	ret nz
+	ld l,SpecialObject.state2
+	inc (hl)
+	ld a,$26
+	jp specialObjectSetAnimation
 
 @substate6:
-	call specialObjectAnimate		; $6fb6
-	call objectApplySpeed		; $6fb9
-	ld e,SpecialObject.xh		; $6fbc
-	ld a,(de)		; $6fbe
-	cp $78			; $6fbf
-	jr nz,+			; $6fc1
-	ld a,$05		; $6fc3
-	jp specialObjectSetAnimation		; $6fc5
+	call specialObjectAnimate
+	call objectApplySpeed
+	ld e,SpecialObject.xh
+	ld a,(de)
+	cp $78
+	jr nz,+
+	ld a,$05
+	jp specialObjectSetAnimation
 +
-	cp $b0			; $6fc8
-	ret c			; $6fca
+	cp $b0
+	ret c
 
-	ld hl,w1Companion.id		; $6fcb
-	ld b,$3f		; $6fce
-	call clearMemory		; $6fd0
-	ld hl,w1Companion.id		; $6fd3
-	ld (hl),SPECIALOBJECTID_RICKY_CUTSCENE		; $6fd6
-	inc l			; $6fd8
-	ld (hl),$01		; $6fd9
-	ld l,SpecialObject.yh		; $6fdb
-	ld (hl),$48		; $6fdd
-	inc l			; $6fdf
-	inc l			; $6fe0
-	ld (hl),$d8		; $6fe1
-	ret			; $6fe3
+	ld hl,w1Companion.id
+	ld b,$3f
+	call clearMemory
+	ld hl,w1Companion.id
+	ld (hl),SPECIALOBJECTID_RICKY_CUTSCENE
+	inc l
+	ld (hl),$01
+	ld l,SpecialObject.yh
+	ld (hl),$48
+	inc l
+	inc l
+	ld (hl),$d8
+	ret
 
 ;;
 ; @addr{6fe4}
 _specialObjectCode_mapleCutscene:
-	ld e,SpecialObject.state		; $6fe4
-	ld a,(de)		; $6fe6
-	rst_jumpTable			; $6fe7
+	ld e,SpecialObject.state
+	ld a,(de)
+	rst_jumpTable
 	.dw @state0
 	.dw @state1
 
 @state0:
-	call _companionCutsceneInitOam		; $6fec
-	ld h,d			; $6fef
-	ld l,SpecialObject.zh		; $6ff0
-	ld (hl),$f0		; $6ff2
-	ld l,SpecialObject.angle		; $6ff4
-	ld (hl),$08		; $6ff6
-	ld l,SpecialObject.counter1		; $6ff8
-	ld (hl),$5a		; $6ffa
-	ret			; $6ffc
+	call _companionCutsceneInitOam
+	ld h,d
+	ld l,SpecialObject.zh
+	ld (hl),$f0
+	ld l,SpecialObject.angle
+	ld (hl),$08
+	ld l,SpecialObject.counter1
+	ld (hl),$5a
+	ret
 
 @initPositionSpeedAnimation:
-	ld l,SpecialObject.counter2		; $6ffd
-	ld a,(hl)		; $6fff
-	add a			; $7000
-	ld hl,@@data		; $7001
-	rst_addDoubleIndex			; $7004
-	ldi a,(hl)		; $7005
-	ld e,SpecialObject.speed		; $7006
-	ld (de),a		; $7008
-	ldi a,(hl)		; $7009
-	ld e,SpecialObject.counter1		; $700a
-	ld (de),a		; $700c
-	ldi a,(hl)		; $700d
-	ld e,SpecialObject.yh		; $700e
-	ld (de),a		; $7010
-	ld a,(hl)		; $7011
-	jp specialObjectSetAnimation		; $7012
+	ld l,SpecialObject.counter2
+	ld a,(hl)
+	add a
+	ld hl,@@data
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld e,SpecialObject.speed
+	ld (de),a
+	ldi a,(hl)
+	ld e,SpecialObject.counter1
+	ld (de),a
+	ldi a,(hl)
+	ld e,SpecialObject.yh
+	ld (de),a
+	ld a,(hl)
+	jp specialObjectSetAnimation
 
 
 ; b0: speed
@@ -562,92 +562,92 @@ _specialObjectCode_mapleCutscene:
 
 
 @state1:
-	call specialObjectAnimate		; $7025
-	call objectOscillateZ		; $7028
-	ld e,SpecialObject.state2		; $702b
-	ld a,(de)		; $702d
-	rst_jumpTable			; $702e
+	call specialObjectAnimate
+	call objectOscillateZ
+	ld e,SpecialObject.state2
+	ld a,(de)
+	rst_jumpTable
 	.dw @substate0
 	.dw @substate1
 	.dw @substate2
 	.dw @substate3
 
 @substate0:
-	ld a,(wPaletteThread_mode)		; $7037
-	or a			; $703a
-	call z,itemDecCounter1		; $703b
-	ret nz			; $703e
-	call itemIncState2		; $703f
-	jr @initPositionSpeedAnimation		; $7042
+	ld a,(wPaletteThread_mode)
+	or a
+	call z,itemDecCounter1
+	ret nz
+	call itemIncState2
+	jr @initPositionSpeedAnimation
 
 @substate1:
-	call itemDecCounter1		; $7044
-	jp nz,objectApplySpeed		; $7047
-	ld (hl),$5a		; $704a
-	inc l			; $704c
-	inc (hl)		; $704d
-	jp itemIncState2		; $704e
+	call itemDecCounter1
+	jp nz,objectApplySpeed
+	ld (hl),$5a
+	inc l
+	inc (hl)
+	jp itemIncState2
 
 @substate2:
-	call itemDecCounter1		; $7051
-	ret nz			; $7054
+	call itemDecCounter1
+	ret nz
 
 	; Check counter2
-	inc l			; $7055
-	ld a,(hl)		; $7056
-	cp $04			; $7057
-	jr nz,++		; $7059
+	inc l
+	ld a,(hl)
+	cp $04
+	jr nz,++
 
 	; Set counter1
-	dec l			; $705b
-	ld (hl),$1e		; $705c
+	dec l
+	ld (hl),$1e
 
-	call itemIncState2		; $705e
-	ld a,$07		; $7061
-	jp specialObjectSetAnimation		; $7063
+	call itemIncState2
+	ld a,$07
+	jp specialObjectSetAnimation
 ++
-	ld l,SpecialObject.state2		; $7066
-	dec (hl)		; $7068
-	ld l,SpecialObject.angle		; $7069
-	ld a,(hl)		; $706b
-	xor $10			; $706c
-	ld (hl),a		; $706e
-	jr @initPositionSpeedAnimation		; $706f
+	ld l,SpecialObject.state2
+	dec (hl)
+	ld l,SpecialObject.angle
+	ld a,(hl)
+	xor $10
+	ld (hl),a
+	jr @initPositionSpeedAnimation
 
 @substate3:
-	call itemDecCounter1		; $7071
-	jr z,+			; $7074
-	ld c,$02		; $7076
-	jp objectUpdateSpeedZ_paramC		; $7078
+	call itemDecCounter1
+	jr z,+
+	ld c,$02
+	jp objectUpdateSpeedZ_paramC
 +
-	ld a,$ff		; $707b
-	ld ($cfdf),a		; $707d
-	ret			; $7080
+	ld a,$ff
+	ld ($cfdf),a
+	ret
 
 ;;
 ; @param	a	Angle
 ; @addr{7081}
 _companionCutsceneFunc_7081:
-	sub $04			; $7081
-	and $07			; $7083
-	ret nz			; $7085
-	ld e,SpecialObject.angle		; $7086
-	call convertAngleDeToDirection		; $7088
-	dec a			; $708b
-	and $03			; $708c
-	ld h,d			; $708e
-	ld l,SpecialObject.direction		; $708f
-	ld (hl),a		; $7091
-	ld l,SpecialObject.var36		; $7092
-	add (hl)		; $7094
-	jp specialObjectSetAnimation		; $7095
+	sub $04
+	and $07
+	ret nz
+	ld e,SpecialObject.angle
+	call convertAngleDeToDirection
+	dec a
+	and $03
+	ld h,d
+	ld l,SpecialObject.direction
+	ld (hl),a
+	ld l,SpecialObject.var36
+	add (hl)
+	jp specialObjectSetAnimation
 
 ;;
 ; @addr{7098}
 _companionCutsceneDecAngle:
-	ld e,SpecialObject.angle		; $7098
-	ld a,(de)		; $709a
-	dec a			; $709b
-	and $1f			; $709c
-	ld (de),a		; $709e
-	ret			; $709f
+	ld e,SpecialObject.angle
+	ld a,(de)
+	dec a
+	and $1f
+	ld (de),a
+	ret

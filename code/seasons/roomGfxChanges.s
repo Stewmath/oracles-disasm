@@ -13,18 +13,18 @@
 ; @param[out]	zflag	z if nothing is planted in the given room.
 ; @addr{7a54}
 getIndexOfGashaSpotInRoom_body:
-	ld c,$00		; $66cc
-	ld hl,gashaSpotRooms		; $66ce
+	ld c,$00
+	ld hl,gashaSpotRooms
 --
-	cp (hl)			; $66d1
-	jr z,+			; $66d2
-	inc hl			; $66d4
-	inc c			; $66d5
-	jr --			; $66d6
+	cp (hl)
+	jr z,+
+	inc hl
+	inc c
+	jr --
 +
-	ld a,c			; $66d8
-	ld hl,wGashaSpotsPlantedBitset		; $66d9
-	jp checkFlag		; $66dc
+	ld a,c
+	ld hl,wGashaSpotsPlantedBitset
+	jp checkFlag
 
 
 ; This is a list of room IDs (the low bytes only) where gasha spots are located.
@@ -47,11 +47,11 @@ gashaSpotRooms:
 ;;
 ; @addr{66ef}
 applyRoomSpecificTileChangesAfterGfxLoad:
-	ld a,(wActiveRoom)		; $66ef
-	ld hl,@tileChangesGroupTable		; $66f2
-	call findRoomSpecificData		; $66f5
-	ret nc			; $66f8
-	rst_jumpTable			; $66f9
+	ld a,(wActiveRoom)
+	ld hl,@tileChangesGroupTable
+	call findRoomSpecificData
+	ret nc
+	rst_jumpTable
 	.dw _roomTileChangesAfterLoad00
 	.dw _roomTileChangesAfterLoad01
 	.dw  roomTileChangesAfterLoad02 ; Located in bank 0 / bank 9 for some reason
@@ -151,11 +151,11 @@ applyRoomSpecificTileChangesAfterGfxLoad:
 ; $09: Load scent tree graphics (north horon)
 ; @addr{6776}
 _roomTileChangesAfterLoad09:
-	ld a,TREE_GFXH_07		; $6776
+	ld a,TREE_GFXH_07
 _label_04_291:
-	call loadTreeGfx		; $6778
-	ld hl,@rect		; $677b
-	jp drawRectangleToVramTiles		; $677e
+	call loadTreeGfx
+	ld hl,@rect
+	jp drawRectangleToVramTiles
 
 @rect:
 	.dw w3VramTiles+$88
@@ -169,18 +169,18 @@ _label_04_291:
 ; $0a: Load pegasus tree graphics (spool swamp)
 ; @addr{679d}
 _roomTileChangesAfterLoad0a:
-	ld a,TREE_GFXH_08		; $679d
-	jr _label_04_291		; $679f
+	ld a,TREE_GFXH_08
+	jr _label_04_291
 
 ;;
 ; $0b: Load gale tree graphics (tarm ruins)
 ; @addr{67a1}
 _roomTileChangesAfterLoad0b:
-	ld hl,_loadGaleTreeGfx@rect		; $67a1
+	ld hl,_loadGaleTreeGfx@rect
 _loadGaleTreeGfx:
-	call drawRectangleToVramTiles		; $67a4
-	ld a,TREE_GFXH_09		; $67a7
-	jp loadTreeGfx		; $67a9
+	call drawRectangleToVramTiles
+	ld a,TREE_GFXH_09
+	jp loadTreeGfx
 
 @rect:
 	.dw w3VramTiles+$48
@@ -194,8 +194,8 @@ _loadGaleTreeGfx:
 ; $0c: Load gale tree graphics (sunken city)
 ; @addr{67c8}
 _roomTileChangesAfterLoad0c:
-	ld hl,@rect		; $67c8
-	jr _loadGaleTreeGfx		; $67cb
+	ld hl,@rect
+	jr _loadGaleTreeGfx
 
 @rect:
 	.dw w3VramTiles+$86
@@ -209,10 +209,10 @@ _roomTileChangesAfterLoad0c:
 ; $0d: Load mystery tree graphics (woods of winter)
 ; @addr{67e9}
 _roomTileChangesAfterLoad0d:
-	ld a,TREE_GFXH_0a		; $67e9
-	call loadTreeGfx		; $67eb
-	ld hl,@rect		; $67ee
-	jp drawRectangleToVramTiles		; $67f1
+	ld a,TREE_GFXH_0a
+	call loadTreeGfx
+	ld hl,@rect
+	jp drawRectangleToVramTiles
 
 @rect:
 	.dw w3VramTiles+$88
@@ -226,24 +226,24 @@ _roomTileChangesAfterLoad0d:
 ; $00: Pirate ship bow (at beach)
 ; @addr{6810}
 _roomTileChangesAfterLoad00:
-	ld a,GLOBALFLAG_PIRATE_SHIP_DOCKED		; $6810
-	call checkGlobalFlag		; $6812
-	ret z			; $6815
+	ld a,GLOBALFLAG_PIRATE_SHIP_DOCKED
+	call checkGlobalFlag
+	ret z
 
 	; Load extra tileset graphics
-	ld e,OBJGFXH_PIRATE_SHIP_TILES_1 - 1		; $6816
-	call loadObjectGfxHeaderToSlot4		; $6818
+	ld e,OBJGFXH_PIRATE_SHIP_TILES_1 - 1
+	call loadObjectGfxHeaderToSlot4
 
 	; Load new tilemaps
-	ld a,GFXH_PIRATE_SHIP_BOW_TILEMAP		; $681b
-	call loadGfxHeader		; $681d
+	ld a,GFXH_PIRATE_SHIP_BOW_TILEMAP
+	call loadGfxHeader
 
-	ld hl,@vramTiles		; $6820
-	call copyRectangleFromTmpGfxBuffer		; $6823
-	ld hl,@vramAttributes		; $6826
-	call copyRectangleFromTmpGfxBuffer		; $6829
-	ld hl,@roomLayout		; $682c
-	jp copyRectangleToRoomLayoutAndCollisions		; $682f
+	ld hl,@vramTiles
+	call copyRectangleFromTmpGfxBuffer
+	ld hl,@vramAttributes
+	call copyRectangleFromTmpGfxBuffer
+	ld hl,@roomLayout
+	jp copyRectangleToRoomLayoutAndCollisions
 
 @vramTiles:
 	.db $0a $0a
@@ -268,24 +268,24 @@ _roomTileChangesAfterLoad00:
 ; $01: Pirate ship middle (at beach)
 ; @addr{6874}
 _roomTileChangesAfterLoad01:
-	ld a,GLOBALFLAG_PIRATE_SHIP_DOCKED		; $6874
-	call checkGlobalFlag		; $6876
-	ret z			; $6879
+	ld a,GLOBALFLAG_PIRATE_SHIP_DOCKED
+	call checkGlobalFlag
+	ret z
 
 	; Load extra tileset graphics
-	ld e,OBJGFXH_PIRATE_SHIP_TILES_1 - 1		; $687a
-	call loadObjectGfxHeaderToSlot4		; $687c
+	ld e,OBJGFXH_PIRATE_SHIP_TILES_1 - 1
+	call loadObjectGfxHeaderToSlot4
 
 	; Load new tilemaps
-	ld a,GFXH_PIRATE_SHIP_BODY_TILEMAP		; $687f
-	call loadGfxHeader		; $6881
+	ld a,GFXH_PIRATE_SHIP_BODY_TILEMAP
+	call loadGfxHeader
 
-	ld hl,@vramTiles		; $6884
-	call copyRectangleFromTmpGfxBuffer		; $6887
-	ld hl,@vramAttributes		; $688a
-	call copyRectangleFromTmpGfxBuffer		; $688d
-	ld hl,@roomLayout		; $6890
-	jp copyRectangleToRoomLayoutAndCollisions		; $6893
+	ld hl,@vramTiles
+	call copyRectangleFromTmpGfxBuffer
+	ld hl,@vramAttributes
+	call copyRectangleFromTmpGfxBuffer
+	ld hl,@roomLayout
+	jp copyRectangleToRoomLayoutAndCollisions
 
 @vramTiles:
 	.db $14 $0a
@@ -310,86 +310,86 @@ _roomTileChangesAfterLoad01:
 ; $03: Din's troupe screen: Draw tents and stuff if they should be there.
 ; @addr{68ba}
 _roomTileChangesAfterLoad03:
-	call getThisRoomFlags		; $68ba
-	and $40			; $68bd
-	ret nz			; $68bf
+	call getThisRoomFlags
+	and $40
+	ret nz
 
-	xor a			; $68c0
-	ld (wRoomLayout+$14),a		; $68c1
-	ld (wRoomLayout+$24),a		; $68c4
+	xor a
+	ld (wRoomLayout+$14),a
+	ld (wRoomLayout+$24),a
 
-	ld a,($ff00+R_SVBK)	; $68c7
-	ld c,a			; $68c9
-	ldh a,(<hRomBank)	; $68ca
-	ld b,a			; $68cc
-	push bc			; $68cd
+	ld a,($ff00+R_SVBK)
+	ld c,a
+	ldh a,(<hRomBank)
+	ld b,a
+	push bc
 
-	ld de,_dinsTroupeVramAndCollisions		; $68ce
+	ld de,_dinsTroupeVramAndCollisions
 
 _loadDinsTroupeTileChanges:
-	ld a,:w3VramTiles		; $68d1
-	ld ($ff00+R_SVBK),a	; $68d3
+	ld a,:w3VramTiles
+	ld ($ff00+R_SVBK),a
 
 @getAddress:
-	ld a,(de)		; $68d5
-	ld l,a			; $68d6
-	inc de			; $68d7
-	or a			; $68d8
-	jr z,@doneReadingVramTiles	; $68d9
-	ld a,(de)		; $68db
-	ld h,a			; $68dc
-	inc de			; $68dd
+	ld a,(de)
+	ld l,a
+	inc de
+	or a
+	jr z,@doneReadingVramTiles
+	ld a,(de)
+	ld h,a
+	inc de
 
 @getTilePair:
-	ld a,(de)		; $68de
-	ld b,a			; $68df
-	inc de			; $68e0
-	or a			; $68e1
-	jr z,@getAddress	; $68e2
+	ld a,(de)
+	ld b,a
+	inc de
+	or a
+	jr z,@getAddress
 
-	ld a,(de)		; $68e4
-	ld c,a			; $68e5
-	inc de			; $68e6
-	push hl			; $68e7
-	ld (hl),b		; $68e8
-	set 2,h			; $68e9
-	ld (hl),c		; $68eb
-	ld a,$20		; $68ec
-	rst_addAToHl			; $68ee
-	inc b			; $68ef
-	ld (hl),c		; $68f0
-	res 2,h			; $68f1
-	ld (hl),b		; $68f3
-	pop hl			; $68f4
-	inc hl			; $68f5
-	jr @getTilePair		; $68f6
+	ld a,(de)
+	ld c,a
+	inc de
+	push hl
+	ld (hl),b
+	set 2,h
+	ld (hl),c
+	ld a,$20
+	rst_addAToHl
+	inc b
+	ld (hl),c
+	res 2,h
+	ld (hl),b
+	pop hl
+	inc hl
+	jr @getTilePair
 
 @doneReadingVramTiles:
-	ld l,e			; $68f8
-	ld h,d			; $68f9
-	ld d,>wRoomCollisions		; $68fa
+	ld l,e
+	ld h,d
+	ld d,>wRoomCollisions
 @nextAddress:
-	ldi a,(hl)		; $68fc
-	or a			; $68fd
-	jr z,@done	; $68fe
-	ld e,a			; $6900
-	ld a,$0f		; $6901
-	bit 7,e			; $6903
-	jr z,++			; $6905
-	res 7,e			; $6907
-	ld a,$05		; $6909
+	ldi a,(hl)
+	or a
+	jr z,@done
+	ld e,a
+	ld a,$0f
+	bit 7,e
+	jr z,++
+	res 7,e
+	ld a,$05
 ++
-	ld (de),a		; $690b
-	jr @nextAddress		; $690c
+	ld (de),a
+	jr @nextAddress
 
 @done:
-	pop bc			; $690e
-	ld a,b			; $690f
+	pop bc
+	ld a,b
 	setrombank
-	ld a,c			; $6915
-	ld ($ff00+R_SVBK),a	; $6916
-	ld a,TREE_GFXH_02		; $6918
-	jp loadTreeGfx		; $691a
+	ld a,c
+	ld ($ff00+R_SVBK),a
+	ld a,TREE_GFXH_02
+	jp loadTreeGfx
 
 ; Values are written in pairs, vertically. Example: at "w3VramTiles+$0e" the row below it,
 ; values $36 and $37 are written, both with attribute $24.
@@ -439,17 +439,17 @@ _dinsTroupeVramAndCollisions:
 ; $0e: West of din's troupe: create wagon
 ; @addr{6962}
 _roomTileChangesAfterLoad0e:
-	ld a,GLOBALFLAG_INTRO_DONE		; $6962
-	call checkGlobalFlag		; $6964
-	ret nz			; $6967
+	ld a,GLOBALFLAG_INTRO_DONE
+	call checkGlobalFlag
+	ret nz
 
-	ld a,($ff00+R_SVBK)	; $6968
-	ld c,a			; $696a
-	ldh a,(<hRomBank)	; $696b
-	ld b,a			; $696d
-	push bc			; $696e
-	ld de,@vramTilesAndCollisions		; $696f
-	jp _loadDinsTroupeTileChanges		; $6972
+	ld a,($ff00+R_SVBK)
+	ld c,a
+	ldh a,(<hRomBank)
+	ld b,a
+	push bc
+	ld de,@vramTilesAndCollisions
+	jp _loadDinsTroupeTileChanges
 
 ; Same format as data above
 @vramTilesAndCollisions:
@@ -474,13 +474,13 @@ _roomTileChangesAfterLoad0e:
 ; $05: King Moblin's house (not moblin's keep)
 ; @addr{6991}
 _roomTileChangesAfterLoad05:
-	ld a,GLOBALFLAG_MOBLINS_KEEP_DESTROYED		; $6991
-	call checkGlobalFlag		; $6993
-	ret z			; $6996
-	ld e,$08		; $6997
-	call loadObjectGfxHeaderToSlot4		; $6999
-	ld hl,@rect		; $699c
-	jp drawRectangleToVramTiles		; $699f
+	ld a,GLOBALFLAG_MOBLINS_KEEP_DESTROYED
+	call checkGlobalFlag
+	ret z
+	ld e,$08
+	call loadObjectGfxHeaderToSlot4
+	ld hl,@rect
+	jp drawRectangleToVramTiles
 
 @rect:
 	.dw w3VramTiles+$4c
@@ -496,10 +496,10 @@ _roomTileChangesAfterLoad05:
 ; $06: Blaino's gym (draws gloves on roof)
 ; @addr{69d6}
 _roomTileChangesAfterLoad06:
-	ld a,TREE_GFXH_01		; $69d6
-	call loadTreeGfx		; $69d8
-	ld hl,@rect		; $69db
-	jp drawRectangleToVramTiles		; $69de
+	ld a,TREE_GFXH_01
+	call loadTreeGfx
+	ld hl,@rect
+	jp drawRectangleToVramTiles
 
 @rect:
 	.dw w3VramTiles+$4b
@@ -513,10 +513,10 @@ _roomTileChangesAfterLoad06:
 ; $07: Vasu's shop (draws ring sign)
 ; @addr{69fd}
 _roomTileChangesAfterLoad07:
-	ld a,$01		; $69fd
-	call loadTreeGfx		; $69ff
-	ld hl,_vasuSignRect		; $6a02
-	call drawRectangleToVramTiles		; $6a05
+	ld a,$01
+	call loadTreeGfx
+	ld hl,_vasuSignRect
+	call drawRectangleToVramTiles
 
 	; Fall through (forbid digging up enemies on vasu screen)
 
@@ -524,9 +524,9 @@ _roomTileChangesAfterLoad07:
 ; $0f: Maku tree entrance & one screen south: forbid digging up enemies
 ; @addr{6a08}
 _roomTileChangesAfterLoad0f:
-	ld a,$01		; $6a08
-	ld (wDiggingUpEnemiesForbidden),a		; $6a0a
-	ret			; $6a0d
+	ld a,$01
+	ld (wDiggingUpEnemiesForbidden),a
+	ret
 
 
 _vasuSignRect:
@@ -540,39 +540,39 @@ _vasuSignRect:
 ; $08: Gasha spot (draws the tree or the plant if something has been planted)
 _roomTileChangesAfterLoad08:
 	; Return if a gasha seed is not planted in this room.
-	ld a,(wActiveRoom)		; $6a1a
-	call getIndexOfGashaSpotInRoom_body		; $6a1d
-	ret z			; $6a20
+	ld a,(wActiveRoom)
+	call getIndexOfGashaSpotInRoom_body
+	ret z
 	; 'c' now contains the gasha spot index.
 
-	ld a,TILEINDEX_SOFT_SOIL		; $6a21
-	call findTileInRoom		; $6a23
-	ret nz			; $6a26
+	ld a,TILEINDEX_SOFT_SOIL
+	call findTileInRoom
+	ret nz
 
-	ld e,l			; $6a27
-	ld d,>wRoomLayout		; $6a28
+	ld e,l
+	ld d,>wRoomLayout
 
 	; Check if at least 20 enemies have been killed
-	ld a,c			; $6a2a
-	ld hl,wGashaSpotKillCounters		; $6a2b
-	rst_addAToHl			; $6a2e
-	ld a,(hl)		; $6a2f
-	cp 20			; $6a30
-	jr c,+			; $6a32
+	ld a,c
+	ld hl,wGashaSpotKillCounters
+	rst_addAToHl
+	ld a,(hl)
+	cp 20
+	jr c,+
 
 	; If so, load the tree graphics
-	ld a,e			; $6a34
-	sub $10			; $6a35
-	ld e,a			; $6a37
-	ld hl,@treeLayout		; $6a38
-	jr ++			; $6a3b
+	ld a,e
+	sub $10
+	ld e,a
+	ld hl,@treeLayout
+	jr ++
 +
-	ld hl,@sproutLayout		; $6a3d
+	ld hl,@sproutLayout
 ++
-	call copyRectangleToRoomLayoutAndCollisions_paramDe		; $6a40
+	call copyRectangleToRoomLayoutAndCollisions_paramDe
 
 	; Regenerate graphics after modifying wRoomLayout
-	jp generateW3VramTilesAndAttributes		; $6a43
+	jp generateW3VramTilesAndAttributes
 
 @sproutLayout:
 	.db $01 $01
@@ -587,15 +587,15 @@ _roomTileChangesAfterLoad08:
 ; This function is used by "drawRectangleToVramTiles".
 ; @addr{7d35}
 readParametersForRectangleDrawing:
-	ldi a,(hl)		; $6a54
-	ld e,a			; $6a55
-	ldi a,(hl)		; $6a56
-	ld d,a			; $6a57
-	ldi a,(hl)		; $6a58
-	ld b,a			; $6a59
-	ldi a,(hl)		; $6a5a
-	ld c,a			; $6a5b
-	ret			; $6a5c
+	ldi a,(hl)
+	ld e,a
+	ldi a,(hl)
+	ld d,a
+	ldi a,(hl)
+	ld b,a
+	ldi a,(hl)
+	ld c,a
+	ret
 
 ;;
 ; Unused in seasons?
@@ -606,11 +606,11 @@ readParametersForRectangleDrawing:
 ; @param	hl	The address of the data to write to the given address
 ; @addr{7d3e}
 drawRectangleToVramTiles_withParameters:
-	ld a,($ff00+R_SVBK)	; $6a5d
-	push af			; $6a5f
-	ld a,:w3VramTiles		; $6a60
-	ld ($ff00+R_SVBK),a	; $6a62
-	jr drawRectangleToVramTiles@nextRow		; $6a64
+	ld a,($ff00+R_SVBK)
+	push af
+	ld a,:w3VramTiles
+	ld ($ff00+R_SVBK),a
+	jr drawRectangleToVramTiles@nextRow
 
 ;;
 ; This function takes a data struct in hl which is expected to point to somewhere in
@@ -623,34 +623,34 @@ drawRectangleToVramTiles_withParameters:
 ; 			b4+: The data to write to the given address
 ; @addr{7d47}
 drawRectangleToVramTiles:
-	ld a,($ff00+R_SVBK)	; $6a66
-	push af			; $6a68
-	ld a,:w3VramTiles		; $6a69
-	ld ($ff00+R_SVBK),a	; $6a6b
-	call readParametersForRectangleDrawing		; $6a6d
+	ld a,($ff00+R_SVBK)
+	push af
+	ld a,:w3VramTiles
+	ld ($ff00+R_SVBK),a
+	call readParametersForRectangleDrawing
 
 @nextRow:
-	push bc			; $6a70
+	push bc
 --
-	ldi a,(hl)		; $6a71
-	ld (de),a		; $6a72
-	set 2,d			; $6a73
-	ldi a,(hl)		; $6a75
-	ld (de),a		; $6a76
-	res 2,d			; $6a77
-	inc de			; $6a79
-	dec c			; $6a7a
-	jr nz,--		; $6a7b
-	pop bc			; $6a7d
-	ld a,$20		; $6a7e
-	sub c			; $6a80
-	call addAToDe		; $6a81
-	dec b			; $6a84
-	jr nz,@nextRow	; $6a85
+	ldi a,(hl)
+	ld (de),a
+	set 2,d
+	ldi a,(hl)
+	ld (de),a
+	res 2,d
+	inc de
+	dec c
+	jr nz,--
+	pop bc
+	ld a,$20
+	sub c
+	call addAToDe
+	dec b
+	jr nz,@nextRow
 
-	pop af			; $6a87
-	ld ($ff00+R_SVBK),a	; $6a88
-	ret			; $6a8a
+	pop af
+	ld ($ff00+R_SVBK),a
+	ret
 
 ;;
 ; @param	hl	Pointer to data struct:
@@ -660,48 +660,48 @@ drawRectangleToVramTiles:
 ; 			b4-b5: Where to read data from (should point somewhere in wram 2)
 ; @addr{7d6e}
 copyRectangleFromTmpGfxBuffer:
-	ld a,($ff00+R_SVBK)	; $6a8b
-	push af			; $6a8d
+	ld a,($ff00+R_SVBK)
+	push af
 
-	ldi a,(hl)		; $6a8e
-	ld b,a			; $6a8f
-	ldi a,(hl)		; $6a90
-	ld c,a			; $6a91
-	ldi a,(hl)		; $6a92
-	ld e,a			; $6a93
-	ldi a,(hl)		; $6a94
-	ld d,a			; $6a95
-	ldi a,(hl)		; $6a96
-	ld h,(hl)		; $6a97
-	ld l,a			; $6a98
+	ldi a,(hl)
+	ld b,a
+	ldi a,(hl)
+	ld c,a
+	ldi a,(hl)
+	ld e,a
+	ldi a,(hl)
+	ld d,a
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
 
 @nextRow:
-	push bc			; $6a99
+	push bc
 --
-	ld a,:w2TmpGfxBuffer		; $6a9a
-	ld ($ff00+R_SVBK),a	; $6a9c
-	ldi a,(hl)		; $6a9e
-	ld b,a			; $6a9f
-	ld a,:w3VramTiles		; $6aa0
-	ld ($ff00+R_SVBK),a	; $6aa2
-	ld a,b			; $6aa4
-	ld (de),a		; $6aa5
-	inc de			; $6aa6
-	dec c			; $6aa7
-	jr nz,--		; $6aa8
-	pop bc			; $6aaa
-	ld a,$20		; $6aab
-	sub c			; $6aad
-	call addAToDe		; $6aae
-	ld a,$20		; $6ab1
-	sub c			; $6ab3
-	rst_addAToHl			; $6ab4
-	dec b			; $6ab5
-	jr nz,@nextRow	; $6ab6
+	ld a,:w2TmpGfxBuffer
+	ld ($ff00+R_SVBK),a
+	ldi a,(hl)
+	ld b,a
+	ld a,:w3VramTiles
+	ld ($ff00+R_SVBK),a
+	ld a,b
+	ld (de),a
+	inc de
+	dec c
+	jr nz,--
+	pop bc
+	ld a,$20
+	sub c
+	call addAToDe
+	ld a,$20
+	sub c
+	rst_addAToHl
+	dec b
+	jr nz,@nextRow
 
-	pop af			; $6ab8
-	ld ($ff00+R_SVBK),a	; $6ab9
-	ret			; $6abb
+	pop af
+	ld ($ff00+R_SVBK),a
+	ret
 
 ;;
 ; @param	hl	Pointer to data struct:
@@ -712,47 +712,47 @@ copyRectangleFromTmpGfxBuffer:
 ;			wRoomCollisions)
 ; @addr{7d9f}
 copyRectangleToRoomLayoutAndCollisions:
-	ldi a,(hl)		; $6abc
-	ld e,a			; $6abd
-	ldi a,(hl)		; $6abe
-	ld d,a			; $6abf
+	ldi a,(hl)
+	ld e,a
+	ldi a,(hl)
+	ld d,a
 
 ;;
 ; @param	de	Where to write the data
 ; @param	hl	Pointer to data struct (same as above method except first 2 bytes)
 ; @addr{7da3}
 copyRectangleToRoomLayoutAndCollisions_paramDe:
-	ldi a,(hl)		; $6ac0
-	ld b,a			; $6ac1
-	ldi a,(hl)		; $6ac2
-	ld c,a			; $6ac3
+	ldi a,(hl)
+	ld b,a
+	ldi a,(hl)
+	ld c,a
 
 @nextRow:
-	push bc			; $6ac4
+	push bc
 --
-	ldi a,(hl)		; $6ac5
-	ld (de),a		; $6ac6
-	dec d			; $6ac7
-	ldi a,(hl)		; $6ac8
-	ld (de),a		; $6ac9
-	inc d			; $6aca
-	inc de			; $6acb
-	dec c			; $6acc
-	jr nz,--		; $6acd
-	pop bc			; $6acf
-	ld a,$10		; $6ad0
-	sub c			; $6ad2
-	call addAToDe		; $6ad3
-	dec b			; $6ad6
-	jr nz,@nextRow	; $6ad7
-	ret			; $6ad9
+	ldi a,(hl)
+	ld (de),a
+	dec d
+	ldi a,(hl)
+	ld (de),a
+	inc d
+	inc de
+	dec c
+	jr nz,--
+	pop bc
+	ld a,$10
+	sub c
+	call addAToDe
+	dec b
+	jr nz,@nextRow
+	ret
 
 ;;
 ; This is called in shops to load "price" graphics and set bit 1 of "wInShop".
 _roomTileChangesAfterLoad04:
-	ld hl,wInShop		; $6ada
-	set 1,(hl)		; $6add
-	ld a,TREE_GFXH_03		; $6adf
-	jp loadTreeGfx		; $6ae1
+	ld hl,wInShop
+	set 1,(hl)
+	ld a,TREE_GFXH_03
+	jp loadTreeGfx
 
 .ends

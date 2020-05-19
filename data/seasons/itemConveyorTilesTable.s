@@ -19,4 +19,4 @@ _itemConveyorTilesTable:
 @collisions2:
 @collisions3:
 @collisions5:
-	.db $00			; $4c37
+	.db $00

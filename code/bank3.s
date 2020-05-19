@@ -2,114 +2,114 @@
 ; This is the first thing the game jumps to on startup.
 ; @addr{4000}
 init:
-	di			; $4000
-	xor a			; $4001
-	ld ($ff00+R_IF),a	; $4002
-	ld ($ff00+R_IE),a	; $4004
-	ld ($ff00+R_STAT),a	; $4006
-	ld ($ff00+R_TAC),a	; $4008
-	ld ($ff00+R_SC),a	; $400a
-	xor a			; $400c
-	ld ($1111),a		; $400d
+	di
+	xor a
+	ld ($ff00+R_IF),a
+	ld ($ff00+R_IE),a
+	ld ($ff00+R_STAT),a
+	ld ($ff00+R_TAC),a
+	ld ($ff00+R_SC),a
+	xor a
+	ld ($1111),a
 
-	call disableLcd		; $4010
+	call disableLcd
 
-	ldh a,(<hGameboyType)	; $4013
-	or a			; $4015
-	jr z,+			; $4016
+	ldh a,(<hGameboyType)
+	or a
+	jr z,+
 
 	; Initialize CGB registers
-	xor a			; $4018
-	ld ($ff00+R_RP),a	; $4019
-	ld ($ff00+R_SVBK),a	; $401b
-	ld ($ff00+R_VBK),a	; $401d
-	call _setCpuToDoubleSpeed		; $401f
+	xor a
+	ld ($ff00+R_RP),a
+	ld ($ff00+R_SVBK),a
+	ld ($ff00+R_VBK),a
+	call _setCpuToDoubleSpeed
 +
-	ld hl,hActiveFileSlot		; $4022
+	ld hl,hActiveFileSlot
 .ifdef ROM_AGES
-	ld b,hramEnd-hActiveFileSlot		; $4025
+	ld b,hramEnd-hActiveFileSlot
 .else
 	; hFFBE and hFFBF not cleared in seasons
-	ld b,hramEnd-hActiveFileSlot-2		; $4025
+	ld b,hramEnd-hActiveFileSlot-2
 .endif
-	call clearMemory		; $4027
+	call clearMemory
 
 	; Clear all memory after the stacks
-	ld hl,wThread3StackTop		; $402a
-	ld bc,$dfff-wThread3StackTop		; $402d
-	call clearMemoryBc		; $4030
+	ld hl,wThread3StackTop
+	ld bc,$dfff-wThread3StackTop
+	call clearMemoryBc
 
-	call clearVram		; $4033
+	call clearVram
 
 	; Copy DMA function to hram
-	ld hl,_oamDmaFunction		; $4036
-	ld de,hOamFunc		; $4039
-	ld b,_oamDmaFunctionEnd-_oamDmaFunction		; $403c
-	call copyMemory		; $403e
+	ld hl,_oamDmaFunction
+	ld de,hOamFunc
+	ld b,_oamDmaFunctionEnd-_oamDmaFunction
+	call copyMemory
 
 	; Initialize DMG palettes
-	ld a,%11100100		; $4041
-	ld ($ff00+R_BGP),a	; $4043
-	ld ($ff00+R_OBP0),a	; $4045
-	ld a,%01101100		; $4047
-	ld ($ff00+R_OBP1),a	; $4049
+	ld a,%11100100
+	ld ($ff00+R_BGP),a
+	ld ($ff00+R_OBP0),a
+	ld a,%01101100
+	ld ($ff00+R_OBP1),a
 
-	call initSound		; $404b
+	call initSound
 
-	ld a,$c7		; $404e
-	ld ($ff00+R_LYC),a	; $4050
-	ld a,$40		; $4052
-	ld ($ff00+R_STAT),a	; $4054
+	ld a,$c7
+	ld ($ff00+R_LYC),a
+	ld a,$40
+	ld ($ff00+R_STAT),a
 
-	xor a			; $4056
-	ld ($ff00+R_IF),a	; $4057
-	ld a,$0f		; $4059
-	ld ($ff00+R_IE),a	; $405b
+	xor a
+	ld ($ff00+R_IF),a
+	ld a,$0f
+	ld ($ff00+R_IE),a
 
-	callab bank3f.initGbaModePaletteData		; $405d
-	ei			; $4065
-	callab bank2.checkDisplayDmgModeScreen		; $4066
+	callab bank3f.initGbaModePaletteData
+	ei
+	callab bank2.checkDisplayDmgModeScreen
 
-	jp startGame		; $406e
+	jp startGame
 
 ;;
 ; @addr{4071}
 _setCpuToDoubleSpeed:
-	ld a,($ff00+R_KEY1)	; $4071
-	rlca			; $4073
-	ret c			; $4074
+	ld a,($ff00+R_KEY1)
+	rlca
+	ret c
 
-	xor a			; $4075
-	ld ($ff00+R_IF),a	; $4076
-	ld ($ff00+R_IE),a	; $4078
-	ld a,$01		; $407a
-	ld ($ff00+R_KEY1),a	; $407c
-	ld a,$30		; $407e
-	ld ($ff00+R_P1),a	; $4080
-	stop			; $4082
-	nop			; $4083
+	xor a
+	ld ($ff00+R_IF),a
+	ld ($ff00+R_IE),a
+	ld a,$01
+	ld ($ff00+R_KEY1),a
+	ld a,$30
+	ld ($ff00+R_P1),a
+	stop
+	nop
 -
-	ld a,($ff00+R_KEY1)	; $4084
-	rlca			; $4086
-	jr nc,-			; $4087
+	ld a,($ff00+R_KEY1)
+	rlca
+	jr nc,-
 
-	xor a			; $4089
-	ld ($ff00+R_P1),a	; $408a
-	ld ($ff00+R_IF),a	; $408c
-	ld ($ff00+R_IE),a	; $408e
-	ret			; $4090
+	xor a
+	ld ($ff00+R_P1),a
+	ld ($ff00+R_IF),a
+	ld ($ff00+R_IE),a
+	ret
 
 ;;
 ; This is copied to RAM and run from there.
 ; @addr{4091}
 _oamDmaFunction:
-	ld a,>wOam		; $4091
-	ld ($ff00+R_DMA),a	; $4093
-	ld a,$28		; $4095
+	ld a,>wOam
+	ld ($ff00+R_DMA),a
+	ld a,$28
 -
-	dec a			; $4097
-	jr nz,-			; $4098
-	ret			; $409a
+	dec a
+	jr nz,-
+	ret
 _oamDmaFunctionEnd:
 
 
@@ -141,31 +141,31 @@ objectSpeedTable:
 ; Calculates the game-transfer secret's text?
 ; @addr{481b}
 generateGameTransferSecret:
-	ld hl,wFileIsLinkedGame		; $481b
-	ldi a,(hl)		; $481e
-	ld b,(hl)		; $481f
-	ld c,a			; $4820
-	push bc			; $4821
+	ld hl,wFileIsLinkedGame
+	ldi a,(hl)
+	ld b,(hl)
+	ld c,a
+	push bc
 
 	; When generating a game-transfer secret: if this file is either linked or
 	; a hero's file, mark the secret as a "hero's secret"; otherwise, it's just
 	; linked? (so basically, only the secret from the first game is marked as
 	; linked...)
-	or b			; $4822
-	ldd (hl),a		; $4823
-	xor $01			; $4824
-	or b			; $4826
-	ld (hl),a		; $4827
+	or b
+	ldd (hl),a
+	xor $01
+	or b
+	ld (hl),a
 
-	ldbc $00,$00		; $4828
-	call secretFunctionCaller_body		; $482b
+	ldbc $00,$00
+	call secretFunctionCaller_body
 
-	pop bc			; $482e
-	ld hl,wFileIsLinkedGame		; $482f
-	ld (hl),c		; $4832
-	inc l			; $4833
-	ld (hl),b		; $4834
-	ret			; $4835
+	pop bc
+	ld hl,wFileIsLinkedGame
+	ld (hl),c
+	inc l
+	ld (hl),b
+	ret
 
 ;;
 ; Calls a secret-related function based on parameter 'b':
@@ -182,22 +182,22 @@ generateGameTransferSecret:
 ; @param[out]	zflag	Generally set on success
 ; @addr{4836}
 secretFunctionCaller_body:
-	push de			; $4836
-	ld a,($ff00+R_SVBK)	; $4837
-	push af			; $4839
-	ld a,TEXT_BANK		; $483a
-	ld ($ff00+R_SVBK),a	; $483c
+	push de
+	ld a,($ff00+R_SVBK)
+	push af
+	ld a,TEXT_BANK
+	ld ($ff00+R_SVBK),a
 
-	call @jumpTable		; $483e
+	call @jumpTable
 
-	pop af			; $4841
-	ld ($ff00+R_SVBK),a	; $4842
-	pop de			; $4844
-	ret			; $4845
+	pop af
+	ld ($ff00+R_SVBK),a
+	pop de
+	ret
 
 @jumpTable:
-	ld a,b			; $4846
-	rst_jumpTable			; $4847
+	ld a,b
+	rst_jumpTable
 	.dw _generateSecret
 	.dw _unpackSecret
 	.dw _verifyUnpackedSecretGameID
@@ -212,35 +212,35 @@ secretFunctionCaller_body:
 ; @param	c	Value for wSecretType
 ; @addr{4852}
 _generateSecret:
-	ld hl,w7SecretText1		; $4852
-	ld b,$40		; $4855
-	call clearMemory		; $4857
+	ld hl,w7SecretText1
+	ld b,$40
+	call clearMemory
 
-	call _andCWith3		; $485a
-	call _generateGameIDIfNeeded		; $485d
+	call _andCWith3
+	call _generateGameIDIfNeeded
 
-	call @determineXorCipher		; $4860
-	ld hl,wSecretXorCipherIndex		; $4863
-	ldi (hl),a		; $4866
+	call @determineXorCipher
+	ld hl,wSecretXorCipherIndex
+	ldi (hl),a
 	ld (hl),c ; hl = wSecretType
 
 	ld a,$04 ; Encode the gameID
-	call _encodeSecretData		; $486a
+	call _encodeSecretData
 	; Encode everything else (c is unmodified from before)
-	call _encodeSecretData_paramC		; $486d
+	call _encodeSecretData_paramC
 
 	; Calculate checksum (4 bits) and insert it at the end
-	ld b,$04		; $4870
-	xor a			; $4872
-	call _insertBitsIntoSecretGenerationBuffer		; $4873
-	call _getSecretBufferChecksum		; $4876
-	ld hl,w7SecretGenerationBuffer+19		; $4879
-	or (hl)			; $487c
-	ld (hl),a		; $487d
+	ld b,$04
+	xor a
+	call _insertBitsIntoSecretGenerationBuffer
+	call _getSecretBufferChecksum
+	ld hl,w7SecretGenerationBuffer+19
+	or (hl)
+	ld (hl),a
 
-	call _shiftSecretBufferContentsToFront		; $487e
-	call _runXorCipherOnSecretBuffer		; $4881
-	jp _convertSecretBufferToText		; $4884
+	call _shiftSecretBufferContentsToFront
+	call _runXorCipherOnSecretBuffer
+	jp _convertSecretBufferToText
 
 ;;
 ; Decides which xor cipher to use based on GameID (and, for 5-letter secrets, based on
@@ -250,37 +250,37 @@ _generateSecret:
 ; @param[out]	a	Which xor cipher to use (from 0-7)
 ; @addr{4887}
 @determineXorCipher:
-	push bc			; $4887
-	ld hl,wGameID		; $4888
-	ldi a,(hl)		; $488b
+	push bc
+	ld hl,wGameID
+	ldi a,(hl)
 	add (hl)
-	ld b,a			; $488d
-	ld a,c			; $488e
-	cp $03			; $488f
-	ld a,b			; $4891
-	jr nz,@ret		; $4892
+	ld b,a
+	ld a,c
+	cp $03
+	ld a,b
+	jr nz,@ret
 
-	ld l,<wShortSecretIndex		; $4894
-	ld a,(hl)		; $4896
-	swap a			; $4897
-	and $0f			; $4899
-	add b			; $489b
-	ld b,a			; $489c
-	ld a,(hl)		; $489d
-	and $01			; $489e
-	rlca			; $48a0
-	rlca			; $48a1
-	xor b			; $48a2
+	ld l,<wShortSecretIndex
+	ld a,(hl)
+	swap a
+	and $0f
+	add b
+	ld b,a
+	ld a,(hl)
+	and $01
+	rlca
+	rlca
+	xor b
 @ret:
-	and $07			; $48a3
-	pop bc			; $48a5
-	ret			; $48a6
+	and $07
+	pop bc
+	ret
 
 ;;
 ; @param	c	Secret type to encode (0-4)
 ; @addr{48a7}
 _encodeSecretData_paramC:
-	ld a,c			; $48a7
+	ld a,c
 
 ;;
 ; Encodes data into a secret by shifting in the required bits.
@@ -288,27 +288,27 @@ _encodeSecretData_paramC:
 ; @param	a	Secret type to encode (0-4)
 ; @addr{48a8}
 _encodeSecretData:
-	push bc			; $48a8
-	ld hl,_secretDataToEncodeTable		; $48a9
-	rst_addDoubleIndex			; $48ac
-	ldi a,(hl)		; $48ad
-	ld h,(hl)		; $48ae
-	ld l,a			; $48af
+	push bc
+	ld hl,_secretDataToEncodeTable
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
 
-	ldi a,(hl)		; $48b0
-	ld c,a			; $48b1
+	ldi a,(hl)
+	ld c,a
 --
-	ldi a,(hl)		; $48b2
-	ld e,a			; $48b3
-	ldi a,(hl)		; $48b4
-	ld b,a			; $48b5
-	ld d,>wc600Block		; $48b6
-	ld a,(de)		; $48b8
-	call _insertBitsIntoSecretGenerationBuffer		; $48b9
-	dec c			; $48bc
-	jr nz,--		; $48bd
-	pop bc			; $48bf
-	ret			; $48c0
+	ldi a,(hl)
+	ld e,a
+	ldi a,(hl)
+	ld b,a
+	ld d,>wc600Block
+	ld a,(de)
+	call _insertBitsIntoSecretGenerationBuffer
+	dec c
+	jr nz,--
+	pop bc
+	ret
 
 ;;
 ; Encodes the given bits into w7SecretGenerationBuffer.
@@ -320,37 +320,37 @@ _encodeSecretData:
 ; @param	b	Number of bits to encode
 ; @addr{48c1}
 _insertBitsIntoSecretGenerationBuffer:
-	push hl			; $48c1
-	push bc			; $48c2
-	ld c,a			; $48c3
+	push hl
+	push bc
+	ld c,a
 ---
-	ld hl,w7SecretGenerationBuffer+19		; $48c4
-	ld e,20			; $48c7
-	srl c			; $48c9
+	ld hl,w7SecretGenerationBuffer+19
+	ld e,20
+	srl c
 --
-	ld a,(hl)		; $48cb
-	rla			; $48cc
-	ldd (hl),a		; $48cd
-	rla			; $48ce
-	rla			; $48cf
-	dec e			; $48d0
-	jr nz,--		; $48d1
-	dec b			; $48d3
-	jr nz,---		; $48d4
+	ld a,(hl)
+	rla
+	ldd (hl),a
+	rla
+	rla
+	dec e
+	jr nz,--
+	dec b
+	jr nz,---
 
 	; Iterate through all characters to remove anything in the upper 2 bits
-	ld hl,w7SecretGenerationBuffer		; $48d6
-	ldde $3f,20		; $48d9
+	ld hl,w7SecretGenerationBuffer
+	ldde $3f,20
 --
-	ld a,(hl)		; $48dc
-	and d			; $48dd
-	ldi (hl),a		; $48de
-	dec e			; $48df
-	jr nz,--		; $48e0
+	ld a,(hl)
+	and d
+	ldi (hl),a
+	dec e
+	jr nz,--
 
-	pop bc			; $48e2
-	pop hl			; $48e3
-	ret			; $48e4
+	pop bc
+	pop hl
+	ret
 
 ;;
 ; Unpacks a secret's data to wTmpcec0. (each entry in "_secretDataToEncodeTable" gets
@@ -362,48 +362,48 @@ _insertBitsIntoSecretGenerationBuffer:
 ; @param[out]	b	$00 if secret was valid, $01 otherwise
 ; @addr{48e5}
 _unpackSecret:
-	ld hl,w7SecretText1		; $48e5
-	ld b,$40		; $48e8
-	call clearMemory		; $48ea
-	call _andCWith3		; $48ed
-	call _loadSecretBufferFromText		; $48f0
-	jr c,@fail			; $48f3
+	ld hl,w7SecretText1
+	ld b,$40
+	call clearMemory
+	call _andCWith3
+	call _loadSecretBufferFromText
+	jr c,@fail
 
-	call _runXorCipherOnSecretBuffer		; $48f5
+	call _runXorCipherOnSecretBuffer
 
 	; Retrieve checksum in 'e', then remove the checksum bits from the secret buffer
-	call _getNumCharactersForSecretType		; $48f8
-	ld hl,w7SecretGenerationBuffer-1		; $48fb
-	rst_addAToHl			; $48fe
-	ld a,(hl)		; $48ff
-	and $0f			; $4900
-	ld e,a			; $4902
-	xor (hl)		; $4903
-	ld (hl),a		; $4904
+	call _getNumCharactersForSecretType
+	ld hl,w7SecretGenerationBuffer-1
+	rst_addAToHl
+	ld a,(hl)
+	and $0f
+	ld e,a
+	xor (hl)
+	ld (hl),a
 
-	call _getSecretBufferChecksum		; $4905
-	cp e			; $4908
-	jr nz,@fail	; $4909
+	call _getSecretBufferChecksum
+	cp e
+	jr nz,@fail
 
-	call @unpackSecretData		; $490b
+	call @unpackSecretData
 
 	; Check the value of "wSecretType" stored in the secret, make sure it's correct
-	ld a,(wTmpcec0+1)		; $490e
-	cp c			; $4911
-	jr nz,@fail	; $4912
+	ld a,(wTmpcec0+1)
+	cp c
+	jr nz,@fail
 
-	ld b,$00		; $4914
-	ret			; $4916
+	ld b,$00
+	ret
 @fail:
-	ld b,$01		; $4917
-	ret			; $4919
+	ld b,$01
+	ret
 
 ;;
 ; @addr{491a}
 @unpackSecretData:
-	ld de,wTmpcec0		; $491a
+	ld de,wTmpcec0
 	ld a,$04 ; Unpack gameID, etc
-	call @unpack		; $491f
+	call @unpack
 
 	ld a,c ; Unpack the meat of the data
 
@@ -412,68 +412,68 @@ _unpackSecret:
 ; @param	de	Address to write the extracted data to
 ; @addr{4923}
 @unpack:
-	ld hl,_secretDataToEncodeTable		; $4923
-	rst_addDoubleIndex			; $4926
-	ldi a,(hl)		; $4927
-	ld h,(hl)		; $4928
-	ld l,a			; $4929
+	ld hl,_secretDataToEncodeTable
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
 
-	ldi a,(hl)		; $492a
-	ld b,a			; $492b
+	ldi a,(hl)
+	ld b,a
 @@nextEntry:
-	inc hl			; $492c
-	ldi a,(hl)		; $492d
-	call @readBits		; $492e
-	ld (de),a		; $4931
-	inc de			; $4932
-	dec b			; $4933
-	jr nz,@@nextEntry		; $4934
-	ret			; $4936
+	inc hl
+	ldi a,(hl)
+	call @readBits
+	ld (de),a
+	inc de
+	dec b
+	jr nz,@@nextEntry
+	ret
 
 ;;
 ; @param	a	Number of bits to read from the start of w7SecretGenerationBuffer
 ; @param[out]	a	The value of the bits retrieved
 ; @addr{4937}
 @readBits:
-	push bc			; $4937
-	push de			; $4938
-	push hl			; $4939
-	ld b,a			; $493a
-	ld c,a			; $493b
-	ld d,$00		; $493c
+	push bc
+	push de
+	push hl
+	ld b,a
+	ld c,a
+	ld d,$00
 ---
 	; Rotate the entire buffer left one bit
-	ld hl,w7SecretGenerationBuffer+19		; $493e
-	ld e,20			; $4941
+	ld hl,w7SecretGenerationBuffer+19
+	ld e,20
 --
-	rl (hl)			; $4943
-	ld a,(hl)		; $4945
-	rla			; $4946
-	rla			; $4947
-	dec hl			; $4948
-	dec e			; $4949
-	jr nz,--		; $494a
+	rl (hl)
+	ld a,(hl)
+	rla
+	rla
+	dec hl
+	dec e
+	jr nz,--
 
 	rr d ; Rotate leftmost bit into d
-	dec b			; $494e
-	jr nz,---		; $494f
+	dec b
+	jr nz,---
 
 	; Result is now in the upper bits of 'd'. We still need to shift it into the lower
 	; bits.
-	ld a,$08		; $4951
-	sub c			; $4953
-	ld b,a			; $4954
-	ld a,d			; $4955
-	jr z,@@end		; $4956
+	ld a,$08
+	sub c
+	ld b,a
+	ld a,d
+	jr z,@@end
 --
-	rrca			; $4958
-	dec b			; $4959
-	jr nz,--		; $495a
+	rrca
+	dec b
+	jr nz,--
 @@end:
-	pop hl			; $495c
-	pop de			; $495d
-	pop bc			; $495e
-	ret			; $495f
+	pop hl
+	pop de
+	pop bc
+	ret
 
 ;;
 ; Loads the data associated with an unpacked secret (ie. for game-transfer secrets, copies
@@ -481,8 +481,8 @@ _unpackSecret:
 ;
 ; @addr{4960}
 _loadUnpackedSecretData:
-	call _andCWith3		; $4960
-	rst_jumpTable			; $4963
+	call _andCWith3
+	rst_jumpTable
 	.dw @type0
 	.dw @type1
 	.dw @type2
@@ -490,109 +490,109 @@ _loadUnpackedSecretData:
 
 @type0: ; Game-transfer secret
 @type1:
-	ld hl,_secretDataToEncodeTable@entry0		; $496c
-	ldi a,(hl)		; $496f
-	ld b,a			; $4970
+	ld hl,_secretDataToEncodeTable@entry0
+	ldi a,(hl)
+	ld b,a
 	ld de,wTmpcec0+4 ; Start from +4 to skip the "header"
 --
-	ld a,(de)		; $4974
-	push de			; $4975
-	ld e,(hl)		; $4976
-	ld d,>wc600Block		; $4977
-	ld (de),a		; $4979
-	pop de			; $497a
-	inc de			; $497b
-	inc hl			; $497c
-	inc hl			; $497d
-	dec b			; $497e
-	jr nz,--		; $497f
+	ld a,(de)
+	push de
+	ld e,(hl)
+	ld d,>wc600Block
+	ld (de),a
+	pop de
+	inc de
+	inc hl
+	inc hl
+	dec b
+	jr nz,--
 
 	; Copy the secret's game ID
-	ld hl,wGameID		; $4981
-	ld a,(wTmpcec0+2)		; $4984
-	ldi (hl),a		; $4987
-	ld a,(wTmpcec0+3)		; $4988
-	ld (hl),a		; $498b
+	ld hl,wGameID
+	ld a,(wTmpcec0+2)
+	ldi (hl),a
+	ld a,(wTmpcec0+3)
+	ld (hl),a
 
 @type3: ; 5-letter secret
-	ret			; $498c
+	ret
 
 @type2: ; Ring secret
-	ld hl,_secretDataToEncodeTable@entry2+1		; $498d
-	ld b,$08		; $4990
+	ld hl,_secretDataToEncodeTable@entry2+1
+	ld b,$08
 	ld de,wTmpcec0+4 ; Start from +4 to skip the "header"
 --
-	ldi a,(hl)		; $4995
-	push hl			; $4996
-	ld l,a			; $4997
-	ld h,>wc600Block		; $4998
-	ld a,(de)		; $499a
-	or (hl)			; $499b
-	ld (hl),a		; $499c
-	pop hl			; $499d
-	inc de			; $499e
-	inc hl			; $499f
-	dec b			; $49a0
-	jr nz,--		; $49a1
-	ret			; $49a3
+	ldi a,(hl)
+	push hl
+	ld l,a
+	ld h,>wc600Block
+	ld a,(de)
+	or (hl)
+	ld (hl),a
+	pop hl
+	inc de
+	inc hl
+	dec b
+	jr nz,--
+	ret
 
 ;;
 ; @addr{49a4}
 _verifyUnpackedSecretGameID:
 	; Get the gameID of an unpacked secret
-	ld hl,wTmpcec0+2		; $49a4
-	ldi a,(hl)		; $49a7
-	ld d,(hl)		; $49a8
-	ld e,a			; $49a9
+	ld hl,wTmpcec0+2
+	ldi a,(hl)
+	ld d,(hl)
+	ld e,a
 
 	; If the GameID is zero, accept the secret.
 	; This means that any secret encoded with GameID 0 works on EVERY file, regardless
 	; of that file's game ID. Was this intentional?
-	or d			; $49aa
-	jr z,@success		; $49ab
+	or d
+	jr z,@success
 
 	; If nonzero, check that it matches this game's gameID
-	ld hl,wGameID		; $49ad
-	ldi a,(hl)		; $49b0
-	cp e			; $49b1
-	jr nz,@fail		; $49b2
-	ldi a,(hl)		; $49b4
-	cp d			; $49b5
-	jr z,@success		; $49b6
+	ld hl,wGameID
+	ldi a,(hl)
+	cp e
+	jr nz,@fail
+	ldi a,(hl)
+	cp d
+	jr z,@success
 @fail:
-	ld b,$01		; $49b8
-	ret			; $49ba
+	ld b,$01
+	ret
 @success:
-	ld b,$00		; $49bb
-	ret			; $49bd
+	ld b,$00
+	ret
 
 ;;
 ; Generates a gameID if one hasn't been calculated yet.
 ; @addr{49be}
 _generateGameIDIfNeeded:
-	ld hl,wGameID		; $49be
-	ldi a,(hl)		; $49c1
-	or (hl)			; $49c2
-	ret nz			; $49c3
+	ld hl,wGameID
+	ldi a,(hl)
+	or (hl)
+	ret nz
 
 	; Base the ID on wPlaytimeCounter (which should be pseudo-random).
-	ld l,<wPlaytimeCounter+1		; $49c4
-	ldd a,(hl)		; $49c6
-	and $7f			; $49c7
-	ld b,a			; $49c9
-	ld a,(hl)		; $49ca
-	jr nz,+			; $49cb
+	ld l,<wPlaytimeCounter+1
+	ldd a,(hl)
+	and $7f
+	ld b,a
+	ld a,(hl)
+	jr nz,+
 --
 	; The GameID can't be 0, so read from R_DIV until we get a nonzero value.
-	or a			; $49cd
-	jr nz,+			; $49ce
-	ld a,($ff00+R_DIV)	; $49d0
-	jr --			; $49d2
+	or a
+	jr nz,+
+	ld a,($ff00+R_DIV)
+	jr --
 +
-	ld l,<wGameID		; $49d4
-	ldi (hl),a		; $49d6
-	ld (hl),b		; $49d7
-	ret			; $49d8
+	ld l,<wGameID
+	ldi (hl),a
+	ld (hl),b
+	ret
 
 ;;
 ; Copies the data from w7SecretGenerationBuffer to w7SecretText1. The former consists of
@@ -600,39 +600,39 @@ _generateGameIDIfNeeded:
 ;
 ; @addr{49d9}
 _convertSecretBufferToText:
-	ld a,c			; $49d9
-	ld hl,@secretSpacingData		; $49da
-	rst_addDoubleIndex			; $49dd
-	ldi a,(hl)		; $49de
-	ld b,(hl)		; $49df
-	ld c,a			; $49e0
-	ld de,w7SecretGenerationBuffer		; $49e1
-	ld hl,w7SecretText1		; $49e4
+	ld a,c
+	ld hl,@secretSpacingData
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld b,(hl)
+	ld c,a
+	ld de,w7SecretGenerationBuffer
+	ld hl,w7SecretText1
 @nextGroup:
-	ld a,(bc)		; $49e7
-	and $0f			; $49e8
-	ret z			; $49ea
+	ld a,(bc)
+	and $0f
+	ret z
 
-	push bc			; $49eb
-	ld b,a			; $49ec
+	push bc
+	ld b,a
 @nextSymbol:
-	ld a,(de)		; $49ed
-	push hl			; $49ee
-	ld hl,secretSymbols		; $49ef
-	rst_addAToHl			; $49f2
-	ld a,(hl)		; $49f3
-	pop hl			; $49f4
-	ldi (hl),a		; $49f5
-	inc de			; $49f6
-	dec b			; $49f7
-	jr nz,@nextSymbol	; $49f8
+	ld a,(de)
+	push hl
+	ld hl,secretSymbols
+	rst_addAToHl
+	ld a,(hl)
+	pop hl
+	ldi (hl),a
+	inc de
+	dec b
+	jr nz,@nextSymbol
 
-	pop bc			; $49fa
-	ld a,(bc)		; $49fb
-	and $f0			; $49fc
-	ldi (hl),a		; $49fe
-	inc bc			; $49ff
-	jr @nextGroup		; $4a00
+	pop bc
+	ld a,(bc)
+	and $f0
+	ldi (hl),a
+	inc bc
+	jr @nextGroup
 
 
 ; For each secret type, this data tells the above function how to format it (in groups of
@@ -662,18 +662,18 @@ _convertSecretBufferToText:
 ; @param[out]	cflag		Set if there's a problem with the secret (invalid char)
 ; @addr{4a15}
 _loadSecretBufferFromText:
-	call _getNumCharactersForSecretType		; $4a15
-	ld hl,wTmpcec0		; $4a18
-	ld de,w7SecretGenerationBuffer		; $4a1b
+	call _getNumCharactersForSecretType
+	ld hl,wTmpcec0
+	ld de,w7SecretGenerationBuffer
 --
-	ldi a,(hl)		; $4a1e
-	call @textCharacterToByte		; $4a1f
-	ret c			; $4a22
-	ld (de),a		; $4a23
-	inc de			; $4a24
-	dec b			; $4a25
-	jr nz,--		; $4a26
-	ret			; $4a28
+	ldi a,(hl)
+	call @textCharacterToByte
+	ret c
+	ld (de),a
+	inc de
+	dec b
+	jr nz,--
+	ret
 
 ;;
 ; @param	a	Ascii symbol
@@ -681,23 +681,23 @@ _loadSecretBufferFromText:
 ; @param[out]	cflag	Set if there's no byte corresponding to it
 ; @addr{4a29}
 @textCharacterToByte:
-	push hl			; $4a29
-	push bc			; $4a2a
-	ld hl,secretSymbols		; $4a2b
-	ldbc $40,$00		; $4a2e
+	push hl
+	push bc
+	ld hl,secretSymbols
+	ldbc $40,$00
 --
-	cp (hl)			; $4a31
-	jr z,@end		; $4a32
-	inc hl			; $4a34
-	inc c			; $4a35
-	dec b			; $4a36
-	jr nz,--		; $4a37
-	scf			; $4a39
+	cp (hl)
+	jr z,@end
+	inc hl
+	inc c
+	dec b
+	jr nz,--
+	scf
 @end:
-	ld a,c			; $4a3a
-	pop bc			; $4a3b
-	pop hl			; $4a3c
-	ret			; $4a3d
+	ld a,c
+	pop bc
+	pop hl
+	ret
 
 ;;
 ; This xors all bytes in w7SecretGenerationBuffer with the corresponding cipher
@@ -705,45 +705,45 @@ _loadSecretBufferFromText:
 ;
 ; @addr{4a3e}
 _runXorCipherOnSecretBuffer:
-	call _getNumCharactersForSecretType		; $4a3e
+	call _getNumCharactersForSecretType
 
 	; Determine cipher ID from the first 3 bits of the secret (corresponds to
 	; wSecretXorCipherIndex)
-	ld a,(w7SecretGenerationBuffer)		; $4a41
-	and $38			; $4a44
-	rrca			; $4a46
-	ld de,_secretXorCipher		; $4a47
-	call addAToDe		; $4a4a
+	ld a,(w7SecretGenerationBuffer)
+	and $38
+	rrca
+	ld de,_secretXorCipher
+	call addAToDe
 
-	ld hl,w7SecretGenerationBuffer		; $4a4d
-	ld a,(de)		; $4a50
+	ld hl,w7SecretGenerationBuffer
+	ld a,(de)
 
 	; For the first byte only, don't xor the upper bits so that the cipher ID remains
 	; intact.
 	and $07
 --
-	xor (hl)		; $4a53
-	ldi (hl),a		; $4a54
-	inc de			; $4a55
-	ld a,(de)		; $4a56
-	dec b			; $4a57
-	jr nz,--		; $4a58
-	ret			; $4a5a
+	xor (hl)
+	ldi (hl),a
+	inc de
+	ld a,(de)
+	dec b
+	jr nz,--
+	ret
 
 ;;
 ; @param[out]	a	The last 4 bits of the sum of all bytes in w7SecretGenerationBuffer
 ; @addr{4a5b}
 _getSecretBufferChecksum:
-	ld hl,w7SecretGenerationBuffer		; $4a5b
-	ld b,20			; $4a5e
-	xor a			; $4a60
+	ld hl,w7SecretGenerationBuffer
+	ld b,20
+	xor a
 --
-	add (hl)		; $4a61
-	inc hl			; $4a62
-	dec b			; $4a63
-	jr nz,--		; $4a64
-	and $0f			; $4a66
-	ret			; $4a68
+	add (hl)
+	inc hl
+	dec b
+	jr nz,--
+	and $0f
+	ret
 
 ;;
 ; For smaller secrets (length < 20), this shifts the contents of the secret to the front
@@ -752,30 +752,30 @@ _getSecretBufferChecksum:
 ; @param	c	Secret type
 ; @addr{4a69}
 _shiftSecretBufferContentsToFront:
-	call _getNumCharactersForSecretType		; $4a69
-	ld a,20		; $4a6c
-	sub b			; $4a6e
-	ret z			; $4a6f
+	call _getNumCharactersForSecretType
+	ld a,20
+	sub b
+	ret z
 
-	ld de,w7SecretGenerationBuffer		; $4a70
-	ld h,d			; $4a73
-	ld l,e			; $4a74
-	rst_addAToHl			; $4a75
+	ld de,w7SecretGenerationBuffer
+	ld h,d
+	ld l,e
+	rst_addAToHl
 --
-	ldi a,(hl)		; $4a76
-	ld (de),a		; $4a77
-	inc de			; $4a78
-	dec b			; $4a79
-	jr nz,--		; $4a7a
-	ret			; $4a7c
+	ldi a,(hl)
+	ld (de),a
+	inc de
+	dec b
+	jr nz,--
+	ret
 
 ;;
 ; @addr{4a7d}
 _andCWith3:
-	ld a,c			; $4a7d
-	and $03			; $4a7e
-	ld c,a			; $4a80
-	ret			; $4a81
+	ld a,c
+	and $03
+	ld c,a
+	ret
 
 
 ; This lists the data that a particular secret type must encode.
@@ -846,12 +846,12 @@ _secretDataToEncodeTable:
 ; @param[out]	a,b	Number of characters in secret
 ; @addr{4ace}
 _getNumCharactersForSecretType:
-	ld a,c			; $4ace
-	ld hl,@lengths		; $4acf
-	rst_addAToHl			; $4ad2
-	ld a,(hl)		; $4ad3
-	ld b,a			; $4ad4
-	ret			; $4ad5
+	ld a,c
+	ld hl,@lengths
+	rst_addAToHl
+	ld a,(hl)
+	ld b,a
+	ret
 
 @lengths:
 	.db 20 20 15 5
@@ -874,114 +874,114 @@ _secretXorCipher:
 ;
 ; @addr{4b0a}
 twinrovaCutsceneCaller:
-	ld a,c			; $4b0a
-	rst_jumpTable			; $4b0b
+	ld a,c
+	rst_jumpTable
 	.dw _cutscene18_body
 	.dw _cutscene19_body
 
 ;;
 ; @addr{4b10}
 _incCutsceneState:
-	ld hl,wCutsceneState		; $4b10
-	inc (hl)		; $4b13
-	ret			; $4b14
+	ld hl,wCutsceneState
+	inc (hl)
+	ret
 
 ;;
 ; Unused
 ; @addr{4b15}
 unused_incTmpcbb3:
-	ld hl,wTmpcbb3		; $4b15
-	inc (hl)		; $4b18
-	ret			; $4b19
+	ld hl,wTmpcbb3
+	inc (hl)
+	ret
 
 ;;
 ; @addr{4b1a}
 _decTmpcbb4:
-	ld hl,wTmpcbb4		; $4b1a
-	dec (hl)		; $4b1d
-	ret			; $4b1e
+	ld hl,wTmpcbb4
+	dec (hl)
+	ret
 
 ;;
 ; @addr{4b1f}
 _setScreenShakeCounterTo255:
-	ld a,$ff		; $4b1f
-	jp setScreenShakeCounter		; $4b21
+	ld a,$ff
+	jp setScreenShakeCounter
 
 ;;
 ; State 0: screen fadeout
 ; @addr{4b24}
 _twinrovaCutscene_state0:
-	ld a,$04		; $4b24
-	call fadeoutToWhiteWithDelay		; $4b26
-	ld hl,wTmpcbb3		; $4b29
-	ld b,$10		; $4b2c
-	call clearMemory		; $4b2e
-	jr _incCutsceneState		; $4b31
+	ld a,$04
+	call fadeoutToWhiteWithDelay
+	ld hl,wTmpcbb3
+	ld b,$10
+	call clearMemory
+	jr _incCutsceneState
 
 ;;
 ; State 1: fading out, then initialize fadein to zelda sacrifice room
 ; @addr{4b33}
 _twinrovaCutscene_state1:
-	ld a,(wPaletteThread_mode)		; $4b33
-	or a			; $4b36
-	ret nz			; $4b37
+	ld a,(wPaletteThread_mode)
+	or a
+	ret nz
 
-	call _incCutsceneState		; $4b38
+	call _incCutsceneState
 
 .ifdef ROM_AGES
 	ld a,$f1 ; Room with zelda and torches
 .else
 	ld a,$9a ; Room with zelda and torches
 .endif
-	ld (wActiveRoom),a		; $4b3d
-	call _twinrovaCutscene_fadeinToRoom		; $4b40
+	ld (wActiveRoom),a
+	call _twinrovaCutscene_fadeinToRoom
 
-	call refreshObjectGfx		; $4b43
+	call refreshObjectGfx
 
-	ld hl,w1Link.yh		; $4b46
-	ld (hl),$38		; $4b49
-	inc l			; $4b4b
-	inc l			; $4b4c
-	ld (hl),$78		; $4b4d
+	ld hl,w1Link.yh
+	ld (hl),$38
+	inc l
+	inc l
+	ld (hl),$78
 
-	call resetCamera		; $4b4f
+	call resetCamera
 
 	ld hl,objectData.objectData4022
-	call parseGivenObjectData		; $4b55
+	call parseGivenObjectData
 
 .ifdef ROM_AGES
-	ld a,PALH_ac		; $4b58
+	ld a,PALH_ac
 .else
-	ld a,SEASONS_PALH_ac		; $4b58
+	ld a,SEASONS_PALH_ac
 .endif
-	call loadPaletteHeader		; $4b5a
+	call loadPaletteHeader
 
-	ld a,$01		; $4b5d
-	ld (wScrollMode),a		; $4b5f
+	ld a,$01
+	ld (wScrollMode),a
 
-	call loadCommonGraphics		; $4b62
+	call loadCommonGraphics
 
-	ld a,$04		; $4b65
-	call fadeinFromWhiteWithDelay		; $4b67
-	ld a,$02		; $4b6a
-	jp loadGfxRegisterStateIndex		; $4b6c
+	ld a,$04
+	call fadeinFromWhiteWithDelay
+	ld a,$02
+	jp loadGfxRegisterStateIndex
 
 ;;
 ; @addr{4b6f}
 _twinrovaCutscene_fadeinToRoom:
-	call disableLcd		; $4b6f
-	call clearScreenVariablesAndWramBank1		; $4b72
-	call loadScreenMusicAndSetRoomPack		; $4b75
-	call loadTilesetData		; $4b78
-	call loadTilesetGraphics		; $4b7b
-	jp func_131f		; $4b7e
+	call disableLcd
+	call clearScreenVariablesAndWramBank1
+	call loadScreenMusicAndSetRoomPack
+	call loadTilesetData
+	call loadTilesetGraphics
+	jp func_131f
 
 ;;
 ; CUTSCENE_FLAMES_FLICKERING
 ; @addr{4b81}
 _cutscene18_body:
-	ld a,(wCutsceneState)		; $4b81
-	rst_jumpTable			; $4b84
+	ld a,(wCutsceneState)
+	rst_jumpTable
 	.dw _twinrovaCutscene_state0
 	.dw _twinrovaCutscene_state1
 	.dw _twinrovaCutscene_state2
@@ -993,135 +993,135 @@ _cutscene18_body:
 ; State 2: waiting for fadein to finish
 ; @addr{4b91}
 _twinrovaCutscene_state2:
-	ld a,(wPaletteThread_mode)		; $4b91
-	or a			; $4b94
-	ret nz			; $4b95
-	ld a,$01		; $4b96
-	ld (wTmpcbb4),a		; $4b98
-	jp _incCutsceneState		; $4b9b
+	ld a,(wPaletteThread_mode)
+	or a
+	ret nz
+	ld a,$01
+	ld (wTmpcbb4),a
+	jp _incCutsceneState
 
 ;;
 ; State 3: initializes stuff for state 4
 ; @addr{4b9e}
 _twinrovaCutscene_state3:
-	call _decTmpcbb4		; $4b9e
-	ret nz			; $4ba1
+	call _decTmpcbb4
+	ret nz
 
 	ld (hl),180 ; Wait in state 4 for 180 frames
 
-	call _twinrovaCutscene_deleteAllInteractionsExceptFlames		; $4ba4
-	call _twinrovaCutscene_loadAngryFlames		; $4ba7
-	ld a,SND_OPENING		; $4baa
-	call playSound		; $4bac
-	jp _incCutsceneState		; $4baf
+	call _twinrovaCutscene_deleteAllInteractionsExceptFlames
+	call _twinrovaCutscene_loadAngryFlames
+	ld a,SND_OPENING
+	call playSound
+	jp _incCutsceneState
 
 ;;
 ; State 4: screen shaking, flames flickering with zelda on pedestal
 ; @addr{4bb2}
 _cutscene18_state4:
-	call _setScreenShakeCounterTo255		; $4bb2
-	ld a,(wFrameCounter)		; $4bb5
-	and $3f			; $4bb8
-	jr nz,+			; $4bba
-	ld a,SND_OPENING		; $4bbc
-	call playSound		; $4bbe
+	call _setScreenShakeCounterTo255
+	ld a,(wFrameCounter)
+	and $3f
+	jr nz,+
+	ld a,SND_OPENING
+	call playSound
 +
-	call _decTmpcbb4		; $4bc1
-	ret nz			; $4bc4
+	call _decTmpcbb4
+	ret nz
 
 	; Fadeout
-	ld a,$04		; $4bc5
-	call fadeoutToWhiteWithDelay		; $4bc7
+	ld a,$04
+	call fadeoutToWhiteWithDelay
 
-	jp _incCutsceneState		; $4bca
+	jp _incCutsceneState
 
 ;;
 ; State 5: fading out again. When done, it fades in to the next room, and the cutscene's
 ; over.
 ; @addr{4bcd}
 _cutscene18_state5:
-	call _setScreenShakeCounterTo255		; $4bcd
-	ld a,(wPaletteThread_mode)		; $4bd0
-	or a			; $4bd3
-	ret nz			; $4bd4
+	call _setScreenShakeCounterTo255
+	ld a,(wPaletteThread_mode)
+	or a
+	ret nz
 
 	; Load twinrova fight room, start a fadein, then exit cutscene
 .ifdef ROM_AGES
-	ld a,$f5		; $4bd5
+	ld a,$f5
 .else
-	ld a,$9e		; $4bd5
+	ld a,$9e
 .endif
-	ld (wActiveRoom),a		; $4bd7
-	call _twinrovaCutscene_fadeinToRoom		; $4bda
+	ld (wActiveRoom),a
+	call _twinrovaCutscene_fadeinToRoom
 
-	call getFreeEnemySlot		; $4bdd
-	ld (hl),ENEMYID_TWINROVA		; $4be0
-	ld l,Enemy.var03		; $4be2
-	set 7,(hl)		; $4be4
+	call getFreeEnemySlot
+	ld (hl),ENEMYID_TWINROVA
+	ld l,Enemy.var03
+	set 7,(hl)
 
-	ld hl,w1Link.enabled		; $4be6
-	ld (hl),$03		; $4be9
-	ld l,<w1Link.yh		; $4beb
-	ld (hl),$78		; $4bed
-	inc l			; $4bef
-	inc l			; $4bf0
-	ld (hl),$78		; $4bf1
+	ld hl,w1Link.enabled
+	ld (hl),$03
+	ld l,<w1Link.yh
+	ld (hl),$78
+	inc l
+	inc l
+	ld (hl),$78
 
-	call resetCamera		; $4bf3
-	ld a,CUTSCENE_INGAME		; $4bf6
-	ld (wCutsceneIndex),a		; $4bf8
-	ld a,$01		; $4bfb
-	ld (wScrollMode),a		; $4bfd
-	call loadCommonGraphics		; $4c00
+	call resetCamera
+	ld a,CUTSCENE_INGAME
+	ld (wCutsceneIndex),a
+	ld a,$01
+	ld (wScrollMode),a
+	call loadCommonGraphics
 
-	ld a,$02		; $4c03
-	call fadeinFromWhiteWithDelay		; $4c05
-	ld a,$02		; $4c08
-	jp loadGfxRegisterStateIndex		; $4c0a
+	ld a,$02
+	call fadeinFromWhiteWithDelay
+	ld a,$02
+	jp loadGfxRegisterStateIndex
 
 ;;
 ; @addr{4c0d}
 _twinrovaCutscene_deleteAllInteractionsExceptFlames:
-	ldhl FIRST_DYNAMIC_INTERACTION_INDEX, Interaction.start		; $4c0d
+	ldhl FIRST_DYNAMIC_INTERACTION_INDEX, Interaction.start
 @next:
-	ld l,Interaction.start		; $4c10
-	ldi a,(hl)		; $4c12
-	or a			; $4c13
-	jr z,+			; $4c14
-	ldi a,(hl)		; $4c16
-	cp INTERACID_TWINROVA_FLAME			; $4c17
-	call z,@delete		; $4c19
+	ld l,Interaction.start
+	ldi a,(hl)
+	or a
+	jr z,+
+	ldi a,(hl)
+	cp INTERACID_TWINROVA_FLAME
+	call z,@delete
 +
-	inc h			; $4c1c
-	ld a,h			; $4c1d
-	cp $e0			; $4c1e
-	jr c,@next		; $4c20
-	ret			; $4c22
+	inc h
+	ld a,h
+	cp $e0
+	jr c,@next
+	ret
 
 @delete:
-	dec l			; $4c23
-	ld b,$40		; $4c24
-	jp clearMemory		; $4c26
+	dec l
+	ld b,$40
+	jp clearMemory
 
 ;;
 ; Loads the "angry-looking" version of the flames.
 ; @addr{4c29}
 _twinrovaCutscene_loadAngryFlames:
 .ifdef ROM_AGES
-	ld a,PALH_af		; $4c29
+	ld a,PALH_af
 .else
-	ld a,SEASONS_PALH_af		; $4c29
+	ld a,SEASONS_PALH_af
 .endif
-	call loadPaletteHeader		; $4c2b
-	ld hl,objectData.objectData402f		; $4c2e
-	jp parseGivenObjectData		; $4c31
+	call loadPaletteHeader
+	ld hl,objectData.objectData402f
+	jp parseGivenObjectData
 
 ;;
 ; CUTSCENE_TWINROVA_SACRIFICE
 ; @addr{4c34}
 _cutscene19_body:
-	ld a,(wCutsceneState)		; $4c34
-	rst_jumpTable			; $4c37
+	ld a,(wCutsceneState)
+	rst_jumpTable
 	.dw _twinrovaCutscene_state0
 	.dw _twinrovaCutscene_state1
 	.dw _twinrovaCutscene_state2
@@ -1138,139 +1138,139 @@ _cutscene19_body:
 ; 3 seconds before striking the first flame with lightning.
 ; @addr{4c4c}
 _cutscene19_state4:
-	call _decTmpcbb4		; $4c4c
-	ret nz			; $4c4f
+	call _decTmpcbb4
+	ret nz
 
-	ld (hl),20		; $4c50
-	ld bc,$1878		; $4c52
+	ld (hl),20
+	ld bc,$1878
 _cutscene19_strikeFlameWithLightning:
-	call _twinrovaCutscene_createLightningStrike		; $4c55
-	jp _incCutsceneState		; $4c58
+	call _twinrovaCutscene_createLightningStrike
+	jp _incCutsceneState
 
 ;;
 ; State 5: wait before striking the 2nd flame with lightning.
 ; @addr{4c5b}
 _cutscene19_state5:
-	call _decTmpcbb4		; $4c5b
-	ret nz			; $4c5e
+	call _decTmpcbb4
+	ret nz
 
-	ld (hl),20		; $4c5f
-	ld bc,$48a8		; $4c61
-	jr _cutscene19_strikeFlameWithLightning		; $4c64
+	ld (hl),20
+	ld bc,$48a8
+	jr _cutscene19_strikeFlameWithLightning
 
 ;;
 ; State 6: wait before striking the 3rd flame with lightning.
 ; @addr{4c66}
 _cutscene19_state6:
-	call _decTmpcbb4		; $4c66
-	ret nz			; $4c69
+	call _decTmpcbb4
+	ret nz
 
-	ld (hl),40		; $4c6a
-	ld bc,$4848		; $4c6c
-	jr _cutscene19_strikeFlameWithLightning		; $4c6f
+	ld (hl),40
+	ld bc,$4848
+	jr _cutscene19_strikeFlameWithLightning
 
 ;;
 ; State 7: wait before shaking screen around
 ; @addr{4c71}
 _cutscene19_state7:
-	call _decTmpcbb4		; $4c71
-	ret nz			; $4c74
+	call _decTmpcbb4
+	ret nz
 
-	ld (hl),120		; $4c75
-	ld a,SND_BOSS_DEAD		; $4c77
-	call playSound		; $4c79
-	jp _incCutsceneState		; $4c7c
+	ld (hl),120
+	ld a,SND_BOSS_DEAD
+	call playSound
+	jp _incCutsceneState
 
 ;;
 ; State 8: shake the screen and repeatedly flash the screen white
 ; @addr{4c7f}
 _cutscene19_state8:
-	call _setScreenShakeCounterTo255		; $4c7f
-	ld a,(wFrameCounter)		; $4c82
-	and $07			; $4c85
-	call z,fastFadeinFromWhite		; $4c87
-	call _decTmpcbb4		; $4c8a
-	ret nz			; $4c8d
+	call _setScreenShakeCounterTo255
+	ld a,(wFrameCounter)
+	and $07
+	call z,fastFadeinFromWhite
+	call _decTmpcbb4
+	ret nz
 
-	ld a,$04		; $4c8e
-	call fadeoutToWhiteWithDelay		; $4c90
-	ld a,SND_FADEOUT		; $4c93
-	call playSound		; $4c95
-	jp _incCutsceneState		; $4c98
+	ld a,$04
+	call fadeoutToWhiteWithDelay
+	ld a,SND_FADEOUT
+	call playSound
+	jp _incCutsceneState
 
 ;;
 ; State 9: wait before fading back to twinrova. Cutscene ends here.
 ; @addr{4c9b}
 _cutscene19_state9:
-	call _setScreenShakeCounterTo255		; $4c9b
-	ld a,(wPaletteThread_mode)		; $4c9e
-	or a			; $4ca1
-	ret nz			; $4ca2
+	call _setScreenShakeCounterTo255
+	ld a,(wPaletteThread_mode)
+	or a
+	ret nz
 
-	call clearScreenVariablesAndWramBank1		; $4ca3
-	ld a,CUTSCENE_INGAME		; $4ca6
-	ld (wCutsceneIndex),a		; $4ca8
-	ld a,$01		; $4cab
-	ld (wScrollMode),a		; $4cad
+	call clearScreenVariablesAndWramBank1
+	ld a,CUTSCENE_INGAME
+	ld (wCutsceneIndex),a
+	ld a,$01
+	ld (wScrollMode),a
 
-	call getFreeEnemySlot		; $4cb0
-	ld (hl),ENEMYID_GANON		; $4cb3
+	call getFreeEnemySlot
+	ld (hl),ENEMYID_GANON
 
-	ld a,SNDCTRL_STOPMUSIC		; $4cb5
-	jp playSound		; $4cb7
+	ld a,SNDCTRL_STOPMUSIC
+	jp playSound
 
 ;;
 ; @param	bc	Position to strike
 ; @addr{4cba}
 _twinrovaCutscene_createLightningStrike:
-	call getFreePartSlot		; $4cba
-	ret nz			; $4cbd
-	ld (hl),PARTID_LIGHTNING		; $4cbe
-	inc l			; $4cc0
-	inc (hl)		; $4cc1
-	ld l,Part.yh		; $4cc2
-	ld (hl),b		; $4cc4
-	inc l			; $4cc5
-	inc l			; $4cc6
-	ld (hl),c		; $4cc7
-	ret			; $4cc8
+	call getFreePartSlot
+	ret nz
+	ld (hl),PARTID_LIGHTNING
+	inc l
+	inc (hl)
+	ld l,Part.yh
+	ld (hl),b
+	inc l
+	inc l
+	ld (hl),c
+	ret
 
 ;;
 ; This function is part of the main loop until the player reaches the file select screen.
 ; @addr{4cc9}
 runIntro:
-	ldh a,(<hSerialInterruptBehaviour)	; $4cc9
-	or a			; $4ccb
-	jr z,+			; $4ccc
+	ldh a,(<hSerialInterruptBehaviour)
+	or a
+	jr z,+
 
-	call serialFunc_0c8d		; $4cce
-	ld a,$09		; $4cd1
-	ld (wTmpcbb4),a		; $4cd3
-	jr @nextStage			; $4cd6
+	call serialFunc_0c8d
+	ld a,$09
+	ld (wTmpcbb4),a
+	jr @nextStage
 +
-	call serialFunc_0c85		; $4cd8
-	ld a,$03		; $4cdb
-	ldh (<hFFBE),a	; $4cdd
-	xor a			; $4cdf
-	ldh (<hFFBF),a	; $4ce0
-	ld a,(wKeysJustPressed)		; $4ce2
-	and BTN_START		; $4ce5
-	jr z,_intro_runStage		; $4ce7
+	call serialFunc_0c85
+	ld a,$03
+	ldh (<hFFBE),a
+	xor a
+	ldh (<hFFBF),a
+	ld a,(wKeysJustPressed)
+	and BTN_START
+	jr z,_intro_runStage
 
 @nextStage:
-	ldh a,(<hIntroInputsEnabled)	; $4ce9
-	add a			; $4ceb
-	jr z,_intro_runStage		; $4cec
+	ldh a,(<hIntroInputsEnabled)
+	add a
+	jr z,_intro_runStage
 
-	ld a,(wIntroStage)		; $4cee
-	cp $03			; $4cf1
-	jr nz,_intro_gotoTitlescreen	; $4cf3
+	ld a,(wIntroStage)
+	cp $03
+	jr nz,_intro_gotoTitlescreen
 
 ;;
 ; @addr{4cf5}
 _intro_runStage:
-	ld a,(wIntroStage)		; $4cf5
-	rst_jumpTable			; $4cf8
+	ld a,(wIntroStage)
+	rst_jumpTable
 	.dw _intro_uninitialized
 	.dw _intro_capcomScreen
 	.dw intro_cinematic
@@ -1281,56 +1281,56 @@ _intro_runStage:
 ; Advance the intro to the next stage (eg. cinematic -> titlescreen)
 ; @addr{4d03}
 _intro_gotoTitlescreen:
-	call clearPaletteFadeVariables		; $4d03
-	call _cutscene_clearObjects		; $4d06
-	ld hl,wIntroVar		; $4d09
-	xor a			; $4d0c
-	ldd (hl),a		; $4d0d
-	ldh (<hCameraY),a	; $4d0e
-	ld (wTmpcbb6),a		; $4d10
+	call clearPaletteFadeVariables
+	call _cutscene_clearObjects
+	ld hl,wIntroVar
+	xor a
+	ldd (hl),a
+	ldh (<hCameraY),a
+	ld (wTmpcbb6),a
 	ld (hl),$03 ; hl = wIntroStage
-	dec a			; $4d15
-	ld (wTilesetAnimation),a		; $4d16
-	jr _intro_runStage	; $4d19
+	dec a
+	ld (wTilesetAnimation),a
+	jr _intro_runStage
 
 ;;
 ; @addr{4d1b}
 _intro_restart:
-	xor a			; $4d1b
-	ld (wIntroStage),a		; $4d1c
-	ld (wIntroVar),a		; $4d1f
-	ret			; $4d22
+	xor a
+	ld (wIntroStage),a
+	ld (wIntroVar),a
+	ret
 
 ;;
 ; @addr{4d23}
 _intro_gotoNextStage:
-	call enableIntroInputs		; $4d23
-	call clearDynamicInteractions		; $4d26
-	ld hl,wIntroStage		; $4d29
-	inc (hl)		; $4d2c
-	inc l			; $4d2d
+	call enableIntroInputs
+	call clearDynamicInteractions
+	ld hl,wIntroStage
+	inc (hl)
+	inc l
 	ld (hl),$00 ; [wIntroVar] = 0
-	jp clearPaletteFadeVariables		; $4d30
+	jp clearPaletteFadeVariables
 
 ;;
 ; @addr{4d33}
 _intro_incState:
-	ld hl,wIntroVar		; $4d33
-	inc (hl)		; $4d36
-	ret			; $4d37
+	ld hl,wIntroVar
+	inc (hl)
+	ret
 
 ;;
 ; @addr{4d38}
 _intro_uninitialized:
-	ld hl,wIntroStage		; $4d38
-	inc (hl)		; $4d3b
+	ld hl,wIntroStage
+	inc (hl)
 
 
 ;;
 ; @addr{4d3c}
 _intro_capcomScreen:
-	ld a,(wIntroVar)		; $4d3c
-	rst_jumpTable			; $4d3f
+	ld a,(wIntroVar)
+	rst_jumpTable
 	.dw @state0
 	.dw @state1
 	.dw @state2
@@ -1338,69 +1338,69 @@ _intro_capcomScreen:
 ;;
 ; @addr{4d46}
 @state0:
-	call restartSound		; $4d46
+	call restartSound
 
-	call clearVram		; $4d49
-	ld a,$01		; $4d4c
-	call loadGfxHeader		; $4d4e
-	ld a,PALH_01		; $4d51
-	call loadPaletteHeader		; $4d53
+	call clearVram
+	ld a,$01
+	call loadGfxHeader
+	ld a,PALH_01
+	call loadPaletteHeader
 
-	ld hl,wTmpcbb3		; $4d56
-	ld (hl),208		; $4d59
-	inc hl			; $4d5b
+	ld hl,wTmpcbb3
+	ld (hl),208
+	inc hl
 	ld (hl),$00 ; [wTmpcbb4] = 0
 
-	call _intro_incState		; $4d5e
-	call fadeinFromWhite		; $4d61
-	xor a			; $4d64
-	jp loadGfxRegisterStateIndex		; $4d65
+	call _intro_incState
+	call fadeinFromWhite
+	xor a
+	jp loadGfxRegisterStateIndex
 
 ;;
 ; Fading in, waiting
 ; @addr{4d68}
 @state1:
-	ld hl,wTmpcbb3		; $4d68
-	call decHlRef16WithCap		; $4d6b
-	ret nz			; $4d6e
+	ld hl,wTmpcbb3
+	call decHlRef16WithCap
+	ret nz
 
-	call _intro_incState		; $4d6f
-	jp fadeoutToWhite		; $4d72
+	call _intro_incState
+	jp fadeoutToWhite
 
 ;;
 ; Fading out
 ; @addr{4d75}
 @state2:
-	ld a,(wPaletteThread_mode)		; $4d75
-	or a			; $4d78
-	ret nz			; $4d79
+	ld a,(wPaletteThread_mode)
+	or a
+	ret nz
 
-	xor a			; $4d7a
-	ld hl,wIntroStage		; $4d7b
-	ld (hl),$02		; $4d7e
-	inc l			; $4d80
+	xor a
+	ld hl,wIntroStage
+	ld (hl),$02
+	inc l
 	ld (hl),a ; [wIntroVar] = 0
-	ld (wIntro.cinematicState),a		; $4d82
-	jp enableIntroInputs		; $4d85
+	ld (wIntro.cinematicState),a
+	jp enableIntroInputs
 
 ;;
 ; @addr{4d88}
 _intro_titlescreen:
-	call getRandomNumber_noPreserveVars		; $4d88
-	call @runState		; $4d8b
-	call clearOam		; $4d8e
+	call getRandomNumber_noPreserveVars
+	call @runState
+	call clearOam
 
 .ifdef ROM_AGES
-	ld hl,bank3f.titlescreenMakuSeedSprite		; $4d91
-	ld e,:bank3f.titlescreenMakuSeedSprite		; $4d94
-	call addSpritesFromBankToOam		; $4d96
+	ld hl,bank3f.titlescreenMakuSeedSprite
+	ld e,:bank3f.titlescreenMakuSeedSprite
+	call addSpritesFromBankToOam
 
-	ld a,(wTmpcbb3)		; $4d99
-	and $20			; $4d9c
-	ret nz			; $4d9e
-	ld hl,bank3f.titlescreenPressStartSprites		; $4d9f
-	ld e,:bank3f.titlescreenPressStartSprites		; $4da2
-	jp addSpritesFromBankToOam		; $4da4
+	ld a,(wTmpcbb3)
+	and $20
+	ret nz
+	ld hl,bank3f.titlescreenPressStartSprites
+	ld e,:bank3f.titlescreenPressStartSprites
+	jp addSpritesFromBankToOam
 
 .else; ROM_SEASONS
 
@@ -1417,8 +1417,8 @@ _intro_titlescreen:
 ;;
 ; @addr{4da7}
 @runState:
-	ld a,(wIntroVar)		; $4da7
-	rst_jumpTable			; $4daa
+	ld a,(wIntroVar)
+	rst_jumpTable
 	.dw _intro_titlescreen_state0
 	.dw _intro_titlescreen_state1
 	.dw _intro_titlescreen_state2
@@ -1427,82 +1427,82 @@ _intro_titlescreen:
 ;;
 ; @addr{4db3}
 _intro_titlescreen_state0:
-	call restartSound		; $4db3
+	call restartSound
 
 	; Stop any irrelevant threads.
-	ld a,THREAD_1		; $4db6
-	call threadStop		; $4db8
-	call stopTextThread		; $4dbb
+	ld a,THREAD_1
+	call threadStop
+	call stopTextThread
 
-	call disableLcd		; $4dbe
-	ld a,GFXH_02		; $4dc1
-	call loadGfxHeader		; $4dc3
-	ld a,PALH_03		; $4dc6
-	call loadPaletteHeader		; $4dc8
+	call disableLcd
+	ld a,GFXH_02
+	call loadGfxHeader
+	ld a,PALH_03
+	call loadPaletteHeader
 
 	; cbb3-cbb4 used as a 2-byte counter until automatically exiting
-	ld hl,wTmpcbb3		; $4dcb
-	ld a,$60		; $4dce
-	ldi (hl),a		; $4dd0
-	ld a,$09		; $4dd1
+	ld hl,wTmpcbb3
+	ld a,$60
+	ldi (hl),a
+	ld a,$09
 	ldi (hl),a ; [wTmpcbb4] = $09
 
-	call _intro_incState		; $4dd4
+	call _intro_incState
 
-	ld a,MUS_TITLESCREEN		; $4dd7
-	call playSound		; $4dd9
+	ld a,MUS_TITLESCREEN
+	call playSound
 
-	ld a,$04		; $4ddc
-	jp loadGfxRegisterStateIndex		; $4dde
+	ld a,$04
+	jp loadGfxRegisterStateIndex
 
 ;;
 ; State 1: waiting for player to press start
 ; @addr{4de1}
 _intro_titlescreen_state1:
-	ld a,(wKeysJustPressed)		; $4de1
-	and BTN_START			; $4de4
-	jr nz,@pressedStart	; $4de6
+	ld a,(wKeysJustPressed)
+	and BTN_START
+	jr nz,@pressedStart
 
 	; Check to automatically exit the titlescreen
-	ld hl,wTmpcbb3		; $4de8
-	call decHlRef16WithCap		; $4deb
-	ret nz			; $4dee
-	ld a,$02		; $4def
-	jr @gotoState		; $4df1
+	ld hl,wTmpcbb3
+	call decHlRef16WithCap
+	ret nz
+	ld a,$02
+	jr @gotoState
 
 @pressedStart:
-	ld a,SND_SELECTITEM		; $4df3
-	call playSound		; $4df5
-	call serialFunc_0c7e		; $4df8
-	ld a,$03		; $4dfb
+	ld a,SND_SELECTITEM
+	call playSound
+	call serialFunc_0c7e
+	ld a,$03
 @gotoState:
-	ld (wIntroVar),a		; $4dfd
-	ld a,SNDCTRL_FAST_FADEOUT		; $4e00
-	call playSound		; $4e02
-	jp fadeoutToWhite		; $4e05
+	ld (wIntroVar),a
+	ld a,SNDCTRL_FAST_FADEOUT
+	call playSound
+	jp fadeoutToWhite
 
 ;;
 ; State 2: fading out to replay intro cinematic
 ; @addr{4e08}
 _intro_titlescreen_state2:
-	ld a,(wPaletteThread_mode)		; $4e08
-	or a			; $4e0b
-	ret nz			; $4e0c
-	jp _intro_gotoNextStage		; $4e0d
+	ld a,(wPaletteThread_mode)
+	or a
+	ret nz
+	jp _intro_gotoNextStage
 
 ;;
 ; State 3: fading out to go to file select
 ; @addr{4e10}
 _intro_titlescreen_state3:
-	ld a,(wPaletteThread_mode)		; $4e10
-	or a			; $4e13
-	ret nz			; $4e14
+	ld a,(wPaletteThread_mode)
+	or a
+	ret nz
 
 	; Initialize file select thread, stop this thread
-	ld a,THREAD_1		; $4e15
-	ld bc,fileSelectThreadStart		; $4e17
-	call threadRestart		; $4e1a
-	jp stubThreadStart		; $4e1d
+	ld a,THREAD_1
+	ld bc,fileSelectThreadStart
+	call threadRestart
+	jp stubThreadStart
 
 .ifdef ROM_SEASONS
 
@@ -1548,7 +1548,7 @@ titlescreenPressStartSprites:
 ; @addr{4e20}
 runIntroCinematic:
 	ld a,(wIntro.cinematicState)
-	rst_jumpTable			; $4e23
+	rst_jumpTable
 	.dw _introCinematic_ridingHorse
 	.dw _introCinematic_inTemple
 	.dw _introCinematic_preTitlescreen
@@ -1559,8 +1559,8 @@ runIntroCinematic:
 ; Covers intro sections after the capcom screen and before the temple scene.
 ; @addr{4e2a}
 _introCinematic_ridingHorse:
-	ld a,(wIntroVar)		; $4e2a
-	rst_jumpTable			; $4e2d
+	ld a,(wIntroVar)
+	rst_jumpTable
 	.dw _introCinematic_ridingHorse_state0
 	.dw _introCinematic_ridingHorse_state1
 	.dw _introCinematic_ridingHorse_state2
@@ -1577,244 +1577,244 @@ _introCinematic_ridingHorse:
 ; State 0: initialization
 ; @addr{4e44}
 _introCinematic_ridingHorse_state0:
-	call disableLcd		; $4e44
-	ld hl,wOamEnd		; $4e47
-	ld bc,$d000-wOamEnd	; $4e4a
-	call clearMemoryBc		; $4e4d
+	call disableLcd
+	ld hl,wOamEnd
+	ld bc,$d000-wOamEnd
+	call clearMemoryBc
 
-	ld a,:w4TileMap		; $4e50
-	ld ($ff00+R_SVBK),a	; $4e52
-	ld hl,w4TileMap		; $4e54
-	ld bc,$0120		; $4e57
-	call clearMemoryBc		; $4e5a
+	ld a,:w4TileMap
+	ld ($ff00+R_SVBK),a
+	ld hl,w4TileMap
+	ld bc,$0120
+	call clearMemoryBc
 
-	ld hl,w4AttributeMap		; $4e5d
-	ld bc,$0120		; $4e60
-	call clearMemoryBc		; $4e63
-	ld a,$01		; $4e66
-	ld ($ff00+R_SVBK),a	; $4e68
+	ld hl,w4AttributeMap
+	ld bc,$0120
+	call clearMemoryBc
+	ld a,$01
+	ld ($ff00+R_SVBK),a
 
-	call clearOam		; $4e6a
-	ld a,<wOam+$10		; $4e6d
-	ldh (<hOamTail),a	; $4e6f
+	call clearOam
+	ld a,<wOam+$10
+	ldh (<hOamTail),a
 
-	ld a,GFXH_9b		; $4e71
-	call loadGfxHeader		; $4e73
+	ld a,GFXH_9b
+	call loadGfxHeader
 .ifdef ROM_AGES
-	ld a,PALH_90		; $4e76
+	ld a,PALH_90
 .else
-	ld a,SEASONS_PALH_90		; $4e76
+	ld a,SEASONS_PALH_90
 .endif
-	call loadPaletteHeader		; $4e78
+	call loadPaletteHeader
 
 	; Use cbb3-cbb4 as a 2-byte counter; wait for 0x15e=350 frames
-	ld hl,wTmpcbb3		; $4e7b
-	ld (hl),$5e		; $4e7e
-	inc hl			; $4e80
-	ld (hl),$01		; $4e81
+	ld hl,wTmpcbb3
+	ld (hl),$5e
+	inc hl
+	ld (hl),$01
 
-	ld a,$20		; $4e83
-	ld ($cbb8),a		; $4e85
-	ld a,$10		; $4e88
-	ld (wTmpcbb9),a		; $4e8a
-	ld a,$22		; $4e8d
-	ld (wTmpcbb6),a		; $4e8f
-	xor a			; $4e92
-	ld (wTmpcbba),a		; $4e93
+	ld a,$20
+	ld ($cbb8),a
+	ld a,$10
+	ld (wTmpcbb9),a
+	ld a,$22
+	ld (wTmpcbb6),a
+	xor a
+	ld (wTmpcbba),a
 
-	ld a,MUS_INTRO_1		; $4e96
-	call playSound		; $4e98
+	ld a,MUS_INTRO_1
+	call playSound
 
-	ld a,$0b		; $4e9b
-	call fadeinFromWhiteWithDelay		; $4e9d
+	ld a,$0b
+	call fadeinFromWhiteWithDelay
 
 	; The "bars" at the top and bottom need to be black
-	ld hl,wLockBG7Color3ToBlack		; $4ea0
-	ld (hl),$01		; $4ea3
+	ld hl,wLockBG7Color3ToBlack
+	ld (hl),$01
 
 	; Load Link and Bird objects
-	ld hl,objectData.objectData4037		; $4ea5
-	call parseGivenObjectData		; $4ea8
+	ld hl,objectData.objectData4037
+	call parseGivenObjectData
 
-	ld a,$17		; $4eab
-	call loadGfxRegisterStateIndex		; $4ead
+	ld a,$17
+	call loadGfxRegisterStateIndex
 
-	ld a,(wGfxRegs2.LCDC)		; $4eb0
-	ld (wGfxRegs6.LCDC),a		; $4eb3
-	xor a			; $4eb6
-	ldh (<hCameraX),a	; $4eb7
-	jp _intro_incState		; $4eb9
+	ld a,(wGfxRegs2.LCDC)
+	ld (wGfxRegs6.LCDC),a
+	xor a
+	ldh (<hCameraX),a
+	jp _intro_incState
 
 ;;
 ; State 1: fading into the sunset
 ; @addr{4ebc}
 _introCinematic_ridingHorse_state1:
-	call _introCinematic_moveBlackBarsIn		; $4ebc
-	ld hl,wTmpcbb3		; $4ebf
-	call decHlRef16WithCap		; $4ec2
-	ret nz			; $4ec5
+	call _introCinematic_moveBlackBarsIn
+	ld hl,wTmpcbb3
+	call decHlRef16WithCap
+	ret nz
 
-	ld (hl),$06		; $4ec6
-	call clearPaletteFadeVariablesAndRefreshPalettes		; $4ec8
-	ld a,$06		; $4ecb
-	ldh (<hNextLcdInterruptBehaviour),a	; $4ecd
-	jp _intro_incState		; $4ecf
+	ld (hl),$06
+	call clearPaletteFadeVariablesAndRefreshPalettes
+	ld a,$06
+	ldh (<hNextLcdInterruptBehaviour),a
+	jp _intro_incState
 
 ;;
 ; State 2: scrolling down to reveal Link on horse
 ; @addr{4ed2}
 _introCinematic_ridingHorse_state2:
-	call _introCinematic_ridingHorse_updateScrollingGround		; $4ed2
-	call decCbb3		; $4ed5
-	ret nz			; $4ed8
+	call _introCinematic_ridingHorse_updateScrollingGround
+	call decCbb3
+	ret nz
 
 	; Set counter to 6 frames (so screen scrolls down once every 6 frames)
-	ld (hl),$06		; $4ed9
+	ld (hl),$06
 
-	ld hl,wGfxRegs2.SCY		; $4edb
-	inc (hl)		; $4ede
-	ld a,(hl)		; $4edf
+	ld hl,wGfxRegs2.SCY
+	inc (hl)
+	ld a,(hl)
 	ldh (<hCameraY),a ; Must set CameraY for sprites to scroll correctly
 
 	; Go to next state once we scroll this far down
-	cp $48			; $4ee2
-	ret nz			; $4ee4
-	ld a,126		; $4ee5
-	ld (wTmpcbb3),a		; $4ee7
-	jp _intro_incState		; $4eea
+	cp $48
+	ret nz
+	ld a,126
+	ld (wTmpcbb3),a
+	jp _intro_incState
 
 ;;
 ; Decrements the SCX value for the scrolling ground, and recalculates the value of LYC to
 ; use for producing the scrolling effect for the ground.
 ; @addr{4eed}
 _introCinematic_ridingHorse_updateScrollingGround:
-	ld a,$a8		; $4eed
-	ld hl,wGfxRegs2.SCY		; $4eef
-	sub (hl)		; $4ef2
-	cp $78			; $4ef3
-	jr c,+			; $4ef5
-	ld a,$c7		; $4ef7
+	ld a,$a8
+	ld hl,wGfxRegs2.SCY
+	sub (hl)
+	cp $78
+	jr c,+
+	ld a,$c7
 +
-	ld (wGfxRegs2.LYC),a		; $4ef9
-	ld a,(hl)		; $4efc
-	ld hl,wGfxRegs6.SCY		; $4efd
+	ld (wGfxRegs2.LYC),a
+	ld a,(hl)
+	ld hl,wGfxRegs6.SCY
 	ldi (hl),a ; SCY should not change at hblank, so copy the value
 
 	ld a,(wIntro.frameCounter) ; Only decrement SCX every other frame
-	and $01			; $4f04
-	ret nz			; $4f06
+	and $01
+	ret nz
 	dec (hl) ; hl = wGfxRegs6.SCX
-	ret			; $4f08
+	ret
 
 ;;
 ; State 3: camera has scrolled all the way down; not doing anything for a bit
 ; @addr{4f09}
 _introCinematic_ridingHorse_state3:
-	call _introCinematic_ridingHorse_updateScrollingGround		; $4f09
-	call decCbb3		; $4f0c
-	ret nz			; $4f0f
+	call _introCinematic_ridingHorse_updateScrollingGround
+	call decCbb3
+	ret nz
 
 	; Initialize stuff for state 4
 
-	ld (hl),$20		; $4f10
-	inc hl			; $4f12
-	ld (hl),$01		; $4f13
+	ld (hl),$20
+	inc hl
+	ld (hl),$01
 
 .ifdef ROM_AGES
-	ld a,PALH_96		; $4f15
+	ld a,PALH_96
 .else
-	ld a,SEASONS_PALH_96		; $4f15
+	ld a,SEASONS_PALH_96
 .endif
-	call loadPaletteHeader		; $4f17
-	ld a,UNCMP_GFXH_38		; $4f1a
-	call loadUncompressedGfxHeader		; $4f1c
+	call loadPaletteHeader
+	ld a,UNCMP_GFXH_38
+	call loadUncompressedGfxHeader
 
-	ld a,$18		; $4f1f
-	ld (wTmpcbba),a		; $4f21
-	call loadGfxRegisterStateIndex		; $4f24
+	ld a,$18
+	ld (wTmpcbba),a
+	call loadGfxRegisterStateIndex
 
-	xor a			; $4f27
-	ldh (<hCameraY),a	; $4f28
-	ld (wTmpcbbc),a		; $4f2a
+	xor a
+	ldh (<hCameraY),a
+	ld (wTmpcbbc),a
 
-	ldbc INTERACID_INTRO_SPRITE, $03		; $4f2d
-	call _createInteraction		; $4f30
+	ldbc INTERACID_INTRO_SPRITE, $03
+	call _createInteraction
 
-	ld a,$0d		; $4f33
-	ld (wTmpcbb6),a		; $4f35
-	ld a,$3c		; $4f38
-	ld (wTmpcbbb),a		; $4f3a
-	ld a,$03		; $4f3d
-	ldh (<hNextLcdInterruptBehaviour),a	; $4f3f
-	jp _intro_incState		; $4f41
+	ld a,$0d
+	ld (wTmpcbb6),a
+	ld a,$3c
+	ld (wTmpcbbb),a
+	ld a,$03
+	ldh (<hNextLcdInterruptBehaviour),a
+	jp _intro_incState
 
 ;;
 ; State 4: Link riding horse toward camera
 ; @addr{4f44}
 _introCinematic_ridingHorse_state4:
-	call @drawLinkOnHorseAndScrollScreen		; $4f44
-	ld hl,wTmpcbb3		; $4f47
-	call decHlRef16WithCap		; $4f4a
-	ret nz			; $4f4d
+	call @drawLinkOnHorseAndScrollScreen
+	ld hl,wTmpcbb3
+	call decHlRef16WithCap
+	ret nz
 
-	ld a,UNCMP_GFXH_36		; $4f4e
-	call loadUncompressedGfxHeader		; $4f50
+	ld a,UNCMP_GFXH_36
+	call loadUncompressedGfxHeader
 
 	; After calling "loadUncompressedGfxHeader", hl points to rom. They almost
 	; certainly didn't intend to write there. They probably intended for hl to point
 	; to wTmpcbb3, and set the counter for the next state?
 	; It makes no difference, though, since the next state doesn't use wTmpcbb3.
-	ld (hl),90		; $4f53
+	ld (hl),90
 
-	ld a,PALH_9b		; $4f55
-	call loadPaletteHeader		; $4f57
-	call clearDynamicInteractions		; $4f5a
-	call clearOam		; $4f5d
-	ld a,$19		; $4f60
-	call loadGfxRegisterStateIndex		; $4f62
+	ld a,PALH_9b
+	call loadPaletteHeader
+	call clearDynamicInteractions
+	call clearOam
+	ld a,$19
+	call loadGfxRegisterStateIndex
 
-	ld a,$48		; $4f65
-	ld (wGfxRegs1.LYC),a		; $4f67
-	ld (wGfxRegs2.WINY),a		; $4f6a
-	jp _intro_incState		; $4f6d
+	ld a,$48
+	ld (wGfxRegs1.LYC),a
+	ld (wGfxRegs2.WINY),a
+	jp _intro_incState
 
 ;;
 ; @addr{4f70}
 @drawLinkOnHorseAndScrollScreen:
-	ld hl,bank3f.linkOnHorseFacingCameraSprite		; $4f70
-	ld e,:bank3f.linkOnHorseFacingCameraSprite		; $4f73
-	call addSpritesFromBankToOam		; $4f75
+	ld hl,bank3f.linkOnHorseFacingCameraSprite
+	ld e,:bank3f.linkOnHorseFacingCameraSprite
+	call addSpritesFromBankToOam
 
 	; Scroll the top, cloudy layer right every 32 frames
-	ld a,(wIntro.frameCounter)		; $4f78
-	and $1f			; $4f7b
-	jr nz,+			; $4f7d
-	ld hl,wGfxRegs1.SCX		; $4f7f
-	dec (hl)		; $4f82
+	ld a,(wIntro.frameCounter)
+	and $1f
+	jr nz,+
+	ld hl,wGfxRegs1.SCX
+	dec (hl)
 +
 	; Scroll the mountain layer right every 6 frames
-	ld hl,wTmpcbb6		; $4f83
-	dec (hl)		; $4f86
-	jr nz,+			; $4f87
-	ld (hl),$0d		; $4f89
-	ld hl,wGfxRegs2.SCX		; $4f8b
-	dec (hl)		; $4f8e
+	ld hl,wTmpcbb6
+	dec (hl)
+	jr nz,+
+	ld (hl),$0d
+	ld hl,wGfxRegs2.SCX
+	dec (hl)
 +
 	; Change link's palette every 60 frames to gradually get lighter
-	ld hl,wTmpcbbb		; $4f8f
-	dec (hl)		; $4f92
-	ret nz			; $4f93
-	ld (hl),60		; $4f94
-	inc hl			; $4f96
-	ld a,(hl)		; $4f97
-	cp $03			; $4f98
-	ret z			; $4f9a
+	ld hl,wTmpcbbb
+	dec (hl)
+	ret nz
+	ld (hl),60
+	inc hl
+	ld a,(hl)
+	cp $03
+	ret z
 
-	inc (hl)		; $4f9b
-	ld hl,@linkPalettes		; $4f9c
-	rst_addAToHl			; $4f9f
-	ld a,(hl)		; $4fa0
-	jp loadPaletteHeader		; $4fa1
+	inc (hl)
+	ld hl,@linkPalettes
+	rst_addAToHl
+	ld a,(hl)
+	jp loadPaletteHeader
 
 @linkPalettes:
 	.db PALH_a4
@@ -1825,44 +1825,44 @@ _introCinematic_ridingHorse_state4:
 ; State 5: closeup of Link's face; face is moving left
 ; @addr{4fa7}
 _introCinematic_ridingHorse_state5:
-	call _introCinematic_moveBlackBarsOut		; $4fa7
-	ld hl,wGfxRegs2.SCX		; $4faa
-	ld a,(hl)		; $4fad
-	add $08			; $4fae
-	ld (hl),a		; $4fb0
-	cp $60			; $4fb1
-	ret c			; $4fb3
+	call _introCinematic_moveBlackBarsOut
+	ld hl,wGfxRegs2.SCX
+	ld a,(hl)
+	add $08
+	ld (hl),a
+	cp $60
+	ret c
 
-	ld (hl),$60		; $4fb4
-	call _intro_incState		; $4fb6
+	ld (hl),$60
+	call _intro_incState
 
-	ld hl,wTmpcbb3		; $4fb9
+	ld hl,wTmpcbb3
 	ld (hl),24 ; Linger for another 24 frames
 
-	ldbc INTERACID_INTRO_SPRITE, $04		; $4fbe
-	jp _createInteraction		; $4fc1
+	ldbc INTERACID_INTRO_SPRITE, $04
+	jp _createInteraction
 
 ;;
 ; State 6: closeup of Link's face; screen staying still for a moment
 ; @addr{4fc4}
 _introCinematic_ridingHorse_state6:
-	ld hl,wTmpcbb3		; $4fc4
-	call decHlRef16WithCap		; $4fc7
-	ret nz			; $4fca
+	ld hl,wTmpcbb3
+	call decHlRef16WithCap
+	ret nz
 
-	call disableLcd		; $4fcb
+	call disableLcd
 .ifdef ROM_AGES
 	ld a,PALH_92		;$4fce
 .else
 	ld a,SEASONS_PALH_92	;$4fce
 .endif
-	call loadPaletteHeader		; $4fd0
-	ld a,GFXH_9c		; $4fd3
-	call loadGfxHeader		; $4fd5
-	call clearDynamicInteractions		; $4fd8
-	ld a,$0a		; $4fdb
-	call loadGfxRegisterStateIndex		; $4fdd
-	jp _intro_incState		; $4fe0
+	call loadPaletteHeader
+	ld a,GFXH_9c
+	call loadGfxHeader
+	call clearDynamicInteractions
+	ld a,$0a
+	call loadGfxRegisterStateIndex
+	jp _intro_incState
 
 
 .else; ROM_SEASONS
@@ -1896,9 +1896,9 @@ _introCinematic_ridingHorse_state0:
 	ld a,GFXH_9b
 	call loadGfxHeader
 .ifdef ROM_AGES
-	ld a,PALH_90		; $4e76
+	ld a,PALH_90
 .else
-	ld a,SEASONS_PALH_90		; $4e76
+	ld a,SEASONS_PALH_90
 .endif
 	call loadPaletteHeader
 
@@ -2015,13 +2015,13 @@ _introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites_1:
 ; State 7 (3 in seasons): scrolling up on the link+horse shot
 ; @addr{4fe3}
 _introCinematic_ridingHorse_state7:
-	ld hl,wGfxRegs1.SCY		; $4fe3
-	dec (hl)		; $4fe6
+	ld hl,wGfxRegs1.SCY
+	dec (hl)
 	jr nz,_introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites_2
 
 	ld a,204 ; Linger on this shot for another 204 frames
-	ld (wTmpcbb6),a		; $4feb
-	call _intro_incState		; $4fee
+	ld (wTmpcbb6),a
+	call _intro_incState
 
 ;;
 ; Draw the sprites that complement the image of Link on the horse (the 2nd image in
@@ -2029,18 +2029,18 @@ _introCinematic_ridingHorse_state7:
 ; @addr{4ff1}
 _introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites_2:
 	; Calculate offset for sprites
-	ld a,(wGfxRegs1.SCY)		; $4ff1
-	cpl			; $4ff4
-	inc a			; $4ff5
-	ld b,a			; $4ff6
-	xor a			; $4ff7
-	ldh (<hOamTail),a	; $4ff8
-	ld c,a			; $4ffa
+	ld a,(wGfxRegs1.SCY)
+	cpl
+	inc a
+	ld b,a
+	xor a
+	ldh (<hOamTail),a
+	ld c,a
 
 .ifdef ROM_AGES
-	ld hl,bank3f.linkOnHorseCloseupSprites_2		; $4ffb
-	ld e,:bank3f.linkOnHorseCloseupSprites_2		; $4ffe
-	jp addSpritesFromBankToOam_withOffset		; $5000
+	ld hl,bank3f.linkOnHorseCloseupSprites_2
+	ld e,:bank3f.linkOnHorseCloseupSprites_2
+	jp addSpritesFromBankToOam_withOffset
 
 .else; ROM_SEASONS
 
@@ -2052,103 +2052,103 @@ _introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites_2:
 ; State 8 (4 in seasons): lingering on the link+horse shot
 ; @addr{5003}
 _introCinematic_ridingHorse_state8:
-	ld hl,wTmpcbb6		; $5003
-	dec (hl)		; $5006
-	jr nz,_introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites_2	; $5007
+	ld hl,wTmpcbb6
+	dec (hl)
+	jr nz,_introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites_2
 
 .ifdef ROM_AGES
-	ld a,PALH_93		; $5009
+	ld a,PALH_93
 .else
-	ld a,SEASONS_PALH_93		; $5009
+	ld a,SEASONS_PALH_93
 .endif
-	call loadPaletteHeader		; $500b
-	call disableLcd		; $500e
-	call clearOam		; $5011
-	ld a,$10		; $5014
-	ldh (<hOamTail),a	; $5016
-	ld a,GFXH_9d		; $5018
-	call loadGfxHeader		; $501a
+	call loadPaletteHeader
+	call disableLcd
+	call clearOam
+	ld a,$10
+	ldh (<hOamTail),a
+	ld a,GFXH_9d
+	call loadGfxHeader
 
 	; Screen should be shifted a pixel every 5 frames next state
-	ld a,$05		; $501d
-	ld (wTmpcbbb),a		; $501f
+	ld a,$05
+	ld (wTmpcbbb),a
 
 	; Wait for $0190=400 frames in the next state
-	ld hl,wTmpcbb3		; $5022
-	ld (hl),$90		; $5025
-	inc hl			; $5027
-	ld (hl),$01		; $5028
+	ld hl,wTmpcbb3
+	ld (hl),$90
+	inc hl
+	ld (hl),$01
 
 	; How long to scroll the screen in the next state
-	ld a,$b4		; $502a
-	ld (wTmpcbb6),a		; $502c
+	ld a,$b4
+	ld (wTmpcbb6),a
 
-	call clearPaletteFadeVariablesAndRefreshPalettes		; $502f
-	ld a,$0b		; $5032
-	call loadGfxRegisterStateIndex		; $5034
-	call _introCinematic_ridingHorse_drawTempleSprites		; $5037
+	call clearPaletteFadeVariablesAndRefreshPalettes
+	ld a,$0b
+	call loadGfxRegisterStateIndex
+	call _introCinematic_ridingHorse_drawTempleSprites
 
 	; Create 2 interactions of type INTERACID_INTRO_SPRITE with subid's 2 and 1.
 	; (These are the horse and cliff sprites.)
-	ld b,$02		; $503a
+	ld b,$02
 --
-	call getFreeInteractionSlot		; $503c
-	jr nz,++		; $503f
-	ld (hl),INTERACID_INTRO_SPRITE		; $5041
-	inc l			; $5043
-	ld (hl),b		; $5044
-	dec b			; $5045
-	jr nz,--		; $5046
+	call getFreeInteractionSlot
+	jr nz,++
+	ld (hl),INTERACID_INTRO_SPRITE
+	inc l
+	ld (hl),b
+	dec b
+	jr nz,--
 ++
-	jp _intro_incState		; $5048
+	jp _intro_incState
 
 ;;
 ; State 9 (5 in seasons): showing Link on a cliff overlooking the temple
 ; @addr{504b}
 _introCinematic_ridingHorse_state9:
-	ld hl,wTmpcbb3		; $504b
-	call decHlRef16WithCap		; $504e
-	jr nz,+			; $5051
-	call fadeoutToWhite		; $5053
-	call _intro_incState		; $5056
-	jr _introCinematic_ridingHorse_drawTempleSprites		; $5059
+	ld hl,wTmpcbb3
+	call decHlRef16WithCap
+	jr nz,+
+	call fadeoutToWhite
+	call _intro_incState
+	jr _introCinematic_ridingHorse_drawTempleSprites
 +
-	ld hl,wTmpcbb6		; $505b
-	ld a,(hl)		; $505e
-	or a			; $505f
-	jr z,_introCinematic_ridingHorse_drawTempleSprites	; $5060
+	ld hl,wTmpcbb6
+	ld a,(hl)
+	or a
+	jr z,_introCinematic_ridingHorse_drawTempleSprites
 
 	; Check if the screen is done moving
-	dec (hl)		; $5062
-	ld a,(wGfxRegs1.SCX)		; $5063
-	or a			; $5066
-	jr z,_introCinematic_ridingHorse_drawTempleSprites	; $5067
+	dec (hl)
+	ld a,(wGfxRegs1.SCX)
+	or a
+	jr z,_introCinematic_ridingHorse_drawTempleSprites
 
 	; Shift screen once every 5 frames
-	ld hl,wTmpcbbb		; $5069
-	dec (hl)		; $506c
-	jr nz,_introCinematic_ridingHorse_drawTempleSprites	; $506d
-	ld (hl),$05		; $506f
-	ld hl,wGfxRegs1.SCX		; $5071
-	dec (hl)		; $5074
+	ld hl,wTmpcbbb
+	dec (hl)
+	jr nz,_introCinematic_ridingHorse_drawTempleSprites
+	ld (hl),$05
+	ld hl,wGfxRegs1.SCX
+	dec (hl)
 
 ;;
 ; In the scene overlooking the temple, a few sprites are used to touch up the appearance
 ; of the temple, even though it's mostly drawn on the background.
 ; @addr{5075}
 _introCinematic_ridingHorse_drawTempleSprites:
-	xor a			; $5075
-	ldh (<hOamTail),a	; $5076
-	ld b,a			; $5078
-	ld a,(wGfxRegs1.SCX)		; $5079
-	cpl			; $507c
-	inc a			; $507d
-	ld c,a			; $507e
+	xor a
+	ldh (<hOamTail),a
+	ld b,a
+	ld a,(wGfxRegs1.SCX)
+	cpl
+	inc a
+	ld c,a
 
 .ifdef ROM_AGES
-	ld hl,bank3f.introTempleSprites		; $507f
-	ld e,:bank3f.introTempleSprites		; $5082
-	jp addSpritesFromBankToOam_withOffset		; $5084
+	ld hl,bank3f.introTempleSprites
+	ld e,:bank3f.introTempleSprites
+	jp addSpritesFromBankToOam_withOffset
 
 .else; ROM_SEASONS
 
@@ -2160,68 +2160,68 @@ _introCinematic_ridingHorse_drawTempleSprites:
 ; State 10 (6 in seasons): fading out, then proceed to next cinematic state (temple)
 ; @addr{5087}
 _introCinematic_ridingHorse_state10:
-	ld a,(wPaletteThread_mode)		; $5087
-	or a			; $508a
-	jr nz,_introCinematic_ridingHorse_drawTempleSprites	; $508b
+	ld a,(wPaletteThread_mode)
+	or a
+	jr nz,_introCinematic_ridingHorse_drawTempleSprites
 
-	call clearDynamicInteractions		; $508d
-	jr _incIntroCinematicState		; $5090
+	call clearDynamicInteractions
+	jr _incIntroCinematicState
 
 ;;
 ; @param[out]	zflag	nz if there's no more scrolling to be done
 ; @addr{5092}
 _introCinematic_preTitlescreen_updateScrollingTree:
-	ld hl,wTmpcbb6		; $5092
-	dec (hl)		; $5095
-	ret nz			; $5096
+	ld hl,wTmpcbb6
+	dec (hl)
+	ret nz
 
-	ld a,(wTmpcbba)		; $5097
-	ld (wTmpcbb6),a		; $509a
-	ld hl,wGfxRegs1.SCY		; $509d
-	dec (hl)		; $50a0
-	ld a,(hl)		; $50a1
-	cp $88			; $50a2
-	ret z			; $50a4
+	ld a,(wTmpcbba)
+	ld (wTmpcbb6),a
+	ld hl,wGfxRegs1.SCY
+	dec (hl)
+	ld a,(hl)
+	cp $88
+	ret z
 
-	cp $10			; $50a5
-	jr nz,@label_03_063	; $50a7
+	cp $10
+	jr nz,@label_03_063
 
-	ld a,UNCMP_GFXH_0d		; $50a9
-	call loadUncompressedGfxHeader		; $50ab
-	ld b,$04		; $50ae
+	ld a,UNCMP_GFXH_0d
+	call loadUncompressedGfxHeader
+	ld b,$04
 --
-	call getFreeInteractionSlot		; $50b0
-	jr nz,@ret		; $50b3
-	ld (hl),INTERACID_TITLESCREEN_CLOUDS		; $50b5
-	inc l			; $50b7
-	dec b			; $50b8
-	ld (hl),b		; $50b9
-	jr nz,--		; $50ba
-	jr @ret			; $50bc
+	call getFreeInteractionSlot
+	jr nz,@ret
+	ld (hl),INTERACID_TITLESCREEN_CLOUDS
+	inc l
+	dec b
+	ld (hl),b
+	jr nz,--
+	jr @ret
 
 @label_03_063:
-	cp $b0			; $50be
-	jr nz,@ret		; $50c0
-	ld a,UNCMP_GFXH_2a		; $50c2
-	call loadUncompressedGfxHeader		; $50c4
+	cp $b0
+	jr nz,@ret
+	ld a,UNCMP_GFXH_2a
+	call loadUncompressedGfxHeader
 @ret:
-	or $01			; $50c7
-	ret			; $50c9
+	or $01
+	ret
 
 ;;
 ; @addr{50ca}
 _incIntroCinematicState:
-	ld hl,wIntro.cinematicState		; $50ca
-	inc (hl)		; $50cd
-	xor a			; $50ce
-	ld (wIntroVar),a		; $50cf
-	ret			; $50d2
+	ld hl,wIntro.cinematicState
+	inc (hl)
+	xor a
+	ld (wIntroVar),a
+	ret
 
 ;;
 ; @addr{50d3}
 _introCinematic_inTemple:
-	ld a,(wIntroVar)		; $50d3
-	rst_jumpTable			; $50d6
+	ld a,(wIntroVar)
+	rst_jumpTable
 	.dw _introCinematic_inTemple_state0
 	.dw _introCinematic_inTemple_state1
 .ifdef ROM_SEASONS
@@ -2241,96 +2241,96 @@ _introCinematic_inTemple:
 ; State 0: Load the room
 ; @addr{50ed}
 _introCinematic_inTemple_state0:
-	call disableLcd		; $50ed
-	call clearOam		; $50f0
-	ld a,$10		; $50f3
-	ldh (<hOamTail),a	; $50f5
+	call disableLcd
+	call clearOam
+	ld a,$10
+	ldh (<hOamTail),a
 
-	ld a,GFXH_9e		; $50f7
-	call loadGfxHeader		; $50f9
+	ld a,GFXH_9e
+	call loadGfxHeader
 .ifdef ROM_AGES
-	ld a,PALH_91		; $50fc
+	ld a,PALH_91
 .else
-	ld a,SEASONS_PALH_91		; $50fc
+	ld a,SEASONS_PALH_91
 .endif
-	call loadPaletteHeader		; $50fe
+	call loadPaletteHeader
 
-	ld a,$09		; $5101
-	call loadGfxRegisterStateIndex		; $5103
+	ld a,$09
+	call loadGfxRegisterStateIndex
 
-	ld a,(wGfxRegs1.SCY)		; $5106
-	ldh (<hCameraY),a	; $5109
-
-.ifdef ROM_AGES
-	ld a,$10		; $510b
-.else
-	ld a,$18		; $510b
-.endif
-	ld (wTilesetAnimation),a		; $510d
-	call loadAnimationData		; $5110
-
-	ld a,$01		; $5113
-	ld (wScrollMode),a		; $5115
-
-	ld a,SPECIALOBJECTID_LINK_CUTSCENE		; $5118
-	call setLinkID		; $511a
-	ld l,<w1Link.enabled		; $511d
-	ld (hl),$01		; $511f
-
-	ld l,<w1Link.yh		; $5121
-	ld a,(wGfxRegs1.SCY)		; $5123
-	add $60			; $5126
-	ld (hl),a		; $5128
-	ld l,<w1Link.xh		; $5129
-	ld (hl),$50		; $512b
+	ld a,(wGfxRegs1.SCY)
+	ldh (<hCameraY),a
 
 .ifdef ROM_AGES
-	ld hl,interactionBank10.templeIntro_simulatedInput		; $512d
-	ld a,:interactionBank10.templeIntro_simulatedInput		; $5130
+	ld a,$10
 .else
-	ld hl,templeIntro_simulatedInput		; $512d
-	ld a,:templeIntro_simulatedInput		; $5130
+	ld a,$18
 .endif
-	call setSimulatedInputAddress		; $5132
+	ld (wTilesetAnimation),a
+	call loadAnimationData
+
+	ld a,$01
+	ld (wScrollMode),a
+
+	ld a,SPECIALOBJECTID_LINK_CUTSCENE
+	call setLinkID
+	ld l,<w1Link.enabled
+	ld (hl),$01
+
+	ld l,<w1Link.yh
+	ld a,(wGfxRegs1.SCY)
+	add $60
+	ld (hl),a
+	ld l,<w1Link.xh
+	ld (hl),$50
+
+.ifdef ROM_AGES
+	ld hl,interactionBank10.templeIntro_simulatedInput
+	ld a,:interactionBank10.templeIntro_simulatedInput
+.else
+	ld hl,templeIntro_simulatedInput
+	ld a,:templeIntro_simulatedInput
+.endif
+	call setSimulatedInputAddress
 
 	; Spawn the 3 pieces of triforce
-	ld b,$03		; $5135
-	ld c,$30		; $5137
+	ld b,$03
+	ld c,$30
 @nextTriforce:
-	call getFreeInteractionSlot		; $5139
-	jr nz,@doneSpawningTriforce	; $513c
-	ld (hl),INTERACID_INTRO_SPRITES_1		; $513e
-	inc l			; $5140
-	ld a,b			; $5141
-	dec a			; $5142
-	ld (hl),a		; $5143
+	call getFreeInteractionSlot
+	jr nz,@doneSpawningTriforce
+	ld (hl),INTERACID_INTRO_SPRITES_1
+	inc l
+	ld a,b
+	dec a
+	ld (hl),a
 
-	ld l,Interaction.yh		; $5144
-	ld (hl),$19		; $5146
-	ld a,c			; $5148
-	ld l,Interaction.xh		; $5149
-	ld (hl),a		; $514b
-	add $20			; $514c
-	ld c,a			; $514e
-	ld a,c			; $514f
-	dec b			; $5150
-	jr nz,@nextTriforce	; $5151
+	ld l,Interaction.yh
+	ld (hl),$19
+	ld a,c
+	ld l,Interaction.xh
+	ld (hl),a
+	add $20
+	ld c,a
+	ld a,c
+	dec b
+	jr nz,@nextTriforce
 
 @doneSpawningTriforce:
-	ld hl,wMenuDisabled		; $5153
-	ld (hl),$01		; $5156
-	call fadeinFromWhite		; $5158
-	xor a			; $515b
-	ld (wTmpcbb9),a		; $515c
-	jp _intro_incState		; $515f
+	ld hl,wMenuDisabled
+	ld (hl),$01
+	call fadeinFromWhite
+	xor a
+	ld (wTmpcbb9),a
+	jp _intro_incState
 
 ;;
 ; State 1: walking up to triforce
 ; @addr{5162}
 _introCinematic_inTemple_state1:
-	ld a,(wPaletteThread_mode)		; $5162
-	or a			; $5165
-	ret nz			; $5166
+	ld a,(wPaletteThread_mode)
+	or a
+	ret nz
 
 .ifdef ROM_SEASONS
 
@@ -2342,83 +2342,83 @@ _introCinematic_inTemple_state1.5:
 .endif
 
 	; Check if simulated input is done (bit 7 set)
-	ld a,(wUseSimulatedInput)		; $5167
-	rlca			; $516a
-	jp nc,_introCinematic_inTemple_updateCamera		; $516b
-	xor a			; $516e
-	ld (wUseSimulatedInput),a		; $516f
-	call _introCinematic_inTemple_updateCamera		; $5172
-	jp _intro_incState		; $5175
+	ld a,(wUseSimulatedInput)
+	rlca
+	jp nc,_introCinematic_inTemple_updateCamera
+	xor a
+	ld (wUseSimulatedInput),a
+	call _introCinematic_inTemple_updateCamera
+	jp _intro_incState
 
 ;;
 ; State 2: waiting for cutscene objects to do their thing (nothing to be done here)
 ; @addr{5178}
 _introCinematic_inTemple_state2:
 	; The "link cutscene object" will write to wIntro.triforceState eventually
-	ld a,(wIntro.triforceState)		; $5178
-	cp $03			; $517b
-	ret nz			; $517d
+	ld a,(wIntro.triforceState)
+	cp $03
+	ret nz
 
-	call fadeoutToWhite		; $517e
-	jp _intro_incState		; $5181
+	call fadeoutToWhite
+	jp _intro_incState
 
 ;;
 ; State 3: screen fading out temporarily
 ; @addr{5184}
 _introCinematic_inTemple_state3:
-	ld a,(wPaletteThread_mode)		; $5184
-	or a			; $5187
-	ret nz			; $5188
+	ld a,(wPaletteThread_mode)
+	or a
+	ret nz
 
 	; Initialize variables needed to make the screen "wavy"
-	ld a,$01		; $5189
-	ld (wGfxRegs1.LYC),a		; $518b
-	inc a			; $518e
-	ld (wGfxRegs2.LYC),a		; $518f
-	ld a,$00		; $5192
-	ldh (<hNextLcdInterruptBehaviour),a	; $5194
-	ld a,$20		; $5196
-	call initWaveScrollValues		; $5198
-	call fadeinFromWhite		; $519b
-	call _intro_incState		; $519e
+	ld a,$01
+	ld (wGfxRegs1.LYC),a
+	inc a
+	ld (wGfxRegs2.LYC),a
+	ld a,$00
+	ldh (<hNextLcdInterruptBehaviour),a
+	ld a,$20
+	call initWaveScrollValues
+	call fadeinFromWhite
+	call _intro_incState
 
 	; Fall through
 
 ;;
 ; @addr{51a1}
 _introCinematic_inTemple_updateWave:
-	ld hl,wFrameCounter		; $51a1
-	inc (hl)		; $51a4
-	ld a,$02		; $51a5
-	jp loadBigBufferScrollValues		; $51a7
+	ld hl,wFrameCounter
+	inc (hl)
+	ld a,$02
+	jp loadBigBufferScrollValues
 
 ;;
 ; State 4: screen fading back in
 ; @addr{51aa}
 _introCinematic_inTemple_state4:
-	call _introCinematic_inTemple_updateWave		; $51aa
-	ld a,(wPaletteThread_mode)		; $51ad
-	or a			; $51b0
-	ret nz			; $51b1
-	ld hl,wTmpcbb6		; $51b2
-	ld (hl),120		; $51b5
-	jp _intro_incState		; $51b7
+	call _introCinematic_inTemple_updateWave
+	ld a,(wPaletteThread_mode)
+	or a
+	ret nz
+	ld hl,wTmpcbb6
+	ld (hl),120
+	jp _intro_incState
 
 ;;
 ; State 5: waving the screen around
 ; @addr{51ba}
 _introCinematic_inTemple_state5:
-	call _introCinematic_inTemple_updateWave		; $51ba
-	ld hl,wTmpcbb6		; $51bd
-	dec (hl)		; $51c0
-	ret nz			; $51c1
+	call _introCinematic_inTemple_updateWave
+	ld hl,wTmpcbb6
+	dec (hl)
+	ret nz
 
 	; a=0 here
-	ld (wTmpcbb6),a		; $51c2
-	dec a			; $51c5
-	ld (wTmpcbba),a		; $51c6
+	ld (wTmpcbb6),a
+	dec a
+	ld (wTmpcbba),a
 
-	call _intro_incState		; $51c9
+	call _intro_incState
 
 	; Fall through
 
@@ -2426,70 +2426,70 @@ _introCinematic_inTemple_state5:
 ; State 6: this is the instant where Link "falls"?
 ; @addr{51cc}
 _introCinematic_inTemple_state6:
-	call _introCinematic_inTemple_updateWave		; $51cc
-	ld hl,wTmpcbb6		; $51cf
-	ld b,$00		; $51d2
-	call flashScreen_body		; $51d4
-	ret z			; $51d7
+	call _introCinematic_inTemple_updateWave
+	ld hl,wTmpcbb6
+	ld b,$00
+	call flashScreen_body
+	ret z
 
-	call clearPaletteFadeVariablesAndRefreshPalettes		; $51d8
-	ld a,$06		; $51db
-	ld (wTmpcbb9),a		; $51dd
-	ld a,SND_FAIRYCUTSCENE		; $51e0
-	call playSound		; $51e2
-	jp _intro_incState		; $51e5
+	call clearPaletteFadeVariablesAndRefreshPalettes
+	ld a,$06
+	ld (wTmpcbb9),a
+	ld a,SND_FAIRYCUTSCENE
+	call playSound
+	jp _intro_incState
 
 ;;
 ; State 7: link is in the process of falling
 ; @addr{51e8}
 _introCinematic_inTemple_state7:
-	call _introCinematic_inTemple_updateWave		; $51e8
-	ld a,(wTmpcbb9)		; $51eb
-	cp $07			; $51ee
-	ret nz			; $51f0
+	call _introCinematic_inTemple_updateWave
+	ld a,(wTmpcbb9)
+	cp $07
+	ret nz
 
 	; Finished falling; delete Link
-	call clearLinkObject		; $51f1
-	ld b,$08		; $51f4
-	call func_2d48		; $51f6
-	ld a,b			; $51f9
-	ld (wTmpcbb6),a		; $51fa
-	jp _intro_incState		; $51fd
+	call clearLinkObject
+	ld b,$08
+	call func_2d48
+	ld a,b
+	ld (wTmpcbb6),a
+	jp _intro_incState
 
 ;;
 ; State 8: waiting?
 ; @addr{5200}
 _introCinematic_inTemple_state8:
-	call _introCinematic_inTemple_updateWave		; $5200
-	ld hl,wTmpcbb6		; $5203
-	dec (hl)		; $5206
-	ret nz			; $5207
-	ld (hl),$3c		; $5208
-	jp _intro_incState		; $520a
+	call _introCinematic_inTemple_updateWave
+	ld hl,wTmpcbb6
+	dec (hl)
+	ret nz
+	ld (hl),$3c
+	jp _intro_incState
 
 ;;
 ; State 9: waiting?
 ; @addr{520d}
 _introCinematic_inTemple_state9:
-	call _introCinematic_inTemple_updateWave		; $520d
-	ld hl,wTmpcbb6		; $5210
-	dec (hl)		; $5213
-	ret nz			; $5214
-	ld a,SND_FADEOUT		; $5215
-	call playSound		; $5217
-	call fadeoutToWhite		; $521a
-	jp _intro_incState		; $521d
+	call _introCinematic_inTemple_updateWave
+	ld hl,wTmpcbb6
+	dec (hl)
+	ret nz
+	ld a,SND_FADEOUT
+	call playSound
+	call fadeoutToWhite
+	jp _intro_incState
 
 ;;
 ; State 10: screen fading out, then moves on to the next cinematic state
 ; @addr{5220}
 _introCinematic_inTemple_state10:
-	call _introCinematic_inTemple_updateWave		; $5220
-	ld a,(wPaletteThread_mode)		; $5223
-	or a			; $5226
-	ret nz			; $5227
-	call clearDynamicInteractions		; $5228
-	jp _incIntroCinematicState		; $522b
+	call _introCinematic_inTemple_updateWave
+	ld a,(wPaletteThread_mode)
+	or a
+	ret nz
+	call clearDynamicInteractions
+	jp _incIntroCinematicState
 
 ;;
 ; This function causes the screen to flash white. Based on parameter 'b', which acts as
@@ -2502,62 +2502,62 @@ _introCinematic_inTemple_state10:
 ; @param[out]	zflag	nz if the flashing is complete (all data has been read).
 ; @addr{522e}
 flashScreen_body:
-	ld a,b			; $522e
-	inc (hl)		; $522f
-	ld b,(hl)		; $5230
-	ld hl,_screenFlashingData		; $5231
-	rst_addDoubleIndex			; $5234
-	ldi a,(hl)		; $5235
-	ld h,(hl)		; $5236
-	ld l,a			; $5237
-	ld c,$00		; $5238
+	ld a,b
+	inc (hl)
+	ld b,(hl)
+	ld hl,_screenFlashingData
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	ld c,$00
 --
-	ld a,(hl)		; $523a
-	bit 7,a			; $523b
-	ret nz			; $523d
-	cp b			; $523e
-	jr nc,+			; $523f
+	ld a,(hl)
+	bit 7,a
+	ret nz
+	cp b
+	jr nc,+
 
-	inc hl			; $5241
-	inc c			; $5242
-	jr --			; $5243
+	inc hl
+	inc c
+	jr --
 +
 	; Check if the index has changed from last time?
-	ld a,c			; $5245
-	and $01			; $5246
-	ld c,a			; $5248
-	ld a,(wTmpcbba)		; $5249
-	cp c			; $524c
-	ret z			; $524d
-	ld a,c			; $524e
-	ld (wTmpcbba),a		; $524f
+	ld a,c
+	and $01
+	ld c,a
+	ld a,(wTmpcbba)
+	cp c
+	ret z
+	ld a,c
+	ld (wTmpcbba),a
 
-	or a			; $5252
-	jr z,clearFadingPalettes_body	; $5253
-	call clearPaletteFadeVariablesAndRefreshPalettes		; $5255
-	xor a			; $5258
-	ret			; $5259
+	or a
+	jr z,clearFadingPalettes_body
+	call clearPaletteFadeVariablesAndRefreshPalettes
+	xor a
+	ret
 
 ;;
 ; Clears w2FadingBgPalettes, w2FadingSprPalettes (fills contents with $ff), and marks all
 ; palettes as needing refresh?
 ; @addr{525a}
 clearFadingPalettes_body:
-	ld a,:w2FadingBgPalettes		; $525a
-	ld ($ff00+R_SVBK),a	; $525c
-	ld b,$80		; $525e
-	ld hl,w2FadingBgPalettes		; $5260
-	ld a,$ff		; $5263
-	call fillMemory		; $5265
+	ld a,:w2FadingBgPalettes
+	ld ($ff00+R_SVBK),a
+	ld b,$80
+	ld hl,w2FadingBgPalettes
+	ld a,$ff
+	call fillMemory
 
-	ld a,$ff		; $5268
-	ldh (<hSprPaletteSources),a	; $526a
-	ldh (<hBgPaletteSources),a	; $526c
-	ldh (<hDirtySprPalettes),a	; $526e
-	ldh (<hDirtyBgPalettes),a	; $5270
-	xor a			; $5272
-	ld ($ff00+R_SVBK),a	; $5273
-	ret			; $5275
+	ld a,$ff
+	ldh (<hSprPaletteSources),a
+	ldh (<hBgPaletteSources),a
+	ldh (<hDirtySprPalettes),a
+	ldh (<hDirtyBgPalettes),a
+	xor a
+	ld ($ff00+R_SVBK),a
+	ret
 
 .ifdef ROM_AGES
 
@@ -2622,8 +2622,8 @@ clearFadingPalettes_body:
 ;;
 ; @addr{52b9}
 _introCinematic_preTitlescreen:
-	ld a,(wIntroVar)		; $52b9
-	rst_jumpTable			; $52bc
+	ld a,(wIntroVar)
+	rst_jumpTable
 	.dw _introCinematic_preTitlescreen_state0
 	.dw _introCinematic_preTitlescreen_state1
 	.dw _introCinematic_preTitlescreen_state2
@@ -2633,99 +2633,99 @@ _introCinematic_preTitlescreen:
 ; State 0: load tree graphics
 ; @addr{52c5}
 _introCinematic_preTitlescreen_state0:
-	call disableLcd		; $52c5
+	call disableLcd
 
-	ld a,$ff		; $52c8
-	ld (wTilesetAnimation),a		; $52ca
-	ld a,GFXH_9f		; $52cd
-	call loadGfxHeader		; $52cf
+	ld a,$ff
+	ld (wTilesetAnimation),a
+	ld a,GFXH_9f
+	call loadGfxHeader
 .ifdef ROM_AGES
-	ld a,PALH_94		; $52d2
+	ld a,PALH_94
 .else
-	ld a,SEASONS_PALH_94		; $52d2
+	ld a,SEASONS_PALH_94
 .endif
-	call loadPaletteHeader		; $52d4
-	call refreshObjectGfx		; $52d7
-	ld a,$0a		; $52da
-	call loadGfxRegisterStateIndex		; $52dc
+	call loadPaletteHeader
+	call refreshObjectGfx
+	ld a,$0a
+	call loadGfxRegisterStateIndex
 
 	; Create the "tree branches" object
-	call getFreeInteractionSlot		; $52df
-	jr nz,++		; $52e2
-	ld (hl),INTERACID_INTRO_SPRITES_1		; $52e4
-	inc l			; $52e6
-	ld (hl),$08		; $52e7
-	ld l,Interaction.y		; $52e9
-	ld a,$60		; $52eb
-	ldi (hl),a		; $52ed
-	ldi (hl),a		; $52ee
-	ld a,$3d		; $52ef
-	inc l			; $52f1
-	ldi (hl),a		; $52f2
+	call getFreeInteractionSlot
+	jr nz,++
+	ld (hl),INTERACID_INTRO_SPRITES_1
+	inc l
+	ld (hl),$08
+	ld l,Interaction.y
+	ld a,$60
+	ldi (hl),a
+	ldi (hl),a
+	ld a,$3d
+	inc l
+	ldi (hl),a
 ++
 
 	; Spawn birds
-	ld b,$08		; $52f3
+	ld b,$08
 --
-	call getFreeInteractionSlot		; $52f5
-	jr nz,++		; $52f8
-	ld (hl),INTERACID_INTRO_BIRD		; $52fa
-	inc l			; $52fc
-	dec b			; $52fd
-	ld (hl),b		; $52fe
-	jr nz,--		; $52ff
+	call getFreeInteractionSlot
+	jr nz,++
+	ld (hl),INTERACID_INTRO_BIRD
+	inc l
+	dec b
+	ld (hl),b
+	jr nz,--
 ++
-	ld a,$03		; $5301
-	ld (wTmpcbba),a		; $5303
-	ld (wTmpcbb6),a		; $5306
-	call fadeinFromWhite		; $5309
-	xor a			; $530c
-	ldh (<hCameraY),a	; $530d
+	ld a,$03
+	ld (wTmpcbba),a
+	ld (wTmpcbb6),a
+	call fadeinFromWhite
+	xor a
+	ldh (<hCameraY),a
 
-	ld a,MUS_INTRO_2		; $530f
-	call playSound		; $5311
+	ld a,MUS_INTRO_2
+	call playSound
 
-	jp _intro_incState		; $5314
+	jp _intro_incState
 
 ;;
 ; State 1: scrolling up the tree
 ; @addr{5317}
 _introCinematic_preTitlescreen_state1:
-	call _introCinematic_preTitlescreen_updateScrollingTree		; $5317
-	ret nz			; $531a
+	call _introCinematic_preTitlescreen_updateScrollingTree
+	ret nz
 
 	; Initialize stuff for state 2.
 
-	call _intro_incState		; $531b
-	ld hl,wTmpcbb3		; $531e
-	ld (hl),$02		; $5321
-	inc hl			; $5323
-	xor a			; $5324
-	ld (hl),a		; $5325
+	call _intro_incState
+	ld hl,wTmpcbb3
+	ld (hl),$02
+	inc hl
+	xor a
+	ld (hl),a
 
 	; wTmpcbb6 = counter until the sound effect should be played
-	ld hl,wTmpcbb6		; $5326
-	ld (hl),$10		; $5329
+	ld hl,wTmpcbb6
+	ld (hl),$10
 
-	inc a			; $532b
-	ld (wGfxRegs1.LYC),a		; $532c
-	inc a			; $532f
-	ld (wGfxRegs2.LYC),a		; $5330
-	ld a,$01		; $5333
-	ldh (<hNextLcdInterruptBehaviour),a	; $5335
+	inc a
+	ld (wGfxRegs1.LYC),a
+	inc a
+	ld (wGfxRegs2.LYC),a
+	ld a,$01
+	ldh (<hNextLcdInterruptBehaviour),a
 
 	; wBigBuffer will contain separate scrollY values for each line on the screen, in
 	; order to produce the effect introducing the title.
 	; Initialize it with normal values for scrollY for now.
-	ld a,(wGfxRegs1.SCY)		; $5337
-	ld b,$90		; $533a
-	ld hl,wBigBuffer		; $533c
+	ld a,(wGfxRegs1.SCY)
+	ld b,$90
+	ld hl,wBigBuffer
 --
-	ldi (hl),a		; $533f
-	dec b			; $5340
-	jr nz,--		; $5341
+	ldi (hl),a
+	dec b
+	jr nz,--
 
-	ld a,$01		; $5343
+	ld a,$01
 
 	; Fall through
 
@@ -2735,99 +2735,99 @@ _introCinematic_preTitlescreen_state1:
 ; @param	a	Number of pixels of the title to show (divided by two)
 ; @addr{5345}
 _introCinematic_preTitlescreen_updateScrollForTitle:
-	ld b,a			; $5345
+	ld b,a
 
 	; Calculate c=$18/b (the amount that the title needs to be shrunk)
-	xor a			; $5346
-	ld c,a			; $5347
+	xor a
+	ld c,a
 --
-	inc c			; $5348
-	add b			; $5349
-	cp $18			; $534a
-	jr z,+			; $534c
+	inc c
+	add b
+	cp $18
+	jr z,+
 	ret nc ; Should never return if given a valid parameter
-	jr --			; $534f
+	jr --
 +
 	; Calculate SCY values for the top half of the title
-	push bc			; $5351
+	push bc
 	ld a,$38 ; vertical center of title
-	sub b			; $5354
-	ld h,>wBigBuffer		; $5355
-	ld l,a			; $5357
-	xor a			; $5358
+	sub b
+	ld h,>wBigBuffer
+	ld l,a
+	xor a
 --
-	push af			; $5359
-	sub l			; $535a
+	push af
+	sub l
 	add $58 ; SCY value that would be needed to draw the title at top of screen
-	ldi (hl),a		; $535d
-	pop af			; $535e
-	add c			; $535f
-	dec b			; $5360
-	jr nz,--		; $5361
+	ldi (hl),a
+	pop af
+	add c
+	dec b
+	jr nz,--
 
 	; Calculate SCY values for the bottom half of the title
-	pop bc			; $5363
-	ld a,$37		; $5364
-	add b			; $5366
-	ld l,a			; $5367
-	ld a,$2f		; $5368
+	pop bc
+	ld a,$37
+	add b
+	ld l,a
+	ld a,$2f
 --
-	push af			; $536a
-	sub l			; $536b
+	push af
+	sub l
 	add $58 ; SCY value that would be needed to draw the title at top of screen
-	ldd (hl),a		; $536e
-	pop af			; $536f
-	sub c			; $5370
-	dec b			; $5371
-	jr nz,--		; $5372
-	ret			; $5374
+	ldd (hl),a
+	pop af
+	sub c
+	dec b
+	jr nz,--
+	ret
 
 ;;
 ; State 2: game title coming into view
 ; @addr{5375}
 _introCinematic_preTitlescreen_state2:
 	; Check whether to play the sound effect
-	ld hl,wTmpcbb6		; $5375
-	ld a,(hl)		; $5378
-	or a			; $5379
-	jr z,+			; $537a
-	dec a			; $537c
-	ld (hl),a		; $537d
-	ld a,SND_SWORD_OBTAINED		; $537e
-	call z,playSound		; $5380
+	ld hl,wTmpcbb6
+	ld a,(hl)
+	or a
+	jr z,+
+	dec a
+	ld (hl),a
+	ld a,SND_SWORD_OBTAINED
+	call z,playSound
 +
 	; Only update every other frame?
-	ld a,(wIntro.frameCounter)		; $5383
-	and $01			; $5386
-	ld hl,wTmpcbb4		; $5388
-	ret nz			; $538b
+	ld a,(wIntro.frameCounter)
+	and $01
+	ld hl,wTmpcbb4
+	ret nz
 
-	ld a,(hl)		; $538c
-	cp $08			; $538d
-	jr nc,@titleDone	; $538f
-	inc a			; $5391
-	ld (hl),a		; $5392
-	ld hl,_introCinematic_preTitlescreen_titleSizeData		; $5393
-	rst_addAToHl			; $5396
-	ld a,(hl)		; $5397
-	jp _introCinematic_preTitlescreen_updateScrollForTitle		; $5398
+	ld a,(hl)
+	cp $08
+	jr nc,@titleDone
+	inc a
+	ld (hl),a
+	ld hl,_introCinematic_preTitlescreen_titleSizeData
+	rst_addAToHl
+	ld a,(hl)
+	jp _introCinematic_preTitlescreen_updateScrollForTitle
 
 @titleDone:
-	xor a			; $539b
-	ld (wTmpcbb6),a		; $539c
-	dec a			; $539f
-	ld (wTmpcbba),a		; $53a0
-	jp _intro_incState		; $53a3
+	xor a
+	ld (wTmpcbb6),a
+	dec a
+	ld (wTmpcbba),a
+	jp _intro_incState
 
 ;;
 ; State 3: title fully in view; wait a bit, then go to the titlescreen.
 ; @addr{53a6}
 _introCinematic_preTitlescreen_state3:
-	ld hl,wTmpcbb6		; $53a6
-	ld b,$01		; $53a9
-	call flashScreen_body		; $53ab
-	ret z			; $53ae
-	jp _intro_gotoTitlescreen		; $53af
+	ld hl,wTmpcbb6
+	ld b,$01
+	call flashScreen_body
+	ret z
+	jp _intro_gotoTitlescreen
 
 ; Each byte is the number of pixels of the title to show on a particular frame, divided by
 ; two.
@@ -2838,42 +2838,42 @@ _introCinematic_preTitlescreen_titleSizeData:
 ; Updates camera position based on link's Y position.
 ; @addr{53ba}
 _introCinematic_inTemple_updateCamera:
-	ld a,(wGfxRegs1.SCY)		; $53ba
-	ld b,a			; $53bd
-	ld de,w1Link.yh		; $53be
-	ld a,(de)		; $53c1
-	sub b			; $53c2
-	sub $40			; $53c3
-	ld b,a			; $53c5
-	ld a,(wGfxRegs1.SCY)		; $53c6
-	add b			; $53c9
-	cp $70			; $53ca
-	ret nc			; $53cc
-	ld (wGfxRegs1.SCY),a		; $53cd
-	ldh (<hCameraY),a	; $53d0
-	ret			; $53d2
+	ld a,(wGfxRegs1.SCY)
+	ld b,a
+	ld de,w1Link.yh
+	ld a,(de)
+	sub b
+	sub $40
+	ld b,a
+	ld a,(wGfxRegs1.SCY)
+	add b
+	cp $70
+	ret nc
+	ld (wGfxRegs1.SCY),a
+	ldh (<hCameraY),a
+	ret
 
 ;;
 ; Moves the black bars in the intro cinematic in by 2 pixels, until it covers 24 pixels on
 ; each end.
 ; @addr{53d3}
 _introCinematic_moveBlackBarsIn:
-	ld hl,wGfxRegs1.LYC		; $53d3
-	inc (hl)		; $53d6
-	inc (hl)		; $53d7
-	ld a,(hl)		; $53d8
-	cp $17			; $53d9
-	jr c,+			; $53db
-	ld (hl),$17		; $53dd
+	ld hl,wGfxRegs1.LYC
+	inc (hl)
+	inc (hl)
+	ld a,(hl)
+	cp $17
+	jr c,+
+	ld (hl),$17
 +
-	ld hl,wGfxRegs2.WINY		; $53df
-	dec (hl)		; $53e2
-	dec (hl)		; $53e3
-	ld a,(hl)		; $53e4
-	cp $90-$18			; $53e5
-	ret nc			; $53e7
-	ld (hl),$90-$18		; $53e8
-	ret			; $53ea
+	ld hl,wGfxRegs2.WINY
+	dec (hl)
+	dec (hl)
+	ld a,(hl)
+	cp $90-$18
+	ret nc
+	ld (hl),$90-$18
+	ret
 
 
 .ifdef ROM_AGES
@@ -2883,22 +2883,22 @@ _introCinematic_moveBlackBarsIn:
 ; Used for the closeup of Link's face.
 ; @addr{53eb}
 _introCinematic_moveBlackBarsOut:
-	ld hl,wGfxRegs1.LYC		; $53eb
-	dec (hl)		; $53ee
-	dec (hl)		; $53ef
-	ld a,(hl)		; $53f0
-	cp $2f			; $53f1
-	jr nc,+			; $53f3
-	ld (hl),$2f		; $53f5
+	ld hl,wGfxRegs1.LYC
+	dec (hl)
+	dec (hl)
+	ld a,(hl)
+	cp $2f
+	jr nc,+
+	ld (hl),$2f
 +
-	ld hl,wGfxRegs2.WINY		; $53f7
-	inc (hl)		; $53fa
-	inc (hl)		; $53fb
-	ld a,(hl)		; $53fc
-	cp $90-$30			; $53fd
-	ret c			; $53ff
-	ld (hl),$90-$30		; $5400
-	ret			; $5402
+	ld hl,wGfxRegs2.WINY
+	inc (hl)
+	inc (hl)
+	ld a,(hl)
+	cp $90-$30
+	ret c
+	ld (hl),$90-$30
+	ret
 
 .else; ROM_SEASONS
 
@@ -2943,9 +2943,9 @@ _seasonsFunc_03_5367:
 ;;
 ; @addr{5403}
 _cutscene_clearObjects:
-	call clearDynamicInteractions		; $5403
-	call clearLinkObject		; $5406
-	jp refreshObjectGfx		; $5409
+	call clearDynamicInteractions
+	call clearLinkObject
+	jp refreshObjectGfx
 
 
 .ifdef ROM_AGES
@@ -2954,12 +2954,12 @@ _cutscene_clearObjects:
 ; @param	bc	ID of interaction to create
 ; @addr{540c}
 _createInteraction:
-	call getFreeInteractionSlot		; $540c
-	ret nz			; $540f
-	ld (hl),b		; $5410
-	inc l			; $5411
-	ld (hl),c		; $5412
-	ret			; $5413
+	call getFreeInteractionSlot
+	ret nz
+	ld (hl),b
+	inc l
+	ld (hl),c
+	ret
 
 .endif
 
@@ -3077,16 +3077,16 @@ data_5951:
 ; @param	e
 ; @addr{5414}
 endgameCutsceneHandler_body:
-	ld hl,wCutsceneState		; $5414
-	bit 0,(hl)		; $5417
-	jr nz,+	; $5419
-	inc (hl)		; $541b
-	ld hl,wTmpcbb3		; $541c
-	ld b,$10		; $541f
-	call clearMemory		; $5421
+	ld hl,wCutsceneState
+	bit 0,(hl)
+	jr nz,+
+	inc (hl)
+	ld hl,wTmpcbb3
+	ld b,$10
+	call clearMemory
 +
-	ld a,e			; $5424
-	rst_jumpTable			; $5425
+	ld a,e
+	rst_jumpTable
 	.dw _endgameCutsceneHandler_09
 	.dw _endgameCutsceneHandler_0a
 	.dw _endgameCutsceneHandler_0f
@@ -3098,18 +3098,18 @@ endgameCutsceneHandler_body:
 ; @addr{542e}
 _clearFadingPalettes:
 	; Clear w2FadingBgPalettes and w2FadingSprPalettes
-	ld a,:w2FadingBgPalettes		; $542e
-	ld ($ff00+R_SVBK),a	; $5430
-	ld hl,w2FadingBgPalettes		; $5432
-	ld b,$80		; $5435
-	call clearMemory		; $5437
+	ld a,:w2FadingBgPalettes
+	ld ($ff00+R_SVBK),a
+	ld hl,w2FadingBgPalettes
+	ld b,$80
+	call clearMemory
 
-	xor a			; $543a
-	ld ($ff00+R_SVBK),a	; $543b
-	dec a			; $543d
-	ldh (<hSprPaletteSources),a	; $543e
-	ldh (<hDirtySprPalettes),a	; $5440
-	ld a,$fd		; $5442
-	ldh (<hBgPaletteSources),a	; $5444
-	ldh (<hDirtyBgPalettes),a	; $5446
-	ret			; $5448
+	xor a
+	ld ($ff00+R_SVBK),a
+	dec a
+	ldh (<hSprPaletteSources),a
+	ldh (<hDirtySprPalettes),a
+	ld a,$fd
+	ldh (<hBgPaletteSources),a
+	ldh (<hDirtyBgPalettes),a
+	ret

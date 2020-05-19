@@ -2,81 +2,81 @@
 ; Sets carry (bit 0 of c) if link is allowed to surface
 ; @addr{78e4}
 checkLinkCanSurface_isUnderwater: ; 78e4
-	ld a,(wActiveGroup)		; $78e4
+	ld a,(wActiveGroup)
 	ld hl, underWaterSurfaceTable
-	rst_addDoubleIndex			; $78ea
-	ldi a,(hl)		; $78eb
-	ld h,(hl)		; $78ec
-	ld l,a			; $78ed
-	ld a,(wActiveRoom)		; $78ee
-	ld b,a			; $78f1
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	ld a,(wActiveRoom)
+	ld b,a
 -
-	ldi a,(hl)		; $78f2
-	or a			; $78f3
+	ldi a,(hl)
+	or a
 	jr z,+++
-	cp b			; $78f6
+	cp b
 	jr z,+
-	inc hl			; $78f9
-	inc hl			; $78fa
+	inc hl
+	inc hl
 	jr -
 +
-	ldi a,(hl)		; $78fd
-	ld h,(hl)		; $78fe
-	ld l,a			; $78ff
-	ld a,(wTilesetFlags)		; $7900
-	and $01			; $7903
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	ld a,(wTilesetFlags)
+	and $01
 	jr z, +
-	ld b,(hl)		; $7907
-	ld a,b			; $7908
-	and $03			; $7909
+	ld b,(hl)
+	ld a,b
+	and $03
 	jr z, ++
-	push hl			; $790d
-	ld a,GLOBALFLAG_WATER_POLLUTION_FIXED		; $790e
-	call checkGlobalFlag		; $7910
-	pop hl			; $7913
+	push hl
+	ld a,GLOBALFLAG_WATER_POLLUTION_FIXED
+	call checkGlobalFlag
+	pop hl
 	jr z, ++
-	bit 0,b			; $7916
+	bit 0,b
 	jr nz, +++
-	ld a,$08		; $791a
-	rst_addDoubleIndex			; $791c
+	ld a,$08
+	rst_addDoubleIndex
 	jr ++
 +
-	ld a,(wDungeonIndex)		; $791f
-	cp $07			; $7922
+	ld a,(wDungeonIndex)
+	cp $07
 	jr nz, ++
-	ld a,(wJabuWaterLevel)		; $7926
-	and $03			; $7929
-	cp $02			; $792b
+	ld a,(wJabuWaterLevel)
+	and $03
+	cp $02
 	jr nz, ++
-	ld a,(wActiveRoom)		; $792f
-	cp $4c			; $7932
+	ld a,(wActiveRoom)
+	cp $4c
 	jr z, +
-	cp $4d			; $7936
+	cp $4d
 	jr nz, ++
 +
-	ld a,$0b		; $793a
-	rst_addDoubleIndex			; $793c
+	ld a,$0b
+	rst_addDoubleIndex
 ++
-	ld a,(wActiveTilePos)		; $793d
-	ld b,a			; $7940
-	swap a			; $7941
-	and $0f			; $7943
-	rst_addDoubleIndex			; $7945
-	ld a,b			; $7946
-	and $0f			; $7947
-	xor $0f			; $7949
-	call checkFlag		; $794b
+	ld a,(wActiveTilePos)
+	ld b,a
+	swap a
+	and $0f
+	rst_addDoubleIndex
+	ld a,b
+	and $0f
+	xor $0f
+	call checkFlag
 	jr nz,++++
-	scf			; $7950
+	scf
 	jr ++++
 +++
-	ld a,(wTilesetFlags)		; $7953
-	and $01			; $7956
+	ld a,(wTilesetFlags)
+	and $01
 	jr z, ++++
-	scf			; $795a
+	scf
 ++++
-	rl c			; $795b
-	ret			; $795d
+	rl c
+	ret
 
 underWaterSurfaceTable: ; 795e
 	.dw underWaterSurfaceTableGroup0

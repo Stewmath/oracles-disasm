@@ -2,29 +2,29 @@
 ; @param[out]	c	$00 if there is no solid object at that position, $01 if there is
 ; @addr{62c4}
 checkSolidObjectAtWarpDestPos:
-	ld a,:w2SolidObjectPositions	; $62c4
-	ld ($ff00+R_SVBK),a	; $62c6
-	ld a,(wWarpDestPos)		; $62c8
-	ld hl,w2SolidObjectPositions		; $62cb
-	call checkFlag		; $62ce
-	ld c,$00		; $62d1
-	jr z,+			; $62d3
-	inc c			; $62d5
+	ld a,:w2SolidObjectPositions
+	ld ($ff00+R_SVBK),a
+	ld a,(wWarpDestPos)
+	ld hl,w2SolidObjectPositions
+	call checkFlag
+	ld c,$00
+	jr z,+
+	inc c
 +
-	xor a			; $62d6
-	ld ($ff00+R_SVBK),a	; $62d7
-	ret			; $62d9
+	xor a
+	ld ($ff00+R_SVBK),a
+	ret
 
 ;;
 ; @addr{62da}
 clearSolidObjectPositions:
-	ld a,:w2SolidObjectPositions	; $62da
-	ld ($ff00+R_SVBK),a	; $62dc
-	ld b,$10		; $62de
-	ld hl,w2SolidObjectPositions	; $62e0
-	call clearMemory		; $62e3
-	ld ($ff00+R_SVBK),a	; $62e6
-	ret			; $62e8
+	ld a,:w2SolidObjectPositions
+	ld ($ff00+R_SVBK),a
+	ld b,$10
+	ld hl,w2SolidObjectPositions
+	call clearMemory
+	ld ($ff00+R_SVBK),a
+	ret
 
 ;;
 ; This is used to check whether Link can time-warp into a position successfully.
@@ -32,32 +32,32 @@ clearSolidObjectPositions:
 ; @param[out]	c	$00 if the tile is OK to stand on, $01 otherwise.
 ; @addr{62e9}
 checkLinkCanStandOnTile:
-	ld a,(w1Link.yh)		; $62e9
-	ld b,a			; $62ec
-	ld a,(w1Link.xh)		; $62ed
-	ld c,a			; $62f0
-	callab bank5.checkPositionSurroundedByWalls		; $62f1
-	rl b			; $62f9
-	jr c,@invalidTile		; $62fb
+	ld a,(w1Link.yh)
+	ld b,a
+	ld a,(w1Link.xh)
+	ld c,a
+	callab bank5.checkPositionSurroundedByWalls
+	rl b
+	jr c,@invalidTile
 
-	call objectGetTileAtPosition		; $62fd
-	ld e,(hl)		; $6300
-	ld hl,_invalidTimewarpTileList		; $6301
-	call lookupKey		; $6304
-	jr c,++			; $6307
+	call objectGetTileAtPosition
+	ld e,(hl)
+	ld hl,_invalidTimewarpTileList
+	call lookupKey
+	jr c,++
 
 @validTile:
-	ld c,$00		; $6309
-	ret			; $630b
+	ld c,$00
+	ret
 ++
-	or a			; $630c
-	ld a,TREASURE_MERMAID_SUIT		; $630d
-	call nz,checkTreasureObtained		; $630f
-	jr c,@validTile			; $6312
+	or a
+	ld a,TREASURE_MERMAID_SUIT
+	call nz,checkTreasureObtained
+	jr c,@validTile
 
 @invalidTile:
-	ld c,$01		; $6314
-	ret			; $6316
+	ld c,$01
+	ret
 
 ; The tiles listed here are invalid, unless their corresponding value is $01, in which
 ; case it will be permitted to warp onto them if Link has the mermaid suit.

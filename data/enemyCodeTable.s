@@ -267,4 +267,4 @@ enemyCodeTable:
 ;;
 ; @addr{3034}
 enemyCodeNil:
-	ret			; $3034
+	ret

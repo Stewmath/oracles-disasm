@@ -4,161 +4,161 @@
 ; @addr{4d73}
 _parentItemCode_flute:
 _parentItemCode_harp:
-	ld e,Item.state		; $4d73
-	ld a,(de)		; $4d75
-	rst_jumpTable			; $4d76
+	ld e,Item.state
+	ld a,(de)
+	rst_jumpTable
 	.dw @state0
 	.dw @state1
 
 @state0:
-	call _checkLinkOnGround		; $4d7b
-	jp nz,_clearParentItem		; $4d7e
-	ld a,(wInstrumentsDisabledCounter)		; $4d81
-	or a			; $4d84
-	jp nz,_clearParentItem		; $4d85
-	call _isLinkInHole		; $4d88
-	jp c,_clearParentItem		; $4d8b
-	call _checkNoOtherParentItemsInUse		; $4d8e
-	jp nz,_clearParentItem		; $4d91
+	call _checkLinkOnGround
+	jp nz,_clearParentItem
+	ld a,(wInstrumentsDisabledCounter)
+	or a
+	jp nz,_clearParentItem
+	call _isLinkInHole
+	jp c,_clearParentItem
+	call _checkNoOtherParentItemsInUse
+	jp nz,_clearParentItem
 
-	ld a,$80		; $4d94
-	ld (wcc95),a		; $4d96
-	ld a,$ff ~ DISABLE_LINK ~ DISABLE_ALL_BUT_INTERACTIONS		; $4d99
-	ld (wDisabledObjects),a		; $4d9b
+	ld a,$80
+	ld (wcc95),a
+	ld a,$ff ~ DISABLE_LINK ~ DISABLE_ALL_BUT_INTERACTIONS
+	ld (wDisabledObjects),a
 
-	call _parentItemLoadAnimationAndIncState		; $4d9e
+	call _parentItemLoadAnimationAndIncState
 
 	; Determine what sound to play
-	ld b,$00		; $4da1
-	call @getSelectedSongAddr		; $4da3
-	jr z,+			; $4da6
-	ld b,$03		; $4da8
+	ld b,$00
+	call @getSelectedSongAddr
+	jr z,+
+	ld b,$03
 +
-	ld a,(hl)		; $4daa
-	add b			; $4dab
-	ld hl,@sfxList		; $4dac
-	rst_addAToHl			; $4daf
-	ld a,(hl)		; $4db0
-	call playSound		; $4db1
+	ld a,(hl)
+	add b
+	ld hl,@sfxList
+	rst_addAToHl
+	ld a,(hl)
+	call playSound
 
 @state1:
-	ld hl,w1Link.collisionType		; $4db4
-	res 7,(hl)		; $4db7
+	ld hl,w1Link.collisionType
+	res 7,(hl)
 
 	; Create floating music note every $20 frames
-	call itemDecCounter1		; $4db9
-	ld a,(hl)		; $4dbc
-	and $1f			; $4dbd
-	jr nz,++		; $4dbf
+	call itemDecCounter1
+	ld a,(hl)
+	and $1f
+	jr nz,++
 
-	ld l,Item.animParameter		; $4dc1
-	bit 0,(hl)		; $4dc3
-	ld bc,$fcf8		; $4dc5
-	jr z,+			; $4dc8
-	ld c,$08		; $4dca
+	ld l,Item.animParameter
+	bit 0,(hl)
+	ld bc,$fcf8
+	jr z,+
+	ld c,$08
 +
-	call getRandomNumber		; $4dcc
-	and $01			; $4dcf
-	push de			; $4dd1
-	ld d,>w1Link		; $4dd2
-	call objectCreateFloatingMusicNote		; $4dd4
-	pop de			; $4dd7
+	call getRandomNumber
+	and $01
+	push de
+	ld d,>w1Link
+	call objectCreateFloatingMusicNote
+	pop de
 ++
-	call _specialObjectAnimate		; $4dd8
-	call @getSelectedSongAddr		; $4ddb
+	call _specialObjectAnimate
+	call @getSelectedSongAddr
 
 .ifdef ROM_AGES
-	ld a,$ff		; $4dde
-	jr z,+			; $4de0
-	ld a,(hl)		; $4de2
+	ld a,$ff
+	jr z,+
+	ld a,(hl)
 +
-	ld (wLinkPlayingInstrument),a		; $4de3
-	ld (wLinkRidingObject),a		; $4de6
-	ld c,$80		; $4de9
-	jr nz,++			; $4deb
+	ld (wLinkPlayingInstrument),a
+	ld (wLinkRidingObject),a
+	ld c,$80
+	jr nz,++
 
 .else; ROM_SEASONS
-	ld a,$ff		; $4dde
+	ld a,$ff
 	ld (wLinkPlayingInstrument),a
 	ld (wLinkRidingObject),a
 	ld c,$80
 .endif
 
-	ld a,(hl)		; $4ded
-	or a			; $4dee
-	jr nz,++			; $4def
-	ld c,$40		; $4df1
+	ld a,(hl)
+	or a
+	jr nz,++
+	ld c,$40
 ++
-	ld e,Item.animParameter		; $4df3
-	ld a,(de)		; $4df5
-	and c			; $4df6
-	ret z			; $4df7
+	ld e,Item.animParameter
+	ld a,(de)
+	and c
+	ret z
 
 ; Done playing song
 
-	ld hl,w1Link.collisionType		; $4df8
-	set 7,(hl)		; $4dfb
+	ld hl,w1Link.collisionType
+	set 7,(hl)
 
 .ifdef ROM_AGES
-	call @getSelectedSongAddr		; $4dfd
-	jr nz,@harp		; $4e00
+	call @getSelectedSongAddr
+	jr nz,@harp
 .endif
 
 	; Flute: try to spawn companion
-	ldbc INTERACID_COMPANION_SPAWNER, $80		; $4e02
-	call objectCreateInteraction		; $4e05
+	ldbc INTERACID_COMPANION_SPAWNER, $80
+	call objectCreateInteraction
 
 @clearSelf:
-	xor a			; $4e08
-	ld (wDisabledObjects),a		; $4e09
-	ld (wcc95),a		; $4e0c
-	jp _clearParentItem		; $4e0f
+	xor a
+	ld (wDisabledObjects),a
+	ld (wcc95),a
+	jp _clearParentItem
 
 
 .ifdef ROM_AGES ; Harp code
 
 @tuneEchoesInVain:
-	ld bc,TX_5110		; $4e12
-	call showText		; $4e15
-	jr @clearSelf		; $4e18
+	ld bc,TX_5110
+	call showText
+	jr @clearSelf
 
 @harp:
 	; Only allow harp playing on overworld, non-maku tree screens
-	ld a,(wTilesetFlags)		; $4e1a
+	ld a,(wTilesetFlags)
 	and (TILESETFLAG_UNDERWATER|TILESETFLAG_SIDESCROLL|TILESETFLAG_10|TILESETFLAG_DUNGEON|TILESETFLAG_INDOORS|TILESETFLAG_MAKU)
-	jr nz,@clearSelf	; $4e1f
+	jr nz,@clearSelf
 
-	ld a,(hl)		; $4e21
-	rst_jumpTable			; $4e22
+	ld a,(hl)
+	rst_jumpTable
 	.dw @clearSelf
 	.dw @tuneOfEchoes
 	.dw @tuneOfCurrents
 	.dw @tuneOfAges
 
 @tuneOfEchoes:
-	call getThisRoomFlags		; $4e2b
-	bit ROOMFLAG_BIT_PORTALSPOT_DISCOVERED,(hl)		; $4e2e
-	jr nz,@clearSelf	; $4e30
-	jr @tuneEchoesInVain		; $4e32
+	call getThisRoomFlags
+	bit ROOMFLAG_BIT_PORTALSPOT_DISCOVERED,(hl)
+	jr nz,@clearSelf
+	jr @tuneEchoesInVain
 
 @tuneOfCurrents:
 	; Test TILESETFLAG_BIT_PAST
-	ld a,(wTilesetFlags)		; $4e34
-	rlca			; $4e37
-	jr nc,@tuneEchoesInVain	; $4e38
+	ld a,(wTilesetFlags)
+	rlca
+	jr nc,@tuneEchoesInVain
 
 @tuneOfAges:
-	call restartSound		; $4e3a
+	call restartSound
 
-	ld a,CUTSCENE_TIMEWARP		; $4e3d
-	ld (wCutsceneTrigger),a		; $4e3f
+	ld a,CUTSCENE_TIMEWARP
+	ld (wCutsceneTrigger),a
 
 	ld a,DISABLE_LINK|DISABLE_ENEMIES|DISABLE_8|DISABLE_COMPANION|DISABLE_40
-	ld (wDisabledObjects),a		; $4e44
-	ld (wDisableLinkCollisionsAndMenu),a		; $4e47
-	ld (wcde0),a		; $4e4a
-	call clearAllItemsAndPutLinkOnGround		; $4e4d
-	jp _specialObjectAnimate		; $4e50
+	ld (wDisabledObjects),a
+	ld (wDisableLinkCollisionsAndMenu),a
+	ld (wcde0),a
+	call clearAllItemsAndPutLinkOnGround
+	jp _specialObjectAnimate
 
 .endif ; ROM_AGES
 
@@ -179,13 +179,13 @@ _parentItemCode_harp:
 ; @param[out]	zflag	Set if using flute, unset for harp
 ; @addr{4e5a}
 @getSelectedSongAddr:
-	ld hl,wFluteIcon		; $4e5a
-	ld e,Item.id		; $4e5d
-	ld a,(de)		; $4e5f
-	cp ITEMID_FLUTE			; $4e60
+	ld hl,wFluteIcon
+	ld e,Item.id
+	ld a,(de)
+	cp ITEMID_FLUTE
 
 .ifdef ROM_AGES
-	ret z			; $4e62
-	ld l,<wSelectedHarpSong		; $4e63
+	ret z
+	ld l,<wSelectedHarpSong
 .endif
-	ret			; $4e65
+	ret

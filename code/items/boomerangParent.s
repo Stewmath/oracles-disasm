@@ -2,9 +2,9 @@
 ; ITEMID_BOOMERANG ($06)
 ; @addr{4fdd}
 _parentItemCode_boomerang:
-	ld e,Item.state		; $4fdd
-	ld a,(de)		; $4fdf
-	rst_jumpTable			; $4fe0
+	ld e,Item.state
+	ld a,(de)
+	rst_jumpTable
 
 	.dw @state0
 	.dw @state1
@@ -14,18 +14,18 @@ _parentItemCode_boomerang:
 
 @state0:
 .ifdef ROM_AGES
-	call _isLinkUnderwater		; $4fe5
-	jp nz,_clearParentItem		; $4fe8
-	ld a,(w1ParentItem2.id)		; $4feb
-	cp ITEMID_SWITCH_HOOK			; $4fee
-	jp z,_clearParentItem		; $4ff0
+	call _isLinkUnderwater
+	jp nz,_clearParentItem
+	ld a,(w1ParentItem2.id)
+	cp ITEMID_SWITCH_HOOK
+	jp z,_clearParentItem
 .endif
 
-	ld a,(wLinkSwimmingState)		; $4ff3
-	or a			; $4ff6
-	jp nz,_clearParentItem		; $4ff7
+	ld a,(wLinkSwimmingState)
+	or a
+	jp nz,_clearParentItem
 
-	call _parentItemLoadAnimationAndIncState		; $4ffa
+	call _parentItemLoadAnimationAndIncState
 
 .ifdef ROM_SEASONS
 	ld a,(wBoomerangLevel)
@@ -35,35 +35,35 @@ _parentItemCode_boomerang:
 	inc a
 +
 .else; ROM_AGES
-	ld a,$01		; $4ffd
+	ld a,$01
 .endif
 
-	ld e,Item.state		; $4fff
-	ld (de),a		; $5001
+	ld e,Item.state
+	ld (de),a
 
 	; Try to create the physical boomerang object, delete self on failure
-	dec a			; $5002
-	ld c,a			; $5003
-	ld e,Item.id		; $5004
-	ld a,(de)		; $5006
-	ld b,a			; $5007
-	ld e,$01		; $5008
-	call itemCreateChildWithID		; $500a
-	jp c,_clearParentItem		; $500d
+	dec a
+	ld c,a
+	ld e,Item.id
+	ld a,(de)
+	ld b,a
+	ld e,$01
+	call itemCreateChildWithID
+	jp c,_clearParentItem
 
 	; Calculate angle for newly created boomerang
-	ld a,(wLinkAngle)		; $5010
-	bit 7,a			; $5013
-	jr z,+			; $5015
-	ld a,(w1Link.direction)		; $5017
-	swap a			; $501a
-	rrca			; $501c
+	ld a,(wLinkAngle)
+	bit 7,a
+	jr z,+
+	ld a,(w1Link.direction)
+	swap a
+	rrca
 +
-	ld l,Item.angle		; $501d
-	ld (hl),a		; $501f
-	ld l,Item.var34		; $5020
-	ld (hl),a		; $5022
-	ret			; $5023
+	ld l,Item.angle
+	ld (hl),a
+	ld l,Item.var34
+	ld (hl),a
+	ret
 
 .ifdef ROM_SEASONS
 
@@ -108,8 +108,8 @@ _parentItemCode_boomerang:
 
 
 @state1:
-	ld e,Item.animParameter		; $5024
-	ld a,(de)		; $5026
-	rlca			; $5027
-	jp nc,_specialObjectAnimate		; $5028
-	jp _clearParentItem		; $502b
+	ld e,Item.animParameter
+	ld a,(de)
+	rlca
+	jp nc,_specialObjectAnimate
+	jp _clearParentItem

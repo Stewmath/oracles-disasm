@@ -8,83 +8,83 @@
 ;;
 ; @addr{4000}
 _ecom_incState:
-	ld h,d			; $4000
-	ld l,Enemy.state		; $4001
-	inc (hl)		; $4003
-	ret			; $4004
+	ld h,d
+	ld l,Enemy.state
+	inc (hl)
+	ret
 
 ;;
 ; @addr{4005}
 _ecom_incState2:
-	ld h,d			; $4005
-	ld l,Enemy.state2		; $4006
-	inc (hl)		; $4008
-	ret			; $4009
+	ld h,d
+	ld l,Enemy.state2
+	inc (hl)
+	ret
 
 ;;
 ; Update knockback where solid tiles are defined "normally".
 ; @addr{400a}
 _ecom_updateKnockback:
-	xor a			; $400a
-	ld e,Enemy.knockbackAngle		; $400b
-	call _ecom_getSideviewAdjacentWallsBitsetGivenAngle		; $400d
+	xor a
+	ld e,Enemy.knockbackAngle
+	call _ecom_getSideviewAdjacentWallsBitsetGivenAngle
 
 _ecom_updateKnockback_common:
-	ld a,(de)		; $4010
-	ld c,a			; $4011
-	ld e,Enemy.knockbackCounter		; $4012
-	ld a,(de)		; $4014
-	rlca			; $4015
+	ld a,(de)
+	ld c,a
+	ld e,Enemy.knockbackCounter
+	ld a,(de)
+	rlca
 
 	; Speed is 200 or 300 based on knockback duration
-	ld b,SPEED_200		; $4016
-	jr nc,++		; $4018
+	ld b,SPEED_200
+	jr nc,++
 
-	ld b,SPEED_300		; $401a
-	and $06			; $401c
-	jr nz,++		; $401e
+	ld b,SPEED_300
+	and $06
+	jr nz,++
 
 	; Create "dust" if bit 7 of Enemy.knockbackCounter is set
-	push bc			; $4020
-	ldbc INTERACID_FALLDOWNHOLE, $01		; $4021
-	call objectCreateInteraction		; $4024
-	pop bc			; $4027
+	push bc
+	ldbc INTERACID_FALLDOWNHOLE, $01
+	call objectCreateInteraction
+	pop bc
 ++
-	call _ecom_applyGivenVelocityGivenAdjacentWalls		; $4028
-	ret nz			; $402b
+	call _ecom_applyGivenVelocityGivenAdjacentWalls
+	ret nz
 
 	; Enemy stopped moving; stop knockback early.
-	ld e,Enemy.knockbackCounter		; $402c
-	ld a,(de)		; $402e
-	and $80			; $402f
-	ld (de),a		; $4031
-	ret			; $4032
+	ld e,Enemy.knockbackCounter
+	ld a,(de)
+	and $80
+	ld (de),a
+	ret
 
 ;;
 ; Update knockback where the enemy can pass through anything except the screen boundary.
 ; @addr{4033}
 _ecom_updateKnockbackNoSolidity:
-	ld a,$02		; $4033
-	ld e,Enemy.knockbackAngle		; $4035
-	call _ecom_getSideviewAdjacentWallsBitsetGivenAngle		; $4037
-	jr _ecom_updateKnockback_common		; $403a
+	ld a,$02
+	ld e,Enemy.knockbackAngle
+	call _ecom_getSideviewAdjacentWallsBitsetGivenAngle
+	jr _ecom_updateKnockback_common
 
 ;;
 ; @addr{403c}
 _ecom_updateKnockbackAndCheckHazardsNoAnimationsForHoles:
-	call _ecom_updateKnockback		; $403c
-	call _ecom_checkHazardsNoAnimationForHoles		; $403f
-	ret			; $4042
+	call _ecom_updateKnockback
+	call _ecom_checkHazardsNoAnimationForHoles
+	ret
 
 ;;
 ; Like "_ecom_checkHazards", but the enemy doesn't animate when they fall into a hole.
 ; That is, they just get stuck on the last frame of their animation as they get sucked in.
 ; @addr{4043}
 _ecom_checkHazardsNoAnimationForHoles:
-	ldh (<hFF8F),a	; $4043
-	xor a			; $4045
-	ldh (<hFF8D),a	; $4046
-	jr _ecom_checkHazardsCommon		; $4048
+	ldh (<hFF8F),a
+	xor a
+	ldh (<hFF8D),a
+	jr _ecom_checkHazardsCommon
 
 ;;
 ; Standard implementation of "enemy experiencing knockback" state?
@@ -92,9 +92,9 @@ _ecom_checkHazardsNoAnimationForHoles:
 ; "_ecom_checkHazards" function instead of jumping to it.
 ; @addr{404a}
 _ecom_updateKnockbackAndCheckHazards:
-	call _ecom_updateKnockback		; $404a
-	call _ecom_checkHazards		; $404d
-	ret			; $4050
+	call _ecom_updateKnockback
+	call _ecom_checkHazards
+	ret
 
 ;;
 ; Checks whether the enemy falls into any hazards, and does the appropriate reaction if
@@ -108,79 +108,79 @@ _ecom_updateKnockbackAndCheckHazards:
 ; @param[out]	a	Same as passed in
 ; @addr{4051}
 _ecom_checkHazards:
-	ldh (<hFF8F),a	; $4051
-	ld a,$01		; $4053
-	ldh (<hFF8D),a	; $4055
+	ldh (<hFF8F),a
+	ld a,$01
+	ldh (<hFF8D),a
 
 _ecom_checkHazardsCommon:
 	; If already touched a hazard, skip the checks below
-	ld e,Enemy.var3f		; $4057
-	ld a,(de)		; $4059
-	and $07			; $405a
-	jr nz,@applyHazardEffect	; $405c
+	ld e,Enemy.var3f
+	ld a,(de)
+	and $07
+	jr nz,@applyHazardEffect
 
 	; Return if enemy is in midair
-	ld e,Enemy.zh		; $405e
-	ld a,(de)		; $4060
-	rlca			; $4061
-	jr c,@ret	; $4062
+	ld e,Enemy.zh
+	ld a,(de)
+	rlca
+	jr c,@ret
 
 	; Check if it touched a hazard
-	ld bc,$05ff		; $4064
-	call objectGetRelativeTile		; $4067
-	ld hl,hazardCollisionTable		; $406a
-	call lookupCollisionTable		; $406d
-	ld b,$ff		; $4070
-	jr c,@touchedHazard	; $4072
+	ld bc,$05ff
+	call objectGetRelativeTile
+	ld hl,hazardCollisionTable
+	call lookupCollisionTable
+	ld b,$ff
+	jr c,@touchedHazard
 
-	ld bc,$0501		; $4074
-	call objectGetRelativeTile		; $4077
-	ld hl,hazardCollisionTable		; $407a
-	call lookupCollisionTable		; $407d
-	ld b,$01		; $4080
-	jr c,@touchedHazard	; $4082
+	ld bc,$0501
+	call objectGetRelativeTile
+	ld hl,hazardCollisionTable
+	call lookupCollisionTable
+	ld b,$01
+	jr c,@touchedHazard
 
-	call _ecom_updateMovingPlatform		; $4084
+	call _ecom_updateMovingPlatform
 
 @ret:
-	ldh a,(<hFF8F)	; $4087
-	or a			; $4089
-	ret			; $408a
+	ldh a,(<hFF8F)
+	or a
+	ret
 
 @touchedHazard:
-	ld h,d			; $408b
-	ld l,Enemy.var3f		; $408c
-	ld e,l			; $408e
-	or (hl)			; $408f
-	ld (hl),a		; $4090
-	ld l,Enemy.invincibilityCounter		; $4091
-	ld (hl),$00		; $4093
-	ld l,Enemy.knockbackCounter		; $4095
-	ld (hl),$00		; $4097
+	ld h,d
+	ld l,Enemy.var3f
+	ld e,l
+	or (hl)
+	ld (hl),a
+	ld l,Enemy.invincibilityCounter
+	ld (hl),$00
+	ld l,Enemy.knockbackCounter
+	ld (hl),$00
 
 	; Disable collisions
-	ld l,Enemy.collisionType		; $4099
-	res 7,(hl)		; $409b
+	ld l,Enemy.collisionType
+	res 7,(hl)
 
-	ld l,Enemy.counter1		; $409d
-	ld (hl),60		; $409f
-	inc l			; $40a1
-	ldh a,(<hFF8D)	; $40a2
+	ld l,Enemy.counter1
+	ld (hl),60
+	inc l
+	ldh a,(<hFF8D)
 	ld (hl),a ; [Enemy.counter2] = [hFF8D]
 
-	ld l,Enemy.xh		; $40a5
-	ld a,(hl)		; $40a7
-	add b			; $40a8
-	ld (hl),a		; $40a9
+	ld l,Enemy.xh
+	ld a,(hl)
+	add b
+	ld (hl),a
 
 @applyHazardEffect:
 	pop hl ; Discard return address (this enemy is about to be be deleted)
-	ld a,(de)		; $40ab
-	rrca			; $40ac
-	jr c,_ecom_makeSplashAndDelete	; $40ad
-	rrca			; $40af
-	jr c,_ecom_fallingInHole	; $40b0
-	jr _ecom_makeLavaSplashAndDelete		; $40b2
+	ld a,(de)
+	rrca
+	jr c,_ecom_makeSplashAndDelete
+	rrca
+	jr c,_ecom_fallingInHole
+	jr _ecom_makeLavaSplashAndDelete
 
 ; @addr{40b4}
 _enemyConveyorTilesTable:
@@ -224,101 +224,101 @@ _enemyConveyorTilesTable:
 
 
 _ecom_makeSplashAndDelete:
-	ld b,INTERACID_SPLASH		; $40c9
-	jr ++			; $40cb
+	ld b,INTERACID_SPLASH
+	jr ++
 
 _ecom_makeLavaSplashAndDelete:
-	ld b,INTERACID_LAVASPLASH		; $40cd
+	ld b,INTERACID_LAVASPLASH
 ++
-	call objectCreateInteractionWithSubid00		; $40cf
+	call objectCreateInteractionWithSubid00
 
 _ecom_decNumEnemiesAndDelete:
-	call decNumEnemies		; $40d2
-	jp enemyDelete		; $40d5
+	call decNumEnemies
+	jp enemyDelete
 
 _ecom_fallDownHoleAndDelete:
-	call objectCreateFallingDownHoleInteraction		; $40d8
-	jr _ecom_decNumEnemiesAndDelete		; $40db
+	call objectCreateFallingDownHoleInteraction
+	jr _ecom_decNumEnemiesAndDelete
 
 
 ;;
 ; Enemy is currently falling down a hole.
 ; @addr{40dd}
 _ecom_fallingInHole:
-	call _ecom_decCounter1		; $40dd
-	jr z,_ecom_fallDownHoleAndDelete	; $40e0
+	call _ecom_decCounter1
+	jr z,_ecom_fallDownHoleAndDelete
 
 	ld a,(hl) ; a = [Enemy.counter1]
-	and $07			; $40e3
-	jr nz,++		; $40e5
+	and $07
+	jr nz,++
 
 	; Every 8 frames, move a half pixel closer to the hole.
-	call @checkInCenterOfHole		; $40e7
-	jr z,_ecom_fallDownHoleAndDelete	; $40ea
+	call @checkInCenterOfHole
+	jr z,_ecom_fallDownHoleAndDelete
 
-	call objectGetRelativeAngleWithTempVars		; $40ec
-	ld c,a			; $40ef
-	ld b,SPEED_80		; $40f0
-	call _ecom_applyGivenVelocity		; $40f2
+	call objectGetRelativeAngleWithTempVars
+	ld c,a
+	ld b,SPEED_80
+	call _ecom_applyGivenVelocity
 ++
 	; If bit 0 of counter2 is set, animate the enemy as it's being sucked toward the
 	; hole.
-	ld h,d			; $40f5
-	ld l,Enemy.counter2		; $40f6
-	bit 0,(hl)		; $40f8
-	ret z			; $40fa
-	ld l,Enemy.animCounter		; $40fb
-	ld a,(hl)		; $40fd
-	sub $03			; $40fe
-	jr nc,+			; $4100
-	xor a			; $4102
+	ld h,d
+	ld l,Enemy.counter2
+	bit 0,(hl)
+	ret z
+	ld l,Enemy.animCounter
+	ld a,(hl)
+	sub $03
+	jr nc,+
+	xor a
 +
-	inc a			; $4103
-	ld (hl),a		; $4104
-	jp enemyAnimate		; $4105
+	inc a
+	ld (hl),a
+	jp enemyAnimate
 
 ;;
 ; @param[out]	zflag	z if enemy is in the center of the hole
 ; @addr{4108}
 @checkInCenterOfHole:
-	ld l,Enemy.yh		; $4108
-	ldi a,(hl)		; $410a
-	ldh (<hFF8F),a	; $410b
-	add $05			; $410d
-	and $f0			; $410f
-	add $08			; $4111
-	ld b,a			; $4113
-	inc l			; $4114
-	ld a,(hl)		; $4115
-	ldh (<hFF8E),a	; $4116
-	and $f0			; $4118
-	add $08			; $411a
-	ld c,a			; $411c
-	cp (hl)			; $411d
-	ret nz			; $411e
-	ldh a,(<hFF8F)	; $411f
-	cp b			; $4121
-	ret			; $4122
+	ld l,Enemy.yh
+	ldi a,(hl)
+	ldh (<hFF8F),a
+	add $05
+	and $f0
+	add $08
+	ld b,a
+	inc l
+	ld a,(hl)
+	ldh (<hFF8E),a
+	and $f0
+	add $08
+	ld c,a
+	cp (hl)
+	ret nz
+	ldh a,(<hFF8F)
+	cp b
+	ret
 
 
 ;;
 ; Updates enemy's position if he's on a moving platform.
 ; @addr{4123}
 _ecom_updateMovingPlatform:
-	ld e,Enemy.zh		; $4123
-	ld a,(de)		; $4125
-	rlca			; $4126
-	ret c			; $4127
+	ld e,Enemy.zh
+	ld a,(de)
+	rlca
+	ret c
 
 	; Check if on a moving platform
-	ld bc,$0500		; $4128
-	call objectGetRelativeTile		; $412b
-	ld hl,_enemyConveyorTilesTable		; $412e
-	call lookupCollisionTable		; $4131
-	ret nc			; $4134
+	ld bc,$0500
+	call objectGetRelativeTile
+	ld hl,_enemyConveyorTilesTable
+	call lookupCollisionTable
+	ret nc
 
-	ld c,a			; $4135
-	ld b,SPEED_80		; $4136
+	ld c,a
+	ld b,SPEED_80
 
 ;;
 ; Move an object with normal collisions.
@@ -329,14 +329,14 @@ _ecom_updateMovingPlatform:
 ; @param	c	Angle
 ; @param[out]	zflag	z if stopped
 _ecom_applyGivenVelocity:
-	ld hl,_ecom_sideviewAdjacentWallOffsetTable		; $4138
-	xor a			; $413b
-	ldh (<hFF8A),a	; $413c
-	push bc			; $413e
-	ld a,c			; $413f
-	call _ecom_getAdjacentWallsBitset		; $4140
-	pop bc			; $4143
-	jr _ecom_applyGivenVelocityGivenAdjacentWalls		; $4144
+	ld hl,_ecom_sideviewAdjacentWallOffsetTable
+	xor a
+	ldh (<hFF8A),a
+	push bc
+	ld a,c
+	call _ecom_getAdjacentWallsBitset
+	pop bc
+	jr _ecom_applyGivenVelocityGivenAdjacentWalls
 
 ;;
 ; Apply an enemies velocity, accounting for walls. Enemy should be the "top-down" type
@@ -345,17 +345,17 @@ _ecom_applyGivenVelocity:
 ; Note: ALL of these functions assume a 16x16 size enemy.
 ; @addr{4146}
 _ecom_applyVelocityForTopDownEnemy:
-	xor a			; $4146
-	call _ecom_getTopDownAdjacentWallsBitset		; $4147
-	jr _ecom_applyVelocityGivenAdjacentWalls		; $414a
+	xor a
+	call _ecom_getTopDownAdjacentWallsBitset
+	jr _ecom_applyVelocityGivenAdjacentWalls
 
 ;;
 ; Same as above, but holes count as walls.
 ; @addr{414c}
 _ecom_applyVelocityForTopDownEnemyNoHoles:
-	ld a,$01		; $414c
-	call _ecom_getTopDownAdjacentWallsBitset		; $414e
-	jr _ecom_applyVelocityGivenAdjacentWalls		; $4151
+	ld a,$01
+	call _ecom_getTopDownAdjacentWallsBitset
+	jr _ecom_applyVelocityGivenAdjacentWalls
 
 ;;
 ; Like the above functions, but the enemy's collision box is slightly reduced for enemies
@@ -371,26 +371,26 @@ _ecom_applyVelocityForTopDownEnemyNoHoles:
 ; only for the terrain?
 ; @addr{4153}
 _ecom_applyVelocityForSideviewEnemy:
-	xor a			; $4153
-	jr ++			; $4154
+	xor a
+	jr ++
 
 ;;
 ; @addr{4156}
 _ecom_applyVelocityForSideviewEnemyNoHoles:
-	ld a,$01		; $4156
+	ld a,$01
 ++
-	call _ecom_getSideviewAdjacentWallsBitset		; $4158
+	call _ecom_getSideviewAdjacentWallsBitset
 
 ;;
 ; @param	de	Enemy's angle value
 ; @param	hFF8B	Collision bitset
 ; @addr{415b}
 _ecom_applyVelocityGivenAdjacentWalls:
-	ld a,(de)		; $415b
-	ld c,a			; $415c
-	ld e,Enemy.speed		; $415d
-	ld a,(de)		; $415f
-	ld b,a			; $4160
+	ld a,(de)
+	ld c,a
+	ld e,Enemy.speed
+	ld a,(de)
+	ld b,a
 
 ;;
 ; Applies the given speed and angle, while checking for collisions; this also accounts for
@@ -403,96 +403,96 @@ _ecom_applyVelocityGivenAdjacentWalls:
 ; @param[out]	zflag	nz if the enemy moved at least the equivalent of 1 pixel
 ; @addr{4161}
 _ecom_applyGivenVelocityGivenAdjacentWalls:
-	ld a,c			; $4161
-	ldh (<hFF8C),a	; $4162
-	call getPositionOffsetForVelocity		; $4164
+	ld a,c
+	ldh (<hFF8C),a
+	call getPositionOffsetForVelocity
 
-	xor a			; $4167
-	ldh (<hFF8D),a	; $4168
+	xor a
+	ldh (<hFF8D),a
 
 @updateY:
-	ld e,Enemy.y		; $416a
-	ldh a,(<hFF8B)	; $416c
-	and $0c			; $416e
-	jr nz,@checkSlideY	; $4170
+	ld e,Enemy.y
+	ldh a,(<hFF8B)
+	and $0c
+	jr nz,@checkSlideY
 
-	call @applySpeedComponent		; $4172
-	jr @updateX		; $4175
+	call @applySpeedComponent
+	jr @updateX
 
 @checkSlideY:
-	cp $0c			; $4177
-	jr z,@updateX	; $4179
-	bit 3,a			; $417b
-	ldh a,(<hFF8C)	; $417d
-	ld bc,$0060		; $417f
-	jr nz,++		; $4182
-	xor $10			; $4184
-	ld bc,-$60		; $4186
+	cp $0c
+	jr z,@updateX
+	bit 3,a
+	ldh a,(<hFF8C)
+	ld bc,$0060
+	jr nz,++
+	xor $10
+	ld bc,-$60
 ++
-	cp $11			; $4189
-	jr nc,@updateX	; $418b
+	cp $11
+	jr nc,@updateX
 
-	ld e,Enemy.x		; $418d
-	ld a,(de)		; $418f
-	add c			; $4190
-	ld (de),a		; $4191
-	inc e			; $4192
-	ld a,(de)		; $4193
-	adc b			; $4194
-	ld (de),a		; $4195
-	ld e,Enemy.speed		; $4196
-	ld a,(de)		; $4198
-	cp SPEED_140			; $4199
-	jr nc,@updateX	; $419b
+	ld e,Enemy.x
+	ld a,(de)
+	add c
+	ld (de),a
+	inc e
+	ld a,(de)
+	adc b
+	ld (de),a
+	ld e,Enemy.speed
+	ld a,(de)
+	cp SPEED_140
+	jr nc,@updateX
 
-	ld a,$01		; $419d
-	ldh (<hFF8D),a	; $419f
+	ld a,$01
+	ldh (<hFF8D),a
 
 @updateX:
-	ld e,Enemy.x		; $41a1
-	ld l,<wTmpcfc0+2		; $41a3
-	ldh a,(<hFF8B)	; $41a5
-	and $03			; $41a7
-	jr nz,@checkSlideX	; $41a9
-	call @applySpeedComponent		; $41ab
-	jr @ret		; $41ae
+	ld e,Enemy.x
+	ld l,<wTmpcfc0+2
+	ldh a,(<hFF8B)
+	and $03
+	jr nz,@checkSlideX
+	call @applySpeedComponent
+	jr @ret
 
 @checkSlideX:
-	cp $03			; $41b0
-	jr z,@ret	; $41b2
-	rrca			; $41b4
-	ldh a,(<hFF8C)	; $41b5
-	ld bc,$0060		; $41b7
-	jr nc,++		; $41ba
-	sub $10			; $41bc
-	ld bc,-$60		; $41be
+	cp $03
+	jr z,@ret
+	rrca
+	ldh a,(<hFF8C)
+	ld bc,$0060
+	jr nc,++
+	sub $10
+	ld bc,-$60
 ++
-	add $08			; $41c1
-	and $1f			; $41c3
-	cp $11			; $41c5
-	jr nc,@ret	; $41c7
+	add $08
+	and $1f
+	cp $11
+	jr nc,@ret
 
-	ld e,Enemy.y		; $41c9
-	ld a,(de)		; $41cb
-	add c			; $41cc
-	ld (de),a		; $41cd
-	inc e			; $41ce
-	ld a,(de)		; $41cf
-	adc b			; $41d0
-	ld (de),a		; $41d1
+	ld e,Enemy.y
+	ld a,(de)
+	add c
+	ld (de),a
+	inc e
+	ld a,(de)
+	adc b
+	ld (de),a
 
-	ld e,Enemy.speed		; $41d2
-	ld a,(de)		; $41d4
-	cp SPEED_140			; $41d5
-	jr nc,@ret	; $41d7
+	ld e,Enemy.speed
+	ld a,(de)
+	cp SPEED_140
+	jr nc,@ret
 
-	ld a,$01		; $41d9
-	ldh (<hFF8D),a	; $41db
+	ld a,$01
+	ldh (<hFF8D),a
 
 @ret:
-	ldh a,(<hFF8D)	; $41dd
-	or a			; $41df
-	ret			; $41e0
+	ldh a,(<hFF8D)
+	or a
+	ret
 
 ;;
 ; Writes something to hFF8D (nonzero if moved at least one pixel?)
@@ -501,34 +501,34 @@ _ecom_applyGivenVelocityGivenAdjacentWalls:
 ; @param	hl	Speed component (from "getPositionOffsetForVelocity" call)
 ; @addr{41e1}
 @applySpeedComponent:
-	ld a,(de)		; $41e1
-	add (hl)		; $41e2
-	ld (de),a		; $41e3
+	ld a,(de)
+	add (hl)
+	ld (de),a
 
-	ld b,(hl)		; $41e4
-	inc l			; $41e5
-	inc e			; $41e6
-	ld a,(de)		; $41e7
-	ld c,a			; $41e8
-	adc (hl)		; $41e9
-	ld (de),a		; $41ea
+	ld b,(hl)
+	inc l
+	inc e
+	ld a,(de)
+	ld c,a
+	adc (hl)
+	ld (de),a
 
-	sub c			; $41eb
-	jr nz,++		; $41ec
+	sub c
+	jr nz,++
 
-	ld c,$20		; $41ee
-	ld e,Enemy.speed		; $41f0
-	ld a,(de)		; $41f2
-	cp SPEED_140			; $41f3
-	jr c,+			; $41f5
-	ld c,$60		; $41f7
+	ld c,$20
+	ld e,Enemy.speed
+	ld a,(de)
+	cp SPEED_140
+	jr c,+
+	ld c,$60
 +
-	ld a,b			; $41f9
-	cp c			; $41fa
-	ret c			; $41fb
+	ld a,b
+	cp c
+	ret c
 ++
-	ldh (<hFF8D),a	; $41fc
-	ret			; $41fe
+	ldh (<hFF8D),a
+	ret
 
 
 ;;
@@ -537,32 +537,32 @@ _ecom_applyGivenVelocityGivenAdjacentWalls:
 ; @param	de	Pointer to Enemy.angle?
 ; @addr{41ff}
 _ecom_getTopDownAdjacentWallsBitsetGivenAngle:
-	ld hl,_ecom_topDownAdjacentWallOffsetTable		; $41ff
-	jr _ecom_getAdjacentWallsBitset		; $4202
+	ld hl,_ecom_topDownAdjacentWallOffsetTable
+	jr _ecom_getAdjacentWallsBitset
 
 ;;
 ; @param	a	Value for hFF8A (see below)
 ; @addr{4204}
 _ecom_getTopDownAdjacentWallsBitset:
-	ld e,Enemy.angle		; $4204
-	ld hl,_ecom_topDownAdjacentWallOffsetTable		; $4206
-	jr _label_025		; $4209
+	ld e,Enemy.angle
+	ld hl,_ecom_topDownAdjacentWallOffsetTable
+	jr _label_025
 
 ;;
 ; @param	a	Value for hFF8A (see below)
 ; @addr{420b}
 _ecom_getSideviewAdjacentWallsBitset:
-	ld e,Enemy.angle		; $420b
+	ld e,Enemy.angle
 
 ;;
 ; @param	a	Value for hFF8A (see below)
 ; @param	de	Pointer to Enemy.angle?
 ; @addr{420d}
 _ecom_getSideviewAdjacentWallsBitsetGivenAngle:
-	ld hl,_ecom_sideviewAdjacentWallOffsetTable		; $420d
+	ld hl,_ecom_sideviewAdjacentWallOffsetTable
 _label_025:
-	ldh (<hFF8A),a	; $4210
-	ld a,(de)		; $4212
+	ldh (<hFF8A),a
+	ld a,(de)
 
 ;;
 ; Calculates a bitset of adjacent walls, just like SpecialObject's "adjacentWallsBitset".
@@ -578,30 +578,30 @@ _label_025:
 ;			moving toward?)
 ; @addr{4213}
 _ecom_getAdjacentWallsBitset:
-	push de			; $4213
-	call _ecom_getAdjacentWallTableOffset		; $4214
-	ld b,d			; $4217
-	rst_addAToHl			; $4218
-	ld d,h			; $4219
-	ld e,l			; $421a
-	ld h,b			; $421b
-	ld l,Enemy.yh		; $421c
-	ld b,(hl)		; $421e
-	ld l,Enemy.xh		; $421f
-	ld c,(hl)		; $4221
+	push de
+	call _ecom_getAdjacentWallTableOffset
+	ld b,d
+	rst_addAToHl
+	ld d,h
+	ld e,l
+	ld h,b
+	ld l,Enemy.yh
+	ld b,(hl)
+	ld l,Enemy.xh
+	ld c,(hl)
 
-	ld a,$10		; $4222
-	ldh (<hFF8B),a	; $4224
+	ld a,$10
+	ldh (<hFF8B),a
 --
-	call @checkCollisionAt		; $4226
-	ldh a,(<hFF8B)	; $4229
-	rla			; $422b
-	ldh (<hFF8B),a	; $422c
-	jr nc,--		; $422e
+	call @checkCollisionAt
+	ldh a,(<hFF8B)
+	rla
+	ldh (<hFF8B),a
+	jr nc,--
 
-	pop de			; $4230
-	or a			; $4231
-	ret			; $4232
+	pop de
+	or a
+	ret
 
 ;;
 ; @param	bc	Position offset to check
@@ -610,34 +610,34 @@ _ecom_getAdjacentWallsBitset:
 ; @param[out]	cflag	c if there's a collision
 ; @addr{4233}
 @checkCollisionAt:
-	ld a,(de)		; $4233
-	inc de			; $4234
-	add b			; $4235
-	ld b,a			; $4236
-	ld a,(de)		; $4237
-	inc de			; $4238
-	add c			; $4239
-	ld c,a			; $423a
+	ld a,(de)
+	inc de
+	add b
+	ld b,a
+	ld a,(de)
+	inc de
+	add c
+	ld c,a
 
-	ldh a,(<hFF8A)	; $423b
-	dec a			; $423d
+	ldh a,(<hFF8A)
+	dec a
 
 	; hFF8A == 1 (holes count as walls)
-	jp z,checkTileCollisionAt_disallowHoles		; $423e
-	inc a			; $4241
-	jr z,++			; $4242
+	jp z,checkTileCollisionAt_disallowHoles
+	inc a
+	jr z,++
 
 	; hFF8A == 2 or higher (only screen boundaries count as walls; checking for
 	; SPECIALCOLLISION_SCREEN_BOUNDARY ($ff).)
-	call getTileCollisionsAtPosition		; $4244
-	add $01			; $4247
-	ret			; $4249
+	call getTileCollisionsAtPosition
+	add $01
+	ret
 ++
 	; hFF8A == 0 (normal collision check)
-	call getTileCollisionsAtPosition		; $424a
-	add $01			; $424d
-	jp nc,checkTileCollisionAt_allowHoles		; $424f
-	ret			; $4252
+	call getTileCollisionsAtPosition
+	add $01
+	jp nc,checkTileCollisionAt_allowHoles
+	ret
 
 ;;
 ; Given an angle this returns an offset within the position offset table to use.
@@ -648,14 +648,14 @@ _ecom_getAdjacentWallsBitset:
 ; @param[out]	a	Offset into table to use
 ; @addr{4253}
 _ecom_getAdjacentWallTableOffset:
-	rlca			; $4253
-	ld b,a			; $4254
-	and $0f			; $4255
-	ld a,b			; $4257
-	ret z			; $4258
-	and $f0			; $4259
-	add $08			; $425b
-	ret			; $425d
+	rlca
+	ld b,a
+	and $0f
+	ld a,b
+	ret z
+	and $f0
+	add $08
+	ret
 
 
 ; For enemies drawn in "side" view (ie. moblins). Smaller bounding box.
@@ -768,69 +768,69 @@ _ecom_topDownAdjacentWallOffsetTable:
 ; Like below, but including walls and holes.
 ; @addr{42de}
 _ecom_bounceOffWallsAndHoles:
-	ld a,$01		; $42de
-	jr ++			; $42e0
+	ld a,$01
+	jr ++
 
 ;;
 ; Like below, but including walls.
 ; @addr{42e2}
 _ecom_bounceOffWalls:
-	xor a			; $42e2
-	jr ++			; $42e3
+	xor a
+	jr ++
 
 ;;
 ; When an enemy hits a screen boundary, its angle is updated to "bounce" off it.
 ; @addr{42e5}
 _ecom_bounceOffScreenBoundary:
-	ld a,$02		; $42e5
+	ld a,$02
 ++
-	call _ecom_getSideviewAdjacentWallsBitset		; $42e7
-	call @getDirectionsHit		; $42ea
-	ld a,c			; $42ed
-	or a			; $42ee
-	ret z			; $42ef
-	cp $05			; $42f0
-	jr z,@reverseDirection	; $42f2
+	call _ecom_getSideviewAdjacentWallsBitset
+	call @getDirectionsHit
+	ld a,c
+	or a
+	ret z
+	cp $05
+	jr z,@reverseDirection
 
-	ld hl,@angleTable+$10		; $42f4
-	bit 0,a			; $42f7
-	jr nz,+			; $42f9
-	ld hl,@angleTable		; $42fb
+	ld hl,@angleTable+$10
+	bit 0,a
+	jr nz,+
+	ld hl,@angleTable
 +
-	ld e,Enemy.angle		; $42fe
-	ld a,(de)		; $4300
-	rst_addAToHl			; $4301
-	ld a,(hl)		; $4302
-	ld (de),a		; $4303
-	or d			; $4304
-	ret			; $4305
+	ld e,Enemy.angle
+	ld a,(de)
+	rst_addAToHl
+	ld a,(hl)
+	ld (de),a
+	or d
+	ret
 
 @reverseDirection:
 	; Hit both horizontal and vertical wall at the same time
-	ld e,Enemy.angle		; $4306
-	ld a,(de)		; $4308
-	add $10			; $4309
-	and $1f			; $430b
-	ld (de),a		; $430d
-	or d			; $430e
-	ret			; $430f
+	ld e,Enemy.angle
+	ld a,(de)
+	add $10
+	and $1f
+	ld (de),a
+	or d
+	ret
 
 ;;
 ; @param	a	Adjacent walls bitset
 ; @param[out]	c	Bits 0,2 set if horizontal, vertical wall bits are set.
 ; @addr{4310}
 @getDirectionsHit:
-	ld c,$00		; $4310
-	ld b,a			; $4312
-	and $03			; $4313
-	jr z,+			; $4315
-	inc c			; $4317
+	ld c,$00
+	ld b,a
+	and $03
+	jr z,+
+	inc c
 +
-	ld a,b			; $4318
-	and $0c			; $4319
-	ret z			; $431b
-	set 2,c			; $431c
-	ret			; $431e
+	ld a,b
+	and $0c
+	ret z
+	set 2,c
+	ret
 
 @angleTable:
 	.db $10 $0f $0e $0d $0c $0b $0a $09
@@ -847,19 +847,19 @@ _ecom_bounceOffScreenBoundary:
 ; @param[out]	a	Zero
 ; @addr{434f}
 _ecom_randomBitwiseAndBCE:
-	push bc			; $434f
-	call getRandomNumber_noPreserveVars		; $4350
-	pop bc			; $4353
-	and e			; $4354
-	ld e,a			; $4355
-	ld a,h			; $4356
-	and b			; $4357
-	ld b,a			; $4358
-	ld a,l			; $4359
-	and c			; $435a
-	ld c,a			; $435b
-	xor a			; $435c
-	ret			; $435d
+	push bc
+	call getRandomNumber_noPreserveVars
+	pop bc
+	and e
+	ld e,a
+	ld a,h
+	and b
+	ld b,a
+	ld a,l
+	and c
+	ld c,a
+	xor a
+	ret
 
 ;;
 ; Sets the enemy's speed to given value, sets state to 8, and makes the enemy visible.
@@ -868,20 +868,20 @@ _ecom_randomBitwiseAndBCE:
 ; @param[out]	hl	Enemy.state
 ; @addr{435e}
 _ecom_setSpeedAndState8AndVisible:
-	call _ecom_setSpeedAndState8		; $435e
-	jp objectSetVisiblec2		; $4361
+	call _ecom_setSpeedAndState8
+	jp objectSetVisiblec2
 
 ;;
 ; @param	a	Speed
 ; @param[out]	hl	Enemy.state
 ; @addr{4364}
 _ecom_setSpeedAndState8:
-	ld h,d			; $4364
-	ld l,Enemy.speed		; $4365
-	ld (hl),a		; $4367
-	ld l,Enemy.state		; $4368
-	ld (hl),$08		; $436a
-	ret			; $436c
+	ld h,d
+	ld l,Enemy.speed
+	ld (hl),a
+	ld l,Enemy.state
+	ld (hl),$08
+	ret
 
 ;;
 ; @param	b	Enemy type
@@ -889,9 +889,9 @@ _ecom_setSpeedAndState8:
 ; @param[out]	zflag	z if successfully spawned
 ; @addr{436d}
 _ecom_spawnUncountedEnemyWithSubid01:
-	call getFreeEnemySlot_uncounted		; $436d
-	ret nz			; $4370
-	jr ++			; $4371
+	call getFreeEnemySlot_uncounted
+	ret nz
+	jr ++
 
 ;;
 ; @param	b	Enemy type
@@ -899,14 +899,14 @@ _ecom_spawnUncountedEnemyWithSubid01:
 ; @param[out]	zflag	z if successfully spawned
 ; @addr{4373}
 _ecom_spawnEnemyWithSubid01:
-	call getFreeEnemySlot		; $4373
-	ret nz			; $4376
+	call getFreeEnemySlot
+	ret nz
 ++
-	ld (hl),b		; $4377
-	inc l			; $4378
-	inc (hl)		; $4379
-	xor a			; $437a
-	ret			; $437b
+	ld (hl),b
+	inc l
+	inc (hl)
+	xor a
+	ret
 
 ;;
 ; Spawns a "part" which is probably a projectile for the enemy. It inherits the enemy's
@@ -917,110 +917,110 @@ _ecom_spawnEnemyWithSubid01:
 ; @param[out]	zflag	z if spawned successfully
 ; @addr{437c}
 _ecom_spawnProjectile:
-	call getFreePartSlot		; $437c
-	ret nz			; $437f
+	call getFreePartSlot
+	ret nz
 
-	ld (hl),b		; $4380
-	call objectCopyPosition		; $4381
+	ld (hl),b
+	call objectCopyPosition
 
-	ld l,Part.relatedObj1		; $4384
-	ld a,Enemy.start		; $4386
-	ldi (hl),a		; $4388
-	ld (hl),d		; $4389
+	ld l,Part.relatedObj1
+	ld a,Enemy.start
+	ldi (hl),a
+	ld (hl),d
 
-	ld e,Enemy.relatedObj2		; $438a
-	ld a,Part.start		; $438c
-	ld (de),a		; $438e
-	inc e			; $438f
-	ld a,h			; $4390
-	ld (de),a		; $4391
+	ld e,Enemy.relatedObj2
+	ld a,Part.start
+	ld (de),a
+	inc e
+	ld a,h
+	ld (de),a
 
-	ld e,Enemy.angle		; $4392
-	ld l,Part.angle		; $4394
-	ld a,(de)		; $4396
-	ldi (hl),a		; $4397
-	xor a			; $4398
-	ret			; $4399
+	ld e,Enemy.angle
+	ld l,Part.angle
+	ld a,(de)
+	ldi (hl),a
+	xor a
+	ret
 
 ;;
 ; @param[out]	zflag	z if counter1 reached 0
 ; @addr{439a}
 _ecom_decCounter1:
-	ld h,d			; $439a
-	ld l,Enemy.counter1		; $439b
-	dec (hl)		; $439d
-	ret			; $439e
+	ld h,d
+	ld l,Enemy.counter1
+	dec (hl)
+	ret
 
 ;;
 ; Treats counter1 and counter2 as one 16-bit counter. (Unused?)
 ; @param[out]	zflag	z if counter reached 0
 ; @addr{439f}
 _ecom_dec16BitCounter:
-	call _ecom_decCounter1		; $439f
-	ret nz			; $43a2
+	call _ecom_decCounter1
+	ret nz
 
 ;;
 ; @param[out]	zflag
 ; @addr{43a3}
 _ecom_decCounter2:
-	ld h,d			; $43a3
-	ld l,Enemy.counter2		; $43a4
-	ld a,(hl)		; $43a6
-	or a			; $43a7
-	ret z			; $43a8
-	dec (hl)		; $43a9
-	ret			; $43aa
+	ld h,d
+	ld l,Enemy.counter2
+	ld a,(hl)
+	or a
+	ret z
+	dec (hl)
+	ret
 
 ;;
 ; @param[out]	a	New angle
 ; @addr{43ab}
 _ecom_updateCardinalAngleAwayFromTarget:
-	call objectGetAngleTowardEnemyTarget		; $43ab
-	xor $10			; $43ae
-	ld e,Enemy.angle		; $43b0
-	ld (de),a		; $43b2
-	ret			; $43b3
+	call objectGetAngleTowardEnemyTarget
+	xor $10
+	ld e,Enemy.angle
+	ld (de),a
+	ret
 
 ;;
 ; Similar to below, but angle must be in a cardinal direction.
 ; @param[out]	a	New angle
 ; @addr{43b4}
 _ecom_updateCardinalAngleTowardTarget:
-	call objectGetAngleTowardEnemyTarget		; $43b4
-	add $04			; $43b7
-	and $18			; $43b9
-	ld e,Enemy.angle		; $43bb
-	ld (de),a		; $43bd
-	ret			; $43be
+	call objectGetAngleTowardEnemyTarget
+	add $04
+	and $18
+	ld e,Enemy.angle
+	ld (de),a
+	ret
 
 ;;
 ; Sets the enemy's angle to face its target (usually Link).
 ; @param[out]	a	New angle
 ; @addr{43bf}
 _ecom_updateAngleTowardTarget:
-	call objectGetAngleTowardEnemyTarget		; $43bf
-	ld e,Enemy.angle		; $43c2
-	ld (de),a		; $43c4
-	ret			; $43c5
+	call objectGetAngleTowardEnemyTarget
+	ld e,Enemy.angle
+	ld (de),a
+	ret
 
 ;;
 ; @param[out]	a	New angle
 ; @addr{43c6}
 _ecom_setRandomCardinalAngle:
-	call getRandomNumber_noPreserveVars		; $43c6
-	and $18			; $43c9
-	ld e,Enemy.angle		; $43cb
-	ld (de),a		; $43cd
-	ret			; $43ce
+	call getRandomNumber_noPreserveVars
+	and $18
+	ld e,Enemy.angle
+	ld (de),a
+	ret
 
 ;;
 ; @addr{43cf}
 _ecom_setRandomAngle:
-	call getRandomNumber_noPreserveVars		; $43cf
-	and $1f			; $43d2
-	ld e,Enemy.angle		; $43d4
-	ld (de),a		; $43d6
-	ret			; $43d7
+	call getRandomNumber_noPreserveVars
+	and $1f
+	ld e,Enemy.angle
+	ld (de),a
+	ret
 
 ;;
 ; Updates the enemy's animation based on its angle. Cardinal directions are animations 0-3,
@@ -1030,33 +1030,33 @@ _ecom_setRandomAngle:
 ;
 ; @addr{43d8}
 _ecom_updateAnimationFromAngle:
-	ld h,d			; $43d8
-	ld l,Enemy.angle		; $43d9
-	ldd a,(hl)		; $43db
-	ld e,a			; $43dc
-	ld bc,@angleToAnimIndex		; $43dd
-	call addAToBc		; $43e0
-	ld a,(bc)		; $43e3
-	cp $04			; $43e4
-	jr c,@setAnimation	; $43e6
+	ld h,d
+	ld l,Enemy.angle
+	ldd a,(hl)
+	ld e,a
+	ld bc,@angleToAnimIndex
+	call addAToBc
+	ld a,(bc)
+	cp $04
+	jr c,@setAnimation
 
-	sub (hl)		; $43e8
-	cp $07			; $43e9
-	ret z			; $43eb
-	sub $03			; $43ec
-	cp $02			; $43ee
-	ret c			; $43f0
-	ld a,e			; $43f1
-	add $04			; $43f2
-	and $18			; $43f4
-	swap a			; $43f6
-	rlca			; $43f8
+	sub (hl)
+	cp $07
+	ret z
+	sub $03
+	cp $02
+	ret c
+	ld a,e
+	add $04
+	and $18
+	swap a
+	rlca
 
 @setAnimation:
 	cp (hl) ; hl == direction (actually stores animation index)
-	ret z			; $43fa
-	ld (hl),a		; $43fb
-	jp enemySetAnimation		; $43fc
+	ret z
+	ld (hl),a
+	jp enemySetAnimation
 
 @angleToAnimIndex:
 	.db $00 $00 $00 $04 $04 $04 $01 $01
@@ -1067,11 +1067,11 @@ _ecom_updateAnimationFromAngle:
 ;;
 ; @addr{441f}
 _ecom_flickerVisibility:
-	ld e,Enemy.visible		; $441f
-	ld a,(de)		; $4421
-	xor $80			; $4422
-	ld (de),a		; $4424
-	ret			; $4425
+	ld e,Enemy.visible
+	ld a,(de)
+	xor $80
+	ld (de),a
+	ret
 
 ;;
 ; @param[out]	a	State
@@ -1079,13 +1079,13 @@ _ecom_flickerVisibility:
 ; @param[out]	cflag	c if state < 8
 ; @addr{4426}
 _ecom_getSubidAndCpStateTo08:
-	ld e,Enemy.subid		; $4426
-	ld a,(de)		; $4428
-	ld b,a			; $4429
-	ld e,Enemy.state		; $442a
-	ld a,(de)		; $442c
-	cp $08			; $442d
-	ret			; $442f
+	ld e,Enemy.subid
+	ld a,(de)
+	ld b,a
+	ld e,Enemy.state
+	ld a,(de)
+	cp $08
+	ret
 
 ;;
 ; @param	bc	YX position to get the direction toward
@@ -1093,10 +1093,10 @@ _ecom_getSubidAndCpStateTo08:
 ; @param	hFF8F	Y position of object
 ; @addr{4430}
 _ecom_moveTowardPosition:
-	call objectGetRelativeAngleWithTempVars		; $4430
-	ld e,Enemy.angle		; $4433
-	ld (de),a		; $4435
-	jp objectApplySpeed		; $4436
+	call objectGetRelativeAngleWithTempVars
+	ld e,Enemy.angle
+	ld (de),a
+	jp objectApplySpeed
 
 ;;
 ; Call this just before calling "_ecom_moveTowardPosition" above.
@@ -1108,16 +1108,16 @@ _ecom_moveTowardPosition:
 ; @param[out]	hFF8E	[Enemy.x]
 ; @addr{4439}
 _ecom_readPositionVars:
-	ld b,(hl)		; $4439
-	inc l			; $443a
-	ld c,(hl)		; $443b
-	ld l,Enemy.yh		; $443c
-	ldi a,(hl)		; $443e
-	ldh (<hFF8F),a	; $443f
-	inc l			; $4441
-	ld a,(hl)		; $4442
-	ldh (<hFF8E),a	; $4443
-	ret			; $4445
+	ld b,(hl)
+	inc l
+	ld c,(hl)
+	ld l,Enemy.yh
+	ldi a,(hl)
+	ldh (<hFF8F),a
+	inc l
+	ld a,(hl)
+	ldh (<hFF8E),a
+	ret
 
 .ifdef ROM_SEASONS
 
@@ -1126,28 +1126,28 @@ _ecom_readPositionVars:
 ; @param	a
 ; @param[out]	zflag
 _ecom_seasonsFunc_4446:
-	ld b,a			; $4446
+	ld b,a
 	ld a,(wMagnetGloveState) ; TODO: figure out what this corresponds to in ages (if anything)
-	or a			; $444a
-	ld a,b			; $444b
-	jp z,_ecom_checkHazards		; $444c
+	or a
+	ld a,b
+	jp z,_ecom_checkHazards
 
-	ld h,d			; $444f
-	ld l,Enemy.var3f		; $4450
-	res 1,(hl)		; $4452
+	ld h,d
+	ld l,Enemy.var3f
+	res 1,(hl)
 
-	ld l,Enemy.collisionType		; $4454
-	set 7,(hl)		; $4456
+	ld l,Enemy.collisionType
+	set 7,(hl)
 
-	push af			; $4458
-	call objectGetAngleTowardLink		; $4459
-	ld c,a			; $445c
-	ld b,SPEED_80		; $445d
-	call _ecom_applyGivenVelocity		; $445f
+	push af
+	call objectGetAngleTowardLink
+	ld c,a
+	ld b,SPEED_80
+	call _ecom_applyGivenVelocity
 
-	pop af			; $4462
-	or a			; $4463
-	ret			; $4464
+	pop af
+	or a
+	ret
 
 .endif
 
@@ -1158,35 +1158,35 @@ _ecom_seasonsFunc_4446:
 ;			the screen)
 ; @addr{4446}
 _ecom_setZAboveScreen:
-	ld h,d			; $4446
-	ld l,Enemy.yh		; $4447
-	ld a,(hl)		; $4449
-	add c			; $444a
-	cpl			; $444b
-	inc a			; $444c
-	ld c,a			; $444d
-	ldh a,(<hCameraY)	; $444e
-	add c			; $4450
-	jr nc,+			; $4451
-	ld a,c			; $4453
+	ld h,d
+	ld l,Enemy.yh
+	ld a,(hl)
+	add c
+	cpl
+	inc a
+	ld c,a
+	ldh a,(<hCameraY)
+	add c
+	jr nc,+
+	ld a,c
 +
-	bit 7,a			; $4454
-	jr nz,+			; $4456
-	ld a,$80		; $4458
+	bit 7,a
+	jr nz,+
+	ld a,$80
 +
-	ld l,Enemy.zh		; $445a
-	ld (hl),a		; $445c
-	ret			; $445d
+	ld l,Enemy.zh
+	ld (hl),a
+	ret
 
 ;;
 ; @param	h	Object index
 ; @param	l	Object type
 ; @addr{445e}
 _ecom_killObjectH:
-	ld a,l			; $445e
-	and $c0			; $445f
-	or Object.health			; $4461
-	ld l,a			; $4463
+	ld a,l
+	and $c0
+	or Object.health
+	ld l,a
 
 ;;
 ; Sets an object's health to zero, disables their collisions.
@@ -1194,26 +1194,26 @@ _ecom_killObjectH:
 ; @param	hl	Pointer to object's health value
 ; @addr{4464}
 _ecom_killRelatedObj:
-	ld (hl),$00		; $4464
-	ld a,l			; $4466
-	add Object.collisionType - Object.health			; $4467
-	ld l,a			; $4469
-	res 7,(hl)		; $446a
-	ret			; $446c
+	ld (hl),$00
+	ld a,l
+	add Object.collisionType - Object.health
+	ld l,a
+	res 7,(hl)
+	ret
 
 ;;
 ; @addr{446d}
 _ecom_killRelatedObj1:
-	ld a,Object.health		; $446d
-	call objectGetRelatedObject1Var		; $446f
-	jr _ecom_killRelatedObj		; $4472
+	ld a,Object.health
+	call objectGetRelatedObject1Var
+	jr _ecom_killRelatedObj
 
 ;;
 ; @addr{4474}
 _ecom_killRelatedObj2:
-	ld a,Object.health		; $4474
-	call objectGetRelatedObject2Var		; $4476
-	jr _ecom_killRelatedObj		; $4479
+	ld a,Object.health
+	call objectGetRelatedObject2Var
+	jr _ecom_killRelatedObj
 
 ;;
 ; Enemy shakes horizontally until counter2 reaches 0, then flies up above the screen.
@@ -1221,37 +1221,37 @@ _ecom_killRelatedObj2:
 ; @param[out]	cflag	c if gale seed effect still persists, nc otherwise
 ; @addr{447b}
 _ecom_galeSeedEffect:
-	call _ecom_decCounter2		; $447b
-	jr z,@zero	; $447e
+	call _ecom_decCounter2
+	jr z,@zero
 
-	ld a,(hl)		; $4480
-	and $03			; $4481
-	ld hl,@oscillationX		; $4483
-	rst_addAToHl			; $4486
-	ld e,Enemy.xh		; $4487
-	ld a,(de)		; $4489
-	add (hl)		; $448a
-	ld (de),a		; $448b
-	scf			; $448c
-	ret			; $448d
+	ld a,(hl)
+	and $03
+	ld hl,@oscillationX
+	rst_addAToHl
+	ld e,Enemy.xh
+	ld a,(de)
+	add (hl)
+	ld (de),a
+	scf
+	ret
 
 @zero:
-	call objectApplySpeed		; $448e
-	ld c,$10		; $4491
-	call objectUpdateSpeedZ_paramC		; $4493
-	ldh a,(<hCameraY)	; $4496
-	ld b,a			; $4498
-	ld l,Enemy.zh		; $4499
-	ld a,(hl)		; $449b
-	cp $80			; $449c
-	ccf			; $449e
-	ret nc			; $449f
-	ld e,Enemy.yh		; $44a0
-	ld a,(de)		; $44a2
-	add (hl)		; $44a3
-	sub b			; $44a4
-	cp LARGE_ROOM_HEIGHT<<4			; $44a5
-	ret			; $44a7
+	call objectApplySpeed
+	ld c,$10
+	call objectUpdateSpeedZ_paramC
+	ldh a,(<hCameraY)
+	ld b,a
+	ld l,Enemy.zh
+	ld a,(hl)
+	cp $80
+	ccf
+	ret nc
+	ld e,Enemy.yh
+	ld a,(de)
+	add (hl)
+	sub b
+	cp LARGE_ROOM_HEIGHT<<4
+	ret
 
 @oscillationX:
 	.db $fe $02 $02 $fe
@@ -1261,57 +1261,57 @@ _ecom_galeSeedEffect:
 ; tornado and flies away, then gets deleted.
 ; @addr{44ac}
 _ecom_blownByGaleSeedState:
-	call _ecom_galeSeedEffect		; $44ac
-	ret c			; $44af
-	call decNumEnemies		; $44b0
-	jp enemyDelete		; $44b3
+	call _ecom_galeSeedEffect
+	ret c
+	call decNumEnemies
+	jp enemyDelete
 
 ;;
 ; If a scent seed is active, and this enemy should respond to it, this sets its state to
 ; 4.
 ; @addr{44b6}
 _ecom_checkScentSeedActive:
-	ld a,(wScentSeedActive)		; $44b6
-	or a			; $44b9
-	ret z			; $44ba
-	ld e,Enemy.var3f		; $44bb
-	ld a,(de)		; $44bd
-	bit 4,a			; $44be
-	ret z			; $44c0
+	ld a,(wScentSeedActive)
+	or a
+	ret z
+	ld e,Enemy.var3f
+	ld a,(de)
+	bit 4,a
+	ret z
 
-	ld e,Enemy.state		; $44c1
-	ld a,(de)		; $44c3
-	and $f8			; $44c4
-	ret z			; $44c6
-	ld a,$04		; $44c7
-	ld (de),a		; $44c9
-	ret			; $44ca
+	ld e,Enemy.state
+	ld a,(de)
+	and $f8
+	ret z
+	ld a,$04
+	ld (de),a
+	ret
 
 ;;
 ; Every 16 frames, this function updates the enemy's angle relative to a scent seed
 ; (position in hFFB2/hFFB3). Uses Enemy.var3d as a counter for this.
 ; @addr{44cb}
 _ecom_updateAngleToScentSeed:
-	ld h,d			; $44cb
-	ld l,Enemy.var3d		; $44cc
-	dec (hl)		; $44ce
-	ld a,(hl)		; $44cf
-	and $0f			; $44d0
-	ret nz			; $44d2
+	ld h,d
+	ld l,Enemy.var3d
+	dec (hl)
+	ld a,(hl)
+	and $0f
+	ret nz
 
-	ldh a,(<hFFB2)	; $44d3
-	ld b,a			; $44d5
-	ldh a,(<hFFB3)	; $44d6
-	ld c,a			; $44d8
-	call objectGetRelativeAngle		; $44d9
-	ld e,Enemy.angle		; $44dc
-	ld (de),a		; $44de
-	ret			; $44df
+	ldh a,(<hFFB2)
+	ld b,a
+	ldh a,(<hFFB3)
+	ld c,a
+	call objectGetRelativeAngle
+	ld e,Enemy.angle
+	ld (de),a
+	ret
 
 ;;
 ; @addr{44e0}
 _ecom_fallToGroundAndSetState8:
-	ld b,$08		; $44e0
+	ld b,$08
 
 ;;
 ; Updates gravity for an enemy, and changes its state when it lands.
@@ -1320,11 +1320,11 @@ _ecom_fallToGroundAndSetState8:
 ; @param[out]	zflag	z if the enemy is on the ground
 ; @addr{44e2}
 _ecom_fallToGroundAndSetState:
-	ld c,$20		; $44e2
-	call objectUpdateSpeedZ_paramC		; $44e4
-	ret nz			; $44e7
-	ld l,Enemy.collisionType		; $44e8
-	set 7,(hl)		; $44ea
-	ld l,Enemy.state		; $44ec
-	ld (hl),b		; $44ee
-	ret			; $44ef
+	ld c,$20
+	call objectUpdateSpeedZ_paramC
+	ret nz
+	ld l,Enemy.collisionType
+	set 7,(hl)
+	ld l,Enemy.state
+	ld (hl),b
+	ret

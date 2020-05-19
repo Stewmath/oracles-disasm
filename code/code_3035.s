@@ -4,91 +4,91 @@
 ; @param	hl
 ; @addr{3035}
 objectLoadMovementScript:
-	ldh a,(<hRomBank)	; $3035
-	push af			; $3037
+	ldh a,(<hRomBank)
+	push af
 .ifdef ROM_AGES
-	callfrombank0 bank0e.objectLoadMovementScript_body		; $3038
+	callfrombank0 bank0e.objectLoadMovementScript_body
 .else
 	callfrombank0 objectLoadMovementScript_body		; $3038 - bank0d
 .endif
-	pop af			; $3042
+	pop af
 	setrombank
-	ret			; $3048
+	ret
 
 ;;
 ; @addr{3049}
 objectRunMovementScript:
-	ldh a,(<hRomBank)	; $3049
-	push af			; $304b
+	ldh a,(<hRomBank)
+	push af
 .ifdef ROM_AGES
-	callfrombank0 bank0e.objectRunMovementScript_body		; $3038
+	callfrombank0 bank0e.objectRunMovementScript_body
 .else
 	callfrombank0 objectRunMovementScript_body		; $3038 - bank0d
 .endif
-	pop af			; $3056
-	setrombank		; $3057
-	ret			; $305c
+	pop af
+	setrombank
+	ret
 
 ;;
 ; @addr{305d}
 decCbb3:
-	ld hl,wTmpcbb3		; $305d
-	dec (hl)		; $3060
-	ret			; $3061
+	ld hl,wTmpcbb3
+	dec (hl)
+	ret
 
 ;;
 ; @addr{3062}
 incCbc1:
-	ld hl,$cbc1		; $3062
-	inc (hl)		; $3065
-	ret			; $3066
+	ld hl,$cbc1
+	inc (hl)
+	ret
 
 ;;
 ; @addr{3067}
 incCbc2:
-	ld hl,$cbc2		; $3067
-	inc (hl)		; $306a
-	ret			; $306b
+	ld hl,$cbc2
+	inc (hl)
+	ret
 
 ;;
 ; @param	e
 ; @addr{306c}
 endgameCutsceneHandler:
-	ldh a,(<hRomBank)	; $306c
-	push af			; $306e
-	callfrombank0 endgameCutsceneHandler_body		; $306f
-	pop af			; $3079
-	setrombank		; $307a
-	ret			; $307f
+	ldh a,(<hRomBank)
+	push af
+	callfrombank0 endgameCutsceneHandler_body
+	pop af
+	setrombank
+	ret
 
 ;;
 ; @addr{3080}
 getEntryFromObjectTable1:
-	ldh a,(<hRomBank)	; $3080
-	push af			; $3082
+	ldh a,(<hRomBank)
+	push af
 	ld a, :objectData.objectTable1
-	setrombank		; $3085
-	ld a,b			; $308a
+	setrombank
+	ld a,b
 	ld hl, objectData.objectTable1
-	rst_addDoubleIndex			; $308e
-	ldi a,(hl)		; $308f
-	ld h,(hl)		; $3090
-	ld l,a			; $3091
-	pop af			; $3092
-	setrombank		; $3093
-	ret			; $3098
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	pop af
+	setrombank
+	ret
 
 ;;
 ; @addr{3099}
 fileSelect_redrawDecorations:
-	ldh a,(<hRomBank)	; $3099
-	push af			; $309b
-	callfrombank0 bank2.fileSelect_redrawDecorationsAndSetWramBank4	; $309c
-	pop af			; $30a6
-	setrombank		; $30a7
-	xor a			; $30ac
-	ld ($ff00+R_SVBK),a	; $30ad
-	ret			; $30af
+	ldh a,(<hRomBank)
+	push af
+	callfrombank0 bank2.fileSelect_redrawDecorationsAndSetWramBank4
+	pop af
+	setrombank
+	xor a
+	ld ($ff00+R_SVBK),a
+	ret
 
 
 .ifdef ROM_AGES
@@ -103,12 +103,12 @@ fileSelect_redrawDecorations:
 ; @param	c	Room
 ; @addr{30b0}
 disableLcdAndLoadRoom:
-	ldh a,(<hRomBank)	; $30b0
-	push af			; $30b2
-	callfrombank0 disableLcdAndLoadRoom_body		; $30b3
-	pop af			; $30bd
-	setrombank		; $30be
-	ret			; $30c3
+	ldh a,(<hRomBank)
+	push af
+	callfrombank0 disableLcdAndLoadRoom_body
+	pop af
+	setrombank
+	ret
 
 ;;
 ; Plays SND_WAVE, and writes something to 'hl'.
@@ -116,12 +116,12 @@ disableLcdAndLoadRoom:
 ; @param	hl
 ; @addr{30c4}
 playWaveSoundAtRandomIntervals:
-	ldh a,(<hRomBank)	; $30c4
-	push af			; $30c6
-	callfrombank0 interactionBank10.agesFunc_10_7298@playWaveSoundAtRandomIntervals_body		; $30c7
-	pop af			; $30d1
-	setrombank		; $30d2
-	ret			; $30d7
+	ldh a,(<hRomBank)
+	push af
+	callfrombank0 interactionBank10.agesFunc_10_7298@playWaveSoundAtRandomIntervals_body
+	pop af
+	setrombank
+	ret
 
 .endif
 
@@ -134,14 +134,14 @@ playWaveSoundAtRandomIntervals:
 ; @param	hl	OAM data
 ; @addr{30d8}
 addSpritesFromBankToOam_withOffset:
-	ldh a,(<hRomBank)	; $30d8
-	push af			; $30da
-	ld a,e			; $30db
-	setrombank		; $30dc
-	call addSpritesToOam_withOffset		; $30e1
-	pop af			; $30e4
-	setrombank		; $30e5
-	ret			; $30ea
+	ldh a,(<hRomBank)
+	push af
+	ld a,e
+	setrombank
+	call addSpritesToOam_withOffset
+	pop af
+	setrombank
+	ret
 
 
 .ifdef ROM_AGES
@@ -153,13 +153,13 @@ addSpritesFromBankToOam_withOffset:
 ; @param	hl	OAM data
 ; @addr{30eb}
 addSpritesFromBankToOam:
-	ldh a,(<hRomBank)	; $30eb
-	push af			; $30ed
-	ld a,e			; $30ee
-	setrombank		; $30ef
-	call addSpritesToOam		; $30f4
-	pop af			; $30f7
-	setrombank		; $30f8
-	ret			; $30fd
+	ldh a,(<hRomBank)
+	push af
+	ld a,e
+	setrombank
+	call addSpritesToOam
+	pop af
+	setrombank
+	ret
 
 .endif

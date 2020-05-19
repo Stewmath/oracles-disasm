@@ -2,112 +2,112 @@
 ;  var37: ?
 _parentItemCode_magnetGloves:
 .ifdef ROM_SEASONS
-	ld a,(wLinkClimbingVine)		; $51cd
-	inc a			; $51d0
-	jr z,@deleteSelf	; $51d1
-	ld e,Item.state		; $51d3
-	ld a,(de)		; $51d5
-	rst_jumpTable			; $51d6
+	ld a,(wLinkClimbingVine)
+	inc a
+	jr z,@deleteSelf
+	ld e,Item.state
+	ld a,(de)
+	rst_jumpTable
 	.dw @state0
 	.dw @state1
 
 @state0:
-	ld a,(wLinkSwimmingState)		; $51db
-	or a			; $51de
-	jr nz,@deleteSelf	; $51df
+	ld a,(wLinkSwimmingState)
+	or a
+	jr nz,@deleteSelf
 
-	call itemIncState		; $51e1
-	ld l,Item.var37		; $51e4
-	ld (hl),$ff		; $51e6
-	ld l,Item.relatedObj2		; $51e8
-	xor a			; $51ea
-	ldi (hl),a		; $51eb
-	ld (hl),>w1WeaponItem		; $51ec
-	call itemCreateChild		; $51ee
-	call updateLinkDirectionFromAngle		; $51f1
-	call setStatusBarNeedsRefreshBit1		; $51f4
+	call itemIncState
+	ld l,Item.var37
+	ld (hl),$ff
+	ld l,Item.relatedObj2
+	xor a
+	ldi (hl),a
+	ld (hl),>w1WeaponItem
+	call itemCreateChild
+	call updateLinkDirectionFromAngle
+	call setStatusBarNeedsRefreshBit1
 
 @state1:
-	ld a,(wLinkSwimmingState)		; $51f7
-	or a			; $51fa
-	jr nz,@invertPolarityAndStop	; $51fb
-	ld a,(wLinkInAir)		; $51fd
-	rlca			; $5200
-	jr c,@invertPolarityAndStop	; $5201
-	call _parentItemCheckButtonPressed		; $5203
-	jr z,@invertPolarityAndStop	; $5206
+	ld a,(wLinkSwimmingState)
+	or a
+	jr nz,@invertPolarityAndStop
+	ld a,(wLinkInAir)
+	rlca
+	jr c,@invertPolarityAndStop
+	call _parentItemCheckButtonPressed
+	jr z,@invertPolarityAndStop
 
-	ld a,SND_MAGNET_GLOVES		; $5208
-	call playSound		; $520a
-	ld a,(wMagnetGlovePolarity)		; $520d
-	scf			; $5210
-	adc a			; $5211
-	ld (wMagnetGloveState),a		; $5212
-	call _itemDisableLinkTurning		; $5215
-	call @checkLatchedOntoTile		; $5218
-	ret z			; $521b
+	ld a,SND_MAGNET_GLOVES
+	call playSound
+	ld a,(wMagnetGlovePolarity)
+	scf
+	adc a
+	ld (wMagnetGloveState),a
+	call _itemDisableLinkTurning
+	call @checkLatchedOntoTile
+	ret z
 
 	; Link moves toward something
-	call objectGetRelativeAngleWithTempVars		; $521c
-	ld hl,wMagnetGloveState		; $521f
-	set 6,(hl)		; $5222
-	bit 1,(hl)		; $5224
-	jr nz,+			; $5226
-	xor $10			; $5228
+	call objectGetRelativeAngleWithTempVars
+	ld hl,wMagnetGloveState
+	set 6,(hl)
+	bit 1,(hl)
+	jr nz,+
+	xor $10
 +
-	ld e,Item.angle		; $522a
-	ld (de),a		; $522c
-	ld c,a			; $522d
-	ld a,$ff		; $522e
-	ld (w1Link.angle),a		; $5230
-	ld b,SPEED_180		; $5233
-	jp updateLinkPositionGivenVelocity		; $5235
+	ld e,Item.angle
+	ld (de),a
+	ld c,a
+	ld a,$ff
+	ld (w1Link.angle),a
+	ld b,SPEED_180
+	jp updateLinkPositionGivenVelocity
 
 @invertPolarityAndStop:
-	ld hl,wMagnetGlovePolarity		; $5238
-	ld a,(hl)		; $523b
-	xor $01			; $523c
-	ld (hl),a		; $523e
-	ld hl,wStatusBarNeedsRefresh		; $523f
-	set 0,(hl)		; $5242
+	ld hl,wMagnetGlovePolarity
+	ld a,(hl)
+	xor $01
+	ld (hl),a
+	ld hl,wStatusBarNeedsRefresh
+	set 0,(hl)
 
 @deleteSelf:
-	xor a			; $5244
-	ld (wMagnetGloveState),a		; $5245
-	jp _clearParentItem		; $5248
+	xor a
+	ld (wMagnetGloveState),a
+	jp _clearParentItem
 
 ;;
 ; @param[out]	bc	Position of object locked on to
 ; @param[out]	zflag	nz if Link should move toward something
 ; @addr{524b}
 @checkLatchedOntoTile:
-	ld a,(wLinkObjectIndex)		; $524b
-	xor $01			; $524e
-	and $01			; $5250
-	ret z			; $5252
+	ld a,(wLinkObjectIndex)
+	xor $01
+	and $01
+	ret z
 
-	ld a,(wActiveGroup)		; $5253
-	ld hl,@magnetTilesTable		; $5256
-	rst_addAToHl			; $5259
-	ld a,(hl)		; $525a
-	or a			; $525b
-	ret z			; $525c
+	ld a,(wActiveGroup)
+	ld hl,@magnetTilesTable
+	rst_addAToHl
+	ld a,(hl)
+	or a
+	ret z
 
-	push de			; $525d
-	ld d,a			; $525e
-	ld a,(w1Link.direction)		; $525f
-	ld e,a			; $5262
-	add a			; $5263
-	add a			; $5264
-	add e			; $5265
-	ld hl,@offsetsToCheck		; $5266
-	rst_addAToHl			; $5269
-	ldi a,(hl)		; $526a
-	ld e,a			; $526b
-	call @searchForTile		; $526c
-	call z,@searchForTile		; $526f
-	pop de			; $5272
-	ret			; $5273
+	push de
+	ld d,a
+	ld a,(w1Link.direction)
+	ld e,a
+	add a
+	add a
+	add e
+	ld hl,@offsetsToCheck
+	rst_addAToHl
+	ldi a,(hl)
+	ld e,a
+	call @searchForTile
+	call z,@searchForTile
+	pop de
+	ret
 
 ;;
 ; @param	d	Tile index to check for
@@ -115,47 +115,47 @@ _parentItemCode_magnetGloves:
 ; @param	hl	Y and X offsets (2 bytes)
 ; @addr{5274}
 @searchForTile:
-	ld a,(w1Link.yh)		; $5274
-	ldh (<hFF8F),a	; $5277
-	add (hl)		; $5279
-	ld b,a			; $527a
-	inc hl			; $527b
-	ld a,(w1Link.xh)		; $527c
-	ldh (<hFF8E),a	; $527f
-	add (hl)		; $5281
-	ld c,a			; $5282
+	ld a,(w1Link.yh)
+	ldh (<hFF8F),a
+	add (hl)
+	ld b,a
+	inc hl
+	ld a,(w1Link.xh)
+	ldh (<hFF8E),a
+	add (hl)
+	ld c,a
 
 	; Get tile in front of Link
-	inc hl			; $5283
-	push hl			; $5284
-	call getTileAtPosition		; $5285
-	ld c,l			; $5288
-	ld b,h			; $5289
-	pop hl			; $528a
+	inc hl
+	push hl
+	call getTileAtPosition
+	ld c,l
+	ld b,h
+	pop hl
 
 @checkNextTile:
-	or a			; $528b
-	jr z,@ret	; $528c
-	cp d			; $528e
-	jr z,@foundTile			; $528f
-	ld a,c			; $5291
-	add e			; $5292
-	ld c,a			; $5293
-	ld a,(bc)		; $5294
-	jr @checkNextTile		; $5295
+	or a
+	jr z,@ret
+	cp d
+	jr z,@foundTile
+	ld a,c
+	add e
+	ld c,a
+	ld a,(bc)
+	jr @checkNextTile
 
 @foundTile:
-	ld a,c			; $5297
-	and $f0			; $5298
-	or $08			; $529a
-	ld b,a			; $529c
-	ld a,c			; $529d
-	swap a			; $529e
-	and $f0			; $52a0
-	or $08			; $52a2
-	ld c,a			; $52a4
+	ld a,c
+	and $f0
+	or $08
+	ld b,a
+	ld a,c
+	swap a
+	and $f0
+	or $08
+	ld c,a
 @ret:
-	ret			; $52a5
+	ret
 
 ; First byte is the direction to check for magnet tiles in.
 ; The next pairs of bytes are position offsets to check (it doesn't just check for a straight line

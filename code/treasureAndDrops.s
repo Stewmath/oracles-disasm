@@ -6,55 +6,55 @@
 ; @param[out]	l	Value of the treasure's "related variable" (ie. item level)
 ; @addr{446d}
 checkTreasureObtained_body:
-	ld a,l			; $446d
-	cp TREASURE_60			; $446e
-	jr nc,@index60OrHigher		; $4470
+	ld a,l
+	cp TREASURE_60
+	jr nc,@index60OrHigher
 
-	ldh (<hFF8B),a	; $4472
-	ld hl,wObtainedTreasureFlags		; $4474
-	call checkFlag		; $4477
-	jr z,@dontHaveItem		; $447a
+	ldh (<hFF8B),a
+	ld hl,wObtainedTreasureFlags
+	call checkFlag
+	jr z,@dontHaveItem
 
-	push bc			; $447c
-	ldh a,(<hFF8B)	; $447d
-	ld c,a			; $447f
-	ld b,$00		; $4480
-	ld hl,treasureCollectionBehaviourTable		; $4482
-	add hl,bc		; $4485
-	add hl,bc		; $4486
-	add hl,bc		; $4487
-	pop bc			; $4488
-	ldi a,(hl)		; $4489
-	ld l,a			; $448a
-	or a			; $448b
-	jr z,@haveItem			; $448c
+	push bc
+	ldh a,(<hFF8B)
+	ld c,a
+	ld b,$00
+	ld hl,treasureCollectionBehaviourTable
+	add hl,bc
+	add hl,bc
+	add hl,bc
+	pop bc
+	ldi a,(hl)
+	ld l,a
+	or a
+	jr z,@haveItem
 
-	ld h,>wc600Block		; $448e
-	ld l,(hl)		; $4490
+	ld h,>wc600Block
+	ld l,(hl)
 
 @haveItem:
-	ld h,$01		; $4491
-	ret			; $4493
+	ld h,$01
+	ret
 
 @index60OrHigher:
-	and $07			; $4494
-	ld hl,wcca8		; $4496
-	call checkFlag		; $4499
-	jr nz,@haveItem		; $449c
+	and $07
+	ld hl,wcca8
+	call checkFlag
+	jr nz,@haveItem
 
 @dontHaveItem:
-	ld h,$00		; $449e
-	ret			; $44a0
+	ld h,$00
+	ret
 
 ;;
 ; @param	b	Treasure
 ; @addr{44a1}
 loseTreasure_body:
-	push hl			; $44a1
-	ld a,b			; $44a2
-	call _loseTreasure_helper		; $44a3
-	pop hl			; $44a6
-	ret			; $44a7
+	push hl
+	ld a,b
+	call _loseTreasure_helper
+	pop hl
+	ret
 
 ;;
 ; Unset the bit in wObtainedTreasureFlags, and remove it from the inventory if it's an
@@ -63,35 +63,35 @@ loseTreasure_body:
 ; @param	a	Treasure
 ; @addr{44a8}
 _loseTreasure_helper:
-	ld b,a			; $44a8
-	ld hl,wObtainedTreasureFlags		; $44a9
-	call unsetFlag		; $44ac
+	ld b,a
+	ld hl,wObtainedTreasureFlags
+	call unsetFlag
 
 	; Only continue if it's an inventory item (index < $20)
-	ld a,b			; $44af
-	cp NUM_INVENTORY_ITEMS			; $44b0
-	ret nc			; $44b2
+	ld a,b
+	cp NUM_INVENTORY_ITEMS
+	ret nc
 
 	; Attempt to remove the item from the inventory
-	ld hl,wInventoryB		; $44b3
-	ld b,INVENTORY_CAPACITY+2		; $44b6
+	ld hl,wInventoryB
+	ld b,INVENTORY_CAPACITY+2
 --
-	cp (hl)			; $44b8
-	jr z,@foundItem			; $44b9
+	cp (hl)
+	jr z,@foundItem
 
-	inc l			; $44bb
-	dec b			; $44bc
-	jr nz,--		; $44bd
-	ret			; $44bf
+	inc l
+	dec b
+	jr nz,--
+	ret
 
 @foundItem:
-	ld (hl),$00		; $44c0
+	ld (hl),$00
 
 	; Refresh the A/B buttons on the status bar
-	ld hl,wStatusBarNeedsRefresh		; $44c2
-	set 0,(hl)		; $44c5
+	ld hl,wStatusBarNeedsRefresh
+	set 0,(hl)
 
-	ret			; $44c7
+	ret
 
 ;;
 ; Called from giveTreasure in bank 0.
@@ -101,35 +101,35 @@ _loseTreasure_helper:
 ; @param[out]	b	Sound to play
 ; @addr{44c8}
 giveTreasure_body:
-	push hl			; $44c8
-	push de			; $44c9
-	ld a,b			; $44ca
-	ldh (<hFF8B),a	; $44cb
-	push bc			; $44cd
+	push hl
+	push de
+	ld a,b
+	ldh (<hFF8B),a
+	push bc
 
 	; Check if adding this item requires the removal of another item.
-	ld hl,@itemsToRemoveTable		; $44ce
-	call @findItemInTable		; $44d1
-	jr z,+			; $44d4
+	ld hl,@itemsToRemoveTable
+	call @findItemInTable
+	jr z,+
 
-	call _loseTreasure_helper		; $44d6
-	ld a,c			; $44d9
-	call _loseTreasure_helper		; $44da
+	call _loseTreasure_helper
+	ld a,c
+	call _loseTreasure_helper
 +
-	pop bc			; $44dd
-	ld a,b			; $44de
-	call @giveTreasure		; $44df
+	pop bc
+	ld a,b
+	call @giveTreasure
 
 	; Check if adding this item requires adding another item.
-	push af			; $44e2
-	ld hl,@extraItemsToAddTable		; $44e3
-	call @findItemInTable		; $44e6
-	call nz,@giveTreasure		; $44e9
+	push af
+	ld hl,@extraItemsToAddTable
+	call @findItemInTable
+	call nz,@giveTreasure
 
-	pop bc			; $44ec
-	pop de			; $44ed
-	pop hl			; $44ee
-	ret			; $44ef
+	pop bc
+	pop de
+	pop hl
+	ret
 
 ;;
 ; @param	hl	Table to search through
@@ -138,69 +138,69 @@ giveTreasure_body:
 ; @param[out]	zflag	Set if the item being added wasn't in the table
 ; @addr{44f0}
 @findItemInTable:
-	ldh a,(<hFF8B)	; $44f0
-	ld c,a			; $44f2
+	ldh a,(<hFF8B)
+	ld c,a
 --
-	ldi a,(hl)		; $44f3
-	cp c			; $44f4
-	jr z,+			; $44f5
-	or a			; $44f7
-	ret z			; $44f8
+	ldi a,(hl)
+	cp c
+	jr z,+
+	or a
+	ret z
 
-	inc hl			; $44f9
-	inc hl			; $44fa
-	jr --			; $44fb
+	inc hl
+	inc hl
+	jr --
 +
-	ldi a,(hl)		; $44fd
-	ld c,(hl)		; $44fe
-	or a			; $44ff
-	ret			; $4500
+	ldi a,(hl)
+	ld c,(hl)
+	or a
+	ret
 
 ;;
 ; @param	a	Item being added
 ; @param	c	Parameter
 ; @addr{4501}
 @giveTreasure:
-	ldh (<hFF8B),a	; $4501
-	call _checkIncreaseGashaMaturityForGettingTreasure		; $4503
-	call addTreasureToInventory		; $4506
+	ldh (<hFF8B),a
+	call _checkIncreaseGashaMaturityForGettingTreasure
+	call addTreasureToInventory
 
-	ld hl,wObtainedTreasureFlags		; $4509
-	ldh a,(<hFF8B)	; $450c
-	call setFlag		; $450e
+	ld hl,wObtainedTreasureFlags
+	ldh a,(<hFF8B)
+	call setFlag
 
-	push bc			; $4511
-	ldh a,(<hFF8B)	; $4512
-	ld c,a			; $4514
-	ld b,$00		; $4515
-	ld hl,treasureCollectionBehaviourTable		; $4517
-	add hl,bc		; $451a
-	add hl,bc		; $451b
-	add hl,bc		; $451c
-	pop bc			; $451d
-	ld d,>wc600Block		; $451e
-	ldi a,(hl)		; $4520
-	ld e,a			; $4521
-	or a			; $4522
-	jr nz,+			; $4523
-	ld e,<wShortSecretIndex		; $4525
+	push bc
+	ldh a,(<hFF8B)
+	ld c,a
+	ld b,$00
+	ld hl,treasureCollectionBehaviourTable
+	add hl,bc
+	add hl,bc
+	add hl,bc
+	pop bc
+	ld d,>wc600Block
+	ldi a,(hl)
+	ld e,a
+	or a
+	jr nz,+
+	ld e,<wShortSecretIndex
 +
-	ld a,(hl)		; $4527
-	and $0f			; $4528
-	push hl			; $452a
-	call @applyParameter		; $452b
+	ld a,(hl)
+	and $0f
+	push hl
+	call @applyParameter
 
 	; Check whether to play a sound effect
-	pop hl			; $452e
-	bit 7,(hl)		; $452f
-	inc hl			; $4531
-	ldi a,(hl)		; $4532
-	jr nz,@ret			; $4533
-	call playSound		; $4535
-	xor a			; $4538
+	pop hl
+	bit 7,(hl)
+	inc hl
+	ldi a,(hl)
+	jr nz,@ret
+	call playSound
+	xor a
 
 @ret:
-	ret			; $4539
+	ret
 
 ; When Link obtains any item in the first column, he will obtain the item in the second
 ; column with the parameter in the third column.
@@ -235,7 +235,7 @@ giveTreasure_body:
 ; @param	de	The item's "variable" (ie. item level, or ammo)
 ; @addr{4548}
 @applyParameter:
-	rst_jumpTable			; $4548
+	rst_jumpTable
 	.dw @ret
 	.dw @mode1
 	.dw @mode2
@@ -255,180 +255,180 @@ giveTreasure_body:
 
 ; Set a bit in [$cca8].
 @modeb:
-	ld a,c			; $4569
-	ld hl,wcca8		; $456a
-	jp setFlag		; $456d
+	ld a,c
+	ld hl,wcca8
+	jp setFlag
 
 ; Set [de] to c if [de]<c. Also refreshes part of status bar. Used for items with levels.
 @mode8:
-	ld a,(de)		; $4570
-	cp c			; $4571
-	ret nc			; $4572
-	ld a,c			; $4573
-	ld (de),a		; $4574
-	ld hl,wStatusBarNeedsRefresh		; $4575
-	set 0,(hl)		; $4578
-	ret			; $457a
+	ld a,(de)
+	cp c
+	ret nc
+	ld a,c
+	ld (de),a
+	ld hl,wStatusBarNeedsRefresh
+	set 0,(hl)
+	ret
 
 ; [de] = c
 @mode5:
-	ld a,c			; $457b
-	ld (de),a		; $457c
-	ret			; $457d
+	ld a,c
+	ld (de),a
+	ret
 
 ; Set bit [wDungeonIndex] in [de].
 @mode6:
-	ld a,(wDungeonIndex)		; $457e
-	ld c,a			; $4581
+	ld a,(wDungeonIndex)
+	ld c,a
 
 ; Set bit c in [de].
 @mode1:
-	ld a,c			; $4582
-	ld h,d			; $4583
-	ld l,e			; $4584
-	jp setFlag		; $4585
+	ld a,c
+	ld h,d
+	ld l,e
+	jp setFlag
 
 ; Increment [de].
 @mode2:
-	ld a,(de)		; $4588
-	inc a			; $4589
-	ld (de),a		; $458a
-	ret			; $458b
+	ld a,(de)
+	inc a
+	ld (de),a
+	ret
 
 ; Increment [de] as a bcd value.
 @mode3:
-	ld c,$01		; $458c
+	ld c,$01
 
 ; Add c to [de] as a bcd value.
 ; Mode 4 is also called by mode d, mode f.
 @mode4:
-	ld a,(de)		; $458e
-	add c			; $458f
-	daa			; $4590
-	jr nc,+			; $4591
-	ld a,$99		; $4593
+	ld a,(de)
+	add c
+	daa
+	jr nc,+
+	ld a,$99
 +
-	ld (de),a		; $4595
-	ret			; $4596
+	ld (de),a
+	ret
 
 ; Increment [de+[wDungeonIndex]].
 ; Used for small keys.
 @mode7:
-	ld a,(wDungeonIndex)		; $4597
-	add e			; $459a
-	ld l,a			; $459b
-	ld h,d			; $459c
-	inc (hl)		; $459d
-	ld hl,wStatusBarNeedsRefresh		; $459e
-	set 4,(hl)		; $45a1
-	ret			; $45a3
+	ld a,(wDungeonIndex)
+	add e
+	ld l,a
+	ld h,d
+	inc (hl)
+	ld hl,wStatusBarNeedsRefresh
+	set 4,(hl)
+	ret
 
 ; [de] += c.
 @modea:
-	ld a,(de)		; $45a4
-	add c			; $45a5
-	ld (de),a		; $45a6
-	ret			; $45a7
+	ld a,(de)
+	add c
+	ld (de),a
+	ret
 
 ; [de] += c, and [de+1] is the cap for this value.
 ; Also plays a sound effect if it's operating on wLinkHealth.
 @modec:
-	ld h,d			; $45a8
-	ld l,e			; $45a9
+	ld h,d
+	ld l,e
 
 	; Check if we're adding to wLinkHealth
-	ld a,<wLinkHealth		; $45aa
-	cp e			; $45ac
-	ldi a,(hl)		; $45ad
-	jr nz,+			; $45ae
+	ld a,<wLinkHealth
+	cp e
+	ldi a,(hl)
+	jr nz,+
 
 	; If so, compare current health to max health
-	cp (hl)			; $45b0
-	jr nz,+			; $45b1
+	cp (hl)
+	jr nz,+
 
 	; This code will probably only run when you get a heart, but your health is
 	; already full.
-	ld a,SND_GAINHEART		; $45b3
-	jp playSound		; $45b5
+	ld a,SND_GAINHEART
+	jp playSound
 +
-	add c			; $45b8
-	ld (de),a		; $45b9
-	jr ++			; $45ba
+	add c
+	ld (de),a
+	jr ++
 
 ; [de] += c (as bcd values), and [de+1] is the cap.
 @moded:
-	call @mode4		; $45bc
-	ld h,d			; $45bf
-	ld l,e			; $45c0
-	inc l			; $45c1
+	call @mode4
+	ld h,d
+	ld l,e
+	inc l
 ++
-	cp (hl)			; $45c2
-	ret c			; $45c3
-	ldd a,(hl)		; $45c4
-	ld (hl),a		; $45c5
-	ret			; $45c6
+	cp (hl)
+	ret c
+	ldd a,(hl)
+	ld (hl),a
+	ret
 
 ; Adds rupee value of 'c' to 2-byte bcd value at [de].
 ; Also adds to wTotalRupeesCollected if operating on wNumRupees.
 @modee:
 	; Get the value of the rupee in bc
-	ld a,c			; $45c7
-	call getRupeeValue		; $45c8
+	ld a,c
+	call getRupeeValue
 
 	; Check whether to add this to wTotalRupeesCollected
-	ld a,e			; $45cb
-	cp <wNumRupees			; $45cc
-	jr nz,++		; $45ce
+	ld a,e
+	cp <wNumRupees
+	jr nz,++
 
-	ld a,GLOBALFLAG_10000_RUPEES_COLLECTED		; $45d0
-	call checkGlobalFlag		; $45d2
-	jr nz,++		; $45d5
+	ld a,GLOBALFLAG_10000_RUPEES_COLLECTED
+	call checkGlobalFlag
+	jr nz,++
 
 	; Add the amount to the total rupee counter, set the flag when it reaches 10000.
-	ld h,d			; $45d7
-	ld l,<wTotalRupeesCollected		; $45d8
-	call addDecimalToHlRef		; $45da
-	jr nc,++		; $45dd
-	ld a,GLOBALFLAG_10000_RUPEES_COLLECTED		; $45df
-	call setGlobalFlag		; $45e1
+	ld h,d
+	ld l,<wTotalRupeesCollected
+	call addDecimalToHlRef
+	jr nc,++
+	ld a,GLOBALFLAG_10000_RUPEES_COLLECTED
+	call setGlobalFlag
 
 ++
-	ld h,d			; $45e4
-	ld l,e			; $45e5
-	call addDecimalToHlRef		; $45e6
+	ld h,d
+	ld l,e
+	call addDecimalToHlRef
 
 	; Check for overflow
-	ldi a,(hl)		; $45e9
-	ld h,(hl)		; $45ea
-	ld l,a			; $45eb
-	ld bc,$0999		; $45ec
-	call compareHlToBc		; $45ef
-	dec a			; $45f2
-	ret nz			; $45f3
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	ld bc,$0999
+	call compareHlToBc
+	dec a
+	ret nz
 
-	ld a,c			; $45f4
-	ld (de),a		; $45f5
-	inc e			; $45f6
-	ld a,b			; $45f7
-	ld (de),a		; $45f8
-	ld a,SND_RUPEE		; $45f9
-	jp playSound		; $45fb
+	ld a,c
+	ld (de),a
+	inc e
+	ld a,b
+	ld (de),a
+	ld a,SND_RUPEE
+	jp playSound
 
 ; [de] += c (as bcd values), check wSeedSatchelLevel for the cap.
 ; Used for giving seeds.
 @modef:
-	call @mode4		; $45fe
-	call setStatusBarNeedsRefreshBit1		; $4601
-	ld a,(wSeedSatchelLevel)		; $4604
-	ld hl,@seedSatchelCapacities-1		; $4607
-	rst_addAToHl			; $460a
-	ld a,(de)		; $460b
-	cp (hl)			; $460c
-	ret c			; $460d
+	call @mode4
+	call setStatusBarNeedsRefreshBit1
+	ld a,(wSeedSatchelLevel)
+	ld hl,@seedSatchelCapacities-1
+	rst_addAToHl
+	ld a,(de)
+	cp (hl)
+	ret c
 
-	ld a,(hl)		; $460e
-	ld (de),a		; $460f
-	ret			; $4610
+	ld a,(hl)
+	ld (de),a
+	ret
 
 @seedSatchelCapacities:
 	.db $20 $50 $99
@@ -436,92 +436,92 @@ giveTreasure_body:
 ; Add a ring to the unappraised ring list.
 @mode9:
 	; Setting bit 6 means the ring is unappraised
-	set 6,c			; $4614
-	call realignUnappraisedRings		; $4616
+	set 6,c
+	call realignUnappraisedRings
 
 	; Check that there are less than 64 unappraised rings (checking aginst a bcd
 	; number)
-	cp $64			; $4619
-	jr c,+			; $461b
+	cp $64
+	jr c,+
 
 	; If there are already 64 unappraised rings, remove one duplicate ring and
 	; re-align the list.
-	call @removeOneDuplicateRing		; $461d
-	call realignUnappraisedRings		; $4620
+	call @removeOneDuplicateRing
+	call realignUnappraisedRings
 +
 	; Add the ring to the end of the list
-	ld a,c			; $4623
-	ld (wUnappraisedRingsEnd-1),a		; $4624
-	jr realignUnappraisedRings		; $4627
+	ld a,c
+	ld (wUnappraisedRingsEnd-1),a
+	jr realignUnappraisedRings
 
 ;;
 ; Decides on one ring to remove by counting all of the unappraised rings and finding the
 ; one with the most duplicates.
 ; @addr{4629}
 @removeOneDuplicateRing:
-	ld a,($ff00+R_SVBK)	; $4629
-	push af			; $462b
-	ld a,:w4TmpRingBuffer		; $462c
-	ld ($ff00+R_SVBK),a	; $462e
+	ld a,($ff00+R_SVBK)
+	push af
+	ld a,:w4TmpRingBuffer
+	ld ($ff00+R_SVBK),a
 
 	; Construct w4TmpRingBuffer such that each index corresponds to how many
 	; unappraised rings of that index Link has.
 
-	ld hl,w4TmpRingBuffer		; $4630
-	ld b,NUM_RINGS		; $4633
-	call clearMemory		; $4635
+	ld hl,w4TmpRingBuffer
+	ld b,NUM_RINGS
+	call clearMemory
 
-	ld de,wUnappraisedRings		; $4638
-	ld b,wUnappraisedRingsEnd-wUnappraisedRings		; $463b
+	ld de,wUnappraisedRings
+	ld b,wUnappraisedRingsEnd-wUnappraisedRings
 --
-	ld a,(de)		; $463d
-	and $3f			; $463e
-	ld hl,w4TmpRingBuffer		; $4640
-	rst_addAToHl			; $4643
-	inc (hl)		; $4644
-	inc e			; $4645
-	dec b			; $4646
-	jr nz,--		; $4647
+	ld a,(de)
+	and $3f
+	ld hl,w4TmpRingBuffer
+	rst_addAToHl
+	inc (hl)
+	inc e
+	dec b
+	jr nz,--
 
 	; Now loop through w4TmpRingBuffer to find the ring with the most duplicates.
 	; d = max number of duplicates
 	; e = the index with the most duplicates
 
-	ld hl,w4TmpRingBuffer		; $4649
-	ld de,$0000		; $464c
-	ld b,NUM_RINGS		; $464f
+	ld hl,w4TmpRingBuffer
+	ld de,$0000
+	ld b,NUM_RINGS
 --
-	ld a,(hl)		; $4651
-	cp d			; $4652
-	jr c,+			; $4653
-	ld d,a			; $4655
-	ld e,l			; $4656
+	ld a,(hl)
+	cp d
+	jr c,+
+	ld d,a
+	ld e,l
 +
-	inc l			; $4657
-	dec b			; $4658
-	jr nz,--		; $4659
+	inc l
+	dec b
+	jr nz,--
 
-	ld a,e			; $465b
-	sub <w4TmpRingBuffer			; $465c
-	or $40			; $465e
-	ld e,a			; $4660
+	ld a,e
+	sub <w4TmpRingBuffer
+	or $40
+	ld e,a
 
 	; Restore wram bank
-	pop af			; $4661
-	ld ($ff00+R_SVBK),a	; $4662
+	pop af
+	ld ($ff00+R_SVBK),a
 
 	; Search for an instance of the ring to be replaced in wUnappraisedRings
 
-	ld hl,wUnappraisedRingsEnd-1		; $4664
+	ld hl,wUnappraisedRingsEnd-1
 --
-	ldd a,(hl)		; $4667
-	cp e			; $4668
-	jr nz,--		; $4669
+	ldd a,(hl)
+	cp e
+	jr nz,--
 
 	; Remove that ring from the list
-	inc hl			; $466b
-	ld (hl),$ff		; $466c
-	ret			; $466e
+	inc hl
+	ld (hl),$ff
+	ret
 
 ;;
 ; Reorganize wUnappraisedRings so that there are no blank spaces (everything gets put into
@@ -531,27 +531,27 @@ giveTreasure_body:
 ; @param[out]	b	Number of unappraised rings (normal number)
 ; @addr{466f}
 realignUnappraisedRings:
-	ld hl,wUnappraisedRings		; $466f
+	ld hl,wUnappraisedRings
 --
 	; Check if this slot is empty.
-	ld a,(hl)		; $4672
-	cp $ff			; $4673
-	jr nz,++		; $4675
+	ld a,(hl)
+	cp $ff
+	jr nz,++
 
 	; If there is a ring later in the list, move it to this slot.
-	push hl			; $4677
-	call @findNextFilledSlot		; $4678
-	pop hl			; $467b
-	jr nc,+++		; $467c
+	push hl
+	call @findNextFilledSlot
+	pop hl
+	jr nc,+++
 
-	ld (hl),a		; $467e
+	ld (hl),a
 ++
-	inc l			; $467f
-	ld a,l			; $4680
-	cp <wUnappraisedRingsEnd			; $4681
-	jr nz,--		; $4683
+	inc l
+	ld a,l
+	cp <wUnappraisedRingsEnd
+	jr nz,--
 +++
-	jr getNumUnappraisedRings		; $4685
+	jr getNumUnappraisedRings
 
 ;;
 ; Find the next filled slot in wUnappraisedRings, and clear it.
@@ -561,18 +561,18 @@ realignUnappraisedRings:
 ; @param[out]	cflag	Set if a non-empty ring slot was encountered
 ; @addr{4687}
 @findNextFilledSlot:
-	ldi a,(hl)		; $4687
-	cp $ff			; $4688
-	jr nz,++		; $468a
-	ld a,l			; $468c
-	cp <wUnappraisedRingsEnd			; $468d
-	jr nz,@findNextFilledSlot		; $468f
-	ret			; $4691
+	ldi a,(hl)
+	cp $ff
+	jr nz,++
+	ld a,l
+	cp <wUnappraisedRingsEnd
+	jr nz,@findNextFilledSlot
+	ret
 ++
-	dec hl			; $4692
-	ld (hl),$ff		; $4693
-	scf			; $4695
-	ret			; $4696
+	dec hl
+	ld (hl),$ff
+	scf
+	ret
 
 ;;
 ; Sets wNumUnappraisedRingsBcd, and returns the number of unappraised rings
@@ -582,61 +582,61 @@ realignUnappraisedRings:
 ; @param[out]	b	Number of unappraised rings (normal number)
 ; @addr{4697}
 getNumUnappraisedRings:
-	push de			; $4697
-	ld hl,wUnappraisedRings		; $4698
-	ld de,$4000		; $469b
+	push de
+	ld hl,wUnappraisedRings
+	ld de,$4000
 --
-	ldi a,(hl)		; $469e
-	cp $ff			; $469f
-	jr z,+			; $46a1
-	inc e			; $46a3
+	ldi a,(hl)
+	cp $ff
+	jr z,+
+	inc e
 +
-	dec d			; $46a4
-	jr nz,--		; $46a5
+	dec d
+	jr nz,--
 
-	push bc			; $46a7
-	ld a,e			; $46a8
-	call hexToDec		; $46a9
-	swap c			; $46ac
-	or c			; $46ae
-	ld (wNumUnappraisedRingsBcd),a		; $46af
-	pop bc			; $46b2
-	ld b,e			; $46b3
-	pop de			; $46b4
-	ret			; $46b5
+	push bc
+	ld a,e
+	call hexToDec
+	swap c
+	or c
+	ld (wNumUnappraisedRingsBcd),a
+	pop bc
+	ld b,e
+	pop de
+	ret
 
 ;;
 ; @param	hFF8B	Treasure index
 ; @addr{46b6}
 addTreasureToInventory:
-	ldh a,(<hFF8B)	; $46b6
-	cp NUM_INVENTORY_ITEMS			; $46b8
-	ret nc			; $46ba
+	ldh a,(<hFF8B)
+	cp NUM_INVENTORY_ITEMS
+	ret nc
 
-	push bc			; $46bb
-	call @addToInventory		; $46bc
-	pop bc			; $46bf
-	ret nc			; $46c0
-	jp z,setStatusBarNeedsRefreshBit1		; $46c1
+	push bc
+	call @addToInventory
+	pop bc
+	ret nc
+	jp z,setStatusBarNeedsRefreshBit1
 
 	; Do something weird with biggoron's sword...
-	push bc			; $46c4
-	cpl			; $46c5
-	add <wInventoryB			; $46c6
-	ld l,a			; $46c8
-	ldh a,(<hFF8B)	; $46c9
-	ld c,a			; $46cb
-	cp TREASURE_BIGGORON_SWORD			; $46cc
-	jr nz,+			; $46ce
+	push bc
+	cpl
+	add <wInventoryB
+	ld l,a
+	ldh a,(<hFF8B)
+	ld c,a
+	cp TREASURE_BIGGORON_SWORD
+	jr nz,+
 
-	ld a,(hl)		; $46d0
-	ld (hl),c		; $46d1
-	call @addToInventory		; $46d2
+	ld a,(hl)
+	ld (hl),c
+	call @addToInventory
 +
-	ld hl,wStatusBarNeedsRefresh		; $46d5
-	set 0,(hl)		; $46d8
-	pop bc			; $46da
-	ret			; $46db
+	ld hl,wStatusBarNeedsRefresh
+	set 0,(hl)
+	pop bc
+	ret
 
 ;;
 ; @param	a	Item to add
@@ -644,33 +644,33 @@ addTreasureToInventory:
 ; @param[out]	zflag	z if already had the item
 ; @addr{46dc}
 @addToInventory:
-	ld c,a			; $46dc
-	ld hl,wInventoryB		; $46dd
+	ld c,a
+	ld hl,wInventoryB
 
 	; Check if link has the item already
-	ld b,INVENTORY_CAPACITY+2		; $46e0
+	ld b,INVENTORY_CAPACITY+2
 @nextItem:
-	ldi a,(hl)		; $46e2
-	cp c			; $46e3
-	jr z,@assignItem	; $46e4
-	dec b			; $46e6
-	jr nz,@nextItem	; $46e7
+	ldi a,(hl)
+	cp c
+	jr z,@assignItem
+	dec b
+	jr nz,@nextItem
 
 	; Find the first available slot
-	dec b			; $46e9
-	ld l,<wInventoryB		; $46ea
+	dec b
+	ld l,<wInventoryB
 --
-	ldi a,(hl)		; $46ec
-	or a			; $46ed
-	jr nz,--		; $46ee
+	ldi a,(hl)
+	or a
+	jr nz,--
 
 @assignItem:
-	dec l			; $46f0
-	ld (hl),c		; $46f1
-	ld a,l			; $46f2
-	sub <wInventoryStorage			; $46f3
-	bit 7,b			; $46f5
-	ret			; $46f7
+	dec l
+	ld (hl),c
+	ld a,l
+	sub <wInventoryStorage
+	bit 7,b
+	ret
 
 ;;
 ; Loads 7 bytes of "display data" describing a treasure's sprite, its palette, what its
@@ -682,51 +682,51 @@ addTreasureToInventory:
 ; @param[out]	hl	Where the data is stored (wTmpcec0).
 ; @addr{46f8}
 loadTreasureDisplayData:
-	ld a,l			; $46f8
-	push de			; $46f9
-	call @getTableIndices		; $46fa
+	ld a,l
+	push de
+	call @getTableIndices
 
 	; Set up hl to point to "[treasureDisplayData2+e*2]+d*7".
 
-	push bc			; $46fd
-	ld hl,$0000		; $46fe
+	push bc
+	ld hl,$0000
 
 	; hl = d*7
-	ld a,d			; $4701
-	or a			; $4702
-	jr z,+			; $4703
-	cpl			; $4705
-	inc a			; $4706
-	ld l,a			; $4707
-	ld h,$ff		; $4708
-	ld a,d			; $470a
-	call multiplyABy8		; $470b
-	add hl,bc		; $470e
+	ld a,d
+	or a
+	jr z,+
+	cpl
+	inc a
+	ld l,a
+	ld h,$ff
+	ld a,d
+	call multiplyABy8
+	add hl,bc
 +
-	push hl			; $470f
-	ld a,e			; $4710
-	ld hl,treasureDisplayData2		; $4711
-	rst_addDoubleIndex			; $4714
-	ldi a,(hl)		; $4715
-	ld h,(hl)		; $4716
-	ld l,a			; $4717
-	pop bc			; $4718
-	add hl,bc		; $4719
+	push hl
+	ld a,e
+	ld hl,treasureDisplayData2
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	pop bc
+	add hl,bc
 
 	; Now copy the 7 bytes to wTmpcec0
-	ld de,wTmpcec0		; $471a
-	ld b,$07		; $471d
+	ld de,wTmpcec0
+	ld b,$07
 -
-	ldi a,(hl)		; $471f
-	ld (de),a		; $4720
-	inc e			; $4721
-	dec b			; $4722
-	jr nz,-			; $4723
+	ldi a,(hl)
+	ld (de),a
+	inc e
+	dec b
+	jr nz,-
 
-	ld hl,wTmpcec0		; $4725
-	pop bc			; $4728
-	pop de			; $4729
-	ret			; $472a
+	ld hl,wTmpcec0
+	pop bc
+	pop de
+	ret
 
 ;;
 ; @param	a	Item index
@@ -736,41 +736,41 @@ loadTreasureDisplayData:
 ; @param[out]	e	Which sub-table to use from treasureDisplayData2
 ; @addr{472b}
 @getTableIndices:
-	ld d,a			; $472b
-	ld hl,treasureDisplayData1		; $472c
+	ld d,a
+	ld hl,treasureDisplayData1
 -
-	ldi a,(hl)		; $472f
-	or a			; $4730
-	jr z,+			; $4731
+	ldi a,(hl)
+	or a
+	jr z,+
 
-	cp d			; $4733
-	jr z,+			; $4734
+	cp d
+	jr z,+
 
-	inc hl			; $4736
-	inc hl			; $4737
-	jr -			; $4738
+	inc hl
+	inc hl
+	jr -
 
 .ifdef ROM_SEASONS
 +
-	cp ITEMID_SLINGSHOT			; $4740
-	jr nz,+			; $4742
-	ld a,(wSlingshotLevel)		; $4744
-	cp $02			; $4747
-	jr nz,+			; $4749
-	inc a			; $474b
-	rst_addAToHl			; $474c
+	cp ITEMID_SLINGSHOT
+	jr nz,+
+	ld a,(wSlingshotLevel)
+	cp $02
+	jr nz,+
+	inc a
+	rst_addAToHl
 .endif
 +
-	ldi a,(hl)		; $473a
-	ld e,(hl)		; $473b
-	or a			; $473c
-	jr z,+			; $473d
+	ldi a,(hl)
+	ld e,(hl)
+	or a
+	jr z,+
 
-	ld l,a			; $473f
-	ld h,>wc600Block	; $4740
-	ld d,(hl)		; $4742
+	ld l,a
+	ld h,>wc600Block
+	ld d,(hl)
 +
-	ret			; $4743
+	ret
 
 ;;
 ; Decides what an enemy will drop.
@@ -780,51 +780,51 @@ loadTreasureDisplayData:
 ;			should drop
 ; @addr{4744}
 decideItemDrop_body:
-	ld a,c			; $4744
-	or a			; $4745
-	set 7,a			; $4746
-	jr nz,+			; $4748
+	ld a,c
+	or a
+	set 7,a
+	jr nz,+
 
 	; If parameter == 0, assume it's an enemy; use the enemy's ID for the drop table. (Assumes
 	; that 'd' points to an instance of PARTID_ENEMY_DESTROYED or PARTID_BOSS_DEATH_EXPLOSION,
 	; whose subid refers to the enemy that was killed? TODO: verify.)
-	ldh a,(<hActiveObjectType)	; $474a
-	add Object.subid			; $474c
-	ld e,a			; $474e
-	ld a,(de)		; $474f
+	ldh a,(<hActiveObjectType)
+	add Object.subid
+	ld e,a
+	ld a,(de)
 +
-	ld hl,itemDropTables		; $4750
-	rst_addAToHl			; $4753
-	ld a,(hl)		; $4754
-	ld c,a			; $4755
-	cp $ff			; $4756
-	jr z,checkItemDropAvailable_body@done		; $4758
+	ld hl,itemDropTables
+	rst_addAToHl
+	ld a,(hl)
+	ld c,a
+	cp $ff
+	jr z,checkItemDropAvailable_body@done
 
-	swap a			; $475a
-	rrca			; $475c
-	and $07			; $475d
-	ld hl,_itemDropProbabilityTable		; $475f
-	rst_addDoubleIndex			; $4762
-	ldi a,(hl)		; $4763
-	ld h,(hl)		; $4764
-	ld l,a			; $4765
-	call getRandomNumber		; $4766
-	and $3f			; $4769
-	call checkFlag		; $476b
-	jr z,checkItemDropAvailable_body@done		; $476e
+	swap a
+	rrca
+	and $07
+	ld hl,_itemDropProbabilityTable
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	call getRandomNumber
+	and $3f
+	call checkFlag
+	jr z,checkItemDropAvailable_body@done
 
-	ld a,c			; $4770
-	and $1f			; $4771
-	ld hl,_itemDropSetTable		; $4773
-	rst_addDoubleIndex			; $4776
-	ldi a,(hl)		; $4777
-	ld h,(hl)		; $4778
-	ld l,a			; $4779
-	call getRandomNumber		; $477a
-	and $1f			; $477d
-	rst_addAToHl			; $477f
-	ld a,(hl)		; $4780
-	ld c,a			; $4781
+	ld a,c
+	and $1f
+	ld hl,_itemDropSetTable
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	call getRandomNumber
+	and $1f
+	rst_addAToHl
+	ld a,(hl)
+	ld c,a
 
 ;;
 ; Checks whether an item drop of a given type can spawn.
@@ -835,30 +835,30 @@ decideItemDrop_body:
 checkItemDropAvailable_body:
 .ifdef ROM_SEASONS
 	; different drop table for subrosia
-	ld a,(wMinimapGroup)	; $4795
-	dec a			; $4798
-	ld a,c			; $4799
-	jr nz,+			; $479a
-	ld hl,subrosiaDropSet		; $479c
-	rst_addAToHl		; $479f
-	ld a,(hl)		; $47a0
-	ld c,a			; $47a1
+	ld a,(wMinimapGroup)
+	dec a
+	ld a,c
+	jr nz,+
+	ld hl,subrosiaDropSet
+	rst_addAToHl
+	ld a,(hl)
+	ld c,a
 +
 .else
-	ld a,c			; $4782
+	ld a,c
 .endif
-	ld hl,_itemDropAvailabilityTable		; $4783
-	rst_addDoubleIndex			; $4786
-	ldi a,(hl)		; $4787
-	ld b,(hl)		; $4788
-	ld l,a			; $4789
-	ld h,>wc600Block		; $478a
-	ld a,(hl)		; $478c
-	and b			; $478d
-	ret nz			; $478e
+	ld hl,_itemDropAvailabilityTable
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld b,(hl)
+	ld l,a
+	ld h,>wc600Block
+	ld a,(hl)
+	and b
+	ret nz
 @done:
-	ld c,$ff		; $478f
-	ret			; $4791
+	ld c,$ff
+	ret
 
 
 ; Rings are divided into "tiers" (called "classes" in TourianTourist's ring guide). These
@@ -1143,26 +1143,26 @@ itemDropTables:
 ; @param	c	Treasure "parameter"
 ; @addr{4ad6}
 _checkIncreaseGashaMaturityForGettingTreasure:
-	push bc			; $4ad6
-	ld b,a			; $4ad7
-	ld hl,@data-1		; $4ad8
+	push bc
+	ld b,a
+	ld hl,@data-1
 --
-	inc hl			; $4adb
-	ldi a,(hl)		; $4adc
-	or a			; $4add
-	jr z,++			; $4ade
-	cp b			; $4ae0
-	jr nz,--		; $4ae1
+	inc hl
+	ldi a,(hl)
+	or a
+	jr z,++
+	cp b
+	jr nz,--
 
-	cp TREASURE_HEART_REFILL			; $4ae3
-	ld a,c			; $4ae5
-	jr z,+			; $4ae6
-	ld a,(hl)		; $4ae8
+	cp TREASURE_HEART_REFILL
+	ld a,c
+	jr z,+
+	ld a,(hl)
 +
-	call addToGashaMaturity		; $4ae9
+	call addToGashaMaturity
 ++
-	pop bc			; $4aec
-	ret			; $4aed
+	pop bc
+	ret
 
 @data:
 	.db TREASURE_ESSENCE		150

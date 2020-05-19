@@ -36,7 +36,7 @@ cliffTilesTable:
 	.db $00
 
 @collisions2Data:
-	.db $00			; $7ccc
+	.db $00
 @collisions3Data:
 @collisions4Data:
 	.db $b0 $10
@@ -47,4 +47,4 @@ cliffTilesTable:
 	.db $06 $10
 
 @collisions5Data:
-	.db $00			; $7cd9
+	.db $00

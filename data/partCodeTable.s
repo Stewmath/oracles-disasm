@@ -181,9 +181,9 @@ partCodeTable:
 ;;
 ; @addr{5f55}
 partCodeNil:
-	ret			; $5f55
+	ret
 
 ;;
 ; @addr{5f56}
 partCode00:
-	jp partDelete		; $5f56
+	jp partDelete

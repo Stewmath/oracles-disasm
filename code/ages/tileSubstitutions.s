@@ -1,48 +1,48 @@
 ;;
 ; @addr{5fef}
 applyAllTileSubstitutions:
-	call replacePollutionWithWaterIfPollutionFixed		; $5fef
-	call applySingleTileChanges		; $5ff2
-	call applyStandardTileSubstitutions		; $5ff5
-	call replaceOpenedChest		; $5ff8
-	ld a,(wActiveGroup)		; $5ffb
-	and $06			; $5ffe
-	cp NUM_SMALL_GROUPS		; $6000
-	jr nz,+			; $6002
+	call replacePollutionWithWaterIfPollutionFixed
+	call applySingleTileChanges
+	call applyStandardTileSubstitutions
+	call replaceOpenedChest
+	ld a,(wActiveGroup)
+	and $06
+	cp NUM_SMALL_GROUPS
+	jr nz,+
 
-	call replaceShutterForLinkEntering		; $6004
-	call replaceSwitchTiles		; $6007
-	call replaceToggleBlocks		; $600a
-	call replaceJabuTilesIfUnderwater		; $600d
+	call replaceShutterForLinkEntering
+	call replaceSwitchTiles
+	call replaceToggleBlocks
+	call replaceJabuTilesIfUnderwater
 +
-	call applyRoomSpecificTileChanges		; $6010
-	ld a,(wActiveGroup)		; $6013
-	cp $02			; $6016
-	ret nc			; $6018
+	call applyRoomSpecificTileChanges
+	ld a,(wActiveGroup)
+	cp $02
+	ret nc
 
 	; In the overworld
 
-	call replaceBreakableTileOverPortal		; $6019
-	call replaceBreakableTileOverLinkTimeWarpingIn		; $601c
-	ld a,(wLinkTimeWarpTile)		; $601f
-	or a			; $6022
-	ret z			; $6023
+	call replaceBreakableTileOverPortal
+	call replaceBreakableTileOverLinkTimeWarpingIn
+	ld a,(wLinkTimeWarpTile)
+	or a
+	ret z
 
 	; If link was sent back from trying to travel through time, clear the
 	; breakable tile at his position (if it exists) so he can safely
 	; return.
 
-	ld c,a			; $6024
-	dec c			; $6025
-	ld b,>wRoomLayout		; $6026
-	ld a,(bc)		; $6028
-	ld e,a			; $6029
-	ld hl,@tileReplacementDict		; $602a
-	call lookupKey		; $602d
-	ret nc			; $6030
+	ld c,a
+	dec c
+	ld b,>wRoomLayout
+	ld a,(bc)
+	ld e,a
+	ld hl,@tileReplacementDict
+	call lookupKey
+	ret nc
 
-	ld (bc),a		; $6031
-	ret			; $6032
+	ld (bc),a
+	ret
 
 @tileReplacementDict:
 	.db $c0 $3a ; Rocks
@@ -59,28 +59,28 @@ applyAllTileSubstitutions:
 ;;
 ; @addr{6046}
 replaceBreakableTileOverPortal:
-	ld hl,wPortalGroup		; $6046
-	ld a,(wActiveGroup)		; $6049
-	cp (hl)			; $604c
-	ret nz			; $604d
+	ld hl,wPortalGroup
+	ld a,(wActiveGroup)
+	cp (hl)
+	ret nz
 
-	inc l			; $604e
-	ld a,(wActiveRoom)		; $604f
-	cp (hl)			; $6052
-	ret nz			; $6053
+	inc l
+	ld a,(wActiveRoom)
+	cp (hl)
+	ret nz
 
-	inc l			; $6054
-	ld c,(hl)		; $6055
+	inc l
+	ld c,(hl)
 _removeBreakableTileForTimeWarp:
-	ld b,>wRoomLayout		; $6056
-	ld a,(bc)		; $6058
-	ld e,a			; $6059
-	ld hl,@tileReplacementDict		; $605a
-	call lookupKey		; $605d
-	ret nc			; $6060
+	ld b,>wRoomLayout
+	ld a,(bc)
+	ld e,a
+	ld hl,@tileReplacementDict
+	call lookupKey
+	ret nc
 
-	ld (bc),a		; $6061
-	ret			; $6062
+	ld (bc),a
+	ret
 
 ; @addr{6063}
 @tileReplacementDict:
@@ -92,32 +92,32 @@ _removeBreakableTileForTimeWarp:
 ;;
 ; @addr{606a}
 replaceBreakableTileOverLinkTimeWarpingIn:
-	ld a,(wWarpTransition)		; $606a
-	and $0f			; $606d
-	cp TRANSITION_DEST_TIMEWARP		; $606f
-	ret nz			; $6071
+	ld a,(wWarpTransition)
+	and $0f
+	cp TRANSITION_DEST_TIMEWARP
+	ret nz
 
-	ld a,(wWarpDestPos)		; $6072
-	ld c,a			; $6075
-	jr _removeBreakableTileForTimeWarp		; $6076
+	ld a,(wWarpDestPos)
+	ld c,a
+	jr _removeBreakableTileForTimeWarp
 
 ;;
 ; @addr{6078}
 replacePollutionWithWaterIfPollutionFixed:
-	ld a,GLOBALFLAG_WATER_POLLUTION_FIXED		; $6078
-	call checkGlobalFlag		; $607a
-	ret z			; $607d
+	ld a,GLOBALFLAG_WATER_POLLUTION_FIXED
+	call checkGlobalFlag
+	ret z
 
-	ld a,(wTilesetFlags)		; $607e
-	bit TILESETFLAG_BIT_OUTDOORS,a			; $6081
-	ret z			; $6083
+	ld a,(wTilesetFlags)
+	bit TILESETFLAG_BIT_OUTDOORS,a
+	ret z
 
-	ld de,@aboveWaterReplacement		; $6084
-	and TILESETFLAG_UNDERWATER		; $6087
-	jr z,+			; $6089
-	ld de,@belowWaterReplacement		; $608b
+	ld de,@aboveWaterReplacement
+	and TILESETFLAG_UNDERWATER
+	jr z,+
+	ld de,@belowWaterReplacement
 +
-	jr replaceTiles		; $608e
+	jr replaceTiles
 
 ; @addr{6090}
 @aboveWaterReplacement:
@@ -133,73 +133,73 @@ replacePollutionWithWaterIfPollutionFixed:
 ; (format: tile to replace with, tile to replace, repeat, $00 to end)
 ; @addr{6096}
 replaceTiles:
-	ld a,(de)		; $6096
-	or a			; $6097
-	ret z			; $6098
+	ld a,(de)
+	or a
+	ret z
 
-	ld b,a			; $6099
-	inc de			; $609a
-	ld a,(de)		; $609b
-	inc de			; $609c
-	call findTileInRoom		; $609d
-	jr nz,replaceTiles	; $60a0
+	ld b,a
+	inc de
+	ld a,(de)
+	inc de
+	call findTileInRoom
+	jr nz,replaceTiles
 
-	ld (hl),b		; $60a2
-	ld c,a			; $60a3
-	ld a,l			; $60a4
-	or a			; $60a5
-	jr z,replaceTiles	; $60a6
+	ld (hl),b
+	ld c,a
+	ld a,l
+	or a
+	jr z,replaceTiles
 --
-	dec l			; $60a8
-	ld a,c			; $60a9
-	call backwardsSearch		; $60aa
-	jr nz,replaceTiles	; $60ad
+	dec l
+	ld a,c
+	call backwardsSearch
+	jr nz,replaceTiles
 
-	ld (hl),b		; $60af
-	ld c,a			; $60b0
-	ld a,l			; $60b1
-	or a			; $60b2
-	jr z,replaceTiles	; $60b3
-	jr --			; $60b5
+	ld (hl),b
+	ld c,a
+	ld a,l
+	or a
+	jr z,replaceTiles
+	jr --
 
 ;;
 ; Substitutes various tiles when particular room flag bits (0-3, 7) are set.
 ; @addr{60b7}
 applyStandardTileSubstitutions:
-	call getThisRoomFlags		; $60b7
-	ldh (<hFF8B),a	; $60ba
-	ld hl,@bit0		; $60bc
-	bit 0,a			; $60bf
-	call nz,@locFunc		; $60c1
+	call getThisRoomFlags
+	ldh (<hFF8B),a
+	ld hl,@bit0
+	bit 0,a
+	call nz,@locFunc
 
-	ld hl,@bit1		; $60c4
-	ldh a,(<hFF8B)	; $60c7
-	bit 1,a			; $60c9
-	call nz,@locFunc		; $60cb
+	ld hl,@bit1
+	ldh a,(<hFF8B)
+	bit 1,a
+	call nz,@locFunc
 
-	ld hl,@bit2		; $60ce
-	ldh a,(<hFF8B)	; $60d1
-	bit 2,a			; $60d3
-	call nz,@locFunc		; $60d5
+	ld hl,@bit2
+	ldh a,(<hFF8B)
+	bit 2,a
+	call nz,@locFunc
 
-	ld hl,@bit3		; $60d8
-	ldh a,(<hFF8B)	; $60db
-	bit 3,a			; $60dd
-	call nz,@locFunc		; $60df
+	ld hl,@bit3
+	ldh a,(<hFF8B)
+	bit 3,a
+	call nz,@locFunc
 
-	ld hl,@bit7		; $60e2
-	ldh a,(<hFF8B)	; $60e5
-	bit 7,a			; $60e7
-	ret z			; $60e9
+	ld hl,@bit7
+	ldh a,(<hFF8B)
+	bit 7,a
+	ret z
 @locFunc:
-	ld a,(wActiveCollisions)		; $60ea
-	rst_addDoubleIndex			; $60ed
-	ldi a,(hl)		; $60ee
-	ld h,(hl)		; $60ef
-	ld l,a			; $60f0
-	ld e,l			; $60f1
-	ld d,h			; $60f2
-	jr replaceTiles			; $60f3
+	ld a,(wActiveCollisions)
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	ld e,l
+	ld d,h
+	jr replaceTiles
 
 ; @addr{60f5}
 @bit0:
@@ -324,17 +324,17 @@ applyStandardTileSubstitutions:
 ; Updates the toggleable blocks to the correct state when loading a room.
 ; @addr{617c}
 replaceToggleBlocks:
-	call checkDungeonUsesToggleBlocks		; $617c
-	ret z			; $617f
+	call checkDungeonUsesToggleBlocks
+	ret z
 
-	callab roomGfxChanges.func_02_7a77		; $6180
-	ld de,@state1		; $6188
-	ld a,(wToggleBlocksState)		; $618b
-	or a			; $618e
-	jr nz,+			; $618f
-	ld de,@state2		; $6191
+	callab roomGfxChanges.func_02_7a77
+	ld de,@state1
+	ld a,(wToggleBlocksState)
+	or a
+	jr nz,+
+	ld de,@state2
 +
-	jp replaceTiles		; $6194
+	jp replaceTiles
 
 ; @addr{6197}
 @state1:
@@ -351,26 +351,26 @@ replaceToggleBlocks:
 ; Does the necessary tile changes if underwater in jabu-jabu.
 ; @addr{61a1}
 replaceJabuTilesIfUnderwater:
-	ld a,(wDungeonIndex)		; $61a1
-	cp $07			; $61a4
-	ret nz			; $61a6
+	ld a,(wDungeonIndex)
+	cp $07
+	ret nz
 
-	ld a,(wTilesetFlags)		; $61a7
-	and TILESETFLAG_SIDESCROLL			; $61aa
-	ret nz			; $61ac
+	ld a,(wTilesetFlags)
+	and TILESETFLAG_SIDESCROLL
+	ret nz
 
 	; Only substitute tiles if on the first non-underwater floor
-	ld a,(wDungeonFloor)		; $61ad
-	ld b,a			; $61b0
-	ld a,(wJabuWaterLevel)		; $61b1
-	and $07			; $61b4
-	cp b			; $61b6
-	ret nz			; $61b7
+	ld a,(wDungeonFloor)
+	ld b,a
+	ld a,(wJabuWaterLevel)
+	and $07
+	cp b
+	ret nz
 
-	ld de,@data1		; $61b8
-	call replaceTiles		; $61bb
-	ld de,@data2		; $61be
-	jp replaceTiles		; $61c1
+	ld de,@data1
+	call replaceTiles
+	ld de,@data2
+	jp replaceTiles
 
 ; @addr{61c4}
 @data1:
@@ -393,112 +393,112 @@ replaceJabuTilesIfUnderwater:
 ; Replaces a shutter link is about to walk on to with empty floor.
 ; @addr{61d8}
 replaceShutterForLinkEntering:
-	ldbc >wRoomLayout, (LARGE_ROOM_HEIGHT-1)<<4 + (LARGE_ROOM_WIDTH-1)	; $61d8
+	ldbc >wRoomLayout, (LARGE_ROOM_HEIGHT-1)<<4 + (LARGE_ROOM_WIDTH-1)
 --
-	ld a,(bc)		; $61db
-	push bc			; $61dc
-	sub $78			; $61dd
-	cp $08			; $61df
-	call c,@temporarilyOpenDoor		; $61e1
-	pop bc			; $61e4
-	dec c			; $61e5
-	jr nz,--		; $61e6
-	ret			; $61e8
+	ld a,(bc)
+	push bc
+	sub $78
+	cp $08
+	call c,@temporarilyOpenDoor
+	pop bc
+	dec c
+	jr nz,--
+	ret
 
 ; Replaces a door at position bc with empty floor, and adds an interaction to
 ; re-close it when link moves away (for minecart doors only)
 @temporarilyOpenDoor:
-	ld de,@shutterData		; $61e9
-	call addDoubleIndexToDe		; $61ec
-	ld a,(de)		; $61ef
-	ldh (<hFF8B),a	; $61f0
-	inc de			; $61f2
-	ld a,(de)		; $61f3
-	ld e,a			; $61f4
-	ld a,(wScrollMode)		; $61f5
-	and $08			; $61f8
-	jr z,@doneReplacement	; $61fa
+	ld de,@shutterData
+	call addDoubleIndexToDe
+	ld a,(de)
+	ldh (<hFF8B),a
+	inc de
+	ld a,(de)
+	ld e,a
+	ld a,(wScrollMode)
+	and $08
+	jr z,@doneReplacement
 
-	ld a,(wLinkObjectIndex)		; $61fc
-	ld h,a			; $61ff
-	ld a,(wScreenTransitionDirection)		; $6200
-	xor $02			; $6203
-	ld d,a			; $6205
-	ld a,e			; $6206
-	and $03			; $6207
-	cp d			; $6209
-	ret nz			; $620a
+	ld a,(wLinkObjectIndex)
+	ld h,a
+	ld a,(wScreenTransitionDirection)
+	xor $02
+	ld d,a
+	ld a,e
+	and $03
+	cp d
+	ret nz
 
-	ld a,(wScreenTransitionDirection)		; $620b
-	bit 0,a			; $620e
-	jr nz,@horizontal			; $6210
+	ld a,(wScreenTransitionDirection)
+	bit 0,a
+	jr nz,@horizontal
 ; vertical
-	and $02			; $6212
-	ld l,<w1Link.xh		; $6214
-	ld a,(hl)		; $6216
-	jr nz,@down		; $6217
+	and $02
+	ld l,<w1Link.xh
+	ld a,(hl)
+	jr nz,@down
 @up:
-	and $f0			; $6219
-	swap a			; $621b
-	or $a0			; $621d
-	jr @doReplacement		; $621f
+	and $f0
+	swap a
+	or $a0
+	jr @doReplacement
 @down:
-	and $f0			; $6221
-	swap a			; $6223
-	jr @doReplacement		; $6225
+	and $f0
+	swap a
+	jr @doReplacement
 
 @horizontal:
-	and $02			; $6227
-	ld l,<w1Link.yh		; $6229
-	ld a,(hl)		; $622b
-	jr nz,@left	; $622c
+	and $02
+	ld l,<w1Link.yh
+	ld a,(hl)
+	jr nz,@left
 @right:
-	and $f0			; $622e
-	jr @doReplacement		; $6230
+	and $f0
+	jr @doReplacement
 @left:
-	and $f0			; $6232
-	or $0e			; $6234
+	and $f0
+	or $0e
 
 @doReplacement:
 	; Only replace if link is standing on the tile.
-	cp c			; $6236
-	jr nz,@doneReplacement	; $6237
+	cp c
+	jr nz,@doneReplacement
 
-	push bc			; $6239
-	ld c,a			; $623a
-	ld a,(bc)		; $623b
-	sub $78			; $623c
-	cp $08			; $623e
-	jr nc,+			; $6240
+	push bc
+	ld c,a
+	ld a,(bc)
+	sub $78
+	cp $08
+	jr nc,+
 
-	ldh a,(<hFF8B)	; $6242
-	ld (bc),a		; $6244
+	ldh a,(<hFF8B)
+	ld (bc),a
 +
-	pop bc			; $6245
+	pop bc
 
 @doneReplacement:
 	; If bit 7 is set, don't add an auto-shutter interaction.
-	ld a,e			; $6246
-	bit 7,a			; $6247
-	ret nz			; $6249
+	ld a,e
+	bit 7,a
+	ret nz
 
-	and $7f			; $624a
-	ld e,a			; $624c
+	and $7f
+	ld e,a
 
 	; If not in a dungeon, don't add an auto-shutter.
-	ld a,(wTilesetFlags)		; $624d
-	bit TILESETFLAG_BIT_DUNGEON,a			; $6250
-	ret z			; $6252
+	ld a,(wTilesetFlags)
+	bit TILESETFLAG_BIT_DUNGEON,a
+	ret z
 
-	call getFreeInteractionSlot		; $6253
-	ret nz			; $6256
+	call getFreeInteractionSlot
+	ret nz
 
-	ld (hl),$1e		; $6257
-	inc l			; $6259
-	ld (hl),e		; $625a
-	ld l,Interaction.yh		; $625b
-	ld (hl),c		; $625d
-	ret			; $625e
+	ld (hl),$1e
+	inc l
+	ld (hl),e
+	ld l,Interaction.yh
+	ld (hl),c
+	ret
 
 ; Data format:
 ; Byte 1 - tile to replace shutter with
@@ -517,62 +517,62 @@ replaceShutterForLinkEntering:
 ;;
 ; @addr{626f}
 replaceOpenedChest:
-	call getThisRoomFlags		; $626f
-	bit ROOMFLAG_BIT_ITEM,a			; $6272
-	ret z			; $6274
+	call getThisRoomFlags
+	bit ROOMFLAG_BIT_ITEM,a
+	ret z
 
-	call getChestData		; $6275
-	ld d,>wRoomLayout		; $6278
-	ld a,TILEINDEX_CHEST_OPENED	; $627a
-	ld (de),a		; $627c
-	ret			; $627d
+	call getChestData
+	ld d,>wRoomLayout
+	ld a,TILEINDEX_CHEST_OPENED
+	ld (de),a
+	ret
 
 ;;
 ; Replaces switch tiles and whatever they control if the switch is set.
 ; Groups 4 and 5 only.
 ; @addr{627e}
 replaceSwitchTiles:
-	ld hl,@group4SwitchData		; $627e
-	ld a,(wActiveGroup)		; $6281
-	sub NUM_SMALL_GROUPS			; $6284
-	jr z,+			; $6286
+	ld hl,@group4SwitchData
+	ld a,(wActiveGroup)
+	sub NUM_SMALL_GROUPS
+	jr z,+
 
-	dec a			; $6288
-	ret nz			; $6289
+	dec a
+	ret nz
 
-	ld hl,@group5SwitchData		; $628a
+	ld hl,@group5SwitchData
 +
-	ld a,(wActiveRoom)		; $628d
-	ld b,a			; $6290
-	ld a,(wSwitchState)		; $6291
-	ld c,a			; $6294
-	ld d,>wRoomLayout		; $6295
+	ld a,(wActiveRoom)
+	ld b,a
+	ld a,(wSwitchState)
+	ld c,a
+	ld d,>wRoomLayout
 @next:
-	ldi a,(hl)		; $6297
-	or a			; $6298
-	ret z			; $6299
+	ldi a,(hl)
+	or a
+	ret z
 
 	; Check room
-	cp b			; $629a
-	jr nz,@skip3Bytes	; $629b
+	cp b
+	jr nz,@skip3Bytes
 
 	; Check if corresponding bit of wSwitchState is set
-	ldi a,(hl)		; $629d
-	and c			; $629e
-	jr z,@skip2Bytes	; $629f
+	ldi a,(hl)
+	and c
+	jr z,@skip2Bytes
 
-	ldi a,(hl)		; $62a1
-	ld e,(hl)		; $62a2
-	inc hl			; $62a3
-	ld (de),a		; $62a4
-	jr @next		; $62a5
+	ldi a,(hl)
+	ld e,(hl)
+	inc hl
+	ld (de),a
+	jr @next
 
 @skip3Bytes:
-	inc hl			; $62a7
+	inc hl
 @skip2Bytes:
-	inc hl			; $62a8
-	inc hl			; $62a9
-	jr @next		; $62aa
+	inc hl
+	inc hl
+	jr @next
 
 ; Data format:
 ; Room, Switch bit, new tile index, position of tile to replace
@@ -600,69 +600,69 @@ replaceSwitchTiles:
 ;;
 ; @addr{62de}
 applySingleTileChanges:
-	ld a,(wActiveRoom)		; $62de
-	ld b,a			; $62e1
-	call getThisRoomFlags		; $62e2
-	ld c,a			; $62e5
-	ld d,>wRoomLayout		; $62e6
-	ld a,(wActiveGroup)		; $62e8
-	ld hl,singleTileChangeGroupTable		; $62eb
-	rst_addDoubleIndex			; $62ee
-	ldi a,(hl)		; $62ef
-	ld h,(hl)		; $62f0
-	ld l,a			; $62f1
+	ld a,(wActiveRoom)
+	ld b,a
+	call getThisRoomFlags
+	ld c,a
+	ld d,>wRoomLayout
+	ld a,(wActiveGroup)
+	ld hl,singleTileChangeGroupTable
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
 @next:
 	; Check room
-	ldi a,(hl)		; $62f2
-	cp b			; $62f3
-	jr nz,@notMatch		; $62f4
+	ldi a,(hl)
+	cp b
+	jr nz,@notMatch
 
-	ld a,(hl)		; $62f6
-	cp $f0			; $62f7
-	jr z,@unlinkedOnly	; $62f9
+	ld a,(hl)
+	cp $f0
+	jr z,@unlinkedOnly
 
-	cp $f1			; $62fb
-	jr z,@linkedOnly	; $62fd
+	cp $f1
+	jr z,@linkedOnly
 
-	cp $f2			; $62ff
-	jr z,@finishedGameOnly	; $6301
+	cp $f2
+	jr z,@finishedGameOnly
 
-	ld a,(hl)		; $6303
-	and c			; $6304
-	jr z,@notMatch		; $6305
+	ld a,(hl)
+	and c
+	jr z,@notMatch
 
 @match:
-	inc hl			; $6307
-	ldi a,(hl)		; $6308
-	ld e,a			; $6309
-	ldi a,(hl)		; $630a
-	ld (de),a		; $630b
-	jr @next		; $630c
+	inc hl
+	ldi a,(hl)
+	ld e,a
+	ldi a,(hl)
+	ld (de),a
+	jr @next
 
 @notMatch:
-	ld a,(hl)		; $630e
-	or a			; $630f
-	ret z			; $6310
+	ld a,(hl)
+	or a
+	ret z
 
-	inc hl			; $6311
-	inc hl			; $6312
-	inc hl			; $6313
-	jr @next		; $6314
+	inc hl
+	inc hl
+	inc hl
+	jr @next
 
 @unlinkedOnly:
-	call checkIsLinkedGame		; $6316
-	jr nz,@notMatch		; $6319
-	jr @match			; $631b
+	call checkIsLinkedGame
+	jr nz,@notMatch
+	jr @match
 
 @linkedOnly:
-	call checkIsLinkedGame		; $631d
-	jr z,@notMatch		; $6320
-	jr @match			; $6322
+	call checkIsLinkedGame
+	jr z,@notMatch
+	jr @match
 
 @finishedGameOnly:
-	ld a,GLOBALFLAG_FINISHEDGAME		; $6324
-	push hl			; $6326
-	call checkGlobalFlag		; $6327
-	pop hl			; $632a
-	ret z			; $632b
-	jr @match		; $632c
+	ld a,GLOBALFLAG_FINISHEDGAME
+	push hl
+	call checkGlobalFlag
+	pop hl
+	ret z
+	jr @match

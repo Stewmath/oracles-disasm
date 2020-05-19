@@ -3,8 +3,8 @@
 ;			moving
 ; @addr{4000}
 _partCommon_getTileCollisionInFront:
-	ld e,Part.angle		; $4000
-	ld a,(de)		; $4002
+	ld e,Part.angle
+	ld a,(de)
 
 ;;
 ; @param	a	Angle
@@ -12,21 +12,21 @@ _partCommon_getTileCollisionInFront:
 ; @param[out]	zflag	nz if there's a tile collision in that direction
 ; @addr{4003}
 _partCommon_getTileCollisionAtAngle:
-	add $02			; $4003
-	and $1c			; $4005
-	rrca			; $4007
-	ld hl,_partCommon_anglePositionOffsets		; $4008
-	rst_addAToHl			; $400b
-	ld e,Part.yh		; $400c
-	ld a,(de)		; $400e
-	add (hl)		; $400f
-	ld b,a			; $4010
-	ld e,Part.xh		; $4011
-	inc hl			; $4013
-	ld a,(de)		; $4014
-	add (hl)		; $4015
-	ld c,a			; $4016
-	jp getTileCollisionsAtPosition		; $4017
+	add $02
+	and $1c
+	rrca
+	ld hl,_partCommon_anglePositionOffsets
+	rst_addAToHl
+	ld e,Part.yh
+	ld a,(de)
+	add (hl)
+	ld b,a
+	ld e,Part.xh
+	inc hl
+	ld a,(de)
+	add (hl)
+	ld c,a
+	jp getTileCollisionsAtPosition
 
 
 ; Position offsets used by specific angle values to check when it should be considered
@@ -46,69 +46,69 @@ _partCommon_anglePositionOffsets:
 ; @param[out]	zflag
 ; @addr{402a}
 _partCommon_getTileCollisionAtAngle_allowHoles:
-	call _partCommon_getTileCollisionAtAngle		; $402a
-	ret z			; $402d
-	jr +++			; $402e
+	call _partCommon_getTileCollisionAtAngle
+	ret z
+	jr +++
 
 ;;
 ; @param[out]	cflag	c if there's a collision
 ; @addr{4030}
 _partCommon_getTileCollisionInFront_allowHoles:
-	call _partCommon_getTileCollisionInFront		; $4030
-	ret z			; $4033
+	call _partCommon_getTileCollisionInFront
+	ret z
 +++
-	add $01			; $4034
+	add $01
 	ret c ; Check for SPECIALCOLLISION_SCREEN_BOUNDARY
-	dec a			; $4037
-	jp checkGivenCollision_allowHoles		; $4038
+	dec a
+	jp checkGivenCollision_allowHoles
 
 ;;
 ; Analagous to the "enemyStandardUpdate" function.
 ; @addr{403b}
 partCommon_standardUpdate:
-	ld h,d			; $403b
-	ld l,Part.state		; $403c
-	ld a,(hl)		; $403e
-	or a			; $403f
-	jr z,@uninitialized	; $4040
+	ld h,d
+	ld l,Part.state
+	ld a,(hl)
+	or a
+	jr z,@uninitialized
 
-	ld l,Part.invincibilityCounter		; $4042
-	ld a,(hl)		; $4044
-	or a			; $4045
-	jr z,@doneUpdatingInvincibility	; $4046
-	rlca			; $4048
-	jr nc,++		; $4049
-	inc (hl)		; $404b
-	jr @doneUpdatingInvincibility		; $404c
+	ld l,Part.invincibilityCounter
+	ld a,(hl)
+	or a
+	jr z,@doneUpdatingInvincibility
+	rlca
+	jr nc,++
+	inc (hl)
+	jr @doneUpdatingInvincibility
 ++
-	dec (hl)		; $404e
+	dec (hl)
 
 @doneUpdatingInvincibility:
-	dec l			; $404f
+	dec l
 	bit 7,(hl) ; [Part.var2a]
-	jr nz,@collision	; $4052
-	dec l			; $4054
+	jr nz,@collision
+	dec l
 	ld a,(hl) ; [Part.health]
-	or a			; $4056
-	jr z,@dead	; $4057
-	ld c,PARTSTATUS_NORMAL		; $4059
-	ret			; $405b
+	or a
+	jr z,@dead
+	ld c,PARTSTATUS_NORMAL
+	ret
 
 @uninitialized:
-	callab bank3f.partLoadGraphicsAndProperties		; $405c
-	ld e,Part.var3e		; $4064
+	callab bank3f.partLoadGraphicsAndProperties
+	ld e,Part.var3e
 	ld a,$08 ; TODO: what's this
-	ld (de),a		; $4068
-	ld c,PARTSTATUS_NORMAL		; $4069
-	ret			; $406b
+	ld (de),a
+	ld c,PARTSTATUS_NORMAL
+	ret
 
 @collision:
-	ld c,PARTSTATUS_JUST_HIT		; $406c
-	ret			; $406e
+	ld c,PARTSTATUS_JUST_HIT
+	ret
 
 @dead:
-	ld c,PARTSTATUS_DEAD		; $406f
-	ret			; $4071
+	ld c,PARTSTATUS_DEAD
+	ret
 
 
 ;;
@@ -117,126 +117,126 @@ partCommon_standardUpdate:
 ; @param[out]	zflag	z if collision occurred
 ; @addr{4072}
 partCommon_checkTileCollisionOrOutOfBounds:
-	call objectGetTileCollisions		; $4072
+	call objectGetTileCollisions
 	add $01 ; Check for SPECIALCOLLISION_SCREEN_BOUNDARY
-	ret z			; $4077
-	call checkTileCollision_allowHoles		; $4078
-	ret c			; $407b
-	or d			; $407c
-	ret			; $407d
+	ret z
+	call checkTileCollision_allowHoles
+	ret c
+	or d
+	ret
 
 ;;
 ; @param[out]	zflag	z if out of bounds
 ; @addr{407e}
 partCommon_checkOutOfBounds:
-	ld h,d			; $407e
-	ld l,Part.yh		; $407f
-	ld b,(hl)		; $4081
-	ld l,Part.xh		; $4082
-	ld c,(hl)		; $4084
+	ld h,d
+	ld l,Part.yh
+	ld b,(hl)
+	ld l,Part.xh
+	ld c,(hl)
 
-	call @roundAngleToDiagonal		; $4085
-	ld a,e			; $4088
-	rrca			; $4089
-	ld hl,_partCommon_anglePositionOffsets		; $408a
-	rst_addAToHl			; $408d
+	call @roundAngleToDiagonal
+	ld a,e
+	rrca
+	ld hl,_partCommon_anglePositionOffsets
+	rst_addAToHl
 
-	ldi a,(hl)		; $408e
-	add b			; $408f
-	ld b,a			; $4090
-	ld a,(hl)		; $4091
-	add c			; $4092
-	ld c,a			; $4093
+	ldi a,(hl)
+	add b
+	ld b,a
+	ld a,(hl)
+	add c
+	ld c,a
 
-	call getTileCollisionsAtPosition		; $4094
-	inc a			; $4097
-	ret			; $4098
+	call getTileCollisionsAtPosition
+	inc a
+	ret
 
 @roundAngleToDiagonal:
-	ld l,Part.angle		; $4099
-	ld a,(hl)		; $409b
-	ld e,a			; $409c
-	and $07			; $409d
-	ret z			; $409f
-	ld a,e			; $40a0
-	and $18			; $40a1
-	add $04			; $40a3
-	ld e,a			; $40a5
-	ret			; $40a6
+	ld l,Part.angle
+	ld a,(hl)
+	ld e,a
+	and $07
+	ret z
+	ld a,e
+	and $18
+	add $04
+	ld e,a
+	ret
 
 ;;
 ; @param[out]	zflag	Set if counter1 is zero
 ; @addr{40a7}
 partCommon_decCounter1IfNonzero:
-	ld h,d			; $40a7
-	ld l,Part.counter1		; $40a8
-	ld a,(hl)		; $40aa
-	or a			; $40ab
-	ret z			; $40ac
-	dec (hl)		; $40ad
-	ret			; $40ae
+	ld h,d
+	ld l,Part.counter1
+	ld a,(hl)
+	or a
+	ret z
+	dec (hl)
+	ret
 
 ;;
 ; Reverses direction & bounces upward when collisions are enabled?
 ; @addr{40af}
 _partCommon_bounceWhenCollisionsEnabled:
-	ld h,d			; $40af
-	ld l,Part.collisionType		; $40b0
-	bit 7,(hl)		; $40b2
-	ret z			; $40b4
+	ld h,d
+	ld l,Part.collisionType
+	bit 7,(hl)
+	ret z
 
-	res 7,(hl)		; $40b5
+	res 7,(hl)
 
-	call partSetAnimation		; $40b7
-	ld bc,-$e0		; $40ba
-	call objectSetSpeedZ		; $40bd
+	call partSetAnimation
+	ld bc,-$e0
+	call objectSetSpeedZ
 
-	ld l,Part.counter1		; $40c0
-	ld (hl),$20		; $40c2
-	ld l,Part.speed		; $40c4
-	ld (hl),SPEED_40		; $40c6
-	ld l,Part.angle		; $40c8
-	ld a,(hl)		; $40ca
-	xor $10			; $40cb
-	ld (hl),a		; $40cd
-	ret			; $40ce
+	ld l,Part.counter1
+	ld (hl),$20
+	ld l,Part.speed
+	ld (hl),SPEED_40
+	ld l,Part.angle
+	ld a,(hl)
+	xor $10
+	ld (hl),a
+	ret
 
 ;;
 ; @addr{40cf}
 _partCommon_updateSpeedAndDeleteWhenCounter1Is0:
-	call partCommon_decCounter1IfNonzero		; $40cf
-	jp z,partDelete		; $40d2
-	ld c,$0e		; $40d5
-	call objectUpdateSpeedZ_paramC		; $40d7
-	call partAnimate		; $40da
-	jp objectApplySpeed		; $40dd
+	call partCommon_decCounter1IfNonzero
+	jp z,partDelete
+	ld c,$0e
+	call objectUpdateSpeedZ_paramC
+	call partAnimate
+	jp objectApplySpeed
 
 ;;
 ; @addr{40e0}
 _partCommon_setPositionOffsetAndRadiusFromAngle:
-	ld e,Part.angle		; $40e0
-	ld a,(de)		; $40e2
-	add $04			; $40e3
-	and $18			; $40e5
-	rrca			; $40e7
-	ld hl,@data		; $40e8
-	rst_addAToHl			; $40eb
+	ld e,Part.angle
+	ld a,(de)
+	add $04
+	and $18
+	rrca
+	ld hl,@data
+	rst_addAToHl
 
-	ld e,Part.yh		; $40ec
-	ldi a,(hl)		; $40ee
-	add b			; $40ef
-	ld (de),a		; $40f0
-	ld e,Part.xh		; $40f1
-	ldi a,(hl)		; $40f3
-	add c			; $40f4
-	ld (de),a		; $40f5
-	ld e,Part.collisionRadiusY		; $40f6
-	ldi a,(hl)		; $40f8
-	ld (de),a		; $40f9
-	inc e			; $40fa
-	ld a,(hl)		; $40fb
+	ld e,Part.yh
+	ldi a,(hl)
+	add b
+	ld (de),a
+	ld e,Part.xh
+	ldi a,(hl)
+	add c
+	ld (de),a
+	ld e,Part.collisionRadiusY
+	ldi a,(hl)
+	ld (de),a
+	inc e
+	ld a,(hl)
 	ld (de),a ; Part.collisionRadiusX
-	ret			; $40fd
+	ret
 
 ; Data format: Y offset, X offset, collisionRadiusY, collisionRadiusX
 @data:
@@ -248,7 +248,7 @@ _partCommon_setPositionOffsetAndRadiusFromAngle:
 ;;
 ; @addr{410e}
 _partCommon_incState2:
-	ld h,d			; $410e
-	ld l,Part.state2		; $410f
-	inc (hl)		; $4111
-	ret			; $4112
+	ld h,d
+	ld l,Part.state2
+	inc (hl)
+	ret
