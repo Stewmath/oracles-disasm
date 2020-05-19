@@ -2101,7 +2101,7 @@ seasonsFunc_03_66dc:
 	ld l,<wInventoryB		; $66e1
 	ldi a,(hl)		; $66e3
 	ld b,(hl)		; $66e4
-	ld hl,$cc3b		; $66e5
+	ld hl,wcc1f		; $66e5
 	ldi (hl),a		; $66e8
 	ld (hl),b		; $66e9
 	jp disableActiveRing		; $66ea
@@ -2110,7 +2110,7 @@ seasonsFunc_03_66ed:
 	ld hl,wLinkMaxHealth		; $66ed
 	ldd a,(hl)		; $66f0
 	ld (hl),a		; $66f1
-	ld hl,$cc3b		; $66f2
+	ld hl,wcc1f		; $66f2
 	ldi a,(hl)		; $66f5
 	ld b,(hl)		; $66f6
 	ld hl,wInventoryB		; $66f7

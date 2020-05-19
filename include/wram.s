@@ -2689,11 +2689,11 @@ wMamamuDogLocation:
 ; Number from 0-3 for one of 4 possible screens.
 	db
 
-; $cde3-4: Used for storing items for blaino boxing minigame?
 wcde3: ; $cde3
-	db
-wcde4: ; $cde4
-	db
+; Ages' version of Seasons' wcc1f. In both games, this is used solely as temporary
+; storage for Link's equipped items during the credits cutscene (state 0). The items
+; are given back to Link during credits cutscene state 3
+	dw
 
 ; $cde5-$ceff unused?
 

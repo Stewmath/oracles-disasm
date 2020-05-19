@@ -1781,7 +1781,7 @@ func_60e0:
 	ld l,<wInventoryB		; $60e5
 	ldi a,(hl)		; $60e7
 	ld b,(hl)		; $60e8
-	ld hl,$cde3		; $60e9
+	ld hl,wcde3		; $60e9
 	ldi (hl),a		; $60ec
 	ld (hl),b		; $60ed
 	jp disableActiveRing		; $60ee
@@ -1792,7 +1792,7 @@ func_60f1:
 	ld hl,wLinkMaxHealth		; $60f1
 	ldd a,(hl)		; $60f4
 	ld (hl),a		; $60f5
-	ld hl,$cde3		; $60f6
+	ld hl,wcde3		; $60f6
 	ldi a,(hl)		; $60f9
 	ld b,(hl)		; $60fa
 	ld hl,wInventoryB		; $60fb
