@@ -3479,9 +3479,9 @@ runGameLogic:
 	ld a,(wGameState)		; $596a
 	rst_jumpTable			; $596d
 	.dw _initializeGame
-	.dw _func_5a4f
-	.dw _func_5abc
-	.dw func_7b8d
+	.dw _loadingRoom
+	.dw _standardGameState
+	.dw linkSummonedCutscene
 
 ;;
 ; Clears a lot of memory, loads common palette header $0f,
@@ -3634,7 +3634,7 @@ _initializeGame:
 
 ;;
 ; @addr{5a4f}
-_func_5a4f:
+_loadingRoom:
 	call clearScreenVariablesAndWramBank1		; $5a4f
 	call clearStaticObjects		; $5a52
 	call stopTextThread		; $5a55
@@ -3684,7 +3684,7 @@ _func_5a60:
 
 ;;
 ; @addr{5abc}
-_func_5abc:
+_standardGameState:
 	ld a,(wLinkDeathTrigger)		; $5abc
 	cp $ff			; $5abf
 	jr nz,+			; $5ac1
@@ -3818,7 +3818,7 @@ cutscene01:
 	call func_60e9		; $5b8d
 	ld a,(wWarpTransition2)		; $5b90
 	or a			; $5b93
-	jp nz,func_5e0e		; $5b94
+	jp nz,applyWarpTransition2		; $5b94
 
 .ifdef ROM_SEASONS
 	ld a,(wcc4c)
@@ -4175,7 +4175,7 @@ cutscene13:
 	ret nz
 	ld a,(wWarpTransition2)
 	or a
-	jp nz,func_5e0e
+	jp nz,applyWarpTransition2
 
 	call seasonsFunc_331b
 	call seasonsFunc_34a0
@@ -4188,13 +4188,13 @@ cutscene13:
 .endif
 
 ;;
-; Unused in ages?
+; Seasons-only
 ; @addr{5d31}
 _func_5d31:
 	call func_1613		; $5d31
 	ld a,(wWarpTransition2)		; $5d34
 	or a			; $5d37
-	jp nz,func_5e0e		; $5d38
+	jp nz,applyWarpTransition2		; $5d38
 
 	call updateStatusBar		; $5d3b
 	jp updateAllObjects		; $5d3e
@@ -4205,7 +4205,8 @@ func_5d41:
 	call func_1613		; $5d41
 	ld a,(wWarpTransition2)		; $5d44
 	or a			; $5d47
-	jp nz,func_5e0e		; $5d48
+	jp nz,applyWarpTransition2		; $5d48
+
 	jp updateAllObjects		; $5d4b
 
 
@@ -4268,7 +4269,7 @@ triggerFadeoutTransition:
 
 ;;
 ; @addr{5e0e}
-func_5e0e:
+applyWarpTransition2:
 	ld hl,wWarpTransition2		; $5e0e
 	ld a,(hl)		; $5e11
 	ld b,a			; $5e12
@@ -4279,7 +4280,7 @@ func_5e0e:
 
 	ld a,$01		; $5e1b
 	ld (wGameState),a		; $5e1d
-	xor a			; $5e20
+	lda CUTSCENE_LOADING_ROOM			; $5e20
 	ld (wCutsceneIndex),a		; $5e21
 	ret			; $5e24
 ++
@@ -5633,7 +5634,7 @@ cutscene14:
 
 ;;
 ; @addr{7b8d}
-func_7b8d:
+linkSummonedCutscene:
 	call func_7b93		; $7b8d
 	jp updateAllObjects		; $7b90
 

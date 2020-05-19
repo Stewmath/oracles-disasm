@@ -4325,7 +4325,7 @@ zeldaScript_ganonBeat:
 	checkabutton
 	setdisabledobjectsto11
 	writememory $cc1d, $b0
-	writememory $cc17, $01
+	writememory wLoadedTreeGfxIndex, $01
 	setanimation $06
 	setcounter1 $dc
 	showtext TX_3d05

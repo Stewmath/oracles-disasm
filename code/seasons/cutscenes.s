@@ -28,7 +28,7 @@ cutscene09:
 	ld a,(wWarpTransition2)		; $5bf2
 	or a			; $5bf5
 	ret z			; $5bf6
-	jp func_5e0e		; $5bf7
+	jp applyWarpTransition2		; $5bf7
 
 ;;
 ; CUTSCENE_S_ROOM_OF_RITES_COLLAPSE
@@ -67,7 +67,7 @@ cutscene0d:
 cutscene0e:
 	ld a,(wWarpTransition2)		; $5c23
 	or a			; $5c26
-	jr nz,func_5e0e		; $5c27
+	jr nz,applyWarpTransition2		; $5c27
 	ld e,$04		; $5c29
 	call multiIntroCutsceneCaller		; $5c2b
 	jp updateAnimationsAfterCutscene		; $5c2e

@@ -69,7 +69,7 @@ enemyCode02:
 	ld b,$89		; $58a1
 	call _enemyBoss_initializeRoom		; $58a3
 	ld a,$01		; $58a6
-	ld ($cc17),a		; $58a8
+	ld (wLoadedTreeGfxIndex),a		; $58a8
 	ld a,$0a		; $58ab
 	jp _ecom_setSpeedAndState8		; $58ad
 +

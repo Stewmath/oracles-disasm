@@ -4096,7 +4096,7 @@ enemyCode76:
 	ld l,$86		; $5c75
 	ld (hl),$3c		; $5c77
 	ld a,$01		; $5c79
-	ld ($cc17),a		; $5c7b
+	ld (wLoadedTreeGfxIndex),a		; $5c7b
 	call objectSetVisible82		; $5c7e
 	ld a,$02		; $5c81
 	jp enemySetAnimation		; $5c83
@@ -4762,7 +4762,7 @@ _poeSister604b:
 	ld a,($cc34)		; $606a
 	or a			; $606d
 	ret nz			; $606e
-	ld a,($cc67)		; $606f
+	ld a,(wWarpTransition2)		; $606f
 	or a			; $6072
 	ret nz			; $6073
 	ld a,$8d		; $6074

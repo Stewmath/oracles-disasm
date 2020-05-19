@@ -2850,7 +2850,7 @@ seasonsTable_15_6375:
 
 seasonsFunc_15_6378:
 	ld a,$01		; $6378
-	ld ($cc17),a		; $637a
+	ld (wLoadedTreeGfxIndex),a		; $637a
 	ld a,$b4		; $637d
 	ld ($cc1d),a		; $637f
 	ret			; $6382
@@ -3030,7 +3030,7 @@ seasonsFunc_15_6464:
 	xor a			; $646f
 	ld ($cc30),a		; $6470
 	ld a,$01		; $6473
-	ld ($cc17),a		; $6475
+	ld (wLoadedTreeGfxIndex),a		; $6475
 	call setLinkForceStateToState08		; $6478
 	ld hl,$d008		; $647b
 	ld (hl),$00		; $647e

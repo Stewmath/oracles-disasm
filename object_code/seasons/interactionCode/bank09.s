@@ -2279,7 +2279,7 @@ interactionCode69:
 	xor a			; $5a25
 	ld ($cc65),a		; $5a26
 	ld a,$03		; $5a29
-	ld ($cc67),a		; $5a2b
+	ld (wWarpTransition2),a		; $5a2b
 	call getThisRoomFlags		; $5a2e
 	res 4,(hl)		; $5a31
 	xor a			; $5a33

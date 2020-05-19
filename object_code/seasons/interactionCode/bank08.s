@@ -4915,7 +4915,7 @@ _zelda_state0:
 @subid0:
 	ld a,$b0		; $6e19
 	ld ($cc1d),a		; $6e1b
-	ld ($cc17),a		; $6e1e
+	ld (wLoadedTreeGfxIndex),a		; $6e1e
 	
 	call getThisRoomFlags		; $6e21
 	bit 7,a			; $6e24

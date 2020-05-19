@@ -14,7 +14,7 @@ cutscene07:
 _func_5d5d:
 	ld a,(wWarpTransition2)		; $5d5d
 	or a			; $5d60
-	jp nz,func_5e0e		; $5d61
+	jp nz,applyWarpTransition2		; $5d61
 	jpab miscCutsceneHandler		; $5d64
 
 ;;
@@ -47,7 +47,7 @@ cutscene09:
 	ld a,(wWarpTransition2)		; $5d86
 	or a			; $5d89
 	ret z			; $5d8a
-	jp func_5e0e		; $5d8b
+	jp applyWarpTransition2		; $5d8b
 
 ;;
 ; CUTSCENE_ROOM_OF_RITES_COLLAPSE
@@ -87,7 +87,7 @@ cutscene0e:
 	call func_1613		; $5daf
 	ld a,(wWarpTransition2)		; $5db2
 	or a			; $5db5
-	jr nz,func_5e0e	; $5db6
+	jr nz,applyWarpTransition2	; $5db6
 
 	ld c,$05		; $5db8
 	jpab miscCutsceneHandler		; $5dba

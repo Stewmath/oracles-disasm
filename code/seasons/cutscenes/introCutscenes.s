@@ -809,7 +809,7 @@ cutscene08Func8:
 	call decCbb3		; $78f5
 	ret nz			; $78f8
 	xor a			; $78f9
-	ld ($c2ee),a		; $78fa
+	ld (wGameState),a		; $78fa
 	ld (wCutsceneIndex),a		; $78fd
 	ld c,a			; $7900
 	jpab bank1.loadDeathRespawnBufferPreset
@@ -1394,7 +1394,7 @@ cutscene0eFunc7:
 	xor a			; $7d3a
 	ld ($cc65),a		; $7d3b
 	ld a,$03		; $7d3e
-	ld ($cc67),a		; $7d40
+	ld (wWarpTransition2),a		; $7d40
 	ret			; $7d43
 
 cutscene0dFunca:
@@ -1443,7 +1443,7 @@ cutscene0dFuncb:
 cutscene0dFuncc:
 	call decCbb3		; $7da4
 	ret nz			; $7da7
-	ld hl,$c2ee		; $7da8
+	ld hl,wGameState		; $7da8
 	xor a			; $7dab
 	ldi (hl),a		; $7dac
 	ld (hl),a		; $7dad
