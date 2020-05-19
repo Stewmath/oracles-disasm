@@ -38,6 +38,7 @@
 .ORG 0
 
 	.include "code/bank3.s"
+	.include "code/ages/cutscenes/endgameCutscenes.s"
 	.include "code/ages/cutscenes/miscCutscenes.s"
 
 	.include "code/ages/garbage/bank03End.s"
