@@ -4215,6 +4215,28 @@ func_5d41:
 	.include "code/seasons/cutscenes.s"
 .endif
 
+;;
+; CUTSCENE_IN_GALE_SEED_MENU
+cutscene16:
+	call updateMenus		; $5c43
+	ret nz			; $5c46
+
+	ld hl,wWarpTransition2		; $5c47
+	ld a,(hl)		; $5c4a
+	ld (hl),$00		; $5c4b
+	inc a			; $5c4d
+	ld a,$03		; $5c4e
+	jr nz,+			; $5c50
+
+	call updateAllObjects		; $5c52
+	ld a,$01		; $5c55
++
+	ld (wCutsceneIndex),a		; $5c57
+	xor a			; $5c5a
+	ld (wMenuDisabled),a		; $5c5b
+	ld (wLinkCanPassNpcs),a		; $5c5e
+	ld (wDisableScreenTransitions),a		; $5c61
+	ret			; $5c64
 
 .ifdef ROM_SEASONS
 

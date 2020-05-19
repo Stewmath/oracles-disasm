@@ -127,27 +127,3 @@ cutscene12:
 
 	call func_3ee4		; $5dde
 	jp func_5d41		; $5de1
-
-;;
-; CUTSCENE_16
-; @addr{5de4}
-cutscene16:
-	call updateMenus		; $5de4
-	ret nz			; $5de7
-
-	ld hl,wWarpTransition2		; $5de8
-	ld a,(hl)		; $5deb
-	ld (hl),$00		; $5dec
-	inc a			; $5dee
-	ld a,$03		; $5def
-	jr nz,+			; $5df1
-
-	call updateAllObjects		; $5df3
-	ld a,$01		; $5df6
-+
-	ld (wCutsceneIndex),a		; $5df8
-	xor a			; $5dfb
-	ld (wMenuDisabled),a		; $5dfc
-	ld ($cc8c),a		; $5dff
-	ld ($cc91),a		; $5e02
-	ret			; $5e05
