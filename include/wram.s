@@ -1800,7 +1800,8 @@ wWarpTransition2: ; $cc4b/$cc67
 ;   00: none
 ;   01: instant
 ;   03: fadeout
-; Does bit 7 do something?
+;   ff: exiting gale seed menu - prompts CUTSCENE_IN_GALE_SEED_MENU to not load room
+; Bit 7 set for fadeout: fades out with delay
 	db
 
 wWarpDestVariablesEnd: ; $cc4c/$cc68

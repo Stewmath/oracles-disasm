@@ -681,7 +681,7 @@ _galeSeedTryToWarpLink:
 
 	ld a,$02		; $5006
 	ld (w1Link.state2),a		; $5008
-	ld a,CUTSCENE_16		; $500b
+	ld a,CUTSCENE_IN_GALE_SEED_MENU		; $500b
 	ld (wCutsceneTrigger),a		; $500d
 
 	; Open warp menu, delete self

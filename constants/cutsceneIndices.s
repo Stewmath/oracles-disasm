@@ -29,7 +29,7 @@
 	CUTSCENE_FAIRIES_HIDE		db ; 0x13: Hide & seek minigame
 	CUTSCENE_BOOTED_FROM_PALACE	db ; 0x14: "You can't come in without permission!"
 	CUTSCENE_15			db ; 0x15
-	CUTSCENE_16			db ; 0x16: Triggers on using gale seeds?
+	CUTSCENE_IN_GALE_SEED_MENU	db ; 0x16
 	CUTSCENE_WARP_TO_TWINROVA_FIGHT	db ; 0x17: Triggers after approaching Zelda
 	CUTSCENE_FLAMES_FLICKERING	db ; 0x18: Flames turn blue before Twinrova fight
 	CUTSCENE_TWINROVA_SACRIFICE	db ; 0x19
@@ -67,7 +67,7 @@
 	CUTSCENE_S_ONOX_FINAL_FORM	db ; 0x13
 	CUTSCENE_S_ONOX_CASTLE_FORCE	db ; 0x14: Link can't enter onox castle area
 	CUTSCENE_S_15			db ; 0x15
-	CUTSCENE_S_16			db ; 0x16: Warps Link someplace?
+	CUTSCENE_S_IN_GALE_SEED_MENU	db ; 0x16
 	CUTSCENE_S_WARP_TO_TWINROVA_FIGHT	db ; 0x17: Triggers after approaching Zelda
 	CUTSCENE_S_FLAMES_FLICKERING	db ; 0x18: Flames turn blue before Twinrova fight
 	CUTSCENE_S_TWINROVA_SACRIFICE	db ; 0x19
