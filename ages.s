@@ -849,6 +849,7 @@ specialObjectLoadAnimationFrameToBuffer:
 
  m_section_force Interaction_Code_Bank10 NAMESPACE interactionBank10
 
+	.include "object_code/common/interactionCode/group8.s"
 	.include "object_code/ages/interactionCode/bank10.s"
 
 .ends

@@ -607,7 +607,50 @@ _linkItemAnimationTable:
 
 	.include "scripts/common/scriptHelper.s"
 	.include "object_code/common/interactionCode/group4.s"
-	.include "object_code/seasons/interactionCode/bank15_1.s"
+	.include "object_code/common/interactionCode/group8.s"
+
+oamData_15_4da3:
+	.db $1a
+	.db $40 $d0 $00 $02
+	.db $50 $e8 $02 $02
+	.db $f8 $50 $08 $06
+	.db $f8 $58 $0a $06
+	.db $f8 $60 $0c $06
+	.db $f8 $68 $0e $06
+	.db $40 $10 $10 $07
+	.db $50 $18 $12 $07
+	.db $50 $28 $14 $07
+	.db $50 $30 $16 $07
+	.db $50 $38 $1e $00
+	.db $40 $20 $18 $07
+	.db $38 $28 $1a $07
+	.db $28 $2b $1c $07
+	.db $40 $38 $20 $07
+	.db $30 $38 $22 $00
+	.db $30 $30 $24 $07
+	.db $10 $28 $26 $01
+	.db $10 $30 $28 $01
+	.db $10 $38 $2a $01
+	.db $10 $40 $2c $01
+	.db $00 $40 $2e $01
+	.db $2b $02 $30 $02
+	.db $30 $50 $32 $00
+	.db $30 $58 $34 $00
+	.db $1d $55 $36 $00
+
+
+oamData_15_4e0c:
+	.db $0a
+	.db $46 $4a $88 $03
+	.db $46 $52 $8a $03
+	.db $49 $4c $80 $02
+	.db $49 $54 $82 $02
+	.db $47 $42 $84 $03
+	.db $47 $4a $86 $03
+	.db $39 $4e $90 $03
+	.db $43 $59 $8c $03
+	.db $39 $46 $8e $03
+	.db $3b $3c $92 $03
 
 	.include "code/staticObjects.s"
 	.include "build/data/staticDungeonObjects.s"
@@ -616,7 +659,7 @@ _linkItemAnimationTable:
 	.include "build/data/treasureObjectData.s"
 
 	.include "scripts/seasons/scriptHelper.s"
-	.include "object_code/seasons/interactionCode/bank15_2.s"
+	.include "object_code/seasons/interactionCode/bank15.s"
 
 	.include "data/seasons/partAnimations.s"
 

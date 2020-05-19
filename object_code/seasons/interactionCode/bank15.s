@@ -547,7 +547,7 @@ _interactionCodedc_subid7:
 	call interactionDecCounter1		; $694a
 	ret nz			; $694d
 	ld a,$01		; $694e
-	ld ($cc17),a		; $6950
+	ld (wLoadedTreeGfxIndex),a		; $6950
 	call @func_692f		; $6953
 	ld b,$04		; $6956
 -
