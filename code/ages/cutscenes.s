@@ -39,7 +39,7 @@ cutscene09:
 	call func_1613		; $5d77
 	ld a,(wCutsceneTrigger)		; $5d7a
 	or a			; $5d7d
-	jp nz,func_5e3d		; $5d7e
+	jp nz,setCutsceneIndexIfCutsceneTriggerSet		; $5d7e
 
 	ld e,$00		; $5d81
 ---
@@ -98,7 +98,7 @@ cutscene0e:
 cutscene21:
 	ld a,(wCutsceneTrigger)		; $5dc2
 	or a			; $5dc5
-	jp nz,func_5e3d		; $5dc6
+	jp nz,setCutsceneIndexIfCutsceneTriggerSet		; $5dc6
 
 	ld c,$07		; $5dc9
 	jr _func_5d5d			; $5dcb
@@ -123,7 +123,7 @@ cutscene11:
 cutscene12:
 	ld a,(wCutsceneTrigger)		; $5dd7
 	or a			; $5dda
-	jp nz,func_5e3d		; $5ddb
+	jp nz,setCutsceneIndexIfCutsceneTriggerSet		; $5ddb
 
 	call func_3ee4		; $5dde
 	jp func_5d41		; $5de1

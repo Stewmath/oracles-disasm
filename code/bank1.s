@@ -2445,7 +2445,7 @@ cutscene17:
 	xor a			; $4bb5
 	ld (wcc50),a		; $4bb6
 	ld (wMenuDisabled),a		; $4bb9
-	ld a,$03		; $4bbc
+	ld a,CUTSCENE_03		; $4bbc
 	ld (wCutsceneIndex),a		; $4bbe
 	ld a,$03		; $4bc1
 	ldh (<hNextLcdInterruptBehaviour),a	; $4bc3
@@ -3813,7 +3813,7 @@ cutscene01:
 
 	ld a,(wCutsceneTrigger)		; $5b86
 	or a			; $5b89
-	jp nz,func_5e3d		; $5b8a
+	jp nz,setCutsceneIndexIfCutsceneTriggerSet		; $5b8a
 
 	call func_60e9		; $5b8d
 	ld a,(wWarpTransition2)		; $5b90
@@ -4183,7 +4183,7 @@ cutscene13:
 	ld a,(wCutsceneTrigger)
 	or a
 	jp z,checkEnemyAndPartCollisionsIfTextInactive
-	jp func_5e3d
+	jp setCutsceneIndexIfCutsceneTriggerSet
 
 .endif
 
@@ -4226,11 +4226,11 @@ cutscene16:
 	ld a,(hl)		; $5c4a
 	ld (hl),$00		; $5c4b
 	inc a			; $5c4d
-	ld a,$03		; $5c4e
+	ld a,CUTSCENE_03		; $5c4e
 	jr nz,+			; $5c50
 
 	call updateAllObjects		; $5c52
-	ld a,$01		; $5c55
+	ld a,CUTSCENE_INGAME		; $5c55
 +
 	ld (wCutsceneIndex),a		; $5c57
 	xor a			; $5c5a
@@ -4300,7 +4300,7 @@ applyWarpTransition2:
 
 ;;
 ; @addr{5e3d}
-func_5e3d:
+setCutsceneIndexIfCutsceneTriggerSet:
 	ld a,(wCutsceneTrigger)		; $5e3d
 	and $7f			; $5e40
 	ld (wCutsceneIndex),a		; $5e42

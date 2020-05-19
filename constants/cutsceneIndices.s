@@ -10,8 +10,8 @@
 	CUTSCENE_LOADING_ROOM		db ; 0x00
 	CUTSCENE_INGAME			db ; 0x01
 	CUTSCENE_TOGGLE_BLOCKS		db ; 0x02: Triggers when blue orbs are hit
-	CUTSCENE_03			db ; 0x03
-	CUTSCENE_04			db ; 0x04
+	CUTSCENE_03			db ; 0x03: various, plus fadeout transition while not riding anything
+	CUTSCENE_04			db ; 0x04: fadeout transition while riding something
 	CUTSCENE_05			db ; 0x05: Screen fadeout?
 	CUTSCENE_NAYRU_SINGING		db ; 0x06
 	CUTSCENE_MAKU_TREE_DISAPPEARING	db ; 0x07

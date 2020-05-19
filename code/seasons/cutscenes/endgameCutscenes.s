@@ -862,7 +862,7 @@ _endgameCutsceneHandler_09_stage1_body:
 @state9:
 	call decCbb3		; $5b81
 	ret nz			; $5b84
-	ld a,$0a		; $5b85
+	ld a,CUTSCENE_S_CREDITS		; $5b85
 	ld (wCutsceneIndex),a		; $5b87
 	call seasonsFunc_03_646a		; $5b8a
 	ld hl,$cf00		; $5b8d
@@ -1241,7 +1241,7 @@ _endgameCutsceneHandler_0f_stage1_body:
 	call _endgameCutsceneHandler_09_stage1_body@seasonsFunc_03_5aa2		; $5e4f
 	call seasonsFunc_03_6462		; $5e52
 	ret nz			; $5e55
-	ld a,$0a		; $5e56
+	ld a,CUTSCENE_S_CREDITS		; $5e56
 	ld (wCutsceneIndex),a		; $5e58
 	call seasonsFunc_03_646a		; $5e5b
 	ld hl,$cf00		; $5e5e

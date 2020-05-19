@@ -1068,7 +1068,7 @@ _cutscene18_state5:
 	ld (hl),$78		; $4bf1
 
 	call resetCamera		; $4bf3
-	ld a,$01		; $4bf6
+	ld a,CUTSCENE_INGAME		; $4bf6
 	ld (wCutsceneIndex),a		; $4bf8
 	ld a,$01		; $4bfb
 	ld (wScrollMode),a		; $4bfd

@@ -404,12 +404,12 @@ cutscene06Funcf:
 	ret nz			; $75ef
 	call clearOam		; $75f0
 	call _cutscene_clearObjects		; $75f3
-	ld a,$07		; $75f6
+	ld a,CUTSCENE_S_DIN_IMPRISONED		; $75f6
 	ld (wCutsceneIndex),a		; $75f8
 	xor a			; $75fb
-	ld ($cc02),a		; $75fc
+	ld (wMenuDisabled),a		; $75fc
 	ld (wCutsceneState),a		; $75ff
-	ld a,$30		; $7602
+	ld a,GLOBALFLAG_SEASON_ALWAYS_SPRING		; $7602
 	call unsetGlobalFlag		; $7604
 	jp fadeoutToWhite		; $7607
 
@@ -620,7 +620,7 @@ cutsceneDinImprisoned:
 	ret nz			; $778c
 
 	call clearDynamicInteractions		; $778d
-	ld a,$08		; $7790
+	ld a,CUTSCENE_S_TEMPLE_SINKING		; $7790
 	ld (wCutsceneIndex),a		; $7792
 	xor a			; $7795
 	ld (wCutsceneState),a		; $7796
