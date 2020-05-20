@@ -1,6 +1,6 @@
 ;;
 ; Sets carry (bit 0 of c) if link is allowed to surface
-checkLinkCanSurface_isUnderwater: ; 78e4
+checkLinkCanSurface_isUnderwater:
 	ld a,(wActiveGroup)
 	ld hl, underWaterSurfaceTable
 	rst_addDoubleIndex
@@ -77,7 +77,7 @@ checkLinkCanSurface_isUnderwater: ; 78e4
 	rl c
 	ret
 
-underWaterSurfaceTable: ; 795e
+underWaterSurfaceTable:
 	.dw underWaterSurfaceTableGroup0
 	.dw underWaterSurfaceTableGroup1
 	.dw underWaterSurfaceTableGroup2
@@ -89,7 +89,7 @@ underWaterSurfaceTable: ; 795e
 
 ; Format: room pointer
 
-underWaterSurfaceTableGroup0: ; 796e
+underWaterSurfaceTableGroup0:
 underWaterSurfaceTableGroup1:
 underWaterSurfaceTableGroup2:
 underWaterSurfaceTableGroup6:
@@ -207,7 +207,7 @@ underWaterSurfaceTableGroup7:
 
 	.db $00
 
-underWaterSurfaceTableGroup3: ; 79de
+underWaterSurfaceTableGroup3:
 	.db $90
 	.dw underWaterSurfaceData_7a47
 
@@ -285,13 +285,13 @@ underWaterSurfaceTableGroup3: ; 79de
 
 	.db $00
 
-underWaterSurfaceTableGroup4: ; 7a2a
+underWaterSurfaceTableGroup4:
 	.db $c1
 	.dw underWaterSurfaceData_7e53
 
 	.db $00
 
-underWaterSurfaceTableGroup5: ; 7a2e
+underWaterSurfaceTableGroup5:
 	.db $4c
 	.dw underWaterSurfaceData_7d77
 

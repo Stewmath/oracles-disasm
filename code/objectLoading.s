@@ -11,7 +11,7 @@
 .endif
 
 ;;
-parseObjectData: ; 55b7
+parseObjectData:
 	xor a
 	ld (wNumEnemies),a
 	ld ($cfc0),a
@@ -42,7 +42,7 @@ parseObjectData: ; 55b7
 
 ;;
 ; @param de Address of object data to parse
-parseGivenObjectData: ; 55d4
+parseGivenObjectData:
 	ld a,(de)
 	cp $fe
 	jr nz,+
@@ -106,7 +106,7 @@ _objectDataOpcodeSizes:
 ;;
 ; Only use objects when certain room properties are set
 ; Used a lot in jabu-jabu
-_objectDataOp0: ; 561e
+_objectDataOp0:
 	ld a,(wRoomStateModifier)
 	ld hl,bitTable
 	add l
@@ -410,7 +410,7 @@ _objectDataOp7:
 
 ;;
 ; "Parts" (owl statues etc)
-_objectDataOp8: ; 577a
+_objectDataOp8:
 	ld a,(de)
 	bit 7,a
 	jp nz,parseGivenObjectData
@@ -545,7 +545,7 @@ _continueObjectLoopIfOpDone:
 ;;
 ; @param de Source
 ; @param hl Destination
-_read2Bytes: ; 580d
+_read2Bytes:
 	ld a,(de)
 	inc de
 	ldi (hl),a

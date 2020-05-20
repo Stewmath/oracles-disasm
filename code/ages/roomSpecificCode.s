@@ -1,5 +1,5 @@
 ;;
-runRoomSpecificCode: ; 5872
+runRoomSpecificCode:
 	ld a,(wActiveRoom)
 	ld hl, _roomSpecificCodeGroupTable
 	call findRoomSpecificData
@@ -20,9 +20,9 @@ runRoomSpecificCode: ; 5872
 .dw _roomSpecificCodeC
 
 	; Random stub not called by anything?
-	ret			; 5897
+	ret
 
-_roomSpecificCodeGroupTable: ; 5898
+_roomSpecificCodeGroupTable:
 	.dw _roomSpecificCodeGroup0Table
 	.dw _roomSpecificCodeGroup1Table
 	.dw _roomSpecificCodeGroup2Table
@@ -34,37 +34,37 @@ _roomSpecificCodeGroupTable: ; 5898
 
 ; Format: room index
 
-_roomSpecificCodeGroup0Table: ; 58a8
+_roomSpecificCodeGroup0Table:
 	.db $93 $00
 	.db $38 $06
 	.db $39 $08
 	.db $3a $09
 	.db $00
-_roomSpecificCodeGroup1Table: ; 58b1
+_roomSpecificCodeGroup1Table:
 	.db $81 $03
 	.db $38 $06
 	.db $97 $07
 	.db $0e $0a
 	.db $00
-_roomSpecificCodeGroup2Table: ; 58ba
+_roomSpecificCodeGroup2Table:
 	.db $0e $05
 	.db $00
-_roomSpecificCodeGroup3Table: ; 58bd
+_roomSpecificCodeGroup3Table:
 	.db $0f $0b
 	.db $00
-_roomSpecificCodeGroup4Table: ; 58c0
+_roomSpecificCodeGroup4Table:
 	.db $60 $01
 	.db $52 $02
 	.db $e6 $0c
 	.db $00
-_roomSpecificCodeGroup5Table: ; 58c7
+_roomSpecificCodeGroup5Table:
 	.db $d2 $04
 _roomSpecificCodeGroup6Table:
-_roomSpecificCodeGroup7Table: ; 58c9
+_roomSpecificCodeGroup7Table:
 	.db $00
 
 ;;
-_roomSpecificCode0: ; 58ca
+_roomSpecificCode0:
 	ld a,GLOBALFLAG_WON_FAIRY_HIDING_GAME
 	call checkGlobalFlag
 	ret nz
@@ -73,7 +73,7 @@ _roomSpecificCode0: ; 58ca
 	jp clearMemory
 
 ;;
-_roomSpecificCode1: ; 5cd8
+_roomSpecificCode1:
 	ld a, GLOBALFLAG_D3_CRYSTALS
 	call checkGlobalFlag
 	ret nz
@@ -89,7 +89,7 @@ _roomSpecificCode1: ; 5cd8
 	ret
 
 ;;
-_roomSpecificCode2: ; 58ed
+_roomSpecificCode2:
 	ld a,GLOBALFLAG_D3_CRYSTALS
 	call checkGlobalFlag
 	ret z
@@ -97,7 +97,7 @@ _roomSpecificCode2: ; 58ed
 	jr ---
 
 ;;
-_roomSpecificCode3: ; 58f5
+_roomSpecificCode3:
 	call getThisRoomFlags
 	bit 6,a
 	ret nz
@@ -116,7 +116,7 @@ _roomSpecificCode3: ; 58f5
 	ret
 
 ;;
-_roomSpecificCode7: ; 5915
+_roomSpecificCode7:
 	ld a,GLOBALFLAG_GAVE_ROPE_TO_RAFTON
 	call checkGlobalFlag
 	ret z
@@ -132,7 +132,7 @@ _roomSpecificCode7: ; 5915
 	ret
 
 ;;
-_roomSpecificCode5: ; 5927
+_roomSpecificCode5:
 	ld a,GLOBALFLAG_SAVED_NAYRU
 	call checkGlobalFlag
 	ret nz
@@ -142,7 +142,7 @@ _roomSpecificCode5: ; 5927
 
 ;;
 ; Something in ambi's palace
-_roomSpecificCode4: ; 5933
+_roomSpecificCode4:
 	ld a,$06
 	ld (wMinimapRoom),a
 	ld hl,wPastRoomFlags+$06
@@ -151,7 +151,7 @@ _roomSpecificCode4: ; 5933
 
 ;;
 ; Check to play ralph music for ralph entering portal cutscene
-_roomSpecificCode8: ; 593e
+_roomSpecificCode8:
 	ld a,(wScreenTransitionDirection)
 	cp DIR_RIGHT
 	ret nz
@@ -168,7 +168,7 @@ _roomSpecificCode8: ; 593e
 
 ;;
 ; Play nayru music on impa's house screen, for some reason
-_roomSpecificCode9: ; 5950
+_roomSpecificCode9:
 	ld a,GLOBALFLAG_FINISHEDGAME
 	call checkGlobalFlag
 	ret z
@@ -182,7 +182,7 @@ _roomSpecificCode9: ; 5950
 
 ;;
 ; Correct minimap in mermaid's cave present
-_roomSpecificCodeA: ; 595c
+_roomSpecificCodeA:
 	ld hl,wMinimapGroup
 	ld (hl),$00
 	inc l
@@ -191,7 +191,7 @@ _roomSpecificCodeA: ; 595c
 
 ;;
 ; Correct minimap in mermaid's cave past
-_roomSpecificCodeB: ; 5965
+_roomSpecificCodeB:
 	ld hl,wMinimapGroup
 	ld (hl),$01
 	inc l
@@ -200,7 +200,7 @@ _roomSpecificCodeB: ; 5965
 
 ;;
 ; Something happening on vire black tower screen
-_roomSpecificCodeC: ; 596e
+_roomSpecificCodeC:
 	ld hl,wActiveMusic
 	ld a,(hl)
 	or a

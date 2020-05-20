@@ -11,7 +11,7 @@
 	.db \1&$ff \2|(\1>>8)
 .endm
 
-seedTreeRefillLocations: ; $6036
+seedTreeRefillLocations:
 	m_TreeRefillData $10b (<wxSeedTreeRefillData+$00)
 	m_TreeRefillData $047 (<wxSeedTreeRefillData+$08)
 	m_TreeRefillData $000 (<wxSeedTreeRefillData+$10)
