@@ -1,6 +1,5 @@
 ;;
 ; Called once as a textbox is about to be shown.
-; @addr{4af7}
 initTextbox:
 	ld a,(wTextboxFlags)
 	bit TEXTBOXFLAG_BIT_DONTCHECKPOSITION,a
@@ -27,7 +26,6 @@ initTextbox:
 
 ;;
 ; Called every frame while a textbox is being shown.
-; @addr{4b1f}
 updateTextbox:
 	ld a,$07
 	ld ($ff00+R_SVBK),a
@@ -55,7 +53,6 @@ updateTextbox:
 	jp stubThreadStart
 
 ;;
-; @addr{4b44}
 @updateText:
 	ld a,(wTextIsActive)
 	cp $80
@@ -69,7 +66,6 @@ updateTextbox:
 .dw @inventoryText
 
 ;;
-; @addr{4b56}
 @standardText:
 	ld a,(de)
 	rst_jumpTable
@@ -93,7 +89,6 @@ updateTextbox:
 
 ;;
 ; An option has come up (ie yes/no)
-; @addr{4b7a}
 @textOption:
 	ld a,(de)
 	rst_jumpTable
@@ -104,7 +99,6 @@ updateTextbox:
 .dw textOptionCode@state04
 
 ;;
-; @addr{4b86}
 @inventoryText:
 	ld a,(de)
 	rst_jumpTable
@@ -119,7 +113,6 @@ updateTextbox:
 
 ;;
 ; Initializing
-; @addr{4b98}
 @standardTextState0:
 	ld a,$01
 	ld (de),a
@@ -129,7 +122,6 @@ updateTextbox:
 
 ;;
 ; Prepare to draw the top line.
-; @addr{4ba4}
 @standardTextState1:
 	ld h,d
 	ld l,<w7TextDisplayState
@@ -147,7 +139,6 @@ updateTextbox:
 ; State 2: top row
 ; State 4: bottom row
 ; State A: bottom row, next row will come up automatically
-; @addr{4bb6}
 @standardTextState2:
 @standardTextState4:
 @standardTextStatea:
@@ -189,7 +180,6 @@ updateTextbox:
 
 ;;
 ; Preparing to draw the bottom line
-; @addr{4be7}
 @standardTextState3:
 @standardTextState9:
 	call _updateCharacterDisplayTimer
@@ -209,7 +199,6 @@ updateTextbox:
 
 ;;
 ; Waiting for input to display the next 2 rows of characters
-; @addr{4c00}
 @standardTextState5:
 	ld a,(wKeysJustPressed)
 	and BTN_A | BTN_B
@@ -224,7 +213,6 @@ updateTextbox:
 
 ;;
 ; Doesn't really do anything
-; @addr{4c14}
 @standardTextState6:
 @standardTextStatec:
 	; Go to state $07/0d
@@ -236,7 +224,6 @@ updateTextbox:
 
 ;;
 ; Shifts the text up one tile.
-; @addr{4c1a}
 @standardTextState7:
 @standardTextStated:
 	; Go to state $08/0e
@@ -249,7 +236,6 @@ updateTextbox:
 
 ;;
 ; The first of the next 2 lines of text is about to come up.
-; @addr{4c23}
 @standardTextState8:
 	; Go to state $09
 	ld h,d
@@ -269,7 +255,6 @@ updateTextbox:
 ;;
 ; A new line has just been drawn after scrolling text up. Another line of text
 ; still needs to scroll up.
-; @addr{4c31}
 @standardTextStateb:
 	; Go to state $0c
 	ld h,d
@@ -291,7 +276,6 @@ updateTextbox:
 
 ;;
 ; The second new line is ready to be shown.
-; @addr{4c48}
 @standardTextStatee:
 	; Go to state $03
 	ld h,d
@@ -307,7 +291,6 @@ updateTextbox:
 	jp _dmaTextGfxBuffer
 
 ;;
-; @addr{4c57}
 @standardTextStatef:
 	ld h,d
 	ld l,<w7d0ef
@@ -365,7 +348,6 @@ updateTextbox:
 ;;
 ; Unsets zero flag if the textbox should be exited from (usually, player has
 ; pressed a button to exit the textbox).
-; @addr{4ca0}
 @checkShouldExit:
 	ld a,(wTextboxFlags)
 	bit TEXTBOXFLAG_BIT_NONEXITABLE,a
@@ -394,7 +376,6 @@ updateTextbox:
 
 ;;
 ; Closes the textbox
-; @addr{4cc1}
 @standardTextState10:
 	xor a
 	ld (wTextIsActive),a
@@ -407,7 +388,6 @@ textOptionCode:
 
 ;;
 ; Initialization
-; @addr{4cc8}
 @state00:
 	; hl = w7TextDisplayState (go to state $01)
 	ld h,d
@@ -429,7 +409,6 @@ textOptionCode:
 	.db $20 $1c $18 $14 $10
 
 ;;
-; @addr{4cdc}
 @state01:
 	ld h,d
 	ld l,<w7CharacterDisplayTimer
@@ -443,7 +422,6 @@ textOptionCode:
 	jp _updateSelectedTextPositionAndDmaTextboxMap
 
 ;;
-; @addr{4ce6}
 @state02:
 	ld a,(wKeysJustPressed)
 	and BTN_A | BTN_B
@@ -476,7 +454,6 @@ textOptionCode:
 	ret
 
 ;;
-; @addr{4d12}
 @state03:
 	; hl = w7TextDisplayState (go to state $04)
 	ld h,d
@@ -516,7 +493,6 @@ textOptionCode:
 	ret
 
 ;;
-; @addr{4d3c}
 @state04:
 	ld a,$00
 	ld (wTextDisplayMode),a
@@ -541,7 +517,6 @@ inventoryTextCode:
 
 ;;
 ; Initialization
-; @addr{4d5d}
 @state00:
 	; hl = w7TextDisplayState (go to state $01)
 	ld h,d
@@ -603,7 +578,6 @@ inventoryTextCode:
 
 ;;
 ; Text is paused on the name of the item being viewed
-; @addr{4d9e}
 @state01:
 	call _decInvTextScrollTimer
 	ret nz
@@ -621,7 +595,6 @@ inventoryTextCode:
 
 ;;
 ; Text is scrolling and more remains to be read
-; @addr{4dab}
 @state02:
 	call _decInvTextScrollTimer
 	ret nz
@@ -674,7 +647,6 @@ inventoryTextCode:
 
 ;;
 ; Text is scrolling but all of it has been displayed
-; @addr{4de4}
 @state03:
 	call _decInvTextScrollTimer
 	ret nz
@@ -722,7 +694,6 @@ inventoryTextCode:
 
 ;;
 ; The name of the item is being read again.
-; @addr{4e15}
 @state04:
 	call _decInvTextScrollTimer
 	ret nz
@@ -768,7 +739,6 @@ inventoryTextCode:
 
 ;;
 ; The name of the item has been read, now it's scrolling to the middle.
-; @addr{4e45}
 @state05:
 	call _decInvTextScrollTimer
 	ret nz
@@ -788,7 +758,6 @@ inventoryTextCode:
 	ret
 
 ;;
-; @addr{4e54}
 @state06:
 	call _decInvTextScrollTimer
 	ret nz
@@ -802,7 +771,6 @@ inventoryTextCode:
 	ret
 
 ;;
-; @addr{4e5d}
 @state07:
 	call _decInvTextScrollTimer
 	ret nz
@@ -825,7 +793,6 @@ inventoryTextCode:
 
 ;;
 ; Initializes text stuff, particularly position variables for the textbox.
-; @addr{4e72}
 _initTextboxStuff:
 	ld a,(wActiveLanguage)
 	ld b,a
@@ -988,13 +955,11 @@ _initTextboxStuff:
 +
 	jp loadPaletteHeader
 
-; @addr{4f4b}
 @textboxPositions:
 	.dw $0020 $00a0 $0140 $0180 $0160 $00c0 $0060
 
 ;;
 ; Gets address of the text index in hl, stores bank number in [w7ActiveBank]
-; @addr{4f59}
 _getTextAddress:
 	push de
 	ld a,(w7TextTableAddr)
@@ -1113,7 +1078,6 @@ textTableTable:
 ; It deals with the textbox positioning command ("\pos()" in text.txt) and
 ; command 8 (displaying extra text after buying something).
 ; Most of the time this does nothing though.
-; @addr{4ff5}
 _checkInitialTextCommands:
 	push de
 	call _getTextAddress
@@ -1184,7 +1148,6 @@ _checkInitialTextCommands:
 ;;
 ; Gets the graphics for a line of text and puts it into w7TextGfxBuffer.
 ; Also sets w7LineTextBuffer, w7LineAttributesBuffer, etc.
-; @addr{5055}
 _drawLineOfText:
 	ld h,d
 	ld l,<w7TextStatus
@@ -1229,7 +1192,6 @@ _drawLineOfText:
 	ret
 
 ;;
-; @addr{5091}
 _clearTextGfxBuffer:
 	ld hl,w7TextGfxBuffer
 	ld bc,$0200
@@ -1237,7 +1199,6 @@ _clearTextGfxBuffer:
 	jp fillMemoryBc
 
 ;;
-; @addr{509c}
 _clearLineTextBuffer:
 	ld hl,w7LineTextBuffer
 	ld d,h
@@ -1250,7 +1211,6 @@ _clearLineTextBuffer:
 ; character in each LineBuffer to appropriate values.
 ; @param a Character
 ; @param de Address in w7LineTextBuffer
-; @addr{50a6}
 _setLineTextBuffers:
 	; Write to w7LineTextBuffer
 	ld (de),a
@@ -1296,7 +1256,6 @@ _setLineTextBuffers:
 
 ;;
 ; @param a Relative offset for where to write to. Should be $00 or $02.
-; @addr{50cc}
 _dmaTextGfxBuffer:
 	add $94
 	ld d,a
@@ -1309,7 +1268,6 @@ _dmaTextGfxBuffer:
 	ret
 
 ;;
-; @addr{50dd}
 _saveTilesUnderTextbox:
 	ld hl,w7TextboxPosL
 	ld e,(hl)
@@ -1337,7 +1295,6 @@ _saveTilesUnderTextbox:
 ; @param de Where to copy the data from
 ; @param hl Where to copy the data to (bank 7)
 ; @param [w7TextboxPosBank] Bank to copy the data from
-; @addr{50f6}
 @copyTileMap:
 	; Iterate 3 times
 	ld a,$03
@@ -1418,7 +1375,6 @@ _saveTilesUnderTextbox:
 
 ;;
 ; Initialize the textbox map and attributes so it starts as a black box.
-; @addr{514a}
 _initTextboxMapping:
 	ld a,(w7d0cc)
 	inc a
@@ -1455,7 +1411,6 @@ _initTextboxMapping:
 ;;
 ; Sets up the textbox map and attributes for dma'ing.
 ; I have no idea what the branch instructions are for.
-; @addr{5173}
 _dmaTextboxMap:
 	ld a,(wTextMapAddress)
 	add $03
@@ -1508,7 +1463,6 @@ _dmaTextboxMap:
 
 ;;
 ; Updates the timer, and sets bit 0 of w7d0c1 if A or B is pressed.
-; @addr{51b9}
 _updateCharacterDisplayTimer:
 	ld h,d
 	ld l,<w7TextSoundCooldownCounter
@@ -1546,7 +1500,6 @@ _updateCharacterDisplayTimer:
 ;;
 ; This function updates the textbox's tilemap to display the next character, as
 ; well as playing associated sound effects and whatnot.
-; @addr{51db}
 _displayNextTextCharacter:
 	ld e,<w7d0d3
 	ld a,(de)
@@ -1653,7 +1606,6 @@ _displayNextTextCharacter:
 ; Reads and applies values from w7LineDelaysBuffer, w7LineSoundsBuffer, and
 ; w7LineSoundEffectsBuffer.
 ; @param hl Pointer within w7LineAttributeBuffer
-; @addr{524a}
 @readSubsequentLineBuffers:
 	; Have hl point to w7LineDelaysBuffer, set w7CharacterDisplayTimer
 	ld a,l
@@ -1707,7 +1659,6 @@ _displayNextTextCharacter:
 
 ;;
 ; Sets zero flag if the player isn't allowed to advance with A/B currently.
-; @addr{527b}
 @checkCanAdvanceWithAB:
 	push hl
 	ld e,<w7NextTextColumnToDisplay
@@ -1722,7 +1673,6 @@ _displayNextTextCharacter:
 ;;
 ; Get the next character to display based on w7NextTextColumnToDisplay.
 ; Sets the zero flag if there's nothing more to display this line.
-; @addr{5288}
 _getNextCharacterToDisplay:
 	ld e,<w7NextTextColumnToDisplay
 	ld a,(de)
@@ -1737,7 +1687,6 @@ _getNextCharacterToDisplay:
 	ret
 
 ;;
-; @addr{5296}
 _func_5296:
 	ld h,d
 	ld l,<w7d0c1
@@ -1819,7 +1768,6 @@ _label_3f_160:
 	ret
 
 ;;
-; @addr{52fd}
 _readNextTextByte:
 	ld l,<w7TextAddressL
 	ldi a,(hl)
@@ -1830,7 +1778,6 @@ _readNextTextByte:
 ;;
 ; This is part of text command $08, used in shops when trying to buy something.
 ; @param a Index
-; @addr{5305}
 _getExtraTextIndex:
 	ld hl,_extraTextIndices
 	rst_addDoubleIndex
@@ -1848,7 +1795,6 @@ _getExtraTextIndex:
 
 ;;
 ; Update the little red arrow in the bottom-right of the textbox.
-; @addr{5314}
 _updateTextboxArrow:
 	ld a,(wFrameCounter)
 	and $0f
@@ -1897,7 +1843,6 @@ _updateTextboxArrow:
 
 ;;
 ; This clears the very top row - only the 8x8 portion, not the 8x16 portion.
-; @addr{5354}
 _clearTopRowOfTextMap:
 	ld h,>w7TextboxMap
 	ld a,(w7d0cc)
@@ -1933,7 +1878,6 @@ _clearTopRowOfTextMap:
 
 ;;
 ; Shifts everything in w7TextboxMap and w7TextboxAttributes up one tile.
-; @addr{537d}
 _shiftTextboxMapUp:
 	ld h,>w7TextboxMap
 	call @func
@@ -1981,7 +1925,6 @@ _shiftTextboxMapUp:
 ;;
 ; This resets bit 5 for every piece of text in the top row.
 ; This causes it to reference the values in the map $20 bytes earlier.
-; @addr{53b3}
 _subFirstRowOfTextMapBy20:
 	ld h,>w7TextboxMap
 	ld b,$00
@@ -2014,7 +1957,6 @@ _subFirstRowOfTextMapBy20:
 	ret
 
 ;;
-; @addr{53dd}
 _func_53dd:
 	ld h,d
 	ld l,<w7d0c1
@@ -2025,7 +1967,6 @@ _func_53dd:
 
 ;;
 ; Something to do with pieces of heart
-; @addr{53eb}
 _func_53eb:
 	ld h,d
 	ld l,<w7d0c1
@@ -2059,7 +2000,6 @@ _func_53eb:
 ; Something to do with pieces of heart
 ; @param b Relative number of pieces of heart to show; $ff to show one less
 ; than you actually have
-; @addr{5414}
 @func:
 	ld a,(wNumHeartPieces)
 	add b
@@ -2123,7 +2063,6 @@ _func_53eb:
 	.db $5f $7e $5f $7e
 
 ;;
-; @addr{5479}
 @dmaHeartPieceDisplay:
 	ld hl,gfx_font_heartpiece
 	ld de,$95d0
@@ -2147,7 +2086,6 @@ _func_53eb:
 ; This calculates w7InvTextSpacesAfterName such that the text will be centered.
 ; It also draws the initial line of text, because that should be visible
 ; immediately, not scrolled in.
-; @addr{549e}
 _doInventoryTextFirstPass:
 	call _clearTextGfxBuffer
 	ld h,d
@@ -2250,7 +2188,6 @@ _doInventoryTextFirstPass:
 ; The point of this function is just to increment e by how many characters
 ; there are.
 ; @param a Control code
-; @addr{5510}
 @controlCode:
 	sub $02
 	ld b,a
@@ -2272,7 +2209,6 @@ _doInventoryTextFirstPass:
 .dw @controlCodeF
 
 ;;
-; @addr{5531}
 @dictionary:
 	pop hl
 	call _readByteFromW7ActiveBankAndIncHl
@@ -2284,7 +2220,6 @@ _doInventoryTextFirstPass:
 
 ;;
 ; Symbol
-; @addr{5542}
 @controlCode6:
 	inc e
 @controlCodeNil:
@@ -2293,7 +2228,6 @@ _doInventoryTextFirstPass:
 
 ;;
 ; Jump to another text index
-; @addr{5547}
 @controlCode7:
 	pop hl
 	call _readByteFromW7ActiveBankAndIncHl
@@ -2302,7 +2236,6 @@ _doInventoryTextFirstPass:
 
 ;;
 ; Link name, kid name, or secret
-; @addr{5551}
 @controlCodeA:
 	pop hl
 	call _readByteFromW7ActiveBankAndIncHl
@@ -2326,7 +2259,6 @@ _doInventoryTextFirstPass:
 
 ;;
 ; Call another text index
-; @addr{5566}
 @controlCodeF:
 	pop hl
 	call _readByteFromW7ActiveBankAndIncHl
@@ -2347,7 +2279,6 @@ _doInventoryTextFirstPass:
 ;;
 ; Shift w7TextGfxBuffer such that each tile is moved one position to the left.
 ; @param[out] hl Text address
-; @addr{557f}
 _shiftTextGfxBufferLeft:
 	ld hl,w7TextGfxBuffer
 	ld de,w7TextGfxBuffer+$20
@@ -2368,7 +2299,6 @@ _shiftTextGfxBufferLeft:
 	ret
 
 ;;
-; @addr{5597}
 _decInvTextScrollTimer:
 	ld h,d
 	ld l,<w7InvTextScrollTimer
@@ -2383,7 +2313,6 @@ _decInvTextScrollTimer:
 ; Sets z flag if $06 is passed (command to read a trade item or symbol
 ; graphic). I think the reasoning is that the z flag is set when an actual
 ; character is drawn, since most control codes don't draw characters.
-; @addr{55a0}
 _handleTextControlCodeWithSpecialCase:
 	cp $06
 	jr z,@cmd6
@@ -2403,7 +2332,6 @@ _handleTextControlCodeWithSpecialCase:
 ;;
 ; Updates w7SelectedTextPosition based on w7SelectedTextOption, and draws the
 ; cursor to that position in w7TextboxMap.
-; @addr{55b4}
 _updateSelectedTextPosition:
 	call _getSelectedTextOptionAddress
 	bit 5,(hl)
@@ -2424,7 +2352,6 @@ _updateSelectedTextPosition:
 ;;
 ; @param[out] hl The address in w7TextboxOptionPositions for the current
 ; selected option.
-; @addr{55c8}
 _getSelectedTextOptionAddress:
 	ld e,<w7SelectedTextOption
 	ld a,(de)
@@ -2437,7 +2364,6 @@ _getSelectedTextOptionAddress:
 ; @param a Value from w7TextboxOptionPositions
 ; @param b Offset to start of row ($20 for top row, $60 for bottom)
 ; @param[out] hl Pointer to somewhere in w7TextboxMap
-; @addr{55d0}
 _getAddressInTextboxMap:
 	and $1e
 	rrca
@@ -2456,7 +2382,6 @@ _getAddressInTextboxMap:
 	ret
 
 ;;
-; @addr{55e1}
 _removeCursorFromSelectedTextPosition:
 	ld b,$60
 	ld e,<w7SelectedTextPosition
@@ -2471,7 +2396,6 @@ _removeCursorFromSelectedTextPosition:
 	ret
 
 ;;
-; @addr{55f2}
 _moveSelectedTextOptionRight:
 	ld e,<w7SelectedTextOption
 	ld a,(de)
@@ -2488,7 +2412,6 @@ _moveSelectedTextOptionRight:
 	ret
 
 ;;
-; @addr{5602}
 _moveSelectedTextOptionLeft:
 	ld e,<w7SelectedTextOption
 	ld a,(de)
@@ -2502,7 +2425,6 @@ _moveSelectedTextOptionLeft:
 	jr _moveSelectedTextOptionLeft
 
 ;;
-; @addr{5611}
 _textOptionCode_checkDirectionButtons:
 	ld a,(wKeysJustPressed)
 	and BTN_UP|BTN_DOWN|BTN_LEFT|BTN_RIGHT
@@ -2516,7 +2438,6 @@ _textOptionCode_checkDirectionButtons:
 
 ;;
 ; Updates w7SelectedTextOption depending on the input.
-; @addr{5624}
 @updateSelectedTextOption:
 	ld a,(wKeysJustPressed)
 	call getHighestSetBit
@@ -2571,7 +2492,6 @@ _textOptionCode_checkDirectionButtons:
 	ret
 
 ;;
-; @addr{565c}
 _updateSelectedTextPositionAndDmaTextboxMap:
 	call _updateSelectedTextPosition
 	jp _dmaTextboxMap
@@ -2580,7 +2500,6 @@ _updateSelectedTextPositionAndDmaTextboxMap:
 ; When the B button is pressed, move the cursor to the last option.
 ; Unsets zero flag if B is pressed.
 ; @param a Buttons pressed
-; @addr{5662}
 _textOptionCode_checkBButton:
 	and BTN_B
 	ret z
@@ -2608,7 +2527,6 @@ _textOptionCode_checkBButton:
 ;;
 ; Save the current address of text being read.
 ; @param hl Current address of text
-; @addr{567f}
 _pushToTextStack:
 	push de
 	push bc
@@ -2643,7 +2561,6 @@ _pushToTextStack:
 	ret
 
 ;;
-; @addr{56a4}
 _popFromTextStack:
 	push de
 	push bc
@@ -2682,12 +2599,10 @@ _popFromTextStack:
 	ret
 
 ;;
-; @addr{56cf}
 _readByteFromW7ActiveBankAndIncHl:
 	call readByteFromW7ActiveBank
 
 ;;
-; @addr{56d2}
 _incHlAndUpdateBank:
 	inc l
 	ret nz
@@ -2707,7 +2622,6 @@ _incHlAndUpdateBank:
 ;;
 ; Handle control codes for text (any value under $10)
 ; @param a Control code
-; @addr{56e4}
 _handleTextControlCode:
 	push bc
 	push hl
@@ -2737,7 +2651,6 @@ _handleTextControlCode:
 
 ;;
 ; Null terminator; end of text
-; @addr{570a}
 @controlCode0:
 	pop hl
 	pop bc
@@ -2752,7 +2665,6 @@ _handleTextControlCode:
 
 ;;
 ; Newline character
-; @addr{5716}
 @controlCode1:
 	pop hl
 	pop bc
@@ -2766,7 +2678,6 @@ _handleTextControlCode:
 ; gfx_font_tradeitems.
 ; Otherwise, it reads a kanji from gfx_font_jp. This file also contains the
 ; triangle symbol which is used sometimes in the english version.
-; @addr{571e}
 @controlCode6:
 	pop hl
 	call _readByteFromW7ActiveBankAndIncHl
@@ -2800,28 +2711,24 @@ _handleTextControlCode:
 
 ;;
 ; Dictionary 0
-; @addr{574d}
 @controlCode2:
 	xor a
 	jr ++
 
 ;;
 ; Dictionary 1
-; @addr{5750}
 @controlCode3:
 	ld a,$01
 	jr ++
 
 ;;
 ; Dictionary 2
-; @addr{5754}
 @controlCode4:
 	ld a,$02
 	jr ++
 
 ;;
 ; Dictionary 3
-; @addr{5758}
 @controlCode5:
 	ld a,$03
 ++
@@ -2838,7 +2745,6 @@ _handleTextControlCode:
 ;;
 ; "Call" another piece of text; insert that text, then go back to reading the
 ; current text.
-; @addr{5770}
 @controlCodeF:
 	pop hl
 	call _readByteFromW7ActiveBankAndIncHl
@@ -2861,7 +2767,6 @@ _handleTextControlCode:
 
 ;;
 ; "Jump" to a different text index
-; @addr{5791}
 @controlCode7:
 	pop hl
 	call _readByteFromW7ActiveBankAndIncHl
@@ -2874,7 +2779,6 @@ _handleTextControlCode:
 ; textbox when this one is closed. Used in shops to show various messages
 ; depending whether you can hold or can afford a particular item.
 ; This command actually takes a parameter, but it's not read here.
-; @addr{579d}
 @controlCode8:
 	; Show another textbox later
 	ld a,(w7d0c1)
@@ -2892,7 +2796,6 @@ _handleTextControlCode:
 ; Change text color or set the attribute byte.
 ; If the parameter has bit 7 set, it is written directly to w7TextAttribute.
 ; Otherwise, the parameter is used as an index for a table of preset values.
-; @addr{57ac}
 @controlCode9:
 	pop hl
 
@@ -2927,7 +2830,6 @@ _handleTextControlCode:
 
 ; b0: attribute byte (which palette to use)
 ; b1: Value for wTextGfxColorIndex
-; @addr{57d5}
 @textColorData:
 	.db $80 $02
 	.db $80 $01
@@ -2937,7 +2839,6 @@ _handleTextControlCode:
 
 ;;
 ; Link or kid name
-; @addr{57df}
 @controlCodeA:
 	pop hl
 	pop bc
@@ -2962,7 +2863,6 @@ _handleTextControlCode:
 
 ;;
 ; Play a sound effect
-; @addr{57fa}
 @controlCodeE:
 	pop hl
 	call _readByteFromW7ActiveBankAndIncHl
@@ -3000,7 +2900,6 @@ _handleTextControlCode:
 
 ;;
 ; Set the sound that's made when each character is displayed
-; @addr{5824}
 @controlCodeB:
 	pop hl
 	call _readByteFromW7ActiveBankAndIncHl
@@ -3009,7 +2908,6 @@ _handleTextControlCode:
 
 ;;
 ; Set the number of frames until the textbox closes itself.
-; @addr{582d}
 @controlCodeD:
 	pop hl
 	call _readByteFromW7ActiveBankAndIncHl
@@ -3020,7 +2918,6 @@ _handleTextControlCode:
 ; Parameter:
 ;  Bits 0-1: Loaded into c
 ;  Bits 3-7: Action to perform. Values of 0-7 are valid.
-; @addr{5836}
 @controlCodeC:
 	pop hl
 	call _readByteFromW7ActiveBankAndIncHl
@@ -3046,7 +2943,6 @@ _handleTextControlCode:
 ; Gets the number of frames each character is displayed for, based on
 ; wTextSpeed.
 ; @param[out] a Frames per character
-; @addr{5856}
 _getCharacterDisplayLength:
 	push hl
 	ld a,(wTextSpeed)
@@ -3061,7 +2957,6 @@ _getCharacterDisplayLength:
 ;;
 ; Sets the speed of the text. Value of $02 for c sets it to normal, lower
 ; values are faster, higher ones are slower.
-; @addr{5864}
 _textControlCodeC_0:
 	ld a,(wTextSpeed)
 	swap a
@@ -3076,7 +2971,6 @@ _textControlCodeC_0:
 ; This is the structure which controls the values for each text speed. I don't
 ; know why there are 8 bytes per text speed, but the 3rd byte of each appears
 ; to be the only important one.
-; @addr{5875}
 _textSpeedData:
 	.db $04 $05 $07 $08 $0a $0c $0e $0f ; Text speed 1
 	.db $03 $04 $05 $07 $08 $0a $0b $0c ; Text speed 2
@@ -3085,7 +2979,6 @@ _textSpeedData:
 	.db $01 $01 $02 $02 $03 $03 $04 $05 ; 5
 ;;
 ; Slow down the text. Used for essences.
-; @addr{589d}
 _textControlCodeC_7:
 	ld a,$78
 	ld (w7TextSlowdownTimer),a
@@ -3093,20 +2986,17 @@ _textControlCodeC_7:
 
 ;;
 ; Show the piece of heart icon.
-; @addr{58a4}
 _textControlCodeC_5:
 	ld hl,w7d0c1
 	set 5,(hl)
 
 ;;
 ; Stop text here, clear textbox on next button press.
-; @addr{58a9}
 _textControlCodeC_3:
 	ld hl,w7d0c1
 	set 1,(hl)
 
 ;;
-; @addr{58ae}
 _textControlCodeC_ret:
 	pop hl
 	pop bc
@@ -3114,7 +3004,6 @@ _textControlCodeC_ret:
 
 ;;
 ; Unused?
-; @addr{58b1}
 _textControlCodeC_6:
 	ld a,($cbab)
 	ld (wTextNumberSubstitution+1),a
@@ -3123,7 +3012,6 @@ _textControlCodeC_6:
 
 ;;
 ; Display a number of up to 3 digits. Usually bcd format.
-; @addr{58bd}
 _textControlCodeC_1:
 	pop hl
 	pop bc
@@ -3159,7 +3047,6 @@ _textControlCodeC_1:
 ;;
 ; An option is presented, ie. yes/no. This command marks a possible position
 ; for the cursor.
-; @addr{58e8}
 _textControlCodeC_2:
 	call @getNextTextboxOptionPosition
 	ld a,(w7d0c1)
@@ -3185,7 +3072,6 @@ _textControlCodeC_2:
 	jp retrieveTextCharacter
 
 ;;
-; @addr{5904}
 @getNextTextboxOptionPosition:
 	ld hl,w7TextboxOptionPositions
 -
@@ -3196,7 +3082,6 @@ _textControlCodeC_2:
 	inc l
 	jr -
 
-; @addr{590d}
 _nameAddressTable:
 	.dw wLinkName wKidName
 	.dw w7SecretText1 w7SecretText2
@@ -3205,7 +3090,6 @@ _nameAddressTable:
 ; a shop, it checks the given variable ($cbad) and displays one of these pieces
 ; of text depending on the value.
 ;
-; @addr{5915}
 .ifdef ROM_AGES
 _extraTextIndices:
 	.dw $0000

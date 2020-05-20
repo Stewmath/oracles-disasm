@@ -5,7 +5,6 @@
 ; ITEMID_GALE_SEED
 ; ITEMID_MYSTERY_SEED
 ;
-; @addr{4ced}
 itemCode20:
 itemCode21:
 itemCode22:
@@ -157,7 +156,6 @@ itemCode24:
 
 ;;
 ; State 1: seed moving
-; @addr{4d85}
 _seedItemState1:
 	call _itemUpdateDamageToApply
 .ifdef ROM_AGES
@@ -359,7 +357,6 @@ _seedItemState1:
 ;;
 ; Sets state to 3, loads gfx for the new effect, plays sound, sets counter1.
 ;
-; @addr{4e82}
 @initState3:
 	ld e,Item.state
 	ld a,$03
@@ -371,7 +368,6 @@ _seedItemState1:
 ;;
 ; @param	a	Index to use for below table (plus $20, since
 ;			ITEMID_EMBER_SEED=$20)
-; @addr{4e8a}
 @loadGfxVarsWithIndex:
 	add a
 	ld hl,@data-(ITEMID_EMBER_SEED*4)
@@ -407,7 +403,6 @@ _seedItemState1:
 	.db $0b $3c $96 SND_SCENT_SEED
 
 ;;
-; @addr{4ec0}
 _seedItemDelete:
 	ld e,Item.subid
 	ld a,(de)
@@ -426,7 +421,6 @@ _seedItemDelete:
 ;;
 ; State 3: typically occurs when the seed collides with a wall or enemy (instead of the
 ; ground)
-; @addr{4ed1}
 _seedItemState3:
 	ld e,Item.id
 	ld a,(de)
@@ -477,7 +471,6 @@ _emberSeedBurn:
 ;;
 ; Generic update function for seed states 2/3
 ;
-; @addr{4f14}
 _seedUpdateAnimation:
 	ld e,Item.collisionType
 	xor a
@@ -491,7 +484,6 @@ _seedUpdateAnimation:
 
 ;;
 ; State 2: typically occurs when the seed lands on the ground
-; @addr{4f23}
 _seedItemState2:
 	ld e,Item.id
 	ld a,(de)
@@ -506,7 +498,6 @@ _seedItemState2:
 ;;
 ; Scent seed in the "smelling" state that attracts enemies
 ;
-; @addr{4f33}
 _scentSeedSmell:
 	ld h,d
 	ld l,Item.counter1
@@ -540,7 +531,6 @@ _scentSeedSmell:
 	jp _itemUpdateSpeedZAndCheckHazards
 
 ;;
-; @addr{4f65}
 _galeSeedUpdateAnimationAndCounter:
 	call _galeSeedUpdateAnimation
 	call itemDecCounter1
@@ -561,7 +551,6 @@ _galeSeedUpdateAnimationAndCounter:
 ; "_galeSeedTryToWarpLink" function, which causes the animation to go over, and it skips
 ; over some of the palettes?
 ;
-; @addr{4f79}
 _galeSeedUpdateAnimation:
 	call itemAnimate
 	ld e,Item.counter1
@@ -581,7 +570,6 @@ _galeSeedUpdateAnimation:
 
 ;;
 ; Gale seed in its tornado state, will pull in Link if possible
-; @addr{4f8c}
 _galeSeedTryToWarpLink:
 	call _galeSeedUpdateAnimation
 	ld e,Item.state2
@@ -717,7 +705,6 @@ _galeSeedTryToWarpLink:
 ; "bounces" when that happens.
 ;
 ; @param[out]	zflag	Unset when the seed's "effect" should be activated
-; @addr{5035}
 _seedItemUpdateBouncing:
 	call objectGetTileAtPosition
 	ld hl,_seedDontBounceTilesTable
@@ -811,7 +798,6 @@ _seedItemUpdateBouncing:
 ;
 ; @param	a	Angle
 ; @param[out]	zflag	Unset if the seed should bounce
-; @addr{5099}
 _seedItemCheckDiagonalCollision:
 	rrca
 	and $0c
@@ -889,7 +875,6 @@ _seedItemCheckDiagonalCollision:
 ;;
 ; @param	h,d	Object
 ; @param[out]	zflag	Set if there are still bounces left?
-; @addr{50f4}
 _func_50f4:
 	ld e,Item.angle
 	ld l,Item.knockbackAngle
@@ -918,7 +903,6 @@ _func_50f4:
 	ret
 
 ;;
-; @addr{510f}
 _seedItemClearKnockback:
 	ld e,Item.knockbackCounter
 	xor a
@@ -957,7 +941,6 @@ _seedDontBounceTilesTable:
 .else
 ;;
 ; @param[out]	zflag	z if no collision
-; @addr{4fdf}
 _slingshotCheckCanPassSolidTile:
 	call objectCheckTileCollision_allowHoles
 	jr nc,++
@@ -973,7 +956,6 @@ _slingshotCheckCanPassSolidTile:
 ; attack. Also checks for eatable tiles.
 ;
 ; ITEMID_DIMITRI_MOUTH
-; @addr{514d}
 itemCode2b:
 	ld e,Item.state
 	ld a,(de)
@@ -1014,7 +996,6 @@ itemCode2b:
 ;;
 ; Sets the position for this object around Dimitri's mouth.
 ;
-; @addr{517c}
 @calcPosition:
 	ld a,(w1Companion.direction)
 	ld hl,@offsets
@@ -1034,7 +1015,6 @@ itemCode2b:
 
 ;;
 ; ITEMID_BOMBCHUS
-; @addr{5194}
 itemCode0d:
 	call _bombchuCountdownToExplosion
 
@@ -1234,14 +1214,12 @@ itemCode0d:
 ;;
 ; Updates bombchu's position & speed every frame, and the angle every 8 frames.
 ;
-; @addr{5272}
 _bombchuUpdateVelocity:
 	ld a,(wFrameCounter)
 	and $07
 	call z,_bombchuUpdateAngle_topDown
 
 ;;
-; @addr{527a}
 _bombchuUpdateSpeed:
 	call @updateSpeed
 
@@ -1312,7 +1290,6 @@ _bombchuUpdateSpeed:
 ; @param[out]	a	Collision value
 ; @param[out]	hl	Address of collision data
 ; @param[out]	zflag	Set if there is no collision.
-; @addr{52bd}
 _bombchuGetTileCollisions:
 	ld h,d
 	ld l,Item.yh
@@ -1340,7 +1317,6 @@ _bombchuGetTileCollisions:
 	.db $02 $fc ; DIR_LEFT
 
 ;;
-; @addr{52dc}
 _bombchuUpdateVelocityAndClimbing_sidescroll:
 	ld a,(wFrameCounter)
 	and $07
@@ -1349,13 +1325,11 @@ _bombchuUpdateVelocityAndClimbing_sidescroll:
 ;;
 ; In sidescrolling areas, this updates the bombchu's "climbing wall" state.
 ;
-; @addr{52e4}
 _bombchuCheckWallsAndApplySpeed:
 	call @updateWallClimbing
 	jp objectApplySpeed
 
 ;;
-; @addr{52ea}
 @updateWallClimbing:
 	ld e,Item.var32
 	ld a,(de)
@@ -1469,7 +1443,6 @@ _bombchuCheckWallsAndApplySpeed:
 ;;
 ; Sets the bombchu's angle relative to its target.
 ;
-; @addr{5361}
 _bombchuUpdateAngle_topDown:
 	ld a,Object.yh
 	call objectGetRelatedObject2Var
@@ -1506,7 +1479,6 @@ _bombchuUpdateAngle_topDown:
 ;
 ; Also, this assumes that the item's angle is a cardinal direction?
 ;
-; @addr{5383}
 _bombchuSetAnimationFromAngle:
 	ld h,d
 	ld l,Item.direction
@@ -1538,7 +1510,6 @@ _bombchuSetAnimationFromAngle:
 ; current axis; so if it's moving along the X axis, it will chase on the X axis, and
 ; vice-versa.
 ;
-; @addr{539e}
 _bombchuUpdateAngle_sidescrolling:
 	ld a,Object.yh
 	call objectGetRelatedObject2Var
@@ -1581,7 +1552,6 @@ _bombchuUpdateAngle_sidescrolling:
 ; would put the item in a wall, it will default to Link's exact position instead.
 ;
 ; @param[out]	zflag	Set if the item defaulted to Link's exact position due to a wall
-; @addr{53ce}
 _bombchuSetPositionInFrontOfLink:
 	ld hl,w1Link.yh
 	ld b,(hl)
@@ -1642,13 +1612,11 @@ _bombchuSetPositionInFrontOfLink:
 ;;
 ; Bombchus call this every frame.
 ;
-; @addr{540f}
 _bombchuCountdownToExplosion:
 	call itemDecCounter2
 	ret nz
 
 ;;
-; @addr{5413}
 _bombchuClearCounter2AndInitializeExplosion:
 	ld e,Item.counter2
 	xor a
@@ -1657,7 +1625,6 @@ _bombchuClearCounter2AndInitializeExplosion:
 
 ;;
 ; @param[out]	cflag	Set on collision or if the enemy has died
-; @addr{541a}
 _bombchuCheckCollidedWithTarget:
 	ld a,Object.health
 	call objectGetRelatedObject2Var
@@ -1674,7 +1641,6 @@ _bombchuCheckCollidedWithTarget:
 ; Each time it loops through all enemies, the bombchu's vision radius increases.
 ;
 ; @param[out]	zflag	Set if a valid target is found
-; @addr{5426}
 _bombchuCheckForEnemyTarget:
 	; Check if the target enemy is enabled
 	ld e,Item.var30
@@ -1774,7 +1740,6 @@ _bombchuCheckForEnemyTarget:
 
 ;;
 ; ITEMID_BOMB
-; @addr{54a0}
 itemCode03:
 	ld e,Item.var2f
 	ld a,(de)
@@ -1906,7 +1871,6 @@ itemCode03:
 ;;
 ; @param[out]	cflag	Set if the item was deleted
 ; @param[out]	zflag	Set if the bomb is not on the ground
-; @addr{5530}
 _bombUpdateThrowingVerticallyAndCheckDelete:
 	push bc
 	ld a,(wTilesetFlags)
@@ -1957,7 +1921,6 @@ _bombUpdateThrowingVerticallyAndCheckDelete:
 ;;
 ; Update function for bombs and bombchus while they're exploding
 ;
-; @addr{5565}
 _itemUpdateExplosion:
 	; animParameter specifies:
 	;  Bits 0-4: collision radius
@@ -1993,7 +1956,6 @@ _itemUpdateExplosion:
 ;;
 ; Bombs call each frame if bit 4 of Item.var2f is set.
 ;
-; @addr{558d}
 _bombUpdateExplosion:
 	ld h,d
 	ld l,Item.state
@@ -2005,7 +1967,6 @@ _bombUpdateExplosion:
 ;;
 ; @param[out]	zflag	Set if the bomb isn't exploding (not sure if it gets unset on just
 ;			one frame, or all frames after the explosion starts)
-; @addr{5597}
 _bombUpdateAnimation:
 	call itemAnimate
 	ld e,Item.animParameter
@@ -2017,7 +1978,6 @@ _bombUpdateAnimation:
 ; Initializes a bomb explosion?
 ;
 ; @param[out]	zflag
-; @addr{559f}
 _itemInitializeBombExplosion:
 	ld h,d
 	ld l,Item.oamFlagsBackup
@@ -2071,7 +2031,6 @@ _itemInitializeBombExplosion:
 	ret
 
 ;;
-; @addr{55df}
 _bombInitializeIfNeeded:
 	ld h,d
 	ld l,Item.var37
@@ -2084,7 +2043,6 @@ _bombInitializeIfNeeded:
 	call _itemMergeZPositionIfSidescrollingArea
 
 ;;
-; @addr{55f0}
 _bombResetAnimationAndSetVisiblec1:
 	xor a
 	call itemSetAnimation
@@ -2093,7 +2051,6 @@ _bombResetAnimationAndSetVisiblec1:
 ;;
 ; Bombs call this to check for collision with Link and apply the damage.
 ;
-; @addr{55f7}
 _explosionCheckAndApplyLinkCollision:
 	; Return if the bomb has already hit Link
 	ld h,d
@@ -2165,7 +2122,6 @@ _explosionCheckAndApplyLinkCollision:
 ; Each call checks one tile for deletion. After 9 calls, all spots will have been checked.
 ;
 ; @param	hl	Pointer to a counter (should count down from 8 to 0)
-; @addr{563e}
 _explosionTryToBreakNextTile:
 	ld a,(hl)
 	dec (hl)
@@ -2251,7 +2207,6 @@ _explosionTryToBreakNextTile:
 
 ;;
 ; ITEMID_BOOMERANG
-; @addr{569d}
 itemCode06:
 	ld e,Item.state
 	ld a,(de)
@@ -2487,7 +2442,6 @@ magicBoomerangTryToBreakTile:
 ; @param	b	Should be double the value of c
 ; @param	c	Range to be within
 ; @param[out]	cflag	Set if within specified range of link
-; @addr{577e}
 _itemCheckWithinRangeOfLink:
 	ld hl,w1Link.yh
 	ld e,Item.yh
@@ -2510,7 +2464,6 @@ _itemCheckWithinRangeOfLink:
 ; The chain on the switch hook; cycles between 3 intermediate positions
 ;
 ; ITEMID_SWITCH_HOOK_CHAIN
-; @addr{5791}
 itemCode0bPost:
 	ld a,(w1WeaponItem.id)
 	cp ITEMID_SWITCH_HOOK
@@ -2581,7 +2534,6 @@ itemCode0bPost:
 
 ;;
 ; ITEMID_SWITCH_HOOK_CHAIN
-; @addr{57dc}
 itemCode0b:
 	ld e,Item.state
 	ld a,(de)
@@ -2598,7 +2550,6 @@ itemCode0b:
 
 ;;
 ; ITEMID_SWITCH_HOOK
-; @addr{57f2}
 itemCode0aPost:
 	call _cpRelatedObject1ID
 	ret z
@@ -2611,7 +2562,6 @@ itemCode0aPost:
 
 ;;
 ; ITEMID_SWITCH_HOOK
-; @addr{5800}
 itemCode0a:
 	ld a,$08
 	ld (wDisableRingTransformations),a
@@ -2811,7 +2761,6 @@ itemCode0a:
 
 ;;
 ; Swap with an object?
-; @addr{5902}
 _func_5902:
 	call _checkRelatedObject2States
 	jr nc,++
@@ -3120,7 +3069,6 @@ _switchHookState3:
 ; @param[out]	hl	Related object 2's state2 variable
 ; @param[out]	zflag	Set if latched onto a tile, not an object
 ; @param[out]	cflag	Unset if the related object is on state 3, substate 3?
-; @addr{5a94}
 _checkRelatedObject2States:
 	; Jump if latched onto a tile, not an object
 	ld e,Item.subid
@@ -3147,7 +3095,6 @@ _checkRelatedObject2States:
 
 ;;
 ; Plays the switch hook sound every 4 frames.
-; @addr{5aaa}
 _updateSwitchHookSound:
 	ld e,Item.counter1
 	ld a,(de)
@@ -3161,7 +3108,6 @@ _updateSwitchHookSound:
 ; @param l Position to check
 ; @param[out] zflag Set if the tile at l has a collision value of 0 (or is the somaria
 ; block?)
-; @addr{5ab5}
 _checkCanPlaceDiamondOnTile:
 	ld h,>wRoomCollisions
 	ld a,(hl)
@@ -3176,7 +3122,6 @@ _checkCanPlaceDiamondOnTile:
 ;;
 ; ITEMID_SWITCH_HOOK_HELPER
 ; Used with the switch hook in w1ReservedItemE to store position values.
-; @addr{5ac0}
 itemCode09:
 	ld h,d
 	ld l,Item.var2f
@@ -3222,7 +3167,6 @@ itemCode09:
 
 ;;
 ; Unused?
-; @addr{5af5}
 _func_5af5:
 	ld hl,w1ReservedItemE
 	bit 0,(hl)
@@ -3234,7 +3178,6 @@ _func_5af5:
 
 ;;
 ; ITEMID_RICKY_TORNADO
-; @addr{5b00}
 itemCode2a:
 	ld e,Item.state
 	ld a,(de)
@@ -3304,7 +3247,6 @@ itemCode2a:
 ; ITEMID_SHOOTER
 ; ITEMID_29
 ;
-; @addr{5b51}
 itemCode0f:
 itemCode29:
 	ld e,Item.state
@@ -3328,7 +3270,6 @@ itemCode29:
 
 ;;
 ; ITEMID_SHOOTER
-; @addr{5b6a}
 itemCode0fPost:
 	call _cpRelatedObject1ID
 	jp nz,itemDelete
@@ -4033,7 +3974,6 @@ itemCode29:
 ;;
 ; ITEMID_28 (ricky/moosh attack?)
 ;
-; @addr{5b8c}
 itemCode28:
 	ld e,Item.state
 	ld a,(de)
@@ -4139,7 +4079,6 @@ itemCode28:
 
 ;;
 ; ITEMID_SHOVEL
-; @addr{5c1f}
 itemCode15:
 	ld e,Item.state
 	ld a,(de)
@@ -4174,7 +4113,6 @@ itemCode15:
 .ifdef ROM_AGES
 ;;
 ; ITEMID_CANE_OF_SOMARIA
-; @addr{5c49}
 itemCode04:
 	call _itemTransferKnockbackToLink
 	ld e,Item.state
@@ -4253,7 +4191,6 @@ itemCode04:
 
 ;;
 ; ITEMID_18 (somaria block object)
-; @addr{5cac}
 itemCode18:
 	ld e,Item.state
 	ld a,(de)
@@ -4486,7 +4423,6 @@ itemCode18:
 
 ;;
 ; @param[out]	zflag	Unset if slated for deletion
-; @addr{5dd4}
 @checkDeletionTrigger:
 	ld h,d
 	ld l,Item.var2f
@@ -4494,7 +4430,6 @@ itemCode18:
 	ret
 
 ;;
-; @addr{5dda}
 @pushLinkAway:
 	ld e,Item.collisionRadiusY
 	ld a,$07
@@ -4504,7 +4439,6 @@ itemCode18:
 
 ;;
 ; @param[out]	zflag	Set if the cane of somaria block is present, and is solid?
-; @addr{5de5}
 @checkBlockInPlace:
 	ld e,Item.var32
 	ld a,(de)
@@ -4520,7 +4454,6 @@ itemCode18:
 	ret
 
 ;;
-; @addr{5df5}
 @removeBlock:
 	call @checkBlockInPlace
 	ret nz
@@ -4533,7 +4466,6 @@ itemCode18:
 
 ;;
 ; @param[out]	zflag	Set if the block can appear at this position
-; @addr{5e02}
 @checkBlockCanAppear:
 	; Disallow cane of somaria usage if in patch's minigame room
 	ld a,(wActiveGroup)
@@ -4576,7 +4508,6 @@ itemCode18:
 
 ;;
 ; @param[out]	zflag	Set on success
-; @addr{5e2f}
 @createBlockIfNotOnHazard:
 	call @alignOnTile
 	call objectGetTileAtPosition
@@ -4653,7 +4584,6 @@ itemCode07:
 
 ;;
 ; ITEMID_MINECART_COLLISION
-; @addr{5e5a}
 itemCode1d:
 	ld e,Item.state
 	ld a,(de)
@@ -4670,7 +4600,6 @@ itemCode1d:
 
 ;;
 ; ITEMID_MINECART_COLLISION
-; @addr{5e6a}
 itemCode1dPost:
 	ld hl,w1Companion.id
 	ld a,(hl)
@@ -4681,7 +4610,6 @@ itemCode1dPost:
 .ifdef ROM_AGES
 ;;
 ; ITEMID_SLINGSHOT
-; @addr{5e76}
 itemCode13:
 	ret
 .else
@@ -4753,7 +4681,6 @@ itemCode1e:
 
 ;;
 ; ITEMID_BIGGORON_SWORD
-; @addr{5e77}
 itemCode0c:
 	ld e,Item.state
 	ld a,(de)
@@ -4773,7 +4700,6 @@ itemCode0c:
 
 ;;
 ; ITEMID_SWORD
-; @addr{5e8f}
 itemCode05:
 	call _itemTransferKnockbackToLink
 	ld e,Item.state
@@ -4928,7 +4854,6 @@ itemCode05:
 ;;
 ; ITEMID_PUNCH
 ; ITEMID_NONE also points here, but this doesn't get called from there normally
-; @addr{5f2a}
 itemCode00:
 itemCode02:
 	ld e,Item.state
@@ -4980,7 +4905,6 @@ itemCode02:
 
 ;;
 ; ITEMID_SWORD_BEAM
-; @addr{5f61}
 itemCode27:
 	ld e,Item.state
 	ld a,(de)
@@ -5057,7 +4981,6 @@ itemCode27:
 ; Used for sword, cane of somaria, rod of seasons. Updates animation, deals with
 ; destroying tiles?
 ;
-; @addr{5fca}
 _updateSwingableItemAnimation:
 	ld l,Item.animParameter
 .ifdef ROM_AGES
@@ -5123,7 +5046,6 @@ _label_07_227:
 ;;
 ; Analagous to _updateSwingableItemAnimation, but specifically for biggoron's sword
 ;
-; @addr{6026}
 _updateBiggoronSwordAnimation:
 	ld b,$00
 	ld l,Item.animParameter
@@ -5163,7 +5085,6 @@ _updateBiggoronSwordAnimation:
 ;;
 ; ITEMID_MAGNET_GLOVES
 ;
-; @addr{6057}
 itemCode08Post:
 	call _cpRelatedObject1ID
 	jp nz,itemDelete
@@ -5182,7 +5103,6 @@ itemCode08Post:
 ;;
 ; ITEMID_SLINGSHOT
 ;
-; @addr{6072}
 itemCode13Post:
 	call _cpRelatedObject1ID
 	jp nz,itemDelete
@@ -5197,7 +5117,6 @@ itemCode13Post:
 ;;
 ; ITEMID_FOOLS_ORE
 ;
-; @addr{6087}
 itemCode1ePost:
 	call _cpRelatedObject1ID
 	jp nz,itemDelete
@@ -5217,7 +5136,6 @@ itemCode1ePost:
 ;;
 ; ITEMID_PUNCH
 ;
-; @addr{60a0}
 itemCode00Post:
 itemCode02Post:
 	ld a,(w1Link.direction)
@@ -5228,7 +5146,6 @@ itemCode02Post:
 ;;
 ; ITEMID_BIGGORON_SWORD
 ;
-; @addr{60aa}
 itemCode0cPost:
 	call _cpRelatedObject1ID
 	jp nz,itemDelete
@@ -5245,7 +5162,6 @@ itemCode0cPost:
 ; ITEMID_SWORD
 ; ITEMID_ROD_OF_SEASONS
 ;
-; @addr{60bf}
 itemCode04Post:
 itemCode05Post:
 itemCode07Post:
@@ -5264,7 +5180,6 @@ itemCode07Post:
 ;;
 ; @param	a	Index for table 'hl'
 ; @param	hl	Usually points to _swordArcData
-; @addr{60d4}
 _itemSetPositionInSwordArc:
 	add a
 	rst_addDoubleIndex
@@ -5273,7 +5188,6 @@ _itemSetPositionInSwordArc:
 ; Copy Link's position (accounting for raised floors, with Z position 2 higher than Link)
 ;
 ; @param	hl	Pointer to data for collision radii and position offsets
-; @addr{60d6}
 _itemInitializeFromLinkPosition:
 	ld e,Item.collisionRadiusY
 	ldi a,(hl)
@@ -5313,7 +5227,6 @@ _itemInitializeFromLinkPosition:
 ; Each row probably corresponds to part of a sword's arc? (Also used by punches.)
 ; b0/b1: collisionRadiusY/X
 ; b2/b3: Y/X offsets relative to Link
-; @addr{60fa}
 _swordArcData:
 	.db $09 $06 $fe $10
 	.db $06 $09 $f2 $00
@@ -5344,7 +5257,6 @@ _swordArcData:
 	.db $05 $05 $0c $03
 	.db $05 $05 $00 $f4
 
-; @addr{616a}
 _biggoronSwordArcData:
 	.db $0b $0b $ef $fe
 	.db $09 $0c $f2 $10
@@ -5357,7 +5269,6 @@ _biggoronSwordArcData:
 
 
 ;;
-; @addr{618a}
 _tryBreakTileWithExpertsRing:
 	ld a,(w1Link.direction)
 	add a
@@ -5370,7 +5281,6 @@ _tryBreakTileWithExpertsRing:
 ; "breakableTileSource".
 ;
 ; @param	a	Direction (see below function)
-; @addr{6193}
 _tryBreakTileWithSword_calculateLevel:
 	; Use BREAKABLETILESOURCE_SWORD_L1 or L2 depending on sword's level
 	ld c,a
@@ -5384,7 +5294,6 @@ _tryBreakTileWithSword_calculateLevel:
 ;
 ; @param	a	See constants/breakableTileSources.s
 ; @param	c	Direction (0-7 are 45-degree increments, 8 is link's center)
-; @addr{619d}
 _tryBreakTileWithSword:
 	; Check link is close enough to the ground
 	ld e,a
@@ -5483,7 +5392,6 @@ _tryBreakTileWithSword:
 ; they're bombable.
 ; * The second is a list of tiles which don't produce clinks at all.
 ;
-; @addr{620c}
 @clinkSoundTable:
 	.dw @collisions0
 	.dw @collisions1
@@ -5551,7 +5459,6 @@ _tryBreakTileWithSword:
 ;;
 ; Calculates the value for Item.damage, accounting for ring modifiers.
 ;
-; @addr{6235}
 _itemCalculateSwordDamage:
 	ld e,Item.var3a
 	ld a,(de)
@@ -5637,7 +5544,6 @@ _itemCalculateSwordDamage:
 ;;
 ; Makes the given item mimic a tile. Used for switch hooking bushes and pots and stuff,
 ; possibly for other things too?
-; @addr{628e}
 _itemMimicBgTile:
 	call getTileMappingData
 	push bc
@@ -5692,7 +5598,6 @@ _itemMimicBgTile:
 ; If it's not a tile (ie. it's dimitri), this is just an invisible item with collisions?
 ;
 ; ITEMID_BRACELET
-; @addr{62c6}
 itemCode16:
 	ld e,Item.state
 	ld a,(de)
@@ -5867,7 +5772,6 @@ itemCode16:
 ;;
 ; @param[out] zflag Set if Item.subid is zero
 ; @param[out] cflag Inverse of zflag?
-; @addr{636d}
 _braceletCheckBreakable:
 	ld e,Item.subid
 	ld a,(de)
@@ -5884,7 +5788,6 @@ _braceletCheckBreakable:
 ; itself.
 ;
 ; @param[out]	hl	relatedObj2.state2 or this.state2
-; @addr{6374}
 _braceletCheckDeleteSelfWhileThrowing:
 	ld e,Item.subid
 	ld a,(de)
@@ -5922,7 +5825,6 @@ _braceletCheckDeleteSelfWhileThrowing:
 ;;
 ; Called every frame a bomb is being thrown. Also used by somaria block?
 ;
-; @addr{639c}
 _bombUpdateThrowingLaterally:
 	; If it's landed in water, set speed to 0 (for sidescrolling areas)
 	ld h,d
@@ -5943,7 +5845,6 @@ _bombUpdateThrowingLaterally:
 ;;
 ; Items call this once on the frame they're thrown
 ;
-; @addr{63b1}
 _itemBeginThrow:
 	call _itemSetVar3cToFF
 
@@ -6035,7 +5936,6 @@ _itemBeginThrow:
 ; Called by throwable items each frame. See also "_itemUpdateThrowingVertically".
 ;
 ; @param[out]	zflag	Set if the item should break.
-; @addr{6407}
 _itemUpdateThrowingLaterally:
 	ld e,Item.var38
 	ld a,(de)
@@ -6152,7 +6052,6 @@ _itemUpdateThrowingLaterally:
 ; bounce a few times before settling, reducing in speed with each bounce.
 ; @param[out] zflag Set if the item has reached a ground speed of zero.
 ; @param[out] cflag Set if the item has stopped bouncing.
-; @addr{6482}
 _itemBounce:
 	ld a,SND_BOMB_LAND
 	call playSound
@@ -6202,7 +6101,6 @@ _itemWeights:
 ; A series of key-value pairs where the key is a bouncing object's current speed, and the
 ; value is the object's new speed after one bounce.
 ; This returns roughly half the value of the key.
-; @addr{64d2}
 _bounceSpeedReductionMapping:
 	.db SPEED_020 SPEED_000
 	.db SPEED_040 SPEED_020
@@ -6232,7 +6130,6 @@ _bounceSpeedReductionMapping:
 
 ;;
 ; ITEMID_DUST
-; @addr{6504}
 itemCode1a:
 	ld e,Item.state2
 	ld a,(de)
@@ -6337,7 +6234,6 @@ itemCode1a:
 ;;
 ; @param[out]	b	[Item.animParameter]
 ; @param[out]	hl	Item.oamFlags
-; @addr{657d}
 @setOamTileIndexBaseFromAnimParameter:
 	ld h,d
 	ld l,Item.animParameter
@@ -6350,7 +6246,6 @@ itemCode1a:
 
 ;;
 ; Clears one of the "slots" for the dust cloud objects.
-; @addr{6588}
 @clearDustCloudVariables:
 	xor a
 	ldi (hl),a
@@ -6362,7 +6257,6 @@ itemCode1a:
 ;;
 ; Initializes a dust cloud if one of the two slots are blank
 ;
-; @addr{6590}
 @initializeNextDustCloud:
 	ld h,d
 	ld l,Item.subid

@@ -181,7 +181,6 @@ _runVeranGhostSubid0:
 	jp interactionIncState2
 
 ;;
-; @addr{4dcb}
 @rumbleAndRandomizeX:
 	ld a,(wFrameCounter)
 	and $0f
@@ -845,7 +844,6 @@ linkExitPalaceSimulatedInput
 
 ;;
 ; @param[out]	cflag	nc if dungeon 6 is beaten (can enter the palace)
-; @addr{51f8}
 _soldierCheckBeatD6:
 	ld a,TREASURE_ESSENCE
 	call checkTreasureObtained
@@ -857,7 +855,6 @@ _soldierCheckBeatD6:
 	scf
 	ret
 
-; @addr{5207}
 _soldierScriptTable:
 	.dw soldierSubid00Script
 	.dw soldierSubid01Script
@@ -939,7 +936,6 @@ interactionCode41:
 	jp interactionIncState
 
 ;;
-; @addr{528e}
 @initGraphicsIncStateAndLoadScript:
 	call interactionInitGraphics
 	call objectMarkSolidPosition
@@ -955,7 +951,6 @@ interactionCode41:
 	call interactionSetScript
 	jp interactionIncState
 
-; @addr{52a9}
 @scriptTable:
 	.dw manOutsideD2Script
 	.dw lynnaManScript_befored3
@@ -1243,7 +1238,6 @@ interactionCode43:
 	call interactionSetScript
 	jp interactionIncState
 
-; @addr{5466}
 @scriptTable:
 	.dw pastGuySubid0Script
 	.dw stubScript
@@ -1253,7 +1247,6 @@ interactionCode43:
 	.dw stubScript
 	.dw pastGuySubid6Script
 
-; @addr{5474}
 @subid1And2ScriptTable:
 	.dw pastGuySubid1And2Script_befored4
 	.dw pastGuySubid1And2Script_befored4
@@ -1385,7 +1378,6 @@ interactionCode44:
 ;			$03 if beat d7;
 ;			$04 if got the maku seed (saw twinrova cutscene);
 ;			$05 if game finished (unlinked only)
-; @addr{552b}
 getGameProgress_1:
 	ld b,$05
 	ld a,GLOBALFLAG_FINISHEDGAME
@@ -1430,7 +1422,6 @@ getGameProgress_1:
 ;			$05 if got the maku seed (saw twinrova cutscene);
 ;			$06 if beat veran but not twinrova (linked only);
 ;			$07 if game finished (unlinked only)
-; @addr{5559}
 getGameProgress_2:
 	ld b,$07
 	ld a,GLOBALFLAG_FINISHEDGAME
@@ -1479,7 +1470,6 @@ getGameProgress_2:
 
 
 ;;
-; @addr{5598}
 _unusedFunc5598:
 	ld a,b
 	ld hl,lynnaMan2ScriptTable
@@ -1498,7 +1488,6 @@ _unusedFunc5598:
 ; @param	b	Return value from "getGameProgress_1"?
 ; @param	c	Subid "base"
 ; @param[out]	zflag	Set if the npc should exist
-; @addr{55a6}
 checkNpcShouldExistAtGameStage_body:
 	ld hl,@table
 	rst_addDoubleIndex
@@ -2235,7 +2224,6 @@ _tokayThiefSubstate0:
 ; Sets up the graphics for the item that the tokay is holding (ie. shovel, sword)
 ;
 ; @param	b	Held item index (0-4)
-; @addr{5959}
 _tokayInitHeldItem:
 	call getFreeInteractionSlot
 	ret nz
@@ -2249,7 +2237,6 @@ _tokayInitHeldItem:
 ;;
 ; @param	hl	Pointer to an object which will be set to type
 ;			INTERACID_ACCESSORY.
-; @addr{5967}
 _tokayInitAccessory:
 	ld (hl),INTERACID_ACCESSORY
 	ld l,Interaction.relatedObj1
@@ -2265,7 +2252,6 @@ _tokayItemGraphics:
 ;;
 ; This function counts down a timer in var38, and removes the next item from Link's
 ; inventory once it hits zero. The next item index to steal is var3a.
-; @addr{5975}
 _tokayThief_countdownToStealNextItem:
 	ld h,d
 	ld l,Interaction.var38
@@ -2493,7 +2479,6 @@ _wildTokayParticipantSubstate2:
 	jp interactionDelete
 
 ;;
-; @addr{5aa9}
 _wildTokayParticipant_checkGrabMeat:
 	; Check that Link's throwing an item
 	ld a,(w1ReservedItemC.enabled)
@@ -2544,7 +2529,6 @@ _wildTokayParticipant_checkGrabMeat:
 
 ;;
 ; Creates a graphic of "held meat" for a tokay.
-; @addr{5ae1}
 _tokayInitMeatAccessory:
 	call getFreeInteractionSlot
 	ret nz
@@ -2692,7 +2676,6 @@ _tokayRunSubid1c:
 ;
 ; On return, var3e will be 0 if he's currently at his starting position, otherwise it will
 ; be 1.
-; @addr{5b7c}
 _tokayRunStinkBagCutscene:
 	ld e,Interaction.state2
 	ld a,(de)
@@ -2808,7 +2791,6 @@ _tokayRunStinkBagCutscene:
 	jp @beginNextJump
 
 ;;
-; @addr{5c12}
 _tokayLoadScript:
 	ld e,Interaction.subid
 	ld a,(de)
@@ -3322,7 +3304,6 @@ _forestFairy_subid07:
 
 ;;
 ; @param	hl	Pointer to 2 bytes (see example data below)
-; @addr{5efd}
 _forestFairy_initNpcFromData:
 	push hl
 	call interactionInitGraphics
@@ -4197,14 +4178,12 @@ _subrosian_subid04:
 	jp npcFaceLinkAndAnimate
 
 ;;
-; @addr{63e3}
 _subrosian_initGraphicsAndIncState:
 	call interactionInitGraphics
 	call objectMarkSolidPosition
 	jp interactionIncState
 
 ;;
-; @addr{63ec}
 _subrosian_unused_63ec:
 	call interactionInitGraphics
 	call objectMarkSolidPosition
@@ -4212,7 +4191,6 @@ _subrosian_unused_63ec:
 
 
 ;;
-; @addr{63f4}
 _subrosian_initSubid02:
 	call interactionInitGraphics
 	call objectMarkSolidPosition
@@ -4220,7 +4198,6 @@ _subrosian_initSubid02:
 
 ;;
 ; Load a script based just on the subid.
-; @addr{63fc}
 _subrosian_loadScript:
 	call _subrosian_getScriptPtr
 	call interactionSetScript
@@ -4228,7 +4205,6 @@ _subrosian_loadScript:
 
 ;;
 ; Load a script based on the subid and var03.
-; @addr{6405}
 _subrosian_loadScriptIndex:
 	call _subrosian_getScriptPtr
 	inc e
@@ -4243,7 +4219,6 @@ _subrosian_loadScriptIndex:
 ;;
 ; @param[out]	hl	Pointer read from scriptTable (either points to a script or to
 ;			a table of scripts)
-; @addr{6414}
 _subrosian_getScriptPtr:
 	ld a,>TX_1c00
 	call interactionSetHighTextIndex
@@ -4256,7 +4231,6 @@ _subrosian_getScriptPtr:
 	ld l,a
 	ret
 
-; @addr{6424}
 @scriptTable:
 	.dw stubScript
 	.dw stubScript
@@ -4313,7 +4287,6 @@ _impaNpc_subid00:
 
 ;;
 ; @param	hl	Script address
-; @addr{6468}
 _impaNpc_setScriptAndInitialize:
 	call interactionSetScript
 	call interactionInitGraphics
@@ -4336,7 +4309,6 @@ _impaNpc_setScriptAndInitialize:
 ;
 ; @param	a	Index of "behaviour" ($00-$08 for unlinked, $09-$11 for linked)
 ; @param[out]	hl	Script address
-; @addr{6481}
 _impaNpc_determineTextAndPositionInHouse:
 	ld e,Interaction.var03
 	ld (de),a
@@ -4481,7 +4453,6 @@ _impaNpc_subid03:
 	jr _impaNpc_setTextIndexAndLoadGenericNpcScript
 
 ;;
-; @addr{653b}
 _impaNpc_faceLinkIfClose:
 	ld c,$28
 	call objectCheckLinkWithinDistance
@@ -4519,7 +4490,6 @@ _impaNpc_faceLinkIfClose:
 ; * $ff after finishing game
 ;
 ; @param[out]	b	Return value
-; @addr{655a}
 _getImpaNpcState:
 	ld a,GLOBALFLAG_FINISHEDGAME
 	call checkGlobalFlag
@@ -5026,7 +4996,6 @@ _dog_initGraphicsLoadScriptAndIncState:
 	jp interactionIncState
 
 ;;
-; @addr{6825}
 _dog_moveTowardTargetPosition:
 	ld h,d
 	ld l,Interaction.var3a
@@ -5052,7 +5021,6 @@ _dog_moveTowardTargetPosition:
 
 ;;
 ; @param[out]	cflag	Set if close to target position
-; @addr{6841}
 _dog_checkCloseToTargetPosition:
 	call _dog_getTargetPositionAddress
 	ld l,Interaction.yh
@@ -5071,7 +5039,6 @@ _dog_checkCloseToTargetPosition:
 
 ;;
 ; Update direction based on angle.
-; @addr{6857}
 _dog_updateDirection:
 	ld h,d
 	ld l,Interaction.angle
@@ -5088,7 +5055,6 @@ _dog_updateDirection:
 
 ;;
 ; @param[out]	cflag	Set if the position index "looped" (dog went off-screen)
-; @addr{686b}
 _dog_incTargetPositionIndex:
 	call _dog_snapToTargetPosition
 	ld h,d
@@ -5105,7 +5071,6 @@ _dog_incTargetPositionIndex:
 	ret
 
 ;;
-; @addr{687b}
 _dog_snapToTargetPosition:
 	call _dog_getTargetPositionAddress
 	ld l,Interaction.y
@@ -5123,7 +5088,6 @@ _dog_snapToTargetPosition:
 
 ;;
 ; @param[out]	bc	Address of target position (2 bytes, Y and X)
-; @addr{688c}
 _dog_getTargetPositionAddress:
 	ld e,Interaction.var3d
 	ld a,(de)
@@ -5142,7 +5106,6 @@ _dog_getTargetPositionAddress:
 ; due to an apparent issue with the caller, the data for the first map is always used.
 ;
 ; @param	a	Index of data to read (0-3 for corresponding maps)
-; @addr{689c}
 _dog_setTargetPositionIndex:
 	ld hl,@dogPositionLists
 	rst_addDoubleIndex
@@ -5498,7 +5461,6 @@ interactionCode57:
 
 ;;
 ; Create the debris that comes out when the pickaxe hits the ground.
-; @addr{6aa4}
 @createDirtChips:
 	ld c,a
 	ld b,$02
@@ -5903,7 +5865,6 @@ interactionCode5b:
 ;
 ; @param[out]	cflag	c if there is a defined reaction to the object that fell in the
 ;                       hole (and something did indeed fall in).
-; @addr{6ccb}
 @respondToObjectInHole:
 	ld a,(wTextIsActive)
 	or a
@@ -6818,7 +6779,6 @@ interactionCode61:
 ; If the lever is fully extended, this also caps its position to the max value.
 ;
 ; @param[out]	cflag	nc if fully extended.
-; @addr{70ec}
 @checkLeverFullyExtended:
 	ld e,Interaction.var31
 	ld a,(de)
@@ -6844,7 +6804,6 @@ interactionCode61:
 ; If the lever is fully retracted, this also caps its position to 0.
 ;
 ; @param[out]	cflag	nc if fully retracted.
-; @addr{7101}
 @checkLeverFullyRetracted:
 	xor a
 	ld h,d
@@ -6869,7 +6828,6 @@ interactionCode61:
 ; @param	cflag	Set if lever is facing up
 ; @param[out]	a	Old value of pull distance
 ; @param[out]	b	New value of pull distance
-; @addr{7114}
 @updatePullOffset:
 	jr nc,++
 	cpl
@@ -7153,7 +7111,6 @@ _makuConfetti_subid0:
 ;;
 ; @param	bc	Speed
 ; @param[out]	bc	Inverted speed
-; @addr{7260}
 @negateBC:
 	xor a
 	ld a,c
@@ -7168,7 +7125,6 @@ _makuConfetti_subid0:
 
 ;;
 ; @param	de	Address of value to invert
-; @addr{726c}
 @negateWordAtDE:
 	xor a
 	ld a,(de)
@@ -8353,7 +8309,6 @@ _goronSubid0f:
 	jp npcFaceLinkAndAnimate
 
 ;;
-; @addr{78d0}
 _goronDance_updateFrameCounter:
 	ld a,(wTmpcfc0.goronDance.linkStartedDance)
 	or a
@@ -8362,7 +8317,6 @@ _goronDance_updateFrameCounter:
 	jp incHlRef16WithCap
 
 ;;
-; @addr{78db}
 _goronDance_initNextRound:
 	ld a,(wTmpcfc0.goronDance.remainingRounds)
 	or a
@@ -8370,7 +8324,6 @@ _goronDance_initNextRound:
 	callab interactionBank08.shootingGallery_getNextTargetLayout
 
 ;;
-; @addr{78e9}
 _goronDance_clearDanceVariables:
 	xor a
 	ld (wTmpcfc0.goronDance.linkJumping),a
@@ -8386,7 +8339,6 @@ _goronDance_clearDanceVariables:
 ;;
 ; Waits for input from Link, checks for round failure conditions, updates link and goron
 ; animations when input is good, etc.
-; @addr{7903}
 _goronDance_checkLinkInput:
 	call _goronDance_getNextMove
 	cp $00
@@ -8497,7 +8449,6 @@ _goronDance_checkLinkInput:
 
 ;;
 ; @param[out]	zflag	z if too early or too late
-; @addr{79ac}
 _goronDance_checkInputNotTooEarlyOrLate:
 	call _goronDance_getCurrentAndNeededFrameCounts
 
@@ -8538,7 +8489,6 @@ _goronDance_checkInputNotTooEarlyOrLate:
 
 ;;
 ; @param[out]	zflag	z the window for input this beat has passed.
-; @addr{79dc}
 _goronDance_checkTooLateToInput:
 	call _goronDance_getCurrentAndNeededFrameCounts
 	ld a,$08
@@ -8547,7 +8497,6 @@ _goronDance_checkTooLateToInput:
 
 ;;
 ; @param[out]	zflag	z if the exact expected time for the input has passed.
-; @addr{79e4}
 _goronDance_checkExactInputTimePassed:
 	call _goronDance_getCurrentAndNeededFrameCounts
 ++
@@ -8558,7 +8507,6 @@ _goronDance_checkExactInputTimePassed:
 ;;
 ; @param[out]	bc	Current frame count
 ; @param[out]	hl	Needed frame count? (First OK frame to press button?)
-; @addr{79ed}
 _goronDance_getCurrentAndNeededFrameCounts:
 	; hl = [wTmpcfc0.goronDance.beat] * 20
 	ld a,(wTmpcfc0.goronDance.beat)
@@ -8577,7 +8525,6 @@ _goronDance_getCurrentAndNeededFrameCounts:
 	ret
 
 ;;
-; @addr{7a04}
 _goronDance_playMoveSound:
 	ld a,(wTmpcfc0.goronDance.currentMove)
 	bit 7,a
@@ -8594,7 +8541,6 @@ _goronDance_playMoveSound:
 	jp playSound
 
 ;;
-; @addr{7a1b}
 _goronDance_incBeat:
 	ld hl,wTmpcfc0.goronDance.beat
 	inc (hl)
@@ -8604,7 +8550,6 @@ _goronDance_incBeat:
 ; Get the next dance move, based on "danceLevel", "dancePattern", and "beat".
 ;
 ; @param[out]	zflag	nz if the data ran out.
-; @addr{7a20}
 _goronDance_getNextMove:
 	ld a,(wTmpcfc0.goronDance.danceLevel)
 	ld hl,_goronDance_sequenceData
@@ -8624,7 +8569,6 @@ _goronDance_getNextMove:
 	ret
 
 ;;
-; @addr{7a3c}
 _goronDance_updateConsecutiveBPressCounter:
 	ld hl,wTmpcfc0.goronDance.consecutiveBPressCounter
 	ld a,(wTmpcfc0.goronDance.currentMove)
@@ -8638,7 +8582,6 @@ _goronDance_updateConsecutiveBPressCounter:
 
 ;;
 ; @param[out]	zflag	z if Link and dancers should jump
-; @addr{7a4b}
 _goronDance_updateLinkAndBackupDancerAnimation:
 	call _goronDance_updateBackupDancerAnimation
 	ld a,(wTmpcfc0.goronDance.currentMove)
@@ -8671,7 +8614,6 @@ _goronDance_updateLinkAndBackupDancerAnimation:
 
 ;;
 ; @param	a	Direction
-; @addr{7a72}
 _goronDance_turnLinkToDirection:
 	ld hl,w1Link.direction
 	ld (hl),a
@@ -8689,7 +8631,6 @@ _goronDance_linkBButtonAnimations:
 
 ;;
 ; @param[out]	zflag	z if they should jump
-; @addr{7a83}
 _goronDance_updateBackupDancerAnimation:
 	call checkIsLinkedGame
 	jr z,@gorons
@@ -8746,7 +8687,6 @@ _goronDance_subrosianBAnimations:
 
 ;;
 ; @param[out]	zflag	z if the graceful goron should jump (5 consecutive B presses)
-; @addr{7acf}
 _goronDance_updateGracefulGoronAnimation:
 	ld a,(wTmpcfc0.goronDance.currentMove)
 	cp $01
@@ -8832,31 +8772,26 @@ _goronDance_sequenceData:
 	.db $02 $02 $01 $02 $02 $02 $01 $ff $00 $00 $00 $00 $00 $00 $00 $00
 
 ;;
-; @addr{7d72}
 _goron_initGraphicsAndIncState:
 	call _goron_initGraphics
 	jp interactionIncState
 
 ;;
-; @addr{7d78}
 _goron_loadScriptAndInitGraphics:
 	call _goron_initGraphics
 	jr _goron_loadScript
 
 ;;
-; @addr{7d7d}
 _goron_loadScriptFromTableAndInitGraphics:
 	call _goron_initGraphics
 	jr _goron_loadScriptFromTable
 
 ;;
-; @addr{7d82}
 _goron_initGraphics:
 	call interactionLoadExtraGraphics
 	jp interactionInitGraphics
 
 ;;
-; @addr{7d88}
 _goron_loadScript:
 	ld e,Interaction.subid
 	ld a,(de)
@@ -8870,7 +8805,6 @@ _goron_loadScript:
 
 ;;
 ; Load a script based on both subid and var03.
-; @addr{7d98}
 _goron_loadScriptFromTable:
 	ld e,Interaction.subid
 	ld a,(de)
@@ -8888,7 +8822,6 @@ _goron_loadScriptFromTable:
 	call interactionSetScript
 	jp interactionIncState
 
-; @addr{7dae}
 _goron_scriptTable:
 	.dw stubScript
 	.dw goron_subid01Script
@@ -8929,7 +8862,6 @@ _goron_scriptTable:
 	.dw goron_subid0bScript
 
 
-; @addr{7de8}
 goronDanceScriptTable:
 	.dw goron_subid00Script
 	.dw goronDanceScript_failedRound

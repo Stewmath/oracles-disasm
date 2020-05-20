@@ -1,6 +1,5 @@
 ;;
 ; For each Enemy and each Part, check for collisions with Link and Items.
-; @addr{41d1}
 checkEnemyAndPartCollisions:
 	; Calculate shield position
 	ld a,(w1Link.direction)
@@ -77,7 +76,6 @@ checkEnemyAndPartCollisions:
 
 	ret
 
-; @addr{4231}
 @shieldPositionOffsets:
 	.db $f9 $01 $01 $06 ; DIR_UP
 	.db $00 $06 $07 $01 ; DIR_RIGHT
@@ -89,7 +87,6 @@ checkEnemyAndPartCollisions:
 ; Check if the given part is colliding with an item or link, and do the appropriate
 ; action.
 ; @param d Part index
-; @addr{4241}
 _partCheckCollisions:
 	ld e,Part.collisionType
 	ld a,(de)
@@ -102,7 +99,6 @@ _partCheckCollisions:
 ; action.
 ; @param a Enemy.collisionType
 ; @param d Enemy index
-; @addr{424b}
 _enemyCheckCollisions:
 	ld hl,enemyActiveCollisions
 	ld e,Enemy.yh
@@ -286,7 +282,6 @@ _enemyCheckCollisions:
 ; I guess it's a bit more efficient?
 ; @param a Bit to check
 ; @param hl Start of flags
-; @addr{432b}
 @checkFlag:
 	ld b,a
 	and $f8
@@ -311,7 +306,6 @@ _enemyCheckCollisions:
 ; @param hFF8D Y-position?
 ; @param hFF8E X-position?
 ; @param hFF90 Collision type
-; @addr{4341}
 @handleCollision:
 	ld a,l
 	and $c0
@@ -420,7 +414,6 @@ _enemyCheckCollisions:
 
 ;;
 ; COLLISIONEFFECT_NONE
-; @addr{43f3}
 _collisionEffect00:
 	ret
 
@@ -428,7 +421,6 @@ _collisionEffect00:
 ; COLLISIONEFFECT_DAMAGE_LINK_WITH_RING_MODIFIER
 ; This is the same as COLLISIONEFFECT_DAMAGE_LINK, but it checks for rings that reduce or
 ; prevent damage.
-; @addr{43f4}
 _collisionEffect3c:
 	; Get Object.id
 	ldh a,(<hActiveObjectType)
@@ -466,7 +458,6 @@ _collisionEffect3c:
 	sra (hl)
 	ret
 
-; @addr{441d}
 @ringProtections:
 	.db ENEMYID_BLADE_TRAP		$80|GREEN_LUCK_RING
 	.db PARTID_OCTOROK_PROJECTILE	$00|RED_HOLY_RING
@@ -476,28 +467,24 @@ _collisionEffect3c:
 
 ;;
 ; COLLISIONEFFECT_DAMAGE_LINK_LOW_KNOCKBACK
-; @addr{4426}
 _collisionEffect01:
 	ld e,LINKDMG_00
 	jr ++
 
 ;;
 ; COLLISIONEFFECT_DAMAGE_LINK
-; @addr{442a}
 _collisionEffect02:
 	ld e,LINKDMG_04
 	jr ++
 
 ;;
 ; COLLISIONEFFECT_DAMAGE_LINK_HIGH_KNOCKBACK
-; @addr{442e}
 _collisionEffect03:
 	ld e,LINKDMG_08
 	jr ++
 
 ;;
 ; COLLISIONEFFECT_DAMAGE_LINK_NO_KNOCKBACK
-; @addr{4432}
 _collisionEffect04:
 	ld e,LINKDMG_0c
 ++
@@ -507,28 +494,24 @@ _collisionEffect04:
 
 ;;
 ; COLLISIONEFFECT_SWORD_LOW_KNOCKBACK
-; @addr{443c}
 _collisionEffect08:
 	ld e,ENEMYDMG_00
 	jr _label_07_027
 
 ;;
 ; COLLISIONEFFECT_SWORD
-; @addr{4440}
 _collisionEffect09:
 	ld e,ENEMYDMG_04
 	jr _label_07_027
 
 ;;
 ; COLLISIONEFFECT_SWORD_HIGH_KNOCKBACK
-; @addr{4440}
 _collisionEffect0a:
 	ld e,ENEMYDMG_08
 	jr _label_07_027
 
 ;;
 ; COLLISIONEFFECT_SWORD_NO_KNOCKBACK
-; @addr{4440}
 _collisionEffect0b:
 	call _func_07_47b7
 	ret z
@@ -537,7 +520,6 @@ _collisionEffect0b:
 
 ;;
 ; COLLISIONEFFECT_21
-; @addr{4450}
 _collisionEffect21:
 	ld e,ENEMYDMG_30
 _label_07_027:
@@ -554,39 +536,33 @@ _label_07_027:
 
 ;;
 ; COLLISIONEFFECT_BUMP_WITH_CLINK_LOW_KNOCKBACK
-; @addr{4461}
 _collisionEffect12:
 	call _createClinkInteraction
 
 ;;
 ; COLLISIONEFFECT_BUMP_LOW_KNOCKBACK
-; @addr{4464}
 _collisionEffect0c:
 	ld e,ENEMYDMG_10
 	jr _label_07_028
 
 ;;
 ; COLLISIONEFFECT_BUMP_WITH_CLINK
-; @addr{4468}
 _collisionEffect13:
 	call _createClinkInteraction
 
 ;;
 ; COLLISIONEFFECT_BUMP
-; @addr{446b}
 _collisionEffect0d:
 	ld e,ENEMYDMG_14
 	jr _label_07_028
 
 ;;
 ; COLLISIONEFFECT_BUMP_WITH_CLINK_HIGH_KNOCKBACK
-; @addr{446f}
 _collisionEffect14:
 	call _createClinkInteraction
 
 ;;
 ; COLLISIONEFFECT_BUMP_HIGH_KNOCKBACK
-; @addr{4472}
 _collisionEffect0e:
 	ld e,ENEMYDMG_18
 _label_07_028:
@@ -603,54 +579,46 @@ _label_07_028:
 
 ;;
 ; COLLISIONEFFECT_05
-; @addr{4483}
 _collisionEffect05:
 	ldhl LINKDMG_10, ENEMYDMG_1c
 	jr _applyDamageToBothObjects
 
 ;;
 ; COLLISIONEFFECT_06
-; @addr{4488}
 _collisionEffect06:
 	ldhl LINKDMG_14, ENEMYDMG_1c
 	jr _applyDamageToBothObjects
 
 ;;
 ; COLLISIONEFFECT_07
-; @addr{448d}
 _collisionEffect07:
 	ldhl LINKDMG_18, ENEMYDMG_1c
 	jr _applyDamageToBothObjects
 
 ;;
 ; COLLISIONEFFECT_SHIELD_BUMP_WITH_CLINK
-; @addr{4492}
 _collisionEffect18:
 	call _createClinkInteraction
 
 ;;
 ; COLLISIONEFFECT_SHIELD_BUMP
-; @addr{4495}
 _collisionEffect0f:
 	ldhl LINKDMG_10, ENEMYDMG_10
 	jr _applyDamageToBothObjects
 
 ;;
 ; COLLISIONEFFECT_SHIELD_BUMP_WITH_CLINK_HIGH_KNOCKBACK
-; @addr{449a}
 _collisionEffect19:
 	call _createClinkInteraction
 
 ;;
 ; COLLISIONEFFECT_SHIELD_BUMP_HIGH_KNOCKBACK
-; @addr{449d}
 _collisionEffect10:
 	ldhl LINKDMG_14, ENEMYDMG_14
 	jr _applyDamageToBothObjects
 
 ;;
 ; COLLISIONEFFECT_15
-; @addr{44a2}
 _collisionEffect15:
 	call _createClinkInteraction
 	ldhl LINKDMG_10, ENEMYDMG_34
@@ -658,7 +626,6 @@ _collisionEffect15:
 
 ;;
 ; COLLISIONEFFECT_16
-; @addr{44aa}
 _collisionEffect16:
 	call _createClinkInteraction
 	ldhl LINKDMG_14, ENEMYDMG_34
@@ -666,7 +633,6 @@ _collisionEffect16:
 
 ;;
 ; COLLISIONEFFECT_17
-; @addr{44b2}
 _collisionEffect17:
 	call _createClinkInteraction
 	ldhl LINKDMG_18, ENEMYDMG_34
@@ -674,20 +640,17 @@ _collisionEffect17:
 
 ;;
 ; COLLISIONEFFECT_1a
-; @addr{44ba}
 _collisionEffect1a:
 	call _createClinkInteraction
 
 ;;
 ; COLLISIONEFFECT_11
-; @addr{44bd}
 _collisionEffect11:
 	ldhl LINKDMG_18, ENEMYDMG_18
 	jr _applyDamageToBothObjects
 
 ;;
 ; COLLISIONEFFECT_1b
-; @addr{44c2}
 _collisionEffect1b:
 	call _createClinkInteraction
 	ldhl LINKDMG_1c, ENEMYDMG_28
@@ -695,28 +658,24 @@ _collisionEffect1b:
 
 ;;
 ; COLLISIONEFFECT_1d
-; @addr{44ca}
 _collisionEffect1d:
 	ldhl LINKDMG_0c, ENEMYDMG_04
 	jr _applyDamageToBothObjects
 
 ;;
 ; COLLISIONEFFECT_1e
-; @addr{44cf}
 _collisionEffect1e:
 	ldhl LINKDMG_28, ENEMYDMG_34
 	jr _applyDamageToBothObjects
 
 ;;
 ; COLLISIONEFFECT_1f
-; @addr{44d4}
 _collisionEffect1f:
 	ldhl LINKDMG_20, ENEMYDMG_34
 	jr _applyDamageToBothObjects
 
 ;;
 ; COLLISIONEFFECT_20
-; @addr{44d9}
 _collisionEffect20:
 	ld h,b
 	ld l,Item.id
@@ -735,14 +694,12 @@ _collisionEffect20:
 
 ;;
 ; COLLISIONEFFECT_STUN
-; @addr{44ee}
 _collisionEffect22:
 	ldhl LINKDMG_1c, ENEMYDMG_24
 
 ;;
 ; @param h Damage type for link ( / item?)
 ; @param l Damage type for enemy / part
-; @addr{44f1}
 _applyDamageToBothObjects:
 	ld a,h
 	push hl
@@ -753,14 +710,12 @@ _applyDamageToBothObjects:
 
 ;;
 ; COLLISIONEFFECT_26
-; @addr{44fb}
 _collisionEffect26:
 	ldhl LINKDMG_1c, ENEMYDMG_34
 	jr _applyDamageToBothObjects
 
 ;;
 ; COLLISIONEFFECT_BURN
-; @addr{4500}
 _collisionEffect27:
 	ld h,b
 	ld l,Item.collisionType
@@ -774,7 +729,6 @@ _collisionEffect27:
 
 ;;
 ; COLLISIONEFFECT_PEGASUS_SEED
-; @addr{4511}
 _collisionEffect28:
 	ld h,b
 	ld l,Item.collisionType
@@ -788,7 +742,6 @@ _collisionEffect28:
 ;;
 ; COLLISIONEFFECT_3a
 ; Assumes that the first object is an Enemy, not a Part.
-; @addr{451f}
 _collisionEffect3a:
 	ld e,Enemy.knockbackCounter
 	ld a,(de)
@@ -797,7 +750,6 @@ _collisionEffect3a:
 
 ;;
 ; COLLISIONEFFECT_LIKELIKE
-; @addr{4524}
 _collisionEffect3d:
 	ld a,(w1Link.id)
 	or a
@@ -814,42 +766,36 @@ _collisionEffect3d:
 
 ;;
 ; COLLISIONEFFECT_2b
-; @addr{4538}
 _collisionEffect2b:
 	ldhl LINKDMG_1c, ENEMYDMG_3c
 	jr _applyDamageToBothObjects
 
 ;;
 ; COLLISIONEFFECT_2c
-; @addr{453d}
 _collisionEffect2c:
 	ldhl LINKDMG_14, ENEMYDMG_30
 	jr _applyDamageToBothObjects
 
 ;;
 ; COLLISIONEFFECT_2f
-; @addr{4542}
 _collisionEffect2f:
 	ldhl LINKDMG_30, ENEMYDMG_04
 	jr _applyDamageToBothObjects
 
 ;;
 ; COLLISIONEFFECT_30
-; @addr{4547}
 _collisionEffect30:
 	ldhl LINKDMG_1c, ENEMYDMG_44
 	jr _applyDamageToBothObjects
 
 ;;
 ; COLLISIONEFFECT_1c
-; @addr{454c}
 _collisionEffect1c:
 	ldhl LINKDMG_1c, ENEMYDMG_1c
 	jr _applyDamageToBothObjects
 
 ;;
 ; COLLISIONEFFECT_SWITCH_HOOK
-; @addr{4551}
 _collisionEffect2e:
 	ld h,d
 	ldh a,(<hActiveObjectType)
@@ -899,7 +845,6 @@ _collisionEffect2e:
 
 ;;
 ; COLLISIONEFFECT_23
-; @addr{4584}
 _collisionEffect23:
 	ldh a,(<hActiveObjectType)
 	add Object.health
@@ -910,7 +855,6 @@ _collisionEffect23:
 
 ;;
 ; COLLISIONEFFECT_24
-; @addr{458d}
 _collisionEffect24:
 	ldh a,(<hActiveObjectType)
 	add Object.var2a
@@ -934,7 +878,6 @@ _collisionEffect24:
 
 ;;
 ; COLLISIONEFFECT_25
-; @addr{45a5}
 _collisionEffect25:
 	call _killEnemyOrPart
 	ld a,l
@@ -951,7 +894,6 @@ _collisionEffect25:
 ; COLLISIONEFFECT_GALE_SEED
 ; This assumes that second object is an Enemy, NOT a Part. At least, it does when
 ; func_07_47b7 returns nonzero...
-; @addr{45b4}
 _collisionEffect29:
 	ld h,b
 	ld l,Item.collisionType
@@ -1012,7 +954,6 @@ _collisionEffect29:
 ;;
 ; COLLISIONEFFECT_2a
 ; This assumes that the second object is a Part, not an Enemy.
-; @addr{4604}
 _collisionEffect2a:
 	ld h,b
 	ld l,Item.knockbackCounter
@@ -1039,7 +980,6 @@ _collisionEffect2a:
 
 ;;
 ; COLLISIONEFFECT_2d
-; @addr{461a}
 _collisionEffect2d:
 	ld h,b
 	ld l,Item.var2f
@@ -1048,21 +988,18 @@ _collisionEffect2d:
 
 ;;
 ; COLLISIONEFFECT_31
-; @addr{4620}
 _collisionEffect31:
 	ld a,ENEMYDMG_34
 	jp _applyDamageToEnemyOrPart
 
 ;;
 ; COLLISIONEFFECT_32
-; @addr{4625}
 _collisionEffect32:
 	ldhl LINKDMG_34, ENEMYDMG_48
 	jr _label_07_033
 
 ;;
 ; COLLISIONEFFECT_33
-; @addr{462a}
 _collisionEffect33:
 	ldhl LINKDMG_38, ENEMYDMG_4c
 _label_07_033:
@@ -1071,7 +1008,6 @@ _label_07_033:
 
 ;;
 ; COLLISIONEFFECT_34
-; @addr{4633}
 _collisionEffect34:
 	call _createFlamePart
 	ld h,b
@@ -1083,14 +1019,12 @@ _collisionEffect34:
 
 ;;
 ; COLLISIONEFFECT_35
-; @addr{4643}
 _collisionEffect35:
 	ldhl LINKDMG_1c, ENEMYDMG_1c
 	call _applyDamageToBothObjects
 
 ;;
 ; Set the Enemy/Part's health to zero, disable its collisions?
-; @addr{4649}
 _killEnemyOrPart:
 	ld h,d
 	ldh a,(<hActiveObjectType)
@@ -1105,7 +1039,6 @@ _killEnemyOrPart:
 
 ;;
 ; COLLISIONEFFECT_ELECTRIC_SHOCK
-; @addr{4657}
 _collisionEffect36:
 	ld h,d
 	ldh a,(<hActiveObjectType)
@@ -1153,7 +1086,6 @@ _collisionEffect36:
 
 ;;
 ; COLLISIONEFFECT_37
-; @addr{4693}
 _collisionEffect37:
 	ldh a,(<hActiveObjectType)
 	add Object.invincibilityCounter
@@ -1183,7 +1115,6 @@ _collisionEffect37:
 
 ;;
 ; COLLISIONEFFECT_38
-; @addr{46b6}
 _collisionEffect38:
 	ld h,d
 	ldh a,(<hActiveObjectType)
@@ -1203,13 +1134,11 @@ _collisionEffect38:
 
 ;;
 ; COLLISIONEFFECT_39
-; @addr{46cd}
 _collisionEffect39:
 	ret
 
 ;;
 ; COLLISIONEFFECT_3b
-; @addr{46ce}
 _collisionEffect3b:
 	ld a,$02
 	call setLinkIDOverride
@@ -1218,18 +1147,15 @@ _collisionEffect3b:
 
 ;;
 ; COLLISIONEFFECT_3e
-; @addr{46d8}
 _collisionEffect3e:
 	ret
 
 ;;
 ; COLLISIONEFFECT_3f
-; @addr{46d9}
 _collisionEffect3f:
 	ret
 
 ;;
-; @addr{46da}
 _createFlamePart:
 	call getFreePartSlot
 	ret nz
@@ -1242,7 +1168,6 @@ _createFlamePart:
 	ret
 
 ;;
-; @addr{46e7}
 _createClinkInteraction:
 	call getFreeInteractionSlot
 	jr nz,@ret
@@ -1273,7 +1198,6 @@ _createClinkInteraction:
 ; @param	d	Enemy/Part object
 ; @param	e	Enemy damage type (see enum below)
 ; @param	hFF90	CollisionType
-; @addr{4707}
 _applyDamageToEnemyOrPart:
 	ld hl,@damageTypeTable
 	rst_addAToHl
@@ -1368,7 +1292,6 @@ _applyDamageToEnemyOrPart:
 ; b2: Value to write to Object.knockbackCounter (if applicable)
 ; b3: Value to write to Object.stunCounter (if applicable)
 
-; @addr{475f}
 @damageTypeTable:
 	.db $f1 $10 $08 $00 ; ENEMYDMG_00
 	.db $f1 $15 $0b $00 ; ENEMYDMG_04
@@ -1392,7 +1315,6 @@ _applyDamageToEnemyOrPart:
 	.db $70 $f5 $09 $00 ; ENEMYDMG_4c
 
 
-; @addr{47af}
 @soundEffects:
 	.db SND_NONE
 	.db SND_DAMAGE_ENEMY
@@ -1428,7 +1350,6 @@ _applyDamageToEnemyOrPart:
 
 
 ;;
-; @addr{47b7}
 _func_07_47b7:
 	ld c,Item.id
 	ld a,(bc)
@@ -1468,12 +1389,10 @@ _func_07_47b7:
 ; @param	b	Link/Item object
 ; @param	d	Enemy / part object
 ; @param	e	Link damage type (see enum below)
-; @addr{47df}
 _applyDamageToLink_paramE:
 	ld a,e
 
 ;;
-; @addr{47e0}
 _applyDamageToLink:
 	push af
 	ldh a,(<hActiveObjectType)
@@ -1551,7 +1470,6 @@ _applyDamageToLink:
 ; b2: Value to write to Object.knockbackCounter (if applicable)
 ; b3: Value to write to Object.stunCounter (if applicable)
 
-; @addr{482e}
 @damageTypeTable:
 	.db $b2 $19 $07 $00 ; LINKDMG_00
 	.db $b2 $22 $0f $00 ; LINKDMG_04
@@ -1569,7 +1487,6 @@ _applyDamageToLink:
 	.db $31 $fa $06 $00 ; LINKDMG_34
 	.db $31 $f8 $08 $00 ; LINKDMG_38
 
-; @addr{486a}
 @soundEffects:
 	.db SND_NONE
 	.db SND_BOMB_LAND

@@ -94,7 +94,6 @@ interactionCode9f:
 ;                       indefinitely).
 ; @param	bc	Offset from the object to create the exclamation mark at.
 ; @param	d	The object to use for the base position of the exclamation mark.
-; @addr{406d}
 objectCreateExclamationMark_body:
 	ldh (<hFF8B),a
 	call getFreeInteractionSlot
@@ -119,7 +118,6 @@ objectCreateExclamationMark_body:
 ; @param	bc	Offset relative to object to place the interaction at
 ; @param	hFF8D	Interaction.subid (0 for snore, 1 for music note)
 ; @param	hFF8B	Interaction.var03 (0 to float left, 1 to float right)
-; @addr{4085}
 objectCreateFloatingImage:
 	call getFreeInteractionSlot
 	ret nz
@@ -294,7 +292,6 @@ interactionCodeac:
 ;;
 ; This is called on file initialization. In a linked game, wChildStatus will be nonzero if
 ; he was given a name, so he will start at stage 5.
-; @addr{415c}
 initializeChildOnGameStart:
 	ld hl,wChildStatus
 	ld a,(hl)
@@ -307,13 +304,11 @@ initializeChildOnGameStart:
 	ldi (hl),a
 
 ;;
-; @addr{4168}
 _decideInitialChildPersonality:
 	ld hl,_initialChildPersonalityTable
 	jr _label_0b_006
 
 ;;
-; @addr{416d}
 _decideFinalChildPersonality:
 	; a = [wChildPersonality] * 6
 	ld a,(wChildPersonality)
@@ -360,7 +355,6 @@ _finalChildPersonalityTable:
 	.db $00 $03 ; status >= 0:  Singer
 
 ;;
-; @addr{41a0}
 _childSetVar38ToNumEssencesObtained:
 	ld a,TREASURE_ESSENCE
 	call checkTreasureObtained
@@ -383,7 +377,6 @@ _childSetVar38ToNumEssencesObtained:
 ; Spawn bipin, blossom, and child objects depending on the stage of the child's
 ; development, which part of the house this is, and the child's personality.
 ;
-; @addr{41b5}
 _spawnBipinBlossomFamilyObjects:
 	ld e,Interaction.subid
 	ld a,(de)
@@ -1611,7 +1604,6 @@ interactionCodec7:
 ;;
 ; @param	a	0 for enemy; 1 for part; 2 for interaction
 ; @param[out]	hl	Spawned object
-; @addr{4950}
 @spawnObjectType:
 	or a
 	jp z,getFreeEnemySlot

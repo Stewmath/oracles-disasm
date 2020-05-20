@@ -1,5 +1,4 @@
 ;;
-; @addr{70a0}
 specialObjectCode_linkInCutscene:
 	ld e,SpecialObject.subid
 	ld a,(de)
@@ -21,7 +20,6 @@ specialObjectCode_linkInCutscene:
 
 ;;
 ; Opening cutscene with the triforce
-; @addr{70be}
 _linkCutscene0:
 	ld e,Item.state
 	ld a,(de)
@@ -132,7 +130,6 @@ _linkCutscene0:
 
 ;;
 ; Creates the colored orb that appears under Link in the opening cutscene
-; @addr{7167}
 _linkCutscene_createGlowingOrb:
 	ldbc INTERACID_SPARKLE, $06
 	call objectCreateInteraction
@@ -147,12 +144,10 @@ _linkCutscene_createGlowingOrb:
 	jp specialObjectSetAnimation
 
 ;;
-; @addr{717d}
 _linkCutscene_oscillateZ_1:
 	ld hl,_linkCutscene_zOscillation1
 
 ;;
-; @addr{7180}
 _linkCutscene_oscillateZ:
 	ld a,($cbb7)
 .ifdef ROM_SEASONS
@@ -212,7 +207,6 @@ _linkCutscene0_substate6:
 
 
 ;;
-; @addr{71cb}
 _linkCutscene1:
 	ld e,SpecialObject.state
 	ld a,(de)
@@ -299,7 +293,6 @@ _linkCutsceneRet:
 	ret
 
 ;;
-; @addr{7251}
 _linkCutscene2:
 	ld e,SpecialObject.state
 	ld a,(de)
@@ -436,7 +429,6 @@ _linkCutscene2:
 	ret
 
 ;;
-; @addr{7322}
 _linkCutscene3:
 	ld e,SpecialObject.state
 	ld a,(de)
@@ -561,7 +553,6 @@ _linkCutscene3:
 	jp itemIncState2
 
 ;;
-; @addr{73e8}
 _linkCutsceneFunc_73e8:
 	ld a,(wFrameCounter)
 	and $07
@@ -578,7 +569,6 @@ _linkCutsceneFunc_73e8:
 	jp specialObjectSetAnimation
 
 ;;
-; @addr{7405}
 _linkCutscene4:
 	ld e,SpecialObject.state
 	ld a,(de)
@@ -660,7 +650,6 @@ _linkCutscene4:
 	jp setLinkIDOverride
 
 ;;
-; @addr{7487}
 _linkCutscene_cpyTo48:
 	ld e,SpecialObject.yh
 	ld a,(de)
@@ -668,7 +657,6 @@ _linkCutscene_cpyTo48:
 	ret
 
 ;;
-; @addr{748d}
 _linkCutscene_cpxTo38:
 	ld e,SpecialObject.xh
 	ld a,(de)
@@ -676,20 +664,17 @@ _linkCutscene_cpxTo38:
 	ret
 
 ;;
-; @addr{7493}
 _linkCutscene_initOam_setVisible_incState:
 	callab bank5.specialObjectSetOamVariables
 	call objectSetVisiblec1
 	jp itemIncState
 
 ;;
-; @addr{74a1}
 _linkCutscene_animateAndDecCounter1:
 	call specialObjectAnimate
 	jp itemDecCounter1
 
 ;;
-; @addr{74a7}
 _linkCutscene5:
 	ld e,SpecialObject.state
 	ld a,(de)
@@ -716,7 +701,6 @@ _linkCutscene5:
 	jp setLinkIDOverride
 
 ;;
-; @addr{74ce}
 _linkCutscene6:
 	ld e,SpecialObject.state
 	ld a,(de)
@@ -765,7 +749,6 @@ _linkCutscene6:
 	ret
 
 ;;
-; @addr{7513}
 _linkCutscene7:
 	ld e,SpecialObject.state
 	ld a,(de)
@@ -794,7 +777,6 @@ _linkCutscene7:
 	ret
 
 ;;
-; @addr{753f}
 _linkCutscene8:
 	ld e,SpecialObject.state
 	ld a,(de)
@@ -834,7 +816,6 @@ _linkCutscene8:
 	ret
 
 ;;
-; @addr{7576}
 _linkCutscene9:
 	ld e,SpecialObject.state
 	ld a,(de)
@@ -904,7 +885,6 @@ _linkCutscene9:
 ;;
 ; Link being kissed by Zelda in ending cutscene - cutscene 6 in seasons
 ;
-; @addr{75e0}
 _linkCutsceneA:
 	ld e,SpecialObject.state
 	ld a,(de)
@@ -925,7 +905,6 @@ _linkCutsceneA:
 
 ;;
 ; @param[out]	zflag	Set if shield equipped
-; @addr{75fa}
 @checkShieldEquipped:
 	ld hl,wInventoryB
 	ld a,ITEMID_SHIELD
@@ -1010,7 +989,6 @@ _linkCutsceneA:
 ;;
 ; Cutscene played on starting a new game ("accept our quest, hero") - cutsceneB in seasons
 ;
-; @addr{7668}
 _linkCutsceneB:
 	ld e,SpecialObject.state
 	ld a,(de)
@@ -1110,7 +1088,6 @@ _linkCutsceneB:
 	jp objectSetVisible
 
 ;;
-; @addr{76fe}
 _linkCutsceneC:
 	ld e,SpecialObject.state
 	ld a,(de)
@@ -1129,7 +1106,6 @@ _linkCutsceneC:
 	jp specialObjectSetAnimation
 
 ;;
-; @addr{771a}
 _linkCutscene_oscillateZ_2:
 	ld hl,_linkCutscene_zOscillation2
 	jp _linkCutscene_oscillateZ
@@ -1139,7 +1115,6 @@ _linkCutscene_oscillateZ_2:
 ; from 0-2).
 ;
 ; @param[out]	zflag	Set if reached the destination
-; @addr{7720}
 _linkCutscene_updateAngleOnPath:
 	ld e,SpecialObject.var03
 	ld a,(de)
@@ -1190,7 +1165,6 @@ _linkCutscene_updateAngleOnPath:
 ;;
 ; @param	b	Direction value
 ; @param[out]	zflag	Unset
-; @addr{7759}
 @updateDirection:
 	ld e,SpecialObject.direction
 	ld a,(de)

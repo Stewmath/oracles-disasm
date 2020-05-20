@@ -1,7 +1,6 @@
 ;;
 ; Called from "func_3ed0" in bank 0.
 ; CUTSCENE_FLAME_OF_SORROW
-; @addr{7841}
 func_03_7841:
 	ld a,(wCutsceneState)
 	rst_jumpTable
@@ -11,7 +10,6 @@ func_03_7841:
 ;;
 ; Called from "func_3ee4" in bank 0.
 ; CUTSCENE_ZELDA_KIDNAPPED
-; @addr{7849}
 func_03_7849:
 	ld a,(wCutsceneState)
 	rst_jumpTable
@@ -19,7 +17,6 @@ func_03_7849:
 	.dw _zeldaKidnappedState1
 
 ;;
-; @addr{7851}
 _func_03_7851:
 	ld b,$10
 	ld hl,wTmpcbb3
@@ -34,7 +31,6 @@ _func_03_7851:
 	ret
 
 ;;
-; @addr{786b}
 _flameOfSorrowState1:
 	ld a,(wTmpcbb3)
 	rst_jumpTable
@@ -439,7 +435,6 @@ _func_7b48:
 
 ;;
 ; @param c Low byte of text index
-; @addr{7b81}
 _func_03_7b81:
 	ld b,$28
 	call showText
@@ -452,14 +447,12 @@ _linkedCutscene_incSubstate:
 	ret
 
 ;;
-; @addr{7b90}
 _func_03_7b90:
 	ld hl,wTmpcbb4
 	inc (hl)
 	ret
 
 ;;
-; @addr{7b95}
 _func_03_7b95:
 	ld hl,wTmpcbb5
 	dec (hl)

@@ -342,7 +342,6 @@ _monkeyState1:
 	.dw _monkeyAnimateAndRunScript
 
 ;;
-; @addr{74ce}
 _monkeySubid0State1:
 	call interactionAnimate
 	call objectSetPriorityRelativeToLink_withTerrainEffects
@@ -421,7 +420,6 @@ _monkeyJumpSpeed120:
 
 ;;
 ; Updates gravity, and if the monkey landed, resets speedZ to values of var38/var39.
-; @addr{754d}
 _monkeyUpdateGravityAndJumpIfLanded:
 	ld c,$10
 	call objectUpdateSpeedZ_paramC
@@ -429,7 +427,6 @@ _monkeyUpdateGravityAndJumpIfLanded:
 
 ;;
 ; Sets speedZ to values of var38/var39.
-; @addr{7553}
 _monkeySetJumpSpeed:
 	ld l,Interaction.var38
 	ldi a,(hl)
@@ -442,7 +439,6 @@ _monkeySetJumpSpeed:
 
 ;;
 ; Monkey disappearance cutscene
-; @addr{755d}
 _monkeySubid1State1:
 	ld e,Interaction.var03
 	ld a,(de)
@@ -663,7 +659,6 @@ _monkey9Disappearance:
 
 ;;
 ; Checks if the monkey is in the air, updates var3a and animation accordingly?
-; @addr{768d}
 _monkeyCheckChangeAnimation:
 	ld h,d
 	ld l,Interaction.zh
@@ -747,7 +742,6 @@ _monkey8Disappearance:
 
 ;;
 ; Monkey that only exists before intro
-; @addr{770f}
 _monkeySubid2State1:
 _monkeySubid3State1:
 	call interactionRunScript
@@ -755,7 +749,6 @@ _monkeySubid3State1:
 
 
 ;;
-; @addr{7715}
 _monkeySubid4State1:
 	ld e,Interaction.var03
 	ld a,(de)
@@ -882,7 +875,6 @@ _monkeySubid4State1:
 
 
 ;;
-; @addr{77da}
 _monkeySubid5State1:
 	ld e,Interaction.var03
 	ld a,(de)
@@ -1322,7 +1314,6 @@ _rabbitSubid4:
 	dec (hl)
 
 ;;
-; @addr{7a76}
 _rabbitJump:
 	ld a,$07
 	call interactionSetAnimation
@@ -1434,7 +1425,6 @@ _rabbitSubid7:
 
 ;;
 ; This might be setting one of 4 possible speed values to var38?
-; @addr{7b17}
 _rabbitSubid2SetRandomSpawnDelay:
 	call getRandomNumber_noPreserveVars
 	and $03
@@ -1447,7 +1437,6 @@ _rabbitSubid2SetRandomSpawnDelay:
 
 ;;
 ; hl should point to "counter1".
-; @addr{7b27}
 _spawnNextRabbitThatTurnsToStone:
 	; Increment counter2, the index of the rabbit to spawn (0-2)
 	inc l
@@ -1485,7 +1474,6 @@ _spawnNextRabbitThatTurnsToStone:
 ; Spawns a rabbit for the cutscene where a bunch of rabbits turn to stone
 ;
 ; @param	bc	Position
-; @addr{7b49}
 _spawnRabbitWithSubid1;
 	call getFreeInteractionSlot
 	ret nz
@@ -1708,7 +1696,6 @@ _tuniNut_state3:
 
 ;;
 ; Sets the room flags so present symmetry village is nice and cheerful now
-; @addr{7c95}
 @setSymmetryVillageRoomFlags:
 	ld hl,wPresentRoomFlags+$02
 	call @setRow

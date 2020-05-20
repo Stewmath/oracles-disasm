@@ -1,5 +1,4 @@
 ;;
-; @addr{642c}
 applyRoomSpecificTileChanges:
 	ld a,(wActiveRoom)
 	ld hl,roomTileChangerCodeGroupTable
@@ -63,7 +62,6 @@ applyRoomSpecificTileChanges:
 	.dw tileReplacement_group0Map76 ; $36
 	.dw tileReplacement_group0Mapa5 ; $37
 
-; @addr{$124a7}
 roomTileChangerCodeGroupTable:
 	.dw roomTileChangerCodeGroup0Data
 	.dw roomTileChangerCodeGroup1Data
@@ -74,7 +72,6 @@ roomTileChangerCodeGroupTable:
 	.dw roomTileChangerCodeGroup6Data
 	.dw roomTileChangerCodeGroup7Data
 
-; @addr{$124b7}
 roomTileChangerCodeGroup0Data:
 	.db $38 $08
 	.db $48 $17
@@ -102,24 +99,20 @@ roomTileChangerCodeGroup0Data:
 	.db $a5 $37
 	.db $76 $36
 	.db $00
-; @addr{$124ea}
 roomTileChangerCodeGroup1Data:
 	.db $38 $09
 	.db $27 $28
 	.db $8c $2c
 	.db $58 $34
 	.db $00
-; @addr{$124f3}
 roomTileChangerCodeGroup2Data:
 	.db $f7 $15
 	.db $90 $2b
 	.db $9e $2f
 	.db $7e $02
 	.db $00
-; @addr{$124fc}
 roomTileChangerCodeGroup3Data:
 	.db $00
-; @addr{$124fd}
 roomTileChangerCodeGroup4Data:
 	.db $1b $01
 	.db $4c $03
@@ -131,7 +124,6 @@ roomTileChangerCodeGroup4Data:
 	.db $c9 $2e
 	.db $ea $33
 	.db $00
-; @addr{$12510}
 roomTileChangerCodeGroup5Data:
 	.db $f5 $00
 	.db $38 $0a
@@ -149,17 +141,14 @@ roomTileChangerCodeGroup5Data:
 	.db $c2 $29
 	.db $e3 $2a
 	.db $00
-; @addr{$1252f}
 roomTileChangerCodeGroup6Data:
 	.db $00
-; @addr{$12530}
 roomTileChangerCodeGroup7Data:
 	.db $4a $11
 	.db $00
 
 ;;
 ; Opens advance shop
-; @addr{6533}
 tileReplacement_group1Map58:
 	ldh a,(<hGameboyType)
 	rlca
@@ -170,7 +159,6 @@ tileReplacement_group1Map58:
 
 ;;
 ; Twinrova/ganon fight
-; @addr{653d}
 tileReplacement_group5Mapf5:
 	ld a,(wTwinrovaTileReplacementMode)
 	or a
@@ -188,7 +176,6 @@ tileReplacement_group5Mapf5:
 	ld hl,@seizureTiles
 	jp fillRectInRoomLayout
 
-; @addr{6555}
 @seizureTiles:
 	.db $00, LARGE_ROOM_HEIGHT, LARGE_ROOM_WIDTH, $aa
 
@@ -212,7 +199,6 @@ tileReplacement_group5Mapf5:
 
 ;;
 ; Dungeon 1 in the room where torches light up to make stairs appear
-; @addr{6576}
 tileReplacement_group4Map1b:
 	call getThisRoomFlags
 	and $80
@@ -231,7 +217,6 @@ tileReplacement_group4Map1b:
 ;;
 ; Secret shop: replace item area with blank floor and 2 chests, if you've
 ; already bought everything.
-; @addr{6584}
 tileReplacement_group2Map7e:
 	ld a,(wBoughtShopItems1)
 	and $0f
@@ -254,7 +239,6 @@ tileReplacement_group2Map7e:
 
 ;;
 ; Hero's cave: make a bridge appear
-; @addr{65a4}
 tileReplacement_group4Mapc9:
 	call getThisRoomFlags
 	and ROOMFLAG_40
@@ -266,7 +250,6 @@ tileReplacement_group4Mapc9:
 
 ;;
 ; Hero's cave: make a bridge appear, make another disappear if a switch is set
-; @addr{65b2}
 tileReplacement_group4Mapc7:
 	ld hl,wSwitchState
 	bit 0,(hl)
@@ -288,7 +271,6 @@ tileReplacement_group4Mapc7:
 
 ;;
 ; D3, left of miniboss: deal with bridges
-; @addr{65cf}
 tileReplacement_group4Map4c:
 	ld hl,wSwitchState
 	bit 0,(hl)
@@ -307,7 +289,6 @@ tileReplacement_group4Map4c:
 
 ;;
 ; D3, left, down from miniboss: deal with bridges
-; @addr{65e8}
 tileReplacement_group4Map4e:
 	ld hl,wSwitchState
 	bit 1,(hl)
@@ -333,7 +314,6 @@ tileReplacement_group4Map4e:
 
 ;;
 ; D3, right of seed shooter room: set torch lit
-; @addr{660b}
 tileReplacement_group4Map59:
 	call getThisRoomFlags
 	and $80
@@ -342,7 +322,6 @@ tileReplacement_group4Map59:
 	ld de,@replacementTiles
 	jp replaceTiles
 
-; @addr{6617}
 @replacementTiles:
 	.db $09 $08 ; Replace unlit torch with lit
 	.db $00
@@ -350,7 +329,6 @@ tileReplacement_group4Map59:
 ;;
 ; D3, upper spinner room: remove spinner if crystals broken (doesn't remove
 ; interaction itself)
-; @addr{661a}
 tileReplacement_group4Map60:
 	ld a,GLOBALFLAG_D3_CRYSTALS
 	call checkGlobalFlag
@@ -375,14 +353,12 @@ tileReplacement_group4Map60:
 	ld l,$7a
 	ld (hl),$1d
 	ret
-; @addr{6645}
 @rect:
 	.db $34 $05 $07 $a0
 
 ;;
 ; D3, lower spinner room: add spinner if crystals broken (doesn't add
 ; interaction itself)
-; @addr{6649}
 tileReplacement_group4Map52:
 	ld a,GLOBALFLAG_D3_CRYSTALS
 	call checkGlobalFlag
@@ -396,7 +372,6 @@ tileReplacement_group4Map52:
 
 ;;
 ; Maku tree present
-; @addr{665d}
 tileReplacement_group0Map38:
 	ld a,GLOBALFLAG_MAKU_TREE_SAVED
 	call checkGlobalFlag
@@ -404,7 +379,6 @@ tileReplacement_group0Map38:
 	jr +
 ;;
 ; Maku tree past
-; @addr{6665}
 tileReplacement_group1Map38:
 	call getThisRoomFlags
 	bit 7,(hl)
@@ -417,7 +391,6 @@ tileReplacement_group1Map38:
 
 ;;
 ; Present: Screen below maku tree
-; @addr{6673}
 tileReplacement_group0Map48:
 	ld a,GLOBALFLAG_MAKU_TREE_SAVED
 	call checkGlobalFlag
@@ -430,7 +403,6 @@ tileReplacement_group0Map48:
 
 ;;
 ; D6 before boss room: create bridge
-; @addr{6681}
 tileReplacement_group5Map38:
 	call getThisRoomFlags
 	and ROOMFLAG_40
@@ -449,7 +421,6 @@ tileReplacement_group5Map38:
 
 ;;
 ; D6 present: screen with retracting wall
-; @addr{6697}
 tileReplacement_group5Map25:
 	call getThisRoomFlags
 	and $40
@@ -459,16 +430,13 @@ tileReplacement_group5Map25:
 	call fillRectInRoomLayout
 	jr ++
 
-; @addr{66a5}
 _d6RetractingWallRectPresent:
 	.db $17 $09 $04 $a6
-; @addr{66a9}
 _d6RetractingWallRectPast:
 	.db $17 $09 $04 $a7
 
 ;;
 ; D6 past: screen with retracting walls
-; @addr{66ad}
 tileReplacement_group5Map43:
 	call getThisRoomFlags
 	and $40
@@ -499,7 +467,6 @@ tileReplacement_group5Map43:
 
 ;;
 ; D8: room with retracting wall
-; @addr{66d7}
 tileReplacement_group5Map95:
 	call getThisRoomFlags
 	and $40
@@ -522,7 +489,6 @@ tileReplacement_group5Map95:
 ;;
 ; Past: cave with goron elder
 ; Gets rid of a boulder and creates a shortcut
-; @addr{66f9}
 tileReplacement_group5Mapc3:
 	call @func_04_672e
 	call getThisRoomFlags
@@ -547,7 +513,6 @@ tileReplacement_group5Mapc3:
 	jr nz,--
 	ret
 
-; @addr{671f}
 @boulderReplacementTiles:
 	.db $a2 $a1 $a2 $a1 $a2
 	.db $a1 $a2 $a1 $a2 $a1
@@ -557,7 +522,6 @@ tileReplacement_group5Mapc3:
 ;;
 ; If d5 is beaten, remove a wall to make the area easier to traverse. (This
 ; does not remove the boulder)
-; @addr{672e}
 @func_04_672e:
 	ld a,$04
 	ld hl,wEssencesObtained
@@ -590,7 +554,6 @@ tileReplacement_group5Mapc3:
 	ret
 
 ; 4x4 grid of new tiles to insert ($00 means unchanged).
-; @addr{675b}
 @newTiles:
 	.db $b0 $b0 $b0 $b0
 	.db $ef $00 $00 $ef
@@ -599,7 +562,6 @@ tileReplacement_group5Mapc3:
 
 ;;
 ; Past: cave in goron mountain with 2 chests
-; @addr{676b}
 tileReplacement_group2Mapf7:
 	call getThisRoomFlags
 	bit ROOMFLAG_BIT_ITEM,(hl)
@@ -646,7 +608,6 @@ tileReplacement_group2Mapf7:
 	jr nz,---
 	ret
 
-; @addr{67b1}
 @wallInsertion:
 	.db $b9 $a7 $a7 $a7 $b8
 	.db $b1 $a7 $a7 $a7 $b3
@@ -655,7 +616,6 @@ tileReplacement_group2Mapf7:
 
 ;;
 ; D7: 1st platform on floor 1
-; @addr{67c5}
 tileReplacement_group5Map4c:
 	ld a,(wJabuWaterLevel)
 	and $07
@@ -669,13 +629,11 @@ tileReplacement_group5Map4c:
 	ld (hl),$45
 	ret
 
-; @addr{67d6}
 @rect:
 	.db $35 $05 $05 $a2
 
 ;;
 ; D7: 2nd platform on floor 1
-; @addr{67da}
 tileReplacement_group5Map4d:
 	ld a,(wJabuWaterLevel)
 	and $07
@@ -684,14 +642,12 @@ tileReplacement_group5Map4d:
 	ld hl,@rect
 	jp fillRectInRoomLayout
 
-; @addr{67e6}
 @rect:
 	.db $12 $05 $05 $a2
 
 ;;
 ; D7: Used in room $55c and $571. Makes the 1st platform appear if the water
 ; level is correct.
-; @addr{67ea}
 tileReplacement_group5Map5c:
 	ld a,(wDungeonFloor)
 	ld b,a
@@ -703,7 +659,6 @@ tileReplacement_group5Map5c:
 	ld de,@platformRect
 	jp drawRectInRoomLayout
 
-; @addr{67fb}
 @platformRect:
 	.db $35 $05 $05
 	.db $c5 $c3 $c3 $c3 $c6
@@ -715,7 +670,6 @@ tileReplacement_group5Map5c:
 ;;
 ; D7: used is room $55d and $572. Makes the 2nd platform appear if the water
 ; level is correct.
-; @addr{6817}
 tileReplacement_group5Map5d:
 	ld a,(wDungeonFloor)
 	ld b,a
@@ -738,7 +692,6 @@ tileReplacement_group5Map5d:
 ;;
 ; D7 miniboss room (except it's group 7 instead of 5?)
 ; Creates a ladder if the miniboss has been murdered.
-; @addr{6844}
 tileReplacement_group7Map4a:
 	call getThisRoomFlags
 	and $80
@@ -747,13 +700,11 @@ tileReplacement_group7Map4a:
 	ld hl,@ladderRect
 	jp fillRectInRoomLayout
 
-; @addr{5850}
 @ladderRect:
 	.db $0d $0a $01 $18
 
 ;;
 ; Graveyard: Clear the fence if opened
-; @addr{6854}
 tileReplacement_group0Map5c:
 	call getThisRoomFlags
 	and $80
@@ -767,7 +718,6 @@ tileReplacement_group0Map5c:
 
 ;;
 ; Present forest above d2: clear rubble
-; @addr{6865}
 tileReplacement_group0Map73:
 	call getThisRoomFlags
 	and $80
@@ -787,7 +737,6 @@ tileReplacement_group0Map73:
 
 ;;
 ; Present Tokay: remove scent tree if not planted
-; @addr{687d}
 tileReplacement_group0Mapac:
 	call getThisRoomFlags
 	and $80
@@ -804,7 +753,6 @@ tileReplacement_group0Mapac:
 
 ;;
 ; Rolling ridge present screen with vine
-; @addr{688f}
 tileReplacement_group0Map2c:
 	ld bc,$0017
 	call getVinePosition
@@ -813,14 +761,12 @@ tileReplacement_group0Map2c:
 	ld de,@vineEdgeReplacements
 	jp replaceVineTiles
 
-; @addr{68a0}
 @vineEdgeReplacements:
 	.db $5d $60
 	.db $00
 
 ;;
 ; Rolling ridge present, above the screen with a vine
-; @addr{68a3}
 tileReplacement_group0Map1c:
 	ld bc,$0017
 	call getVinePosition
@@ -829,7 +775,6 @@ tileReplacement_group0Map1c:
 	ld de,@vineEdgeReplacements
 	jp replaceVineTiles
 
-; @addr{68b2}
 @vineEdgeReplacements:
 	.db $5b $45
 	.db $4d $55
@@ -837,7 +782,6 @@ tileReplacement_group0Map1c:
 
 ;;
 ; Tokay island present, D3 entrance screen (has a vine)
-; @addr{68b7}
 tileReplacement_group0Mapba:
 	ld bc,$0218
 	call getVinePosition
@@ -849,14 +793,12 @@ tileReplacement_group0Mapba:
 	ld (wRoomLayout+$18),a
 	ret
 
-; @addr{68ce}
 @vineEdgeReplacements:
 	.db $61 $60
 	.db $00
 
 ;;
 ; Tokay island present, above D3 entrance screen
-; @addr{68d1}
 tileReplacement_group0Mapaa:
 	ld bc,$0218
 	call getVinePosition
@@ -866,14 +808,12 @@ tileReplacement_group0Mapaa:
 	ld de,@vineEdgeReplacements
 	jp replaceVineTiles
 
-; @addr{68e0}
 @vineEdgeReplacements:
 	.db $46 $45
 	.db $00
 
 ;;
 ; Tokay island present, 2nd vine screen
-; @addr{68e3}
 tileReplacement_group0Mapcc:
 	ld bc,$0311
 	call getVinePosition
@@ -883,14 +823,12 @@ tileReplacement_group0Mapcc:
 	ld de,@vineEdgeReplacements
 	jp replaceVineTiles
 
-; @addr{68f4}
 @vineEdgeReplacements:
 	.db $61 $5d
 	.db $00
 
 ;;
 ; Tokay island present, above 2nd vine screen
-; @addr{68f7}
 tileReplacement_group0Mapbc:
 	ld bc,$0311
 	call getVinePosition
@@ -900,14 +838,12 @@ tileReplacement_group0Mapbc:
 	ld de,@vineEdgeReplacements
 	jp replaceVineTiles
 
-; @addr{6906}
 @vineEdgeReplacements:
 	.db $46 $5c
 	.db $00
 
 ;;
 ; Tokay island present, 3rd vine screen
-; @addr{6909}
 tileReplacement_group0Mapda:
 	ld bc,$0418
 	call getVinePosition
@@ -917,14 +853,12 @@ tileReplacement_group0Mapda:
 	ld de,@vineEdgeReplacements
 	jp replaceVineTiles
 
-; @addr{691a}
 @vineEdgeReplacements:
 	.db $61 $60
 	.db $00
 
 ;;
 ; Tokay island present, above 3rd vine screen
-; @addr{691d}
 tileReplacement_group0Mapca:
 	ld bc,$0418
 	call getVinePosition
@@ -934,14 +868,12 @@ tileReplacement_group0Mapca:
 	ld de,@videEdgeReplacements
 	jp replaceVineTiles
 
-; @addr{692c}
 @videEdgeReplacements:
 	.db $46 $45
 	.db $00
 
 ;;
 ; Talus Peaks Present, has 2 vines
-; @addr{692f}
 tileReplacement_group0Map61:
 	ld bc,$0122
 	call getVinePosition
@@ -985,7 +917,6 @@ tileReplacement_group0Map61:
 
 ;;
 ; Screen above talus peaks vines
-; @addr{6974}
 tileReplacement_group0Map51:
 	ld bc,$0122
 	call getVinePosition
@@ -1016,7 +947,6 @@ tileReplacement_group0Map51:
 ; @param de Data structure with values to replace the sides of the vine with.
 ; Format: left byte, right byte, repeat, $00 to end
 ; @param l Top-left of where to apply the data at de.
-; @addr{699b}
 replaceVineTiles:
 	ld h,>wRoomLayout
 --
@@ -1050,7 +980,6 @@ replaceVineTiles:
 	ld (hl),$8d
 	ret
 
-; @addr{69c0}
 @vineReplacements:
 	.db $d4 $05 ; Top of cliff -> top of vine
 	.db $d5 $8e ; Body
@@ -1061,7 +990,6 @@ replaceVineTiles:
 ;;
 ; Retrieve a position from [hl], set the tile at that position to a withered
 ; vine.
-; @addr{69c7}
 setTileToWitheredVine:
 	ld l,(hl)
 	ld h,>wRoomLayout
@@ -1076,7 +1004,6 @@ setTileToWitheredVine:
 
 ;;
 ; Get the position of vine B and compare with C.
-; @addr{69d5}
 getVinePosition:
 	ld a,b
 	ld hl,wVinePositions
@@ -1086,7 +1013,6 @@ getVinePosition:
 	ret
 
 ;;
-; @addr{69dd}
 initializeVinePositions:
 	ld hl,wVinePositions
 	ld de,@defaultVinePositions
@@ -1098,7 +1024,6 @@ initializeVinePositions:
 
 ;;
 ; Present, bridge to nuun highlands
-; @addr{69ee}
 tileReplacement_group0Map54:
 	xor a
 	ld (wSwitchState),a
@@ -1122,7 +1047,6 @@ tileReplacement_group0Map54:
 
 ;;
 ; Present, right side of bridge to symmetry city
-; @addr{6a0d}
 tileReplacement_group0Map25:
 	ld a,GLOBALFLAG_SYMMETRY_BRIDGE_BUILT
 	call checkGlobalFlag
@@ -1142,7 +1066,6 @@ tileReplacement_group0Map25:
 
 ;;
 ; Present overworld, impa's house
-; @addr{6a24}
 tileReplacement_group0Map3a:
 	ld a,GLOBALFLAG_INTRO_DONE
 	call checkGlobalFlag
@@ -1155,7 +1078,6 @@ tileReplacement_group0Map3a:
 
 ;;
 ; Present, screen right of d5 where a cave opens up
-; @addr{6a30}
 tileReplacement_group0Map0b:
 	ld hl,wPresentRoomFlags+$0a
 	bit ROOMFLAG_BIT_40,(hl)
@@ -1168,7 +1090,6 @@ tileReplacement_group0Map0b:
 ;;
 ; Present cave with goron elder.
 ; Removes boulders after dungeon 4 is beaten.
-; @addr{6a3c}
 tileReplacement_group5Mapb9:
 	; Must have beaten dungeon 4
 	ld a,$03
@@ -1198,7 +1119,6 @@ tileReplacement_group5Mapb9:
 
 ;;
 ; Past overworld, Ambi's Palace secret passage
-; @addr{6a67}
 tileReplacement_group1Map27:
 	call getThisRoomFlags
 	ld l,$15
@@ -1240,7 +1160,6 @@ tileReplacement_group1Map27:
 ;;
 ; Present cave on the way to rolling ridge
 ; Has a bridge
-; @addr{6aa1}
 tileReplacement_group5Mapc2:
 	call getThisRoomFlags
 	and $80
@@ -1251,7 +1170,6 @@ tileReplacement_group5Mapc2:
 
 ;;
 ; Sets 4 bytes at hl to the value of a.
-; @addr{6aac}
 set4Bytes:
 	ldi (hl),a
 set3Bytes:
@@ -1263,7 +1181,6 @@ set3Bytes:
 ;;
 ; Past cave on the way to the d6 area
 ; Has a bridge
-; @addr{6ab1}
 tileReplacement_group5Mape3:
 	call getThisRoomFlags
 	and $80
@@ -1275,7 +1192,6 @@ tileReplacement_group5Mape3:
 
 ;;
 ; Underwater, entrance to Jabu
-; @addr{6abe}
 tileReplacement_group2Map90:
 	call getThisRoomFlags
 	and $02
@@ -1284,7 +1200,6 @@ tileReplacement_group2Map90:
 	ld de,@rect
 	jp drawRectInRoomLayout
 
-; @addr{6aca}
 @rect:
 	.db $42 $02 $06
 	.db $dd $de $df $ed $ee $ef
@@ -1292,7 +1207,6 @@ tileReplacement_group2Map90:
 
 ;;
 ; Past, area beneath the entrance to d8 maze
-; @addr{6ad9}
 tileReplacement_group1Map8c:
 	call getThisRoomFlags
 	and $80
@@ -1314,7 +1228,6 @@ tileReplacement_group1Map8c:
 
 ;;
 ; Present, shortcut cave for tingle
-; @addr{6af5}
 tileReplacement_group2Map9e:
 	xor a
 	ld (wToggleBlocksState),a
@@ -1330,7 +1243,6 @@ tileReplacement_group2Map9e:
 
 ;;
 ; Present, on top of maku tree (left end)
-; @addr{6b0b}
 tileReplacement_group0Mape0:
 	ld a,(wEssencesObtained)
 	bit 4,a
@@ -1338,7 +1250,6 @@ tileReplacement_group0Mape0:
 	call nz,_setTileToDoor
 	ld c,$1b
 ;;
-; @addr{6b17}
 _createInteraction90:
 	call getFreeInteractionSlot
 	ret nz
@@ -1350,7 +1261,6 @@ _createInteraction90:
 
 ;;
 ; Present, on top of maku tree (middle)
-; @addr{6b20}
 tileReplacement_group0Mape1:
 	ld c,$1c
 	call _createInteraction90
@@ -1366,7 +1276,6 @@ tileReplacement_group0Mape1:
 
 ;;
 ; Present, on top of maku tree (right)
-; @addr{6b34}
 tileReplacement_group0Mape2:
 	ld c,$1d
 	call _createInteraction90
@@ -1377,7 +1286,6 @@ tileReplacement_group0Mape2:
 	ld l,$54
 
 ;;
-; @addr{6b41}
 _setTileToDoor:
 	ld h,>wRoomLayout
 	ld (hl),$dd
@@ -1385,7 +1293,6 @@ _setTileToDoor:
 
 ;;
 ; Black Tower, room with 3 doors
-; @addr{6b46}
 tileReplacement_group4Mapea:
 	call getThisRoomFlags
 	and $40
@@ -1409,7 +1316,6 @@ tileReplacement_group4Mapea:
 
 ;;
 ; Present, room where you find ricky's gloves
-; @addr{6b71}
 tileReplacement_group0Map98:
 	ld a,(wRickyState)
 	bit 5,a
@@ -1429,7 +1335,6 @@ tileReplacement_group0Map98:
 
 ;;
 ; Present overworld, black tower entrance
-; @addr{6b88}
 tileReplacement_group0Map76:
 	call checkIsLinkedGame
 	ret z
@@ -1446,7 +1351,6 @@ tileReplacement_group0Map76:
 
 ;;
 ; Present library
-; @addr{6b99}
 tileReplacement_group0Mapa5:
 	ld a,(wPastRoomFlags+$a5)
 	bit 7,a

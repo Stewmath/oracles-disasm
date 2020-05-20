@@ -2,7 +2,6 @@
 
 ;;
 ; Reads the static object buffer and creates the objects for the room.
-; @addr{5015}
 parseStaticObjects:
 	ld de,wStaticObjects
 @next:
@@ -113,7 +112,6 @@ parseStaticObjects:
 ; This function is called from "loadStaticObjects" in bank 0.
 ; Loads the static objects for the current dungeon. (Doesn't check whether you're actually
 ; in a dungeon.)
-; @addr{5085}
 loadStaticObjects_body:
 	call clearStaticObjects
 	ld a,(wDungeonIndex)

@@ -3350,12 +3350,10 @@ _interac65_state1:
 
 
 ;;
-; @addr{6699}
 _childUpdateAnimationAndSolidity:
 	call interactionAnimate
 
 ;;
-; @addr{669c}
 _childUpdateSolidityAndVisibility:
 	ld e,Interaction.var39
 	ld a,(de)
@@ -3371,7 +3369,6 @@ _childUpdateSolidityAndVisibility:
 
 ;;
 ; Writes the "base" animation index to var37 based on subid (personality type)?
-; @addr{66b4}
 _childDetermineAnimationBase:
 	ld e,Interaction.subid
 	ld a,(de)
@@ -3386,7 +3383,6 @@ _childDetermineAnimationBase:
 	.db $00 $02 $05 $08 $0b $11 $15 $17
 
 ;;
-; @addr{66c8}
 _childUpdateHyperactiveMovement:
 	call objectApplySpeed
 	ld h,d
@@ -3425,7 +3421,6 @@ _childHyperactiveMovementAngles:
 	.db $18 $0a $18 $06
 
 ;;
-; @addr{66fc}
 _childUpdateUnknownMovement:
 	call objectApplySpeed
 	ld e,Interaction.xh
@@ -3442,7 +3437,6 @@ _childUpdateUnknownMovement:
 
 ;;
 ; Updates movement for "shy" personality type (runs away when Link approaches)
-; @addr{6710}
 _childUpdateShyMovement:
 	ld e,Interaction.state2
 	ld a,(de)
@@ -3468,7 +3462,6 @@ _childUpdateShyMovement:
 	jp _childIncPositionIndex
 
 ;;
-; @addr{6730}
 _childUpdateAngleAndApplySpeed:
 	ld h,d
 	ld l,Interaction.var3c
@@ -3494,7 +3487,6 @@ _childUpdateAngleAndApplySpeed:
 ;;
 ; @param[out]	cflag	Set if the child's reached the position he's moving toward (or is
 ;			within 1 pixel from the destination on both axes)
-; @addr{674c}
 _childCheckReachedDestination:
 	ld h,d
 	ld l,Interaction.var3c
@@ -3527,7 +3519,6 @@ _childCheckReachedDestination:
 
 ;;
 ; Updates animation if the child's direction has changed?
-; @addr{6771}
 _childCheckAnimationDirectionChanged:
 	ld h,d
 	ld l,Interaction.angle
@@ -3546,7 +3537,6 @@ _childCheckAnimationDirectionChanged:
 	jp interactionSetAnimation
 
 ;;
-; @addr{6789}
 _childIncPositionIndex:
 	ld h,d
 	ld l,Interaction.var3d
@@ -3563,7 +3553,6 @@ _childIncPositionIndex:
 ; through (minus one) into var3d.
 ;
 ; @param	a	Data index
-; @addr{6795}
 _childLoadPositionListPointer:
 	add a
 	add a
@@ -3633,7 +3622,6 @@ _childLoadPositionListPointer:
 	.db $18 $48
 
 ;;
-; @addr{67f8}
 _childUpdateCuriousMovement:
 	ld e,Interaction.state2
 	ld a,(de)
@@ -5472,7 +5460,6 @@ interactionCode49:
 	jp @initState3
 
 ;;
-; @addr{76e9}
 @updateHopping:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
@@ -5480,13 +5467,11 @@ interactionCode49:
 	ld h,d
 
 ;;
-; @addr{76f0}
 @beginHop:
 	ld bc,-$c0
 	jp objectSetSpeedZ
 
 ;;
-; @addr{76f6}
 @updateMovement:
 	call objectApplySpeed
 	ld e,Interaction.xh
@@ -5508,7 +5493,6 @@ interactionCode49:
 	jp interactionSetAnimation
 
 ;;
-; @addr{7710}
 @func_7710:
 	ld h,d
 	ld l,Interaction.var3c
@@ -5518,7 +5502,6 @@ interactionCode49:
 	jr +++
 
 ;;
-; @addr{771b}
 @initState2:
 	ld h,d
 	ld l,Interaction.state
@@ -5540,7 +5523,6 @@ interactionCode49:
 	jp interactionSetAnimation
 
 ;;
-; @addr{7739}
 @initState3:
 	ld h,d
 	ld l,Interaction.state
@@ -7330,7 +7312,6 @@ _subrosianAtD8_subid1:
 	jp interactionDelete
 
 ;;
-; @addr{7d1c}
 _subrosianAtD8_getNumEssences:
 	ld a,($c6bb)
 	jp getNumSetBits

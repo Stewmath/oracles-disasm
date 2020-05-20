@@ -7,7 +7,6 @@
 ;;
 ; Enemy bosses call this when they're dead (ENEMYSTATUS_NO_HEALTH). They don't disappear
 ; right away, they flicker for a second, then explode.
-; @addr{44f0}
 _enemyBoss_dead:
 	ld h,d
 	ld l,Enemy.collisionType
@@ -58,7 +57,6 @@ _enemyBoss_dead:
 ; @param	b	Shadow size (0-2 for small-large)
 ; @param	c	Y-offset of shadow relative to self
 ; @param[out]	zflag	z on success
-; @addr{4534}
 _enemyBoss_spawnShadow:
 	call getFreePartSlot
 	ret nz
@@ -80,7 +78,6 @@ _enemyBoss_spawnShadow:
 ;
 ; @param	a	Enemy ID for graphics to load (or $ff to not load extra graphics)
 ; @param	b	Palette header to load (or 0 for none)
-; @addr{4546}
 _enemyBoss_initializeRoom:
 	bit 7,a
 	jr nz,+
@@ -94,7 +91,6 @@ _enemyBoss_initializeRoom:
 
 ;;
 ; Stops music, forces Link to walk into the room.
-; @addr{4552}
 _enemyBoss_initializeRoomWithoutExtraGfx:
 .ifdef ROM_SEASONS
 	ldh a,(<hActiveObject)
@@ -138,14 +134,12 @@ _enemyBoss_initializeRoomWithoutExtraGfx:
 
 ;;
 ; Plays miniboss music, enables controls.
-; @addr{4580}
 _enemyBoss_beginMiniboss:
 	ld b,MUS_MINIBOSS
 	jr ++
 
 ;;
 ; Plays boss music, enables controls.
-; @addr{4584}
 _enemyBoss_beginBoss:
 	ld b,MUS_BOSS
 ++

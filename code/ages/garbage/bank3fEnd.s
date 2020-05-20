@@ -3,14 +3,12 @@
 ; Garbage functions appear to follow (corrupted repeats of the above functions).
 
 ;;
-; @addr{7ca7}
 func_7ca7:
 	jr -$30
 	call $2118
 	jp $2422
 
 ;;
-; @addr{7caf}
 func_7caf:
 	ld c,$20
 	call $1f83
@@ -26,7 +24,6 @@ func_7caf:
 	jp $2422
 
 ;;
-; @addr{7cc7}
 func_7cc7:
 	call $2409
 	ret nz
@@ -34,7 +31,6 @@ func_7cc7:
 	jp $2422
 
 ;;
-; @addr{7cd1}
 func_7cd1:
 	ld a,(wPaletteThread_mode)
 	or a
@@ -54,7 +50,6 @@ func_7cd1:
 	jp $7bf2
 
 ;;
-; @addr{7cf8}
 func_7cf8:
 	ld hl,$c702
 	call $7d00

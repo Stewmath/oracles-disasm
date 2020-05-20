@@ -79,7 +79,6 @@ _parentItemCode_magnetGloves:
 ;;
 ; @param[out]	bc	Position of object locked on to
 ; @param[out]	zflag	nz if Link should move toward something
-; @addr{524b}
 @checkLatchedOntoTile:
 	ld a,(wLinkObjectIndex)
 	xor $01
@@ -113,7 +112,6 @@ _parentItemCode_magnetGloves:
 ; @param	d	Tile index to check for
 ; @param	e	Offset value (ie. $10 for down)
 ; @param	hl	Y and X offsets (2 bytes)
-; @addr{5274}
 @searchForTile:
 	ld a,(w1Link.yh)
 	ldh (<hFF8F),a

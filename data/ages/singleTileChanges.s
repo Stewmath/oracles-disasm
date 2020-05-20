@@ -1,4 +1,3 @@
-; @addr{$1232e}
 singleTileChangeGroupTable:
 	.dw singleTileChangeGroup0Data
 	.dw singleTileChangeGroup1Data
@@ -19,7 +18,6 @@ singleTileChangeGroupTable:
 ; b2: Position of tile to change
 ; b3: New tile to put at that position
 
-; @addr{$1233e}
 singleTileChangeGroup0Data:
 	.db $39 $40 $22 $d7
 	.db $83 $80 $43 $1c
@@ -34,7 +32,6 @@ singleTileChangeGroup0Data:
 	.db $64 $02 $67 $3a
 	.db $00 $00
 
-; @addr{$1236c}
 singleTileChangeGroup1Data:
 	.db $0e $80 $16 $af
 	.db $48 $02 $48 $3a
@@ -51,12 +48,10 @@ singleTileChangeGroup1Data:
 	.db $65 $02 $61 $3a
 	.db $00 $00
 
-; @addr{$123a2}
 singleTileChangeGroup2Data:
 	.db $d7 $f0 $42 $e9
 	.db $00 $00
 
-; @addr{$123a8}
 singleTileChangeGroup3Data:
 	.db $d6 $f1 $55 $e9
 	.db $0f $80 $16 $af
@@ -64,7 +59,6 @@ singleTileChangeGroup3Data:
 	.db $9e $80 $32 $a0
 	.db $00 $00
 
-; @addr{$123ba}
 singleTileChangeGroup4Data:
 	.db $56 $20 $44 $a0
 	.db $59 $80 $a3 $a0
@@ -73,7 +67,6 @@ singleTileChangeGroup4Data:
 	.db $c5 $20 $57 $52
 	.db $00 $00
 
-; @addr{$123d0}
 singleTileChangeGroup5Data:
 	.db $19 $01 $08 $34
 	.db $26 $02 $5e $35
@@ -98,7 +91,6 @@ singleTileChangeGroup5Data:
 	.db $f5 $80 $9d $44
 	.db $00 $00
 
-; @addr{$12426}
 singleTileChangeGroup6Data:
 	.db $2b $80 $aa $19
 singleTileChangeGroup7Data:

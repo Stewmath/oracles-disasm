@@ -299,7 +299,6 @@ interactionCode79:
 
 ;;
 ; @param[out]	cflag	Set if Link's touching the platform
-; @addr{40da}
 @checkLinkTouching:
 	ld hl,w1Link.yh
 	ldi a,(hl)
@@ -605,7 +604,6 @@ interactionCode7a:
 ;;
 ; @param	c	Angle it's moving toward
 ; @param[out]	zflag	z if can be pushed.
-; @addr{425f}
 @checkRollerCanBePushed:
 	; Do some weird math to get the topmost tile on the left or right side of the
 	; roller?
@@ -659,7 +657,6 @@ interactionCode7a:
 
 ;;
 ; @param[out]	cflag	c if Link is pushing against the roller
-; @addr{429d}
 @preventLinkFromPassing:
 	ld a,(w1Link.collisionType)
 	bit 7,a
@@ -939,7 +936,6 @@ _spinner_subid02:
 	jp interactionAnimate
 
 ;;
-; @addr{43e7}
 _spinner_updateLinkPosition:
 	; Check that the animParameter signals Link should change position (nonzero and
 	; not $ff)
@@ -968,7 +964,6 @@ _spinner_updateLinkPosition:
 
 ;;
 ; @param	hl	Address of 2 bytes (Y/X offset for Link relative to spinner)
-; @addr{4400}
 _spinner_setLinkRelativePosition:
 	ld b,>w1Link
 	ld e,Interaction.yh
@@ -1679,7 +1674,6 @@ _interaction7f_subid00:
 
 ;;
 ; Pedestal for an essence
-; @addr{476f}
 _interaction7f_subid01:
 	call checkInteractionState
 	jp nz,objectPreventLinkFromPassing
@@ -1712,7 +1706,6 @@ _interaction7f_subid01:
 
 ;;
 ; The glowing thing behind the essence
-; @addr{478a}
 _interaction7f_subid02:
 	call checkInteractionState
 	jr nz,@state1

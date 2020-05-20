@@ -1,6 +1,5 @@
 ;;
 ; ITEMID_SWITCH_HOOK ($08)
-; @addr{4b16}
 _parentItemCode_switchHook:
 .ifdef ROM_AGES
 	ld e,Item.state

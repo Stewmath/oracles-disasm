@@ -4,7 +4,6 @@
 ; @param	l	Item to check for (see constants/treasure.s)
 ; @param[out]	h	Bit 0 set if link has the item
 ; @param[out]	l	Value of the treasure's "related variable" (ie. item level)
-; @addr{446d}
 checkTreasureObtained_body:
 	ld a,l
 	cp TREASURE_60
@@ -48,7 +47,6 @@ checkTreasureObtained_body:
 
 ;;
 ; @param	b	Treasure
-; @addr{44a1}
 loseTreasure_body:
 	push hl
 	ld a,b
@@ -61,7 +59,6 @@ loseTreasure_body:
 ; inventory item.
 ;
 ; @param	a	Treasure
-; @addr{44a8}
 _loseTreasure_helper:
 	ld b,a
 	ld hl,wObtainedTreasureFlags
@@ -99,7 +96,6 @@ _loseTreasure_helper:
 ; @param	b	Item to give (see constants/treasure)
 ; @param	c	"Parameter"
 ; @param[out]	b	Sound to play
-; @addr{44c8}
 giveTreasure_body:
 	push hl
 	push de
@@ -136,7 +132,6 @@ giveTreasure_body:
 ; @param	hFF8B	The treasure currently being given to Link
 ; @param[out]	a,c	Two values associated with the item
 ; @param[out]	zflag	Set if the item being added wasn't in the table
-; @addr{44f0}
 @findItemInTable:
 	ldh a,(<hFF8B)
 	ld c,a
@@ -159,7 +154,6 @@ giveTreasure_body:
 ;;
 ; @param	a	Item being added
 ; @param	c	Parameter
-; @addr{4501}
 @giveTreasure:
 	ldh (<hFF8B),a
 	call _checkIncreaseGashaMaturityForGettingTreasure
@@ -233,7 +227,6 @@ giveTreasure_body:
 ; @param	a	Index indicating what to do with the parameter
 ; @param	c	Parameter (could be # of seeds, or the item's level, etc)
 ; @param	de	The item's "variable" (ie. item level, or ammo)
-; @addr{4548}
 @applyParameter:
 	rst_jumpTable
 	.dw @ret
@@ -457,7 +450,6 @@ giveTreasure_body:
 ;;
 ; Decides on one ring to remove by counting all of the unappraised rings and finding the
 ; one with the most duplicates.
-; @addr{4629}
 @removeOneDuplicateRing:
 	ld a,($ff00+R_SVBK)
 	push af
@@ -529,7 +521,6 @@ giveTreasure_body:
 ;
 ; @param[out]	a	Number of unappraised rings (bcd)
 ; @param[out]	b	Number of unappraised rings (normal number)
-; @addr{466f}
 realignUnappraisedRings:
 	ld hl,wUnappraisedRings
 --
@@ -559,7 +550,6 @@ realignUnappraisedRings:
 ; @param	hl	Where to start searching in the unappraised ring list
 ; @param[out]	a	The value of the first non-empty ring slot encountered after hl
 ; @param[out]	cflag	Set if a non-empty ring slot was encountered
-; @addr{4687}
 @findNextFilledSlot:
 	ldi a,(hl)
 	cp $ff
@@ -580,7 +570,6 @@ realignUnappraisedRings:
 ;
 ; @param[out]	a	Number of unappraised rings (bcd)
 ; @param[out]	b	Number of unappraised rings (normal number)
-; @addr{4697}
 getNumUnappraisedRings:
 	push de
 	ld hl,wUnappraisedRings
@@ -607,7 +596,6 @@ getNumUnappraisedRings:
 
 ;;
 ; @param	hFF8B	Treasure index
-; @addr{46b6}
 addTreasureToInventory:
 	ldh a,(<hFF8B)
 	cp NUM_INVENTORY_ITEMS
@@ -642,7 +630,6 @@ addTreasureToInventory:
 ; @param	a	Item to add
 ; @param[out]	a	Index of the inventory slot it went into
 ; @param[out]	zflag	z if already had the item
-; @addr{46dc}
 @addToInventory:
 	ld c,a
 	ld hl,wInventoryB
@@ -680,7 +667,6 @@ addTreasureToInventory:
 ;
 ; @param	l	Treasure index
 ; @param[out]	hl	Where the data is stored (wTmpcec0).
-; @addr{46f8}
 loadTreasureDisplayData:
 	ld a,l
 	push de
@@ -734,7 +720,6 @@ loadTreasureDisplayData:
 ;			This is usually the item's level/loaded ammo, but if the item is
 ;			not in treasureDisplayData1, then this equals 'a'.
 ; @param[out]	e	Which sub-table to use from treasureDisplayData2
-; @addr{472b}
 @getTableIndices:
 	ld d,a
 	ld hl,treasureDisplayData1
@@ -778,7 +763,6 @@ loadTreasureDisplayData:
 ; @param	c
 ; @param[out]	c	Subid for PARTID_ITEM_DROP (see constants/itemDrops.s) or $ff if no item
 ;			should drop
-; @addr{4744}
 decideItemDrop_body:
 	ld a,c
 	or a
@@ -831,7 +815,6 @@ decideItemDrop_body:
 ;
 ; @param	c	Item drop index (see constants/itemDrops.s)
 ; @param[out]	c	$ff if item cannot spawn (Link doesn't have it), otherwise the item itself
-; @addr{4782}
 checkItemDropAvailable_body:
 .ifdef ROM_SEASONS
 	; different drop table for subrosia
@@ -867,7 +850,6 @@ checkItemDropAvailable_body:
 ; Each tier has 8 ring types (except for the last one, which only has 2). Some have
 ; repeated rings in order to fill that list.
 ;
-; @addr{4792}
 ringTierTable:
 	.dw @tier0
 	.dw @tier1
@@ -890,7 +872,6 @@ ringTierTable:
 @tier4:
 	.db GREEN_RING		RANG_RING_L2
 
-; @addr{47be}
 _itemDropSetTable:
 	.dw _itemDropSet0
 	.dw _itemDropSet1
@@ -914,7 +895,6 @@ _itemDropSetTable:
 ;   Byte 0: Variable in $c600 block to check
 ;   Byte 1: Value to AND with that variable to check availability; if nonzero, the item
 ;           can drop.
-; @addr{47de}
 _itemDropAvailabilityTable:
 	.db <wc608, $ff				; ITEM_DROP_FAIRY
 	.db <wc608, $ff				; ITEM_DROP_HEART
@@ -941,7 +921,6 @@ _itemDropAvailabilityTable:
 
 
 ; Each entry in this table is a bitset. A random bit is chosen. If the bit is 0, no item drops.
-; @addr{47fe}
 _itemDropProbabilityTable:
 	.dw @probability0
 	.dw @probability1
@@ -1096,7 +1075,6 @@ _itemDropSetF:
 ;   Bits 3-7: Index for _itemDropSetTable
 ; Or it can be $ff for no item drop.
 ; Comments show changes in Seasons
-; @addr{4a46}
 itemDropTables:
 .ifdef ROM_AGES
 	.db $ff $ef $ff $ff $ff $ff $ff $ff
@@ -1141,7 +1119,6 @@ itemDropTables:
 ;;
 ; @param	a	Treasure index
 ; @param	c	Treasure "parameter"
-; @addr{4ad6}
 _checkIncreaseGashaMaturityForGettingTreasure:
 	push bc
 	ld b,a

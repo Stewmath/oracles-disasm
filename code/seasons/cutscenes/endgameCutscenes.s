@@ -1997,7 +1997,6 @@ _endgameCutsceneHandler_0a_stage3:
 ;;
 ; Similar to ages' version of this function
 ;
-; @addr{63d2}
 disableLcdAndLoadRoom_body:
 	ld (wRoomStateModifier),a
 	ld a,b

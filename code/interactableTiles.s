@@ -1,7 +1,6 @@
 ;;
 ; @param[out]	cflag	Set if Link interacted with a tile that should disable some of his
 ;			code? (Opened a chest, read a sign, opened an overworld keyhole)
-; @addr{4000}
 interactWithTileBeforeLink:
 	; Make sure Link isn't holding anything?
 	ld a,(wLinkGrabState)
@@ -37,7 +36,6 @@ interactWithTileBeforeLink:
 	.dw _nextToGhiniSpawner
 
 ;;
-; @addr{402d}
 _nextToChestTile:
 	; This will return if Link isn't facing the tile or hasn't pressed A.
 	call _checkFacingBottomOfTileAndPressedA
@@ -141,7 +139,6 @@ _nextToChestTile:
 	ret
 
 ;;
-; @addr{40b4}
 _nextToSignTile:
 	; This will return if Link isn't facing the tile or hasn't pressed A.
 	call _checkFacingBottomOfTileAndPressedA
@@ -200,7 +197,6 @@ _nextToSignTile:
 ;;
 ; Returns from the caller of the function if Link isn't facing a wall or pressing A.
 ; @param[out] zflag Set if the wall Link is facing is above him.
-; @addr{40ef}
 _checkFacingBottomOfTileAndPressedA:
 	ld a,(wGameKeysJustPressed)
 	and BTN_A
@@ -209,7 +205,6 @@ _checkFacingBottomOfTileAndPressedA:
 ;;
 ; Returns from the caller of the function if Link isn't facing a wall.
 ; @param[out] zflag Set if the wall Link is facing is above him.
-; @addr{40f6}
 _checkFacingBottomOfTile:
 	ld a,(w1Link.direction)
 	ld hl,@data
@@ -231,7 +226,6 @@ _checkFacingBottomOfTile:
 
 ;;
 ; Deals with pushing blocks, pots, etc.
-; @addr{410e}
 _nextToPushableBlock:
 .ifdef ROM_AGES
 	; No pushing underwater
@@ -343,7 +337,6 @@ _nextToPushableBlock:
 .endif
 
 ;;
-; @addr{4191}
 _nextToKeyBlock:
 	call _specialObjectCheckPushingAgainstTile
 	jp z,_resetPushingAgainstTileCounter
@@ -380,7 +373,6 @@ _nextToKeyBlock:
 	jr _resetPushingAgainstTileCounter
 
 ;;
-; @addr{41c6}
 _nextToKeyDoor:
 	call _specialObjectCheckPushingAgainstTile
 	jr z,_resetPushingAgainstTileCounter
@@ -446,7 +438,6 @@ _nextToKeyDoor:
 
 ;;
 ; Sets wPushingAgainstTileCounter to 20 frames.
-; @addr{420c}
 _resetPushingAgainstTileCounter:
 	ld a,20
 	ld (wPushingAgainstTileCounter),a
@@ -454,14 +445,12 @@ _resetPushingAgainstTileCounter:
 
 ;;
 ; @param[out] zflag Set if the counter has reached zero.
-; @addr{4212}
 _decPushingAgainstTileCounter:
 	ld hl,wPushingAgainstTileCounter
 	dec (hl)
 	ret
 
 ;;
-; @addr{4217}
 _nextToOverworldKeyhole:
 	call getThisRoomFlags
 	and $80
@@ -575,7 +564,6 @@ _jumpToShowInfoText:
 	jp showInfoTextForTile
 
 ;;
-; @addr{4288}
 _createKeySpriteInteraction:
 	call getFreeInteractionSlot
 	ret nz
@@ -591,7 +579,6 @@ _createKeySpriteInteraction:
 	jp setShortPosition
 
 ;;
-; @addr{4299}
 _nextToSubrosiaKeydoor:
 .ifdef ROM_SEASONS
 	call _specialObjectCheckPushingAgainstTile
@@ -627,7 +614,6 @@ _nextToSubrosiaKeydoor:
 
 ;;
 ; From seasons: when next to certain tombstones, ghinis spawn
-; @addr{429b}
 _nextToGhiniSpawner:
 	; No enemies allowed while maple is on the screen
 	ld a,(wIsMaplePresent)
@@ -667,7 +653,6 @@ _nextToGhiniSpawner:
 
 ;;
 ; Deals with showing text when pushing against certain tiles, ie. cracked walls, keyholes
-; @addr{42c3}
 _nextToTileWithInfoText:
 	call _specialObjectCheckPushingAgainstTile
 	jp z,_resetPushingAgainstTileCounter
@@ -715,7 +700,6 @@ _nextToTileWithInfoText:
 ; Shows text for pressing against a tile, if it has not been shown once on the current
 ; screen already.
 ; @param a Index for the table below this function
-; @addr{42fb}
 showInfoTextForTile:
 	ld hl,@data
 	rst_addDoubleIndex
@@ -738,7 +722,6 @@ showInfoTextForTile:
 	scf
 	ret
 
-; @addr{4315}
 @data:
 	.db $04 <TX_5100 ; Key door
 	.db $02 <TX_5101 ; Boss key door
@@ -754,7 +737,6 @@ showInfoTextForTile:
 ;;
 ; @param d Special object (Link)
 ; @param[out] zflag Set if the object is pushing against the tile.
-; @addr{4329}
 _specialObjectCheckPushingAgainstTile:
 	ld a,(wLinkPushingDirection)
 	rlca
@@ -776,7 +758,6 @@ _specialObjectCheckPushingAgainstTile:
 
 ;;
 ; @param[out] cflag Unset if the object is in one of the corners of its current tile?
-; @addr{433f}
 @func_433f:
 	ld h,d
 	ld l,SpecialObject.yh
@@ -799,7 +780,6 @@ _specialObjectCheckPushingAgainstTile:
 ; @param	b	Parameter from interactableTilesTable. Will be $40 or above if the
 ;			door is a boss key door.
 ; @param[out]	zflag	Set if you have no keys, or don't have the boss key
-; @addr{4350}
 _checkAndDecKeyCount:
 .ifdef ROM_SEASONS
 	ld a,GLOBALFLAG_DATING_ROSA
@@ -844,7 +824,6 @@ _checkAndDecKeyCount:
 ; @param	d	Special object (Link)
 ; @param[out]	a	The tile index in front of the object
 ; @param[out]	bc	The position of the tile in front
-; @addr{4373}
 _specialObjectGetTileInFront:
 	ld e,SpecialObject.direction
 	ld a,(de)
@@ -853,7 +832,6 @@ _specialObjectGetTileInFront:
 
 ;;
 ; @param	hl	Address to get offsets to add to Y, X
-; @addr{437a}
 _specialObjectGetTileAtOffset:
 	ld e,SpecialObject.yh
 	ld a,(de)
@@ -886,7 +864,6 @@ _nextTileOffsets:
 ; This is used to determine whether a pushable block has room to be pushed.
 ;
 ; @param[out]	cflag	Set if there is no obstruction (tile is not solid)
-; @addr{4398}
 _checkTileAfterNext:
 	ld a,(wLinkPushingDirection)
 	ld hl,@offsets
@@ -934,7 +911,6 @@ _checkTileAfterNext:
 
 .ifdef ROM_AGES
 
-; @addr{43b2}
 interactableTilesTable:
 	.dw @collisions0
 	.dw @collisions1
@@ -998,7 +974,6 @@ interactableTilesTable:
 
 .else; ROM_SEASONS
 
-; @addr{43a3}
 interactableTilesTable:
 	.dw @collisions0
 	.dw @collisions1

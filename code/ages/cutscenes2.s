@@ -1,12 +1,10 @@
 ;;
 ; CUTSCENE_TOGGLE_BLOCKS
-; @addr{7c80}
 cutscene02:
 	call @handleRaisingFloorsCutscene
 	jp updateAllObjects
 
 ;;
-; @addr{7c86}
 @func_7c86:
 	ld hl,wTmpcbb4
 	dec (hl)
@@ -17,14 +15,12 @@ cutscene02:
 
 ;;
 ; Unused
-; @addr{7c8e}
 @func_7c8e:
 	ld hl,wTmpcbb3
 	inc (hl)
 	ret
 
 ;;
-; @addr{7c93}
 @handleRaisingFloorsCutscene:
 	ld a,(wCutsceneState)
 	rst_jumpTable
@@ -71,7 +67,6 @@ cutscene02:
 	jp updateLastToggleBlocksState
 
 ;;
-; @addr{7ced}
 @func_7ced:
 	ld a,:w3RoomLayoutBuffer
 	ld ($ff00+R_SVBK),a
@@ -166,21 +161,18 @@ cutscene02:
 
 ;;
 ; CUTSCENE_WALL_RETRACTION
-; @addr{7d6b}
 cutscene0b:
 	callab func_701d
 	jp updateAllObjects
 
 ;;
 ; CUTSCENE_D2_COLLAPSE
-; @addr{7d76}
 cutscene1a:
 	callab func_7168
 	jp updateAllObjects
 
 ;;
 ; CUTSCENE_TIMEWARP
-; @addr{7d81}
 cutscene1b:
 	ld a,($ff00+R_SVBK)
 	push af
@@ -190,7 +182,6 @@ cutscene1b:
 	jp updateAllObjects
 
 ;;
-; @addr{7d92}
 warpToMoblinKeepUnderground:
 	ld hl,@warpDestVars
 	jp setWarpDestVariables
@@ -200,7 +191,6 @@ warpToMoblinKeepUnderground:
 
 ;;
 ; CUTSCENE_AMBI_PASSAGE_OPEN
-; @addr{7d9d}
 cutscene1c:
 	callab func_03_7493
 	call updateAllObjects
@@ -208,7 +198,6 @@ cutscene1c:
 
 ;;
 ; CUTSCENE_JABU_OPEN
-; @addr{7dab}
 cutscene1d:
 	callab func_03_7565
 	callab checkUpdateUnderwaterWaves
@@ -216,7 +205,6 @@ cutscene1d:
 
 ;;
 ; CUTSCENE_CLEAN_SEAS
-; @addr{7dbe}
 cutscene1e:
 	callab func_03_7619
 	call updateStatusBar

@@ -13,7 +13,6 @@
 ; to any adjacent room, which are in a different pack ($01), the graphics will
 ; be fully reloaded.
 
-; @addr{475c}
 roomPackData:
 
 ; Present   

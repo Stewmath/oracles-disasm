@@ -1,4 +1,3 @@
-; @addr{2f34}
 enemyCodeTable:
 .ifdef ROM_AGES
 	.dw bank10.enemyCode00 ; 0x00
@@ -265,6 +264,5 @@ enemyCodeTable:
 	; - itemDropTables
 
 ;;
-; @addr{3034}
 enemyCodeNil:
 	ret

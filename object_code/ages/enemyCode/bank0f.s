@@ -247,7 +247,6 @@ _giantGhini_stateA:
 
 
 ;;
-; @addr{46da}
 _giantGhini_updateZPos:
 	ld c,$00
 	call objectUpdateSpeedZ_paramC
@@ -274,7 +273,6 @@ _giantGhini_updateZPos:
 
 
 ;;
-; @addr{46f2}
 _giantGhini_spawnChildren:
 	ld c,$03
 @nextChild:
@@ -314,7 +312,6 @@ _giantGhini_spawnChildren:
 ; face directly away from Link before it slowly moves toward him again.
 ;
 ; @param[out]	a	angle
-; @addr{4711}
 _giantGhini_getTargetAngle:
 	ldh a,(<hCameraY)
 	ld c,a
@@ -728,13 +725,11 @@ _swoop_stomp_substate2:
 	res 7,(hl)
 
 ;;
-; @addr{4937}
 _swoop_beginFlyingUp:
 	ld l,Enemy.counter1
 	ld (hl),$03 ; 3 flaps before he goes to next state
 
 ;;
-; @addr{493b}
 _swoop_flyFurtherUp:
 	ld l,Enemy.counter2
 	ld (hl),$30 ; $30 frames per wing flap
@@ -761,7 +756,6 @@ _swoop_stomp_substate3:
 
 ;;
 ; @param[out]	a	Value from 0-2
-; @addr{495e}
 _swoop_getAngerLevel:
 	ld b,$00
 	ld e,Enemy.health
@@ -777,7 +771,6 @@ _swoop_getAngerLevel:
 	ret
 
 ;;
-; @addr{496f}
 _swoop_hitGround:
 	ld a,$30
 	call setScreenShakeCounter
@@ -809,7 +802,6 @@ _swoop_hitGround:
 
 ;;
 ; @param[out]	de	animParameter (if nonzero, just flapped wings)
-; @addr{4999}
 _swoop_animate:
 	call enemyAnimate
 	ld e,Enemy.animParameter
@@ -1311,7 +1303,6 @@ _subterror_stateC:
 
 
 ;;
-; @addr{4c40}
 _subterror_spawnDirtEvery8Frames:
 	inc e
 	ld a,(de) ; [var31]
@@ -1320,7 +1311,6 @@ _subterror_spawnDirtEvery8Frames:
 	ret nz
 
 ;;
-; @addr{4c45}
 _subterror_spawnDirt:
 	ld e,Enemy.var31
 	ld a,$07
@@ -1337,7 +1327,6 @@ _subterror_spawnDirt:
 	jp setTile
 
 ;;
-; @addr{4c5a}
 _subterror_retFromCallerIfAnimationUnfinished:
 	call enemyAnimate
 	ld h,d
@@ -1350,7 +1339,6 @@ _subterror_retFromCallerIfAnimationUnfinished:
 
 ;;
 ; @param[out]	a	Anger level (0-2)
-; @addr{4c65}
 _subterror_getAngerLevel:
 	ld b,$00
 	ld e,Enemy.health
@@ -1366,7 +1354,6 @@ _subterror_getAngerLevel:
 	ret
 
 ;;
-; @addr{4c76}
 _subterror_setAnimationFromAngle:
 	ld h,d
 	ld l,Enemy.angle
@@ -2185,7 +2172,6 @@ _armosWarrior_sword_stateC:
 
 ;;
 ; Shield copies parent's position plus an offset
-; @addr{503a}
 _armosWarrior_shield_updatePosition:
 	ld a,Object.yh
 	call objectGetRelatedObject1Var
@@ -2217,7 +2203,6 @@ _armosWarrior_shield_updatePosition:
 
 ;;
 ; Updates collisionRadiusY/X based on animParameter, also adds an offset to Y/X position.
-; @addr{505a}
 _armosWarrior_sword_updateCollisionBox:
 	ld e,Enemy.animParameter
 	ld a,(de)
@@ -2250,7 +2235,6 @@ _armosWarrior_sword_updateCollisionBox:
 
 ;;
 ; Sets the sword's position assuming it's being held by the parent.
-; @addr{507a}
 _armosWarrior_sword_setPositionAsHeld:
 	ld a,Object.yh
 	call objectGetRelatedObject1Var
@@ -2258,7 +2242,6 @@ _armosWarrior_sword_setPositionAsHeld:
 	jp objectTakePositionWithOffset
 
 ;;
-; @addr{5085}
 _armosWarrior_sword_checkCollisionWithShield:
 	ld e,Enemy.var34
 	ld a,(de)
@@ -2317,7 +2300,6 @@ _armosWarrior_sword_checkCollisionWithShield:
 
 ;;
 ; Checks for intersection on a position component given two objects.
-; @addr{50c7}
 @checkIntersection:
 	; b = [sword.collisionRadius] + [shield.collisionRadius]
 	ld e,l
@@ -2343,7 +2325,6 @@ _armosWarrior_sword_checkCollisionWithShield:
 ; reached one of the "corners" of the box where he must turn.
 ;
 ; @param[out]	zflag	z if hit a turning point
-; @addr{50d5}
 _armosWarrior_parent_checkReachedTurningPoint:
 	ld b,$31
 	ld e,Enemy.yh
@@ -2379,7 +2360,6 @@ _armosWarrior_parent_checkReachedTurningPoint:
 ;;
 ; @param[out]	bc	Position of sword
 ; @param[out]	cflag	c if the sword has gone to far and should stop now
-; @addr{50fc}
 _armosWarrior_sword_checkWentTooFar:
 	; Fix position, store it in bc
 	ld h,d
@@ -2415,7 +2395,6 @@ _armosWarrior_sword_checkWentTooFar:
 	ret
 
 ;;
-; @addr{5123}
 @checkPositionComponent:
 	; If bit 0 of the data structure is set, it's an upper / left boundary
 	bit 0,a
@@ -2475,7 +2454,6 @@ _armosWarrior_sword_angleBoundaries:
 	.db $51 $51 ; Up-left
 
 ;;
-; @addr{5167}
 _armosWarrior_sword_playSlashSound:
 	ld a,(wFrameCounter)
 	and $0f
@@ -3129,7 +3107,6 @@ _smasher_parent_stateB:
 	ld (hl),SPEED_40
 
 ;;
-; @addr{5477}
 _smasher_hop:
 	ld l,Enemy.speedZ
 	ld a,<(-$c0)
@@ -3242,7 +3219,6 @@ _smasher_parent_stateD:
 
 ;;
 ; @param[out]	a	direction value
-; @addr{54f8}
 _smasher_updateAngleTowardPosition:
 	call objectGetRelativeAngleWithTempVars
 	ld e,Enemy.angle
@@ -3250,7 +3226,6 @@ _smasher_updateAngleTowardPosition:
 	jr _smasher_updateDirectionFromAngle
 
 ;;
-; @addr{5500}
 _smasher_updateAngleTowardLink:
 	call objectGetAngleTowardEnemyTarget
 	ld e,Enemy.angle
@@ -3259,7 +3234,6 @@ _smasher_updateAngleTowardLink:
 ;;
 ; @param	a	angle
 ; @param[out]	a	direction value
-; @addr{5506}
 _smasher_updateDirectionFromAngle:
 	ld b,a
 	and $0f
@@ -3276,7 +3250,6 @@ _smasher_updateDirectionFromAngle:
 
 ;;
 ; @param	a	Value for oamFlags
-; @addr{5516}
 _smasher_setOamFlags:
 	ld h,d
 	ld l,Enemy.oamFlagsBackup
@@ -3289,7 +3262,6 @@ _smasher_setOamFlags:
 ; "objectGetRelativeAngleWithTempVars".
 ;
 ; @param	h	Parent object
-; @addr{551c}
 _smasher_ball_loadPositions:
 	ld l,Enemy.yh
 	ld e,l
@@ -3307,7 +3279,6 @@ _smasher_ball_loadPositions:
 ;;
 ; Updates the ball's "respawn timer" and makes it disappear (goes to state $0d) when it
 ; hits zero.
-; @addr{552b}
 _smasher_ball_updateRespawnTimer:
 	; Return if this isn't the ball
 	ld e,Enemy.subid
@@ -3339,7 +3310,6 @@ _smasher_ball_updateRespawnTimer:
 
 
 ;;
-; @addr{554e}
 _smasher_ball_makeLinkDrop:
 	ld e,Enemy.state
 	ld a,(de)
@@ -4341,7 +4311,6 @@ _vire_batForm_stateD:
 ; increments state2.
 ;
 ; @param[out]	hl	Enemy.state2
-; @addr{5a45}
 _vire_spawnOutsideCamera:
 	call getRandomNumber_noPreserveVars
 	and $07
@@ -4391,7 +4360,6 @@ _vire_spawnOutsideCamera:
 ;;
 ; Vire has left the screen; set state to 9, where he'll wait for 90 frames before
 ; attacking again.
-; @addr{5a86}
 _vire_mainForm_leftScreen:
 	ld h,d
 	ld l,Enemy.state
@@ -4407,7 +4375,6 @@ _vire_mainForm_leftScreen:
 
 ;;
 ; @param[out]	cflag	c if left screen
-; @addr{5a98}
 _vire_checkOffScreen:
 	ld e,Enemy.yh
 	ld a,(de)
@@ -4420,7 +4387,6 @@ _vire_checkOffScreen:
 
 
 ;;
-; @addr{5aa4}
 _vire_mainForm_circleAroundScreen:
 	ldh a,(<hCameraY)
 	add (SCREEN_HEIGHT<<3)+4
@@ -4493,14 +4459,12 @@ _vire_mainForm_circleAroundScreen:
 
 
 ;;
-; @addr{5af9}
 _vire_mainForm_applySpeedAndAnimate:
 	call objectApplySpeed
 	jp enemyAnimate
 
 ;;
 ; @param[out]	cflag	c if Link is too close (Vire will flee)
-; @addr{5aff}
 _vire_mainForm_checkLinkTooClose:
 	ld h,d
 	ld l,Enemy.yh
@@ -4518,7 +4482,6 @@ _vire_mainForm_checkLinkTooClose:
 
 
 ;;
-; @addr{5b14}
 _vire_mainForm_fireProjectile:
 	call getRandomNumber_noPreserveVars
 	and $01
@@ -4527,7 +4490,6 @@ _vire_mainForm_fireProjectile:
 
 ;;
 ; @param	b	Subid
-; @addr{5b1b}
 _vire_mainForm_fireProjectileWithSubid:
 	call getFreePartSlot
 	ret nz
@@ -4550,7 +4512,6 @@ _vire_mainForm_fireProjectileWithSubid:
 	jp enemySetAnimation
 
 ;;
-; @addr{5b39}
 _vire_batForm_moveAwayFromLinkIfTooClose:
 	ld h,d
 	ld l,Enemy.yh
@@ -4574,7 +4535,6 @@ _vire_batForm_moveAwayFromLinkIfTooClose:
 
 
 ;;
-; @addr{5b59}
 _vire_batForm_updateZPos:
 	call _ecom_decCounter1
 	ld a,(hl)
@@ -5006,7 +4966,6 @@ _anglerFish_antenna:
 
 ;;
 ; Changes state to $0c if conditions are appropriate to fire a projectile.
-; @addr{5d80}
 anglerFish_main_checkFireProjectile:
 	ld e,Enemy.yh
 	ld a,(de)
@@ -5690,7 +5649,6 @@ _blueStalfos_subid3:
 ;;
 ; Decides the next position for the blue stalfos. It will always choose a different
 ; quadrant of the screen from the one it's in already.
-; @addr{60e2}
 _blueStalfos_main_decideNextPosition:
 	ld e,$03
 	ld bc,$3030
@@ -5719,7 +5677,6 @@ _blueStalfos_main_decideNextPosition:
 ;;
 ; @param	a	Position index to use
 ; @param	bc	Offset to be added to target position
-; @addr{6102}
 _blueStalfos_main_moveToQuadrant:
 	ld hl,@quadrantList
 	rst_addAToHl
@@ -5753,7 +5710,6 @@ _blueStalfos_main_moveToQuadrant:
 ;;
 ; @param[out]	a	The quadrant of the screen Link is in.
 ;			(0/2/4/6 for up/left, up/right, down/left, down/right)
-; @addr{6127}
 @getLinkQuadrant:
 	ld e,$00
 	ldh a,(<hEnemyTargetY)
@@ -5784,7 +5740,6 @@ _blueStalfos_main_moveToQuadrant:
 
 
 ;;
-; @addr{6153}
 _blueStalfos_main_accelerate:
 	ld e,Enemy.counter1
 	ld a,(de)
@@ -5805,7 +5760,6 @@ _blueStalfos_main_accelerate:
 
 
 ;;
-; @addr{6164}
 _blueStalfos_afterImage_resetPositionVars:
 	; [this.position] = [parent.position]
 	; (Also copy position to var30/var31)
@@ -5841,7 +5795,6 @@ _blueStalfos_afterImage_resetPositionVars:
 	ret
 
 ;;
-; @addr{6183}
 _blueStalfos_createPuff:
 	ldbc INTERACID_PUFF,$02
 	call objectCreateInteraction
@@ -6729,7 +6682,6 @@ _pumpkinHead_head_state08:
 	ld b,$00
 
 ;;
-; @addr{65a1}
 _pumpkinHead_head_setAnimation:
 	ld e,Enemy.direction
 	ld (de),a
@@ -7034,7 +6986,6 @@ _pumpkinHead_head_state16:
 
 ;;
 ; @param[out]	zflag	z if time to stomp
-; @addr{66fe}
 pumpkinHead_body_countdownUntilStomp:
 	ld a,(wFrameCounter)
 	rrca
@@ -7049,7 +7000,6 @@ pumpkinHead_body_countdownUntilStomp:
 
 ;;
 ; Randomly sets the duration until a stomp occurs, and the number of stomps to perform.
-; @addr{670f}
 _pumpkinHead_body_chooseRandomStompTimerAndCount:
 	ld bc,$0701
 	call _ecom_randomBitwiseAndBCE
@@ -7073,7 +7023,6 @@ _pumpkinHead_body_chooseRandomStompTimerAndCount:
 
 ;;
 ; @param[out]	zflag	z if body is moving down
-; @addr{672e}
 _pumpkinHead_ghostOrHead_updatePositionWhileStompingUp:
 	ld a,Object.speedZ+1
 	call objectGetRelatedObject1Var
@@ -7091,7 +7040,6 @@ _pumpkinHead_ghostOrHead_updatePositionWhileStompingUp:
 ; @param	c	Gravity
 ; @param[out]	hl	Enemy.zh
 ; @param[out]	cflag	nc if reached target z-position
-; @addr{6740}
 _pumpkinHead_ghostOrHead_updatePositionWhileStompingDown:
 	call objectUpdateSpeedZ_paramC
 	ld l,Enemy.zh
@@ -7110,7 +7058,6 @@ _pumpkinHead_ghostOrHead_updatePositionWhileStompingDown:
 
 
 ;;
-; @addr{6757}
 _pumpkinHead_noHealth:
 	ld e,Enemy.subid
 	ld a,(de)
@@ -7776,7 +7723,6 @@ _headThwomp_state11:
 
 
 ;;
-; @addr{6a78}
 _headThwomp_setSolidTilesAroundSelf:
 	ld hl,wRoomCollisions+$46
 	ld (hl),$01
@@ -7795,7 +7741,6 @@ _headThwomp_setSolidTilesAroundSelf:
 	ret
 
 ;;
-; @addr{6a8e}
 _headThwomp_unsetSolidTilesAroundSelf:
 	ld hl,wRoomCollisions+$46
 	xor a
@@ -7811,7 +7756,6 @@ _headThwomp_unsetSolidTilesAroundSelf:
 
 ;;
 ; @param	b	Animation base
-; @addr{6a9b}
 _headThwomp_rotate:
 	ld e,Enemy.direction
 	ld a,(de)
@@ -7834,7 +7778,6 @@ _headThwomp_rotate:
 ; If a bomb is thrown into head thwomp, this sets the state to $0a.
 ;
 ; @param[out]	zflag	z if no bomb entered head thwomp
-; @addr{6ab0}
 _headThwomp_checkBombThrownIntoHead:
 	ldhl FIRST_DYNAMIC_ITEM_INDEX,Item.start
 @itemLoop:
@@ -7922,7 +7865,6 @@ _headThwomp_checkBombThrownIntoHead:
 	jr @triggerBombEffect
 
 ;;
-; @addr{6b1c}
 _headThwomp_dropHeart:
 	call getFreePartSlot
 	ret nz
@@ -7933,7 +7875,6 @@ _headThwomp_dropHeart:
 	jp objectCopyPositionWithOffset
 
 ;;
-; @addr{6b2b}
 _headThwomp_checkShootProjectile:
 	ld a,(wFrameCounter)
 	rrca
@@ -8447,7 +8388,6 @@ _shadowHag_state13:
 
 
 ;;
-; @addr{6db4}
 _shadowHag_beginEmergingFromShadow:
 	ld a,$05
 	call enemySetAnimation
@@ -8460,7 +8400,6 @@ _shadowHag_beginEmergingFromShadow:
 
 ;;
 ; @param[out]	zflag	z if done emerging? (animParameter was $ff)
-; @addr{6dc3}
 _shadowHag_updateEmergingFromShadow:
 	call enemyAnimate
 	ld e,Enemy.animParameter
@@ -8481,7 +8420,6 @@ _shadowHag_updateEmergingFromShadow:
 	ret
 
 ;;
-; @addr{6dd7}
 shadowHag_updateReturningToGround:
 	call enemyAnimate
 
@@ -8511,7 +8449,6 @@ shadowHag_updateReturningToGround:
 
 ;;
 ; Sets state to 9 & initializes stuff
-; @addr{6df3}
 _shadowHag_beginReturningToGround:
 	ld h,d
 	ld l,Enemy.state
@@ -8539,7 +8476,6 @@ _shadowHag_beginReturningToGround:
 ;
 ; @param[out]	bc	Spawn position
 ; @param[out]	zflag	nz if Link is too close to the wall to spawn in
-; @addr{6e0f}
 _shadowHag_chooseSpawnPosition:
 	ld a,(w1Link.direction)
 	ld hl,@spawnOffsets
@@ -8580,7 +8516,6 @@ _shadowHag_chooseSpawnPosition:
 
 ;;
 ; @param[out]	zflag	z if Link looked at the hag
-; @addr{6e3f}
 _shadowHag_checkLinkLookedAtHag:
 	call objectGetAngleTowardEnemyTarget
 	add $14
@@ -8976,7 +8911,6 @@ _eyesoar_stateE:
 ;;
 ; Checks to update the "formation", that is, the distances away from Eyesoar for the
 ; children.
-; @addr{6ffa}
 _eyesoar_updateFormation:
 	; Check all children are at their target distance away from Eyesoar
 	ld e,Enemy.var3a
@@ -9060,7 +8994,6 @@ _eyesoar_dead:
 ;;
 ; Chooses an angle which roughly goes toward the center of the room, plus a small, random
 ; angle offset.
-; @addr{7057}
 _eyesoar_chooseNewAngle:
 	; Get random angle offset in 'c'
 	call getRandomNumber_noPreserveVars
@@ -9237,7 +9170,6 @@ _smog_state_uninitialized:
 
 ;;
 ; @param	a	Collision radius
-; @addr{7139}
 @initCollisions:
 	call objectSetCollideRadius
 	ld l,Enemy.enemyCollisionMode
@@ -9534,7 +9466,6 @@ _smog_state8_subid4:
 
 ;;
 ; @param[out]	zflag	z if counter1 reached 0 (should update speed)
-; @addr{72b2}
 @func_72b2:
 	ld e,Enemy.animParameter
 	ld a,(de)
@@ -9589,7 +9520,6 @@ _smog_state8_subid5:
 
 ;;
 ; @param[out]	zflag	nz if hit a wall
-; @addr{72f7}
 _smog_checkHitWall:
 	ld e,Enemy.direction
 	ld a,(de)
@@ -9607,7 +9537,6 @@ _smog_positionOffsets:
 
 ;;
 ; @param[out]	zflag	nz if hugging a wall
-; @addr{7309}
 _smog_checkHuggingWall:
 	ld b,$ff
 	ld e,Enemy.subid
@@ -9656,7 +9585,6 @@ _smog_checkHuggingWall:
 ; called.)
 ;
 ; @param[out]	zflag	nz if a wall exists
-; @addr{733a}
 _smog_checkAdjacentWallsBitset:
 	ld h,d
 	ld l,Enemy.angle
@@ -9688,7 +9616,6 @@ _smog_checkAdjacentWallsBitset:
 
 ;;
 ; Applies speed and updates "adjacentWallsBitset"
-; @addr{735c}
 _smog_applySpeed:
 	; Update angle based on direction
 	ld e,Enemy.direction
@@ -9751,7 +9678,6 @@ _smog_updateAdjacentWallsBitset:
 
 ;;
 ; @param[out]	zflag	nz if smog should begin "firing projectile" animation
-; @addr{73a6}
 _smog_decCounterToFireProjectile:
 	ld e,Enemy.var36
 	ld a,(de)
@@ -9772,7 +9698,6 @@ _smog_decCounterToFireProjectile:
 ;;
 ; For given values of subid and var03, this reads one of four randomly chosen values and
 ; puts that value into var36 (counter until next projectile is fired).
-; @addr{73b3}
 _smog_setCounterToFireProjectile:
 	ld e,Enemy.subid
 	ld a,(de)
@@ -10294,7 +10219,6 @@ _octogon_subid0_pauseMovement:
 
 
 ;;
-; @addr{7637}
 _octogon_chooseRandomTargetPosition:
 	call getRandomNumber
 	and $18
@@ -10304,7 +10228,6 @@ _octogon_chooseRandomTargetPosition:
 ; @param	hl	Pointer to index for a table
 ; @param[out]	hl	Pointer to some data
 ; @param[out]	zflag	z if animation changed
-; @addr{763d}
 _octogon_loadTargetPosition:
 	ld a,(hl)
 	add a
@@ -10655,7 +10578,6 @@ _octogon_subid1_belowWater_state8:
 
 ;;
 ; Moves toward target position and updates animation + sound effects accordingly
-; @addr{7802}
 _octogon_updateMovementAndAnimation:
 	call _octogon_moveTowardTargetPosition
 
@@ -10681,7 +10603,6 @@ _octogon_updateMovementAndAnimation:
 	; Above-water only (subid 0)
 
 ;;
-; @addr{781e}
 _octogon_doSplashAnimation:
 	ld a,SND_SWORDSPIN
 	call playSound
@@ -10905,7 +10826,6 @@ _octogon_subid2:
 
 
 ;;
-; @addr{7931}
 _octogon_subid0_submergeIntoWater:
 	ld h,d
 	ld l,Enemy.state
@@ -10925,7 +10845,6 @@ _octogon_subid0_submergeIntoWater:
 
 
 ;;
-; @addr{794e}
 _octogon_beginRisingAboveWater:
 	ld h,d
 	ld l,Enemy.state
@@ -10948,7 +10867,6 @@ _octogon_beginRisingAboveWater:
 ;;
 ; Takes current position, fixes it to the closest valid spot above water, and decides
 ; a value for var30 (target position index).
-; @addr{7967}
 _octogon_fixPositionAboveWater:
 	ld a,(wTmpcfc0.octogonBoss.posNeedsFixing)
 	or a
@@ -11020,7 +10938,6 @@ _octogon_fixPositionAboveWater:
 	.db $01 $00 $01 $06 $00 $08 $03 $08 $05
 
 ;;
-; @addr{79d7}
 _octogon_fireOctorokProjectile:
 	call getFreePartSlot
 	ret nz
@@ -11029,7 +10946,6 @@ _octogon_fireOctorokProjectile:
 ;;
 ; @param	h	Projectile (could be PARTID_OCTOROK_PROJECTILE or
 ;			PARTID_OCTOGON_BUBBLE)
-; @addr{79dd}
 _octogon_initializeProjectile:
 	ld e,Enemy.direction
 	ld a,(de)
@@ -11060,7 +10976,6 @@ _octogon_initializeProjectile:
 	.db $00 $f0
 
 ;;
-; @addr{7a02}
 _octogon_decVar36IfNonzero:
 	ld h,d
 	ld l,Enemy.var36
@@ -11073,7 +10988,6 @@ _octogon_decVar36IfNonzero:
 ;;
 ; Moves toward position stored in var31/var32. Increments state and sets counter1 to 30
 ; when it reaches that position.
-; @addr{7a0a}
 _octogon_moveTowardTargetPosition:
 	ld h,d
 	ld l,Enemy.var31
@@ -11107,7 +11021,6 @@ _octogon_moveTowardTargetPosition:
 ; @param	bc	Position
 ; @param[out]	a
 ; @param[out]	e
-; @addr{7a2e}
 _octogon_getClosestTargetPositionIndex:
 	ld e,$00
 
@@ -11526,7 +11439,6 @@ _plasmarine_stateF:
 	ld (hl),30
 
 ;;
-; @addr{7c32}
 _plasmarine_decideNumberOfShockAttacks:
 	call getRandomNumber_noPreserveVars
 	and $01
@@ -11537,7 +11449,6 @@ _plasmarine_decideNumberOfShockAttacks:
 
 ;;
 ; @param[out]	cflag	c if close enough to target position
-; @addr{7c3c}
 _plasmarine_checkCloseToTargetPosition:
 	ld h,d
 	ld l,Enemy.var30
@@ -11699,7 +11610,6 @@ _kingMoblin_state_uninitialized:
 
 ;;
 ; @param[out]	a,h	Object index
-; @addr{7d1e}
 @spawnMinion:
 	call getFreeEnemySlot_uncounted
 	ld (hl),ENEMYID_KING_MOBLIN_MINION
@@ -12147,7 +12057,6 @@ _kingMoblin_state15:
 ; bomb on screen. Sets state to $10 while moving, $0b when reached centre.
 ;
 ; @param[out]	zflag	nz if state changed
-; @addr{7f5c}
 _kingMoblin_checkMoveToCentre:
 	ld a,Object.id
 	call objectGetRelatedObject2Var
@@ -12156,7 +12065,6 @@ _kingMoblin_checkMoveToCentre:
 	ret z
 
 ;;
-; @addr{7f65}
 _kingMoblin_moveToCentre:
 	ld h,d
 	ld l,Enemy.xh

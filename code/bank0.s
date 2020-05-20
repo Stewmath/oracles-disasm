@@ -91,7 +91,6 @@
 ;;
 ; @param a
 ; @param de
-; @addr{0068}
 addAToDe:
 	add e
 	ld e,a
@@ -102,7 +101,6 @@ addAToDe:
 ;;
 ; @param a
 ; @param bc
-; @addr{006d}
 addAToBc:
 	add c
 	ld c,a
@@ -114,7 +112,6 @@ addAToBc:
 ; Adds a*2 to de.
 ; @param a
 ; @param de
-; @addr{0072}
 addDoubleIndexToDe:
 	push hl
 	add a
@@ -132,7 +129,6 @@ addDoubleIndexToDe:
 ; Adds a*2 to bc.
 ; @param a
 ; @param bc
-; @addr{007e}
 addDoubleIndexToBc:
 	push hl
 	add a
@@ -150,7 +146,6 @@ addDoubleIndexToBc:
 ; Call a function in any bank, from any bank.
 ; @param e Bank of the function to call
 ; @param hl Address of the function to call
-; @addr{008a}
 interBankCall:
 	ld a,($ff97)
 	push af
@@ -166,7 +161,6 @@ interBankCall:
 ;;
 ; Jump to hl.
 ; @param hl Address to jump to.
-; @addr{00a0}
 jpHl:
 	jp hl
 
@@ -177,7 +171,6 @@ jpHl:
 ;	bdfghj m$*/:~
 ;	nqrstwy?%&<=>
 ;	23456789↑↓←→@
-; @addr{00a1}
 secretSymbols:
 	.asc "BDFGHJLM"
 	.db $13 $bd $12 $11 $23
@@ -230,7 +223,6 @@ bitTable:
 
 ;;
 ; The game's entrypoint.
-; @addr{0150}
 begin:
 	nop
 	di
@@ -259,7 +251,6 @@ resetGame:
 ;
 ; @param	a	Value to check
 ; @param[out]	a,b	Number of set bits in 'a'
-; @addr{0176}
 getNumSetBits:
 	ld b,$00
 -
@@ -279,7 +270,6 @@ getNumSetBits:
 ; @param[in]  bc	Number to add.
 ; @param[in]  hl	Address to add with and store result into.
 ; @param[out] cflag	Set if the value would have gone over $9999.
-; @addr{0181}
 addDecimalToHlRef:
 	ld a,(hl)
 	add c
@@ -302,7 +292,6 @@ addDecimalToHlRef:
 ; @param	bc	Value to subtract.
 ; @param	hl	Address to subtract with and store result into.
 ; @param[out]	cflag	Set if the value would have gone under $0000.
-; @addr{018f}
 subDecimalFromHlRef:
 	ld a,(hl)
 	sub c
@@ -324,7 +313,6 @@ subDecimalFromHlRef:
 ; @param	c	Operand 2
 ; @param[out]	hl	Result
 ; @trashes{b,e}
-; @addr{019d}
 multiplyAByC:
 	ld e,$08
 	ld b,$00
@@ -345,7 +333,6 @@ multiplyAByC:
 ;
 ; @param	a	Value to multiply
 ; @param[out]	bc	Result
-; @addr{01ac}
 multiplyABy16:
 	swap a
 	ld b,a
@@ -361,7 +348,6 @@ multiplyABy16:
 ;
 ; @param	a	Value to multiply
 ; @param[out]	bc	Result
-; @addr{01b7}
 multiplyABy8:
 	swap a
 	rrca
@@ -378,7 +364,6 @@ multiplyABy8:
 ;
 ; @param	a	Value to multiply
 ; @param[out]	bc	Result
-; @addr{01c3}
 multiplyABy4:
 	ld b,$00
 	add a
@@ -393,7 +378,6 @@ multiplyABy4:
 ;
 ; @param	a	Signed value
 ; @param[out]	bc	Signed 16-bit value
-; @addr{01cd}
 s8ToS16:
 	ld b,$ff
 	bit 7,a
@@ -406,7 +390,6 @@ s8ToS16:
 ;;
 ; @param[out]	a	$ff if hl < bc, $01 if hl > bc, $00 if equal
 ; @param[out]	cflag	c if hl < bc, nc otherwise
-; @addr{01d6}
 compareHlToBc:
 	ld a,h
 	cp b
@@ -430,7 +413,6 @@ compareHlToBc:
 ;
 ; @param[out]	a	Bit value (0-7) or unchanged if no bits are set
 ; @param[out]	cflag	c if at least one bit was set (output is valid)
-; @addr{01ea}
 getHighestSetBit:
 	or a
 	ret z
@@ -448,7 +430,6 @@ getHighestSetBit:
 ;;
 ; @param[out]	a	Bit value (0-7) or unchanged if no bits are set
 ; @param[out]	cflag	c if at least one bit was set (output is valid)
-; @addr{01f8}
 getLowestSetBit:
 	or a
 	ret z
@@ -471,7 +452,6 @@ getLowestSetBit:
 ; @param	hl	Start address of flags
 ; @param[out]	a	AND result
 ; @param[out]	zflag	Set if the flag is not set.
-; @addr{0205}
 checkFlag:
 	push hl
 	push bc
@@ -484,7 +464,6 @@ checkFlag:
 ;;
 ; @param	a	Flag to set
 ; @param	hl	Start address of flags
-; @addr{020e}
 setFlag:
 	push hl
 	push bc
@@ -498,7 +477,6 @@ setFlag:
 ;;
 ; @param	a	Flag to unset
 ; @param	hl	Start address of flags
-; @addr{0218}
 unsetFlag:
 	push hl
 	push bc
@@ -513,7 +491,6 @@ unsetFlag:
 ;;
 ; Add (a/8) to hl, set 'a' to a bitmask for the desired bit (a%8)
 ;
-; @addr{0223}
 _flagHlpr:
 	ld b,a
 	and $f8
@@ -531,7 +508,6 @@ _flagHlpr:
 	ret
 
 ;;
-; @addr{0237}
 decHlRef16WithCap:
 	inc hl
 	ldd a,(hl)
@@ -547,7 +523,6 @@ decHlRef16WithCap:
 	ret
 
 ;;
-; @addr{0245}
 incHlRefWithCap:
 	inc (hl)
 	ret nz
@@ -555,7 +530,6 @@ incHlRefWithCap:
 	ret
 
 ;;
-; @addr{024a}
 incHlRef16WithCap:
 	inc (hl)
 	ret nz
@@ -577,7 +551,6 @@ incHlRef16WithCap:
 ;
 ; @param	a	Hexadecimal number
 ; @param[out]	bc	bcd-encoded decimal number
-; @addr{0259}
 hexToDec:
 	ld bc,$0000
 -
@@ -598,7 +571,6 @@ hexToDec:
 ; Update wKeysPressed, wKeysJustPressed, and wKeysPressedLastFrame.
 ;
 ; @trashes{bc,hl}
-; @addr{026d}
 pollInput:
 	ld c,R_P1
 	ld a,$20
@@ -632,7 +604,6 @@ pollInput:
 	ret
 
 ;;
-; @addr{0294}
 getInputWithAutofire:
 	push hl
 	push bc
@@ -667,7 +638,6 @@ getInputWithAutofire:
 	ret
 
 ;;
-; @addr{02c1}
 disableLcd:
 	ld a,($ff00+R_LCDC)
 	rlca
@@ -696,7 +666,6 @@ disableLcd:
 
 ;;
 ; @param	a	Gfx register state index to load
-; @addr{02ea}
 loadGfxRegisterStateIndex:
 	; a *= $06
 	ld l,a
@@ -719,7 +688,6 @@ loadGfxRegisterStateIndex:
 	ld ($ff00+R_LCDC),a
 	ret
 
-; @addr{0306}
 gfxRegisterStates:
 	.db $c3 $00 $00 $c7 $c7 $c7 ; 0x00: DMG mode screen, capcom intro, ...
 	.db $c3 $00 $00 $c7 $c7 $c7
@@ -804,7 +772,6 @@ gfxRegisterStates:
 
 ;;
 ; @param[out]	a	Random number
-; @addr{043e}
 getRandomNumber:
 	push hl
 	push bc
@@ -829,7 +796,6 @@ getRandomNumber:
 ;
 ; @param[out]	a,c	Random number
 ; @param[out]	hl	Intermediate calculation (sometimes also used as random values?)
-; @addr{0453}
 getRandomNumber_noPreserveVars:
 	ldh a,(<hRng1)
 	ld l,a
@@ -855,7 +821,6 @@ getRandomNumber_noPreserveVars:
 ;
 ; @param	hl	Probability distribution
 ; @param[out]	b	The index chosen from the distribution
-; @addr{0464}
 getRandomIndexFromProbabilityDistribution:
 	ld b,$00
 	call getRandomNumber
@@ -869,7 +834,6 @@ getRandomIndexFromProbabilityDistribution:
 ;;
 ; @param	b	# of bytes to clear
 ; @param	hl	Memory to clear
-; @addr{046f}
 clearMemory:
 	xor a
 
@@ -877,7 +841,6 @@ clearMemory:
 ; @param	a	Value to fill memory with
 ; @param	b	# of bytes to fill
 ; @param	hl	Memory to fill
-; @addr{0470}
 fillMemory:
 	ldi (hl),a
 	dec b
@@ -887,7 +850,6 @@ fillMemory:
 ;;
 ; @param	bc	# of bytes to clear
 ; @param	hl	Memory to clear
-; @addr{0475}
 clearMemoryBc:
 	xor a
 
@@ -895,7 +857,6 @@ clearMemoryBc:
 ; @param	a	Value to fill memory with
 ; @param	bc	# of bytes to fill
 ; @param	hl	Memory to fill
-; @addr{0476}
 fillMemoryBc:
 	ld e,a
 -
@@ -911,7 +872,6 @@ fillMemoryBc:
 ; @param	b	# of bytes to copy
 ; @param	de	Source
 ; @param	hl	Destination
-; @addr{047f}
 copyMemoryReverse:
 	ld a,(de)
 	ldi (hl),a
@@ -924,7 +884,6 @@ copyMemoryReverse:
 ; @param	b	# of bytes to copy
 ; @param	de	Destination
 ; @param	hl	Source
-; @addr{0486}
 copyMemory:
 	ldi a,(hl)
 	ld (de),a
@@ -937,7 +896,6 @@ copyMemory:
 ; @param	bc	# of bytes to copy
 ; @param	de	Source
 ; @param	hl	Destination
-; @addr{048d}
 copyMemoryBcReverse:
 	ld a,(de)
 	ldi (hl),a
@@ -952,7 +910,6 @@ copyMemoryBcReverse:
 ; @param	bc	# of bytes to copy
 ; @param	de	Destination
 ; @param	hl	Source
-; @addr{0496}
 copyMemoryBc:
 	ldi a,(hl)
 	ld (de),a
@@ -964,7 +921,6 @@ copyMemoryBc:
 	ret
 
 ;;
-; @addr{049f}
 clearOam:
 	xor a
 	ldh (<hOamTail),a
@@ -979,7 +935,6 @@ clearOam:
 	ret
 
 ;;
-; @addr{04af}
 clearVram:
 	call disableLcd
 	call clearOam
@@ -995,11 +950,9 @@ clearVram:
 	jr clearMemoryBc
 
 ;;
-; @addr{04cd}
 initializeVramMaps:
 	call initializeVramMap1
 ;;
-; @addr{04d0}
 initializeVramMap0:
 	call disableLcd
 	ld a,$01
@@ -1015,7 +968,6 @@ initializeVramMap0:
 	jr clearMemoryBc
 
 ;;
-; @addr{04ed}
 initializeVramMap1:
 	call disableLcd
 	ld a,$01
@@ -1032,7 +984,6 @@ initializeVramMap1:
 
 ;;
 ; @param	a	Palette header to load (see data/[ages|seasons]/paletteHeaders.s)
-; @addr{050b}
 loadPaletteHeader:
 	push de
 	ld l,a
@@ -1152,7 +1103,6 @@ loadPaletteHeader:
 ; @param	hl	src address
 ; @param[out]	cflag	Set if the lcd is on (data can't be copied immediately)
 ; @trashes{hl}
-; @addr{058a}
 queueDmaTransfer:
 	ld a,($ff00+R_LCDC)
 	rlca
@@ -1219,7 +1169,6 @@ queueDmaTransfer:
 ;;
 ; @param	a	Uncompressed gfx header index to load
 ; @trashes{bc,de,hl}
-; @addr{05da}
 loadUncompressedGfxHeader:
 	ld e,a
 	ld a,($ff00+R_SVBK)
@@ -1275,7 +1224,6 @@ loadUncompressedGfxHeader:
 
 ;;
 ; @param	a	The index of the gfx header to load
-; @addr{0626}
 loadGfxHeader:
 	ld e,a
 	ld a,($ff00+R_SVBK)
@@ -1336,7 +1284,6 @@ loadGfxHeader:
 ; @param	c	ROM bank (bits 0-5) and compression mode (bits 6-7)
 ; @param	de	Destination (lower 4 bits = destination bank, either vram or wram)
 ; @param	hl	Source
-; @addr{0672}
 decompressGraphics:
 	ld a,e
 	and $0f
@@ -1365,7 +1312,6 @@ decompressGraphics:
 	ret
 
 ;;
-; @addr{069c}
 func_069c:
 	call readByteSequential
 	ld c,a
@@ -1415,7 +1361,6 @@ _label_00_056:
 	ret
 
 ;;
-; @addr{06e0}
 func_06e0:
 	ld c,$10
 -
@@ -1530,7 +1475,6 @@ _label_00_069:
 ; @param	de	Address to write data to
 ; @param	hl	Address to read data from
 ; @param[out]	zflag	Set if bc reaches 0.
-; @addr{0772}
 copyByteSequential:
 	ldi a,(hl)
 	ld (de),a
@@ -1542,7 +1486,6 @@ copyByteSequential:
 ; functions.
 ; @param	hl	Address
 ; @param[out]	zflag	Set if bc is 0.
-; @addr{0776}
 _adjustHLSequential:
 	ld a,h
 	cp $80
@@ -1558,7 +1501,6 @@ _adjustHLSequential:
 
 ;;
 ; @param	hl	Address to read from
-; @addr{0788}
 readByteSequential:
 	ldi a,(hl)
 	bit 7,h
@@ -1573,7 +1515,6 @@ readByteSequential:
 
 ;;
 ; @param	a	Tileset to load (tilesets include collision data and tile indices)
-; @addr{0799}
 loadTileset:
 	ld e,a
 	ld a,($ff00+R_SVBK)
@@ -1665,7 +1606,6 @@ loadTileset:
 ;;
 ; @param	hl	pointer to compressed data
 ; @param	[ff8e]	bank of compressed data
-; @addr{07fe}
 loadTilesetHlpr:
 
 ; Internal variables:
@@ -1757,7 +1697,6 @@ loadTilesetHlpr:
 	ret
 
 ;;
-; @addr{0878}
 dec16_ff8c:
 	push hl
 	ld hl,hFF8C
@@ -1766,7 +1705,6 @@ dec16_ff8c:
 	ret
 
 ;;
-; @addr{0881}
 enableIntroInputs:
 	ldh a,(<hIntroInputsEnabled)
 	bit 7,a
@@ -1776,7 +1714,6 @@ enableIntroInputs:
 	ret
 
 ;;
-; @addr{088b}
 threadFunc_088b:
 	push hl
 	ld l,a
@@ -1786,7 +1723,6 @@ threadFunc_088b:
 	ret
 
 ;;
-; @addr{0893}
 threadFunc_0893:
 	push hl
 	ld l,a
@@ -1797,7 +1733,6 @@ threadFunc_0893:
 
 ;;
 ; @param	a	Low byte of thread address
-; @addr{089b}
 threadStop:
 	push hl
 	ld l,a
@@ -1809,7 +1744,6 @@ threadStop:
 ;;
 ; @param	a	Low byte of thread address
 ; @param[in]	bc	Address where thread should restart
-; @addr{08a3}
 threadRestart:
 	push hl
 	push de
@@ -1841,7 +1775,6 @@ threadRestart:
 
 ;;
 ; @param[in]	bc	Address where thread should restart
-; @addr{08c3}
 restartThisThread:
 	push bc
 	ldh a,(<hActiveThread)
@@ -1869,7 +1802,6 @@ restartThisThread:
 	jr _nextThread
 
 ;;
-; @addr{08e2}
 stubThreadStart:
 	ldh a,(<hActiveThread)
 	ld l,a
@@ -1878,7 +1810,6 @@ stubThreadStart:
 	jr _nextThread
 
 ;;
-; @addr{08eb}
 resumeThreadNextFrameAndSaveBank:
 	ld a,$01
 	push bc
@@ -1893,12 +1824,10 @@ resumeThreadNextFrameAndSaveBank:
 	ret
 
 ;;
-; @addr{08fe}
 resumeThreadNextFrame:
 	ld a,$01
 ;;
 ; @param	a	Frames before the active thread will be executed next
-; @addr{0900}
 resumeThreadInAFrames:
 	push hl
 	push de
@@ -1923,7 +1852,6 @@ resumeThreadInAFrames:
 	ldh a,(<hFF93)
 	ld (hl),a
 ;;
-; @addr{0917}
 _nextThread:
 	ld sp,wMainStackTop
 	ld h,>wThreadStateBuffer
@@ -1934,7 +1862,6 @@ _nextThread:
 ;;
 ; Called just after basic initialization
 ;
-; @addr{0922}
 startGame:
 	; Initialize thread states
 	ld sp,wMainStackTop
@@ -1949,7 +1876,6 @@ startGame:
 	jr nz,-
 
 ;;
-; @addr{0933}
 _mainLoop:
 	call pollInput
 	ldh a,(<hIntroInputsEnabled)
@@ -1979,7 +1905,6 @@ _mainLoop:
 	jr z,_initializeThread
 
 ;;
-; @addr{0955}
 _mainLoop_nextThread:
 	ldh a,(<hActiveThread)
 	add $08
@@ -2015,7 +1940,6 @@ _mainLoop_nextThread:
 	jr _mainLoop
 
 ;;
-; @addr{098b}
 _countdownToRunThread:
 	inc l
 	dec (hl)
@@ -2035,7 +1959,6 @@ _countdownToRunThread:
 	ret
 
 ;;
-; @addr{099c}
 _initializeThread:
 	ld a,$03
 	ldi (hl),a
@@ -2065,7 +1988,6 @@ _initialThreadStates:
 
 
 ; Upper bytes of addresses of flags for each group
-; @addr{09cc}
 flagLocationGroupTable:
 	.db >wPresentRoomFlags >wPastRoomFlags
 	.db >wGroup2Flags >wPastRoomFlags
@@ -2074,28 +1996,24 @@ flagLocationGroupTable:
 
 ;;
 ; @param	hActiveFileSlot	File index
-; @addr{09d4}
 initializeFile:
 	ld c,$00
 	jr ++
 
 ;;
 ; @param	hActiveFileSlot	File index
-; @addr{09d8}
 saveFile:
 	ld c,$01
 	jr ++
 
 ;;
 ; @param	hActiveFileSlot	File index
-; @addr{09dc}
 loadFile:
 	ld c,$02
 	jr ++
 
 ;;
 ; @param	hActiveFileSlot	File index
-; @addr{09e0}
 eraseFile:
 	ld c,$03
 
@@ -2110,7 +2028,6 @@ eraseFile:
 	ret
 
 ;;
-; @addr{09f8}
 vblankInterrupt:
 	ldh a,(<hNextLcdInterruptBehaviour)
 	ldh (<hLcdInterruptBehaviour),a
@@ -2204,7 +2121,6 @@ vblankInterrupt:
 	reti
 
 ;;
-; @addr{0a71}
 runVBlankFunctions:
 	ld hl,wVBlankFunctionQueue
 --
@@ -2216,7 +2132,6 @@ runVBlankFunctions:
 	add hl,bc
 	jp hl
 ;;
-; @addr{0a7e}
 vblankFunctionRet:
 	ldh a,(<hVBlankFunctionQueueTail)
 	cp l
@@ -2254,7 +2169,6 @@ vblankDmaFunctionOffset:
 vblankFunctionsStart:
 
 ;;
-; @addr{0a8e}
 vblankFunction0a8e:
 	pop hl
 	ldi a,(hl)
@@ -2274,14 +2188,12 @@ vblankFunction0a8e:
 	jr vblankFunctionRet
 
 ;;
-; @addr{0aa0}
 vblankRunBank4Function:
 	ld a,:vblankRunBank4Function_b04
 	ld ($2222),a
 	jp vblankRunBank4Function_b04
 
 ;;
-; @addr{0aa8}
 vblankFunction0aa8:
 	pop hl
 	ldi a,(hl)
@@ -2299,7 +2211,6 @@ vblankFunction0aa8:
 	jr vblankFunctionRet
 
 ;;
-; @addr{0ab7}
 vblankCopyTileFunction:
 	pop hl
 	ld de,vblankFunctionRet
@@ -2321,7 +2232,6 @@ vblankCopyTileFunction:
 ;;
 ; @param	de	Destination (vram)
 ; @param	hl	Source
-; @addr{0acc}
 @write4Bytes:
 	; Write 2 bytes
 	ldi a,(hl)
@@ -2344,7 +2254,6 @@ vblankCopyTileFunction:
 	ret
 
 ;;
-; @addr{0ad9}
 vblankFunction0ad9:
 	pop hl
 	ldi a,(hl)
@@ -2364,7 +2273,6 @@ vblankFunction0ad9:
 	jr vblankFunctionRet
 
 ;;
-; @addr{0aeb}
 vblankDmaFunction:
 	pop hl
 	ldi a,(hl)
@@ -2389,7 +2297,6 @@ vblankDmaFunction:
 ;;
 ; Update all palettes marked as dirty.
 ;
-; @addr{0b07}
 updateDirtyPalettes:
 	ld a,$02
 	ld ($ff00+R_SVBK),a
@@ -2409,7 +2316,6 @@ updateDirtyPalettes:
 	ld c, R_OBPI
 	ld l, w2SprPalettesBuffer&$ff
 ;;
-; @addr{0b23}
 @writePaletteRegs:
 	srl d
 	jr nc,++
@@ -2444,7 +2350,6 @@ updateDirtyPalettes:
 	jr @writePaletteRegs
 
 ;;
-; @addr{0b46}
 lcdInterrupt:
 	ldh a,(<hLcdInterruptBehaviour)
 	cp $02
@@ -2523,7 +2428,6 @@ lcdInterrupt:
 	.dw lcdInterrupt_0bea
 
 ;;
-; @addr{0bab}
 lcdInterrupt_setLcdcToA7:
 	ld a,($ff00+R_STAT)
 	and c
@@ -2537,7 +2441,6 @@ lcdInterrupt_setLcdcToA7:
 ;   * Once on line $47 (list menu) or $57 (appraisal menu), where the textbox starts.
 ;   * If on the list menu, once more on line $87, where the textbox ends.
 ;
-; @addr{0bb6}
 lcdInterrupt_ringMenu:
 	ld a,($ff00+R_STAT)
 	and c
@@ -2567,14 +2470,12 @@ lcdInterrupt_ringMenu:
 	jr lcdInterrupt_clearWXY
 
 ;;
-; @addr{0bdc}
 lcdInterrupt_clearWXY:
 	ld a,$c7
 	ld ($ff00+R_WY),a
 	ld ($ff00+R_WX),a
 
 ;;
-; @addr{0be2}
 lcdInterrupt_clearLYC:
 	ld a,$c7
 	ld ($ff00+R_LYC),a
@@ -2585,7 +2486,6 @@ _lcdInterruptEnd:
 	reti
 
 ;;
-; @addr{0bea}
 lcdInterrupt_0bea:
 	ld a,($ff00+R_STAT)
 	and c
@@ -2600,7 +2500,6 @@ lcdInterrupt_0bea:
 	jr lcdInterrupt_clearLYC
 
 ; Table of functions in bank $04?
-; @addr{0bfd}
 data_0bfd:
 	.dw b4VBlankFunction0
 	.dw b4VBlankFunction1
@@ -2636,7 +2535,6 @@ data_0bfd:
 	.dw b4VBlankFunction31
 
 ;;
-; @addr{0c3d}
 serialInterrupt:
 	ldh a,(<hSerialInterruptBehaviour)
 	or a
@@ -2675,7 +2573,6 @@ serialInterrupt:
 ; Writes A to SC. Also writes $01 beforehand which might just be to reset any active
 ; transfers?
 ;
-; @addr{0c6a}
 writeToSC:
 	push af
 	and $01
@@ -2685,7 +2582,6 @@ writeToSC:
 	ret
 
 ;;
-; @addr{0c73}
 serialFunc_0c73:
 	xor a
 	ldh (<hFFBD),a
@@ -2695,7 +2591,6 @@ serialFunc_0c73:
 	jr writeToSC
 
 ;;
-; @addr{0c7e}
 serialFunc_0c7e:
 	xor a
 	ldh (<hSerialInterruptBehaviour),a
@@ -2703,12 +2598,10 @@ serialFunc_0c7e:
 	jr writeToSC
 
 ;;
-; @addr{0c85}
 serialFunc_0c85:
 	jpab serialCode.func_44ac
 
 ;;
-; @addr{0c8d}
 serialFunc_0c8d:
 	push de
 	callab serialCode.func_4000
@@ -2717,7 +2610,6 @@ serialFunc_0c8d:
 
 ;;
 ; @param	a	Sound to play
-; @addr{0c98}
 playSound:
 	or a
 	ret z
@@ -2739,26 +2631,22 @@ playSound:
 
 ;;
 ; @param	a	Volume (0-3)
-; @addr{0cad}
 setMusicVolume:
 	or $80
 	ldh (<hMusicVolume),a
 	ret
 
 ;;
-; @addr{0cb2}
 restartSound:
 	ld bc,b39_stopSound
 	jr _startSound
 
 ;;
-; @addr{0cb7}
 initSound:
 	ld bc,b39_initSound
 
 ;;
 ; @param bc Function to call for initialization
-; @addr{0cba}
 _startSound:
 	push de
 	ldh a,(<hRomBank)
@@ -2776,14 +2664,12 @@ _startSound:
 	ret
 
 ;;
-; @addr{0cda}
 jpBc:
 	ld l,c
 	ld h,b
 	jp hl
 
 ;;
-; @addr{0cdd}
 disableTimer:
 	ld hl,hFFB7
 	set 0,(hl)
@@ -2792,7 +2678,6 @@ disableTimer:
 	ret
 
 ;;
-; @addr{0ce6}
 enableTimer:
 	xor a
 	ld ($ff00+R_TAC),a
@@ -2816,7 +2701,6 @@ enableTimer:
 	ret
 
 ;;
-; @addr{0d07}
 timerInterrupt:
 	ld hl,hFFB7
 	bit 7,(hl)
@@ -2888,14 +2772,12 @@ timerInterrupt:
 ; ff8b: internal variable (number of objects remaining)
 ;
 ; @param	hl	OAM data
-; @addr{0d5e}
 addSpritesToOam:
 	ld bc,$0000
 
 ;;
 ; @param	bc	Sprite offset
 ; @param	hl	OAM data
-; @addr{0d61}
 addSpritesToOam_withOffset:
 	ldh a,(<hOamTail)
 	cp $a0
@@ -2947,7 +2829,6 @@ addSpritesToOam_withOffset:
 	jr @decCounter
 
 ;;
-; @addr{0d9a}
 drawAllSprites:
 	ld hl,wc4b6
 	bit 0,(hl)
@@ -2956,7 +2837,6 @@ drawAllSprites:
 	ld (hl),$ff
 
 ;;
-; @addr{0da2}
 drawAllSpritesUnconditionally:
 	ldh a,(<hRomBank)
 	push af
@@ -3120,7 +3000,6 @@ drawAllSpritesUnconditionally:
 
 ;;
 ; @param hl Address in wObjectsToDraw.
-; @addr{0e71}
 @drawObject:
 	push hl
 	inc l
@@ -3246,7 +3125,6 @@ drawAllSpritesUnconditionally:
 ; @param hl Address of oam data
 ; @param hFF8C Y-position to draw at
 ; @param hFF8D X-position to draw at
-; @addr{0eda}
 func_0eda:
 	ld a,:terrainEffects.shadowAnimation
 	setrombank
@@ -3304,7 +3182,6 @@ func_0eda:
 ; @param	hl	Pointer to object
 ; @param	[hFF8C]	Y-position
 ; @param	[hFF8D]	X-position
-; @addr{0f08}
 _drawObjectTerrainEffects:
 	ld a,(wTilesetFlags)
 	and TILESETFLAG_SIDESCROLL
@@ -3423,7 +3300,6 @@ _drawObjectTerrainEffects:
 ; @param[out] hl Pointer to the object's Object.oamFlags variable.
 ; @param[out] hFF8C Y position to draw the object
 ; @param[out] hFF8D X position to draw the object
-; @addr{0f82}
 _getObjectPositionOnScreen:
 	ldh a,(<hCameraX)
 	ld c,a
@@ -3476,7 +3352,6 @@ _getObjectPositionOnScreen:
 	ret
 
 ;;
-; @addr{0faf}
 _label_00_152:
 	ldh a,(<hCameraX)
 	ld c,a
@@ -3502,7 +3377,6 @@ _label_00_152:
 ; @param[out]	hl	Pointer to the object's Object.oamFlags variable.
 ; @param[out]	hFF8C	Y position to draw the object
 ; @param[out]	hFF8D	X position to draw the object
-; @addr{0fc1}
 _getObjectPositionOnScreen_duringScreenTransition:
 	ld d,h
 	ld a,l
@@ -3642,7 +3516,6 @@ _getObjectPositionOnScreen_duringScreenTransition:
 ; Something to do with sprite positions during screen transitions. 4 bytes get written to
 ; hFF90-hFF93, and the values are used in
 ; _getObjectPositionOnScreen_duringScreenTransition.
-; @addr{1058}
 data_1058:
 	; Small rooms
 	.db $80 $ff $00 $00 ; scrolling up
@@ -3658,7 +3531,6 @@ data_1058:
 ;;
 ; Call objectQueueDraw on everything, except $d0-$d5 objects at $00-$3f (Link, Companion,
 ; and "ParentItems").
-; @addr{1078}
 queueDrawEverything:
 	ld hl,hTerrainEffectsBufferUsedSize
 	xor a
@@ -3693,7 +3565,6 @@ queueDrawEverything:
 ;;
 ; @param	b	Low byte of the address of the Object.yh variable
 ; @param	de	Start address of object to draw
-; @addr{10a8}
 objectQueueDraw:
 	ld a,(de)
 	or a
@@ -3735,7 +3606,6 @@ objectQueueDraw:
 ; Defaults to position $00, contents $2800 if a chest is not found.
 ; @param	bc	Chest contents
 ; @param	e	Chest position
-; @addr{10cc}
 getChestData:
 	ldh a,(<hRomBank)
 	push af
@@ -3778,7 +3648,6 @@ getChestData:
 
 ;;
 ; Set Link's death respawn point based on the current room / position variables.
-; @addr{1100}
 setDeathRespawnPoint:
 	ld hl,wDeathRespawnBuffer
 	ld a,(wActiveGroup)
@@ -3809,14 +3678,12 @@ setDeathRespawnPoint:
 	ret
 
 ;;
-; @addr{1135}
 func_1135:
 	xor a
 	ld (wDeathRespawnBuffer.rememberedCompanionGroup),a
 	ret
 
 ;;
-; @addr{113a}
 updateLinkLocalRespawnPosition:
 	ld a,(wLinkObjectIndex)
 	ld h,a
@@ -3836,7 +3703,6 @@ updateLinkLocalRespawnPosition:
 ; flags in more than one room, to mark a door as open on both sides.
 ;
 ; @param	a	Tile that was broken
-; @addr{1151}
 updateRoomFlagsForBrokenTile:
 	push af
 	ld hl,_unknownTileCollisionTable
@@ -4052,7 +3918,6 @@ _unknownTileCollisionTable:
 ; room to unlock the other side of the door as well.
 ;
 ; @param	a	Direction of door (times 4) (upper 4 bits are ignored)
-; @addr{11fc}
 setRoomFlagsForUnlockedKeyDoor:
 	and $0f
 	ld de,_adjacentRoomsData
@@ -4097,7 +3962,6 @@ setRoomFlagsForUnlockedKeyDoor:
 ; b1: Value to add to wDungeonMapPosition to get the adjacent room
 ; b2: Room flag to set in second room
 ; b3: Unused
-; @addr{122e}
 _adjacentRoomsData:
 	.db $01 $f8 $04 $00 ; Key door going up
 	.db $02 $01 $08 $00 ; Key door going right
@@ -4113,7 +3977,6 @@ _adjacentRoomsData:
 ;   dungeons which assumes that vertical rooms are separated by $08 instead of $10.
 ;
 ; @param	a	Direction of door (times 4) (upper 4 bits are ignored)
-; @addr{123e}
 setRoomFlagsForUnlockedKeyDoor_overworldOnly:
 	and $0f
 	ld hl,_adjacentRoomsData
@@ -4135,7 +3998,6 @@ setRoomFlagsForUnlockedKeyDoor_overworldOnly:
 
 ;;
 ; Allows link to walk through chests when he's already inside one.
-; @addr{1255}
 checkAndUpdateLinkOnChest:
 	ld a,(wLinkOnChest)
 	or a
@@ -4169,7 +4031,6 @@ checkAndUpdateLinkOnChest:
 ;;
 ; @param[out]	cflag	Set if Link interacted with a tile that should disable some of his
 ;			code? (Opened a chest, read a sign, opened an overworld keyhole)
-; @addr{1280}
 interactWithTileBeforeLink:
 	ldh a,(<hRomBank)
 	push af
@@ -4182,7 +4043,6 @@ interactWithTileBeforeLink:
 
 ;;
 ; Shows TX_510a ("It's too heavy to move") if it hasn't been shown already.
-; @addr{1298}
 showInfoTextForRoller:
 	ldh a,(<hRomBank)
 	push af
@@ -4195,7 +4055,6 @@ showInfoTextForRoller:
 	ret
 
 ;;
-; @addr{12ae}
 updateCamera:
 	ld a,(wScrollMode)
 	and $05
@@ -4211,7 +4070,6 @@ updateCamera:
 	ret
 
 ;;
-; @addr{12ce}
 resetCamera:
 	ldh a,(<hRomBank)
 	push af
@@ -4222,7 +4080,6 @@ resetCamera:
 	ret
 
 ;;
-; @addr{12e5}
 setCameraFocusedObject:
 	ldh a,(<hActiveObject)
 	ld (wCameraFocusedObject),a
@@ -4231,7 +4088,6 @@ setCameraFocusedObject:
 	ret
 
 ;;
-; @addr{12f0}
 setCameraFocusedObjectToLink:
 	ld a,(wLinkObjectIndex)
 	ld (wCameraFocusedObject),a
@@ -4241,7 +4097,6 @@ setCameraFocusedObjectToLink:
 
 ;;
 ; Reloads tile map for the room from w3VramTiles, w3VramAttributes.
-; @addr{12fc}
 reloadTileMap:
 	ldh a,(<hRomBank)
 	push af
@@ -4258,7 +4113,6 @@ reloadTileMap:
 
 ;;
 ; Called whenever entering an area with a fadein transition.
-; @addr{131f}
 func_131f:
 	xor a
 	ld (wScreenOffsetY),a
@@ -4296,7 +4150,6 @@ func_131f:
 	ret
 
 ;;
-; @addr{1374}
 loadTilesetAnimation:
 	ld a,(wLoadedTilesetAnimation)
 	ld b,a
@@ -4309,7 +4162,6 @@ loadTilesetAnimation:
 ;;
 ; Seasons-only function
 ; Called when displaying D4 entrance after water shuts off in screen above
-; @addr{1383}
 func_1383:
 
 .ifdef ROM_SEASONS
@@ -4356,7 +4208,6 @@ func_1383:
 ; Loads w2WaveScrollValues to make the screen sway in a sine wave.
 ;
 ; @param	a	Amplitude
-; @addr{1384}
 initWaveScrollValues:
 	ldh (<hFF93),a
 	ld a,($ff00+R_SVBK)
@@ -4381,7 +4232,6 @@ initWaveScrollValues:
 ; wFrameCounter). The LCD interrupt will read from there when configured properly.
 ;
 ; @param	a	Affects the frequency of the wave?
-; @addr{13a5}
 loadBigBufferScrollValues:
 	ldh (<hFF93),a
 	ld a,($ff00+R_SVBK)
@@ -4404,7 +4254,6 @@ loadBigBufferScrollValues:
 ;;
 ; @param	bc	Pointer to palette data?
 ; @param	hl	Pointer to palette data?
-; @addr{13c6}
 func_13c6:
 	ldh a,(<hRomBank)
 	push af
@@ -4430,7 +4279,6 @@ func_13c6:
 ;
 ; @param	de	Destination to write colors to
 ; @param	hl	First palette to extract from
-; @addr{13e9}
 extractColorComponents:
 	ldh a,(<hRomBank)
 	push af
@@ -4475,7 +4323,6 @@ extractColorComponents:
 ;
 ; @param	a	Value to change tile to
 ; @param	c	Position of tile to change
-; @addr{141c}
 setTileWithoutGfxReload:
 	ld b,>wRoomLayout
 	ld (bc),a
@@ -4487,7 +4334,6 @@ setTileWithoutGfxReload:
 ;;
 ; @param	b	New index for tile
 ; @param	c	Position to change
-; @addr{1426}
 setTileInRoomLayoutBuffer:
 	ld a,($ff00+R_SVBK)
 	push af
@@ -4506,7 +4352,6 @@ setTileInRoomLayoutBuffer:
 ; @param	bc	Offset to add to object's position
 ; @param[out]	a	The tile at position bc
 ; @param[out]	hl	The tile's address in wRoomLayout
-; @addr{1435}
 objectGetRelativeTile:
 	ldh a,(<hActiveObjectType)
 	or Object.yh
@@ -4527,14 +4372,12 @@ objectGetRelativeTile:
 ; @param[in]	d	Object
 ; @param[out]	a	The tile at the object's position
 ; @param[out]	hl	The tile's address in wRoomLayout
-; @addr{1444}
 objectGetTileAtPosition:
 	call objectGetPosition
 ;;
 ; @param[in]	bc	The position to check (format: YYXX)
 ; @param[out]	a	The tile at position bc
 ; @param[out]	hl	The tile's address in wRoomLayout
-; @addr{1447}
 getTileAtPosition:
 	ld a,c
 	and $f0
@@ -4554,7 +4397,6 @@ getTileAtPosition:
 ;
 ; @param	a	Tile to check for adjacency
 ; @param[out]	a	The direction of the tile relative to the object, or $ff.
-; @addr{1456}
 objectGetRelativePositionOfTile:
 	ldh (<hFF8B),a
 	call objectGetShortPosition
@@ -4588,7 +4430,6 @@ objectGetRelativePositionOfTile:
 ; @param	a	Offset to add to 'e'
 ; @param	e	Position of object
 ; @param[out]	zflag	Set if the tile is at that position.
-; @addr{1481}
 @checkTileAtOffset:
 	add e
 	ld l,a
@@ -4603,7 +4444,6 @@ objectGetRelativePositionOfTile:
 ; This will NOT work for collision values $10 and above.
 ;
 ; @param[out]	zflag	Set if there is no collision.
-; @addr{1487}
 objectCheckSimpleCollision:
 	ldh a,(<hActiveObjectType)
 	or Object.yh
@@ -4646,7 +4486,6 @@ objectCheckSimpleCollision:
 ; @param[out]	a	Collision value
 ; @param[out]	hl	Address of collision data
 ; @param[out]	zflag	Set if there is no collision.
-; @addr{14ad}
 objectGetTileCollisions:
 	ldh a,(<hActiveObjectType)
 	or Object.yh
@@ -4664,7 +4503,6 @@ objectGetTileCollisions:
 ; @param[out]	a	Collision value
 ; @param[out]	hl	Address of collision data
 ; @param[out]	zflag	Set if there is no collision.
-; @addr{14b7}
 getTileCollisionsAtPosition:
 	ld a,b
 	and $f0
@@ -4688,7 +4526,6 @@ getTileCollisionsAtPosition:
 ; should be prevented from doing that).
 ;
 ; @param[out]	cflag	Set on collision
-; @addr{14c7}
 objectCheckTileCollision_allowHoles:
 	ldh a,(<hActiveObjectType)
 	or Object.yh
@@ -4705,7 +4542,6 @@ objectCheckTileCollision_allowHoles:
 ; Same as above function, but with explicit YX.
 ;
 ; @param	bc	YX position to check
-; @addr{14d1}
 checkTileCollisionAt_allowHoles:
 	; Put shortened YX into 'l'
 	ld a,b
@@ -4718,7 +4554,6 @@ checkTileCollisionAt_allowHoles:
 	ld l,a
 
 ;;
-; @addr{14dc}
 checkTileCollision_allowHoles:
 	ld h,>wRoomCollisions
 	ld a,(hl)
@@ -4726,7 +4561,6 @@ checkTileCollision_allowHoles:
 ;;
 ; @param	a	Collision value
 ; @param	bc	YX position to check
-; @addr{14df}
 checkGivenCollision_allowHoles:
 	cp $10
 	jr c,_simpleCollision
@@ -4744,7 +4578,6 @@ checkGivenCollision_allowHoles:
 ; Same as above functions, but for enemies that shouldn't be allowed to cross holes or
 ; water tiles.
 ;
-; @addr{14f8}
 objectCheckTileCollision_disallowHoles:
 	ldh a,(<hActiveObjectType)
 	or Object.yh
@@ -4759,7 +4592,6 @@ objectCheckTileCollision_disallowHoles:
 
 ;;
 ; @param	bc	YX position to check
-; @addr{1502}
 checkTileCollisionAt_disallowHoles:
 	; Put shortened YX into 'l'
 	ld a,b
@@ -4772,14 +4604,12 @@ checkTileCollisionAt_disallowHoles:
 	ld l,a
 
 ;;
-; @addr{150d}
 checkTileCollision_disallowHoles:
 	ld h,>wRoomCollisions
 	ld a,(hl)
 
 ;;
 ; @param	a	Collision value
-; @addr{1510}
 checkGivenCollision_disallowHoles:
 	cp $10
 	jr c,_simpleCollision
@@ -4793,7 +4623,6 @@ checkGivenCollision_disallowHoles:
 ;;
 ; @param	bc	Full position to check
 ; @param	l	Shortened position (where the tile is)
-; @addr{1529}
 checkCollisionPosition_disallowSmallBridges:
 	ld h,>wRoomCollisions
 	ld a,(hl)
@@ -4851,7 +4680,6 @@ _complexCollision:
 
 ;;
 ; Get tile collision value from buffer in bank 3, not wRoomCollisions
-; @addr{156e}
 retrieveTileCollisionValue:
 	ld h,>w3TileCollisions
 	ld l,a
@@ -4865,7 +4693,6 @@ retrieveTileCollisionValue:
 
 ;;
 ; Load data into wRoomCollisions based on wRoomLayout and w3TileCollisions
-; @addr{157b}
 loadRoomCollisions:
 	ld a,:w3TileCollisions
 	ld ($ff00+R_SVBK),a
@@ -4889,7 +4716,6 @@ loadRoomCollisions:
 
 ;;
 ; Blanks data around the "edges" of wRoomCollisions.
-; @addr{1596}
 @blankDataAroundCollisions:
 	ld hl, wRoomCollisions+$f0
 	call @blankDataHorizontally
@@ -4931,7 +4757,6 @@ loadRoomCollisions:
 ; @param	a	Tile to find in the room
 ; @param[out]	hl	Address of the tile in wRoomLayout (if it was found)
 ; @param[out]	zflag	z if the tile was found.
-; @addr{15cc}
 findTileInRoom:
 	ld h,>wRoomLayout
 	ld l,LARGE_ROOM_HEIGHT*$10+$0f
@@ -4941,7 +4766,6 @@ findTileInRoom:
 ; @param	hl	Address to start the search at (end when 'l' reaches 0)
 ; @param[out]	hl	Address of the value (if it was found)
 ; @param[out]	zflag	z if the value was found.
-; @addr{15d0}
 backwardsSearch:
 	cp (hl)
 	ret z
@@ -4961,12 +4785,10 @@ backwardsSearch:
 ; @param[out]	c	Position of tile (passed in as A)
 ; @param[out]	cflag	Set carry flag if the tile's collision value is between $1 and $f
 ;			(at least partially solid)
-; @addr{15d7}
 getTileIndexFromRoomLayoutBuffer:
 	ld c,a
 
 ;;
-; @addr{15d8}
 getTileIndexFromRoomLayoutBuffer_paramC:
 	ld a,($ff00+R_SVBK)
 	push af
@@ -4999,7 +4821,6 @@ getTileIndexFromRoomLayoutBuffer_paramC:
 ;;
 ; Load an interaction's graphics and initialize the animation.
 ; @param[out] c
-; @addr{15fb}
 interactionInitGraphics:
 	ldh a,(<hRomBank)
 	push af
@@ -5011,13 +4832,11 @@ interactionInitGraphics:
 	jp interactionSetAnimation
 
 ;;
-; @addr{1613}
 func_1613:
 	ld a,(wLoadedTreeGfxIndex)
 	or a
 	ret z
 ;;
-; @addr{1618}
 refreshObjectGfx:
 	ldh a,(<hRomBank)
 	push af
@@ -5029,7 +4848,6 @@ refreshObjectGfx:
 	ret
 
 ;;
-; @addr{1630}
 reloadObjectGfx:
 	ldh a,(<hRomBank)
 	push af
@@ -5044,7 +4862,6 @@ reloadObjectGfx:
 ; seasons, but apparently unused in ages.
 ;
 ; @param	e	Object gfx header (minus 1)
-; @addr{1644}
 loadObjectGfxHeaderToSlot4:
 	ldh a,(<hRomBank)
 	push af
@@ -5055,7 +4872,6 @@ loadObjectGfxHeaderToSlot4:
 
 ;;
 ; @param	a	Tree gfx index
-; @addr{1658}
 loadTreeGfx:
 	ld e,a
 	ldh a,(<hRomBank)
@@ -5067,7 +4883,6 @@ loadTreeGfx:
 
 ;;
 ; @param	a	Uncompressed gfx header to load
-; @addr{166d}
 loadWeaponGfx:
 	ld e,a
 	ldh a,(<hRomBank)
@@ -5084,7 +4899,6 @@ loadWeaponGfx:
 ;
 ; @param	b	High byte of destination to write gfx to (low byte is $00)
 ; @param	hl	Address to read from to get the index to load
-; @addr{1682}
 loadObjectGfx:
 	ld d,b
 	ld e,$00
@@ -5093,7 +4907,6 @@ loadObjectGfx:
 ; @param a
 ; @param de
 ; @param hl
-; @addr{1685}
 loadObjectGfx2:
 	ld c,a
 	ldi a,(hl)
@@ -5150,7 +4963,6 @@ loadObjectGfx2:
 ; Load graphics for an item (as in, items on the inventory screen)
 ;
 ; @param a Item index
-; @addr{16d6}
 loadTreasureDisplayData:
 	ld l,a
 	ldh a,(<hRomBank)
@@ -5164,7 +4976,6 @@ loadTreasureDisplayData:
 ; @param	a
 ; @param[out]	a,c	Subid for PARTID_ITEM_DROP (see constants/itemDrops.s)
 ; @param[out]	zflag	z if there is no item drop
-; @addr{16eb}
 decideItemDrop:
 	ld c,a
 	ldh a,(<hRomBank)
@@ -5181,7 +4992,6 @@ decideItemDrop:
 ;
 ; @param	a	Item drop index (see constants/itemDrops.s)
 ; @param[out]	zflag	z if item cannot spawn (Link doesn't have it)
-; @addr{1703}
 checkItemDropAvailable:
 	ld c,a
 	ldh a,(<hRomBank)
@@ -5200,7 +5010,6 @@ checkItemDropAvailable:
 ; @param	a	Treasure for Link to obtain (see constants/treasure.s)
 ; @param	c	Parameter (ie. item level, ring index, etc...)
 ; @param[out]	a	Sound to play on obtaining the treasure (if nonzero)
-; @addr{171c}
 giveTreasure:
 	ld b,a
 	ldh a,(<hRomBank)
@@ -5214,7 +5023,6 @@ giveTreasure:
 
 ;;
 ; @param	a	Treasure for Link to lose (see constants/treasure.s)
-; @addr{1733}
 loseTreasure:
 	ld b,a
 	ldh a,(<hRomBank)
@@ -5228,7 +5036,6 @@ loseTreasure:
 ; @param	a	Item to check for (see constants/treasure.s)
 ; @param[out]	cflag	Set if you have that item
 ; @param[out]	a	The value of the treasure's "related variable" (ie. item level)
-; @addr{1748}
 checkTreasureObtained:
 	push hl
 	ld l,a
@@ -5261,7 +5068,6 @@ cpOreChunkValue:
 ; @param	a	Rupee type to compare with
 ; @param[out]	a	0 if Link has at least that many rupees, 1 otherwise
 ; @param[out]	zflag	Set if Link has that many rupees
-; @addr{1765}
 cpRupeeValue:
 	ld hl,wNumRupees
 ++
@@ -5291,7 +5097,6 @@ removeOreChunkValue:
 ; Remove the value of a kind of rupee from your wallet.
 ;
 ; @param	a	The type of rupee to lose (not the value)
-; @addr{1778}
 removeRupeeValue:
 	ld hl,wNumRupees
 ++
@@ -5301,7 +5106,6 @@ removeRupeeValue:
 ;;
 ; @param	a	The "type" of rupee you're getting.
 ; @param[out]	bc	The amount of rupees you get from it
-; @addr{1781}
 getRupeeValue:
 	push hl
 	cp RUPEEVAL_COUNT-1
@@ -5317,7 +5121,6 @@ getRupeeValue:
 	ret
 
 ; Each number here corresponds to a value in constants/rupeeValues.s.
-; @addr{1791}
 @rupeeValues:
 	.dw $0000 ; $00
 	.dw $0001 ; $01
@@ -5343,7 +5146,6 @@ getRupeeValue:
 
 ;;
 ; @param	a	Seed type to decrement
-; @addr{17bb}
 decNumActiveSeeds:
 	and $07
 	ld hl,wNumEmberSeeds
@@ -5351,13 +5153,11 @@ decNumActiveSeeds:
 	jr +
 
 ;;
-; @addr{17c3}
 decNumBombchus:
 	ld hl,wNumBombchus
 	jr +
 
 ;;
-; @addr{17c8}
 decNumBombs:
 	ld hl,wNumBombs
 +
@@ -5374,7 +5174,6 @@ decNumBombs:
 	ret
 
 ;;
-; @addr{17d8}
 setStatusBarNeedsRefreshBit1:
 	push hl
 	ld hl,wStatusBarNeedsRefresh
@@ -5392,7 +5191,6 @@ setStatusBarNeedsRefreshBit1:
 ; @param[out]	a	TREASURE_RING (to be passed to "giveTreasure")
 ; @param[out]	c	Randomly chosen ring from the given tier (to be passed to
 ;			"giveTreasure")
-; @addr{17e0}
 getRandomRingOfGivenTier:
 	ldh a,(<hRomBank)
 	push af
@@ -5426,7 +5224,6 @@ getRandomRingOfGivenTier:
 
 ;;
 ; Fills the seed satchel with all seed types that Link currently has.
-; @addr{180c}
 refillSeedSatchel:
 	ld e,TREASURE_EMBER_SEEDS
 --
@@ -5446,7 +5243,6 @@ refillSeedSatchel:
 
 ;;
 ; @param	a	Amount to add to wGashaMaturity
-; @addr{1821}
 addToGashaMaturity:
 	push hl
 	ld hl,wGashaMaturity
@@ -5465,7 +5261,6 @@ addToGashaMaturity:
 	ret
 
 ;;
-; @addr{1832}
 makeActiveObjectFollowLink:
 	ldh a,(<hRomBank)
 	push af
@@ -5475,7 +5270,6 @@ makeActiveObjectFollowLink:
 	ret
 
 ;;
-; @addr{1846}
 clearFollowingLinkObject:
 	ld hl,wFollowingLinkObjectType
 	xor a
@@ -5484,7 +5278,6 @@ clearFollowingLinkObject:
 	ret
 
 ;;
-; @addr{184d}
 stopTextThread:
 	xor a
 	ld (wTextIsActive),a
@@ -5493,7 +5286,6 @@ stopTextThread:
 	jp threadStop
 
 ;;
-; @addr{1859}
 retIfTextIsActive:
 	ld a,(wTextIsActive)
 	or a
@@ -5502,7 +5294,6 @@ retIfTextIsActive:
 	ret
 
 ;;
-; @addr{1860}
 showTextOnInventoryMenu:
 	ld a,(wTextboxFlags)
 	set TEXTBOXFLAG_BIT_NOCOLORS,a
@@ -5514,14 +5305,12 @@ showTextOnInventoryMenu:
 ;;
 ; Displays text index bc while not being able to exit the textbox with button presses
 ;
-; @addr{186e}
 showTextNonExitable:
 	ld l,TEXTBOXFLAG_NONEXITABLE
 	jr _label_00_203
 
 ;;
 ; Displays text index bc
-; @addr{1872}
 showText:
 	ld l,$00
 _label_00_203:
@@ -5564,7 +5353,6 @@ _label_00_204:
 	jp threadRestart
 
 ;;
-; @addr{18a0}
 textThreadStart:
 	ld a,(wScrollMode)
 	or a
@@ -5592,7 +5380,6 @@ textThreadStart:
 ; @param	[w7TextGfxSource]	Table to use
 ; @param	a			Character
 ; @param	bc			Address to write data to
-; @addr{18cd}
 retrieveTextCharacter:
 	push hl
 	push de
@@ -5619,7 +5406,6 @@ retrieveTextCharacter:
 	pop hl
 	ret
 
-; @addr{18f7}
 @data:
 	.dw gfx_font_start
 	.dw gfx_font_jp
@@ -5628,7 +5414,6 @@ retrieveTextCharacter:
 ;;
 ; @param bc
 ; @param hl
-; @addr{18fd}
 @func_18fd:
 	ld e,$10
 
@@ -5702,7 +5487,6 @@ retrieveTextCharacter:
 ;;
 ; Can only be called from bank $3f. Also assumes RAM bank 7 is loaded.
 ;
-; @addr{1949}
 readByteFromW7ActiveBank:
 	push bc
 	ld a,(w7ActiveBank)
@@ -5719,7 +5503,6 @@ readByteFromW7ActiveBank:
 ;;
 ; Assumes RAM bank 7 is loaded.
 ;
-; @addr{195d}
 readByteFromW7TextTableBank:
 	ldh a,(<hRomBank)
 	push af
@@ -5741,7 +5524,6 @@ readByteFromW7TextTableBank:
 	ret
 
 ;;
-; @addr{197d}
 getThisRoomFlags:
 	ld a,(wActiveRoom)
 getARoomFlags:
@@ -5757,7 +5539,6 @@ getARoomFlags:
 ; @param	b	Room
 ; @param[out]	a	Room flags
 ; @param[out]	hl	Address of room flags
-; @addr{198a}
 getRoomFlags:
 	ld hl, flagLocationGroupTable
 	rst_addAToHl
@@ -5768,7 +5549,6 @@ getRoomFlags:
 
 ;;
 ; @param[out]	zflag	z if unlinked
-; @addr{1992}
 checkIsLinkedGame:
 	ld a,(wIsLinkedGame)
 	or a
@@ -5776,7 +5556,6 @@ checkIsLinkedGame:
 
 ;;
 ; @param	hl	Where to copy the values from for wWarpDestVariables
-; @addr{1997}
 setWarpDestVariables:
 	push de
 	ld de,wWarpDestVariables
@@ -5786,7 +5565,6 @@ setWarpDestVariables:
 	ret
 
 ;;
-; @addr{19a2}
 setInstrumentsDisabledCounterAndScrollMode:
 	ld a,$08
 	ld (wInstrumentsDisabledCounter),a
@@ -5797,7 +5575,6 @@ setInstrumentsDisabledCounterAndScrollMode:
 ;;
 ; Clears all physical item objects (not parent items) and clears midair-related variables.
 ;
-; @addr{19ad}
 clearAllItemsAndPutLinkOnGround:
 	push de
 	call clearAllParentItems
@@ -5845,7 +5622,6 @@ clearAllItemsAndPutLinkOnGround:
 ; @param	c			0 to use jp font, 1 to use english font
 ; @param	de			Where to write the character to
 ; @param	wFileSelect.fontXor	Value to xor every other byte with
-; @addr{19df}
 copyTextCharacterGfx:
 	push hl
 	push bc
@@ -5886,7 +5662,6 @@ copyTextCharacterGfx:
 	ret
 
 ;;
-; @addr{1a17}
 fileSelectThreadStart:
 	ld hl,wTmpcbb3
 	ld b,$10
@@ -5909,7 +5684,6 @@ fileSelectThreadStart:
 ; @param	b	Index of function to call
 ; @param	c	Secret type (in most cases)
 ; @param[out]	zflag	Generally set on success
-; @addr{1a2e}
 secretFunctionCaller:
 	ldh a,(<hRomBank)
 	push af
@@ -5933,7 +5707,6 @@ secretFunctionCaller:
 ; Opens a secret input menu.
 ;
 ; @param	a	Secret type (0 = 20-char, 2 = 15-char, $80-$ff = 5-char?)
-; @addr{1a44}
 openSecretInputMenu:
 	ld (wSecretInputType),a
 	ld a,$01
@@ -5943,7 +5716,6 @@ openSecretInputMenu:
 
 ;;
 ; @param[out]	zflag	Set if no menu is being displayed.
-; @addr{1a51}
 updateMenus:
 	ld a,($ff00+R_SVBK)
 	ld c,a
@@ -5964,7 +5736,6 @@ updateMenus:
 ; If wStatusBarNeedsRefresh is nonzero, this function dma's the status bar graphics to
 ; vram. It also reloads the item icon's graphics, if bit 0 is set.
 ;
-; @addr{1a71}
 checkReloadStatusBarGraphics:
 	ld hl,wStatusBarNeedsRefresh
 	ld a,(hl)
@@ -5989,7 +5760,6 @@ checkReloadStatusBarGraphics:
 ; @param	b	Bank
 ; @param	de	Destination
 ; @param	hl	Source
-; @addr{1a83}
 copy20BytesFromBank:
 	ldh a,(<hRomBank)
 	push af
@@ -6002,57 +5772,48 @@ copy20BytesFromBank:
 	ret
 
 ;;
-; @addr{1a98}
 loadCommonGraphics:
 	ld h,$00
 	jr +++
 
 ;;
 ; Jumps to bank2._updateStatusBar.
-; @addr{1a9c}
 updateStatusBar:
 	ld h,$01
 	jr +++
 
 ;;
-; @addr{1aa0}
 hideStatusBar:
 	ld h,$02
 	jr +++
 
 ;;
-; @addr{1aa4}
 showStatusBar:
 	ld h,$03
 	jr +++
 
 ;;
-; @addr{1aa8}
 saveGraphicsOnEnterMenu:
 	ld h,$04
 	jr +++
 
 ;;
-; @addr{1aac}
 reloadGraphicsOnExitMenu:
 	ld h,$05
 	jr +++
 
 ;;
 ; @param	a	Type of menu to open (see wOpenedMenuType in wram.s)
-; @addr{1ab0}
 openMenu:
 	ld h,$06
 	jr +++
 
 ;;
-; @addr{1ab4}
 copyW2TilesetBgPalettesToW4PaletteData:
 	ld h,$07
 	jr +++
 
 ;;
-; @addr{1ab8}
 copyW4PaletteDataToW2TilesetBgPalettes:
 	ld h,$08
 +++
@@ -6074,7 +5835,6 @@ copyW4PaletteDataToW2TilesetBgPalettes:
 ; @param[in]	b	Room
 ; @param[out]	b	Dungeon property byte for the given room (see
 ;			constants/dungeonRoomProperties.s)
-; @addr{1ad7}
 getRoomDungeonProperties:
 	ldh a,(<hRomBank)
 	push af
@@ -6095,7 +5855,6 @@ getRoomDungeonProperties:
 	ret
 
 ;;
-; @addr{1af7}
 copy8BytesFromRingMapToCec0:
 	ldh a,(<hRomBank)
 	push af
@@ -6111,7 +5870,6 @@ copy8BytesFromRingMapToCec0:
 ;;
 ; Runs game over screen?
 ;
-; @addr{1b10}
 thread_1b10:
 	ld hl,wTmpcbb3
 	ld b,$10
@@ -6127,7 +5885,6 @@ thread_1b10:
 ; Calling this function allows an interaction to use the "checkabutton" command.
 ;
 ; @param	de	Variable to write $01 to when A button is pressed next to object
-; @addr{1b2c}
 objectAddToAButtonSensitiveObjectList:
 	xor a
 	ld (de),a
@@ -6150,7 +5907,6 @@ objectAddToAButtonSensitiveObjectList:
 	ret
 
 ;;
-; @addr{1b41}
 objectRemoveFromAButtonSensitiveObjectList:
 	push de
 	ld a,e
@@ -6183,7 +5939,6 @@ objectRemoveFromAButtonSensitiveObjectList:
 ; A button has been pressed near them.
 ;
 ; @param[out]	cflag	Set if Link just pressed A next to the object
-; @addr{1b5d}
 linkInteractWithAButtonSensitiveObjects:
 	ld a,(wGameKeysJustPressed)
 	and BTN_A
@@ -6308,7 +6063,6 @@ linkInteractWithAButtonSensitiveObjects:
 	.db $00 $f6 ; DIR_LEFT
 
 ;;
-; @addr{1bdb}
 objectCheckContainsPoint:
 	ld h,d
 	ldh a,(<hActiveObjectType)
@@ -6316,7 +6070,6 @@ objectCheckContainsPoint:
 	jr objectHCheckContainsPoint
 
 ;;
-; @addr{1be1}
 interactionCheckContainsPoint:
 	ld h,d
 	ld l,Interaction.start
@@ -6327,7 +6080,6 @@ interactionCheckContainsPoint:
 ; @param	bc	Point to check
 ; @param	hl	The object to check (not object d as usual)
 ; @param[out]	cflag	Set if the point is contained in the object's collision box.
-; @addr{1be4}
 objectHCheckContainsPoint:
 	ld a,l
 	and $c0
@@ -6371,7 +6123,6 @@ objectHCheckContainsPoint:
 ; @param	ff8e	X position object 2
 ; @param	ff8f	Y position object 2
 ; @param[out]	cflag	Set if collision, unset if no collision
-; @addr{1c04}
 checkObjectsCollidedFromVariables:
 	ld a,b
 	ldh (<hFF8D),a
@@ -6404,13 +6155,11 @@ checkObjectsCollidedFromVariables:
 	ret
 
 ;;
-; @addr{1c28}
 objectCheckCollidedWithLink_notDeadAndNotGrabbing:
 	ld a,(wLinkGrabState)
 	and $be
 	ret nz
 ;;
-; @addr{1c2e}
 objectCheckCollidedWithLink_notDead:
 	ld a,(wLinkDeathTrigger)
 	or a
@@ -6418,7 +6167,6 @@ objectCheckCollidedWithLink_notDead:
 	jr objectCheckCollidedWithLink
 
 ;;
-; @addr{1c35}
 objectCheckCollidedWithLink_onGround:
 	ld a,(wLinkInAir)
 	or a
@@ -6430,7 +6178,6 @@ objectCheckCollidedWithLink_onGround:
 
 ;;
 ; @param[out]	cflag	Set if the object is touching Link.
-; @addr{1c41}
 objectCheckCollidedWithLink:
 	ldh a,(<hActiveObjectType)
 	add Object.zh
@@ -6439,7 +6186,6 @@ objectCheckCollidedWithLink:
 
 ;;
 ; @param	hl	Address of an object's zh variable
-; @addr{1c47}
 _checkCollidedWithLink:
 	ld a,(wLinkObjectIndex)
 	ld b,a
@@ -6475,7 +6221,6 @@ _checkCollidedWithLink:
 
 ;;
 ; @param[out]	cflag	Set if the object is touching Link.
-; @addr{1c6f}
 objectCheckCollidedWithLink_ignoreZ:
 	ldh a,(<hActiveObjectType)
 	add Object.xh
@@ -6486,7 +6231,6 @@ objectCheckCollidedWithLink_ignoreZ:
 ;;
 ; Unused?
 ;
-; @addr{1c77}
 hObjectCheckCollidedWithLink:
 	push de
 	ld d,h
@@ -6501,7 +6245,6 @@ hObjectCheckCollidedWithLink:
 ;;
 ; Unused?
 ;
-; @addr{1c84}
 func_1c84:
 	ld a,(w1ReservedItemC.enabled)
 	or a
@@ -6509,7 +6252,6 @@ func_1c84:
 
 ;;
 ; @param[out]	cflag	Set on collision
-; @addr{1c89}
 objectHCheckCollisionWithLink:
 	push de
 	push hl
@@ -6528,7 +6270,6 @@ objectHCheckCollisionWithLink:
 ;
 ; @param	d	Link object?
 ; @param[out]	cflag	Set on collision
-; @addr{1c97}
 checkGrabbableObjects:
 	; Check that something isn't already being carried around
 	ld a,(w1ReservedItemC.enabled)
@@ -6599,7 +6340,6 @@ checkGrabbableObjects:
 ; @param[out]	hFF8E	Link X
 ; @param[out]	hFF8F	Link Y
 ; @param[out]	hFF91	Link Z (subtracted by 3)
-; @addr{1cd3}
 _getLinkPositionPlusDirectionOffset:
 	ld a,(w1Link.direction)
 	ld hl,@positionOffsets
@@ -6619,7 +6359,6 @@ _getLinkPositionPlusDirectionOffset:
 	ldh (<hFF91),a
 	ret
 
-; @addr{1cf0}
 @positionOffsets:
 	.dw $00fa ; DIR_UP
 	.dw $0500 ; DIR_RIGHT
@@ -6633,7 +6372,6 @@ _getLinkPositionPlusDirectionOffset:
 ; @param	[hFF8E]	Object d's x position
 ; @param	[hFF8F]	Object d's y position
 ; @param[out]	cflag	Set if collision, unset if no collision
-; @addr{1cf8}
 _checkCollisionWithHAndD:
 	add Object.var2a
 	ld l,a
@@ -6668,7 +6406,6 @@ _checkCollisionWithHAndD:
 ; (wLinkDeathTrigger, wLinkInAir, and link being in a spinner?)
 ;
 ; @param[out]	cflag	Set if any checks fail.
-; @addr{1d18}
 checkLinkID0AndControlNormal:
 	ld a,(w1Link.id)
 	or a
@@ -6681,7 +6418,6 @@ checkLinkID0AndControlNormal:
 	ret
 
 ;;
-; @addr{1d20}
 checkLinkVulnerableAndIDZero:
 
 .ifdef ROM_AGES
@@ -6696,7 +6432,6 @@ checkLinkVulnerableAndIDZero:
 ; Check if link should respond to collisions, perhaps other things?
 ;
 ; @param[out]	cflag	Set if link is vulnerable
-; @addr{1d28}
 checkLinkVulnerable:
 	; Check var2a, invincibilityCounter, knockbackCounter
 	ld hl,w1Link.var2a
@@ -6710,7 +6445,6 @@ checkLinkVulnerable:
 ; Check if link should respond to collisions, perhaps other things?
 ;
 ; @param[out]	cflag
-; @addr{1d32}
 checkLinkCollisionsEnabled:
 	ld a,(w1Link.collisionType)
 	rlca
@@ -6758,7 +6492,6 @@ checkLinkCollisionsEnabled:
 ; @param[in]	d	Object 1
 ; @param[in]	h	Object 2
 ; @param[out]	cflag	Set if collision, unset if no collision
-; @addr{1d5a}
 checkObjectsCollided:
 	; Everything here is just setting up variables for the jump at the end
 	ld a,l
@@ -6799,7 +6532,6 @@ checkObjectsCollided:
 ; @param	d	Object 1 (Npc, minecart)
 ; @param	h	Object 2 (Link)
 ; @param[out]	cflag	Set if there's a collision
-; @addr{1d7f}
 preventObjectHFromPassingObjectD:
 	ld a,l
 	and $c0
@@ -6846,7 +6578,6 @@ preventObjectHFromPassingObjectD:
 ; @param[out]	hFF8C	Sum of both objects' collisionRadiusX variables
 ; @param[out]	hFF8D	Sum of both objects' collisionRadiusY variables
 ; @param[out]	cflag	Set if the collision was predominantly from a vertical direction
-; @addr{1dab}
 @checkCollisionDirection:
 	ld b,Object.yh
 	call @setBothObjectVariables
@@ -6900,7 +6631,6 @@ preventObjectHFromPassingObjectD:
 ; Makes both objects de and hl point to a particular variable.
 ;
 ; @param	b	The variable to make both objects point to
-; @addr{1dde}
 @setBothObjectVariables:
 	ldh a,(<hActiveObjectType)
 	or b
@@ -6911,7 +6641,6 @@ preventObjectHFromPassingObjectD:
 	ret
 
 ;;
-; @addr{1de7}
 checkEnemyAndPartCollisionsIfTextInactive:
 	call retIfTextIsActive
 	ldh a,(<hRomBank)
@@ -6930,7 +6659,6 @@ checkEnemyAndPartCollisionsIfTextInactive:
 ;
 ; @param	a	Room index
 ; @param	hl	Table address
-; @addr{1dfe}
 findRoomSpecificData:
 	ld e,a
 	ld a,(wActiveGroup)
@@ -6949,7 +6677,6 @@ findRoomSpecificData:
 ; @param	hl	Table address
 ; @param[out]	a	The "value" associated with the key.
 ; @param[out]	cflag	Set on success (the key is in the table).
-; @addr{1e06}
 lookupKey:
 	ldi a,(hl)
 	or a
@@ -6964,7 +6691,6 @@ lookupKey:
 ; Unused?
 ;
 ; @param a
-; @addr{1e0f}
 findByteInGroupTable:
 	ld e,a
 	ld a,(wActiveGroup)
@@ -6979,7 +6705,6 @@ findByteInGroupTable:
 ; @param	e	Value to match
 ; @param[in]	hl	Start address to search
 ; @param[out]	cflag	Set if match found
-; @addr{1e17}
 findByteAtHl:
 	ldi a,(hl)
 	or a
@@ -6995,7 +6720,6 @@ findByteAtHl:
 ; @param	a	Tile to lookup
 ; @param	hl	Table
 ; @param[out]	cflag	Set on success.
-; @addr{1e1f}
 lookupCollisionTable:
 	ld e,a
 
@@ -7003,7 +6727,6 @@ lookupCollisionTable:
 ; @param	e	Tile to lookup
 ; @param	hl	Table
 ; @param[out]	cflag	Set on success.
-; @addr{1e20}
 lookupCollisionTable_paramE:
 	ld a,(wActiveCollisions)
 	rst_addDoubleIndex
@@ -7015,13 +6738,11 @@ lookupCollisionTable_paramE:
 ;;
 ; @param	a	Key
 ; @param[out]	cflag	Set if match found
-; @addr{1e29}
 findByteInCollisionTable:
 	ld e,a
 
 ;;
 ; @param e
-; @addr{1e2a}
 findByteInCollisionTable_paramE:
 	ld a,(wActiveCollisions)
 	rst_addDoubleIndex
@@ -7031,7 +6752,6 @@ findByteInCollisionTable_paramE:
 	jr findByteAtHl
 
 ;;
-; @addr{1e33}
 objectSetVisiblec0:
 	ldh a,(<hActiveObjectType)
 	add Object.visible
@@ -7040,7 +6760,6 @@ objectSetVisiblec0:
 	ld (de),a
 	ret
 ;;
-; @addr{1e3c}
 objectSetVisiblec1:
 	ldh a,(<hActiveObjectType)
 	add Object.visible
@@ -7049,7 +6768,6 @@ objectSetVisiblec1:
 	ld (de),a
 	ret
 ;;
-; @addr{1e45}
 objectSetVisiblec2:
 	ldh a,(<hActiveObjectType)
 	add Object.visible
@@ -7058,7 +6776,6 @@ objectSetVisiblec2:
 	ld (de),a
 	ret
 ;;
-; @addr{1e4e}
 objectSetVisiblec3:
 	ldh a,(<hActiveObjectType)
 	add Object.visible
@@ -7067,7 +6784,6 @@ objectSetVisiblec3:
 	ld (de),a
 	ret
 ;;
-; @addr{1e57}
 objectSetVisible80:
 	ldh a,(<hActiveObjectType)
 	add Object.visible
@@ -7076,7 +6792,6 @@ objectSetVisible80:
 	ld (de),a
 	ret
 ;;
-; @addr{1e60}
 objectSetVisible81:
 	ldh a,(<hActiveObjectType)
 	add Object.visible
@@ -7085,7 +6800,6 @@ objectSetVisible81:
 	ld (de),a
 	ret
 ;;
-; @addr{1e69}
 objectSetVisible82:
 	ldh a,(<hActiveObjectType)
 	add Object.visible
@@ -7094,7 +6808,6 @@ objectSetVisible82:
 	ld (de),a
 	ret
 ;;
-; @addr{1e72}
 objectSetVisible83:
 	ldh a,(<hActiveObjectType)
 	add Object.visible
@@ -7104,7 +6817,6 @@ objectSetVisible83:
 	ret
 
 ;;
-; @addr{1e7b}
 objectSetInvisible:
 	ldh a,(<hActiveObjectType)
 	add Object.visible
@@ -7113,7 +6825,6 @@ objectSetInvisible:
 	res 7,(hl)
 	ret
 ;;
-; @addr{1e84}
 objectSetVisible:
 	ldh a,(<hActiveObjectType)
 	add Object.visible
@@ -7123,7 +6834,6 @@ objectSetVisible:
 	ret
 
 ;;
-; @addr{1e8d}
 objectSetReservedBit1:
 	ldh a,(<hActiveObjectType)
 	ld l,a
@@ -7132,7 +6842,6 @@ objectSetReservedBit1:
 	ret
 
 ;;
-; @addr{1e94}
 objectGetAngleTowardEnemyTarget:
 	ldh a,(<hEnemyTargetY)
 	ld b,a
@@ -7141,7 +6850,6 @@ objectGetAngleTowardEnemyTarget:
 	jr objectGetRelativeAngle
 
 ;;
-; @addr{1e9c}
 objectGetAngleTowardLink:
 	ld a,(w1Link.yh)
 	ld b,a
@@ -7153,7 +6861,6 @@ objectGetAngleTowardLink:
 ; @param	bc	YX position to get the direction toward
 ; @param	d	Current object
 ; @param[out]	a	An angle value pointing towards bc
-; @addr{1ea4}
 objectGetRelativeAngle:
 
 ; Internal variables:
@@ -7167,7 +6874,6 @@ objectGetRelativeAngle:
 ;;
 ; @param	bc	YX position to get the direction toward
 ; @param	de	Address of an object's Y position
-; @addr{1ea9}
 getRelativeAngle:
 	ld a,(de)
 	ldh (<hFF8F),a
@@ -7180,7 +6886,6 @@ getRelativeAngle:
 ; @param	d	Current object
 ; @param	hFF8E	X position of object
 ; @param	hFF8F	Y position of object
-; @addr{1eb1}
 objectGetRelativeAngleWithTempVars:
 	ld e,$08
 	ld a,b
@@ -7256,7 +6961,6 @@ objectGetRelativeAngleWithTempVars:
 	ld a,(hl)
 	ret
 
-; @addr{1f05}
 pushDirectionData:
 	.db $18 $19 $1a $1b $1c $00 $00 $00
 	.db $00 $1f $1e $1d $1c $00 $00 $00
@@ -7271,14 +6975,12 @@ pushDirectionData:
 ; @param	a	Z Acceleration (gravity)
 ; @param[out]	hl	Object.speedZ variable
 ; @param[out]	zflag	Set if resulting position is below or on the ground
-; @addr{1f45}
 objectUpdateSpeedZ:
 	ld c,a
 ;;
 ; @param	c	Z Acceleration (gravity)
 ; @param[out]	hl	Object.speedZ variable
 ; @param[out]	zflag	Set if resulting position is below or on the ground
-; @addr{1f46}
 objectUpdateSpeedZ_paramC:
 	ldh a,(<hActiveObjectType)
 	add Object.z
@@ -7318,7 +7020,6 @@ objectUpdateSpeedZ_paramC:
 ; @param	a	Gravity (amount to add to Object.speedZ)
 ; @param[out]	cflag	Set if the object has landed.
 ; @param[out]	hl	Object.speedZ+1
-; @addr{1f66}
 objectUpdateSpeedZ_sidescroll:
 	ld b,$06
 
@@ -7327,7 +7028,6 @@ objectUpdateSpeedZ_sidescroll:
 ; @param	b	Y offset for collision check
 ; @param[out]	cflag	Set if the object has landed.
 ; @param[out]	hl	Object.speedZ+1
-; @addr{1f68}
 objectUpdateSpeedZ_sidescroll_givenYOffset:
 	ldh (<hFF8B),a
 	ldh a,(<hActiveObjectType)
@@ -7397,7 +7097,6 @@ objectUpdateSpeedZ_sidescroll_givenYOffset:
 ;			a standard direction value)
 ; @param[out]	cflag	c if Link is within the specified distance. If unset, 'a' won't
 ;			be calculated properly.
-; @addr{1fa2}
 objectCheckLinkWithinDistance:
 	ldh a,(<hActiveObjectType)
 
@@ -7447,7 +7146,6 @@ objectCheckLinkWithinDistance:
 ; Increments or decrements an object's angle by one unit toward the given value.
 ;
 ; @param	a	Angle value to move toward
-; @addr{1fd4}
 objectNudgeAngleTowards:
 	ld c,a
 	ldh a,(<hActiveObjectType)
@@ -7480,7 +7178,6 @@ objectNudgeAngleTowards:
 ; @param	b	Distance threshold
 ; @param	d	Object to compare with
 ; @param[out]	cflag	Set if link is centered within the threshold given.
-; @addr{1fee}
 objectCheckCenteredWithLink:
 	ld c,b
 	sla c
@@ -7510,7 +7207,6 @@ objectCheckCenteredWithLink:
 ; This function reads Object.speed differently than most places (ie. objectApplySpeed). It
 ; adds variables $10-$11 to Object.y as a 16-bit value, and $12-$13 to Object.x.
 ;
-; @addr{2008}
 objectApplyComponentSpeed:
 	ldh a,(<hActiveObjectType)
 	add Object.y
@@ -7522,7 +7218,6 @@ objectApplyComponentSpeed:
 	inc e
 
 ;;
-; @addr{2015}
 @addSpeedComponent:
 	ld a,(de)
 	add (hl)
@@ -7537,7 +7232,6 @@ objectApplyComponentSpeed:
 ; Uses the object's speed and angle variables to update its position.
 ;
 ; @param[out]	a	New value of object.xh
-; @addr{201d}
 objectApplySpeed:
 	ld h,d
 	ldh a,(<hActiveObjectType)
@@ -7555,7 +7249,6 @@ objectApplySpeed:
 ; @param	de	Address of an object's angle variable (will only read/write the
 ;			Y and X values which follow that, not the angle itself).
 ; @param[out]	a	New value of object.xh
-; @addr{2029}
 objectApplyGivenSpeed:
 	call getPositionOffsetForVelocity
 	ret z
@@ -7593,7 +7286,6 @@ objectApplyGivenSpeed:
 ; @param[out]	hl	Pointer to 4 bytes of data to be added to Y and X positions.
 ;			It always points to wTmpcec0.
 ; @param[out]	zflag	Set if the speed / angle was invalid (or speed is zero)
-; @addr{2041}
 getPositionOffsetForVelocity:
 	bit 7,c
 	jr nz,@invalid
@@ -7656,7 +7348,6 @@ getPositionOffsetForVelocity:
 
 ;;
 ; @param[out]	bc	Object's position
-; @addr{208a}
 objectGetPosition:
 	ldh a,(<hActiveObjectType)
 	add Object.yh
@@ -7671,13 +7362,11 @@ objectGetPosition:
 
 ;;
 ; @param[out]	a	Object's position (short form)
-; @addr{2096}
 objectGetShortPosition:
 	ldh a,(<hActiveObjectType)
 	add Object.yh
 	ld e,a
 ;;
-; @addr{209b}
 getShortPositionFromDE:
 	ld a,(de)
 --
@@ -7694,7 +7383,6 @@ getShortPositionFromDE:
 ;;
 ; @param	a	Value to add to the object's Y position before calculating
 ; @param[out]	a	Object's position (short form)
-; @addr{20a8}
 objectGetShortPosition_withYOffset:
 	ld b,a
 	ldh a,(<hActiveObjectType)
@@ -7707,7 +7395,6 @@ objectGetShortPosition_withYOffset:
 ;;
 ; Writes $0f to the collision value of the tile the object is standing on.
 ;
-; @addr{20b2}
 objectMakeTileSolid:
 	call objectGetTileCollisions
 	ld (hl),$0f
@@ -7716,13 +7403,11 @@ objectMakeTileSolid:
 ;;
 ; @param	a	Short-form position
 ; @param	hl	Address to write to (usually an Object.yh)
-; @addr{20b8}
 setShortPosition:
 	ld c,a
 ;;
 ; @param	c	Short-form position
 ; @param	hl	Address to write to (usually an Object.yh)
-; @addr{20b9}
 setShortPosition_paramC:
 	push bc
 	call convertShortToLongPosition_paramC
@@ -7737,7 +7422,6 @@ setShortPosition_paramC:
 ; Set an object's position.
 ;
 ; @param	c	Short-form position
-; @addr{20c3}
 objectSetShortPosition:
 	ld h,d
 	ldh a,(<hActiveObjectType)
@@ -7748,13 +7432,11 @@ objectSetShortPosition:
 ;;
 ; @param	a	Short-form position (YX)
 ; @param[out]	bc	Long-form position (YYXX)
-; @addr{20cb}
 convertShortToLongPosition:
 	ld c,a
 ;;
 ; @param	c	Short-form position (YX)
 ; @param[out]	bc	Long-form position (YYXX)
-; @addr{20cc}
 convertShortToLongPosition_paramC:
 	ld a,c
 	and $f0
@@ -7768,7 +7450,6 @@ convertShortToLongPosition_paramC:
 	ret
 
 ;;
-; @addr{20db}
 objectCenterOnTile:
 	ldh a,(<hActiveObjectType)
 	add Object.y
@@ -7779,7 +7460,6 @@ objectCenterOnTile:
 ; Adjust 16-bit coordinates to the center of a tile.
 ;
 ; @param	hl
-; @addr{20e1}
 centerCoordinatesOnTile:
 	; Center Y
 	xor a
@@ -7803,13 +7483,11 @@ centerCoordinatesOnTile:
 ;
 ; @param	b	Number of part slots to check for
 ; @param[out]	zflag	Set if there are at least 'b' part slots available.
-; @addr{20f2}
 checkBPartSlotsAvailable:
 	ldhl FIRST_PART_INDEX, Part.enabled
 	jr checkBEnemySlotsAvailable@nextSlot
 
 ;;
-; @addr{20f7}
 checkBEnemySlotsAvailable:
 	ldhl FIRST_ENEMY_INDEX, Enemy.enabled
 
@@ -7822,7 +7500,6 @@ checkBEnemySlotsAvailable:
 	ret
 
 ;;
-; @addr{2104}
 @checkSlotAvailable:
 	ld a,(hl)
 	inc h
@@ -7847,7 +7524,6 @@ checkBEnemySlotsAvailable:
 ; @param	bc	Relative offset ("center of the circle")
 ; @param	de	Pointer to the object's angle value
 ; @param[out]	de	Object.xh
-; @addr{210e}
 objectSetPositionInCircleArc:
 	push bc
 	ld h,d
@@ -7881,7 +7557,6 @@ objectSetPositionInCircleArc:
 ; @param	c		Angle
 ; @param[out]	wTmpcec0	The scaled values are stored here (4 bytes total).
 ; @param[out]	hl		wTmpcec0+3
-; @addr{212a}
 getScaledPositionOffsetForVelocity:
 	ldh (<hFF8B),a
 	call getPositionOffsetForVelocity
@@ -7892,7 +7567,6 @@ getScaledPositionOffsetForVelocity:
 ;;
 ; @param	hl	Address of position offset to scale
 ; @param	hFF8B	Amount to scale the position offsets by
-; @addr{2133}
 @scaleComponent:
 	push hl
 	ldi a,(hl)
@@ -7927,7 +7601,6 @@ getScaledPositionOffsetForVelocity:
 ; @param	a	Amount to multiply speed by
 ; @param	b	Speed
 ; @param	c	Angle
-; @addr{214c}
 objectSetComponentSpeedByScaledVelocity:
 	call getScaledPositionOffsetForVelocity
 
@@ -7956,13 +7629,11 @@ objectSetComponentSpeedByScaledVelocity:
 ;
 ; @param	a	Which variable to get for relatedObj1
 ; @param[out]	hl	Address of the variable
-; @addr{2160}
 objectGetRelatedObject1Var:
 	ld l,Object.relatedObj1
 	jr ++
 
 ;;
-; @addr{2164}
 objectGetRelatedObject2Var:
 	ld l,Object.relatedObj2
 ++
@@ -7983,7 +7654,6 @@ objectGetRelatedObject2Var:
 ; assigned this value.
 ;
 ; @param[out]	a	Z position
-; @addr{2172}
 objectGetZAboveScreen:
 	ldh a,(<hActiveObjectType)
 	add Object.yh
@@ -8007,7 +7677,6 @@ objectGetZAboveScreen:
 ; calculation. (Is it expecting 16x16-size objects?)
 ;
 ; @param[out]	cflag	Set if the object is within the screen boundary
-; @addr{2184}
 objectCheckWithinScreenBoundary:
 	ldh a,(<hCameraY)
 	ld b,a
@@ -8032,7 +7701,6 @@ objectCheckWithinScreenBoundary:
 
 ;;
 ; @param[out]	cflag	Set if the object is within the room boundary
-; @addr{219f}
 objectCheckWithinRoomBoundary:
 	ldh a,(<hActiveObjectType)
 	add Object.yh
@@ -8055,7 +7723,6 @@ objectCheckWithinRoomBoundary:
 ; The new object keeps its former yh, xh, zh, and enabled values.
 ;
 ; @param	bc	New object ID
-; @addr{21b0}
 objectReplaceWithID:
 	ld h,d
 	push bc
@@ -8111,13 +7778,11 @@ objectReplaceWithID:
 	ret
 
 ;;
-; @addr{21e0}
 objectDelete_useActiveObjectType:
 	ldh a,(<hActiveObjectType)
 	ld e,a
 
 ;;
-; @addr{21e3}
 objectDelete_de:
 	ld a,e
 	and $c0
@@ -8143,7 +7808,6 @@ objectDelete_de:
 ;
 ; @param[out]	a	$01 if water, $02 if hole, $04 if lava
 ; @param[out]	cflag	Set if Link is on one of the above tiles.
-; @addr{21f6}
 checkLinkIsOverHazard:
 	ld a,(wLinkObjectIndex)
 	ld d,a
@@ -8169,7 +7833,6 @@ checkLinkIsOverHazard:
 ;
 ; @param[out]	a	$01 if water, $02 if hole, $04 if lava
 ; @param[out]	cflag	Set if the object is on one of these tiles.
-; @addr{220d}
 objectCheckIsOnHazard:
 	ldh a,(<hActiveObjectType)
 	add Object.zh
@@ -8182,7 +7845,6 @@ objectCheckIsOnHazard:
 ;
 ; @param[out]	a	$01 if water, $02 if hole, $04 if lava
 ; @param[out]	cflag	Set if the object is on one of these tiles.
-; @addr{2216}
 objectCheckIsOverHazard:
 	ld bc,$0500
 	call objectGetRelativeTile
@@ -8196,7 +7858,6 @@ objectCheckIsOverHazard:
 ; If the object is over a pit, this replaces it with an appropriate animation.
 ;
 ; @param[out]	cflag	Set if the object was on a pit.
-; @addr{2225}
 objectReplaceWithAnimationIfOnHazard:
 	call objectCheckIsOnHazard
 	ret nc
@@ -8211,13 +7872,11 @@ objectReplaceWithAnimationIfOnHazard:
 	jr objectReplaceWithSplash@create
 
 ;;
-; @addr{2233}
 objectReplaceWithFallingDownHoleInteraction:
 	call objectCreateFallingDownHoleInteraction
 	jr objectReplaceWithSplash@delete
 
 ;;
-; @addr{2238}
 objectReplaceWithSplash:
 	ld b,INTERACID_SPLASH
 @create:
@@ -8232,7 +7891,6 @@ objectReplaceWithSplash:
 ;
 ; @param[out]	de	Object d's 'zh' variable
 ; @param[out]	hl	Object h's 'speed' variable (one past 'zh')
-; @addr{2242}
 objectCopyPosition:
 	ldh a,(<hActiveObjectType)
 	add Object.yh
@@ -8240,7 +7898,6 @@ objectCopyPosition:
 ;;
 ; Copies the xyz position at address de to object h.
 ;
-; @addr{2247}
 objectCopyPosition_rawAddress:
 	ld a,l
 	and $c0
@@ -8264,7 +7921,6 @@ objectCopyPosition_rawAddress:
 ; Copies xyz position of object d to object h and adds an offset.
 ;
 ; @param	bc	YX offset
-; @addr{225a}
 objectCopyPositionWithOffset:
 	ldh a,(<hActiveObjectType)
 	add Object.yh
@@ -8295,7 +7951,6 @@ objectCopyPositionWithOffset:
 ;;
 ; Object 'd' takes the xyz position of object 'h'.
 ;
-; @addr{2274}
 objectTakePosition:
 	ld bc,$0000
 ;;
@@ -8306,7 +7961,6 @@ objectTakePosition:
 ; @param[out]	a	Z position
 ; @param[out]	de	Address of this object's zh variable
 ; @param[out]	hl	Address of object h's zh variable
-; @addr{2277}
 objectTakePositionWithOffset:
 	ldh a,(<hActiveObjectType)
 	add Object.yh
@@ -8339,7 +7993,6 @@ objectTakePositionWithOffset:
 ;
 ; @param	a	Value to change the tile to
 ; @param	c	Position of tile to change, and where to put the interaction
-; @addr{2291}
 breakCrackedFloor:
 	push bc
 	call setTile
@@ -8362,7 +8015,6 @@ breakCrackedFloor:
 ;;
 ; @param[out]	cflag	Set if the tile at the object's position is water (even shallow
 ;			water)
-; @addr{22a9}
 objectCheckTileAtPositionIsWater:
 	call objectGetTileAtPosition
 	sub TILEINDEX_PUDDLE
@@ -8374,7 +8026,6 @@ objectCheckTileAtPositionIsWater:
 ;
 ; @param	bc	Position of tile
 ; @param[out]	cflag	Set if the tile at that position is water (even shallow water)
-; @addr{22b1}
 checkTileAtPositionIsWater:
 	call getTileAtPosition
 	sub TILEINDEX_PUDDLE
@@ -8385,7 +8036,6 @@ checkTileAtPositionIsWater:
 ; @param	c	An item ID to search for
 ; @param[out]	hl	Address of the id variable for the first item with ID 'c'
 ; @param[out]	zflag	Set on success
-; @addr{22b9}
 findItemWithID:
 	ld h,FIRST_ITEM_INDEX
 ---
@@ -8397,7 +8047,6 @@ findItemWithID:
 ; @param	c	An item ID to search for
 ; @param	h	The index before the first item to check
 ; @param[out]	zflag	Set on success
-; @addr{22c0}
 findItemWithID_startingAfterH:
 	inc h
 	ld a,h
@@ -8412,7 +8061,6 @@ findItemWithID_startingAfterH:
 ; @param	c	An object ID to search for
 ; @param[out]	hl	Address of the id variable for the first object with ID 'c'
 ; @param[out]	zflag	Set on success
-; @addr{22c8}
 objectFindSameTypeObjectWithID:
 	ldh a,(<hActiveObject)
 	and $f0
@@ -8437,7 +8085,6 @@ func_228f:
 ;;
 ; Sets object's priority based on y, z relative to link?
 ;
-; @addr{22dc}
 objectSetPriorityRelativeToLink:
 	ld c,$80
 	jr +
@@ -8450,7 +8097,6 @@ objectSetPriorityRelativeToLink:
 ;
 ; @param[out]	b	Value written to Object.visible
 ; @param[out]	de	Address of Object.visible
-; @addr{22e0}
 objectSetPriorityRelativeToLink_withTerrainEffects:
 	ld c,$c0
 +
@@ -8468,7 +8114,6 @@ objectSetPriorityRelativeToLink_withTerrainEffects:
 ;
 ; @param	d	Object
 ; @param[out]	b	Priority
-; @addr{22ee}
 @getPriority:
 	ldh a,(<hActiveObjectType)
 	add Object.zh
@@ -8508,7 +8153,6 @@ objectSetPriorityRelativeToLink_withTerrainEffects:
 ; them with some resistance.
 ;
 ; @param[out]	cflag	Set if the object collided with Link
-; @addr{230e}
 objectPushLinkAwayOnCollision:
 	ld a,(wLinkObjectIndex)
 	ld h,a
@@ -8524,7 +8168,6 @@ objectPushLinkAwayOnCollision:
 ;;
 ; @param	b	Speed
 ; @param	c	Angle
-; @addr{231e}
 updateLinkPositionGivenVelocity:
 	ldh a,(<hRomBank)
 	push af
@@ -8551,7 +8194,6 @@ updateLinkPositionGivenVelocity:
 ; The object will still need to load the correct animation.
 ;
 ; @param	a	Tile index
-; @addr{233b}
 objectMimicBgTile:
 	; Get top-left flag value in 'b', top-left tile index in 'c'
 	call getTileMappingData
@@ -8603,7 +8245,6 @@ objectMimicBgTile:
 ; @param	c	Gravity
 ; @param[out]	cflag	c if the object will no longer bounce (speedZ is sufficiently low).
 ; @param[out]	zflag	z if the object touched the ground
-; @addr{2370}
 objectUpdateSpeedZAndBounce:
 	call objectUpdateSpeedZ_paramC
 	ret nz
@@ -8615,7 +8256,6 @@ objectUpdateSpeedZAndBounce:
 ;
 ; @param[out]	cflag	c if the object will no longer bounce (speedZ is sufficiently low).
 ; @param[out]	zflag	z if the object touched the ground
-; @addr{2374}
 objectNegateAndHalveSpeedZ:
 	ld h,d
 	ldh a,(<hActiveObjectType)
@@ -8662,7 +8302,6 @@ objectNegateAndHalveSpeedZ:
 
 ;;
 ; @param	bc	speedZ
-; @addr{239d}
 objectSetSpeedZ:
 	ldh a,(<hActiveObjectType)
 	add Object.speedZ
@@ -8679,7 +8318,6 @@ objectSetSpeedZ:
 ; @param	de	Address to add and write result to
 ; @param	hl	Address of value to add
 ; @param[out]	a	High byte of result
-; @addr{23a7}
 add16BitRefs:
 	ld a,(de)
 	add (hl)
@@ -8694,7 +8332,6 @@ add16BitRefs:
 ;;
 ; @param	a	The ring to check for.
 ; @param[out]	zflag	Set if the currently equipped ring equals 'a'.
-; @addr{23b0}
 cpActiveRing:
 	push hl
 	ld hl,wActiveRing
@@ -8703,7 +8340,6 @@ cpActiveRing:
 	ret
 
 ;;
-; @addr{23b7}
 disableActiveRing:
 	push hl
 	ld hl,wActiveRing
@@ -8712,7 +8348,6 @@ disableActiveRing:
 	ret
 
 ;;
-; @addr{23bf}
 enableActiveRing:
 	push hl
 	ld hl,wActiveRing
@@ -8725,56 +8360,48 @@ enableActiveRing:
 	ret
 
 ;;
-; @addr{23cc}
 interactionDecCounter1:
 	ld h,d
 	ld l,Interaction.counter1
 	dec (hl)
 	ret
 ;;
-; @addr{23d1}
 interactionDecCounter2:
 	ld h,d
 	ld l,Interaction.counter2
 	dec (hl)
 	ret
 ;;
-; @addr{23d6}
 itemDecCounter1:
 	ld h,d
 	ld l,Item.counter1
 	dec (hl)
 	ret
 ;;
-; @addr{23db}
 itemDecCounter2:
 	ld h,d
 	ld l,Item.counter2
 	dec (hl)
 	ret
 ;;
-; @addr{23e0}
 interactionIncState:
 	ld h,d
 	ld l,Interaction.state
 	inc (hl)
 	ret
 ;;
-; @addr{23e5}
 interactionIncState2:
 	ld h,d
 	ld l,Interaction.state2
 	inc (hl)
 	ret
 ;;
-; @addr{23ea}
 itemIncState:
 	ld h,d
 	ld l,Item.state
 	inc (hl)
 	ret
 ;;
-; @addr{23ef}
 itemIncState2:
 	ld h,d
 	ld l,$05
@@ -8782,7 +8409,6 @@ itemIncState2:
 	ret
 ;;
 ; Unused?
-; @addr{23f4}
 cpInteractionState:
 	ld h,d
 	ld l,Interaction.state
@@ -8790,21 +8416,18 @@ cpInteractionState:
 	ret
 ;;
 ; Unused?
-; @addr{23f9}
 cpInteractionState2:
 	ld h,d
 	ld l,Interaction.state2
 	cp (hl)
 	ret
 ;;
-; @addr{23fe}
 checkInteractionState:
 	ld e,Interaction.state
 	ld a,(de)
 	or a
 	ret
 ;;
-; @addr{2403}
 checkInteractionState2:
 	ld e,Interaction.state2
 	ld a,(de)
@@ -8814,7 +8437,6 @@ checkInteractionState2:
 
 ; Lists the water, hole, and lava tiles for each collision mode.
 ;
-; @addr{2408}
 hazardCollisionTable:
 	.dw @collisions0
 	.dw @collisions1
@@ -8958,7 +8580,6 @@ hazardCollisionTable:
 ; Used in bank6.specialObjectUpdatePosition. Has something to do with how Link "slides off" tiles
 ; when he approaches them from the side.
 ;
-; @addr{2461}
 slideAngleTable:
 	.db $80 $80 $01 $02 $02 $02 $03 $24
 	.db $24 $24 $05 $06 $06 $06 $07 $48
@@ -8972,7 +8593,6 @@ slideAngleTable:
 ; through 2 directions, whereas even values can only pass through the direction
 ; corresponding to the value divided by 2 (see constants/directions.s).
 ;
-; @addr{2481}
 angleTable:
 	.db $00 $00 $00 $01 $01 $01 $02 $02
 	.db $02 $02 $02 $03 $03 $03 $04 $04
@@ -8983,7 +8603,6 @@ angleTable:
 ; Set an object's X and Y collide radii to 'a'.
 ;
 ; @param	a	Collision radius
-; @addr{24a1}
 objectSetCollideRadius:
 	push bc
 	ld b,a
@@ -8997,7 +8616,6 @@ objectSetCollideRadius:
 ;
 ; @param	b	Collide radius Y
 ; @param	c	Collide radius X
-; @addr{24a9}
 objectSetCollideRadii:
 	ldh a,(<hActiveObjectType)
 	add Object.collisionRadiusY
@@ -9009,7 +8627,6 @@ objectSetCollideRadii:
 	ret
 
 ;;
-; @addr{24b3}
 decNumEnemies:
 	ld hl,wNumEnemies
 	ld a,(hl)
@@ -9019,7 +8636,6 @@ decNumEnemies:
 	ret
 
 ;;
-; @addr{24bb}
 setScreenShakeCounter:
 	ld hl,wScreenShakeCounterY
 	ldi (hl),a
@@ -9027,13 +8643,11 @@ setScreenShakeCounter:
 	ret
 
 ;;
-; @addr{24c1}
 objectCreatePuff:
 	ld b,INTERACID_PUFF
 
 ;;
 ; @param	b	High byte of interaction
-; @addr{24c3}
 objectCreateInteractionWithSubid00:
 	ld c,$00
 
@@ -9045,7 +8659,6 @@ objectCreateInteractionWithSubid00:
 ; @param[out]	a	0
 ; @param[out]	hl	The new interaction's 'speed' variable (one past 'zh')
 ; @param[out]	zflag	nz if there wasn't a free slot for the interaction
-; @addr{24c5}
 objectCreateInteraction:
 	call getFreeInteractionSlot
 	ret nz
@@ -9057,7 +8670,6 @@ objectCreateInteraction:
 	ret
 
 ;;
-; @addr{24d1}
 objectCreateFallingDownHoleInteraction:
 	call getFreeInteractionSlot
 	ret nz
@@ -9087,7 +8699,6 @@ objectCreateFallingDownHoleInteraction:
 ; b=1 will flicker every frame, creating a sort of transparency.
 ;
 ; @param	b	Value to AND with [wFrameCounter].
-; @addr{24e6}
 objectFlickerVisibility:
 	ld a,(wFrameCounter)
 	and b
@@ -9098,7 +8709,6 @@ objectFlickerVisibility:
 ; Sets a bit in w2SolidObjectPositions based on the object's current position. Prevents
 ; you from timewarping on top of an npc.
 ;
-; @addr{24f0}
 objectMarkSolidPosition:
 	call objectGetShortPosition
 	ld b,a
@@ -9112,7 +8722,6 @@ objectMarkSolidPosition:
 	ret
 
 ;;
-; @addr{2504}
 objectUnmarkSolidPosition:
 	call objectGetShortPosition
 	ld b,a
@@ -9128,7 +8737,6 @@ objectUnmarkSolidPosition:
 .endif
 
 ;;
-; @addr{2518}
 _interactionActuallyRunScript:
 	ldh a,(<hRomBank)
 	push af
@@ -9153,7 +8761,6 @@ _interactionActuallyRunScript:
 	ret
 
 ;;
-; @addr{253b}
 interactionSetHighTextIndex:
 	ld e,Interaction.textID+1
 	ld (de),a
@@ -9167,7 +8774,6 @@ interactionSetHighTextIndex:
 ;
 ; @param	hl	The address of the script
 ; @param[out]	a	0 (this is assumed by INTERACID_MAMAMU_DOG due to an apparent bug...)
-; @addr{2544}
 interactionSetScript:
 	ld e,Interaction.scriptPtr
 	ld a,l
@@ -9184,7 +8790,6 @@ interactionSetScript:
 
 ;;
 ; @param[out]	cflag	Set when the script ends (ran a "scriptend" command)
-; @addr{2552}
 interactionRunScript:
 	ld a,(wLinkDeathTrigger)
 	or a
@@ -9234,7 +8839,6 @@ interactionRunScript:
 
 ;;
 ; @param	hl	Script address
-; @addr{2588}
 _interactionSaveScriptAddress:
 	ld e,Interaction.scriptPtr
 	ld a,l
@@ -9245,14 +8849,12 @@ _interactionSaveScriptAddress:
 	ret
 
 ;;
-; @addr{2590}
 scriptCmd_asmCall:
 	pop hl
 	call _scriptFunc_setupAsmCall
 	jr ++
 
 ;;
-; @addr{2596}
 scriptCmd_asmCallWithParam:
 	pop hl
 	call _scriptFunc_setupAsmCall
@@ -9274,7 +8876,6 @@ scriptCmd_asmCallWithParam:
 	jp hl
 
 ;;
-; @addr{25b1}
 _scriptCmd_asmRetFunc:
 	pop hl
 	pop af
@@ -9285,7 +8886,6 @@ _scriptCmd_asmRetFunc:
 	ret
 
 ;;
-; @addr{25bd}
 _scriptFunc_setupAsmCall:
 	inc hl
 	ld d,$15
@@ -9305,7 +8905,6 @@ _scriptFunc_setupAsmCall:
 ;
 ; @param	hl	Current address of script, whose contents point to the address to
 ;			jump to
-; @addr{25c5}
 scriptFunc_jump_scf:
 	call scriptFunc_jump
 	scf
@@ -9318,7 +8917,6 @@ scriptFunc_jump_scf:
 ;
 ; @param	hl	Current address of script, whose contents point to the address to
 ;			jump to
-; @addr{25ca}
 scriptFunc_jump:
 	ld a,h
 	cp $80
@@ -9369,11 +8967,9 @@ scriptFunc_jump:
 .endif
 
 ;;
-; @addr{25e9}
 scriptFunc_add3ToHl_scf:
 	scf
 ;;
-; @addr{25ea}
 scriptFunc_add3ToHl:
 	inc hl
 	inc hl
@@ -9381,7 +8977,6 @@ scriptFunc_add3ToHl:
 	ret
 
 ;;
-; @addr{25ee}
 scriptCmd_loadScript:
 	pop hl
 	inc hl
@@ -9415,7 +9010,6 @@ scriptCmd_loadScript:
 	ret
 
 ;;
-; @addr{261b}
 interactionAnimate:
 	ld h,d
 	ld l,Interaction.animCounter
@@ -9431,7 +9025,6 @@ interactionAnimate:
 
 ;;
 ; @param	a	Animation index
-; @addr{262e}
 interactionSetAnimation:
 	add a
 	ld c,a
@@ -9450,7 +9043,6 @@ interactionSetAnimation:
 	add hl,bc
 
 ;;
-; @addr{2647}
 _interactionNextAnimationFrame:
 	ldi a,(hl)
 	ld h,(hl)
@@ -9523,7 +9115,6 @@ _interactionNextAnimationFrame:
 ; Also prevents Dimitri from passing through npcs when thrown.
 ;
 ; @param[out]	cflag	Set if there's a collision with Link
-; @addr{2680}
 objectPreventLinkFromPassing:
 	ld a,(wLinkCanPassNpcs)
 	or a
@@ -9556,7 +9147,6 @@ objectPreventLinkFromPassing:
 	ret
 
 ;;
-; @addr{26a9}
 npcFaceLinkAndAnimate:
 	ld e,Interaction.knockbackAngle
 	ld a,$01
@@ -9626,12 +9216,10 @@ seasonsFunc_2678:
 ;;
 ; Update animations, push Link away, update draw priority relative to Link, and enable
 ; "terrain effects" (puddles on water, etc).
-; @addr{26db}
 interactionAnimateAsNpc:
 	call interactionAnimate
 
 ;;
-; @addr{26de}
 interactionPushLinkAwayAndUpdateDrawPriority:
 	call objectPreventLinkFromPassing
 	jp objectSetPriorityRelativeToLink_withTerrainEffects
@@ -9639,7 +9227,6 @@ interactionPushLinkAwayAndUpdateDrawPriority:
 ;;
 ; Return if screen scrolling is disabled?
 ;
-; @addr{26e4}
 returnIfScrollMode01Unset:
 	ld a,(wScrollMode)
 	and SCROLLMODE_01
@@ -9650,7 +9237,6 @@ returnIfScrollMode01Unset:
 ;;
 ; Deletes the interaction and returns from the caller if [Interaction.enabled]&3 == 2.
 ;
-; @addr{26ec}
 interactionDeleteAndRetIfEnabled02:
 	ld e,Interaction.enabled
 	ld a,(de)
@@ -9666,7 +9252,6 @@ interactionDeleteAndRetIfEnabled02:
 ;
 ; @param	de	Address of an "angle" value
 ; @param[out]	a	Corresponding "direction" value
-; @addr{26f8}
 convertAngleDeToDirection:
 	ld a,(de)
 
@@ -9676,7 +9261,6 @@ convertAngleDeToDirection:
 ;
 ; @param	a	Angle value
 ; @param[out]	a	Corresponding "direction" value
-; @addr{26f9}
 convertAngleToDirection:
 	add $04
 	add a
@@ -9687,7 +9271,6 @@ convertAngleToDirection:
 ;;
 ; Sets bit 7 of Interaction.enabled, indicating that the interaction should update even
 ; when scrolling, when textboxes are up, and when bit 1 of wActiveObjects is set.
-; @addr{2701}
 interactionSetAlwaysUpdateBit:
 	ld h,d
 	ld l,Interaction.enabled
@@ -9700,7 +9283,6 @@ interactionSetAlwaysUpdateBit:
 ; be used for other things.
 ;
 ; @param[out]	cflag	Set if centered correctly (and various other checks pass)
-; @addr{2707}
 objectCheckLinkPushingAgainstCenter:
 	ld a,(w1Link.id)
 	or a
@@ -9724,7 +9306,6 @@ objectCheckLinkPushingAgainstCenter:
 ; is solid or not.
 ;
 ; @param[out]	zflag	Set if the adjacent tile is not solid.
-; @addr{271d}
 interactionCheckAdjacentTileIsSolid:
 	ld e,Interaction.angle
 	ld a,(de)
@@ -9734,7 +9315,6 @@ interactionCheckAdjacentTileIsSolid:
 ;;
 ; Unused?
 ;
-; @addr{2725}
 interactionCheckAdjacentTileIsSolid_viaDirection:
 	ld e,Interaction.direction
 	ld a,(de)
@@ -9750,7 +9330,6 @@ interactionCheckAdjacentTileIsSolid_viaDirection:
 	or a
 	ret
 
-; @addr{2738}
 @dirOffsets:
 	.db $f0 $01 $10 $ff
 
@@ -9760,7 +9339,6 @@ interactionCheckAdjacentTileIsSolid_viaDirection:
 
 ;;
 ; @param[out]	zflag	z when counter1 reaches 0 (and text is inactive)
-; @addr{273c}
 interactionDecCounter1IfTextNotActive:
 	ld a,(wTextIsActive)
 	or a
@@ -9768,7 +9346,6 @@ interactionDecCounter1IfTextNotActive:
 	jp interactionDecCounter1
 
 ;;
-; @addr{2744}
 interactionDecCounter1IfPaletteNotFading:
 	ld a,(wPaletteThread_mode)
 	or a
@@ -9778,17 +9355,14 @@ interactionDecCounter1IfPaletteNotFading:
 ;;
 ; Unused?
 ;
-; @addr{274c}
 interactionAnimate4Times:
 	call interactionAnimate
 
 ;;
-; @addr{274f}
 interactionAnimate3Times:
 	call interactionAnimate
 
 ;;
-; @addr{2752}
 interactionAnimate2Times:
 	call interactionAnimate
 	jp interactionAnimate
@@ -9799,7 +9373,6 @@ interactionAnimate2Times:
 ;
 ; If counter2 is nonzero, it updates the animation at the slowest speed.
 ;
-; @addr{2758}
 interactionAnimateBasedOnSpeed:
 	call interactionAnimate
 	ld e,Interaction.counter2
@@ -9821,13 +9394,11 @@ interactionAnimateBasedOnSpeed:
 
 ;;
 ; @param	bc	Position
-; @addr{2773}
 interactionSetPosition:
 	ld h,d
 
 ;;
 ; @param	bc	Position
-; @addr{2774}
 interactionHSetPosition:
 	ld l,Interaction.yh
 	ld (hl),b
@@ -9838,7 +9409,6 @@ interactionHSetPosition:
 ;;
 ; Unused?
 ;
-; @addr{277b}
 interactionUnsetAlwaysUpdateBit:
 	ld h,d
 	ld l,Interaction.enabled
@@ -9846,7 +9416,6 @@ interactionUnsetAlwaysUpdateBit:
 	ret
 
 ;;
-; @addr{2781}
 interactionLoadExtraGraphics:
 	ld e,Interaction.id
 	ld a,(de)
@@ -9860,7 +9429,6 @@ interactionLoadExtraGraphics:
 ;;
 ; Unused?
 ;
-; @addr{278b}
 interactionFunc_278b:
 	ld l,Interaction.scriptPtr
 	ld (hl),c
@@ -9872,7 +9440,6 @@ interactionFunc_278b:
 ; This isn't used with standard scripts; see the function below.
 ;
 ; @param[out]	hl	Value of Interaction.scriptPtr
-; @addr{2791}
 interactionGetMiniScript:
 	ld h,d
 	ld l,Interaction.scriptPtr
@@ -9891,7 +9458,6 @@ interactionGetMiniScript:
 ; in bank 0 instead of by the "user".
 ;
 ; @param	hl	Address of script (it gets written to Interaction.scriptPtr)
-; @addr{2798}
 interactionSetMiniScript:
 	ld e,Interaction.scriptPtr
 	ld a,l
@@ -9907,7 +9473,6 @@ interactionSetMiniScript:
 ;;
 ; Oscillates an object's Z position up and down? (used by Maple)
 ;
-; @addr{27a0}
 objectOscillateZ:
 	ldh a,(<hRomBank)
 	push af
@@ -9925,7 +9490,6 @@ objectOscillateZ:
 ; @param	c	var03 for TREASURE_RING (determines if it's in a chest or not,
 ;			how it spawns in, etc). This should usually be $00?
 ; @param[out]	zflag	Set if the treasure was given successfully.
-; @addr{27b4}
 giveRingToLink:
 	call createRingTreasure
 	ret nz
@@ -9943,7 +9507,6 @@ giveRingToLink:
 ; @param	c	Subid for TREASURE_RING (determines if it's in a chest or not,
 ;			how it spawns in, etc)
 ; @param[out]	zflag	Set if the treasure was created successfully.
-; @addr{27c2}
 createRingTreasure:
 	call getFreeInteractionSlot
 	ret nz
@@ -9963,7 +9526,6 @@ createRingTreasure:
 ;
 ; @param	bc	Treasure to create (b = main id, c = subid)
 ; @param[out]	zflag	Set if the treasure was created successfully.
-; @addr{27d4}
 createTreasure:
 	call getFreeInteractionSlot
 	ret nz
@@ -9983,7 +9545,6 @@ createTreasure:
 ;                       indefinitely).
 ; @param	bc	Offset from the object to create the exclamation mark at.
 ; @param	d	The object to use for the base position of the exclamation mark.
-; @addr{27e0}
 objectCreateExclamationMark:
 	ldh (<hFF8B),a
 	ldh a,(<hRomBank)
@@ -10011,7 +9572,6 @@ objectCreateExclamationMark:
 ;
 ; @param	a	0 to float left, nonzero to float right
 ; @param	bc	Offset relative to object
-; @addr{27f8}
 objectCreateFloatingSnore:
 	ldh (<hFF8B),a
 	ld a,$00
@@ -10020,7 +9580,6 @@ objectCreateFloatingSnore:
 ;;
 ; @param	a	0 to float left, nonzero to float right
 ; @param	bc	Offset relative to object
-; @addr{27fe}
 objectCreateFloatingMusicNote:
 	ldh (<hFF8B),a
 	ld a,$01
@@ -10038,7 +9597,6 @@ objectCreateFloatingMusicNote:
 	ret
 
 ;;
-; @addr{2818}
 enemyAnimate:
 	ld h,d
 	ld l,Enemy.animCounter
@@ -10055,7 +9613,6 @@ enemyAnimate:
 ;;
 ; @param a Animation index
 ;
-; @addr{282b}
 enemySetAnimation:
 	add a
 	ld c,a
@@ -10074,7 +9631,6 @@ enemySetAnimation:
 	add hl,bc
 
 ;;
-; @addr{2844}
 _enemyNextAnimationFrame:
 	ldi a,(hl)
 	ld h,(hl)
@@ -10138,7 +9694,6 @@ _enemyNextAnimationFrame:
 ;;
 ; See the below functions.
 ;
-; @addr{287b}
 enemyDie_uncounted_withoutItemDrop:
 	ld b,$80
 	jr ++
@@ -10146,7 +9701,6 @@ enemyDie_uncounted_withoutItemDrop:
 ;;
 ; Like enemyDie, but there is no random item drop.
 ;
-; @addr{287f}
 enemyDie_withoutItemDrop:
 	ld b,$81
 	jr ++
@@ -10155,7 +9709,6 @@ enemyDie_withoutItemDrop:
 ; Like enemyDie, but wNumEnemies is not decremented. Other kill counters are incremented
 ; as normal.
 ;
-; @addr{2883}
 enemyDie_uncounted:
 	ld b,$00
 	jr ++
@@ -10164,7 +9717,6 @@ enemyDie_uncounted:
 ; Kills an enemy in a puff of smoke. wNumEnemies will be decremented, and there will be
 ; a random item drop (depending on the enemy id?)
 ;
-; @addr{2887}
 enemyDie:
 	ld b,$01
 ++
@@ -10219,7 +9771,6 @@ enemyDie:
 ;;
 ; @param	b	Bit 0 set if wNumEnemies should be decremented,
 ;			Bit 7 set if there should be an item drop.
-; @addr{28d3}
 @enemyCreateDeathPuff:
 	; Kill instantly instead of in a puff of smoke if bit 7 of var3f is set
 	ld e,Enemy.var3f
@@ -10276,7 +9827,6 @@ enemyDie:
 ;			$03 if health is 0
 ;			$04 if something hit the enemy?
 ;			$05 if the enemy is experiencing knockback
-; @addr{28fd}
 enemyStandardUpdate:
 	ld h,d
 	ld l,Enemy.state
@@ -10387,7 +9937,6 @@ enemyStandardUpdate:
 	ret
 
 ;;
-; @addr{2978}
 partAnimate:
 	ld h,d
 	ld l,Part.animCounter
@@ -10399,7 +9948,6 @@ partAnimate:
 	jr _partNextAnimationFrame
 
 ;;
-; @addr{2988}
 partSetAnimation:
 	add a
 	ld c,a
@@ -10418,7 +9966,6 @@ partSetAnimation:
 ;;
 ; Note: this sets the ROM bank to $11 before returning.
 ;
-; @addr{299e}
 _partNextAnimationFrame:
 	ldi a,(hl)
 	ld h,(hl)
@@ -10485,7 +10032,6 @@ _partNextAnimationFrame:
 ;
 ; @param	bc	Center of the swirl
 ; @param	a	Duration of swirl ($ff and $00 are infinite?)
-; @addr{29d8}
 createEnergySwirlGoingIn:
 	ld l,a
 	ldh a,(<hRomBank)
@@ -10500,7 +10046,6 @@ createEnergySwirlGoingIn:
 ;
 ; @param	bc	Center of the swirl
 ; @param	a	Duration of swirl ($ff and $00 are infinite?)
-; @addr{29ed}
 createEnergySwirlGoingOut:
 	ld l,a
 	ldh a,(<hRomBank)
@@ -10519,7 +10064,6 @@ createEnergySwirlGoingOut:
 ; final fight.
 ;
 ; @param[out]	a	Direction buttons that correspond to wLinkAngle
-; @addr{2a02}
 convertLinkAngleToDirectionButtons:
 	ld a,(wLinkAngle)
 	add a
@@ -10553,7 +10097,6 @@ convertLinkAngleToDirectionButtons:
 ;
 ; @param	a 	Simulated input bank
 ; @param	hl	Simulated input address
-; @addr{2a1d}
 setSimulatedInputAddress:
 	ld de,wSimulatedInputBank
 	ld (de),a
@@ -10582,7 +10125,6 @@ setSimulatedInputAddress:
 ; Returns preset input values. Used for cutscenes (ie. the intro).
 ;
 ; @param[out]	a	Value to be written to wGameKeysPressed
-; @addr{2a33}
 getSimulatedInput:
 	ld a,(wPaletteThread_mode)
 	or a
@@ -10637,7 +10179,6 @@ getSimulatedInput:
 ; Sets Item.state to 'a', and Item.state2 to 0.
 ;
 ; @param	a	Value for Item.state
-; @addr{2a7e}
 itemSetState:
 	ld h,d
 	ld l,Item.state
@@ -10646,7 +10187,6 @@ itemSetState:
 	ret
 
 ;;
-; @addr{2a85}
 clearPegasusSeedCounter:
 	ld hl,wPegasusSeedCounter
 	xor a
@@ -10657,7 +10197,6 @@ clearPegasusSeedCounter:
 ;;
 ; Resets some Link variables - primarily his Z position - and resets his animation?
 ;
-; @addr{2a8c}
 putLinkOnGround:
 	; Return if Link is riding something
 	ld a,(wLinkObjectIndex)
@@ -10691,7 +10230,6 @@ putLinkOnGround:
 ;;
 ; Sets wLinkForceState to LINK_STATE_08.
 ;
-; @addr{2aad}
 setLinkForceStateToState08:
 	xor a
 
@@ -10699,7 +10237,6 @@ setLinkForceStateToState08:
 ; Sets wLinkForceState to LINK_STATE_08, and wcc50 to the given value.
 ;
 ; @param	a	Value for wcc50
-; @addr{2aae}
 setLinkForceStateToState08_withParam:
 	push hl
 
@@ -10717,7 +10254,6 @@ setLinkForceStateToState08_withParam:
 ;
 ; Parameter 'd' does not need to be passed as the Link object.
 ;
-; @addr{2ab7}
 linkApplyDamage:
 	push de
 	ldh a,(<hRomBank)
@@ -10734,7 +10270,6 @@ linkApplyDamage:
 ; clears subid, var03, state, and state2.
 ;
 ; @param	a	Link ID value (see constants/specialObjectTypes.s)
-; @addr{2acf}
 setLinkIDOverride:
 	or $80
 	ld (wLinkIDOverride),a
@@ -10745,7 +10280,6 @@ setLinkIDOverride:
 ; Sets link's ID and clears w1Link.subid, var03, state, state2.
 ;
 ; @param	a	New value for w1Link.id
-; @addr{2ad9}
 setLinkID:
 	ld hl,w1Link.id
 	ldi (hl),a
@@ -10760,7 +10294,6 @@ setLinkID:
 ;;
 ; Sends Link back to his spawn point for the room. Also damages him maybe?
 ;
-; @addr{2ae3}
 respawnLink:
 	ld a,LINK_STATE_RESPAWNING
 	ld (wLinkForceState),a
@@ -10771,7 +10304,6 @@ respawnLink:
 
 ;;
 ; @param	d	Special object index (link or companion)
-; @addr{2aef}
 specialObjectAnimate:
 	ld h,d
 	ld l,SpecialObject.animCounter
@@ -10791,7 +10323,6 @@ specialObjectAnimate:
 ;;
 ; @param	a	Animation (see constants/linkAnimations.s)
 ; @param	d	Special object index
-; @addr{2b0a}
 specialObjectSetAnimation:
 	ld e,SpecialObject.animMode
 	ld (de),a
@@ -10806,7 +10337,6 @@ specialObjectSetAnimation:
 	ret
 
 ;;
-; @addr{2b25}
 loadLinkAndCompanionAnimationFrame:
 	ldh a,(<hRomBank)
 	push af
@@ -10820,7 +10350,6 @@ loadLinkAndCompanionAnimationFrame:
 ; whether he should do a sword poke.
 ;
 ; @param[out]	cflag	Set if link is pushing against a wall.
-; @addr{2b39}
 checkLinkPushingAgainstWall:
 	push hl
 	ld a,(w1Link.direction)
@@ -10847,7 +10376,6 @@ checkLinkPushingAgainstWall:
 	xor a
 	ret
 
-; @addr{2b55}
 @collisionDirections:
 	.db $c0 $40
 	.db $03 $10
@@ -10858,7 +10386,6 @@ checkLinkPushingAgainstWall:
 ; Updates w1Companion.direction based on wLinkAngle.
 ;
 ; @param[out]	cflag	Set if direction changed.
-; @addr{2b5d}
 updateCompanionDirectionFromAngle:
 	push bc
 	push hl
@@ -10869,7 +10396,6 @@ updateCompanionDirectionFromAngle:
 ; Updates w1Link.direction based on wLinkAngle.
 ;
 ; @param[out]	cflag	Set if direction changed.
-; @addr{2b64}
 updateLinkDirectionFromAngle:
 	push bc
 	push hl
@@ -10910,7 +10436,6 @@ updateLinkDirectionFromAngle:
 	ret
 
 ;;
-; @addr{2b8a}
 specialObjectSetCoordinatesToRespawnYX:
 	ld h,d
 	ld l,SpecialObject.direction
@@ -10942,7 +10467,6 @@ specialObjectSetCoordinatesToRespawnYX:
 
 ;;
 ; Clear variables related to link's invincibility, knockback, etc.
-; @addr{2ba9}
 resetLinkInvincibility:
 	ld hl,w1Link.oamFlagsBackup
 	ldi a,(hl)
@@ -10976,7 +10500,6 @@ resetLinkInvincibility:
 ; equipped, which doubles their duration.
 ;
 ; @param[out]	zflag	Set if wPegasusSeedCounter is zero.
-; @addr{2bbd}
 decPegasusSeedCounter:
 	ld hl,wPegasusSeedCounter+1
 	res 7,(hl)
@@ -11011,7 +10534,6 @@ decPegasusSeedCounter:
 ;;
 ; @param[out]	a	The high byte of wPegasusSeedCounter
 ; @param[out]	zflag	Set if wPegasusSeedCounter is zero
-; @addr{2be8}
 checkPegasusSeedCounter:
 	ld hl,wPegasusSeedCounter
 	ldi a,(hl)
@@ -11024,7 +10546,6 @@ checkPegasusSeedCounter:
 ;
 ; @param	a	The type of collision (see constants/breakableTileSources.s)
 ; @param[out]	cflag	Set if the tile was broken (or can be broken)
-; @addr{2bef}
 itemTryToBreakTile:
 	ld h,d
 	ld l,Item.yh
@@ -11039,7 +10560,6 @@ itemTryToBreakTile:
 ;			won't actually break it.
 ; @param	bc	The YYXX position
 ; @param[out]	cflag	Set if the tile was broken (or can be broken)
-; @addr{2bf6}
 tryToBreakTile:
 	ldh (<hFF8F),a
 	ldh a,(<hRomBank)
@@ -11053,7 +10573,6 @@ tryToBreakTile:
 
 ;;
 ; Calls bank6._clearAllParentItems.
-; @addr{2c10}
 clearAllParentItems:
 	ld c,$00
 	jr ++
@@ -11064,7 +10583,6 @@ clearAllParentItems:
 ; Updates var03 of a parent item to correspond to the equipped A or B button item. This is
 ; called after closing a menu (since button assignments may be changed).
 ;
-; @addr{2c14}
 updateParentItemButtonAssignment:
 	ld c,$01
 	jr ++
@@ -11073,7 +10591,6 @@ updateParentItemButtonAssignment:
 ; Calls bank6.checkUseItems, which checks the A and B buttons and creates corresponding
 ; item objects if necessary.
 ;
-; @addr{2c18}
 checkUseItems:
 	ld c,$02
 ++
@@ -11085,7 +10602,6 @@ checkUseItems:
 	ret
 
 ;;
-; @addr{2c2e}
 objectAddToGrabbableObjectBuffer:
 	ld hl,wGrabbableObjectBuffer
 --
@@ -11108,7 +10624,6 @@ objectAddToGrabbableObjectBuffer:
 ;;
 ; Drops an item being held by Link?
 ;
-; @addr{2c43}
 dropLinkHeldItem:
 	ld a,(wInShop)
 	or a
@@ -11151,7 +10666,6 @@ dropLinkHeldItem:
 ; Clears var3f for w1ParentItem2-5. Relates to the animation link does as he uses the
 ; item?
 ;
-; @addr{2c72}
 clearVar3fForParentItems:
 	ld hl,w1ParentItem2.var3f
 --
@@ -11167,7 +10681,6 @@ clearVar3fForParentItems:
 ; wLinkSwimmingState variable.
 ;
 ; @param	d	Link object
-; @addr{2c7e}
 linkCreateSplash:
 	ld b,INTERACID_SPLASH
 
@@ -11190,7 +10703,6 @@ linkCreateSplash:
 	jp objectCopyPositionWithOffset
 
 ;;
-; @addr{2c9b}
 clearVariousLinkVariables:
 	xor a
 	ld (w1Link.var36),a
@@ -11206,7 +10718,6 @@ clearVariousLinkVariables:
 ;
 ; Not sure why this is in bank 0 instead of bank 5.
 ;
-; @addr{2cad}
 linkState07:
 	ld e,SpecialObject.state2
 	ld a,(de)
@@ -11250,7 +10761,6 @@ linkState07:
 	jp bank5.linkSetState
 
 ;;
-; @addr{2ce2}
 itemDelete:
 	ld h,d
 	ld l,Item.start
@@ -11269,7 +10779,6 @@ itemDelete:
 ; Updates an item's angle based on its direction.
 ;
 ; @param[out]	hl	Item.direction
-; @addr{2cf0}
 itemUpdateAngle:
 	ld h,d
 	ld l,Item.direction
@@ -11281,7 +10790,6 @@ itemUpdateAngle:
 
 ;;
 ; @param[out]	zflag	nz on failure.
-; @addr{2cf9}
 getFreeItemSlot:
 	ldhl FIRST_DYNAMIC_ITEM_INDEX, Item.start
 -
@@ -11298,7 +10806,6 @@ getFreeItemSlot:
 	ret
 
 ;;
-; @addr{2d07}
 introThreadStart:
 	ld hl,wIntro.frameCounter
 	inc (hl)
@@ -11308,7 +10815,6 @@ introThreadStart:
 
 ;;
 ; This runs everything after the "nintendo/capcom" logo and before the titlescreen.
-; @addr{2d1a}
 intro_cinematic:
 	ldh a,(<hRomBank)
 	push af
@@ -11328,7 +10834,6 @@ intro_cinematic:
 ;
 ; @param	b
 ; @param[out]	b
-; @addr{2d48}
 func_2d48:
 	ldh a,(<hRomBank)
 	push af
@@ -11354,7 +10859,6 @@ func_2d48:
 
 ;;
 ; wram bank 1 loaded on return.
-; @addr{2d5f}
 clearFadingPalettes:
 	ldh a,(<hRomBank)
 	push af
@@ -11372,7 +10876,6 @@ clearFadingPalettes:
 ; @param	b	Index of "screen flashing" data
 ; @param	hl	Counter to use (should start at 0?)
 ; @param[out]	zflag	nz if the flashing is complete (all data has been read).
-; @addr{2d73}
 flashScreen:
 	ldh a,(<hRomBank)
 	push af
@@ -11390,7 +10893,6 @@ flashScreen:
 ;;
 ; SpecialObject code for IDs $0f-$12
 ;
-; @addr{2d8e}
 specialObjectCode_companionCutscene:
 	ldh a,(<hRomBank)
 	push af
@@ -11400,7 +10902,6 @@ specialObjectCode_companionCutscene:
 	ret
 
 ;;
-; @addr{2da2}
 specialObjectCode_linkInCutscene:
 
 .ifdef ROM_SEASONS
@@ -11419,7 +10920,6 @@ specialObjectCode_linkInCutscene:
 ;;
 ; Load dungeon layout if currently in a dungeon.
 ;
-; @addr{2daa}
 loadDungeonLayout:
 	ld a,(wTilesetFlags)
 	and TILESETFLAG_DUNGEON
@@ -11433,7 +10933,6 @@ loadDungeonLayout:
 	ret
 
 ;;
-; @addr{2dc4}
 initializeDungeonStuff:
 	xor a
 	ld (wToggleBlocksState),a
@@ -11442,7 +10941,6 @@ initializeDungeonStuff:
 	jp loadStaticObjects
 
 ;;
-; @addr{2dd1}
 setVisitedRoomFlag:
 	call getThisRoomFlags
 	set ROOMFLAG_BIT_VISITED, (hl)
@@ -11453,7 +10951,6 @@ setVisitedRoomFlag:
 ; value in a
 ;
 ; @param[out]	a	Dungeon properties
-; @addr{2dd7}
 getThisRoomDungeonProperties:
 	ldh a,(<hRomBank)
 	push af
@@ -11480,7 +10977,6 @@ getThisRoomDungeonProperties:
 ;;
 ; Get the address of the dungeon layout in RAM in hl (wram bank 2)
 ;
-; @addr{2e01}
 getDungeonLayoutAddress:
 	push bc
 	push de
@@ -11497,7 +10993,6 @@ getDungeonLayoutAddress:
 ; Get the current room index.
 ;
 ; @param[out]	a	Current room index
-; @addr{2e12}
 getActiveRoomFromDungeonMapPosition:
 	ld a,(wDungeonMapPosition)
 
@@ -11506,7 +11001,6 @@ getActiveRoomFromDungeonMapPosition:
 ;
 ; @param	a	Minimap position
 ; @param[out]	a,l	Room at that position
-; @addr{2e15}
 getRoomInDungeon:
 	ldh (<hFF8B),a
 	ld a, :w2DungeonLayout
@@ -11527,7 +11021,6 @@ getRoomInDungeon:
 
 
 ;;
-; @addr{2e27}
 getFreeEnemySlot:
 	call getFreeEnemySlot_uncounted
 	ret nz
@@ -11538,7 +11031,6 @@ getFreeEnemySlot:
 	ret
 
 ;;
-; @addr{2e34}
 getFreeEnemySlot_uncounted:
 	ldhl FIRST_ENEMY_INDEX, Enemy.start
 --
@@ -11558,7 +11050,6 @@ getFreeEnemySlot_uncounted:
 	ret
 
 ;;
-; @addr{2e47}
 enemyDelete:
 	ld e,Enemy.enabled
 	call objectRemoveFromAButtonSensitiveObjectList
@@ -11583,7 +11074,6 @@ enemyDelete:
 ; Mostly equivalent to the "objectReplaceWithID" function, but only for enemies.
 ;
 ; @param	bc	New enemy ID
-; @addr{2e59}
 enemyReplaceWithID:
 	ld h,d
 	push bc
@@ -11631,7 +11121,6 @@ enemyReplaceWithID:
 ;;
 ; Update all enemies with 'state' variables equal to 0.
 ;
-; @addr{2e82}
 _updateEnemiesIfStateIsZero:
 	ld a,Enemy.start
 	ldh (<hActiveObjectType),a
@@ -11664,7 +11153,6 @@ _updateEnemiesIfStateIsZero:
 ; Update all enemies by calling their enemy-specific code and doing other common enemy
 ; stuff.
 ;
-; @addr{2ea5}
 updateEnemies:
 	ld a,(wScrollMode)
 	and $0e
@@ -11747,7 +11235,6 @@ updateEnemies:
 
 ;;
 ; @param	d	Enemy to update
-; @addr{2f07}
 updateEnemy:
 	call enemyStandardUpdate
 	ld e,Enemy.id
@@ -11820,7 +11307,6 @@ updateEnemy:
 ; Note: ages doesn't save the bank number properly when something calls this, so it only
 ; works when called from bank 1 (same bank as "checkLoadPirateShip").
 ;
-; @addr{30fe}
 initializeRoom:
 
 .ifdef ROM_AGES
@@ -11881,7 +11367,6 @@ initializeRoom:
 
 ;;
 ; @param	hl	Address of interaction data to parse
-; @addr{3171}
 parseGivenObjectData:
 	ldh a,(<hRomBank)
 	push af
@@ -11899,7 +11384,6 @@ parseGivenObjectData:
 ;;
 ; Checks if there are any "static objects" in the room to load.
 ;
-; @addr{3189}
 loadStaticObjects:
 	ldh a,(<hRomBank)
 	push af
@@ -11913,7 +11397,6 @@ loadStaticObjects:
 	ret
 
 ;;
-; @addr{319f}
 clearStaticObjects:
 	ld hl,wStaticObjects
 	ld b,_sizeof_wStaticObjects
@@ -11924,7 +11407,6 @@ clearStaticObjects:
 ;
 ; @param[out]	hl	Address of free slot (if successful)
 ; @param[out]	zflag	Set on success
-; @addr{31a7}
 findFreeStaticObjectSlot:
 	ld hl,wStaticObjects
 .ifdef ROM_AGES
@@ -11950,7 +11432,6 @@ findFreeStaticObjectSlot:
 ; Deletes the object which the relatedObj1 variable points to, assuming it points to
 ; a "static" object (stored in wStaticObjects).
 ;
-; @addr{31b8}
 objectDeleteRelatedObj1AsStaticObject:
 	ldh a,(<hActiveObjectType)
 	add Object.relatedObj1
@@ -11983,7 +11464,6 @@ objectDeleteRelatedObj1AsStaticObject:
 ; @param	a	Static object type (see constants/staticObjectTypes.s)
 ; @param	d	Object
 ; @param	hl	Address in wStaticObjects
-; @addr{31cf}
 objectSaveAsStaticObject:
 	ld (hl),a
 	ldh a,(<hActiveObjectType)
@@ -12026,21 +11506,18 @@ objectSaveAsStaticObject:
 
 ;;
 ; @param	a	Global flag to check (see constants/globalFlags.s)
-; @addr{31f3}
 checkGlobalFlag:
 	ld hl,wGlobalFlags
 	jp checkFlag
 
 ;;
 ; @param	a	Global flag to set
-; @addr{31f9}
 setGlobalFlag:
 	ld hl,wGlobalFlags
 	jp setFlag
 
 ;;
 ; @param	a	Global flag to unset
-; @addr{31ff}
 unsetGlobalFlag:
 	ld hl,wGlobalFlags
 	jp unsetFlag
@@ -12049,7 +11526,6 @@ unsetGlobalFlag:
 ;;
 ; Calls bank2._clearEnemiesKilledList.
 ;
-; @addr{3205}
 clearEnemiesKilledList:
 	ld h,$00
 	.ifdef ROM_AGES
@@ -12061,7 +11537,6 @@ clearEnemiesKilledList:
 ;;
 ; Calls bank2._addRoomToEnemiesKilledList.
 ;
-; @addr{3209}
 addRoomToEnemiesKilledList:
 	ld h,$01
 	.ifdef ROM_AGES
@@ -12074,7 +11549,6 @@ addRoomToEnemiesKilledList:
 ; Marks an enemy as killed so it doesn't respawn for a bit.
 ; Calls bank2._markEnemyAsKilledInRoom.
 ;
-; @addr{320d}
 markEnemyAsKilledInRoom:
 	ld h,$02
 	.ifdef ROM_AGES
@@ -12086,7 +11560,6 @@ markEnemyAsKilledInRoom:
 ;;
 ; Calls bank2._stub_02_77f4. (Unused)
 ;
-; @addr{3211}
 func_3211:
 	ld h,$03
 	.ifdef ROM_AGES
@@ -12099,7 +11572,6 @@ func_3211:
 ; Places the numbers $00-$ff into w4RandomBuffer in a random order.
 ; Calls bank2.generateRandomBuffer.
 ;
-; @addr{3215}
 generateRandomBuffer:
 	ld h,$04
 	.ifdef ROM_AGES
@@ -12113,7 +11585,6 @@ generateRandomBuffer:
 ; Calls bank2._getRandomPositionForEnemy.
 ;
 ; @param	hFF8B	"Flags" (set when placing an enemy in the editor)
-; @addr{3219}
 getRandomPositionForEnemy:
 	ld h,$05
 	.ifdef ROM_AGES
@@ -12128,7 +11599,6 @@ getRandomPositionForEnemy:
 ;;
 ; Calls bank2._checkSpawnTimeportalInteraction.
 ;
-; @addr{321d}
 checkSpawnTimeportalInteraction:
 	ld h,$06
 
@@ -12146,13 +11616,11 @@ checkSpawnTimeportalInteraction:
 	ret
 
 ;;
-; @addr{3238}
 clearPaletteFadeVariablesAndRefreshPalettes:
 	ld a,$ff
 	ldh (<hDirtyBgPalettes),a
 	ldh (<hDirtySprPalettes),a
 ;;
-; @addr{323e}
 clearPaletteFadeVariables:
 	xor a
 	ld (wPaletteThread_mode),a
@@ -12170,7 +11638,6 @@ clearPaletteFadeVariables:
 
 ;;
 ; @param	a	Amount to divide the speed of the fadeout by
-; @addr{3257}
 fadeoutToWhiteWithDelay:
 	call setPaletteThreadDelay
 	ld a,$09
@@ -12179,14 +11646,12 @@ fadeoutToWhiteWithDelay:
 	jr ++
 
 ;;
-; @addr{3263}
 fastFadeoutToWhite:
 	ld a,$01
 	ld (wPaletteThread_mode),a
 	ld a,$03
 	jr ++
 ;;
-; @addr{326c}
 fadeoutToWhite:
 	ld a,$01
 	ld (wPaletteThread_mode),a
@@ -12199,7 +11664,6 @@ fadeoutToWhite:
 ;;
 ; Configure all palettes to update from w2FadingBg/SprPalettes, and mark the palettes as
 ; dirty.
-; @addr{327a}
 makeAllPaletteUseFading:
 	ld a,$ff
 	ld hl,wDirtyFadeBgPalettes
@@ -12211,7 +11675,6 @@ makeAllPaletteUseFading:
 
 ;;
 ; @param	a	Amount to divide the speed of the fadein by
-; @addr{3284}
 fadeinFromWhiteWithDelay:
 	call setPaletteThreadDelay
 	ld a,$0a
@@ -12220,7 +11683,6 @@ fadeinFromWhiteWithDelay:
 	jr ++
 
 ;;
-; @addr{3290}
 fastFadeinFromWhite:
 	ld a,$02
 	ld (wPaletteThread_mode),a
@@ -12228,7 +11690,6 @@ fastFadeinFromWhite:
 	jr ++
 
 ;;
-; @addr{3299}
 fadeinFromWhite:
 	ld a,$02
 	ld (wPaletteThread_mode),a
@@ -12241,7 +11702,6 @@ fadeinFromWhite:
 
 ;;
 ; @param	a	Amount to divide the speed of the fadeout by
-; @addr{32ab}
 fadeoutToBlackWithDelay:
 	call setPaletteThreadDelay
 	ld a,$0b
@@ -12250,7 +11710,6 @@ fadeoutToBlackWithDelay:
 	jr ++
 
 ;;
-; @addr{32b7}
 fastFadeoutToBlack:
 	ld a,$03
 	ld (wPaletteThread_mode),a
@@ -12258,7 +11717,6 @@ fastFadeoutToBlack:
 	jr ++
 
 ;;
-; @addr{32c0}
 fadeoutToBlack:
 	ld a,$03
 	ld (wPaletteThread_mode),a
@@ -12271,7 +11729,6 @@ fadeoutToBlack:
 
 ;;
 ; @param	a	Amount to divide the speed of the fadein by
-; @addr{32d1}
 fadeinFromBlackWithDelay:
 	call setPaletteThreadDelay
 	ld a,$0c
@@ -12280,7 +11737,6 @@ fadeinFromBlackWithDelay:
 	jr ++
 
 ;;
-; @addr{32dd}
 fastFadeinFromBlack:
 	ld a,$04
 	ld (wPaletteThread_mode),a
@@ -12288,7 +11744,6 @@ fastFadeinFromBlack:
 	jr ++
 
 ;;
-; @addr{32e6}
 fadeinFromBlack:
 	ld a,$04
 	ld (wPaletteThread_mode),a
@@ -12307,7 +11762,6 @@ fadeinFromBlack:
 
 ;;
 ; Darkens a room half as much as "darkenRoomLightly".
-; @addr{32f8}
 darkenRoomLightly:
 	ld b,$f7
 	jr _darkenRoomHelper
@@ -12316,7 +11770,6 @@ darkenRoomLightly:
 ; Unused?
 ;
 ; @param	a	How much to slow down palette thread
-; @addr{32fc}
 func_32fc:
 	call setPaletteThreadDelay
 	ld a,$0d
@@ -12328,7 +11781,6 @@ func_32fc:
 ;;
 
 ; @param	a	Speed of darkening
-; @addr{330a}
 darkenRoomWithSpeed:
 	ld b,$f0
 	call _setDarkeningVariables
@@ -12339,13 +11791,11 @@ darkenRoomWithSpeed:
 
 ;;
 ; Darkens a room twice as much as "darkenRoomLightly".
-; @addr{3315}
 darkenRoom:
 	ld b,$f0
 
 ;;
 ; @param	b	Amount to darken
-; @addr{3317}
 _darkenRoomHelper:
 	ld a,$05
 	ld (wPaletteThread_mode),a
@@ -12355,7 +11805,6 @@ _darkenRoomHelper:
 ;;
 ; @param	a	Speed of darkening
 ; @param	b	Amount to darken
-; @addr{331e}
 _setDarkeningVariables:
 	ld (wPaletteThread_speed),a
 	ld a,(wPaletteThread_parameter)
@@ -12374,7 +11823,6 @@ _setDarkeningVariables:
 	ret
 
 ;;
-; @addr{3338}
 brightenRoomLightly:
 	ld b,$f7
 	ld a,$01
@@ -12384,7 +11832,6 @@ brightenRoomLightly:
 ; Unused?
 ;
 ; @param	a
-; @addr{333e}
 func_333e:
 	call setPaletteThreadDelay
 	ld a,$0e
@@ -12395,13 +11842,11 @@ func_333e:
 
 ;;
 ; @param	a	Speed of brightening
-; @addr{334c}
 brightenRoomWithSpeed:
 	ld b,$00
 	jr _brightenRoomHelper
 
 ;;
-; @addr{3350}
 brightenRoom:
 	ld b,$00
 	ld a,$01
@@ -12409,7 +11854,6 @@ brightenRoom:
 ;;
 ; @param	a	Speed of brightening
 ; @param	b	Amount to brighten
-; @addr{3354}
 _brightenRoomHelper:
 	call _setDarkeningVariables
 	ld a,$06
@@ -12479,7 +11923,6 @@ brightenRoom:
 ; Also uses a value of $1e instead of $20 for initial fadeOffset; maybe because it's
 ; a multiple of 3, which is the value for wPaletteThread_speed?
 ;
-; @addr{335d}
 fastFadeinFromWhiteToRoom:
 	call fastFadeinFromWhite
 	ld a,$1e
@@ -12490,7 +11933,6 @@ fastFadeinFromWhiteToRoom:
 	ret
 
 ;;
-; @addr{336b}
 fadeinFromWhiteToRoom:
 	call fadeinFromWhite
 	jr --
@@ -12499,7 +11941,6 @@ fadeinFromWhiteToRoom:
 ; Fades between the palettes in w2ColorComponentBuffer1 and w2ColorComponentBuffer2. The
 ; colors in these palettes apply to the palettes BG2-7.
 ;
-; @addr{3370}
 startFadeBetweenTwoPalettes:
 	ld a,$08
 	ld (wPaletteThread_mode),a
@@ -12510,7 +11951,6 @@ startFadeBetweenTwoPalettes:
 ;;
 ; @param	a	A value which acts to slow down certain palette fades the higher
 ;			it is. (Acts like division.)
-; @addr{337b}
 setPaletteThreadDelay:
 	ld (wPaletteThread_counterRefill),a
 	ld a,$01
@@ -12518,7 +11958,6 @@ setPaletteThreadDelay:
 	ret
 
 ;;
-; @addr{3384}
 paletteFadeThreadStart:
 	ld a,:w2TilesetBgPalettes
 	ld ($ff00+R_SVBK),a
@@ -12539,7 +11978,6 @@ paletteFadeThreadStart:
 ;;
 ; This thread runs all of the interesting, in-game stuff.
 ;
-; @addr{33a1}
 mainThreadStart:
 	call restartSound
 	call stopTextThread
@@ -12583,7 +12021,6 @@ updateAnimationsAfterCutscene:
 ; Sets wActiveMusic2 to the appropriate value, and sets wLoadingRoomPack (for present/past
 ; overworlds only)
 ;
-; @addr{33cf}
 loadScreenMusic:
 	ldh a,(<hRomBank)
 	push af
@@ -12656,7 +12093,6 @@ applyWarpDest:
 ; - Copies wActiveRoom to wLoadingRoom
 ; - Copies wLoadingRoomPack to wRoomPack (for group 0 only)
 ;
-; @addr{341a}
 loadScreenMusicAndSetRoomPack:
 	call loadScreenMusic
 	ld a,(wActiveRoom)
@@ -12673,7 +12109,6 @@ loadScreenMusicAndSetRoomPack:
 	ret
 
 ;;
-; @addr{3431}
 dismountCompanionAndSetRememberedPositionToScreenCenter:
 	ldh a,(<hRomBank)
 	push af
@@ -12750,7 +12185,6 @@ zeldaKidnappedCutsceneCaller:
 ;;
 ; TODO: give this a better name
 ;
-; @addr{345b}
 updateAllObjects:
 	ldh a,(<hRomBank)
 	push af
@@ -12790,7 +12224,6 @@ updateAllObjects:
 	ret
 
 ;;
-; @addr{34f9}
 updateSpecialObjectsAndInteractions:
 	ldh a,(<hRomBank)
 	push af
@@ -12804,7 +12237,6 @@ updateSpecialObjectsAndInteractions:
 	ret
 
 ;;
-; @addr{351e}
 updateInteractionsAndDrawAllSprites:
 	ldh a,(<hRomBank)
 	push af
@@ -12819,7 +12251,6 @@ updateInteractionsAndDrawAllSprites:
 ;;
 ; Similar to updateAllObjects but calls a bit less
 ;
-; @addr{3539}
 func_3539:
 	ldh a,(<hRomBank)
 	push af
@@ -12876,7 +12307,6 @@ seasonsFunc_34a0:
 .endif
 
 ;;
-; @addr{3597}
 clearWramBank1:
 	xor a
 	ld ($ff00+R_SVBK),a
@@ -12887,11 +12317,9 @@ clearWramBank1:
 ;;
 ; Clear $30 bytes of ram related to information about the current screen, as
 ; well as clearing wram bank 1.
-; @addr{35a3}
 clearScreenVariablesAndWramBank1:
 	call clearWramBank1
 ;;
-; @addr{35a6}
 clearScreenVariables:
 	ld hl,wScreenVariables
 	ld b,wScreenVariables.size
@@ -12903,14 +12331,12 @@ clearScreenVariables:
 	ret
 
 ;;
-; @addr{35ba}
 clearLinkObject:
 	ld hl,w1Link
 	ld b,$40
 	jp clearMemory
 
 ;;
-; @addr{35c2}
 clearReservedInteraction0:
 	ld hl,w1ReservedInteraction0
 	ld b,$40
@@ -12919,7 +12345,6 @@ clearReservedInteraction0:
 ;;
 ; Unused?
 ;
-; @addr{35ca}
 clearReservedInteraction1:
 	ld hl,w1ReservedInteraction1
 	ld b,$40
@@ -12928,7 +12353,6 @@ clearReservedInteraction1:
 ;;
 ; Clear all interactions except wReservedInteraction0 and wReservedInteraction1.
 ;
-; @addr{35d2}
 clearDynamicInteractions:
 	ldde FIRST_DYNAMIC_INTERACTION_INDEX, Interaction.start
 --
@@ -12947,7 +12371,6 @@ clearDynamicInteractions:
 	ret
 
 ;;
-; @addr{35e3}
 clearItems:
 	ldde FIRST_ITEM_INDEX, Item.start
 --
@@ -12966,7 +12389,6 @@ clearItems:
 	ret
 
 ;;
-; @addr{35f4}
 clearEnemies:
 	ldde FIRST_ENEMY_INDEX, Enemy.start
 --
@@ -12985,7 +12407,6 @@ clearEnemies:
 	ret
 
 ;;
-; @addr{3605}
 clearParts:
 	ldde FIRST_PART_INDEX, Part.start
 --
@@ -13004,7 +12425,6 @@ clearParts:
 	ret
 
 ;;
-; @addr{3616}
 setEnemyTargetToLinkPosition:
 	ld a,(wLinkObjectIndex)
 	ld h,a
@@ -13027,7 +12447,6 @@ setEnemyTargetToLinkPosition:
 	ret
 
 ;;
-; @addr{3632}
 getEntryFromObjectTable2:
 
 .ifdef ROM_AGES
@@ -13065,7 +12484,6 @@ multiIntroCutsceneCaller:
 ; Check if a dungeon uses those toggle blocks with the orbs.
 ;
 ; @param[out]	z	Set if the dungeon does not use toggle blocks.
-; @addr{364b}
 checkDungeonUsesToggleBlocks:
 	ld a,(wDungeonIndex)
 	cp $ff
@@ -13107,7 +12525,6 @@ func_35ec:
 ; Load data into wAnimationState, wAnimationPointerX, etc.
 ;
 ; @param	a	Value of wTilesetAnimation
-; @addr{3659}
 loadAnimationData:
 	ld b,a
 	ldh a,(<hRomBank)
@@ -13140,7 +12557,6 @@ loadAnimationData:
 	ret
 
 ;;
-; @addr{3698}
 @helper:
 	push hl
 	ldi a,(hl)
@@ -13178,7 +12594,6 @@ roomTileChangesAfterLoad02:
 ; @param	a	Room
 ; @param[out]	c	Bit 7 set if something is planted in the given room.
 ;			(This is the value of the 'f' register after the function call.)
-; @addr{36a8}
 getIndexOfGashaSpotInRoom:
 	ld c,a
 	ldh a,(<hRomBank)
@@ -13206,7 +12621,6 @@ getIndexOfGashaSpotInRoom:
 ;
 ; @param[out]	a	Black tower progress (0-2)
 ; @param[out]	zflag	z if black tower is still in early stages (npcs hanging around)
-; @addr{36c0}
 getBlackTowerProgress:
 	push bc
 	ld c,$02
@@ -13229,7 +12643,6 @@ getBlackTowerProgress:
 
 ; A table of addresses in vram. The index is a row (of 16 pixels), and the corresponding
 ; value is the address of the start of that row.
-; @addr{36d6}
 vramBgMapTable:
 	.dw $9800 $9840 $9880 $98c0
 	.dw $9900 $9940 $9980 $99c0
@@ -13242,7 +12655,6 @@ vramBgMapTable:
 ; @param	a	Value for wRoomStateModifier (only lower 2 bits are used)
 ; @param	b	Value for wActiveGroup
 ; @param	c	Value for wActiveRoom
-; @addr{36f6}
 func_36f6:
 	and $03
 	ld (wRoomStateModifier),a
@@ -13262,7 +12674,6 @@ func_36f6:
 ; End result: w3TileMappingData is loaded with the tile indices and attributes for all
 ; tiles in the tileset.
 ;
-; @addr{3712}
 loadTilesetLayout:
 	ld a,(wTilesetLayout)
 	call loadTileset
@@ -13291,7 +12702,6 @@ loadTilesetLayout:
 .endif
 
 ;;
-; @addr{373b}
 @helper:
 	; bc = tile mapping index
 	ldi a,(hl)
@@ -13351,7 +12761,6 @@ loadTilesetLayout:
 ;
 ; @param	a	Unique gfx header (see constants/uniqueGfxHeaders.s).
 ;			Bit 7 is ignored.
-; @addr{3775}
 loadUniqueGfxHeader:
 	and $7f
 	ld b,a
@@ -13373,7 +12782,6 @@ loadUniqueGfxHeader:
 ;;
 ; Load all graphics based on wTileset variables.
 ;
-; @addr{3796}
 loadTilesetGraphics:
 	ldh a,(<hRomBank)
 	push af
@@ -13410,7 +12818,6 @@ loadTilesetGraphics:
 ;
 ; @param	wUniqueGfxHeaderAddress	Where to read the header from (will be updated)
 ; @param[out]	cflag			Set if there are more entries to load.
-; @addr{37db}
 updateTilesetUniqueGfx:
 	ld a,(wTilesetUniqueGfx)
 	or a
@@ -13449,7 +12856,6 @@ updateTilesetUniqueGfx:
 ; Unused?
 ;
 ; @param	a	Unique gfx header index
-; @addr{380b}
 uniqueGfxFunc_380b:
 	ld b,a
 	ldh a,(<hRomBank)
@@ -13470,7 +12876,6 @@ uniqueGfxFunc_380b:
 	ret
 
 ;;
-; @addr{3828}
 loadTilesetUniqueGfx:
 	ld a,:uniqueGfxHeaderTable
 	setrombank
@@ -13496,7 +12901,6 @@ loadTilesetUniqueGfx:
 ; If the first byte (bank+mode) is zero, it loads a palette instead.
 ;
 ; @param[out]	a	Last byte of the entry (bit 7 set if there's another entry)
-; @addr{3843}
 loadUniqueGfxHeaderEntry:
 	ldi a,(hl)
 	or a
@@ -13548,7 +12952,6 @@ loadUniqueGfxHeaderEntry:
 	ret
 
 ;;
-; @addr{3889}
 loadTilesetData:
 	ldh a,(<hRomBank)
 	push af
@@ -13561,7 +12964,6 @@ loadTilesetData:
 	ret
 
 ;;
-; @addr{38a5}
 loadTilesetAndRoomLayout:
 	ldh a,(<hRomBank)
 	push af
@@ -13623,7 +13025,6 @@ seasonsFunc_3870:
 ; Load room layout into wRoomLayout using the relevant RAM addresses (wTilesetLayoutGroup,
 ; wLoadingRoom, etc)
 ;
-; @addr{38dc}
 loadRoomLayout:
 	ld hl,wRoomLayout
 	ld b,(LARGE_ROOM_HEIGHT+1)*16
@@ -13657,7 +13058,6 @@ loadRoomLayout:
 	.dw @loadSmallRoomLayout
 
 ;;
-; @addr{3913}
 @loadLargeRoomLayoutHlpr:
 	ld d,b
 	ld a,b
@@ -13679,7 +13079,6 @@ loadRoomLayout:
 	ret
 
 ;;
-; @addr{3928}
 @loadLargeRoomLayout:
 	ldh a,(<hFF8F)
 	ld h,a
@@ -13749,7 +13148,6 @@ loadRoomLayout:
 	ret
 
 ;;
-; @addr{3986}
 @loadSmallRoomLayout:
 	ldh a,(<hFF8D)
 	setrombank
@@ -13800,7 +13198,6 @@ loadRoomLayout:
 	ret
 
 ;;
-; @addr{39c1}
 @decompressLayoutMode2:
 	ld de,wRoomLayout
 	ld a,(SMALL_ROOM_WIDTH*SMALL_ROOM_HEIGHT)/16
@@ -13817,7 +13214,6 @@ loadRoomLayout:
 ;
 ; Format: word where each bit means "repeat" or "don't repeat"; byte to repeat; remaining data
 ;
-; @addr{39cf}
 @decompressLayoutMode2Helper:
 	ldi a,(hl)
 	ld c,a
@@ -13834,7 +13230,6 @@ loadRoomLayout:
 	jr @decompressLayoutHelper
 
 ;;
-; @addr{39e7}
 @decompressLayoutMode1:
 	ld de,wRoomLayout
 	ld a,(SMALL_ROOM_WIDTH*SMALL_ROOM_HEIGHT)/8
@@ -13847,7 +13242,6 @@ loadRoomLayout:
 	ret
 
 ;;
-; @addr{39f2}
 @decompressLayoutMode1Helper:
 	ldi a,(hl)
 	ld c,a
@@ -13861,7 +13255,6 @@ loadRoomLayout:
 ;;
 ; Copy b bytes to wRoomLayout, while keeping de in bounds
 ;
-; @addr{39fe}
 @layoutCopyBytes:
 	ldi a,(hl)
 	ld (de),a
@@ -13872,7 +13265,6 @@ loadRoomLayout:
 	ret
 
 ;;
-; @addr{3a08}
 @checkDeNextLayoutRow:
 	ld a,e
 	and $0f
@@ -13884,7 +13276,6 @@ loadRoomLayout:
 	ret
 
 ;;
-; @addr{3a13}
 @decompressLayoutHelper:
 	ld b,$08
 --
@@ -13904,7 +13295,6 @@ loadRoomLayout:
 
 ;;
 ; Load the compressed layout data into wRoomCollisions (temporarily)
-; @addr{3a27}
 @loadLayoutData:
 	push de
 	ldh a,(<hFF8C)
@@ -13952,7 +13342,6 @@ loadRoomLayout:
 ; Generates w3VramTiles and w3VramAttributes, and calls the function for room-specific
 ; changes to them.
 ;
-; @addr{3a4e}
 generateVramTilesWithRoomChanges:
 	ld a,($ff00+R_SVBK)
 	ld c,a
@@ -13982,7 +13371,6 @@ generateVramTilesWithRoomChanges:
 ; @param	a	Tile to get mapping data for
 ; @param[out]	b	Top-left flag value
 ; @param[out]	c	Top-left tile index
-; @addr{3a72}
 getTileMappingData:
 	ld c,a
 	ld a,($ff00+R_SVBK)
@@ -14019,7 +13407,6 @@ getTileMappingData:
 	ret
 
 ;;
-; @addr{3a94}
 setHlToTileMappingDataPlusATimes8:
 	call multiplyABy8
 	ld hl,w3TileMappingData
@@ -14032,7 +13419,6 @@ setHlToTileMappingDataPlusATimes8:
 ; @param	a	New tile index
 ; @param	c	Position of tile to change (returned intact)
 ; @param[out]	zflag	Set on failure (w2ChangedTileQueue is full)
-; @addr{3a9c}
 setTile:
 	ld b,a
 	ld a,(wChangedTileQueueTail)
@@ -14079,7 +13465,6 @@ setTile:
 ;
 ; @param	a	New tile index
 ; @param	c	Position of tile to change
-; @addr{3ac6}
 setTileInAllBuffers:
 	ld e,a
 	ld b,a
@@ -14103,7 +13488,6 @@ setTileInAllBuffers:
 ; @param	hFF8C	Position of tile to change
 ; @param	hFF8F	Tile index 1
 ; @param	hFF8E	Tile index 2
-; @addr{3acf}
 setInterleavedTile:
 	push de
 	ld e,a
@@ -14158,7 +13542,6 @@ checkRoomPackAfterWarp:
 ;;
 ; @param[out]	hl	Address of a free interaction slot (on the id byte)
 ; @param[out]	zflag	Set if a free slot was found
-; @addr{3aef}
 getFreeInteractionSlot:
 	ld hl,FIRST_DYNAMIC_INTERACTION_INDEX<<8 | $40
 --
@@ -14183,13 +13566,11 @@ getFreeInteractionSlot:
 
 .ifdef ROM_AGES
 ;;
-; @addr{3b02}
 interactionDeleteAndUnmarkSolidPosition:
 	call objectUnmarkSolidPosition
 .endif
 
 ;;
-; @addr{3b05}
 interactionDelete:
 	ld h,d
 	ld l,Interaction.start
@@ -14205,7 +13586,6 @@ interactionDelete:
 	ret
 
 ;;
-; @addr{3b13}
 _updateInteractionsIfStateIsZero:
 	ld a,Interaction.start
 	ldh (<hActiveObjectType),a
@@ -14235,7 +13615,6 @@ _updateInteractionsIfStateIsZero:
 	ret
 
 ;;
-; @addr{3b36}
 updateInteractions:
 	ld a,(wScrollMode)
 	cp $08
@@ -14269,7 +13648,6 @@ updateInteractions:
 ; Run once per frame for each interaction.
 ;
 ; @param	d	Interaction to update
-; @addr{3b62}
 updateInteraction:
 	ld e,Interaction.id
 	ld a,(de)
@@ -14349,7 +13727,6 @@ checkGotMakuSeedDidNotSeeZeldaKidnapped:
 ; @param	hl	Object's Y position
 ; @param	hFF8B	Range we must be within on each axis
 ; @param[out]	cflag	c if the object is within [hFF8B] pixels of the position
-; @addr{3d59}
 checkObjectIsCloseToPosition:
 	ldh (<hFF8B),a
 	ldh a,(<hRomBank)
@@ -14377,7 +13754,6 @@ checkObjectIsCloseToPosition:
 ; @param	b	Return value from "getGameProgress_1" or "getGameProgress_2"?
 ; @param	c	Subid "base"
 ; @param[out]	zflag	Set if the npc should exist
-; @addr{3d78}
 checkNpcShouldExistAtGameStage:
 	ldh (<hFF8B),a
 	ldh a,(<hRomBank)
@@ -14396,7 +13772,6 @@ checkNpcShouldExistAtGameStage:
 	or a
 	ret
 
-; @addr{3d97}
 tokayIslandStolenItems:
 	.db TREASURE_SWORD
 	.db TREASURE_SHOVEL
@@ -14414,7 +13789,6 @@ tokayIslandStolenItems:
 ; This function is identical to "interactionSetMiniScript", but is used in different
 ; contexts. See "include/simplescript_commands.s".
 ;
-; @addr{3da0}
 interactionSetSimpleScript:
 	ld e,Interaction.scriptPtr
 	ld a,l
@@ -14426,7 +13800,6 @@ interactionSetSimpleScript:
 
 ;;
 ; @param[out]	cflag	Set if the script has ended.
-; @addr{3da8}
 interactionRunSimpleScript:
 	ldh a,(<hRomBank)
 	push af
@@ -14458,7 +13831,6 @@ interactionRunSimpleScript:
 	ret
 
 ;;
-; @addr{3dd4}
 @runCommand:
 	ldi a,(hl)
 	push hl
@@ -14478,7 +13850,6 @@ interactionRunSimpleScript:
 ;;
 ; This doesn't get executed, value $00 is checked for above.
 ;
-; @addr{3de1}
 @command0:
 	pop hl
 	ret
@@ -14486,7 +13857,6 @@ interactionRunSimpleScript:
 ;;
 ; Set counter1
 ;
-; @addr{3de3}
 @command1:
 	pop hl
 	ldi a,(hl)
@@ -14498,7 +13868,6 @@ interactionRunSimpleScript:
 ;;
 ; Call playSound
 ;
-; @addr{3dea}
 @command2:
 	pop hl
 	ldi a,(hl)
@@ -14510,7 +13879,6 @@ interactionRunSimpleScript:
 ;;
 ; Call setTile
 ;
-; @addr{3df2}
 @command3:
 	pop hl
 	ldi a,(hl)
@@ -14525,7 +13893,6 @@ interactionRunSimpleScript:
 ;;
 ; Call setInterleavedTile
 ;
-; @addr{3dfd}
 @command4:
 	pop hl
 	ldi a,(hl)
@@ -14607,7 +13974,6 @@ interactionRunSimpleScript:
 ;
 ; @param	b	Index (0/1: Tokay on left; 2: tokay on right; 3: both sides)
 ; @param[out]	hl	Address of object data
-; @addr{3e0f}
 getWildTokayObjectDataIndex:
 	ldh a,(<hRomBank)
 	push af
@@ -14626,7 +13992,6 @@ getWildTokayObjectDataIndex:
 ;;
 ; Create a sparkle at the current object's position.
 ;
-; @addr{3e28}
 objectCreateSparkle:
 	call getFreeInteractionSlot
 	ret nz
@@ -14640,7 +14005,6 @@ objectCreateSparkle:
 ;
 ; Unused?
 ;
-; @addr{3e34}
 objectCreateSparkleMovingUp:
 	call getFreeInteractionSlot
 	ret nz
@@ -14658,7 +14022,6 @@ objectCreateSparkleMovingUp:
 ;
 ; Unused?
 ;
-; @addr{3e47}
 objectCreateRedBlueOrb:
 	call getFreeInteractionSlot
 	ret nz
@@ -14668,7 +14031,6 @@ objectCreateRedBlueOrb:
 	jp objectCopyPositionWithOffset
 
 ;;
-; @addr{3e53}
 incMakuTreeState:
 	ld a,(wMakuTreeState)
 	inc a
@@ -14682,7 +14044,6 @@ incMakuTreeState:
 ;;
 ; Sets w1Link.direction, as well as w1Companion.direction if Link is riding something.
 ;
-; @addr{3e61}
 setLinkDirection:
 	ld b,a
 	ld a,(wLinkObjectIndex)
@@ -14747,7 +14108,6 @@ setUpCharactersAfterMoblinKeepDestroyed:
 ;;
 ; Used during the end credits. Seems to load the credit text into OAM.
 ;
-; @addr{3e6d}
 interactionFunc_3e6d:
 	push de
 	ld l,Interaction.var03
@@ -14799,7 +14159,6 @@ getLinkedHerosCaveSideEntranceRoom:
 ;;
 ; @param[out]	hl	Address of part slot ("id" byte)
 ; @param[out]	zflag	nz if no free slot was available
-; @addr{3e8e}
 getFreePartSlot:
 	ldhl FIRST_PART_INDEX, Part.start
 --
@@ -14819,7 +14178,6 @@ getFreePartSlot:
 	ret
 
 ;;
-; @addr{3ea1}
 partDelete:
 	ld h,d
 	ld l,Part.start
@@ -14839,7 +14197,6 @@ partDelete:
 
 ;;
 ; @param[out]	cflag
-; @addr{3eaf}
 checkLinkCanSurface:
 	ld a,(wTilesetFlags)
 	and TILESETFLAG_UNDERWATER
@@ -14859,7 +14216,6 @@ checkLinkCanSurface:
 ; @param	d	High byte of address to copy to
 ; @param	e	WRAM Bank
 ; @param	hl	Address to copy from
-; @addr{3ec0}
 copy256BytesFromBank:
 	ld a,e
 	ld ($ff00+R_SVBK),a
@@ -14870,7 +14226,6 @@ copy256BytesFromBank:
 	jp copyMemory
 
 ;;
-; @addr{3ed0}
 func_3ed0:
 	ldh a,(<hRomBank)
 	push af
@@ -14880,7 +14235,6 @@ func_3ed0:
 	ret
 
 ;;
-; @addr{3ee4}
 func_3ee4:
 	ldh a,(<hRomBank)
 	push af

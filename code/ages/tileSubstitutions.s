@@ -1,5 +1,4 @@
 ;;
-; @addr{5fef}
 applyAllTileSubstitutions:
 	call replacePollutionWithWaterIfPollutionFixed
 	call applySingleTileChanges
@@ -57,7 +56,6 @@ applyAllTileSubstitutions:
 	.db $00
 
 ;;
-; @addr{6046}
 replaceBreakableTileOverPortal:
 	ld hl,wPortalGroup
 	ld a,(wActiveGroup)
@@ -82,7 +80,6 @@ _removeBreakableTileForTimeWarp:
 	ld (bc),a
 	ret
 
-; @addr{6063}
 @tileReplacementDict:
 	.db $c5 $3a
 	.db $c8 $3a
@@ -90,7 +87,6 @@ _removeBreakableTileForTimeWarp:
 	.db $00
 
 ;;
-; @addr{606a}
 replaceBreakableTileOverLinkTimeWarpingIn:
 	ld a,(wWarpTransition)
 	and $0f
@@ -102,7 +98,6 @@ replaceBreakableTileOverLinkTimeWarpingIn:
 	jr _removeBreakableTileForTimeWarp
 
 ;;
-; @addr{6078}
 replacePollutionWithWaterIfPollutionFixed:
 	ld a,GLOBALFLAG_WATER_POLLUTION_FIXED
 	call checkGlobalFlag
@@ -119,11 +114,9 @@ replacePollutionWithWaterIfPollutionFixed:
 +
 	jr replaceTiles
 
-; @addr{6090}
 @aboveWaterReplacement:
 	.db $fc $eb
 	.db $00
-; @addr{6093}
 @belowWaterReplacement:
 	.db $3b $eb
 	.db $00
@@ -131,7 +124,6 @@ replacePollutionWithWaterIfPollutionFixed:
 ;;
 ; @param de Structure for tiles to replace
 ; (format: tile to replace with, tile to replace, repeat, $00 to end)
-; @addr{6096}
 replaceTiles:
 	ld a,(de)
 	or a
@@ -164,7 +156,6 @@ replaceTiles:
 
 ;;
 ; Substitutes various tiles when particular room flag bits (0-3, 7) are set.
-; @addr{60b7}
 applyStandardTileSubstitutions:
 	call getThisRoomFlags
 	ldh (<hFF8B),a
@@ -201,7 +192,6 @@ applyStandardTileSubstitutions:
 	ld d,h
 	jr replaceTiles
 
-; @addr{60f5}
 @bit0:
 	.dw @bit0Collisions0
 	.dw @bit0Collisions1
@@ -209,7 +199,6 @@ applyStandardTileSubstitutions:
 	.dw @bit0Collisions3
 	.dw @bit0Collisions4
 	.dw @bit0Collisions5
-; @addr{6101}
 @bit1:
 	.dw @bit1Collisions0
 	.dw @bit1Collisions1
@@ -217,7 +206,6 @@ applyStandardTileSubstitutions:
 	.dw @bit1Collisions3
 	.dw @bit1Collisions4
 	.dw @bit1Collisions5
-; @addr{610d}
 @bit2:
 	.dw @bit2Collisions0
 	.dw @bit2Collisions1
@@ -225,7 +213,6 @@ applyStandardTileSubstitutions:
 	.dw @bit2Collisions3
 	.dw @bit2Collisions4
 	.dw @bit2Collisions5
-; @addr{6119}
 @bit3:
 	.dw @bit3Collisions0
 	.dw @bit3Collisions1
@@ -233,7 +220,6 @@ applyStandardTileSubstitutions:
 	.dw @bit3Collisions3
 	.dw @bit3Collisions4
 	.dw @bit3Collisions5
-; @addr{6125}
 @bit7:
 	.dw @bit7Collisions0
 	.dw @bit7Collisions1
@@ -322,7 +308,6 @@ applyStandardTileSubstitutions:
 
 ;;
 ; Updates the toggleable blocks to the correct state when loading a room.
-; @addr{617c}
 replaceToggleBlocks:
 	call checkDungeonUsesToggleBlocks
 	ret z
@@ -336,12 +321,10 @@ replaceToggleBlocks:
 +
 	jp replaceTiles
 
-; @addr{6197}
 @state1:
 	.db $0f $29
 	.db $28 $0e
 	.db $00
-; @addr{619c}
 @state2:
 	.db $0e $28
 	.db $29 $0f
@@ -349,7 +332,6 @@ replaceToggleBlocks:
 
 ;;
 ; Does the necessary tile changes if underwater in jabu-jabu.
-; @addr{61a1}
 replaceJabuTilesIfUnderwater:
 	ld a,(wDungeonIndex)
 	cp $07
@@ -372,7 +354,6 @@ replaceJabuTilesIfUnderwater:
 	ld de,@data2
 	jp replaceTiles
 
-; @addr{61c4}
 @data1:
 	.db $fa $f3 ; holes -> shallow water
 	.db $fa $f4
@@ -381,7 +362,6 @@ replaceJabuTilesIfUnderwater:
 	.db $fa $f7
 	.db $00
 
-; @addr{61cf}
 @data2:
 	.db $fc $48 ; floor-transfer holes -> deep water
 	.db $fc $49
@@ -391,7 +371,6 @@ replaceJabuTilesIfUnderwater:
 
 ;;
 ; Replaces a shutter link is about to walk on to with empty floor.
-; @addr{61d8}
 replaceShutterForLinkEntering:
 	ldbc >wRoomLayout, (LARGE_ROOM_HEIGHT-1)<<4 + (LARGE_ROOM_WIDTH-1)
 --
@@ -503,7 +482,6 @@ replaceShutterForLinkEntering:
 ; Data format:
 ; Byte 1 - tile to replace shutter with
 ; Byte 2 - bit 7: don't auto-close, bits 0-6: low byte of interaction id
-; @addr{625f}
 @shutterData:
 	.db $a0 $80 ; Normal shutters
 	.db $a0 $81
@@ -515,7 +493,6 @@ replaceShutterForLinkEntering:
 	.db $5d $0f
 
 ;;
-; @addr{626f}
 replaceOpenedChest:
 	call getThisRoomFlags
 	bit ROOMFLAG_BIT_ITEM,a
@@ -530,7 +507,6 @@ replaceOpenedChest:
 ;;
 ; Replaces switch tiles and whatever they control if the switch is set.
 ; Groups 4 and 5 only.
-; @addr{627e}
 replaceSwitchTiles:
 	ld hl,@group4SwitchData
 	ld a,(wActiveGroup)
@@ -577,7 +553,6 @@ replaceSwitchTiles:
 ; Data format:
 ; Room, Switch bit, new tile index, position of tile to replace
 
-; @addr{62ac}
 @group4SwitchData:
 	.db $2f $02 $0b $79
 	.db $2f $02 $5a $6c
@@ -593,12 +568,10 @@ replaceSwitchTiles:
 	.db $c7 $01 $0b $68
 	.db $00
 
-; @addr{62dd}
 @group5SwitchData:
 	.db $00
 
 ;;
-; @addr{62de}
 applySingleTileChanges:
 	ld a,(wActiveRoom)
 	ld b,a

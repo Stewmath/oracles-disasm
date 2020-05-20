@@ -11,7 +11,6 @@
 ; @param	a	Room
 ; @param[out]	c	Gasha spot index
 ; @param[out]	zflag	z if nothing is planted in the given room.
-; @addr{7a54}
 getIndexOfGashaSpotInRoom_body:
 	ld c,$00
 	ld hl,gashaSpotRooms
@@ -45,7 +44,6 @@ gashaSpotRooms:
 	.db $01 $0a $28 $34 $55 $95 $d0 $ca ; Subids 8-f
 
 ;;
-; @addr{7a77}
 func_02_7a77:
 	call checkDungeonUsesToggleBlocks
 	ret z
@@ -65,7 +63,6 @@ func_02_7a77:
 ; involves either modifying w3VramTiles, or modifying wRoomLayout for behavioural changes
 ; only (not visual changes).
 ;
-; @addr{7a88}
 applyRoomSpecificTileChangesAfterGfxLoad:
 	ld a,(wActiveRoom)
 	ld hl,@tileChangesGroupTable
@@ -87,11 +84,9 @@ applyRoomSpecificTileChangesAfterGfxLoad:
 ;;
 ; Unused stub
 ;
-; @addr{7aa9}
 @stub:
 	ret
 
-; @addr{7aaa}
 @tileChangesGroupTable:
 	.dw @group0
 	.dw @group1
@@ -173,7 +168,6 @@ applyRoomSpecificTileChangesAfterGfxLoad:
 ; no visual effect. The only purpose is to make it so that when Link stands on these
 ; tiles, he gets the "pond" animation at his feet.
 ;
-; @addr{7b04}
 _roomTileChangesAfterLoad0a:
 	ld hl,wRoomLayout+$79
 --
@@ -192,7 +186,6 @@ _roomTileChangesAfterLoad0a:
 ; mermaid statue tiles with the base for the Link statue. (The statue itself is an object,
 ; so it's not drawn here.)
 ;
-; @addr{7b14}
 _roomTileChangesAfterLoad09:
 	ld a,GLOBALFLAG_FINISHEDGAME
 	call checkGlobalFlag
@@ -213,7 +206,6 @@ _roomTileChangesAfterLoad09:
 ;
 ; A portal gets put on top of the staircase, so you don't see it.
 ;
-; @addr{7b30}
 _roomTileChangesAfterLoad06:
 	call _roomTileChangesAfterLoad0a
 	call checkIsLinkedGame
@@ -232,7 +224,6 @@ _roomTileChangesAfterLoad06:
 ; Crown Dungeon entrance screen: redraw the tiles for the entrance if it has not been
 ; opened yet.
 ;
-; @addr{7b43}
 _roomTileChangesAfterLoad07:
 	call getThisRoomFlags
 	and $80
@@ -256,7 +247,6 @@ _roomTileChangesAfterLoad07:
 ; the keyhole.
 ;
 ; @param	c	Which frame of the animation (0-2)
-; @addr{7b83}
 drawCrownDungeonOpeningTiles:
 	ld a,c
 	ld hl,@tileReplacementTable
@@ -306,14 +296,12 @@ drawCrownDungeonOpeningTiles:
 ;;
 ; Dungeon 2 present screen: redraw the cave if it's collapsed.
 ;
-; @addr{7bfc}
 _roomTileChangesAfterLoad00:
 	call getThisRoomFlags
 	and $80
 	ret z
 
 ;;
-; @addr{7c02}
 drawCollapsedWingDungeon:
 	; Load the tile data for the cave to 2:$d000
 	ld a,GFXH_53
@@ -341,7 +329,6 @@ drawCollapsedWingDungeon:
 ;;
 ; This is unused in Ages.
 ;
-; @addr{7c2f}
 _roomTileChangesAfterLoad02:
 	call getThisRoomFlags
 	and $01
@@ -351,7 +338,6 @@ _roomTileChangesAfterLoad02:
 ;;
 ; Present tokay island screen with scent tree: draw the tree if room flags are set.
 ;
-; @addr{7c37}
 _roomTileChangesAfterLoad03:
 	call getThisRoomFlags
 	and $80
@@ -360,7 +346,6 @@ _roomTileChangesAfterLoad03:
 ;;
 ; Each screen with a tree on it calls this to load the tree's graphics.
 ;
-; @addr{7c3d}
 _roomTileChangesAfterLoad01:
 	ld a,(wActiveGroup)
 	ld hl,treeGfxLocationsTable
@@ -404,7 +389,6 @@ _roomTileChangesAfterLoad01:
 	add TREE_GFXH_07
 	jp loadTreeGfx
 
-; @addr{7c72}
 treeGfxLocationsTable:
 	.dw @present
 	.dw @past
@@ -429,7 +413,6 @@ treeGfxLocationsTable:
 	.db $00
 
 
-; @addr{7c9c}
 treeTilesTable:
 	.dw @tree0
 	.dw @tree1
@@ -456,7 +439,6 @@ treeTilesTable:
 ; Rooms with gasha spots call this to replace the "soft soil" with tree graphics if
 ; necessary.
 ;
-; @addr{7cec}
 _roomTileChangesAfterLoad08:
 	; Return if a gasha seed is not planted in this room.
 	ld a,(wActiveRoom)
@@ -509,7 +491,6 @@ _roomTileChangesAfterLoad08:
 ; Of course, this is after w3VramTiles has been generated, so there is no visual change.
 ; It seems that this is done to allow Link to throw bombs up the ledge.
 ;
-; @addr{7d2b}
 _roomTileChangesAfterLoad05:
 	ld hl,wRoomLayout+$33
 	ld a,$0a
@@ -521,7 +502,6 @@ _roomTileChangesAfterLoad05:
 
 ;;
 ; This function is used by "drawRectangleToVramTiles".
-; @addr{7d35}
 readParametersForRectangleDrawing:
 	ldi a,(hl)
 	ld e,a
@@ -538,7 +518,6 @@ readParametersForRectangleDrawing:
 ; @param	c	# of rows
 ; @param	de	Where to write the data (should point to w3VramTiles)
 ; @param	hl	The address of the data to write to the given address
-; @addr{7d3e}
 drawRectangleToVramTiles_withParameters:
 	ld a,($ff00+R_SVBK)
 	push af
@@ -555,7 +534,6 @@ drawRectangleToVramTiles_withParameters:
 ; 			b2: # of columns to write before moving to next row
 ; 			b3: # of rows
 ; 			b4+: The data to write to the given address
-; @addr{7d47}
 drawRectangleToVramTiles:
 	ld a,($ff00+R_SVBK)
 	push af
@@ -588,7 +566,6 @@ drawRectangleToVramTiles:
 	ret
 
 ;;
-; @addr{7d6c}
 copyRectangleFromTmpGfxBuffer_paramBc:
 	ld l,c
 	ld h,b
@@ -599,7 +576,6 @@ copyRectangleFromTmpGfxBuffer_paramBc:
 ; 			b1: # of rows
 ; 			b2-b3: Where to write the data (should point somewhere in wram 3)
 ; 			b4-b5: Where to read data from (should point somewhere in wram 2)
-; @addr{7d6e}
 copyRectangleFromTmpGfxBuffer:
 	ld a,($ff00+R_SVBK)
 	push af
@@ -651,7 +627,6 @@ copyRectangleFromTmpGfxBuffer:
 ;			b3: # of rows
 ;			b4+: Data to write (even bytes go to wRoomLayout, odd bytes go to
 ;			wRoomCollisions)
-; @addr{7d9f}
 copyRectangleToRoomLayoutAndCollisions:
 	ldi a,(hl)
 	ld e,a
@@ -661,7 +636,6 @@ copyRectangleToRoomLayoutAndCollisions:
 ;;
 ; @param	de	Where to write the data
 ; @param	hl	Pointer to data struct (same as above method except first 2 bytes)
-; @addr{7da3}
 copyRectangleToRoomLayoutAndCollisions_paramDe:
 	ldi a,(hl)
 	ld b,a
@@ -690,7 +664,6 @@ copyRectangleToRoomLayoutAndCollisions_paramDe:
 
 ;;
 ; This is called in shops to load "price" graphics and set bit 1 of "wInShop".
-; @addr{7dbd}
 _roomTileChangesAfterLoad04:
 	ld hl,wInShop
 	set 1,(hl)
@@ -698,7 +671,6 @@ _roomTileChangesAfterLoad04:
 	jp loadTreeGfx
 
 ;;
-; @addr{7dc7}
 checkLoadPastSignAndChestGfx:
 	ld a,(wDungeonIndex)
 	cp $0f

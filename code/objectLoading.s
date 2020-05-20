@@ -11,7 +11,6 @@
 .endif
 
 ;;
-; @addr{55b7}
 parseObjectData: ; 55b7
 	xor a
 	ld (wNumEnemies),a
@@ -43,7 +42,6 @@ parseObjectData: ; 55b7
 
 ;;
 ; @param de Address of object data to parse
-; @addr{55d4}
 parseGivenObjectData: ; 55d4
 	ld a,(de)
 	cp $fe
@@ -76,7 +74,6 @@ _func_55f8:
 	jr parseGivenObjectData
 
 ;;
-; @addr{55fa}
 _parseGivenObjectData_hl:
 	ld e,l
 	ld d,h
@@ -109,7 +106,6 @@ _objectDataOpcodeSizes:
 ;;
 ; Only use objects when certain room properties are set
 ; Used a lot in jabu-jabu
-; @addr{561e}
 _objectDataOp0: ; 561e
 	ld a,(wRoomStateModifier)
 	ld hl,bitTable
@@ -159,7 +155,6 @@ _objectDataOp0: ; 561e
 
 ;;
 ; No-value interaction
-; @addr{5653}
 _objectDataOp1:
 	call _continueObjectLoopIfOpDone
 	call getFreeInteractionSlot
@@ -169,7 +164,6 @@ _objectDataOp1:
 	jr _objectDataOp1
 
 ;;
-; @addr{5660}
 _skipToOpEnd_2byte:
 	inc de
 	inc de
@@ -180,7 +174,6 @@ _skipToOpEnd_2byte:
 
 ;;
 ; Double-value interaction
-; @addr{566b}
 _objectDataOp2:
 	call _continueObjectLoopIfOpDone
 	call getFreeInteractionSlot
@@ -205,7 +198,6 @@ _skipToOpEnd_4byte:
 ; In addition to checking wcc05, this appears to have a mechanism to prevent
 ; the pointer from being read if link enters from a certain direction.
 ; @param[out] @zflag Set if the pointer should be skipped.
-; @addr{568a}
 _checkSkipPointer:
 .ifdef ROM_AGES
 	ld a,(wcc05)
@@ -235,14 +227,12 @@ _checkSkipPointer:
 	ret
 
 ;;
-; @addr{56aa}
 _skipPointer:
 	inc de
 	inc de
 	jp parseGivenObjectData
 
 ;;
-; @addr{56af}
 _parsePointer:
 	ld l,e
 	ld h,d
@@ -256,7 +246,6 @@ _parsePointer:
 
 ;;
 ; Object pointer
-; @addr{56ba}
 _objectDataOp3:
 	call _checkSkipPointer
 	jr z,_skipPointer
@@ -264,7 +253,6 @@ _objectDataOp3:
 
 ;;
 ; "Before Event" pointer: use the pointer if bit 7 of room flags is not set.
-; @addr{56c1}
 _objectDataOp4:
 	call _checkSkipPointer
 	jr z,_skipPointer
@@ -276,7 +264,6 @@ _objectDataOp4:
 
 ;;
 ; "After Event" pointer: use the pointer if bit 7 of room flags is set.
-; @addr{56cf}
 _objectDataOp5:
 	call _checkSkipPointer
 	jr z,_skipPointer
@@ -288,7 +275,6 @@ _objectDataOp5:
 
 ;;
 ; Random enemy
-; @addr{56dd}
 _objectDataOp6:
 	; Flags
 	ld a,(de)
@@ -362,7 +348,6 @@ _objectDataOp6:
 
 ;;
 ; Specific position enemy
-; @addr{5734}
 _objectDataOp7:
 	; Flags
 	ld a,(de)
@@ -425,7 +410,6 @@ _objectDataOp7:
 
 ;;
 ; "Parts" (owl statues etc)
-; @addr{577a}
 _objectDataOp8: ; 577a
 	ld a,(de)
 	bit 7,a
@@ -450,7 +434,6 @@ _objectDataOp8: ; 577a
 
 ;;
 ; Object with parameter
-; @addr{579b}
 _objectDataOp9:
 	call _continueObjectLoopIfOpDone
 	call @allocateObjectType
@@ -503,7 +486,6 @@ _objectDataOp9:
 .ifdef ROM_AGES
 ;;
 ; Item drops
-; @addr{57cb}
 _objectDataOpA:
 	ld a,(de)
 	inc de
@@ -552,7 +534,6 @@ _objectDataOpA:
 .endif
 
 ;;
-; @addr{5805}
 _continueObjectLoopIfOpDone:
 	ld a,(de)
 	cp $f0
@@ -564,7 +545,6 @@ _continueObjectLoopIfOpDone:
 ;;
 ; @param de Source
 ; @param hl Destination
-; @addr{580d}
 _read2Bytes: ; 580d
 	ld a,(de)
 	inc de
@@ -577,7 +557,6 @@ _read2Bytes: ; 580d
 ;;
 ; @param de Source
 ; @param hl Destination (an Object.yh variable)
-; @addr{5814}
 _readCoordinates:
 	ld a,(de)
 	inc de
@@ -590,7 +569,6 @@ _readCoordinates:
 
 ;;
 ; @param hFF8B Flags that came with the enemy data
-; @addr{581c}
 _decEnemyCounterIfApplicable:
 	ldh a,(<hFF8B)
 	and $02
@@ -603,7 +581,6 @@ _decEnemyCounterIfApplicable:
 
 ;;
 ; @param	c	Enemy position?
-; @addr{5829}
 _addPositionToPlacedEnemyPositions:
 	push hl
 	ld a,(wEnemyPlacement.numEnemies)
@@ -621,7 +598,6 @@ _addPositionToPlacedEnemyPositions:
 
 ;;
 ; @param[out]	cflag	c if a valid position couldn't be found
-; @addr{583d}
 _assignRandomPositionToEnemy:
 	call getRandomPositionForEnemy
 	ret c
@@ -641,7 +617,6 @@ _assignRandomPositionToEnemy:
 ; is assigned an index, which allows the game to remember which enemies have been killed.
 ;
 ; @param[out]	cflag	nc if the enemy has been killed already (so it shouldn't spawn)
-; @addr{5852}
 _checkEnemyKilled:
 	ld a,(wEnemyPlacement.numKillableEnemies)
 	cp $07

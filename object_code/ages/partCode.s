@@ -3083,7 +3083,6 @@ _blueStalfosProjectile_subid1_uninitialized:
 ;;
 ; Explodes the projectile (sets state to 6) if it's the correct type and is close to Link.
 ; Returns from caller if so.
-; @addr{7084}
 _blueStalfosProjectile_checkShouldExplode:
 	ld a,(wFrameCounter)
 	and $07
@@ -3115,7 +3114,6 @@ _blueStalfosProjectile_checkShouldExplode:
 
 ;;
 ; @param[out]	cflag	c on collision
-; @addr{70a7}
 _blueStalfosProjectile_checkCollidedWithStalfos:
 	ld a,Object.enabled
 	call objectGetRelatedObject1Var
@@ -3131,7 +3129,6 @@ _blueStalfosProjectile_checkCollidedWithStalfos:
 
 ;;
 ; Explodes into six parts
-; @addr{70b9}
 _blueStalfosProjectile_explode:
 	ld c,$06
 @next:
@@ -3543,7 +3540,6 @@ _kingMoblinBomb_state8:
 	jp _kingMoblinBomb_explode
 
 ;;
-; @addr{7293}
 _kingMoblinBomb_checkCollisionWithLink:
 	ld e,Part.var30
 	ld a,(de)
@@ -3577,7 +3573,6 @@ _kingMoblinBomb_checkCollisionWithLink:
 	ret
 
 ;;
-; @addr{72bb}
 _kingMoblinBomb_checkCollisionWithKingMoblin:
 	ld e,Part.relatedObj1+1
 	ld a,(de)

@@ -1,6 +1,5 @@
 ;;
 ; Unused function (in both ages and seasons)
-; @addr{5358}
 _func_5358:
 	call _checkNoOtherParentItemsInUse
 --
@@ -14,7 +13,6 @@ _func_5358:
 ;;
 ; @param	d	The current parent item
 ; @param[out]	zflag	Set if there are no other parent item slots in use
-; @addr{5366}
 _checkNoOtherParentItemsInUse:
 	ld hl,w1ParentItem2.enabled
 --
@@ -42,7 +40,6 @@ _checkNoOtherParentItemsInUse:
 ; * Sets Item.relatedObj2 to something
 ; * Sets Item.var3f to something
 ;
-; @addr{5378}
 _parentItemLoadAnimationAndIncState:
 	call _itemDisableLinkMovement
 	call _itemDisableLinkTurning
@@ -121,7 +118,6 @@ _parentItemLoadAnimationAndIncState:
 ;;
 ; Same as below, except it's assumed that only one instance of the child can exist.
 ;
-; @addr{53d4}
 itemCreateChildIfDoesntExistAlready:
 	ld e,$01
 
@@ -130,7 +126,6 @@ itemCreateChildIfDoesntExistAlready:
 ; failure.
 ;
 ; @param	e	Max # of instances of the child
-; @addr{53d6}
 itemCreateChildAndDeleteOnFailure:
 	call itemCreateChild
 	ret nc
@@ -146,7 +141,6 @@ itemCreateChildAndDeleteOnFailure:
 ; @param	e	Max # instances of the object that can exist (0 means 256)
 ; @param[out]	h	The newly created child item
 ; @param[out]	cflag	Set on failure
-; @addr{53dd}
 itemCreateChild:
 	ld c,$00
 	ld h,d
@@ -160,7 +154,6 @@ itemCreateChild:
 ; @param	e	Max # instances of the object that can exist (0 means 256)
 ; @param[out]	h	The newly created child item
 ; @param[out]	cflag	Set on failure
-; @addr{53e3}
 itemCreateChildWithID:
 	ld h,d
 	ld l,Item.relatedObj2+1
@@ -221,7 +214,6 @@ itemCreateChildWithID:
 ; @param	e	Maximum number of items with ID "bc" that can exist (0 means 256).
 ; @param[out]	hl	Free item slot
 ; @param[out]	cflag	Set on failure.
-; @addr{5416}
 _getFreeItemSlotWithObjectCap:
 	ldhl FIRST_DYNAMIC_ITEM_INDEX, Item.id
 
@@ -258,7 +250,6 @@ _getFreeItemSlotWithObjectCap:
 ;
 ; @param[out]	a	Number of available slots
 ; @param[out]	zflag
-; @addr{5431}
 _getNumFreeItemSlots:
 	ldhl FIRST_DYNAMIC_ITEM_INDEX, Item.start
 	ld b,$00
@@ -278,7 +269,6 @@ _getNumFreeItemSlots:
 
 ;;
 ; @param d Parent item to add to wLinkUsingItem1
-; @addr{5444}
 _setLinkUsingItem1:
 	call _itemIndexToBit
 	swap a
@@ -290,7 +280,6 @@ _setLinkUsingItem1:
 
 ;;
 ; @param d Parent item to clear from wLinkUsingItem1
-; @addr{5450}
 _clearLinkUsingItem1:
 	call _itemIndexToBit
 	swap a
@@ -303,7 +292,6 @@ _clearLinkUsingItem1:
 
 ;;
 ; @param d Parent item to add to wLinkImmobilized
-; @addr{545d}
 _itemDisableLinkMovement:
 	call _itemIndexToBit
 	ld hl,wLinkImmobilized
@@ -313,7 +301,6 @@ _itemDisableLinkMovement:
 
 ;;
 ; @param d Parent item to clear from wLinkImmobilized
-; @addr{5466}
 _itemEnableLinkMovement:
 	call _itemIndexToBit
 	ld hl,wLinkImmobilized
@@ -324,7 +311,6 @@ _itemEnableLinkMovement:
 
 ;;
 ; @param d Parent item to add to wLinkTurningDisabled
-; @addr{5470}
 _itemDisableLinkTurning:
 	call _itemIndexToBit
 	ld hl,wLinkTurningDisabled
@@ -334,7 +320,6 @@ _itemDisableLinkTurning:
 
 ;;
 ; @param d Parent item to clear from wLinkTurningDisabled
-; @addr{5479}
 _itemEnableLinkTurning:
 	call _itemIndexToBit
 	ld hl,wLinkTurningDisabled
@@ -347,7 +332,6 @@ _itemEnableLinkTurning:
 ; Unused?
 ;
 ; @param d Parent item to add to wcc95
-; @addr{5483}
 _setCc95Bit:
 	call _itemIndexToBit
 	ld hl,wcc95
@@ -360,7 +344,6 @@ _setCc95Bit:
 ;
 ; @param	d	Parent item object
 ; @param[out]	a	Bitmask for the item
-; @addr{548c}
 _itemIndexToBit:
 	ld a,d
 	sub >w1ParentItem2
@@ -374,14 +357,12 @@ _itemIndexToBit:
 ; Checks if the button corresponding to the parent item object is pressed (the bitmask is
 ; stored in var03).
 ;
-; @addr{5496}
 _parentItemCheckButtonPressed:
 	ld h,d
 	ld l,Item.var03
 
 ;;
 ; @param	hl
-; @addr{5499}
 _andHlWithGameKeysPressed:
 	ld a,(wGameKeysPressed)
 	and (hl)
@@ -389,7 +370,6 @@ _andHlWithGameKeysPressed:
 
 ;;
 ; @param	d	Parent item object
-; @addr{549e}
 _clearParentItemIfCantUseSword:
 	; Check if in a spinner
 	ld a,(wcc95)
@@ -421,7 +401,6 @@ _clearParentItemIfCantUseSword:
 ;;
 ; @param[out]	zflag	Set if link is on the ground (not on companion, not underwater,
 ;			not swimming, not in the air).
-; @addr{54c4}
 _checkLinkOnGround:
 	ld a,(wLinkObjectIndex)
 	and $01
@@ -446,7 +425,6 @@ _checkLinkOnGround:
 ;;
 ; TODO: rename this to the inverse of what it is now
 ; @param[out]	zflag	z if Link is not in an underwater map
-; @addr{54d2}
 _isLinkUnderwater:
 	ld a,(w1Link.var2f)
 	bit 7,a
@@ -455,7 +433,6 @@ _isLinkUnderwater:
 
 ;;
 ; @param[out]	cflag	Set if link is currently in a hole.
-; @addr{54d8}
 _isLinkInHole:
 	ld a,(wActiveTileType)
 	dec a
@@ -465,7 +442,6 @@ _isLinkInHole:
 ;;
 ; Updates the position of a grabbed object (overwrites its x/y/z variables).
 ;
-; @addr{54df}
 updateGrabbedObjectPosition:
 	ld a,(wLinkGrabState2)
 	ld b,a
@@ -527,7 +503,6 @@ updateGrabbedObjectPosition:
 ; Each 2 bytes are Z/X offsets relative to Link where an object should be placed.
 ; Each row has 8 bytes, 2 for each of Link's facing directions.
 ;
-; @addr{551e}
 @liftedObjectPositions:
 	; Weight 0
 	.db $f8 $00 $00 $07 $06 $00 $00 $f8 ; Frame 0 (lifting 1)

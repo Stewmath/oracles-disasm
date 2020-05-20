@@ -1,5 +1,4 @@
 ;;
-; @addr{6cec}
 specialObjectCode_companionCutscene:
 	ld hl,w1Companion.id
 	ld a,(hl)
@@ -11,7 +10,6 @@ specialObjectCode_companionCutscene:
 	.dw _specialObjectCode_mapleCutscene
 
 ;;
-; @addr{6cfb}
 _specialObjectCode_rickyCutscene:
 	ld e,SpecialObject.state
 	ld a,(de)
@@ -37,7 +35,6 @@ _rickyCutsceneJump:
 
 ;;
 ; @param	de	Pointer to Object.state variable
-; @addr{6d1b}
 _companionCutsceneInitOam:
 	ld a,$01
 	ld (de),a
@@ -237,7 +234,6 @@ _rickyCutscene_state1:
 	jp @jump
 
 ;;
-; @addr{6e54}
 _specialObjectCode_mooshCutscene:
 	ld e,SpecialObject.state
 	ld a,(de)
@@ -351,7 +347,6 @@ _specialObjectCode_mooshCutscene:
 	ret
 
 ;;
-; @addr{6efa}
 _specialObjectCode_dimitriCutscene:
 	ld e,SpecialObject.state
 	ld a,(de)
@@ -512,7 +507,6 @@ _specialObjectCode_dimitriCutscene:
 	ret
 
 ;;
-; @addr{6fe4}
 _specialObjectCode_mapleCutscene:
 	ld e,SpecialObject.state
 	ld a,(de)
@@ -626,7 +620,6 @@ _specialObjectCode_mapleCutscene:
 
 ;;
 ; @param	a	Angle
-; @addr{7081}
 _companionCutsceneFunc_7081:
 	sub $04
 	and $07
@@ -643,7 +636,6 @@ _companionCutsceneFunc_7081:
 	jp specialObjectSetAnimation
 
 ;;
-; @addr{7098}
 _companionCutsceneDecAngle:
 	ld e,SpecialObject.angle
 	ld a,(de)

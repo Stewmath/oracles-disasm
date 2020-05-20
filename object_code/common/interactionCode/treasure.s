@@ -422,7 +422,6 @@ interactionCode60:
 ;;
 ; @param	b	Animation to do (0 = 1-hand grab, 1 = 2-hand grab)
 ; @param	c	x-offset to put item relative to Link
-; @addr{4b9f}
 @setLinkAnimationAndDeleteIfTextClosed:
 	ld a,LINK_STATE_04
 	ld (wLinkForceState),a
@@ -583,7 +582,6 @@ interactionCode60:
 
 ;;
 ; @param[out]	cflag	Set if Link's touched this object so he should collect it
-; @addr{4c88}
 @checkLinkTouched:
 	ld a,(wLinkForceState)
 	or a

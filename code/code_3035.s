@@ -2,7 +2,6 @@
 
 ;;
 ; @param	hl
-; @addr{3035}
 objectLoadMovementScript:
 	ldh a,(<hRomBank)
 	push af
@@ -16,7 +15,6 @@ objectLoadMovementScript:
 	ret
 
 ;;
-; @addr{3049}
 objectRunMovementScript:
 	ldh a,(<hRomBank)
 	push af
@@ -30,21 +28,18 @@ objectRunMovementScript:
 	ret
 
 ;;
-; @addr{305d}
 decCbb3:
 	ld hl,wTmpcbb3
 	dec (hl)
 	ret
 
 ;;
-; @addr{3062}
 incCbc1:
 	ld hl,$cbc1
 	inc (hl)
 	ret
 
 ;;
-; @addr{3067}
 incCbc2:
 	ld hl,$cbc2
 	inc (hl)
@@ -52,7 +47,6 @@ incCbc2:
 
 ;;
 ; @param	e
-; @addr{306c}
 endgameCutsceneHandler:
 	ldh a,(<hRomBank)
 	push af
@@ -62,7 +56,6 @@ endgameCutsceneHandler:
 	ret
 
 ;;
-; @addr{3080}
 getEntryFromObjectTable1:
 	ldh a,(<hRomBank)
 	push af
@@ -79,7 +72,6 @@ getEntryFromObjectTable1:
 	ret
 
 ;;
-; @addr{3099}
 fileSelect_redrawDecorations:
 	ldh a,(<hRomBank)
 	push af
@@ -101,7 +93,6 @@ fileSelect_redrawDecorations:
 ;
 ; @param	b	Group
 ; @param	c	Room
-; @addr{30b0}
 disableLcdAndLoadRoom:
 	ldh a,(<hRomBank)
 	push af
@@ -114,7 +105,6 @@ disableLcdAndLoadRoom:
 ; Plays SND_WAVE, and writes something to 'hl'.
 ;
 ; @param	hl
-; @addr{30c4}
 playWaveSoundAtRandomIntervals:
 	ldh a,(<hRomBank)
 	push af
@@ -132,7 +122,6 @@ playWaveSoundAtRandomIntervals:
 ; @param	bc	Sprite offset
 ; @param	e	Bank where the OAM data is
 ; @param	hl	OAM data
-; @addr{30d8}
 addSpritesFromBankToOam_withOffset:
 	ldh a,(<hRomBank)
 	push af
@@ -151,7 +140,6 @@ addSpritesFromBankToOam_withOffset:
 ;
 ; @param	e	Bank where the OAM data is
 ; @param	hl	OAM data
-; @addr{30eb}
 addSpritesFromBankToOam:
 	ldh a,(<hRomBank)
 	push af

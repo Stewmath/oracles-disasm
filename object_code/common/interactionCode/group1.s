@@ -100,7 +100,6 @@ interactionCode0c:
 ;;
 ; Does specific things for interactions 0 (underwater bush breaking) and $0a (shovel
 ; debris)
-; @addr{407e}
 @doSpecializedInitialization:
 	ld e,Interaction.id
 	ld a,(de)
@@ -237,7 +236,6 @@ interactionCode0f:
 ;;
 ; Certain rooms have things happen when something falls into a hole; this writes something
 ; around $cfd8 to provide a signal?
-; @addr{411e}
 @checkUpdateHoleEvent:
 	ld a,(wActiveRoom)
 	ld e,a
@@ -271,14 +269,12 @@ interactionCode0f:
 	jr nz,--
 	ret
 
-; @addr{4146}
 @specialHoleRooms:
 	.dw ROOM_AGES_5e8 ; Patch's room
 	.dw ROOM_AGES_23e ; Toilet room
 	.db $00
 
 ;;
-; @addr{414b}
 clearFallDownHoleEventBuffer:
 	ld hl,wTmpcfc0.fallDownHoleEvent.cfd8
 	ld b,_sizeof_wTmpcfc0.fallDownHoleEvent.cfd8
@@ -835,7 +831,6 @@ interactionCode14:
 
 ;;
 ; If this object is on top of an unpressed button, this raises the z position by 2 pixels.
-; @addr{44ca}
 @updateZPositionForButton:
 	ld a,(wTilesetFlags)
 	and (TILESETFLAG_10 | TILESETFLAG_DUNGEON)
@@ -859,7 +854,6 @@ interactionCode14:
 ; non-solid, it uses that; otherwise, it uses [var32] as the new tile index.
 ;
 ; @param	c	Position
-; @addr{44ec}
 @replaceTileUnderneathBlock:
 	ld e,Interaction.var30
 	ld a,(de)
@@ -878,7 +872,6 @@ interactionCode14:
 ; the cube are lit.
 ;
 ; @param[out]	cflag	If set, this interaction will delete itself?
-; @addr{44f2}
 @checkRotatingCubePermitsPushing:
 	ld a,(wRotatingCubePos)
 	or a
@@ -900,7 +893,6 @@ interactionCode14:
 
 ;;
 ; Loads var31-var34 with some variables relating to pushable blocks (see below).
-; @addr{450a}
 @loadPushableTileProperties:
 .ifdef ROM_AGES
 	ld a,(wActiveCollisions)
@@ -940,7 +932,6 @@ interactionCode14:
 	ret
 
 
-; @addr{452d}
 _pushableTilePropertiesTable:
 	.db @collisions0-CADDR
 	.db @collisions1-CADDR
@@ -1517,7 +1508,6 @@ interactionCode1e:
 
 ;;
 ; Force Link to respawn if he's on the same tile as this object.
-; @addr{47c9}
 @checkRespawnLink:
 	ld a,(w1Link.yh)
 	and $f0
@@ -1571,7 +1561,6 @@ interactionCode1e:
 
 ;;
 ; @param	a	Sound to play
-; @addr{480d}
 @playSoundIfInScreenBoundary:
 	ldh (<hFF8B),a
 	call objectCheckWithinScreenBoundary
@@ -1603,7 +1592,6 @@ interactionCode1e:
 	.db $5d $7f
 
 
-; @addr{4838}
 @scriptSubidTable:
 	/* $00 */ .dw doorOpenerScript
 	/* $01 */ .dw stubScript

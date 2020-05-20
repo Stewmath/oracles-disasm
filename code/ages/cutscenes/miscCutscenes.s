@@ -1,6 +1,5 @@
 ;;
 ; CUTSCENE_FAIRIES_HIDE
-; @addr{6103}
 func_03_6103:
 	ld a,($cfd1)
 	cp $07
@@ -205,7 +204,6 @@ _fairyCutscene_incState:
 
 ;;
 ; CUTSCENE_BOOTED_FROM_PALACE
-; @addr{6275}
 func_03_6275:
 	ld a,(wCutsceneState)
 	rst_jumpTable
@@ -275,7 +273,6 @@ func_03_6275:
 	jp playSound
 
 ;;
-; @addr{6306}
 miscCutsceneHandler:
 	ld a,c
 	rst_jumpTable
@@ -509,7 +506,6 @@ _nayruSingingCutsceneHandler:
 	jp loadGfxRegisterStateIndex
 
 ;;
-; @addr{64c5}
 _cutscene_loadRoomObjectSetAndFadein:
 	ld hl,wTmpcfc0.genericCutscene.cfde
 	ld a,(hl)
@@ -1953,7 +1949,6 @@ _func_6fb0:
 ; @param	a	Index?
 ; @param[out]	b	Index for "objectTable2"?
 ; @param[out]	c
-; @addr{6fd6}
 _cutscene_disableLcdLoadRoomResetCamera:
 	ld hl,@data
 	rst_addDoubleIndex
@@ -2005,7 +2000,6 @@ _cutscene_incCBB3:
 
 ;;
 ; CUTSCENE_WALL_RETRACTION
-; @addr{701d}
 func_701d:
 	ld a,(wDungeonIndex)
 	cp $08
@@ -2193,7 +2187,6 @@ _d2Collapse_incCBB3:
 
 ;;
 ; CUTSCENE_D2_COLLAPSE
-; @addr{7168}
 func_7168:
 	ld a,(wCutsceneState)
 	rst_jumpTable
@@ -2314,7 +2307,6 @@ _timewarpCutscene_incCBB3:
 
 ;;
 ; CUTSCENE_TIMEWARP
-; @addr{7244}
 func_03_7244:
 	ld a,(wCutsceneState)
 	rst_jumpTable
@@ -2629,7 +2621,6 @@ _ambiPassageOpen_incCBB3:
 
 ;;
 ; CUTSCENE_AMBI_PASSAGE_OPEN
-; @addr{7493}
 func_03_7493:
 	ld a,(wCutsceneState)
 	rst_jumpTable
@@ -2837,7 +2828,6 @@ _cleanSeas_incCBB3:
 
 ;;
 ; CUTSCENE_CLEAN_SEAS
-; @addr{7619}
 func_03_7619:
 	ld a,(wCutsceneState)
 	rst_jumpTable
@@ -3122,7 +3112,6 @@ _blackTowerEscapeAttempt_loadNewRoom:
 
 ;;
 ; CUTSCENE_BLACK_TOWER_ESCAPE_ATTEMPT
-; @addr{7cb7}
 func_03_7cb7:
 	ld a,(wCutsceneState)
 	rst_jumpTable

@@ -1,6 +1,5 @@
 ;;
 ; This is the first thing the game jumps to on startup.
-; @addr{4000}
 init:
 	di
 	xor a
@@ -73,7 +72,6 @@ init:
 	jp startGame
 
 ;;
-; @addr{4071}
 _setCpuToDoubleSpeed:
 	ld a,($ff00+R_KEY1)
 	rlca
@@ -101,7 +99,6 @@ _setCpuToDoubleSpeed:
 
 ;;
 ; This is copied to RAM and run from there.
-; @addr{4091}
 _oamDmaFunction:
 	ld a,>wOam
 	ld ($ff00+R_DMA),a
@@ -120,7 +117,6 @@ _oamDmaFunctionEnd:
 ; Y speed as angle $00 (up) does for its X speed. Due to this, there is an extra .dwsin
 ; line at the end of each repetition which is used for angle $18-$1f's X positions only.
 ;
-; @addr{409b}
 objectSpeedTable:
 	.define TMP_SPEED $20
 
@@ -139,7 +135,6 @@ objectSpeedTable:
 
 ;;
 ; Calculates the game-transfer secret's text?
-; @addr{481b}
 generateGameTransferSecret:
 	ld hl,wFileIsLinkedGame
 	ldi a,(hl)
@@ -180,7 +175,6 @@ generateGameTransferSecret:
 ; @param	b	Function to call
 ; @param	c	Secret type
 ; @param[out]	zflag	Generally set on success
-; @addr{4836}
 secretFunctionCaller_body:
 	push de
 	ld a,($ff00+R_SVBK)
@@ -210,7 +204,6 @@ secretFunctionCaller_body:
 ; should be set to the corresponding secret's index (?) before calling this.
 ;
 ; @param	c	Value for wSecretType
-; @addr{4852}
 _generateSecret:
 	ld hl,w7SecretText1
 	ld b,$40
@@ -248,7 +241,6 @@ _generateSecret:
 ;
 ; @param	c
 ; @param[out]	a	Which xor cipher to use (from 0-7)
-; @addr{4887}
 @determineXorCipher:
 	push bc
 	ld hl,wGameID
@@ -278,7 +270,6 @@ _generateSecret:
 
 ;;
 ; @param	c	Secret type to encode (0-4)
-; @addr{48a7}
 _encodeSecretData_paramC:
 	ld a,c
 
@@ -286,7 +277,6 @@ _encodeSecretData_paramC:
 ; Encodes data into a secret by shifting in the required bits.
 ;
 ; @param	a	Secret type to encode (0-4)
-; @addr{48a8}
 _encodeSecretData:
 	push bc
 	ld hl,_secretDataToEncodeTable
@@ -318,7 +308,6 @@ _encodeSecretData:
 ;
 ; @param	a	Byte to encode
 ; @param	b	Number of bits to encode
-; @addr{48c1}
 _insertBitsIntoSecretGenerationBuffer:
 	push hl
 	push bc
@@ -360,7 +349,6 @@ _insertBitsIntoSecretGenerationBuffer:
 ;
 ; @param	c	Secret type
 ; @param[out]	b	$00 if secret was valid, $01 otherwise
-; @addr{48e5}
 _unpackSecret:
 	ld hl,w7SecretText1
 	ld b,$40
@@ -399,7 +387,6 @@ _unpackSecret:
 	ret
 
 ;;
-; @addr{491a}
 @unpackSecretData:
 	ld de,wTmpcec0
 	ld a,$04 ; Unpack gameID, etc
@@ -410,7 +397,6 @@ _unpackSecret:
 ;;
 ; @param	a	Secret type
 ; @param	de	Address to write the extracted data to
-; @addr{4923}
 @unpack:
 	ld hl,_secretDataToEncodeTable
 	rst_addDoubleIndex
@@ -433,7 +419,6 @@ _unpackSecret:
 ;;
 ; @param	a	Number of bits to read from the start of w7SecretGenerationBuffer
 ; @param[out]	a	The value of the bits retrieved
-; @addr{4937}
 @readBits:
 	push bc
 	push de
@@ -479,7 +464,6 @@ _unpackSecret:
 ; Loads the data associated with an unpacked secret (ie. for game-transfer secrets, copies
 ; over player name, animal companion, game type, etc.)
 ;
-; @addr{4960}
 _loadUnpackedSecretData:
 	call _andCWith3
 	rst_jumpTable
@@ -537,7 +521,6 @@ _loadUnpackedSecretData:
 	ret
 
 ;;
-; @addr{49a4}
 _verifyUnpackedSecretGameID:
 	; Get the gameID of an unpacked secret
 	ld hl,wTmpcec0+2
@@ -568,7 +551,6 @@ _verifyUnpackedSecretGameID:
 
 ;;
 ; Generates a gameID if one hasn't been calculated yet.
-; @addr{49be}
 _generateGameIDIfNeeded:
 	ld hl,wGameID
 	ldi a,(hl)
@@ -598,7 +580,6 @@ _generateGameIDIfNeeded:
 ; Copies the data from w7SecretGenerationBuffer to w7SecretText1. The former consists of
 ; "raw bytes", while the latter is ascii.
 ;
-; @addr{49d9}
 _convertSecretBufferToText:
 	ld a,c
 	ld hl,@secretSpacingData
@@ -660,7 +641,6 @@ _convertSecretBufferToText:
 ;
 ; @param	wTmpcec0	Buffer with the secret in text format
 ; @param[out]	cflag		Set if there's a problem with the secret (invalid char)
-; @addr{4a15}
 _loadSecretBufferFromText:
 	call _getNumCharactersForSecretType
 	ld hl,wTmpcec0
@@ -679,7 +659,6 @@ _loadSecretBufferFromText:
 ; @param	a	Ascii symbol
 ; @param[out]	a	Byte corresponding to value
 ; @param[out]	cflag	Set if there's no byte corresponding to it
-; @addr{4a29}
 @textCharacterToByte:
 	push hl
 	push bc
@@ -703,7 +682,6 @@ _loadSecretBufferFromText:
 ; This xors all bytes in w7SecretGenerationBuffer with the corresponding cipher
 ; (determined by the first 3 bits in the secret buffer).
 ;
-; @addr{4a3e}
 _runXorCipherOnSecretBuffer:
 	call _getNumCharactersForSecretType
 
@@ -732,7 +710,6 @@ _runXorCipherOnSecretBuffer:
 
 ;;
 ; @param[out]	a	The last 4 bits of the sum of all bytes in w7SecretGenerationBuffer
-; @addr{4a5b}
 _getSecretBufferChecksum:
 	ld hl,w7SecretGenerationBuffer
 	ld b,20
@@ -750,7 +727,6 @@ _getSecretBufferChecksum:
 ; of the buffer.
 ;
 ; @param	c	Secret type
-; @addr{4a69}
 _shiftSecretBufferContentsToFront:
 	call _getNumCharactersForSecretType
 	ld a,20
@@ -770,7 +746,6 @@ _shiftSecretBufferContentsToFront:
 	ret
 
 ;;
-; @addr{4a7d}
 _andCWith3:
 	ld a,c
 	and $03
@@ -844,7 +819,6 @@ _secretDataToEncodeTable:
 ;;
 ; @param	c	Secret type
 ; @param[out]	a,b	Number of characters in secret
-; @addr{4ace}
 _getNumCharactersForSecretType:
 	ld a,c
 	ld hl,@lengths
@@ -872,7 +846,6 @@ _secretXorCipher:
 ;;
 ; Used for CUTSCENE_FLAMES_FLICKERING and CUTSCENE_TWINROVA_SACRIFICE.
 ;
-; @addr{4b0a}
 twinrovaCutsceneCaller:
 	ld a,c
 	rst_jumpTable
@@ -880,7 +853,6 @@ twinrovaCutsceneCaller:
 	.dw _cutscene19_body
 
 ;;
-; @addr{4b10}
 _incCutsceneState:
 	ld hl,wCutsceneState
 	inc (hl)
@@ -888,28 +860,24 @@ _incCutsceneState:
 
 ;;
 ; Unused
-; @addr{4b15}
 unused_incTmpcbb3:
 	ld hl,wTmpcbb3
 	inc (hl)
 	ret
 
 ;;
-; @addr{4b1a}
 _decTmpcbb4:
 	ld hl,wTmpcbb4
 	dec (hl)
 	ret
 
 ;;
-; @addr{4b1f}
 _setScreenShakeCounterTo255:
 	ld a,$ff
 	jp setScreenShakeCounter
 
 ;;
 ; State 0: screen fadeout
-; @addr{4b24}
 _twinrovaCutscene_state0:
 	ld a,$04
 	call fadeoutToWhiteWithDelay
@@ -920,7 +888,6 @@ _twinrovaCutscene_state0:
 
 ;;
 ; State 1: fading out, then initialize fadein to zelda sacrifice room
-; @addr{4b33}
 _twinrovaCutscene_state1:
 	ld a,(wPaletteThread_mode)
 	or a
@@ -967,7 +934,6 @@ _twinrovaCutscene_state1:
 	jp loadGfxRegisterStateIndex
 
 ;;
-; @addr{4b6f}
 _twinrovaCutscene_fadeinToRoom:
 	call disableLcd
 	call clearScreenVariablesAndWramBank1
@@ -978,7 +944,6 @@ _twinrovaCutscene_fadeinToRoom:
 
 ;;
 ; CUTSCENE_FLAMES_FLICKERING
-; @addr{4b81}
 _cutscene18_body:
 	ld a,(wCutsceneState)
 	rst_jumpTable
@@ -991,7 +956,6 @@ _cutscene18_body:
 
 ;;
 ; State 2: waiting for fadein to finish
-; @addr{4b91}
 _twinrovaCutscene_state2:
 	ld a,(wPaletteThread_mode)
 	or a
@@ -1002,7 +966,6 @@ _twinrovaCutscene_state2:
 
 ;;
 ; State 3: initializes stuff for state 4
-; @addr{4b9e}
 _twinrovaCutscene_state3:
 	call _decTmpcbb4
 	ret nz
@@ -1017,7 +980,6 @@ _twinrovaCutscene_state3:
 
 ;;
 ; State 4: screen shaking, flames flickering with zelda on pedestal
-; @addr{4bb2}
 _cutscene18_state4:
 	call _setScreenShakeCounterTo255
 	ld a,(wFrameCounter)
@@ -1038,7 +1000,6 @@ _cutscene18_state4:
 ;;
 ; State 5: fading out again. When done, it fades in to the next room, and the cutscene's
 ; over.
-; @addr{4bcd}
 _cutscene18_state5:
 	call _setScreenShakeCounterTo255
 	ld a,(wPaletteThread_mode)
@@ -1080,7 +1041,6 @@ _cutscene18_state5:
 	jp loadGfxRegisterStateIndex
 
 ;;
-; @addr{4c0d}
 _twinrovaCutscene_deleteAllInteractionsExceptFlames:
 	ldhl FIRST_DYNAMIC_INTERACTION_INDEX, Interaction.start
 @next:
@@ -1105,7 +1065,6 @@ _twinrovaCutscene_deleteAllInteractionsExceptFlames:
 
 ;;
 ; Loads the "angry-looking" version of the flames.
-; @addr{4c29}
 _twinrovaCutscene_loadAngryFlames:
 .ifdef ROM_AGES
 	ld a,PALH_af
@@ -1118,7 +1077,6 @@ _twinrovaCutscene_loadAngryFlames:
 
 ;;
 ; CUTSCENE_TWINROVA_SACRIFICE
-; @addr{4c34}
 _cutscene19_body:
 	ld a,(wCutsceneState)
 	rst_jumpTable
@@ -1136,7 +1094,6 @@ _cutscene19_body:
 ;;
 ; After fading in to zelda on the pedestal, this shows the "angry flames" and waits for
 ; 3 seconds before striking the first flame with lightning.
-; @addr{4c4c}
 _cutscene19_state4:
 	call _decTmpcbb4
 	ret nz
@@ -1149,7 +1106,6 @@ _cutscene19_strikeFlameWithLightning:
 
 ;;
 ; State 5: wait before striking the 2nd flame with lightning.
-; @addr{4c5b}
 _cutscene19_state5:
 	call _decTmpcbb4
 	ret nz
@@ -1160,7 +1116,6 @@ _cutscene19_state5:
 
 ;;
 ; State 6: wait before striking the 3rd flame with lightning.
-; @addr{4c66}
 _cutscene19_state6:
 	call _decTmpcbb4
 	ret nz
@@ -1171,7 +1126,6 @@ _cutscene19_state6:
 
 ;;
 ; State 7: wait before shaking screen around
-; @addr{4c71}
 _cutscene19_state7:
 	call _decTmpcbb4
 	ret nz
@@ -1183,7 +1137,6 @@ _cutscene19_state7:
 
 ;;
 ; State 8: shake the screen and repeatedly flash the screen white
-; @addr{4c7f}
 _cutscene19_state8:
 	call _setScreenShakeCounterTo255
 	ld a,(wFrameCounter)
@@ -1200,7 +1153,6 @@ _cutscene19_state8:
 
 ;;
 ; State 9: wait before fading back to twinrova. Cutscene ends here.
-; @addr{4c9b}
 _cutscene19_state9:
 	call _setScreenShakeCounterTo255
 	ld a,(wPaletteThread_mode)
@@ -1221,7 +1173,6 @@ _cutscene19_state9:
 
 ;;
 ; @param	bc	Position to strike
-; @addr{4cba}
 _twinrovaCutscene_createLightningStrike:
 	call getFreePartSlot
 	ret nz
@@ -1237,7 +1188,6 @@ _twinrovaCutscene_createLightningStrike:
 
 ;;
 ; This function is part of the main loop until the player reaches the file select screen.
-; @addr{4cc9}
 runIntro:
 	ldh a,(<hSerialInterruptBehaviour)
 	or a
@@ -1267,7 +1217,6 @@ runIntro:
 	jr nz,_intro_gotoTitlescreen
 
 ;;
-; @addr{4cf5}
 _intro_runStage:
 	ld a,(wIntroStage)
 	rst_jumpTable
@@ -1279,7 +1228,6 @@ _intro_runStage:
 
 ;;
 ; Advance the intro to the next stage (eg. cinematic -> titlescreen)
-; @addr{4d03}
 _intro_gotoTitlescreen:
 	call clearPaletteFadeVariables
 	call _cutscene_clearObjects
@@ -1294,7 +1242,6 @@ _intro_gotoTitlescreen:
 	jr _intro_runStage
 
 ;;
-; @addr{4d1b}
 _intro_restart:
 	xor a
 	ld (wIntroStage),a
@@ -1302,7 +1249,6 @@ _intro_restart:
 	ret
 
 ;;
-; @addr{4d23}
 _intro_gotoNextStage:
 	call enableIntroInputs
 	call clearDynamicInteractions
@@ -1313,21 +1259,18 @@ _intro_gotoNextStage:
 	jp clearPaletteFadeVariables
 
 ;;
-; @addr{4d33}
 _intro_incState:
 	ld hl,wIntroVar
 	inc (hl)
 	ret
 
 ;;
-; @addr{4d38}
 _intro_uninitialized:
 	ld hl,wIntroStage
 	inc (hl)
 
 
 ;;
-; @addr{4d3c}
 _intro_capcomScreen:
 	ld a,(wIntroVar)
 	rst_jumpTable
@@ -1336,7 +1279,6 @@ _intro_capcomScreen:
 	.dw @state2
 
 ;;
-; @addr{4d46}
 @state0:
 	call restartSound
 
@@ -1358,7 +1300,6 @@ _intro_capcomScreen:
 
 ;;
 ; Fading in, waiting
-; @addr{4d68}
 @state1:
 	ld hl,wTmpcbb3
 	call decHlRef16WithCap
@@ -1369,7 +1310,6 @@ _intro_capcomScreen:
 
 ;;
 ; Fading out
-; @addr{4d75}
 @state2:
 	ld a,(wPaletteThread_mode)
 	or a
@@ -1384,7 +1324,6 @@ _intro_capcomScreen:
 	jp enableIntroInputs
 
 ;;
-; @addr{4d88}
 _intro_titlescreen:
 	call getRandomNumber_noPreserveVars
 	call @runState
@@ -1415,7 +1354,6 @@ _intro_titlescreen:
 .endif
 
 ;;
-; @addr{4da7}
 @runState:
 	ld a,(wIntroVar)
 	rst_jumpTable
@@ -1425,7 +1363,6 @@ _intro_titlescreen:
 	.dw _intro_titlescreen_state3
 
 ;;
-; @addr{4db3}
 _intro_titlescreen_state0:
 	call restartSound
 
@@ -1457,7 +1394,6 @@ _intro_titlescreen_state0:
 
 ;;
 ; State 1: waiting for player to press start
-; @addr{4de1}
 _intro_titlescreen_state1:
 	ld a,(wKeysJustPressed)
 	and BTN_START
@@ -1483,7 +1419,6 @@ _intro_titlescreen_state1:
 
 ;;
 ; State 2: fading out to replay intro cinematic
-; @addr{4e08}
 _intro_titlescreen_state2:
 	ld a,(wPaletteThread_mode)
 	or a
@@ -1492,7 +1427,6 @@ _intro_titlescreen_state2:
 
 ;;
 ; State 3: fading out to go to file select
-; @addr{4e10}
 _intro_titlescreen_state3:
 	ld a,(wPaletteThread_mode)
 	or a
@@ -1545,7 +1479,6 @@ titlescreenPressStartSprites:
 .endif
 
 ;;
-; @addr{4e20}
 runIntroCinematic:
 	ld a,(wIntro.cinematicState)
 	rst_jumpTable
@@ -1557,7 +1490,6 @@ runIntroCinematic:
 
 ;;
 ; Covers intro sections after the capcom screen and before the temple scene.
-; @addr{4e2a}
 _introCinematic_ridingHorse:
 	ld a,(wIntroVar)
 	rst_jumpTable
@@ -1575,7 +1507,6 @@ _introCinematic_ridingHorse:
 
 ;;
 ; State 0: initialization
-; @addr{4e44}
 _introCinematic_ridingHorse_state0:
 	call disableLcd
 	ld hl,wOamEnd
@@ -1647,7 +1578,6 @@ _introCinematic_ridingHorse_state0:
 
 ;;
 ; State 1: fading into the sunset
-; @addr{4ebc}
 _introCinematic_ridingHorse_state1:
 	call _introCinematic_moveBlackBarsIn
 	ld hl,wTmpcbb3
@@ -1662,7 +1592,6 @@ _introCinematic_ridingHorse_state1:
 
 ;;
 ; State 2: scrolling down to reveal Link on horse
-; @addr{4ed2}
 _introCinematic_ridingHorse_state2:
 	call _introCinematic_ridingHorse_updateScrollingGround
 	call decCbb3
@@ -1686,7 +1615,6 @@ _introCinematic_ridingHorse_state2:
 ;;
 ; Decrements the SCX value for the scrolling ground, and recalculates the value of LYC to
 ; use for producing the scrolling effect for the ground.
-; @addr{4eed}
 _introCinematic_ridingHorse_updateScrollingGround:
 	ld a,$a8
 	ld hl,wGfxRegs2.SCY
@@ -1708,7 +1636,6 @@ _introCinematic_ridingHorse_updateScrollingGround:
 
 ;;
 ; State 3: camera has scrolled all the way down; not doing anything for a bit
-; @addr{4f09}
 _introCinematic_ridingHorse_state3:
 	call _introCinematic_ridingHorse_updateScrollingGround
 	call decCbb3
@@ -1750,7 +1677,6 @@ _introCinematic_ridingHorse_state3:
 
 ;;
 ; State 4: Link riding horse toward camera
-; @addr{4f44}
 _introCinematic_ridingHorse_state4:
 	call @drawLinkOnHorseAndScrollScreen
 	ld hl,wTmpcbb3
@@ -1779,7 +1705,6 @@ _introCinematic_ridingHorse_state4:
 	jp _intro_incState
 
 ;;
-; @addr{4f70}
 @drawLinkOnHorseAndScrollScreen:
 	ld hl,bank3f.linkOnHorseFacingCameraSprite
 	ld e,:bank3f.linkOnHorseFacingCameraSprite
@@ -1823,7 +1748,6 @@ _introCinematic_ridingHorse_state4:
 
 ;;
 ; State 5: closeup of Link's face; face is moving left
-; @addr{4fa7}
 _introCinematic_ridingHorse_state5:
 	call _introCinematic_moveBlackBarsOut
 	ld hl,wGfxRegs2.SCX
@@ -1844,7 +1768,6 @@ _introCinematic_ridingHorse_state5:
 
 ;;
 ; State 6: closeup of Link's face; screen staying still for a moment
-; @addr{4fc4}
 _introCinematic_ridingHorse_state6:
 	ld hl,wTmpcbb3
 	call decHlRef16WithCap
@@ -1869,7 +1792,6 @@ _introCinematic_ridingHorse_state6:
 
 ;;
 ; Covers intro sections after the capcom screen and before the temple scene.
-; @addr{4e2a}
 _introCinematic_ridingHorse:
 	ld a,(wIntroVar)
 	rst_jumpTable
@@ -2013,7 +1935,6 @@ _introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites_1:
 
 ;;
 ; State 7 (3 in seasons): scrolling up on the link+horse shot
-; @addr{4fe3}
 _introCinematic_ridingHorse_state7:
 	ld hl,wGfxRegs1.SCY
 	dec (hl)
@@ -2026,7 +1947,6 @@ _introCinematic_ridingHorse_state7:
 ;;
 ; Draw the sprites that complement the image of Link on the horse (the 2nd image in
 ; seasons; the only such image in ages)
-; @addr{4ff1}
 _introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites_2:
 	; Calculate offset for sprites
 	ld a,(wGfxRegs1.SCY)
@@ -2050,7 +1970,6 @@ _introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites_2:
 
 ;;
 ; State 8 (4 in seasons): lingering on the link+horse shot
-; @addr{5003}
 _introCinematic_ridingHorse_state8:
 	ld hl,wTmpcbb6
 	dec (hl)
@@ -2104,7 +2023,6 @@ _introCinematic_ridingHorse_state8:
 
 ;;
 ; State 9 (5 in seasons): showing Link on a cliff overlooking the temple
-; @addr{504b}
 _introCinematic_ridingHorse_state9:
 	ld hl,wTmpcbb3
 	call decHlRef16WithCap
@@ -2135,7 +2053,6 @@ _introCinematic_ridingHorse_state9:
 ;;
 ; In the scene overlooking the temple, a few sprites are used to touch up the appearance
 ; of the temple, even though it's mostly drawn on the background.
-; @addr{5075}
 _introCinematic_ridingHorse_drawTempleSprites:
 	xor a
 	ldh (<hOamTail),a
@@ -2158,7 +2075,6 @@ _introCinematic_ridingHorse_drawTempleSprites:
 
 ;;
 ; State 10 (6 in seasons): fading out, then proceed to next cinematic state (temple)
-; @addr{5087}
 _introCinematic_ridingHorse_state10:
 	ld a,(wPaletteThread_mode)
 	or a
@@ -2169,7 +2085,6 @@ _introCinematic_ridingHorse_state10:
 
 ;;
 ; @param[out]	zflag	nz if there's no more scrolling to be done
-; @addr{5092}
 _introCinematic_preTitlescreen_updateScrollingTree:
 	ld hl,wTmpcbb6
 	dec (hl)
@@ -2209,7 +2124,6 @@ _introCinematic_preTitlescreen_updateScrollingTree:
 	ret
 
 ;;
-; @addr{50ca}
 _incIntroCinematicState:
 	ld hl,wIntro.cinematicState
 	inc (hl)
@@ -2218,7 +2132,6 @@ _incIntroCinematicState:
 	ret
 
 ;;
-; @addr{50d3}
 _introCinematic_inTemple:
 	ld a,(wIntroVar)
 	rst_jumpTable
@@ -2239,7 +2152,6 @@ _introCinematic_inTemple:
 
 ;;
 ; State 0: Load the room
-; @addr{50ed}
 _introCinematic_inTemple_state0:
 	call disableLcd
 	call clearOam
@@ -2326,7 +2238,6 @@ _introCinematic_inTemple_state0:
 
 ;;
 ; State 1: walking up to triforce
-; @addr{5162}
 _introCinematic_inTemple_state1:
 	ld a,(wPaletteThread_mode)
 	or a
@@ -2352,7 +2263,6 @@ _introCinematic_inTemple_state1.5:
 
 ;;
 ; State 2: waiting for cutscene objects to do their thing (nothing to be done here)
-; @addr{5178}
 _introCinematic_inTemple_state2:
 	; The "link cutscene object" will write to wIntro.triforceState eventually
 	ld a,(wIntro.triforceState)
@@ -2364,7 +2274,6 @@ _introCinematic_inTemple_state2:
 
 ;;
 ; State 3: screen fading out temporarily
-; @addr{5184}
 _introCinematic_inTemple_state3:
 	ld a,(wPaletteThread_mode)
 	or a
@@ -2385,7 +2294,6 @@ _introCinematic_inTemple_state3:
 	; Fall through
 
 ;;
-; @addr{51a1}
 _introCinematic_inTemple_updateWave:
 	ld hl,wFrameCounter
 	inc (hl)
@@ -2394,7 +2302,6 @@ _introCinematic_inTemple_updateWave:
 
 ;;
 ; State 4: screen fading back in
-; @addr{51aa}
 _introCinematic_inTemple_state4:
 	call _introCinematic_inTemple_updateWave
 	ld a,(wPaletteThread_mode)
@@ -2406,7 +2313,6 @@ _introCinematic_inTemple_state4:
 
 ;;
 ; State 5: waving the screen around
-; @addr{51ba}
 _introCinematic_inTemple_state5:
 	call _introCinematic_inTemple_updateWave
 	ld hl,wTmpcbb6
@@ -2424,7 +2330,6 @@ _introCinematic_inTemple_state5:
 
 ;;
 ; State 6: this is the instant where Link "falls"?
-; @addr{51cc}
 _introCinematic_inTemple_state6:
 	call _introCinematic_inTemple_updateWave
 	ld hl,wTmpcbb6
@@ -2441,7 +2346,6 @@ _introCinematic_inTemple_state6:
 
 ;;
 ; State 7: link is in the process of falling
-; @addr{51e8}
 _introCinematic_inTemple_state7:
 	call _introCinematic_inTemple_updateWave
 	ld a,(wTmpcbb9)
@@ -2458,7 +2362,6 @@ _introCinematic_inTemple_state7:
 
 ;;
 ; State 8: waiting?
-; @addr{5200}
 _introCinematic_inTemple_state8:
 	call _introCinematic_inTemple_updateWave
 	ld hl,wTmpcbb6
@@ -2469,7 +2372,6 @@ _introCinematic_inTemple_state8:
 
 ;;
 ; State 9: waiting?
-; @addr{520d}
 _introCinematic_inTemple_state9:
 	call _introCinematic_inTemple_updateWave
 	ld hl,wTmpcbb6
@@ -2482,7 +2384,6 @@ _introCinematic_inTemple_state9:
 
 ;;
 ; State 10: screen fading out, then moves on to the next cinematic state
-; @addr{5220}
 _introCinematic_inTemple_state10:
 	call _introCinematic_inTemple_updateWave
 	ld a,(wPaletteThread_mode)
@@ -2500,7 +2401,6 @@ _introCinematic_inTemple_state10:
 ; @param	b	Index of "screen flashing" data
 ; @param	hl	Counter to use (should start at 0?)
 ; @param[out]	zflag	nz if the flashing is complete (all data has been read).
-; @addr{522e}
 flashScreen_body:
 	ld a,b
 	inc (hl)
@@ -2541,7 +2441,6 @@ flashScreen_body:
 ;;
 ; Clears w2FadingBgPalettes, w2FadingSprPalettes (fills contents with $ff), and marks all
 ; palettes as needing refresh?
-; @addr{525a}
 clearFadingPalettes_body:
 	ld a,:w2FadingBgPalettes
 	ld ($ff00+R_SVBK),a
@@ -2620,7 +2519,6 @@ clearFadingPalettes_body:
 
 
 ;;
-; @addr{52b9}
 _introCinematic_preTitlescreen:
 	ld a,(wIntroVar)
 	rst_jumpTable
@@ -2631,7 +2529,6 @@ _introCinematic_preTitlescreen:
 
 ;;
 ; State 0: load tree graphics
-; @addr{52c5}
 _introCinematic_preTitlescreen_state0:
 	call disableLcd
 
@@ -2689,7 +2586,6 @@ _introCinematic_preTitlescreen_state0:
 
 ;;
 ; State 1: scrolling up the tree
-; @addr{5317}
 _introCinematic_preTitlescreen_state1:
 	call _introCinematic_preTitlescreen_updateScrollingTree
 	ret nz
@@ -2733,7 +2629,6 @@ _introCinematic_preTitlescreen_state1:
 ; Updates the effect where the title comes into view.
 ;
 ; @param	a	Number of pixels of the title to show (divided by two)
-; @addr{5345}
 _introCinematic_preTitlescreen_updateScrollForTitle:
 	ld b,a
 
@@ -2784,7 +2679,6 @@ _introCinematic_preTitlescreen_updateScrollForTitle:
 
 ;;
 ; State 2: game title coming into view
-; @addr{5375}
 _introCinematic_preTitlescreen_state2:
 	; Check whether to play the sound effect
 	ld hl,wTmpcbb6
@@ -2821,7 +2715,6 @@ _introCinematic_preTitlescreen_state2:
 
 ;;
 ; State 3: title fully in view; wait a bit, then go to the titlescreen.
-; @addr{53a6}
 _introCinematic_preTitlescreen_state3:
 	ld hl,wTmpcbb6
 	ld b,$01
@@ -2836,7 +2729,6 @@ _introCinematic_preTitlescreen_titleSizeData:
 
 ;;
 ; Updates camera position based on link's Y position.
-; @addr{53ba}
 _introCinematic_inTemple_updateCamera:
 	ld a,(wGfxRegs1.SCY)
 	ld b,a
@@ -2856,7 +2748,6 @@ _introCinematic_inTemple_updateCamera:
 ;;
 ; Moves the black bars in the intro cinematic in by 2 pixels, until it covers 24 pixels on
 ; each end.
-; @addr{53d3}
 _introCinematic_moveBlackBarsIn:
 	ld hl,wGfxRegs1.LYC
 	inc (hl)
@@ -2881,7 +2772,6 @@ _introCinematic_moveBlackBarsIn:
 ;;
 ; Moves the black bars out until a certain area in the center of the screen is visible.
 ; Used for the closeup of Link's face.
-; @addr{53eb}
 _introCinematic_moveBlackBarsOut:
 	ld hl,wGfxRegs1.LYC
 	dec (hl)
@@ -2903,7 +2793,6 @@ _introCinematic_moveBlackBarsOut:
 .else; ROM_SEASONS
 
 ;;
-; @addr{5367}
 _seasonsFunc_03_5367:
 	call @func
 	ld bc,$0506
@@ -2941,7 +2830,6 @@ _seasonsFunc_03_5367:
 
 
 ;;
-; @addr{5403}
 _cutscene_clearObjects:
 	call clearDynamicInteractions
 	call clearLinkObject
@@ -2952,7 +2840,6 @@ _cutscene_clearObjects:
 
 ;;
 ; @param	bc	ID of interaction to create
-; @addr{540c}
 _createInteraction:
 	call getFreeInteractionSlot
 	ret nz
@@ -3075,7 +2962,6 @@ data_5951:
 ; Called from endgameCutsceneHandler in bank 0.
 ;
 ; @param	e
-; @addr{5414}
 endgameCutsceneHandler_body:
 	ld hl,wCutsceneState
 	bit 0,(hl)
@@ -3095,7 +2981,6 @@ endgameCutsceneHandler_body:
 .endif
 
 ;;
-; @addr{542e}
 _clearFadingPalettes:
 	; Clear w2FadingBgPalettes and w2FadingSprPalettes
 	ld a,:w2FadingBgPalettes

@@ -3,7 +3,6 @@
 ; Garbage functions appear to follow (corrupted repeats of the above functions).
 
 ;;
-; @addr{7e54}
 func_7e54:
 	ld a,$10
 	ld (wLinkStateParameter),a
@@ -31,7 +30,6 @@ func_7e54:
 	jp $7d02
 
 ;;
-; @addr{7e88}
 func_7e88:
 	call $7ea9
 	ld a,(wTmpcbb5)
@@ -47,7 +45,6 @@ func_7e88:
 	jp $19c5
 
 ;;
-; @addr{7ea4}
 func_7ea4:
 	add l
 	rst_addAToHl

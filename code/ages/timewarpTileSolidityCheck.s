@@ -1,6 +1,5 @@
 ;;
 ; @param[out]	c	$00 if there is no solid object at that position, $01 if there is
-; @addr{62c4}
 checkSolidObjectAtWarpDestPos:
 	ld a,:w2SolidObjectPositions
 	ld ($ff00+R_SVBK),a
@@ -16,7 +15,6 @@ checkSolidObjectAtWarpDestPos:
 	ret
 
 ;;
-; @addr{62da}
 clearSolidObjectPositions:
 	ld a,:w2SolidObjectPositions
 	ld ($ff00+R_SVBK),a
@@ -30,7 +28,6 @@ clearSolidObjectPositions:
 ; This is used to check whether Link can time-warp into a position successfully.
 ;
 ; @param[out]	c	$00 if the tile is OK to stand on, $01 otherwise.
-; @addr{62e9}
 checkLinkCanStandOnTile:
 	ld a,(w1Link.yh)
 	ld b,a

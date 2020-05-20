@@ -1,6 +1,5 @@
 ; This lists the tiles that can be passed through by items (such as the switch hook or
 ; seeds) even if their collisions prevent link from passing them.
-; @addr{4cc9}
 _itemPassableTilesTable:
 	.dw @collisions0
 	.dw @collisions1

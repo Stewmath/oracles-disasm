@@ -7,36 +7,30 @@
 .ORG 0
 
 ;;
-; @addr{4000}
 b39_initSound:
 	jp _initSound
 
 ;;
-; @addr{4003}
 b39_updateSound:
 	jp _updateSound
 
 ;;
 ; @param	a	Sound to play
-; @addr{4006}
 b39_playSound:
 	jp _playSound
 
 ;;
-; @addr{4009}
 b39_stopSound:
 	jp _stopSound
 
 ;;
 ; Unused? (The address it jumps too doesn't seem like it would do anything useful...)
-; @addr{400c}
 func_39_400c:
 	pop af
 	jp $4d3e
 
 ;;
 ; @param	a	Volume (0-3)
-; @addr{4010}
 b39_updateMusicVolume:
 	jp _updateMusicVolume
 
@@ -46,7 +40,6 @@ b39_updateMusicVolume:
 
 
 ;;
-; @addr{4015}
 _initSound:
 	ldh (<hSoundDataBaseBank),a
 	call _stopSound
@@ -94,7 +87,6 @@ _initSound:
 ;;
 ; @param	a	Volume (0-3)
 ;
-; @addr{405d}
 _updateMusicVolume:
 	push bc
 	push de
@@ -119,7 +111,6 @@ _updateMusicVolume:
 	ret
 
 ;;
-; @addr{4079}
 @updateSquareChannelVolumes:
 	; Update square 1's volume
 	ld a,$00
@@ -150,7 +141,6 @@ _updateMusicVolume:
 	ret
 
 ;;
-; @addr{40a8}
 _stopSound:
 	ld a,$00
 -
@@ -163,7 +153,6 @@ _stopSound:
 	ret
 
 ;;
-; @addr{40b9}
 _func_39_40b9:
 	ld a,$00
 -
@@ -178,7 +167,6 @@ _func_39_40b9:
 ;;
 ; Disable all sound effect channels
 ;
-; @addr{40ca}
 _stopSfx:
 	; Square 1
 	ld a,$02
@@ -235,7 +223,6 @@ _stopSfx:
 	ret
 
 ;;
-; @addr{4127}
 _updateSound:
 	push bc
 	push de
@@ -336,7 +323,6 @@ _updateSound:
 	ret
 
 ;;
-; @addr{41c2}
 _func_39_41c2:
 	ld hl,wChannelWaitCounters
 	ld a,(wSoundChannel)
@@ -368,7 +354,6 @@ _func_39_41c2:
 	ret
 
 ;;
-; @addr{41f3}
 _func_39_41f3:
 	ld hl,wc03f
 	ld a,(wSoundChannel)
@@ -513,7 +498,6 @@ _label_39_027:
 	call _func_39_4a10
 
 ;;
-; @addr{42d1}
 _func_42d1:
 	ld a,(wSoundChannel)
 	sla a
@@ -534,7 +518,6 @@ _func_42d1:
 	ld (wSoundFrequencyH),a
 
 ;;
-; @addr{42ea}
 _func_42ea:
 	ld a,(wSoundChannel)
 	scf
@@ -602,7 +585,6 @@ _label_39_030:
 
 ;;
 ; @param[out]	a	0 or 1 (something about whether wSoundChannel can be active?)
-; @addr{434b}
 _func_39_434b:
 	ld a,(wSoundChannel)
 	cp $05
@@ -623,7 +605,6 @@ _func_39_434b:
 	ret
 
 ;;
-; @addr{4366}
 _getNextChannelByte:
 	push bc
 	push de
@@ -660,7 +641,6 @@ _getNextChannelByte:
 	ret
 
 ;;
-; @addr{4396}
 _doNextChannelCommand:
 	call _getNextChannelByte
 	scf
@@ -710,22 +690,18 @@ _doNextChannelCommand:
 	.dw _channelCmdf0
 
 ;;
-; @addr{43e2}
 _channelCmdf1:
 	jp _doNextChannelCommand
 ;;
-; @addr{43e5}
 _channelCmdf2:
 	jp _doNextChannelCommand
 ;;
-; @addr{43e8}
 _channelCmdf3:
 	jp _doNextChannelCommand
 
 ;;
 ; Vibrato
 ;
-; @addr{43eb}
 _channelCmdf9:
 	ld a,(wSoundChannel)
 	scf
@@ -745,7 +721,6 @@ _channelCmdf9:
 	jp _doNextChannelCommand
 
 ;;
-; @addr{4407}
 _channelCmdf8:
 	ld a,(wSoundChannel)
 	scf
@@ -765,7 +740,6 @@ _channelCmdf8:
 	jp _doNextChannelCommand
 
 ;;
-; @addr{4423}
 _channelCmdfd:
 	ld a,(wSoundChannel)
 	scf
@@ -788,7 +762,6 @@ _channelCmdfd:
 	jp _doNextChannelCommand
 
 ;;
-; @addr{4445}
 _cmde0Toef:
 	and $07
 	ld hl,wChannelEnvelopes
@@ -812,7 +785,6 @@ _cmde0Toef:
 	jp _doNextChannelCommand
 
 ;;
-; @addr{4469}
 _channelCmdf0:
 	ld a,(wSoundChannel)
 	cp $07
@@ -896,7 +868,6 @@ _cmdVolume:
 	jp _doNextChannelCommand
 
 ;;
-; @addr{44ea}
 _channelCmdf6:
 	ld a,(wSoundChannel)
 	cp $04
@@ -935,7 +906,6 @@ _channelCmdf6:
 	jp _doNextChannelCommand
 
 ;;
-; @addr{4529}
 _standardSoundCmd:
 	ld a,(wSoundChannel)
 	ld hl,@table
@@ -1057,7 +1027,6 @@ _standardSoundCmd:
 	call _func_42ea
 ;;
 ; Read a byte, set the channel wait counter to the value
-; @addr{45f7}
 _setChannelWaitCounter:
 	call _getNextChannelByte
 	dec a
@@ -1072,7 +1041,6 @@ _setChannelWaitCounter:
 	ret
 
 ;;
-; @addr{4609}
 _func_39_4609:
 	ld hl,_data_4ad0
 	ld a,b
@@ -1088,7 +1056,6 @@ _func_39_4609:
 
 ;;
 ; Sends wSoundFrequency to given value plus value in table at wChannelPitchShift.
-; @addr{461a}
 _setSoundFrequency:
 	push hl
 	ld hl,wChannelPitchShift
@@ -1125,7 +1092,6 @@ _setSoundFrequency:
 	ret
 
 ;;
-; @addr{464c}
 _func_39_464c:
 	ld a,(wSoundChannel)
 	cp $04
@@ -1248,7 +1214,6 @@ _label_39_049:
 	jp _updateChannelVolume
 
 ;;
-; @addr{4714}
 _updateChannelVolume:
 	ld a,(wSoundChannel)
 	cp $02
@@ -1302,7 +1267,6 @@ _updateChannelVolume:
 	ret
 
 ;;
-; @addr{4766}
 _func_39_4766:
 	call _func_39_489e
 	ld b,a
@@ -1322,7 +1286,6 @@ _func_39_4766:
 	ret
 
 ;;
-; @addr{4783}
 _getChannelVolume:
 	ld a,(wSoundChannel)
 	scf
@@ -1330,7 +1293,6 @@ _getChannelVolume:
 	cp $02
 	jr nc,_label_39_056
 ;;
-; @addr{478c}
 _func_39_478c:
 	ld a,(wMusicVolume)
 	cp $00
@@ -1494,7 +1456,6 @@ _standardCmdChannels4To5:
 	jp _setChannelWaitCounter
 
 ;;
-; @addr{489e}
 _func_39_489e:
 	ld hl,wc02d
 	ld a,(wSoundChannel)
@@ -1528,7 +1489,6 @@ _label_39_067:
 	ret
 
 ;;
-; @addr{48cf}
 _standardCmdChannel6:
 	ld a,(wSoundCmd)
 	ld c,a
@@ -1572,7 +1532,6 @@ _standardCmdChannel6:
 	jp _setChannelWaitCounter
 
 ;;
-; @addr{4909}
 _standardCmdChannel7:
 	ld a,(wSoundCmd)
 	ld ($ff00+R_NR43),a
@@ -1601,7 +1560,6 @@ _channelCmdff:
 ; Checks whether to call _updateChannelVolume on square channels, does some other things
 ; with the other types of channels...
 ;
-; @addr{4932}
 _updateChannelStuff:
 	ld a,(wSoundChannel)
 	ld hl,@table
@@ -1700,7 +1658,6 @@ _updateChannelStuff:
 	ret
 
 ;;
-; @addr{49c1}
 _setWaveform:
 	call _func_39_434b
 	cp $00
@@ -1757,7 +1714,6 @@ _channelCmdfe:
 	jp _doNextChannelCommand
 
 ;;
-; @addr{4a10}
 _func_39_4a10:
 	cp $00
 	jr nz,+
@@ -1775,7 +1731,6 @@ _func_39_4a10:
 +
 	ret
 
-; @addr{4a22}
 _soundFrequencyTable:
 	.dw $002d
 	.dw $009d
@@ -1865,7 +1820,6 @@ _soundFrequencyTable:
 	.dw $07f1
 	.dw $07f2
 
-; @addr{4ad0}
 _data_4ad0:
 	.db $00 $01 $02 $03 $04 $05 $06 $07
 	.db $00 $02 $04 $06 $07 $09 $0b $0d
@@ -1881,14 +1835,12 @@ _data_4ad0:
 	.db $00 $0b $16 $22 $2d $38 $43 $4e
 	.db $00 $0c $18 $24 $31 $3d $49 $55
 	.db $00 $0d $1a $27 $34 $41 $4e $5b
-; @addr{4b40}
 _data_4b40:
 	.db $00 $00 $01 $00 $02 $00 $01 $00
 	.db $00 $00 $ff $ff $fe $ff $ff $ff
 
 ;;
 ; @param a The sound to play.
-; @addr{4b50}
 _playSound:
 	push bc
 	push de
@@ -2190,7 +2142,6 @@ _playSound:
 
 ;;
 ; Reads a word at hl+a*2 into de and hl. Index can't be higher than $7f.
-; @addr{4d19}
 _readWordFromTable:
 	sla a
 	ld d,$00
@@ -2205,7 +2156,6 @@ _readWordFromTable:
 
 ;;
 ; Adds b to c, writes a to ($ff00+c), increments c.
-; @addr{4d25}
 _writeIndexedHighRamAndIncrement:
 	push af
 	ld a,b
@@ -2226,7 +2176,6 @@ _writeIndexedHighRamAndIncrement:
 	ld ($ff00+c),a
 	ret
 
-; @addr{4d38}
 _noiseFrequencyTable:
 	.db $24 $01 $47
 	.db $22 $00 $47
@@ -2243,7 +2192,6 @@ _noiseFrequencyTable:
 	.db $30 $00 $07
 	.db $ff
 
-; @addr{4d60}
 _waveformTable:
 	.dw @waveform00
 	.dw @waveform01

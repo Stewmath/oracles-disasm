@@ -143,7 +143,6 @@ interactionCodee2:
 	.db $05 $07
 
 ;;
-; @addr{6fad}
 @centerOnTileAndGetDirectionToFace:
 	call objectCenterOnTile
 
@@ -152,7 +151,6 @@ interactionCodee2:
 ; or angle value.)
 ;
 ; @param[out]	a	Direction (0-7)
-; @addr{6fb0}
 @getDirectionToFace:
 	call objectGetAngleTowardLink
 	ld b,a
@@ -192,7 +190,6 @@ interactionCodee2:
 ;;
 ; @param	c	position
 ; @param	e	subid
-; @addr{6fdd}
 @spawnChild:
 	call getFreeInteractionSlot
 	ret nz

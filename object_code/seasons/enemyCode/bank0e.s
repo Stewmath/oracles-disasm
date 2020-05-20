@@ -3757,7 +3757,6 @@ _vire_batForm_stateD:
 ; increments state2.
 ;
 ; @param[out]	hl	Enemy.state2
-; @addr{5a45}
 _vire_spawnOutsideCamera:
 	call getRandomNumber_noPreserveVars
 	and $07
@@ -3807,7 +3806,6 @@ _vire_spawnOutsideCamera:
 ;;
 ; Vire has left the screen; set state to 9, where he'll wait for 90 frames before
 ; attacking again.
-; @addr{5a86}
 _vire_mainForm_leftScreen:
 	ld h,d
 	ld l,Enemy.state
@@ -3823,7 +3821,6 @@ _vire_mainForm_leftScreen:
 
 ;;
 ; @param[out]	cflag	c if left screen
-; @addr{5a98}
 _vire_checkOffScreen:
 	ld e,Enemy.yh
 	ld a,(de)
@@ -3836,7 +3833,6 @@ _vire_checkOffScreen:
 
 
 ;;
-; @addr{5aa4}
 _vire_mainForm_circleAroundScreen:
 	ldh a,(<hCameraY)
 	add (SCREEN_HEIGHT<<3)+4
@@ -3909,14 +3905,12 @@ _vire_mainForm_circleAroundScreen:
 
 
 ;;
-; @addr{5af9}
 _vire_mainForm_applySpeedAndAnimate:
 	call objectApplySpeed
 	jp enemyAnimate
 
 ;;
 ; @param[out]	cflag	c if Link is too close (Vire will flee)
-; @addr{5aff}
 _vire_mainForm_checkLinkTooClose:
 	ld h,d
 	ld l,Enemy.yh
@@ -3934,7 +3928,6 @@ _vire_mainForm_checkLinkTooClose:
 
 
 ;;
-; @addr{5b14}
 _vire_mainForm_fireProjectile:
 	call getRandomNumber_noPreserveVars
 	and $01
@@ -3943,7 +3936,6 @@ _vire_mainForm_fireProjectile:
 
 ;;
 ; @param	b	Subid
-; @addr{5b1b}
 _vire_mainForm_fireProjectileWithSubid:
 	call getFreePartSlot
 	ret nz
@@ -3966,7 +3958,6 @@ _vire_mainForm_fireProjectileWithSubid:
 	jp enemySetAnimation
 
 ;;
-; @addr{5b39}
 _vire_batForm_moveAwayFromLinkIfTooClose:
 	ld h,d
 	ld l,Enemy.yh
@@ -3990,7 +3981,6 @@ _vire_batForm_moveAwayFromLinkIfTooClose:
 
 
 ;;
-; @addr{5b59}
 _vire_batForm_updateZPos:
 	call _ecom_decCounter1
 	ld a,(hl)
@@ -5481,7 +5471,6 @@ _aquamentus_body_stateA:
 	ld a,$20
 
 ;;
-; @addr{6459}
 _aquamentus_body_pound:
 	call setScreenShakeCounter
 	ld a,SND_STRONG_POUND
@@ -5788,7 +5777,6 @@ _aquamentus_subid3_state8:
 
 ;;
 ; @param	h	Child object
-; @addr{65da}
 _aquamentus_initializeChildObject:
 	ld l,Enemy.relatedObj1
 	ld a,Enemy.start
@@ -5800,7 +5788,6 @@ _aquamentus_initializeChildObject:
 
 ;;
 ; Chooses whether to charge (state $0e) or move forward (state $0c)
-; @addr{65e5}
 _aquamentus_decideNextAttack:
 	ld e,Enemy.xh
 	ld a,(de)
@@ -5870,7 +5857,6 @@ _aquamentus_decideNextAttack:
 
 
 ;;
-; @addr{6640}
 _aquamentus_body_chooseRandomLeftwardAngle:
 	call getRandomNumber_noPreserveVars
 	and $07
@@ -5885,7 +5871,6 @@ _aquamentus_body_chooseRandomLeftwardAngle:
 
 ;;
 ; Sets angle to move left, slightly up or down, depending on Link's position
-; @addr{6651}
 _aquamentus_body_calculateAngleForCharge:
 	ld b,$02
 	ldh a,(<hEnemyTargetY)
@@ -5905,7 +5890,6 @@ _aquamentus_body_calculateAngleForCharge:
 
 ;;
 ; @param[out]	cflag	c if within 2 pixels of target position
-; @addr{6666}
 _aquamentus_body_checkReachedTargetPosition:
 	ld h,d
 	ld l,Enemy.var32
@@ -5922,7 +5906,6 @@ _aquamentus_body_checkReachedTargetPosition:
 
 ;;
 ; @param	b	Amount to subtract z value by (subpixels)
-; @addr{667a}
 _aquamentus_body_subZ:
 	ld e,Enemy.z
 	ld a,(de)
@@ -5935,7 +5918,6 @@ _aquamentus_body_subZ:
 	ret
 
 ;;
-; @addr{6685}
 _aquamentus_fireProjectiles:
 	ld e,Enemy.var31
 	ld a,$10
@@ -5946,7 +5928,6 @@ _aquamentus_fireProjectiles:
 	jp _ecom_spawnProjectile
 
 ;;
-; @addr{6694}
 _aquamentus_body_6694:
 	ld e,Enemy.var34
 	ld a,(de)
@@ -5969,7 +5950,6 @@ _aquamentus_body_6694:
 
 
 ;;
-; @addr{66ab}
 _aquamentus_playHoverSoundEvery32Frames:
 	ld a,(wFrameCounter)
 	and $1f
@@ -5979,13 +5959,11 @@ _aquamentus_playHoverSoundEvery32Frames:
 	jr _aquamentus_playSound
 
 ;;
-; @addr{66b5}
 _aquamentus_body_playFootstepSoundEvery18Frames:
 	ld a,$12
 	jr ++
 
 ;;
-; @addr{66b9}
 _aquamentus_body_playFootstepSoundEvery24Frames:
 	ld a,$18
 ++
@@ -6001,7 +5979,6 @@ _aquamentus_playSound:
 	jp playSound
 
 ;;
-; @addr{66c6}
 _aquamentus_horn_updateAnimation:
 	ld a,Object.var34
 	call objectGetRelatedObject1Var
@@ -6423,7 +6400,6 @@ _dodongo_stateD:
 
 ;;
 ; @param	hl	Pointer to Enemy.direction
-; @addr{68e0}
 _dodongo_updateAnimation:
 	ld e,Enemy.var30
 	ld a,(de)
@@ -6433,7 +6409,6 @@ _dodongo_updateAnimation:
 	jp enemySetAnimation
 
 ;;
-; @addr{68eb}
 _dodongo_resetMovement:
 	ld h,d
 	ld l,Enemy.state
@@ -6456,7 +6431,6 @@ _dodongo_resetMovement:
 ; Either turns toward Link or, if facing a wall, turns in some other random direction.
 ;
 ; @param[out]	c	c if wasn't able to turn in any valid direction
-; @addr{68ff}
 _dodongo_turnTowardLinkIfPossible:
 	call _ecom_updateCardinalAngleTowardTarget
 	call _dodongo_checkTileInFront
@@ -6467,7 +6441,6 @@ _dodongo_turnTowardLinkIfPossible:
 
 ;;
 ; @param[out]	cflag	c if tile in front of dodongo is not a spike
-; @addr{6909}
 _dodongo_checkTileInFront:
 	ld h,d
 	ld l,Enemy.yh
@@ -6503,7 +6476,6 @@ _dodongo_checkTileInFront:
 	.db   4,-17
 
 ;;
-; @addr{6933}
 _dodongo_playStompSoundAtInterval:
 	ld e,Enemy.speed
 	ld a,(de)
@@ -6520,7 +6492,6 @@ _dodongo_playStompSoundAtInterval:
 
 ;;
 ; @param[out]	c	c if Link is at a good angle to charge him
-; @addr{6948}
 _dodongo_updateAngleTowardLink:
 	ld c,$0c
 	call objectCheckCenteredWithLink
@@ -6538,7 +6509,6 @@ _dodongo_updateAngleTowardLink:
 
 ;;
 ; @param[out]	zflag	z if dodongo is ready to continue moving
-; @addr{695b}
 _dodongo_updateAnimationWhileSlimmingDown:
 	ld e,Enemy.var30
 	ld a,(de)
@@ -6565,7 +6535,6 @@ _dodongo_updateAnimationWhileSlimmingDown:
 	.db 180, 20, 20, 16, 16, 10, 10
 
 ;;
-; @addr{697e}
 _dodongo_checkEatBomb:
 	; Check bomb 1
 	ld c,ITEMID_BOMB
@@ -6611,7 +6580,6 @@ _dodongo_checkEatBomb:
 ;;
 ; @param	h	Bomb object
 ; @param[out]	zflag	z if bomb shall be eaten
-; @addr{69b9}
 @checkBombInRangeToEat:
 	; Is bomb being held?
 	ld l,Item.var2f
@@ -6679,7 +6647,6 @@ _dodongo_checkEatBomb:
 
 ;;
 ; Determines next attack.
-; @addr{6a02}
 _dodongo_initiateNextAttack:
 	ld e,Enemy.var32
 	ld a,(de)
@@ -6716,7 +6683,6 @@ _dodongo_initiateNextAttack:
 
 ;;
 ; @param[out]	zflag	z if in spikes
-; @addr{6a30}
 _dodongo_setInvincibilityAndPlaySoundIfInSpikes:
 	call _dodongo_checkInSpikes
 	ret nz
@@ -6731,7 +6697,6 @@ _dodongo_setInvincibilityAndPlaySoundIfInSpikes:
 
 ;;
 ; @param[out]	zflag	z if in spikes
-; @addr{6a40}
 _dodongo_checkInSpikes:
 	ld h,d
 	ld l,Enemy.zh
@@ -6749,7 +6714,6 @@ _dodongo_checkInSpikes:
 
 ;;
 ; @param[out]	zflag	z if king dodongo has regained normal weight and is ready to move
-; @addr{6a54}
 _dodongo_updateAnimationWhileHeld:
 	ld h,d
 	ld l,Enemy.counter2
@@ -7039,7 +7003,6 @@ _mothula_stateF:
 
 ;;
 ; @param	hl	var37 (counter to spawn projectile)
-; @addr{6bb7}
 _mothula_spawnFireball:
 	ld (hl),$50
 	ld b,PARTID_MOTHULA_PROJECTILE_1
@@ -7047,7 +7010,6 @@ _mothula_spawnFireball:
 
 ;;
 ; Decides what to spawn after state $0e (small moth or ring of fireballs).
-; @addr{6bbe}
 _mothula_spawnSomethingAfterStandingStill:
 	ld e,Enemy.var36
 	ld a,(de)
@@ -7064,7 +7026,6 @@ _mothula_spawnSomethingAfterStandingStill:
 ; Sets child object's subid to $80 normally, or $81 if mothula's health is $10 or less
 ;
 ; @param	hl	Pointer to child object's subid
-; @addr{6bcc}
 _mothula_initChild:
 	ld b,$80
 	ld e,Enemy.health
@@ -7077,7 +7038,6 @@ _mothula_initChild:
 	ret
 
 ;;
-; @addr{6bd8}
 _mothula_spawnChild:
 	ld b,ENEMYID_MOTHULA_CHILD
 	call _ecom_spawnUncountedEnemyWithSubid01
@@ -7089,7 +7049,6 @@ _mothula_spawnChild:
 ; Update mothula "bouncing" in place for state $0e
 ;
 ; @param	hl	counter1
-; @addr{6be4}
 _mothula_updateZPosAndOamFlagsForStateE:
 	ld a,(hl)
 	cp 90
@@ -7130,7 +7089,6 @@ _mothula_updateZPosAndOamFlagsForStateE:
 
 ;;
 ; @param[out]	cflag	c if reached target position
-; @addr{6c1a}
 _mothula_checkReachedTargetPosition:
 	ld h,d
 	ld l,Enemy.var32
@@ -7147,7 +7105,6 @@ _mothula_checkReachedTargetPosition:
 
 
 ;;
-; @addr{6c2e}
 _mothula_setTargetPositionToLeftOrRightSide:
 	call getRandomNumber_noPreserveVars
 	and $01
@@ -7181,7 +7138,6 @@ _mothula_setTargetPositionToLeftOrRightSide:
 
 ;;
 ; Chooses a position in one of the two center areas
-; @addr{6c5a}
 _mothula_chooseTargetPositionWithinHoles:
 	call getRandomNumber_noPreserveVars
 	rrca
@@ -7199,7 +7155,6 @@ _mothula_chooseTargetPositionWithinHoles:
 	ret
 
 ;;
-; @addr{6c70}
 _mothula_updateAngleTowardTargetPosition:
 	ld h,d
 	ld l,Enemy.var35
@@ -7213,7 +7168,6 @@ _mothula_updateAngleTowardTargetPosition:
 	call objectNudgeAngleTowards
 
 ;;
-; @addr{6c7e}
 _mothula_updateAnimation:
 	ld h,d
 	ld l,Enemy.angle
@@ -7232,7 +7186,6 @@ _mothula_updateAnimation:
 ; mothula to move in an oval pattern.
 ;
 ; @param[out]	zflag	z if completed a full circle (var31 should be reset)
-; @addr{6c8e}
 _mothula_updateCounter1ForCirclingRoom:
 	ld h,d
 	ld l,Enemy.var31
@@ -7262,7 +7215,6 @@ _mothula_updateCounter1ForCirclingRoom:
 
 ;;
 ; @param[out]	zflag	z if var34 reached 0
-; @addr{6cb8}
 _mothula_decVar34Every4Frames:
 	ld a,(wFrameCounter)
 	and $03
@@ -7276,7 +7228,6 @@ _mothula_decVar34Every4Frames:
 ;;
 ; Calculates appropriate angle, and decides how long to remain in state $0b (circling
 ; around room).
-; @addr{6cc3}
 _mothula_initializeStateB:
 	call getRandomNumber_noPreserveVars
 	and $03
@@ -8079,7 +8030,6 @@ _gohma_subid3:
 
 ;;
 ; Updates speed while falling to be fast vertically, slow horizontally.
-; @addr{70c7}
 _gohma_updateSpeedWhileFalling:
 	ld h,d
 	ld l,Enemy.angle
@@ -8092,7 +8042,6 @@ _gohma_updateSpeedWhileFalling:
 
 ;;
 ; Reverses direction if gohma hits a wall, and plays walking sound.
-; @addr{70d4}
 _gohma_checkWallsAndPlayWalkingSound:
 	ld h,d
 	ld l,Enemy.yh
@@ -8125,7 +8074,6 @@ _gohma_checkWallsAndPlayWalkingSound:
 	ld (de),a
 
 ;;
-; @addr{70f5}
 _gohma_updateMovement:
 	; If moving down, don't allow gohma to pass a certain point?
 	ld e,Enemy.angle
@@ -8164,7 +8112,6 @@ _gohma_positionOffsets:
 
 ;;
 ; Used by subid 1 (body) and 3 (claw)?
-; @addr{7125}
 _gohma_updateCollisionsEnabled:
 	ld e,Enemy.health
 	ld a,(de)
@@ -8186,7 +8133,6 @@ _gohma_updateCollisionsEnabled:
 
 ;;
 ; Main body has died (health is 0).
-; @addr{713e}
 _gohma_subid1_dead:
 	ld e,Enemy.collisionType
 	ld a,(de)
@@ -8221,7 +8167,6 @@ _gohma_subid1_dead:
 
 ;;
 ; Claw is dead
-; @addr{7168}
 _gohma_subid3_dead:
 	ld h,d
 	ld l,Enemy.collisionType
@@ -8246,7 +8191,6 @@ _gohma_subid3_dead:
 
 
 ;;
-; @addr{718f}
 _gohma_subid1_updateAnimationsAndCollisions:
 	ld e,Enemy.state2
 	ld a,(de)
@@ -8311,7 +8255,6 @@ _gohma_subid1_updateAnimationsAndCollisions:
 
 
 ;;
-; @addr{71db}
 _gohma_phase1_decideAngle:
 	ld b,$00
 	ld h,d
@@ -8352,7 +8295,6 @@ _gohma_phase1_decideAngle:
 
 ;;
 ; Sets counter1 to something.
-; @addr{7211}
 _gohma_decideMovementDuration:
 	call getRandomNumber_noPreserveVars
 	and $03
@@ -8376,7 +8318,6 @@ _gohma_decideMovementDuration:
 	.db $60 $70 $80 $50
 
 ;;
-; @addr{722c}
 _gohma_decideAnimation:
 	ld h,d
 	ld l,Enemy.var31
@@ -8394,7 +8335,6 @@ _gohma_decideAnimation:
 
 ;;
 ; Updates movement for "lunge" at Link with claw
-; @addr{7240}
 _gohma_updateLunge:
 	call _ecom_decCounter1
 	ret z
@@ -8417,7 +8357,6 @@ _gohma_updateLunge:
 
 ;;
 ; Decides angle to use while charging toward Link, and plays sound effect.
-; @addr{725a}
 _gohma_initAngleForLungeAtLink:
 	ld b,$00
 	ld a,Object.xh
@@ -8445,7 +8384,6 @@ _gohma_initAngleForLungeAtLink:
 
 ;;
 ; @param	hl	Pointer to counter1
-; @addr{727e}
 _gohma_phase2_spawnGelChild:
 	ld (hl),$07
 	ld l,Enemy.var32
@@ -8478,7 +8416,6 @@ _gohma_counter1Vals:
 
 ;;
 ; If Link is using something and a certain item type is active, block eye with claw
-; @addr{2ad}
 _gohma_checkShouldBlock:
 	ld a,(wLinkUsingItem1)
 	and $f0
@@ -8522,14 +8459,12 @@ _gohma_claw_updateBlockingPosition:
 	jp objectTakePositionWithOffset
 
 ;;
-; @addr{72e7}
 _gohma_claw_updatePositionInLunge:
 	ld e,Enemy.animParameter
 	ld a,(de)
 
 ;;
 ; @param	a	Position index
-; @addr{72ea}
 _gohma_claw_setPositionInLunge:
 	ld hl,@positions
 	rst_addAToHl
@@ -8549,7 +8484,6 @@ _gohma_claw_setPositionInLunge:
 
 ;;
 ; @param	hl	Pointer to w1Link.animParameter?
-; @addr{7303}
 _gohma_updateLinkAnimAndClawPositionDuringSlamAttack:
 	; Update Link's animation?
 	ld a,(hl)

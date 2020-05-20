@@ -1,6 +1,5 @@
 ;;
 ; ITEMID_CANE_OF_SOMARIA ($04)
-; @addr{4b67}
 _parentItemCode_caneOfSomaria:
 .ifdef ROM_AGES
 	ld e,Item.state

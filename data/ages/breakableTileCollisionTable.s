@@ -1,4 +1,3 @@
-; @addr{7818}
 _breakableTileCollisionTable:
 	.dw _breakableTileCollision0Data
 	.dw _breakableTileCollision1Data
@@ -9,7 +8,6 @@ _breakableTileCollisionTable:
 
 ; 1st byte is the tile index, 2nd is an index for "_breakableTileModes".
 
-; @addr{7824}
 _breakableTileCollision0Data:
 _breakableTileCollision4Data:
 	.db $da $32
@@ -74,7 +72,6 @@ _breakableTileCollision4Data:
 	.db $af $11
 	.db $bf $11
 	.db $00
-; @addr{789f}
 _breakableTileCollision1Data:
 _breakableTileCollision2Data:
 _breakableTileCollision5Data:
@@ -106,7 +103,6 @@ _breakableTileCollision5Data:
 	.db $68 $2e
 	.db $69 $2f
 	.db $00
-; @addr{78d6}
 _breakableTileCollision3Data:
 	.db $da $32
 	.db $12 $30
@@ -138,7 +134,6 @@ _breakableTileCollision3Data:
 	.db \5 \6
 .endm
 
-; @addr{78dd}
 _breakableTileModes:
 	m_BreakableTileData %10010110 %00110000 %0010 $1 $10 $3a ; $00
 	m_BreakableTileData %10110111 %10110001 %0110 $1 $00 $3a ; $01

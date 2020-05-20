@@ -746,7 +746,6 @@ seasonsFunc_15_5847:
 
 ;;
 ; Show some text based on bipin's subid (expected to be 1-9).
-; @addr{4fb1}
 bipin_showText_subid1To9:
 	ld e,Interaction.subid
 	ld a,(de)
@@ -774,7 +773,6 @@ bipin_showText_subid1To9:
 
 ;;
 ; @param	a	Value to write
-; @addr{4fe1}
 setNextChildStage:
 	ld hl,wNextChildStage
 	ld (hl),a
@@ -782,14 +780,12 @@ setNextChildStage:
 
 ;;
 ; @param	a	Bit to set
-; @addr{4fe6}
 setc6e2Bit:
 	ld hl,wc6e2
 	jp setFlag
 
 ;;
 ; @param	a	Bit to check
-; @addr{4fec}
 checkc6e2BitSet:
 	ld hl,wc6e2
 	call checkFlag
@@ -803,7 +799,6 @@ checkc6e2BitSet:
 
 ;;
 ; @param	a	Rupee value (see constants/rupeeValues.s)
-; @addr{4ffb}
 blossom_checkHasRupees:
 	call cpRupeeValue
 	ld e,Interaction.var3c
@@ -811,7 +806,6 @@ blossom_checkHasRupees:
 	ret
 
 ;;
-; @addr{5002}
 blossom_addValueToChildStatus:
 	ld hl,wChildStatus
 	add (hl)
@@ -820,7 +814,6 @@ blossom_addValueToChildStatus:
 
 ;;
 ; After naming the child, wChildStatus gets set to a random value from $01-$03.
-; @addr{5008}
 blossom_decideInitialChildStatus:
 	ld hl,wKidName
 	ld b,$00
@@ -842,7 +835,6 @@ blossom_decideInitialChildStatus:
 	ret
 
 ;;
-; @addr{5022}
 blossom_openNameEntryMenu:
 	ld a,$07
 	jp openMenu
@@ -923,7 +915,6 @@ linkedNpc_checkSecretBegun:
 
 
 ;;
-; @addr{7aa2}
 linkedNpc_generateSecret:
 	ld h,d
 	ld l,Interaction.var3e
@@ -939,7 +930,6 @@ linkedNpc_generateSecret:
 
 
 ;;
-; @addr{7ab8}
 linkedNpc_initHighTextIndex:
 	ld c,a
 	ld a,>TX_5300
@@ -951,7 +941,6 @@ linkedNpc_initHighTextIndex:
 ; Loads a text index for linked npcs. Each linked npc has text indices that they say.
 ;
 ; @param	a	Index of text (0-4)
-; @addr{7abd}
 linkedNpc_calcLowTextIndex:
 	add <TX_5300
 	ld c,a
@@ -1052,7 +1041,6 @@ rosa_startDate:
 
 ;;
 ; @param	a	Value to add
-; @addr{5457}
 child_addValueToChildStatus:
 	ld hl,wChildStatus
 	add (hl)
@@ -1067,19 +1055,16 @@ child_checkHasRupees:
 
 ;;
 ; Stores the response to the "love or courage" question.
-; @addr{5464}
 child_setStage8ResponseToSelectedTextOption:
 	ld hl,wSelectedTextOption
 	add (hl)
 
 ;;
-; @addr{5468}
 child_setStage8Response:
 	ld (wChildStage8Response),a
 	ret
 
 ;;
-; @addr{546c}
 child_playMusic:
 	ld a,(wChildStage8Response)
 	or a
@@ -1091,13 +1076,11 @@ child_playMusic:
 	jp playSound
 
 ;;
-; @addr{547c}
 child_giveHeartRefill:
 	ld c,$40
 	jr ++
 
 ;;
-; @addr{5480}
 child_giveOneHeart:
 	ld c,$04
 ++
@@ -1106,7 +1089,6 @@ child_giveOneHeart:
 
 ;;
 ; @param	a	Rupee value
-; @addr{5487}
 child_giveRupees:
 	ld c,a
 	ld a,TREASURE_RUPEES

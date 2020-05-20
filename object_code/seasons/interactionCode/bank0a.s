@@ -540,7 +540,6 @@ interactionCode8c:
 
 ;;
 ; @param[out]	bc	Y/X positions for Link
-; @addr{4e99}
 _flyingRooster_applySpeedAndUpdatePositions:
 	ld hl,w1Link.yh
 	ld e,Interaction.yh
@@ -565,7 +564,6 @@ _flyingRooster_applySpeedAndUpdatePositions:
 	ret
 
 ;;
-; @addr{4eb7}
 _flyingRooster_updateGravityAndCheckCaps:
 	; [this.z] = [w1Link.z]
 	ld l,<w1Link.z
@@ -619,7 +617,6 @@ _flyingRooster_updateGravityAndCheckCaps:
 
 ;;
 ; @param[out]	a,b	Link's Y-position + Z-position
-; @addr{4eef}
 _flyingRooster_getVisualLinkYPosition:
 	ld l,<w1Link.yh
 	ld a,(hl)
@@ -659,7 +656,6 @@ _flyingRooster_subidBit7Set:
 	jp interactionDelete
 
 ;;
-; @addr{4f21}
 _flyingRooster_getSubidAndInitSpeed:
 	ld l,Interaction.subid
 	ld c,(hl)
@@ -3763,14 +3759,12 @@ _sidescrollingPlatformCommon:
 
 ;;
 ; @param	c	Angle
-; @addr{5aca}
 @moveLinkAtAngle:
 	ld b,SPEED_80
 	jp updateLinkPositionGivenVelocity
 
 ;;
 ; @param[out]	cflag	c if Link got squished
-; @addr{5acf}
 _sidescrollPlatform_checkLinkSquished:
 	ld h,d
 	ld l,Interaction.collisionRadiusY
@@ -3814,7 +3808,6 @@ _sidescrollPlatform_checkLinkSquished:
 
 ;;
 ; @param[out]	cflag	c if Link's close enough to the platform?
-; @addr{5b04}
 _sidescrollPlatform_checkLinkIsClose:
 	ld a,(wLinkInAir)
 	or a
@@ -3856,7 +3849,6 @@ _sidescrollPlatform_checkLinkIsClose:
 ;;
 ; @param[out]	a	Collision value
 ; @param[out]	zflag	nz if a valid collision value is returned
-; @addr{5b32}
 _sidescrollPlatform_getTileCollisionBehindLink:
 	ld l,Interaction.xh
 	ld a,(w1Link.xh)
@@ -3879,7 +3871,6 @@ _sidescrollPlatform_getTileCollisionBehindLink:
 
 ;;
 ; @param[out]	hl
-; @addr{5b51}
 _sidescrollPlatformFunc_5b51:
 	ld h,d
 	ld l,Interaction.yh
@@ -3913,7 +3904,6 @@ _sidescrollPlatformFunc_5b51:
 ; Checks if Link's on the platform, updates wLinkRidingObject if so.
 ;
 ; @param[out]	zflag	nz if Link is standing on the platform
-; @addr{5b7f}
 _sidescrollPlatform_checkLinkOnPlatform:
 	call objectCheckCollidedWithLink
 	jr nc,@notOnPlatform
@@ -3956,7 +3946,6 @@ _sidescrollPlatform_checkLinkOnPlatform:
 	ret
 
 ;;
-; @addr{5bb4}
 _sidescrollPlatform_updateLinkKnockbackForConveyor:
 	ld e,Interaction.angle
 	ld a,(de)
@@ -3977,7 +3966,6 @@ _sidescrollPlatform_updateLinkKnockbackForConveyor:
 
 ;;
 ; @param[out]	hl	counter1
-; @addr{5bce}
 _sidescrollPlatform_decCounter1:
 	ld h,d
 	ld l,Interaction.counter1
@@ -3988,7 +3976,6 @@ _sidescrollPlatform_decCounter1:
 	ret
 
 ;;
-; @addr{5bd6}
 _sidescrollPlatform_pushLinkAwayVertical:
 	ld hl,w1Link.collisionRadiusY
 	ld e,Interaction.collisionRadiusY
@@ -4000,7 +3987,6 @@ _sidescrollPlatform_pushLinkAwayVertical:
 	jr +++
 
 ;;
-; @addr{5be4}
 _sidescrollPlatform_pushLinkAwayHorizontal:
 	ld hl,w1Link.collisionRadiusX
 	ld e,Interaction.collisionRadiusX
@@ -4024,7 +4010,6 @@ _sidescrollPlatform_pushLinkAwayHorizontal:
 	ret
 
 ;;
-; @addr{5bfc}
 _sidescrollPlatformFunc_5bfc:
 	call objectRunMovementScript
 	ld a,(wLinkRidingObject)
@@ -4032,7 +4017,6 @@ _sidescrollPlatformFunc_5bfc:
 	ret nz
 
 ;;
-; @addr{5c04}
 _sidescrollPlatform_updateLinkSubpixels:
 	ld e,Interaction.y
 	ld a,(de)
@@ -5402,7 +5386,6 @@ interactionCodeae:
 	jp interactionDelete
 
 ;;
-; @addr{6537}
 _creditsTextHorizontal_6537:
 	call getFreeInteractionSlot
 	jr nz,++
@@ -5427,7 +5410,6 @@ _creditsTextHorizontal_6537:
 	inc (hl)
 
 ;;
-; @addr{6554}
 _creditsTextHorizontal_6554:
 	ld l,Interaction.scriptPtr
 	ldi a,(hl)
@@ -5436,7 +5418,6 @@ _creditsTextHorizontal_6554:
 
 ;;
 ; @param	hl	Script pointer
-; @addr{6559}
 _creditsTextHorizontal_6559:
 	ldi a,(hl)
 	ld e,Interaction.var30
@@ -5473,7 +5454,6 @@ _creditsTextHorizontal_6559:
 	jp _creditsTextHorizontal_6537
 
 ;;
-; @addr{657b}
 _horizontalCreditsText_var03Nonzero:
 	ld a,(wPaletteThread_mode)
 	or a
@@ -7534,7 +7514,6 @@ interactionCodec1:
 
 ;;
 ; @param[out]	zflag	z if [counter1] == 0
-; @addr{721a}
 @updateMovementAndSparkles:
 	call @updateSparkles
 	call objectApplySpeed
@@ -7545,7 +7524,6 @@ interactionCodec1:
 
 ;;
 ; Unused
-; @addr{7224}
 @func_7224:
 	ld a,(wFrameCounter)
 	and $01
@@ -7553,7 +7531,6 @@ interactionCodec1:
 	jp objectSetVisible
 
 ;;
-; @addr{722f}
 @updateSparkles:
 	ld h,d
 	ld l,Interaction.var36

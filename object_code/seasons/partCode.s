@@ -2282,7 +2282,6 @@ _kingMoblinBomb_explode:
 
 
 ;;
-; @addr{7293}
 _kingMoblinBomb_checkCollisionWithLink:
 	ld e,Part.var30
 	ld a,(de)
@@ -2317,7 +2316,6 @@ _kingMoblinBomb_checkCollisionWithLink:
 
 
 ;;
-; @addr{72bb}
 _kingMoblinBomb_checkCollisionWithKingMoblin:
 	ld e,Part.relatedObj1+1
 	ld a,(de)

@@ -1,6 +1,5 @@
 ;;
 ; CUTSCENE_BLACK_TOWER_ESCAPE
-; @addr{5449}
 _endgameCutsceneHandler_09:
 	ld de,wGenericCutscene.cbc1
 	ld a,(de)
@@ -593,7 +592,6 @@ _endgameCutsceneHandler_09_stage1:
 
 ;;
 ; CUTSCENE_FLAME_OF_DESPAIR
-; @addr{5854}
 _endgameCutsceneHandler_20:
 	call @runStates
 	jp updateAllObjects
@@ -1005,7 +1003,6 @@ _endgameCutsceneHandler_20:
 
 ;;
 ; CUTSCENE_ROOM_OF_RITES_COLLAPSE
-; @addr{5b64}
 _endgameCutsceneHandler_0f:
 	ld de,$cbc1
 	ld a,(de)
@@ -1337,7 +1334,6 @@ _endgameCutsceneHandler_0f:
 
 ;;
 ; CUTSCENE_CREDITS
-; @addr{5e10}
 _endgameCutsceneHandler_0a:
 	call @runStates
 	jp func_3539
@@ -1589,7 +1585,6 @@ _endgameCutsceneHandler_0a:
 ;;
 ; Called from disableLcdAndLoadRoom in bank 0.
 ;
-; @addr{5fe5}
 disableLcdAndLoadRoom_body:
 	ld a,b
 	ld (wActiveGroup),a
@@ -1668,7 +1663,6 @@ _cutscene_incCBC2setCBB3whenCBB3is0:
 	ret
 
 ;;
-; @addr{6068}
 _cutscene_decCBB3IfTextNotActive:
 	ld a,(wTextIsActive)
 	or a
@@ -1676,7 +1670,6 @@ _cutscene_decCBB3IfTextNotActive:
 	jp decCbb3
 
 ;;
-; @addr{6070}
 _cutscene_decCBB3IfNotFadingOut:
 	ld a,(wPaletteThread_mode)
 	or a
@@ -1693,14 +1686,12 @@ _cutscene_decCBB3IfNotFadingOut_incState_setCBB3_showText:
 	jp showText
 
 ;;
-; @addr{6086}
 cutscene_clearTmpCBB3:
 	ld hl,wTmpcbb3
 	ld b,$10
 	jp clearMemory
 
 ;;
-; @addr{608e}
 _cutscene_clearCFC0ToCFDF:
 	ld b,$20
 	ld hl,$cfc0
@@ -1718,7 +1709,6 @@ _cutscene_rumbleSoundWhenFrameCounterLowerNibbleIs0:
 
 
 ;;
-; @addr{60a6}
 _cutscene_resetOamWithSomething1:
 	ld hl,bank16.oamData_4f73
 	ld e,:bank16.oamData_4f73
@@ -1726,7 +1716,6 @@ _cutscene_resetOamWithSomething1:
 	jr _cutscene_resetOamWithData
 
 ;;
-; @addr{60b0}
 _cutscene_resetOamWithSomething2:
 	ld hl,bank16.oamData_4e37
 	ld e,:bank16.oamData_4e37
@@ -1735,7 +1724,6 @@ _cutscene_resetOamWithSomething2:
 ;;
 ; @param	bc	Sprite offset
 ; @param	hl	OAM data to load
-; @addr{60b8}
 _cutscene_resetOamWithData:
 	xor a
 	ldh (<hOamTail),a
@@ -1743,7 +1731,6 @@ _cutscene_resetOamWithData:
 
 ;;
 ; @param	hl	List of tiles (see below for example of format)
-; @addr{60be}
 _cutscene_replaceListOfTiles:
 	ld b,(hl)
 	inc hl
@@ -1775,7 +1762,6 @@ _blackTowerEscapeCutscene_doorOpenReplacement:
 	.db $55 $80
 
 ;;
-; @addr{60e0}
 func_60e0:
 	ld hl,wLinkHealth
 	ld (hl),$04
@@ -1788,7 +1774,6 @@ func_60e0:
 	jp disableActiveRing
 
 ;;
-; @addr{60f1}
 func_60f1:
 	ld hl,wLinkMaxHealth
 	ldd a,(hl)

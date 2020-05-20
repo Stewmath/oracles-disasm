@@ -29,7 +29,6 @@
 ;
 ; See also constants/treasure.s.
 
-; @addr{5332}
 treasureObjectData:
 	; 0x00
 	.db $00 $00 $ff $00

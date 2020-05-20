@@ -787,7 +787,6 @@ _mergedTwinrova_iceRoom_state10:
 	jp enemySetAnimation
 
 ;;
-; @addr{497e}
 _mergedTwinrova_checkTimeToSwapRoomFromTimer:
 	ld a,(wFrameCounter)
 	and $03
@@ -817,7 +816,6 @@ _mergedTwinrova_checkTimeToSwapRoomFromTimer:
 ; @param	bc
 ; @param	hFF8F
 ; @param[out]	cflag	c if within 2 pixels of position
-; @addr{499a}
 _mergedTwinrova_checkPositionsCloseEnough:
 	sub c
 	add $02
@@ -832,7 +830,6 @@ _mergedTwinrova_checkPositionsCloseEnough:
 ;;
 ; Checks whether to begin changing the room. If so, it sets the state to 9 and returns
 ; from caller (pops return address).
-; @addr{49a8}
 _mergedTwinrova_checkTimeToSwapRoomFromDamage:
 	ld h,d
 	ld l,Enemy.var3a
@@ -965,7 +962,6 @@ _mergedTwinrova_deathCutscene:
 	.db $fa $fc
 
 ;;
-; @addr{4a4f}
 _mergedTwinrova_decVar3bIfNonzero:
 	ld h,d
 	ld l,Enemy.var3b
@@ -1744,7 +1740,6 @@ _twinrova_subid1_stateC:
 
 ;;
 ; @param	a	Speed
-; @addr{4e02}
 _twinrova_initialize:
 	ld h,d
 	ld l,Enemy.var03
@@ -1790,7 +1785,6 @@ _twinrova_initialize:
 	jp enemySetAnimation
 
 ;;
-; @addr{4e46}
 _twinrova_updateZPosition:
 	ld h,d
 	ld l,Enemy.var37
@@ -1824,7 +1818,6 @@ _twinrova_updateZPosition:
 	.db -3, -4, -5, -4
 
 ;;
-; @addr{4e6d}
 _twinrova_checkFireProjectile:
 	ld h,d
 	ld l,Enemy.var32
@@ -1879,7 +1872,6 @@ _twinrova_checkFireProjectile:
 	jp enemySetAnimation
 
 ;;
-; @addr{4eb2}
 @spawnProjectile:
 	ld b,PARTID_RED_TWINROVA_PROJECTILE
 	ld e,Enemy.subid
@@ -1894,7 +1886,6 @@ _twinrova_checkFireProjectile:
 ; Unused?
 ;
 ; @param	h	Object to set target position to
-; @addr{4ebf}
 _twinrova_setTargetPositionToObject:
 	ld l,Enemy.yh
 	ld e,l
@@ -1911,7 +1902,6 @@ _twinrova_setTargetPositionToObject:
 
 
 ;;
-; @addr{4ed2}
 _twinrova_updateAnimationFromAngle:
 	ld e,Enemy.angle
 	ld a,(de)
@@ -1921,14 +1911,12 @@ _twinrova_updateAnimationFromAngle:
 	jp enemySetAnimation
 
 ;;
-; @addr{4edd}
 _twinrova_updateMovingAnimation:
 	ld e,Enemy.angle
 	ld a,(de)
 
 ;;
 ; @param	a	angle
-; @addr{4ee0}
 _twinrova_updateMovingAnimationGivenAngle:
 	call _twinrova_calculateAnimationFromAngle
 	ret z
@@ -1955,7 +1943,6 @@ _twinrova_updateMovingAnimationGivenAngle:
 ; @param	a	Angle value
 ; @param[out]	hl	Enemy.direction
 ; @param[out]	zflag	z if calculated animation is the same as current animation
-; @addr{4ef7}
 _twinrova_calculateAnimationFromAngle:
 	ld c,a
 	add $04
@@ -1975,13 +1962,11 @@ _twinrova_calculateAnimationFromAngle:
 
 ;;
 ; @param[out]	zflag	z if reached the end of the movement pattern
-; @addr{4f0c}
 _twinrova_subid0_updateTargetPosition:
 	ld hl,_twinrova_subid0_targetPositions
 	jr ++
 
 ;;
-; @addr{4f11}
 _twinrova_subid1_updateTargetPosition:
 	ld hl,_twinrova_subid1_targetPositions
 ++
@@ -2016,7 +2001,6 @@ _twinrova_subid1_updateTargetPosition:
 
 ;;
 ; @param[out]	cflag	c if reached target position
-; @addr{4f2f}
 _twinrova_moveTowardTargetPosition:
 	ld h,d
 	ld l,Enemy.var35
@@ -2041,7 +2025,6 @@ _twinrova_moveTowardTargetPosition:
 
 ;;
 ; Randomly chooses either this object or its twin to begin an attack
-; @addr{4f4d}
 _twinrova_chooseObjectToAttack:
 	call getRandomNumber_noPreserveVars
 	rrca
@@ -2062,7 +2045,6 @@ _twinrova_chooseObjectToAttack:
 ; Checks if an attack is in progress, unsets bit 0 of var32 when attack is done?
 ;
 ; @param[out]	zflag	nz if either twinrova is currently doing an attack
-; @addr{4f60}
 _twinrova_checkAttackInProgress:
 	ld h,d
 	ld l,Enemy.var32
@@ -2085,7 +2067,6 @@ _twinrova_checkAttackInProgress:
 
 ;;
 ; @param[out]	zflag	z if Twinrova's risen to the desired height (-2)
-; @addr{4f7a}
 _twinrova_rise2PixelsAboveGround:
 	ld h,d
 	ld l,Enemy.zh
@@ -2104,7 +2085,6 @@ _twinrova_rise2PixelsAboveGround:
 
 ;;
 ; Unused?
-; @addr{4f8c}
 _twinrova_incState2ForSelfAndTwin:
 	ld a,Object.state2
 	call objectGetRelatedObject1Var
@@ -3346,7 +3326,6 @@ _ganon_stateE_substate3:
 	jp enemyDelete
 
 ;;
-; @addr{56de}
 ganon_loadGfxHeader:
 	push af
 	call loadGfxHeader
@@ -3366,7 +3345,6 @@ ganon_loadGfxHeader:
 ; X-position alternates left & right each frame while teleporting.
 ;
 ; @param	hl	counter1?
-; @addr{56f6}
 _ganon_updateTeleportAnimationGoingOut:
 	ld a,(hl)
 	and $3e
@@ -3388,7 +3366,6 @@ _ganon_updateFlickeringXPosition:
 	jp _ecom_flickerVisibility
 
 ;;
-; @addr{570d}
 _ganon_updateTeleportVarsAndPlaySound:
 	ld a,SND_TELEPORT
 	call playSound
@@ -3407,7 +3384,6 @@ _ganon_updateTeleportVarsAndPlaySound:
 
 ;;
 ; @param	hl	counter1?
-; @addr{5722}
 _ganon_updateTeleportAnimationComingIn:
 	ld a,(hl)
 	and $3e
@@ -3415,7 +3391,6 @@ _ganon_updateTeleportAnimationComingIn:
 	jr _ganon_updateFlickeringXPosition
 
 ;;
-; @addr{5728}
 _ganon_finishAttack:
 	ld h,d
 	ld l,Enemy.var35
@@ -3443,7 +3418,6 @@ _label_10_135:
 
 ;;
 ; Sets state to something randomly?
-; @addr{5740}
 _ganon_decideNextMove:
 	ld e,Enemy.health
 	ld a,(de)
@@ -3506,7 +3480,6 @@ _ganon_decideNextMove:
 
 
 ;;
-; @addr{5787}
 _ganon_decideTeleportLocationAndCounter:
 	ld bc,$0e0f
 	call _ecom_randomBitwiseAndBCE
@@ -3546,7 +3519,6 @@ _ganon_decideTeleportLocationAndCounter:
 
 ;;
 ; @param	e	Part ID
-; @addr{57c4}
 _ganon_spawnPart:
 	call getFreePartSlot
 	ret nz
@@ -3561,7 +3533,6 @@ _ganon_spawnPart:
 ;;
 ; Sets the boundaries of the room to be solid when "reversed controls" happen; most likely because
 ; the wall tiles are removed when in this state, so collisions must be set manually.
-; @addr{57d1}
 _ganon_makeRoomBoundarySolid:
 	ld hl,wRoomCollisions+$10
 	ld b,LARGE_ROOM_HEIGHT-2
@@ -3601,7 +3572,6 @@ _ganon_makeRoomBoundarySolid:
 
 ;;
 ; Updates palettes in reversed-control mode
-; @addr{57fd}
 _ganon_updateSeizurePalette:
 	ld a,(wScrollMode)
 	and $01
@@ -3627,7 +3597,6 @@ _ganon_updateSeizurePalette:
 
 
 ;;
-; @addr{581c}
 _ganon_setTileReplacementMode:
 	ld (wTwinrovaTileReplacementMode),a
 	call func_131f
@@ -3636,6 +3605,5 @@ _ganon_setTileReplacementMode:
 	ret
 
 ;;
-; @addr{5826}
 enemyCode00:
 	ret

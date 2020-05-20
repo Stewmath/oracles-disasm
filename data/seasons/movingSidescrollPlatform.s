@@ -1,7 +1,6 @@
 ; ==============================================================================
 ; Data for INTERACID_MOVING_SIDESCROLL_PLATFORM and INTERACID_MOVING_SIDESCROLL_CONVEYOR
 ; ==============================================================================
-; @addr{7a3c}
 movingSidescrollPlatformScriptTable:
 	.dw @subid00
 	.dw @subid01
@@ -221,7 +220,6 @@ movingSidescrollPlatformScriptTable:
 	ms_loop  --
 
 
-; @addr{7b2f}
 movingSidescrollConveyorScriptTable: ; INTERACID_MOVING_SIDESCROLL_CONVEYOR
 	.dw @subid00
 	.dw @subid01

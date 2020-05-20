@@ -265,7 +265,6 @@ partCode01:
 
 
 ;;
-; @addr{428e}
 _itemDrop_initGfx:
 	ld e,Part.subid
 	ld a,(de)
@@ -308,7 +307,6 @@ _itemDrop_initGfx:
 
 ;;
 ; @param[out]	cflag	c if time to disappear
-; @addr{42c3}
 _itemDrop_countdownToDisappear:
 	ld a,(wFrameCounter)
 	xor d
@@ -346,7 +344,6 @@ _itemDrop_countdownToDisappear:
 
 ;;
 ; @param	a	Subid
-; @addr{42e8}
 _itemDrop_initSpeed:
 	ld h,d
 	or a
@@ -369,14 +366,12 @@ _itemDrop_initSpeed:
 	jp _itemDrop_chooseRandomFairyMovement
 
 ;;
-; @addr{4302}
 _itemDrop_updateSpeed:
 	call objectCheckTileCollision_allowHoles
 	ret c
 	jp objectApplySpeed
 
 ;;
-; @addr{4309}
 _itemDrop_spawnEnemy:
 	ld c,a
 	ld a,(wDiggingUpEnemiesForbidden)
@@ -414,7 +409,6 @@ _itemDrop_spawnEnemy:
 
 ;;
 ; Delete and return from caller if it goes out of bounds in a sidescrolling room
-; @addr{4332}
 _itemDrop_checkSidescrollingConditions:
 	ld a,(wTilesetFlags)
 	and TILESETFLAG_SIDESCROLL
@@ -459,7 +453,6 @@ _itemDrop_checkSidescrollingConditions:
 ; Enables collisions once the item comes to rest
 ;
 ; @param[out]	cflag	c if it's a fairy and some condition is met?
-; @addr{4365}
 _itemDrop_checkHitGround:
 	ld e,Part.subid
 	ld a,(de)
@@ -489,7 +482,6 @@ _itemDrop_checkHitGround:
 
 ;;
 ; @param[out]	cflag	c if it's over a hazard (and deleted itself)
-; @addr{4386}
 _itemDrop_checkOnHazard:
 	call objectCheckIsOnHazard
 	jr c,@onHazard
@@ -539,7 +531,6 @@ _itemDrop_checkOnHazard:
 	jp objectCreateInteractionWithSubid00
 
 ;;
-; @addr{43bf}
 _itemDrop_updateFairyMovement:
 	ld h,d
 	ld l,Part.counter2
@@ -551,7 +542,6 @@ _itemDrop_updateFairyMovement:
 
 ;;
 ; Initializes speed, counter2, and angle randomly.
-; @addr{43cc}
 _itemDrop_chooseRandomFairyMovement:
 	call getRandomNumber_noPreserveVars
 	and $3e
@@ -593,7 +583,6 @@ _itemDrop_chooseRandomFairyMovement:
 ; Moves toward position stored in var31/var32 if it's not there already?
 ;
 ; @param[out]	cflag	c if reached target position
-; @addr{4401}
 _itemDrop_moveTowardPoint:
 	ld l,Part.var31
 	ld h,d
@@ -665,7 +654,6 @@ _itemDrop_pullOreChunksWithMagnetGloves:
 ;;
 ; @param	b	Speed
 ; @param	c	Angle
-; @addr{441e}
 _itemDrop_applySpeed:
 	push bc
 	ld a,c
@@ -1112,7 +1100,6 @@ partCode06:
 	jr @setTile
 
 ;;
-; @addr{4636}
 @getTileAtRelatedObjPosition:
 	ld a,Object.yh
 	call objectGetRelatedObject2Var
@@ -1265,7 +1252,6 @@ partCode08:
 ;;
 ; @param	l	Position of an unlit torch
 ; @param[out]	c	Incremented
-; @addr{46dc}
 @spawnLightableTorch:
 	push hl
 	push bc
@@ -1734,7 +1720,6 @@ partCode0e:
 ; @param	b	Angle
 ; @param	c	var03
 ; @param	e	Subid
-; @addr{490b}
 @spawnCollisionHelper:
 	call getFreePartSlot
 	ret nz
@@ -1862,7 +1847,6 @@ partCode0e:
 	ld (hl),a
 
 ;;
-; @addr{498a}
 @initSpeed:
 	ld h,d
 	ld l,Part.angle
@@ -1952,7 +1936,6 @@ partCode0f:
 
 ;;
 ; @param	a	Tile index to set
-; @addr{49ef}
 @setTileHere:
 	push af
 	call objectGetShortPosition
@@ -2359,7 +2342,6 @@ _volcanoRock_setRandomPosition:
 
 ;;
 ; @param	a	Angle
-; @addr{4c09}
 _volcanoRock_subid0_setSpeedFromAngle:
 	ld b,SPEED_80
 	cp $0d
@@ -2376,7 +2358,6 @@ _volcanoRock_subid0_setSpeedFromAngle:
 
 ;;
 ; @param	a	Value from [animParameter] (should be multiple of 2)
-; @addr{4c1c}
 _volcanoRock_setCollisionSize:
 	dec a
 	ld hl,@data
@@ -2479,7 +2460,6 @@ partCode12:
 ; ==============================================================================
 ; PARTID_OWL_STATUE
 ; ==============================================================================
-; @addr{4c94}
 partCode13:
 	jr z,@normalStatus
 	ld e,Part.var2a
@@ -2576,7 +2556,6 @@ partCode13:
 ; PARTID_ITEM_FROM_MAPLE
 ; PARTID_ITEM_FROM_MAPLE_2
 ; ==============================================================================
-; @addr{4d13}
 partCode14:
 partCode15:
 	ld e,Part.subid
@@ -2947,7 +2926,6 @@ partCode15:
 ; ==============================================================================
 ; PARTID_GASHA_TREE
 ; ==============================================================================
-; @addr{4f59}
 partCode17:
 	jr z,@normalStatus
 	ld e,Part.subid
@@ -3079,7 +3057,6 @@ _table_501e:
 ; ==============================================================================
 ; PARTID_OCTOROK_PROJECTILE
 ; ==============================================================================
-; @addr{5026}
 partCode18:
 	jr z,@normalStatus
 	ld e,$ea
@@ -3133,7 +3110,6 @@ partCode18:
 ; PARTID_ZORA_FIRE
 ; PARTID_GOPONGA_PROJECTILE
 ; ==============================================================================
-; @addr{506d}
 partCode19:
 partCode31:
 	jp nz,partDelete
@@ -3194,7 +3170,6 @@ partCode31:
 ; ==============================================================================
 ; PARTID_ENEMY_ARROW
 ; ==============================================================================
-; @addr{50c1}
 partCode1a:
 	jr z,@normalStatus
 	ld e,$ea
@@ -3295,7 +3270,6 @@ partCode1a:
 ; ==============================================================================
 ; PARTID_LYNEL_BEAM
 ; ==============================================================================
-; @addr{514c}
 partCode1b:
 	jr z,@normalStatus
 	ld e,$ea
@@ -3341,7 +3315,6 @@ partCode1b:
 ; ==============================================================================
 ; PARTID_STALFOS_BONE
 ; ==============================================================================
-; @addr{5190}
 partCode1c:
 	jr z,@normalStatus
 	ld e,$ea
@@ -3402,7 +3375,6 @@ partCode1c:
 ; ==============================================================================
 ; PARTID_ENEMY_SWORD
 ; ==============================================================================
-; @addr{51e6}
 partCode1d:
 	jr z,@normalStatus
 	ld e,$ea
@@ -3535,7 +3507,6 @@ partCode1d:
 ; ==============================================================================
 ; PARTID_DEKU_SCRUB_PROJECTILE
 ; ==============================================================================
-; @addr{529c}
 partCode1e:
 	jr z,@normalStatus
 	ld e,$ea
@@ -3660,7 +3631,6 @@ _func_5336:
 ; ==============================================================================
 ; PARTID_WIZZROBE_PROJECTILE
 ; ==============================================================================
-; @addr{5353}
 partCode1f:
 	jr nz,@normalStatus
 	ld e,$c4
@@ -3692,7 +3662,6 @@ _func_5369:
 ; PARTID_FIRE
 ; Created by fire keese
 ; ==============================================================================
-; @addr{537c}
 partCode20:
 	ld e,$c4
 	ld a,(de)
@@ -3714,7 +3683,6 @@ partCode20:
 ; ==============================================================================
 ; PARTID_MOBLIN_BOOMERANG
 ; ==============================================================================
-; @addr{5395}
 partCode21:
 	jr z,@normalStatus
 	ld e,$ea
@@ -3939,7 +3907,6 @@ partCode22:
 ; ==============================================================================
 ; PARTID_FIRE_PIPES
 ; ==============================================================================
-; @addr{54de}
 partCode23:
 	ld e,$c2
 	ld a,(de)
@@ -4039,7 +4006,6 @@ _table_554f:
 ; ==============================================================================
 ; PARTID_LIGHTNING
 ; ==============================================================================
-; @addr{5553}
 partCode27:
 	ld e,Part.state
 	ld a,(de)
@@ -4182,7 +4148,6 @@ partCode27:
 ; ==============================================================================
 ; PARTID_SMALL_FAIRY
 ; ==============================================================================
-; @addr{560d}
 partCode28:
 	jr z,@normalStatus
 	cp $02
@@ -4347,7 +4312,6 @@ _table_56f5:
 ; ==============================================================================
 ; PARTID_BEAM
 ; ==============================================================================
-; @addr{5705}
 partCode29:
 	jr z,@normalStatus
 	ld e,$ea
@@ -4520,7 +4484,6 @@ _spikedBall_head_setDefaultDistanceAway:
 
 ;;
 ; @param	b	Enemy object
-; @addr{57da}
 _spikedBall_updatePosition:
 	call _spikedBall_copyParentPosition
 	ld e,Part.var30
@@ -4636,7 +4599,6 @@ _spikedBall_chain:
 
 ;;
 ; @param	b	Enemy object
-; @addr{5862}
 _spikedBall_copyParentPosition:
 	ld h,b
 	ld l,Enemy.yh
@@ -4657,7 +4619,6 @@ _spikedBall_copyParentPosition:
 ;;
 ; If the ball collides with any item other than Link, this sets its speed to 0 (begins
 ; retracting earlier).
-; @addr{5874}
 _spikedBall_checkCollisionWithItem:
 	; Check for collision with any item other than Link himself
 	ld h,d
@@ -4678,7 +4639,6 @@ _spikedBall_checkCollisionWithItem:
 
 
 ;;
-; @addr{5887}
 _spikedBall_head_updateDistanceFromOrigin:
 	ld h,d
 	ld e,Part.var30
@@ -4710,7 +4670,6 @@ _spikedBall_head_updateDistanceFromOrigin:
 
 ;;
 ; Reads parent's var30 to decide whether to update state>
-; @addr{58a5}
 _spikedBall_updateStateFromParent:
 	ld l,Enemy.var30
 
@@ -4751,7 +4710,6 @@ _spikedBall_updateStateFromParent:
 
 ;;
 ; @param	h	Parent object (the actual ball)
-; @addr{58c5}
 _spikedBall_chain_updateDistanceFromOrigin:
 	ld l,Part.var30
 	push hl
@@ -4802,7 +4760,6 @@ _spikedBall_chain_updateDistanceFromOrigin:
 ; ==============================================================================
 ; PARTID_GREAT_FAIRY_HEART
 ; ==============================================================================
-; @addr{58f3}
 partCode30:
 	ld e,$c4
 	ld a,(de)
@@ -4996,7 +4953,6 @@ partCode4d:
 ; ==============================================================================
 ; PARTID_TWINROVA_FLAME
 ; ==============================================================================
-; @addr{59ee}
 partCode4c:
 	jr z,@normalStatus
 	ld e,$ea
@@ -5173,7 +5129,6 @@ partCode4e:
 ; PARTID_50
 ; Used by Ganon
 ; ==============================================================================
-; @addr{5ae0}
 partCode50:
 	ld a,$04
 	call objectGetRelatedObject1Var
@@ -5271,7 +5226,6 @@ _table_5b5b:
 ; PARTID_51
 ; Used by Ganon
 ; ==============================================================================
-; @addr{5b67}
 partCode51:
 	ld a,$04
 	call objectGetRelatedObject1Var
@@ -5437,7 +5391,6 @@ partCode51:
 ; PARTID_52
 ; Used by Ganon
 ; ==============================================================================
-; @addr{5c5c}
 partCode52:
 	ld a,$04
 	call objectGetRelatedObject1Var
@@ -5640,7 +5593,6 @@ partCode52:
 ; PARTID_BLUE_ENERGY_BEAD
 ; Used by "createEnergySwirl" functions
 ; ==============================================================================
-; @addr{5d85}
 partCode53:
 	ld e,$c4
 	ld a,(de)
@@ -5713,7 +5665,6 @@ partCode53:
 	ret
 
 ;;
-; @addr{5df0}
 createEnergySwirlGoingOut_body:
 	ld a,$01
 	jr ++
@@ -5721,7 +5672,6 @@ createEnergySwirlGoingOut_body:
 ;;
 ; @param	bc	Center of the swirl
 ; @param	l	Duration of swirl ($ff and $00 are infinite)?
-; @addr{5df4}
 createEnergySwirlGoingIn_body:
 	xor a
 ++
@@ -5822,7 +5772,6 @@ _label_11_212:
 	ret
 
 ;;
-; @addr{5e58}
 updateParts:
 	ld a,$c0
 	ldh (<hActiveObjectType),a
@@ -5858,7 +5807,6 @@ updateParts:
 	ret
 
 ;;
-; @addr{5e8a}
 _func_11_5e8a:
 	call partCommon_standardUpdate
 

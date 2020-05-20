@@ -71,7 +71,6 @@
 ;;
 ; Left-over garbage from Seasons (d8LavaRoomsFillTilesWithLava), can be used
 ; for other tiles, not just lava
-; @addr{6ba8}
 func_04_6ba8:
 	ld d,>wRoomLayout
 	ldi a,(hl)
@@ -93,7 +92,6 @@ func_04_6ba8:
 ; - Height
 ; - Width
 ; - Tile value
-; @addr{6bb5}
 fillRectInRoomLayout:
 	ldi a,(hl)
 	ld e,a
@@ -124,7 +122,6 @@ fillRectInRoomLayout:
 ;;
 ; Like fillRect, but reads a series of bytes for the tile values instead of
 ; just one.
-; @addr{6bcf}
 drawRectInRoomLayout:
 	ld a,(de)
 	inc de
@@ -160,7 +157,6 @@ drawRectInRoomLayout:
 ;;
 ; Called from loadTilesetData in bank 0.
 ;
-; @addr{6d7a}
 loadTilesetData_body:
 	call getAdjustedRoomGroup
 
@@ -229,7 +225,6 @@ loadTilesetData_body:
 ; which tells it to use the underwater group
 ;
 ; @param[out]	a,b	The corrected group number
-; @addr{6dd6}
 getAdjustedRoomGroup:
 	ld a,(wActiveGroup)
 	ld b,a
@@ -245,7 +240,6 @@ getAdjustedRoomGroup:
 
 ;;
 ; Modifies hFF8D to indicate changes to a room (ie. jabu flooding)?
-; @addr{6de7}
 func_6de7:
 	call @func_04_6e0d
 	ret c
@@ -276,7 +270,6 @@ func_6de7:
 	ret
 
 ;;
-; @addr{6e0d}
 @func_04_6e0d:
 	ld a,(wActiveGroup)
 	or a
@@ -301,7 +294,6 @@ func_6de7:
 
 ;;
 ; @param[out]	cflag	Set if the current room is flooded in jabu-jabu?
-; @addr{6e28}
 @checkJabuFlooded:
 	ld a,(wDungeonIndex)
 	cp $07
@@ -335,7 +327,6 @@ func_6de7:
 	xor a
 	ret
 
-; @addr{6e60}
 @data:
 	.db $00 $01 $03
 
@@ -346,7 +337,6 @@ func_6de7:
 ; This is annoying so it's disabled in the hack-base branch, which separates all tileset data
 ; anyway.
 ;
-; @addr{6e63}
 setPastCliffPalettesToRed:
 	ld a,(wActiveCollisions)
 	or a
@@ -392,7 +382,6 @@ setPastCliffPalettesToRed:
 	ret
 
 ;;
-; @addr{6e9b}
 func_04_6e9b:
 	ld a,$02
 	ld ($ff00+R_SVBK),a
@@ -425,7 +414,6 @@ func_04_6e9b:
 	ret
 
 ;;
-; @addr{6ed1}
 func_04_6ed1:
 	ld a,$02
 	ld ($ff00+R_SVBK),a
@@ -458,7 +446,6 @@ func_04_6ed1:
 	ret
 
 ;;
-; @addr{6f07}
 func_04_6f07:
 	ld hl,$d800
 	ld de,$dc00
@@ -484,7 +471,6 @@ func_04_6f07:
 	ret
 
 ;;
-; @addr{6f31}
 func_04_6f31:
 	ld hl,$dc00
 	ld de,$d800
@@ -578,7 +564,6 @@ func_04_6f31:
 ;                6-7: invalid
 ;  b1: Byte to check input against when the item is first used
 ;
-; @addr{55be}
 _itemUsageParameterTable:
 	.db $00 <wGameKeysPressed	; ITEMID_NONE
 	.db $05 <wGameKeysPressed	; ITEMID_SHIELD
@@ -622,7 +607,6 @@ _itemUsageParameterTable:
 ;                A value of $6 refers to w1WeaponItem.
 ;  b1: Animation to set Link to? (see constants/linkAnimations.s)
 ;
-; @addr{55fe}
 _linkItemAnimationTable:
 	.db $00  LINK_ANIM_MODE_NONE	; ITEMID_NONE
 	.db $00  LINK_ANIM_MODE_NONE	; ITEMID_SHIELD
@@ -667,7 +651,6 @@ _linkItemAnimationTable:
 	.include "build/data/breakableTileCollisionTable.s"
 
 ;;
-; @addr{79dc}
 specialObjectLoadAnimationFrameToBuffer:
 	ld hl,w1Companion.visible
 	bit 7,(hl)
@@ -933,7 +916,6 @@ specialObjectLoadAnimationFrameToBuffer:
  m_section_free "Object_Pointers" namespace "objectData"
 
 ;;
-; @addr{4315}
 getObjectDataAddress:
 	ld a,(wActiveGroup)
 	ld hl,objectDataGroupTable
@@ -968,7 +950,6 @@ getObjectDataAddress:
 
 ;;
 ; @param	d	Interaction index (should be of type INTERACID_TREASURE)
-; @addr{451e}
 interactionLoadTreasureData:
 	ld e,Interaction.subid
 	ld a,(de)
@@ -1044,7 +1025,6 @@ interactionLoadTreasureData:
 ; Used in the room in present Mermaid's Cave with the changing floor
 ;
 ; @param	b	Floor state (0/1)
-; @addr{5766}
 loadD6ChangingFloorPatternToBigBuffer:
 	ld a,b
 	add a
@@ -1230,7 +1210,6 @@ loadD6ChangingFloorPatternToBigBuffer:
 .include "code/treasureAndDrops.s"
 .include "code/textbox.s"
 
-; @addr{5951}
 data_5951:
 	.db $3c $b4 $3c $50 $78 $b4 $3c $3c
 	.db $3c $70 $78 $78
@@ -1347,7 +1326,6 @@ linkOnHorseFacingCameraSprite:
 .include "build/data/treasureCollectionBehaviours.s"
 .include "build/data/treasureDisplayData.s"
 
-; @addr{714c}
 oamData_714c:
 	.db $10
 	.db $c8 $38 $2e $0e
@@ -1367,7 +1345,6 @@ oamData_714c:
 	.db $f0 $18 $00 $2d
 	.db $e8 $08 $00 $2d
 
-; @addr{718d}
 oamData_718d:
 	.db $10
 	.db $a8 $38 $12 $0a
@@ -1387,7 +1364,6 @@ oamData_718d:
 	.db $d8 $30 $06 $0e
 	.db $e8 $30 $08 $2e
 
-; @addr{71ce}
 oamData_71ce:
 	.db $0a
 	.db $50 $40 $40 $0b
@@ -1401,7 +1377,6 @@ oamData_71ce:
 	.db $70 $38 $3a $0c
 	.db $60 $38 $3e $0c
 
-; @addr{71f7}
 oamData_71f7:
 	.db $0a
 	.db $10 $40 $22 $08
@@ -1415,7 +1390,6 @@ oamData_71f7:
 	.db $50 $40 $20 $08
 	.db $50 $68 $20 $28
 
-; @addr{7220}
 oamData_7220:
 	.db $0a
 	.db $e0 $48 $24 $0b
@@ -1429,7 +1403,6 @@ oamData_7220:
 	.db $f8 $50 $2c $0b
 	.db $f8 $58 $2c $2b
 
-; @addr{7249}
 oamData_7249:
 	.db $27
 	.db $38 $38 $00 $01

@@ -1,7 +1,6 @@
 ;;
 ; Update a minecart object.
 ; (Called from bank5._specialObjectCode_minecart)
-; @addr{563e}
 specialObjectCode_minecart:
 	call _minecartCreateCollisionItem
 	ld e,SpecialObject.state
@@ -168,7 +167,6 @@ specialObjectCode_minecart:
 ;;
 ; Check for collisions, check the track for changing direction.
 ; @param[out] cflag Set if the minecart should stop (reached a platform)
-; @addr{570c}
 _minecartCheckCollisions:
 	; Get minecart position in c, tile it's on in e
 	call getTileAtPosition
@@ -297,7 +295,6 @@ _minecartCheckCollisions:
 ; b0: Tile to check for ($00 to end list)
 ; b1: Value to add to position (where the next tile is)
 ; b2-b4: Other tiles that are allowed to link to the current tile
-; @addr{5783}
 @trackData:
 	; DIR_UP
 	.db TILEINDEX_TRACK_VERTICAL $f0 TILEINDEX_TRACK_VERTICAL   TILEINDEX_TRACK_TL TILEINDEX_TRACK_TR
@@ -326,7 +323,6 @@ _minecartCheckCollisions:
 ;;
 ; @param	c	Next tile
 ; @param[out]	cflag	Set if the next tile is a minecart door that will open
-; @addr{57c3}
 @checkMinecartDoor:
 	; Check if the next tile is a minecart door
 	ld a,c
@@ -357,7 +353,6 @@ _minecartCheckCollisions:
 
 ;;
 ; Creates an invisible item object which stays with the minecart to give it collision with enemies
-; @addr{57dd}
 _minecartCreateCollisionItem:
 	; Check if the "item" has been created already
 	ld e,SpecialObject.var36

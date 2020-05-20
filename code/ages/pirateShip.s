@@ -1,5 +1,4 @@
 ;;
-; @addr{7dcc}
 updatePirateShip:
 	ld a,GLOBALFLAG_PIRATES_GONE
 	call checkGlobalFlag
@@ -12,7 +11,6 @@ updatePirateShip:
 	jp updatePirateShipRoom
 
 ;;
-; @addr{7de1}
 checkLoadPirateShip:
 	ld a,GLOBALFLAG_PIRATES_GONE
 	call checkGlobalFlag
@@ -60,7 +58,6 @@ checkLoadPirateShip:
 
 ;;
 ; Update wPirateShipChangedTile when the ship is centered on a tile.
-; @addr{7e1e}
 updatePirateShipChangedTile:
 	ld a,(wPirateShipY)
 	and $0f
@@ -83,7 +80,6 @@ updatePirateShipChangedTile:
 	ret
 
 ;;
-; @addr{7e40}
 updatePirateShipPosition:
 	call retIfTextIsActive
 	ld a,(wLinkPlayingInstrument)
@@ -110,7 +106,6 @@ updatePirateShipPosition:
 	ld (hl),a
 	ret
 
-; @addr{7e63}
 @speedComponents:
 	.db $ff $00 ; up
 	.db $00 $01 ; right
@@ -118,7 +113,6 @@ updatePirateShipPosition:
 	.db $00 $ff ; left
 
 ;;
-; @addr{7e6b}
 updatePirateShipRoom:
 	ld a,(wPirateShipAngle)
 	and $03
@@ -129,7 +123,6 @@ updatePirateShipRoom:
 	.dw @movingLeft
 
 ;;
-; @addr{7e79}
 @movingUp:
 	ld hl,wPirateShipY
 	ldbc $80, $f0
@@ -150,7 +143,6 @@ updatePirateShipRoom:
 	ret
 
 ;;
-; @addr{7e8c}
 @movingRight:
 	ld hl,wPirateShipX
 	ldbc $00, $01
@@ -158,7 +150,6 @@ updatePirateShipRoom:
 	jr @updateRoom
 
 ;;
-; @addr{7e96}
 @movingDown:
 	ld hl,wPirateShipY
 	ld bc,$0010
@@ -166,7 +157,6 @@ updatePirateShipRoom:
 	jr @updateRoom
 
 ;;
-; @addr{7ea0}
 @movingLeft:
 	ld hl,wPirateShipX
 	ldbc $a0, $ff
@@ -174,7 +164,6 @@ updatePirateShipRoom:
 	jr @updateRoom
 
 ;;
-; @addr{7eaa}
 updatePirateShipAngle:
 	ld a,(wPirateShipChangedTile)
 	or a
@@ -220,7 +209,6 @@ updatePirateShipAngle:
 ; b1: YX position
 ; b2: new direction to move in when the ship reaches that position
 
-; @addr{7edd}
 @shipDirectionsPresent:
 	.db $b6 $47 DIR_DOWN
 	.db $d6 $27 DIR_RIGHT

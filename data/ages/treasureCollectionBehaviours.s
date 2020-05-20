@@ -32,7 +32,6 @@
 ;                  maximum value. (Seed drops)
 ; b2: Sound effect to play when Link gets the item
 
-; @addr{6c09}
 treasureCollectionBehaviourTable:
 	; TREASURE_NONE (0x00)
 	.db $00

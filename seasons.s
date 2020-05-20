@@ -80,7 +80,6 @@
 ; - Height
 ; - Width
 ; - Tile value
-; @addr{6bb5}
 fillRectInRoomLayout:
 	ldi a,(hl)
 	ld e,a

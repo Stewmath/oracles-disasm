@@ -473,7 +473,6 @@ interactionCode91:
 
 ;;
 ; @param[out]	cflag	c if bubble should be deleted (no longer in water)
-; @addr{4a39}
 @checkDelete:
 	ld a,(wTilesetFlags)
 	and TILESETFLAG_SIDESCROLL

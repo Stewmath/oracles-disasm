@@ -247,7 +247,6 @@ seasonsFunc_0f_70b4_swapGraphics:
 
 ;;
 ; @param	hl	$cfca/$cfc9 in @state3
-; @addr{736a}
 seasons_func_0f_712a:
 	ld a,(hl)
 	cp $06
@@ -355,7 +354,6 @@ _table_71cb:
 
 ;;
 ; @param	a	$cfca value 0 to 5
-; @addr{$71cf}
 seasonsFunc_0f_71cf_copyw6Filler1IntoWramBank3:
 	call load5aIntoBc
 	push bc
@@ -461,7 +459,6 @@ _table_7291:
 ;;
 ; @param	b	number of bytes to copy
 ; @param	hl	a few values between $d000-$db00 in bank 6 (w6Filler1, etc)
-; @addr{7297}
 seasonsFunc_0f_7297_copyw6Filler1IntowTmpVramBuffer:
 	ld a,$06
 	ld ($ff00+R_SVBK),a
@@ -477,7 +474,6 @@ seasonsFunc_0f_7297_copyw6Filler1IntowTmpVramBuffer:
 ;;
 ; @param	c	$00 for w3VramTiles/$20 for w3TileMappingIndices
 ; @param	hl	$d802(w3VramTiles)/$dc02(w3TileMappingIndices) in bank 3
-; @addr{72a5}
 seasonsFunc_0f_72a5_copyFromwTmpVramBufferIntoBank3:
 	ld a,$03
 	ld ($ff00+R_SVBK),a
@@ -634,7 +630,6 @@ seasons_func_0f_7325:
 ;;
 ; @param	a	a value
 ; @param[out]	bc	5 * a
-; @addr{736a}
 load5aIntoBc:
 	ld b,a
 	add a

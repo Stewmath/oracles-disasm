@@ -424,7 +424,6 @@ interactionCode5f:
 ; @param	hl	Address in wRoomCollisions to start at
 ; @param[out]	bc	Position to spawn at
 ; @param[out]	zflag	z if the companion can spawn from there
-; @addr{4c0b}
 @checkVerticalCompanionSpawnPosition:
 	ld b,$10
 	jr ++
@@ -433,7 +432,6 @@ interactionCode5f:
 ; @param	hl	Address in wRoomCollisions to start at
 ; @param[out]	bc	Position to spawn at
 ; @param[out]	zflag	z if the companion can spawn from there
-; @addr{4c0b}
 @checkHorizontalCompanionSpawnPosition:
 	ld b,$01
 ++
@@ -458,7 +456,6 @@ interactionCode5f:
 ; @param	hl	Starting position to check (also checks 3 rows/columns after)
 ; @param[out]	bc	Position to spawn at
 ; @param[out]	zflag	nz if valid position to spawn from found
-; @addr{4c20}
 @checkCompanionSpawnColumnRange:
 	push de
 	ld b,$01
@@ -469,7 +466,6 @@ interactionCode5f:
 ; @param	hl	Starting position to check (also checks 3 rows/columns after)
 ; @param[out]	bc	Position to spawn at
 ; @param[out]	zflag	nz if valid position to spawn from found
-; @addr{4c27}
 @checkCompanionSpawnRowRange:
 	push de
 	ld b,$10
@@ -1299,7 +1295,6 @@ _interaction6b_subid0d:
 	jp interactionAnimateAsNpc
 
 ;;
-; @addr{509a}
 @checkLinkSquished:
 	push af
 	ld a,(wLinkInAir)
@@ -1595,18 +1590,15 @@ _interaction6b_subid16:
 
 
 ;;
-; @addr{524c}
 _interaction6b_initGraphicsAndIncState:
 	call interactionInitGraphics
 	jp interactionIncState
 
 ;;
-; @addr{5252}
 _interaction6b_initGraphicsAndLoadScript:
 	call interactionInitGraphics
 
 ;;
-; @addr{5255}
 _interaction6b_loadScript:
 	ld e,Interaction.subid
 	ld a,(de)
@@ -1620,7 +1612,6 @@ _interaction6b_loadScript:
 
 ;;
 ; @param[out]	zflag	nz if Link pressed up at screen edge
-; @addr{5265}
 _interaction6b_checkLinkPressedUpAtScreenEdge:
 	ld a,(wScrollMode)
 	cp $01
@@ -1864,7 +1855,6 @@ _fairyHidingMinigame_subid02:
 
 ;;
 ; Spawns the 3 fairies; they should delete themselves if they're not found yet?
-; @addr{53c7}
 _fairyHidingMinigame_spawn3FairiesAndDelete:
 	ld b,$03
 
@@ -1882,7 +1872,6 @@ _fairyHidingMinigame_spawn3FairiesAndDelete:
 
 ;;
 ; @param[out]	cflag	c if Link is vulnerable (ready to begin cutscene?)
-; @addr{53d9}
 _fairyHidingMinigame_checkBeginCutscene:
 	call checkLinkVulnerable
 	ret nc
@@ -1901,7 +1890,6 @@ _fairyHidingMinigame_checkBeginCutscene:
 
 ;;
 ; @param[out]	cflag	c if minigame is active
-; @addr{53f2}
 _fairyHidingMinigame_checkMinigameActive:
 	ld a,GLOBALFLAG_WON_FAIRY_HIDING_GAME
 	call checkGlobalFlag
@@ -2717,7 +2705,6 @@ interactionCode70:
 	dec (hl)
 
 ;;
-; @addr{5883}
 @getRandomVar39Value:
 	ld hl,wTmpcfc0.wildTokay.cfdc
 	ld a,(hl)
@@ -3322,7 +3309,6 @@ _companionScript_subid0c:
 	jr _companionScript_delete
 
 ;;
-; @addr{5c1b}
 _companionScript_subid00_state1:
 	; If var3a is nonzero, make Moosh shake in fear
 	ld e,Interaction.var3a
@@ -3999,7 +3985,6 @@ interactionCode76:
 
 ;;
 ; @param	hl	Pointer to data
-; @addr{5fcf}
 @loadInterleavedTiles:
 	ldi a,(hl)
 	ld b,a
@@ -4022,7 +4007,6 @@ interactionCode76:
 
 ;;
 ; @param	hl	Pointer to data
-; @addr{5fe6}
 @loadTiles:
 	ldi a,(hl)
 	ld b,a
@@ -4044,7 +4028,6 @@ interactionCode76:
 
 ;;
 ; @param	hl	Pointer to poof position data
-; @addr{5ff9}
 @loadPoofs:
 	ld a,(bc)
 	inc bc
@@ -4509,7 +4492,6 @@ interactionCode81:
 ; accordingly and initializing the graphics after doing so.
 ;
 ; @param[out]	zflag	nz if item should be deleted?
-; @addr{628b}
 @checkTransformItem:
 	ld h,d
 	ld l,Interaction.var38
@@ -5904,7 +5886,6 @@ interactionCode8a:
 
 ;;
 ; @param	a	Essence number
-; @addr{6a45}
 @checkEssenceObtained:
 	ld hl,wEssencesObtained
 	jp checkFlag
@@ -6531,7 +6512,6 @@ _miscPuzzles_subid03:
 ;			number of positions in the room where that tile should be; $ff to
 ;			give a new tile index; $00 to stop.
 ; @param[out]	zflag	z if all tiles matched as expected.
-; @addr{6dcc}
 _miscPuzzles_verifyTilesAtPositions:
 	ld b,>wRoomLayout
 @newTileIndex:
@@ -6777,7 +6757,6 @@ _miscPuzzles_subid07:
 	jp parseGivenObjectData
 
 ;;
-; @addr{6f0e}
 @makeTorchesUnlightable:
 	ldhl FIRST_PART_INDEX, Part.id
 --
@@ -6800,7 +6779,6 @@ _miscPuzzles_subid07:
 
 ;;
 ; @param[out]	b	Bitset of lit torches (in bits 0-3)
-; @addr{6f27}
 @checkLitTorches:
 	ld a,TILEINDEX_LIT_TORCH
 	ld b,$00
@@ -7040,7 +7018,6 @@ _miscPuzzles_subid0c:
 	ret nz
 
 ;;
-; @addr{7075}
 _miscPuzzles_dropSmallKeyHere:
 	ldbc TREASURE_SMALL_KEY, $01
 	call createTreasure
@@ -7204,7 +7181,6 @@ _miscPuzzles_subid11:
 	ld hl,miscPuzzles_crownDungeonOpeningScript
 
 ;;
-; @addr{715c}
 _miscPuzzles_setScriptAndIncState:
 	call interactionSetScript
 	call interactionSetAlwaysUpdateBit
@@ -7671,7 +7647,6 @@ _miscPuzzles_subid21:
 	jp fadeoutToWhiteWithDelay
 
 ;;
-; @addr{73e8}
 _miscPuzzles_deleteSelfAndRetIfItemFlagSet:
 	call getThisRoomFlags
 	and ROOMFLAG_ITEM
@@ -7680,7 +7655,6 @@ _miscPuzzles_deleteSelfAndRetIfItemFlagSet:
 	jp interactionDelete
 
 ;;
-; @addr{73f2}
 _miscPuzzles_deleteSelfOrIncStateIfItemFlagSet:
 	call getThisRoomFlags
 	and ROOMFLAG_ITEM
@@ -7688,7 +7662,6 @@ _miscPuzzles_deleteSelfOrIncStateIfItemFlagSet:
 	jp interactionIncState
 
 ;;
-; @addr{73fd}
 _miscPuzzles_deleteSelfOrIncStateIfRoomFlag7Set:
 	call getThisRoomFlags
 	and ROOMFLAG_80
@@ -7697,7 +7670,6 @@ _miscPuzzles_deleteSelfOrIncStateIfRoomFlag7Set:
 
 ;;
 ; Unused
-; @addr{7408}
 _miscPuzzles_deleteSelfOrIncStateIfRoomFlag6Set:
 	call getThisRoomFlags
 	and ROOMFLAG_40
@@ -7965,7 +7937,6 @@ _fallingRock_subid06:
 	.db $08 $18
 
 ;;
-; @addr{758c}
 _fallingRock_initGraphicsAndIncState:
 	call interactionInitGraphics
 	call objectSetVisiblec1
@@ -7974,7 +7945,6 @@ _fallingRock_initGraphicsAndIncState:
 ;;
 ; Randomly choose a position from a list of possible positions. var03 determines which
 ; list it reads from?
-; @addr{7595}
 _fallingRock_chooseRandomPosition:
 	ld e,Interaction.var03
 	ld a,(de)
@@ -8087,7 +8057,6 @@ interactionCode93:
 	.dw _twinrova_initOtherHalf
 
 ;;
-; @addr{763d}
 _twinrova_loadGfx:
 	ld hl,wLoadedObjectGfx+10
 	ld b,$03
@@ -8164,7 +8133,6 @@ _twinrova_genericInitialize:
 	jpab scriptHlp.objectWritePositionTocfd5
 
 ;;
-; @addr{76b4}
 _twinrova_loadAngleAndCounterPreset:
 	ld e,Interaction.var3a
 	ld a,(de)
@@ -8179,7 +8147,6 @@ _twinrova_loadAngleAndCounterPreset:
 ;
 ; @param	b	Preset to use
 ; @param[out]	b	Zero if end of data reached; nonzero otherwise.
-; @addr{76b8}
 loadAngleAndCounterPreset:
 	ld a,b
 	ld hl,_presetInteractionAnglesAndCounters
@@ -8208,7 +8175,6 @@ loadAngleAndCounterPreset:
 	ret
 
 ;;
-; @addr{76d4}
 _twinrova_updateDirectionFromAngle:
 	ld e,Interaction.angle
 	call convertAngleDeToDirection
@@ -8232,7 +8198,6 @@ _twinrova_initOtherHalf:
 
 ;;
 ; @param	h	Object to copy visiblility, direction, position from
-; @addr{76ef}
 _twinrova_takeInvertedPositionFromObject:
 	ld l,Interaction.visible
 	ld e,l
@@ -8454,7 +8419,6 @@ _twinrova_state1:
 	.dw @subid00State2
 
 ;;
-; @addr{785c}
 _twinrova_loadScript:
 	ld e,Interaction.subid
 	ld a,(de)
@@ -8478,7 +8442,6 @@ _twinrova_loadScript:
 ; Gets a position stored in $cfd5/$cfd6?
 ;
 ; @param[out]	bc	Position
-; @addr{7877}
 func_0a_7877:
 	ld hl,wTmpcfc0.genericCutscene.cfd5
 	ld b,(hl)

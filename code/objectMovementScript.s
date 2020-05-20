@@ -2,7 +2,6 @@
 ; Called from objectRunMovementScript in bank0. See include/movementscript_commands.s.
 ;
 ; @param	hl	Script address
-; @addr{6b2d}
 objectLoadMovementScript_body:
 	ldh a,(<hActiveObjectType)
 	add Object.subid
@@ -36,7 +35,6 @@ objectLoadMovementScript_body:
 
 ;;
 ; Called from objectRunMovementScript in bank0. See include/movementscript_commands.s.
-; @addr{6b4c}
 objectRunMovementScript_body:
 	ldh a,(<hActiveObjectType)
 	add Object.var30

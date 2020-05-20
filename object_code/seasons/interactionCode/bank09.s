@@ -608,7 +608,6 @@ interactionCode5f:
 ; @param	hl	Address in wRoomCollisions to start at
 ; @param[out]	bc	Position to spawn at
 ; @param[out]	zflag	z if the companion can spawn from there
-; @addr{4c0b}
 @checkVerticalCompanionSpawnPosition:
 	ld b,$10
 	jr ++
@@ -617,7 +616,6 @@ interactionCode5f:
 ; @param	hl	Address in wRoomCollisions to start at
 ; @param[out]	bc	Position to spawn at
 ; @param[out]	zflag	z if the companion can spawn from there
-; @addr{4c0b}
 @checkHorizontalCompanionSpawnPosition:
 	ld b,$01
 ++
@@ -642,7 +640,6 @@ interactionCode5f:
 ; @param	hl	Starting position to check (also checks 3 rows/columns after)
 ; @param[out]	bc	Position to spawn at
 ; @param[out]	zflag	nz if valid position to spawn from found
-; @addr{4c20}
 @checkCompanionSpawnColumnRange:
 	push de
 	ld b,$01
@@ -653,7 +650,6 @@ interactionCode5f:
 ; @param	hl	Starting position to check (also checks 3 rows/columns after)
 ; @param[out]	bc	Position to spawn at
 ; @param[out]	zflag	nz if valid position to spawn from found
-; @addr{4c27}
 @checkCompanionSpawnRowRange:
 	push de
 	ld b,$10
@@ -1405,7 +1401,6 @@ _func_53e7:
 
 ;;
 ; $02: D6 wall-closing room
-; @addr{53f0}
 roomTileChangesAfterLoad02_body:
 	call _func_537e
 	call _func_53c7

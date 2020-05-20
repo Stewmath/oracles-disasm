@@ -1,6 +1,5 @@
 ;;
 ; Reloads the tiles for "price" on the item selection area when necessary.
-; @addr{4000}
 checkReloadShopItemTiles:
 	ld a,(wScrollMode)
 	cp $02
@@ -540,7 +539,6 @@ _shopkeeperState5:
 
 ;;
 ; @param	a	Item index?
-; @addr{424e}
 _shopkeeperGetItemPrice:
 	ld hl,_shopItemPrices
 	rst_addAToHl
@@ -555,7 +553,6 @@ _shopkeeperGetItemPrice:
 	ret
 
 ;;
-; @addr{4263}
 _shopkeeperCloseOpenedChest:
 	ld a,(wcca2)
 	bit 7,a
@@ -569,7 +566,6 @@ _shopkeeperCloseOpenedChest:
 ; he can carry.
 ;
 ; @param	a	Item index
-; @addr{426f}
 _shopkeeperCheckLinkHasItemAlready:
 	ld b,a
 	xor a
@@ -627,7 +623,6 @@ _shopkeeperCheckLinkHasItemAlready:
 ;;
 ; @param[out]	hl	Script to run if no shop items exist
 ; @param[out]	zflag	Set if at least one shop item exists
-; @addr{42ae}
 _shopkeeperCheckAllItemsBought:
 	ldhl FIRST_DYNAMIC_INTERACTION_INDEX, Interaction.enabled
 ---
@@ -848,7 +843,6 @@ _shopItemState5:
 ; The fact that this pops the stack means that it will return one level higher than it's
 ; supposed to? This ultimately isn't a big deal, it just means that other interactions
 ; won't be updated until next frame, but it's probably unintentional...
-; @addr{4397}
 _shopItemPopStackAndDeleteSelf:
 	pop af
 	jp interactionDelete
@@ -906,7 +900,6 @@ _shopItemState4:
 ; Clears the tiles in w3VramLayout corresponding to item price, and sets bit 2 of wInShop
 ; in order to request a tilemap update.
 ;
-; @addr{43d0}
 _shopItemClearRupeeDisplay:
 	call _shopItemGetTilesForRupeeDisplay
 	ret nc
@@ -928,7 +921,6 @@ _shopItemClearRupeeDisplay:
 ; Updates the tiles in w3VramLayout corresponding to item price, and sets bit 2 of wInShop
 ; in order to request a tilemap update.
 ;
-; @addr{43e2}
 _shopItemUpdateRupeeDisplay:
 	call _shopItemGetTilesForRupeeDisplay
 	ret nc
@@ -1025,7 +1017,6 @@ _shopItemState3:
 ;				* Tile index (byte)
 ;				* Tile attribute (byte
 ; @param[out]	cflag	nc if nothing to do?
-; @addr{4447}
 _shopItemGetTilesForRupeeDisplay:
 	ld e,Interaction.subid
 	ld a,(de)
@@ -1149,7 +1140,6 @@ _shopItemPrices:
 
 ;;
 ; @param[out]	zflag	z if Link should grab or release the item
-; @addr{44d0}
 _shopItemCheckGrabbed:
 	ld a,(wGameKeysJustPressed)
 	and (BTN_A|BTN_B)
@@ -1404,7 +1394,6 @@ interactionCode4a:
 	ret
 
 ;;
-; @addr{4613}
 _introSpriteIncStateAndLoadGraphics:
 	ld h,d
 	ld l,Interaction.state
@@ -1413,7 +1402,6 @@ _introSpriteIncStateAndLoadGraphics:
 
 ;;
 ; Sets up X and Y positions with some slight random variance?
-; @addr{461a}
 _introSpriteFunc_461a:
 	call objectGetRelatedObject1Var
 	call objectTakePosition
@@ -1492,7 +1480,6 @@ _introSpriteFunc_461a:
 
 
 ;;
-; @addr{467e}
 _introSpritesState1:
 	ld e,Interaction.subid
 	ld a,(de)
@@ -1684,7 +1671,6 @@ _introSpriteRunSubid08:
 
 ;;
 ; Sets relatedObj1 of object 'h' to object 'd' (self).
-; @addr{4794}
 _introSpriteSetChildRelatedObject1ToSelf:
 	ld l,Interaction.relatedObj1
 	ld (hl),Interaction.start
@@ -1894,7 +1880,6 @@ interactionCode50:
 	jp interactionDelete
 
 ;;
-; @addr{48d0}
 @func_48d0:
 	ld l,Interaction.yh
 	ld e,Interaction.var38
@@ -1914,7 +1899,6 @@ interactionCode50:
 	call objectApplySpeed
 
 ;;
-; @addr{48eb}
 @func_48eb:
 	ld h,d
 	ld l,Interaction.yh
@@ -1930,7 +1914,6 @@ interactionCode50:
 	ret
 
 ;;
-; @addr{48f9}
 @func_48f9:
 	ld e,Interaction.var3a
 	ld a,(de)
@@ -1946,7 +1929,6 @@ interactionCode50:
 	ret
 
 ;;
-; @addr{4907}
 @func_4907:
 	ld a,(wFrameCounter)
 	rrca
@@ -1961,7 +1943,6 @@ interactionCode50:
 
 ;;
 ; @param[out]	cflag	Set if Link is close to this object
-; @addr{4914}
 @checkLinkIsClose:
 	ld h,d
 	ld l,Interaction.yh
@@ -1982,7 +1963,6 @@ interactionCode50:
 ;;
 ; When called once per frame, the object's Z positon will gently oscillate up and down.
 ;
-; @addr{492d}
 objectOscillateZ_body:
 	ld a,(wFrameCounter)
 	and $07

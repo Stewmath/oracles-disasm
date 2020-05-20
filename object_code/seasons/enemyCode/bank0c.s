@@ -914,7 +914,6 @@ _ironMask_subid01:
 ;;
 ; Modifies this object's enemyCollisionMode based on if Link is directly behind the iron
 ; mask or not.
-; @addr{6d1e}
 _ironMask_updateCollisionsFromLinkRelativeAngle:
 	call objectGetAngleTowardEnemyTarget
 	ld h,d
@@ -933,7 +932,6 @@ _ironMask_updateCollisionsFromLinkRelativeAngle:
 
 
 ;;
-; @addr{6d35}
 _ironMask_chooseRandomAngleAndCounter1:
 	ld bc,$0703
 	call _ecom_randomBitwiseAndBCE
@@ -973,7 +971,6 @@ _ironMask_chooseRandomAngleAndCounter1:
 
 
 ;;
-; @addr{6d6b}
 _ironMask_chooseAmountOfTimeToStand:
 	call getRandomNumber_noPreserveVars
 	and $03

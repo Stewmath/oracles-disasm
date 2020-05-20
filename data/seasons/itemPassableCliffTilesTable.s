@@ -1,7 +1,6 @@
 ; This lists the tiles that are passible from a single direction - usually cliffs.
 ; The second byte in the .db's specifies whether the item has to go up or down a level of
 ; elevation in order to pass it.
-; @addr{4c50}
 _itemPassableCliffTilesTable:
 	.dw @collisions0
 	.dw @collisions1

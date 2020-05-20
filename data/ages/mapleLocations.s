@@ -1,7 +1,6 @@
 ; Each bit represents whether maple can appear on the corresponding screen 
 ; (0 if she can appear, 1 if she can't)
 
-; @addr{b72c}
 maplePresentLocationsTable:
 	.dw maplePresentLocationsRickyCompanion
 	.dw maplePresentLocationsDimitriCompanion
@@ -59,7 +58,6 @@ maplePresentLocationsMooshCompanion:
 	dbrev %11111111 %11111111
 	dbrev %11111111 %11111111
 
-; @addr{b792}
 maplePastLocations:
 	dbrev %11010111 %11111111
 	dbrev %00010111 %01011111

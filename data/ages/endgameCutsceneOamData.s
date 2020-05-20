@@ -1,5 +1,4 @@
 ; Used in CUTSCENE_BLACK_TOWER_ESCAPE
-; @addr{4d05}
 oamData_4d05:
 	.db $26
 	.db $e0 $10 $02 $01
@@ -42,7 +41,6 @@ oamData_4d05:
 	.db $60 $10 $12 $01
 
 ; Used by CUTSCENE_BLACK_TOWER_ESCAPE
-; @addr{4d9e}
 oamData_4d9e:
 	.db $26
 	.db $e0 $f8 $02 $21
@@ -84,7 +82,6 @@ oamData_4d9e:
 	.db $60 $00 $00 $21
 	.db $60 $f8 $12 $21
 
-; @addr{4e37}
 oamData_4e37:
 	.db $28
 	.db $44 $21 $00 $00
@@ -128,7 +125,6 @@ oamData_4e37:
 	.db $10 $40 $50 $07
 	.db $20 $40 $52 $07
 
-; @addr{4ed8}
 oamData_4ed8:
 	.db $12
 	.db $10 $08 $00 $0c
@@ -150,7 +146,6 @@ oamData_4ed8:
 	.db $4c $3a $0a $0d
 	.db $4c $42 $0a $2d
 
-; @addr{4f21}
 oamData_4f21:
 	.db $0d
 	.db $38 $d3 $02 $03
@@ -167,7 +162,6 @@ oamData_4f21:
 	.db $11 $f2 $26 $00
 	.db $01 $f2 $24 $00
 
-; @addr{4f56}
 oamData_4f56:
 	.db $07
 	.db $60 $f8 $00 $02
@@ -178,7 +172,6 @@ oamData_4f56:
 	.db $42 $f8 $0e $01
 	.db $68 $e0 $18 $02
 
-; @addr{4f73}
 oamData_4f73:
 	.db $1e
 	.db $e8 $e8 $00 $06
@@ -212,7 +205,6 @@ oamData_4f73:
 	.db $00 $48 $38 $00
 	.db $00 $50 $3a $05
 
-; @addr{4fec}
 oamData_4fec:
 	.db $0a
 	.db $48 $4d $88 $05

@@ -4,7 +4,6 @@
  m_section_free "Bank_1_Code_1" NAMESPACE "bank1"
 
 ;;
-; @addr{4000}
 func_4000:
 	ld a,(wScrollMode)
 	or a
@@ -14,7 +13,6 @@ func_4000:
 	ret
 
 ;;
-; @addr{400b}
 func_400b:
 	ld a,(wScreenTransitionState)
 	rst_jumpTable
@@ -29,7 +27,6 @@ func_400b:
 ; State 0: Entering a room from scratch (after entering/exiting a building, fadeout
 ; transition, etc)
 ;
-; @addr{401b}
 _screenTransitionState0:
 	xor a
 	ld (wPaletteThread_parameter),a
@@ -38,7 +35,6 @@ _screenTransitionState0:
 	ld (wScreenTransitionState),a
 
 ;;
-; @addr{4027}
 initializeRoomBoundaryAndLoadAnimations:
 	call setCameraFocusedObjectToLink
 	ld b,$01
@@ -97,7 +93,6 @@ initializeRoomBoundaryAndLoadAnimations:
 ;;
 ; State 1: Waiting a bit before giving control to return to Link.
 ;
-; @addr{4075}
 _screenTransitionState1:
 	ld a,(wcd03)
 	inc a
@@ -112,7 +107,6 @@ _screenTransitionState1:
 ;;
 ; Initializing
 ;
-; @addr{4088}
 @substate0:
 	ld a,(wPaletteThread_mode)
 	or a
@@ -130,7 +124,6 @@ _screenTransitionState1:
 ;;
 ; More initializing?
 ;
-; @addr{40a1}
 @substate1:
 	ld a,(wScreenOffsetX)
 	ld b,a
@@ -154,7 +147,6 @@ _screenTransitionState1:
 ;;
 ; The game is in this state while the screen is scrolling
 ;
-; @addr{40c1}
 @substate2:
 	ld a,(wScreenScrollCounter)
 	cp $20
@@ -187,7 +179,6 @@ _screenTransitionState1:
 	jp addFunctionsToVBlankQueue
 
 ;;
-; @addr{40f5}
 setScreenTransitionState02:
 	call setInstrumentsDisabledCounterAndScrollMode
 	ld a,$02
@@ -202,7 +193,6 @@ setScreenTransitionState02:
 ;
 ; Called every frame.
 ;
-; @addr{4105}
 _screenTransitionState2:
 	ld a,(wLinkInAir)
 	add a
@@ -272,7 +262,6 @@ _screenTransitionState2:
 ;;
 ; @param	b	Direction button to check
 ; @param	c	Direction of transition (see constants/directions.s)
-; @addr{4160}
 @transition:
 	ld a,(w1Link.enabled)
 	or a
@@ -384,7 +373,6 @@ _screenTransitionState2:
 
 ;;
 ; @param[out]	a	One of bits 0/1 set if Link is forbidden to transition over water.
-; @addr{41e5}
 @checkCanTransitionOverWater:
 	; Return false if Link is riding something? (apparently code execution doesn't
 	; reach here if Link is riding the raft, perhaps Dimitri as well?)
@@ -413,7 +401,6 @@ _screenTransitionState2:
 ; Updates the values for hCameraY/X. They get updated one pixel at a time in each
 ; direction.
 ;
-; @addr{4201}
 updateCameraPosition:
 	ld hl,wScrollMode
 	res 7,(hl)
@@ -463,7 +450,6 @@ updateCameraPosition:
 ;;
 ; @param	a	Target value for the position component
 ; @param	hl	Position component
-; @addr{4240}
 @updateComponent:
 	ld b,a
 	ld a,(wTextIsActive)
@@ -491,7 +477,6 @@ updateCameraPosition:
 ;
 ; Called when loading a screen.
 ;
-; @addr{4256}
 calculateCameraPosition:
 	ld a,(wLinkObjectIndex)
 	ld d,a
@@ -524,7 +509,6 @@ calculateCameraPosition:
 ;;
 ; Adjusts wGfxRegs2.SCY and SCX if the screen should be shaking.
 ;
-; @addr{427d}
 updateScreenShake:
 	ld a,(wMenuDisabled)
 	or a
@@ -559,7 +543,6 @@ updateScreenShake:
 
 ;;
 ; @param[out]	hl	Pointer to amount to offset the screen by
-; @addr{42b0}
 @getShakeAmount:
 	ld a,(wScreenShakeMagnitude)
 	add a
@@ -578,7 +561,6 @@ updateScreenShake:
 ;;
 ; Sets wGfxRegs2.SCY and SCX based on wScreenOffsetY/X and hCameraY/X.
 ;
-; @addr{42cb}
 updateGfxRegs2Scroll:
 	ldh a,(<hCameraY)
 	ld b,a
@@ -596,7 +578,6 @@ updateGfxRegs2Scroll:
 ;;
 ; State 3: the edge of the screen has just been touched
 ;
-; @addr{42e2}
 _screenTransitionState3:
 	ld a,(wScrollMode)
 	bit 7,a
@@ -631,13 +612,11 @@ _screenTransitionState3:
 	ret
 
 ;;
-; @addr{430d}
 checkDarkenRoomAndClearPaletteFadeState:
 	xor a
 	ld (wPaletteThread_parameter),a
 
 ;;
-; @addr{4311}
 checkDarkenRoom:
 	ld a,(wDungeonIndex)
 	cp $ff
@@ -665,7 +644,6 @@ checkDarkenRoom:
 	jp darkenRoom
 
 ;;
-; @addr{4323}
 checkBrightenRoom:
 	ld a,(wDungeonIndex)
 	cp $ff
@@ -684,7 +662,6 @@ checkBrightenRoom:
 ;;
 ; State 4: reload unique gfx / palettes, then proceed to state 5?
 ;
-; @addr{433a}
 _screenTransitionState4:
 	call updateTilesetUniqueGfx
 	ret c
@@ -707,7 +684,6 @@ _screenTransitionState4:
 ;;
 ; State 5: Scrolling between 2 screens
 ;
-; @addr{435a}
 _screenTransitionState5:
 	ld a,(wScreenTransitionState2)
 	rst_jumpTable
@@ -716,7 +692,6 @@ _screenTransitionState5:
 	.dw _screenTransitionState5Substate2
 
 ;;
-; @addr{4364}
 _screenTransitionState5Substate0:
 	ld a,(wPaletteThread_mode)
 	or a
@@ -798,7 +773,6 @@ _screenTransitionState5Substate0:
 ; Link's position.
 ;
 ; @param	cflag	Set for horizontal transition, unset for vertical
-; @addr{43d8}
 transitionUpdateScrollAndLinkPosition:
 	ld de,wGfxRegs2.SCY
 	ld hl,hCameraY
@@ -858,7 +832,6 @@ transitionUpdateScrollAndLinkPosition:
 
 ; Values to add to Link's position each frame
 ;
-; @addr{441a}
 @linkSpeeds:
 	.dw -$80, $00 ; DIR_UP
 	.dw  $00, $60 ; DIR_RIGHT
@@ -871,7 +844,6 @@ transitionUpdateScrollAndLinkPosition:
 ; Updates Link's position after a completed screen transition, and updates his local
 ; respawn position.
 ;
-; @addr{442a}
 finishScrollingTransition:
 	call cpLinkState0e
 	ret z
@@ -888,7 +860,6 @@ finishScrollingTransition:
 
 ;;
 ; @param	de	Pointer to 2 bytes (values to add to Link's Y/X)
-; @addr{4440}
 _label_01_037:
 	ld a,(wLinkObjectIndex)
 	ld h,a
@@ -937,7 +908,6 @@ _label_01_037:
 ; b0: Value to add to w1Link.yh
 ; b1: Value to add to w1Link.xh
 
-; @addr{4483}
 @positionOffsets:
 	; Large rooms
 	.db LARGE_ROOM_HEIGHT*16        $00                  ; DIR_UP
@@ -952,14 +922,12 @@ _label_01_037:
 	.db $00                         SMALL_ROOM_WIDTH*16  ; DIR_LEFT
 
 ;;
-; @addr{4493}
 func_4493:
 	ld a,(wScreenTransitionDirection)
 	ld de,@positionOffsets
 	call addDoubleIndexToDe
 	jr _label_01_037
 
-; @addr{449e}
 @positionOffsets:
 	.db $70 $00 ; DIR_UP
 	.db $00 $70 ; DIR_RIGHT
@@ -970,7 +938,6 @@ func_4493:
 ; Reset w2LinkWalkPath such that it's as if Link walked out from the screen's edge.
 ; Called after screen transitions.
 ;
-; @addr{44a6}
 resetFollowingLinkObjectPosition:
 	ld a,(wFollowingLinkObject)
 	or a
@@ -1040,7 +1007,6 @@ resetFollowingLinkObjectPosition:
 ; State 5 substate 2: horizontal scrolling transition. Very similar to the vertical
 ; scrolling code below (state 5 substate 1).
 ;
-; @addr{44fa}
 _screenTransitionState5Substate2:
 	ld a,(wScreenTransitionState3)
 	rst_jumpTable
@@ -1052,7 +1018,6 @@ _screenTransitionState5Substate2:
 	.dw @state5
 
 ;;
-; @addr{450a}
 @state0:
 	ld a,(wScreenOffsetX)
 	swap a
@@ -1068,7 +1033,6 @@ _screenTransitionState5Substate2:
 	ret
 
 ;;
-; @addr{4520}
 @state1:
 	ld a,$02
 	ld (wScreenTransitionState3),a
@@ -1080,7 +1044,6 @@ _screenTransitionState5Substate2:
 ; When this state ends, anything just outside the screen won't have been drawn yet; that's
 ; handled in state 3.
 ;
-; @addr{4528}
 @state2:
 	scf
 	call transitionUpdateScrollAndLinkPosition
@@ -1110,7 +1073,6 @@ _screenTransitionState5Substate2:
 ;;
 ; This state draws anything remaining past the edge of the screen.
 ;
-; @addr{4546}
 @state3:
 	; Draw any remaining columns
 	ld a,(wScreenScrollCounter)
@@ -1131,7 +1093,6 @@ _screenTransitionState5Substate2:
 	ret
 
 ;;
-; @addr{4559}
 @state4:
 	; Load one entry from the unique gfx per frame
 	call updateTilesetUniqueGfx
@@ -1144,7 +1105,6 @@ _screenTransitionState5Substate2:
 	xor a
 	ld (wTilesetUniqueGfx),a
 ;;
-; @addr{4567}
 @state5:
 	call checkBrightenRoom
 	call updateTilesetPalette
@@ -1180,7 +1140,6 @@ _screenTransitionState5Substate2:
 	jp finishScrollingTransition
 
 ;;
-; @addr{4598}
 @drawNextRow:
 	ld a,(wScreenScrollRow)
 	ld e,a
@@ -1189,7 +1148,6 @@ _screenTransitionState5Substate2:
 	call addFunctionsToVBlankQueue
 
 ;;
-; @addr{45a5}
 incrementScreenScrollRowVars:
 	ld a,(wScreenScrollRow)
 	ld b,a
@@ -1211,7 +1169,6 @@ incrementScreenScrollRowVars:
 	ret
 
 ;;
-; @addr{45c4}
 addFunctionsToVBlankQueue:
 	ld b,a
 	ld c,$01
@@ -1245,7 +1202,6 @@ addFunctionsToVBlankQueue:
 ; State 5 substate 1: vertical scrolling transition. Practically a copy of the horizontal
 ; transition code above.
 ;
-; @addr{45ed}
 _screenTransitionState5Substate1:
 	ld a,(wScreenTransitionState3)
 	rst_jumpTable
@@ -1257,7 +1213,6 @@ _screenTransitionState5Substate1:
 	.dw @state5
 
 ;;
-; @addr{45fd}
 @state0:
 	ld a,(wScreenOffsetY)
 	swap a
@@ -1273,7 +1228,6 @@ _screenTransitionState5Substate1:
 	ret
 
 ;;
-; @addr{4613}
 @state1:
 	ld a,$02
 	ld (wScreenTransitionState3),a
@@ -1285,7 +1239,6 @@ _screenTransitionState5Substate1:
 ; When this state ends, anything just outside the screen won't have been drawn yet; that's
 ; handled in state 3.
 ;
-; @addr{461b}
 @state2:
 	xor a
 	call transitionUpdateScrollAndLinkPosition
@@ -1315,7 +1268,6 @@ _screenTransitionState5Substate1:
 ;;
 ; This state draws anything remaining past the edge of the screen.
 ;
-; @addr{4639}
 @state3:
 	; Draw any remaining rows
 	ld a,(wScreenScrollCounter)
@@ -1336,7 +1288,6 @@ _screenTransitionState5Substate1:
 	ret
 
 ;;
-; @addr{464c}
 @state4:
 	; Load one entry from the unique gfx per frame
 	call updateTilesetUniqueGfx
@@ -1349,7 +1300,6 @@ _screenTransitionState5Substate1:
 	xor a
 	ld (wTilesetUniqueGfx),a
 ;;
-; @addr{465a}
 @state5:
 	call checkBrightenRoom
 	call updateTilesetPalette
@@ -1398,7 +1348,6 @@ _screenTransitionState5Substate1:
 	.db $00                                       SMALL_ROOM_HEIGHT*16  ; DIR_DOWN
 
 ;;
-; @addr{4694}
 @drawNextRow:
 	; Load tiles and attributes to wTmpVramBuffer
 	ld a,(wScreenScrollRow)
@@ -1418,7 +1367,6 @@ _screenTransitionState5Substate1:
 
 ;;
 ; @param	c	Tiles (0) or attributes (1)
-; @addr{46a8}
 @queueRowDmaTransfer:
 	ld a,(wScreenScrollVramRow)
 	ld b,a
@@ -1445,7 +1393,6 @@ _screenTransitionState5Substate1:
 	jp queueDmaTransfer
 
 ;;
-; @addr{46ca}
 func_46ca:
 	ld a,(wScreenOffsetY)
 	cpl
@@ -1481,7 +1428,6 @@ func_46ca:
 	ld ($ff00+R_SVBK),a
 	ret
 ;;
-; @addr{46ff}
 func_46ff:
 	ld a,(de)
 	ldi (hl),a
@@ -1503,7 +1449,6 @@ func_46ff:
 ; Loads a row of tiles from w3VramTiles and w3VramAttributes into wTmpVramBuffer+$00 and
 ; wTmpVramBuffer+$20, respectively.
 ;
-; @addr{4712}
 copyTileRowToVramBuffer:
 	; Calculate the address of the row in w3VramTiles through black magic
 	ld a,(wScreenOffsetX)
@@ -1557,7 +1502,6 @@ copyTileRowToVramBuffer:
 ; @param	b	Number of bytes to copy
 ; @param	de	Destination
 ; @param	hl	Source
-; @addr{4751}
 @copyFunc:
 	ld a,(hl)
 	ld (de),a
@@ -1577,7 +1521,6 @@ copyTileRowToVramBuffer:
 
 ;;
 ; Check if the newly loaded tileset has a different palette than before, update accordingly
-; @addr{4762}
 updateTilesetPalette:
 	ld a,(wLoadedTilesetPalette)
 	ld b,a
@@ -1589,7 +1532,6 @@ updateTilesetPalette:
 	jp loadPaletteHeader
 
 ;;
-; @addr{4771}
 cpLinkState0e:
 	ld a,(wLinkObjectIndex)
 	cp LINK_OBJECT_INDEX
@@ -1604,7 +1546,6 @@ cpLinkState0e:
 ; Loads w2WaveScrollValues to make the screen sway in a sine wave.
 ;
 ; @param	c	Amplitude
-; @addr{477e}
 initWaveScrollValues_body:
 	ld a,:w2WaveScrollValues
 	ld ($ff00+R_SVBK),a
@@ -1665,7 +1606,6 @@ initWaveScrollValues_body:
 ; wFrameCounter). The LCD interrupt will read from here when configured properly.
 ;
 ; @param	b	Affects the frequency of the wave?
-; @addr{47da}
 loadBigBufferScrollValues_body:
 	ld a,:w2WaveScrollValues
 	ld ($ff00+R_SVBK),a
@@ -1691,7 +1631,6 @@ loadBigBufferScrollValues_body:
 	ret
 
 ;;
-; @addr{47fc}
 func_47fc:
 	call getPaletteFadeTransitionData
 	jr c,+
@@ -1703,7 +1642,6 @@ func_47fc:
 	ret
 
 ;;
-; @addr{4805}
 checkAndApplyPaletteFadeTransition:
 	call getPaletteFadeTransitionData
 	call c,applyPaletteFadeTransitionData
@@ -1719,7 +1657,6 @@ checkAndApplyPaletteFadeTransition:
 ;
 ; @param[out]	cflag	Set if the active room has palette transition data
 ; @param[out]	hl	Address of palette fade data (if it has one)
-; @addr{480c}
 getPaletteFadeTransitionData:
 	; Don't do a transition in symmetry city if the tuni nut was fixed
 	call checkSymmetryCityPaletteTransition
@@ -1757,7 +1694,6 @@ getPaletteFadeTransitionData:
 
 ;;
 ; @param	hl	Address of palette fade transition data (starting at byte 2)
-; @addr{4834}
 applyPaletteFadeTransitionData:
 	ld a,(wLoadedTilesetPalette)
 	ld b,a
@@ -1794,7 +1730,6 @@ applyPaletteFadeTransitionData:
 ;;
 ; @param[out]	cflag	Set if the game should transition the palette between the symmetry
 ;			city exits (this gets unset when the tuni nut is replaced).
-; @addr{4862}
 checkSymmetryCityPaletteTransition:
 	ld a,(wActiveGroup)
 	or a
@@ -1828,7 +1763,6 @@ checkSymmetryCityPaletteTransition:
 ;
 ; @param[out]	cflag	Set if the active room has palette transition data
 ; @param[out]	hl	Address of palette fade data (if it has one)
-; @addr{480c}
 getPaletteFadeTransitionData:
 	ld a,(wActiveGroup)
 	ld b,a
@@ -1867,7 +1801,6 @@ getPaletteFadeTransitionData:
 
 ;;
 ; @param	hl	Address of palette fade transition data (starting at byte 1)
-; @addr{4834}
 applyPaletteFadeTransitionData:
 	inc hl
 	ld a,:w2ColorComponentBuffer1
@@ -1917,7 +1850,6 @@ applyPaletteFadeTransitionData:
 ;;
 ; Used by Impa, Rosa when following Link.
 ;
-; @addr{4910}
 makeActiveObjectFollowLink:
 	ld hl,wFollowingLinkObjectType
 	ldh a,(<hActiveObjectType)
@@ -1928,7 +1860,6 @@ makeActiveObjectFollowLink:
 ;;
 ; Reset the contents of w2LinkWalkPath to equal Link's position.
 ;
-; @addr{4919}
 resetFollowingLinkPath:
 	push de
 	ld a,(w1Link.direction)
@@ -1975,7 +1906,6 @@ resetFollowingLinkPath:
 ;;
 ; Updates the "FollowingLinkObject" and w2LinkWalkPath if necessary.
 ;
-; @addr{494d}
 checkUpdateFollowingLinkObject:
 	ld a,(wFollowingLinkObject)
 	or a
@@ -2066,7 +1996,6 @@ checkUpdateFollowingLinkObject:
 ;;
 ; Clears memory from cc5c-cce9, initializes wLinkObjectIndex, focuses camera on Link...
 ;
-; @addr{49af}
 clearMemoryOnScreenReload:
 	ld hl,wLinkInAir
 	ld b,wcce9-wLinkInAir
@@ -2086,7 +2015,6 @@ clearMemoryOnScreenReload:
 	jr ++
 
 ;;
-; @addr{49c9}
 func_49c9:
 	ld hl,wDisabledObjects
 	ld b,wcce1-wDisabledObjects
@@ -2098,7 +2026,6 @@ func_49c9:
 
 ;;
 ; Set the lower 2 bits of each object's Object.enabled to 2.
-; @addr{49d7}
 setObjectsEnabledTo2:
 	call setInteractionsEnabledTo2
 	call setEnemiesEnabledTo2
@@ -2109,25 +2036,21 @@ setObjectsEnabledTo2:
 	jr _setObjectsEnabledTo2_hlpr
 
 ;;
-; @addr{49ea}
 setItemsEnabledTo2:
 	ld hl,FIRST_ITEM_INDEX<<8 + $00
 	ld c,$e0
 	jr _setObjectsEnabledTo2_hlpr
 ;;
-; @addr{49f1}
 setInteractionsEnabledTo2:
 	ld hl,$d040
 	ld c,$e0
 	jr _setObjectsEnabledTo2_hlpr
 ;;
-; @addr{49f8}
 setEnemiesEnabledTo2:
 	ld hl,$d080
 	ld c,$e0
 	jr _setObjectsEnabledTo2_hlpr
 ;;
-; @addr{49ff}
 setPartsEnabledTo2:
 	ld hl,$d0c0
 	ld c,$e0
@@ -2150,7 +2073,6 @@ _setObjectsEnabledTo2_hlpr:
 	ret
 
 ;;
-; @addr{4a17}
 clearObjectsWithEnabled2:
 	call clearInteractionsWithEnabled2
 	call clearEnemiesWithEnabled2
@@ -2161,28 +2083,24 @@ clearObjectsWithEnabled2:
 	jr clearObjectsWithEnabled2_hlpr
 
 ;;
-; @addr{4a2a}
 clearItemsWithEnabled2:
 	ld hl,FIRST_ITEM_INDEX<<8 + $00
 	ld c,$e0
 	jr clearObjectsWithEnabled2_hlpr
 
 ;;
-; @addr{4a31}
 clearInteractionsWithEnabled2:
 	ld hl,$d040
 	ld c,$e0
 	jr clearObjectsWithEnabled2_hlpr
 
 ;;
-; @addr{4a38}
 clearEnemiesWithEnabled2:
 	ld hl,$d080
 	ld c,$e0
 	jr clearObjectsWithEnabled2_hlpr
 
 ;;
-; @addr{4a3f}
 clearPartsWithEnabled2:
 	ld hl,$d0c0
 	ld c,$e0
@@ -2204,7 +2122,6 @@ clearObjectsWithEnabled2_hlpr:
 	jr c,clearObjectsWithEnabled2_hlpr
 	ret
 ;;
-; @addr{4a58}
 playCompassSoundIfKeyInRoom:
 	ld a,(wMenuDisabled)
 	or a
@@ -2303,7 +2220,6 @@ updateLinkBeingShocked:
 
 ;;
 ; This is called when Link falls into a hole tile that goes a level down.
-; @addr{4ad2}
 initiateFallDownHoleWarp:
 	ld a,(wDungeonFloor)
 	dec a
@@ -2326,7 +2242,6 @@ initiateFallDownHoleWarp:
 
 ;;
 ; CUTSCENE_WARP_TO_TWINROVA_FIGHT
-; @addr{4af8}
 cutscene17:
 	ld a,(wCutsceneState)
 	rst_jumpTable
@@ -2464,7 +2379,6 @@ cutscene17:
 ; Calls initWaveScrollValues, then sets every other line to have a normal scroll value.
 ;
 ; @param	a	Amplitude
-; @addr{4bd9}
 _initWaveScrollValuesForEverySecondLine:
 	call initWaveScrollValues
 	ld a,:w2WaveScrollValues
@@ -2484,7 +2398,6 @@ _initWaveScrollValuesForEverySecondLine:
 
 ;;
 ; CUTSCENE_15
-; @addr{4bf0}
 cutscene15:
 	call @update
 	call updateStatusBar
@@ -2499,7 +2412,6 @@ cutscene15:
 
 ;;
 ; Unused?
-; @addr{4c03}
 @func_4c03:
 	ld hl,wGenericCutscene.cbb4
 	dec (hl)
@@ -2509,7 +2421,6 @@ cutscene15:
 	ret
 
 ;;
-; @addr{4c0b}
 @incTmpcbb3:
 	ld hl,wGenericCutscene.cbb3
 	inc (hl)
@@ -2551,7 +2462,6 @@ cutscene15:
 ; Calls initWaveScrollValues, then inverts every other line.
 ;
 ; @param	a	Amplitude
-; @addr{4c48}
 @@initWaveScrollValuesInverted:
 	call initWaveScrollValues
 	ld a,:w2WaveScrollValues
@@ -2660,14 +2570,12 @@ cutscene15:
 
 ;;
 ; CUTSCENE_FLAMES_FLICKERING
-; @addr{4d16}
 cutscene18:
 	ld c,$00
 	jr ++
 
 ;;
 ; CUTSCENE_TWINROVA_SACRIFICE
-; @addr{4d1a}
 cutscene19:
 	ld c,$01
 ++
@@ -2689,7 +2597,6 @@ cutscene19:
 
 ;;
 ; Load 8 bytes into wDungeonMapData and up to $100 bytes into w2DungeonLayout.
-; @addr{564e}
 loadDungeonLayout_b01:
 	ld a,$02
 	ld ($ff00+R_SVBK),a
@@ -2747,7 +2654,6 @@ loadDungeonLayout_b01:
 	jp setVisitedRoomFlag
 
 ;;
-; @addr{56a3}
 clearDungeonLayout:
 	ld hl,w2DungeonLayout
 	ld bc,$0200
@@ -2756,7 +2662,6 @@ clearDungeonLayout:
 
 .ifdef ROM_AGES
 ;;
-; @addr{56ac}
 findActiveRoomInDungeonLayoutWithPointlessBankSwitch:
 	ld a,:CADDR
 	setrombank
@@ -2765,7 +2670,6 @@ findActiveRoomInDungeonLayoutWithPointlessBankSwitch:
 ;;
 ; Finds the active room in the dungeon layout and sets wDungeonFloor and
 ; wDungeonMapPosition accordingly.
-; @addr{56b3}
 findActiveRoomInDungeonLayout:
 	xor a
 	call getFirstDungeonLayoutAddress
@@ -2791,7 +2695,6 @@ findActiveRoomInDungeonLayout:
 
 ;;
 ; Get the address of the layout data for the first floor
-; @addr{56d3}
 getFirstDungeonLayoutAddress:
 	ld c,a
 	ld a,(wDungeonFirstLayout)
@@ -2805,7 +2708,6 @@ getFirstDungeonLayoutAddress:
 	ret
 
 ;;
-; @addr{56e3}
 paletteFadeHandler:
 	ld a,(wPaletteThread_mode)
 	rst_jumpTable
@@ -2830,14 +2732,12 @@ paletteFadeHandler:
 
 
 ;;
-; @addr{5705}
 _paletteFadeHandler09:
 	call paletteThread_decCounter
 	ret nz
 
 ;;
 ; Fade out to white
-; @addr{5709}
 _paletteFadeHandler01:
 	ld a,$1f
 	ldh (<hFF8B),a
@@ -2860,7 +2760,6 @@ _paletteFadeHandler01:
 ;
 ; @param	c	Value to add to each color component
 ; @param	hFF8B	Intensity of a color component after overflowing ($00 or $1f?)
-; @addr{571e}
 _updateFadingPalettes:
 	call paletteThread_calculateFadingPalettes
 
@@ -2878,19 +2777,16 @@ _updateFadingPalettes:
 	ld a,(hl)
 	ldh (<hSprPaletteSources),a
 ;;
-; @addr{5736}
 _paletteFadeHandler00:
 	ret
 
 ;;
-; @addr{5737}
 _paletteFadeHandler0a:
 	call paletteThread_decCounter
 	ret nz
 
 ;;
 ; Fade in from white
-; @addr{573b}
 _paletteFadeHandler02:
 	ld a,$1f
 	ldh (<hFF8B),a
@@ -2905,14 +2801,12 @@ _paletteFadeHandler02:
 	jr _updateFadingPalettes
 
 ;;
-; @addr{574f}
 _paletteFadeHandler0b:
 	call paletteThread_decCounter
 	ret nz
 
 ;;
 ; Fade out to black
-; @addr{5753}
 _paletteFadeHandler03:
 	xor a
 	ldh (<hFF8B),a
@@ -2928,14 +2822,12 @@ _paletteFadeHandler03:
 	jr _updateFadingPalettes
 
 ;;
-; @addr{5768}
 _paletteFadeHandler0c:
 	call paletteThread_decCounter
 	ret nz
 
 ;;
 ; Fade in from black
-; @addr{576c}
 _paletteFadeHandler04:
 	xor a
 	ldh (<hFF8B),a
@@ -2953,7 +2845,6 @@ _paletteFadeHandler04:
 .ifdef ROM_AGES
 ;;
 ; @param	b	"inverted" value for wPaletteThread_fadeOffset?
-; @addr{5780}
 _paletteThread_setFadeOffsetAndStop:
 	ld a,b
 	sub $1f
@@ -2962,7 +2853,6 @@ _paletteThread_setFadeOffsetAndStop:
 
 ;;
 ; Clears some variables and stops operation (goes to mode 0).
-; @addr{5786}
 _paletteThread_stop:
 	xor a
 	ld (wPaletteThread_updateRate),a
@@ -2971,7 +2861,6 @@ _paletteThread_stop:
 
 ;;
 ; Like above, but also marks all palettes as dirty.
-; @addr{5790}
 _paletteThread_refreshPalettesAndStop:
 	xor a
 	ld (wPaletteThread_updateRate),a
@@ -2981,7 +2870,6 @@ _paletteThread_refreshPalettesAndStop:
 
 .ifdef ROM_AGES
 ;;
-; @addr{579a}
 _paletteFadeHandler0d:
 	call paletteThread_decCounter
 	ret nz
@@ -2989,7 +2877,6 @@ _paletteFadeHandler0d:
 
 ;;
 ; Fade out to black, stop eventually depending on wPaletteThread_parameter
-; @addr{579e}
 _paletteFadeHandler05:
 
 .ifdef ROM_AGES
@@ -3030,7 +2917,6 @@ _paletteFadeHandler05:
 
 .ifdef ROM_AGES
 ;;
-; @addr{57ba}
 _paletteFadeHandler0e:
 	call paletteThread_decCounter
 	ret nz
@@ -3038,7 +2924,6 @@ _paletteFadeHandler0e:
 
 ;;
 ; Fade in from black, stop eventually depending on wPaletteThread_parameter
-; @addr{57be}
 _paletteFadeHandler06:
 
 .ifdef ROM_AGES
@@ -3082,7 +2967,6 @@ _paletteFadeHandler06:
 
 ;;
 ; Fade in from white for a dark room
-; @addr{57e0}
 _paletteFadeHandler07:
 	ld a,$1f
 	ldh (<hFF8B),a
@@ -3117,7 +3001,6 @@ _paletteFadeHandler07:
 
 ;;
 ; Fade between two palettes
-; @addr{580f}
 paletteFadeHandler08:
 	ld hl,wPaletteThread_fadeOffset
 	dec (hl)
@@ -3159,7 +3042,6 @@ paletteFadeHandler08:
 ;
 ; @param	c	Value to add to each color component
 ; @param	hFF8B	Intensity of a color component after overflowing ($00 or $1f)
-; @addr{583b}
 paletteThread_calculateFadingPalettes:
 	ld hl,w2TilesetBgPalettes
 	ld b,$40
@@ -3240,7 +3122,6 @@ paletteThread_calculateFadingPalettes:
 ; Game alternates between calling this and the below function when fading between
 ; palettes.
 ;
-; @addr{5886}
 _paletteThread_mixBG234Palettes:
 	ld hl,w2TilesetBgPalettes+2*8
 	ld e,<w2ColorComponentBuffer1+$00
@@ -3250,7 +3131,6 @@ _paletteThread_mixBG234Palettes:
 ;;
 ; Mix BG5-7 palettes.
 ;
-; @addr{588f}
 _paletteThread_mixBG567Palettes:
 	ld hl,w2TilesetBgPalettes+5*8
 	ld e,<w2ColorComponentBuffer1+$24
@@ -3325,7 +3205,6 @@ _paletteThread_mixBG567Palettes:
 ; @param	hFF91	Weighting for w2ColorComponentBuffer1 ($00-$f0, upper nibble)
 ; @param	hFF90	Weighting for w2ColorComponentBuffer2 ($00-$f0, upper nibble)
 ; @param[out]	hl	Shift this value right by 4 to get the final intensity to use
-; @addr{58d8}
 @mixColors:
 	; Calculate intensity to add for first component
 	ldh a,(<hFF91)
@@ -3371,7 +3250,6 @@ _paletteThread_mixBG567Palettes:
 ;;
 ; Takes color components (stored in hFF8B, hFF8C, hFF8D) and writes them to
 ; the color in w2FadingBgPalettes.
-; @addr{5902}
 @writeToFadingBgPalettes:
 	inc h
 	ldh a,(<hFF8B)
@@ -3395,7 +3273,6 @@ _paletteThread_mixBG567Palettes:
 	ret
 
 ;;
-; @addr{591e}
 checkLockBG7Color3ToBlack:
 	ld a,(wLockBG7Color3ToBlack)
 	rst_jumpTable
@@ -3411,7 +3288,6 @@ checkLockBG7Color3ToBlack:
 
 ;;
 ; @param[out]	zflag	Set if wPaletteThread_counter reached 0
-; @addr{592e}
 paletteThread_decCounter:
 	ld hl,wPaletteThread_counter
 	dec (hl)
@@ -3421,7 +3297,6 @@ paletteThread_decCounter:
 	ret
 
 ;;
-; @addr{593a}
 func_593a:
 	call updateLinkLocalRespawnPosition
 	call loadCommonGraphics
@@ -3429,7 +3304,6 @@ func_593a:
 	jp loadGfxRegisterStateIndex
 
 ;;
-; @addr{5945}
 checkUpdateDungeonMinimap:
 
 .ifdef ROM_AGES
@@ -3474,7 +3348,6 @@ checkUpdateDungeonMinimap:
 ;;
 ; This function is called from the main thread.
 ; Runs the game for a frame.
-; @addr{596a}
 runGameLogic:
 	ld a,(wGameState)
 	rst_jumpTable
@@ -3485,7 +3358,6 @@ runGameLogic:
 
 ;;
 ; Clears a lot of memory, loads common palette header $0f,
-; @addr{5976}
 _initializeGame:
 	ld hl,wOamEnd
 	ld bc,$d000-wOamEnd
@@ -3633,7 +3505,6 @@ _initializeGame:
 	ret
 
 ;;
-; @addr{5a4f}
 _loadingRoom:
 	call clearScreenVariablesAndWramBank1
 	call clearStaticObjects
@@ -3643,7 +3514,6 @@ _loadingRoom:
 	call applyWarpDest
 
 ;;
-; @addr{5a60}
 _func_5a60:
 	call clearOam
 	call initializeVramMaps
@@ -3683,7 +3553,6 @@ _func_5a60:
 	jp func_593a
 
 ;;
-; @addr{5abc}
 _standardGameState:
 	ld a,(wLinkDeathTrigger)
 	cp $ff
@@ -3748,7 +3617,6 @@ _standardGameState:
 ;;
 ; Cutscene 0 = not in a cutscene; loading a room
 ;
-; @addr{5b26}
 cutscene00:
 	call updateStatusBar
 	call updateAllObjects
@@ -3787,7 +3655,6 @@ cutscene00:
 ;;
 ; Cutscene 1 = not in a cutscene; game running normally
 ;
-; @addr{5b65}
 cutscene01:
 	call func_1613
 	call updateLinkBeingShocked
@@ -3874,7 +3741,6 @@ cutscene02:
 
 
 ;;
-; @addr{5bd8}
 cutscene03:
 	ld a,(wPaletteThread_mode)
 	or a
@@ -3949,7 +3815,6 @@ _func_5c18:
 	jp resetCamera
 
 ;;
-; @addr{5c6b}
 func_5c6b:
 	call setEnteredWarpPosition
 	call calculateRoomEdge
@@ -3963,7 +3828,6 @@ func_5c6b:
 ;;
 ; Sets wEnteredWarpPosition to Link's position, which prevents him from activating a warp
 ; tile if he spawns on one.
-; @addr{5c82}
 setEnteredWarpPosition:
 	ld de,w1Link.yh
 	call getShortPositionFromDE
@@ -3971,7 +3835,6 @@ setEnteredWarpPosition:
 	ret
 
 ;;
-; @addr{5c8c}
 cutscene04:
 	ld a,(wPaletteThread_mode)
 	or a
@@ -3995,7 +3858,6 @@ cutscene04:
 	jr ++
 
 ;;
-; @addr{5cb6}
 cutscene05:
 	ld a,(wPaletteThread_mode)
 	or a
@@ -4034,7 +3896,6 @@ cutscene05:
 	jp _func_5c18
 
 ;;
-; @addr{5cfe}
 _func_5cfe:
 	ld a,(wcc4c)
 	or a
@@ -4189,7 +4050,6 @@ cutscene13:
 
 ;;
 ; Seasons-only
-; @addr{5d31}
 _func_5d31:
 	call func_1613
 	ld a,(wWarpTransition2)
@@ -4200,7 +4060,6 @@ _func_5d31:
 	jp updateAllObjects
 
 ;;
-; @addr{5d41}
 func_5d41:
 	call func_1613
 	ld a,(wWarpTransition2)
@@ -4261,14 +4120,12 @@ checkDisplayEraOrSeasonInfo:
 
 ;;
 ; Called when a fadeout transition must occur between two screens.
-; @addr{5e06}
 triggerFadeoutTransition:
 	ld a,CUTSCENE_05
 	ld (wCutsceneIndex),a
 	jp fadeoutToWhite
 
 ;;
-; @addr{5e0e}
 applyWarpTransition2:
 	ld hl,wWarpTransition2
 	ld a,(hl)
@@ -4299,7 +4156,6 @@ applyWarpTransition2:
 	jp fadeoutToWhiteWithDelay
 
 ;;
-; @addr{5e3d}
 setCutsceneIndexIfCutsceneTriggerSet:
 	ld a,(wCutsceneTrigger)
 	and $7f
@@ -4310,7 +4166,6 @@ setCutsceneIndexIfCutsceneTriggerSet:
 	ret
 
 ;;
-; @addr{5e4d}
 checkPlayRoomMusic:
 	ld a, GLOBALFLAG_INTRO_DONE
 	call checkGlobalFlag
@@ -4367,7 +4222,6 @@ checkPlayRoomMusic:
 .ifdef ROM_AGES
 ;;
 ; Seasons has a version of this function a bit higher up.
-; @addr{5e7d}
 checkDisplayEraOrSeasonInfo:
 	ld a,GLOBALFLAG_16
 	call checkGlobalFlag
@@ -4400,7 +4254,6 @@ checkDisplayEraOrSeasonInfo:
 ;
 ; In Ages, it's always $00 (green).
 ;
-; @addr{5e9e}
 updateGrassAnimationModifier:
 
 .ifdef ROM_AGES
@@ -4441,7 +4294,6 @@ updateGrassAnimationModifier:
 
 ;;
 ; @param c Index of preset to load into wDeathRespawnBuffer
-; @addr{5ea4}
 loadDeathRespawnBufferPreset:
 	push de
 	ld a,c
@@ -4486,7 +4338,6 @@ loadDeathRespawnBufferPreset:
 ; Seasons puts its implementation of this function at the end of the bank.
 ;
 ; @param[out]	zflag	nz if fadeout transition should occur
-; @addr{5edd}
 checkRoomPack:
 	ld a,(wActiveGroup)
 	cp $02
@@ -4518,7 +4369,6 @@ checkRoomPack:
 ; rooms. This is probably on purpose, so objects don't disappear right away, but it's
 ; inconsistent.
 ;
-; @addr{5f00}
 calculateRoomEdge:
 	ldbc SMALL_ROOM_HEIGHT*16, SMALL_ROOM_WIDTH*16
 	ld a,(wRoomIsLarge)
@@ -4535,7 +4385,6 @@ calculateRoomEdge:
 ;;
 ; Called after a screen transition, this calculates the new value for
 ; wActiveRoom.
-; @addr{5f13}
 updateActiveRoom:
 	ld a,(wDungeonIndex)
 	inc a
@@ -4571,7 +4420,6 @@ updateActiveRoom:
 ; current screen transition.
 ;
 ; @param[out]	cflag	Set on success.
-; @addr{5f45}
 getNextActiveRoom:
 	ld a,(wScrollMode)
 	and $04
@@ -4595,7 +4443,6 @@ getNextActiveRoom:
 .endif
 
 ;;
-; @addr{5f5f}
 screenTransitionStandard:
 	call clearEyePuzzleVars
 	call updateActiveRoom
@@ -4603,7 +4450,6 @@ screenTransitionStandard:
 	ret
 
 ;;
-; @addr{5f67}
 clearEyePuzzleVars:
 	xor a
 	ld (wLostWoodsTransitionCounter1),a
@@ -4686,7 +4532,6 @@ clearEyePuzzleVars:
 
 ;;
 ; Forest scrambler code
-; @addr{5f96}
 screenTransitionForestScrambler:
 	ld a, GLOBALFLAG_FOREST_UNSCRAMBLED
 	call checkGlobalFlag
@@ -4901,7 +4746,6 @@ screenTransitionOnoxDungeon:
 
 
 ;;
-; @addr{5feb}
 screenTransitionEyePuzzle:
 	ld a,(wScreenTransitionDirection)
 	and $03
@@ -4933,7 +4777,6 @@ screenTransitionEyePuzzle:
 	ret
 
 ;;
-; @addr{6016}
 updateSeedTreeRefillData:
 
 .ifdef ROM_AGES
@@ -4977,7 +4820,6 @@ updateSeedTreeRefillData:
 ; @param	b	Seed tree index (actually NUM_SEED_TREES - index)
 ; @param	c	Screen the seed tree is on
 ; @param	e	Group?
-; @addr{6056}
 _checkSeedTreeRefillIndex:
 	ld a,b
 	ldh (<hFF8D),a
@@ -5117,7 +4959,6 @@ _checkSeedTreeRefillIndex:
 .endif
 
 ;;
-; @addr{60b5}
 initializeSeedTreeRefillData:
 
 .ifdef ROM_AGES
@@ -5142,7 +4983,6 @@ initializeSeedTreeRefillData:
 	ret
 
 ;;
-; @addr{60cd}
 func_60cd:
 	ld a,(wLinkObjectIndex)
 	rrca
@@ -5166,7 +5006,6 @@ func_60cd:
 
 ;;
 ; Checks for warps?
-; @addr{60e9}
 func_60e9:
 	ld a,(wScrollMode)
 	or a
@@ -5231,7 +5070,6 @@ func_60e9:
 ;;
 ; @param	hFF8C	Tile Link is on
 ; @param	hFF8D	Position of tile Link is on
-; @addr{6143}
 _checkWarpsTopDown:
 	call _checkTileWarps
 	ret c
@@ -5243,7 +5081,6 @@ _checkWarpsTopDown:
 ;;
 ; @param	hFF8C	Tile Link is on
 ; @param	hFF8D	Position of tile Link is on
-; @addr{614d}
 _checkWarpsSidescrolling:
 	call _checkScreenEdgeWarps
 	ret nc
@@ -5259,7 +5096,6 @@ _initiateScreenEdgeWarp:
 	ld (wWarpTransition),a
 
 ;;
-; @addr{6163}
 _initiateWarp:
 	ld a,$00
 	ld (wScrollMode),a
@@ -5275,7 +5111,6 @@ _initiateWarp:
 ; So, touching the tile is not quite enough; Link needs to be close enough to the center?
 ;
 ; @param[out]	cflag	Set if Link's close enough to the tile's center.
-; @addr{6174}
 _checkLinkCloseEnoughToWarpTileCenter:
 	ld h,LINK_OBJECT_INDEX
 	ldh a,(<hFF8D)
@@ -5301,7 +5136,6 @@ _checkLinkCloseEnoughToWarpTileCenter:
 
 ;;
 ; @param[out]	cflag
-; @addr{618f}
 @func_618f:
 	ld a,(hl)
 	add b
@@ -5312,7 +5146,6 @@ _checkLinkCloseEnoughToWarpTileCenter:
 
 ;;
 ; @param[out]	cflag	Set to indicate a warp has occurred.
-; @addr{6198}
 _warpInitiated:
 	ld a,$01
 	ld (wDisableLinkCollisionsAndMenu),a
@@ -5321,7 +5154,6 @@ _warpInitiated:
 
 ;;
 ; @param[out]	cflag	Unset to indicate no warp has occurred.
-; @addr{619f}
 _noWarpInitiated:
 	xor a
 	ret
@@ -5330,7 +5162,6 @@ _noWarpInitiated:
 ; Check for warps initiated by touching certain tiles (ie. stairs).
 ;
 ; @param[out]	cflag	Set if a warp has occurred.
-; @addr{61a1}
 _checkTileWarps:
 	ld a,(wLinkObjectIndex)
 	ld h,a
@@ -5385,7 +5216,6 @@ _checkTileWarps:
 ; Checks if a tile to the left or right is a warp tile.
 ;
 ; @param[out]	cflag	Set if one of the adjacent tiles (left/right) is a warp tile
-; @addr{61d2}
 @checkAdjacentTileIsWarpTile:
 	ldh a,(<hFF8D)
 	inc a
@@ -5445,7 +5275,6 @@ _checkTileWarps:
 ; prevents warps from occurring if this is the case.
 ;
 ; @param[out]	cflag	Set if the game may proceed to check for warps
-; @addr{61fd}
 _checkStandingOnDeactivatedWarpTile:
 	scf
 	ld a,(wEnteredWarpPosition)
@@ -5476,7 +5305,6 @@ _checkStandingOnDeactivatedWarpTile:
 
 ;;
 ; @param[out]	cflag	Set if warp activated
-; @addr{621a}
 _checkScreenEdgeWarps:
 	ld a,$ff
 	ld (wTmpcec0),a
@@ -5489,7 +5317,6 @@ _checkScreenEdgeWarps:
 ;;
 ; @param	a	Tile index
 ; @param[out]	cflag	Set if this tile is a warp tile.
-; @addr{6232}
 checkTileIsWarpTile:
 	ld hl,_warpTileTable
 	jp lookupCollisionTable
@@ -5615,7 +5442,6 @@ _warpTileTable:
 .ifdef ROM_AGES
 ;;
 ; CUTSCENE_FAIRIES_HIDE
-; @addr{7b6e}
 cutscene13:
 	callab func_03_6103
 	call func_1613
@@ -5623,7 +5449,6 @@ cutscene13:
 
 ;;
 ; CUTSCENE_BOOTED_FROM_PALACE
-; @addr{7b7c}
 cutscene14:
 	callab func_03_6275
 	call func_1613
@@ -5633,13 +5458,11 @@ cutscene14:
 .endif
 
 ;;
-; @addr{7b8d}
 linkSummonedCutscene:
 	call func_7b93
 	jp updateAllObjects
 
 ;;
-; @addr{7b93}
 func_7b93:
 	ld a,(wCutsceneIndex)
 	rst_jumpTable
@@ -5873,14 +5696,12 @@ checkRoomPackAfterWarp_body:
 .else ; ROM_AGES
 
 ;;
-; @addr{7c65}
 updateLastToggleBlocksState:
 	ld a,(wToggleBlocksState)
 	ld (wLastToggleBlocksState),a
 	ret
 
 ;;
-; @addr{7c6c}
 checkUpdateToggleBlocks:
 	call checkDungeonUsesToggleBlocks
 	ret z
@@ -5900,7 +5721,6 @@ checkUpdateToggleBlocks:
 
 ;;
 ; CUTSCENE_BLACK_TOWER_ESCAPE_ATTEMPT
-; @addr{7f15}
 cutscene1f:
 	callab func_03_7cb7
 	call updateStatusBar

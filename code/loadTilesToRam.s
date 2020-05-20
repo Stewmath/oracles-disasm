@@ -1,7 +1,6 @@
 ;;
 ; Generate the buffers at w3VramTiles and w3VramAttributes based on the tiles
 ; loaded in wRoomLayout.
-; @addr{6bf1}
 generateW3VramTilesAndAttributes:
 	ld a,:w3VramTiles
 	ld ($ff00+R_SVBK),a
@@ -37,7 +36,6 @@ generateW3VramTilesAndAttributes:
 
 ;;
 ; Take 4 bytes from hl, write 2 to de, write the next 2 $20 bytes later.
-; @addr{6c23}
 write4BytesToVramLayout:
 	ldi a,(hl)
 	ld (de),a
@@ -58,7 +56,6 @@ write4BytesToVramLayout:
 ; This updates up to 4 entries in w2ChangedTileQueue by writing a command to the vblank
 ; queue.
 ;
-; @addr{6c32}
 updateChangedTileQueue:
 	ld a,(wScrollMode)
 	and $0e
@@ -78,7 +75,6 @@ updateChangedTileQueue:
 	ret
 
 ;;
-; @addr{6c46}
 @handleSingleEntry:
 	ld a,(wChangedTileQueueHead)
 	ld b,a
@@ -137,7 +133,6 @@ updateChangedTileQueue:
 ;;
 ; @param	c	Tile index
 ; @param[out]	de	Address of tile c's top-left subtile in w3VramTiles
-; @addr{6c89}
 getVramSubtileAddressOfTile:
 	ld a,c
 	swap a
@@ -186,7 +181,6 @@ getVramSubtileAddressOfTile:
 ; @param	hFF8C	Position of tile to change
 ; @param	hFF8F	Tile index 1
 ; @param	hFF8E	Tile index 2
-; @addr{6cb3}
 setInterleavedTile_body:
 	ldh (<hFF8B),a
 
@@ -258,7 +252,6 @@ setInterleavedTile_body:
 	jr @queueWrite
 
 ;;
-; @addr{6d0f}
 @copy2BytesSeparated:
 	ldi a,(hl)
 	ld (de),a
@@ -273,7 +266,6 @@ setInterleavedTile_body:
 ;;
 ; @param	hFF8C	The position of the tile to refresh
 ; @param	$cec8	The data to write for that tile
-; @addr{6d18}
 @queueWrite:
 	ldh a,(<hFF8C)
 	ld hl,$cec8
@@ -288,7 +280,6 @@ setInterleavedTile_body:
 ; @param	a	Tile position
 ; @param	hl	Pointer to 8 bytes of tile data (usually somewhere in
 ;			w3TileMappingData)
-; @addr{6d24}
 queueTileWriteAtVBlank:
 	push hl
 	call @getTilePositionInVram
@@ -330,7 +321,6 @@ queueTileWriteAtVBlank:
 	ret
 
 ;;
-; @addr{6d4d}
 @copy2Bytes:
 	ldi a,(hl)
 	ld (de),a
@@ -344,7 +334,6 @@ queueTileWriteAtVBlank:
 ; @param	a	Tile position
 ; @param[out]	a	Same as 'e'
 ; @param[out]	de	Somewhere in the vram bg map
-; @addr{6d54}
 @getTilePositionInVram:
 	ld e,a
 	and $f0

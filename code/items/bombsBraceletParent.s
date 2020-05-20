@@ -1,6 +1,5 @@
 ;;
 ; ITEMID_BOMBCHUS ($0d)
-; @addr{502e}
 _parentItemCode_bombchu:
 	ld e,Item.state
 	ld a,(de)
@@ -37,7 +36,6 @@ _parentItemCode_bombchu:
 
 ;;
 ; ITEMID_BOMB ($03)
-; @addr{505a}
 _parentItemCode_bomb:
 	ld e,Item.state
 	ld a,(de)
@@ -94,7 +92,6 @@ _parentItemCode_bomb:
 ; Makes Link pick up a bomb object if such an object exists and Link's touching it.
 ;
 ; @param[out]	zflag	Unset if a bomb was picked up
-; @addr{50ad}
 _tryPickupBombs:
 	; Return if Link's using something?
 	ld a,(wLinkUsingItem1)
@@ -131,7 +128,6 @@ _tryPickupBombs:
 
 ;;
 ; @param	h	Object to make Link pick up
-; @addr{50d3}
 _makeLinkPickupObjectH:
 	ld l,Item.enabled
 	set 1,(hl)
@@ -152,7 +148,6 @@ _makeLinkPickupObjectH:
 ; Bracelet's code is also heavily used by bombs.
 ;
 ; ITEMID_BRACELET ($16)
-; @addr{50e6}
 _parentItemCode_bracelet:
 	ld e,Item.state
 	ld a,(de)
@@ -471,7 +466,6 @@ _parentItemCode_bracelet:
 	jr @dropAndDeleteSelf
 
 ;;
-; @addr{5294}
 @deleteAndRetIfSwimmingOrGrabState0:
 	ld a,(wLinkSwimmingState)
 	or a
@@ -489,7 +483,6 @@ _parentItemCode_bracelet:
 ;;
 ; @param[out]	bc	Y/X of tile Link is grabbing
 ; @param[out]	zflag	Set if Link is directly facing a wall
-; @addr{52a6}
 @checkWallInFrontOfLink:
 	ld a,(w1Link.direction)
 	ld b,a

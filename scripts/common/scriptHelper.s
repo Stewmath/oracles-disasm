@@ -256,7 +256,6 @@ doorController_checkEnoughTorchesLit:
 ; ==============================================================================
 
 ;;
-; @addr{411c}
 shopkeeper_take10Rupees:
 	ld a,RUPEEVAL_10
 	jp removeRupeeValue
@@ -266,7 +265,6 @@ shopkeeper_take10Rupees:
 ;;
 ; Located elsewhere in Ages
 ; @param	d	Interaction index (should be of type INTERACID_TREASURE)
-; @addr{451e}
 interactionLoadTreasureData:
 	ld e,Interaction.subid
 	ld a,(de)
@@ -338,7 +336,6 @@ createBossDeathExplosion:
 
 ;;
 ; The moving platform has a custom "script format".
-; @addr{4121}
 movingPlatform_loadScript:
 	ld a,(wDungeonIndex)
 	ld b,a
@@ -487,7 +484,6 @@ movingPlatform_runScript:
 	jr @opcode01
 
 ;;
-; @addr{41b6}
 _movingPlatform_setScript:
 	ld e,Interaction.scriptPtr
 	ld a,l
@@ -504,14 +500,12 @@ _movingPlatform_setScript:
 ; ==============================================================================
 
 ;;
-; @addr{4248}
 essence_createEnergySwirl:
 	call objectGetPosition
 	ld a,$ff
 	jp createEnergySwirlGoingIn
 
 ;;
-; @addr{4250}
 essence_stopEnergySwirl:
 	ld a,$01
 	ld (wDeleteEnergyBeads),a
@@ -522,7 +516,6 @@ essence_stopEnergySwirl:
 ; ==============================================================================
 
 ;;
-; @addr{4256}
 vasu_giveRingBox:
 	call getFreeInteractionSlot
 	ldbc TREASURE_RING_BOX, $00
@@ -541,7 +534,6 @@ vasu_giveRingBox:
 
 ;;
 ; @param	a	$00 to display unappraised rings, $01 for appraised ring list
-; @addr{426e}
 vasu_openRingMenu:
 	ld (wRingMenu_mode),a
 	ld a,$01
@@ -550,13 +542,11 @@ vasu_openRingMenu:
 	jp openMenu
 
 ;;
-; @addr{427b}
 redSnake_openSecretInputMenu:
 	ld a,$02
 	jp openSecretInputMenu
 
 ;;
-; @addr{4280}
 redSnake_generateRingSecret:
 	ld a,GLOBALFLAG_RING_SECRET_GENERATED
 	call setGlobalFlag
@@ -564,7 +554,6 @@ redSnake_generateRingSecret:
 	jp secretFunctionCaller
 
 ;;
-; @addr{428b}
 blueSnake_linkOrFortune:
 	ld e,Interaction.state
 	ld a,$05
@@ -596,7 +585,6 @@ blueSnake_linkOrFortune:
 ;;
 ; Checks for 1000 enemies ring, 1000 rupee ring, victory ring. Writes a value to var3b
 ; indicating the action to be taken, and a ring index to var3a if applicable.
-; @addr{42b2}
 vasu_checkEarnedSpecialRing:
 	ld a,GLOBALFLAG_1000_ENEMIES_KILLED
 	call @checkFlagSet
@@ -646,7 +634,6 @@ vasu_checkEarnedSpecialRing:
 	ret
 
 ;;
-; @addr{42ed}
 vasu_giveFriendshipRing:
 	ld a,FRIENDSHIP_RING
 	jr ++

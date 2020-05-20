@@ -7,7 +7,6 @@
 ;;
 ; @param a Command to execute
 ; @param hl Current address of script
-; @addr{4000}
 runScriptCommand:
 	bit 7,a
 	jp z,_scriptCmd_jump2byte
@@ -141,23 +140,19 @@ runScriptCommand:
 	.dw _scriptCmd_delay ; 0xfc
 
 ;;
-; @addr{4103}
 _scriptCmd_none:
 	pop hl
 	ret
 
 ;;
-; @addr{4105}
 _scriptCmd_stopIfItemFlagSet:
 	ld b,ROOMFLAG_ITEM
 	jr _scriptFunc_checkRoomFlag
 ;;
-; @addr{4109}
 _scriptCmd_stopIfRoomFlag40Set:
 	ld b,ROOMFLAG_40
 	jr _scriptFunc_checkRoomFlag
 ;;
-; @addr{410d}
 _scriptCmd_stopIfRoomFlag80Set:
 	ld b,ROOMFLAG_80
 _scriptFunc_checkRoomFlag:
@@ -170,7 +165,6 @@ _scriptFunc_checkRoomFlag:
 	ret
 
 ;;
-; @addr{411c}
 _scriptCmd_showPasswordScreen:
 	pop hl
 	inc hl
@@ -197,18 +191,15 @@ _scriptCmd_showPasswordScreen:
 .endif
 
 ;;
-; @addr{4132}
 @askForSecret:
 	ld a,b
 	or $80
 ;;
-; @addr{4135}
 @openSecretMenu:
 	call openSecretInputMenu
 	jr ++
 
 ;;
-; @addr{413a}
 @generateSecret:
 	ld a,b
 	ld (wShortSecretIndex),a
@@ -220,7 +211,6 @@ _scriptCmd_showPasswordScreen:
 	ret
 
 ;;
-; @addr{4147}
 _scriptCmd_disableInput:
 	ld a,$81
 	ld (wDisabledObjects),a
@@ -237,7 +227,6 @@ _scriptFunc_popHlAndInc:
 	ret
 
 ;;
-; @addr{415e}
 _scriptCmd_enableInput:
 	xor a
 	ld (wDisabledObjects),a
@@ -255,18 +244,15 @@ _scriptFunc_setLinkCantMove:
 	ret
 
 ;;
-; @addr{4170}
 _scriptCmd_setLinkCantMoveTo00:
 	xor a
 	jr _scriptFunc_setLinkCantMove
 ;;
-; @addr{4173}
 _scriptCmd_setLinkCantMoveTo11:
 	ld a,$11
 	jr _scriptFunc_setLinkCantMove
 
 ;;
-; @addr{4177}
 _func_0c_4177:
 	push hl
 	ld a,(wLinkObjectIndex)
@@ -279,13 +265,11 @@ _func_0c_4177:
 	ret
 
 ;;
-; @addr{4186}
 _scriptCmd_setState:
 	pop hl
 	inc hl
 	ld e,Interaction.state
 ;;
-; @addr{418a}
 _scriptFunc_setState:
 	ldi a,(hl)
 	cp $ff
@@ -302,7 +286,6 @@ _scriptFunc_setState:
 	ret
 
 ;;
-; @addr{4197}
 _scriptCmd_setState2:
 	pop hl
 	inc hl
@@ -311,7 +294,6 @@ _scriptCmd_setState2:
 
 ;;
 ; This is for all commands under $80.
-; @addr{419d}
 _scriptCmd_jump2byte:
 
 .ifdef ROM_AGES
@@ -344,7 +326,6 @@ _scriptCmd_jump2byte:
 	ret
 
 ;;
-; @addr{41ba}
 _scriptCmd_spawnInteraction:
 	pop hl
 	inc hl
@@ -363,7 +344,6 @@ _scriptFunc_restoreActiveObject:
 
 ;;
 ; Loads bc and de from hl (bc first, de second, big-endian).
-; @addr{41cf}
 _scriptFunc_loadBcAndDe:
 	ldi a,(hl)
 	ld b,a
@@ -380,7 +360,6 @@ _scriptFunc_loadBcAndDe:
 ; @param[in] bc ID of the object
 ; @param[in] de YX coordinates
 ; @param[in] hl Address of object
-; @addr{41d8}
 _scriptFunc_initializeObject:
 	ld (hl),b
 	inc l
@@ -394,7 +373,6 @@ _scriptFunc_initializeObject:
 	ret
 
 ;;
-; @addr{41e2}
 _scriptCmd_spawnEnemy:
 	pop hl
 	inc hl
@@ -601,7 +579,6 @@ _scriptCmd_runGenericNpc:
 	ret
 
 ;;
-; @addr{42c8}
 _scriptFunc_getTextIndex:
 	ld e,Interaction.useTextID
 	ld a,(de)
@@ -1335,6 +1312,5 @@ _scriptCmd_delay:
 	ld a,(bc)
 	jp _scriptFunc_4310
 
-; @addr{45e2}
 @delayLengths:
 	.db 1 4 8 10 15 20 30 40 60 90 120 180 240

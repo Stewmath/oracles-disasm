@@ -3,7 +3,6 @@
 ; Garbage function follows (partial repeat of the last function)
 
 ;;
-; @addr{7f64}
 func_11_7f64:
 	call $20ef
 	ld h,$cf

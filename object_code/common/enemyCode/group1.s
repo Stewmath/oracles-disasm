@@ -841,7 +841,6 @@ enemyCode0b:
 
 ;;
 ; Updates position, checks for collision with wall (or hole).
-; @addr{48e5}
 @updatePosition:
 	ld a,$01 ; Set to $01 to treat holes as walls
 	call _ecom_getTopDownAdjacentWallsBitset
@@ -854,7 +853,6 @@ enemyCode0b:
 ;			otherwise it spawns in a completely random position.
 ; @param[out]	c	Position
 ; @param[out]	zflag	z if a valid position was returned
-; @addr{48f3}
 @chooseSpawnPosition:
 	ld a,b
 	or a
@@ -1134,7 +1132,6 @@ _arrowDarknut_fireArrowEveryOtherTime:
 
 ;;
 ; Sets random angle and counter, and goes to state 8.
-; @addr{4a5a}
 _arrowDarknut_setState8WithRandomAngleAndCounter:
 	call getRandomNumber_noPreserveVars
 	and $3f
@@ -1148,7 +1145,6 @@ _arrowDarknut_setState8WithRandomAngleAndCounter:
 
 ;;
 ; 1-in-4 chance of turning to face Link directly, otherwise turns in a random direction.
-; @addr{4a6c}
 _arrowDarknut_chooseAngle:
 	call getRandomNumber_noPreserveVars
 	and $03
@@ -1327,7 +1323,6 @@ enemyCode0d:
 
 ;;
 ; The lynel turns, and if Link is in its sights, it charges.
-; @addr{4b61}
 @updateAngleAndSpeed:
 	call @chooseNewAngle
 	ld b,$0e
@@ -1352,7 +1347,6 @@ enemyCode0d:
 
 ;;
 ; @param	b	0 if walking, 4 if running (value to add to animation)
-; @addr{4b83}
 @updateAnimationFromAngle:
 	ld h,d
 	ld l,Enemy.angle
@@ -1368,7 +1362,6 @@ enemyCode0d:
 ;;
 ; Chooses a new angle; var30 sets the probability that it will turn to face Link instead
 ; of just a random direction.
-; @addr{4b91}
 @chooseNewAngle:
 	call getRandomNumber_noPreserveVars
 	ld h,d
@@ -1733,7 +1726,6 @@ _bladeTrap_subid05:
 
 ;;
 ; Only for subids 3-4 (circular traps)
-; @addr{4d36}
 bladeTrap_updateAngle:
 	ld e,Enemy.subid
 	ld a,(de)
@@ -1743,7 +1735,6 @@ bladeTrap_updateAngle:
 	jp _bladeTrap_incAngle
 
 ;;
-; @addr{4d43}
 _bladeTrap_initCircular:
 	call getRandomNumber_noPreserveVars
 	and $1f
@@ -1787,7 +1778,6 @@ _bladeTrap_directionOffsets:
 ;;
 ; @param[out]	zflag	z if there are no obstructions (solid tiles) between trap and
 ;			target
-; @addr{4d75}
 _bladeTrap_checkObstructionsToTarget:
 	ld h,d
 	ld l,Enemy.yh
@@ -1838,7 +1828,6 @@ _bladeTrap_checkObstructionsToTarget:
 ; @param	d	>wRoomCollisions
 ; @param	hl	Value to add to bc each time (direction offset)
 ; @param[out]	zflag	nz if tile is solid
-; @addr{4dad}
 @checkNextTileSolid:
 	ld a,b
 	add h
@@ -1860,7 +1849,6 @@ _bladeTrap_checkObstructionsToTarget:
 ; @param	bc	Enemy position
 ; @param	hl	Enemy angle
 ; @param[out]	hFF8B	Number of tiles between enemy and target
-; @addr{4dbf}
 @getNumTilesToTarget:
 	ld e,b
 	ldh a,(<hEnemyTargetY)
@@ -1889,7 +1877,6 @@ _bladeTrap_checkObstructionsToTarget:
 ; @param	b	How close Link must be (on the orthogonal axis relative to the
 ;			attack) before the trap can attack
 ; @param[out]	cflag	c if Link is in range
-; @addr{4dd8}
 _bladeTrap_checkLinkAligned:
 	ld c,b
 	sla c
@@ -1925,14 +1912,12 @@ _bladeTrap_checkLinkAligned:
 	ret
 
 ;;
-; @addr{4e01}
 _bladeTrap_incAngle:
 	ld a,(de)
 	inc a
 	jr ++
 
 ;;
-; @addr{4e05}
 _bladeTrap_decAngle:
 	ld a,(de)
 	dec a
@@ -2312,7 +2297,6 @@ _rope_subid03:
 
 ;;
 ; Chooses random new angle, random value for counter1.
-; @addr{4fc7}
 _rope_changeDirection:
 	ldbc $18,$70
 	call _ecom_randomBitwiseAndBCE
@@ -2325,7 +2309,6 @@ _rope_changeDirection:
 	ld (de),a
 
 ;;
-; @addr{4fd7}
 _rope_updateAnimationFromAngle:
 	ld h,d
 	ld l,Enemy.angle
@@ -2344,7 +2327,6 @@ _rope_updateAnimationFromAngle:
 	jp enemySetAnimation
 
 ;;
-; @addr{4feb}
 _rope_animate:
 	ld h,d
 	ld l,Enemy.animCounter
@@ -2358,7 +2340,6 @@ _rope_animate:
 	jp enemyAnimate
 
 ;;
-; @addr{4ff9}
 _rope_checkHazardsIfApplicable:
 	ld h,d
 	ld l,Enemy.var30
@@ -2638,7 +2619,6 @@ _whisp_state8:
 ;;
 ; Updates the spark's moving angle by checking for walls, updating angle appropriately.
 ; Sparks move by hugging walls.
-; @addr{514b}
 _spark_updateAngle:
 	ld a,$01
 	ldh (<hFF8A),a
@@ -2680,7 +2660,6 @@ _spark_updateAngle:
 ;;
 ; @param[out]	a	Angle relative to enemy where wall is (only valid if cflag is set)
 ; @param[out]	cflag	c if there is a wall in any direction, nc otherwise
-; @addr{5178}
 _spark_getWallAngle:
 	xor a
 	call _spark_checkWallInDirection
@@ -2699,7 +2678,6 @@ _spark_getWallAngle:
 ; @param[out]	a	A value from 0-7, indicating the offset within a quarter-tile the
 ;			whisp is at. When this is 0, it needs to check for a direction
 ;			change?
-; @addr{518d}
 _spark_getTileOffset:
 	ld e,Enemy.angle
 	ld a,(de)
@@ -2718,7 +2696,6 @@ _spark_getTileOffset:
 ;;
 ; @param	a	Angle to check
 ; @param[out]	cflag	c if there's a solid wall in that direction
-; @addr{51a0}
 _spark_checkWallInDirection:
 	and $18
 	rrca
@@ -2990,7 +2967,6 @@ enemyCode14:
 
 ;;
 ; Angle and counter1 are set randomly (counter1 is between $30-$60, in increments of $10).
-; @addr{52ff}
 @setRandomAngleAndCounter1:
 	ldbc $18,$30
 	call _ecom_randomBitwiseAndBCE
@@ -3004,7 +2980,6 @@ enemyCode14:
 	ret
 
 ;;
-; @addr{5310}
 @chargeLink:
 	call _ecom_updateCardinalAngleTowardTarget
 	ld h,d
@@ -3017,7 +2992,6 @@ enemyCode14:
 	ret
 
 ;;
-; @addr{5321}
 @incSpeed:
 	ld e,Enemy.counter2
 	ld a,(de)
@@ -3093,7 +3067,6 @@ enemyCode15:
 	jp enemyAnimate
 
 ;;
-; @addr{5383}
 @chooseNewDirection:
 	ldbc $07,$18
 	call _ecom_randomBitwiseAndBCE
@@ -3106,7 +3079,6 @@ enemyCode15:
 
 ;;
 ; @param[out]	zflag	z if centered
-; @addr{5390}
 @checkCenteredOnTile:
 	ld h,d
 	ld l,Enemy.yh
@@ -3192,7 +3164,6 @@ enemyCode16:
 
 ;;
 ; Increments angle every 5 frames.
-; @addr{53f1}
 @updateAngle:
 	call _ecom_decCounter1
 	ret nz
@@ -3216,7 +3187,6 @@ enemyCode16:
 	.db $06 $06 $07 $07 $07 $07 $07 $00
 
 ;;
-; @addr{5426}
 @checkFireBeam:
 	call objectGetAngleTowardEnemyTarget
 	ld h,d
@@ -3580,7 +3550,6 @@ _ghini_subid02:
 
 ;;
 ; Sets speed, where it's higher if counter1 is lower.
-; @addr{55de}
 _ghini_updateMovementAndSetSpeedFromCounter1:
 	call _ghini_updateMovement
 	ld e,Enemy.counter1
@@ -3605,14 +3574,12 @@ _ghini_updateMovementAndSetSpeedFromCounter1:
 	.db SPEED_80, SPEED_40, SPEED_20
 
 ;;
-; @addr{55fe}
 _ghini_updateMovement:
 	call objectApplySpeed
 	call _ecom_bounceOffScreenBoundary
 	ret z
 
 ;;
-; @addr{5605}
 _ghini_updateAnimationFromAngle:
 	ld h,d
 	ld l,Enemy.angle
@@ -3633,7 +3600,6 @@ _ghini_updateAnimationFromAngle:
 ; Target position seems to always be somewhere around the center of the room, even moreso
 ; for large rooms.
 ;
-; @addr{5616}
 _ghini_chooseTargetPosition:
 	ldbc $70,$70
 	call _ecom_randomBitwiseAndBCE
@@ -3826,7 +3792,6 @@ _buzzblob_chooseNewDirection:
 	jr _buzzblob_animate
 
 ;;
-; @addr{5701}
 _buzzblob_checkShowText:
 	ld e,Enemy.var31
 	ld a,(de)
@@ -4167,7 +4132,6 @@ enemyCode1b:
 ; collisiosRadius, visibility, and sets state to $0a
 ;
 ; @param[out]	zflag	z if the object it's hiding under is gone
-; @addr{588f}
 @checkBushOrRockGone:
 	ld e,Enemy.relatedObj2+1
 	ld a,(de)
@@ -4375,7 +4339,6 @@ _armos_subid00_stateA:
 
 ;;
 ; @param	a	EnemyCollisionMode
-; @addr{5975}
 _armos_beginMoving:
 	ld l,e
 	inc (hl) ; [state] = $0b
@@ -4515,7 +4478,6 @@ _armos_subid03_stateC:
 
 ;;
 ; @param	l	Position to spawn at
-; @addr{5a15}
 _armos_spawnArmosAtPosition:
 	push bc
 	push hl
@@ -4554,7 +4516,6 @@ _armos_spawnArmosAtPosition:
 	ret
 
 ;;
-; @addr{5a3d}
 _armos_dead:
 	ld e,Enemy.subid
 	ld a,(de)
@@ -4575,7 +4536,6 @@ _armos_dead:
 	jp enemyDie
 
 ;;
-; @addr{5a54}
 _armos_clearKilledArmosBuffer:
 	ld hl,wTmpcfc0.armosStatue.killedArmosPositions
 	xor a
@@ -4591,7 +4551,6 @@ _armos_clearKilledArmosBuffer:
 
 ;;
 ; Replace the tile underneath the armos with [var30].
-; @addr{5a62}
 _armos_replaceTileUnderSelf:
 	call objectGetTileAtPosition
 	ld c,l
@@ -4743,7 +4702,6 @@ _fish_subid00:
 
 
 ;;
-; @addr{5b1d}
 _fish_enterWater:
 	ld h,d
 	ld l,Enemy.enemyCollisionMode
@@ -4776,7 +4734,6 @@ _fish_subid01:
 
 ;;
 ; @param	cflag	c if we were able to move
-; @addr{5b43}
 _fish_checkReverseAngle:
 	ret c
 	ld e,Enemy.angle
@@ -4785,7 +4742,6 @@ _fish_checkReverseAngle:
 	ld (de),a
 
 ;;
-; @addr{5b4a}
 _fish_updateAnimationFromAngle:
 	ld e,Enemy.angle
 	ld a,(de)
@@ -4808,7 +4764,6 @@ _fish_updateAnimationFromAngle:
 ; Sets animation (3 or 5 is added to value passed if we're moving right or left)
 ;
 ; @param	b	Value to add to animation index
-; @addr{5b62}
 _fish_setAnimation:
 	ld e,Enemy.angle
 	ld a,(de)
@@ -4829,7 +4784,6 @@ _fish_setAnimation:
 
 ;;
 ; @param[out]	cflag	c if we were able to move (tile in front of us is traversable)
-; @addr{5b79}
 _fish_updatePosition:
 	ld e,Enemy.angle
 	ld a,(de)
@@ -4869,7 +4823,6 @@ _fish_updatePosition:
 	.db $00 $f0
 
 ;;
-; @addr{5ba9}
 _fish_setRandomCounter1:
 	call getRandomNumber_noPreserveVars
 	and $03
@@ -4890,7 +4843,6 @@ _fish_setRandomCounter1:
 ; This is identical to "_waterTektite_getAdjacentWallsBitsetGivenAngle".
 ;
 ; @param[out]	hFF8B	Bitset of adjacent walls
-; @addr{5bbb}
 _fish_getAdjacentWallsBitsetForKnockback:
 	ld e,Enemy.knockbackAngle
 	ld a,(de)
@@ -5063,7 +5015,6 @@ _polsVoice_setLandedAnimation:
 ;;
 ; @param	a	Enemy status
 ; @param[out]	a	Updated enemy status
-; @addr{5c8d}
 _polsVoice_checkLinkPlayingInstrument:
 	ld b,a
 	ld a,(wLinkPlayingInstrument)
@@ -5328,7 +5279,6 @@ _likelike_stateB:
 	call objectSetVisiblec2
 
 ;;
-; @addr{5dc7}
 _likelike_releaseLink:
 	; Release link from LINK_STATE_GRABBED
 	ld hl,w1Link.state2
@@ -5545,7 +5495,6 @@ _likelike_subid03:
 ; the spawner.
 ;
 ; @param	e	Subid of like-like to spwan
-; @addr{5ec9}
 _likelike_spawn:
 	ld b,ENEMYID_LIKE_LIKE
 	call _ecom_spawnEnemyWithSubid01
@@ -5560,7 +5509,6 @@ _likelike_spawn:
 
 ;;
 ; @param	c	Index of spawn position to use
-; @addr{5ed8}
 _likelike_setChildSpawnPosition:
 	push hl
 	ld a,c
@@ -5585,7 +5533,6 @@ _likelike_setChildSpawnPosition:
 ;;
 ; Searches for all existing like-likes with subid 0, sets their relatedObj1 to point to
 ; this object (the spawner), and stores the current like-like count in var30.
-; @addr{5ef1}
 _likelike_findAllLikelikesWithSubid0:
 	ldhl FIRST_ENEMY_INDEX, Enemy.id
 	ld c,$00
@@ -5622,7 +5569,6 @@ _likelike_findAllLikelikesWithSubid0:
 ; Z position is also set to be above the screen.
 ;
 ; @param[out]	zflag	z if chose valid position
-; @addr{5f14}
 _likelike_chooseRandomPosition:
 	call getRandomNumber_noPreserveVars
 	and $77
@@ -5640,7 +5586,6 @@ _likelike_chooseRandomPosition:
 
 
 ;;
-; @addr{5f2a}
 _likelike_checkHazards:
 	push af
 	ld a,(w1Link.state)
@@ -5989,7 +5934,6 @@ _dekuScrub_stateD:
 
 
 ;;
-; @addr{60c5}
 _dekuScrub_hideInBush:
 	ld h,d
 	ld l,Enemy.state
@@ -6021,7 +5965,6 @@ _dekuScrub_fireAnimations:
 
 ;;
 ; @param[out]	zflag	z if spawned bus successfully
-; @addr{6100}
 _dekuScrub_spawnBush:
 	ld b,ENEMYID_BUSH_OR_ROCK
 	call _ecom_spawnUncountedEnemyWithSubid01
@@ -6351,7 +6294,6 @@ _wallmaster_stateD:
 
 ;;
 ; Flickers visibility if very high up (zh < $b8)
-; @addr{6275}
 _wallmaster_flickerVisibilityIfHighUp:
 	ld e,Enemy.zh
 	ld a,(de)
@@ -6503,7 +6445,6 @@ _podoboo_stateC:
 
 
 ;;
-; @addr{631e}
 _podoboo_spawnLavaParticleEvery16Frames:
 	call _ecom_decCounter1
 	ld a,(hl)
@@ -6511,7 +6452,6 @@ _podoboo_spawnLavaParticleEvery16Frames:
 	ret nz
 
 ;;
-; @addr{6325}
 _podoboo_spawnLavaParticle:
 	ld b,ENEMYID_PODOBOO
 	call _ecom_spawnUncountedEnemyWithSubid01
@@ -6527,7 +6467,6 @@ _podoboo_spawnLavaParticle:
 ;;
 ; Makes a splash, sets animation and speed, enables collisions for when the splash has
 ; just spawned, sets state to 9.
-; @addr{6335}
 _podoboo_beginMovingUp:
 	call _podoboo_makeLavaSplash
 	ret nz
@@ -6552,7 +6491,6 @@ _podoboo_beginMovingUp:
 
 ;;
 ; @param[out]	zflag	z if created successfully
-; @addr{6354}
 _podoboo_makeLavaSplash:
 	ldbc INTERACID_LAVASPLASH,$01
 	jp objectCreateInteraction
@@ -6565,7 +6503,6 @@ _podoboo_counter1Vals:
 
 ;;
 ; @param[out]	zflag	z if returned to original position.
-; @addr{635e}
 _podoboo_updatePosition:
 	ld h,d
 	ld l,Enemy.speedZ
@@ -6836,7 +6773,6 @@ _giantBladeTrap_subid03_stateA:
 
 ;;
 ; Subid 1 only; check all directions, choose which way to go.
-; @addr{6480}
 _giantBladeTrap_chooseInitialAngle:
 	call _giantBladeTrap_checkCanMoveInDirection
 	ld a,ANGLE_RIGHT
@@ -6865,7 +6801,6 @@ _giantBladeTrap_chooseInitialAngle:
 ; blocked by solid tiles directly ahead).
 ;
 ; @param[out]	zflag	z if it can move in this direction.
-; @addr{64a0}
 _giantBladeTrap_checkCanMoveInDirection:
 	ld e,Enemy.yh
 	ld a,(de)
@@ -6892,7 +6827,6 @@ _giantBladeTrap_checkCanMoveInDirection:
 ; @param	bc	Position
 ; @param	hl	Pointer to position offsets
 ; @param[out]	zflag	z if tile is solid
-; @addr{64bd}
 @checkTileAtOffsetSolid:
 	ldi a,(hl)
 	add b
@@ -6916,7 +6850,6 @@ _giantBladeTrap_checkCanMoveInDirection:
 
 ;;
 ; Decrements counter1 and uses its value to determine speed. Lower values = higher speed.
-; @addr{64dd}
 _giantBladeTrap_updateSpeed:
 	ld e,Enemy.counter1
 	ld a,(de)
@@ -7242,7 +7175,6 @@ enemyCode2d:
 ; ground.
 ;
 ; @param	a	Index of data to read (multiple of 3)
-; @addr{6649}
 @updateCollisionRadiiAndYPosition:
 	sub $03
 	ld hl,@data
@@ -7276,7 +7208,6 @@ enemyCode2d:
 	.db $12 $04 $f2
 
 ;;
-; @addr{6671}
 @decCounter2Every4Frames:
 	ld a,(wFrameCounter)
 	and $03
@@ -7572,7 +7503,6 @@ _thwomp_stateB:
 ;
 ; @param	bc	Position offset
 ; @param[out]	a	Tile collisions at thwomp's position + offset bc
-; @addr{67ba}
 _thwomp_func67ba:
 	ld e,Enemy.yh
 	ld a,(de)
@@ -7586,7 +7516,6 @@ _thwomp_func67ba:
 
 ;;
 ; Checks if Link is riding the thwomp, updates appropriate variables if so.
-; @addr{67c6}
 _thwomp_updateLinkRidingSelf:
 	ld h,d
 	ld l,Enemy.xh

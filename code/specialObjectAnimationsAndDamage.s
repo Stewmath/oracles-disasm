@@ -2,7 +2,6 @@
 ; Sets the object's animation using Link's animation data tables?
 ;
 ; @param	a	Animation (value for SpecialObject.animMode)
-; @addr{4412}
 specialObjectSetAnimationWithLinkData:
 	ld e,SpecialObject.animMode
 	ld (de),a
@@ -14,7 +13,6 @@ specialObjectSetAnimationWithLinkData:
 
 ;;
 ; Same as "specialObjectAnimate" in bank 0, but optimized for this bank?
-; @addr{441e}
 _specialObjectAnimate:
 	ld h,d
 	ld l,SpecialObject.animCounter
@@ -29,7 +27,6 @@ _specialObjectAnimate:
 ;
 ; @param	bc	Animation index (times 2)
 ; @param	d	Object
-; @addr{4427}
 specialObjectSetAnimation_body:
 	ld e,SpecialObject.id
 	ld a,(de)
@@ -45,7 +42,6 @@ _label_06_032:
 ;;
 ; @param	d	Object
 ; @param	hl	Address of pointer to animation data
-; @addr{4432}
 specialObjectNextAnimationFrame:
 	ldi a,(hl)
 	ld h,(hl)
@@ -89,7 +85,6 @@ specialObjectNextAnimationFrame:
 	.include "build/data/specialObjectAnimationPointers.s"
 
 ;;
-; @addr{44c9}
 loadLinkAndCompanionAnimationFrame_body:
 	ld a,$ff
 	ld (wLinkPushingDirection),a
@@ -123,7 +118,6 @@ loadLinkAndCompanionAnimationFrame_body:
 ;;
 ; @param	a	Frame index?
 ; @param	h	Object (should be LINK_OBJECT_INDEX ($d0) or COMPANION_OBJECT_INDEX ($d1))
-; @addr{44f4}
 @loadAnimationFrame:
 	ld l,SpecialObject.var32
 	cp (hl)
@@ -169,7 +163,6 @@ loadLinkAndCompanionAnimationFrame_body:
 ; @param[out]	c	Bank of graphics
 ; @param[out]	hl	Address of graphics
 ; @param[out]	zflag	Set if there are no graphics to load.
-; @addr{4516}
 _getSpecialObjectGraphicsFrame:
 	ld c,a
 	ld b,$00
@@ -236,7 +229,6 @@ _getSpecialObjectGraphicsFrame:
 ;;
 ; @param[out]	b	Frame index to use (not accounting for direction)
 ;
-; @addr{4553}
 _func_4553:
 	ld a,(w1Link.id)
 	or a
@@ -283,7 +275,6 @@ _func_4553:
 ; something, has a shield out, etc.
 ;
 ; @param[out]	a	Value written to w1Link.var34
-; @addr{4589}
 @getLinkWalkingAnimation:
 .ifdef ROM_AGES
 	ld c,$0a
@@ -418,7 +409,6 @@ _func_4553:
 ; (see constants/specialObjectTypes.s).
 ; Under normal circumstances, this will return 0 (SPECIALOBJECTID_LINK).
 ; @param[out] b Special object ID to use, based on the ring Link is wearing
-; @addr{462d}
 getTransformedLinkID:
 	ld hl,wDisableRingTransformations
 	ld a,(hl)
@@ -472,7 +462,6 @@ getTransformedLinkID:
 ;;
 ; Updates Link's damageToApply variable to account for damage-modifying rings.
 ; @param d Link object
-; @addr{4668}
 linkUpdateDamageToApplyForRings:
 	ld e,SpecialObject.damageToApply
 	ld a,(de)
@@ -543,7 +532,6 @@ linkUpdateDamageToApplyForRings:
 	ret
 
 ; This is a table of values to add to any amount of damage that Link takes.
-; @addr{46ae}
 @ringDamageModifierTable:
 	.db POWER_RING_L1 $fe
 	.db POWER_RING_L2 $fc
@@ -557,7 +545,6 @@ linkUpdateDamageToApplyForRings:
 ; Reads w1Link.damageToApply, and reduces Link's health based on this value.
 ; Also triggers the potion if necessary, and accounts for the protection ring.
 ; @param d Link object
-; @addr{46bb}
 linkApplyDamage:
 	ld h,d
 	ld l,SpecialObject.damageToApply

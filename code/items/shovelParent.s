@@ -1,6 +1,5 @@
 ;;
 ; ITEMID_SHOVEL ($15)
-; @addr{4f9f}
 _parentItemCode_shovel:
 	ld e,Item.state
 	ld a,(de)

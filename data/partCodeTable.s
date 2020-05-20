@@ -179,11 +179,9 @@ partCodeTable:
 .endif
 
 ;;
-; @addr{5f55}
 partCodeNil:
 	ret
 
 ;;
-; @addr{5f56}
 partCode00:
 	jp partDelete

@@ -3,7 +3,6 @@
 .IFDEF BUILD_VANILLA
 
 ; Partial copy of @shipDirectionsPresent. The first few entries are missing.
-; @addr{7f23}
 @shipDirectionsPresentCopy:
 	.db $d6 $28 DIR_UP
 	.db $b6 $68 DIR_RIGHT
@@ -17,7 +16,6 @@
 	.db $b8 $43 DIR_LEFT
 	.db $00
 
-; @addr{7f41}
 @shipDirectionsPastCopy:
 	.db $b6 $34 DIR_DOWN
 	.db $d6 $14 DIR_RIGHT
@@ -29,7 +27,6 @@
 
 ;;
 ; Garbage function, calls invalid addresses, who knows what it was supposed to do.
-; @addr{7f55}
 func_7f55:
 	ld a,(wPirateShipRoom)
 	ld e,a
@@ -68,13 +65,11 @@ func_7f55:
 
 ;;
 ; Another garbage function calling invalid addresses
-; @addr{7f90}
 func_7f90:
 	callab $03 $7d20
 	call $1aca
 	jp $34ad
 
-; @addr{7f9d}
 @data:
 	.db $78 $02 $a8 $00 $b6 $00 $b7 $00
 	.db $b8 $00 $c6 $00 $c7 $00 $c8 $00
@@ -82,7 +77,6 @@ func_7f90:
 
 ;;
 ; Another garbage function calling invalid addresses
-; @addr{7fb5}
 func_7fb5:
 	callab $03 $7d20
 	call $1ae4

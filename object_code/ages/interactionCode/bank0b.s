@@ -1133,7 +1133,6 @@ interactionCode9e:
 
 ;;
 ; @param	a	Position
-; @addr{56e9}
 @setHoleTile:
 	ld c,a
 	ld a,TILEINDEX_HOLE
@@ -1141,7 +1140,6 @@ interactionCode9e:
 
 ;;
 ; @param	a	Position
-; @addr{56ef}
 @setInterleavedPuddleHoleTile:
 	ld hl,@@data
 	jr @setInterleavedTile
@@ -1151,7 +1149,6 @@ interactionCode9e:
 
 ;;
 ; @param	a	Position
-; @addr{56ef}
 @setInterleavedHolePuddleTile:
 	ld hl,@@data
 	jr @setInterleavedTile
@@ -1161,7 +1158,6 @@ interactionCode9e:
 
 ;;
 ; @param	a	Position
-; @addr{56ff}
 @setGroundTile:
 	push bc
 	ld c,a
@@ -1172,7 +1168,6 @@ interactionCode9e:
 
 ;;
 ; @param	a	Position
-; @addr{5708}
 @setPuddleTile:
 	push bc
 	ld c,a
@@ -1183,7 +1178,6 @@ interactionCode9e:
 
 ;;
 ; @param	a	Position
-; @addr{5711}
 @setInterleavedHoleGroundTile:
 	ld hl,@@data
 	jr @setInterleavedTile
@@ -1201,7 +1195,6 @@ interactionCode9e:
 ;;
 ; @param	a	Position
 ; @param	hl	Interleaved tile data
-; @addr{5721}
 @setInterleavedTile:
 	ldh (<hFF8C),a
 	ldi a,(hl)
@@ -1322,7 +1315,6 @@ interactionCode9e:
 
 ;;
 ; Swap the room layouts in all rooms affected by the flooding.
-; @addr{57e5}
 @swapRoomLayouts:
 	call getThisRoomFlags
 	ld l,<ROOM_AGES_140
@@ -1800,7 +1792,6 @@ interactionCodea4:
 ; * INTERACID_MOVING_SIDESCROLL_CONVEYOR
 ; * INTERACID_DISAPPEARING_SIDESCROLL_PLATFORM
 ; * INTERACID_CIRCULAR_SIDESCROLL_PLATFORM
-; @addr{5a73}
 _sidescrollingPlatformCommon:
 	ld a,(w1Link.state)
 	cp LINK_STATE_NORMAL
@@ -1862,14 +1853,12 @@ _sidescrollingPlatformCommon:
 
 ;;
 ; @param	c	Angle
-; @addr{5aca}
 @moveLinkAtAngle:
 	ld b,SPEED_80
 	jp updateLinkPositionGivenVelocity
 
 ;;
 ; @param[out]	cflag	c if Link got squished
-; @addr{5acf}
 _sidescrollPlatform_checkLinkSquished:
 	ld h,d
 	ld l,Interaction.collisionRadiusY
@@ -1913,7 +1902,6 @@ _sidescrollPlatform_checkLinkSquished:
 
 ;;
 ; @param[out]	cflag	c if Link's close enough to the platform?
-; @addr{5b04}
 _sidescrollPlatform_checkLinkIsClose:
 	ld a,(wLinkInAir)
 	or a
@@ -1955,7 +1943,6 @@ _sidescrollPlatform_checkLinkIsClose:
 ;;
 ; @param[out]	a	Collision value
 ; @param[out]	zflag	nz if a valid collision value is returned
-; @addr{5b32}
 _sidescrollPlatform_getTileCollisionBehindLink:
 	ld l,Interaction.xh
 	ld a,(w1Link.xh)
@@ -1978,7 +1965,6 @@ _sidescrollPlatform_getTileCollisionBehindLink:
 
 ;;
 ; @param[out]	hl
-; @addr{5b51}
 _sidescrollPlatformFunc_5b51:
 	ld h,d
 	ld l,Interaction.yh
@@ -2012,7 +1998,6 @@ _sidescrollPlatformFunc_5b51:
 ; Checks if Link's on the platform, updates wLinkRidingObject if so.
 ;
 ; @param[out]	zflag	nz if Link is standing on the platform
-; @addr{5b7f}
 _sidescrollPlatform_checkLinkOnPlatform:
 	call objectCheckCollidedWithLink
 	jr nc,@notOnPlatform
@@ -2055,7 +2040,6 @@ _sidescrollPlatform_checkLinkOnPlatform:
 	ret
 
 ;;
-; @addr{5bb4}
 _sidescrollPlatform_updateLinkKnockbackForConveyor:
 	ld e,Interaction.angle
 	ld a,(de)
@@ -2076,7 +2060,6 @@ _sidescrollPlatform_updateLinkKnockbackForConveyor:
 
 ;;
 ; @param[out]	hl	counter1
-; @addr{5bce}
 _sidescrollPlatform_decCounter1:
 	ld h,d
 	ld l,Interaction.counter1
@@ -2087,7 +2070,6 @@ _sidescrollPlatform_decCounter1:
 	ret
 
 ;;
-; @addr{5bd6}
 _sidescrollPlatform_pushLinkAwayVertical:
 	ld hl,w1Link.collisionRadiusY
 	ld e,Interaction.collisionRadiusY
@@ -2099,7 +2081,6 @@ _sidescrollPlatform_pushLinkAwayVertical:
 	jr +++
 
 ;;
-; @addr{5be4}
 _sidescrollPlatform_pushLinkAwayHorizontal:
 	ld hl,w1Link.collisionRadiusX
 	ld e,Interaction.collisionRadiusX
@@ -2123,7 +2104,6 @@ _sidescrollPlatform_pushLinkAwayHorizontal:
 	ret
 
 ;;
-; @addr{5bfc}
 _sidescrollPlatformFunc_5bfc:
 	call objectRunMovementScript
 	ld a,(wLinkRidingObject)
@@ -2131,7 +2111,6 @@ _sidescrollPlatformFunc_5bfc:
 	ret nz
 
 ;;
-; @addr{5c04}
 _sidescrollPlatform_updateLinkSubpixels:
 	ld e,Interaction.y
 	ld a,(de)
@@ -2295,7 +2274,6 @@ interactionCodea5:
 
 ;;
 ; @param[out]	zflag	z if reached touching book
-; @addr{5d0e}
 @updateMapleAngle:
 	ld hl,w1Companion.yh
 	ldi a,(hl)
@@ -2385,7 +2363,6 @@ interactionCodea6:
 
 ;;
 ; Unused function?
-; @addr{5d87}
 @func_5d87:
 	ldbc INTERACID_SPARKLE,$0b
 	call objectCreateInteraction
@@ -2421,7 +2398,6 @@ interactionCodea6:
 	.db $06 $f5
 
 ;;
-; @addr{5dbd}
 @createSparkle:
 	ldbc INTERACID_SPARKLE,$0f
 	call objectCreateInteraction
@@ -3279,7 +3255,6 @@ _zora_subid1B:
 ;			1 if he's cured;
 ;			2 if pollution is fixed;
 ;			3 if beat Jabu (except it's bugged and this doesn't happen)
-; @addr{6267}
 _zora_getWorldState:
 	ld a,GLOBALFLAG_KING_ZORA_CURED
 	call checkGlobalFlag
@@ -3487,7 +3462,6 @@ _zelda_state1:
 	jp npcFaceLinkAndAnimate
 
 ;;
-; @addr{63ba}
 _zelda_loadScript:
 	ld e,Interaction.subid
 	ld a,(de)
@@ -3786,7 +3760,6 @@ interactionCodeae:
 	jp interactionDelete
 
 ;;
-; @addr{6537}
 _creditsTextHorizontal_6537:
 	call getFreeInteractionSlot
 	jr nz,++
@@ -3811,7 +3784,6 @@ _creditsTextHorizontal_6537:
 	inc (hl)
 
 ;;
-; @addr{6554}
 _creditsTextHorizontal_6554:
 	ld l,Interaction.scriptPtr
 	ldi a,(hl)
@@ -3820,7 +3792,6 @@ _creditsTextHorizontal_6554:
 
 ;;
 ; @param	hl	Script pointer
-; @addr{6559}
 _creditsTextHorizontal_6559:
 	ldi a,(hl)
 	ld e,Interaction.var30
@@ -3857,7 +3828,6 @@ _creditsTextHorizontal_6559:
 	jp _creditsTextHorizontal_6537
 
 ;;
-; @addr{657b}
 _horizontalCreditsText_var03Nonzero:
 	ld a,(wPaletteThread_mode)
 	or a
@@ -4522,7 +4492,6 @@ interactionCodeb4:
 	jp @func_69ce
 
 ;;
-; @addr{6964}
 @replaceTiles:
 	ld a,DISABLE_ALL_BUT_INTERACTIONS | DISABLE_LINK
 	ld (wDisabledObjects),a
@@ -4602,7 +4571,6 @@ interactionCodeb4:
 
 ;;
 ; @param[out]	c	Subid
-; @addr{69ce}
 @func_69ce:
 	ld e,Interaction.subid
 	ld a,(de)
@@ -5029,7 +4997,6 @@ _vire_subid2:
 
 ;;
 ; @param[out]	cflag	c if successfully disabled objects
-; @addr{6c33}
 _vire_disableObjectsIfLinkIsReady:
 	ld a,(wLinkInAir)
 	or a
@@ -5049,12 +5016,10 @@ _vire_disableObjectsIfLinkIsReady:
 	ret
 
 ;;
-; @addr{6c4f}
 _vire_deleteAndReturnControl:
 	call interactionDelete
 
 ;;
-; @addr{6c52}
 _vire_returnControl:
 	xor a
 	ld (wDisabledObjects),a
@@ -5595,7 +5560,6 @@ interactionCodebc:
 
 ;;
 ; Updates z values to "float" up and down?
-; @addr{6f3f}
 @updateFloating:
 	ld a,(wFrameCounter)
 	and $07
@@ -5616,7 +5580,6 @@ interactionCodebc:
 	.db $ff $fe $ff $00 $01 $02 $01 $00
 
 ;;
-; @addr{6f5f}
 @moveTowardTargetPosition:
 	ld h,d
 	ld l,Interaction.var3c
@@ -5644,7 +5607,6 @@ interactionCodebc:
 ;;
 ; @param	bc	Pointer to position data (Y, X values)
 ; @param[out]	cflag	c if reached target position
-; @addr{6f7b}
 @checkReachedTargetPosition:
 	call @getCurrentPositionPointer
 	ld l,Interaction.yh
@@ -5662,7 +5624,6 @@ interactionCodebc:
 	ret
 
 ;;
-; @addr{6f91}
 @updateAnimationIndex:
 	ld h,d
 	ld l,Interaction.angle
@@ -5678,7 +5639,6 @@ interactionCodebc:
 
 ;;
 ; @param[out]	cflag	c if we've exhausted the position list and we're looping
-; @addr{6fa3}
 @nextTargetPosition:
 	call @@setPositionToPointerData
 	ld h,d
@@ -5693,7 +5653,6 @@ interactionCodebc:
 	ret
 
 ;;
-; @addr{6fb3}
 @@setPositionToPointerData:
 	call @getCurrentPositionPointer
 	ld l,Interaction.y
@@ -5711,7 +5670,6 @@ interactionCodebc:
 
 ;;
 ; @param[out]	bc	Pointer to position data
-; @addr{6fc4}
 @getCurrentPositionPointer:
 	ld h,d
 	ld l,Interaction.var3c
@@ -5732,7 +5690,6 @@ interactionCodebc:
 ; Read values for var3f, var3e, var3d based on parameter
 ;
 ; @param	a	Index for table
-; @addr{6fd7}
 @readPositionTable:
 	add a
 	ld hl,@table
@@ -5865,7 +5822,6 @@ interactionCodebd:
 ;;
 ; @param	hl	Position of block to push in wRoomLayuut
 ; @param	hFF8B	Index of tile to push
-; @addr{709e}
 @pushBlockAt:
 	push hl
 	ldh a,(<hFF8B)
@@ -6118,7 +6074,6 @@ interactionCodec1:
 
 ;;
 ; @param[out]	zflag	z if [counter1] == 0
-; @addr{721a}
 @updateMovementAndSparkles:
 	call @updateSparkles
 	call objectApplySpeed
@@ -6129,7 +6084,6 @@ interactionCodec1:
 
 ;;
 ; Unused
-; @addr{7224}
 @func_7224:
 	ld a,(wFrameCounter)
 	and $01
@@ -6137,7 +6091,6 @@ interactionCodec1:
 	jp objectSetVisible
 
 ;;
-; @addr{722f}
 @updateSparkles:
 	ld h,d
 	ld l,Interaction.var36
@@ -6442,7 +6395,6 @@ interactionCodec4:
 
 ;;
 ; @param[out]	cflag	c if Link is pushing up towards this object
-; @addr{73eb}
 @checkCenteredWithLink:
 	ld a,(wLinkDeathTrigger)
 	or a
@@ -7019,7 +6971,6 @@ interactionCode49:
 	jp @initState3
 
 ;;
-; @addr{76e9}
 @updateHopping:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
@@ -7027,13 +6978,11 @@ interactionCode49:
 	ld h,d
 
 ;;
-; @addr{76f0}
 @beginHop:
 	ld bc,-$c0
 	jp objectSetSpeedZ
 
 ;;
-; @addr{76f6}
 @updateMovement:
 	call objectApplySpeed
 	ld e,Interaction.xh
@@ -7055,7 +7004,6 @@ interactionCode49:
 	jp interactionSetAnimation
 
 ;;
-; @addr{7710}
 @func_7710:
 	ld h,d
 	ld l,Interaction.var3c
@@ -7065,7 +7013,6 @@ interactionCode49:
 	jr +++
 
 ;;
-; @addr{771b}
 @initState2:
 	ld h,d
 	ld l,Interaction.state
@@ -7087,7 +7034,6 @@ interactionCode49:
 	jp interactionSetAnimation
 
 ;;
-; @addr{7739}
 @initState3:
 	ld h,d
 	ld l,Interaction.state
@@ -7287,7 +7233,6 @@ interactionCodecd:
 
 ;;
 ; Unused
-; @addr{7840}
 @func_7840:
 	call interactionInitGraphics
 	call objectMarkSolidPosition
@@ -7480,7 +7425,6 @@ _greatFairy_subid1:
 
 ;;
 ; Unused
-; @addr{795a}
 @func_795a:
 	call interactionInitGraphics
 	call objectMarkSolidPosition
@@ -7958,7 +7902,6 @@ interactiond7_essence:
 	jp playSound
 
 ;;
-; @addr{7c0f}
 _interactiond7_updateSmallSparkles:
 	ld a,(wFrameCounter)
 	and $07
@@ -7997,7 +7940,6 @@ _interactiond7_updateSmallSparkles:
 
 ;;
 ; Updates Z-position based on frame counter.
-; @addr{7c46}
 _interactiond7_updateFloating:
 	ld a,(wFrameCounter)
 	and $07

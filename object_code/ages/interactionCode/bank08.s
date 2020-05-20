@@ -112,7 +112,6 @@ interactionCode15:
 
 ;;
 ; @param[out]	a,l	The position of the tile Link's standing on
-; @addr{48f3}
 getLinkTilePosition:
 	push bc
 	ld a,(w1Link.yh)
@@ -280,7 +279,6 @@ interactionCode19:
 
 ;;
 ; Updates wRotatingCubePos and wRoomCollisions based on the object's current position.
-; @addr{49c0}
 @updatePosition:
 	call objectGetShortPosition
 	ld h,>wRoomCollisions
@@ -302,7 +300,6 @@ interactionCode19:
 ;;
 ; @param[out]	b	Direction it's being pushed in
 ; @param[out]	zflag	Set if Link is pushing toward the block
-; @addr{49e5}
 @checkLinkPushingTowardBlock:
 	ld a,(wLinkGrabState)
 	or a
@@ -346,7 +343,6 @@ interactionCode19:
 ; Sets wRotatingCubeColor as well as the animation to use.
 ;
 ; @param	a	Orientation of cube (value of Interaction.direction)
-; @addr{4a16}
 @setColor:
 	ld b,a
 	ld hl,@colors
@@ -459,7 +455,6 @@ interactionCode1b:
 ;;
 ; Sets var30 to the animation to be done. Bit 0 set if the gate is open.
 ; Also modifies tile collisions appropriately.
-; @addr{4aab}
 @setAnimationAndUpdateCollisions:
 	ld a,(wSwitchState)
 	ld b,a
@@ -747,7 +742,6 @@ interactionCode20:
 	ret nc
 	jp interactionDelete
 
-; @addr{4c2c}
 @scriptTable:
 	.dw @dungeon0
 	.dw @dungeon1
@@ -1368,7 +1362,6 @@ _setTileWithPuff:
 
 ;;
 ; @param	c	Position to create puff at
-; @addr{4fd3}
 _createPuffAt:
 	call getFreeInteractionSlot
 	ret nz
@@ -1485,7 +1478,6 @@ _interaction21_subid18:
 
 
 ;;
-; @addr{507d}
 _interactionDeleteAndRetIfItemFlagSet:
 	call getThisRoomFlags
 	and ROOMFLAG_ITEM
@@ -1494,7 +1486,6 @@ _interactionDeleteAndRetIfItemFlagSet:
 	jp interactionDelete
 
 ;;
-; @addr{5087}
 _spawnSmallKeyFromCeiling:
 	ldbc TREASURE_SMALL_KEY, $01
 	call createTreasure
@@ -1510,7 +1501,6 @@ _spawnSmallKeyFromCeiling:
 ;			that index. Value $ff starts a new "group", and $00 ends the
 ;			structure.
 ; @param[out]	zflag	Set if the tiles all match the expected values.
-; @addr{5094}
 _verifyTiles:
 	ld b,>wRoomLayout
 @nextTileIndex:
@@ -1534,7 +1524,6 @@ _verifyTiles:
 ; @param	b	Number of frames it can stay lit before burning out
 ; @param	c	Position
 ; @param[out]	zflag	Set if the part object was created successfully
-; @addr{50a6}
 _makeTorchAtPositionTemporarilyLightable:
 	call getFreePartSlot
 	ret nz
@@ -1656,7 +1645,6 @@ interactionCode22:
 ;;
 ; @param	hFF8C	Position of this object
 ; @param[out]	zflag	Set if we've converted the last tile
-; @addr{514f}
 @convertNextTile:
 	ld e,Interaction.counter1
 	ld a,(de)
@@ -1849,7 +1837,6 @@ interactionCode23:
 
 ;;
 ; @param[out]	zflag	nz if the switch has been toggled
-; @addr{5240}
 @checkSwitchStateChanged:
 	ld a,(wSwitchState)
 	ld b,a
@@ -1864,7 +1851,6 @@ interactionCode23:
 
 ;;
 ; @param[out]	c	Next byte
-; @addr{524e}
 @updateNextTile:
 	ld h,d
 	ld l,Interaction.relatedObj2
@@ -2601,7 +2587,6 @@ interactionCode30:
 
 ;;
 ; Interaction $8b (goron elder) also calls this.
-; @addr{5626}
 shootingGalleryNpc:
 	ld e,Interaction.state
 	ld a,(de)
@@ -2650,7 +2635,6 @@ shootingGalleryNpc:
 	jp npcFaceLinkAndAnimate
 
 ;;
-; @addr{566a}
 @loadRetryScriptAndGotoState1:
 	ld h,d
 	ld l,Interaction.state
@@ -2659,7 +2643,6 @@ shootingGalleryNpc:
 
 ;;
 ; @param	a	Script index.
-; @addr{5671}
 @setScript:
 	; a *= 3
 	ld b,a
@@ -2680,7 +2663,6 @@ shootingGalleryNpc:
 ; Interaction $30, subid $03 runs the shooting gallery game.
 ; It cycles through states 1-6 a total of 10 times.
 ; var3f is the round counter.
-; @addr{5682}
 _shootingGalleryGame:
 	ld e,Interaction.state
 	ld a,(de)
@@ -2865,7 +2847,6 @@ _shootingGalleryGame:
 ; Also used by goron dance minigame.
 ;
 ; @param	b	Number of rounds
-; @addr{5786}
 shootingGallery_initializeGameRounds:
 	ld hl,wShootingGalleryTileLayoutsToShow
 	xor a
@@ -2884,7 +2865,6 @@ shootingGallery_initializeGameRounds:
 ; one.
 ;
 ; @param[out]	wTmpcfc0.shootingGallery.targetLayoutIndex	Index of the layout to use
-; @addr{5793}
 shootingGallery_getNextTargetLayout:
 	ld a,(wTmpcfc0.shootingGallery.remainingRounds)
 	ld b,a
@@ -2926,7 +2906,6 @@ shootingGallery_getNextTargetLayout:
 	ret
 
 ;;
-; @addr{57bd}
 shootingGallery_removeAllTargets:
 	ld a,$01
 	ld (wTmpcfc0.shootingGallery.useTileIndexData),a
@@ -2950,7 +2929,6 @@ shootingGallery_removeAllTargets:
 ;;
 ; Chooses one of the 10 target layouts to use and loads the tiles. (It never uses the same
 ; layout more than once, though.)
-; @addr{57da}
 _shootingGallery_setRandomTargetLayout:
 	xor a
 	ld (wTmpcfc0.shootingGallery.useTileIndexData),a
@@ -2996,7 +2974,6 @@ _shootingGallery_setRandomTargetLayout:
 ; @param	wTmpcfc0.shootingGallery.useTileIndexData
 ;			If zero, it uses hl to get the tile indices; otherwise, all tiles
 ;			are replaced with TILEINDEX_STANDARD_FLOOR.
-; @addr{580c}
 _shootingGallery_setTiles:
 	ld a,$0a
 @nextTile:
@@ -3071,7 +3048,6 @@ _shootingGallery_targetTiles_biggoron:
 	.db $d9 $d9 $d7 $d8 $dc $dc $d9 $dc $d9 $d9
 
 ;;
-; @addr{5973}
 _shootingGallery_createPuffAtEachTargetPosition:
 	ld e,Interaction.var03
 	ld a,(de)
@@ -3108,7 +3084,6 @@ _shootingGallery_createPuffAtEachTargetPosition:
 	ret
 
 ;;
-; @addr{59a2}
 _shootingGallery_createBallHere:
 	call getFreePartSlot
 	ret nz
@@ -3117,7 +3092,6 @@ _shootingGallery_createBallHere:
 
 ;;
 ; @param	a	Index?
-; @addr{59ab}
 _shootingGallery_addValueToScore:
 	ld hl,@scores
 	rst_addDoubleIndex
@@ -3409,7 +3383,6 @@ _impaState1:
 ; Variables:
 ;   var37-var3a: Last frame's Y, X, and Direction values. Used for checking whether to
 ;                update Impa's animation (update if any one has changed).
-; @addr{5b5e}
 _impaSubid0:
 	ld e,Interaction.state2
 	ld a,(de)
@@ -3547,7 +3520,6 @@ _impaSubid0:
 	jp interactionAnimate
 
 ;;
-; @addr{5c32}
 @setAngleTowardStone:
 	ldbc $38,$38
 	call objectGetRelativeAngle
@@ -3745,7 +3717,6 @@ _impaSubid0:
 ;;
 ; Changes impa's "oamTileIndexBase" to reference her "collapsed" graphic, which is not in
 ; her normal sprite sheet.
-; @addr{5d56}
 _impaLoadCollapsedGraphic:
 	ld l,Interaction.oamFlags
 	ld (hl),$0a
@@ -3758,7 +3729,6 @@ _impaRet:
 
 ;;
 ; Impa talking to you after Nayru is kidnapped
-; @addr{5d5f}
 _impaSubid1:
 	ld e,Interaction.state2
 	ld a,(de)
@@ -3789,7 +3759,6 @@ _impaSubid1:
 ;;
 ; Uses var3d as the interaction's "base" position, and randomly shifts this position left
 ; by one or not at all.
-; @addr{5d87}
 interactionOscillateXRandomly:
 	call getRandomNumber
 	and $01
@@ -3812,7 +3781,6 @@ _impaSubid1Substate2:
 
 ;;
 ; Impa in the credits cutscene
-; @addr{5da6}
 _impaSubid2:
 	ld e,Interaction.state2
 	ld a,(de)
@@ -3858,7 +3826,6 @@ _impaSubid2:
 	jp fadeinFromWhite
 
 ;;
-; @addr{5df2}
 _impaAnimateAndRunScript:
 	call interactionAnimateBasedOnSpeed
 	jp interactionRunScript
@@ -3930,7 +3897,6 @@ _impaSubid2Substate7:
 
 ;;
 ; Impa tells you about Ralph's heritage (unlinked)
-; @addr{5e5b}
 _impaSubid4:
 	call checkInteractionState2
 	jr nz,@substate1
@@ -4049,7 +4015,6 @@ _impaSubid4:
 
 ;;
 ; Like above (explaining ralph's heritage), but for linked game
-; @addr{5f04}
 _impaSubid5:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
@@ -4098,7 +4063,6 @@ _impaSubid5:
 
 ;;
 ; Impa tells you that zelda's been kidnapped by Vire
-; @addr{5f50}
 _impaSubid7:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
@@ -4115,7 +4079,6 @@ _impaSubid7:
 	jp npcFaceLinkAndAnimate
 
 ;;
-; @addr{5f6e}
 _impaSubid8:
 	call _impaAnimateAndRunScript
 	jp c,interactionDelete
@@ -4123,7 +4086,6 @@ _impaSubid8:
 
 ;;
 ; Impa tells you that Zelda's been kidnapped by Twinrova
-; @addr{5f75}
 _impaSubid9:
 	ld e,Interaction.var38
 	ld a,(de)
@@ -4140,7 +4102,6 @@ _impaSubid9:
 ; @param	hl	Object's Y position
 ; @param	hFF8B	Range we must be within on each axis
 ; @param[out]	cflag	c if the object is within [hFF8B] pixels of the position
-; @addr{5f86}
 checkObjectIsCloseToPosition:
 	push hl
 	call @checkComponent
@@ -4156,7 +4117,6 @@ checkObjectIsCloseToPosition:
 ; @param	hl	Object position component
 ; @param	hFF8B
 ; @param[out]	cflag	Set if we're within [hFF8B] pixels of 'b'.
-; @addr{5f8f}
 @checkComponent:
 	ld a,b
 	sub (hl)
@@ -4174,7 +4134,6 @@ checkObjectIsCloseToPosition:
 	ret
 
 ;;
-; @addr{5fa0}
 _impaUpdateAnimationIfDirectionChanged:
 	ld h,d
 	ld l,Interaction.direction
@@ -4187,7 +4146,6 @@ _impaUpdateAnimationIfDirectionChanged:
 
 ;;
 ; @param[out]	cflag	c if Link has approached the stone to trigger Impa's reaction
-; @addr{5fac}
 _impaCheckApproachedStone:
 	ld a,(wActiveRoom)
 	cp $59
@@ -4211,7 +4169,6 @@ _impaCheckApproachedStone:
 
 ;;
 ; @param[out]	zflag	z if counter1 has reached 0.
-; @addr{5fc8}
 _impaAnimateAndDecCounter1:
 	ld h,d
 	ld l,Interaction.counter1
@@ -4225,7 +4182,6 @@ _impaAnimateAndDecCounter1:
 
 ;;
 ; Shows text if Link tries to leave the screen with the stone.
-; @addr{5fd5}
 _impaPreventLinkFromLeavingStoneScreen:
 	ld hl,w1Link.yh
 	ld a,(hl)
@@ -4249,7 +4205,6 @@ _impaPreventLinkFromLeavingStoneScreen:
 	ld bc,TX_010a
 	jp showText
 
-; @addr{5ff9}
 _impaScriptTable:
 	.dw impaScript0
 	.dw impaScript1
@@ -4890,7 +4845,6 @@ interactionCode33:
 
 
 ;;
-; @addr{631c}
 @findFirstSmogEnemy:
 	ld h,FIRST_ENEMY_INDEX-1
 
@@ -4898,7 +4852,6 @@ interactionCode33:
 ; @param	h	Enemy index after which to start looking
 ; @param[out]	h	Index of first found smog enemy
 ; @param[out]	zflag	nz if no such enemy was found
-; @addr{631c}
 @findNextSmogEnemy:
 	inc h
 ---
@@ -4924,7 +4877,6 @@ interactionCode33:
 	ret
 
 ;;
-; @addr{6339}
 @spawnEnemy:
 	push af
 	call getFreeEnemySlot
@@ -4963,7 +4915,6 @@ interactionCode33:
 ; @param	b	Enemy 1
 ; @param	h	Enemy 2
 ; @param[out]	cflag	Set if they're close enough to merge (within 4 pixels)
-; @addr{6361}
 @checkEnemiesCloseEnoughToMerge:
 	ld l,Enemy.var31
 	ld c,l
@@ -5162,7 +5113,6 @@ interactionCode34:
 
 ;;
 ; @param[out]	zflag	Set if Link has pushed against the stone long enough
-; @addr{6481}
 @checkPushedStoneLongEnough:
 	; Check Link's X is close enough
 	ld e,Interaction.xh
@@ -5271,7 +5221,6 @@ interactionCode34:
 
 ;;
 ; @param	c	Tile to set collisions to "solid" for
-; @addr{6500}
 @setSolidTile:
 	call objectGetShortPosition
 	ld c,a
@@ -5565,12 +5514,10 @@ _interac65_state1:
 
 
 ;;
-; @addr{6699}
 _childUpdateAnimationAndSolidity:
 	call interactionAnimate
 
 ;;
-; @addr{669c}
 _childUpdateSolidityAndVisibility:
 	ld e,Interaction.var39
 	ld a,(de)
@@ -5586,7 +5533,6 @@ _childUpdateSolidityAndVisibility:
 
 ;;
 ; Writes the "base" animation index to var37 based on subid (personality type)?
-; @addr{66b4}
 _childDetermineAnimationBase:
 	ld e,Interaction.subid
 	ld a,(de)
@@ -5601,7 +5547,6 @@ _childDetermineAnimationBase:
 	.db $00 $02 $05 $08 $0b $11 $15 $17
 
 ;;
-; @addr{66c8}
 _childUpdateHyperactiveMovement:
 	call objectApplySpeed
 	ld h,d
@@ -5640,7 +5585,6 @@ _childHyperactiveMovementAngles:
 	.db $18 $0a $18 $06
 
 ;;
-; @addr{66fc}
 _childUpdateUnknownMovement:
 	call objectApplySpeed
 	ld e,Interaction.xh
@@ -5657,7 +5601,6 @@ _childUpdateUnknownMovement:
 
 ;;
 ; Updates movement for "shy" personality type (runs away when Link approaches)
-; @addr{6710}
 _childUpdateShyMovement:
 	ld e,Interaction.state2
 	ld a,(de)
@@ -5683,7 +5626,6 @@ _childUpdateShyMovement:
 	jp _childIncPositionIndex
 
 ;;
-; @addr{6730}
 _childUpdateAngleAndApplySpeed:
 	ld h,d
 	ld l,Interaction.var3c
@@ -5709,7 +5651,6 @@ _childUpdateAngleAndApplySpeed:
 ;;
 ; @param[out]	cflag	Set if the child's reached the position he's moving toward (or is
 ;			within 1 pixel from the destination on both axes)
-; @addr{674c}
 _childCheckReachedDestination:
 	ld h,d
 	ld l,Interaction.var3c
@@ -5742,7 +5683,6 @@ _childCheckReachedDestination:
 
 ;;
 ; Updates animation if the child's direction has changed?
-; @addr{6771}
 _childCheckAnimationDirectionChanged:
 	ld h,d
 	ld l,Interaction.angle
@@ -5761,7 +5701,6 @@ _childCheckAnimationDirectionChanged:
 	jp interactionSetAnimation
 
 ;;
-; @addr{6789}
 _childIncPositionIndex:
 	ld h,d
 	ld l,Interaction.var3d
@@ -5778,7 +5717,6 @@ _childIncPositionIndex:
 ; through (minus one) into var3d.
 ;
 ; @param	a	Data index
-; @addr{6795}
 _childLoadPositionListPointer:
 	add a
 	add a
@@ -5848,7 +5786,6 @@ _childLoadPositionListPointer:
 	.db $18 $48
 
 ;;
-; @addr{67f8}
 _childUpdateCuriousMovement:
 	ld e,Interaction.state2
 	ld a,(de)
@@ -5947,7 +5884,6 @@ interactionCode36:
 	.dw _nayruState1
 
 ;;
-; @addr{6883}
 nayruState0:
 	ld a,$01
 	ld (de),a
@@ -6206,7 +6142,6 @@ nayruState0:
 	jp @setSingingAnimation
 
 ;;
-; @addr{6a43}
 _nayruState1:
 	ld e,Interaction.subid
 	ld a,(de)
@@ -6340,7 +6275,6 @@ _nayruSubid00:
 
 ;;
 ; Nayru sways horizontally (3 pixels left, 3 pixels right, repeat)
-; @addr{6af4}
 @swayHorizontally:
 	ld a,(wFrameCounter)
 	and $07
@@ -6506,7 +6440,6 @@ _nayruSubid02:
 	.dw _nayruSubid02Substate2
 
 ;;
-; @addr{6bd8}
 _nayruSubid02Substate0: ; This is also called by Ralph in the same cutscene
 	ld a,($cfd0)
 	cp $07
@@ -6527,13 +6460,11 @@ _nayruSubid02Substate0: ; This is also called by Ralph in the same cutscene
 	call _nayruSubid00@createMusicNotes
 
 ;;
-; @addr{6bf2}
 _nayruAnimateAndRunScript:
 	call interactionAnimateBasedOnSpeed
 	jp interactionRunScript
 
 ;;
-; @addr{6bf8}
 _nayruSubid02Substate1:
 	ld a,($cfd0)
 	cp $08
@@ -6549,7 +6480,6 @@ _nayruSubid02Substate1:
 
 ;;
 ; This is also called by Ralph in the same cutscene
-; @addr{6c0d}
 _nayruFlipDirectionAtRandomIntervals:
 	call interactionDecCounter1
 	ret nz
@@ -6560,7 +6490,6 @@ _nayruFlipDirectionAtRandomIntervals:
 	call interactionSetAnimation
 
 ;;
-; @addr{6c1a}
 _nayruSetCounter1Randomly:
 	call getRandomNumber_noPreserveVars
 	and $03
@@ -6608,7 +6537,6 @@ _nayruSubid03:
 
 ;;
 ; Subid $04: Cutscene at end of game with Ambi and her guards
-; @addr{6c59}
 _nayruSubid04:
 	call checkIsLinkedGame
 	jp z,_nayruAnimateAndRunScript
@@ -6621,7 +6549,6 @@ _nayruSubid04:
 
 ;;
 ; Subid $05: ?
-; @addr{6c71}
 _nayruSubid05:
 	call _nayruAnimateAndRunScript
 
@@ -6638,7 +6565,6 @@ _nayruSubid05:
 ; how long Nayru's palette should be "normal" or "possessed".
 ;
 ; @param[out]	zflag	Set when Nayru is fully possessed
-; @addr{6c85}
 _nayruUpdatePossessionPaletteDurations:
 	ld a,(wFrameCounter)
 	and $01
@@ -6718,7 +6644,6 @@ _nayruUpdatePossessionPaletteDurations:
 
 ;;
 ; Subid $07: Cutscene with the vision of Nayru teaching you Tune of Echoes
-; @addr{6cd4}
 _nayruSubid07:
 	call checkInteractionState2
 	jr nz,@substate1
@@ -6779,14 +6704,12 @@ _nayruSubid07:
 	jp interactionDelete
 
 ;;
-; @addr{6d34}
 _nayruAsNpc:
 	call interactionRunScript
 	jp npcFaceLinkAndAnimate
 
 ;;
 ; Subid $09: Cutscene where Ralph's heritage is revealed (unlinked?)
-; @addr{6d3a}
 _nayruSubid09:
 	call _nayruAnimateAndRunScript
 	ret nc
@@ -6800,7 +6723,6 @@ _nayruSubid09:
 
 ;;
 ; Subid $10: Cutscene in black tower where Nayru/Ralph meet you to try to escape
-; @addr{6d4d}
 _nayruSubid10:
 	ld a,(wScreenShakeCounterY)
 	cp $5a
@@ -6819,7 +6741,6 @@ _nayruSubid10:
 
 ;;
 ; Subid $0a: Cutscene where Ralph's heritage is revealed (linked?)
-; @addr{6d67}
 _nayruSubid0a:
 	call _nayruAnimateAndRunScript
 	ret nc
@@ -6827,13 +6748,11 @@ _nayruSubid0a:
 
 ;;
 ; Subid $13: NPC after completing game (singing to animals)
-; @addr{6d6e}
 _nayruSubid13:
 	call _nayruSubid00@createMusicNotes
 
 ;;
 ; This is called by Ralph as well
-; @addr{6d71}
 _nayruRunScriptWithConditionalAnimation:
 	call interactionRunScript
 	ld e,Interaction.var39
@@ -7156,7 +7075,6 @@ _ralphState0:
 	call objectSetVisiblec0
 
 ;;
-; @addr{6f9d}
 _ralphRunSubid:
 	ld e,Interaction.subid
 	ld a,(de)
@@ -7183,7 +7101,6 @@ _ralphRunSubid:
 
 ;;
 ; Cutscene where Nayru gets possessed
-; @addr{6fc7}
 _ralphSubid00:
 	ld e,Interaction.state2
 	ld a,(de)
@@ -7226,7 +7143,6 @@ _ralphSubid00:
 
 ;;
 ; Cutscene after Nayru is possessed
-; @addr{7004}
 _ralphSubid02:
 	; They probably meant to call "checkInteractionState2" instead? It looks like
 	; @state0 will never be run...
@@ -7259,7 +7175,6 @@ _ralphSubid02:
 
 ;;
 ; Cutscene outside Ambi's palace before getting mystery seeds
-; @addr{7036}
 _ralphSubid01:
 	call interactionRunScript
 	jp c,interactionDelete
@@ -7273,7 +7188,6 @@ _ralphSubid01:
 
 ;;
 ; Cutscene after talking to Rafton
-; @addr{7049}
 _ralphSubid03:
 	ld e,Interaction.state2
 	ld a,(de)
@@ -7406,7 +7320,6 @@ _ralphSubid03:
 
 ;;
 ; Cutscene on maku tree screen after saving Nayru
-; @addr{7118}
 _ralphSubid04:
 	ld e,Interaction.state2
 	ld a,(de)
@@ -7432,7 +7345,6 @@ _ralphSubid04:
 
 ;;
 ; Cutscene in black tower where Nayru/Ralph meet you to try to escape
-; @addr{713d}
 _ralphSubid05:
 	call interactionAnimateBasedOnSpeed
 	ld e,Interaction.state2
@@ -7478,7 +7390,6 @@ _ralphRunScript:
 	jp interactionRunScript
 
 ;;
-; @addr{7186}
 _ralphSubid06:
 	call interactionAnimateBasedOnSpeed
 	ld e,Interaction.state2
@@ -7507,7 +7418,6 @@ _ralphSubid06:
 
 ;;
 ; Cutscene postgame where they warp to the maku tree, Ralph notices the statue
-; @addr{71b7}
 _ralphSubid07:
 	callab scriptHlp.objectWritePositionTocfd5
 	ld e,Interaction.state2
@@ -7540,7 +7450,6 @@ _ralphSubid07Substate2:
 
 ;;
 ; Cutscene in credits where Ralph is training with his sword
-; @addr{71ec}
 _ralphSubid08:
 	ld e,Interaction.state2
 	ld a,(de)
@@ -7590,7 +7499,6 @@ _ralphSubid08:
 
 ;;
 ; Cutscene where Ralph charges in to Ambi's palace
-; @addr{7237}
 _ralphSubid09:
 	call interactionRunScript
 	jp nc,interactionAnimateBasedOnSpeed
@@ -7603,7 +7511,6 @@ _ralphSubid09:
 
 ;;
 ; Cutscene where Ralph's about to charge into the black tower
-; @addr{7247}
 _ralphSubid0a:
 	call checkIsLinkedGame
 	jp nz,_ralphSubid0a_linked
@@ -7725,7 +7632,6 @@ _ralphSubid0a:
 	jp interactionDelete
 
 ;;
-; @addr{72fb}
 _ralphSubid0a_linked:
 	call interactionRunScript
 	jp c,interactionDelete
@@ -7761,7 +7667,6 @@ _ralphSubid0a_linked:
 ;;
 ; $0b: Cutscene where Ralph tells you about getting Tune of Currents
 ; $10: Cutscene after talking to Cheval
-; @addr{7324}
 _ralphSubid0b:
 _ralphSubid10:
 	ld a,($cfc0)
@@ -7797,7 +7702,6 @@ _ralphSubid10:
 
 ;;
 ; Runs script, deletes self when finished, and updates animations only if var3f is 0.
-; @addr{7353}
 _ralphRunScriptWithConditionalAnimation:
 	call interactionRunScript
 	jp c,interactionDelete
@@ -7811,7 +7715,6 @@ _ralphRunScriptWithConditionalAnimation:
 
 ;;
 ; Cutscene with Nayru and Ralph when Link exits the black tower
-; @addr{7361}
 _ralphSubid0e:
 	ld a,(wScreenShakeCounterY)
 	cp $5a
@@ -7831,7 +7734,6 @@ _ralphSubid0e:
 	call interactionSetAnimation
 
 ;;
-; @addr{737c}
 _ralphRunScriptAndDeleteWhenOver:
 	call interactionRunScript
 	jp c,interactionDelete
@@ -7840,14 +7742,12 @@ _ralphRunScriptAndDeleteWhenOver:
 
 ;;
 ; NPC after beating Veran, before beating Twinrova in a linked game
-; @addr{7385}
 _ralphSubid12:
 	call npcFaceLinkAndAnimate
 	jp interactionRunScript
 
 ;;
 ; Unused?
-; @addr{738b}
 _ralphFunc_738b:
 	ld h,d
 	ld l,Interaction.var38
@@ -7885,7 +7785,6 @@ _ralphFunc_738b:
 	ret
 
 ;;
-; @addr{73bb}
 _ralphTurnLinkTowardSelf:
 	ld a,(w1Link.xh)
 	add $10
@@ -7908,7 +7807,6 @@ _ralphTurnLinkTowardSelf:
 	jp setLinkForceStateToState08
 
 ;;
-; @addr{73db}
 startJump:
 	ld bc,-$1c0
 	call objectSetSpeedZ
@@ -9027,7 +8925,6 @@ interactionCode3c:
 	jp _boyLoadScript
 
 ;;
-; @addr{7a37}
 _boyState1:
 	ld e,Interaction.subid
 	ld a,(de)
@@ -9225,7 +9122,6 @@ _boyRunSubid05:
 
 ;;
 ; Used in cutscenes where people get restored from stone?
-; @addr{7b54}
 setCounter1To120AndPlaySoundEffectAndIncState2:
 	ld a,120
 	ld e,Interaction.counter1
@@ -9433,7 +9329,6 @@ boyRunSubid09:
 	ld (hl),$00
 
 ;;
-; @addr{7c7b}
 @updateAngleAndCounter:
 	ld e,Interaction.id
 	ld a,(de)
@@ -9705,27 +9600,23 @@ _boyRunSubid10:
 
 ;;
 ; Load palette used for turning npcs to stone?
-; @addr{7de5}
 loadStoneNpcPalette:
 	ld a,PALH_a2
 	jp loadPaletteHeader
 
 ;;
-; @addr{7dea}
 _boyUpdateGravityAndHopWhenLanded:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	ret nz
 
 ;;
-; @addr{7df0}
 _boyStartHop:
 	ld bc,-$e0
 	jp objectSetSpeedZ
 
 ;;
 ; Load a script for INTERACID_BOY.
-; @addr{7df6}
 _boyLoadScript:
 	ld e,Interaction.subid
 	ld a,(de)
@@ -9736,7 +9627,6 @@ _boyLoadScript:
 	ld l,a
 	jp interactionSetScript
 
-; @addr{7e03}
 @scriptTable:
 	.dw boySubid00Script
 	.dw boySubid01Script

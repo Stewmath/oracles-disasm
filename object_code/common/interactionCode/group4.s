@@ -56,7 +56,6 @@ _interactiond9_state0:
 ; @param[out]	bc	The item ID.
 ;			If this is an upgrade, 'c' is a value from 0-4 indicating the
 ;			behaviour (ie. compare with current ring box level, sword level)
-; @addr{4e14}
 _interactiond9_getItemID:
 	ld e,Interaction.subid
 	ld a,(de)
@@ -347,7 +346,6 @@ _interactiond9_state2:
 	jp objectCopyPosition
 
 ;;
-; @addr{4fb5}
 _interactiond9_markSecretAsTold:
 	ld e,Interaction.subid
 	ld a,(de)

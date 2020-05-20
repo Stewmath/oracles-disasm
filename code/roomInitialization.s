@@ -7,7 +7,6 @@
 
 ;;
 ; Check the wRememberedCompanion variables to see if a companion is in this room.
-; @addr{768a}
 loadRememberedCompanion:
 	ld hl,wRememberedCompanionId
 	ldi a,(hl)
@@ -84,7 +83,6 @@ loadRememberedCompanion:
 
 ;;
 ; Spawn maple if all the conditions meet (enough kills, valid map, etc)
-; @addr{76d3}
 checkAndSpawnMaple:
 	xor a
 	ld (wIsMaplePresent),a
@@ -209,7 +207,6 @@ updateRosaDateStatus:
 ;
 ; @param	h	Function index
 ; @param	l	Gets moved to 'c' before calling the function
-; @addr{77b2}
 functionCaller:
 	ld c,l
 	ld a,h
@@ -226,7 +223,6 @@ functionCaller:
 
 ;;
 ; Marks an enemy as killed so it doesn't respawn for a bit.
-; @addr{77c3}
 _addRoomToEnemiesKilledList:
 	ld hl,wEnemiesKilledList
 	ld a,(wActiveRoom)
@@ -269,7 +265,6 @@ _stub_02_77f4:
 
 ;;
 ; @param	d	Enemy index
-; @addr{77f5}
 _markEnemyAsKilledInRoom:
 	ld hl,wEnemiesKilledList
 	ld b,$08
@@ -298,7 +293,6 @@ _markEnemyAsKilledInRoom:
 	ret
 
 ;;
-; @addr{7817}
 _clearEnemiesKilledList:
 	xor a
 	ld (wEnemiesKilledListTail),a
@@ -308,7 +302,6 @@ _clearEnemiesKilledList:
 
 ;;
 ; This places the numbers $00-$ff into w4RandomBuffer in a random order.
-; @addr{7823}
 generateRandomBuffer:
 	push de
 
@@ -358,7 +351,6 @@ generateRandomBuffer:
 ;;
 ; @param	hFF8B	Flags from object data. (if bit 2 is set, ignore tile solidity.)
 ; @param[out]	cflag	Set on failure
-; @addr{785c}
 _getRandomPositionForEnemy:
 	ld a,$40
 	ld (wEnemyPlacement.randomPlacementAttemptCounter),a
@@ -395,7 +387,6 @@ _getRandomPositionForEnemy:
 ;
 ; @param	c	Candidate position to place enemy
 ; @param[out]	cflag	nc if enemy can be placed here
-; @addr{7882}
 _checkTileValidForEnemySpawn:
 	ld b,>wRoomCollisions
 	ld a,(bc)
@@ -425,7 +416,6 @@ _checkTileValidForEnemySpawn:
 ;
 ; @param	c	Candidate position to place enemy
 ; @param[out]	cflag	nc if enemy can be placed here
-; @addr{7894}
 _checkPositionValidForEnemySpawn:
 	; Check if this is a standard transition, or a walk-in-from-outside-screen
 	; transition
@@ -539,7 +529,6 @@ _checkPositionValidForEnemySpawn:
 	ret
 
 ;;
-; @addr{7919}
 @getAbsoluteValue:
 	bit 7,a
 	ret z
@@ -554,7 +543,6 @@ _checkPositionValidForEnemySpawn:
 
 .ifdef ROM_AGES
 
-; @addr{791f}
 enemyUnspawnableTilesTable:
 	.dw @collisions0
 	.dw @collisions1
@@ -641,7 +629,6 @@ enemyUnspawnableTilesTable:
 
 ;;
 ; @param[out]	a	Next value from w4RandomBuffer
-; @addr{7959}
 _getNextValueFromRandomBuffer:
 	ld hl,wEnemyPlacement.randomBufferIndex
 	inc (hl)
@@ -662,7 +649,6 @@ _getNextValueFromRandomBuffer:
 ; placed on it.
 ;
 ; @param[out]	a	Candidate position for an enemy
-; @addr{796b}
 _getCandidatePositionForEnemy:
 	ld a,(wActiveGroup)
 	and $04
@@ -713,7 +699,6 @@ _getCandidatePositionForEnemy:
 ;;
 ; @param	b	Position to check
 ; @param[out]	cflag	Set if an enemy has been placed at position 'b'.
-; @addr{79a7}
 _checkEnemyPlacedAtPosition:
 	ld a,(wEnemyPlacement.numEnemies)
 	or a
@@ -743,7 +728,6 @@ _checkEnemyPlacedAtPosition:
 
 ;;
 ; Checks if the timeportal exists in the current room, and loads the interaction if so.
-; @addr{79be}
 _checkSpawnTimeportalInteraction:
 	xor a
 	ld (wcddd),a
@@ -774,7 +758,6 @@ _checkSpawnTimeportalInteraction:
 ; ages, this indicates whether the room is underwater, or whether the room layout has been
 ; swapped.
 ;
-; @addr{79e2}
 calculateRoomStateModifier:
 	ld a,(wActiveGroup)
 	or a
@@ -814,7 +797,6 @@ calculateRoomStateModifier:
 ; If there are whirlpools or pollution tiles on the screen, this creates a part of type
 ; PARTID_WHIRLPOOL_POLLUTION_EFFECTS, which applies their effects.
 ;
-; @addr{7a12}
 createSeaEffectsPartIfApplicable:
 	ld a,(wActiveCollisions)
 	ld hl,@table
@@ -861,7 +843,6 @@ createSeaEffectsPartIfApplicable:
 
 
 ;;
-; @addr{7a3a}
 func_02_7a3a:
 	ld a,(wcddd)
 	or a

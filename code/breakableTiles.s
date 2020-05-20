@@ -16,7 +16,6 @@
 ;  ff90: Y
 ;  ff91: X
 ;
-; @addr{4734}
 tryToBreakTile_body:
 	ld a,b
 	and $f0
@@ -172,7 +171,6 @@ tryToBreakTile_body:
 
 ;;
 ; @param	h	Somaria block to slate for deletion
-; @addr{47fe}
 @deleteSomariaBlock:
 	ld l,Item.state
 	ld a,(hl)
@@ -187,7 +185,6 @@ tryToBreakTile_body:
 ;;
 ; Makes an interaction for a breakable tile at the item's location.
 ; The effect that will be made is based on the Item.var03 variable.
-; @addr{4809}
 itemMakeInteractionForBreakableTile:
 	ld h,d
 	ld l,Item.yh
@@ -199,7 +196,6 @@ itemMakeInteractionForBreakableTile:
 	ld l,Item.var03
 	ld a,(hl)
 ;;
-; @addr{4816}
 _makeInteractionForBreakableTile:
 	and $1f
 	cp $1f
@@ -232,7 +228,6 @@ _makeInteractionForBreakableTile:
 
 ;;
 ; @param	a	Item drop type?
-; @addr{483d}
 func_483d:
 	push hl
 	call decideItemDrop

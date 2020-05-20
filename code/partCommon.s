@@ -1,7 +1,6 @@
 ;;
 ; @param[out]	zflag	nz if there's a tile collision in the direction this part is
 ;			moving
-; @addr{4000}
 _partCommon_getTileCollisionInFront:
 	ld e,Part.angle
 	ld a,(de)
@@ -10,7 +9,6 @@ _partCommon_getTileCollisionInFront:
 ; @param	a	Angle
 ; @param[out]	bc	Position
 ; @param[out]	zflag	nz if there's a tile collision in that direction
-; @addr{4003}
 _partCommon_getTileCollisionAtAngle:
 	add $02
 	and $1c
@@ -44,7 +42,6 @@ _partCommon_anglePositionOffsets:
 ;;
 ; @param	a	Angle
 ; @param[out]	zflag
-; @addr{402a}
 _partCommon_getTileCollisionAtAngle_allowHoles:
 	call _partCommon_getTileCollisionAtAngle
 	ret z
@@ -52,7 +49,6 @@ _partCommon_getTileCollisionAtAngle_allowHoles:
 
 ;;
 ; @param[out]	cflag	c if there's a collision
-; @addr{4030}
 _partCommon_getTileCollisionInFront_allowHoles:
 	call _partCommon_getTileCollisionInFront
 	ret z
@@ -64,7 +60,6 @@ _partCommon_getTileCollisionInFront_allowHoles:
 
 ;;
 ; Analagous to the "enemyStandardUpdate" function.
-; @addr{403b}
 partCommon_standardUpdate:
 	ld h,d
 	ld l,Part.state
@@ -115,7 +110,6 @@ partCommon_standardUpdate:
 ; Checks for collisions. Considers "screen boundaries" to be collisions.
 ;
 ; @param[out]	zflag	z if collision occurred
-; @addr{4072}
 partCommon_checkTileCollisionOrOutOfBounds:
 	call objectGetTileCollisions
 	add $01 ; Check for SPECIALCOLLISION_SCREEN_BOUNDARY
@@ -127,7 +121,6 @@ partCommon_checkTileCollisionOrOutOfBounds:
 
 ;;
 ; @param[out]	zflag	z if out of bounds
-; @addr{407e}
 partCommon_checkOutOfBounds:
 	ld h,d
 	ld l,Part.yh
@@ -166,7 +159,6 @@ partCommon_checkOutOfBounds:
 
 ;;
 ; @param[out]	zflag	Set if counter1 is zero
-; @addr{40a7}
 partCommon_decCounter1IfNonzero:
 	ld h,d
 	ld l,Part.counter1
@@ -178,7 +170,6 @@ partCommon_decCounter1IfNonzero:
 
 ;;
 ; Reverses direction & bounces upward when collisions are enabled?
-; @addr{40af}
 _partCommon_bounceWhenCollisionsEnabled:
 	ld h,d
 	ld l,Part.collisionType
@@ -202,7 +193,6 @@ _partCommon_bounceWhenCollisionsEnabled:
 	ret
 
 ;;
-; @addr{40cf}
 _partCommon_updateSpeedAndDeleteWhenCounter1Is0:
 	call partCommon_decCounter1IfNonzero
 	jp z,partDelete
@@ -212,7 +202,6 @@ _partCommon_updateSpeedAndDeleteWhenCounter1Is0:
 	jp objectApplySpeed
 
 ;;
-; @addr{40e0}
 _partCommon_setPositionOffsetAndRadiusFromAngle:
 	ld e,Part.angle
 	ld a,(de)
@@ -246,7 +235,6 @@ _partCommon_setPositionOffsetAndRadiusFromAngle:
 	.db $02 $f8 $03 $06 ; DIR_LEFT
 
 ;;
-; @addr{410e}
 _partCommon_incState2:
 	ld h,d
 	ld l,Part.state2

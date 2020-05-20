@@ -344,7 +344,6 @@ agesFunc_10_7298:
 ;
 ; @param	hl	Place to write a counter to (how many frames until calling this
 ;			again)
-; @addr{7328}
 @playWaveSoundAtRandomIntervals_body:
 	push hl
 	ld a,SND_WAVE
@@ -931,7 +930,6 @@ _interactiondc_subid09:
 
 ;;
 ; @param	hl	List of tile postiion/value pairs to set
-; @addr{76f0}
 @replaceTileList:
 	ldi a,(hl)
 	or a
@@ -1483,7 +1481,6 @@ _timewarp_subid0_state1:
 
 ;;
 ; @param	b	Subid of INTERACID_TIMEWARP object to spawn
-; @addr{7a36}
 _timewarp_spawnChild:
 	call getFreeInteractionSlot
 	ret nz
@@ -1688,7 +1685,6 @@ _timewarp_subid4:
 
 ;;
 ; @param[out]	a	[Interaction.animParameter]+1
-; @addr{7b60}
 _timewarp_animate:
 	call interactionAnimate
 	ld e,Interaction.animParameter
@@ -1772,7 +1768,6 @@ interactionCodede:
 
 ;;
 ; Also called by INTERACID_TIMEPORTAL_SPAWNER.
-; @addr{7bce}
 interactionBeginTimewarp:
 	call resetLinkInvincibility
 	ld hl,w1Link
@@ -1798,7 +1793,6 @@ interactionBeginTimewarp:
 	jp interactionDelete
 
 ;;
-; @addr{7bff}
 _timeportal_updatePalette:
 	ld a,(wFrameCounter)
 	and $01
@@ -2329,7 +2323,6 @@ interactionCodee6:
 
 ;;
 ; @param	a	Collision radius
-; @addr{7ee5}
 @checkLinkWithinRange:
 	call objectSetCollideRadius
 	ld hl,w1Link.yh

@@ -1,4 +1,3 @@
-; @addr{7d09}
 cliffTilesTable:
 	.dw @collisions0Data
 	.dw @collisions1Data

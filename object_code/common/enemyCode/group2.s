@@ -152,7 +152,6 @@ enemyCode30:
 	jp nz,_ecom_applyVelocityForSideviewEnemy
 
 ;;
-; @addr{45ae}
 @gotoState8:
 	call getRandomNumber_noPreserveVars
 	and $7f
@@ -371,7 +370,6 @@ _stalfos_state10:
 
 ;;
 ; Go to state 9 with a freshly chosen angle
-; @addr{46ab}
 _stalfos_moveInRandomAngle:
 	ld e,$30
 	ld bc,$1f0f
@@ -401,7 +399,6 @@ _stalfos_moveInRandomAngle:
 ;;
 ; For subid 3 only, if Link approaches close enough, it will jump toward Link to stomp on
 ; him (goes to state $0d).
-; @addr{46ce}
 _stalfos_checkSubid3StompsLink:
 	ld e,Enemy.subid
 	ld a,(de)
@@ -426,7 +423,6 @@ _stalfos_checkSubid3StompsLink:
 
 
 ;;
-; @addr{46ec}
 _stalfos_beginJumpAnimation:
 	ld a,$01
 	call enemySetAnimation
@@ -438,7 +434,6 @@ _stalfos_beginJumpAnimation:
 ;;
 ; If Link is swinging something near this object, it will set its state to $0a if not
 ; already jumping.
-; @addr{46f9}
 _stalfos_checkJumpAwayFromLink:
 	; Not for subid 0
 	ld e,Enemy.subid
@@ -467,7 +462,6 @@ _stalfos_checkJumpAwayFromLink:
 
 ;;
 ; Unused
-; @addr{4716}
 _stalfos_setState8:
 	ld e,Enemy.state
 	ld a,$08
@@ -684,7 +678,6 @@ _keese_subid02_state9:
 ;;
 ; Every 16 frames (based on counter1) this updates the keese's speed as it's decelerating.
 ; Also handles the animation (which slows down).
-; @addr{481c}
 _keese_updateDeceleration:
 	ld e,Enemy.counter1
 	ld a,(de)
@@ -718,7 +711,6 @@ _keese_updateDeceleration:
 
 
 ;;
-; @addr{4851}
 _keese_initializeSubid:
 	dec b
 	jr z,@subid1
@@ -739,7 +731,6 @@ _keese_initializeSubid:
 ;;
 ; For subid 1 only, this has a 1 in 4 chance of deciding to reverse the turning angle
 ; (clockwise or counterclockwise).
-; @addr{4861}
 _keese_chooseWhetherToReverseTurningAngle:
 	call getRandomNumber_noPreserveVars
 	and $03
@@ -887,7 +878,6 @@ _babyCucco_state9:
 
 
 ;;
-; @addr{491a}
 _babyCucco_updateAnimationFromAngle:
 	ld e,Enemy.angle
 	ld a,(de)
@@ -1277,7 +1267,6 @@ _zol_subid01_stateD:
 
 ;;
 ; @param	c	X offset
-; @addr{4af0}
 _zol_spawnGel:
 	ld b,ENEMYID_GEL
 	call _ecom_spawnEnemyWithSubid01
@@ -1748,7 +1737,6 @@ _floormaster_stateD:
 
 ;;
 ; @param[out]	a	Value written to var30 (0 if Link is to the left, 1 if right)
-; @addr{4d0f}
 _floormaster_updateAngleTowardLink:
 	call @checkLinkCollisionsEnabled
 	ret nc
@@ -1802,7 +1790,6 @@ _floormaster_updateAngleTowardLink:
 
 ;;
 ; @param[out]	cflag	c if Link's collisions are enabled
-; @addr{4d48}
 @checkLinkCollisionsEnabled:
 	ld a,(w1Link.collisionType)
 	rlca
@@ -1813,7 +1800,6 @@ _floormaster_updateAngleTowardLink:
 
 
 ;;
-; @addr{4d51}
 _floormaster_updateZPosition:
 	ld e,Enemy.counter1
 	ld a,(de)
@@ -1843,7 +1829,6 @@ _floormaster_updateZPosition:
 ;
 ; @param[out]	bc	Link's position
 ; @param[out]	cflag	c if he's within 8 pixels
-; @addr{4d6f}
 _floormaster_checkLinkMoved8PixelsAway:
 	ld a,Object.var31
 	call objectGetRelatedObject1Var
@@ -1864,7 +1849,6 @@ _floormaster_checkLinkMoved8PixelsAway:
 
 
 ;;
-; @addr{4d89}
 _floormaster_initSpawner:
 	ld e,Enemy.yh
 	ld a,(de)
@@ -1884,7 +1868,6 @@ _floormaster_initSpawner:
 
 ;;
 ; Only screen boundaries count as "walls" for floormaster.
-; @addr{4d9f}
 _floormaster_getAdjacentWallsBitset:
 	ld a,$02
 	jp _ecom_getTopDownAdjacentWallsBitset
@@ -2200,7 +2183,6 @@ _giantCucco_animate:
 
 
 ;;
-; @addr{4f25}
 _cucco_setAnimationFromAngle:
 	ld h,d
 	ld l,Enemy.angle
@@ -2224,7 +2206,6 @@ _cucco_zVals:
 
 
 ;;
-; @addr{4f49}
 _cucco_checkSpawnCuccoAttacker:
 	ld h,d
 	ld l,Enemy.var33
@@ -2294,7 +2275,6 @@ _cucco_attacked:
 ;;
 ; Cucco will transform into ENEMYID_BABY_CUCCO (if not aggressive) or ENEMYID_GIANT_CUCCO
 ; (if aggressive).
-; @addr{4f9c}
 _cucco_hitWithMysterySeed:
 	ld l,Enemy.collisionType
 	res 7,(hl)
@@ -2331,7 +2311,6 @@ _cucco_hitWithMysterySeed:
 
 
 ;;
-; @addr{4fc7}
 _cucco_playChickenSoundEvery32Frames:
 	ld h,d
 	ld l,Enemy.invincibilityCounter
@@ -2582,7 +2561,6 @@ _greatFairy_state9:
 
 
 ;;
-; @addr{50ee}
 _greatFairy_updateZPosition:
 	ld h,d
 	ld l,Enemy.var30
@@ -2609,7 +2587,6 @@ _greatFairy_updateZPosition:
 
 ;;
 ; @param[out]	cflag	c if Link approached
-; @addr{510a}
 _greatFairy_checkLinkApproached:
 	call checkLinkVulnerable
 	ret nc
@@ -2630,7 +2607,6 @@ _greatFairy_checkLinkApproached:
 	ret
 
 ;;
-; @addr{5123}
 _greatFairy_spawnCirclingHeart:
 	call getFreePartSlot
 	ret nz
@@ -2648,7 +2624,6 @@ _greatFairy_spawnCirclingHeart:
 
 
 ;;
-; @addr{5134}
 _greatFairy_createPuff:
 	ldbc INTERACID_PUFF,$02
 	call objectCreateInteraction
@@ -2663,7 +2638,6 @@ _greatFairy_createPuff:
 	ret
 
 ;;
-; @addr{5144}
 _greatFairy_playSoundEvery8Frames:
 	ld a,(wFrameCounter)
 	and $07
@@ -3161,7 +3135,6 @@ _fireKeese_subid1_stateD:
 
 ;;
 ; Subid 1 slows down gradually in state $0d.
-; @addr{538a}
 _fireKeese_subid1_setSpeedAndAnimateBasedOnCounter1:
 	ld e,Enemy.counter1
 	ld a,(de)
@@ -3192,7 +3165,6 @@ _fireKeese_subid1_setSpeedAndAnimateBasedOnCounter1:
 
 ;;
 ; @param[out]	cflag	c if Link is within 32 pixels of keese in each direction
-; @addr{53af}
 _fireKeese_checkCloseToLink:
 	ld h,d
 	ld l,Enemy.yh
@@ -3214,7 +3186,6 @@ _fireKeese_checkCloseToLink:
 ; torch" (var31/var32).
 ;
 ; @param	c	Position of lit torch
-; @addr{53c4}
 _fireKeese_addCandidateTorch:
 	; Get Y distance
 	ld a,c
@@ -3273,7 +3244,6 @@ _fireKeese_addCandidateTorch:
 ; While the keese is not lit on fire, this function checks if any new lit torches suddenly
 ; appear in the room. If so, it sets the state to 8 and returns from the caller (discards
 ; return address).
-; @addr{53fc}
 _fireKeese_checkForNewlyLitTorch:
 	; Return if on fire already
 	ld e,Enemy.var33
@@ -3321,7 +3291,6 @@ _fireKeese_checkForNewlyLitTorch:
 
 ;;
 ; @param[out]	cflag	nc if reached ground (or at most 6 units away)
-; @addr{5427}
 _fireKeese_moveToGround:
 	ld e,Enemy.zh
 	ld a,(de)
@@ -3345,7 +3314,6 @@ _fireKeese_moveToGround:
 
 
 ;;
-; @addr{543b}
 _fireKeese_moveTowardCenterIfOutOfBounds:
 	ld e,Enemy.yh
 	ld a,(de)
@@ -3510,13 +3478,11 @@ _waterTektike_state9:
 ;
 ; This is identical to "_fish_getAdjacentWallsBitsetForKnockback".
 ;
-; @addr{5508}
 _waterTektite_getAdjacentWallsBitset:
 	ld e,Enemy.angle
 
 ;;
 ; @param	de	Angle variable
-; @addr{550a}
 _waterTektite_getAdjacentWallsBitsetGivenAngle:
 	ld a,(de)
 	call _ecom_getAdjacentWallTableOffset
@@ -3562,7 +3528,6 @@ _waterTektite_getAdjacentWallsBitsetGivenAngle:
 
 ;;
 ; @param	hl	Pointer to counter1
-; @addr{5542}
 _waterTektike_setSpeedFromCounter1:
 	ld a,(hl)
 	srl a
@@ -3742,7 +3707,6 @@ _swordEnemy_stateA:
 
 ;;
 ; Reverts to state 8; wandering around in cardinal directions
-; @addr{5628}
 _swordEnemy_gotoState8:
 	ld l,e
 	ld (hl),$08 ; [state]
@@ -3874,7 +3838,6 @@ _swordDarknut_stateA:
 	jr _swordDarknut_animate
 
 ;;
-; @addr{56d3}
 _swordEnemy_beginChasingLink:
 	ld l,Enemy.state
 	inc (hl)
@@ -3884,7 +3847,6 @@ _swordEnemy_beginChasingLink:
 	jp _ecom_updateAnimationFromAngle
 
 ;;
-; @addr{56e0}
 _swordEnemy_chooseRandomAngleAndCounter1:
 	ld bc,$3f07
 	call _ecom_randomBitwiseAndBCE
@@ -3907,7 +3869,6 @@ _swordEnemy_chooseRandomAngleAndCounter1:
 ;;
 ; @param[out]	cflag	c if Link is within 40 pixels of enemy in both directions (and
 ;			counter2, the timeout, has reached 0)
-; @addr{56fa}
 _swordEnemy_checkLinkIsClose:
 	call _ecom_decCounter2
 	ret nz
@@ -3929,7 +3890,6 @@ _swordEnemy_checkLinkIsClose:
 
 ;;
 ; This is identical to the above function.
-; @addr{5712}
 _swordDarknut_checkLinkIsClose:
 	call _ecom_decCounter2
 	ret nz
@@ -3953,7 +3913,6 @@ _swordDarknut_checkLinkIsClose:
 ;;
 ; Sets counter2 to the number of frames to wait before chasing Link again. Higher subids
 ; have lower cooldowns.
-; @addr{572a}
 _swordEnemy_setChaseCooldown:
 	ld e,Enemy.subid
 	ld a,(de)
@@ -3972,7 +3931,6 @@ _swordEnemy_setChaseCooldown:
 ; Updates enemyCollisionMode based on Link's angle relative to the enemy. In this way,
 ; Link's sword doesn't damage the enemy if positioned in such a way that their sword
 ; should block it.
-; @addr{573b}
 _swordEnemy_updateEnemyCollisionMode:
 	ld b,$00
 	ld e,Enemy.stunCounter
@@ -4008,7 +3966,6 @@ _swordEnemy_updateEnemyCollisionMode:
 
 ;;
 ; Same as above, but with a different enemyCollisionMode for the darknut.
-; @addr{5760}
 _swordDarknut_updateEnemyCollisionMode:
 	ld b,$00
 	ld e,Enemy.stunCounter
@@ -4040,7 +3997,6 @@ _swordDarknut_updateEnemyCollisionMode:
 ; Knockback is handled by PARTID_ENEMY_SWORD.
 ;
 ; @param[out]	zflag	z if sword hits should be ignored
-; @addr{577c}
 _swordEnemy_checkIgnoreCollision:
 	ld e,Enemy.knockbackCounter
 	ld a,(de)
@@ -4065,7 +4021,6 @@ _swordEnemy_checkIgnoreCollision:
 
 
 ;;
-; @addr{57a1}
 _swordDarknut_delete:
 	call decNumEnemies
 	jp enemyDelete
@@ -4205,7 +4160,6 @@ _peahat_stateB:
 
 
 ;;
-; @addr{5849}
 _peahat_updateEnemyCollisionMode:
 	ld e,Enemy.zh
 	ld a,(de)
@@ -4220,7 +4174,6 @@ _peahat_updateEnemyCollisionMode:
 
 ;;
 ; Adjusts speed based on counter1, updates position, animates.
-; @addr{5857}
 _peahat_updatePosition:
 	ld e,Enemy.counter1
 	ld a,(de)
@@ -4588,7 +4541,6 @@ _wizzrobe_subid1_stateB:
 ;;
 ; Removes position reservation in "wWizzrobePositionReservations" allowing other wizzrobes
 ; to spawn here.
-; @addr{5a08}
 _wizzrobe_removePositionReservation:
 	ld h,d
 	ld l,Enemy.var30
@@ -4720,7 +4672,6 @@ _wizzrobe_subid2_stateB:
 	jp objectSetVisiblec2
 
 ;;
-; @addr{5aa7}
 _wizzrobe_setAnimationFromAngle:
 	ld e,Enemy.angle
 	ld a,(de)
@@ -4733,7 +4684,6 @@ _wizzrobe_setAnimationFromAngle:
 
 ;;
 ; Flicker visibility when [counter1] < 45.
-; @addr{5ab5}
 _wizzrobe_checkFlickerVisibility:
 	ld e,Enemy.counter1
 	ld a,(de)
@@ -4743,7 +4693,6 @@ _wizzrobe_checkFlickerVisibility:
 
 ;;
 ; @param[out]	cflag	c if within 1 pixel of target position in both directions
-; @addr{5abe}
 _wizzrobe_checkReachedTargetPosition:
 	ld h,d
 	ld l,Enemy.yh
@@ -4763,7 +4712,6 @@ _wizzrobe_checkReachedTargetPosition:
 
 
 ;;
-; @addr{5ad2}
 _wizzrobe_setAngleTowardTargetPosition:
 	ld h,d
 	ld l,Enemy.var31
@@ -4781,7 +4729,6 @@ _wizzrobe_setAngleTowardTargetPosition:
 ; @param[out]	bc	Chosen position (long form)
 ; @param[out]	l	Chosen position (short form)
 ; @param[out]	zflag	nz if this tile has solidity
-; @addr{5adf}
 _wizzrobe_chooseSpawnPosition:
 	call getRandomNumber_noPreserveVars
 	and $70 ; Value strictly under SCREEN_HEIGHT<<4
@@ -4806,7 +4753,6 @@ _wizzrobe_chooseSpawnPosition:
 	jp getTileCollisionsAtPosition
 
 ;;
-; @addr{5b02}
 _wizzrobe_fireEvery32Frames:
 	ld e,Enemy.counter1
 	ld a,(de)
@@ -4824,7 +4770,6 @@ _wizzrobe_fireEvery32Frames:
 ; @param	l	Position
 ; @param[out]	zflag	z if position already reserved, or wWizzrobePositionReservations
 ;			is full
-; @addr{5b0d}
 _wizzrobe_markSpotAsTaken:
 	push bc
 	ld e,l
@@ -5216,7 +5161,6 @@ _crow_subid1_stateD:
 ;;
 ; Adjusts angle to move directly toward Link when [counter1] reaches 0. After this it
 ; underflows to 255, so the angle correction only happens once.
-; @addr{5cc5}
 _crow_updateAngleTowardLinkIfCounter1Zero:
 	call _ecom_decCounter1
 	ret nz
@@ -5224,7 +5168,6 @@ _crow_updateAngleTowardLinkIfCounter1Zero:
 
 
 ;;
-; @addr{5ccc}
 _crow_setAnimationFromAngle:
 	ld h,d
 	ld l,Enemy.angle
@@ -5248,7 +5191,6 @@ _crow_setAnimationFromAngle:
 ; Identical to _crow_subid1_checkWithinScreenBounds.
 ;
 ; @param[out]	cflag	c if within screen bounds
-; @addr{5ce3}
 _crow_subid0_checkWithinScreenBounds:
 	ld e,Enemy.yh
 	ld a,(de)
@@ -5261,7 +5203,6 @@ _crow_subid0_checkWithinScreenBounds:
 
 ;;
 ; @param[out]	cflag	c if within 1 pixel of target position
-; @addr{5cef}
 _crow_moveTowardTargetPosition:
 	ld h,d
 	ld l,Enemy.var32
@@ -5285,7 +5226,6 @@ _crow_moveTowardTargetPosition:
 
 ;;
 ; Updates speed based on counter2. For subid 1.
-; @addr{5d0a}
 _crow_updateSpeed:
 	ld e,Enemy.counter2
 	ld a,(de)
@@ -5308,7 +5248,6 @@ _crow_updateSpeed:
 ; Identical to _crow_subid0_checkWithinScreenBounds.
 ;
 ; @param[out]	cflag	c if within screen bounds
-; @addr{5d20}
 _crow_subid1_checkWithinScreenBounds:
 	ld e,Enemy.yh
 	ld a,(de)
@@ -5532,7 +5471,6 @@ _gel_stateD:
 
 
 ;;
-; @addr{5e32}
 _gel_beginHop:
 	ld bc,-$200
 	call objectSetSpeedZ
@@ -5551,7 +5489,6 @@ _gel_beginHop:
 	jp objectSetVisiblec1
 
 ;;
-; @addr{5e4c}
 _gel_setAngleAwayFromLink:
 	ld a,(w1Link.angle)
 	bit 7,a
@@ -5810,7 +5747,6 @@ _pincer_head_stateE:
 
 ;;
 ; Subid 2-4: body of pincer (just decoration)
-; @addr{5f69}
 _pincer_body:
 	ld a,(de)
 	sub $08
@@ -5880,7 +5816,6 @@ _pincer_body:
 ; Sets relatedObj1 of object 'h' to object 'c'.
 ; 'h' is part of the pincer's body, 'c' is the pincer's head.
 ; Also increments the body part's subid since that does need to be done...
-; @addr{5fb3}
 _pincer_setChildRelatedObj1:
 	inc (hl) ; [subid]++
 	ld l,Enemy.relatedObj1
@@ -5891,7 +5826,6 @@ _pincer_setChildRelatedObj1:
 
 ;;
 ; Updates position based on "base position" (var31), angle, and distance extended (var33).
-; @addr{5fbb}
 _pincer_updatePosition:
 	ld h,d
 	ld l,Enemy.var31
@@ -5905,7 +5839,6 @@ _pincer_updatePosition:
 
 ;;
 ; Calculates value for var33 (amount extended) for a body part.
-; @addr{5fc8}
 _pincer_body_updateExtendedAmount:
 	push hl
 	ld e,Enemy.subid
@@ -6108,7 +6041,6 @@ _ballAndChain_stateA:
 
 ;;
 ; @param[out]	zflag	z if spawned successfully
-; @addr{6095}
 _ballAndChain_spawnSpikedBall:
 	; BUG: This checks for 4 enemy slots, but we actually need 4 part slots...
 	ld b,$04
@@ -6143,7 +6075,6 @@ _ballAndChain_spawnSpikedBall:
 ; Sets state the enemy will return to after switch hook is used on it
 ;
 ; @param	hl	Pointer to state
-; @addr{60b6}
 _ballAndChain_setDefaultState:
 	ld a,(hl)
 	ld l,Enemy.var31
@@ -6681,7 +6612,6 @@ _moldorm_tail:
 	ret
 
 ;;
-; @addr{62f2}
 _moldorm_tail_delete:
 	call decNumEnemies
 	jp enemyDelete
@@ -6689,7 +6619,6 @@ _moldorm_tail_delete:
 
 ;;
 ; @param	h	Object to follow (either the head or the tail in front)
-; @addr{62f8}
 _moldorm_tail_setRelatedObj1AndCopyPosition:
 	ld l,Enemy.relatedObj1
 	ld a,Enemy.start
@@ -6699,7 +6628,6 @@ _moldorm_tail_setRelatedObj1AndCopyPosition:
 
 
 ;;
-; @addr{6301}
 _moldorm_head_updateAnimationFromAngle:
 	ld e,Enemy.angle
 	ld a,(de)
@@ -6715,7 +6643,6 @@ _moldorm_head_updateAnimationFromAngle:
 	jp enemySetAnimation
 
 ;;
-; @addr{6313}
 _moldorm_tail_clearOffsetBuffer:
 	ld h,d
 	ld l,Enemy.var33
@@ -6732,7 +6659,6 @@ _moldorm_tail_clearOffsetBuffer:
 
 
 ;;
-; @addr{6322}
 _moldorm_checkHazards:
 	ld b,a
 	ld e,Enemy.subid
@@ -6904,7 +6830,6 @@ _fireballShooter_timingOffsets:
 
 ;;
 ; For subid $81 only, this deletes itself when all enemies are killed.
-; @addr{63d4}
 _fireballShooter_checkAllEnemiesKilled:
 	ld e,Enemy.subid
 	ld a,(de)
@@ -7233,7 +7158,6 @@ _beetle_subid3:
 
 
 ;;
-; @addr{653c}
 _beetle_chooseRandomAngleAndCounter1:
 	ld bc,$071c
 	call _ecom_randomBitwiseAndBCE
@@ -7255,7 +7179,6 @@ _beetle_chooseRandomAngleAndCounter1:
 ;;
 ; Beetle has custom checkHazards function so it can decrease the spawner's var30 (number
 ; of spawned
-; @addr{6558}
 _beetle_checkHazards:
 	ld b,a
 	ld e,Enemy.state
@@ -7364,7 +7287,6 @@ _flyingTile_state_spawner:
 
 ;;
 ; @param	hl	Address to save to var30/var31
-; @addr{65ca}
 @flyingTile_saveTileDataAddress:
 	ld e,Enemy.var30
 	ld a,l
@@ -7475,13 +7397,11 @@ _flyingTile_stateB:
 
 
 ;;
-; @addr{6636}
 _flyingTile_dead:
 	ld b,INTERACID_ROCKDEBRIS
 	call objectCreateInteractionWithSubid00
 
 ;;
-; @addr{663b}
 _flyingTile_delete:
 	call decNumEnemies
 	jp enemyDelete
@@ -7489,7 +7409,6 @@ _flyingTile_delete:
 ;;
 ; Overwrites the tile at this position with whatever it should become after a flying tile
 ; is created there (depends on subid).
-; @addr{6641}
 _flyingTile_overwriteTileHere:
 	call objectGetShortPosition
 	ld c,a
@@ -7743,7 +7662,6 @@ _dragonfly_state5:
 
 ;;
 ; @param[out]	zflag	nz if touched a wall
-; @addr{6765}
 _dragonfly_applySpeed:
 	ld a,$02 ; Only screen boundaries count as walls
 	call _ecom_getSideviewAdjacentWallsBitset
@@ -7917,7 +7835,6 @@ enemyCode58:
 
 ;;
 ; Make parent visible, remove self from Parent.relatedObj2
-; @addr{6825}
 @makeParentEnemyVisibleAndRemoveReference:
 	ld a,Object.visible
 	call objectGetRelatedObject1Var
@@ -7930,7 +7847,6 @@ enemyCode58:
 
 ;;
 ; Copies parent position, with a Z offset determined by parent.var03.
-; @addr{6832}
 @copyParentPosition:
 	ld a,Object.yh
 	call objectGetRelatedObject1Var
@@ -7952,7 +7868,6 @@ enemyCode58:
 
 ;;
 ; Disable bush destruction for deku scrubs only.
-; @addr{684d}
 @checkDisableDestruction:
 	ld a,Object.id
 	call objectGetRelatedObject1Var
@@ -8258,7 +8173,6 @@ enemyCode5d:
 ;;
 ; This doesn't appear to do anything other than make a sound, because the angle is
 ; immediately overwritten after this is called?
-; @addr{6972}
 _twinrovaIce_bounceOffShield:
 	ld a,(w1Link.direction)
 	swap a
@@ -8364,7 +8278,6 @@ enemyCode5e:
 
 ;;
 ; @param[out]	cflag	c if in bounds
-; @addr{6a36}
 @checkInBounds:
 	ld e,Enemy.yh
 	ld a,(de)
@@ -8376,7 +8289,6 @@ enemyCode5e:
 	ret
 
 ;;
-; @addr{6a42}
 @updateOamFlags:
 	call _ecom_decCounter1
 	ld a,(hl)
@@ -8516,7 +8428,6 @@ _label_270:
 	jp enemyDelete
 
 ;;
-; @addr{6ae6}
 _ganonRevivalCutscene_spawnShadow:
 	call getFreeEnemySlot_uncounted
 	ret nz

@@ -1,6 +1,5 @@
 ;;
 ; ITEMID_BOOMERANG ($06)
-; @addr{4fdd}
 _parentItemCode_boomerang:
 	ld e,Item.state
 	ld a,(de)

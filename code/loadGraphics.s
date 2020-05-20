@@ -1,5 +1,4 @@
 ;;
-; @addr{4000}
 initGbaModePaletteData:
 	ld a,($ff00+R_SVBK)
 	push af
@@ -17,7 +16,6 @@ initGbaModePaletteData:
 
 ;;
 ; Redraw dirty palettes
-; @addr{4016}
 refreshDirtyPalettes:
 	ld a,$02
 	ld ($ff00+R_SVBK),a
@@ -38,7 +36,6 @@ refreshDirtyPalettes:
 ; @param d Bitset of dirty palettes
 ; @param e Bitset of where to get the palettes from
 ; @param l $80 for background, $c0 for sprites
-; @addr{402d}
 @refresh:
 	ld a,d
 	or a
@@ -89,7 +86,6 @@ refreshDirtyPalettes:
 	jr @refresh
 
 ;;
-; @addr{4067}
 @gbaBrightenPalette:
 	ldi a,(hl)
 	ld c,a
@@ -132,7 +128,6 @@ refreshDirtyPalettes:
 	ld h,c
 	ret
 
-; @addr{409d}
 _gbaModePaletteData:
 	.db $00 $05 $07 $08 $0a $0b $0c $0e
 	.db $10 $11 $12 $13 $14 $15 $16 $17
@@ -152,7 +147,6 @@ _gbaModePaletteData:
 	.db $74 $78 $78 $78 $7c $7c $7c $7c
 
 ;;
-; @addr{411d}
 _resumeThreadNextFrameIfLcdIsOn:
 	ld a,($ff00+R_LCDC)
 	rlca
@@ -164,7 +158,6 @@ _resumeThreadNextFrameIfLcdIsOn:
 ;;
 ; Goes through wLoadedObjectGfx, and reloads each entry. This is called when closing
 ; the inventory screen and things like that.
-; @addr{4125}
 reloadObjectGfx:
 	ld a,(wLoadedItemGraphic1)
 	or a
@@ -201,7 +194,6 @@ agesFunc_3f_4133:
 	jp loadTreeGfx_body
 
 ;;
-; @addr{4154}
 refreshObjectGfx_body:
 	call _markAllLoadedObjectGfxUnused
 
@@ -324,7 +316,6 @@ refreshObjectGfx_body:
 ; seasons, but apparently unused in ages.
 ;
 ; @param	e	Object gfx header (minus 1)
-; @addr{41ec}
 loadObjectGfxHeaderToSlot4_body:
 	push de
 	call refreshObjectGfx_body
@@ -334,7 +325,6 @@ loadObjectGfxHeaderToSlot4_body:
 
 ;;
 ; @param	e	Tree gfx index
-; @addr{41f5}
 loadTreeGfx_body:
 	ld hl,wLoadedTreeGfxActive
 	ld a,e
@@ -345,7 +335,6 @@ loadTreeGfx_body:
 	jp _resumeThreadNextFrameIfLcdIsOn
 
 ;;
-; @addr{4201}
 _updateTileIndexBaseForAllObjects:
 	push bc
 	push de
@@ -411,7 +400,6 @@ _updateTileIndexBaseForAllObjects:
 ;
 ; @param	a	Object gfx index
 ; @param	d	Object index
-; @addr{4256}
 @updateTileIndexBase:
 	or a
 	ret z
@@ -447,7 +435,6 @@ _updateTileIndexBaseForAllObjects:
 ; @param[out]	c
 ; @param[out]	hl	Address where gfx is loaded (if it is loaded)
 ; @param[out]	cflag	nc if index is loaded
-; @addr{4270}
 _findIndexInLoadedObjectGfx:
 	or a
 	ret z
@@ -481,7 +468,6 @@ _findIndexInLoadedObjectGfx:
 ; @param[out]	c	Relative position in wLoadedObjectGfx which is free
 ; @param[out]	hl
 ; @param[out]	cflag	Set on failure.
-; @addr{428e}
 _findUnusedIndexInLoadedObjectGfx:
 	ld b,$08
 --
@@ -506,7 +492,6 @@ _findUnusedIndexInLoadedObjectGfx:
 	ret
 
 ;;
-; @addr{42a9}
 _incLoadedObjectGfxIndex:
 	ld a,(wLoadedObjectGfxIndex)
 	inc a
@@ -516,7 +501,6 @@ _incLoadedObjectGfxIndex:
 
 ;;
 ; Gets an address in wLoadedObjectGfx based on wLoadedObjectGfxIndex.
-; @addr{42b3}
 _getAddressOfLoadedObjectGfxIndex:
 	ld a,(wLoadedObjectGfxIndex)
 	ld hl,wLoadedObjectGfx
@@ -530,7 +514,6 @@ _getAddressOfLoadedObjectGfxIndex:
 ; @param[out]	a	Relative position where it's placed in wLoadedObjectGfx
 ; @param[out]	cflag	Set if graphics were queued to be loaded and lcd is
 ;			currently on
-; @addr{42bb}
 _addIndexToLoadedObjectGfx:
 	or a
 	ret z
@@ -558,7 +541,6 @@ _addIndexToLoadedObjectGfx:
 ;
 ; @param	e	Object gfx index
 ; @param	hl	Address in wLoadedObjectGfx?
-; @addr{42cf}
 _insertIndexIntoLoadedObjectGfx:
 	ld a,l
 	cp <wLoadedTreeGfxActive
@@ -620,7 +602,6 @@ _insertIndexIntoLoadedObjectGfx:
 ; Mark a particular object gfx index as used. This doesn't insert the index into
 ; wLoadedObjectGfx if it's not found, though.
 ; @param a Object gfx index to mark as used
-; @addr{430e}
 _markLoadedObjectGfxUsed:
 	or a
 	ret z
@@ -651,7 +632,6 @@ _markLoadedObjectGfxUsed:
 ;;
 ; Sets the 2nd byte of every entry in the wLoadedObjectGfx buffer to $00,
 ; indicating that they are not being used.
-; @addr{4327}
 _markAllLoadedObjectGfxUnused:
 	push bc
 	push hl
@@ -672,14 +652,12 @@ _markAllLoadedObjectGfxUnused:
 ; Get an enemy's gfx index, as well as a pointer to the rest of its data.
 ; @param[out]	a	Object gfx index
 ; @param[out]	hl	Pointer to 3 more bytes of enemy data
-; @addr{4337}
 _enemyGetObjectGfxIndex:
 	ld e,Enemy.id
 	ld a,(de)
 
 ;;
 ; @param	a	Enemy ID
-; @addr{433a}
 _getObjectGfxIndexForEnemy:
 	push bc
 	add a
@@ -695,7 +673,6 @@ _getObjectGfxIndexForEnemy:
 ;;
 ; @param[out]	a	Object gfx index
 ; @param[out]	hl	Pointer to 7 more bytes of part data
-; @addr{4347}
 _partGetObjectGfxIndex:
 	push bc
 	ld e,Part.id
@@ -708,7 +685,6 @@ _partGetObjectGfxIndex:
 	ret
 
 ;;
-; @addr{4355}
 _interactionGetObjectGfxIndex:
 	push bc
 	call _interactionGetData
@@ -717,7 +693,6 @@ _interactionGetObjectGfxIndex:
 	ret
 
 ;;
-; @addr{435c}
 _itemGetObjectGfxIndex:
 	ld e,Item.id
 	ld a,(de)
@@ -734,7 +709,6 @@ _itemGetObjectGfxIndex:
 
 ;;
 ; Loading an enemy?
-; @addr{4368}
 enemyLoadGraphicsAndProperties:
 	call _enemyGetObjectGfxIndex
 	call _addIndexToLoadedObjectGfx
@@ -818,7 +792,6 @@ enemyLoadGraphicsAndProperties:
 
 ;;
 ; Loading a part?
-; @addr{43c9}
 partLoadGraphicsAndProperties:
 	call _partGetObjectGfxIndex
 	call _addIndexToLoadedObjectGfx
@@ -885,7 +858,6 @@ partLoadGraphicsAndProperties:
 ;
 ; @param	d	Interaction index
 ; @param[out]	a	Initial animation index to use
-; @addr{4404}
 interactionLoadGraphics:
 	call _interactionGetObjectGfxIndex
 	call _addIndexToLoadedObjectGfx
@@ -922,7 +894,6 @@ interactionLoadGraphics:
 ;;
 ; Same as above function, but for items.
 ; @param d Item index
-; @addr{4422}
 itemLoadGraphics:
 	call _itemGetObjectGfxIndex
 	call _addIndexToLoadedObjectGfx
@@ -948,7 +919,6 @@ itemLoadGraphics:
 	ret
 
 ;;
-; @addr{4437}
 _interactionGetData:
 	ld h,d
 	ld l,Interaction.id
@@ -958,7 +928,6 @@ _interactionGetData:
 ;;
 ; @param	a	Interaction ID
 ; @param	e	Interaction subID
-; @addr{443c}
 _getDataForInteraction:
 	ld c,a
 	ld b,$00
@@ -993,7 +962,6 @@ _getDataForInteraction:
 
 ;;
 ; @param e Uncompressed gfx header to load
-; @addr{445b}
 loadWeaponGfx:
 	ld hl,wLoadedItemGraphic1
 	ld a,e

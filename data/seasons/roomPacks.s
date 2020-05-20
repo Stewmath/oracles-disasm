@@ -4,7 +4,6 @@
 ; significance? Whenever transitioning between rooms of different "packs", a fadeout
 ; transition is triggered so that the season can change.
 
-; @addr{475c}
 roomPackData:
 
 ;    X:     $00 $01 $02 $03 $04 $05 $06 $07 $08 $09 $0a $0b $0c $0d $0e $0f

@@ -123,7 +123,6 @@ _veranSpider_state_scentSeed:
 
 
 ;;
-; @addr{6895}
 _veranSpider_updateAnimation:
 	ld h,d
 	ld l,Enemy.animCounter
@@ -137,7 +136,6 @@ _veranSpider_updateAnimation:
 	jp enemyAnimate
 
 ;;
-; @addr{68a3}
 _veranSpider_gotoState9:
 	ld h,d
 	ld l,Enemy.state
@@ -229,7 +227,6 @@ _veranSpider_stateA:
 
 
 ;;
-; @addr{6912}
 _veranSpider_setRandomAngleAndCounter1:
 	ld bc,$1870
 	call _ecom_randomBitwiseAndBCE
@@ -417,7 +414,6 @@ _eyesoarChild_stateA:
 	ld (de),a
 
 ;;
-; @addr{6a05}
 _eyesoarChild_updatePosition:
 	ld l,Enemy.yh
 	ld b,(hl)
@@ -818,7 +814,6 @@ _ironMask_subid01:
 ;;
 ; Modifies this object's enemyCollisionMode based on if Link is directly behind the iron
 ; mask or not.
-; @addr{6bee}
 _ironMask_updateCollisionsFromLinkRelativeAngle:
 	call objectGetAngleTowardEnemyTarget
 	ld h,d
@@ -837,7 +832,6 @@ _ironMask_updateCollisionsFromLinkRelativeAngle:
 
 
 ;;
-; @addr{6c05}
 _ironMask_chooseRandomAngleAndCounter1:
 	ld bc,$0703
 	call _ecom_randomBitwiseAndBCE
@@ -876,7 +870,6 @@ _ironMask_chooseRandomAngleAndCounter1:
 	.db 25 30 35 40 45 50 55 60
 
 ;;
-; @addr{6c3a}
 _ironMask_chooseAmountOfTimeToStand:
 	call getRandomNumber_noPreserveVars
 	and $03

@@ -273,7 +273,6 @@ seasonsFunc_03_7516:
 
 ;;
 ; @param	b	index of tile list in table below
-; @addr{752e}
 cutsceneDinDancing_loadListOfTiles:
 	xor c
 	ld (de),a

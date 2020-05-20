@@ -891,7 +891,6 @@ _veranFinal_beeForm_state1:
 ; @param	bc	collisionRadiusY/X
 ; @param	e	enemyCollisionMode
 ; @param	l	Pointer to health value
-; @addr{5d12}
 _veranFinal_initializeForm:
 	ld h,d
 	ld a,(hl)
@@ -1203,7 +1202,6 @@ _veranFinal_beeForm_screenCornerEntrances:
 
 ;;
 ; @param	hl	Enemy.state
-; @addr{5eba}
 _veranFinal_transformToBeeOrSpider:
 	ld (hl),$01
 	ld l,Enemy.collisionType
@@ -1256,7 +1254,6 @@ _veranFinal_transformToBeeOrSpider:
 ;;
 ; @param	b	Distance
 ; @param[out]	cflag	c if Link is within 'b' pixels of self
-; @addr{5efa}
 _veranFinal_spiderForm_checkLinkWithinDistance:
 	ld a,b
 	add a
@@ -1279,7 +1276,6 @@ _veranFinal_spiderForm_checkLinkWithinDistance:
 
 ;;
 ; @param[out]	cflag	c if will do an attack (state changed to 4)
-; @addr{5f11}
 _veranFinal_spiderForm_decideWhetherToAttack:
 	call objectGetAngleTowardLink
 	ld e,a
@@ -1335,7 +1331,6 @@ _veranFinal_spiderForm_decideWhetherToAttack:
 
 
 ;;
-; @addr{5f4e}
 _veranFinal_dead:
 	ld e,Enemy.subid
 	ld a,(de)
@@ -1418,7 +1413,6 @@ _veranFinal_spiderForm_decideAngle:
 	.db $04 $04 $0c $14 $14 $1c $1c $1c
 
 ;;
-; @addr{5fd2}
 _veranFinal_beeForm_chooseRandomTargetPosition:
 	ld bc,$0801
 	call _ecom_randomBitwiseAndBCE
@@ -1434,7 +1428,6 @@ _veranFinal_beeForm_chooseRandomTargetPosition:
 	ld (de),a
 
 ;;
-; @addr{5fe5}
 _veranFinal_beeForm_nextTargetPosition:
 	ld e,Enemy.counter1
 	ld a,(de)
@@ -1476,7 +1469,6 @@ _veranFinal_beeForm_targetPositions:
 
 
 ;;
-; @addr{601c}
 _veranFinal_moveTowardTargetPosition:
 	ld h,d
 	ld l,Enemy.var36
@@ -1497,7 +1489,6 @@ _veranFinal_moveTowardTargetPosition:
 
 ;;
 ; @param[out]	b	Value from 0-3 corresponding to screen quadrant
-; @addr{6036}
 _veranFinal_getQuadrant:
 	ld b,$00
 	ldh a,(<hEnemyTargetY)
@@ -2144,7 +2135,6 @@ _ramrockArm_subid4_substate3:
 
 
 ;;
-; @addr{63b0}
 _ramrockArm_setRelativePosition:
 	call _ramrockArm_getRelativePosition
 	ld h,d
@@ -2156,7 +2146,6 @@ _ramrockArm_setRelativePosition:
 
 ;;
 ; @param[out]	zflag
-; @addr{63bb}
 _ramrockArm_subid0_checkReachedRamrock:
 	call _ramrockArm_getRelativePosition
 	ld e,$02
@@ -2164,7 +2153,6 @@ _ramrockArm_subid0_checkReachedRamrock:
 ;;
 ; @param	bc	Position
 ; @param	e
-; @addr{63c0}
 _ramrockArm_checkPositionAtRamrock:
 	ld h,d
 	ld l,Enemy.yh
@@ -2194,7 +2182,6 @@ _label_10_212:
 
 ;;
 ; @param[out]	bc	Relative position
-; @addr{63dd}
 _ramrockArm_getRelativePosition:
 	ld e,Enemy.subid
 	ld a,(de)
@@ -2215,7 +2202,6 @@ _ramrockArm_getRelativePosition:
 	ret
 
 ;;
-; @addr{63f5}
 _ramrockArm_subid2_copyRamrockPosition:
 	ld a,Object.yh
 	call objectGetRelatedObject1Var
@@ -2703,7 +2689,6 @@ _veranFairy_speedTable:
 	.db SPEED_140, SPEED_1c0, SPEED_200
 
 ;;
-; @addr{6698}
 _veranFairy_checkLoopAroundScreen:
 	call objectGetShortPosition
 	ld e,a
@@ -2748,7 +2733,6 @@ _veranFairy_checkLoopAroundScreen:
 
 ;;
 ; @param[out]	a	Value written to var35
-; @addr{66d9}
 _veranFairy_updateVar35BasedOnHealth:
 	ld b,$00
 	ld e,Enemy.health
@@ -2766,7 +2750,6 @@ _veranFairy_updateVar35BasedOnHealth:
 	ret
 
 ;;
-; @addr{66ed}
 _veranFairy_66ed:
 	call _ecom_decCounter2
 	ret nz
@@ -2915,7 +2898,6 @@ attack2:
 
 ;;
 ; @param[out]	cflag	nc if veran is outside the room boundary
-; @addr{67be}
 _veranFairy_checkWithinBoundary:
 	ld e,Enemy.yh
 	ld a,(de)
@@ -3693,7 +3675,6 @@ _ramrock_glovePhase_substate4:
 
 ;;
 ; Moves from side to side of the screen
-; @addr{6c3f}
 _ramrock_updateHorizontalMovement:
 	call _ecom_applyVelocityForSideviewEnemy
 	ret nz
@@ -3725,7 +3706,6 @@ _ramrock_glovePhase_reverseDirection:
 	jp objectApplySpeed
 
 ;;
-; @addr{6c64}
 _ramrock_glovePhase_updateMovement:
 	ld hl,w1Link.yh
 	ld e,Enemy.yh
@@ -4053,29 +4033,24 @@ blackTower_getMovingFlamesNextTileCoords:
 	ld (de),a
 	ret
 
-; @addr{6ddd}
 @table:
 	.dw @leftFlame
 	.dw @topFlame
 	.dw @rightFlame
 	.dw @bottomFlame
 
-; @addr{6de5}
 @leftFlame:
 	.db $51 $91 $93 $13 $19 $39 $3d $9d
 	.db $97 $77 $7a $8a $00
 
-; @addr{6df2}
 @topFlame:
 	.db $17 $13 $73 $7d $3d $39 $99 $91
 	.db $61 $62 $00
 
-; @addr{6dfd}
 @rightFlame:
 	.db $5d $9d $95 $55 $51 $11 $1b $3b
 	.db $35 $25 $26 $00
 
-; @addr{6e09}
 @bottomFlame:
 	.db $97 $99 $79 $7d $9d $9b $3b $3d
 	.db $1d $1b $3b $35 $55 $53 $93 $98

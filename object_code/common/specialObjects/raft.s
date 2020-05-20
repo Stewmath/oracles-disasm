@@ -1,5 +1,4 @@
 ;;
-; @addr{57ef}
 specialObjectCode_raft:
 .ifdef ROM_AGES
 	ld a,d
@@ -242,7 +241,6 @@ specialObjectCode_raft:
 	jp itemDelete
 
 ;;
-; @addr{593e}
 @saveRaftPosition:
 	ld bc,wLastAnimalMountPointY
 	ld h,d
@@ -259,7 +257,6 @@ specialObjectCode_raft:
 ; Calculates the "adjacent walls bitset" for the raft specifically, treating everything as
 ; solid except for water tiles.
 ;
-; @addr{5952}
 @raftCalculateAdjacentWallsBitset:
 	ld a,$01
 	ldh (<hFF8B),a
@@ -313,7 +310,6 @@ specialObjectCode_raft:
 
 
 ;;
-; @addr{5990}
 @transferKnockbackToLink:
 	; Check Link's invincibilityCounter and var2a
 	ld hl,w1Link.invincibilityCounter

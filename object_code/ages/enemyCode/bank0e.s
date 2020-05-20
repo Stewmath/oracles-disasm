@@ -182,7 +182,6 @@ _bari_state9:
 
 
 ;;
-; @addr{6cbc}
 _bari_setRandomAngleAndCounter2:
 	call getRandomNumber_noPreserveVars
 	and $03
@@ -219,7 +218,6 @@ _bari_subid0_stateA:
 
 ;;
 ; @param	c	X-offset (and value to add to angle)
-; @addr{6cec}
 @spawnSmallBari:
 	ld b,ENEMYID_BARI
 	call _ecom_spawnEnemyWithSubid01
@@ -284,7 +282,6 @@ _bari_subid1:
 
 ;;
 ; Bobs up and down
-; @addr{6d39}
 _bari_updateZPosition:
 	ld h,d
 	ld l,Enemy.var32
@@ -894,7 +891,6 @@ _colorChangingGel_stateA:
 ; Updates the gel's color with intentional lag. Every 90 frames, this uses the value of
 ; var32 (tile index) to set the gel's color, then it updates the value of var32. Due to
 ; the order this is done in, it takes 180 frames for the color to update fully.
-; @addr{702c}
 _colorChangingGel_updateColor:
 	; Must be on ground
 	ld e,Enemy.zh
@@ -939,7 +935,6 @@ _colorChangingGel_updateColor:
 ; Sets enemyCollisionMode depending on whether the gel's color matches the floor or not.
 ;
 ; @param[out]	zflag	z if immune
-; @addr{7052}
 @updateImmunity:
 	call objectGetTileAtPosition
 	cp TILEINDEX_SOMARIA_BLOCK
@@ -959,7 +954,6 @@ _colorChangingGel_updateColor:
 ; @param	a	Tile index
 ; @param[out]	a	Color (defaults to red ($02) if floor tile not listed)
 ; @param[out]	hl	Enemy.oamFlagsBackup
-; @addr{7066}
 @lookupFloorColor:
 	ld e,a
 	ld hl,@floorColors
@@ -981,7 +975,6 @@ _colorChangingGel_updateColor:
 
 ;;
 ; Sets the gel's color to something random that isn't its current color.
-; @addr{7081}
 _colorChangingGel_chooseRandomColor:
 	call getRandomNumber_noPreserveVars
 	and $01
@@ -1313,7 +1306,6 @@ _ambiGuard_attacksLink_state10:
 	ld (hl),ENEMYCOLLISION_AMBI_GUARD_CHASING_LINK
 
 ;;
-; @addr{720f}
 _ambiGuard_turnToFaceLink:
 	call _ecom_updateCardinalAngleTowardTarget
 	swap a
@@ -1335,7 +1327,6 @@ _ambiGuard_attacksLink_state11:
 ; Deletes self if Veran was defeated, otherwise spawns PARTID_DETECTION_HELPER.
 ;
 ; @param[out]	zflag	nz if caller should return immediately (deleted self)
-; @addr{7228}
 _ambiGuard_commonInitialization:
 	ld hl,wGroup4Flags+$fc
 	bit 7,(hl)
@@ -1375,7 +1366,6 @@ _ambiGuard_commonInitialization:
 	ret
 
 ;;
-; @addr{725b}
 _ambiGuard_runMovementScript:
 	call objectRunMovementScript
 
@@ -1393,7 +1383,6 @@ _ambiGuard_runMovementScript:
 ; on-screen will be alerted in this way.
 ;
 ; As long as var36 is nonzero, this "returns from caller" (discards return address).
-; @addr{7269}
 _ambiGuard_checkAlertTrigger:
 	ld h,d
 	ld l,Enemy.var36
@@ -1439,7 +1428,6 @@ _ambiGuard_checkAlertTrigger:
 ;;
 ; @param	de	Variable to set on the guards. "var34" to alert them to Link
 ;			immediately, "var35" to make them patrol faster.
-; @addr{7292}
 _ambiGuard_alertAllGuards:
 	ldhl FIRST_ENEMY_INDEX,Enemy.enabled
 ---
@@ -1473,7 +1461,6 @@ _ambiGuard_alertAllGuards:
 
 ;;
 ; Checks for spotting Link, among other things?
-; @addr{72b5}
 _ambiGuard_checkSpottedLink:
 	ld a,(wScentSeedActive)
 	or a
@@ -1620,7 +1607,6 @@ _ambiGuard_checkSpottedLink:
 	; fall through
 
 ;;
-; @addr{734f}
 _ambiGuard_createExclamationMark:
 	ld a,45
 	ld bc,$f408
@@ -1664,7 +1650,6 @@ _ambiGuard_collisionOccured:
 
 ;;
 ; @param	a	Angle
-; @addr{7376}
 _ambiGuard_setAngle:
 	add $04
 	and $18
@@ -1677,7 +1662,6 @@ _ambiGuard_setAngle:
 
 ;;
 ; A collision with one of Link's direct attacks (sword, fist, etc) occurred.
-; @addr{7383}
 _ambiGuard_directAttackOccurred:
 	; Guard notices Link right away
 	ld e,Enemy.var34
@@ -1686,7 +1670,6 @@ _ambiGuard_directAttackOccurred:
 
 ;;
 ; Does some initialization for "attacking link" type only, when they just notice Link.
-; @addr{7388}
 _ambiGuard_setCounter2ForAttackingTypeOnly:
 	ld e,Enemy.subid
 	ld a,(de)
@@ -3224,7 +3207,6 @@ _veranPossessionBoss_subid3:
 
 
 ;;
-; @addr{7b11}
 _veranPossessionBoss_wasHit:
 	ld h,d
 	ld l,Enemy.knockbackCounter
@@ -3600,7 +3582,6 @@ _vineSprout_state4:
 ;;
 ; Updates tile properties at current position, updates wVinePositions, if var33 is
 ; nonzero.
-; @addr{7cd3}
 _vineSprout_updateTileAtPosition:
 	; Return if we've already done this
 	ld e,Enemy.var33
@@ -3660,7 +3641,6 @@ _vineSprout_updateTileAtPosition:
 ;;
 ; Undoes the changes done previously to the tile at the sprout's current position (the
 ; sprout is just moving off, or being destroyed, etc).
-; @addr{7d14}
 _vineSprout_restoreTileAtPosition:
 	; Return if there's nothing to undo
 	ld e,Enemy.var33
@@ -3687,7 +3667,6 @@ _vineSprout_restoreTileAtPosition:
 
 ;;
 ; @param[out]	cflag	c if Link is in the sprout
-; @addr{7d28}
 _vineSprout_checkLinkInSprout:
 	ld a,(wLinkObjectIndex)
 	ld h,a
@@ -3710,7 +3689,6 @@ _vineSprout_checkLinkInSprout:
 ;;
 ; @param[out]	a	Sprout's default position
 ; @param[out]	de	Enemy.subid
-; @addr{7d42}
 _vineSprout_getDefaultPosition:
 	ld e,Enemy.subid
 	ld a,(de)
@@ -3725,7 +3703,6 @@ _vineSprout_getDefaultPosition:
 
 ;;
 ; @param[out]	c	Sprout's position
-; @addr{7d53}
 _vineSprout_getPosition:
 	ld e,Enemy.subid
 	ld a,(de)
@@ -3847,7 +3824,6 @@ _targetCartCrystal_state2:
 ; Sets var03 to "behaviour" value (0-2)
 ;
 ; @param[out]	zflag	z iff [var03] == 0
-; @addr{7de2}
 _targetCartCrystal_loadBehaviour:
 	ld a,(wTmpcfc0.targetCarts.targetConfiguration)
 	swap a
@@ -3875,7 +3851,6 @@ _targetCartCrystal_loadBehaviour:
 
 ;;
 ; Sets Y/X position based on "wTmpcfc0.targetCarts.targetConfiguration" and subid.
-; @addr{7e24}
 _targetCartCrystal_loadPosition:
 	ld a,(wTmpcfc0.targetCarts.targetConfiguration)
 	ld hl,@configurationTable
@@ -3944,7 +3919,6 @@ _targetCartCrystal_loadPosition:
 	.db $98 $50
 
 ;;
-; @addr{7e85}
 _targetCartCrystal_initSpeed:
 	ld h,d
 	ld l,Enemy.speed
@@ -3967,7 +3941,6 @@ _targetCartCrystal_initSpeed:
 
 ;;
 ; Crystal moves for a bit, switches directions, moves other way.
-; @addr{7e9f}
 _targetCartCrystal_updateMovement:
 	call _ecom_decCounter1
 	jr nz,++

@@ -59,7 +59,6 @@ _parentItemCode_slingshot:
 
 ;;
 ; ITEMID_SHOOTER ($0f)
-; @addr{4e66}
 _parentItemCode_shooter:
 .ifdef ROM_AGES
 	ld e,Item.state
@@ -211,7 +210,6 @@ _parentItemCode_shooter:
 
 ;;
 ; ITEMID_SEED_SATCHEL ($19)
-; @addr{4f2d}
 _parentItemCode_satchel:
 	ld e,Item.state
 	ld a,(de)
@@ -278,7 +276,6 @@ _parentItemCode_satchel:
 ; @param[out]	a	# of seeds of that type
 ; @param[out]	b	Item ID for seed type (value between $20-$24)
 ; @param[out]	hl	Address of "wNum*Seeds" variable
-; @addr{4f82}
 _clearSelfIfNoSeeds:
 	ld hl,wSatchelSelectedSeeds
 	rst_addAToHl
@@ -297,7 +294,6 @@ _clearSelfIfNoSeeds:
 ;;
 ; This is "state 1" for the satchel, bombchu, and bomb "parent items". It simply updates
 ; Link's animation, then deletes the parent.
-; @addr{4f95}
 _parentItemGenericState1:
 	ld e,Item.animParameter
 	ld a,(de)

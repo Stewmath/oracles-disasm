@@ -13,7 +13,6 @@
 ; Note: Byte 0 is the direction Link MOVES INTO the room, not where he ENTERS FROM.
 
 
-; @addr{4886}
 paletteTransitionData:
 	.db @group0-CADDR
 	.db @group1-CADDR

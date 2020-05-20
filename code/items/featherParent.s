@@ -1,6 +1,5 @@
 ;;
 ; ITEMID_FEATHER ($17)
-; @addr{52f3}
 _parentItemCode_feather:
 	ld e,Item.state
 	ld a,(de)

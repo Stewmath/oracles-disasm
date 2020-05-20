@@ -1,5 +1,4 @@
 ;;
-; @addr{5872}
 runRoomSpecificCode: ; 5872
 	ld a,(wActiveRoom)
 	ld hl, _roomSpecificCodeGroupTable
@@ -65,7 +64,6 @@ _roomSpecificCodeGroup7Table: ; 58c9
 	.db $00
 
 ;;
-; @addr{58ca}
 _roomSpecificCode0: ; 58ca
 	ld a,GLOBALFLAG_WON_FAIRY_HIDING_GAME
 	call checkGlobalFlag
@@ -75,7 +73,6 @@ _roomSpecificCode0: ; 58ca
 	jp clearMemory
 
 ;;
-; @addr{5cd8}
 _roomSpecificCode1: ; 5cd8
 	ld a, GLOBALFLAG_D3_CRYSTALS
 	call checkGlobalFlag
@@ -92,7 +89,6 @@ _roomSpecificCode1: ; 5cd8
 	ret
 
 ;;
-; @addr{58ed}
 _roomSpecificCode2: ; 58ed
 	ld a,GLOBALFLAG_D3_CRYSTALS
 	call checkGlobalFlag
@@ -101,7 +97,6 @@ _roomSpecificCode2: ; 58ed
 	jr ---
 
 ;;
-; @addr{58f5}
 _roomSpecificCode3: ; 58f5
 	call getThisRoomFlags
 	bit 6,a
@@ -121,7 +116,6 @@ _roomSpecificCode3: ; 58f5
 	ret
 
 ;;
-; @addr{5915}
 _roomSpecificCode7: ; 5915
 	ld a,GLOBALFLAG_GAVE_ROPE_TO_RAFTON
 	call checkGlobalFlag
@@ -138,7 +132,6 @@ _roomSpecificCode7: ; 5915
 	ret
 
 ;;
-; @addr{5927}
 _roomSpecificCode5: ; 5927
 	ld a,GLOBALFLAG_SAVED_NAYRU
 	call checkGlobalFlag
@@ -149,7 +142,6 @@ _roomSpecificCode5: ; 5927
 
 ;;
 ; Something in ambi's palace
-; @addr{5933}
 _roomSpecificCode4: ; 5933
 	ld a,$06
 	ld (wMinimapRoom),a
@@ -159,7 +151,6 @@ _roomSpecificCode4: ; 5933
 
 ;;
 ; Check to play ralph music for ralph entering portal cutscene
-; @addr{593e}
 _roomSpecificCode8: ; 593e
 	ld a,(wScreenTransitionDirection)
 	cp DIR_RIGHT
@@ -177,7 +168,6 @@ _roomSpecificCode8: ; 593e
 
 ;;
 ; Play nayru music on impa's house screen, for some reason
-; @addr{5950}
 _roomSpecificCode9: ; 5950
 	ld a,GLOBALFLAG_FINISHEDGAME
 	call checkGlobalFlag
@@ -192,7 +182,6 @@ _roomSpecificCode9: ; 5950
 
 ;;
 ; Correct minimap in mermaid's cave present
-; @addr{595c}
 _roomSpecificCodeA: ; 595c
 	ld hl,wMinimapGroup
 	ld (hl),$00
@@ -202,7 +191,6 @@ _roomSpecificCodeA: ; 595c
 
 ;;
 ; Correct minimap in mermaid's cave past
-; @addr{5965}
 _roomSpecificCodeB: ; 5965
 	ld hl,wMinimapGroup
 	ld (hl),$01
@@ -212,7 +200,6 @@ _roomSpecificCodeB: ; 5965
 
 ;;
 ; Something happening on vire black tower screen
-; @addr{596e}
 _roomSpecificCodeC: ; 596e
 	ld hl,wActiveMusic
 	ld a,(hl)

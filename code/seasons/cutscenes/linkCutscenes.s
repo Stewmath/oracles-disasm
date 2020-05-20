@@ -16,7 +16,6 @@ specialObjectCode_linkInCutscene:
 
 ;;
 ; Opening cutscene with the triforce
-; @addr{70be}
 _linkCutscene0:
 	ld e,Item.state
 	ld a,(de)
@@ -127,7 +126,6 @@ _linkCutscene0:
 
 ;;
 ; Creates the colored orb that appears under Link in the opening cutscene
-; @addr{7167}
 _linkCutscene_createGlowingOrb:
 	ldbc INTERACID_SPARKLE, $06
 	call objectCreateInteraction
@@ -142,12 +140,10 @@ _linkCutscene_createGlowingOrb:
 	jp specialObjectSetAnimation
 
 ;;
-; @addr{717d}
 _linkCutscene_oscillateZ_1:
 	ld hl,_linkCutscene_zOscillation1
 
 ;;
-; @addr{7180}
 _linkCutscene_oscillateZ:
 	ld a,($cbb7)
 .ifdef ROM_SEASONS
@@ -827,7 +823,6 @@ _linkCutscene5:
 ;;
 ; Link being kissed by Zelda in ending cutscene - cutsceneA in ages
 ;
-; @addr{75e0}
 _linkCutscene6:
 	ld e,SpecialObject.state
 	ld a,(de)
@@ -848,7 +843,6 @@ _linkCutscene6:
 
 ;;
 ; @param[out]	zflag	Set if shield equipped
-; @addr{75fa}
 @checkShieldEquipped:
 	ld hl,wInventoryB
 	ld a,ITEMID_SHIELD
@@ -1075,7 +1069,6 @@ _linkCutscene9:
 ;;
 ; Cutscene played on starting a new game ("accept our quest, hero") - cutsceneA in ages
 ;
-; @addr{7668}
 _linkCutsceneA:
 	ld e,SpecialObject.state
 	ld a,(de)

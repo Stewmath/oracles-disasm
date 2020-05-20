@@ -11,7 +11,6 @@
 ; @param	a	Room
 ; @param[out]	c	Gasha spot index
 ; @param[out]	zflag	z if nothing is planted in the given room.
-; @addr{7a54}
 getIndexOfGashaSpotInRoom_body:
 	ld c,$00
 	ld hl,gashaSpotRooms
@@ -45,7 +44,6 @@ gashaSpotRooms:
 	.db $89 $95 $a6 $ac $c0 $ef $f0 $c8 ; Subids 8-f
 
 ;;
-; @addr{66ef}
 applyRoomSpecificTileChangesAfterGfxLoad:
 	ld a,(wActiveRoom)
 	ld hl,@tileChangesGroupTable
@@ -149,7 +147,6 @@ applyRoomSpecificTileChangesAfterGfxLoad:
 
 ;;
 ; $09: Load scent tree graphics (north horon)
-; @addr{6776}
 _roomTileChangesAfterLoad09:
 	ld a,TREE_GFXH_07
 _label_04_291:
@@ -167,14 +164,12 @@ _label_04_291:
 
 ;;
 ; $0a: Load pegasus tree graphics (spool swamp)
-; @addr{679d}
 _roomTileChangesAfterLoad0a:
 	ld a,TREE_GFXH_08
 	jr _label_04_291
 
 ;;
 ; $0b: Load gale tree graphics (tarm ruins)
-; @addr{67a1}
 _roomTileChangesAfterLoad0b:
 	ld hl,_loadGaleTreeGfx@rect
 _loadGaleTreeGfx:
@@ -192,7 +187,6 @@ _loadGaleTreeGfx:
 
 ;;
 ; $0c: Load gale tree graphics (sunken city)
-; @addr{67c8}
 _roomTileChangesAfterLoad0c:
 	ld hl,@rect
 	jr _loadGaleTreeGfx
@@ -207,7 +201,6 @@ _roomTileChangesAfterLoad0c:
 
 ;;
 ; $0d: Load mystery tree graphics (woods of winter)
-; @addr{67e9}
 _roomTileChangesAfterLoad0d:
 	ld a,TREE_GFXH_0a
 	call loadTreeGfx
@@ -224,7 +217,6 @@ _roomTileChangesAfterLoad0d:
 
 ;;
 ; $00: Pirate ship bow (at beach)
-; @addr{6810}
 _roomTileChangesAfterLoad00:
 	ld a,GLOBALFLAG_PIRATE_SHIP_DOCKED
 	call checkGlobalFlag
@@ -266,7 +258,6 @@ _roomTileChangesAfterLoad00:
 
 ;;
 ; $01: Pirate ship middle (at beach)
-; @addr{6874}
 _roomTileChangesAfterLoad01:
 	ld a,GLOBALFLAG_PIRATE_SHIP_DOCKED
 	call checkGlobalFlag
@@ -308,7 +299,6 @@ _roomTileChangesAfterLoad01:
 
 ;;
 ; $03: Din's troupe screen: Draw tents and stuff if they should be there.
-; @addr{68ba}
 _roomTileChangesAfterLoad03:
 	call getThisRoomFlags
 	and $40
@@ -437,7 +427,6 @@ _dinsTroupeVramAndCollisions:
 
 ;;
 ; $0e: West of din's troupe: create wagon
-; @addr{6962}
 _roomTileChangesAfterLoad0e:
 	ld a,GLOBALFLAG_INTRO_DONE
 	call checkGlobalFlag
@@ -472,7 +461,6 @@ _roomTileChangesAfterLoad0e:
 
 ;;
 ; $05: King Moblin's house (not moblin's keep)
-; @addr{6991}
 _roomTileChangesAfterLoad05:
 	ld a,GLOBALFLAG_MOBLINS_KEEP_DESTROYED
 	call checkGlobalFlag
@@ -494,7 +482,6 @@ _roomTileChangesAfterLoad05:
 
 ;;
 ; $06: Blaino's gym (draws gloves on roof)
-; @addr{69d6}
 _roomTileChangesAfterLoad06:
 	ld a,TREE_GFXH_01
 	call loadTreeGfx
@@ -511,7 +498,6 @@ _roomTileChangesAfterLoad06:
 
 ;;
 ; $07: Vasu's shop (draws ring sign)
-; @addr{69fd}
 _roomTileChangesAfterLoad07:
 	ld a,$01
 	call loadTreeGfx
@@ -522,7 +508,6 @@ _roomTileChangesAfterLoad07:
 
 ;;
 ; $0f: Maku tree entrance & one screen south: forbid digging up enemies
-; @addr{6a08}
 _roomTileChangesAfterLoad0f:
 	ld a,$01
 	ld (wDiggingUpEnemiesForbidden),a
@@ -585,7 +570,6 @@ _roomTileChangesAfterLoad08:
 
 ;;
 ; This function is used by "drawRectangleToVramTiles".
-; @addr{7d35}
 readParametersForRectangleDrawing:
 	ldi a,(hl)
 	ld e,a
@@ -604,7 +588,6 @@ readParametersForRectangleDrawing:
 ; @param	c	# of rows
 ; @param	de	Where to write the data (should point to w3VramTiles)
 ; @param	hl	The address of the data to write to the given address
-; @addr{7d3e}
 drawRectangleToVramTiles_withParameters:
 	ld a,($ff00+R_SVBK)
 	push af
@@ -621,7 +604,6 @@ drawRectangleToVramTiles_withParameters:
 ; 			b2: # of columns to write before moving to next row
 ; 			b3: # of rows
 ; 			b4+: The data to write to the given address
-; @addr{7d47}
 drawRectangleToVramTiles:
 	ld a,($ff00+R_SVBK)
 	push af
@@ -658,7 +640,6 @@ drawRectangleToVramTiles:
 ; 			b1: # of rows
 ; 			b2-b3: Where to write the data (should point somewhere in wram 3)
 ; 			b4-b5: Where to read data from (should point somewhere in wram 2)
-; @addr{7d6e}
 copyRectangleFromTmpGfxBuffer:
 	ld a,($ff00+R_SVBK)
 	push af
@@ -710,7 +691,6 @@ copyRectangleFromTmpGfxBuffer:
 ;			b3: # of rows
 ;			b4+: Data to write (even bytes go to wRoomLayout, odd bytes go to
 ;			wRoomCollisions)
-; @addr{7d9f}
 copyRectangleToRoomLayoutAndCollisions:
 	ldi a,(hl)
 	ld e,a
@@ -720,7 +700,6 @@ copyRectangleToRoomLayoutAndCollisions:
 ;;
 ; @param	de	Where to write the data
 ; @param	hl	Pointer to data struct (same as above method except first 2 bytes)
-; @addr{7da3}
 copyRectangleToRoomLayoutAndCollisions_paramDe:
 	ldi a,(hl)
 	ld b,a

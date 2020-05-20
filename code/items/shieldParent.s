@@ -1,6 +1,5 @@
 ;;
 ; ITEMID_SHIELD ($01)
-; @addr{4a57}
 _parentItemCode_shield:
 	; Verify that the shield can be used
 	call @checkShieldIsUsable
@@ -39,7 +38,6 @@ _parentItemCode_shield:
 
 ;;
 ; @param[out]	cflag	Set if the shield is ok to use (and the button is held)
-; @addr{4a80}
 @checkShieldIsUsable:
 	; Can't use while swimming
 	ld a,(wLinkSwimmingState)

@@ -171,7 +171,6 @@ _breakableTileCollision5:
 	.db \5 \6
 .endm
 
-; @addr{76e4}
 _breakableTileModes:
 	m_BreakableTileData %10010110 %00110000 %0010 $1 $10 $04 ; $00
 	m_BreakableTileData %10110111 %10110001 %0110 $1 $00 $04 ; $01

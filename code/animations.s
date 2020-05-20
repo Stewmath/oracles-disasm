@@ -1,5 +1,4 @@
 ;;
-; @addr{58e4}
 initializeAnimations:
 	ld a,(wTilesetAnimation)
 	cp $ff
@@ -22,7 +21,6 @@ initializeAnimations:
 	ret
 
 ;;
-; @addr{5906}
 updateAnimations:
 	ld hl,wAnimationState
 	res 6,(hl)
@@ -40,7 +38,6 @@ updateAnimations:
 ;;
 ; Read the next index off of the animation queue, set zero flag if there's
 ; nothing more to be read.
-; @addr{591b}
 updateAnimationQueue:
 	ld a,(wAnimationQueueHead)
 	ld b,a
@@ -67,7 +64,6 @@ updateAnimationQueue:
 	ret
 
 ;;
-; @addr{5942}
 updateAnimationData:
 	ld hl,wAnimationCounter1
 	ld a,(wAnimationState)
@@ -94,7 +90,6 @@ updateAnimationData:
 
 ;;
 ; Update animation data pointed to by hl
-; @addr{5977}
 updateAnimationDataPointer:
 	; If bit 7 set, force update
 	ld a,(wAnimationState)
@@ -158,7 +153,6 @@ updateAnimationDataPointer:
 
 ;;
 ; Load animation index a
-; @addr{59b7}
 loadAnimationGfxIndex:
 	ld c,$06
 	call multiplyAByC

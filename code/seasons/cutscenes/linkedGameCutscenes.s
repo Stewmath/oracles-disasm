@@ -1,6 +1,5 @@
 ;;
 ; CUTSCENE_S_FLAME_OF_DESTRUCTION
-; @addr{6dfd}
 flameOfDestructionCutsceneBody:
 	ld a,(wCutsceneState)
 	rst_jumpTable
@@ -9,7 +8,6 @@ flameOfDestructionCutsceneBody:
 
 ;;
 ; CUTSCENE_S_ZELDA_VILLAGERS
-; @addr{6e05}
 zeldaAndVillagersCutsceneBody:
 	ld a,(wCutsceneState)
 	rst_jumpTable
@@ -18,7 +16,6 @@ zeldaAndVillagersCutsceneBody:
 
 ;;
 ; CUTSCENE_S_ZELDA_KIDNAPPED
-; @addr{6e0d}
 zeldaKidnappedCutsceneBody:
 	ld a,(wCutsceneState)
 	rst_jumpTable

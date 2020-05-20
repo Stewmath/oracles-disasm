@@ -1,5 +1,4 @@
 ; This table maps a tile index to a tileType (see constants/tileTypes.s).
-; @addr{7bad}
 tileTypesTable:
         .dw @collisions0Data
         .dw @collisions1Data

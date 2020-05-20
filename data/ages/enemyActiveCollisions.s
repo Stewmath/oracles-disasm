@@ -9,7 +9,6 @@
 ; Note: the bits are reversed to make it easier to look at (ie. collisionType 0 is at the
 ; far left)
 
-; @addr{69a2}
 enemyActiveCollisions:
 	dbrev %00000000 %00000000 %00000000 %00000000 ; 0x00
 	dbrev %11111111 %11110100 %00000111 %11111110 ; 0x01

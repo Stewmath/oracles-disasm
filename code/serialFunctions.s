@@ -1,7 +1,6 @@
  m_section_force serialCode NAMESPACE serialCode
 
 ;;
-; @addr{4000}
 func_4000:
 	ldh a,(<hSerialInterruptBehaviour)
 	or a
@@ -782,7 +781,6 @@ _func_448c:
 	jp _func_43f5
 
 ;;
-; @addr{44ac}
 func_44ac:
 	ldh a,(<SVBK)
 	push af

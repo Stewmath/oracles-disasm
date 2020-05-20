@@ -569,7 +569,6 @@ interactionCoded0:
 .endif
 
 ;;
-; @addr{4bee}
 @cpYToCompanion:
 	ld e,Interaction.yh
 	ld a,(de)
@@ -580,7 +579,6 @@ interactionCoded0:
 ;;
 ; @param[out]	zflag	z if Link is within a certain range of X-positions for certain
 ;			rooms?
-; @addr{4bf6}
 @checkLinkInXRange:
 	ld a,(wActiveRoom)
 	ld hl,@rooms
@@ -741,7 +739,6 @@ interactionCoded2:
 ;;
 ; This is used by INTERACID_TITLESCREEN_CLOUDS and INTERACID_INTRO_BIRD.
 ; @param[out]	a	X position
-; @addr{4ca1}
 _introObject_applySpeed:
 	ld h,d
 	ld l,Interaction.angle

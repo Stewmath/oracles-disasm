@@ -12,7 +12,6 @@ _parentItemCode_rodOfSeasons:
 
 ;;
 ; ITEMID_BIGGORON_SWORD ($0c)
-; @addr{4aa7}
 _parentItemCode_biggoronSword:
 	call _clearParentItemIfCantUseSword
 
@@ -25,7 +24,6 @@ _parentItemCode_biggoronSword:
 
 ;;
 ; ITEMID_FOOLS_ORE ($1e)
-; @addr{4ab0}
 _parentItemCode_foolsOre:
 	ld e,Item.state
 	ld a,(de)
@@ -52,7 +50,6 @@ _parentItemCode_foolsOre:
 
 ;;
 ; ITEMID_PUNCH ($02)
-; @addr{4ac6}
 _parentItemCode_punch:
 	ld e,Item.state
 	ld a,(de)

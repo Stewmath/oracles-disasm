@@ -1,7 +1,6 @@
 ;;
 ; ITEMID_FLUTE ($0e)
 ; ITEMID_HARP ($11)
-; @addr{4d73}
 _parentItemCode_flute:
 _parentItemCode_harp:
 	ld e,Item.state
@@ -177,7 +176,6 @@ _parentItemCode_harp:
 ;;
 ; @param[out]	hl	wFluteIcon or wSelectedHarpSong
 ; @param[out]	zflag	Set if using flute, unset for harp
-; @addr{4e5a}
 @getSelectedSongAddr:
 	ld hl,wFluteIcon
 	ld e,Item.id

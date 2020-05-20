@@ -1,6 +1,5 @@
 ;;
 ; ITEMID_SWORD ($05)
-; @addr{4b82}
 _parentItemCode_sword:
 	call _clearParentItemIfCantUseSword
 	ld e,Item.state

@@ -1,7 +1,6 @@
 ;;
 ; Indirectly calls a few functions. Used for code outside of this bank.
 ; @param c Index of the function to run
-; @addr{4870}
 functionCaller:
 	ld a,c
 	rst_jumpTable
@@ -11,7 +10,6 @@ functionCaller:
 
 ;;
 ; Clears all variables related to items being used?
-; @addr{4878}
 _clearAllParentItems:
 	push de
 	ld d,>w1ParentItem2
@@ -35,7 +33,6 @@ _clearAllParentItems:
 ; Updates var03 of a parent item to correspond to the equipped A or B button item. This is
 ; called after closing a menu (since button assignments may be changed).
 ;
-; @addr{4890}
 _updateParentItemButtonAssignment_body:
 	ld h,>w1ParentItem2
 @itemLoop:
@@ -70,7 +67,6 @@ _updateParentItemButtonAssignment_body:
 ;;
 ; Use items if the appropriate buttons are pressed along with other conditions.
 ;
-; @addr{48b3}
 checkUseItems:
 	xor a
 	ld (wUsingShield),a
@@ -197,7 +193,6 @@ checkUseItems:
 ;
 ; @param	d	Bitmask for button to check
 ; @param	e	Low byte of inventory item address to check
-; @addr{4954}
 _checkItemUsed:
 	ld h,>wInventoryB
 	ld l,e
@@ -255,7 +250,6 @@ _checkItemUsed:
 ; @param	c	Upper nibble for Item.enabled
 ; @param	d	Button pressed
 ; @param	e	Item.id
-; @addr{4980}
 _initializeParentItem:
 	ld a,c
 	and $f0
@@ -294,7 +288,6 @@ _chooseParentItemSlot:
 	.dw @thing5
 
 ;;
-; @addr{499c}
 @thing4:
 	ld a,(w1ParentItem2.enabled)
 	or a
@@ -303,7 +296,6 @@ _chooseParentItemSlot:
 ;;
 ; Only one of the item can exist at a time.
 ;
-; @addr{49a1}
 @thing2:
 	ld hl,w1ParentItem3.id
 	ld a,e
@@ -316,7 +308,6 @@ _chooseParentItemSlot:
 	jr z,@thing0
 
 ;;
-; @addr{49ac}
 @thing1:
 	ld hl,w1ParentItem3.enabled
 	ld a,(hl)
@@ -332,7 +323,6 @@ _chooseParentItemSlot:
 ;;
 ; Sword, cane, bombs, shovel, bracelet, feather...
 ;
-; @addr{49b6}
 @thing3:
 	; If w1ParentItem2 is already in use, continue only if this object's priority is
 	; greater than or equal to the other object's.
@@ -357,7 +347,6 @@ _chooseParentItemSlot:
 ;;
 ; Used for shield, flute, harp (items that don't create separate objects?)
 ;
-; @addr{49d2}
 @thing5:
 	ld hl,w1ParentItem5.enabled
 	ld a,(hl)
@@ -365,7 +354,6 @@ _chooseParentItemSlot:
 	ret z
 
 ;;
-; @addr{49d8}
 @thing0:
 	or h
 	ret
@@ -374,7 +362,6 @@ _chooseParentItemSlot:
 ;;
 ; Check whether link is picking up an item in a shop
 ;
-; @addr{49da}
 _checkShopInput:
 	ld a,(wLinkGrabState)
 	or a
@@ -393,7 +380,6 @@ _checkShopInput:
 
 ;;
 ; @param	de	Object to update (e should be $00)
-; @addr{49ef}
 _parentItemUpdate:
 	ld a,e
 	ldh (<hActiveObjectType),a
@@ -446,7 +432,6 @@ _parentItemUpdate:
 	.dw _clearParentItem			; ITEMID_1f
 
 ;;
-; @addr{4a42}
 _clearParentItem:
 	call _clearLinkUsingItem1
 	call _itemEnableLinkTurning
@@ -455,7 +440,6 @@ _clearParentItem:
 	jp objectDelete_de
 
 ;;
-; @addr{4a50}
 _clearParentItemH:
 	push de
 	ld d,h

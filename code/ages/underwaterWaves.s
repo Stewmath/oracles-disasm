@@ -2,7 +2,6 @@
 ; Sets up the LCD interrupt behaviour to do the underwater waves, and initializes the SCX
 ; values needed.
 ;
-; @addr{626e}
 checkInitUnderwaterWaves:
 	ld a,(wTilesetFlags)
 	and TILESETFLAG_UNDERWATER
@@ -18,7 +17,6 @@ checkInitUnderwaterWaves:
 ;;
 ; Updates wBigBuffer with the values for SCX for next frame.
 ;
-; @addr{6282}
 checkUpdateUnderwaterWaves:
 	ld a,(wTilesetFlags)
 	and TILESETFLAG_UNDERWATER
@@ -56,7 +54,6 @@ checkUpdateUnderwaterWaves:
 ;;
 ; Cancels the underwater wave effect momentarily during screen transitions.
 ;
-; @addr{62b4}
 checkDisableUnderwaterWaves:
 	ld a,(wTilesetFlags)
 	and TILESETFLAG_UNDERWATER

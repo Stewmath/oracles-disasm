@@ -74,7 +74,6 @@ b4VBlankFunction\1:
  m_VBlankFunction 31
 
 ;;
-; @addr{45c0}
 vblankRunBank4Function_b04:
 	pop hl
 	ldi a,(hl)
@@ -92,7 +91,6 @@ vblankRunBank4Function_b04:
 
 ;;
 ; Does most of the gruntwork involved in figuring out which room to warp to
-; @addr{45d0}
 applyWarpDest_b04:
 	ld a,(wWarpDestGroup)
 	bit 7,a
@@ -191,7 +189,6 @@ _label_04_036:
 ;
 ; @param	hFF8C	The tile index that initiated the warp
 ; @param	hFF8D	The position of the tile that initiated the warp
-; @addr{4629}
 findWarpSourceAndDest:
 .ifdef ROM_AGES
 	ld a,(wDisableWarps)
@@ -305,7 +302,6 @@ findWarpSourceAndDest:
 
 ;;
 ; When you give up, make the warp warp to itself.
-; @addr{46b2}
 setWarpDestDefault:
 	ld hl,wWarpDestGroup
 	ld a,(wActiveGroup)
@@ -323,7 +319,6 @@ setWarpDestDefault:
 .endif ; ROM_AGES
 
 ;;
-; @addr{46c8}
 findScreenEdgeWarpSource:
 	; Don't do anything if the warp is already in progress
 	ld a,(wScrollMode)
@@ -404,7 +399,6 @@ findScreenEdgeWarpSource:
 	ret
 
 ;;
-; @addr{4732}
 func_04_4732:
 	push hl
 	call dismountCompanionAndSetRememberedPositionToScreenCenter
@@ -416,7 +410,6 @@ func_04_4732:
 	ret
 
 ;;
-; @addr{4742}
 getLinkWarpQuadrant:
 	ld a,(wScreenTransitionDirection)
 	ld b,a

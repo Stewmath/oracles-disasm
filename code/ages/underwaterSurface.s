@@ -1,6 +1,5 @@
 ;;
 ; Sets carry (bit 0 of c) if link is allowed to surface
-; @addr{78e4}
 checkLinkCanSurface_isUnderwater: ; 78e4
 	ld a,(wActiveGroup)
 	ld hl, underWaterSurfaceTable

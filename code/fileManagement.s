@@ -3,7 +3,6 @@
 ;;
 ; @param c What operation to do on the file
 ; @param hActiveFileSlot File index
-; @addr{4000}
 fileManagementFunction:
 	ld a,c
 	rst_jumpTable
@@ -13,7 +12,6 @@ fileManagementFunction:
 	.dw _eraseFile
 
 ;;
-; @addr{400a}
 _initializeFile:
 	ld hl,_initialFileVariables
 	call _initializeFileVariables
@@ -68,7 +66,6 @@ _initializeFile:
 ;;
 ; In addition to saving, this is called after creating a file, as well as when it's about
 ; to be loaded (for some reason)
-; @addr{4059}
 _saveFile:
 	; Write $01 here for "ages"
 	ld hl,wWhichGame
@@ -108,7 +105,6 @@ _saveFile:
 	jr _verifyFileCopies
 
 ;;
-; @addr{4085}
 _loadFile:
 	call _verifyFileCopies
 	push af
@@ -128,7 +124,6 @@ _loadFile:
 	ret
 
 ;;
-; @addr{409e}
 _eraseFile:
 	call _getFileAddress1
 	call @clearFile
@@ -136,7 +131,6 @@ _eraseFile:
 	call _getFileAddress2
 ;;
 ; @param bc
-; @addr{40a7}
 @clearFile:
 	ld a,$0a
 	ld ($1111),a
@@ -149,7 +143,6 @@ _eraseFile:
 
 ;;
 ; Clear $0550 bytes at hl
-; @addr{40b6}
 _clearFileAtHl:
 	ld bc,$0550
 	jp clearMemoryBc
@@ -159,7 +152,6 @@ _clearFileAtHl:
 ; If one is valid but not the other, this also updates the invalid copy with the valid
 ; copy's data.
 ; @param[out] a $01 if copy 2 was valid while copy 1 wasn't
-; @addr{40bc}
 _verifyFileCopies:
 	call _getFileAddress2
 	ld l,c
@@ -184,7 +176,6 @@ _verifyFileCopies:
 	.dw @bothCopiesInvalid
 
 ;;
-; @addr{40dc}
 @copy2Invalid:
 	call _getFileAddress2
 	ld e,c
@@ -195,13 +186,11 @@ _verifyFileCopies:
 	call _copyFileFromHlToDe
 
 ;;
-; @addr{40e9}
 @bothCopiesValid:
 	xor a
 	ret
 
 ;;
-; @addr{40eb}
 @copy1Invalid:
 	call _getFileAddress1
 	ld e,c
@@ -214,7 +203,6 @@ _verifyFileCopies:
 	ret
 
 ;;
-; @addr{40fb}
 @bothCopiesInvalid:
 	ld a,$ff
 	ret
@@ -223,7 +211,6 @@ _verifyFileCopies:
 ; Copy a file ($0550 bytes) from hl to de.
 ; @param de Destination address
 ; @param hl Source address
-; @addr{40fe}
 _copyFileFromHlToDe:
 	push hl
 	ld a,$0a
@@ -239,7 +226,6 @@ _copyFileFromHlToDe:
 ; @param hl Address of file
 ; @param[out] a Equals $ff if verification failed
 ; @param[out] cflag Set if verification failed
-; @addr{4110}
 _verifyFileAtHl:
 	push hl
 	ld a,$0a
@@ -287,7 +273,6 @@ _verifyFileAtHl:
 ; Calculate a checksum over $550 bytes (excluding the first 2) for a save file
 ; @param hl Address to start at
 ; @param[out] de Checksum
-; @addr{4140}
 _calculateFileChecksum:
 	push hl
 	ld a,$02
@@ -313,7 +298,6 @@ _calculateFileChecksum:
 ; Get the first address of the save data
 ; @param hActiveFileSlot Save slot
 ; @param[out] bc Address
-; @addr{4157}
 _getFileAddress1:
 	ld c,$00
 	jr +
@@ -322,7 +306,6 @@ _getFileAddress1:
 ; Get the second (backup?) address of the save data
 ; @param hActiveFileSlot Save slot
 ; @param[out] bc Address
-; @addr{415b}
 _getFileAddress2:
 	ld c,$03
 +
@@ -337,7 +320,6 @@ _getFileAddress2:
 	pop hl
 	ret
 
-; @addr{416a}
 @saveFileAddresses:
 	.dw $a010
 	.dw $a560
@@ -350,7 +332,6 @@ _getFileAddress2:
 ;;
 ; @param hl Address of initial values (should point to _initialFileVariables or some
 ; variant)
-; @addr{4176}
 _initializeFileVariables:
 	ld d,>wc600Block
 --
@@ -367,7 +348,6 @@ _initializeFileVariables:
 
 ; Table to distinguish initial file data based on whether it's a standard, linked, or hero
 ; game.
-; @addr{4182}
 _initialFileVariablesTable:
 	.dw _initialFileVariables_standardGame
 	.dw _initialFileVariables_linkedGame
@@ -375,7 +355,6 @@ _initialFileVariablesTable:
 	.dw _initialFileVariables_linkedGame
 
 ; Initial values for variables in the c6xx block.
-; @addr{418a}
 _initialFileVariables:
 	.db <wTextSpeed				$02
 	.db <wc608				$01
@@ -407,14 +386,12 @@ _initialFileVariables:
 	.db $00
 
 ; Standard game (not linked or hero)
-; @addr{41b1}
 _initialFileVariables_standardGame:
 	.db <wLinkHealth			$0c
 	.db <wLinkMaxHealth			$0c
 	; Continue reading the following data
 
 ; Hero game (not linked+hero game)
-; @addr{41b5}
 _initialFileVariables_heroGame:
 	.db <wChildStatus			$00
 	.db <wShieldLevel			$01
@@ -426,7 +403,6 @@ _initialFileVariables_heroGame:
 	.db $00
 
 ; Linked game, or linked+hero game
-; @addr{41bc}
 _initialFileVariables_linkedGame:
 	.db <wSwordLevel			$01
 	.db <wShieldLevel			$01
@@ -439,7 +415,6 @@ _initialFileVariables_linkedGame:
 	.db $00
 
 ; This string is different in ages and seasons.
-; @addr{41c9}
 _saveVerificationString:
 .ifdef ROM_AGES
 	.ASC "Z21216-0"

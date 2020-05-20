@@ -31,7 +31,6 @@
 ;                                      corresponding bit in this file is set)
 ;  data/{game}/partActiveCollisions.s  (Same as above but for part objects)
 
-; @addr{6d0a}
 objectCollisionTable:
 	; ENEMYCOLLISION_00 (0x00)
 	.db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
