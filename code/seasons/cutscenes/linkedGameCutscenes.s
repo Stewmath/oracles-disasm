@@ -287,7 +287,7 @@ zeldaAndVillagersCutscene_state1:
 
 
 zeldaKidnappedCutscene_state1:
-	call zeldaKidnappedCutscene_state1Handler ; $6ff3
+	call zeldaKidnappedCutscene_state1Handler
 	ld hl,wGenericCutscene.cbb3
 	ld a,(hl)
 	cp $10

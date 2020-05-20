@@ -2481,7 +2481,7 @@ _warpTransition3:
 	ld a,SND_ENTERCAVE
 	jp playSound
 
-@directionTable: ; $4ad8
+@directionTable:
 	.db $00 $00
 	.db $02 $10
 

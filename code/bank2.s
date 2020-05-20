@@ -3146,7 +3146,7 @@ _updateStatusBar:
 	ld h,(hl)
 	ld l,a
 	call compareHlToBc
-	jr z,@updateRupeeDisplay; $51bc
+	jr z,@updateRupeeDisplay
 
 	ld hl,wStatusBarNeedsRefresh
 	set 3,(hl)

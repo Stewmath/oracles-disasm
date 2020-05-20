@@ -1350,22 +1350,22 @@ interactionCodeb6:
 	.db @rank1Spot-CADDR ; $0e
 	.db @rank0Spot-CADDR ; $0f
 .else
-	.db @rank1Spot-CADDR ; $4991
-	.db @rank0Spot-CADDR ; $4992
-	.db @rank0Spot-CADDR ; $4993
-	.db @rank3Spot-CADDR ; $4994
-	.db @rank2Spot-CADDR ; $4995
-	.db @rank3Spot-CADDR ; $4996
-	.db @rank2Spot-CADDR ; $4997
-	.db @rank4Spot-CADDR ; $4998
-	.db @rank1Spot-CADDR ; $4999
-	.db @rank2Spot-CADDR ; $499a
-	.db @rank4Spot-CADDR ; $499b
-	.db @rank3Spot-CADDR ; $499c
-	.db @rank2Spot-CADDR ; $499d
-	.db @rank2Spot-CADDR ; $499e
-	.db @rank3Spot-CADDR ; $499f
-	.db @rank4Spot-CADDR ; $49a0
+	.db @rank1Spot-CADDR ; $00
+	.db @rank0Spot-CADDR ; $01
+	.db @rank0Spot-CADDR ; $02
+	.db @rank3Spot-CADDR ; $03
+	.db @rank2Spot-CADDR ; $04
+	.db @rank3Spot-CADDR ; $05
+	.db @rank2Spot-CADDR ; $06
+	.db @rank4Spot-CADDR ; $07
+	.db @rank1Spot-CADDR ; $08
+	.db @rank2Spot-CADDR ; $09
+	.db @rank4Spot-CADDR ; $0a
+	.db @rank3Spot-CADDR ; $0b
+	.db @rank2Spot-CADDR ; $0c
+	.db @rank2Spot-CADDR ; $0d
+	.db @rank3Spot-CADDR ; $0e
+	.db @rank4Spot-CADDR ; $0f
 .endif
 
 

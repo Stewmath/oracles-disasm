@@ -4559,10 +4559,10 @@ updateActiveRoom:
 	ld (wActiveRoom),a
 	jp setVisitedRoomFlag
 
-@smallMapDirectionTable: ; $5f3d
+@smallMapDirectionTable:
 	.db $f0 $01 $10 $ff
 
-@largeMapDirectionTable: ; $5f41
+@largeMapDirectionTable:
 	.db $f8 $01 $08 $ff
 
 
@@ -4720,7 +4720,7 @@ screenTransitionForestScrambler:
 	scf
 	ret
 
-@forestScramblerTable: ; $5fc7
+@forestScramblerTable:
 	.db $00 $71 $90 $00
 	.db $00 $82 $91 $80
 	.db $00 $00 $92 $82

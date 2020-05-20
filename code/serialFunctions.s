@@ -251,37 +251,37 @@ _FFBE_03_FFBF_03:
 _FFBE_03_FFBF_06:
 	ld a,$02
 ++
-	ldh (<hActiveFileSlot),a; $417f
+	ldh (<hActiveFileSlot),a
 	call loadFile
 	ldh (<hFF8B),a
 _func_4186:
 	call _func_4269
 	ld hl,$d9e5
 	ld a,$21
-	ldi (hl),a		; $418e [hl = $d9e5]
+	ldi (hl),a		; hl = $d9e5
 	ld c,a
 	ldh a,(<hFF8B)
-	ldi (hl),a		; $4192 [hl = $d9e6]
-	ldi (hl),a		; $4193 [hl = $d9e7]
+	ldi (hl),a		; hl = $d9e6
+	ldi (hl),a		; hl = $d9e7
 	add a
 	add c
 	ld c,a
 	ld a,(wLinkMaxHealth)
-	ldi (hl),a		; $419a [hl = $d9e8]
-	ldi (hl),a		; $419b [hl = $d9e9]
+	ldi (hl),a		; hl = $d9e8
+	ldi (hl),a		; hl = $d9e9
 	add a
 	add c
 	ld c,a
 	ld a,(wDeathCounter)
-	ldi (hl),a		; $41a2 [hl = $d9ea]
+	ldi (hl),a		; hl = $d9ea
 	add c
 	ld c,a
 	ld a,(wDeathCounter+1)
-	ldi (hl),a		; $41a8 [hl = $d9eb]
+	ldi (hl),a		; hl = $d9eb
 	add c
 	ld c,a
-	ld a,(wFileIsLinkedGame); $41ab
-	ldi (hl),a		; $41ae [hl = $d9ec]
+	ld a,(wFileIsLinkedGame)
+	ldi (hl),a		; hl = $d9ec
 	add c
 	ld c,a
 	ld a,(wFileIsHeroGame)
@@ -289,14 +289,14 @@ _func_4186:
 	ld e,a
 	ld a,(wFileIsCompleted)
 	or e
-	ldi (hl),a		; $41ba [hl = $d9ed]
+	ldi (hl),a		; hl = $d9ed
 	add c
 	ld c,a
 	ld de,wGameID
 	ld b,$16
 --
 	ld a,(de)
-	ldi (hl),a		; $41c3 [hl = $d9ee-$da03]
+	ldi (hl),a		; hl = $d9ee-$da03
 	add c
 	ld c,a
 	inc e
@@ -307,13 +307,13 @@ _func_4186:
 .else
 	ld a,$a0
 .endif
-	ldi (hl),a		; $41cc [hl = $da04]
+	ldi (hl),a		; hl = $da04
 	add c
 	ld c,a
-	ldh a,(<hActiveFileSlot); $41cf
-	ld (hl),a		; $41d1 [hl = $da05]
+	ldh a,(<hActiveFileSlot)
+	ld (hl),a		; hl = $da05
 	add c
-	ldi (hl),a		; $41d3 [hl = $da05]
+	ldi (hl),a		; hl = $da05
 	ld a,$01
 	ld ($d988),a
 	jp _func_4049

@@ -1,9 +1,9 @@
-dungeonRoomPropertiesGroupTable: ; $4dca
+dungeonRoomPropertiesGroupTable:
 	.dw dungeonRoomPropertiesGroup4Data
 	.dw dungeonRoomPropertiesGroup5Data
 
-dungeonRoomPropertiesGroup4Data: ; 4dce
+dungeonRoomPropertiesGroup4Data:
 	m_IncRoomData group4DungeonProperties.bin
-dungeonRoomPropertiesGroup5Data: ; 4ece
+dungeonRoomPropertiesGroup5Data:
 	m_IncRoomData group5DungeonProperties.bin
 
