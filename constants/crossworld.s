@@ -1,0 +1,9 @@
+.define SRAMBANK_OTHERGAME_BACKUP	$00
+.define SRAMBANK_BOOTSTRAP		$01
+.define SRAMBANK_AGES			$02
+.define SRAMBANK_SEASONS		$03
+
+; SRAMBANK_OTHERGAME_BACKUP
+.define AGES_BACKUP			$a000
+.define SEASONS_BACKUP			$a550
+.define CURRENT_SAVED_GAME_START	$aaa0 ; $0 for ages, $1 for seasons

@@ -311,6 +311,17 @@ wPuddleAnimationPointer: ; $c4ba
 ; every 16 frames.
 	dw
 
+wSwapGame:
+; Set to swap game
+; $02: ages
+; $03: seasons
+	db
+
+wCurrentGame:
+; $00: ages
+; $01: seasons
+	db
+
 ; $c4bb-$c4bf unused?
 
 .ENDS

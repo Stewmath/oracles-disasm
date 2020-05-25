@@ -243,7 +243,7 @@ begin:
 	ldh (<hRng2),a
 resetGame:
 	ld sp,wMainStackTop
-	jpfrombank0 init
+	jp sramBootstrap
 
 
 ;;
@@ -7345,6 +7345,32 @@ getPositionOffsetForVelocity:
 	ldd (hl),a
 	ld (hl),a
 	ret
+
+sramBootstrap:
+	ld a,:bank0p2Start
+	setrombank
+
+	ld a,$0a
+	ld ($1111),a
+
+	ld a,SRAMBANK_BOOTSTRAP
+	ld ($4444),a
+
+	ld hl,bank0p2Start - $a000 + $4000
+	ld de,bank0p2Start
+	ld bc,$2000 - (bank0p2Start - $a000)
+	call copyMemoryBc
+
+	jpfrombank0 init
+.ENDS
+
+.BANK $41 SLOT 4
+.ORG 0
+
+.SECTION "Bank 0 SRAM"
+
+bank0p2Start:
+
 
 ;;
 ; @param[out]	bc	Object's position

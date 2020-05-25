@@ -21,10 +21,8 @@
 
 	hRomBank			db	; $ff97
 
-.ifdef ROM_AGES
 	hScriptAddressL			db	; $ff98
 	hScriptAddressH			db	; $ff99
-.endif
 
 
 	; When gameboy is initialized, hram is cleared from here to "hramEnd".

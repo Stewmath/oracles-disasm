@@ -4,12 +4,22 @@
 ; @param c What operation to do on the file
 ; @param hActiveFileSlot File index
 fileManagementFunction:
+	ld a,SRAMBANK_AGES
+	ld ($4444),a
 	ld a,c
+	ld bc,@return
+	push bc
 	rst_jumpTable
 	.dw _initializeFile
 	.dw _saveFile
 	.dw _loadFile
 	.dw _eraseFile
+@return:
+	push af
+	ld a,SRAMBANK_BOOTSTRAP
+	ld ($4444),a
+	pop af
+	ret
 
 ;;
 _initializeFile:
@@ -138,7 +148,7 @@ _eraseFile:
 	ld h,b
 	call _clearFileAtHl
 	xor a
-	ld ($1111),a
+	;ld ($1111),a
 	ret
 
 ;;
@@ -218,7 +228,7 @@ _copyFileFromHlToDe:
 	ld bc,$0550
 	call copyMemoryBc
 	xor a
-	ld ($1111),a
+	;ld ($1111),a
 	pop hl
 	ret
 
@@ -255,7 +265,7 @@ _verifyFileAtHl:
 
 @verifyDone:
 	xor a
-	ld ($1111),a
+	;ld ($1111),a
 	pop hl
 	ld a,b
 	rrca

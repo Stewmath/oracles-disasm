@@ -8,8 +8,11 @@ init:
 	ld ($ff00+R_STAT),a
 	ld ($ff00+R_TAC),a
 	ld ($ff00+R_SC),a
-	xor a
-	ld ($1111),a
+	;xor a
+	;ld ($1111),a
+	.rept 4
+	.db $00
+	.endr
 
 	call disableLcd
 

@@ -3746,6 +3746,36 @@ cutscene03:
 	or a
 	ret nz
 
+	; TODO: remove
+	ld a,(wCurrentGame)
+	or a
+	jr z,+
+	ld a,(wWarpDestGroup)
+	cp $03
+	jr nz,+
+	ld a,(wWarpDestRoom)
+	cp $15
+	jr nz,+
+	ld a,SRAMBANK_AGES
+	ld (wSwapGame),a
+	call setDeathRespawnPoint
+	ret
++
+	ld a,(wCurrentGame)
+	or a
+	jr nz,+
+	ld a,(wWarpDestGroup)
+	cp $02
+	jr nz,+
+	ld a,(wWarpDestRoom)
+	cp $3b
+	jr nz,+
+	ld a,SRAMBANK_SEASONS
+	ld (wSwapGame),a
+	call setDeathRespawnPoint
+	ret
++
+
 	call disableLcd
 	call clearOam
 	call clearScreenVariablesAndWramBank1

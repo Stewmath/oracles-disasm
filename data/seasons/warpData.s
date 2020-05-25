@@ -649,7 +649,7 @@ group0WarpSources: ; $13467
 	m_PointerWarp  $40 $c5 warpSource7603
 	m_StandardWarp $00 $c8 $05 $3 $4
 	m_PointerWarp  $40 $d2 warpSource763f
-	m_StandardWarp $00 $e8 $15 $3 $4
+	m_StandardWarp $00 $e8 $15 $3 $2 ; TODO: remove - change last param back to $4
 	m_PointerWarp  $40 $f6 warpSource7623
 	m_StandardWarp $00 $b5 $18 $3 $4
 	m_StandardWarp $00 $4d $1d $3 $4

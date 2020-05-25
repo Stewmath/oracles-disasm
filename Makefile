@@ -120,6 +120,9 @@ seasons:
 	@ln -s $(SEASONS_BUILD_DIR) build
 	@ROM_SEASONS=1 $(MAKE) seasons.gbc
 
+combined: ages seasons
+	@echo '===Merging games==='
+	@$(PYTHON) tools/misc/merge_games.py
 
 $(GAME).gbc: $(OBJS) linkfile_$(GAME)
 	$(LD) -S linkfile_$(GAME) $@

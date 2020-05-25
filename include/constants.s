@@ -39,6 +39,7 @@
 .include "constants/treeGfxHeaders.s"
 .include "constants/uncmpGfxHeaders.s"
 .include "constants/uniqueGfxHeaders.s"
+.include "constants/crossworld.s"
 
 .ifdef ROM_SEASONS
 .include "constants/seasons.s"
