@@ -990,7 +990,7 @@ loadPaletteHeader:
 	ld a,:paletteHeaderTable
 	setrombank
 	ld a,l
-	ld hl,paletteHeaderTable
+	call ldhl_paletteHeaderTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -1063,7 +1063,7 @@ loadPaletteHeader:
 	ld h,a
 
 	; Set bank, begin copying
-	ld a,:paletteDataStart
+	call lda_paletteDataStart_bank
 	setrombank
 --
 	ld c,$08
@@ -1172,7 +1172,7 @@ loadUncompressedGfxHeader:
 	ld a,:uncmpGfxHeaderTable
 	setrombank
 	ld a,e
-	ld hl,uncmpGfxHeaderTable
+	call ldhl_uncmpGfxHeaderTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -1227,7 +1227,7 @@ loadGfxHeader:
 	ld a,:gfxHeaderTable
 	setrombank
 	ld a,e
-	ld hl,gfxHeaderTable
+	call ldhl_gfxHeaderTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -1519,7 +1519,7 @@ loadTileset:
 	ld a,:tilesetLayoutTable
 	setrombank
 	ld a,e
-	ld hl,tilesetLayoutTable
+	call ldhl_tilesetLayoutTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -1527,7 +1527,7 @@ loadTileset:
 --
 	ldi a,(hl)
 	push hl
-	ld hl,tilesetLayoutDictionaryTable
+	call ldhl_tilesetLayoutDictionaryTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -1745,7 +1745,7 @@ threadRestart:
 	add $04
 	ld c,a
 	ld d,$00
-	ld hl,_initialThreadStates-(<wThreadStateBuffer)
+	ld hl,initialThreadStates-(<wThreadStateBuffer)
 	add hl,de
 	ld d,>wThreadStateBuffer
 	ld b,$08
@@ -1775,7 +1775,7 @@ restartThisThread:
 	add $04
 	ld c,a
 	ld d,$00
-	ld hl,_initialThreadStates-(<wThreadStateBuffer)
+	ld hl,initialThreadStates-(<wThreadStateBuffer)
 	add hl,de
 	ld d,>wThreadStateBuffer
 	ld b,$08
@@ -1858,7 +1858,7 @@ _nextThread:
 startGame:
 	; Initialize thread states
 	ld sp,wMainStackTop
-	ld hl,_initialThreadStates
+	ld hl,initialThreadStates
 	ld de,wThreadStateBuffer
 	ld b,NUM_THREADS*8
 -
@@ -1972,20 +1972,6 @@ _initializeThread:
 	ld sp,hl
 	push bc
 	ret
-
-_initialThreadStates:
-	m_ThreadState $02 $00 wThread0StackTop introThreadStart
-	m_ThreadState $02 $00 wThread1StackTop stubThreadStart
-	m_ThreadState $02 $00 wThread2StackTop stubThreadStart
-	m_ThreadState $02 $00 wThread3StackTop paletteFadeThreadStart
-
-
-; Upper bytes of addresses of flags for each group
-flagLocationGroupTable:
-	.db >wPresentRoomFlags >wPastRoomFlags
-	.db >wGroup2Flags >wPastRoomFlags
-	.db >wGroup4Flags >wGroup5Flags
-	.db >wGroup4Flags >wGroup5Flags
 
 ;;
 ; @param	hActiveFileSlot	File index
@@ -2592,12 +2578,16 @@ serialFunc_0c7e:
 
 ;;
 serialFunc_0c85:
-	jpab serialCode.func_44ac
+	ld hl,serialCode.func_44ac
+	call lde_serialCode_bank
+	jp interBankCall
 
 ;;
 serialFunc_0c8d:
 	push de
-	callab serialCode.func_4000
+	ld hl,serialCode.func_4000
+	call lde_serialCode_bank
+	call interBankCall
 	pop de
 	ret
 
@@ -2857,7 +2847,7 @@ drawAllSpritesUnconditionally:
 	jr c,@loop
 ++
 	; Update the puddle animation
-	ld a,:terrainEffects.puddleAnimationFrames
+	call lda_terrainEffects_bank
 	setrombank
 
 	; Every 16 frames, the animation changes
@@ -2898,7 +2888,7 @@ drawAllSpritesUnconditionally:
 	ld b,a
 	inc a
 	ldh (<hFF8A),a
-	ld a,(wRoomIsLarge)
+	call lda_wRoomIsLarge
 	or a
 	jr z,+
 	ld a,$04
@@ -3011,7 +3001,7 @@ drawAllSpritesUnconditionally:
 	and $c0
 	rlca
 	rlca
-	add BASE_OAM_DATA_BANK
+	call add_baseOAMDataBank
 	setrombank
 	set 6,h
 	res 7,h
@@ -3106,7 +3096,7 @@ drawAllSpritesUnconditionally:
 ; @param hFF8C Y-position to draw at
 ; @param hFF8D X-position to draw at
 func_0eda:
-	ld a,:terrainEffects.shadowAnimation
+	call lda_terrainEffects_bank
 	setrombank
 
 	; Get the end of used OAM, get how many sprites are to be drawn, check
@@ -3163,7 +3153,7 @@ func_0eda:
 ; @param	[hFF8C]	Y-position
 ; @param	[hFF8D]	X-position
 _drawObjectTerrainEffects:
-	ld a,(wTilesetFlags)
+	call lda_wTilesetFlags
 	and TILESETFLAG_SIDESCROLL
 	ret nz
 
@@ -3546,15 +3536,15 @@ objectQueueDraw:
 getChestData:
 	ldh a,(<hRomBank)
 	push af
-	ld a,:chestData.chestDataGroupTable
+	call lda_chestDataGroupTable_bank
 	setrombank
-	ld a,(wActiveGroup)
-	ld hl,chestData.chestDataGroupTable
+	call lda_wActiveGroup
+	call ldhl_chestDataGroupTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
 	ld l,a
-	ld a,(wActiveRoom)
+	call lda_wActiveRoom
 	ld b,a
 -
 	ldi a,(hl)
@@ -3587,11 +3577,11 @@ getChestData:
 ; Set Link's death respawn point based on the current room / position variables.
 setDeathRespawnPoint:
 	ld hl,wDeathRespawnBuffer
-	ld a,(wActiveGroup)
+	call lda_wActiveGroup
 	ldi (hl),a
-	ld a,(wActiveRoom)
+	call lda_wActiveRoom
 	ldi (hl),a
-	ld a,(wRoomStateModifier)
+	call lda_wRoomStateModifier
 	ldi (hl),a
 	ld a,(w1Link.direction)
 	ldi (hl),a
@@ -3599,18 +3589,18 @@ setDeathRespawnPoint:
 	ldi (hl),a
 	ld a,(w1Link.xh)
 	ldi (hl),a
-	ld a,(wRememberedCompanionId)
+	call lda_wRememberedCompanionId
 	ldi (hl),a
-	ld a,(wRememberedCompanionGroup)
+	call lda_wRememberedCompanionGroup
 	ldi (hl),a
-	ld a,(wRememberedCompanionRoom)
+	call lda_wRememberedCompanionRoom
 	ldi (hl),a
-	ld a,(wLinkObjectIndex)
+	call lda_wLinkObjectIndex
 	ldi (hl),a
 	inc l
-	ld a,(wRememberedCompanionY)
+	call lda_wRememberedCompanionY
 	ldi (hl),a
-	ld a,(wRememberedCompanionX)
+	call lda_wRememberedCompanionX
 	ldi (hl),a
 	ret
 
@@ -3622,17 +3612,17 @@ func_1135:
 
 ;;
 updateLinkLocalRespawnPosition:
-	ld a,(wLinkObjectIndex)
+	call lda_wLinkObjectIndex
 	ld h,a
 	ld l,<w1Link.direction
 	ld a,(hl)
-	ld (wLinkLocalRespawnDir),a
+	call ldwLinkLocalRespawnDir_a
 	ld l,<w1Link.yh
 	ld a,(hl)
-	ld (wLinkLocalRespawnY),a
+	call ldwLinkLocalRespawnY_a
 	ld l,<w1Link.xh
 	ld a,(hl)
-	ld (wLinkLocalRespawnX),a
+	call ldwLinkLocalRespawnX_a
 	ret
 
 ;;
@@ -3661,11 +3651,11 @@ updateRoomFlagsForBrokenTile:
 	ld bc,bitTable
 	add c
 	ld c,a
-	ld a,(wActiveGroup)
+	call lda_wActiveGroup
 	ld hl, flagLocationGroupTable
 	rst_addAToHl
 	ld h,(hl)
-	ld a,(wActiveRoom)
+	call lda_wActiveRoom
 	ld l,a
 	ld a,(bc)
 	or (hl)
@@ -3682,26 +3672,26 @@ setRoomFlagsForUnlockedKeyDoor:
 	and $0f
 	ld de,_adjacentRoomsData
 	call addAToDe
-	ld a,(wDungeonIndex)
+	call lda_wDungeonIndex
 	cp $ff
 	jr z,@notInDungeon
 
 	; Set the flag in the first room
-	call getActiveRoomFromDungeonMapPosition
+	call getActiveRoomFromDungeonMapPosition_caller
 	call @setRoomFlag
 
 	; Calculate the position of the second room, and set the corresponding flag there
 	inc de
-	ld a,(wDungeonMapPosition)
+	call lda_wDungeonMapPosition
 	ld l,a
 	ld a,(de)
 	add l
-	call getRoomInDungeon
+	call getRoomInDungeon_caller
 	inc de
 
 @setRoomFlag:
 	ld c,a
-	ld a,(wDungeonFlagsAddressH)
+	call lda_wDungeonFlagsAddressH
 	ld b,a
 	ld a,(de)
 	ld l,a
@@ -3741,9 +3731,9 @@ setRoomFlagsForUnlockedKeyDoor_overworldOnly:
 	and $0f
 	ld hl,_adjacentRoomsData
 	rst_addAToHl
-	ld a,(wActiveRoom)
+	call lda_wActiveRoom
 	ld c,a
-	ld b,>wGroup2Flags
+	call ldb_wGroup2Flags_upperByte
 	ld a,(bc)
 	or (hl)
 	ld (bc),a
@@ -3759,23 +3749,23 @@ setRoomFlagsForUnlockedKeyDoor_overworldOnly:
 ;;
 ; Allows link to walk through chests when he's already inside one.
 checkAndUpdateLinkOnChest:
-	ld a,(wLinkOnChest)
+	call lda_wLinkOnChest
 	or a
 	jr nz,++
 
-	ld a,(wActiveTileIndex)
+	call lda_wActiveTileIndex
 	cp TILEINDEX_CHEST
 	ret nz
 
-	ld a,(wActiveTilePos)
-	ld (wLinkOnChest),a
+	call lda_wActiveTilePos
+	call ldwLinkOnChest_a
 	ld l,a
 	ld h,>wRoomCollisions
 	ld (hl),$00
 	ret
 ++
 	ld c,a
-	ld a,(wActiveTilePos)
+	call lda_wActiveTilePos
 	cp c
 	ret z
 
@@ -3785,7 +3775,7 @@ checkAndUpdateLinkOnChest:
 	dec b
 	ld (bc),a
 	xor a
-	ld (wLinkOnChest),a
+	call ldwLinkOnChest_a
 	ret
 
 ;;
@@ -3809,7 +3799,7 @@ showInfoTextForRoller:
 	ld a,:bank6.showInfoTextForTile
 	setrombank
 	ld a,$09
-	call bank6.showInfoTextForTile
+	call bank6_showInfoTextForTile_caller
 	pop af
 	setrombank
 	ret
@@ -3822,9 +3812,9 @@ updateCamera:
 
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 bank1.updateCameraPosition
-	call          bank1.updateGfxRegs2Scroll
-	call          bank1.updateScreenShake
+	ld a,:bank1.updateCameraPosition
+	setrombank
+	call updateCamera_body
 	pop af
 	setrombank
 	ret
@@ -3833,8 +3823,9 @@ updateCamera:
 resetCamera:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 bank1.calculateCameraPosition
-	call          bank1.updateGfxRegs2Scroll
+	ld a,:bank1.calculateCameraPosition
+	setrombank
+	call resetCamera_body
 	pop af
 	setrombank
 	ret
@@ -3849,7 +3840,7 @@ setCameraFocusedObject:
 
 ;;
 setCameraFocusedObjectToLink:
-	ld a,(wLinkObjectIndex)
+	call lda_wLinkObjectIndex
 	ld (wCameraFocusedObject),a
 	ld a,$00
 	ld (wCameraFocusedObjectType),a
@@ -3866,7 +3857,7 @@ reloadTileMap:
 	ld a,UNCMP_GFXH_10
 	call loadUncompressedGfxHeader
 	callfrombank0 bank1.setScreenTransitionState02
-	call          bank1.updateGfxRegs2Scroll
+	call          bank1_updateGfxRegs2Scroll_caller
 	pop af
 	setrombank
 	ret
@@ -3881,7 +3872,7 @@ func_131f:
 	push af
 	callfrombank0 bank1.initializeRoomBoundaryAndLoadAnimations
 	call          bank1.setScreenTransitionState02
-	call          loadTilesetAndRoomLayout
+	call          loadTilesetAndRoomLayout_caller
 
 	call func_131f_body
 
@@ -3901,14 +3892,14 @@ loadTilesetAnimation:
 	cp b
 	ret z
 	ld (wLoadedTilesetAnimation),a
-	jp loadAnimationData
+	jp loadAnimationData_jper
 
 ;;
 ; Seasons-only function
 ; Called when displaying D4 entrance after water shuts off in screen above
 func_1383:
 	push de
-	ld (wActiveRoom),a
+	call ldwActiveRoom_a
 	ld a,b
 	ld (wScreenTransitionDirection),a
 	ld a,($ff00+R_SVBK)
@@ -3925,15 +3916,10 @@ func_1383:
 	ld ($cd06),a
 	ld a,$01
 	setrombank
-	call bank1.func_49c9
-	call bank1.setObjectsEnabledTo2
-	call loadScreenMusic
-	call loadTilesetData
-	ld a,(wActiveRoom)
-	ld (wLoadingRoom),a
-	call loadTilesetAndRoomLayout
+	call func_1383_body
+	call loadTilesetAndRoomLayout_caller
 	call loadRoomCollisions
-	call generateVramTilesWithRoomChanges
+	call generateVramTilesWithRoomChanges_caller
 	pop bc
 	ld a,b
 	setrombank
@@ -3957,7 +3943,7 @@ initWaveScrollValues:
 	setrombank
 	ldh a,(<hFF93)
 	ld c,a
-	call bank1.initWaveScrollValues_body
+	call bank1_initWaveScrollValues_body_caller
 	pop bc
 	ld a,b
 	setrombank
@@ -3981,7 +3967,7 @@ loadBigBufferScrollValues:
 	setrombank
 	ldh a,(<hFF93)
 	ld b,a
-	call bank1.loadBigBufferScrollValues_body
+	call bank1_loadBigBufferScrollValues_body_caller
 	pop bc
 	ld a,b
 	setrombank
@@ -4009,7 +3995,7 @@ func_13c6:
 	setrombank
 	xor a
 	ld ($ff00+R_SVBK),a
-	jp startFadeBetweenTwoPalettes
+	jp startFadeBetweenTwoPalettes_jper
 
 ;;
 ; This function appears to extract the color components from $30 colors ($c palettes).
@@ -4020,7 +4006,7 @@ func_13c6:
 extractColorComponents:
 	ldh a,(<hRomBank)
 	push af
-	ld a,:paletteDataStart
+	call lda_paletteDataStart_bank
 	setrombank
 	ld b,$30
 --
@@ -4459,7 +4445,7 @@ loadRoomCollisions:
 	call @blankDataHorizontally
 	ld hl, wRoomCollisions+$0f
 	call @blankDataVertically
-	ld a,(wActiveGroup)
+	call lda_wActiveGroup
 	cp NUM_SMALL_GROUPS
 	jr c,+
 	ld l,LARGE_ROOM_HEIGHT*$10
@@ -4567,11 +4553,11 @@ interactionInitGraphics:
 	pop af
 	setrombank
 	ld a,c
-	jp interactionSetAnimation
+	jp interactionSetAnimation_jper
 
 ;;
 func_1613:
-	ld a,(wLoadedTreeGfxIndex)
+	call lda_wLoadedTreeGfxIndex
 	or a
 	ret z
 ;;
@@ -4580,7 +4566,7 @@ refreshObjectGfx:
 	push af
 	callfrombank0 bank3f.refreshObjectGfx_body
 	xor a
-	ld (wLoadedTreeGfxIndex),a
+	call ldwLoadedTreeGfxIndex_a
 	pop af
 	setrombank
 	ret
@@ -4655,9 +4641,7 @@ loadObjectGfx2:
 	call loadObjectGfx2_body
 
 	push de
-	ld a,(wcc07)
-	xor $ff
-	ld (wcc07),a
+	call loadObjectGfx2_body2
 	ld de,w4GfxBuf1 | (:w4GfxBuf1)
 	jr nz,+
 	ld de,w4GfxBuf2 | (:w4GfxBuf2)
@@ -4683,7 +4667,9 @@ loadTreasureDisplayData:
 	ld l,a
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 bank3f.loadTreasureDisplayData
+	ld a,:bank3f.loadTreasureDisplayData
+	setrombank
+	call bank3f_loadTreasureDisplayData_caller
 	pop af
 	setrombank
 	ret
@@ -4696,7 +4682,9 @@ decideItemDrop:
 	ld c,a
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 bank3f.decideItemDrop_body
+	ld a,:bank3f.decideItemDrop_body
+	setrombank
+	call bank3f_decideItemDrop_body_caller
 	pop af
 	setrombank
 	ld a,c
@@ -4715,7 +4703,7 @@ checkItemDropAvailable:
 	ld a,:bank3f.checkItemDropAvailable_body
 	setrombank
 	ld a,c
-	call bank3f.checkItemDropAvailable_body
+	call bank3f_checkItemDropAvailable_body_caller
 	pop af
 	setrombank
 	ld a,c
@@ -4783,7 +4771,7 @@ cpOreChunkValue:
 ; @param[out]	a	0 if Link has at least that many rupees, 1 otherwise
 ; @param[out]	zflag	Set if Link has that many rupees
 cpRupeeValue:
-	ld hl,wNumRupees
+	call ldhl_wNumRupees
 ++
 	call getRupeeValue
 	ldi a,(hl)
@@ -4810,7 +4798,7 @@ removeOreChunkValue:
 ;
 ; @param	a	The type of rupee to lose (not the value)
 removeRupeeValue:
-	ld hl,wNumRupees
+	call ldhl_wNumRupees
 ++
 	call getRupeeValue
 	jp subDecimalFromHlRef
@@ -4860,18 +4848,18 @@ getRupeeValue:
 ; @param	a	Seed type to decrement
 decNumActiveSeeds:
 	and $07
-	ld hl,wNumEmberSeeds
+	call ldhl_wNumEmberSeeds
 	rst_addAToHl
 	jr +
 
 ;;
 decNumBombchus:
-	ld hl,wNumBombchus
+	call ldhl_wNumBombchus
 	jr +
 
 ;;
 decNumBombs:
-	ld hl,wNumBombs
+	call ldhl_wNumBombs
 +
 	ld a,(hl)
 	or a
@@ -4888,7 +4876,7 @@ decNumBombs:
 ;;
 setStatusBarNeedsRefreshBit1:
 	push hl
-	ld hl,wStatusBarNeedsRefresh
+	call ldhl_wStatusBarNeedsRefresh
 	set 1,(hl)
 	pop hl
 	ret
@@ -4915,7 +4903,7 @@ getRandomRingOfGivenTier:
 	jr z,+
 	ld b,$07
 +
-	ld hl,bank3f.ringTierTable
+	call ldhl_bank3f_ringTierTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -4957,7 +4945,7 @@ refillSeedSatchel:
 ; @param	a	Amount to add to wGashaMaturity
 addToGashaMaturity:
 	push hl
-	ld hl,wGashaMaturity
+	call ldhl_wGashaMaturity
 	add (hl)
 	ldi (hl),a
 	jr nc,+
@@ -4976,14 +4964,16 @@ addToGashaMaturity:
 makeActiveObjectFollowLink:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 bank1.makeActiveObjectFollowLink
+	ld a,:bank1.makeActiveObjectFollowLink
+	setrombank
+	call bank1_makeActiveObjectFollowLink_caller
 	pop af
 	setrombank
 	ret
 
 ;;
 clearFollowingLinkObject:
-	ld hl,wFollowingLinkObjectType
+	call ldhl_wFollowingLinkObjectType
 	xor a
 	ldi (hl),a
 	ld (hl),a
@@ -5080,9 +5070,13 @@ textThreadStart:
 	jp stubThreadStart
 
 @showText:
-	callfrombank0 bank3f.initTextbox
+	ld a,:bank3f.initTextbox
+	setrombank
+	call bank3f_initTextbox_caller
 -
-	callfrombank0 bank3f.updateTextbox
+	ld a,:bank3f.updateTextbox
+	setrombank
+	call bank3f_updateTextbox_caller
 	call resumeThreadNextFrame
 	jr -
 
@@ -5237,11 +5231,11 @@ readByteFromW7TextTableBank:
 
 ;;
 getThisRoomFlags:
-	ld a,(wActiveRoom)
+	call lda_wActiveRoom
 getARoomFlags:
 	push bc
 	ld b,a
-	ld a,(wActiveGroup)
+	call lda_wActiveGroup
 	call getRoomFlags
 	pop bc
 	ret
@@ -5270,7 +5264,7 @@ checkIsLinkedGame:
 ; @param	hl	Where to copy the values from for wWarpDestVariables
 setWarpDestVariables:
 	push de
-	ld de,wWarpDestVariables
+	call ldde_wWarpDestVariables
 	ld b,$05
 	call copyMemory
 	pop de
@@ -5279,7 +5273,7 @@ setWarpDestVariables:
 ;;
 setInstrumentsDisabledCounterAndScrollMode:
 	ld a,$08
-	ld (wInstrumentsDisabledCounter),a
+	call ldwInstrumentsDisabledCounter_a
 	ld a,$01
 	ld (wScrollMode),a
 	ret
@@ -5289,11 +5283,8 @@ setInstrumentsDisabledCounterAndScrollMode:
 ;
 clearAllItemsAndPutLinkOnGround:
 	push de
-	call clearAllParentItems
-	call dropLinkHeldItem
 
-	xor a
-	ld (wIsSeedShooterInUse),a
+	call clearAllItemsAndPutLinkOnGround_body
 
 	ldde FIRST_ITEM_INDEX, Item.start
 
@@ -5325,7 +5316,7 @@ clearAllItemsAndPutLinkOnGround:
 	jr c,@nextItem
 
 	pop de
-	jp putLinkOnGround
+	jp clearAllItemsAndPutLinkOnGround_jper
 
 ;;
 ; @param	a			Character index
@@ -5377,7 +5368,9 @@ fileSelectThreadStart:
 	ld b,$10
 	call clearMemory
 -
-	callfrombank0 bank2.b2_fileSelectScreen
+	ld a,:bank2.b2_fileSelectScreen
+	setrombank
+	call bank2_b2_fileSelectScreen_caller
 	call resumeThreadNextFrame
 	jr -
 
@@ -5418,9 +5411,7 @@ secretFunctionCaller:
 ;
 ; @param	a	Secret type (0 = 20-char, 2 = 15-char, $80-$ff = 5-char?)
 openSecretInputMenu:
-	ld (wSecretInputType),a
-	ld a,$01
-	ld (wTextInputResult),a
+	call openSecretInputMenu_body
 	ld a,$06
 	jp openMenu
 
@@ -5432,7 +5423,9 @@ updateMenus:
 	ldh a,(<hRomBank)
 	ld b,a
 	push bc
-	callfrombank0 bank2.b2_updateMenus
+	ld a,:bank2.b2_updateMenus
+	setrombank
+	call bank2_b2_updateMenus_caller
 	pop bc
 	ld a,b
 	setrombank
@@ -5447,7 +5440,7 @@ updateMenus:
 ; vram. It also reloads the item icon's graphics, if bit 0 is set.
 ;
 checkReloadStatusBarGraphics:
-	ld hl,wStatusBarNeedsRefresh
+	call ldhl_wStatusBarNeedsRefresh
 	ld a,(hl)
 	or a
 	ret z
@@ -5533,7 +5526,9 @@ copyW4PaletteDataToW2TilesetBgPalettes:
 	ldh a,(<hRomBank)
 	ld b,a
 	push bc
-	callfrombank0 bank2.runBank2Function
+	ld a,:bank2.runBank2Function
+	setrombank
+	call bank2_runBank2Function_caller
 	pop bc
 	ld a,b
 	setrombank
@@ -5550,9 +5545,9 @@ getRoomDungeonProperties:
 	push af
 	ld a, :dungeonRoomPropertiesGroupTable
 	setrombank
-	ld a,(wActiveGroup)
+	call lda_wActiveGroup
 	and $01
-	ld hl, dungeonRoomPropertiesGroupTable
+	call ldhl_dungeonRoomPropertiesGroupTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -5587,7 +5582,9 @@ thread_1b10:
 	ld a,$01
 	ld (wTmpcbb4),a
 -
-	callfrombank0 bank2.runSaveAndQuitMenu
+	ld a,:bank2.runSaveAndQuitMenu
+	setrombank
+	call bank2_runSaveAndQuitMenu_caller
 	call resumeThreadNextFrame
 	jr -
 
@@ -5598,7 +5595,7 @@ thread_1b10:
 objectAddToAButtonSensitiveObjectList:
 	xor a
 	ld (de),a
-	ld hl,wAButtonSensitiveObjectList
+	call ldhl_wAButtonSensitiveObjectList
 @next:
 	ldi a,(hl)
 	or (hl)
@@ -5606,7 +5603,7 @@ objectAddToAButtonSensitiveObjectList:
 
 	inc l
 	ld a,l
-	cp <wAButtonSensitiveObjectListEnd
+	call cp_wAButtonSensitiveObjectListEnd_lowerByte
 	jr c,@next
 	ret
 @foundBlankEntry:
@@ -5622,7 +5619,7 @@ objectRemoveFromAButtonSensitiveObjectList:
 	ld a,e
 	and $c0
 	ld e,a
-	ld hl,wAButtonSensitiveObjectList
+	call ldhl_wAButtonSensitiveObjectList
 ---
 	ldi a,(hl)
 	cp d
@@ -5638,7 +5635,7 @@ objectRemoveFromAButtonSensitiveObjectList:
 @next:
 	inc l
 	ld a,l
-	cp <wAButtonSensitiveObjectListEnd
+	call cp_wAButtonSensitiveObjectListEnd_lowerByte
 	jr c,---
 
 	pop de
@@ -5650,17 +5647,17 @@ objectRemoveFromAButtonSensitiveObjectList:
 ;
 ; @param[out]	cflag	Set if Link just pressed A next to the object
 linkInteractWithAButtonSensitiveObjects:
-	ld a,(wGameKeysJustPressed)
+	call lda_wGameKeysJustPressed
 	and BTN_A
 	ret z
 
 	; If he's in a shop, he can interact while holding something
-	ld a,(wInShop)
+	call lda_wInShop
 	or a
 	jr nz,+
 
 	; If he's not in a shop, this should return if he's holding something
-	ld a,(wLinkGrabState)
+	call lda_wLinkGrabState
 	or a
 	ret nz
 +
@@ -5684,7 +5681,7 @@ linkInteractWithAButtonSensitiveObjects:
 	ldh (<hFF8C),a
 
 	; Check all objects in the list
-	ld de,wAButtonSensitiveObjectList
+	call ldde_wAButtonSensitiveObjectList
 ---
 	; Get the object in hl
 	ld a,(de)
@@ -5712,7 +5709,7 @@ linkInteractWithAButtonSensitiveObjects:
 +
 	inc e
 	ld a,e
-	cp <wAButtonSensitiveObjectListEnd
+	call cp_wAButtonSensitiveObjectListEnd_lowerByte
 	jr c,---
 
 	; No object found
@@ -5753,13 +5750,13 @@ linkInteractWithAButtonSensitiveObjects:
 	; Disable ring transformations for 8 frames? (He can't normally interact with
 	; objects while transformed... so what's the point of this?)
 	ld a,$08
-	ld (wDisableRingTransformations),a
+	call ldwDisableRingTransformations_a
 
 	; Disable pushing animation
 	ld a,$80
-	ld (wForceLinkPushAnimation),a
+	call ldwForceLinkPushAnimation_a
 
-	ld hl,wLinkTurningDisabled
+	call ldhl_wLinkTurningDisabled
 	set 7,(hl)
 
 	scf
@@ -5866,19 +5863,19 @@ checkObjectsCollidedFromVariables:
 
 ;;
 objectCheckCollidedWithLink_notDeadAndNotGrabbing:
-	ld a,(wLinkGrabState)
+	call lda_wLinkGrabState
 	and $be
 	ret nz
 ;;
 objectCheckCollidedWithLink_notDead:
-	ld a,(wLinkDeathTrigger)
+	call lda_wLinkDeathTrigger
 	or a
 	ret nz
 	jr objectCheckCollidedWithLink
 
 ;;
 objectCheckCollidedWithLink_onGround:
-	ld a,(wLinkInAir)
+	call lda_wLinkInAir
 	or a
 	ret nz
 	ld a,(w1Link.zh)
@@ -5897,7 +5894,7 @@ objectCheckCollidedWithLink:
 ;;
 ; @param	hl	Address of an object's zh variable
 _checkCollidedWithLink:
-	ld a,(wLinkObjectIndex)
+	call lda_wLinkObjectIndex
 	ld b,a
 
 	; Check if the object is within 7 z-units of link
@@ -5920,7 +5917,7 @@ _checkCollidedWithLink:
 	ld a,l
 	add $1b
 	ld e,a
-	ld a,(wLinkObjectIndex)
+	call lda_wLinkObjectIndex
 	ld h,a
 	ld l,<w1Link.yh
 	ld b,(hl)
@@ -5991,7 +5988,7 @@ checkGrabbableObjects:
 	; This call sets up hFF8E and hFF8F for collision function calls
 	call _getLinkPositionPlusDirectionOffset
 
-	ld hl,wGrabbableObjectBuffer
+	call ldhl_wGrabbableObjectBuffer
 
 @objectLoop:
 	inc l
@@ -6008,7 +6005,7 @@ checkGrabbableObjects:
 @nextObject:
 	inc l
 	ld a,l
-	cp <wGrabbableObjectBufferEnd
+	call cp_wGrabbableObjectBufferEnd_lowerByte
 	jr c,@objectLoop
 
 	pop de
@@ -6270,7 +6267,9 @@ checkEnemyAndPartCollisionsIfTextInactive:
 	call retIfTextIsActive
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 bank7.checkEnemyAndPartCollisions
+	ld a,:bank7.checkEnemyAndPartCollisions
+	setrombank
+	call bank7_checkEnemyAndPartCollisions_caller
 	pop af
 	setrombank
 	ret
@@ -6286,7 +6285,7 @@ checkEnemyAndPartCollisionsIfTextInactive:
 ; @param	hl	Table address
 findRoomSpecificData:
 	ld e,a
-	ld a,(wActiveGroup)
+	call lda_wActiveGroup
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -6318,7 +6317,7 @@ lookupKey:
 ; @param a
 findByteInGroupTable:
 	ld e,a
-	ld a,(wActiveGroup)
+	call lda_wActiveGroup
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -6353,7 +6352,7 @@ lookupCollisionTable:
 ; @param	hl	Table
 ; @param[out]	cflag	Set on success.
 lookupCollisionTable_paramE:
-	ld a,(wActiveCollisions)
+	call lda_wActiveCollisions
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -6369,7 +6368,7 @@ findByteInCollisionTable:
 ;;
 ; @param e
 findByteInCollisionTable_paramE:
-	ld a,(wActiveCollisions)
+	call lda_wActiveCollisions
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -6613,7 +6612,7 @@ objectUpdateSpeedZ_paramC:
 	add Object.speedZ - Object.z
 	ld l,a
 	ld h,d
-	call add16BitRefs
+	call add16BitRefs_caller
 	bit 7,a
 	jr z,@belowGround
 
@@ -6696,7 +6695,7 @@ objectUpdateSpeedZ_sidescroll_givenYOffset:
 	add Object.speedZ-Object.y
 	ld l,a
 	ld h,d
-	call add16BitRefs
+	call add16BitRefs_caller
 
 	; Apply gravity (increase speedZ by amount passed to function)
 	dec l
@@ -7330,7 +7329,7 @@ objectCheckWithinRoomBoundary:
 	ldh a,(<hActiveObjectType)
 	add Object.yh
 	ld e,a
-	ld hl,wRoomEdgeY
+	call ldhl_wRoomEdgeY
 	ld a,(de)
 	cp (hl)
 	ret nc
@@ -7434,7 +7433,7 @@ objectDelete_de:
 ; @param[out]	a	$01 if water, $02 if hole, $04 if lava
 ; @param[out]	cflag	Set if Link is on one of the above tiles.
 checkLinkIsOverHazard:
-	ld a,(wLinkObjectIndex)
+	call lda_wLinkObjectIndex
 	ld d,a
 	ldh (<hActiveObject),a
 	xor a
@@ -7748,7 +7747,7 @@ func_131f_body:
 	call loadUncompressedGfxHeader
 	ret
 .else
-	.rept $1d
+	.rept $1c
 	nop
 	.endr
 .endif
@@ -7812,6 +7811,10 @@ checkLinkVulnerableAndIDZero:
 	jr z,checkLinkVulnerable
 	xor a
 	ret
+.else
+	.rept 8
+	nop
+	.endr
 .endif
 
 ;;
@@ -7840,6 +7843,10 @@ checkLinkCollisionsEnabled:
 	ld a,(wLinkDeathTrigger)
 	or a
 	jr nz,@noCarry
+.else
+	.rept 6
+	nop
+	.endr
 .endif
 
 	ld a,(wDisableLinkCollisionsAndMenu)
@@ -7855,6 +7862,10 @@ checkLinkCollisionsEnabled:
 	ld a,(wLinkDeathTrigger)
 	or a
 	jr nz,@noCarry
+.else
+	.rept 6
+	nop
+	.endr
 .endif
 
 	; Check if in a spinner
@@ -7870,6 +7881,377 @@ checkLinkCollisionsEnabled:
 	ret
 @noCarry:
 	xor a
+	ret
+
+ldhl_paletteHeaderTable:
+	ld hl,paletteHeaderTable
+	ret
+
+lda_paletteDataStart_bank:
+	ld a,:paletteDataStart
+	ret
+
+ldhl_uncmpGfxHeaderTable:
+	ld hl,uncmpGfxHeaderTable
+	ret
+
+ldhl_gfxHeaderTable:
+	ld hl,gfxHeaderTable
+	ret
+
+ldhl_tilesetLayoutTable:
+	ld hl,tilesetLayoutTable
+	ret
+
+ldhl_tilesetLayoutDictionaryTable:
+	ld hl,tilesetLayoutDictionaryTable
+	ret
+
+initialThreadStates:
+	m_ThreadState $02 $00 wThread0StackTop introThreadStart
+	m_ThreadState $02 $00 wThread1StackTop stubThreadStart
+	m_ThreadState $02 $00 wThread2StackTop stubThreadStart
+	m_ThreadState $02 $00 wThread3StackTop paletteFadeThreadStart
+
+; Upper bytes of addresses of flags for each group
+flagLocationGroupTable:
+	.db >wPresentRoomFlags >wPastRoomFlags
+	.db >wGroup2Flags >wPastRoomFlags
+	.db >wGroup4Flags >wGroup5Flags
+	.db >wGroup4Flags >wGroup5Flags
+
+lde_serialCode_bank:
+	ld e,:serialCode.func_4000
+	ret
+
+lda_terrainEffects_bank:
+	ld a,:terrainEffects.puddleAnimationFrames
+	ret
+
+lda_wRoomIsLarge:
+	ld a,(wRoomIsLarge)
+	ret
+
+add_baseOAMDataBank:
+	add BASE_OAM_DATA_BANK
+	ret
+
+lda_wTilesetFlags:
+	ld a,(wTilesetFlags)
+	ret
+
+lda_chestDataGroupTable_bank:
+	ld a,:chestData.chestDataGroupTable
+	ret
+
+ldhl_chestDataGroupTable:
+	ld hl,chestData.chestDataGroupTable
+	ret
+
+lda_wActiveGroup:
+	ld a,(wActiveGroup)
+	ret
+
+lda_wActiveRoom:
+	ld a,(wActiveRoom)
+	ret
+
+lda_wRoomStateModifier:
+	ld a,(wRoomStateModifier)
+	ret
+
+lda_wRememberedCompanionId:
+	ld a,(wRememberedCompanionId)
+	ret
+
+lda_wRememberedCompanionGroup:
+	ld a,(wRememberedCompanionGroup)
+	ret
+
+lda_wRememberedCompanionRoom:
+	ld a,(wRememberedCompanionRoom)
+	ret
+
+lda_wLinkObjectIndex:
+	ld a,(wLinkObjectIndex)
+	ret
+
+lda_wRememberedCompanionY:
+	ld a,(wRememberedCompanionY)
+	ret
+
+lda_wRememberedCompanionX:
+	ld a,(wRememberedCompanionX)
+	ret
+
+ldwLinkLocalRespawnDir_a:
+	ld (wLinkLocalRespawnDir),a
+	ret
+
+ldwLinkLocalRespawnY_a:
+	ld (wLinkLocalRespawnY),a
+	ret
+
+ldwLinkLocalRespawnX_a:
+	ld (wLinkLocalRespawnX),a
+	ret
+
+lda_wDungeonIndex:
+	ld a,(wDungeonIndex)
+	ret
+
+getActiveRoomFromDungeonMapPosition_caller:
+	jp getActiveRoomFromDungeonMapPosition
+
+lda_wDungeonMapPosition:
+	ld a,(wDungeonMapPosition)
+	ret
+
+getRoomInDungeon_caller:
+	jp getRoomInDungeon
+
+lda_wDungeonFlagsAddressH:
+	ld a,(wDungeonFlagsAddressH)
+	ret
+
+ldb_wGroup2Flags_upperByte:
+	ld b,>wGroup2Flags
+	ret
+
+lda_wLinkOnChest:
+	ld a,(wLinkOnChest)
+	ret
+
+lda_wActiveTileIndex:
+	ld a,(wActiveTileIndex)
+	ret
+
+lda_wActiveTilePos:
+	ld a,(wActiveTilePos)
+	ret
+
+ldwLinkOnChest_a:
+	ld (wLinkOnChest),a
+	ret
+
+bank6_showInfoTextForTile_caller:
+	jp bank6.showInfoTextForTile
+
+updateCamera_body:
+	call          bank1.updateCameraPosition
+	call          bank1.updateGfxRegs2Scroll
+	jp            bank1.updateScreenShake
+
+resetCamera_body:
+	call          bank1.calculateCameraPosition
+	jp            bank1.updateGfxRegs2Scroll
+
+bank1_updateGfxRegs2Scroll_caller:
+	jp bank1.updateGfxRegs2Scroll
+
+loadTilesetAndRoomLayout_caller:
+	jp loadTilesetAndRoomLayout
+
+loadAnimationData_jper:
+	jp loadAnimationData
+
+ldwActiveRoom_a:
+	ld (wActiveRoom),a
+	ret
+
+func_1383_body:
+	call bank1.func_49c9
+	call bank1.setObjectsEnabledTo2
+	call loadScreenMusic
+	call loadTilesetData
+	ld a,(wActiveRoom)
+	ld (wLoadingRoom),a
+	ret
+
+generateVramTilesWithRoomChanges_caller:
+	jp generateVramTilesWithRoomChanges
+
+bank1_initWaveScrollValues_body_caller:
+	jp bank1.initWaveScrollValues_body
+
+bank1_loadBigBufferScrollValues_body_caller:
+	jp bank1.loadBigBufferScrollValues_body
+
+startFadeBetweenTwoPalettes_jper:
+	jp startFadeBetweenTwoPalettes
+
+interactionSetAnimation_jper:
+	jp interactionSetAnimation
+
+lda_wLoadedTreeGfxIndex:
+	ld a,(wLoadedTreeGfxIndex)
+	ret
+
+ldwLoadedTreeGfxIndex_a:
+	ld (wLoadedTreeGfxIndex),a
+	ret
+
+loadObjectGfx2_body2:
+	ld a,(wcc07)
+	xor $ff
+	ld (wcc07),a
+	ret
+
+bank3f_loadTreasureDisplayData_caller:
+	jp bank3f.loadTreasureDisplayData
+
+bank3f_decideItemDrop_body_caller:
+	jp bank3f.decideItemDrop_body
+
+bank3f_checkItemDropAvailable_body_caller:
+	jp bank3f.checkItemDropAvailable_body
+
+ldhl_wNumRupees:
+	ld hl,wNumRupees
+	ret
+
+ldhl_wNumEmberSeeds:
+	ld hl,wNumEmberSeeds
+	ret
+
+ldhl_wNumBombchus:
+	ld hl,wNumBombchus
+	ret
+
+ldhl_wNumBombs:
+	ld hl,wNumBombs
+	ret
+
+ldhl_wStatusBarNeedsRefresh:
+	ld hl,wStatusBarNeedsRefresh
+	ret
+
+ldhl_bank3f_ringTierTable:
+	ld hl,bank3f.ringTierTable
+	ret
+
+ldhl_wGashaMaturity:
+	ld hl,wGashaMaturity
+	ret
+
+bank1_makeActiveObjectFollowLink_caller:
+	jp bank1.makeActiveObjectFollowLink
+
+ldhl_wFollowingLinkObjectType:
+	ld hl,wFollowingLinkObjectType
+	ret
+
+bank3f_initTextbox_caller:
+	jp bank3f.initTextbox
+
+bank3f_updateTextbox_caller:
+	jp bank3f.updateTextbox
+
+ldde_wWarpDestVariables:
+	ld de,wWarpDestVariables
+	ret
+
+ldwInstrumentsDisabledCounter_a:
+	ld (wInstrumentsDisabledCounter),a
+	ret
+
+clearAllItemsAndPutLinkOnGround_jper:
+	jp clearAllItemsAndPutLinkOnGround
+
+clearAllItemsAndPutLinkOnGround_body:
+	call clearAllParentItems
+	call dropLinkHeldItem
+
+	xor a
+	ld (wIsSeedShooterInUse),a
+	ret
+
+bank2_b2_fileSelectScreen_caller:
+	jp bank2.b2_fileSelectScreen
+
+openSecretInputMenu_body:
+	ld (wSecretInputType),a
+	ld a,$01
+	ld (wTextInputResult),a
+	ret
+
+bank2_b2_updateMenus_caller:
+	jp bank2.b2_updateMenus
+
+bank2_runBank2Function_caller:
+	jp bank2.runBank2Function
+
+ldhl_dungeonRoomPropertiesGroupTable:
+	ld hl,dungeonRoomPropertiesGroupTable
+	ret
+
+bank2_runSaveAndQuitMenu_caller:
+	jp bank2.runSaveAndQuitMenu
+
+ldhl_wAButtonSensitiveObjectList:
+	ld hl,wAButtonSensitiveObjectList
+	ret
+
+ldde_wAButtonSensitiveObjectList:
+	ld de,wAButtonSensitiveObjectList
+	ret
+
+cp_wAButtonSensitiveObjectListEnd_lowerByte:
+	cp <wAButtonSensitiveObjectListEnd
+	ret
+
+lda_wGameKeysJustPressed:
+	ld a,(wGameKeysJustPressed)
+	ret
+
+lda_wInShop:
+	ld a,(wInShop)
+	ret
+
+lda_wLinkGrabState:
+	ld a,(wLinkGrabState)
+	ret
+
+ldwDisableRingTransformations_a:
+	ld (wDisableRingTransformations),a
+	ret
+
+ldwForceLinkPushAnimation_a:
+	ld (wForceLinkPushAnimation),a
+	ret
+
+ldhl_wLinkTurningDisabled:
+	ld hl,wLinkTurningDisabled
+	ret
+
+lda_wLinkDeathTrigger:
+	ld a,(wLinkDeathTrigger)
+	ret
+
+lda_wLinkInAir:
+	ld a,(wLinkInAir)
+	ret
+
+ldhl_wGrabbableObjectBuffer:
+	ld hl,wGrabbableObjectBuffer
+	ret
+
+cp_wGrabbableObjectBufferEnd_lowerByte:
+	cp <wGrabbableObjectBufferEnd
+	ret
+
+bank7_checkEnemyAndPartCollisions_caller:
+	jp bank7.checkEnemyAndPartCollisions
+
+lda_wActiveCollisions:
+	ld a,(wActiveCollisions)
+	ret
+
+add16BitRefs_caller:
+	jp add16BitRefs
+
+ldhl_wRoomEdgeY:
+	ld hl,wRoomEdgeY
 	ret
 
 ;;
