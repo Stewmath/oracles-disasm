@@ -208,13 +208,8 @@ bitTable:
 ; ROM title / manufacturer code
 .ORGA $134
 
-.ifdef ROM_SEASONS
-	.asc "ZELDA DIN" 0 0
-	.asc "AZ7E"
-.else ; ROM_AGES
 	.asc "ZELDA NAYRU"
 	.asc "AZ8E"
-.endif
 
 
 .ORGA $150
@@ -758,7 +753,6 @@ gfxRegisterStates:
 	.db $ff $30 $00 $60 $07 $18 ; 0x16: farore's secret list
 	.db $ff $30 $00 $60 $07 $c7
 
-.ifdef ROM_AGES
 	.db $ef $00 $00 $90 $07 $00 ; 0x17: intro cinematic screen 1
 	.db $e7 $00 $00 $90 $07 $c7
 
@@ -767,7 +761,6 @@ gfxRegisterStates:
 
 	.db $ef $00 $00 $90 $07 $30 ; 0x19
 	.db $e7 $98 $00 $60 $07 $c7
-.endif
 
 
 ;;
@@ -2842,12 +2835,7 @@ drawAllSpritesUnconditionally:
 	push af
 	call queueDrawEverything
 
-.ifdef ROM_AGES
-	ld a,(wLinkRaisedFloorOffset)
-	ld hl,w1Link.yh
-	add (hl)
-	ld (hl),a
-.endif
+	call drawAllSpritesUnconditionally_floorOffset1
 
 	ld de,w1Link
 
@@ -2984,15 +2972,7 @@ drawAllSpritesUnconditionally:
 	jr c,-
 ++
 
-.ifdef ROM_AGES
-	; Undo link's Y offset for drawing
-	ld a,(wLinkRaisedFloorOffset)
-	cpl
-	inc a
-	ld hl,w1Link.yh
-	add (hl)
-	ld (hl),a
-.endif
+	call drawAllSpritesUnconditionally_floorOffset2
 
 	pop af
 	setrombank
@@ -3248,50 +3228,7 @@ _drawObjectTerrainEffects:
 	ld b,>wRoomLayout
 	ld a,(bc)
 
-.ifdef ROM_AGES
-	cp TILEINDEX_GRASS
-	jr z,@walkingInGrass
-	cp TILEINDEX_PUDDLE
-	jr nz,@end
-
-.else ; ROM_SEASONS
-	; Seasons has multiple grass and shallow water tiles, so this checks ranges
-	; instead of exact values
-	cp TILEINDEX_GRASS
-	jr c,@end
-	cp TILEINDEX_WATER
-	jr nc,@end
-	cp TILEINDEX_PUDDLE
-	jr c,@walkingInGrass
-.endif
-
-@walkingInPuddle:
-	inc e
-	ld hl,wPuddleAnimationPointer
-	ldi a,(hl)
-	ld h,(hl)
-	ld l,a
-	jr @grassOrWater
-
-@walkingInGrass:
-	bit 2,h
-	ld a,(wGrassAnimationModifier)
-	jr z,+
-	add $24
-+
-	ld c,a
-	ld b,$00
-	ld hl,terrainEffects.greenGrassAnimationFrame0
-	add hl,bc
-
-@grassOrWater:
-	push de
-	call func_0eda
-	pop de
-
-@end:
-	pop hl
-	ret
+	jp drawObjectTerrainEffects_body
 
 ;;
 ; Get the position where an object should be drawn on-screen, accounting for
@@ -3705,12 +3642,12 @@ updateLinkLocalRespawnPosition:
 ; @param	a	Tile that was broken
 updateRoomFlagsForBrokenTile:
 	push af
-	ld hl,_unknownTileCollisionTable
+	ld hl,unknownTileCollisionTable
 	call lookupCollisionTable
 	call c,addToGashaMaturity
 
 	pop af
-	ld hl,_tileUpdateRoomFlagsOnBreakTable
+	ld hl,tileUpdateRoomFlagsOnBreakTable
 	call lookupCollisionTable
 	ret nc
 
@@ -3734,183 +3671,6 @@ updateRoomFlagsForBrokenTile:
 	or (hl)
 	ld (hl),a
 	ret
-
-
-; This is a list of tiles that will cause certain room flag bits to be set when destroyed.
-; (In order for this to work, the corresponding bit in the "_breakableTileModes" table
-; must be set so that it calls the above function.)
-_tileUpdateRoomFlagsOnBreakTable:
-	.dw @collisions0
-	.dw @collisions1
-	.dw @collisions2
-	.dw @collisions3
-	.dw @collisions4
-	.dw @collisions5
-
-; Data format:
-; b0: tile index
-; b1: bit 7:    Set if it's a door linked between two rooms in a dungeon (will update the
-;               room flags in both rooms)
-;     bit 6:    Set if it's a door linked between two rooms in the overworld
-;     bits 0-3: If bit 6 or 7 is set, this is the "direction" of the room link (times 4).
-;               If bits 6 and 7 aren't set, this is the bit to set in the room flags (ie.
-;               value of 2 will set bit 2).
-
-.ifdef ROM_AGES
-
-@collisions0:
-@collisions4:
-	.db $c6 $07
-	.db $c7 $07
-	.db $c9 $07
-	.db $c1 $07
-	.db $c2 $07
-	.db $c4 $07
-	.db $cb $07
-	.db $d1 $07
-	.db $cf $07
-	.db $00
-@collisions1:
-	.db $30 $00
-	.db $31 $44
-	.db $32 $02
-	.db $33 $4c
-	.db $00
-@collisions2:
-@collisions5:
-	.db $30 $80
-	.db $31 $84
-	.db $32 $88
-	.db $33 $8c
-	.db $38 $80
-	.db $39 $84
-	.db $3a $88
-	.db $3b $8c
-	.db $68 $84
-	.db $69 $8c
-@collisions3:
-	.db $00
-
-
-.else ; ROM_SEASONS
-
-
-@collisions0:
-	.db $c6 $07
-	.db $c1 $07
-	.db $c2 $07
-	.db $e3 $07
-@collisions1:
-	.db $e2 $07
-	.db $cb $07
-	.db $c5 $07
-@collisions2:
-	.db $00
-
-@collisions3:
-	.db $30 $00
-	.db $31 $44
-	.db $32 $02
-	.db $33 $4c
-	.db $00
-
-@collisions4:
-	.db $30 $80
-	.db $31 $84
-	.db $32 $88
-	.db $33 $8c
-	.db $38 $80
-	.db $39 $84
-	.db $3a $88
-	.db $3b $8c
-@collisions5:
-	.db $00
-
-.endif
-
-
-; Seems to list some breakable tiles similar to the table above?
-_unknownTileCollisionTable:
-	.dw @collisions0
-	.dw @collisions1
-	.dw @collisions2
-	.dw @collisions3
-	.dw @collisions4
-	.dw @collisions5
-
-; Data format:
-; b0: tile index
-; b1: amount to add to wGashaMaturity?
-
-.ifdef ROM_AGES
-
-@collisions0:
-@collisions4:
-	.db $c7 50
-	.db $c2 50
-	.db $cb 50
-	.db $d1 50
-	.db $cf 30
-	.db $c6 30
-	.db $c4 30
-	.db $c9 30
-	.db $00
-@collisions1:
-	.db $30 100
-	.db $31 100
-	.db $32 100
-	.db $33 100
-	.db $00
-@collisions2:
-@collisions5:
-	.db $30 50
-	.db $31 50
-	.db $32 50
-	.db $33 50
-	.db $38 100
-	.db $39 100
-	.db $3a 100
-	.db $3b 100
-	.db $68 50
-	.db $69 50
-@collisions3:
-	.db $00
-
-
-.else ; ROM_SEASONS
-
-
-@collisions0:
-	.db $c6 $32
-	.db $c2 $32
-	.db $e3 $32
-@collisions1:
-	.db $e2 $32
-	.db $cb $1e
-	.db $c5 $1e
-@collisions2:
-	.db $00
-
-@collisions3:
-	.db $30 $64
-	.db $31 $64
-	.db $32 $64
-	.db $33 $64
-	.db $00
-
-@collisions4:
-	.db $30 $32
-	.db $31 $32
-	.db $32 $32
-	.db $33 $32
-	.db $38 $64
-	.db $39 $64
-	.db $3a $64
-	.db $3b $64
-@collisions5:
-	.db $00
-
-.endif
 
 
 ;;
@@ -4123,24 +3883,8 @@ func_131f:
 	call          bank1.setScreenTransitionState02
 	call          loadTilesetAndRoomLayout
 
-.ifdef ROM_AGES
-	ld a,(wcddf)
-	or a
-	jr z,+
+	call func_131f_body
 
-	callab func_04_6ed1
-	callab func_04_6f31
-	ld a,UNCMP_GFXH_30
-	call loadUncompressedGfxHeader
-	jr ++
-.endif
-
-+
-	call loadRoomCollisions
-	call generateVramTilesWithRoomChanges
-	ld a,UNCMP_GFXH_10
-	call loadUncompressedGfxHeader
-++
 	ld a,(wTilesetPalette)
 	ld (wLoadedTilesetPalette),a
 	ld a,(wTilesetUniqueGfx)
@@ -4163,8 +3907,6 @@ loadTilesetAnimation:
 ; Seasons-only function
 ; Called when displaying D4 entrance after water shuts off in screen above
 func_1383:
-
-.ifdef ROM_SEASONS
 	push de
 	ld (wActiveRoom),a
 	ld a,b
@@ -4199,10 +3941,6 @@ func_1383:
 	ld ($ff00+R_SVBK),a
 	pop de
 	ret
-
-.else ; ROM_AGES
-	ret
-.endif
 
 ;;
 ; Loads w2WaveScrollValues to make the screen sway in a sine wave.
@@ -4914,11 +4652,7 @@ loadObjectGfx2:
 	and $7f
 	ld h,a
 
-.ifdef ROM_AGES
-	ld a,($cc20)
-	or a
-	jr nz,@label_00_192
-.endif
+	call loadObjectGfx2_body
 
 	push de
 	ld a,(wcc07)
@@ -4940,24 +4674,6 @@ loadObjectGfx2:
 	setrombank
 	ld b,$1f
 	jp queueDmaTransfer
-
-.ifdef ROM_AGES
-
-@label_00_192:
-	ld a,d
-	or $d0
-	ld d,a
-	ld a,$05
-	add e
-	ld e,a
-	ld b,$1f
-	call decompressGraphics
-	ld a,$01
-	ld ($ff00+R_SVBK),a
-	ld a,$3f
-	setrombank
-	ret
-.endif
 
 ;;
 ; Load graphics for an item (as in, items on the inventory screen)
@@ -5054,13 +4770,11 @@ checkTreasureObtained:
 	ret
 
 
-.ifdef ROM_SEASONS
 ;;
 ; Same as below but for ore chunks.
 cpOreChunkValue:
-	ld hl,wNumOreChunks
+	ld hl,$c6a7
 	jr ++
-.endif
 
 ;;
 ; Compares the current total rupee count with a value from the "getRupee" function.
@@ -5086,12 +4800,10 @@ cpRupeeValue:
 	ret
 
 
-.ifdef ROM_SEASONS
 ;;
 removeOreChunkValue:
-	ld hl,wNumOreChunks
+	ld hl,$c6a7
 	jr ++
-.endif
 
 ;;
 ; Remove the value of a kind of rupee from your wallet.
@@ -5588,7 +5300,6 @@ clearAllItemsAndPutLinkOnGround:
 @nextItem:
 	ld h,d
 
-.ifdef ROM_AGES
 	ld l,Item.id
 	ld a,(hl)
 	cp ITEMID_18
@@ -5602,7 +5313,6 @@ clearAllItemsAndPutLinkOnGround:
 	ld l,Item.visible
 	res 7,(hl)
 	jr ++
-.endif
 
 @notSomariaBlock:
 	ld l,e
@@ -6400,91 +6110,6 @@ _checkCollisionWithHAndD:
 	ld l,a
 	ld e,Item.collisionRadiusY
 	jp checkObjectsCollidedFromVariables
-
-;;
-; Checks link's ID is 0, and checks various other things impeding game control
-; (wLinkDeathTrigger, wLinkInAir, and link being in a spinner?)
-;
-; @param[out]	cflag	Set if any checks fail.
-checkLinkID0AndControlNormal:
-	ld a,(w1Link.id)
-	or a
-.ifdef ROM_AGES
-	jr z,+++
-.else
-	jr z,checkLinkVulnerableAndIDZero
-.endif
-	xor a
-	ret
-
-;;
-checkLinkVulnerableAndIDZero:
-
-.ifdef ROM_AGES
-	ld a,(w1Link.id)
-	or a
-	jr z,checkLinkVulnerable
-	xor a
-	ret
-.endif
-
-;;
-; Check if link should respond to collisions, perhaps other things?
-;
-; @param[out]	cflag	Set if link is vulnerable
-checkLinkVulnerable:
-	; Check var2a, invincibilityCounter, knockbackCounter
-	ld hl,w1Link.var2a
-	ldi a,(hl)
-	or (hl)
-	ld l,<w1Link.knockbackCounter
-	or (hl)
-	jr nz,checkLinkCollisionsEnabled@noCarry
-
-;;
-; Check if link should respond to collisions, perhaps other things?
-;
-; @param[out]	cflag
-checkLinkCollisionsEnabled:
-	ld a,(w1Link.collisionType)
-	rlca
-	jr nc,@noCarry
-
-.ifdef ROM_SEASONS
-	ld a,(wLinkDeathTrigger)
-	or a
-	jr nz,@noCarry
-.endif
-
-	ld a,(wDisableLinkCollisionsAndMenu)
-	or a
-	jr nz,@noCarry
-
-	ld a,(wMenuDisabled)
-	or a
-	jr nz,@noCarry
-
-.ifdef ROM_AGES
-+++
-	ld a,(wLinkDeathTrigger)
-	or a
-	jr nz,@noCarry
-.endif
-
-	; Check if in a spinner
-	ld a,(wcc95)
-	rlca
-	jr c,@noCarry
-
-	ld a,(wLinkInAir)
-	rlca
-	jr c,@noCarry
-
-	scf
-	ret
-@noCarry:
-	xor a
-	ret
 
 ;;
 ; Check if objects d and h have collided.
@@ -7346,32 +6971,6 @@ getPositionOffsetForVelocity:
 	ld (hl),a
 	ret
 
-sramBootstrap:
-	ld a,:bank0p2Start
-	setrombank
-
-	ld a,$0a
-	ld ($1111),a
-
-	ld a,SRAMBANK_BOOTSTRAP
-	ld ($4444),a
-
-	ld hl,bank0p2Start - $a000 + $4000
-	ld de,bank0p2Start
-	ld bc,$2000 - (bank0p2Start - $a000)
-	call copyMemoryBc
-
-	jpfrombank0 init
-.ENDS
-
-.BANK $41 SLOT 4
-.ORG 0
-
-.SECTION "Bank 0 SRAM"
-
-bank0p2Start:
-
-
 ;;
 ; @param[out]	bc	Object's position
 objectGetPosition:
@@ -7851,6 +7450,426 @@ checkLinkIsOverHazard:
 	call objectCheckIsOverHazard
 	pop hl
 	pop bc
+	ret
+
+
+sramBootstrap:
+	ld a,:bank0p2Start
+	setrombank
+
+	ld a,$0a
+	ld ($1111),a
+
+	ld a,SRAMBANK_BOOTSTRAP
+	ld ($4444),a
+
+	ld hl,bank0p2Start - $a000 + $4000
+	ld de,bank0p2Start
+	ld bc,$2000 - (bank0p2Start - $a000)
+	call copyMemoryBc
+
+	jpfrombank0 init
+.ENDS
+
+.BANK $41 SLOT 4
+.ORG 0
+
+.SECTION "Bank 0 SRAM"
+
+bank0p2Start:
+
+drawAllSpritesUnconditionally_floorOffset1:
+.ifdef ROM_AGES
+	ld a,(wLinkRaisedFloorOffset)
+.else
+	jp +
+.endif
+	ld hl,w1Link.yh
+	add (hl)
+	ld (hl),a
++
+	ret
+
+drawAllSpritesUnconditionally_floorOffset2:
+.ifdef ROM_AGES
+	; Undo link's Y offset for drawing
+	ld a,(wLinkRaisedFloorOffset)
+.else
+	jp +
+.endif
+	cpl
+	inc a
+	ld hl,w1Link.yh
+	add (hl)
+	ld (hl),a
++
+	ret
+
+drawObjectTerrainEffects_body:
+.ifdef ROM_AGES
+	cp TILEINDEX_GRASS
+	jr z,@walkingInGrass
+	cp TILEINDEX_PUDDLE
+	jr nz,@end
+
+	.rept 4
+	nop
+	.endr
+
+.else ; ROM_SEASONS
+	; Seasons has multiple grass and shallow water tiles, so this checks ranges
+	; instead of exact values
+	cp TILEINDEX_GRASS
+	jr c,@end
+	cp TILEINDEX_WATER
+	jr nc,@end
+	cp TILEINDEX_PUDDLE
+	jr c,@walkingInGrass
+.endif
+
+@walkingInPuddle:
+	inc e
+	ld hl,wPuddleAnimationPointer
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	jr @grassOrWater
+
+@walkingInGrass:
+	bit 2,h
+	ld a,(wGrassAnimationModifier)
+	jr z,+
+	add $24
++
+	ld c,a
+	ld b,$00
+	ld hl,terrainEffects.greenGrassAnimationFrame0
+	add hl,bc
+
+@grassOrWater:
+	push de
+	call func_0eda
+	pop de
+
+@end:
+	pop hl
+	ret
+
+; This is a list of tiles that will cause certain room flag bits to be set when destroyed.
+; (In order for this to work, the corresponding bit in the "_breakableTileModes" table
+; must be set so that it calls the above function.)
+tileUpdateRoomFlagsOnBreakTable:
+	.dw @collisions0
+	.dw @collisions1
+	.dw @collisions2
+	.dw @collisions3
+	.dw @collisions4
+	.dw @collisions5
+
+; Data format:
+; b0: tile index
+; b1: bit 7:    Set if it's a door linked between two rooms in a dungeon (will update the
+;               room flags in both rooms)
+;     bit 6:    Set if it's a door linked between two rooms in the overworld
+;     bits 0-3: If bit 6 or 7 is set, this is the "direction" of the room link (times 4).
+;               If bits 6 and 7 aren't set, this is the bit to set in the room flags (ie.
+;               value of 2 will set bit 2).
+
+.ifdef ROM_AGES
+
+@collisions0:
+@collisions4:
+	.db $c6 $07
+	.db $c7 $07
+	.db $c9 $07
+	.db $c1 $07
+	.db $c2 $07
+	.db $c4 $07
+	.db $cb $07
+	.db $d1 $07
+	.db $cf $07
+	.db $00
+@collisions1:
+	.db $30 $00
+	.db $31 $44
+	.db $32 $02
+	.db $33 $4c
+	.db $00
+@collisions2:
+@collisions5:
+	.db $30 $80
+	.db $31 $84
+	.db $32 $88
+	.db $33 $8c
+	.db $38 $80
+	.db $39 $84
+	.db $3a $88
+	.db $3b $8c
+	.db $68 $84
+	.db $69 $8c
+@collisions3:
+	.db $00
+
+
+.else ; ROM_SEASONS
+
+
+@collisions0:
+	.db $c6 $07
+	.db $c1 $07
+	.db $c2 $07
+	.db $e3 $07
+@collisions1:
+	.db $e2 $07
+	.db $cb $07
+	.db $c5 $07
+@collisions2:
+	.db $00
+
+@collisions3:
+	.db $30 $00
+	.db $31 $44
+	.db $32 $02
+	.db $33 $4c
+	.db $00
+
+@collisions4:
+	.db $30 $80
+	.db $31 $84
+	.db $32 $88
+	.db $33 $8c
+	.db $38 $80
+	.db $39 $84
+	.db $3a $88
+	.db $3b $8c
+@collisions5:
+	.db $00
+
+	.rept 8
+	nop
+	.endr
+.endif
+
+; Seems to list some breakable tiles similar to the table above?
+unknownTileCollisionTable:
+	.dw @collisions0
+	.dw @collisions1
+	.dw @collisions2
+	.dw @collisions3
+	.dw @collisions4
+	.dw @collisions5
+
+; Data format:
+; b0: tile index
+; b1: amount to add to wGashaMaturity?
+
+.ifdef ROM_AGES
+
+@collisions0:
+@collisions4:
+	.db $c7 50
+	.db $c2 50
+	.db $cb 50
+	.db $d1 50
+	.db $cf 30
+	.db $c6 30
+	.db $c4 30
+	.db $c9 30
+	.db $00
+@collisions1:
+	.db $30 100
+	.db $31 100
+	.db $32 100
+	.db $33 100
+	.db $00
+@collisions2:
+@collisions5:
+	.db $30 50
+	.db $31 50
+	.db $32 50
+	.db $33 50
+	.db $38 100
+	.db $39 100
+	.db $3a 100
+	.db $3b 100
+	.db $68 50
+	.db $69 50
+@collisions3:
+	.db $00
+
+
+.else ; ROM_SEASONS
+
+
+@collisions0:
+	.db $c6 $32
+	.db $c2 $32
+	.db $e3 $32
+@collisions1:
+	.db $e2 $32
+	.db $cb $1e
+	.db $c5 $1e
+@collisions2:
+	.db $00
+
+@collisions3:
+	.db $30 $64
+	.db $31 $64
+	.db $32 $64
+	.db $33 $64
+	.db $00
+
+@collisions4:
+	.db $30 $32
+	.db $31 $32
+	.db $32 $32
+	.db $33 $32
+	.db $38 $64
+	.db $39 $64
+	.db $3a $64
+	.db $3b $64
+@collisions5:
+	.db $00
+
+	.rept 8
+	nop
+	.endr
+.endif
+
+func_131f_body:
+.ifdef ROM_AGES
+	ld a,(wcddf)
+	or a
+	jr z,+
+
+	callab func_04_6ed1
+	callab func_04_6f31
+	ld a,UNCMP_GFXH_30
+	call loadUncompressedGfxHeader
+	ret
+.else
+	.rept $1d
+	nop
+	.endr
+.endif
+
++
+	call loadRoomCollisions
+	call generateVramTilesWithRoomChanges
+	ld a,UNCMP_GFXH_10
+	jp loadUncompressedGfxHeader
+
+
+
+loadObjectGfx2_body:
+.ifdef ROM_AGES
+	ld a,($cc20)
+	or a
+	jr nz,@label_00_192
+	ret
+@label_00_192:
+	ld a,d
+	or $d0
+	ld d,a
+	ld a,$05
+	add e
+	ld e,a
+	ld b,$1f
+	call decompressGraphics
+	ld a,$01
+	ld ($ff00+R_SVBK),a
+	ld a,$3f
+	setrombank
+.else
+	.rept $1f
+	nop
+	.endr
+.endif
+	ret
+
+;;
+; Checks link's ID is 0, and checks various other things impeding game control
+; (wLinkDeathTrigger, wLinkInAir, and link being in a spinner?)
+;
+; @param[out]	cflag	Set if any checks fail.
+checkLinkID0AndControlNormal:
+	ld a,(w1Link.id)
+	or a
+.ifdef ROM_AGES
+	jr z,+++
+.else
+	jr z,checkLinkVulnerable
+.endif
+	xor a
+	ret
+
+;;
+checkLinkVulnerableAndIDZero:
+
+.ifdef ROM_AGES
+	ld a,(w1Link.id)
+	or a
+	jr z,checkLinkVulnerable
+	xor a
+	ret
+.endif
+
+;;
+; Check if link should respond to collisions, perhaps other things?
+;
+; @param[out]	cflag	Set if link is vulnerable
+checkLinkVulnerable:
+	; Check var2a, invincibilityCounter, knockbackCounter
+	ld hl,w1Link.var2a
+	ldi a,(hl)
+	or (hl)
+	ld l,<w1Link.knockbackCounter
+	or (hl)
+	jr nz,checkLinkCollisionsEnabled@noCarry
+
+;;
+; Check if link should respond to collisions, perhaps other things?
+;
+; @param[out]	cflag
+checkLinkCollisionsEnabled:
+	ld a,(w1Link.collisionType)
+	rlca
+	jr nc,@noCarry
+
+.ifdef ROM_SEASONS
+	ld a,(wLinkDeathTrigger)
+	or a
+	jr nz,@noCarry
+.endif
+
+	ld a,(wDisableLinkCollisionsAndMenu)
+	or a
+	jr nz,@noCarry
+
+	ld a,(wMenuDisabled)
+	or a
+	jr nz,@noCarry
+
+.ifdef ROM_AGES
++++
+	ld a,(wLinkDeathTrigger)
+	or a
+	jr nz,@noCarry
+.endif
+
+	; Check if in a spinner
+	ld a,(wcc95)
+	rlca
+	jr c,@noCarry
+
+	ld a,(wLinkInAir)
+	rlca
+	jr c,@noCarry
+
+	scf
+	ret
+@noCarry:
+	xor a
 	ret
 
 ;;
