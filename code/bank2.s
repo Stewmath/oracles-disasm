@@ -333,6 +333,7 @@ _fileSelectMode1:
 	call playSound
 	call _incFileSelectMode2
 	call saveFile
+	call saveIntoSwitchedWramInitial
 	jp fadeoutToWhite
 
 @back:
@@ -370,6 +371,25 @@ _fileSelectMode1:
 	ld a,(wPaletteThread_mode)
 	or a
 	jr nz,@textSpeedMenu_addCursorToOam
+
+	push hl
+
+	; start on the right game
+	ld a,SRAMBANK_OTHERGAME_BACKUP
+	ld ($4444),a
+	ldh a,(<hActiveFileSlot)
+	ld hl,CURRENT_SAVED_GAME_START
+	rst_addAToHl
+	ld a,(hl)
+	or a
+	jr z,+ ; if on ages, don't do anything
+	ld a,SRAMBANK_SEASONS
+	ld (wSwapGame),a
++
+	ld a,SRAMBANK_BOOTSTRAP
+	ld ($4444),a
+
+	pop hl
 
 	; Fade done
 	xor a
@@ -10338,7 +10358,7 @@ _saveQuitMenu_state1:
 	; A pressed
 	ld a,(wSaveQuitMenu.cursorIndex)
 	or a
-	call nz,saveFile ; Save for options 2 and 3
+	call nz,saveFileInGame ; Save for options 2 and 3
 
 	ld a,$02
 	ld (wSaveQuitMenu.state),a

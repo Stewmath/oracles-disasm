@@ -4,8 +4,6 @@
 ; @param c What operation to do on the file
 ; @param hActiveFileSlot File index
 fileManagementFunction:
-	ld a,SRAMBANK_AGES
-	ld ($4444),a
 	ld a,c
 	ld bc,@return
 	push bc
@@ -100,7 +98,7 @@ _saveFile:
 
 	; Save file
 	ld l,<wFileStart
-	call _getFileAddress1
+	call getFileAddress1
 	ld e,c
 	ld d,b
 	call _copyFileFromHlToDe
@@ -121,7 +119,7 @@ _loadFile:
 	or a
 	jr nz,+
 
-	call _getFileAddress1
+	call getFileAddress1
 	jr ++
 +
 	call _getFileAddress2
@@ -135,7 +133,7 @@ _loadFile:
 
 ;;
 _eraseFile:
-	call _getFileAddress1
+	call getFileAddress1
 	call @clearFile
 
 	call _getFileAddress2
@@ -170,7 +168,7 @@ _verifyFileCopies:
 	and $01
 	push af
 
-	call _getFileAddress1
+	call getFileAddress1
 	ld l,c
 	ld h,b
 	call _verifyFileAtHl
@@ -190,7 +188,7 @@ _verifyFileCopies:
 	call _getFileAddress2
 	ld e,c
 	ld d,b
-	call _getFileAddress1
+	call getFileAddress1
 	ld l,c
 	ld h,b
 	call _copyFileFromHlToDe
@@ -202,7 +200,7 @@ _verifyFileCopies:
 
 ;;
 @copy1Invalid:
-	call _getFileAddress1
+	call getFileAddress1
 	ld e,c
 	ld d,b
 	call _getFileAddress2
@@ -308,7 +306,7 @@ _calculateFileChecksum:
 ; Get the first address of the save data
 ; @param hActiveFileSlot Save slot
 ; @param[out] bc Address
-_getFileAddress1:
+getFileAddress1:
 	ld c,$00
 	jr +
 

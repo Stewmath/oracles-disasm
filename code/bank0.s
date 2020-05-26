@@ -1899,6 +1899,10 @@ _mainLoop:
 
 ;;
 _mainLoop_nextThread:
+	ld a,(wSwapGame)
+	or a
+	jp nz,swapGame
+
 	ldh a,(<hActiveThread)
 	add $08
 	ldh (<hActiveThread),a
@@ -1974,29 +1978,327 @@ _initializeThread:
 	ret
 
 ;;
+; Switches back to SRAMBANK_BOOTSTRAP
+saveCurrentGameAsLastSavedGame:
+	push af
+	push bc
+	push hl
+
+	ld a,(wCurrentGame)
+	ld b,a
+
+	ld a,SRAMBANK_OTHERGAME_BACKUP
+	ld ($4444),a
+
+	; save wCurrentGame into CURRENT_SAVED_GAME_START
+	ldh a,(<hActiveFileSlot)
+	ld hl,CURRENT_SAVED_GAME_START
+	rst_addAToHl
+	ld (hl),b
+
+	ld a,SRAMBANK_BOOTSTRAP
+	ld ($4444),a
+
+	pop hl
+	pop bc
+	pop af
+	ret
+
+;;
 ; @param	hActiveFileSlot	File index
+; Called by:
+;   - Normally creating a game, and selecting a name
+;   - Entering a secret which creates a game
+;   - Creating a game similar to above, but using a game link
 initializeFile:
+	push af
+	push bc
+	push de
+	push hl
+
+	ldh a,(<hRomBank)
+	push af
+
+	call saveCurrentGameAsLastSavedGame
+
+	; Call normal initialize using Seasons
+	call fillBootstrappedSramWithSeasons
+	ld a,SRAMBANK_SEASONS
+	ld ($4444),a
 	ld c,$00
-	jr ++
+	call fileManagement_caller
 
-;;
-; @param	hActiveFileSlot	File index
-saveFile:
-	ld c,$01
-	jr ++
-
-;;
-; @param	hActiveFileSlot	File index
-loadFile:
+	; Load fresh Ages game
+	call fillBootstrappedSramWithAges
+	ld a,SRAMBANK_AGES
+	ld ($4444),a
 	ld c,$02
-	jr ++
+	call fileManagement_caller
+
+	; copy name back onto ages
+	ldh a,(<SVBK)
+	push af
+	ld a,:w4NameBuffer
+	ldh (<SVBK),a
+	ld hl,w4NameBuffer
+	ld de,wLinkName
+	ld b,$06
+	call copyMemory
+	pop af
+	ldh (<SVBK),a
+
+	; Finally save ages
+	ld a,SRAMBANK_AGES
+	ld ($4444),a
+	ld c,$00
+	call fileManagement_caller
+
+	pop af
+	setrombank
+
+	pop hl
+	pop de
+	pop bc
+	pop af
+
+	ret
+
+fillBootstrappedSramWithAges:
+	push af
+
+	lda $00
+	ld ($3333),a
+	call fillBootstrappedSram
+
+	pop af
+	ret
+
+fillBootstrappedSramWithSeasons:
+	push af
+
+	lda $01
+	ld ($3333),a
+	call fillBootstrappedSram
+
+	pop af
+	ret
+
+saveFileInGame:
+	push af
+	push bc
+	push de
+	push hl
+
+	ldh a,(<hRomBank)
+	push af
+
+	; changes SRAM bank, but that gets set immediately after
+	call saveCurrentGameAsLastSavedGame
+
+	ld a,(wCurrentGame)
+	or a
+	jr nz,@savingDuringSeasons
+
+	; Save during ages
+	ld a,SRAMBANK_AGES
+	ld ($4444),a
+	ld c,$01
+	call fileManagement_caller
+
+	; save seasons data
+	ld a,SRAMBANK_OTHERGAME_BACKUP
+	ld ($4444),a
+	ld hl,SEASONS_BACKUP
+	ld de,wFileStart
+	ld bc,$550
+	call copyMemoryBc
+
+	call fillBootstrappedSramWithSeasons
+	ld a,SRAMBANK_SEASONS
+	ld ($4444),a
+	ld c,$01
+	call fileManagement_caller
+
+	; back to ages
+	call fillBootstrappedSramWithAges
+	ld a,SRAMBANK_AGES
+	ld ($4444),a
+	ld c,$02
+	call fileManagement_caller
+
+	jr @done
+
+@savingDuringSeasons:
+	ld a,SRAMBANK_SEASONS
+	ld ($4444),a
+	ld c,$01
+	call fileManagement_caller
+
+	; save ages data
+	ld a,SRAMBANK_OTHERGAME_BACKUP
+	ld ($4444),a
+	ld hl,AGES_BACKUP
+	ld de,wFileStart
+	ld bc,$550
+	call copyMemoryBc
+
+	call fillBootstrappedSramWithAges
+	ld a,SRAMBANK_AGES
+	ld ($4444),a
+	ld c,$01
+	call fileManagement_caller
+
+	; back to seasons
+	call fillBootstrappedSramWithSeasons
+	ld a,SRAMBANK_SEASONS
+	ld ($4444),a
+	ld c,$02
+	call fileManagement_caller
+
+@done:
+	pop af
+	setrombank
+
+	pop hl
+	pop de
+	pop bc
+	pop af
+
+	ret
 
 ;;
 ; @param	hActiveFileSlot	File index
+; Called by:
+;   - A serial function
+;   - Copying a file over
+;   - Selecting text speed, saving the text speed
+;   - In-game saving option - catered to by above function
+;   - As part of game complete
+saveFile:
+	ld a,SRAMBANK_AGES
+	ld ($4444),a
+	ld c,$01
+	jp fileManagement_caller
+
+
+saveIntoSwitchedWramInitial:
+	ldh a,(<SVBK)
+	push af
+	ldh a,(<hRomBank)
+	push af
+	push bc
+	push de
+	push hl
+
+	; address of ages save data into bc
+	ld a,:fileManagement.fileManagementFunction
+	setrombank
+	call bank0_getFileAddress1
+
+	; copy file address 1 in ages to w6Filler2
+	ld l,c
+	ld h,b
+	ld a,SRAMBANK_AGES
+	ld ($4444),a
+	ld a,:w6Filler2
+	ldh (<SVBK),a
+	ld de,w6Filler2
+	ld bc,$550
+	call copyMemoryBc
+
+	; copy w6Filler2 into ages on backup SRAM
+	ld a,SRAMBANK_OTHERGAME_BACKUP
+	ld ($4444),a
+	ld hl,w6Filler2
+	ld de,AGES_BACKUP
+	ld bc,$550
+	call copyMemoryBc
+
+	; address of seasons data into bc
+	call fillBootstrappedSramWithSeasons
+
+	ld a,:fileManagement.fileManagementFunction
+	setrombank
+	call bank0_getFileAddress1
+
+	; copy file address 1 in seasons to w6Filler2
+	ld l,c
+	ld h,b
+	ld a,SRAMBANK_SEASONS
+	ld ($4444),a
+	ld a,:w6Filler2
+	ldh (<SVBK),a
+	ld de,w6Filler2
+	ld bc,$550
+	call copyMemoryBc
+
+	; copy w6Filler2 into ages on backup SRAM
+	ld a,SRAMBANK_OTHERGAME_BACKUP
+	ld ($4444),a
+	ld hl,w6Filler2
+	ld de,SEASONS_BACKUP
+	ld bc,$550
+	call copyMemoryBc
+
+	; back to ages
+	call fillBootstrappedSramWithAges
+
+	pop hl
+	pop de
+	pop bc
+	pop af
+	setrombank
+	pop af
+	ldh (<SVBK),a
+	ret
+
+
+;;
+; @param	hActiveFileSlot	File index
+; Called by:
+;   - 2 serial functions
+;   - Copying file over
+;   - Selecting a non-empty file
+;   - Before entering name for new file
+;   - Initial step of entering game secret
+;   - Initial step of using link cable
+;   - Displaying variables for 3 files in menu
+loadFile:
+	ld a,SRAMBANK_AGES
+	ld ($4444),a
+	ld c,$02
+	jp fileManagement_caller
+
+;;
+; @param	hActiveFileSlot	File index
+; Called by:
+;   - Normal erase file function
+;   - Before load game when entering name for new file
 eraseFile:
+	ldh a,(<hRomBank)
+	push af
+
+	; Delete seasons
+	call fillBootstrappedSramWithSeasons
+
+	ld a,SRAMBANK_SEASONS
+	ld ($4444),a
+	ld c,$03
+	call fileManagement_caller
+
+	; Back to ages
+	call fillBootstrappedSramWithAges
+
+	pop af
+	setrombank
+
+	; Delete ages
+	ld a,SRAMBANK_AGES
+	ld ($4444),a
 	ld c,$03
 
-++
+
+fileManagement_caller:
 	ldh a,(<hRomBank)
 	push af
 	callfrombank0 fileManagement.fileManagementFunction
@@ -7451,13 +7753,92 @@ checkLinkIsOverHazard:
 	pop bc
 	ret
 
+swapGame:
+	push de
+	push hl
 
-sramBootstrap:
+	ld a,(wSwapGame)
+	sub $02
+	ld b,a
+	ld a,(wCurrentGame)
+
+	; game chosen to swap to is the current game
+	cp b
+	jr z,@done
+
+	; a - wCurrentGame
+	or a
+
+	jr z,@agesToSeasons
+
+	; seasonsToAges
+	ld a,SRAMBANK_OTHERGAME_BACKUP
+	ld ($4444),a
+
+	; copy file ram into seasons backup
+	ld hl,wFileStart
+	ld de,SEASONS_BACKUP
+	ld bc,$550
+	call copyMemoryBc
+
+	; copy ages backup into file ram
+	ld hl,AGES_BACKUP
+	ld de,wFileStart
+	ld bc,$550
+	call copyMemoryBc
+
+	ld a,$00
+	ld (wCurrentGame),a
+
+	jr @loadOtherGamesBootstrappedSRAM
+
+@agesToSeasons:
+	ld a,SRAMBANK_OTHERGAME_BACKUP
+	ld ($4444),a
+
+	; copy file ram into ages backup
+	ld hl,wFileStart
+	ld de,AGES_BACKUP
+	ld bc,$550
+	call copyMemoryBc
+
+	; copy seasons backup into file ram
+	ld hl,SEASONS_BACKUP
+	ld de,wFileStart
+	ld bc,$550
+	call copyMemoryBc
+
+	ld a,$01
+	ld (wCurrentGame),a
+
+@loadOtherGamesBootstrappedSRAM:
+	ld a,(wSwapGame)
+	ld ($3333),a
+	call fillBootstrappedSram
+
+@done:
+	lda $00
+	ld (wSwapGame),a
+
+	pop hl
+	pop de
+
+	ld sp,wMainStackTop
+
+	ld bc,mainThreadStart
+	jp restartThisThread
+
+
+fillBootstrappedSram:
+	push af
+	push bc
+	push de
+	push hl
+	ldh a,(<hRomBank)
+	push af
+
 	ld a,:bank0p2Start
 	setrombank
-
-	ld a,$0a
-	ld ($1111),a
 
 	ld a,SRAMBANK_BOOTSTRAP
 	ld ($4444),a
@@ -7466,6 +7847,26 @@ sramBootstrap:
 	ld de,bank0p2Start
 	ld bc,$2000 - (bank0p2Start - $a000)
 	call copyMemoryBc
+
+	pop af
+	setrombank
+	pop hl
+	pop de
+	pop bc
+	pop af
+
+	ret
+
+sramBootstrap:
+	; Always start on ages
+	lda $00
+	ld (wCurrentGame),a
+	ld ($3333),a
+
+	ld a,$0a
+	ld ($1111),a
+
+	call fillBootstrappedSram
 
 	jpfrombank0 init
 .ENDS
@@ -8253,6 +8654,63 @@ add16BitRefs_caller:
 ldhl_wRoomEdgeY:
 	ld hl,wRoomEdgeY
 	ret
+
+bank0_getFileAddress1:
+	jp fileManagement.getFileAddress1
+
+;;
+introThreadStart:
+	ld hl,wIntro.frameCounter
+	inc (hl)
+	callfrombank0 runIntro
+	call resumeThreadNextFrame
+	jr introThreadStart
+
+;;
+paletteFadeThreadStart:
+	ld a,:w2TilesetBgPalettes
+	ld ($ff00+R_SVBK),a
+
+	callfrombank0 bank1.paletteFadeHandler
+	call          bank1.checkLockBG7Color3ToBlack
+
+	; Resume this thread in [wPaletteThread_updateRate] frames.
+	ld a,(wPaletteThread_updateRate)
+	or a
+	jr nz,+
+	inc a
++
+	call resumeThreadInAFrames
+	jr paletteFadeThreadStart
+
+;;
+; This thread runs all of the interesting, in-game stuff.
+;
+mainThreadStart:
+	call restartSound
+	call stopTextThread
+
+@mainThread:
+	; Increment wPlaytimeCounter, the 4-byte counter
+	ld hl,wPlaytimeCounter
+	inc (hl)
+	ldi a,(hl)
+	ld (wFrameCounter),a
+	jr nz,++
+	inc (hl)
+	jr nz,++
+	inc l
+	inc (hl)
+	jr nz,++
+	inc l
+	inc (hl)
+++
+	callfrombank0 bank1.runGameLogic
+	call          drawAllSprites
+	call          checkReloadStatusBarGraphics
+	call          resumeThreadNextFrame
+
+	jr           @mainThread
 
 ;;
 ; Check if an object is on water, lava, or a hole. Same as the below function, except if
@@ -11233,14 +11691,6 @@ getFreeItemSlot:
 	ret
 
 ;;
-introThreadStart:
-	ld hl,wIntro.frameCounter
-	inc (hl)
-	callfrombank0 runIntro
-	call resumeThreadNextFrame
-	jr introThreadStart
-
-;;
 ; This runs everything after the "nintendo/capcom" logo and before the titlescreen.
 intro_cinematic:
 	ldh a,(<hRomBank)
@@ -12383,54 +12833,6 @@ setPaletteThreadDelay:
 	ld a,$01
 	ld (wPaletteThread_counter),a
 	ret
-
-;;
-paletteFadeThreadStart:
-	ld a,:w2TilesetBgPalettes
-	ld ($ff00+R_SVBK),a
-
-	callfrombank0 bank1.paletteFadeHandler
-	call          bank1.checkLockBG7Color3ToBlack
-
-	; Resume this thread in [wPaletteThread_updateRate] frames.
-	ld a,(wPaletteThread_updateRate)
-	or a
-	jr nz,+
-	inc a
-+
-	call resumeThreadInAFrames
-	jr paletteFadeThreadStart
-
-
-;;
-; This thread runs all of the interesting, in-game stuff.
-;
-mainThreadStart:
-	call restartSound
-	call stopTextThread
-
-@mainThread:
-	; Increment wPlaytimeCounter, the 4-byte counter
-	ld hl,wPlaytimeCounter
-	inc (hl)
-	ldi a,(hl)
-	ld (wFrameCounter),a
-	jr nz,++
-	inc (hl)
-	jr nz,++
-	inc l
-	inc (hl)
-	jr nz,++
-	inc l
-	inc (hl)
-++
-	callfrombank0 bank1.runGameLogic
-	call          drawAllSprites
-	call          checkReloadStatusBarGraphics
-	call          resumeThreadNextFrame
-
-	jr           @mainThread
-
 
 
 .ifdef ROM_SEASONS
