@@ -7,8 +7,8 @@ with open('seasons.gbc', 'rb') as f:
 
 
 combined_games = bytearray(0x200*0x4000)
-combined_games[:0x100*0x4000] = ages_data
-combined_games[0x100*0x4000:] = seasons_data
+combined_games[:0x100*0x4000] = ages_data[:0x100*0x4000]
+combined_games[0x100*0x4000:0x200*0x4000] = seasons_data[:0x100*0x4000]
 
 with open('combined.gbc', 'wb') as f:
     f.write(combined_games)
