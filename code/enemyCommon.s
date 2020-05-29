@@ -1140,6 +1140,10 @@ _ecom_killObjectH:
 ;
 ; @param	hl	Pointer to object's health value
 _ecom_killRelatedObj:
+	ld a,h
+	or a
+	ret z
+
 	ld (hl),$00
 	ld a,l
 	add Object.collisionType - Object.health

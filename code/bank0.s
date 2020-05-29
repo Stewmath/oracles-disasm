@@ -5618,7 +5618,7 @@ clearAllItemsAndPutLinkOnGround:
 	jr c,@nextItem
 
 	pop de
-	jp clearAllItemsAndPutLinkOnGround_jper
+	jp putLinkOnGround_jper
 
 ;;
 ; @param	a			Character index
@@ -8556,8 +8556,8 @@ ldwInstrumentsDisabledCounter_a:
 	ld (wInstrumentsDisabledCounter),a
 	ret
 
-clearAllItemsAndPutLinkOnGround_jper:
-	jp clearAllItemsAndPutLinkOnGround
+putLinkOnGround_jper:
+	jp putLinkOnGround
 
 clearAllItemsAndPutLinkOnGround_body:
 	call clearAllParentItems

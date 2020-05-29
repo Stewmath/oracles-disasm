@@ -7192,7 +7192,8 @@ patch_turnToFaceLink:
 	swap a
 	rlca
 	ld e,Interaction.direction
-	ld (hl),a
+	; Bug: h is manipulated by above call, they probably mean d
+	ld (de),a
 	jp interactionSetAnimation
 
 

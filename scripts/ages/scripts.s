@@ -1120,7 +1120,7 @@ gameCompleteDialogScript:
 
 	; Save
 	asm15 scriptHlp.gameCompleteDialog_markGameAsComplete
-	asm15 saveFile
+	asm15 saveFileInGame
 	wait 30
 	jump2byte ++
 
