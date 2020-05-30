@@ -8,7 +8,6 @@ updateSpecialObjects:
 	and $7f
 	ld (w1Link.id),a
 +
-.ifdef ROM_AGES
 	ld hl,w1Link.var2f
 	ld a,(hl)
 	and $3f
@@ -19,6 +18,7 @@ updateSpecialObjects:
 	jr nc,+
 	set 6,(hl)
 +
+.ifdef ROM_AGES
 	ld a,(wTilesetFlags)
 	and TILESETFLAG_UNDERWATER
 	jr z,+
@@ -721,11 +721,9 @@ _linkApplyTileTypes:
 	or a
 	ret nz
 
-.ifdef ROM_AGES
 	ld a,(w1Link.var2f)
 	bit 7,a
 	ret nz
-.endif
 
 	xor a
 	ld e,SpecialObject.var35
@@ -5022,7 +5020,6 @@ _linkState10:
 	or a
 	jp nz,setLinkIDOverride
 
-.ifdef ROM_AGES
 	; Handle movement
 
 	; Check if Link is underwater?
@@ -5035,7 +5032,6 @@ _linkState10:
 	call _linkUpdateVelocity@mermaidSuit
 	jr ++
 +
-.endif
 	; Check if bits 0-3 of wLinkGrabState == 1 or 2.
 	; (Link is grabbing or lifting something. This cancels ice physics.)
 	ld a,(wLinkGrabState)
@@ -5231,22 +5227,18 @@ _overworldSwimmingState1:
 	call linkCancelAllItemUsage
 	call _linkSetSwimmingSpeed
 
-.ifdef ROM_AGES
 	; Set counter1 to the number of frames to stay in swimmingState2.
 	; This is just a period of time during which Link's speed is locked immediately
 	; after entering the water.
 	ld l,SpecialObject.var2f
 	bit 6,(hl)
-.endif
 
 	ld l,SpecialObject.counter1
 	ld (hl),$0a
 
-.ifdef ROM_AGES
 	jr z,+
 	ld (hl),$02
 +
-.endif
 
 	ld a,(wLinkSwimmingState)
 	bit 6,a
@@ -5355,7 +5347,6 @@ _overworldSwimmingState3:
 +
 	call updateLinkDirectionFromAngle
 
-.ifdef ROM_AGES
 	; Check whether the flippers or the mermaid suit are in use
 	ld h,d
 	ld l,SpecialObject.var2f
@@ -5366,7 +5357,6 @@ _overworldSwimmingState3:
 	call _linkUpdateVelocity@mermaidSuit
 	jp specialObjectUpdatePosition
 +
-.endif
 	; Flippers movement
 	call _linkUpdateFlippersSpeed
 	call _func_5933
@@ -5685,7 +5675,6 @@ _linkUpdateSwimming_sidescroll:
 	; Ensure that he's facing either left or right (not up or down)
 	set 0,(hl)
 
-.ifdef ROM_AGES
 	; Jump if Link does not have the mermaid suit (only flippers)
 	ld l,SpecialObject.var2f
 	bit 6,(hl)
@@ -5695,7 +5684,6 @@ _linkUpdateSwimming_sidescroll:
 	call _linkUpdateVelocity@mermaidSuit
 	jr ++
 +
-.endif
 	; Flippers movement
 	call _linkUpdateFlippersSpeed
 	call _func_5933
@@ -5728,7 +5716,7 @@ _linkUpdateVelocity:
 	ld a,(wTilesetFlags)
 	and TILESETFLAG_UNDERWATER
 	jr z,@label_05_159
-
+.endif
 @mermaidSuit:
 	ld c,$98
 	call updateLinkSpeed_withParam
@@ -5767,7 +5755,6 @@ _linkUpdateVelocity:
 ++
 	ld l,SpecialObject.var12
 	ld (hl),$14
-.endif
 
 @label_05_159:
 	ld a,(wLinkAngle)
@@ -5878,7 +5865,6 @@ _linkState01_sidescroll:
 	bit TILETYPE_SS_BIT_WATER,a
 	jr z,@notInWater
 
-.ifdef ROM_AGES
 	; In water
 
 	ld h,d
@@ -5887,7 +5873,6 @@ _linkState01_sidescroll:
 	jr z,+
 	set 7,(hl)
 +
-.endif
 	; If link was in water last frame, don't create a splash
 	ld a,(wLinkSwimmingState)
 	or a
@@ -6620,9 +6605,7 @@ updateLinkSpeed_withParam:
 	.db $28 $00 $1e $14 $28 $2d $1e $3c
 	.db $00 $06 $28 $28 $28 $3c $3c $3c
 	.db $14 $03 $1e $14 $28 $2d $1e $3c
-.ifdef ROM_AGES
 	.db $00 $05 $2d $2d $2d $2d $2d $2d
-.endif
 
 ;;
 ; Updates Link's speed and updates his position if he's experiencing knockback.

@@ -2232,7 +2232,7 @@ saveIntoSwitchedWramInitial:
 	ld bc,$550
 	call copyMemoryBc
 
-	; copy w6Filler2 into ages on backup SRAM
+	; copy w6Filler2 into seasons on backup SRAM
 	ld a,SRAMBANK_OTHERGAME_BACKUP
 	ld ($4444),a
 	ld hl,w6Filler2
@@ -7807,6 +7807,17 @@ swapGame:
 	ld de,wFileStart
 	ld bc,$550
 	call copyMemoryBc
+
+	; TODO: remove
+	; give self mermaid suit
+	ld hl,$c692
+	ld a,$2e
+	call setFlag
+	ld a,$59
+	call setFlag
+	ld hl,wDeathRespawnBuffer.room
+	ld a,$5d
+	ld (hl),a
 
 	ld a,$01
 	ld (wCurrentGame),a
