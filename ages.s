@@ -702,7 +702,6 @@ specialObjectLoadAnimationFrameToBuffer:
 
 	.include "build/data/enemyActiveCollisions.s"
 	.include "build/data/partActiveCollisions.s"
-	.include "build/data/objectCollisionTable.s"
 
 	.include "code/ages/garbage/bank07End.s"
 

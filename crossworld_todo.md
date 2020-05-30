@@ -21,6 +21,10 @@ Switch Hook
 * Texts
 * interactionData.s
 
+Shooter
+* Texts
+* interactionData.s
+
 Items
-* seasons - harp, shooter
+* seasons - harp
 * ages - fools ore, slingshot, magic boomerang, mag gloves, rocs cape, rod of seasons

@@ -55,6 +55,7 @@ uncmpGfxHeaderTable:
 	.dw uncmpGfxHeader35
 	.dw uncmpGfxHeader36
 	.dw uncmpGfxHeader37
+	.dw uncmpGfxHeader38
 
 uncmpGfxHeader00: ; $6740
 uncmpGfxHeader01: ; $6740
@@ -195,3 +196,5 @@ uncmpGfxHeader36: ; $6926
 	m_GfxHeader spr_switch_hook $8521 $0b
 uncmpGfxHeader37: ; $6926
 	m_GfxHeader spr_cane_of_somaria $8521 $09
+uncmpGfxHeader38:
+	m_GfxHeader spr_seed_shooter $8521 $09

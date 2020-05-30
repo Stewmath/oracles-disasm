@@ -4076,7 +4076,11 @@ _inventoryMenuState1:
 
 .else; ROM_SEASONS
 	cp ITEMID_SLINGSHOT
-	jr nz,@finalizeEquip
+	jr z,@hasSubmenu
+	cp ITEMID_SHOOTER
+	jr z,@hasSubmenu
+	jr @finalizeEquip
+
 .endif
 
 @hasSubmenu:

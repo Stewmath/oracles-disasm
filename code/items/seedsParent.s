@@ -60,7 +60,6 @@ _parentItemCode_slingshot:
 ;;
 ; ITEMID_SHOOTER ($0f)
 _parentItemCode_shooter:
-.ifdef ROM_AGES
 	ld e,Item.state
 	ld a,(de)
 	rst_jumpTable
@@ -107,6 +106,9 @@ _parentItemCode_shooter:
 	; Note: here, 'c' = the "behaviour" value from the "_itemUsageParameterTable" for
 	; button B, and this will become the subid for the new item? (The only important
 	; thing is that it's nonzero, to indicate the seed came from the shooter.)
+.ifdef ROM_SEASONS
+	ld c,$63
+.endif
 	push bc
 	ld e,$01
 	call itemCreateChildWithID
@@ -187,9 +189,11 @@ _parentItemCode_shooter:
 	ld (hl),$10
 
 @determineBaseAnimation:
+.ifdef ROM_AGES
 	call _isLinkUnderwater
 	ld a,$48
 	jr nz,++
+.endif
 	ld a,(w1Companion.id)
 	cp SPECIALOBJECTID_MINECART
 	ld a,$40
@@ -204,8 +208,6 @@ _parentItemCode_shooter:
 	ld l,Item.var3f
 	ld (hl),$04
 	ret
-
-.endif ; ROM_AGES
 
 
 ;;

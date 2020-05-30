@@ -7767,6 +7767,8 @@ getSomariaBlockIndex:
 	ld b,$f9
 	ret
 
+.include "build/data/objectCollisionTable.s"
+
 seasonsInitHook:
 	; TODO: remove
 	; give items
@@ -7781,6 +7783,12 @@ seasonsInitHook:
 	call setFlag
 	ld a,TREASURE_SWITCH_HOOK
 	call setFlag
+	ld a,TREASURE_SHOOTER
+	call setFlag
+	ld a,TREASURE_EMBER_SEEDS
+	call setFlag
+	ld a,TREASURE_SEED_SATCHEL
+	call setFlag
 
 	; wInventoryA
 	ld l,$81
@@ -7794,6 +7802,9 @@ seasonsInitHook:
 	inc l
 	ld a,TREASURE_SWITCH_HOOK
 	ld (hl),a
+	inc l
+	ld a,TREASURE_SHOOTER
+	ld (hl),a
 
 	; wSwitchHookLevel, wBraceletLevel
 	ld l,$ea
@@ -7801,6 +7812,14 @@ seasonsInitHook:
 	ld (hl),a
 	ld l,$eb
 	ld a,$02
+	ld (hl),a
+
+	; wNumEmberSeeds, wSeedSatchelLevel
+	ld l,$b5
+	ld a,$20
+	ld (hl),a
+	ld l,$ae
+	ld a,$01
 	ld (hl),a
 
 	; set room

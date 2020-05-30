@@ -350,7 +350,7 @@ _itemUsageParameterTable:
 	.db $73 <wGameKeysJustPressed   ; ITEMID_BIGGORON_SWORD
 	.db $02 <wGameKeysJustPressed   ; ITEMID_BOMBCHUS
 	.db $05 <wGameKeysJustPressed   ; ITEMID_FLUTE
-	.db $00 <wGameKeysJustPressed   ; ITEMID_SHOOTER
+	.db $43 <wGameKeysJustPressed   ; ITEMID_SHOOTER
 	.db $00 <wGameKeysJustPressed   ; ITEMID_10
 	.db $00 <wGameKeysJustPressed   ; ITEMID_HARP
 	.db $00 <wGameKeysJustPressed   ; ITEMID_12
@@ -430,8 +430,8 @@ _linkItemAnimationTable:
 
 
  m_section_superfree "Item_Code" namespace "itemCode"
-.include "code/updateItems.s"
 
+	.include "code/updateItems.s"
 	.include "build/data/itemConveyorTilesTable.s"
 	.include "build/data/itemPassableCliffTilesTable.s"
 	.include "build/data/itemPassableTilesTable.s"
@@ -448,7 +448,6 @@ _linkItemAnimationTable:
 
 	.include "data/seasons/enemyActiveCollisions.s"
 	.include "data/seasons/partActiveCollisions.s"
-	.include "data/seasons/objectCollisionTable.s"
 
 .ends
 

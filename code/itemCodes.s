@@ -33,11 +33,25 @@ itemCode24:
 	ld a,(hl)
 	or a
 	call z,itemUpdateAngle
+.endif
 
 	ld l,Item.var34
 	ld (hl),$03
-.else
+
+.ifdef ROM_SEASONS
+	ld l,Item.subid
+	ldd a,(hl)
+	cp $63
+	ld b,a
+	jr z,@shooter
+
 	call itemUpdateAngle
+	ld a,b
+	or a
+	ld l,Item.id
+	jp z,@satchel
+	jp @slingshot
+
 .endif
 
 	ld l,Item.subid
@@ -48,7 +62,7 @@ itemCode24:
 .else
 	jr nz,@slingshot
 .endif
-
+@satchel:
 	; Satchel
 	ldi a,(hl)
 	cp ITEMID_GALE_SEED
@@ -72,7 +86,6 @@ itemCode24:
 	ld a,SPEED_c0
 	jr @setSpeed
 
-.ifdef ROM_AGES
 @shooter:
 	ld e,Item.angle
 	ld a,(de)
@@ -91,7 +104,9 @@ itemCode24:
 
 	; Since 'd'='h', this will copy its own position and apply the offset
 	call objectCopyPositionWithOffset
-.else
+	jr +
+
+.ifdef ROM_SEASONS
 @slingshot:
 	ld hl,@slingshotAngleTable-1
 	rst_addAToHl
@@ -101,7 +116,7 @@ itemCode24:
 	and $1f
 	ld (de),a
 .endif
-
++
 	ld hl,wIsSeedShooterInUse
 	inc (hl)
 	ld a,SPEED_300
@@ -141,7 +156,6 @@ itemCode24:
 	.db $05 $00 $fe ; DIR_DOWN
 	.db $01 $fb $fe ; DIR_LEFT
 
-.ifdef ROM_AGES
 ; Y/X offsets for shooter
 @shooterPositionOffsets:
 	.db $f2 $fc ; Up
@@ -152,7 +166,6 @@ itemCode24:
 	.db $0a $f8 ; Down-left
 	.db $05 $f3 ; Left
 	.db $f8 $f8 ; Up-left
-.endif
 
 ;;
 ; State 1: seed moving
@@ -181,12 +194,18 @@ _seedItemState1:
 	or a
 	jr z,@satchelUpdate
 
-@slingshotUpdate:
-.ifdef ROM_AGES
-	call _seedItemUpdateBouncing
-.else
+@nonSatchelUpdate:
+.ifdef ROM_SEASONS
+	ld e,Item.subid
+	ld a,(de)
+	cp $63
+	jr z,@shooter
 	call _slingshotCheckCanPassSolidTile
+	jr +
 .endif
+@shooter:
+	call _seedItemUpdateBouncing
++
 	jr nz,@seedCollidedWithWall
 
 @updatePosition:
@@ -699,7 +718,6 @@ _galeSeedTryToWarpLink:
 	ld (hl),a
 	ret
 
-.ifdef ROM_AGES
 ;;
 ; Called for seeds used with seed shooter. Checks for tile collisions and triggers
 ; "bounces" when that happens.
@@ -926,6 +944,7 @@ _seedDontBounceTilesTable:
 	.dw @collisions4
 	.dw @collisions5
 
+.ifdef ROM_AGES
 @collisions0:
 	.db $ce $cf $c5 $c5 $c6 $c7 $c8 $c9 $ca
 @collisions1:
@@ -939,6 +958,23 @@ _seedDontBounceTilesTable:
 	.db TILEINDEX_LIT_TORCH
 	.db $00
 .else
+@collisions0:
+	.db $c3 $c4 $c5 $c6 $c7 $c8 $c9 $ca $cb
+	.db $d8 $d9 $da $e5
+@collisions1:
+@collisions2:
+@collisions3:
+@collisions5:
+	.db $00
+
+@collisions4:
+	.db TILEINDEX_UNLIT_TORCH
+	.db TILEINDEX_LIT_TORCH
+	.db $00
+.endif
+
+
+.ifdef ROM_SEASONS
 ;;
 ; @param[out]	zflag	z if no collision
 _slingshotCheckCanPassSolidTile:
@@ -3248,13 +3284,13 @@ itemCode2a:
 
 	jp itemAnimate
 
-.ifdef ROM_AGES
 ;;
 ; ITEMID_SHOOTER
-; ITEMID_29
 ;
 itemCode0f:
+.ifdef ROM_AGES
 itemCode29:
+.endif
 	ld e,Item.state
 	ld a,(de)
 	rst_jumpTable
@@ -3262,7 +3298,11 @@ itemCode29:
 	.dw @state1
 
 @state0:
+.ifdef ROM_AGES
 	ld a,UNCMP_GFXH_1d
+.else
+	ld a,UNCMP_GFXH_38
+.endif
 	call loadWeaponGfx
 	call _loadAttributesAndGraphicsAndIncState
 	ld e,Item.var30
@@ -3302,7 +3342,8 @@ itemCode0fPost:
 ; b2/b3: Y/X offsets relative to Link
 @data:
 	.db $00 $00 $00 $00
-.else
+
+.ifdef ROM_SEASONS
 ;;
 ; ITEMID_MAGNET_GLOVES
 ; ITEMID_29
