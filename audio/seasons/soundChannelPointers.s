@@ -1305,10 +1305,8 @@ sounda0:
 	.db $ff
 ; @addr{568b}
 sounda1:
-	.db $02
-	.dw sounda1Channel2
-	.db $07
-	.dw sounda1Channel7
+	.db $a2
+	.dw bank3f.sounda1Channel2
 	.db $ff
 ; @addr{5692}
 sounda2:

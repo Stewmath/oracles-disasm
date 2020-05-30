@@ -13,6 +13,7 @@ treasureDisplayData1:
 	.db TREASURE_PIRATES_BELL	<wPirateBellState $09
 	.db TREASURE_MAGNET_GLOVES	<wMagnetGlovePolarity $0a
 	.db TREASURE_BRACELET		<wBraceletLevel $0c
+	.db TREASURE_SWITCH_HOOK	<wSwitchHookLevel $0d
 	.db $00 $00 $00
 
 treasureDisplayData2:
@@ -29,6 +30,7 @@ treasureDisplayData2:
 	.dw @magnetGloveData
 	.dw @fluteData
 	.dw @braceletData  - 7
+	.dw @switchHookData-7
 
 	.dw @swordData
 
@@ -195,3 +197,7 @@ treasureDisplayData2:
 @braceletData:
 	.db TREASURE_BRACELET           $99 $05 $00 $00 $00 $2b ; L1
 	.db TREASURE_BRACELET           $a6 $05 $00 $00 $00 $00 ; L2
+
+@switchHookData:
+	.db TREASURE_SWITCH_HOOK        $9f $04 $00 $00 $00 $00 ; L1
+	.db TREASURE_SWITCH_HOOK        $9f $04 $00 $00 $00 $00 ; L2

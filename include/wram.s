@@ -2383,6 +2383,15 @@ wFollowingLinkObjectType: ; $cce7/$ccfd
 wFollowingLinkObject: ; $cce8/$ccfe
 	db
 
+.ifdef ROM_SEASONS
+wSwitchHookState:
+; Used when swapping with the switch hook.
+; (NOTE: May not be cleared since wcce9, below, isn't referenced properly in seasons.
+; Shouldn't be a big deal.)
+	db
+.endif
+
+
 wcce9: ; $cce9
 ; This might be a marker for the end of data in the $cc00 block?
 	.db

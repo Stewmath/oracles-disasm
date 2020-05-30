@@ -11,8 +11,13 @@ Mermaid suit
 
 Cane of Somaria
 * Texts
+* interactionData.s
 
 Power Gloves
+* Texts
+* interactionData.s
+
+Switch Hook
 * Texts
 * interactionData.s
 

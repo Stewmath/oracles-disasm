@@ -192,5 +192,6 @@ uncmpGfxHeader34: ; $6920
 uncmpGfxHeader35: ; $6920
 	m_GfxHeaderRam $07 $d800 $8300 $2f
 uncmpGfxHeader36: ; $6926
+	m_GfxHeader spr_switch_hook $8521 $0b
 uncmpGfxHeader37: ; $6926
 	m_GfxHeader spr_cane_of_somaria $8521 $09

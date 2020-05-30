@@ -279,7 +279,7 @@
 .ifdef ROM_AGES
 	SND_MONKEY              db ; $a1 ; Monkey from LADX?
 .else
-	SND_a1                  db ; $a1 ; Blank
+	SND_SWITCH2             db ; $a1
 .endif
 
 	SND_COMPASS             db ; $a2

@@ -2459,7 +2459,6 @@ _itemCheckWithinRangeOfLink:
 	cp b
 	ret
 
-.ifdef ROM_AGES
 ;;
 ; The chain on the switch hook; cycles between 3 intermediate positions
 ;
@@ -2576,7 +2575,11 @@ itemCode0a:
 	.dw _switchHookState3
 
 @state0:
+.ifdef ROM_AGES
 	ld a,UNCMP_GFXH_1f
+.else
+	ld a,UNCMP_GFXH_36
+.endif
 	call loadWeaponGfx
 
 	ld hl,@offsetsTable
@@ -3045,8 +3048,12 @@ _switchHookState3:
 	ld c,l
 	ld e,Item.var3d
 	ld a,(de)
+.ifdef ROM_AGES
 	cp TILEINDEX_SWITCH_DIAMOND
 	jr nz,+
+.else
+	jr +
+.endif
 
 	call setTile
 	jr @delete
@@ -3174,7 +3181,6 @@ _func_5af5:
 	ld l,Item.var2f
 	set 5,(hl)
 	ret
-.endif
 
 ;;
 ; ITEMID_RICKY_TORNADO

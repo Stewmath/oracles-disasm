@@ -122,9 +122,9 @@ updateItems:
 	.dw itemCode06 ; 0x06
 	.dw itemCode07 ; 0x07
 	.dw itemCode08 ; 0x08
-	.dw itemDelete ; 0x09
-	.dw itemDelete ; 0x0a
-	.dw itemDelete ; 0x0b
+	.dw itemCode09 ; 0x09
+	.dw itemCode0a ; 0x0a
+	.dw itemCode0b ; 0x0b
 	.dw itemCode0c ; 0x0c
 	.dw itemCode0d ; 0x0d
 	.dw itemDelete ; 0x0e
@@ -199,19 +199,14 @@ _updateItemPost:
 	.dw itemCode07Post	; 0x07
 	.dw itemCode08Post	; 0x08
 	.dw itemCodeNilPost	; 0x09
-.ifdef ROM_AGES
 	.dw itemCode0aPost	; 0x0a
 	.dw itemCode0bPost	; 0x0b
 	.dw itemCode0cPost	; 0x0c
 	.dw itemCodeNilPost	; 0x0d
 	.dw itemCodeNilPost	; 0x0e
+.ifdef ROM_AGES
 	.dw itemCode0fPost	; 0x0f
 .else
-	.dw itemDelete		; 0x0a
-	.dw itemDelete		; 0x0b
-	.dw itemCode0cPost	; 0x0c
-	.dw itemCodeNilPost	; 0x0d
-	.dw itemCodeNilPost	; 0x0e
 	.dw itemDelete		; 0x0f
 .endif
 	.dw itemCodeNilPost	; 0x10

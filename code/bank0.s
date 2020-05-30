@@ -7779,6 +7779,8 @@ seasonsInitHook:
 	call setFlag
 	ld a,TREASURE_BRACELET
 	call setFlag
+	ld a,TREASURE_SWITCH_HOOK
+	call setFlag
 
 	; wInventoryA
 	ld l,$81
@@ -7789,15 +7791,21 @@ seasonsInitHook:
 	ld l,$82
 	ld a,TREASURE_BRACELET
 	ld (hl),a
+	inc l
+	ld a,TREASURE_SWITCH_HOOK
+	ld (hl),a
 
-	; wBraceletLevel
+	; wSwitchHookLevel, wBraceletLevel
+	ld l,$ea
+	ld a,$02
+	ld (hl),a
 	ld l,$eb
 	ld a,$02
 	ld (hl),a
 
 	; set room
 	ld hl,wDeathRespawnBuffer.group
-	ld a,$01
+	ld a,$00
 	ld (hl),a
 	ld l,<wDeathRespawnBuffer.room
 	ld a,$54

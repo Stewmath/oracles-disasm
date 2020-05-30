@@ -15,10 +15,10 @@ _parentItemCode_boomerang:
 .ifdef ROM_AGES
 	call _isLinkUnderwater
 	jp nz,_clearParentItem
+.endif
 	ld a,(w1ParentItem2.id)
 	cp ITEMID_SWITCH_HOOK
 	jp z,_clearParentItem
-.endif
 
 	ld a,(wLinkSwimmingState)
 	or a

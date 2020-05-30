@@ -345,7 +345,7 @@ _itemUsageParameterTable:
 	.db $33 <wGameKeysJustPressed   ; ITEMID_ROD_OF_SEASONS
 	.db $53 <wGameKeysJustPressed   ; ITEMID_MAGNET_GLOVES
 	.db $00 <wGameKeysJustPressed   ; ITEMID_SWITCH_HOOK_HELPER
-	.db $00 <wGameKeysJustPressed   ; ITEMID_SWITCH_HOOK
+	.db $73 <wGameKeysJustPressed   ; ITEMID_SWITCH_HOOK
 	.db $00 <wGameKeysJustPressed   ; ITEMID_SWITCH_HOOK_CHAIN
 	.db $73 <wGameKeysJustPressed   ; ITEMID_BIGGORON_SWORD
 	.db $02 <wGameKeysJustPressed   ; ITEMID_BOMBCHUS
@@ -774,4 +774,21 @@ oamData_15_4e0c:
 	.include "build/data/treasureCollectionBehaviours.s"
 	.include "build/data/treasureDisplayData.s"
 
+sounda1Start:
+; @addr{ebada}
+sounda1Channel2:
+	duty $02
+	vol $d
+	env $1 $00
+	cmdf8 $00
+	note $30 $04
+	vol $c
+	note $34 $04
+	vol $d
+	note $38 $04
+	vibrato $51
+	env $1 $01
+	vol $b
+	note $3c $14
+	cmdff
 .ends
