@@ -339,7 +339,7 @@ _itemUsageParameterTable:
 	.db $05 <wGameKeysPressed       ; ITEMID_SHIELD
 	.db $03 <wGameKeysJustPressed   ; ITEMID_PUNCH
 	.db $23 <wGameKeysJustPressed   ; ITEMID_BOMB
-	.db $00 <wGameKeysJustPressed   ; ITEMID_CANE_OF_SOMARIA
+	.db $03 <wGameKeysJustPressed   ; ITEMID_CANE_OF_SOMARIA
 	.db $63 <wGameKeysJustPressed   ; ITEMID_SWORD
 	.db $02 <wGameKeysJustPressed   ; ITEMID_BOOMERANG
 	.db $33 <wGameKeysJustPressed   ; ITEMID_ROD_OF_SEASONS

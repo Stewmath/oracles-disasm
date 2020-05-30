@@ -220,3 +220,6 @@ _breakableTileModes:
 	m_BreakableTileData %10010110 %00110000 %0010 $0 $10 $ef ; $2d
 	m_BreakableTileData %01000000 %00000000 %0000 $c $0a $4c ; $2e
 	m_BreakableTileData %00110000 %00000000 %0000 $0 $06 $01 ; $2f
+
+caneBreakableTileData:
+	m_BreakableTileData %00111110 %10000000 %1011 $0 $1f $00 ; $32

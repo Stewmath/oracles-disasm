@@ -4110,7 +4110,6 @@ itemCode15:
 	ret nz
 	jp itemDelete
 
-.ifdef ROM_AGES
 ;;
 ; ITEMID_CANE_OF_SOMARIA
 itemCode04:
@@ -4124,7 +4123,11 @@ itemCode04:
 	.dw @state2
 
 @state0:
+.ifdef ROM_AGES
 	ld a,UNCMP_GFXH_1c
+.else
+	ld a,UNCMP_GFXH_37
+.endif
 	call loadWeaponGfx
 	call _loadAttributesAndGraphicsAndIncState
 
@@ -4289,11 +4292,13 @@ itemCode18:
 
 	; Set speed & counter1 based on bracelet level
 	ldbc SPEED_80, $20
+.ifdef ROM_AGES
 	ld a,(wBraceletLevel)
 	cp $02
 	jr nz,+
 	ldbc SPEED_c0, $15
 +
+.endif
 	ld l,Item.speed
 	ld (hl),b
 	ld l,Item.counter1
@@ -4443,9 +4448,16 @@ itemCode18:
 	ld e,Item.var32
 	ld a,(de)
 	ld l,a
+.ifdef ROM_AGES
 	ld h,>wRoomLayout
 	ld a,(hl)
 	cp TILEINDEX_SOMARIA_BLOCK
+.else
+	call getSomariaBlockIndex
+ 	ld h,>wRoomLayout
+ 	ld a,(hl)
+	cp b
+.endif
 	ret nz
 
 	ld h,>wRoomCollisions
@@ -4485,12 +4497,12 @@ itemCode18:
 	; Can't be in a wall
 	call objectGetTileCollisions
 	ret nz
-
+.ifdef ROM_AGES
 	; If underwater, never allow it
 	ld a,(wTilesetFlags)
 	bit TILESETFLAG_BIT_UNDERWATER,a
 	ret nz
-
+.endif
 	; If in a sidescrolling area, check for floor underneath
 	and TILESETFLAG_SIDESCROLL
 	ret z
@@ -4518,8 +4530,15 @@ itemCode18:
 	jr c,++
 
 	; Overwrite the tile with the somaria block
+.ifdef ROM_AGES
 	ld b,(hl)
 	ld (hl),TILEINDEX_SOMARIA_BLOCK
+.else
+	call getSomariaBlockIndex
+	ld a,b
+ 	ld b,(hl)
+	ld (hl),a
+.endif
 	ld h,>wRoomCollisions
 	ld (hl),$0f
 
@@ -4541,7 +4560,8 @@ itemCode18:
 	dec (hl)
 	dec (hl)
 	ret
-.else
+
+.ifdef ROM_SEASONS
 ; ITEMID_ROD_OF_SEASONS
 itemCode07:
 	call _itemTransferKnockbackToLink
@@ -4983,12 +5003,12 @@ itemCode27:
 ;
 _updateSwingableItemAnimation:
 	ld l,Item.animParameter
-.ifdef ROM_AGES
-	cp $04
-.else
-	cp $07
-.endif
+
+	cp ITEMID_CANE_OF_SOMARIA
 	jr z,_label_07_227
+	cp ITEMID_ROD_OF_SEASONS
+	jr z,_label_07_227
+
 	bit 6,(hl)
 	jr z,_label_07_227
 

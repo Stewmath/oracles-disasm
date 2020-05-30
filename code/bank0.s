@@ -7753,6 +7753,57 @@ checkLinkIsOverHazard:
 	pop bc
 	ret
 
+getSomariaBlockIndex:
+	ld a,(wActiveCollisions)
+	ld b,$3f ; Overworld
+	or a
+	ret z
+
+	dec a ; Subrosia
+	ld b,$ba
+	ret z
+
+	; Indoors (3), Dungeon (4), Sidescrolling (5)
+	ld b,$f9
+	ret
+
+seasonsInitHook:
+	; TODO: remove
+	; give items
+	ld hl,$c692
+	ld a,TREASURE_FLIPPERS
+	call setFlag
+	ld a,$59 ; mermaid suit
+	call setFlag
+	ld a,TREASURE_CANE_OF_SOMARIA
+	call setFlag
+	ld a,TREASURE_BRACELET
+
+	; wInventoryA
+	ld l,$81
+	ld a,TREASURE_CANE_OF_SOMARIA
+	ld (hl),a
+
+	; wInventoryStorage
+	ld l,$82
+	ld a,TREASURE_BRACELET
+	ld (hl),a
+
+	; set room
+	ld hl,wDeathRespawnBuffer.group
+	ld a,$01
+	ld (hl),a
+	ld l,<wDeathRespawnBuffer.room
+	ld a,$54
+	ld (hl),a
+	ld l,<wDeathRespawnBuffer.y
+	ld a,$58
+	ld (hl),a
+	ld l,<wDeathRespawnBuffer.x
+	ld a,$48
+	ld (hl),a
+	ret
+
 swapGame:
 	push de
 	push hl
@@ -7808,16 +7859,7 @@ swapGame:
 	ld bc,$550
 	call copyMemoryBc
 
-	; TODO: remove
-	; give self mermaid suit
-	ld hl,$c692
-	ld a,$2e
-	call setFlag
-	ld a,$59
-	call setFlag
-	ld hl,wDeathRespawnBuffer.room
-	ld a,$5d
-	ld (hl),a
+	call seasonsInitHook
 
 	ld a,$01
 	ld (wCurrentGame),a
