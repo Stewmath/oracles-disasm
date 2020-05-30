@@ -4292,13 +4292,11 @@ itemCode18:
 
 	; Set speed & counter1 based on bracelet level
 	ldbc SPEED_80, $20
-.ifdef ROM_AGES
 	ld a,(wBraceletLevel)
 	cp $02
 	jr nz,+
 	ldbc SPEED_c0, $15
 +
-.endif
 	ld l,Item.speed
 	ld (hl),b
 	ld l,Item.counter1

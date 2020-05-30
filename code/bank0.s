@@ -7778,6 +7778,7 @@ seasonsInitHook:
 	ld a,TREASURE_CANE_OF_SOMARIA
 	call setFlag
 	ld a,TREASURE_BRACELET
+	call setFlag
 
 	; wInventoryA
 	ld l,$81
@@ -7789,6 +7790,11 @@ seasonsInitHook:
 	ld a,TREASURE_BRACELET
 	ld (hl),a
 
+	; wBraceletLevel
+	ld l,$eb
+	ld a,$02
+	ld (hl),a
+
 	; set room
 	ld hl,wDeathRespawnBuffer.group
 	ld a,$01
@@ -7797,7 +7803,7 @@ seasonsInitHook:
 	ld a,$54
 	ld (hl),a
 	ld l,<wDeathRespawnBuffer.y
-	ld a,$58
+	ld a,$28
 	ld (hl),a
 	ld l,<wDeathRespawnBuffer.x
 	ld a,$48

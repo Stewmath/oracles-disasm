@@ -11,8 +11,11 @@ Mermaid suit
 
 Cane of Somaria
 * Texts
-* wBraceletLevel
+
+Power Gloves
+* Texts
+* interactionData.s
 
 Items
-* harp, power glove, shooter, hook to seasons
-* fools ore, slingshot, magic boomerang, mag gloves, rocs cape, rod of seasons to ages
+* seasons - harp, shooter
+* ages - fools ore, slingshot, magic boomerang, mag gloves, rocs cape, rod of seasons
