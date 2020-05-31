@@ -870,8 +870,11 @@ wPirateShipX: ; $c6ee
 wPirateShipAngle: ; $c6ef
 	db
 
+wBoomerangLevel: ; $c6b1
+	db
+
 wc6f0: ; $c6f0
-	dsb $b
+	dsb $a
 
 .endif ; ROM_AGES
 

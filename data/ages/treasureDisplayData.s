@@ -16,6 +16,7 @@ treasureDisplayData1:
 	.db TREASURE_SLINGSHOT 		<wShooterSelectedSeeds $0b
 	.db TREASURE_SLINGSHOT 		<wShooterSelectedSeeds $0c
 	.db TREASURE_FEATHER		<wFeatherLevel         $0d
+	.db TREASURE_BOOMERANG		<wBoomerangLevel       $0e
 	.db $00				$00                    $00
 
 treasureDisplayData2:
@@ -33,6 +34,7 @@ treasureDisplayData2:
 	.dw @slingshotData
 	.dw @hyperSlingshotData
 	.dw @featherData   - 7
+	.dw @boomerangData - 7
 
 
 ; The parts marked as "filler" in this table aren't actually used, since they have their
@@ -242,3 +244,7 @@ treasureDisplayData2:
 @featherData:
 	.db TREASURE_FEATHER            $96 $04 $00 $00 $00 $2c
 	.db TREASURE_FEATHER            $9a $05 $00 $00 $00 $3e
+
+@boomerangData:
+	.db TREASURE_BOOMERANG          $9c $05 $00 $00 $00 $27
+	.db TREASURE_BOOMERANG          $9d $04 $00 $00 $00 $40

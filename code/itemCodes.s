@@ -2229,24 +2229,18 @@ itemCode06:
 
 @state0:
 	call _itemLoadAttributesAndGraphics
-.ifdef ROM_AGES
-	ld a,UNCMP_GFXH_18
-.else
 	ld e,Item.subid
 	ld a,(de)
+.ifdef ROM_AGES
+	add $41
+.else
 	add $18
 .endif
+
 	call loadWeaponGfx
 
 	call itemIncState
 
-.ifdef ROM_AGES
-	ld l,Item.speed
-	ld (hl),SPEED_1a0
-
-	ld l,Item.counter1
-	ld (hl),$28
-.else
 	ld bc,(SPEED_1a0<<8|$28)
 	ld l,Item.subid
 	bit 0,(hl)
@@ -2265,7 +2259,6 @@ itemCode06:
 	ld (hl),b
 	ld l,Item.counter1
 	ld (hl),c
-.endif
 
 	ld c,-1
 	ld a,RANG_RING_L1
@@ -2290,9 +2283,7 @@ itemCode06:
 
 ; State 1: boomerang moving outward
 @state1:
-.ifdef ROM_SEASONS
 	call magicBoomerangTryToBreakTile
-.endif
 
 	ld e,Item.var2a
 	ld a,(de)
@@ -2415,9 +2406,7 @@ itemCode06:
 	jp objectTakePosition
 
 @breakTileAndUpdateSpeedAndAnimation:
-.ifdef ROM_SEASONS
 	call magicBoomerangTryToBreakTile
-.endif
 
 @updateSpeedAndAnimation:
 	call objectApplySpeed
@@ -2433,7 +2422,6 @@ itemCode06:
 
 	jp itemAnimate
 
-.ifdef ROM_SEASONS
 magicBoomerangTryToBreakTile:
 	ld e,Item.subid
 	ld a,(de)
@@ -2443,7 +2431,6 @@ magicBoomerangTryToBreakTile:
 	; level-2
 	ld a,BREAKABLETILESOURCE_07
 	jp itemTryToBreakTile
-.endif
 
 ;;
 ; Assumes that both objects are of the same size (checks top-left positions)

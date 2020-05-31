@@ -64,8 +64,8 @@ treasureCollectionBehaviourTable:
 	.db SND_GETITEM
 
 	; TREASURE_BOOMERANG (0x06)
-	.db $00
-	.db $00
+	.db <wBoomerangLevel
+	.db $08
 	.db SND_GETITEM
 
 	; TREASURE_ROD_OF_SEASONS (0x07)

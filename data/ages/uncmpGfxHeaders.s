@@ -64,6 +64,8 @@ uncmpGfxHeaderTable: ; $6744
 	.dw uncmpGfxHeader3e ; 0x3e
 	.dw uncmpGfxHeader3f ; 0x3f
 	.dw uncmpGfxHeader40 ; 0x40
+	.dw uncmpGfxHeader41 ; 0x40
+	.dw uncmpGfxHeader42 ; 0x40
 
 
 
@@ -136,7 +138,7 @@ uncmpGfxHeader16:
 uncmpGfxHeader17:
 	m_GfxHeaderRam $07 $d200 $9201 $1f
 uncmpGfxHeader18:
-	m_GfxHeader spr_boomerang $84e1 $03
+	; unused
 uncmpGfxHeader19:
 uncmpGfxHeader1a:
 	m_GfxHeader spr_swords $8521 $09
@@ -222,3 +224,7 @@ uncmpGfxHeader3f:
 	m_GfxHeader gfx_animations_2 $8cc1 $03 $7c0
 uncmpGfxHeader40:
 	m_GfxHeader spr_slingshot $8521 $07
+uncmpGfxHeader41:
+	m_GfxHeader spr_boomerang $84e1 $03
+uncmpGfxHeader42:
+	m_GfxHeader spr_boomerang $84e1 $03 $40

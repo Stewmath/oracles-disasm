@@ -19,6 +19,10 @@ Rocs cape
 * treasureObjectData.s?
 * animations
 
+Magic boomerang
+* Texts
+* interactionData.s
+
 Items
 * seasons - harp
-* ages - fools ore, magic boomerang, mag gloves, rod of seasons
+* ages - fools ore, mag gloves, rod of seasons
