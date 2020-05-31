@@ -803,3 +803,5 @@ sounda1Channel2:
 	.include "build/data/tilesetHeaders.s"
 
 .ends
+
+.include "build/data/objectCollisionTable.s"

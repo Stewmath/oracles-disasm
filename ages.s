@@ -1462,3 +1462,5 @@ oamData_7249:
 	.include "build/data/tilesetHeaders.s"
 
 .ends
+
+.include "build/data/objectCollisionTable.s"

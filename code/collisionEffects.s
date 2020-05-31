@@ -336,12 +336,8 @@ _enemyCheckCollisions:
 	ld a,(de)
 	add a
 	call multiplyABy16
-	ld hl,objectCollisionTable
-	add hl,bc
+	call getCollisionEffect
 	pop bc
-	ldh a,(<hFF90)
-	rst_addAToHl
-	ld a,(hl)
 	rst_jumpTable
 	.dw _collisionEffect00
 	.dw _collisionEffect01

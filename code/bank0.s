@@ -7753,6 +7753,21 @@ checkLinkIsOverHazard:
 	pop bc
 	ret
 
+;;
+; Check if an object is on water, lava, or a hole. Same as the below function, except if
+; the object is in midair, it doesn't count.
+;
+; @param[out]	a	$01 if water, $02 if hole, $04 if lava
+; @param[out]	cflag	Set if the object is on one of these tiles.
+objectCheckIsOnHazard:
+	ldh a,(<hActiveObjectType)
+	add Object.zh
+	ld e,a
+	ld a,(de)
+	and $80
+	ret nz
+	jp objectCheckIsOverHazard
+
 getSomariaBlockIndex:
 	ld a,(wActiveCollisions)
 	ld b,$3f ; Overworld
@@ -7766,8 +7781,6 @@ getSomariaBlockIndex:
 	; Indoors (3), Dungeon (4), Sidescrolling (5)
 	ld b,$f9
 	ret
-
-.include "build/data/objectCollisionTable.s"
 
 seasonsInitHook:
 	; TODO: remove
@@ -8848,6 +8861,23 @@ ldhl_wRoomEdgeY:
 bank0_getFileAddress1:
 	jp fileManagement.getFileAddress1
 
+getCollisionEffect:
+	ldh a,(<hRomBank)
+	push af
+
+	ld a,:objectCollisionTable
+	setrombank
+	ld hl,objectCollisionTable
+	add hl,bc
+	ldh a,(<hFF90)
+	rst_addAToHl
+	ld l,(hl)
+
+	pop af
+	setrombank
+	ld a,l
+	ret
+
 ;;
 introThreadStart:
 	ld hl,wIntro.frameCounter
@@ -8902,19 +8932,7 @@ mainThreadStart:
 
 	jr           @mainThread
 
-;;
-; Check if an object is on water, lava, or a hole. Same as the below function, except if
-; the object is in midair, it doesn't count.
-;
-; @param[out]	a	$01 if water, $02 if hole, $04 if lava
-; @param[out]	cflag	Set if the object is on one of these tiles.
-objectCheckIsOnHazard:
-	ldh a,(<hActiveObjectType)
-	add Object.zh
-	ld e,a
-	ld a,(de)
-	and $80
-	ret nz
+
 ;;
 ; Check if an object is over water, lava, or a hole.
 ;
