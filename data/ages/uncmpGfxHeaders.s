@@ -63,6 +63,7 @@ uncmpGfxHeaderTable: ; $6744
 	.dw uncmpGfxHeader3d ; 0x3d
 	.dw uncmpGfxHeader3e ; 0x3e
 	.dw uncmpGfxHeader3f ; 0x3f
+	.dw uncmpGfxHeader40 ; 0x40
 
 
 
@@ -219,3 +220,5 @@ uncmpGfxHeader3e:
 	m_GfxHeader gfx_animations_2 $8cc1 $03 $780
 uncmpGfxHeader3f:
 	m_GfxHeader gfx_animations_2 $8cc1 $03 $7c0
+uncmpGfxHeader40:
+	m_GfxHeader spr_slingshot $8521 $07

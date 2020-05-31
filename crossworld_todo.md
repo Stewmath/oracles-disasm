@@ -25,6 +25,10 @@ Shooter
 * Texts
 * interactionData.s
 
+Slingshot
+* Texts
+* interactionData.s
+
 Items
 * seasons - harp
-* ages - fools ore, slingshot, magic boomerang, mag gloves, rocs cape, rod of seasons
+* ages - fools ore, magic boomerang, mag gloves, rocs cape, rod of seasons

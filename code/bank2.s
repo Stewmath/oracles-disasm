@@ -4066,22 +4066,19 @@ _inventoryMenuState1:
 	cp ITEMID_SEED_SATCHEL
 	jr z,@hasSubmenu
 
-.ifdef ROM_AGES
-	cp ITEMID_SHOOTER
-	jr z,@hasSubmenu
-
-	cp ITEMID_HARP
-	jr nz,@finalizeEquip
-	ld c,$e0
-
-.else; ROM_SEASONS
 	cp ITEMID_SLINGSHOT
 	jr z,@hasSubmenu
 	cp ITEMID_SHOOTER
 	jr z,@hasSubmenu
+
+.ifdef ROM_AGES
+	cp ITEMID_HARP
+	jr nz,@finalizeEquip
+	ld c,$e0
+.endif
+
 	jr @finalizeEquip
 
-.endif
 
 @hasSubmenu:
 	ld a,(wSeedsAndHarpSongsObtained)

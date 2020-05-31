@@ -27,18 +27,9 @@ itemCode24:
 	ld bc,$ffe0
 	call objectSetSpeedZ
 
-.ifdef ROM_AGES
-	; Subid is nonzero if being used from seed shooter
-	ld l,Item.subid
-	ld a,(hl)
-	or a
-	call z,itemUpdateAngle
-.endif
-
 	ld l,Item.var34
 	ld (hl),$03
 
-.ifdef ROM_SEASONS
 	ld l,Item.subid
 	ldd a,(hl)
 	cp $63
@@ -52,16 +43,6 @@ itemCode24:
 	jp z,@satchel
 	jp @slingshot
 
-.endif
-
-	ld l,Item.subid
-	ldd a,(hl)
-	or a
-.ifdef ROM_AGES
-	jr nz,@shooter
-.else
-	jr nz,@slingshot
-.endif
 @satchel:
 	; Satchel
 	ldi a,(hl)
@@ -106,7 +87,6 @@ itemCode24:
 	call objectCopyPositionWithOffset
 	jr +
 
-.ifdef ROM_SEASONS
 @slingshot:
 	ld hl,@slingshotAngleTable-1
 	rst_addAToHl
@@ -115,7 +95,6 @@ itemCode24:
 	add (hl)
 	and $1f
 	ld (de),a
-.endif
 +
 	ld hl,wIsSeedShooterInUse
 	inc (hl)
@@ -144,10 +123,8 @@ itemCode24:
 	ld (de),a
 	ret
 
-.ifdef ROM_SEASONS
 @slingshotAngleTable:
 	.db $00 $02 $fe
-.endif
 
 ; Y/X/Z position offsets relative to Link to make seeds appear at (for satchel)
 @satchelPositionOffsets:
@@ -195,14 +172,12 @@ _seedItemState1:
 	jr z,@satchelUpdate
 
 @nonSatchelUpdate:
-.ifdef ROM_SEASONS
 	ld e,Item.subid
 	ld a,(de)
 	cp $63
 	jr z,@shooter
 	call _slingshotCheckCanPassSolidTile
 	jr +
-.endif
 @shooter:
 	call _seedItemUpdateBouncing
 +
@@ -974,7 +949,6 @@ _seedDontBounceTilesTable:
 .endif
 
 
-.ifdef ROM_SEASONS
 ;;
 ; @param[out]	zflag	z if no collision
 _slingshotCheckCanPassSolidTile:
@@ -985,7 +959,6 @@ _slingshotCheckCanPassSolidTile:
 ++
 	xor a
 	ret
-.endif
 
 ;;
 ; This is an object which serves as a collision for enemies when Dimitri does his eating
@@ -4672,19 +4645,17 @@ itemCode1dPost:
 	jp z,objectTakePosition
 	jp itemDelete
 
-.ifdef ROM_AGES
-;;
-; ITEMID_SLINGSHOT
-itemCode13:
-	ret
-.else
 ; ITEMID_SLINGSHOT
 itemCode13:
 	ld e,Item.state
 	ld a,(de)
 	or a
 	ret nz
+.ifdef ROM_AGES
+	ld a,$40
+.else
 	ld a,$1d
+.endif
 	call loadWeaponGfx
 	call _loadAttributesAndGraphicsAndIncState
 	ld h,d
@@ -4694,6 +4665,8 @@ itemCode13:
 	ldi (hl),a
 	ld (hl),a
 	jp objectSetVisible81
+
+.ifdef ROM_SEASONS
 
 foolsOreRet:
 	ret

@@ -129,8 +129,8 @@ treasureCollectionBehaviourTable:
 	.db SND_NONE
 
 	; TREASURE_SLINGSHOT (0x13)
-	.db $00
-	.db $00
+	.db <wSlingshotLevel
+	.db $08
 	.db SND_GETSEED
 
 	; TREASURE_14 (0x14)

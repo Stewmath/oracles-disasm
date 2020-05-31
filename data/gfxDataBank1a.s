@@ -14,12 +14,13 @@ gfxDataBank1a:
 	m_GfxDataSimple spr_cane_of_somaria		; $06b000
 	m_GfxDataSimple spr_switch_hook			; $06b0a0
 	m_GfxDataSimple spr_seed_shooter		; $06b160
+	m_GfxDataSimple spr_slingshot
 
 .ifdef ROM_AGES
 	m_GfxDataSimple gfx_animations_1		; $06b200
 
 .else ; ROM_SEASONS
-	m_GfxDataSimple spr_slingshot
+
 	m_GfxDataSimple spr_magnet_gloves
 
 .endif

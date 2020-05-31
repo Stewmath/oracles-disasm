@@ -7789,6 +7789,13 @@ seasonsInitHook:
 	call setFlag
 	ld a,TREASURE_SEED_SATCHEL
 	call setFlag
+	ld a,TREASURE_SLINGSHOT
+	call setFlag
+
+	; wInventoryB
+	ld l,$80
+	ld a,TREASURE_SLINGSHOT
+	ld (hl),a
 
 	; wInventoryA
 	ld l,$81
@@ -7806,11 +7813,14 @@ seasonsInitHook:
 	ld a,TREASURE_SHOOTER
 	ld (hl),a
 
-	; wSwitchHookLevel, wBraceletLevel
+	; wSwitchHookLevel, wBraceletLevel, wSlingshotLevel
 	ld l,$ea
 	ld a,$02
 	ld (hl),a
 	ld l,$eb
+	ld a,$02
+	ld (hl),a
+	ld l,$b3
 	ld a,$02
 	ld (hl),a
 
@@ -7821,6 +7831,86 @@ seasonsInitHook:
 	ld l,$ae
 	ld a,$01
 	ld (hl),a
+	ret
+
+	; set room
+	ld hl,wDeathRespawnBuffer.group
+	ld a,$00
+	ld (hl),a
+	ld l,<wDeathRespawnBuffer.room
+	ld a,$54
+	ld (hl),a
+	ld l,<wDeathRespawnBuffer.y
+	ld a,$28
+	ld (hl),a
+	ld l,<wDeathRespawnBuffer.x
+	ld a,$48
+	ld (hl),a
+	ret
+
+agesInitHook:
+	; TODO: remove
+	; give items
+	ld hl,wObtainedTreasureFlags
+	ld a,TREASURE_FLIPPERS
+	call setFlag
+	ld a,TREASURE_MERMAID_SUIT
+	call setFlag
+	ld a,TREASURE_CANE_OF_SOMARIA
+	call setFlag
+	ld a,TREASURE_BRACELET
+	call setFlag
+	ld a,TREASURE_SWITCH_HOOK
+	call setFlag
+	ld a,TREASURE_SHOOTER
+	call setFlag
+	ld a,TREASURE_EMBER_SEEDS
+	call setFlag
+	ld a,TREASURE_SEED_SATCHEL
+	call setFlag
+	ld a,TREASURE_SLINGSHOT
+	call setFlag
+
+	; wInventoryB
+	ld l,<wInventoryB
+	ld a,TREASURE_SLINGSHOT
+	ld (hl),a
+
+	; wInventoryA
+	ld l,<wInventoryA
+	ld a,TREASURE_CANE_OF_SOMARIA
+	ld (hl),a
+
+	; wInventoryStorage
+	ld l,<wInventoryStorage
+	ld a,TREASURE_BRACELET
+	ld (hl),a
+	inc l
+	ld a,TREASURE_SWITCH_HOOK
+	ld (hl),a
+	inc l
+	ld a,TREASURE_SHOOTER
+	ld (hl),a
+
+	; wSwitchHookLevel, wBraceletLevel, wSlingshotLevel
+	ld l,<wSwitchHookLevel
+	ld a,$02
+	ld (hl),a
+	ld l,<wBraceletLevel
+	ld a,$02
+	ld (hl),a
+	ld l,<wSlingshotLevel
+	ld a,$02
+	ld (hl),a
+
+	; wNumEmberSeeds, wSeedSatchelLevel
+	ld l,<wNumEmberSeeds
+	ld a,$20
+	ld (hl),a
+	ld l,<wSeedSatchelLevel
+	ld a,$01
+	ld (hl),a
+	ret
 
 	; set room
 	ld hl,wDeathRespawnBuffer.group
@@ -7870,6 +7960,8 @@ swapGame:
 	ld de,wFileStart
 	ld bc,$550
 	call copyMemoryBc
+
+	call agesInitHook
 
 	ld a,$00
 	ld (wCurrentGame),a

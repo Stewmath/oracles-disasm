@@ -791,3 +791,15 @@ sounda1Channel2:
 	note $3c $14
 	cmdff
 .ends
+
+.BANK $42 SLOT 1
+.ORG 0
+
+ m_section_superfree "Bank_1_Data_2"
+
+	.include "build/data/paletteHeaders.s"
+	.include "build/data/uncmpGfxHeaders.s"
+	.include "build/data/gfxHeaders.s"
+	.include "build/data/tilesetHeaders.s"
+
+.ends

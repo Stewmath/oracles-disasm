@@ -900,6 +900,9 @@ wSwitchHookLevel: ; -/$c6ea
 	db
 wBraceletLevel: ; -/$c6eb
 	db
+.else
+wSlingshotLevel: ; $c6ff/$c6b3
+	db
 .endif
 
 .ENDS

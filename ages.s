@@ -584,7 +584,7 @@ _itemUsageParameterTable:
 	.db $00 <wGameKeysJustPressed	; ITEMID_10
 	.db $05 <wGameKeysJustPressed	; ITEMID_HARP
 	.db $00 <wGameKeysJustPressed	; ITEMID_12
-	.db $00 <wGameKeysJustPressed	; ITEMID_SLINGSHOT
+	.db $43 <wGameKeysJustPressed	; ITEMID_SLINGSHOT
 	.db $00 <wGameKeysJustPressed	; ITEMID_14
 	.db $13 <wGameKeysJustPressed	; ITEMID_SHOVEL
 	.db $13 <wGameKeysPressed	; ITEMID_BRACELET
@@ -1448,5 +1448,17 @@ oamData_7249:
 .include "object_code/ages/interactionCode/bank3f.s"
 
 .include "code/ages/garbage/bank3fEnd.s"
+
+.ends
+
+.BANK $42 SLOT 1
+.ORG 0
+
+ m_section_superfree "Bank_1_Data_2"
+
+	.include "build/data/paletteHeaders.s"
+	.include "build/data/uncmpGfxHeaders.s"
+	.include "build/data/gfxHeaders.s"
+	.include "build/data/tilesetHeaders.s"
 
 .ends

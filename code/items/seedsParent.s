@@ -2,7 +2,6 @@
 ; ITEMID_SLINGSHOT ($13)
 ; @snaddr{4d25}
 _parentItemCode_slingshot:
-.ifdef ROM_SEASONS
 	ld e,Item.state
 	ld a,(de)
 	rst_jumpTable
@@ -54,8 +53,6 @@ _parentItemCode_slingshot:
 	ld a,b
 	jp decNumActiveSeeds
 
-.endif ; ROM_SEASONS
-
 
 ;;
 ; ITEMID_SHOOTER ($0f)
@@ -106,9 +103,8 @@ _parentItemCode_shooter:
 	; Note: here, 'c' = the "behaviour" value from the "_itemUsageParameterTable" for
 	; button B, and this will become the subid for the new item? (The only important
 	; thing is that it's nonzero, to indicate the seed came from the shooter.)
-.ifdef ROM_SEASONS
 	ld c,$63
-.endif
+
 	push bc
 	ld e,$01
 	call itemCreateChildWithID

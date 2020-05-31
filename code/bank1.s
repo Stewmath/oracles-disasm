@@ -5457,16 +5457,6 @@ _warpTileTable:
 .ENDS
 
 
- m_section_superfree "Bank_1_Data_2"
-
-	.include "build/data/paletteHeaders.s"
-	.include "build/data/uncmpGfxHeaders.s"
-	.include "build/data/gfxHeaders.s"
-	.include "build/data/tilesetHeaders.s"
-
-.ends
-
-
  m_section_free "Bank_1_Code_3" NAMESPACE "bank1"
 
 .ifdef ROM_AGES

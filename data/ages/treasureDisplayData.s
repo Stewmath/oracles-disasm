@@ -13,6 +13,8 @@ treasureDisplayData1:
 	.db TREASURE_HARP		<wSelectedHarpSong     $08
 	.db TREASURE_TUNI_NUT		<wTuniNutState         $09
 	.db TREASURE_SWITCH_HOOK	<wSwitchHookLevel      $0a
+	.db TREASURE_SLINGSHOT 		<wShooterSelectedSeeds $0b
+	.db TREASURE_SLINGSHOT 		<wShooterSelectedSeeds $0c
 	.db $00				$00                    $00
 
 treasureDisplayData2:
@@ -27,6 +29,8 @@ treasureDisplayData2:
 	.dw @harpData
 	.dw @tuniNutData
 	.dw @switchHookData-7
+	.dw @slingshotData
+	.dw @hyperSlingshotData
 
 
 ; The parts marked as "filler" in this table aren't actually used, since they have their
@@ -219,4 +223,16 @@ treasureDisplayData2:
 	.db TREASURE_SWITCH_HOOK $9f $04 $00 $00 $00 <TX_093d ; L1
 	.db TREASURE_SWITCH_HOOK $9f $04 $00 $00 $00 <TX_093e ; L2
 
+@slingshotData:
+	.db TREASURE_EMBER_SEEDS        $88 $04 $83 $02 $01 $3c
+	.db TREASURE_SCENT_SEEDS        $88 $04 $84 $03 $01 $3c
+	.db TREASURE_PEGASUS_SEEDS      $88 $04 $85 $01 $01 $3c
+	.db TREASURE_GALE_SEEDS         $88 $04 $86 $01 $01 $3c
+	.db TREASURE_MYSTERY_SEEDS      $88 $04 $87 $00 $01 $3c
 
+@hyperSlingshotData:
+	.db TREASURE_EMBER_SEEDS        $89 $05 $83 $02 $01 $3d
+	.db TREASURE_SCENT_SEEDS        $89 $05 $84 $03 $01 $3d
+	.db TREASURE_PEGASUS_SEEDS      $89 $05 $85 $01 $01 $3d
+	.db TREASURE_GALE_SEEDS         $89 $05 $86 $01 $01 $3d
+	.db TREASURE_MYSTERY_SEEDS      $89 $05 $87 $00 $01 $3d
