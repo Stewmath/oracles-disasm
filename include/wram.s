@@ -620,7 +620,7 @@ wGashaMaturity: ; $c65f/$c65c
 	dw
 
 .ifdef ROM_AGES
-wc661: ; $c661
+wFeatherLevel: ; $c6b4 - TODO: may be used, use another bank for storing extra wram variables
 	db
 .else
 ws_c65d: ; TODO: figure out what this is

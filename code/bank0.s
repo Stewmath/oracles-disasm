@@ -7866,9 +7866,13 @@ agesInitHook:
 	call setFlag
 	ld a,TREASURE_EMBER_SEEDS
 	call setFlag
+	ld a,TREASURE_PEGASUS_SEEDS
+	call setFlag
 	ld a,TREASURE_SEED_SATCHEL
 	call setFlag
 	ld a,TREASURE_SLINGSHOT
+	call setFlag
+	ld a,TREASURE_FEATHER
 	call setFlag
 
 	; wInventoryB
@@ -7878,7 +7882,7 @@ agesInitHook:
 
 	; wInventoryA
 	ld l,<wInventoryA
-	ld a,TREASURE_CANE_OF_SOMARIA
+	ld a,TREASURE_FEATHER
 	ld (hl),a
 
 	; wInventoryStorage
@@ -7891,39 +7895,47 @@ agesInitHook:
 	inc l
 	ld a,TREASURE_SHOOTER
 	ld (hl),a
+	inc l
+	ld a,TREASURE_CANE_OF_SOMARIA
+	ld (hl),a
 
-	; wSwitchHookLevel, wBraceletLevel, wSlingshotLevel
+	; wSwitchHookLevel, wBraceletLevel, wFeatherLevel
 	ld l,<wSwitchHookLevel
 	ld a,$02
 	ld (hl),a
 	ld l,<wBraceletLevel
 	ld a,$02
 	ld (hl),a
-	ld l,<wSlingshotLevel
+	ld l,<wFeatherLevel
 	ld a,$02
 	ld (hl),a
 
-	; wNumEmberSeeds, wSeedSatchelLevel
+	; wNumEmberSeeds, wSeedSatchelLevel, wSlingshotLevel
 	ld l,<wNumEmberSeeds
+	ld a,$20
+	ld (hl),a
+	ld l,<wNumPegasusSeeds
 	ld a,$20
 	ld (hl),a
 	ld l,<wSeedSatchelLevel
 	ld a,$01
 	ld (hl),a
-	ret
+	ld l,<wSlingshotLevel
+	ld a,$02
+	ld (hl),a
 
 	; set room
 	ld hl,wDeathRespawnBuffer.group
-	ld a,$00
+	ld a,$01
 	ld (hl),a
 	ld l,<wDeathRespawnBuffer.room
-	ld a,$54
+	ld a,$29
 	ld (hl),a
 	ld l,<wDeathRespawnBuffer.y
-	ld a,$28
+	ld a,$58
 	ld (hl),a
 	ld l,<wDeathRespawnBuffer.x
-	ld a,$48
+	ld a,$88
 	ld (hl),a
 	ret
 
