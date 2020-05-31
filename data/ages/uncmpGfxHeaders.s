@@ -138,7 +138,7 @@ uncmpGfxHeader16:
 uncmpGfxHeader17:
 	m_GfxHeaderRam $07 $d200 $9201 $1f
 uncmpGfxHeader18:
-	; unused
+	m_GfxHeader spr_item_icons_1 $8521 $01 $140
 uncmpGfxHeader19:
 uncmpGfxHeader1a:
 	m_GfxHeader spr_swords $8521 $09

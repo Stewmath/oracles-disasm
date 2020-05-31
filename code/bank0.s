@@ -7889,6 +7889,8 @@ agesInitHook:
 	call setFlag
 	ld a,TREASURE_BOOMERANG
 	call setFlag
+	ld a,TREASURE_FOOLS_ORE
+	call setFlag
 
 	; wInventoryB
 	ld l,<wInventoryB
@@ -7897,7 +7899,7 @@ agesInitHook:
 
 	; wInventoryA
 	ld l,<wInventoryA
-	ld a,TREASURE_BOOMERANG
+	ld a,TREASURE_FOOLS_ORE
 	ld (hl),a
 
 	; wInventoryStorage
@@ -7915,6 +7917,9 @@ agesInitHook:
 	ld (hl),a
 	inc l
 	ld a,TREASURE_FEATHER
+	ld (hl),a
+	inc l
+	ld a,TREASURE_BOOMERANG
 	ld (hl),a
 
 	; wSwitchHookLevel, wBraceletLevel, wFeatherLevel

@@ -23,6 +23,10 @@ Magic boomerang
 * Texts
 * interactionData.s
 
+Fool's ore
+* Texts
+* interactionData.s
+
 Items
 * seasons - harp
-* ages - fools ore, mag gloves, rod of seasons
+* ages - mag gloves, rod of seasons

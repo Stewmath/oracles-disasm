@@ -4653,11 +4653,10 @@ itemCode13:
 	ld (hl),a
 	jp objectSetVisible81
 
-.ifdef ROM_SEASONS
-
 foolsOreRet:
 	ret
 
+.ifdef ROM_SEASONS
 ; ITEMID_MAGNET_GLOVES
 itemCode08:
 	ld e,Item.state
@@ -4688,7 +4687,6 @@ itemCode08:
 
 ; ITEMID_FOOLS_ORE
 itemCode1e:
-.ifdef ROM_SEASONS
 	ld e,Item.state
 	ld a,(de)
 	rst_jumpTable
@@ -4696,13 +4694,16 @@ itemCode1e:
 	.dw foolsOreRet
 
 @state0:
+.ifdef ROM_AGES
+	ld a,$18
+.else
 	ld a,$1f
+.endif
 	call loadWeaponGfx
 	call _loadAttributesAndGraphicsAndIncState
 	xor a
 	call itemSetAnimation
 	jp objectSetVisible82
-.endif
 
 ;;
 ; ITEMID_BIGGORON_SWORD
