@@ -3791,6 +3791,8 @@ _loadItemIconGfx:
 	; song)
 	cp $a3
 	jr c,+
+	cp $af
+	jr z,+
 	add $02
 +
 .endif

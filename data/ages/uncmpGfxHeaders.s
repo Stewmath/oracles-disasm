@@ -66,6 +66,7 @@ uncmpGfxHeaderTable: ; $6744
 	.dw uncmpGfxHeader40 ; 0x40
 	.dw uncmpGfxHeader41 ; 0x40
 	.dw uncmpGfxHeader42 ; 0x40
+	.dw uncmpGfxHeader43 ; 0x40
 
 
 
@@ -228,3 +229,5 @@ uncmpGfxHeader41:
 	m_GfxHeader spr_boomerang $84e1 $03
 uncmpGfxHeader42:
 	m_GfxHeader spr_boomerang $84e1 $03 $40
+uncmpGfxHeader43:
+	m_GfxHeader spr_rod_of_seasons $8521 $09

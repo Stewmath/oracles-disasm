@@ -7891,6 +7891,8 @@ agesInitHook:
 	call setFlag
 	ld a,TREASURE_FOOLS_ORE
 	call setFlag
+	ld a,TREASURE_ROD_OF_SEASONS
+	call setFlag
 
 	; wInventoryB
 	ld l,<wInventoryB
@@ -7899,7 +7901,7 @@ agesInitHook:
 
 	; wInventoryA
 	ld l,<wInventoryA
-	ld a,TREASURE_FOOLS_ORE
+	ld a,TREASURE_ROD_OF_SEASONS
 	ld (hl),a
 
 	; wInventoryStorage
@@ -7921,8 +7923,11 @@ agesInitHook:
 	inc l
 	ld a,TREASURE_BOOMERANG
 	ld (hl),a
+	inc l
+	ld a,TREASURE_FOOLS_ORE
+	ld (hl),a
 
-	; wSwitchHookLevel, wBraceletLevel, wFeatherLevel
+	; wSwitchHookLevel, wBraceletLevel, wFeatherLevel, wObtainedSeasons
 	ld l,<wSwitchHookLevel
 	ld a,$02
 	ld (hl),a
@@ -7931,6 +7936,9 @@ agesInitHook:
 	ld (hl),a
 	ld l,<wFeatherLevel
 	ld a,$02
+	ld (hl),a
+	ld l,<wObtainedSeasons
+	ld a,$0f
 	ld (hl),a
 
 	; wNumEmberSeeds, wSeedSatchelLevel, wSlingshotLevel, wBoomerangLevel
@@ -7949,6 +7957,7 @@ agesInitHook:
 	ld l,<wBoomerangLevel
 	ld a,$02
 	ld (hl),a
+	ret
 
 	; set room
 	ld hl,wDeathRespawnBuffer.group

@@ -4566,7 +4566,6 @@ itemCode18:
 	dec (hl)
 	ret
 
-.ifdef ROM_SEASONS
 ; ITEMID_ROD_OF_SEASONS
 itemCode07:
 	call _itemTransferKnockbackToLink
@@ -4585,11 +4584,18 @@ itemCode07:
 	ld (hl),$10
 	ld a,$74
 	call playSound
+.ifdef ROM_AGES
+	ld a,$43
+.else
 	ld a,$1c
+.endif
 	call loadWeaponGfx
 	call _itemLoadAttributesAndGraphics
 	jp objectSetVisible82
 @state1:
+.ifdef ROM_AGES
+	ret
+.else
 	ld h,d
 	ld l,$06
 	dec (hl)
