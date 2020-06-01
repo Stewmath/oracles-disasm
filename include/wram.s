@@ -639,14 +639,6 @@ wDungeonBossKeys: ; $c682/$c67a
 ; Bitset of boss keys obtained
 	dsb NUM_DUNGEONS_DIV_8
 
-wDungeonCompasses: ; $c684/$c67c
-; Bitset of compasses obtained
-	dsb NUM_DUNGEONS_DIV_8
-
-wDungeonMaps: ; $c686/$c67e
-; Bitset of maps obtained
-	dsb NUM_DUNGEONS_DIV_8
-
 wInventoryB: ; $c688/$c680
 	db
 wInventoryA: ; $c689/$c681
@@ -880,8 +872,16 @@ wMagnetGlovePolarity: ; $c6f2
 ; 0=S, 1=N
 	db
 
+wDungeonCompasses: ; $c684/$c67c
+; Bitset of compasses obtained
+	dsb NUM_DUNGEONS_DIV_8
+
+wDungeonMaps: ; $c686/$c67e
+; Bitset of maps obtained
+	dsb NUM_DUNGEONS_DIV_8
+
 wc6f0: ; $c6f2
-	dsb $8
+	dsb $4
 
 .endif ; ROM_AGES
 
@@ -910,6 +910,13 @@ wSwitchHookLevel: ; -/$c6ea
 	db
 wBraceletLevel: ; -/$c6eb
 	db
+wDungeonCompasses: ; $c684/$c67c
+; Bitset of compasses obtained
+	dsb NUM_DUNGEONS_DIV_8
+
+wDungeonMaps: ; $c686/$c67e
+; Bitset of maps obtained
+	dsb NUM_DUNGEONS_DIV_8
 .else
 wSlingshotLevel: ; $c6ff/$c6b3
 	db

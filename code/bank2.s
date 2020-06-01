@@ -4571,7 +4571,17 @@ _inventorySubscreen0CheckDirectionButtons:
 
 	ld hl,wInventorySubmenu0CursorPos
 	add (hl)
-	and $0f
+	cp INVENTORY_CAPACITY
+	jr c,+
+	; moving down from bottom
+	cp INVENTORY_CAPACITY+4
+	jr nc,++
+	sub INVENTORY_CAPACITY
+	jr +
+++
+	; moving up from top
+	add INVENTORY_CAPACITY
++
 	ld (hl),a
 	ld a,SND_MENU_MOVE
 	jp playSound
@@ -4768,14 +4778,16 @@ _func_02_5938:
 _inventorySubscreen0_drawCursor:
 	ld a,(wInventorySubmenu0CursorPos)
 	ld c,a
+	cp $10
+	jr c,+
+	ld b,64
+	jr ++
++
 	and $0c
-	rrca
-	rrca
-	swap a
+	rlca
+	rlca
 	ld b,a
-	rrca
-	add b
-	ld b,a
+++
 	ld a,c
 	and $03
 	swap a
@@ -5166,7 +5178,7 @@ _drawEquippedSpriteForActiveRing:
 ;;
 ; Draw all items in wInventoryStorage to their appropriate positions.
 _inventorySubscreen0_drawStoredItems:
-	ld a,$10
+	ld a,$14
 --
 	ldh (<hFF8D),a
 	ld hl,wInventoryStorage-1
@@ -5197,20 +5209,25 @@ _inventorySubscreen0_drawStoredItems:
 	.dw w4TileMap+$6b
 	.dw w4TileMap+$6f
 
-	.dw w4TileMap+$c3
-	.dw w4TileMap+$c7
-	.dw w4TileMap+$cb
-	.dw w4TileMap+$cf
+	.dw w4TileMap+$a3
+	.dw w4TileMap+$a7
+	.dw w4TileMap+$ab
+	.dw w4TileMap+$af
+
+	.dw w4TileMap+$e3
+	.dw w4TileMap+$e7
+	.dw w4TileMap+$eb
+	.dw w4TileMap+$ef
 
 	.dw w4TileMap+$123
 	.dw w4TileMap+$127
 	.dw w4TileMap+$12b
 	.dw w4TileMap+$12f
 
-	.dw w4TileMap+$183
-	.dw w4TileMap+$187
-	.dw w4TileMap+$18b
-	.dw w4TileMap+$18f
+	.dw w4TileMap+$163
+	.dw w4TileMap+$167
+	.dw w4TileMap+$16b
+	.dw w4TileMap+$16f
 
 ;;
 ; Modifies the tilemap and displayed text for subscreen 1 based on obtained treasures.
@@ -5741,7 +5758,6 @@ _inventoryMenuDrawHarpSprites:
 	and $fc
 	ld b,a
 	add a
-	add b
 	add a
 	add $14
 	ld b,a

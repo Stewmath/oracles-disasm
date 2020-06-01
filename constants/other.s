@@ -70,7 +70,7 @@
 .define NUM_GASHA_SPOTS		$10
 
 ; Number of items the inventory can hold (not including A and B buttons)
-.define INVENTORY_CAPACITY	$10
+.define INVENTORY_CAPACITY	$14
 
 
 .ifdef ROM_AGES
