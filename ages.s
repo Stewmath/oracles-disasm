@@ -13,6 +13,7 @@
 
 .include "objects/macros.s"
 .include "include/gfxDataMacros.s"
+.include "include/musicMacros.s"
 
 .include "build/textDefines.s"
 
@@ -573,7 +574,7 @@ _itemUsageParameterTable:
 	.db $63 <wGameKeysJustPressed	; ITEMID_SWORD
 	.db $02 <wGameKeysJustPressed	; ITEMID_BOOMERANG
 	.db $33 <wGameKeysJustPressed	; ITEMID_ROD_OF_SEASONS
-	.db $00 <wGameKeysJustPressed	; ITEMID_MAGNET_GLOVES
+	.db $53 <wGameKeysJustPressed	; ITEMID_MAGNET_GLOVES
 	.db $00 <wGameKeysJustPressed	; ITEMID_SWITCH_HOOK_HELPER
 	.db $73 <wGameKeysJustPressed	; ITEMID_SWITCH_HOOK
 	.db $00 <wGameKeysJustPressed	; ITEMID_SWITCH_HOOK_CHAIN
@@ -1448,6 +1449,14 @@ oamData_7249:
 .include "object_code/ages/interactionCode/bank3f.s"
 
 .include "code/ages/garbage/bank3fEnd.s"
+
+sound7aStart:
+; @addr{e5c40}
+sound7aChannel2:
+	vol $9
+	note f6  $01
+	note c6  $01
+	cmdff
 
 .ends
 

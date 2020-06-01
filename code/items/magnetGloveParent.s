@@ -1,7 +1,6 @@
 ; Variables:
 ;  var37: ?
 _parentItemCode_magnetGloves:
-.ifdef ROM_SEASONS
 	ld a,(wLinkClimbingVine)
 	inc a
 	jr z,@deleteSelf
@@ -80,6 +79,11 @@ _parentItemCode_magnetGloves:
 ; @param[out]	bc	Position of object locked on to
 ; @param[out]	zflag	nz if Link should move toward something
 @checkLatchedOntoTile:
+.ifdef ROM_AGES
+	lda $00
+	ret
+.endif
+
 	ld a,(wLinkObjectIndex)
 	xor $01
 	and $01
@@ -168,5 +172,3 @@ _parentItemCode_magnetGloves:
 ; Tile indices for magnet tiles (per group)
 @magnetTilesTable:
 	.db $00 $e3 $00 $3f $3f $3f $3f $3f
-
-.endif ; ROM_SEASONS

@@ -876,8 +876,12 @@ wBoomerangLevel: ; $c6f0
 wObtainedSeasons: ; $c6f1
 	db
 
+wMagnetGlovePolarity: ; $c6f2
+; 0=S, 1=N
+	db
+
 wc6f0: ; $c6f2
-	dsb $9
+	dsb $8
 
 .endif ; ROM_AGES
 

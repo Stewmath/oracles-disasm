@@ -17,6 +17,7 @@ treasureDisplayData1:
 	.db TREASURE_SLINGSHOT 		<wShooterSelectedSeeds $0c
 	.db TREASURE_FEATHER		<wFeatherLevel         $0d
 	.db TREASURE_BOOMERANG		<wBoomerangLevel       $0e
+	.db TREASURE_MAGNET_GLOVES	<wMagnetGlovePolarity  $0f
 	.db $00				$00                    $00
 
 treasureDisplayData2:
@@ -35,6 +36,7 @@ treasureDisplayData2:
 	.dw @hyperSlingshotData
 	.dw @featherData   - 7
 	.dw @boomerangData - 7
+	.dw @magnetGloveData
 
 
 ; The parts marked as "filler" in this table aren't actually used, since they have their
@@ -228,23 +230,27 @@ treasureDisplayData2:
 	.db TREASURE_SWITCH_HOOK $9f $04 $00 $00 $00 <TX_093e ; L2
 
 @slingshotData:
-	.db TREASURE_EMBER_SEEDS        $88 $04 $83 $02 $01 $3c
-	.db TREASURE_SCENT_SEEDS        $88 $04 $84 $03 $01 $3c
-	.db TREASURE_PEGASUS_SEEDS      $88 $04 $85 $01 $01 $3c
-	.db TREASURE_GALE_SEEDS         $88 $04 $86 $01 $01 $3c
-	.db TREASURE_MYSTERY_SEEDS      $88 $04 $87 $00 $01 $3c
+	.db TREASURE_EMBER_SEEDS        $88 $04 $83 $02 $01 $00
+	.db TREASURE_SCENT_SEEDS        $88 $04 $84 $03 $01 $00
+	.db TREASURE_PEGASUS_SEEDS      $88 $04 $85 $01 $01 $00
+	.db TREASURE_GALE_SEEDS         $88 $04 $86 $01 $01 $00
+	.db TREASURE_MYSTERY_SEEDS      $88 $04 $87 $00 $01 $00
 
 @hyperSlingshotData:
-	.db TREASURE_EMBER_SEEDS        $89 $05 $83 $02 $01 $3d
-	.db TREASURE_SCENT_SEEDS        $89 $05 $84 $03 $01 $3d
-	.db TREASURE_PEGASUS_SEEDS      $89 $05 $85 $01 $01 $3d
-	.db TREASURE_GALE_SEEDS         $89 $05 $86 $01 $01 $3d
-	.db TREASURE_MYSTERY_SEEDS      $89 $05 $87 $00 $01 $3d
+	.db TREASURE_EMBER_SEEDS        $89 $05 $83 $02 $01 $00
+	.db TREASURE_SCENT_SEEDS        $89 $05 $84 $03 $01 $00
+	.db TREASURE_PEGASUS_SEEDS      $89 $05 $85 $01 $01 $00
+	.db TREASURE_GALE_SEEDS         $89 $05 $86 $01 $01 $00
+	.db TREASURE_MYSTERY_SEEDS      $89 $05 $87 $00 $01 $00
 
 @featherData:
 	.db TREASURE_FEATHER            $96 $04 $00 $00 $00 $2c
-	.db TREASURE_FEATHER            $9a $05 $00 $00 $00 $3e
+	.db TREASURE_FEATHER            $9a $05 $00 $00 $00 $00
 
 @boomerangData:
 	.db TREASURE_BOOMERANG          $9c $05 $00 $00 $00 $27
-	.db TREASURE_BOOMERANG          $9d $04 $00 $00 $00 $40
+	.db TREASURE_BOOMERANG          $9d $04 $00 $00 $00 $00
+
+@magnetGloveData:
+	.db TREASURE_MAGNET_GLOVES      $82 $01 $00 $00 $03 $00
+	.db TREASURE_MAGNET_GLOVES      $82 $02 $00 $00 $03 $00

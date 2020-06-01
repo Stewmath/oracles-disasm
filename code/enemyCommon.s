@@ -1068,8 +1068,6 @@ _ecom_readPositionVars:
 	ldh (<hFF8E),a
 	ret
 
-.ifdef ROM_SEASONS
-
 ;;
 ; Moves toward Link?
 ; @param	a
@@ -1097,8 +1095,6 @@ _ecom_seasonsFunc_4446:
 	pop af
 	or a
 	ret
-
-.endif
 
 ;;
 ; Set the enemy's Z position such that it's just above the screen.

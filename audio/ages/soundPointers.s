@@ -121,7 +121,8 @@ _soundPointers:
 	m_soundPointer sound77 ; $e5520
 	m_soundPointer sound78 ; $e5524
 	m_soundPointer sound79 ; $e5528
-	m_soundPointer sound7a ; $e571c
+	.db :bank3f.sound7aStart-$39
+	.dw sound7a
 	m_soundPointer sound7b ; $e552c
 	m_soundPointer sound7c ; $e5530
 	m_soundPointer sound7d ; $e5724

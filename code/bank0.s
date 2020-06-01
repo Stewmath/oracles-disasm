@@ -7798,11 +7798,11 @@ seasonsInitHook:
 	call setFlag
 	ld a,TREASURE_SHOOTER
 	call setFlag
-	ld a,TREASURE_EMBER_SEEDS
-	call setFlag
 	ld a,TREASURE_SEED_SATCHEL
 	call setFlag
 	ld a,TREASURE_SLINGSHOT
+	call setFlag
+	ld a,TREASURE_MAGNET_GLOVES
 	call setFlag
 
 	; wInventoryB
@@ -7812,7 +7812,7 @@ seasonsInitHook:
 
 	; wInventoryA
 	ld l,$81
-	ld a,TREASURE_CANE_OF_SOMARIA
+	ld a,TREASURE_MAGNET_GLOVES
 	ld (hl),a
 
 	; wInventoryStorage
@@ -7824,6 +7824,9 @@ seasonsInitHook:
 	ld (hl),a
 	inc l
 	ld a,TREASURE_SHOOTER
+	ld (hl),a
+	inc l
+	ld a,TREASURE_CANE_OF_SOMARIA
 	ld (hl),a
 
 	; wSwitchHookLevel, wBraceletLevel, wSlingshotLevel
@@ -7877,10 +7880,6 @@ agesInitHook:
 	call setFlag
 	ld a,TREASURE_SHOOTER
 	call setFlag
-	ld a,TREASURE_EMBER_SEEDS
-	call setFlag
-	ld a,TREASURE_PEGASUS_SEEDS
-	call setFlag
 	ld a,TREASURE_SEED_SATCHEL
 	call setFlag
 	ld a,TREASURE_SLINGSHOT
@@ -7893,6 +7892,18 @@ agesInitHook:
 	call setFlag
 	ld a,TREASURE_ROD_OF_SEASONS
 	call setFlag
+	ld a,TREASURE_HARP
+	call setFlag
+	ld a,TREASURE_TUNE_OF_ECHOES
+	call setFlag
+	ld a,TREASURE_TUNE_OF_CURRENTS
+	call setFlag
+	ld a,TREASURE_TUNE_OF_AGES
+	call setFlag
+	ld a,TREASURE_MAGNET_GLOVES
+	call setFlag
+	ld a,TREASURE_SWITCH_HOOK
+	call setFlag
 
 	; wInventoryB
 	ld l,<wInventoryB
@@ -7901,7 +7912,7 @@ agesInitHook:
 
 	; wInventoryA
 	ld l,<wInventoryA
-	ld a,TREASURE_ROD_OF_SEASONS
+	ld a,TREASURE_MAGNET_GLOVES
 	ld (hl),a
 
 	; wInventoryStorage
@@ -7925,6 +7936,15 @@ agesInitHook:
 	ld (hl),a
 	inc l
 	ld a,TREASURE_FOOLS_ORE
+	ld (hl),a
+	inc l
+	ld a,TREASURE_HARP
+	ld (hl),a
+	inc l
+	ld a,TREASURE_ROD_OF_SEASONS
+	ld (hl),a
+	inc l
+	ld a,TREASURE_SWITCH_HOOK
 	ld (hl),a
 
 	; wSwitchHookLevel, wBraceletLevel, wFeatherLevel, wObtainedSeasons
@@ -7957,20 +7977,28 @@ agesInitHook:
 	ld l,<wBoomerangLevel
 	ld a,$02
 	ld (hl),a
+
+	; wSeedsAndHarpSongsObtained
+	ld l,<wSeedsAndHarpSongsObtained
+	ld a,$ff
+	ld (hl),a
+	ld l,$b7
+	ld a,$01
+	ld (hl),a
 	ret
 
 	; set room
 	ld hl,wDeathRespawnBuffer.group
-	ld a,$04
+	ld a,$05
 	ld (hl),a
 	ld l,<wDeathRespawnBuffer.room
-	ld a,$4e
+	ld a,$70
 	ld (hl),a
 	ld l,<wDeathRespawnBuffer.y
-	ld a,$98
+	ld a,$38
 	ld (hl),a
 	ld l,<wDeathRespawnBuffer.x
-	ld a,$38
+	ld a,$28
 	ld (hl),a
 	ret
 

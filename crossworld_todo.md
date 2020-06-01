@@ -9,9 +9,14 @@ Mermaid suit
 * text for data/seasons/treasureDisplayData.s
 * text for getting it as a treasure
 
-Cane of Somaria/Power Gloves/Switch Hook/Shooter/Slingshot/Fool's ore
+Cane of Somaria/Power Gloves/Shooter/Slingshot/Fool's ore
 * Texts
 * interactionData.s
+
+Switch Hook
+* Texts
+* interactionData.s
+* Iron Mask
 
 Magic boomerang
 * Texts
@@ -30,6 +35,11 @@ Rocs cape
 * treasureObjectData.s?
 * animations
 
+Magnet gloves
+* Texts
+* interactionData.s
+* Graphics
+* Iron mask
+
 Items
 * seasons - harp
-* ages - mag gloves

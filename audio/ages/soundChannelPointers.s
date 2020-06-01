@@ -1501,7 +1501,7 @@ soundaf:
 ; @addr{571c}
 sound7a:
 	.db $02
-	.dw sound7aChannel2
+	.dw bank3f.sound7aChannel2
 	.db $ff
 ; @addr{5720}
 sound8e:

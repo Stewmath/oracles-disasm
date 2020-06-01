@@ -14600,11 +14600,6 @@ sounda9Channel7:
 	cmdf0 $f1
 	note $64 $0a
 	cmdff
-; $ebad8
-sound7aStart:
-; @addr{ebad8}
-sound7aChannel2:
-	cmdff
 ; $ebad9
 ; GAP
 	cmdff

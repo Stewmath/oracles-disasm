@@ -3435,7 +3435,7 @@ _drawTreasureExtraTiles:
 	dec a
 	jr z,@val02
 	dec a
-	jr z,@val03
+	jp z,@val03
 	dec a
 	jr z,@val04
 	jr @val00
@@ -3511,10 +3511,6 @@ _drawTreasureExtraTiles:
 
 .ifdef ROM_AGES
 
-; Stub
-@val03:
-	ret
-
 ; Display the harp?
 @val02:
 	ld h,d
@@ -3565,7 +3561,7 @@ _drawTreasureExtraTiles:
 	ld (hl),$1e
 	ret
 
-.else; ROM_SEASONS
+.endif
 
 ; Print magnet glove polarity (overwrites "S" with "N" if necessary)
 @val03:
@@ -3581,6 +3577,7 @@ _drawTreasureExtraTiles:
 	ld (de),a
 	ret
 
+.ifdef ROM_SEASONS
 ; Display obtained seasons
 @val02:
 	ld h,d
@@ -4077,6 +4074,7 @@ _inventoryMenuState1:
 	cp ITEMID_HARP
 	jr nz,@finalizeEquip
 	ld c,$e0
+	jr @hasSubmenu
 .endif
 
 	jr @finalizeEquip

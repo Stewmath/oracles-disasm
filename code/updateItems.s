@@ -75,11 +75,7 @@ updateItems:
 	.dw itemCode05 ; 0x05
 	.dw itemCode06 ; 0x06
 	.dw itemCode07 ; 0x07
-.ifdef ROM_AGES
-	.dw itemDelete ; 0x08
-.else
 	.dw itemCode08 ; 0x08
-.endif
 	.dw itemCode09 ; 0x09
 	.dw itemCode0a ; 0x0a
 	.dw itemCode0b ; 0x0b
