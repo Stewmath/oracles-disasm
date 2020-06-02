@@ -917,6 +917,12 @@ wDungeonCompasses: ; $c684/$c67c
 wDungeonMaps: ; $c686/$c67e
 ; Bitset of maps obtained
 	dsb NUM_DUNGEONS_DIV_8
+
+wSelectedHarpSong: ; $c6f0
+; 1 = Tune of Echoes;
+; 2 = Tune of Currents;
+; 3 = Tune of Ages
+	db
 .else
 wSlingshotLevel: ; $c6ff/$c6b3
 	db

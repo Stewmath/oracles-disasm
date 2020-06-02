@@ -7804,6 +7804,14 @@ seasonsInitHook:
 	call setFlag
 	ld a,TREASURE_MAGNET_GLOVES
 	call setFlag
+	ld a,TREASURE_HARP
+	call setFlag
+	ld a,TREASURE_TUNE_OF_ECHOES
+	call setFlag
+	ld a,TREASURE_TUNE_OF_CURRENTS
+	call setFlag
+	ld a,TREASURE_TUNE_OF_AGES
+	call setFlag
 
 	; wInventoryB
 	ld l,$80
@@ -7828,6 +7836,9 @@ seasonsInitHook:
 	inc l
 	ld a,TREASURE_CANE_OF_SOMARIA
 	ld (hl),a
+	inc l
+	ld a,TREASURE_HARP
+	ld (hl),a
 
 	; wSwitchHookLevel, wBraceletLevel, wSlingshotLevel
 	ld l,$ea
@@ -7847,20 +7858,27 @@ seasonsInitHook:
 	ld l,$ae
 	ld a,$01
 	ld (hl),a
-	ret
+
+	; wSeedsAndHarpSongsObtained
+	ld l,$92+TREASURE_EMBER_SEEDS/8
+	ld a,$ff
+	ld (hl),a
+	ld l,$f0
+	ld a,$01
+	ld (hl),a
 
 	; set room
 	ld hl,wDeathRespawnBuffer.group
-	ld a,$00
+	ld a,$04
 	ld (hl),a
 	ld l,<wDeathRespawnBuffer.room
-	ld a,$54
+	ld a,$59
 	ld (hl),a
 	ld l,<wDeathRespawnBuffer.y
-	ld a,$28
+	ld a,$78
 	ld (hl),a
 	ld l,<wDeathRespawnBuffer.x
-	ld a,$48
+	ld a,$38
 	ld (hl),a
 	ret
 
@@ -7904,6 +7922,14 @@ agesInitHook:
 	call setFlag
 	ld a,TREASURE_SWITCH_HOOK
 	call setFlag
+	ld a,TREASURE_BIGGORON_SWORD
+	call setFlag
+	ld a,TREASURE_BOMBS
+	call setFlag
+	ld a,TREASURE_BOMBCHUS
+	call setFlag
+	ld a,TREASURE_FLUTE
+	call setFlag
 
 	; wInventoryB
 	ld l,<wInventoryB
@@ -7917,12 +7943,6 @@ agesInitHook:
 
 	; wInventoryStorage
 	ld l,<wInventoryStorage
-	ld a,TREASURE_BRACELET
-	ld (hl),a
-	inc l
-	ld a,TREASURE_SWITCH_HOOK
-	ld (hl),a
-	inc l
 	ld a,TREASURE_SHOOTER
 	ld (hl),a
 	inc l
@@ -7946,6 +7966,18 @@ agesInitHook:
 	inc l
 	ld a,TREASURE_SWITCH_HOOK
 	ld (hl),a
+	inc l
+	ld a,TREASURE_BIGGORON_SWORD
+	ld (hl),a
+	inc l
+	ld a,TREASURE_BOMBS
+	ld (hl),a
+	inc l
+	ld a,TREASURE_BOMBCHUS
+	ld (hl),a
+	inc l
+	ld a,TREASURE_FLUTE
+	ld (hl),a
 
 	; wSwitchHookLevel, wBraceletLevel, wFeatherLevel, wObtainedSeasons
 	ld l,<wSwitchHookLevel
@@ -7963,19 +7995,37 @@ agesInitHook:
 
 	; wNumEmberSeeds, wSeedSatchelLevel, wSlingshotLevel, wBoomerangLevel
 	ld l,<wNumEmberSeeds
-	ld a,$20
+	ld a,$99
 	ld (hl),a
 	ld l,<wNumPegasusSeeds
 	ld a,$20
 	ld (hl),a
 	ld l,<wSeedSatchelLevel
-	ld a,$01
+	ld a,$03
 	ld (hl),a
 	ld l,<wSlingshotLevel
 	ld a,$02
 	ld (hl),a
 	ld l,<wBoomerangLevel
 	ld a,$02
+	ld (hl),a
+	ld l,<wMaxBombs
+	ld a,$99
+	ld (hl),a
+	ld l,<wNumBombs
+	ld a,$99
+	ld (hl),a
+	ld l,<wNumBombchus
+	ld a,$99
+	ld (hl),a
+	ld l,<wShieldLevel
+	ld a,$03
+	ld (hl),a
+	ld l,<wSwordLevel
+	ld a,$03
+	ld (hl),a
+	ld l,<wFluteIcon
+	ld a,$01
 	ld (hl),a
 
 	; wSeedsAndHarpSongsObtained

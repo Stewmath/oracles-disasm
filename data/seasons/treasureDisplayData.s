@@ -15,6 +15,7 @@ treasureDisplayData1:
 	.db TREASURE_MAGNET_GLOVES	<wMagnetGlovePolarity $0a
 	.db TREASURE_BRACELET		<wBraceletLevel $0c
 	.db TREASURE_SWITCH_HOOK	<wSwitchHookLevel $0d
+	.db TREASURE_HARP		<wSelectedHarpSong $0f
 	.db $00 $00 $00
 
 treasureDisplayData2:
@@ -33,6 +34,7 @@ treasureDisplayData2:
 	.dw @braceletData  - 7
 	.dw @switchHookData-7
 	.dw @shooterData
+	.dw @harpData
 
 	.dw @swordData
 
@@ -210,3 +212,9 @@ treasureDisplayData2:
 	.db TREASURE_PEGASUS_SEEDS      $a4 $03 $85 $01 $01 $3c
 	.db TREASURE_GALE_SEEDS         $a4 $03 $86 $01 $01 $3c
 	.db TREASURE_MYSTERY_SEEDS      $a4 $03 $87 $00 $01 $3c
+
+@harpData:
+	.db $00                         $02 $04 $02 $00 $02 $00 ; No song?
+	.db $00                         $a3 $00 $a4 $00 $02 $00 ; Tune of echoes
+	.db $00                         $a7 $03 $a8 $03 $02 $00 ; Tune of currents
+	.db $00                         $ab $01 $ac $01 $02 $00 ; Tune of ages

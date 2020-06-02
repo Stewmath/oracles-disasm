@@ -299,7 +299,7 @@
 	SND_CURRENT             db ; $ae
 	SND_AGES                db ; $af
 .else
-	SND_ad                  db ; $ad (blank)
+	SND_ECHO                db ; $ad
 	SND_FRYPOLAR_MOVEMENT   db ; $ae
 	SND_MAGNET_GLOVES       db ; $af
 .endif
@@ -316,7 +316,7 @@
 	SND_b7                  db ; $b7 (blank)
 .else
 	SND_b5                  db ; $b5 ; Not blank, but unknown
-	SND_b6                  db ; $b6 (blank)
+	SND_CURRENT             db ; $b6 (blank)
 	SND_b7                  db ; $b7 ; Not blank, but unknown
 .endif
 
@@ -376,7 +376,7 @@
 .ifdef ROM_AGES
 	SND_TIMEWARP_COMPLETED  db ; $d4
 .else
-	SND_d4                  db ; $d4 (blank)
+	SND_AGES                  db ; $d4 (blank)
 .endif
 
 .ende

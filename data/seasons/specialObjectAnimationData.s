@@ -282,8 +282,8 @@ specialObject09AnimationDataPointers:
 	.dw animationData19ceb
 	.dw animationData19cf7
 	.dw animationData19d0c
-	.dw animationData19d0c
-	.dw animationData19d0c
+	.dw animationDataHarp
+	.dw animationDataHarp
 	.dw animationData19d0c
 	.dw animationData19d15
 	.dw animationData19d18
@@ -653,6 +653,25 @@ animationData19cf7:
 	.db $3c $2f $01
 	.db $1e $2e $01
 	.db $7f $2e $ff
+
+animationDataHarp:
+	.db $14 $34 $00
+	.db $14 $35 $00
+	.db $0c $34 $00
+	.db $14 $36 $01
+	.db $14 $37 $01
+	.db $0c $36 $01
+	.db $14 $34 $00
+	.db $14 $35 $00
+	.db $0c $34 $00
+	.db $14 $36 $01
+	.db $14 $37 $01
+	.db $0c $36 $01
+	.db $14 $36 $01
+	.db $14 $37 $01
+	.db $0c $36 $01
+	.db $01 $36 $81
+	.db $7f $1c $ff
 
 animationData19d0c:
 	.db $06 $b4 $44
