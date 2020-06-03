@@ -46,3 +46,5 @@ Harp
 * interactionData.s
 * graphics
 * music
+
+Copy over wTextSpeed

@@ -7769,7 +7769,7 @@ objectCheckIsOnHazard:
 	jp objectCheckIsOverHazard
 
 getSomariaBlockIndex:
-	ld a,(wActiveCollisions)
+	call lda_wActiveCollisions
 	ld b,$3f ; Overworld
 	or a
 	ret z
@@ -7782,274 +7782,184 @@ getSomariaBlockIndex:
 	ld b,$f9
 	ret
 
-seasonsInitHook:
-	; TODO: remove
-	; give items
+seasonsToAgesItemCountsLevelsTable:
+	.db $a9 $af ; wShieldLevel
+	.db $aa $b0 ; wNumBombs
+	.db $ab $b1 ; wMaxBombs
+	.db $ac $b2 ; wSwordLevel
+	.db $b1 $f0 ; wBoomerangLevel
+	.db $b0 $f1 ; wObtainedSeasons
+	.db $b2 $f2 ; wMagnetGlovePolarity
+	.db $ea $b6 ; wSwitchHookLevel
+	.db $ad $b3 ; wNumBombchus
+	.db $10 $10 ; wAnimalCompanion
+	.db $af $b5 ; wFluteIcon
+	.db $f0 $b7 ; wSelectedHarpSong
+	.db $b3 $ff ; wSlingshotLevel
+	.db $eb $b8 ; wBraceletLevel
+	.db $b4 $61 ; wFeatherLevel
+	.db $ae $b4 ; wSeedSatchelLevel
+	.db $be $c4 ; wSatchelSelectedSeeds
+	.db $bf $c5 ; wShooterSelectedSeeds
+	.db $92+TREASURE_EMBER_SEEDS/8 $9a+TREASURE_EMBER_SEEDS/8 ; wSeedsAndHarpSongsObtained
+	.db $a5 $ad ; wNumRupees
+	.db $a2 $aa ; wLinkHealth
+	.db $a3 $ab ; wLinkMaxHealth
+	.db $a4 $ac ; wNumHeartPieces
+	.db $b5 $b9 ; wNumEmberSeeds
+	.db $b6 $ba ; wNumScentSeeds
+	.db $b7 $bb ; wNumPegasusSeeds
+	.db $b8 $bc ; wNumGaleSeeds
+	.db $b9 $bd ; wNumMysterySeeds
+	.db $ba $be ; wNumGashaSeeds
+	.db $15 $15 ; wObtainedRingBox
+	.db $16 $16 ; wRingsObtained
+	.db $c0 $c6 ; wRingBoxContents
+	.db $c5 $cb ; wActiveRing
+	.db $c6 $cc ; wRingBoxLevel
+	.db $c7 $cd ; wNumUnappraisedRingsBcd
+	.db $c8 $ce ; wNumRingsAppraised
+	.db $1e $1e ; wDeathCounter
+	.db $20 $20 ; wTotalEnemiesKilled
+	.db $22 $22 ; wPlaytimeCounter
+	.db $26 $26 ; wTotalSignsDestroyed
+	.db $27 $27 ; wTotalRupeesCollected
+	.db $00
+
+
+seasonsToAgesExtraTreasuresTable:
+	.db TREASURE_FLIPPERS	TREASURE_FLIPPERS
+	.db TREASURE_RING	TREASURE_RING
+	.db TREASURE_POTION	TREASURE_POTION
+	.db $59			$4a ; mermaid suit
+	.db $00
+
+saveSeasonsTreasureDataForAges:
+	; Copy inventory items and wObtainedTreasureFlags for each
+	; $c67c is wInventoryB - seasons, $c684 is same for ages
+	ld hl,$c67c-wFileStart+SEASONS_BACKUP
+	ld de,$c684
+	ld b,INVENTORY_CAPACITY+2
+--
+	ld a,(hl)
+	ld (de),a
+
+	push hl
+	ld hl,$c69a ; ages wObtainedTreasureFlags
+	call setFlag
+	pop hl
+
+	inc hl
+	inc de
+	dec b
+	jr nz,--
+
+	; copy extra treasures
+	ld hl,seasonsToAgesExtraTreasuresTable
+	push hl
+--
+	pop hl
+	ldi a,(hl)
+	or a
+	jr z,++
+	push af
+	ldi a,(hl)
+	ld b,a
+	pop af
+	push hl
+	ld hl,$c692-wFileStart+SEASONS_BACKUP
+	call checkFlag
+	jr z,--
+	ld hl,$c69a
+	ld a,b
+	call setFlag
+	jr --
+++
+
+	; copy item counts
+	ld hl,seasonsToAgesItemCountsLevelsTable
+	ld b,$00
+	push hl
+--
+	pop hl
+	ldi a,(hl)
+	or a
+	jr z,++
+	push af
+	ldi a,(hl)
+	ld c,a
+	pop af
+	push hl
+	ld hl,$c600-wFileStart+SEASONS_BACKUP
+	rst_addAToHl
+	ld a,(hl)
+	ld hl,$c600
+	add hl,bc
+	ld (hl),a
+	jr --
+++
+	ret
+
+saveAgesTreasureDataForSeasons:
+	; Copy inventory items and wObtainedTreasureFlags for each
+	; $c67c is wInventoryB - seasons, $c684 is same for ages
+	ld hl,$c684-wFileStart+AGES_BACKUP
+	ld de,$c67c
+	ld b,INVENTORY_CAPACITY+2
+--
+	ld a,(hl)
+	ld (de),a
+
+	push hl
+	ld hl,$c692 ; seasons wObtainedTreasureFlags
+	call setFlag
+	pop hl
+
+	inc hl
+	inc de
+	dec b
+	jr nz,--
+
+	; copy extra treasures
+	ld hl,seasonsToAgesExtraTreasuresTable
+	push hl
+--
+	pop hl
+	ldi a,(hl)
+	or a
+	jr z,++
+	ld b,a
+	ldi a,(hl)
+	push hl
+	ld hl,$c69a-wFileStart+AGES_BACKUP
+	call checkFlag
+	jr z,--
 	ld hl,$c692
-	ld a,TREASURE_FLIPPERS
+	ld a,b
 	call setFlag
-	ld a,$59 ; mermaid suit
-	call setFlag
-	ld a,TREASURE_CANE_OF_SOMARIA
-	call setFlag
-	ld a,TREASURE_BRACELET
-	call setFlag
-	ld a,TREASURE_SWITCH_HOOK
-	call setFlag
-	ld a,TREASURE_SHOOTER
-	call setFlag
-	ld a,TREASURE_SEED_SATCHEL
-	call setFlag
-	ld a,TREASURE_SLINGSHOT
-	call setFlag
-	ld a,TREASURE_MAGNET_GLOVES
-	call setFlag
-	ld a,TREASURE_HARP
-	call setFlag
-	ld a,TREASURE_TUNE_OF_ECHOES
-	call setFlag
-	ld a,TREASURE_TUNE_OF_CURRENTS
-	call setFlag
-	ld a,TREASURE_TUNE_OF_AGES
-	call setFlag
+	jr --
+++
 
-	; wInventoryB
-	ld l,$80
-	ld a,TREASURE_SLINGSHOT
+	; copy item counts
+	ld hl,seasonsToAgesItemCountsLevelsTable
+	ld b,$00
+	push hl
+--
+	pop hl
+	ldi a,(hl)
+	or a
+	jr z,++
+	ld c,a
+	ldi a,(hl)
+	push hl
+	ld hl,$c600-wFileStart+AGES_BACKUP
+	rst_addAToHl
+	ld a,(hl)
+	ld hl,$c600
+	add hl,bc
 	ld (hl),a
-
-	; wInventoryA
-	ld l,$81
-	ld a,TREASURE_MAGNET_GLOVES
-	ld (hl),a
-
-	; wInventoryStorage
-	ld l,$82
-	ld a,TREASURE_BRACELET
-	ld (hl),a
-	inc l
-	ld a,TREASURE_SWITCH_HOOK
-	ld (hl),a
-	inc l
-	ld a,TREASURE_SHOOTER
-	ld (hl),a
-	inc l
-	ld a,TREASURE_CANE_OF_SOMARIA
-	ld (hl),a
-	inc l
-	ld a,TREASURE_HARP
-	ld (hl),a
-
-	; wSwitchHookLevel, wBraceletLevel, wSlingshotLevel
-	ld l,$ea
-	ld a,$02
-	ld (hl),a
-	ld l,$eb
-	ld a,$02
-	ld (hl),a
-	ld l,$b3
-	ld a,$02
-	ld (hl),a
-
-	; wNumEmberSeeds, wSeedSatchelLevel
-	ld l,$b5
-	ld a,$20
-	ld (hl),a
-	ld l,$ae
-	ld a,$01
-	ld (hl),a
-
-	; wSeedsAndHarpSongsObtained
-	ld l,$92+TREASURE_EMBER_SEEDS/8
-	ld a,$ff
-	ld (hl),a
-	ld l,$f0
-	ld a,$01
-	ld (hl),a
-
-	; set room
-	ld hl,wDeathRespawnBuffer.group
-	ld a,$04
-	ld (hl),a
-	ld l,<wDeathRespawnBuffer.room
-	ld a,$59
-	ld (hl),a
-	ld l,<wDeathRespawnBuffer.y
-	ld a,$78
-	ld (hl),a
-	ld l,<wDeathRespawnBuffer.x
-	ld a,$38
-	ld (hl),a
-	ret
-
-agesInitHook:
-	; TODO: remove
-	; give items
-	ld hl,wObtainedTreasureFlags
-	ld a,TREASURE_FLIPPERS
-	call setFlag
-	ld a,TREASURE_MERMAID_SUIT
-	call setFlag
-	ld a,TREASURE_CANE_OF_SOMARIA
-	call setFlag
-	ld a,TREASURE_BRACELET
-	call setFlag
-	ld a,TREASURE_SWITCH_HOOK
-	call setFlag
-	ld a,TREASURE_SHOOTER
-	call setFlag
-	ld a,TREASURE_SEED_SATCHEL
-	call setFlag
-	ld a,TREASURE_SLINGSHOT
-	call setFlag
-	ld a,TREASURE_FEATHER
-	call setFlag
-	ld a,TREASURE_BOOMERANG
-	call setFlag
-	ld a,TREASURE_FOOLS_ORE
-	call setFlag
-	ld a,TREASURE_ROD_OF_SEASONS
-	call setFlag
-	ld a,TREASURE_HARP
-	call setFlag
-	ld a,TREASURE_TUNE_OF_ECHOES
-	call setFlag
-	ld a,TREASURE_TUNE_OF_CURRENTS
-	call setFlag
-	ld a,TREASURE_TUNE_OF_AGES
-	call setFlag
-	ld a,TREASURE_MAGNET_GLOVES
-	call setFlag
-	ld a,TREASURE_SWITCH_HOOK
-	call setFlag
-	ld a,TREASURE_BIGGORON_SWORD
-	call setFlag
-	ld a,TREASURE_BOMBS
-	call setFlag
-	ld a,TREASURE_BOMBCHUS
-	call setFlag
-	ld a,TREASURE_FLUTE
-	call setFlag
-
-	; wInventoryB
-	ld l,<wInventoryB
-	ld a,TREASURE_SLINGSHOT
-	ld (hl),a
-
-	; wInventoryA
-	ld l,<wInventoryA
-	ld a,TREASURE_MAGNET_GLOVES
-	ld (hl),a
-
-	; wInventoryStorage
-	ld l,<wInventoryStorage
-	ld a,TREASURE_SHOOTER
-	ld (hl),a
-	inc l
-	ld a,TREASURE_CANE_OF_SOMARIA
-	ld (hl),a
-	inc l
-	ld a,TREASURE_FEATHER
-	ld (hl),a
-	inc l
-	ld a,TREASURE_BOOMERANG
-	ld (hl),a
-	inc l
-	ld a,TREASURE_FOOLS_ORE
-	ld (hl),a
-	inc l
-	ld a,TREASURE_HARP
-	ld (hl),a
-	inc l
-	ld a,TREASURE_ROD_OF_SEASONS
-	ld (hl),a
-	inc l
-	ld a,TREASURE_SWITCH_HOOK
-	ld (hl),a
-	inc l
-	ld a,TREASURE_BIGGORON_SWORD
-	ld (hl),a
-	inc l
-	ld a,TREASURE_BOMBS
-	ld (hl),a
-	inc l
-	ld a,TREASURE_BOMBCHUS
-	ld (hl),a
-	inc l
-	ld a,TREASURE_FLUTE
-	ld (hl),a
-
-	; wSwitchHookLevel, wBraceletLevel, wFeatherLevel, wObtainedSeasons
-	ld l,<wSwitchHookLevel
-	ld a,$02
-	ld (hl),a
-	ld l,<wBraceletLevel
-	ld a,$02
-	ld (hl),a
-	ld l,<wFeatherLevel
-	ld a,$02
-	ld (hl),a
-	ld l,<wObtainedSeasons
-	ld a,$0f
-	ld (hl),a
-
-	; wNumEmberSeeds, wSeedSatchelLevel, wSlingshotLevel, wBoomerangLevel
-	ld l,<wNumEmberSeeds
-	ld a,$99
-	ld (hl),a
-	ld l,<wNumPegasusSeeds
-	ld a,$20
-	ld (hl),a
-	ld l,<wSeedSatchelLevel
-	ld a,$03
-	ld (hl),a
-	ld l,<wSlingshotLevel
-	ld a,$02
-	ld (hl),a
-	ld l,<wBoomerangLevel
-	ld a,$02
-	ld (hl),a
-	ld l,<wMaxBombs
-	ld a,$99
-	ld (hl),a
-	ld l,<wNumBombs
-	ld a,$99
-	ld (hl),a
-	ld l,<wNumBombchus
-	ld a,$99
-	ld (hl),a
-	ld l,<wShieldLevel
-	ld a,$03
-	ld (hl),a
-	ld l,<wSwordLevel
-	ld a,$03
-	ld (hl),a
-	ld l,<wFluteIcon
-	ld a,$01
-	ld (hl),a
-
-	; wSeedsAndHarpSongsObtained
-	ld l,<wSeedsAndHarpSongsObtained
-	ld a,$ff
-	ld (hl),a
-	ld l,$b7
-	ld a,$01
-	ld (hl),a
-	ret
-
-	; set room
-	ld hl,wDeathRespawnBuffer.group
-	ld a,$05
-	ld (hl),a
-	ld l,<wDeathRespawnBuffer.room
-	ld a,$70
-	ld (hl),a
-	ld l,<wDeathRespawnBuffer.y
-	ld a,$38
-	ld (hl),a
-	ld l,<wDeathRespawnBuffer.x
-	ld a,$28
-	ld (hl),a
+	jr --
+++
 	ret
 
 swapGame:
@@ -8086,7 +7996,7 @@ swapGame:
 	ld bc,$550
 	call copyMemoryBc
 
-	call agesInitHook
+	call saveSeasonsTreasureDataForAges
 
 	ld a,$00
 	ld (wCurrentGame),a
@@ -8109,7 +8019,7 @@ swapGame:
 	ld bc,$550
 	call copyMemoryBc
 
-	call seasonsInitHook
+	call saveAgesTreasureDataForSeasons
 
 	ld a,$01
 	ld (wCurrentGame),a

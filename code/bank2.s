@@ -5121,7 +5121,7 @@ _drawEquippedSpriteForActiveRing:
 ;;
 ; Draw all items in wInventoryStorage to their appropriate positions.
 _inventorySubscreen0_drawStoredItems:
-	ld a,$14
+	ld a,INVENTORY_CAPACITY
 --
 	ldh (<hFF8D),a
 	ld hl,wInventoryStorage-1
