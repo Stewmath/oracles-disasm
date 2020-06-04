@@ -302,7 +302,8 @@ gfxHeader1d: ; $6c88
 gfxHeader1e: ; $6c88
 gfxHeader1f: ; $6c88
 gfxHeader20: ; $6c88
-	m_GfxHeader gfx_hud $9000 $1f
+	m_GfxHeader gfx_hud $9000 $1f|$80
+	m_GfxHeader gfx_extra_hud $9500 $0f
 gfxHeader21: ; $6c8e
 	m_GfxHeader map_0e $d244 $03|$80
 	m_GfxHeader map_0f $d644 $03

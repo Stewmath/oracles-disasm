@@ -792,6 +792,10 @@ sounda1Channel2:
 	cmdff
 .ends
 
+ m_section_superfree "Gfx_3f" ALIGN $10
+	m_GfxDataSimple spr_extra_mags
+.ends
+
 .BANK $42 SLOT 1
 .ORG 0
 

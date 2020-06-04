@@ -1,18 +1,14 @@
 Base functionality
 * Linked game
 * Copy file
-* 5th row of inventory items and bigger wram for it
+
+Cane of Somaria/Power Gloves/Shooter/Slingshot/Fool's ore/Switch Hook/
+Magic boomerang/Rod of Seasons/Harp/Mermaid Suit
+* Texts
+* interactionData.s/treasureObjectData.s/etc for rando when getting as treasure
 
 Mermaid suit
 * Animations (2d side-scrolling to use mermaid suit)
-* data/seasons/interactionData.s
-* text for data/seasons/treasureDisplayData.s
-* text for getting it as a treasure
-
-Cane of Somaria/Power Gloves/Shooter/Slingshot/Fool's ore/Switch Hook/
-Magic boomerang/Rod of Seasons/Harp
-* Texts
-* interactionData.s/treasureObjectData.s/etc for rando when getting as treasure
 
 Switch Hook/Magnet gloves
 * Iron Mask
@@ -24,8 +20,10 @@ Rod of Seasons
 * Collision types
 
 Harp
-* seasons graphics
+* background blank sprites
 * music
 
 1. Vasu switch
 2. Copy over wTextSpeed
+3. Warp after game beat
+4. Remove intro flags for seasons

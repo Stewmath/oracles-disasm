@@ -3300,11 +3300,7 @@ _loadEquippedItemSpriteData:
 	; Comparion differs between ages/seasons. See the respective games'
 	; "spr_item_icons_1.bin". This comparison changes the palette used for the seed
 	; satchel, seed shooter, slingshot, and hyper slingshot.
-.ifdef ROM_AGES
 	cp $84
-.else; ROM_SEASONS
-	cp $86
-.endif
 	ldi a,(hl)
 	jr nc,+
 	sub $03
@@ -3509,8 +3505,6 @@ _drawTreasureExtraTiles:
 	ld (de),a
 	ret
 
-.ifdef ROM_AGES
-
 ; Display the harp?
 @val02:
 	ld h,d
@@ -3523,9 +3517,15 @@ _drawTreasureExtraTiles:
 
 	; Drawing on A/B buttons
 
+.ifdef ROM_AGES
 	ld a,$1f
 	ldd (hl),a
 	ld (hl),$1d
+.else
+	ld a,$5f
+	ldd (hl),a
+	ld (hl),$5d
+.endif
 	set 2,h
 	ld a,$80
 	ldi (hl),a
@@ -3538,15 +3538,27 @@ _drawTreasureExtraTiles:
 	ldd (hl),a
 	ld (hl),a
 	res 2,h
+.ifdef ROM_AGES
 	ld a,$1c
 	ldi (hl),a
 	ld (hl),$1e
+.else
+	ld a,$5c
+	ldi (hl),a
+	ld (hl),$5e
+.endif
 	ret
 
 @@drawOnInventory:
+.ifdef ROM_AGES
 	ld a,$1f
 	ldd (hl),a
 	ld (hl),$1d
+.else
+	ld a,$5f
+	ldd (hl),a
+	ld (hl),$5d
+.endif
 	set 2,h
 	ld a,$84
 	ldi (hl),a
@@ -3556,14 +3568,16 @@ _drawTreasureExtraTiles:
 	ldi (hl),a
 	ldd (hl),a
 	res 2,h
+.ifdef ROM_AGES
 	ld a,$1c
 	ldi (hl),a
 	ld (hl),$1e
-	ret
 .else
-@val02:
-	ret
+	ld a,$5c
+	ldi (hl),a
+	ld (hl),$5e
 .endif
+	ret
 
 ; Print magnet glove polarity (overwrites "S" with "N" if necessary)
 @val03:
@@ -3578,8 +3592,15 @@ _drawTreasureExtraTiles:
 	cp $80
 	ret z
 .else
-	ret z
+	jr z,+
 	ld (hl),$0a
+	jr ++
++
+	ld (hl),$5b
+++
+	ld a,c
+	cp $80
+	ret z
 .endif
 	set 2,d
 	rrca
@@ -3802,19 +3823,17 @@ _loadItemIconGfx:
 	jr nc,+
 	add $02
 +
-.ifdef ROM_AGES
 	; status bar mag gloves gotten from new file
+.ifdef ROM_AGES
 	cp $bb
+.else
+	cp $b9
+.endif
 	jr nz, +
-	sub $bb
-	add a
-	call multiplyABy16
 	ld hl,spr_extra_mags
-	add hl,bc
 	ld b,:spr_extra_mags
 	jr ++
 +
-.endif
 
 	add a
 	call multiplyABy16
@@ -5707,7 +5726,7 @@ _inventoryMenuDrawSprites:
 ; Draw harp sprites if it's in the inventory.
 _inventoryMenuDrawHarpSprites:
 	ld hl,wInventoryStorage
-	ld bc,$1000
+	ldbc INVENTORY_CAPACITY $00
 --
 	ldi a,(hl)
 	cp ITEMID_HARP

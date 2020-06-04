@@ -2244,28 +2244,101 @@ saveIntoSwitchedWramInitial:
 	call fillBootstrappedSramWithAges
 
 	; TODO: remove
+	ld hl,wObtainedTreasureFlags
+	ld a,TREASURE_FEATHER
+	call setFlag
+	ld a,TREASURE_BOMBS
+	call setFlag
+	ld a,TREASURE_CANE_OF_SOMARIA
+	call setFlag
+	ld a,TREASURE_BOOMERANG
+	call setFlag
+	ld a,TREASURE_ROD_OF_SEASONS
+	call setFlag
+	ld a,TREASURE_MAGNET_GLOVES
+	call setFlag
+	ld a,TREASURE_SWITCH_HOOK
+	call setFlag
+	ld a,TREASURE_BIGGORON_SWORD
+	call setFlag
+	ld a,TREASURE_BOMBCHUS
+	call setFlag
+	ld a,TREASURE_FLUTE
+	call setFlag
+	ld a,TREASURE_SHOOTER
+	call setFlag
+	ld a,TREASURE_SLINGSHOT
+	call setFlag
+	ld a,TREASURE_FOOLS_ORE
+	call setFlag
+	ld a,TREASURE_FLIPPERS
+	call setFlag
+	ld a,TREASURE_MERMAID_SUIT
+	call setFlag
+
 	ld hl,wInventoryStorage+1
 	ld a,TREASURE_FEATHER
-	ld (hl),a
-	ld hl,wObtainedTreasureFlags
-	call setFlag
+	ldi (hl),a
+	ld a,TREASURE_BOMBS
+	ldi (hl),a
+	ld a,TREASURE_CANE_OF_SOMARIA
+	ldi (hl),a
+	ld a,TREASURE_BOOMERANG
+	ldi (hl),a
+	ld a,TREASURE_ROD_OF_SEASONS
+	ldi (hl),a
+	ld a,TREASURE_MAGNET_GLOVES
+	ldi (hl),a
+	ld a,TREASURE_SWITCH_HOOK
+	ldi (hl),a
+	ld a,TREASURE_BIGGORON_SWORD
+	ldi (hl),a
+	ld a,TREASURE_BOMBCHUS
+	ldi (hl),a
+	ld a,TREASURE_FLUTE
+	ldi (hl),a
+	ld a,TREASURE_SHOOTER
+	ldi (hl),a
+	ld a,TREASURE_SLINGSHOT
+	ldi (hl),a
+	ld a,TREASURE_FOOLS_ORE
+	ldi (hl),a
+
 	ld hl,wFeatherLevel
 	ld a,$02
 	ld (hl),a
-
-	ld hl,wInventoryStorage+2
-	ld a,TREASURE_MAGNET_GLOVES
-	ld (hl),a
-	ld hl,wObtainedTreasureFlags
-	call setFlag
-
-	ld hl,wInventoryStorage+3
-	ld a,TREASURE_ROD_OF_SEASONS
-	ld (hl),a
-	ld hl,wObtainedTreasureFlags
-	call setFlag
 	ld hl,wObtainedSeasons
 	ld a,$0f
+	ld (hl),a
+	ld hl,wNumBombs
+	ld a,$99
+	ld (hl),a
+	ld hl,wMaxBombs
+	ld a,$99
+	ld (hl),a
+	ld hl,wNumBombchus
+	ld a,$99
+	ld (hl),a
+	ld hl,wSeedSatchelLevel
+	ld a,$01
+	ld (hl),a
+	ld hl,wFluteIcon
+	ld a,$01
+	ld (hl),a
+	ld hl,wBoomerangLevel
+	ld a,$02
+	ld (hl),a
+	ld hl,wSwitchHookLevel
+	ld a,$02
+	ld (hl),a
+	ld hl,wAnimalCompanion
+	ld a,$0c
+	ld (hl),a
+	ld hl,wSlingshotLevel
+	ld a,$02
+	ld (hl),a
+	ld hl,wSeedsAndHarpSongsObtained
+	ld a,$ff
 	ld (hl),a
 
 	pop hl

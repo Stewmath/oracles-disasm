@@ -21,6 +21,7 @@
 	m_GfxData spr_quest_items_3 ; $0a0c09
 	m_GfxData spr_quest_items_4 ; $0a0d57
 	m_GfxData gfx_hud ; $0a0eab
+	m_GfxData gfx_extra_hud ; $0a0eab
 	m_GfxData gfx_inventory_hud_1 ; $0a0fa0
 	m_GfxData gfx_inventory_hud_2 ; $0a1083
 	m_GfxData gfx_save ; $0a1199
