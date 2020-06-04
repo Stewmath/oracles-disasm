@@ -312,7 +312,7 @@ gfxHeader1e:
 gfxHeader1f:
 	m_GfxHeader gfx_blurb_makupath $8c00 $27
 gfxHeader20:
-	m_GfxHeader gfx_hud $9000 $1f
+	m_GfxHeader gfx_hud $9000 $2f
 gfxHeader21:
 	m_GfxHeader map_0e $d244 $03|$80
 	m_GfxHeader map_0f $d644 $03

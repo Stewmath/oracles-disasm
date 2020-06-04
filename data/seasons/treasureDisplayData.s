@@ -46,7 +46,7 @@ treasureDisplayData2:
 	.db $00                         $a3 $02 $00 $00 $ff $00 ; TREASURE_CANE_OF_SOMARIA
 	.db $00                         $07 $00 $07 $00 $00 $00 ; (filler) TREASURE_SWORD
 	.db $06                         $07 $00 $07 $00 $00 $00 ; (filler) TREASURE_BOOMERANG
-	.db TREASURE_ROD_OF_SEASONS     $98 $02 $00 $00 $02 $41 ; TREASURE_ROD_OF_SEASONS
+	.db TREASURE_ROD_OF_SEASONS     $98 $02 $00 $00 $05 $41 ; TREASURE_ROD_OF_SEASONS
 	.db $00                         $07 $00 $07 $00 $03 $00 ; (filler) TREASURE_MAGNET_GLOVES
 	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_SWITCH_HOOK_HELPER
 	.db TREASURE_SWITCH_HOOK        $9f $04 $00 $00 $00 $00 ; TREASURE_SWITCH_HOOK

@@ -3436,6 +3436,8 @@ _drawTreasureExtraTiles:
 	jp z,@val03
 	dec a
 	jr z,@val04
+	dec a
+	jp z,@val05
 	jr @val00
 
 ; Display item quantity with "x" symbol (ie. slates in ages d8)
@@ -3558,7 +3560,9 @@ _drawTreasureExtraTiles:
 	ldi (hl),a
 	ld (hl),$1e
 	ret
-
+.else
+@val02:
+	ret
 .endif
 
 ; Print magnet glove polarity (overwrites "S" with "N" if necessary)
@@ -3567,22 +3571,33 @@ _drawTreasureExtraTiles:
 	ld l,e
 	ld a,(wMagnetGlovePolarity)
 	and $01
+.ifdef ROM_AGES
+	add $2a
+	ld (hl),a
+	ld a,c
+	cp $80
+	ret z
+.else
 	ret z
 	ld (hl),$0a
+.endif
 	set 2,d
 	rrca
 	or c
 	ld (de),a
 	ret
 
-.ifdef ROM_SEASONS
 ; Display obtained seasons
-@val02:
+@val05:
 	ld h,d
 	ld l,e
 
 	; Spring
+.ifdef ROM_AGES
+	ld b,$2c
+.else
 	ld b,$1c
+.endif
 	ld a,(wObtainedSeasons)
 	rrca
 	ld e,a
@@ -3609,8 +3624,6 @@ _drawTreasureExtraTiles:
 	srl e
 	jr c,@drawTile
 	ret
-
-.endif
 
 ;;
 ; Unused in ages
@@ -3786,15 +3799,29 @@ _loadItemIconGfx:
 	cp $a3
 	jr c,+
 	cp $af
-	jr z,+
+	jr nc,+
 	add $02
 +
+.ifdef ROM_AGES
+	; status bar mag gloves gotten from new file
+	cp $bb
+	jr nz, +
+	sub $bb
+	add a
+	call multiplyABy16
+	ld hl,spr_extra_mags
+	add hl,bc
+	ld b,:spr_extra_mags
+	jr ++
++
+.endif
 
 	add a
 	call multiplyABy16
 	ld hl,spr_item_icons_1
 	add hl,bc
 	ld b,:spr_item_icons_1
+++
 	jp copy20BytesFromBank
 @clear:
 	ld h,d

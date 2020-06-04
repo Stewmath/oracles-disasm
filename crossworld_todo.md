@@ -9,42 +9,23 @@ Mermaid suit
 * text for data/seasons/treasureDisplayData.s
 * text for getting it as a treasure
 
-Cane of Somaria/Power Gloves/Shooter/Slingshot/Fool's ore
+Cane of Somaria/Power Gloves/Shooter/Slingshot/Fool's ore/Switch Hook/
+Magic boomerang/Rod of Seasons/Harp
 * Texts
-* interactionData.s
+* interactionData.s/treasureObjectData.s/etc for rando when getting as treasure
 
-Switch Hook
-* Texts
-* interactionData.s
+Switch Hook/Magnet gloves
 * Iron Mask
 
 Magic boomerang
-* Texts
-* interactionData.s
 * Collision types (also MAX_BOOMERANG for whisp/spark)
 
 Rod of Seasons
-* Texts
-* interactionData.s
 * Collision types
-* Seasons display in ages
-
-Rocs cape
-* Texts
-* interactionData.s
-* treasureObjectData.s?
-* animations
-
-Magnet gloves
-* Texts
-* interactionData.s
-* Graphics
-* Iron mask
 
 Harp
-* Texts
-* interactionData.s
-* graphics
+* seasons graphics
 * music
 
-Copy over wTextSpeed
+1. Vasu switch
+2. Copy over wTextSpeed

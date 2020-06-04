@@ -2243,6 +2243,31 @@ saveIntoSwitchedWramInitial:
 	; back to ages
 	call fillBootstrappedSramWithAges
 
+	; TODO: remove
+	ld hl,wInventoryStorage+1
+	ld a,TREASURE_FEATHER
+	ld (hl),a
+	ld hl,wObtainedTreasureFlags
+	call setFlag
+	ld hl,wFeatherLevel
+	ld a,$02
+	ld (hl),a
+
+	ld hl,wInventoryStorage+2
+	ld a,TREASURE_MAGNET_GLOVES
+	ld (hl),a
+	ld hl,wObtainedTreasureFlags
+	call setFlag
+
+	ld hl,wInventoryStorage+3
+	ld a,TREASURE_ROD_OF_SEASONS
+	ld (hl),a
+	ld hl,wObtainedTreasureFlags
+	call setFlag
+	ld hl,wObtainedSeasons
+	ld a,$0f
+	ld (hl),a
+
 	pop hl
 	pop de
 	pop bc
