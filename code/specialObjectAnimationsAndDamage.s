@@ -90,23 +90,32 @@ loadLinkAndCompanionAnimationFrame_body:
 	ld (wLinkPushingDirection),a
 	ld a,(w1Link.visible)
 	rlca
-	jr nc,++
+	jr nc,+++
 
 	call _func_4553
 	ld a,(w1Link.id)
 	ld hl,@data
 	rst_addAToHl
-	ld a,b
-	cp (hl)
-	jr c,+
 
+.ifdef ROM_AGES
+	ld a,(w1Link.animMode)
+	cp LINK_ANIM_MODE_ROCS_CAPE
+	ld a,b
+	jr z,+
+.endif
+
+	ld a,b
+
+	cp (hl)
+	jr c,++
++
 	ld a,(w1Link.direction)
 	add b
-+
+++
 	ld h,LINK_OBJECT_INDEX
 	call @loadAnimationFrame
 
-++
++++
 	; Companion / maple / whatever
 	ld hl,w1Companion.visible
 	bit 7,(hl)
@@ -166,6 +175,13 @@ loadLinkAndCompanionAnimationFrame_body:
 _getSpecialObjectGraphicsFrame:
 	ld c,a
 	ld b,$00
+.ifdef ROM_AGES
+	ld a,(w1Link.animMode)
+	cp LINK_ANIM_MODE_ROCS_CAPE
+	jr nz,+
+	inc b
++
+.endif
 	ld d,h
 	ld l,<w1Link.id
 	ld a,(hl)
@@ -178,6 +194,7 @@ _getSpecialObjectGraphicsFrame:
 	add hl,bc
 	add hl,bc
 	add hl,bc
+	ld b,$00
 
 	; Byte 0
 	ldi a,(hl)

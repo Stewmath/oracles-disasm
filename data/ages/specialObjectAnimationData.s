@@ -258,6 +258,11 @@ specialObject08GfxPointers:
 	m_SpecialObjectGfxPointer $01 spr_link $1540 $04
 	m_SpecialObjectGfxPointer $00 spr_link $14c0 $04
 	m_SpecialObjectGfxPointer $00 spr_link $1540 $04
+	m_SpecialObjectGfxPointer $04 spr_link $18c0 $02
+	m_SpecialObjectGfxPointer $01 spr_link $1900 $04
+	m_SpecialObjectGfxPointer $04 spr_link $18e0 $02
+	m_SpecialObjectGfxPointer $00 spr_link $1900 $04
+	m_SpecialObjectGfxPointer $01 spr_link $0000 $04 ; duplicate
 
 specialObject00AnimationDataPointers:
 specialObject09AnimationDataPointers:
@@ -286,7 +291,7 @@ specialObject09AnimationDataPointers:
 	.dw animationData19f6a
 	.dw animationData19f70
 	.dw animationData19f78
-	.dw animationData19f84
+	.dw animationDataRocsCape
 	.dw animationData19f84
 	.dw animationData19f90
 	.dw animationData19fa5
@@ -654,6 +659,11 @@ animationData19f78:
 	.db $09 $e8 $00
 	.db $06 $ec $00
 	.db $7f $80 $ff
+
+animationDataRocsCape:
+	.db $06 $00 $00
+	.db $28 $00 $00
+	.db $7f $04 $ff
 
 animationData19f84:
 	.db $04 $f8 $00
