@@ -747,11 +747,9 @@ wPirateBellState: ; -/$c6bd
 	db
 .endif
 
-wSatchelSelectedSeeds: ; $c6c4/$c6be
-	db
-wShooterSelectedSeeds: ; $c6c5/$c6bf
-; Can also be slingshot selected seeds for seasons
-	db
+wUnknown2:
+	dsb 2
+
 wRingBoxContents: ; $c6c6/$c6c0
 	dsb 5
 wActiveRing: ; $c6cb/$c6c5
@@ -880,8 +878,16 @@ wDungeonMaps: ; $c686/$c67e
 ; Bitset of maps obtained
 	dsb NUM_DUNGEONS_DIV_8
 
+wSatchelSelectedSeeds: ; $c6c4/$c6be
+	db
+wShooterSelectedSeeds: ; $c6c5/$c6bf
+; Can also be slingshot selected seeds for seasons
+	db
+wSlingshotSelectedSeeds:
+	db
+
 wc6f0: ; $c6f2
-	dsb $4
+	dsb $1
 
 .endif ; ROM_AGES
 
@@ -922,6 +928,14 @@ wSelectedHarpSong: ; $c6f0
 ; 1 = Tune of Echoes;
 ; 2 = Tune of Currents;
 ; 3 = Tune of Ages
+	db
+
+wSatchelSelectedSeeds: ; $c6c4/$c6be
+	db
+wShooterSelectedSeeds: ; $c6c5/$c6bf
+; Can also be slingshot selected seeds for seasons
+	db
+wSlingshotSelectedSeeds:
 	db
 .else
 wSlingshotLevel: ; $c6ff/$c6b3

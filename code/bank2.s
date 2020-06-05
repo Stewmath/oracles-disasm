@@ -4322,6 +4322,9 @@ _inventoryMenuState2:
 	cp ITEMID_SEED_SATCHEL
 	jr z,+
 	inc l
+	cp ITEMID_SHOOTER
+	jr z,+
+	inc l
 +
 	ld e,(hl)
 	ld d,$00
@@ -4427,6 +4430,9 @@ _inventoryMenuState2:
 +
 	ld e,<wSatchelSelectedSeeds
 	cp ITEMID_SEED_SATCHEL
+	jr z,+
+	inc e
+	cp ITEMID_SHOOTER
 	jr z,+
 	inc e
 +

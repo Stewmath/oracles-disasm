@@ -6,8 +6,8 @@ treasureDisplayData1:
 	.db TREASURE_SHIELD		<wShieldLevel $05
 	.db TREASURE_TRADEITEM		<wTradeItem $08
 	.db TREASURE_FLUTE		<wFluteIcon $0b
-	.db TREASURE_SLINGSHOT		<wShooterSelectedSeeds $02
-	.db TREASURE_SLINGSHOT 		<wShooterSelectedSeeds $03
+	.db TREASURE_SLINGSHOT		<wSlingshotSelectedSeeds $02
+	.db TREASURE_SLINGSHOT 		<wSlingshotSelectedSeeds $03
 	.db TREASURE_SHOOTER 		<wShooterSelectedSeeds $0e
 	.db TREASURE_FEATHER		<wFeatherLevel $06
 	.db TREASURE_BOOMERANG		<wBoomerangLevel $07

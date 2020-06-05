@@ -16,9 +16,6 @@ Magic boomerang
 Rod of Seasons
 * Collision types
 
-Slingshot/Shooter
-* Separate chosen seed variable
-
 Harp
 * background blank sprites
 * music

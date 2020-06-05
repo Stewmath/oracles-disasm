@@ -13,8 +13,8 @@ treasureDisplayData1:
 	.db TREASURE_HARP		<wSelectedHarpSong     $08
 	.db TREASURE_TUNI_NUT		<wTuniNutState         $09
 	.db TREASURE_SWITCH_HOOK	<wSwitchHookLevel      $0a
-	.db TREASURE_SLINGSHOT 		<wShooterSelectedSeeds $0b
-	.db TREASURE_SLINGSHOT 		<wShooterSelectedSeeds $0c
+	.db TREASURE_SLINGSHOT 		<wSlingshotSelectedSeeds $0b
+	.db TREASURE_SLINGSHOT 		<wSlingshotSelectedSeeds $0c
 	.db TREASURE_FEATHER		<wFeatherLevel         $0d
 	.db TREASURE_BOOMERANG		<wBoomerangLevel       $0e
 	.db TREASURE_MAGNET_GLOVES	<wMagnetGlovePolarity  $0f

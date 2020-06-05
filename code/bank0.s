@@ -2319,6 +2319,15 @@ saveIntoSwitchedWramInitial:
 	ld hl,wNumBombchus
 	ld a,$99
 	ld (hl),a
+	ld hl,wNumEmberSeeds
+	ld a,$99
+	ld (hl),a
+	ld hl,wNumScentSeeds
+	ld a,$99
+	ld (hl),a
+	ld hl,wNumPegasusSeeds
+	ld a,$99
+	ld (hl),a
 	ld hl,wSeedSatchelLevel
 	ld a,$01
 	ld (hl),a
@@ -7897,8 +7906,9 @@ seasonsToAgesItemCountsLevelsTable:
 	.db $eb $b8 ; wBraceletLevel
 	.db $b4 $61 ; wFeatherLevel
 	.db $ae $b4 ; wSeedSatchelLevel
-	.db $be $c4 ; wSatchelSelectedSeeds
-	.db $bf $c5 ; wShooterSelectedSeeds
+	.db $f1 $f7 ; wSatchelSelectedSeeds
+	.db $f2 $f8 ; wShooterSelectedSeeds
+	.db $f3 $f9 ; wSlingshotSelectedSeeds
 	.db $92+TREASURE_EMBER_SEEDS/8 $9a+TREASURE_EMBER_SEEDS/8 ; wSeedsAndHarpSongsObtained
 	.db $a5 $ad ; wNumRupees
 	.db $a2 $aa ; wLinkHealth

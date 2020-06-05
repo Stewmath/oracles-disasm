@@ -26,7 +26,7 @@ _parentItemCode_slingshot:
 	cp c
 	jp c,_clearParentItem
 
-	ld a,$01
+	ld a,$02
 	call _clearSelfIfNoSeeds
 	; b = seed ID after above call
 	push bc
