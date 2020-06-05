@@ -10,9 +10,6 @@ Magic boomerang/Rod of Seasons/Slingshot/Fool's ore/Magnet gloves/Rocs Cape
 Mermaid suit
 * Animations (2d side-scrolling to use mermaid suit)
 
-Rod of Seasons
-* Collision types
-
 Harp
 * background blank sprites
 * music

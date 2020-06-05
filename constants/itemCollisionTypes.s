@@ -35,7 +35,11 @@
 
 	ITEMCOLLISION_0e			db ; $0e:
 	ITEMCOLLISION_0f			db ; $0f: Instant death - maybe dimitri?
-	ITEMCOLLISION_10			db ; $10: Used by ROD_OF_SEASONS in ages? (ages/itemAttributes.s)
+.ifdef ROM_AGES
+	ITEMCOLLISION_ROD_OF_SEASONS		db ; $10
+.else
+	ITEMCOLLISION_10			db ; $10
+.endif
 	ITEMCOLLISION_11			db ; $11:
 	ITEMCOLLISION_HARMLESS			db ; $12: Cane of Somaria, other harmless things
 
