@@ -10,9 +10,6 @@ Magic boomerang/Rod of Seasons/Slingshot/Fool's ore/Magnet gloves/Rocs Cape
 Mermaid suit
 * Animations (2d side-scrolling to use mermaid suit)
 
-Switch Hook/Magnet gloves
-* Iron Mask
-
 Magic boomerang
 * Collision types (also MAX_BOOMERANG for whisp/spark)
 
