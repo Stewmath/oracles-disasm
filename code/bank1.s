@@ -3656,6 +3656,36 @@ cutscene00:
 ; Cutscene 1 = not in a cutscene; game running normally
 ;
 cutscene01:
+	; TODO: remove
+	ld a,(wCurrentGame)
+	or a
+	jr z,+
+	ld a,(wWarpDestGroup)
+	cpa $00
+	jr nz,+
+	ld a,(wWarpDestRoom)
+	cp $e8
+	jr nz,+
+	ld a,SRAMBANK_AGES
+	ld (wSwapGame),a
+	call setDeathRespawnPoint
+	ret
++
+	ld a,(wCurrentGame)
+	or a
+	jr nz,+
+	ld a,(wWarpDestGroup)
+	cpa $00
+	jr nz,+
+	ld a,(wWarpDestRoom)
+	cp $58
+	jr nz,+
+	ld a,SRAMBANK_SEASONS
+	ld (wSwapGame),a
+	call setDeathRespawnPoint
+	ret
++
+
 	call func_1613
 	call updateLinkBeingShocked
 	call updateMenus
@@ -3745,36 +3775,6 @@ cutscene03:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
-
-	; TODO: remove
-	ld a,(wCurrentGame)
-	or a
-	jr z,+
-	ld a,(wWarpDestGroup)
-	cp $03
-	jr nz,+
-	ld a,(wWarpDestRoom)
-	cp $15
-	jr nz,+
-	ld a,SRAMBANK_AGES
-	ld (wSwapGame),a
-	call setDeathRespawnPoint
-	ret
-+
-	ld a,(wCurrentGame)
-	or a
-	jr nz,+
-	ld a,(wWarpDestGroup)
-	cp $02
-	jr nz,+
-	ld a,(wWarpDestRoom)
-	cp $3b
-	jr nz,+
-	ld a,SRAMBANK_SEASONS
-	ld (wSwapGame),a
-	call setDeathRespawnPoint
-	ret
-+
 
 	call disableLcd
 	call clearOam

@@ -2,8 +2,8 @@ Base functionality
 * Linked game
 * Copy file
 
-Cane of Somaria/Power Gloves/Shooter/Slingshot/Fool's ore/Switch Hook/
-Magic boomerang/Rod of Seasons/Harp/Mermaid Suit
+Cane of Somaria/Power Gloves/Shooter/Switch Hook/Mermaid Suit/Harp
+Magic boomerang/Rod of Seasons/Slingshot/Fool's ore/Magnet gloves/Rocs Cape
 * Texts
 * interactionData.s/treasureObjectData.s/etc for rando when getting as treasure
 

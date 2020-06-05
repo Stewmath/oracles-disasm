@@ -640,7 +640,7 @@ group0WarpSources: ; $135ae
 	m_StandardWarp $00 $55 $3b $3 $4
 	m_StandardWarp $00 $56 $01 $2 $4
 	m_StandardWarp $00 $57 $3c $3 $4
-	m_StandardWarp $00 $58 $3b $2 $2 ; TODO: remove - change last param back to $4
+	m_StandardWarp $00 $58 $3b $2 $4
 	m_StandardWarp $00 $5d $37 $3 $4
 	m_StandardWarp $00 $66 $33 $2 $4
 	m_PointerWarp  $40 $68 warpSource770e
@@ -868,7 +868,7 @@ group2WarpSources: ; $13872
 	m_StandardWarp $04 $ea $2e $0 $3
 	m_StandardWarp $04 $eb $2f $0 $3
 	m_StandardWarp $04 $ec $21 $0 $3
-	m_StandardWarp $04 $ee $35 $0 $3
+	m_StandardWarp $04 $ee $35 $0 $2 ; TODO: remove - change last param back to $3
 	m_StandardWarp $04 $f3 $28 $1 $3
 	m_StandardWarp $04 $f4 $24 $0 $3
 	m_StandardWarp $04 $f5 $2c $1 $3
