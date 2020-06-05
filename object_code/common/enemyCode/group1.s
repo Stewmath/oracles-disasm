@@ -2471,9 +2471,18 @@ enemyCode13:
 	ld e,Enemy.var2a
 	ld a,(de)
 	res 7,a
+.ifdef ROM_SEASONS
 	sub ITEMCOLLISION_L1_BOOMERANG
 	cp MAX_BOOMERANG_LEVEL
 	jr nc,@normalStatus
+.else
+	cp ITEMCOLLISION_L1_BOOMERANG
+	jr z,+
+	cp ITEMCOLLISION_L2_BOOMERANG
+	jr z,+
+	jr @normalStatus
++
+.endif
 
 	; Collision with boomerang occurred. Go to state 9.
 	ld e,Enemy.state
@@ -2564,9 +2573,18 @@ enemyCode19:
 	ld e,Enemy.var2a
 	ld a,(de)
 	res 7,a
+.ifdef ROM_SEASONS
 	sub ITEMCOLLISION_L1_BOOMERANG
 	cp MAX_BOOMERANG_LEVEL
 	jr nc,@normalStatus
+.else
+	cp ITEMCOLLISION_L1_BOOMERANG
+	jr z,+
+	cp ITEMCOLLISION_L2_BOOMERANG
+	jr z,+
+	jr @normalStatus
++
+.endif
 
 	; Hit with boomerang
 	ld e,Enemy.state

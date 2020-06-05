@@ -43,7 +43,7 @@
 	; ambi's guards (they notice him right away), while $12-$1f are indirect attacks?
 
 .ifdef ROM_AGES
-	ITEMCOLLISION_AG_13			db ; $13:
+	ITEMCOLLISION_L2_BOOMERANG		db ; $13:
 	ITEMCOLLISION_AG_14			db ; $14:
 	ITEMCOLLISION_SOMARIA_BLOCK		db ; $15: Cane of Somaria block
 	ITEMCOLLISION_THROWN_OBJECT		db ; $16: Object being thrown (ie. sign)
@@ -53,7 +53,7 @@
 	ITEMCOLLISION_SOMARIA_BLOCK		db ; $13: It's used in seasons/itemAttributes.s
 	ITEMCOLLISION_THROWN_OBJECT		db ; $14: Object being thrown (ie. sign)
 	ITEMCOLLISION_L1_BOOMERANG		db ; $15: L-1 Boomerang
-	ITEMCOLLISION_SE_16			db ; $16: L-2 Boomerang
+	ITEMCOLLISION_L2_BOOMERANG		db ; $16: L-2 Boomerang
 	ITEMCOLLISION_BOMB			db ; $17: Bomb, bombchu
 	ITEMCOLLISION_SE_18			db ; $18
 .endif
@@ -77,8 +77,4 @@
 
 
 ; This constant is used by some code that checks for boomerang collisions
-.ifdef ROM_AGES
-	.define MAX_BOOMERANG_LEVEL $01
-.else
-	.define MAX_BOOMERANG_LEVEL $02
-.endif
+.define MAX_BOOMERANG_LEVEL $02

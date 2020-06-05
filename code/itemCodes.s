@@ -2248,7 +2248,11 @@ itemCode06:
 
 	; level-2
 	ld l,Item.collisionType
+.ifdef ROM_AGES
+	ld (hl),$93
+.else
 	ld (hl),$96
+.endif
 	ld l,Item.oamFlagsBackup
 	ld a,$0c
 	ldi (hl),a
