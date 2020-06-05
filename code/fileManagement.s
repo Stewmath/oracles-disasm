@@ -39,6 +39,26 @@ _initializeFile:
 	ld l,a
 	call _initializeFileVariables
 
+.ifdef ROM_SEASONS
+	ld hl,wGlobalFlags
+	ld a,GLOBALFLAG_PREGAME_INTRO_DONE
+	call setFlag
+	ld a,GLOBALFLAG_INTRO_DONE
+	call setFlag
+	ld hl,$c7b6
+	ld a,(hl)
+	or $40
+	ld (hl),a
+	ld hl,$c7a7
+	ld a,(hl)
+	set 6,a
+	ld (hl),a
+	ld hl,$c798
+	ld a,(hl)
+	or $40
+	ld (hl),a
+.endif
+
 	; Clear unappraised rings
 	pop af
 	ld c,a
@@ -386,9 +406,9 @@ _initialFileVariables:
 	.db <wPirateShipAngle			$02
 .else
 	.db <wDeathRespawnBuffer.group		$00
-	.db <wDeathRespawnBuffer.room       $a7
-	.db <wDeathRespawnBuffer.y          $38
-	.db <wDeathRespawnBuffer.x          $48
+	.db <wDeathRespawnBuffer.room       $e8
+	.db <wDeathRespawnBuffer.y          $48
+	.db <wDeathRespawnBuffer.x          $58
 	.db <wDeathRespawnBuffer.facingDir  $02
 .endif
 	.db $00

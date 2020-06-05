@@ -16,11 +16,13 @@ Magic boomerang
 Rod of Seasons
 * Collision types
 
+Slingshot/Shooter
+* Separate chosen seed variable
+
 Harp
 * background blank sprites
 * music
 
-1. Vasu switch
+1. Vasu proper switch (2 entrances)
 2. Copy over wTextSpeed
 3. Warp after game beat
-4. Remove intro flags for seasons
