@@ -5619,7 +5619,6 @@ _linkUpdateSwimming_sidescroll:
 	call checkTreasureObtained
 	jr nc,@drown
 
-.ifdef ROM_AGES
 	ld hl,w1Link.var2f
 	bit 6,(hl)
 	ld a,LINK_ANIM_MODE_SWIM_2D
@@ -5628,10 +5627,6 @@ _linkUpdateSwimming_sidescroll:
 	set 7,(hl)
 	ld a,LINK_ANIM_MODE_MERMAID
 	jr ++
-.else
-	ld a,LINK_ANIM_MODE_SWIM_2D
-	jr ++
-.endif
 
 
 @drown:

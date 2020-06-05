@@ -7,9 +7,6 @@ Magic boomerang/Rod of Seasons/Slingshot/Fool's ore/Magnet gloves/Rocs Cape
 * Texts
 * interactionData.s/treasureObjectData.s/etc for rando when getting as treasure
 
-Mermaid suit
-* Animations (2d side-scrolling to use mermaid suit)
-
 Harp
 * background blank sprites
 * music

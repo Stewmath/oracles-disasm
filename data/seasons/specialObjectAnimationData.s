@@ -270,7 +270,7 @@ specialObject09AnimationDataPointers:
 	.dw animationData19c65
 	.dw animationData19c6b
 	.dw animationData19c71
-	.dw animationData19c9a
+	.dw animationDataMermaid
 	.dw animationData19cbc
 	.dw animationData19c9a
 	.dw animationData19ca5
@@ -592,6 +592,11 @@ animationLoop19c74:
 	.db $06 $80 $04
 	.db $06 $54 $00
 	m_AnimationLoop animationLoop19c74
+
+animationDataMermaid:
+	.db $09 $7c $00
+	.db $09 $a8 $00
+	m_AnimationLoop animationDataMermaid
 
 animationData19c9a:
 	.db $01 $d0 $00
