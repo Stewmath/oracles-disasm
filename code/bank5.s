@@ -5707,11 +5707,12 @@ _linkUpdateSwimming_sidescroll:
 ; Updates speed and angle for things like ice, jumping, underwater? (Things where he
 ; accelerates and decelerates)
 _linkUpdateVelocity:
-.ifdef ROM_AGES
+	ld a,(wCurrentGame)
+	or a
+	jr nz,@label_05_159
 	ld a,(wTilesetFlags)
-	and TILESETFLAG_UNDERWATER
+	and $40 ; TILESETFLAG_UNDERWATER
 	jr z,@label_05_159
-.endif
 @mermaidSuit:
 	ld c,$98
 	call updateLinkSpeed_withParam
