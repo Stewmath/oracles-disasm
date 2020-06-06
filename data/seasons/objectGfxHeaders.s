@@ -198,3 +198,4 @@ objectGfxHeaderTable: ; $fdafb
 	/* $c4 */ m_ObjectGfxHeader spr_twinrova_8 $00
 	/* $c5 */ m_ObjectGfxHeader spr_twinrova_9 $00
 	/* $c6 */ m_ObjectGfxHeader spr_twinrovamerged_2 $80
+	/* $c7 */ m_ObjectGfxHeader spr_extra_mags $80

@@ -268,18 +268,18 @@ interaction60SubidData:
 	m_InteractionData $60 $08 $50
 	m_InteractionData $60 $0a $40
 	m_InteractionData $60 $0c $40
-	m_InteractionData $60 $0e $50
-	m_InteractionData $5f $10 $10
+	m_InteractionData $60 $14 $50
+	m_InteractionData $c7 $00 $10
 	m_InteractionData $60 $12 $50
-	m_InteractionData $60 $14 $10
+	m_InteractionData $5f $14 $10
 	m_InteractionData $60 $16 $40
 	m_InteractionData $60 $18 $50
 	m_InteractionData $60 $1a $40
-	m_InteractionData $60 $10 $20
+	m_InteractionData $61 $1e $20
 	m_InteractionData $60 $1e $40
 	m_InteractionData $5f $00 $50
-	m_InteractionData $5f $02 $40
-	m_InteractionData $5f $04 $50
+	m_InteractionData $5f $10 $40
+	m_InteractionData $5f $12 $50
 	m_InteractionData $5f $16 $03
 	m_InteractionData $61 $00 $50
 	m_InteractionData $61 $02 $33
@@ -805,5 +805,5 @@ interactiondfSubidData:
 interactione6SubidData:
 	m_InteractionData $00 $00 $00
 	m_InteractionData $73 $18 $00
-	m_InteractionData $60 $10 $21
+	m_InteractionData $61 $1e $21
 	m_InteractionData $5b $06 $42
