@@ -18,6 +18,56 @@ from collections import OrderedDict
 from common import *
 
 
+# There is partial support for dumping Japanese text, but currently it can't be
+# parsed by parseText.py.
+jpKanaTable = """
+あいうえお
+かきくけこ
+さしすせそ
+たちつてと
+なにぬねの
+はひふへほ
+まみむめも
+やゆよ
+らりるれろ
+わをん
+ぁぃぅぇぉっゃゅょ
+がぎぐげご
+ざじずぜぞ
+だぢづでど
+ばびぶべぼ
+ぱぴぷぺぽ
+
+アイウエオ
+カキクケコ
+サシスセソ
+タチツテト
+ナニヌネノ
+ハヒフヘホ
+マミムメモ
+ヤユヨ
+ラリルレロ
+ワヲン
+ァィゥェォッャュョ
+ガギグゲゴ
+ザジズゼゾ
+ダヂヅデド
+バビブベボ
+パピプペポ
+""".replace('\n', '')
+
+
+# I couldn't recognize all the kanji. Unknown ones are marked with "?".
+jpKanjiTable = """
+姫村下木東西南北地図出入口水氷池
+見門手力知？？気火金？？？実上四
+季？？秋冬右左大小本王国男女？年
+山人世中々？花？？軍？？？者？目
+？死心？？？？？？川？界生時？？
+？空？黒？海？？
+""".replace('\n', '')
+
+
 class HighIndexStruct:
 
     def __init__(self):
@@ -53,6 +103,11 @@ else:
 
 # Constants
 region = getRomRegion(rom)
+
+textBase1 = None
+textBase2 = None
+textBase3 = None
+textTable = None
 
 if romIsAges(rom):
     lastGroupSize = 0x16
@@ -123,16 +178,38 @@ elif romIsSeasons(rom):
         textBase3Table = 0xfd030
 
         languageTable = 0xfd044
+    elif region == "JP":
+        numHighTextIndices = 0x64
+
+        textBase1IndexStart = 0x00
+        textBase1Table = bankedAddress(0x3f, 0x4f92)
+
+        textBase2IndexStart = 0x34
+        textBase2Table = -1 # JAPANESE VERSION ONLY: Use hardcoded value (below) instead of table lookup
+        textBase2 = bankedAddress(0x1f, 0x21df)
+
+        textBase3IndexStart = 0x100
+        textBase3Table = 0
+
+        # 4f44: _getTextAddress
+
+        # JAPANESE VERSION ONLY: "languageTable" does not exist, define
+        # "textTable" directly.
+        textTable = bankedAddress(0x1d, 0x4000)
     else:
         assert False, "Unsupported region."
 else:
     assert False, "Unsupported rom."
 
 
-textBase1 = read3BytePointer(rom, textBase1Table+language*4)
-textBase2 = read3BytePointer(rom, textBase2Table+language*4)
-textBase3 = read3BytePointer(rom, textBase3Table+language*4)
-textTable = readReversed3BytePointer(rom, languageTable+language*3)
+if textBase1 == None:
+    textBase1 = read3BytePointer(rom, textBase1Table+language*4)
+if textBase2 == None:
+    textBase2 = read3BytePointer(rom, textBase2Table+language*4)
+if textBase3 == None:
+    textBase3 = read3BytePointer(rom, textBase3Table+language*4)
+if textTable == None:
+    textTable = readReversed3BytePointer(rom, languageTable+language*3)
 
 
 # See note at top of file
@@ -152,6 +229,34 @@ def getTextBase(index):
     if index < textBase3IndexStart:
         return textBase2
     return textBase3
+
+
+# Converts a byte to a character.
+def lookupNormalCharacter(b):
+    assert(isNormalCharacter(b))
+    if region == "JP":
+        if b < 0x60:
+            if b == 0x20:
+                return '　'
+            return chr(0xff00 + b - 0x20) # Fullwidth form
+        else:
+            return jpKanaTable[b-0x60]
+    else:
+        return chr(b)
+
+def lookupSymbol(b):
+    if b >= 0x60:
+        return None
+    c = jpKanjiTable[b]
+    if c == '？':
+        return None
+    return c
+
+def isNormalCharacter(b):
+    if region == "JP":
+        return b >= 0x20
+    else:
+        return b >= 0x20 and b < 0x80
 
 highIndexList = []
 
@@ -307,8 +412,8 @@ def parseTextData(data):
         b = data[i]
         if b == 0x27: # Single quote
             textData += "'"
-        elif (b >= 0x20 and b < 0x80):
-            textData += chr(b)
+        elif isNormalCharacter(b):
+            textData += lookupNormalCharacter(b)
         elif b == 0x1:
             fixTrailingSpace()
             textData += '\n'
@@ -317,7 +422,11 @@ def parseTextData(data):
             if p&0x80 == 0x80:
                 textData += '\\item(0x' + myhex(p&0x7f,2) + ')'
             else:
-                textData += '\\sym(0x' + myhex(p&0x7f,2) + ')'
+                c = lookupSymbol(p&0x7f)
+                if c != None:
+                    textData += c
+                else:
+                    textData += '\\sym(0x' + myhex(p&0x7f,2) + ')'
             i+=1
         elif b == 0x7 and len(data)>i+1:
             textData += '\\jump(' + getTextName((index & 0xff00) | data[i+1]) + ')'
@@ -591,7 +700,7 @@ setup_yaml()
 
 
 def dumpYaml(l, outStream):
-    s = yaml.dump({'groups': l})
+    s = yaml.dump({'groups': l}, allow_unicode=True)
 
     # Add some spacing to make it nicer.
     # Must be careful with this. It could break block text which doesn't trim
