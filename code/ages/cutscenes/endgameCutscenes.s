@@ -831,7 +831,7 @@ _endgameCutsceneHandler_20:
 	ret nz
 	call incCbc1
 	ld c,$40
-	ld a,$29
+	ld a,TREASURE_HEART_REFILL
 	call giveTreasure
 	ld a,$08
 	call setLinkIDOverride

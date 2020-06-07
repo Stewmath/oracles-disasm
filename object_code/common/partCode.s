@@ -4251,7 +4251,7 @@ partCode28:
 +
 	ld c,$30
 ++
-	ld a,$29
+	ld a,TREASURE_HEART_REFILL
 	call giveTreasure
 	jp partDelete
 

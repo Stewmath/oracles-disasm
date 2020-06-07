@@ -823,8 +823,8 @@ interactionCode90:
 	jp nz,interactionDelete
 	call checkIsLinkedGame
 	jr nz,@label_0a_132
-	ld a,$34
-	ld ($ccbd),a
+	ld a,TREASURE_GASHA_SEED
+	ld (wChestContentsOverride),a
 	ld a,$01
 	ld ($ccbe),a
 	jp interactionDelete

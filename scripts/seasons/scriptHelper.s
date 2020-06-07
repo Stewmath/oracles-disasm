@@ -260,7 +260,7 @@ D7dropKeyDownAFloor:
 	ret nz
 	ld (hl),INTERACID_TREASURE
 	inc l
-	ld (hl),$30
+	ld (hl),TREASURE_SMALL_KEY
 	inc l
 	ld (hl),$01
 	call objectCopyPosition
@@ -2574,7 +2574,7 @@ oldMan_giveRupees:
 	ld hl,_oldMan_rupeeValues
 	rst_addAToHl
 	ld c,(hl)
-	ld a,$28
+	ld a,TREASURE_RUPEES
 	jp giveTreasure
 
 _oldMan_rupeeValues:

@@ -208,7 +208,7 @@ bitTable:
 ; ROM title / manufacturer code
 .ORGA $134
 
-	.asc "ZELDA NAYRU"
+	.asc "ZELDA CROSS"
 	.asc "AZ8E"
 
 
@@ -3879,7 +3879,7 @@ getChestData:
 	jr @end
 
 @chestNotFound:
-	ld bc,$2800
+	ldbc TREASURE_RUPEES $00
 
 @end:
 	pop af
