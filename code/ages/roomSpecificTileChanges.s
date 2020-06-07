@@ -61,6 +61,7 @@ applyRoomSpecificTileChanges:
 	.dw tileReplacement_group0Map98 ; $35
 	.dw tileReplacement_group0Map76 ; $36
 	.dw tileReplacement_group0Mapa5 ; $37
+	.dw tileReplacement_group2Mapee ; $38
 
 roomTileChangerCodeGroupTable:
 	.dw roomTileChangerCodeGroup0Data
@@ -110,6 +111,7 @@ roomTileChangerCodeGroup2Data:
 	.db $90 $2b
 	.db $9e $2f
 	.db $7e $02
+	.db $ee $38
 	.db $00
 roomTileChangerCodeGroup3Data:
 	.db $00
@@ -1360,4 +1362,20 @@ tileReplacement_group0Mapa5:
 	ld (hl),$ee
 	inc l
 	ld (hl),$ef
+	ret
+
+; Vasu
+tileReplacement_group2Mapee:
+	ld hl,wRoomLayout+$72
+	ld a,$e0
+	ldi (hl),a
+	ld a,$e1
+	ldi (hl),a
+	ld a,$b2
+	ldi (hl),a
+	ldi (hl),a
+	ld a,$e0
+	ldi (hl),a
+	ld a,$e1
+	ldi (hl),a
 	ret

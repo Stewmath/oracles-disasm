@@ -231,7 +231,7 @@ group2WarpDestTable:
 	m_WarpDest $eb $ff $9 $3
 	m_WarpDest $ec $ff $9 $3
 	m_WarpDest $ed $ff $9 $3
-	m_WarpDest $ee $ff $9 $3
+	m_WarpDest $ee $f3 $9 $3 ; Entering vasu, 2nd param previously ff
 	m_WarpDest $ef $ff $9 $3
 	m_WarpDest $f3 $ff $9 $3
 	m_WarpDest $f4 $ff $9 $3
@@ -868,7 +868,8 @@ group2WarpSources: ; $13872
 	m_StandardWarp $04 $ea $2e $0 $3
 	m_StandardWarp $04 $eb $2f $0 $3
 	m_StandardWarp $04 $ec $21 $0 $3
-	m_StandardWarp $04 $ee $35 $0 $2 ; TODO: remove - change last param back to $3
+	m_StandardWarp $04 $ee $35 $0 $3 ; Vasu
+	m_StandardWarp $08 $ee $ff $0 $3 ; Vasu, extra warp to seasons
 	m_StandardWarp $04 $f3 $28 $1 $3
 	m_StandardWarp $04 $f4 $24 $0 $3
 	m_StandardWarp $04 $f5 $2c $1 $3

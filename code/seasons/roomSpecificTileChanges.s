@@ -51,6 +51,7 @@ applyRoomSpecificTileChanges:
 	.dw tileReplacement_group5Map8e ; $2c
 	.dw tileReplacement_group5Map3b ; $2d
 	.dw tileReplacement_group4Map61 ; $2e
+	.dw tileReplacement_group2_3Map91 ; $2f
 
 roomTileChangerCodeGroupTable:
 	.dw roomTileChangerCodeGroup0Data
@@ -99,6 +100,7 @@ roomTileChangerCodeGroup3Data:
 	.db $ab $2a
 	.db $b0 $03
 	.db $b5 $1c
+	.db $91 $2f
 	.db $00
 
 roomTileChangerCodeGroup4Data:
@@ -920,3 +922,19 @@ d8LavaRoomsFillTilesWithLava:
 	ld a,c
 	ld (de),a
 	jr -
+
+; Vasu
+tileReplacement_group2_3Map91:
+	ld hl,wRoomLayout+$72
+	ld a,$e0
+	ldi (hl),a
+	ld a,$e1
+	ldi (hl),a
+	ld a,$b2
+	ldi (hl),a
+	ldi (hl),a
+	ld a,$e0
+	ldi (hl),a
+	ld a,$e1
+	ldi (hl),a
+	ret

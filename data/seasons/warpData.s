@@ -261,7 +261,7 @@ group3WarpDestTable:
 	m_WarpDest $8d $61 $0 $4
 	m_WarpDest $8f $ff $9 $3
 	m_WarpDest $90 $ff $9 $3
-	m_WarpDest $91 $ff $9 $3
+	m_WarpDest $91 $f7 $9 $3 ; Entering vasu, 2nd param previously ff
 	m_WarpDest $92 $ff $9 $3
 	m_WarpDest $93 $ff $9 $3
 	m_WarpDest $94 $ff $9 $3
@@ -911,7 +911,8 @@ group3WarpSources: ; $137f7
 	m_StandardWarp $00 $8a $0a $3 $2
 	m_PointerWarp  $40 $8b warpSource78f7
 	m_StandardWarp $04 $8f $17 $1 $3
-	m_StandardWarp $04 $91 $12 $0 $2 ; TODO: remove - change last param back to $3
+	m_StandardWarp $04 $91 $ff $0 $3 ; Vasu, extra warp to Ages
+	m_StandardWarp $08 $91 $12 $0 $3 ; Vasu, 1st param previously 4
 	m_StandardWarp $04 $92 $13 $0 $3
 	m_StandardWarp $04 $93 $14 $0 $3
 	m_StandardWarp $04 $94 $15 $0 $3

@@ -1,6 +1,5 @@
-Base functionality
+Future todo
 * Linked game
-* Copy file
 
 Cane of Somaria/Power Gloves/Shooter/Switch Hook/Mermaid Suit/Harp
 Magic boomerang/Rod of Seasons/Slingshot/Fool's ore/Magnet gloves/Rocs Cape
@@ -11,6 +10,17 @@ Harp
 * background blank sprites
 * music
 
-1. Vasu proper switch (2 entrances)
-2. Copy over wTextSpeed
-3. Warp after game beat
+Current todo:
+*. Copy over wTextSpeed
+
+Rando todo:
+*. Skip credits
+
+
+Graphical bugs
+* exclamation mark/talking to pirate captain - creates black box on harp icon
+* getting heart container in d5 changes N in magnet glove
+* tokay trading shop glitches??? - ask Nitroz
+* grabbing strange flute in ages from shop shows 000 rupees
+* flying in to rolling ridge peg tree, the tree has 123, etc graphics
+* rosa doors re-lock after some condition??? - ask Nitroz

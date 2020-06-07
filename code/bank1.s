@@ -3511,6 +3511,42 @@ _loadingRoom:
 	call stopTextThread
 	ld a,$ff
 	ld (wActiveMusic),a
+
+	; Vasu warp
+	ld a,(wWarpDestGroup)
+	cpa $00
+	jr nz,+
+	ld a,(wWarpDestRoom)
+	cp $ff
+	jr nz,+
+.ifdef ROM_AGES
+	ld a,SRAMBANK_SEASONS
+.else
+	ld a,SRAMBANK_AGES
+.endif
+	ld (wSwapGame),a
+
+	call setDeathRespawnPoint
+	ld hl,wDeathRespawnBuffer
+	lda, $00
+	ldi (hl),a
+.ifdef ROM_AGES
+	ld a,$58
+.else
+	ld a,$e8
+.endif
+	ldi (hl),a
+	inc hl
+	ld a,DIR_DOWN
+	ldi (hl),a
+	ld a,$48
+	ldi (hl),a
+	ld a,$58
+	ld (hl),a
+
+	ret
++
+
 	call applyWarpDest
 
 ;;
@@ -3656,36 +3692,6 @@ cutscene00:
 ; Cutscene 1 = not in a cutscene; game running normally
 ;
 cutscene01:
-	; TODO: remove
-	ld a,(wCurrentGame)
-	or a
-	jr z,+
-	ld a,(wWarpDestGroup)
-	cpa $00
-	jr nz,+
-	ld a,(wWarpDestRoom)
-	cp $e8
-	jr nz,+
-	ld a,SRAMBANK_AGES
-	ld (wSwapGame),a
-	call setDeathRespawnPoint
-	ret
-+
-	ld a,(wCurrentGame)
-	or a
-	jr nz,+
-	ld a,(wWarpDestGroup)
-	cpa $00
-	jr nz,+
-	ld a,(wWarpDestRoom)
-	cp $58
-	jr nz,+
-	ld a,SRAMBANK_SEASONS
-	ld (wSwapGame),a
-	call setDeathRespawnPoint
-	ret
-+
-
 	call func_1613
 	call updateLinkBeingShocked
 	call updateMenus
