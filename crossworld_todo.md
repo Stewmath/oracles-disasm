@@ -10,9 +10,6 @@ Harp
 * background blank sprites
 * music
 
-Current todo:
-*. Copy over wTextSpeed
-
 Rando todo:
 *. Skip credits
 

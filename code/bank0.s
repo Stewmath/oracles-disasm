@@ -2247,6 +2247,10 @@ saveIntoSwitchedWramInitial:
 	ld bc,$550
 	call copyMemoryBc
 
+	ld a,(wTextSpeed-wFileStart+AGES_BACKUP)
+	ld hl,wTextSpeed-wFileStart+SEASONS_BACKUP
+	ld (hl),a
+
 	; back to ages
 	call fillBootstrappedSramWithAges
 
