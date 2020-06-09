@@ -179,6 +179,9 @@ _getSpecialObjectGraphicsFrame:
 	ld a,(w1Link.animMode)
 	cp LINK_ANIM_MODE_ROCS_CAPE
 	jr nz,+
+	ld a,c
+	cp $05
+	jr nc,+
 	inc b
 +
 .endif
