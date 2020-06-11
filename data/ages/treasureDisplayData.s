@@ -73,7 +73,7 @@ treasureDisplayData2:
 	.db $00				$97 $02 $00 $00 $ff <TX_093c ; TREASURE_CANE_OF_SOMARIA (0x04)
 	.db $00				$07 $00 $07 $00 $00 <TX_0900 ; (filler) TREASURE_SWORD (0x05)
 	.db TREASURE_BOOMERANG		$9c $05 $00 $00 $ff <TX_0927 ; TREASURE_BOOMERANG (0x06)
-	.db TREASURE_ROD_OF_SEASONS	$af $02 $00 $00 $05 <TX_0900 ; TREASURE_ROD_OF_SEASONS (0x07)
+	.db TREASURE_ROD_OF_SEASONS	$af $02 $00 $00 $05 <TX_0968 ; TREASURE_ROD_OF_SEASONS (0x07)
 	.db $00				$07 $00 $07 $00 $ff <TX_0900 ; TREASURE_MAGNET_GLOVES (0x08)
 	.db $00				$00 $00 $00 $00 $ff <TX_0900 ; TREASURE_SWITCH_HOOK_HELPER (0x09)
 	.db $00				$07 $00 $07 $00 $00 <TX_0900 ; (filler) TREASURE_SWITCH_HOOK (0x0a)
@@ -96,7 +96,7 @@ treasureDisplayData2:
 	.db $00				$00 $00 $00 $00 $ff <TX_0900 ; TREASURE_1b (0x1b)
 	.db $00				$00 $00 $00 $00 $ff <TX_0900 ; TREASURE_1c (0x1c)
 	.db $00				$00 $00 $00 $00 $ff <TX_0900 ; TREASURE_MINECART_COLLISION (0x1d)
-	.db TREASURE_FOOLS_ORE		$8a $00 $00 $00 $ff <TX_0900 ; TREASURE_FOOLS_ORE (0x1e)
+	.db TREASURE_FOOLS_ORE		$8a $00 $00 $00 $ff <TX_096d ; TREASURE_FOOLS_ORE (0x1e)
 	.db $00				$9a $00 $9a $00 $ff <TX_0900 ; TREASURE_1f (0x1f)
 	.db TREASURE_EMBER_SEEDS 	$80 $00 $83 $00 $ff <TX_0932 ; TREASURE_EMBER_SEEDS (0x20)
 	.db TREASURE_SCENT_SEEDS 	$80 $00 $84 $00 $ff <TX_0933 ; TREASURE_SCENT_SEEDS (0x21)
@@ -230,27 +230,27 @@ treasureDisplayData2:
 	.db TREASURE_SWITCH_HOOK $9f $04 $00 $00 $00 <TX_093e ; L2
 
 @slingshotData:
-	.db TREASURE_EMBER_SEEDS        $88 $04 $83 $02 $01 $00
-	.db TREASURE_SCENT_SEEDS        $88 $04 $84 $03 $01 $00
-	.db TREASURE_PEGASUS_SEEDS      $88 $04 $85 $01 $01 $00
-	.db TREASURE_GALE_SEEDS         $88 $04 $86 $01 $01 $00
-	.db TREASURE_MYSTERY_SEEDS      $88 $04 $87 $00 $01 $00
+	.db TREASURE_EMBER_SEEDS        $88 $04 $83 $02 $01 $6a
+	.db TREASURE_SCENT_SEEDS        $88 $04 $84 $03 $01 $6a
+	.db TREASURE_PEGASUS_SEEDS      $88 $04 $85 $01 $01 $6a
+	.db TREASURE_GALE_SEEDS         $88 $04 $86 $01 $01 $6a
+	.db TREASURE_MYSTERY_SEEDS      $88 $04 $87 $00 $01 $6a
 
 @hyperSlingshotData:
-	.db TREASURE_EMBER_SEEDS        $89 $05 $83 $02 $01 $00
-	.db TREASURE_SCENT_SEEDS        $89 $05 $84 $03 $01 $00
-	.db TREASURE_PEGASUS_SEEDS      $89 $05 $85 $01 $01 $00
-	.db TREASURE_GALE_SEEDS         $89 $05 $86 $01 $01 $00
-	.db TREASURE_MYSTERY_SEEDS      $89 $05 $87 $00 $01 $00
+	.db TREASURE_EMBER_SEEDS        $89 $05 $83 $02 $01 $6b
+	.db TREASURE_SCENT_SEEDS        $89 $05 $84 $03 $01 $6b
+	.db TREASURE_PEGASUS_SEEDS      $89 $05 $85 $01 $01 $6b
+	.db TREASURE_GALE_SEEDS         $89 $05 $86 $01 $01 $6b
+	.db TREASURE_MYSTERY_SEEDS      $89 $05 $87 $00 $01 $6b
 
 @featherData:
 	.db TREASURE_FEATHER            $96 $04 $00 $00 $00 $2c
-	.db TREASURE_FEATHER            $9a $05 $00 $00 $00 $00
+	.db TREASURE_FEATHER            $9a $05 $00 $00 $00 $6c
 
 @boomerangData:
 	.db TREASURE_BOOMERANG          $9c $05 $00 $00 $00 $27
-	.db TREASURE_BOOMERANG          $9d $04 $00 $00 $00 $00
+	.db TREASURE_BOOMERANG          $9d $04 $00 $00 $00 $67
 
 @magnetGloveData:
-	.db TREASURE_MAGNET_GLOVES      $bb $01 $00 $00 $03 $00
-	.db TREASURE_MAGNET_GLOVES      $bb $02 $00 $00 $03 $00
+	.db TREASURE_MAGNET_GLOVES      $bb $01 $00 $00 $03 $69
+	.db TREASURE_MAGNET_GLOVES      $bb $02 $00 $00 $03 $69

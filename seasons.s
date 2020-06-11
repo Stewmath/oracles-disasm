@@ -735,20 +735,17 @@ oamData_15_4e0c:
 
 	m_GfxDataSimple map_rings ; $717a0
 
-	; TODO: where does "build/data/largeRoomLayoutTables.s" go?
 
+.BANK $1c
+.ORGA $5c00
 
-	; "build/textData.s" will determine where this data starts.
-	;   Ages:    1d:4000
-	;   Seasons: 1c:5c00
+.DEFINE DATA_ADDR $5c00
+.DEFINE DATA_BANK $1c
 
-	.include "build/textData.s"
-
-	.REDEFINE DATA_ADDR TEXT_END_ADDR
-	.REDEFINE DATA_BANK TEXT_END_BANK
 
 	.include "build/data/roomLayoutData.s"
 	.include "build/data/gfxDataMain.s"
+
 
 .BANK $3f SLOT 1
 .ORG 0
@@ -809,3 +806,14 @@ sounda1Channel2:
 .ends
 
 .include "build/data/objectCollisionTable.s"
+
+.BANK $43 SLOT 1
+
+	; "build/textData.s" will determine where this data starts.
+	;   Ages:    1d:4000
+	;   Seasons: 1c:5c00
+
+	.include "build/textData.s"
+
+	;.REDEFINE DATA_ADDR TEXT_END_ADDR
+    ;.REDEFINE DATA_BANK TEXT_END_BANK

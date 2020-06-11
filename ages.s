@@ -1185,14 +1185,11 @@ loadD6ChangingFloorPatternToBigBuffer:
 	.include "code/ages/garbage/bank1cEnd.s"
 .endif
 
-; "build/textData.s" will determine where this data starts.
-;   Ages:    1d:4000
-;   Seasons: 1c:5c00
+.BANK $1d
+.ORGA $4000
 
-	.include "build/textData.s"
-
-	.REDEFINE DATA_ADDR TEXT_END_ADDR
-	.REDEFINE DATA_BANK TEXT_END_BANK
+.DEFINE DATA_ADDR $4000
+.DEFINE DATA_BANK $1d
 
 	.include "build/data/roomLayoutData.s"
 	.include "build/data/gfxDataMain.s"
@@ -1477,3 +1474,15 @@ sound7aChannel2:
 .ends
 
 .include "build/data/objectCollisionTable.s"
+
+.BANK $43 SLOT 1
+.ORG 0
+
+; "build/textData.s" will determine where this data starts.
+;   Ages:    1d:4000
+;   Seasons: 1c:5c00
+
+	.include "build/textData.s"
+
+	;.REDEFINE DATA_ADDR TEXT_END_ADDR
+	;.REDEFINE DATA_BANK TEXT_END_BANK

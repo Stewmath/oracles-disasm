@@ -33,12 +33,12 @@ ifdef ROM_SEASONS
 	DEFINES += -D ROM_SEASONS -D FORCE_SECTIONS # TODO: remove force_sections later
 	GAME = seasons
 	OTHERGAME = ages
-	TEXT_INSERT_ADDRESS = 0x71c00
+	TEXT_INSERT_ADDRESS = 0x10c000
 else # ROM_AGES
 	DEFINES += -D ROM_AGES
 	GAME = ages
 	OTHERGAME = seasons
-	TEXT_INSERT_ADDRESS = 0x74000
+	TEXT_INSERT_ADDRESS = 0x10c000
 endif
 
 CFLAGS += $(DEFINES)
@@ -231,13 +231,12 @@ build/rooms/room%.cmp: precompressed/rooms/$(GAME)/room%.cmp | build/rooms
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
-build/textData.s: precompressed/text/$(GAME)/textData.s | build
-	@echo "Copying $< to $@..."
-	@cp $< $@
+# Parse & compress text
+build/textData.s: text/$(GAME)/text.yaml text/$(GAME)/dict.yaml tools/build/parseText.py | build
+	@echo "Compressing text..."
+	@$(PYTHON) tools/build/parseText.py text/$(GAME)/dict.yaml $< $@ $$(($(TEXT_INSERT_ADDRESS)))
 
-build/textDefines.s: precompressed/text/$(GAME)/textDefines.s | build
-	@echo "Copying $< to $@..."
-	@cp $< $@
+build/textDefines.s: build/textData.s
 
 else
 

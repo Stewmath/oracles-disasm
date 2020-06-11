@@ -4540,6 +4540,55 @@ groups:
       The current age
       is the past.
 
+  - name: TX_0967
+    index: 0x67
+    text: |-
+      Magic Boomerang
+      A remote-control
+      weapon.
+
+  - name: TX_0968
+    index: 0x68
+    text: |-
+      Rod of Seasons
+      Best used from
+      atop a stump.
+
+  - name: TX_0969
+    index: 0x69
+    text: |-
+      Magnetic Gloves
+      Magnetically
+      attractive!
+
+  - name: TX_096a
+    index: 0x6a
+    text: |-
+      Slingshot
+      Used to shoot
+      seeds.
+
+  - name: TX_096b
+    index: 0x6b
+    text: |-
+      Hyper Slingshot
+      Shoots in three
+      directions.
+
+  - name: TX_096c
+    index: 0x6c
+    text: |-
+      Roc's Cape
+      A wind-riding
+      cape.
+
+  - name: TX_096d
+    index: 0x6d
+    text: |-
+      Traded Ore
+      Not as useful
+      as a feather.
+
 - group: 0x0a
   data:
   - name: TX_0a00

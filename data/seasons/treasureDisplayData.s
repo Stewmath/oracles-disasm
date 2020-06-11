@@ -43,7 +43,7 @@ treasureDisplayData2:
 	.db $00                         $07 $00 $00 $00 $00 $00 ; (filler) TREASURE_SHIELD
 	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_PUNCH
 	.db TREASURE_BOMBS              $9e $04 $00 $00 $01 $26 ; TREASURE_BOMBS
-	.db $00                         $97 $02 $00 $00 $ff $00 ; TREASURE_CANE_OF_SOMARIA
+	.db $00                         $97 $02 $00 $00 $ff $5a ; TREASURE_CANE_OF_SOMARIA
 	.db $00                         $07 $00 $07 $00 $00 $00 ; (filler) TREASURE_SWORD
 	.db $06                         $07 $00 $07 $00 $00 $00 ; (filler) TREASURE_BOOMERANG
 	.db TREASURE_ROD_OF_SEASONS     $af $02 $00 $00 $05 $41 ; TREASURE_ROD_OF_SEASONS
@@ -54,9 +54,9 @@ treasureDisplayData2:
 	.db $00                         $a1 $03 $a2 $03 $ff $28 ; TREASURE_BIGGORON_SWORD
 	.db TREASURE_BOMBCHUS           $a0 $05 $00 $00 $01 $29 ; TREASURE_BOMBCHUS
 	.db $00                         $07 $00 $07 $00 $ff $00 ; (filler) TREASURE_FLUTE
-	.db $00                         $88 $00 $00 $00 $ff $00 ; TREASURE_SHOOTER
+	.db $00                         $88 $00 $00 $00 $ff $5d ; TREASURE_SHOOTER
 	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_10
-	.db $00                         $00 $00 $00 $00 $00 $00 ; TREASURE_HARP
+	.db $00                         $00 $00 $00 $00 $00 $5e ; TREASURE_HARP
 	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_12
 	.db $00                         $07 $00 $07 $00 $ff $00 ; (filler) TREASURE_SLINGSHOT
 	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_14
@@ -76,9 +76,9 @@ treasureDisplayData2:
 	.db TREASURE_PEGASUS_SEEDS      $80 $00 $85 $00 $ff $34 ; TREASURE_PEGASUS_SEEDS
 	.db TREASURE_GALE_SEEDS         $80 $00 $86 $00 $ff $35 ; TREASURE_GALE_SEEDS
 	.db TREASURE_MYSTERY_SEEDS      $80 $00 $87 $00 $ff $36 ; TREASURE_MYSTERY_SEEDS
-	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_TUNE_OF_ECHOES
-	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_TUNE_OF_CURRENTS
-	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_TUNE_OF_AGES
+	.db $00                         $00 $00 $00 $00 $ff $5f ; TREASURE_TUNE_OF_ECHOES
+	.db $00                         $00 $00 $00 $00 $ff $60 ; TREASURE_TUNE_OF_CURRENTS
+	.db $00                         $00 $00 $00 $00 $ff $61 ; TREASURE_TUNE_OF_AGES
 	.db TREASURE_RUPEES             $00 $00 $00 $00 $ff $00 ; TREASURE_RUPEES
 	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_HEART_REFILL
 	.db TREASURE_HEART_CONTAINER    $00 $00 $00 $00 $ff $00 ; TREASURE_HEART_CONTAINER
@@ -128,7 +128,7 @@ treasureDisplayData2:
 	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_56
 	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_57
 	.db TREASURE_BOMB_FLOWER        $f7 $04 $f8 $04 $ff $1a ; TREASURE_58
-	.db TREASURE_MERMAID_SUIT       $2b $04 $2c $04 $ff $00 ; TREASURE_MERMAID_SUIT
+	.db TREASURE_MERMAID_SUIT       $2b $04 $2c $04 $ff $63 ; TREASURE_MERMAID_SUIT
 
 
 @satchelData:
@@ -200,21 +200,21 @@ treasureDisplayData2:
 
 @braceletData:
 	.db TREASURE_BRACELET           $99 $05 $00 $00 $00 $2b ; L1
-	.db TREASURE_BRACELET           $98 $05 $00 $00 $00 $00 ; L2
+	.db TREASURE_BRACELET           $98 $05 $00 $00 $00 $62 ; L2
 
 @switchHookData:
-	.db TREASURE_SWITCH_HOOK        $9f $04 $00 $00 $00 $00 ; L1
-	.db TREASURE_SWITCH_HOOK        $9f $04 $00 $00 $00 $00 ; L2
+	.db TREASURE_SWITCH_HOOK        $9f $04 $00 $00 $00 $5b ; L1
+	.db TREASURE_SWITCH_HOOK        $9f $04 $00 $00 $00 $5c ; L2
 
 @shooterData:
-	.db TREASURE_EMBER_SEEDS        $81 $05 $83 $02 $01 $3c
-	.db TREASURE_SCENT_SEEDS        $81 $05 $84 $03 $01 $3c
-	.db TREASURE_PEGASUS_SEEDS      $81 $05 $85 $01 $01 $3c
-	.db TREASURE_GALE_SEEDS         $81 $05 $86 $01 $01 $3c
-	.db TREASURE_MYSTERY_SEEDS      $81 $05 $87 $00 $01 $3c
+	.db TREASURE_EMBER_SEEDS        $81 $05 $83 $02 $01 $5d
+	.db TREASURE_SCENT_SEEDS        $81 $05 $84 $03 $01 $5d
+	.db TREASURE_PEGASUS_SEEDS      $81 $05 $85 $01 $01 $5d
+	.db TREASURE_GALE_SEEDS         $81 $05 $86 $01 $01 $5d
+	.db TREASURE_MYSTERY_SEEDS      $81 $05 $87 $00 $01 $5d
 
 @harpData:
-	.db $00                         $02 $04 $02 $00 $02 $00 ; No song?
-	.db $00                         $a3 $00 $a4 $00 $02 $00 ; Tune of echoes
-	.db $00                         $a7 $03 $a8 $03 $02 $00 ; Tune of currents
-	.db $00                         $ab $01 $ac $01 $02 $00 ; Tune of ages
+	.db $00                         $02 $04 $02 $00 $02 $5e ; No song?
+	.db $00                         $a3 $00 $a4 $00 $02 $5e ; Tune of echoes
+	.db $00                         $a7 $03 $a8 $03 $02 $5e ; Tune of currents
+	.db $00                         $ab $01 $ac $01 $02 $5e ; Tune of ages

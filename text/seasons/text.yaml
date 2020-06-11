@@ -2818,6 +2818,76 @@ groups:
       The season is
       winter.
 
+  - name: TX_095a
+    index: 0x5a
+    text: |-
+      Cane of Somaria
+      Used to create
+      blocks.
+
+  - name: TX_095b
+    index: 0x5b
+    text: |-
+      Switch Hook
+      User and target
+      trade places.
+
+  - name: TX_095c
+    index: 0x5c
+    text: |-
+      Long Hook
+      Switches places
+      from a distance.
+
+  - name: TX_095d
+    index: 0x5d
+    text: |-
+      Seed Shooter
+      Used to bounce
+      seeds around.
+
+  - name: TX_095e
+    index: 0x5e
+    text: |-
+      Harp of Ages
+      A harp used to
+      navigate time.
+
+  - name: TX_095f
+    index: 0x5f
+    text: |-
+      Tune of Echoes
+      Awakens Time
+      Portals.
+
+  - name: TX_0960
+    index: 0x60
+    text: |-
+      Tune of Currents
+      Moves from past
+      to present.
+
+  - name: TX_0961
+    index: 0x61
+    text: |-
+      Tune of Ages
+      Moves freely
+      through time.
+
+  - name: TX_0962
+    index: 0x62
+    text: |-
+      Power Gloves
+      Used to lift
+      large objects.
+
+  - name: TX_0963
+    index: 0x63
+    text: |-
+      Mermaid Suit
+      The skin of the
+      mythical beast.
+
 - group: 0x0a
   data:
   - name: TX_0a00
