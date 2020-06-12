@@ -4740,7 +4740,7 @@ headSmelterAtTempleScript:
 	checkabutton
 	disablemenu
 	asm15 scriptHlp.headSmelter_disableScreenTransitions
-	jumpifitemobtained TREASURE_BOMB_FLOWER, @haveBombFlower
+	jumpifitemobtained TREASURE_S_BOMB_FLOWER, @haveBombFlower
 	showtext TX_2707
 	asm15 scriptHlp.headSmelter_enableScreenTransitions
 	enablemenu
@@ -5149,7 +5149,7 @@ blainoFightDoneScript:
 @fightWon:
 	jumpifroomflagset $40, @give30Rupees
 	showtextlowindex <TX_2306
-	giveitem TREASURE_RICKY_GLOVES $00
+	giveitem TREASURE_S_RICKY_GLOVES $00
 	orroomflag $40
 	enableinput
 	jump2byte @finishedTalking
@@ -6139,7 +6139,7 @@ companionScript_RickyInNorthHoron:
 	checkmemoryeq $d13d, $01
 	disablemenu
 	setdisabledobjectsto11
-	jumpifitemobtained TREASURE_RICKY_GLOVES, @hasRickysGloves
+	jumpifitemobtained TREASURE_S_RICKY_GLOVES, @hasRickysGloves
 	enablemenu
 	jumpifmemoryeq wIsLinkedGame, $00, @unlinked
 	jumpifmemoryset wRickyState, $10, @talkedToRickyBefore

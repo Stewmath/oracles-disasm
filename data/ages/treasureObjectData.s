@@ -338,7 +338,7 @@ treasureObjectData:
 	.db $0a $00 $7d $3c
 
 	; 0x53
-	.db $00 $00 $ff $00
+	.db $00 $00 $45 $6f
 
 	; 0x54
 	.db $0a $00 $7c $26
@@ -388,6 +388,85 @@ treasureObjectData:
 
 	; 0x62
 	.db $02 $00 $46 $20
+
+	; 0x63
+	.db $00 $00 $ff $00
+
+	; 0x64
+	.db $00 $00 $ff $00
+
+	; 0x65
+	.db $00 $00 $ff $00
+
+	; 0x66
+	.db $00 $00 $ff $00
+
+	; 0x67
+	.db $00 $00 $ff $00
+
+	; 0x68
+	.db $80
+	.dw treasureObjectData68
+	.db $00
+
+	; 0x69
+	.db $09 $00 $82 $6d
+
+	; 0x6a
+	.db $09 $00 $83 $6e
+
+	; 0x6b
+	.db $38 $00 $84 $03
+
+	; 0x6c - ribbon
+	.db $00 $00 $85 $04
+
+	; 0x6d
+	.db $0a $00 $86 $0b
+
+	; 0x6e
+	.db $09 $01 $87 $55
+
+	; 0x6f
+	.db $0a $00 $3c $56
+
+	; 0x70
+	.db $80
+	.dw treasureObjectData70 ; $546d
+	.db $00
+
+	; 0x71 - treasure map
+	.db $00 $00 $8a $1d
+
+	; 0x72
+	.db $0a $00 $8b $1e
+
+	; 0x73
+	.db $80
+	.dw treasureObjectData73 ; $5479
+	.db $00
+
+	; 0x74
+	.db $38 $00 $8c $2f
+
+	; 0x75
+	.db $38 $00 $8d $59
+
+	; 0x76
+	.db $38 $00 $91 $0c
+
+	; 0x77
+	.db $38 $00 $90 $0f
+
+	; 0x78
+	.db $0a $00 $8f $5a
+
+	; 0x79
+	.db $38 $00 $92 $5e
+
+	; 0x7a - bomb flower bottom
+	.db $00 $00 $ff $00
+
 
 treasureObjectData01:
 	.db $0a $01 $1f $13
@@ -621,3 +700,15 @@ treasureObjectData5e:
 	.db $0a $00 $3e $4e
 	.db $10 $00 $3e $4e
 
+treasureObjectData68:
+	.db $29 $00 $81 $6c
+	.db $09 $00 $81 $6c
+
+treasureObjectData70:
+	.db $0a $00 $88 $18
+	.db $4a $00 $88 $18
+	.db $0a $01 $89 $18 ; - cant get fixed bell in ages
+
+treasureObjectData73:
+	.db $08 $00 $8e $22
+	.db $02 $00 $8e $22

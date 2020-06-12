@@ -552,3 +552,95 @@ treasureCollectionBehaviourTable:
 	.db $00
 	.db $0b
 	.db SND_NONE
+
+	; TREASURE_GNARLED_KEY (0x68)
+	.db $00
+	.db $00
+	.db SND_GETITEM
+
+	; TREASURE_FLOODGATE_KEY (0x69)
+	.db $00
+	.db $00
+	.db SND_GETITEM
+
+	; TREASURE_DRAGON_KEY (0x6a)
+	.db $00
+	.db $00
+	.db SND_GETITEM
+
+	; TREASURE_STAR_ORE (0x6b)
+	.db $00
+	.db $00
+	.db SND_GETITEM
+
+	; TREASURE_RIBBON (0x6c)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; TREASURE_SPRING_BANANA (0x6d)
+	.db $00
+	.db $00
+	.db SND_GETITEM
+
+	; TREASURE_RICKY_GLOVES (0x6e)
+	.db $00
+	.db $05
+	.db SND_GETITEM
+
+	; TREASURE_BOMB_FLOWER (0x6f)
+	.db $00
+	.db $00
+	.db SND_GETITEM
+
+	; TREASURE_PIRATES_BELL (0x70)
+	.db <wPirateBellState
+	.db $05
+	.db SND_GETITEM
+
+	; TREASURE_TREASURE_MAP (0x71)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; TREASURE_ROUND_JEWEL (0x72)
+	.db $00
+	.db $00
+	.db SND_GETITEM
+
+	; TREASURE_PYRAMID_JEWEL (0x73)
+	.db $00
+	.db $00
+	.db SND_GETITEM
+
+	; TREASURE_SQUARE_JEWEL (0x74)
+	.db $00
+	.db $00
+	.db SND_GETITEM
+
+	; TREASURE_X_SHAPED_JEWEL (0x75)
+	.db $00
+	.db $00
+	.db SND_GETITEM
+
+	; TREASURE_RED_ORE (0x76)
+	.db $00
+	.db $00
+	.db SND_GETITEM
+
+	; TREASURE_BLUE_ORE (0x77)
+	.db $00
+	.db $00
+	.db SND_GETITEM
+
+	; TREASURE_HARD_ORE (0x78)
+	.db $00
+	.db $00
+	.db SND_GETITEM
+
+	; TREASURE_MASTERS_PLAQUE (0x79)
+	.db $00
+	.db $00
+	.db SND_GETITEM
+
+

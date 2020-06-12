@@ -260,7 +260,7 @@ interaction60SubidData:
 	m_InteractionData $5c $1e $20
 	m_InteractionData $5d $0a $10
 	m_InteractionData $5d $08 $00
-	m_InteractionData $00 $00 $00
+	m_InteractionData $5f $14 $00 ; 0x0f - fools ore
 	m_InteractionData $60 $00 $00
 	m_InteractionData $60 $02 $50
 	m_InteractionData $60 $04 $40
@@ -284,7 +284,7 @@ interaction60SubidData:
 	m_InteractionData $61 $00 $50
 	m_InteractionData $61 $02 $33
 	m_InteractionData $5d $0c $33
-	m_InteractionData $00 $00 $00
+	m_InteractionData $5d $0c $13 ; 0x27 - members card
 	m_InteractionData $5c $04 $00
 	m_InteractionData $5c $04 $10
 	m_InteractionData $5c $04 $20
@@ -300,39 +300,39 @@ interaction60SubidData:
 	m_InteractionData $5d $14 $10
 	m_InteractionData $5d $14 $20
 interaction92SubidData:
-	m_InteractionData $65 $04 $00
+	m_InteractionData $65 $04 $00 ; 0x36
 	m_InteractionData $65 $06 $20
 	m_InteractionData $65 $08 $10
-	m_InteractionData $65 $0a $30
+	m_InteractionData $65 $0a $30 ; 0x39
 	m_InteractionData $5d $10 $22
 	m_InteractionData $5d $12 $52
-	m_InteractionData $00 $00 $00
-	m_InteractionData $00 $00 $00
-	m_InteractionData $00 $00 $00
-	m_InteractionData $00 $00 $00
+	m_InteractionData $65 $0c $23 ; 0x3c - ribbon
+	m_InteractionData $65 $14 $33 ; 0x3d - treasure map
+	m_InteractionData $5d $10 $26 ; 0x3e - rare peach stone
+	m_InteractionData $c9 $0e $50 ; 0x3f - graveyard key
 	m_InteractionData $5e $00 $33
 	m_InteractionData $5e $04 $13
 interaction17SubidData:
 	m_InteractionData $5e $0c $50
 	m_InteractionData $5e $08 $53
 interaction18SubidData:
-	m_InteractionData $5e $0e $50
+	m_InteractionData $5e $0e $50 ; 0x44
 	m_InteractionData $5e $10 $40
 	m_InteractionData $5e $12 $10
 	m_InteractionData $66 $12 $0a
-	m_InteractionData $00 $00 $00
-	m_InteractionData $00 $00 $00
-	m_InteractionData $00 $00 $00
-	m_InteractionData $00 $00 $00
-	m_InteractionData $00 $00 $00
-	m_InteractionData $00 $00 $00
-	m_InteractionData $00 $00 $00
-	m_InteractionData $00 $00 $00
-	m_InteractionData $00 $00 $00
-	m_InteractionData $00 $00 $00
-	m_InteractionData $00 $00 $00
-	m_InteractionData $00 $00 $00
-	m_InteractionData $65 $10 $33
+	m_InteractionData $c9 $10 $20 ; 0x48 - crown key
+	m_InteractionData $c9 $12 $50 ; 0x49 - old mermaid key
+	m_InteractionData $c9 $12 $40 ; 0x4a - mermaid key
+	m_InteractionData $c9 $14 $00 ; 0x4b - library key
+	m_InteractionData $ca $1c $53 ; 0x4c - rickys gloves
+	m_InteractionData $cc $0a $04 ; 0x4d - bomb flower
+	m_InteractionData $5d $16 $43 ; 0x4e - mermaids tail
+	m_InteractionData $c8 $1c $30 ; 0x4f - slate
+	m_InteractionData $cc $06 $53 ; 0x50 - tuni nut
+	m_InteractionData $cc $00 $03 ; 0x51 - scent seedling
+	m_InteractionData $ca $0c $13 ; 0x52 - zora scale
+	m_InteractionData $cb $1a $50 ; 0x53 - tokay eyeball
+	m_InteractionData $65 $10 $33 ; 0x54
 	m_InteractionData $64 $1c $53
 	m_InteractionData $66 $0a $04
 	m_InteractionData $66 $00 $33
@@ -340,11 +340,11 @@ interaction18SubidData:
 	m_InteractionData $66 $04 $20
 	m_InteractionData $66 $06 $03
 	m_InteractionData $65 $18 $23
-	m_InteractionData $65 $1c $13
+	m_InteractionData $65 $1c $13 ; 0x5c
 	m_InteractionData $64 $1c $43
-	m_InteractionData $00 $00 $00
+	m_InteractionData $cb $12 $32 ; 0x5e - fairy powder
 interactiondeSubidData:
-	m_InteractionData $66 $12 $0a
+	m_InteractionData $66 $12 $0a ; 0x5f
 	m_InteractionData $62 $14 $02
 	m_InteractionData $62 $10 $12
 	m_InteractionData $62 $06 $53
@@ -353,14 +353,14 @@ interactiondeSubidData:
 	m_InteractionData $62 $0c $43
 	m_InteractionData $62 $02 $23
 	m_InteractionData $62 $00 $32
-	m_InteractionData $00 $00 $00
-	m_InteractionData $00 $00 $00
-	m_InteractionData $00 $00 $00
-	m_InteractionData $00 $00 $00
-	m_InteractionData $00 $00 $00
-	m_InteractionData $00 $00 $00
-	m_InteractionData $00 $00 $00
-	m_InteractionData $00 $00 $00
+	m_InteractionData $ca $10 $33 ; 0x68 - cheval rope
+	m_InteractionData $ca $14 $43 ; 0x69 - island chart
+	m_InteractionData $c9 $16 $03 ; 0x6a - book of seals
+	m_InteractionData $cb $14 $33 ; 0x6b - goron letter
+	m_InteractionData $cb $08 $53 ; 0x6c - lava juice
+	m_InteractionData $cb $00 $33 ; 0x6d - brother emblem
+	m_InteractionData $cb $0c $52 ; 0x6e - goron vase
+	m_InteractionData $cb $0e $12 ; 0x6f - goronade
 	m_InteractionData $63 $00 $03
 	m_InteractionData $63 $04 $32
 	m_InteractionData $63 $06 $03
@@ -372,7 +372,8 @@ interactiondeSubidData:
 	m_InteractionData $64 $04 $53
 	m_InteractionData $64 $08 $33
 	m_InteractionData $64 $0c $13
-	m_InteractionData $64 $90 $03
+	m_InteractionData $64 $10 $03
+	m_InteractionData $cb $84 $53 ; 0x7c - rock brisket
 
 interaction7dSubidData:
 	m_InteractionData $58 $00 $40

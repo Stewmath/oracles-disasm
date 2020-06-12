@@ -7,8 +7,10 @@
 checkTreasureObtained_body:
 	ld a,l
 	cp TREASURE_60
-	jr nc,@index60OrHigher
-
+	jr c,+
+	cp $68
+	jr c,@index60to67
++
 	ldh (<hFF8B),a
 	ld hl,wObtainedTreasureFlags
 	call checkFlag
@@ -35,7 +37,7 @@ checkTreasureObtained_body:
 	ld h,$01
 	ret
 
-@index60OrHigher:
+@index60to67:
 	and $07
 	ld hl,wcca8
 	call checkFlag

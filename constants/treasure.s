@@ -76,12 +76,12 @@
 	TREASURE_TRADEITEM		db ; $41
 
 .ifdef ROM_AGES
-
 	TREASURE_FIRST_KEY		.db
+.endif
 
 	TREASURE_GRAVEYARD_KEY		db ; $42
 	TREASURE_CROWN_KEY		db ; $43
-	TREASURE_OLD_MERMAID_KEY	db ; $44
+	TREASURE_OLD_MERMAID_KEY	db ; $44 - actually swapped with below
 	TREASURE_MERMAID_KEY		db ; $45
 	TREASURE_LIBRARY_KEY		db ; $46
 	TREASURE_47			db ; $47
@@ -110,47 +110,6 @@
 	TREASURE_ROCK_BRISKET		db ; $5e
 	TREASURE_5f			db ; $5f
 
-.else; ROM_SEASONS
-
-	TREASURE_FIRST_KEY		.db
-
-	TREASURE_GNARLED_KEY		db ; $42
-	TREASURE_FLOODGATE_KEY		db ; $43
-	TREASURE_DRAGON_KEY		db ; $44
-	TREASURE_STAR_ORE		db ; $45
-	TREASURE_RIBBON			db ; $46
-	TREASURE_SPRING_BANANA		db ; $47
-	TREASURE_RICKY_GLOVES		db ; $48
-	TREASURE_BOMB_FLOWER		db ; $49
-	TREASURE_PIRATES_BELL		db ; $4a
-	TREASURE_TREASURE_MAP		db ; $4b
-	TREASURE_ROUND_JEWEL		db ; $4c
-	TREASURE_PYRAMID_JEWEL		db ; $4d
-	TREASURE_SQUARE_JEWEL		db ; $4e
-	TREASURE_X_SHAPED_JEWEL		db ; $4f
-	TREASURE_RED_ORE		db ; $50
-	TREASURE_BLUE_ORE		db ; $51
-	TREASURE_HARD_ORE		db ; $52
-	TREASURE_MEMBERS_CARD		db ; $53
-	TREASURE_MASTERS_PLAQUE		db ; $54
-	TREASURE_55			db ; $55
-	TREASURE_56			db ; $56
-	TREASURE_57			db ; $57
-	TREASURE_58			db ; $58: relates to bomb flower?
-
-	; The remainder appear as seeds in seed satchel/slingshot, but that probably
-	; doesn't mean anything. These may not be valid treasures.
-	TREASURE_MERMAID_SUIT		db ; $59
-	TREASURE_5a			db ; $5a
-	TREASURE_5b			db ; $5b
-	TREASURE_5c			db ; $5c
-	TREASURE_5d			db ; $5d
-	TREASURE_5e			db ; $5e
-	TREASURE_5f			db ; $5f
-
-.endif ; ROM_SEASONS
-
-
 	; Do these behave the same in seasons?
 	TREASURE_60			db ; $60
 	TREASURE_BOMB_UPGRADE		db ; $61
@@ -160,6 +119,30 @@
 	TREASURE_65			db ; $65
 	TREASURE_66			db ; $66
 	TREASURE_67			db ; $67
+
+.ifdef ROM_SEASONS
+	TREASURE_FIRST_KEY		.db
+.endif
+
+	TREASURE_GNARLED_KEY db ; $68
+	TREASURE_FLOODGATE_KEY		db ; $69
+	TREASURE_DRAGON_KEY		db ; $6a
+	TREASURE_STAR_ORE		db ; $6b
+	TREASURE_RIBBON			db ; $6c
+	TREASURE_SPRING_BANANA		db ; $6d
+	TREASURE_S_RICKY_GLOVES		db ; $6e
+	TREASURE_S_BOMB_FLOWER		db ; $6f
+	TREASURE_PIRATES_BELL		db ; $70
+	TREASURE_TREASURE_MAP		db ; $71
+	TREASURE_ROUND_JEWEL		db ; $72
+	TREASURE_PYRAMID_JEWEL		db ; $73
+	TREASURE_SQUARE_JEWEL		db ; $74
+	TREASURE_X_SHAPED_JEWEL		db ; $75
+	TREASURE_RED_ORE		db ; $76
+	TREASURE_BLUE_ORE		db ; $77
+	TREASURE_HARD_ORE		db ; $78
+	TREASURE_MASTERS_PLAQUE		db ; $79
+	TREASURE_S_BOMB_FLOWER_BOTTOM	db ; $7a
 .ende
 
 

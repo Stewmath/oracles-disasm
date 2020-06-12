@@ -223,3 +223,7 @@ objectGfxHeaderTable:
 	/* $dd */ m_ObjectGfxHeader spr_twinrova_8 $00
 	/* $de */ m_ObjectGfxHeader spr_twinrova_9 $00
 	/* $df */ m_ObjectGfxHeader spr_twinrovamerged_2 $80
+	/* $e0 */ m_ObjectGfxHeader spr_seasons_map_compass_keys $00
+	/* $e1 */ m_ObjectGfxHeader spr_s_quest_items_2 $00
+	/* $e2 */ m_ObjectGfxHeader spr_s_quest_items_3 $00
+	/* $e3 */ m_ObjectGfxHeader spr_s_quest_items_4 $00

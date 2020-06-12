@@ -199,3 +199,8 @@ objectGfxHeaderTable: ; $fdafb
 	/* $c5 */ m_ObjectGfxHeader spr_twinrova_9 $00
 	/* $c6 */ m_ObjectGfxHeader spr_twinrovamerged_2 $80
 	/* $c7 */ m_ObjectGfxHeader spr_extra_mags $80
+	/* $c8 */ m_ObjectGfxHeader spr_a_rollingplatform_d8stuff $00
+	/* $c9 */ m_ObjectGfxHeader spr_a_map_compass_keys_bookofseals $00
+	/* $ca */ m_ObjectGfxHeader spr_a_quest_items_2 $00
+	/* $cb */ m_ObjectGfxHeader spr_a_quest_items_3 $00
+	/* $cc */ m_ObjectGfxHeader spr_a_quest_items_4 $00

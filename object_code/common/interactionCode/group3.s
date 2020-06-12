@@ -27,7 +27,11 @@ _bomb_flower_subid0:
 	bit 5,(hl)
 	jr nz,+
 
+.ifdef ROM_AGES
 	ld a,TREASURE_BOMB_FLOWER
+.else
+	ld a,TREASURE_S_BOMB_FLOWER
+.endif
 	call checkTreasureObtained
 	jr c,+
 
@@ -92,7 +96,11 @@ _bomb_flower_subid0:
 	ld (wcc50),a
 	ld bc,TX_003c
 	call showText
+.ifdef ROM_AGES
 	ld a,TREASURE_BOMB_FLOWER
+.else
+	ld a,TREASURE_S_BOMB_FLOWER
+.endif
 	jp giveTreasure
 
 @substate2:

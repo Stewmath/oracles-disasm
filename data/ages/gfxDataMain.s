@@ -3,6 +3,7 @@
 	m_GfxData spr_common_items ; $0a42c1
 	m_GfxData spr_quest_items_5 ; $0a440a
 	m_GfxData spr_map_compass_keys_bookofseals ; $0a4598
+	m_GfxData spr_seasons_map_compass_keys ; $0a4598
 	m_GfxData gfx_blank ; $0a4715
 	m_GfxData gfx_rings ; $0a471b
 	m_GfxData spr_item_icons_1_spr ; $0a4a75
@@ -11,6 +12,9 @@
 	m_GfxData spr_quest_items_2 ; $0a4e82
 	m_GfxData spr_quest_items_3 ; $0a5048
 	m_GfxData spr_quest_items_4 ; $0a5216
+	m_GfxData spr_s_quest_items_2 ; $0a4e82
+	m_GfxData spr_s_quest_items_3 ; $0a5048
+	m_GfxData spr_s_quest_items_4 ; $0a5216
 	m_GfxData gfx_hud ; $0a5363
 	m_GfxData gfx_inventory_hud_1 ; $0a5469
 	m_GfxData gfx_inventory_hud_2 ; $0a5595

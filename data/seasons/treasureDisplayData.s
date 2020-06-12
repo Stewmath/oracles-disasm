@@ -105,14 +105,52 @@ treasureDisplayData2:
 	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_3f
 	.db $00                         $07 $00 $07 $00 $ff $00 ; TREASURE_ESSENCE
 	.db TREASURE_TRADEITEM          $07 $00 $07 $00 $ff $00 ; (filler) TREASURE_TRADEITEM
+	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_GNARLED_KEY
+	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_FLOODGATE_KEY
+	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_DRAGON_KEY
+	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_STAR_ORE
+	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_RIBBON
+	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_SPRING_BANANA
+	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_RICKY_GLOVES
+	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_BOMB_FLOWER
+	.db TREASURE_MERMAID_SUIT       $2b $04 $2c $04 $ff $63 ; TREASURE_MERMAID_SUIT
+	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_TREASURE_MAP
+	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_ROUND_JEWEL
+	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_PYRAMID_JEWEL
+	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_SQUARE_JEWEL
+	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_X_SHAPED_JEWEL
+	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_RED_ORE
+	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_BLUE_ORE
+	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_HARD_ORE
+	.db TREASURE_MEMBERS_CARD       $26 $01 $27 $01 $ff $1c ; TREASURE_MEMBERS_CARD
+	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_MASTERS_PLAQUE
+	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_55
+	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_56
+	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_57
+	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_58
+	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_59
+	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_5a
+	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_5b
+	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_5c
+	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_5d
+	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_5e
+	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_5f
+	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_60
+	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_61
+	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_62
+	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_63
+	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_64
+	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_65
+	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_66
+	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_67
 	.db TREASURE_GNARLED_KEY        $37 $05 $00 $00 $ff $44 ; TREASURE_GNARLED_KEY
 	.db TREASURE_FLOODGATE_KEY      $38 $04 $00 $00 $ff $45 ; TREASURE_FLOODGATE_KEY
 	.db TREASURE_DRAGON_KEY         $39 $01 $00 $00 $ff $46 ; TREASURE_DRAGON_KEY
 	.db TREASURE_STAR_ORE           $f0 $03 $f1 $03 $ff $4c ; TREASURE_STAR_ORE
 	.db TREASURE_RIBBON             $e6 $02 $e7 $02 $ff $4d ; TREASURE_RIBBON
 	.db TREASURE_SPRING_BANANA      $e8 $03 $e9 $03 $ff $47 ; TREASURE_SPRING_BANANA
-	.db TREASURE_RICKY_GLOVES       $de $05 $df $05 $ff $1b ; TREASURE_RICKY_GLOVES
-	.db TREASURE_BOMB_FLOWER        $f5 $05 $f5 $25 $ff $1a ; TREASURE_BOMB_FLOWER
+	.db TREASURE_S_RICKY_GLOVES       $de $05 $df $05 $ff $1b ; TREASURE_RICKY_GLOVES
+	.db TREASURE_S_BOMB_FLOWER        $f5 $05 $f5 $25 $ff $1a ; TREASURE_BOMB_FLOWER
 	.db $00                         $07 $00 $07 $00 $ff $00 ; (filler) TREASURE_PIRATES_BELL
 	.db TREASURE_TREASURE_MAP       $ea $03 $eb $03 $ff $4a ; TREASURE_TREASURE_MAP
 	.db TREASURE_ROUND_JEWEL        $e2 $00 $00 $00 $ff $4b ; TREASURE_ROUND_JEWEL
@@ -122,13 +160,8 @@ treasureDisplayData2:
 	.db TREASURE_RED_ORE            $f2 $02 $00 $00 $ff $4e ; TREASURE_RED_ORE
 	.db TREASURE_BLUE_ORE           $f2 $01 $00 $00 $ff $4f ; TREASURE_BLUE_ORE
 	.db TREASURE_HARD_ORE           $f3 $00 $f4 $00 $ff $50 ; TREASURE_HARD_ORE
-	.db TREASURE_MEMBERS_CARD       $26 $01 $27 $01 $ff $1c ; TREASURE_MEMBERS_CARD
 	.db TREASURE_MASTERS_PLAQUE     $26 $03 $27 $03 $ff $43 ; TREASURE_MASTERS_PLAQUE
-	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_55
-	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_56
-	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_57
-	.db TREASURE_BOMB_FLOWER        $f7 $04 $f8 $04 $ff $1a ; TREASURE_58
-	.db TREASURE_MERMAID_SUIT       $2b $04 $2c $04 $ff $63 ; TREASURE_MERMAID_SUIT
+	.db TREASURE_S_BOMB_FLOWER        $f7 $04 $f8 $04 $ff $1a ; TREASURE_S_BOMB_FLOWER_BOTTOM
 
 
 @satchelData:

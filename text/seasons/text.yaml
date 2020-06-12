@@ -960,6 +960,161 @@ groups:
     text: |-
       GOAL!!!
 
+  - name: TX_0073
+    index: 0x73
+    text: |-
+      You got the
+      \col(1)Graveyard Key\col(0)!
+
+  - name: TX_0074
+    index: 0x74
+    text: |-
+      You got the
+      \col(1)Crown Key\col(0)!
+
+  - name: TX_0075
+    index: 0x75
+    text: |-
+      You got the
+      \col(1)Mermaid Key\col(0)!
+
+  - name: TX_0076
+    index: 0x76
+    text: |-
+      You got the \col(1)Old
+      Mermaid Key\col(0)!
+
+  - name: TX_0077
+    index: 0x77
+    text: |-
+      You got the
+      \col(1)Library Key\col(0)!
+
+  - name: TX_0078
+    index: 0x78
+    text: |-
+      \pos(2)You got \col(1)Ricky's
+      Gloves\col(0)! Take
+      them to their
+      owner.
+
+  - name: TX_0079
+    index: 0x79
+    text: |-
+      You got a
+      \col(1)Mermaid Suit\col(0)!
+      Now you can swim
+      in deep waters.
+      Press \col(0x84)\item(0x00)\col(0) to swim,
+      \bbtn to dive and
+      \abtn to use items.
+
+  - name: TX_007a
+    index: 0x7a
+    text: |-
+      You got the
+      \col(1)Slate\col(0)! Ancient
+      words are
+      written on it.
+
+  - name: TX_007b
+    index: 0x7b
+    text: |-
+      You got the
+      \col(1)Tuni Nut\col(0)!
+
+  - name: TX_007c
+    index: 0x7c
+    text: |-
+      You got a \col(1)Scent
+      Seedling\col(0)! Maybe
+      it will produce
+      many seeds!
+
+  - name: TX_007d
+    index: 0x7d
+    text: |-
+      \pos(2)You got the
+      \col(1)Zora Scale\col(0)!
+
+  - name: TX_007e
+    index: 0x7e
+    text: |-
+      You got the
+      \col(1)Tokay Eyeball\col(0),
+      a treasure of
+      the deep!
+
+  - name: TX_007f
+    index: 0x7f
+    text: |-
+      You got \col(1)Fairy
+      Powder\col(0)! It
+      removes curses.
+
+  - name: TX_0080
+    index: 0x80
+    text: |-
+      You got \col(1)Cheval
+      Rope\col(0)! This
+      sturdy rope
+      won't rot when
+      wet.
+
+  - name: TX_0081
+    index: 0x81
+    text: |-
+      It's an \col(1)Island
+      Chart\col(0)! You can
+      now navigate
+      the seas!
+
+  - name: TX_0082
+    index: 0x82
+    text: |-
+      You got the
+      \col(1)Book of Seals\col(0)!
+
+  - name: TX_0083
+    index: 0x83
+    text: |-
+      You got a \col(1)Letter
+      of Introduction\col(0)!
+
+  - name: TX_0084
+    index: 0x84
+    text: |-
+      You got
+      \col(1)Lava Juice\col(0)!
+
+  - name: TX_0085
+    index: 0x85
+    text: |-
+      You got the
+      \col(1)Brother Emblem\col(0)!
+      Now you are a
+      Goron, too!
+
+  - name: TX_0086
+    index: 0x86
+    text: |-
+      You got the
+      \col(1)Goron Vase\col(0)!
+
+  - name: TX_0087
+    index: 0x87
+    text: |-
+      You got
+      \col(1)Goronade\col(0)! One
+      quick gulp will
+      keep you awake.
+
+  - name: TX_0088
+    index: 0x88
+    text: |-
+      You got
+      \col(1)Rock Brisket\col(0)!
+
 - group: 0x01
   data:
   - name: TX_0100

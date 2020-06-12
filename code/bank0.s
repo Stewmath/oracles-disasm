@@ -7836,14 +7836,59 @@ seasonsToAgesItemCountsLevelsTable:
 	.db $22 $22 ; wPlaytimeCounter
 	.db $26 $26 ; wTotalSignsDestroyed
 	.db $27 $27 ; wTotalRupeesCollected
+	.db $f4 $c3 ; wNumSlates
 	.db $00
 
 
-seasonsToAgesExtraTreasuresTable:
-	.db TREASURE_FLIPPERS	TREASURE_FLIPPERS
-	.db TREASURE_RING	TREASURE_RING
-	.db TREASURE_POTION	TREASURE_POTION
-	.db $59			$4a ; mermaid suit
+crossworldExtraTreasuresTable:
+	.db TREASURE_FLIPPERS
+	.db TREASURE_RING
+	.db TREASURE_POTION
+	.db TREASURE_GNARLED_KEY
+	.db TREASURE_FLOODGATE_KEY
+	.db TREASURE_DRAGON_KEY
+	.db TREASURE_STAR_ORE
+	.db TREASURE_RIBBON
+	.db TREASURE_SPRING_BANANA
+	.db TREASURE_S_RICKY_GLOVES
+	.db TREASURE_S_BOMB_FLOWER
+	.db TREASURE_PIRATES_BELL
+	.db TREASURE_TREASURE_MAP
+	.db TREASURE_ROUND_JEWEL
+	.db TREASURE_PYRAMID_JEWEL
+	.db TREASURE_SQUARE_JEWEL
+	.db TREASURE_X_SHAPED_JEWEL
+	.db TREASURE_RED_ORE
+	.db TREASURE_BLUE_ORE
+	.db TREASURE_HARD_ORE
+	.db TREASURE_MASTERS_PLAQUE
+	.db TREASURE_S_BOMB_FLOWER_BOTTOM
+	.db TREASURE_MERMAID_SUIT
+	.db TREASURE_MEMBERS_CARD
+	.db TREASURE_GRAVEYARD_KEY
+	.db TREASURE_CROWN_KEY
+	.db TREASURE_OLD_MERMAID_KEY
+	.db TREASURE_MERMAID_KEY
+	.db TREASURE_LIBRARY_KEY
+	.db TREASURE_RICKY_GLOVES
+	.db TREASURE_BOMB_FLOWER
+	.db TREASURE_MERMAID_SUIT
+	.db TREASURE_SLATE
+	.db TREASURE_TUNI_NUT
+	.db TREASURE_SCENT_SEEDLING
+	.db TREASURE_ZORA_SCALE
+	.db TREASURE_TOKAY_EYEBALL
+	.db TREASURE_FAIRY_POWDER
+	.db TREASURE_CHEVAL_ROPE
+	.db TREASURE_ISLAND_CHART
+	.db TREASURE_BOOK_OF_SEALS
+	.db TREASURE_58
+	.db TREASURE_GORON_LETTER
+	.db TREASURE_LAVA_JUICE
+	.db TREASURE_BROTHER_EMBLEM
+	.db TREASURE_GORON_VASE
+	.db TREASURE_GORONADE
+	.db TREASURE_ROCK_BRISKET
 	.db $00
 
 saveSeasonsTreasureDataForAges:
@@ -7867,17 +7912,14 @@ saveSeasonsTreasureDataForAges:
 	jr nz,--
 
 	; copy extra treasures
-	ld hl,seasonsToAgesExtraTreasuresTable
+	ld hl,crossworldExtraTreasuresTable
 	push hl
 --
 	pop hl
 	ldi a,(hl)
 	or a
 	jr z,++
-	push af
-	ldi a,(hl)
 	ld b,a
-	pop af
 	push hl
 	ld hl,$c692-wFileStart+SEASONS_BACKUP
 	call checkFlag
@@ -7933,7 +7975,7 @@ saveAgesTreasureDataForSeasons:
 	jr nz,--
 
 	; copy extra treasures
-	ld hl,seasonsToAgesExtraTreasuresTable
+	ld hl,crossworldExtraTreasuresTable
 	push hl
 --
 	pop hl
@@ -7941,7 +7983,6 @@ saveAgesTreasureDataForSeasons:
 	or a
 	jr z,++
 	ld b,a
-	ldi a,(hl)
 	push hl
 	ld hl,$c69a-wFileStart+AGES_BACKUP
 	call checkFlag

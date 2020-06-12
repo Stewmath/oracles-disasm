@@ -112,7 +112,7 @@ treasureObjectData:
 	.db $00 $00 $ff $00
 
 	; 0x1e
-	.db $00 $00 $ff $00
+	.db $00 $00 $36 $0f
 
 	; 0x1f
 	.db $00 $00 $ff $00
@@ -246,70 +246,70 @@ treasureObjectData:
 	.db $00
 
 	; 0x42
-	.db $80
-	.dw treasureObjectData42 ; $5465
-	.db $00
+	.db $29 $00 $73 $3f
 
 	; 0x43
-	.db $09 $00 $43 $45
+	.db $09 $00 $74 $48
 
 	; 0x44
-	.db $09 $00 $44 $46
+	.db $09 $00 $75 $49
 
 	; 0x45
-	.db $5a $00 $40 $57
+	.db $80
+	.dw treasureObjectData45
+	.db $00
 
 	; 0x46
-	.db $00 $00 $ff $00
+	.db $02 $00 $77 $4b
 
 	; 0x47
-	.db $0a $00 $66 $54
+	.db $00 $00 $ff $00
 
 	; 0x48
-	.db $09 $01 $67 $55
+	.db $51 $01 $78 $4c
 
 	; 0x49
-	.db $0a $00 $3c $56
+	.db $80
+	.dw treasureObjectData49
+	.db $00
 
 	; 0x4a
-	.db $80
-	.dw treasureObjectData4a ; $546d
-	.db $00
+	.db $38 $00 $79 $4e
 
 	; 0x4b
-	.db $00 $00 $ff $00
+	.db $38 $00 $7a $4f
 
 	; 0x4c
-	.db $0a $00 $47 $36
-
-	; 0x4d
 	.db $80
-	.dw treasureObjectData4d ; $5479
+	.dw treasureObjectData4c
 	.db $00
 
+	; 0x4d
+	.db $0a $00 $7c $51
+
 	; 0x4e
-	.db $38 $00 $48 $38
+	.db $0a $00 $7d $52
 
 	; 0x4f
-	.db $38 $00 $49 $39
+	.db $0a $00 $7e $53
 
 	; 0x50
-	.db $38 $00 $3f $59
+	.db $00 $00 $ff $00
 
 	; 0x51
-	.db $38 $00 $3e $58
+	.db $0a $00 $7f $5e
 
 	; 0x52
-	.db $0a $00 $3d $5a
+	.db $0a $00 $80 $68
 
 	; 0x53
-	.db $00 $00 $ff $00
+	.db $00 $00 $45 $27
 
 	; 0x54
-	.db $38 $00 $70 $26
+	.db $0a $00 $81 $69
 
 	; 0x55
-	.db $00 $00 $ff $00
+	.db $0a $00 $82 $6a
 
 	; 0x56
 	.db $00 $00 $ff $00
@@ -321,22 +321,26 @@ treasureObjectData:
 	.db $00 $00 $ff $00
 
 	; 0x59
-	.db $00 $00 $ff $00
+	.db $02 $00 $83 $6b
 
 	; 0x5a
-	.db $00 $00 $ff $00
+	.db $0a $00 $84 $6c
 
 	; 0x5b
-	.db $00 $00 $ff $00
+	.db $0a $00 $85 $6d
 
 	; 0x5c
-	.db $00 $00 $ff $00
+	.db $0a $00 $86 $6e
 
 	; 0x5d
-	.db $00 $00 $ff $00
+	.db $80
+	.dw treasureObjectData5d
+	.db $00
 
 	; 0x5e
-	.db $00 $00 $ff $00
+	.db $80
+	.dw treasureObjectData5e
+	.db $00
 
 	; 0x5f
 	.db $00 $00 $ff $00
@@ -349,6 +353,84 @@ treasureObjectData:
 
 	; 0x62
 	.db $02 $00 $46 $20
+
+	; 0x63
+	.db $00 $00 $ff $00
+
+	; 0x64
+	.db $00 $00 $ff $00
+
+	; 0x65
+	.db $00 $00 $ff $00
+
+	; 0x66
+	.db $00 $00 $ff $00
+
+	; 0x67
+	.db $00 $00 $ff $00
+
+	; 0x68
+    .db $80
+    .dw treasureObjectData68 ; $5465
+    .db $00
+
+	; 0x69
+	.db $09 $00 $43 $45
+
+	; 0x6a
+	.db $09 $00 $44 $46
+
+	; 0x6b
+	.db $5a $00 $40 $57
+
+	; 0x6c - ribbon
+	.db $00 $00 $41 $3c
+
+	; 0x6d
+	.db $0a $00 $66 $54
+
+	; 0x6e
+	.db $09 $01 $67 $55
+
+	; 0x6f
+	.db $0a $00 $3c $56
+
+	; 0x70
+	.db $80
+	.dw treasureObjectData70 ; $546d
+	.db $00
+
+	; 0x71 - treasure map
+	.db $00 $00 $6c $3d
+
+	; 0x72
+	.db $0a $00 $47 $36
+
+	; 0x73
+	.db $80
+	.dw treasureObjectData73 ; $5479
+	.db $00
+
+	; 0x74
+	.db $38 $00 $48 $38
+
+	; 0x75
+	.db $38 $00 $49 $39
+
+	; 0x76
+	.db $38 $00 $3f $59
+
+	; 0x77
+	.db $38 $00 $3e $58
+
+	; 0x78
+	.db $0a $00 $3d $5a
+
+	; 0x79
+	.db $38 $00 $70 $26
+
+	; 0x7a - bomb flower bottom
+	.db $00 $00 $ff $00
 
 
 treasureObjectData19:
@@ -503,16 +585,36 @@ treasureObjectData41:
 	.db $0a $0a $64 $7a
 	.db $0a $0b $65 $7b
 
-treasureObjectData42:
+treasureObjectData68:
 	.db $29 $00 $42 $44
 	.db $09 $00 $42 $44
 
-treasureObjectData4a:
+treasureObjectData70:
 	.db $0a $00 $55 $5b
 	.db $4a $00 $55 $5b
 	.db $0a $01 $56 $5c
 
-treasureObjectData4d:
+treasureObjectData73:
 	.db $08 $00 $4a $37
 	.db $02 $00 $4a $37
 
+
+treasureObjectData45:
+	.db $09 $00 $76 $4a
+	.db $19 $00 $76 $4a
+
+treasureObjectData49:
+	.db $0a $00 $3c $4d
+	.db $00 $00 $ff $4d
+
+treasureObjectData4c:
+	.db $0a $00 $7b $50
+	.db $0a $02 $ff $00
+
+treasureObjectData5d:
+	.db $0a $00 $87 $6f
+	.db $10 $00 $ff $6f
+
+treasureObjectData5e:
+	.db $0a $00 $88 $7c
+	.db $10 $00 $88 $7c

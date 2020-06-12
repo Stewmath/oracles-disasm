@@ -261,19 +261,19 @@ interaction63SubidData:
 	m_InteractionData $78 $04 $00
 	m_InteractionData $78 $06 $40
 	m_InteractionData $78 $08 $53
-	m_InteractionData $00 $00 $00
-	m_InteractionData $00 $00 $00
+	m_InteractionData $e3 $00 $33 ; 0x03 - star ore
+	m_InteractionData $e2 $0c $23 ; 0x04 - ribbon
 	m_InteractionData $78 $10 $40
 	m_InteractionData $78 $12 $20
 	m_InteractionData $78 $14 $30
 	m_InteractionData $78 $16 $10
 	m_InteractionData $78 $18 $10
 	m_InteractionData $78 $1a $00
-	m_InteractionData $00 $00 $00
-	m_InteractionData $00 $00 $00
+	m_InteractionData $e2 $10 $33 ; 0x0b - spring banana
+	m_InteractionData $e3 $04 $20 ; 0x0c - red ore
 	m_InteractionData $79 $0a $10
 	m_InteractionData $79 $08 $00
-	m_InteractionData $00 $00 $00
+	m_InteractionData $e3 $04 $10 ; 0x0f - blue ore
 	m_InteractionData $7d $00 $00
 	m_InteractionData $7d $02 $50
 	m_InteractionData $7d $04 $40
@@ -282,17 +282,17 @@ interaction63SubidData:
 	m_InteractionData $7d $0a $40
 	m_InteractionData $7d $0c $40
 	m_InteractionData $7d $0e $20
-	m_InteractionData $00 $00 $00
+	m_InteractionData $e2 $18 $23 ; 0x18 - pirates bell (rusty)
 	m_InteractionData $7d $12 $50
 	m_InteractionData $7d $10 $50
 	m_InteractionData $7d $16 $40
 	m_InteractionData $7d $18 $50
-	m_InteractionData $00 $00 $00
-	m_InteractionData $00 $00 $00
+	m_InteractionData $e2 $14 $33 ; 0x1d - treasure map
+	m_InteractionData $e2 $04 $00 ; 0x1e - round jewel
 	m_InteractionData $7d $1e $40
 	m_InteractionData $7c $00 $50
 	m_InteractionData $7c $02 $50
-	m_InteractionData $00 $00 $00
+	m_InteractionData $e2 $06 $20 ; 0x22 - pyramid jewel
 	m_InteractionData $7c $16 $03
 	m_InteractionData $7e $00 $50
 	m_InteractionData $7e $02 $33
@@ -305,7 +305,7 @@ interaction63SubidData:
 	m_InteractionData $78 $06 $50
 	m_InteractionData $78 $08 $43
 	m_InteractionData $78 $08 $53
-	m_InteractionData $00 $00 $00
+	m_InteractionData $e2 $08 $10 ; 0x2f - square jewel
 	m_InteractionData $79 $00 $00
 	m_InteractionData $79 $04 $53
 	m_InteractionData $79 $04 $00
@@ -325,10 +325,10 @@ interaction63SubidData:
 	m_InteractionData $7a $00 $33
 	m_InteractionData $7a $04 $13
 interaction17SubidData:
-	m_InteractionData $7a $0c $50
+	m_InteractionData $7a $0c $50 ; 0x42
 	m_InteractionData $7a $08 $53
 interaction18SubidData:
-	m_InteractionData $7a $0e $50
+	m_InteractionData $7a $0e $50 ; 0x44
 	m_InteractionData $7a $10 $20
 	m_InteractionData $7a $12 $50
 	m_InteractionData $7a $12 $40
@@ -349,12 +349,12 @@ interaction18SubidData:
 	m_InteractionData $83 $0a $04
 	m_InteractionData $83 $00 $33
 	m_InteractionData $82 $12 $32
-	m_InteractionData $00 $00 $00
-	m_InteractionData $00 $00 $00
+	m_InteractionData $e2 $0a $30 ; 0x59 - x-shaped jewel
+	m_InteractionData $e3 $06 $03 ; 0x5a - hard ore
 	m_InteractionData $83 $06 $53
 	m_InteractionData $83 $04 $52
 	m_InteractionData $81 $1c $43
-	m_InteractionData $00 $00 $00
+	m_InteractionData $79 $0c $33 ; 0x5e - masters plaque
 interactiond7SubidData:
 	m_InteractionData $83 $12 $0d
 	m_InteractionData $7f $00 $13
@@ -369,10 +369,10 @@ interactiond7SubidData:
 	m_InteractionData $7e $06 $03
 	m_InteractionData $7e $0e $33
 	m_InteractionData $7e $16 $13
-	m_InteractionData $00 $00 $00
-	m_InteractionData $00 $00 $00
-	m_InteractionData $00 $00 $00
-	m_InteractionData $00 $00 $00
+	m_InteractionData $e0 $0e $50 ; 0x6c - gnarled key
+	m_InteractionData $e0 $10 $40 ; 0x6d - floodgate key
+	m_InteractionData $e0 $12 $10 ; 0x6e - dragon key
+	m_InteractionData $79 $0c $13 ; 0x6f - members card
 	m_InteractionData $80 $00 $53
 	m_InteractionData $80 $04 $22
 	m_InteractionData $80 $06 $03

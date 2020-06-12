@@ -12,6 +12,8 @@
 	m_GfxData spr_common_items ; $09ff69
 	m_GfxData spr_quest_items_5 ; $0a009d
 	m_GfxData spr_map_compass_keys ; $0a01b9
+	m_GfxData spr_a_rollingplatform_d8stuff
+	m_GfxData spr_a_map_compass_keys_bookofseals
 	m_GfxData gfx_blank ; $0a02d7
 	m_GfxData gfx_rings ; $0a02dd
 	m_GfxData spr_item_icons_1_spr ; $0a0637
@@ -20,6 +22,9 @@
 	m_GfxData spr_quest_items_2 ; $0a0a47
 	m_GfxData spr_quest_items_3 ; $0a0c09
 	m_GfxData spr_quest_items_4 ; $0a0d57
+	m_GfxData spr_a_quest_items_2
+	m_GfxData spr_a_quest_items_3
+	m_GfxData spr_a_quest_items_4
 	m_GfxData gfx_hud ; $0a0eab
 	m_GfxData gfx_extra_hud ; $0a0eab
 	m_GfxData gfx_inventory_hud_1 ; $0a0fa0

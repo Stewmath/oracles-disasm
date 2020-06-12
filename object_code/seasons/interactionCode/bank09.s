@@ -5108,7 +5108,7 @@ _companionScript_subid03:
 	ld hl,companionScript_RickyInNorthHoron
 	jp interactionSetScript
 @state2:
-	ld a,TREASURE_RICKY_GLOVES
+	ld a,TREASURE_S_RICKY_GLOVES
 	call loseTreasure
 _companionScript_giveFlute:
 	ld a,$01

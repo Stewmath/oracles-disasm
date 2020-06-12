@@ -886,8 +886,8 @@ wShooterSelectedSeeds: ; $c6c5/$c6bf
 wSlingshotSelectedSeeds:
 	db
 
-wc6f0: ; $c6f2
-	dsb $1
+wPirateBellState: ; -/$c6bd
+	db
 
 .endif ; ROM_AGES
 
@@ -937,6 +937,10 @@ wShooterSelectedSeeds: ; $c6c5/$c6bf
 	db
 wSlingshotSelectedSeeds:
 	db
+wNumSlates:
+    db
+wTuniNutState:
+    db
 .else
 wSlingshotLevel: ; $c6ff/$c6b3
 	db

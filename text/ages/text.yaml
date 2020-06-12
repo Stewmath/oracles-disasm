@@ -1018,6 +1018,128 @@ groups:
       carry more
       \col(1)seeds\col(0)!
 
+  - name: TX_0081
+    index: 0x81
+    text: |-
+      You got the
+      \col(1)Gnarled Key\col(0)!
+
+  - name: TX_0082
+    index: 0x82
+    text: |-
+      You got the
+      \col(1)Floodgate Key\col(0)!
+      Now you can open
+      the floodgates!
+
+  - name: TX_0083
+    index: 0x83
+    text: |-
+      You got the
+      \col(1)Dragon Key\col(0)!
+
+  - name: TX_0084
+    index: 0x84
+    text: |-
+      You found a
+      \col(1)Star-Shaped Ore\col(0)!
+      Maybe you can
+      trade it for
+      something
+      special!
+
+  - name: TX_0085
+    index: 0x85
+    text: |-
+      You got a
+      \col(1)Ribbon\col(0)!
+
+  - name: TX_0086
+    index: 0x86
+    text: |-
+      \pos(2)You got a \col(1)Spring
+      Banana\col(0)! It sure
+      smells sweet!
+
+  - name: TX_0087
+    index: 0x87
+    text: |-
+      \pos(2)You got \col(1)Ricky's
+      Gloves\col(0)!
+
+  - name: TX_0088
+    index: 0x88
+    text: |-
+      You got the
+      \col(1)Rusty Bell\col(0)!
+      Will something
+      this rusty do?
+
+  - name: TX_0089
+    index: 0x89
+    text: |-
+      You got the
+      \col(1)Pirate's Bell\col(0)!
+      GONG!
+
+  - name: TX_008a
+    index: 0x8a
+    text: |-
+      You got the
+      \col(1)Treasure Map\col(0)!
+      Press SELECT to
+      see where the
+      treasure is!
+
+  - name: TX_008b
+    index: 0x8b
+    text: |-
+      \pos(2)You got the
+      \col(1)Round Jewel\col(0)!
+
+  - name: TX_008c
+    index: 0x8c
+    text: |-
+      \pos(2)You got the
+      \col(1)Square Jewel\col(0)!
+
+  - name: TX_008d
+    index: 0x8d
+    text: |-
+      \pos(2)You got the
+      \col(1)X-Shaped Jewel\col(0)!
+
+  - name: TX_008e
+    index: 0x8e
+    text: |-
+      \pos(2)You got the
+      \col(1)Pyramid Jewel\col(0)!
+
+  - name: TX_008f
+    index: 0x8f
+    text: |-
+      You got
+      \col(1)Hard Ore\col(0)!
+
+  - name: TX_0090
+    index: 0x90
+    text: |-
+      You got
+      \col(1)Blue Ore\col(0)!
+
+  - name: TX_0091
+    index: 0x91
+    text: |-
+      You got \col(1)Red Ore\col(0)!
+
+  - name: TX_0092
+    index: 0x92
+    text: |-
+      You got the
+      \col(1)Master's Plaque\col(0)!\stop
+      Take it to the
+      master!
+
 - group: 0x01
   data:
   - name: TX_0100
