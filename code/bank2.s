@@ -568,10 +568,7 @@ _fileSelectMode3:
 	or a
 	jp z,_setFileSelectModeTo1
 
-	call loadFile
-	ld a,(wFileSelect.cursorPos)
-	ldh (<hActiveFileSlot),a
-	call saveFile
+	call copyFile
 	jp _setFileSelectModeTo1
 
 ;;

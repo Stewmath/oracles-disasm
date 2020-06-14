@@ -2188,6 +2188,64 @@ saveFile:
 	jp fileManagement_caller
 
 
+copyFile:
+    ldh a,(<hActiveFileSlot)
+    push af
+
+    ; load ages
+    ld a,SRAMBANK_AGES
+    ld ($4444),a
+    ld c,$02
+    call fileManagement_caller
+
+    ; change to new file
+	ld a,(wFileSelect.cursorPos)
+	ldh (<hActiveFileSlot),a
+
+    ; save ages
+    ld a,SRAMBANK_AGES
+    ld ($4444),a
+    ld c,$01
+    call fileManagement_caller
+
+    ; start again, as seasons
+    call fillBootstrappedSramWithSeasons
+    pop af
+    push af
+    ldh (<hActiveFileSlot),a
+
+    ; load seasons
+    ld a,SRAMBANK_SEASONS
+    ld ($4444),a
+    ld c,$02
+    call fileManagement_caller
+
+    ; change to new file
+	ld a,(wFileSelect.cursorPos)
+	ldh (<hActiveFileSlot),a
+
+	; save seasons
+    ld a,SRAMBANK_SEASONS
+    ld ($4444),a
+    ld c,$01
+    call fileManagement_caller
+
+    ; copy 'last saved game'
+    ld a,SRAMBANK_OTHERGAME_BACKUP
+    ld ($4444),a
+    pop af
+    ld hl,CURRENT_SAVED_GAME_START
+    rst_addAToHl
+    ld b,(hl)
+    ld a,(wFileSelect.cursorPos)
+    ld hl,CURRENT_SAVED_GAME_START
+    rst_addAToHl
+    ld (hl),b
+
+    ; back to ages
+    jp fillBootstrappedSramWithAges
+
+
 saveIntoSwitchedWramInitial:
 	ldh a,(<SVBK)
 	push af
