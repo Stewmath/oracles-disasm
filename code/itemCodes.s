@@ -3297,18 +3297,26 @@ itemCode0fPost:
 @data:
 	.db $00 $00 $00 $00
 .else
+
 ;;
-; ITEMID_MAGNET_GLOVES
-; ITEMID_29
+; ITEMID_MAGNET_BALL
+; Variables:
+;   var03: Disables collisions and uses custom code to prevent enemies passing 
+;		   through it (for wall flame shooters)
+;   var30/var31: Set to initial yh,xh to reset ball's position in wStaticObjects
+;                if ball fell in hole
+;   var32: boolean that restricts friction from its max of SPEED_300 to SPEED_100
+;   var33: vertical friction - the higher, the faster
+;   var34: horizontal friction
 itemCode29:
 	ld e,Item.state
 	ld a,(de)
 	rst_jumpTable
-	.dw @state0
-	.dw @state1
-	.dw @state2
+	.dw @unitialized
+	.dw @mainState
+	.dw @fallingDownCliff
 
-@state0:
+@unitialized:
 	ld a,$01
 	ld (de),a
 
@@ -3328,26 +3336,30 @@ itemCode29:
 	call itemSetAnimation
 	call objectSetVisiblec3
 
+    ; Room with the wall flame shooters
 	ld a,(wActiveGroup)
 	cp >ROOM_SEASONS_494
-	jr nz,@state1
+	jr nz,@mainState
 	ld a,(wActiveRoom)
 	cp <ROOM_SEASONS_494
-	jr nz,@state1
+	jr nz,@mainState
 	ld e,Item.var03
 	ld a,$01
 	ld (de),a
 
-@state1:
-	call @seasonsFunc_07_56ef
-	call @seasonsFunc_07_590f
+@mainState:
+	call @mainStateBody
+	call @applySpeedIfNoCollision
 	ld e,Item.collisionType
 	ld a,(de)
 	bit 7,a
 	ret nz
-	jp @seasonsFunc_07_5a06
+	jp @blockAllWallFlameShooters
 
-@seasonsFunc_07_56ef:
+; Saves ball's position, deals with collision with Link, cliffs and holes,
+; slows down if not hooked on to, checks if hooked on to, move the ball if hooked,
+; begin attracting or repelling the ball
+@mainStateBody:
 	ld h,d
 	ld l,Item.var03
 	ld a,(hl)
@@ -3356,14 +3368,16 @@ itemCode29:
 	ld l,Item.collisionType
 	res 7,(hl)
 +
-	call @seasonsFunc_07_5a28
-	call @seasonsFunc_07_5a5e
+	call @savePositionInStaticObjects
+	call @preventLinkFromPassing
 	ld a,(wMagnetGloveState)
 	or a
-	jp z,@seasonsFunc_07_57bd
+	jp z,@slowDownCheckCliffHolesAndRoomBoundary
 	ld b,$0c
 	call objectCheckCenteredWithLink
-	jp nc,@seasonsFunc_07_57bd
+	jp nc,@slowDownCheckCliffHolesAndRoomBoundary
+	
+	; store in b 0-3 based on opposite angle towards Link
 	call objectGetAngleTowardLink
 	add $04
 	add a
@@ -3371,248 +3385,257 @@ itemCode29:
 	and $03
 	xor $02
 	ld b,a
+	
 	ld a,(w1Link.direction)
 	cp b
-	jp nz,@seasonsFunc_07_57bd
-	ld e,$10
-	ld a,$28
+	jp nz,@slowDownCheckCliffHolesAndRoomBoundary
+	
+	; Link facing ball, using magnet gloves, and near enough to ball
+	ld e,Item.speed
+	ld a,SPEED_100
 	ld (de),a
-	ld e,$32
+	ld e,Item.var32
 	ld a,(de)
 	or a
 	jr z,+
+	; Item.var33
 	inc e
 	ld a,(de)
 	cp $10
-	jp nc,@seasonsFunc_07_57bd
+	jp nc,@slowDownCheckCliffHolesAndRoomBoundary
+	; Item.var34
 	inc e
 	ld a,(de)
 	cp $10
-	jp nc,@seasonsFunc_07_57bd
-	ld e,$32
+	jp nc,@slowDownCheckCliffHolesAndRoomBoundary
+	ld e,Item.var32
 	xor a
 	ld (de),a
 +
 	ld a,(wMagnetGloveState)
 	bit 1,a
-	jr nz,@seasonsFunc_07_578b
-	ld a,($d008)
-	ld hl,@seasonsTable_07_587b
+	jr nz,@repelBall
+	
+	; attract ball
+	ld a,(w1Link.direction)
+	ld hl,@linksRelativePositionForFF8D_FF8CbasedOnLinkDirection
 	rst_addDoubleIndex
-	ld a,($d00b)
+	ld a,(w1Link.yh)
 	add (hl)
 	ldh (<hFF8D),a
 	inc hl
-	ld a,($d00d)
+	ld a,(w1Link.xh)
 	add (hl)
 	ldh (<hFF8C),a
 	push bc
-	call @seasonsFunc_07_5842
+	call @checkLinkInBallsPosition
 	pop bc
-	jp c,@seasonsFunc_07_5806
+	jp c,@moveBallCheckCliffsAndRoomBoundary
+
 	bit 0,b
-	jr nz,@seasonsFunc_07_5779
-	call @seasonsFunc_07_588d
-	ld e,$04
+	jr nz,+
+	call @horizontalAttractBall
+	ld e,Item.state
 	ld a,(de)
 	cp $01
 	ret nz
-	call @seasonsFunc_07_5972
-	call @seasonsFunc_07_594e
-	jp @seasonsFunc_07_5883
-
-@seasonsFunc_07_5779:
-	call @seasonsFunc_07_5883
-	ld e,$04
+	call @incVar33IfNotff
+	call @applySpeedBasedOnVar33
+	jp @verticalAttractBall
++
+	call @verticalAttractBall
+	ld e,Item.state
 	ld a,(de)
 	cp $01
 	ret nz
-	call @seasonsFunc_07_5979
-	call @seasonsFunc_07_5966
-	jp @seasonsFunc_07_588d
+	call @incVar34IfNotff
+	call @applySpeedBasedOnVar34
+	jp @horizontalAttractBall
 
-@seasonsFunc_07_578b:
-	ld a,($d00b)
+@repelBall:
+	ld a,(w1Link.yh)
 	ldh (<hFF8D),a
-	ld a,($d00d)
+	ld a,(w1Link.xh)
 	ldh (<hFF8C),a
 	bit 0,b
-	jr nz,@seasonsFunc_07_57ab
-	call @seasonsFunc_07_588d
-	ld e,$04
+	jr nz,+
+	call @horizontalAttractBall
+	ld e,Item.state
 	ld a,(de)
 	cp $01
 	ret nz
-	call @seasonsFunc_07_5972
-	call @seasonsFunc_07_594e
-	jp @seasonsFunc_07_5897
-
-@seasonsFunc_07_57ab:
-	call @seasonsFunc_07_5883
-	ld e,$04
-	ld a,(de)
-	cp $01
-	ret nz
-	call @seasonsFunc_07_5979
-	call @seasonsFunc_07_5966
-	jp @seasonsFunc_07_58a1
-
-@seasonsFunc_07_57bd:
-	ld e,$33
-	ld a,(de)
-	or a
-	jr z,+
-	ld e,$32
-	ld a,$01
-	ld (de),a
-	call @seasonsFunc_07_5980
-	call @seasonsFunc_07_5980
-	call @seasonsFunc_07_594e
-	ld e,$09
-	ld a,(de)
-	call @seasonsFunc_07_58c3
+	call @incVar33IfNotff
+	call @applySpeedBasedOnVar33
+	jp @verticalRepelBall
 +
-	ld e,$34
+	call @verticalAttractBall
+	ld e,Item.state
+	ld a,(de)
+	cp $01
+	ret nz
+	call @incVar34IfNotff
+	call @applySpeedBasedOnVar34
+	jp @horizontalRepelBall
+
+@slowDownCheckCliffHolesAndRoomBoundary:
+	ld e,Item.var33
 	ld a,(de)
 	or a
 	jr z,+
-	ld e,$32
+	ld e,Item.var32
 	ld a,$01
 	ld (de),a
-	call @seasonsFunc_07_598f
-	call @seasonsFunc_07_598f
-	call @seasonsFunc_07_5966
-	ld e,$09
+	call @keepVar33LessThan40_decVar33IfNot0
+	call @keepVar33LessThan40_decVar33IfNot0
+	call @applySpeedBasedOnVar33
+	ld e,Item.angle
 	ld a,(de)
-	call @seasonsFunc_07_58c3
+	call @checkBallShouldBeDroppedOffCliffOrLeavingRoom
++
+	ld e,Item.var34
+	ld a,(de)
+	or a
+	jr z,+
+	ld e,Item.var32
+	ld a,$01
+	ld (de),a
+	call @keepVar34LessThan40_decVar34IfNot0
+	call @keepVar34LessThan40_decVar34IfNot0
+	call @applySpeedBasedOnVar34
+	ld e,Item.angle
+	ld a,(de)
+	call @checkBallShouldBeDroppedOffCliffOrLeavingRoom
 +
 	call objectCheckIsOnHazard
-	jp c,@seasonsFunc_07_57f8
+	jp c,@ballDropped_positionResetOnRoomReentry
 	ret
 
-@seasonsFunc_07_57f8:
+@ballDropped_positionResetOnRoomReentry:
 	ldh (<hFF8B),a
-	call @seasonsFunc_07_5a1f
+	call @saveInitialPositionInStaticObjects
 	ldh a,(<hFF8B)
 	dec a
 	jp z,objectReplaceWithSplash
 	jp objectReplaceWithFallingDownHoleInteraction
 
-@seasonsFunc_07_5806:
+@moveBallCheckCliffsAndRoomBoundary:
 	xor a
-	ld e,$33
+	ld e,Item.var33
 	ld (de),a
-	ld e,$34
+	ld e,Item.var34
 	ld (de),a
+	
 	ld a,(wLinkAngle)
 	cp $ff
 	ret z
+	
 	ld a,(wGameKeysPressed)
 	ld b,a
-	bit 6,b
+	bit BTN_BIT_UP,b
 	jr z,+
-	ld a,$00
-	call @seasonsFunc_07_583c
+	ld a,ANGLE_UP
+	call @setAngleAndCheckBallShouldBeDroppedOffCliffOrLeavingRoom
 	jr ++
 
 +
-	bit 7,b
+	bit BTN_BIT_DOWN,b
 	jr z,++
-	ld a,$10
-	call @seasonsFunc_07_583c
+	ld a,ANGLE_DOWN
+	call @setAngleAndCheckBallShouldBeDroppedOffCliffOrLeavingRoom
 ++
 	ld a,(wGameKeysPressed)
 	ld b,a
-	bit 4,b
+	bit BTN_BIT_RIGHT,b
 	jr z,+
-	ld a,$08
-	jr @seasonsFunc_07_583c
+	ld a,ANGLE_RIGHT
+	jr @setAngleAndCheckBallShouldBeDroppedOffCliffOrLeavingRoom
 +
-	bit 5,b
-	ld a,$18
+	bit BTN_BIT_LEFT,b
+	ld a,ANGLE_LEFT
 	ret z
 
-@seasonsFunc_07_583c:
-	ld e,$09
+@setAngleAndCheckBallShouldBeDroppedOffCliffOrLeavingRoom:
+	ld e,Item.angle
 	ld (de),a
-	jp @seasonsFunc_07_58c3
+	jp @checkBallShouldBeDroppedOffCliffOrLeavingRoom
 
-@seasonsFunc_07_5842:
+@checkLinkInBallsPosition:
 	ldh a,(<hFF8D)
 	ld b,a
 	ldh a,(<hFF8C)
 	ld c,a
 	jp objectCheckContainsPoint
 
-@state2:
+@fallingDownCliff:
 	ld h,d
-	ld l,$24
+	ld l,Item.collisionType
 	set 7,(hl)
-	ld l,$08
+	ld l,Item.direction
 	ldi a,(hl)
+	; Item.angle
 	ld (hl),a
 	call objectApplySpeed
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	ret nz
-	ld a,$77
+	ld a,SND_DROPESSENCE
 	call playSound
 	ld h,d
-	ld l,$06
+	ld l,Item.counter1
 	dec (hl)
 	jr z,+
 	ld bc,$ff20
-	ld l,$14
+	ld l,Item.speedZ
 	ld (hl),c
 	inc l
 	ld (hl),b
-	ld l,$10
+	ld l,Item.speed
 	ld (hl),$14
 	ret
 +
 	ld a,$01
-	ld e,$04
+	ld e,Item.state
 	ld (de),a
 	ret
 
-@seasonsTable_07_587b:
+@linksRelativePositionForFF8D_FF8CbasedOnLinkDirection:
 	.db $f0 $00
 	.db $00 $10
 	.db $10 $00
 	.db $00 $f0
 
-@seasonsFunc_07_5883:
-	ld b,$00
-	ld c,$10
-	call @seasonsFunc_07_58ab
+@verticalAttractBall:
+	ld b,ANGLE_UP
+	ld c,ANGLE_DOWN
+	call @loadBIntoAngleIfLinkAboveBallElseLoadC
 	ret z
-	jr @seasonsFunc_07_58c3
+	jr @checkBallShouldBeDroppedOffCliffOrLeavingRoom
 
-@seasonsFunc_07_588d:
-	ld b,$18
-	ld c,$08
-	call @seasonsFunc_07_58bb
+@horizontalAttractBall:
+	ld b,ANGLE_LEFT
+	ld c,ANGLE_RIGHT
+	call @loadBIntoAngleIfLinkLeftOfBallElseLoadC
 	ret z
-	jr @seasonsFunc_07_58c3
+	jr @checkBallShouldBeDroppedOffCliffOrLeavingRoom
 
-@seasonsFunc_07_5897:
-	ld b,$10
-	ld c,$00
-	call @seasonsFunc_07_58ab
+@verticalRepelBall:
+	ld b,ANGLE_DOWN
+	ld c,ANGLE_UP
+	call @loadBIntoAngleIfLinkAboveBallElseLoadC
 	ret z
-	jr @seasonsFunc_07_58c3
+	jr @checkBallShouldBeDroppedOffCliffOrLeavingRoom
 
-@seasonsFunc_07_58a1:
-	ld b,$08
-	ld c,$18
-	call @seasonsFunc_07_58bb
+@horizontalRepelBall:
+	ld b,ANGLE_RIGHT
+	ld c,ANGLE_LEFT
+	call @loadBIntoAngleIfLinkLeftOfBallElseLoadC
 	ret z
-	jr @seasonsFunc_07_58c3
+	jr @checkBallShouldBeDroppedOffCliffOrLeavingRoom
 
-@seasonsFunc_07_58ab:
+@loadBIntoAngleIfLinkAboveBallElseLoadC:
 	ldh a,(<hFF8D)
-	ld l,$0b
-	ld e,$33
+	ld l,Item.yh
+	ld e,Item.var33
 -
 	ld h,d
 	cp (hl)
@@ -3620,49 +3643,52 @@ itemCode29:
 	jr c,+
 	ld a,c
 +
-	ld l,$09
+	ld l,Item.angle
 	ld (hl),a
 	ret
 
-@seasonsFunc_07_58bb:
+@loadBIntoAngleIfLinkLeftOfBallElseLoadC:
 	ldh a,(<hFF8C)
-	ld l,$0d
-	ld e,$34
+	ld l,Item.xh
+	ld e,Item.var34
 	jr -
 
-@seasonsFunc_07_58c3:
+@checkBallShouldBeDroppedOffCliffOrLeavingRoom:
 	srl a
-	ld hl,@seasonsTable_07_58ff
+	ld hl,@positionOf2TilesJustAheadOfBall
 	rst_addAToHl
-	call @seasonsFunc_07_58ed
+	call @checkRelativeHLTileCollision_allowHoles
 	jr c,+
-	call @seasonsFunc_07_58ed
+	call @checkRelativeHLTileCollision_allowHoles
 	jr c,+
 	ld h,d
-	ld l,$24
+	ld l,Item.collisionType
 	set 7,(hl)
 	call objectApplySpeed
-	jr @seasonsFunc_07_5930
+	jr @preventFromLeavingRoom
 +
-	call @seasonsFunc_07_59a9
-	ld e,$09
+	call @checkBallShouldBeDroppedOffCliff
+	; var33 is set to 0 if angle is N/S
+	; var34 is set to 0 if angle is E/W
+	ld e,Item.angle
 	ld a,(de)
 	bit 3,a
-	ld e,$33
+	ld e,Item.var33
 	jr z,+
+	; Item.var34
 	inc e
 +
 	xor a
 	ld (de),a
 	ret
 
-@seasonsFunc_07_58ed:
-	ld e,$0b
+@checkRelativeHLTileCollision_allowHoles:
+	ld e,Item.yh
 	ld a,(de)
 	add (hl)
 	inc hl
 	ld b,a
-	ld e,$0d
+	ld e,Item.xh
 	ld a,(de)
 	add (hl)
 	inc hl
@@ -3672,17 +3698,13 @@ itemCode29:
 	pop hl
 	ret
 
-@seasonsTable_07_58ff:
-	.db $f8 $fc
-	.db $f8 $04
-	.db $fc $08
-	.db $04 $08
-	.db $08 $fc
-	.db $08 $04
-	.db $fc $f8
-	.db $04 $f8
+@positionOf2TilesJustAheadOfBall:
+	.db $f8 $fc $f8 $04
+	.db $fc $08 $04 $08
+	.db $08 $fc $08 $04
+	.db $fc $f8 $04 $f8
 
-@seasonsFunc_07_590f:
+@applySpeedIfNoCollision:
 	call objectGetTileAtPosition
 	ld hl,hazardCollisionTable
 	call lookupCollisionTable
@@ -3693,18 +3715,19 @@ itemCode29:
 	ld b,a
 	call checkTileCollisionAt_allowHoles
 	ret nc
-	ld b,$14
-	call @seasonsFunc_07_5961
-	ld e,$09
+	ld b,SPEED_80
+	call @loadBIntoItemSpeed
+	ld e,Item.angle
 	xor a
 	ld (de),a
 	jp objectApplySpeed
 
-@seasonsFunc_07_5930:
-	ld bc,$a8e8
+@preventFromLeavingRoom:
+	; max yh, xh
+	ldbc $a8 $e8
 	ld e,$08
 	ld h,d
-	ld l,$0b
+	ld l,Item.yh
 	ld a,e
 	cp (hl)
 	jr c,+
@@ -3715,7 +3738,7 @@ itemCode29:
 	jr nc,+
 	ld (hl),a
 +
-	ld l,$0d
+	ld l,Item.xh
 	ld a,e
 	cp (hl)
 	jr c,+
@@ -3727,54 +3750,59 @@ itemCode29:
 	ld (hl),a
 	ret
 
-@seasonsFunc_07_594e:
-	ld e,$33
+@applySpeedBasedOnVar33:
+	ld e,Item.var33
 --
 	ld a,(de)
 	cp $40
-	ld b,$78
-	jr nc,@seasonsFunc_07_5961
+	ld b,SPEED_300
+	jr nc,@loadBIntoItemSpeed
 	and $38
 	swap a
 	rlca
-	ld hl,@seasonsTable_596a
+	ld hl,@magnetBallSpeeds
 	rst_addAToHl
 	ld b,(hl)
 
-@seasonsFunc_07_5961:
+@loadBIntoItemSpeed:
 	ld a,b
-	ld e,$10
+	ld e,Item.speed
 	ld (de),a
 	ret
 
-@seasonsFunc_07_5966:
-	ld e,$34
+@applySpeedBasedOnVar34:
+	ld e,Item.var34
 	jr --
 
-@seasonsTable_596a:
-	.db $0a $14
-	.db $28 $32
-	.db $3c $46
-	.db $50 $50
+; moves faster the longer you've interacted with it
+@magnetBallSpeeds:
+	.db SPEED_040
+	.db SPEED_080
+	.db SPEED_100
+	.db SPEED_140
+	.db SPEED_180
+	.db SPEED_1c0
+	.db SPEED_200
+	.db SPEED_200
 
-@seasonsFunc_07_5972:
+@incVar33IfNotff:
 	ld h,d
-	ld l,$33
+	ld l,Item.var33
 	inc (hl)
 	ret nz
 	dec (hl)
 	ret
 
-@seasonsFunc_07_5979:
+@incVar34IfNotff:
 	ld h,d
-	ld l,$34
+	ld l,Item.var34
 	inc (hl)
 	ret nz
 	dec (hl)
 	ret
 
-@seasonsFunc_07_5980:
-	ld l,$33
+@keepVar33LessThan40_decVar33IfNot0:
+	ld l,Item.var33
 --
 	ld h,d
 	ld a,(hl)
@@ -3788,17 +3816,17 @@ itemCode29:
 	ld (hl),a
 	ret
 
-@seasonsFunc_07_598f:
-	ld l,$34
+@keepVar34LessThan40_decVar34IfNot0:
+	ld l,Item.var34
 	jr --
 
-@seasonsFunc_07_5993:
-	ld e,$0b
+@retCIfTileAtRelativePositionHLIsTopOfCliff:
+	ld e,Item.yh
 	ld a,(de)
 	add (hl)
 	inc hl
 	ld b,a
-	ld e,$0d
+	ld e,Item.xh
 	ld a,(de)
 	add (hl)
 	inc hl
@@ -3810,63 +3838,64 @@ itemCode29:
 	cp $04
 	ret
 
-@seasonsFunc_07_59a9:
-	call @seasonsFunc_07_59fb
+@checkBallShouldBeDroppedOffCliff:
+	call @convertAngleTo0To3
 	add a
-	ld hl,@seasonsTable_07_58ff
+	ld hl,@positionOf2TilesJustAheadOfBall
 	rst_addDoubleIndex
-	call @seasonsFunc_07_5993
+	call @retCIfTileAtRelativePositionHLIsTopOfCliff
 	ret nc
-	call @seasonsFunc_07_5993
+	call @retCIfTileAtRelativePositionHLIsTopOfCliff
 	ret nc
+	; a is the type of wall from 0 to 3
 	add $02
 	and $03
 	swap a
 	rrca
 	ld b,a
-	ld e,$09
+	ld e,Item.angle
 	ld a,(de)
 	cp b
 	ret nz
 	sra a
-	ld hl,@seasonsTable_07_59eb
+	
+	ld hl,@cliffDropData
 	rst_addAToHl
 	ldi a,(hl)
-	ld e,$08
+	ld e,Item.direction
 	ld (de),a
 	ldi a,(hl)
-	ld e,$10
+	ld e,Item.speed
 	ld (de),a
 	ldi a,(hl)
-	ld e,$14
+	ld e,Item.speedZ
 	ld (de),a
 	inc e
 	ld a,(hl)
 	ld (de),a
+	
+	; reset var32 - var34
 	xor a
 	ld h,d
-	ld l,$32
+	ld l,Item.var32
 	ldi (hl),a
 	ldi (hl),a
 	ld (hl),a
-	ld l,$06
+	
+	ld l,Item.counter1
 	ld (hl),$02
-	ld l,$04
+	ld l,Item.state
 	ld (hl),$02
 	ret
 
-@seasonsTable_07_59eb:
-	.db $00 $28
-	.db $40 $fe
-	.db $08 $28
-	.db $40 $fe
-	.db $10 $28
-	.db $40 $fe
-	.db $18 $28
-	.db $40 $fe
+@cliffDropData:
+	dbbw ANGLE_UP    SPEED_100 $fe40
+	dbbw ANGLE_RIGHT SPEED_100 $fe40
+	dbbw ANGLE_DOWN  SPEED_100 $fe40
+	dbbw ANGLE_LEFT  SPEED_100 $fe40
 
-@seasonsFunc_07_59fb:
-	ld e,$09
+@convertAngleTo0To3:
+	ld e,Item.angle
 	ld a,(de)
 	add $04
 	add a
@@ -3874,46 +3903,47 @@ itemCode29:
 	and $03
 	ret
 
-@seasonsFunc_07_5a06:
-	ld hl,$d080
+@blockAllWallFlameShooters:
+	ldhl FIRST_ENEMY_INDEX, Enemy.start
 -
 	ld a,(hl)
 	or a
-	call nz,@seasonsFunc_07_5a15
+	call nz,@blockWallFlameShooter
 	inc h
 	ld a,h
 	cp $e0
 	jr c,-
 	ret
 
-@seasonsFunc_07_5a15:
+@blockWallFlameShooter:
 	push hl
-	ld l,$8f
+	ld l,Enemy.zh
 	bit 7,(hl)
 	call z,preventObjectHFromPassingObjectD
 	pop hl
 	ret
 
-@seasonsFunc_07_5a1f:
-	ld e,$30
+@saveInitialPositionInStaticObjects:
+	ld e,Item.var30 ; yh
 	ld a,(de)
 	ld b,a
+	; Item.var31 ; xh
 	inc e
 	ld a,(de)
 	ld c,a
 	jr +
 
-@seasonsFunc_07_5a28:
+@savePositionInStaticObjects:
 	call objectCheckIsOnHazard
 	ret c
-	ld e,$0b
+	ld e,Item.yh
 	ld a,(de)
 	ld b,a
-	ld e,$0d
+	ld e,Item.xh
 	ld a,(de)
 	ld c,a
 +
-	ld e,$16
+	ld e,Item.relatedObj1
 	ld a,(de)
 	ld l,a
 	inc e
@@ -3923,6 +3953,7 @@ itemCode29:
 	ld bc,$0004
 	add hl,bc
 	pop bc
+	; Make sure magnet ball is not too close to room edges so Link can walk in
 	ld a,b
 	cp $18
 	jr nc,+
@@ -3945,29 +3976,29 @@ itemCode29:
 	ld (hl),a
 	ret
 
-@seasonsFunc_07_5a5e:
+@preventLinkFromPassing:
 	ld a,(wLinkInAir)
 	rlca
 	ret c
-	ld a,($d004)
-	cp $01
+	ld a,(w1Link.state)
+	cp LINK_STATE_NORMAL
 	ret nz
 	call objectCheckCollidedWithLink_ignoreZ
 	ret nc
-	ld a,($d00b)
+	ld a,(w1Link.yh)
 	ld b,a
-	ld a,($d00d)
+	ld a,(w1Link.xh)
 	ld c,a
 	call objectCheckContainsPoint
 	jr c,+
 	call objectGetAngleTowardLink
 	ld c,a
-	ld b,$78
+	ld b,SPEED_300
 	jp updateLinkPositionGivenVelocity
 +
 	call objectGetAngleTowardLink
 	ld c,a
-	ld b,$14
+	ld b,SPEED_080
 	jp updateLinkPositionGivenVelocity
 .endif
 

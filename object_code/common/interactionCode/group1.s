@@ -542,20 +542,19 @@ interactionCode12:
 	call interactionInitGraphics
 	call objectSetVisible82
 @@state1:
-	ld hl,$dd00
+	ld hl,w1MagnetBall
 	ld a,(hl)
 	or a
 	ret nz
 
 	ld (hl),$01
 	inc l
-	; TODO:
-	ld (hl),$29
+	ld (hl),ITEMID_MAGNET_BALL
 	call objectCopyPosition
 
 	; copy relatedObj1 over
 	ld e,Interaction.relatedObj1
-	ld l,$16
+	ld l,Object.relatedObj1
 	ld a,(de)
 	ldi (hl),a
 	inc e

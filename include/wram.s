@@ -3191,6 +3191,10 @@ wRoomLayoutEnd: ; $cfc0
 	w1ReservedItemC:	instanceof ItemStruct
 .ENDE
 
+.ENUM $dd00 export
+	w1MagnetBall:       instanceof ItemStruct
+.ENDE
+
 .ENUM $de00 export
 	; Doesn't have collisions? (comes after LAST_STANDARD_ITEM_INDEX)
 	; Used to store positions for switch hook (ITEMID_SWITCH_HOOK_HELPER).

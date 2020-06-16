@@ -48,6 +48,6 @@ itemAttributes:
 	.db $92 $00 $00 $00 ; $26: ITEMID_26
 	.db $99 $22 $fe $00 ; $27: ITEMID_SWORD_BEAM
 	.db $99 $aa $fc $00 ; $28: ITEMID_28
-	.db $98 $66 $fc $7e ; $29: ITEMID_29
+	.db $98 $66 $fc $7e ; $29: ITEMID_MAGNET_BALL
 	.db $99 $66 $fc $00 ; $2a: ITEMID_RICKY_TORNADO
 	.db $8f $88 $fc $00 ; $2b: ITEMID_DIMITRI_MOUTH

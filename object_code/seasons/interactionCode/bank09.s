@@ -982,15 +982,15 @@ interactionCode64:
 	call interactionInitGraphics
 	call getThisRoomFlags
 	bit 7,(hl)
-	jr nz,@func_5111
+	jr nz,@createBall
 	call objectGetZAboveScreen
 	ld h,d
-	ld l,$44
+	ld l,Interaction.state
 	ld (hl),$01
-	ld l,$4f
+	ld l,Interaction.zh
 	ld (hl),a
 	ret
-@func_5111:
+@createBall:
 	ld e,Interaction.state
 	ld a,$04
 	ld (de),a
@@ -1002,16 +1002,16 @@ interactionCode64:
 	ld e,Interaction.state
 	ld a,$02
 	ld (de),a
-	ld e,$46
+	ld e,Interaction.counter1
 	ld a,$1e
 	ld (de),a
-	ld a,$4d
+	ld a,SND_SOLVEPUZZLE
 	call playSound
 	jp objectSetVisiblec1
 @state2:
 	call interactionDecCounter1
 	ret nz
-	ld l,$44
+	ld l,Interaction.state
 	inc (hl)
 @state3:
 	ld c,$10
@@ -1021,16 +1021,16 @@ interactionCode64:
 	ld a,$04
 	ld (de),a
 @state4:
-	ld hl,$dd00
+	ld hl,w1MagnetBall
 	ld a,(hl)
 	or a
 	ret nz
 	ld (hl),$01
 	inc l
-	ld (hl),$29
+	ld (hl),ITEMID_MAGNET_BALL
 	call objectCopyPosition
-	ld e,$56
-	ld l,$16
+	ld e,Interaction.relatedObj1
+	ld l,Object.relatedObj1
 	ld a,(de)
 	ldi (hl),a
 	inc e
