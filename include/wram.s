@@ -325,12 +325,17 @@ wTerrainEffectsBuffer: ; $c4c0
 	dsb $40
 
 wObjectsToDraw: ; $c500
-; A $40 byte buffer keeping track of which objects to draw, in what order (first = highest
+; A buffer keeping track of which objects to draw, in what order (first = highest
 ; priority). Each entry is 2 bytes, consisting of the address of high byte of the object's
 ; y-position.
-	dsb $40
+;
+; The entries are divided into 4 groups of 16. Each group corresponds to a value for the
+; "object.visible" variable (value from 0-3). Lower values have higher draw priority.
+;
+; Must be aligned to $100 bytes.
+	dsb $80
 
-; $c540-$c5af unused?
+; $c580-$c5af unused?
 
 .ENDS
 
