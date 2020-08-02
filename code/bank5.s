@@ -2275,14 +2275,17 @@ _linkState0a:
 	.dw _warpTransitionF
 
 ;;
+; TRANSITION_DEST_BASIC
 _warpTransition0:
 	call _warpTransition_setLinkFacingDir
 ;;
+; TRANSITION_DEST_UNKNOWN_A
 _warpTransitionA:
 	jp _initLinkStateAndAnimateStanding
 
 ;;
-; Transition E shifts Link's X position left 8, but otherwise behaves like Transition 1
+; TRANSITION_DEST_X_SHIFTED
+; Shifts Link's X position left 8, but otherwise behaves like Transition 1
 _warpTransitionE:
 	call objectCenterOnTile
 	ld a,(hl)
@@ -2290,22 +2293,23 @@ _warpTransitionE:
 	ld (hl),a
 
 ;;
-; Transition 1 behaves like transition 0, but saves link's deathwarp point
+; TRANSITION_DEST_SET_RESPAWN
+; Behaves like transition 0, but saves link's deathwarp point
 _warpTransition1:
 	call _warpTransition_setLinkFacingDir
 
 ;;
 _warpUpdateRespawnPoint:
 	ld a,(wActiveGroup)
-	cp NUM_UNIQUE_GROUPS
+	cp NUM_UNIQUE_GROUPS ; Don't update respawn point in sidescrolling rooms?
 	jr nc,_warpTransition0
 	call setDeathRespawnPoint
 	call updateLinkLocalRespawnPosition
 	jp _initLinkStateAndAnimateStanding
 
 ;;
-; Transition C behaves like transition 0, but sets link's facing direction in
-; a way I don't understand
+; TRANSITION_DEST_UNKNOWN_C
+; Behaves like transition 0, but sets link's facing direction in a way I don't understand
 _warpTransitionC:
 	ld a,(wcc50)
 	and $03
@@ -2334,6 +2338,7 @@ _facingDirAfterWarpTable:
 	.dw @collisions5
 
 .ifdef ROM_AGES
+
 @collisions1:
 	.db $36 DIR_UP ; Cave opening?
 
@@ -2346,7 +2351,9 @@ _facingDirAfterWarpTable:
 @collisions4:
 @collisions5:
 	.db $00
-.else
+
+.else ; ROM_SEASONS
+
 @collisions3:
 	.db $36 DIR_UP
 @collisions4:
@@ -2357,10 +2364,12 @@ _facingDirAfterWarpTable:
 @collisions1:
 @collisions2:
 	.db $00
+
 .endif
 
 ;;
-; Transition 2 is used by warp sources to fade out the screen.
+; TRANSITION_SRC_FADEOUT
+; Screen fades out.
 _warpTransition2:
 	ld a,$03
 	ld (wWarpTransition2),a
@@ -2368,9 +2377,10 @@ _warpTransition2:
 	jp playSound
 
 ;;
-; Transition 3 is used by both sources and destinations for transitions where
-; link walks off the screen (or comes in from off the screen). It saves link's
-; deathwarp point.
+; TRANSITION_DEST_ENTERSCREEN
+; TRANSITION_SRC_LEAVESCREEN
+; Used by both sources and destinations for transitions where link walks off the screen (or comes in
+; from off the screen). It saves link's deathwarp point.
 _warpTransition3:
 	ld e,<w1Link.warpVar1
 	ld a,(de)
@@ -2483,10 +2493,11 @@ _warpTransition3:
 	swap a
 	and $f0
 	ld b,a
+
+	; Add +8 to link's X position if in a large room
 	ld a,(wActiveGroup)
 	and NUM_SMALL_GROUPS
 	jr z,+
-
 	rlca
 +
 	or b
@@ -2501,6 +2512,8 @@ _warpTransition3:
 	.db $f0 $78 ; large room, enter from top
 
 ;;
+; TRANSITION_DEST_DONT_SET_RESPAWN
+; TRANSITION_SRC_INSTANT
 _warpTransition4:
 	ld a,(wWarpTransition)
 	rlca
@@ -2512,6 +2525,7 @@ _warpTransition4:
 	jp playSound
 
 ;;
+; TRANSITION_DEST_FALL
 ; Link falls into the screen
 _warpTransition5:
 	ld e,<w1Link.warpVar1
@@ -2543,26 +2557,37 @@ _warpTransition5_01:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	ret nz
+
+	; BUG(?): the "objectGetTileAtPosition" function should not have been removed in Ages?
+	; Regardless this transition type appears to be unused in Ages anyway.
+
 .ifdef ROM_SEASONS
 	call objectGetTileAtPosition
-	cp $07
-	jr z,+
+	cp TILEINDEX_TRAMPOLINE
+	jr z,@trampoline
 .endif
+
+	; If he didn't fall into a hazard, make link "collapse" when he lands.
 	ld hl,hazardCollisionTable
 	call lookupCollisionTable
-	jp nc,_warpTransition7@label_4c05
+	jp nc,_warpTransition7@linkCollapsed
 	jp _initLinkStateAndAnimateStanding
+
 .ifdef ROM_SEASONS
-+
+@trampoline:
 	ld a,(wActiveGroup)
 	and $06
 	cp $04
-	jp nz,_warpTransition7@label_4c05
+	jp nz,_warpTransition7@linkCollapsed
 	; group 4/5
-	jp seasonsFunc_05_50a5
+	jp _bounceLinkOffTrampolineAfterFalling
 .endif
 
+
 .ifdef ROM_SEASONS
+
+; TRANSITION_DEST_FROM_TRAMPOLINE
+; Jumped in from a trampoline.
 _warpTransition6:
 	ld e,SpecialObject.state2
 	ld a,(de)
@@ -2580,13 +2605,13 @@ _warpTransition6_00:
 	rrca
 	and $0f
 	ld (wcc50),a
-	ld a,$09
+	ld a,LINK_STATE_BOUNCING_ON_TRAMPOLINE
 	jp linkSetState
 +
 	ld bc,-$300
 	call objectSetSpeedZ
 	ld l,SpecialObject.counter1
-	ld (hl),$78
+	ld (hl),120
 	ld l,SpecialObject.yh
 	ld a,(hl)
 	sub $04
@@ -2597,27 +2622,29 @@ _warpTransition6_00:
 _warpTransition6_01:
 	ld c,$18
 	call objectUpdateSpeedZ_paramC
-	jr z,+
+	jr z,@hitGround
 	call specialObjectAnimate
 	call _specialObjectUpdateAdjacentWallsBitset
 	ld e,SpecialObject.speed
-	ld a,$14
+	ld a,SPEED_80
 	ld (de),a
 	ld a,(wLinkAngle)
 	ld e,SpecialObject.angle
 	ld (de),a
 	call updateLinkDirectionFromAngle
 	jp specialObjectUpdatePosition
-+
+
+@hitGround:
 	call objectGetTileAtPosition
-	cp $07
-	jp z,seasonsFunc_05_50a5
+	cp TILEINDEX_TRAMPOLINE
+	jp z,_bounceLinkOffTrampolineAfterFalling
 	jp _initLinkStateAndAnimateStanding
 .endif
 
 
 ;;
-; Used only in Seasons
+; TRANSITION_DEST_FALL_INTO_HOLLYS_HOUSE
+; Only used in Seasons.
 _warpTransition7:
 	ld e,<w1Link.warpVar1
 	ld a,(de)
@@ -2643,7 +2670,7 @@ _warpTransition7:
 	res 7,(hl)
 
 	ld l,<w1Link.warpVar2
-	ld (hl),$78
+	ld (hl),120
 
 	ld a,LINK_ANIM_MODE_FALL
 	call specialObjectSetAnimation
@@ -2672,7 +2699,7 @@ _warpTransition7:
 	call itemDecCounter1
 	jp nz,specialObjectUpdatePosition
 ;;
-@label_4c05:
+@linkCollapsed:
 	call itemIncState2
 	ld l,<w1Link.warpVar2
 	ld (hl),$1e
@@ -2706,7 +2733,8 @@ _linkIncrementDirection:
 	ret
 
 ;;
-; A subrosian warp portal?
+; TRANSITION_SRC_SUBROSIA
+; A subrosian warp portal.
 _warpTransition8:
 	ld e,SpecialObject.state2
 	ld a,(de)
@@ -2842,6 +2870,8 @@ _warpTransition8:
 	jp _initLinkStateAndAnimateStanding
 
 ;;
+; TRANSITION_SRC_FALL
+; Fall out of the screen (like into a hole).
 _warpTransition9:
 	ld e,SpecialObject.state2
 	ld a,(de)
@@ -2877,6 +2907,8 @@ _warpTransition9:
 	ret
 
 ;;
+; TRANSITION_DEST_SLOWFALL
+; Transition used in the beginning of the game. Updates respawn point.
 _warpTransitionB:
 	ld e,<w1Link.warpVar1
 	ld a,(de)
@@ -2904,6 +2936,8 @@ _warpTransitionB:
 	call objectUpdateSpeedZ_paramC
 	ret nz
 
+	; Done falling. Set Link's initial state depending on the game.
+
 .ifdef ROM_AGES
 	call itemIncState2
 	call _animateLinkStanding
@@ -2912,7 +2946,7 @@ _warpTransitionB:
 .else
 	xor a
 	ld (wDisabledObjects),a
-	ld a,$08
+	ld a,SPECIALOBJECTID_LINK_CUTSCENE
 	call setLinkIDOverride
 	ld l,SpecialObject.subid
 	ld (hl),$02
@@ -2929,13 +2963,18 @@ _warpTransitionB:
 
 
 ;;
+; TRANSITION_DEST_INVISIBLE
+; Link does not appear.
 _warpTransitionF:
 	call _checkLinkForceState
 	jp objectSetInvisible
 
+
 .ifdef ROM_AGES
+
 ;;
-; "Timewarp" transition
+; TRANSITION_DEST_TIMEWARP
+; Warp in and create a portal. Doesn't update respawn. Ages only.
 _warpTransition6:
 	ld e,SpecialObject.state2
 	ld a,(de)
@@ -2977,7 +3016,7 @@ _warpTransition6:
 	call objectGetTileAtPosition
 	push hl
 
-	; This should be "ld e,a" instead of "ld a,e".
+	; BUG: This should be "ld e,a" instead of "ld a,e".
 	ld a,e
 
 	ld hl,@doorTiles
@@ -3906,7 +3945,7 @@ _linkState09:
 	ret nz
 	call objectGetTileAtPosition
 	cp $07
-	jr z,seasonsFunc_05_50a5
+	jr z,_bounceLinkOffTrampolineAfterFalling
 	ld h,d
 	ld l,SpecialObject.state2
 	inc (hl)
@@ -3933,7 +3972,7 @@ _linkState09:
 	call updateLinkLocalRespawnPosition
 	jr -
 
-seasonsFunc_05_50a5:
+_bounceLinkOffTrampolineAfterFalling:
 	call objectGetShortPosition
 	ld c,a
 	ld b,$02
@@ -6490,6 +6529,7 @@ _initLinkState:
 	ret
 
 ;;
+; Called after most types of warps
 _initLinkStateAndAnimateStanding:
 	call _initLinkState
 	ld l,<w1Link.visible

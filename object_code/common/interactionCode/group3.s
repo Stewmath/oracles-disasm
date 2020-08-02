@@ -1149,8 +1149,8 @@ interactionCode7e:
 +
 	ld a,b
 	ldi (hl),a  ; [wWarpDestRoom] = b
-	lda TRANSITION_DEST_0
-	ldi (hl),a  ; [wWarpTransition] = TRANSITION_DEST_0
+	lda TRANSITION_DEST_BASIC
+	ldi (hl),a  ; [wWarpTransition] = TRANSITION_DEST_BASIC
 	ld (hl),$57 ; [wWarpDestPos] = $57
 	inc l
 	ld (hl),$03 ; [wWarpTransition2] = $03 (fadeout)
@@ -1283,7 +1283,7 @@ interactionCode7e:
 	ld (wWarpDestPos),a
 	ld a,$85
 	ld (wWarpDestGroup),a
-	lda TRANSITION_DEST_0
+	lda TRANSITION_DEST_BASIC
 	ld (wWarpTransition),a
 	ld a,$03
 	ld (wWarpTransition2),a ; Fadeout transition

@@ -1793,7 +1793,7 @@ wWarpDestRoom: ; $cc48/$cc64
 ; This first holds the warp destination index, then (later) the room index.
 	db
 wWarpTransition: ; $cc49/$cc65
-; Bits 0-3 are the half-byte given in WarpDest or StandardWarp macros.
+; Bits 0-3 are the half-byte given in WarpDest or StandardWarp macros. See "constants/transitions.s".
 ; Bit 6 determines link's direction for screen-edge warps?
 ; Bit 7 set if this is the "destination" part of the warp?
 	db
