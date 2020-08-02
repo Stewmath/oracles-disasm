@@ -995,8 +995,7 @@ interactionCodeb6:
 +
 	set 1,(hl)
 
-@decGashaMaturity
-	; BUG: no bounds checking here; you could underflow wGashaMaturity.
+@decGashaMaturity:
 	ld hl,wGashaMaturity
 	ld a,(hl)
 	sub 200
@@ -1005,6 +1004,7 @@ interactionCodeb6:
 	sbc $00
 	ld (hl),a
 
+	; Underflow check
 	jr nc,@spawnTreasure
 	xor a
 	ldd (hl),a
