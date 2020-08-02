@@ -1365,7 +1365,7 @@ biggoron_createSparkleAtLink:
 ; INTERACID_HEAD_SMELTER
 ; ==============================================================================
 headSmelter_loseBombFlower:
-	ld a,TREASURE_58
+	ld a,TREASURE_BOMB_FLOWER_LOWER_HALF
 	call loseTreasure
 	ld a,TREASURE_BOMB_FLOWER
 	jp loseTreasure

@@ -119,7 +119,7 @@ treasureDisplayData2:
 	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_55
 	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_56
 	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_57
-	.db TREASURE_BOMB_FLOWER        $f7 $04 $f8 $04 $ff $1a ; TREASURE_58
+	.db TREASURE_BOMB_FLOWER        $f7 $04 $f8 $04 $ff $1a ; TREASURE_BOMB_FLOWER_LOWER_HALF
 
 @satchelData:
 	.db TREASURE_EMBER_SEEDS        $80 $05 $83 $02 $01 $2d
