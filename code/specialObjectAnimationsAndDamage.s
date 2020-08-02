@@ -504,7 +504,7 @@ linkUpdateDamageToApplyForRings:
 	sra a
 	jr @writeDamageToApply
 
-; Green ring: damage /= 1.5
+; Green ring: damage *= 0.75
 @greenRing:
 	ld a,b
 	cpl
