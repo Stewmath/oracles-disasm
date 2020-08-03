@@ -895,7 +895,7 @@ _itemCheckCanPassSolidTile:
 ; @param[out]	zflag	Set if there will be no elevation change (ignore the value of a)
 _checkTileIsPassableFromDirection:
 	; Check if the tile can be passed by items
-	ld hl,_itemPassableTilesTable
+	ld hl,itemPassableTilesTable
 	call findByteInCollisionTable_paramE
 	jr c,@canPassWithoutElevationChange
 
@@ -965,7 +965,7 @@ _itemUpdateConveyorBelt:
 	; Check if on a conveyor belt; get in 'a' the angle to move in if so
 	ld bc,$0500
 	call objectGetRelativeTile
-	ld hl,_itemConveyorTilesTable
+	ld hl,itemConveyorTilesTable
 	call lookupCollisionTable
 	ret nc
 

@@ -132,9 +132,10 @@ def dumpAnimations(objectType):
             if hasLabel:
                 loopLabel = dataLabel
             else:
-                # Making the assumption that all loops are local. (There's one special
-                # case in seasons where this assumption fails.)
-                loopLabel = '@' + dataLabel + 'Loop'
+                # It would be ok to make the label start with '@' (a local label) in general, except
+                # for one edge-case in seasons. I used to do this, but now I have a policy of not
+                # using local labels in the "data" folder to simplify parsing in LynnaLab.
+                loopLabel = dataLabel + 'Loop'
                 outFile.write(loopLabel + ':\n')
         counter = rom[address]
         if counter == 0xff:

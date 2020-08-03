@@ -551,10 +551,10 @@ partAnimation5b9f5:
 	.db $04 $02 $00
 	.db $04 $04 $00
 	.db $04 $06 $00
-@partAnimation5b9f5Loop:
+partAnimation5b9f5Loop:
 	.db $04 $08 $00
 	.db $04 $0a $00
-	m_AnimationLoop @partAnimation5b9f5Loop
+	m_AnimationLoop partAnimation5b9f5Loop
 
 partAnimation5ba0f:
 	.db $03 $02 $83
@@ -598,10 +598,10 @@ partAnimation5ba4f:
 partAnimation5ba60:
 	.db $08 $00 $00
 	.db $08 $02 $00
-@partAnimation5ba60Loop:
+partAnimation5ba60Loop:
 	.db $08 $04 $00
 	.db $08 $06 $00
-	m_AnimationLoop @partAnimation5ba60Loop
+	m_AnimationLoop partAnimation5ba60Loop
 
 partAnimation5ba6e:
 	.db $08 $08 $00
@@ -627,10 +627,10 @@ partAnimation5ba8c:
 
 partAnimation5ba94:
 	.db $01 $00 $00
-@partAnimation5ba94Loop:
+partAnimation5ba94Loop:
 	.db $04 $02 $00
 	.db $04 $00 $01
-	m_AnimationLoop @partAnimation5ba94Loop
+	m_AnimationLoop partAnimation5ba94Loop
 
 partAnimation5ba9f:
 	.db $04 $04 $02
@@ -648,12 +648,12 @@ partAnimation5bab4:
 partAnimation5babc:
 	.db $06 $00 $00
 	.db $06 $02 $00
-@partAnimation5babcLoop:
+partAnimation5babcLoop:
 	.db $06 $04 $00
 	.db $06 $06 $00
 	.db $06 $08 $00
 	.db $06 $0a $00
-	m_AnimationLoop @partAnimation5babcLoop
+	m_AnimationLoop partAnimation5babcLoop
 
 partAnimation5bad0:
 	.db $06 $0c $00
@@ -686,9 +686,9 @@ partAnimation5baf3:
 	.db $02 $0a $00
 	.db $02 $0c $00
 	.db $02 $0a $00
-@partAnimation5baf3Loop:
+partAnimation5baf3Loop:
 	.db $7f $0e $01
-	m_AnimationLoop @partAnimation5baf3Loop
+	m_AnimationLoop partAnimation5baf3Loop
 
 partAnimation5bb10:
 	.db $02 $00 $00
@@ -729,10 +729,10 @@ partAnimation5bb5a:
 	.db $04 $20 $00
 	.db $04 $22 $00
 	.db $04 $24 $00
-@partAnimation5bb5aLoop:
+partAnimation5bb5aLoop:
 	.db $04 $26 $00
 	.db $04 $28 $00
-	m_AnimationLoop @partAnimation5bb5aLoop
+	m_AnimationLoop partAnimation5bb5aLoop
 
 partAnimation5bb74:
 	.db $04 $08 $00

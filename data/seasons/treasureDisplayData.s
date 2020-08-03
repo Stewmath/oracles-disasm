@@ -15,22 +15,22 @@ treasureDisplayData1:
 	.db $00 $00 $00
 
 treasureDisplayData2:
-	.dw @standardData
-	.dw @satchelData
-	.dw @slingshotData
-	.dw @hyperSlingshotData
-	.dw @swordData     - 7
-	.dw @shieldData    - 7
-	.dw @featherData   - 7
-	.dw @boomerangData - 7
-	.dw @tradeItemData
-	.dw @pirateBellData
-	.dw @magnetGloveData
-	.dw @fluteData
+	.dw treasureDisplayData_standard
+	.dw treasureDisplayData_satchel
+	.dw treasureDisplayData_slingshot
+	.dw treasureDisplayData_hyperSlingshot
+	.dw treasureDisplayData_sword     - 7
+	.dw treasureDisplayData_shield    - 7
+	.dw treasureDisplayData_feather   - 7
+	.dw treasureDisplayData_boomerang - 7
+	.dw treasureDisplayData_tradeItem
+	.dw treasureDisplayData_pirateBell
+	.dw treasureDisplayData_magnetGlove
+	.dw treasureDisplayData_flute
 
-	.dw @swordData
+	.dw treasureDisplayData_sword
 
-@standardData:
+treasureDisplayData_standard:
 	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_NONE
 	.db $00                         $07 $00 $00 $00 $00 $00 ; (filler) TREASURE_SHIELD
 	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_PUNCH
@@ -121,46 +121,46 @@ treasureDisplayData2:
 	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_57
 	.db TREASURE_BOMB_FLOWER        $f7 $04 $f8 $04 $ff $1a ; TREASURE_BOMB_FLOWER_LOWER_HALF
 
-@satchelData:
+treasureDisplayData_satchel:
 	.db TREASURE_EMBER_SEEDS        $80 $05 $83 $02 $01 $2d
 	.db TREASURE_SCENT_SEEDS        $80 $05 $84 $03 $01 $2d
 	.db TREASURE_PEGASUS_SEEDS      $80 $05 $85 $01 $01 $2d
 	.db TREASURE_GALE_SEEDS         $80 $05 $86 $01 $01 $2d
 	.db TREASURE_MYSTERY_SEEDS      $80 $05 $87 $00 $01 $2d
 
-@slingshotData:
+treasureDisplayData_slingshot:
 	.db TREASURE_EMBER_SEEDS        $81 $04 $83 $02 $01 $3c
 	.db TREASURE_SCENT_SEEDS        $81 $04 $84 $03 $01 $3c
 	.db TREASURE_PEGASUS_SEEDS      $81 $04 $85 $01 $01 $3c
 	.db TREASURE_GALE_SEEDS         $81 $04 $86 $01 $01 $3c
 	.db TREASURE_MYSTERY_SEEDS      $81 $04 $87 $00 $01 $3c
 
-@hyperSlingshotData:
+treasureDisplayData_hyperSlingshot:
 	.db TREASURE_EMBER_SEEDS        $82 $05 $83 $02 $01 $3d
 	.db TREASURE_SCENT_SEEDS        $82 $05 $84 $03 $01 $3d
 	.db TREASURE_PEGASUS_SEEDS      $82 $05 $85 $01 $01 $3d
 	.db TREASURE_GALE_SEEDS         $82 $05 $86 $01 $01 $3d
 	.db TREASURE_MYSTERY_SEEDS      $82 $05 $87 $00 $01 $3d
 
-@swordData:
+treasureDisplayData_sword:
 	.db TREASURE_SWORD              $90 $00 $00 $00 $00 $23
 	.db TREASURE_SWORD              $91 $05 $00 $00 $00 $24
 	.db TREASURE_SWORD              $92 $04 $00 $00 $00 $25
 
-@shieldData:
+treasureDisplayData_shield:
 	.db TREASURE_SHIELD             $93 $00 $00 $00 $00 $20
 	.db TREASURE_SHIELD             $94 $05 $00 $00 $00 $21
 	.db TREASURE_SHIELD             $95 $04 $00 $00 $00 $22
 
-@featherData:
+treasureDisplayData_feather:
 	.db TREASURE_FEATHER            $96 $04 $00 $00 $00 $2c
 	.db TREASURE_FEATHER            $97 $05 $00 $00 $00 $3e
 
-@boomerangData:
+treasureDisplayData_boomerang:
 	.db TREASURE_BOOMERANG          $9c $05 $00 $00 $00 $27
 	.db TREASURE_BOOMERANG          $9d $04 $00 $00 $00 $40
 
-@tradeItemData:
+treasureDisplayData_tradeItem:
 	.db TREASURE_TRADEITEM          $c0 $00 $c1 $00 $ff $09
 	.db TREASURE_TRADEITEM          $c2 $03 $c2 $23 $ff $0a
 	.db TREASURE_TRADEITEM          $c3 $00 $c4 $00 $ff $0b
@@ -174,15 +174,15 @@ treasureDisplayData2:
 	.db TREASURE_TRADEITEM          $d6 $01 $d7 $01 $ff $13
 	.db TREASURE_TRADEITEM          $d8 $00 $d9 $00 $ff $14
 
-@pirateBellData:
+treasureDisplayData_pirateBell:
 	.db TREASURE_PIRATES_BELL       $ec $02 $ed $02 $ff $48
 	.db TREASURE_PIRATES_BELL       $ee $01 $ef $01 $ff $49
 
-@magnetGloveData:
+treasureDisplayData_magnetGlove:
 	.db TREASURE_MAGNET_GLOVES      $88 $01 $89 $00 $03 $42
 	.db TREASURE_MAGNET_GLOVES      $88 $02 $00 $00 $03 $42
 
-@fluteData:
+treasureDisplayData_flute:
 	.db TREASURE_FLUTE              $8b $00 $8c $00 $ff $2e
 	.db TREASURE_FLUTE              $8b $03 $8d $03 $ff $2f
 	.db TREASURE_FLUTE              $8b $02 $8e $02 $ff $30
