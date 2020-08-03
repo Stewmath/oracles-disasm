@@ -1,6 +1,12 @@
 * text=auto eol=lf
 
 *.s text
+*.py text
+*.sh text
+*.yaml text
+*.txt text
+*.properties text
+
 *.png binary
 *.bin binary
 *.cmp binary
