@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # Helper functions
 def read16(buf, index):
     return buf[index] | (buf[index+1]<<8)

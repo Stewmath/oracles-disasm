@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # Dumps dungeon layouts. I ended up using a different format than what this outputs though.
 
 import sys

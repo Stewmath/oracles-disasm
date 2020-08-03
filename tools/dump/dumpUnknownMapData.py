@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # This file made for extracting certain data around 4b96e
 
 import sys

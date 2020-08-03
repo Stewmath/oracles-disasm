@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # This isn't related to the disassembly; this is just for my studying of the veran warp
 # glitch. (See my findings here: http://wiki.zeldahacking.net/oracle/Veran_Warp)
 

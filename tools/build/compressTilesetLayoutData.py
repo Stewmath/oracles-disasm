@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # Compresses "tilesetCollisions" or "tilesetMappingsIndices" files.
 #
 import sys

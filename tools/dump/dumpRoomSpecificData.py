@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # Dump data which is divided into "groups" with a table of tables at the start.
 # The name of this is a bit misleading, but it was originally used for tables of "rooms".
 

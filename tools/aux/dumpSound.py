@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # Dump sound effects from a specific location for use with oracles-randomizer.
 # (Used for custom compass chimes).
 

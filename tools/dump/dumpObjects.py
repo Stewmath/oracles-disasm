@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # Extract object data to files
 
 import sys

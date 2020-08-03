@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # Dumps "movement scripts". A basic type of script for movement that any object can use
 # (ie. ambi guards and moving platforms in sidescrolling areas).
 

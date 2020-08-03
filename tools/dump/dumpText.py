@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # Note about dumping European text: There's something odd about Ages's
 # French/Spanish text, and Season's French text.
 #

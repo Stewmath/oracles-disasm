@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # Decompresses a single compressed gfx file, where the first byte of the file is NOT the
 # compression mode (so not the format of ".cmp" files).
 

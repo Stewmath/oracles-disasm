@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # Dumps a table where each entry is a byte instead of a pointer; the byte is an offset
 # from the current address to start reading data from.
 

@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # Compresses "tilesetMappings*.bin" files.
 # These files are abstracted to make them more straightforward to modify.
 # They need to be processed together and broken down into:
