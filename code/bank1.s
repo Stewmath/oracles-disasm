@@ -2589,7 +2589,7 @@ cutscene19:
 
 .include "build/data/dungeonData.s"
 .include "data/dungeonProperties.s"
-.include "data/dungeonLayouts.s"
+.include "build/data/dungeonLayouts.s"
 
 .ends
 
