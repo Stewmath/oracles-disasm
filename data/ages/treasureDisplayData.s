@@ -16,17 +16,17 @@ treasureDisplayData1:
 	.db $00				$00                    $00
 
 treasureDisplayData2:
-	.dw @standardData
-	.dw @satchelData
-	.dw @swordData    - 7
-	.dw @shieldData   - 7
-	.dw @braceletData - 7
-	.dw @tradeData
-	.dw @fluteData
-	.dw @shooterData
-	.dw @harpData
-	.dw @tuniNutData
-	.dw @switchHookData-7
+	.dw treasureDisplayData_standard
+	.dw treasureDisplayData_satchel
+	.dw treasureDisplayData_sword    - 7
+	.dw treasureDisplayData_shield   - 7
+	.dw treasureDisplayData_bracelet - 7
+	.dw treasureDisplayData_trade
+	.dw treasureDisplayData_flute
+	.dw treasureDisplayData_shooter
+	.dw treasureDisplayData_harp
+	.dw treasureDisplayData_tuniNut
+	.dw treasureDisplayData_switchHook-7
 
 
 ; The parts marked as "filler" in this table aren't actually used, since they have their
@@ -55,7 +55,7 @@ treasureDisplayData2:
 ;  graphics from vram bank 1. (It has no effect on the icons when in an equippable slot,
 ;  though.)
 
-@standardData:
+treasureDisplayData_standard:
 	.db $00				$00 $00 $00 $00 $ff <TX_0900 ; TREASURE_NONE (0x00)
 	.db $00				$07 $00 $00 $00 $00 <TX_0900 ; (filler) TREASURE_SHIELD (0x01)
 	.db $00				$00 $00 $00 $00 $ff <TX_0900 ; TREASURE_PUNCH (0x02)
@@ -144,7 +144,7 @@ treasureDisplayData2:
 	.db TREASURE_BOOK_OF_SEALS	$3b $01 $3c $01 $ff <TX_0958 ; TREASURE_BOOK_OF_SEALS (0x55)
 	.db $00				$00 $00 $00 $00 $ff <TX_0900 ; TREASURE_56 (0x56)
 	.db $00				$00 $00 $00 $00 $ff <TX_0900 ; TREASURE_57 (0x57)
-	.db TREASURE_BOMB_FLOWER	$f7 $04 $f8 $04 $ff <TX_091a ; TREASURE_58 (0x58)
+	.db TREASURE_BOMB_FLOWER	$f7 $04 $f8 $04 $ff <TX_091a ; TREASURE_BOMB_FLOWER_LOWER_HALF (0x58)
 	.db TREASURE_GORON_LETTER	$ea $03 $eb $03 $ff <TX_0956 ; TREASURE_GORON_LETTER (0x59)
 	.db TREASURE_LAVA_JUICE		$e4 $05 $e5 $05 $ff <TX_0950 ; TREASURE_LAVA_JUICE (0x5a)
 	.db TREASURE_BROTHER_EMBLEM	$e0 $03 $e1 $03 $ff <TX_0949 ; TREASURE_BROTHER_EMBLEM (0x5b)
@@ -156,35 +156,35 @@ treasureDisplayData2:
 	; Treasures $60-$67 don't have display data apparently? (they seem to represent
 	; upgrades)
 
-@satchelData:
+treasureDisplayData_satchel:
 	.db TREASURE_EMBER_SEEDS	$80 $05 $83 $02 $01 <TX_092d ; Ember seeds
 	.db TREASURE_SCENT_SEEDS	$80 $05 $84 $03 $01 <TX_092d ; Scent seeds
 	.db TREASURE_PEGASUS_SEEDS	$80 $05 $85 $01 $01 <TX_092d ; Pegasus seeds
 	.db TREASURE_GALE_SEEDS		$80 $05 $86 $01 $01 <TX_092d ; Gale seeds
 	.db TREASURE_MYSTERY_SEEDS	$80 $05 $87 $00 $01 <TX_092d ; Mystery seeds
 
-@shooterData:
+treasureDisplayData_shooter:
 	.db TREASURE_EMBER_SEEDS	$81 $05 $83 $02 $01 <TX_0940 ; Ember seeds
 	.db TREASURE_SCENT_SEEDS	$81 $05 $84 $03 $01 <TX_0940 ; Scent seeds
 	.db TREASURE_PEGASUS_SEEDS	$81 $05 $85 $01 $01 <TX_0940 ; Pegasus seeds
 	.db TREASURE_GALE_SEEDS		$81 $05 $86 $01 $01 <TX_0940 ; Gale seeds
 	.db TREASURE_MYSTERY_SEEDS	$81 $05 $87 $00 $01 <TX_0940 ; Mystery seeds
 
-@swordData:
+treasureDisplayData_sword:
 	.db TREASURE_SWORD $90 $00 $00 $00 $00 <TX_0923 ; L1
 	.db TREASURE_SWORD $91 $05 $00 $00 $00 <TX_0924 ; L2
 	.db TREASURE_SWORD $92 $04 $00 $00 $00 <TX_0925 ; L3
 
-@shieldData:
+treasureDisplayData_shield:
 	.db TREASURE_SHIELD $93 $00 $00 $00 $00 <TX_0920 ; L1
 	.db TREASURE_SHIELD $94 $05 $00 $00 $00 <TX_0921 ; L2
 	.db TREASURE_SHIELD $95 $04 $00 $00 $00 <TX_0922 ; L3
 
-@braceletData:
+treasureDisplayData_bracelet:
 	.db TREASURE_BRACELET $99 $05 $00 $00 $00 <TX_092b ; L1
 	.db TREASURE_BRACELET $98 $05 $00 $00 $00 <TX_093f ; L2
 
-@tradeData:
+treasureDisplayData_trade:
 	.db TREASURE_TRADEITEM $c0 $05 $c1 $05 $ff <TX_0909 ; Poe clock
 	.db TREASURE_TRADEITEM $c2 $02 $c2 $22 $ff <TX_090a ; Stationery
 	.db TREASURE_TRADEITEM $c3 $00 $c4 $00 $ff <TX_090b ; Stink bag
@@ -199,23 +199,23 @@ treasureDisplayData2:
 	.db TREASURE_TRADEITEM $d4 $01 $d5 $01 $ff <TX_0914 ; Broken sword
 	.db TREASURE_TRADEITEM $00 $00 $00 $00 $ff <TX_0900 ; Nothing (sequence done)
 
-@fluteData:
+treasureDisplayData_flute:
 	.db TREASURE_FLUTE $8b $00 $8c $00 $ff <TX_092e ; Strange flute
 	.db TREASURE_FLUTE $8b $03 $8d $03 $ff <TX_092f ; Ricky's flute
 	.db TREASURE_FLUTE $8b $02 $8e $02 $ff <TX_0930 ; Dimitri's flute
 	.db TREASURE_FLUTE $8b $01 $8f $01 $ff <TX_0931 ; Moosh's flute
 
-@harpData:
+treasureDisplayData_harp:
 	.db $00 $02 $04 $02 $00 $02 <TX_0941 ; No song?
 	.db $00 $a3 $00 $a4 $00 $02 <TX_0941 ; Tune of echoes
 	.db $00 $a7 $03 $a8 $03 $02 <TX_0941 ; Tune of currents
 	.db $00 $ab $01 $ac $01 $02 <TX_0941 ; Tune of ages
-@tuniNutData:
+treasureDisplayData_tuniNut:
 	.db TREASURE_TUNI_NUT $f3 $05 $f4 $05 $ff <TX_0957 ; Broken
 	.db TREASURE_TUNI_NUT $00 $00 $00 $00 $ff <TX_0900 ; Invisible (during the ceremony?)
 	.db TREASURE_TUNI_NUT $f2 $05 $f2 $25 $ff <TX_094b ; Fixed
 
-@switchHookData:
+treasureDisplayData_switchHook:
 	.db TREASURE_SWITCH_HOOK $9f $04 $00 $00 $00 <TX_093d ; L1
 	.db TREASURE_SWITCH_HOOK $9f $04 $00 $00 $00 <TX_093e ; L2
 

@@ -1,25 +1,25 @@
 ; Tons of OAM data here. TODO: account for all address references.
 data_4556:
-	.dw @data0
-	.dw @data1
-	.dw @data2
-	.dw @data3
-	.dw @data4
-	.dw @data5
-	.dw @data6
-	.dw @data7
-	.dw @data8
-	.dw @data9
-	.dw @dataA
-	.dw @dataB
-	.dw @dataC
-	.dw @dataD
-	.dw @dataE
-	.dw @dataF
-	.dw @data10
+	.dw data_4556_0
+	.dw data_4556_1
+	.dw data_4556_2
+	.dw data_4556_3
+	.dw data_4556_4
+	.dw data_4556_5
+	.dw data_4556_6
+	.dw data_4556_7
+	.dw data_4556_8
+	.dw data_4556_9
+	.dw data_4556_A
+	.dw data_4556_B
+	.dw data_4556_C
+	.dw data_4556_D
+	.dw data_4556_E
+	.dw data_4556_F
+	.dw data_4556_10
 
 
-@data0:
+data_4556_0:
 	.db $10
 	.db $ab $e0 $40 $01
 	.db $ab $ea $42 $01
@@ -38,7 +38,7 @@ data_4556:
 	.db $d0 $17 $10 $00
 	.db $d0 $1d $1e $00
 
-@data1:
+data_4556_1:
 	.db $1b
 	.db $a8 $e9 $4a $01
 	.db $a8 $f2 $4c $01
@@ -68,7 +68,7 @@ data_4556:
 	.db $e0 $23 $1a $00
 	.db $e0 $2b $1c $00
 
-@data2:
+data_4556_2:
 	.db $1c
 	.db $a8 $e0 $52 $01
 	.db $a8 $e8 $54 $01
@@ -99,7 +99,7 @@ data_4556:
 	.db $f0 $17 $14 $00
 	.db $f0 $1f $00 $00
 
-@data3:
+data_4556_3:
 	.db $1f
 	.db $d2 $f9 $0e $00
 	.db $d2 $01 $1c $00
@@ -133,7 +133,7 @@ data_4556:
 	.db $b8 $07 $64 $01
 	.db $b8 $0f $68 $01
 
-@dataA:
+data_4556_A:
 	.db $19
 	.db $b0 $e8 $4c $09
 	.db $b0 $f0 $4e $09
@@ -161,7 +161,7 @@ data_4556:
 	.db $04 $0c $18 $00
 	.db $04 $14 $10 $00
 
-@dataE:
+data_4556_E:
 	.db $18
 	.db $ac $e0 $5a $01
 	.db $ac $ea $4e $01
@@ -188,7 +188,7 @@ data_4556:
 	.db $e0 $37 $28 $00
 	.db $d0 $03 $00 $00
 
-@dataF:
+data_4556_F:
 	.db $27
 	.db $d0 $d4 $24 $00
 	.db $d0 $dc $0e $00
@@ -230,7 +230,7 @@ data_4556:
 	.db $b0 $20 $22 $09
 	.db $b0 $28 $24 $09
 
-@data10:
+data_4556_10:
 	.db $20
 	.db $a8 $df $52 $01
 	.db $b0 $e8 $7e $01
@@ -265,7 +265,7 @@ data_4556:
 	.db $b8 $11 $66 $01
 	.db $b8 $24 $68 $01
 
-@data5:
+data_4556_5:
 	.db $18
 	.db $d8 $ec $14 $00
 	.db $d8 $f4 $34 $00
@@ -292,7 +292,7 @@ data_4556:
 	.db $c0 $14 $6c $01
 	.db $c0 $1c $68 $01
 
-@data6:
+data_4556_6:
 	.db $16
 	.db $a8 $ec $5a $01
 	.db $a8 $f4 $58 $01
@@ -317,7 +317,7 @@ data_4556:
 	.db $d0 $18 $14 $00
 	.db $d0 $20 $08 $00
 
-@data4:
+data_4556_4:
 	.db $1a
 	.db $d0 $e8 $18 $00
 	.db $d0 $f0 $34 $00
@@ -346,7 +346,7 @@ data_4556:
 	.db $00 $25 $00 $00
 	.db $00 $e4 $72 $08
 
-@dataB:
+data_4556_B:
 	.db $1f
 	.db $b4 $f8 $08 $00
 	.db $b4 $00 $0c $00
@@ -380,7 +380,7 @@ data_4556:
 	.db $04 $1c $06 $00
 	.db $04 $24 $00 $00
 
-@dataC:
+data_4556_C:
 	.db $23
 	.db $cc $e8 $1c $00
 	.db $cc $f0 $22 $00
@@ -418,7 +418,7 @@ data_4556:
 	.db $b4 $04 $02 $00
 	.db $b4 $0c $28 $00
 
-@dataD:
+data_4556_D:
 	.db $0d
 	.db $b8 $fc $1a $00
 	.db $b8 $04 $1c $00
@@ -434,7 +434,7 @@ data_4556:
 	.db $c8 $24 $0a $00
 	.db $c8 $2c $0a $00
 
-@data7:
+data_4556_7:
 	.db $28
 	.db $b0 $e0 $c0 $09
 	.db $b0 $e8 $c2 $09
@@ -477,7 +477,7 @@ data_4556:
 	.db $08 $1d $08 $00
 	.db $08 $24 $1a $00
 
-@data8:
+data_4556_8:
 	.db $1a
 	.db $a8 $f8 $50 $01
 	.db $a8 $00 $52 $01
@@ -506,7 +506,7 @@ data_4556:
 	.db $e8 $30 $08 $00
 	.db $e8 $37 $1a $00
 
-@data9:
+data_4556_9:
 	.db $28
 	.db $a8 $e0 $e6 $09
 	.db $a8 $e8 $e8 $09

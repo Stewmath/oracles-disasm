@@ -1,13 +1,13 @@
-; This table maps a tile index to a tileType (see constants/tileTypes.s).
+; This table maps a tile index to a tileType (see constants/tileTypes.s, constants/tileIndices.s).
 tileTypesTable:
-        .dw @collisions0Data
-        .dw @collisions1Data
-        .dw @collisions2Data
-        .dw @collisions3Data
-        .dw @collisions4Data
-        .dw @collisions5Data
+        .dw tileTypes_collisions0
+        .dw tileTypes_collisions1
+        .dw tileTypes_collisions2
+        .dw tileTypes_collisions3
+        .dw tileTypes_collisions4
+        .dw tileTypes_collisions5
 
-@collisions0Data:
+tileTypes_collisions0:
 	.db $20 TILETYPE_STUMP
 	.db $f3 TILETYPE_HOLE
 	.db $f4 TILETYPE_HOLE
@@ -35,7 +35,7 @@ tileTypesTable:
 	.db $7f TILETYPE_LAVA
 	.db $00
 
-@collisions1Data:
+tileTypes_collisions1:
         .db $f3 TILETYPE_HOLE
         .db $f4 TILETYPE_HOLE
         .db $f8 TILETYPE_GRASS
@@ -68,15 +68,15 @@ tileTypesTable:
         .db $cf TILETYPE_LAVA
         .db $00
 
-@collisions2Data:
+tileTypes_collisions2:
         .db $d0 TILETYPE_VINES
         .db $dd TILETYPE_VINES
         .db $de TILETYPE_VINES
         .db $df TILETYPE_VINES
         .db $00
 
-@collisions3Data:
-@collisions4Data:
+tileTypes_collisions3:
+tileTypes_collisions4:
         .db $f3 TILETYPE_HOLE
         .db $f4 TILETYPE_HOLE
         .db $f5 TILETYPE_HOLE
@@ -111,7 +111,7 @@ tileTypesTable:
         .db $3f TILETYPE_HOLE
         .db $00
 
-@collisions5Data:
+tileTypes_collisions5:
         .db $16 TILETYPE_SS_LADDER
         .db $18 TILETYPE_SS_LADDER
         .db $17 TILETYPE_SS_LADDER_TOP | TILETYPE_SS_LADDER

@@ -63,7 +63,7 @@ _giantGhini_state_stub:
 ; The ghini is spawning in before the fight starts
 _giantGhini_state8:
 	inc e
-	ld a,(de) ; [state2]
+	ld a,(de) ; [substate]
 	rst_jumpTable
 	.dw @substate0
 	.dw @substate1
@@ -87,7 +87,7 @@ _giantGhini_state8:
 	ld a,30
 	ld (de),a ; [counter2]
 
-	jp _ecom_incState2
+	jp _ecom_incSubstate
 
 @substate1:
 	call _ecom_decCounter1
@@ -101,7 +101,7 @@ _giantGhini_state8:
 	ld b,$01
 	ld c,$0c
 	call _enemyBoss_spawnShadow
-	jp _ecom_incState2
+	jp _ecom_incSubstate
 
 @substate2:
 	; Flicker visibility
@@ -400,7 +400,7 @@ _swoop_state_stub:
 
 ; Spawning in before the fight starts
 _swoop_state8:
-	ld e,Enemy.state2
+	ld e,Enemy.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -418,7 +418,7 @@ _swoop_state8:
 	or a
 	ret nz
 
-	call _ecom_incState2
+	call _ecom_incSubstate
 	ld c,$08
 	call _ecom_setZAboveScreen
 
@@ -465,12 +465,12 @@ _swoop_state8:
 	ret nz
 	ld bc,TX_2f00
 	call showText
-	jp _ecom_incState2
+	jp _ecom_incSubstate
 
 @substate2:
 	call retIfTextIsActive
 	call _enemyBoss_beginMiniboss
-	call _ecom_incState2
+	call _ecom_incSubstate
 	jp _swoop_beginFlyingUp
 
 @substate3:
@@ -510,7 +510,7 @@ _swoop_state9:
 	ld a,$0a
 	ld l,Enemy.state
 	ldi (hl),a
-	ld (hl),$00 ; [state2]
+	ld (hl),$00 ; [substate]
 
 	call _swoop_getAngerLevel
 	ld hl,_swoop_framesBeforeAttacking
@@ -552,7 +552,7 @@ _swoop_stateA:
 
 	call _ecom_incState
 	inc l
-	ld (hl),$00 ; [state2]
+	ld (hl),$00 ; [substate]
 	ld l,Enemy.counter1
 	ld (hl),30
 	ret
@@ -572,7 +572,7 @@ _swoop_stateA:
 
 ; Stomping
 _swoop_stateB:
-	ld e,Enemy.state2
+	ld e,Enemy.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -620,7 +620,7 @@ _swoop_stateB:
 	ret
 
 @beginStomp:
-	call _ecom_incState2
+	call _ecom_incSubstate
 	ld l,Enemy.speed
 	ld (hl),SPEED_200
 
@@ -666,14 +666,14 @@ _swoop_stateB:
 
 	; Hit the ground.
 	call _swoop_hitGround
-	call _ecom_incState2
+	call _ecom_incSubstate
 	ld e,Enemy.health
 	ld a,(de)
 	cp $0a
 	jr nc,_swoop_setVisible
 
 	; Health is low; will bounce either 2 or 3 times.
-	inc (hl) ; [state2] = 3
+	inc (hl) ; [substate] = 3
 
 	; [counter1] = number of bounces
 	call getRandomNumber
@@ -719,7 +719,7 @@ _swoop_stomp_substate2:
 	ld l,Enemy.state
 	ld a,$09
 	ldi (hl),a
-	ld (hl),$00 ; [state2]
+	ld (hl),$00 ; [substate]
 
 	ld l,Enemy.collisionType
 	res 7,(hl)
@@ -749,7 +749,7 @@ _swoop_stomp_substate3:
 	call _ecom_decCounter1
 	jr nz,_swoop_setSpeedZForBounce
 
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	dec (hl)
 	jp objectSetVisible82
 
@@ -882,7 +882,7 @@ _subterror_state_stub:
 
 ; Cutscene before fight
 _subterror_state8:
-	ld e,Enemy.state2
+	ld e,Enemy.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -919,7 +919,7 @@ _subterror_state8:
 	call enemySetAnimation
 	call objectSetVisiblec2
 
-	call _ecom_incState2
+	call _ecom_incSubstate
 
 	; Disable dirt animation
 	ld l,Enemy.var30
@@ -936,7 +936,7 @@ _subterror_state8:
 	ld b,INTERACID_ROCKDEBRIS
 	call objectCreateInteractionWithSubid00
 
-	call _ecom_incState2
+	call _ecom_incSubstate
 
 	ld l,Enemy.counter1
 	ld (hl),60
@@ -959,7 +959,7 @@ _subterror_state8:
 
 	ld bc,TX_2f03
 	call showText
-	jp _ecom_incState2
+	jp _ecom_incSubstate
 
 @substate3:
 	call retIfTextIsActive
@@ -990,7 +990,7 @@ _subterror_beginUndergroundMovement:
 	ld (hl),$0a
 	inc l
 	xor a
-	ld (hl),a ; [state2]
+	ld (hl),a ; [substate]
 
 	dec a
 	ld l,Enemy.angle
@@ -1019,7 +1019,7 @@ _subterror_beginUndergroundMovement:
 
 ; Currently in the ground, moving around
 _subterror_stateA:
-	ld e,Enemy.state2
+	ld e,Enemy.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -1031,7 +1031,7 @@ _subterror_stateA:
 	call _ecom_decCounter1
 	ret nz
 
-	call _ecom_incState2
+	call _ecom_incSubstate
 
 @resetUndergroundMovement:
 	; Adjust angle toward Link?
@@ -1083,7 +1083,7 @@ _subterror_stateA:
 	ld l,Enemy.state
 	ldi (hl),a
 	xor a
-	ld (hl),a ; [state2] = 0
+	ld (hl),a ; [substate] = 0
 
 	ld l,Enemy.var30
 	ld (hl),a ; [var30] = 0
@@ -1113,7 +1113,7 @@ _subterror_stateA:
 	jr z,++
 
 	; Hit wall
-	call _ecom_incState2
+	call _ecom_incSubstate
 	ld l,Enemy.counter1
 	ld (hl),90
 	ld l,Enemy.visible
@@ -1151,7 +1151,7 @@ _subterror_stateA:
 	call _ecom_incState ; [state] = $0b
 	inc l
 	xor a
-	ld (hl),a ; [state2] = 0
+	ld (hl),a ; [substate] = 0
 
 	ld l,Enemy.var30
 	ld (hl),a ; [var30] = 0
@@ -1172,14 +1172,14 @@ _subterror_stateA:
 	call _ecom_decCounter2
 	call _ecom_decCounter1
 	ret nz
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	dec (hl)
 	jp @resetUndergroundMovement
 
 
 ; Drilling
 _subterror_stateB:
-	ld e,Enemy.state2
+	ld e,Enemy.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -1212,7 +1212,7 @@ _subterror_stateB:
 	ld (hl),60
 	ld a,$07
 	call enemySetAnimation
-	jp _ecom_incState2
+	jp _ecom_incSubstate
 
 @substate1:
 	call _subterror_retFromCallerIfAnimationUnfinished
@@ -1225,7 +1225,7 @@ _subterror_stateB:
 
 ; Popping out of ground after shovel was used
 _subterror_stateC:
-	ld e,Enemy.state2
+	ld e,Enemy.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -1249,7 +1249,7 @@ _subterror_stateC:
 	jr z,++
 	ld l,Enemy.counter1
 	ld (hl),180
-	jp _ecom_incState2
+	jp _ecom_incSubstate
 ++
 	ld bc,-$80
 	jp objectSetSpeedZ
@@ -1263,7 +1263,7 @@ _subterror_stateC:
 	call _ecom_decCounter1
 	ret nz
 ++
-	call _ecom_incState2
+	call _ecom_incSubstate
 
 	call getRandomNumber
 	and $1c
@@ -1575,7 +1575,7 @@ _armosWarrior_parent_state8:
 ; Cutscene before fight starts (falling from sky)
 _armosWarrior_parent_state9:
 	inc e
-	ld a,(de) ; [state2]
+	ld a,(de) ; [substate]
 	rst_jumpTable
 	.dw @substate0
 	.dw @substate1
@@ -1590,7 +1590,7 @@ _armosWarrior_parent_state9:
 
 	; Hit the ground
 
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	inc (hl)
 
 	inc l
@@ -1614,14 +1614,14 @@ _armosWarrior_parent_state9:
 	call _ecom_decCounter1
 	ret nz
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	ld bc,TX_2f01
 	jp showText
 
 @substate2:
 	ld h,d
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 
 	ld l,Enemy.counter1
 	ld (hl),30
@@ -1639,7 +1639,7 @@ _armosWarrior_parent_state9:
 	ld (hl),ANGLE_DOWN
 
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 
 	; [sword.yh] -= 2
 	ld l,Enemy.var32
@@ -1973,7 +1973,7 @@ _armosWarrior_sword_state8:
 
 ; Waiting for initial cutscene to end, then moving upward before fight starts
 _armosWarrior_sword_state9:
-	ld a,Object.state2
+	ld a,Object.substate
 	call objectGetRelatedObject1Var
 	ld a,(hl)
 	or a
@@ -2595,7 +2595,7 @@ _smasher_state_uninitialized:
 
 _smasher_state_grabbed:
 	inc e
-	ld a,(de) ; [state2]
+	ld a,(de) ; [substate]
 	rst_jumpTable
 	.dw @justGrabbed
 	.dw @beingHeld
@@ -3394,7 +3394,7 @@ enemyCode75:
 
 	ld (hl),$0f ; [state]
 	inc l
-	ld (hl),$00 ; [state2]
+	ld (hl),$00 ; [substate]
 	inc l
 	ld (hl),20 ; [counter1]
 
@@ -3488,7 +3488,7 @@ _vire_mainForm:
 ; Mini-cutscene before starting fight
 _vire_mainForm_state8:
 	inc e
-	ld a,(de) ; [state2]
+	ld a,(de) ; [substate]
 	rst_jumpTable
 	.dw @substate0
 	.dw @substate1
@@ -3523,7 +3523,7 @@ _vire_mainForm_state8:
 	ld a,Interaction.start
 	ld (de),a
 
-	ld e,Enemy.state2
+	ld e,Enemy.substate
 	ld a,$01
 	ld (de),a
 	ld (wDisabledObjects),a ; DISABLE_LINK
@@ -3538,7 +3538,7 @@ _vire_mainForm_state8:
 	ret z
 
 	ld h,d
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	inc (hl)
 	inc l
 	ld (hl),$08 ; [counter1]
@@ -3550,7 +3550,7 @@ _vire_mainForm_state8:
 	jp nz,enemyAnimate
 
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	ld bc,TX_2f12
 	call checkIsLinkedGame
 	jr z,+
@@ -3576,7 +3576,7 @@ _vire_mainForm_state8:
 .endif
 
 	inc l
-	ldi (hl),a ; [state2] = 0
+	ldi (hl),a ; [substate] = 0
 	ld (hl),90 ; [counter1]
 
 	ld l,Enemy.health
@@ -3648,7 +3648,7 @@ _vire_mainForm_stateA:
 
 	; Begin charging
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 
 	ld l,Enemy.speed
 	ld (hl),SPEED_200
@@ -3716,7 +3716,7 @@ _vire_mainForm_stateB:
 ; Begin charging; initially toward Link, but will run away if he gets too close or Link
 ; attacks
 @beginCharge:
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	inc (hl)
 	ld l,Enemy.speed
 	ld (hl),SPEED_200
@@ -3737,7 +3737,7 @@ _vire_mainForm_stateB:
 ; Charging away from Link
 @updateAngleAway:
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	call _ecom_updateCardinalAngleAwayFromTarget
 @animate:
 	jp enemyAnimate
@@ -3778,7 +3778,7 @@ _vire_mainForm_stateC:
 
 	ld (hl),12 ; [counter1]
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 
 	ld b,$03
 	call _vire_mainForm_fireProjectileWithSubid
@@ -3789,7 +3789,7 @@ _vire_mainForm_stateC:
 	jr nz,@animate
 
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 
 	ld l,Enemy.angle
 	ld a,(hl)
@@ -3838,7 +3838,7 @@ _vire_mainForm_stateD:
 ; Begin charging; initially toward Link, but will run away if he gets too close or Link
 ; attacks
 @beginCharge:
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	inc (hl)
 	ld l,Enemy.speed
 	ld (hl),SPEED_200
@@ -3854,7 +3854,7 @@ _vire_mainForm_stateD:
 
 	ld h,d
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	inc l
 	ld (hl),12 ; [counter1]
 	ld l,Enemy.speed
@@ -3873,7 +3873,7 @@ _vire_mainForm_stateD:
 
 	ld (hl),12 ; [counter1]
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 
 	ld b,PARTID_VIRE_PROJECTILE
 	call _ecom_spawnProjectile
@@ -3887,7 +3887,7 @@ _vire_mainForm_stateD:
 	jr nz,@animate
 
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 
 	ld l,Enemy.speed
 	ld (hl),SPEED_1c0
@@ -3914,7 +3914,7 @@ _vire_mainForm_stateE:
 @substate0:
 	ld h,d
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 
 	inc l
 	ld (hl),20 ; [counter1]
@@ -3936,7 +3936,7 @@ _vire_mainForm_stateE:
 	jp nz,enemyAnimate
 
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 
 	; Check whether to show text based on current health
 	ld l,Enemy.health
@@ -3987,7 +3987,7 @@ _vire_mainForm_stateF:
 	jp nz,enemyAnimate
 
 	ld h,d
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	inc (hl)
 
 	ld l,Enemy.var34
@@ -4030,7 +4030,7 @@ _vire_mainForm_stateF:
 
 	; Vire defeated
 	ld h,d
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	inc (hl)
 	inc l
 	ld (hl),60 ; [counter1]
@@ -4043,7 +4043,7 @@ _vire_mainForm_stateF:
 
 	ld (hl),$10 ; [counter1]
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	jp objectSetVisiblec1
 
 @substate4:
@@ -4051,7 +4051,7 @@ _vire_mainForm_stateF:
 	jp nz,enemyAnimate
 
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 
 	ld l,Enemy.angle
 	ld (hl),$06
@@ -4308,9 +4308,9 @@ _vire_batForm_stateD:
 
 ;;
 ; Sets Vire's position to just outside the camera (along with corresponding angle), and
-; increments state2.
+; increments substate.
 ;
-; @param[out]	hl	Enemy.state2
+; @param[out]	hl	Enemy.substate
 _vire_spawnOutsideCamera:
 	call getRandomNumber_noPreserveVars
 	and $07
@@ -4339,7 +4339,7 @@ _vire_spawnOutsideCamera:
 	ld l,Enemy.collisionType
 	set 7,(hl)
 
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	inc (hl)
 	jp objectSetVisiblec1
 
@@ -4365,7 +4365,7 @@ _vire_mainForm_leftScreen:
 	ld l,Enemy.state
 	ld (hl),$09
 	inc l
-	ld (hl),$00 ; [state2]
+	ld (hl),$00 ; [substate]
 	inc l
 	ld (hl),90 ; [counter1]
 
@@ -5942,7 +5942,7 @@ _pumpkinHead_state_grabbed:
 @justGrabbed:
 	ld h,d
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 
 	xor a
 	ld (wLinkGrabState2),a
@@ -7074,7 +7074,7 @@ _pumpkinHead_noHealth:
 	cp $02
 	jr nz,@delete
 
-	ld a,(hl) ; [state2]
+	ld a,(hl) ; [substate]
 	cp $02
 	call c,dropLinkHeldItem
 @delete:
@@ -7260,14 +7260,14 @@ _headThwomp_stateA:
 	ld l,e
 	inc (hl) ; [state]
 	inc l
-	ld (hl),$00 ; [state2]
+	ld (hl),$00 ; [substate]
 	ret
 
 
 ; Spinning after bomb was thrown into head
 _headThwomp_stateB:
 	inc e
-	ld a,(de) ; [state2]
+	ld a,(de) ; [substate]
 	rst_jumpTable
 	.dw @substate0
 	.dw @substate1
@@ -7277,7 +7277,7 @@ _headThwomp_stateB:
 @substate0:
 	ld h,d
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	inc l
 	ld (hl),60 ; [counter1]
 
@@ -7288,7 +7288,7 @@ _headThwomp_stateB:
 	jp nz,_headThwomp_rotate
 
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	inc l
 	ld (hl),$01 ; [counter1]
 	inc l
@@ -7326,7 +7326,7 @@ _headThwomp_stateB:
 	inc l
 	ld (hl),$06 ; [counter2]
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 
 ; Slowest spinning; will stop when it reaches the target head
 @substate3:
@@ -7369,21 +7369,21 @@ _headThwomp_stateC:
 	ld (hl),a
 
 	inc l
-	ld (hl),$00 ; [state2]
+	ld (hl),$00 ; [substate]
 	ret
 
 
 ; Green face (shoots fireballs)
 _headThwomp_stateD:
 	inc e
-	ld a,(de) ; [state2]
+	ld a,(de) ; [substate]
 	or a
 	jr nz,@substate1
 
 @substate0:
 	ld h,d
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 
 	inc l
 	ld (hl),$f0 ; [counter1]
@@ -7431,7 +7431,7 @@ _headThwomp_stateE:
 @substate0:
 	ld h,d
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 
 	inc l
 	ld a,$08
@@ -7457,7 +7457,7 @@ _headThwomp_stateE:
 	jp nz,enemyAnimate
 
 	ld (hl),$08 ; [counter1]
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	inc (hl)
 
 	ld hl,wRoomCollisions+$47
@@ -7484,7 +7484,7 @@ _headThwomp_stateE:
 
 	ld (hl),30 ; [counter1]
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	ret
 
 ; Cooldown after firing; checks whether to fire again or return to normal state
@@ -7498,7 +7498,7 @@ _headThwomp_stateE:
 
 	; Fire again
 	ld l,e
-	ld (hl),$01 ; [state2]
+	ld (hl),$01 ; [substate]
 	ld a,$08
 	jr ++
 
@@ -7522,7 +7522,7 @@ _headThwomp_stateE:
 ; Purple face (stomps the ground)
 _headThwomp_stateF:
 	inc e
-	ld a,(de) ; [state2]
+	ld a,(de) ; [substate]
 	rst_jumpTable
 	.dw @substate0
 	.dw @substate1
@@ -7533,7 +7533,7 @@ _headThwomp_stateF:
 @substate0:
 	ld h,d
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 
 	ld l,Enemy.speedZ
 	xor a
@@ -7552,7 +7552,7 @@ _headThwomp_stateF:
 	ret c
 
 	ld h,d
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	inc (hl)
 
 	inc l
@@ -7584,7 +7584,7 @@ _headThwomp_stateF:
 
 @beginMovingUp:
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	ret
 
 ; Moving back up
@@ -7601,7 +7601,7 @@ _headThwomp_stateF:
 	cp $56
 	ret nz
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	ret
 
 ; Reached original position
@@ -7634,14 +7634,14 @@ _headThwomp_stateF:
 ; Red face (takes damage)
 _headThwomp_state10:
 	inc e
-	ld a,(de) ; [state2]
+	ld a,(de) ; [substate]
 	or a
 	jr nz,@substate1
 
 @substate0:
 	ld h,d
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 
 	inc l
 	ld (hl),120 ; [counter1]
@@ -8017,7 +8017,7 @@ _shadowHag_state8:
 	ret nz
 
 	ld h,d
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	inc (hl)
 	ld l,Enemy.angle
 	ld (hl),$18
@@ -8043,7 +8043,7 @@ _shadowHag_state8:
 
 	call _shadowHag_beginEmergingFromShadow
 	ld h,d
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	inc (hl)
 
 	inc l
@@ -8058,7 +8058,7 @@ _shadowHag_state8:
 	call _shadowHag_updateEmergingFromShadow
 	ret nz
 
-	ld e,Enemy.state2
+	ld e,Enemy.substate
 	ld a,$03
 	ld (de),a
 	dec a
@@ -8701,7 +8701,7 @@ _eyesoar_state_switchHook:
 	ld (hl),150
 	ld l,Enemy.direction
 	ld (hl),$00
-	jp _ecom_incState2
+	jp _ecom_incSubstate
 
 @substate1:
 	ret
@@ -9293,7 +9293,7 @@ _smog_state8_subid3:
 	call enemySetAnimation
 
 @runSubstate:
-	ld e,Enemy.state2
+	ld e,Enemy.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -9320,7 +9320,7 @@ _smog_state8_subid3:
 	ld (de),a
 
 	; Go to substate 1
-	ld e,Enemy.state2
+	ld e,Enemy.substate
 	ld a,$01
 	ld (de),a
 	jp _smog_applySpeed
@@ -9384,7 +9384,7 @@ _smog_state8_subid3:
 	sub b
 	and $03
 	ld (de),a
-	ld e,Enemy.state2
+	ld e,Enemy.substate
 	ld a,$02
 	ld (de),a
 	ret
@@ -9396,7 +9396,7 @@ _smog_state8_subid3:
 	jr nz,@hitWall
 
 @notHuggingWall:
-	ld e,Enemy.state2
+	ld e,Enemy.substate
 	xor a
 	ld (de),a
 	jp _smog_applySpeed
@@ -9411,14 +9411,14 @@ _smog_state8_subid4:
 
 	; Link attacked the boss and got shocked.
 	ld a,$03
-	ld e,Enemy.state2
+	ld e,Enemy.substate
 	ld (de),a
 	ld a,70
 	ld e,Enemy.counter2
 	ld (de),a
 ++
 	call enemyAnimate
-	ld e,Enemy.state2
+	ld e,Enemy.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -9428,7 +9428,7 @@ _smog_state8_subid4:
 
 @substate0:
 	ld a,$01
-	ld (de),a ; [state2] = 1
+	ld (de),a ; [substate] = 1
 	dec a
 	ld e,Enemy.speed
 	ld (de),a
@@ -9449,7 +9449,7 @@ _smog_state8_subid4:
 	cp SPEED_c0
 	ret nz
 
-	jp _ecom_incState2
+	jp _ecom_incSubstate
 
 ; Slowing down
 @substate2:
@@ -9460,8 +9460,8 @@ _smog_state8_subid4:
 	ld (hl),a
 	ret nz
 
-	ld l,Enemy.state2
-	ld (hl),a ; [state2] = 0
+	ld l,Enemy.substate
+	ld (hl),a ; [substate] = 0
 	ret
 
 ;;
@@ -11149,7 +11149,7 @@ _plasmarine_state_switchHook:
 	ld e,Enemy.var33
 	ld (de),a
 	call enemySetAnimation
-	jp _ecom_incState2
+	jp _ecom_incSubstate
 
 @afterSwitch:
 	ld e,Enemy.var33

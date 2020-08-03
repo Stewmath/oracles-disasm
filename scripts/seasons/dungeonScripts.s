@@ -74,7 +74,7 @@ poisonMothsLairScript_hallwayTrapRoom:
 poisonMothsLairScript_checkStatuePuzzle:
 	asm15 scriptHlp.D3StatuePuzzleCheck
 	wait 1
-	jump2byte poisonMothsLairScript_checkStatuePuzzle
+	scriptjump poisonMothsLairScript_checkStatuePuzzle
 
 
 poisonMothsLairScript_minibossDeath:
@@ -85,7 +85,7 @@ poisonMothsLairScript_minibossDeath:
 	createpuff
 	settilehere TILEINDEX_INDOOR_UPSTAIRCASE
 	spawninteraction INTERACID_MINIBOSS_PORTAL $00, $00, $00
-	jump2byte dungeonScriptEnableLinkAndMenu
+	scriptjump dungeonScriptEnableLinkAndMenu
 
 
 poisonMothsLairScript_bossDeath:
@@ -97,7 +97,7 @@ poisonMothsLairScript_bossDeath:
 _poisonMothsLair_coordsForHeartContainer:
 	stopifitemflagset
 	setcoords $20, $78
-	jump2byte _spawnHeartContainerAtCustomPosition
+	scriptjump _spawnHeartContainerAtCustomPosition
 
 
 poisonMothsLairScript_openEssenceDoorIfBossBeat:
@@ -123,7 +123,7 @@ dancingDragonScript_torchesHallway:
 	wait 8
 @spawnChest:
 	stopifitemflagset
-	jump2byte spawnChestAfterPuff
+	scriptjump spawnChestAfterPuff
 
 
 dancingDragonScript_spawnBossKey:
@@ -186,7 +186,7 @@ ancientRuinsScript_spawnStaircaseUp1FTopMiddleRoom:
 	stopifroomflag80set
 	checkmemoryeq wActiveTriggers, $01
 	setangle <ROOM_SEASONS_5be
-	jump2byte _createWallUpStaircaseAndSetOtherRoomFlag
+	scriptjump _createWallUpStaircaseAndSetOtherRoomFlag
 
 
 ; ???
@@ -195,7 +195,7 @@ script4c50:
 _loopCheckToggleBlocks:
 	asm15 scriptHlp.toggleBlocksInAngleBitsHit
 	wait 8
-	jump2byte _loopCheckToggleBlocks
+	scriptjump _loopCheckToggleBlocks
 
 
 ancientRuinsScript_5TorchesMovingPlatformsRoom:
@@ -203,7 +203,7 @@ ancientRuinsScript_5TorchesMovingPlatformsRoom:
 	checkmemoryeq wNumTorchesLit, $05
 	setcounter1 $2d
 	setangle <ROOM_SEASONS_5c4
-	jump2byte _createWallUpStaircaseAndSetOtherRoomFlag
+	scriptjump _createWallUpStaircaseAndSetOtherRoomFlag
 
 
 ancientRuinsScript_roomWithJustRopesSpawningButton:
@@ -214,7 +214,7 @@ ancientRuinsScript_roomWithJustRopesSpawningButton:
 
 ancientRuinsScript_UShapePitToMagicBoomerangOrb:
 	setangle $04
-	jump2byte _loopCheckToggleBlocks
+	scriptjump _loopCheckToggleBlocks
 
 
 ancientRuinsScript_randomButtonRoom:
@@ -237,12 +237,12 @@ ancientRuinsScript_randomButtonRoom:
 	asm15 scriptHlp.D6RandomButtonSpawnRopes
 	wait 60
 	checknoenemies
-	jump2byte ancientRuinsScript_randomButtonRoom
+	scriptjump ancientRuinsScript_randomButtonRoom
 
 
 ancientRuinsScript_4F3OrbsRoom:
 	setangle $38
-	jump2byte _loopCheckToggleBlocks
+	scriptjump _loopCheckToggleBlocks
 
 
 ancientRuinsScript_spawnStairsLeadingToBoss:
@@ -265,7 +265,7 @@ ancientRuinsScript_spawnHeartContainerAndStairsUp:
 	createpuff
 	wait 30
 	settilehere TILEINDEX_INDOOR_WALL_UPSTAIRCASE
-	jump2byte _spawnHeartContainerCenterOfRoom
+	scriptjump _spawnHeartContainerCenterOfRoom
 
 
 ancientRuinsScript_1FTopRightTrapButtonRoom:
@@ -282,7 +282,7 @@ ancientRuinsScript_crystalTrapRoom:
 @waitUntilRupeeGotten:
 	jumpifroomflagset $20, @rupeeGotten
 	wait 8
-	jump2byte @waitUntilRupeeGotten
+	scriptjump @waitUntilRupeeGotten
 @rupeeGotten:
 	loadscript startCrystalTrapRoomSequence
 
@@ -313,7 +313,7 @@ explorersCryptScript_4OrbTrampoline:
 explorersCryptScript_roomLeftOfRandomArmosRoom:
 	jumpifroomflagset $40, _D7createTrampoline
 	checkmemoryeq wActiveTriggers, $01
-	jump2byte _D7buttonPressed
+	scriptjump _D7buttonPressed
 explorersCryptScript_magunesuTrampoline:
 	asm15 interactionSetAlwaysUpdateBit
 	jumpifroomflagset $40, _D7createTrampoline
@@ -335,7 +335,7 @@ script4d05:
 	jumpifroomflagset $40, spawnChestAfterPuff
 	checkmemoryeq wActiveTriggers, $01
 	orroomflag $40
-	jump2byte spawnChestAfterPuff
+	scriptjump spawnChestAfterPuff
 
 
 explorersCryptScript_randomlyPlaceNonEnemyArmos:
@@ -350,10 +350,10 @@ dungeonScript_checkIfMagnetBallOnButton:
 	.dw @pressed
 @unpressed:
 	asm15 scriptHlp.D7MagnetBallRoom_removeChest
-	jump2byte dungeonScript_checkIfMagnetBallOnButton
+	scriptjump dungeonScript_checkIfMagnetBallOnButton
 @pressed:
 	asm15 scriptHlp.D7MagnetBallRoom_addChest
-	jump2byte dungeonScript_checkIfMagnetBallOnButton
+	scriptjump dungeonScript_checkIfMagnetBallOnButton
 
 
 explorersCryptScript_1stPoeSisterRoom:
@@ -439,7 +439,7 @@ swordAndShieldMazeScript_spawnFireKeeseAtLavaHoles:
 @loop:
 	wait 240
 	asm15 scriptHlp.D8SpawnLimitedFireKeese
-	jump2byte @loop
+	scriptjump @loop
 
 
 swordAndShieldMazeScript_pushableIceBlocks:
@@ -469,13 +469,13 @@ swordAndShieldMazeScript_horizontalBridgeByMoldorms:
 swordAndShieldMazeScript_tripleEyesByMiniboss:
 	stopifroomflag80set
 	checkmemoryeq wActiveTriggers, $07
-	jump2byte _puzzelSolvedSpawnUpStaircase
+	scriptjump _puzzelSolvedSpawnUpStaircase
 
 
 swordAndShieldMazeScript_tripleEyesNearStart:
 	stopifitemflagset
 	checkmemoryeq wActiveTriggers, $07
-	jump2byte spawnChestAfterPuff
+	scriptjump spawnChestAfterPuff
 
 
 onoxsCastleScript_setFlagOnAllEnemiesDefeated:
@@ -494,18 +494,18 @@ onoxsCastleScript_resetRoomFlagsOnDungeonStart:
 herosCaveScript_spawnChestOnTorchLit:
 	stopifitemflagset
 	checkmemoryeq wNumTorchesLit, $01
-	jump2byte spawnChestAfterPuff
+	scriptjump spawnChestAfterPuff
 
 
 herosCaveScript_spawnChestOn2TorchesLit:
 	stopifitemflagset
 	checkmemoryeq wNumTorchesLit, $02
-	jump2byte spawnChestAfterPuff
+	scriptjump spawnChestAfterPuff
 
 
 herosCaveScript_check6OrbsHit:
 	setangle $3f
-	jump2byte _loopCheckToggleBlocks
+	scriptjump _loopCheckToggleBlocks
 
 
 herosCaveScript_allButtonsPressedAndEnemiesDefeated:

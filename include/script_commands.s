@@ -6,24 +6,24 @@
 	.db $00
 .ENDM
 
-.MACRO jump2byte
-	.db \1>>8
-	.db \1&$ff
+.MACRO scriptjump
+	.db (\1)>>8
+	.db (\1)&$ff
 .ENDM
 
 ; Set the value of the Interaction.state variable.
 .MACRO setstate
-	.db $80 \1
+	.db $80, \1
 .ENDM
 
 ; Increment the Interaction.state variable.
 .MACRO incstate
-	.db $80 $ff
+	.db $80, $ff
 .ENDM
 
-; Set the value of the Interaction.state2 variable.
-.MACRO setstate2
-	.db $81 \1
+; Set the value of the Interaction.substate variable.
+.MACRO setsubstate
+	.db $81, \1
 .ENDM
 
 ; $82: not a real command
@@ -32,10 +32,10 @@
 ; param1:	Script to load and jump to
 .MACRO loadscript
 	.IF NARGS == 2
-		.db $83 \1
+		.db $83, \1
 		.dw \2
 	.ELSE
-		.db $83 :\1
+		.db $83, :\1
 		.dw \1
 	.ENDIF
 .ENDM
@@ -48,11 +48,11 @@
 .MACRO spawninteraction
 	.db $84
 	.if NARGS == 3
-		.db \1>>8 \1&$ff
-		.db \2 \3
+		.db (\1)>>8, (\1)&$ff
+		.db \2, \3
 	.else
-		.db \1 \2
-		.db \3 \4
+		.db \1, \2
+		.db \3, \4
 	.endif
 .ENDM
 
@@ -64,11 +64,11 @@
 .MACRO spawnenemy
 	.db $85
 	.if NARGS == 3
-		.db \1>>8 \1&$ff
-		.db \2 \3
+		.db (\1)>>8, (\1)&$ff
+		.db \2, \3
 	.else
-		.db \1 \2
-		.db \3 \4
+		.db \1, \2
+		.db \3, \4
 	.endif
 .ENDM
 
@@ -142,14 +142,14 @@
 		.db \1
 		.db \2
 	.ELSE
-		.db (\1&$f0) | 8
-		.db ((\1&$0f)<<4) | 8
+		.db ((\1)&$f0) | 8
+		.db (((\1)&$0f)<<4) | 8
 	.ENDIF
 .ENDM
 
-; @param angle New angle
+; param1:  Value for Interaction.angle
 .MACRO setangle
-	.db $89 \1
+	.db $89, \1
 .ENDM
 
 ; Make an object face link.
@@ -157,19 +157,19 @@
 	.db $8a
 .ENDM
 
-; @param speed Value for Interaction.speed (see constants/objectSpeeds.s)
+; param1:   Value for Interaction.speed (see constants/objectSpeeds.s)
 .MACRO setspeed
-	.db $8b \1
+	.db $8b, \1
 .ENDM
 
 ; Writes the given value to Interaction.counter2. Then, the script holds execution for
 ; that many frames while the object's speed is applied.
 ;
-; @param1	The number of frames to wait. (for some reason this parameter is
+; param1:	The number of frames to wait. (for some reason this parameter is
 ;		optional? If it's not passed, it just waits for counter2 to reach 0...)
 .MACRO applyspeed
 	.IF NARGS == 1
-		.db $8c \1
+		.db $8c, \1
 	.ELSE
 		.db $d8
 	.ENDIF
@@ -179,22 +179,22 @@
 ; param1:	Y collision radius
 ; param2:	X collision radius
 .MACRO setcollisionradii
-	.db $8d \1 \2
+	.db $8d, \1, \2
 .ENDM
 
 ; Write a byte to the object's memory. Script execution resumes next frame.
 ; param1:	Low byte of address to set (should be Interaction.something)
 ; param2:	Byte value to write to the address
 .MACRO writeobjectbyte
-	.db $8e \1 \2
+	.db $8e, \1, \2
 
-	m_verify_object_byte \1 "writeobjectbyte"
+	m_verify_object_byte \1, "writeobjectbyte"
 .ENDM
 
 ; Calls interactionSetAnimation with the specified value.
 ; param1:	Animation index
 .MACRO setanimation
-	.db $8f \1
+	.db $8f, \1
 
 	.if \1 >= $fe
 		.PRINTT "SCRIPT ERROR: argument to 'setanimation' too high.\n"
@@ -206,7 +206,7 @@
 .MACRO setanimationfromobjectbyte
 	.db $8f, $fe, \1
 
-	m_verify_object_byte \1 "setanimationfromobjectbyte"
+	m_verify_object_byte \1, "setanimationfromobjectbyte"
 .ENDM
 
 ; Sets the interaction's animation based on its angle.
@@ -219,9 +219,9 @@
 ; it's $01)
 ; param1:	Low byte of address to store the result
 .MACRO cplinkx
-	.db $90 \1
+	.db $90, \1
 
-	m_verify_object_byte \1 "cplinkx"
+	m_verify_object_byte \1, "cplinkx"
 .ENDM
 
 ; Write a byte to an address in memory.
@@ -247,9 +247,9 @@
 ; param2:	Value to bitwise AND with the random number before storing it.
 .MACRO getrandombits
 	.db $93
-	.db \1 \2
+	.db \1, \2
 
-	m_verify_object_byte \1 "getrandombits"
+	m_verify_object_byte \1, "getrandombits"
 .ENDM
 
 ; Add a byte with an interaction address.
@@ -259,7 +259,7 @@
 	.db $94
 	.db \1 \2
 
-	m_verify_object_byte \1 "addobjectbyte"
+	m_verify_object_byte \1, "addobjectbyte"
 .ENDM
 
 ; Sets the interaction's vertical speed (z axis).
@@ -283,7 +283,7 @@
 ; param1[16]:	The text index to show when talked to
 .MACRO rungenericnpc
 	.db $97
-	.db \1>>8 \1&$ff
+	.db (\1)>>8, (\1)&$ff
 .ENDM
 
 ; Set Interaction.textID to the given value. Only use this when Interaction.useTextID is
@@ -301,7 +301,7 @@
 ; param1[16]:	The low byte of the text index to display.
 .MACRO showtext
 	.db $98
-	.db \1>>8 \1&$ff
+	.db (\1)>>8, (\1)&$ff
 .ENDM
 
 ; Displays the text index with high byte [Interaction.textID] and the low
@@ -326,7 +326,7 @@
 ; param1[16]:	The text index to display.
 .MACRO showtextnonexitable
 	.db $9a
-	.db \1>>8 \1&$ff
+	.db (\1)>>8, (\1)&$ff
 .ENDM
 
 ; Displays the text index given, being non-exitable by user input. Only use this when
@@ -370,9 +370,9 @@
 ; param2: the text to show for linked games.
 .MACRO showtextdifferentforlinked
 	.db $9f
-	.db \1>>8 \1&$ff \2&$ff
+	.db (\1)>>8, (\1)&$ff, (\2)&$ff
 
-	.if \1>>8 != \2>>8
+	.if (\1)>>8 != (\2)>>8
 		.PRINTT "SCRIPT ERROR: in 'showtextdifferentforlinked' opcode, the text indices were in different groups.\n"
 		.FAIL
 	.endif
@@ -381,13 +381,13 @@
 ; Holds execution until the given bit of address $cfc0 is set.
 ; param1:	Bit to check (0-7)
 .MACRO checkcfc0bit
-	.db $a0 | \1
+	.db $a0 | (\1)
 .ENDM
 
 ; Xors the given bit in address $cfc0.
 ; param1:	Bit to xor (0-7)
 .MACRO xorcfc0bit
-	.db $a8 | \1
+	.db $a8 | (\1)
 .ENDM
 
 ; Jumps to the specified address if the specified flag(s) in the room are set.
@@ -397,14 +397,14 @@
 ; param1:	Value to AND with the room flags for the check
 ; param2[16]:	Destination address to jump to if the result is nonzero
 .MACRO jumpifroomflagset
-	.db $b0 \1
+	.db $b0, \1
 	.dw \2
 .ENDM
 
 ; OR the room flags with the given value. Used to mark if an event has occured,
 ; and if so, you can skip it with the "jumpifroomflagset" opcode.
 .MACRO orroomflag
-	.db $b1 \1
+	.db $b1, \1
 .ENDM
 
 ; B2: no command
@@ -420,7 +420,7 @@
 ; param3[16]:	Destination address to jump to if the result is nonzero
 .MACRO jumpifc6xxset
 	.db $b3
-	.db \1 \2
+	.db \1, \2
 	.dw \3
 .ENDM
 
@@ -429,7 +429,7 @@
 ; param2:	Value to write to the address
 .MACRO writec6xx
 	.db $b4
-	.db \1 \2
+	.db \1, \2
 .ENDM
 
 ; Jump to the specified address if the given global flag is set.
@@ -438,7 +438,7 @@
 ; param1:	The global flag to check
 ; param2[16]:	Destination address to jump to if the flag is set
 .MACRO jumpifglobalflagset
-	.db $b5 \1
+	.db $b5, \1
 	.dw \2
 .ENDM
 
@@ -447,7 +447,7 @@
 ;
 ; param1:	The global flag to set
 .MACRO setglobalflag
-	.db $b6 \1
+	.db $b6, \1
 .ENDM
 
 ; Unsets the specified global flag.
@@ -455,7 +455,7 @@
 ;
 ; param1:	The global flag to unset
 .MACRO unsetglobalflag
-	.db $b6 (\1 | $80)
+	.db $b6, (\1) | $80
 .ENDM
 
 ; $B7: no command
@@ -531,7 +531,7 @@
 		.FAIL
 	.endif
 	.db $c4
-	.dw \1 \2
+	.dw \1, \2
 .ENDM
 
 ; $C5: no command
@@ -542,9 +542,9 @@
 ;
 ; param1:	Low byte of the address to use as the index for the table
 .MACRO jumptable_objectbyte
-	.db $c6 \1
+	.db $c6, \1
 
-	m_verify_object_byte \1 "jumptable_objectbyte"
+	m_verify_object_byte \1, "jumptable_objectbyte"
 .ENDM
 
 ; Jump to somewhere if the given memory address AND the given value is nonzero.
@@ -565,7 +565,7 @@
 ;               "constants/tradeitems.s" just fine.)
 ; param2[16]:	Destination to jump to
 .MACRO jumpiftradeitemeq
-	.db $c8 (\1+1)
+	.db $c8, \1+1
 	.dw \2
 .ENDM
 
@@ -583,7 +583,7 @@
 ; param3[16]:	Destination to jump to
 .MACRO jumpiflinkvariableneq
 	.db $ca
-	.db \1 \2
+	.db \1, \2
 	.dw \3
 .ENDM
 
@@ -608,7 +608,7 @@
 	.db \2
 	.dw \3
 
-	m_verify_object_byte \1 "jumpifobjectbyteeq"
+	m_verify_object_byte \1, "jumpifobjectbyteeq"
 .ENDM
 
 ; Stops execution of the script if the room's item flag (aka ROOMFLAG_ITEM aka bit 5) is set.
@@ -658,9 +658,9 @@
 ; param2:	The value to check for equality with
 .MACRO checkobjectbyteeq
 	.db $d4
-	.db \1 \2
+	.db \1, \2
 
-	m_verify_object_byte \1 "checkobjectbyteeq"
+	m_verify_object_byte \1, "checkobjectbyteeq"
 .ENDM
 
 ; Holds execution until the given memory address equals the given value.
@@ -683,7 +683,7 @@
 ; zero.
 ; For custom scripts, use the "wait" pseudo-opcode instead of this.
 .MACRO setcounter1
-	.db $d7 \1
+	.db $d7, \1
 .ENDM
 
 ; Command $d8: see applyspeed
@@ -715,9 +715,9 @@
 .MACRO spawnitem
 	.db $dd
 	.if NARGS == 1
-		.db \1>>8 \1&$ff
+		.db (\1)>>8 (\1)&$ff
 	.else
-		.db \1 \2
+		.db \1, \2
 	.endif
 .ENDM
 
@@ -731,9 +731,9 @@
 .MACRO giveitem
 	.db $de
 	.if NARGS == 1
-		.db \1>>8 \1&$ff
+		.db (\1)>>8, (\1)&$ff
 	.else
-		.db \1 \2
+		.db \1, \2
 	.endif
 .ENDM
 
@@ -796,9 +796,9 @@
 .MACRO spawnenemyhere
 	.db $e6
 	.if NARGS == 1
-		.db \1>>8 \1&$ff
+		.db (\1)>>8, (\1)&$ff
 	.else
-		.db \1 \2
+		.db \1, \2
 	.endif
 .ENDM
 
@@ -807,7 +807,7 @@
 ; param2:	The tile index to set it to
 .MACRO settileat
 	.db $e7
-	.db \1 \2
+	.db \1, \2
 .ENDM
 
 ; Set the tile at this interaction's position to the specified value.
@@ -843,16 +843,16 @@
 ; Moves an npc a set distance. Use the "setspeed" command prior to this.
 ; param1:	Number of frames to move
 .MACRO moveup
-	.db $ec \1
+	.db $ec, \1
 .ENDM
 .MACRO moveright
-	.db $ed \1
+	.db $ed, \1
 .ENDM
 .MACRO movedown
-	.db $ee \1
+	.db $ee, \1
 .ENDM
 .MACRO moveleft
-	.db $ef \1
+	.db $ef, \1
 .ENDM
 
 ; Wait for a set number of frames by setting counter1. The parameter passed is not the
@@ -891,7 +891,8 @@
 
 ; Alternative to "delay"; takes a frame value as the parameter instead of the arbitrary
 ; lengths "delay" works with. Falls back to using "setcounter1" if it would take 2 bytes.
-; @param frames Number of frames to wait
+;
+; param1:   Number of frames to wait
 .MACRO wait
 	.if \1 >= 256
 		.redefine M_RESULT (-1)
@@ -1007,9 +1008,11 @@
 	.endif
 .ENDM
 
+
+; Write 2 consecutive bytes to an object's variables (little-endian)
 .MACRO writeobjectword
-	writeobjectbyte \1,   \2&$ff
-	writeobjectbyte \1+1, \2>>$8
+	writeobjectbyte \1,     (\2)&$ff
+	writeobjectbyte (\1)+1, (\2)>>$8
 .ENDM
 
 ; Pseudo-ops from ZOSE
@@ -1017,7 +1020,7 @@
 ; param1:	Tile position to check
 ; param2:	Tile index to check for
 .MACRO checktile
-	checkmemoryeq wRoomLayout+\1 \2
+	checkmemoryeq wRoomLayout+\1, \2
 .ENDM
 
 .MACRO maketorcheslightable
@@ -1027,6 +1030,14 @@
 .MACRO createpuffnodelay
 	asm15 objectCreatePuff
 .ENDM
+
+
+
+; Opcode aliases
+.MACRO jump2byte
+	scriptjump \1
+.ENDM
+
 
 
 ; Helper macro for validating arguments that take an interaction byte.

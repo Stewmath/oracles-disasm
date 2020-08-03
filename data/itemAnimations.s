@@ -272,11 +272,11 @@ itemAnimation1e803:
 itemAnimation1e818:
 	.db $01 $00 $00
 	.db $02 $00 $00
-@itemAnimation1e818Loop:
+itemAnimation1e818Loop:
 	.db $02 $02 $00
 	.db $02 $04 $80
 	.db $02 $06 $40
-	m_AnimationLoop @itemAnimation1e818Loop
+	m_AnimationLoop itemAnimation1e818Loop
 
 itemAnimation1e829:
 	.db $01 $00 $00
@@ -291,10 +291,10 @@ itemAnimation1e838:
 
 itemAnimation1e840:
 	.db $01 $00 $00
-@itemAnimation1e840Loop:
+itemAnimation1e840Loop:
 	.db $03 $02 $00
 	.db $03 $04 $00
-	m_AnimationLoop @itemAnimation1e840Loop
+	m_AnimationLoop itemAnimation1e840Loop
 
 itemAnimation1e84b:
 	.db $08 $00 $00

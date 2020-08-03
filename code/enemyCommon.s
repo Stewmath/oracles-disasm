@@ -13,9 +13,9 @@ _ecom_incState:
 	ret
 
 ;;
-_ecom_incState2:
+_ecom_incSubstate:
 	ld h,d
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	inc (hl)
 	ret
 

@@ -1741,7 +1741,7 @@ interactionCode23:
 
 ; State 1: waiting for switch to toggle to create bridge
 @state1:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @state1Substate0
@@ -1776,7 +1776,7 @@ interactionCode23:
 	ld a,$0a
 	ld e,Interaction.counter1
 	ld (de),a
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @state1Substate1:
 	call interactionDecCounter1
@@ -1800,7 +1800,7 @@ interactionCode23:
 
 ; State 2: waiting for switch to toggle to remove bridge
 @state2:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @state2Substate0
@@ -2418,7 +2418,7 @@ interactionCode2c:
 
 @state1:
 	call interactionAnimate
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -2429,7 +2429,7 @@ interactionCode2c:
 @substate0:
 	call interactionDecCounter1
 	ret nz
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate1:
 	ld c,$00
@@ -2437,13 +2437,13 @@ interactionCode2c:
 	ret nz
 	ld a,$01
 	call interactionSetAnimation
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate2:
 	ld e,Interaction.animParameter
 	ld a,(de)
 	bit 7,a
-	jp nz,interactionIncState2
+	jp nz,interactionIncSubstate
 
 	or a
 	ret z
@@ -3384,7 +3384,7 @@ _impaState1:
 ;   var37-var3a: Last frame's Y, X, and Direction values. Used for checking whether to
 ;                update Impa's animation (update if any one has changed).
 _impaSubid0:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	cp $0e
 	jr nc,+
@@ -3406,7 +3406,7 @@ _impaSubid0:
 	ld a,$03
 	call setMusicVolume
 
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 +
 	ld a,(de)
 	rst_jumpTable
@@ -3443,7 +3443,7 @@ _impaSubid0:
 	ld (hl),DIR_UP
 
 @beginFollowingLink:
-	call interactionIncState2
+	call interactionIncSubstate
 	call makeActiveObjectFollowLink
 	call interactionSetAlwaysUpdateBit
 	call objectSetReservedBit1
@@ -3477,7 +3477,7 @@ _impaSubid0:
 	ld l,<w1Link.subid
 	ld (hl),$02
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),$1e
 	ld l,Interaction.enabled
@@ -3537,7 +3537,7 @@ _impaSubid0:
 	call objectUpdateSpeedZ_paramC
 	ret nz
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),$0a
 	ret
@@ -3550,7 +3550,7 @@ _impaSubid0:
 
 	ld bc,TX_0104
 	call showText
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate4:
 	call interactionDecCounter1IfTextNotActive
@@ -3558,7 +3558,7 @@ _impaSubid0:
 
 	ld l,Interaction.speed
 	ld (hl),SPEED_300
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 ; Moving toward stone
 @substate5:
@@ -3577,7 +3577,7 @@ _impaSubid0:
 ; Reached the stone
 
 	ld h,d
-	call interactionIncState2
+	call interactionIncSubstate
 	ld a,$38
 	ld l,Interaction.yh
 	ldi (hl),a
@@ -3596,7 +3596,7 @@ _impaSubid0:
 	ld (hl),$1e
 	ld bc,-$180
 	call objectSetSpeedZ
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 ; Jumping in front of stone
 @substate7:
@@ -3607,7 +3607,7 @@ _impaSubid0:
 	call objectUpdateSpeedZ_paramC
 	ret nz
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),$0a
 	ret
@@ -3617,7 +3617,7 @@ _impaSubid0:
 	ret nz
 
 	ld (hl),$1e
-	call interactionIncState2
+	call interactionIncSubstate
 	ld bc,TX_0105
 	jp showText
 
@@ -3629,7 +3629,7 @@ _impaSubid0:
 	ld (hl),$02
 	ld hl,impaScript_moveAwayFromRock
 	call interactionSetScript
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 ; Moving away from rock (the previously loaded script handles this)
 @substateA:
@@ -3644,7 +3644,7 @@ _impaSubid0:
 	ld (hl),DIR_UP
 	ld hl,impaScript_waitForRockToBeMoved
 	call interactionSetScript
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 ; Waiting for Link to start pushing the rock
 @substateB:
@@ -3659,7 +3659,7 @@ _impaSubid0:
 
 	ld hl,impaScript_rockJustMoved
 	call interactionSetScript
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substateC:
 	call _impaAnimateAndRunScript
@@ -3679,7 +3679,7 @@ _impaSubid0:
 	jp nz,@updateAnimationWhileFollowingLink
 
 	; Start the next part of the cutscene
-	call interactionIncState2
+	call interactionIncSubstate
 	call clearFollowingLinkObject
 	ldbc $68,$38
 	call interactionSetPosition
@@ -3692,7 +3692,7 @@ _impaSubid0:
 
 ; Impa has just moved into the corner, Veran will now come out.
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.oamFlags
 	ld (hl),$02
 	ld a,$05
@@ -3712,7 +3712,7 @@ _impaSubid0:
 	ld a,(hl)
 	or a
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 
 ;;
 ; Changes impa's "oamTileIndexBase" to reference her "collapsed" graphic, which is not in
@@ -3730,7 +3730,7 @@ _impaRet:
 ;;
 ; Impa talking to you after Nayru is kidnapped
 _impaSubid1:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -3742,7 +3742,7 @@ _impaSubid1:
 	cp $20
 	jp nz,interactionAnimate
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld e,Interaction.xh
 	ld a,(de)
 	ld l,Interaction.var3d
@@ -3754,7 +3754,7 @@ _impaSubid1:
 @substate1:
 	call interactionDecCounter1
 	jr nz,interactionOscillateXRandomly
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 ;;
 ; Uses var3d as the interaction's "base" position, and randomly shifts this position left
@@ -3782,7 +3782,7 @@ _impaSubid1Substate2:
 ;;
 ; Impa in the credits cutscene
 _impaSubid2:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -3798,7 +3798,7 @@ _impaSubid2:
 	call interactionDecCounter1IfPaletteNotFading
 	ret nz
 	ld (hl),$3c
-	call interactionIncState2
+	call interactionIncSubstate
 	ld a,$50
 	ld bc,$6050
 	jp createEnergySwirlGoingIn
@@ -3811,7 +3811,7 @@ _impaSubid2:
 	ld (hl),a
 	dec a
 	ld (wTmpcbba),a
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate2:
 	ld hl,wTmpcbb3
@@ -3819,7 +3819,7 @@ _impaSubid2:
 	call flashScreen
 	ret z
 
-	call interactionIncState2
+	call interactionIncSubstate
 	call interactionCode31@loadScript
 	ld a,$01
 	ld ($cfc0),a
@@ -3836,7 +3836,7 @@ _impaSubid2Substate4:
 	ld l,Interaction.var38
 	dec (hl)
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),$02
 
@@ -3857,7 +3857,7 @@ _impaSubid2Substate5:
 	ld h,d
 	ld l,Interaction.var38
 	ld (hl),$10
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 _impaSubid2Substate6:
 	ld h,d
@@ -3877,7 +3877,7 @@ _impaSubid2Substate6:
 	jr z,+
 	xor $02
 +
-	ld l,Interaction.state2
+	ld l,Interaction.substate
 	dec (hl)
 	dec (hl)
 	jp interactionSetAnimation
@@ -3886,7 +3886,7 @@ _impaSubid2Substate6:
 	ld (hl),$00
 	ld a,$02
 	ld ($cfc0),a
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 _impaSubid2Substate7:
 	call _impaAnimateAndRunScript
@@ -3898,7 +3898,7 @@ _impaSubid2Substate7:
 ;;
 ; Impa tells you about Ralph's heritage (unlinked)
 _impaSubid4:
-	call checkInteractionState2
+	call checkInteractionSubstate
 	jr nz,@substate1
 
 @substate0:
@@ -3919,7 +3919,7 @@ _impaSubid4:
 	inc a
 	ld (wDisabledObjects),a
 	ld (wMenuDisabled),a
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate1:
 	ld c,$20
@@ -4031,7 +4031,7 @@ _impaSubid5:
 	jp interactionDelete
 ++
 	call interactionAnimateBasedOnSpeed
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -4049,14 +4049,14 @@ _impaSubid5:
 	ld (wLinkForceState),a
 	ld a,$10
 	ld (w1Link.angle),a
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate1:
 	ld a,(w1Link.state)
 	cp LINK_STATE_FORCE_MOVEMENT
 	ret z
 	call setLinkForceStateToState08
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate2:
 	ret
@@ -4295,7 +4295,7 @@ interactionCode32:
 
 _impaOctorokCode:
 	call interactionAnimate
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -4307,7 +4307,7 @@ _impaOctorokCode:
 	ld a,($cfd0)
 	cp $01
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),$14
 	ret
@@ -4315,7 +4315,7 @@ _impaOctorokCode:
 @substate1:
 	call interactionDecCounter1
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.speed
 	ld (hl),SPEED_300
 
@@ -4345,7 +4345,7 @@ _impaOctorokCode:
 	ret nz
 	ld a,SND_THROW
 	call playSound
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate3:
 	call objectCheckWithinScreenBoundary
@@ -5073,7 +5073,7 @@ interactionCode34:
 	jp objectSetVisible83
 
 @state1:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -5087,7 +5087,7 @@ interactionCode34:
 
 ; Begin stone-pushing cutscene
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.speed
 	ld (hl),SPEED_40
 	ld l,Interaction.counter1
@@ -5192,7 +5192,7 @@ interactionCode34:
 	ld l,Interaction.xh
 	ld (hl),b
 
-	call interactionIncState2
+	call interactionIncSubstate
 
 	; Determine bit to set on room flags (depends which way it was pushed)
 	call getThisRoomFlags
@@ -5602,7 +5602,7 @@ _childUpdateUnknownMovement:
 ;;
 ; Updates movement for "shy" personality type (runs away when Link approaches)
 _childUpdateShyMovement:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -5613,7 +5613,7 @@ _childUpdateShyMovement:
 	call objectCheckLinkWithinDistance
 	ret nc
 
-	call interactionIncState2
+	call interactionIncSubstate
 
 @substate1:
 	call _childUpdateAngleAndApplySpeed
@@ -5621,7 +5621,7 @@ _childUpdateShyMovement:
 	ret nc
 
 	ld h,d
-	ld l,Interaction.state2
+	ld l,Interaction.substate
 	ld (hl),$00
 	jp _childIncPositionIndex
 
@@ -5787,7 +5787,7 @@ _childLoadPositionListPointer:
 
 ;;
 _childUpdateCuriousMovement:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -5803,7 +5803,7 @@ _childUpdateCuriousMovement:
 
 @gotoSubstate1AndJump:
 	ld h,d
-	ld l,Interaction.state2
+	ld l,Interaction.substate
 	ld (hl),$01
 	ld l,Interaction.var3d
 	ld (hl),$01
@@ -5820,7 +5820,7 @@ _childUpdateCuriousMovement:
 	call objectUpdateSpeedZ_paramC
 	jp nz,objectApplySpeed
 
-	call interactionIncState2
+	call interactionIncSubstate
 
 	ld l,Interaction.var3d
 	ld (hl),$00
@@ -6177,7 +6177,7 @@ _nayruState1:
 ;             palette. These are copied to var39. Her "possessed" counter gets longer while
 ;             the other gets shorter.
 _nayruSubid00:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -6197,7 +6197,7 @@ _nayruSubid00:
 	cp $09
 	jp nz,@createMusicNotes
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld a,$0f
 	ld l,Interaction.var39
 	ldi (hl),a
@@ -6253,7 +6253,7 @@ _nayruSubid00:
 	jr nz,++
 
 	; Done flickering with possession
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.oamFlags
 	ld (hl),$06
 	ret
@@ -6301,7 +6301,7 @@ _nayruSubid00:
 @substate2:
 	call interactionRunScript
 	ret nc
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 
 ; Waiting for some kind of signal?
@@ -6309,7 +6309,7 @@ _nayruSubid00:
 	ld a,($cfd0)
 	cp $1a
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),60
 	ret
@@ -6321,7 +6321,7 @@ _nayruSubid00:
 	call interactionDecCounter1
 	ret nz
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld bc,-$400
 	call objectSetSpeedZ
 	ld a,SND_SWORDSPIN
@@ -6348,14 +6348,14 @@ _nayruSubid00:
 	ld l,Interaction.counter1
 	ld (hl),$1e
 
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 
 ; Brief delay before falling back down
 @substate6:
 	call interactionDecCounter1
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld bc,$0040
 	jp objectSetSpeedZ
 
@@ -6374,7 +6374,7 @@ _nayruSubid00:
 	call interactionSetScript
 	ld a,SND_SLASH
 	call playSound
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 
 ; Next script running; make Nayru transparent when signal is given. Delete self when the
@@ -6432,7 +6432,7 @@ _nayruSubid01:
 
 ; Subid $02: Cutscene on maku tree screen after being saved
 _nayruSubid02:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw _nayruSubid02Substate0
@@ -6454,7 +6454,7 @@ _nayruSubid02Substate0: ; This is also called by Ralph in the same cutscene
 	ld (de),a
 
 	call _nayruSetCounter1Randomly
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @createNotes:
 	call _nayruSubid00@createMusicNotes
@@ -6470,7 +6470,7 @@ _nayruSubid02Substate1:
 	cp $08
 	jr nz,_nayruFlipDirectionAtRandomIntervals
 
-	call interactionIncState2
+	call interactionIncSubstate
 
 	ld hl,nayruScript02_part3
 	call interactionSetScript
@@ -6509,7 +6509,7 @@ _nayruSubid02Substate2:
 ; Subid $03: Cutscene with Nayru and Ralph when Link exits the black tower
 _nayruSubid03:
 	call interactionAnimateBasedOnSpeed
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -6521,7 +6521,7 @@ _nayruSubid03:
 	cp $01
 	ret nz
 	call startJump
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate1:
 	ld c,$24
@@ -6529,7 +6529,7 @@ _nayruSubid03:
 	ret nz
 	ld hl,nayruScript03
 	call interactionSetScript
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate2:
 	jp interactionRunScript
@@ -6645,7 +6645,7 @@ _nayruUpdatePossessionPaletteDurations:
 ;;
 ; Subid $07: Cutscene with the vision of Nayru teaching you Tune of Echoes
 _nayruSubid07:
-	call checkInteractionState2
+	call checkInteractionSubstate
 	jr nz,@substate1
 
 @substate0:
@@ -6660,7 +6660,7 @@ _nayruSubid07:
 ++
 	xor a
 	ld ($cfc0),a
-	call interactionIncState2
+	call interactionIncSubstate
 	call objectSetVisible82
 
 	ld a,MUS_NAYRU
@@ -7102,7 +7102,7 @@ _ralphRunSubid:
 ;;
 ; Cutscene where Nayru gets possessed
 _ralphSubid00:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -7114,7 +7114,7 @@ _ralphSubid00:
 	cp $09
 	ret nz
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),$3c
 
@@ -7144,7 +7144,7 @@ _ralphSubid00:
 ;;
 ; Cutscene after Nayru is possessed
 _ralphSubid02:
-	; They probably meant to call "checkInteractionState2" instead? It looks like
+	; They probably meant to call "checkInteractionSubstate" instead? It looks like
 	; @state0 will never be run...
 	call checkInteractionState
 	jr nz,@state1
@@ -7155,7 +7155,7 @@ _ralphSubid02:
 	ld a,($cfd0)
 	cp $1f
 	ret nz
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @state1:
 	callab scriptHlp.objectWritePositionTocfd5
@@ -7189,7 +7189,7 @@ _ralphSubid01:
 ;;
 ; Cutscene after talking to Rafton
 _ralphSubid03:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -7209,7 +7209,7 @@ _ralphSubid03:
 	ld (hl),$1e
 	ld a,$02
 	call interactionSetAnimation
-	jp interactionIncState2
+	jp interactionIncSubstate
 ++
 	ld a,(wFrameCounter)
 	and $0f
@@ -7223,7 +7223,7 @@ _ralphSubid03:
 @substate1:
 	call interactionDecCounter1
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	jp startJump
 
 @substate2:
@@ -7231,7 +7231,7 @@ _ralphSubid03:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),$0a
 	ret
@@ -7240,7 +7240,7 @@ _ralphSubid03:
 	call interactionDecCounter1
 	ret nz
 	ld (hl),$1e
-	call interactionIncState2
+	call interactionIncSubstate
 	ld bc,TX_2a0a
 	jp showText
 
@@ -7249,7 +7249,7 @@ _ralphSubid03:
 	ret nz
 	ld (hl),$30
 
-	call interactionIncState2
+	call interactionIncSubstate
 
 	ld l,Interaction.angle
 	ld (hl),$10
@@ -7265,7 +7265,7 @@ _ralphSubid03:
 	jp nz,objectApplySpeed
 
 	ld (hl),$06
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate6:
 	call interactionDecCounter1
@@ -7273,7 +7273,7 @@ _ralphSubid03:
 	ld (hl),$0a
 
 	; Align with Link's x-position
-	call interactionIncState2
+	call interactionIncSubstate
 	ld a,(w1Link.xh)
 	ld l,Interaction.xh
 	sub (hl)
@@ -7304,7 +7304,7 @@ _ralphSubid03:
 	jp nz,objectApplySpeed
 
 @startScript:
-	call interactionIncState2
+	call interactionIncSubstate
 	ld hl,ralphSubid03Script
 	jp interactionSetScript
 
@@ -7321,7 +7321,7 @@ _ralphSubid03:
 ;;
 ; Cutscene on maku tree screen after saving Nayru
 _ralphSubid04:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw _nayruSubid02Substate0 ; Borrow some of Nayru's code from the same cutscene
@@ -7333,7 +7333,7 @@ _ralphSubid04:
 	cp $08
 	jp nz,_nayruFlipDirectionAtRandomIntervals
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld hl,ralphSubid04Script_part3
 	call interactionSetScript
 	jp @substate2
@@ -7347,7 +7347,7 @@ _ralphSubid04:
 ; Cutscene in black tower where Nayru/Ralph meet you to try to escape
 _ralphSubid05:
 	call interactionAnimateBasedOnSpeed
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -7361,7 +7361,7 @@ _ralphSubid05:
 	cp $01
 	ret nz
 	call startJump
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate1:
 	ld c,$20
@@ -7369,20 +7369,20 @@ _ralphSubid05:
 	ret nz
 	ld hl,ralphSubid05Script
 	call interactionSetScript
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate2:
 	ld a,($cfd0)
 	cp $02
 	jp nz,interactionRunScript
 	call startJump
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate3:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.var3e
 	inc (hl)
 
@@ -7392,7 +7392,7 @@ _ralphRunScript:
 ;;
 _ralphSubid06:
 	call interactionAnimateBasedOnSpeed
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -7405,13 +7405,13 @@ _ralphSubid06:
 	cp $08
 	jp nz,interactionRunScript
 	call startJump
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate1:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.var3e
 	inc (hl)
 	jr _ralphRunScript
@@ -7420,7 +7420,7 @@ _ralphSubid06:
 ; Cutscene postgame where they warp to the maku tree, Ralph notices the statue
 _ralphSubid07:
 	callab scriptHlp.objectWritePositionTocfd5
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw _ralphAnimateBasedOnSpeedAndRunScript
@@ -7433,7 +7433,7 @@ _ralphAnimateBasedOnSpeedAndRunScript:
 	jp interactionRunScript
 
 _ralphSubid07Substate1:
-	call interactionIncState2
+	call interactionIncSubstate
 	call objectSetVisiblec2
 	ld bc,-$1c0
 	call objectSetSpeedZ
@@ -7443,7 +7443,7 @@ _ralphSubid07Substate2:
 	call objectUpdateSpeedZ_paramC
 	ret nz
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.var3e
 	inc (hl)
 	jp objectSetVisible82
@@ -7451,7 +7451,7 @@ _ralphSubid07Substate2:
 ;;
 ; Cutscene in credits where Ralph is training with his sword
 _ralphSubid08:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -7465,7 +7465,7 @@ _ralphSubid08:
 
 	; Script done
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.speed
 	ld (hl),SPEED_c0
 
@@ -7483,7 +7483,7 @@ _ralphSubid08:
 	call z,@getNextAngle
 	ret nz
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),$5a
 	ld a,$08
@@ -7517,7 +7517,7 @@ _ralphSubid0a:
 
 ; Unlinked game
 
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -7545,7 +7545,7 @@ _ralphSubid0a:
 	ld a,SND_CLINK
 	call playSound
 
-	call interactionIncState2
+	call interactionIncSubstate
 
 	ld l,Interaction.counter1
 	ld (hl),$1e
@@ -7566,7 +7566,7 @@ _ralphSubid0a:
 	ld b,a
 	add $02
 	cp $05
-	jr c,@incState2
+	jr c,@incSubstate
 
 	ld a,b
 	bit 7,a
@@ -7586,8 +7586,8 @@ _ralphSubid0a:
 	rlca
 	ld (hl),a ; [w1Link.direction]
 
-@incState2:
-	jp interactionIncState2
+@incSubstate:
+	jp interactionIncSubstate
 
 @substate2:
 	ld b,$50
@@ -7606,7 +7606,7 @@ _ralphSubid0a:
 	ld (wLinkStateParameter),a
 	ld a,LINK_STATE_FORCE_MOVEMENT
 	ld (wLinkForceState),a
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate3:
 	ldbc DIR_RIGHT,$03
@@ -7621,7 +7621,7 @@ _ralphSubid0a:
 	ld (w1Link.direction),a
 	ld a,c
 	call interactionSetAnimation
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate4:
 	call interactionRunScript
@@ -7637,7 +7637,7 @@ _ralphSubid0a_linked:
 	jp c,interactionDelete
 
 	call interactionAnimateBasedOnSpeed
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -7673,7 +7673,7 @@ _ralphSubid10:
 	or a
 	call nz,_ralphTurnLinkTowardSelf
 
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -8098,7 +8098,7 @@ interactionCode3a:
 
 ; Cutscene where guy is struck by lightning in intro
 @runSubid00:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @@substate0
@@ -8110,7 +8110,7 @@ interactionCode3a:
 	cp $02
 	jp nz,interactionAnimate
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),$3c
 	ld l,Interaction.xh
@@ -8125,7 +8125,7 @@ interactionCode3a:
 	cp $03
 	ret nz
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),$10
 
@@ -8160,7 +8160,7 @@ interactionCode3a:
 
 ; Construction worker blocking path to upper part of black tower.
 @runSubid02:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @@substate0
@@ -8191,7 +8191,7 @@ interactionCode3a:
 	jr nc,++
 
 	; Link tried to approach; move over to block his path
-	call interactionIncState2
+	call interactionIncSubstate
 	ld hl,villagerSubid02Script_part2
 	call interactionSetScript
 ++
@@ -8219,7 +8219,7 @@ interactionCode3a:
 	ld a,(hl)
 	xor $01
 	ld (hl),a
-	ld l,Interaction.state2
+	ld l,Interaction.substate
 	ld (hl),$00
 	jp @loadScript
 
@@ -8230,7 +8230,7 @@ interactionCode3a:
 
 
 @runSubid09:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @@substate0
@@ -8242,13 +8242,13 @@ interactionCode3a:
 	ld a,($cfd1)
 	cp $01
 	ret nz
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @@substate1:
 	ld a,($cfd1)
 	cp $02
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.oamFlags
 	ld (hl),$06
 
@@ -8258,7 +8258,7 @@ interactionCode3a:
 
 ; Villager being restored from stone, resumes playing catch
 @runSubid0b:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @@substate0
@@ -8273,13 +8273,13 @@ interactionCode3a:
 	ld ($cfd1),a
 	ld a,SND_RESTORE
 	call playSound
-	jpab setCounter1To120AndPlaySoundEffectAndIncState2
+	jpab setCounter1To120AndPlaySoundEffectAndIncSubstate
 
 @@substate1:
 	call interactionDecCounter1
 	jr nz,++
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.oamFlags
 	ld (hl),$01
 	jp @loadScript
@@ -8557,7 +8557,7 @@ interactionCode3b:
 
 ; Cutscene where guy is struck by lightning in intro
 @runSubid00:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @@substate0
@@ -8571,7 +8571,7 @@ interactionCode3b:
 	cp $02
 	jp nz,interactionAnimate
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.xh
 	ld a,(hl)
 	ld l,Interaction.var3d
@@ -8584,7 +8584,7 @@ interactionCode3b:
 	cp $04
 	ret nz
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),$1e
 	ret
@@ -8597,14 +8597,14 @@ interactionCode3b:
 	call objectSetSpeedZ
 	ld a,SND_JUMP
 	call playSound
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @@substate3:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	ret nz
 
-	call interactionIncState2
+	call interactionIncSubstate
 	jp @loadScript
 
 @@substate4:
@@ -8953,12 +8953,12 @@ _boyRunSubid00:
 	call interactionAnimate
 	call objectSetPriorityRelativeToLink_withTerrainEffects
 
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	or a
 	call z,objectPreventLinkFromPassing
 
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -8971,7 +8971,7 @@ _boyRunSubid00:
 	cp $0e
 	jp nz,interactionRunScript
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld a,$02
 	jp interactionSetAnimation
 
@@ -8981,7 +8981,7 @@ _boyRunSubid00:
 	cp $10
 	ret nz
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld bc,-$180
 	call objectSetSpeedZ
 	ld a,$02
@@ -8993,7 +8993,7 @@ _boyRunSubid00:
 	ret nz
 
 	; Run away
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.angle
 	ld (hl),$02
 	ld l,Interaction.speed
@@ -9009,7 +9009,7 @@ _boyRunSubid00:
 
 ; Kid turning to stone cutscene
 _boyRunSubid01:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -9021,7 +9021,7 @@ _boyRunSubid01:
 	ld a,($cfd1)
 	cp $01
 	jr nz,+
-	jp interactionIncState2
+	jp interactionIncSubstate
 +
 	ld e,Interaction.counter2
 	ld a,(de)
@@ -9035,7 +9035,7 @@ _boyRunSubid01:
 	cp $02
 	jr nz,++
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.oamFlags
 	ld (hl),$06
 	ret
@@ -9085,7 +9085,7 @@ boyRunSubid03:
 
 ; Cutscene where kids talk about how they're scared of a ghost (green kid)
 _boyRunSubid04:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -9096,20 +9096,20 @@ _boyRunSubid04:
 	call interactionAnimate
 	call interactionDecCounter1
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	jp startJump
 
 @substate1:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	jp _boyLoadScript
 
 
 ; Cutscene where kid is restored from stone
 _boyRunSubid05:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -9122,20 +9122,20 @@ _boyRunSubid05:
 
 ;;
 ; Used in cutscenes where people get restored from stone?
-setCounter1To120AndPlaySoundEffectAndIncState2:
+setCounter1To120AndPlaySoundEffectAndIncSubstate:
 	ld a,120
 	ld e,Interaction.counter1
 	ld (de),a
 	ld a,SND_ENERGYTHING
 	call playSound
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 
 _childSubid05Substate1:
 	call interactionDecCounter1
 	jr nz,childFlickerBetweenStone
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.oamFlags
 	ld (hl),$02
 	jp _boyLoadScript
@@ -9162,7 +9162,7 @@ _childAnimateIfVar39IsZeroAndRunScript:
 
 ; Cutscene where kid sees his dad turn to stone
 _boyRunSubid06:
-	call checkInteractionState2
+	call checkInteractionSubstate
 	call nz,interactionAnimateBasedOnSpeed
 	jp interactionRunScript
 
@@ -9182,7 +9182,7 @@ _boyRunSubid07:
 ; Also called by another interaction?
 boyRunSubid08:
 boyRunSubid09:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -9208,7 +9208,7 @@ boyRunSubid09:
 	ld l,Interaction.angle
 	ld (hl),$18
 
-	call interactionIncState2
+	call interactionIncSubstate
 
 @setAnimationFromAngle:
 	ld e,Interaction.angle
@@ -9230,7 +9230,7 @@ boyRunSubid09:
 	ld l,Interaction.angle
 	ld (hl),$08
 	call @setAnimationFromAngle
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @updateAnimationTwiceAndApplySpeed:
 	call interactionAnimate2Times
@@ -9241,7 +9241,7 @@ boyRunSubid09:
 	call interactionDecCounter1
 	ret nz
 	call _boyStartHop
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate3:
 	call _boyUpdateGravityAndHopWhenLanded
@@ -9254,7 +9254,7 @@ boyRunSubid09:
 	or a
 	ret nz
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),$1e
 	ret
@@ -9266,7 +9266,7 @@ boyRunSubid09:
 	ld l,Interaction.speed
 	ld (hl),SPEED_200
 	call @updateAngleAndCounter
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate5:
 	ld a,($cfd0)
@@ -9277,7 +9277,7 @@ boyRunSubid09:
 	or a
 	jr nz,++
 
-	call interactionIncState2
+	call interactionIncSubstate
 
 	ld l,Interaction.counter1
 	ld (hl),$0a
@@ -9415,7 +9415,7 @@ boyRunSubid09:
 	ld (hl),b
 	ld l,Interaction.speed
 	ld (hl),SPEED_180
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 
 @substate7:
@@ -9430,7 +9430,7 @@ boyRunSubid09:
 
 	ld a,$01
 	call interactionSetAnimation
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 
 ; Waiting for signal to start hopping again
@@ -9440,7 +9440,7 @@ boyRunSubid09:
 	ret nz
 	call interactionDecCounter1
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	jp _boyStartHop
 
 
@@ -9456,7 +9456,7 @@ boyRunSubid09:
 	or a
 	ret nz
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),$0c
 	ret
@@ -9465,7 +9465,7 @@ boyRunSubid09:
 	call interactionDecCounter1
 	ret nz
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),$50
 	ld l,Interaction.speed
@@ -9494,7 +9494,7 @@ _boyRunSubid0b:
 
 ; Cutscene where kid's dad gets restored from stone
 _boyRunSubid0c:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -9510,7 +9510,7 @@ _boyRunSubid0c:
 	cp $01
 	ret nz
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),$78
 
@@ -9524,7 +9524,7 @@ _boyRunSubid0c:
 @substate1:
 	call interactionDecCounter1
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld bc,-$1c0
 	jp objectSetSpeedZ
 
@@ -9535,7 +9535,7 @@ _boyRunSubid0c:
 
 	ld a,$02
 	ld ($cfd1),a
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),120
 	ret
@@ -9544,13 +9544,13 @@ _boyRunSubid0c:
 	call interactionDecCounter1
 	ret nz
 	ld (hl),$3c
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate4:
 	call interactionAnimate2Times
 	call interactionDecCounter1
 	ret nz
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 
 ; Kid with grandma who's either stone or was restored from stone
@@ -9772,7 +9772,7 @@ interactionCode3d:
 
 ; Cutscene where her grandson gets turned to stone
 @runSubid1:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @@substate0
@@ -9786,7 +9786,7 @@ interactionCode3d:
 	jr nc,++
 
 	; Script ended
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),60
 	ret
@@ -9801,13 +9801,13 @@ interactionCode3d:
 	call interactionDecCounter1
 	ret nz
 	ld (hl),20
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @@substate2:
 	call interactionDecCounter1
 	jp nz,interactionAnimate3Times
 	ld (hl),60
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @@substate3:
 	call interactionDecCounter1
@@ -9825,7 +9825,7 @@ interactionCode3d:
 
 ; Cutscene where her grandson is restored from stone
 @runSubid3:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @@substate0
@@ -9836,14 +9836,14 @@ interactionCode3d:
 	call interactionDecCounter1
 	ret nz
 	call startJump
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @@substate1:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	ret nz
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.var38
 	ld (hl),$b4
 	jp @loadScript

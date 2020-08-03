@@ -325,12 +325,17 @@ wTerrainEffectsBuffer: ; $c4c0
 	dsb $40
 
 wObjectsToDraw: ; $c500
-; A $40 byte buffer keeping track of which objects to draw, in what order (first = highest
+; A buffer keeping track of which objects to draw, in what order (first = highest
 ; priority). Each entry is 2 bytes, consisting of the address of high byte of the object's
 ; y-position.
-	dsb $40
+;
+; The entries are divided into 4 groups of 16. Each group corresponds to a value for the
+; "object.visible" variable (value from 0-3). Lower values have higher draw priority.
+;
+; Must be aligned to $100 bytes.
+	dsb $80
 
-; $c540-$c5af unused?
+; $c580-$c5af unused?
 
 .ENDS
 
@@ -1788,8 +1793,8 @@ wWarpDestRoom: ; $cc48/$cc64
 ; This first holds the warp destination index, then (later) the room index.
 	db
 wWarpTransition: ; $cc49/$cc65
-; Bits 0-3 are the half-byte given in WarpDest or StandardWarp macros.
-; Bit 6 determines link's direction for screen-edge warps?
+; Bits 0-3 are the half-byte given in WarpDest or StandardWarp macros. See "constants/transitions.s".
+; Bit 6 determines link's direction for screen-edge warps (0 for up, 1 for down)?
 ; Bit 7 set if this is the "destination" part of the warp?
 	db
 wWarpDestPos: ; $cc4a/$cc66
@@ -2008,10 +2013,10 @@ wGrabbableObjectBuffer: ; $cc74
 ;
 ; When an object is grabbed:
 ; * state = 2
-; * state2 = 0
+; * substate = 0
 ; * enabled |= 2 (allows it to persist across screens)
 ;
-; state2 is set to 2 when the object is thrown / released?
+; substate is set to 2 when the object is thrown / released?
 	dsb $10
 wGrabbableObjectBufferEnd: ; $cc84
 	.db
@@ -3192,6 +3197,10 @@ wRoomLayoutEnd: ; $cfc0
 	; copy its position to the actual object being thrown each frame, and update that
 	; object's state accordingly (ie. ENEMYSTATE_GRABBED).
 	w1ReservedItemC:	instanceof ItemStruct
+.ENDE
+
+.ENUM $dd00 export
+	w1MagnetBall:       instanceof ItemStruct
 .ENDE
 
 .ENUM $de00 export

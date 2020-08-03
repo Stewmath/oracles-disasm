@@ -444,11 +444,11 @@ partAnimation57463:
 	.db $02 $00 $00
 	.db $02 $02 $00
 	.db $02 $04 $00
-@partAnimation57463Loop:
+partAnimation57463Loop:
 	.db $03 $06 $00
 	.db $03 $08 $00
 	.db $03 $0a $00
-	m_AnimationLoop @partAnimation57463Loop
+	m_AnimationLoop partAnimation57463Loop
 
 partAnimation57477:
 	.db $02 $00 $00
@@ -493,11 +493,11 @@ partAnimation574ae:
 	.db $02 $06 $01
 	.db $02 $08 $01
 	.db $02 $0a $01
-@partAnimation574aeLoop:
+partAnimation574aeLoop:
 	.db $02 $00 $02
 	.db $02 $02 $02
 	.db $02 $04 $02
-	m_AnimationLoop @partAnimation574aeLoop
+	m_AnimationLoop partAnimation574aeLoop
 
 partAnimation574dd:
 	.db $01 $00 $00
@@ -602,26 +602,26 @@ partAnimation57599:
 	.db $04 $02 $00
 	.db $04 $04 $00
 	.db $04 $06 $00
-@partAnimation57599Loop:
+partAnimation57599Loop:
 	.db $04 $08 $00
 	.db $04 $0a $00
 	.db $04 $0c $00
-	m_AnimationLoop @partAnimation57599Loop
+	m_AnimationLoop partAnimation57599Loop
 
 partAnimation575b0:
 	.db $04 $06 $00
 	.db $04 $04 $00
-@partAnimation575b0Loop:
+partAnimation575b0Loop:
 	.db $04 $02 $00
 	.db $04 $00 $00
-	m_AnimationLoop @partAnimation575b0Loop
+	m_AnimationLoop partAnimation575b0Loop
 
 partAnimation575be:
 	.db $03 $02 $00
 	.db $03 $04 $01
-@partAnimation575beLoop:
+partAnimation575beLoop:
 	.db $7f $06 $02
-	m_AnimationLoop @partAnimation575beLoop
+	m_AnimationLoop partAnimation575beLoop
 
 partAnimation575c9:
 	.db $03 $04 $01
@@ -629,10 +629,10 @@ partAnimation575c9:
 	.db $7f $02 $ff
 partAnimation575d2:
 	.db $50 $00 $00
-@partAnimation575d2Loop:
+partAnimation575d2Loop:
 	.db $04 $02 $00
 	.db $04 $00 $01
-	m_AnimationLoop @partAnimation575d2Loop
+	m_AnimationLoop partAnimation575d2Loop
 
 partAnimation575dd:
 	.db $04 $04 $02
@@ -702,9 +702,9 @@ partAnimation57654:
 	.db $02 $0a $00
 	.db $02 $0c $00
 	.db $02 $0a $00
-@partAnimation57654Loop:
+partAnimation57654Loop:
 	.db $7f $0e $01
-	m_AnimationLoop @partAnimation57654Loop
+	m_AnimationLoop partAnimation57654Loop
 
 partAnimation57671:
 	.db $78 $00 $00
@@ -754,10 +754,10 @@ partAnimation576cf:
 	.db $04 $20 $00
 	.db $04 $22 $00
 	.db $04 $24 $00
-@partAnimation576cfLoop:
+partAnimation576cfLoop:
 	.db $04 $26 $00
 	.db $04 $28 $00
-	m_AnimationLoop @partAnimation576cfLoop
+	m_AnimationLoop partAnimation576cfLoop
 
 partAnimation576e9:
 	.db $04 $08 $00

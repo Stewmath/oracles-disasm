@@ -417,7 +417,7 @@ _shopkeeperGotoState1:
 ; It jumps to state 5, substate 0 after relinquishing control for Link to pick a chest.
 ; It jumps to state 5, substate 2 after relinquishing control for Link to pick a chest.
 _shopkeeperState5:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -459,7 +459,7 @@ _shopkeeperState5:
 	or a
 	ret z
 
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	xor a
 	ld (de),a
 
@@ -525,7 +525,7 @@ _shopkeeperState5:
 	jr nz,@substate3
 
 	call _shopkeeperCloseOpenedChest
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,$03
 	ld (de),a
 
@@ -533,7 +533,7 @@ _shopkeeperState5:
 	call interactionRunScript
 	ret nc
 
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	xor a
 	ld (de),a
 
@@ -850,7 +850,7 @@ _shopItemPopStackAndDeleteSelf:
 
 ; State 2: item picked up by Link
 _shopItemState2:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -1508,7 +1508,7 @@ _introSpritesState1:
 
 ; Triforce pieces
 _introSpriteTriforceSubid:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -1531,7 +1531,7 @@ _introSpriteTriforceSubid:
 	ld b,$0a
 +
 	call func_2d48
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),b
 
@@ -1564,7 +1564,7 @@ _introSpriteTriforceSubid:
 
 @label_09_048:
 	call func_2d48
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),b
 
@@ -1574,7 +1574,7 @@ _introSpriteTriforceSubid:
 
 	ld b,$02
 	call func_2d48
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),b
 ++
@@ -1587,7 +1587,7 @@ _introSpriteTriforceSubid:
 
 	ld b,$03
 	call func_2d48
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),b
 
@@ -1596,7 +1596,7 @@ _introSpriteTriforceSubid:
 	cp $01
 	jr z,+
 
-	jp interactionIncState2
+	jp interactionIncSubstate
 +
 	ld a,SND_ENERGYTHING
 	jp playSound
@@ -1606,7 +1606,7 @@ _introSpriteTriforceSubid:
 	call interactionDecCounter1
 	ret nz
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld a,$02
 	ld (wIntro.triforceState),a
 
@@ -1694,7 +1694,7 @@ interactionCode50:
 	.dw @state5
 
 @state0:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @@substate0
@@ -1704,7 +1704,7 @@ interactionCode50:
 @@substate0:
 	call interactionSetAlwaysUpdateBit
 
-	ld l,Interaction.state2
+	ld l,Interaction.substate
 	ld (hl),$01
 	ld l,Interaction.counter1
 	ld (hl),$01
@@ -1719,7 +1719,7 @@ interactionCode50:
 	call interactionDecCounter1
 	ret nz
 
-	ld l,Interaction.state2
+	ld l,Interaction.substate
 	ld (hl),$02
 	ld l,Interaction.counter1
 	ld (hl),$10
@@ -1735,7 +1735,7 @@ interactionCode50:
 	ld h,d
 	ld l,Interaction.state
 	ld (hl),$01
-	ld l,Interaction.state2
+	ld l,Interaction.substate
 	ld (hl),$00
 
 	ld l,Interaction.var03

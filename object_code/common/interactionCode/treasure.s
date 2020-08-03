@@ -83,7 +83,7 @@ interactionCode60:
 
 ; Appears with a poof
 @spawnMode1:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	or a
 	jr nz,++
@@ -102,7 +102,7 @@ interactionCode60:
 
 ; Falls from top of screen
 @spawnMode2:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @@substate0
@@ -125,7 +125,7 @@ interactionCode60:
 	inc l
 	ld (hl),$02
 
-	ld l,Interaction.state2
+	ld l,Interaction.substate
 	inc (hl)
 
 	call objectGetZAboveScreen
@@ -220,7 +220,7 @@ interactionCode60:
 @spawnMode3:
 	ld a,$80
 	ld (wForceLinkPushAnimation),a
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @m3State0
@@ -248,7 +248,7 @@ interactionCode60:
 	ret nz
 
 	; Finished moving up
-	ld l,Interaction.state2
+	ld l,Interaction.substate
 	inc (hl)
 	ld l,Interaction.var39
 	ld a,(hl)
@@ -273,7 +273,7 @@ interactionCode60:
 
 ; Appears at Link's position after a short delay
 @spawnMode6:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @m6State0
@@ -293,7 +293,7 @@ interactionCode60:
 
 	; Delay done, give treasure to Link
 
-	call interactionIncState2
+	call interactionIncSubstate
 	call objectSetVisible80
 	call @giveTreasure
 	ldbc $81,$00
@@ -328,7 +328,7 @@ interactionCode60:
 
 ; Item that falls to Link's position when [wccaa]=$ff?
 @spawnMode5:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @m5State0
@@ -353,7 +353,7 @@ interactionCode60:
 
 	ld bc,$ff00
 	call objectSetSpeedZ
-	ld l,Interaction.state2
+	ld l,Interaction.substate
 	inc (hl)
 	ld a,(w1Link.direction)
 	swap a
@@ -411,7 +411,7 @@ interactionCode60:
 @grabMode2:
 	ldbc $81,$00
 +
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	or a
 	jr nz,++
@@ -448,7 +448,7 @@ interactionCode60:
 @grabMode3:
 	ld a,Interaction.var38
 	ld (wInstrumentsDisabledCounter),a
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @gm3State0
@@ -475,7 +475,7 @@ interactionCode60:
 	call interactionDecCounter1
 	ret nz
 
-	ld l,Interaction.state2
+	ld l,Interaction.substate
 	inc (hl)
 
 	; Forces spinslash animation
@@ -504,7 +504,7 @@ interactionCode60:
 
 	call objectSetVisible
 	call objectSetVisible80
-	call interactionIncState2
+	call interactionIncSubstate
 	ld a,SND_SWORD_OBTAINED
 	jp playSound
 

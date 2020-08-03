@@ -45,7 +45,7 @@ _bomb_flower_subid0:
 	jp objectAddToGrabbableObjectBuffer
 
 @state2:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -54,7 +54,7 @@ _bomb_flower_subid0:
 	.dw @substate3
 
 @substate0:
-	call interactionIncState2
+	call interactionIncSubstate
 	ld a,$1c
 	ld (wDisabledObjects),a
 	xor a
@@ -80,7 +80,7 @@ _bomb_flower_subid0:
 	ld (wMenuDisabled),a
 	call dropLinkHeldItem
 
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,$02
 	ld (de),a
 
@@ -291,7 +291,7 @@ interactionCode79:
 	ld (wLinkRidingObject),a
 
 @updateSubstate:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -1149,8 +1149,8 @@ interactionCode7e:
 +
 	ld a,b
 	ldi (hl),a  ; [wWarpDestRoom] = b
-	lda TRANSITION_DEST_0
-	ldi (hl),a  ; [wWarpTransition] = TRANSITION_DEST_0
+	lda TRANSITION_DEST_BASIC
+	ldi (hl),a  ; [wWarpTransition] = TRANSITION_DEST_BASIC
 	ld (hl),$57 ; [wWarpDestPos] = $57
 	inc l
 	ld (hl),$03 ; [wWarpTransition2] = $03 (fadeout)
@@ -1283,7 +1283,7 @@ interactionCode7e:
 	ld (wWarpDestPos),a
 	ld a,$85
 	ld (wWarpDestGroup),a
-	lda TRANSITION_DEST_0
+	lda TRANSITION_DEST_BASIC
 	ld (wWarpTransition),a
 	ld a,$03
 	ld (wWarpTransition2),a ; Fadeout transition

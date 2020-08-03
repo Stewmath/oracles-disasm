@@ -766,7 +766,7 @@ enemyCode05:
 	ld l,Enemy.collisionType
 	res 7,(hl)
 	xor a
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	ldd (hl),a
 	; state $0e
 	ld (hl),$0e
@@ -919,13 +919,13 @@ dragonOnox_checkTransitionState:
 	cp $08
 	jr nz,+
 
-	ld e,Enemy.state2
+	ld e,Enemy.substate
 	ld a,(de)
 	sub $02
 	cp $02
 	jr nc,+
 
-	; state2 with value $02 or $03
+	; substate with value $02 or $03
 	ld e,Enemy.angle
 	ld a,(de)
 	bit 4,a
@@ -935,7 +935,7 @@ dragonOnox_checkTransitionState:
 	jr ++
 +
 	; non-state $08 goes here
-	; or non-state2 of $02/$03
+	; or non-substate of $02/$03
 	ld e,Enemy.var30
 	ld a,(de)
 	and $01
@@ -944,10 +944,10 @@ dragonOnox_checkTransitionState:
 	; non-state 8
 	;	var30 - bit 0 of previous var30
 	;	$cfc9 - $80|bit 0 of previous var30
-	; state 8, state2 of $02/$03, bit 4 of angle set (ANGLE_DOWN/ANGLE_LEFT)
+	; state 8, substate of $02/$03, bit 4 of angle set (ANGLE_DOWN/ANGLE_LEFT)
 	;	var30 - $08
 	;	$cfc9 - $88
-	; state 8, state2 of $02/$03, bit 4 of angle not set (ANGLE_UP/ANGLE_RIGHT)
+	; state 8, substate of $02/$03, bit 4 of angle not set (ANGLE_UP/ANGLE_RIGHT)
 	;	var30 - $09
 	;	$cfc9 - $89
 	jp dragonOnoxLoadaIntoVar30Andcfc9
@@ -989,7 +989,7 @@ dragonOnox_mainBody_state1:
 	or a
 	jr nz,++
 
-	; state2 is 0
+	; substate is 0
 	call _ecom_decCounter1
 	jr z,+
 	ld a,(hl)
@@ -1305,7 +1305,7 @@ dragonOnox_mainBody_state7:
 +
 	ld e,Enemy.state
 	; go to state $08 if health is high, else $0b
-	; reset state2, and var37
+	; reset substate, and var37
 	ld (de),a
 	inc e
 	xor a
@@ -1356,7 +1356,7 @@ dragonOnox_mainBody_state8:
 	call seasonsFunc_0f_66aa
 	ret nz
 	ld h,d
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	inc (hl)
 	; counter1
 	inc l
@@ -1423,7 +1423,7 @@ dragonOnox_mainBody_state8:
 	cp $d0
 	ret nz
 	ld h,d
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	inc (hl)
 	inc l
 	ld (hl),$00
@@ -1507,7 +1507,7 @@ dragonOnox_mainBody_stateB:
 	call seasonsFunc_0f_66aa
 	ret nz
 	ld h,d
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	inc (hl)
 	; counter1
 	inc l
@@ -1809,7 +1809,7 @@ dragonOnox_leftClaw:
 	ld l,Enemy.state
 	add (hl)
 	ld (hl),a
-	; state2
+	; substate
 	inc l
 	ld (hl),$00
 	; counter1
@@ -1923,7 +1923,7 @@ dragonOnox_leftClaw:
 	ld a,$1e
 	ld (wScreenShakeCounterY),a
 	ld h,d
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	inc (hl)
 	; counter1
 	inc l
@@ -1981,7 +1981,7 @@ dragonOnox_leftClaw:
 	ldh a,(<hFF8E)
 	cp c
 	jr nz,+
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	inc (hl)
 	ret
 +
@@ -3028,7 +3028,7 @@ enemyCode06:
 @@stateB:
 	ld e,Enemy.var03
 	ld a,(de)
-	ld e,Enemy.state2
+	ld e,Enemy.substate
 	rst_jumpTable
 	.dw @@@var03_00
 	.dw @@@var03_01

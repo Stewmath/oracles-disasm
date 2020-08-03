@@ -1,3 +1,5 @@
+; If you want to change which tiles are cliff tiles, see also "cliffTilesTable.s".
+
 ; This lists the tiles that are passible from a single direction - usually cliffs.
 ; The second byte in the .db's specifies whether the item has to go up or down a level of
 ; elevation in order to pass it.

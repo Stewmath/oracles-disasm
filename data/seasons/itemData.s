@@ -47,6 +47,6 @@ itemData:
 	.db $00 $1e $00 ; $26: ITEMID_26
 	.db $00 $38 $0c ; $27: ITEMID_SWORD_BEAM
 	.db $00 $00 $00 ; $28: ITEMID_28
-	.db $57 $0a $02 ; $29: ITEMID_29
+	.db $57 $0a $02 ; $29: ITEMID_MAGNET_BALL
 	.db $00 $28 $09 ; $2a: ITEMID_RICKY_TORNADO
 	; Item $2b (dimitri mouth) exists, but it's invisible, so this doesn't matter.

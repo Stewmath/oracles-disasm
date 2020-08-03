@@ -542,20 +542,19 @@ interactionCode12:
 	call interactionInitGraphics
 	call objectSetVisible82
 @@state1:
-	ld hl,$dd00
+	ld hl,w1MagnetBall
 	ld a,(hl)
 	or a
 	ret nz
 
 	ld (hl),$01
 	inc l
-	; TODO:
-	ld (hl),$29
+	ld (hl),ITEMID_MAGNET_BALL
 	call objectCopyPosition
 
 	; copy relatedObj1 over
 	ld e,Interaction.relatedObj1
-	ld l,$16
+	ld l,Object.relatedObj1
 	ld a,(de)
 	ldi (hl),a
 	inc e
@@ -1381,7 +1380,7 @@ interactionCode1e:
 	call interactionRunScript
 	jp c,interactionDelete
 
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	xor a
 	ld (de),a
 	ret
@@ -1393,7 +1392,7 @@ interactionCode1e:
 	or a
 	ret nz
 
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @state2Substate0
@@ -1425,7 +1424,7 @@ interactionCode1e:
 	ldh a,(<hActiveObject)
 	ld d,a
 	ld h,d
-	ld l,Interaction.state2
+	ld l,Interaction.substate
 	inc (hl)
 
 	ld l,Interaction.counter1
@@ -1456,7 +1455,7 @@ interactionCode1e:
 
 ; State 3: a door is closing
 @state3:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @state3Substate0

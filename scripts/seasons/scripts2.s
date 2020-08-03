@@ -226,7 +226,7 @@ linkedPirateCaptainScript_sayingByeToAmbi:
 	delay 6
 	showtextlowindex <TX_3a24
 	delay 6
-	jump2byte piratianCaptainScript_inHouse@unlinkedCaptain
+	scriptjump piratianCaptainScript_inHouse@unlinkedCaptain
 
 showSamasaGateCombination:
 	checkabutton
@@ -271,7 +271,7 @@ showSamasaGateCombination:
 	showtextlowindex <TX_3a0d
 	delay 6
 	enableallobjects
-	jump2byte piratian2FScript_textBasedOnD6Beaten@showGateCombo
+	scriptjump piratian2FScript_textBasedOnD6Beaten@showGateCombo
 
 piratianCaptain_preCutsceneScene:
 	disableinput
@@ -521,7 +521,7 @@ biggoronScript_giveBiggoronSword:
 	giveitem TREASURE_BIGGORON_SWORD $00
 	delay 8
 	setglobalflag GLOBALFLAG_DONE_BIGGORON_SECRET
-	jump2byte biggoronScript@generateSecret
+	scriptjump biggoronScript@generateSecret
 
 
 ; ==============================================================================
@@ -658,7 +658,7 @@ lavaSoupSubrosianScript_fillPot:
 	orroomflag $40
 	writeobjectbyte Interaction.var3f $00
 	enableinput
-	jump2byte lavaSoupSubrosianScript@filledPot
+	scriptjump lavaSoupSubrosianScript@filledPot
 
 
 ; ==============================================================================
@@ -719,7 +719,7 @@ danceLeaderScript_danceTutorial:
 	jumpiftextoptioneq $01 danceLeaderScript_promptForTutorial@needTutorial
 	showtext TX_0109
 	checkmemoryeq $cba0 $00
-	jump2byte danceLeaderScript_promptForTutorial@danceLeaderScript_readyToDance
+	scriptjump danceLeaderScript_promptForTutorial@danceLeaderScript_readyToDance
 
 
 ; ==============================================================================
@@ -931,22 +931,22 @@ rosaHidingScript_firstEncounterIntro:
 	setcoords $48 $b0
 	orroomflag $40
 	delay 8
-	setstate2 $03
+	setsubstate $03
 	setspeed $50
 	moveleft $39
 	moveup $19
-	setstate2 $02
+	setsubstate $02
 	setanimation $02
 	showtext TX_2600
-	jump2byte rosaHidingScript_afterInitialScreenText
+	scriptjump rosaHidingScript_afterInitialScreenText
 
 rosaHidingScript_secondEncounterOnwardsIntro:
 	setspeed $50
 	setanimation $02
-	setstate2 $02
+	setsubstate $02
 	delay 8
 	showtext TX_2602
-	jump2byte rosaHidingScript_afterInitialScreenText
+	scriptjump rosaHidingScript_afterInitialScreenText
 
 rosaHidingScript_2ndScreenPattern1:
 	moveup $20
@@ -1029,7 +1029,7 @@ rosaHidingScript_4thScreenPattern1:
 	moveleft $40
 	callscript rosaHidingScript_lookRightDownUp
 	moveleft $34
-	jump2byte rosaHidingScript_pokeBackOut
+	scriptjump rosaHidingScript_pokeBackOut
 
 rosaHidingScript_4thScreenPattern2:
 	moveup $20
@@ -1042,7 +1042,7 @@ rosaHidingScript_4thScreenPattern2:
 	movedown $10
 	callscript rosaHidingScript_lookRightDownUp
 	moveleft $34
-	jump2byte rosaHidingScript_pokeBackOut
+	scriptjump rosaHidingScript_pokeBackOut
 
 rosaHidingScript_pokeBackOut_body:
 	delay 6
@@ -1058,7 +1058,7 @@ rosaHidingScript_portalScreen_body:
 	resetmusic
 	playsound $4d
 	asm15 scriptHlp.rosaHiding_hidingFinishedSetInitialRoomsFlags
-	setstate2 $03
+	setsubstate $03
 	setspeed $28
 	setangleandanimation $18
 	delay 6
@@ -1073,12 +1073,12 @@ rosaHidingScript_portalScreen_body:
 	scriptend
 
 rosaHidingScript_caught_body:
-	setstate2 $02
+	setsubstate $02
 	setdisabledobjectsto91
 	setspeed $50
 	setangleandanimation $10
 	showtext TX_2601
-	setstate2 $05
+	setsubstate $05
 	scriptend
 
 

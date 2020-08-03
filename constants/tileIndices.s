@@ -159,7 +159,10 @@
 	.define TILEINDEX_WATER			$fa
 
 .else ; ROM_SEASONS
-	.define TILEINDEX_STUMP		$20
+	; Trampolines overwrite the tile index they're on with this value.
+	.define TILEINDEX_TRAMPOLINE		$07 ; dungeons
+
+	.define TILEINDEX_STUMP			$20 ; overworld
 
 	.define TILEINDEX_GASHA_TREE_TL		$75
 

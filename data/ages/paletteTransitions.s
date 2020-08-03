@@ -14,24 +14,24 @@
 
 
 paletteTransitionData:
-	.db @group0-CADDR
-	.db @group1-CADDR
-	.db @group2-CADDR
-	.db @group3-CADDR
-	.db @group4-CADDR
-	.db @group5-CADDR
-	.db @group6-CADDR
-	.db @group7-CADDR
+	.db paletteTransitionGroup0-CADDR
+	.db paletteTransitionGroup1-CADDR
+	.db paletteTransitionGroup2-CADDR
+	.db paletteTransitionGroup3-CADDR
+	.db paletteTransitionGroup4-CADDR
+	.db paletteTransitionGroup5-CADDR
+	.db paletteTransitionGroup6-CADDR
+	.db paletteTransitionGroup7-CADDR
 
 
-@group3:
-@group4:
-@group5:
-@group6:
-@group7:
+paletteTransitionGroup3:
+paletteTransitionGroup4:
+paletteTransitionGroup5:
+paletteTransitionGroup6:
+paletteTransitionGroup7:
 	.db $ff
 
-@group0:
+paletteTransitionGroup0:
 	dbbww DIR_LEFT  $6a  paletteData4a90 paletteData4a30
 	dbbww DIR_RIGHT $6b  paletteData4a30 paletteData4a90
 	dbbww DIR_LEFT  $7a  paletteData4a90 paletteData4a30
@@ -47,7 +47,7 @@ paletteTransitionData:
 	dbbww DIR_DOWN  $3d  paletteData4d90 paletteData4bb0
 	.db $ff
 
-@group1:
+paletteTransitionGroup1:
 	dbbww DIR_UP    $12  paletteData4d00 paletteData4ca0
 	dbbww DIR_DOWN  $22  paletteData4ca0 paletteData4d00
 	dbbww DIR_UP    $14  paletteData4d00 paletteData4ca0
@@ -56,7 +56,7 @@ paletteTransitionData:
 	dbbww DIR_DOWN  $46  paletteData4f40 paletteData4a60
 	.db $ff
 
-@group2:
+paletteTransitionGroup2:
 	dbbww DIR_UP    $90  paletteData4eb0 paletteData4e80
 	dbbww DIR_DOWN  $a0  paletteData4e80 paletteData4eb0
 	.db $ff

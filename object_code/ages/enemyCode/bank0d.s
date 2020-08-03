@@ -94,7 +94,7 @@ _veranSpider_state_switchHook:
 	inc e
 	ld a,(de)
 	rst_jumpTable
-	.dw _ecom_incState2
+	.dw _ecom_incSubstate
 	.dw @substate1
 	.dw @substate2
 	.dw @substate3
@@ -736,7 +736,7 @@ _ironMask_state_switchHook:
 ++
 	ld e,Enemy.counter1
 	ld (de),a
-	jp _ecom_incState2
+	jp _ecom_incSubstate
 
 @substate1:
 @substate2:

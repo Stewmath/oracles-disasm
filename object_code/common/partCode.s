@@ -155,7 +155,7 @@ partCode01:
 
 ; Triggered by PARTSTATUS_JUST_HIT (ie. from a weapon or Link?)
 @state3:
-	ld e,Part.state2
+	ld e,Part.substate
 	ld a,(de)
 	or a
 	call z,@getRelatedObj1ID
@@ -177,7 +177,7 @@ partCode01:
 @getRelatedObj1ID:
 	ld h,d
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	ld l,Part.zh
 	ld (hl),$00
 	ld a,Object.id
@@ -2032,7 +2032,7 @@ partCode10:
 	ret
 
 @state4:
-	ld e,Part.state2
+	ld e,Part.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -2047,7 +2047,7 @@ partCode10:
 	jr c,@giveSeedAndSomething
 
 	; First time getting this seed type
-	ld e,Part.state2
+	ld e,Part.substate
 	ld a,$01
 	ld (de),a
 
@@ -2120,7 +2120,7 @@ partCode10:
 	ld (hl),a
 	ld l,Part.state
 	ldi (hl),a
-	ld (hl),$00 ; [state2]
+	ld (hl),$00 ; [substate]
 	inc l
 	ld (hl),$02 ; [counter1]
 	ld l,Part.speed
@@ -2251,7 +2251,7 @@ _volcanoRock_common_substate2:
 	ret nz
 	ld (hl),$10 ; [counter1]
 	ld l,e
-	inc (hl) ; [state2]++
+	inc (hl) ; [substate]++
 	jp objectSetVisiblec0
 
 _volcanoRock_common_substate3:
@@ -2311,7 +2311,7 @@ _volcanoRock_subid2:
 
 @substate0:
 	ld a,$01
-	ld (de),a ; [state2]
+	ld (de),a ; [substate]
 
 _volcanoRock_setRandomPosition:
 	call getRandomNumber_noPreserveVars
@@ -2522,7 +2522,7 @@ partCode13:
 	ret nz
 	ld (hl),INTERACID_SPARKLE
 .ifdef ROM_SEASONS
-	; state2
+	; substate
 	inc l
 	ld (hl),$05
 .endif
@@ -2713,7 +2713,7 @@ partCode15:
 	jr z,+
 	call @moveToMaple
 	ret nz
-	ld l,Part.state2
+	ld l,Part.substate
 	inc (hl)
 	ld l,Part.collisionType
 	res 7,(hl)
@@ -2731,7 +2731,7 @@ partCode15:
 	ld a,$01
 	ld (w1Companion.damageToApply),a
 	ld h,d
-	ld l,Part.state2
+	ld l,Part.substate
 	ld (hl),$03
 	ld l,Part.var03
 	ld (hl),$00
@@ -2996,7 +2996,7 @@ partCode17:
 @state2:
 	call @func_4fb2
 	jp nz,partDelete
-	ld e,Part.state2
+	ld e,Part.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -3031,7 +3031,7 @@ partCode17:
 	call objectGetRelatedObject1Var
 	jp objectCopyPosition
 +
-	ld e,Part.state2
+	ld e,Part.substate
 	ld a,$02
 	ld (de),a
 

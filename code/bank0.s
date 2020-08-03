@@ -6153,7 +6153,7 @@ checkGrabbableObjects:
 	ld l,a
 	ld (hl),ENEMYSTATE_GRABBED ; TODO: Better name? it's not just for enemies
 
-	; l = Object.state2
+	; l = Object.substate
 	inc l
 	ld (hl),$00
 
@@ -8217,9 +8217,9 @@ interactionIncState:
 	inc (hl)
 	ret
 ;;
-interactionIncState2:
+interactionIncSubstate:
 	ld h,d
-	ld l,Interaction.state2
+	ld l,Interaction.substate
 	inc (hl)
 	ret
 ;;
@@ -8229,7 +8229,7 @@ itemIncState:
 	inc (hl)
 	ret
 ;;
-itemIncState2:
+itemIncSubstate:
 	ld h,d
 	ld l,$05
 	inc (hl)
@@ -8243,9 +8243,9 @@ cpInteractionState:
 	ret
 ;;
 ; Unused?
-cpInteractionState2:
+cpInteractionSubstate:
 	ld h,d
-	ld l,Interaction.state2
+	ld l,Interaction.substate
 	cp (hl)
 	ret
 ;;
@@ -8255,8 +8255,8 @@ checkInteractionState:
 	or a
 	ret
 ;;
-checkInteractionState2:
-	ld e,Interaction.state2
+checkInteractionSubstate:
+	ld e,Interaction.substate
 	ld a,(de)
 	or a
 	ret
@@ -10003,7 +10003,7 @@ getSimulatedInput:
 	ret
 
 ;;
-; Sets Item.state to 'a', and Item.state2 to 0.
+; Sets Item.state to 'a', and Item.substate to 0.
 ;
 ; @param	a	Value for Item.state
 itemSetState:
@@ -10094,7 +10094,7 @@ linkApplyDamage:
 
 ;;
 ; This will force Link's ID to change next time "updateSpecialObjects" is called. Also
-; clears subid, var03, state, and state2.
+; clears subid, var03, state, and substate.
 ;
 ; @param	a	Link ID value (see constants/specialObjectTypes.s)
 setLinkIDOverride:
@@ -10104,7 +10104,7 @@ setLinkIDOverride:
 	jr ++
 
 ;;
-; Sets link's ID and clears w1Link.subid, var03, state, state2.
+; Sets link's ID and clears w1Link.subid, var03, state, substate.
 ;
 ; @param	a	New value for w1Link.id
 setLinkID:
@@ -10475,12 +10475,12 @@ dropLinkHeldItem:
 	cp $02
 	jr nz,@end
 
-	; Write $03 to Object.state2 (means it's no longer being held?)
+	; Write $03 to Object.substate (means it's no longer being held?)
 	ld a,$03
 	ld (hl),a
 
 	ld a,l
-	add Object.angle-Object.state2
+	add Object.angle-Object.substate
 	ld l,a
 	ld (hl),$ff
 @end:
@@ -10546,7 +10546,7 @@ clearVariousLinkVariables:
 ; Not sure why this is in bank 0 instead of bank 5.
 ;
 linkState07:
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 .dw @substate0
@@ -10559,7 +10559,7 @@ linkState07:
 	; Cancel item usage
 	call bank5.linkCancelAllItemUsageAndClearAdjacentWallsBitset
 
-	call itemIncState2
+	call itemIncSubstate
 
 	xor a
 	ld l,SpecialObject.collisionType

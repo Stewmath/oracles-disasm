@@ -238,7 +238,7 @@ interactionCodee2:
 	.dw objectSetVisible83
 
 @@state1:
-	call checkInteractionState2
+	call checkInteractionSubstate
 	jr z,@substate0
 
 	call interactionDecCounter1
@@ -273,7 +273,7 @@ interactionCodee2:
 
 @substate0:
 	ld a,60
-	ld (de),a ; [state2] = nonzero
+	ld (de),a ; [substate] = nonzero
 	ld e,Interaction.counter1
 	ld (de),a
 	ret

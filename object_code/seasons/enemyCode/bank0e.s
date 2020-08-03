@@ -2840,7 +2840,7 @@ enemyCode75:
 
 	ld (hl),$0f ; [state]
 	inc l
-	ld (hl),$00 ; [state2]
+	ld (hl),$00 ; [substate]
 	inc l
 	ld (hl),20 ; [counter1]
 
@@ -2934,7 +2934,7 @@ _vire_mainForm:
 ; Mini-cutscene before starting fight
 _vire_mainForm_state8:
 	inc e
-	ld a,(de) ; [state2]
+	ld a,(de) ; [substate]
 	rst_jumpTable
 	.dw @substate0
 	.dw @substate1
@@ -2969,7 +2969,7 @@ _vire_mainForm_state8:
 	ld a,Interaction.start
 	ld (de),a
 
-	ld e,Enemy.state2
+	ld e,Enemy.substate
 	ld a,$01
 	ld (de),a
 	ld (wDisabledObjects),a ; DISABLE_LINK
@@ -2984,7 +2984,7 @@ _vire_mainForm_state8:
 	ret z
 
 	ld h,d
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	inc (hl)
 	inc l
 	ld (hl),$08 ; [counter1]
@@ -2996,7 +2996,7 @@ _vire_mainForm_state8:
 	jp nz,enemyAnimate
 
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	ld bc,TX_2f12
 	call checkIsLinkedGame
 	jr z,+
@@ -3022,7 +3022,7 @@ _vire_mainForm_state8:
 .endif
 
 	inc l
-	ldi (hl),a ; [state2] = 0
+	ldi (hl),a ; [substate] = 0
 	ld (hl),90 ; [counter1]
 
 	ld l,Enemy.health
@@ -3094,7 +3094,7 @@ _vire_mainForm_stateA:
 
 	; Begin charging
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 
 	ld l,Enemy.speed
 	ld (hl),SPEED_200
@@ -3162,7 +3162,7 @@ _vire_mainForm_stateB:
 ; Begin charging; initially toward Link, but will run away if he gets too close or Link
 ; attacks
 @beginCharge:
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	inc (hl)
 	ld l,Enemy.speed
 	ld (hl),SPEED_200
@@ -3183,7 +3183,7 @@ _vire_mainForm_stateB:
 ; Charging away from Link
 @updateAngleAway:
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	call _ecom_updateCardinalAngleAwayFromTarget
 @animate:
 	jp enemyAnimate
@@ -3224,7 +3224,7 @@ _vire_mainForm_stateC:
 
 	ld (hl),12 ; [counter1]
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 
 	ld b,$03
 	call _vire_mainForm_fireProjectileWithSubid
@@ -3235,7 +3235,7 @@ _vire_mainForm_stateC:
 	jr nz,@animate
 
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 
 	ld l,Enemy.angle
 	ld a,(hl)
@@ -3284,7 +3284,7 @@ _vire_mainForm_stateD:
 ; Begin charging; initially toward Link, but will run away if he gets too close or Link
 ; attacks
 @beginCharge:
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	inc (hl)
 	ld l,Enemy.speed
 	ld (hl),SPEED_200
@@ -3300,7 +3300,7 @@ _vire_mainForm_stateD:
 
 	ld h,d
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	inc l
 	ld (hl),12 ; [counter1]
 	ld l,Enemy.speed
@@ -3319,7 +3319,7 @@ _vire_mainForm_stateD:
 
 	ld (hl),12 ; [counter1]
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 
 	ld b,PARTID_VIRE_PROJECTILE
 	call _ecom_spawnProjectile
@@ -3333,7 +3333,7 @@ _vire_mainForm_stateD:
 	jr nz,@animate
 
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 
 	ld l,Enemy.speed
 	ld (hl),SPEED_1c0
@@ -3360,7 +3360,7 @@ _vire_mainForm_stateE:
 @substate0:
 	ld h,d
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 
 	inc l
 	ld (hl),20 ; [counter1]
@@ -3382,7 +3382,7 @@ _vire_mainForm_stateE:
 	jp nz,enemyAnimate
 
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 
 	; Check whether to show text based on current health
 	ld l,Enemy.health
@@ -3433,7 +3433,7 @@ _vire_mainForm_stateF:
 	jp nz,enemyAnimate
 
 	ld h,d
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	inc (hl)
 
 	ld l,Enemy.var34
@@ -3476,7 +3476,7 @@ _vire_mainForm_stateF:
 
 	; Vire defeated
 	ld h,d
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	inc (hl)
 	inc l
 	ld (hl),60 ; [counter1]
@@ -3489,7 +3489,7 @@ _vire_mainForm_stateF:
 
 	ld (hl),$10 ; [counter1]
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	jp objectSetVisiblec1
 
 @substate4:
@@ -3497,7 +3497,7 @@ _vire_mainForm_stateF:
 	jp nz,enemyAnimate
 
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 
 	ld l,Enemy.angle
 	ld (hl),$06
@@ -3754,9 +3754,9 @@ _vire_batForm_stateD:
 
 ;;
 ; Sets Vire's position to just outside the camera (along with corresponding angle), and
-; increments state2.
+; increments substate.
 ;
-; @param[out]	hl	Enemy.state2
+; @param[out]	hl	Enemy.substate
 _vire_spawnOutsideCamera:
 	call getRandomNumber_noPreserveVars
 	and $07
@@ -3785,7 +3785,7 @@ _vire_spawnOutsideCamera:
 	ld l,Enemy.collisionType
 	set 7,(hl)
 
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	inc (hl)
 	jp objectSetVisiblec1
 
@@ -3811,7 +3811,7 @@ _vire_mainForm_leftScreen:
 	ld l,Enemy.state
 	ld (hl),$09
 	inc l
-	ld (hl),$00 ; [state2]
+	ld (hl),$00 ; [substate]
 	inc l
 	ld (hl),90 ; [counter1]
 
@@ -6097,7 +6097,7 @@ _dodongo_state_uninitialized:
 
 _dodongo_state_grabbed:
 	inc e
-	ld a,(de) ; [state2]
+	ld a,(de) ; [substate]
 	rst_jumpTable
 	.dw @justGrabbed
 	.dw @beingHeld
@@ -6107,7 +6107,7 @@ _dodongo_state_grabbed:
 @justGrabbed:
 	ld h,d
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 
 	ld a,$20
 	ld (wLinkGrabState2),a
@@ -6144,7 +6144,7 @@ _dodongo_state_grabbed:
 @dropDodongo:
 	call dropLinkHeldItem
 	ld h,d
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	ld (hl),$03
 	inc l
 	ld (hl),60 ; [counter1]
@@ -6592,7 +6592,7 @@ _dodongo_checkEatBomb:
 	jr nz,@notEaten
 
 	; Don't eat if it's being held
-	ld l,Item.state2
+	ld l,Item.substate
 	ld a,(hl)
 	cp $02
 	jr c,@notEaten
@@ -7536,7 +7536,7 @@ _gohma_subid1_stateB:
 ; Phase 1 of fight: claw still intact
 _gohma_subid1_stateC:
 	call _gohma_subid1_updateAnimationsAndCollisions
-	ld e,Enemy.state2
+	ld e,Enemy.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -7550,7 +7550,7 @@ _gohma_subid1_stateC:
 	call _ecom_decCounter1
 	ret nz
 	ld l,e
-	inc (hl) ; [state2] = 1
+	inc (hl) ; [substate] = 1
 	call _gohma_phase1_decideAngle
 	call _gohma_decideMovementDuration
 	call _gohma_decideAnimation
@@ -7588,8 +7588,8 @@ _gohma_movingNormally:
 	call _ecom_decCounter1
 	ret nz
 
-	; [state2] = 0 (stop moving for a moment)
-	ld l,Enemy.state2
+	; [substate] = 0 (stop moving for a moment)
+	ld l,Enemy.substate
 	dec (hl)
 	call getRandomNumber_noPreserveVars
 	and $07
@@ -7601,8 +7601,8 @@ _gohma_movingNormally:
 	ret
 
 _gohma_beginLungeTowardLink:
-	ld l,Enemy.state2
-	inc (hl) ; [state2] = 2
+	ld l,Enemy.substate
+	inc (hl) ; [substate] = 2
 	inc l
 	ld (hl),31 ; [counter1]
 
@@ -7649,15 +7649,15 @@ _gohma_stateC_substate2:
 	jr z,_gohma_stateC_setSubstate4
 
 	ld h,d
-	ld l,Enemy.state2
-	inc (hl) ; [state2] = 3
+	ld l,Enemy.substate
+	inc (hl) ; [substate] = 3
 	inc l
 	ld (hl),20 ; [counter1]
 	ret
 
 ; Grabbed Link
 _gohma_stateC_setSubstate4:
-	ld e,Enemy.state2
+	ld e,Enemy.substate
 	ld a,$04
 	ld (de),a
 	ld a,$0a
@@ -7678,7 +7678,7 @@ _gohma_stateC_substate3:
 	ld (hl),40 ; [counter2]
 
 	ld l,e
-	ld (hl),$00 ; [state2]
+	ld (hl),$00 ; [substate]
 
 	ld l,Enemy.var31
 	ld (hl),$02
@@ -7693,7 +7693,7 @@ _gohma_stateC_substate4:
 	bit 7,(hl)
 	ret z
 
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	ld (hl),$00
 	inc l
 	ld (hl),60 ; [counter1]
@@ -7706,7 +7706,7 @@ _gohma_stateC_substate4:
 ; Phase 2 of fight: claw destroyed
 _gohma_subid1_stateD:
 	call _gohma_subid1_updateAnimationsAndCollisions
-	ld e,Enemy.state2
+	ld e,Enemy.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -7724,7 +7724,7 @@ _gohma_subid1_stateD:
 	cp $05
 	jr nc,@chooseNextMovement
 
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	ld (hl),$02
 	inc l
 	ld (hl),$01 ; [counter1]
@@ -7734,7 +7734,7 @@ _gohma_subid1_stateD:
 
 @chooseNextMovement:
 	call _ecom_setRandomCardinalAngle
-	ld e,Enemy.state2
+	ld e,Enemy.substate
 	ld a,$01
 	ld (de),a
 	call _gohma_decideMovementDuration
@@ -7962,7 +7962,7 @@ _gohma_subid3:
 ; Claw grabbed Link and is pulling him back
 @stateE:
 	; Wait for main body to move back into position
-	ld a,Object.state2
+	ld a,Object.substate
 	call objectGetRelatedObject1Var
 	ld a,(hl)
 	cp $04
@@ -7997,7 +7997,7 @@ _gohma_subid3:
 	jp z,_gohma_updateClawPositionDuringSlamAttack
 
 	res 4,(hl)
-	ld hl,w1Link.state2
+	ld hl,w1Link.substate
 	ld (hl),$02
 	ld l,<w1Link.collisionType
 	set 7,(hl)
@@ -8192,12 +8192,12 @@ _gohma_subid3_dead:
 
 ;;
 _gohma_subid1_updateAnimationsAndCollisions:
-	ld e,Enemy.state2
+	ld e,Enemy.substate
 	ld a,(de)
 	dec a
 	jr nz,@updateCollision
 
-	; [state2] == 1
+	; [substate] == 1
 
 	ld h,d
 	ld l,Enemy.var30

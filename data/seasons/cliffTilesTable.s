@@ -1,16 +1,16 @@
 cliffTilesTable:
-	.dw @collisions0Data
-	.dw @collisions1Data
-	.dw @collisions2Data
-	.dw @collisions3Data
-	.dw @collisions4Data
-	.dw @collisions5Data
+	.dw cliffTilesCollisions0Data
+	.dw cliffTilesCollisions1Data
+	.dw cliffTilesCollisions2Data
+	.dw cliffTilesCollisions3Data
+	.dw cliffTilesCollisions4Data
+	.dw cliffTilesCollisions5Data
 
 ; Data format:
 ; b0: Tile index
 ; b1: Angle value from which the tile can be jumped off of.
 
-@collisions0Data:
+cliffTilesCollisions0Data:
 	.db $54 $10
 	.db $25 $18
 	.db $26 $08
@@ -28,16 +28,16 @@ cliffTilesTable:
 	.db $ff $10
 	.db $00
 
-@collisions1Data:
+cliffTilesCollisions1Data:
 	.db $ea $10
 	.db $eb $10
 	.db $54 $10
 	.db $00
 
-@collisions2Data:
+cliffTilesCollisions2Data:
 	.db $00
-@collisions3Data:
-@collisions4Data:
+cliffTilesCollisions3Data:
+cliffTilesCollisions4Data:
 	.db $b0 $10
 	.db $b1 $18
 	.db $b2 $00
@@ -45,5 +45,5 @@ cliffTilesTable:
 	.db $05 $00
 	.db $06 $10
 
-@collisions5Data:
+cliffTilesCollisions5Data:
 	.db $00

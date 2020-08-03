@@ -205,7 +205,7 @@ interactionCode89:
 ; State 5: Linking with blue snake?
 @state5:
 	call interactionAnimate
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @state5Substate0
@@ -216,7 +216,7 @@ interactionCode89:
 
 @state5Substate0:
 	call retIfTextIsActive
-	call interactionIncState2
+	call interactionIncSubstate
 	xor a
 	ld l,Interaction.counter1
 	ld (hl),a
@@ -245,7 +245,7 @@ interactionCode89:
 	and $01
 	add $01
 	ldh (<hFFBE),a
-	call interactionIncState2
+	call interactionIncSubstate
 
 	ld l,Interaction.counter1
 	ld (hl),180
@@ -308,7 +308,7 @@ interactionCode89:
 	; Open linking menu
 	ld a,$08
 	call openMenu
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @state5Substate4:
 	ld a,($ff00+R_SVBK)

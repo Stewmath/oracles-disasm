@@ -30,7 +30,7 @@ _linkCutscene0:
 	call specialObjectSetAnimation
 
 @state1:
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -65,14 +65,14 @@ _linkCutscene0:
 	ld (wTmpcbb9),a
 	ld a,SND_DROPESSENCE
 	call playSound
-	jp itemIncState2
+	jp itemIncSubstate
 
 @substate1:
 	ld a,(wTmpcbb9)
 	cp $02
 	ret nz
 
-	call itemIncState2
+	call itemIncSubstate
 	ld b,$04
 	call func_2d48
 	ld a,b
@@ -92,13 +92,13 @@ _linkCutscene0:
 	ld a,b
 	ld e,SpecialObject.counter1
 	ld (de),a
-	jp itemIncState2
+	jp itemIncSubstate
 
 @substate3:
 	call itemDecCounter1
 	jp nz,++
 
-	call itemIncState2
+	call itemIncSubstate
 	ld b,$07
 	call func_2d48
 	ld a,b
@@ -117,7 +117,7 @@ _linkCutscene0:
 	jp nz,_linkCutscene_oscillateZ_1
 	ld a,$03
 	ld (wTmpcbb9),a
-	call itemIncState2
+	call itemIncSubstate
 
 @substate5:
 	ld a,(wTmpcbb9)
@@ -135,7 +135,7 @@ _linkCutscene_createGlowingOrb:
 	ldi (hl),a
 	ld (hl),d
 +
-	call itemIncState2
+	call itemIncSubstate
 	ld a,$05
 	jp specialObjectSetAnimation
 
@@ -214,7 +214,7 @@ _linkCutscene1:
 	jp _linkCutscene_initOam_setVisible_incState
 
 @state1:
-	ld e,Item.state2
+	ld e,Item.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -245,7 +245,7 @@ _linkCutscene1:
 	or a
 	ret nz
 
-	call itemIncState2
+	call itemIncSubstate
 	ld l,Item.counter1
 	ld (hl),$aa
 
@@ -281,7 +281,7 @@ _linkCutscene1:
 	call itemDecCounter1
 	jr nz,@animateSelfAndRelatedObj2
 	ld (hl),$1e
-	call itemIncState2
+	call itemIncSubstate
 	jr @seasonsFunc_06_6f71
 
 @animateSelfAndRelatedObj2:
@@ -296,13 +296,13 @@ _linkCutscene1:
 	call specialObjectSetAnimation
 	ld a,$0d
 	call setRelatedObj2Animation
-	jp itemIncState2
+	jp itemIncSubstate
 
 @substate3:
 	call itemDecCounter1
 	ret nz
 	ld (hl),$3c
-	call itemIncState2
+	call itemIncSubstate
 	ld bc,TX_0c17
 	call checkIsLinkedGame
 	jr z,+
@@ -318,27 +318,27 @@ _linkCutscene1:
 	ret nz
 	ld (hl),$96
 	call @seasonsFunc_06_6f71
-	jp itemIncState2
+	jp itemIncSubstate
 
 @substate5:
 	call itemDecCounter1
 	jr nz,@animateSelfAndRelatedObj2
 	ld a,$02
 	ld ($cfd0),a
-	jp itemIncState2
+	jp itemIncSubstate
 
 @substate6:
 	ld a,($cfd0)
 	cp $03
 	jr nz,@animateSelfAndRelatedObj2
 	call @seasonsFunc_06_6f71
-	jp itemIncState2
+	jp itemIncSubstate
 
 @substate7:
 	ld a,($cfd0)
 	cp $04
 	ret nz
-	call itemIncState2
+	call itemIncSubstate
 	ld l,Item.counter1
 	ld (hl),$5a
 	ld l,Item.direction
@@ -350,7 +350,7 @@ _linkCutscene1:
 	call itemDecCounter1
 	ret nz
 	ld (hl),$12
-	jp itemIncState2
+	jp itemIncSubstate
 
 @substate9:
 	call itemDecCounter1
@@ -358,7 +358,7 @@ _linkCutscene1:
 	ld (hl),$46
 	xor a
 	call specialObjectSetAnimation
-	jp itemIncState2
+	jp itemIncSubstate
 +
 	ld l,Item.xh
 	dec (hl)
@@ -369,7 +369,7 @@ _linkCutscene1:
 	ret nz
 	ld hl,$cfd0
 	ld (hl),$05
-	jp itemIncState2
+	jp itemIncSubstate
 
 @substateB:
 	ld hl,$cfd1
@@ -383,7 +383,7 @@ _linkCutscene1:
 	ld a,(de)
 	dec e
 	ld (de),a
-	jp itemIncState2
+	jp itemIncSubstate
 
 @substateC:
 	call itemDecCounter1
@@ -399,7 +399,7 @@ _linkCutscene1:
 	call specialObjectSetAnimation
 	ld bc,-$180
 	call objectSetSpeedZ
-	jp itemIncState2
+	jp itemIncSubstate
 
 @seasonsFunc_06_7052:
 	call getRandomNumber
@@ -420,7 +420,7 @@ _linkCutscene1:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	ret nz
-	call itemIncState2
+	call itemIncSubstate
 	ld l,Item.counter1
 	ld (hl),$28
 	ld a,$14
@@ -431,13 +431,13 @@ _linkCutscene1:
 	ret nz
 	ld a,$07
 	ld ($cfd0),a
-	jp itemIncState2
+	jp itemIncSubstate
 
 @substateF:
 	ld a,($cfd0)
 	cp $09
 	ret nz
-	call itemIncState2
+	call itemIncSubstate
 	ld l,Item.speedZ
 	ld (hl),$f0
 	inc l
@@ -455,7 +455,7 @@ _linkCutscene1:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	ret nz
-	call itemIncState2
+	call itemIncSubstate
 	ld l,Item.counter1
 	ld (hl),$1e
 	xor a
@@ -471,7 +471,7 @@ _linkCutscene1:
 	ld (hl),SPEED_200
 	ld l,Item.angle
 	ld (hl),$02
-	jp itemIncState2
+	jp itemIncSubstate
 
 @substate12:
 	call specialObjectAnimate
@@ -495,7 +495,7 @@ _linkCutscene1:
 	ld (wScrollMode),a
 	ld a,$08
 	call specialObjectSetAnimation
-	jp itemIncState2
+	jp itemIncSubstate
 
 @substate14:
 	call specialObjectAnimate
@@ -505,7 +505,7 @@ _linkCutscene1:
 	ret c
 	ld a,$0a
 	ld ($cfd0),a
-	jp itemIncState2
+	jp itemIncSubstate
 
 
 _linkCutscene2:
@@ -521,7 +521,7 @@ _linkCutscene2:
 	call specialObjectSetAnimation
 
 @state1:
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -539,7 +539,7 @@ _linkCutscene2:
 	ld a,(de)
 	inc a
 	ret nz
-	call itemIncState2
+	call itemIncSubstate
 	ld l,Item.speedZ
 	ld (hl),$f0
 	inc l
@@ -554,7 +554,7 @@ _linkCutscene2:
 @substate1:
 	call seasonsFunc_06_7178
 	ret nz
-	call itemIncState2
+	call itemIncSubstate
 	ld l,Item.counter1
 	ld (hl),$1e
 	ret
@@ -564,7 +564,7 @@ _linkCutscene2:
 	ret nz
 	ld hl,$cfd0
 	ld (hl),$02
-	call itemIncState2
+	call itemIncSubstate
 	ld l,Item.direction
 	ld (hl),DIR_LEFT
 	ld a,$00
@@ -637,7 +637,7 @@ _linkCutscene3:
 	jp specialObjectSetAnimation
 
 @state1:
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -650,7 +650,7 @@ _linkCutscene3:
 	jr nz,+
 	ld a,$80
 	ld ($cfc0),a
-	call itemIncState2
+	call itemIncSubstate
 	ld bc,-$100
 	call objectSetSpeedZ
 +
@@ -660,7 +660,7 @@ _linkCutscene3:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	ret nz
-	call itemIncState2
+	call itemIncSubstate
 	ld l,Item.counter1
 	ld (hl),$0a
 	ret
@@ -669,7 +669,7 @@ _linkCutscene3:
 	call itemDecCounter1
 	ret nz
 	ld (hl),$78
-	call itemIncState2
+	call itemIncSubstate
 	ld a,$0c
 	jp specialObjectSetAnimation
 
@@ -700,7 +700,7 @@ _linkCutscene4:
 	jp specialObjectSetAnimation
 
 @state1:
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -719,13 +719,13 @@ _linkCutscene4:
 	call itemDecCounter1
 	ret nz
 	ld (hl),$06
-	jp itemIncState2
+	jp itemIncSubstate
 
 @substate1:
 	call itemDecCounter1
 	ret nz
 	ld (hl),$78
-	call itemIncState2
+	call itemIncSubstate
 	ld a,$03
 	jp specialObjectSetAnimation
 
@@ -734,13 +734,13 @@ _linkCutscene4:
 	ret nz
 	ld hl,$cfc0
 	ld (hl),$01
-	jp itemIncState2
+	jp itemIncSubstate
 
 @substate3:
 	ld a,($cfc0)
 	cp $02
 	ret nz
-	call itemIncState2
+	call itemIncSubstate
 	ld l,Item.angle
 	ld (hl),ANGLE_DOWN
 	ld bc,-$100
@@ -753,7 +753,7 @@ _linkCutscene4:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	ret nz
-	call itemIncState2
+	call itemIncSubstate
 	ld l,Item.counter1
 	ld (hl),$78
 	ld l,Item.animCounter
@@ -784,7 +784,7 @@ _linkCutscene5:
 	jp specialObjectSetAnimation
 
 @state1:
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -798,7 +798,7 @@ _linkCutscene5:
 	ret nz
 	ld l,Item.counter1
 	ld (hl),$3c
-	call itemIncState2
+	call itemIncSubstate
 	ld hl,$cfc0
 	ld (hl),$01
 @seasonsFunc_06_72d0:
@@ -853,7 +853,7 @@ _linkCutscene6:
 	ret
 
 @state1:
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -866,7 +866,7 @@ _linkCutscene6:
 	cp $01
 	ret nz
 
-	call itemIncState2
+	call itemIncSubstate
 .ifdef ROM_AGES
 	jp objectSetVisible82
 .else
@@ -878,7 +878,7 @@ _linkCutscene6:
 	cp $07
 	ret nz
 
-	call itemIncState2
+	call itemIncSubstate
 	call @checkShieldEquipped
 	ld a,$10
 	jr nz,+
@@ -891,7 +891,7 @@ _linkCutscene6:
 	cp $08
 	ret nz
 
-	call itemIncState2
+	call itemIncSubstate
 	ld l,SpecialObject.counter1
 	ld (hl),$68
 	inc l
@@ -983,7 +983,7 @@ _linkCutscene9:
 	jp specialObjectSetAnimation
 
 @state1:
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -998,7 +998,7 @@ _linkCutscene9:
 	ld a,($cfd1)
 	or a
 	ret z
-	call itemIncState2
+	call itemIncSubstate
 	ld l,Item.counter1
 	ld (hl),$28
 	ld l,Item.speed
@@ -1011,12 +1011,12 @@ _linkCutscene9:
 	call itemDecCounter1
 	jp nz,objectApplySpeed
 	ld (hl),$19
-	jp itemIncState2
+	jp itemIncSubstate
 
 @substate2:
 	call itemDecCounter1
 	ret nz
-	call itemIncState2
+	call itemIncSubstate
 	ld l,Item.speed
 	ld (hl),SPEED_300
 	ld l,Item.angle
@@ -1037,7 +1037,7 @@ _linkCutscene9:
 	ret nc
 	ld a,SND_ROLLER
 	call playSound
-	call itemIncState2
+	call itemIncSubstate
 	ld l,Item.counter1
 	ld (hl),$1e
 	jr @animate
@@ -1045,7 +1045,7 @@ _linkCutscene9:
 @substate4:
 	call itemDecCounter1
 	jr nz,+
-	call itemIncState2
+	call itemIncSubstate
 	ld bc,-$c0
 	jp objectSetSpeedZ
 
@@ -1053,7 +1053,7 @@ _linkCutscene9:
 	ld c,$10
 	call objectUpdateSpeedZ_paramC
 	ret nz
-	call itemIncState2
+	call itemIncSubstate
 	jr @animate
 +
 	ld a,(wFrameCounter)
@@ -1109,7 +1109,7 @@ _linkCutsceneA:
 @state1:
 	ld a,(wFrameCounter)
 	ld ($cbb7),a
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -1124,14 +1124,14 @@ _linkCutsceneA:
 	ret nz
 
 	ld (hl),$3c
-	jp itemIncState2
+	jp itemIncSubstate
 
 @substate1:
 	call _linkCutscene_oscillateZ_2
 	call itemDecCounter1
 	ret nz
 
-	call itemIncState2
+	call itemIncSubstate
 .ifdef ROM_AGES
 	ld bc,TX_1213
 .else

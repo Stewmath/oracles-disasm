@@ -54,7 +54,7 @@ _rickyState1:
 	.dw @subid1
 
 @subid0:
-	ld e,Object.state2
+	ld e,Object.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @@substate0
@@ -103,7 +103,7 @@ _rickyState1:
 	jp _func_69fe
 
 @subid1:
-	ld e,Object.state2
+	ld e,Object.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @@substate0
@@ -133,7 +133,7 @@ _rickyState1:
 	add $18
 	cp b
 	jr c,+
-	call itemIncState2
+	call itemIncSubstate
 	inc (hl)
 	inc l
 	ld (hl),$3c
@@ -146,7 +146,7 @@ _rickyState1:
 	ld c,$40
 	call objectUpdateSpeedZ_paramC
 	ret nz
-	call itemIncState2
+	call itemIncSubstate
 	ld l,$06
 	ld (hl),$08
 	jp specialObjectAnimate
@@ -249,7 +249,7 @@ _rickyState1:
 	ld c,$40
 	call objectUpdateSpeedZ_paramC
 	ret nz
-	call itemIncState2
+	call itemIncSubstate
 	ld l,$06
 	ld (hl),$08
 	jp specialObjectAnimate
@@ -294,14 +294,14 @@ mooshCutscenes:
 	jp specialObjectSetAnimation
 
 @state1:
-	ld e,Object.state2
+	ld e,Object.substate
 	ld a,(de)
 	or a
 	jr z,+
 	call specialObjectAnimate
 	call objectApplySpeed
 +
-	ld e,Object.state2
+	ld e,Object.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @@substate0
@@ -392,7 +392,7 @@ dimitriCutscenes:
 	jp specialObjectSetAnimation
 
 @state1:
-	ld e,Object.state2
+	ld e,Object.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @@substate0
@@ -565,7 +565,7 @@ mapleCutscenes:
 	.dw @@subid1
 
 @@subid1:
-	ld e,Object.state2
+	ld e,Object.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @@@substate0
@@ -576,7 +576,7 @@ mapleCutscenes:
 	ld a,($cfc0)
 	or a
 	jr z,@@subid0
-	call itemIncState2
+	call itemIncSubstate
 	ld bc,$ff00
 	call objectSetSpeedZ
 	ld l,$09
@@ -601,7 +601,7 @@ seasonsFunc_06_6d62:
 	ld c,$20
 	call objectUpdateSpeedZAndBounce
 	jp nc,seasonsFunc_06_6d74
-	call itemIncState2
+	call itemIncSubstate
 	ld l,$20
 	ld (hl),$01
 

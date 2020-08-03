@@ -132,7 +132,7 @@ _makeLinkPickupObjectH:
 	ld l,Item.enabled
 	set 1,(hl)
 
-	ld l,Item.state2
+	ld l,Item.substate
 	xor a
 	ldd (hl),a
 	ld (hl),$02
@@ -364,7 +364,7 @@ _parentItemCode_bracelet:
 ++
 	; Item is being thrown
 
-	; Unlink related object from Link, set its "state2" to $02 (meaning just thrown)
+	; Unlink related object from Link, set its "substate" to $02 (meaning just thrown)
 	ld hl,w1Link.relatedObj2
 	xor a
 	ld c,(hl)
@@ -372,7 +372,7 @@ _parentItemCode_bracelet:
 	ld b,(hl)
 	ldi (hl),a
 	ld a,c
-	add Object.state2
+	add Object.substate
 	ld l,a
 	ld h,b
 	ld (hl),$02

@@ -199,7 +199,7 @@ _bari_setRandomAngleAndCounter2:
 ; Bari has just been attacked; now it's splitting in two.
 _bari_subid0_stateA:
 	inc e
-	ld a,(de) ; [state2]
+	ld a,(de) ; [substate]
 	or a
 	jr z,@substate0
 
@@ -250,7 +250,7 @@ _bari_subid0_stateA:
 	ld l,Enemy.counter2
 	ld (hl),$04
 
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	inc (hl)
 
 	ld a,SND_KILLENEMY
@@ -1688,7 +1688,7 @@ _ambiGuard_setCounter2ForAttackingTypeOnly:
 
 ; Scampering away when health is 0
 _ambiGuard_noHealth:
-	ld e,Enemy.state2
+	ld e,Enemy.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -1698,7 +1698,7 @@ _ambiGuard_noHealth:
 @substate0:
 	ld h,d
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 
 	ld l,Enemy.speedZ
 	ld a,$00
@@ -1712,7 +1712,7 @@ _ambiGuard_noHealth:
 	ret nz
 
 	; Landed
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	inc (hl)
 
 	ld l,Enemy.speedZ
@@ -2416,7 +2416,7 @@ _veranPossessionBoss_state_switchHook:
 	ld h,d
 	ld l,Enemy.collisionType
 	res 7,(hl)
-	jp _ecom_incState2
+	jp _ecom_incSubstate
 
 @substate3:
 	ld b,$0b
@@ -3548,7 +3548,7 @@ _vineSprout_state_switchHook:
 
 @justLatched:
 	call _vineSprout_restoreTileAtPosition
-	jp _ecom_incState2
+	jp _ecom_incSubstate
 
 @beforeSwitch:
 	ret

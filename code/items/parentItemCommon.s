@@ -179,7 +179,7 @@ itemCreateChildWithID:
 	ld a,c
 	ldi (hl),a
 
-	; Clear Item.var03, Item.state, Item.state2
+	; Clear Item.var03, Item.state, Item.substate
 	xor a
 	ldi (hl),a
 	ldi (hl),a

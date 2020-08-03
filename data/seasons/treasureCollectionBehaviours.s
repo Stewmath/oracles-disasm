@@ -441,7 +441,7 @@ treasureCollectionBehaviourTable:
 	.db $00
 	.db SND_NONE
 
-	; TREASURE_58 (0x58)
+	; TREASURE_BOMB_FLOWER_LOWER_HALF (0x58)
 	.db $00
 	.db $00
 	.db SND_NONE

@@ -81,7 +81,7 @@ _interactiond9_getItemID:
 
 ; State 1: it's a new item, not an upgrade
 _interactiond9_state1:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -113,7 +113,7 @@ _interactiond9_state1:
 	ld e,Interaction.counter1
 	ld a,$3c
 	ld (de),a
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate2:
 	call interactionDecCounter1
@@ -128,7 +128,7 @@ _interactiond9_state1:
 
 	ld bc,TX_5509 ; "Your secrets have called forth power"
 	call showText
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate3:
 	; Wait for the chest to be opened
@@ -140,7 +140,7 @@ _interactiond9_state1:
 	ld e,Interaction.counter1
 	ld a,$1e
 	ld (de),a
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate4:
 	call interactionDecCounter1
@@ -157,7 +157,7 @@ _interactiond9_state1:
 
 ; State 2: it's an upgrade; it doesn't go in a chest.
 _interactiond9_state2:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -171,7 +171,7 @@ _interactiond9_state2:
 	.dw @substate8
 
 @substate0:
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),30
 	ld hl,w1Link
@@ -189,7 +189,7 @@ _interactiond9_state2:
 	ld (hl),$28
 	ld l,Interaction.xh
 	ld (hl),$58
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate2:
 	call interactionDecCounter1
@@ -202,7 +202,7 @@ _interactiond9_state2:
 	ld c,a
 	ld a,$78
 	call createEnergySwirlGoingIn
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate3:
 @substate4:
@@ -214,7 +214,7 @@ _interactiond9_state2:
 @playFadeOutSoundAndIncState:
 	ld a,SND_FADEOUT
 	call playSound
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate5:
 	call interactionDecCounter1
@@ -243,7 +243,7 @@ _interactiond9_state2:
 	rst_addAToHl
 	ld c,(hl)
 	ld b,TREASURE_RING_BOX
-	jr @createTreasureAndIncState2
+	jr @createTreasureAndIncSubstate
 
 @ringBoxSubids:
 	.db $03 $03 $04 $04
@@ -269,7 +269,7 @@ _interactiond9_state2:
 
 @bombUpgrade:
 	ldbc TREASURE_BOMB_UPGRADE, $00
-	call @createTreasureAndIncState2
+	call @createTreasureAndIncSubstate
 	ld hl,wMaxBombs
 	ld a,(hl)
 	add $20
@@ -284,18 +284,18 @@ _interactiond9_state2:
 .else
 	ldbc TREASURE_SEED_SATCHEL, $01
 .endif
-	jr @createTreasureAndIncState2
+	jr @createTreasureAndIncSubstate
 
 @label_0b_135:
 	and $03
 	ld c,a
 
-@createTreasureAndIncState2:
+@createTreasureAndIncSubstate:
 	call @createTreasure
 	ld e,Interaction.counter1
 	ld a,30
 	ld (de),a
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate7:
 	call retIfTextIsActive
@@ -315,7 +315,7 @@ _interactiond9_state2:
 	ld c,a
 	ld b,TREASURE_SWORD
 	call @createTreasure
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),$5a
 	ret

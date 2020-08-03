@@ -32,7 +32,7 @@ interactionCodec8:
 	ld l,$78
 	dec (hl)
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld b,INTERACID_BOOMERANG
 	call objectCreateInteractionWithSubid00
 	jr nz,+
@@ -98,7 +98,7 @@ interactionCodec9:
 	jr nz,+
 	ld l,$49
 	ld (hl),$08
-	call interactionIncState2
+	call interactionIncSubstate
 +
 	call objectApplySpeed
 --
@@ -469,7 +469,7 @@ interactionCodecb:
 	call objectPreventLinkFromPassing
 	call interactionRunScript
 	ret nc
-	call interactionIncState2
+	call interactionIncSubstate
 	jp _func_7c0f
 @@substate1:
 	call _func_7bf9
@@ -754,13 +754,13 @@ interactionCodecc:
 	call interactionAnimateAsNpc
 	call interactionRunScript
 	call seasonsFunc_0f_7dac
-	call checkInteractionState2
+	call checkInteractionSubstate
 	ret nz
 	call _func_7d95
 	ld a,TILEINDEX_GRASS
 	call findTileInRoom
 	ret z
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$78
 	ld a,(hl)
 	ld b,$02

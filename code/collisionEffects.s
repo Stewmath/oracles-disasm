@@ -827,7 +827,7 @@ _collisionEffect2e:
 	ld l,a
 	ld (hl),$03
 
-	; l = Object.state2
+	; l = Object.substate
 	inc l
 	ld (hl),$00
 

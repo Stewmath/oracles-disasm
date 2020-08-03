@@ -670,7 +670,7 @@ interactionCode22:
 	ret
 	
 @state2:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -696,7 +696,7 @@ interactionCode22:
 	jr nz,-
 	ldh a,(<hActiveObject)
 	ld d,a
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,$01
 	ld (de),a
 	ld e,Interaction.counter1
@@ -1810,12 +1810,12 @@ interactionCode27:
 	call interactionAnimateAsNpc
 	call interactionRunScript
 	jp c,interactionDelete
-	call checkInteractionState2
+	call checkInteractionSubstate
 	ret nz
 	ld a,($d00d)
 	cp $18
 	ret c
-	call interactionIncState2
+	call interactionIncSubstate
 	call @@func_5bae
 	jp _beginJump
 @@subid2:
@@ -2054,7 +2054,7 @@ interactionCode2a:
 	or a
 	jr z,@label_10_337
 	
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$48
 	ld a,(hl)
 	add $02
@@ -3438,7 +3438,7 @@ _childUpdateUnknownMovement:
 ;;
 ; Updates movement for "shy" personality type (runs away when Link approaches)
 _childUpdateShyMovement:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -3449,7 +3449,7 @@ _childUpdateShyMovement:
 	call objectCheckLinkWithinDistance
 	ret nc
 
-	call interactionIncState2
+	call interactionIncSubstate
 
 @substate1:
 	call _childUpdateAngleAndApplySpeed
@@ -3457,7 +3457,7 @@ _childUpdateShyMovement:
 	ret nc
 
 	ld h,d
-	ld l,Interaction.state2
+	ld l,Interaction.substate
 	ld (hl),$00
 	jp _childIncPositionIndex
 
@@ -3623,7 +3623,7 @@ _childLoadPositionListPointer:
 
 ;;
 _childUpdateCuriousMovement:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -3639,7 +3639,7 @@ _childUpdateCuriousMovement:
 
 @gotoSubstate1AndJump:
 	ld h,d
-	ld l,Interaction.state2
+	ld l,Interaction.substate
 	ld (hl),$01
 	ld l,Interaction.var3d
 	ld (hl),$01
@@ -3656,7 +3656,7 @@ _childUpdateCuriousMovement:
 	call objectUpdateSpeedZ_paramC
 	jp nz,objectApplySpeed
 
-	call interactionIncState2
+	call interactionIncSubstate
 
 	ld l,Interaction.var3d
 	ld (hl),$00
@@ -3791,7 +3791,7 @@ interactionCode3b:
 	ld c,$28
 	call objectCheckLinkWithinDistance
 	jr nc,+
-	call interactionIncState2
+	call interactionIncSubstate
 	call @func_67fc
 	add $06
 	call interactionSetAnimation
@@ -3802,7 +3802,7 @@ interactionCode3b:
 	ld a,(de)
 	inc a
 	jr nz,+
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$49
 	ld (hl),$ff
 +
@@ -3811,7 +3811,7 @@ interactionCode3b:
 	ld c,$28
 	call objectCheckLinkWithinDistance
 	jr c,+
-	call interactionIncState2
+	call interactionIncSubstate
 	call @func_67fc
 	add $07
 	call interactionSetAnimation
@@ -3831,7 +3831,7 @@ interactionCode3b:
 @var03_02:
 	call interactionAnimate
 	call interactionAnimate
-	call checkInteractionState2
+	call checkInteractionSubstate
 	jr nz,@func_67f0
 	ld e,Interaction.pressedAButton
 	ld a,(de)
@@ -3849,7 +3849,7 @@ interactionCode3b:
 	call interactionSetAnimation
 	ld bc,TX_3700
 	call showText
-	call interactionIncState2
+	call interactionIncSubstate
 @runScriptPushLinkAwayUpdateDrawPriority:
 	call interactionRunScript
 	jp interactionPushLinkAwayAndUpdateDrawPriority
@@ -4040,7 +4040,7 @@ interactionCode3e:
 	jr nz,+
 	ld l,$60
 	ld (hl),$01
-	call interactionIncState2
+	call interactionIncSubstate
 	ld hl,$cceb
 	ld (hl),$01
 	call interactionAnimate
@@ -4064,9 +4064,9 @@ interactionCode3e:
 	ld a,(hl)
 	cp $02
 	jr c,@@var03_03
-	call checkInteractionState2
+	call checkInteractionSubstate
 	jr nz,+
-	call interactionIncState2
+	call interactionIncSubstate
 	xor a
 	ld l,$4e
 	ldi (hl),a
@@ -4109,7 +4109,7 @@ interactionCode3e:
 	call objectApplySpeed
 	cp $4b
 	jr c,+
-	call interactionIncState2
+	call interactionIncSubstate
 	ld bc,$fe80
 	call objectSetSpeedZ
 	ld l,$50
@@ -4124,13 +4124,13 @@ interactionCode3e:
 	ret nz
 	inc a
 	ld ($ccc3),a
-	call interactionIncState2
+	call interactionIncSubstate
 	jp objectSetVisiblec2
 @@@substate2:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	jp nz,objectApplySpeed
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$76
 	ld (hl),$28
 	call objectCenterOnTile
@@ -4143,7 +4143,7 @@ interactionCode3e:
 @@@substate3:
 	call _func_6abc
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld a,$05
 	jp interactionSetAnimation
 @@@substate4:
@@ -4152,7 +4152,7 @@ interactionCode3e:
 	ld (de),a
 	or a
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld bc,$fd40
 	call objectSetSpeedZ
 	ld l,$4f
@@ -4167,7 +4167,7 @@ interactionCode3e:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	jp nz,objectApplySpeed
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$76
 	ld (hl),$10
 	ld l,$71
@@ -4176,7 +4176,7 @@ interactionCode3e:
 @@@substate6:
 	call _func_6abc
 	ret nz
-	jp interactionIncState2
+	jp interactionIncSubstate
 @@@substate7:
 	call objectCheckCollidedWithLink_notDeadAndNotGrabbing
 	jr nc,+
@@ -4191,7 +4191,7 @@ interactionCode3e:
 	ld a,(de)
 	cp $28
 	jr nc,+
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$76
 	ld (hl),$06
 	ld l,$49
@@ -4208,7 +4208,7 @@ interactionCode3e:
 	rlca
 	add $05
 	call interactionSetAnimation
-	jp interactionIncState2
+	jp interactionIncSubstate
 @@@substate9:
 	call objectCheckCollidedWithLink_notDeadAndNotGrabbing
 	jr nc,+
@@ -4221,7 +4221,7 @@ interactionCode3e:
 	call objectApplySpeed
 	cp $18
 	jr nc,+
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$76
 	ld (hl),$06
 	ld l,$49
@@ -4242,7 +4242,7 @@ interactionCode3e:
 	ld a,(de)
 	cp $62
 	jr c,+
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$76
 	ld (hl),$06
 	ld l,$49
@@ -6126,7 +6126,7 @@ interactionCode4e:
 @@@func75b5:
 	ld a,($cfd0)
 	or a
-	call nz,interactionIncState2
+	call nz,interactionIncSubstate
 @@@animate:
 	call interactionAnimate
 @@@runScriptPushLinkAway:
@@ -6142,7 +6142,7 @@ interactionCode4e:
 	ld a,($cfd1)
 	and b
 	jr z,+
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$46
 	ld (hl),$20
 	ld l,$4d
@@ -6158,7 +6158,7 @@ interactionCode4e:
 	call interactionDecCounter1
 	jr nz,+
 	call @@func_7612
-	jp interactionIncState2
+	jp interactionIncSubstate
 +
 	call getRandomNumber_noPreserveVars
 	and $0f
@@ -6210,7 +6210,7 @@ interactionCode4e:
 	ld a,($cfd3)
 	cp $3f
 	jp nz,@@subid9@func75b5
-	call interactionIncState2
+	call interactionIncSubstate
 	ld hl,troupeScript_startDanceScene
 	call interactionSetScript
 @@@substate1:
@@ -6219,7 +6219,7 @@ interactionCode4e:
 	and $40
 	ret z
 	call fastFadeoutToWhite
-	jp interactionIncState2
+	jp interactionIncSubstate
 @@@substate2:
 	ld a,($c4ab)
 	or a
@@ -6234,25 +6234,25 @@ interactionCode4e:
 	ld (hl),$01
 	ld l,$19
 	ld (hl),d
-	jp interactionIncState2
+	jp interactionIncSubstate
 @@@substate3:
 	ld a,($cfd0)
 	or a
 	ret nz
 	call @@subid9@runScriptPushLinkAway
-	jp interactionIncState2
+	jp interactionIncSubstate
 @@@substate4:
 	ld a,($cfd0)
 	cp $04
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld a,$0d
 	jp interactionSetAnimation
 @@@substate5:
 	ld a,($cfd0)
 	cp $07
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$50
 	ld (hl),$0a
 	ld l,$49
@@ -6276,7 +6276,7 @@ interactionCode4e:
 @@@substate0:
 	call interactionRunScript
 	jr nc,@@@func_76e9
-	call interactionIncState2
+	call interactionIncSubstate
 	ld hl,$cfd0
 	ld (hl),$04
 	jr @@@func_76e9
@@ -6286,7 +6286,7 @@ interactionCode4e:
 	ld a,(hl)
 	cp $06
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld hl,troupeScript_tornadoEnd
 	jp interactionSetScript
 @@@substate2:
@@ -6300,9 +6300,9 @@ interactionCode4e:
 	ld a,$d3
 	jp playSound
 @@subidA:
-	call checkInteractionState2
+	call checkInteractionSubstate
 	jr nz,+
-	call interactionIncState2
+	call interactionIncSubstate
 	ld a,GLOBALFLAG_FINISHEDGAME
 	call checkGlobalFlag
 	jp z,interactionDelete
@@ -6456,9 +6456,9 @@ _interactionCode4f_state1:
 	jp z,interactionDelete
 	cp $0d
 	jr nz,++
-	call checkInteractionState2
+	call checkInteractionSubstate
 	jr nz,+
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$4b
 	ld (hl),$4a
 	inc l
@@ -6473,7 +6473,7 @@ _interactionCode4f_state1:
 	jp interactionRunScript
 
 @subid2:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @@substate0
@@ -6487,7 +6487,7 @@ _interactionCode4f_state1:
 	.dw @@substate8
 
 @@substate0:
-	call interactionIncState2
+	call interactionIncSubstate
 	ld a,$7c
 	call @func_7957
 	ld e,Interaction.var03
@@ -6520,7 +6520,7 @@ _interactionCode4f_state1:
 	ld a,(de)
 	or $80
 	ld (de),a
-	jp interactionIncState2
+	jp interactionIncSubstate
 +
 	ld a,(de)
 	xor $80
@@ -6540,7 +6540,7 @@ _interactionCode4f_state1:
 	ret nz
 	ld l,$50
 	ld (hl),$78
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @@substate3:
 	call objectApplySpeed
@@ -6556,7 +6556,7 @@ _interactionCode4f_state1:
 	jr nc,+
 	xor a
 	call @func_7941
-	jp interactionIncState2
+	jp interactionIncSubstate
 +
 	or a
 	ret nz
@@ -6567,7 +6567,7 @@ _interactionCode4f_state1:
 	ld l,$72
 	dec (hl)
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$46
 	ld (hl),$a0
 	ld l,$43
@@ -6586,7 +6586,7 @@ _interactionCode4f_state1:
 	ld (hl),$28
 	ld a,$04
 	call @func_791f
-	jp interactionIncState2
+	jp interactionIncSubstate
 +
 	ld l,$49
 	inc (hl)
@@ -6635,7 +6635,7 @@ _interactionCode4f_state1:
 	dec b
 	jr nz,--
 ++
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @@substate7:
 	call objectApplySpeed
@@ -6645,7 +6645,7 @@ _interactionCode4f_state1:
 	ld (hl),$0c
 	ld a,$79
 	call @func_7957
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @@substate8:
 	ld hl,$cfd0
@@ -6764,7 +6764,7 @@ _interactionCode4f_state1:
 	call _interactionCode4f_state0@func_7784
 	call _interactionCode4f_state0@func_7796
 	call objectSetVisible
-	jp interactionIncState2
+	jp interactionIncSubstate
 +
 	call objectApplySpeed
 	call interactionAnimate
@@ -6779,11 +6779,11 @@ _interactionCode4f_state1:
 	jp objectSetInvisible
 
 @subid4:
-	call checkInteractionState2
+	call checkInteractionSubstate
 	jr nz,+
 	call interactionDecCounter1
 	ret nz
-	jp interactionIncState2
+	jp interactionIncSubstate
 +
 	ld hl,$cfd0
 	ld a,(hl)
@@ -6792,7 +6792,7 @@ _interactionCode4f_state1:
 	jp objectApplySpeed
 
 @subid1:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @@substate0
@@ -6805,7 +6805,7 @@ _interactionCode4f_state1:
 	call interactionAnimate
 	jr @@func_7a00
 +
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @@func_7a00:
 	ld h,d
@@ -6823,7 +6823,7 @@ _interactionCode4f_state1:
 	call objectSetInvisible
 	ld hl,dinImprisonedScript_OnoxSendsTempleDown
 	call interactionSetScript
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @func_7a1e:
 	ld a,($c486)
@@ -7206,7 +7206,7 @@ _subrosianAtD8_subid0:
 
 ; Waiting for Link to throw bomb in
 @state1:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -7223,7 +7223,7 @@ _subrosianAtD8_subid0:
 
 	call interactionDecCounter1
 	ret nz
-	ld l,Interaction.state2
+	ld l,Interaction.substate
 	inc (hl)
 	call objectSetVisiblec2
 	ld hl,subrosianAtD8Script_tossItemIntoHole
@@ -7243,7 +7243,7 @@ _subrosianAtD8_subid0:
 	ld h,d
 	ld l,Interaction.counter1
 	ld (hl),60
-	ld l,Interaction.state2
+	ld l,Interaction.substate
 	dec (hl)
 	ret
 

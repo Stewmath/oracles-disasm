@@ -3399,7 +3399,7 @@ _kingMoblinBomb_state2:
 
 @justGrabbed:
 	ld a,$01
-	ld (de),a ; [state2] = 1
+	ld (de),a ; [substate] = 1
 	xor a
 	ld (wLinkGrabState2),a
 .ifdef ROM_AGES

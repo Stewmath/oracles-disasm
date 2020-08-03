@@ -3,7 +3,7 @@
 dungeonScript_spawnChestOnTriggerBit0:
 	stopifitemflagset
 	checkflagset $00, wActiveTriggers
-	jump2byte _spawnChestHere
+	scriptjump _spawnChestHere
 
 
 makuPathScript_spawnChestWhenActiveTriggersEq01:
@@ -92,7 +92,7 @@ dungeonScript_bossDeath:
 
 _spawnHeartContainer:
 	spawnitem TREASURE_HEART_CONTAINER, $00
-	jump2byte _script4bc8
+	scriptjump _script4bc8
 
 wingDungeonScript_bossDeath:
 	jumpifroomflagset $80, @spawnHeart
@@ -110,7 +110,7 @@ wingDungeonScript_bossDeath:
 @spawnHeart:
 	stopifitemflagset
 	setcoords $98, $78
-	jump2byte _spawnHeartContainer
+	scriptjump _spawnHeartContainer
 
 
 ; Spawn stairs to the bracelet room when the two torches are lit.
@@ -138,27 +138,27 @@ wingDungeonScript_spawn30Rupees:
 moonlitGrottoScript_spawnChestWhen2TorchesLit:
 	stopifitemflagset
 	checkmemoryeq wNumTorchesLit, $02
-	jump2byte _spawnChestHere
+	scriptjump _spawnChestHere
 
 
 ; The room with the moving platform and an orb to hit
 skullDungeonScript_spawnChestWhenOrb0Hit:
 	stopifitemflagset
 	checkflagset $00, wToggleBlocksState
-	jump2byte _spawnChestHere
+	scriptjump _spawnChestHere
 
 ; The room with an orb that's being blocked by a moldorm
 skullDungeonScript_spawnChestWhenOrb1Hit:
 	stopifitemflagset
 	checkflagset $01, wToggleBlocksState
-	jump2byte _spawnChestHere
+	scriptjump _spawnChestHere
 
 
 ; The room with 3 eyeball-statue things that need to be hit with a seed shooter
 crownDungeonScript_spawnChestWhen3TriggersActive:
 	stopifitemflagset
 	checkmemoryeq wActiveTriggers, $07
-	jump2byte _spawnChestHere
+	scriptjump _spawnChestHere
 
 
 mermaidsCaveScript_spawnBridgeWhenOrbHit:
@@ -170,7 +170,7 @@ mermaidsCaveScript_spawnBridgeWhenOrbHit:
 mermaidsCaveScript_updateTrigger2BasedOnTriggers0And1:
 	wait 1
 	asm15 scriptHlp.setTrigger2IfTriggers0And1Set
-	jump2byte mermaidsCaveScript_updateTrigger2BasedOnTriggers0And1
+	scriptjump mermaidsCaveScript_updateTrigger2BasedOnTriggers0And1
 
 
 ; Creates a stair tile facing south when trigger 0 is activated
@@ -190,7 +190,7 @@ ancientTombScript_spawnNorthStairsWhenTrigger0Active:
 	stopifroomflag40set
 	checkmemoryeq wActiveTriggers, $01
 	settilehere $52
-	jump2byte _ancientTombScript_finishMakingStairs
+	scriptjump _ancientTombScript_finishMakingStairs
 
 
 ancientTombScript_retractWallWhenTrigger0Active:
@@ -225,7 +225,7 @@ ancientTombScript_spawnVerticalBridgeWhenTorchLit:
 herosCaveScript_spawnChestWhen4TriggersActive:
 	stopifitemflagset
 	checkmemoryeq wActiveTriggers, $0f
-	jump2byte _spawnChestHere
+	scriptjump _spawnChestHere
 
 herosCaveScript_spawnBridgeWhenTriggerPressed:
 	stopifroomflag40set
