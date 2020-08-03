@@ -37,12 +37,12 @@ parseStaticObjects:
 
 	and $7f
 	rst_jumpTable
-.dw @end
-.dw @end
-.dw @end
-.dw @interaction
-.dw @enemy
-.dw @part
+	.dw @end
+	.dw @end
+	.dw @end
+	.dw @interaction
+	.dw @enemy
+	.dw @part
 
 @end:
 	ld a,e

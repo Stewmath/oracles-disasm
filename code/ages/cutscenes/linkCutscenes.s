@@ -433,8 +433,8 @@ _linkCutscene3:
 	ld e,SpecialObject.state
 	ld a,(de)
 	rst_jumpTable
-.dw @state0
-.dw @state1
+	.dw @state0
+	.dw @state1
 
 @state0:
 	call _linkCutscene_initOam_setVisible_incState

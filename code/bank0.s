@@ -10722,9 +10722,9 @@ linkState07:
 	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
-.dw @substate0
-.dw specialObjectAnimate
-.dw @substate2
+	.dw @substate0
+	.dw specialObjectAnimate
+	.dw @substate2
 
 
 ; Initialization (just touched a gale seed)

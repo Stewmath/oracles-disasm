@@ -5,19 +5,19 @@ runRoomSpecificCode:
 	call findRoomSpecificData
 	ret nc
 	rst_jumpTable
-.dw _roomSpecificCode0
-.dw _roomSpecificCode1
-.dw _roomSpecificCode2
-.dw _roomSpecificCode3
-.dw _roomSpecificCode4
-.dw _roomSpecificCode5
-.dw setDeathRespawnPoint
-.dw _roomSpecificCode7
-.dw _roomSpecificCode8
-.dw _roomSpecificCode9
-.dw _roomSpecificCodeA
-.dw _roomSpecificCodeB
-.dw _roomSpecificCodeC
+	.dw _roomSpecificCode0
+	.dw _roomSpecificCode1
+	.dw _roomSpecificCode2
+	.dw _roomSpecificCode3
+	.dw _roomSpecificCode4
+	.dw _roomSpecificCode5
+	.dw setDeathRespawnPoint
+	.dw _roomSpecificCode7
+	.dw _roomSpecificCode8
+	.dw _roomSpecificCode9
+	.dw _roomSpecificCodeA
+	.dw _roomSpecificCodeB
+	.dw _roomSpecificCodeC
 
 	; Random stub not called by anything?
 	ret

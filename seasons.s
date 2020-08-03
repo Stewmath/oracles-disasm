@@ -430,7 +430,8 @@ _linkItemAnimationTable:
 
 
  m_section_superfree "Item_Code" namespace "itemCode"
-.include "code/updateItems.s"
+
+	.include "code/updateItems.s"
 
 	.include "build/data/itemConveyorTilesTable.s"
 	.include "build/data/itemPassableCliffTilesTable.s"
@@ -602,7 +603,7 @@ _linkItemAnimationTable:
 .BANK $15 SLOT 1
 .ORG 0
 
-.include "code/serialFunctions.s"
+	.include "code/serialFunctions.s"
 
 	.include "scripts/common/scriptHelper.s"
 	.include "object_code/common/interactionCode/group4.s"
