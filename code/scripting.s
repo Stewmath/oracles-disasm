@@ -9,13 +9,13 @@
 ; @param hl Current address of script
 runScriptCommand:
 	bit 7,a
-	jp z,_scriptCmd_jump2byte
+	jp z,_scriptCmd_jump
 	push hl
 	and $7f
 	rst_jumpTable
 	.dw _scriptCmd_setState ; 0x80
 	.dw _scriptCmd_setSubstate ; 0x81
-	.dw _scriptCmd_jump2byte ; 0x82
+	.dw _scriptCmd_jump ; 0x82
 	.dw scriptCmd_loadScript ; 0x83
 	.dw _scriptCmd_spawnInteraction ; 0x84
 	.dw _scriptCmd_spawnEnemy ; 0x85
@@ -294,7 +294,7 @@ _scriptCmd_setSubstate:
 
 ;;
 ; This is for all commands under $80.
-_scriptCmd_jump2byte:
+_scriptCmd_jump:
 
 .ifdef ROM_AGES
 	ld a,h

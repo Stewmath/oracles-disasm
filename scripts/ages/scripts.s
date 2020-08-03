@@ -10,7 +10,7 @@ genericNpcScript:
 --
 	checkabutton
 	showloadedtext
-	jump2byte --
+	scriptjump --
 
 
 ; ==============================================================================
@@ -41,12 +41,12 @@ _faroreUnlinked:
 	showtextlowindex <TX_5519
 	jumpiftextoptioneq $00, @sayOtherGameSecret
 	showtextlowindex <TX_5505
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @sayOtherGameSecret:
 	asm15 scriptHlp.faroreGenerateGameTransferSecret
 	showtextlowindex <TX_551a
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @askForPassword:
 	askforsecret $ff
@@ -61,13 +61,13 @@ _faroreUnlinked:
 
 @wrongGame: ; A Seasons secret was given in Ages.
 	showtextlowindex <TX_550b
-	jump2byte @offerOtherGameSecret
+	scriptjump @offerOtherGameSecret
 
 @secretOK: ; The secret is fine, but you're supposed to tell it to someone else.
 	asm15 scriptHlp.faroreShowTextForSecretHint
 	wait 30
 	showtextlowindex <TX_5504
-	jump2byte @offerOtherGameSecret
+	scriptjump @offerOtherGameSecret
 
 
 ; When talking to Farore in a linked game, you can tell her secrets and she'll respond by
@@ -77,7 +77,7 @@ _faroreLinked:
 	checkabutton
 	setdisabledobjectsto91
 	showtextlowindex <TX_5506
-	jump2byte ++
+	scriptjump ++
 @npcLoop:
 	enableinput
 	checkabutton
@@ -87,7 +87,7 @@ _faroreLinked:
 	showtextlowindex <TX_5507 ; Do you know a secret?
 	jumpiftextoptioneq $00, @showPasswordScreen
 	showtextlowindex <TX_5508 ; Come back anytime
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @showPasswordScreen:
 	askforsecret $ff
@@ -102,30 +102,30 @@ _faroreLinked:
 
 @script4667:
 	showtextlowindex <TX_5505
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @secretOK:
 	asm15 scriptHlp.faroreSpawnSecretChest
 	checkcfc0bit 1
 	xorcfc0bit 1
 	enableinput
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @alreadyToldSecret: ; The secret has already been told to farore
 	showtextlowindex <TX_550c
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @wrongGame: ; A secret for Seasons was told in Ages, or vice versa
 	showtextlowindex <TX_550b
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @secretNotActive: ; Need to talk to the corresponding npc before you can tell the secret
 	showtextlowindex <TX_551c
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @waitForLinkToOpenChest: ; A chest exists already, waiting for Link to open it
 	showtextlowindex <TX_550a
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; ==============================================================================
@@ -168,12 +168,12 @@ faroresMemoryScript:
 	showtext TX_551b
 	jumpiftextoptioneq $00, @openSecretList
 	wait 8
-	jump2byte --
+	scriptjump --
 
 @openSecretList:
 	asm15 openMenu, $0a
 	wait 8
-	jump2byte --
+	scriptjump --
 
 
 ; ==================================================
@@ -216,19 +216,19 @@ doorOpenerScript:
 doorController_controlledByTriggers_up:
 	setcollisionradii $0a, $08
 	setangle $10
-	jump2byte _doorController_controlledByTriggers
+	scriptjump _doorController_controlledByTriggers
 
 ; Subid $05
 doorController_controlledByTriggers_right:
 	setcollisionradii $08, $0a
 	setangle $12
-	jump2byte _doorController_controlledByTriggers
+	scriptjump _doorController_controlledByTriggers
 
 ; Subid $06
 doorController_controlledByTriggers_down:
 	setcollisionradii $0a, $08
 	setangle $14
-	jump2byte _doorController_controlledByTriggers
+	scriptjump _doorController_controlledByTriggers
 
 ; Subid $07
 doorController_controlledByTriggers_left:
@@ -246,10 +246,10 @@ _doorController_controlledByTriggers:
 @open:
 	playsound SND_SOLVEPUZZLE
 	setstate $02
-	jump2byte @loop
+	scriptjump @loop
 @close:
 	setstate $03
-	jump2byte @loop
+	scriptjump @loop
 
 
 ; Subids $08-$0b:
@@ -275,28 +275,28 @@ doorController_shutUntilEnemiesDead_up:
 	setcollisionradii $0a, $08
 	setangle $10
 	jumpifnoenemies _doorController_open
-	jump2byte _doorController_shutUntilEnemiesDead
+	scriptjump _doorController_shutUntilEnemiesDead
 
 ; Subid $09
 doorController_shutUntilEnemiesDead_right:
 	setcollisionradii $08, $0a
 	setangle $12
 	jumpifnoenemies _doorController_open
-	jump2byte _doorController_shutUntilEnemiesDead
+	scriptjump _doorController_shutUntilEnemiesDead
 
 ; Subid $0a
 doorController_shutUntilEnemiesDead_down:
 	setcollisionradii $0a, $08
 	setangle $14
 	jumpifnoenemies _doorController_open
-	jump2byte _doorController_shutUntilEnemiesDead
+	scriptjump _doorController_shutUntilEnemiesDead
 
 ; Subid $0b
 doorController_shutUntilEnemiesDead_left:
 	setcollisionradii $08, $0a
 	setangle $16
 	jumpifnoenemies _doorController_open
-	jump2byte _doorController_shutUntilEnemiesDead
+	scriptjump _doorController_shutUntilEnemiesDead
 
 _doorController_openOnMinecartCollision:
 	asm15 scriptHlp.doorController_checkMinecartCollidedWithDoor
@@ -326,25 +326,25 @@ _doorController_minecart:
 doorController_minecartDoor_up:
 	setcollisionradii $10, $08
 	setangle $18
-	jump2byte _doorController_minecart
+	scriptjump _doorController_minecart
 
 ; Subid $0d
 doorController_minecartDoor_right:
 	setcollisionradii $08, $0e
 	setangle $1a
-	jump2byte _doorController_minecart
+	scriptjump _doorController_minecart
 
 ; Subid $0e
 doorController_minecartDoor_down:
 	setcollisionradii $0f, $08
 	setangle $1c
-	jump2byte _doorController_minecart
+	scriptjump _doorController_minecart
 
 ; Subid $0f
 doorController_minecartDoor_left:
 	setcollisionradii $08, $0f
 	setangle $1e
-	jump2byte _doorController_minecart
+	scriptjump _doorController_minecart
 
 
 ; Subids $10-$13:
@@ -362,25 +362,25 @@ _doorController_closeDoorWhenLinkNotTouchingAndFlipcfc0:
 doorController_closeAfterLinkEnters_up:
 	setcollisionradii $0c, $08
 	setangle $10
-	jump2byte _doorController_closeDoorWhenLinkNotTouchingAndFlipcfc0
+	scriptjump _doorController_closeDoorWhenLinkNotTouchingAndFlipcfc0
 
 ; Subid $11
 doorController_closeAfterLinkEnters_right:
 	setcollisionradii $08, $0c
 	setangle $12
-	jump2byte _doorController_closeDoorWhenLinkNotTouchingAndFlipcfc0
+	scriptjump _doorController_closeDoorWhenLinkNotTouchingAndFlipcfc0
 
 ; Subid $12
 doorController_closeAfterLinkEnters_down:
 	setcollisionradii $0c, $08
 	setangle $14
-	jump2byte _doorController_closeDoorWhenLinkNotTouchingAndFlipcfc0
+	scriptjump _doorController_closeDoorWhenLinkNotTouchingAndFlipcfc0
 
 ; Subid $13
 doorController_closeAfterLinkEnters_left:
 	setcollisionradii $08, $0c
 	setangle $16
-	jump2byte _doorController_closeDoorWhenLinkNotTouchingAndFlipcfc0
+	scriptjump _doorController_closeDoorWhenLinkNotTouchingAndFlipcfc0
 
 
 ; Subids $14-$17:
@@ -406,14 +406,14 @@ doorController_openWhenTorchesLit_up_2Torches:
 	setcollisionradii $0a, $08
 	setangle $10
 	setspeed $02
-	jump2byte _doorController_shutUntilTorchesLit
+	scriptjump _doorController_shutUntilTorchesLit
 
 ; Subid $15
 doorController_openWhenTorchesLit_left_2Torches:
 	setcollisionradii $08, $0a
 	setangle $16
 	setspeed $02
-	jump2byte _doorController_shutUntilTorchesLit
+	scriptjump _doorController_shutUntilTorchesLit
 
 .ifdef ROM_AGES
 ; Subid $16
@@ -421,14 +421,14 @@ doorController_openWhenTorchesLit_down_1Torch:
 	setcollisionradii $0a, $08
 	setangle $14
 	setspeed $01
-	jump2byte _doorController_shutUntilTorchesLit
+	scriptjump _doorController_shutUntilTorchesLit
 
 ; Subid $17
 doorController_openWhenTorchesLit_left_1Torch:
 	setcollisionradii $08, $0a
 	setangle $16
 	setspeed $01
-	jump2byte _doorController_shutUntilTorchesLit
+	scriptjump _doorController_shutUntilTorchesLit
 .endif
 
 
@@ -450,7 +450,7 @@ shopkeeperScript_blockLinkAccess:
 @membersCard:
 	showtextlowindex <TX_0e0c
 	writeobjectbyte $7d, $01
-	jump2byte +
+	scriptjump +
 
 @noMembersCard:
 	showtextlowindex <TX_0e01
@@ -615,7 +615,7 @@ _shopkeeperNotEnoughRupeesToReplayChestGame:
 
 _shopkeeperNotEnoughRupees:
 	showtextlowindex <TX_0e06
-	jump2byte _shopkeeperCancelPurchase
+	scriptjump _shopkeeperCancelPurchase
 
 
 _shopkeeperAttemptToPurchaseItem:
@@ -684,7 +684,7 @@ shopkeeperChestGameScript:
 
 	showtextlowindex <TX_0e0d
 	ormemory wBoughtShopItems1, $80
-	jump2byte ++
+	scriptjump ++
 
 @notFirstTime:
 	showtextlowindex <TX_0e0e
@@ -707,7 +707,7 @@ shopkeeperChestGameScript:
 	moveup    $1a
 	moveright $11
 	movedown  $08
-	jump2byte ++
+	scriptjump ++
 
 @playAgain:
 	asm15 scriptHlp.shopkeeper_take10Rupees
@@ -739,7 +739,7 @@ shopkeeperScript_openedWrongChest:
 
 	; Selected "Yes" to play again
 	jumpifmemoryeq wShopHaveEnoughRupees, $01, _shopkeeperNotEnoughRupeesToReplayChestGame
-	jump2byte shopkeeperChestGameScript@playAgain
+	scriptjump shopkeeperChestGameScript@playAgain
 
 @selectedNo:
 	callscript _shopkeeperReturnToDeskAfterChestGame
@@ -882,7 +882,7 @@ vasuScript:
 	jumpifglobalflagset GLOBALFLAG_OBTAINED_RING_BOX, @alreadyGaveRingBox
 	jumpifmemoryeq wIsLinkedGame, $00, @firstTime
 	jumpifmemoryset wObtainedRingBox, $01, @linkedGameFirstTime
-	jump2byte @firstTime
+	scriptjump @firstTime
 
 @linkedGameFirstTime:
 	showtextlowindex <TX_303e
@@ -895,14 +895,14 @@ vasuScript:
 ++
 	setdisabledobjectsto11
 	checktext
-	jump2byte @justGaveRingBox
+	scriptjump @justGaveRingBox
 
 @firstTime:
 	showtextnonexitablelowindex <TX_3000
 @giveExplanation:
 	jumpiftextoptioneq $00, @explanationDone
 	showtextnonexitablelowindex <TX_303a
-	jump2byte @giveExplanation
+	scriptjump @giveExplanation
 @explanationDone:
 	jumpifobjectbyteeq Interaction.var36, $01, ++ ; Check TREASURE_RING_BOX
 
@@ -935,7 +935,7 @@ vasuScript:
 	setglobalflag GLOBALFLAG_OBTAINED_RING_BOX
 	ormemory wObtainedRingBox, $01
 	enableinput
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 @alreadyGaveRingBox:
@@ -949,18 +949,18 @@ vasuScript:
 
 @giveSlayersRing:
 	showtextlowindex <TX_3036
-	jump2byte @giveSpecialRing
+	scriptjump @giveSpecialRing
 
 @giveWealthRing:
 	showtextlowindex <TX_3037
-	jump2byte @giveSpecialRing
+	scriptjump @giveSpecialRing
 
 @giveVictoryRing:
 	showtextlowindex <TX_3039
 @giveSpecialRing:
 	checktext
 	asm15 scriptHlp.vasu_giveRingInVar3a
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; Just show normal welcome text
@@ -972,12 +972,12 @@ vasuScript:
 	; Selected "Quit"
 	enableinput
 	showtextlowindex <TX_3008
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @appraise:
 	jumpifobjectbyteeq Interaction.var37, $00, @noUnappraisedRings
 	asm15 scriptHlp.vasu_openRingMenu, $00
-	jump2byte @exitedRingMenu
+	scriptjump @exitedRingMenu
 
 @list:
 	jumpifobjectbyteeq Interaction.var38, $00, @noAppraisedRings
@@ -989,23 +989,23 @@ vasuScript:
 
 	showtextlowindex <TX_3008
 	enableinput
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @giveHundredthRing:
 	showtextlowindex <TX_3038
 	checktext
 	unsetglobalflag GLOBALFLAG_APPRAISED_HUNDREDTH_RING
 	asm15 scriptHlp.vasu_giveHundredthRing
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 @noUnappraisedRings:
 	showtextlowindex <TX_3014
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @noAppraisedRings:
 	showtextlowindex <TX_3015
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; Red snake before beating unlinked game
@@ -1024,7 +1024,7 @@ _redSnake_explain:
 
 @explainAppraisal:
 	showtextnonexitablelowindex <TX_300b
-	jump2byte ++
+	scriptjump ++
 
 @explainBox:
 	showtextnonexitablelowindex <TX_300c
@@ -1038,7 +1038,7 @@ _redSnake_explain:
 blueSnakeScript_preLinked:
 	showtextnonexitablelowindex <TX_301f
 	jumpiftextoptioneq $01, blueSnakeScript_doNotRemoveCable
-	jump2byte _blueSnake_linkOrFortune
+	scriptjump _blueSnake_linkOrFortune
 
 ; Blue snake after beating linked game
 blueSnakeScript_linked:
@@ -1076,7 +1076,7 @@ redSnakeScript_linked:
 @tellSecretToLink:
 	showtextnonexitablelowindex <TX_301d
 	jumpiftextoptioneq $00, @tellSecretToLink
-	jump2byte @quit
+	scriptjump @quit
 
 @tellSecretToSnake:
 	asm15 scriptHlp.redSnake_openSecretInputMenu
@@ -1122,7 +1122,7 @@ gameCompleteDialogScript:
 	asm15 scriptHlp.gameCompleteDialog_markGameAsComplete
 	asm15 saveFile
 	wait 30
-	jump2byte ++
+	scriptjump ++
 
 @dontSave:
 	wait 30
@@ -1145,7 +1145,7 @@ ringHelpBookSubid1Script:
 	showtextnonexitablelowindex <TX_3019
 	jumpiftextoptioneq $01, ringHelpBookSubid1Reset
 	showtextlowindex <TX_301a
-	jump2byte ringHelpBookSubid1Script
+	scriptjump ringHelpBookSubid1Script
 
 
 ringHelpBookSubid0Reset:
@@ -1163,11 +1163,11 @@ ringHelpBookSubid0Script:
 	jumpiftextoptioneq $02, ringHelpBookSubid0Reset
 	showtextnonexitablelowindex <TX_303d
 	jumpiftextoptioneq $01, ringHelpBookSubid0Reset
-	jump2byte @showAgain
+	scriptjump @showAgain
 @option1:
 	showtextnonexitablelowindex <TX_3026
 	jumpiftextoptioneq $01, ringHelpBookSubid0Reset
-	jump2byte @showAgain
+	scriptjump @showAgain
 
 
 ; ==============================================================================
@@ -1188,10 +1188,10 @@ bipinScript0:
 	checkabutton
 	jumpifmemoryeq wChildStatus, $00, @stillUnnamed
 	showtext TX_4301
-	jump2byte @loop
+	scriptjump @loop
 @stillUnnamed:
 	showtext TX_4300
-	jump2byte @loop
+	scriptjump @loop
 
 
 ; Bipin gives you a random tip
@@ -1205,7 +1205,7 @@ bipinScript1:
 	wait 30
 	callscript _bipinSayRandomTip
 	enableallobjects
-	jump2byte @loop
+	scriptjump @loop
 
 
 ; Bipin just moved to Labrynna/Holodrum?
@@ -1216,7 +1216,7 @@ bipinScript2:
 	setdisabledobjectsto91
 	asm15 scriptHlp.bipin_showText_subid1To9
 	enableallobjects
-	jump2byte @loop
+	scriptjump @loop
 
 _bipinSayRandomTip:
 	; Show a random text index from TX_4309-TX_4310
@@ -1255,22 +1255,22 @@ adlarScript:
 @nayruPossessed:
 	checkabutton
 	showtext TX_3711
-	jump2byte @nayruPossessed
+	scriptjump @nayruPossessed
 
 @queenPossessed:
 	checkabutton
 	showtext TX_3712
-	jump2byte @queenPossessed
+	scriptjump @queenPossessed
 
 @queenMissing:
 	checkabutton
 	showtext TX_3716
-	jump2byte @queenMissing
+	scriptjump @queenMissing
 
 @queenBackToNormal:
 	checkabutton
 	showtext TX_3713
-	jump2byte @queenBackToNormal
+	scriptjump @queenBackToNormal
 
 
 ; ==============================================================================
@@ -1281,7 +1281,7 @@ librarianScript:
 @loop:
 	checkabutton
 	showloadedtext
-	jump2byte @loop
+	scriptjump @loop
 
 
 ; ==============================================================================
@@ -1308,7 +1308,7 @@ blossomScript0:
 @invalidName:
 	showtextlowindex <TX_440a
 	enableinput
-	jump2byte @loop
+	scriptjump @loop
 
 @validName:
 	showtextlowindex <TX_4407
@@ -1328,7 +1328,7 @@ blossomScript0:
 @nameAlreadyGiven:
 	checkabutton
 	showtextlowindex <TX_4409
-	jump2byte @nameAlreadyGiven
+	scriptjump @nameAlreadyGiven
 
 
 ; Blossom asking for money to see a doctor
@@ -1363,7 +1363,7 @@ blossomScript1:
 @gave150RupeesLoop:
 	showtextlowindex <TX_440d
 	checkabutton
-	jump2byte @gave150RupeesLoop
+	scriptjump @gave150RupeesLoop
 
 @give50Rupees:
 	asm15 scriptHlp.blossom_checkHasRupees, RUPEEVAL_050
@@ -1376,7 +1376,7 @@ blossomScript1:
 @gave50RupeesLoop:
 	showtextlowindex <TX_440e
 	checkabutton
-	jump2byte @gave50RupeesLoop
+	scriptjump @gave50RupeesLoop
 
 @give10Rupees:
 	asm15 scriptHlp.blossom_checkHasRupees, RUPEEVAL_010
@@ -1389,7 +1389,7 @@ blossomScript1:
 @gave10RupeesLoop:
 	showtextlowindex <TX_440f
 	checkabutton
-	jump2byte @gave10RupeesLoop
+	scriptjump @gave10RupeesLoop
 
 @give1Rupee:
 	asm15 scriptHlp.blossom_checkHasRupees, RUPEEVAL_001
@@ -1401,24 +1401,24 @@ blossomScript1:
 @gave1RupeeLoop:
 	showtextlowindex <TX_4410
 	checkabutton
-	jump2byte @gave1RupeeLoop
+	scriptjump @gave1RupeeLoop
 
 @notEnoughRupees:
 	wait 30
 	showtextlowindex <TX_4432
 	enableallobjects
-	jump2byte @loop
+	scriptjump @loop
 
 @selectedNo:
 	wait 30
 	showtextlowindex <TX_4411
 	enableallobjects
-	jump2byte @loop
+	scriptjump @loop
 
 @alreadyGaveMoney:
 	checkabutton
 	showtextlowindex <TX_4431
-	jump2byte @alreadyGaveMoney
+	scriptjump @alreadyGaveMoney
 
 
 ; Blossom tells you that the baby has gotten better
@@ -1430,7 +1430,7 @@ script4e08:
 	showtextlowindex <TX_4412
 	asm15 scriptHlp.setNextChildStage, $03
 	enableallobjects
-	jump2byte script4e08
+	scriptjump script4e08
 
 
 ; Blossom asks you how to get the baby to sleep
@@ -1454,7 +1454,7 @@ blossomScript3:
 	wait 30
 	showtextlowindex <TX_4414
 	enableallobjects
-	jump2byte @alreadyGaveAdvice
+	scriptjump @alreadyGaveAdvice
 @play:
 	wait 30
 	showtextlowindex <TX_4415
@@ -1464,7 +1464,7 @@ blossomScript3:
 @alreadyGaveAdvice:
 	checkabutton
 	showtextlowindex <TX_4416
-	jump2byte @alreadyGaveAdvice
+	scriptjump @alreadyGaveAdvice
 
 
 ; Blossom tells you that the child has grown
@@ -1501,7 +1501,7 @@ blossomScript6:
 @hyperactiveResponseReceived:
 	checkabutton
 	showtextlowindex <TX_4422
-	jump2byte @hyperactiveResponseReceived
+	scriptjump @hyperactiveResponseReceived
 
 
 @shy:
@@ -1518,7 +1518,7 @@ blossomScript6:
 @shyReponseReceived:
 	checkabutton
 	showtextlowindex <TX_4423
-	jump2byte @shyReponseReceived
+	scriptjump @shyReponseReceived
 
 
 @curious:
@@ -1535,7 +1535,7 @@ blossomScript6:
 @curiousResponseReceived:
 	checkabutton
 	showtextlowindex <TX_4424
-	jump2byte @curiousResponseReceived
+	scriptjump @curiousResponseReceived
 
 
 ; Blossom asks about how Link was as a child. She asks a few things before giving up.
@@ -1670,7 +1670,7 @@ oldManScript_givesRupees:
 @alreadyGaveMoney:
 	checkabutton
 	showtextlowindex <TX_3319
-	jump2byte @alreadyGaveMoney
+	scriptjump @alreadyGaveMoney
 
 
 oldManScript_takesRupees:
@@ -1689,13 +1689,13 @@ oldManScript_takesRupees:
 @alreadyTookMoney:
 	checkabutton
 	showtextlowindex <TX_3316
-	jump2byte @alreadyTookMoney
+	scriptjump @alreadyTookMoney
 
 @linkIsBroke:
 	wait 30
 	showtextlowindex <TX_3317
 	enableinput
-	jump2byte @alreadyTookMoney
+	scriptjump @alreadyTookMoney
 
 
 ; ==============================================================================
@@ -1718,14 +1718,14 @@ shootingGalleryScript_humanNpc:
 	enableinput
 	wait 30
 	writeobjectbyte Interaction.var31, $00
-	jump2byte @loop
+	scriptjump @loop
 
 @tryAgain:
 	disableinput
 	showtext TX_081a
 	wait 30
 	jumpiftextoptioneq $00, @repliedYes
-	jump2byte @repliedNo
+	scriptjump @repliedNo
 
 @repliedYes:
 	asm15 scriptHlp.shootingGallery_checkLinkHasRupees, RUPEEVAL_10
@@ -1735,7 +1735,7 @@ shootingGalleryScript_humanNpc:
 	showtext TX_0803
 	enableinput
 	checkabutton
-	jump2byte @notEnoughRupees
+	scriptjump @notEnoughRupees
 
 @enoughRupees:
 	asm15 removeRupeeValue, RUPEEVAL_10
@@ -1747,7 +1747,7 @@ shootingGalleryScript_humanNpc:
 	showtext TX_0804
 	wait 30
 	jumpiftextoptioneq $00, @beginGame
-	jump2byte @giveExplanation
+	scriptjump @giveExplanation
 
 @beginGame:
 	showtext TX_0805
@@ -1797,7 +1797,7 @@ shootingGalleryScript_goronNpc:
 	enableinput
 	wait 30
 	writeobjectbyte Interaction.var31, $00
-	jump2byte @loop
+	scriptjump @loop
 
 @normalGame:
 	showtext TX_24cf
@@ -1809,14 +1809,14 @@ shootingGalleryScript_goronNpc:
 	enableinput
 	wait 30
 	writeobjectbyte Interaction.var31, $00
-	jump2byte @loop
+	scriptjump @loop
 
 @tryAgain:
 	disableinput
 	showtext TX_24df
 	wait 30
 	jumpiftextoptioneq $00, @answeredYes
-	jump2byte @answeredNo
+	scriptjump @answeredNo
 
 @answeredYes:
 	asm15 scriptHlp.shootingGallery_checkLinkHasRupees, RUPEEVAL_20
@@ -1826,7 +1826,7 @@ shootingGalleryScript_goronNpc:
 	showtext TX_24d2
 	enableinput
 	checkabutton
-	jump2byte @notEnoughRupees
+	scriptjump @notEnoughRupees
 
 @enoughRupees:
 	disableinput
@@ -1839,11 +1839,11 @@ shootingGalleryScript_goronNpc:
 	showtext TX_24d3
 	wait 30
 	jumpiftextoptioneq $00, @beginGame
-	jump2byte @giveExplanation
+	scriptjump @giveExplanation
 
 @beginGame:
 	showtext TX_24d6
-	jump2byte _shootingGallery_fadeIntoGameWithSword
+	scriptjump _shootingGallery_fadeIntoGameWithSword
 
 
 
@@ -1861,7 +1861,7 @@ shootingGalleryScript_goronElderNpc:
 	jumpiftextoptioneq $00, @askForSecret
 	showtext TX_3131
 	enableinput
-	jump2byte @loop
+	scriptjump @loop
 
 @askForSecret:
 	askforsecret ELDER_SECRET
@@ -1869,26 +1869,26 @@ shootingGalleryScript_goronElderNpc:
 	jumpifmemoryeq wTextInputResult, $00, @validSecret
 	showtext TX_3133
 	enableinput
-	jump2byte @loop
+	scriptjump @loop
 
 @validSecret:
 	setglobalflag GLOBALFLAG_BEGAN_ELDER_SECRET
 	showtext TX_3132
-	jump2byte @askedToTakeTest
+	scriptjump @askedToTakeTest
 
 @alreadyGaveSecret:
 	checkabutton
 	jumpifmemoryeq wTmpcfc0.shootingGallery.disableGoronNpcs, $01, @alreadyGaveSecret
 	disableinput
 	showtext TX_313c
-	jump2byte @askedToTakeTest
+	scriptjump @askedToTakeTest
 
 @tellSecret:
 	checkabutton
 	jumpifmemoryeq wTmpcfc0.shootingGallery.disableGoronNpcs, $01, @tellSecret
 	generatesecret ELDER_RETURN_SECRET
 	showtext TX_313e
-	jump2byte @tellSecret
+	scriptjump @tellSecret
 
 ; Parse the response to the goron asking you to take the test
 @askedToTakeTest:
@@ -1896,7 +1896,7 @@ shootingGalleryScript_goronElderNpc:
 	jumpiftextoptioneq $00, @acceptedTest
 	showtext TX_3134
 	enableinput
-	jump2byte @alreadyGaveSecret
+	scriptjump @alreadyGaveSecret
 
 @acceptedTest:
 	showtext TX_3135
@@ -1920,48 +1920,48 @@ shootingGalleryScript_goronElderNpc:
 	wait 20
 	asm15 fadeinFromWhite
 	checkpalettefadedone
-	jump2byte _shootingGallery_beginGame
+	scriptjump _shootingGallery_beginGame
 
 
 shootingGalleryScript_hit1Blue:
 	showtext TX_0807
-	jump2byte _shootingGallery_printTotalPoints
+	scriptjump _shootingGallery_printTotalPoints
 shootingGalleryScript_hit1Fairy:
 	showtext TX_0808
-	jump2byte _shootingGallery_printTotalPoints
+	scriptjump _shootingGallery_printTotalPoints
 shootingGalleryScript_hit1Red:
 	showtext TX_0809
-	jump2byte _shootingGallery_printTotalPoints
+	scriptjump _shootingGallery_printTotalPoints
 shootingGalleryScript_hit1Imp:
 	showtext TX_080a
-	jump2byte _shootingGallery_printTotalPoints
+	scriptjump _shootingGallery_printTotalPoints
 shootingGalleryScript_hit2Blue:
 	showtext TX_080b
-	jump2byte _shootingGallery_printTotalPoints
+	scriptjump _shootingGallery_printTotalPoints
 shootingGalleryScript_hit2Red:
 	showtext TX_080c
-	jump2byte _shootingGallery_printTotalPoints
+	scriptjump _shootingGallery_printTotalPoints
 shootingGalleryScript_hit1Blue1Fairy:
 	showtext TX_080e
-	jump2byte _shootingGallery_printTotalPoints
+	scriptjump _shootingGallery_printTotalPoints
 shootingGalleryScript_hit1Red1Blue:
 	showtext TX_080d
-	jump2byte _shootingGallery_printTotalPoints
+	scriptjump _shootingGallery_printTotalPoints
 shootingGalleryScript_hit1Blue1Imp:
 	showtext TX_080f
-	jump2byte _shootingGallery_printTotalPoints
+	scriptjump _shootingGallery_printTotalPoints
 shootingGalleryScript_hit1Red1Fairy:
 	showtext TX_0810
-	jump2byte _shootingGallery_printTotalPoints
+	scriptjump _shootingGallery_printTotalPoints
 shootingGalleryScript_hit1Fairy1Imp:
 	showtext TX_0811
-	jump2byte _shootingGallery_printTotalPoints
+	scriptjump _shootingGallery_printTotalPoints
 shootingGalleryScript_hit1Red1Imp:
 	showtext TX_0812
-	jump2byte _shootingGallery_printTotalPoints
+	scriptjump _shootingGallery_printTotalPoints
 shootingGalleryScript_hitNothing:
 	showtext TX_0806
-	jump2byte _shootingGallery_printTotalPoints
+	scriptjump _shootingGallery_printTotalPoints
 shootingGalleryScript_strike:
 	showtext TX_081c
 
@@ -2030,7 +2030,7 @@ shootingGalleryScript_goronElderNpc_gameDone:
 	jumpiftextoptioneq $00, @playAgain
 	showtext TX_3134
 	enableinput
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @playAgain:
 	showtext TX_3135
@@ -2053,7 +2053,7 @@ shootingGalleryScript_goronElderNpc_gameDone:
 	generatesecret ELDER_RETURN_SECRET
 	showtext TX_313b
 	enableinput
-	jump2byte shootingGalleryScript_goronElderNpc@tellSecret
+	scriptjump shootingGalleryScript_goronElderNpc@tellSecret
 @end2:
 	scriptend
 
@@ -2090,7 +2090,7 @@ _jumpAndWaitUntilLanded:
 @stillInAir:
 	asm15 scriptHlp.updateGravity
 	jumpifmemoryset wcddb, $80, @landed
-	jump2byte @stillInAir
+	scriptjump @stillInAir
 @landed:
 	retscript
 
@@ -2196,7 +2196,7 @@ impaScript1:
 
 @unlinked:
 	giveitem TREASURE_SWORD, $00
-	jump2byte ++
+	scriptjump ++
 @linked:
 	giveitem TREASURE_SHIELD, $00
 
@@ -2324,12 +2324,12 @@ greatFairyOctorokScript:
 	jumpifglobalflagset GLOBALFLAG_TALKED_TO_OCTOROK_FAIRY, @alreadyExplained
 	showtextlowindex <TX_4106
 	setglobalflag GLOBALFLAG_TALKED_TO_OCTOROK_FAIRY
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @alreadyExplained:
 	jumpifitemobtained TREASURE_FAIRY_POWDER, @applyFairyPowder
 	showtextlowindex <TX_4107
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @applyFairyPowder:
 	setdisabledobjectsto11
@@ -2355,21 +2355,21 @@ childScript_stage4_hyperactive:
 @loop:
 	checkabutton
 	showtext TX_4700
-	jump2byte @loop
+	scriptjump @loop
 
 childScript_stage4_shy:
 	initcollisions
 @loop:
 	checkabutton
 	showtext TX_4200
-	jump2byte @loop
+	scriptjump @loop
 
 childScript_stage4_curious:
 	initcollisions
 @loop:
 	checkabutton
 	showtext TX_4900
-	jump2byte @loop
+	scriptjump @loop
 
 
 childScript_stage5_hyperactive:
@@ -2378,7 +2378,7 @@ childScript_stage5_hyperactive:
 	checkabutton
 	showtext TX_4701
 	asm15 scriptHlp.setNextChildStage, $06
-	jump2byte @loop
+	scriptjump @loop
 
 childScript_stage5_shy:
 	initcollisions
@@ -2386,7 +2386,7 @@ childScript_stage5_shy:
 	checkabutton
 	showtext TX_4201
 	asm15 scriptHlp.setNextChildStage, $06
-	jump2byte @loop
+	scriptjump @loop
 
 childScript_stage5_curious:
 	initcollisions
@@ -2394,7 +2394,7 @@ childScript_stage5_curious:
 	checkabutton
 	showtext TX_4901
 	asm15 scriptHlp.setNextChildStage, $06
-	jump2byte @loop
+	scriptjump @loop
 
 
 ; Stage 6: the child asks a question. The question differs based on his personality, but
@@ -2418,7 +2418,7 @@ childScript_stage6_hyperactive:
 	showtext TX_4703
 	asm15 scriptHlp.child_addValueToChildStatus, $04
 	enableinput
-	jump2byte @alreadyAnswered
+	scriptjump @alreadyAnswered
 
 @answeredNo:
 	wait 30
@@ -2428,7 +2428,7 @@ childScript_stage6_hyperactive:
 @alreadyAnswered:
 	checkabutton
 	showtext TX_4705
-	jump2byte @alreadyAnswered
+	scriptjump @alreadyAnswered
 
 
 childScript_stage6_shy:
@@ -2449,7 +2449,7 @@ childScript_stage6_shy:
 	showtext TX_4203
 	asm15 scriptHlp.child_addValueToChildStatus, $04
 	enableinput
-	jump2byte @alreadyAnswered
+	scriptjump @alreadyAnswered
 
 @answeredNo:
 	wait 30
@@ -2459,7 +2459,7 @@ childScript_stage6_shy:
 @alreadyAnswered:
 	checkabutton
 	showtext TX_4205
-	jump2byte @alreadyAnswered
+	scriptjump @alreadyAnswered
 
 
 childScript_stage6_curious:
@@ -2480,7 +2480,7 @@ childScript_stage6_curious:
 	showtext TX_4903
 	asm15 scriptHlp.child_addValueToChildStatus, $04
 	enableinput
-	jump2byte @alreadyAnswered
+	scriptjump @alreadyAnswered
 
 @answeredEgg:
 	wait 30
@@ -2490,7 +2490,7 @@ childScript_stage6_curious:
 @alreadyAnswered:
 	checkabutton
 	showtext TX_4905
-	jump2byte @alreadyAnswered
+	scriptjump @alreadyAnswered
 
 
 ; Stage 7: just says some text.
@@ -2501,7 +2501,7 @@ childScript_stage7_slacker:
 	checkabutton
 	showtext TX_4b00
 	asm15 scriptHlp.setNextChildStage, $08
-	jump2byte @loop
+	scriptjump @loop
 
 childScript_stage7_warrior:
 	initcollisions
@@ -2509,7 +2509,7 @@ childScript_stage7_warrior:
 	checkabutton
 	showtext TX_4a00
 	asm15 scriptHlp.setNextChildStage, $08
-	jump2byte @loop
+	scriptjump @loop
 
 childScript_stage7_arborist:
 	initcollisions
@@ -2517,7 +2517,7 @@ childScript_stage7_arborist:
 	checkabutton
 	showtext TX_4800
 	asm15 scriptHlp.setNextChildStage, $08
-	jump2byte @loop
+	scriptjump @loop
 
 childScript_stage7_singer:
 	initcollisions
@@ -2525,7 +2525,7 @@ childScript_stage7_singer:
 	checkabutton
 	showtext TX_4600
 	asm15 scriptHlp.setNextChildStage, $08
-	jump2byte @loop
+	scriptjump @loop
 
 
 ; Stage 8: asks a question or makes a request. This affects what he will do in stage 9.
@@ -2564,7 +2564,7 @@ childScript_stage8_slacker:
 @answered100Loop:
 	showtext TX_4b04
 	checkabutton
-	jump2byte @answered100Loop
+	scriptjump @answered100Loop
 
 @answered50Rupees:
 	asm15 scriptHlp.child_checkHasRupees, RUPEEVAL_050
@@ -2578,7 +2578,7 @@ childScript_stage8_slacker:
 @answered50Loop:
 	showtext TX_4b05
 	checkabutton
-	jump2byte @answered50Loop
+	scriptjump @answered50Loop
 
 @answered10Rupees:
 	asm15 scriptHlp.child_checkHasRupees, RUPEEVAL_010
@@ -2592,7 +2592,7 @@ childScript_stage8_slacker:
 @answered10Loop:
 	showtext TX_4b06
 	checkabutton
-	jump2byte @answered10Loop
+	scriptjump @answered10Loop
 
 @answered0Rupees: ; He takes 1 rupee anyway...
 	asm15 scriptHlp.child_checkHasRupees, RUPEEVAL_001
@@ -2606,24 +2606,24 @@ childScript_stage8_slacker:
 @answered0Loop:
 	showtext TX_4b07
 	checkabutton
-	jump2byte @answered0Loop
+	scriptjump @answered0Loop
 
 @notEnoughRupees:
 	wait 30
 	showtext TX_4b08
 	enableinput
-	jump2byte @loop
+	scriptjump @loop
 
 @answeredNo:
 	wait 30
 	showtext TX_4b03
 	enableinput
-	jump2byte @loop
+	scriptjump @loop
 
 @alreadyAnswered:
 	checkabutton
 	showtext TX_4b09
-	jump2byte @alreadyAnswered
+	scriptjump @alreadyAnswered
 
 
 ; Asks Link what will make him mightiest.
@@ -2660,15 +2660,15 @@ childScript_stage8_warrior:
 	showtext TX_4a04
 	enableinput
 	wait 30
-	jump2byte @alreadyAnswered
+	scriptjump @alreadyAnswered
 
 @answeredDailyTraining:
 	asm15 scriptHlp.child_setStage8Response, $00
-	jump2byte @gaveResponse
+	scriptjump @gaveResponse
 
 @answeredNaturalTalent:
 	asm15 scriptHlp.child_setStage8Response, $01
-	jump2byte @gaveResponse
+	scriptjump @gaveResponse
 
 @answeredCaringHeart:
 	asm15 scriptHlp.child_setStage8Response, $02
@@ -2684,7 +2684,7 @@ childScript_stage8_warrior:
 @alreadyAnswered:
 	checkabutton
 	showtext TX_4a08
-	jump2byte @alreadyAnswered
+	scriptjump @alreadyAnswered
 
 
 ; Gives Link a gasha seed.
@@ -2707,7 +2707,7 @@ childScript_stage8_arborist:
 @alreadyGaveSeed:
 	checkabutton
 	showtext TX_4803
-	jump2byte @alreadyGaveSeed
+	scriptjump @alreadyGaveSeed
 
 
 ; Asks link what's more important, love or courage.
@@ -2724,13 +2724,13 @@ childScript_stage8_singer:
 	asm15 scriptHlp.setNextChildStage, $09
 	wait 30
 	enableinput
-	jump2byte @showResponseText
+	scriptjump @showResponseText
 
 @alreadyAnswered:
 	checkabutton
 @showResponseText:
 	showtext TX_4602
-	jump2byte @alreadyAnswered
+	scriptjump @alreadyAnswered
 
 
 ; Stage 9: the child gives a reward based on your response in stage 8.
@@ -2753,16 +2753,16 @@ childScript_stage9_slacker:
 @fillSatchel:
 	asm15 refillSeedSatchel
 	showtext TX_0052
-	jump2byte @justGaveReward
+	scriptjump @justGaveReward
 
 @give200Rupees:
 	asm15 scriptHlp.child_giveRupees, RUPEEVAL_200
 	showtext TX_0009
-	jump2byte @justGaveReward
+	scriptjump @justGaveReward
 
 @giveGashaSeed:
 	giveitem TREASURE_GASHA_SEED, $03
-	jump2byte @justGaveReward
+	scriptjump @justGaveReward
 
 @give10Bombs:
 	giveitem TREASURE_BOMBS, $02
@@ -2770,13 +2770,13 @@ childScript_stage9_slacker:
 @justGaveReward:
 	wait 30
 	enableinput
-	jump2byte @showTextAfterGiving
+	scriptjump @showTextAfterGiving
 
 @alreadyGaveReward:
 	checkabutton
 @showTextAfterGiving:
 	showtext TX_4b0b
-	jump2byte @alreadyGaveReward
+	scriptjump @alreadyGaveReward
 
 
 childScript_stage9_warrior:
@@ -2799,17 +2799,17 @@ childScript_stage9_warrior:
 @give100Rupees:
 	asm15 scriptHlp.child_giveRupees, RUPEEVAL_100
 	showtext TX_0007
-	jump2byte @justGaveReward
+	scriptjump @justGaveReward
 
 @give1Heart:
 	asm15 scriptHlp.child_giveOneHeart, $01
 	showtext TX_0051
-	jump2byte @justGaveReward
+	scriptjump @justGaveReward
 
 @restoreHealth:
 	asm15 scriptHlp.child_giveHeartRefill
 	showtext TX_0053
-	jump2byte @justGaveReward
+	scriptjump @justGaveReward
 
 @give1Rupee:
 	asm15 scriptHlp.child_giveRupees, RUPEEVAL_001
@@ -2818,13 +2818,13 @@ childScript_stage9_warrior:
 @justGaveReward:
 	wait 30
 	enableinput
-	jump2byte @showTextAfterGiving
+	scriptjump @showTextAfterGiving
 
 @alreadyGaveReward:
 	checkabutton
 @showTextAfterGiving:
 	showtext TX_4a08
-	jump2byte @alreadyGaveReward
+	scriptjump @alreadyGaveReward
 
 
 childScript_stage9_arborist:
@@ -2836,7 +2836,7 @@ childScript_stage9_arborist:
 	wait 30
 	callscript @showTip
 	enableinput
-	jump2byte @loop
+	scriptjump @loop
 
 @showTip:
 	writeobjectbyte Interaction.textID+1, >TX_4800
@@ -2865,13 +2865,13 @@ childScript_stage9_singer:
 @singingLoop:
 	showtext TX_4604
 	checkabutton
-	jump2byte @singingLoop
+	scriptjump @singingLoop
 
 @selectedNo:
 	wait 30
 	showtext TX_4605
 	enableinput
-	jump2byte @loop
+	scriptjump @loop
 
 
 ; ==============================================================================
@@ -2977,7 +2977,7 @@ nayruScript02_part3:
 	wait 1
 	asm15 scriptHlp.turnToFaceSomethingAtInterval, $03
 	jumpifmemoryeq wTmpcfc0.genericCutscene.cfd0, $09, @sayGoodbye
-	jump2byte nayruScript02_part3
+	scriptjump nayruScript02_part3
 
 @sayGoodbye:
 	wait 60
@@ -3164,7 +3164,7 @@ ralphSubid00Script:
 	wait 1
 	asm15 scriptHlp.turnToFaceSomething
 	jumpifmemoryeq wTmpcfc0.genericCutscene.cfd0, $15, @faceUp
-	jump2byte @faceVeranGhost
+	scriptjump @faceVeranGhost
 
 @faceUp:
 	setanimation $00
@@ -3292,7 +3292,7 @@ ralphSubid04Script_part3:
 	wait 1
 	asm15 scriptHlp.turnToFaceSomethingAtInterval, $03
 	jumpifmemoryeq wTmpcfc0.genericCutscene.cfd0, $09, @twinrovaGone
-	jump2byte ralphSubid04Script_part3
+	scriptjump ralphSubid04Script_part3
 
 @twinrovaGone:
 	wait 60
@@ -3545,7 +3545,7 @@ ralphSubid0dScript:
 	asm15 scriptHlp.ralph_flickerVisibility
 	asm15 scriptHlp.ralph_decVar3f
 	jumpifmemoryset wcddb, $80, @done
-	jump2byte @flickerVisibility
+	scriptjump @flickerVisibility
 
 @done:
 	setglobalflag GLOBALFLAG_RALPH_ENTERED_PORTAL
@@ -3603,7 +3603,7 @@ ralphSubid11Script:
 	writeobjectbyte Interaction.var39, $00 ; Enable animations
 	setanimation $03
 	enableinput
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ralphSubid12Script:
@@ -3653,7 +3653,7 @@ monkeySubid0Script:
 	showtextlowindex <TX_5704
 	wait 20
 	setanimation $02
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 monkeySubid2Script:
 	rungenericnpclowindex <TX_5700
@@ -3671,11 +3671,11 @@ monkeySubid5Script:
 @waitUntilLanded:
 	jumpifobjectbyteeq Interaction.zh, $00, @landed
 	wait 1
-	jump2byte @waitUntilLanded
+	scriptjump @waitUntilLanded
 @landed:
 	asm15 scriptHlp.monkey_decideTextIndex
 	showloadedtext
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 monkeySubid5Script_bowtieMonkey:
@@ -3692,7 +3692,7 @@ monkeySubid7Script_0:
 	asm15 scriptHlp.monkey_turnToFaceLink
 	showtextlowindex <TX_5715
 	asm15 scriptHlp.monkey_setAnimationFromVar3a
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 monkeySubid7Script_1:
@@ -3702,7 +3702,7 @@ monkeySubid7Script_1:
 	asm15 scriptHlp.monkey_turnToFaceLink
 	showtextlowindex <TX_5716
 	asm15 scriptHlp.monkey_setAnimationFromVar3a
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 monkeySubid7Script_2:
@@ -3712,7 +3712,7 @@ monkeySubid7Script_2:
 	asm15 scriptHlp.monkey_turnToFaceLink
 	showtextlowindex <TX_5719
 	asm15 scriptHlp.monkey_setAnimationFromVar3a
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 monkeySubid7Script_3:
@@ -3722,7 +3722,7 @@ monkeySubid7Script_3:
 	asm15 scriptHlp.monkey_turnToFaceLink
 	showtextlowindex <TX_571a
 	asm15 scriptHlp.monkey_setAnimationFromVar3a
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; ==============================================================================
@@ -3732,7 +3732,7 @@ monkeySubid7Script_3:
 villagerSubid01Script:
 	initcollisions
 	settextid TX_1440
-	jump2byte _villagerFaceDownAfterTalkedTo
+	scriptjump _villagerFaceDownAfterTalkedTo
 
 
 ; Construction worker blocking path to upper part of black tower
@@ -3746,7 +3746,7 @@ _villagerFaceDownAfterTalkedTo:
 	showloadedtext
 	wait 10
 	setanimation $02
-	jump2byte _villagerFaceDownAfterTalkedTo
+	scriptjump _villagerFaceDownAfterTalkedTo
 
 
 ; Construction worker moves toward Link to prevent him from passing
@@ -3756,7 +3756,7 @@ villagerSubid02Script_part2:
 	jumpifobjectbyteeq Interaction.direction, $00, @moveRight
 
 	moveleft $10
-	jump2byte ++
+	scriptjump ++
 @moveRight:
 	moveright $10
 ++
@@ -3855,7 +3855,7 @@ villagerSubid09Script:
 _villagerThrowBallAnimation:
 	asm15 scriptHlp.loadNextAnimationFrameAndMore, $01
 	wait 30
-	jump2byte villagerSubid09Script
+	scriptjump villagerSubid09Script
 
 script5bbf: ; Unused
 	scriptend
@@ -3884,7 +3884,7 @@ villagerSubid0bScript:
 	; Throw the ball
 	writeobjectbyte Interaction.var3b, $01
 	asm15 scriptHlp.villager_createBall
-	jump2byte _villagerThrowBallAnimation
+	scriptjump _villagerThrowBallAnimation
 
 
 ; Cutscene when you first enter the past
@@ -3937,7 +3937,7 @@ villagerGalSubid07Script:
 	turntofacelink
 	showloadedtext
 	setanimation $00
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; Present NPC near black tower / outside shop
@@ -4020,7 +4020,7 @@ boySubid00Script:
 	showtext TX_2510
 	wait 10
 	setanimation $00
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; Kid turning to stone cutscene
@@ -4102,7 +4102,7 @@ _boyShakeWithFearThenRun:
 	addobjectbyte Interaction.var38, -1
 	jumpifobjectbyteeq Interaction.var38, $00, @runAway
 	wait 1
-	jump2byte @shake
+	scriptjump @shake
 
 @runAway:
 	playsound SND_THROW
@@ -4121,7 +4121,7 @@ boySubid04Script:
 	writememory   wTmpcfc0.genericCutscene.cfd1, $01
 	checkmemoryeq wTmpcfc0.genericCutscene.cfd1, $03
 
-	jump2byte _boyShakeWithFearThenRun
+	scriptjump _boyShakeWithFearThenRun
 
 
 ; Cutscene where kid is restored from stone
@@ -4143,7 +4143,7 @@ _boyRunAroundHouse:
 	moveup $16
 	wait 3
 	moveleft $35
-	jump2byte _boyRunAroundHouse
+	scriptjump _boyRunAroundHouse
 
 
 ; Cutscene where kid sees his dad turn to stone
@@ -4153,7 +4153,7 @@ boySubid06Script:
 	asm15 scriptHlp.loadNextAnimationFrameAndMore, $02
 	wait 90
 	setanimation $03
-	jump2byte boySubid06Script
+	scriptjump boySubid06Script
 
 @stopPlayingCatch:
 	writememory wTmpcfc0.genericCutscene.cfd1, $01
@@ -4213,7 +4213,7 @@ boySubid0bScript:
 	turntofacelink
 	showloadedtext
 	setanimation $00
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; Cutscene where kid's dad gets restored from stone
@@ -4232,7 +4232,7 @@ boySubid0cScript:
 	wait 30
 	asm15 scriptHlp.loadNextAnimationFrameAndMore, $02
 	wait 90
-	jump2byte @playCatchLoop
+	scriptjump @playCatchLoop
 
 
 ; Kid with grandma who's either stone or was restored from stone
@@ -4243,7 +4243,7 @@ boySubid0dScript:
 ; NPC playing catch with dad, or standing next to his stone dad
 boySubid0eScript:
 	initcollisions
-	jump2byte boySubid0cScript@playCatch
+	scriptjump boySubid0cScript@playCatch
 
 
 ; Cutscene where kid runs away?
@@ -4290,7 +4290,7 @@ oldLadySubid2Script:
 oldLadySubid3Script:
 	setspeed SPEED_180
 	moveleft $16
-	jump2byte _boyRunAroundHouse
+	scriptjump _boyRunAroundHouse
 
 
 ; ==============================================================================
@@ -4342,7 +4342,7 @@ boy2Subid2Script:
 	showtextlowindex <TX_2911
 	writememory   wTmpcfc0.genericCutscene.cfd1, $02
 	checkmemoryeq wTmpcfc0.genericCutscene.cfd1, $03
-	jump2byte _boyShakeWithFearThenRun
+	scriptjump _boyShakeWithFearThenRun
 
 
 ; ==============================================================================
@@ -4373,7 +4373,7 @@ soldierSubid03Script:
 	setspeed SPEED_100
 	jumpifobjectbyteeq Interaction.xh, $48, script5e1a
 	setangle $08
-	jump2byte script5e1c
+	scriptjump script5e1c
 script5e1a:
 	setangle $18
 script5e1c:
@@ -4538,7 +4538,7 @@ soldierSubid0cScript:
 	checkabutton
 	asm15 scriptHlp.soldierGetRandomVar32Val
 	showloadedtext
-	jump2byte @loop
+	scriptjump @loop
 
 
 ; Friendly soldier after finishing game. Behaviour depends on var3b, in turn set by var03.
@@ -4555,7 +4555,7 @@ soldierSubid0dScript:
 @mode0_genericNpc:
 	checkabutton
 	showloadedtext
-	jump2byte @mode0_genericNpc
+	scriptjump @mode0_genericNpc
 
 @mode1_moveClockwise:
 	checkmemoryeq wcde0, $00
@@ -4573,7 +4573,7 @@ soldierSubid0dScript:
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $01
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter, $60
 	callscript @moveForVar3cFrames
-	jump2byte @mode1Loop
+	scriptjump @mode1Loop
 
 @mode2_moveCounterClockwise:
 	checkmemoryeq wcde0, $00
@@ -4591,7 +4591,7 @@ soldierSubid0dScript:
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $03
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter, $20
 	callscript @moveForVar3cFrames
-	jump2byte @mode2Loop
+	scriptjump @mode2Loop
 
 @mode3_moveVertically:
 	checkmemoryeq wcde0, $00
@@ -4603,14 +4603,14 @@ soldierSubid0dScript:
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $00
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter, $c0
 	callscript @moveForVar3cFrames
-	jump2byte @mode3Loop
+	scriptjump @mode3Loop
 
 @moveForVar3cFrames:
 	jumpifobjectbyteeq Interaction.pressedAButton, $01, @@turnToLinkAndShowText
 	asm15 scriptHlp.hardhatWorker_decPatrolCounter
 	jumpifmemoryset wcddb, $80, @@wait20Frames
 	asm15 objectApplySpeed
-	jump2byte @moveForVar3cFrames
+	scriptjump @moveForVar3cFrames
 
 @@wait20Frames:
 	wait 20
@@ -4624,7 +4624,7 @@ soldierSubid0dScript:
 	wait 30
 	asm15 scriptHlp.hardhatWorker_updatePatrolAnimation
 	enableinput
-	jump2byte @moveForVar3cFrames
+	scriptjump @moveForVar3cFrames
 
 
 ; ==============================================================================
@@ -4830,7 +4830,7 @@ tokayMainThiefScript:
 	setanimation $00
 	playsound SND_STRIKE
 	writememory wTmpcfc0.genericCutscene.cfd1, $01
-	jump2byte _tokayThiefCommon
+	scriptjump _tokayThiefCommon
 
 
 ; Subid $05: NPC who trades meat for stink bag
@@ -4887,7 +4887,7 @@ tokayRunningFromRosaScript:
 	asm15 objectUpdateSpeedZ, $20
 	jumpifobjectbyteeq Interaction.zh, $00, @landed
 	wait 1
-	jump2byte @jumping
+	scriptjump @jumping
 
 @landed:
 	wait 20
@@ -4914,7 +4914,7 @@ tokayGameManagerScript_past:
 @dontHaveBracelet:
 	checkabutton
 	showtextlowindex <TX_0a1c
-	jump2byte @dontHaveBracelet
+	scriptjump @dontHaveBracelet
 
 @waitForLinkToTalk:
 	asm15 scriptHlp.tokayGame_determinePrizeAndCheckRupees
@@ -4942,14 +4942,14 @@ tokayGameManagerScript_past:
 	writeobjectbyte Interaction.var3b, $01
 	showloadedtext
 	enableinput
-	jump2byte @waitForLinkToTalk
+	scriptjump @waitForLinkToTalk
 
 @startGame:
 	jumpifobjectbyteeq Interaction.var3d, $00, @takeRupees
 
 @notEnoughRupees:
 	settextid TX_0a1b
-	jump2byte @selectedNo
+	scriptjump @selectedNo
 
 @takeRupees:
 	asm15 removeRupeeValue, RUPEEVAL_10
@@ -4983,7 +4983,7 @@ tokayGameManagerScript_past:
 	wait 30
 	asm15 scriptHlp.tokayGame_givePrizeToLink
 	wait 30
-	jump2byte @enableInput
+	scriptjump @enableInput
 
 @failedGame:
 	; Ask to play again
@@ -4992,11 +4992,11 @@ tokayGameManagerScript_past:
 	jumpiftextoptioneq $01, @enableInput
 	jumpifobjectbyteeq Interaction.var3d, $01, @notEnoughRupees
 	asm15 removeRupeeValue, RUPEEVAL_10
-	jump2byte @beginGame
+	scriptjump @beginGame
 
 @enableInput:
 	enableinput
-	jump2byte @askToPlay
+	scriptjump @askToPlay
 
 
 ; Subid $0e: Shopkeeper (trades items)
@@ -5011,11 +5011,11 @@ tokayShopkeeperScript:
 
 	; At least one item available
 	showtextlowindex <TX_0a37
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @noItemsAvailable:
 	showtextlowindex <TX_0a38
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; Subid $0f: Tokay who tries to eat Dimitri
@@ -5047,7 +5047,7 @@ tokayWithDimitri1Script:
 
 @selectedNo:
 	showtextlowindex <TX_0a22
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 ; Agreed to trade ember seeds
 @selectedYes:
@@ -5071,7 +5071,7 @@ tokayWithDimitri1Script:
 tokayWithDimitri2Script:
 	jumpifmemoryset wDimitriState, $01, @beginNpcLoop
 	jumpifmemoryset w1Companion.var3e, $01, @script61e9
-	jump2byte tokayWithDimitri2Script
+	scriptjump tokayWithDimitri2Script
 
 @script61e9:
 	disableinput
@@ -5092,10 +5092,10 @@ tokayWithDimitri2Script:
 	asm15 scriptHlp.tokayTurnToFaceLink
 	showtextlowindex <TX_0a1e
 	writeobjectbyte Interaction.pressedAButton, $00
-	jump2byte @faceUp
+	scriptjump @faceUp
 @didntPressA:
 	jumpifmemoryset w1Companion.var3e, $04, @beginCutscene
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 ; Face down, wait for signal to run away
 @beginCutscene:
@@ -5103,7 +5103,7 @@ tokayWithDimitri2Script:
 @wait:
 	jumpifmemoryset w1Companion.var3e, $08, @runAway
 	wait 1
-	jump2byte @wait
+	scriptjump @wait
 
 @runAway:
 	moveleft $20
@@ -5122,7 +5122,7 @@ tokayAtSeedlingPlotScript:
 	jumpifroomflagset $80, @alreadyPlantedSeedling
 	jumpifitemobtained TREASURE_SCENT_SEEDLING, @plantSeedling
 	showtextlowindex <TX_0a40
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @plantSeedling:
 	disableinput
@@ -5145,16 +5145,16 @@ tokayAtSeedlingPlotScript:
 	showtextlowindex <TX_0a42
 
 	enableinput
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @alreadyPlantedSeedling:
 	jumpifitemobtained TREASURE_SCENT_SEEDS, @gotScentSeeds
 	showtextlowindex <TX_0a43
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @gotScentSeeds:
 	showtextlowindex <TX_0a44
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; Subid $19: Present NPC in charge of the wild tokay museum
@@ -5189,7 +5189,7 @@ tokayGameManagerScript_present:
 	; Declined to tell secret
 	showtextlowindex <TX_0a46
 	enableinput
-	jump2byte @npcLoop_waitingForSecret
+	scriptjump @npcLoop_waitingForSecret
 
 @enterSecret:
 	askforsecret TOKAY_SECRET
@@ -5199,12 +5199,12 @@ tokayGameManagerScript_present:
 	; No valid secret entered
 	showtextlowindex <TX_0a48
 	enableinput
-	jump2byte @npcLoop_waitingForSecret
+	scriptjump @npcLoop_waitingForSecret
 
 @validSecret:
 	setglobalflag GLOBALFLAG_BEGAN_TOKAY_SECRET
 	showtextlowindex <TX_0a47
-	jump2byte @promptToPlayMinigame
+	scriptjump @promptToPlayMinigame
 
 
 ; The secret has been entered, but Link still needs to complete the minigame.
@@ -5221,7 +5221,7 @@ tokayGameManagerScript_present:
 	; Declined to play minigame
 	showtextlowindex <TX_0a52
 	enableinput
-	jump2byte @npcLoop_waitingForLinkToPlayMinigame
+	scriptjump @npcLoop_waitingForLinkToPlayMinigame
 
 @promptRules:
 	wait 20
@@ -5265,7 +5265,7 @@ tokayGameManagerScript_present:
 	checkabutton
 	generatesecret TOKAY_RETURN_SECRET
 	showtextlowindex <TX_0a53
-	jump2byte @alreadyGotBombUpgrade
+	scriptjump @alreadyGotBombUpgrade
 
 @failedGame:
 	showtextlowindex <TX_0a4d
@@ -5273,7 +5273,7 @@ tokayGameManagerScript_present:
 	jumpiftextoptioneq $00, @beginGame
 	showtextlowindex <TX_0a4e
 	enableinput
-	jump2byte @npcLoop_waitingForLinkToPlayMinigame
+	scriptjump @npcLoop_waitingForLinkToPlayMinigame
 
 
 ; Subid $1d: NPC holding shield upgrade
@@ -5296,7 +5296,7 @@ forestFairyScript_firstDiscovered:
 @npcLoop:
 	checkabutton
 	showtext TX_1108
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 ; NPC for second fairy on "main" forest screen, after being found
 forestFairyScript_secondDiscovered:
@@ -5304,7 +5304,7 @@ forestFairyScript_secondDiscovered:
 @npcLoop:
 	checkabutton
 	showtext TX_1109
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 ; Subids $05-$0a
 forestFairyScript_genericNpc:
@@ -5313,7 +5313,7 @@ forestFairyScript_genericNpc:
 @npcLoop:
 	checkabutton
 	showloadedtext
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; Subid $0b: NPC in unlinked game who takes a secret
@@ -5328,14 +5328,14 @@ forestFairyScript_heartContainerSecret:
 	wait 30
 	jumpiftextoptioneq $00, @askForSecret
 	showtext TX_1149
-	jump2byte @enableInput
+	scriptjump @enableInput
 
 @askForSecret:
 	askforsecret FAIRY_SECRET
 	wait 30
 	jumpifmemoryeq wTextInputResult, $00, @gaveValidSecret
 	showtext TX_114b
-	jump2byte @enableInput
+	scriptjump @enableInput
 
 @gaveValidSecret:
 	setglobalflag GLOBALFLAG_BEGAN_FAIRY_SECRET
@@ -5348,7 +5348,7 @@ forestFairyScript_heartContainerSecret:
 	generatesecret FAIRY_RETURN_SECRET
 	setglobalflag GLOBALFLAG_DONE_FAIRY_SECRET
 	showtext TX_114c
-	jump2byte @enableInput
+	scriptjump @enableInput
 
 @alreadyGaveSecret:
 	generatesecret FAIRY_RETURN_SECRET
@@ -5356,7 +5356,7 @@ forestFairyScript_heartContainerSecret:
 
 @enableInput:
 	enableinput
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; ==============================================================================
@@ -5373,7 +5373,7 @@ rabbitScript_listeningToNayruGameStart:
 	showtext TX_5705
 	wait 10
 	setanimation $00
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; Subid 4: Watching other rabbits getting restored from stone
@@ -5415,7 +5415,7 @@ birdScript_listeningToNayruGameStart:
 	enableallobjects
 	setanimation $01
 	asm15 interactionUnsetAlwaysUpdateBit
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; Subid 4: Bird with Impa when Zelda gets kidnapped
@@ -5428,7 +5428,7 @@ birdScript_zeldaKidnapped:
 	setanimation $02
 	showtext TX_3216
 	setanimation $00
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @zeldaSaved:
 	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $05
@@ -5593,7 +5593,7 @@ ambiSubid05Script:
 	asm15 scriptHlp.ambiFlickerVisibility
 	asm15 scriptHlp.ambiDecVar3f
 	jumpifmemoryset wcddb, $80, @beginRising
-	jump2byte @flickerLoop
+	scriptjump @flickerLoop
 
 @beginRising:
 	playsound SND_SWORDSPIN
@@ -5601,7 +5601,7 @@ ambiSubid05Script:
 	asm15 scriptHlp.ambiRiseUntilOffScreen
 	jumpifmemoryset wcddb, $10, @doneRising
 	asm15 scriptHlp.ambiFlickerVisibility
-	jump2byte @risingLoop
+	scriptjump @risingLoop
 
 @doneRising:
 	xorcfc0bit 3
@@ -5682,7 +5682,7 @@ impaNpcScript_lookingAtPassage:
 	writeobjectbyte Interaction.direction, $ff
 	showloadedtext
 	setanimation $00
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 ; ==============================================================================
 ; INTERACID_DUMBBELL_MAN
@@ -5710,7 +5710,7 @@ oldManScript_generic:
 	turntofacelink
 	showloadedtext
 	asm15 scriptHlp.oldManSetAnimationToVar38
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; ==============================================================================
@@ -5730,14 +5730,14 @@ dogInMamamusHouseScript:
 	jumpifmemoryset wcddb, $80, @counterHit0
 	asm15 scriptHlp.mamamuDog_updateSpeedZ
 	asm15 scriptHlp.mamamuDog_checkReverseDirection
-	jump2byte @loop
+	scriptjump @loop
 
 @counterHit0:
 	asm15 scriptHlp.mamamuDog_setZPositionTo0
 	asm15 scriptHlp.mamamuDog_reverseDirection
 	wait 180
 	asm15 scriptHlp.mamamuDog_reverseDirection
-	jump2byte dogInMamamusHouseScript
+	scriptjump dogInMamamusHouseScript
 
 
 ; ==============================================================================
@@ -5759,7 +5759,7 @@ pickaxeWorkerSubid00Script:
 	checkabutton
 	asm15 interactionSetAnimation, $03
 	showtextlowindex <TX_1b00
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; Credits cutscene guy making Link statue? (subids $01 and $02)
@@ -5782,7 +5782,7 @@ pickaxeWorkerSubid01Script_part1:
 	asm15 scriptHlp.pickaxeWorker_setRandomDelay
 
 	setanimation $05
-	jump2byte @loop
+	scriptjump @loop
 
 
 pickaxeWorkerSubid02Script_part1:
@@ -5804,7 +5804,7 @@ pickaxeWorkerSubid02Script_part1:
 	asm15 scriptHlp.pickaxeWorker_setRandomDelay
 
 	setanimation $04
-	jump2byte @loop
+	scriptjump @loop
 
 pickaxeWorkerSubid01Script_part2:
 	loadscript scriptHlp.pickaxeWorkerSubid01Script_part2
@@ -5863,7 +5863,7 @@ pickaxeWorkerSubid03Script:
 	checkabutton
 	asm15 scriptHlp.pickaxeWorker_chooseRandomBlackTowerText
 	showloadedtext
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; ==============================================================================
@@ -5890,7 +5890,7 @@ hardhatWorkerSubid00Script:
 
 @alreadyGaveShovel:
 	showtextlowindex <TX_1002
-	jump2byte @enableInput
+	scriptjump @enableInput
 
 @doesntGiveShovel:
 	showtextlowindex <TX_1000
@@ -5898,7 +5898,7 @@ hardhatWorkerSubid00Script:
 @enableInput:
 	setanimation $04
 	enableinput
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; Generic NPC.
@@ -5937,7 +5937,7 @@ hardhatWorkerFunc_patrol:
 	asm15 scriptHlp.hardhatWorker_decPatrolCounter
 	jumpifmemoryset wcddb, $80, @doneMoving
 	asm15 objectApplySpeed
-	jump2byte hardhatWorkerFunc_patrol
+	scriptjump hardhatWorkerFunc_patrol
 
 @doneMoving:
 	wait 20
@@ -5952,7 +5952,7 @@ hardhatWorkerFunc_patrol:
 
 	asm15 scriptHlp.hardhatWorker_updatePatrolAnimation
 	enableinput
-	jump2byte hardhatWorkerFunc_patrol
+	scriptjump hardhatWorkerFunc_patrol
 
 
 ; ==============================================================================
@@ -5989,18 +5989,18 @@ toiletHandScript:
 	jumpifobjectbyteeq Interaction.pressedAButton, $01, @pressedA
 	asm15 scriptHlp.toiletHand_checkLinkIsClose
 	jumpifmemoryset wcddb, $10, @linkRetreated
-	jump2byte @waitForLinkToRetreat
+	scriptjump @waitForLinkToRetreat
 
 @linkRetreated:
 	callscript @retreatIntoToilet
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @waitForLinkToReapproach:
 	asm15 scriptHlp.toiletHand_checkLinkIsClose
 	jumpifmemoryset wcddb, $10, ++
-	jump2byte @waitForLinkToReapproach
+	scriptjump @waitForLinkToReapproach
 ++
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @pressedA:
 	disableinput
@@ -6012,7 +6012,7 @@ toiletHandScript:
 	; Don't have correct trade item
 	callscript @retreatIntoToiletAfterDelay
 	enableinput
-	jump2byte @waitForLinkToReapproach
+	scriptjump @waitForLinkToReapproach
 
 @promptForTrade:
 	wait 30
@@ -6024,7 +6024,7 @@ toiletHandScript:
 	showtextlowindex <TX_0b0a
 	callscript @retreatIntoToiletAfterDelay
 	enableinput
-	jump2byte @waitForLinkToReapproach
+	scriptjump @waitForLinkToReapproach
 
 @acceptedTrade:
 	showtextlowindex <TX_0b09
@@ -6040,13 +6040,13 @@ toiletHandScript:
 	giveitem TREASURE_TRADEITEM, $02
 	callscript @retreatIntoToiletAfterDelay
 	enableinput
-	jump2byte @waitForLinkToReapproach
+	scriptjump @waitForLinkToReapproach
 
 @alreadyGaveStinkBag:
 	showtextlowindex <TX_0b09
 	callscript @retreatIntoToiletAfterDelay
 	enableinput
-	jump2byte @waitForLinkToReapproach
+	scriptjump @waitForLinkToReapproach
 
 
 ; Script functions
@@ -6083,7 +6083,7 @@ toiletHandScript_reactToObjectInHole:
 	jumpifmemoryset wcddb, $07, @retreatIntoToilet
 
 	wait 90
-	jump2byte @react
+	scriptjump @react
 
 @retreatIntoToilet:
 	asm15 scriptHlp.toiletHand_retreatIntoToiletIfNotAlready
@@ -6151,7 +6151,7 @@ bearSubid00Script_part1:
 	ormemory wTmpcfc0.genericCutscene.cfde, $10
 	jumpifmemoryeq wTmpcfc0.genericCutscene.cfde, $1f, @moveDown
 	showtext TX_5702
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @moveDown:
 	setdisabledobjectsto11
@@ -6171,7 +6171,7 @@ bearSubid00Script_part1:
 
 @alreadyMovedDown:
 	checkabutton
-	jump2byte @justSitAndListen
+	scriptjump @justSitAndListen
 
 bearSubid00Script_part2:
 	wait 120
@@ -6187,7 +6187,7 @@ bearSubid02Script:
 @npcLoop:
 	checkabutton
 	showloadedtext
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; ==============================================================================
@@ -6223,16 +6223,16 @@ syrupScript_purchaseItem:
 
 @buyMagicPotion:
 	showtextnonexitable TX_0d01
-	jump2byte @checkAcceptPurchase
+	scriptjump @checkAcceptPurchase
 
 @buyGashaSeed:
 	showtextnonexitable TX_0d05
-	jump2byte @checkAcceptPurchase
+	scriptjump @checkAcceptPurchase
 
 @buyBombchus:
 	showtextnonexitable TX_0d0a
 .ifdef ROM_SEASONS
-	jump2byte @checkAcceptPurchase
+	scriptjump @checkAcceptPurchase
 .endif
 
 @checkAcceptPurchase:
@@ -6322,13 +6322,13 @@ _goron_subid00_npcLoop:
 	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2400
 	wait 30
 	jumpiftextoptioneq $00, @acceptedDance
-	jump2byte @declinedDance
+	scriptjump @declinedDance
 
 @danceForGenericItem:
 	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2401
 	wait 30
 	jumpiftextoptioneq $00, @acceptedDance
-	jump2byte @declinedDance
+	scriptjump @declinedDance
 
 @danceForOldMermaidKey:
 	showtext TX_2419
@@ -6339,7 +6339,7 @@ _goron_subid00_npcLoop:
 	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2403
 	wait 1
 	enableinput
-	jump2byte _goron_subid00_npcLoop
+	scriptjump _goron_subid00_npcLoop
 
 @acceptedDance:
 	callscript _goronDanceFunc_checkLinkHasEnoughRupees
@@ -6349,7 +6349,7 @@ _goron_subid00_npcLoop:
 	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2409
 	enableinput
 	checkabutton
-	jump2byte @notEnoughRupeesLoop
+	scriptjump @notEnoughRupeesLoop
 
 @enoughRupees:
 	disableinput
@@ -6380,7 +6380,7 @@ _goron_subid00_npcLoop:
 
 	setanimation $02
 	jumpiftextoptioneq $00, _goronDance_begin
-	jump2byte @giveExplanation
+	scriptjump @giveExplanation
 
 
 _goronDance_begin:
@@ -6400,11 +6400,11 @@ _goronDance_begin:
 
 	; Past
 	writememory wTmpcfc0.goronDance.danceLevel, $02
-	jump2byte @beginDance
+	scriptjump @beginDance
 ++
 	; Present
 	writememory wTmpcfc0.goronDance.danceLevel, $03
-	jump2byte @beginDance
+	scriptjump @beginDance
 
 @selectDifficulty:
 	asm15 scriptHlp.goron_showText_differentForPresent, <TX_240b
@@ -6525,7 +6525,7 @@ goronDanceScript_failedRound:
 	wait 1
 	asm15 scriptHlp.goronDance_clearVariables
 	enableinput
-	jump2byte _goron_subid00_npcLoop
+	scriptjump _goron_subid00_npcLoop
 
 @tryAgain:
 	callscript _goronDanceFunc_checkLinkHasEnoughRupees
@@ -6536,7 +6536,7 @@ goronDanceScript_failedRound:
 	wait 1
 	enableinput
 	checkabutton
-	jump2byte @notEnoughRupeesLoop
+	scriptjump @notEnoughRupeesLoop
 
 @enoughRupees:
 	asm15 restartSound
@@ -6586,7 +6586,7 @@ goronDanceScript_givePrize:
 	wait 30
 	asm15 scriptHlp.goronDance_clearVariables
 	enableinput
-	jump2byte _goron_subid00_npcLoop
+	scriptjump _goron_subid00_npcLoop
 
 @giveOldMermaidKey:
 	showtext TX_241a
@@ -6597,7 +6597,7 @@ goronDanceScript_givePrize:
 	wait 30
 	asm15 scriptHlp.goronDance_clearVariables
 	enableinput
-	jump2byte _goron_subid00_npcLoop
+	scriptjump _goron_subid00_npcLoop
 
 @giveGenericPrize:
 	asm15 scriptHlp.goronDance_checkNumFailedRounds
@@ -6608,7 +6608,7 @@ goronDanceScript_givePrize:
 	wait 1
 	callscript _goronDance_giveRewardForImperfectGame
 	wait 30
-	jump2byte @cleanup
+	scriptjump @cleanup
 
 @perfectGame:
 	; Failed no rounds
@@ -6622,7 +6622,7 @@ goronDanceScript_givePrize:
 	wait 30
 	asm15 scriptHlp.goronDance_clearVariables
 	enableinput
-	jump2byte _goron_subid00_npcLoop
+	scriptjump _goron_subid00_npcLoop
 
 
 _goronDance_giveRewardForImperfectGame:
@@ -6669,7 +6669,7 @@ goron_subid01Script:
 @npcLoop:
 	checkabutton
 	callscript @showText
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @showText:
 	jumptable_objectbyte Interaction.var03
@@ -6744,11 +6744,11 @@ _goron_moveBackAndForthLoop:
 	asm15 scriptHlp.goron_decMovementCounter
 	jumpifmemoryset wcddb, CPU_ZFLAG, @turnAround
 	asm15 objectApplySpeed
-	jump2byte _goron_moveBackAndForthLoop
+	scriptjump _goron_moveBackAndForthLoop
 
 @turnAround:
 	asm15 scriptHlp.goron_reverseWalkingDirection
-	jump2byte _goron_moveBackAndForthLoop
+	scriptjump _goron_moveBackAndForthLoop
 
 @pressedA:
 	jumpifobjectbyteeq Interaction.subid, $0d, _goron_subid0d_pressedAFromMoveBackAndForthLoop
@@ -6761,14 +6761,14 @@ _goron_moveBackAndForthLoop:
 	wait 30
 	asm15 scriptHlp.goron_refreshWalkingAnimation
 	enableinput
-	jump2byte _goron_moveBackAndForthLoop
+	scriptjump _goron_moveBackAndForthLoop
 
 
 goron_subid05Script_A:
 	; Delete self if beaten d5
 	asm15 scriptHlp.checkEssenceObtained, $04
 	jumpifmemoryset wcddb, CPU_ZFLAG, stubScript
-	jump2byte ++
+	scriptjump ++
 
 goron_subid05Script_B:
 	; Delete self if not beaten d5
@@ -6783,7 +6783,7 @@ goron_subid05Script_B:
 _goron_chooseNappingLoop:
 	asm15 scriptHlp.goron_checkShouldBeNapping
 	jumpifmemoryset wcddb, CPU_CFLAG, _goron_beginNappingLoop
-	jump2byte _goron_beginNotNappingLoop
+	scriptjump _goron_beginNotNappingLoop
 
 
 ; Goron naps until Link approaches.
@@ -6793,10 +6793,10 @@ _goron_beginNappingLoop:
 _goron_nappingLoop:
 	asm15 scriptHlp.goron_checkShouldBeNapping
 	jumpifmemoryset wcddb, CPU_CFLAG, ++
-	jump2byte _goron_beginNotNappingLoop
+	scriptjump _goron_beginNotNappingLoop
 ++
 	wait 1
-	jump2byte _goron_nappingLoop
+	scriptjump _goron_nappingLoop
 
 
 ; Goron is standing up until Link walks away.
@@ -6807,9 +6807,9 @@ _goron_notNappingLoop:
 	jumpifobjectbyteeq Interaction.pressedAButton, $01, @pressedA
 	asm15 scriptHlp.goron_checkShouldBeNapping
 	jumpifmemoryset wcddb, CPU_CFLAG, ++
-	jump2byte _goron_notNappingLoop
+	scriptjump _goron_notNappingLoop
 ++
-	jump2byte _goron_beginNappingLoop
+	scriptjump _goron_beginNappingLoop
 
 @pressedA:
 	jumpifobjectbyteeq Interaction.subid, $07, _goron_subid07_pressedAFromNappingLoop
@@ -6824,7 +6824,7 @@ _goron_notNappingLoop:
 	asm15 scriptHlp.goron_showTextForSubid05
 	wait 1
 	enableinput
-	jump2byte _goron_notNappingLoop
+	scriptjump _goron_notNappingLoop
 
 
 ; Goron who's trying to break the elder out of rock (one on the left)
@@ -6846,14 +6846,14 @@ goron_subid06Script_A:
 	jumpifmemoryeq wTmpcfc0.goronCutscenes.elderVar_cfdd, $01, @beginBombFlowerCutscene
 	jumpifobjectbyteeq Interaction.pressedAButton, $01, @pressedA
 	wait 1
-	jump2byte @checkCreateRockDebris
+	scriptjump @checkCreateRockDebris
 
 @createDebrisToLeft:
 	asm15 scriptHlp.goron_createRockDebrisToLeft
-	jump2byte @checkEvents
+	scriptjump @checkEvents
 @createDebrisToRight:
 	asm15 scriptHlp.goron_createRockDebrisToRight
-	jump2byte @checkEvents
+	scriptjump @checkEvents
 
 @pressedA:
 	disableinput
@@ -6862,7 +6862,7 @@ goron_subid06Script_A:
 	showtext TX_247b
 	wait 30
 	enableinput
-	jump2byte @doRockPunchingAnimation
+	scriptjump @doRockPunchingAnimation
 
 @beginSavedElderLoop:
 	asm15 scriptHlp.goron_faceDown
@@ -6874,14 +6874,14 @@ goron_subid06Script_A:
 @npcLoop:
 	checkabutton
 	showtext TX_247c
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @beginBombFlowerCutscene:
 	asm15 scriptHlp.goron_setAnimation, $00
 @waitBeforeFacingDown:
 	jumpifmemoryeq wTmpcfc0.genericCutscene.state, $01, @beginSavedElderLoop
 	wait 1
-	jump2byte @waitBeforeFacingDown
+	scriptjump @waitBeforeFacingDown
 
 
 ; Goron who's trying to break the elder out of rock (one on the right)
@@ -6902,14 +6902,14 @@ goron_subid06Script_B:
 	jumpifobjectbyteeq Interaction.pressedAButton, $01, @pressedA
 	asm15 scriptHlp.goron_checkLinkApproachedWithBombFlower
 	jumpifmemoryset wcddb, CPU_CFLAG, @beginBombFlowerCutscene
-	jump2byte @checkCreateRockDebris
+	scriptjump @checkCreateRockDebris
 
 @createDebrisToLeft:
 	asm15 scriptHlp.goron_createRockDebrisToLeft
-	jump2byte @checkEvents
+	scriptjump @checkEvents
 @createDebrisToRight:
 	asm15 scriptHlp.goron_createRockDebrisToRight
-	jump2byte @checkEvents
+	scriptjump @checkEvents
 
 
 @beginBombFlowerCutscene:
@@ -6923,7 +6923,7 @@ goron_subid06Script_B:
 	asm15 objectApplySpeed
 	asm15 scriptHlp.goron_cpLinkY
 	jumpifmemoryset wcddb, CPU_ZFLAG, @beginMovingRight
-	jump2byte @moveDownLoop
+	scriptjump @moveDownLoop
 
 ; Move right toward Link
 @beginMovingRight:
@@ -6933,7 +6933,7 @@ goron_subid06Script_B:
 	asm15 objectApplySpeed
 	asm15 scriptHlp.goron_checkReachedLinkHorizontally
 	jumpifmemoryset wcddb, CPU_ZFLAG, @script6be1
-	jump2byte @moveRightLoop
+	scriptjump @moveRightLoop
 
 ; Exclamation mark, ask Link to use bomb
 @script6be1:
@@ -6948,7 +6948,7 @@ goron_subid06Script_B:
 	showtext TX_247f
 	wait 30
 	jumpiftextoptioneq $00, @giveBomb
-	jump2byte @insistOnBomb
+	scriptjump @insistOnBomb
 
 @giveBomb:
 	showtext TX_2480
@@ -6962,7 +6962,7 @@ goron_subid06Script_B:
 	asm15 objectApplySpeed
 	asm15 scriptHlp.goron_cpXTo48
 	jumpifmemoryset wcddb, CPU_ZFLAG, @beginMovingUp
-	jump2byte @moveLeftLoop
+	scriptjump @moveLeftLoop
 
 @beginMovingUp:
 	setanimation $00
@@ -6971,7 +6971,7 @@ goron_subid06Script_B:
 	asm15 objectApplySpeed
 	asm15 scriptHlp.goron_cpYTo60
 	jumpifmemoryset wcddb, CPU_ZFLAG, @placeBomb
-	jump2byte @moveUpLoop
+	scriptjump @moveUpLoop
 
 @placeBomb:
 	writememory wTmpcfc0.goronCutscenes.elderVar_cfdd, $01
@@ -6994,7 +6994,7 @@ goron_subid06Script_B:
 	asm15 scriptHlp.goron_countdownToPlayRockSoundAndShakeScreen
 	asm15 scriptHlp.goron_decMovementCounter
 	jumpifmemoryset wcddb, CPU_ZFLAG, @fadeToWhite
-	jump2byte @explosionLoop1
+	scriptjump @explosionLoop1
 
 @fadeToWhite:
 	playsound SND_BIG_EXPLOSION
@@ -7005,7 +7005,7 @@ goron_subid06Script_B:
 	asm15 scriptHlp.goron_countdownToPlayRockSoundAndShakeScreen
 	jumpifmemoryeq wPaletteThread_mode, $00, @screenFullyWhite
 	wait 1
-	jump2byte @explosionLoop2
+	scriptjump @explosionLoop2
 
 @screenFullyWhite:
 	wait 30
@@ -7023,7 +7023,7 @@ goron_subid06Script_B:
 	wait 75
 
 	writememory wTmpcfc0.genericCutscene.cfdf, $01 ; Signal to stop falling rock spawner
-	jump2byte @savedElderLoop
+	scriptjump @savedElderLoop
 
 
 ; Pressed A while trying to break down the rock
@@ -7034,7 +7034,7 @@ goron_subid06Script_B:
 	showtext TX_247d
 	wait 30
 	enableinput
-	jump2byte @doRockPunchingAnimation
+	scriptjump @doRockPunchingAnimation
 
 
 @alreadySavedElder:
@@ -7042,7 +7042,7 @@ goron_subid06Script_B:
 @savedElderLoop:
 	checkabutton
 	showtext TX_2481
-	jump2byte @savedElderLoop
+	scriptjump @savedElderLoop
 
 
 
@@ -7055,7 +7055,7 @@ goron_subid07Script:
 	jumpifroomflagset $40, @alreadyGaveEmberSeedsAndBombs
 
 	asm15 scriptHlp.goron_clearRefillBit
-	jump2byte @doRockPunchingAnimation
+	scriptjump @doRockPunchingAnimation
 
 @alreadyGaveEmberSeedsAndBombs:
 	asm15 scriptHlp.goron_checkEnoughTimePassed
@@ -7070,14 +7070,14 @@ goron_subid07Script:
 @checkEvents:
 	jumpifobjectbyteeq Interaction.pressedAButton, $01, @pressedA
 	wait 1
-	jump2byte @checkCreateRockDebris
+	scriptjump @checkCreateRockDebris
 
 @createDebrisToLeft:
 	asm15 scriptHlp.goron_createRockDebrisToLeft
-	jump2byte @checkEvents
+	scriptjump @checkEvents
 @createDebrisToRight:
 	asm15 scriptHlp.goron_createRockDebrisToRight
-	jump2byte @checkEvents
+	scriptjump @checkEvents
 
 @pressedA:
 	disableinput
@@ -7088,7 +7088,7 @@ goron_subid07Script:
 	wait 30
 	jumpiftextoptioneq $00, @tryGiveEmberSeedsAndBombs
 	showtext TX_2473
-	jump2byte @enableInput
+	scriptjump @enableInput
 
 @tryGiveEmberSeedsAndBombs:
 	asm15 scriptHlp.goron_tryTakeEmberSeedsAndBombs
@@ -7096,7 +7096,7 @@ goron_subid07Script:
 
 	; Not enough bombs/seeds
 	showtext TX_2474
-	jump2byte @enableInput
+	scriptjump @enableInput
 
 @gaveEmberSeedsAndBombs:
 	playsound SND_GETSEED
@@ -7105,17 +7105,17 @@ goron_subid07Script:
 @enableInput:
 	wait 30
 	enableinput
-	jump2byte @doRockPunchingAnimation
+	scriptjump @doRockPunchingAnimation
 @comeBackLaterText:
 	showtext TX_2476
-	jump2byte @enableInput
+	scriptjump @enableInput
 
 
 @justBrokeDownWall:
 	orroomflag $80
 @brokeDownWall:
 	setcoords $38, $58
-	jump2byte _goron_beginNappingLoop
+	scriptjump _goron_beginNappingLoop
 
 
 _goron_subid07_pressedAFromNappingLoop:
@@ -7137,7 +7137,7 @@ _goron_subid07_pressedAFromNappingLoop:
 	asm15 scriptHlp.goron_setAnimation, $03
 	setanimation $03
 	setangle $18
-	jump2byte @moveBack
+	scriptjump @moveBack
 
 @leftChest:
 	asm15 scriptHlp.goron_setAnimation, $00
@@ -7151,23 +7151,23 @@ _goron_subid07_pressedAFromNappingLoop:
 	applyspeed $11
 	writememory wTmpcfc0.genericCutscene.state, $01
 	enableinput
-	jump2byte _goron_beginNotNappingLoop
+	scriptjump _goron_beginNotNappingLoop
 
 @alreadyGotItem:
 	showtext TX_2478
 	wait 30
 	enableinput
-	jump2byte _goron_notNappingLoop
+	scriptjump _goron_notNappingLoop
 
 
 ; Goron guarding the staircase until you get brother's emblem (both eras)
 goron_subid08Script:
 	initcollisions
 	jumpifroomflagset $80, @moved
-	jump2byte _goron_beginNappingLoop
+	scriptjump _goron_beginNappingLoop
 @moved:
 	setcoords $58, $78
-	jump2byte _goron_beginNappingLoop
+	scriptjump _goron_beginNappingLoop
 
 _goron_subid08_pressedAFromNappingLoop:
 	loadscript scriptHlp.goron_subid08_pressedAScript
@@ -7180,7 +7180,7 @@ goron_subid09Script_A:
 	jumpifobjectbyteeq Interaction.pressedAButton, $01, @pressedA
 	jumpifmemoryeq wTmpcfc0.targetCarts.beginGameTrigger, $01, @beginGame
 	wait 1
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @pressedA:
 	disableinput
@@ -7192,7 +7192,7 @@ goron_subid09Script_A:
 	jumpiftextoptioneq $00, @beginGame
 	showtext TX_24a9
 	enableinput
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @beginGame:
 	asm15 scriptHlp.shootingGallery_checkLinkHasRupees, RUPEEVAL_10
@@ -7202,7 +7202,7 @@ goron_subid09Script_A:
 	showtext TX_24aa
 	enableinput
 	checkabutton
-	jump2byte @notEnoughRupeesLoop
+	scriptjump @notEnoughRupeesLoop
 
 @enoughRupees:
 	asm15 removeRupeeValue, RUPEEVAL_10
@@ -7238,7 +7238,7 @@ goron_subid09Script_A:
 
 	asm15 scriptHlp.goron_targetCarts_beginGame
 	enableallobjects
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; Goron running target carts (guy on the right)
@@ -7249,29 +7249,29 @@ goron_subid09Script_B:
 @npcLoop:
 	jumpifobjectbyteeq Interaction.pressedAButton, $01, @pressedA
 	wait 1
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 @pressedA:
 	disableinput
 	writeobjectbyte Interaction.pressedAButton, $00
 	showtext TX_24ae
 	enableinput
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 @endingGame:
 	; Wait for Link to jump out of cart
 	asm15 scriptHlp.goron_checkLinkNotInAir
 	jumpifmemoryset wcddb, CPU_ZFLAG, ++
-	jump2byte @linkInAir
+	scriptjump @linkInAir
 ++
 	wait 1
-	jump2byte @endingGame
+	scriptjump @endingGame
 
 @linkInAir:
 	; Waitfor Link to land on the ground
 	asm15 scriptHlp.goron_checkLinkNotInAir
 	jumpifmemoryset wcddb, CPU_ZFLAG, @linkLanded
-	jump2byte @linkInAir
+	scriptjump @linkInAir
 
 @linkLanded:
 	disableinput
@@ -7305,14 +7305,14 @@ goron_subid09Script_B:
 	jumpifmemoryset wcddb, CPU_CFLAG, @hit9OrMoreTargets
 	showtext TX_24b2
 	wait 30
-	jump2byte @askToTryAgain
+	scriptjump @askToTryAgain
 
 @hitAllTargets:
 	showtext TX_24b0
 	wait 30
 	callscript @givePrize
 	wait 30
-	jump2byte @askToTryAgain
+	scriptjump @askToTryAgain
 
 @givePrize:
 	jumptable_memoryaddress wTmpcfc0.targetCarts.prizeIndex
@@ -7351,20 +7351,20 @@ goron_subid09Script_B:
 	showtext TX_24b3
 	wait 30
 	jumpiftextoptioneq $00, @selectedYes
-	jump2byte @selectedNo
+	scriptjump @selectedNo
 @selectedNo:
 	showtext TX_24b4
 	enableinput
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 @selectedYes:
 	writememory wTmpcfc0.targetCarts.beginGameTrigger, $01
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; Goron who gives you letter of introduction
 goron_subid0aScript:
 	initcollisions
-	jump2byte _goron_beginNappingLoop
+	scriptjump _goron_beginNappingLoop
 
 _goron_subid0a_pressedAFromNappingLoop:
 	disableinput
@@ -7392,7 +7392,7 @@ _goron_subid0a_pressedAFromNappingLoop:
 
 	; Rejected trade of juice for letter
 	showtext TX_24cb
-	jump2byte goron_enableInputAndResumeNappingLoop
+	scriptjump goron_enableInputAndResumeNappingLoop
 
 @acceptedTrade:
 	asm15 loseTreasure, $5a
@@ -7401,19 +7401,19 @@ _goron_subid0a_pressedAFromNappingLoop:
 	orroomflag $40
 	showtext TX_24ca
 	writeobjectbyte Interaction.var3c, $01
-	jump2byte goron_enableInputAndResumeNappingLoop
+	scriptjump goron_enableInputAndResumeNappingLoop
 
 @noMermaidKey:
 	showtext TX_24cd
-	jump2byte goron_enableInputAndResumeNappingLoop
+	scriptjump goron_enableInputAndResumeNappingLoop
 
 @noLavaJuice:
 	showtext TX_24ce
-	jump2byte goron_enableInputAndResumeNappingLoop
+	scriptjump goron_enableInputAndResumeNappingLoop
 
 @justGaveIntroduction:
 	showtext TX_24cc
-	jump2byte goron_enableInputAndResumeNappingLoop
+	scriptjump goron_enableInputAndResumeNappingLoop
 
 @alreadyGaveIntroduction:
 	showtext TX_24c5
@@ -7421,13 +7421,13 @@ _goron_subid0a_pressedAFromNappingLoop:
 
 goron_enableInputAndResumeNappingLoop:
 	enableinput
-	jump2byte _goron_chooseNappingLoop
+	scriptjump _goron_chooseNappingLoop
 
 
 ; Goron running the big bang game
 goron_subid0bScript:
 	initcollisions
-	jump2byte _goron_beginNappingLoop
+	scriptjump _goron_beginNappingLoop
 
 _goron_subid0b_pressedAFromNappingLoop:
 	disableinput
@@ -7439,7 +7439,7 @@ _goron_subid0b_pressedAFromNappingLoop:
 	jumpifitemobtained TREASURE_GORONADE, @promptToGiveGoronade
 
 	showtext TX_24b6
-	jump2byte goron_enableInputAndResumeNappingLoop
+	scriptjump goron_enableInputAndResumeNappingLoop
 
 @promptToGiveGoronade:
 	showtext TX_24b7
@@ -7448,7 +7448,7 @@ _goron_subid0b_pressedAFromNappingLoop:
 
 	; Rejected trade
 	showtext TX_24b8
-	jump2byte goron_enableInputAndResumeNappingLoop
+	scriptjump goron_enableInputAndResumeNappingLoop
 
 @acceptedTrade:
 	asm15 loseTreasure, TREASURE_GORONADE
@@ -7461,7 +7461,7 @@ _goron_subid0b_pressedAFromNappingLoop:
 
 	; Don't begin game
 	showtext TX_24ba
-	jump2byte goron_enableInputAndResumeNappingLoop
+	scriptjump goron_enableInputAndResumeNappingLoop
 
 
 @alreadyGaveGoronade:
@@ -7470,7 +7470,7 @@ _goron_subid0b_pressedAFromNappingLoop:
 	jumpiftextoptioneq $00, @takeRupees
 @selectedNo:
 	showtext TX_24c0
-	jump2byte goron_enableInputAndResumeNappingLoop
+	scriptjump goron_enableInputAndResumeNappingLoop
 
 
 @takeRupees:
@@ -7479,7 +7479,7 @@ _goron_subid0b_pressedAFromNappingLoop:
 
 @notEnoughRupees:
 	showtext TX_24c1
-	jump2byte goron_enableInputAndResumeNappingLoop
+	scriptjump goron_enableInputAndResumeNappingLoop
 
 @enoughRupees:
 	asm15 removeRupeeValue, RUPEEVAL_10
@@ -7494,7 +7494,7 @@ _goron_subid0b_pressedAFromNappingLoop:
 	showtext TX_24bd
 	wait 30
 	jumpiftextoptioneq $00, @beginGame
-	jump2byte @giveExplanation
+	scriptjump @giveExplanation
 
 @beginGame:
 	showtext TX_24bc
@@ -7532,13 +7532,13 @@ _goron_subid0b_pressedAFromNappingLoop:
 	jumpifmemoryeq wTmpcfc0.bigBangGame.gameStatus, $01, @wonGame
 	asm15 scriptHlp.goron_bigBang_checkLinkHitByBomb
 	jumpifmemoryset wcddb, CPU_ZFLAG, @hitByBomb
-	jump2byte @waitForGameToFinish
+	scriptjump @waitForGameToFinish
 
 @hitByBomb:
 	; Link was hit by a bomb; wait for him to land.
 	asm15 scriptHlp.goron_checkLinkInAir
 	jumpifmemoryset wcddb, CPU_ZFLAG, @lostGame
-	jump2byte @hitByBomb
+	scriptjump @hitByBomb
 
 @lostGame:
 	disableinput
@@ -7552,13 +7552,13 @@ _goron_subid0b_pressedAFromNappingLoop:
 
 	showtext TX_24e1
 	callscript _goron_bigBang_loadNormalRoomLayout
-	jump2byte @askToPlayAgain
+	scriptjump @askToPlayAgain
 
 @wonGame:
 	; Wait for Link to land on ground
 	asm15 scriptHlp.goron_checkLinkInAir
 	jumpifmemoryset wcddb, $80, ++
-	jump2byte @wonGame
+	scriptjump @wonGame
 ++
 	disableinput
 	playsound SND_WHISTLE
@@ -7584,16 +7584,16 @@ _goron_subid0b_pressedAFromNappingLoop:
 	showtext TX_24c2
 	wait 30
 	jumpiftextoptioneq $00, @selectedYes
-	jump2byte @selectedNo
+	scriptjump @selectedNo
 
 @selectedYes:
 	asm15 scriptHlp.shootingGallery_checkLinkHasRupees, RUPEEVAL_10
 	jumpifmemoryset wcddb, CPU_ZFLAG, @takeRupees_2
-	jump2byte @notEnoughRupees
+	scriptjump @notEnoughRupees
 
 @takeRupees_2:
 	asm15 removeRupeeValue, RUPEEVAL_10
-	jump2byte @beginGame
+	scriptjump @beginGame
 
 
 _goron_bigBang_loadNormalRoomLayout:
@@ -7681,14 +7681,14 @@ goron_subid0cScript:
 @npcLoop:
 	checkabutton
 	showloadedtext
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; Generic npc like subid $0c, but moving left and right.
 goron_subid0dScript:
 	asm15 scriptHlp.goron_determineTextForGenericNpc
 	jumpifobjectbyteeq Interaction.textID, $ff, stubScript
-	jump2byte _goron_moveBackAndForth
+	scriptjump _goron_moveBackAndForth
 
 _goron_subid0d_pressedAFromMoveBackAndForthLoop:
 	disableinput
@@ -7697,7 +7697,7 @@ _goron_subid0d_pressedAFromMoveBackAndForthLoop:
 	showloadedtext
 	asm15 scriptHlp.goron_refreshWalkingAnimation
 	enableinput
-	jump2byte _goron_moveBackAndForthLoop
+	scriptjump _goron_moveBackAndForthLoop
 
 
 ; Generic npc like subid $0c, but naps when Link isn't near.
@@ -7705,14 +7705,14 @@ goron_subid0eScript:
 	asm15 scriptHlp.goron_determineTextForGenericNpc
 	jumpifobjectbyteeq Interaction.textID, $ff, stubScript
 	initcollisions
-	jump2byte _goron_beginNappingLoop
+	scriptjump _goron_beginNappingLoop
 
 _goron_subid0e_pressedAFromNappingLoop:
 	disableinput
 	writeobjectbyte Interaction.pressedAButton, $00
 	showloadedtext
 	enableinput
-	jump2byte _goron_notNappingLoop
+	scriptjump _goron_notNappingLoop
 
 
 ; Clairvoyant goron who gives you tips
@@ -7725,7 +7725,7 @@ goron_subid10Script:
 	asm15 scriptHlp.goron_showTextForClairvoyantGoron
 	wait 1
 	enableinput
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; ==============================================================================
@@ -7762,14 +7762,14 @@ rosa_subid00Script:
 
 	orroomflag $40
 	enableinput
-	jump2byte rosa_subid00Script_alreadyGaveShovel@npcLoop
+	scriptjump rosa_subid00Script_alreadyGaveShovel@npcLoop
 
 rosa_subid00Script_alreadyGaveShovel:
 	initcollisions
 @npcLoop:
 	checkabutton
 	showtextlowindex <TX_1c12
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; Rosa at goron dance, linked only
@@ -7804,7 +7804,7 @@ rafton_subid00Script:
 	showloadedtext
 	enableinput
 	setanimation DIR_DOWN
-	jump2byte @genericNpcLoop
+	scriptjump @genericNpcLoop
 
 
 @behaviour_afterd2:
@@ -7815,7 +7815,7 @@ rafton_subid00Script:
 	wait 20
 
 	settextid TX_2701
-	jump2byte @showLoadedTextInGenericNpcLoop
+	scriptjump @showLoadedTextInGenericNpcLoop
 
 
 @behaviour_afterGotChevalRope:
@@ -7842,7 +7842,7 @@ rafton_subid00Script:
 	checkabutton
 
 	callscript @faceLinkAndFreezeAnimation
-	jump2byte @askToGiveRope
+	scriptjump @askToGiveRope
 
 @giveRopeToRafton:
 	asm15 loseTreasure, TREASURE_CHEVAL_ROPE
@@ -7855,7 +7855,7 @@ rafton_subid00Script:
 
 @behaviour_afterGaveChevalRope:
 	settextid TX_2706
-	jump2byte @genericNpcLoop
+	scriptjump @genericNpcLoop
 
 
 @behaviour_afterGotIslandChart:
@@ -7897,13 +7897,13 @@ cheval_subid00Script:
 	checkabutton
 	showtextlowindex <TX_270c
 	asm15 scriptHlp.cheval_setTalkedGlobalflag
-	jump2byte @dontHaveChevalRope
+	scriptjump @dontHaveChevalRope
 
 @gotChevalRope:
 	checkabutton
 	showtextlowindex <TX_270d
 	asm15 scriptHlp.cheval_setTalkedGlobalflag
-	jump2byte @gotChevalRope
+	scriptjump @gotChevalRope
 
 
 ; ==============================================================================
@@ -7962,7 +7962,7 @@ interaction6b_subid05Script:
 
 	addobjectbyte Interaction.var38, -1
 	jumpifobjectbyteeq Interaction.var38, $00, ++
-	jump2byte @darkenAndBrightenLoop
+	scriptjump @darkenAndBrightenLoop
 ++
 	wait 30
 	writememory wTmpcfc0.introCutscene.cfd1, $02
@@ -7978,7 +7978,7 @@ interaction6b_subid05Script:
 	wait 4
 	addobjectbyte Interaction.var38, -1
 	jumpifobjectbyteeq Interaction.var38, $00, ++
-	jump2byte @fastDarkenAndBrightenLoop
+	scriptjump @fastDarkenAndBrightenLoop
 ++
 	asm15 darkenRoomWithSpeed, $02
 	checkpalettefadedone
@@ -8214,7 +8214,7 @@ interaction6e_subid01Script_part2:
 
 _interaction6e_waitForever:
 	wait 240
-	jump2byte _interaction6e_waitForever
+	scriptjump _interaction6e_waitForever
 
 
 ; Ralph
@@ -8244,7 +8244,7 @@ interaction6e_subid03Script:
 	wait 2
 
 	showtext TX_2a0d
-	jump2byte _interaction6e_waitForever
+	scriptjump _interaction6e_waitForever
 
 
 ; Guards that run into the room
@@ -8274,7 +8274,7 @@ _interaction6e_guardCommon:
 @moveForward:
 	applyspeed $08
 	wait 30
-	jump2byte @moveForward
+	scriptjump @moveForward
 
 
 interaction6e_guard1Script:
@@ -8287,7 +8287,7 @@ interaction6e_guard1Script:
 	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $04
 	applyspeed $15
 	setanimation $0e
-	jump2byte _interaction6e_guardCommon
+	scriptjump _interaction6e_guardCommon
 
 interaction6e_guard2Script:
 	wait 90
@@ -8298,7 +8298,7 @@ interaction6e_guard2Script:
 	applyspeed $23
 	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $03
 	applyspeed $0a
-	jump2byte _interaction6e_guardCommon
+	scriptjump _interaction6e_guardCommon
 
 interaction6e_guard3Script:
 	wait 135
@@ -8309,7 +8309,7 @@ interaction6e_guard3Script:
 	applyspeed $23
 	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $04
 	applyspeed $0a
-	jump2byte _interaction6e_guardCommon
+	scriptjump _interaction6e_guardCommon
 
 interaction6e_guard4Script:
 	wait 180
@@ -8318,7 +8318,7 @@ interaction6e_guard4Script:
 	applyspeed $12
 	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $02
 	applyspeed $0f
-	jump2byte _interaction6e_guardCommon
+	scriptjump _interaction6e_guardCommon
 
 interaction6e_guard5Script:
 	wait 225
@@ -8328,7 +8328,7 @@ interaction6e_guard5Script:
 	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $02
 	applyspeed $0f
 	writememory wTmpcfc0.genericCutscene.cfd0 ,$08
-	jump2byte _interaction6e_guardCommon
+	scriptjump _interaction6e_guardCommon
 
 
 ; ==============================================================================
@@ -8340,7 +8340,7 @@ companionScript_subid00Script:
 
 @wait1:
 	jumpifmemoryset w1Companion.var3e, $02, ++
-	jump2byte @wait1
+	scriptjump @wait1
 ++
 	writeobjectbyte Interaction.var3a, 60
 	callscript @delayFrames
@@ -8349,7 +8349,7 @@ companionScript_subid00Script:
 
 @wait2:
 	jumpifmemoryset w1Companion.var3e, $10, ++
-	jump2byte @wait2
+	scriptjump @wait2
 ++
 	checkmemoryeq wNumEnemies, $00
 
@@ -8375,11 +8375,11 @@ companionScript_subid00Script:
 
 	jumpifmemoryeq wIsLinkedGame, $00, @meetingMooshFirstTime
 	jumpifmemoryeq wAnimalCompanion, SPECIALOBJECTID_MOOSH, @meetingMooshAgain
-	jump2byte @meetingMooshFirstTime
+	scriptjump @meetingMooshFirstTime
 
 @meetingMooshAgain:
 	showtext TX_2204
-	jump2byte ++
+	scriptjump ++
 
 @meetingMooshFirstTime:
 	showtext TX_2203
@@ -8396,7 +8396,7 @@ companionScript_subid00Script:
 @delayFrames:
 	jumpifobjectbyteeq Interaction.var3a, $00, ++
 	wait 1
-	jump2byte @delayFrames
+	scriptjump @delayFrames
 ++
 	retscript
 
@@ -8456,7 +8456,7 @@ _kingMoblinMoveDown:
 kingMoblinDefeated_helperMoblinScript:
 	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $01
 	setanimation $02
-	jump2byte _kingMoblinMoveDown
+	scriptjump _kingMoblinMoveDown
 
 ; Subid 2: Gorons who approach afterward
 kingMoblinDefeated_goron0:
@@ -8528,14 +8528,14 @@ ghiniHarassingMoosh_subid00Script:
 @waitUntilStopped:
 	jumpifobjectbyteeq Interaction.speed, $00, ++
 	wait 1
-	jump2byte @waitUntilStopped
+	scriptjump @waitUntilStopped
 ++
 	showtext TX_1204
 	ormemory w1Companion.var3e, $01
 
 @waitUntilCutsceneDone:
 	jumpifmemoryset w1Companion.var3e, $10, ++
-	jump2byte @waitUntilCutsceneDone
+	scriptjump @waitUntilCutsceneDone
 ++
 	enableallobjects
 	spawnenemyhere ENEMYID_GHINI, $00
@@ -8544,27 +8544,27 @@ ghiniHarassingMoosh_subid00Script:
 
 ghiniHarassingMoosh_subid01Script:
 	jumpifmemoryset w1Companion.var3e, $01, ++
-	jump2byte ghiniHarassingMoosh_subid01Script
+	scriptjump ghiniHarassingMoosh_subid01Script
 ++
 	asm15 scriptHlp.ghiniHarassingMoosh_beginCircularMovement
 @waitUntilStopped:
 	jumpifobjectbyteeq Interaction.speed, $00, ++
 	wait 1
-	jump2byte @waitUntilStopped
+	scriptjump @waitUntilStopped
 ++
 	showtext TX_1205
 	ormemory w1Companion.var3e, $02
 
 @wait2:
 	jumpifmemoryset w1Companion.var3e, $08, ++
-	jump2byte @wait2
+	scriptjump @wait2
 ++
 	asm15 scriptHlp.ghiniHarassingMoosh_beginCircularMovement
 
 @waitUntilStopped2:
 	jumpifobjectbyteeq Interaction.speed, $00, ++
 	wait 1
-	jump2byte @waitUntilStopped2
+	scriptjump @waitUntilStopped2
 ++
 	showtext TX_1207
 	playsound SND_DING
@@ -8576,19 +8576,19 @@ ghiniHarassingMoosh_subid01Script:
 
 ghiniHarassingMoosh_subid02Script:
 	jumpifmemoryset w1Companion.var3e, $04, ++
-	jump2byte ghiniHarassingMoosh_subid02Script
+	scriptjump ghiniHarassingMoosh_subid02Script
 ++
 	asm15 scriptHlp.ghiniHarassingMoosh_beginCircularMovement
 @waitUntilStopped:
 	jumpifobjectbyteeq Interaction.speed, $00, ++
 	wait 1
-	jump2byte @waitUntilStopped
+	scriptjump @waitUntilStopped
 ++
 	showtext TX_1206
 	ormemory w1Companion.var3e, $08
 @wait:
 	jumpifmemoryset w1Companion.var3e, $10, ++
-	jump2byte @wait
+	scriptjump @wait
 ++
 	spawnenemyhere ENEMYID_GHINI, $00
 	scriptend
@@ -8628,7 +8628,7 @@ tokayShopItemScript:
 	scriptend
 @notEnoughSeedsForFeather:
 	showtextlowindex <TX_0a2e
-	jump2byte tokayShopItemScript
+	scriptjump tokayShopItemScript
 
 @offerGetFeatherForShovel:
 	jumpifobjectbyteeq Interaction.var3a, $00, @offerReturnBracelet
@@ -8639,7 +8639,7 @@ tokayShopItemScript:
 
 @getFeatherForShovel:
 	asm15 scriptHlp.tokayShopItem_giveFeatherAndLoseShovel
-	jump2byte tokayShopItemScript
+	scriptjump tokayShopItemScript
 
 @offerReturnBracelet:
 	showtextlowindex <TX_0a27
@@ -8650,7 +8650,7 @@ tokayShopItemScript:
 @returnBracelet:
 	showtextlowindex <TX_0a28
 	asm15 scriptHlp.tokayShopItem_giveShovelAndLoseBracelet
-	jump2byte tokayShopItemScript
+	scriptjump tokayShopItemScript
 
 
 @selectedBracelet:
@@ -8672,7 +8672,7 @@ tokayShopItemScript:
 	scriptend
 @notEnoughSeedsForBracelet:
 	showtextlowindex <TX_0a34
-	jump2byte tokayShopItemScript
+	scriptjump tokayShopItemScript
 
 @offerGetBraceletForShovel:
 	jumpifobjectbyteeq Interaction.var3a, $00, @offerReturnFeather
@@ -8683,7 +8683,7 @@ tokayShopItemScript:
 
 @getBraceletForShovel:
 	asm15 scriptHlp.tokayShopItem_giveBraceletAndLoseShovel
-	jump2byte tokayShopItemScript
+	scriptjump tokayShopItemScript
 
 @offerReturnFeather:
 	showtextlowindex <TX_0a30
@@ -8694,7 +8694,7 @@ tokayShopItemScript:
 @returnFeather:
 	showtextlowindex <TX_0a28
 	asm15 scriptHlp.tokayShopItem_giveShovelAndLoseFeather
-	jump2byte tokayShopItemScript
+	scriptjump tokayShopItemScript
 
 
 @selectedShovelReplacingFeather:
@@ -8706,7 +8706,7 @@ tokayShopItemScript:
 @getShovelForFeather:
 	showtextlowindex <TX_0a28
 	asm15 scriptHlp.tokayShopItem_giveShovelAndLoseFeather
-	jump2byte tokayShopItemScript
+	scriptjump tokayShopItemScript
 
 
 @selectedShovelReplacingBracelet:
@@ -8718,16 +8718,16 @@ tokayShopItemScript:
 @getShovelForBracelet:
 	showtextlowindex <TX_0a28
 	asm15 scriptHlp.tokayShopItem_giveShovelAndLoseBracelet
-	jump2byte tokayShopItemScript
+	scriptjump tokayShopItemScript
 
 
 @declineTrade1:
 	showtextlowindex <TX_0a2d
-	jump2byte tokayShopItemScript
+	scriptjump tokayShopItemScript
 
 @declineTrade2:
 	showtextlowindex <TX_0a29
-	jump2byte tokayShopItemScript
+	scriptjump tokayShopItemScript
 
 
 @selectedShield:
@@ -8741,7 +8741,7 @@ tokayShopItemScript:
 
 	; Already have shield
 	showtextlowindex <TX_0a3a
-	jump2byte tokayShopItemScript
+	scriptjump tokayShopItemScript
 
 @getShield:
 	jumpifobjectbyteeq Interaction.var38, $00, @notEnoughSeedsForShield
@@ -8751,7 +8751,7 @@ tokayShopItemScript:
 	scriptend
 @notEnoughSeedsForShield:
 	showtextlowindex <TX_0a34
-	jump2byte tokayShopItemScript
+	scriptjump tokayShopItemScript
 
 
 ; ==============================================================================
@@ -8810,7 +8810,7 @@ makuTree_subid03Script:
 
 	; linked
 	showtextlowindex <TX_0557
-	jump2byte ++
+	scriptjump ++
 @unlinked:
 	showtextlowindex <TX_0554
 ++
@@ -8833,7 +8833,7 @@ makuTree_subid03Script:
 	enableinput
 	checkabutton
 	disableinput
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 makuTree_subid04Script:
@@ -8913,7 +8913,7 @@ makuSprout_subid01Script:
 @npcLoop:
 	checkabutton
 	showtextlowindex <TX_05d5
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; ==============================================================================
@@ -8936,7 +8936,7 @@ remoteMakuCutsceneScript:
 	spawninteraction INTERACID_MAKU_CONFETTI, $00, $00, $00
 	wait 240
 	wait 180
-	jump2byte ++
+	scriptjump ++
 @past:
 	spawninteraction INTERACID_MAKU_CONFETTI, $01, $00, $00
 	wait 240
@@ -9014,7 +9014,7 @@ miscPuzzles_mermaidsCaveDungeonOpeningScript:
 	wait 60
 	playsound SND_DOORCLOSE
 	settilehere TILEINDEX_INDOOR_DOOR
-	jump2byte _miscPuzzles_justOpenedKeyDoor
+	scriptjump _miscPuzzles_justOpenedKeyDoor
 
 
 ; Subid $13
@@ -9025,7 +9025,7 @@ miscPuzzles_eyeglassLibraryOpeningScript:
 	playsound SND_DOORCLOSE
 	settileat $22, TILEINDEX_DUNGEON_DOOR_1
 	settileat $23, TILEINDEX_DUNGEON_DOOR_2
-	jump2byte _miscPuzzles_justOpenedKeyDoor
+	scriptjump _miscPuzzles_justOpenedKeyDoor
 
 
 ; ==============================================================================
@@ -9061,7 +9061,7 @@ patch_upstairsRepairedEverythingScript:
 @npcLoop:
 	checkabutton
 	showtext TX_5811
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 patch_upstairsMoveToStaircaseScript:
@@ -9084,7 +9084,7 @@ patch_duringMinigameScript:
 @npcLoop:
 	checkabutton
 	showtext TX_580b
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 patch_linkWonMinigameScript:
@@ -9131,7 +9131,7 @@ _patch_giveRepairedItem:
 @level2:
 	giveitem TREASURE_SWORD_SUBID_01
 	giveitem TREASURE_SWORD_SUBID_04
-	jump2byte @loseTradeItem
+	scriptjump @loseTradeItem
 @level3:
 	giveitem TREASURE_SWORD_SUBID_02
 	giveitem TREASURE_SWORD_SUBID_05
@@ -9157,7 +9157,7 @@ patch_downstairsAfterBeatingMinigameScript:
 @npcLoop:
 	checkabutton
 	showtext TX_580f
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; ==============================================================================
@@ -9182,7 +9182,7 @@ _moblin_jumpUntilLinkApproaches:
 
 	jumpifmemoryeq wTmpcfc0.genericCutscene.state, $06, @linkApproached
 	wait 30
-	jump2byte _moblin_jumpUntilLinkApproaches
+	scriptjump _moblin_jumpUntilLinkApproaches
 
 @linkApproached:
 	asm15 scriptHlp.turnToFaceLink
@@ -9206,7 +9206,7 @@ moblin_subid01Script:
 	writememory   wTmpcfc0.genericCutscene.state, $04
 	checkmemoryeq wTmpcfc0.genericCutscene.state, $05
 	wait 30
-	jump2byte _moblin_jumpUntilLinkApproaches
+	scriptjump _moblin_jumpUntilLinkApproaches
 
 
 ; ==============================================================================
@@ -9224,11 +9224,11 @@ carpenter_subid02Script:
 	setanimation DIR_DOWN
 	checkabutton
 	jumpifobjectbyteeq Interaction.var3f, $00, @hasntReturnedToBossYet
-	jump2byte _carpenter_talkedWhileWithBoss
+	scriptjump _carpenter_talkedWhileWithBoss
 @hasntReturnedToBossYet
 	jumpifmemoryeq wTmpcfc0.carpenterSearch.cfd0, $01, _carpenter_convincedToReturn
 	showtextlowindex <TX_230c
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; Carpenter #2 to be sought out
@@ -9238,11 +9238,11 @@ carpenter_subid03Script:
 	setanimation DIR_DOWN
 	checkabutton
 	jumpifobjectbyteeq Interaction.var3f, $00, @hasntReturnedToBossYet
-	jump2byte _carpenter_talkedWhileWithBoss
+	scriptjump _carpenter_talkedWhileWithBoss
 @hasntReturnedToBossYet
 	jumpifmemoryeq wTmpcfc0.carpenterSearch.cfd0, $01, _carpenter_convincedToReturn
 	showtextlowindex <TX_230d
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; Carpenter #3 to be sought out
@@ -9252,11 +9252,11 @@ carpenter_subid04Script:
 	setanimation DIR_DOWN
 	checkabutton
 	jumpifobjectbyteeq Interaction.var3f, $00, @hasntReturnedToBossYet
-	jump2byte _carpenter_talkedWhileWithBoss
+	scriptjump _carpenter_talkedWhileWithBoss
 @hasntReturnedToBossYet
 	jumpifmemoryeq wTmpcfc0.carpenterSearch.cfd0, $01, _carpenter_convincedToReturn
 	showtextlowindex <TX_230e
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; The carpenter shows text then returns to the boss
@@ -9431,10 +9431,10 @@ carpenter_subid09Script:
 	jumpifglobalflagset GLOBALFLAG_WATER_POLLUTION_FIXED, ++
 
 	showtextlowindex <TX_2313
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 ++
 	showtextlowindex <TX_2314
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; Talked to one of the workers after they've returned
@@ -9443,7 +9443,7 @@ _carpenter_talkedWhileWithBoss:
 	showtextlowindex <TX_2310
 	setanimation $02
 	checkabutton
-	jump2byte _carpenter_talkedWhileWithBoss
+	scriptjump _carpenter_talkedWhileWithBoss
 
 
 
@@ -9483,7 +9483,7 @@ _kingZoraScript_present_justAcceptedTask:
 kingZoraScript_present_acceptedTask:
 	checkabutton
 	showtext TX_340c
-	jump2byte kingZoraScript_present_acceptedTask
+	scriptjump kingZoraScript_present_acceptedTask
 
 
 kingZoraScript_present_justCleanedWater:
@@ -9494,13 +9494,13 @@ kingZoraScript_present_justCleanedWater:
 kingZoraScript_present_cleanedWater:
 	checkabutton
 	showtext TX_340e
-	jump2byte kingZoraScript_present_cleanedWater
+	scriptjump kingZoraScript_present_cleanedWater
 
 
 kingZoraScript_present_afterD7:
 	checkabutton
 	showtext TX_340f
-	jump2byte kingZoraScript_present_afterD7
+	scriptjump kingZoraScript_present_afterD7
 
 
 ; Accepts a secret for the sword upgrade
@@ -9513,14 +9513,14 @@ kingZoraScript_present_postGame:
 	wait 30
 	jumpiftextoptioneq $00, @askForSecret
 	showtext TX_3436
-	jump2byte @loop
+	scriptjump @loop
 
 @askForSecret:
 	askforsecret KING_ZORA_SECRET
 	wait 30
 	jumpifmemoryeq wTextInputResult, $00, @gaveCorrectSecret
 	showtext TX_3438
-	jump2byte @loop
+	scriptjump @loop
 
 @gaveCorrectSecret:
 	setglobalflag GLOBALFLAG_BEGAN_KING_ZORA_SECRET
@@ -9533,14 +9533,14 @@ kingZoraScript_present_postGame:
 	generatesecret KING_ZORA_RETURN_SECRET
 	setglobalflag GLOBALFLAG_DONE_KING_ZORA_SECRET
 	showtext TX_3439
-	jump2byte @loop
+	scriptjump @loop
 
 @alreadyGotUpgrade:
 	generatesecret KING_ZORA_RETURN_SECRET
 	showtext TX_343a
 @loop:
 	enableinput
-	jump2byte kingZoraScript_present_postGame
+	scriptjump kingZoraScript_present_postGame
 
 @giveSwordUpgrade:
 	jumptable_objectbyte Interaction.var03
@@ -9561,7 +9561,7 @@ kingZoraScript_present_postGame:
 kingZoraScript_past_dontHavePotion:
 	checkabutton
 	showtext TX_3400
-	jump2byte kingZoraScript_past_dontHavePotion
+	scriptjump kingZoraScript_past_dontHavePotion
 
 
 kingZoraScript_past_havePotion:
@@ -9590,19 +9590,19 @@ kingZoraScript_past_havePotion:
 kingZoraScript_past_justCured:
 	checkabutton
 	showtext TX_3405
-	jump2byte kingZoraScript_past_justCured
+	scriptjump kingZoraScript_past_justCured
 
 
 kingZoraScript_past_cleanedWater:
 	checkabutton
 	showtext TX_3406
-	jump2byte kingZoraScript_past_cleanedWater
+	scriptjump kingZoraScript_past_cleanedWater
 
 
 kingZoraScript_past_afterD7:
 	checkabutton
 	showtext TX_3407
-	jump2byte kingZoraScript_past_afterD7
+	scriptjump kingZoraScript_past_afterD7
 
 
 
@@ -9719,7 +9719,7 @@ zoraSubid0dScript:
 	wait 8
 	moveup $11
 	moveleft $17
-	jump2byte zoraScript_end
+	scriptjump zoraScript_end
 
 
 ; Zora studying in library
@@ -9730,7 +9730,7 @@ zoraSubid0eScript:
 	turntofacelink
 	showloadedtext
 	setanimation $00
-	jump2byte @loop
+	scriptjump @loop
 
 
 ; Gives zora scale to Link
@@ -9787,7 +9787,7 @@ zoraSubid11And12Script:
 	moveleft $18
 	asm15 scriptHlp.zora_setLinkDirectionUp
 	moveup $30
-	jump2byte @end
+	scriptjump @end
 
 @linked:
 	movedown $10
@@ -9935,7 +9935,7 @@ bookOfSealsPodiumScript:
 	checkabutton
 	jumpifitemobtained TREASURE_BOOK_OF_SEALS, @askToPlaceBook
 	showtextlowindex <TX_1211
-	jump2byte bookOfSealsPodiumScript
+	scriptjump bookOfSealsPodiumScript
 
 @askToPlaceBook:
 	showtextlowindex <TX_1212
@@ -9996,7 +9996,7 @@ horonDogScript:
 	setangle $08
 	applyspeed $14
 	wait 120
-	jump2byte @loop
+	scriptjump @loop
 
 
 ; ==============================================================================
@@ -10007,7 +10007,7 @@ childJabuScript:
 
 ; Unused?
 script7d8e:
-	jump2byte childJabuScript
+	scriptjump childJabuScript
 
 
 ; ==============================================================================
@@ -10123,7 +10123,7 @@ tingleScript:
 	; First meeting
 	setglobalflag GLOBALFLAG_MET_TINGLE
 	showtextnonexitablelowindex <TX_1e00
-	jump2byte @respondToBeFriend
+	scriptjump @respondToBeFriend
 
 @notFirstMeeting:
 	showtextnonexitablelowindex <TX_1e01
@@ -10136,7 +10136,7 @@ tingleScript:
 
 @wontBeFriend:
 	showtextlowindex <TX_1e03
-	jump2byte @endConversation
+	scriptjump @endConversation
 
 @willBeFriend:
 	disableinput
@@ -10154,7 +10154,7 @@ tingleScript:
 	setdisabledobjectsto11
 	writememory w1Companion.state, $0a
 
-	jump2byte @loop
+	scriptjump @loop
 
 @alreadyGotChart:
 	disableinput
@@ -10166,7 +10166,7 @@ tingleScript:
 
 @alreadyGotSatchelUpgrade:
 	showtextlowindex <TX_1e08
-	jump2byte @endConversation
+	scriptjump @endConversation
 
 @notEnoughSeedTypes:
 	showtextlowindex <TX_1e04
@@ -10175,7 +10175,7 @@ tingleScript:
 	checktext
 	callscript @koolooLimpah
 	enableallobjects
-	jump2byte tingleScript
+	scriptjump tingleScript
 
 @haveLevel1Satchel:
 	jumpifglobalflagset GLOBALFLAG_GOT_SATCHEL_UPGRADE, @alreadyGotSatchelUpgrade
@@ -10186,7 +10186,7 @@ tingleScript:
 
 @dontAcceptUpgrade:
 	showtextlowindex <TX_1e03
-	jump2byte @endConversation
+	scriptjump @endConversation
 
 @acceptUpgrade:
 	setglobalflag GLOBALFLAG_GOT_SATCHEL_UPGRADE
@@ -10200,7 +10200,7 @@ tingleScript:
 @waitForAnimation:
 	jumpifobjectbyteeq Interaction.var3f, $00, ++
 	wait 1
-	jump2byte @waitForAnimation
+	scriptjump @waitForAnimation
 ++
 	asm15 scriptHlp.tingle_createGlowAroundLink
 	wait 120
@@ -10209,12 +10209,12 @@ tingleScript:
 	asm15 refillSeedSatchel
 	jumpifobjectbyteeq Interaction.var3d, $02, @haveLevel3Satchel
 	enableallobjects
-	jump2byte tingleScript
+	scriptjump tingleScript
 
 
 @haveLevel2Satchel:
 	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, @postgame
-	jump2byte @haveLevel1Satchel
+	scriptjump @haveLevel1Satchel
 
 @postgame:
 	showtextlowindex <TX_1e09
@@ -10224,30 +10224,30 @@ tingleScript:
 
 @dontEnterSecret:
 	showtextlowindex <TX_1e0a
-	jump2byte @endConversation
+	scriptjump @endConversation
 
 @enterSecret:
 	askforsecret TINGLE_SECRET
 	wait 30
 	jumpifmemoryeq wTextInputResult, $00, @validSecret
 	showtextlowindex <TX_1e0d
-	jump2byte @endConversation
+	scriptjump @endConversation
 
 @validSecret:
 	showtextlowindex <TX_1e0e
 	setglobalflag GLOBALFLAG_BEGAN_TINGLE_SECRET
-	jump2byte @giveSatchelUpgrade
+	scriptjump @giveSatchelUpgrade
 
 
 @haveLevel3Satchel:
 	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, @showReturnSecret
-	jump2byte @alreadyGotSatchelUpgrade
+	scriptjump @alreadyGotSatchelUpgrade
 
 @showReturnSecret:
 	generatesecret TINGLE_RETURN_SECRET
 	setglobalflag GLOBALFLAG_DONE_TINGLE_SECRET
 	showtextlowindex <TX_1e0f
-	jump2byte @endConversation
+	scriptjump @endConversation
 
 
 @koolooLimpah:
@@ -10258,7 +10258,7 @@ tingleScript:
 @waitUntilKoolooLimpahAnimationDone:
 	jumpifobjectbyteeq Interaction.var3f, $00, ++
 	wait 1
-	jump2byte @waitUntilKoolooLimpahAnimationDone
+	scriptjump @waitUntilKoolooLimpahAnimationDone
 ++
 	retscript
 
@@ -10307,7 +10307,7 @@ linkedGameNpcScript:
 	addobjectbyte Interaction.textID, $01
 	showloadedtext
 	enableinput
-	jump2byte @offerSecret
+	scriptjump @offerSecret
 
 @answeredYes:
 	asm15 scriptHlp.linkedNpc_checkHasExtraTextBox
@@ -10336,7 +10336,7 @@ linkedGameNpcScript:
 
 	checkabutton
 	disableinput
-	jump2byte @answeredYes
+	scriptjump @answeredYes
 
 
 ; ==============================================================================
@@ -10359,7 +10359,7 @@ greatFairySubid0Script:
 	asm15 scriptHlp.greatFairy_checkScreenIsScrolling
 	jumpifmemoryset wcddb, $80, @spawnIn
 	wait 1
-	jump2byte @waitLoop
+	scriptjump @waitLoop
 
 @spawnIn:
 	playsound SND_KILLENEMY ; Why?
@@ -10368,7 +10368,7 @@ greatFairySubid0Script:
 	setmusic MUS_FAIRY
 	asm15 objectSetVisible
 	writeobjectbyte Interaction.var3e, $00
-	jump2byte linkedGameNpcScript
+	scriptjump linkedGameNpcScript
 
 
 ; ==============================================================================
@@ -10424,4 +10424,4 @@ knowItAllBirdScript:
 @doneTalking:
 	enableallobjects
 	writeobjectbyte Interaction.var37, $00
-	jump2byte @loop
+	scriptjump @loop

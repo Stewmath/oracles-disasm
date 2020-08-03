@@ -6,7 +6,7 @@
 	.db $00
 .ENDM
 
-.MACRO jump2byte
+.MACRO scriptjump
 	.db (\1)>>8
 	.db (\1)&$ff
 .ENDM
@@ -1030,6 +1030,14 @@
 .MACRO createpuffnodelay
 	asm15 objectCreatePuff
 .ENDM
+
+
+
+; Opcode aliases
+.MACRO jump2byte
+	scriptjump \1
+.ENDM
+
 
 
 ; Helper macro for validating arguments that take an interaction byte.

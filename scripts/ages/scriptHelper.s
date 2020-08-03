@@ -130,10 +130,10 @@ bipinScript3:
 	wait 1
 	checktext
 	showtext TX_4312
-	jump2byte @loop
+	scriptjump @loop
 @alreadyGaveSeed:
 	showtext TX_4313
-	jump2byte @loop
+	scriptjump @loop
 .endif
 
 
@@ -608,18 +608,18 @@ shootingGalleryScript_humanNpc_gameDone:
 	jumpifglobalflagset GLOBALFLAG_CAN_BUY_FLUTE, @checkScoreForFluteGame
 
 @normalGame:
-	jump2byte @checkScoreForNormalGame
+	scriptjump @checkScoreForNormalGame
 
 @checkScoreForFluteGame:
 	asm15 shootingGallery_cpScore, $03
 	jumpifmemoryset wcddb, $80, @flutePrize
-	jump2byte @noPrize
+	scriptjump @noPrize
 
 @flutePrize:
 	showtext TX_081b
 	wait 30
 	giveitem TREASURE_FLUTE, $00
-	jump2byte @end
+	scriptjump @end
 
 @checkScoreForNormalGame:
 	asm15 shootingGallery_cpScore, $00
@@ -636,26 +636,26 @@ shootingGalleryScript_humanNpc_gameDone:
 
 @noPrize:
 	showtext TX_0819
-	jump2byte @end
+	scriptjump @end
 
 @ringPrize:
 	showtext TX_0815
 	wait 30
 	asm15 shootingGallery_giveRandomRingToLink
-	jump2byte @end
+	scriptjump @end
 
 @gashaSeedPrize:
 	showtext TX_0816
 	wait 30
 	giveitem TREASURE_GASHA_SEED, $00
-	jump2byte @end
+	scriptjump @end
 
 @thirtyRupeePrize:
 	showtext TX_0817
 	wait 30
 	asm15 giveRupees, RUPEEVAL_30
 	showtext TX_0005
-	jump2byte @end
+	scriptjump @end
 
 @oneHeartPrize:
 	showtext TX_0818
@@ -691,13 +691,13 @@ shootingGalleryScript_goronNpc_gameDone:
 	asm15 shootingGallery_cpScore, $07
 	jumpifmemoryset wcddb, $80, @lavaJuicePrize
 	showtext TX_24d9
-	jump2byte @end
+	scriptjump @end
 
 @lavaJuicePrize:
 	showtext TX_24d8
 	wait 30
 	giveitem TREASURE_LAVA_JUICE, $00
-	jump2byte @end
+	scriptjump @end
 
 ; Playing for normal prizes
 @normalGame:
@@ -715,26 +715,26 @@ shootingGalleryScript_goronNpc_gameDone:
 
 	; No prize
 	showtext TX_24de
-	jump2byte @end
+	scriptjump @end
 
 @boomerangPrize:
 	jumpifitemobtained TREASURE_BOOMERANG, @gashaSeedPrize
 	showtext TX_24da
 	wait 30
 	giveitem TREASURE_BOOMERANG, $02
-	jump2byte @end
+	scriptjump @end
 
 @gashaSeedPrize:
 	showtext TX_24db
 	wait 30
 	giveitem TREASURE_GASHA_SEED, $00
-	jump2byte @end
+	scriptjump @end
 
 @twentyBombsPrize:
 	showtext TX_24dc
 	wait 30
 	giveitem TREASURE_BOMBS, $05
-	jump2byte @end
+	scriptjump @end
 
 @thirtyRupeesPrize:
 	showtext TX_24dd
@@ -798,7 +798,7 @@ impaScript_rockJustMoved:
 	setangle $10
 	setspeed SPEED_040
 	applyspeed 65
-	jump2byte ++
+	scriptjump ++
 
 @pushedRight:
 	wait 65
@@ -897,11 +897,11 @@ impaScript7:
 	setangle $18
 	applyspeed $10
 	setglobalflag GLOBALFLAG_IMPA_MOVED_AFTER_ZELDA_KIDNAPPED
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @alreadyMoved:
 	showtext TX_0129
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @zeldaSaved:
 	checkpalettefadedone
@@ -1269,7 +1269,7 @@ nayruScript13:
 	wait 20
 	writeobjectbyte Interaction.var39, $00
 	setanimation $04
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 ;;
 ; Turns to face position value at $cfd5/$cfd6?
@@ -1527,7 +1527,7 @@ ralphSubid0bScript:
 	setspeed SPEED_200
 	setsubstate $00
 	moveright $38
-	jump2byte _ralphEndCutscene
+	scriptjump _ralphEndCutscene
 
 
 ; Cutscene after talking to Cheval
@@ -1595,7 +1595,7 @@ ralphSubid0cScript:
 	asm15 objectApplySpeed
 	asm15 ralph_updateGravity
 	jumpifmemoryset wcddb, $80, @landed
-	jump2byte @jumping
+	scriptjump @jumping
 
 @landed:
 	wait 20
@@ -1613,7 +1613,7 @@ ralphSubid0cScript:
 @flashScreen:
 	asm15 ralph_flashScreen
 	jumpifmemoryset wcddb, $80, @doneFlashingScreen
-	jump2byte @flashScreen
+	scriptjump @flashScreen
 
 @doneFlashingScreen:
 	setcoords $58, $60
@@ -1642,12 +1642,12 @@ ralphSubid0cScript:
 @npcLoop:
 	checkabutton
 	showtext TX_2a1d
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @alreadySawCutscene:
 	setcoords $58, $60
 	setanimation $0c
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; ==============================================================================
@@ -1852,13 +1852,13 @@ boySubid07Script:
 @showDepressedText:
 	showtext TX_2517
 	enableinput
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @offerTrade:
 	showtext TX_2515
 	wait 30
 	jumpiftextoptioneq $00, @acceptedTrade
-	jump2byte @showDepressedText
+	scriptjump @showDepressedText
 
 @acceptedTrade:
 	writeobjectbyte Interaction.var3d, $01
@@ -1878,7 +1878,7 @@ boySubid07Script:
 @funnyJokeCutsceneLoop:
 	asm15 boy_runFunnyJokeCutscene
 	jumpifmemoryset wcddb, $80, @doneFunnyJokeCutscene
-	jump2byte @funnyJokeCutsceneLoop
+	scriptjump @funnyJokeCutsceneLoop
 
 @doneFunnyJokeCutscene:
 	asm15 restartSound
@@ -1899,12 +1899,12 @@ boySubid07Script:
 
 	resetmusic
 	enableinput
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @alreadyToldJoke:
 	showtext TX_2518
 	enableinput
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; ==============================================================================
@@ -1936,7 +1936,7 @@ ghostVeranSubid0Script_part1:
 	asm15 _ghostVeranApplySpeedUntilVar38Zero
 	wait 1
 	jumpifobjectbyteeq Interaction.var38, $00, @movement1
-	jump2byte --
+	scriptjump --
 
 @movement1:
 	wait 8
@@ -1947,7 +1947,7 @@ ghostVeranSubid0Script_part1:
 	asm15 _ghostVeranApplySpeedUntilVar38Zero
 	wait 1
 	jumpifobjectbyteeq Interaction.var38, $00, @movement2
-	jump2byte --
+	scriptjump --
 
 @movement2:
 	wait 8
@@ -1958,7 +1958,7 @@ ghostVeranSubid0Script_part1:
 	asm15 _ghostVeranApplySpeedUntilVar38Zero
 	wait 1
 	jumpifobjectbyteeq Interaction.var38, $00, @movement3
-	jump2byte --
+	scriptjump --
 
 @movement3:
 	wait 8
@@ -1969,7 +1969,7 @@ ghostVeranSubid0Script_part1:
 	asm15 _ghostVeranApplySpeedUntilVar38Zero
 	wait 1
 	jumpifobjectbyteeq Interaction.var38, $00, @movement4
-	jump2byte --
+	scriptjump --
 
 @movement4:
 	wait 8
@@ -1980,7 +1980,7 @@ ghostVeranSubid0Script_part1:
 	asm15 _ghostVeranApplySpeedUntilVar38Zero
 	wait 1
 	jumpifobjectbyteeq Interaction.var38, $00, @movement5
-	jump2byte --
+	scriptjump --
 
 @movement5:
 	wait 8
@@ -1991,7 +1991,7 @@ ghostVeranSubid0Script_part1:
 	asm15 _ghostVeranApplySpeedUntilVar38Zero
 	wait 1
 	jumpifobjectbyteeq Interaction.var38, $00, @movement6
-	jump2byte --
+	scriptjump --
 
 @movement6:
 	wait 30
@@ -2146,7 +2146,7 @@ soldierSubid02Script:
 
 @rightGuard:
 	setangle $1c
-	jump2byte ++
+	scriptjump ++
 
 @leftGuard:
 	setangle $04
@@ -2474,7 +2474,7 @@ tokayWithShieldUpgradeScript:
 @alreadyGaveShield:
 	showtextlowindex <TX_0a69
 	enableinput
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; Subid $1e: Present NPC who talks to you after climbing down vine
@@ -2497,12 +2497,12 @@ tokayExplainingVinesScript:
 	writeobjectbyte Interaction.speedZ, $ff
 	wait 30
 	showtextlowindex <TX_0a6a
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @vineNotGrown:
 	; Vine is not grown properly
 	showtextlowindex <TX_0a6b
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; NPC who trades meat for stink bag (subid $05)
@@ -2519,7 +2519,7 @@ tokayCookScript:
 
 	showtextlowindex <TX_0a09
 	enableinput
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @askForTrade:
 	showtextlowindex <TX_0a01
@@ -2529,7 +2529,7 @@ tokayCookScript:
 	; Rejected trade
 	showtextlowindex <TX_0a08
 	enableinput
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @acceptedTrade:
 	showtextlowindex <TX_0a02
@@ -2553,12 +2553,12 @@ tokayCookScript:
 
 	giveitem TREASURE_TRADEITEM, $03
 	enableinput
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @alreadyTraded:
 	showtextlowindex <TX_0a07
 	enableinput
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; ==============================================================================
@@ -2601,7 +2601,7 @@ ambiRiseUntilOffScreen:
 dumbbellManScript:
 	jumpifroomflagset $20, @liftingAnimation
 	setanimation $00 ; Swaying animation
-	jump2byte ++
+	scriptjump ++
 
 @liftingAnimation:
 	setanimation $01 ; Lifting animation
@@ -2619,7 +2619,7 @@ dumbbellManScript:
 	wait 30
 	jumpiftradeitemeq TRADEITEM_DUMBBELL, @offerTrade
 	enableinput
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @offerTrade:
 	showtextlowindex <TX_0b1e
@@ -2639,7 +2639,7 @@ dumbbellManScript:
 	; Declined trade
 	showtextlowindex <TX_0b20
 	enableinput
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @giveMustache:
 	showtextlowindex <TX_0b22
@@ -2655,7 +2655,7 @@ dumbbellManScript:
 	showtextlowindex <TX_0b24
 	wait 30
 	enableinput
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; ==============================================================================
@@ -2723,7 +2723,7 @@ oldManScript_givesShieldUpgrade:
 
 	; Said "no"
 	showtext TX_3311
-	jump2byte @warpLinkOut
+	scriptjump @warpLinkOut
 
 @promptForSecret:
 	askforsecret LIBRARY_SECRET
@@ -2732,7 +2732,7 @@ oldManScript_givesShieldUpgrade:
 
 	; Invalid secret
 	showtext TX_3311
-	jump2byte @warpLinkOut
+	scriptjump @warpLinkOut
 
 @validSecret:
 	setglobalflag GLOBALFLAG_BEGAN_LIBRARY_SECRET
@@ -2746,7 +2746,7 @@ oldManScript_givesShieldUpgrade:
 	setglobalflag GLOBALFLAG_DONE_LIBRARY_SECRET
 	generatesecret LIBRARY_RETURN_SECRET
 	showtext TX_3313
-	jump2byte @warpLinkOut
+	scriptjump @warpLinkOut
 
 @alreadyToldSecret:
 	generatesecret LIBRARY_RETURN_SECRET
@@ -2758,7 +2758,7 @@ oldManScript_givesShieldUpgrade:
 	enableinput
 @wait:
 	wait 1
-	jump2byte @wait
+	scriptjump @wait
 
 
 ; Subid $01: Old man who gives you book of seals
@@ -2771,7 +2771,7 @@ oldManScript_givesBookOfSeals:
 	jumpifroomflagset $20, @alreadyGaveBook
 	showtext TX_3308
 	jumpifglobalflagset GLOBALFLAG_TALKED_TO_OCTOROK_FAIRY, @talkedToFairy
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @talkedToFairy:
 	wait 30
@@ -2785,11 +2785,11 @@ oldManScript_givesBookOfSeals:
 	wait 1
 	checktext
 	enableinput
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @alreadyGaveBook:
 	showtext TX_330a
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; Subid $02: Old man guarding fairy powder in past (same spot as subid $00)
@@ -2839,7 +2839,7 @@ mamamuYanRandomizeDogLocation:
 
 mamamuYanScript:
 	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, +
-	jump2byte @tradeScript
+	scriptjump @tradeScript
 +
 	jumpifroomflagset $20, @postgameScript
 
@@ -2857,7 +2857,7 @@ mamamuYanScript:
 
 	showtextlowindex <TX_0b17
 	enableinput
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @askForTrade:
 	showtextlowindex <TX_0b18
@@ -2867,7 +2867,7 @@ mamamuYanScript:
 	; Declined trade
 	showtextlowindex <TX_0b1b
 	enableinput
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @acceptedTrade:
 	showtextlowindex <TX_0b19
@@ -2876,12 +2876,12 @@ mamamuYanScript:
 	wait 30
 	showtextlowindex <TX_0b1a
 	enableinput
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @alreadyGaveDoggieMask:
 	showtextlowindex <TX_0b1c
 	enableinput
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; This runs after beating the game (and after trading the doggie mask); after telling her
@@ -2902,7 +2902,7 @@ mamamuYanScript:
 	jumpiftextoptioneq $00, @promptForSecret
 
 	showtextlowindex <TX_0b3b
-	jump2byte @enableInputAndLoop
+	scriptjump @enableInputAndLoop
 
 @promptForSecret:
 	askforsecret MAMAMU_SECRET
@@ -2911,12 +2911,12 @@ mamamuYanScript:
 
 	; Invalid secret
 	showtextlowindex <TX_0b3d
-	jump2byte @enableInputAndLoop
+	scriptjump @enableInputAndLoop
 
 @validSecret:
 	setglobalflag GLOBALFLAG_BEGAN_MAMAMU_SECRET
 	showtextlowindex <TX_0b3c
-	jump2byte @askedListenToRequest
+	scriptjump @askedListenToRequest
 
 ; Link has told the secret already, but hasn't accepted the sidequest.
 @alreadyToldSecret:
@@ -2927,21 +2927,21 @@ mamamuYanScript:
 
 	; Refused her request.
 	showtextlowindex <TX_0b3e
-	jump2byte @enableInputAndLoop
+	scriptjump @enableInputAndLoop
 
 ; Accepted her request
 @acceptedRequest:
 	showtextlowindex <TX_0b3f
 	orroomflag $80
 	asm15 mamamuYanRandomizeDogLocation
-	jump2byte @enableInputAndLoop
+	scriptjump @enableInputAndLoop
 
 @alreadyBeganSearch:
 	showtextlowindex <TX_0b40
 
 @enableInputAndLoop:
 	enableinput
-	jump2byte @postgameNpcLoop
+	scriptjump @postgameNpcLoop
 
 @dogFound:
 	jumpifroomflagset $40, @alreadyGaveReward
@@ -2957,7 +2957,7 @@ mamamuYanScript:
 
 	showtextlowindex <TX_0b42
 	enableinput
-	jump2byte @genericNpc
+	scriptjump @genericNpc
 
 @alreadyGaveReward:
 	setcoords $1a, $18
@@ -3051,7 +3051,7 @@ postmanScript:
 	showtextlowindex <TX_0b03
 	wait 30
 	jumpiftradeitemeq TRADEITEM_POE_CLOCK, @promptForTrade
-	jump2byte @enableInput
+	scriptjump @enableInput
 
 @promptForTrade:
 	showtextlowindex <TX_0b04
@@ -3061,7 +3061,7 @@ postmanScript:
 
 @enableInput:
 	enableinput
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @acceptedTrade:
 	showtextlowindex <TX_0b05
@@ -3320,7 +3320,7 @@ hardhatWorkerSubid02Script:
 @alreadySawCutscene:
 	checkabutton
 	showtextlowindex <TX_1004
-	jump2byte @alreadySawCutscene
+	scriptjump @alreadySawCutscene
 
 
 ; A patrolling NPC.
@@ -3352,7 +3352,7 @@ hardhatWorkerSubid03Script:
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $40
 	callscript hardhatWorkerFunc_patrol
 
-	jump2byte @val00
+	scriptjump @val00
 
 @val01:
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $02
@@ -3379,7 +3379,7 @@ hardhatWorkerSubid03Script:
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $40
 	callscript hardhatWorkerFunc_patrol
 
-	jump2byte @val01
+	scriptjump @val01
 
 @val02:
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $01
@@ -3390,7 +3390,7 @@ hardhatWorkerSubid03Script:
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $a0
 	callscript hardhatWorkerFunc_patrol
 
-	jump2byte @val02
+	scriptjump @val02
 
 @val03:
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $02
@@ -3409,7 +3409,7 @@ hardhatWorkerSubid03Script:
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $40
 	callscript hardhatWorkerFunc_patrol
 
-	jump2byte @val03
+	scriptjump @val03
 
 @val04:
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $01
@@ -3420,7 +3420,7 @@ hardhatWorkerSubid03Script:
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $60
 	callscript hardhatWorkerFunc_patrol
 
-	jump2byte @val04
+	scriptjump @val04
 
 
 ; ==============================================================================
@@ -3466,7 +3466,7 @@ poeScript:
 @disappearLoop:
 	asm15 poe_decCounterAndFlickerVisibility
 	jumpifmemoryset wcddb, $80, @end
-	jump2byte @disappearLoop
+	scriptjump @disappearLoop
 @end:
 	enableinput
 	scriptend
@@ -3487,14 +3487,14 @@ poeScript:
 	setangle $08
 	applyspeed $39
 
-	jump2byte @disappear
+	scriptjump @disappear
 
 
 @lastMeeting:
 	showtext TX_0b02
 	wait 30
 	giveitem TREASURE_TRADEITEM, $00
-	jump2byte @disappear
+	scriptjump @disappear
 
 
 ; ==============================================================================
@@ -3515,7 +3515,7 @@ oldZoraScript:
 	jumpiftradeitemeq TRADEITEM_SEA_UKELELE, @offerTrade
 
 	showtextlowindex <TX_0b34
-	jump2byte @enableInput
+	scriptjump @enableInput
 
 @offerTrade:
 	showtextlowindex <TX_0b35
@@ -3523,7 +3523,7 @@ oldZoraScript:
 
 	jumpiftextoptioneq $00, @acceptedTrade
 	showtextlowindex <TX_0b38
-	jump2byte @enableInput
+	scriptjump @enableInput
 
 @acceptedTrade:
 	showtextlowindex <TX_0b36
@@ -3532,13 +3532,13 @@ oldZoraScript:
 	wait 30
 
 	showtextlowindex <TX_0b37
-	jump2byte @enableInput
+	scriptjump @enableInput
 
 @alreadyGaveSword:
 	showtextlowindex <TX_0b39
 @enableInput:
 	enableinput
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; ==============================================================================
@@ -3636,7 +3636,7 @@ maskSalesmanScript:
 	showtext TX_0b0e
 	wait 30
 	jumpiftradeitemeq TRADEITEM_TASTY_MEAT, @promptForTrade
-	jump2byte @enableInput
+	scriptjump @enableInput
 
 @promptForTrade:
 	showtext TX_0b10
@@ -3645,7 +3645,7 @@ maskSalesmanScript:
 
 	; Declined trade
 	showtext TX_0b14
-	jump2byte @enableInput
+	scriptjump @enableInput
 
 @acceptedTrade:
 	showtext TX_0b45
@@ -3665,14 +3665,14 @@ maskSalesmanScript:
 
 	giveitem TREASURE_TRADEITEM,$04
 	setanimation $00
-	jump2byte @enableInput
+	scriptjump @enableInput
 
 @alreadyGaveDoggieMask:
 	showtext TX_0b15
 
 @enableInput:
 	enableinput
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; ==============================================================================
@@ -3754,7 +3754,7 @@ comedianScript:
 
 	asm15 comedian_disableMustache
 	setanimation $01
-	jump2byte @initNpc
+	scriptjump @initNpc
 
 @hasMustache:
 	asm15 comedian_enableMustache
@@ -3773,17 +3773,17 @@ comedianScript:
 
 @beforeBeatD2:
 	showtextlowindex <TX_0b2c
-	jump2byte @enableInput
+	scriptjump @enableInput
 
 @afterBeatD2:
 	showtextlowindex <TX_0b2d
-	jump2byte @enableInput
+	scriptjump @enableInput
 
 @afterBeatMoonlitGrotto:
 	showtextlowindex <TX_0b2e
 	wait 30
 	jumpiftradeitemeq TRADEITEM_CHEESY_MUSTACHE, @promptForTrade
-	jump2byte @noTrade
+	scriptjump @noTrade
 
 @promptForTrade:
 	showtextlowindex <TX_0b2f
@@ -3792,14 +3792,14 @@ comedianScript:
 
 @noTrade:
 	showtextlowindex <TX_0b31
-	jump2byte @enableInput
+	scriptjump @enableInput
 
 @acceptedTrade:
 	asm15 comedian_enableMustache
 	showtextlowindex <TX_0b30
 	wait 30
 	giveitem TREASURE_TRADEITEM,$07
-	jump2byte @enableInput
+	scriptjump @enableInput
 
 @alreadyGaveMustache:
 	showtextlowindex <TX_0b32
@@ -3807,7 +3807,7 @@ comedianScript:
 @enableInput:
 	wait 30
 	enableinput
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; ==============================================================================
@@ -5245,7 +5245,7 @@ goron_subid08_pressedAScript:
 	jumpifitemobtained TREASURE_BROTHER_EMBLEM, @moveAside
 
 	asm15 goron_showText_differentForPast, <TX_2491
-	jump2byte goron_enableInputAndResumeNappingLoop
+	scriptjump goron_enableInputAndResumeNappingLoop
 
 ; Link has the goron emblem, move aside
 @moveAside:
@@ -5269,11 +5269,11 @@ goron_subid08_pressedAScript:
 
 ; Check goron vase
 	jumpifitemobtained TREASURE_GORON_VASE, @haveVaseOrSirloin
-	jump2byte goron_enableInputAndResumeNappingLoop
+	scriptjump goron_enableInputAndResumeNappingLoop
 
 @checkSirloin_1:
 	jumpifitemobtained TREASURE_ROCK_BRISKET, @haveVaseOrSirloin
-	jump2byte goron_enableInputAndResumeNappingLoop
+	scriptjump goron_enableInputAndResumeNappingLoop
 
 
 @alreadyMovedAside:
@@ -5288,14 +5288,14 @@ goron_subid08_pressedAScript:
 
 ; Check goron vase
 	jumpifitemobtained TREASURE_GORON_VASE, @haveVaseOrSirloin
-	jump2byte @dontHaveVaseOrSirloin
+	scriptjump @dontHaveVaseOrSirloin
 
 @checkSirloin_2:
 	jumpifitemobtained TREASURE_ROCK_BRISKET, @haveVaseOrSirloin
 
 @dontHaveVaseOrSirloin:
 	asm15 goron_showText_differentForPast, <TX_2495 ; "Yeah, a vase/sirloin would be great"
-	jump2byte goron_enableInputAndResumeNappingLoop
+	scriptjump goron_enableInputAndResumeNappingLoop
 
 
 @haveVaseOrSirloin:
@@ -5306,14 +5306,14 @@ goron_subid08_pressedAScript:
 @rejectedTrade:
 	asm15 goron_showText_differentForPast, <TX_2497
 	writememory wTmpcfc0.goronCutscenes.goronGuardMovedAside, $01
-	jump2byte goron_enableInputAndResumeNappingLoop
+	scriptjump goron_enableInputAndResumeNappingLoop
 
 ; This gets executed if you say no, then talk to him again.
 @promptForTradeAfterRejection:
 	asm15 goron_showText_differentForPast, <TX_2498
 	wait 30
 	jumpiftextoptioneq $00, @acceptedTrade
-	jump2byte @rejectedTrade
+	scriptjump @rejectedTrade
 
 
 @acceptedTrade:
@@ -5326,7 +5326,7 @@ goron_subid08_pressedAScript:
 ; Get goronade, lose goron vase
 	asm15 loseTreasure, TREASURE_GORON_VASE
 	giveitem TREASURE_GORONADE, $00
-	jump2byte ++
+	scriptjump ++
 
 ; Get vase, lose rock sirloin
 @giveVase:
@@ -5336,11 +5336,11 @@ goron_subid08_pressedAScript:
 	orroomflag $40
 	wait 30
 	asm15 goron_showText_differentForPast, <TX_249a
-	jump2byte goron_enableInputAndResumeNappingLoop
+	scriptjump goron_enableInputAndResumeNappingLoop
 
 @alreadyTraded:
 	asm15 goron_showText_differentForPast, <TX_249b
-	jump2byte goron_enableInputAndResumeNappingLoop
+	scriptjump goron_enableInputAndResumeNappingLoop
 
 
 ; ==============================================================================
@@ -5361,7 +5361,7 @@ rafton_subid01Script:
 	wait 10
 	setanimation DIR_DOWN
 	settextid TX_270a
-	jump2byte @beforeD3NpcLoop
+	scriptjump @beforeD3NpcLoop
 
 @afterD3NpcLoop:
 	checkabutton
@@ -5371,7 +5371,7 @@ rafton_subid01Script:
 	showtextlowindex <TX_2710
 	wait 30
 	jumpiftradeitemeq TRADEITEM_MAGIC_OAR, @linkHasOar
-	jump2byte @enableInput
+	scriptjump @enableInput
 
 @linkHasOar:
 	showtextlowindex <TX_2711
@@ -5380,20 +5380,20 @@ rafton_subid01Script:
 
 	; Rejected trade
 	showtextlowindex <TX_2713
-	jump2byte @enableInput
+	scriptjump @enableInput
 
 @acceptedTrade:
 	showtextlowindex <TX_2712
 	wait 30
 	giveitem TREASURE_TRADEITEM, $0a
-	jump2byte @enableInput
+	scriptjump @enableInput
 
 @alreadyTraded:
 	showtextlowindex <TX_2714
 
 @enableInput:
 	enableinput
-	jump2byte @afterD3NpcLoop
+	scriptjump @afterD3NpcLoop
 
 
 ; ==============================================================================
@@ -5589,7 +5589,7 @@ interaction6b_subid04Script:
 @waitForGatesToOpen:
 	jumpifroomflagset $80, ++
 	wait 1
-	jump2byte @waitForGatesToOpen
+	scriptjump @waitForGatesToOpen
 ++
 	wait 40
 	setglobalflag GLOBALFLAG_MAKU_GIVES_ADVICE_FROM_PAST_MAP
@@ -5712,7 +5712,7 @@ fairyHidingMinigame_subid02Script:
 
 	asm15 fairyHidingMinigame_moveLinkBackLeft
 	wait 10
-	jump2byte @checkLinkLeaving
+	scriptjump @checkLinkLeaving
 
 @leave:
 	scriptend
@@ -5912,7 +5912,7 @@ companionScript_subid07Script_body:
 
 @wait:
 	jumpifmemoryset w1Companion.var3e, $02, ++
-	jump2byte @wait
+	scriptjump @wait
 ++
 	showtext TX_2100
 	ormemory wDimitriState, $01
@@ -5925,7 +5925,7 @@ companionScript_subid07Script_body:
 	showtext TX_2100
 	writememory w1Companion.var3d, $00
 	enableinput
-	jump2byte companionScript_subid07Script
+	scriptjump companionScript_subid07Script
 
 @savedDimitri:
 	disableinput
@@ -5933,7 +5933,7 @@ companionScript_subid07Script_body:
 
 	; First meeting
 	showtext TX_2101
-	jump2byte ++
+	scriptjump ++
 
 @notFirstMeeting:
 	showtext TX_2102
@@ -5982,7 +5982,7 @@ companionScript_subid03Script_body:
 
 	; First meeting
 	showtext TX_2000
-	jump2byte @alreadyExplainedSituation
+	scriptjump @alreadyExplainedSituation
 
 @notFirstMeeting:
 	showtext TX_2001
@@ -5992,7 +5992,7 @@ companionScript_subid03Script_body:
 	showtext TX_2003
 	writememory w1Companion.var3d, $00
 	enableinput
-	jump2byte companionScript_subid03Script
+	scriptjump companionScript_subid03Script
 
 @retrievedGloves:
 	showtext TX_2004
@@ -6024,7 +6024,7 @@ companionScript_subid0aScript_body:
 @waitForFairiesToLeave:
 	jumpifmemoryeq wTmpcfc0.fairyHideAndSeek.cfd2, $03, @fairiesLeft
 	wait 1
-	jump2byte @waitForFairiesToLeave
+	scriptjump @waitForFairiesToLeave
 
 @fairiesLeft:
 	showtext TX_1131
@@ -6054,7 +6054,7 @@ companionScript_subid09Script_body:
 @waitForFairy:
 	jumpifmemoryeq wTmpcfc0.fairyHideAndSeek.cfd2, $02, @fairyAppeared
 	wait 1
-	jump2byte @waitForFairy
+	scriptjump @waitForFairy
 
 @fairyAppeared:
 	showtext TX_112a
@@ -6551,7 +6551,7 @@ makuTree_subid00Script_body:
 --
 	checkabutton
 	asm15 makuTree_showTextWithOffsetAndUpdateMapText, $00
-	jump2byte --
+	scriptjump --
 
 
 @mode01_showTextWithLaugh:
@@ -6564,7 +6564,7 @@ makuTree_subid00Script_body:
 	asm15 makuTree_showTextWithOffsetAndUpdateMapText, $00
 	wait 1
 	asm15 makuTree_setAnimation, $00
-	jump2byte --
+	scriptjump --
 
 
 @mode02_showTwoTexts_frownOnSecond:
@@ -6581,7 +6581,7 @@ makuTree_subid00Script_body:
 	wait 1
 	asm15 makuTree_setAnimation, $00
 	enableinput
-	jump2byte --
+	scriptjump --
 
 
 @mode03_constantFrownAndShowText:
@@ -6592,7 +6592,7 @@ makuTree_subid00Script_body:
 --
 	checkabutton
 	asm15 makuTree_showTextWithOffsetAndUpdateMapText, $00
-	jump2byte --
+	scriptjump --
 
 
 @mode05_showTwoTexts_frownOnFirst:
@@ -6609,7 +6609,7 @@ makuTree_subid00Script_body:
 	asm15 makuTree_showTextWithOffsetAndUpdateMapText, $01
 	wait 1
 	enableinput
-	jump2byte --
+	scriptjump --
 
 
 @mode06:
@@ -6727,7 +6727,7 @@ makuTree_subid02Script_body:
 	wait 30
 	asm15 makuTree_setAnimation, $00
 	enableinput
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; Cutscene where Link gets the maku seed, then Twinrova appears
@@ -6775,7 +6775,7 @@ makuTree_subid06Script_part2_body:
 @npcLoop:
 	checkabutton
 	showloadedtext
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 
@@ -6808,7 +6808,7 @@ makuSprout_subid00Script_body:
 --
 	checkabutton
 	asm15 makuTree_showTextWithOffsetAndUpdateMapText, $01
-	jump2byte --
+	scriptjump --
 
 
 @mode01_happyAnimationWhileTalking:
@@ -6821,7 +6821,7 @@ makuSprout_subid00Script_body:
 	asm15 makuTree_showTextWithOffsetAndUpdateMapText, $00
 	wait 1
 	asm15 makuSprout_setAnimation, $00
-	jump2byte --
+	scriptjump --
 
 
 @mode02_showDifferentTextFirstTime:
@@ -6833,7 +6833,7 @@ makuSprout_subid00Script_body:
 --
 	checkabutton
 	asm15 makuTree_showTextWithOffsetAndUpdateMapText, $01
-	jump2byte --
+	scriptjump --
 
 
 ; ==============================================================================
@@ -6924,13 +6924,13 @@ goronElderScript_subid00_body:
 	wait 30
 
 	enableinput
-	jump2byte ++
+	scriptjump ++
 
 @npcLoop:
 	checkabutton
 ++
 	showtext TX_2489
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; NPC hanging out in rolling ridge (after getting D5 essence)
@@ -6944,7 +6944,7 @@ goronElderScript_subid01_body:
 @npcLoop:
 	checkabutton
 	showtext TX_24e4
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 ; ==============================================================================
@@ -7205,14 +7205,14 @@ patch_upstairsRepairTuniNutScript:
 	; First meeting
 	ormemory wPastRoomFlags+(<ROOM_AGES_1be), $06
 	showtextnonexitable TX_5800
-	jump2byte ++
+	scriptjump ++
 
 @alreadyMetPatch:
 	showtextnonexitable TX_5801
 ++
 	jumpiftextoptioneq $00, @saidYes1
 	showtext TX_5802
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 @saidYes1:
 	jumptable_objectbyte Interaction.var38
 	.dw @hasBrokenNut
@@ -7220,14 +7220,14 @@ patch_upstairsRepairTuniNutScript:
 
 @doesntHaveBrokenNut:
 	showtext TX_5803
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @hasBrokenNut:
 	asm15 patch_updateTextSubstitution
 	showtextnonexitable TX_5804
 	jumpiftextoptioneq $00, @saidYes2
 	showtext TX_5805
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @saidYes2:
 	asm15 patch_jump
@@ -7244,14 +7244,14 @@ patch_upstairsRepairSwordScript_body:
 	showtextnonexitable TX_5810
 	jumpiftextoptioneq $00, @saidYes1
 	showtext TX_5802
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @saidYes1:
 	asm15 patch_updateTextSubstitution
 	showtextnonexitable TX_5804
 	jumpiftextoptioneq $00, @saidYes2
 	showtext TX_5805
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @saidYes2:
 	asm15 patch_jump
@@ -7278,7 +7278,7 @@ patch_downstairsScript_body:
 @saidNo:
 	asm15 patch_updateTextSubstitution
 	showtext TX_5805
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @beginGame:
 	showtext TX_580a
@@ -7333,7 +7333,7 @@ carpenter_subid00Script_body:
 	; Don't have flute
 	showtextlowindex <TX_2301
 	setglobalflag GLOBALFLAG_TALKED_TO_HEAD_CARPENTER
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @haveFlute:
 	jumpifmemoryeq wTmpcfc0.carpenterSearch.cfd0, $01, @alreadyAgreedToSearch
@@ -7342,21 +7342,21 @@ carpenter_subid00Script_body:
 
 	; Refused to help
 	showtextlowindex <TX_2303
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @agreedToHelp:
 	showtextlowindex <TX_2304
 @repeatExplanation:
 	jumpiftextoptioneq $00, ++
 	showtextlowindex <TX_2305
-	jump2byte @repeatExplanation
+	scriptjump @repeatExplanation
 ++
 	writememory wTmpcfc0.carpenterSearch.cfd0, $01
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 @alreadyAgreedToSearch:
 	showtextlowindex <TX_2306
-	jump2byte @npcLoop
+	scriptjump @npcLoop
 
 
 
@@ -7532,7 +7532,7 @@ tokkayScript_justHeardTune_body:
 	resetmusic
 	setcollisionradii $06, $06
 	setstate $01
-	jump2byte tokkeyScript_alreadyTaughtTune
+	scriptjump tokkeyScript_alreadyTaughtTune
 
 
 ; ==============================================================================
@@ -7854,7 +7854,7 @@ symmetryNpcSubid8And9Script:
 	; Said no
 	showtextlowindex <TX_2d13
 	enableinput
-	jump2byte @loop
+	scriptjump @loop
 
 @saidYes:
 	asm15 symmetryNpc_setRoomFlagIfTalkedToRightSister
@@ -7864,12 +7864,12 @@ symmetryNpcSubid8And9Script:
 @repeat:
 	jumpiftextoptioneq $00, @almostDoneTalking
 	showtextlowindex <TX_2d14
-	jump2byte @repeat
+	scriptjump @repeat
 
 @almostDoneTalking:
 	showtextlowindex <TX_2d12
 	enableinput
-	jump2byte @sister1
+	scriptjump @sister1
 
 @script15_7879:
 	enableinput
@@ -7901,14 +7901,14 @@ symmetryNpcSubid8And9Script:
 	wait 30
 	jumpiftextoptioneq $00, @askForSecret
 	showtextlowindex <TX_2d25
-	jump2byte @resume
+	scriptjump @resume
 
 @askForSecret:
 	askforsecret SYMMETRY_SECRET
 	wait 30
 	jumpifmemoryeq wTextInputResult, $00, @validSecret
 	showtextlowindex <TX_2d27
-	jump2byte @resume
+	scriptjump @resume
 
 @validSecret:
 	setglobalflag GLOBALFLAG_BEGAN_SYMMETRY_SECRET
@@ -7918,7 +7918,7 @@ symmetryNpcSubid8And9Script:
 
 	; Don't have ring box, show different text
 	showtextlowindex <TX_2d2a
-	jump2byte @determineLevelToGive
+	scriptjump @determineLevelToGive
 
 @haveRingBox:
 	showtextlowindex <TX_2d28
@@ -7932,7 +7932,7 @@ symmetryNpcSubid8And9Script:
 
 	; Level 2 box
 	giveitem TREASURE_RING_BOX_SUBID_01
-	jump2byte ++
+	scriptjump ++
 
 @giveLevel3RingBox:
 	giveitem TREASURE_RING_BOX_SUBID_02
@@ -7947,7 +7947,7 @@ symmetryNpcSubid8And9Script:
 
 @resume:
 	enableinput
-	jump2byte @postgameLoop
+	scriptjump @postgameLoop
 
 
 ; Brothers with the tuni nut
@@ -7990,7 +7990,7 @@ symmetryNpcSubid6And7Script:
 	disableinput
 	wait 30
 	showtextlowindex <TX_2d04
-	jump2byte @respondToQuestion
+	scriptjump @respondToQuestion
 
 @questionLoop:
 	checkabutton
@@ -8001,14 +8001,14 @@ symmetryNpcSubid6And7Script:
 	jumpiftextoptioneq $00, @giveTuniNut
 	showtextlowindex <TX_2d07
 	enableinput
-	jump2byte @questionLoop
+	scriptjump @questionLoop
 
 @giveTuniNut:
 	showtextlowindex <TX_2d05
 	wait 30
 	giveitem TREASURE_TUNI_NUT_SUBID_00
 	enableinput
-	jump2byte @nutNotRepaired
+	scriptjump @nutNotRepaired
 
 @tuniNutPlaced:
 	rungenericnpclowindex <TX_2d0a
@@ -8041,7 +8041,7 @@ pirateCaptainScript:
 	showtextdifferentforlinked TX_3600, TX_3601
 	jumpiftextoptioneq $00, @gaveZoraScale
 	enableinput
-	jump2byte @loop
+	scriptjump @loop
 
 @gaveZoraScale:
 	showtextdifferentforlinked TX_3604, TX_3605
@@ -8133,7 +8133,7 @@ troySubid0Script:
 	jumpiftextoptioneq $00, @askForSecret
 	showtext TX_2c07
 	enableinput
-	jump2byte @loop
+	scriptjump @loop
 
 @askForSecret:
 	askforsecret TROY_SECRET
@@ -8143,12 +8143,12 @@ troySubid0Script:
 	; Invalid secret
 	showtext TX_2c09
 	enableinput
-	jump2byte @loop
+	scriptjump @loop
 
 @validSecret:
 	setglobalflag GLOBALFLAG_BEGAN_TROY_SECRET
 	showtext TX_2c08
-	jump2byte @askToBeginGame
+	scriptjump @askToBeginGame
 
 @alreadyBeganSecret:
 	showtext TX_2c0e
@@ -8157,7 +8157,7 @@ troySubid0Script:
 	jumpiftextoptioneq $00, @beganGame
 	showtext TX_2c0f
 	enableinput
-	jump2byte @loop
+	scriptjump @loop
 
 @beganGame:
 	showtext TX_2c0a
@@ -8170,7 +8170,7 @@ troySubid0Script:
 @waitingToCompleteGame:
 	checkabutton
 	showtext TX_2c10
-	jump2byte @waitingToCompleteGame
+	scriptjump @waitingToCompleteGame
 
 
 @returnedToScreenAfterGame:
@@ -8180,7 +8180,7 @@ troySubid0Script:
 
 	; Failed game
 	enableinput
-	jump2byte @waitingToCompleteGame
+	scriptjump @waitingToCompleteGame
 
 @giveReward:
 	showtext TX_2c0c
@@ -8193,7 +8193,7 @@ troySubid0Script:
 	generatesecret TROY_RETURN_SECRET
 	showtext TX_2c0d
 	enableinput
-	jump2byte @loop
+	scriptjump @loop
 
 
 ; Troy in his house
@@ -8206,11 +8206,11 @@ troySubid1Script:
 	asm15 troy_chooseRandomAnimalText
 	showtext TX_2c11
 	orroomflag $40
-	jump2byte @loop
+	scriptjump @loop
 ++
 	asm15 troy_chooseRandomAnimalText
 	showtext TX_2c12
-	jump2byte @loop
+	scriptjump @loop
 
 
 ; ==============================================================================
@@ -8331,7 +8331,7 @@ plenSubid0Script:
 	wait 30
 	jumpiftextoptioneq $00, @giveSecret
 	showtext TX_3701
-	jump2byte @resume
+	scriptjump @resume
 
 @giveSecret:
 	askforsecret PLEN_SECRET
@@ -8339,7 +8339,7 @@ plenSubid0Script:
 	jumpifmemoryeq wTextInputResult, $00, @validSecret
 	; Bad secret
 	showtext TX_3703
-	jump2byte @resume
+	scriptjump @resume
 
 @validSecret:
 	setglobalflag GLOBALFLAG_BEGAN_PLEN_SECRET
@@ -8349,14 +8349,14 @@ plenSubid0Script:
 	setglobalflag GLOBALFLAG_DONE_PLEN_SECRET
 	wait 30
 	showtext TX_3704
-	jump2byte @resume
+	scriptjump @resume
 
 @alreadyCompletedSecret:
 	showtext TX_3705
 
 @resume:
 	enableinput
-	jump2byte @loop
+	scriptjump @loop
 
 
 ; ==============================================================================

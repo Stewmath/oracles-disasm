@@ -132,7 +132,7 @@ def parseScript(address, output, recurse=0):
         elif b < 0x80:
             mem = read16BE(rom,address-1)
             newAddress = bankedAddress((address-1)//0x4000, mem)
-            output.write('jump2byte ' + scriptStr(newAddress) + '\n')
+            output.write('scriptjump ' + scriptStr(newAddress) + '\n')
             address+=1
             if recurse > 0:
                 parseScript(newAddress, output, recurse)
