@@ -2013,10 +2013,10 @@ wGrabbableObjectBuffer: ; $cc74
 ;
 ; When an object is grabbed:
 ; * state = 2
-; * state2 = 0
+; * substate = 0
 ; * enabled |= 2 (allows it to persist across screens)
 ;
-; state2 is set to 2 when the object is thrown / released?
+; substate is set to 2 when the object is thrown / released?
 	dsb $10
 wGrabbableObjectBufferEnd: ; $cc84
 	.db

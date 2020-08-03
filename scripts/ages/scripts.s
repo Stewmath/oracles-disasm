@@ -713,7 +713,7 @@ shopkeeperChestGameScript:
 	asm15 scriptHlp.shopkeeper_take10Rupees
 ++
 	setangleandanimation $08
-	writeobjectbyte Interaction.state2, $02 ; Signal to close whichever chest he faces
+	writeobjectbyte Interaction.substate, $02 ; Signal to close whichever chest he faces
 	writeobjectbyte Interaction.state,  $05
 	wait 60
 
@@ -726,7 +726,7 @@ shopkeeperChestGameScript:
 
 	enableallobjects
 	ormemory wInShop, $80
-	writeobjectbyte Interaction.state2, $00
+	writeobjectbyte Interaction.substate, $00
 	writeobjectbyte Interaction.state,  $05
 	; Script will stop here since state has been changed.
 
@@ -761,7 +761,7 @@ shopkeeperScript_openedCorrectChest:
 @nextRound:
 	showtextlowindex <TX_0e13
 	setangleandanimation $08
-	writeobjectbyte Interaction.state2, $02 ; Signal to close whichever chest he faces
+	writeobjectbyte Interaction.substate, $02 ; Signal to close whichever chest he faces
 	writeobjectbyte Interaction.state,  $05
 	wait 60
 
@@ -807,7 +807,7 @@ shopkeeperScript_openedCorrectChest:
 ; Linked talked to the shopkeep in the middle of the chest game.
 shopkeeperScript_talkDuringChestGame:
 	showtextlowindex <TX_0e1a
-	writeobjectbyte Interaction.state2, $01
+	writeobjectbyte Interaction.substate, $01
 	writeobjectbyte Interaction.state,  $05
 	; Script stops here since state has been changed.
 
@@ -2225,7 +2225,7 @@ impaScript2:
 	setspeed SPEED_200
 	moveup $20
 	addobjectbyte Interaction.var38, $1e
-	addobjectbyte Interaction.state2, $01
+	addobjectbyte Interaction.substate, $01
 	checkmemoryeq wTmpcfc0.genericCutscene.state, $05
 	setanimation $08
 	checkobjectbyteeq Interaction.animParameter, $01
@@ -3430,7 +3430,7 @@ ralphSubid07Script:
 	setanimation $02
 	wait 30
 
-	addobjectbyte     Interaction.state2, $01
+	addobjectbyte     Interaction.substate, $01
 	checkobjectbyteeq Interaction.var3e,  $01
 	wait 60
 
@@ -3491,7 +3491,7 @@ ralphSubid0aScript_linked:
 	writememory wTmpcfc0.genericCutscene.cfd0, $01
 	setspeed SPEED_100
 	moveup $29
-	checkobjectbyteeq Interaction.state2, $03
+	checkobjectbyteeq Interaction.substate, $03
 	wait 8
 
 	showtext TX_2a19
@@ -4180,7 +4180,7 @@ boySubid06Script:
 	asm15 scriptHlp.createExclamationMark, $28
 	wait 40
 
-	addobjectbyte Interaction.state2, $01 ; Enable normal animations
+	addobjectbyte Interaction.substate, $01 ; Enable normal animations
 	setspeed SPEED_180
 	moveleft $21
 	wait 30
@@ -7994,7 +7994,7 @@ interaction6b_subid0aScript:
 	jumpifobjectbyteeq Interaction.var38, $00, @waitForLinkToGrab
 	disableinput
 	asm15 objectSetInvisible
-	writeobjectbyte Interaction.state2, $01
+	writeobjectbyte Interaction.substate, $01
 	jumptable_objectbyte Interaction.var03
 	.dw @bombs
 	.dw @chevalRope

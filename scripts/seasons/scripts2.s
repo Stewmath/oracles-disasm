@@ -931,11 +931,11 @@ rosaHidingScript_firstEncounterIntro:
 	setcoords $48 $b0
 	orroomflag $40
 	delay 8
-	setstate2 $03
+	setsubstate $03
 	setspeed $50
 	moveleft $39
 	moveup $19
-	setstate2 $02
+	setsubstate $02
 	setanimation $02
 	showtext TX_2600
 	jump2byte rosaHidingScript_afterInitialScreenText
@@ -943,7 +943,7 @@ rosaHidingScript_firstEncounterIntro:
 rosaHidingScript_secondEncounterOnwardsIntro:
 	setspeed $50
 	setanimation $02
-	setstate2 $02
+	setsubstate $02
 	delay 8
 	showtext TX_2602
 	jump2byte rosaHidingScript_afterInitialScreenText
@@ -1058,7 +1058,7 @@ rosaHidingScript_portalScreen_body:
 	resetmusic
 	playsound $4d
 	asm15 scriptHlp.rosaHiding_hidingFinishedSetInitialRoomsFlags
-	setstate2 $03
+	setsubstate $03
 	setspeed $28
 	setangleandanimation $18
 	delay 6
@@ -1073,12 +1073,12 @@ rosaHidingScript_portalScreen_body:
 	scriptend
 
 rosaHidingScript_caught_body:
-	setstate2 $02
+	setsubstate $02
 	setdisabledobjectsto91
 	setspeed $50
 	setangleandanimation $10
 	showtext TX_2601
-	setstate2 $05
+	setsubstate $05
 	scriptend
 
 

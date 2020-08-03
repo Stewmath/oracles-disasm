@@ -235,8 +235,8 @@ _partCommon_setPositionOffsetAndRadiusFromAngle:
 	.db $02 $f8 $03 $06 ; DIR_LEFT
 
 ;;
-_partCommon_incState2:
+_partCommon_incSubstate:
 	ld h,d
-	ld l,Part.state2
+	ld l,Part.substate
 	inc (hl)
 	ret

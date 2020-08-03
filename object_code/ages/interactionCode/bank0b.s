@@ -215,7 +215,7 @@ interactionCode9a:
 	ld (de),a
 	ld (wDisallowMountingCompanion),a
 ++
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	dec a
 	jr z,@@substate1
@@ -227,7 +227,7 @@ interactionCode9a:
 	ld a,$10
 	cp (hl)
 	ret c
-	ld a,$01 ; [state2] = $01
+	ld a,$01 ; [substate] = $01
 	ld (de),a
 	ld bc,TX_2307
 	jp showText
@@ -253,7 +253,7 @@ interactionCode9a:
 	ld (de),a
 	ld a,ANGLE_RIGHT
 	ld (w1Link.angle),a
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	xor a
 	ld (de),a
 	ld a,(wLinkObjectIndex)
@@ -509,11 +509,11 @@ interactionCode9b:
 	jp objectCopyPosition
 
 @updateSubstate:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	cp $02
 	call nc,interactionRunScript
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -532,7 +532,7 @@ interactionCode9b:
 	ret z
 
 	; Initialize Link's speed/direction to move to the center of the screen
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.speed
 	ld (hl),SPEED_80
 	ld l,Interaction.xh
@@ -564,7 +564,7 @@ interactionCode9b:
 	jp objectApplySpeed
 ++
 	; Begin the script
-	call interactionIncState2
+	call interactionIncSubstate
 	ld hl,raftwreckCutsceneScript
 	jp interactionSetScript
 
@@ -578,7 +578,7 @@ interactionCode9b:
 	ld (hl),$00
 	ld hl,wGenericCutscene.cbba
 	ld (hl),$ff
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate3:
 @substate5:
@@ -587,7 +587,7 @@ interactionCode9b:
 	call flashScreen
 	ret z
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ldi a,(hl)
 	cp $03
 	ld a,$5a
@@ -609,14 +609,14 @@ interactionCode9b:
 	ret nz
 	ld a,$02
 	ld (wTmpcfc0.genericCutscene.state),a
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate7:
 	ld a,(wTmpcfc0.genericCutscene.state)
 	cp $03
 	jr nz,++
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),20
 	ret
@@ -1007,7 +1007,7 @@ interactionCode9e:
 
 ; Pushed block from right to left
 @subid0State3:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @subid0Substate0
@@ -1033,7 +1033,7 @@ interactionCode9e:
 	call @setInterleavedHoleGroundTile
 	ld a,$65
 	call @setInterleavedHoleGroundTile
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @subid0Substate1:
 	ldbc $63,$65
@@ -1045,7 +1045,7 @@ interactionCode9e:
 	call @setGroundTile
 	ld a,c
 	call @setPuddleTile
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @subid0Substate2:
 	ldbc $62,$66
@@ -1057,7 +1057,7 @@ interactionCode9e:
 	call @setInterleavedHoleGroundTile
 	ld a,c
 	call @setInterleavedHoleGroundTile
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @subid0Substate3:
 	ldbc $62,$66
@@ -1079,7 +1079,7 @@ interactionCode9e:
 	call @setInterleavedPuddleHoleTile
 	ld a,$68
 	call @setInterleavedHoleGroundTile
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @subid0Substate7:
 	call interactionDecCounter1
@@ -1089,7 +1089,7 @@ interactionCode9e:
 	call @setHoleTile
 	ld a,$68
 	call @setPuddleTile
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @subid0Substate8:
 	call interactionDecCounter1
@@ -1097,7 +1097,7 @@ interactionCode9e:
 	ld (hl),$08
 	ld a,$69
 	call @setInterleavedPuddleHoleTile
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @subid0Substate9:
 	call interactionDecCounter1
@@ -1105,10 +1105,10 @@ interactionCode9e:
 	ld (hl),90
 	ld c,$69
 
-@setWaterTileAndIncState2:
+@setWaterTileAndIncSubstate:
 	ld a,TILEINDEX_WATER
 	call setTile
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substateA:
 	call interactionDecCounter1
@@ -1118,7 +1118,7 @@ interactionCode9e:
 	call playSound
 	ld a,SND_SOLVEPUZZLE
 	call playSound
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substateB:
 	call interactionDecCounter1
@@ -1222,7 +1222,7 @@ interactionCode9e:
 
 ; Pushed block from left to right
 @subid1State3:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @subid1Substate0
@@ -1248,7 +1248,7 @@ interactionCode9e:
 	call @setInterleavedGroundHoleTile
 	ld a,$65
 	call @setInterleavedGroundHoleTile
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @subid1Substate1:
 	ldbc $65,$63
@@ -1264,7 +1264,7 @@ interactionCode9e:
 	call @setInterleavedGroundHoleTile
 	ld a,c
 	call @setInterleavedGroundHoleTile
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @subid1Substate3:
 	ldbc $66,$62
@@ -1286,7 +1286,7 @@ interactionCode9e:
 	call @setInterleavedHolePuddleTile
 	ld a,$68
 	call @setInterleavedGroundHoleTile
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @subid1Substate7:
 	call interactionDecCounter1
@@ -1295,7 +1295,7 @@ interactionCode9e:
 	ld a,$68
 	call @setGroundTile
 	ld c,$60
-	jp @setWaterTileAndIncState2
+	jp @setWaterTileAndIncSubstate
 
 @subid1Substate8:
 	call interactionDecCounter1
@@ -1303,7 +1303,7 @@ interactionCode9e:
 	ld (hl),$08
 	ld a,$69
 	call @setInterleavedHolePuddleTile
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @subid1Substate9:
 	call interactionDecCounter1
@@ -1311,7 +1311,7 @@ interactionCode9e:
 	ld (hl),$5a
 	ld a,$69
 	call @setHoleTile
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 ;;
 ; Swap the room layouts in all rooms affected by the flooding.
@@ -2269,7 +2269,7 @@ interactionCodea5:
 	ld (wDisabledObjects),a
 
 	ld a,$02
-	ld (w1Companion.state2),a
+	ld (w1Companion.substate),a
 	jp interactionDelete
 
 ;;
@@ -2459,7 +2459,7 @@ interactionCodea7:
 	ret
 
 @state1:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -2470,7 +2470,7 @@ interactionCodea7:
 	ld a,(wTmpcfc0.genericCutscene.state)
 	or a
 	jr z,++
-	call interactionIncState2
+	call interactionIncSubstate
 	ld bc,-$100
 	call objectSetSpeedZ
 ++
@@ -2480,7 +2480,7 @@ interactionCodea7:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),10
 	ret
@@ -2819,7 +2819,7 @@ interactionCodeaa:
 	jp objectSetVisible82
 
 @runSubid0Substates:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -2833,7 +2833,7 @@ interactionCodeaa:
 	ld a,(wTmpcfc0.genericCutscene.state)
 	cp $04
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),120
 	ld a,$05
@@ -2843,7 +2843,7 @@ interactionCodeaa:
 @substate1:
 	call interactionDecCounter1
 	jp nz,@updateSpeedZ
-	call interactionIncState2
+	call interactionIncSubstate
 	xor a
 	ld l,Interaction.zh
 	ld (hl),a
@@ -2854,7 +2854,7 @@ interactionCodeaa:
 @substate2:
 	call interactionDecCounter1
 	jr nz,++
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),60
 	ld bc,TX_3d09
@@ -2865,7 +2865,7 @@ interactionCodeaa:
 @substate3:
 	call interactionDecCounter1IfTextNotActive
 	jr nz,++
-	call interactionIncState2
+	call interactionIncSubstate
 	ld hl,wTmpcfc0.genericCutscene.state
 	ld (hl),$05
 ++
@@ -3570,7 +3570,7 @@ interactionCodeae:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -3598,7 +3598,7 @@ interactionCodeae:
 	ld h,d
 	ld l,Interaction.counter1
 	ld (hl),180
-	ld l,Interaction.state2
+	ld l,Interaction.substate
 	ld (hl),b
 	ret
 
@@ -3697,7 +3697,7 @@ interactionCodeae:
 	jr nz,@label_0b_236
 
 	xor a
-	ld l,Interaction.state2
+	ld l,Interaction.substate
 	ld (hl),a
 	ld l,Interaction.var33
 	ld (hl),a
@@ -3832,7 +3832,7 @@ _horizontalCreditsText_var03Nonzero:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -3844,7 +3844,7 @@ _horizontalCreditsText_var03Nonzero:
 	dec (hl)
 	jr nz,@applySpeed
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld b,$a0
 	ld l,Interaction.subid
 	ld a,(hl)
@@ -4109,7 +4109,7 @@ _twinrovaInCutscene_state1:
 	.dw interactionAnimate
 
 @subid0:
-	call checkInteractionState2
+	call checkInteractionSubstate
 	jr nz,@substate1
 
 @substate0:
@@ -4122,7 +4122,7 @@ _twinrovaInCutscene_state1:
 	ld (wGenericCutscene.cbb3),a
 	dec a
 	ld (wGenericCutscene.cbba),a
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate1:
 	ld hl,wGenericCutscene.cbb3
@@ -4425,7 +4425,7 @@ interactionCodeb4:
 
 @state1:
 	inc e
-	ld a,(de) ; [state2]
+	ld a,(de) ; [substate]
 	or a
 	call z,@spawnAllPodiums
 	call objectSetPriorityRelativeToLink_withTerrainEffects
@@ -4458,7 +4458,7 @@ interactionCodeb4:
 	ld a,$03
 	ldi (hl),a ; [state]
 	inc l
-	ld (hl),$02 ; [state2]
+	ld (hl),$02 ; [substate]
 	ret
 
 @textTable:
@@ -4466,7 +4466,7 @@ interactionCodeb4:
 
 @state2:
 	inc e
-	ld a,(de) ; [state2]
+	ld a,(de) ; [substate]
 	or a
 	call z,@spawnAllPodiums
 	call interactionRunScript
@@ -4684,7 +4684,7 @@ interactionCodeb5:
 	jp createEnergySwirlGoingIn
 
 @state1:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -4695,7 +4695,7 @@ interactionCodeb5:
 	call interactionDecCounter1
 	ret nz
 
-	call interactionIncState2
+	call interactionIncSubstate
 
 	ld l,Interaction.counter1
 	ld (hl),$08
@@ -4720,7 +4720,7 @@ interactionCodeb5:
 	ld b,$01
 	call flashScreen
 	ret z
-	call interactionIncState2
+	call interactionIncSubstate
 	ld a,$03
 	jp fadeinFromWhiteWithDelay
 
@@ -4989,7 +4989,7 @@ _vire_subid2:
 	jr nc,@animate
 
 	; Increment Zelda's state
-	ld a,Object.state2
+	ld a,Object.substate
 	call objectGetRelatedObject1Var
 	inc (hl)
 
@@ -5170,7 +5170,7 @@ interactionCodeb9:
 	.dw $ffc8 ; 6
 
 @state1:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -5181,7 +5181,7 @@ interactionCodeb9:
 	call interactionDecCounter1
 	ret nz
 	call objectSetVisible
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 
 @substate1:
@@ -5195,7 +5195,7 @@ interactionCodeb9:
 	cp (hl)
 	jr nz,@reachedTargetXPosition
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.zh
 	ld (hl),$00
 	ld l,Interaction.subid
@@ -5410,7 +5410,7 @@ interactionCodebc:
 
 
 @subid0State1:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @subid0Substate0
@@ -5429,7 +5429,7 @@ interactionCodebc:
 
 	; Exhausted position list
 	ld h,d
-	ld l,Interaction.state2
+	ld l,Interaction.substate
 	ld (hl),$01
 	ld l,Interaction.counter2
 	ld (hl),40
@@ -5459,7 +5459,7 @@ interactionCodebc:
 	call interactionDecCounter2
 	ret nz
 
-	ld l,Interaction.state2
+	ld l,Interaction.substate
 	inc (hl)
 	ld l,Interaction.counter2
 	ld (hl),40
@@ -5484,7 +5484,7 @@ interactionCodebc:
 	call interactionDecCounter2
 	ret nz
 
-	ld l,Interaction.state2
+	ld l,Interaction.substate
 	inc (hl)
 	ld l,Interaction.direction
 	ld (hl),$ff
@@ -5519,7 +5519,7 @@ interactionCodebc:
 ++
 	call @func_6eac
 	ld h,d
-	ld l,Interaction.state2
+	ld l,Interaction.substate
 	inc (hl)
 	ret
 
@@ -5528,14 +5528,14 @@ interactionCodebc:
 
 
 @subid2State1:
-	call checkInteractionState2
+	call checkInteractionSubstate
 	jr nz,++
 	call @updateFloating
 	call @animate
 	ld a,(wTmpcfc0.genericCutscene.state)
 	bit 0,a
 	ret z
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.direction
 	ld (hl),$ff
 	ret
@@ -6039,7 +6039,7 @@ interactionCodec1:
 	jp objectSetVisible82
 
 @state1:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -6053,14 +6053,14 @@ interactionCodec1:
 	ret nz
 	ld l,Interaction.counter1
 	ld (hl),40
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate1:
 	call @updateMovementAndSparkles
 	jr nz,@ret
 	ld l,Interaction.animCounter
 	ld (hl),$01
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate2:
 	call interactionAnimate
@@ -7353,7 +7353,7 @@ _greatFairy_subid1:
 
 @state1:
 	call interactionAnimate
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -7371,7 +7371,7 @@ _greatFairy_subid1:
 	ld (hl),SPEED_300
 	ld bc,TX_4109
 	call showText
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate1:
 	call retIfTextIsActive
@@ -7387,7 +7387,7 @@ _greatFairy_subid1:
 	and $1f
 	ld (hl),a
 	call interactionDecCounter1
-	jp z,interactionIncState2
+	jp z,interactionIncSubstate
 
 @updateSparklesAndSoundEffect:
 	ld a,(wFrameCounter)
@@ -7412,7 +7412,7 @@ _greatFairy_subid1:
 	cp $b0
 	ret nc
 	call fadeoutToWhite
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 ; Transition to next part of cutscene
 @substate3:
@@ -7595,7 +7595,7 @@ interactiond7_makuSeed:
 @state3:
 	call _interactiond7_updateSmallSparkles
 	call _interactiond7_updateFloating
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @state3Substate0
@@ -7615,7 +7615,7 @@ interactiond7_makuSeed:
 	ld (hl),20
 	inc l
 	ld (hl),$08
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 
 ; Spawning the essences
@@ -7648,7 +7648,7 @@ interactiond7_makuSeed:
 	or a
 	ret nz
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),120
 	ret
@@ -7675,7 +7675,7 @@ interactiond7_makuSeed:
 	ld (wTmpcfc0.genericCutscene.state),a
 	ld a,$20
 	ld (wTmpcfc0.genericCutscene.cfc1),a
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 
 ; Essences rotating & moving in
@@ -7703,7 +7703,7 @@ interactiond7_makuSeed:
 	call interactionDecCounter1
 	ret nz
 	ld (hl),60
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 
 ; Fadeout as the essences leave the screen
@@ -7714,7 +7714,7 @@ interactiond7_makuSeed:
 	call playSound
 	ld a,$04
 	call fadeoutToWhiteWithDelay
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 
 ; Waiting for fadeout to end
@@ -7731,7 +7731,7 @@ interactiond7_makuSeed:
 
 
 @state4:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @state4Substate0
@@ -7758,7 +7758,7 @@ interactiond7_makuSeed:
 	ld e,Interaction.counter1
 	ld a,30
 	ld (de),a
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 ; b0: tile position
 ; b1: tile index
@@ -7791,7 +7791,7 @@ interactiond7_makuSeed:
 	ld (hl),120
 	ld a,$08
 	call fadeinFromWhiteWithDelay
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 
 ; Fading back in
@@ -7801,7 +7801,7 @@ interactiond7_makuSeed:
 	ret nz
 	ld a,SND_SOLVEPUZZLE_2
 	call playSound
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 
 @state4Substate3:
@@ -7818,7 +7818,7 @@ interactiond7_makuSeed:
 	jr z,@@unlinkedGame
 
 	call fadeoutToBlack
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @@unlinkedGame:
 	xor a

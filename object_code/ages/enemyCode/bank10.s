@@ -132,7 +132,7 @@ _veranFinal_turtleForm_state0:
 ; Showing text before fight starts
 _veranFinal_turtleForm_state1:
 	inc e
-	ld a,(de) ; [state2]
+	ld a,(de) ; [substate]
 	rst_jumpTable
 	.dw @substate0
 	.dw @substate1
@@ -146,12 +146,12 @@ _veranFinal_turtleForm_state1:
 	call playSound
 	ld bc,TX_5614
 	call showText
-	jp _ecom_incState2
+	jp _ecom_incSubstate
 
 @substate1:
 	ld h,d
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	xor a
 	ld (wDisabledObjects),a
 	ld (wMenuDisabled),a
@@ -289,7 +289,7 @@ _veranFinal_turtleForm_state5:
 	jr nc,@jumpAgain
 
 	; Open face
-	inc (hl) ; [state2] = $06
+	inc (hl) ; [substate] = $06
 	ld l,Enemy.counter1
 	ld (hl),$08
 	ld a,SND_GORON
@@ -411,7 +411,7 @@ _veranFinal_turtleForm_stateA:
 
 	call dropLinkHeldItem
 	call clearAllParentItems
-	call _ecom_incState2
+	call _ecom_incSubstate
 
 	call checkIsLinkedGame
 	ld bc,TX_5615
@@ -424,7 +424,7 @@ _veranFinal_turtleForm_stateA:
 	ld a,(wTextIsActive)
 	or a
 	ret nz
-	call _ecom_incState2
+	call _ecom_incSubstate
 	ld l,Enemy.counter2
 	ld (hl),40
 	ld l,Enemy.yh
@@ -440,7 +440,7 @@ _veranFinal_turtleForm_stateA:
 	ldbc INTERACID_MISC_PUZZLES, $21
 	call objectCreateInteraction
 	ret nz
-	jp _ecom_incState2
+	jp _ecom_incSubstate
 
 @substate3:
 	ld a,(wPaletteThread_mode)
@@ -557,7 +557,7 @@ _veranFinal_spiderForm_state3:
 _veranFinal_spiderForm_state4:
 	ld e,Enemy.var03
 	ld a,(de)
-	ld e,Enemy.state2
+	ld e,Enemy.substate
 	rst_jumpTable
 	.dw _veranFinal_spiderForm_rushAttack
 	.dw _veranFinal_spiderForm_jumpAttack
@@ -577,7 +577,7 @@ _veranFinal_spiderForm_rushAttack:
 	jp enemyAnimate
 
 @substate0:
-	call _ecom_incState2
+	call _ecom_incSubstate
 	inc l
 	ld (hl),60 ; [counter1]
 	ld l,Enemy.speed
@@ -604,7 +604,7 @@ _veranFinal_spiderForm_jumpAttack:
 	ld b,PARTID_VERAN_SPIDERWEB
 	call _ecom_spawnProjectile
 	ret nz
-	call _ecom_incState2
+	call _ecom_incSubstate
 	ld l,Enemy.var38
 	ld (hl),$00
 	call _veranFinal_spiderForm_setVulnerableCollisionData
@@ -637,7 +637,7 @@ _veranFinal_spiderForm_jumpAttack:
 	cp $b0
 	ret c
 ++
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	inc (hl)
 	inc l
 	ld (hl),90 ; [counter1]
@@ -651,7 +651,7 @@ _veranFinal_spiderForm_jumpAttack:
 	call _ecom_decCounter1
 	ret nz
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	ld l,Enemy.collisionType
 	set 7,(hl)
 	ld l,Enemy.speedZ
@@ -676,7 +676,7 @@ _veranFinal_spiderForm_jumpAttack:
 	ret nz
 
 	; Landed
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	inc (hl)
 	inc l
 	ld (hl),120 ; [counter1]
@@ -709,7 +709,7 @@ _veranFinal_spiderForm_webAttack:
 _veranFinal_spiderForm_webAttack_substate0:
 	ld h,d
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	inc l
 	ld (hl),30 ; [counter1]
 	ld l,Enemy.var38
@@ -731,7 +731,7 @@ _veranFinal_spiderForm_webAttack_substate1:
 	inc l
 	ld (hl),$08 ; [counter2]
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 
 _veranFinal_spiderForm_setVulnerableCollisionData:
 	ld h,d
@@ -752,7 +752,7 @@ _veranFinal_spiderForm_webAttack_substate2:
 	ret nz
 	ld l,Part.subid
 	inc (hl) ; [subid] = 1
-	call _ecom_incState2
+	call _ecom_incSubstate
 	inc l
 	ld (hl),90 ; [counter1]
 	jr _veranFinal_spiderForm_resetCollisionData
@@ -773,7 +773,7 @@ _veranFinal_spiderForm_webAttack_substate3:
 	jp nz,_veranFinal_spiderForm_setCounter2AndInitState2
 
 	; Grabbed
-	call _ecom_incState2
+	call _ecom_incSubstate
 	inc l
 	ld (hl),$10
 	ld a,$06
@@ -792,7 +792,7 @@ _veranFinal_spiderForm_webAttack_substate4:
 
 	ld (hl),$04 ; [counter1]
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	ld a,$05
 	call enemySetAnimation
 	ld a,$04
@@ -847,7 +847,7 @@ _veranFinal_spiderForm_webAttack_substate7:
 
 
 _veranFinal_grabbingLink:
-	ld hl,w1Link.state2
+	ld hl,w1Link.substate
 	ld (hl),$02
 	ld l,<w1Link.collisionType
 	set 7,(hl)
@@ -1116,7 +1116,7 @@ _veranFinal_beeForm_state9:
 	jr nz,_veranFinal_beeForm_animate2
 	ld (hl),25 ; [counter1]
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 
 _veranFinal_beeForm_animate2:
 	jp enemyAnimate
@@ -1325,7 +1325,7 @@ _veranFinal_spiderForm_decideWhetherToAttack:
 	ld l,Enemy.state
 	ld (hl),$04
 	inc l
-	ld (hl),$00 ; [state2]
+	ld (hl),$00 ; [substate]
 	scf
 	ret
 
@@ -1643,7 +1643,7 @@ _ramrockArm_subid0:
 
 	inc a
 	ld (de),a
-	ld e,Enemy.state2
+	ld e,Enemy.substate
 	ld a,$06
 	ld (de),a
 	ld a,60
@@ -1651,7 +1651,7 @@ _ramrockArm_subid0:
 	ld (de),a
 
 @runStates:
-	ld e,Enemy.state2
+	ld e,Enemy.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw _ramrockArm_subid0_substate0
@@ -1685,7 +1685,7 @@ _ramrockArm_subid0_substate0:
 	ret nz
 
 	; Angle is now directly left or right
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	inc (hl)
 	ld l,Enemy.subid
 	ld b,(hl)
@@ -1723,7 +1723,7 @@ _ramrockArm_subid0_substate2:
 	cp $10
 	ret nz
 
-	call _ecom_incState2
+	call _ecom_incSubstate
 	ld l,Enemy.angle
 	ld (hl),a
 	ld l,Enemy.counter1
@@ -1754,7 +1754,7 @@ _ramrockArm_subid0_substate3:
 	jr nz,@moveTowardLink
 
 @sword:
-	ld e,Enemy.state2
+	ld e,Enemy.substate
 	ld a,$05
 	ld (de),a
 
@@ -1778,7 +1778,7 @@ _ramrockArm_subid0_substate3:
 
 
 _ramrockArm_subid0_moveBackToRamrock:
-	ld e,Enemy.state2
+	ld e,Enemy.substate
 	ld a,$04
 	ld (de),a
 	ld e,Enemy.speed
@@ -1801,7 +1801,7 @@ _ramrockArm_subid0_substate4:
 	ret nz
 	ld a,SND_BOMB_LAND
 	call playSound
-	ld e,Enemy.state2
+	ld e,Enemy.substate
 	ld a,$02
 	ld (de),a
 	ld e,Enemy.counter2
@@ -1874,7 +1874,7 @@ _ramrockArm_subid0_substate6:
 
 ; Bomb grabber hands
 _ramrockArm_subid2:
-	ld e,Enemy.state2
+	ld e,Enemy.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw _ramrockArm_subid2_substate0
@@ -1892,7 +1892,7 @@ _ramrockArm_subid2_substate0:
 
 	ld a,SND_SCENT_SEED
 	call playSound
-	jp _ecom_incState2
+	jp _ecom_incSubstate
 
 _ramrockArm_subid2_substate1:
 	ld a,Object.subid
@@ -1908,7 +1908,7 @@ _ramrockArm_subid2_substate1:
 
 	ld l,Enemy.visible
 	res 7,(hl)
-	jp _ecom_incState2
+	jp _ecom_incSubstate
 
 _ramrockArm_subid2_substate2:
 	call _ramrockArm_subid2_copyRamrockPosition
@@ -1991,7 +1991,7 @@ _ramrockArm_deleteSelf:
 
 ; Shield hands
 _ramrockArm_subid4:
-	ld e,Enemy.state2
+	ld e,Enemy.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw _ramrockArm_subid4_substate0
@@ -2012,7 +2012,7 @@ _ramrockArm_subid4_substate0:
 	ld (hl),SPEED_100
 	ld l,Enemy.counter2
 	ld (hl),62
-	jp _ecom_incState2
+	jp _ecom_incSubstate
 
 
 _ramrockArm_subid4_substate1:
@@ -2024,7 +2024,7 @@ _ramrockArm_subid4_substate1:
 	call _ecom_decCounter2
 	jp nz,objectApplySpeed
 
-	call _ecom_incState2
+	call _ecom_incSubstate
 	ld e,Enemy.subid
 	ld a,(de)
 	rrca
@@ -2039,7 +2039,7 @@ _ramrockArm_subid4_substate1:
 
 
 _ramrockArm_subid4_substate2:
-	ld a,Object.state2
+	ld a,Object.substate
 	call objectGetRelatedObject1Var
 	ld a,(hl)
 	dec a
@@ -2097,7 +2097,7 @@ _ramrockArm_subid4_collisionOccurred:
 	ld (hl),Object.xh
 	ld l,Enemy.var36
 	ld (hl),$10
-	jp _ecom_incState2
+	jp _ecom_incSubstate
 
 
 _ramrockArm_subid4_substate3:
@@ -2128,7 +2128,7 @@ _ramrockArm_subid4_substate3:
 	cp $0d
 	jr z,_ramrockArm_subid4_updateXPosition
 
-	ld e,Enemy.state2
+	ld e,Enemy.substate
 	ld a,$02
 	ld (de),a
 	jr _ramrockArm_subid4_updateXPosition
@@ -2261,7 +2261,7 @@ enemyCode06:
 	ld l,Enemy.state
 	ld (hl),$05
 	inc l
-	ld (hl),$00 ; [state2]
+	ld (hl),$00 ; [substate]
 	ld l,Enemy.counter1
 	ld (hl),60
 	jr @normalStatus
@@ -2323,19 +2323,19 @@ _veranFairy_state1:
 	jp nz,_ecom_flickerVisibility
 	ld (hl),$08
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	jp objectSetVisible83
 
 @substate1:
 	call _ecom_decCounter1
 	ret nz
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	ld bc,TX_560f
 	jp showText
 
 @substate2:
-	call _ecom_incState2
+	call _ecom_incSubstate
 	ld l,Enemy.counter1
 	ld (hl),30
 	ld a,$04
@@ -2349,7 +2349,7 @@ _veranFairy_state1:
 	ret nz
 	ld (hl),10 ; [counter1]
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 
 @strikeLightning:
 	call getFreePartSlot
@@ -2378,7 +2378,7 @@ _veranFairy_state1:
 	call _ecom_decCounter1
 	ret nz
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	ld c,$59
 	call @strikeLightning
 	jp fadeoutToWhite
@@ -2398,7 +2398,7 @@ _veranFairy_state1:
 	pop bc
 	dec b
 	jr nz,@loop
-	jp _ecom_incState2
+	jp _ecom_incSubstate
 
 @pillarPositions:
 	.db $23 $33 $63 $73 $45 $55 $49 $59
@@ -2423,7 +2423,7 @@ _veranFairy_state1:
 	dec b
 	jr nz,@nextMimic
 
-	call _ecom_incState2
+	call _ecom_incSubstate
 	ld l,Enemy.counter1
 	ld (hl),30
 
@@ -2592,7 +2592,7 @@ _veranFairy_state5:
 	jp objectSetVisible82
 
 @substate1:
-	call _ecom_incState2
+	call _ecom_incSubstate
 	ld l,Enemy.counter2
 	ld (hl),65
 	ld bc,TX_5612
@@ -2979,7 +2979,7 @@ _ramrock_state8_substate0:
 	ld e,Enemy.stunCounter
 	ld a,60
 	ld (de),a
-	jp _ecom_incState2
+	jp _ecom_incSubstate
 
 _ramrock_state8_substate1:
 	ld e,Enemy.stunCounter
@@ -3009,7 +3009,7 @@ _ramrock_state8_substate1:
 	dec c
 	jr z,@spawnArm
 
-	jp _ecom_incState2
+	jp _ecom_incSubstate
 
 _ramrock_state8_substate2:
 	ld e,Enemy.subid
@@ -3019,14 +3019,14 @@ _ramrock_state8_substate2:
 	ld e,Enemy.counter1
 	ld a,$02
 	ld (de),a
-	call _ecom_incState2
+	call _ecom_incSubstate
 	ld a,PALH_84
 	jp loadPaletteHeader
 
 _ramrock_state8_substate3:
 	call _ecom_decCounter1
 	ret nz
-	call _ecom_incState2
+	call _ecom_incSubstate
 	ld a,SND_SWORD_OBTAINED
 	call playSound
 	ld l,Enemy.subid
@@ -3040,7 +3040,7 @@ _ramrock_state8_substate4:
 	ld a,(de)
 	or a
 	ret z
-	call _ecom_incState2
+	call _ecom_incSubstate
 	ld l,Enemy.angle
 	ld (hl),$00
 	ld a,$00
@@ -3152,7 +3152,7 @@ _ramrock_bombPhase_substate0:
 	inc l
 	ld (hl),d
 
-	jp _ecom_incState2
+	jp _ecom_incSubstate
 
 _ramrock_bombPhase_substate1:
 	ld e,Enemy.subid
@@ -3171,7 +3171,7 @@ _ramrock_bombPhase_substate1:
 	ld (hl),$08
 	ld a,$01
 	call enemySetAnimation
-	jp _ecom_incState2
+	jp _ecom_incSubstate
 
 _ramrock_bombPhase_substate2:
 	ld c,$00
@@ -3190,7 +3190,7 @@ _ramrock_bombPhase_gotoSubstate3:
 	ld a,$04
 	ldi (hl),a
 	ld (hl),50 ; [counter2]
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	ld (hl),$03
 	ret
 
@@ -3223,7 +3223,7 @@ _ramrock_bombPhase_substate3:
 	jp objectNudgeAngleTowards
 
 _label_10_236:
-	call _ecom_incState2
+	call _ecom_incSubstate
 	ld a,$02
 	jp enemySetAnimation
 
@@ -3263,7 +3263,7 @@ _ramrock_bombPhase_substate4:
 ; "Seed" phase
 _ramrock_seedPhase:
 	ld h,d
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	ld a,(hl)
 	or a
 	jr z,@runSubstate
@@ -3317,7 +3317,7 @@ _ramrock_seedPhase:
 	ld (hl),$0c
 
 @runSubstate:
-	ld e,Enemy.state2
+	ld e,Enemy.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw _ramrock_seedPhase_substate0
@@ -3372,7 +3372,7 @@ _ramrock_seedPhase_substate0:
 	cp $05
 	jr z,@spawnArm
 
-	jp _ecom_incState2
+	jp _ecom_incSubstate
 
 @updateMovement:
 	call objectGetRelativeAngle
@@ -3404,7 +3404,7 @@ _ramrock_seedPhase_6a94:
 
 _ramrock_seedPhase_resumeNormalMovement:
 	ld h,d
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	ld (hl),$02
 	ld l,Enemy.counter2
 	ld (hl),120
@@ -3443,7 +3443,7 @@ _ramrock_seedPhase_substate2:
 	jr z,@gotoNextSubstate
 
 	ld (hl),$0f ; [counter2]
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	ld (hl),$06
 	ld l,Enemy.counter1
 	ld (hl),60
@@ -3458,7 +3458,7 @@ _ramrock_seedPhase_substate2:
 	ld (hl),$0e
 	ld l,Enemy.angle
 	ld (hl),$18
-	call _ecom_incState2
+	call _ecom_incSubstate
 
 @setAnimation0:
 	ld a,$00
@@ -3472,7 +3472,7 @@ _ramrock_seedPhase_substate3:
 	call _ramrock_updateHorizontalMovement
 	ret nz
 
-	call _ecom_incState2
+	call _ecom_incSubstate
 	ld l,Enemy.counter1
 	ld (hl),180
 	inc l
@@ -3504,7 +3504,7 @@ _ramrock_seedPhase_substate4:
 	jp _ramrock_updateHorizontalMovement
 
 @gotoNextSubstate:
-	call _ecom_incState2
+	call _ecom_incSubstate
 	ld l,Enemy.counter1
 	ld (hl),90
 	ld l,Enemy.subid
@@ -3549,7 +3549,7 @@ _ramrock_glovePhase_substate0:
 	ld a,(hl)
 	cp c
 	jr nz,@updateMovement
-	call _ecom_incState2
+	call _ecom_incSubstate
 
 	ld bc,$e001
 @spawnArm:
@@ -3586,7 +3586,7 @@ _ramrock_glovePhase_substate1:
 	ld a,(de)
 	cp $03
 	ret nz
-	call _ecom_incState2
+	call _ecom_incSubstate
 	ld l,Enemy.counter2
 	ld (hl),$02
 	ld a,PALH_84
@@ -3613,7 +3613,7 @@ _ramrock_glovePhase_gotoSubstate3:
 	call objectSetSpeedZ
 	ld l,Enemy.subid
 	ld (hl),$11
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	ld (hl),$03
 	ld l,Enemy.angle
 	ld (hl),$08
@@ -3650,7 +3650,7 @@ _ramrock_glovePhase_substate3:
 	jr nz,+
 	set 5,(hl)
 +
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	ld (hl),$04
 	ret
 

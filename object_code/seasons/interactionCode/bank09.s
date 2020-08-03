@@ -2010,7 +2010,7 @@ interactionCode68:
 	ld b,INTERACID_FALLDOWNHOLE
 	jp objectCreateInteractionWithSubid00
 @state2:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @@substate0
@@ -2142,7 +2142,7 @@ interactionCode69:
 	.dw @@state2
 	.dw @@state3
 @@state0:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @@@substate0
@@ -2164,7 +2164,7 @@ interactionCode69:
 	jp z,interactionDelete
 	call getThisRoomFlags
 	set 6,(hl)
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,$01
 	ld (de),a
 	ld a,$f0
@@ -2499,7 +2499,7 @@ interactionCode6a:
 	jp interactionAnimate
 @@state3:
 	call interactionAnimate
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @@@substate0
@@ -2552,7 +2552,7 @@ interactionCode6a:
 	ret
 
 @@state4:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @@@substate0
@@ -2644,7 +2644,7 @@ interactionCode6a:
 	jr z,+
 	jp @func_5ee1
 +
-	call interactionIncState2
+	call interactionIncSubstate
 	ld a,($cfd6)
 	ld l,$46
 	ld (hl),a
@@ -2675,7 +2675,7 @@ interactionCode6a:
 	dec (hl)
 	jr z,@@@func_5dab
 	call @@func_5e77
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,$01
 	ld (de),a
 	xor a
@@ -2685,7 +2685,7 @@ interactionCode6a:
 	ld bc,TX_0104
 	call showText
 	ld a,$04
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld (de),a
 	ld a,$ff
 	ld ($cfd0),a
@@ -2710,7 +2710,7 @@ interactionCode6a:
 @@@warpDestVariables:
 	m_HardcodedWarpA ROOM_SEASONS_124 $00 $14 $03
 @@state5:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @@@substate0
@@ -2720,7 +2720,7 @@ interactionCode6a:
 	.dw @@state4@substate4
 @@@substate0:
 	call retIfTextIsActive
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,$01
 	ld (de),a
 	jp fastFadeoutToWhite
@@ -2736,7 +2736,7 @@ interactionCode6a:
 	ld (hl),$48
 	ld l,$08
 	ld (hl),$02
-	call interactionIncState2
+	call interactionIncSubstate
 	ld a,$81
 	ld ($cca4),a
 	ld ($cbca),a
@@ -2786,7 +2786,7 @@ interactionCode6a:
 	ld hl,danceLeaderScript_boomerang
 @@@func_5e68:
 	call interactionSetScript
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,$03
 	ld (de),a
 	ret
@@ -4130,7 +4130,7 @@ interactionCode6d:
 	.dw _strangeBrothersSubId2
 
 _rosaSubId0:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -4249,7 +4249,7 @@ _rosaSubId0:
 	.db $cb $bb $ab $9b $9a
 
 _rosaSubId1:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -4746,7 +4746,7 @@ interactionCode6e:
 	ld hl,stealingFeatherScript
 	jp interactionSetScript
 @@state2:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @@substate0
@@ -5375,7 +5375,7 @@ _blainoSubid01:
 	jp objectSetVisiblec1
 
 @state1:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -5387,7 +5387,7 @@ _blainoSubid01:
 	or a
 	jr z,@substate2
 	ld h,d
-	ld l,Interaction.state2
+	ld l,Interaction.substate
 	inc (hl)
 	ld l,Interaction.animCounter
 	ld (hl),$01
@@ -5404,7 +5404,7 @@ _blainoSubid01:
 	ld a,(hl)
 	or a
 	jr z,+
-	ld l,Interaction.state2
+	ld l,Interaction.substate
 	inc (hl)
 +
 	jp interactionAnimate
@@ -5857,7 +5857,7 @@ interactionCode75:
 	pop de
 	ret
 @subid1:
-	call checkInteractionState2
+	call checkInteractionSubstate
 	jr nz,@subid2
 	call interactionAnimate
 	ld h,d
@@ -6653,7 +6653,7 @@ interactionCode81:
 	ld ($cc02),a
 	ret
 @state3:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -6911,7 +6911,7 @@ interactionCode82:
 	call interactionInitGraphics
 	jp objectSetVisible82
 @state1:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -6931,7 +6931,7 @@ interactionCode82:
 	ld a,(de)
 	cp b
 	jr c,@func_79fc
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$46
 	ld (hl),$14
 	ld a,$06
@@ -6956,7 +6956,7 @@ interactionCode82:
 	ld (hl),$18
 	ld l,$50
 	ld (hl),$28
-	jp interactionIncState2
+	jp interactionIncSubstate
 @substate2:
 	call @func_7a06
 	call objectGetRelatedObject1Var
@@ -6965,7 +6965,7 @@ interactionCode82:
 	add $04
 	call _func_7a9f
 	jp nz,objectApplySpeed
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$46
 	ld (hl),$0c
 	ld l,$4e
@@ -6980,7 +6980,7 @@ interactionCode82:
 	call objectApplySpeed
 	jr ++
 @func_7a4f:
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$46
 	ld (hl),$1e
 	ld l,$49
@@ -6994,7 +6994,7 @@ interactionCode82:
 	call _func_7aa5
 	call interactionDecCounter1
 	ret nz
-	jp interactionIncState2
+	jp interactionIncSubstate
 @substate5:
 	call @func_7a06
 	call _func_7aa5
@@ -7081,7 +7081,7 @@ interactionCode83:
 	ld h,d
 	ld l,$5a
 	res 6,(hl)
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @@susbtate0
@@ -7101,7 +7101,7 @@ interactionCode83:
 	ld a,(hl)
 	inc e
 	ld (de),a
-	jp interactionIncState2
+	jp interactionIncSubstate
 @@susbtate1:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
@@ -7125,7 +7125,7 @@ interactionCode83:
 	ld l,a
 	call compareHlToBc
 	ret c
-	jp interactionIncState2
+	jp interactionIncSubstate
 @@susbtate2:
 	ld a,($cceb)
 	cp $02
@@ -7661,7 +7661,7 @@ interactionCode88:
 	ld a,(de)
 	or a
 	jr nz,+
-	call interactionIncState2
+	call interactionIncSubstate
 	ld hl,_seasonsTable_09_7f33
 	jp _seasonsFunc_09_7f01
 +
@@ -7680,7 +7680,7 @@ interactionCode88:
 	or a
 	jp nz,interactionDelete
 +
-	call checkInteractionState2
+	call checkInteractionSubstate
 	jr nz,+
 	call interactionDecCounter1
 	ret nz
@@ -7689,7 +7689,7 @@ interactionCode88:
 	call getRandomNumber_noPreserveVars
 	and $01
 	ret z
-	call interactionIncState2
+	call interactionIncSubstate
 	call getRandomNumber_noPreserveVars
 	and $03
 	ld hl,_seasonsTable_09_7f2b

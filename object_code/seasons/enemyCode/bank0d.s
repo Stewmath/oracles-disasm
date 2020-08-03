@@ -975,7 +975,7 @@ enemyCode54:
 @stateC:
 	ld e,Enemy.var03
 	ld a,(de)
-	ld e,Enemy.state2
+	ld e,Enemy.substate
 	rst_jumpTable
 	.dw @stateCvar03_0
 	.dw @stateCvar03_1
@@ -1759,7 +1759,7 @@ enemyCode56:
 
 @state2:
 	ld h,d
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	ld a,(hl)
 	or a
 	jr nz,+
@@ -1786,7 +1786,7 @@ enemyCode56:
 	jp z,enemyAnimate
 	xor a
 	ld (hl),a
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	ldd (hl),a
 	inc (hl)
 	jp @snore
@@ -1923,7 +1923,7 @@ enemyCode5f:
 @state1:
 	call seasonsFunc_0d_786d
 	ld b,h
-	ld e,Enemy.state2
+	ld e,Enemy.substate
 	ld a,(hl)
 	rst_jumpTable
 	.dw @seasonsFunc_0d_76fa

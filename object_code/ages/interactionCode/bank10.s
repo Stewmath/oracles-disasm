@@ -683,7 +683,7 @@ _interactiondc_subid02:
 
 ; Screen shaking just before present collapse
 @state2:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -698,7 +698,7 @@ _interactiondc_subid02:
 	call objectCreateExclamationMark
 	call clearAllParentItems
 	call dropLinkHeldItem
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate1:
 	ld a,$28
@@ -854,7 +854,7 @@ _interactiondc_subid09:
 	and $07
 	ret nz
 
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	xor a
 	ld (de),a
 	ldh a,(<hRng2)
@@ -863,7 +863,7 @@ _interactiondc_subid09:
 	jp interactionIncState
 
 @state2:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @state2Substate0
@@ -878,7 +878,7 @@ _interactiondc_subid09:
 
 @replaceTileListAndIncSubstateA:
 	call @replaceTileList
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @state2Substate1:
 	call interactionDecCounter1
@@ -896,7 +896,7 @@ _interactiondc_subid09:
 	ret
 
 @state3:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @state3Substate0
@@ -912,7 +912,7 @@ _interactiondc_subid09:
 
 @replaceTileListAndIncSubstateB:
 	call @replaceTileList
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @state3Substate1:
 	call interactionDecCounter1
@@ -1836,7 +1836,7 @@ interactionCodedf:
 	jp objectSetVisiblec0
 
 @state1:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -1850,7 +1850,7 @@ interactionCodedf:
 @substate0:
 	call interactionDecCounter1
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 
 @substate1:
 	call interactionAnimate
@@ -1858,7 +1858,7 @@ interactionCodedf:
 	cp $68 ; [xh]
 	ret nz
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),180
 
@@ -1874,7 +1874,7 @@ interactionCodedf:
 	ret nz
 	ld hl,wTmpcfc0.genericCutscene.cfd0
 	ld (hl),$01
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),$04
 	inc l
@@ -1887,7 +1887,7 @@ interactionCodedf:
 	call decHlRef16WithCap
 	jr nz,@label_10_330
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),100
 
@@ -1960,7 +1960,7 @@ interactionCodedf:
 	ld (hl),b ; [counter1]
 	ld hl,wTmpcfc0.genericCutscene.cfd0
 	ld (hl),$03
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate5:
 	call interactionDecCounter1
@@ -1968,7 +1968,7 @@ interactionCodedf:
 	ld (hl),60 ; [counter1]
 	ld hl,wTmpcfc0.genericCutscene.cfd0
 	ld (hl),$04
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate6:
 	call interactionAnimate
@@ -2144,7 +2144,7 @@ interactionCodee3:
 
 @state1:
 	call interactionRunScript
-	call checkInteractionState2
+	call checkInteractionSubstate
 	jr nz,@substate1
 
 @substate0:
@@ -2154,7 +2154,7 @@ interactionCodee3:
 	jr z,@label_10_337
 
 	; Being talked to
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.direction
 	ld a,(hl)
 	add $02
@@ -2190,7 +2190,7 @@ interactionCodee3:
 	ld (hl),60
 
 	; a == 0 here
-	ld l,Interaction.state2
+	ld l,Interaction.substate
 	ld (hl),a
 	ld l,Interaction.z
 	ldi (hl),a

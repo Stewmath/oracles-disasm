@@ -721,14 +721,14 @@ interactionCoded2:
 	ld e,Interaction.yh
 	ld (de),a
 
-	call checkInteractionState2
+	call checkInteractionSubstate
 	jr nz,@substate1
 
 @substate0:
 	ld a,(wGfxRegs1.SCY)
 	cp $e0
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	call objectSetVisible82
 
 @substate1:
@@ -845,7 +845,7 @@ interactionCoded3:
 	ld e,Interaction.yh
 	ld (de),a
 
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -856,12 +856,12 @@ interactionCoded3:
 	ld a,(wGfxRegs1.SCY)
 	cp $10
 	ret nz
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate1:
 	call interactionDecCounter1
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	jp objectSetVisible82
 
 @substate2:
@@ -884,7 +884,7 @@ interactionCoded3:
 	or a
 	jp z,interactionDelete
 
-	ld l,Interaction.state2
+	ld l,Interaction.substate
 	dec (hl)
 	ld l,Interaction.subid
 	ld a,(hl)

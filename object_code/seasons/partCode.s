@@ -2047,7 +2047,7 @@ _kingMoblinBomb_state2:
 
 @justGrabbed:
 	ld a,$01
-	ld (de),a ; [state2] = 1
+	ld (de),a ; [substate] = 1
 	xor a
 	ld (wLinkGrabState2),a
 .ifdef ROM_AGES
@@ -4047,7 +4047,7 @@ partCode4f:
 	dec b
 	jr nz,-
 	ld h,d
-	ld l,Part.state2
+	ld l,Part.substate
 	inc (hl)
 	; counter1
 	inc l
@@ -4077,7 +4077,7 @@ partCode4f:
 	ld h,d
 	ld l,Part.state
 	inc (hl)
-	; state2
+	; substate
 	inc l
 	ld (hl),$00
 	ret

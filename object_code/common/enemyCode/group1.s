@@ -269,7 +269,7 @@ _octorok_state_latchedBySwitchHook:
 	inc e
 	ld a,(de)
 	rst_jumpTable
-	.dw _ecom_incState2
+	.dw _ecom_incSubstate
 	.dw @substate1
 	.dw @substate2
 	.dw _ecom_fallToGroundAndSetState8
@@ -470,7 +470,7 @@ enemyCode0a:
 	inc e
 	ld a,(de)
 	rst_jumpTable
-	.dw _ecom_incState2
+	.dw _ecom_incSubstate
 	.dw @@substate1
 	.dw @@substate2
 	.dw @@substate3
@@ -618,7 +618,7 @@ enemyCode0b:
 	inc e
 	ld a,(de)
 	rst_jumpTable
-	.dw _ecom_incState2
+	.dw _ecom_incSubstate
 	.dw @@substate1
 	.dw @@substate2
 	.dw @@substate3
@@ -1025,7 +1025,7 @@ _moblin_state_switchHook:
 	inc e
 	ld a,(de)
 	rst_jumpTable
-	.dw _ecom_incState2
+	.dw _ecom_incSubstate
 	.dw @substate1
 	.dw @substate2
 	.dw _ecom_fallToGroundAndSetState8
@@ -1997,7 +1997,7 @@ enemyCode10:
 	inc e
 	ld a,(de)
 	rst_jumpTable
-	.dw _ecom_incState2
+	.dw _ecom_incSubstate
 	.dw @@substate1
 	.dw @@substate2
 	.dw @@substate3
@@ -2407,7 +2407,7 @@ enemyCode12:
 	inc e
 	ld a,(de)
 	rst_jumpTable
-	.dw _ecom_incState2
+	.dw _ecom_incSubstate
 	.dw @@substate1
 	.dw @@substate2
 	.dw _ecom_fallToGroundAndSetState8
@@ -3875,7 +3875,7 @@ enemyCode1a:
 	inc e
 	ld a,(de)
 	rst_jumpTable
-	.dw _ecom_incState2
+	.dw _ecom_incSubstate
 	.dw @@substate1
 	.dw @@substate2
 	.dw _ecom_fallToGroundAndSetState8
@@ -4033,7 +4033,7 @@ enemyCode1b:
 	inc e
 	ld a,(de)
 	rst_jumpTable
-	.dw _ecom_incState2
+	.dw _ecom_incSubstate
 	.dw @@substate1
 	.dw @@substate2
 	.dw _ecom_fallToGroundAndSetState8
@@ -4278,7 +4278,7 @@ _armos_state_switchHook:
 	inc e
 	ld a,(de)
 	rst_jumpTable
-	.dw _ecom_incState2
+	.dw _ecom_incSubstate
 	.dw @substate1
 	.dw @substate2
 	.dw @substate3
@@ -5141,7 +5141,7 @@ _likelike_state_switchHook:
 	inc e
 	ld a,(de)
 	rst_jumpTable
-	.dw _ecom_incState2
+	.dw _ecom_incSubstate
 	.dw @substate1
 	.dw @substate2
 	.dw @substate3
@@ -5281,7 +5281,7 @@ _likelike_stateB:
 ;;
 _likelike_releaseLink:
 	; Release link from LINK_STATE_GRABBED
-	ld hl,w1Link.state2
+	ld hl,w1Link.substate
 	ld (hl),$04
 
 	ld l,<w1Link.collisionType
@@ -6288,7 +6288,7 @@ _wallmaster_stateC:
 _wallmaster_stateD:
 	; Go to substate 2 in LINK_STATE_GRABBED_BY_WALLMASTER.
 	ld a,$02
-	ld (w1Link.state2),a
+	ld (w1Link.substate),a
 	ret
 
 

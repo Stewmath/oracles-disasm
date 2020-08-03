@@ -56,7 +56,7 @@ enemyCode30:
 	inc e
 	ld a,(de)
 	rst_jumpTable
-	.dw _ecom_incState2
+	.dw _ecom_incSubstate
 	.dw @substate1
 	.dw @substate2
 	.dw @substate3
@@ -213,7 +213,7 @@ _stalfos_state_switchHook:
 	inc e
 	ld a,(de)
 	rst_jumpTable
-	.dw _ecom_incState2
+	.dw _ecom_incSubstate
 	.dw @substate1
 	.dw @substate2
 	.dw _ecom_fallToGroundAndSetState8
@@ -780,7 +780,7 @@ _babyCucco_state_grabbed:
 @justGrabbed:
 	ld h,d
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 
 	ld l,Enemy.collisionType
 	res 7,(hl)
@@ -1693,9 +1693,9 @@ _floormaster_stateC:
 	jr nz,_floormaster_animate
 
 	; [animParameter] == 3
-	; Set state2 for LINK_STATE_GRABBED_BY_WALLMASTER
+	; Set substate for LINK_STATE_GRABBED_BY_WALLMASTER
 	ld a,$02
-	ld (w1Link.state2),a
+	ld (w1Link.substate),a
 	jp objectSetInvisible
 
 @makeLinkInvisible: ; [animParameter] == 1
@@ -3622,7 +3622,7 @@ _swordEnemy_state_switchHook:
 	inc e
 	ld a,(de)
 	rst_jumpTable
-	.dw _ecom_incState2
+	.dw _ecom_incSubstate
 	.dw @substate1
 	.dw @substate2
 	.dw @substate3
@@ -4336,7 +4336,7 @@ _wizzrobe_state_switchHook:
 	inc e
 	ld a,(de)
 	rst_jumpTable
-	.dw _ecom_incState2
+	.dw _ecom_incSubstate
 	.dw @substate1
 	.dw @substate2
 	.dw @substate3
@@ -5937,7 +5937,7 @@ _ballAndChain_state_switchHook:
 	inc e
 	ld a,(de)
 	rst_jumpTable
-	.dw _ecom_incState2
+	.dw _ecom_incSubstate
 	.dw @substate1
 	.dw @substate2
 	.dw @substate3
@@ -6227,7 +6227,7 @@ _armMimic_state_switchHook:
 	inc e
 	ld a,(de)
 	rst_jumpTable
-	.dw _ecom_incState2
+	.dw _ecom_incSubstate
 	.dw @substate1
 	.dw @substate2
 	.dw _ecom_fallToGroundAndSetState8
@@ -6974,7 +6974,7 @@ _beetle_state_switchHook:
 	inc e
 	ld a,(de)
 	rst_jumpTable
-	.dw _ecom_incState2
+	.dw _ecom_incSubstate
 	.dw @substate1
 	.dw @substate2
 	.dw @substate3
@@ -7259,7 +7259,7 @@ _flyingTile_state_uninitialized:
 
 _flyingTile_state_spawner:
 	inc e
-	ld a,(de) ; [state2]
+	ld a,(de) ; [substate]
 	rst_jumpTable
 	.dw @substate0
 	.dw @substate1
@@ -7267,7 +7267,7 @@ _flyingTile_state_spawner:
 @substate0:
 	ld h,d
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 
 	inc l
 	ld (hl),120 ; [counter1]
@@ -7778,7 +7778,7 @@ enemyCode58:
 
 @@substate0:
 	call @makeParentEnemyVisibleAndRemoveReference
-	jp _ecom_incState2
+	jp _ecom_incSubstate
 
 @@substate1:
 @@substate2:

@@ -143,7 +143,7 @@ def parseScript(address, output, recurse=0):
             output.write('setstate ' + wlahex(rom[address],2) + '\n')
             address+=1
         elif b == 0x81:
-            output.write('setstate2 ' + wlahex(rom[address],2) + '\n')
+            output.write('setsubstate ' + wlahex(rom[address],2) + '\n')
             address+=1
         elif b == 0x83:
             bank = rom[address]

@@ -851,7 +851,7 @@ _interaction6b_subid00:
 	bit 6,a
 	jp nz,interactionDelete
 @state1:
-	call checkInteractionState2
+	call checkInteractionSubstate
 	jr nz,@substate1
 
 @substate0:
@@ -866,7 +866,7 @@ _interaction6b_subid00:
 	ld (de),a
 	ld bc,TX_0100
 	call showText
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate1:
 	call @decCounter1IfTextNotActive
@@ -986,14 +986,14 @@ _interaction6b_subid05:
 	.dw @state1
 
 @state1:
-	call checkInteractionState2
+	call checkInteractionSubstate
 	jr nz,@substate1
 
 @substate0:
 	call interactionRunScript
 	ret nc
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),$01
 	inc l
@@ -1065,7 +1065,7 @@ _interaction6b_subid06:
 	jp interactionDelete
 
 @state1:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -1084,14 +1084,14 @@ _interaction6b_subid06:
 	ld (hl),a
 	ld a,SND_LIGHTNING
 	call playSound
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate1:
 	ld hl,wGenericCutscene.cbb3
 	ld b,$01
 	call flashScreen
 	ret z
-	call interactionIncState2
+	call interactionIncSubstate
 	jp fadeoutToWhite
 
 @substate2:
@@ -1233,7 +1233,7 @@ _interaction6b_subid0c:
 	ld (wMenuDisabled),a
 	jp interactionDelete
 ++
-	call checkInteractionState2
+	call checkInteractionSubstate
 	jp z,interactionAnimateAsNpc
 	ret
 
@@ -1428,7 +1428,7 @@ _interaction6b_subid10:
 	jp objectSetVisiblec2
 
 @state1:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -1445,7 +1445,7 @@ _interaction6b_subid10:
 	ld a,(wTmpcfc0.genericCutscene.state)
 	cp $02
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),$20
 	ret
@@ -1455,7 +1455,7 @@ _interaction6b_subid10:
 	jr nz,++
 	ld a,$03
 	ld (wTmpcfc0.genericCutscene.state),a
-	jp interactionIncState2
+	jp interactionIncSubstate
 ++
 	ld a,(hl)
 	and $07
@@ -1467,7 +1467,7 @@ _interaction6b_subid10:
 @substate2:
 	call interactionRunScript
 	ret nc
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate3:
 	call interactionAnimateBasedOnSpeed
@@ -1475,7 +1475,7 @@ _interaction6b_subid10:
 	ld a,(wTmpcfc0.genericCutscene.state)
 	cp $06
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld bc,$4084
 	jp interactionSetPosition
 
@@ -1483,14 +1483,14 @@ _interaction6b_subid10:
 	ld a,(wTmpcfc0.genericCutscene.state)
 	cp $07
 	ret nz
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate5:
 	ld c,$01
 	call objectUpdateSpeedZ_paramC
 	ret nz
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),30
 	call objectSetVisible82
@@ -1502,7 +1502,7 @@ _interaction6b_subid10:
 	jr nz,++
 	xor a
 	ld (wGfxRegs1.SCY),a
-	jp interactionIncState2
+	jp interactionIncSubstate
 ++
 	ld a,(hl)
 	and $01
@@ -2447,7 +2447,7 @@ interactionCode70:
 	.db $05 $05 $05 $06 $07
 
 @state1:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -2491,7 +2491,7 @@ interactionCode70:
 	dec b
 	jr nz,@@nextTile
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),30
 
@@ -2520,7 +2520,7 @@ interactionCode70:
 @substate1:
 	call interactionDecCounter1
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),10
 	ld a,MUS_MINIGAME
@@ -2530,7 +2530,7 @@ interactionCode70:
 @substate2:
 	call interactionDecCounter1IfPaletteNotFading
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	xor a
 	ld (wDisabledObjects),a
 	ld bc,TX_0a16
@@ -2543,7 +2543,7 @@ interactionCode70:
 	or a
 	ret nz
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),60
 	call getFreeInteractionSlot
@@ -2576,7 +2576,7 @@ interactionCode70:
 	ld a,SND_ERROR
 	call playSound
 ++
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),30
 	ret
@@ -2588,7 +2588,7 @@ interactionCode70:
 	ret nz
 
 	ld (hl),60
-	call interactionIncState2
+	call interactionIncSubstate
 
 	ld a,(wTmpcfc0.wildTokay.inPresent)
 	or a
@@ -3808,7 +3808,7 @@ interactionCode75:
 	jp interactionDelete
 
 @runSubid1:
-	call checkInteractionState2
+	call checkInteractionSubstate
 	jr nz,@updateSpeed
 
 	call interactionAnimate
@@ -3823,7 +3823,7 @@ interactionCode75:
 	dec (hl)
 	jr nz,@updateSpeed
 
-	ld l,Interaction.state2
+	ld l,Interaction.substate
 	inc (hl)
 	ld a,$04
 	call interactionSetAnimation
@@ -4222,7 +4222,7 @@ interactionCode7b:
 
 @state2:
 	call objectPreventLinkFromPassing
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -4249,7 +4249,7 @@ interactionCode7b:
 
 	ld a,SND_OPENING
 	call playSound
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate1: ; Currently opening
 	ld a,(wFrameCounter)
@@ -4259,7 +4259,7 @@ interactionCode7b:
 	call interactionDecCounter1
 	ret nz
 	ld (hl),30
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate2: ; Done opening
 	call interactionDecCounter1
@@ -4643,7 +4643,7 @@ interactionCode82:
 	.dw @break
 
 @substate0_justGrabbed:
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.subid
 	ld a,(hl)
 	or a
@@ -5593,14 +5593,14 @@ interactionCode88:
 	jp interactionSetAnimation
 
 @subid2State1:
-	call checkInteractionState2
+	call checkInteractionSubstate
 	jp nz,interactionAnimate
 
 	ld a,(wTmpcfc0.genericCutscene.state)
 	cp $06
 	ret nz
 
-	call interactionIncState2
+	call interactionIncSubstate
 	jp objectSetVisible82
 
 
@@ -6003,7 +6003,7 @@ interactionCode8c:
 
 @state1:
 	call objectAddToGrabbableObjectBuffer
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @@substate0
@@ -6016,7 +6016,7 @@ interactionCode8c:
 	ld a,(hl)
 	or a
 	jp nz,interactionDecCounter1
-	call interactionIncState2
+	call interactionIncSubstate
 	call objectSetVisiblec1
 	ld a,SND_FALLINHOLE
 	jp playSound
@@ -6025,7 +6025,7 @@ interactionCode8c:
 	ld c,$28
 	call objectUpdateSpeedZ_paramC
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld a,SND_BOMB_LAND
 	jp playSound
 
@@ -6051,7 +6051,7 @@ interactionCode8c:
 	call getFreeInteractionSlot
 	ret nz
 	ld (hl),INTERACID_TOKAY_MEAT
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @beingHeld:
 	ret
@@ -6152,7 +6152,7 @@ interactionCode8d:
 ; Cutscene after d7; black tower is complete
 @runSubid1:
 	call interactionAnimate
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @subid1Substate0
@@ -6174,13 +6174,13 @@ interactionCode8d:
 	ld a,$03
 	ld (wDirtyFadeBgPalettes),a
 	ld (wFadeBgPaletteSources),a
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @subid1Substate1:
 	call interactionDecCounter1IfPaletteNotFading
 	ret nz
 	ld (hl),20
-	call interactionIncState2
+	call interactionIncSubstate
 	ld bc,TX_2808
 	jp showText
 
@@ -6193,7 +6193,7 @@ interactionCode8d:
 	ld (hl),$00
 	ld hl,wGenericCutscene.cbba
 	ld (hl),$ff
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @subid1Substate3:
 	ld hl,wGenericCutscene.cbb3
@@ -6587,7 +6587,7 @@ _miscPuzzles_subid04:
 ; Helpers for floor changer (subid $04)
 _miscPuzzles_subid05:
 _miscPuzzles_subid06:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	or a
 	jr nz,@substate1
@@ -6602,7 +6602,7 @@ _miscPuzzles_subid06:
 	ld b,$04
 	ld e,Interaction.var30
 	call copyMemory
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 ; Values for var30-var33
 ; var30: Start position
@@ -6690,7 +6690,7 @@ _miscPuzzles_subid07:
 	ld a,b
 	ld (de),a
 
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	ld hl,@torchLightOrder
 	rst_addAToHl
@@ -6700,7 +6700,7 @@ _miscPuzzles_subid07:
 
 	ld a,(de)
 	cp $03
-	jp c,interactionIncState2
+	jp c,interactionIncSubstate
 
 	; Lit all torches
 	ld a, $ff ~ (DISABLE_ITEMS | DISABLE_ALL_BUT_INTERACTIONS)
@@ -8340,7 +8340,7 @@ _twinrova_state1:
 	.dw @runOtherHalf
 
 @runSubid00:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @subid00State0
@@ -8354,7 +8354,7 @@ _twinrova_state1:
 	call interactionDecCounter1
 	call z,_twinrova_loadAngleAndCounterPreset
 	jp nz,_twinrova_updateDirectionFromAngle
-	call interactionIncState2
+	call interactionIncSubstate
 	jp _twinrova_loadScript
 
 @subid00State1:
@@ -8366,7 +8366,7 @@ _twinrova_state1:
 	ld a,SND_BEAM2
 	call playSound
 	callab scriptHlp.objectWritePositionTocfd5
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter2
 	ld (hl),$00
 	ld l,Interaction.var3a
@@ -8395,7 +8395,7 @@ _twinrova_state1:
 
 @runSubid02:
 @runSubid04:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @subid02State0
@@ -8409,10 +8409,10 @@ _twinrova_state1:
 	dec (hl)
 	ret nz
 	call objectSetVisiblec1
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @runSubid06:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @subid00State1
@@ -9179,7 +9179,7 @@ interactionCode95:
 	jp objectSetVisible80
 
 @state1:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -9190,7 +9190,7 @@ interactionCode95:
 	ld a,($cfd3)
 	or a
 	ret z
-	call interactionIncState2
+	call interactionIncSubstate
 	ld b,ANGLE_RIGHT
 	dec a
 	jr z,+
@@ -9230,7 +9230,7 @@ interactionCode95:
 +
 	xor a
 	ld ($cfd3),a
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld (de),a
 	jp interactionSetPosition
 
@@ -9257,7 +9257,7 @@ interactionCode95:
 	ld l,a
 	call compareHlToBc
 	ret c
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate2:
 	ret

@@ -362,7 +362,7 @@ func_410d:
 	ldi a,(hl)
 	cp LINK_STATE_RESPAWNING
 	jr nz,++
-	ldi a,(hl) ; Check w1Link.state2
+	ldi a,(hl) ; Check w1Link.substate
 	cp $03
 	ret c
 ++
@@ -1296,7 +1296,7 @@ _companionGotoHazardHandlingState:
 	ld a,$04
 	ldi (hl),a
 	xor a
-	ldi (hl),a ; [state2] = 0
+	ldi (hl),a ; [substate] = 0
 	ldi (hl),a ; [counter1] = 0
 
 	ld l,SpecialObject.id
@@ -1578,7 +1578,7 @@ _companionRespawn:
 	ld l,SpecialObject.state
 	ldi (hl),a
 	xor a
-	ld (hl),a ; [state2] = 0
+	ld (hl),a ; [substate] = 0
 
 	ld l,SpecialObject.var3d
 	ld (hl),a
@@ -1662,7 +1662,7 @@ _companionCheckHopDownCliff:
 	ld a,$07
 	ldi (hl),a
 	xor a
-	ld (hl),a ; [state2] = 0
+	ld (hl),a ; [substate] = 0
 	ret
 
 
@@ -1799,20 +1799,20 @@ _companionCheckCanSpawn:
 	jr nz,@canSpawn
 
 .ifdef ROM_AGES
-	; Jump if [state2] != 0
+	; Jump if [substate] != 0
 	inc e
 	ld a,(de)
 	or a
 	jr nz,++
 
-	; Set [state2]=1, return from caller
+	; Set [substate]=1, return from caller
 	inc a
 	ld (de),a
 	pop af
 	ret
 ++
 	xor a
-	ld (de),a ; [state2] = 0
+	ld (de),a ; [substate] = 0
 
 	; Delete self if there's already a solid object in its position
 	call objectGetShortPosition
@@ -2589,7 +2589,7 @@ _warpTransition5_01:
 ; TRANSITION_DEST_FROM_TRAMPOLINE
 ; Jumped in from a trampoline.
 _warpTransition6:
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw _warpTransition6_00
@@ -2700,7 +2700,7 @@ _warpTransition7:
 	jp nz,specialObjectUpdatePosition
 ;;
 @linkCollapsed:
-	call itemIncState2
+	call itemIncSubstate
 	ld l,<w1Link.warpVar2
 	ld (hl),$1e
 	ld a,LINK_ANIM_MODE_COLLAPSED
@@ -2736,7 +2736,7 @@ _linkIncrementDirection:
 ; TRANSITION_SRC_SUBROSIA
 ; A subrosian warp portal.
 _warpTransition8:
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -2785,7 +2785,7 @@ _warpTransition8:
 	call z,_linkIncrementDirection
 	call itemDecCounter1
 	ret nz
-	jp itemIncState2
+	jp itemIncSubstate
 
 @substate2:
 	ld c,$02
@@ -2803,7 +2803,7 @@ _warpTransition8:
 	ld a,$02
 	call fadeoutToWhiteWithDelay
 
-	jp itemIncState2
+	jp itemIncSubstate
 
 @substate3:
 	call _linkIncrementDirectionOnOddFrames
@@ -2811,14 +2811,14 @@ _warpTransition8:
 	ret nz
 	ld hl,wTmpcbb3
 	inc (hl)
-	jp itemIncState2
+	jp itemIncSubstate
 
 @substate4:
 	call _linkIncrementDirectionOnOddFrames
 	ld a,(wCutsceneState)
 	cp $02
 	ret nz
-	call itemIncState2
+	call itemIncSubstate
 	ld l,SpecialObject.counter1
 	ld (hl),$28
 	ret
@@ -2829,7 +2829,7 @@ _warpTransition8:
 	call _linkIncrementDirectionOnOddFrames
 	call itemDecCounter1
 	ret nz
-	jp itemIncState2
+	jp itemIncSubstate
 
 @substate6:
 	ld c,$02
@@ -2845,7 +2845,7 @@ _warpTransition8:
 
 	ld hl,wTmpcbb3
 	inc (hl)
-	jp itemIncState2
+	jp itemIncSubstate
 
 @substate7:
 	ld a,(wDisabledObjects)
@@ -2873,14 +2873,14 @@ _warpTransition8:
 ; TRANSITION_SRC_FALL
 ; Fall out of the screen (like into a hole).
 _warpTransition9:
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
 	.dw @substate1
 
 @substate0:
-	call itemIncState2
+	call itemIncSubstate
 
 	ld l,SpecialObject.yh
 	ld a,$08
@@ -2918,7 +2918,7 @@ _warpTransitionB:
 	.dw @warpVar2
 
 @warpVar0:
-	call itemIncState2
+	call itemIncSubstate
 
 	call objectGetZAboveScreen
 	ld l,<w1Link.zh
@@ -2939,7 +2939,7 @@ _warpTransitionB:
 	; Done falling. Set Link's initial state depending on the game.
 
 .ifdef ROM_AGES
-	call itemIncState2
+	call itemIncSubstate
 	call _animateLinkStanding
 	ld a,SND_SPLASH
 	jp playSound
@@ -2976,7 +2976,7 @@ _warpTransitionF:
 ; TRANSITION_DEST_TIMEWARP
 ; Warp in and create a portal. Doesn't update respawn. Ages only.
 _warpTransition6:
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -3060,7 +3060,7 @@ _warpTransition6:
 
 ; Initialization
 @substate0:
-	call itemIncState2
+	call itemIncSubstate
 
 	ld l,SpecialObject.counter1
 	ld (hl),$1e
@@ -3101,11 +3101,11 @@ _warpTransition6:
 	srl c
 	jr c,@warpFailed
 
-	jp itemIncState2
+	jp itemIncSubstate
 
 	; Link will be returned to the time he came from.
 @warpFailed:
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,$04
 	ld (de),a
 	ret
@@ -3122,7 +3122,7 @@ _warpTransition6:
 	ld a,SND_TIMEWARP_COMPLETED
 	call playSound
 	call objectSetVisiblec0
-	jp itemIncState2
+	jp itemIncSubstate
 
 
 @substate3:
@@ -3193,7 +3193,7 @@ _warpTransition6:
 
 	ld (hl),$10
 	call @createDestinationTimewarpAnimation
-	jp itemIncState2
+	jp itemIncSubstate
 
 @substate6:
 	call @flickerVisibilityAndDecCounter1
@@ -3201,7 +3201,7 @@ _warpTransition6:
 
 	ld (hl),$14
 	call objectSetInvisible
-	jp itemIncState2
+	jp itemIncSubstate
 
 @substate7:
 	call itemDecCounter1
@@ -3263,7 +3263,7 @@ _warpTransition6:
 ;;
 ; LINK_STATE_08
 _linkState08:
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -3318,7 +3318,7 @@ linkCancelAllItemUsage:
 ;;
 ; LINK_STATE_0e
 _linkState0e:
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -3326,7 +3326,7 @@ _linkState0e:
 	.dw @substate2
 
 @substate0:
-	call itemIncState2
+	call itemIncSubstate
 	ld e,SpecialObject.var37
 	ld a,(wActiveRoom)
 	ld (de),a
@@ -3334,7 +3334,7 @@ _linkState0e:
 @substate1:
 	call objectCheckWithinScreenBoundary
 	ret c
-	call itemIncState2
+	call itemIncSubstate
 	call objectSetInvisible
 
 @substate2:
@@ -3347,7 +3347,7 @@ _linkState0e:
 	call objectCheckWithinScreenBoundary
 	ret nc
 
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,$01
 	ld (de),a
 	jp objectSetVisiblec2
@@ -3360,7 +3360,7 @@ _linkState0f:
 	or a
 	ret nz
 
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -3368,7 +3368,7 @@ _linkState0f:
 	.dw @substate2
 
 @substate0:
-	call itemIncState2
+	call itemIncSubstate
 
 	; [SpecialObject.counter1] = $14
 	inc l
@@ -3400,7 +3400,7 @@ _linkState0f:
 	call objectUpdateSpeedZAndBounce
 	ret nc ; Return if Link can still bounce
 
-	jp itemIncState2
+	jp itemIncSubstate
 
 @substate2:
 	call itemDecCounter1
@@ -3411,7 +3411,7 @@ _linkState0f:
 ;;
 ; LINK_STATE_FORCE_MOVEMENT
 _linkState0b:
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -3446,7 +3446,7 @@ _linkState0b:
 ;;
 ; LINK_STATE_04
 _linkState04:
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -3493,7 +3493,7 @@ setLinkStateToDead:
 _linkState03:
 	xor a
 	ld (wLinkHealth),a
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -3509,7 +3509,7 @@ _linkState03:
 	jp nz,_linkUpdateKnockback
 
 	ld h,d
-	ld l,SpecialObject.state2
+	ld l,SpecialObject.substate
 	inc (hl)
 
 	ld l,SpecialObject.counter1
@@ -3563,7 +3563,7 @@ _linkState02:
 	ld a,$80
 	ld (wForceLinkPushAnimation),a
 
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -3586,7 +3586,7 @@ _linkState02:
 	.dw @parameter_drown
 
 @parameter_drown:
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,$05
 	ld (de),a
 	ld a,LINK_ANIM_MODE_DROWN
@@ -3596,11 +3596,11 @@ _linkState02:
 	call objectCenterOnTile
 
 @parameter_fallDownHoleWithoutCentering:
-	call itemIncState2
+	call itemIncSubstate
 	jr ++
 
 @parameter_3:
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,$04
 	ld (de),a
 ++
@@ -3654,7 +3654,7 @@ _linkState02:
 
 @respawn:
 	call specialObjectSetCoordinatesToRespawnYX
-	ld l,SpecialObject.state2
+	ld l,SpecialObject.substate
 	ld a,$02
 	ldi (hl),a
 
@@ -3699,7 +3699,7 @@ _linkState02:
 	jr nz,+
 	sra a
 +
-	call itemIncState2
+	call itemIncSubstate
 
 	ld l,SpecialObject.damageToApply
 	ld (hl),a
@@ -3847,7 +3847,7 @@ _checkForUnderwaterTransition:
 ; or setting warp to floor above
 _linkState09:
 	call retIfTextIsActive
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -3873,7 +3873,7 @@ _linkState09:
 	jr nc,+
 	inc a
 +
-	ld l,SpecialObject.state2
+	ld l,SpecialObject.substate
 	ld (hl),a
 	ld a,$81
 	ld (wLinkInAir),a
@@ -3902,7 +3902,7 @@ _linkState09:
 	ret c
 	ld a,$01
 	ld (wScrollMode),a
-	ld l,SpecialObject.state2
+	ld l,SpecialObject.substate
 	inc (hl)
 	ld l,SpecialObject.counter1
 	ld (hl),$1e
@@ -3947,7 +3947,7 @@ _linkState09:
 	cp $07
 	jr z,_bounceLinkOffTrampolineAfterFalling
 	ld h,d
-	ld l,SpecialObject.state2
+	ld l,SpecialObject.substate
 	inc (hl)
 	; SpecialObject.counter1
 	inc l
@@ -4021,7 +4021,7 @@ _bounceLinkOffTrampolineAfterFalling:
 ;;
 ; LINK_STATE_GRABBED_BY_WALLMASTER
 _linkState0c:
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -4048,7 +4048,7 @@ _linkState0c:
 	jp playSound
 
 
-; The wallmaster writes [w1Link.state2] = 2 when Link is fully dragged off-screen.
+; The wallmaster writes [w1Link.substate] = 2 when Link is fully dragged off-screen.
 @substate2:
 	xor a
 	ld (wWarpsDisabled),a
@@ -4073,7 +4073,7 @@ _linkState0c:
 	; wWarpDestTransition2
 	ld (hl),$03
 
-; Substate 1: waiting for the wallmaster to increment w1Link.state2.
+; Substate 1: waiting for the wallmaster to increment w1Link.substate.
 @substate1:
 	ret
 
@@ -4084,14 +4084,14 @@ _linkState13:
 	ld a,$80
 	ld (wForceLinkPushAnimation),a
 
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
 	.dw @substate1
 
 @substate0:
-	call itemIncState2
+	call itemIncSubstate
 
 	; [SpecialObject.counter1] = $b4
 	inc l
@@ -4159,14 +4159,14 @@ _linkState13:
 ;;
 ; LINK_STATE_COLLAPSED
 _linkState14:
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
 	.dw _linkState13@substate1
 
 @substate0:
-	call itemIncState2
+	call itemIncSubstate
 
 	ld l,SpecialObject.counter1
 	ld (hl),$f0
@@ -4186,7 +4186,7 @@ _linkState14:
 _linkState0d:
 	ld a,$80
 	ld (wcc92),a
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -4279,7 +4279,7 @@ _linkState0d:
 ;;
 ; LINK_STATE_SLEEPING
 _linkState05:
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -4288,7 +4288,7 @@ _linkState05:
 
 ; Just touched the bed
 @substate0:
-	call itemIncState2
+	call itemIncSubstate
 
 	ld l,SpecialObject.speed
 	ld (hl),SPEED_80
@@ -4321,7 +4321,7 @@ _linkState05:
 	call objectUpdateSpeedZ_paramC
 	ret nz
 
-	call itemIncState2
+	call itemIncSubstate
 	jp _specialObjectSetPositionToVar38IfSet
 
 ; Sleeping; do various things depending on "animParameter".
@@ -4385,7 +4385,7 @@ _linkState05:
 ; LINK_STATE_06
 ; Moves Link up until he's no longer in a solid wall?
 _linkState06:
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -4419,7 +4419,7 @@ _linkState06:
 	ret nz
 
 	; Go to substate 2
-	ld l,SpecialObject.state2
+	ld l,SpecialObject.substate
 	inc (hl)
 
 	ld l,SpecialObject.direction
@@ -4440,7 +4440,7 @@ _linkState06:
 	call objectSetSpeedZ
 
 	; Go to substate 3
-	ld l,SpecialObject.state2
+	ld l,SpecialObject.substate
 	inc (hl)
 
 	ld l,SpecialObject.speed
@@ -4466,7 +4466,7 @@ _linkState06:
 ; LINK_STATE_AMBI_POSSESSED_CUTSCENE
 ; This state is used during the cutscene in the black tower where Ambi gets un-possessed.
 _linkState09:
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -4479,7 +4479,7 @@ _linkState09:
 
 ; Initialization
 @substate0:
-	call itemIncState2
+	call itemIncSubstate
 
 ; Backing up to the right
 
@@ -4573,7 +4573,7 @@ _linkState09:
 	jr nz,@animate
 
 	; a is 0 at this point
-	ld l,SpecialObject.state2
+	ld l,SpecialObject.substate
 	ldd (hl),a
 	ld (hl),SpecialObject.direction
 	ret
@@ -4585,7 +4585,7 @@ _linkState09:
 .else
 
 _linkState0f:
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -4616,7 +4616,7 @@ _linkState0f:
 	call itemDecCounter1
 	jr nz,@updateObject
 	ld (hl),$5a
-	; SpecialObject.state2
+	; SpecialObject.substate
 	dec l
 	inc (hl)
 	ld l,SpecialObject.speed
@@ -4639,7 +4639,7 @@ _linkState0f:
 	ld a,(hl)
 	cp $74
 	jr nc,@updateObject
-	ld l,SpecialObject.state2
+	ld l,SpecialObject.substate
 	inc (hl)
 	inc l
 	; SpecialObject.direction
@@ -4691,7 +4691,7 @@ _linkState0f:
 	ld c,$18
 	call objectUpdateSpeedZ_paramC
 	jr nz,@updateObject
-	ld l,SpecialObject.state2
+	ld l,SpecialObject.substate
 	inc (hl)
 	; SpecialObject.counter1
 	inc l
@@ -4709,7 +4709,7 @@ _linkState0f:
 	jp _initLinkStateAndAnimateStanding
 
 _linkState10:
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -4748,7 +4748,7 @@ _linkState10:
 	ld a,(wCutsceneState)
 	dec a
 	jp nz,_initLinkStateAndAnimateStanding
-	ld l,SpecialObject.state2
+	ld l,SpecialObject.substate
 	inc (hl)
 	; SpecialObject.counter1
 	inc l
@@ -4772,7 +4772,7 @@ _linkState10:
 ;;
 ; LINK_STATE_SQUISHED
 _linkState11:
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -4810,7 +4810,7 @@ _linkState11:
 	inc a
 	ret nz
 
-	call itemIncState2
+	call itemIncSubstate
 	ld l,SpecialObject.counter1
 	ld (hl),$14
 
@@ -4850,7 +4850,7 @@ _checkLinkForceState:
 	pop hl
 
 ;;
-; Sets w1Link.state to the given value, and w1Link.state2 to $00.
+; Sets w1Link.state to the given value, and w1Link.substate to $00.
 ; For some reason, this also runs the code for the state immediately if it's
 ; LINK_STATE_WARPING, LINK_STATE_GRABBED_BY_WALLMASTER, or LINK_STATE_GRABBED.
 ;
@@ -7609,7 +7609,7 @@ _checkLinkJumpingOffCliff:
 ;;
 ; LINK_STATE_JUMPING_DOWN_LEDGE
 _linkState12:
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -7618,7 +7618,7 @@ _linkState12:
 	.dw @substate3
 
 @substate0:
-	call itemIncState2
+	call itemIncSubstate
 
 .ifdef ROM_AGES
 	; Set jumping animation if not underwater
@@ -7665,7 +7665,7 @@ _linkState12:
 	ld l,SpecialObject.visible
 	res 6,(hl)
 
-	ld l,SpecialObject.state2
+	ld l,SpecialObject.substate
 	ld (hl),$02
 
 	xor a
@@ -7746,7 +7746,7 @@ _linkState12:
 	; Initiate screen transition
 	ld a,$82
 	ld (wScreenTransitionDirection),a
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,$03
 	ld (de),a
 	ret
@@ -7775,7 +7775,7 @@ _linkState12:
 	set 6,(hl)
 
 	; Go to substate 1 to complete the fall.
-	ld l,SpecialObject.state2
+	ld l,SpecialObject.substate
 	ld (hl),$01
 	ret
 
@@ -8901,7 +8901,7 @@ _mapleState6:
 	ld l,a
 	ld (hl),$04 ; [Part.state] = $04
 	inc l
-	ld (hl),$00 ; [Part.state2] = $00
+	ld (hl),$00 ; [Part.substate] = $00
 
 	; Read the item's var03 to determine how long it takes to collect.
 	ld a,(de)
@@ -9035,7 +9035,7 @@ _mapleState7:
 	ld l,SpecialObject.state
 	ld (hl),$08
 	inc l
-	ld (hl),$00 ; [state2] = 0
+	ld (hl),$00 ; [substate] = 0
 
 	ld l,SpecialObject.counter2
 	ld (hl),$20
@@ -9183,7 +9183,7 @@ _mapleStateA:
 ; State 8: stunned from a bomb
 _mapleState8:
 	call specialObjectAnimate
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -9195,7 +9195,7 @@ _mapleState8:
 	call itemDecCounter2
 	ret nz
 
-	ld l,SpecialObject.state2
+	ld l,SpecialObject.substate
 	ld (hl),$01
 
 	ld l,SpecialObject.speedZ
@@ -9211,7 +9211,7 @@ _mapleState8:
 	call objectUpdateSpeedZ_paramC
 	ret nz
 
-	ld l,SpecialObject.state2
+	ld l,SpecialObject.substate
 	ld (hl),$02
 	ld l,SpecialObject.counter2
 	ld (hl),$40
@@ -9221,7 +9221,7 @@ _mapleState8:
 	call itemDecCounter2
 	ret nz
 
-	ld l,SpecialObject.state2
+	ld l,SpecialObject.substate
 	ld (hl),$03
 	ld a,$08
 	jp specialObjectSetAnimation
@@ -9252,7 +9252,7 @@ _mapleState8:
 ; State 9: flying away after item collection is over
 _mapleState9:
 	call specialObjectAnimate
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -9267,7 +9267,7 @@ _mapleState9:
 	ld (wInstrumentsDisabledCounter),a
 
 	ld a,$01
-	ld (de),a ; [state2] = $01
+	ld (de),a ; [substate] = $01
 
 	; "health" is maple's obtained value, and "var2a" is Link's obtained value.
 
@@ -9329,7 +9329,7 @@ _mapleState9:
 	ld l,SpecialObject.speed
 	ld (hl),SPEED_300
 
-	ld l,SpecialObject.state2
+	ld l,SpecialObject.substate
 	ld (hl),$02
 
 	ld e,SpecialObject.damage
@@ -9374,7 +9374,7 @@ _mapleDeleteSelf:
 ; State B: exchanging touching book
 _mapleStateB:
 	inc e
-	ld a,(de) ; a = [state2]
+	ld a,(de) ; a = [substate]
 	or a
 	jr nz,@substate1
 
@@ -9421,7 +9421,7 @@ _mapleStateB:
 
 @substate1:
 	dec a
-	ld (de),a ; [state2] -= 1
+	ld (de),a ; [substate] -= 1
 	ret nz
 
 .ifdef ROM_AGES
@@ -9999,7 +9999,7 @@ _mapleDecideItemToCollectAndUpdateTargetAngle:
 	ld (de),a
 	inc e
 	xor a
-	ld (de),a ; [state2] = 0
+	ld (de),a ; [substate] = 0
 	ret
 
 ;;
@@ -10526,7 +10526,7 @@ _rickyState4:
 ; (Note: this may be called from state C?)
 ;
 _rickyState5:
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw _rickyState5Substate0
@@ -10624,7 +10624,7 @@ _rickyState5Substate0:
 
 @jump:
 	; If there's a hole in front, try to jump over it
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,$02
 	ld (de),a
 	call _rickyCheckForHoleInFront
@@ -10633,7 +10633,7 @@ _rickyState5Substate0:
 	; Otherwise, just do a normal hop
 	ld bc,-$180
 	call objectSetSpeedZ
-	ld l,SpecialObject.state2
+	ld l,SpecialObject.substate
 	ld (hl),$01
 	ld l,SpecialObject.counter1
 	ld (hl),$08
@@ -10796,7 +10796,7 @@ _rickyState5Substate3:
 
 	; Return to state 5, substate 0 (normal movement)
 	xor a
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld (de),a
 
 	jp _rickyCheckHazards2
@@ -10850,7 +10850,7 @@ _rickyState8:
 	jp z,_rickyStopUntilLandedOnGround
 
 	; Start tornado charging
-	call itemIncState2
+	call itemIncSubstate
 	ld c,$13
 	call _companionSetAnimation
 	call _companionCheckHazards
@@ -10928,7 +10928,7 @@ _rickyStartPunch:
 	ld a,$08
 	ldi (hl),a
 	xor a
-	ld (hl),a ; [state2] = 0
+	ld (hl),a ; [substate] = 0
 
 	inc a
 	ld l,SpecialObject.var35
@@ -10942,7 +10942,7 @@ _rickyStartPunch:
 ; State 6: Link has dismounted; he can't remount until he moves a certain distance away,
 ; then comes back.
 _rickyState6:
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -10953,7 +10953,7 @@ _rickyState6:
 	ld c,$40
 	call objectUpdateSpeedZ_paramC
 	ret nz
-	call itemIncState2
+	call itemIncSubstate
 	call companionDismountAndSavePosition
 	ld a,$17
 	jp specialObjectSetAnimation
@@ -10962,7 +10962,7 @@ _rickyState6:
 	ld a,(wLinkInAir)
 	or a
 	ret nz
-	jp itemIncState2
+	jp itemIncSubstate
 
 ; Waiting for Link to get a certain distance away before allowing him to mount again
 @substate2:
@@ -10973,9 +10973,9 @@ _rickyState6:
 	jp c,_rickyCheckHazards
 
 	; Link is far enough away; allow him to remount when he approaches again.
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	xor a
-	ld (de),a ; [state2] = 0
+	ld (de),a ; [substate] = 0
 	dec e
 	inc a
 	ld (de),a ; [state] = 1
@@ -11013,7 +11013,7 @@ _rickyStopUntilLandedOnGround:
 	ld e,SpecialObject.state
 	ld (de),a
 	ld a,$03
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld (de),a
 
 	; If Ricky's close to the screen edge, set the "jump delay counter" back to $10 so
@@ -11047,8 +11047,7 @@ _rickyFunc_70cc:
 
 ;;
 ; State A: various cutscene-related things? Behaviour is controlled by "var03" instead of
-; "state2".
-;
+; "substate".
 _rickyStateA:
 	ld e,SpecialObject.var03
 	ld a,(de)
@@ -11143,7 +11142,7 @@ _rickySetJumpSpeedForCutsceneAndSetAngle:
 _rickySetJumpSpeedForCutscene:
 	ld bc,-$180
 	call objectSetSpeedZ
-	ld l,SpecialObject.state2
+	ld l,SpecialObject.substate
 	ld (hl),$01
 	ld l,SpecialObject.speed
 	ld (hl),SPEED_200
@@ -11493,7 +11492,7 @@ _rickyStateC:
 	ld a,$0c
 	ld (de),a ; [state] = $0c
 	inc e
-	ld a,(de) ; a = [state2]
+	ld a,(de) ; a = [substate]
 	cp $03
 	ret nz
 
@@ -11577,7 +11576,7 @@ _rickyCheckHopUpCliff:
 	ld (de),a
 	inc e
 	xor a
-	ld (de),a ; [state2] = 0
+	ld (de),a ; [substate] = 0
 
 	ld e,SpecialObject.counter2
 	ld (de),a
@@ -11840,7 +11839,7 @@ _dimitriState2:
 _dimitriState2Substate0:
 	ld a,$40
 	ld (wLinkGrabState2),a
-	call itemIncState2
+	call itemIncSubstate
 	xor a
 	ld (wcc90),a
 
@@ -12073,7 +12072,7 @@ _dimitriFunc_756d:
 	ld l,SpecialObject.state
 	ld a,$01
 	ldi (hl),a
-	ld (hl),$00 ; [state2] = 0
+	ld (hl),$00 ; [substate] = 0
 
 	ld c,$1c
 	jp _companionSetAnimation
@@ -12212,7 +12211,7 @@ _dimitriGotoEatingState:
 	ld a,$08
 	ldi (hl),a
 	xor a
-	ldi (hl),a ; [state2] = 0
+	ldi (hl),a ; [substate] = 0
 	ld (hl),a  ; [counter1] = 0
 
 	ld l,SpecialObject.var35
@@ -12241,7 +12240,7 @@ _dimitriGotoEatingState:
 ; State 6: Link has dismounted; he can't remount until he moves a certain distance away,
 ; then comes back.
 _dimitriState6:
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -12259,7 +12258,7 @@ _dimitriState6:
 	ld a,(wLinkInAir)
 	or a
 	ret nz
-	jp itemIncState2
+	jp itemIncSubstate
 
 @substate2:
 	call _dimitriCheckAddToGrabbableObjectBuffer
@@ -12280,7 +12279,7 @@ _dimitriGotoState1:
 	ld (de),a
 	inc e
 	xor a
-	ld (de),a ; [state2] = 0
+	ld (de),a ; [substate] = 0
 	ld e,SpecialObject.var3b
 	ld (de),a
 	ret
@@ -12306,7 +12305,7 @@ _dimitriState7:
 ;;
 ; State 8: Attempting to eat something
 _dimitriState8:
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -12324,7 +12323,7 @@ _dimitriState8:
 
 	; Initialize stuff for substate 1 (moving back)
 
-	call itemIncState2
+	call itemIncSubstate
 
 	; Calculate angle based on the reverse of the current direction
 	ld l,SpecialObject.direction
@@ -12363,7 +12362,7 @@ _dimitriState8:
 	ld a,(hl)
 	or a
 	jp z,_dimitriLandOnGroundAndGotoState5
-	call itemIncState2
+	call itemIncSubstate
 	ld c,$10
 	jp _companionSetAnimation
 
@@ -12965,7 +12964,7 @@ _mooshStateB:
 ;;
 ; State 8: floating in air, possibly performing buttstomp
 _mooshState8:
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw _mooshState8Substate0
@@ -12979,7 +12978,7 @@ _mooshState8:
 ; Substate 0: just pressed A button
 _mooshState8Substate0:
 	ld a,$01
-	ld (de),a ; [state2] = 1
+	ld (de),a ; [substate] = 1
 
 	ld bc,-$140
 	call objectSetSpeedZ
@@ -13009,7 +13008,7 @@ _mooshState8Substate1:
 	ld bc,$0000
 	call objectSetSpeedZ
 
-	ld l,SpecialObject.state2
+	ld l,SpecialObject.substate
 	ld (hl),$05
 
 	ld b,INTERACID_EXCLAMATION_MARK
@@ -13115,7 +13114,7 @@ _mooshState8Substate1:
 	jp _mooshTryToBreakTileFromMovingAndCheckHazards
 
 @gotoSubstate2:
-	jp itemIncState2
+	jp itemIncSubstate
 
 ;;
 ; Substate 2: charging buttstomp
@@ -13162,7 +13161,7 @@ _mooshState8Substate2:
 	ldi a,(hl)
 	ld (hl),a ; [w1Link.oamFlags] = [w1Link.oamFlagsBackup]
 
-	call itemIncState2
+	call itemIncSubstate
 	ld c,$17
 
 	; Set buttstomp animation if he's charged up enough
@@ -13194,7 +13193,7 @@ _mooshState8Substate3:
 	call _companionCheckHazards
 	jp c,_mooshSetVar37ForHazard
 
-	call itemIncState2
+	call itemIncSubstate
 
 	ld a,$0f
 	ld (wScreenShakeCounterY),a
@@ -13246,7 +13245,7 @@ _mooshState8Substate5:
 ; State 6: Link has dismounted; he can't remount until he moves a certain distance away,
 ; then comes back.
 _mooshState6:
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -13264,14 +13263,14 @@ _mooshState6:
 	ld a,(wLinkInAir)
 	or a
 	ret nz
-	jp itemIncState2
+	jp itemIncSubstate
 
 @substate2:
 	ld c,$09
 	call objectCheckLinkWithinDistance
 	jp c,_mooshCheckHazards
 
-	ld e,SpecialObject.state2
+	ld e,SpecialObject.substate
 	xor a
 	ld (de),a
 	dec e

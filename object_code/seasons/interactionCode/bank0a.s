@@ -174,7 +174,7 @@ interactionCode8c:
 ; "Grabbed" state
 @state2:
 	call interactionAnimate
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @justGrabbed
@@ -185,7 +185,7 @@ interactionCode8c:
 
 @justGrabbed:
 	ld a,$01
-	ld (de),a ; [state2]
+	ld (de),a ; [substate]
 	ld (wDisableScreenTransitions),a
 	ld (wMenuDisabled),a
 	ld a,$08
@@ -249,7 +249,7 @@ interactionCode8c:
 	ld l,Interaction.enabled
 	res 1,(hl)
 
-	ld l,Interaction.state2
+	ld l,Interaction.substate
 	ld (hl),$04
 
 	ld e,Interaction.subid
@@ -871,7 +871,7 @@ interactionCode90:
 	ret
 
 @subid0State1:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @subid0Substate0
@@ -902,7 +902,7 @@ interactionCode90:
 	xor a
 	ld (w1Link.direction),a
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld hl,jewelHelperScript_insertedJewel
 	call interactionSetScript
 
@@ -916,14 +916,14 @@ interactionCode90:
 	cp $0f
 	jr z,@insertedAllJewels
 	xor a
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld (de),a
 	ld ($cc02),a
 	ld ($cca4),a
 	ret
 
 @insertedAllJewels:
-	call interactionIncState2
+	call interactionIncSubstate
 	ld hl,jewelHelperScript_insertedAllJewels
 	call interactionSetScript
 
@@ -932,7 +932,7 @@ interactionCode90:
 @subid0Substate2:
 	call interactionRunScript
 	ret nc
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 
 ; Gate opening
@@ -957,7 +957,7 @@ interactionCode90:
 
 	ldh a,(<hActiveObject)
 	ld d,a
-	call interactionIncState2
+	call interactionIncSubstate
 
 	ld l,Interaction.counter1
 	ld (hl),30
@@ -1000,7 +1000,7 @@ interactionCode90:
 	call @spawnGatePuffs
 	ld a,SND_KILLENEMY
 	call playSound
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),60
 	ret
@@ -1023,7 +1023,7 @@ interactionCode90:
 
 
 @subid6State1:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @@substate0
@@ -1036,7 +1036,7 @@ interactionCode90:
 	ld a,($cc34)
 	or a
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$46
 	ld (hl),$1e
 	ld a,$80
@@ -1056,7 +1056,7 @@ interactionCode90:
 	ld (hl),a
 	ld a,$85
 	call playSound
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$46
 	ld (hl),$10
 	ret
@@ -1871,13 +1871,13 @@ interactionCode96:
 	call setLinkIDOverride
 	ld l,$02
 	ld (hl),$09
-	jp interactionIncState2
+	jp interactionIncSubstate
 @@@substate2:
 	ld hl,$cfd1
 	ld a,(hl)
 	or a
 	jp z,npcFaceLinkAndAnimate
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$42
 	ld a,(hl)
 	add $0b
@@ -1888,7 +1888,7 @@ interactionCode96:
 	ld a,(de)
 	inc a
 	ret nz
-	jp interactionIncState2
+	jp interactionIncSubstate
 @@@substate4:
 	ld e,$42
 	ld a,(de)
@@ -1898,7 +1898,7 @@ interactionCode96:
 	ld a,(hl)
 	cp b
 	jp nz,npcFaceLinkAndAnimate
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$50
 	ld (hl),$28
 	ld l,$4d
@@ -1917,7 +1917,7 @@ interactionCode96:
 	call objectApplySpeed
 	cp $50
 	jr nz,+
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$46
 	ld (hl),$05
 +
@@ -1947,13 +1947,13 @@ interactionCode96:
 	jp interactionDelete
 @@subid2:
 	call interactionAnimate
-	call checkInteractionState2
+	call checkInteractionSubstate
 	jr nz,+
 	call interactionDecCounter1
 	ret nz
 	ld l,$50
 	ld (hl),$50
-	jp interactionIncState2
+	jp interactionIncSubstate
 +
 	call interactionAnimate
 	call interactionCode95@state1@func_557c
@@ -1975,7 +1975,7 @@ interactionCode96:
 	jp c,interactionDelete
 	jp interactionAnimateAsNpc
 _func_5768:
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$46
 	ld (hl),$20
 	ld l,$4b
@@ -2090,7 +2090,7 @@ interactionCode97:
 	ld hl,$cfc0
 	bit 1,(hl)
 	ret z
-	call interactionIncState2
+	call interactionIncSubstate
 	call objectSetVisible81
 @func_581d:
 	push de
@@ -2106,7 +2106,7 @@ interactionCode97:
 	ld hl,$cfc0
 	bit 3,(hl)
 	jr z,+
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$49
 	ld (hl),$10
 	ld l,$50
@@ -2417,7 +2417,7 @@ _state1_subid3:
 	dec a
 	ldh (<hDirtySprPalettes),a
 	ld ($cfd0),a
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$46
 	ld (hl),$1e
 	ld hl,$d00b
@@ -2608,7 +2608,7 @@ _func_5b49:
 	ld ($cbb3),a
 	dec a
 	ld ($cbba),a
-	jp interactionIncState2
+	jp interactionIncSubstate
 @func_5b65:
 	bit 6,a
 	set 6,(hl)
@@ -2633,7 +2633,7 @@ _func_5b49:
 	ld a,$ff
 	ldh (<hDirtyBgPalettes),a
 	ldh (<hBgPaletteSources),a
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$46
 	ld (hl),$1e
 	ret
@@ -2650,7 +2650,7 @@ _func_5b49:
 	ld a,$02
 	ld ($d008),a
 	call setLinkForceStateToState08
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$46
 	ld (hl),$1e
 	ld c,$02
@@ -3009,7 +3009,7 @@ interactionCode9d:
 	.dw @@subid4
 	.dw @@faceLinkAndAnimate
 @@subid0:
-	call checkInteractionState2
+	call checkInteractionSubstate
 	jr nz,++
 	inc a
 	ld (de),a
@@ -3043,7 +3043,7 @@ interactionCode9d:
 @@animateAsNPC:
 	jp interactionAnimateAsNpc
 @@subid4:
-	call checkInteractionState2
+	call checkInteractionSubstate
 	jr nz,_func_5eb1
 	ld a,($cbc3)
 	rlca
@@ -3052,7 +3052,7 @@ interactionCode9d:
 	ld ($cbc3),a
 	inc a
 	ld ($cca4),a
-	call interactionIncState2
+	call interactionIncSubstate
 	jp objectSetVisible
 _func_5eb1:
 	ld a,($cba0)
@@ -3121,7 +3121,7 @@ interactionCode9e:
 	ld a,(de)
 	cp $ff
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$7d
 	ld (hl),$28
 	ld a,$81
@@ -3133,7 +3133,7 @@ interactionCode9e:
 @substate1:
 	call _func_5f87
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$7d
 	ld (hl),$78
 	ld a,$b8
@@ -3142,7 +3142,7 @@ interactionCode9e:
 	call _func_606a
 	call _func_5f87
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$7d
 	ld (hl),$01
 	ret
@@ -3159,7 +3159,7 @@ interactionCode9e:
 	ld a,$6f
 	jp playSound
 @func_5f67:
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$7d
 	ld (hl),$28
 	ret
@@ -4209,7 +4209,7 @@ _dinState1_subid0:
 	ld a,(de)
 	cp $90
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	xor a
 	ld ($cca4),a
 	inc a
@@ -4236,7 +4236,7 @@ _dinState1_subid0:
 	ld a,(wLinkInAir)
 	or a
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld a,$80
 	ld ($cca4),a
 	ld l,$46
@@ -4252,7 +4252,7 @@ _dinState1_subid0:
 @substate2:
 	call interactionDecCounter1
 	jr nz,@func_6576
-	call interactionIncState2
+	call interactionIncSubstate
 	ld hl,$cbb3
 	ld (hl),$00
 	ld hl,$cbba
@@ -4273,7 +4273,7 @@ _dinState1_subid0:
 	ld b,$01
 	call flashScreen
 	ret z
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$46
 	ld (hl),$1e
 	ld b,$04
@@ -4296,7 +4296,7 @@ _dinState1_subid0:
 @substate4:
 	call interactionDecCounter1
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$50
 	ld (hl),$28
 	ld l,$60
@@ -4309,7 +4309,7 @@ _dinState1_subid0:
 	ld a,(hl)
 	sub $98
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$4f
 	ld (hl),a
 	ld l,$60
@@ -4321,7 +4321,7 @@ _dinState1_subid0:
 	ld a,(de)
 	or a
 	ret z
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$46
 	ld (hl),$1e
 	jp npcFaceLinkAndAnimate
@@ -4350,7 +4350,7 @@ _dinState1_subid3:
 	ld a,($cfc0)
 	or a
 	jr z,+
-	call interactionIncState2
+	call interactionIncSubstate
 	ld bc,$ff00
 	call objectSetSpeedZ
 +
@@ -4359,7 +4359,7 @@ _dinState1_subid3:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$46
 	ld (hl),$0a
 	ret
@@ -4389,13 +4389,13 @@ _dinState1_subid4:
 	ld (hl),$08
 	ld l,$50
 	ld (hl),$37
-	jp interactionIncState2
+	jp interactionIncSubstate
 @substate1:
 	call objectApplySpeed
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$60
 	ld (hl),$20
 @substate2:
@@ -4419,7 +4419,7 @@ _dinState1_subid7:
 	ld a,($cfc0)
 	cp $04
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$46
 	ld (hl),$78
 	ld a,$08
@@ -4428,7 +4428,7 @@ _dinState1_subid7:
 @substate1:
 	call interactionDecCounter1
 	jp nz,seasonsFunc_0a_6710
-	call interactionIncState2
+	call interactionIncSubstate
 	xor a
 	ld l,$4f
 	ld (hl),a
@@ -4438,7 +4438,7 @@ _dinState1_subid7:
 @substate2:
 	call interactionDecCounter1
 	jr nz,+
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$46
 	ld (hl),$3c
 	ld bc,TX_3d09
@@ -4451,7 +4451,7 @@ _dinState1_subid7:
 	jr nz,+
 	call interactionDecCounter1
 	jr nz,+
-	call interactionIncState2
+	call interactionIncSubstate
 	ld hl,$cfc0
 	ld (hl),$05
 +
@@ -4530,7 +4530,7 @@ interactionCodea6:
 	jr nz,@substate1
 	call interactionDecCounter1
 	jr nz,@applySpeedTwice
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$46
 	ld (hl),$14
 @applySpeedTwice:
@@ -4599,7 +4599,7 @@ interactionCodea7:
 	ret
 
 @state1:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -4610,7 +4610,7 @@ interactionCodea7:
 	ld a,(wTmpcfc0.genericCutscene.state)
 	or a
 	jr z,++
-	call interactionIncState2
+	call interactionIncSubstate
 	ld bc,-$100
 	call objectSetSpeedZ
 ++
@@ -4620,7 +4620,7 @@ interactionCodea7:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),10
 	ret
@@ -4797,7 +4797,7 @@ interactionCodea9:
 	ld a,($cfc0)
 	or a
 	ret z
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$42
 	ld a,(hl)
 	add a
@@ -4806,25 +4806,25 @@ interactionCodea9:
 	ld a,($cfc0)
 	cp $02
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$46
 	ld (hl),$0a
 	ret
 	call interactionDecCounter1
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld bc,$ff00
 	jp objectSetSpeedZ
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$46
 	ld (hl),$50
 	ret
 	call interactionDecCounter1
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$42
 	ld a,(hl)
 	cp $01
@@ -5059,12 +5059,12 @@ interactionCodead:
 	ld l,$76
 	dec (hl)
 	ret nz
-	jp interactionIncState2
+	jp interactionIncSubstate
 @substate1:
 	ld a,($cfc0)
 	cp $01
 	jr nz,+
-	call interactionIncState2
+	call interactionIncSubstate
 	ld bc,$fe80
 	jp objectSetSpeedZ
 +
@@ -5077,7 +5077,7 @@ interactionCodead:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$46
 	ld (hl),$08
 	ld l,$49
@@ -5097,7 +5097,7 @@ interactionCodead:
 	ret nz
 	ld l,$46
 	ld (hl),$40
-	jp interactionIncState2
+	jp interactionIncSubstate
 @substate4:
 	call interactionDecCounter1
 	jp z,interactionDelete
@@ -5196,7 +5196,7 @@ interactionCodeae:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -5224,7 +5224,7 @@ interactionCodeae:
 	ld h,d
 	ld l,Interaction.counter1
 	ld (hl),180
-	ld l,Interaction.state2
+	ld l,Interaction.substate
 	ld (hl),b
 	ret
 
@@ -5323,7 +5323,7 @@ interactionCodeae:
 	jr nz,@label_0b_236
 
 	xor a
-	ld l,Interaction.state2
+	ld l,Interaction.substate
 	ld (hl),a
 	ld l,Interaction.var33
 	ld (hl),a
@@ -5458,7 +5458,7 @@ _horizontalCreditsText_var03Nonzero:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -5470,7 +5470,7 @@ _horizontalCreditsText_var03Nonzero:
 	dec (hl)
 	jr nz,@applySpeed
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld b,$a0
 	ld l,Interaction.subid
 	ld a,(hl)
@@ -6250,7 +6250,7 @@ _twinrovaWitches_state1:
 	ld a,($cfc0)
 	bit 0,a
 	ret z
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$48
 	ld (hl),$ff
 	ret
@@ -6482,7 +6482,7 @@ interactionCodeb5:
 	jp createEnergySwirlGoingIn
 
 @state1:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -6492,7 +6492,7 @@ interactionCodeb5:
 @substate0:
 	call interactionDecCounter1
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),$08
 	ld hl,$cbb3
@@ -6515,7 +6515,7 @@ interactionCodeb5:
 	ld b,$01
 	call flashScreen
 	ret z
-	call interactionIncState2
+	call interactionIncSubstate
 	ld a,$03
 	jp fadeinFromWhiteWithDelay
 
@@ -6758,7 +6758,7 @@ interactionCodeb9:
 	call interactionDecCounter1
 	ret nz
 	call objectSetVisible
-	jp interactionIncState2
+	jp interactionIncSubstate
 @@substate1:
 	call interactionAnimate
 	call objectApplySpeed
@@ -6768,7 +6768,7 @@ interactionCodeb9:
 	ld l,$76
 	cp (hl)
 	jr nz,@@func_752b
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$4f
 	ld (hl),$00
 	ld l,$42
@@ -6984,7 +6984,7 @@ interactionCodebb:
 	ld (hl),$32
 	ld l,$49
 	ld (hl),$18
-	call interactionIncState2
+	call interactionIncSubstate
 @@setAnimationBasedOnAngle:
 	ld e,$49
 	ld a,(de)
@@ -7001,7 +7001,7 @@ interactionCodebb:
 	ld l,$49
 	ld (hl),$08
 	call @@setAnimationBasedOnAngle
-	jp interactionIncState2
+	jp interactionIncSubstate
 @@animateTwiceAndApplySpeed:
 	call interactionAnimate
 	call interactionAnimate
@@ -7010,7 +7010,7 @@ interactionCodebb:
 	call interactionDecCounter1
 	ret nz
 	call _func_77eb
-	jp interactionIncState2
+	jp interactionIncSubstate
 @@substate3:
 	call _func_77e5
 	ld a,($cfd0)
@@ -7020,7 +7020,7 @@ interactionCodebb:
 	ld a,(de)
 	or a
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$46
 	ld (hl),$1e
 	ret
@@ -7030,7 +7030,7 @@ interactionCodebb:
 	ld l,$50
 	ld (hl),$50
 	call @@func_772e
-	jp interactionIncState2
+	jp interactionIncSubstate
 @@substate5:
 	ld a,($cfd0)
 	cp $02
@@ -7039,7 +7039,7 @@ interactionCodebb:
 	ld a,(de)
 	or a
 	jr nz,+
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$46
 	ld (hl),$0a
 	ld l,$49
@@ -7150,7 +7150,7 @@ interactionCodebb:
 	ld (hl),b
 	ld l,$50
 	ld (hl),$3c
-	jp interactionIncState2
+	jp interactionIncSubstate
 @@substate7:
 	call @@animateTwiceAndApplySpeed
 	call interactionDecCounter1
@@ -7161,14 +7161,14 @@ interactionCodebb:
 	ld (hl),a
 	ld a,$01
 	call interactionSetAnimation
-	jp interactionIncState2
+	jp interactionIncSubstate
 @@substate8:
 	ld a,($cfd0)
 	cp $03
 	ret nz
 	call interactionDecCounter1
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	jr _func_77eb
 @@substate9:
 	call _func_77e5
@@ -7179,14 +7179,14 @@ interactionCodebb:
 	ld a,(de)
 	or a
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$46
 	ld (hl),$0c
 	ret
 @@substateA:
 	call interactionDecCounter1
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$46
 	ld (hl),$50
 	ld l,$50
@@ -7479,7 +7479,7 @@ interactionCodec1:
 	jp objectSetVisible82
 
 @state1:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -7493,14 +7493,14 @@ interactionCodec1:
 	ret nz
 	ld l,Interaction.counter1
 	ld (hl),40
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate1:
 	call @updateMovementAndSparkles
 	jr nz,@ret
 	ld l,Interaction.animCounter
 	ld (hl),$01
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate2:
 	call interactionAnimate
@@ -7576,7 +7576,7 @@ interactionCodec3:
 	.dw @state0
 	.dw @state1
 @state0:
-	call checkInteractionState2
+	call checkInteractionSubstate
 	jr nz,@substate1
 	ld a,GLOBALFLAG_IMPA_ASKED_TO_SAVE_ZELDA
 	call checkGlobalFlag
@@ -7585,7 +7585,7 @@ interactionCodec3:
 	call checkGlobalFlag
 	jp nz,interactionDelete
 	callab scriptHlp.zeldaKidnappedRoom_loadZeldaAndMoblins
-	jp interactionIncState2
+	jp interactionIncSubstate
 @substate1:
 	call returnIfScrollMode01Unset
 	call interactionIncState

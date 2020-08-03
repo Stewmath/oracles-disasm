@@ -880,7 +880,7 @@ interactionCodede:
 	ld (hl),$14
 	inc l
 	ld (hl),$08
-	jp interactionIncState2
+	jp interactionIncSubstate
 @@substate1:
 	call interactionDecCounter1
 	ret nz
@@ -906,7 +906,7 @@ interactionCodede:
 	ld a,(de)
 	or a
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,$46
 	ld (hl),$78
 	ret
@@ -928,7 +928,7 @@ interactionCodede:
 	ld ($cfc0),a
 	ld a,$20
 	ld ($cfc1),a
-	jp interactionIncState2
+	jp interactionIncSubstate
 @@substate3:
 @@substate5:
 @@substate7:
@@ -949,7 +949,7 @@ interactionCodede:
 	call interactionDecCounter1
 	ret nz
 	ld (hl),$3c
-	jp interactionIncState2
+	jp interactionIncSubstate
 @@substate8:
 	ld hl,$cfc1
 	inc (hl)
@@ -957,7 +957,7 @@ interactionCodede:
 	call playSound
 	ld a,$04
 	call fadeoutToWhiteWithDelay
-	jp interactionIncState2
+	jp interactionIncSubstate
 @@substate9:
 	ld hl,$cfc1
 	inc (hl)
@@ -1109,7 +1109,7 @@ interactionCodedf:
 	jp objectSetVisiblec0
 
 @state1:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -1123,7 +1123,7 @@ interactionCodedf:
 @substate0:
 	call interactionDecCounter1
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 
 @substate1:
 	call interactionAnimate
@@ -1131,7 +1131,7 @@ interactionCodedf:
 	cp $68 ; [xh]
 	ret nz
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),180
 
@@ -1147,7 +1147,7 @@ interactionCodedf:
 	ret nz
 	ld hl,wTmpcfc0.genericCutscene.cfd0
 	ld (hl),$01
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),$04
 	inc l
@@ -1160,7 +1160,7 @@ interactionCodedf:
 	call decHlRef16WithCap
 	jr nz,@label_10_330
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),100
 
@@ -1233,7 +1233,7 @@ interactionCodedf:
 	ld (hl),b ; [counter1]
 	ld hl,wTmpcfc0.genericCutscene.cfd0
 	ld (hl),$03
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate5:
 	call interactionDecCounter1
@@ -1241,7 +1241,7 @@ interactionCodedf:
 	ld (hl),60 ; [counter1]
 	ld hl,wTmpcfc0.genericCutscene.cfd0
 	ld (hl),$04
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @substate6:
 	call interactionAnimate
@@ -1341,7 +1341,7 @@ interactionCodee3:
 	jr c,+
 	jp interactionAnimateAsNpc
 +
-	call interactionIncState2
+	call interactionIncSubstate
 	ld a,$39
 	ld (wActiveMusic),a
 	call playSound
@@ -1354,7 +1354,7 @@ interactionCodee3:
 	jr c,+
 	jp interactionAnimateAsNpc
 +
-	call interactionIncState2
+	call interactionIncSubstate
 	ld a,$74
 	call playSound
 	ld bc,$fc00
@@ -1373,7 +1373,7 @@ interactionCodee3:
 	xor a
 	ld (wMenuDisabled),a
 	ld (wDisabledObjects),a
-	call interactionIncState2
+	call interactionIncSubstate
 @substate3:
 	call getFreeInteractionSlot
 	ret nz
@@ -1591,7 +1591,7 @@ _interactionCodee6_state1:
 
 @sparkles:
 	call interactionAnimate
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @@waitToMove
@@ -1600,7 +1600,7 @@ _interactionCodee6_state1:
 @@waitToMove:
 	call interactionDecCounter2
 	ret nz
-	call interactionIncState2
+	call interactionIncSubstate
 
 @@move:
 	call dropSparkles
@@ -1610,7 +1610,7 @@ _interactionCodee6_state1:
 	ret
 
 @rodOfSeasons:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @@substate0
@@ -1655,7 +1655,7 @@ _interactionCodee6_state1:
 	ld l,Interaction.speed
 	ld (hl),SPEED_80
 
-	ld l,Interaction.state2
+	ld l,Interaction.substate
 	inc (hl)
 	ret
 
@@ -1676,7 +1676,7 @@ _interactionCodee6_state1:
 	ld e,Interaction.collisionRadiusX
 	ld a,$06
 	ld (de),a
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @@substate2:
 	ld c,$08
@@ -1688,7 +1688,7 @@ _interactionCodee6_state1:
 	ld h,d
 	ld l,Interaction.counter2
 	ld (hl),$1e
-	jp interactionIncState2
+	jp interactionIncSubstate
 
 @@substate3:
 	call interactionDecCounter2
@@ -1699,7 +1699,7 @@ _interactionCodee6_state1:
 	xor a
 	ld (wcc50),a
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld a,(w1Link.yh)
 	sub $0e
 	ld l,Interaction.yh
@@ -1734,7 +1734,7 @@ _interactionCodee6_state1:
 
 @@substate4:
 	call retIfTextIsActive
-	call interactionIncState2
+	call interactionIncSubstate
 	ld hl,setCounter1To32
 	jp interactionSetScript
 
@@ -1742,7 +1742,7 @@ _interactionCodee6_state1:
 	call interactionRunScript
 	ret nc
 
-	call interactionIncState2
+	call interactionIncSubstate
 	ld l,Interaction.counter2
 	ld (hl),$14
 	jp brightenRoom

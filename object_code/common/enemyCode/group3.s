@@ -84,7 +84,7 @@ enemyCode01:
 	ld l,Enemy.collisionType
 	res 7,(hl)
 
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	ld (hl),$00
 	inc l
 	ld (hl),216 ; [counter1]
@@ -204,7 +204,7 @@ _mergedTwinrova_state9:
 	ld l,e
 	inc (hl) ; [state] = $0a
 	inc l
-	ld (hl),$00 ; [state2]
+	ld (hl),$00 ; [substate]
 	inc l
 	ld (hl),60 ; [counter1]
 
@@ -221,7 +221,7 @@ _mergedTwinrova_state9:
 ; In the process of converting the room to lava or ice
 _mergedTwinrova_stateA:
 	inc e
-	ld a,(de) ; [state2]
+	ld a,(de) ; [substate]
 	rst_jumpTable
 	.dw @substate0
 	.dw @substate1
@@ -242,7 +242,7 @@ _mergedTwinrova_stateA:
 	ret
 ++
 	ld l,e
-	inc (hl) ; [state2] = 1
+	inc (hl) ; [substate] = 1
 	inc l
 	ld (hl),30 ; [counter1]
 
@@ -276,7 +276,7 @@ _mergedTwinrova_stateA:
 	ret
 ++
 	ld l,e
-	inc (hl) ; [state2] = 2
+	inc (hl) ; [substate] = 2
 
 	ld l,Enemy.subid
 	ld a,(hl)
@@ -295,7 +295,7 @@ _mergedTwinrova_stateA:
 
 @substate2:
 	ld a,$03
-	ld (de),a ; [state2]
+	ld (de),a ; [substate]
 
 	call disableLcd
 
@@ -437,7 +437,7 @@ _mergedTwinrova_lavaRoom_stateD:
 @attack:
 	inc (hl) ; [state] = $0e
 	inc l
-	ld (hl),$00 ; [state2]
+	ld (hl),$00 ; [substate]
 
 	ld l,Enemy.var39
 	ld (hl),$01
@@ -466,7 +466,7 @@ _mergedTwinrova_lavaRoom_stateE:
 	or a
 	jp nz,@keeseAttack
 
-	ld e,Enemy.state2
+	ld e,Enemy.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @flameAttack_substate0
@@ -476,7 +476,7 @@ _mergedTwinrova_lavaRoom_stateE:
 @flameAttack_substate0:
 	ld h,d
 	ld l,e
-	inc (hl) ; [state2] = 1
+	inc (hl) ; [substate] = 1
 	inc l
 	ld (hl),30 ; [counter1]
 
@@ -500,7 +500,7 @@ _mergedTwinrova_lavaRoom_stateE:
 
 	ld (hl),16
 	ld l,e
-	inc (hl) ; [state2] = 2
+	inc (hl) ; [substate] = 2
 	ld a,$04
 	jp enemySetAnimation
 
@@ -522,7 +522,7 @@ _mergedTwinrova_lavaRoom_stateE:
 
 
 @keeseAttack:
-	ld e,Enemy.state2
+	ld e,Enemy.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @keeseAttack_substate0
@@ -532,7 +532,7 @@ _mergedTwinrova_lavaRoom_stateE:
 @keeseAttack_substate0:
 	ld h,d
 	ld l,e
-	inc (hl) ; [state2] = 1
+	inc (hl) ; [substate] = 1
 	inc l
 	ld (hl),$0a ; [counter1]
 	inc l
@@ -571,7 +571,7 @@ _mergedTwinrova_lavaRoom_stateE:
 	dec l
 	ld (hl),180 ; [counter1]
 	ld l,e
-	inc (hl) ; [state2] = 2
+	inc (hl) ; [substate] = 2
 	ld a,$03
 	jp enemySetAnimation
 
@@ -604,7 +604,7 @@ _mergedTwinrova_iceRoom_stateC:
 	ld l,e
 	inc (hl) ; [state] = $0d
 	inc l
-	ld (hl),$00 ; [state2]
+	ld (hl),$00 ; [substate]
 	inc l
 	ld (hl),10 ; [counter1]
 
@@ -632,7 +632,7 @@ _mergedTwinrova_iceRoom_stateC:
 ; Spawning ice projectiles (ENEMYID_TWINROVA_ICE)
 _mergedTwinrova_iceRoom_stateD:
 	inc e
-	ld a,(de) ; [state2]
+	ld a,(de) ; [substate]
 	rst_jumpTable
 	.dw @substate0
 	.dw @substate1
@@ -686,7 +686,7 @@ _mergedTwinrova_iceRoom_stateD:
 
 @doneSpawningProjectiles:
 	ld l,e
-	inc (hl) ; [state2] = 1
+	inc (hl) ; [substate] = 1
 	ld l,Enemy.counter1
 	ld (hl),120
 	ld l,Enemy.var39
@@ -734,7 +734,7 @@ _mergedTwinrova_iceRoom_stateF:
 	ld l,Enemy.state
 	inc (hl) ; [state] = $10
 	inc l
-	ld (hl),$00 ; [state2]
+	ld (hl),$00 ; [substate]
 	inc l
 	ld (hl),30 ; [counter1]
 
@@ -766,7 +766,7 @@ _mergedTwinrova_iceRoom_state10:
 	ld (hl),60
 
 	ld l,e
-	inc (hl) ; [state2] = 1
+	inc (hl) ; [substate] = 1
 
 	ld a,$06
 	jp enemySetAnimation
@@ -859,7 +859,7 @@ _mergedTwinrova_checkTimeToSwapRoomFromDamage:
 
 
 _mergedTwinrova_deathCutscene:
-	ld e,Enemy.state2
+	ld e,Enemy.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -894,7 +894,7 @@ _mergedTwinrova_deathCutscene:
 
 @doneExplosions:
 	ld (hl),25 ; [counter1]
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	inc (hl)
 
 @substate1:
@@ -915,7 +915,7 @@ _mergedTwinrova_deathCutscene:
 
 @substate2:
 	ld a,$03
-	ld (de),a ; [state2] = 3
+	ld (de),a ; [substate] = 3
 
 	ld a,CUTSCENE_TWINROVA_SACRIFICE
 	ld (wCutsceneTrigger),a
@@ -1223,7 +1223,7 @@ _twinrova_state9:
 	inc l
 	ld (hl),$12 ; [counter2]
 	ld l,e
-	inc (hl) ; [state2] = 1
+	inc (hl) ; [substate] = 1
 	jr @animate
 
 @substate1:
@@ -1236,7 +1236,7 @@ _twinrova_state9:
 	jr nz,@updateAngle
 
 	ld l,e
-	inc (hl) ; [state2] = 3
+	inc (hl) ; [substate] = 3
 	inc l
 	ld (hl),30 ; [counter1]
 
@@ -1264,7 +1264,7 @@ _twinrova_state9:
 	jr nz,@animate
 
 	ld l,e
-	inc (hl) ; [state2] = 3
+	inc (hl) ; [substate] = 3
 
 	ld e,Enemy.subid
 	ld a,(de)
@@ -1283,8 +1283,8 @@ _twinrova_state9:
 	ldd (hl),a
 	ld (hl),Interaction.start
 
-	ld l,Enemy.state2
-	inc (hl) ; [state2] = 4
+	ld l,Enemy.substate
+	inc (hl) ; [substate] = 4
 
 	ld l,Enemy.var32
 	res 7,(hl)
@@ -1440,7 +1440,7 @@ _twinrova_stateF:
 @nextState:
 	call _ecom_incState
 	inc l
-	ld (hl),$00 ; [state2] = 0
+	ld (hl),$00 ; [substate] = 0
 
 	ld l,Enemy.var32
 	res 3,(hl)
@@ -1465,7 +1465,7 @@ _twinrova_state10:
 @substate0:
 	ld h,d
 	ld l,e
-	inc (hl) ; [state2] = 1
+	inc (hl) ; [substate] = 1
 
 	ld l,Enemy.var32
 	res 1,(hl)
@@ -1506,8 +1506,8 @@ _twinrova_state10:
 	cp $f0
 	jr c,@animate
 ++
-	ld l,Enemy.state2
-	inc (hl) ; [state2] = 2
+	ld l,Enemy.substate
+	inc (hl) ; [substate] = 2
 
 	ld l,Enemy.var32
 	set 1,(hl)
@@ -1531,8 +1531,8 @@ _twinrova_state10:
 	bit 1,(hl)
 	ret z
 
-	; Increment state2 for both (now synchronized)
-	ld l,Enemy.state2
+	; Increment substate for both (now synchronized)
+	ld l,Enemy.substate
 	inc (hl)
 	ld h,d
 	inc (hl)
@@ -1545,7 +1545,7 @@ _twinrova_state10:
 
 	ld (hl),48 ; [counter1]
 	ld l,e
-	inc (hl) ; [state2] = 4
+	inc (hl) ; [substate] = 4
 
 	ld l,Enemy.zh
 	ld (hl),$a0
@@ -1596,7 +1596,7 @@ _twinrova_state10:
 	jr nz,@animate
 
 	dec l
-	inc (hl) ; [state2] = 5
+	inc (hl) ; [substate] = 5
 @animate:
 	jp enemyAnimate
 
@@ -1617,8 +1617,8 @@ _twinrova_state10:
 	ld (wDisableLinkCollisionsAndMenu),a
 
 	ld h,d
-	ld l,Enemy.state2
-	inc (hl) ; [state2] = 6
+	ld l,Enemy.substate
+	inc (hl) ; [substate] = 6
 
 	ld l,Enemy.oamFlagsBackup
 	xor a
@@ -1640,8 +1640,8 @@ _twinrova_state10:
 	ret nz
 
 	ld h,d
-	ld l,Enemy.state2
-	inc (hl) ; [state2] = 7
+	ld l,Enemy.substate
+	inc (hl) ; [substate] = 7
 
 	ld l,Enemy.var32
 	res 0,(hl)
@@ -2086,7 +2086,7 @@ _twinrova_rise2PixelsAboveGround:
 ;;
 ; Unused?
 _twinrova_incState2ForSelfAndTwin:
-	ld a,Object.state2
+	ld a,Object.substate
 	call objectGetRelatedObject1Var
 	inc (hl)
 	ld h,d
@@ -2239,7 +2239,7 @@ enemyCode04:
 	ld l,Enemy.state
 	ld (hl),$0e
 	inc l
-	ld (hl),$00 ; [state2]
+	ld (hl),$00 ; [substate]
 	inc l
 	ld (hl),120 ; [counter1]
 
@@ -2533,7 +2533,7 @@ _ganon_state7:
 ; 3-projectile attack
 _ganon_state8:
 	inc e
-	ld a,(de) ; [state2]
+	ld a,(de) ; [substate]
 	rst_jumpTable
 	.dw _ganon_state8_substate0
 	.dw _ganon_state8_substate1
@@ -2547,7 +2547,7 @@ _ganon_state8:
 ; Also used by state D
 _ganon_state8_substate0:
 	call _ganon_updateTeleportVarsAndPlaySound
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	inc (hl)
 	ret
 
@@ -2556,7 +2556,7 @@ _ganon_state8_substate1:
 	call _ecom_decCounter1
 	jp nz,_ganon_updateTeleportAnimationGoingOut
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	call _ganon_decideTeleportLocationAndCounter
 	jp objectSetInvisible
 
@@ -2565,7 +2565,7 @@ _ganon_state8_substate2:
 	call _ecom_decCounter1
 	ret nz
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	jp _ganon_updateTeleportVarsAndPlaySound
 
 ; Reappearing.
@@ -2576,7 +2576,7 @@ _ganon_state8_substate3:
 	; Done teleporting, he will become solid again
 	ld (hl),$08 ; [counter1]
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 
 	ld l,Enemy.var30
 	ld a,(hl)
@@ -2592,7 +2592,7 @@ _ganon_state8_substate4:
 	ret nz
 	ld (hl),$02
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	ld a,GFXH_b3
 	jp ganon_loadGfxHeader
 
@@ -2613,7 +2613,7 @@ _ganon_state8_substate6:
 	jr nz,++
 	ld (hl),60
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	ld a,$02
 	jp enemySetAnimation
 ++
@@ -2663,7 +2663,7 @@ _ganon_state9:
 ; Also used by state A, B, C
 _ganon_state9_substate0:
 	call _ganon_updateTeleportVarsAndPlaySound
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	inc (hl)
 	ret
 
@@ -2672,7 +2672,7 @@ _ganon_state9_substate1:
 	jp nz,_ganon_updateTeleportAnimationGoingOut
 	ld (hl),120 ; [counter1]
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	ld l,Enemy.yh
 	ld (hl),$58
 	ld l,Enemy.xh
@@ -2684,7 +2684,7 @@ _ganon_state9_substate3:
 	jp nz,_ganon_updateTeleportAnimationComingIn
 	ld (hl),$08 ; [counter1]
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	ld l,Enemy.collisionType
 	set 7,(hl)
 	jp objectSetVisible83
@@ -2694,7 +2694,7 @@ _ganon_state9_substate4:
 	ret nz
 	ld (hl),40 ; [counter1]
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	ld a,GFXH_b6
 	call ganon_loadGfxHeader
 	ld a,$09
@@ -2750,7 +2750,7 @@ _ganon_state9_substate7:
 ; "Slash" move
 _ganon_stateA:
 	inc e
-	ld a,(de) ; [state2]
+	ld a,(de) ; [substate]
 	rst_jumpTable
 	.dw _ganon_state9_substate0
 	.dw _ganon_stateA_substate1
@@ -2768,7 +2768,7 @@ _ganon_stateA_substate1:
 
 	ld (hl),120
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	jp objectSetInvisible
 
 ; Delay before reappearing
@@ -2777,7 +2777,7 @@ _ganon_stateA_substate2:
 	ret nz
 
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 
 	ldh a,(<hEnemyTargetX)
 	cp (LARGE_ROOM_WIDTH<<4)/2
@@ -2811,7 +2811,7 @@ _ganon_stateA_substate3:
 	jp nz,_ganon_updateTeleportAnimationComingIn
 	ld (hl),$02
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	ld l,Enemy.collisionType
 	set 7,(hl)
 	ld l,Enemy.speed
@@ -2826,7 +2826,7 @@ _ganon_stateA_substate4:
 	ret nz
 	ld (hl),$04
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	ld a,Enemy.var37
 	call ganon_loadGfxHeader
 	ld e,Enemy.var32
@@ -2839,7 +2839,7 @@ _ganon_stateA_substate5:
 	jr nz,+++
 	ld (hl),16
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	ld a,GFXH_b6
 	call ganon_loadGfxHeader
 	ld e,Enemy.var32
@@ -2851,7 +2851,7 @@ _ganon_stateA_substate6:
 	call _ecom_decCounter1
 	jr nz,+++
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	inc l
 	ld (hl),30 ; [counter1]
 	ret
@@ -2898,14 +2898,14 @@ _ganon_stateB_substate1:
 	jp nz,_ganon_updateTeleportAnimationGoingOut
 	ld (hl),180
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	jp objectSetInvisible
 
 _ganon_stateB_substate2:
 	call _ecom_decCounter1
 	ret nz
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	ld l,Enemy.yh
 	ld (hl),$28
 	ld l,Enemy.xh
@@ -2921,7 +2921,7 @@ _ganon_stateB_substate3:
 	jp nz,_ganon_updateTeleportAnimationComingIn
 	ld (hl),$40 ; [counter1]
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	ld l,Enemy.collisionType
 	set 7,(hl)
 	call objectSetVisible83
@@ -2935,7 +2935,7 @@ _ganon_stateB_substate4:
 	call _ecom_decCounter1
 	ret nz
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	ld l,Enemy.speedZ
 	ld a,<(-$1c0)
 	ldi (hl),a
@@ -2964,7 +2964,7 @@ _ganon_stateB_substate5:
 	ld a,120
 	ld (hl),a
 	ld (wScreenShakeCounterY),a
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	inc (hl)
 	ld a,SND_EXPLOSION
 	jp playSound
@@ -2997,7 +2997,7 @@ _ganon_stateB_substate7:
 	ret nz
 	ld (hl),24 ; [counter1]
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	ld e,PARTID_51
 	call _ganon_spawnPart
 	ret nz
@@ -3011,7 +3011,7 @@ _ganon_stateB_substate8:
 	ret nz
 	ld (hl),60
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	call objectCreatePuff
 	ld a,GFXH_b3
 	call ganon_loadGfxHeader
@@ -3055,7 +3055,7 @@ _ganon_stateC_substate1:
 	jp nz,_ganon_updateTeleportAnimationGoingOut
 	ld (hl),90 ; [counter1]
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	ld l,Enemy.yh
 	ld (hl),$58
 	ld l,Enemy.xh
@@ -3067,7 +3067,7 @@ _ganon_stateC_substate3:
 	jp nz,_ganon_updateTeleportAnimationComingIn
 	ld (hl),90 ; [counter1]
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	ld l,Enemy.collisionType
 	set 7,(hl)
 	call objectSetVisible83
@@ -3097,7 +3097,7 @@ _ganon_stateC_substate4:
 	ret z
 
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	ld l,Enemy.collisionType
 	res 7,(hl)
 	ld l,Enemy.oamFlagsBackup
@@ -3112,7 +3112,7 @@ _ganon_stateC_substate5:
 	or a
 	ret nz
 	ld a,$06
-	ld (de),a ; [state2]
+	ld (de),a ; [substate]
 	ld a,$04
 	call _ganon_setTileReplacementMode
 	jp _ganon_makeRoomBoundarySolid
@@ -3120,7 +3120,7 @@ _ganon_stateC_substate5:
 _ganon_stateC_substate6:
 	ld h,d
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	inc l
 	ld (hl),60 ; [counter1]
 
@@ -3150,9 +3150,9 @@ _ganon_stateC_substate7:
 	call _ecom_decCounter2
 	jr nz,++
 
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	inc (hl)
-	inc (hl) ; [state2] = 9
+	inc (hl) ; [substate] = 9
 	ld l,Enemy.collisionType
 	res 7,(hl)
 	jp fastFadeoutToWhite
@@ -3160,7 +3160,7 @@ _ganon_stateC_substate7:
 	call _ecom_decCounter1
 	jr nz,++
 	ld l,e
-	inc (hl) ; [state2] = 8
+	inc (hl) ; [substate] = 8
 	ld l,Enemy.counter1
 	ld (hl),80
 	ld a,GFXH_b3
@@ -3196,7 +3196,7 @@ _ganon_stateC_substate8:
 	jp objectCopyPosition
 
 @nextSubstate:
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	dec (hl)
 	inc l
 	ld (hl),60
@@ -3208,7 +3208,7 @@ _ganon_stateC_substate9:
 	or a
 	ret nz
 	ld a,$0a
-	ld (de),a ; [state2]
+	ld (de),a ; [substate]
 	ld a,$03
 	call _ganon_setTileReplacementMode
 .ifdef ROM_AGES
@@ -3242,7 +3242,7 @@ _ganon_stateD_substate3:
 	call _ecom_decCounter1
 	jp nz,_ganon_updateTeleportAnimationComingIn
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	ld l,Enemy.var30
 	ld a,(hl)
 	ld l,Enemy.xh
@@ -3253,7 +3253,7 @@ _ganon_stateD_substate3:
 ; Just died
 _ganon_stateE:
 	inc e
-	ld a,(de) ; [state2]
+	ld a,(de) ; [substate]
 	rst_jumpTable
 	.dw _ganon_stateE_substate0
 	.dw _ganon_stateE_substate1
@@ -3281,7 +3281,7 @@ _ganon_stateE_substate0:
 	inc (hl)
 
 	ld h,d
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	inc (hl)
 	ld l,Enemy.zh
 	ld (hl),$00
@@ -3296,7 +3296,7 @@ _ganon_stateE_substate1:
 	bit 7,(hl)
 	ret z
 	ld h,d
-	ld l,Enemy.state2
+	ld l,Enemy.substate
 	inc (hl)
 	inc l
 	ld (hl),$08 ; [counter1]
@@ -3307,7 +3307,7 @@ _ganon_stateE_substate2:
 	ret nz
 	ld (hl),30 ; [counter1]
 	ld l,e
-	inc (hl) ; [state2]
+	inc (hl) ; [substate]
 	xor a
 	ld (wExtraBgPaletteHeader),a
 	call _ganon_setTileReplacementMode
@@ -3406,7 +3406,7 @@ _label_10_135:
 	ld (de),a
 	inc e
 	xor a
-	ld (de),a ; [state2]
+	ld (de),a ; [substate]
 	ld e,Enemy.var35
 	ld a,l
 	ld (de),a

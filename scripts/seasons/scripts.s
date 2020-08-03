@@ -699,7 +699,7 @@ shopkeeperChestGameScript:
 	asm15 scriptHlp.shopkeeper_take10Rupees
 ++
 	setangleandanimation $08
-	writeobjectbyte Interaction.state2, $02 ; Signal to close whichever chest he faces
+	writeobjectbyte Interaction.substate, $02 ; Signal to close whichever chest he faces
 	writeobjectbyte Interaction.state,  $05
 	wait 60
 
@@ -712,7 +712,7 @@ shopkeeperChestGameScript:
 
 	enableallobjects
 	ormemory wInShop, $80
-	writeobjectbyte Interaction.state2, $00
+	writeobjectbyte Interaction.substate, $00
 	writeobjectbyte Interaction.state,  $05
 	; Script will stop here since state has been changed.
 
@@ -747,7 +747,7 @@ shopkeeperScript_openedCorrectChest:
 @nextRound:
 	showtextlowindex <TX_0e13
 	setangleandanimation $08
-	writeobjectbyte Interaction.state2, $02 ; Signal to close whichever chest he faces
+	writeobjectbyte Interaction.substate, $02 ; Signal to close whichever chest he faces
 	writeobjectbyte Interaction.state,  $05
 	wait 60
 
@@ -793,7 +793,7 @@ shopkeeperScript_openedCorrectChest:
 ; Linked talked to the shopkeep in the middle of the chest game.
 shopkeeperScript_talkDuringChestGame:
 	showtextlowindex <TX_0e1a
-	writeobjectbyte Interaction.state2, $01
+	writeobjectbyte Interaction.substate, $01
 	writeobjectbyte Interaction.state,  $05
 	; Script stops here since state has been changed.
 
@@ -4478,15 +4478,15 @@ pirateSkullScript_notYetCarried:
 	jumpifroomflagset $40, @canCarrySkull
 	showtextlowindex <TX_4d02
 	orroomflag $40
-	jump2byte @setState2ff
+	jump2byte @setSubstateff
 @canCarrySkull:
 	showtextlowindex <TX_4d03
-@setState2ff:
-	setstate2 $ff
+@setSubstateff:
+	setsubstate $ff
 	scriptend
 @obtainedPiratesBell:
 	showtextlowindex <TX_4d05
-	jump2byte @setState2ff
+	jump2byte @setSubstateff
 	
 
 ; ==============================================================================
@@ -5393,7 +5393,7 @@ danceLeaderScript_promptForTutorial:
 	jumpiftextoptioneq $01, @needTutorial
 @danceLeaderScript_readyToDance:
 	asm15 fastFadeoutToWhite
-	setstate2 $ff
+	setsubstate $ff
 	scriptend
 @needTutorial:
 	loadscript danceLeaderScript_danceTutorial
@@ -5417,7 +5417,7 @@ _danceLeaderScript_itemGiven:
 	wait 30
 	resetmusic
 	enableinput
-	setstate2 $ff
+	setsubstate $ff
 
 danceLeaderScript_showLoadedText:
 	initcollisions
@@ -5558,14 +5558,14 @@ rosaHidingScript_1stScreen:
 rosaHidingScript_afterInitialScreenText:
 	xorcfc0bit 0
 	asm15 scriptHlp.subrosianHiding_store02Intocc9e
-	setstate2 $03
+	setsubstate $03
 	moveup $30
 	enableinput
 	scriptend
 
 rosaHidingScript_2ndScreen:
 	asm15 scriptHlp.subrosianHiding_createDetectionHelper
-	setstate2 $04
+	setsubstate $04
 	setspeed SPEED_100
 	jumprandom @pattern1, @pattern2
 @pattern1:
@@ -5575,7 +5575,7 @@ rosaHidingScript_2ndScreen:
 
 rosaHidingScript_3rdScreen:
 	asm15 scriptHlp.subrosianHiding_createDetectionHelper
-	setstate2 $04
+	setsubstate $04
 	setspeed SPEED_100
 	jumprandom @pattern1, @pattern2
 @pattern1:
@@ -5585,7 +5585,7 @@ rosaHidingScript_3rdScreen:
 	
 rosaHidingScript_4thScreen:
 	asm15 scriptHlp.subrosianHiding_createDetectionHelper
-	setstate2 $04
+	setsubstate $04
 	setspeed SPEED_100
 	jumprandom @pattern1, @pattern2
 @pattern1:

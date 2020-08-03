@@ -106,7 +106,7 @@ _parentItemCode_sword:
 	ld l,Item.state
 	ld (hl),$02
 
-	; [Item.state2] = 0
+	; [Item.substate] = 0
 	inc l
 	xor a
 	ld (hl),a

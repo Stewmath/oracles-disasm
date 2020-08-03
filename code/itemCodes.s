@@ -572,7 +572,7 @@ _galeSeedUpdateAnimation:
 ; Gale seed in its tornado state, will pull in Link if possible
 _galeSeedTryToWarpLink:
 	call _galeSeedUpdateAnimation
-	ld e,Item.state2
+	ld e,Item.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -619,7 +619,7 @@ _galeSeedTryToWarpLink:
 	ld e,Item.counter2
 	ld a,$3c
 	ld (de),a
-	ld e,Item.state2
+	ld e,Item.substate
 	ld a,$01
 	ld (de),a
 	ld (wMenuDisabled),a
@@ -630,7 +630,7 @@ _galeSeedTryToWarpLink:
 	jp objectSetVisible80
 
 @setSubstate3:
-	ld e,Item.state2
+	ld e,Item.substate
 	ld a,$03
 	ld (de),a
 	ret
@@ -668,7 +668,7 @@ _galeSeedTryToWarpLink:
 	jr nz,@flickerAndCopyPositionToLink
 
 	ld a,$02
-	ld (w1Link.state2),a
+	ld (w1Link.substate),a
 	ld a,CUTSCENE_IN_GALE_SEED_MENU
 	ld (wCutsceneTrigger),a
 
@@ -1770,7 +1770,7 @@ itemCode03:
 	cp $02
 	jr nz,+
 
-	; Check bit 1 of Item.state2 (check if it's being held?)
+	; Check bit 1 of Item.substate (check if it's being held?)
 	bit 1,(hl)
 	call z,dropLinkHeldItem
 +
@@ -1792,7 +1792,7 @@ itemCode03:
 ; State 0/2: bomb is being picked up / thrown around
 @state0:
 @state2:
-	ld e,Item.state2
+	ld e,Item.substate
 	ld a,(de)
 	rst_jumpTable
 
@@ -1804,7 +1804,7 @@ itemCode03:
 
 ; Bomb just picked up
 @heldState0:
-	call itemIncState2
+	call itemIncSubstate
 
 	ld l,Item.var2f
 	set 6,(hl)
@@ -1829,7 +1829,7 @@ itemCode03:
 ; Bomb being thrown
 @heldState2:
 @heldState3:
-	; Set state2 to $03
+	; Set substate to $03
 	ld a,$03
 	ld (de),a
 
@@ -2719,7 +2719,7 @@ itemCode0a:
 
 ; State 2: retracting the hook
 @state2:
-	ld e,Item.state2
+	ld e,Item.substate
 	ld a,(de)
 	or a
 	jr nz,@fullyRetracted
@@ -2742,7 +2742,7 @@ itemCode0a:
 
 	; Item has reached Link
 
-	call itemIncState2
+	call itemIncSubstate
 
 	; Set Item.counter1 to $03
 	inc l
@@ -2766,7 +2766,7 @@ _func_5902:
 	jr nc,++
 	jr z,++
 
-	ld a,Object.state2
+	ld a,Object.substate
 	call objectGetRelatedObject2Var
 	ld (hl),$03
 ++
@@ -2779,7 +2779,7 @@ _func_5902:
 ; Uses w1ReservedItemE as ITEMID_SWITCH_HOOK_HELPER to hold the positions for link and the
 ; object temporarily.
 _switchHookState3:
-	ld e,Item.state2
+	ld e,Item.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @s3subState0
@@ -2864,7 +2864,7 @@ _switchHookState3:
 	ld a,SND_SWITCH2
 	call playSound
 
-	call itemIncState2
+	call itemIncSubstate
 
 	ld l,Item.zh
 	ld (hl),$00
@@ -2877,7 +2877,7 @@ _switchHookState3:
 	ldi (hl),a
 	ld (hl),ITEMID_SWITCH_HOOK_HELPER
 
-	; Zero Item.state and Item.state2
+	; Zero Item.state and Item.substate
 	ld l,Item.state
 	xor a
 	ldi (hl),a
@@ -2886,7 +2886,7 @@ _switchHookState3:
 	call objectCopyPosition
 	jp resetLinkInvincibility
 ++
-	ld a,Object.state2
+	ld a,Object.substate
 	call objectGetRelatedObject2Var
 	ld (hl),$03
 	jp itemCode0a@label_07_185
@@ -2899,7 +2899,7 @@ _switchHookState3:
 	dec (hl)
 	ld a,(hl)
 	cp $f1
-	call c,itemIncState2
+	call c,itemIncSubstate
 	jr @updateOtherPositions
 
 ; Substate 2: Link and the object swap positions
@@ -2984,7 +2984,7 @@ _switchHookState3:
 	xor $02
 	ld (hl),a
 
-	call itemIncState2
+	call itemIncSubstate
 	call _checkRelatedObject2States
 	jr nc,+
 	jr z,+
@@ -3066,7 +3066,7 @@ _switchHookState3:
 ;;
 ; This function is used for the switch hook.
 ;
-; @param[out]	hl	Related object 2's state2 variable
+; @param[out]	hl	Related object 2's substate variable
 ; @param[out]	zflag	Set if latched onto a tile, not an object
 ; @param[out]	cflag	Unset if the related object is on state 3, substate 3?
 _checkRelatedObject2States:
@@ -4286,8 +4286,8 @@ itemCode18:
 	ld l,Item.zh
 	ld (hl),a
 
-	; Set [state]=3, [state2]=0
-	ld l,Item.state2
+	; Set [state]=3, [substate]=0
+	ld l,Item.substate
 	ldd (hl),a
 	ld (hl),$03
 
@@ -4307,7 +4307,7 @@ itemCode18:
 
 ; State 4: block being pushed
 @state4:
-	ld e,Item.state2
+	ld e,Item.substate
 	ld a,(de)
 	rst_jumpTable
 
@@ -4315,7 +4315,7 @@ itemCode18:
 	.dw @state4Substate1
 
 @state4Substate0:
-	call itemIncState2
+	call itemIncSubstate
 	call itemUpdateAngle
 
 	; Set speed & counter1 based on bracelet level
@@ -4368,7 +4368,7 @@ itemCode18:
 
 ; State 2: being picked up / thrown
 @state2:
-	ld e,Item.state2
+	ld e,Item.substate
 	ld a,(de)
 	rst_jumpTable
 
@@ -4379,7 +4379,7 @@ itemCode18:
 
 ; Substate 0: just picked up
 @state2Substate0:
-	call itemIncState2
+	call itemIncSubstate
 	call @removeBlock
 	call objectSetVisiblec1
 	ld a,$02
@@ -5661,7 +5661,7 @@ itemCode16:
 @state1:
 @state2:
 	ld h,d
-	ld l,Item.state2
+	ld l,Item.substate
 	ld a,(hl)
 	or a
 	ret z
@@ -5778,7 +5778,7 @@ itemCode16:
 	jr z,@@createPuff
 .endif
 
-	ld a,Object.state2
+	ld a,Object.substate
 	call objectGetRelatedObject2Var
 	ld (hl),$03
 	jp itemDelete
@@ -5818,7 +5818,7 @@ _braceletCheckBreakable:
 ; Called each frame an item's being thrown. Returns from caller if it decides to delete
 ; itself.
 ;
-; @param[out]	hl	relatedObj2.state2 or this.state2
+; @param[out]	hl	relatedObj2.substate or this.substate
 _braceletCheckDeleteSelfWhileThrowing:
 	ld e,Item.subid
 	ld a,(de)
@@ -5850,7 +5850,7 @@ _braceletCheckDeleteSelfWhileThrowing:
 	call objectCheckWithinRoomBoundary
 	jr nc,@deleteSelfAndRetFromCaller
 	ld h,d
-	ld l,Item.state2
+	ld l,Item.substate
 	ret
 
 ;;
@@ -6162,7 +6162,7 @@ _bounceSpeedReductionMapping:
 ;;
 ; ITEMID_DUST
 itemCode1a:
-	ld e,Item.state2
+	ld e,Item.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -6171,7 +6171,7 @@ itemCode1a:
 
 @substate0:
 	call _itemLoadAttributesAndGraphics
-	call itemIncState2
+	call itemIncSubstate
 	ld hl,w1Link.yh
 	call objectTakePosition
 	xor a
@@ -6207,7 +6207,7 @@ itemCode1a:
 	ld (hl),a
 
 	call objectSetInvisible
-	jp itemIncState2
+	jp itemIncSubstate
 
 
 ; Substate 2: dust by Link's feet (spends the majority of time in this state)

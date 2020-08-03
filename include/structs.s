@@ -105,7 +105,7 @@
 	; Enemy states below $08 behave differently? (See constants/enemyStates.s)
 	state			db ; $04
 
-	state2			db ; $05
+	substate		db ; $05
 	counter1		db ; $06
 	counter2		db ; $07
 
@@ -243,7 +243,7 @@
 	subid			db ; $02
 	var03			db ; $03
 	state			db ; $04
-	state2			db ; $05
+	substate		db ; $05
 
 	; Link's counter1 is used for:
 	;  - Movement with flippers
@@ -414,7 +414,7 @@
 	; $01: Being held
 	; $02: Just released?
 	; $03: Not being held
-	state2			db ; $05
+	substate		db ; $05
 
 	counter1		db ; $06
 
@@ -559,7 +559,7 @@
 	subid			db ; $02
 	var03			db ; $03
 	state			db ; $04
-	state2			db ; $05
+	substate		db ; $05
 	; counter1 is used by the checkabutton command among others. checkabutton
 	; doesn't activate until it reaches zero.
 	counter1		db ; $06

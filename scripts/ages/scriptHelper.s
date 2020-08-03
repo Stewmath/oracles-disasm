@@ -857,7 +857,7 @@ impaScript5:
 	setanimation $03
 	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $03
 	setanimation $02
-	checkobjectbyteeq Interaction.state2, $02
+	checkobjectbyteeq Interaction.substate, $02
 
 	writememory wTmpcfc0.genericCutscene.cfd0, $05
 	setanimation $00
@@ -1507,14 +1507,14 @@ ralphSubid0bScript:
 
 	setspeed SPEED_200
 	moveleft $30
-	setstate2 $ff
+	setsubstate $ff
 
 	setspeed SPEED_100
 	moveleft $20
 	setspeed SPEED_080
 	moveleft $20
 
-	setstate2 $ff
+	setsubstate $ff
 	wait 30
 
 	setspeed SPEED_100
@@ -1525,7 +1525,7 @@ ralphSubid0bScript:
 	wait 30
 
 	setspeed SPEED_200
-	setstate2 $00
+	setsubstate $00
 	moveright $38
 	jump2byte _ralphEndCutscene
 
@@ -1538,19 +1538,19 @@ ralphSubid10Script:
 	xorcfc0bit 0
 	setspeed  SPEED_200
 	moveup $18
-	setstate2 $ff
+	setsubstate $ff
 	setspeed  SPEED_100
 	moveup $20
 	setspeed  SPEED_080
 	moveup $20
-	setstate2 $ff
+	setsubstate $ff
 	wait 30
 
 	showtext TX_2a20
 	wait 30
 
 	setspeed SPEED_200
-	setstate2 $00
+	setsubstate $00
 	movedown $38
 
 _ralphEndCutscene:
@@ -7682,7 +7682,7 @@ zeldaSubid02Script_body:
 
 
 zeldaSubid03Script_body:
-	checkobjectbyteeq Interaction.state2, $01
+	checkobjectbyteeq Interaction.substate, $01
 	wait 30
 
 	setspeed SPEED_100

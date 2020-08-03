@@ -400,7 +400,7 @@ movingPlatform_runScript:
 	ldi a,(hl)
 	ld e,Interaction.counter1
 	ld (de),a
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	xor a
 	ld (de),a
 	jr _movingPlatform_setScript
@@ -411,7 +411,7 @@ movingPlatform_runScript:
 	ldi a,(hl)
 	ld e,Interaction.counter1
 	ld (de),a
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,$01
 	ld (de),a
 	jr _movingPlatform_setScript
@@ -455,7 +455,7 @@ movingPlatform_runScript:
 	ld e,Interaction.counter1
 	ld (de),a
 	xor a
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld (de),a
 	jr _movingPlatform_setScript
 
@@ -575,7 +575,7 @@ blueSnake_linkOrFortune:
 	or a
 	jr z,@showText
 
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,$03
 	ld (de),a
 	ld bc,TX_3028

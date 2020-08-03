@@ -45,7 +45,7 @@ _bomb_flower_subid0:
 	jp objectAddToGrabbableObjectBuffer
 
 @state2:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -54,7 +54,7 @@ _bomb_flower_subid0:
 	.dw @substate3
 
 @substate0:
-	call interactionIncState2
+	call interactionIncSubstate
 	ld a,$1c
 	ld (wDisabledObjects),a
 	xor a
@@ -80,7 +80,7 @@ _bomb_flower_subid0:
 	ld (wMenuDisabled),a
 	call dropLinkHeldItem
 
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,$02
 	ld (de),a
 
@@ -291,7 +291,7 @@ interactionCode79:
 	ld (wLinkRidingObject),a
 
 @updateSubstate:
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0

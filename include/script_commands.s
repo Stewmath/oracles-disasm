@@ -21,8 +21,8 @@
 	.db $80 $ff
 .ENDM
 
-; Set the value of the Interaction.state2 variable.
-.MACRO setstate2
+; Set the value of the Interaction.substate variable.
+.MACRO setsubstate
 	.db $81 \1
 .ENDM
 

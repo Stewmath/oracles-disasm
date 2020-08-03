@@ -14,7 +14,7 @@ runScriptCommand:
 	and $7f
 	rst_jumpTable
 	.dw _scriptCmd_setState ; 0x80
-	.dw _scriptCmd_setState2 ; 0x81
+	.dw _scriptCmd_setSubstate ; 0x81
 	.dw _scriptCmd_jump2byte ; 0x82
 	.dw scriptCmd_loadScript ; 0x83
 	.dw _scriptCmd_spawnInteraction ; 0x84
@@ -286,10 +286,10 @@ _scriptFunc_setState:
 	ret
 
 ;;
-_scriptCmd_setState2:
+_scriptCmd_setSubstate:
 	pop hl
 	inc hl
-	ld e,Interaction.state2
+	ld e,Interaction.substate
 	jr _scriptFunc_setState
 
 ;;
