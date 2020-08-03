@@ -182,7 +182,7 @@ _label_04_036:
 .endif
 
 ;;
-; Sets wWarpDestRoom, wWarpDestGroup, wWarpDestTransition with suitable warp data. If no
+; Sets wWarpDestRoom, wWarpDestGroup, wWarpTransition with suitable warp data. If no
 ; good warp data is found, it defaults to warping to itself (the current position).
 ;
 ; This only handles tile-based warps, not screen-edge warps.
