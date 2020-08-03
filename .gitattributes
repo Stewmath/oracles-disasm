@@ -16,6 +16,7 @@
 # edited versions. Useful for stuff like Area and Music ID binary files.
 # Must run "tools/git/installMergeDriver.sh" to enable this.
 
+rooms/*/roomPacks*.bin              merge=oracles-bytewise
 rooms/*/group*Tilesets.bin          merge=oracles-bytewise
 rooms/*/group*DungeonProperties.bin merge=oracles-bytewise
 audio/*/group*IDs.bin               merge=oracles-bytewise
