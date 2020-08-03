@@ -115,7 +115,7 @@ seasons:
 
 $(GAME).gbc: $(OBJS) linkfile_$(GAME)
 	$(LD) -S linkfile_$(GAME) $@
-	@-tools/build/verify-checksum.sh $(GAME)
+#	@-tools/build/verify-checksum.sh $(GAME)
 
 
 build/$(GAME).o: $(MAIN_ASM_FILES)
