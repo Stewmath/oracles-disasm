@@ -10,3 +10,12 @@
 *.png binary
 *.bin binary
 *.cmp binary
+
+
+# Custom binary merge driver can merge binary files as long as the same byte is not modified in both
+# edited versions. Useful for stuff like Area and Music ID binary files.
+# Must run "tools/git/installMergeDriver.sh" to enable this.
+
+rooms/*/group*Tilesets.bin          merge=oracles-bytewise
+rooms/*/group*DungeonProperties.bin merge=oracles-bytewise
+audio/*/group*IDs.bin               merge=oracles-bytewise
