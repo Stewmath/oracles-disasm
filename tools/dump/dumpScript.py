@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # There are some problems when dumping scripts not in bank C:
 # - "jump" commands will either jump locally, or to somewhere in bank C. It's local if the
 # jump would land in the $c300 buffer, otherwise it jumps to bank C. For now it's assumed

@@ -61,55 +61,55 @@ updateTextbox:
 	ld e,<w7TextDisplayState
 	ld a,(wTextDisplayMode)
 	rst_jumpTable
-.dw @standardText
-.dw @textOption
-.dw @inventoryText
+	.dw @standardText
+	.dw @textOption
+	.dw @inventoryText
 
 ;;
 @standardText:
 	ld a,(de)
 	rst_jumpTable
-.dw @standardTextState0
-.dw @standardTextState1
-.dw @standardTextState2
-.dw @standardTextState3
-.dw @standardTextState4
-.dw @standardTextState5
-.dw @standardTextState6
-.dw @standardTextState7
-.dw @standardTextState8
-.dw @standardTextState9
-.dw @standardTextStatea
-.dw @standardTextStateb
-.dw @standardTextStatec
-.dw @standardTextStated
-.dw @standardTextStatee
-.dw @standardTextStatef
-.dw @standardTextState10
+	.dw @standardTextState0
+	.dw @standardTextState1
+	.dw @standardTextState2
+	.dw @standardTextState3
+	.dw @standardTextState4
+	.dw @standardTextState5
+	.dw @standardTextState6
+	.dw @standardTextState7
+	.dw @standardTextState8
+	.dw @standardTextState9
+	.dw @standardTextStatea
+	.dw @standardTextStateb
+	.dw @standardTextStatec
+	.dw @standardTextStated
+	.dw @standardTextStatee
+	.dw @standardTextStatef
+	.dw @standardTextState10
 
 ;;
 ; An option has come up (ie yes/no)
 @textOption:
 	ld a,(de)
 	rst_jumpTable
-.dw textOptionCode@state00
-.dw textOptionCode@state01
-.dw textOptionCode@state02
-.dw textOptionCode@state03
-.dw textOptionCode@state04
+	.dw textOptionCode@state00
+	.dw textOptionCode@state01
+	.dw textOptionCode@state02
+	.dw textOptionCode@state03
+	.dw textOptionCode@state04
 
 ;;
 @inventoryText:
 	ld a,(de)
 	rst_jumpTable
-.dw inventoryTextCode@state00
-.dw inventoryTextCode@state01
-.dw inventoryTextCode@state02
-.dw inventoryTextCode@state03
-.dw inventoryTextCode@state04
-.dw inventoryTextCode@state05
-.dw inventoryTextCode@state06
-.dw inventoryTextCode@state07
+	.dw inventoryTextCode@state00
+	.dw inventoryTextCode@state01
+	.dw inventoryTextCode@state02
+	.dw inventoryTextCode@state03
+	.dw inventoryTextCode@state04
+	.dw inventoryTextCode@state05
+	.dw inventoryTextCode@state06
+	.dw inventoryTextCode@state07
 
 ;;
 ; Initializing
@@ -2193,20 +2193,20 @@ _doInventoryTextFirstPass:
 	ld b,a
 	push hl
 	rst_jumpTable
-.dw @dictionary
-.dw @dictionary
-.dw @dictionary
-.dw @dictionary
-.dw @controlCode6
-.dw @controlCode7
-.dw @controlCode8
-.dw @controlCodeNil
-.dw @controlCodeA
-.dw @controlCodeNil
-.dw @controlCodeNil
-.dw @controlCodeNil
-.dw @controlCodeNil
-.dw @controlCodeF
+	.dw @dictionary
+	.dw @dictionary
+	.dw @dictionary
+	.dw @dictionary
+	.dw @controlCode6
+	.dw @controlCode7
+	.dw @controlCode8
+	.dw @controlCodeNil
+	.dw @controlCodeA
+	.dw @controlCodeNil
+	.dw @controlCodeNil
+	.dw @controlCodeNil
+	.dw @controlCodeNil
+	.dw @controlCodeF
 
 ;;
 @dictionary:
@@ -2626,22 +2626,22 @@ _handleTextControlCode:
 	push bc
 	push hl
 	rst_jumpTable
-.dw @controlCode0
-.dw @controlCode1
-.dw @controlCode2
-.dw @controlCode3
-.dw @controlCode4
-.dw @controlCode5
-.dw @controlCode6
-.dw @controlCode7
-.dw @controlCode8
-.dw @controlCode9
-.dw @controlCodeA
-.dw @controlCodeB
-.dw @controlCodeC
-.dw @controlCodeD
-.dw @controlCodeE
-.dw @controlCodeF
+	.dw @controlCode0
+	.dw @controlCode1
+	.dw @controlCode2
+	.dw @controlCode3
+	.dw @controlCode4
+	.dw @controlCode5
+	.dw @controlCode6
+	.dw @controlCode7
+	.dw @controlCode8
+	.dw @controlCode9
+	.dw @controlCodeA
+	.dw @controlCodeB
+	.dw @controlCodeC
+	.dw @controlCodeD
+	.dw @controlCodeE
+	.dw @controlCodeF
 
 ; Unused?
 @blankCode:
@@ -2930,14 +2930,14 @@ _handleTextControlCode:
 	rlca
 	and $1f
 	rst_jumpTable
-.dw _textControlCodeC_0
-.dw _textControlCodeC_1
-.dw _textControlCodeC_2
-.dw _textControlCodeC_3
-.dw _textControlCodeC_ret ; $04 is dealt with in _checkInitialTextCommands.
-.dw _textControlCodeC_5
-.dw _textControlCodeC_6
-.dw _textControlCodeC_7
+	.dw _textControlCodeC_0
+	.dw _textControlCodeC_1
+	.dw _textControlCodeC_2
+	.dw _textControlCodeC_3
+	.dw _textControlCodeC_ret ; $04 is dealt with in _checkInitialTextCommands.
+	.dw _textControlCodeC_5
+	.dw _textControlCodeC_6
+	.dw _textControlCodeC_7
 
 ;;
 ; Gets the number of frames each character is displayed for, based on

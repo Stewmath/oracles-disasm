@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # This is obsolete / only for debugging, use dumpTilesets instead?
 
 import sys

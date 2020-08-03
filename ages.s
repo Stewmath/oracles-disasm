@@ -46,7 +46,7 @@
 .BANK $04 SLOT 1
 .ORG 0
 
-.include "code/bank4.s"
+	.include "code/bank4.s"
 
 	; These 2 includes must be in the same bank
 	.include "build/data/roomPacks.s"
@@ -683,7 +683,8 @@ specialObjectLoadAnimationFrameToBuffer:
 
 
  m_section_superfree "Item_Code" namespace "itemCode"
-.include "code/updateItems.s"
+
+	.include "code/updateItems.s"
 
 	.include "build/data/itemConveyorTilesTable.s"
 	.include "build/data/itemPassableCliffTilesTable.s"
@@ -1089,8 +1090,8 @@ loadD6ChangingFloorPatternToBigBuffer:
 
 .ends
 
-.include "build/data/interactionAnimations.s"
-.include "build/data/partAnimations.s"
+	.include "build/data/interactionAnimations.s"
+	.include "build/data/partAnimations.s"
 
 .BANK $17 SLOT 1 ; Seasons: should be bank $16
 .ORG 0

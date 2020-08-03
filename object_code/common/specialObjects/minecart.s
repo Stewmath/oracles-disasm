@@ -243,13 +243,13 @@ _minecartCheckCollisions:
 ++
 	ld e,SpecialObject.direction
 	rst_jumpTable
-.dw @trackTL
-.dw @trackBR
-.dw @trackBL
-.dw @trackTR
-.dw @trackHorizontal
-.dw @trackVertical
-.dw @notTrack
+	.dw @trackTL
+	.dw @trackBR
+	.dw @trackBL
+	.dw @trackTR
+	.dw @trackHorizontal
+	.dw @trackVertical
+	.dw @notTrack
 
 @trackTL:
 @trackBR:

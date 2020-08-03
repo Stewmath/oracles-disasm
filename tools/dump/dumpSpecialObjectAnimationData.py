@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # Animation data for link, companions, maple, etc
 # (objects at $d000-$d03f, $d100-$d13f)
 

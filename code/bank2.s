@@ -236,10 +236,10 @@ _fileSelectMode1:
 @mode1SubModes:
 	ld a,(wFileSelect.mode2)
 	rst_jumpTable
-.dw @state0
-.dw @state1
-.dw @state2
-.dw @state3
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
 
 ;;
 ; Initialization
@@ -387,8 +387,8 @@ _fileSelectMode5:
 @mode5States:
 	ld a,(wFileSelect.mode2)
 	rst_jumpTable
-.dw @state0
-.dw @state1
+	.dw @state0
+	.dw @state1
 
 ;;
 @state0:
@@ -459,10 +459,10 @@ _fileSelectMode3:
 @mode3Update:
 	ld a,(wFileSelect.mode2)
 	rst_jumpTable
-.dw @mode0
-.dw @mode1
-.dw @mode2
-.dw @mode3
+	.dw @mode0
+	.dw @mode1
+	.dw @mode2
+	.dw @mode3
 
 ;;
 @mode0:
@@ -599,10 +599,10 @@ _fileSelectMode4:
 @mode4Update:
 	ld a,(wFileSelect.mode2)
 	rst_jumpTable
-.dw @mode0
-.dw @mode1
-.dw @mode2
-.dw @mode3
+	.dw @mode0
+	.dw @mode1
+	.dw @mode2
+	.dw @mode3
 
 @mode0:
 	call _setFileSelectCursorOffsetToFileSelectMode
@@ -738,9 +738,9 @@ _fileSelectMode2:
 @func:
 	ld a,(wFileSelect.mode2)
 	rst_jumpTable
-.dw @mode0
-.dw _runTextInput
-.dw @mode2
+	.dw @mode0
+	.dw _runTextInput
+	.dw @mode2
 
 @mode0:
 	call eraseFile
@@ -769,9 +769,9 @@ _runKidNameEntryMenu:
 @func:
 	ld a,(wFileSelect.mode2)
 	rst_jumpTable
-.dw @mode0
-.dw @mode1
-.dw @mode2
+	.dw @mode0
+	.dw @mode1
+	.dw @mode2
 
 @mode0:
 	ld a,GFXH_a0
@@ -1112,14 +1112,14 @@ _runTextInput:
 	call playSound
 	ld a,b
 	rst_jumpTable
-.dw @aButton
-.dw @bButton
-.dw @selectButton
-.dw @startButton
-.dw @rightButton
-.dw @leftButton
-.dw @upButton
-.dw @downButton
+	.dw @aButton
+	.dw @bButton
+	.dw @selectButton
+	.dw @startButton
+	.dw @rightButton
+	.dw @leftButton
+	.dw @upButton
+	.dw @downButton
 
 @soundEffects:
 	.db SND_SELECTITEM
@@ -2494,15 +2494,15 @@ runBank2Function:
 	ld c,l
 	ld a,h
 	rst_jumpTable
-.dw _loadCommonGraphics
-.dw _updateStatusBar
-.dw _hideStatusBar
-.dw _showStatusBar
-.dw _saveGraphicsOnEnterMenu
-.dw _reloadGraphicsOnExitMenu
-.dw _openMenu
-.dw _copyW2TilesetBgPalettesToW4PaletteData
-.dw _copyW4PaletteDataToW2TilesetBgPalettes
+	.dw _loadCommonGraphics
+	.dw _updateStatusBar
+	.dw _hideStatusBar
+	.dw _showStatusBar
+	.dw _saveGraphicsOnEnterMenu
+	.dw _reloadGraphicsOnExitMenu
+	.dw _openMenu
+	.dw _copyW2TilesetBgPalettesToW4PaletteData
+	.dw _copyW4PaletteDataToW2TilesetBgPalettes
 
 ;;
 _hideStatusBar:
@@ -2680,26 +2680,26 @@ b2_updateMenus:
 	ld (wc4b6),a
 	ld a,(wMenuLoadState)
 	rst_jumpTable
-.dw _menuStateFadeIntoMenu
-.dw _menuSpecificCode
-.dw _menuStateFadeOutOfMenu
-.dw _menuStateFadeIntoGame
+	.dw _menuStateFadeIntoMenu
+	.dw _menuSpecificCode
+	.dw _menuStateFadeOutOfMenu
+	.dw _menuStateFadeIntoGame
 
 ;;
 _menuSpecificCode:
 	ld a,(wOpenedMenuType)
 	rst_jumpTable
-.dw runSaveAndQuitMenu
-.dw _runInventoryMenu
-.dw _runMapMenu
-.dw runSaveAndQuitMenu
-.dw _runRingMenu
-.dw _runGaleSeedMenu
-.dw _runSecretEntryMenu
-.dw _runKidNameEntryMenu
-.dw _runGameLinkMenu
-.dw _runFakeReset
-.dw _runSecretListMenu
+	.dw runSaveAndQuitMenu
+	.dw _runInventoryMenu
+	.dw _runMapMenu
+	.dw runSaveAndQuitMenu
+	.dw _runRingMenu
+	.dw _runGaleSeedMenu
+	.dw _runSecretEntryMenu
+	.dw _runKidNameEntryMenu
+	.dw _runGameLinkMenu
+	.dw _runFakeReset
+	.dw _runSecretListMenu
 
 ;;
 ; Game is fading out just after initial start/select press
@@ -3957,9 +3957,9 @@ _func_02_55b2:
 	push hl
 	ld a,(wInventorySubmenu)
 	rst_jumpTable
-.dw @subScreen0
-.dw @subScreen1
-.dw @subScreen2
+	.dw @subScreen0
+	.dw @subScreen1
+	.dw @subScreen2
 
 ;;
 @subScreen0:
@@ -3997,9 +3997,9 @@ _inventoryMenuState1:
 
 	ld a,(wInventorySubmenu)
 	rst_jumpTable
-.dw @subscreen0
-.dw @subscreen1
-.dw @subscreen2
+	.dw @subscreen0
+	.dw @subscreen1
+	.dw @subscreen2
 
 ;;
 @func_02_5606:
@@ -4248,9 +4248,9 @@ _inventoryMenuState2:
 @subStates:
 	ld a,(wSubmenuState)
 	rst_jumpTable
-.dw @subState0
-.dw @subState1
-.dw @subState2
+	.dw @subState0
+	.dw @subState1
+	.dw @subState2
 
 ;;
 @subState0:
@@ -6633,11 +6633,11 @@ _mapGetRoomText:
 	ld a,c
 	and $07
 	rst_jumpTable
-.dw @specialCode0
-.dw @specialCode1
-.dw @specialCode2
-.dw @specialCode3
-.dw @specialCode4
+	.dw @specialCode0
+	.dw @specialCode1
+	.dw @specialCode2
+	.dw @specialCode3
+	.dw @specialCode4
 
 ; Maku tree: text varies based on the point in the game the player is at
 @specialCode0:
