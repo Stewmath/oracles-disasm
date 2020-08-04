@@ -832,7 +832,7 @@ interactionCode14:
 ; If this object is on top of an unpressed button, this raises the z position by 2 pixels.
 @updateZPositionForButton:
 	ld a,(wTilesetFlags)
-	and (TILESETFLAG_10 | TILESETFLAG_DUNGEON)
+	and (TILESETFLAG_LARGE_INDOORS | TILESETFLAG_DUNGEON)
 	ret z
 	call objectGetShortPosition
 	ld c,a

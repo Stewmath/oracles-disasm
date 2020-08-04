@@ -3308,7 +3308,7 @@ checkUpdateDungeonMinimap:
 
 .ifdef ROM_AGES
 	ld a,(wTilesetFlags)
-	bit TILESETFLAG_BIT_10,a
+	bit TILESETFLAG_BIT_LARGE_INDOORS,a
 	ret nz
 
 	bit TILESETFLAG_BIT_SIDESCROLL,a
@@ -4235,7 +4235,7 @@ checkDisplayEraOrSeasonInfo:
 	ret z
 
 	ld a,(wTilesetFlags)
-	bit TILESETFLAG_BIT_10,a
+	bit TILESETFLAG_BIT_LARGE_INDOORS,a
 	ret nz
 
 	bit 0,a

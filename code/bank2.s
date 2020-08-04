@@ -3071,7 +3071,7 @@ _updateStatusBar:
 	ld a,(wTilesetFlags)
 
 .ifdef ROM_AGES
-	bit TILESETFLAG_BIT_10,a
+	bit TILESETFLAG_BIT_LARGE_INDOORS,a
 	jr nz,+
 .endif
 
@@ -6319,7 +6319,7 @@ _loadMinimapDisplayRoom:
 	ld b,a
 	ld b,$02
 	ld a,(wTilesetFlags)
-	bit TILESETFLAG_BIT_10,a
+	bit TILESETFLAG_BIT_LARGE_INDOORS,a
 	jr nz,@overworld
 	bit TILESETFLAG_BIT_DUNGEON,a
 	jr nz,@setRoom

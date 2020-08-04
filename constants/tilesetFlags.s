@@ -21,9 +21,14 @@
 .define TILESETFLAG_SIDESCROLL	$20
 .DEFINE TILESETFLAG_BIT_SIDESCROLL	5
 
-.define TILESETFLAG_10		$10 ; Might prevent minimap updating? (ages only)
-.DEFINE TILESETFLAG_BIT_10		4
+; Set in large, indoor rooms (which aren't real dungeons, ie. ambi's palace). Seems to disable
+; certain properties of dungeons? (Ages only?)
+.define TILESETFLAG_LARGE_INDOORS	$10
+.DEFINE TILESETFLAG_BIT_LARGE_INDOORS	4
 
+; This flag is set on dungeons, but also on any room which has a layout in the "Dungeons" tab, even
+; if it's not a real dungeon (ie. ambi's palace). In that case "TILESETFLAG_LARGE_INDOORS" is also
+; set.
 .define TILESETFLAG_DUNGEON	$08
 .DEFINE TILESETFLAG_BIT_DUNGEON	3
 
