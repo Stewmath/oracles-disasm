@@ -35,8 +35,13 @@
 .define TILESETFLAG_INDOORS	$04
 .DEFINE TILESETFLAG_BIT_INDOORS	2
 
+; Hardcodes location on the minimap for maku tree screens. Ages only?
 .define TILESETFLAG_MAKU		$02
 .DEFINE TILESETFLAG_BIT_MAKU	1
 
+; Does various things, including enabling the companion to be called (though it must also have the
+; correct entry in the "companionCallableRooms" table). In Ages this must be set for the minimap to
+; update Link's position. In Seasons it just checks the group number instead (this is the case for
+; several other things too).
 .define TILESETFLAG_OUTDOORS	$01
 .DEFINE TILESETFLAG_BIT_OUTDOORS	0

@@ -3335,13 +3335,13 @@ checkUpdateDungeonMinimap:
 @setMinimapRoom:
 	ld hl,wMinimapDungeonFloor
 	ld a,(wDungeonFloor)
-	ldd (hl),a
+	ldd (hl),a ; wMinimapDungeonFloor
 	ld a,(wDungeonMapPosition)
-	ldd (hl),a
+	ldd (hl),a ; wMinimapDungeonMapPosition
 	ld a,(wActiveRoom)
-	ldd (hl),a
+	ldd (hl),a ; wMinimapRoom
 	ld a,(wActiveGroup)
-	ld c,(hl)
+	ld c,(hl)  ; wMinimapGroup
 	ld (hl),a
 	ret
 
