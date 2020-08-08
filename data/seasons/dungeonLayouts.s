@@ -1,7 +1,13 @@
-; Each 8 rows represents the layout of 1 floor of a dungeon. The floors aren't commented since it
-; would be a pain to maintain those comments while being edited in LynnaLab (they could become
-; inaccurate if floors get added and removed).
-dungeonLayoutData:
+; Each 8 rows represents the layout of 1 floor of a dungeon. The label for each dungeon must be
+; a multiple of 0x40 bytes away from the "dungeonLayoutStart" label, because the labels are actually
+; converted to an index.
+;
+; If adding or removing floors from a dungeon, remember to update the "num floors" variable in
+; "data/{game}/dungeonData.s".
+
+dungeonLayoutDataStart:
+
+dungeon00Layout;
 	.db $01 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $02 $03 $00 $00 $00
@@ -11,6 +17,7 @@ dungeonLayoutData:
 	.db $00 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00
 
+dungeon01Layout:
 	.db $09 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $0a $0b $00 $00 $00 $00
 	.db $00 $00 $00 $0c $00 $00 $00 $00
@@ -20,6 +27,7 @@ dungeonLayoutData:
 	.db $00 $00 $00 $1c $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00
 
+dungeon02Layout:
 	.db $1d $1e $1f $20 $00 $00 $00 $00
 	.db $00 $00 $00 $21 $22 $23 $24 $00
 	.db $00 $00 $00 $00 $25 $26 $27 $00
@@ -29,6 +37,7 @@ dungeonLayoutData:
 	.db $00 $33 $34 $35 $36 $37 $00 $00
 	.db $00 $00 $38 $39 $00 $00 $00 $00
 
+dungeon03Layout:
 	.db $3a $3b $3c $3d $00 $00 $00 $00
 	.db $00 $00 $3e $00 $3f $00 $00 $00
 	.db $00 $00 $00 $40 $00 $00 $00 $00
@@ -47,6 +56,7 @@ dungeonLayoutData:
 	.db $00 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00
 
+dungeon04Layout:
 	.db $5c $5d $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $5e $5f $60 $00 $00
 	.db $00 $00 $61 $62 $00 $00 $00 $00
@@ -74,6 +84,7 @@ dungeonLayoutData:
 	.db $00 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00
 
+dungeon05Layout:
 	.db $84 $85 $86 $87 $88 $00 $00 $00
 	.db $89 $8a $00 $8b $8c $00 $00 $00
 	.db $00 $8d $8e $8f $90 $00 $00 $00
@@ -83,6 +94,7 @@ dungeonLayoutData:
 	.db $00 $a3 $a4 $a5 $00 $00 $00 $00
 	.db $00 $a6 $a7 $a8 $a9 $00 $00 $00
 
+dungeon06Layout:
 	.db $00 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $aa $ab $ac $ad $ae $00 $00
@@ -128,6 +140,7 @@ dungeonLayoutData:
 	.db $00 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00
 
+dungeon0bLayout:
 	.db $20 $21 $00 $00 $22 $23 $00 $00
 	.db $24 $25 $00 $00 $26 $27 $00 $00
 	.db $00 $00 $28 $29 $00 $00 $00 $00
@@ -137,6 +150,7 @@ dungeonLayoutData:
 	.db $00 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $34
 
+dungeon07Layout:
 	.db $00 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $35 $36 $37 $00 $00 $00
 	.db $00 $38 $00 $39 $00 $3a $00 $00
@@ -164,6 +178,7 @@ dungeonLayoutData:
 	.db $00 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00
 
+dungeon08Layout:
 	.db $5c $5d $00 $5e $5f $00 $00 $00
 	.db $60 $61 $62 $63 $64 $00 $00 $00
 	.db $00 $00 $00 $65 $66 $00 $00 $00
@@ -182,6 +197,7 @@ dungeonLayoutData:
 	.db $00 $00 $00 $8d $8e $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00
 
+dungeon09Layout:
 	.db $90 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $91 $00 $00 $00 $00
 	.db $00 $00 $00 $92 $00 $00 $00 $00
@@ -191,6 +207,7 @@ dungeonLayoutData:
 	.db $00 $00 $96 $97 $98 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00
 
+dungeon0aLayout:
 	.db $00 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $99 $9a $00 $00 $00 $00
@@ -199,3 +216,4 @@ dungeonLayoutData:
 	.db $00 $00 $00 $9d $9e $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00
+

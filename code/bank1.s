@@ -2673,7 +2673,7 @@ getFirstDungeonLayoutAddress:
 	ld a,(wDungeonFirstLayout)
 	add c
 	call multiplyABy16
-	ld hl,dungeonLayoutData
+	ld hl,dungeonLayoutDataStart
 	add hl,bc
 	add hl,bc
 	add hl,bc
@@ -3281,7 +3281,7 @@ checkUpdateDungeonMinimap:
 
 .ifdef ROM_AGES
 	ld a,(wTilesetFlags)
-	bit TILESETFLAG_BIT_10,a
+	bit TILESETFLAG_BIT_LARGE_INDOORS,a
 	ret nz
 
 	bit TILESETFLAG_BIT_SIDESCROLL,a
@@ -3308,13 +3308,13 @@ checkUpdateDungeonMinimap:
 @setMinimapRoom:
 	ld hl,wMinimapDungeonFloor
 	ld a,(wDungeonFloor)
-	ldd (hl),a
+	ldd (hl),a ; wMinimapDungeonFloor
 	ld a,(wDungeonMapPosition)
-	ldd (hl),a
+	ldd (hl),a ; wMinimapDungeonMapPosition
 	ld a,(wActiveRoom)
-	ldd (hl),a
+	ldd (hl),a ; wMinimapRoom
 	ld a,(wActiveGroup)
-	ld c,(hl)
+	ld c,(hl)  ; wMinimapGroup
 	ld (hl),a
 	ret
 
@@ -4208,7 +4208,7 @@ checkDisplayEraOrSeasonInfo:
 	ret z
 
 	ld a,(wTilesetFlags)
-	bit TILESETFLAG_BIT_10,a
+	bit TILESETFLAG_BIT_LARGE_INDOORS,a
 	ret nz
 
 	bit 0,a

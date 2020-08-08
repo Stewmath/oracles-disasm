@@ -1,4 +1,3 @@
-.include "constants/areaFlags.s"
 .include "constants/breakableTileSources.s"
 .include "constants/directions.s"
 .include "constants/collisionEffects.s"
@@ -32,6 +31,7 @@
 .include "constants/secrets.s"
 .include "constants/textboxFlags.s"
 .include "constants/tileIndices.s"
+.include "constants/tilesetFlags.s"
 .include "constants/tileTypes.s"
 .include "constants/tradeitems.s"
 .include "constants/transitions.s"
