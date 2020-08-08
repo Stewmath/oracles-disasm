@@ -8,7 +8,6 @@
 dungeonLayoutDataStart:
 
 dungeon00Layout:
-dungeon09Layout:
 	.db $00 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $01 $00 $00 $00 $00
 	.db $00 $00 $00 $02 $00 $00 $00 $00
@@ -254,6 +253,18 @@ dungeon0aLayout:
 	.db $00 $00 $00 $f2 $00 $00 $00 $00
 	.db $00 $00 $00 $f3 $00 $00 $00 $00
 	.db $00 $00 $00 $f4 $f5 $00 $00 $00
+	.db $00 $00 $00 $00 $00 $00 $00 $00
+	.db $00 $00 $00 $00 $00 $00 $00 $00
+
+; HACK-BASE: This used to point to the same data as "dungeon00Layout". To avoid problems in
+; LynnaLab, a fresh copy of the data has been created.
+dungeon09Layout:
+	.db $00 $00 $00 $00 $00 $00 $00 $00
+	.db $00 $00 $00 $01 $00 $00 $00 $00
+	.db $00 $00 $00 $02 $00 $00 $00 $00
+	.db $00 $00 $00 $03 $00 $00 $00 $00
+	.db $00 $00 $00 $04 $00 $00 $00 $00
+	.db $00 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00
 
