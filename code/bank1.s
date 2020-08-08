@@ -2700,7 +2700,7 @@ getFirstDungeonLayoutAddress:
 	ld a,(wDungeonFirstLayout)
 	add c
 	call multiplyABy16
-	ld hl,dungeonLayoutData
+	ld hl,dungeonLayoutDataStart
 	add hl,bc
 	add hl,bc
 	add hl,bc

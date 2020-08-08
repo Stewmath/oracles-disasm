@@ -484,3 +484,10 @@
 	.db \1>>8, \1&$ff
 	.db \2, \3, \4
 .endm
+
+; See "data/{game}/dungeonData.s"
+.macro m_DungeonData
+	.db \1, \2
+	.db ((\3) - dungeonLayoutDataStart) / $40
+	.db \4, \5, \6, \7, \8
+.endm
