@@ -19,6 +19,7 @@
 
 ;;
 ; Moblin with boomerang.
+;
 ; @subid_00{Red moblin}
 ; @subid_01{Blue moblin}
 .define ENEMYID_BOOMERANG_MOBLIN		$0a
@@ -34,6 +35,7 @@
 
 ;;
 ; Moblin with arrows.
+;
 ; @subid_00{Red moblin}
 ; @subid_01{Blue moblin}
 ; @subid_02{Golden moblin (once dead, it's gone forever)}
@@ -62,12 +64,14 @@
 ;;
 ; Spider that Veran spawns when fighting possessed Ambi. Spawns in a random position within
 ; the screen boundary. If used in a small room, it could spawn off-screen...
+;
 ; @palette{PALH_8a}
 ; @postype{none}
 .define ENEMYID_VERAN_SPIDER			$0f
 
 ;;
 ; Rope = snake
+;
 ; @subid_00{Normal}
 ; @subid_01{Falls from ceiling}
 ; @subid_02{Immediately charges Link upon spawning}
@@ -76,6 +80,7 @@
 
 ;;
 ; Part of D4 boss (ENEMYID_EYESOAR)
+;
 ; @subid_00{Spawns above eyesoar}
 ; @subid_01{Right of eyesoar}
 ; @subid_02{Below eyesoar}
@@ -151,12 +156,14 @@
 
 ;;
 ; Flopping fish in a top-down area.
+;
 ; @subid_00{Standard fish}
 ; @subid_01{Unused?}
 .define ENEMYID_PIRANHA				$1e
 
 ;;
 ; Used by ENEMYID_VERAN_FINAL_FORM. Flies at you, then despawns when off-screen.
+;
 ; @subid_00{Moves down}
 ; @subid_01{Moves down-left}
 ; @subid_02{Moves up-right}
@@ -164,12 +171,14 @@
 
 ;;
 ; The type of moblin you'd see in the Goron area, with white horns, shoots arrows
+;
 ; @subid_00{Red}
 ; @subid_01{Blue}
 .define ENEMYID_MASKED_MOBLIN			$20
 
 ;;
 ; Darknut that shoots arrows.
+;
 ; @subid_00{Red}
 ; @subid_01{Blue}
 ; @subid_02{Gold}
@@ -202,6 +211,7 @@
 ;;
 ; Deku scrub that shoots seeds at you. His "bush" graphic (ENEMYID_BUSH_OR_ROCK) only
 ; works outdoors.
+;
 ; @var03{Low byte of text index to show when talking to the scrub (TX_45XX)}
 .define ENEMYID_DEKU_SCRUB			$27
 
@@ -242,6 +252,7 @@
 
 ;;
 ; Fish in sidescrolling areas that moves back and forth.
+;
 ; @var03{How far to travel per cycle (in pixels)}
 ; @subid_00{Moves left, right}
 ; @subid_01{Moves down, up}
@@ -271,6 +282,7 @@
 
 ;;
 ; Goddamned annoying bat enemy
+;
 ; @subid_00{Moves all the time}
 ; @subid_01{Only moves when Link approaches, moves in circular patterns}
 .define ENEMYID_KEESE				$32
@@ -340,23 +352,28 @@
 ; attacking it 8 times, it charges at Link, and will not stop... until he is dead.
 ;
 ; This bug seems to result from its health value being 0 (it doesn't die). Perhaps an
-; engine feature relating to this was added in Ages, which caused the bug? Since cuccos
-; aren't used in Ages, this was probably untested.
+; engine feature relating to this was added in Ages, which caused the bug?
 .define ENEMYID_GIANT_CUCCO			$3b
 
 .ifdef ROM_AGES
 ;;
 ; Jellyfish enemy that splits in two. The large ones always hover close to their spawn
 ; position, the small ones move toward Link.
+;
 ; @subid_00{Normal version}
 ; @subid_01{Small version}
 .define ENEMYID_BARI				$3c
-.else
+
+.else; ROM_SEASONS
+
+;;
 .define ENEMYID_MAGUNESU			$3c
+
 .endif
 
 ;;
 ; Moblin with a sword.
+;
 ; @subid_00{Red}
 ; @subid_01{Blue}
 ; @subid_02{Blue, less cooldown between charges}
@@ -491,6 +508,7 @@
 
 ;;
 ; Creates a bunch of tiles from the ground that attack Link.
+;
 ; @postype{none}
 ; @subid_00-02{"Spawners" for flying tiles. Each subid in this range has a hardcoded
 ;              pattern that it follows.}
@@ -502,6 +520,7 @@
 ;;
 ; Decorative bug, non-interactable. Only designed to work in small rooms (moves roughly
 ; around the center of a small room)
+;
 ; @subid{Gets written directly to oamFlags?}
 .define ENEMYID_DRAGONFLY			$53
 
@@ -517,6 +536,7 @@
 
 ;;
 ; "Decorative" moblins that don't do anything? Subids 0-3 have various positions?
+;
 ; @subid_00{Left side}
 ; @subid_01{Right side}
 .define ENEMYID_KING_MOBLIN_MINION		$56
@@ -559,6 +579,7 @@
 ; Spawned during Seasons pirate ship departing cutscene when ship is burying under the sand
 .define ENEMYID_SAND_PUFF			$5b
 
+;;
 .define ENEMYID_STUB_5c				$5c
 
 ;;
@@ -571,11 +592,13 @@
 
 ;;
 ; Hardhat beetle that just pushes Link away. Has a purple tint.
+;
 ; @palette{PALH_8d}
 .define ENEMYID_HARMLESS_HARDHAT_BEETLE		$5f
 
 ;;
 ; Part of cutscene for Ganon revival; darkens screen, makes shadows come toward Twinrova.
+;
 ; @subid_00{Cutscene controller}
 ; @subid_01{An individual shadow}
 .define ENEMYID_GANON_REVIVAL_CUTSCENE		$60
@@ -618,11 +641,17 @@
 ;;
 ; Used in final battle against Veran. Almost identical to ENEMYID_ARM_MIMIC aside from
 ; health and appearance.
+;
 ; @palette{PALH_82}
 .define ENEMYID_LINK_MIMIC			$64
 
+;;
 .define ENEMYID_STUB_65				$65
+
+;;
 .define ENEMYID_STUB_66				$66
+
+;;
 .define ENEMYID_STUB_67				$67
 
 
@@ -708,6 +737,7 @@
 ;;
 ; King of Evil
 .define ENEMYID_GANON				$04
+
 
 .ifdef ROM_AGES
 
