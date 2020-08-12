@@ -11,34 +11,34 @@
 .ENDM
 
 ; Args:
-;   obj_Interaction ID[word]
+;   obj_Interaction ID, subID
 ; OR
-;   obj_Interaction ID[word], YY[byte], XX[byte]
+;   obj_Interaction ID, subID, YY, XX
 ; OR
-;   obj_Interaction ID[word], YY[byte], XX[byte], Var03[byte]
+;   obj_Interaction ID, subID, YY, XX, Var03
 .MACRO obj_Interaction
-	.IF NARGS == 1
+	.IF NARGS == 2
 		.IF M_LASTOPCODE != 1
 		.db $f1
 		.ENDIF
-		dwbe \1
+		.db \1, \2
 		.REDEFINE M_LASTOPCODE 1
 	.ELSE
-	.IF NARGS == 3
+	.IF NARGS == 4
 		.IF M_LASTOPCODE != 2
 		.db $f2
 		.ENDIF
-		dwbe \1
-		.db \2, \3
+		.db \1, \2
+		.db \3, \4
 		.REDEFINE M_LASTOPCODE 2
 	.ELSE
-	.IF NARGS == 4
+	.IF NARGS == 5
 		.IF M_LASTOPCODE != 9
 		.db $f9
 		.ENDIF
 		.db 0
-		dwbe \1
-		.db \4, \2, \3
+		.db \1, \2
+		.db \5, \3, \4
 		.REDEFINE M_LASTOPCODE 9
 	.ELSE
 		.FAIL
@@ -74,39 +74,39 @@
 .ENDM
 
 ; Args:
-;   obj_RandomEnemy Flags[byte], ID[word]
+;   obj_RandomEnemy Flags, ID, subID
 .MACRO obj_RandomEnemy
 	.db $f6
 	.db \1
-	dwbe \2
+	.db \2, \3
 	.REDEFINE M_LASTOPCODE 6
 .ENDM
 
 ; Args:
-;   obj_SpecificEnemyA Flags[byte], ID[word], YY[byte], XX[byte]
+;   obj_SpecificEnemyA Flags, ID, subID, YY, XX
 ; First parameter (flags) may be omitted, in which case the value for the last defined
 ; "obj_SpecificEnemyA" will be used.
 .MACRO obj_SpecificEnemyA
-	.IF NARGS == 4
+	.IF NARGS == 5
 		.db $f7
 		.db \1
-		dwbe \2
-		.db \3, \4
+		.db \2, \3
+		.db \4, \5
 	.ELSE
 		.IF M_LASTOPCODE != 7
 			.PRINTT "ERROR: Bad # of arguments to obj_SpecificEnemy.\n"
 			.FAIL
 		.ENDIF
-		dwbe \1
-		.db \2, \3
+		.db \1, \2
+		.db \3, \4
 	.ENDIF
 	.REDEFINE M_LASTOPCODE 7
 .ENDM
 
 ; Args:
-;   obj_Part ID[word], YX[byte]
+;   obj_Part ID, subID, YX
 ; OR
-;   obj_Part ID[word], YY[byte], XX[byte], Var03[byte]
+;   obj_Part ID, subID, YY, XX, Var03
 ;
 ; NOTE: The above 2 versions are subtly different. The first version will prevent random position
 ; enemies from spawning at that position, while the second version won't. This is because they're
@@ -114,38 +114,38 @@
 ; account for this difference, and aggressively optimizes the 2nd version into the 1st version when
 ; possible.
 .MACRO obj_Part
-	.IF NARGS == 2
+	.IF NARGS == 3
 		.IF M_LASTOPCODE != 8
 			.db $f8
 		.ENDIF
-		dwbe \1
-		.db \2
+		.db \1, \2
+		.db \3
 		.REDEFINE M_LASTOPCODE 8
 	.ELSE
 		.IF M_LASTOPCODE != 9
 			.db $f9
 		.ENDIF
 		.db 2
-		dwbe \1
-		.db \4, \2, \3
+		.db \1, \2
+		.db \5, \3, \4
 		.REDEFINE M_LASTOPCODE 9
 	.ENDIF
 .ENDM
 
 ; Args:
-;   obj_SpecificEnemyB ID[word], YY[byte], XX[byte], Var03[byte]
+;   obj_SpecificEnemyB ID, subID, YY, XX, Var03
 .MACRO obj_SpecificEnemyB
 	.IF M_LASTOPCODE != 9
 		.db $f9
 	.ENDIF
 	.db 1
-	dwbe \1
-	.db \4, \2, \3
+	.db \1, \2
+	.db \5, \3, \4
 	.REDEFINE M_LASTOPCODE 9
 .ENDM
 
 ; Args:
-;   obj_ItemDrop Flags[byte], Item[byte], YX[byte]
+;   obj_ItemDrop Flags, Item, YX
 ; First parameter (flags) may be omitted, in which case the value for the last defined
 ; "obj_ItemDrop" will be used.
 .MACRO obj_ItemDrop
