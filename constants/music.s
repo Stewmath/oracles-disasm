@@ -381,7 +381,10 @@
 
 .ende
 
-; $d5-$ef are undefined?
+; Aside from $de, $d5-$ef are undefined?
+
+; Part of the implementation for "SNDCTRL_STOPMUSIC"?
+.define SNDCTRL_DE		$de
 
 ; The following are "pseudo-sound effects" with special behaviour.
 
