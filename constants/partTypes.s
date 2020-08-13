@@ -1,6 +1,8 @@
 ;;
 ; Subids correspond to "constants/itemDrops.s".
+;
 ; @var03{Nonzero if came from the ground?}
+;
 ; @subid_00{Fairy}
 ; @subid_01{Heart}
 ; @subid_02{1 Rupee}
@@ -71,9 +73,6 @@
 ; The YX value is actually the length of time the torches should stay lit (the value of "counter2"
 ; for the "PARTID_LIGHTABLE_TORCH" objects it spawns).
 ;
-; (TODO: support postype{none} in LynnaLab, meaning the Y/X positions should be in 1 value instead
-; of divided in two.)
-;
 ; @subid{Subid value for "PARTID_LIGHTABLE_TORCH" objects this will spawn.}
 ; @postype{none}
 .define PARTID_DARK_ROOM_HANDLER		$08
@@ -130,8 +129,6 @@
 .define PARTID_SEED_ON_TREE			$10
 
 ;;
-; TODO: what does each subid do?
-;
 ; @subid_00{?}
 ; @subid_01{Rock from a volcano?}
 ; @subid_02{Like subid 1, but falls directly from the sky instead of shooting up first?}
@@ -150,7 +147,6 @@
 ; Maple sets these to state 4 when being collected.
 ;
 ; @subid{Corresponds to the item. Bit 7 of subid might do something?}
-;
 ; @var03{Determines how many frames Maple takes to collect the item.}
 .define PARTID_ITEM_FROM_MAPLE			$14
 
@@ -230,6 +226,7 @@
 
 ;;
 ; Used by ENEMYID_BALL_AND_CHAIN_SOLDIER.
+;
 ; @subid_00{The ball}
 ; @subid_01{Part of the chain; 3/4ths extended}
 ; @subid_02{Part of the chain; 1/2 extended}
@@ -242,6 +239,7 @@
 
 ;;
 ; Used by INTERACID_VIRE (flame used in "donkey kong" minigame?)
+;
 ; subid determines movement pattern
 ; @subid_00{2nd screen with Zelda}
 ; @subid_01{1st screen}
@@ -282,7 +280,7 @@
 
 ;;
 ; Used by Ramrock (glove form)
-; TODO:
+;
 ; @subid_00{Right hand/shoulder}
 ; @subid_01{Left hand/shoulder}
 ; @subid_80{Right hand/shoulder}
@@ -311,7 +309,7 @@
 
 ;;
 ; relatedObj2 is ENEMYID_VIRE
-; @subid_00-02{TODO:}
+; @subid_00-02{?}
 .define PARTID_VIRE_PROJECTILE			$3a
 
 ;;
@@ -336,13 +334,17 @@
 .define PARTID_KING_MOBLIN_BOMB			$3f
 
 ;;
-; Used with bomb drop with head thwomp
-; Does not create bomb drop, but configures its speed and angle
+; Used with bomb drop with head thwomp.
+;
+; Does not create bomb drop, but configures its speed and angle.
+;
 ; relatedObj1 is a reference to a PARTID_ITEM_DROP instance.
 .define PARTID_HEAD_THWOMP_BOMB_DROPPER				$40
 
+;;
 .define PARTID_SHADOW_HAG_SHADOW		$41
 
+;;
 .define PARTID_PUMPKIN_HEAD_PROJECTILE		$42
 
 ;;
@@ -355,9 +357,11 @@
 .define PARTID_TINGLE_BALLOON			$44
 
 ;;
-; Spawns boulders when climbing up to Patch
-; All subids used per screen, they determine initial time before spawning,
-; so that they fall one after the other
+; Spawns boulders when climbing up to Patch.
+;
+; All subids used per screen, they determine initial time before spawning, so that they fall one
+; after the other.
+;
 ; @subid_00-03{}
 .define PARTID_FALLING_BOULDER_SPAWNER		$45
 
@@ -371,18 +375,21 @@
 .define PARTID_BOMB				$47
 
 ;;
-; Projectile used by Octogon when Link is below water and Octogon is above
+; Projectile used by Octogon when Link is below water and Octogon is above.
+;
 ; @subid_00{The large projectile (before splitting)}
 ; @subid_01{Smaller, split projectile}
 .define PARTID_OCTOGON_DEPTH_CHARGE		$48
 
 ;;
 ; Used by big bang game.
+;
 ; @subid_00{A single bomb?}
 ; @subid_ff{A spawner for bombs?}
 .define PARTID_BIGBANG_BOMB_SPAWNER		$49
 
 ;;
+;
 ; Projectile used by smog boss.
 ; @subid_00{Projectile from small smog}
 ; @subid_01{Projectile from large smog}
@@ -446,6 +453,7 @@
 ; @subid_03{Bottom flame}
 .define PARTID_BLACK_TOWER_MOVING_FLAMES	$59
 
+;;
 ; The stone that's pushed at the start of the game. This only applies after it's moved;
 ; before it's moved, the stone is handled by INTERACID_TRIFORCE_STONE instead.
 .define PARTID_TRIFORCE_STONE			$5a
@@ -501,6 +509,7 @@
 
 ;;
 ; TODO: Is this the same as PARTID_GOPONGA_PROJECTILE?
+;
 ; @subid_80{Normal}
 ; @subid_81{Low health}
 .define PARTID_MOTHULA_PROJECTILE_1		$31
@@ -521,6 +530,7 @@
 ; created by agunima - the balls?
 .define PARTID_39				$39
 
+;;
 .define PARTID_3a				$3a
 
 ;;
@@ -534,6 +544,7 @@
 ;;
 .define PARTID_AQUAMENTUS_PROJECTILE		$40
 
+;;
 .define PARTID_DODONGO_FIREBALL			$41
 
 ;;
@@ -549,13 +560,20 @@
 ; created by medusa head
 .define PARTID_44				$44
 
+;;
 .define PARTID_S_45				$45
 
+;;
 .define PARTID_S_46				$46
 
+;;
 ; relating to General Onox boss fight?
 .define PARTID_47				$47
+
+;;
 .define PARTID_48				$48
+
+;;
 .define PARTID_49				$49
 
 ;;

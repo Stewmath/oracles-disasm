@@ -252,10 +252,12 @@ def parseObjectData(buf, pos, outFile):
             output += wlahex(buf[pos], 2) + '\n'
             pos+=1
         elif op == 0x01:  # No-value
-            output += wlahex(read16BE(buf, pos), 4) + '\n'
+            output += wlahex(buf[pos+0], 2) + ' '
+            output += wlahex(buf[pos+1], 2) + '\n'
             pos+=2
         elif op == 0x02:  # Double-value
-            output += wlahex(read16BE(buf, pos), 4) + ' '
+            output += wlahex(buf[pos+0], 2) + ' '
+            output += wlahex(buf[pos+1], 2) + ' '
             output += wlahex(buf[pos+2], 2) + ' '
             output += wlahex(buf[pos+3], 2) + '\n'
             pos+=4
@@ -270,7 +272,8 @@ def parseObjectData(buf, pos, outFile):
             pos += 2
         elif op == 0x06:  # Random spawn
             output += wlahex(buf[pos], 2) + ' '
-            output += wlahex(read16BE(buf, pos+1), 4) + '\n'
+            output += wlahex(buf[pos+1], 2) + ' '
+            output += wlahex(buf[pos+2], 2) + '\n'
             pos+=3
         elif op == 0x07:  # Specific spawn
             if fresh == 1:
@@ -278,12 +281,14 @@ def parseObjectData(buf, pos, outFile):
                 pos+=1
             else:
                 output += '    '
-            output += wlahex(read16BE(buf, pos), 4) + ' '
+            output += wlahex(buf[pos+0], 2) + ' '
+            output += wlahex(buf[pos+1], 2) + ' '
             output += wlahex(buf[pos+2], 2) + ' '
             output += wlahex(buf[pos+3], 2) + '\n'
             pos+=4
         elif op == 0x08:  # Part
-            output += wlahex(read16BE(buf, pos), 4) + ' '
+            output += wlahex(buf[pos+0], 2) + ' '
+            output += wlahex(buf[pos+1], 2) + ' '
             output += wlahex(buf[pos+2], 2) + '\n'
             pos+=3
         elif op == 0x09:  # Quadruple
@@ -296,7 +301,8 @@ def parseObjectData(buf, pos, outFile):
                 output += '\tobj_Part '
             else:
                 assert(False)
-            output += wlahex(read16BE(buf, pos+1), 4) + ' '
+            output += wlahex(buf[pos+1], 2) + ' '
+            output += wlahex(buf[pos+2], 2) + ' '
             output += wlahex(buf[pos+4], 2) + ' '
             output += wlahex(buf[pos+5], 2) + ' '
             output += wlahex(buf[pos+3], 2) + '\n'

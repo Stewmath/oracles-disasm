@@ -1874,7 +1874,7 @@ _playSound:
 
 ; Stop music
 @sndf0:
-	ld a,$de
+	ld a,SNDCTRL_DE
 	ld (wSoundTmp),a
 	jr @normalSound
 
