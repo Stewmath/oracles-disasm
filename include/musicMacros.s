@@ -127,7 +127,7 @@
 .endm
 
 .macro m_soundPointer
-	.db :\1Start - $39
+	.db :\1Start - :b39_initSound
 	.dw \1
 .endm
 
