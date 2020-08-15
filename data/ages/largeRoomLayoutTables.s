@@ -1,5 +1,6 @@
 roomLayoutGroup4Table:
-	.incbin "rooms/ages/dictionary4.bin"
+	; HACK-BASE: Removed dictionary incbins
+	;.incbin "rooms/ages/dictionary4.bin"
 
 	m_RoomLayoutDictPointer room0400 room0400
 	m_RoomLayoutDictPointer room0401 room0400
@@ -259,7 +260,7 @@ roomLayoutGroup4Table:
 	m_RoomLayoutDictPointer room04ff room0400
 
 roomLayoutGroup5Table:
-	.incbin "rooms/ages/dictionary5.bin"
+	;.incbin "rooms/ages/dictionary5.bin"
 
 	m_RoomLayoutDictPointer room0500 room0500
 	m_RoomLayoutDictPointer room0501 room0500

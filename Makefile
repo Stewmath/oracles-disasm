@@ -223,15 +223,21 @@ build/textDefines.s: precompressed/text/$(GAME)/textDefines.s | build
 
 else
 
+# HACK-BASE: Not compressing large rooms at all anymore. Using the pre-built dictionary could cause
+# problems down the line, and regenerating it on each build would be kind of costly, so we're just
+# not going to bother.
 build/rooms/room04%.cmp: rooms/$(GAME)/large/room04%.bin | build/rooms
-	@echo "Compressing $< to $@..."
-	@$(PYTHON) tools/build/compressRoomLayout.py $< $@ -d rooms/$(GAME)/dictionary4.bin
+	@echo "Copying $< to $@..."
+	@dd if=/dev/zero bs=1 count=1 of=$@ 2>/dev/null
+	@cat $< >> $@
 build/rooms/room05%.cmp: rooms/$(GAME)/large/room05%.bin | build/rooms
-	@echo "Compressing $< to $@..."
-	@$(PYTHON) tools/build/compressRoomLayout.py $< $@ -d rooms/$(GAME)/dictionary5.bin
+	@echo "Copying $< to $@..."
+	@dd if=/dev/zero bs=1 count=1 of=$@ 2>/dev/null
+	@cat $< >> $@
 build/rooms/room06%.cmp: rooms/$(GAME)/large/room06%.bin | build/rooms
-	@echo "Compressing $< to $@..."
-	@$(PYTHON) tools/build/compressRoomLayout.py $< $@ -d rooms/$(GAME)/dictionary6.bin
+	@echo "Copying $< to $@..."
+	@dd if=/dev/zero bs=1 count=1 of=$@ 2>/dev/null
+	@cat $< >> $@
 
 # Parse & compress text
 build/textData.s: text/$(GAME)/text.yaml text/$(GAME)/dict.yaml tools/build/parseText.py | build

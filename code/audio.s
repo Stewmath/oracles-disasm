@@ -3,7 +3,9 @@
 
 .include "include/constants.s"
 
-.BANK $39 SLOT 1
+; HACK-BASE: Bank of sound engine (and of data in "audio/{game}/soundChannelData.s") changed to
+; allocate more space to the compressed data section (text, graphics, room layouts).
+.BANK $72 SLOT 1
 .ORG 0
 
 ;;

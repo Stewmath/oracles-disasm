@@ -1,5 +1,6 @@
 roomLayoutGroup5Table:
-	.incbin "rooms/seasons/dictionary5.bin"
+	; HACK-BASE: Removed dictionary incbins
+	;.incbin "rooms/seasons/dictionary5.bin"
 
 	m_RoomLayoutDictPointer room0500 room0500
 	m_RoomLayoutDictPointer room0501 room0500
@@ -259,7 +260,7 @@ roomLayoutGroup5Table:
 	m_RoomLayoutDictPointer room05ff room0500
 
 roomLayoutGroup6Table:
-	.incbin "rooms/seasons/dictionary6.bin"
+	;.incbin "rooms/seasons/dictionary6.bin"
 
 	m_RoomLayoutDictPointer room0600 room0600
 	m_RoomLayoutDictPointer room0601 room0600

@@ -1170,6 +1170,10 @@ loadD6ChangingFloorPatternToBigBuffer:
 	.include "build/data/roomLayoutData.s"
 	.include "build/data/gfxDataMain.s"
 
+	; HACK-BASE: Normally audio code would start in bank $39. But to give more space for the
+	; data in the above includes, it's been relocated. So now, banks all the way up to and
+	; including bank $3e could be used for the above data (text, room layouts, graphics).
+
 
 
 .BANK $3f SLOT 1

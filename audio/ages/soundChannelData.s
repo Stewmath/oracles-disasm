@@ -5601,7 +5601,7 @@ musice7f16:
 	cmdff
 	cmdff
 	cmdff
-.bank $3a slot 1
+.bank $73 slot 1
 .org 0
 sound00Start:
 sound01Start:
@@ -15521,7 +15521,7 @@ sounda6Channel7:
 ; GAP
 	cmdff
 	cmdff
-.bank $3b slot 1
+.bank $74 slot 1
 .org 0
 sound02Start:
 sound03Start:
@@ -24743,7 +24743,7 @@ sound4cChannel7:
 	cmdff
 	cmdff
 	cmdff
-.bank $3c slot 1
+.bank $75 slot 1
 .org 0
 sound1cStart:
 sound1fStart:
@@ -34723,7 +34723,7 @@ soundafChannel7:
 	cmdff
 	cmdff
 	cmdff
-.bank $3d slot 1
+.bank $76 slot 1
 .org 0
 sound1bStart:
 sound27Start:
@@ -44294,7 +44294,7 @@ sound62Channel2:
 	cmdff
 	cmdff
 	cmdff
-.bank $3e slot 1
+.bank $77 slot 1
 .org 0
 sound0cStart:
 sound2fStart:

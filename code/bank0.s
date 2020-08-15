@@ -12760,6 +12760,8 @@ seasonsFunc_3870:
 ; Load room layout into wRoomLayout using the relevant RAM addresses (wTilesetLayoutGroup,
 ; wLoadingRoom, etc)
 ;
+; HACK-BASE: Large rooms are now loaded completely uncompressed. Made various tweaks to this
+; function to enable that.
 loadRoomLayout:
 	ld hl,wRoomLayout
 	ld b,(LARGE_ROOM_HEIGHT+1)*16
@@ -12786,7 +12788,15 @@ loadRoomLayout:
 	ld l,a
 	ldh a,(<hFF8C)
 	setrombank
+
+	; HACK-BASE: Subtract $4000 from "base" offset for pointers, to make arithmetic simpler
+	; later. This is part of a change needed to allow a single group of rooms to cumulatively
+	; occupy up to $10000 bytes, instead of up to $8000 only.
+	ld a,h
+	sub $40
+	ld h,a
 	push hl
+
 	ld a,b
 	rst_jumpTable
 	.dw @loadLargeRoomLayout
@@ -12819,8 +12829,8 @@ loadRoomLayout:
 	ld h,a
 	ldh a,(<hFF8E)
 	ld l,a
-	ld bc,$1000
-	add hl,bc
+	;ld bc,$1000
+	;add hl,bc
 	ldh a,(<hFF8D)
 	setrombank
 
@@ -12834,53 +12844,8 @@ loadRoomLayout:
 	add hl,bc
 	ld bc,-$200
 	add hl,bc
-	call @loadLayoutData
-	ld de,wRoomLayout
-@next8:
-	ldi a,(hl)
-	ld b,$08
-@next:
-	rrca
-	ldh (<hFF8B),a
-	jr c,+
-	ldi a,(hl)
-	ld (de),a
-	inc e
-	ld a,e
-	cp LARGE_ROOM_HEIGHT*16
-	ret z
---
-	ldh a,(<hFF8B)
-	dec b
-	jr nz,@next
-	jr @next8
-+
-	push bc
-	ldi a,(hl)
-	ld c,a
-	ldi a,(hl)
-	ld b,a
-	push hl
-	call @loadLargeRoomLayoutHlpr
-	ld d,>wRoomLayout
-	ldh a,(<hFF8D) ; Relative offset bank number
-	setrombank
--
-	ldi a,(hl)
-	ld (de),a
-	inc e
-	ld a,e
-	cp LARGE_ROOM_HEIGHT*16
-	jr z,+
-	dec b
-	jr nz,-
-	pop hl
-	pop bc
-	jr --
-+
-	pop hl
-	pop bc
-	ret
+	ld c,>wRoomLayout
+	jp @loadLayoutData
 
 ;;
 @loadSmallRoomLayout:
@@ -12904,6 +12869,7 @@ loadRoomLayout:
 	; Add relative offset with base offset
 	pop hl
 	add hl,bc
+	ld c,>wRoomCollisions
 	call @loadLayoutData
 
 	; Upper bits of relative offset specify compression
@@ -13030,37 +12996,32 @@ loadRoomLayout:
 
 ;;
 ; Load the compressed layout data into wRoomCollisions (temporarily)
+;
+; HACK-BASE: This takes a new parameter "c" which specifies where to load the data (either to
+; "wRoomCollisions" or to "wRoomLayout" directly).
 @loadLayoutData:
 	push de
 	ldh a,(<hFF8C)
-.ifdef ROM_AGES
 	ld e,a
-.endif
 -
-	bit 7,h
-	jr z,+
+ 	; HACK-BASE: The pointer starts at $0000 instead of $4000.
 	ld a,h
-.ifdef ROM_AGES
+	cp $40
+	jr c,+
 	sub $40
-.else
-	xor $c0
-.endif
 	ld h,a
 
-.ifdef ROM_SEASONS
-	ldh a,(<hFF8C)
-	inc a
-	ldh (<hFF8C),a
-.else
 	inc e
 	jr -
 +
+	ld a,h
+	add $40
+	ld h,a
 	ld a,e
-.endif
-+
 	setrombank
 	ld b,LARGE_ROOM_HEIGHT*16
-	ld de,wRoomCollisions
+	ld d,c ; >wRoomCollisions or >wRoomLayout
+	ld e,$00
 -
 	call readByteSequential
 	ld (de),a
@@ -13068,7 +13029,8 @@ loadRoomLayout:
 	dec b
 	jr nz,-
 
-	ld hl,wRoomCollisions
+	ld h,c
+	ld l,$00
 	pop de
 	ret
 
