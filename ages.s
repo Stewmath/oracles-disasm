@@ -1103,9 +1103,7 @@ loadD6ChangingFloorPatternToBigBuffer:
 
 	.include "build/data/smallRoomLayoutTables.s"
 
-.ifdef ROM_AGES
 	.include "code/ages/garbage/bank17End.s"
-.endif
 
 ; HACK-BASE: Bank $18 is repurposed for the expanded tilesets patch.
 
@@ -1158,10 +1156,7 @@ loadD6ChangingFloorPatternToBigBuffer:
 	m_GfxDataSimple map_rings ; $717a0
 
 	.include "build/data/largeRoomLayoutTables.s" ; $719c0
-
-.ifdef ROM_AGES
 	.include "code/ages/garbage/bank1cEnd.s"
-.endif
 
 ; "build/textData.s" will determine where this data starts.
 ;   Ages:    1d:4000
@@ -1192,7 +1187,6 @@ data_5951:
 	.db $3c $b4 $3c $50 $78 $b4 $3c $3c
 	.db $3c $70 $78 $78
 
-.ifdef ROM_AGES
 
 ; In Seasons these sprites are located elsewhere
 
@@ -1290,7 +1284,6 @@ linkOnHorseFacingCameraSprite:
 	.db $70 $08 $58 $02
 	.db $70 $10 $5a $02
 
-.endif ; ROM_AGES
 
 
 .include "build/data/objectGfxHeaders.s"

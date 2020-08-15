@@ -14,6 +14,7 @@ if len(sys.argv) < 3:
 dictionaryMapping = {}
 
 
+# Compress large room
 def compressRoomLayout_dictionary_nomemo(data, i, dictionary):
     if i == 0:
         res = bytearray()
@@ -133,8 +134,11 @@ elif compressionMode == 'dictionary':
                 break
             dictionaryMapping[bytes(dictionary[i:j])] = i
 
+    dataToWrite = compressRoomLayout_dictionary(layoutData, len(layoutData), dictionary)[0]
+    if len(dataToWrite) > 0xb0:
+        print('WARNING: compressed size of "' + sys.argv[2] + '" is greater than 0xb0, might not load properly!')
+
     outFile = open(sys.argv[2], 'wb')
     outFile.write(bytes([3]))
-    outFile.write(compressRoomLayout_dictionary(
-        layoutData, len(layoutData), dictionary)[0])
+    outFile.write(dataToWrite)
     outFile.close()

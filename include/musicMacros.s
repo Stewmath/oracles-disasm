@@ -127,7 +127,7 @@
 .endm
 
 .macro m_soundPointer
-	.db :\1Start - $39
+	.db :\1Start - :b39_initSound
 	.dw \1
 .endm
 
@@ -171,6 +171,9 @@
 	.endr
 .endm
 
+; This is NOT used by the base game; it's an attempt to provide a more sane way to define music
+; (multiple notes per line). Each pair of arguments is a note followed by a length. Can define
+; "NOTE_END_WAIT" to set a certain amount of a note to be "rest" instead of being actually played.
 .macro beat
 	.redefine offset 0
 	.rept NARGS
