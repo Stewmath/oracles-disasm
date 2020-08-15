@@ -78,6 +78,9 @@ MAPPINGINDICESFILES = $(wildcard tileset_layouts/$(GAME)/tilesetMappings*.bin)
 MAPPINGINDICESFILES := $(foreach file,$(MAPPINGINDICESFILES),build/tileset_layouts/$(notdir $(file)))
 MAPPINGINDICESFILES := $(MAPPINGINDICESFILES:.bin=Indices.cmp)
 
+# Common data files (for both games)
+COMMONDATAFILES = $(wildcard data/*.s)
+
 # Game-specific data files
 GAMEDATAFILES = $(wildcard data/$(GAME)/*.s)
 GAMEDATAFILES := $(foreach file,$(GAMEDATAFILES),build/data/$(notdir $(file)))
@@ -130,7 +133,7 @@ $(MAPPINGINDICESFILES): build/tileset_layouts/mappingsDictionary.bin
 $(COLLISIONFILES): build/tileset_layouts/collisionsDictionary.bin
 
 build/$(GAME).o: $(MAIN_ASM_FILES)
-build/$(GAME).o: $(GFXFILES) $(ROOMLAYOUTFILES) $(COLLISIONFILES) $(MAPPINGINDICESFILES) $(GAMEDATAFILES)
+build/$(GAME).o: $(GFXFILES) $(ROOMLAYOUTFILES) $(COLLISIONFILES) $(MAPPINGINDICESFILES) $(COMMONDATAFILES) $(GAMEDATAFILES)
 build/$(GAME).o: build/tileset_layouts/tileMappingTable.bin build/tileset_layouts/tileMappingIndexData.bin build/tileset_layouts/tileMappingAttributeData.bin
 build/$(GAME).o: rooms/$(GAME)/*.bin
 
