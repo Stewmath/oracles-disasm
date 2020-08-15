@@ -6,7 +6,12 @@
 
 ; Tiles in normal tilesets
 
-.define TILEINDEX_00			$00 ; Out-of-bounds tile (also used by vine sprout?)
+; Not sure if tile index 00 can be reliably considered an "out-of-bounds" tile. There may be some
+; cases where it's used in-bounds (ie. by vine sprout), and also, in some areas (Black Tower) the
+; out of bounds tile on the right edge of the tile grid is value "$03" instead of "$00"...
+; For out-of-bounds checking, check for collision value "$ff" instead, which is more reliable.
+.define TILEINDEX_00			$00
+
 .define TILEINDEX_GRAVE_STATIONARY	$02 ; Overworld only
 .define TILEINDEX_UNLIT_TORCH		$08
 .define TILEINDEX_LIT_TORCH		$09

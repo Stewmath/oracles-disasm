@@ -1,4 +1,7 @@
 #!/usr/bin/python3
+# Dumps room layout data for the given game, and also precompressed data for large rooms only.
+# This script tested and working on US, EU, JP versions for both games.
+
 import sys
 import io
 from common import *
