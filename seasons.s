@@ -161,38 +161,34 @@
 .BANK $07 SLOT 1
 .ORG 0
 
-	.include "code/fileManagement.s"
+	 m_section_superfree "File_Management" namespace "fileManagement"
+		.include "code/fileManagement.s"
+	.ends
 
- ; This section can't be superfree, since it must be in the same bank as section
- ; "Bank_7_Data".
- m_section_free "Enemy_Part_Collisions" namespace "bank7"
-	.include "code/collisionEffects.s"
-.ends
+	 ; This section can't be superfree, since it must be in the same bank as section
+	 ; "Bank_7_Data".
+	 m_section_free "Enemy_Part_Collisions" namespace "bank7"
+		.include "code/collisionEffects.s"
+	.ends
 
+	 m_section_superfree "Item_Code" namespace "itemCode"
+		.include "code/updateItems.s"
 
- m_section_superfree "Item_Code" namespace "itemCode"
+		.include "build/data/itemConveyorTilesTable.s"
+		.include "build/data/itemPassableCliffTilesTable.s"
+		.include "build/data/itemPassableTilesTable.s"
+		.include "code/itemCodes.s"
+		.include "build/data/itemAttributes.s"
+		.include "data/itemAnimations.s"
+	.ends
 
-	.include "code/updateItems.s"
-
-	.include "build/data/itemConveyorTilesTable.s"
-	.include "build/data/itemPassableCliffTilesTable.s"
-	.include "build/data/itemPassableTilesTable.s"
-	.include "code/itemCodes.s"
-	.include "build/data/itemAttributes.s"
-	.include "data/itemAnimations.s"
-
-.ends
-
-
- ; This section can't be superfree, since it must be in the same bank as section
- ; "Enemy_Part_Collisions".
- m_section_free "Bank_7_Data" namespace "bank7"
-
-	.include "build/data/enemyActiveCollisions.s"
-	.include "build/data/partActiveCollisions.s"
-	.include "build/data/objectCollisionTable.s"
-
-.ends
+	 ; This section can't be superfree, since it must be in the same bank as section
+	 ; "Enemy_Part_Collisions".
+	 m_section_free "Bank_7_Data" namespace "bank7"
+		.include "build/data/enemyActiveCollisions.s"
+		.include "build/data/partActiveCollisions.s"
+		.include "build/data/objectCollisionTable.s"
+	.ends
 
 
 .BANK $08 SLOT 1

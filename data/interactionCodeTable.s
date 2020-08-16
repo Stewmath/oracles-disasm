@@ -96,7 +96,7 @@ interactionCodeTable: ; $3b8b
 	.dw agesInteractionsBank09.interactionCode5d ; 0x5d
 	.dw agesInteractionsBank09.interactionCode5e ; 0x5e
 	.dw agesInteractionsBank09.interactionCode5f ; 0x5f
-	.dw                        interactionCode60 ; 0x60 (TODO: put this in a section?)
+	.dw    treasureInteraction.interactionCode60 ; 0x60
 	.dw agesInteractionsBank09.interactionCode61 ; 0x61
 	.dw agesInteractionsBank09.interactionCode62 ; 0x62
 	.dw agesInteractionsBank09.interactionCode63 ; 0x63
@@ -330,7 +330,7 @@ interactionCodeTable: ; $3b8b
 	.dw seasonsInteractionsBank08.interactionCode5d ; 0x5d
 	.dw seasonsInteractionsBank09.interactionCode5e ; 0x5e
 	.dw seasonsInteractionsBank09.interactionCode5f ; 0x5f
-	.dw                           interactionCode60 ; 0x60 (TODO: put this in a section?)
+	.dw       treasureInteraction.interactionCode60 ; 0x60
 	.dw                           interactionDelete ; 0x61
 	.dw seasonsInteractionsBank09.interactionCode62 ; 0x62
 	.dw seasonsInteractionsBank09.interactionCode63 ; 0x63

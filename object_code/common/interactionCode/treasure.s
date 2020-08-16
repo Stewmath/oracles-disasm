@@ -1,3 +1,5 @@
+ m_section_free Interaction_Code_Treasure NAMESPACE treasureInteraction
+
 ; ==============================================================================
 ; INTERACID_TREASURE
 ;
@@ -611,3 +613,5 @@ interactionCode60:
 ++
 	xor a
 	ret
+
+.ends
