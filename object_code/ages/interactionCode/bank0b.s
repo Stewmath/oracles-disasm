@@ -1,3 +1,5 @@
+m_section_free Ages_Interactions_Bank0b NAMESPACE agesInteractionsBank0b
+
 ; ==============================================================================
 ; INTERACID_EXPLOSION_WITH_DEBRIS
 ; ==============================================================================
@@ -8419,4 +8421,4 @@ interactionCodedb:
 	ret nc
 	jp interactionDelete
 
-; ==============================================================================
+.ends

@@ -1,3 +1,5 @@
+ m_section_superfree Interaction_Code_Group6 NAMESPACE commonInteractions6
+
 ; ==============================================================================
 ; INTERACID_WOODEN_TUNNEL
 ; ==============================================================================
@@ -1612,3 +1614,5 @@ interactionCodec7:
 	dec a
 	jp z,getFreeInteractionSlot
 	ret
+
+.ends

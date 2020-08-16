@@ -1,3 +1,5 @@
+ m_section_superfree Interaction_Code_Group5 NAMESPACE commonInteractions5
+
 ; ==============================================================================
 ; INTERACID_VASU
 ;
@@ -501,3 +503,5 @@ interactionCode91:
 	call lookupCollisionTable
 	ccf
 	ret
+
+.ends

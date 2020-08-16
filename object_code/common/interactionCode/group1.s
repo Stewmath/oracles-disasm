@@ -1,3 +1,5 @@
+ m_section_superfree Interaction_Code_Group1 NAMESPACE commonInteractions1
+
 ; ==============================================================================
 ; INTERACID_GRASSDEBRIS (and other animations)
 ; ==============================================================================
@@ -1618,3 +1620,5 @@ interactionCode1e:
 	/* $16 */ .dw doorController_openWhenTorchesLit_down_1Torch
 	/* $17 */ .dw doorController_openWhenTorchesLit_left_1Torch
 .endif
+
+.ends

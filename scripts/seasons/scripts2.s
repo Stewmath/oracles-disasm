@@ -1564,7 +1564,7 @@ gettingRodOfSeasons_body:
 	setcollisionradii $02 $04
 	checkcollidedwithlink_onground
 	disableinput
-	asm15 spawnRodOfSeasonsSparkles
+	asm15 seasonsInteractionsBank15.spawnRodOfSeasonsSparkles
 	setcounter1 $82
 
 	playsound SND_FADEOUT
@@ -1584,7 +1584,7 @@ gettingRodOfSeasons_body:
 	asm15 fadeinFromWhiteWithDelay $04
 	checkpalettefadedone
 	checkflagset $00 $cceb
-	asm15 forceLinksDirection DIR_DOWN
+	asm15 seasonsInteractionsBank15.forceLinksDirection DIR_DOWN
 	delay $07
 
 	showtext TX_0810

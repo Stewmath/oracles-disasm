@@ -367,7 +367,7 @@
 	SEASONS_PALH_a9:	db ; $a9
 	SEASONS_PALH_aa:	db ; $aa
 	SEASONS_PALH_ab:	db ; $ab
-	SEASONS_PALH_ac:	db ; $ac
+	PALH_ac:	db ; $ac (Confirmed the same as ages's PALH_ac; maybe others are the same too)
 	SEASONS_PALH_ad:	db ; $ad
 	SEASONS_PALH_ae:	db ; $ae
 	SEASONS_PALH_af:	db ; $af

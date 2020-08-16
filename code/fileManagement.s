@@ -56,11 +56,9 @@ _initializeFile:
 	ld a,VICTORY_RING | $40
 	ld (wUnappraisedRings),a
 ++
+	callab commonInteractions6.initializeChildOnGameStart
 .ifdef ROM_AGES
-	callab interactionBank0b.initializeChildOnGameStart
 	callab initializeVinePositions
-.else
-	callab initializeChildOnGameStart
 .endif
 
 ;;

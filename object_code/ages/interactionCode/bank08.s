@@ -1,3 +1,5 @@
+m_section_superfree Ages_Interactions_Bank8 NAMESPACE agesInteractionsBank08
+
 ; ==============================================================================
 ; INTERACID_TOGGLE_FLOOR: red/yellow/blue floor tiles that change color when jumped over.
 ; ==============================================================================
@@ -7471,7 +7473,7 @@ _ralphSubid08:
 
 @getNextAngle:
 	ld b,$02
-	callab interactionBank0a.loadAngleAndCounterPreset
+	callab agesInteractionsBank0a.loadAngleAndCounterPreset
 	ld a,b
 	or a
 	ret
@@ -7839,7 +7841,7 @@ interactionCode38:
 	.dw @subid0Init
 
 @subid0Init:
-	callab interactionBank09.getGameProgress_2
+	callab agesInteractionsBank09.getGameProgress_2
 
 	; NPC doesn't exist between beating d2 and saving Nayru
 	ld a,b
@@ -7958,7 +7960,7 @@ interactionCode3a:
 	jp @loadScript
 
 @initSubid03:
-	callab interactionBank09.getGameProgress_1
+	callab agesInteractionsBank09.getGameProgress_1
 	ld a,b
 	ld hl,@subid03ScriptTable
 	rst_addDoubleIndex
@@ -7973,7 +7975,7 @@ interactionCode3a:
 	ld e,Interaction.oamFlags
 	ld (de),a
 
-	callab interactionBank09.getGameProgress_1
+	callab agesInteractionsBank09.getGameProgress_1
 	ld c,$04
 	ld a,$03
 	call checkNpcShouldExistAtGameStage
@@ -7989,7 +7991,7 @@ interactionCode3a:
 
 @initSubid06:
 @initSubid07:
-	callab interactionBank09.getGameProgress_2
+	callab agesInteractionsBank09.getGameProgress_2
 	ld c,$06
 	ld a,$04
 	call checkNpcShouldExistAtGameStage
@@ -8009,7 +8011,7 @@ interactionCode3a:
 	ld (de),a
 
 	; Delete if you haven't beaten d7 yet?
-	callab interactionBank09.getGameProgress_2
+	callab agesInteractionsBank09.getGameProgress_2
 	ld a,b
 	cp $04
 	jp c,interactionDelete
@@ -8450,7 +8452,7 @@ interactionCode3b:
 
 @initSubid01:
 @initSubid02:
-	callab interactionBank09.getGameProgress_1
+	callab agesInteractionsBank09.getGameProgress_1
 	ld c,$01
 	xor a
 	call checkNpcShouldExistAtGameStage
@@ -8467,7 +8469,7 @@ interactionCode3b:
 
 @initSubid03:
 @initSubid04:
-	callab interactionBank09.getGameProgress_2
+	callab agesInteractionsBank09.getGameProgress_2
 	ld c,$03
 	ld a,$01
 	call checkNpcShouldExistAtGameStage
@@ -8486,7 +8488,7 @@ interactionCode3b:
 	ld a,$01
 	ld e,Interaction.oamFlags
 	ld (de),a
-	callab interactionBank09.getGameProgress_2
+	callab agesInteractionsBank09.getGameProgress_2
 	ld c,$05
 	ld a,$02
 	call checkNpcShouldExistAtGameStage
@@ -8841,7 +8843,7 @@ interactionCode3c:
 	jp _boyLoadScript
 
 @initSubid02:
-	callab interactionBank09.getGameProgress_1
+	callab agesInteractionsBank09.getGameProgress_1
 	ld a,b
 	or a
 	jr nz,++
@@ -9718,7 +9720,7 @@ interactionCode3d:
 
 @initSubid2:
 	; This NPC only exists between saving Nayru and beating d7?
-	callab interactionBank09.getGameProgress_1
+	callab agesInteractionsBank09.getGameProgress_1
 	ld e,Interaction.subid
 	ld a,(de)
 	cp b
@@ -9873,3 +9875,5 @@ _oldLadyScriptTable:
 	.dw oldLadySubid1Script
 	.dw oldLadySubid2Script
 	.dw oldLadySubid3Script
+
+.ends

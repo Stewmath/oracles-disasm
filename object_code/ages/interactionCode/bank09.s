@@ -1,3 +1,5 @@
+m_section_free Ages_Interactions_Bank9 NAMESPACE agesInteractionsBank09
+
 ; ==============================================================================
 ; INTERACID_GHOST_VERAN
 ; ==============================================================================
@@ -384,7 +386,7 @@ interactionCode3f:
 	cp $01
 	ret nz
 	call interactionIncSubstate
-	jpab interactionBank08.startJump
+	jpab agesInteractionsBank08.startJump
 
 @@substate1:
 	ld c,$20
@@ -396,7 +398,7 @@ interactionCode3f:
 	ret
 
 @@substate2:
-	jpab interactionBank08.boyRunSubid03
+	jpab agesInteractionsBank08.boyRunSubid03
 
 
 @subid3:
@@ -404,7 +406,7 @@ interactionCode3f:
 	jr z,@@state0
 
 @@state1:
-	jpab interactionBank08.boyRunSubid09
+	jpab agesInteractionsBank08.boyRunSubid09
 
 @@state0:
 	call @initGraphicsAndIncState
@@ -1143,12 +1145,12 @@ interactionCode43:
 	ld a,($cfd1)
 	cp $01
 	ret nz
-	jpab interactionBank08.setCounter1To120AndPlaySoundEffectAndIncSubstate
+	jpab agesInteractionsBank08.setCounter1To120AndPlaySoundEffectAndIncSubstate
 
 @@substate1:
 	call interactionDecCounter1
 	jr z,+
-	jpab interactionBank08.childFlickerBetweenStone
+	jpab agesInteractionsBank08.childFlickerBetweenStone
 +
 	call interactionIncSubstate
 	ld l,Interaction.oamFlags
@@ -3747,7 +3749,7 @@ interactionCode4d:
 
 ; Same cutscene as subid $03, but second part
 @initSubid04:
-	callab interactionBank08.nayruState0@init0e
+	callab agesInteractionsBank08.nayruState0@init0e
 	jp _ambi_loadScript
 
 
@@ -3765,7 +3767,7 @@ interactionCode4d:
 ; Cutscene where Ralph confronts Ambi
 @initSubid05:
 	; Call some of nayru's code to load possessed palette
-	callab interactionBank08.nayruState0@init0e
+	callab agesInteractionsBank08.nayruState0@init0e
 
 	call objectSetVisiblec3
 	jp _ambi_loadScript
@@ -3884,7 +3886,7 @@ _ambi_runSubid01:
 	cp $0e
 	jr nz,_ambi_updateAnimationAndRunScript
 
-	callab interactionBank08.startJump
+	callab agesInteractionsBank08.startJump
 	jp interactionIncSubstate
 
 @substate1:
@@ -5792,7 +5794,7 @@ interactionCode5b:
 @state0:
 	call @loadScriptAndInitGraphics
 	call interactionSetAlwaysUpdateBit
-	callab interactionBank08.clearFallDownHoleEventBuffer
+	callab commonInteractions1.clearFallDownHoleEventBuffer
 
 
 ; Normal script is running; waiting for Link to talk or for something to fall into a hole.
@@ -5831,7 +5833,7 @@ interactionCode5b:
 
 @scriptEnded:
 	call @loadScript
-	callab interactionBank08.clearFallDownHoleEventBuffer
+	callab commonInteractions1.clearFallDownHoleEventBuffer
 	ld e,Interaction.state
 	ld a,$01
 	ld (de),a
@@ -6216,9 +6218,9 @@ interactionCode5e:
 ; ==============================================================================
 interactionCode5f:
 .ifdef ROM_AGES
-	callab checkReloadShopItemTiles
+	callab commonInteractions2.checkReloadShopItemTiles
 .else
-	call checkReloadShopItemTiles
+	call commonInteractions2.checkReloadShopItemTiles
 .endif
 	call @runState
 	jp interactionAnimateAsNpc
@@ -6299,7 +6301,7 @@ interactionCode5f:
 
 	; Check if Link has the rupees for it
 	ld a,b
-	ld hl,_shopItemPrices
+	ld hl,commonInteractions2.shopItemPrices
 	rst_addAToHl
 	ld a,(hl)
 	call cpRupeeValue
@@ -6356,7 +6358,7 @@ interactionCode5f:
 	jr @setScriptAndGotoState2
 
 @talkToSyrupWithoutItem:
-	call _shopkeeperCheckAllItemsBought
+	call commonInteractions2.shopkeeperCheckAllItemsBought
 	jr z,@showWelcomeText
 
 	ld hl,syrupScript_showClosedText
@@ -7438,7 +7440,7 @@ interactionCode64:
 
 @loadAngleAndCounterPreset:
 	ld b,$03
-	callab interactionBank0a.loadAngleAndCounterPreset
+	callab agesInteractionsBank0a.loadAngleAndCounterPreset
 	ld a,b
 	or a
 	ret
@@ -7765,7 +7767,7 @@ _goronSubid00:
 @scriptDone:
 	; Dance begins when script ends
 	ld b,$0a
-	callab interactionBank08.shootingGallery_initializeGameRounds
+	callab agesInteractionsBank08.shootingGallery_initializeGameRounds
 
 	ld a,DIR_DOWN
 	ld (wTmpcfc0.goronDance.danceAnimation),a
@@ -8321,7 +8323,7 @@ _goronDance_initNextRound:
 	ld a,(wTmpcfc0.goronDance.remainingRounds)
 	or a
 	jr z,_goronDance_clearDanceVariables
-	callab interactionBank08.shootingGallery_getNextTargetLayout
+	callab agesInteractionsBank08.shootingGallery_getNextTargetLayout
 
 ;;
 _goronDance_clearDanceVariables:
@@ -8866,3 +8868,5 @@ goronDanceScriptTable:
 	.dw goron_subid00Script
 	.dw goronDanceScript_failedRound
 	.dw goronDanceScript_givePrize
+
+.ends

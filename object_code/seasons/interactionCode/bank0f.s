@@ -1,3 +1,5 @@
+ m_section_free Seasons_Interactions_Bank0f NAMESPACE seasonsInteractionsBank0f
+
 ; ==============================================================================
 ;INTERACID_BOOMERANG_SUBROSIAN
 ; ==============================================================================
@@ -1083,3 +1085,5 @@ interactionCoded6:
 
 interactionCoded7:
 	jp interactionDelete
+
+.ends

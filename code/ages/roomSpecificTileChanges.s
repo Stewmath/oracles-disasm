@@ -1361,3 +1361,87 @@ tileReplacement_group0Mapa5:
 	inc l
 	ld (hl),$ef
 	ret
+
+;;
+; Leftover function from Seasons (d8LavaRoomsFillTilesWithLava). Can be used for other tiles, not
+; just lava
+func_04_6ba8:
+	ld d,>wRoomLayout
+	ldi a,(hl)
+	ld c,a
+--
+	ldi a,(hl)
+	cp $ff
+	ret z
+
+	ld e,a
+	ld a,c
+	ld (de),a
+	jr --
+
+;;
+; Fills a square in wRoomLayout using the data at hl.
+; Data format:
+; - Top-left position (YX)
+; - Height
+; - Width
+; - Tile value
+fillRectInRoomLayout:
+	ldi a,(hl)
+	ld e,a
+	ldi a,(hl)
+	ld b,a
+	ldi a,(hl)
+	ld c,a
+	ldi a,(hl)
+	ld d,a
+	ld h,>wRoomLayout
+--
+	ld a,d
+	ld l,e
+	push bc
+-
+	ldi (hl),a
+	dec c
+	jr nz,-
+
+	ld a,e
+	add $10
+	ld e,a
+	pop bc
+	dec b
+	jr nz,--
+	ret
+
+;;
+; Like fillRect, but reads a series of bytes for the tile values instead of
+; just one.
+drawRectInRoomLayout:
+	ld a,(de)
+	inc de
+	ld h,>wRoomLayout
+	ld l,a
+	ldh (<hFF8B),a
+	ld a,(de)
+	inc de
+	ld c,a
+	ld a,(de)
+	inc de
+	ldh (<hFF8D),a
+---
+	ldh a,(<hFF8D)
+	ld b,a
+--
+	ld a,(de)
+	inc de
+	ldi (hl),a
+	dec b
+	jr nz,--
+
+	ldh a,(<hFF8B)
+	add $10
+	ldh (<hFF8B),a
+	ld l,a
+	dec c
+	jr nz,---
+	ret

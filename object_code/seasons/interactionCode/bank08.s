@@ -1,3 +1,5 @@
+ m_section_free Seasons_Interactions_Bank08 NAMESPACE seasonsInteractionsBank08
+
 ; ==============================================================================
 ; INTERACID_USED_ROD_OF_SEASONS
 ; ==============================================================================
@@ -1072,7 +1074,7 @@ _dungeonWiseOldMan_textLookup:
 	.db $00 $00 <TX_3302
 
 ;;
-; param[out]	zflag	set if NPC should not be seen
+; @param[out]	zflag	set if NPC should not be seen
 _checkMayorsHouseNPCshouldBeSeen:
 	; mayor disappears if unlinked game beat
 	; or seen villagers, but not zelda kidnapped
@@ -1135,8 +1137,8 @@ _checkHoronVillageNPCShouldBeSeen:
 	jr checkHoronVillageNPCShouldBeSeen_body@scf
 
 ;;
-; param[out]	cflag	set if NPC is conditional and should be seen at current stage of the game
-; param[out]	zflag	unset if NPC is non-conditional
+; @param[out]	cflag	set if NPC is conditional and should be seen at current stage of the game
+; @param[out]	zflag	unset if NPC is non-conditional
 checkHoronVillageNPCShouldBeSeen_body:
 	; non interactioncode2d/37 - b = $01
 	inc b
@@ -1145,6 +1147,8 @@ checkHoronVillageNPCShouldBeSeen_body:
 	inc b
 	cp $3d
 	ret nz
+
+; This label is used directly in a number of places.
 @main:
 	; interactioncode2d - b = $00
 	; interactioncode37 (except in advance shop) - b = $01
@@ -1180,7 +1184,7 @@ checkHoronVillageNPCShouldBeSeen_body:
 	ret
 
 ;;
-; param[out]	b	$0a if game finished
+; @param[out]	b	$0a if game finished
 ;			$09 if at least 2nd essence gotten, less than 5 essences gotten, and not saved Zelda from Vire
 ;			$08 if zelda kidnapped
 ;			$07 if got maku seed
@@ -1259,19 +1263,14 @@ checkNPCStage:
 	ret
 
 ;;
-; param[out]	zflag	unset if not interactioncode36/39
-; param[out]	b	$04 if game finished
+; @param[out]	zflag	nz if not interactioncode36/39
+; @param[out]	b	$04 if game finished
 ;			$03 if zelda kidnapped seen
 ;			$02 if 8th essence gotten
 ;			$01 if 4th essence gotten
 ;			$00 if none of the above
+;			$ff if not interaction $36 or $39
 getSunkenCityNPCVisibleSubId:
-	; returns b = $04 if game finished
-	; b = $03 is zelda kidnapped seen
-	; b = $02 if 8th essence gotten
-	; b = $01 if 4th essence gotten
-	; b = $00 if no essences, or none of the above
-	; a = $ff if not interactioncode36 or 39
 	ld e,$41
 	ld a,(de)
 	cp INTERACID_MASTER_DIVERS_SON
@@ -1280,6 +1279,8 @@ getSunkenCityNPCVisibleSubId:
 	jr z,@main
 	ld a,$ff
 	ret
+
+; This label is used directly in a number of places.
 @main:
 	ld a,GLOBALFLAG_FINISHEDGAME
 	call checkGlobalFlag
@@ -4659,9 +4660,9 @@ _table_6d14:
 ; ==============================================================================
 interactionCode43:
 .ifdef ROM_AGES
-	callab checkReloadShopItemTiles
+	callab commonInteractions2.checkReloadShopItemTiles
 .else
-	call checkReloadShopItemTiles
+	call commonInteractions2.checkReloadShopItemTiles
 .endif
 	call @runState
 	jp interactionAnimateAsNpc
@@ -4742,7 +4743,7 @@ interactionCode43:
 
 	; Check if Link has the rupees for it
 	ld a,b
-	ld hl,_shopItemPrices
+	ld hl,commonInteractions2.shopItemPrices
 	rst_addAToHl
 	ld a,(hl)
 	call cpRupeeValue
@@ -4799,7 +4800,7 @@ interactionCode43:
 	jr @setScriptAndGotoState2
 
 @talkToSyrupWithoutItem:
-	call _shopkeeperCheckAllItemsBought
+	call commonInteractions2.shopkeeperCheckAllItemsBought
 	jr z,@showWelcomeText
 
 	ld hl,syrupScript_showClosedText
@@ -7725,3 +7726,5 @@ interactionCode5d:
 	call checkFlag
 	jp nz,interactionDelete
 	jp objectPreventLinkFromPassing
+
+.ends

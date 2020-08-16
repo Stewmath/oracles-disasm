@@ -1,3 +1,5 @@
+ m_section_superfree Interaction_Code_Group4 NAMESPACE commonInteractions4
+
 ; ==============================================================================
 ; INTERACID_FARORE_GIVEITEM
 ; ==============================================================================
@@ -268,7 +270,7 @@ _interactiond9_state2:
 	jr @label_0b_135
 
 @bombUpgrade:
-	ldbc TREASURE_BOMB_UPGRADE, $00
+	ld bc,TREASURE_BOMB_UPGRADE_SUBID_00
 	call @createTreasureAndIncSubstate
 	ld hl,wMaxBombs
 	ld a,(hl)
@@ -279,11 +281,9 @@ _interactiond9_state2:
 
 @satchelUpgrade:
 	ld a,(wSeedSatchelLevel)
-.ifdef ROM_AGES
-	ldbc TREASURE_SEED_SATCHEL, $04
-.else
-	ldbc TREASURE_SEED_SATCHEL, $01
-.endif
+
+	; This index differs in ages and seasons (see constants/treasure.s)
+	ld bc,TREASURE_SEED_SATCHEL_SUBID_UPGRADE
 	jr @createTreasureAndIncSubstate
 
 @label_0b_135:
@@ -375,11 +375,7 @@ interactionCodeda:
 	call getThisRoomFlags
 	and ROOMFLAG_80
 	jp nz,interactionDelete
-.ifdef ROM_AGES
 	ld a,PALH_ac
-.else
-	ld a,SEASONS_PALH_ac
-.endif
 	jp loadPaletteHeader
 
 @state1:
@@ -429,3 +425,5 @@ interactionCodeda:
 	cp LAST_INTERACTION_INDEX+1
 	jr c,--
 	jp interactionDelete
+
+.ends

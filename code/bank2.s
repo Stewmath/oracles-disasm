@@ -10811,18 +10811,4 @@ _runFakeReset:
 	inc (hl)
 	jp fadeoutToWhite
 
-
-.ifdef ROM_AGES
-
-.ends
-
-.include "code/roomInitialization.s"
-.include "code/ages/roomGfxChanges.s"
-
- m_section_force "Bank_2_2" NAMESPACE "bank2"
-
-.include "code/ages/garbage/bank02End.s"
-
-.endif ; ROM_AGES
-
 .ENDS

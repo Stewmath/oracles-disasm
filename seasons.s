@@ -55,250 +55,32 @@
 	; These 2 includes must be in the same bank
 	.include "build/data/roomPacks.s"
 	.include "build/data/musicAssignments.s"
+
 	.include "build/data/roomLayoutGroupTable.s"
 	.include "build/data/tilesets.s"
 	.include "build/data/tilesetAssignments.s"
 
 	.include "code/animations.s"
 
-	.include "data/seasons/uniqueGfxHeaders.s"
-	.include "data/seasons/uniqueGfxHeaderPointers.s"
+	.include "build/data/uniqueGfxHeaders.s"
+	.include "build/data/uniqueGfxHeaderPointers.s"
 	.include "build/data/animationGroups.s"
-
 	.include "build/data/animationGfxHeaders.s"
-
 	.include "build/data/animationData.s"
 
 	.include "code/seasons/tileSubstitutions.s"
 	.include "build/data/singleTileChanges.s"
 	.include "code/seasons/roomSpecificTileChanges.s"
-
-;;
-; Fills a square in wRoomLayout using the data at hl.
-; Data format:
-; - Top-left position (YX)
-; - Height
-; - Width
-; - Tile value
-fillRectInRoomLayout:
-	ldi a,(hl)
-	ld e,a
-	ldi a,(hl)
-	ld b,a
-	ldi a,(hl)
-	ld c,a
-	ldi a,(hl)
-	ld d,a
-	ld h,>wRoomLayout
---
-	ld a,d
-	ld l,e
-	push bc
--
-	ldi (hl),a
-	dec c
-	jr nz,-
-	ld a,e
-	add $10
-	ld e,a
-	pop bc
-	dec b
-	jr nz,--
-	ret
-
-;;
-; @param	bc	$0808
-; @param	de	$c8f0 - d2 rupee room, $c8f8 - d6 rupee room
-; @param	hl	top-left tile of rupees
-replaceRupeeRoomRupees:
-	ld a,(de)
-	inc de
-	push bc
--
-	rrca
-	jr nc,+
-	ld (hl),TILEINDEX_STANDARD_FLOOR
-+
-	inc l
-	dec b
-	jr nz,-
-	ld a,l
-	add $08
-	ld l,a
-	pop bc
-	dec c
-	jr nz,replaceRupeeRoomRupees
-	ret
-
-
-.include "code/seasons/roomGfxChanges.s"
-.include "code/loadTilesToRam.s"
-
-
-loadTilesetData_body:
-	call getTempleRemainsSeasonsTilesetData
-	jr c,+
-	call getMoblinKeepSeasonsTilesetData
-	jr c,+
-	ld a,(wActiveGroup)
-
-	ld hl,roomTilesetsGroupTable
-	rst_addDoubleIndex
-	ldi a,(hl)
-	ld h,(hl)
-	ld l,a
-	ld a,(wActiveRoom)
-	rst_addAToHl
-	ld a,(hl)
-	and $80
-	ldh (<hFF8B),a
-	ld a,(hl)
-
-	and $7f
-	call multiplyABy8
-	ld hl,tilesetData
-	add hl,bc
-
-	ld a,(hl)
-	inc a
-	jr nz,+
-	inc hl
-	ldi a,(hl)
-	ld h,(hl)
-	ld l,a
-	ld a,(wRoomStateModifier)
-	call multiplyABy8
-	add hl,bc
-+
-	ldi a,(hl)
-	ld e,a
-	and $0f
-	cp $0f
-	jr nz,+
-	ld a,$ff
-+
-	ld (wDungeonIndex),a
-	ld a,e
-	swap a
-	and $0f
-	ld (wActiveCollisions),a
-
-	ldi a,(hl)
-	ld (wTilesetFlags),a
-
-	ld b,$06
-	ld de,wTilesetUniqueGfx
-@copyloop:
-	ldi a,(hl)
-	ld (de),a
-	inc e
-	dec b
-	jr nz,@copyloop
-
-	ld e,wTilesetUniqueGfx&$ff
-	ld a,(de)
-	ld b,a
-	ldh a,(<hFF8B)
-	or b
-	ld (de),a
-
-	ld a,(wActiveGroup)
-	or a
-	ret nz
-	ld a,(wActiveRoom)
-	cp <ROOM_SEASONS_096
-	ret nz
-	call getThisRoomFlags
-	and $80
-	ret nz
-	ld a,$20
-	ld (wTilesetUniqueGfx),a
-	ret
-
-getTempleRemainsSeasonsTilesetData:
-	ld a,GLOBALFLAG_TEMPLE_REMAINS_FILLED_WITH_LAVA
-	call checkGlobalFlag
-	ret z
-
-	call checkIsTempleRemains
-	ret nc
-
-	ld a,(wRoomStateModifier)
-	call multiplyABy8
-	ld hl,templeRemainsSeasons
-	add hl,bc
---
-	xor a
-	ldh (<hFF8B),a
-	scf
-	ret
-
-; @param[out]	cflag	set if active room is temple remains
-checkIsTempleRemains:
-	ld a,(wActiveGroup)
-	or a
-	ret nz
-	ld a,(wActiveRoom)
-	cp $14
-	jr c,+
-	sub $04
-	cp $30
-	ret nc
-	and $0f
-	cp $04
-	ret
-+
-	xor a
-	ret
-
-getMoblinKeepSeasonsTilesetData:
-	ld a,(wActiveGroup)
-	or a
-	ret nz
-
-	call getMoblinKeepScreenIndex
-	ret nc
-
-	ld a,GLOBALFLAG_MOBLINS_KEEP_DESTROYED
-	call checkGlobalFlag
-	ret z
-
-	ld a,(wAnimalCompanion)
-	sub $0a
-	and $03
-	call multiplyABy8
-	ld hl,moblinKeepSeasons
-	add hl,bc
-	jr --
-
-;;
-; @param[out]	cflag	Set if active room is in Moblin keep
-getMoblinKeepScreenIndex:
-	ld a,(wActiveRoom)
-	ld b,$05
-	ld hl,moblinKeepRooms
--
-	cp (hl)
-	jr z,+
-	inc hl
-	dec b
-	jr nz,-
-	xor a
-	ret
-+
-	scf
-	ret
-
-moblinKeepRooms:
-	.db $5b $5c $6b $6c $7b
-
+	.include "code/seasons/roomGfxChanges.s"
+	.include "code/loadTilesToRam.s"
+	.include "code/seasons/loadTilesetData.s"
 	.include "build/data/warpData.s"
 
 
 .BANK $05 SLOT 1
 .ORG 0
 
- m_section_force "Bank_5" NAMESPACE bank5
+ m_section_superfree "Bank_5" NAMESPACE bank5
 
 	.include "code/bank5.s"
 	.include "build/data/tileTypeMappings.s"
@@ -332,81 +114,12 @@ moblinKeepRooms:
 	.include "code/items/magnetGloveParent.s"
 
 	.include "code/items/parentItemCommon.s"
-
-
-_itemUsageParameterTable:
-	.db $00 <wGameKeysPressed       ; ITEMID_NONE
-	.db $05 <wGameKeysPressed       ; ITEMID_SHIELD
-	.db $03 <wGameKeysJustPressed   ; ITEMID_PUNCH
-	.db $23 <wGameKeysJustPressed   ; ITEMID_BOMB
-	.db $00 <wGameKeysJustPressed   ; ITEMID_CANE_OF_SOMARIA
-	.db $63 <wGameKeysJustPressed   ; ITEMID_SWORD
-	.db $02 <wGameKeysJustPressed   ; ITEMID_BOOMERANG
-	.db $33 <wGameKeysJustPressed   ; ITEMID_ROD_OF_SEASONS
-	.db $53 <wGameKeysJustPressed   ; ITEMID_MAGNET_GLOVES
-	.db $00 <wGameKeysJustPressed   ; ITEMID_SWITCH_HOOK_HELPER
-	.db $00 <wGameKeysJustPressed   ; ITEMID_SWITCH_HOOK
-	.db $00 <wGameKeysJustPressed   ; ITEMID_SWITCH_HOOK_CHAIN
-	.db $73 <wGameKeysJustPressed   ; ITEMID_BIGGORON_SWORD
-	.db $02 <wGameKeysJustPressed   ; ITEMID_BOMBCHUS
-	.db $05 <wGameKeysJustPressed   ; ITEMID_FLUTE
-	.db $00 <wGameKeysJustPressed   ; ITEMID_SHOOTER
-	.db $00 <wGameKeysJustPressed   ; ITEMID_10
-	.db $00 <wGameKeysJustPressed   ; ITEMID_HARP
-	.db $00 <wGameKeysJustPressed   ; ITEMID_12
-	.db $43 <wGameKeysJustPressed   ; ITEMID_SLINGSHOT
-	.db $00 <wGameKeysJustPressed   ; ITEMID_14
-	.db $13 <wGameKeysJustPressed   ; ITEMID_SHOVEL
-	.db $13 <wGameKeysPressed       ; ITEMID_BRACELET
-	.db $01 <wGameKeysJustPressed   ; ITEMID_FEATHER
-	.db $00 <wGameKeysJustPressed   ; ITEMID_18
-	.db $02 <wGameKeysJustPressed   ; ITEMID_SEED_SATCHEL
-	.db $00 <wGameKeysJustPressed   ; ITEMID_DUST
-	.db $00 <wGameKeysJustPressed   ; ITEMID_1b
-	.db $00 <wGameKeysJustPressed   ; ITEMID_1c
-	.db $00 <wGameKeysJustPressed   ; ITEMID_MINECART_COLLISION
-	.db $03 <wGameKeysJustPressed   ; ITEMID_FOOLS_ORE
-	.db $00 <wGameKeysJustPressed   ; ITEMID_1f
-
-
-_linkItemAnimationTable:
-	.db $00  LINK_ANIM_MODE_NONE	; ITEMID_NONE
-	.db $00  LINK_ANIM_MODE_NONE	; ITEMID_SHIELD
-	.db $d6  LINK_ANIM_MODE_21	; ITEMID_PUNCH
-	.db $30  LINK_ANIM_MODE_LIFT	; ITEMID_BOMB
-	.db $d6  LINK_ANIM_MODE_22	; ITEMID_CANE_OF_SOMARIA
-	.db $e6  LINK_ANIM_MODE_22	; ITEMID_SWORD
-	.db $b0  LINK_ANIM_MODE_21	; ITEMID_BOOMERANG
-	.db $d6  LINK_ANIM_MODE_22	; ITEMID_ROD_OF_SEASONS
-	.db $60  LINK_ANIM_MODE_NONE	; ITEMID_MAGNET_GLOVES
-	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_SWITCH_HOOK_HELPER
-	.db $f6  LINK_ANIM_MODE_21	; ITEMID_SWITCH_HOOK
-	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_SWITCH_HOOK_CHAIN
-	.db $f6  LINK_ANIM_MODE_23	; ITEMID_BIGGORON_SWORD
-	.db $30  LINK_ANIM_MODE_21	; ITEMID_BOMBCHUS
-	.db $70  LINK_ANIM_MODE_FLUTE	; ITEMID_FLUTE
-	.db $c6  LINK_ANIM_MODE_21	; ITEMID_SHOOTER
-	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_10
-	.db $70  LINK_ANIM_MODE_HARP_2	; ITEMID_HARP
-	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_12
-	.db $c6  LINK_ANIM_MODE_21	; ITEMID_SLINGSHOT
-	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_14
-	.db $b0  LINK_ANIM_MODE_DIG_2	; ITEMID_SHOVEL
-	.db $40  LINK_ANIM_MODE_LIFT_3	; ITEMID_BRACELET
-	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_FEATHER
-	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_18
-	.db $a0  LINK_ANIM_MODE_21	; ITEMID_SEED_SATCHEL
-	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_DUST
-	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_1b
-	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_1c
-	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_MINECART_COLLISION
-	.db $e6  LINK_ANIM_MODE_22	; ITEMID_FOOLS_ORE
-	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_1f
+	.include "build/data/itemUsageTables.s"
 
 	.include "object_code/common/specialObjects/minecart.s"
 	.include "object_code/common/specialObjects/raft.s"
 
-	.include "data/seasons/specialObjectAnimationData.s"
+	.include "build/data/specialObjectAnimationData.s"
 	.include "code/seasons/cutscenes/companionCutscenes.s"
 	.include "code/seasons/cutscenes/linkCutscenes.s"
 	.include "build/data/signText.s"
@@ -418,14 +131,12 @@ _linkItemAnimationTable:
 .BANK $07 SLOT 1
 .ORG 0
 
-.include "code/fileManagement.s"
+	.include "code/fileManagement.s"
 
  ; This section can't be superfree, since it must be in the same bank as section
  ; "Bank_7_Data".
  m_section_free "Enemy_Part_Collisions" namespace "bank7"
-
 	.include "code/collisionEffects.s"
-
 .ends
 
 
@@ -437,7 +148,7 @@ _linkItemAnimationTable:
 	.include "build/data/itemPassableCliffTilesTable.s"
 	.include "build/data/itemPassableTilesTable.s"
 	.include "code/itemCodes.s"
-	.include "data/seasons/itemAttributes.s"
+	.include "build/data/itemAttributes.s"
 	.include "data/itemAnimations.s"
 
 .ends
@@ -447,9 +158,9 @@ _linkItemAnimationTable:
  ; "Enemy_Part_Collisions".
  m_section_free "Bank_7_Data" namespace "bank7"
 
-	.include "data/seasons/enemyActiveCollisions.s"
-	.include "data/seasons/partActiveCollisions.s"
-	.include "data/seasons/objectCollisionTable.s"
+	.include "build/data/enemyActiveCollisions.s"
+	.include "build/data/partActiveCollisions.s"
+	.include "build/data/objectCollisionTable.s"
 
 .ends
 
@@ -461,6 +172,7 @@ _linkItemAnimationTable:
         .include "object_code/common/interactionCode/group2.s"
 	.include "object_code/seasons/interactionCode/bank08.s"
 
+
 .BANK $09 SLOT 1
 .ORG 0
 
@@ -468,12 +180,14 @@ _linkItemAnimationTable:
         .include "object_code/common/interactionCode/group3.s"
 	.include "object_code/seasons/interactionCode/bank09.s"
 
+
 .BANK $0a SLOT 1
 .ORG 0
 
 	.include "object_code/common/interactionCode/group5.s"
         .include "object_code/common/interactionCode/group6.s"
 	.include "object_code/seasons/interactionCode/bank0a.s"
+
 
 .BANK $0b SLOT 1
 .ORG 0
@@ -533,14 +247,16 @@ _linkItemAnimationTable:
 	.include "object_code/seasons/enemyCode/bank0f.s"
 	.include "code/seasons/cutscenes/transitionToDragonOnox.s"
 
+.ends
+
+.ifdef BUILD_VANILLA
 	.REPT $87
-	.db $0f ; emptyfill
+	.db $0f ; emptyfill (TODO: replace this with ORGA, update md5 for emptyfill-0)
 	.ENDR
+.endif
 
 	.include "object_code/common/interactionCode/group7.s"
 	.include "object_code/seasons/interactionCode/bank0f.s"
-
-.ends
 
 .BANK $10 SLOT 1
 .ORG 0

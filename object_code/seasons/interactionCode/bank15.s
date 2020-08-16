@@ -1,3 +1,5 @@
+ m_section_free Seasons_Interactions_Bank15 NAMESPACE seasonsInteractionsBank15
+
 ; ==============================================================================
 ; INTERACID_LINKED_FOUNTAIN_LADY
 ; ==============================================================================
@@ -1349,7 +1351,7 @@ interactionCodee3:
 	call interactionSetAnimation
 	jp interactionAnimateAsNpc
 @substate1:
-	callab seasonsFunc_0a_71ce
+	callab seasonsInteractionsBank0a.seasonsFunc_0a_71ce
 	call interactionRunScript
 	jr c,+
 	jp interactionAnimateAsNpc
@@ -1865,3 +1867,5 @@ interactionCodee7:
 @state1:
 	call interactionRunScript
 	jp npcFaceLinkAndAnimate
+
+.ends

@@ -1,7 +1,9 @@
 ; Constants for every room exist in this file.
-; This may seem pointless, but it can be useful for grep'ing specific rooms to see if
-; their room flags are modified from somewhere.
-; Also, they could be renamed later (a few have been already).
+; This may seem pointless, but it can be useful for grep'ing specific rooms to see if their room
+; flags are modified from somewhere.
+; Also, they could be renamed later (a few have been already). In a few cases, the same room exists
+; in Ages and Seasons but have different numbers. In this case they are renamed to "ROOM_X" instead
+; of "ROOM_AGES_X" or "ROOM_SEASONS_X".
 
 .ifdef ROM_AGES
 	.enum 0
@@ -1532,7 +1534,7 @@
 	ROOM_AGES_5ee		db
 	ROOM_AGES_5ef		db
 	ROOM_AGES_5f0		db
-	ROOM_AGES_5f1		db
+	ROOM_ZELDA_IN_FINAL_DUNGEON	db
 	ROOM_AGES_5f2		db
 	ROOM_AGES_5f3		db
 	ROOM_AGES_5f4		db
@@ -3507,7 +3509,7 @@
 	ROOM_SEASONS_597	db
 	ROOM_SEASONS_598	db
 	ROOM_SEASONS_599	db
-	ROOM_SEASONS_59a	db
+	ROOM_ZELDA_IN_FINAL_DUNGEON	db
 	ROOM_SEASONS_59b	db
 	ROOM_SEASONS_59c	db
 	ROOM_SEASONS_59d	db

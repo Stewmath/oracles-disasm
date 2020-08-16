@@ -1135,7 +1135,7 @@ _nayruWarpToMakuTreeCutsceneHandler:
 	ld a,(wFrameCounter)
 	and $07
 	ret nz
-	callab interactionBank0a.func_0a_7877
+	callab agesInteractionsBank0a.func_0a_7877
 	ld de,w1Link.yh
 	call objectGetRelativeAngle
 	call convertAngleToDirection
@@ -1605,7 +1605,7 @@ _pregameIntroCutsceneHandler:
 @func_6d40:
 	ld a,$01
 	ld (de),a
-	ld bc, ROOM_AGES_5f1
+	ld bc,ROOM_ZELDA_IN_FINAL_DUNGEON
 	call disableLcdAndLoadRoom
 	call resetCamera
 	ld a,PALH_ac
@@ -1970,12 +1970,12 @@ _cutscene_disableLcdLoadRoomResetCamera:
 	dwbe ROOM_AGES_149
 	dwbe ROOM_AGES_184
 	dwbe ROOM_AGES_165
-	dwbe ROOM_AGES_5f1
+	dwbe ROOM_ZELDA_IN_FINAL_DUNGEON
 	dwbe ROOM_AGES_165
 	dwbe ROOM_AGES_149
 	dwbe ROOM_AGES_184
 	dwbe ROOM_AGES_4f6
-	dwbe ROOM_AGES_5f1
+	dwbe ROOM_ZELDA_IN_FINAL_DUNGEON
 	dwbe ROOM_AGES_038
 	dwbe ROOM_AGES_149
 	dwbe ROOM_AGES_038

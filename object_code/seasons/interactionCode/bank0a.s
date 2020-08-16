@@ -1,3 +1,5 @@
+ m_section_free Seasons_Interactions_Bank0a NAMESPACE seasonsInteractionsBank0a
+
 ; ==============================================================================
 ; INTERACID_FLOODED_HOUSE_GIRL
 ; INTERACID_MASTER_DIVERS_WIFE
@@ -2905,9 +2907,9 @@ interactionCode9d:
 	ld hl,impaScript_afterOnoxTakesDin
 	jr @@setScript
 @@subid1:
-	call interactionCodec4@checkZeldaVillagersSeenButNoMakuSeed
+	call checkZeldaVillagersSeenButNoMakuSeed
 	jp nz,interactionDelete
-	call interactionCodec4@checkGotMakuSeedDidNotSeeZeldaKidnapped
+	call checkGotMakuSeedDidNotSeeZeldaKidnapped_body
 	jp nz,interactionDelete
 	ld a,GLOBALFLAG_IMPA_ASKED_TO_SAVE_ZELDA
 	call checkGlobalFlag
@@ -2929,7 +2931,7 @@ interactionCode9d:
 	call getHighestSetBit
 	jr @@func_5dd5
 @@subid2:
-	call interactionCodec4@checkZeldaVillagersSeenButNoMakuSeed
+	call checkZeldaVillagersSeenButNoMakuSeed
 	jp z,interactionDelete
 	ld a,$03
 	ld e,$7b
@@ -2938,7 +2940,7 @@ interactionCode9d:
 	ld a,$08
 	jr @@func_5dd5
 @@subid3:
-	call interactionCodec4@checkGotMakuSeedDidNotSeeZeldaKidnapped
+	call checkGotMakuSeedDidNotSeeZeldaKidnapped_body
 	jp z,interactionDelete
 	ld a,$09
 @@func_5dd5:
@@ -7599,14 +7601,14 @@ interactionCodec3:
 ; INTERACID_ZELDA_VILLAGERS_ROOM
 ; ==============================================================================
 interactionCodec4:
-	call @checkZeldaVillagersSeenButNoMakuSeed
+	call checkZeldaVillagersSeenButNoMakuSeed
 	ld a,$00
 	jr nz,+
-	call @checkGotMakuSeedDidNotSeeZeldaKidnapped
+	call checkGotMakuSeedDidNotSeeZeldaKidnapped_body
 	jp z,interactionDelete
 	ld a,$01
 +
-	ld hl,@interactionsTableLookup
+	ld hl,_zeldaVillagersRoom_interactionsTableLookup
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -7639,7 +7641,8 @@ interactionCodec4:
 	pop de
 	jp interactionDelete
 
-@checkZeldaVillagersSeenButNoMakuSeed:
+
+checkZeldaVillagersSeenButNoMakuSeed:
 	call checkIsLinkedGame
 	ret z
 	ld a,GLOBALFLAG_GOT_MAKU_SEED
@@ -7652,7 +7655,7 @@ interactionCodec4:
 	ld a,GLOBALFLAG_ZELDA_VILLAGERS_SEEN
 	jp checkGlobalFlag
 
-@checkGotMakuSeedDidNotSeeZeldaKidnapped:
+checkGotMakuSeedDidNotSeeZeldaKidnapped_body:
 	call checkIsLinkedGame
 	ret z
 	ld a,GLOBALFLAG_ZELDA_KIDNAPPED_SEEN
@@ -7665,7 +7668,8 @@ interactionCodec4:
 	ld a,GLOBALFLAG_GOT_MAKU_SEED
 	jp checkGlobalFlag
 
-@interactionsTableLookup:
+
+_zeldaVillagersRoom_interactionsTableLookup:
 	.dw @villagersSeenInteractions ; checkZeldaVillagersSeenButNoMakuSeed
 	.dw @gotMakuSeedInteractions ; checkGotMakuSeedDidNotSeeZeldaKidnapped
 
@@ -7854,3 +7858,5 @@ interactionCodec6:
 	jp interactionDelete
 @warpDestVariables:
 	m_HardcodedWarpA ROOM_SEASONS_0d4 $00 $54 $83
+
+.ends

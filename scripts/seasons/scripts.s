@@ -9372,7 +9372,7 @@ goldenBeastOldManScript:
 	initcollisions
 -
 	checkabutton
-	asm15 checkGoldenBeastsKilled
+	asm15 seasonsInteractionsBank15.checkGoldenBeastsKilled
 	jumptable_memoryaddress $cfc1
 	.dw @notSlayed4Beasts
 	.dw @slayed4Beasts
@@ -9382,7 +9382,7 @@ goldenBeastOldManScript:
 @slayed4Beasts:
 	showtextlowindex <TX_1f05
 	disableinput
-	asm15 giveRedRing
+	asm15 seasonsInteractionsBank15.giveRedRing
 	wait 20
 	showtextlowindex <TX_1f06
 	wait 20
@@ -9420,13 +9420,13 @@ linkedHerosCaveOldManScript:
 	showtextlowindex <TX_3306
 	scriptjump -
 @answeredYes:
-	asm15 linkedHerosCaveOldMan_takeRupees
+	asm15 seasonsInteractionsBank15.linkedHerosCaveOldMan_takeRupees
 	jumptable_memoryaddress $cfd0
 	.dw @notEnoughRupees
 	.dw @hasEnoughRupees
 @hasEnoughRupees:
 	disableinput
-	asm15 linkedHerosCaveOldMan_spawnChests
+	asm15 seasonsInteractionsBank15.linkedHerosCaveOldMan_spawnChests
 	wait 60
 	showtextlowindex <TX_3304
 	enableinput

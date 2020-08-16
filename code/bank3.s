@@ -895,11 +895,7 @@ _twinrovaCutscene_state1:
 
 	call _incCutsceneState
 
-.ifdef ROM_AGES
-	ld a,$f1 ; Room with zelda and torches
-.else
-	ld a,$9a ; Room with zelda and torches
-.endif
+	ld a,<ROOM_ZELDA_IN_FINAL_DUNGEON ; Room with zelda and torches
 	ld (wActiveRoom),a
 	call _twinrovaCutscene_fadeinToRoom
 
@@ -916,11 +912,7 @@ _twinrovaCutscene_state1:
 	ld hl,objectData.objectData4022
 	call parseGivenObjectData
 
-.ifdef ROM_AGES
 	ld a,PALH_ac
-.else
-	ld a,SEASONS_PALH_ac
-.endif
 	call loadPaletteHeader
 
 	ld a,$01
@@ -2196,9 +2188,10 @@ _introCinematic_inTemple_state0:
 	ld l,<w1Link.xh
 	ld (hl),$50
 
+	; Intro input data was moved to another bank in Ages
 .ifdef ROM_AGES
-	ld hl,interactionBank10.templeIntro_simulatedInput
-	ld a,:interactionBank10.templeIntro_simulatedInput
+	ld hl,cutscenesBank10.templeIntro_simulatedInput
+	ld a,:cutscenesBank10.templeIntro_simulatedInput
 .else
 	ld hl,templeIntro_simulatedInput
 	ld a,:templeIntro_simulatedInput

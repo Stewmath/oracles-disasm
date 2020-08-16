@@ -1,3 +1,5 @@
+ m_section_superfree Interaction_Code_Group8 NAMESPACE commonInteractions8
+
 ; ==============================================================================
 ; INTERACID_ERA_OR_SEASON_INFO
 ; ==============================================================================
@@ -330,3 +332,5 @@ interactionCodee5:
 
 @state1:
 	jp interactionRunScript
+
+.ends

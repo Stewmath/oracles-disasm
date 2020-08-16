@@ -1,467 +1,469 @@
 interactionCodeTable: ; $3b8b
 .ifdef ROM_AGES
-	.dw interactionBank08.interactionCode00 ; 0x00
-	.dw interactionBank08.interactionCode01 ; 0x01
-	.dw interactionBank08.interactionCode02 ; 0x02
-	.dw interactionBank08.interactionCode03 ; 0x03
-	.dw interactionBank08.interactionCode04 ; 0x04
-	.dw interactionBank08.interactionCode05 ; 0x05
-	.dw interactionBank08.interactionCode06 ; 0x06
-	.dw interactionBank08.interactionCode07 ; 0x07
-	.dw interactionBank08.interactionCode08 ; 0x08
-	.dw interactionBank08.interactionCode09 ; 0x09
-	.dw interactionBank08.interactionCode0a ; 0x0a
-	.dw interactionBank08.interactionCode0b ; 0x0b
-	.dw interactionBank08.interactionCode0c ; 0x0c
-	.dw                   interactionDelete ; 0x0d
-	.dw                   interactionDelete ; 0x0e
-	.dw interactionBank08.interactionCode0f ; 0x0f
-	.dw interactionBank08.interactionCode10 ; 0x10
-	.dw interactionBank08.interactionCode11 ; 0x11
-	.dw interactionBank08.interactionCode12 ; 0x12
-	.dw interactionBank08.interactionCode13 ; 0x13
-	.dw interactionBank08.interactionCode14 ; 0x14
-	.dw interactionBank08.interactionCode15 ; 0x15
-	.dw interactionBank08.interactionCode16 ; 0x16
-	.dw interactionBank08.interactionCode17 ; 0x17
-	.dw interactionBank08.interactionCode18 ; 0x18
-	.dw interactionBank08.interactionCode19 ; 0x19
-	.dw interactionBank08.interactionCode1a ; 0x1a
-	.dw interactionBank08.interactionCode1b ; 0x1b
-	.dw interactionBank08.interactionCode1c ; 0x1c
-	.dw                   interactionDelete ; 0x1d
-	.dw interactionBank08.interactionCode1e ; 0x1e
-	.dw interactionBank08.interactionCode1f ; 0x1f
-	.dw interactionBank08.interactionCode20 ; 0x20
-	.dw interactionBank08.interactionCode21 ; 0x21
-	.dw interactionBank08.interactionCode22 ; 0x22
-	.dw interactionBank08.interactionCode23 ; 0x23
-	.dw interactionBank08.interactionCode24 ; 0x24
-	.dw interactionBank08.interactionCode25 ; 0x25
-	.dw                   interactionDelete ; 0x26
-	.dw                   interactionDelete ; 0x27
-	.dw interactionBank08.interactionCode28 ; 0x28
-	.dw interactionBank08.interactionCode29 ; 0x29
-	.dw interactionBank08.interactionCode2a ; 0x2a
-	.dw interactionBank08.interactionCode2b ; 0x2b
-	.dw interactionBank08.interactionCode2c ; 0x2c
-	.dw interactionBank08.interactionCode2d ; 0x2d
-	.dw interactionBank08.interactionCode2e ; 0x2e
-	.dw interactionBank08.interactionCode2f ; 0x2f
-	.dw interactionBank08.interactionCode30 ; 0x30
-	.dw interactionBank08.interactionCode31 ; 0x31
-	.dw interactionBank08.interactionCode32 ; 0x32
-	.dw interactionBank08.interactionCode33 ; 0x33
-	.dw interactionBank08.interactionCode34 ; 0x34
-	.dw interactionBank08.interactionCode35 ; 0x35
-	.dw interactionBank08.interactionCode36 ; 0x36
-	.dw interactionBank08.interactionCode37 ; 0x37
-	.dw interactionBank08.interactionCode38 ; 0x38
-	.dw interactionBank08.interactionCode39 ; 0x39
-	.dw interactionBank08.interactionCode3a ; 0x3a
-	.dw interactionBank08.interactionCode3b ; 0x3b
-	.dw interactionBank08.interactionCode3c ; 0x3c
-	.dw interactionBank08.interactionCode3d ; 0x3d
-	.dw interactionBank09.interactionCode3e ; 0x3e
-	.dw interactionBank09.interactionCode3f ; 0x3f
-	.dw interactionBank09.interactionCode40 ; 0x40
-	.dw interactionBank09.interactionCode41 ; 0x41
-	.dw interactionBank09.interactionCode42 ; 0x42
-	.dw interactionBank09.interactionCode43 ; 0x43
-	.dw interactionBank09.interactionCode44 ; 0x44
-	.dw interactionBank09.interactionCode45 ; 0x45
-	.dw interactionBank09.interactionCode46 ; 0x46
-	.dw interactionBank09.interactionCode47 ; 0x47
-	.dw interactionBank09.interactionCode48 ; 0x48
-	.dw interactionBank09.interactionCode49 ; 0x49
-	.dw interactionBank09.interactionCode4a ; 0x4a
-	.dw interactionBank09.interactionCode4b ; 0x4b
-	.dw interactionBank09.interactionCode4c ; 0x4c
-	.dw interactionBank09.interactionCode4d ; 0x4d
-	.dw interactionBank09.interactionCode4e ; 0x4e
-	.dw interactionBank09.interactionCode4f ; 0x4f
-	.dw                   interactionDelete ; 0x50
-	.dw interactionBank09.interactionCode51 ; 0x51
-	.dw interactionBank09.interactionCode52 ; 0x52
-	.dw interactionBank09.interactionCode53 ; 0x53
-	.dw interactionBank09.interactionCode54 ; 0x54
-	.dw interactionBank09.interactionCode55 ; 0x55
-	.dw interactionBank09.interactionCode56 ; 0x56
-	.dw interactionBank09.interactionCode57 ; 0x57
-	.dw interactionBank09.interactionCode58 ; 0x58
-	.dw interactionBank09.interactionCode59 ; 0x59
-	.dw interactionBank09.interactionCode5a ; 0x5a
-	.dw interactionBank09.interactionCode5b ; 0x5b
-	.dw interactionBank09.interactionCode5c ; 0x5c
-	.dw interactionBank09.interactionCode5d ; 0x5d
-	.dw interactionBank09.interactionCode5e ; 0x5e
-	.dw interactionBank09.interactionCode5f ; 0x5f
-	.dw interactionBank09.interactionCode60 ; 0x60
-	.dw interactionBank09.interactionCode61 ; 0x61
-	.dw interactionBank09.interactionCode62 ; 0x62
-	.dw interactionBank09.interactionCode63 ; 0x63
-	.dw interactionBank09.interactionCode64 ; 0x64
-	.dw interactionBank09.interactionCode65 ; 0x65
-	.dw interactionBank09.interactionCode66 ; 0x66
-	.dw interactionBank0a.interactionCode67 ; 0x67
-	.dw interactionBank0a.interactionCode68 ; 0x68
-	.dw interactionBank0a.interactionCode69 ; 0x69
-	.dw interactionBank0a.interactionCode6a ; 0x6a
-	.dw interactionBank0a.interactionCode6b ; 0x6b
-	.dw interactionBank0a.interactionCode6c ; 0x6c
-	.dw interactionBank0a.interactionCode6d ; 0x6d
-	.dw interactionBank0a.interactionCode6e ; 0x6e
-	.dw interactionBank0a.interactionCode6f ; 0x6f
-	.dw interactionBank0a.interactionCode70 ; 0x70
-	.dw interactionBank0a.interactionCode71 ; 0x71
-	.dw interactionBank0a.interactionCode72 ; 0x72
-	.dw interactionBank0a.interactionCode73 ; 0x73
-	.dw interactionBank0a.interactionCode74 ; 0x74
-	.dw interactionBank0a.interactionCode75 ; 0x75
-	.dw interactionBank0a.interactionCode76 ; 0x76
-	.dw interactionBank0a.interactionCode77 ; 0x77
-	.dw interactionBank0a.interactionCode78 ; 0x78
-	.dw interactionBank0a.interactionCode79 ; 0x79
-	.dw interactionBank0a.interactionCode7a ; 0x7a
-	.dw interactionBank0a.interactionCode7b ; 0x7b
-	.dw interactionBank0a.interactionCode7c ; 0x7c
-	.dw interactionBank0a.interactionCode7d ; 0x7d
-	.dw interactionBank0a.interactionCode7e ; 0x7e
-	.dw interactionBank0a.interactionCode7f ; 0x7f
-	.dw interactionBank0a.interactionCode80 ; 0x80
-	.dw interactionBank0a.interactionCode81 ; 0x81
-	.dw interactionBank0a.interactionCode82 ; 0x82
-	.dw interactionBank0a.interactionCode83 ; 0x83
-	.dw interactionBank0a.interactionCode84 ; 0x84
-	.dw                   interactionDelete ; 0x85
-	.dw interactionBank0a.interactionCode86 ; 0x86
-	.dw interactionBank0a.interactionCode87 ; 0x87
-	.dw interactionBank0a.interactionCode88 ; 0x88
-	.dw interactionBank0a.interactionCode89 ; 0x89
-	.dw interactionBank0a.interactionCode8a ; 0x8a
-	.dw interactionBank0a.interactionCode8b ; 0x8b
-	.dw interactionBank0a.interactionCode8c ; 0x8c
-	.dw interactionBank0a.interactionCode8d ; 0x8d
-	.dw interactionBank0a.interactionCode8e ; 0x8e
-	.dw interactionBank0a.interactionCode8f ; 0x8f
-	.dw interactionBank0a.interactionCode90 ; 0x90
-	.dw interactionBank0a.interactionCode91 ; 0x91
-	.dw interactionBank0a.interactionCode92 ; 0x92
-	.dw interactionBank0a.interactionCode93 ; 0x93
-	.dw interactionBank0a.interactionCode94 ; 0x94
-	.dw interactionBank0a.interactionCode95 ; 0x95
-	.dw interactionBank0a.interactionCode96 ; 0x96
-	.dw interactionBank0a.interactionCode97 ; 0x97
-	.dw interactionBank0b.interactionCode98 ; 0x98
-	.dw interactionBank0b.interactionCode99 ; 0x99
-	.dw interactionBank0b.interactionCode9a ; 0x9a
-	.dw interactionBank0b.interactionCode9b ; 0x9b
-	.dw interactionBank0b.interactionCode9c ; 0x9c
-	.dw interactionBank0b.interactionCode9d ; 0x9d
-	.dw interactionBank0b.interactionCode9e ; 0x9e
-	.dw interactionBank0b.interactionCode9f ; 0x9f
-	.dw interactionBank0b.interactionCodea0 ; 0xa0
-	.dw interactionBank0b.interactionCodea1 ; 0xa1
-	.dw interactionBank0b.interactionCodea2 ; 0xa2
-	.dw interactionBank0b.interactionCodea3 ; 0xa3
-	.dw interactionBank0b.interactionCodea4 ; 0xa4
-	.dw interactionBank0b.interactionCodea5 ; 0xa5
-	.dw interactionBank0b.interactionCodea6 ; 0xa6
-	.dw interactionBank0b.interactionCodea7 ; 0xa7
-	.dw interactionBank0b.interactionCodea8 ; 0xa8
-	.dw interactionBank0b.interactionCodea9 ; 0xa9
-	.dw interactionBank0b.interactionCodeaa ; 0xaa
-	.dw interactionBank0b.interactionCodeab ; 0xab
-	.dw interactionBank0b.interactionCodeac ; 0xac
-	.dw interactionBank0b.interactionCodead ; 0xad
-	.dw interactionBank0b.interactionCodeae ; 0xae
-	.dw interactionBank0b.interactionCodeaf ; 0xaf
-	.dw interactionBank0b.interactionCodeb0 ; 0xb0
-	.dw interactionBank0b.interactionCodeb1 ; 0xb1
-	.dw interactionBank0b.interactionCodeb2 ; 0xb2
-	.dw interactionBank0b.interactionCodeb3 ; 0xb3
-	.dw interactionBank0b.interactionCodeb4 ; 0xb4
-	.dw interactionBank0b.interactionCodeb5 ; 0xb5
-	.dw interactionBank0b.interactionCodeb6 ; 0xb6
-	.dw interactionBank0b.interactionCodeb7 ; 0xb7
-	.dw interactionBank0b.interactionCodeb8 ; 0xb8
-	.dw interactionBank0b.interactionCodeb9 ; 0xb9
-	.dw interactionBank0b.interactionCodeba ; 0xba
-	.dw interactionBank0b.interactionCodebb ; 0xbb
-	.dw interactionBank0b.interactionCodebc ; 0xbc
-	.dw interactionBank0b.interactionCodebd ; 0xbd
-	.dw interactionBank0b.interactionCodebe ; 0xbe
-	.dw interactionBank0b.interactionCodebf ; 0xbf
-	.dw interactionBank0b.interactionCodec0 ; 0xc0
-	.dw interactionBank0b.interactionCodec1 ; 0xc1
-	.dw interactionBank0b.interactionCodec2 ; 0xc2
-	.dw interactionBank0b.interactionCodec3 ; 0xc3
-	.dw interactionBank0b.interactionCodec4 ; 0xc4
-	.dw interactionBank0b.interactionCodec5 ; 0xc5
-	.dw interactionBank0b.interactionCodec6 ; 0xc6
-	.dw interactionBank0b.interactionCodec7 ; 0xc7
-	.dw interactionBank0b.interactionCodec8 ; 0xc8
-	.dw interactionBank0b.interactionCodec9 ; 0xc9
-	.dw interactionBank0b.interactionCodeca ; 0xca
-	.dw interactionBank0b.interactionCodecb ; 0xcb
-	.dw interactionBank0b.interactionCodecc ; 0xcc
-	.dw interactionBank0b.interactionCodecd ; 0xcd
-	.dw interactionBank0b.interactionCodece ; 0xce
-	.dw interactionBank0b.interactionCodecf ; 0xcf
-	.dw interactionBank0b.interactionCoded0 ; 0xd0
-	.dw interactionBank0b.interactionCoded1 ; 0xd1
-	.dw interactionBank0b.interactionCoded2 ; 0xd2
-	.dw interactionBank0b.interactionCoded3 ; 0xd3
-	.dw interactionBank0b.interactionCoded4 ; 0xd4
-	.dw interactionBank0b.interactionCoded5 ; 0xd5
-	.dw interactionBank0b.interactionCoded6 ; 0xd6
-	.dw interactionBank0b.interactionCoded7 ; 0xd7
-	.dw interactionBank0b.interactionCoded8 ; 0xd8
-	.dw interactionBank0b.interactionCoded9 ; 0xd9
-	.dw interactionBank0b.interactionCodeda ; 0xda
-	.dw interactionBank0b.interactionCodedb ; 0xdb
-	.dw interactionBank10.interactionCodedc ; 0xdc
-	.dw interactionBank10.interactionCodedd ; 0xdd
-	.dw interactionBank10.interactionCodede ; 0xde
-	.dw interactionBank10.interactionCodedf ; 0xdf
-	.dw interactionBank10.interactionCodee0 ; 0xe0
-	.dw interactionBank10.interactionCodee1 ; 0xe1
-	.dw interactionBank10.interactionCodee2 ; 0xe2
-	.dw interactionBank10.interactionCodee3 ; 0xe3
-	.dw                   interactionDelete ; 0xe4
-	.dw interactionBank10.interactionCodee5 ; 0xe5
-	.dw interactionBank10.interactionCodee6 ; 0xe6
-.else
-	.dw interactionCode00 ; bank 08 start
-	.dw interactionCode01
-	.dw interactionCode02
-	.dw interactionCode03
-	.dw interactionCode04
-	.dw interactionCode05
-	.dw interactionCode06
-	.dw interactionCode07
-	.dw interactionCode08
-	.dw interactionCode09
-	.dw interactionCode0a
-	.dw interactionCode0b
-	.dw interactionCode0c
-	.dw interactionDelete
-	.dw interactionDelete
-	.dw interactionCode0f
-	.dw interactionCode10
-	.dw interactionCode11_caller
-	.dw interactionCode12
-	.dw interactionCode13
-	.dw interactionCode14
-	.dw interactionCode15
-	.dw interactionCode16
-	.dw interactionCode17
-	.dw interactionCode18
-	.dw interactionDelete
-	.dw interactionDelete
-	.dw interactionDelete
-	.dw interactionCode1c
-	.dw interactionCode1d
-	.dw interactionCode1e
-	.dw interactionCode1f
-	.dw interactionCode20
-	.dw interactionCode21
-	.dw interactionCode22
-	.dw interactionCode23
-	.dw interactionCode24
-	.dw interactionCode25
-	.dw interactionCode26
-	.dw interactionCode27
-	.dw interactionCode28
-	.dw interactionCode29
-	.dw interactionCode2a
-	.dw interactionCode2b
-	.dw interactionCode2c
-	.dw interactionCode2d
-	.dw interactionCode2e
-	.dw interactionCode2f
-	.dw interactionCode30
-	.dw interactionCode31
-	.dw interactionCode32
-	.dw interactionCode33
-	.dw interactionCode34
-	.dw interactionCode35
-	.dw interactionCode36
-	.dw interactionCode37
-	.dw interactionCode38
-	.dw interactionCode39
-	.dw interactionCode3a
-	.dw interactionCode3b
-	.dw interactionCode3c
-	.dw interactionCode3d
-	.dw interactionCode3e
-	.dw interactionCode3f
-	.dw interactionCode40
-	.dw interactionCode41
-	.dw interactionCode42
-	.dw interactionCode43
-	.dw interactionCode44
-	.dw interactionCode45
-	.dw interactionCode46
-	.dw interactionCode47
-	.dw interactionCode48
-	.dw interactionCode49
-	.dw interactionCode4a
-	.dw interactionCode4b
-	.dw interactionCode4c
-	.dw interactionCode4d
-	.dw interactionCode4e
-	.dw interactionCode4f
-	.dw interactionCode50
-	.dw interactionCode51
-	.dw interactionCode52
-	.dw interactionCode53
-	.dw interactionCode54
-	.dw interactionCode55
-	.dw interactionCode56
-	.dw interactionCode57
-	.dw interactionCode58
-	.dw interactionCode59
-	.dw interactionCode5a
-	.dw interactionCode5b
-	.dw interactionCode5c
-	.dw interactionCode5d ; bank 08 end
-	.dw interactionCode5e ; bank 09 start
-	.dw interactionCode5f
-	.dw interactionCode60
-	.dw interactionDelete
-	.dw interactionCode62
-	.dw interactionCode63
-	.dw interactionCode64
-	.dw interactionCode65
-	.dw interactionCode66
-	.dw interactionCode67
-	.dw interactionCode68
-	.dw interactionCode69
-	.dw interactionCode6a
-	.dw interactionCode6b
-	.dw interactionCode6c
-	.dw interactionCode6d
-	.dw interactionCode6e
-	.dw interactionCode6f
-	.dw interactionCode70
-	.dw interactionCode71
-	.dw interactionCode72
-	.dw interactionCode73
-	.dw interactionCode74
-	.dw interactionCode75
-	.dw interactionCode76
-	.dw interactionCode77
-	.dw interactionCode78
-	.dw interactionCode79
-	.dw interactionCode7a
-	.dw interactionCode7b
-	.dw interactionCode7c
-	.dw interactionCode7d
-	.dw interactionCode7e
-	.dw interactionCode7f
-	.dw interactionCode80
-	.dw interactionCode81
-	.dw interactionCode82
-	.dw interactionCode83
-	.dw interactionCode84
-	.dw interactionCode85
-	.dw interactionCode86
-	.dw interactionCode87
-	.dw interactionCode88 ; bank 09 end
-	.dw interactionCode89 ; bank 0a start
-	.dw interactionCode8a
-	.dw interactionCode8b
-	.dw interactionCode8c
-	.dw interactionCode8d
-	.dw interactionCode8e
-	.dw interactionCode8f
-	.dw interactionCode90
-	.dw interactionCode91
-	.dw interactionCode92
-	.dw interactionCode93
-	.dw interactionCode94
-	.dw interactionCode95
-	.dw interactionCode96
-	.dw interactionCode97
-	.dw interactionCode98
-	.dw interactionCode99
-	.dw interactionCode9a
-	.dw interactionCode9b
-	.dw interactionCode9c
-	.dw interactionCode9d
-	.dw interactionCode9e
-	.dw interactionCode9f
-	.dw interactionCodea0
-	.dw interactionCodea1
-	.dw interactionCodea2
-	.dw interactionCodea3
-	.dw interactionCodea4
-	.dw interactionCodea5
-	.dw interactionCodea6
-	.dw interactionCodea7
-	.dw interactionCodea8
-	.dw interactionCodea9
-	.dw interactionCodeaa
-	.dw interactionCodeab
-	.dw interactionCodeac
-	.dw interactionCodead
-	.dw interactionCodeae
-	.dw interactionCodeaf
-	.dw interactionCodeb0
-	.dw interactionCodeb1
-	.dw interactionCodeb2
-	.dw interactionCodeb3
-	.dw interactionCodeb4
-	.dw interactionCodeb5
-	.dw interactionCodeb6
-	.dw interactionCodeb7
-	.dw interactionCodeb8
-	.dw interactionCodeb9
-	.dw interactionCodeba
-	.dw interactionCodebb
-	.dw interactionCodebc
-	.dw interactionCodebd
-	.dw interactionCodebe
-	.dw interactionCodebf
-	.dw interactionCodec0
-	.dw interactionCodec1
-	.dw interactionCodec2
-	.dw interactionCodec3
-	.dw interactionCodec4
-	.dw interactionCodec5
-	.dw interactionCodec6
-	.dw interactionCodec7 ; bank 0a end
-	.dw interactionCodec8 ; bank 0f start
-	.dw interactionCodec9
-	.dw interactionCodeca
-	.dw interactionCodecb
-	.dw interactionCodecc
-	.dw interactionCodecd
-	.dw interactionCodece
-	.dw interactionCodecf
-	.dw interactionCoded0
-	.dw interactionCoded1
-	.dw interactionCoded2
-	.dw interactionCoded3
-	.dw interactionCoded4
-	.dw interactionCoded5
-	.dw interactionCoded6
-	.dw interactionCoded7 ; bank 0f end
-	.dw interactionCoded8 ; bank 15 start
-	.dw interactionCoded9
-	.dw interactionCodeda
-	.dw interactionCodedb
-	.dw interactionCodedc
-	.dw interactionCodedd
-	.dw interactionCodede
-	.dw interactionCodedf
-	.dw interactionCodee0
-	.dw interactionCodee1
-	.dw interactionCodee2
-	.dw interactionCodee3
-	.dw interactionCodee4
-	.dw interactionCodee5
-	.dw interactionCodee6
-	.dw interactionCodee7 ; bank 15 end
+	.dw    commonInteractions1.interactionCode00 ; 0x00
+	.dw    commonInteractions1.interactionCode01 ; 0x01
+	.dw    commonInteractions1.interactionCode02 ; 0x02
+	.dw    commonInteractions1.interactionCode03 ; 0x03
+	.dw    commonInteractions1.interactionCode04 ; 0x04
+	.dw    commonInteractions1.interactionCode05 ; 0x05
+	.dw    commonInteractions1.interactionCode06 ; 0x06
+	.dw    commonInteractions1.interactionCode07 ; 0x07
+	.dw    commonInteractions1.interactionCode08 ; 0x08
+	.dw    commonInteractions1.interactionCode09 ; 0x09
+	.dw    commonInteractions1.interactionCode0a ; 0x0a
+	.dw    commonInteractions1.interactionCode0b ; 0x0b
+	.dw    commonInteractions1.interactionCode0c ; 0x0c
+	.dw                        interactionDelete ; 0x0d
+	.dw                        interactionDelete ; 0x0e
+	.dw    commonInteractions1.interactionCode0f ; 0x0f
+	.dw    commonInteractions1.interactionCode10 ; 0x10
+	.dw    commonInteractions1.interactionCode11 ; 0x11
+	.dw    commonInteractions1.interactionCode12 ; 0x12
+	.dw    commonInteractions1.interactionCode13 ; 0x13
+	.dw    commonInteractions1.interactionCode14 ; 0x14
+	.dw agesInteractionsBank08.interactionCode15 ; 0x15
+	.dw    commonInteractions1.interactionCode16 ; 0x16
+	.dw    commonInteractions1.interactionCode17 ; 0x17
+	.dw    commonInteractions1.interactionCode18 ; 0x18
+	.dw agesInteractionsBank08.interactionCode19 ; 0x19
+	.dw agesInteractionsBank08.interactionCode1a ; 0x1a
+	.dw agesInteractionsBank08.interactionCode1b ; 0x1b
+	.dw    commonInteractions1.interactionCode1c ; 0x1c
+	.dw                        interactionDelete ; 0x1d (Code still exists, just not pointed to)
+	.dw    commonInteractions1.interactionCode1e ; 0x1e
+	.dw agesInteractionsBank08.interactionCode1f ; 0x1f
+	.dw agesInteractionsBank08.interactionCode20 ; 0x20
+	.dw agesInteractionsBank08.interactionCode21 ; 0x21
+	.dw agesInteractionsBank08.interactionCode22 ; 0x22
+	.dw agesInteractionsBank08.interactionCode23 ; 0x23
+	.dw agesInteractionsBank08.interactionCode24 ; 0x24
+	.dw agesInteractionsBank08.interactionCode25 ; 0x25
+	.dw                        interactionDelete ; 0x26
+	.dw                        interactionDelete ; 0x27
+	.dw agesInteractionsBank08.interactionCode28 ; 0x28
+	.dw agesInteractionsBank08.interactionCode29 ; 0x29
+	.dw agesInteractionsBank08.interactionCode2a ; 0x2a
+	.dw agesInteractionsBank08.interactionCode2b ; 0x2b
+	.dw agesInteractionsBank08.interactionCode2c ; 0x2c
+	.dw agesInteractionsBank08.interactionCode2d ; 0x2d
+	.dw agesInteractionsBank08.interactionCode2e ; 0x2e
+	.dw agesInteractionsBank08.interactionCode2f ; 0x2f
+	.dw agesInteractionsBank08.interactionCode30 ; 0x30
+	.dw agesInteractionsBank08.interactionCode31 ; 0x31
+	.dw agesInteractionsBank08.interactionCode32 ; 0x32
+	.dw agesInteractionsBank08.interactionCode33 ; 0x33
+	.dw agesInteractionsBank08.interactionCode34 ; 0x34
+	.dw agesInteractionsBank08.interactionCode35 ; 0x35
+	.dw agesInteractionsBank08.interactionCode36 ; 0x36
+	.dw agesInteractionsBank08.interactionCode37 ; 0x37
+	.dw agesInteractionsBank08.interactionCode38 ; 0x38
+	.dw agesInteractionsBank08.interactionCode39 ; 0x39
+	.dw agesInteractionsBank08.interactionCode3a ; 0x3a
+	.dw agesInteractionsBank08.interactionCode3b ; 0x3b
+	.dw agesInteractionsBank08.interactionCode3c ; 0x3c
+	.dw agesInteractionsBank08.interactionCode3d ; 0x3d
+	.dw agesInteractionsBank09.interactionCode3e ; 0x3e
+	.dw agesInteractionsBank09.interactionCode3f ; 0x3f
+	.dw agesInteractionsBank09.interactionCode40 ; 0x40
+	.dw agesInteractionsBank09.interactionCode41 ; 0x41
+	.dw agesInteractionsBank09.interactionCode42 ; 0x42
+	.dw agesInteractionsBank09.interactionCode43 ; 0x43
+	.dw agesInteractionsBank09.interactionCode44 ; 0x44
+	.dw agesInteractionsBank09.interactionCode45 ; 0x45
+	.dw    commonInteractions2.interactionCode46 ; 0x46
+	.dw    commonInteractions2.interactionCode47 ; 0x47
+	.dw agesInteractionsBank09.interactionCode48 ; 0x48
+	.dw agesInteractionsBank09.interactionCode49 ; 0x49
+	.dw    commonInteractions2.interactionCode4a ; 0x4a
+	.dw agesInteractionsBank09.interactionCode4b ; 0x4b
+	.dw agesInteractionsBank09.interactionCode4c ; 0x4c
+	.dw agesInteractionsBank09.interactionCode4d ; 0x4d
+	.dw agesInteractionsBank09.interactionCode4e ; 0x4e
+	.dw agesInteractionsBank09.interactionCode4f ; 0x4f
+	.dw                        interactionDelete ; 0x50 (Code still exists, just not pointed to)
+	.dw agesInteractionsBank09.interactionCode51 ; 0x51
+	.dw agesInteractionsBank09.interactionCode52 ; 0x52
+	.dw agesInteractionsBank09.interactionCode53 ; 0x53
+	.dw agesInteractionsBank09.interactionCode54 ; 0x54
+	.dw agesInteractionsBank09.interactionCode55 ; 0x55
+	.dw    commonInteractions2.interactionCode56 ; 0x56
+	.dw agesInteractionsBank09.interactionCode57 ; 0x57
+	.dw agesInteractionsBank09.interactionCode58 ; 0x58
+	.dw agesInteractionsBank09.interactionCode59 ; 0x59
+	.dw agesInteractionsBank09.interactionCode5a ; 0x5a
+	.dw agesInteractionsBank09.interactionCode5b ; 0x5b
+	.dw agesInteractionsBank09.interactionCode5c ; 0x5c
+	.dw agesInteractionsBank09.interactionCode5d ; 0x5d
+	.dw agesInteractionsBank09.interactionCode5e ; 0x5e
+	.dw agesInteractionsBank09.interactionCode5f ; 0x5f
+	.dw                        interactionCode60 ; 0x60 (TODO: put this in a section?)
+	.dw agesInteractionsBank09.interactionCode61 ; 0x61
+	.dw agesInteractionsBank09.interactionCode62 ; 0x62
+	.dw agesInteractionsBank09.interactionCode63 ; 0x63
+	.dw agesInteractionsBank09.interactionCode64 ; 0x64
+	.dw agesInteractionsBank09.interactionCode65 ; 0x65
+	.dw agesInteractionsBank09.interactionCode66 ; 0x66
+	.dw agesInteractionsBank0a.interactionCode67 ; 0x67
+	.dw agesInteractionsBank0a.interactionCode68 ; 0x68
+	.dw agesInteractionsBank0a.interactionCode69 ; 0x69
+	.dw agesInteractionsBank0a.interactionCode6a ; 0x6a
+	.dw agesInteractionsBank0a.interactionCode6b ; 0x6b
+	.dw agesInteractionsBank0a.interactionCode6c ; 0x6c
+	.dw agesInteractionsBank0a.interactionCode6d ; 0x6d
+	.dw agesInteractionsBank0a.interactionCode6e ; 0x6e
+	.dw    commonInteractions3.interactionCode6f ; 0x6f
+	.dw agesInteractionsBank0a.interactionCode70 ; 0x70
+	.dw agesInteractionsBank0a.interactionCode71 ; 0x71
+	.dw agesInteractionsBank0a.interactionCode72 ; 0x72
+	.dw agesInteractionsBank0a.interactionCode73 ; 0x73
+	.dw agesInteractionsBank0a.interactionCode74 ; 0x74
+	.dw agesInteractionsBank0a.interactionCode75 ; 0x75
+	.dw agesInteractionsBank0a.interactionCode76 ; 0x76
+	.dw agesInteractionsBank0a.interactionCode77 ; 0x77
+	.dw    commonInteractions3.interactionCode78 ; 0x78
+	.dw    commonInteractions3.interactionCode79 ; 0x79
+	.dw    commonInteractions3.interactionCode7a ; 0x7a
+	.dw agesInteractionsBank0a.interactionCode7b ; 0x7b
+	.dw agesInteractionsBank0a.interactionCode7c ; 0x7c
+	.dw    commonInteractions3.interactionCode7d ; 0x7d
+	.dw    commonInteractions3.interactionCode7e ; 0x7e
+	.dw    commonInteractions3.interactionCode7f ; 0x7f
+	.dw agesInteractionsBank0a.interactionCode80 ; 0x80
+	.dw agesInteractionsBank0a.interactionCode81 ; 0x81
+	.dw agesInteractionsBank0a.interactionCode82 ; 0x82
+	.dw agesInteractionsBank0a.interactionCode83 ; 0x83
+	.dw agesInteractionsBank0a.interactionCode84 ; 0x84
+	.dw                        interactionDelete ; 0x85
+	.dw agesInteractionsBank0a.interactionCode86 ; 0x86
+	.dw agesInteractionsBank0a.interactionCode87 ; 0x87
+	.dw agesInteractionsBank0a.interactionCode88 ; 0x88
+	.dw    commonInteractions5.interactionCode89 ; 0x89
+	.dw agesInteractionsBank0a.interactionCode8a ; 0x8a
+	.dw agesInteractionsBank0a.interactionCode8b ; 0x8b
+	.dw agesInteractionsBank0a.interactionCode8c ; 0x8c
+	.dw agesInteractionsBank0a.interactionCode8d ; 0x8d
+	.dw agesInteractionsBank0a.interactionCode8e ; 0x8e
+	.dw agesInteractionsBank0a.interactionCode8f ; 0x8f
+	.dw agesInteractionsBank0a.interactionCode90 ; 0x90
+	.dw    commonInteractions5.interactionCode91 ; 0x91
+	.dw agesInteractionsBank0a.interactionCode92 ; 0x92
+	.dw agesInteractionsBank0a.interactionCode93 ; 0x93
+	.dw agesInteractionsBank0a.interactionCode94 ; 0x94
+	.dw agesInteractionsBank0a.interactionCode95 ; 0x95
+	.dw agesInteractionsBank0a.interactionCode96 ; 0x96
+	.dw agesInteractionsBank0a.interactionCode97 ; 0x97
+	.dw    commonInteractions6.interactionCode98 ; 0x98
+	.dw agesInteractionsBank0b.interactionCode99 ; 0x99
+	.dw agesInteractionsBank0b.interactionCode9a ; 0x9a
+	.dw agesInteractionsBank0b.interactionCode9b ; 0x9b
+	.dw agesInteractionsBank0b.interactionCode9c ; 0x9c
+	.dw agesInteractionsBank0b.interactionCode9d ; 0x9d
+	.dw agesInteractionsBank0b.interactionCode9e ; 0x9e
+	.dw    commonInteractions6.interactionCode9f ; 0x9f
+	.dw    commonInteractions6.interactionCodea0 ; 0xa0
+	.dw agesInteractionsBank0b.interactionCodea1 ; 0xa1
+	.dw agesInteractionsBank0b.interactionCodea2 ; 0xa2
+	.dw agesInteractionsBank0b.interactionCodea3 ; 0xa3
+	.dw agesInteractionsBank0b.interactionCodea4 ; 0xa4
+	.dw agesInteractionsBank0b.interactionCodea5 ; 0xa5
+	.dw agesInteractionsBank0b.interactionCodea6 ; 0xa6
+	.dw agesInteractionsBank0b.interactionCodea7 ; 0xa7
+	.dw agesInteractionsBank0b.interactionCodea8 ; 0xa8
+	.dw agesInteractionsBank0b.interactionCodea9 ; 0xa9
+	.dw agesInteractionsBank0b.interactionCodeaa ; 0xaa
+	.dw agesInteractionsBank0b.interactionCodeab ; 0xab
+	.dw    commonInteractions6.interactionCodeac ; 0xac
+	.dw agesInteractionsBank0b.interactionCodead ; 0xad
+	.dw agesInteractionsBank0b.interactionCodeae ; 0xae
+	.dw agesInteractionsBank0b.interactionCodeaf ; 0xaf
+	.dw agesInteractionsBank0b.interactionCodeb0 ; 0xb0
+	.dw agesInteractionsBank0b.interactionCodeb1 ; 0xb1
+	.dw agesInteractionsBank0b.interactionCodeb2 ; 0xb2
+	.dw agesInteractionsBank0b.interactionCodeb3 ; 0xb3
+	.dw agesInteractionsBank0b.interactionCodeb4 ; 0xb4
+	.dw agesInteractionsBank0b.interactionCodeb5 ; 0xb5
+	.dw    commonInteractions6.interactionCodeb6 ; 0xb6
+	.dw    commonInteractions6.interactionCodeb7 ; 0xb7
+	.dw agesInteractionsBank0b.interactionCodeb8 ; 0xb8
+	.dw agesInteractionsBank0b.interactionCodeb9 ; 0xb9
+	.dw agesInteractionsBank0b.interactionCodeba ; 0xba
+	.dw agesInteractionsBank0b.interactionCodebb ; 0xbb
+	.dw agesInteractionsBank0b.interactionCodebc ; 0xbc
+	.dw agesInteractionsBank0b.interactionCodebd ; 0xbd
+	.dw agesInteractionsBank0b.interactionCodebe ; 0xbe
+	.dw agesInteractionsBank0b.interactionCodebf ; 0xbf
+	.dw    commonInteractions6.interactionCodec0 ; 0xc0
+	.dw agesInteractionsBank0b.interactionCodec1 ; 0xc1
+	.dw agesInteractionsBank0b.interactionCodec2 ; 0xc2
+	.dw agesInteractionsBank0b.interactionCodec3 ; 0xc3
+	.dw agesInteractionsBank0b.interactionCodec4 ; 0xc4
+	.dw agesInteractionsBank0b.interactionCodec5 ; 0xc5
+	.dw agesInteractionsBank0b.interactionCodec6 ; 0xc6
+	.dw    commonInteractions6.interactionCodec7 ; 0xc7
+	.dw agesInteractionsBank0b.interactionCodec8 ; 0xc8
+	.dw agesInteractionsBank0b.interactionCodec9 ; 0xc9
+	.dw agesInteractionsBank0b.interactionCodeca ; 0xca
+	.dw agesInteractionsBank0b.interactionCodecb ; 0xcb
+	.dw agesInteractionsBank0b.interactionCodecc ; 0xcc
+	.dw agesInteractionsBank0b.interactionCodecd ; 0xcd
+	.dw    commonInteractions7.interactionCodece ; 0xce
+	.dw    commonInteractions7.interactionCodecf ; 0xcf
+	.dw    commonInteractions7.interactionCoded0 ; 0xd0
+	.dw    commonInteractions7.interactionCoded1 ; 0xd1
+	.dw    commonInteractions7.interactionCoded2 ; 0xd2
+	.dw    commonInteractions7.interactionCoded3 ; 0xd3
+	.dw    commonInteractions7.interactionCoded4 ; 0xd4
+	.dw agesInteractionsBank0b.interactionCoded5 ; 0xd5
+	.dw agesInteractionsBank0b.interactionCoded6 ; 0xd6
+	.dw agesInteractionsBank0b.interactionCoded7 ; 0xd7
+	.dw agesInteractionsBank0b.interactionCoded8 ; 0xd8
+	.dw    commonInteractions4.interactionCoded9 ; 0xd9
+	.dw    commonInteractions4.interactionCodeda ; 0xda
+	.dw agesInteractionsBank0b.interactionCodedb ; 0xdb
+	.dw agesInteractionsBank10.interactionCodedc ; 0xdc
+	.dw agesInteractionsBank10.interactionCodedd ; 0xdd
+	.dw agesInteractionsBank10.interactionCodede ; 0xde
+	.dw agesInteractionsBank10.interactionCodedf ; 0xdf
+	.dw    commonInteractions8.interactionCodee0 ; 0xe0
+	.dw agesInteractionsBank10.interactionCodee1 ; 0xe1
+	.dw    commonInteractions8.interactionCodee2 ; 0xe2
+	.dw agesInteractionsBank10.interactionCodee3 ; 0xe3
+	.dw                        interactionDelete ; 0xe4
+	.dw    commonInteractions8.interactionCodee5 ; 0xe5
+	.dw agesInteractionsBank10.interactionCodee6 ; 0xe6
+
+.else; ROM_SEASONS
+
+	.dw       commonInteractions1.interactionCode00 ; 0x00
+	.dw       commonInteractions1.interactionCode01 ; 0x01
+	.dw       commonInteractions1.interactionCode02 ; 0x02
+	.dw       commonInteractions1.interactionCode03 ; 0x03
+	.dw       commonInteractions1.interactionCode04 ; 0x04
+	.dw       commonInteractions1.interactionCode05 ; 0x05
+	.dw       commonInteractions1.interactionCode06 ; 0x06
+	.dw       commonInteractions1.interactionCode07 ; 0x07
+	.dw       commonInteractions1.interactionCode08 ; 0x08
+	.dw       commonInteractions1.interactionCode09 ; 0x09
+	.dw       commonInteractions1.interactionCode0a ; 0x0a
+	.dw       commonInteractions1.interactionCode0b ; 0x0b
+	.dw       commonInteractions1.interactionCode0c ; 0x0c
+	.dw                           interactionDelete ; 0x0d
+	.dw                           interactionDelete ; 0x0e
+	.dw       commonInteractions1.interactionCode0f ; 0x0f
+	.dw       commonInteractions1.interactionCode10 ; 0x10
+	.dw       commonInteractions1.interactionCode11_caller ; 0x11
+	.dw       commonInteractions1.interactionCode12 ; 0x12
+	.dw       commonInteractions1.interactionCode13 ; 0x13
+	.dw       commonInteractions1.interactionCode14 ; 0x14
+	.dw seasonsInteractionsBank08.interactionCode15 ; 0x15
+	.dw       commonInteractions1.interactionCode16 ; 0x16
+	.dw       commonInteractions1.interactionCode17 ; 0x17
+	.dw       commonInteractions1.interactionCode18 ; 0x18
+	.dw                           interactionDelete ; 0x19
+	.dw                           interactionDelete ; 0x1a
+	.dw                           interactionDelete ; 0x1b
+	.dw       commonInteractions1.interactionCode1c ; 0x1c
+	.dw       commonInteractions1.interactionCode1d ; 0x1d
+	.dw       commonInteractions1.interactionCode1e ; 0x1e
+	.dw seasonsInteractionsBank08.interactionCode1f ; 0x1f
+	.dw seasonsInteractionsBank08.interactionCode20 ; 0x20
+	.dw seasonsInteractionsBank08.interactionCode21 ; 0x21
+	.dw seasonsInteractionsBank08.interactionCode22 ; 0x22
+	.dw seasonsInteractionsBank08.interactionCode23 ; 0x23
+	.dw seasonsInteractionsBank08.interactionCode24 ; 0x24
+	.dw seasonsInteractionsBank08.interactionCode25 ; 0x25
+	.dw seasonsInteractionsBank08.interactionCode26 ; 0x26
+	.dw seasonsInteractionsBank08.interactionCode27 ; 0x27
+	.dw seasonsInteractionsBank08.interactionCode28 ; 0x28
+	.dw seasonsInteractionsBank08.interactionCode29 ; 0x29
+	.dw seasonsInteractionsBank08.interactionCode2a ; 0x2a
+	.dw seasonsInteractionsBank08.interactionCode2b ; 0x2b
+	.dw seasonsInteractionsBank08.interactionCode2c ; 0x2c
+	.dw seasonsInteractionsBank08.interactionCode2d ; 0x2d
+	.dw seasonsInteractionsBank08.interactionCode2e ; 0x2e
+	.dw seasonsInteractionsBank08.interactionCode2f ; 0x2f
+	.dw seasonsInteractionsBank08.interactionCode30 ; 0x30
+	.dw seasonsInteractionsBank08.interactionCode31 ; 0x31
+	.dw seasonsInteractionsBank08.interactionCode32 ; 0x32
+	.dw seasonsInteractionsBank08.interactionCode33 ; 0x33
+	.dw seasonsInteractionsBank08.interactionCode34 ; 0x34
+	.dw seasonsInteractionsBank08.interactionCode35 ; 0x35
+	.dw seasonsInteractionsBank08.interactionCode36 ; 0x36
+	.dw seasonsInteractionsBank08.interactionCode37 ; 0x37
+	.dw seasonsInteractionsBank08.interactionCode38 ; 0x38
+	.dw seasonsInteractionsBank08.interactionCode39 ; 0x39
+	.dw seasonsInteractionsBank08.interactionCode3a ; 0x3a
+	.dw seasonsInteractionsBank08.interactionCode3b ; 0x3b
+	.dw seasonsInteractionsBank08.interactionCode3c ; 0x3c
+	.dw seasonsInteractionsBank08.interactionCode3d ; 0x3d
+	.dw seasonsInteractionsBank08.interactionCode3e ; 0x3e
+	.dw seasonsInteractionsBank08.interactionCode3f ; 0x3f
+	.dw seasonsInteractionsBank08.interactionCode40 ; 0x40
+	.dw seasonsInteractionsBank08.interactionCode41 ; 0x41
+	.dw seasonsInteractionsBank08.interactionCode42 ; 0x42
+	.dw seasonsInteractionsBank08.interactionCode43 ; 0x43
+	.dw seasonsInteractionsBank08.interactionCode44 ; 0x44
+	.dw seasonsInteractionsBank08.interactionCode45 ; 0x45
+	.dw       commonInteractions2.interactionCode46 ; 0x46
+	.dw       commonInteractions2.interactionCode47 ; 0x47
+	.dw seasonsInteractionsBank08.interactionCode48 ; 0x48
+	.dw seasonsInteractionsBank08.interactionCode49 ; 0x49
+	.dw       commonInteractions2.interactionCode4a ; 0x4a
+	.dw seasonsInteractionsBank08.interactionCode4b ; 0x4b
+	.dw seasonsInteractionsBank08.interactionCode4c ; 0x4c
+	.dw seasonsInteractionsBank08.interactionCode4d ; 0x4d
+	.dw seasonsInteractionsBank08.interactionCode4e ; 0x4e
+	.dw seasonsInteractionsBank08.interactionCode4f ; 0x4f
+	.dw       commonInteractions2.interactionCode50 ; 0x50
+	.dw seasonsInteractionsBank08.interactionCode51 ; 0x51
+	.dw seasonsInteractionsBank08.interactionCode52 ; 0x52
+	.dw seasonsInteractionsBank08.interactionCode53 ; 0x53
+	.dw seasonsInteractionsBank08.interactionCode54 ; 0x54
+	.dw seasonsInteractionsBank08.interactionCode55 ; 0x55
+	.dw       commonInteractions2.interactionCode56 ; 0x56
+	.dw seasonsInteractionsBank08.interactionCode57 ; 0x57
+	.dw seasonsInteractionsBank08.interactionCode58 ; 0x58
+	.dw seasonsInteractionsBank08.interactionCode59 ; 0x59
+	.dw seasonsInteractionsBank08.interactionCode5a ; 0x5a
+	.dw seasonsInteractionsBank08.interactionCode5b ; 0x5b
+	.dw seasonsInteractionsBank08.interactionCode5c ; 0x5c
+	.dw seasonsInteractionsBank08.interactionCode5d ; 0x5d
+	.dw seasonsInteractionsBank09.interactionCode5e ; 0x5e
+	.dw seasonsInteractionsBank09.interactionCode5f ; 0x5f
+	.dw                           interactionCode60 ; 0x60 (TODO: put this in a section?)
+	.dw                           interactionDelete ; 0x61
+	.dw seasonsInteractionsBank09.interactionCode62 ; 0x62
+	.dw seasonsInteractionsBank09.interactionCode63 ; 0x63
+	.dw seasonsInteractionsBank09.interactionCode64 ; 0x64
+	.dw seasonsInteractionsBank09.interactionCode65 ; 0x65
+	.dw seasonsInteractionsBank09.interactionCode66 ; 0x66
+	.dw seasonsInteractionsBank09.interactionCode67 ; 0x67
+	.dw seasonsInteractionsBank09.interactionCode68 ; 0x68
+	.dw seasonsInteractionsBank09.interactionCode69 ; 0x69
+	.dw seasonsInteractionsBank09.interactionCode6a ; 0x6a
+	.dw seasonsInteractionsBank09.interactionCode6b ; 0x6b
+	.dw seasonsInteractionsBank09.interactionCode6c ; 0x6c
+	.dw seasonsInteractionsBank09.interactionCode6d ; 0x6d
+	.dw seasonsInteractionsBank09.interactionCode6e ; 0x6e
+	.dw       commonInteractions3.interactionCode6f ; 0x6f
+	.dw seasonsInteractionsBank09.interactionCode70 ; 0x70
+	.dw seasonsInteractionsBank09.interactionCode71 ; 0x71
+	.dw seasonsInteractionsBank09.interactionCode72 ; 0x72
+	.dw seasonsInteractionsBank09.interactionCode73 ; 0x73
+	.dw seasonsInteractionsBank09.interactionCode74 ; 0x74
+	.dw seasonsInteractionsBank09.interactionCode75 ; 0x75
+	.dw seasonsInteractionsBank09.interactionCode76 ; 0x76
+	.dw seasonsInteractionsBank09.interactionCode77 ; 0x77
+	.dw       commonInteractions3.interactionCode78 ; 0x78
+	.dw       commonInteractions3.interactionCode79 ; 0x79
+	.dw       commonInteractions3.interactionCode7a ; 0x7a
+	.dw seasonsInteractionsBank09.interactionCode7b ; 0x7b
+	.dw seasonsInteractionsBank09.interactionCode7c ; 0x7c
+	.dw       commonInteractions3.interactionCode7d ; 0x7d
+	.dw       commonInteractions3.interactionCode7e ; 0x7e
+	.dw       commonInteractions3.interactionCode7f ; 0x7f
+	.dw seasonsInteractionsBank09.interactionCode80 ; 0x80
+	.dw seasonsInteractionsBank09.interactionCode81 ; 0x81
+	.dw seasonsInteractionsBank09.interactionCode82 ; 0x82
+	.dw seasonsInteractionsBank09.interactionCode83 ; 0x83
+	.dw seasonsInteractionsBank09.interactionCode84 ; 0x84
+	.dw seasonsInteractionsBank09.interactionCode85 ; 0x85
+	.dw seasonsInteractionsBank09.interactionCode86 ; 0x86
+	.dw seasonsInteractionsBank09.interactionCode87 ; 0x87
+	.dw seasonsInteractionsBank09.interactionCode88 ; 0x88
+	.dw       commonInteractions5.interactionCode89 ; 0x89
+	.dw seasonsInteractionsBank0a.interactionCode8a ; 0x8a
+	.dw seasonsInteractionsBank0a.interactionCode8b ; 0x8b
+	.dw seasonsInteractionsBank0a.interactionCode8c ; 0x8c
+	.dw seasonsInteractionsBank0a.interactionCode8d ; 0x8d
+	.dw seasonsInteractionsBank0a.interactionCode8e ; 0x8e
+	.dw seasonsInteractionsBank0a.interactionCode8f ; 0x8f
+	.dw seasonsInteractionsBank0a.interactionCode90 ; 0x90
+	.dw       commonInteractions5.interactionCode91 ; 0x91
+	.dw seasonsInteractionsBank0a.interactionCode92 ; 0x92
+	.dw seasonsInteractionsBank0a.interactionCode93 ; 0x93
+	.dw seasonsInteractionsBank0a.interactionCode94 ; 0x94
+	.dw seasonsInteractionsBank0a.interactionCode95 ; 0x95
+	.dw seasonsInteractionsBank0a.interactionCode96 ; 0x96
+	.dw seasonsInteractionsBank0a.interactionCode97 ; 0x97
+	.dw       commonInteractions6.interactionCode98 ; 0x98
+	.dw seasonsInteractionsBank0a.interactionCode99 ; 0x99
+	.dw seasonsInteractionsBank0a.interactionCode9a ; 0x9a
+	.dw seasonsInteractionsBank0a.interactionCode9b ; 0x9b
+	.dw seasonsInteractionsBank0a.interactionCode9c ; 0x9c
+	.dw seasonsInteractionsBank0a.interactionCode9d ; 0x9d
+	.dw seasonsInteractionsBank0a.interactionCode9e ; 0x9e
+	.dw       commonInteractions6.interactionCode9f ; 0x9f
+	.dw       commonInteractions6.interactionCodea0 ; 0xa0
+	.dw seasonsInteractionsBank0a.interactionCodea1 ; 0xa1
+	.dw seasonsInteractionsBank0a.interactionCodea2 ; 0xa2
+	.dw seasonsInteractionsBank0a.interactionCodea3 ; 0xa3
+	.dw seasonsInteractionsBank0a.interactionCodea4 ; 0xa4
+	.dw seasonsInteractionsBank0a.interactionCodea5 ; 0xa5
+	.dw seasonsInteractionsBank0a.interactionCodea6 ; 0xa6
+	.dw seasonsInteractionsBank0a.interactionCodea7 ; 0xa7
+	.dw seasonsInteractionsBank0a.interactionCodea8 ; 0xa8
+	.dw seasonsInteractionsBank0a.interactionCodea9 ; 0xa9
+	.dw seasonsInteractionsBank0a.interactionCodeaa ; 0xaa
+	.dw seasonsInteractionsBank0a.interactionCodeab ; 0xab
+	.dw       commonInteractions6.interactionCodeac ; 0xac
+	.dw seasonsInteractionsBank0a.interactionCodead ; 0xad
+	.dw seasonsInteractionsBank0a.interactionCodeae ; 0xae
+	.dw seasonsInteractionsBank0a.interactionCodeaf ; 0xaf
+	.dw seasonsInteractionsBank0a.interactionCodeb0 ; 0xb0
+	.dw seasonsInteractionsBank0a.interactionCodeb1 ; 0xb1
+	.dw seasonsInteractionsBank0a.interactionCodeb2 ; 0xb2
+	.dw seasonsInteractionsBank0a.interactionCodeb3 ; 0xb3
+	.dw seasonsInteractionsBank0a.interactionCodeb4 ; 0xb4
+	.dw seasonsInteractionsBank0a.interactionCodeb5 ; 0xb5
+	.dw       commonInteractions6.interactionCodeb6 ; 0xb6
+	.dw       commonInteractions6.interactionCodeb7 ; 0xb7
+	.dw seasonsInteractionsBank0a.interactionCodeb8 ; 0xb8
+	.dw seasonsInteractionsBank0a.interactionCodeb9 ; 0xb9
+	.dw seasonsInteractionsBank0a.interactionCodeba ; 0xba
+	.dw seasonsInteractionsBank0a.interactionCodebb ; 0xbb
+	.dw seasonsInteractionsBank0a.interactionCodebc ; 0xbc
+	.dw seasonsInteractionsBank0a.interactionCodebd ; 0xbd
+	.dw seasonsInteractionsBank0a.interactionCodebe ; 0xbe
+	.dw seasonsInteractionsBank0a.interactionCodebf ; 0xbf
+	.dw       commonInteractions6.interactionCodec0 ; 0xc0
+	.dw seasonsInteractionsBank0a.interactionCodec1 ; 0xc1
+	.dw seasonsInteractionsBank0a.interactionCodec2 ; 0xc2
+	.dw seasonsInteractionsBank0a.interactionCodec3 ; 0xc3
+	.dw seasonsInteractionsBank0a.interactionCodec4 ; 0xc4
+	.dw seasonsInteractionsBank0a.interactionCodec5 ; 0xc5
+	.dw seasonsInteractionsBank0a.interactionCodec6 ; 0xc6
+	.dw       commonInteractions6.interactionCodec7 ; 0xc7
+	.dw seasonsInteractionsBank0f.interactionCodec8 ; 0xc8
+	.dw seasonsInteractionsBank0f.interactionCodec9 ; 0xc9
+	.dw seasonsInteractionsBank0f.interactionCodeca ; 0xca
+	.dw seasonsInteractionsBank0f.interactionCodecb ; 0xcb
+	.dw seasonsInteractionsBank0f.interactionCodecc ; 0xcc
+	.dw seasonsInteractionsBank0f.interactionCodecd ; 0xcd
+	.dw       commonInteractions7.interactionCodece ; 0xce
+	.dw       commonInteractions7.interactionCodecf ; 0xcf
+	.dw       commonInteractions7.interactionCoded0 ; 0xd0
+	.dw       commonInteractions7.interactionCoded1 ; 0xd1
+	.dw       commonInteractions7.interactionCoded2 ; 0xd2
+	.dw       commonInteractions7.interactionCoded3 ; 0xd3
+	.dw       commonInteractions7.interactionCoded4 ; 0xd4
+	.dw seasonsInteractionsBank0f.interactionCoded5 ; 0xd5
+	.dw seasonsInteractionsBank0f.interactionCoded6 ; 0xd6
+	.dw seasonsInteractionsBank0f.interactionCoded7 ; 0xd7
+	.dw seasonsInteractionsBank15.interactionCoded8 ; 0xd8
+	.dw       commonInteractions4.interactionCoded9 ; 0xd9
+	.dw       commonInteractions4.interactionCodeda ; 0xda
+	.dw seasonsInteractionsBank15.interactionCodedb ; 0xdb
+	.dw seasonsInteractionsBank15.interactionCodedc ; 0xdc
+	.dw seasonsInteractionsBank15.interactionCodedd ; 0xdd
+	.dw seasonsInteractionsBank15.interactionCodede ; 0xde
+	.dw seasonsInteractionsBank15.interactionCodedf ; 0xdf
+	.dw       commonInteractions8.interactionCodee0 ; 0xe0
+	.dw seasonsInteractionsBank15.interactionCodee1 ; 0xe1
+	.dw       commonInteractions8.interactionCodee2 ; 0xe2
+	.dw seasonsInteractionsBank15.interactionCodee3 ; 0xe3
+	.dw seasonsInteractionsBank15.interactionCodee4 ; 0xe4
+	.dw       commonInteractions8.interactionCodee5 ; 0xe5
+	.dw seasonsInteractionsBank15.interactionCodee6 ; 0xe6
+	.dw seasonsInteractionsBank15.interactionCodee7 ; 0xe6
 .endif

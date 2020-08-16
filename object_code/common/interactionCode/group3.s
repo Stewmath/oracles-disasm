@@ -1,3 +1,5 @@
+ m_section_superfree Interaction_Code_Group3 NAMESPACE commonInteractions3
+
 ; ==============================================================================
 ; INTERACID_BOMB_FLOWER
 ; ==============================================================================
@@ -134,7 +136,8 @@ _bomb_flower_subid1:
 @state3:
 	call objectSetInvisible
 	jp interactionRunScript
-.endif
+
+.endif ; ROM_SEASONS
 
 
 ; ==============================================================================
@@ -1661,14 +1664,14 @@ _interaction7f_subid00:
 	.db $82, $90, $45, TRANSITION_DEST_X_SHIFTED
 	.db $81, $5c, $15, TRANSITION_DEST_X_SHIFTED
 .else
-	.db $80 $96 $44 TRANSITION_DEST_SET_RESPAWN
-	.db $80 $8d $24 TRANSITION_DEST_SET_RESPAWN
-	.db $80 $60 $25 TRANSITION_DEST_SET_RESPAWN
-	.db $80 $1d $13 TRANSITION_DEST_SET_RESPAWN
-	.db $80 $8a $25 TRANSITION_DEST_SET_RESPAWN
-	.db $80 $00 $34 TRANSITION_DEST_SET_RESPAWN
-	.db $80 $d0 $34 TRANSITION_DEST_SET_RESPAWN
-	.db $81 $00 $33 TRANSITION_DEST_SET_RESPAWN
+	.db $80, $96, $44, TRANSITION_DEST_SET_RESPAWN
+	.db $80, $8d, $24, TRANSITION_DEST_SET_RESPAWN
+	.db $80, $60, $25, TRANSITION_DEST_SET_RESPAWN
+	.db $80, $1d, $13, TRANSITION_DEST_SET_RESPAWN
+	.db $80, $8a, $25, TRANSITION_DEST_SET_RESPAWN
+	.db $80, $00, $34, TRANSITION_DEST_SET_RESPAWN
+	.db $80, $d0, $34, TRANSITION_DEST_SET_RESPAWN
+	.db $81, $00, $33, TRANSITION_DEST_SET_RESPAWN
 .endif
 
 
@@ -1737,3 +1740,5 @@ _interaction7f_subid02:
 	ld a,Object.enabled
 	call objectGetRelatedObject1Var
 	jp objectTakePosition
+
+.ends

@@ -1,3 +1,5 @@
+; TODO: this is more than just intro cutscenes, rename this
+
 multiIntroCutsceneHandler:
 	ld a,e
 	rst_jumpTable
@@ -1125,9 +1127,9 @@ cutscene0dFunc0:
 	ld a,$01
 	ld (de),a
 	; Room of Rites
-	ld bc,ROOM_SEASONS_59a
+	ld bc,ROOM_ZELDA_IN_FINAL_DUNGEON
 	call disableLcdAndLoadRoom_body
-	ld a,SEASONS_PALH_ac
+	ld a,PALH_ac
 	call loadPaletteHeader
 	ld b,$03
 -

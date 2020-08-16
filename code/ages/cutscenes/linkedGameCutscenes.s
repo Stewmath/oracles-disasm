@@ -1,3 +1,6 @@
+; TODO: Some of this file is probably shared with the Seasons version? Should try to merge them as
+; much as possible.
+
 ;;
 ; Called from "func_3ed0" in bank 0.
 ; CUTSCENE_FLAME_OF_SORROW
@@ -476,7 +479,7 @@ _func_7ba1:
 
 _func_7bab:
 	xor a
-	ld bc, ROOM_AGES_5f1
+	ld bc,ROOM_ZELDA_IN_FINAL_DUNGEON
 	call disableLcdAndLoadRoom
 	ld a,PALH_ac
 	call loadPaletteHeader

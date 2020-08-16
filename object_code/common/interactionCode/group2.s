@@ -1,3 +1,5 @@
+ m_section_free Interaction_Code_Group2 NAMESPACE commonInteractions2
+
 ;;
 ; Reloads the tiles for "price" on the item selection area when necessary.
 checkReloadShopItemTiles:
@@ -280,7 +282,7 @@ _shopkeeperState2:
 	jp _shopkeeperLoadScript
 
 @holdingNothing:
-	call _shopkeeperCheckAllItemsBought
+	call shopkeeperCheckAllItemsBought
 	jr nz,_shopkeeperLoadScript
 
 	ld e,Interaction.subid
@@ -540,7 +542,7 @@ _shopkeeperState5:
 ;;
 ; @param	a	Item index?
 _shopkeeperGetItemPrice:
-	ld hl,_shopItemPrices
+	ld hl,shopItemPrices
 	rst_addAToHl
 	ld a,(hl)
 	call cpRupeeValue
@@ -623,7 +625,7 @@ _shopkeeperCheckLinkHasItemAlready:
 ;;
 ; @param[out]	hl	Script to run if no shop items exist
 ; @param[out]	zflag	Set if at least one shop item exists
-_shopkeeperCheckAllItemsBought:
+shopkeeperCheckAllItemsBought:
 	ldhl FIRST_DYNAMIC_INTERACTION_INDEX, Interaction.enabled
 ---
 	ld l,Interaction.enabled
@@ -961,7 +963,7 @@ _shopItemState3:
 	; Take rupees
 	ld e,Interaction.subid
 	ld a,(de)
-	ld hl,_shopItemPrices
+	ld hl,shopItemPrices
 	rst_addAToHl
 	ldi a,(hl)
 	call removeRupeeValue
@@ -1032,7 +1034,7 @@ _shopItemGetTilesForRupeeDisplay:
 	ld d,(hl)
 
 	ld a,c
-	ld hl,_shopItemPrices
+	ld hl,shopItemPrices
 	rst_addAToHl
 	ld a,(hl)
 	call getRupeeValue
@@ -1108,7 +1110,7 @@ _shopItemGetTilesForRupeeDisplay:
 	.dw w3VramTiles+$6e
 .endif
 
-_shopItemPrices:
+shopItemPrices:
 	/* $00 */ .db RUPEEVAL_300
 	/* $01 */ .db RUPEEVAL_010
 	/* $02 */ .db RUPEEVAL_300
@@ -2018,3 +2020,5 @@ interactionCode56:
 	rrca
 	jp c,objectSetVisible81
 	jp objectSetVisible82
+
+.ends

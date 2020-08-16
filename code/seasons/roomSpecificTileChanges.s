@@ -920,3 +920,60 @@ d8LavaRoomsFillTilesWithLava:
 	ld a,c
 	ld (de),a
 	jr -
+
+;;
+; Fills a square in wRoomLayout using the data at hl.
+; Data format:
+; - Top-left position (YX)
+; - Height
+; - Width
+; - Tile value
+fillRectInRoomLayout:
+	ldi a,(hl)
+	ld e,a
+	ldi a,(hl)
+	ld b,a
+	ldi a,(hl)
+	ld c,a
+	ldi a,(hl)
+	ld d,a
+	ld h,>wRoomLayout
+--
+	ld a,d
+	ld l,e
+	push bc
+-
+	ldi (hl),a
+	dec c
+	jr nz,-
+	ld a,e
+	add $10
+	ld e,a
+	pop bc
+	dec b
+	jr nz,--
+	ret
+
+;;
+; @param	bc	$0808
+; @param	de	$c8f0 - d2 rupee room, $c8f8 - d6 rupee room
+; @param	hl	top-left tile of rupees
+replaceRupeeRoomRupees:
+	ld a,(de)
+	inc de
+	push bc
+-
+	rrca
+	jr nc,+
+	ld (hl),TILEINDEX_STANDARD_FLOOR
++
+	inc l
+	dec b
+	jr nz,-
+	ld a,l
+	add $08
+	ld l,a
+	pop bc
+	dec c
+	jr nz,replaceRupeeRoomRupees
+	ret

@@ -10204,7 +10204,7 @@ tingleScript:
 ++
 	asm15 scriptHlp.tingle_createGlowAroundLink
 	wait 120
-	giveitem TREASURE_SEED_SATCHEL_SUBID_04
+	giveitem TREASURE_SEED_SATCHEL_SUBID_UPGRADE
 	checktext
 	asm15 refillSeedSatchel
 	jumpifobjectbyteeq Interaction.var3d, $02, @haveLevel3Satchel

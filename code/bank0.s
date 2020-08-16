@@ -9476,11 +9476,7 @@ interactionSetMiniScript:
 objectOscillateZ:
 	ldh a,(<hRomBank)
 	push af
-.ifdef ROM_AGES
-	callfrombank0 interactionBank09.objectOscillateZ_body
-.else
-	callfrombank0 objectOscillateZ_body
-.endif
+	callfrombank0 commonInteractions2.objectOscillateZ_body
 	pop af
 	setrombank
 	ret
@@ -9549,18 +9545,10 @@ objectCreateExclamationMark:
 	ldh (<hFF8B),a
 	ldh a,(<hRomBank)
 	push af
-.ifdef ROM_AGES
-	ld a,:interactionBank0b.objectCreateExclamationMark_body
-.else
-	ld a,:objectCreateExclamationMark_body
-.endif
+	ld a,:commonInteractions6.objectCreateExclamationMark_body
 	setrombank
 	ldh a,(<hFF8B)
-.ifdef ROM_AGES
-	call interactionBank0b.objectCreateExclamationMark_body
-.else
-	call objectCreateExclamationMark_body
-.endif
+	call commonInteractions6.objectCreateExclamationMark_body
 	pop af
 	setrombank
 	ret
@@ -9587,11 +9575,7 @@ objectCreateFloatingMusicNote:
 	ldh (<hFF8D),a
 	ldh a,(<hRomBank)
 	push af
-.ifdef ROM_AGES
-	callfrombank0 interactionBank0b.objectCreateFloatingImage
-.else
-	callfrombank0 objectCreateFloatingImage
-.endif
+	callfrombank0 commonInteractions6.objectCreateFloatingImage
 	pop af
 	setrombank
 	ret
@@ -12581,7 +12565,7 @@ loadAnimationData:
 roomTileChangesAfterLoad02:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 roomTileChangesAfterLoad02_body
+	callfrombank0 seasonsInteractionsBank09.roomTileChangesAfterLoad02_body
 	pop af
 	setrombank
 	ret
@@ -13711,7 +13695,7 @@ createSokraSnore:
 checkGotMakuSeedDidNotSeeZeldaKidnapped:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 interactionCodec4@checkGotMakuSeedDidNotSeeZeldaKidnapped
+	callfrombank0 seasonsInteractionsBank0a.checkGotMakuSeedDidNotSeeZeldaKidnapped_body
 	push af
 	pop bc
 	pop af
@@ -13732,7 +13716,7 @@ checkObjectIsCloseToPosition:
 	ldh a,(<hRomBank)
 	push af
 
-	callfrombank0 interactionBank08.checkObjectIsCloseToPosition
+	callfrombank0 agesInteractionsBank08.checkObjectIsCloseToPosition
 	ld b,$00
 	jr nc,+
 	inc b
@@ -13758,10 +13742,10 @@ checkNpcShouldExistAtGameStage:
 	ldh (<hFF8B),a
 	ldh a,(<hRomBank)
 	push af
-	ld a,:interactionBank09.checkNpcShouldExistAtGameStage_body
+	ld a,:agesInteractionsBank09.checkNpcShouldExistAtGameStage_body
 	setrombank
 	ldh a,(<hFF8B)
-	call interactionBank09.checkNpcShouldExistAtGameStage_body
+	call agesInteractionsBank09.checkNpcShouldExistAtGameStage_body
 	ld c,$00
 	jr z,+
 	inc c
@@ -14057,12 +14041,12 @@ setLinkDirection:
 .else ; ROM_SEASONS
 
 ;;
-; param		b	index into _conditionalHoronNPCLookupTable
-; param[out]	c	$01 if NPC should be seen, otherwise $00
+; @param	b	index into _conditionalHoronNPCLookupTable
+; @param[out]	c	$01 if NPC should be seen, otherwise $00
 checkIfHoronVillageNPCShouldBeSeen:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 checkHoronVillageNPCShouldBeSeen_body@main
+	callfrombank0 seasonsInteractionsBank08.checkHoronVillageNPCShouldBeSeen_body@main
 	ld c,$01
 	jr c,+
 	dec c
@@ -14075,7 +14059,7 @@ checkIfHoronVillageNPCShouldBeSeen:
 setMakuTreeStageAndMapText:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 interactionCode87@setAppropriateStage
+	callfrombank0 seasonsInteractionsBank09.makuTree_setAppropriateStage
 	callfrombank0 scriptHlp.makuTree_setMapTextBasedOnStage
 	pop af
 	setrombank
@@ -14086,7 +14070,7 @@ setMakuTreeStageAndMapText:
 getSunkenCityNPCVisibleSubId_caller:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 getSunkenCityNPCVisibleSubId@main
+	callfrombank0 seasonsInteractionsBank08.getSunkenCityNPCVisibleSubId@main
 	pop af
 	setrombank
 	ret
@@ -14094,10 +14078,10 @@ getSunkenCityNPCVisibleSubId_caller:
 setUpCharactersAfterMoblinKeepDestroyed:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 moblinKeepScene_setLinkDirectionAndPositionAfterDestroyed 
+	callfrombank0 seasonsInteractionsBank0a.moblinKeepScene_setLinkDirectionAndPositionAfterDestroyed 
 	ld a,$01
-	call moblinKeepScene_spawnKingMoblin
-	call moblinKeepScene_spawn2MoblinsAfterKeepDestroyed
+	call seasonsInteractionsBank0a.moblinKeepScene_spawnKingMoblin
+	call seasonsInteractionsBank0a.moblinKeepScene_spawn2MoblinsAfterKeepDestroyed
 	pop af
 	setrombank
 	ret

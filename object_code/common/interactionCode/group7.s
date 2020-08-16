@@ -1,8 +1,10 @@
+ m_section_superfree Interaction_Code_Group7 NAMESPACE commonInteractions7
+
 ; ==============================================================================
 ; INTERACID_BUSINESS_SCRUB
 ;
 ; Variables:
-;   var38: Number of rupees to spent (1-byte value, converted with "rupeeValue" methods)
+;   var38: Number of rupees to spend (1-byte value, converted with "rupeeValue" methods)
 ;   var39: Set when Link is close to the scrub (he pops out of his bush)
 ; ==============================================================================
 interactionCodece:
@@ -102,7 +104,7 @@ interactionCodece:
 .ifdef ROM_AGES
 	ld a,TILEINDEX_OVERWORLD_BUSH_1
 .else
-	ld a,$20
+	ld a,TILEINDEX_DUNGEON_BUSH
 .endif
 +
 	call objectMimicBgTile
@@ -606,6 +608,7 @@ interactionCoded0:
 	ret
 
 .ifdef ROM_AGES
+
 @rooms:
 	.db <ROOM_AGES_036
 	.db <ROOM_AGES_037
@@ -626,7 +629,10 @@ interactionCoded0:
 
 @flagNumbers:
 	.db $00 $01 $00 $03 $04 $00
-.else
+
+.else; ROM_SEASONS
+
+; These seem unused in seasons, just copies of the Ages data
 @rooms:
 	.db <ROOM_SEASONS_036
 	.db <ROOM_SEASONS_037
@@ -637,6 +643,7 @@ interactionCoded0:
 	.db $10 $30
 	.db $40 $80
 
+; Although this really is used
 @tutorialTextToShow:
 	.dw TX_200d
 	.dw TX_200e
@@ -648,6 +655,7 @@ interactionCoded0:
 
 @flagNumbers:
 	.db $00 $01 $02 $03 $04 $05 $04
+
 .endif
 
 
@@ -995,3 +1003,5 @@ interactionCoded4:
 	ld a,(hl)
 	ld (de),a
 	ret
+
+.ends

@@ -2257,11 +2257,7 @@ enemyCode04:
 
 	call getThisRoomFlags
 	set 7,(hl)
-.ifdef ROM_AGES
-	ld l,<ROOM_AGES_5f1
-.else
-	ld l,<ROOM_SEASONS_59a
-.endif
+	ld l,<ROOM_ZELDA_IN_FINAL_DUNGEON
 	set 7,(hl)
 	ld l,<ROOM_TWINROVA_FIGHT
 	set 7,(hl)
