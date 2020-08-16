@@ -674,7 +674,7 @@ interactionCoded1:
 	ld (de),a
 	ld c,a
 	callab bank1.loadDeathRespawnBufferPreset
-	ld hl,gameCompleteDialogScript
+	ld hl,mainScripts.gameCompleteDialogScript
 	jp interactionSetScript
 
 

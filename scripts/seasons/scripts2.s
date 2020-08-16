@@ -155,7 +155,7 @@ seasonsSpirits_createBridgeOnOrbHit:
 subrosianScript_steaLinksFeather:
 	stopifroomflag40set
 	writeobjectbyte Interaction.oamFlags $01
-	callscript subrosianScript_runLeft
+	callscript mainScripts.subrosianScript_runLeft
 	checkcfc0bit 0
 	asm15 scriptHlp.subrosian_setYAboveLink
 	applyspeed $68
@@ -185,9 +185,9 @@ subrosianScript_steaLinksFeather:
 
 
 subrosianScript_inHouseRunFromLink:
-	jumpifglobalflagset GLOBALFLAG_SAW_STRANGE_BROTHERS_IN_HOUSE stubScript
+	jumpifglobalflagset GLOBALFLAG_SAW_STRANGE_BROTHERS_IN_HOUSE mainScripts.stubScript
 	writeobjectbyte Interaction.oamFlags $02
-	callscript subrosianScript_runLeft
+	callscript mainScripts.subrosianScript_runLeft
 	setanimation $02
 	setdisabledobjectsto11
 	delay 8
@@ -226,7 +226,7 @@ linkedPirateCaptainScript_sayingByeToAmbi:
 	delay 6
 	showtextlowindex <TX_3a24
 	delay 6
-	scriptjump piratianCaptainScript_inHouse@unlinkedCaptain
+	scriptjump mainScripts.piratianCaptainScript_inHouse@unlinkedCaptain
 
 showSamasaGateCombination:
 	checkabutton
@@ -241,26 +241,26 @@ showSamasaGateCombination:
 	setangle ANGLE_RIGHT
 	applyspeed $09
 	delay 1
-	callscript pirationScript_closeOpenCupboard
-	callscript pirationScript_closeOpenCupboard
+	callscript mainScripts.pirationScript_closeOpenCupboard
+	callscript mainScripts.pirationScript_closeOpenCupboard
 	setanimation $00
 	setangle ANGLE_LEFT
 	applyspeed $09
 	delay 1
-	callscript pirationScript_closeOpenCupboard
+	callscript mainScripts.pirationScript_closeOpenCupboard
 	setanimation $00
 	setangle ANGLE_LEFT
 	applyspeed $09
 	delay 1
-	callscript pirationScript_closeOpenCupboard
-	callscript pirationScript_closeOpenCupboard
+	callscript mainScripts.pirationScript_closeOpenCupboard
+	callscript mainScripts.pirationScript_closeOpenCupboard
 	setanimation $00
 	setangle ANGLE_RIGHT
 	applyspeed $19
 	delay 1
-	callscript pirationScript_closeOpenCupboard
-	callscript pirationScript_closeOpenCupboard
-	callscript pirationScript_closeOpenCupboard
+	callscript mainScripts.pirationScript_closeOpenCupboard
+	callscript mainScripts.pirationScript_closeOpenCupboard
+	callscript mainScripts.pirationScript_closeOpenCupboard
 	setanimation $00
 	setangle ANGLE_LEFT
 	applyspeed $11
@@ -271,7 +271,7 @@ showSamasaGateCombination:
 	showtextlowindex <TX_3a0d
 	delay 6
 	enableallobjects
-	scriptjump piratian2FScript_textBasedOnD6Beaten@showGateCombo
+	scriptjump mainScripts.piratian2FScript_textBasedOnD6Beaten@showGateCombo
 
 piratianCaptain_preCutsceneScene:
 	disableinput
@@ -280,7 +280,7 @@ piratianCaptain_preCutsceneScene:
 	delay 8
 	asm15 scriptHlp.piratesDeparting_spawnPirateFromShip
 	checkcfc0bit 0
-	callscript piratianScript_jump
+	callscript mainScripts.piratianScript_jump
 	delay 6
 	showtextlowindex <TX_3a25
 	delay 6
@@ -292,7 +292,7 @@ piratianCaptain_preCutsceneScene:
 	delay 1
 	setspeed SPEED_100
 	moveup $1f
-	callscript piratianScript_moveUpPauseThenUp
+	callscript mainScripts.piratianScript_moveUpPauseThenUp
 	asm15 scriptHlp.piratianCaptain_setInvisible
 	checkcfc0bit 2
 	asm15 scriptHlp.piratianCaptain_simulatedInput
@@ -521,7 +521,7 @@ biggoronScript_giveBiggoronSword:
 	giveitem TREASURE_BIGGORON_SWORD $00
 	delay 8
 	setglobalflag GLOBALFLAG_DONE_BIGGORON_SECRET
-	scriptjump biggoronScript@generateSecret
+	scriptjump mainScripts.biggoronScript@generateSecret
 
 
 ; ==============================================================================
@@ -552,11 +552,11 @@ script_14_4aea:
 	setmusic $31
 	setcounter1 $7d
 	setstate $03
-	callscript script62b1
-	callscript script62b1
+	callscript mainScripts.script62b1
+	callscript mainScripts.script62b1
 	setcounter1 $c6
-	callscript script62b1
-	callscript script62b1
+	callscript mainScripts.script62b1
+	callscript mainScripts.script62b1
 	asm15 scriptHlp.headSmelter_smeltingDone
 	playsound $79
 	delay 6
@@ -658,7 +658,7 @@ lavaSoupSubrosianScript_fillPot:
 	orroomflag $40
 	writeobjectbyte Interaction.var3f $00
 	enableinput
-	scriptjump lavaSoupSubrosianScript@filledPot
+	scriptjump mainScripts.lavaSoupSubrosianScript@filledPot
 
 
 ; ==============================================================================
@@ -716,10 +716,10 @@ danceLeaderScript_danceTutorial:
 	writememory $cfdf $ff
 	setanimation $01
 	showtext TX_0108
-	jumpiftextoptioneq $01 danceLeaderScript_promptForTutorial@needTutorial
+	jumpiftextoptioneq $01 mainScripts.danceLeaderScript_promptForTutorial@needTutorial
 	showtext TX_0109
 	checkmemoryeq $cba0 $00
-	scriptjump danceLeaderScript_promptForTutorial@danceLeaderScript_readyToDance
+	scriptjump mainScripts.danceLeaderScript_promptForTutorial@danceLeaderScript_readyToDance
 
 
 ; ==============================================================================
@@ -938,7 +938,7 @@ rosaHidingScript_firstEncounterIntro:
 	setsubstate $02
 	setanimation $02
 	showtext TX_2600
-	scriptjump rosaHidingScript_afterInitialScreenText
+	scriptjump mainScripts.rosaHidingScript_afterInitialScreenText
 
 rosaHidingScript_secondEncounterOnwardsIntro:
 	setspeed $50
@@ -946,17 +946,17 @@ rosaHidingScript_secondEncounterOnwardsIntro:
 	setsubstate $02
 	delay 8
 	showtext TX_2602
-	scriptjump rosaHidingScript_afterInitialScreenText
+	scriptjump mainScripts.rosaHidingScript_afterInitialScreenText
 
 rosaHidingScript_2ndScreenPattern1:
 	moveup $20
 	moveright $10
-	callscript rosaHidingScript_lookLeftUpDown
+	callscript mainScripts.rosaHidingScript_lookLeftUpDown
 	movedown $30
 	moveleft $40
-	callscript rosaHidingScript_lookRightDownUp
+	callscript mainScripts.rosaHidingScript_lookRightDownUp
 	moveup $30
-	callscript rosaHidingScript_lookDownLeftRight
+	callscript mainScripts.rosaHidingScript_lookDownLeftRight
 	moveup $44
 	xorcfc0bit 0
 	scriptend
@@ -964,15 +964,15 @@ rosaHidingScript_2ndScreenPattern1:
 rosaHidingScript_2ndScreenPattern2:
 	moveup $20
 	moveleft $30
-	callscript rosaHidingScript_lookRightDownUp
+	callscript mainScripts.rosaHidingScript_lookRightDownUp
 	movedown $30
-	callscript rosaHidingScript_lookUpRightLeft
+	callscript mainScripts.rosaHidingScript_lookUpRightLeft
 	moveright $40
 	moveup $30
-	callscript rosaHidingScript_lookDownLeftRight
+	callscript mainScripts.rosaHidingScript_lookDownLeftRight
 	moveup $30
 	moveleft $30
-	callscript rosaHidingScript_lookRightDownUp
+	callscript mainScripts.rosaHidingScript_lookRightDownUp
 	moveup $24
 	xorcfc0bit 0
 	scriptend
@@ -980,20 +980,20 @@ rosaHidingScript_2ndScreenPattern2:
 rosaHidingScript_3rdScreenPattern1:
 	moveup $10
 	moveright $30
-	callscript rosaHidingScript_lookLeftUpDown
+	callscript mainScripts.rosaHidingScript_lookLeftUpDown
 	movedown $30
 	moveleft $30
-	callscript rosaHidingScript_lookRightDownUp
+	callscript mainScripts.rosaHidingScript_lookRightDownUp
 	moveleft $30
 	moveup $50
-	callscript rosaHidingScript_lookDownLeftRight
+	callscript mainScripts.rosaHidingScript_lookDownLeftRight
 	moveright $30
-	callscript rosaHidingScript_lookLeftUpDown
+	callscript mainScripts.rosaHidingScript_lookLeftUpDown
 	movedown $10
 	moveright $40
-	callscript rosaHidingScript_lookLeftUpDown
+	callscript mainScripts.rosaHidingScript_lookLeftUpDown
 	moveup $30
-	callscript rosaHidingScript_lookDownLeftRight
+	callscript mainScripts.rosaHidingScript_lookDownLeftRight
 	moveup $14
 	xorcfc0bit 0
 	scriptend
@@ -1001,18 +1001,18 @@ rosaHidingScript_3rdScreenPattern1:
 rosaHidingScript_3rdScreenPattern2:
 	moveup $30
 	moveleft $30
-	callscript rosaHidingScript_lookRightDownUp
+	callscript mainScripts.rosaHidingScript_lookRightDownUp
 	movedown $50
 	moveright $30
-	callscript rosaHidingScript_lookLeftUpDown
+	callscript mainScripts.rosaHidingScript_lookLeftUpDown
 	moveup $30
 	moveright $30
-	callscript rosaHidingScript_lookLeftUpDown
+	callscript mainScripts.rosaHidingScript_lookLeftUpDown
 	movedown $30
 	moveleft $30
-	callscript rosaHidingScript_lookRightDownUp
+	callscript mainScripts.rosaHidingScript_lookRightDownUp
 	moveup $50
-	callscript rosaHidingScript_lookDownLeftRight
+	callscript mainScripts.rosaHidingScript_lookDownLeftRight
 	moveup $34
 	xorcfc0bit 0
 	scriptend
@@ -1020,35 +1020,35 @@ rosaHidingScript_3rdScreenPattern2:
 rosaHidingScript_4thScreenPattern1:
 	moveup $20
 	moveleft $30
-	callscript rosaHidingScript_lookRightDownUp
+	callscript mainScripts.rosaHidingScript_lookRightDownUp
 	movedown $30
 	moveright $40
-	callscript rosaHidingScript_lookLeftUpDown
+	callscript mainScripts.rosaHidingScript_lookLeftUpDown
 	moveup $30
-	callscript rosaHidingScript_lookDownLeftRight
+	callscript mainScripts.rosaHidingScript_lookDownLeftRight
 	moveleft $40
-	callscript rosaHidingScript_lookRightDownUp
+	callscript mainScripts.rosaHidingScript_lookRightDownUp
 	moveleft $34
-	scriptjump rosaHidingScript_pokeBackOut
+	scriptjump mainScripts.rosaHidingScript_pokeBackOut
 
 rosaHidingScript_4thScreenPattern2:
 	moveup $20
 	moveright $10
-	callscript rosaHidingScript_lookLeftUpDown
+	callscript mainScripts.rosaHidingScript_lookLeftUpDown
 	movedown $30
 	moveleft $40
-	callscript rosaHidingScript_lookRightDownUp
+	callscript mainScripts.rosaHidingScript_lookRightDownUp
 	moveup $40
 	movedown $10
-	callscript rosaHidingScript_lookRightDownUp
+	callscript mainScripts.rosaHidingScript_lookRightDownUp
 	moveleft $34
-	scriptjump rosaHidingScript_pokeBackOut
+	scriptjump mainScripts.rosaHidingScript_pokeBackOut
 
 rosaHidingScript_pokeBackOut_body:
 	delay 6
 	moveright $14
 	delay 6
-	callscript rosaHidingScript_lookDownLeftRight
+	callscript mainScripts.rosaHidingScript_lookDownLeftRight
 	moveleft $14
 	xorcfc0bit 0
 	scriptend
@@ -1087,26 +1087,26 @@ rosaHidingScript_caught_body:
 ; ==============================================================================
 strangeBrother2Script_1stScreenPattern1:
 	movedown $40
-	callscript _strangeBrotherScript_lookUpDownRightLeft
+	callscript mainScripts.strangeBrotherScript_lookUpDownRightLeft
 	moveright $30
-	callscript _strangeBrotherScript_lookLeftRightUpDown
+	callscript mainScripts.strangeBrotherScript_lookLeftRightUpDown
 	movedown $18
-	callscript _strangeBrotherScript_lookUpDownRightLeft
+	callscript mainScripts.strangeBrotherScript_lookUpDownRightLeft
 	movedown $20
 	xorcfc0bit 1
 	scriptend
 
 strangeBrother2Script_1stScreenPattern2:
 	moveup $20
-	callscript _strangeBrotherScript_lookDownUpRightLeft
+	callscript mainScripts.strangeBrotherScript_lookDownUpRightLeft
 	moveright $30
 	movedown $10
 	moveright $30
-	callscript _strangeBrotherScript_lookLeftRightUpDown
+	callscript mainScripts.strangeBrotherScript_lookLeftRightUpDown
 	moveleft $30
 	movedown $20
 	moveleft $30
-	callscript _strangeBrotherScript_lookRightLeftUpDown
+	callscript mainScripts.strangeBrotherScript_lookRightLeftUpDown
 	movedown $40
 	xorcfc0bit 1
 	scriptend
@@ -1118,16 +1118,16 @@ strangeBrother2Script_2ndScreenPattern1:
 	delay 8
 	moveleft $10
 	movedown $20
-	callscript _strangeBrotherScript_lookUpDownRightLeft
+	callscript mainScripts.strangeBrotherScript_lookUpDownRightLeft
 	movedown $10
 	moveleft $30
 	movedown $20
-	callscript _strangeBrotherScript_lookUpDownRightLeft
+	callscript mainScripts.strangeBrotherScript_lookUpDownRightLeft
 	moveleft $30
 	moveup $30
 	moveright $20
 	moveup $30
-	callscript _strangeBrotherScript_lookDownUpRightLeft
+	callscript mainScripts.strangeBrotherScript_lookDownUpRightLeft
 	moveright $10
 	movedown $80
 	xorcfc0bit 1
@@ -1140,10 +1140,10 @@ strangeBrother2Script_2ndScreenPattern2:
 	delay 8
 	moveright $30
 	moveup $20
-	callscript _strangeBrotherScript_lookDownUpRightLeft
+	callscript mainScripts.strangeBrotherScript_lookDownUpRightLeft
 	moveleft $20
 	moveup $30
-	callscript _strangeBrotherScript_lookDownUpRightLeft
+	callscript mainScripts.strangeBrotherScript_lookDownUpRightLeft
 	delay 9
 	moveright $30
 	movedown $30
@@ -1165,7 +1165,7 @@ strangeBrother2Script_3rdScreenPattern1:
 	moveleft $10
 	moveup $10
 	moveleft $20
-	callscript _strangeBrotherScript_lookRightLeftUpDown
+	callscript mainScripts.strangeBrotherScript_lookRightLeftUpDown
 	moveleft $20
 	xorcfc0bit 1
 	scriptend
@@ -1176,10 +1176,10 @@ strangeBrother2Script_3rdScreenPattern2:
 	setangleandanimation $18
 	delay 8
 	moveleft $10
-	callscript _strangeBrotherScript_lookRightLeftUpDown
+	callscript mainScripts.strangeBrotherScript_lookRightLeftUpDown
 	moveup $20
 	moveleft $10
-	callscript _strangeBrotherScript_lookRightLeftUpDown
+	callscript mainScripts.strangeBrotherScript_lookRightLeftUpDown
 	moveright $20
 	moveup $10
 	moveright $30
@@ -1187,7 +1187,7 @@ strangeBrother2Script_3rdScreenPattern2:
 	moveleft $30
 	moveup $10
 	moveleft $20
-	callscript _strangeBrotherScript_lookRightLeftUpDown
+	callscript mainScripts.strangeBrotherScript_lookRightLeftUpDown
 	moveleft $20
 	xorcfc0bit 1
 	scriptend
@@ -1198,17 +1198,17 @@ strangeBrother2Script_4thScreenPattern1:
 	setangleandanimation $00
 	delay 8
 	moveup $20
-	callscript _strangeBrotherScript_lookDownUpRightLeft
+	callscript mainScripts.strangeBrotherScript_lookDownUpRightLeft
 	delay 11
 	moveright $40
-	callscript _strangeBrotherScript_lookLeftRightUpDown
+	callscript mainScripts.strangeBrotherScript_lookLeftRightUpDown
 	delay 8
 	movedown $20
 	moveleft $20
 	movedown $10
-	callscript _strangeBrotherScript_lookUpDownRightLeft
+	callscript mainScripts.strangeBrotherScript_lookUpDownRightLeft
 	moveleft $50
-	callscript _strangeBrotherScript_lookRightLeftUpDown
+	callscript mainScripts.strangeBrotherScript_lookRightLeftUpDown
 	moveup $60
 	xorcfc0bit 1
 	scriptend
@@ -1233,11 +1233,11 @@ strangeBrother2Script_5thScreenPattern1:
 	delay 8
 	moveright $40
 	movedown $60
-	callscript _strangeBrotherScript_lookUpDownRightLeft
+	callscript mainScripts.strangeBrotherScript_lookUpDownRightLeft
 	moveleft $60
-	callscript _strangeBrotherScript_lookRightLeftUpDown
+	callscript mainScripts.strangeBrotherScript_lookRightLeftUpDown
 	moveup $60
-	callscript _strangeBrotherScript_lookDownUpRightLeft
+	callscript mainScripts.strangeBrotherScript_lookDownUpRightLeft
 	moveup $20
 	xorcfc0bit 1
 	scriptend
@@ -1248,11 +1248,11 @@ strangeBrother2Script_5thScreenPattern2:
 	setangleandanimation $18
 	delay 8
 	movedown $60
-	callscript _strangeBrotherScript_lookUpDownRightLeft
+	callscript mainScripts.strangeBrotherScript_lookUpDownRightLeft
 	moveleft $70
-	callscript _strangeBrotherScript_lookRightLeftUpDown
+	callscript mainScripts.strangeBrotherScript_lookRightLeftUpDown
 	moveup $60
-	callscript _strangeBrotherScript_lookDownUpRightLeft
+	callscript mainScripts.strangeBrotherScript_lookDownUpRightLeft
 	moveup $20
 	xorcfc0bit 1
 	scriptend
@@ -1263,13 +1263,13 @@ strangeBrother2Script_6thScreenPattern1:
 	setangleandanimation $10
 	delay 8
 	movedown $60
-	callscript _strangeBrotherScript_lookUpDownRightLeft
+	callscript mainScripts.strangeBrotherScript_lookUpDownRightLeft
 	moveleft $30
-	callscript _strangeBrotherScript_lookRightLeftUpDown
+	callscript mainScripts.strangeBrotherScript_lookRightLeftUpDown
 	moveup $30
 	moveright $10
 	moveup $30
-	callscript _strangeBrotherScript_lookDownUpRightLeft
+	callscript mainScripts.strangeBrotherScript_lookDownUpRightLeft
 	moveright $20
 	movedown $80
 	xorcfc0bit 1
@@ -1282,9 +1282,9 @@ strangeBrother2Script_6thScreenPattern2:
 	delay 8
 	movedown $30
 	moveleft $30
-	callscript _strangeBrotherScript_lookRightLeftUpDown
+	callscript mainScripts.strangeBrotherScript_lookRightLeftUpDown
 	movedown $30
-	callscript _strangeBrotherScript_lookUpDownRightLeft
+	callscript mainScripts.strangeBrotherScript_lookUpDownRightLeft
 	moveright $30
 	moveup $30
 	moveleft $30
@@ -1467,7 +1467,7 @@ dinScript_discoverLinkCollapsed_body:
 	writeobjectbyte Interaction.var38 $80
 	asm15 scriptHlp.din_createExclamationMark $1e
 	delay 7
-	callscript piratianScript_jump
+	callscript mainScripts.piratianScript_jump
 	setcounter1 $06
 	writeobjectbyte Interaction.var38 $01
 	setspeed $28

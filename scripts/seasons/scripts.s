@@ -4805,7 +4805,7 @@ script62b1:
 	wait 20
 	retscript
 
-headSmelter_danceMovementText1:
+headSmelterScript_danceMovementText1:
 	setspeed SPEED_100
 	setstate $04
 	moveup $31
@@ -4816,7 +4816,7 @@ headSmelter_danceMovementText1:
 	setstate $01
 	rungenericnpc TX_2702
 
-headSmelter_danceMovementText2:
+headSmelterScript_danceMovementText2:
 	setspeed SPEED_100
 	setstate $04
 	moveup $11
@@ -5400,20 +5400,20 @@ danceLeaderScript_promptForTutorial:
 
 danceLeaderScript_boomerang:
 	giveitem TREASURE_BOOMERANG $00
-	scriptjump _danceLeaderScript_itemGiven
+	scriptjump danceLeaderScript_itemGiven
 
 danceLeaderScript_giveFlute:
 	giveitem TREASURE_FLUTE $00
-	scriptjump _danceLeaderScript_itemGiven
+	scriptjump danceLeaderScript_itemGiven
 
 danceLeaderScript_gashaSeed:
 	giveitem TREASURE_GASHA_SEED $00
-	scriptjump _danceLeaderScript_itemGiven
+	scriptjump danceLeaderScript_itemGiven
 
 danceLeaderScript_giveOreChunks:
 	giveitem TREASURE_ORE_CHUNKS $00
 
-_danceLeaderScript_itemGiven:
+danceLeaderScript_itemGiven:
 	wait 30
 	resetmusic
 	enableinput
@@ -5506,7 +5506,7 @@ floodgateKeyholeScript_keyEntered:
 	incstate
 	scriptend
 
-d4Keyhole_disableThingsAndScreenShake:
+d4KeyholeScript_disableThingsAndScreenShake:
 	checkcfc0bit 0
 	asm15 scriptHlp.d4Keyhole_setState0eDisableAllSorts
 	playsound SNDCTRL_STOPMUSIC
@@ -5654,9 +5654,9 @@ strangeBrother1Script_1stScreen:
 	setangleandanimation $18
 	callscript _strangeBrother1Script_1stScreenInit
 	moveleft $30
-	callscript _strangeBrotherScript_lookRightLeftUpDown
+	callscript strangeBrotherScript_lookRightLeftUpDown
 	movedown $60
-	callscript _strangeBrotherScript_lookUpDownRightLeft
+	callscript strangeBrotherScript_lookUpDownRightLeft
 	movedown $20
 	xorcfc0bit 0
 	scriptend
@@ -5665,13 +5665,13 @@ strangeBrother1Script_1stScreen:
 	setangleandanimation $00
 	callscript _strangeBrother1Script_1stScreenInit
 	moveup $30
-	callscript _strangeBrotherScript_lookDownUpRightLeft
+	callscript strangeBrotherScript_lookDownUpRightLeft
 	moveright $30
 	movedown $10
 	moveright $10
-	callscript _strangeBrotherScript_lookLeftRightUpDown
+	callscript strangeBrotherScript_lookLeftRightUpDown
 	movedown $50
-	callscript _strangeBrotherScript_lookUpDownRightLeft
+	callscript strangeBrotherScript_lookUpDownRightLeft
 	movedown $20
 	xorcfc0bit 0
 	scriptend
@@ -5708,17 +5708,17 @@ strangeBrother1Script_2ndScreen:
 	setangleandanimation $10
 	wait 60
 	movedown $30
-	callscript _strangeBrotherScript_lookUpDownRightLeft
+	callscript strangeBrotherScript_lookUpDownRightLeft
 	wait 180
 	moveleft $30
 	moveup $30
-	callscript _strangeBrotherScript_lookUpDownRightLeft
+	callscript strangeBrotherScript_lookUpDownRightLeft
 	moveright $30
 	movedown $30
 	wait 120
 	moveleft $10
 	movedown $20
-	callscript _strangeBrotherScript_lookUpDownRightLeft
+	callscript strangeBrotherScript_lookUpDownRightLeft
 	movedown $20
 	xorcfc0bit 0
 	scriptend
@@ -5731,14 +5731,14 @@ strangeBrother1Script_2ndScreen:
 	moveup $30
 	setcounter1 $96
 	moveright $20
-	callscript _strangeBrotherScript_lookLeftRightUpDown
+	callscript strangeBrotherScript_lookLeftRightUpDown
 	moveup $30
 	moveleft $20
-	callscript _strangeBrotherScript_lookRightLeftUpDown
+	callscript strangeBrotherScript_lookRightLeftUpDown
 	wait 120
 	moveright $30
 	movedown $60
-	callscript _strangeBrotherScript_lookUpDownRightLeft
+	callscript strangeBrotherScript_lookUpDownRightLeft
 	movedown $20
 	xorcfc0bit 0
 	scriptend
@@ -5753,13 +5753,13 @@ strangeBrother1Script_3rdScreen:
 	setangleandanimation $18
 	wait 60
 	moveleft $60
-	callscript _strangeBrotherScript_lookRightLeftUpDown
+	callscript strangeBrotherScript_lookRightLeftUpDown
 	moveup $20
-	callscript _strangeBrotherScript_lookDownUpRightLeft
+	callscript strangeBrotherScript_lookDownUpRightLeft
 	moveup $10
 	moveright $40
 	movedown $30
-	callscript _strangeBrotherScript_lookUpDownRightLeft
+	callscript strangeBrotherScript_lookUpDownRightLeft
 	moveleft $40
 	movedown $10
 	moveleft $30
@@ -5792,12 +5792,12 @@ strangeBrother1Script_4thScreen:
 	setangleandanimation $18
 	wait 60
 	moveleft $20
-	callscript _strangeBrotherScript_lookRightLeftUpDown
+	callscript strangeBrotherScript_lookRightLeftUpDown
 	moveup $20
 	moveright $30
 	moveright $30
 	moveup $10
-	callscript _strangeBrotherScript_lookDownUpRightLeft
+	callscript strangeBrotherScript_lookDownUpRightLeft
 	moveup $20
 	xorcfc0bit 0
 	scriptend
@@ -5807,12 +5807,12 @@ strangeBrother1Script_4thScreen:
 	setangleandanimation $10
 	wait 60
 	movedown $30
-	callscript _strangeBrotherScript_lookUpDownRightLeft
+	callscript strangeBrotherScript_lookUpDownRightLeft
 	moveright $50
-	callscript _strangeBrotherScript_lookLeftRightUpDown
+	callscript strangeBrotherScript_lookLeftRightUpDown
 	moveup $10
 	moveright $20
-	callscript _strangeBrotherScript_lookLeftRightUpDown
+	callscript strangeBrotherScript_lookLeftRightUpDown
 	moveup $50
 	xorcfc0bit 0
 	scriptend
@@ -5828,13 +5828,13 @@ strangeBrother1Script_5thScreen:
 	wait 60
 	moveright $40
 	movedown $10
-	callscript _strangeBrotherScript_lookUpDownRightLeft
+	callscript strangeBrotherScript_lookUpDownRightLeft
 	movedown $20
 	moveleft $60
-	callscript _strangeBrotherScript_lookLeftRightUpDown
+	callscript strangeBrotherScript_lookLeftRightUpDown
 	moveup $30
 	moveright $40
-	callscript _strangeBrotherScript_lookRightLeftUpDown
+	callscript strangeBrotherScript_lookRightLeftUpDown
 	moveup $20
 	xorcfc0bit 0
 	scriptend
@@ -5844,13 +5844,13 @@ strangeBrother1Script_5thScreen:
 	setangleandanimation $18
 	wait 60
 	movedown $60
-	callscript _strangeBrotherScript_lookUpDownRightLeft
+	callscript strangeBrotherScript_lookUpDownRightLeft
 	moveleft $30
-	callscript _strangeBrotherScript_lookRightLeftUpDown
+	callscript strangeBrotherScript_lookRightLeftUpDown
 	moveup $30
-	callscript _strangeBrotherScript_lookDownUpRightLeft
+	callscript strangeBrotherScript_lookDownUpRightLeft
 	moveright $40
-	callscript _strangeBrotherScript_lookLeftRightUpDown
+	callscript strangeBrotherScript_lookLeftRightUpDown
 	moveup $50
 	xorcfc0bit 0
 	scriptend
@@ -5865,13 +5865,13 @@ strangeBrother1Script_6thScreen:
 	setangleandanimation $10
 	wait 60
 	movedown $60
-	callscript _strangeBrotherScript_lookUpDownRightLeft
+	callscript strangeBrotherScript_lookUpDownRightLeft
 	moveright $30
-	callscript _strangeBrotherScript_lookLeftRightUpDown
+	callscript strangeBrotherScript_lookLeftRightUpDown
 	moveup $30
 	moveleft $10
 	moveup $30
-	callscript _strangeBrotherScript_lookDownUpRightLeft
+	callscript strangeBrotherScript_lookDownUpRightLeft
 	moveleft $20
 	movedown $80
 	xorcfc0bit 0
@@ -5883,9 +5883,9 @@ strangeBrother1Script_6thScreen:
 	wait 60
 	movedown $30
 	moveright $30
-	callscript _strangeBrotherScript_lookLeftRightUpDown
+	callscript strangeBrotherScript_lookLeftRightUpDown
 	movedown $30
-	callscript _strangeBrotherScript_lookUpDownRightLeft
+	callscript strangeBrotherScript_lookUpDownRightLeft
 	moveleft $30
 	moveup $30
 	moveright $30
@@ -5973,7 +5973,7 @@ strangeBrother2Script_6thScreen:
 strangeBrother2Script_finishedScreen:
 	loadscript strangeBrother2Script_finishedScreenPattern2
 	
-_strangeBrotherScript_lookDownUpRightLeft:
+strangeBrotherScript_lookDownUpRightLeft:
 	setangleandanimation $10
 	wait 30
 	setangleandanimation $00
@@ -5985,14 +5985,14 @@ _strangeBrotherScript_lookDownUpRightLeft:
 	wait 30
 	retscript
 	
-_strangeBrotherScript_lookUpDownRightLeft:
+strangeBrotherScript_lookUpDownRightLeft:
 	setangleandanimation $00
 	wait 30
 	setangleandanimation $10
 	wait 30
 	scriptjump --
 	
-_strangeBrotherScript_lookRightLeftUpDown:
+strangeBrotherScript_lookRightLeftUpDown:
 	setangleandanimation $08
 	wait 30
 	setangleandanimation $18
@@ -6004,7 +6004,7 @@ _strangeBrotherScript_lookRightLeftUpDown:
 	wait 30
 	retscript
 	
-_strangeBrotherScript_lookLeftRightUpDown:
+strangeBrotherScript_lookLeftRightUpDown:
 	setangleandanimation $18
 	wait 30
 	setangleandanimation $08
@@ -9444,10 +9444,10 @@ linkedHerosCaveOldManScript:
 ; ==============================================================================
 ; INTERACID_GET_ROD_OF_SEASONS
 ; ==============================================================================
-gettingRodOfSeasons:
+gettingRodOfSeasonsScript:
 	loadscript gettingRodOfSeasons_body
 
-setCounter1To32:
+gettingRodOfSeasonsScript_setCounter1To32:
 	setcounter1 $32
 	scriptend
 

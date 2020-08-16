@@ -2738,7 +2738,7 @@ oldManScript_givesShieldUpgrade:
 	setglobalflag GLOBALFLAG_BEGAN_LIBRARY_SECRET
 	showtext TX_3312
 	wait 30
-	callscript scriptFunc_doEnergySwirlCutscene
+	callscript mainScripts.scriptFunc_doEnergySwirlCutscene
 	wait 30
 	asm15 oldManGiveShieldUpgradeToLink
 	wait 30
@@ -3043,7 +3043,7 @@ mamamuDog_decCounter:
 ; INTERACID_POSTMAN
 ; ==============================================================================
 postmanScript:
-	jumpifroomflagset $20, stubScript
+	jumpifroomflagset $20, mainScripts.stubScript
 	initcollisions
 @npcLoop:
 	checkabutton
@@ -3338,87 +3338,87 @@ hardhatWorkerSubid03Script:
 @val00:
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $02
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $40
-	callscript hardhatWorkerFunc_patrol
+	callscript mainScripts.hardhatWorkerFunc_patrol
 
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $01
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $60
-	callscript hardhatWorkerFunc_patrol
+	callscript mainScripts.hardhatWorkerFunc_patrol
 
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $03
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $60
-	callscript hardhatWorkerFunc_patrol
+	callscript mainScripts.hardhatWorkerFunc_patrol
 
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $00
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $40
-	callscript hardhatWorkerFunc_patrol
+	callscript mainScripts.hardhatWorkerFunc_patrol
 
 	scriptjump @val00
 
 @val01:
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $02
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $40
-	callscript hardhatWorkerFunc_patrol
+	callscript mainScripts.hardhatWorkerFunc_patrol
 
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $01
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $80
-	callscript hardhatWorkerFunc_patrol
+	callscript mainScripts.hardhatWorkerFunc_patrol
 
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $00
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $20
-	callscript hardhatWorkerFunc_patrol
+	callscript mainScripts.hardhatWorkerFunc_patrol
 
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $02
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $20
-	callscript hardhatWorkerFunc_patrol
+	callscript mainScripts.hardhatWorkerFunc_patrol
 
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $03
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $80
-	callscript hardhatWorkerFunc_patrol
+	callscript mainScripts.hardhatWorkerFunc_patrol
 
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $00
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $40
-	callscript hardhatWorkerFunc_patrol
+	callscript mainScripts.hardhatWorkerFunc_patrol
 
 	scriptjump @val01
 
 @val02:
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $01
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $a0
-	callscript hardhatWorkerFunc_patrol
+	callscript mainScripts.hardhatWorkerFunc_patrol
 
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $03
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $a0
-	callscript hardhatWorkerFunc_patrol
+	callscript mainScripts.hardhatWorkerFunc_patrol
 
 	scriptjump @val02
 
 @val03:
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $02
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $40
-	callscript hardhatWorkerFunc_patrol
+	callscript mainScripts.hardhatWorkerFunc_patrol
 
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $01
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $a0
-	callscript hardhatWorkerFunc_patrol
+	callscript mainScripts.hardhatWorkerFunc_patrol
 
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $03
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $a0
-	callscript hardhatWorkerFunc_patrol
+	callscript mainScripts.hardhatWorkerFunc_patrol
 
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $00
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $40
-	callscript hardhatWorkerFunc_patrol
+	callscript mainScripts.hardhatWorkerFunc_patrol
 
 	scriptjump @val03
 
 @val04:
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $01
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $60
-	callscript hardhatWorkerFunc_patrol
+	callscript mainScripts.hardhatWorkerFunc_patrol
 
 	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $03
 	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $60
-	callscript hardhatWorkerFunc_patrol
+	callscript mainScripts.hardhatWorkerFunc_patrol
 
 	scriptjump @val04
 
@@ -5245,7 +5245,7 @@ goron_subid08_pressedAScript:
 	jumpifitemobtained TREASURE_BROTHER_EMBLEM, @moveAside
 
 	asm15 goron_showText_differentForPast, <TX_2491
-	scriptjump goron_enableInputAndResumeNappingLoop
+	scriptjump mainScripts.goron_enableInputAndResumeNappingLoop
 
 ; Link has the goron emblem, move aside
 @moveAside:
@@ -5269,11 +5269,11 @@ goron_subid08_pressedAScript:
 
 ; Check goron vase
 	jumpifitemobtained TREASURE_GORON_VASE, @haveVaseOrSirloin
-	scriptjump goron_enableInputAndResumeNappingLoop
+	scriptjump mainScripts.goron_enableInputAndResumeNappingLoop
 
 @checkSirloin_1:
 	jumpifitemobtained TREASURE_ROCK_BRISKET, @haveVaseOrSirloin
-	scriptjump goron_enableInputAndResumeNappingLoop
+	scriptjump mainScripts.goron_enableInputAndResumeNappingLoop
 
 
 @alreadyMovedAside:
@@ -5295,7 +5295,7 @@ goron_subid08_pressedAScript:
 
 @dontHaveVaseOrSirloin:
 	asm15 goron_showText_differentForPast, <TX_2495 ; "Yeah, a vase/sirloin would be great"
-	scriptjump goron_enableInputAndResumeNappingLoop
+	scriptjump mainScripts.goron_enableInputAndResumeNappingLoop
 
 
 @haveVaseOrSirloin:
@@ -5306,7 +5306,7 @@ goron_subid08_pressedAScript:
 @rejectedTrade:
 	asm15 goron_showText_differentForPast, <TX_2497
 	writememory wTmpcfc0.goronCutscenes.goronGuardMovedAside, $01
-	scriptjump goron_enableInputAndResumeNappingLoop
+	scriptjump mainScripts.goron_enableInputAndResumeNappingLoop
 
 ; This gets executed if you say no, then talk to him again.
 @promptForTradeAfterRejection:
@@ -5336,11 +5336,11 @@ goron_subid08_pressedAScript:
 	orroomflag $40
 	wait 30
 	asm15 goron_showText_differentForPast, <TX_249a
-	scriptjump goron_enableInputAndResumeNappingLoop
+	scriptjump mainScripts.goron_enableInputAndResumeNappingLoop
 
 @alreadyTraded:
 	asm15 goron_showText_differentForPast, <TX_249b
-	scriptjump goron_enableInputAndResumeNappingLoop
+	scriptjump mainScripts.goron_enableInputAndResumeNappingLoop
 
 
 ; ==============================================================================
@@ -5925,7 +5925,7 @@ companionScript_subid07Script_body:
 	showtext TX_2100
 	writememory w1Companion.var3d, $00
 	enableinput
-	scriptjump companionScript_subid07Script
+	scriptjump mainScripts.companionScript_subid07Script
 
 @savedDimitri:
 	disableinput
@@ -5992,7 +5992,7 @@ companionScript_subid03Script_body:
 	showtext TX_2003
 	writememory w1Companion.var3d, $00
 	enableinput
-	scriptjump companionScript_subid03Script
+	scriptjump mainScripts.companionScript_subid03Script
 
 @retrievedGloves:
 	showtext TX_2004
@@ -6890,10 +6890,10 @@ goronElder_normalAnimation:
 
 ; Cutscene where goron elder is saved / NPC in that room after that
 goronElderScript_subid00_body:
-	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, stubScript
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, mainScripts.stubScript
 
 	asm15 checkEssenceObtained, $04
-	jumpifmemoryset wcddb, CPU_ZFLAG, stubScript
+	jumpifmemoryset wcddb, CPU_ZFLAG, mainScripts.stubScript
 
 	initcollisions
 	jumpifroomflagset $40, @npcLoop
@@ -6935,10 +6935,10 @@ goronElderScript_subid00_body:
 
 ; NPC hanging out in rolling ridge (after getting D5 essence)
 goronElderScript_subid01_body:
-	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, stubScript
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, mainScripts.stubScript
 
 	asm15 checkEssenceNotObtained, $04
-	jumpifmemoryset wcddb, CPU_ZFLAG, stubScript
+	jumpifmemoryset wcddb, CPU_ZFLAG, mainScripts.stubScript
 
 	initcollisions
 @npcLoop:
@@ -7478,8 +7478,8 @@ tokkayScript_justHeardTune_body:
 	moveleft $10
 	wait 15
 
-	callscript tokkeyScriptFunc_runAcrossDesk
-	callscript tokkeyScriptFunc_runAcrossDesk
+	callscript mainScripts.tokkeyScriptFunc_runAcrossDesk
+	callscript mainScripts.tokkeyScriptFunc_runAcrossDesk
 
 	setstate $04 ; Stop movement animation
 	wait 120
@@ -7497,8 +7497,8 @@ tokkayScript_justHeardTune_body:
 	setanimation $02
 	wait 15
 
-	callscript tokkeyScriptFunc_hopAcrossDesk
-	callscript tokkeyScriptFunc_hopAcrossDesk
+	callscript mainScripts.tokkeyScriptFunc_hopAcrossDesk
+	callscript mainScripts.tokkeyScriptFunc_hopAcrossDesk
 
 	moveleft $10
 
@@ -7532,7 +7532,7 @@ tokkayScript_justHeardTune_body:
 	resetmusic
 	setcollisionradii $06, $06
 	setstate $01
-	scriptjump tokkeyScript_alreadyTaughtTune
+	scriptjump mainScripts.tokkeyScript_alreadyTaughtTune
 
 
 ; ==============================================================================
@@ -7840,7 +7840,7 @@ symmetryNpc_getUpgradeCapacityForText:
 symmetryNpcSubid8And9Script:
 	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, @postgame
 	incstate ; [state] = 2
-	jumpifglobalflagset GLOBALFLAG_TUNI_NUT_PLACED, symmetryNpcSubid8And9Script_afterTuniNutRestored
+	jumpifglobalflagset GLOBALFLAG_TUNI_NUT_PLACED, mainScripts.symmetryNpcSubid8And9Script_afterTuniNutRestored
 
 @loop:
 	initcollisions
@@ -8198,7 +8198,7 @@ troySubid0Script:
 
 ; Troy in his house
 troySubid1Script:
-	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, stubScript
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, mainScripts.stubScript
 	initcollisions
 @loop:
 	checkabutton

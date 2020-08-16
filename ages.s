@@ -256,8 +256,10 @@ specialObjectLoadAnimationFrameToBuffer:
 .BANK $0c SLOT 1
 .ORG 0
 
-	.include "code/scripting.s"
-	.include "scripts/ages/scripts.s"
+	 m_section_superfree "Scripts" namespace "mainScripts"
+		.include "code/scripting.s"
+		.include "scripts/ages/scripts.s"
+	.ends
 
 
 .BANK $0d SLOT 1

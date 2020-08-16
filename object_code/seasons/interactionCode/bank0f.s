@@ -18,7 +18,7 @@ interactionCodec8:
 	call interactionInitGraphics
 	call objectGetTileAtPosition
 	ld (hl),$00
-	ld hl,boomerangSubrosianScript
+	ld hl,mainScripts.boomerangSubrosianScript
 	call interactionSetScript
 	call @func_78cc
 @state1:
@@ -148,14 +148,14 @@ interactionCodeca:
 	ld a,GLOBALFLAG_DONE_CLOCK_SHOP_SECRET
 	call checkGlobalFlag
 	jr z,+
-	ld hl,troyScript_doneSecret
+	ld hl,mainScripts.troyScript_doneSecret
 	jr ++
 +
 	ld a,GLOBALFLAG_BEGAN_CLOCK_SHOP_SECRET
 	call checkGlobalFlag
-	ld hl,troyScript_beginningSecret
+	ld hl,mainScripts.troyScript_beginningSecret
 	jr z,++
-	ld hl,troyScript_beganSecret
+	ld hl,mainScripts.troyScript_beganSecret
 ++
 	call interactionSetScript
 	ld a,$02
@@ -201,7 +201,7 @@ interactionCodeca:
 	ld l,$44
 	ld (hl),$01
 	callab scriptHlp.linkedFunc_15_6430
-	ld hl,troyScript_gameBegun
+	ld hl,mainScripts.troyScript_gameBegun
 	call interactionSetScript
 	ret
 	ld hl,$ccf7
@@ -391,14 +391,14 @@ interactionCodecb:
 	ld a,GLOBALFLAG_DONE_GRAVEYARD_SECRET
 	call checkGlobalFlag
 	jr z,@@notDoneSecret
-	ld hl,linkedGhiniScript_doneSecret
+	ld hl,mainScripts.linkedGhiniScript_doneSecret
 	jr @@setScript
 @@notDoneSecret:
 	ld a,GLOBALFLAG_BEGAN_GRAVEYARD_SECRET
 	call checkGlobalFlag
-	ld hl,linkedGhiniScript_beginningSecret
+	ld hl,mainScripts.linkedGhiniScript_beginningSecret
 	jr z,@@setScript
-	ld hl,linkedGhiniScript_begunSecret
+	ld hl,mainScripts.linkedGhiniScript_begunSecret
 @@setScript:
 	call interactionSetScript
 	jp objectSetVisible81
@@ -454,7 +454,7 @@ interactionCodecb:
 	ld (hl),$03
 	ld l,$7e
 	ld (hl),GLOBALFLAG_BEGAN_LIBRARY_SECRET-GLOBALFLAG_FIRST_SEASONS_BEGAN_SECRET
-	ld hl,linkedGameNpcScript
+	ld hl,mainScripts.linkedGameNpcScript
 	call interactionSetScript
 	jp interactionAnimateAsNpc
 
@@ -486,7 +486,7 @@ interactionCodecb:
 	ret nz
 	ld l,$45
 	inc (hl)
-	ld hl,linkedGhiniScript_startRound
+	ld hl,mainScripts.linkedGhiniScript_startRound
 	call interactionSetScript
 @@substate3:
 	call interactionAnimate
@@ -737,16 +737,16 @@ interactionCodecc:
 	ld a,GLOBALFLAG_DONE_SUBROSIAN_SECRET
 	call checkGlobalFlag
 	jr z,@notDoneSubrosianScript
-	ld hl,script7dac
+	ld hl,mainScripts.script7dac
 	jr @setScript
 @notDoneSubrosianScript:
 	call getThisRoomFlags
 	bit 7,a
 	jr z,@notGivenSecret
-	ld hl,goldenCaveSubrosianScript_givenSecret
+	ld hl,mainScripts.goldenCaveSubrosianScript_givenSecret
 	jr @setScript
 @notGivenSecret:
-	ld hl,goldenCaveSubrosianScript_beginningSecret
+	ld hl,mainScripts.goldenCaveSubrosianScript_beginningSecret
 @setScript:
 	call interactionSetScript
 	call interactionInitGraphics
@@ -810,10 +810,10 @@ seasonsFunc_0f_7dc1:
 	jp objectSetSpeedZ
 
 seasonsTable_0f_7dc7:
-	.dw goldenCaveSubrosianScript_beginningSecret
-	.dw goldenCaveSubrosianScript_7d00
-	.dw goldenCaveSubrosianScript_7d87
-	.dw goldenCaveSubrosianScript_7d00
+	.dw mainScripts.goldenCaveSubrosianScript_beginningSecret
+	.dw mainScripts.goldenCaveSubrosianScript_7d00
+	.dw mainScripts.goldenCaveSubrosianScript_7d87
+	.dw mainScripts.goldenCaveSubrosianScript_7d00
 
 
 ; ==============================================================================
@@ -844,7 +844,7 @@ interactionCodecd:
 	ld a,GLOBALFLAG_DONE_DIVER_SECRET
 	call checkGlobalFlag
 	jp z,@notDoneDiverSecret
-	ld hl,masterDiverScript_secretDone
+	ld hl,mainScripts.masterDiverScript_secretDone
 	jr @setScript
 @notDoneDiverSecret:
 	ld a,$07
@@ -853,14 +853,14 @@ interactionCodecd:
 	and $40
 	jr z,+
 	res 6,(hl)
-	ld hl,masterDiverScript_swimmingChallengeDone
+	ld hl,mainScripts.masterDiverScript_swimmingChallengeDone
 	jr @setScript
 +
 	ld a,GLOBALFLAG_BEGAN_DIVER_SECRET
 	call checkGlobalFlag
-	ld hl,masterDiverScript_beginningSecret
+	ld hl,mainScripts.masterDiverScript_beginningSecret
 	jr z,@setScript
-	ld hl,masterDiverScript_begunSecret
+	ld hl,mainScripts.masterDiverScript_begunSecret
 @setScript:
 	call interactionSetScript
 	xor a
@@ -884,7 +884,7 @@ interactionCodecd:
 	call unsetGlobalFlag
 	ld a,>TX_4c00
 	call interactionSetHighTextIndex
-	ld hl,masterDiverScript_swimmingChallengeText
+	ld hl,mainScripts.masterDiverScript_swimmingChallengeText
 	call interactionSetScript
 	call objectSetReservedBit1
 	jr @state2
@@ -894,7 +894,7 @@ interactionCodecd:
 	ld (hl),$02
 	ld a,>TX_4c00
 	call interactionSetHighTextIndex
-	ld hl,masterDiverScript_spawnFakeStarOre
+	ld hl,mainScripts.masterDiverScript_spawnFakeStarOre
 	call interactionSetScript
 	jr @state2
 @state1:
@@ -979,15 +979,15 @@ interactionCoded5:
 	ld e,$42
 	ld a,(de)
 	or a
-	ld hl,linkedGameNpcScript
+	ld hl,mainScripts.linkedGameNpcScript
 	jr nz,@setScript
 
 	ld a,GLOBALFLAG_DONE_TEMPLE_SECRET
 	call checkGlobalFlag
-	ld hl,templeGreatFairyScript_beginningSecret
+	ld hl,mainScripts.templeGreatFairyScript_beginningSecret
 	jr z,@setScript
 
-	ld hl,templeGreatFairyScript_doneSecret
+	ld hl,mainScripts.templeGreatFairyScript_doneSecret
 @setScript:
 	jp interactionSetScript
 @substate1:
@@ -1040,20 +1040,20 @@ interactionCoded6:
 
 	ld a,GLOBALFLAG_FINISHEDGAME
 	call checkGlobalFlag
-	ld hl,dekuScrubScript_notFinishedGame
+	ld hl,mainScripts.dekuScrubScript_notFinishedGame
 	jr z,@setScript
 
 	ld a,GLOBALFLAG_DONE_DEKU_SECRET
 	call checkGlobalFlag
-	ld hl,dekuScrubScript_doneSecret
+	ld hl,mainScripts.dekuScrubScript_doneSecret
 	jr nz,@setScript
 
 	call getThisRoomFlags
 	bit 7,a
-	ld hl,dekuScrubScript_gaveSecret
+	ld hl,mainScripts.dekuScrubScript_gaveSecret
 	jr nz,@setScript
 
-	ld hl,dekuScrubScript_beginningSecret
+	ld hl,mainScripts.dekuScrubScript_beginningSecret
 @setScript:
 	jp interactionSetScript
 @table_7f74:

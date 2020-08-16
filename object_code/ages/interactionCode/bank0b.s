@@ -458,16 +458,16 @@ interactionCode9a:
 	jp interactionSetScript
 
 @scriptTable:
-	.dw carpenter_subid00Script
-	.dw carpenter_subid00Script
-	.dw carpenter_subid02Script
-	.dw carpenter_subid03Script
-	.dw carpenter_subid04Script
-	.dw carpenter_subid05Script
-	.dw carpenter_subid06Script
-	.dw carpenter_subid07Script
-	.dw carpenter_subid08Script
-	.dw carpenter_subid09Script
+	.dw mainScripts.carpenter_subid00Script
+	.dw mainScripts.carpenter_subid00Script
+	.dw mainScripts.carpenter_subid02Script
+	.dw mainScripts.carpenter_subid03Script
+	.dw mainScripts.carpenter_subid04Script
+	.dw mainScripts.carpenter_subid05Script
+	.dw mainScripts.carpenter_subid06Script
+	.dw mainScripts.carpenter_subid07Script
+	.dw mainScripts.carpenter_subid08Script
+	.dw mainScripts.carpenter_subid09Script
 
 ; Animations for each subid
 @animationsForBridgeBuildCutsceneStart:
@@ -567,7 +567,7 @@ interactionCode9b:
 ++
 	; Begin the script
 	call interactionIncSubstate
-	ld hl,raftwreckCutsceneScript
+	ld hl,mainScripts.raftwreckCutsceneScript
 	jp interactionSetScript
 
 @substate2:
@@ -748,7 +748,7 @@ interactionCode9c:
 
 	ld a,GLOBALFLAG_FINISHEDGAME
 	call checkGlobalFlag
-	ld hl,kingZoraScript_present_afterD7
+	ld hl,mainScripts.kingZoraScript_present_afterD7
 	ret z
 
 	ld a,TREASURE_SWORD
@@ -756,28 +756,28 @@ interactionCode9c:
 	and $01
 	ld e,Interaction.var03
 	ld (de),a
-	ld hl,kingZoraScript_present_postGame
+	ld hl,mainScripts.kingZoraScript_present_postGame
 	ret
 
 @@pollutionNotFixed:
 	ld a,TREASURE_LIBRARY_KEY
 	call checkTreasureObtained
-	ld hl,kingZoraScript_present_acceptedTask
+	ld hl,mainScripts.kingZoraScript_present_acceptedTask
 	ret c
 
 	call getThisRoomFlags
 	bit 6,(hl)
-	ld hl,kingZoraScript_present_firstTime
+	ld hl,mainScripts.kingZoraScript_present_firstTime
 	ret z
-	ld hl,kingZoraScript_present_giveKey
+	ld hl,mainScripts.kingZoraScript_present_giveKey
 	ret
 
 @@justCleanedWater:
 	ld a,GLOBALFLAG_GOT_PERMISSION_TO_ENTER_JABU
 	call checkGlobalFlag
-	ld hl,kingZoraScript_present_justCleanedWater
+	ld hl,mainScripts.kingZoraScript_present_justCleanedWater
 	ret z
-	ld hl,kingZoraScript_present_cleanedWater
+	ld hl,mainScripts.kingZoraScript_present_cleanedWater
 	ret
 
 @choosePastKingZoraScript:
@@ -787,23 +787,23 @@ interactionCode9c:
 
 	ld a,GLOBALFLAG_WATER_POLLUTION_FIXED
 	call checkGlobalFlag
-	ld hl,kingZoraScript_past_justCured
+	ld hl,mainScripts.kingZoraScript_past_justCured
 	ret z
 
 	ld a,TREASURE_ESSENCE
 	call checkTreasureObtained
 	bit 6,a
-	ld hl,kingZoraScript_past_cleanedWater
+	ld hl,mainScripts.kingZoraScript_past_cleanedWater
 	ret z
-	ld hl,kingZoraScript_past_afterD7
+	ld hl,mainScripts.kingZoraScript_past_afterD7
 	ret
 
 @@notCured:
 	ld a,TREASURE_POTION
 	call checkTreasureObtained
-	ld hl,kingZoraScript_past_dontHavePotion
+	ld hl,mainScripts.kingZoraScript_past_dontHavePotion
 	ret nc
-	ld hl,kingZoraScript_past_havePotion
+	ld hl,mainScripts.kingZoraScript_past_havePotion
 	ret
 
 
@@ -824,7 +824,7 @@ interactionCode9d:
 	call interactionInitGraphics
 	ld a,>TX_2c00
 	call interactionSetHighTextIndex
-	ld hl,tokkeyScript
+	ld hl,mainScripts.tokkeyScript
 	call interactionSetScript
 	call objectSetVisible82
 	jp interactionIncState
@@ -852,7 +852,7 @@ interactionCode9d:
 	ld a,60
 	ld bc,$f810
 	call objectCreateExclamationMark
-	ld hl,tokkeyScript_justHeardTune
+	ld hl,mainScripts.tokkeyScript_justHeardTune
 	call interactionSetScript
 	jp interactionIncState
 
@@ -2886,7 +2886,7 @@ interactionCodeaa:
 	jp interactionSetScript
 
 @scriptTable:
-	.dw dinScript
+	.dw mainScripts.dinScript
 
 
 @updateSpeedZ:
@@ -2980,7 +2980,7 @@ _zora_subid0F:
 	cp $06
 	jp nc,interactionDelete
 ++
-	ld hl,genericNpcScript
+	ld hl,mainScripts.genericNpcScript
 
 _zora_commonInitWithScript:
 	call interactionSetScript
@@ -3017,9 +3017,9 @@ _zora_subid0D:
 	ld e,Interaction.subid
 	ld a,(de)
 	cp $0c
-	ld hl,zoraSubid0cScript
+	ld hl,mainScripts.zoraSubid0cScript
 	jr z,_zora_commonInitWithScript
-	ld hl,zoraSubid0dScript
+	ld hl,mainScripts.zoraSubid0dScript
 	jr _zora_commonInitWithScript
 
 
@@ -3159,9 +3159,9 @@ _zora_subid12:
 	ret
 
 @scriptTable:
-	.dw zoraSubid10Script
-	.dw zoraSubid11And12Script
-	.dw zoraSubid11And12Script
+	.dw mainScripts.zoraSubid10Script
+	.dw mainScripts.zoraSubid11And12Script
+	.dw mainScripts.zoraSubid11And12Script
 
 @state1:
 	call interactionRunScript
@@ -3198,7 +3198,7 @@ _zora_subid0E:
 	xor a
 	call interactionSetAnimation
 	call objectSetVisiblec2
-	ld hl,zoraSubid0eScript
+	ld hl,mainScripts.zoraSubid0eScript
 	jp interactionSetScript
 
 
@@ -3236,7 +3236,7 @@ _zora_subid1B:
 	ld e,Interaction.textID
 	ld a,(hl)
 	ld (de),a
-	ld hl,genericNpcScript
+	ld hl,mainScripts.genericNpcScript
 	jp interactionSetScript
 
 
@@ -3373,7 +3373,7 @@ _zelda_state0:
 	inc e
 	ld a,>TX_0600
 	ld (de),a
-	ld hl,genericNpcScript
+	ld hl,mainScripts.genericNpcScript
 	jp interactionSetScript
 
 @initSubid08:
@@ -3475,17 +3475,17 @@ _zelda_loadScript:
 	jp interactionSetScript
 
 @scriptTable:
-	.dw zeldaSubid00Script
-	.dw zeldaSubid01Script
-	.dw zeldaSubid02Script
-	.dw zeldaSubid03Script
-	.dw zeldaSubid04Script
-	.dw zeldaSubid05Script
-	.dw zeldaSubid06Script
-	.dw stubScript
-	.dw stubScript
-	.dw zeldaSubid09Script
-	.dw stubScript
+	.dw mainScripts.zeldaSubid00Script
+	.dw mainScripts.zeldaSubid01Script
+	.dw mainScripts.zeldaSubid02Script
+	.dw mainScripts.zeldaSubid03Script
+	.dw mainScripts.zeldaSubid04Script
+	.dw mainScripts.zeldaSubid05Script
+	.dw mainScripts.zeldaSubid06Script
+	.dw mainScripts.stubScript
+	.dw mainScripts.stubScript
+	.dw mainScripts.zeldaSubid09Script
+	.dw mainScripts.stubScript
 
 
 ; ==============================================================================
@@ -4148,8 +4148,8 @@ _twinrovaInCutscene_loadScript:
 	jp interactionSetScript
 
 @scriptTable:
-	.dw twinrovaInCutsceneScript
-	.dw stubScript
+	.dw mainScripts.twinrovaInCutsceneScript
+	.dw mainScripts.stubScript
 
 
 ; ==============================================================================
@@ -4422,7 +4422,7 @@ interactionCodeb4:
 	bit 6,a
 	ret nz
 	call interactionIncState
-	ld hl,bookOfSealsPodiumScript
+	ld hl,mainScripts.bookOfSealsPodiumScript
 	jp interactionSetScript
 
 @state1:
@@ -4782,7 +4782,7 @@ _vire_subid0:
 
 	ld a,MUS_GREAT_MOBLIN
 	call playSound
-	ld hl,vireSubid0Script
+	ld hl,mainScripts.vireSubid0Script
 
 _vire_setScript:
 	call interactionSetScript
@@ -4813,7 +4813,7 @@ _vire_subid1:
 
 	call getThisRoomFlags
 	bit 6,(hl)
-	ld hl,vireSubid1Script
+	ld hl,mainScripts.vireSubid1Script
 	jr z,_vire_setScript
 
 	ld a,(wActiveMusic)
@@ -4910,7 +4910,7 @@ _vire_subid2:
 	ld a,h
 	ld (de),a
 
-	ld hl,vireSubid2Script
+	ld hl,mainScripts.vireSubid2Script
 	call _vire_setScript
 	ld l,Interaction.counter1
 	ld (hl),$08
@@ -5139,7 +5139,7 @@ interactionCodeb9:
 	ret
 
 @subid7Init:
-	ld hl,horonDogScript
+	ld hl,mainScripts.horonDogScript
 	jp interactionSetScript
 
 
@@ -5296,7 +5296,7 @@ interactionCodeba:
 	call interactionIncState
 	ld bc,$0e06
 	call objectSetCollideRadii
-	ld hl,childJabuScript
+	ld hl,mainScripts.childJabuScript
 	call interactionSetScript
 	jp objectSetVisible82
 
@@ -5318,7 +5318,7 @@ interactionCodebb:
 @state0:
 	call interactionIncState
 	call interactionInitGraphics
-	ld hl,humanVeranScript
+	ld hl,mainScripts.humanVeranScript
 	call interactionSetScript
 	jp objectSetVisible82
 
@@ -5976,19 +5976,19 @@ interactionCodebf:
 	jp interactionSetScript
 
 @scriptTable:
-	.dw symmetryNpcSubid0And1Script
-	.dw symmetryNpcSubid0And1Script
-	.dw symmetryNpcSubid2And3Script
-	.dw symmetryNpcSubid2And3Script
-	.dw symmetryNpcSubid4And5Script
-	.dw symmetryNpcSubid4And5Script
-	.dw symmetryNpcSubid6And7Script
-	.dw symmetryNpcSubid6And7Script
-	.dw symmetryNpcSubid8And9Script
-	.dw symmetryNpcSubid8And9Script
-	.dw symmetryNpcSubidAScript
-	.dw symmetryNpcSubidBScript
-	.dw symmetryNpcSubidCScript
+	.dw mainScripts.symmetryNpcSubid0And1Script
+	.dw mainScripts.symmetryNpcSubid0And1Script
+	.dw mainScripts.symmetryNpcSubid2And3Script
+	.dw mainScripts.symmetryNpcSubid2And3Script
+	.dw mainScripts.symmetryNpcSubid4And5Script
+	.dw mainScripts.symmetryNpcSubid4And5Script
+	.dw mainScripts.symmetryNpcSubid6And7Script
+	.dw mainScripts.symmetryNpcSubid6And7Script
+	.dw mainScripts.symmetryNpcSubid8And9Script
+	.dw mainScripts.symmetryNpcSubid8And9Script
+	.dw mainScripts.symmetryNpcSubidAScript
+	.dw mainScripts.symmetryNpcSubidBScript
+	.dw mainScripts.symmetryNpcSubidCScript
 
 
 ; For subids 8/9 (sisters in the tuni nut building)...
@@ -5998,7 +5998,7 @@ interactionCodebf:
 	bit 0,(hl)
 	jr z,@runScriptAndAnimate
 
-	ld hl,symmetryNpcSubid8And9Script_afterTuniNutRestored
+	ld hl,mainScripts.symmetryNpcSubid8And9Script_afterTuniNutRestored
 	call interactionSetScript
 	ld e,Interaction.state
 	ld a,$01
@@ -6296,7 +6296,7 @@ interactionCodec3:
 	ld hl,wTilesetFlags
 	set TILESETFLAG_BIT_PAST,(hl)
 ++
-	ld hl,pirateCaptainScript
+	ld hl,mainScripts.pirateCaptainScript
 	call interactionSetScript
 	jp interactionIncState
 
@@ -6362,11 +6362,11 @@ interactionCodec4:
 	jp interactionSetScript
 
 @scriptTable:
-	.dw pirateSubid0Script
-	.dw pirateSubid1Script
-	.dw pirateSubid2Script
-	.dw pirateSubid3Script
-	.dw pirateSubid4Script
+	.dw mainScripts.pirateSubid0Script
+	.dw mainScripts.pirateSubid1Script
+	.dw mainScripts.pirateSubid2Script
+	.dw mainScripts.pirateSubid3Script
+	.dw mainScripts.pirateSubid4Script
 
 
 ; Subids 0-3: waiting for signal from piration captain to jump in excitement
@@ -6440,7 +6440,7 @@ interactionCodec4:
 	ld (wMenuDisabled),a
 	ld a,SNDCTRL_STOPMUSIC
 	call playSound
-	ld hl,pirateSubid4Script_insertEyeball
+	ld hl,mainScripts.pirateSubid4Script_insertEyeball
 	call interactionSetScript
 
 @state4:
@@ -6714,7 +6714,7 @@ interactionCodec8:
 
 	ld e,Interaction.pressedAButton
 	call objectAddToAButtonSensitiveObjectList
-	ld hl,tingleScript
+	ld hl,mainScripts.tingleScript
 	call interactionSetScript
 	ld a,$04
 	ld e,Interaction.state
@@ -6900,11 +6900,11 @@ interactionCode49:
 	ld h,a
 	ld e,Interaction.var3a
 	ld (de),a
-	ld hl,syrupCuccoScript_awaitingMushroomText
+	ld hl,mainScripts.syrupCuccoScript_awaitingMushroomText
 	jp @setScriptAndGotoState4
 
 @gotoState4:
-	ld hl,syrupCuccoScript_awaitingMushroomText
+	ld hl,mainScripts.syrupCuccoScript_awaitingMushroomText
 
 @setScriptAndGotoState4:
 	ld e,Interaction.state
@@ -6928,7 +6928,7 @@ interactionCode49:
 	ld e,Interaction.var3d
 	xor a
 	ld (de),a
-	ld hl,syrupCuccoScript_triedToSteal
+	ld hl,mainScripts.syrupCuccoScript_triedToSteal
 	jp @setScriptAndGotoState4
 
 
@@ -7111,8 +7111,8 @@ interactionCodeca:
 	jp interactionIncState
 
 @scriptTable:
-	.dw troySubid0Script
-	.dw troySubid1Script
+	.dw mainScripts.troySubid0Script
+	.dw mainScripts.troySubid1Script
 
 
 ; ==============================================================================
@@ -7132,7 +7132,7 @@ interactionCodecb:
 	ld (hl),$02
 	ld l,Interaction.var3f
 	ld (hl),GRAVEYARD_SECRET & $0f
-	ld hl,linkedGameNpcScript
+	ld hl,mainScripts.linkedGameNpcScript
 	call interactionSetScript
 
 @state1:
@@ -7162,7 +7162,7 @@ interactionCodecb:
 	jp interactionIncState
 
 @scriptTable:
-	.dw linkedGameNpcScript
+	.dw mainScripts.linkedGameNpcScript
 
 
 ; ==============================================================================
@@ -7202,7 +7202,7 @@ interactionCodecc:
 	jp interactionIncState
 
 @scriptTable:
-	.dw plenSubid0Script
+	.dw mainScripts.plenSubid0Script
 
 
 ; ==============================================================================
@@ -7219,7 +7219,7 @@ interactionCodecd:
 	call @initialize
 	ld l,Interaction.var3f
 	ld (hl),DIVER_SECRET & $0f
-	ld hl,linkedGameNpcScript
+	ld hl,mainScripts.linkedGameNpcScript
 	call interactionSetScript
 	call interactionRunScript
 
@@ -7447,7 +7447,7 @@ _greatFairy_initialize:
 	jp interactionIncState
 
 @scriptTable:
-	.dw greatFairySubid0Script
+	.dw mainScripts.greatFairySubid0Script
 
 
 ; ==============================================================================
@@ -7466,7 +7466,7 @@ interactionCoded6:
 	call interactionSetAlwaysUpdateBit
 	ld l,Interaction.var3f
 	ld (hl),DEKU_SECRET & $0f
-	ld hl,linkedGameNpcScript
+	ld hl,mainScripts.linkedGameNpcScript
 	call interactionSetScript
 	call interactionRunScript
 
@@ -8374,7 +8374,7 @@ interactionCodedb:
 	and (hl)
 	jp nz,interactionDelete
 
-	ld hl,slateSlotScript
+	ld hl,mainScripts.slateSlotScript
 	call interactionSetScript
 	jp interactionIncState
 
@@ -8412,7 +8412,7 @@ interactionCodedb:
 	ld (wDisabledObjects),a
 	ld (wMenuDisabled),a
 
-	ld hl,slateSlotScript_placeSlate
+	ld hl,mainScripts.slateSlotScript_placeSlate
 	call interactionSetScript
 	call interactionIncState
 

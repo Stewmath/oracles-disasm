@@ -72,25 +72,25 @@ interactionCode8d:
 	jp interactionAnimateAsNpc
 
 @floodedHouseGirlScripts:
-	.dw floodedHouseGirlScript_text1
-	.dw floodedHouseGirlScript_text2
-	.dw floodedHouseGirlScript_text3
-	.dw floodedHouseGirlScript_text4
-	.dw floodedHouseGirlScript_text5
+	.dw mainScripts.floodedHouseGirlScript_text1
+	.dw mainScripts.floodedHouseGirlScript_text2
+	.dw mainScripts.floodedHouseGirlScript_text3
+	.dw mainScripts.floodedHouseGirlScript_text4
+	.dw mainScripts.floodedHouseGirlScript_text5
 
 @masterDiversWifeScripts:
-	.dw masterDiversWifeScript_text1
-	.dw masterDiversWifeScript_text2
-	.dw masterDiversWifeScript_text3
-	.dw masterDiversWifeScript_text4
-	.dw masterDiversWifeScript_text5
+	.dw mainScripts.masterDiversWifeScript_text1
+	.dw mainScripts.masterDiversWifeScript_text2
+	.dw mainScripts.masterDiversWifeScript_text3
+	.dw mainScripts.masterDiversWifeScript_text4
+	.dw mainScripts.masterDiversWifeScript_text5
 
 @masterDiverScripts:
-	.dw masterDiverScript_text1
-	.dw masterDiverScript_text2
-	.dw masterDiverScript_text3
-	.dw masterDiverScript_text4
-	.dw masterDiverScript_text5
+	.dw mainScripts.masterDiverScript_text1
+	.dw mainScripts.masterDiverScript_text2
+	.dw mainScripts.masterDiverScript_text3
+	.dw mainScripts.masterDiverScript_text4
+	.dw mainScripts.masterDiverScript_text5
 
 
 ; ==============================================================================
@@ -719,7 +719,7 @@ interactionCode8f:
 	ld a,>TX_3600
 	call interactionSetHighTextIndex
 
-	ld hl,oldManWithJewelScript
+	ld hl,mainScripts.oldManWithJewelScript
 	call interactionSetScript
 	call @checkHaveEssences
 
@@ -905,7 +905,7 @@ interactionCode90:
 	ld (w1Link.direction),a
 
 	call interactionIncSubstate
-	ld hl,jewelHelperScript_insertedJewel
+	ld hl,mainScripts.jewelHelperScript_insertedJewel
 	call interactionSetScript
 
 
@@ -926,7 +926,7 @@ interactionCode90:
 
 @insertedAllJewels:
 	call interactionIncSubstate
-	ld hl,jewelHelperScript_insertedAllJewels
+	ld hl,mainScripts.jewelHelperScript_insertedAllJewels
 	call interactionSetScript
 
 
@@ -1195,14 +1195,14 @@ interactionCode90:
 	.db $28 $60
 
 @scriptTable:
-	.dw jewelHelperScript_insertedJewel
-	.dw jewelHelperScript_underwaterPyramidJewel
-	.dw jewelHelperScript_createBridgeToXJewelMoldorm
-	.dw jewelHelperScript_XjewelMoldorm
-	.dw jewelHelperScript_spoolSwampSquareJewel
-	.dw jewelHelperScript_eyeglassLakeSquareJewel
-	.dw jewelHelperScript_stub
-	.dw jewelHelperScript_stub
+	.dw mainScripts.jewelHelperScript_insertedJewel
+	.dw mainScripts.jewelHelperScript_underwaterPyramidJewel
+	.dw mainScripts.jewelHelperScript_createBridgeToXJewelMoldorm
+	.dw mainScripts.jewelHelperScript_XjewelMoldorm
+	.dw mainScripts.jewelHelperScript_spoolSwampSquareJewel
+	.dw mainScripts.jewelHelperScript_eyeglassLakeSquareJewel
+	.dw mainScripts.jewelHelperScript_stub
+	.dw mainScripts.jewelHelperScript_stub
 
 
 ; ==============================================================================
@@ -1566,13 +1566,13 @@ interactionCode95:
 	ld ($cfd1),a
 	jr @state1
 @@subid4:
-	ld hl,script73cd
+	ld hl,mainScripts.script73cd
 	call interactionSetScript
 @@subid3:
 	call interactionInitGraphics
 	jp interactionAnimateAsNpc
 @@subid5:
-	ld hl,script73d8
+	ld hl,mainScripts.script73d8
 	call interactionSetScript
 	ld a,$01
 	ld (wLoadedTreeGfxIndex),a
@@ -1667,7 +1667,7 @@ interactionCode95:
 	ld c,a
 	ld a,$50
 	call @@@func_5547
-	ld hl,kingMoblinScript_trapLinkInBombedHouse
+	ld hl,mainScripts.kingMoblinScript_trapLinkInBombedHouse
 	jp interactionSetScript
 @@@func_5547:
 	ldh (<hFF8B),a
@@ -1735,9 +1735,9 @@ interactionCode95:
 	jp interactionAnimate
 _table_55bf:
 	; based on room flags
-	.dw script73ab ; bit 6 and 7 both not set
-	.dw script73b5 ; 1 of bit 6 and 7 set
-	.dw script73bf ; both of bits 6 and 7 set
+	.dw mainScripts.script73ab ; bit 6 and 7 both not set
+	.dw mainScripts.script73b5 ; 1 of bit 6 and 7 set
+	.dw mainScripts.script73bf ; both of bits 6 and 7 set
 
 
 ; ==============================================================================
@@ -1777,7 +1777,7 @@ interactionCode96:
 	call interactionSetAnimation
 	jp objectSetVisible80
 @@subid4:
-	ld hl,script7421
+	ld hl,mainScripts.script7421
 	call interactionSetScript
 	ld e,$43
 	ld a,(de)
@@ -2046,18 +2046,18 @@ _func_57ba:
 	ld l,a
 	jp interactionSetScript
 _table_57d0:
-	.dw script73f3
-	.dw script73f3
-	.dw script73f3
+	.dw mainScripts.script73f3
+	.dw mainScripts.script73f3
+	.dw mainScripts.script73f3
 _table_57d6:
-	.dw script73f6
-	.dw script73f6
-	.dw script73f6
+	.dw mainScripts.script73f6
+	.dw mainScripts.script73f6
+	.dw mainScripts.script73f6
 _table_57dc:
-	.dw script7443
-	.dw script7456
-	.dw script7469
-	.dw script7469
+	.dw mainScripts.script7443
+	.dw mainScripts.script7456
+	.dw mainScripts.script7469
+	.dw mainScripts.script7469
 
 
 ; moblin house-related?
@@ -2152,14 +2152,14 @@ interactionCode99:
 	call interactionRunScript
 	jp npcFaceLinkAndAnimate
 _table_587b:
-	.dw oldManScript_givesRupees
-	.dw oldManScript_givesRupees
-	.dw oldManScript_givesRupees
-	.dw oldManScript_givesRupees
-	.dw oldManScript_givesRupees
-	.dw oldManScript_takesRupees
-	.dw oldManScript_takesRupees
-	.dw oldManScript_takesRupees
+	.dw mainScripts.oldManScript_givesRupees
+	.dw mainScripts.oldManScript_givesRupees
+	.dw mainScripts.oldManScript_givesRupees
+	.dw mainScripts.oldManScript_givesRupees
+	.dw mainScripts.oldManScript_givesRupees
+	.dw mainScripts.oldManScript_takesRupees
+	.dw mainScripts.oldManScript_takesRupees
+	.dw mainScripts.oldManScript_takesRupees
 
 
 ; same room as moblin rest house - event when moblin house explodes?
@@ -2904,7 +2904,7 @@ interactionCode9d:
 	ld l,$42
 	ld (hl),$01
 ++
-	ld hl,impaScript_afterOnoxTakesDin
+	ld hl,mainScripts.impaScript_afterOnoxTakesDin
 	jr @@setScript
 @@subid1:
 	call checkZeldaVillagersSeenButNoMakuSeed
@@ -3072,19 +3072,19 @@ _simulatedInput_5ec3:
 _table_5ec8:
 	; for subid1, if Zelda Kidnapped not seen,
 	; the rest are indexed by highest essence count
-	.dw impaScript_after1stEssence
-	.dw impaScript_after2ndEssence
-	.dw impaScript_after3rdEssence
-	.dw impaScript_after4thEssence
-	.dw impaScript_after5thEssence
-	.dw impaScript_after6thEssence
-	.dw impaScript_after7thEssence
-	.dw impaScript_after8thEssence
-	.dw impaScript_villagersSeenButNoMakuSeed ; subid2
-	.dw impaScript_gotMakuSeedDidntSeeZeldaKidnapped ; subid3
-	.dw impaScript_askingToSaveZelda; subid4
-	.dw impaScript_askedToSaveZeldaButHavent ; subid5
-	.dw impaScript_afterZeldaKidnapped ; subid1 - zelda kidnapped seen
+	.dw mainScripts.impaScript_after1stEssence
+	.dw mainScripts.impaScript_after2ndEssence
+	.dw mainScripts.impaScript_after3rdEssence
+	.dw mainScripts.impaScript_after4thEssence
+	.dw mainScripts.impaScript_after5thEssence
+	.dw mainScripts.impaScript_after6thEssence
+	.dw mainScripts.impaScript_after7thEssence
+	.dw mainScripts.impaScript_after8thEssence
+	.dw mainScripts.impaScript_villagersSeenButNoMakuSeed ; mainScripts.subid2
+	.dw mainScripts.impaScript_gotMakuSeedDidntSeeZeldaKidnapped ; mainScripts.subid3
+	.dw mainScripts.impaScript_askingToSaveZelda; mainScripts.subid4
+	.dw mainScripts.impaScript_askedToSaveZeldaButHavent ; mainScripts.subid5
+	.dw mainScripts.impaScript_afterZeldaKidnapped ; subid1 - zelda kidnapped mainScripts.seen
 
 
 ; ==============================================================================
@@ -3130,7 +3130,7 @@ interactionCode9e:
 	ld ($cca4),a
 	ld a,$80
 	ld ($cc02),a
-	ld hl,script7556
+	ld hl,mainScripts.script7556
 	jp interactionSetScript
 @substate1:
 	call _func_5f87
@@ -4046,7 +4046,7 @@ interactionCodea4:
 	ld a,>TX_3b00
 	call interactionSetHighTextIndex
 	call @func_6418
-	ld hl,subrosianSmithyScript
+	ld hl,mainScripts.subrosianSmithyScript
 	call interactionSetScript
 	call interactionAnimateAsNpc
 	ld a,$02
@@ -4139,10 +4139,10 @@ _dinState0:
 	ld (hl),$a0
 	ret
 @subid2:
-	ld hl,dinScript_subid2Init
+	ld hl,mainScripts.dinScript_subid2Init
 	jp interactionSetScript
 @subid4:
-	ld hl,dinScript_subid4Init
+	ld hl,mainScripts.dinScript_subid4Init
 	jp interactionSetScript
 @subid6:
 	ld h,d
@@ -4154,7 +4154,7 @@ _dinState0:
 @subidStub:
 	ret
 @subid7:
-	ld hl,dinScript_stubInit
+	ld hl,mainScripts.dinScript_stubInit
 	jp interactionSetScript
 @subid8:
 	ld a,GLOBALFLAG_FINISHEDGAME
@@ -4165,13 +4165,13 @@ _dinState0:
 	ld a,INTERACID_S_DIN
 	ld (wInteractionIDToLoadExtraGfx),a
 	ld (wLoadedTreeGfxIndex),a
-	ld hl,dinScript_subid8Init
+	ld hl,mainScripts.dinScript_subid8Init
 	jp interactionSetScript
 @subid9:
 	call getThisRoomFlags
 	bit 6,a
 	jp nz,interactionDelete
-	ld hl,dinScript_discoverLinkCollapsed
+	ld hl,mainScripts.dinScript_discoverLinkCollapsed
 	jp interactionSetScript
 
 _dinState1:
@@ -4874,10 +4874,10 @@ interactionCodeaa:
 	call interactionAnimate
 	jp interactionRunScript
 @scriptTable:
-	.dw script769f
-	.dw script76ad
-	.dw script76b7
-	.dw script76dc
+	.dw mainScripts.script769f
+	.dw mainScripts.script76ad
+	.dw mainScripts.script76b7
+	.dw mainScripts.script76dc
 
 
 ; ==============================================================================
@@ -5006,9 +5006,9 @@ moblinKeepScene_spawn2MoblinsAfterKeepDestroyed:
 	.db $01 $56 $68 $00
 
 _moblinKeepScene_scriptTable:
-	.dw moblinKeepSceneScript_linkSeenOnRightSide
-	.dw moblinKeepSceneScript_settingUpFight
-	.dw moblinKeepSceneScript_postKeepDestruction
+	.dw mainScripts.moblinKeepSceneScript_linkSeenOnRightSide
+	.dw mainScripts.moblinKeepSceneScript_settingUpFight
+	.dw mainScripts.moblinKeepSceneScript_postKeepDestruction
 
 
 ; some misc NPCs during endgame cutscene
@@ -5025,7 +5025,7 @@ interactionCodead:
 	call objectGetAngleTowardLink
 	ld e,$49
 	ld (de),a
-	ld hl,script779e
+	ld hl,mainScripts.script779e
 	call interactionSetScript
 	ld e,$42
 	ld a,(de)
@@ -5906,38 +5906,38 @@ _piratian_state6:
 	jp objectSetInvisible
 
 _table_6f4b:
-	.dw stubScript
-	.dw shipPirationScript_piratianComingDownHandler
-	.dw shipPiratianScript_piratianFromAbove
-	.dw shipPirationScript_inShipLeavingSubrosia
-	.dw shipPirationScript_inShipLeavingSubrosia
-	.dw shipPirationScript_inShipLeavingSubrosia
-	.dw shipPirationScript_inShipLeavingSubrosia
-	.dw shipPiratianScript_leavingSamasaDesert
-	.dw shipPiratianScript_dizzyPirate1Spawner
-	.dw shipPiratianScript_swapShip
-	.dw shipPiratianScript_1stDizzyPirateDescending
-	.dw shipPirationScript_2ndDizzyPirateDescending
-	.dw shipPirationScript_3rdDizzyPirateDescending
-	.dw shipPiratianScript_dizzyPiratiansAlreadyInside
-	.dw shipPiratianScript_dizzyPiratiansAlreadyInside
-	.dw stubScript
-	.dw shipPiratianScript_landedInWestCoast_shipTopHalf
-	.dw shipPiratianScript_landedInWestCoast_shipBottomHalf
-	.dw shipPiratianScript_insideDockedShip1
-	.dw shipPiratianScript_insideDockedShip2
-	.dw shipPiratianScript_insideDockedShip3
-	.dw shipPiratianScript_insideDockedShip4
-	.dw shipPiratianScript_insideDockedShip5
-	.dw stubScript
-	.dw shipPiratianScript_ghostPiratian
-	.dw shipPiratianScript_NWofGhostPiration
-	.dw shipPiratianScript_NEofGhostPiration
+	.dw mainScripts.stubScript
+	.dw mainScripts.shipPirationScript_piratianComingDownHandler
+	.dw mainScripts.shipPiratianScript_piratianFromAbove
+	.dw mainScripts.shipPirationScript_inShipLeavingSubrosia
+	.dw mainScripts.shipPirationScript_inShipLeavingSubrosia
+	.dw mainScripts.shipPirationScript_inShipLeavingSubrosia
+	.dw mainScripts.shipPirationScript_inShipLeavingSubrosia
+	.dw mainScripts.shipPiratianScript_leavingSamasaDesert
+	.dw mainScripts.shipPiratianScript_dizzyPirate1Spawner
+	.dw mainScripts.shipPiratianScript_swapShip
+	.dw mainScripts.shipPiratianScript_1stDizzyPirateDescending
+	.dw mainScripts.shipPirationScript_2ndDizzyPirateDescending
+	.dw mainScripts.shipPirationScript_3rdDizzyPirateDescending
+	.dw mainScripts.shipPiratianScript_dizzyPiratiansAlreadyInside
+	.dw mainScripts.shipPiratianScript_dizzyPiratiansAlreadyInside
+	.dw mainScripts.stubScript
+	.dw mainScripts.shipPiratianScript_landedInWestCoast_shipTopHalf
+	.dw mainScripts.shipPiratianScript_landedInWestCoast_shipBottomHalf
+	.dw mainScripts.shipPiratianScript_insideDockedShip1
+	.dw mainScripts.shipPiratianScript_insideDockedShip2
+	.dw mainScripts.shipPiratianScript_insideDockedShip3
+	.dw mainScripts.shipPiratianScript_insideDockedShip4
+	.dw mainScripts.shipPiratianScript_insideDockedShip5
+	.dw mainScripts.stubScript
+	.dw mainScripts.shipPiratianScript_ghostPiratian
+	.dw mainScripts.shipPiratianScript_NWofGhostPiration
+	.dw mainScripts.shipPiratianScript_NEofGhostPiration
 _table_6f81:
-	.dw shipPiratianCaptainScript_leavingSubrosia
-	.dw shipPiratianCaptainScript_gettingSick
-	.dw shipPiratianCaptainScript_arrivingInWestCoast
-	.dw shipPiratianCaptainScript_inWestCoast
+	.dw mainScripts.shipPiratianCaptainScript_leavingSubrosia
+	.dw mainScripts.shipPiratianCaptainScript_gettingSick
+	.dw mainScripts.shipPiratianCaptainScript_arrivingInWestCoast
+	.dw mainScripts.shipPiratianCaptainScript_inWestCoast
 
 
 ; ==============================================================================
@@ -6028,11 +6028,11 @@ interactionCodeb3:
 	ret
 
 @scriptTable:
-	.dw linkedCutsceneScript_witches1
-	.dw linkedCutsceneScript_witches2
-	.dw linkedCutsceneScript_zeldaVillagers
-	.dw linkedCutsceneScript_zeldaKidnapped
-	.dw linkedCutsceneScript_flamesOfDestruction
+	.dw mainScripts.linkedCutsceneScript_witches1
+	.dw mainScripts.linkedCutsceneScript_witches2
+	.dw mainScripts.linkedCutsceneScript_zeldaVillagers
+	.dw mainScripts.linkedCutsceneScript_zeldaKidnapped
+	.dw mainScripts.linkedCutsceneScript_flamesOfDestruction
 
 
 ; twinrova witches?
@@ -6622,11 +6622,11 @@ _func_740a:
 	ret
 
 _table_7432:
-	.dw ambiScript_mrsRuulsHouse
-	.dw ambiScript_outsideSyrupHut
-	.dw ambiScript_samasaShore
-	.dw ambiScript_enteringPirateHouseBeforePiratesLeave
-	.dw ambiScript_pirateHouseAfterTheyLeft
+	.dw mainScripts.ambiScript_mrsRuulsHouse
+	.dw mainScripts.ambiScript_outsideSyrupHut
+	.dw mainScripts.ambiScript_samasaShore
+	.dw mainScripts.ambiScript_enteringPirateHouseBeforePiratesLeave
+	.dw mainScripts.ambiScript_pirateHouseAfterTheyLeft
 
 
 ; endgame cutscene NPC?
@@ -6721,7 +6721,7 @@ interactionCodeb9:
 	ld (de),a
 	ret
 @@subid7:
-	ld hl,script7a81
+	ld hl,mainScripts.script7a81
 	jp interactionSetScript
 @@counter1Vals:
 	.db $e6 $5a $78 $be
@@ -7270,7 +7270,7 @@ interactionCodebe:
 	call interactionIncState
 	ld l,$7e
 	ld (hl),$02
-	ld hl,linkedGameNpcScript
+	ld hl,mainScripts.linkedGameNpcScript
 	call interactionSetScript
 @@state1:
 	call interactionRunScript
@@ -7373,24 +7373,24 @@ _ba_to_beScripts:
 	.dw _bdScripts
 	.dw _beScripts
 _baScripts:
-	.dw zeldaNPCScript_stub
-	.dw zeldaNPCScript_ba_subid1
-	.dw zeldaNPCScript_stub
-	.dw zeldaNPCScript_ba_subid3
+	.dw mainScripts.zeldaNPCScript_stub
+	.dw mainScripts.zeldaNPCScript_ba_subid1
+	.dw mainScripts.zeldaNPCScript_stub
+	.dw mainScripts.zeldaNPCScript_ba_subid3
 _bbScripts:
-	.dw zeldaNPCScript_stub
+	.dw mainScripts.zeldaNPCScript_stub
 _bcScripts:
-	.dw zeldaNPCScript_stub
-	.dw zeldaNPCScript_bc_subid1
-	.dw zeldaNPCScript_bc_subid2
+	.dw mainScripts.zeldaNPCScript_stub
+	.dw mainScripts.zeldaNPCScript_bc_subid1
+	.dw mainScripts.zeldaNPCScript_bc_subid2
 _bdScripts:
-	.dw zeldaNPCScript_stub
-	.dw zeldaNPCScript_bd_subid1
-	.dw zeldaNPCScript_bd_subid2
+	.dw mainScripts.zeldaNPCScript_stub
+	.dw mainScripts.zeldaNPCScript_bd_subid1
+	.dw mainScripts.zeldaNPCScript_bd_subid2
 _beScripts:
-	.dw zeldaNPCScript_stub
-	.dw zeldaNPCScript_be_subid1
-	.dw zeldaNPCScript_be_subid2
+	.dw mainScripts.zeldaNPCScript_stub
+	.dw mainScripts.zeldaNPCScript_be_subid1
+	.dw mainScripts.zeldaNPCScript_be_subid2
 
 
 ; cloaked twinrova?
@@ -7560,7 +7560,7 @@ interactionCodec2:
 	ld a,$01
 	ld (de),a
 	call interactionInitGraphics
-	ld hl,mayorsHouseGirlScript
+	ld hl,mainScripts.mayorsHouseGirlScript
 	call interactionSetScript
 	jp interactionAnimateAsNpc
 @state1:
@@ -7591,7 +7591,7 @@ interactionCodec3:
 @substate1:
 	call returnIfScrollMode01Unset
 	call interactionIncState
-	ld hl,ZeldaBeingKidnappedScript
+	ld hl,mainScripts.ZeldaBeingKidnappedScript
 	call interactionSetScript
 @state1:
 	jp interactionRunScript

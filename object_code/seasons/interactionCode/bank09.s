@@ -1313,10 +1313,10 @@ interactionCode67:
 	ld (de),a
 	jp objectCreatePuff
 @table_571f:
-	.dw d8ArmosScript_pattern1
-	.dw d8ArmosScript_pattern2
-	.dw d8ArmosScript_pattern3
-	.dw d8ArmosScript_pattern4
+	.dw mainScripts.d8ArmosScript_pattern1
+	.dw mainScripts.d8ArmosScript_pattern2
+	.dw mainScripts.d8ArmosScript_pattern3
+	.dw mainScripts.d8ArmosScript_pattern4
 @table_5727:
 	.db $00 $01 $02 $03
 	.db $00 $01 $02 $03
@@ -1377,7 +1377,7 @@ interactionCode67:
 	call interactionIncState
 	ld a,$4d
 	call playSound
-	ld hl,d8ArmosScript_giveKey
+	ld hl,mainScripts.d8ArmosScript_giveKey
 	jp interactionSetScript
 @func_5792:
 	ld a,$5a
@@ -1950,7 +1950,7 @@ interactionCode6a:
 	.dw @@state5
 @@state0:
 	call @@func_5c21
-	ld hl,dancecLeaderScript_promptToStartDancing
+	ld hl,mainScripts.dancecLeaderScript_promptToStartDancing
 	jp interactionSetScript
 @@func_5c21:
 	ld a,$01
@@ -1981,7 +1981,7 @@ interactionCode6a:
 	ld ($cfda),a
 	ld a,$50
 	ld ($cfd3),a
-	ld hl,danceLeaderScript_promptForTutorial
+	ld hl,mainScripts.danceLeaderScript_promptForTutorial
 	jp interactionSetScript
 @@@substate2:
 	ld a,($c4ab)
@@ -2234,7 +2234,7 @@ interactionCode6a:
 	ld a,($c643)
 	and $20
 	jr nz,@@@func_5e56
-	ld hl,danceLeaderScript_giveFlute
+	ld hl,mainScripts.danceLeaderScript_giveFlute
 	jr @@@func_5e68
 @@@func_5e40:
 	callab scriptHlp.seasonsFunc_15_5e20
@@ -2242,18 +2242,18 @@ interactionCode6a:
 	jr nz,+
 	ld c,$00
 	call giveRingToLink
-	ld hl,_danceLeaderScript_itemGiven
+	ld hl,mainScripts.danceLeaderScript_itemGiven
 	jr @@@func_5e68
 @@@func_5e56:
 	call getRandomNumber
 	cp $60
-	ld hl,danceLeaderScript_giveOreChunks
+	ld hl,mainScripts.danceLeaderScript_giveOreChunks
 	jr nc,@@@func_5e68
 +
-	ld hl,danceLeaderScript_gashaSeed
+	ld hl,mainScripts.danceLeaderScript_gashaSeed
 	jr @@@func_5e68
 @@@func_5e25:
-	ld hl,danceLeaderScript_boomerang
+	ld hl,mainScripts.danceLeaderScript_boomerang
 @@@func_5e68:
 	call interactionSetScript
 	ld e,Interaction.substate
@@ -2411,7 +2411,7 @@ interactionCode6a:
 	ld l,$4b
 	ld a,(hl)
 	call setShortPosition
-	ld hl,danceLeaderScript_showLoadedText
+	ld hl,mainScripts.danceLeaderScript_showLoadedText
 	jp interactionSetScript
 @@table_5f72:
 	.db <TX_010b <TX_010c <TX_010d
@@ -2706,7 +2706,7 @@ _floodgateKeeper:
 	ld a,$01
 	ld (de),a
 	call interactionInitGraphics
-	ld hl,floodgateKeeperScript
+	ld hl,mainScripts.floodgateKeeperScript
 	call interactionSetScript
 	call objectSetVisible82
 	xor a
@@ -2734,7 +2734,7 @@ _floodgateKeeperSwitchScript:
 	call objectSetInvisible
 	xor a
 	ld (wSwitchState),a
-	ld hl,floodgateSwitchScript
+	ld hl,mainScripts.floodgateSwitchScript
 	jp interactionSetScript
 @state1:
 	call interactionAnimate
@@ -2756,7 +2756,7 @@ _floodgateKeyhole:
 	call getThisRoomFlags
 	bit 7,(hl)
 	jp nz,interactionDelete
-	ld hl,floodgateKeyholeScript_keyEntered
+	ld hl,mainScripts.floodgateKeyholeScript_keyEntered
 	jp interactionSetScript
 @state2:
 	ld a,$04
@@ -2801,7 +2801,7 @@ _d4KeyHole:
 	call objectSetReservedBit1
 	ld a,$01
 	ld (wScreenShakeMagnitude),a
-	ld hl,d4Keyhole_disableThingsAndScreenShake
+	ld hl,mainScripts.d4KeyholeScript_disableThingsAndScreenShake
 	jp interactionSetScript
 @state1:
 	ld a,(wActiveRoom)
@@ -2877,7 +2877,7 @@ _floodgateKey:
 	set 7,(hl)
 	ld a,$01
 	ld ($cc02),a
-	ld hl,floodgateKeyScript_keeperNoticesKey
+	ld hl,mainScripts.floodgateKeyScript_keeperNoticesKey
 	jp interactionSetScript
 
 _dragonKey:
@@ -2896,7 +2896,7 @@ _tarmArmosUnlockingStairs:
 	and $40
 	jp nz,interactionDelete
 	call interactionIncState
-	ld hl,tarmArmosUnlockingStairsScript
+	ld hl,mainScripts.tarmArmosUnlockingStairsScript
 	jp interactionSetScript
 @state1:
 	call objectGetTileAtPosition
@@ -3088,7 +3088,7 @@ _piratesBellRoomWhenFallingIn:
 	ld a,$01
 	ld ($cc02),a
 	call interactionIncState
-	ld hl,piratesBellRoomDroppingInScript
+	ld hl,mainScripts.piratesBellRoomDroppingInScript
 	jp interactionSetScript
 
 _greenJoyRing:
@@ -3156,7 +3156,7 @@ _masterDiverPuzzle:
 +
 	ld l,$44
 	ld (hl),$03
-	ld hl,masterDiverPuzzleScript_solved
+	ld hl,mainScripts.masterDiverPuzzleScript_solved
 	call interactionSetScript
 @state3:
 	call interactionRunScript
@@ -3572,7 +3572,7 @@ interactionCode6bSubid25:
 interactionCode6bSubid26:
 	call checkInteractionState
 	jp nz,interactionRunScript
-	ld hl,subrosianScript_templeFallenText
+	ld hl,mainScripts.subrosianScript_templeFallenText
 	call interactionSetScript
 	jp interactionIncState
 
@@ -3772,7 +3772,7 @@ _rosaSubId1:
 	jr z,+
 	jr @substate3
 +
-	ld hl,rosaHidingScript_caught
+	ld hl,mainScripts.rosaHidingScript_caught
 	call interactionSetScript
 	jp interactionRunScript
 @substate5:
@@ -3831,12 +3831,12 @@ _func_6919:
 	ld ($ccab),a
 	jp interactionDelete
 _table_6931:
-	.dw rosaHidingScript_1stScreen
-	.dw rosaHidingScript_2ndScreen
-	.dw rosaHidingScript_3rdScreen
-	.dw rosaHidingScript_4thScreen
-	.dw rosaHidingScript_portalScreen
-	.dw rosaHidingScript_caught
+	.dw mainScripts.rosaHidingScript_1stScreen
+	.dw mainScripts.rosaHidingScript_2ndScreen
+	.dw mainScripts.rosaHidingScript_3rdScreen
+	.dw mainScripts.rosaHidingScript_4thScreen
+	.dw mainScripts.rosaHidingScript_portalScreen
+	.dw mainScripts.rosaHidingScript_caught
 
 _strangeBrothersSubId0:
 	ld e,Interaction.state
@@ -4045,21 +4045,21 @@ _strangeBrothersSubId2:
 	.dw @table_6a96
 	.dw @table_6aa4
 @table_6a96:
-	.dw strangeBrother1Script_1stScreen
-	.dw strangeBrother1Script_2ndScreen
-	.dw strangeBrother1Script_3rdScreen
-	.dw strangeBrother1Script_4thScreen
-	.dw strangeBrother1Script_5thScreen
-	.dw strangeBrother1Script_6thScreen
-	.dw strangeBrother1Script_finishedScreen
+	.dw mainScripts.strangeBrother1Script_1stScreen
+	.dw mainScripts.strangeBrother1Script_2ndScreen
+	.dw mainScripts.strangeBrother1Script_3rdScreen
+	.dw mainScripts.strangeBrother1Script_4thScreen
+	.dw mainScripts.strangeBrother1Script_5thScreen
+	.dw mainScripts.strangeBrother1Script_6thScreen
+	.dw mainScripts.strangeBrother1Script_finishedScreen
 @table_6aa4:
-	.dw strangeBrother2Script_1stScreen
-	.dw strangeBrother2Script_2ndScreen
-	.dw strangeBrother2Script_3rdScreen
-	.dw strangeBrother2Script_4thScreen
-	.dw strangeBrother2Script_5thScreen
-	.dw strangeBrother2Script_6thScreen
-	.dw strangeBrother2Script_finishedScreen
+	.dw mainScripts.strangeBrother2Script_1stScreen
+	.dw mainScripts.strangeBrother2Script_2ndScreen
+	.dw mainScripts.strangeBrother2Script_3rdScreen
+	.dw mainScripts.strangeBrother2Script_4thScreen
+	.dw mainScripts.strangeBrother2Script_5thScreen
+	.dw mainScripts.strangeBrother2Script_6thScreen
+	.dw mainScripts.strangeBrother2Script_finishedScreen
 @state1:
 	ld a,($cca7)
 	or a
@@ -4213,7 +4213,7 @@ interactionCode6e:
 	call getThisRoomFlags
 	bit 6,(hl)
 	jp nz,interactionDelete
-	ld hl,stealingFeatherScript
+	ld hl,mainScripts.stealingFeatherScript
 	jp interactionSetScript
 @@state2:
 	ld e,Interaction.substate
@@ -4286,9 +4286,9 @@ interactionCode70:
 	ld (de),a
 	ld a,(wWarpDestPos)
 	cp $04
-	ld hl,hollyScript_enteredFromChimney
+	ld hl,mainScripts.hollyScript_enteredFromChimney
 	jr z,@setScript
-	ld hl,hollyScript_enteredNormally
+	ld hl,mainScripts.hollyScript_enteredNormally
 @setScript:
 	call interactionSetScript
 	call interactionInitGraphics
@@ -4375,7 +4375,7 @@ _companionScript_subid00:
 	ld a,(hl)
 	ld l,$3f
 	ld (hl),a
-	ld hl,companionScript_RickyLeavingYouInSpoolSwamp
+	ld hl,mainScripts.companionScript_RickyLeavingYouInSpoolSwamp
 	jp interactionSetScript
 
 ; Moosh being bullied in Spool
@@ -4409,7 +4409,7 @@ _companionScript_subid01:
 	ld a,$2c
 	ld e,$4d
 	ld (de),a
-	ld hl,companionScript_mooshInSpoolSwamp
+	ld hl,mainScripts.companionScript_mooshInSpoolSwamp
 	call interactionSetScript
 	ld a,(wMooshState)
 	bit 5,a
@@ -4453,7 +4453,7 @@ _companionScript_subid02:
 	ld (hl),a
 	ld l,$3f
 	ld (hl),$14
-	ld hl,companionScript_mooshEnteringSunkenCity
+	ld hl,mainScripts.companionScript_mooshEnteringSunkenCity
 	jp interactionSetScript
 @func_6d72:
 	ld hl,$d104
@@ -4494,7 +4494,7 @@ _companionScript_subid06:
 	rla
 	ld e,$78
 	ld (de),a
-	ld hl,companionScript_mooshInMtCucco
+	ld hl,mainScripts.companionScript_mooshInMtCucco
 	jp interactionSetScript
 @state1:
 	ld a,($d13d)
@@ -4575,7 +4575,7 @@ _companionScript_subid03:
 	ld a,$0b
 	ld (de),a
 	call interactionSetAlwaysUpdateBit
-	ld hl,companionScript_RickyInNorthHoron
+	ld hl,mainScripts.companionScript_RickyInNorthHoron
 	jp interactionSetScript
 @state2:
 	ld a,TREASURE_RICKY_GLOVES
@@ -4669,7 +4669,7 @@ _companionScript_subid04:
 	ld e,$79
 	ld a,$0c
 	ld (de),a
-	ld hl,companionScript_dimitriInSpoolSwamp
+	ld hl,mainScripts.companionScript_dimitriInSpoolSwamp
 	jp interactionSetScript
 
 ; Dimitri being bullied
@@ -4688,7 +4688,7 @@ _companionScript_subid05:
 	jr z,_companionScript_delete2
 	ld a,$01
 	ld (de),a
-	ld hl,companionScript_dimitriBeingBullied
+	ld hl,mainScripts.companionScript_dimitriBeingBullied
 	jp interactionSetScript
 
 ; Moblin rest house
@@ -5138,21 +5138,21 @@ interactionCode73:
 	ret
 @table_71cd:
 	; Dimitri
-	.dw moblinBulliesScript_dimitriBully1BeforeSaving
-	.dw moblinBulliesScript_dimitriBully2BeforeSaving
-	.dw moblinBulliesScript_dimitriBully3BeforeSaving
+	.dw mainScripts.moblinBulliesScript_dimitriBully1BeforeSaving
+	.dw mainScripts.moblinBulliesScript_dimitriBully2BeforeSaving
+	.dw mainScripts.moblinBulliesScript_dimitriBully3BeforeSaving
 @table_71d3:
 	; Dimitri
-	.dw moblinBulliesScript_dimitriBully1AfterSaving
-	.dw moblinBulliesScript_dimitriBully2AfterSaving
-	.dw moblinBulliesScript_dimitriBully3AfterSaving
+	.dw mainScripts.moblinBulliesScript_dimitriBully1AfterSaving
+	.dw mainScripts.moblinBulliesScript_dimitriBully2AfterSaving
+	.dw mainScripts.moblinBulliesScript_dimitriBully3AfterSaving
 @table_71d9:
-	.dw moblinBulliesScript_mooshBully1
-	.dw moblinBulliesScript_mooshBully2
-	.dw moblinBulliesScript_mooshBully3
-	.dw moblinBulliesScript_maskedMoblin1MovingUp
-	.dw moblinBulliesScript_maskedMoblin2MovingUp
-	.dw moblinBulliesScript_maskedMoblinMovingLeft
+	.dw mainScripts.moblinBulliesScript_mooshBully1
+	.dw mainScripts.moblinBulliesScript_mooshBully2
+	.dw mainScripts.moblinBulliesScript_mooshBully3
+	.dw mainScripts.moblinBulliesScript_maskedMoblin1MovingUp
+	.dw mainScripts.moblinBulliesScript_maskedMoblin2MovingUp
+	.dw mainScripts.moblinBulliesScript_maskedMoblinMovingLeft
 
 
 ; pirate ship parts?
@@ -5280,7 +5280,7 @@ interactionCode75:
 	ld a,(de)
 	or a
 	jr nz,@notSubdId0
-	ld hl,script6f48
+	ld hl,mainScripts.script6f48
 	call interactionSetScript
 	jp objectSetVisible82
 @notSubdId0:
@@ -5551,17 +5551,17 @@ _func_745b:
 	ld a,>TX_2100
 	jp interactionSetHighTextIndex
 _table_7477:
-	.dw sunkenCityBulliesScript1_bully1
-	.dw sunkenCityBulliesScript1_bully2
-	.dw sunkenCityBulliesScript1_bully3
+	.dw mainScripts.sunkenCityBulliesScript1_bully1
+	.dw mainScripts.sunkenCityBulliesScript1_bully2
+	.dw mainScripts.sunkenCityBulliesScript1_bully3
 _table_747d:
-	.dw sunkenCityBulliesScript2_bully1
-	.dw sunkenCityBulliesScript2_bully2
-	.dw sunkenCityBulliesScript2_bully3
+	.dw mainScripts.sunkenCityBulliesScript2_bully1
+	.dw mainScripts.sunkenCityBulliesScript2_bully2
+	.dw mainScripts.sunkenCityBulliesScript2_bully3
 _table_7483:
-	.dw sunkenCityBulliesScript3_bully1
-	.dw sunkenCityBulliesScript3_bully2
-	.dw sunkenCityBulliesScript3_bully3
+	.dw mainScripts.sunkenCityBulliesScript3_bully1
+	.dw mainScripts.sunkenCityBulliesScript3_bully2
+	.dw mainScripts.sunkenCityBulliesScript3_bully3
 _table_7489:
 	.db $38 $58
 	.db $38 $68
@@ -5951,17 +5951,17 @@ interactionCode80:
 	call interactionRunScript
 	jp interactionAnimateAsNpc
 @table_7717:
-	.dw fickleOldManScript_text1
-	.dw fickleOldManScript_text1
-	.dw fickleOldManScript_text2
-	.dw fickleOldManScript_text2
-	.dw fickleOldManScript_text3
-	.dw fickleOldManScript_text4
-	.dw fickleOldManScript_text4
-	.dw fickleOldManScript_text4
-	.dw fickleOldManScript_text5
-	.dw fickleOldManScript_text2
-	.dw fickleOldManScript_text6
+	.dw mainScripts.fickleOldManScript_text1
+	.dw mainScripts.fickleOldManScript_text1
+	.dw mainScripts.fickleOldManScript_text2
+	.dw mainScripts.fickleOldManScript_text2
+	.dw mainScripts.fickleOldManScript_text3
+	.dw mainScripts.fickleOldManScript_text4
+	.dw mainScripts.fickleOldManScript_text4
+	.dw mainScripts.fickleOldManScript_text4
+	.dw mainScripts.fickleOldManScript_text5
+	.dw mainScripts.fickleOldManScript_text2
+	.dw mainScripts.fickleOldManScript_text6
 
 
 ; ==============================================================================
@@ -6345,21 +6345,21 @@ _func_7973:
 	jp removeOreChunkValue
 	
 _table_7994:
-	.dw subrosianShopScript_ribbon
-	.dw subrosianShopScript_bombUpgrade
-	.dw subrosianShopScript_gashaSeed
-	.dw subrosianShopScript_gashaSeed
-	.dw subrosianShopScript_pieceOfHeart
-	.dw subrosianShopScript_ring1
-	.dw subrosianShopScript_ring2
-	.dw subrosianShopScript_ring3
-	.dw subrosianShopScript_ring4
-	.dw subrosianShopScript_emberSeeds
-	.dw subrosianShopScript_shield
-	.dw subrosianShopScript_pegasusSeeds
-	.dw subrosianShopScript_heartRefill
-	.dw subrosianShopScript_membersCard
-	.dw subrosianShopScript_oreChunks
+	.dw mainScripts.subrosianShopScript_ribbon
+	.dw mainScripts.subrosianShopScript_bombUpgrade
+	.dw mainScripts.subrosianShopScript_gashaSeed
+	.dw mainScripts.subrosianShopScript_gashaSeed
+	.dw mainScripts.subrosianShopScript_pieceOfHeart
+	.dw mainScripts.subrosianShopScript_ring1
+	.dw mainScripts.subrosianShopScript_ring2
+	.dw mainScripts.subrosianShopScript_ring3
+	.dw mainScripts.subrosianShopScript_ring4
+	.dw mainScripts.subrosianShopScript_emberSeeds
+	.dw mainScripts.subrosianShopScript_shield
+	.dw mainScripts.subrosianShopScript_pegasusSeeds
+	.dw mainScripts.subrosianShopScript_heartRefill
+	.dw mainScripts.subrosianShopScript_membersCard
+	.dw mainScripts.subrosianShopScript_oreChunks
 
 
 ; ==============================================================================
@@ -6947,7 +6947,7 @@ interactionCode87:
 	call interactionSetAlwaysUpdateBit
 	call makuTree_setAppropriateStage
 	call _makuTree_spawnGnarledKey
-	ld hl,script710b
+	ld hl,mainScripts.script710b
 	call interactionSetScript
 	ld a,($cc39)
 	or a
@@ -6969,7 +6969,7 @@ interactionCode87:
 	ld (de),a
 	call interactionInitGraphics
 	call objectSetVisible83
-	ld hl,script7255
+	ld hl,mainScripts.script7255
 	call interactionSetScript
 	jp interactionRunScript
 
@@ -6980,7 +6980,7 @@ interactionCode87:
 	call interactionInitGraphics
 	call objectSetVisible83
 	call interactionSetAlwaysUpdateBit
-	ld hl,script7261
+	ld hl,mainScripts.script7261
 	call interactionSetScript
 	jp interactionRunScript
 

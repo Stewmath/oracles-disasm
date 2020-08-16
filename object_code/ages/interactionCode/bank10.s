@@ -107,7 +107,7 @@ _interactiondc_subid01:
 	call getThisRoomFlags
 	and $80
 	jp nz,interactionDelete
-	ld hl,interactiondcSubid01Script
+	ld hl,mainScripts.interactiondcSubid01Script
 	call interactionSetScript
 	call interactionSetAlwaysUpdateBit
 	jp interactionIncState
@@ -1593,7 +1593,7 @@ interactionCodee3:
 	ld a,$01
 	ld (de),a
 	call interactionInitGraphics
-	ld hl,knowItAllBirdScript
+	ld hl,mainScripts.knowItAllBirdScript
 	call interactionSetScript
 
 	call getRandomNumber_noPreserveVars

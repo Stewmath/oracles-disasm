@@ -8740,14 +8740,14 @@ objectUnmarkSolidPosition:
 _interactionActuallyRunScript:
 	ldh a,(<hRomBank)
 	push af
-	ld a,:runScriptCommand
+	ld a,:mainScripts.runScriptCommand
 	setrombank
 --
 	ld a,(hl)
 	or a
 	jr z,++
 
-	call runScriptCommand
+	call mainScripts.runScriptCommand
 	jr c,--
 
 	pop af

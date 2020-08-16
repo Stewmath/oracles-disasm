@@ -119,7 +119,7 @@ _bomb_flower_subid1:
 	ld a,$01
 	ld (de),a
 
-	ld hl,bombflower_unblockAutumnTemple
+	ld hl,mainScripts.bombflower_unblockAutumnTemple
 	call interactionSetScript
 	call interactionInitGraphics
 	xor a
@@ -726,7 +726,7 @@ interactionCode7d:
 	call setShortPosition
 
 	call interactionInitGraphics
-	ld hl,spinnerScript_initialization
+	ld hl,mainScripts.spinnerScript_initialization
 	call interactionSetScript
 	call objectSetVisible82
 
@@ -756,7 +756,7 @@ interactionCode7d:
 	ld e,Interaction.state
 	ld a,$01
 	ld (de),a
-	ld hl,spinnerScript_waitForLink
+	ld hl,mainScripts.spinnerScript_waitForLink
 	jp interactionSetScript
 
 @beginTurning:
@@ -881,7 +881,7 @@ interactionCode7d:
 	; Go back to state 1
 	ld l,Interaction.state
 	ld (hl),$01
-	ld hl,spinnerScript_waitForLinkAfterDelay
+	ld hl,mainScripts.spinnerScript_waitForLinkAfterDelay
 	jp interactionSetScript
 
 
@@ -1606,7 +1606,7 @@ _interaction7f_subid00:
 	call retIfTextIsActive
 
 	call interactionIncState
-	ld hl,essenceScript_essenceGetCutscene
+	ld hl,mainScripts.essenceScript_essenceGetCutscene
 	jp interactionSetScript
 
 

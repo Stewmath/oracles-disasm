@@ -304,7 +304,7 @@ interactionCode10:
 	ld a,>TX_5500
 	call interactionSetHighTextIndex
 
-	ld hl,faroreScript
+	ld hl,mainScripts.faroreScript
 	call interactionSetScript
 
 	ld a,GLOBALFLAG_SECRET_CHEST_WAITING
@@ -434,7 +434,7 @@ interactionCode12:
 @@substate0:
 	ld a,$01
 	ld (de),a
-	ld hl,dropSmallKeyWhenNoEnemiesScript
+	ld hl,mainScripts.dropSmallKeyWhenNoEnemiesScript
 	call interactionSetScript
 
 @runScript:
@@ -455,7 +455,7 @@ interactionCode12:
 @@substate0:
 	ld a,$01
 	ld (de),a
-	ld hl,createChestWhenNoEnemiesScript
+	ld hl,mainScripts.createChestWhenNoEnemiesScript
 	call interactionSetScript
 	jr @runScript
 
@@ -473,7 +473,7 @@ interactionCode12:
 
 	ld a,$01
 	ld (de),a
-	ld hl,setRoomFlagBit7WhenNoEnemiesScript
+	ld hl,mainScripts.setRoomFlagBit7WhenNoEnemiesScript
 	call interactionSetScript
 	jr @runScript
 
@@ -1309,7 +1309,7 @@ interactionCode1c:
 	call interactionInitGraphics
 	call objectSetVisible83
 
-	ld hl,faroresMemoryScript
+	ld hl,mainScripts.faroresMemoryScript
 	call interactionSetScript
 
 	jp interactionIncState
@@ -1594,31 +1594,31 @@ interactionCode1e:
 
 
 @scriptSubidTable:
-	/* $00 */ .dw doorOpenerScript
-	/* $01 */ .dw stubScript
-	/* $02 */ .dw stubScript
-	/* $03 */ .dw stubScript
-	/* $04 */ .dw doorController_controlledByTriggers_up
-	/* $05 */ .dw doorController_controlledByTriggers_right
-	/* $06 */ .dw doorController_controlledByTriggers_down
-	/* $07 */ .dw doorController_controlledByTriggers_left
-	/* $08 */ .dw doorController_shutUntilEnemiesDead_up
-	/* $09 */ .dw doorController_shutUntilEnemiesDead_right
-	/* $0a */ .dw doorController_shutUntilEnemiesDead_down
-	/* $0b */ .dw doorController_shutUntilEnemiesDead_left
-	/* $0c */ .dw doorController_minecartDoor_up
-	/* $0d */ .dw doorController_minecartDoor_right
-	/* $0e */ .dw doorController_minecartDoor_down
-	/* $0f */ .dw doorController_minecartDoor_left
-	/* $10 */ .dw doorController_closeAfterLinkEnters_up
-	/* $11 */ .dw doorController_closeAfterLinkEnters_right
-	/* $12 */ .dw doorController_closeAfterLinkEnters_down
-	/* $13 */ .dw doorController_closeAfterLinkEnters_left
-	/* $14 */ .dw doorController_openWhenTorchesLit_up_2Torches
-	/* $15 */ .dw doorController_openWhenTorchesLit_left_2Torches
+	/* $00 */ .dw mainScripts.doorOpenerScript
+	/* $01 */ .dw mainScripts.stubScript
+	/* $02 */ .dw mainScripts.stubScript
+	/* $03 */ .dw mainScripts.stubScript
+	/* $04 */ .dw mainScripts.doorController_controlledByTriggers_up
+	/* $05 */ .dw mainScripts.doorController_controlledByTriggers_right
+	/* $06 */ .dw mainScripts.doorController_controlledByTriggers_down
+	/* $07 */ .dw mainScripts.doorController_controlledByTriggers_left
+	/* $08 */ .dw mainScripts.doorController_shutUntilEnemiesDead_up
+	/* $09 */ .dw mainScripts.doorController_shutUntilEnemiesDead_right
+	/* $0a */ .dw mainScripts.doorController_shutUntilEnemiesDead_down
+	/* $0b */ .dw mainScripts.doorController_shutUntilEnemiesDead_left
+	/* $0c */ .dw mainScripts.doorController_minecartDoor_up
+	/* $0d */ .dw mainScripts.doorController_minecartDoor_right
+	/* $0e */ .dw mainScripts.doorController_minecartDoor_down
+	/* $0f */ .dw mainScripts.doorController_minecartDoor_left
+	/* $10 */ .dw mainScripts.doorController_closeAfterLinkEnters_up
+	/* $11 */ .dw mainScripts.doorController_closeAfterLinkEnters_right
+	/* $12 */ .dw mainScripts.doorController_closeAfterLinkEnters_down
+	/* $13 */ .dw mainScripts.doorController_closeAfterLinkEnters_left
+	/* $14 */ .dw mainScripts.doorController_openWhenTorchesLit_up_2Torches
+	/* $15 */ .dw mainScripts.doorController_openWhenTorchesLit_left_2Torches
 .ifdef ROM_AGES
-	/* $16 */ .dw doorController_openWhenTorchesLit_down_1Torch
-	/* $17 */ .dw doorController_openWhenTorchesLit_left_1Torch
+	/* $16 */ .dw mainScripts.doorController_openWhenTorchesLit_down_1Torch
+	/* $17 */ .dw mainScripts.doorController_openWhenTorchesLit_left_1Torch
 .endif
 
 .ends

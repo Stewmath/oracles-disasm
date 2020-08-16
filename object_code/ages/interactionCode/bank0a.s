@@ -42,7 +42,7 @@ interactionCode68:
 	ret
 
 @@alreadyGaveShovel:
-	ld hl,rosa_subid00Script_alreadyGaveShovel
+	ld hl,mainScripts.rosa_subid00Script_alreadyGaveShovel
 	jp interactionSetScript
 
 @@state1:
@@ -114,11 +114,11 @@ interactionCode68:
 	ret
 
 @scriptTable:
-	.dw rosa_subid00Script
+	.dw mainScripts.rosa_subid00Script
 	.dw @scriptTable2
 
 @scriptTable2:
-	.dw rosa_subid01Script
+	.dw mainScripts.rosa_subid01Script
 
 
 ; ==============================================================================
@@ -225,8 +225,8 @@ interactionCode69:
 	jp interactionSetScript
 
 @scriptTable:
-	.dw rafton_subid00Script
-	.dw rafton_subid01Script
+	.dw mainScripts.rafton_subid00Script
+	.dw mainScripts.rafton_subid01Script
 
 
 ; ==============================================================================
@@ -273,7 +273,7 @@ interactionCode6a:
 	jp interactionSetScript
 
 @scriptTable:
-	.dw cheval_subid00Script
+	.dw mainScripts.cheval_subid00Script
 
 
 ; ==============================================================================
@@ -862,7 +862,7 @@ _interaction6b_subid0f:
 	call getThisRoomFlags
 	set 6,(hl)
 	call interactionIncState
-	ld hl,interaction6b_bridgeToNuunSimpleScript
+	ld hl,mainScripts.interaction6b_bridgeToNuunSimpleScript
 	jp interactionSetSimpleScript
 
 @state2:
@@ -1099,23 +1099,23 @@ _interaction6b_checkLinkPressedUpAtScreenEdge:
 	ret
 
 _interaction6b_scriptTable:
-	.dw interaction6b_stubScript
-	.dw interaction6b_stubScript
-	.dw interaction6b_subid02Script
-	.dw interaction6b_stubScript
-	.dw interaction6b_subid04Script
-	.dw interaction6b_subid05Script
-	.dw interaction6b_stubScript
-	.dw interaction6b_stubScript
-	.dw interaction6b_stubScript
-	.dw interaction6b_stubScript
-	.dw interaction6b_subid0aScript
-	.dw interaction6b_subid0aScript
-	.dw interaction6b_subid0aScript
-	.dw interaction6b_stubScript
-	.dw interaction6b_stubScript
-	.dw interaction6b_stubScript
-	.dw interaction6b_subid10Script
+	.dw mainScripts.interaction6b_stubScript
+	.dw mainScripts.interaction6b_stubScript
+	.dw mainScripts.interaction6b_subid02Script
+	.dw mainScripts.interaction6b_stubScript
+	.dw mainScripts.interaction6b_subid04Script
+	.dw mainScripts.interaction6b_subid05Script
+	.dw mainScripts.interaction6b_stubScript
+	.dw mainScripts.interaction6b_stubScript
+	.dw mainScripts.interaction6b_stubScript
+	.dw mainScripts.interaction6b_stubScript
+	.dw mainScripts.interaction6b_subid0aScript
+	.dw mainScripts.interaction6b_subid0aScript
+	.dw mainScripts.interaction6b_subid0aScript
+	.dw mainScripts.interaction6b_stubScript
+	.dw mainScripts.interaction6b_stubScript
+	.dw mainScripts.interaction6b_stubScript
+	.dw mainScripts.interaction6b_subid10Script
 
 
 ; ==============================================================================
@@ -1179,7 +1179,7 @@ _fairyHidingMinigame_subid00:
 	ld (w1Link.direction),a
 	ld a,$01
 	ld (wTmpcfc0.fairyHideAndSeek.active),a
-	ld hl,fairyHidingMinigame_subid00Script
+	ld hl,mainScripts.fairyHidingMinigame_subid00Script
 	jp interactionSetScript
 
 @state2:
@@ -1264,7 +1264,7 @@ _fairyHidingMinigame_subid01:
 	ld (hl),a
 	call objectCreatePuff
 	call interactionIncState
-	ld hl,fairyHidingMinigame_subid01Script
+	ld hl,mainScripts.fairyHidingMinigame_subid01Script
 	jp interactionSetScript
 
 @state3:
@@ -1319,7 +1319,7 @@ _fairyHidingMinigame_subid02:
 	call _fairyHidingMinigame_checkMinigameActive
 	jp nc,interactionDelete
 	call interactionIncState
-	ld hl,fairyHidingMinigame_subid02Script
+	ld hl,mainScripts.fairyHidingMinigame_subid02Script
 	jp interactionSetScript
 
 ;;
@@ -1433,7 +1433,7 @@ _possessedNayru_subid00:
 	ld (wMenuDisabled),a
 	call interactionIncState
 	call objectSetVisible82
-	ld hl,possessedNayru_beginFightScript
+	ld hl,mainScripts.possessedNayru_beginFightScript
 	jp interactionSetScript
 
 @state1:
@@ -1488,7 +1488,7 @@ _possessedNayru_ghost:
 	ld l,Interaction.speed
 	ld (hl),SPEED_80
 	call objectSetVisible81
-	ld hl,possessedNayru_veranGhostScript
+	ld hl,mainScripts.possessedNayru_veranGhostScript
 	jp interactionSetScript
 
 @state2:
@@ -1559,7 +1559,7 @@ _interaction6e_subid00:
 	ld a,$0a
 	call interactionSetAnimation
 	call objectSetVisible82
-	ld hl,interaction6e_subid00Script
+	ld hl,mainScripts.interaction6e_subid00Script
 	jp interactionSetScript
 
 @state1:
@@ -1600,7 +1600,7 @@ _interaction6e_subid01:
 	ldi (hl),a
 	ld (hl),a
 	call objectSetVisiblec2
-	ld hl,interaction6e_subid01Script_part1
+	ld hl,mainScripts.interaction6e_subid01Script_part1
 	jp interactionSetScript
 
 @state1:
@@ -1672,7 +1672,7 @@ _interaction6e_subid01:
 	ld a,$06
 	ldd (hl),a
 	ld (hl),a
-	ld hl,interaction6e_subid01Script_part2
+	ld hl,mainScripts.interaction6e_subid01Script_part2
 	call interactionSetScript
 
 	ld a,SND_LIGHTNING
@@ -1833,7 +1833,7 @@ _interaction6e_initRalph:
 	ld l,Interaction.speed
 	ld (hl),SPEED_200
 	call objectSetVisible82
-	ld hl,interaction6e_subid03Script
+	ld hl,mainScripts.interaction6e_subid03Script
 	jp interactionSetScript
 
 
@@ -1865,12 +1865,12 @@ _interaction6e_subid04:
 	jp interactionSetScript
 
 @scriptTable:
-	.dw interaction6e_guard0Script
-	.dw interaction6e_guard1Script
-	.dw interaction6e_guard2Script
-	.dw interaction6e_guard3Script
-	.dw interaction6e_guard4Script
-	.dw interaction6e_guard5Script
+	.dw mainScripts.interaction6e_guard0Script
+	.dw mainScripts.interaction6e_guard1Script
+	.dw mainScripts.interaction6e_guard2Script
+	.dw mainScripts.interaction6e_guard3Script
+	.dw mainScripts.interaction6e_guard4Script
+	.dw mainScripts.interaction6e_guard5Script
 
 
 ; ==============================================================================
@@ -2264,7 +2264,7 @@ _companionScript_subid00:
 	ld a,$01
 	ld (wDisableScreenTransitions),a
 	ld (wDiggingUpEnemiesForbidden),a
-	ld hl,companionScript_subid00Script
+	ld hl,mainScripts.companionScript_subid00Script
 	jp interactionSetScript
 
 
@@ -2464,7 +2464,7 @@ _companionScript_subid03:
 	ld a,(hl)
 	and $20
 	jr nz,_companionScript_deleteSelf
-	ld hl,companionScript_subid03Script
+	ld hl,mainScripts.companionScript_subid03Script
 	jp interactionSetScript
 
 
@@ -2482,7 +2482,7 @@ _companionScript_subid07:
 	jr nz,_companionScript_deleteSelf
 	ld a,$01
 	ld (de),a
-	ld hl,companionScript_subid07Script
+	ld hl,mainScripts.companionScript_subid07Script
 	jp interactionSetScript
 
 
@@ -2520,7 +2520,7 @@ _companionScript_subid06:
 	inc l
 	ld (hl),$0a
 
-	ld hl,companionScript_subid06Script
+	ld hl,mainScripts.companionScript_subid06Script
 	jp interactionSetScript
 
 _companionScript_deleteSelf:
@@ -2584,7 +2584,7 @@ _companionScript_subid08:
 	call objectCreateInteraction
 	ld l,Interaction.var03
 	ld (hl),$0f
-	ld hl,companionScript_subid08Script
+	ld hl,mainScripts.companionScript_subid08Script
 	call interactionSetScript
 	jp interactionIncState
 
@@ -2639,7 +2639,7 @@ _companionScript_subid09:
 +
 	ldi a,(hl)
 	ld (wTextSubstitutions+1),a
-	ld hl,companionScript_subid09Script
+	ld hl,mainScripts.companionScript_subid09Script
 	jp interactionSetScript
 
 
@@ -2718,7 +2718,7 @@ _companionScript_subid0a:
 	dec c
 	jr nz,@nextFairy
 
-	ld hl,companionScript_subid0aScript
+	ld hl,mainScripts.companionScript_subid0aScript
 	jp interactionSetScript
 
 
@@ -2763,7 +2763,7 @@ _companionScript_subid0b:
 	xor a
 	ld (wTmpcfc0.fairyHideAndSeek.cfd2),a
 
-	ld hl,companionScript_subid0bScript
+	ld hl,mainScripts.companionScript_subid0bScript
 	call interactionSetScript
 	jp interactionIncState
 
@@ -2953,7 +2953,7 @@ interactionCode72:
 
 	ld a,$02
 	call fadeinFromWhiteWithDelay
-	ld hl,kingMoblinDefeated_kingScript
+	ld hl,mainScripts.kingMoblinDefeated_kingScript
 
 @setScriptAndInitStuff:
 	call interactionSetScript
@@ -2992,7 +2992,7 @@ interactionCode72:
 	jp interactionDelete
 
 @subid1State0:
-	ld hl,kingMoblinDefeated_helperMoblinScript
+	ld hl,mainScripts.kingMoblinDefeated_helperMoblinScript
 	jr @setScriptAndInitStuff
 
 
@@ -3060,10 +3060,10 @@ interactionCode72:
 	ret
 
 @scriptTable:
-	.dw kingMoblinDefeated_goron0
-	.dw kingMoblinDefeated_goron1
-	.dw kingMoblinDefeated_goron2
-	.dw kingMoblinDefeated_goron3
+	.dw mainScripts.kingMoblinDefeated_goron0
+	.dw mainScripts.kingMoblinDefeated_goron1
+	.dw mainScripts.kingMoblinDefeated_goron2
+	.dw mainScripts.kingMoblinDefeated_goron3
 
 ; b0: Y
 ; b1: X
@@ -3162,9 +3162,9 @@ interactionCode73:
 	jp interactionDelete
 
 @scriptTable:
-	.dw ghiniHarassingMoosh_subid00Script
-	.dw ghiniHarassingMoosh_subid01Script
-	.dw ghiniHarassingMoosh_subid02Script
+	.dw mainScripts.ghiniHarassingMoosh_subid00Script
+	.dw mainScripts.ghiniHarassingMoosh_subid01Script
+	.dw mainScripts.ghiniHarassingMoosh_subid02Script
 
 
 ; ==============================================================================
@@ -3929,7 +3929,7 @@ interactionCode81:
 	call @checkTransformItem
 	jp nz,interactionDelete
 
-	ld hl,tokayShopItemScript
+	ld hl,mainScripts.tokayShopItemScript
 	call interactionSetScript
 	ld e,Interaction.pressedAButton
 	call objectAddToAButtonSensitiveObjectList
@@ -4292,7 +4292,7 @@ _bombUpgradeFairy_subid00:
 	call objectCreateInteraction
 
 	call objectSetVisible81
-	ld hl,bombUpgradeFairyScript
+	ld hl,mainScripts.bombUpgradeFairyScript
 	call interactionSetScript
 
 	ld b,$00
@@ -4820,14 +4820,14 @@ interactionCode87:
 	call @setVisibleAndSpawnFlower
 
 	ld b,$00
-	ld hl,makuTree_subid06Script_part1
+	ld hl,mainScripts.makuTree_subid06Script_part1
 	ld a,GLOBALFLAG_GOT_MAKU_SEED
 	push hl
 	call checkGlobalFlag
 	pop hl
 	jr z,+
 	ld b,$04
-	ld hl,makuTree_subid06Script_part2
+	ld hl,mainScripts.makuTree_subid06Script_part2
 +
 	call interactionSetScript
 	ld a,>TX_0500
@@ -4999,13 +4999,13 @@ interactionCode87:
 	jp objectCopyPosition
 
 @scriptTable:
-	.dw makuTree_subid00Script
-	.dw makuTree_subid01Script
-	.dw makuTree_subid02Script
-	.dw makuTree_subid03Script
-	.dw makuTree_subid04Script
-	.dw makuTree_subid05Script
-	.dw makuTree_subid06Script_part3
+	.dw mainScripts.makuTree_subid00Script
+	.dw mainScripts.makuTree_subid01Script
+	.dw mainScripts.makuTree_subid02Script
+	.dw mainScripts.makuTree_subid03Script
+	.dw mainScripts.makuTree_subid04Script
+	.dw mainScripts.makuTree_subid05Script
+	.dw mainScripts.makuTree_subid06Script_part3
 
 
 ; ==============================================================================
@@ -5197,9 +5197,9 @@ interactionCode88:
 	jp interactionIncState
 
 @scriptTable:
-	.dw makuSprout_subid00Script
-	.dw makuSprout_subid01Script
-	.dw stubScript
+	.dw mainScripts.makuSprout_subid00Script
+	.dw mainScripts.makuSprout_subid01Script
+	.dw mainScripts.stubScript
 
 
 ; ==============================================================================
@@ -5381,8 +5381,8 @@ interactionCode8a:
 	jp interactionIncState
 
 @scriptTable:
-	.dw remoteMakuCutsceneScript
-	.dw remoteMakuCutsceneScript
+	.dw mainScripts.remoteMakuCutsceneScript
+	.dw mainScripts.remoteMakuCutsceneScript
 
 
 ; ==============================================================================
@@ -5438,8 +5438,8 @@ interactionCode8b:
 	jp interactionIncState
 
 @scriptTable:
-	.dw goronElderScript_subid00
-	.dw goronElderScript_subid01
+	.dw mainScripts.goronElderScript_subid00
+	.dw mainScripts.goronElderScript_subid01
 
 
 ; ==============================================================================
@@ -5687,9 +5687,9 @@ interactionCode8d:
 	jp interactionSetScript
 
 @scriptTable:
-	.dw cloakedTwinrova_subid00Script
-	.dw stubScript
-	.dw cloakedTwinrova_subid02Script
+	.dw mainScripts.cloakedTwinrova_subid00Script
+	.dw mainScripts.stubScript
+	.dw mainScripts.cloakedTwinrova_subid02Script
 
 
 ; ==============================================================================
@@ -6647,7 +6647,7 @@ _miscPuzzles_subid11:
 	push de
 	call reloadTileMap
 	pop de
-	ld hl,miscPuzzles_crownDungeonOpeningScript
+	ld hl,mainScripts.miscPuzzles_crownDungeonOpeningScript
 
 ;;
 _miscPuzzles_setScriptAndIncState:
@@ -6665,7 +6665,7 @@ _miscPuzzles_subid12:
 	call getThisRoomFlags
 	and ROOMFLAG_80
 	jp nz,interactionDelete
-	ld hl,miscPuzzles_mermaidsCaveDungeonOpeningScript
+	ld hl,mainScripts.miscPuzzles_mermaidsCaveDungeonOpeningScript
 	jr _miscPuzzles_setScriptAndIncState
 
 
@@ -6678,7 +6678,7 @@ _miscPuzzles_subid13:
 	call getThisRoomFlags
 	and ROOMFLAG_80
 	jp nz,interactionDelete
-	ld hl,miscPuzzles_eyeglassLibraryOpeningScript
+	ld hl,mainScripts.miscPuzzles_eyeglassLibraryOpeningScript
 	jr _miscPuzzles_setScriptAndIncState
 
 
@@ -7899,13 +7899,13 @@ _twinrova_loadScript:
 	jp interactionSetScript
 
 @scriptTable:
-	.dw twinrova_subid00Script
-	.dw stubScript
-	.dw twinrova_subid02Script
-	.dw stubScript
-	.dw twinrova_subid04Script
-	.dw stubScript
-	.dw twinrova_subid06Script
+	.dw mainScripts.twinrova_subid00Script
+	.dw mainScripts.stubScript
+	.dw mainScripts.twinrova_subid02Script
+	.dw mainScripts.stubScript
+	.dw mainScripts.twinrova_subid04Script
+	.dw mainScripts.stubScript
+	.dw mainScripts.twinrova_subid06Script
 
 ;;
 ; Gets a position stored in $cfd5/$cfd6?
@@ -7980,7 +7980,7 @@ _patch_subid00:
 	call objectSetVisiblec2
 	ld a,GLOBALFLAG_PATCH_REPAIRED_EVERYTHING
 	call checkGlobalFlag
-	ld hl,patch_upstairsRepairedEverythingScript
+	ld hl,mainScripts.patch_upstairsRepairedEverythingScript
 	jr nz,@setScript
 
 	ld a,<TX_5813
@@ -7998,7 +7998,7 @@ _patch_subid00:
 	call checkTreasureObtained
 	and $01
 	ld (wTmpcfc0.patchMinigame.swordLevel),a
-	ld hl,patch_upstairsRepairSwordScript
+	ld hl,mainScripts.patch_upstairsRepairSwordScript
 	jr @setScript
 
 @notRepairingSword:
@@ -8010,7 +8010,7 @@ _patch_subid00:
 	; Set var38 to 1 if Link doesn't have the broken tuni nut
 	ld a,TREASURE_TUNI_NUT
 	call checkTreasureObtained
-	ld hl,patch_upstairsRepairTuniNutScript
+	ld hl,mainScripts.patch_upstairsRepairTuniNutScript
 	jr nc,++
 	or a
 	jr z,@setScript
@@ -8031,7 +8031,7 @@ _patch_subid00:
 	; Done the script; now load another script to move downstairs
 
 	call interactionIncState
-	ld hl,patch_upstairsMoveToStaircaseScript
+	ld hl,mainScripts.patch_upstairsMoveToStaircaseScript
 	jp interactionSetScript
 
 
@@ -8081,7 +8081,7 @@ _patch_subid01:
 	ld (hl),a  ; [wTmpcfc0.patchMinigame.screenFadedOut]
 	inc a
 	ld (wDiggingUpEnemiesForbidden),a
-	ld hl,patch_downstairsScript
+	ld hl,mainScripts.patch_downstairsScript
 	jp interactionSetScript
 
 ; Waiting for Link to talk to Patch to start the minigame
@@ -8128,7 +8128,7 @@ _patch_subid01:
 	call interactionIncState
 	ld l,Interaction.var39
 	ld (hl),$00
-	ld hl,patch_duringMinigameScript
+	ld hl,mainScripts.patch_duringMinigameScript
 	call interactionSetScript
 
 ; The minigame is running; wait for all enemies to be killed?
@@ -8181,7 +8181,7 @@ _patch_subid01:
 	ld (hl),d
 
 	call interactionIncState
-	ld hl,patch_linkWonMinigameScript
+	ld hl,mainScripts.patch_linkWonMinigameScript
 	call interactionSetScript
 	ld a,SND_SOLVEPUZZLE_2
 	call playSound
@@ -8216,7 +8216,7 @@ _patch_subid01:
 	ld e,Interaction.state
 	ld a,$04
 	ld (de),a
-	ld hl,patch_downstairsAfterBeatingMinigameScript
+	ld hl,mainScripts.patch_downstairsAfterBeatingMinigameScript
 	jp interactionSetScript
 
 ; NPC after winning the game
@@ -8265,7 +8265,7 @@ _patch_subid01:
 	ld a,(wActiveMusic2)
 	ld (wActiveMusic),a
 	call playSound
-	ld hl,patch_linkFailedMinigameScript
+	ld hl,mainScripts.patch_linkFailedMinigameScript
 	jp interactionSetScript
 
 @state6:
@@ -8779,8 +8779,8 @@ interactionCode96:
 	jp interactionIncState
 
 @scriptTable:
-	.dw moblin_subid00Script
-	.dw moblin_subid01Script
+	.dw mainScripts.moblin_subid00Script
+	.dw mainScripts.moblin_subid01Script
 
 
 ; ==============================================================================
