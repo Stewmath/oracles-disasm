@@ -210,8 +210,8 @@
 .BANK $0a SLOT 1
 .ORG 0
 
-	.include "object_code/common/interactionCode/group5.s"
-        .include "object_code/common/interactionCode/group6.s"
+	.include "object_code/common/interactionCode/group4.s"
+        .include "object_code/common/interactionCode/group5.s"
 	.include "object_code/seasons/interactionCode/bank0a.s"
 
 
@@ -281,7 +281,7 @@
 	.ENDR
 .endif
 
-	.include "object_code/common/interactionCode/group7.s"
+	.include "object_code/common/interactionCode/group6.s"
 	.include "object_code/seasons/interactionCode/bank0f.s"
 
 .BANK $10 SLOT 1
@@ -348,7 +348,7 @@
 	.include "code/serialFunctions.s"
 
 	.include "scripts/common/scriptHelper.s"
-	.include "object_code/common/interactionCode/group4.s"
+	.include "object_code/common/interactionCode/group7.s"
 	.include "object_code/common/interactionCode/group8.s"
 
 

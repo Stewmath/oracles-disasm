@@ -237,7 +237,7 @@ specialObjectLoadAnimationFrameToBuffer:
 
 
 	.include "object_code/common/interactionCode/group3.s"
-        .include "object_code/common/interactionCode/group5.s"
+        .include "object_code/common/interactionCode/group4.s"
 	.include "object_code/ages/interactionCode/bank0a.s"
 
 
@@ -245,9 +245,9 @@ specialObjectLoadAnimationFrameToBuffer:
 .ORG 0
 
 
-	.include "object_code/common/interactionCode/group6.s"
+	.include "object_code/common/interactionCode/group5.s"
+        .include "object_code/common/interactionCode/group6.s"
         .include "object_code/common/interactionCode/group7.s"
-        .include "object_code/common/interactionCode/group4.s"
 	.include "object_code/ages/interactionCode/bank0b.s"
 
 	.include "code/ages/garbage/bank0bEnd.s"
