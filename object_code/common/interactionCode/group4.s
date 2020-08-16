@@ -1,4 +1,4 @@
- m_section_superfree Interaction_Code_Group4 NAMESPACE commonInteractions4
+ m_section_superfree Interaction_Code_Group4 NAMESPACE commonInteractions7
 
 ; ==============================================================================
 ; INTERACID_FARORE_GIVEITEM

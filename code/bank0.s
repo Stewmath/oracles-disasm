@@ -9545,10 +9545,10 @@ objectCreateExclamationMark:
 	ldh (<hFF8B),a
 	ldh a,(<hRomBank)
 	push af
-	ld a,:commonInteractions6.objectCreateExclamationMark_body
+	ld a,:commonInteractions5.objectCreateExclamationMark_body
 	setrombank
 	ldh a,(<hFF8B)
-	call commonInteractions6.objectCreateExclamationMark_body
+	call commonInteractions5.objectCreateExclamationMark_body
 	pop af
 	setrombank
 	ret
@@ -9575,7 +9575,7 @@ objectCreateFloatingMusicNote:
 	ldh (<hFF8D),a
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 commonInteractions6.objectCreateFloatingImage
+	callfrombank0 commonInteractions5.objectCreateFloatingImage
 	pop af
 	setrombank
 	ret
