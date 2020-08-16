@@ -2042,7 +2042,7 @@ func_701d:
 	call _cutscene_tickDownCBB4ThenSetTo30
 	ret nz
 	ld (hl),$19
-	callab generateW3VramTilesAndAttributes
+	callab tilesets.generateW3VramTilesAndAttributes
 	ld bc,$260c
 	call _func_70f7
 	xor a
@@ -2092,7 +2092,7 @@ _wallRetraction_dungeon8:
 	call _cutscene_tickDownCBB4ThenSetTo30
 	ret nz
 	ld (hl),$19
-	callab generateW3VramTilesAndAttributes
+	callab tilesets.generateW3VramTilesAndAttributes
 	ld bc,$4d04
 	call _func_70f7
 	xor a
@@ -2416,7 +2416,7 @@ func_03_7244:
 	ld a,(wcddf)
 	or a
 	jr nz,+
-	callab func_04_6f07
+	callab tilesets.func_04_6f07
 +
 	ld a,$03
 	ld ($ff00+R_SVBK),a
@@ -2481,7 +2481,7 @@ func_03_7244:
 	ld a,(wcddf)
 	or a
 	jr nz,+
-	callab func_04_6e9b
+	callab tilesets.func_04_6e9b
 +
 	ld a,(wActiveRoom)
 	ld b,a

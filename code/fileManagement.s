@@ -58,7 +58,7 @@ _initializeFile:
 ++
 	callab commonInteractions6.initializeChildOnGameStart
 .ifdef ROM_AGES
-	callab initializeVinePositions
+	callab roomTileChanges.initializeVinePositions
 .endif
 
 ;;

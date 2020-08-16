@@ -4128,8 +4128,8 @@ func_131f:
 	or a
 	jr z,+
 
-	callab func_04_6ed1
-	callab func_04_6f31
+	callab tilesets.func_04_6ed1
+	callab tilesets.func_04_6f31
 	ld a,UNCMP_GFXH_30
 	call loadUncompressedGfxHeader
 	jr ++
@@ -10806,7 +10806,7 @@ intro_cinematic:
 	callfrombank0 bank3Cutscenes.runIntroCinematic
 	callfrombank0 bank5.updateSpecialObjects
 	call          loadLinkAndCompanionAnimationFrame
-	callfrombank0 updateAnimations
+	callfrombank0 animationAndUniqueGfxData.updateAnimations
 	call          updateInteractionsAndDrawAllSprites
 
 	pop af
@@ -11995,7 +11995,7 @@ mainThreadStart:
 updateAnimationsAfterCutscene:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 updateAnimations
+	callfrombank0 animationAndUniqueGfxData.updateAnimations
 	pop af
 	setrombank
 	ret
@@ -12008,11 +12008,11 @@ updateAnimationsAfterCutscene:
 loadScreenMusic:
 	ldh a,(<hRomBank)
 	push af
-	ld a,:musicAssignmentGroupTable
+	ld a,:bank4Data1.musicAssignmentGroupTable
 	setrombank
 
 	ld a,(wActiveGroup)
-	ld hl,musicAssignmentGroupTable
+	ld hl,bank4Data1.musicAssignmentGroupTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -12030,7 +12030,7 @@ loadScreenMusic:
 	ld b,a
 	ld a,(wActiveRoom)
 	ld c,a
-	ld hl,roomPackData
+	ld hl,bank4Data1.roomPackData
 	add hl,bc
 	ldi a,(hl)
 	ld (wLoadingRoomPack),a
@@ -12046,7 +12046,7 @@ loadScreenMusic:
 	jr nz,++
 
 	ld a,(wActiveRoom)
-	ld hl,roomPackData
+	ld hl,bank4Data1.roomPackData
 	rst $10
 	ldi a,(hl)
 	ld (wLoadingRoomPack),a
@@ -12198,8 +12198,8 @@ updateAllObjects:
 	callfrombank0 itemCode.updateItemsPost
 	callfrombank0 bank1.checkUpdateFollowingLinkObject
 	callfrombank0 updateCamera
-	callfrombank0 updateChangedTileQueue
-	callfrombank0 updateAnimations
+	callfrombank0 tilesets.updateChangedTileQueue
+	callfrombank0 animationAndUniqueGfxData.updateAnimations
 
 	xor a
 	ld (wc4b6),a
@@ -12250,7 +12250,7 @@ func_3539:
 	callfrombank0 updateInteractions
 .endif
 	callfrombank0 loadLinkAndCompanionAnimationFrame
-	callfrombank0 updateAnimations
+	callfrombank0 animationAndUniqueGfxData.updateAnimations
 	xor a
 	ld (wc4b6),a
 	pop af
@@ -12279,7 +12279,7 @@ seasonsFunc_34a0:
 	call loadLinkAndCompanionAnimationFrame
 	callfrombank0 itemCode.updateItemsPost
 	callfrombank0 seasonsFunc_0f_7182
-	callfrombank0 updateChangedTileQueue
+	callfrombank0 tilesets.updateChangedTileQueue
 
 	xor a
 	ld (wc4b6),a
@@ -12513,10 +12513,10 @@ loadAnimationData:
 	ld b,a
 	ldh a,(<hRomBank)
 	push af
-	ld a,:animationGroupTable
+	ld a,:animationAndUniqueGfxData.animationGroupTable
 	setrombank
 	ld a,b
-	ld hl,animationGroupTable
+	ld hl,animationAndUniqueGfxData.animationGroupTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -12682,7 +12682,7 @@ loadTilesetLayout:
 	ret
 
 .else ; ROM_AGES
-	jpab setPastCliffPalettesToRed
+	jpab tilesets.setPastCliffPalettesToRed
 .endif
 
 ;;
@@ -12750,10 +12750,10 @@ loadUniqueGfxHeader:
 	ld b,a
 	ldh a,(<hRomBank)
 	push af
-	ld a,:uniqueGfxHeaderTable
+	ld a,:animationAndUniqueGfxData.uniqueGfxHeaderTable
 	setrombank
 	ld a,b
-	ld hl,uniqueGfxHeaderTable
+	ld hl,animationAndUniqueGfxData.uniqueGfxHeaderTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld (wUniqueGfxHeaderAddress),a
@@ -12776,7 +12776,7 @@ loadTilesetGraphics:
 	call loadPaletteHeader
 
 	call          loadTilesetUniqueGfx
-	callfrombank0 initializeAnimations
+	callfrombank0 animationAndUniqueGfxData.initializeAnimations
 
 .ifdef ROM_AGES
 	callab        roomGfxChanges.func_02_7a77
@@ -12819,7 +12819,7 @@ updateTilesetUniqueGfx:
 	ldi a,(hl)
 	ld h,(hl)
 	ld l,a
-	ld a,:uniqueGfxHeadersStart
+	ld a,:animationAndUniqueGfxData.uniqueGfxHeadersStart
 	setrombank
 	call loadUniqueGfxHeaderEntry
 	ld c,a
@@ -12845,10 +12845,10 @@ uniqueGfxFunc_380b:
 	ldh a,(<hRomBank)
 	push af
 
-	ld a,:uniqueGfxHeadersStart
+	ld a,:animationAndUniqueGfxData.uniqueGfxHeadersStart
 	setrombank
 	ld a,b
-	ld hl,uniqueGfxHeaderTable
+	ld hl,animationAndUniqueGfxData.uniqueGfxHeaderTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -12861,13 +12861,13 @@ uniqueGfxFunc_380b:
 
 ;;
 loadTilesetUniqueGfx:
-	ld a,:uniqueGfxHeaderTable
+	ld a,:animationAndUniqueGfxData.uniqueGfxHeaderTable
 	setrombank
 	ld a,(wTilesetUniqueGfx)
 	and $7f
 	ret z
 
-	ld hl,uniqueGfxHeaderTable
+	ld hl,animationAndUniqueGfxData.uniqueGfxHeaderTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -12921,7 +12921,7 @@ loadUniqueGfxHeaderEntry:
 	pop hl
 	ld a,$00
 	ld ($ff00+R_SVBK),a
-	ld a,:uniqueGfxHeaderTable
+	ld a,:animationAndUniqueGfxData.uniqueGfxHeaderTable
 	setrombank
 	ldi a,(hl)
 	ret
@@ -12940,7 +12940,7 @@ loadTilesetData:
 	ldh a,(<hRomBank)
 	push af
 
-	callfrombank0 loadTilesetData_body
+	callfrombank0 tilesets.loadTilesetData_body
 	callab        bank2.updateTilesetFlagsForIndoorRoomInAltWorld
 
 	pop af
@@ -12966,7 +12966,7 @@ loadTilesetAndRoomLayout:
 	; Load the room layout and apply any dynamic changes necessary
 	call          loadRoomLayout
 
-	callfrombank0 applyAllTileSubstitutions
+	callfrombank0 roomTileChanges.applyAllTileSubstitutions
 
 	; Copy wRoomLayout to w3RoomLayoutBuffer
 	ld a,:w3RoomLayoutBuffer
@@ -12989,7 +12989,7 @@ seasonsFunc_3870:
 	call checkGlobalFlag
 	ret z
 
-	callfrombank0 checkIsTempleRemains
+	callfrombank0 tilesets.checkIsTempleRemains
 	ret nc
 	ld a,(wRoomStateModifier)
 	ld hl,@data
@@ -13008,17 +13008,16 @@ seasonsFunc_3870:
 ;;
 ; Load room layout into wRoomLayout using the relevant RAM addresses (wTilesetLayoutGroup,
 ; wLoadingRoom, etc)
-;
 loadRoomLayout:
 	ld hl,wRoomLayout
 	ld b,(LARGE_ROOM_HEIGHT+1)*16
 	call clearMemory
-	ld a,:roomLayoutGroupTable
+	ld a,:roomLayouts.roomLayoutGroupTable
 	setrombank
 	ld a,(wTilesetLayoutGroup)
 	add a
 	add a
-	ld hl,roomLayoutGroupTable
+	ld hl,roomLayouts.roomLayoutGroupTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld b,a
@@ -13333,11 +13332,11 @@ generateVramTilesWithRoomChanges:
 	ld b,a
 	push bc
 
-	callfrombank0 generateW3VramTilesAndAttributes
+	callfrombank0 tilesets.generateW3VramTilesAndAttributes
 .ifdef ROM_AGES
 	callab        roomGfxChanges.applyRoomSpecificTileChangesAfterGfxLoad
 .else
-	call        roomGfxChanges.applyRoomSpecificTileChangesAfterGfxLoad
+	call          roomGfxChanges.applyRoomSpecificTileChangesAfterGfxLoad
 .endif
 
 	pop bc
@@ -13481,10 +13480,10 @@ setInterleavedTile:
 	ld b,a
 	push bc
 
-	ld a,:setInterleavedTile_body
+	ld a,:tilesets.setInterleavedTile_body
 	setrombank
 	ld a,e
-	call setInterleavedTile_body
+	call tilesets.setInterleavedTile_body
 
 	pop bc
 	ld a,b
@@ -14128,9 +14127,9 @@ interactionFunc_3e6d:
 getLinkedHerosCaveSideEntranceRoom:
 	ldh a,(<hRomBank)
 	push af
-	ld a,:(warpSource7653+2)
+	ld a,:(bank4.warpSource7653+2)
 	setrombank
-	ld hl,warpSource7653+2
+	ld hl,bank4.warpSource7653+2
 	ld a,(hl)
 	; ROOM_SEASONS_552
 	ld (wWarpDestRoom),a

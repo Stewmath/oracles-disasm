@@ -1,7 +1,5 @@
- m_section_force "roomGfxChanges" NAMESPACE roomGfxChanges
-
-; Some code here is the same as code/seasons/roomGfxChanges.s, but almost all
-; room-specific stuff is different, so the codebases are separated.
+; Some code here is the same as code/seasons/roomGfxChanges.s, but almost all room-specific stuff is
+; different, so the codebases are separated.
 
 ;;
 ; Get the gasha spot index for the gasha spot in the given room.
@@ -473,7 +471,7 @@ _roomTileChangesAfterLoad08:
 	call copyRectangleToRoomLayoutAndCollisions_paramDe
 
 	; Regenerate graphics after modifying wRoomLayout
-	jpab generateW3VramTilesAndAttributes
+	jpab tilesets.generateW3VramTilesAndAttributes
 
 @sproutLayout:
 	.db $01 $01
@@ -696,5 +694,3 @@ checkLoadPastSignAndChestGfx:
 rectangleData_02_7de1:
 	.db $06 $06
 	.dw w3VramTiles+8 w2TmpGfxBuffer
-
-.ends

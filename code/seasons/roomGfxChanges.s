@@ -1,7 +1,5 @@
- m_section_force "roomGfxChanges" NAMESPACE roomGfxChanges
-
-; Some code here is the same as code/ages/roomGfxChanges.s, but almost all room-specific
-; stuff is different, so the codebases are separated.
+; Some code here is the same as code/ages/roomGfxChanges.s, but almost all room-specific stuff is
+; different, so the codebases are separated.
 
 ;;
 ; Get the gasha spot index for the gasha spot in the given room.
@@ -557,7 +555,7 @@ _roomTileChangesAfterLoad08:
 	call copyRectangleToRoomLayoutAndCollisions_paramDe
 
 	; Regenerate graphics after modifying wRoomLayout
-	jp generateW3VramTilesAndAttributes
+	jp tilesets.generateW3VramTilesAndAttributes
 
 @sproutLayout:
 	.db $01 $01
@@ -733,5 +731,3 @@ _roomTileChangesAfterLoad04:
 	set 1,(hl)
 	ld a,TREE_GFXH_03
 	jp loadTreeGfx
-
-.ends

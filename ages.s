@@ -36,7 +36,10 @@
 
 	.include "code/bank2.s"
 	.include "code/roomInitialization.s"
-	.include "code/ages/roomGfxChanges.s"
+
+	 m_section_free "roomGfxChanges" NAMESPACE "roomGfxChanges"
+		.include "code/ages/roomGfxChanges.s"
+	.ends
 
 	.include "code/ages/garbage/bank02End.s"
 
@@ -46,11 +49,13 @@
 
 	.include "code/bank3.s"
 
- m_section_free "Bank_3_Cutscenes" NAMESPACE "bank3Cutscenes"
-	.include "code/bank3Cutscenes.s"
-	.include "code/ages/cutscenes/endgameCutscenes.s"
-	.include "code/ages/cutscenes/miscCutscenes.s"
-.ends
+	; This section could probably be made superfree in Ages, but this isn't the case in Seasons,
+	; so let's just play it safe and leave it as "free".
+	 m_section_free "Bank_3_Cutscenes" NAMESPACE "bank3Cutscenes"
+		.include "code/bank3Cutscenes.s"
+		.include "code/ages/cutscenes/endgameCutscenes.s"
+		.include "code/ages/cutscenes/miscCutscenes.s"
+	.ends
 
 	.include "code/ages/garbage/bank03End.s"
 
@@ -59,28 +64,47 @@
 
 	.include "code/bank4.s"
 
-	; These 2 includes must be in the same bank
-	.include "build/data/roomPacks.s"
-	.include "build/data/musicAssignments.s"
+	 m_section_superfree "RoomPacksAndMusicAssignments" NAMESPACE "bank4Data1"
+		; These 2 includes must be in the same bank
+		.include "build/data/roomPacks.s"
+		.include "build/data/musicAssignments.s"
+	.ends
 
-	.include "build/data/roomLayoutGroupTable.s"
-	.include "build/data/tilesets.s"
-	.include "build/data/tilesetAssignments.s"
+	 m_section_superfree "RoomLayouts" NAMESPACE "roomLayouts"
+		.include "build/data/roomLayoutGroupTable.s"
+	.ends
 
-	.include "code/animations.s"
+	; Must be in the same bank as "Tileset_Loading_2".
+	 m_section_free "Tileset_Loading_1" NAMESPACE "tilesets"
+		.include "build/data/tilesets.s"
+		.include "build/data/tilesetAssignments.s"
+	.ends
 
-	.include "build/data/uniqueGfxHeaders.s"
-	.include "build/data/uniqueGfxHeaderPointers.s"
-	.include "build/data/animationGroups.s"
-	.include "build/data/animationGfxHeaders.s"
-	.include "build/data/animationData.s"
+	 m_section_free "animationAndUniqueGfxData" NAMESPACE "animationAndUniqueGfxData"
+		.include "code/animations.s"
 
-	.include "code/ages/tileSubstitutions.s"
-	.include "build/data/singleTileChanges.s"
-	.include "code/ages/roomSpecificTileChanges.s"
-	.include "code/loadTilesToRam.s"
-	.include "code/ages/loadTilesetData.s"
-	.include "build/data/warpData.s"
+		.include "build/data/uniqueGfxHeaders.s"
+		.include "build/data/uniqueGfxHeaderPointers.s"
+		.include "build/data/animationGroups.s"
+		.include "build/data/animationGfxHeaders.s"
+		.include "build/data/animationData.s"
+	.ends
+
+	 m_section_free "roomTileChanges" NAMESPACE "roomTileChanges"
+		.include "code/ages/tileSubstitutions.s"
+		.include "build/data/singleTileChanges.s"
+		.include "code/ages/roomSpecificTileChanges.s"
+	.ends
+
+	 m_section_free "Tileset_Loading_2" NAMESPACE "tilesets"
+		.include "code/loadTilesToRam.s"
+		.include "code/ages/loadTilesetData.s"
+	.ends
+
+		; Must be in same bank as "code/bank4.s"
+	 m_section_free "Warp_Data" NAMESPACE "bank4"
+		.include "build/data/warpData.s"
+	.ends
 
 	.include "code/ages/garbage/bank04End.s"
 
@@ -88,15 +112,14 @@
 .BANK $05 SLOT 1
 .ORG 0
 
- m_section_superfree "Bank_5" NAMESPACE bank5
+	 m_section_superfree "Bank_5" NAMESPACE bank5
+		.include "code/bank5.s"
 
-	.include "code/bank5.s"
-	.include "build/data/tileTypeMappings.s"
-	.include "build/data/cliffTilesTable.s"
+		.include "build/data/tileTypeMappings.s"
+		.include "build/data/cliffTilesTable.s"
 
-	.include "code/ages/garbage/bank05End.s"
-
-.ends
+		.include "code/ages/garbage/bank05End.s"
+	.ends
 
 
 .BANK $06 SLOT 1
@@ -157,6 +180,7 @@ specialObjectLoadAnimationFrameToBuffer:
 	.include "code/ages/garbage/bank06End.s"
 
 .ends
+
 
 .BANK $07 SLOT 1
 .ORG 0
