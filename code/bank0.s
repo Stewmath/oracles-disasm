@@ -2189,9 +2189,9 @@ vblankFunction0a8e:
 
 ;;
 vblankRunBank4Function:
-	ld a,:vblankRunBank4Function_b04
+	ld a,:bank4.vblankRunBank4Function_b04
 	ld ($2222),a
-	jp vblankRunBank4Function_b04
+	jp bank4.vblankRunBank4Function_b04
 
 ;;
 vblankFunction0aa8:
@@ -2501,38 +2501,38 @@ lcdInterrupt_0bea:
 
 ; Table of functions in bank $04?
 data_0bfd:
-	.dw b4VBlankFunction0
-	.dw b4VBlankFunction1
-	.dw b4VBlankFunction2
-	.dw b4VBlankFunction3
-	.dw b4VBlankFunction4
-	.dw b4VBlankFunction5
-	.dw b4VBlankFunction6
-	.dw b4VBlankFunction7
-	.dw b4VBlankFunction8
-	.dw b4VBlankFunction9
-	.dw b4VBlankFunction10
-	.dw b4VBlankFunction11
-	.dw b4VBlankFunction12
-	.dw b4VBlankFunction13
-	.dw b4VBlankFunction14
-	.dw b4VBlankFunction15
-	.dw b4VBlankFunction16
-	.dw b4VBlankFunction17
-	.dw b4VBlankFunction18
-	.dw b4VBlankFunction19
-	.dw b4VBlankFunction20
-	.dw b4VBlankFunction21
-	.dw b4VBlankFunction22
-	.dw b4VBlankFunction23
-	.dw b4VBlankFunction24
-	.dw b4VBlankFunction25
-	.dw b4VBlankFunction26
-	.dw b4VBlankFunction27
-	.dw b4VBlankFunction28
-	.dw b4VBlankFunction29
-	.dw b4VBlankFunction30
-	.dw b4VBlankFunction31
+	.dw bank4.b4VBlankFunction0
+	.dw bank4.b4VBlankFunction1
+	.dw bank4.b4VBlankFunction2
+	.dw bank4.b4VBlankFunction3
+	.dw bank4.b4VBlankFunction4
+	.dw bank4.b4VBlankFunction5
+	.dw bank4.b4VBlankFunction6
+	.dw bank4.b4VBlankFunction7
+	.dw bank4.b4VBlankFunction8
+	.dw bank4.b4VBlankFunction9
+	.dw bank4.b4VBlankFunction10
+	.dw bank4.b4VBlankFunction11
+	.dw bank4.b4VBlankFunction12
+	.dw bank4.b4VBlankFunction13
+	.dw bank4.b4VBlankFunction14
+	.dw bank4.b4VBlankFunction15
+	.dw bank4.b4VBlankFunction16
+	.dw bank4.b4VBlankFunction17
+	.dw bank4.b4VBlankFunction18
+	.dw bank4.b4VBlankFunction19
+	.dw bank4.b4VBlankFunction20
+	.dw bank4.b4VBlankFunction21
+	.dw bank4.b4VBlankFunction22
+	.dw bank4.b4VBlankFunction23
+	.dw bank4.b4VBlankFunction24
+	.dw bank4.b4VBlankFunction25
+	.dw bank4.b4VBlankFunction26
+	.dw bank4.b4VBlankFunction27
+	.dw bank4.b4VBlankFunction28
+	.dw bank4.b4VBlankFunction29
+	.dw bank4.b4VBlankFunction30
+	.dw bank4.b4VBlankFunction31
 
 ;;
 serialInterrupt:
@@ -12061,7 +12061,7 @@ loadScreenMusic:
 applyWarpDest:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 applyWarpDest_b04
+	callfrombank0 bank4.applyWarpDest_b04
 
 .ifdef ROM_SEASONS
 	callfrombank0 bank1.checkUpdateDungeonMinimap

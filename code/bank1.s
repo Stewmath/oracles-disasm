@@ -5191,7 +5191,7 @@ _checkTileWarps:
 	jr nc,_noWarpInitiated
 
 @initiateWarp:
-	callab findWarpSourceAndDest
+	callab bank4.findWarpSourceAndDest
 	jp _initiateWarp
 
 .ifdef ROM_SEASONS
@@ -5306,7 +5306,7 @@ _checkStandingOnDeactivatedWarpTile:
 _checkScreenEdgeWarps:
 	ld a,$ff
 	ld (wTmpcec0),a
-	callab findScreenEdgeWarpSource
+	callab bank4.findScreenEdgeWarpSource
 	ld a,(wTmpcec0)
 	cp $ff
 	jp z,_noWarpInitiated
@@ -5690,9 +5690,6 @@ checkRoomPackAfterWarp_body:
 	ld (wRoomStateModifier),a
 	ret
 
-.ends
-
-
 .else ; ROM_AGES
 
 ;;
@@ -5726,6 +5723,6 @@ cutscene1f:
 	call updateStatusBar
 	jp updateAllObjects
 
-.ends
-
 .endif ; ROM_AGES
+
+.ends
