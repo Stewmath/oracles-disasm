@@ -1,4 +1,4 @@
- m_section_superfree Interaction_Code_Group7 NAMESPACE commonInteractions6
+ m_section_superfree Interaction_Code_Group6 NAMESPACE commonInteractions6
 
 ; ==============================================================================
 ; INTERACID_BUSINESS_SCRUB
