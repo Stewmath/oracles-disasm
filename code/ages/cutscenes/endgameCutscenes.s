@@ -1,3 +1,5 @@
+; This code goes right after the cutscene code in bank 3 (shares the same namespace)
+
 ;;
 ; CUTSCENE_BLACK_TOWER_ESCAPE
 _endgameCutsceneHandler_09:
@@ -336,7 +338,7 @@ _endgameCutsceneHandler_09_stage0:
 	ld a,PALH_9d
 	call loadPaletteHeader
 
-	call _cutscene_clearObjects
+	call cutscene_clearObjects
 	call _cutscene_resetOamWithSomething2
 	ld a,$04
 	call loadGfxRegisterStateIndex

@@ -1,6 +1,6 @@
 ;;
 ; CUTSCENE_S_VOLCANO_ERUPTING
-_cutsceneHandler_0b:
+cutsceneHandler_0b:
 	ld a,(wCutsceneState)
 	rst_jumpTable
 	.dw _cutsceneHandler_0b_stage0

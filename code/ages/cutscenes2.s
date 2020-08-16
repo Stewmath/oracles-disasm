@@ -1,3 +1,5 @@
+; TODO: Rename this and put it into the "cutscenes/" folder
+
 ;;
 ; CUTSCENE_TOGGLE_BLOCKS
 cutscene02:
@@ -162,13 +164,13 @@ cutscene02:
 ;;
 ; CUTSCENE_WALL_RETRACTION
 cutscene0b:
-	callab func_701d
+	callab bank3Cutscenes.func_701d
 	jp updateAllObjects
 
 ;;
 ; CUTSCENE_D2_COLLAPSE
 cutscene1a:
-	callab func_7168
+	callab bank3Cutscenes.func_7168
 	jp updateAllObjects
 
 ;;
@@ -176,7 +178,7 @@ cutscene1a:
 cutscene1b:
 	ld a,($ff00+R_SVBK)
 	push af
-	callab func_03_7244
+	callab bank3Cutscenes.func_03_7244
 	pop af
 	ld ($ff00+R_SVBK),a
 	jp updateAllObjects
@@ -192,20 +194,20 @@ warpToMoblinKeepUnderground:
 ;;
 ; CUTSCENE_AMBI_PASSAGE_OPEN
 cutscene1c:
-	callab func_03_7493
+	callab bank3Cutscenes.func_03_7493
 	call updateAllObjects
 	jp updateStatusBar
 
 ;;
 ; CUTSCENE_JABU_OPEN
 cutscene1d:
-	callab func_03_7565
-	callab checkUpdateUnderwaterWaves
+	callab bank3Cutscenes.func_03_7565
+	callab bank1.checkUpdateUnderwaterWaves
 	jp updateAllObjects
 
 ;;
 ; CUTSCENE_CLEAN_SEAS
 cutscene1e:
-	callab func_03_7619
+	callab bank3Cutscenes.func_03_7619
 	call updateStatusBar
 	jp updateAllObjects

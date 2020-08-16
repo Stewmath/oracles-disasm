@@ -1,6 +1,3 @@
-.BANK $01 SLOT 1
-.ORG 0
-
  m_section_free "Bank_1_Code_1" NAMESPACE "bank1"
 
 ;;
@@ -2579,13 +2576,13 @@ cutscene18:
 cutscene19:
 	ld c,$01
 ++
-	callab twinrovaCutsceneCaller
+	callab bank3Cutscenes.twinrovaCutsceneCaller
 	call func_1613
 	jp updateAllObjects
 
 .ENDS
 
- m_section_free "Bank_1_Data_1"
+ m_section_free "Bank_1_Data_1" NAMESPACE "bank1"
 
 .include "build/data/dungeonData.s"
 .include "data/dungeonProperties.s"
@@ -4075,6 +4072,7 @@ func_5d41:
 	.include "code/seasons/cutscenes.s"
 .endif
 
+
 ;;
 ; CUTSCENE_IN_GALE_SEED_MENU
 cutscene16:
@@ -5427,7 +5425,8 @@ _warpTileTable:
 .ENDS
 
 
- m_section_superfree "Bank_1_Data_2"
+; This is superfree (bank can change) so namespace should be different from the others
+ m_section_superfree "Bank_1_Data_2" NAMESPACE "bank1Moveable"
 
 	.include "build/data/paletteHeaders.s"
 	.include "build/data/uncmpGfxHeaders.s"
@@ -5443,14 +5442,14 @@ _warpTileTable:
 ;;
 ; CUTSCENE_FAIRIES_HIDE
 cutscene13:
-	callab func_03_6103
+	callab bank3Cutscenes.func_03_6103
 	call func_1613
 	jp updateAllObjects
 
 ;;
 ; CUTSCENE_BOOTED_FROM_PALACE
 cutscene14:
-	callab func_03_6275
+	callab bank3Cutscenes.func_03_6275
 	call func_1613
 	call updateAllObjects
 	jp updateStatusBar
@@ -5691,6 +5690,7 @@ checkRoomPackAfterWarp_body:
 	ld (wRoomStateModifier),a
 	ret
 
+.ends
 
 
 .else ; ROM_AGES
@@ -5722,13 +5722,10 @@ checkUpdateToggleBlocks:
 ;;
 ; CUTSCENE_BLACK_TOWER_ESCAPE_ATTEMPT
 cutscene1f:
-	callab func_03_7cb7
+	callab bank3Cutscenes.func_03_7cb7
 	call updateStatusBar
 	jp updateAllObjects
 
-
-.include "code/ages/garbage/bank01End.s"
+.ends
 
 .endif ; ROM_AGES
-
-.ENDS

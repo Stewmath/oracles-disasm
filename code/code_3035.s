@@ -50,7 +50,7 @@ incCbc2:
 endgameCutsceneHandler:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 endgameCutsceneHandler_body
+	callfrombank0 bank3Cutscenes.endgameCutsceneHandler_body
 	pop af
 	setrombank
 	ret
@@ -96,7 +96,7 @@ fileSelect_redrawDecorations:
 disableLcdAndLoadRoom:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 disableLcdAndLoadRoom_body
+	callfrombank0 bank3Cutscenes.disableLcdAndLoadRoom_body
 	pop af
 	setrombank
 	ret

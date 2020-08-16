@@ -22,10 +22,13 @@
 
 	.include "code/bank0.s"
 
+
 .BANK $01 SLOT 1
 .ORG 0
 
 	.include "code/bank1.s"
+
+	.include "code/ages/garbage/bank01End.s"
 
 
 .BANK $02 SLOT 1
@@ -42,8 +45,12 @@
 .ORG 0
 
 	.include "code/bank3.s"
+
+ m_section_free "Bank_3_Cutscenes" NAMESPACE "bank3Cutscenes"
+	.include "code/bank3Cutscenes.s"
 	.include "code/ages/cutscenes/endgameCutscenes.s"
 	.include "code/ages/cutscenes/miscCutscenes.s"
+.ends
 
 	.include "code/ages/garbage/bank03End.s"
 
@@ -358,6 +365,7 @@ specialObjectLoadAnimationFrameToBuffer:
 	.include "data/itemOamData.s"
 	.include "build/data/enemyOamData.s"
 
+
 .BANK $14 SLOT 1
 .ORG 0
 
@@ -365,14 +373,14 @@ specialObjectLoadAnimationFrameToBuffer:
 	.include "data/terrainEffects.s"
 .ends
 
-.include "build/data/interactionOamData.s"
-.include "build/data/partOamData.s"
+	.include "build/data/interactionOamData.s"
+	.include "build/data/partOamData.s"
 
 
 .BANK $15 SLOT 1
 .ORG 0
 
-.include "scripts/common/scriptHelper.s"
+	.include "scripts/common/scriptHelper.s"
 
  m_section_free "Object_Pointers" namespace "objectData"
 
@@ -399,15 +407,15 @@ getObjectDataAddress:
 
 .ENDS
 
-.include "scripts/ages/scriptHelper.s"
+	.include "scripts/ages/scriptHelper.s"
 
 
 .BANK $16 SLOT 1
 .ORG 0
 
-.include "code/serialFunctions.s"
+	.include "code/serialFunctions.s"
 
- m_section_force Bank16 NAMESPACE bank16
+ m_section_free Bank16 NAMESPACE bank16
 
 ;;
 ; @param	d	Interaction index (should be of type INTERACID_TREASURE)
@@ -468,19 +476,19 @@ interactionLoadTreasureData:
 	ret
 
 
-.include "build/data/data_4556.s"
-.include "build/data/endgameCutsceneOamData.s"
+	.include "build/data/data_4556.s"
+	.include "build/data/endgameCutsceneOamData.s"
 
 .ends
 
 
-.include "code/staticObjects.s"
-.include "build/data/staticDungeonObjects.s"
-.include "build/data/chestData.s"
+	.include "code/staticObjects.s"
+	.include "build/data/staticDungeonObjects.s"
+	.include "build/data/chestData.s"
 
- m_section_force Bank16_2 NAMESPACE bank16
+ m_section_free Bank16_2 NAMESPACE bank16
 
-.include "build/data/treasureObjectData.s"
+	.include "build/data/treasureObjectData.s"
 
 ;;
 ; Used in the room in present Mermaid's Cave with the changing floor
@@ -555,7 +563,8 @@ loadD6ChangingFloorPatternToBigBuffer:
 	.include "build/data/interactionAnimations.s"
 	.include "build/data/partAnimations.s"
 
-.BANK $17 SLOT 1 ; Seasons: should be bank $16
+
+.BANK $17 SLOT 1
 .ORG 0
 
 	.include "build/data/paletteData.s"
@@ -564,7 +573,8 @@ loadD6ChangingFloorPatternToBigBuffer:
 
 	.include "code/ages/garbage/bank17End.s"
 
-.BANK $18 SLOT 1 ; Seasons: should be bank $17
+
+.BANK $18 SLOT 1
 .ORG 0
 
  m_section_superfree Tile_Mappings
@@ -592,7 +602,7 @@ loadD6ChangingFloorPatternToBigBuffer:
 .ORG 0
 
  m_section_superfree "Gfx_19_1" ALIGN $10
-	.include "data/ages/gfxDataBank19_1.s"
+	.include "build/data/gfxDataBank19_1.s"
 .ends
 
  m_section_superfree "Tile_mappings"
@@ -600,7 +610,7 @@ loadD6ChangingFloorPatternToBigBuffer:
 .ends
 
  m_section_superfree "Gfx_19_2" ALIGN $10
-	.include "data/ages/gfxDataBank19_2.s"
+	.include "build/data/gfxDataBank19_2.s"
 .ends
 
 

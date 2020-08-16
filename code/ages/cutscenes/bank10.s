@@ -1,3 +1,5 @@
+; TODO: Some code in this file is shared with "code/seasons/cutscenes/endgameCutscenes.s"
+
  m_section_superfree Cutscenes_Bank10 NAMESPACE cutscenesBank10
 
 ; Input values for the intro cutscene in the temple
@@ -105,7 +107,7 @@ agesFunc_10_70f6:
 	ret nz
 	call checkIsLinkedGame
 	jr nz,@func_7174
-	callab cutscene_clearTmpCBB3
+	callab bank3Cutscenes.cutscene_clearTmpCBB3
 	ld a,$03
 	ld ($cbc1),a
 	ld a,$04
@@ -254,7 +256,7 @@ agesFunc_10_70f6:
 	call @func_71fd
 	call decCbb3
 	ret nz
-	callab cutscene_clearTmpCBB3
+	callab bank3Cutscenes.cutscene_clearTmpCBB3
 	ld a,$03
 	ld ($cbc1),a
 	ld a,$04
@@ -285,7 +287,7 @@ agesFunc_10_7298:
 	ret nz
 	call disableLcd
 	call incCbc2
-	callab func_60f1
+	callab bank3Cutscenes.func_60f1
 	call clearDynamicInteractions
 	call clearOam
 	call checkIsLinkedGame
@@ -380,7 +382,7 @@ agesFunc_10_7298:
 	ret nz
 	call incCbc2
 	call disableLcd
-	callab generateGameTransferSecret
+	callab bank3.generateGameTransferSecret
 	ld a,$ff
 	ld (wTmpcbba),a
 	

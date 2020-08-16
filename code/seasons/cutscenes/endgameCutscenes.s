@@ -1,3 +1,5 @@
+; TODO: Some code in this file is shared with "code/ages/cutscenes/bank10.s".
+
 ;;
 ; CUTSCENE_S_DIN_CRYSTAL_DESCENDING
 _endgameCutsceneHandler_09:
@@ -249,7 +251,7 @@ _endgameCutsceneHandler_09_stage0_body:
 	call loadGfxHeader
 	ld a,$9d
 	call loadPaletteHeader
-	call _cutscene_clearObjects
+	call cutscene_clearObjects
 	call _endgameCutsceneHandler_09_stage1_body@seasonsFunc_03_5ab0
 	ld a,$04
 	call loadGfxRegisterStateIndex
@@ -1858,7 +1860,7 @@ _endgameCutsceneHandler_0a_stage3:
 	ret nz
 	call incCbc2
 	call disableLcd
-	call generateGameTransferSecret
+	call bank3.generateGameTransferSecret
 	ld a,$ff
 	ld ($cbba),a
 	ld a,($ff00+R_SVBK)

@@ -87,7 +87,7 @@ faroreSpawnSecretChest:
 	jp setShortPosition_paramC
 
 faroreGenerateGameTransferSecret:
-	jpab generateGameTransferSecret
+	jpab bank3.generateGameTransferSecret
 
 
 ; ==============================================================================

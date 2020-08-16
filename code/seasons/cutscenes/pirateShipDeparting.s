@@ -1,6 +1,6 @@
 ;;
 ; CUTSCENE_S_PIRATES_DEPART
-_cutsceneHandler_0c:
+cutsceneHandler_0c:
 	ld a,(wCutsceneState)
 	rst_jumpTable
 	.dw _cutsceneHandler_0c_stage0 ; initial

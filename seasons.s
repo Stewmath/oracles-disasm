@@ -40,11 +40,15 @@
 .ORG 0
 
 	.include "code/bank3.s"
+
+ m_section_free "Bank_3_Cutscenes" NAMESPACE "bank3Cutscenes"
+	.include "code/bank3Cutscenes.s"
 	.include "code/seasons/cutscenes/endgameCutscenes.s"
 	.include "code/seasons/cutscenes/pirateShipDeparting.s"
 	.include "code/seasons/cutscenes/volcanoErupting.s"
 	.include "code/seasons/cutscenes/linkedGameCutscenes.s"
 	.include "code/seasons/cutscenes/introCutscenes.s"
+.ends
 
 
 .BANK $04 SLOT 1
@@ -204,7 +208,7 @@
 	.include "code/enemyCommon.s"
 	.include "object_code/common/enemyCode/group1.s"
 	.include "object_code/seasons/enemyCode/bank0c.s"
-	.include "data/seasons/enemyAnimations.s"
+	.include "build/data/enemyAnimations.s"
 
 .ends
 
@@ -292,9 +296,9 @@
 	.define BASE_OAM_DATA_BANK $12
 	.export BASE_OAM_DATA_BANK
 
-	.include "data/seasons/specialObjectOamData.s"
+	.include "build/data/specialObjectOamData.s"
 	.include "data/itemOamData.s"
-	.include "data/seasons/enemyOamData.s"
+	.include "build/data/enemyOamData.s"
 
 
 .BANK $13 SLOT 1
@@ -304,8 +308,8 @@
 	.include "data/terrainEffects.s"
 .ends
 
-	.include "data/seasons/interactionOamData.s"
-	.include "data/seasons/partOamData.s"
+	.include "build/data/interactionOamData.s"
+	.include "build/data/partOamData.s"
 
 
 .BANK $14 SLOT 1
@@ -313,7 +317,7 @@
 
 	.include "build/data/data_4556.s"
 	.include "scripts/seasons/scripts2.s"
-	.include "data/seasons/interactionAnimations.s"
+	.include "build/data/interactionAnimations.s"
 
 
 .BANK $15 SLOT 1
@@ -324,6 +328,7 @@
 	.include "scripts/common/scriptHelper.s"
 	.include "object_code/common/interactionCode/group4.s"
 	.include "object_code/common/interactionCode/group8.s"
+
 
 oamData_15_4da3:
 	.db $1a
@@ -368,6 +373,7 @@ oamData_15_4e0c:
 	.db $39 $46 $8e $03
 	.db $3b $3c $92 $03
 
+
 	.include "code/staticObjects.s"
 	.include "build/data/staticDungeonObjects.s"
 	.include "build/data/chestData.s"
@@ -377,7 +383,7 @@ oamData_15_4e0c:
 	.include "scripts/seasons/scriptHelper.s"
 	.include "object_code/seasons/interactionCode/bank15.s"
 
-	.include "data/seasons/partAnimations.s"
+	.include "build/data/partAnimations.s"
 
 
 .BANK $16 SLOT 1
@@ -386,6 +392,7 @@ oamData_15_4e0c:
 	.include "build/data/paletteData.s"
 	.include "build/data/tilesetCollisions.s"
 	.include "build/data/smallRoomLayoutTables.s"
+
 
 .BANK $17 SLOT 1
 .ORG 0

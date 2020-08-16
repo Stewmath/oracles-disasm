@@ -243,7 +243,7 @@ begin:
 	ldh (<hRng2),a
 resetGame:
 	ld sp,wMainStackTop
-	jpfrombank0 init
+	jpfrombank0 bank3.init
 
 
 ;;
@@ -994,16 +994,16 @@ loadPaletteHeader:
 	push bc
 	ld a,$02
 	ld ($ff00+R_SVBK),a
-	ld a,:paletteHeaderTable
+	ld a,:bank1Moveable.paletteHeaderTable
 	setrombank
 	ld a,l
-	ld hl,paletteHeaderTable
+	ld hl,bank1Moveable.paletteHeaderTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
 	ld l,a
 ---
-	ld a,:paletteHeaderTable
+	ld a,:bank1Moveable.paletteHeaderTable
 	setrombank
 
 	; b: how many palettes to load
@@ -1176,10 +1176,10 @@ loadUncompressedGfxHeader:
 	ldh a,(<hRomBank)
 	ld b,a
 	push bc
-	ld a,:uncmpGfxHeaderTable
+	ld a,:bank1Moveable.uncmpGfxHeaderTable
 	setrombank
 	ld a,e
-	ld hl,uncmpGfxHeaderTable
+	ld hl,bank1Moveable.uncmpGfxHeaderTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -1205,7 +1205,7 @@ loadUncompressedGfxHeader:
 	ldh (<hFF91),a
 	pop hl
 	call queueDmaTransfer
-	ld a,:uncmpGfxHeaderTable
+	ld a,:bank1Moveable.uncmpGfxHeaderTable
 	setrombank
 	ldh a,(<hFF90)
 	ld l,a
@@ -1231,10 +1231,10 @@ loadGfxHeader:
 	ldh a,(<hRomBank)
 	ld b,a
 	push bc
-	ld a,:gfxHeaderTable
+	ld a,:bank1Moveable.gfxHeaderTable
 	setrombank
 	ld a,e
-	ld hl,gfxHeaderTable
+	ld hl,bank1Moveable.gfxHeaderTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -1260,7 +1260,7 @@ loadGfxHeader:
 	ldh (<hFF91),a
 	pop hl
 	call decompressGraphics
-	ld a,:gfxHeaderTable
+	ld a,:bank1Moveable.gfxHeaderTable
 	setrombank
 	ldh a,(<hFF90)
 	ld l,a
@@ -1523,10 +1523,10 @@ loadTileset:
 	ld b,a
 	push bc
 
-	ld a,:tilesetLayoutTable
+	ld a,:bank1Moveable.tilesetLayoutTable
 	setrombank
 	ld a,e
-	ld hl,tilesetLayoutTable
+	ld hl,bank1Moveable.tilesetLayoutTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -1534,7 +1534,7 @@ loadTileset:
 --
 	ldi a,(hl)
 	push hl
-	ld hl,tilesetLayoutDictionaryTable
+	ld hl,bank1Moveable.tilesetLayoutDictionaryTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -1581,7 +1581,7 @@ loadTileset:
 	pop hl
 	call loadTilesetHlpr
 
-	ld a,:tilesetLayoutTable
+	ld a,:bank1Moveable.tilesetLayoutTable
 	setrombank
 
 	; Retrieve header position
@@ -5687,7 +5687,7 @@ fileSelectThreadStart:
 secretFunctionCaller:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 secretFunctionCaller_body
+	callfrombank0 bank3.secretFunctionCaller_body
 	pop af
 	setrombank
 	ld a,b
@@ -5838,11 +5838,11 @@ copyW4PaletteDataToW2TilesetBgPalettes:
 getRoomDungeonProperties:
 	ldh a,(<hRomBank)
 	push af
-	ld a, :dungeonRoomPropertiesGroupTable
+	ld a, :bank1.dungeonRoomPropertiesGroupTable
 	setrombank
 	ld a,(wActiveGroup)
 	and $01
-	ld hl, dungeonRoomPropertiesGroupTable
+	ld hl, bank1.dungeonRoomPropertiesGroupTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -7294,7 +7294,7 @@ getPositionOffsetForVelocity:
 	jr z,@invalid
 
 	ld a,b
-	ld hl,objectSpeedTable-$50
+	ld hl,bank3.objectSpeedTable-$50
 	sla c
 	ld b,$00
 	add hl,bc
@@ -7308,7 +7308,7 @@ getPositionOffsetForVelocity:
 	add hl,bc
 	ldh a,(<hRomBank)
 	push af
-	ld a,:objectSpeedTable
+	ld a,:bank3.objectSpeedTable
 	setrombank
 
 	; Get Y values
@@ -10793,7 +10793,7 @@ getFreeItemSlot:
 introThreadStart:
 	ld hl,wIntro.frameCounter
 	inc (hl)
-	callfrombank0 runIntro
+	callfrombank0 bank3Cutscenes.runIntro
 	call resumeThreadNextFrame
 	jr introThreadStart
 
@@ -10803,7 +10803,7 @@ intro_cinematic:
 	ldh a,(<hRomBank)
 	push af
 
-	callfrombank0 runIntroCinematic
+	callfrombank0 bank3Cutscenes.runIntroCinematic
 	callfrombank0 bank5.updateSpecialObjects
 	call          loadLinkAndCompanionAnimationFrame
 	callfrombank0 updateAnimations
@@ -10825,14 +10825,14 @@ func_2d48:
 .ifdef ROM_AGES
 	ld a,:bank3f.data_5951
 .else
-	ld a,:data_5951
+	ld a,:bank3Cutscenes.data_5951
 .endif
 	setrombank
 	ld a,b
 .ifdef ROM_AGES
 	ld hl,bank3f.data_5951
 .else
-	ld hl,data_5951
+	ld hl,bank3Cutscenes.data_5951
 .endif
 	rst_addAToHl
 	ld b,(hl)
@@ -10846,7 +10846,7 @@ func_2d48:
 clearFadingPalettes:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 clearFadingPalettes_body
+	callfrombank0 bank3Cutscenes.clearFadingPalettes_body
 	pop af
 	setrombank
 	ret
@@ -10863,7 +10863,7 @@ clearFadingPalettes:
 flashScreen:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 flashScreen_body
+	callfrombank0 bank3Cutscenes.flashScreen_body
 	ld b,$01
 	jr nz,+
 	dec b
@@ -10938,12 +10938,12 @@ setVisitedRoomFlag:
 getThisRoomDungeonProperties:
 	ldh a,(<hRomBank)
 	push af
-	ld a, :dungeonRoomPropertiesGroupTable
+	ld a, :bank1.dungeonRoomPropertiesGroupTable
 	setrombank
 	ld a,(wActiveGroup)
 	sub $04
 	and $01
-	ld hl, dungeonRoomPropertiesGroupTable
+	ld hl, bank1.dungeonRoomPropertiesGroupTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -12143,7 +12143,7 @@ seasonsFunc_332f:
 flameOfDestructionsCutsceneCaller:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 flameOfDestructionCutsceneBody
+	callfrombank0 bank3Cutscenes.flameOfDestructionCutsceneBody
 	pop af
 	setrombank
 	ret
@@ -12151,7 +12151,7 @@ flameOfDestructionsCutsceneCaller:
 zeldaAndVillagersCutsceneCaller:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 zeldaAndVillagersCutsceneBody
+	callfrombank0 bank3Cutscenes.zeldaAndVillagersCutsceneBody
 	pop af
 	setrombank
 	ret
@@ -12159,7 +12159,7 @@ zeldaAndVillagersCutsceneCaller:
 zeldaKidnappedCutsceneCaller:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 zeldaKidnappedCutsceneBody
+	callfrombank0 bank3Cutscenes.zeldaKidnappedCutsceneBody
 	pop af
 	setrombank
 	ret
@@ -12453,7 +12453,7 @@ getEntryFromObjectTable2:
 multiIntroCutsceneCaller:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 multiIntroCutsceneHandler
+	callfrombank0 bank3Cutscenes.multiIntroCutsceneHandler
 	pop af
 	setrombank
 	ret
@@ -14213,7 +14213,7 @@ copy256BytesFromBank:
 func_3ed0:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 func_03_7841
+	callfrombank0 bank3Cutscenes.func_03_7841
 	pop af
 	setrombank
 	ret
@@ -14222,7 +14222,7 @@ func_3ed0:
 func_3ee4:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 func_03_7849
+	callfrombank0 bank3Cutscenes.func_03_7849
 	pop af
 	setrombank
 	ret

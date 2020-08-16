@@ -404,7 +404,7 @@ cutscene06Funcf:
 	call decCbb3
 	ret nz
 	call clearOam
-	call _cutscene_clearObjects
+	call cutscene_clearObjects
 	ld a,CUTSCENE_S_DIN_IMPRISONED
 	ld (wCutsceneIndex),a
 	xor a
