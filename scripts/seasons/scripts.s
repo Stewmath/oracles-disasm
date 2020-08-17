@@ -1,6 +1,7 @@
-; Scripts for interactions are in this file. You may want to cross-reference with the
-; corresponding code for the script to get the full picture (search for INTERACID_X in
-; main.s to find the code).
+; Scripts for interactions are in this file. You may want to cross-reference with the corresponding
+; code for the script to get the full picture (search for INTERACID_X in main.s to find the code).
+;
+; A great deal of stuff here is shared with Ages. Maybe it will be merged together in the future.
 
 stubScript:
 	scriptend

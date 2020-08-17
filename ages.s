@@ -404,30 +404,30 @@ specialObjectLoadAnimationFrameToBuffer:
 
 	.include "scripts/common/scriptHelper.s"
 
- m_section_free "Object_Pointers" namespace "objectData"
+	 m_section_free "Object_Pointers" namespace "objectData"
 
-;;
-getObjectDataAddress:
-	ld a,(wActiveGroup)
-	ld hl,objectDataGroupTable
-	rst_addDoubleIndex
-	ldi a,(hl)
-	ld h,(hl)
-	ld l,a
-	ld a,(wActiveRoom)
-	ld e,a
-	ld d,$00
-	add hl,de
-	add hl,de
-	ldi a,(hl)
-	ld d,(hl)
-	ld e,a
-	ret
+	;;
+	getObjectDataAddress:
+		ld a,(wActiveGroup)
+		ld hl,objectDataGroupTable
+		rst_addDoubleIndex
+		ldi a,(hl)
+		ld h,(hl)
+		ld l,a
+		ld a,(wActiveRoom)
+		ld e,a
+		ld d,$00
+		add hl,de
+		add hl,de
+		ldi a,(hl)
+		ld d,(hl)
+		ld e,a
+		ret
 
 
-	.include "objects/ages/pointers.s"
+		.include "objects/ages/pointers.s"
 
-.ENDS
+	.ENDS
 
 	.include "scripts/ages/scriptHelper.s"
 
