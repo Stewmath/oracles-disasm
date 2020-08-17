@@ -1,4 +1,4 @@
- m_section_force "Bank_15" NAMESPACE scriptHlp
+ m_section_force "Bank_15" NAMESPACE scriptHelp
 
 ; ==============================================================================
 ; INTERACID_DUNGEON_SCRIPT
@@ -3336,88 +3336,88 @@ hardhatWorkerSubid03Script:
 	.dw @val04
 
 @val00:
-	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $02
-	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $40
+	asm15 scriptHelp.hardhatWorker_setPatrolDirection, $02
+	asm15 scriptHelp.hardhatWorker_setPatrolCounter,   $40
 	callscript mainScripts.hardhatWorkerFunc_patrol
 
-	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $01
-	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $60
+	asm15 scriptHelp.hardhatWorker_setPatrolDirection, $01
+	asm15 scriptHelp.hardhatWorker_setPatrolCounter,   $60
 	callscript mainScripts.hardhatWorkerFunc_patrol
 
-	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $03
-	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $60
+	asm15 scriptHelp.hardhatWorker_setPatrolDirection, $03
+	asm15 scriptHelp.hardhatWorker_setPatrolCounter,   $60
 	callscript mainScripts.hardhatWorkerFunc_patrol
 
-	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $00
-	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $40
+	asm15 scriptHelp.hardhatWorker_setPatrolDirection, $00
+	asm15 scriptHelp.hardhatWorker_setPatrolCounter,   $40
 	callscript mainScripts.hardhatWorkerFunc_patrol
 
 	scriptjump @val00
 
 @val01:
-	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $02
-	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $40
+	asm15 scriptHelp.hardhatWorker_setPatrolDirection, $02
+	asm15 scriptHelp.hardhatWorker_setPatrolCounter,   $40
 	callscript mainScripts.hardhatWorkerFunc_patrol
 
-	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $01
-	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $80
+	asm15 scriptHelp.hardhatWorker_setPatrolDirection, $01
+	asm15 scriptHelp.hardhatWorker_setPatrolCounter,   $80
 	callscript mainScripts.hardhatWorkerFunc_patrol
 
-	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $00
-	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $20
+	asm15 scriptHelp.hardhatWorker_setPatrolDirection, $00
+	asm15 scriptHelp.hardhatWorker_setPatrolCounter,   $20
 	callscript mainScripts.hardhatWorkerFunc_patrol
 
-	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $02
-	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $20
+	asm15 scriptHelp.hardhatWorker_setPatrolDirection, $02
+	asm15 scriptHelp.hardhatWorker_setPatrolCounter,   $20
 	callscript mainScripts.hardhatWorkerFunc_patrol
 
-	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $03
-	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $80
+	asm15 scriptHelp.hardhatWorker_setPatrolDirection, $03
+	asm15 scriptHelp.hardhatWorker_setPatrolCounter,   $80
 	callscript mainScripts.hardhatWorkerFunc_patrol
 
-	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $00
-	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $40
+	asm15 scriptHelp.hardhatWorker_setPatrolDirection, $00
+	asm15 scriptHelp.hardhatWorker_setPatrolCounter,   $40
 	callscript mainScripts.hardhatWorkerFunc_patrol
 
 	scriptjump @val01
 
 @val02:
-	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $01
-	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $a0
+	asm15 scriptHelp.hardhatWorker_setPatrolDirection, $01
+	asm15 scriptHelp.hardhatWorker_setPatrolCounter,   $a0
 	callscript mainScripts.hardhatWorkerFunc_patrol
 
-	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $03
-	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $a0
+	asm15 scriptHelp.hardhatWorker_setPatrolDirection, $03
+	asm15 scriptHelp.hardhatWorker_setPatrolCounter,   $a0
 	callscript mainScripts.hardhatWorkerFunc_patrol
 
 	scriptjump @val02
 
 @val03:
-	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $02
-	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $40
+	asm15 scriptHelp.hardhatWorker_setPatrolDirection, $02
+	asm15 scriptHelp.hardhatWorker_setPatrolCounter,   $40
 	callscript mainScripts.hardhatWorkerFunc_patrol
 
-	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $01
-	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $a0
+	asm15 scriptHelp.hardhatWorker_setPatrolDirection, $01
+	asm15 scriptHelp.hardhatWorker_setPatrolCounter,   $a0
 	callscript mainScripts.hardhatWorkerFunc_patrol
 
-	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $03
-	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $a0
+	asm15 scriptHelp.hardhatWorker_setPatrolDirection, $03
+	asm15 scriptHelp.hardhatWorker_setPatrolCounter,   $a0
 	callscript mainScripts.hardhatWorkerFunc_patrol
 
-	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $00
-	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $40
+	asm15 scriptHelp.hardhatWorker_setPatrolDirection, $00
+	asm15 scriptHelp.hardhatWorker_setPatrolCounter,   $40
 	callscript mainScripts.hardhatWorkerFunc_patrol
 
 	scriptjump @val03
 
 @val04:
-	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $01
-	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $60
+	asm15 scriptHelp.hardhatWorker_setPatrolDirection, $01
+	asm15 scriptHelp.hardhatWorker_setPatrolCounter,   $60
 	callscript mainScripts.hardhatWorkerFunc_patrol
 
-	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $03
-	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $60
+	asm15 scriptHelp.hardhatWorker_setPatrolDirection, $03
+	asm15 scriptHelp.hardhatWorker_setPatrolCounter,   $60
 	callscript mainScripts.hardhatWorkerFunc_patrol
 
 	scriptjump @val04

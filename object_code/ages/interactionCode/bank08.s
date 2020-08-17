@@ -1192,7 +1192,7 @@ _interaction21_subid0d:
 	ret
 
 @enableControl:
-	jpab scriptHlp.moonlitGrotto_enableControlAfterBreakingCrystal
+	jpab scriptHelp.moonlitGrotto_enableControlAfterBreakingCrystal
 
 
 ; d3: Small key falls when a block is pushed into place
@@ -3895,7 +3895,7 @@ _impaSubid2Substate7:
 	ld a,($cfc0)
 	cp $03
 	ret c
-	jpab scriptHlp.turnToFaceSomething
+	jpab scriptHelp.turnToFaceSomething
 
 ;;
 ; Impa tells you about Ralph's heritage (unlinked)
@@ -4093,7 +4093,7 @@ _impaSubid9:
 	ld a,(de)
 	or a
 	jr z,++
-	callab scriptHlp.objectWritePositionTocfd5
+	callab scriptHelp.objectWritePositionTocfd5
 ++
 	jp _impaAnimateAndRunScript
 
@@ -6115,7 +6115,7 @@ nayruState0:
 @init11:
 	xor a
 	call interactionSetAnimation
-	callab scriptHlp.objectWritePositionTocfd5
+	callab scriptHelp.objectWritePositionTocfd5
 	ld a,>TX_1d00
 	call interactionSetHighTextIndex
 	ld hl,mainScripts.nayruScript11
@@ -6547,7 +6547,7 @@ _nayruSubid04:
 	cp $0b
 	jr c,_nayruAnimateAndRunScript
 	call interactionAnimate
-	jpab scriptHlp.turnToFaceSomething
+	jpab scriptHelp.turnToFaceSomething
 
 ;;
 ; Subid $05: ?
@@ -6560,7 +6560,7 @@ _nayruSubid05:
 	cp $05
 	ret nc
 
-	jpab scriptHlp.turnToFaceSomething
+	jpab scriptHelp.turnToFaceSomething
 
 ;;
 ; For Nayru subid 0 (getting possessed cutscene), this updates var3a, var3b representing
@@ -6885,7 +6885,7 @@ _ralphState0:
 	jp objectSetInvisible
 
 @initSubid08:
-	callab scriptHlp.ralph_createLinkedSwordAnimation
+	callab scriptHelp.ralph_createLinkedSwordAnimation
 
 	ld hl,mainScripts.ralphSubid08Script
 	call interactionSetScript
@@ -7047,7 +7047,7 @@ _ralphState0:
 	jp nz,interactionDelete
 
 	call interactionLoadExtraGraphics
-	callab scriptHlp.ralph_createLinkedSwordAnimation
+	callab scriptHelp.ralph_createLinkedSwordAnimation
 	ld hl,mainScripts.ralphSubid0cScript
 	call interactionSetScript
 	xor a
@@ -7160,7 +7160,7 @@ _ralphSubid02:
 	jp interactionIncSubstate
 
 @state1:
-	callab scriptHlp.objectWritePositionTocfd5
+	callab scriptHelp.objectWritePositionTocfd5
 	ld e,Interaction.counter2
 	ld a,(de)
 	or a
@@ -7402,7 +7402,7 @@ _ralphSubid06:
 	.dw _ralphRunScript
 
 @substate0:
-	callab scriptHlp.objectWritePositionTocfd5
+	callab scriptHelp.objectWritePositionTocfd5
 	ld a,($cfd0)
 	cp $08
 	jp nz,interactionRunScript
@@ -7421,7 +7421,7 @@ _ralphSubid06:
 ;;
 ; Cutscene postgame where they warp to the maku tree, Ralph notices the statue
 _ralphSubid07:
-	callab scriptHlp.objectWritePositionTocfd5
+	callab scriptHelp.objectWritePositionTocfd5
 	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable

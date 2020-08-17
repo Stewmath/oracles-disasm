@@ -712,7 +712,7 @@ _soldierSubid08:
 	jp objectSetVisible82
 
 @state1:
-	callab scriptHlp.turnToFaceSomething
+	callab scriptHelp.turnToFaceSomething
 	jp interactionAnimate
 
 
@@ -3871,7 +3871,7 @@ _ambi_runSubid01:
 	jp c,@updateSubstate
 
 	call interactionAnimate
-	jpab scriptHlp.turnToFaceSomething
+	jpab scriptHelp.turnToFaceSomething
 
 @updateSubstate:
 	ld e,Interaction.substate
@@ -4893,7 +4893,7 @@ _dog_subid01:
 	call c,_dog_incTargetPositionIndex
 	jr c,@delete
 
-	callab scriptHlp.mamamuDog_updateSpeedZ
+	callab scriptHelp.mamamuDog_updateSpeedZ
 	call interactionAnimate
 	call objectSetPriorityRelativeToLink_withTerrainEffects
 	jp objectAddToGrabbableObjectBuffer
@@ -7647,7 +7647,7 @@ interactionCode65:
 @state1:
 	call interactionRunScript
 	jp c,interactionDelete
-	callab scriptHlp.comedian_turnToFaceLink
+	callab scriptHelp.comedian_turnToFaceLink
 	jp interactionAnimateAsNpc
 
 
@@ -8261,7 +8261,7 @@ _goronSubid09:
 	call getThisRoomFlags
 	bit 7,(hl)
 	jr z,++
-	callab scriptHlp.goron_targetCarts_reloadCrystalsInFirstRoom
+	callab scriptHelp.goron_targetCarts_reloadCrystalsInFirstRoom
 ++
 	call interactionRunScript
 	jr @state1

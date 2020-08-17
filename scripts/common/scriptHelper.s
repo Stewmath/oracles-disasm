@@ -1,4 +1,4 @@
- m_section_force Script_Helper1 NAMESPACE scriptHlp
+ m_section_force Script_Helper1 NAMESPACE scriptHelp
 
 ; ==============================================================================
 ; INTERACID_FARORE

@@ -14059,7 +14059,7 @@ setMakuTreeStageAndMapText:
 	ldh a,(<hRomBank)
 	push af
 	callfrombank0 seasonsInteractionsBank09.makuTree_setAppropriateStage
-	callfrombank0 scriptHlp.makuTree_setMapTextBasedOnStage
+	callfrombank0 scriptHelp.makuTree_setMapTextBasedOnStage
 	pop af
 	setrombank
 	ret

@@ -45,13 +45,13 @@ _faroreUnlinked:
 	scriptjump @npcLoop
 
 @sayOtherGameSecret:
-	asm15 scriptHlp.faroreGenerateGameTransferSecret
+	asm15 scriptHelp.faroreGenerateGameTransferSecret
 	showtextlowindex <TX_551a
 	scriptjump @npcLoop
 
 @askForPassword:
 	askforsecret $ff
-	asm15 scriptHlp.faroreCheckSecretValidity
+	asm15 scriptHelp.faroreCheckSecretValidity
 	jumptable_objectbyte Interaction.var3f
 	.dw @offerOtherGameSecret
 	.dw @offerOtherGameSecret
@@ -65,7 +65,7 @@ _faroreUnlinked:
 	scriptjump @offerOtherGameSecret
 
 @secretOK: ; The secret is fine, but you're supposed to tell it to someone else.
-	asm15 scriptHlp.faroreShowTextForSecretHint
+	asm15 scriptHelp.faroreShowTextForSecretHint
 	wait 30
 	showtextlowindex <TX_5504
 	scriptjump @offerOtherGameSecret
@@ -92,7 +92,7 @@ _faroreLinked:
 
 @showPasswordScreen:
 	askforsecret $ff
-	asm15 scriptHlp.faroreCheckSecretValidity
+	asm15 scriptHelp.faroreCheckSecretValidity
 	jumptable_objectbyte Interaction.var3f
 	.dw @script4667
 	.dw @secretOK
@@ -106,7 +106,7 @@ _faroreLinked:
 	scriptjump @npcLoop
 
 @secretOK:
-	asm15 scriptHlp.faroreSpawnSecretChest
+	asm15 scriptHelp.faroreSpawnSecretChest
 	checkcfc0bit 1
 	xorcfc0bit 1
 	enableinput
@@ -200,7 +200,7 @@ faroresMemoryScript:
 
 _doorController_updateRespawnWhenLinkNotTouching:
 	checknotcollidedwithlink_ignorez
-	asm15 scriptHlp.doorController_updateLinkRespawn
+	asm15 scriptHelp.doorController_updateLinkRespawn
 	retscript
 
 
@@ -239,7 +239,7 @@ doorController_controlledByTriggers_left:
 _doorController_controlledByTriggers:
 	callscript _doorController_updateRespawnWhenLinkNotTouching
 @loop:
-	asm15 scriptHlp.doorController_decideActionBasedOnTriggers
+	asm15 scriptHelp.doorController_decideActionBasedOnTriggers
 	jumptable_memoryaddress wTmpcfc0.normal.doorControllerState
 	.dw @loop
 	.dw @open
@@ -300,7 +300,7 @@ doorController_shutUntilEnemiesDead_left:
 	scriptjump _doorController_shutUntilEnemiesDead
 
 _doorController_openOnMinecartCollision:
-	asm15 scriptHlp.doorController_checkMinecartCollidedWithDoor
+	asm15 scriptHelp.doorController_checkMinecartCollidedWithDoor
 	jumptable_memoryaddress wTmpcfc0.normal.doorControllerState
 	.dw _doorController_openOnMinecartCollision
 	.dw @incState
@@ -314,7 +314,7 @@ _doorController_closeDoorWhenLinkNotTouching:
 	scriptend
 
 _doorController_minecart:
-	asm15 scriptHlp.doorController_checkTileIsMinecartTrack
+	asm15 scriptHelp.doorController_checkTileIsMinecartTrack
 	jumptable_memoryaddress wTmpcfc0.normal.doorControllerState
 	.dw _doorController_openOnMinecartCollision ; Not minecart track (door is closed)
 	.dw _doorController_closeDoorWhenLinkNotTouching ; Minecart track (door is open)
@@ -391,7 +391,7 @@ _doorController_shutUntilTorchesLit:
 	callscript _doorController_updateRespawnWhenLinkNotTouching
 	setstate $03
 @loop:
-	asm15 scriptHlp.doorController_checkEnoughTorchesLit
+	asm15 scriptHelp.doorController_checkEnoughTorchesLit
 	jumptable_memoryaddress wTmpcec0
 	.dw @loop
 	.dw @torchesLit
@@ -686,7 +686,7 @@ shopkeeperChestGameScript:
 
 @answeredYes:
 	jumpifmemoryeq wShootingGalleryccd5, $01, _shopkeeperNotEnoughRupees
-	asm15 scriptHlp.shopkeeper_take10Rupees
+	asm15 scriptHelp.shopkeeper_take10Rupees
 	setspeed SPEED_200
 	setcollisionradii $06, $06
 	moveup    $08
@@ -697,7 +697,7 @@ shopkeeperChestGameScript:
 	scriptjump ++
 
 @playAgain:
-	asm15 scriptHlp.shopkeeper_take10Rupees
+	asm15 scriptHelp.shopkeeper_take10Rupees
 ++
 	setangleandanimation $08
 	writeobjectbyte Interaction.substate, $02 ; Signal to close whichever chest he faces
@@ -831,7 +831,7 @@ bombflower_unblockAutumnTemple:
 	playsound SND_FADEOUT
 	asm15 fadeoutToWhite
 	shakescreen 120
-	asm15 scriptHlp.createBossDeathExplosion
+	asm15 scriptHelp.createBossDeathExplosion
 	wait 20
 	playsound SND_FADEOUT
 	asm15 fadeoutToWhite
@@ -875,7 +875,7 @@ spinnerScript_waitForLink:
 ; ==============================================================================
 essenceScript_essenceGetCutscene:
 	playsound MUS_ESSENCE
-	asm15 scriptHlp.essence_createEnergySwirl
+	asm15 scriptHelp.essence_createEnergySwirl
 	wait 180
 	wait 180
 	playsound SND_FADEOUT
@@ -885,7 +885,7 @@ essenceScript_essenceGetCutscene:
 	playsound SND_FADEOUT
 	wait 40
 	playsound SND_FADEOUT
-	asm15 scriptHlp.essence_stopEnergySwirl
+	asm15 scriptHelp.essence_stopEnergySwirl
 	scriptend
 
 
@@ -912,7 +912,7 @@ vasuScript:
 
 	; Give ring box in linked game
 	showtextlowindex <TX_303b
-	asm15 scriptHlp.vasu_giveRingBox
+	asm15 scriptHelp.vasu_giveRingBox
 	wait 1
 ++
 	setdisabledobjectsto11
@@ -930,26 +930,26 @@ vasuScript:
 
 	; Give ring box in unlinked game
 	showtextlowindex <TX_303b
-	asm15 scriptHlp.vasu_giveRingBox
+	asm15 scriptHelp.vasu_giveRingBox
 	wait 1
 	setdisabledobjectsto11
 	checktext
 ++
 	; Give friendship ring
 	showtextlowindex <TX_303f
-	asm15 scriptHlp.vasu_giveFriendshipRing
+	asm15 scriptHelp.vasu_giveFriendshipRing
 	wait 1
 	setdisabledobjectsto11
 	checktext
 
 	; Force Link to appraise it
 	showtextlowindex <TX_3033
-	asm15 scriptHlp.vasu_openRingMenu, $00
+	asm15 scriptHelp.vasu_openRingMenu, $00
 	wait 10
 
 	; Open ring list
 	showtextlowindex <TX_3013
-	asm15 scriptHlp.vasu_openRingMenu, $01
+	asm15 scriptHelp.vasu_openRingMenu, $01
 	wait 10
 	showtextlowindex <TX_3008
 
@@ -962,7 +962,7 @@ vasuScript:
 
 @alreadyGaveRingBox:
 	; Check whether to give special rings
-	asm15 scriptHlp.vasu_checkEarnedSpecialRing
+	asm15 scriptHelp.vasu_checkEarnedSpecialRing
 	jumptable_objectbyte Interaction.var3b
 	.dw @giveSlayersRing
 	.dw @giveWealthRing
@@ -981,7 +981,7 @@ vasuScript:
 	showtextlowindex <TX_3039
 @giveSpecialRing:
 	checktext
-	asm15 scriptHlp.vasu_giveRingInVar3a
+	asm15 scriptHelp.vasu_giveRingInVar3a
 	scriptjump @npcLoop
 
 
@@ -998,12 +998,12 @@ vasuScript:
 
 @appraise:
 	jumpifobjectbyteeq Interaction.var37, $00, @noUnappraisedRings
-	asm15 scriptHlp.vasu_openRingMenu, $00
+	asm15 scriptHelp.vasu_openRingMenu, $00
 	scriptjump @exitedRingMenu
 
 @list:
 	jumpifobjectbyteeq Interaction.var38, $00, @noAppraisedRings
-	asm15 scriptHlp.vasu_openRingMenu, $01
+	asm15 scriptHelp.vasu_openRingMenu, $01
 
 @exitedRingMenu:
 	wait 10
@@ -1017,7 +1017,7 @@ vasuScript:
 	showtextlowindex <TX_3038
 	checktext
 	unsetglobalflag GLOBALFLAG_APPRAISED_HUNDREDTH_RING
-	asm15 scriptHlp.vasu_giveHundredthRing
+	asm15 scriptHelp.vasu_giveHundredthRing
 	scriptjump @npcLoop
 
 
@@ -1069,7 +1069,7 @@ blueSnakeScript_linked:
 
 _blueSnake_linkOrFortune:
 	setdisabledobjectsto11
-	asm15 scriptHlp.blueSnake_linkOrFortune
+	asm15 scriptHelp.blueSnake_linkOrFortune
 	wait 1
 	scriptend
 
@@ -1094,14 +1094,14 @@ redSnakeScript_linked:
 	jumpiftextoptioneq $00, @tellSecretToSnake
 
 	; Generate a secret
-	asm15 scriptHlp.redSnake_generateRingSecret
+	asm15 scriptHelp.redSnake_generateRingSecret
 @tellSecretToLink:
 	showtextnonexitablelowindex <TX_301d
 	jumpiftextoptioneq $00, @tellSecretToLink
 	scriptjump @quit
 
 @tellSecretToSnake:
-	asm15 scriptHlp.redSnake_openSecretInputMenu
+	asm15 scriptHelp.redSnake_openSecretInputMenu
 	wait 1
 	jumpifmemoryeq wTextInputResult, $00, @toldValidSecret
 
@@ -1121,7 +1121,7 @@ redSnakeScript_linked:
 blueSnakeScript_successfulFortune:
 	setdisabledobjectsto11
 	showtextlowindex <TX_3023
-	asm15 scriptHlp.vasu_giveRingInVar3a
+	asm15 scriptHelp.vasu_giveRingInVar3a
 	wait 1
 	checktext
 	enableallobjects
@@ -1141,7 +1141,7 @@ gameCompleteDialogScript:
 	jumpiftextoptioneq $00, @dontSave
 
 	; Save
-	asm15 scriptHlp.gameCompleteDialog_markGameAsComplete
+	asm15 scriptHelp.gameCompleteDialog_markGameAsComplete
 	asm15 saveFile
 	wait 30
 	scriptjump ++
@@ -1224,7 +1224,7 @@ makuTreeScript_remoteCutsceneDontSetRoomFlag:
 	setmusic MUS_MAKU_TREE
 	wait 40
 	asm15 hideStatusBar
-	asm15 scriptHlp.seasonsFunc_15_571a, $02
+	asm15 scriptHelp.seasonsFunc_15_571a, $02
 	checkpalettefadedone
 	spawninteraction INTERACID_MAKU_LEAF $00, $40, $50
 	wait 240
@@ -1236,7 +1236,7 @@ makuTreeScript_remoteCutsceneDontSetRoomFlag:
 	checkpalettefadedone
 	resetmusic
 	enableinput
-	asm15 scriptHlp.seasonsFunc_15_576c
+	asm15 scriptHelp.seasonsFunc_15_576c
 	scriptend
 script4e25:
 	jumptable_objectbyte Interaction.subid
@@ -1252,38 +1252,38 @@ script4e25:
 	.dw script4e83
 	.dw @outsideDungeon8
 @outsideDungeon1:
-	asm15 scriptHlp.seasonsFunc_15_5735, <TX_1704
+	asm15 scriptHelp.seasonsFunc_15_5735, <TX_1704
 	retscript
 @outsideDungeon2:
-	asm15 scriptHlp.seasonsFunc_15_5735, <TX_1707
+	asm15 scriptHelp.seasonsFunc_15_5735, <TX_1707
 	retscript
 @outsideDungeon3:
-	asm15 scriptHlp.seasonsFunc_15_5735, <TX_1709 ; / TX_1724
+	asm15 scriptHelp.seasonsFunc_15_5735, <TX_1709 ; / TX_1724
 	retscript
 @outsideDungeon4:
-	asm15 scriptHlp.seasonsFunc_15_5744
+	asm15 scriptHelp.seasonsFunc_15_5744
 	jumpifobjectbyteeq Interaction.var3f, $01, @@dungeon5AfterDungeon4
-	asm15 scriptHlp.seasonsFunc_15_5735, <TX_170b
+	asm15 scriptHelp.seasonsFunc_15_5735, <TX_170b
 	retscript
 @@dungeon5AfterDungeon4:
-	asm15 scriptHlp.seasonsFunc_15_5735, <TX_1710
+	asm15 scriptHelp.seasonsFunc_15_5735, <TX_1710
 	retscript
 @outsideDungeon5:
-	asm15 scriptHlp.seasonsFunc_15_5748
+	asm15 scriptHelp.seasonsFunc_15_5748
 	jumpifobjectbyteeq Interaction.var3f, $01, @@dungeon5AfterDungeon4
-	asm15 scriptHlp.seasonsFunc_15_5735, <TX_170d
+	asm15 scriptHelp.seasonsFunc_15_5735, <TX_170d
 	retscript
 @@dungeon5AfterDungeon4:
-	asm15 scriptHlp.seasonsFunc_15_5735, <TX_170f
+	asm15 scriptHelp.seasonsFunc_15_5735, <TX_170f
 	retscript
 @outsideDungeon6:
-	asm15 scriptHlp.seasonsFunc_15_5735, <TX_1712
+	asm15 scriptHelp.seasonsFunc_15_5735, <TX_1712
 	retscript
 @outsideDungeon7:
-	asm15 scriptHlp.seasonsFunc_15_5735, <TX_1714
+	asm15 scriptHelp.seasonsFunc_15_5735, <TX_1714
 	retscript
 @outsideDungeon8:
-	asm15 scriptHlp.seasonsFunc_15_5735, <TX_1716
+	asm15 scriptHelp.seasonsFunc_15_5735, <TX_1716
 	retscript
 @outsideWinterTemple:
 	showtext TX_1736
@@ -1296,7 +1296,7 @@ script4e83: ; twinrova is behind onox
 makuTreeScript_gateHit:
 	setcollisionradii $14, $20
 @checkLinkHitGateWithSword:
-	asm15 scriptHlp.makuTree_checkGateHit
+	asm15 scriptHelp.makuTree_checkGateHit
 	jumptable_memoryaddress $cfc0
 	.dw @checkLinkHitGateWithSword
 	.dw @gateHit
@@ -1333,7 +1333,7 @@ seasonsSpiritsScript_spiritStatue:
 	checkabutton
 	disableinput
 	writememory $cfc0, $00
-	asm15 scriptHlp.spawnSeasonsSpiritSubId01
+	asm15 scriptHelp.spawnSeasonsSpiritSubId01
 	xorcfc0bit 0
 	playsound SND_CIRCLING
 	checkcfc0bit 1
@@ -1348,12 +1348,12 @@ seasonsSpiritsScript_spiritStatue:
 	setcollisionradii $08, $04
 	checkcollidedwithlink_onground
 	disableinput
-	asm15 scriptHlp.spawnSeasonsSpiritSubId00
+	asm15 scriptHelp.spawnSeasonsSpiritSubId00
 	xorcfc0bit 0
 	playsound SND_CIRCLING
 	checkcfc0bit 1
 	callscript _seasonsSpiritsScript_showIntroText
-	asm15 scriptHlp.seasonsSpirit_createSwirl
+	asm15 scriptHelp.seasonsSpirit_createSwirl
 	wait 10
 	playsound SND_FADEOUT
 	asm15 fadeoutToWhite
@@ -1369,7 +1369,7 @@ seasonsSpiritsScript_spiritStatue:
 	asm15 fadeinFromWhiteWithDelay, $04
 	checkpalettefadedone
 	callscript _seasonsSpiritsScript_imbueSeason
-	asm15 scriptHlp.seasonsSpirits_checkPostSeasonGetText
+	asm15 scriptHelp.seasonsSpirits_checkPostSeasonGetText
 	jumptable_objectbyte $7f
 	.dw @@notAllSeasonsGotten
 	.dw @@allSeasonsGotten_nonAutumnText
@@ -1393,7 +1393,7 @@ _seasonsSpiritsScript_seasonsGotten:
 	checkabutton
 	disableinput
 	writememory $cfc0, $00
-	asm15 scriptHlp.spawnSeasonsSpiritSubId01
+	asm15 scriptHelp.spawnSeasonsSpiritSubId01
 	xorcfc0bit 0
 	playsound SND_CIRCLING
 	checkcfc0bit 1
@@ -1567,7 +1567,7 @@ mayorsHouseLadyScript:
 @upgradeRingbox:
 	showtext TX_3108
 	wait 20
-	asm15 scriptHlp.getNextRingboxLevel
+	asm15 scriptHelp.getNextRingboxLevel
 	jumpifmemoryeq wTextNumberSubstitution, $05, @upgradeTo5
 	giveitem TREASURE_RING_BOX $01
 	scriptjump @provideReturnSecret
@@ -1704,7 +1704,7 @@ malonScript:
 	orroomflag $40
 	enableinput
 @gaveCuccodex:
-	asm15 scriptHlp.checkTalonReturned
+	asm15 scriptHelp.checkTalonReturned
 	jumptable_objectbyte $7c
 	.dw @talonNotReturned
 	.dw @talonReturned
@@ -1824,7 +1824,7 @@ dungeonWiseOldManScript:
 -
 	checkabutton
 	showloadedtext
-	asm15 scriptHlp.dungeonWiseOldMan_setLinksInvincibilityCounterTo0
+	asm15 scriptHelp.dungeonWiseOldMan_setLinksInvincibilityCounterTo0
 	scriptjump -
 	
 
@@ -2036,7 +2036,7 @@ sokraScript_inVillage:
 	scriptjump -
 @canDoEvent:
 	disableinput
-	asm15 scriptHlp.sokra_alert
+	asm15 scriptHelp.sokra_alert
 	playsound SND_CLINK
 	setcounter1 $40
 	setcollisionradii $00, $00
@@ -2048,7 +2048,7 @@ sokraScript_inVillage:
 	setangle $10
 -
 	wait 1
-	asm15 scriptHlp.villageSokra_waitUntilLinkInPosition
+	asm15 scriptHelp.villageSokra_waitUntilLinkInPosition
 	jumpifobjectbyteeq $76, $00, -
 	wait 20
 	writememory $d008, $00
@@ -2058,7 +2058,7 @@ sokraScript_inVillage:
 	setanimation $07
 -
 	wait 1
-	asm15 scriptHlp.seasonsFunc_15_5812, $28
+	asm15 scriptHelp.seasonsFunc_15_5812, $28
 	jumpifobjectbyteeq $76, $01, -
 	setangle $08
 	applyspeed $10
@@ -2081,7 +2081,7 @@ sokraScript_inVillage:
 @haveRodOfSeasons:
 	setanimation $02
 	writeobjectbyte $43, $01
-	asm15 scriptHlp.villageSokra_checkStageInGame
+	asm15 scriptHelp.villageSokra_checkStageInGame
 	jumptable_memoryaddress $cfc0
 	.dw @noEssences
 	.dw @firstEssenceGotten
@@ -2100,7 +2100,7 @@ sokraScript_easternSuburbsPortal:
 	scriptjump sokraScript_easternSuburbsPortal
 @canDoEvent:
 	disableinput
-	asm15 scriptHlp.sokra_alert
+	asm15 scriptHelp.sokra_alert
 	playsound SND_CLINK
 	setcounter1 $40
 	showtextlowindex <TX_5204
@@ -2110,7 +2110,7 @@ sokraScript_easternSuburbsPortal:
 	setangle ANGLE_DOWN
 -
 	wait 1
-	asm15 scriptHlp.suburbsSokra_jumpOffStump
+	asm15 scriptHelp.suburbsSokra_jumpOffStump
 	jumpifobjectbyteeq $4f, $00, @moveLeft
 	scriptjump -
 @moveLeft:
@@ -2118,10 +2118,10 @@ sokraScript_easternSuburbsPortal:
 	setangle ANGLE_LEFT
 	applyspeed $24
 	wait 10
-	asm15 scriptHlp.seasonsFunc_15_5840
+	asm15 scriptHelp.seasonsFunc_15_5840
 -
 	wait 1
-	asm15 scriptHlp.seasonsFunc_15_5802
+	asm15 scriptHelp.seasonsFunc_15_5802
 	jumpifobjectbyteeq $76, $00, -
 	wait 20
 	writememory $d008, $01
@@ -2137,7 +2137,7 @@ sokraScript_easternSuburbsPortal:
 	setspeed SPEED_100
 -
 	wait 1
-	asm15 scriptHlp.seasonsFunc_15_5812, $88
+	asm15 scriptHelp.seasonsFunc_15_5812, $88
 	jumpifobjectbyteeq $76, $01, -
 	enableinput
 	orroomflag $40
@@ -2193,7 +2193,7 @@ bipinScript1:
 	checkabutton
 	setdisabledobjectsto91
 	setanimation $02
-	asm15 scriptHlp.bipin_showText_subid1To9
+	asm15 scriptHelp.bipin_showText_subid1To9
 	wait 30
 	callscript _bipinSayRandomTip
 	enableallobjects
@@ -2206,7 +2206,7 @@ bipinScript2:
 @loop:
 	checkabutton
 	setdisabledobjectsto91
-	asm15 scriptHlp.bipin_showText_subid1To9
+	asm15 scriptHelp.bipin_showText_subid1To9
 	enableallobjects
 	scriptjump @loop
 
@@ -2224,7 +2224,7 @@ _bipinSayRandomTip:
 .ifdef ROM_AGES
 ; "Past" version of Bipin who gives you a gasha seed
 bipinScript3:
-	loadscript scriptHlp.bipinScript3
+	loadscript scriptHelp.bipinScript3
 .endif
 
 
@@ -2274,7 +2274,7 @@ panickingBirdScript:
 ; Blossom asking you to name her child
 blossomScript0:
 	initcollisions
-	asm15 scriptHlp.checkc6e2BitSet, $00
+	asm15 scriptHelp.checkc6e2BitSet, $00
 	jumpifobjectbyteeq Interaction.var3b, $01, @nameAlreadyGiven
 @loop:
 	checkabutton
@@ -2282,7 +2282,7 @@ blossomScript0:
 	showtextlowindex <TX_4400
 
 @askForName:
-	asm15 scriptHlp.blossom_openNameEntryMenu
+	asm15 scriptHelp.blossom_openNameEntryMenu
 	wait 30
 	jumptable_memoryaddress wTextInputResult
 	.dw @validName
@@ -2301,9 +2301,9 @@ blossomScript0:
 	.dw @askForName
 
 @nameConfirmed:
-	asm15 scriptHlp.blossom_decideInitialChildStatus
-	asm15 scriptHlp.setc6e2Bit, $00
-	asm15 scriptHlp.setNextChildStage, $01
+	asm15 scriptHelp.blossom_decideInitialChildStatus
+	asm15 scriptHelp.setc6e2Bit, $00
+	asm15 scriptHelp.setNextChildStage, $01
 	wait 30
 	showtextlowindex <TX_4408
 	enableinput
@@ -2317,7 +2317,7 @@ blossomScript0:
 ; Blossom asking for money to see a doctor
 blossomScript1:
 	initcollisions
-	asm15 scriptHlp.checkc6e2BitSet, $01
+	asm15 scriptHelp.checkc6e2BitSet, $01
 	jumpifobjectbyteeq Interaction.var3b, $01, @alreadyGaveMoney
 @loop:
 	checkabutton
@@ -2336,12 +2336,12 @@ blossomScript1:
 	.dw @give1Rupee
 
 @give150Rupees:
-	asm15 scriptHlp.blossom_checkHasRupees, RUPEEVAL_150
+	asm15 scriptHelp.blossom_checkHasRupees, RUPEEVAL_150
 	jumpifobjectbyteeq Interaction.var3c, $01, @notEnoughRupees
 	asm15 removeRupeeValue, RUPEEVAL_150
-	asm15 scriptHlp.blossom_addValueToChildStatus, $08
-	asm15 scriptHlp.setc6e2Bit, $01
-	asm15 scriptHlp.setNextChildStage, $02
+	asm15 scriptHelp.blossom_addValueToChildStatus, $08
+	asm15 scriptHelp.setc6e2Bit, $01
+	asm15 scriptHelp.setNextChildStage, $02
 	enableallobjects
 @gave150RupeesLoop:
 	showtextlowindex <TX_440d
@@ -2349,12 +2349,12 @@ blossomScript1:
 	scriptjump @gave150RupeesLoop
 
 @give50Rupees:
-	asm15 scriptHlp.blossom_checkHasRupees, RUPEEVAL_050
+	asm15 scriptHelp.blossom_checkHasRupees, RUPEEVAL_050
 	jumpifobjectbyteeq Interaction.var3c, $01, @notEnoughRupees
 	asm15 removeRupeeValue, RUPEEVAL_050
-	asm15 scriptHlp.blossom_addValueToChildStatus, $05
-	asm15 scriptHlp.setc6e2Bit, $01
-	asm15 scriptHlp.setNextChildStage, $02
+	asm15 scriptHelp.blossom_addValueToChildStatus, $05
+	asm15 scriptHelp.setc6e2Bit, $01
+	asm15 scriptHelp.setNextChildStage, $02
 	enableallobjects
 @gave50RupeesLoop:
 	showtextlowindex <TX_440e
@@ -2362,12 +2362,12 @@ blossomScript1:
 	scriptjump @gave50RupeesLoop
 
 @give10Rupees:
-	asm15 scriptHlp.blossom_checkHasRupees, RUPEEVAL_010
+	asm15 scriptHelp.blossom_checkHasRupees, RUPEEVAL_010
 	jumpifobjectbyteeq Interaction.var3c, $01, @notEnoughRupees
 	asm15 removeRupeeValue, RUPEEVAL_010
-	asm15 scriptHlp.blossom_addValueToChildStatus, $02
-	asm15 scriptHlp.setc6e2Bit, $01
-	asm15 scriptHlp.setNextChildStage, $02
+	asm15 scriptHelp.blossom_addValueToChildStatus, $02
+	asm15 scriptHelp.setc6e2Bit, $01
+	asm15 scriptHelp.setNextChildStage, $02
 	enableallobjects
 @gave10RupeesLoop:
 	showtextlowindex <TX_440f
@@ -2375,11 +2375,11 @@ blossomScript1:
 	scriptjump @gave10RupeesLoop
 
 @give1Rupee:
-	asm15 scriptHlp.blossom_checkHasRupees, RUPEEVAL_001
+	asm15 scriptHelp.blossom_checkHasRupees, RUPEEVAL_001
 	jumpifobjectbyteeq Interaction.var3c, $01, @notEnoughRupees
 	asm15 removeRupeeValue, RUPEEVAL_001
-	asm15 scriptHlp.setc6e2Bit, $01
-	asm15 scriptHlp.setNextChildStage, $02
+	asm15 scriptHelp.setc6e2Bit, $01
+	asm15 scriptHelp.setNextChildStage, $02
 	enableallobjects
 @gave1RupeeLoop:
 	showtextlowindex <TX_4410
@@ -2411,7 +2411,7 @@ script4e08:
 	checkabutton
 	setdisabledobjectsto91
 	showtextlowindex <TX_4412
-	asm15 scriptHlp.setNextChildStage, $03
+	asm15 scriptHelp.setNextChildStage, $03
 	enableallobjects
 	scriptjump script4e08
 
@@ -2419,15 +2419,15 @@ script4e08:
 ; Blossom asks you how to get the baby to sleep
 blossomScript3:
 	initcollisions
-	asm15 scriptHlp.checkc6e2BitSet, $02
+	asm15 scriptHelp.checkc6e2BitSet, $02
 	jumpifobjectbyteeq Interaction.var3b, $01, @alreadyGaveAdvice
 	checkabutton
 
 	setdisabledobjectsto91
 	showtextlowindex <TX_4413
 
-	asm15 scriptHlp.setc6e2Bit, $02
-	asm15 scriptHlp.setNextChildStage, $04
+	asm15 scriptHelp.setc6e2Bit, $02
+	asm15 scriptHelp.setNextChildStage, $04
 
 	jumptable_memoryaddress wSelectedTextOption
 	.dw @sing
@@ -2441,7 +2441,7 @@ blossomScript3:
 @play:
 	wait 30
 	showtextlowindex <TX_4415
-	asm15 scriptHlp.blossom_addValueToChildStatus, $0a
+	asm15 scriptHelp.blossom_addValueToChildStatus, $0a
 	enableallobjects
 
 @alreadyGaveAdvice:
@@ -2464,7 +2464,7 @@ blossomScript5:
 ; current personality.)
 blossomScript6:
 	initcollisions
-	asm15 scriptHlp.checkc6e2BitSet, $03
+	asm15 scriptHelp.checkc6e2BitSet, $03
 	jumptable_objectbyte Interaction.var03
 	.dw @hyperactive
 	.dw @shy
@@ -2532,9 +2532,9 @@ blossomScript6:
 @selectedYes_1:
 	wait 30
 	showtextlowindex <TX_441c
-	asm15 scriptHlp.setc6e2Bit, $03
+	asm15 scriptHelp.setc6e2Bit, $03
 	writeobjectbyte Interaction.var3a, $01
-	asm15 scriptHlp.blossom_addValueToChildStatus, $08
+	asm15 scriptHelp.blossom_addValueToChildStatus, $08
 	retscript
 
 @selectedNo_1: ; Quiet, perhaps?
@@ -2547,9 +2547,9 @@ blossomScript6:
 @selectedYes_2:
 	wait 30
 	showtextlowindex <TX_441e
-	asm15 scriptHlp.setc6e2Bit, $03
+	asm15 scriptHelp.setc6e2Bit, $03
 	writeobjectbyte Interaction.var3a, $01
-	asm15 scriptHlp.blossom_addValueToChildStatus, $05
+	asm15 scriptHelp.blossom_addValueToChildStatus, $05
 	retscript
 
 @selectedNo_2: ; Were you weird?
@@ -2562,9 +2562,9 @@ blossomScript6:
 @selectedYes_3:
 	wait 30
 	showtextlowindex <TX_4420
-	asm15 scriptHlp.setc6e2Bit, $03
+	asm15 scriptHelp.setc6e2Bit, $03
 	writeobjectbyte Interaction.var3a, $01
-	asm15 scriptHlp.blossom_addValueToChildStatus, $01
+	asm15 scriptHelp.blossom_addValueToChildStatus, $01
 	retscript
 
 @selectedNo_3: ; She gives up asking (but she'll ask again next time you talk)
@@ -2649,7 +2649,7 @@ sunkenCityFickleGirlScript_text3:
 ; ==============================================================================
 subrosianScript_smelterByAutumnTemple:
 	stopifroomflag80set
-	asm15 scriptHlp.subrosianFunc_58ac
+	asm15 scriptHelp.subrosianFunc_58ac
 	rungenericnpc TX_2705
 
 subrosianScript_smelterText1:
@@ -2662,11 +2662,11 @@ subrosianScript_smelterText2:
 	rungenericnpc TX_2701
 
 subrosianScript_smelterText3:
-	asm15 scriptHlp.subrosianFunc_58ac
+	asm15 scriptHelp.subrosianFunc_58ac
 	rungenericnpc TX_2702
 
 subrosianScript_smelterText4:
-	asm15 scriptHlp.subrosianFunc_58b1
+	asm15 scriptHelp.subrosianFunc_58b1
 	rungenericnpc TX_2703
 
 subrosianScript_beachText1:
@@ -2767,12 +2767,12 @@ subrosianScript_strangeBrother1_stealingFeather:
 	callscript subrosianScript_runLeft
 	checkcfc0bit 0
 	orroomflag $40
-	asm15 scriptHlp.subrosianFunc_58c4
+	asm15 scriptHelp.subrosianFunc_58c4
 	applyspeed $68
 	checkcfc0bit 2
 	setspeed SPEED_100
 	setangle $08
-	asm15 scriptHlp.subrosianFunc_58d4
+	asm15 scriptHelp.subrosianFunc_58d4
 	setanimation $01
 	setcounter1 $10
 	showtext TX_2800
@@ -2788,7 +2788,7 @@ subrosianScript_strangeBrother1_stealingFeather:
 	setanimation $03
 	setspeed SPEED_200
 	setangle $18
-	asm15 scriptHlp.subrosianFunc_5968
+	asm15 scriptHelp.subrosianFunc_5968
 	wait 4
 	scriptend
 subrosianScript_strangeBrother2_stealingFeather:
@@ -2896,11 +2896,11 @@ subrosianScript_goldenByBombFlower:
 ; running this script.
 linkedGameNpcScript:
 	initcollisions
-	asm15 scriptHlp.linkedNpc_checkSecretBegun
+	asm15 scriptHelp.linkedNpc_checkSecretBegun
 	jumpifobjectbyteeq Interaction.var3f, $01, @secretBegun
 -
 	enableinput
-	asm15 scriptHlp.linkedNpc_initHighTextIndex, $00
+	asm15 scriptHelp.linkedNpc_initHighTextIndex, $00
 	checkabutton
 	disableinput
 	showloadedtext
@@ -2913,22 +2913,22 @@ linkedGameNpcScript:
 	addobjectbyte Interaction.textID, $01
 @showTextAndSecret:
 	showloadedtext
-	asm15 scriptHlp.linkedNpc_initHighTextIndex, $05
+	asm15 scriptHelp.linkedNpc_initHighTextIndex, $05
 	wait 20
 	jumpiftextoptioneq $01, @showTextAndSecret
-	asm15 scriptHlp.linkedNpc_generateSecret
-	asm15 scriptHlp.linkedNpc_calcLowTextIndex, <TX_5302
+	asm15 scriptHelp.linkedNpc_generateSecret
+	asm15 scriptHelp.linkedNpc_calcLowTextIndex, <TX_5302
 -
 	showloadedtext
 	wait 20
 	jumpiftextoptioneq $01, -
-	asm15 scriptHlp.linkedNpc_calcLowTextIndex, <TX_5303
+	asm15 scriptHelp.linkedNpc_calcLowTextIndex, <TX_5303
 	showloadedtext
 	enableinput
 @secretBegun:
 	checkabutton
 	disableinput
-	asm15 scriptHlp.linkedNpc_initHighTextIndex, $05
+	asm15 scriptHelp.linkedNpc_initHighTextIndex, $05
 	scriptjump @showTextAndSecret
 	
 
@@ -2938,7 +2938,7 @@ linkedGameNpcScript:
 subrosianScript_signsGuy:
 	initcollisions
 	jumpifroomflagset $20, @ringGotten
-	asm15 scriptHlp.subrosian_checkSignsDestroyed
+	asm15 scriptHelp.subrosian_checkSignsDestroyed
 	jumptable_memoryaddress $cfc0
 	.dw @0signsBroken
 	.dw @lessThan20SignsBroken
@@ -2971,12 +2971,12 @@ subrosianScript_signsGuy:
 	disableinput
 	showtext TX_3e20
 	wait 30
-	asm15 scriptHlp.subrosian_fakeReset
+	asm15 scriptHelp.subrosian_fakeReset
 	wait 10
 	checkpalettefadedone
 	showtext TX_3e21
 	wait 30
-	asm15 scriptHlp.subrosian_giveSignRing
+	asm15 scriptHelp.subrosian_giveSignRing
 	enableinput
 	scriptjump @areYouTreatingSignsProperly
 @ringGotten:
@@ -3006,12 +3006,12 @@ rosaScript_goOnDate:
 	showtextlowindex <TX_2903
 	wait 10
 	playsound SND_GETSEED
-	asm15 scriptHlp.rosa_tradeRibbon
+	asm15 scriptHelp.rosa_tradeRibbon
 	setanimation $02
 	wait 60
 	showtextlowindex <TX_2904
 	setglobalflag GLOBALFLAG_DATING_ROSA
-	asm15 scriptHlp.rosa_startDate
+	asm15 scriptHelp.rosa_startDate
 	enableinput
 	scriptend
 @datedRosa:
@@ -3024,7 +3024,7 @@ rosaScript_goOnDate:
 	disableinput
 	setglobalflag GLOBALFLAG_DATING_ROSA
 	showtextlowindex <TX_2906
-	asm15 scriptHlp.rosa_startDate
+	asm15 scriptHelp.rosa_startDate
 	enableinput
 	scriptend
 
@@ -3100,7 +3100,7 @@ childScript_stage5_hyperactive:
 @loop:
 	checkabutton
 	showtext TX_4701
-	asm15 scriptHlp.setNextChildStage, $06
+	asm15 scriptHelp.setNextChildStage, $06
 	scriptjump @loop
 
 childScript_stage5_shy:
@@ -3108,7 +3108,7 @@ childScript_stage5_shy:
 @loop:
 	checkabutton
 	showtext TX_4201
-	asm15 scriptHlp.setNextChildStage, $06
+	asm15 scriptHelp.setNextChildStage, $06
 	scriptjump @loop
 
 childScript_stage5_curious:
@@ -3116,7 +3116,7 @@ childScript_stage5_curious:
 @loop:
 	checkabutton
 	showtext TX_4901
-	asm15 scriptHlp.setNextChildStage, $06
+	asm15 scriptHelp.setNextChildStage, $06
 	scriptjump @loop
 
 
@@ -3125,13 +3125,13 @@ childScript_stage5_curious:
 
 childScript_stage6_hyperactive:
 	initcollisions
-	asm15 scriptHlp.checkc6e2BitSet, $04
+	asm15 scriptHelp.checkc6e2BitSet, $04
 	jumpifobjectbyteeq Interaction.var3b, $01, @alreadyAnswered
 	checkabutton
 	disableinput
 	showtext TX_4702
-	asm15 scriptHlp.setc6e2Bit, $04
-	asm15 scriptHlp.setNextChildStage, $07
+	asm15 scriptHelp.setc6e2Bit, $04
+	asm15 scriptHelp.setNextChildStage, $07
 	jumptable_memoryaddress wSelectedTextOption
 	.dw @answeredYes
 	.dw @answeredNo
@@ -3139,7 +3139,7 @@ childScript_stage6_hyperactive:
 @answeredYes:
 	wait 30
 	showtext TX_4703
-	asm15 scriptHlp.child_addValueToChildStatus, $04
+	asm15 scriptHelp.child_addValueToChildStatus, $04
 	enableinput
 	scriptjump @alreadyAnswered
 
@@ -3156,13 +3156,13 @@ childScript_stage6_hyperactive:
 
 childScript_stage6_shy:
 	initcollisions
-	asm15 scriptHlp.checkc6e2BitSet, $04
+	asm15 scriptHelp.checkc6e2BitSet, $04
 	jumpifobjectbyteeq Interaction.var3b, $01, @alreadyAnswered
 	checkabutton
 	disableinput
 	showtext TX_4202
-	asm15 scriptHlp.setc6e2Bit, $04
-	asm15 scriptHlp.setNextChildStage, $07
+	asm15 scriptHelp.setc6e2Bit, $04
+	asm15 scriptHelp.setNextChildStage, $07
 	jumptable_memoryaddress wSelectedTextOption
 	.dw @answeredYes
 	.dw @answeredNo
@@ -3170,7 +3170,7 @@ childScript_stage6_shy:
 @answeredYes:
 	wait 30
 	showtext TX_4203
-	asm15 scriptHlp.child_addValueToChildStatus, $04
+	asm15 scriptHelp.child_addValueToChildStatus, $04
 	enableinput
 	scriptjump @alreadyAnswered
 
@@ -3187,13 +3187,13 @@ childScript_stage6_shy:
 
 childScript_stage6_curious:
 	initcollisions
-	asm15 scriptHlp.checkc6e2BitSet, $04
+	asm15 scriptHelp.checkc6e2BitSet, $04
 	jumpifobjectbyteeq Interaction.var3b, $01, @alreadyAnswered
 	checkabutton
 	disableinput
 	showtext TX_4902
-	asm15 scriptHlp.setc6e2Bit, $04
-	asm15 scriptHlp.setNextChildStage, $07
+	asm15 scriptHelp.setc6e2Bit, $04
+	asm15 scriptHelp.setNextChildStage, $07
 	jumptable_memoryaddress wSelectedTextOption
 	.dw @answeredChicken
 	.dw @answeredEgg
@@ -3201,7 +3201,7 @@ childScript_stage6_curious:
 @answeredChicken:
 	wait 30
 	showtext TX_4903
-	asm15 scriptHlp.child_addValueToChildStatus, $04
+	asm15 scriptHelp.child_addValueToChildStatus, $04
 	enableinput
 	scriptjump @alreadyAnswered
 
@@ -3223,7 +3223,7 @@ childScript_stage7_slacker:
 @loop:
 	checkabutton
 	showtext TX_4b00
-	asm15 scriptHlp.setNextChildStage, $08
+	asm15 scriptHelp.setNextChildStage, $08
 	scriptjump @loop
 
 childScript_stage7_warrior:
@@ -3231,7 +3231,7 @@ childScript_stage7_warrior:
 @loop:
 	checkabutton
 	showtext TX_4a00
-	asm15 scriptHlp.setNextChildStage, $08
+	asm15 scriptHelp.setNextChildStage, $08
 	scriptjump @loop
 
 childScript_stage7_arborist:
@@ -3239,7 +3239,7 @@ childScript_stage7_arborist:
 @loop:
 	checkabutton
 	showtext TX_4800
-	asm15 scriptHlp.setNextChildStage, $08
+	asm15 scriptHelp.setNextChildStage, $08
 	scriptjump @loop
 
 childScript_stage7_singer:
@@ -3247,7 +3247,7 @@ childScript_stage7_singer:
 @loop:
 	checkabutton
 	showtext TX_4600
-	asm15 scriptHlp.setNextChildStage, $08
+	asm15 scriptHelp.setNextChildStage, $08
 	scriptjump @loop
 
 
@@ -3255,7 +3255,7 @@ childScript_stage7_singer:
 
 childScript_stage8_slacker:
 	initcollisions
-	asm15 scriptHlp.checkc6e2BitSet, $05
+	asm15 scriptHelp.checkc6e2BitSet, $05
 	jumpifobjectbyteeq Interaction.var3b, $01, @alreadyAnswered
 
 @loop:
@@ -3276,12 +3276,12 @@ childScript_stage8_slacker:
 	.dw @answered0Rupees
 
 @answered100Rupees:
-	asm15 scriptHlp.child_checkHasRupees, RUPEEVAL_100
+	asm15 scriptHelp.child_checkHasRupees, RUPEEVAL_100
 	jumpifobjectbyteeq Interaction.var3c, $01, @notEnoughRupees
 	asm15 removeRupeeValue, RUPEEVAL_100
-	asm15 scriptHlp.child_setStage8Response, $00
-	asm15 scriptHlp.setc6e2Bit, $05
-	asm15 scriptHlp.setNextChildStage, $09
+	asm15 scriptHelp.child_setStage8Response, $00
+	asm15 scriptHelp.setc6e2Bit, $05
+	asm15 scriptHelp.setNextChildStage, $09
 	wait 30
 	enableinput
 @answered100Loop:
@@ -3290,12 +3290,12 @@ childScript_stage8_slacker:
 	scriptjump @answered100Loop
 
 @answered50Rupees:
-	asm15 scriptHlp.child_checkHasRupees, RUPEEVAL_050
+	asm15 scriptHelp.child_checkHasRupees, RUPEEVAL_050
 	jumpifobjectbyteeq Interaction.var3c, $01, @notEnoughRupees
 	asm15 removeRupeeValue, RUPEEVAL_050
-	asm15 scriptHlp.child_setStage8Response, $01
-	asm15 scriptHlp.setc6e2Bit, $05
-	asm15 scriptHlp.setNextChildStage, $09
+	asm15 scriptHelp.child_setStage8Response, $01
+	asm15 scriptHelp.setc6e2Bit, $05
+	asm15 scriptHelp.setNextChildStage, $09
 	wait 30
 	enableinput
 @answered50Loop:
@@ -3304,12 +3304,12 @@ childScript_stage8_slacker:
 	scriptjump @answered50Loop
 
 @answered10Rupees:
-	asm15 scriptHlp.child_checkHasRupees, RUPEEVAL_010
+	asm15 scriptHelp.child_checkHasRupees, RUPEEVAL_010
 	jumpifobjectbyteeq Interaction.var3c, $01, @notEnoughRupees
 	asm15 removeRupeeValue, RUPEEVAL_010
-	asm15 scriptHlp.child_setStage8Response, $02
-	asm15 scriptHlp.setc6e2Bit, $05
-	asm15 scriptHlp.setNextChildStage, $09
+	asm15 scriptHelp.child_setStage8Response, $02
+	asm15 scriptHelp.setc6e2Bit, $05
+	asm15 scriptHelp.setNextChildStage, $09
 	wait 30
 	enableinput
 @answered10Loop:
@@ -3318,12 +3318,12 @@ childScript_stage8_slacker:
 	scriptjump @answered10Loop
 
 @answered0Rupees: ; He takes 1 rupee anyway...
-	asm15 scriptHlp.child_checkHasRupees, RUPEEVAL_001
+	asm15 scriptHelp.child_checkHasRupees, RUPEEVAL_001
 	jumpifobjectbyteeq Interaction.var3c, $01, @notEnoughRupees
 	asm15 removeRupeeValue, RUPEEVAL_001
-	asm15 scriptHlp.child_setStage8Response, $03
-	asm15 scriptHlp.setc6e2Bit, $05
-	asm15 scriptHlp.setNextChildStage, $09
+	asm15 scriptHelp.child_setStage8Response, $03
+	asm15 scriptHelp.setc6e2Bit, $05
+	asm15 scriptHelp.setNextChildStage, $09
 	wait 30
 	enableinput
 @answered0Loop:
@@ -3352,7 +3352,7 @@ childScript_stage8_slacker:
 ; Asks Link what will make him mightiest.
 childScript_stage8_warrior:
 	initcollisions
-	asm15 scriptHlp.checkc6e2BitSet, $05
+	asm15 scriptHelp.checkc6e2BitSet, $05
 	jumpifobjectbyteeq Interaction.var3b, $01, @alreadyAnswered
 	checkabutton
 	disableinput
@@ -3376,9 +3376,9 @@ childScript_stage8_warrior:
 	.dw @answeredNo_3
 
 @answeredNo_3: ; He gives up asking
-	asm15 scriptHlp.child_setStage8Response, $03
-	asm15 scriptHlp.setc6e2Bit, $05
-	asm15 scriptHlp.setNextChildStage, $09
+	asm15 scriptHelp.child_setStage8Response, $03
+	asm15 scriptHelp.setc6e2Bit, $05
+	asm15 scriptHelp.setNextChildStage, $09
 	wait 30
 	showtext TX_4a04
 	enableinput
@@ -3386,19 +3386,19 @@ childScript_stage8_warrior:
 	scriptjump @alreadyAnswered
 
 @answeredDailyTraining:
-	asm15 scriptHlp.child_setStage8Response, $00
+	asm15 scriptHelp.child_setStage8Response, $00
 	scriptjump @gaveResponse
 
 @answeredNaturalTalent:
-	asm15 scriptHlp.child_setStage8Response, $01
+	asm15 scriptHelp.child_setStage8Response, $01
 	scriptjump @gaveResponse
 
 @answeredCaringHeart:
-	asm15 scriptHlp.child_setStage8Response, $02
+	asm15 scriptHelp.child_setStage8Response, $02
 
 @gaveResponse:
-	asm15 scriptHlp.setc6e2Bit, $05
-	asm15 scriptHlp.setNextChildStage, $09
+	asm15 scriptHelp.setc6e2Bit, $05
+	asm15 scriptHelp.setNextChildStage, $09
 	wait 30
 	showtext TX_4a05
 	wait 30
@@ -3413,15 +3413,15 @@ childScript_stage8_warrior:
 ; Gives Link a gasha seed.
 childScript_stage8_arborist:
 	initcollisions
-	asm15 scriptHlp.checkc6e2BitSet, $05
+	asm15 scriptHelp.checkc6e2BitSet, $05
 	jumpifobjectbyteeq Interaction.var3b, $01, @alreadyGaveSeed
 
 	checkabutton
 	disableinput
 	showtext TX_4801
 	giveitem TREASURE_GASHA_SEED, $03
-	asm15 scriptHlp.setc6e2Bit, $05
-	asm15 scriptHlp.setNextChildStage, $09
+	asm15 scriptHelp.setc6e2Bit, $05
+	asm15 scriptHelp.setNextChildStage, $09
 	wait 30
 	showtext TX_4802
 	wait 30
@@ -3436,15 +3436,15 @@ childScript_stage8_arborist:
 ; Asks link what's more important, love or courage.
 childScript_stage8_singer:
 	initcollisions
-	asm15 scriptHlp.checkc6e2BitSet, $05
+	asm15 scriptHelp.checkc6e2BitSet, $05
 	jumpifobjectbyteeq Interaction.var3b, $01, @alreadyAnswered
 
 	checkabutton
 	disableinput
 	showtext TX_4601
-	asm15 scriptHlp.child_setStage8ResponseToSelectedTextOption, $00
-	asm15 scriptHlp.setc6e2Bit, $05
-	asm15 scriptHlp.setNextChildStage, $09
+	asm15 scriptHelp.child_setStage8ResponseToSelectedTextOption, $00
+	asm15 scriptHelp.setc6e2Bit, $05
+	asm15 scriptHelp.setNextChildStage, $09
 	wait 30
 	enableinput
 	scriptjump @showResponseText
@@ -3460,12 +3460,12 @@ childScript_stage8_singer:
 
 childScript_stage9_slacker:
 	initcollisions
-	asm15 scriptHlp.checkc6e2BitSet, $06
+	asm15 scriptHelp.checkc6e2BitSet, $06
 	jumpifobjectbyteeq Interaction.var3b, $01, @alreadyGaveReward
 	checkabutton
 	disableinput
 	showtext TX_4b0a
-	asm15 scriptHlp.setc6e2Bit, $06
+	asm15 scriptHelp.setc6e2Bit, $06
 	wait 30
 	jumptable_memoryaddress wChildStage8Response
 	.dw @fillSatchel
@@ -3479,7 +3479,7 @@ childScript_stage9_slacker:
 	scriptjump @justGaveReward
 
 @give200Rupees:
-	asm15 scriptHlp.child_giveRupees, RUPEEVAL_200
+	asm15 scriptHelp.child_giveRupees, RUPEEVAL_200
 	showtext TX_0009
 	scriptjump @justGaveReward
 
@@ -3504,14 +3504,14 @@ childScript_stage9_slacker:
 
 childScript_stage9_warrior:
 	initcollisions
-	asm15 scriptHlp.checkc6e2BitSet, $06
+	asm15 scriptHelp.checkc6e2BitSet, $06
 	jumpifobjectbyteeq Interaction.var3b, $01, @alreadyGaveReward
 	checkabutton
 	disableinput
 	showtext TX_4a06
 	wait 30
 	showtext TX_4a07
-	asm15 scriptHlp.setc6e2Bit, $06
+	asm15 scriptHelp.setc6e2Bit, $06
 	wait 30
 	jumptable_memoryaddress wChildStage8Response
 	.dw @give100Rupees
@@ -3520,22 +3520,22 @@ childScript_stage9_warrior:
 	.dw @give1Rupee
 
 @give100Rupees:
-	asm15 scriptHlp.child_giveRupees, RUPEEVAL_100
+	asm15 scriptHelp.child_giveRupees, RUPEEVAL_100
 	showtext TX_0007
 	scriptjump @justGaveReward
 
 @give1Heart:
-	asm15 scriptHlp.child_giveOneHeart, $01
+	asm15 scriptHelp.child_giveOneHeart, $01
 	showtext TX_0051
 	scriptjump @justGaveReward
 
 @restoreHealth:
-	asm15 scriptHlp.child_giveHeartRefill
+	asm15 scriptHelp.child_giveHeartRefill
 	showtext TX_0053
 	scriptjump @justGaveReward
 
 @give1Rupee:
-	asm15 scriptHlp.child_giveRupees, RUPEEVAL_001
+	asm15 scriptHelp.child_giveRupees, RUPEEVAL_001
 	showtext TX_0001
 
 @justGaveReward:
@@ -3580,8 +3580,8 @@ childScript_stage9_singer:
 	.dw @selectedNo
 
 @selectedYes:
-	asm15 scriptHlp.child_playMusic
-	asm15 scriptHlp.child_giveHeartRefill
+	asm15 scriptHelp.child_playMusic
+	asm15 scriptHelp.child_giveHeartRefill
 	wait 30
 	enableinput
 
@@ -3665,7 +3665,7 @@ goronScript_upgradeRingBox:
 @haveRingBox:
 	wait 30
 	showtextlowindex <TX_370a
-	asm15 scriptHlp.getNextRingboxLevel
+	asm15 scriptHelp.getNextRingboxLevel
 	jumpifmemoryeq $cba8, $05, @upgradeTo5
 	giveitem TREASURE_RING_BOX $01
 	scriptjump @finishedGivingRingBox
@@ -3768,7 +3768,7 @@ horonVillageBoyScript_text5:
 	initcollisions
 -
 	checkabutton
-	asm15 scriptHlp.faceOppositeDirectionAsLink
+	asm15 scriptHelp.faceOppositeDirectionAsLink
 	showloadedtext
 	wait 10
 	setanimationfromobjectbyte $7b
@@ -3883,21 +3883,21 @@ piratianCaptainScript_inHouse:
 	xorcfc0bit 0
 	setcounter1 $64
 	enableinput
-	asm15 scriptHlp.headToPirateShip
+	asm15 scriptHelp.headToPirateShip
 -
 	setcounter1 $ff
 	scriptjump -
 @linkedCaptain:
 	wait 60
 	showtextlowindex <TX_3a26
-	asm15 scriptHlp.linkedGame_spawnAmbi
+	asm15 scriptHelp.linkedGame_spawnAmbi
 	checkcfc0bit 1
 	wait 30
 	showtextlowindex <TX_3a27
 	wait 30
 	writeobjectbyte $7c, $01
 	setspeed SPEED_100
-	asm15 scriptHlp.seasonsFunc_15_5a70
+	asm15 scriptHelp.seasonsFunc_15_5a70
 	jumptable_objectbyte $79
 	.dw script5d7f
 	.dw script5d5f
@@ -3935,7 +3935,7 @@ piratian1FScript_text1BasedOnD6Beaten:
 @noFixedPiratesBell:
 	jumpifobjectbyteeq $71, $00, --
 	writeobjectbyte $71, $00
-	asm15 scriptHlp.showPiratianTextBasedOnD6Done, $00
+	asm15 scriptHelp.showPiratianTextBasedOnD6Done, $00
 	wait 1
 	scriptjump --
 @haveFixedPiratesBell:
@@ -3944,7 +3944,7 @@ piratian1FScript_text1BasedOnD6Beaten:
 	scriptjump @haveFixedPiratesBell
 @talkedTo:
 	writeobjectbyte $71, $00
-	asm15 scriptHlp.showPiratianTextBasedOnD6Done, $01
+	asm15 scriptHelp.showPiratianTextBasedOnD6Done, $01
 	wait 1
 	scriptjump @haveFixedPiratesBell
 @readyToLeave:
@@ -3962,7 +3962,7 @@ piratian1FScript_text2BasedOnD6Beaten:
 @talkedTo:
 	setdisabledobjectsto91
 	writeobjectbyte $71, $00
-	asm15 scriptHlp.showPiratianTextBasedOnD6Done, $00
+	asm15 scriptHelp.showPiratianTextBasedOnD6Done, $00
 	wait 1
 	enableallobjects
 	scriptjump --
@@ -4015,7 +4015,7 @@ unluckySailorScript:
 	setglobalflag GLOBALFLAG_BEGAN_PIRATE_SECRET
 	showtextlowindex <TX_3a2f
 	wait 30
-	asm15 scriptHlp.unluckySailor_checkHave777OreChunks
+	asm15 scriptHelp.unluckySailor_checkHave777OreChunks
 	jumpifobjectbyteeq $79, $01, @have777OreChunks
 -
 	showtextlowindex <TX_3a31
@@ -4025,7 +4025,7 @@ unluckySailorScript:
 	scriptjump -
 @have777OreChunks:
 	showtextlowindex <TX_3a32
-	asm15 scriptHlp.unluckySailor_increaseBombCapacityAndCount
+	asm15 scriptHelp.unluckySailor_increaseBombCapacityAndCount
 	giveitem TREASURE_BOMB_UPGRADE $00
 	wait 60
 	setglobalflag GLOBALFLAG_DONE_PIRATE_SECRET
@@ -4057,10 +4057,10 @@ piratian2FScript_textBasedOnD6Beaten:
 pirationScript_closeOpenCupboard:
 	setspeed SPEED_100
 	moveup $07
-	asm15 scriptHlp.piratian_replaceTileAtPiratian, $db
+	asm15 scriptHelp.piratian_replaceTileAtPiratian, $db
 	playsound SND_DOORCLOSE
 	wait 10
-	asm15 scriptHlp.piratian_replaceTileAtPiratian, $d9
+	asm15 scriptHelp.piratian_replaceTileAtPiratian, $d9
 	playsound SND_DOORCLOSE
 	setanimation $00
 	setangle $10
@@ -4174,7 +4174,7 @@ piratianScript_jump:
 	setzspeed -$0200
 	playsound SND_JUMP
 -
-	asm15 scriptHlp.piratian_waitUntilJumpDone
+	asm15 scriptHelp.piratian_waitUntilJumpDone
 	wait 1
 	jumpifobjectbyteeq $7d, $00, -
 	retscript
@@ -4381,9 +4381,9 @@ zeldaScript_blessingBeforeFightingOnox:
 	wait 60
 	applyspeed $20
 	wait 30
-	asm15 scriptHlp.forceLinkState8AndSetDirection, DIR_RIGHT
+	asm15 scriptHelp.forceLinkState8AndSetDirection, DIR_RIGHT
 	showtext TX_0607
-	asm15 scriptHlp.child_giveHeartRefill
+	asm15 scriptHelp.child_giveHeartRefill
 	checkheartdisplayupdated
 	wait 30
 	setangle $08
@@ -4397,18 +4397,18 @@ zeldaScript_blessingBeforeFightingOnox:
 -
 	checkabutton
 	showtext TX_0608
-	asm15 scriptHlp.child_giveHeartRefill
+	asm15 scriptHelp.child_giveHeartRefill
 	checkheartdisplayupdated
 	scriptjump -
 
 zeldaScript_healLinkIfNeeded:
 	initcollisions
 	checkabutton
-	asm15 scriptHlp.zelda_checkIfLinkFullyHealed
+	asm15 scriptHelp.zelda_checkIfLinkFullyHealed
 	jumpifobjectbyteeq $7f, $01, @fullyHealedAlready
 	showtext TX_050c
 	disableinput
-	asm15 scriptHlp.child_giveHeartRefill
+	asm15 scriptHelp.child_giveHeartRefill
 	checkheartdisplayupdated
 	enableinput
 	scriptjump @comeBackText
@@ -4495,7 +4495,7 @@ pirateSkullScript_notYetCarried:
 ; ==============================================================================
 troupeScript1:
 	initcollisions
-	asm15 scriptHlp.dinDancingEvent_setTextAdd_0a_ifLinked, <TX_0c00
+	asm15 scriptHelp.dinDancingEvent_setTextAdd_0a_ifLinked, <TX_0c00
 -
 	checkabutton
 	showloadedtext
@@ -4504,7 +4504,7 @@ troupeScript1:
 
 troupeScript2:
 	initcollisions
-	asm15 scriptHlp.dinDancingEvent_setTextAdd_0a_ifLinked, <TX_0c01
+	asm15 scriptHelp.dinDancingEvent_setTextAdd_0a_ifLinked, <TX_0c01
 -
 	checkabutton
 	setdisabledobjectsto11
@@ -4517,7 +4517,7 @@ troupeScript2:
 
 troupeScript3:
 	initcollisions
-	asm15 scriptHlp.dinDancingEvent_setTextAdd_0a_ifLinked, <TX_0c02
+	asm15 scriptHelp.dinDancingEvent_setTextAdd_0a_ifLinked, <TX_0c02
 -
 	checkabutton
 	showloadedtext
@@ -4526,7 +4526,7 @@ troupeScript3:
 
 troupeScript4:
 	initcollisions
-	asm15 scriptHlp.dinDancingEvent_setTextAdd_0a_ifLinked, <TX_0c03
+	asm15 scriptHelp.dinDancingEvent_setTextAdd_0a_ifLinked, <TX_0c03
 -
 	checkabutton
 	showloadedtext
@@ -4535,15 +4535,15 @@ troupeScript4:
 
 troupeScript_Impa:
 	initcollisions
-	asm15 scriptHlp.dinDancingEvent_setTextAdd_0a_ifLinked, <TX_0c04
+	asm15 scriptHelp.dinDancingEvent_setTextAdd_0a_ifLinked, <TX_0c04
 	checkabutton
-	asm15 scriptHlp.dinDancing_spinLink
+	asm15 scriptHelp.dinDancing_spinLink
 	showloadedtext
 	ormemory $cfd3, $10
-	asm15 scriptHlp.dinDancingEvent_setTextAdd_0a_ifLinked, <TX_0c05
+	asm15 scriptHelp.dinDancingEvent_setTextAdd_0a_ifLinked, <TX_0c05
 -
 	checkabutton
-	asm15 scriptHlp.dinDancing_spinLink
+	asm15 scriptHelp.dinDancing_spinLink
 	showloadedtext
 	scriptjump -
 
@@ -4551,7 +4551,7 @@ troupeScript_stub:
 troupeScript_Din:
 	setcollisionradii $12, $04
 	makeabuttonsensitive
-	asm15 scriptHlp.dinDancingEvent_setTextAdd_0a_ifLinked, <TX_0c06
+	asm15 scriptHelp.dinDancingEvent_setTextAdd_0a_ifLinked, <TX_0c06
 -
 	checkabutton
 	setanimation $06
@@ -4562,7 +4562,7 @@ troupeScript_Din:
 troupeScript_startDanceScene:
 	setcollisionradii $12, $04
 	makeabuttonsensitive
-	asm15 scriptHlp.dinDancingEvent_setTextAdd_0a_ifLinked, <TX_0c07
+	asm15 scriptHelp.dinDancingEvent_setTextAdd_0a_ifLinked, <TX_0c07
 -
 	checkabutton
 	setdisabledobjectsto11
@@ -4624,13 +4624,13 @@ biggoronScript:
 	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, @finishedGame
 @haventGivenSoup:
 	jumpifroomflagset $40, @coldHealed
-	asm15 scriptHlp.biggoron_loadAnimationData, $0b
+	asm15 scriptHelp.biggoron_loadAnimationData, $0b
 -
 	checkabutton
 	disableinput
-	asm15 scriptHlp.biggoron_loadAnimationData, $0d
+	asm15 scriptHelp.biggoron_loadAnimationData, $0d
 	showtextlowindex <TX_0b26
-	asm15 scriptHlp.biggoron_loadAnimationData, $0b
+	asm15 scriptHelp.biggoron_loadAnimationData, $0b
 	jumpiftradeitemeq $04, @haveLavaSoup
 	enableinput
 	scriptjump -
@@ -4638,15 +4638,15 @@ biggoronScript:
 	wait 30
 -
 	setanimation $02
-	asm15 scriptHlp.biggoron_loadAnimationData, $0d
+	asm15 scriptHelp.biggoron_loadAnimationData, $0d
 	showtextlowindex <TX_0b27
-	asm15 scriptHlp.biggoron_loadAnimationData, $0b
+	asm15 scriptHelp.biggoron_loadAnimationData, $0b
 	jumpiftextoptioneq $00, @givingSoup
 	wait 30
 	setanimation $00
-	asm15 scriptHlp.biggoron_loadAnimationData, $0d
+	asm15 scriptHelp.biggoron_loadAnimationData, $0d
 	showtextlowindex <TX_0b2a
-	asm15 scriptHlp.biggoron_loadAnimationData, $0b
+	asm15 scriptHelp.biggoron_loadAnimationData, $0b
 	enableinput
 	checkabutton
 	disableinput
@@ -4654,12 +4654,12 @@ biggoronScript:
 @givingSoup:
 	wait 30
 	setanimation $03
-	asm15 scriptHlp.biggoron_loadAnimationData, $0b
+	asm15 scriptHelp.biggoron_loadAnimationData, $0b
 	wait 60
 	setanimation $02
-	asm15 scriptHlp.biggoron_loadAnimationData, $0c
+	asm15 scriptHelp.biggoron_loadAnimationData, $0c
 	wait 60
-	asm15 scriptHlp.biggoron_loadAnimationData, $0d
+	asm15 scriptHelp.biggoron_loadAnimationData, $0d
 	showtextlowindex <TX_0b28
 	disableinput
 	giveitem TREASURE_TRADEITEM $05
@@ -4667,49 +4667,49 @@ biggoronScript:
 @coldHealed:
 	disableinput
 	setanimation $01
-	asm15 scriptHlp.biggoron_loadAnimationData, $0b
+	asm15 scriptHelp.biggoron_loadAnimationData, $0b
 	enableinput
 -
 	checkabutton
 	disableinput
-	asm15 scriptHlp.biggoron_loadAnimationData, $0d
+	asm15 scriptHelp.biggoron_loadAnimationData, $0d
 	showtextlowindex <TX_0b29
-	asm15 scriptHlp.biggoron_loadAnimationData, $0b
+	asm15 scriptHelp.biggoron_loadAnimationData, $0b
 	enableinput
 	scriptjump -
 @finishedGame:
-	asm15 scriptHlp.biggoron_checkSoupGiven
+	asm15 scriptHelp.biggoron_checkSoupGiven
 	jumpifobjectbyteeq $7f, $00, @haventGivenSoup
 	setanimation $01
-	asm15 scriptHlp.biggoron_loadAnimationData, $0b
+	asm15 scriptHelp.biggoron_loadAnimationData, $0b
 	jumpifglobalflagset GLOBALFLAG_DONE_BIGGORON_SECRET, @doneBiggoronSecret
 @promptSecret:
 	checkabutton
 	disableinput
-	asm15 scriptHlp.biggoron_loadAnimationData, $0d
+	asm15 scriptHelp.biggoron_loadAnimationData, $0d
 	showtextlowindex <TX_0b52
-	asm15 scriptHlp.biggoron_loadAnimationData, $0b
+	asm15 scriptHelp.biggoron_loadAnimationData, $0b
 	jumpiftextoptioneq $00, @biggoronSecretKnown
 	wait 30
-	asm15 scriptHlp.biggoron_loadAnimationData, $0d
+	asm15 scriptHelp.biggoron_loadAnimationData, $0d
 	showtextlowindex <TX_0b53
-	asm15 scriptHlp.biggoron_loadAnimationData, $0b
+	asm15 scriptHelp.biggoron_loadAnimationData, $0b
 	enableinput
 	scriptjump @promptSecret
 @biggoronSecretKnown:
 	wait 30
-	asm15 scriptHlp.biggoron_loadAnimationData, $0d
+	asm15 scriptHelp.biggoron_loadAnimationData, $0d
 	showtextlowindex <TX_0b54
-	asm15 scriptHlp.biggoron_loadAnimationData, $0b
+	asm15 scriptHelp.biggoron_loadAnimationData, $0b
 	askforsecret BIGGORON_SECRET
 	wait 30
 	jumptable_memoryaddress $cca3
 	.dw @correctSecret
 	.dw @incorrectSecret
 @incorrectSecret:
-	asm15 scriptHlp.biggoron_loadAnimationData, $0d
+	asm15 scriptHelp.biggoron_loadAnimationData, $0d
 	showtextlowindex <TX_0b56
-	asm15 scriptHlp.biggoron_loadAnimationData, $0b
+	asm15 scriptHelp.biggoron_loadAnimationData, $0b
 	enableinput
 	scriptjump @promptSecret
 @correctSecret:
@@ -4717,14 +4717,14 @@ biggoronScript:
 @generateSecret:
 	generatesecret BIGGORON_RETURN_SECRET
 -
-	asm15 scriptHlp.biggoron_loadAnimationData, $0d
+	asm15 scriptHelp.biggoron_loadAnimationData, $0d
 	showtextlowindex <TX_0b58
-	asm15 scriptHlp.biggoron_loadAnimationData, $0b
+	asm15 scriptHelp.biggoron_loadAnimationData, $0b
 	wait 30
 	jumpiftextoptioneq $00, -
-	asm15 scriptHlp.biggoron_loadAnimationData, $0d
+	asm15 scriptHelp.biggoron_loadAnimationData, $0d
 	showtextlowindex <TX_0b59
-	asm15 scriptHlp.biggoron_loadAnimationData, $0b
+	asm15 scriptHelp.biggoron_loadAnimationData, $0b
 	enableinput
 @doneBiggoronSecret:
 	checkabutton
@@ -4740,10 +4740,10 @@ headSmelterAtTempleScript:
 -
 	checkabutton
 	disablemenu
-	asm15 scriptHlp.headSmelter_disableScreenTransitions
+	asm15 scriptHelp.headSmelter_disableScreenTransitions
 	jumpifitemobtained TREASURE_BOMB_FLOWER, @haveBombFlower
 	showtext TX_2707
-	asm15 scriptHlp.headSmelter_enableScreenTransitions
+	asm15 scriptHelp.headSmelter_enableScreenTransitions
 	enablemenu
 	scriptjump -
 @haveBombFlower:
@@ -4839,7 +4839,7 @@ subrosianAtD8Script_tossItemIntoHole:
 	callscript @spin2win
 	setspeed SPEED_200
 	applyspeed $04
-	asm15 scriptHlp.subrosianAtD8_spawnitem
+	asm15 scriptHelp.subrosianAtD8_spawnitem
 	setangle $18
 	applyspeed $04
 	scriptend
@@ -4950,9 +4950,9 @@ ingoScript_LinkApproachingVases:
 	scriptend
 
 _ingoScript_yahoo:
-	asm15 scriptHlp.ingo_animatePlaySound
+	asm15 scriptHelp.ingo_animatePlaySound
 -
-	asm15 scriptHlp.ingo_jump
+	asm15 scriptHelp.ingo_jump
 	wait 1
 	jumpifobjectbyteeq $7d, $00, -
 	retscript
@@ -5043,11 +5043,11 @@ lostWoodsSwordScript:
 ; ==============================================================================
 blainoScript:
 	initcollisions
-	asm15 scriptHlp.blainoScript_spawnBlaino
+	asm15 scriptHelp.blainoScript_spawnBlaino
 
 @waitUntilSpokenTo:
-	asm15 scriptHlp.blainoScript_saveVariables
-	asm15 scriptHlp.blainoScript_adjustRupeesInText
+	asm15 scriptHelp.blainoScript_saveVariables
+	asm15 scriptHelp.blainoScript_adjustRupeesInText
 	jumpifroomflagset $40, @beatenOnce
 	checkabutton
 	setdisabledobjectsto91
@@ -5103,15 +5103,15 @@ blainoScript:
 	scriptjump @rulesExplanation
 
 @beginFight:
-	asm15 scriptHlp.blainoScript_takeRupees
+	asm15 scriptHelp.blainoScript_takeRupees
 	asm15 fadeoutToWhite
 	checkpalettefadedone
 	setdisabledobjectsto11
 	writememory $cced, $01
-	asm15 scriptHlp.blainoScript_clearItemsAndPegasusSeeds
-	asm15 scriptHlp.blainoScript_setLinkPositionAndState
-	asm15 scriptHlp.blainoScript_spawnBlainoEnemy
-	asm15 scriptHlp.putAwayLinksItems, $00
+	asm15 scriptHelp.blainoScript_clearItemsAndPegasusSeeds
+	asm15 scriptHelp.blainoScript_setLinkPositionAndState
+	asm15 scriptHelp.blainoScript_spawnBlainoEnemy
+	asm15 scriptHelp.putAwayLinksItems, $00
 	wait 4
 	asm15 fadeinFromWhite
 	checkpalettefadedone
@@ -5134,8 +5134,8 @@ blainoFightDoneScript:
 	asm15 fadeoutToWhite
 	checkpalettefadedone
 	setdisabledobjectsto11
-	asm15 scriptHlp.blainoScript_setBlainoPosition
-	asm15 scriptHlp.blainoScript_setLinkPositionAndState
+	asm15 scriptHelp.blainoScript_setBlainoPosition
+	asm15 scriptHelp.blainoScript_setLinkPositionAndState
 	wait 4
 	asm15 fadeinFromWhite
 	checkpalettefadedone
@@ -5157,7 +5157,7 @@ blainoFightDoneScript:
 
 @give30Rupees:
 	showtextlowindex <TX_230b
-	asm15 scriptHlp.blainoScript_give30Rupees
+	asm15 scriptHelp.blainoScript_give30Rupees
 	enableinput
 
 @finishedTalking:
@@ -5178,7 +5178,7 @@ blainoFightDoneScript:
 	scriptjump @declinedRematchAfterCheating
 
 @rematch:
-	asm15 scriptHlp.blainoScript_saveVariables
+	asm15 scriptHelp.blainoScript_saveVariables
 	enableinput
 	scriptjump blainoScript@checkRupees
 
@@ -5436,7 +5436,7 @@ subrosianScript_templeFallenText:
 
 floodgateKeeperScript:
 	initcollisions
-	asm15 scriptHlp.floodgateKeeper_checkStage
+	asm15 scriptHelp.floodgateKeeper_checkStage
 	jumptable_memoryaddress $cfc1
 	.dw @noFloodgateKey
 	.dw @gotFloodgateKey
@@ -5478,7 +5478,7 @@ floodgateKeyScript_keeperNoticesKey:
 
 floodgateSwitchScript:
 	checkmemoryeq wSwitchState, $01
-	asm15 scriptHlp.floodgate_disableObjectsScreenTransition
+	asm15 scriptHelp.floodgate_disableObjectsScreenTransition
 	wait 8
 	disableinput
 	wait 30
@@ -5490,7 +5490,7 @@ floodgateSwitchScript:
 	settilehere $aa
 	playsound SNDCTRL_STOPSFX
 	playsound SND_SOLVEPUZZLE
-	asm15 scriptHlp.floodgate_enableObjects
+	asm15 scriptHelp.floodgate_enableObjects
 	enableinput
 	scriptend
 
@@ -5509,7 +5509,7 @@ floodgateKeyholeScript_keyEntered:
 
 d4KeyholeScript_disableThingsAndScreenShake:
 	checkcfc0bit 0
-	asm15 scriptHlp.d4Keyhole_setState0eDisableAllSorts
+	asm15 scriptHelp.d4Keyhole_setState0eDisableAllSorts
 	playsound SNDCTRL_STOPMUSIC
 	wait 60
 	playsound SND_RUMBLE2
@@ -5558,14 +5558,14 @@ rosaHidingScript_1stScreen:
 	loadscript rosaHidingScript_secondEncounterOnwardsIntro
 rosaHidingScript_afterInitialScreenText:
 	xorcfc0bit 0
-	asm15 scriptHlp.subrosianHiding_store02Intocc9e
+	asm15 scriptHelp.subrosianHiding_store02Intocc9e
 	setsubstate $03
 	moveup $30
 	enableinput
 	scriptend
 
 rosaHidingScript_2ndScreen:
-	asm15 scriptHlp.subrosianHiding_createDetectionHelper
+	asm15 scriptHelp.subrosianHiding_createDetectionHelper
 	setsubstate $04
 	setspeed SPEED_100
 	jumprandom @pattern1, @pattern2
@@ -5575,7 +5575,7 @@ rosaHidingScript_2ndScreen:
 	loadscript rosaHidingScript_2ndScreenPattern2
 
 rosaHidingScript_3rdScreen:
-	asm15 scriptHlp.subrosianHiding_createDetectionHelper
+	asm15 scriptHelp.subrosianHiding_createDetectionHelper
 	setsubstate $04
 	setspeed SPEED_100
 	jumprandom @pattern1, @pattern2
@@ -5585,7 +5585,7 @@ rosaHidingScript_3rdScreen:
 	loadscript rosaHidingScript_3rdScreenPattern2
 	
 rosaHidingScript_4thScreen:
-	asm15 scriptHlp.subrosianHiding_createDetectionHelper
+	asm15 scriptHelp.subrosianHiding_createDetectionHelper
 	setsubstate $04
 	setspeed SPEED_100
 	jumprandom @pattern1, @pattern2
@@ -5680,9 +5680,9 @@ strangeBrother1Script_1stScreen:
 _strangeBrother1Script_1stScreenInit:
 	jumpifglobalflagset GLOBALFLAG_JUST_CAUGHT_BY_STRANGE_BROTHERS, +
 _strangeBrotherScript_1stScreenInit:
-	asm15 scriptHlp.subrosianHiding_store02Intocc9e
+	asm15 scriptHelp.subrosianHiding_store02Intocc9e
 	wait 60
-	asm15 scriptHlp.subrosianHiding_createDetectionHelper
+	asm15 scriptHelp.subrosianHiding_createDetectionHelper
 	retscript
 +
 	disableinput
@@ -5705,7 +5705,7 @@ strangeBrother1Script_2ndScreen:
 	.dw @pattern2
 @pattern1:
 	setcoords $28, $78
-	asm15 scriptHlp.subrosianHiding_createDetectionHelper
+	asm15 scriptHelp.subrosianHiding_createDetectionHelper
 	setangleandanimation $10
 	wait 60
 	movedown $30
@@ -5725,7 +5725,7 @@ strangeBrother1Script_2ndScreen:
 	scriptend
 @pattern2:
 	setcoords $78, $28
-	asm15 scriptHlp.subrosianHiding_createDetectionHelper
+	asm15 scriptHelp.subrosianHiding_createDetectionHelper
 	setangleandanimation $18
 	wait 60
 	moveleft $10
@@ -5750,7 +5750,7 @@ strangeBrother1Script_3rdScreen:
 	.dw @pattern2
 @pattern1:
 	setcoords $38, $78
-	asm15 scriptHlp.subrosianHiding_createDetectionHelper
+	asm15 scriptHelp.subrosianHiding_createDetectionHelper
 	setangleandanimation $18
 	wait 60
 	moveleft $60
@@ -5768,7 +5768,7 @@ strangeBrother1Script_3rdScreen:
 	scriptend
 @pattern2:
 	setcoords $38, $48
-	asm15 scriptHlp.subrosianHiding_createDetectionHelper
+	asm15 scriptHelp.subrosianHiding_createDetectionHelper
 	setangleandanimation $18
 	setcounter1 $7a
 	setangleandanimation $10
@@ -5789,7 +5789,7 @@ strangeBrother1Script_4thScreen:
 	.dw @pattern2
 @pattern1:
 	setcoords $38, $38
-	asm15 scriptHlp.subrosianHiding_createDetectionHelper
+	asm15 scriptHelp.subrosianHiding_createDetectionHelper
 	setangleandanimation $18
 	wait 60
 	moveleft $20
@@ -5804,7 +5804,7 @@ strangeBrother1Script_4thScreen:
 	scriptend
 @pattern2:
 	setcoords $18, $18
-	asm15 scriptHlp.subrosianHiding_createDetectionHelper
+	asm15 scriptHelp.subrosianHiding_createDetectionHelper
 	setangleandanimation $10
 	wait 60
 	movedown $30
@@ -5824,7 +5824,7 @@ strangeBrother1Script_5thScreen:
 	.dw @pattern2
 @pattern1:
 	setcoords $08, $48
-	asm15 scriptHlp.subrosianHiding_createDetectionHelper
+	asm15 scriptHelp.subrosianHiding_createDetectionHelper
 	setangleandanimation $08
 	wait 60
 	moveright $40
@@ -5841,7 +5841,7 @@ strangeBrother1Script_5thScreen:
 	scriptend
 @pattern2:
 	setcoords $08, $78
-	asm15 scriptHlp.subrosianHiding_createDetectionHelper
+	asm15 scriptHelp.subrosianHiding_createDetectionHelper
 	setangleandanimation $18
 	wait 60
 	movedown $60
@@ -5862,7 +5862,7 @@ strangeBrother1Script_6thScreen:
 	.dw @pattern2
 @pattern1:
 	setcoords $18, $18
-	asm15 scriptHlp.subrosianHiding_createDetectionHelper
+	asm15 scriptHelp.subrosianHiding_createDetectionHelper
 	setangleandanimation $10
 	wait 60
 	movedown $60
@@ -5879,7 +5879,7 @@ strangeBrother1Script_6thScreen:
 	scriptend
 @pattern2:
 	setcoords $18, $18
-	asm15 scriptHlp.subrosianHiding_createDetectionHelper
+	asm15 scriptHelp.subrosianHiding_createDetectionHelper
 	setangleandanimation $10
 	wait 60
 	movedown $30
@@ -5900,14 +5900,14 @@ strangeBrother1Script_finishedScreen:
 	setanimation $01
 	playsound SND_SOLVEPUZZLE
 	checkflagset $00, $cd00
-	asm15 scriptHlp.strangeBrothersFunc_15_5d9a
+	asm15 scriptHelp.strangeBrothersFunc_15_5d9a
 	wait 60
 	showtext TX_2803
 	xorcfc0bit 0
 	movedown $50
 	resetmusic
 	spawninteraction INTERACID_S_MISCELLANEOUS_1 $16, $48, $28
-	asm15 scriptHlp.strangeBrothersFunc_15_5dc4
+	asm15 scriptHelp.strangeBrothersFunc_15_5dc4
 	enableinput
 	scriptend
 
@@ -6020,7 +6020,7 @@ stealingFeatherScript:
 	setcollisionradii $12, $30
 	checkcollidedwithlink_onground
 	disableinput
-	asm15 scriptHlp.stealingFeather_putLinkOnGround
+	asm15 scriptHelp.stealingFeather_putLinkOnGround
 	playsound SND_WHISTLE
 	wait 8
 	playsound SND_WHISTLE
@@ -6029,13 +6029,13 @@ stealingFeatherScript:
 	wait 30
 	writememory $d008, $01
 	setmusic MUS_HIDE_AND_SEEK
-	asm15 scriptHlp.stealingFeather_spawnStrangeBrothers
+	asm15 scriptHelp.stealingFeather_spawnStrangeBrothers
 	xorcfc0bit 0
 	wait 20
 	writememory $d008, $01
 	checkcfc0bit 1
 	playsound SND_SCENT_SEED
-	asm15 scriptHlp.stealingFeather_spawnSelfWithSubId0
+	asm15 scriptHelp.stealingFeather_spawnSelfWithSubId0
 	setspeed SPEED_100
 	setangle $04
 	incstate
@@ -6088,11 +6088,11 @@ companionScript_mooshInSpoolSwamp:
 	scriptjump -
 +
 	checkmemoryeq $d12b, $00
-	asm15 scriptHlp.seasonsFunc_15_5e91
+	asm15 scriptHelp.seasonsFunc_15_5e91
 	checkmemoryeq $d115, $00
 	writememory $d106, $20
 	checkmemoryeq $d106, $00
-	asm15 scriptHlp.seasonsFunc_15_5ea6
+	asm15 scriptHelp.seasonsFunc_15_5ea6
 	checkflagset $07, $d121
 @savedMooshHere:
 	writememory $d103, $05
@@ -6206,7 +6206,7 @@ companionScript_RickyLeavingYouInSpoolSwamp:
 	jumpifmemoryset $d13e, $02, +
 	scriptjump -
 +
-	asm15 scriptHlp.seasonsFunc_15_5eb4
+	asm15 scriptHelp.seasonsFunc_15_5eb4
 	enableallobjects
 	checkmemoryeq $cc77, $00
 	writememory $d008, $01
@@ -6215,7 +6215,7 @@ companionScript_RickyLeavingYouInSpoolSwamp:
 	setcounter1 $10
 	showtext TX_2003
 	setdisabledobjectsto11
-	asm15 scriptHlp.seasonsFunc_15_5ec7
+	asm15 scriptHelp.seasonsFunc_15_5ec7
 -
 	jumpifmemoryset $d13e, $04, +
 	scriptjump -
@@ -6300,7 +6300,7 @@ companionScript_mooshInMtCucco:
 @hasSpringBanana:
 	showtext TX_2211
 	writeobjectbyte $44, $02
-	asm15 scriptHlp.seasonsFunc_15_5ede
+	asm15 scriptHelp.seasonsFunc_15_5ede
 	jumptable_objectbyte $7b
 	.dw @mooshIsNotCompanion
 	.dw @mooshIsCompanion
@@ -6697,7 +6697,7 @@ sunkenCityBulliesScript1_bully1:
 @promptForPayment:
 	setangleandanimation $00
 	checkabutton
-	asm15 scriptHlp.sunkenCityBullies_lookToLink
+	asm15 scriptHelp.sunkenCityBullies_lookToLink
 	disablemenu
 	showtextlowindex <TX_2111
 	setdisabledobjectsto11
@@ -6747,7 +6747,7 @@ sunkenCityBulliesScript1_bully2:
 @talkedToBullies:
 	setangleandanimation $00
 	checkabutton
-	asm15 scriptHlp.sunkenCityBullies_lookToLink
+	asm15 scriptHelp.sunkenCityBullies_lookToLink
 	showtextlowindex <TX_2116
 	scriptjump @talkedToBullies
 	
@@ -6771,7 +6771,7 @@ sunkenCityBulliesScript1_bully3:
 @talkedToBullies:
 	setangleandanimation $08
 	checkabutton
-	asm15 scriptHlp.sunkenCityBullies_lookToLink
+	asm15 scriptHelp.sunkenCityBullies_lookToLink
 	showtextlowindex <TX_2117
 	scriptjump @talkedToBullies
 	
@@ -7006,17 +7006,17 @@ _linked:
 	.dw script7223
 	.dw _stageFinishedGame
 _stage0:
-	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $00
-	asm15 scriptHlp.makuTree_setMakuMapText, $03
+	asm15 scriptHelp.makuTree_storeIntoVar37SpawnBubbleIf0, $00
+	asm15 scriptHelp.makuTree_setMakuMapText, $03
 	jumpifroomflagset $40, _gnarledKeySpawned@loop
 	callscript makuTreeScript_waitForBubblePopped
 	disableinput
 	jumpifglobalflagset GLOBALFLAG_GNARLED_KEY_GIVEN, _givenGnarledKey
 	setglobalflag GLOBALFLAG_GNARLED_KEY_GIVEN
-	asm15 scriptHlp.makuTree_showText, <TX_1700
+	asm15 scriptHelp.makuTree_showText, <TX_1700
 	wait 30
 _longText:
-	asm15 scriptHlp.makuTree_showText, <TX_1701
+	asm15 scriptHelp.makuTree_showText, <TX_1701
 	wait 1
 	jumpiftextoptioneq $01, _acceptedQuest
 	wait 30
@@ -7024,100 +7024,100 @@ _longText:
 _acceptedQuest:
 	wait 30
 _givenGnarledKey:
-	asm15 scriptHlp.makuTree_showText, <TX_1702
+	asm15 scriptHelp.makuTree_showText, <TX_1702
 	wait 1
 	jumpifroomflagset $80, _gnarledKeySpawned
 	orroomflag $80
-	asm15 scriptHlp.makuTree_dropGnarledKey
+	asm15 scriptHelp.makuTree_dropGnarledKey
 _gnarledKeySpawned:
-	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $02
+	asm15 scriptHelp.makuTree_storeIntoVar37SpawnBubbleIf0, $02
 	checkobjectbyteeq Interaction.animParameter, $ff
-	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $00
+	asm15 scriptHelp.makuTree_storeIntoVar37SpawnBubbleIf0, $00
 	enableinput
 @loop:
 	callscript makuTreeScript_waitForBubblePopped
-	asm15 scriptHlp.makuTree_showTextAndSetMapText, <TX_1703
+	asm15 scriptHelp.makuTree_showTextAndSetMapText, <TX_1703
 	callscript script729c
 	scriptjump @loop
 	
 	
 script71a2:
-	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $00
+	asm15 scriptHelp.makuTree_storeIntoVar37SpawnBubbleIf0, $00
 @loop:
 	callscript makuTreeScript_waitForBubblePopped
-	asm15 scriptHlp.makuTree_showTextAndSetMapTextBasedOnStage
+	asm15 scriptHelp.makuTree_showTextAndSetMapTextBasedOnStage
 	callscript script729c
 	scriptjump @loop
 
 script71b1:
-	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $04
+	asm15 scriptHelp.makuTree_storeIntoVar37SpawnBubbleIf0, $04
 	setcollisionradii $24, $10
 	makeabuttonsensitive
 @loop:
 	checkabutton
-	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $01
-	asm15 scriptHlp.makuTree_showTextAndSetMapTextBasedOnStage
+	asm15 scriptHelp.makuTree_storeIntoVar37SpawnBubbleIf0, $01
+	asm15 scriptHelp.makuTree_showTextAndSetMapTextBasedOnStage
 	wait 1
-	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $04
+	asm15 scriptHelp.makuTree_storeIntoVar37SpawnBubbleIf0, $04
 	scriptjump @loop
 
 script71c8:
-	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $04
+	asm15 scriptHelp.makuTree_storeIntoVar37SpawnBubbleIf0, $04
 	checkflagset $00, $cd00
 	disableinput
 	wait 30
-	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $01
-	asm15 scriptHlp.makuTree_showTextBasedOnVar, <TX_1717 ; take this seed
+	asm15 scriptHelp.makuTree_storeIntoVar37SpawnBubbleIf0, $01
+	asm15 scriptHelp.makuTree_showTextBasedOnVar, <TX_1717 ; take this seed
 	wait 1
-	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $04
-	asm15 scriptHlp.makuTree_dropMakuSeed
+	asm15 scriptHelp.makuTree_storeIntoVar37SpawnBubbleIf0, $04
+	asm15 scriptHelp.makuTree_dropMakuSeed
 	setcounter1 $61
 	setcounter1 $61
 	playsound SND_GETSEED
 	giveitem TREASURE_MAKU_SEED $00
 	wait 40
-	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $01
-	asm15 scriptHlp.makuTree_showTextAndSetMapText, <TX_1718 ; you can defeat Onox
+	asm15 scriptHelp.makuTree_storeIntoVar37SpawnBubbleIf0, $01
+	asm15 scriptHelp.makuTree_showTextAndSetMapText, <TX_1718 ; you can defeat Onox
 	wait 40
 	asm15 fadeoutToBlackWithDelay, $01
-	asm15 scriptHlp.makuTree_OnoxTauntingAfterMakuSeedGet
+	asm15 scriptHelp.makuTree_OnoxTauntingAfterMakuSeedGet
 	setcounter1 $ff
 	scriptend
 	
 	
 _stageMakuSeedGotten:
-	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $04
-	asm15 scriptHlp.seasonsFunc_15_619a
+	asm15 scriptHelp.makuTree_storeIntoVar37SpawnBubbleIf0, $04
+	asm15 scriptHelp.seasonsFunc_15_619a
 	setmusic MUS_MAKU_TREE
-	asm15 scriptHlp.makuTree_setMakuMapText, <TX_1718
+	asm15 scriptHelp.makuTree_setMakuMapText, <TX_1718
 	setcollisionradii $24, $10
 	makeabuttonsensitive
-	asm15 scriptHlp.makuTree_disableEverythingIfUnlinked
+	asm15 scriptHelp.makuTree_disableEverythingIfUnlinked
 @loop:
 	checkabutton
-	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $01
-	asm15 scriptHlp.makuTree_showTextAndSetMapText, <TX_1718 ; /TX_1733
+	asm15 scriptHelp.makuTree_storeIntoVar37SpawnBubbleIf0, $01
+	asm15 scriptHelp.makuTree_showTextAndSetMapText, <TX_1718 ; /TX_1733
 	wait 1
-	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $04
+	asm15 scriptHelp.makuTree_storeIntoVar37SpawnBubbleIf0, $04
 	scriptjump @loop
 
 script7223:
-	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $04
-	asm15 scriptHlp.seasonsFunc_15_619a
+	asm15 scriptHelp.makuTree_storeIntoVar37SpawnBubbleIf0, $04
+	asm15 scriptHelp.seasonsFunc_15_619a
 	setmusic MUS_MAKU_TREE
-	asm15 scriptHlp.makuTree_setMakuMapText, <TX_1738
+	asm15 scriptHelp.makuTree_setMakuMapText, <TX_1738
 	setcollisionradii $24, $10
 	makeabuttonsensitive
 @loop:
 	checkabutton
-	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $01
+	asm15 scriptHelp.makuTree_storeIntoVar37SpawnBubbleIf0, $01
 	showtext TX_1738 ; passage at my roots leads to Twinrova
-	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $04
+	asm15 scriptHelp.makuTree_storeIntoVar37SpawnBubbleIf0, $04
 	scriptjump @loop
 
 _stageFinishedGame:
-	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $00
-	asm15 scriptHlp.makuTree_setMakuMapText, <TX_1739
+	asm15 scriptHelp.makuTree_storeIntoVar37SpawnBubbleIf0, $00
+	asm15 scriptHelp.makuTree_setMakuMapText, <TX_1739
 @loop:
 	callscript makuTreeScript_waitForBubblePopped
 	showtext TX_1739
@@ -7125,19 +7125,19 @@ _stageFinishedGame:
 	scriptjump @loop
 
 script7255:
-	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $00
+	asm15 scriptHelp.makuTree_storeIntoVar37SpawnBubbleIf0, $00
 	checkcfc0bit 7
 	playsound SND_POOF
-	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $03
+	asm15 scriptHelp.makuTree_storeIntoVar37SpawnBubbleIf0, $03
 	scriptend
 
 script7261:
-	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $04
+	asm15 scriptHelp.makuTree_storeIntoVar37SpawnBubbleIf0, $04
 	checkmemoryeq $cfc0, $02
-	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $01
+	asm15 scriptHelp.makuTree_storeIntoVar37SpawnBubbleIf0, $01
 	showtext TX_3d07
 	wait 1
-	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $04
+	asm15 scriptHelp.makuTree_storeIntoVar37SpawnBubbleIf0, $04
 	wait 60
 	writememory $cfc0, $03
 	setcounter1 $ff
@@ -7148,21 +7148,21 @@ makuTreeScript_waitForBubblePopped:
 	disablemenu
 	writememory wcc95, $80
 	playsound SND_POOF
-	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $03
+	asm15 scriptHelp.makuTree_storeIntoVar37SpawnBubbleIf0, $03
 	checkmemoryeq wcc95, $ff
 	setdisabledobjectsto11
 	checkobjectbyteeq $61, $ff
 	setdisabledobjectsto91
 	writememory wcc95, $00
-	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $01
+	asm15 scriptHelp.makuTree_storeIntoVar37SpawnBubbleIf0, $01
 	enablemenu
 	retscript
 
 script729c:
 	enableallobjects
-	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $02
+	asm15 scriptHelp.makuTree_storeIntoVar37SpawnBubbleIf0, $02
 	checkobjectbyteeq Interaction.animParameter, $ff
-	asm15 scriptHlp.makuTree_storeIntoVar37SpawnBubbleIf0, $00
+	asm15 scriptHelp.makuTree_storeIntoVar37SpawnBubbleIf0, $00
 	retscript
 
 
@@ -7486,7 +7486,7 @@ script7443:
 	moveleft $29
 	setanimation $09
 	checkmemoryeq $cfc0, $03
-	asm15 scriptHlp.moblin_spawnSwordMaskedMoblin
+	asm15 scriptHelp.moblin_spawnSwordMaskedMoblin
 	wait 1
 	scriptend
 
@@ -7496,13 +7496,13 @@ script7456:
 	moveright $29
 	setanimation $09
 	checkmemoryeq $cfc0, $03
-	asm15 scriptHlp.moblin_spawnSwordMaskedMoblin
+	asm15 scriptHelp.moblin_spawnSwordMaskedMoblin
 	wait 1
 	scriptend
 
 script7469:
 	checkmemoryeq $cfc0, $03
-	asm15 scriptHlp.moblin_spawnMaskedMoblin
+	asm15 scriptHelp.moblin_spawnMaskedMoblin
 	wait 1
 	scriptend
 
@@ -7516,7 +7516,7 @@ oldManScript_givesRupees:
 	checkabutton
 	disableinput
 	showtextlowindex <TX_1f03
-	asm15 scriptHlp.oldMan_giveRupees
+	asm15 scriptHelp.oldMan_giveRupees
 	wait 8
 	checkrupeedisplayupdated
 	orroomflag $40
@@ -7533,7 +7533,7 @@ oldManScript_takesRupees:
 	checkabutton
 	disableinput
 	showtextlowindex <TX_1f00
-	asm15 scriptHlp.oldMan_takeRupees
+	asm15 scriptHelp.oldMan_takeRupees
 	jumpifobjectbyteeq $7f, $00, @linkIsBroke
 	wait 8
 	checkrupeedisplayupdated
@@ -7615,7 +7615,7 @@ impaScript_after4thEssence:
 	rungenericnpc TX_250a
 	
 impaScript_after5thEssence:
-	asm15 scriptHlp.impa_checkIf4thEssenceGotten
+	asm15 scriptHelp.impa_checkIf4thEssenceGotten
 	jumptable_memoryaddress $cfc0
 	.dw @got4thEssence
 	.dw impaScript_after3rdEssence@gotFlippers
@@ -7635,7 +7635,7 @@ impaScript_villagersSeenButNoMakuSeed:
 	initcollisions
 -
 	checkabutton
-	asm15 scriptHlp.faceOppositeDirectionAsLink
+	asm15 scriptHelp.faceOppositeDirectionAsLink
 	showtext TX_0600
 	wait 10
 	setanimationfromobjectbyte $7b
@@ -7682,16 +7682,16 @@ script7556:
 
 _samasaDesertGateScript_createNext7Puffs:
 	playsound SND_KILLENEMY
-	asm15 scriptHlp.samasaDesertGate_createNext2Puffs
+	asm15 scriptHelp.samasaDesertGate_createNext2Puffs
 	setcounter1 $05
 	playsound SND_KILLENEMY
-	asm15 scriptHlp.samasaDesertGate_createNextPuff
+	asm15 scriptHelp.samasaDesertGate_createNextPuff
 	setcounter1 $05
 	playsound SND_KILLENEMY
-	asm15 scriptHlp.samasaDesertGate_createNext2Puffs
+	asm15 scriptHelp.samasaDesertGate_createNext2Puffs
 	setcounter1 $05
 	playsound SND_KILLENEMY
-	asm15 scriptHlp.samasaDesertGate_createNext2Puffs
+	asm15 scriptHelp.samasaDesertGate_createNext2Puffs
 	retscript
 
 
@@ -7752,7 +7752,7 @@ subrosianSmithyScript:
 	wait 30
 	showtextlowindex <TX_3b0d
 	callscript _smithyScript_smithItem
-	asm15 scriptHlp.subrosianSmith_takeHardOre
+	asm15 scriptHelp.subrosianSmith_takeHardOre
 	scriptjump _smithyScript_smithingDone
 @makeItFine:
 	wait 30
@@ -7804,7 +7804,7 @@ subrosianSmithyScript:
 	setglobalflag GLOBALFLAG_BEGAN_SMITH_SECRET
 	showtextlowindex <TX_3b12
 	callscript _smithyScript_smithItem
-	asm15 scriptHlp.subrosianSmith_giveUpgradedShield
+	asm15 scriptHelp.subrosianSmith_giveUpgradedShield
 	setglobalflag GLOBALFLAG_DONE_SMITH_SECRET
 	wait 30
 @generateReturnSecret:
@@ -7884,7 +7884,7 @@ dinScript_subid8Init:
 	disableinput
 	wait 10
 	writeobjectbyte $78, $01
-	asm15 scriptHlp.din_animateAndLookAtLink
+	asm15 scriptHelp.din_animateAndLookAtLink
 	wait 8
 	showtext TX_3d18
 	enableinput
@@ -7906,7 +7906,7 @@ script769f:
 
 script76ad:
 	checkmemoryeq $cfc0, $02
-	asm15 scriptHlp.seasonsFunc_15_62d9
+	asm15 scriptHelp.seasonsFunc_15_62d9
 	setanimation $03
 	scriptend
 
@@ -7960,7 +7960,7 @@ moblinKeepSceneScript_linkSeenOnRightSide:
 	setcollisionradii $1c, $1c
 	checkcollidedwithlink_ignorez
 	setdisabledobjectsto91
-	asm15 scriptHlp.moblinKeepScene_putLinkOnGround
+	asm15 scriptHelp.moblinKeepScene_putLinkOnGround
 	jumptable_memoryaddress wIsLinkedGame
 	.dw @unlinked
 	.dw @linked
@@ -7997,8 +7997,8 @@ moblinKeepSceneScript_settingUpFight:
 	setcollisionradii $28, $08
 	checkcollidedwithlink_ignorez
 	setdisabledobjectsto91
-	asm15 scriptHlp.moblinKeepScene_putLinkOnGround
-	asm15 scriptHlp.moblinKeepScene_faceLinkUp
+	asm15 scriptHelp.moblinKeepScene_putLinkOnGround
+	asm15 scriptHelp.moblinKeepScene_faceLinkUp
 	showtextlowindex <TX_3f04
 	playsound SND_BOOMERANG
 	wait 30
@@ -8015,7 +8015,7 @@ moblinKeepSceneScript_settingUpFight:
 	callscript @quickExplosions
 	callscript @quickExplosions
 	callscript @quickExplosions
-	asm15 scriptHlp.moblinKeepScene_warpOutOfMoblinKeep
+	asm15 scriptHelp.moblinKeepScene_warpOutOfMoblinKeep
 	scriptend
 @slowExplosions:
 	playsound SND_BIG_EXPLOSION_2
@@ -8077,7 +8077,7 @@ shipPirationScript_piratianComingDownHandler:
 	setstate $02
 	xorcfc0bit 2
 	checkcfc0bit 0
-	asm15 scriptHlp.shipPiratian_incCbb3
+	asm15 scriptHelp.shipPiratian_incCbb3
 	scriptend
 
 shipPiratianScript_piratianFromAbove:
@@ -8127,7 +8127,7 @@ shipPiratianScript_piratianFromAbove:
 
 shipPirationScript_inShipLeavingSubrosia:
 	setstate $02
-	asm15 scriptHlp.shipPiratian_setRandomAnimation
+	asm15 scriptHelp.shipPiratian_setRandomAnimation
 	checkcfc0bit 1
 	setzspeed -$01c0
 	setangleandanimation $10
@@ -8152,7 +8152,7 @@ shipPiratianScript_dizzyPirate1Spawner:
 	checkcfc0bit 7
 	wait 30
 	showtextlowindex <TX_4e11
-	asm15 scriptHlp.shipPiratian_incCbb3
+	asm15 scriptHelp.shipPiratian_incCbb3
 	scriptend
 
 shipPiratianScript_swapShip:
@@ -8290,7 +8290,7 @@ shipPiratianScript_ghostPiratian:
 	setstate $05
 	asm15 interactionSetAlwaysUpdateBit
 	checkabutton
-	asm15 scriptHlp.shipPiratian_setAnimationIfLinkNear
+	asm15 scriptHelp.shipPiratian_setAnimationIfLinkNear
 	showtextlowindex <TX_4d01
 	setdisabledobjectsto11
 	wait 30
@@ -8365,7 +8365,7 @@ shipPiratianCaptainScript_inWestCoast:
 	setspeed SPEED_100
 	setangle $08
 	applyspeed $10
-	asm15 scriptHlp.shipPiratian_linkBoarding
+	asm15 scriptHelp.shipPiratian_linkBoarding
 	setdisabledobjectsto11
 	wait 60
 	showtextlowindex <TX_4e13
@@ -8385,16 +8385,16 @@ linkedCutsceneScript_witches1:
 	wait 40
 	setcoords $58, $38
 	asm15 restartSound
-	asm15 scriptHlp.seasonsFunc_15_632f
+	asm15 scriptHelp.seasonsFunc_15_632f
 	checkpalettefadedone
 	showtextlowindex <TX_5000
 	wait 30
-	asm15 scriptHlp.seasonsFunc_15_6347
+	asm15 scriptHelp.seasonsFunc_15_6347
 	wait 40
 	setmusic MUS_ONOX_CASTLE
 	createpuff
 	wait 4
-	asm15 scriptHlp.seasonsFunc_15_635e
+	asm15 scriptHelp.seasonsFunc_15_635e
 	wait 90
 	xorcfc0bit 0
 	wait 10
@@ -8405,7 +8405,7 @@ linkedCutsceneScript_witches1:
 	wait 20
 	setmusic SNDCTRL_MEDIUM_FADEOUT
 	wait 90
-	asm15 scriptHlp.seasonsFunc_15_6334
+	asm15 scriptHelp.seasonsFunc_15_6334
 	checkpalettefadedone
 	resetmusic
 	setglobalflag GLOBALFLAG_WITCHES_1_SEEN
@@ -8420,20 +8420,20 @@ linkedCutsceneScript_witches2:
 	wait 60
 	setmusic SNDCTRL_MEDIUM_FADEOUT
 	wait 90
-	asm15 scriptHlp.seasonsFunc_15_634c
+	asm15 scriptHelp.seasonsFunc_15_634c
 	wait 40
 	createpuff
 	wait 4
-	asm15 scriptHlp.seasonsFunc_15_6363
+	asm15 scriptHelp.seasonsFunc_15_6363
 	wait 90
 	showtextlowindex <TX_5002
 	wait 30
 	createpuff
 	xorcfc0bit 7
 	writememory $cfc6, $00
-	asm15 scriptHlp.seasonsFunc_15_6378
+	asm15 scriptHelp.seasonsFunc_15_6378
 	wait 1
-	asm15 scriptHlp.seasonsFunc_15_6383
+	asm15 scriptHelp.seasonsFunc_15_6383
 	setmusic MUS_DISASTER
 	checkcfc0bit 0
 	setdisabledobjectsto91
@@ -8446,7 +8446,7 @@ linkedCutsceneScript_witches2:
 	playsound SND_BEAM2
 	checkcfc0bit 0
 	wait 60
-	asm15 scriptHlp.seasonsFunc_15_63a6
+	asm15 scriptHelp.seasonsFunc_15_63a6
 	setglobalflag GLOBALFLAG_WITCHES_2_SEEN
 	scriptend
 
@@ -8584,7 +8584,7 @@ _zeldaNPCScript_faceLinkShowText:
 	initcollisions
 -
 	checkabutton
-	asm15 scriptHlp.faceOppositeDirectionAsLink
+	asm15 scriptHelp.faceOppositeDirectionAsLink
 	showloadedtext
 	wait 10
 	setanimationfromobjectbyte $7b
@@ -8703,12 +8703,12 @@ troyScript_playGame:
 	showtextlowindex <TX_4c06
 	createpuff
 	wait 4
-	asm15 scriptHlp.seasonsFunc_15_6455
+	asm15 scriptHelp.seasonsFunc_15_6455
 	setcounter1 $2d
 	playsound SND_WHISTLE
 	setmusic MUS_MINIBOSS
 	writeobjectbyte $71, $00
-	asm15 scriptHlp.seasonsFunc_15_6443
+	asm15 scriptHelp.seasonsFunc_15_6443
 	enableinput
 	incstate
 	scriptend
@@ -8721,7 +8721,7 @@ troyScript_gameBegun:
 	writeobjectbyte Interaction.var31, $00
 	asm15 fadeoutToWhite
 	checkpalettefadedone
-	asm15 scriptHlp.seasonsFunc_15_6464
+	asm15 scriptHelp.seasonsFunc_15_6464
 	wait 30
 	asm15 fadeinFromWhite
 	checkpalettefadedone
@@ -8733,7 +8733,7 @@ troyScript_gameBegun:
 	showtextlowindex <TX_4c0a
 	createpuff
 	wait 4
-	asm15 scriptHlp.seasonsFunc_15_645d
+	asm15 scriptHelp.seasonsFunc_15_645d
 	setcounter1 $2d
 	showtextlowindex <TX_4c0b
 	disableinput
@@ -8778,9 +8778,9 @@ troyScript_giveReward:
 	
 	
 troyScript_postGameEffects:
-	asm15 scriptHlp.troyMinigame_createSparkle
+	asm15 scriptHelp.troyMinigame_createSparkle
 	wait 30
-	asm15 scriptHlp.createSwirlAtLink
+	asm15 scriptHelp.createSwirlAtLink
 	wait 10
 	playsound SND_FADEOUT
 	asm15 fadeoutToWhite
@@ -8801,7 +8801,7 @@ troyScript_tookTooLong:
 	showtextlowindex <TX_4c08
 	createpuff
 	wait 4
-	asm15 scriptHlp.seasonsFunc_15_645d
+	asm15 scriptHelp.seasonsFunc_15_645d
 	setcounter1 $2d
 	showtextlowindex <TX_4c09
 	jumpiftextoptioneq $00, troyScript_playGame
@@ -8870,7 +8870,7 @@ linkedGhiniScript_begunSecret:
 	asm15 fadeoutToWhite
 	checkpalettefadedone
 	wait 4
-	asm15 scriptHlp.linkedGhini_forceLinksPositionAndState
+	asm15 scriptHelp.linkedGhini_forceLinksPositionAndState
 	settileat $61, $a2
 	wait 4
 	asm15 fadeinFromWhite
@@ -8880,7 +8880,7 @@ linkedGhiniScript_begunSecret:
 	showtextlowindex <TX_4c16
 	createpuff
 	wait 4
-	asm15 scriptHlp.linkedGhini_clearAllAndSetInvisible
+	asm15 scriptHelp.linkedGhini_clearAllAndSetInvisible
 	setcounter1 $2d
 	playsound SND_WHISTLE
 	scriptend
@@ -8892,10 +8892,10 @@ linkedGhiniScript_startRound:
 	wait 30
 	createpuff
 	wait 4
-	asm15 scriptHlp.linkedGhini_setVisible
+	asm15 scriptHelp.linkedGhini_setVisible
 	setcounter1 $2d
 	showtextlowindex <TX_4c17
-	asm15 scriptHlp.seasonsFunc_15_64a0
+	asm15 scriptHelp.seasonsFunc_15_64a0
 	wait 30
 	jumptable_objectbyte $7f
 	.dw @successfulRound
@@ -8988,8 +8988,8 @@ goldenCaveSubrosianScript_beginningSecret:
 	wait 20
 	showtextlowindex <TX_4c24
 	wait 20
-	asm15 scriptHlp.seasonsFunc_15_653c, $01
-	asm15 scriptHlp.goldenCaveSubrosian_refreshRoom, $87
+	asm15 scriptHelp.seasonsFunc_15_653c, $01
+	asm15 scriptHelp.goldenCaveSubrosian_refreshRoom, $87
 	scriptend
 	
 	
@@ -8999,13 +8999,13 @@ goldenCaveSubrosianScript_7d00:
 	setangleandanimation $00
 	writeobjectbyte $79, $00
 	setdisabledobjectsto11
-	asm15 scriptHlp.goldenCaveSubrosian_emptyLinksItemsAndSetPosition
-	asm15 scriptHlp.seasonsFunc_15_6545
+	asm15 scriptHelp.goldenCaveSubrosian_emptyLinksItemsAndSetPosition
+	asm15 scriptHelp.seasonsFunc_15_6545
 	jumpifobjectbyteeq $7c, $03, script7d19
-	asm15 scriptHlp.putAwayLinksItems, TREASURE_BOOMERANG
+	asm15 scriptHelp.putAwayLinksItems, TREASURE_BOOMERANG
 script7d19:
 	checkpalettefadedone
-	asm15 scriptHlp.seasonsFunc_15_6518
+	asm15 scriptHelp.seasonsFunc_15_6518
 	writememory $cc02, $01
 	wait 20
 	showloadedtext
@@ -9020,7 +9020,7 @@ script7d19:
 	enableallobjects
 script7d32:
 	checkabutton
-	asm15 scriptHlp.seasonsFunc_15_64e9
+	asm15 scriptHelp.seasonsFunc_15_64e9
 	jumptable_objectbyte $79
 	.dw script7d40
 	.dw script7d6b
@@ -9035,8 +9035,8 @@ script7d44:
 	wait 20
 	showtextlowindex <TX_4c3f
 	wait 20
-	asm15 scriptHlp.goldenCaveSubrosian_refreshRoom, $87
-	asm15 scriptHlp.seasonsFunc_15_653c, $03
+	asm15 scriptHelp.goldenCaveSubrosian_refreshRoom, $87
+	asm15 scriptHelp.seasonsFunc_15_653c, $03
 	scriptend
 script7d56:
 	wait 20
@@ -9047,8 +9047,8 @@ script7d56:
 	wait 8
 	wait 8
 	setangleandanimation $10
-	asm15 scriptHlp.seasonsFunc_15_5cf7
-	asm15 scriptHlp.seasonsFunc_15_652e
+	asm15 scriptHelp.seasonsFunc_15_5cf7
+	asm15 scriptHelp.seasonsFunc_15_652e
 	rungenericnpclowindex <TX_4c22
 script7d6b:
 	showtextlowindex <TX_4c29
@@ -9062,8 +9062,8 @@ script7d77:
 	showtextlowindex <TX_4c2a
 	writeobjectbyte $4f, $00
 	wait 20
-	asm15 scriptHlp.seasonsFunc_15_653c, $02
-	asm15 scriptHlp.goldenCaveSubrosian_refreshRoom, $57
+	asm15 scriptHelp.seasonsFunc_15_653c, $02
+	asm15 scriptHelp.goldenCaveSubrosian_refreshRoom, $57
 	scriptend
 	
 	
@@ -9072,8 +9072,8 @@ goldenCaveSubrosianScript_7d87:
 	setcoords $48, $78
 	setangleandanimation $10
 	disableinput
-	asm15 scriptHlp.goldenCaveSubrosian_faceLinkUp
-	asm15 scriptHlp.seasonsFunc_15_5cf7
+	asm15 scriptHelp.goldenCaveSubrosian_faceLinkUp
+	asm15 scriptHelp.seasonsFunc_15_5cf7
 	checkpalettefadedone
 	showtextlowindex <TX_4c2b
 	wait 20
@@ -9086,7 +9086,7 @@ goldenCaveSubrosianScript_7d87:
 	wait 20
 	jumpiftextoptioneq $01, -
 	showtextlowindex <TX_4c2d
-	asm15 scriptHlp.seasonsFunc_15_652e
+	asm15 scriptHelp.seasonsFunc_15_652e
 	setglobalflag GLOBALFLAG_DONE_SUBROSIAN_SECRET
 script7dac:
 	initcollisions
@@ -9174,7 +9174,7 @@ masterDiverScript_swimmingChallengeText:
 	disableinput
 	wait 40
 	showtextlowindex <TX_4c36
-	asm15 scriptHlp.seasonsFunc_15_654e
+	asm15 scriptHelp.seasonsFunc_15_654e
 	setcounter1 $2d
 	playsound SND_WHISTLE
 	enableinput
@@ -9185,34 +9185,34 @@ masterDiverScript_swimmingChallengeText:
 	disableinput
 	orroomflag $40
 	playsound SND_WHISTLE
-	asm15 scriptHlp.masterDiver_checkIfDoneIn30Seconds
-	asm15 scriptHlp.linkedFunc_15_6430
+	asm15 scriptHelp.masterDiver_checkIfDoneIn30Seconds
+	asm15 scriptHelp.linkedFunc_15_6430
 	wait 30
 	jumpifglobalflagset GLOBALFLAG_SWIMMING_CHALLENGE_SUCCEEDED, @finishedInTime
 	showtextlowindex <TX_4c37
 	jumpiftextoptioneq $00, @retry
-	asm15 scriptHlp.masterDiver_exitChallenge
+	asm15 scriptHelp.masterDiver_exitChallenge
 	scriptend
 @retry:
-	asm15 scriptHlp.seasonsFunc_15_6558
-	asm15 scriptHlp.masterDiver_retryChallenge
+	asm15 scriptHelp.seasonsFunc_15_6558
+	asm15 scriptHelp.masterDiver_retryChallenge
 	scriptend
 @finishedInTime:
 	showtextlowindex <TX_4c38
-	asm15 scriptHlp.masterDiver_exitChallenge
+	asm15 scriptHelp.masterDiver_exitChallenge
 	scriptend
 	
 
 masterDiverScript_swimmingChallengeDone:
 	disableinput
 	initcollisions
-	asm15 scriptHlp.masterDiver_forceLinkState
+	asm15 scriptHelp.masterDiver_forceLinkState
 	jumpifglobalflagset GLOBALFLAG_SWIMMING_CHALLENGE_SUCCEEDED, @finishedInTime
 	scriptjump @failed
 @finishedInTime:
 	wait 40
 	showtextlowindex <TX_4c39
-	asm15 scriptHlp.linkedScript_giveRing, SWIMMERS_RING
+	asm15 scriptHelp.linkedScript_giveRing, SWIMMERS_RING
 	setcounter1 $02
 	setglobalflag GLOBALFLAG_DONE_DIVER_SECRET
 -
@@ -9265,7 +9265,7 @@ templeGreatFairyScript_beginningSecret:
 @success:
 	showtextlowindex <TX_4103
 	wait 30
-	asm15 scriptHlp.linkedScript_giveRing, HEART_RING_L1
+	asm15 scriptHelp.linkedScript_giveRing, HEART_RING_L1
 	wait 30
 -
 	showtextlowindex <TX_4104
@@ -9328,7 +9328,7 @@ dekuScrubScript_beginningSecret:
 	showtextlowindex <TX_4c42
 	wait 20
 _dekuScrubScript_finishSecret:
-	asm15 scriptHlp.dekuScrub_upgradeSatchel
+	asm15 scriptHelp.dekuScrub_upgradeSatchel
 	jumpifobjectbyteeq Interaction.var38, $00, dekuScrubScript_gaveSecret
 	showtextlowindex <TX_4c44
 	wait 20

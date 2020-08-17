@@ -1024,7 +1024,7 @@
 .ENDM
 
 .MACRO maketorcheslightable
-	asm15 scriptHlp.makeTorchesLightable
+	asm15 scriptHelp.makeTorchesLightable
 .ENDM
 
 .MACRO createpuffnodelay

@@ -260,8 +260,8 @@ interactionCode79:
 	ld a,(hl)
 	ld (de),a
 
-	callab scriptHlp.movingPlatform_loadScript
-	callab scriptHlp.movingPlatform_runScript
+	callab scriptHelp.movingPlatform_loadScript
+	callab scriptHelp.movingPlatform_runScript
 	jp objectSetVisible83
 
 @collisionRadii:
@@ -316,7 +316,7 @@ interactionCode79:
 @substate0:
 	call interactionDecCounter1
 	ret nz
-	callab scriptHlp.movingPlatform_runScript
+	callab scriptHelp.movingPlatform_runScript
 	ret
 
 ; Substate 1: moving

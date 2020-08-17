@@ -7586,7 +7586,7 @@ interactionCodec3:
 	ld a,GLOBALFLAG_ZELDA_SAVED_FROM_VIRE
 	call checkGlobalFlag
 	jp nz,interactionDelete
-	callab scriptHlp.zeldaKidnappedRoom_loadZeldaAndMoblins
+	callab scriptHelp.zeldaKidnappedRoom_loadZeldaAndMoblins
 	jp interactionIncSubstate
 @substate1:
 	call returnIfScrollMode01Unset

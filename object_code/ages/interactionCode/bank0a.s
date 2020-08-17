@@ -7599,7 +7599,7 @@ _twinrova_genericInitialize:
 	call _twinrova_updateDirectionFromAngle
 	ld a,SND_BEAM2
 	call playSound
-	jpab scriptHlp.objectWritePositionTocfd5
+	jpab scriptHelp.objectWritePositionTocfd5
 
 ;;
 _twinrova_loadAngleAndCounterPreset:
@@ -7817,7 +7817,7 @@ _twinrova_state1:
 	.dw @subid00State2
 
 @subid00State0:
-	callab scriptHlp.objectWritePositionTocfd5
+	callab scriptHelp.objectWritePositionTocfd5
 	call interactionAnimate
 	call objectApplySpeed
 	call interactionDecCounter1
@@ -7834,7 +7834,7 @@ _twinrova_state1:
 
 	ld a,SND_BEAM2
 	call playSound
-	callab scriptHlp.objectWritePositionTocfd5
+	callab scriptHelp.objectWritePositionTocfd5
 	call interactionIncSubstate
 	ld l,Interaction.counter2
 	ld (hl),$00
@@ -7843,7 +7843,7 @@ _twinrova_state1:
 	jp _twinrova_loadAngleAndCounterPreset
 
 @subid00State2:
-	callab scriptHlp.objectWritePositionTocfd5
+	callab scriptHelp.objectWritePositionTocfd5
 	call interactionAnimate
 	call objectApplySpeed
 	call interactionDecCounter1

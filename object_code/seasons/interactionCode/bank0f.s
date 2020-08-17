@@ -200,7 +200,7 @@ interactionCodeca:
 	ld (hl),a
 	ld l,$44
 	ld (hl),$01
-	callab scriptHlp.linkedFunc_15_6430
+	callab scriptHelp.linkedFunc_15_6430
 	ld hl,mainScripts.troyScript_gameBegun
 	call interactionSetScript
 	ret

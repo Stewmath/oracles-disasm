@@ -1,4 +1,4 @@
- m_section_force Script_Helper2 NAMESPACE scriptHlp
+ m_section_force Script_Helper2 NAMESPACE scriptHelp
 
 
 ; ==============================================================================

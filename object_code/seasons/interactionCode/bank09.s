@@ -2237,7 +2237,7 @@ interactionCode6a:
 	ld hl,mainScripts.danceLeaderScript_giveFlute
 	jr @@@func_5e68
 @@@func_5e40:
-	callab scriptHlp.seasonsFunc_15_5e20
+	callab scriptHelp.seasonsFunc_15_5e20
 	bit 7,b
 	jr nz,+
 	ld c,$00
@@ -2829,7 +2829,7 @@ _d4KeyHole:
 	ld a,$1d
 	ld b,$02
 	call func_1383
-	callab scriptHlp.d4KeyHolw_disableAllSorts
+	callab scriptHelp.d4KeyHolw_disableAllSorts
 	ret
 @state3:
 	ld a,($cd00)
@@ -5876,7 +5876,7 @@ interactionCode7c:
 	ld a,(de)
 	or a
 	jr nz,+
-	callab scriptHlp.trampoline_bounce
+	callab scriptHelp.trampoline_bounce
 +
 	ld e,Interaction.state
 	ld a,$04
