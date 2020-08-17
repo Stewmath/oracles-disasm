@@ -1,3 +1,12 @@
+; This is somewhat similar to the ages "scriptHelper" file, which contain extra scripts. HOWEVER,
+; there is an important difference: because this is not located in bank 15, the "asm15" opcode does
+; not work here.
+;
+; For consistency's sake, any code that works with the "asm15" opcode is put into the "scriptHelp"
+; namespace. Since it doesn't work here, this is put into the "scripts2" namespace instead.
+;
+; In ages, essentially, this file and the "scriptHelper" file are the same file.
+
 ; ==============================================================================
 ; INTERACID_DUNGEON_SCRIPT
 ; ==============================================================================

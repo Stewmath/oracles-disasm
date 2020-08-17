@@ -1,5 +1,3 @@
- m_section_force "Bank_15" NAMESPACE scriptHelp
-
 ; ==============================================================================
 ; INTERACID_DUNGEON_SCRIPT
 ; ==============================================================================
@@ -8517,5 +8515,3 @@ _interactiondc_spawnPuff:
 	ld l,Interaction.xh
 	ld (hl),c
 	ret
-
-.ends

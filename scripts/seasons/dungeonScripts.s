@@ -284,7 +284,7 @@ ancientRuinsScript_crystalTrapRoom:
 	wait 8
 	scriptjump @waitUntilRupeeGotten
 @rupeeGotten:
-	loadscript startCrystalTrapRoomSequence
+	loadscript scripts2.startCrystalTrapRoomSequence
 
 
 ancientRuinsScript_spawnChestAfterCrystalTrapRoom:
@@ -357,11 +357,11 @@ dungeonScript_checkIfMagnetBallOnButton:
 
 
 explorersCryptScript_1stPoeSisterRoom:
-	loadscript explorersCrypt_firstPoeSister
+	loadscript scripts2.explorersCrypt_firstPoeSister
 
 
 explorersCryptScript_2ndPoeSisterRoom:
-	loadscript explorersCrypt_secondPoeSister
+	loadscript scripts2.explorersCrypt_secondPoeSister
 
 
 explorersCryptScript_4FiresRoom_1:
@@ -371,7 +371,7 @@ explorersCryptScript_4FiresRoom_1:
 	.dw @notBeaten
 	.dw poeBeaten
 @notBeaten:
-	loadscript explorersCrypt_firesGoingOut_1
+	loadscript scripts2.explorersCrypt_firesGoingOut_1
 poeBeaten:
 	playsound SND_SOLVEPUZZLE
 	orroomflag $40
@@ -385,7 +385,7 @@ explorersCryptScript_4FiresRoom_2:
 	.dw @notBeaten
 	.dw poeBeaten
 @notBeaten:
-	loadscript explorersCrypt_firesGoingOut_2
+	loadscript scripts2.explorersCrypt_firesGoingOut_2
 
 
 explorersCryptScript_darknutBridge:

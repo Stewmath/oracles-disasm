@@ -1,6 +1,3 @@
- m_section_force Script_Helper2 NAMESPACE scriptHelp
-
-
 ; ==============================================================================
 ; INTERACID_DUNGEON_SCRIPT
 ; ==============================================================================
@@ -3257,5 +3254,3 @@ dekuScrub_upgradeSatchel:
 	ret
 _table_65cf:
 	.db $20 $50 $99
-
-.ends

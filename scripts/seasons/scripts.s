@@ -1317,10 +1317,10 @@ makuTreeScript_gateHit:
 ; INTERACID_SEASON_SPIRITS_SCRIPTS
 ; ==============================================================================
 seasonsSpiritsScript_enteringTempleArea:
-	loadscript seasonsSpirits_enteringTempleCutscene
+	loadscript scripts2.seasonsSpirits_enteringTempleCutscene
 	
 seasonsSpiritsScript_winterTempleOrbBridge:
-	loadscript seasonsSpirits_createBridgeOnOrbHit
+	loadscript scripts2.seasonsSpirits_createBridgeOnOrbHit
 	
 seasonsSpiritsScript_spiritStatue:
 	jumpifroomflagset $40, _seasonsSpiritsScript_seasonsGotten
@@ -2792,7 +2792,7 @@ subrosianScript_strangeBrother1_stealingFeather:
 	wait 4
 	scriptend
 subrosianScript_strangeBrother2_stealingFeather:
-	loadscript subrosianScript_steaLinksFeather
+	loadscript scripts2.subrosianScript_steaLinksFeather
 
 subrosianScript_runLeft:
 	writeobjectbyte $40, $81
@@ -2803,7 +2803,7 @@ subrosianScript_runLeft:
 	retscript
 
 subrosianScript_strangeBrother1_inHouse:
-	loadscript subrosianScript_inHouseRunFromLink
+	loadscript scripts2.subrosianScript_inHouseRunFromLink
 
 subrosianScript_strangeBrother2_inHouse:
 	jumpifglobalflagset GLOBALFLAG_SAW_STRANGE_BROTHERS_IN_HOUSE, stubScript
@@ -3923,7 +3923,7 @@ script5d6f:
 script5d7f:
 	movedown $21
 ++
-	loadscript linkedPirateCaptainScript_sayingByeToAmbi
+	loadscript scripts2.linkedPirateCaptainScript_sayingByeToAmbi
 
 piratian1FScript_text1BasedOnD6Beaten:
 	initcollisions
@@ -4048,7 +4048,7 @@ piratian2FScript_textBasedOnD6Beaten:
 	initcollisions
 	jumpifglobalflagset GLOBALFLAG_PIRATES_LEFT_FOR_SHIP, @piratesLeft
 @showGateCombo:
-	loadscript showSamasaGateCombination
+	loadscript scripts2.showSamasaGateCombination
 @piratesLeft:
 	checkabutton
 	showtextlowindex <TX_3a0e
@@ -4093,7 +4093,7 @@ samasaGatePiratianScript:
 	scriptend
 
 piratianCaptainByShipScript:
-	loadscript piratianCaptain_preCutsceneScene
+	loadscript scripts2.piratianCaptain_preCutsceneScene
 
 piratianFromShipScript:
 	writeobjectbyte $7c, $01
@@ -4335,16 +4335,16 @@ zeldaScript_ganonBeat:
 	scriptend
 
 zeldaScript_afterEscapingRoomOfRites:
-	loadscript zelda_triforceOnHandText
+	loadscript scripts2.zelda_triforceOnHandText
 
 zeldaScript_zeldaKidnapped:
-	loadscript zelda_kidnapped
+	loadscript scripts2.zelda_kidnapped
 
 script5fe6:
-	loadscript script_14_49b6
+	loadscript scripts2.script_14_49b6
 
 script5fea:
-	loadscript script_14_49c8
+	loadscript scripts2.script_14_49c8
 
 script5fee:
 	checkmemoryeq $cfc0, $01
@@ -4451,7 +4451,7 @@ caveTalonScript:
 	setdisabledobjectsto91
 	scriptjump -
 @usingMegaphone:
-	loadscript talon_giveMushroomAfterWaking
+	loadscript scripts2.talon_giveMushroomAfterWaking
 	
 returnedTalonScript:
 	rungenericnpclowindex <TX_0b18
@@ -4573,10 +4573,10 @@ troupeScript_startDanceScene:
 	scriptjump -
 
 troupeScript_tornadoStart:
-	loadscript tornadoScript_startDestruction
+	loadscript scripts2.tornadoScript_startDestruction
 
 troupeScript_tornadoEnd:
-	loadscript tornadoScript_endDestruction
+	loadscript scripts2.tornadoScript_endDestruction
 
 troupeScript_inHoronVillage:
 	initcollisions
@@ -4602,7 +4602,7 @@ dinImprisonedScript_setDinCoords:
 	scriptend
 
 dinImprisonedScript_OnoxExplainsMotive:
-	loadscript dinImprisoned_OnoxExplainsMotive
+	loadscript scripts2.dinImprisoned_OnoxExplainsMotive
 
 dinImprisonedScript_OnoxSendsTempleDown:
 	wait 60
@@ -4612,7 +4612,7 @@ dinImprisonedScript_OnoxSendsTempleDown:
 	scriptend
 
 dinImprisonedScript_OnoxSaysComeIfYouDare:
-	loadscript dinImprisoned_OnoxSaysComeIfYouDare
+	loadscript scripts2.dinImprisoned_OnoxSaysComeIfYouDare
 
 
 ; ==============================================================================
@@ -4713,7 +4713,7 @@ biggoronScript:
 	enableinput
 	scriptjump @promptSecret
 @correctSecret:
-	loadscript biggoronScript_giveBiggoronSword
+	loadscript scripts2.biggoronScript_giveBiggoronSword
 @generateSecret:
 	generatesecret BIGGORON_RETURN_SECRET
 -
@@ -4747,7 +4747,7 @@ headSmelterAtTempleScript:
 	enablemenu
 	scriptjump -
 @haveBombFlower:
-	loadscript headSmelterScript_blowUpRocks
+	loadscript scripts2.headSmelterScript_blowUpRocks
 	
 headSmelterAtTempleScript_hideFromBomb:
 	checkcfc0bit 0
@@ -4778,7 +4778,7 @@ headSmelterAtFurnaceScript:
 	showtext TX_2a01
 	scriptjump -
 @startSmeltingOres:
-	loadscript script_14_4aea
+	loadscript scripts2.script_14_4aea
 @oresAlreadySmelted:
 	rungenericnpc TX_2a05
 
@@ -5263,7 +5263,7 @@ lavaSoupSubrosianScript:
 	setdisabledobjectsto91
 	scriptjump -
 @fillingPot:
-	loadscript lavaSoupSubrosianScript_fillPot
+	loadscript scripts2.lavaSoupSubrosianScript_fillPot
 @filledPot:
 	checkabutton
 	showtextlowindex <TX_0b24
@@ -5387,7 +5387,7 @@ dancecLeaderScript_promptToStartDancing:
 	showtext TX_0103
 	scriptjump @dancedBefore
 @beginDance:
-	loadscript danceLeaderScript_moveIntoPosition
+	loadscript scripts2.danceLeaderScript_moveIntoPosition
 
 danceLeaderScript_promptForTutorial:
 	showtext TX_0115
@@ -5397,7 +5397,7 @@ danceLeaderScript_promptForTutorial:
 	setsubstate $ff
 	scriptend
 @needTutorial:
-	loadscript danceLeaderScript_danceTutorial
+	loadscript scripts2.danceLeaderScript_danceTutorial
 
 danceLeaderScript_boomerang:
 	giveitem TREASURE_BOOMERANG $00
@@ -5553,9 +5553,9 @@ piratesBellRoomDroppingInScript:
 ; ==============================================================================
 rosaHidingScript_1stScreen:
 	jumpifroomflagset $40, @seenRosaOnce
-	loadscript rosaHidingScript_firstEncounterIntro
+	loadscript scripts2.rosaHidingScript_firstEncounterIntro
 @seenRosaOnce:
-	loadscript rosaHidingScript_secondEncounterOnwardsIntro
+	loadscript scripts2.rosaHidingScript_secondEncounterOnwardsIntro
 rosaHidingScript_afterInitialScreenText:
 	xorcfc0bit 0
 	asm15 scriptHelp.subrosianHiding_store02Intocc9e
@@ -5570,9 +5570,9 @@ rosaHidingScript_2ndScreen:
 	setspeed SPEED_100
 	jumprandom @pattern1, @pattern2
 @pattern1:
-	loadscript rosaHidingScript_2ndScreenPattern1
+	loadscript scripts2.rosaHidingScript_2ndScreenPattern1
 @pattern2:
-	loadscript rosaHidingScript_2ndScreenPattern2
+	loadscript scripts2.rosaHidingScript_2ndScreenPattern2
 
 rosaHidingScript_3rdScreen:
 	asm15 scriptHelp.subrosianHiding_createDetectionHelper
@@ -5580,9 +5580,9 @@ rosaHidingScript_3rdScreen:
 	setspeed SPEED_100
 	jumprandom @pattern1, @pattern2
 @pattern1:
-	loadscript rosaHidingScript_3rdScreenPattern1
+	loadscript scripts2.rosaHidingScript_3rdScreenPattern1
 @pattern2:
-	loadscript rosaHidingScript_3rdScreenPattern2
+	loadscript scripts2.rosaHidingScript_3rdScreenPattern2
 	
 rosaHidingScript_4thScreen:
 	asm15 scriptHelp.subrosianHiding_createDetectionHelper
@@ -5590,17 +5590,17 @@ rosaHidingScript_4thScreen:
 	setspeed SPEED_100
 	jumprandom @pattern1, @pattern2
 @pattern1:
-	loadscript rosaHidingScript_4thScreenPattern1
+	loadscript scripts2.rosaHidingScript_4thScreenPattern1
 @pattern2:
-	loadscript rosaHidingScript_4thScreenPattern2
+	loadscript scripts2.rosaHidingScript_4thScreenPattern2
 rosaHidingScript_pokeBackOut:
-	loadscript rosaHidingScript_pokeBackOut_body
+	loadscript scripts2.rosaHidingScript_pokeBackOut_body
 	
 rosaHidingScript_portalScreen:
-	loadscript rosaHidingScript_portalScreen_body
+	loadscript scripts2.rosaHidingScript_portalScreen_body
 	
 rosaHidingScript_caught:
-	loadscript rosaHidingScript_caught_body
+	loadscript scripts2.rosaHidingScript_caught_body
 
 rosaHidingScript_lookDownLeftRight:
 	wait 30
@@ -5919,60 +5919,60 @@ strangeBrother2Script_1stScreen:
 	setcoords $28, $18
 	setangleandanimation $10
 	callscript _toStrangeBrotherScript_1stScreenInit
-	loadscript strangeBrother2Script_1stScreenPattern1
+	loadscript scripts2.strangeBrother2Script_1stScreenPattern1
 @otherPattern:
 	setcoords $48, $28
 	setangleandanimation $00
 	callscript _toStrangeBrotherScript_1stScreenInit
-	loadscript strangeBrother2Script_1stScreenPattern2
+	loadscript scripts2.strangeBrother2Script_1stScreenPattern2
 
 strangeBrother2Script_2ndScreen:
 	jumptable_memoryaddress $cfd0
 	.dw @pattern1
 	.dw @pattern2
 @pattern1:
-	loadscript strangeBrother2Script_2ndScreenPattern1
+	loadscript scripts2.strangeBrother2Script_2ndScreenPattern1
 @pattern2:
-	loadscript strangeBrother2Script_2ndScreenPattern2
+	loadscript scripts2.strangeBrother2Script_2ndScreenPattern2
 	
 strangeBrother2Script_3rdScreen:
 	jumptable_memoryaddress $cfd0
 	.dw @pattern1
 	.dw @pattern2
 @pattern1:
-	loadscript strangeBrother2Script_3rdScreenPattern1
+	loadscript scripts2.strangeBrother2Script_3rdScreenPattern1
 @pattern2:
-	loadscript strangeBrother2Script_3rdScreenPattern2
+	loadscript scripts2.strangeBrother2Script_3rdScreenPattern2
 	
 strangeBrother2Script_4thScreen:
 	jumptable_memoryaddress $cfd0
 	.dw @pattern1
 	.dw @pattern2
 @pattern1:
-	loadscript strangeBrother2Script_4thScreenPattern1
+	loadscript scripts2.strangeBrother2Script_4thScreenPattern1
 @pattern2:
-	loadscript strangeBrother2Script_4thScreenPattern2
+	loadscript scripts2.strangeBrother2Script_4thScreenPattern2
 	
 strangeBrother2Script_5thScreen:
 	jumptable_memoryaddress $cfd0
 	.dw @pattern1
 	.dw @pattern2
 @pattern1:
-	loadscript strangeBrother2Script_5thScreenPattern1
+	loadscript scripts2.strangeBrother2Script_5thScreenPattern1
 @pattern2:
-	loadscript strangeBrother2Script_5thScreenPattern2
+	loadscript scripts2.strangeBrother2Script_5thScreenPattern2
 	
 strangeBrother2Script_6thScreen:
 	jumptable_memoryaddress $cfd0
 	.dw @pattern1
 	.dw @pattern2
 @pattern1:
-	loadscript strangeBrother2Script_6thScreenPattern1
+	loadscript scripts2.strangeBrother2Script_6thScreenPattern1
 @pattern2:
-	loadscript strangeBrother2Script_6thScreenPattern2
+	loadscript scripts2.strangeBrother2Script_6thScreenPattern2
 	
 strangeBrother2Script_finishedScreen:
-	loadscript strangeBrother2Script_finishedScreenPattern2
+	loadscript scripts2.strangeBrother2Script_finishedScreenPattern2
 	
 strangeBrotherScript_lookDownUpRightLeft:
 	setangleandanimation $10
@@ -7339,7 +7339,7 @@ jewelHelperScript_createBridgeToXJewelMoldorm:
 	scriptend
 	
 jewelHelperScript_XjewelMoldorm:
-	loadscript jewelHelperScript_jewelMoldorm_body
+	loadscript scripts2.jewelHelperScript_jewelMoldorm_body
 
 jewelHelperScript_spoolSwampSquareJewel:
 	stopifitemflagset
@@ -7397,7 +7397,7 @@ script73bf:
 	scriptjump -
 
 kingMoblinScript_trapLinkInBombedHouse:
-	loadscript kingMoblin_trapLinkInBombedHouse
+	loadscript scripts2.kingMoblin_trapLinkInBombedHouse
 
 script73cd:
 	checkcfc0bit 0
@@ -7655,7 +7655,7 @@ impaScript_gotMakuSeedDidntSeeZeldaKidnapped:
 	rungenericnpc TX_0609
 	
 impaScript_askingToSaveZelda:
-	loadscript impaScript_askedToSaveZeldaButHavent_body
+	loadscript scripts2.impaScript_askedToSaveZeldaButHavent_body
 	
 impaScript_askedToSaveZeldaButHavent:
 	rungenericnpc TX_0502
@@ -7869,10 +7869,10 @@ _smithyScript_smithingDone:
 ; INTERACID_S_DIN
 ; ==============================================================================
 dinScript_subid2Init:
-	loadscript dinScript_subid2Init_body
+	loadscript scripts2.dinScript_subid2Init_body
 
 dinScript_subid4Init:
-	loadscript dinScript_subid4Init_body
+	loadscript scripts2.dinScript_subid4Init_body
 
 dinScript_stubInit:
 	scriptend
@@ -7893,7 +7893,7 @@ dinScript_subid8Init:
 	scriptjump -
 
 dinScript_discoverLinkCollapsed:
-	loadscript dinScript_discoverLinkCollapsed_body
+	loadscript scripts2.dinScript_discoverLinkCollapsed_body
 
 
 ; interactionCodeaa
@@ -8631,7 +8631,7 @@ mayorsHouseGirlScript:
 ; INTERACID_ZELDA_KIDNAPPED_ROOM
 ; ==============================================================================
 ZeldaBeingKidnappedScript:
-	loadscript ZeldaBeingKidnappedEvent_body
+	loadscript scripts2.ZeldaBeingKidnappedEvent_body
 
 
 ; ==============================================================================
@@ -9446,7 +9446,7 @@ linkedHerosCaveOldManScript:
 ; INTERACID_GET_ROD_OF_SEASONS
 ; ==============================================================================
 gettingRodOfSeasonsScript:
-	loadscript gettingRodOfSeasons_body
+	loadscript scripts2.gettingRodOfSeasons_body
 
 gettingRodOfSeasonsScript_setCounter1To32:
 	setcounter1 $32

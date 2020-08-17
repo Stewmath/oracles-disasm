@@ -340,7 +340,11 @@
 .ORG 0
 
 	.include "build/data/data_4556.s"
-	.include "scripts/seasons/scripts2.s"
+
+	 m_section_force "Scripts2" NAMESPACE scripts2
+		.include "scripts/seasons/scripts2.s"
+	.ends
+
 	.include "build/data/interactionAnimations.s"
 
 
@@ -349,7 +353,10 @@
 
 	.include "code/serialFunctions.s"
 
-	.include "scripts/common/scriptHelper.s"
+	 m_section_force "Bank_15" NAMESPACE scriptHelp
+		.include "scripts/common/scriptHelper.s"
+	.ends
+
 	.include "object_code/common/interactionCode/group7.s"
 	.include "object_code/common/interactionCode/group8.s"
 
@@ -404,7 +411,10 @@ oamData_15_4e0c:
 
 	.include "build/data/treasureObjectData.s"
 
-	.include "scripts/seasons/scriptHelper.s"
+	 m_section_force "Bank_15_2" NAMESPACE scriptHelp
+		.include "scripts/seasons/scriptHelper.s"
+	.ends
+
 	.include "object_code/seasons/interactionCode/bank15.s"
 
 	.include "build/data/partAnimations.s"

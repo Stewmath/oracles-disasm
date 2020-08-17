@@ -402,7 +402,9 @@ specialObjectLoadAnimationFrameToBuffer:
 .BANK $15 SLOT 1
 .ORG 0
 
-	.include "scripts/common/scriptHelper.s"
+	 m_section_force "Bank_15" NAMESPACE scriptHelp
+		.include "scripts/common/scriptHelper.s"
+	.ends
 
 	 m_section_free "Object_Pointers" namespace "objectData"
 
@@ -429,7 +431,9 @@ specialObjectLoadAnimationFrameToBuffer:
 
 	.ENDS
 
-	.include "scripts/ages/scriptHelper.s"
+	 m_section_force "Bank_15_2" NAMESPACE scriptHelp
+		.include "scripts/ages/scriptHelper.s"
+	.ends
 
 
 .BANK $16 SLOT 1

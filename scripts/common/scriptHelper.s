@@ -1,5 +1,3 @@
- m_section_force Script_Helper1 NAMESPACE scriptHelp
-
 ; ==============================================================================
 ; INTERACID_FARORE
 ; ==============================================================================
@@ -667,5 +665,3 @@ gameCompleteDialog_markGameAsComplete:
 .endif
 	ld a,GLOBALFLAG_FINISHEDGAME
 	jp setGlobalFlag
-
-.ENDS

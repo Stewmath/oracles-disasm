@@ -2810,7 +2810,7 @@ _d4KeyHole:
 	call interactionRunScript
 	ret nc
 	call interactionIncState
-	ld hl,simpleScript_waterfallEmptyingAboveD4
+	ld hl,scripts2.simpleScript_waterfallEmptyingAboveD4
 	jp interactionSetSimpleScript
 @func_621c:
 	ld h,d
@@ -2838,7 +2838,7 @@ _d4KeyHole:
 	call getThisRoomFlags
 	set 7,(hl)
 	call interactionIncState
-	ld hl,simpleScript_waterfallEmptyingAtD4
+	ld hl,scripts2.simpleScript_waterfallEmptyingAtD4
 	jp interactionSetSimpleScript
 @state4:
 	ld a,$3c
@@ -3227,7 +3227,7 @@ _natzuSwitch:
 	call getThisRoomFlags
 	set 6,(hl)
 	call interactionIncState
-	ld hl,simpleScript_creatingBridgeToNatzu
+	ld hl,scripts2.simpleScript_creatingBridgeToNatzu
 	jp interactionSetSimpleScript
 @state2:
 	call _d4KeyHole@func_621c
@@ -3282,7 +3282,7 @@ _unblockingD3Dam:
 	call checkInteractionState
 	jr nz,@state1
 	call interactionIncState
-	ld hl,simpleScript_unblockingD3Dam
+	ld hl,scripts2.simpleScript_unblockingD3Dam
 	jp interactionSetSimpleScript
 @state1:
 	call interactionRunSimpleScript
