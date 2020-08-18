@@ -1,3 +1,5 @@
+m_section_free Ages_Interactions_Bank9 NAMESPACE agesInteractionsBank09
+
 ; ==============================================================================
 ; INTERACID_GHOST_VERAN
 ; ==============================================================================
@@ -32,7 +34,7 @@ interactionCode3e:
 	ld (hl),$10
 	ld l,Interaction.speed
 	ld (hl),SPEED_c0
-	ld hl,ghostVeranSubid1Script
+	ld hl,mainScripts.ghostVeranSubid1Script
 	call interactionSetScript
 	call interactionSetAlwaysUpdateBit
 	jp objectSetVisible81
@@ -97,7 +99,7 @@ _runVeranGhostSubid0:
 	call interactionDecCounter1
 	jp nz,objectApplySpeed
 	call interactionIncSubstate
-	ld hl,ghostVeranSubid0Script_part1
+	ld hl,mainScripts.ghostVeranSubid0Script_part1
 	jp interactionSetScript
 
 @substate2:
@@ -202,7 +204,7 @@ _runVeranGhostSubid0:
 	ret nz
 
 	call interactionIncSubstate
-	ld hl,ghostVeranSubid1Script_part2
+	ld hl,mainScripts.ghostVeranSubid1Script_part2
 	call interactionSetScript
 	call objectSetVisible80
 
@@ -384,7 +386,7 @@ interactionCode3f:
 	cp $01
 	ret nz
 	call interactionIncSubstate
-	jpab interactionBank08.startJump
+	jpab agesInteractionsBank08.startJump
 
 @@substate1:
 	ld c,$20
@@ -396,7 +398,7 @@ interactionCode3f:
 	ret
 
 @@substate2:
-	jpab interactionBank08.boyRunSubid03
+	jpab agesInteractionsBank08.boyRunSubid03
 
 
 @subid3:
@@ -404,7 +406,7 @@ interactionCode3f:
 	jr z,@@state0
 
 @@state1:
-	jpab interactionBank08.boyRunSubid09
+	jpab agesInteractionsBank08.boyRunSubid09
 
 @@state0:
 	call @initGraphicsAndIncState
@@ -439,10 +441,10 @@ interactionCode3f:
 	jp interactionIncState
 
 @scriptTable:
-	.dw boy2Subid0Script
-	.dw boy2Subid1Script
-	.dw boy2Subid2Script
-	.dw stubScript
+	.dw mainScripts.boy2Subid0Script
+	.dw mainScripts.boy2Subid1Script
+	.dw mainScripts.boy2Subid2Script
+	.dw mainScripts.stubScript
 
 
 ; ==============================================================================
@@ -710,7 +712,7 @@ _soldierSubid08:
 	jp objectSetVisible82
 
 @state1:
-	callab scriptHlp.turnToFaceSomething
+	callab scriptHelp.turnToFaceSomething
 	jp interactionAnimate
 
 
@@ -856,20 +858,20 @@ _soldierCheckBeatD6:
 	ret
 
 _soldierScriptTable:
-	.dw soldierSubid00Script
-	.dw soldierSubid01Script
-	.dw soldierSubid02Script
-	.dw soldierSubid03Script
-	.dw soldierSubid04Script
-	.dw soldierSubid05Script
-	.dw soldierSubid06Script
-	.dw soldierSubid07Script
-	.dw stubScript
-	.dw soldierSubid09Script
-	.dw soldierSubid0aScript
-	.dw stubScript
-	.dw soldierSubid0cScript
-	.dw soldierSubid0dScript
+	.dw mainScripts.soldierSubid00Script
+	.dw mainScripts.soldierSubid01Script
+	.dw mainScripts.soldierSubid02Script
+	.dw mainScripts.soldierSubid03Script
+	.dw mainScripts.soldierSubid04Script
+	.dw mainScripts.soldierSubid05Script
+	.dw mainScripts.soldierSubid06Script
+	.dw mainScripts.soldierSubid07Script
+	.dw mainScripts.stubScript
+	.dw mainScripts.soldierSubid09Script
+	.dw mainScripts.soldierSubid0aScript
+	.dw mainScripts.stubScript
+	.dw mainScripts.soldierSubid0cScript
+	.dw mainScripts.soldierSubid0dScript
 
 ; ==============================================================================
 ; INTERACID_MISC_MAN
@@ -952,13 +954,13 @@ interactionCode41:
 	jp interactionIncState
 
 @scriptTable:
-	.dw manOutsideD2Script
-	.dw lynnaManScript_befored3
-	.dw lynnaManScript_afterd3
-	.dw lynnaManScript_afterNayruSaved
-	.dw lynnaManScript_afterd7
-	.dw lynnaManScript_afterGotMakuSeed
-	.dw lynnaManScript_postGame
+	.dw mainScripts.manOutsideD2Script
+	.dw mainScripts.lynnaManScript_befored3
+	.dw mainScripts.lynnaManScript_afterd3
+	.dw mainScripts.lynnaManScript_afterNayruSaved
+	.dw mainScripts.lynnaManScript_afterd7
+	.dw mainScripts.lynnaManScript_afterGotMakuSeed
+	.dw mainScripts.lynnaManScript_postGame
 
 
 ; ==============================================================================
@@ -1020,8 +1022,8 @@ interactionCode42:
 	jp interactionIncState
 
 @scriptTable:
-	.dw mustacheManScript
-	.dw genericNpcScript
+	.dw mainScripts.mustacheManScript
+	.dw mainScripts.genericNpcScript
 
 
 ; ==============================================================================
@@ -1143,12 +1145,12 @@ interactionCode43:
 	ld a,($cfd1)
 	cp $01
 	ret nz
-	jpab interactionBank08.setCounter1To120AndPlaySoundEffectAndIncSubstate
+	jpab agesInteractionsBank08.setCounter1To120AndPlaySoundEffectAndIncSubstate
 
 @@substate1:
 	call interactionDecCounter1
 	jr z,+
-	jpab interactionBank08.childFlickerBetweenStone
+	jpab agesInteractionsBank08.childFlickerBetweenStone
 +
 	call interactionIncSubstate
 	ld l,Interaction.oamFlags
@@ -1239,23 +1241,23 @@ interactionCode43:
 	jp interactionIncState
 
 @scriptTable:
-	.dw pastGuySubid0Script
-	.dw stubScript
-	.dw stubScript
-	.dw pastGuySubid3Script
-	.dw stubScript
-	.dw stubScript
-	.dw pastGuySubid6Script
+	.dw mainScripts.pastGuySubid0Script
+	.dw mainScripts.stubScript
+	.dw mainScripts.stubScript
+	.dw mainScripts.pastGuySubid3Script
+	.dw mainScripts.stubScript
+	.dw mainScripts.stubScript
+	.dw mainScripts.pastGuySubid6Script
 
 @subid1And2ScriptTable:
-	.dw pastGuySubid1And2Script_befored4
-	.dw pastGuySubid1And2Script_befored4
-	.dw pastGuySubid1And2Script_afterd4
-	.dw pastGuySubid1And2Script_afterNayruSaved
-	.dw pastGuySubid1And2Script_afterd7
-	.dw pastGuySubid1And2Script_afterGotMakuSeed
-	.dw pastGuySubid1And2Script_afterGotMakuSeed
-	.dw pastGuySubid1And2Script_afterGotMakuSeed
+	.dw mainScripts.pastGuySubid1And2Script_befored4
+	.dw mainScripts.pastGuySubid1And2Script_befored4
+	.dw mainScripts.pastGuySubid1And2Script_afterd4
+	.dw mainScripts.pastGuySubid1And2Script_afterNayruSaved
+	.dw mainScripts.pastGuySubid1And2Script_afterd7
+	.dw mainScripts.pastGuySubid1And2Script_afterGotMakuSeed
+	.dw mainScripts.pastGuySubid1And2Script_afterGotMakuSeed
+	.dw mainScripts.pastGuySubid1And2Script_afterGotMakuSeed
 
 
 ; ==============================================================================
@@ -1587,29 +1589,29 @@ checkNpcShouldExistAtGameStage_body:
 
 
 miscMan2ScriptTable:
-	.dw pastHobo2Script
-	.dw npcTurnedToOldManCutsceneScript
-	.dw stubScript
-	.dw stubScript
-	.dw stubScript
+	.dw mainScripts.pastHobo2Script
+	.dw mainScripts.npcTurnedToOldManCutsceneScript
+	.dw mainScripts.stubScript
+	.dw mainScripts.stubScript
+	.dw mainScripts.stubScript
 
 lynnaMan2ScriptTable:
-	.dw lynnaMan2Script_befored3
-	.dw lynnaMan2Script_afterd3
-	.dw lynnaMan2Script_afterNayruSaved
-	.dw lynnaMan2Script_afterd7
-	.dw lynnaMan2Script_afterGotMakuSeed
-	.dw lynnaMan2Script_postGame
+	.dw mainScripts.lynnaMan2Script_befored3
+	.dw mainScripts.lynnaMan2Script_afterd3
+	.dw mainScripts.lynnaMan2Script_afterNayruSaved
+	.dw mainScripts.lynnaMan2Script_afterd7
+	.dw mainScripts.lynnaMan2Script_afterGotMakuSeed
+	.dw mainScripts.lynnaMan2Script_postGame
 
 pastHoboScriptTable:
-	.dw pastHoboScript_befored2
-	.dw pastHoboScript_afterd2
-	.dw pastHoboScript_afterd4
-	.dw pastHoboScript_afterSavedNayru
-	.dw pastHoboScript_afterSavedNayru
-	.dw pastHoboScript_afterGotMakuSeed
-	.dw pastHoboScript_twinrovaKidnappedZelda
-	.dw pastHoboScript_postGame
+	.dw mainScripts.pastHoboScript_befored2
+	.dw mainScripts.pastHoboScript_afterd2
+	.dw mainScripts.pastHoboScript_afterd4
+	.dw mainScripts.pastHoboScript_afterSavedNayru
+	.dw mainScripts.pastHoboScript_afterSavedNayru
+	.dw mainScripts.pastHoboScript_afterGotMakuSeed
+	.dw mainScripts.pastHoboScript_twinrovaKidnappedZelda
+	.dw mainScripts.pastHoboScript_postGame
 
 
 ; ==============================================================================
@@ -1686,14 +1688,14 @@ interactionCode45:
 
 
 @scriptTable:
-	.dw pastOldLadySubid0Script
-	.dw stubScript
+	.dw mainScripts.pastOldLadySubid0Script
+	.dw mainScripts.stubScript
 
 @subid1ScriptTable:
-	.dw pastOldLadySubid1Script_befored2
-	.dw pastOldLadySubid1Script_afterd2
-	.dw pastOldLadySubid1Script_afterd4
-	.dw pastOldLadySubid1Script_afterSavedNayru
+	.dw mainScripts.pastOldLadySubid1Script_befored2
+	.dw mainScripts.pastOldLadySubid1Script_afterd2
+	.dw mainScripts.pastOldLadySubid1Script_afterd4
+	.dw mainScripts.pastOldLadySubid1Script_afterSavedNayru
 
 
 ; ==============================================================================
@@ -2802,38 +2804,38 @@ _tokayLoadScript:
 	jp interactionSetScript
 
 tokayScriptTable:
-	/* $00 */ .dw tokayThiefScript
-	/* $01 */ .dw tokayThiefScript
-	/* $02 */ .dw tokayMainThiefScript
-	/* $03 */ .dw tokayThiefScript
-	/* $04 */ .dw tokayThiefScript
-	/* $05 */ .dw tokayCookScript
-	/* $06 */ .dw tokayHoldingItemScript
-	/* $07 */ .dw tokayHoldingItemScript
-	/* $08 */ .dw tokayHoldingItemScript
-	/* $09 */ .dw tokayHoldingItemScript
-	/* $0a */ .dw tokayHoldingItemScript
-	/* $0b */ .dw tokayRunningFromRosaScript
-	/* $0c */ .dw stubScript
-	/* $0d */ .dw tokayGameManagerScript_past
-	/* $0e */ .dw tokayShopkeeperScript
-	/* $0f */ .dw tokayWithDimitri1Script
-	/* $10 */ .dw tokayWithDimitri2Script
-	/* $11 */ .dw tokayAtSeedlingPlotScript
-	/* $12 */ .dw genericNpcScript
-	/* $13 */ .dw genericNpcScript
-	/* $14 */ .dw genericNpcScript
-	/* $15 */ .dw genericNpcScript
-	/* $16 */ .dw genericNpcScript
-	/* $17 */ .dw genericNpcScript
-	/* $18 */ .dw genericNpcScript
-	/* $19 */ .dw tokayGameManagerScript_present
+	/* $00 */ .dw mainScripts.tokayThiefScript
+	/* $01 */ .dw mainScripts.tokayThiefScript
+	/* $02 */ .dw mainScripts.tokayMainThiefScript
+	/* $03 */ .dw mainScripts.tokayThiefScript
+	/* $04 */ .dw mainScripts.tokayThiefScript
+	/* $05 */ .dw mainScripts.tokayCookScript
+	/* $06 */ .dw mainScripts.tokayHoldingItemScript
+	/* $07 */ .dw mainScripts.tokayHoldingItemScript
+	/* $08 */ .dw mainScripts.tokayHoldingItemScript
+	/* $09 */ .dw mainScripts.tokayHoldingItemScript
+	/* $0a */ .dw mainScripts.tokayHoldingItemScript
+	/* $0b */ .dw mainScripts.tokayRunningFromRosaScript
+	/* $0c */ .dw mainScripts.stubScript
+	/* $0d */ .dw mainScripts.tokayGameManagerScript_past
+	/* $0e */ .dw mainScripts.tokayShopkeeperScript
+	/* $0f */ .dw mainScripts.tokayWithDimitri1Script
+	/* $10 */ .dw mainScripts.tokayWithDimitri2Script
+	/* $11 */ .dw mainScripts.tokayAtSeedlingPlotScript
+	/* $12 */ .dw mainScripts.genericNpcScript
+	/* $13 */ .dw mainScripts.genericNpcScript
+	/* $14 */ .dw mainScripts.genericNpcScript
+	/* $15 */ .dw mainScripts.genericNpcScript
+	/* $16 */ .dw mainScripts.genericNpcScript
+	/* $17 */ .dw mainScripts.genericNpcScript
+	/* $18 */ .dw mainScripts.genericNpcScript
+	/* $19 */ .dw mainScripts.tokayGameManagerScript_present
 	/* $1a */ .dw $0000
 	/* $1b */ .dw $0000
 	/* $1c */ .dw $0000
-	/* $1d */ .dw tokayWithShieldUpgradeScript
-	/* $1e */ .dw tokayExplainingVinesScript
-	/* $1f */ .dw genericNpcScript
+	/* $1d */ .dw mainScripts.tokayWithShieldUpgradeScript
+	/* $1e */ .dw mainScripts.tokayExplainingVinesScript
+	/* $1f */ .dw mainScripts.genericNpcScript
 
 
 
@@ -3164,9 +3166,9 @@ _forestFairy_initCollisionRadiusAndSetZAndIncState:
 
 ; Scripts used for fairy NPCs after being discovered
 _forestFairyDiscoveredScriptTable:
-	.dw forestFairyScript_firstDiscovered
-	.dw forestFairyScript_secondDiscovered
-	.dw stubScript
+	.dw mainScripts.forestFairyScript_firstDiscovered
+	.dw mainScripts.forestFairyScript_secondDiscovered
+	.dw mainScripts.stubScript
 
 _forestFairy_discoveredPositions:
 	.db $48 $38
@@ -3332,7 +3334,7 @@ _forestFairy_initNpcFromData:
 
 	ld l,Interaction.textID+1
 	ld (hl),>TX_1100
-	ld hl,forestFairyScript_genericNpc
+	ld hl,mainScripts.forestFairyScript_genericNpc
 	call interactionSetScript
 	jp objectSetVisiblec1
 
@@ -3409,7 +3411,7 @@ _forestFairy_subid0b:
 	ld a,$01
 	ldd (hl),a
 	ld (hl),a
-	ld hl,forestFairyScript_heartContainerSecret
+	ld hl,mainScripts.forestFairyScript_heartContainerSecret
 	call interactionSetScript
 	jp objectSetVisiblec1
 
@@ -3518,7 +3520,7 @@ interactionCode4c:
 ; Listening to Nayru at the start of the game
 @initSubid00:
 	call _bird_hop
-	ld hl,birdScript_listeningToNayruGameStart
+	ld hl,mainScripts.birdScript_listeningToNayruGameStart
 	jp interactionSetScript
 
 
@@ -3535,7 +3537,7 @@ interactionCode4c:
 	call checkGlobalFlag
 	jp nz,interactionDelete
 
-	ld hl,birdScript_zeldaKidnapped
+	ld hl,mainScripts.birdScript_zeldaKidnapped
 	call interactionSetScript
 	call interactionSetAlwaysUpdateBit
 
@@ -3734,7 +3736,7 @@ interactionCode4d:
 	jp nz,_ambi_loadScript
 	call checkIsLinkedGame
 	ret nz
-	ld hl,ambiSubid01Script_part2
+	ld hl,mainScripts.ambiSubid01Script_part2
 	jp interactionSetScript
 
 
@@ -3747,7 +3749,7 @@ interactionCode4d:
 
 ; Same cutscene as subid $03, but second part
 @initSubid04:
-	callab interactionBank08.nayruState0@init0e
+	callab agesInteractionsBank08.nayruState0@init0e
 	jp _ambi_loadScript
 
 
@@ -3765,7 +3767,7 @@ interactionCode4d:
 ; Cutscene where Ralph confronts Ambi
 @initSubid05:
 	; Call some of nayru's code to load possessed palette
-	callab interactionBank08.nayruState0@init0e
+	callab agesInteractionsBank08.nayruState0@init0e
 
 	call objectSetVisiblec3
 	jp _ambi_loadScript
@@ -3869,7 +3871,7 @@ _ambi_runSubid01:
 	jp c,@updateSubstate
 
 	call interactionAnimate
-	jpab scriptHlp.turnToFaceSomething
+	jpab scriptHelp.turnToFaceSomething
 
 @updateSubstate:
 	ld e,Interaction.substate
@@ -3884,7 +3886,7 @@ _ambi_runSubid01:
 	cp $0e
 	jr nz,_ambi_updateAnimationAndRunScript
 
-	callab interactionBank08.startJump
+	callab agesInteractionsBank08.startJump
 	jp interactionIncSubstate
 
 @substate1:
@@ -4068,17 +4070,17 @@ _ambi_loadScript:
 	jp interactionSetScript
 
 @scriptTable:
-	.dw ambiSubid00Script
-	.dw ambiSubid01Script_part1
-	.dw ambiSubid02Script
-	.dw ambiSubid03Script
-	.dw ambiSubid04Script
-	.dw ambiSubid05Script
-	.dw ambiSubid06Script
-	.dw ambiSubid07Script
-	.dw ambiSubid08Script
-	.dw stubScript
-	.dw ambiSubid0aScript
+	.dw mainScripts.ambiSubid00Script
+	.dw mainScripts.ambiSubid01Script_part1
+	.dw mainScripts.ambiSubid02Script
+	.dw mainScripts.ambiSubid03Script
+	.dw mainScripts.ambiSubid04Script
+	.dw mainScripts.ambiSubid05Script
+	.dw mainScripts.ambiSubid06Script
+	.dw mainScripts.ambiSubid07Script
+	.dw mainScripts.ambiSubid08Script
+	.dw mainScripts.stubScript
+	.dw mainScripts.ambiSubid0aScript
 
 
 ; ==============================================================================
@@ -4113,12 +4115,12 @@ _subrosian_subid00:
 	callab getGameProgress_2
 	ld a,b
 	cp $05
-	ld hl,subrosianInVillageScript_afterGotMakuSeed
+	ld hl,mainScripts.subrosianInVillageScript_afterGotMakuSeed
 	jr z,@setScript
 	cp $07
 	jp nz,interactionDeleteAndUnmarkSolidPosition
 
-	ld hl,subrosianInVillageScript_postGame
+	ld hl,mainScripts.subrosianInVillageScript_postGame
 
 @setScript:
 	call interactionSetScript
@@ -4169,7 +4171,7 @@ _subrosian_subid04:
 @initSecretTellingNpc:
 	ld e,Interaction.var3f
 	ld (de),a
-	ld hl,linkedGameNpcScript
+	ld hl,mainScripts.linkedGameNpcScript
 	call interactionSetScript
 	call interactionRunScript
 @state1:
@@ -4232,13 +4234,13 @@ _subrosian_getScriptPtr:
 	ret
 
 @scriptTable:
-	.dw stubScript
-	.dw stubScript
+	.dw mainScripts.stubScript
+	.dw mainScripts.stubScript
 	.dw @subid02Scripts
 
 @subid02Scripts:
-	.dw subrosianAtGoronDanceScript_greenNpc
-	.dw subrosianAtGoronDanceScript_redNpc
+	.dw mainScripts.subrosianAtGoronDanceScript_greenNpc
+	.dw mainScripts.subrosianAtGoronDanceScript_redNpc
 
 
 ; ==============================================================================
@@ -4348,7 +4350,7 @@ _impaNpc_determineTextAndPositionInHouse:
 	ld a,<TX_0121
 	call @setTextAndPosition
 	ld (de),a
-	ld hl,impaNpcScript_lookingAtPassage
+	ld hl,mainScripts.impaNpcScript_lookingAtPassage
 	ret
 
 @val02:
@@ -4384,7 +4386,7 @@ _impaNpc_determineTextAndPositionInHouse:
 	ld a,$02
 	ld (de),a
 
-	ld hl,genericNpcScript
+	ld hl,mainScripts.genericNpcScript
 	xor a
 	ret
 
@@ -4415,7 +4417,7 @@ _impaNpc_setTextIndexAndLoadGenericNpcScript:
 	ld a,$02
 	ld (de),a
 
-	ld hl,genericNpcScript
+	ld hl,mainScripts.genericNpcScript
 	jp _impaNpc_setScriptAndInitialize
 
 
@@ -4574,7 +4576,7 @@ interactionCode51:
 	jp interactionIncState
 
 @scriptTable:
-	.dw dumbbellManScript
+	.dw mainScripts.dumbbellManScript
 
 
 ; ==============================================================================
@@ -4700,7 +4702,7 @@ interactionCode52:
 	call interactionSetAnimation
 	call objectSetVisiblec2
 
-	ld hl,oldManScript_generic
+	ld hl,mainScripts.oldManScript_generic
 	jp interactionSetScript
 
 
@@ -4738,9 +4740,9 @@ interactionCode52:
 	jp interactionIncState
 
 @scriptTable:
-	.dw oldManScript_givesShieldUpgrade
-	.dw oldManScript_givesBookOfSeals
-	.dw oldManScript_givesFairyPowder
+	.dw mainScripts.oldManScript_givesShieldUpgrade
+	.dw mainScripts.oldManScript_givesBookOfSeals
+	.dw mainScripts.oldManScript_givesFairyPowder
 
 
 ; ==============================================================================
@@ -4779,7 +4781,7 @@ interactionCode53:
 	jp interactionIncState
 
 @scriptTable:
-	.dw mamamuYanScript
+	.dw mainScripts.mamamuYanScript
 
 
 ; ==============================================================================
@@ -4891,7 +4893,7 @@ _dog_subid01:
 	call c,_dog_incTargetPositionIndex
 	jr c,@delete
 
-	callab scriptHlp.mamamuDog_updateSpeedZ
+	callab scriptHelp.mamamuDog_updateSpeedZ
 	call interactionAnimate
 	call objectSetPriorityRelativeToLink_withTerrainEffects
 	jp objectAddToGrabbableObjectBuffer
@@ -5162,7 +5164,7 @@ _dog_setTargetPositionIndex:
 
 
 _dog_scriptTable:
-	.dw dogInMamamusHouseScript
+	.dw mainScripts.dogInMamamusHouseScript
 
 
 ; ==============================================================================
@@ -5206,7 +5208,7 @@ interactionCode55:
 	jp interactionIncState
 
 @scriptTable:
-	.dw postmanScript
+	.dw mainScripts.postmanScript
 
 
 ; ==============================================================================
@@ -5513,16 +5515,16 @@ interactionCode57:
 
 
 @scriptTable:
-	.dw pickaxeWorkerSubid00Script
-	.dw pickaxeWorkerSubid01Script_part1
-	.dw pickaxeWorkerSubid02Script_part1
-	.dw pickaxeWorkerSubid03Script
+	.dw mainScripts.pickaxeWorkerSubid00Script
+	.dw mainScripts.pickaxeWorkerSubid01Script_part1
+	.dw mainScripts.pickaxeWorkerSubid02Script_part1
+	.dw mainScripts.pickaxeWorkerSubid03Script
 
 @subid1And2ScriptTable:
-	.dw pickaxeWorkerSubid01Script_part2
-	.dw pickaxeWorkerSubid02Script_part2
-	.dw pickaxeWorkerSubid01Script_part3
-	.dw pickaxeWorkerSubid02Script_part3
+	.dw mainScripts.pickaxeWorkerSubid01Script_part2
+	.dw mainScripts.pickaxeWorkerSubid02Script_part2
+	.dw mainScripts.pickaxeWorkerSubid01Script_part3
+	.dw mainScripts.pickaxeWorkerSubid02Script_part3
 
 
 ; ==============================================================================
@@ -5635,10 +5637,10 @@ interactionCode58:
 	jp interactionIncState
 
 @scriptTable:
-	.dw hardhatWorkerSubid00Script
-	.dw hardhatWorkerSubid01Script
-	.dw hardhatWorkerSubid02Script
-	.dw hardhatWorkerSubid03Script
+	.dw mainScripts.hardhatWorkerSubid00Script
+	.dw mainScripts.hardhatWorkerSubid01Script
+	.dw mainScripts.hardhatWorkerSubid02Script
+	.dw mainScripts.hardhatWorkerSubid03Script
 
 
 ; ==============================================================================
@@ -5738,7 +5740,7 @@ interactionCode59:
 	jp interactionIncState
 
 @scriptTable:
-	.dw poeScript
+	.dw mainScripts.poeScript
 
 
 ; ==============================================================================
@@ -5775,7 +5777,7 @@ interactionCode5a:
 	jp interactionIncState
 
 @scriptTable:
-	.dw oldZoraScript
+	.dw mainScripts.oldZoraScript
 
 
 ; ==============================================================================
@@ -5792,7 +5794,7 @@ interactionCode5b:
 @state0:
 	call @loadScriptAndInitGraphics
 	call interactionSetAlwaysUpdateBit
-	callab interactionBank08.clearFallDownHoleEventBuffer
+	callab commonInteractions1.clearFallDownHoleEventBuffer
 
 
 ; Normal script is running; waiting for Link to talk or for something to fall into a hole.
@@ -5808,7 +5810,7 @@ interactionCode5b:
 	jp interactionAnimateAsNpc
 
 @droppedSomethingIntoHole:
-	ld hl,toiletHandScript_reactToObjectInHole
+	ld hl,mainScripts.toiletHandScript_reactToObjectInHole
 	call interactionSetScript
 	jp interactionIncState
 
@@ -5831,7 +5833,7 @@ interactionCode5b:
 
 @scriptEnded:
 	call @loadScript
-	callab interactionBank08.clearFallDownHoleEventBuffer
+	callab commonInteractions1.clearFallDownHoleEventBuffer
 	ld e,Interaction.state
 	ld a,$01
 	ld (de),a
@@ -5917,7 +5919,7 @@ interactionCode5b:
 	.db $00
 
 @scriptTable:
-	.dw toiletHandScript
+	.dw mainScripts.toiletHandScript
 
 
 ; ==============================================================================
@@ -5950,7 +5952,7 @@ interactionCode5c:
 	jp interactionIncState
 
 @scriptTable:
-	.dw maskSalesmanScript
+	.dw mainScripts.maskSalesmanScript
 
 
 ; ==============================================================================
@@ -5995,7 +5997,7 @@ _bear_state0:
 	add $10
 	ld (de),a
 ++
-	ld hl,bearSubid00Script_part1
+	ld hl,mainScripts.bearSubid00Script_part1
 	jp interactionSetScript
 
 @initSubid01:
@@ -6040,7 +6042,7 @@ _bear_state0:
 	ld a,$02
 ++
 	call @chooseTextID
-	ld hl,bearSubid02Script
+	ld hl,mainScripts.bearSubid02Script
 	jp interactionSetScript
 
 @chooseTextID:
@@ -6100,7 +6102,7 @@ _bear_state1:
 	ld l,<w1Link.subid
 	ld (hl),$03
 
-	ld hl,bearSubid00Script_part2
+	ld hl,mainScripts.bearSubid00Script_part2
 	call interactionSetScript
 	call interactionIncSubstate
 
@@ -6216,9 +6218,9 @@ interactionCode5e:
 ; ==============================================================================
 interactionCode5f:
 .ifdef ROM_AGES
-	callab checkReloadShopItemTiles
+	callab commonInteractions2.checkReloadShopItemTiles
 .else
-	call checkReloadShopItemTiles
+	call commonInteractions2.checkReloadShopItemTiles
 .endif
 	call @runState
 	jp interactionAnimateAsNpc
@@ -6248,10 +6250,10 @@ interactionCode5f:
 .ifdef ROM_SEASONS
 	call getThisRoomFlags
 	and $40
-	ld hl,syrupScript_notTradedMushroomYet
+	ld hl,mainScripts.syrupScript_notTradedMushroomYet
 	jr z,+
 .endif
-	ld hl,syrupScript_spawnShopItems
+	ld hl,mainScripts.syrupScript_spawnShopItems
 +
 	jr @setScriptAndGotoState2
 
@@ -6299,7 +6301,7 @@ interactionCode5f:
 
 	; Check if Link has the rupees for it
 	ld a,b
-	ld hl,_shopItemPrices
+	ld hl,commonInteractions2.shopItemPrices
 	rst_addAToHl
 	ld a,(hl)
 	call cpRupeeValue
@@ -6352,18 +6354,18 @@ interactionCode5f:
 .endif
 	ld (de),a
 
-	ld hl,syrupScript_purchaseItem
+	ld hl,mainScripts.syrupScript_purchaseItem
 	jr @setScriptAndGotoState2
 
 @talkToSyrupWithoutItem:
-	call _shopkeeperCheckAllItemsBought
+	call commonInteractions2.shopkeeperCheckAllItemsBought
 	jr z,@showWelcomeText
 
-	ld hl,syrupScript_showClosedText
+	ld hl,mainScripts.syrupScript_showClosedText
 	jr @setScriptAndGotoState2
 
 @showWelcomeText:
-	ld hl,syrupScript_showWelcomeText
+	ld hl,mainScripts.syrupScript_showWelcomeText
 
 @setScriptAndGotoState2:
 	ld e,Interaction.state
@@ -7438,7 +7440,7 @@ interactionCode64:
 
 @loadAngleAndCounterPreset:
 	ld b,$03
-	callab interactionBank0a.loadAngleAndCounterPreset
+	callab agesInteractionsBank0a.loadAngleAndCounterPreset
 	ld a,b
 	or a
 	ret
@@ -7645,7 +7647,7 @@ interactionCode65:
 @state1:
 	call interactionRunScript
 	jp c,interactionDelete
-	callab scriptHlp.comedian_turnToFaceLink
+	callab scriptHelp.comedian_turnToFaceLink
 	jp interactionAnimateAsNpc
 
 
@@ -7671,7 +7673,7 @@ interactionCode65:
 	jp interactionIncState
 
 @scriptTable:
-	.dw comedianScript
+	.dw mainScripts.comedianScript
 
 
 ; ==============================================================================
@@ -7765,7 +7767,7 @@ _goronSubid00:
 @scriptDone:
 	; Dance begins when script ends
 	ld b,$0a
-	callab interactionBank08.shootingGallery_initializeGameRounds
+	callab agesInteractionsBank08.shootingGallery_initializeGameRounds
 
 	ld a,DIR_DOWN
 	ld (wTmpcfc0.goronDance.danceAnimation),a
@@ -8259,7 +8261,7 @@ _goronSubid09:
 	call getThisRoomFlags
 	bit 7,(hl)
 	jr z,++
-	callab scriptHlp.goron_targetCarts_reloadCrystalsInFirstRoom
+	callab scriptHelp.goron_targetCarts_reloadCrystalsInFirstRoom
 ++
 	call interactionRunScript
 	jr @state1
@@ -8300,7 +8302,7 @@ _goronSubid0f:
 	call _goron_initGraphicsAndIncState
 	ld l,Interaction.var3f
 	ld (hl),$08
-	ld hl,linkedGameNpcScript
+	ld hl,mainScripts.linkedGameNpcScript
 	call interactionSetScript
 	call interactionRunScript
 @state1:
@@ -8321,7 +8323,7 @@ _goronDance_initNextRound:
 	ld a,(wTmpcfc0.goronDance.remainingRounds)
 	or a
 	jr z,_goronDance_clearDanceVariables
-	callab interactionBank08.shootingGallery_getNextTargetLayout
+	callab agesInteractionsBank08.shootingGallery_getNextTargetLayout
 
 ;;
 _goronDance_clearDanceVariables:
@@ -8823,46 +8825,48 @@ _goron_loadScriptFromTable:
 	jp interactionIncState
 
 _goron_scriptTable:
-	.dw stubScript
-	.dw goron_subid01Script
-	.dw stubScript
-	.dw goron_subid03Script
-	.dw goron_subid04Script
+	.dw mainScripts.stubScript
+	.dw mainScripts.goron_subid01Script
+	.dw mainScripts.stubScript
+	.dw mainScripts.goron_subid03Script
+	.dw mainScripts.goron_subid04Script
 	.dw @subid05ScriptTable
 	.dw @subid06ScriptTable
-	.dw goron_subid07Script
-	.dw goron_subid08Script
+	.dw mainScripts.goron_subid07Script
+	.dw mainScripts.goron_subid08Script
 	.dw @subid09ScriptTable
-	.dw goron_subid0aScript
+	.dw mainScripts.goron_subid0aScript
 	.dw @subid0bScriptTable
-	.dw goron_subid0cScript
-	.dw goron_subid0dScript
-	.dw goron_subid0eScript
-	.dw stubScript
-	.dw goron_subid10Script
+	.dw mainScripts.goron_subid0cScript
+	.dw mainScripts.goron_subid0dScript
+	.dw mainScripts.goron_subid0eScript
+	.dw mainScripts.stubScript
+	.dw mainScripts.goron_subid10Script
 
 @subid05ScriptTable:
-	.dw goron_subid05Script_A
-	.dw goron_subid05Script_A
-	.dw goron_subid05Script_A
-	.dw goron_subid05Script_B
-	.dw goron_subid05Script_B
-	.dw goron_subid05Script_B
+	.dw mainScripts.goron_subid05Script_A
+	.dw mainScripts.goron_subid05Script_A
+	.dw mainScripts.goron_subid05Script_A
+	.dw mainScripts.goron_subid05Script_B
+	.dw mainScripts.goron_subid05Script_B
+	.dw mainScripts.goron_subid05Script_B
 
 @subid06ScriptTable:
-	.dw goron_subid06Script_A
-	.dw goron_subid06Script_B
+	.dw mainScripts.goron_subid06Script_A
+	.dw mainScripts.goron_subid06Script_B
 
 @subid09ScriptTable:
-	.dw goron_subid09Script_A
-	.dw goron_subid09Script_B
+	.dw mainScripts.goron_subid09Script_A
+	.dw mainScripts.goron_subid09Script_B
 
 @subid0bScriptTable:
-	.dw goron_subid0bScript
-	.dw goron_subid0bScript
+	.dw mainScripts.goron_subid0bScript
+	.dw mainScripts.goron_subid0bScript
 
 
 goronDanceScriptTable:
-	.dw goron_subid00Script
-	.dw goronDanceScript_failedRound
-	.dw goronDanceScript_givePrize
+	.dw mainScripts.goron_subid00Script
+	.dw mainScripts.goronDanceScript_failedRound
+	.dw mainScripts.goronDanceScript_givePrize
+
+.ends

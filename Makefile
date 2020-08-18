@@ -70,6 +70,9 @@ ROOMLAYOUTFILES += $(wildcard rooms/$(GAME)/large/*.bin)
 ROOMLAYOUTFILES := $(ROOMLAYOUTFILES:.bin=.cmp)
 ROOMLAYOUTFILES := $(foreach file,$(ROOMLAYOUTFILES),build/rooms/$(notdir $(file)))
 
+# Common data files (for both games)
+COMMONDATAFILES = $(wildcard data/*.s)
+
 # Game-specific data files
 GAMEDATAFILES = $(wildcard data/$(GAME)/*.s)
 GAMEDATAFILES := $(foreach file,$(GAMEDATAFILES),build/data/$(notdir $(file)))
@@ -119,7 +122,7 @@ $(GAME).gbc: $(OBJS) linkfile_$(GAME)
 
 
 build/$(GAME).o: $(MAIN_ASM_FILES)
-build/$(GAME).o: $(GFXFILES) $(ROOMLAYOUTFILES) $(COLLISIONFILES) $(MAPPINGINDICESFILES) $(GAMEDATAFILES)
+build/$(GAME).o: $(GFXFILES) $(ROOMLAYOUTFILES) $(COLLISIONFILES) $(MAPPINGINDICESFILES) $(COMMONDATAFILES) $(GAMEDATAFILES)
 build/$(GAME).o: rooms/$(GAME)/*.bin
 
 build/audio.o: $(AUDIO_FILES)

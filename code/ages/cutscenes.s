@@ -1,9 +1,11 @@
+; TODO: Move this to "cutscenes/" folder (along with seasons equivalent)
+
 ;;
 ; CUTSCENE_NAYRU_SINGING
 cutscene06:
 	call func_1613
 	ld c,$00
-	jpab miscCutsceneHandler
+	jpab bank3Cutscenes.miscCutsceneHandler
 
 ;;
 ; CUTSCENE_MAKU_TREE_DISAPPEARING
@@ -13,7 +15,7 @@ _func_5d5d:
 	ld a,(wWarpTransition2)
 	or a
 	jp nz,applyWarpTransition2
-	jpab miscCutsceneHandler
+	jpab bank3Cutscenes.miscCutsceneHandler
 
 ;;
 ; CUTSCENE_BLACK_TOWER_EXPLANATION
@@ -69,7 +71,7 @@ cutscene20:
 cutscene0d:
 	call func_1613
 	ld c,$06
-	jpab miscCutsceneHandler
+	jpab bank3Cutscenes.miscCutsceneHandler
 
 ;;
 ; CUTSCENE_TWINROVA_REVEAL
@@ -80,7 +82,7 @@ cutscene0e:
 	jr nz,applyWarpTransition2
 
 	ld c,$05
-	jpab miscCutsceneHandler
+	jpab bank3Cutscenes.miscCutsceneHandler
 
 ;;
 ; CUTSCENE_BLACK_TOWER_COMPLETE

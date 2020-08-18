@@ -1,3 +1,5 @@
+ m_section_superfree Interaction_Code_Group3 NAMESPACE commonInteractions3
+
 ; ==============================================================================
 ; INTERACID_BOMB_FLOWER
 ; ==============================================================================
@@ -117,7 +119,7 @@ _bomb_flower_subid1:
 	ld a,$01
 	ld (de),a
 
-	ld hl,bombflower_unblockAutumnTemple
+	ld hl,mainScripts.bombflower_unblockAutumnTemple
 	call interactionSetScript
 	call interactionInitGraphics
 	xor a
@@ -134,7 +136,8 @@ _bomb_flower_subid1:
 @state3:
 	call objectSetInvisible
 	jp interactionRunScript
-.endif
+
+.endif ; ROM_SEASONS
 
 
 ; ==============================================================================
@@ -257,8 +260,8 @@ interactionCode79:
 	ld a,(hl)
 	ld (de),a
 
-	callab scriptHlp.movingPlatform_loadScript
-	callab scriptHlp.movingPlatform_runScript
+	callab scriptHelp.movingPlatform_loadScript
+	callab scriptHelp.movingPlatform_runScript
 	jp objectSetVisible83
 
 @collisionRadii:
@@ -313,7 +316,7 @@ interactionCode79:
 @substate0:
 	call interactionDecCounter1
 	ret nz
-	callab scriptHlp.movingPlatform_runScript
+	callab scriptHelp.movingPlatform_runScript
 	ret
 
 ; Substate 1: moving
@@ -723,7 +726,7 @@ interactionCode7d:
 	call setShortPosition
 
 	call interactionInitGraphics
-	ld hl,spinnerScript_initialization
+	ld hl,mainScripts.spinnerScript_initialization
 	call interactionSetScript
 	call objectSetVisible82
 
@@ -753,7 +756,7 @@ interactionCode7d:
 	ld e,Interaction.state
 	ld a,$01
 	ld (de),a
-	ld hl,spinnerScript_waitForLink
+	ld hl,mainScripts.spinnerScript_waitForLink
 	jp interactionSetScript
 
 @beginTurning:
@@ -878,7 +881,7 @@ interactionCode7d:
 	; Go back to state 1
 	ld l,Interaction.state
 	ld (hl),$01
-	ld hl,spinnerScript_waitForLinkAfterDelay
+	ld hl,mainScripts.spinnerScript_waitForLinkAfterDelay
 	jp interactionSetScript
 
 
@@ -1603,7 +1606,7 @@ _interaction7f_subid00:
 	call retIfTextIsActive
 
 	call interactionIncState
-	ld hl,essenceScript_essenceGetCutscene
+	ld hl,mainScripts.essenceScript_essenceGetCutscene
 	jp interactionSetScript
 
 
@@ -1661,14 +1664,14 @@ _interaction7f_subid00:
 	.db $82, $90, $45, TRANSITION_DEST_X_SHIFTED
 	.db $81, $5c, $15, TRANSITION_DEST_X_SHIFTED
 .else
-	.db $80 $96 $44 TRANSITION_DEST_SET_RESPAWN
-	.db $80 $8d $24 TRANSITION_DEST_SET_RESPAWN
-	.db $80 $60 $25 TRANSITION_DEST_SET_RESPAWN
-	.db $80 $1d $13 TRANSITION_DEST_SET_RESPAWN
-	.db $80 $8a $25 TRANSITION_DEST_SET_RESPAWN
-	.db $80 $00 $34 TRANSITION_DEST_SET_RESPAWN
-	.db $80 $d0 $34 TRANSITION_DEST_SET_RESPAWN
-	.db $81 $00 $33 TRANSITION_DEST_SET_RESPAWN
+	.db $80, $96, $44, TRANSITION_DEST_SET_RESPAWN
+	.db $80, $8d, $24, TRANSITION_DEST_SET_RESPAWN
+	.db $80, $60, $25, TRANSITION_DEST_SET_RESPAWN
+	.db $80, $1d, $13, TRANSITION_DEST_SET_RESPAWN
+	.db $80, $8a, $25, TRANSITION_DEST_SET_RESPAWN
+	.db $80, $00, $34, TRANSITION_DEST_SET_RESPAWN
+	.db $80, $d0, $34, TRANSITION_DEST_SET_RESPAWN
+	.db $81, $00, $33, TRANSITION_DEST_SET_RESPAWN
 .endif
 
 
@@ -1737,3 +1740,5 @@ _interaction7f_subid02:
 	ld a,Object.enabled
 	call objectGetRelatedObject1Var
 	jp objectTakePosition
+
+.ends

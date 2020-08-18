@@ -7,7 +7,7 @@
 
 dungeonLayoutDataStart:
 
-dungeon00Layout;
+dungeon00Layout:
 	.db $01 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $02 $03 $00 $00 $00

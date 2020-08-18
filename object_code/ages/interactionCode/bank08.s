@@ -1,3 +1,5 @@
+m_section_superfree Ages_Interactions_Bank8 NAMESPACE agesInteractionsBank08
+
 ; ==============================================================================
 ; INTERACID_TOGGLE_FLOOR: red/yellow/blue floor tiles that change color when jumped over.
 ; ==============================================================================
@@ -760,59 +762,59 @@ interactionCode20:
 
 @dungeon0:
 @dungeond:
-	.dw makuPathScript_spawnChestWhenActiveTriggersEq01
-	.dw makuPathScript_spawnDownStairsWhenEnemiesKilled
-	.dw makuPathScript_spawn30Rupees
-	.dw makuPathScript_keyFallsFromCeilingWhen1TorchLit
-	.dw makuPathScript_spawnUpStairsWhen2TorchesLit
+	.dw mainScripts.makuPathScript_spawnChestWhenActiveTriggersEq01
+	.dw mainScripts.makuPathScript_spawnDownStairsWhenEnemiesKilled
+	.dw mainScripts.makuPathScript_spawn30Rupees
+	.dw mainScripts.makuPathScript_keyFallsFromCeilingWhen1TorchLit
+	.dw mainScripts.makuPathScript_spawnUpStairsWhen2TorchesLit
 @dungeon1:
-	.dw dungeonScript_spawnChestOnTriggerBit0
-	.dw spiritsGraveScript_spawnBracelet
-	.dw dungeonScript_minibossDeath
-	.dw dungeonScript_bossDeath
-	.dw spiritsGraveScript_stairsToBraceletRoom
-	.dw spiritsGraveScript_spawnMovingPlatform
+	.dw mainScripts.dungeonScript_spawnChestOnTriggerBit0
+	.dw mainScripts.spiritsGraveScript_spawnBracelet
+	.dw mainScripts.dungeonScript_minibossDeath
+	.dw mainScripts.dungeonScript_bossDeath
+	.dw mainScripts.spiritsGraveScript_stairsToBraceletRoom
+	.dw mainScripts.spiritsGraveScript_spawnMovingPlatform
 @dungeon2:
-	.dw wingDungeonScript_spawnFeather
-	.dw wingDungeonScript_spawn30Rupees
-	.dw dungeonScript_minibossDeath
-	.dw wingDungeonScript_bossDeath
+	.dw mainScripts.wingDungeonScript_spawnFeather
+	.dw mainScripts.wingDungeonScript_spawn30Rupees
+	.dw mainScripts.dungeonScript_minibossDeath
+	.dw mainScripts.wingDungeonScript_bossDeath
 @dungeon3:
-	.dw dungeonScript_minibossDeath
-	.dw dungeonScript_bossDeath
-	.dw moonlitGrottoScript_spawnChestWhen2TorchesLit
+	.dw mainScripts.dungeonScript_minibossDeath
+	.dw mainScripts.dungeonScript_bossDeath
+	.dw mainScripts.moonlitGrottoScript_spawnChestWhen2TorchesLit
 @dungeon4:
-	.dw dungeonScript_minibossDeath
-	.dw dungeonScript_bossDeath
-	.dw skullDungeonScript_spawnChestWhenOrb0Hit
-	.dw skullDungeonScript_spawnChestWhenOrb1Hit
+	.dw mainScripts.dungeonScript_minibossDeath
+	.dw mainScripts.dungeonScript_bossDeath
+	.dw mainScripts.skullDungeonScript_spawnChestWhenOrb0Hit
+	.dw mainScripts.skullDungeonScript_spawnChestWhenOrb1Hit
 @dungeon5:
-	.dw dungeonScript_minibossDeath
-	.dw dungeonScript_bossDeath
-	.dw crownDungeonScript_spawnChestWhen3TriggersActive
+	.dw mainScripts.dungeonScript_minibossDeath
+	.dw mainScripts.dungeonScript_bossDeath
+	.dw mainScripts.crownDungeonScript_spawnChestWhen3TriggersActive
 @dungeon6:
-	.dw dungeonScript_minibossDeath
+	.dw mainScripts.dungeonScript_minibossDeath
 @dungeon7:
-	.dw dungeonScript_bossDeath
+	.dw mainScripts.dungeonScript_bossDeath
 @dungeon8:
-	.dw dungeonScript_minibossDeath
-	.dw dungeonScript_bossDeath
-	.dw ancientTombScript_spawnSouthStairsWhenTrigger0Active
-	.dw ancientTombScript_spawnNorthStairsWhenTrigger0Active
-	.dw ancientTombScript_retractWallWhenTrigger0Active
-	.dw ancientTombScript_spawnDownStairsWhenEnemiesKilled
-	.dw ancientTombScript_spawnVerticalBridgeWhenTorchLit
+	.dw mainScripts.dungeonScript_minibossDeath
+	.dw mainScripts.dungeonScript_bossDeath
+	.dw mainScripts.ancientTombScript_spawnSouthStairsWhenTrigger0Active
+	.dw mainScripts.ancientTombScript_spawnNorthStairsWhenTrigger0Active
+	.dw mainScripts.ancientTombScript_retractWallWhenTrigger0Active
+	.dw mainScripts.ancientTombScript_spawnDownStairsWhenEnemiesKilled
+	.dw mainScripts.ancientTombScript_spawnVerticalBridgeWhenTorchLit
 @dungeon9:
 @dungeona:
 @dungeonb:
-	.dw dungeonScript_spawnChestOnTriggerBit0
-	.dw herosCaveScript_spawnChestWhen4TriggersActive
-	.dw herosCaveScript_spawnBridgeWhenTriggerPressed
-	.dw herosCaveScript_spawnNorthStairsWhenEnemiesKilled
+	.dw mainScripts.dungeonScript_spawnChestOnTriggerBit0
+	.dw mainScripts.herosCaveScript_spawnChestWhen4TriggersActive
+	.dw mainScripts.herosCaveScript_spawnBridgeWhenTriggerPressed
+	.dw mainScripts.herosCaveScript_spawnNorthStairsWhenEnemiesKilled
 @dungeonc:
-	.dw dungeonScript_bossDeath
-	.dw mermaidsCaveScript_spawnBridgeWhenOrbHit
-	.dw mermaidsCaveScript_updateTrigger2BasedOnTriggers0And1
+	.dw mainScripts.dungeonScript_bossDeath
+	.dw mainScripts.mermaidsCaveScript_spawnBridgeWhenOrbHit
+	.dw mainScripts.mermaidsCaveScript_updateTrigger2BasedOnTriggers0And1
 
 
 ; ==============================================================================
@@ -1164,7 +1166,7 @@ _interaction21_subid0d:
 	ld (wDisableScreenTransitions),a
 	ld (wcc90),a
 
-	ld hl,moonlitGrottoScript_brokeCrystal
+	ld hl,mainScripts.moonlitGrottoScript_brokeCrystal
 	call interactionSetScript
 	call interactionRunScript
 	jp interactionIncState
@@ -1178,7 +1180,7 @@ _interaction21_subid0d:
 	ld a,$02
 	ld (wScreenShakeMagnitude),a
 
-	ld hl,moonlitGrottoScript_brokeAllCrystals
+	ld hl,mainScripts.moonlitGrottoScript_brokeAllCrystals
 	call interactionSetScript
 
 	ld e,Interaction.state
@@ -1190,7 +1192,7 @@ _interaction21_subid0d:
 	ret
 
 @enableControl:
-	jpab scriptHlp.moonlitGrotto_enableControlAfterBreakingCrystal
+	jpab scriptHelp.moonlitGrotto_enableControlAfterBreakingCrystal
 
 
 ; d3: Small key falls when a block is pushed into place
@@ -2220,18 +2222,18 @@ interactionCode28:
 
 
 @scriptTable:
-	.dw bipinScript0
-	.dw bipinScript1
-	.dw bipinScript1
-	.dw bipinScript1
-	.dw bipinScript1
-	.dw bipinScript2
-	.dw bipinScript1
-	.dw bipinScript1
-	.dw bipinScript1
-	.dw bipinScript1
+	.dw mainScripts.bipinScript0
+	.dw mainScripts.bipinScript1
+	.dw mainScripts.bipinScript1
+	.dw mainScripts.bipinScript1
+	.dw mainScripts.bipinScript1
+	.dw mainScripts.bipinScript2
+	.dw mainScripts.bipinScript1
+	.dw mainScripts.bipinScript1
+	.dw mainScripts.bipinScript1
+	.dw mainScripts.bipinScript1
 .ifdef ROM_AGES
-	.dw bipinScript3
+	.dw mainScripts.bipinScript3
 .endif
 
 
@@ -2277,7 +2279,7 @@ interactionCode29:
 	ld (de),a
 	call objectSetVisiblec2
 
-	ld hl,adlarScript
+	ld hl,mainScripts.adlarScript
 	jp interactionSetScript
 
 
@@ -2315,7 +2317,7 @@ interactionCode2a:
 
 	call objectSetVisiblec2
 
-	ld hl,librarianScript
+	ld hl,mainScripts.librarianScript
 	jp interactionSetScript
 
 
@@ -2380,16 +2382,16 @@ interactionCode2b:
 	jp objectSetPriorityRelativeToLink_withTerrainEffects
 
 @scriptTable:
-	.dw blossomScript0
-	.dw blossomScript1
-	.dw blossomScript2
-	.dw blossomScript3
-	.dw blossomScript4
-	.dw blossomScript5
-	.dw blossomScript6
-	.dw blossomScript7
-	.dw blossomScript8
-	.dw blossomScript9
+	.dw mainScripts.blossomScript0
+	.dw mainScripts.blossomScript1
+	.dw mainScripts.blossomScript2
+	.dw mainScripts.blossomScript3
+	.dw mainScripts.blossomScript4
+	.dw mainScripts.blossomScript5
+	.dw mainScripts.blossomScript6
+	.dw mainScripts.blossomScript7
+	.dw mainScripts.blossomScript8
+	.dw mainScripts.blossomScript9
 
 
 ; ==============================================================================
@@ -2494,7 +2496,7 @@ interactionCode2d:
 	call interactionSetAlwaysUpdateBit
 	ld a,PALH_87
 	call loadPaletteHeader
-	ld hl,veranFaceCutsceneScript
+	ld hl,mainScripts.veranFaceCutsceneScript
 	call interactionSetScript
 
 @state2:
@@ -2548,8 +2550,8 @@ interactionCode2e:
 	jp npcFaceLinkAndAnimate
 
 @scriptTable:
-	.dw oldManScript_givesRupees
-	.dw oldManScript_takesRupees
+	.dw mainScripts.oldManScript_givesRupees
+	.dw mainScripts.oldManScript_takesRupees
 
 
 ; ==============================================================================
@@ -3137,46 +3139,46 @@ _shootingGallery_addValueToScore:
 ; NPC scripts
 _shootingGalleryScriptTable:
 	; NPCs waiting to be talked to
-	.dw shootingGalleryScript_humanNpc
-	.dw shootingGalleryScript_goronNpc
-	.dw shootingGalleryScript_goronElderNpc
+	.dw mainScripts.shootingGalleryScript_humanNpc
+	.dw mainScripts.shootingGalleryScript_goronNpc
+	.dw mainScripts.shootingGalleryScript_goronElderNpc
 
 	; Cleanup after finishing a game
-	.dw shootingGalleryScript_humanNpc_gameDone
-	.dw shootingGalleryScript_goronNpc_gameDone
-	.dw shootingGalleryScript_goronElderNpc_gameDone
+	.dw mainScripts.shootingGalleryScript_humanNpc_gameDone
+	.dw mainScripts.shootingGalleryScript_goronNpc_gameDone
+	.dw mainScripts.shootingGalleryScript_goronElderNpc_gameDone
 
 	; NPCs ask if you want to play again
-	.dw shootingGalleryScript_humanNpc@tryAgain
-	.dw shootingGalleryScript_goronNpc@tryAgain
-	.dw shootingGalleryScript_goronElderNpc@beginGame
+	.dw mainScripts.shootingGalleryScript_humanNpc@tryAgain
+	.dw mainScripts.shootingGalleryScript_goronNpc@tryAgain
+	.dw mainScripts.shootingGalleryScript_goronElderNpc@beginGame
 
 
 ; Scripts to run when tile(s) of the corresponding types are hit.
 _shootingGalleryHitScriptTable:
-	.dw shootingGalleryScript_hit1Blue        ; $00
-	.dw shootingGalleryScript_hit1Fairy       ; $01
-	.dw shootingGalleryScript_hit1Red         ; $02
-	.dw shootingGalleryScript_hit1Imp         ; $03
-	.dw shootingGalleryScript_hit2Blue        ; $04
-	.dw shootingGalleryScript_hit1Blue1Fairy  ; $05
-	.dw shootingGalleryScript_hit1Red1Blue    ; $06
-	.dw shootingGalleryScript_hit1Blue1Imp    ; $07
-	.dw shootingGalleryScript_hit1Blue1Fairy  ; $08
-	.dw shootingGalleryScript_hit2Blue        ; $09
-	.dw shootingGalleryScript_hit1Red1Fairy   ; $0a
-	.dw shootingGalleryScript_hit1Fairy1Imp   ; $0b
-	.dw shootingGalleryScript_hit1Red1Blue    ; $0c
-	.dw shootingGalleryScript_hit1Red1Fairy   ; $0d
-	.dw shootingGalleryScript_hit2Red         ; $0e
-	.dw shootingGalleryScript_hit1Red1Imp     ; $0f
-	.dw shootingGalleryScript_hit1Blue1Imp    ; $10
-	.dw shootingGalleryScript_hit1Fairy1Imp   ; $11
-	.dw shootingGalleryScript_hit1Red1Imp     ; $12
-	.dw shootingGalleryScript_hit2Red         ; $13
+	.dw mainScripts.shootingGalleryScript_hit1Blue        ; $00
+	.dw mainScripts.shootingGalleryScript_hit1Fairy       ; $01
+	.dw mainScripts.shootingGalleryScript_hit1Red         ; $02
+	.dw mainScripts.shootingGalleryScript_hit1Imp         ; $03
+	.dw mainScripts.shootingGalleryScript_hit2Blue        ; $04
+	.dw mainScripts.shootingGalleryScript_hit1Blue1Fairy  ; $05
+	.dw mainScripts.shootingGalleryScript_hit1Red1Blue    ; $06
+	.dw mainScripts.shootingGalleryScript_hit1Blue1Imp    ; $07
+	.dw mainScripts.shootingGalleryScript_hit1Blue1Fairy  ; $08
+	.dw mainScripts.shootingGalleryScript_hit2Blue        ; $09
+	.dw mainScripts.shootingGalleryScript_hit1Red1Fairy   ; $0a
+	.dw mainScripts.shootingGalleryScript_hit1Fairy1Imp   ; $0b
+	.dw mainScripts.shootingGalleryScript_hit1Red1Blue    ; $0c
+	.dw mainScripts.shootingGalleryScript_hit1Red1Fairy   ; $0d
+	.dw mainScripts.shootingGalleryScript_hit2Red         ; $0e
+	.dw mainScripts.shootingGalleryScript_hit1Red1Imp     ; $0f
+	.dw mainScripts.shootingGalleryScript_hit1Blue1Imp    ; $10
+	.dw mainScripts.shootingGalleryScript_hit1Fairy1Imp   ; $11
+	.dw mainScripts.shootingGalleryScript_hit1Red1Imp     ; $12
+	.dw mainScripts.shootingGalleryScript_hit2Red         ; $13
 
-	.dw shootingGalleryScript_hitNothing      ; $14
-	.dw shootingGalleryScript_strike          ; $15
+	.dw mainScripts.shootingGalleryScript_hitNothing      ; $14
+	.dw mainScripts.shootingGalleryScript_strike          ; $15
 
 
 ; ==============================================================================
@@ -3627,7 +3629,7 @@ _impaSubid0:
 
 	ld hl,$cfd0
 	ld (hl),$02
-	ld hl,impaScript_moveAwayFromRock
+	ld hl,mainScripts.impaScript_moveAwayFromRock
 	call interactionSetScript
 	jp interactionIncSubstate
 
@@ -3642,7 +3644,7 @@ _impaSubid0:
 	call setLinkIDOverride
 	ld l,<w1Link.direction
 	ld (hl),DIR_UP
-	ld hl,impaScript_waitForRockToBeMoved
+	ld hl,mainScripts.impaScript_waitForRockToBeMoved
 	call interactionSetScript
 	jp interactionIncSubstate
 
@@ -3657,7 +3659,7 @@ _impaSubid0:
 
 ; The rock has started moving.
 
-	ld hl,impaScript_rockJustMoved
+	ld hl,mainScripts.impaScript_rockJustMoved
 	call interactionSetScript
 	jp interactionIncSubstate
 
@@ -3683,7 +3685,7 @@ _impaSubid0:
 	call clearFollowingLinkObject
 	ldbc $68,$38
 	call interactionSetPosition
-	ld hl,impaScript_revealPossession
+	ld hl,mainScripts.impaScript_revealPossession
 	jp interactionSetScript
 
 @substateE:
@@ -3893,7 +3895,7 @@ _impaSubid2Substate7:
 	ld a,($cfc0)
 	cp $03
 	ret c
-	jpab scriptHlp.turnToFaceSomething
+	jpab scriptHelp.turnToFaceSomething
 
 ;;
 ; Impa tells you about Ralph's heritage (unlinked)
@@ -4091,7 +4093,7 @@ _impaSubid9:
 	ld a,(de)
 	or a
 	jr z,++
-	callab scriptHlp.objectWritePositionTocfd5
+	callab scriptHelp.objectWritePositionTocfd5
 ++
 	jp _impaAnimateAndRunScript
 
@@ -4206,16 +4208,16 @@ _impaPreventLinkFromLeavingStoneScreen:
 	jp showText
 
 _impaScriptTable:
-	.dw impaScript0
-	.dw impaScript1
-	.dw impaScript2
-	.dw impaScript3
-	.dw impaScript4
-	.dw impaScript5
-	.dw impaScript6
-	.dw impaScript7
-	.dw impaScript8
-	.dw impaScript9
+	.dw mainScripts.impaScript0
+	.dw mainScripts.impaScript1
+	.dw mainScripts.impaScript2
+	.dw mainScripts.impaScript3
+	.dw mainScripts.impaScript4
+	.dw mainScripts.impaScript5
+	.dw mainScripts.impaScript6
+	.dw mainScripts.impaScript7
+	.dw mainScripts.impaScript8
+	.dw mainScripts.impaScript9
 
 
 ; ==============================================================================
@@ -4278,7 +4280,7 @@ interactionCode32:
 	call objectSetSpeedZ
 	ld a,>TX_4100
 	call interactionSetHighTextIndex
-	ld hl,greatFairyOctorokScript
+	ld hl,mainScripts.greatFairyOctorokScript
 	jr @init1
 
 @init1:
@@ -4355,9 +4357,9 @@ _impaOctorokCode:
 
 
 _impaOctorokScriptTable: ; These scripts do nothing
-	.dw impaOctorokScript
-	.dw impaOctorokScript
-	.dw impaOctorokScript
+	.dw mainScripts.impaOctorokScript
+	.dw mainScripts.impaOctorokScript
+	.dw mainScripts.impaOctorokScript
 
 
 _greatFairyOctorokCode:
@@ -5842,35 +5844,35 @@ _childUpdateCuriousMovement:
 
 
 _childScriptTable:
-	.dw childScript00
-	.dw childScript_stage4_hyperactive
-	.dw childScript_stage4_shy
-	.dw childScript_stage4_curious
-	.dw childScript_stage5_hyperactive
-	.dw childScript_stage5_shy
-	.dw childScript_stage5_curious
-	.dw childScript_stage6_hyperactive
-	.dw childScript_stage6_shy
-	.dw childScript_stage6_curious
-	.dw childScript_stage7_slacker
-	.dw childScript_stage7_warrior
-	.dw childScript_stage7_arborist
-	.dw childScript_stage7_singer
-	.dw childScript_stage8_slacker
-	.dw childScript_stage8_warrior
-	.dw childScript_stage8_arborist
-	.dw childScript_stage8_singer
-	.dw childScript_stage9_slacker
-	.dw childScript_stage9_warrior
-	.dw childScript_stage9_arborist
-	.dw childScript_stage9_singer
-	.dw childScript00
-	.dw childScript00
-	.dw childScript00
-	.dw childScript00
-	.dw childScript00
-	.dw childScript00
-	.dw childScript00
+	.dw mainScripts.childScript00
+	.dw mainScripts.childScript_stage4_hyperactive
+	.dw mainScripts.childScript_stage4_shy
+	.dw mainScripts.childScript_stage4_curious
+	.dw mainScripts.childScript_stage5_hyperactive
+	.dw mainScripts.childScript_stage5_shy
+	.dw mainScripts.childScript_stage5_curious
+	.dw mainScripts.childScript_stage6_hyperactive
+	.dw mainScripts.childScript_stage6_shy
+	.dw mainScripts.childScript_stage6_curious
+	.dw mainScripts.childScript_stage7_slacker
+	.dw mainScripts.childScript_stage7_warrior
+	.dw mainScripts.childScript_stage7_arborist
+	.dw mainScripts.childScript_stage7_singer
+	.dw mainScripts.childScript_stage8_slacker
+	.dw mainScripts.childScript_stage8_warrior
+	.dw mainScripts.childScript_stage8_arborist
+	.dw mainScripts.childScript_stage8_singer
+	.dw mainScripts.childScript_stage9_slacker
+	.dw mainScripts.childScript_stage9_warrior
+	.dw mainScripts.childScript_stage9_arborist
+	.dw mainScripts.childScript_stage9_singer
+	.dw mainScripts.childScript00
+	.dw mainScripts.childScript00
+	.dw mainScripts.childScript00
+	.dw mainScripts.childScript00
+	.dw mainScripts.childScript00
+	.dw mainScripts.childScript00
+	.dw mainScripts.childScript00
 
 
 ; ==============================================================================
@@ -5939,7 +5941,7 @@ nayruState0:
 
 	call objectSetInvisible
 
-	ld hl,nayruScript01
+	ld hl,mainScripts.nayruScript01
 	call interactionSetScript
 
 @init0e: ; This is also called from ambi subids 4 and 5 (to initialize possessed palettes)
@@ -5959,18 +5961,18 @@ nayruState0:
 
 	ld a,$05
 	call interactionSetAnimation
-	ld hl,nayruScript02_part1
+	ld hl,mainScripts.nayruScript02_part1
 	call interactionSetScript
 	jp objectSetInvisible
 ++
 	ld a,$02
 	call interactionSetAnimation
 
-	ld hl,nayruScript02_part2
+	ld hl,mainScripts.nayruScript02_part2
 	jp interactionSetScript
 
 @init04:
-	ld hl,nayruScript04_part1
+	ld hl,mainScripts.nayruScript04_part1
 	ld a,($cfd0)
 	cp $0b
 	jr nz,++
@@ -5980,7 +5982,7 @@ nayruState0:
 	call checkIsLinkedGame
 	jr nz,@init03
 
-	ld hl,nayruScript04_part2
+	ld hl,mainScripts.nayruScript04_part2
 ++
 	call interactionSetScript
 
@@ -5991,7 +5993,7 @@ nayruState0:
 @init05:
 	ld a,$05
 	call interactionSetAnimation
-	ld hl,nayruScript05
+	ld hl,mainScripts.nayruScript05
 	call interactionSetScript
 	jp objectSetInvisible
 
@@ -6007,14 +6009,14 @@ nayruState0:
 	jp interactionSetAlwaysUpdateBit
 
 @init08:
-	ld hl,nayruScript08
+	ld hl,mainScripts.nayruScript08
 	call interactionSetScript
 	call objectSetVisible82
 	ld a,$03
 	jp interactionSetAnimation
 
 @init09:
-	ld hl,nayruScript09
+	ld hl,mainScripts.nayruScript09
 	jp interactionSetScript
 
 @init0a:
@@ -6031,7 +6033,7 @@ nayruState0:
 
 	ld a,$01
 	call interactionSetAnimation
-	ld hl,nayruScript0a
+	ld hl,mainScripts.nayruScript0a
 	jp interactionSetScript
 
 @init0b:
@@ -6055,7 +6057,7 @@ nayruState0:
 	inc e
 	ld a,>TX_1d00
 	ld (de),a
-	ld hl,genericNpcScript
+	ld hl,mainScripts.genericNpcScript
 	jp interactionSetScript
 
 @init0c:
@@ -6107,16 +6109,16 @@ nayruState0:
 	ld e,Interaction.var3f
 	ld a,$ff
 	ld (de),a
-	ld hl,nayruScript10
+	ld hl,mainScripts.nayruScript10
 	jp interactionSetScript
 
 @init11:
 	xor a
 	call interactionSetAnimation
-	callab scriptHlp.objectWritePositionTocfd5
+	callab scriptHelp.objectWritePositionTocfd5
 	ld a,>TX_1d00
 	call interactionSetHighTextIndex
-	ld hl,nayruScript11
+	ld hl,mainScripts.nayruScript11
 	jp interactionSetScript
 
 @init12:
@@ -6129,7 +6131,7 @@ nayruState0:
 	call checkGlobalFlag
 	jp z,interactionDelete
 
-	ld hl,nayruScript13
+	ld hl,mainScripts.nayruScript13
 	call interactionSetScript
 
 	ld a,>TX_1d00
@@ -6203,7 +6205,7 @@ _nayruSubid00:
 	ldi (hl),a
 	ldi (hl),a
 	ld (hl),$01
-	ld hl,nayruScript00_part1
+	ld hl,mainScripts.nayruScript00_part1
 	jp interactionSetScript
 
 ; This is also called from outside subid 0
@@ -6370,7 +6372,7 @@ _nayruSubid00:
 	ld ($cfd0),a
 
 	; Start next script
-	ld hl,nayruScript00_part2
+	ld hl,mainScripts.nayruScript00_part2
 	call interactionSetScript
 	ld a,SND_SLASH
 	call playSound
@@ -6472,7 +6474,7 @@ _nayruSubid02Substate1:
 
 	call interactionIncSubstate
 
-	ld hl,nayruScript02_part3
+	ld hl,mainScripts.nayruScript02_part3
 	call interactionSetScript
 
 	ld a,$01
@@ -6527,7 +6529,7 @@ _nayruSubid03:
 	ld c,$24
 	call objectUpdateSpeedZ_paramC
 	ret nz
-	ld hl,nayruScript03
+	ld hl,mainScripts.nayruScript03
 	call interactionSetScript
 	jp interactionIncSubstate
 
@@ -6545,7 +6547,7 @@ _nayruSubid04:
 	cp $0b
 	jr c,_nayruAnimateAndRunScript
 	call interactionAnimate
-	jpab scriptHlp.turnToFaceSomething
+	jpab scriptHelp.turnToFaceSomething
 
 ;;
 ; Subid $05: ?
@@ -6558,7 +6560,7 @@ _nayruSubid05:
 	cp $05
 	ret nc
 
-	jpab scriptHlp.turnToFaceSomething
+	jpab scriptHelp.turnToFaceSomething
 
 ;;
 ; For Nayru subid 0 (getting possessed cutscene), this updates var3a, var3b representing
@@ -6667,7 +6669,7 @@ _nayruSubid07:
 	ld (wActiveMusic),a
 	call playSound
 
-	ld hl,nayruScript07
+	ld hl,mainScripts.nayruScript07
 	jp interactionSetScript
 
 @substate1:
@@ -6813,13 +6815,13 @@ _ralphState0:
 
 
 @initSubid06:
-	ld hl,ralphSubid06Script_part1
+	ld hl,mainScripts.ralphSubid06Script_part1
 	ld a,($cfd0)
 	cp $0b
 	jr nz,++
 	ld bc,$4850
 	call interactionSetPosition
-	ld hl,ralphSubid06Script_part2
+	ld hl,mainScripts.ralphSubid06Script_part2
 ++
 	call interactionSetScript
 
@@ -6835,7 +6837,7 @@ _ralphState0:
 	ld a,$09
 	call interactionSetAnimation
 
-	ld hl,ralphSubid02Script
+	ld hl,mainScripts.ralphSubid02Script
 	call interactionSetScript
 
 	call interactionLoadExtraGraphics
@@ -6869,23 +6871,23 @@ _ralphState0:
 	ld a,($cfd0)
 	cp $03
 	jr z,++
-	ld hl,ralphSubid04Script_part1
+	ld hl,mainScripts.ralphSubid04Script_part1
 	call interactionSetScript
 	jp objectSetInvisible
 ++
-	ld hl,ralphSubid04Script_part2
+	ld hl,mainScripts.ralphSubid04Script_part2
 	call interactionSetScript
 	jp objectSetVisiblec2
 
 @initSubid07:
-	ld hl,ralphSubid07Script
+	ld hl,mainScripts.ralphSubid07Script
 	call interactionSetScript
 	jp objectSetInvisible
 
 @initSubid08:
-	callab scriptHlp.ralph_createLinkedSwordAnimation
+	callab scriptHelp.ralph_createLinkedSwordAnimation
 
-	ld hl,ralphSubid08Script
+	ld hl,mainScripts.ralphSubid08Script
 	call interactionSetScript
 	jp objectSetVisiblec2
 
@@ -6921,7 +6923,7 @@ _ralphState0:
 	ld a,(wScreenTransitionDirection)
 	ld (w1Link.direction),a
 
-	ld hl,ralphSubid09Script
+	ld hl,mainScripts.ralphSubid09Script
 	call interactionSetScript
 	xor a
 	call interactionSetAnimation
@@ -6941,7 +6943,7 @@ _ralphState0:
 	jp nz,interactionDelete
 
 	call checkIsLinkedGame
-	ld hl,ralphSubid0aScript_unlinked
+	ld hl,mainScripts.ralphSubid0aScript_unlinked
 	jr z,@@setScript
 
 	; Linked game: adjust position, load a different script
@@ -6951,7 +6953,7 @@ _ralphState0:
 	ld l,Interaction.var38
 	ld (hl),$1e
 
-	ld hl,ralphSubid0aScript_linked
+	ld hl,mainScripts.ralphSubid0aScript_linked
 
 @@setScript:
 	call interactionSetScript
@@ -6966,7 +6968,7 @@ _ralphState0:
 	ld e,Interaction.var3f
 	ld a,$ff
 	ld (de),a
-	ld hl,ralphSubid0eScript
+	ld hl,mainScripts.ralphSubid0eScript
 	jr @setScriptAndRunState1
 
 @initSubid0f:
@@ -6974,7 +6976,7 @@ _ralphState0:
 	jp @setAnimation
 
 @initSubid01:
-	ld hl,ralphSubid01Script
+	ld hl,mainScripts.ralphSubid01Script
 
 @setScriptAndRunState1:
 	call interactionSetScript
@@ -7000,7 +7002,7 @@ _ralphState0:
 	cp $24
 	jr nz,@delete
 
-	ld hl,ralphSubid0bScript
+	ld hl,mainScripts.ralphSubid0bScript
 
 @setScriptAndDisableObjects:
 	call interactionSetScript
@@ -7025,7 +7027,7 @@ _ralphState0:
 	cp $17
 	jp nz,interactionDelete
 
-	ld hl,ralphSubid10Script
+	ld hl,mainScripts.ralphSubid10Script
 	jr @setScriptAndDisableObjects
 
 @initSubid11:
@@ -7035,7 +7037,7 @@ _ralphState0:
 
 	ld a,$03
 	call interactionSetAnimation
-	ld hl,ralphSubid11Script
+	ld hl,mainScripts.ralphSubid11Script
 	call interactionSetScript
 	jr _ralphRunSubid
 
@@ -7045,8 +7047,8 @@ _ralphState0:
 	jp nz,interactionDelete
 
 	call interactionLoadExtraGraphics
-	callab scriptHlp.ralph_createLinkedSwordAnimation
-	ld hl,ralphSubid0cScript
+	callab scriptHelp.ralph_createLinkedSwordAnimation
+	ld hl,mainScripts.ralphSubid0cScript
 	call interactionSetScript
 	xor a
 	ld ($cfde),a
@@ -7062,7 +7064,7 @@ _ralphState0:
 	bit 7,(hl)
 	jp z,interactionDelete
 	call objectSetVisiblec2
-	ld hl,ralphSubid12Script
+	ld hl,mainScripts.ralphSubid12Script
 	jp interactionSetScript
 
 @initSubid0d:
@@ -7070,7 +7072,7 @@ _ralphState0:
 	cp $01
 	jp nz,interactionDelete
 
-	ld hl,ralphSubid0dScript
+	ld hl,mainScripts.ralphSubid0dScript
 	call interactionSetScript
 	call objectSetVisiblec0
 
@@ -7123,7 +7125,7 @@ _ralphSubid00:
 	ld a,$03
 	call interactionSetAnimation
 
-	ld hl,ralphSubid00Script
+	ld hl,mainScripts.ralphSubid00Script
 	jp interactionSetScript
 
 @substate1:
@@ -7158,7 +7160,7 @@ _ralphSubid02:
 	jp interactionIncSubstate
 
 @state1:
-	callab scriptHlp.objectWritePositionTocfd5
+	callab scriptHelp.objectWritePositionTocfd5
 	ld e,Interaction.counter2
 	ld a,(de)
 	or a
@@ -7305,7 +7307,7 @@ _ralphSubid03:
 
 @startScript:
 	call interactionIncSubstate
-	ld hl,ralphSubid03Script
+	ld hl,mainScripts.ralphSubid03Script
 	jp interactionSetScript
 
 @substate8:
@@ -7334,7 +7336,7 @@ _ralphSubid04:
 	jp nz,_nayruFlipDirectionAtRandomIntervals
 
 	call interactionIncSubstate
-	ld hl,ralphSubid04Script_part3
+	ld hl,mainScripts.ralphSubid04Script_part3
 	call interactionSetScript
 	jp @substate2
 
@@ -7367,7 +7369,7 @@ _ralphSubid05:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	ret nz
-	ld hl,ralphSubid05Script
+	ld hl,mainScripts.ralphSubid05Script
 	call interactionSetScript
 	jp interactionIncSubstate
 
@@ -7400,7 +7402,7 @@ _ralphSubid06:
 	.dw _ralphRunScript
 
 @substate0:
-	callab scriptHlp.objectWritePositionTocfd5
+	callab scriptHelp.objectWritePositionTocfd5
 	ld a,($cfd0)
 	cp $08
 	jp nz,interactionRunScript
@@ -7419,7 +7421,7 @@ _ralphSubid06:
 ;;
 ; Cutscene postgame where they warp to the maku tree, Ralph notices the statue
 _ralphSubid07:
-	callab scriptHlp.objectWritePositionTocfd5
+	callab scriptHelp.objectWritePositionTocfd5
 	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
@@ -7471,7 +7473,7 @@ _ralphSubid08:
 
 @getNextAngle:
 	ld b,$02
-	callab interactionBank0a.loadAngleAndCounterPreset
+	callab agesInteractionsBank0a.loadAngleAndCounterPreset
 	ld a,b
 	or a
 	ret
@@ -7839,7 +7841,7 @@ interactionCode38:
 	.dw @subid0Init
 
 @subid0Init:
-	callab interactionBank09.getGameProgress_2
+	callab agesInteractionsBank09.getGameProgress_2
 
 	; NPC doesn't exist between beating d2 and saving Nayru
 	ld a,b
@@ -7870,14 +7872,14 @@ interactionCode38:
 
 
 @scriptTable:
-	.dw pastGirlScript_earlyGame
-	.dw pastGirlScript_afterNayruSaved
-	.dw pastGirlScript_afterNayruSaved
-	.dw pastGirlScript_afterNayruSaved
-	.dw pastGirlScript_afterd7
-	.dw pastGirlScript_afterGotMakuSeed
-	.dw pastGirlScript_twinrovaKidnappedZelda
-	.dw pastGirlScript_gameFinished
+	.dw mainScripts.pastGirlScript_earlyGame
+	.dw mainScripts.pastGirlScript_afterNayruSaved
+	.dw mainScripts.pastGirlScript_afterNayruSaved
+	.dw mainScripts.pastGirlScript_afterNayruSaved
+	.dw mainScripts.pastGirlScript_afterd7
+	.dw mainScripts.pastGirlScript_afterGotMakuSeed
+	.dw mainScripts.pastGirlScript_twinrovaKidnappedZelda
+	.dw mainScripts.pastGirlScript_gameFinished
 
 
 ; ==============================================================================
@@ -7958,7 +7960,7 @@ interactionCode3a:
 	jp @loadScript
 
 @initSubid03:
-	callab interactionBank09.getGameProgress_1
+	callab agesInteractionsBank09.getGameProgress_1
 	ld a,b
 	ld hl,@subid03ScriptTable
 	rst_addDoubleIndex
@@ -7973,7 +7975,7 @@ interactionCode3a:
 	ld e,Interaction.oamFlags
 	ld (de),a
 
-	callab interactionBank09.getGameProgress_1
+	callab agesInteractionsBank09.getGameProgress_1
 	ld c,$04
 	ld a,$03
 	call checkNpcShouldExistAtGameStage
@@ -7989,7 +7991,7 @@ interactionCode3a:
 
 @initSubid06:
 @initSubid07:
-	callab interactionBank09.getGameProgress_2
+	callab agesInteractionsBank09.getGameProgress_2
 	ld c,$06
 	ld a,$04
 	call checkNpcShouldExistAtGameStage
@@ -8009,7 +8011,7 @@ interactionCode3a:
 	ld (de),a
 
 	; Delete if you haven't beaten d7 yet?
-	callab interactionBank09.getGameProgress_2
+	callab agesInteractionsBank09.getGameProgress_2
 	ld a,b
 	cp $04
 	jp c,interactionDelete
@@ -8192,7 +8194,7 @@ interactionCode3a:
 
 	; Link tried to approach; move over to block his path
 	call interactionIncSubstate
-	ld hl,villagerSubid02Script_part2
+	ld hl,mainScripts.villagerSubid02Script_part2
 	call interactionSetScript
 ++
 	ld hl,w1Link.yh
@@ -8356,54 +8358,54 @@ interactionCode3a:
 
 
 @scriptTable:
-	.dw stubScript
-	.dw villagerSubid01Script
-	.dw villagerSubid02Script_part1
-	.dw stubScript
-	.dw stubScript
-	.dw stubScript
-	.dw stubScript
-	.dw stubScript
-	.dw stubScript
-	.dw villagerSubid09Script
-	.dw stubScript
-	.dw villagerSubid0bScript
-	.dw villagerSubid0cScript
-	.dw villagerSubid0dScript
+	.dw mainScripts.stubScript
+	.dw mainScripts.villagerSubid01Script
+	.dw mainScripts.villagerSubid02Script_part1
+	.dw mainScripts.stubScript
+	.dw mainScripts.stubScript
+	.dw mainScripts.stubScript
+	.dw mainScripts.stubScript
+	.dw mainScripts.stubScript
+	.dw mainScripts.stubScript
+	.dw mainScripts.villagerSubid09Script
+	.dw mainScripts.stubScript
+	.dw mainScripts.villagerSubid0bScript
+	.dw mainScripts.villagerSubid0cScript
+	.dw mainScripts.villagerSubid0dScript
 
 
 @subid03ScriptTable:
-	.dw villagerSubid03Script_befored3
-	.dw villagerSubid03Script_afterd3
-	.dw villagerSubid03Script_afterNayruSaved
-	.dw villagerSubid03Script_afterd7
-	.dw villagerSubid03Script_afterGotMakuSeed
-	.dw villagerSubid03Script_postGame
+	.dw mainScripts.villagerSubid03Script_befored3
+	.dw mainScripts.villagerSubid03Script_afterd3
+	.dw mainScripts.villagerSubid03Script_afterNayruSaved
+	.dw mainScripts.villagerSubid03Script_afterd7
+	.dw mainScripts.villagerSubid03Script_afterGotMakuSeed
+	.dw mainScripts.villagerSubid03Script_postGame
 
 
 @subid4And5ScriptTable:
-	.dw villagerSubid4And5Script_befored3
-	.dw villagerSubid4And5Script_afterd3
-	.dw villagerSubid4And5Script_afterGotMakuSeed
-	.dw villagerSubid4And5Script_afterGotMakuSeed
-	.dw villagerSubid4And5Script_afterGotMakuSeed
-	.dw villagerSubid4And5Script_postGame
+	.dw mainScripts.villagerSubid4And5Script_befored3
+	.dw mainScripts.villagerSubid4And5Script_afterd3
+	.dw mainScripts.villagerSubid4And5Script_afterGotMakuSeed
+	.dw mainScripts.villagerSubid4And5Script_afterGotMakuSeed
+	.dw mainScripts.villagerSubid4And5Script_afterGotMakuSeed
+	.dw mainScripts.villagerSubid4And5Script_postGame
 
 @subid6And7ScriptTable:
-	.dw villagerSubid6And7Script_befored2
-	.dw villagerSubid6And7Script_afterd2
-	.dw villagerSubid6And7Script_afterd4
-	.dw villagerSubid6And7Script_afterNayruSaved
-	.dw villagerSubid6And7Script_afterd7
-	.dw villagerSubid6And7Script_afterGotMakuSeed
-	.dw villagerSubid6And7Script_twinrovaKidnappedZelda
-	.dw villagerSubid6And7Script_postGame
+	.dw mainScripts.villagerSubid6And7Script_befored2
+	.dw mainScripts.villagerSubid6And7Script_afterd2
+	.dw mainScripts.villagerSubid6And7Script_afterd4
+	.dw mainScripts.villagerSubid6And7Script_afterNayruSaved
+	.dw mainScripts.villagerSubid6And7Script_afterd7
+	.dw mainScripts.villagerSubid6And7Script_afterGotMakuSeed
+	.dw mainScripts.villagerSubid6And7Script_twinrovaKidnappedZelda
+	.dw mainScripts.villagerSubid6And7Script_postGame
 
 @subid08ScriptTable:
-	.dw villagerSubid08Script_afterd7
-	.dw villagerSubid08Script_afterGotMakuSeed
-	.dw villagerSubid08Script_twinrovaKidnappedZelda
-	.dw villagerSubid08Script_postGame
+	.dw mainScripts.villagerSubid08Script_afterd7
+	.dw mainScripts.villagerSubid08Script_afterGotMakuSeed
+	.dw mainScripts.villagerSubid08Script_twinrovaKidnappedZelda
+	.dw mainScripts.villagerSubid08Script_postGame
 
 
 ; ==============================================================================
@@ -8450,7 +8452,7 @@ interactionCode3b:
 
 @initSubid01:
 @initSubid02:
-	callab interactionBank09.getGameProgress_1
+	callab agesInteractionsBank09.getGameProgress_1
 	ld c,$01
 	xor a
 	call checkNpcShouldExistAtGameStage
@@ -8467,7 +8469,7 @@ interactionCode3b:
 
 @initSubid03:
 @initSubid04:
-	callab interactionBank09.getGameProgress_2
+	callab agesInteractionsBank09.getGameProgress_2
 	ld c,$03
 	ld a,$01
 	call checkNpcShouldExistAtGameStage
@@ -8486,7 +8488,7 @@ interactionCode3b:
 	ld a,$01
 	ld e,Interaction.oamFlags
 	ld (de),a
-	callab interactionBank09.getGameProgress_2
+	callab agesInteractionsBank09.getGameProgress_2
 	ld c,$05
 	ld a,$02
 	call checkNpcShouldExistAtGameStage
@@ -8518,7 +8520,7 @@ interactionCode3b:
 	xor a
 	call interactionSetAnimation
 
-	ld hl,villagerGalSubid07Script
+	ld hl,mainScripts.villagerGalSubid07Script
 	jp interactionSetScript
 
 @initSubid08:
@@ -8529,14 +8531,14 @@ interactionCode3b:
 	ld a,>TX_0f03
 	ld (de),a
 
-	ld hl,genericNpcScript
+	ld hl,mainScripts.genericNpcScript
 	jp interactionSetScript
 
 @initSubid06:
 	ld a,$05
 	ld e,Interaction.var3f
 	ld (de),a
-	ld hl,linkedGameNpcScript
+	ld hl,mainScripts.linkedGameNpcScript
 	call interactionSetScript
 	call interactionRunScript
 
@@ -8643,41 +8645,41 @@ interactionCode3b:
 
 
 @scriptTable:
-	.dw villagerGalSubid00Script
-	.dw stubScript
-	.dw stubScript
-	.dw stubScript
-	.dw stubScript
-	.dw stubScript
-	.dw stubScript
+	.dw mainScripts.villagerGalSubid00Script
+	.dw mainScripts.stubScript
+	.dw mainScripts.stubScript
+	.dw mainScripts.stubScript
+	.dw mainScripts.stubScript
+	.dw mainScripts.stubScript
+	.dw mainScripts.stubScript
 
 @subid1And2ScriptTable:
-	.dw villagerGalSubid1And2Script_befored3
-	.dw villagerGalSubid1And2Script_afterd3
-	.dw villagerGalSubid1And2Script_afterNayruSaved
-	.dw villagerGalSubid1And2Script_afterd7
-	.dw villagerGalSubid1And2Script_afterGotMakuSeed
-	.dw villagerGalSubid1And2Script_postGame
+	.dw mainScripts.villagerGalSubid1And2Script_befored3
+	.dw mainScripts.villagerGalSubid1And2Script_afterd3
+	.dw mainScripts.villagerGalSubid1And2Script_afterNayruSaved
+	.dw mainScripts.villagerGalSubid1And2Script_afterd7
+	.dw mainScripts.villagerGalSubid1And2Script_afterGotMakuSeed
+	.dw mainScripts.villagerGalSubid1And2Script_postGame
 
 @subid3And4ScriptTable:
-	.dw villagerGalSubid3And4Script_befored2
-	.dw villagerGalSubid3And4Script_afterd2
-	.dw villagerGalSubid3And4Script_afterd4
-	.dw villagerGalSubid3And4Script_afterNayruSaved
-	.dw villagerGalSubid3And4Script_afterd7
-	.dw villagerGalSubid3And4Script_afterGotMakuSeed
-	.dw villagerGalSubid3And4Script_twinrovaKidnappedZelda
-	.dw villagerGalSubid3And4Script_postGame
+	.dw mainScripts.villagerGalSubid3And4Script_befored2
+	.dw mainScripts.villagerGalSubid3And4Script_afterd2
+	.dw mainScripts.villagerGalSubid3And4Script_afterd4
+	.dw mainScripts.villagerGalSubid3And4Script_afterNayruSaved
+	.dw mainScripts.villagerGalSubid3And4Script_afterd7
+	.dw mainScripts.villagerGalSubid3And4Script_afterGotMakuSeed
+	.dw mainScripts.villagerGalSubid3And4Script_twinrovaKidnappedZelda
+	.dw mainScripts.villagerGalSubid3And4Script_postGame
 
 @subid5ScriptTable:
-	.dw villagerGalSubid05Script_befored2
-	.dw villagerGalSubid05Script_afterd2
-	.dw villagerGalSubid05Script_afterd4
-	.dw villagerGalSubid05Script_afterNayruSaved
-	.dw villagerGalSubid05Script_afterd7
-	.dw villagerGalSubid05Script_afterd7
-	.dw villagerGalSubid05Script_twinrovaKidnappedZelda
-	.dw villagerGalSubid05Script_twinrovaKidnappedZelda ; Not used
+	.dw mainScripts.villagerGalSubid05Script_befored2
+	.dw mainScripts.villagerGalSubid05Script_afterd2
+	.dw mainScripts.villagerGalSubid05Script_afterd4
+	.dw mainScripts.villagerGalSubid05Script_afterNayruSaved
+	.dw mainScripts.villagerGalSubid05Script_afterd7
+	.dw mainScripts.villagerGalSubid05Script_afterd7
+	.dw mainScripts.villagerGalSubid05Script_twinrovaKidnappedZelda
+	.dw mainScripts.villagerGalSubid05Script_twinrovaKidnappedZelda ; Not used
 
 
 ; ==============================================================================
@@ -8841,7 +8843,7 @@ interactionCode3c:
 	jp _boyLoadScript
 
 @initSubid02:
-	callab interactionBank09.getGameProgress_1
+	callab agesInteractionsBank09.getGameProgress_1
 	ld a,b
 	or a
 	jr nz,++
@@ -9628,31 +9630,31 @@ _boyLoadScript:
 	jp interactionSetScript
 
 @scriptTable:
-	.dw boySubid00Script
-	.dw boySubid01Script
-	.dw boyStubScript
-	.dw boySubid03Script
-	.dw boySubid04Script
-	.dw boySubid05Script
-	.dw boySubid06Script
-	.dw boySubid07Script
-	.dw boyStubScript
-	.dw boyStubScript
-	.dw boySubid0aScript
-	.dw boySubid0bScript
-	.dw boySubid0cScript
-	.dw boySubid0dScript
-	.dw boySubid0eScript
-	.dw boySubid0fScript
-	.dw boySubid00Script
+	.dw mainScripts.boySubid00Script
+	.dw mainScripts.boySubid01Script
+	.dw mainScripts.boyStubScript
+	.dw mainScripts.boySubid03Script
+	.dw mainScripts.boySubid04Script
+	.dw mainScripts.boySubid05Script
+	.dw mainScripts.boySubid06Script
+	.dw mainScripts.boySubid07Script
+	.dw mainScripts.boyStubScript
+	.dw mainScripts.boyStubScript
+	.dw mainScripts.boySubid0aScript
+	.dw mainScripts.boySubid0bScript
+	.dw mainScripts.boySubid0cScript
+	.dw mainScripts.boySubid0dScript
+	.dw mainScripts.boySubid0eScript
+	.dw mainScripts.boySubid0fScript
+	.dw mainScripts.boySubid00Script
 
 _boySubid02ScriptTable:
-	.dw boySubid02Script_afterGotSeedSatchel
-	.dw boySubid02Script_afterd3
-	.dw boySubid02Script_afterNayruSaved
-	.dw boySubid02Script_afterd7
-	.dw boySubid02Script_afterGotMakuSeed
-	.dw boySubid02Script_postGame
+	.dw mainScripts.boySubid02Script_afterGotSeedSatchel
+	.dw mainScripts.boySubid02Script_afterd3
+	.dw mainScripts.boySubid02Script_afterNayruSaved
+	.dw mainScripts.boySubid02Script_afterd7
+	.dw mainScripts.boySubid02Script_afterGotMakuSeed
+	.dw mainScripts.boySubid02Script_postGame
 
 
 ; ==============================================================================
@@ -9718,7 +9720,7 @@ interactionCode3d:
 
 @initSubid2:
 	; This NPC only exists between saving Nayru and beating d7?
-	callab interactionBank09.getGameProgress_1
+	callab agesInteractionsBank09.getGameProgress_1
 	ld e,Interaction.subid
 	ld a,(de)
 	cp b
@@ -9742,7 +9744,7 @@ interactionCode3d:
 ++
 	ld e,Interaction.var3f
 	ld (de),a
-	ld hl,linkedGameNpcScript
+	ld hl,mainScripts.linkedGameNpcScript
 	call interactionSetScript
 	call interactionRunScript
 	jr @state1
@@ -9869,7 +9871,9 @@ interactionCode3d:
 
 
 _oldLadyScriptTable:
-	.dw oldLadySubid0Script
-	.dw oldLadySubid1Script
-	.dw oldLadySubid2Script
-	.dw oldLadySubid3Script
+	.dw mainScripts.oldLadySubid0Script
+	.dw mainScripts.oldLadySubid1Script
+	.dw mainScripts.oldLadySubid2Script
+	.dw mainScripts.oldLadySubid3Script
+
+.ends

@@ -1,3 +1,12 @@
+; This is somewhat similar to the ages "scriptHelper" file, which contain extra scripts. HOWEVER,
+; there is an important difference: because this is not located in bank 15, the "asm15" opcode does
+; not work here.
+;
+; For consistency's sake, any code that works with the "asm15" opcode is put into the "scriptHelp"
+; namespace. Since it doesn't work here, this is put into the "scripts2" namespace instead.
+;
+; In ages, essentially, this file and the "scriptHelper" file are the same file.
+
 ; ==============================================================================
 ; INTERACID_DUNGEON_SCRIPT
 ; ==============================================================================
@@ -27,7 +36,7 @@ explorersCrypt_firesGoingOut_1:
 
 	setcounter1 $30
 	playsound SND_TELEPORT
-	asm15 scriptHlp.warpToD7Entrance
+	asm15 scriptHelp.warpToD7Entrance
 	scriptend
 
 
@@ -57,7 +66,7 @@ explorersCrypt_firesGoingOut_2:
 
 	setcounter1 $30
 	playsound SND_TELEPORT
-	asm15 scriptHlp.warpToD7Entrance
+	asm15 scriptHelp.warpToD7Entrance
 	scriptend
 
 
@@ -155,29 +164,29 @@ seasonsSpirits_createBridgeOnOrbHit:
 subrosianScript_steaLinksFeather:
 	stopifroomflag40set
 	writeobjectbyte Interaction.oamFlags $01
-	callscript subrosianScript_runLeft
+	callscript mainScripts.subrosianScript_runLeft
 	checkcfc0bit 0
-	asm15 scriptHlp.subrosian_setYAboveLink
+	asm15 scriptHelp.subrosian_setYAboveLink
 	applyspeed $68
 	checkcfc0bit 2
 	asm15 objectSetVisiblec1
 	setspeed $28
 	setangle ANGLE_RIGHT
-	asm15 scriptHlp.subrosianFunc_58dc
+	asm15 scriptHelp.subrosianFunc_58dc
 	checkcfc0bit 3
 	setanimation $01
 	setstate $03
 	checkcollidedwithlink_onground
 	setstate $02
-	asm15 scriptHlp.subrosian_giveFoolsOre
+	asm15 scriptHelp.subrosian_giveFoolsOre
 	delay 6
 	xorcfc0bit 4
 	setanimation $03
 	setspeed $50
 	setangle ANGLE_LEFT
-	asm15 scriptHlp.subrosianFunc_5968
+	asm15 scriptHelp.subrosianFunc_5968
 	delay 1
-	asm15 scriptHlp.subrosian_knockLinkOut
+	asm15 scriptHelp.subrosian_knockLinkOut
 	showtext TX_0036
 	enableinput
 	resetmusic
@@ -185,9 +194,9 @@ subrosianScript_steaLinksFeather:
 
 
 subrosianScript_inHouseRunFromLink:
-	jumpifglobalflagset GLOBALFLAG_SAW_STRANGE_BROTHERS_IN_HOUSE stubScript
+	jumpifglobalflagset GLOBALFLAG_SAW_STRANGE_BROTHERS_IN_HOUSE mainScripts.stubScript
 	writeobjectbyte Interaction.oamFlags $02
-	callscript subrosianScript_runLeft
+	callscript mainScripts.subrosianScript_runLeft
 	setanimation $02
 	setdisabledobjectsto11
 	delay 8
@@ -204,7 +213,7 @@ subrosianScript_inHouseRunFromLink:
 ; INTERACID_PIRATIAN_CAPTAIN
 ; ==============================================================================
 linkedPirateCaptainScript_sayingByeToAmbi:
-	asm15 scriptHlp.forceLinkState8AndSetDirection DIR_DOWN
+	asm15 scriptHelp.forceLinkState8AndSetDirection DIR_DOWN
 	delay 6
 	showtextlowindex <TX_3a20
 	delay 6
@@ -226,7 +235,7 @@ linkedPirateCaptainScript_sayingByeToAmbi:
 	delay 6
 	showtextlowindex <TX_3a24
 	delay 6
-	scriptjump piratianCaptainScript_inHouse@unlinkedCaptain
+	scriptjump mainScripts.piratianCaptainScript_inHouse@unlinkedCaptain
 
 showSamasaGateCombination:
 	checkabutton
@@ -241,26 +250,26 @@ showSamasaGateCombination:
 	setangle ANGLE_RIGHT
 	applyspeed $09
 	delay 1
-	callscript pirationScript_closeOpenCupboard
-	callscript pirationScript_closeOpenCupboard
+	callscript mainScripts.pirationScript_closeOpenCupboard
+	callscript mainScripts.pirationScript_closeOpenCupboard
 	setanimation $00
 	setangle ANGLE_LEFT
 	applyspeed $09
 	delay 1
-	callscript pirationScript_closeOpenCupboard
+	callscript mainScripts.pirationScript_closeOpenCupboard
 	setanimation $00
 	setangle ANGLE_LEFT
 	applyspeed $09
 	delay 1
-	callscript pirationScript_closeOpenCupboard
-	callscript pirationScript_closeOpenCupboard
+	callscript mainScripts.pirationScript_closeOpenCupboard
+	callscript mainScripts.pirationScript_closeOpenCupboard
 	setanimation $00
 	setangle ANGLE_RIGHT
 	applyspeed $19
 	delay 1
-	callscript pirationScript_closeOpenCupboard
-	callscript pirationScript_closeOpenCupboard
-	callscript pirationScript_closeOpenCupboard
+	callscript mainScripts.pirationScript_closeOpenCupboard
+	callscript mainScripts.pirationScript_closeOpenCupboard
+	callscript mainScripts.pirationScript_closeOpenCupboard
 	setanimation $00
 	setangle ANGLE_LEFT
 	applyspeed $11
@@ -271,16 +280,16 @@ showSamasaGateCombination:
 	showtextlowindex <TX_3a0d
 	delay 6
 	enableallobjects
-	scriptjump piratian2FScript_textBasedOnD6Beaten@showGateCombo
+	scriptjump mainScripts.piratian2FScript_textBasedOnD6Beaten@showGateCombo
 
 piratianCaptain_preCutsceneScene:
 	disableinput
-	asm15 scriptHlp.pirateCaptain_freezeLinkForCutscene
+	asm15 scriptHelp.pirateCaptain_freezeLinkForCutscene
 	writememory wcc90 $01
 	delay 8
-	asm15 scriptHlp.piratesDeparting_spawnPirateFromShip
+	asm15 scriptHelp.piratesDeparting_spawnPirateFromShip
 	checkcfc0bit 0
-	callscript piratianScript_jump
+	callscript mainScripts.piratianScript_jump
 	delay 6
 	showtextlowindex <TX_3a25
 	delay 6
@@ -292,15 +301,15 @@ piratianCaptain_preCutsceneScene:
 	delay 1
 	setspeed SPEED_100
 	moveup $1f
-	callscript piratianScript_moveUpPauseThenUp
-	asm15 scriptHlp.piratianCaptain_setInvisible
+	callscript mainScripts.piratianScript_moveUpPauseThenUp
+	asm15 scriptHelp.piratianCaptain_setInvisible
 	checkcfc0bit 2
-	asm15 scriptHlp.piratianCaptain_simulatedInput
+	asm15 scriptHelp.piratianCaptain_simulatedInput
 	enableallobjects
 	checkflagset $07 $cbc3
 	setdisabledobjectsto91
 	delay 5
-	asm15 scriptHlp.piratianCaptain_setLinkInvisible
+	asm15 scriptHelp.piratianCaptain_setLinkInvisible
 	writememory $cbc3 $00
 	delay 8
 	setdisabledobjectsto11
@@ -355,7 +364,7 @@ script_14_49b6:
 	delay 4
 	setanimation $02
 	checkcfc0bit 5
-	asm15 scriptHlp.zelda_createExclamationMark
+	asm15 scriptHelp.zelda_createExclamationMark
 	playsound SND_CLINK
 	scriptend
 
@@ -388,7 +397,7 @@ talon_giveMushroomAfterWaking:
 	writememory $cfdf $01
 	giveitem TREASURE_TRADEITEM $08
 	orroomflag $40
-	asm15 scriptHlp.resetBit5ofRoomFlags
+	asm15 scriptHelp.resetBit5ofRoomFlags
 	delay 6
 	writeobjectbyte Interaction.var3a $01
 	setspeed SPEED_200
@@ -491,20 +500,20 @@ dinImprisoned_OnoxSaysComeIfYouDare:
 ; ==============================================================================
 biggoronScript_giveBiggoronSword:
 	setglobalflag GLOBALFLAG_BEGAN_BIGGORON_SECRET
-	asm15 scriptHlp.biggoron_loadAnimationData $0d
+	asm15 scriptHelp.biggoron_loadAnimationData $0d
 	showtextlowindex <TX_0b55
-	asm15 scriptHlp.biggoron_loadAnimationData $0b
+	asm15 scriptHelp.biggoron_loadAnimationData $0b
 	asm15 fadeoutToWhite
 	checkpalettefadedone
 	delay 8
 	asm15 fadeinFromWhite
 	checkpalettefadedone
-	asm15 scriptHlp.biggoron_loadAnimationData $0d
+	asm15 scriptHelp.biggoron_loadAnimationData $0d
 	showtextlowindex <TX_0b57
-	asm15 scriptHlp.biggoron_loadAnimationData $0b
-	asm15 scriptHlp.biggoron_createSparkleAtLink
+	asm15 scriptHelp.biggoron_loadAnimationData $0b
+	asm15 scriptHelp.biggoron_createSparkleAtLink
 	delay 6
-	asm15 scriptHlp.createSwirlAtLink
+	asm15 scriptHelp.createSwirlAtLink
 	delay 3
 	playsound $b4
 	asm15 fadeoutToWhite
@@ -521,7 +530,7 @@ biggoronScript_giveBiggoronSword:
 	giveitem TREASURE_BIGGORON_SWORD $00
 	delay 8
 	setglobalflag GLOBALFLAG_DONE_BIGGORON_SECRET
-	scriptjump biggoronScript@generateSecret
+	scriptjump mainScripts.biggoronScript@generateSecret
 
 
 ; ==============================================================================
@@ -537,13 +546,13 @@ script_14_4aea:
 	moveright $11
 	moveup $21
 	delay 7
-	asm15 scriptHlp.headSmelter_throwRedOreIn
+	asm15 scriptHelp.headSmelter_throwRedOreIn
 	delay 7
-	asm15 scriptHlp.headSmelter_throwBlueOreIn
+	asm15 scriptHelp.headSmelter_throwBlueOreIn
 	delay 8
 	setangleandanimation $10
-	asm15 scriptHlp.headSmelter_setTiles
-	asm15 scriptHlp.headSmelter_loadDanceMovements
+	asm15 scriptHelp.headSmelter_setTiles
+	asm15 scriptHelp.headSmelter_loadDanceMovements
 	movedown $11
 	delay 6
 	writememory $d008 $00
@@ -552,16 +561,16 @@ script_14_4aea:
 	setmusic $31
 	setcounter1 $7d
 	setstate $03
-	callscript script62b1
-	callscript script62b1
+	callscript mainScripts.script62b1
+	callscript mainScripts.script62b1
 	setcounter1 $c6
-	callscript script62b1
-	callscript script62b1
-	asm15 scriptHlp.headSmelter_smeltingDone
+	callscript mainScripts.script62b1
+	callscript mainScripts.script62b1
+	asm15 scriptHelp.headSmelter_smeltingDone
 	playsound $79
 	delay 6
-	asm15 scriptHlp.headSmelter_resetTiles
-	asm15 scriptHlp.headSmelter_giveHardOre
+	asm15 scriptHelp.headSmelter_resetTiles
+	asm15 scriptHelp.headSmelter_giveHardOre
 	setmusic $f0
 	delay 8
 	playsound $4d
@@ -578,7 +587,7 @@ script_14_4aea:
 
 headSmelterScript_blowUpRocks:
 	showtext TX_2708
-	asm15 scriptHlp.headSmelter_loseBombFlower
+	asm15 scriptHelp.headSmelter_loseBombFlower
 	setanimation $00
 	delay 8
 	spawninteraction INTERACID_BOMB_FLOWER $01 $38 $38
@@ -591,7 +600,7 @@ headSmelterScript_blowUpRocks:
 	delay 4
 	setangleandanimation $18
 	checkcfc0bit 0
-	asm15 scriptHlp.headSmelter_loadHideFromBombScript
+	asm15 scriptHelp.headSmelter_loadHideFromBombScript
 	writememory $d008 $00
 	moveleft $19
 	moveup $19
@@ -608,7 +617,7 @@ headSmelterScript_blowUpRocks:
 	applyspeed $31
 	writememory $d008 $02
 	enableinput
-	asm15 scriptHlp.headSmelter_enableScreenTransitions
+	asm15 scriptHelp.headSmelter_enableScreenTransitions
 	scriptend
 
 
@@ -658,7 +667,7 @@ lavaSoupSubrosianScript_fillPot:
 	orroomflag $40
 	writeobjectbyte Interaction.var3f $00
 	enableinput
-	scriptjump lavaSoupSubrosianScript@filledPot
+	scriptjump mainScripts.lavaSoupSubrosianScript@filledPot
 
 
 ; ==============================================================================
@@ -675,7 +684,7 @@ danceLeaderScript_moveIntoPosition:
 	setangleandanimation $10
 	delay 6
 	setspeed $28
-	asm15 scriptHlp.seasonsFunc_15_5d45
+	asm15 scriptHelp.seasonsFunc_15_5d45
 	applyspeed $0a
 	setanimation $04
 	delay 6
@@ -692,7 +701,7 @@ danceLeaderScript_danceTutorial:
 	showtext TX_0105
 	setanimation $05
 	playsound $ca
-	asm15 scriptHlp.seasonsFunc_15_5d20
+	asm15 scriptHelp.seasonsFunc_15_5d20
 	checkmemoryeq $cfd1 $00
 	setcounter1 $32
 	setanimation $06
@@ -701,7 +710,7 @@ danceLeaderScript_danceTutorial:
 	showtext TX_0106
 	setanimation $06
 	playsound $cb
-	asm15 scriptHlp.seasonsFunc_15_5d29
+	asm15 scriptHelp.seasonsFunc_15_5d29
 	checkmemoryeq $cfd1 $00
 	setcounter1 $32
 	setanimation $04
@@ -710,16 +719,16 @@ danceLeaderScript_danceTutorial:
 	showtext TX_0107
 	setanimation $04
 	playsound $cd
-	asm15 scriptHlp.seasonsFunc_15_5d32
+	asm15 scriptHelp.seasonsFunc_15_5d32
 	checkmemoryeq $cfd1 $00
 	setcounter1 $32
 	writememory $cfdf $ff
 	setanimation $01
 	showtext TX_0108
-	jumpiftextoptioneq $01 danceLeaderScript_promptForTutorial@needTutorial
+	jumpiftextoptioneq $01 mainScripts.danceLeaderScript_promptForTutorial@needTutorial
 	showtext TX_0109
 	checkmemoryeq $cba0 $00
-	scriptjump danceLeaderScript_promptForTutorial@danceLeaderScript_readyToDance
+	scriptjump mainScripts.danceLeaderScript_promptForTutorial@danceLeaderScript_readyToDance
 
 
 ; ==============================================================================
@@ -938,7 +947,7 @@ rosaHidingScript_firstEncounterIntro:
 	setsubstate $02
 	setanimation $02
 	showtext TX_2600
-	scriptjump rosaHidingScript_afterInitialScreenText
+	scriptjump mainScripts.rosaHidingScript_afterInitialScreenText
 
 rosaHidingScript_secondEncounterOnwardsIntro:
 	setspeed $50
@@ -946,17 +955,17 @@ rosaHidingScript_secondEncounterOnwardsIntro:
 	setsubstate $02
 	delay 8
 	showtext TX_2602
-	scriptjump rosaHidingScript_afterInitialScreenText
+	scriptjump mainScripts.rosaHidingScript_afterInitialScreenText
 
 rosaHidingScript_2ndScreenPattern1:
 	moveup $20
 	moveright $10
-	callscript rosaHidingScript_lookLeftUpDown
+	callscript mainScripts.rosaHidingScript_lookLeftUpDown
 	movedown $30
 	moveleft $40
-	callscript rosaHidingScript_lookRightDownUp
+	callscript mainScripts.rosaHidingScript_lookRightDownUp
 	moveup $30
-	callscript rosaHidingScript_lookDownLeftRight
+	callscript mainScripts.rosaHidingScript_lookDownLeftRight
 	moveup $44
 	xorcfc0bit 0
 	scriptend
@@ -964,15 +973,15 @@ rosaHidingScript_2ndScreenPattern1:
 rosaHidingScript_2ndScreenPattern2:
 	moveup $20
 	moveleft $30
-	callscript rosaHidingScript_lookRightDownUp
+	callscript mainScripts.rosaHidingScript_lookRightDownUp
 	movedown $30
-	callscript rosaHidingScript_lookUpRightLeft
+	callscript mainScripts.rosaHidingScript_lookUpRightLeft
 	moveright $40
 	moveup $30
-	callscript rosaHidingScript_lookDownLeftRight
+	callscript mainScripts.rosaHidingScript_lookDownLeftRight
 	moveup $30
 	moveleft $30
-	callscript rosaHidingScript_lookRightDownUp
+	callscript mainScripts.rosaHidingScript_lookRightDownUp
 	moveup $24
 	xorcfc0bit 0
 	scriptend
@@ -980,20 +989,20 @@ rosaHidingScript_2ndScreenPattern2:
 rosaHidingScript_3rdScreenPattern1:
 	moveup $10
 	moveright $30
-	callscript rosaHidingScript_lookLeftUpDown
+	callscript mainScripts.rosaHidingScript_lookLeftUpDown
 	movedown $30
 	moveleft $30
-	callscript rosaHidingScript_lookRightDownUp
+	callscript mainScripts.rosaHidingScript_lookRightDownUp
 	moveleft $30
 	moveup $50
-	callscript rosaHidingScript_lookDownLeftRight
+	callscript mainScripts.rosaHidingScript_lookDownLeftRight
 	moveright $30
-	callscript rosaHidingScript_lookLeftUpDown
+	callscript mainScripts.rosaHidingScript_lookLeftUpDown
 	movedown $10
 	moveright $40
-	callscript rosaHidingScript_lookLeftUpDown
+	callscript mainScripts.rosaHidingScript_lookLeftUpDown
 	moveup $30
-	callscript rosaHidingScript_lookDownLeftRight
+	callscript mainScripts.rosaHidingScript_lookDownLeftRight
 	moveup $14
 	xorcfc0bit 0
 	scriptend
@@ -1001,18 +1010,18 @@ rosaHidingScript_3rdScreenPattern1:
 rosaHidingScript_3rdScreenPattern2:
 	moveup $30
 	moveleft $30
-	callscript rosaHidingScript_lookRightDownUp
+	callscript mainScripts.rosaHidingScript_lookRightDownUp
 	movedown $50
 	moveright $30
-	callscript rosaHidingScript_lookLeftUpDown
+	callscript mainScripts.rosaHidingScript_lookLeftUpDown
 	moveup $30
 	moveright $30
-	callscript rosaHidingScript_lookLeftUpDown
+	callscript mainScripts.rosaHidingScript_lookLeftUpDown
 	movedown $30
 	moveleft $30
-	callscript rosaHidingScript_lookRightDownUp
+	callscript mainScripts.rosaHidingScript_lookRightDownUp
 	moveup $50
-	callscript rosaHidingScript_lookDownLeftRight
+	callscript mainScripts.rosaHidingScript_lookDownLeftRight
 	moveup $34
 	xorcfc0bit 0
 	scriptend
@@ -1020,35 +1029,35 @@ rosaHidingScript_3rdScreenPattern2:
 rosaHidingScript_4thScreenPattern1:
 	moveup $20
 	moveleft $30
-	callscript rosaHidingScript_lookRightDownUp
+	callscript mainScripts.rosaHidingScript_lookRightDownUp
 	movedown $30
 	moveright $40
-	callscript rosaHidingScript_lookLeftUpDown
+	callscript mainScripts.rosaHidingScript_lookLeftUpDown
 	moveup $30
-	callscript rosaHidingScript_lookDownLeftRight
+	callscript mainScripts.rosaHidingScript_lookDownLeftRight
 	moveleft $40
-	callscript rosaHidingScript_lookRightDownUp
+	callscript mainScripts.rosaHidingScript_lookRightDownUp
 	moveleft $34
-	scriptjump rosaHidingScript_pokeBackOut
+	scriptjump mainScripts.rosaHidingScript_pokeBackOut
 
 rosaHidingScript_4thScreenPattern2:
 	moveup $20
 	moveright $10
-	callscript rosaHidingScript_lookLeftUpDown
+	callscript mainScripts.rosaHidingScript_lookLeftUpDown
 	movedown $30
 	moveleft $40
-	callscript rosaHidingScript_lookRightDownUp
+	callscript mainScripts.rosaHidingScript_lookRightDownUp
 	moveup $40
 	movedown $10
-	callscript rosaHidingScript_lookRightDownUp
+	callscript mainScripts.rosaHidingScript_lookRightDownUp
 	moveleft $34
-	scriptjump rosaHidingScript_pokeBackOut
+	scriptjump mainScripts.rosaHidingScript_pokeBackOut
 
 rosaHidingScript_pokeBackOut_body:
 	delay 6
 	moveright $14
 	delay 6
-	callscript rosaHidingScript_lookDownLeftRight
+	callscript mainScripts.rosaHidingScript_lookDownLeftRight
 	moveleft $14
 	xorcfc0bit 0
 	scriptend
@@ -1057,7 +1066,7 @@ rosaHidingScript_portalScreen_body:
 	disableinput
 	resetmusic
 	playsound $4d
-	asm15 scriptHlp.rosaHiding_hidingFinishedSetInitialRoomsFlags
+	asm15 scriptHelp.rosaHiding_hidingFinishedSetInitialRoomsFlags
 	setsubstate $03
 	setspeed $28
 	setangleandanimation $18
@@ -1087,47 +1096,47 @@ rosaHidingScript_caught_body:
 ; ==============================================================================
 strangeBrother2Script_1stScreenPattern1:
 	movedown $40
-	callscript _strangeBrotherScript_lookUpDownRightLeft
+	callscript mainScripts.strangeBrotherScript_lookUpDownRightLeft
 	moveright $30
-	callscript _strangeBrotherScript_lookLeftRightUpDown
+	callscript mainScripts.strangeBrotherScript_lookLeftRightUpDown
 	movedown $18
-	callscript _strangeBrotherScript_lookUpDownRightLeft
+	callscript mainScripts.strangeBrotherScript_lookUpDownRightLeft
 	movedown $20
 	xorcfc0bit 1
 	scriptend
 
 strangeBrother2Script_1stScreenPattern2:
 	moveup $20
-	callscript _strangeBrotherScript_lookDownUpRightLeft
+	callscript mainScripts.strangeBrotherScript_lookDownUpRightLeft
 	moveright $30
 	movedown $10
 	moveright $30
-	callscript _strangeBrotherScript_lookLeftRightUpDown
+	callscript mainScripts.strangeBrotherScript_lookLeftRightUpDown
 	moveleft $30
 	movedown $20
 	moveleft $30
-	callscript _strangeBrotherScript_lookRightLeftUpDown
+	callscript mainScripts.strangeBrotherScript_lookRightLeftUpDown
 	movedown $40
 	xorcfc0bit 1
 	scriptend
 
 strangeBrother2Script_2ndScreenPattern1:
 	setcoords $28 $88
-	asm15 scriptHlp.subrosianHiding_createDetectionHelper
+	asm15 scriptHelp.subrosianHiding_createDetectionHelper
 	setangleandanimation $18
 	delay 8
 	moveleft $10
 	movedown $20
-	callscript _strangeBrotherScript_lookUpDownRightLeft
+	callscript mainScripts.strangeBrotherScript_lookUpDownRightLeft
 	movedown $10
 	moveleft $30
 	movedown $20
-	callscript _strangeBrotherScript_lookUpDownRightLeft
+	callscript mainScripts.strangeBrotherScript_lookUpDownRightLeft
 	moveleft $30
 	moveup $30
 	moveright $20
 	moveup $30
-	callscript _strangeBrotherScript_lookDownUpRightLeft
+	callscript mainScripts.strangeBrotherScript_lookDownUpRightLeft
 	moveright $10
 	movedown $80
 	xorcfc0bit 1
@@ -1135,15 +1144,15 @@ strangeBrother2Script_2ndScreenPattern1:
 
 strangeBrother2Script_2ndScreenPattern2:
 	setcoords $78 $38
-	asm15 scriptHlp.subrosianHiding_createDetectionHelper
+	asm15 scriptHelp.subrosianHiding_createDetectionHelper
 	setangleandanimation $08
 	delay 8
 	moveright $30
 	moveup $20
-	callscript _strangeBrotherScript_lookDownUpRightLeft
+	callscript mainScripts.strangeBrotherScript_lookDownUpRightLeft
 	moveleft $20
 	moveup $30
-	callscript _strangeBrotherScript_lookDownUpRightLeft
+	callscript mainScripts.strangeBrotherScript_lookDownUpRightLeft
 	delay 9
 	moveright $30
 	movedown $30
@@ -1154,7 +1163,7 @@ strangeBrother2Script_2ndScreenPattern2:
 
 strangeBrother2Script_3rdScreenPattern1:
 	setcoords $38 $88
-	asm15 scriptHlp.subrosianHiding_createDetectionHelper
+	asm15 scriptHelp.subrosianHiding_createDetectionHelper
 	setangleandanimation $18
 	delay 8
 	moveleft $50
@@ -1165,21 +1174,21 @@ strangeBrother2Script_3rdScreenPattern1:
 	moveleft $10
 	moveup $10
 	moveleft $20
-	callscript _strangeBrotherScript_lookRightLeftUpDown
+	callscript mainScripts.strangeBrotherScript_lookRightLeftUpDown
 	moveleft $20
 	xorcfc0bit 1
 	scriptend
 
 strangeBrother2Script_3rdScreenPattern2:
 	setcoords $38 $28
-	asm15 scriptHlp.subrosianHiding_createDetectionHelper
+	asm15 scriptHelp.subrosianHiding_createDetectionHelper
 	setangleandanimation $18
 	delay 8
 	moveleft $10
-	callscript _strangeBrotherScript_lookRightLeftUpDown
+	callscript mainScripts.strangeBrotherScript_lookRightLeftUpDown
 	moveup $20
 	moveleft $10
-	callscript _strangeBrotherScript_lookRightLeftUpDown
+	callscript mainScripts.strangeBrotherScript_lookRightLeftUpDown
 	moveright $20
 	moveup $10
 	moveright $30
@@ -1187,35 +1196,35 @@ strangeBrother2Script_3rdScreenPattern2:
 	moveleft $30
 	moveup $10
 	moveleft $20
-	callscript _strangeBrotherScript_lookRightLeftUpDown
+	callscript mainScripts.strangeBrotherScript_lookRightLeftUpDown
 	moveleft $20
 	xorcfc0bit 1
 	scriptend
 
 strangeBrother2Script_4thScreenPattern1:
 	setcoords $38 $48
-	asm15 scriptHlp.subrosianHiding_createDetectionHelper
+	asm15 scriptHelp.subrosianHiding_createDetectionHelper
 	setangleandanimation $00
 	delay 8
 	moveup $20
-	callscript _strangeBrotherScript_lookDownUpRightLeft
+	callscript mainScripts.strangeBrotherScript_lookDownUpRightLeft
 	delay 11
 	moveright $40
-	callscript _strangeBrotherScript_lookLeftRightUpDown
+	callscript mainScripts.strangeBrotherScript_lookLeftRightUpDown
 	delay 8
 	movedown $20
 	moveleft $20
 	movedown $10
-	callscript _strangeBrotherScript_lookUpDownRightLeft
+	callscript mainScripts.strangeBrotherScript_lookUpDownRightLeft
 	moveleft $50
-	callscript _strangeBrotherScript_lookRightLeftUpDown
+	callscript mainScripts.strangeBrotherScript_lookRightLeftUpDown
 	moveup $60
 	xorcfc0bit 1
 	scriptend
 
 strangeBrother2Script_4thScreenPattern2:
 	setcoords $08 $18
-	asm15 scriptHlp.subrosianHiding_createDetectionHelper
+	asm15 scriptHelp.subrosianHiding_createDetectionHelper
 	setangleandanimation $10
 	delay 8
 	movedown $30
@@ -1228,48 +1237,48 @@ strangeBrother2Script_4thScreenPattern2:
 
 strangeBrother2Script_5thScreenPattern1:
 	setcoords $08 $38
-	asm15 scriptHlp.subrosianHiding_createDetectionHelper
+	asm15 scriptHelp.subrosianHiding_createDetectionHelper
 	setangleandanimation $08
 	delay 8
 	moveright $40
 	movedown $60
-	callscript _strangeBrotherScript_lookUpDownRightLeft
+	callscript mainScripts.strangeBrotherScript_lookUpDownRightLeft
 	moveleft $60
-	callscript _strangeBrotherScript_lookRightLeftUpDown
+	callscript mainScripts.strangeBrotherScript_lookRightLeftUpDown
 	moveup $60
-	callscript _strangeBrotherScript_lookDownUpRightLeft
+	callscript mainScripts.strangeBrotherScript_lookDownUpRightLeft
 	moveup $20
 	xorcfc0bit 1
 	scriptend
 
 strangeBrother2Script_5thScreenPattern2:
 	setcoords $08 $88
-	asm15 scriptHlp.subrosianHiding_createDetectionHelper
+	asm15 scriptHelp.subrosianHiding_createDetectionHelper
 	setangleandanimation $18
 	delay 8
 	movedown $60
-	callscript _strangeBrotherScript_lookUpDownRightLeft
+	callscript mainScripts.strangeBrotherScript_lookUpDownRightLeft
 	moveleft $70
-	callscript _strangeBrotherScript_lookRightLeftUpDown
+	callscript mainScripts.strangeBrotherScript_lookRightLeftUpDown
 	moveup $60
-	callscript _strangeBrotherScript_lookDownUpRightLeft
+	callscript mainScripts.strangeBrotherScript_lookDownUpRightLeft
 	moveup $20
 	xorcfc0bit 1
 	scriptend
 
 strangeBrother2Script_6thScreenPattern1:
 	setcoords $18 $88
-	asm15 scriptHlp.subrosianHiding_createDetectionHelper
+	asm15 scriptHelp.subrosianHiding_createDetectionHelper
 	setangleandanimation $10
 	delay 8
 	movedown $60
-	callscript _strangeBrotherScript_lookUpDownRightLeft
+	callscript mainScripts.strangeBrotherScript_lookUpDownRightLeft
 	moveleft $30
-	callscript _strangeBrotherScript_lookRightLeftUpDown
+	callscript mainScripts.strangeBrotherScript_lookRightLeftUpDown
 	moveup $30
 	moveright $10
 	moveup $30
-	callscript _strangeBrotherScript_lookDownUpRightLeft
+	callscript mainScripts.strangeBrotherScript_lookDownUpRightLeft
 	moveright $20
 	movedown $80
 	xorcfc0bit 1
@@ -1277,14 +1286,14 @@ strangeBrother2Script_6thScreenPattern1:
 
 strangeBrother2Script_6thScreenPattern2:
 	setcoords $18 $88
-	asm15 scriptHlp.subrosianHiding_createDetectionHelper
+	asm15 scriptHelp.subrosianHiding_createDetectionHelper
 	setangleandanimation $10
 	delay 8
 	movedown $30
 	moveleft $30
-	callscript _strangeBrotherScript_lookRightLeftUpDown
+	callscript mainScripts.strangeBrotherScript_lookRightLeftUpDown
 	movedown $30
-	callscript _strangeBrotherScript_lookUpDownRightLeft
+	callscript mainScripts.strangeBrotherScript_lookUpDownRightLeft
 	moveright $30
 	moveup $30
 	moveleft $30
@@ -1311,36 +1320,36 @@ jewelHelperScript_jewelMoldorm_body:
 	playsound $4d
 	delay 8
 	playsound $73
-	asm15 scriptHlp.jewelHelper_createPuff $04
+	asm15 scriptHelp.jewelHelper_createPuff $04
 	delay 3
 	playsound $73
-	asm15 scriptHlp.jewelHelper_createPuff $05
-	asm15 scriptHlp.jewelHelper_createPuff $03
+	asm15 scriptHelp.jewelHelper_createPuff $05
+	asm15 scriptHelp.jewelHelper_createPuff $03
 	delay 3
 	playsound $73
-	asm15 scriptHlp.jewelHelper_createPuff $01
-	asm15 scriptHlp.jewelHelper_createPuff $07
+	asm15 scriptHelp.jewelHelper_createPuff $01
+	asm15 scriptHelp.jewelHelper_createPuff $07
 	delay 3
 	playsound $73
-	asm15 scriptHlp.jewelHelper_createPuff $00
-	asm15 scriptHlp.jewelHelper_createPuff $08
+	asm15 scriptHelp.jewelHelper_createPuff $00
+	asm15 scriptHelp.jewelHelper_createPuff $08
 	delay 3
 	playsound $73
-	asm15 scriptHlp.jewelHelper_createPuff $02
-	asm15 scriptHlp.jewelHelper_createPuff $06
+	asm15 scriptHelp.jewelHelper_createPuff $02
+	asm15 scriptHelp.jewelHelper_createPuff $06
 	delay 3
 	playsound $73
-	asm15 scriptHlp.jewelHelper_createPuff $01
-	asm15 scriptHlp.jewelHelper_createPuff $05
-	asm15 scriptHlp.jewelHelper_createPuff $03
-	asm15 scriptHlp.jewelHelper_createPuff $07
+	asm15 scriptHelp.jewelHelper_createPuff $01
+	asm15 scriptHelp.jewelHelper_createPuff $05
+	asm15 scriptHelp.jewelHelper_createPuff $03
+	asm15 scriptHelp.jewelHelper_createPuff $07
 	delay 3
 	playsound $73
-	asm15 scriptHlp.jewelHelper_createPuff $04
-	asm15 scriptHlp.jewelHelper_createPuff $00
-	asm15 scriptHlp.jewelHelper_createPuff $02
-	asm15 scriptHlp.jewelHelper_createPuff $06
-	asm15 scriptHlp.jewelHelper_createPuff $08
+	asm15 scriptHelp.jewelHelper_createPuff $04
+	asm15 scriptHelp.jewelHelper_createPuff $00
+	asm15 scriptHelp.jewelHelper_createPuff $02
+	asm15 scriptHelp.jewelHelper_createPuff $06
+	asm15 scriptHelp.jewelHelper_createPuff $08
 	settileat $22 $0f
 	settileat $23 $11
 	settileat $32 $11
@@ -1348,20 +1357,20 @@ jewelHelperScript_jewelMoldorm_body:
 	settileat $34 $11
 	delay 4
 	playsound $73
-	asm15 scriptHlp.jewelHelper_createPuff $01
-	asm15 scriptHlp.jewelHelper_createPuff $05
-	asm15 scriptHlp.jewelHelper_createPuff $03
-	asm15 scriptHlp.jewelHelper_createPuff $07
+	asm15 scriptHelp.jewelHelper_createPuff $01
+	asm15 scriptHelp.jewelHelper_createPuff $05
+	asm15 scriptHelp.jewelHelper_createPuff $03
+	asm15 scriptHelp.jewelHelper_createPuff $07
 	setcounter1 $06
 	playsound $67
 	writememory $cfc0 $00
-	asm15 scriptHlp.jewelHelper_createMoldorm
+	asm15 scriptHelp.jewelHelper_createMoldorm
 	playsound $73
-	asm15 scriptHlp.jewelHelper_createPuff $04
-	asm15 scriptHlp.jewelHelper_createPuff $00
-	asm15 scriptHlp.jewelHelper_createPuff $02
-	asm15 scriptHlp.jewelHelper_createPuff $06
-	asm15 scriptHlp.jewelHelper_createPuff $08
+	asm15 scriptHelp.jewelHelper_createPuff $04
+	asm15 scriptHelp.jewelHelper_createPuff $00
+	asm15 scriptHelp.jewelHelper_createPuff $02
+	asm15 scriptHelp.jewelHelper_createPuff $06
+	asm15 scriptHelp.jewelHelper_createPuff $08
 	setmusic $2d
 	writememory $ccab $00
 	checkcfc0bit 0
@@ -1388,7 +1397,7 @@ kingMoblin_trapLinkInBombedHouse:
 	settileat $26 $a2
 	settileat $27 $a2
 	settileat $28 $a2
-	asm15 scriptHlp.kingMoblin_func_61eb
+	asm15 scriptHelp.kingMoblin_func_61eb
 	setcounter1 $50
 	showtext TX_3804
 	writeobjectbyte Interaction.var37 $00
@@ -1465,9 +1474,9 @@ dinScript_discoverLinkCollapsed_body:
 	movedown $3c
 	delay 3
 	writeobjectbyte Interaction.var38 $80
-	asm15 scriptHlp.din_createExclamationMark $1e
+	asm15 scriptHelp.din_createExclamationMark $1e
 	delay 7
-	callscript piratianScript_jump
+	callscript mainScripts.piratianScript_jump
 	setcounter1 $06
 	writeobjectbyte Interaction.var38 $01
 	setspeed $28
@@ -1517,10 +1526,10 @@ ZeldaBeingKidnappedEvent_body:
 	playsound $c8
 	delay 6
 	writememory $cfc0 $04
-	asm15 scriptHlp.playLinkCutscene2
+	asm15 scriptHelp.playLinkCutscene2
 	checkmemoryeq $d001 $00
 	delay 6
-	asm15 scriptHlp.forceLinkState8AndSetDirection DIR_UP
+	asm15 scriptHelp.forceLinkState8AndSetDirection DIR_UP
 	setmusic $39
 	writememory $cfc0 $05
 	setcounter1 $42
@@ -1529,21 +1538,21 @@ ZeldaBeingKidnappedEvent_body:
 	setcounter1 $24
 	writememory $cfc0 $07
 	delay 5
-	asm15 scriptHlp.forceLinkState8AndSetDirection DIR_LEFT
+	asm15 scriptHelp.forceLinkState8AndSetDirection DIR_LEFT
 	setcounter1 $46
 	showtext TX_0507
-	asm15 scriptHlp.zeldaKidnappedRoom_loadImpa
+	asm15 scriptHelp.zeldaKidnappedRoom_loadImpa
 	writememory $cfc0 $08
 	delay 7
 	writememory $cfc0 $09
-	asm15 scriptHlp.forceLinkState8AndSetDirection DIR_DOWN
+	asm15 scriptHelp.forceLinkState8AndSetDirection DIR_DOWN
 	setcounter1 $32
 	showtext TX_0508
 	writememory $cfc0 $0a
 	delay 6
 	showtext TX_0509
 	delay 3
-	asm15 scriptHlp.linkedScript_giveRing BLUE_JOY_RING
+	asm15 scriptHelp.linkedScript_giveRing BLUE_JOY_RING
 	delay 6
 	showtext TX_050a
 	delay 6
@@ -1564,7 +1573,7 @@ gettingRodOfSeasons_body:
 	setcollisionradii $02 $04
 	checkcollidedwithlink_onground
 	disableinput
-	asm15 spawnRodOfSeasonsSparkles
+	asm15 seasonsInteractionsBank15.spawnRodOfSeasonsSparkles
 	setcounter1 $82
 
 	playsound SND_FADEOUT
@@ -1584,7 +1593,7 @@ gettingRodOfSeasons_body:
 	asm15 fadeinFromWhiteWithDelay $04
 	checkpalettefadedone
 	checkflagset $00 $cceb
-	asm15 forceLinksDirection DIR_DOWN
+	asm15 seasonsInteractionsBank15.forceLinksDirection DIR_DOWN
 	delay $07
 
 	showtext TX_0810

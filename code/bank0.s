@@ -243,7 +243,7 @@ begin:
 	ldh (<hRng2),a
 resetGame:
 	ld sp,wMainStackTop
-	jpfrombank0 init
+	jpfrombank0 bank3.init
 
 
 ;;
@@ -994,16 +994,16 @@ loadPaletteHeader:
 	push bc
 	ld a,$02
 	ld ($ff00+R_SVBK),a
-	ld a,:paletteHeaderTable
+	ld a,:bank1Moveable.paletteHeaderTable
 	setrombank
 	ld a,l
-	ld hl,paletteHeaderTable
+	ld hl,bank1Moveable.paletteHeaderTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
 	ld l,a
 ---
-	ld a,:paletteHeaderTable
+	ld a,:bank1Moveable.paletteHeaderTable
 	setrombank
 
 	; b: how many palettes to load
@@ -1176,10 +1176,10 @@ loadUncompressedGfxHeader:
 	ldh a,(<hRomBank)
 	ld b,a
 	push bc
-	ld a,:uncmpGfxHeaderTable
+	ld a,:bank1Moveable.uncmpGfxHeaderTable
 	setrombank
 	ld a,e
-	ld hl,uncmpGfxHeaderTable
+	ld hl,bank1Moveable.uncmpGfxHeaderTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -1205,7 +1205,7 @@ loadUncompressedGfxHeader:
 	ldh (<hFF91),a
 	pop hl
 	call queueDmaTransfer
-	ld a,:uncmpGfxHeaderTable
+	ld a,:bank1Moveable.uncmpGfxHeaderTable
 	setrombank
 	ldh a,(<hFF90)
 	ld l,a
@@ -1231,10 +1231,10 @@ loadGfxHeader:
 	ldh a,(<hRomBank)
 	ld b,a
 	push bc
-	ld a,:gfxHeaderTable
+	ld a,:bank1Moveable.gfxHeaderTable
 	setrombank
 	ld a,e
-	ld hl,gfxHeaderTable
+	ld hl,bank1Moveable.gfxHeaderTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -1260,7 +1260,7 @@ loadGfxHeader:
 	ldh (<hFF91),a
 	pop hl
 	call decompressGraphics
-	ld a,:gfxHeaderTable
+	ld a,:bank1Moveable.gfxHeaderTable
 	setrombank
 	ldh a,(<hFF90)
 	ld l,a
@@ -2013,9 +2013,9 @@ vblankFunction0a8e:
 
 ;;
 vblankRunBank4Function:
-	ld a,:vblankRunBank4Function_b04
+	ld a,:bank4.vblankRunBank4Function_b04
 	ld ($2222),a
-	jp vblankRunBank4Function_b04
+	jp bank4.vblankRunBank4Function_b04
 
 ;;
 vblankFunction0aa8:
@@ -2325,38 +2325,38 @@ lcdInterrupt_0bea:
 
 ; Table of functions in bank $04?
 data_0bfd:
-	.dw b4VBlankFunction0
-	.dw b4VBlankFunction1
-	.dw b4VBlankFunction2
-	.dw b4VBlankFunction3
-	.dw b4VBlankFunction4
-	.dw b4VBlankFunction5
-	.dw b4VBlankFunction6
-	.dw b4VBlankFunction7
-	.dw b4VBlankFunction8
-	.dw b4VBlankFunction9
-	.dw b4VBlankFunction10
-	.dw b4VBlankFunction11
-	.dw b4VBlankFunction12
-	.dw b4VBlankFunction13
-	.dw b4VBlankFunction14
-	.dw b4VBlankFunction15
-	.dw b4VBlankFunction16
-	.dw b4VBlankFunction17
-	.dw b4VBlankFunction18
-	.dw b4VBlankFunction19
-	.dw b4VBlankFunction20
-	.dw b4VBlankFunction21
-	.dw b4VBlankFunction22
-	.dw b4VBlankFunction23
-	.dw b4VBlankFunction24
-	.dw b4VBlankFunction25
-	.dw b4VBlankFunction26
-	.dw b4VBlankFunction27
-	.dw b4VBlankFunction28
-	.dw b4VBlankFunction29
-	.dw b4VBlankFunction30
-	.dw b4VBlankFunction31
+	.dw bank4.b4VBlankFunction0
+	.dw bank4.b4VBlankFunction1
+	.dw bank4.b4VBlankFunction2
+	.dw bank4.b4VBlankFunction3
+	.dw bank4.b4VBlankFunction4
+	.dw bank4.b4VBlankFunction5
+	.dw bank4.b4VBlankFunction6
+	.dw bank4.b4VBlankFunction7
+	.dw bank4.b4VBlankFunction8
+	.dw bank4.b4VBlankFunction9
+	.dw bank4.b4VBlankFunction10
+	.dw bank4.b4VBlankFunction11
+	.dw bank4.b4VBlankFunction12
+	.dw bank4.b4VBlankFunction13
+	.dw bank4.b4VBlankFunction14
+	.dw bank4.b4VBlankFunction15
+	.dw bank4.b4VBlankFunction16
+	.dw bank4.b4VBlankFunction17
+	.dw bank4.b4VBlankFunction18
+	.dw bank4.b4VBlankFunction19
+	.dw bank4.b4VBlankFunction20
+	.dw bank4.b4VBlankFunction21
+	.dw bank4.b4VBlankFunction22
+	.dw bank4.b4VBlankFunction23
+	.dw bank4.b4VBlankFunction24
+	.dw bank4.b4VBlankFunction25
+	.dw bank4.b4VBlankFunction26
+	.dw bank4.b4VBlankFunction27
+	.dw bank4.b4VBlankFunction28
+	.dw bank4.b4VBlankFunction29
+	.dw bank4.b4VBlankFunction30
+	.dw bank4.b4VBlankFunction31
 
 ;;
 serialInterrupt:
@@ -3952,8 +3952,8 @@ func_131f:
 	or a
 	jr z,+
 
-	callab func_04_6ed1
-	callab func_04_6f31
+	callab tilesets.func_04_6ed1
+	callab tilesets.func_04_6f31
 	ld a,UNCMP_GFXH_30
 	call loadUncompressedGfxHeader
 	jr ++
@@ -5514,7 +5514,7 @@ fileSelectThreadStart:
 secretFunctionCaller:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 secretFunctionCaller_body
+	callfrombank0 bank3.secretFunctionCaller_body
 	pop af
 	setrombank
 	ld a,b
@@ -5665,11 +5665,11 @@ copyW4PaletteDataToW2TilesetBgPalettes:
 getRoomDungeonProperties:
 	ldh a,(<hRomBank)
 	push af
-	ld a, :dungeonRoomPropertiesGroupTable
+	ld a, :bank1.dungeonRoomPropertiesGroupTable
 	setrombank
 	ld a,(wActiveGroup)
 	and $01
-	ld hl, dungeonRoomPropertiesGroupTable
+	ld hl, bank1.dungeonRoomPropertiesGroupTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -7121,7 +7121,7 @@ getPositionOffsetForVelocity:
 	jr z,@invalid
 
 	ld a,b
-	ld hl,objectSpeedTable-$50
+	ld hl,bank3.objectSpeedTable-$50
 	sla c
 	ld b,$00
 	add hl,bc
@@ -7135,7 +7135,7 @@ getPositionOffsetForVelocity:
 	add hl,bc
 	ldh a,(<hRomBank)
 	push af
-	ld a,:objectSpeedTable
+	ld a,:bank3.objectSpeedTable
 	setrombank
 
 	; Get Y values
@@ -8567,14 +8567,14 @@ objectUnmarkSolidPosition:
 _interactionActuallyRunScript:
 	ldh a,(<hRomBank)
 	push af
-	ld a,:runScriptCommand
+	ld a,:mainScripts.runScriptCommand
 	setrombank
 --
 	ld a,(hl)
 	or a
 	jr z,++
 
-	call runScriptCommand
+	call mainScripts.runScriptCommand
 	jr c,--
 
 	pop af
@@ -9303,11 +9303,7 @@ interactionSetMiniScript:
 objectOscillateZ:
 	ldh a,(<hRomBank)
 	push af
-.ifdef ROM_AGES
-	callfrombank0 interactionBank09.objectOscillateZ_body
-.else
-	callfrombank0 objectOscillateZ_body
-.endif
+	callfrombank0 commonInteractions2.objectOscillateZ_body
 	pop af
 	setrombank
 	ret
@@ -9376,18 +9372,10 @@ objectCreateExclamationMark:
 	ldh (<hFF8B),a
 	ldh a,(<hRomBank)
 	push af
-.ifdef ROM_AGES
-	ld a,:interactionBank0b.objectCreateExclamationMark_body
-.else
-	ld a,:objectCreateExclamationMark_body
-.endif
+	ld a,:commonInteractions5.objectCreateExclamationMark_body
 	setrombank
 	ldh a,(<hFF8B)
-.ifdef ROM_AGES
-	call interactionBank0b.objectCreateExclamationMark_body
-.else
-	call objectCreateExclamationMark_body
-.endif
+	call commonInteractions5.objectCreateExclamationMark_body
 	pop af
 	setrombank
 	ret
@@ -9414,11 +9402,7 @@ objectCreateFloatingMusicNote:
 	ldh (<hFF8D),a
 	ldh a,(<hRomBank)
 	push af
-.ifdef ROM_AGES
-	callfrombank0 interactionBank0b.objectCreateFloatingImage
-.else
-	callfrombank0 objectCreateFloatingImage
-.endif
+	callfrombank0 commonInteractions5.objectCreateFloatingImage
 	pop af
 	setrombank
 	ret
@@ -10636,7 +10620,7 @@ getFreeItemSlot:
 introThreadStart:
 	ld hl,wIntro.frameCounter
 	inc (hl)
-	callfrombank0 runIntro
+	callfrombank0 bank3Cutscenes.runIntro
 	call resumeThreadNextFrame
 	jr introThreadStart
 
@@ -10646,10 +10630,10 @@ intro_cinematic:
 	ldh a,(<hRomBank)
 	push af
 
-	callfrombank0 runIntroCinematic
+	callfrombank0 bank3Cutscenes.runIntroCinematic
 	callfrombank0 bank5.updateSpecialObjects
 	call          loadLinkAndCompanionAnimationFrame
-	callfrombank0 updateAnimations
+	callfrombank0 animationAndUniqueGfxData.updateAnimations
 	call          updateInteractionsAndDrawAllSprites
 
 	pop af
@@ -10668,14 +10652,14 @@ func_2d48:
 .ifdef ROM_AGES
 	ld a,:bank3f.data_5951
 .else
-	ld a,:data_5951
+	ld a,:bank3Cutscenes.data_5951
 .endif
 	setrombank
 	ld a,b
 .ifdef ROM_AGES
 	ld hl,bank3f.data_5951
 .else
-	ld hl,data_5951
+	ld hl,bank3Cutscenes.data_5951
 .endif
 	rst_addAToHl
 	ld b,(hl)
@@ -10689,7 +10673,7 @@ func_2d48:
 clearFadingPalettes:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 clearFadingPalettes_body
+	callfrombank0 bank3Cutscenes.clearFadingPalettes_body
 	pop af
 	setrombank
 	ret
@@ -10706,7 +10690,7 @@ clearFadingPalettes:
 flashScreen:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 flashScreen_body
+	callfrombank0 bank3Cutscenes.flashScreen_body
 	ld b,$01
 	jr nz,+
 	dec b
@@ -10781,12 +10765,12 @@ setVisitedRoomFlag:
 getThisRoomDungeonProperties:
 	ldh a,(<hRomBank)
 	push af
-	ld a, :dungeonRoomPropertiesGroupTable
+	ld a, :bank1.dungeonRoomPropertiesGroupTable
 	setrombank
 	ld a,(wActiveGroup)
 	sub $04
 	and $01
-	ld hl, dungeonRoomPropertiesGroupTable
+	ld hl, bank1.dungeonRoomPropertiesGroupTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -11838,7 +11822,7 @@ mainThreadStart:
 updateAnimationsAfterCutscene:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 updateAnimations
+	callfrombank0 animationAndUniqueGfxData.updateAnimations
 	pop af
 	setrombank
 	ret
@@ -11851,11 +11835,11 @@ updateAnimationsAfterCutscene:
 loadScreenMusic:
 	ldh a,(<hRomBank)
 	push af
-	ld a,:musicAssignmentGroupTable
+	ld a,:bank4Data1.musicAssignmentGroupTable
 	setrombank
 
 	ld a,(wActiveGroup)
-	ld hl,musicAssignmentGroupTable
+	ld hl,bank4Data1.musicAssignmentGroupTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -11873,7 +11857,7 @@ loadScreenMusic:
 	ld b,a
 	ld a,(wActiveRoom)
 	ld c,a
-	ld hl,roomPackData
+	ld hl,bank4Data1.roomPackData
 	add hl,bc
 	ldi a,(hl)
 	ld (wLoadingRoomPack),a
@@ -11889,7 +11873,7 @@ loadScreenMusic:
 	jr nz,++
 
 	ld a,(wActiveRoom)
-	ld hl,roomPackData
+	ld hl,bank4Data1.roomPackData
 	rst $10
 	ldi a,(hl)
 	ld (wLoadingRoomPack),a
@@ -11904,7 +11888,7 @@ loadScreenMusic:
 applyWarpDest:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 applyWarpDest_b04
+	callfrombank0 bank4.applyWarpDest_b04
 
 .ifdef ROM_SEASONS
 	callfrombank0 bank1.checkUpdateDungeonMinimap
@@ -11986,7 +11970,7 @@ seasonsFunc_332f:
 flameOfDestructionsCutsceneCaller:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 flameOfDestructionCutsceneBody
+	callfrombank0 bank3Cutscenes.flameOfDestructionCutsceneBody
 	pop af
 	setrombank
 	ret
@@ -11994,7 +11978,7 @@ flameOfDestructionsCutsceneCaller:
 zeldaAndVillagersCutsceneCaller:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 zeldaAndVillagersCutsceneBody
+	callfrombank0 bank3Cutscenes.zeldaAndVillagersCutsceneBody
 	pop af
 	setrombank
 	ret
@@ -12002,7 +11986,7 @@ zeldaAndVillagersCutsceneCaller:
 zeldaKidnappedCutsceneCaller:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 zeldaKidnappedCutsceneBody
+	callfrombank0 bank3Cutscenes.zeldaKidnappedCutsceneBody
 	pop af
 	setrombank
 	ret
@@ -12041,8 +12025,8 @@ updateAllObjects:
 	callfrombank0 itemCode.updateItemsPost
 	callfrombank0 bank1.checkUpdateFollowingLinkObject
 	callfrombank0 updateCamera
-	callfrombank0 updateChangedTileQueue
-	callfrombank0 updateAnimations
+	callfrombank0 tilesets.updateChangedTileQueue
+	callfrombank0 animationAndUniqueGfxData.updateAnimations
 
 	xor a
 	ld (wc4b6),a
@@ -12093,7 +12077,7 @@ func_3539:
 	callfrombank0 updateInteractions
 .endif
 	callfrombank0 loadLinkAndCompanionAnimationFrame
-	callfrombank0 updateAnimations
+	callfrombank0 animationAndUniqueGfxData.updateAnimations
 	xor a
 	ld (wc4b6),a
 	pop af
@@ -12122,7 +12106,7 @@ seasonsFunc_34a0:
 	call loadLinkAndCompanionAnimationFrame
 	callfrombank0 itemCode.updateItemsPost
 	callfrombank0 seasonsFunc_0f_7182
-	callfrombank0 updateChangedTileQueue
+	callfrombank0 tilesets.updateChangedTileQueue
 
 	xor a
 	ld (wc4b6),a
@@ -12296,7 +12280,7 @@ getEntryFromObjectTable2:
 multiIntroCutsceneCaller:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 multiIntroCutsceneHandler
+	callfrombank0 bank3Cutscenes.multiIntroCutsceneHandler
 	pop af
 	setrombank
 	ret
@@ -12356,10 +12340,10 @@ loadAnimationData:
 	ld b,a
 	ldh a,(<hRomBank)
 	push af
-	ld a,:animationGroupTable
+	ld a,:animationAndUniqueGfxData.animationGroupTable
 	setrombank
 	ld a,b
-	ld hl,animationGroupTable
+	ld hl,animationAndUniqueGfxData.animationGroupTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -12408,7 +12392,7 @@ loadAnimationData:
 roomTileChangesAfterLoad02:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 roomTileChangesAfterLoad02_body
+	callfrombank0 seasonsInteractionsBank09.roomTileChangesAfterLoad02_body
 	pop af
 	setrombank
 	ret
@@ -12576,7 +12560,7 @@ loadTilesetGraphics:
 
 	call          loadTilesetGfx
 
-	callfrombank0 initializeAnimations
+	callfrombank0 animationAndUniqueGfxData.initializeAnimations
 
 .ifdef ROM_AGES
 	callab        roomGfxChanges.func_02_7a77
@@ -12691,7 +12675,7 @@ loadTilesetData:
 	ldh a,(<hRomBank)
 	push af
 
-	callfrombank0 loadTilesetData_body
+	callfrombank0 tilesets.loadTilesetData_body
 	callab        bank2.updateTilesetFlagsForIndoorRoomInAltWorld
 
 	pop af
@@ -12717,7 +12701,7 @@ loadTilesetAndRoomLayout:
 	; Load the room layout and apply any dynamic changes necessary
 	call          loadRoomLayout
 
-	callfrombank0 applyAllTileSubstitutions
+	callfrombank0 roomTileChanges.applyAllTileSubstitutions
 
 	; Copy wRoomLayout to w3RoomLayoutBuffer
 	ld a,:w3RoomLayoutBuffer
@@ -12740,7 +12724,7 @@ seasonsFunc_3870:
 	call checkGlobalFlag
 	ret z
 
-	callfrombank0 checkIsTempleRemains
+	callfrombank0 tilesets.checkIsTempleRemains
 	ret nc
 	ld a,(wRoomStateModifier)
 	ld hl,@data
@@ -12766,12 +12750,12 @@ loadRoomLayout:
 	ld hl,wRoomLayout
 	ld b,(LARGE_ROOM_HEIGHT+1)*16
 	call clearMemory
-	ld a,:roomLayoutGroupTable
+	ld a,:roomLayouts.roomLayoutGroupTable
 	setrombank
 	ld a,(wTilesetLayoutGroup)
 	add a
 	add a
-	ld hl,roomLayoutGroupTable
+	ld hl,roomLayouts.roomLayoutGroupTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld b,a
@@ -13046,11 +13030,11 @@ generateVramTilesWithRoomChanges:
 	ld b,a
 	push bc
 
-	callfrombank0 generateW3VramTilesAndAttributes
+	callfrombank0 tilesets.generateW3VramTilesAndAttributes
 .ifdef ROM_AGES
 	callab        roomGfxChanges.applyRoomSpecificTileChangesAfterGfxLoad
 .else
-	call        roomGfxChanges.applyRoomSpecificTileChangesAfterGfxLoad
+	call          roomGfxChanges.applyRoomSpecificTileChangesAfterGfxLoad
 .endif
 
 	pop bc
@@ -13194,10 +13178,10 @@ setInterleavedTile:
 	ld b,a
 	push bc
 
-	ld a,:setInterleavedTile_body
+	ld a,:tilesets.setInterleavedTile_body
 	setrombank
 	ld a,e
-	call setInterleavedTile_body
+	call tilesets.setInterleavedTile_body
 
 	pop bc
 	ld a,b
@@ -13408,7 +13392,7 @@ createSokraSnore:
 checkGotMakuSeedDidNotSeeZeldaKidnapped:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 interactionCodec4@checkGotMakuSeedDidNotSeeZeldaKidnapped
+	callfrombank0 seasonsInteractionsBank0a.checkGotMakuSeedDidNotSeeZeldaKidnapped_body
 	push af
 	pop bc
 	pop af
@@ -13429,7 +13413,7 @@ checkObjectIsCloseToPosition:
 	ldh a,(<hRomBank)
 	push af
 
-	callfrombank0 interactionBank08.checkObjectIsCloseToPosition
+	callfrombank0 agesInteractionsBank08.checkObjectIsCloseToPosition
 	ld b,$00
 	jr nc,+
 	inc b
@@ -13455,10 +13439,10 @@ checkNpcShouldExistAtGameStage:
 	ldh (<hFF8B),a
 	ldh a,(<hRomBank)
 	push af
-	ld a,:interactionBank09.checkNpcShouldExistAtGameStage_body
+	ld a,:agesInteractionsBank09.checkNpcShouldExistAtGameStage_body
 	setrombank
 	ldh a,(<hFF8B)
-	call interactionBank09.checkNpcShouldExistAtGameStage_body
+	call agesInteractionsBank09.checkNpcShouldExistAtGameStage_body
 	ld c,$00
 	jr z,+
 	inc c
@@ -13754,12 +13738,12 @@ setLinkDirection:
 .else ; ROM_SEASONS
 
 ;;
-; param		b	index into _conditionalHoronNPCLookupTable
-; param[out]	c	$01 if NPC should be seen, otherwise $00
+; @param	b	index into _conditionalHoronNPCLookupTable
+; @param[out]	c	$01 if NPC should be seen, otherwise $00
 checkIfHoronVillageNPCShouldBeSeen:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 checkHoronVillageNPCShouldBeSeen_body@main
+	callfrombank0 seasonsInteractionsBank08.checkHoronVillageNPCShouldBeSeen_body@main
 	ld c,$01
 	jr c,+
 	dec c
@@ -13772,8 +13756,8 @@ checkIfHoronVillageNPCShouldBeSeen:
 setMakuTreeStageAndMapText:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 interactionCode87@setAppropriateStage
-	callfrombank0 scriptHlp.makuTree_setMapTextBasedOnStage
+	callfrombank0 seasonsInteractionsBank09.makuTree_setAppropriateStage
+	callfrombank0 scriptHelp.makuTree_setMapTextBasedOnStage
 	pop af
 	setrombank
 	ret
@@ -13783,7 +13767,7 @@ setMakuTreeStageAndMapText:
 getSunkenCityNPCVisibleSubId_caller:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 getSunkenCityNPCVisibleSubId@main
+	callfrombank0 seasonsInteractionsBank08.getSunkenCityNPCVisibleSubId@main
 	pop af
 	setrombank
 	ret
@@ -13791,10 +13775,10 @@ getSunkenCityNPCVisibleSubId_caller:
 setUpCharactersAfterMoblinKeepDestroyed:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 moblinKeepScene_setLinkDirectionAndPositionAfterDestroyed 
+	callfrombank0 seasonsInteractionsBank0a.moblinKeepScene_setLinkDirectionAndPositionAfterDestroyed 
 	ld a,$01
-	call moblinKeepScene_spawnKingMoblin
-	call moblinKeepScene_spawn2MoblinsAfterKeepDestroyed
+	call seasonsInteractionsBank0a.moblinKeepScene_spawnKingMoblin
+	call seasonsInteractionsBank0a.moblinKeepScene_spawn2MoblinsAfterKeepDestroyed
 	pop af
 	setrombank
 	ret
@@ -13841,9 +13825,9 @@ interactionFunc_3e6d:
 getLinkedHerosCaveSideEntranceRoom:
 	ldh a,(<hRomBank)
 	push af
-	ld a,:(warpSource7653+2)
+	ld a,:(bank4.warpSource7653+2)
 	setrombank
-	ld hl,warpSource7653+2
+	ld hl,bank4.warpSource7653+2
 	ld a,(hl)
 	; ROOM_SEASONS_552
 	ld (wWarpDestRoom),a
@@ -13926,7 +13910,7 @@ copy256BytesFromBank:
 func_3ed0:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 func_03_7841
+	callfrombank0 bank3Cutscenes.func_03_7841
 	pop af
 	setrombank
 	ret
@@ -13935,7 +13919,7 @@ func_3ed0:
 func_3ee4:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 func_03_7849
+	callfrombank0 bank3Cutscenes.func_03_7849
 	pop af
 	setrombank
 	ret

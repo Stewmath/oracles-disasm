@@ -1,5 +1,3 @@
- m_section_superfree "File_Management" namespace "fileManagement"
-
 ;;
 ; @param c What operation to do on the file
 ; @param hActiveFileSlot File index
@@ -56,11 +54,9 @@ _initializeFile:
 	ld a,VICTORY_RING | $40
 	ld (wUnappraisedRings),a
 ++
+	callab commonInteractions5.initializeChildOnGameStart
 .ifdef ROM_AGES
-	callab interactionBank0b.initializeChildOnGameStart
-	callab initializeVinePositions
-.else
-	callab initializeChildOnGameStart
+	callab roomTileChanges.initializeVinePositions
 .endif
 
 ;;
@@ -421,5 +417,3 @@ _saveVerificationString:
 .else
 	.ASC "Z11216-0"
 .endif
-
-.ends

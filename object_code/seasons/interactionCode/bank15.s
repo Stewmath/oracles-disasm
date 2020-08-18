@@ -1,3 +1,5 @@
+ m_section_free Seasons_Interactions_Bank15 NAMESPACE seasonsInteractionsBank15
+
 ; ==============================================================================
 ; INTERACID_LINKED_FOUNTAIN_LADY
 ; ==============================================================================
@@ -17,7 +19,7 @@ interactionCoded8:
 	call interactionIncState
 	ld l,$7e
 	ld (hl),GLOBALFLAG_BEGAN_FAIRY_SECRET-GLOBALFLAG_FIRST_SEASONS_BEGAN_SECRET
-	ld hl,linkedGameNpcScript
+	ld hl,mainScripts.linkedGameNpcScript
 	call interactionSetScript
 @state1:
 	call interactionRunScript
@@ -48,7 +50,7 @@ interactionCodedb:
 	ld a,(hl)
 	ld e,$7e
 	ld (de),a
-	ld hl,linkedGameNpcScript
+	ld hl,mainScripts.linkedGameNpcScript
 	call interactionSetScript
 	call interactionInitGraphics
 	jp objectSetVisiblec2
@@ -758,7 +760,7 @@ interactionCodedd:
 	call objectSetVisible82
 	ld a,>TX_1f00
 	call interactionSetHighTextIndex
-	ld hl,goldenBeastOldManScript
+	ld hl,mainScripts.goldenBeastOldManScript
 	jp interactionSetScript
 
 checkGoldenBeastsKilled:
@@ -1318,7 +1320,7 @@ interactionCodee3:
 	call interactionSetAlwaysUpdateBit
 	ld bc,$fe00
 	call objectSetSpeedZ
-	ld hl,vireScript
+	ld hl,mainScripts.vireScript
 	call interactionSetScript
 	ld a,$bb
 	call playSound
@@ -1349,7 +1351,7 @@ interactionCodee3:
 	call interactionSetAnimation
 	jp interactionAnimateAsNpc
 @substate1:
-	callab seasonsFunc_0a_71ce
+	callab seasonsInteractionsBank0a.seasonsFunc_0a_71ce
 	call interactionRunScript
 	jr c,+
 	jp interactionAnimateAsNpc
@@ -1422,7 +1424,7 @@ interactionCodee4:
 	call objectSetVisible82
 	ld a,>TX_3300
 	call interactionSetHighTextIndex
-	ld hl,linkedHerosCaveOldManScript
+	ld hl,mainScripts.linkedHerosCaveOldManScript
 	jp interactionSetScript
 
 linkedHerosCaveOldMan_spawnChests:
@@ -1506,7 +1508,7 @@ _interactionCodee6_state0:
 	jp nz,interactionDelete
 	xor a
 	ld ($cceb),a
-	ld hl,gettingRodOfSeasons
+	ld hl,mainScripts.gettingRodOfSeasonsScript
 	jp interactionSetScript
 
 @sparkles:
@@ -1735,7 +1737,7 @@ _interactionCodee6_state1:
 @@substate4:
 	call retIfTextIsActive
 	call interactionIncSubstate
-	ld hl,setCounter1To32
+	ld hl,mainScripts.gettingRodOfSeasonsScript_setCounter1To32
 	jp interactionSetScript
 
 @@substate5:
@@ -1858,10 +1860,12 @@ interactionCodee7:
 	ld e,$7e
 	ld a,GLOBALFLAG_BEGAN_KING_ZORA_SECRET-GLOBALFLAG_FIRST_SEASONS_BEGAN_SECRET
 	ld (de),a
-	ld hl,linkedGameNpcScript
+	ld hl,mainScripts.linkedGameNpcScript
 	call interactionSetScript
 	ld a,$02
 	call interactionSetAnimation
 @state1:
 	call interactionRunScript
 	jp npcFaceLinkAndAnimate
+
+.ends

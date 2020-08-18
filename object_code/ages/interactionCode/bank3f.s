@@ -51,7 +51,7 @@ interactionCode39_body:
 	ld a,$02
 	call interactionSetAnimation
 
-	ld hl,monkeySubid0Script
+	ld hl,mainScripts.monkeySubid0Script
 	jp interactionSetScript
 
 
@@ -246,7 +246,7 @@ interactionCode39_body:
 	ld l,Interaction.counter1
 	ldi (hl),a
 	ld (hl),a
-	ld hl,monkeySubid5Script
+	ld hl,mainScripts.monkeySubid5Script
 
 	ld e,Interaction.var03
 	ld a,(de)
@@ -256,7 +256,7 @@ interactionCode39_body:
 	; Bowtie monkey has a different script
 	push af
 	call @initBowtieMonkey
-	ld hl,monkeySubid5Script_bowtieMonkey
+	ld hl,mainScripts.monkeySubid5Script_bowtieMonkey
 	pop af
 +
 	; Monkey $05 gets the red palette
@@ -290,7 +290,7 @@ interactionCode39_body:
 	call checkGlobalFlag
 	jp z,interactionDelete
 
-	ld hl,monkeySubid7Script_0
+	ld hl,mainScripts.monkeySubid7Script_0
 	call interactionSetScript
 	ld a,$06
 	jr @setVar3aAnimation
@@ -300,7 +300,7 @@ interactionCode39_body:
 	call checkGlobalFlag
 	jp z,interactionDelete
 
-	ld hl,monkeySubid7Script_1
+	ld hl,mainScripts.monkeySubid7Script_1
 	call interactionSetScript
 	ld a,$05
 	jr @setVar3aAnimation
@@ -316,9 +316,9 @@ interactionCode39_body:
 
 	ld a,GLOBALFLAG_SAVED_NAYRU
 	call checkGlobalFlag
-	ld hl,monkeySubid7Script_2
+	ld hl,mainScripts.monkeySubid7Script_2
 	jp z,@setScript
-	ld hl,monkeySubid7Script_3
+	ld hl,mainScripts.monkeySubid7Script_3
 @setScript:
 	call interactionSetScript
 	ld a,$05
@@ -911,8 +911,8 @@ _monkeySubid5State1_monkey9:
 	.dw _monkey9Disappearance@substate3
 
 _introMonkeyScriptTable:
-	.dw monkeySubid2Script
-	.dw monkeySubid3Script
+	.dw mainScripts.monkeySubid2Script
+	.dw mainScripts.monkeySubid3Script
 
 
 ; ==============================================================================
@@ -951,7 +951,7 @@ interactionCode4b_body:
 	.dw @initSubid7
 
 @initSubid0:
-	ld hl,rabbitScript_listeningToNayruGameStart
+	ld hl,mainScripts.rabbitScript_listeningToNayruGameStart
 	jp interactionSetScript
 
 ; This is also called from outside this interaction's code
@@ -973,7 +973,7 @@ interactionCode4b_body:
 	ld e,Interaction.counter1
 	ld a,180
 	ld (de),a
-	callab interactionBank08.loadStoneNpcPalette
+	callab agesInteractionsBank08.loadStoneNpcPalette
 	jp _rabbitSubid2SetRandomSpawnDelay
 
 @initSubid6:
@@ -987,7 +987,7 @@ interactionCode4b_body:
 	bit 6,a
 	jp z,interactionDelete
 
-	callab interactionBank08.loadStoneNpcPalette
+	callab agesInteractionsBank08.loadStoneNpcPalette
 	ld a,$06
 	call objectSetCollideRadius
 
@@ -1026,9 +1026,9 @@ interactionCode4b_body:
 
 	ld a,GLOBALFLAG_SAVED_NAYRU
 	call checkGlobalFlag
-	ld hl,rabbitScript_waitingForNayru1
+	ld hl,mainScripts.rabbitScript_waitingForNayru1
 	jp z,+
-	ld hl,rabbitScript_waitingForNayru2
+	ld hl,mainScripts.rabbitScript_waitingForNayru2
 +
 	call interactionSetScript
 
@@ -1171,7 +1171,7 @@ _rabbitSubid1:
 	jp interactionIncSubstate
 
 @substate3:
-	callab interactionBank08.interactionOscillateXRandomly
+	callab agesInteractionsBank08.interactionOscillateXRandomly
 	call interactionDecCounter2
 	ret nz
 	ld (hl),20
@@ -1265,7 +1265,7 @@ _rabbitSubid3:
 @substate1:
 	call interactionDecCounter1
 	jr z,+
-	jpab interactionBank08.childFlickerBetweenStone
+	jpab agesInteractionsBank08.childFlickerBetweenStone
 +
 	call interactionIncSubstate
 	ld l,Interaction.oamFlags
@@ -1294,7 +1294,7 @@ _rabbitSubid4:
 	ld h,d
 	ld l,Interaction.substate
 	ld (hl),$02
-	ld hl,rabbitSubid4Script
+	ld hl,mainScripts.rabbitSubid4Script
 	jp interactionSetScript
 ++
 	call interactionAnimate

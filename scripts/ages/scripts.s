@@ -1,6 +1,7 @@
-; Scripts for interactions are in this file. You may want to cross-reference with the
-; corresponding code for the script to get the full picture (search for INTERACID_X in
-; main.s to find the code).
+; Scripts for interactions are in this file. You may want to cross-reference with the corresponding
+; code for the script to get the full picture (search for INTERACID_X in main.s to find the code).
+;
+; A great deal of stuff here is shared with Seasons. Maybe it will be merged together in the future.
 
 stubScript:
 	scriptend
@@ -44,13 +45,13 @@ _faroreUnlinked:
 	scriptjump @npcLoop
 
 @sayOtherGameSecret:
-	asm15 scriptHlp.faroreGenerateGameTransferSecret
+	asm15 scriptHelp.faroreGenerateGameTransferSecret
 	showtextlowindex <TX_551a
 	scriptjump @npcLoop
 
 @askForPassword:
 	askforsecret $ff
-	asm15 scriptHlp.faroreCheckSecretValidity
+	asm15 scriptHelp.faroreCheckSecretValidity
 	jumptable_objectbyte Interaction.var3f
 	.dw @offerOtherGameSecret
 	.dw @offerOtherGameSecret
@@ -64,7 +65,7 @@ _faroreUnlinked:
 	scriptjump @offerOtherGameSecret
 
 @secretOK: ; The secret is fine, but you're supposed to tell it to someone else.
-	asm15 scriptHlp.faroreShowTextForSecretHint
+	asm15 scriptHelp.faroreShowTextForSecretHint
 	wait 30
 	showtextlowindex <TX_5504
 	scriptjump @offerOtherGameSecret
@@ -91,7 +92,7 @@ _faroreLinked:
 
 @showPasswordScreen:
 	askforsecret $ff
-	asm15 scriptHlp.faroreCheckSecretValidity
+	asm15 scriptHelp.faroreCheckSecretValidity
 	jumptable_objectbyte Interaction.var3f
 	.dw @script4667
 	.dw @secretOK
@@ -105,7 +106,7 @@ _faroreLinked:
 	scriptjump @npcLoop
 
 @secretOK:
-	asm15 scriptHlp.faroreSpawnSecretChest
+	asm15 scriptHelp.faroreSpawnSecretChest
 	checkcfc0bit 1
 	xorcfc0bit 1
 	enableinput
@@ -199,7 +200,7 @@ faroresMemoryScript:
 
 _doorController_updateRespawnWhenLinkNotTouching:
 	checknotcollidedwithlink_ignorez
-	asm15 scriptHlp.doorController_updateLinkRespawn
+	asm15 scriptHelp.doorController_updateLinkRespawn
 	retscript
 
 
@@ -238,7 +239,7 @@ doorController_controlledByTriggers_left:
 _doorController_controlledByTriggers:
 	callscript _doorController_updateRespawnWhenLinkNotTouching
 @loop:
-	asm15 scriptHlp.doorController_decideActionBasedOnTriggers
+	asm15 scriptHelp.doorController_decideActionBasedOnTriggers
 	jumptable_memoryaddress wTmpcfc0.normal.doorControllerState
 	.dw @loop
 	.dw @open
@@ -299,7 +300,7 @@ doorController_shutUntilEnemiesDead_left:
 	scriptjump _doorController_shutUntilEnemiesDead
 
 _doorController_openOnMinecartCollision:
-	asm15 scriptHlp.doorController_checkMinecartCollidedWithDoor
+	asm15 scriptHelp.doorController_checkMinecartCollidedWithDoor
 	jumptable_memoryaddress wTmpcfc0.normal.doorControllerState
 	.dw _doorController_openOnMinecartCollision
 	.dw @incState
@@ -313,7 +314,7 @@ _doorController_closeDoorWhenLinkNotTouching:
 	scriptend
 
 _doorController_minecart:
-	asm15 scriptHlp.doorController_checkTileIsMinecartTrack
+	asm15 scriptHelp.doorController_checkTileIsMinecartTrack
 	jumptable_memoryaddress wTmpcfc0.normal.doorControllerState
 	.dw _doorController_openOnMinecartCollision ; Not minecart track (door is closed)
 	.dw _doorController_closeDoorWhenLinkNotTouching ; Minecart track (door is open)
@@ -390,7 +391,7 @@ _doorController_shutUntilTorchesLit:
 	callscript _doorController_updateRespawnWhenLinkNotTouching
 	setstate $03
 @loop:
-	asm15 scriptHlp.doorController_checkEnoughTorchesLit
+	asm15 scriptHelp.doorController_checkEnoughTorchesLit
 	jumptable_memoryaddress wTmpcec0
 	.dw @loop
 	.dw @torchesLit
@@ -699,7 +700,7 @@ shopkeeperChestGameScript:
 
 @answeredYes:
 	jumpifmemoryeq wShootingGalleryccd5, $01, _shopkeeperNotEnoughRupees
-	asm15 scriptHlp.shopkeeper_take10Rupees
+	asm15 scriptHelp.shopkeeper_take10Rupees
 	setspeed SPEED_200
 	setcollisionradii $06, $06
 	moveup    $08
@@ -710,7 +711,7 @@ shopkeeperChestGameScript:
 	scriptjump ++
 
 @playAgain:
-	asm15 scriptHlp.shopkeeper_take10Rupees
+	asm15 scriptHelp.shopkeeper_take10Rupees
 ++
 	setangleandanimation $08
 	writeobjectbyte Interaction.substate, $02 ; Signal to close whichever chest he faces
@@ -853,7 +854,7 @@ spinnerScript_waitForLink:
 ; ==============================================================================
 essenceScript_essenceGetCutscene:
 	playsound MUS_ESSENCE
-	asm15 scriptHlp.essence_createEnergySwirl
+	asm15 scriptHelp.essence_createEnergySwirl
 	wait 180
 	wait 180
 	playsound SND_FADEOUT
@@ -863,7 +864,7 @@ essenceScript_essenceGetCutscene:
 	playsound SND_FADEOUT
 	wait 40
 	playsound SND_FADEOUT
-	asm15 scriptHlp.essence_stopEnergySwirl
+	asm15 scriptHelp.essence_stopEnergySwirl
 	scriptend
 
 
@@ -890,7 +891,7 @@ vasuScript:
 
 	; Give ring box in linked game
 	showtextlowindex <TX_303b
-	asm15 scriptHlp.vasu_giveRingBox
+	asm15 scriptHelp.vasu_giveRingBox
 	wait 1
 ++
 	setdisabledobjectsto11
@@ -908,26 +909,26 @@ vasuScript:
 
 	; Give ring box in unlinked game
 	showtextlowindex <TX_303b
-	asm15 scriptHlp.vasu_giveRingBox
+	asm15 scriptHelp.vasu_giveRingBox
 	wait 1
 	setdisabledobjectsto11
 	checktext
 ++
 	; Give friendship ring
 	showtextlowindex <TX_303f
-	asm15 scriptHlp.vasu_giveFriendshipRing
+	asm15 scriptHelp.vasu_giveFriendshipRing
 	wait 1
 	setdisabledobjectsto11
 	checktext
 
 	; Force Link to appraise it
 	showtextlowindex <TX_3033
-	asm15 scriptHlp.vasu_openRingMenu, $00
+	asm15 scriptHelp.vasu_openRingMenu, $00
 	wait 10
 
 	; Open ring list
 	showtextlowindex <TX_3013
-	asm15 scriptHlp.vasu_openRingMenu, $01
+	asm15 scriptHelp.vasu_openRingMenu, $01
 	wait 10
 	showtextlowindex <TX_3008
 
@@ -940,7 +941,7 @@ vasuScript:
 
 @alreadyGaveRingBox:
 	; Check whether to give special rings
-	asm15 scriptHlp.vasu_checkEarnedSpecialRing
+	asm15 scriptHelp.vasu_checkEarnedSpecialRing
 	jumptable_objectbyte Interaction.var3b
 	.dw @giveSlayersRing
 	.dw @giveWealthRing
@@ -959,7 +960,7 @@ vasuScript:
 	showtextlowindex <TX_3039
 @giveSpecialRing:
 	checktext
-	asm15 scriptHlp.vasu_giveRingInVar3a
+	asm15 scriptHelp.vasu_giveRingInVar3a
 	scriptjump @npcLoop
 
 
@@ -976,12 +977,12 @@ vasuScript:
 
 @appraise:
 	jumpifobjectbyteeq Interaction.var37, $00, @noUnappraisedRings
-	asm15 scriptHlp.vasu_openRingMenu, $00
+	asm15 scriptHelp.vasu_openRingMenu, $00
 	scriptjump @exitedRingMenu
 
 @list:
 	jumpifobjectbyteeq Interaction.var38, $00, @noAppraisedRings
-	asm15 scriptHlp.vasu_openRingMenu, $01
+	asm15 scriptHelp.vasu_openRingMenu, $01
 
 @exitedRingMenu:
 	wait 10
@@ -995,7 +996,7 @@ vasuScript:
 	showtextlowindex <TX_3038
 	checktext
 	unsetglobalflag GLOBALFLAG_APPRAISED_HUNDREDTH_RING
-	asm15 scriptHlp.vasu_giveHundredthRing
+	asm15 scriptHelp.vasu_giveHundredthRing
 	scriptjump @npcLoop
 
 
@@ -1047,7 +1048,7 @@ blueSnakeScript_linked:
 
 _blueSnake_linkOrFortune:
 	setdisabledobjectsto11
-	asm15 scriptHlp.blueSnake_linkOrFortune
+	asm15 scriptHelp.blueSnake_linkOrFortune
 	wait 1
 	scriptend
 
@@ -1072,14 +1073,14 @@ redSnakeScript_linked:
 	jumpiftextoptioneq $00, @tellSecretToSnake
 
 	; Generate a secret
-	asm15 scriptHlp.redSnake_generateRingSecret
+	asm15 scriptHelp.redSnake_generateRingSecret
 @tellSecretToLink:
 	showtextnonexitablelowindex <TX_301d
 	jumpiftextoptioneq $00, @tellSecretToLink
 	scriptjump @quit
 
 @tellSecretToSnake:
-	asm15 scriptHlp.redSnake_openSecretInputMenu
+	asm15 scriptHelp.redSnake_openSecretInputMenu
 	wait 1
 	jumpifmemoryeq wTextInputResult, $00, @toldValidSecret
 
@@ -1099,7 +1100,7 @@ redSnakeScript_linked:
 blueSnakeScript_successfulFortune:
 	setdisabledobjectsto11
 	showtextlowindex <TX_3023
-	asm15 scriptHlp.vasu_giveRingInVar3a
+	asm15 scriptHelp.vasu_giveRingInVar3a
 	wait 1
 	checktext
 	enableallobjects
@@ -1119,7 +1120,7 @@ gameCompleteDialogScript:
 	jumpiftextoptioneq $00, @dontSave
 
 	; Save
-	asm15 scriptHlp.gameCompleteDialog_markGameAsComplete
+	asm15 scriptHelp.gameCompleteDialog_markGameAsComplete
 	asm15 saveFile
 	wait 30
 	scriptjump ++
@@ -1201,7 +1202,7 @@ bipinScript1:
 	checkabutton
 	setdisabledobjectsto91
 	setanimation $02
-	asm15 scriptHlp.bipin_showText_subid1To9
+	asm15 scriptHelp.bipin_showText_subid1To9
 	wait 30
 	callscript _bipinSayRandomTip
 	enableallobjects
@@ -1214,7 +1215,7 @@ bipinScript2:
 @loop:
 	checkabutton
 	setdisabledobjectsto91
-	asm15 scriptHlp.bipin_showText_subid1To9
+	asm15 scriptHelp.bipin_showText_subid1To9
 	enableallobjects
 	scriptjump @loop
 
@@ -1232,7 +1233,7 @@ _bipinSayRandomTip:
 .ifdef ROM_AGES
 ; "Past" version of Bipin who gives you a gasha seed
 bipinScript3:
-	loadscript scriptHlp.bipinScript3
+	loadscript scriptHelp.bipinScript3
 .endif
 
 
@@ -1291,7 +1292,7 @@ librarianScript:
 ; Blossom asking you to name her child
 blossomScript0:
 	initcollisions
-	asm15 scriptHlp.checkc6e2BitSet, $00
+	asm15 scriptHelp.checkc6e2BitSet, $00
 	jumpifobjectbyteeq Interaction.var3b, $01, @nameAlreadyGiven
 @loop:
 	checkabutton
@@ -1299,7 +1300,7 @@ blossomScript0:
 	showtextlowindex <TX_4400
 
 @askForName:
-	asm15 scriptHlp.blossom_openNameEntryMenu
+	asm15 scriptHelp.blossom_openNameEntryMenu
 	wait 30
 	jumptable_memoryaddress wTextInputResult
 	.dw @validName
@@ -1318,9 +1319,9 @@ blossomScript0:
 	.dw @askForName
 
 @nameConfirmed:
-	asm15 scriptHlp.blossom_decideInitialChildStatus
-	asm15 scriptHlp.setc6e2Bit, $00
-	asm15 scriptHlp.setNextChildStage, $01
+	asm15 scriptHelp.blossom_decideInitialChildStatus
+	asm15 scriptHelp.setc6e2Bit, $00
+	asm15 scriptHelp.setNextChildStage, $01
 	wait 30
 	showtextlowindex <TX_4408
 	enableinput
@@ -1334,7 +1335,7 @@ blossomScript0:
 ; Blossom asking for money to see a doctor
 blossomScript1:
 	initcollisions
-	asm15 scriptHlp.checkc6e2BitSet, $01
+	asm15 scriptHelp.checkc6e2BitSet, $01
 	jumpifobjectbyteeq Interaction.var3b, $01, @alreadyGaveMoney
 @loop:
 	checkabutton
@@ -1353,12 +1354,12 @@ blossomScript1:
 	.dw @give1Rupee
 
 @give150Rupees:
-	asm15 scriptHlp.blossom_checkHasRupees, RUPEEVAL_150
+	asm15 scriptHelp.blossom_checkHasRupees, RUPEEVAL_150
 	jumpifobjectbyteeq Interaction.var3c, $01, @notEnoughRupees
 	asm15 removeRupeeValue, RUPEEVAL_150
-	asm15 scriptHlp.blossom_addValueToChildStatus, $08
-	asm15 scriptHlp.setc6e2Bit, $01
-	asm15 scriptHlp.setNextChildStage, $02
+	asm15 scriptHelp.blossom_addValueToChildStatus, $08
+	asm15 scriptHelp.setc6e2Bit, $01
+	asm15 scriptHelp.setNextChildStage, $02
 	enableallobjects
 @gave150RupeesLoop:
 	showtextlowindex <TX_440d
@@ -1366,12 +1367,12 @@ blossomScript1:
 	scriptjump @gave150RupeesLoop
 
 @give50Rupees:
-	asm15 scriptHlp.blossom_checkHasRupees, RUPEEVAL_050
+	asm15 scriptHelp.blossom_checkHasRupees, RUPEEVAL_050
 	jumpifobjectbyteeq Interaction.var3c, $01, @notEnoughRupees
 	asm15 removeRupeeValue, RUPEEVAL_050
-	asm15 scriptHlp.blossom_addValueToChildStatus, $05
-	asm15 scriptHlp.setc6e2Bit, $01
-	asm15 scriptHlp.setNextChildStage, $02
+	asm15 scriptHelp.blossom_addValueToChildStatus, $05
+	asm15 scriptHelp.setc6e2Bit, $01
+	asm15 scriptHelp.setNextChildStage, $02
 	enableallobjects
 @gave50RupeesLoop:
 	showtextlowindex <TX_440e
@@ -1379,12 +1380,12 @@ blossomScript1:
 	scriptjump @gave50RupeesLoop
 
 @give10Rupees:
-	asm15 scriptHlp.blossom_checkHasRupees, RUPEEVAL_010
+	asm15 scriptHelp.blossom_checkHasRupees, RUPEEVAL_010
 	jumpifobjectbyteeq Interaction.var3c, $01, @notEnoughRupees
 	asm15 removeRupeeValue, RUPEEVAL_010
-	asm15 scriptHlp.blossom_addValueToChildStatus, $02
-	asm15 scriptHlp.setc6e2Bit, $01
-	asm15 scriptHlp.setNextChildStage, $02
+	asm15 scriptHelp.blossom_addValueToChildStatus, $02
+	asm15 scriptHelp.setc6e2Bit, $01
+	asm15 scriptHelp.setNextChildStage, $02
 	enableallobjects
 @gave10RupeesLoop:
 	showtextlowindex <TX_440f
@@ -1392,11 +1393,11 @@ blossomScript1:
 	scriptjump @gave10RupeesLoop
 
 @give1Rupee:
-	asm15 scriptHlp.blossom_checkHasRupees, RUPEEVAL_001
+	asm15 scriptHelp.blossom_checkHasRupees, RUPEEVAL_001
 	jumpifobjectbyteeq Interaction.var3c, $01, @notEnoughRupees
 	asm15 removeRupeeValue, RUPEEVAL_001
-	asm15 scriptHlp.setc6e2Bit, $01
-	asm15 scriptHlp.setNextChildStage, $02
+	asm15 scriptHelp.setc6e2Bit, $01
+	asm15 scriptHelp.setNextChildStage, $02
 	enableallobjects
 @gave1RupeeLoop:
 	showtextlowindex <TX_4410
@@ -1428,7 +1429,7 @@ script4e08:
 	checkabutton
 	setdisabledobjectsto91
 	showtextlowindex <TX_4412
-	asm15 scriptHlp.setNextChildStage, $03
+	asm15 scriptHelp.setNextChildStage, $03
 	enableallobjects
 	scriptjump script4e08
 
@@ -1436,15 +1437,15 @@ script4e08:
 ; Blossom asks you how to get the baby to sleep
 blossomScript3:
 	initcollisions
-	asm15 scriptHlp.checkc6e2BitSet, $02
+	asm15 scriptHelp.checkc6e2BitSet, $02
 	jumpifobjectbyteeq Interaction.var3b, $01, @alreadyGaveAdvice
 	checkabutton
 
 	setdisabledobjectsto91
 	showtextlowindex <TX_4413
 
-	asm15 scriptHlp.setc6e2Bit, $02
-	asm15 scriptHlp.setNextChildStage, $04
+	asm15 scriptHelp.setc6e2Bit, $02
+	asm15 scriptHelp.setNextChildStage, $04
 
 	jumptable_memoryaddress wSelectedTextOption
 	.dw @sing
@@ -1458,7 +1459,7 @@ blossomScript3:
 @play:
 	wait 30
 	showtextlowindex <TX_4415
-	asm15 scriptHlp.blossom_addValueToChildStatus, $0a
+	asm15 scriptHelp.blossom_addValueToChildStatus, $0a
 	enableallobjects
 
 @alreadyGaveAdvice:
@@ -1481,7 +1482,7 @@ blossomScript5:
 ; current personality.)
 blossomScript6:
 	initcollisions
-	asm15 scriptHlp.checkc6e2BitSet, $03
+	asm15 scriptHelp.checkc6e2BitSet, $03
 	jumptable_objectbyte Interaction.var03
 	.dw @hyperactive
 	.dw @shy
@@ -1549,9 +1550,9 @@ blossomScript6:
 @selectedYes_1:
 	wait 30
 	showtextlowindex <TX_441c
-	asm15 scriptHlp.setc6e2Bit, $03
+	asm15 scriptHelp.setc6e2Bit, $03
 	writeobjectbyte Interaction.var3a, $01
-	asm15 scriptHlp.blossom_addValueToChildStatus, $08
+	asm15 scriptHelp.blossom_addValueToChildStatus, $08
 	retscript
 
 @selectedNo_1: ; Quiet, perhaps?
@@ -1564,9 +1565,9 @@ blossomScript6:
 @selectedYes_2:
 	wait 30
 	showtextlowindex <TX_441e
-	asm15 scriptHlp.setc6e2Bit, $03
+	asm15 scriptHelp.setc6e2Bit, $03
 	writeobjectbyte Interaction.var3a, $01
-	asm15 scriptHlp.blossom_addValueToChildStatus, $05
+	asm15 scriptHelp.blossom_addValueToChildStatus, $05
 	retscript
 
 @selectedNo_2: ; Were you weird?
@@ -1579,9 +1580,9 @@ blossomScript6:
 @selectedYes_3:
 	wait 30
 	showtextlowindex <TX_4420
-	asm15 scriptHlp.setc6e2Bit, $03
+	asm15 scriptHelp.setc6e2Bit, $03
 	writeobjectbyte Interaction.var3a, $01
-	asm15 scriptHlp.blossom_addValueToChildStatus, $01
+	asm15 scriptHelp.blossom_addValueToChildStatus, $01
 	retscript
 
 @selectedNo_3: ; She gives up asking (but she'll ask again next time you talk)
@@ -1648,7 +1649,7 @@ blossomScript9:
 ; INTERACID_VERAN_CUTSCENE_FACE
 ; ==============================================================================
 veranFaceCutsceneScript:
-	loadscript scriptHlp.veranFaceCutsceneScript
+	loadscript scriptHelp.veranFaceCutsceneScript
 
 
 ; ==============================================================================
@@ -1661,7 +1662,7 @@ oldManScript_givesRupees:
 	checkabutton
 	disableinput
 	showtextlowindex <TX_3318
-	asm15 scriptHlp.oldMan_giveRupees
+	asm15 scriptHelp.oldMan_giveRupees
 	wait 8
 	checkrupeedisplayupdated
 	orroomflag $40
@@ -1679,7 +1680,7 @@ oldManScript_takesRupees:
 	checkabutton
 	disableinput
 	showtextlowindex <TX_3315
-	asm15 scriptHlp.oldMan_takeRupees
+	asm15 scriptHelp.oldMan_takeRupees
 	jumpifobjectbyteeq Interaction.var3f, $00, @linkIsBroke
 	wait 8
 	checkrupeedisplayupdated
@@ -1728,7 +1729,7 @@ shootingGalleryScript_humanNpc:
 	scriptjump @repliedNo
 
 @repliedYes:
-	asm15 scriptHlp.shootingGallery_checkLinkHasRupees, RUPEEVAL_10
+	asm15 scriptHelp.shootingGallery_checkLinkHasRupees, RUPEEVAL_10
 	jumpifmemoryset wcddb, $80, @enoughRupees
 
 @notEnoughRupees:
@@ -1757,10 +1758,10 @@ _shootingGallery_fadeIntoGameWithSword:
 	asm15 fadeoutToWhite
 	checkpalettefadedone
 
-	asm15 scriptHlp.shootingGallery_equipSword
+	asm15 scriptHelp.shootingGallery_equipSword
 	asm15 clearAllItemsAndPutLinkOnGround
-	asm15 scriptHlp.shootingGallery_initLinkPosition
-	asm15 scriptHlp.shootingGallery_setEntranceTiles, $02
+	asm15 scriptHelp.shootingGallery_initLinkPosition
+	asm15 scriptHelp.shootingGallery_setEntranceTiles, $02
 	wait 20
 	asm15 fadeinFromWhite
 	checkpalettefadedone
@@ -1769,7 +1770,7 @@ _shootingGallery_beginGame:
 	setmusic MUS_MINIGAME
 	wait 40
 	wait 30
-	asm15 scriptHlp.shootingGallery_beginGame
+	asm15 scriptHelp.shootingGallery_beginGame
 	enableallobjects
 	scriptend
 
@@ -1819,7 +1820,7 @@ shootingGalleryScript_goronNpc:
 	scriptjump @answeredNo
 
 @answeredYes:
-	asm15 scriptHlp.shootingGallery_checkLinkHasRupees, RUPEEVAL_20
+	asm15 scriptHelp.shootingGallery_checkLinkHasRupees, RUPEEVAL_20
 	jumpifmemoryset wcddb, $80, @enoughRupees
 
 @notEnoughRupees:
@@ -1913,10 +1914,10 @@ shootingGalleryScript_goronElderNpc:
 	wait 40
 	asm15 fadeoutToWhite
 	checkpalettefadedone
-	asm15 scriptHlp.shootingGallery_equipBiggoronSword
+	asm15 scriptHelp.shootingGallery_equipBiggoronSword
 	asm15 clearAllItemsAndPutLinkOnGround
-	asm15 scriptHlp.shootingGallery_initLinkPosition
-	asm15 scriptHlp.shootingGallery_setEntranceTiles, $02
+	asm15 scriptHelp.shootingGallery_initLinkPosition
+	asm15 scriptHelp.shootingGallery_setEntranceTiles, $02
 	wait 20
 	asm15 fadeinFromWhite
 	checkpalettefadedone
@@ -1988,21 +1989,21 @@ _shootingGallery_printTotalPoints:
 
 
 shootingGalleryScript_humanNpc_gameDone:
-	loadscript scriptHlp.shootingGalleryScript_humanNpc_gameDone
+	loadscript scriptHelp.shootingGalleryScript_humanNpc_gameDone
 
 shootingGalleryScript_goronNpc_gameDone:
-	loadscript scriptHlp.shootingGalleryScript_goronNpc_gameDone
+	loadscript scriptHelp.shootingGalleryScript_goronNpc_gameDone
 
 shootingGalleryScript_goronElderNpc_gameDone:
 	disableinput
 	wait 40
 	asm15 fadeoutToWhite
 	checkpalettefadedone
-	asm15 scriptHlp.shootingGallery_restoreEquips
-	asm15 scriptHlp.shootingGallery_setEntranceTiles, $00
-	asm15 scriptHlp.shootingGallery_removeAllTargets
+	asm15 scriptHelp.shootingGallery_restoreEquips
+	asm15 scriptHelp.shootingGallery_setEntranceTiles, $00
+	asm15 scriptHelp.shootingGallery_removeAllTargets
 	asm15 clearAllItemsAndPutLinkOnGround
-	asm15 scriptHlp.shootingGallery_initLinkPositionAfterBiggoronGame
+	asm15 scriptHelp.shootingGallery_initLinkPositionAfterBiggoronGame
 
 	wait 20
 	asm15 fadeinFromWhite
@@ -2010,7 +2011,7 @@ shootingGalleryScript_goronElderNpc_gameDone:
 	resetmusic
 	wait 40
 
-	asm15 scriptHlp.shootingGallery_cpScore, $08
+	asm15 scriptHelp.shootingGallery_cpScore, $08
 	jumpifmemoryset wcddb, $80, @giveBiggoronSword
 
 	; Not enough points
@@ -2062,9 +2063,9 @@ shootingGalleryScript_goronElderNpc_gameDone:
 ; Performs a "cutscene" sometimes used when Link gets an item, where an "energy swirl"
 ; goes toward him and the screen flashes white.
 scriptFunc_doEnergySwirlCutscene:
-	asm15 scriptHlp.createSparkle
+	asm15 scriptHelp.createSparkle
 	wait 30
-	asm15 scriptHlp.func_50e4
+	asm15 scriptHelp.func_50e4
 	wait 10
 	playsound SND_FADEOUT
 	asm15 fadeoutToWhite
@@ -2086,9 +2087,9 @@ scriptFunc_doEnergySwirlCutscene:
 ; ==============================================================================
 
 _jumpAndWaitUntilLanded:
-	asm15 scriptHlp.beginJump
+	asm15 scriptHelp.beginJump
 @stillInAir:
-	asm15 scriptHlp.updateGravity
+	asm15 scriptHelp.updateGravity
 	jumpifmemoryset wcddb, $80, @landed
 	scriptjump @stillInAir
 @landed:
@@ -2130,7 +2131,7 @@ impaScript_waitForRockToBeMoved:
 	rungenericnpc TX_010b
 
 impaScript_rockJustMoved:
-	loadscript scriptHlp.impaScript_rockJustMoved
+	loadscript scriptHelp.impaScript_rockJustMoved
 
 ; Impa reveals that she's under veran's control
 impaScript_revealPossession:
@@ -2173,7 +2174,7 @@ impaScript_revealPossession:
 impaScript1:
 	wait 120
 	setanimation $02
-	asm15 scriptHlp.impa_restoreNormalSpriteSheet
+	asm15 scriptHelp.impa_restoreNormalSpriteSheet
 	wait 60
 	setanimation $03
 	wait 50
@@ -2202,7 +2203,7 @@ impaScript1:
 
 ++
 	wait 30
-	asm15 scriptHlp.forceLinkDirection, DIR_LEFT
+	asm15 scriptHelp.forceLinkDirection, DIR_LEFT
 	wait 30
 	showtext TX_0117
 	wait 30
@@ -2251,10 +2252,10 @@ impaScript3:
 	scriptend
 
 impaScript4:
-	loadscript scriptHlp.impaScript4
+	loadscript scriptHelp.impaScript4
 
 impaScript5:
-	loadscript scriptHlp.impaScript5
+	loadscript scriptHelp.impaScript5
 
 ; Subid 6: ?
 impaScript6:
@@ -2269,13 +2270,13 @@ impaScript6:
 	scriptend
 
 impaScript7:
-	loadscript scriptHlp.impaScript7
+	loadscript scriptHelp.impaScript7
 
 ; Subid 8: ?
 impaScript8:
 	checkcfc0bit 0
 	wait 30
-	asm15 scriptHlp.createExclamationMark, 30
+	asm15 scriptHelp.createExclamationMark, 30
 	checkcfc0bit 3
 	setspeed SPEED_200
 	setanimation $03
@@ -2301,9 +2302,9 @@ impaScript9:
 	callscript _jumpAndWaitUntilLanded
 
 	wait 10
-	asm15 scriptHlp.forceLinkDirection, DIR_UP
+	asm15 scriptHelp.forceLinkDirection, DIR_UP
 	wait 10
-	asm15 scriptHlp.impa_showZeldaKidnappedTextNonExitable
+	asm15 scriptHelp.impa_showZeldaKidnappedTextNonExitable
 	writememory wTmpcfc0.genericCutscene.cfd0, $12
 	scriptend
 
@@ -2335,7 +2336,7 @@ greatFairyOctorokScript:
 	setdisabledobjectsto11
 	disablemenu
 	showtextlowindex <TX_4108
-	asm15 scriptHlp.greatFairyOctorok_createMagicPowderAnimation
+	asm15 scriptHelp.greatFairyOctorok_createMagicPowderAnimation
 	wait 60
 	scriptend
 
@@ -2377,7 +2378,7 @@ childScript_stage5_hyperactive:
 @loop:
 	checkabutton
 	showtext TX_4701
-	asm15 scriptHlp.setNextChildStage, $06
+	asm15 scriptHelp.setNextChildStage, $06
 	scriptjump @loop
 
 childScript_stage5_shy:
@@ -2385,7 +2386,7 @@ childScript_stage5_shy:
 @loop:
 	checkabutton
 	showtext TX_4201
-	asm15 scriptHlp.setNextChildStage, $06
+	asm15 scriptHelp.setNextChildStage, $06
 	scriptjump @loop
 
 childScript_stage5_curious:
@@ -2393,7 +2394,7 @@ childScript_stage5_curious:
 @loop:
 	checkabutton
 	showtext TX_4901
-	asm15 scriptHlp.setNextChildStage, $06
+	asm15 scriptHelp.setNextChildStage, $06
 	scriptjump @loop
 
 
@@ -2402,13 +2403,13 @@ childScript_stage5_curious:
 
 childScript_stage6_hyperactive:
 	initcollisions
-	asm15 scriptHlp.checkc6e2BitSet, $04
+	asm15 scriptHelp.checkc6e2BitSet, $04
 	jumpifobjectbyteeq Interaction.var3b, $01, @alreadyAnswered
 	checkabutton
 	disableinput
 	showtext TX_4702
-	asm15 scriptHlp.setc6e2Bit, $04
-	asm15 scriptHlp.setNextChildStage, $07
+	asm15 scriptHelp.setc6e2Bit, $04
+	asm15 scriptHelp.setNextChildStage, $07
 	jumptable_memoryaddress wSelectedTextOption
 	.dw @answeredYes
 	.dw @answeredNo
@@ -2416,7 +2417,7 @@ childScript_stage6_hyperactive:
 @answeredYes:
 	wait 30
 	showtext TX_4703
-	asm15 scriptHlp.child_addValueToChildStatus, $04
+	asm15 scriptHelp.child_addValueToChildStatus, $04
 	enableinput
 	scriptjump @alreadyAnswered
 
@@ -2433,13 +2434,13 @@ childScript_stage6_hyperactive:
 
 childScript_stage6_shy:
 	initcollisions
-	asm15 scriptHlp.checkc6e2BitSet, $04
+	asm15 scriptHelp.checkc6e2BitSet, $04
 	jumpifobjectbyteeq Interaction.var3b, $01, @alreadyAnswered
 	checkabutton
 	disableinput
 	showtext TX_4202
-	asm15 scriptHlp.setc6e2Bit, $04
-	asm15 scriptHlp.setNextChildStage, $07
+	asm15 scriptHelp.setc6e2Bit, $04
+	asm15 scriptHelp.setNextChildStage, $07
 	jumptable_memoryaddress wSelectedTextOption
 	.dw @answeredYes
 	.dw @answeredNo
@@ -2447,7 +2448,7 @@ childScript_stage6_shy:
 @answeredYes:
 	wait 30
 	showtext TX_4203
-	asm15 scriptHlp.child_addValueToChildStatus, $04
+	asm15 scriptHelp.child_addValueToChildStatus, $04
 	enableinput
 	scriptjump @alreadyAnswered
 
@@ -2464,13 +2465,13 @@ childScript_stage6_shy:
 
 childScript_stage6_curious:
 	initcollisions
-	asm15 scriptHlp.checkc6e2BitSet, $04
+	asm15 scriptHelp.checkc6e2BitSet, $04
 	jumpifobjectbyteeq Interaction.var3b, $01, @alreadyAnswered
 	checkabutton
 	disableinput
 	showtext TX_4902
-	asm15 scriptHlp.setc6e2Bit, $04
-	asm15 scriptHlp.setNextChildStage, $07
+	asm15 scriptHelp.setc6e2Bit, $04
+	asm15 scriptHelp.setNextChildStage, $07
 	jumptable_memoryaddress wSelectedTextOption
 	.dw @answeredChicken
 	.dw @answeredEgg
@@ -2478,7 +2479,7 @@ childScript_stage6_curious:
 @answeredChicken:
 	wait 30
 	showtext TX_4903
-	asm15 scriptHlp.child_addValueToChildStatus, $04
+	asm15 scriptHelp.child_addValueToChildStatus, $04
 	enableinput
 	scriptjump @alreadyAnswered
 
@@ -2500,7 +2501,7 @@ childScript_stage7_slacker:
 @loop:
 	checkabutton
 	showtext TX_4b00
-	asm15 scriptHlp.setNextChildStage, $08
+	asm15 scriptHelp.setNextChildStage, $08
 	scriptjump @loop
 
 childScript_stage7_warrior:
@@ -2508,7 +2509,7 @@ childScript_stage7_warrior:
 @loop:
 	checkabutton
 	showtext TX_4a00
-	asm15 scriptHlp.setNextChildStage, $08
+	asm15 scriptHelp.setNextChildStage, $08
 	scriptjump @loop
 
 childScript_stage7_arborist:
@@ -2516,7 +2517,7 @@ childScript_stage7_arborist:
 @loop:
 	checkabutton
 	showtext TX_4800
-	asm15 scriptHlp.setNextChildStage, $08
+	asm15 scriptHelp.setNextChildStage, $08
 	scriptjump @loop
 
 childScript_stage7_singer:
@@ -2524,7 +2525,7 @@ childScript_stage7_singer:
 @loop:
 	checkabutton
 	showtext TX_4600
-	asm15 scriptHlp.setNextChildStage, $08
+	asm15 scriptHelp.setNextChildStage, $08
 	scriptjump @loop
 
 
@@ -2532,7 +2533,7 @@ childScript_stage7_singer:
 
 childScript_stage8_slacker:
 	initcollisions
-	asm15 scriptHlp.checkc6e2BitSet, $05
+	asm15 scriptHelp.checkc6e2BitSet, $05
 	jumpifobjectbyteeq Interaction.var3b, $01, @alreadyAnswered
 
 @loop:
@@ -2553,12 +2554,12 @@ childScript_stage8_slacker:
 	.dw @answered0Rupees
 
 @answered100Rupees:
-	asm15 scriptHlp.child_checkHasRupees, RUPEEVAL_100
+	asm15 scriptHelp.child_checkHasRupees, RUPEEVAL_100
 	jumpifobjectbyteeq Interaction.var3c, $01, @notEnoughRupees
 	asm15 removeRupeeValue, RUPEEVAL_100
-	asm15 scriptHlp.child_setStage8Response, $00
-	asm15 scriptHlp.setc6e2Bit, $05
-	asm15 scriptHlp.setNextChildStage, $09
+	asm15 scriptHelp.child_setStage8Response, $00
+	asm15 scriptHelp.setc6e2Bit, $05
+	asm15 scriptHelp.setNextChildStage, $09
 	wait 30
 	enableinput
 @answered100Loop:
@@ -2567,12 +2568,12 @@ childScript_stage8_slacker:
 	scriptjump @answered100Loop
 
 @answered50Rupees:
-	asm15 scriptHlp.child_checkHasRupees, RUPEEVAL_050
+	asm15 scriptHelp.child_checkHasRupees, RUPEEVAL_050
 	jumpifobjectbyteeq Interaction.var3c, $01, @notEnoughRupees
 	asm15 removeRupeeValue, RUPEEVAL_050
-	asm15 scriptHlp.child_setStage8Response, $01
-	asm15 scriptHlp.setc6e2Bit, $05
-	asm15 scriptHlp.setNextChildStage, $09
+	asm15 scriptHelp.child_setStage8Response, $01
+	asm15 scriptHelp.setc6e2Bit, $05
+	asm15 scriptHelp.setNextChildStage, $09
 	wait 30
 	enableinput
 @answered50Loop:
@@ -2581,12 +2582,12 @@ childScript_stage8_slacker:
 	scriptjump @answered50Loop
 
 @answered10Rupees:
-	asm15 scriptHlp.child_checkHasRupees, RUPEEVAL_010
+	asm15 scriptHelp.child_checkHasRupees, RUPEEVAL_010
 	jumpifobjectbyteeq Interaction.var3c, $01, @notEnoughRupees
 	asm15 removeRupeeValue, RUPEEVAL_010
-	asm15 scriptHlp.child_setStage8Response, $02
-	asm15 scriptHlp.setc6e2Bit, $05
-	asm15 scriptHlp.setNextChildStage, $09
+	asm15 scriptHelp.child_setStage8Response, $02
+	asm15 scriptHelp.setc6e2Bit, $05
+	asm15 scriptHelp.setNextChildStage, $09
 	wait 30
 	enableinput
 @answered10Loop:
@@ -2595,12 +2596,12 @@ childScript_stage8_slacker:
 	scriptjump @answered10Loop
 
 @answered0Rupees: ; He takes 1 rupee anyway...
-	asm15 scriptHlp.child_checkHasRupees, RUPEEVAL_001
+	asm15 scriptHelp.child_checkHasRupees, RUPEEVAL_001
 	jumpifobjectbyteeq Interaction.var3c, $01, @notEnoughRupees
 	asm15 removeRupeeValue, RUPEEVAL_001
-	asm15 scriptHlp.child_setStage8Response, $03
-	asm15 scriptHlp.setc6e2Bit, $05
-	asm15 scriptHlp.setNextChildStage, $09
+	asm15 scriptHelp.child_setStage8Response, $03
+	asm15 scriptHelp.setc6e2Bit, $05
+	asm15 scriptHelp.setNextChildStage, $09
 	wait 30
 	enableinput
 @answered0Loop:
@@ -2629,7 +2630,7 @@ childScript_stage8_slacker:
 ; Asks Link what will make him mightiest.
 childScript_stage8_warrior:
 	initcollisions
-	asm15 scriptHlp.checkc6e2BitSet, $05
+	asm15 scriptHelp.checkc6e2BitSet, $05
 	jumpifobjectbyteeq Interaction.var3b, $01, @alreadyAnswered
 	checkabutton
 	disableinput
@@ -2653,9 +2654,9 @@ childScript_stage8_warrior:
 	.dw @answeredNo_3
 
 @answeredNo_3: ; He gives up asking
-	asm15 scriptHlp.child_setStage8Response, $03
-	asm15 scriptHlp.setc6e2Bit, $05
-	asm15 scriptHlp.setNextChildStage, $09
+	asm15 scriptHelp.child_setStage8Response, $03
+	asm15 scriptHelp.setc6e2Bit, $05
+	asm15 scriptHelp.setNextChildStage, $09
 	wait 30
 	showtext TX_4a04
 	enableinput
@@ -2663,19 +2664,19 @@ childScript_stage8_warrior:
 	scriptjump @alreadyAnswered
 
 @answeredDailyTraining:
-	asm15 scriptHlp.child_setStage8Response, $00
+	asm15 scriptHelp.child_setStage8Response, $00
 	scriptjump @gaveResponse
 
 @answeredNaturalTalent:
-	asm15 scriptHlp.child_setStage8Response, $01
+	asm15 scriptHelp.child_setStage8Response, $01
 	scriptjump @gaveResponse
 
 @answeredCaringHeart:
-	asm15 scriptHlp.child_setStage8Response, $02
+	asm15 scriptHelp.child_setStage8Response, $02
 
 @gaveResponse:
-	asm15 scriptHlp.setc6e2Bit, $05
-	asm15 scriptHlp.setNextChildStage, $09
+	asm15 scriptHelp.setc6e2Bit, $05
+	asm15 scriptHelp.setNextChildStage, $09
 	wait 30
 	showtext TX_4a05
 	wait 30
@@ -2690,15 +2691,15 @@ childScript_stage8_warrior:
 ; Gives Link a gasha seed.
 childScript_stage8_arborist:
 	initcollisions
-	asm15 scriptHlp.checkc6e2BitSet, $05
+	asm15 scriptHelp.checkc6e2BitSet, $05
 	jumpifobjectbyteeq Interaction.var3b, $01, @alreadyGaveSeed
 
 	checkabutton
 	disableinput
 	showtext TX_4801
 	giveitem TREASURE_GASHA_SEED, $03
-	asm15 scriptHlp.setc6e2Bit, $05
-	asm15 scriptHlp.setNextChildStage, $09
+	asm15 scriptHelp.setc6e2Bit, $05
+	asm15 scriptHelp.setNextChildStage, $09
 	wait 30
 	showtext TX_4802
 	wait 30
@@ -2713,15 +2714,15 @@ childScript_stage8_arborist:
 ; Asks link what's more important, love or courage.
 childScript_stage8_singer:
 	initcollisions
-	asm15 scriptHlp.checkc6e2BitSet, $05
+	asm15 scriptHelp.checkc6e2BitSet, $05
 	jumpifobjectbyteeq Interaction.var3b, $01, @alreadyAnswered
 
 	checkabutton
 	disableinput
 	showtext TX_4601
-	asm15 scriptHlp.child_setStage8ResponseToSelectedTextOption, $00
-	asm15 scriptHlp.setc6e2Bit, $05
-	asm15 scriptHlp.setNextChildStage, $09
+	asm15 scriptHelp.child_setStage8ResponseToSelectedTextOption, $00
+	asm15 scriptHelp.setc6e2Bit, $05
+	asm15 scriptHelp.setNextChildStage, $09
 	wait 30
 	enableinput
 	scriptjump @showResponseText
@@ -2737,12 +2738,12 @@ childScript_stage8_singer:
 
 childScript_stage9_slacker:
 	initcollisions
-	asm15 scriptHlp.checkc6e2BitSet, $06
+	asm15 scriptHelp.checkc6e2BitSet, $06
 	jumpifobjectbyteeq Interaction.var3b, $01, @alreadyGaveReward
 	checkabutton
 	disableinput
 	showtext TX_4b0a
-	asm15 scriptHlp.setc6e2Bit, $06
+	asm15 scriptHelp.setc6e2Bit, $06
 	wait 30
 	jumptable_memoryaddress wChildStage8Response
 	.dw @fillSatchel
@@ -2756,7 +2757,7 @@ childScript_stage9_slacker:
 	scriptjump @justGaveReward
 
 @give200Rupees:
-	asm15 scriptHlp.child_giveRupees, RUPEEVAL_200
+	asm15 scriptHelp.child_giveRupees, RUPEEVAL_200
 	showtext TX_0009
 	scriptjump @justGaveReward
 
@@ -2781,14 +2782,14 @@ childScript_stage9_slacker:
 
 childScript_stage9_warrior:
 	initcollisions
-	asm15 scriptHlp.checkc6e2BitSet, $06
+	asm15 scriptHelp.checkc6e2BitSet, $06
 	jumpifobjectbyteeq Interaction.var3b, $01, @alreadyGaveReward
 	checkabutton
 	disableinput
 	showtext TX_4a06
 	wait 30
 	showtext TX_4a07
-	asm15 scriptHlp.setc6e2Bit, $06
+	asm15 scriptHelp.setc6e2Bit, $06
 	wait 30
 	jumptable_memoryaddress wChildStage8Response
 	.dw @give100Rupees
@@ -2797,22 +2798,22 @@ childScript_stage9_warrior:
 	.dw @give1Rupee
 
 @give100Rupees:
-	asm15 scriptHlp.child_giveRupees, RUPEEVAL_100
+	asm15 scriptHelp.child_giveRupees, RUPEEVAL_100
 	showtext TX_0007
 	scriptjump @justGaveReward
 
 @give1Heart:
-	asm15 scriptHlp.child_giveOneHeart, $01
+	asm15 scriptHelp.child_giveOneHeart, $01
 	showtext TX_0051
 	scriptjump @justGaveReward
 
 @restoreHealth:
-	asm15 scriptHlp.child_giveHeartRefill
+	asm15 scriptHelp.child_giveHeartRefill
 	showtext TX_0053
 	scriptjump @justGaveReward
 
 @give1Rupee:
-	asm15 scriptHlp.child_giveRupees, RUPEEVAL_001
+	asm15 scriptHelp.child_giveRupees, RUPEEVAL_001
 	showtext TX_0001
 
 @justGaveReward:
@@ -2857,8 +2858,8 @@ childScript_stage9_singer:
 	.dw @selectedNo
 
 @selectedYes:
-	asm15 scriptHlp.child_playMusic
-	asm15 scriptHlp.child_giveHeartRefill
+	asm15 scriptHelp.child_playMusic
+	asm15 scriptHelp.child_giveHeartRefill
 	wait 30
 	enableinput
 
@@ -2894,7 +2895,7 @@ nayruScript00_part1:
 
 	writememory   wTmpcfc0.genericCutscene.cfd0, $0b
 	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $0c
-	asm15 scriptHlp.setLinkAnimation, LINK_ANIM_MODE_NONE
+	asm15 scriptHelp.setLinkAnimation, LINK_ANIM_MODE_NONE
 	wait 40
 
 	showtext TX_1d22
@@ -2954,7 +2955,7 @@ nayruScript00_part2:
 
 
 nayruScript01:
-	loadscript scriptHlp.nayruScript01
+	loadscript scriptHelp.nayruScript01
 
 
 ; Subid $02: Nayru on maku tree screen after being saved
@@ -2971,11 +2972,11 @@ nayruScript02_part1:
 	scriptend
 
 nayruScript02_part2:
-	loadscript scriptHlp.nayruScript02_part2
+	loadscript scriptHelp.nayruScript02_part2
 
 nayruScript02_part3:
 	wait 1
-	asm15 scriptHlp.turnToFaceSomethingAtInterval, $03
+	asm15 scriptHelp.turnToFaceSomethingAtInterval, $03
 	jumpifmemoryeq wTmpcfc0.genericCutscene.cfd0, $09, @sayGoodbye
 	scriptjump nayruScript02_part3
 
@@ -2985,7 +2986,7 @@ nayruScript02_part3:
 	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $0a
 	wait 60
 
-	asm15 scriptHlp.forceLinkDirection, DIR_UP
+	asm15 scriptHelp.forceLinkDirection, DIR_UP
 	wait 40
 
 	showtext TX_1d08
@@ -2996,14 +2997,14 @@ nayruScript02_part3:
 	wait 8
 
 	movedown $4c
-	asm15 scriptHlp.forceLinkDirection, DIR_DOWN
+	asm15 scriptHelp.forceLinkDirection, DIR_DOWN
 
 	writememory wTmpcfc0.genericCutscene.cfd0, $0b
 	scriptend
 
 
 nayruScript03:
-	loadscript scriptHlp.nayruScript03
+	loadscript scriptHelp.nayruScript03
 
 
 ; Subid $04: Cutscene at end of game with Ambi and her guards
@@ -3046,7 +3047,7 @@ nayruScript05:
 	scriptend
 
 nayruScript07:
-	loadscript scriptHlp.nayruScript07
+	loadscript scriptHelp.nayruScript07
 
 ; Subid $08: Cutscene after saving Zelda?
 nayruScript08:
@@ -3117,13 +3118,13 @@ nayruScript0a:
 	scriptend
 
 nayruScript10:
-	loadscript scriptHlp.nayruScript10
+	loadscript scriptHelp.nayruScript10
 
 nayruScript11:
-	loadscript scriptHlp.nayruScript11
+	loadscript scriptHelp.nayruScript11
 
 nayruScript13:
-	loadscript scriptHlp.nayruScript13
+	loadscript scriptHelp.nayruScript13
 
 
 ; ==============================================================================
@@ -3141,7 +3142,7 @@ ralphSubid00Script:
 	writememory   wTmpcfc0.genericCutscene.cfd0, $0a
 	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $0b ; Wait for nayru's text to finish
 
-	asm15 scriptHlp.setLinkAnimation, $01
+	asm15 scriptHelp.setLinkAnimation, $01
 	callscript _jumpAndWaitUntilLanded
 	wait 10
 
@@ -3162,7 +3163,7 @@ ralphSubid00Script:
 
 @faceVeranGhost:
 	wait 1
-	asm15 scriptHlp.turnToFaceSomething
+	asm15 scriptHelp.turnToFaceSomething
 	jumpifmemoryeq wTmpcfc0.genericCutscene.cfd0, $15, @faceUp
 	scriptjump @faceVeranGhost
 
@@ -3182,7 +3183,7 @@ ralphSubid00Script:
 	setspeed SPEED_100
 	moveleft $10
 	wait 6
-	asm15 scriptHlp.ralph_createLinkedSwordAnimation
+	asm15 scriptHelp.ralph_createLinkedSwordAnimation
 	moveup $18
 	wait 30
 
@@ -3230,7 +3231,7 @@ ralphSubid00Script:
 
 
 ralphSubid02Script:
-	loadscript scriptHlp.ralphSubid02Script
+	loadscript scriptHelp.ralphSubid02Script
 
 
 ; Cutscene outside Ambi's palace before getting mystery seeds
@@ -3257,7 +3258,7 @@ ralphSubid01Script:
 
 
 ralphSubid03Script:
-	loadscript scriptHlp.ralphSubid03Script
+	loadscript scriptHelp.ralphSubid03Script
 
 
 ; Cutscene on maku tree screen after saving Nayru
@@ -3277,20 +3278,20 @@ ralphSubid04Script_part2:
 	wait 6
 
 	moveright $0a
-	asm15 scriptHlp.forceLinkDirection, DIR_LEFT
+	asm15 scriptHelp.forceLinkDirection, DIR_LEFT
 	wait 30
 
 	showtext TX_2a0e
 	wait 30
 
-	asm15 scriptHlp.forceLinkDirection, DIR_UP
+	asm15 scriptHelp.forceLinkDirection, DIR_UP
 	setanimation $00
 	writememory wTmpcfc0.genericCutscene.cfd0, $05
 	scriptend
 
 ralphSubid04Script_part3:
 	wait 1
-	asm15 scriptHlp.turnToFaceSomethingAtInterval, $03
+	asm15 scriptHelp.turnToFaceSomethingAtInterval, $03
 	jumpifmemoryeq wTmpcfc0.genericCutscene.cfd0, $09, @twinrovaGone
 	scriptjump ralphSubid04Script_part3
 
@@ -3300,7 +3301,7 @@ ralphSubid04Script_part3:
 	wait 60
 
 	setanimation $01
-	asm15 scriptHlp.forceLinkDirection, DIR_LEFT
+	asm15 scriptHelp.forceLinkDirection, DIR_LEFT
 	wait 20
 
 	showtextdifferentforlinked TX_2a0f, TX_2a10
@@ -3308,7 +3309,7 @@ ralphSubid04Script_part3:
 	setspeed SPEED_200
 	movedown $18
 
-	asm15 scriptHlp.forceLinkDirection, DIR_DOWN
+	asm15 scriptHelp.forceLinkDirection, DIR_DOWN
 	writememory wTmpcfc0.genericCutscene.cfd0, $0a
 	scriptend
 
@@ -3324,7 +3325,7 @@ ralphSubid05Script:
 	checkobjectbyteeq Interaction.var3e, $01
 	wait 10
 	moveleft $10
-	asm15 scriptHlp.forceLinkDirection, DIR_RIGHT
+	asm15 scriptHelp.forceLinkDirection, DIR_RIGHT
 	wait 10
 
 	showtext TX_2a11
@@ -3377,7 +3378,7 @@ ralphSubid06Script_part2:
 
 	setanimation $01
 	wait 10
-	asm15 scriptHlp.forceLinkDirection, DIR_LEFT
+	asm15 scriptHelp.forceLinkDirection, DIR_LEFT
 	wait 10
 	showtext TX_2a14
 	wait 60
@@ -3386,7 +3387,7 @@ ralphSubid06Script_part2:
 	wait 20
 
 	setanimation $00
-	asm15 scriptHlp.forceLinkDirection, DIR_UP
+	asm15 scriptHelp.forceLinkDirection, DIR_UP
 	wait 20
 	writememory   wTmpcfc0.genericCutscene.cfd0, $0c
 	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $0d
@@ -3399,7 +3400,7 @@ ralphSubid06Script_part2:
 	wait 10
 
 	setanimation $03
-	asm15 scriptHlp.forceLinkDirection, DIR_LEFT
+	asm15 scriptHelp.forceLinkDirection, DIR_LEFT
 	scriptend
 
 @linked:
@@ -3418,7 +3419,7 @@ ralphSubid07Script:
 	setanimation $00
 	wait 20
 
-	asm15 scriptHlp.ralph_createExclamationMarkShiftedRight, $28
+	asm15 scriptHelp.ralph_createExclamationMarkShiftedRight, $28
 	wait 60
 
 	writememory wTmpcfc0.genericCutscene.state, $03
@@ -3458,7 +3459,7 @@ ralphSubid08Script:
 ; Cutscene where Ralph charges in to Ambi's palace
 ralphSubid09Script:
 	wait 30
-	asm15 scriptHlp.ralph_faceLinkAndCreateExclamationMark
+	asm15 scriptHelp.ralph_faceLinkAndCreateExclamationMark
 	wait 30
 
 	showtext TX_2a16
@@ -3485,7 +3486,7 @@ ralphSubid0aScript_unlinked:
 	scriptend
 
 ralphSubid0aScript_linked:
-	asm15 scriptHlp.ralph_createExclamationMarkShiftedRight, $1e
+	asm15 scriptHelp.ralph_createExclamationMarkShiftedRight, $1e
 	wait 30
 
 	writememory wTmpcfc0.genericCutscene.cfd0, $01
@@ -3514,13 +3515,13 @@ ralphSubid0aScript_linked:
 
 
 ralphSubid0bScript:
-	loadscript scriptHlp.ralphSubid0bScript
+	loadscript scriptHelp.ralphSubid0bScript
 
 ralphSubid10Script:
-	loadscript scriptHlp.ralphSubid10Script
+	loadscript scriptHelp.ralphSubid10Script
 
 ralphSubid0cScript:
-	loadscript scriptHlp.ralphSubid0cScript
+	loadscript scriptHelp.ralphSubid0cScript
 
 
 ; Cutscene where Ralph goes back in time
@@ -3542,14 +3543,14 @@ ralphSubid0dScript:
 	playsound SND_MYSTERY_SEED
 
 @flickerVisibility:
-	asm15 scriptHlp.ralph_flickerVisibility
-	asm15 scriptHlp.ralph_decVar3f
+	asm15 scriptHelp.ralph_flickerVisibility
+	asm15 scriptHelp.ralph_decVar3f
 	jumpifmemoryset wcddb, $80, @done
 	scriptjump @flickerVisibility
 
 @done:
 	setglobalflag GLOBALFLAG_RALPH_ENTERED_PORTAL
-	asm15 scriptHlp.ralph_restoreMusic
+	asm15 scriptHelp.ralph_restoreMusic
 	enableinput
 	scriptend
 
@@ -3594,7 +3595,7 @@ ralphSubid11Script:
 	wait 20
 
 	writeobjectbyte Interaction.var39, $01 ; Disable animations
-	asm15 scriptHlp.turnToFaceLink
+	asm15 scriptHelp.turnToFaceLink
 	wait 6
 
 	showtext TX_2a21
@@ -3673,7 +3674,7 @@ monkeySubid5Script:
 	wait 1
 	scriptjump @waitUntilLanded
 @landed:
-	asm15 scriptHlp.monkey_decideTextIndex
+	asm15 scriptHelp.monkey_decideTextIndex
 	showloadedtext
 	scriptjump @npcLoop
 
@@ -3689,9 +3690,9 @@ monkeySubid7Script_0:
 	initcollisions
 @npcLoop:
 	checkabutton
-	asm15 scriptHlp.monkey_turnToFaceLink
+	asm15 scriptHelp.monkey_turnToFaceLink
 	showtextlowindex <TX_5715
-	asm15 scriptHlp.monkey_setAnimationFromVar3a
+	asm15 scriptHelp.monkey_setAnimationFromVar3a
 	scriptjump @npcLoop
 
 
@@ -3699,9 +3700,9 @@ monkeySubid7Script_1:
 	initcollisions
 @npcLoop:
 	checkabutton
-	asm15 scriptHlp.monkey_turnToFaceLink
+	asm15 scriptHelp.monkey_turnToFaceLink
 	showtextlowindex <TX_5716
-	asm15 scriptHlp.monkey_setAnimationFromVar3a
+	asm15 scriptHelp.monkey_setAnimationFromVar3a
 	scriptjump @npcLoop
 
 
@@ -3709,9 +3710,9 @@ monkeySubid7Script_2:
 	initcollisions
 @npcLoop:
 	checkabutton
-	asm15 scriptHlp.monkey_turnToFaceLink
+	asm15 scriptHelp.monkey_turnToFaceLink
 	showtextlowindex <TX_5719
-	asm15 scriptHlp.monkey_setAnimationFromVar3a
+	asm15 scriptHelp.monkey_setAnimationFromVar3a
 	scriptjump @npcLoop
 
 
@@ -3719,9 +3720,9 @@ monkeySubid7Script_3:
 	initcollisions
 @npcLoop:
 	checkabutton
-	asm15 scriptHlp.monkey_turnToFaceLink
+	asm15 scriptHelp.monkey_turnToFaceLink
 	showtextlowindex <TX_571a
-	asm15 scriptHlp.monkey_setAnimationFromVar3a
+	asm15 scriptHelp.monkey_setAnimationFromVar3a
 	scriptjump @npcLoop
 
 
@@ -3742,7 +3743,7 @@ villagerSubid02Script_part1:
 
 _villagerFaceDownAfterTalkedTo:
 	checkabutton
-	asm15 scriptHlp.turnToFaceLink
+	asm15 scriptHelp.turnToFaceLink
 	showloadedtext
 	wait 10
 	setanimation $02
@@ -3760,7 +3761,7 @@ villagerSubid02Script_part2:
 @moveRight:
 	moveright $10
 ++
-	asm15 scriptHlp.villager_setLinkYToVar39
+	asm15 scriptHelp.villager_setLinkYToVar39
 	wait 10
 	enableinput
 	scriptend
@@ -3853,7 +3854,7 @@ villagerSubid09Script:
 	wait 30
 
 _villagerThrowBallAnimation:
-	asm15 scriptHlp.loadNextAnimationFrameAndMore, $01
+	asm15 scriptHelp.loadNextAnimationFrameAndMore, $01
 	wait 30
 	scriptjump villagerSubid09Script
 
@@ -3869,7 +3870,7 @@ villagerSubid0bScript:
 	; Run off screen to get ball
 	setspeed SPEED_180
 	moveleft $2c
-	asm15 scriptHlp.villager_createBallAccessory
+	asm15 scriptHelp.villager_createBallAccessory
 	wait 30
 
 	; Run back on screen
@@ -3883,7 +3884,7 @@ villagerSubid0bScript:
 
 	; Throw the ball
 	writeobjectbyte Interaction.var3b, $01
-	asm15 scriptHlp.villager_createBall
+	asm15 scriptHelp.villager_createBall
 	scriptjump _villagerThrowBallAnimation
 
 
@@ -4015,7 +4016,7 @@ boySubid00Script:
 	initcollisions
 @npcLoop:
 	checkabutton
-	asm15 scriptHlp.turnToFaceLink
+	asm15 scriptHelp.turnToFaceLink
 	ormemory wTmpcfc0.genericCutscene.cfde, $04
 	showtext TX_2510
 	wait 10
@@ -4032,7 +4033,7 @@ boySubid01Script:
 	wait 8
 	moveleft $30
 
-	asm15 scriptHlp.createExclamationMark, $3c
+	asm15 scriptHelp.createExclamationMark, $3c
 	wait 50
 
 	writememory wTmpcfc0.genericCutscene.cfd1, $01
@@ -4098,7 +4099,7 @@ _boyShakeWithFearThenRun:
 	writeobjectbyte Interaction.var38, 120 ; Wait 2 seconds
 
 @shake:
-	asm15 scriptHlp.oscillateXRandomly
+	asm15 scriptHelp.oscillateXRandomly
 	addobjectbyte Interaction.var38, -1
 	jumpifobjectbyteeq Interaction.var38, $00, @runAway
 	wait 1
@@ -4150,20 +4151,20 @@ _boyRunAroundHouse:
 boySubid06Script:
 	wait 30
 	jumpifobjectbyteeq Interaction.var38, $00, @stopPlayingCatch
-	asm15 scriptHlp.loadNextAnimationFrameAndMore, $02
+	asm15 scriptHelp.loadNextAnimationFrameAndMore, $02
 	wait 90
 	setanimation $03
 	scriptjump boySubid06Script
 
 @stopPlayingCatch:
 	writememory wTmpcfc0.genericCutscene.cfd1, $01
-	asm15 scriptHlp.loadNextAnimationFrameAndMore, $03
+	asm15 scriptHelp.loadNextAnimationFrameAndMore, $03
 	wait 90
 
-	asm15 scriptHlp.boy_createLightning, $00
+	asm15 scriptHelp.boy_createLightning, $00
 	wait 20
 
-	asm15 scriptHlp.boy_createLightning, $01
+	asm15 scriptHelp.boy_createLightning, $01
 	wait 20
 
 	asm15 fadeoutToWhite
@@ -4177,7 +4178,7 @@ boySubid06Script:
 	checkpalettefadedone
 	wait 30
 
-	asm15 scriptHlp.createExclamationMark, $28
+	asm15 scriptHelp.createExclamationMark, $28
 	wait 40
 
 	addobjectbyte Interaction.substate, $01 ; Enable normal animations
@@ -4191,7 +4192,7 @@ boySubid06Script:
 
 ; Depressed kid in trade sequence
 boySubid07Script:
-	loadscript scriptHlp.boySubid07Script
+	loadscript scriptHelp.boySubid07Script
 
 
 ; Cutscene?
@@ -4230,7 +4231,7 @@ boySubid0cScript:
 	setanimation $03
 @playCatch:
 	wait 30
-	asm15 scriptHlp.loadNextAnimationFrameAndMore, $02
+	asm15 scriptHelp.loadNextAnimationFrameAndMore, $02
 	wait 90
 	scriptjump @playCatchLoop
 
@@ -4250,7 +4251,7 @@ boySubid0eScript:
 boySubid0fScript:
 	checkcfc0bit 0
 	wait 60
-	asm15 scriptHlp.createExclamationMark, $1e
+	asm15 scriptHelp.createExclamationMark, $1e
 	checkcfc0bit 2
 	setspeed SPEED_200
 	setanimation $01
@@ -4298,7 +4299,7 @@ oldLadySubid3Script:
 ; ==============================================================================
 
 ghostVeranSubid0Script_part1:
-	loadscript scriptHlp.ghostVeranSubid0Script_part1
+	loadscript scriptHelp.ghostVeranSubid0Script_part1
 
 ghostVeranSubid1Script_part2:
 	setcoords $24, $78
@@ -4364,7 +4365,7 @@ script5dff:
 
 ; Left palace guard
 soldierSubid02Script:
-	loadscript scriptHlp.soldierSubid02Script
+	loadscript scriptHelp.soldierSubid02Script
 
 
 soldierSubid03Script:
@@ -4405,7 +4406,7 @@ soldierSubid04Script:
 	movedown $31
 	wait 6
 	setanimation $01
-	asm15 scriptHlp.forceLinkDirection, $03
+	asm15 scriptHelp.forceLinkDirection, $03
 	wait 60
 	setspeed SPEED_080
 	setangle $08
@@ -4417,7 +4418,7 @@ soldierSubid04Script:
 	giveitem TREASURE_BOMBS_SUBID_02
 	setdisabledobjectsto11
 	wait 30
-	asm15 scriptHlp.forceLinkDirection, $00
+	asm15 scriptHelp.forceLinkDirection, $00
 	setspeed SPEED_100
 	moveup $31
 	wait 6
@@ -4469,7 +4470,7 @@ soldierSubid06Script:
 	setanimation $02
 	wait 40
 	writememory wNumMysterySeeds, $00
-	asm15 scriptHlp.soldierGiveMysterySeeds
+	asm15 scriptHelp.soldierGiveMysterySeeds
 	wait 20
 	setanimation $00
 	wait 10
@@ -4500,7 +4501,7 @@ soldierSubid06Script:
 	showtext TX_590c
 	wait 30
 	writememory wScrollMode, $00
-	asm15 scriptHlp.soldierSetSimulatedInputToEscortLink, $01
+	asm15 scriptHelp.soldierSetSimulatedInputToEscortLink, $01
 	enableallobjects
 	movedown $34
 
@@ -4515,7 +4516,7 @@ soldierSubid07Script:
 	showtext TX_5908
 	wait 30
 	writememory wUseSimulatedInput, $00
-	asm15 scriptHlp.soldierUpdateMinimap
+	asm15 scriptHelp.soldierUpdateMinimap
 	enableinput
 	rungenericnpc TX_5909
 
@@ -4529,22 +4530,22 @@ soldierSubid09Script:
 
 
 soldierSubid0aScript:
-	loadscript scriptHlp.soldierSubid0aScript
+	loadscript scriptHelp.soldierSubid0aScript
 
 
 soldierSubid0cScript:
 	initcollisions
 @loop:
 	checkabutton
-	asm15 scriptHlp.soldierGetRandomVar32Val
+	asm15 scriptHelp.soldierGetRandomVar32Val
 	showloadedtext
 	scriptjump @loop
 
 
 ; Friendly soldier after finishing game. Behaviour depends on var3b, in turn set by var03.
 soldierSubid0dScript:
-	asm15 scriptHlp.soldierSetSpeed80AndVar3fTo01
-	asm15 scriptHlp.soldierSetTextToShow
+	asm15 scriptHelp.soldierSetSpeed80AndVar3fTo01
+	asm15 scriptHelp.soldierSetTextToShow
 	initcollisions
 	jumptable_objectbyte Interaction.var3b
 	.dw @mode0_genericNpc
@@ -4561,17 +4562,17 @@ soldierSubid0dScript:
 	checkmemoryeq wcde0, $00
 	asm15 objectUnmarkSolidPosition
 @mode1Loop:
-	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $02
-	asm15 scriptHlp.hardhatWorker_setPatrolCounter, $60
+	asm15 scriptHelp.hardhatWorker_setPatrolDirection, $02
+	asm15 scriptHelp.hardhatWorker_setPatrolCounter, $60
 	callscript @moveForVar3cFrames
-	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $03
-	asm15 scriptHlp.hardhatWorker_setPatrolCounter, $60
+	asm15 scriptHelp.hardhatWorker_setPatrolDirection, $03
+	asm15 scriptHelp.hardhatWorker_setPatrolCounter, $60
 	callscript @moveForVar3cFrames
-	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $00
-	asm15 scriptHlp.hardhatWorker_setPatrolCounter, $60
+	asm15 scriptHelp.hardhatWorker_setPatrolDirection, $00
+	asm15 scriptHelp.hardhatWorker_setPatrolCounter, $60
 	callscript @moveForVar3cFrames
-	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $01
-	asm15 scriptHlp.hardhatWorker_setPatrolCounter, $60
+	asm15 scriptHelp.hardhatWorker_setPatrolDirection, $01
+	asm15 scriptHelp.hardhatWorker_setPatrolCounter, $60
 	callscript @moveForVar3cFrames
 	scriptjump @mode1Loop
 
@@ -4579,17 +4580,17 @@ soldierSubid0dScript:
 	checkmemoryeq wcde0, $00
 	asm15 objectUnmarkSolidPosition
 @mode2Loop:
-	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $02
-	asm15 scriptHlp.hardhatWorker_setPatrolCounter, $80
+	asm15 scriptHelp.hardhatWorker_setPatrolDirection, $02
+	asm15 scriptHelp.hardhatWorker_setPatrolCounter, $80
 	callscript @moveForVar3cFrames
-	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $01
-	asm15 scriptHlp.hardhatWorker_setPatrolCounter, $20
+	asm15 scriptHelp.hardhatWorker_setPatrolDirection, $01
+	asm15 scriptHelp.hardhatWorker_setPatrolCounter, $20
 	callscript @moveForVar3cFrames
-	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $00
-	asm15 scriptHlp.hardhatWorker_setPatrolCounter, $80
+	asm15 scriptHelp.hardhatWorker_setPatrolDirection, $00
+	asm15 scriptHelp.hardhatWorker_setPatrolCounter, $80
 	callscript @moveForVar3cFrames
-	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $03
-	asm15 scriptHlp.hardhatWorker_setPatrolCounter, $20
+	asm15 scriptHelp.hardhatWorker_setPatrolDirection, $03
+	asm15 scriptHelp.hardhatWorker_setPatrolCounter, $20
 	callscript @moveForVar3cFrames
 	scriptjump @mode2Loop
 
@@ -4597,17 +4598,17 @@ soldierSubid0dScript:
 	checkmemoryeq wcde0, $00
 	asm15 objectUnmarkSolidPosition
 @mode3Loop:
-	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $02
-	asm15 scriptHlp.hardhatWorker_setPatrolCounter, $c0
+	asm15 scriptHelp.hardhatWorker_setPatrolDirection, $02
+	asm15 scriptHelp.hardhatWorker_setPatrolCounter, $c0
 	callscript @moveForVar3cFrames
-	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $00
-	asm15 scriptHlp.hardhatWorker_setPatrolCounter, $c0
+	asm15 scriptHelp.hardhatWorker_setPatrolDirection, $00
+	asm15 scriptHelp.hardhatWorker_setPatrolCounter, $c0
 	callscript @moveForVar3cFrames
 	scriptjump @mode3Loop
 
 @moveForVar3cFrames:
 	jumpifobjectbyteeq Interaction.pressedAButton, $01, @@turnToLinkAndShowText
-	asm15 scriptHlp.hardhatWorker_decPatrolCounter
+	asm15 scriptHelp.hardhatWorker_decPatrolCounter
 	jumpifmemoryset wcddb, $80, @@wait20Frames
 	asm15 objectApplySpeed
 	scriptjump @moveForVar3cFrames
@@ -4619,10 +4620,10 @@ soldierSubid0dScript:
 @@turnToLinkAndShowText:
 	disableinput
 	writeobjectbyte, Interaction.pressedAButton, $00
-	asm15 scriptHlp.turnToFaceLink
+	asm15 scriptHelp.turnToFaceLink
 	showloadedtext
 	wait 30
-	asm15 scriptHlp.hardhatWorker_updatePatrolAnimation
+	asm15 scriptHelp.hardhatWorker_updatePatrolAnimation
 	enableinput
 	scriptjump @moveForVar3cFrames
 
@@ -4826,7 +4827,7 @@ _tokayThiefCommon:
 tokayMainThiefScript:
 	disablemenu
 	wait 240
-	asm15 scriptHlp.tokayMakeLinkJump
+	asm15 scriptHelp.tokayMakeLinkJump
 	setanimation $00
 	playsound SND_STRIKE
 	writememory wTmpcfc0.genericCutscene.cfd1, $01
@@ -4835,7 +4836,7 @@ tokayMainThiefScript:
 
 ; Subid $05: NPC who trades meat for stink bag
 tokayCookScript:
-	loadscript scriptHlp.tokayCookScript
+	loadscript scriptHelp.tokayCookScript
 
 
 ; Subid $06-$0a: NPC who holds something (ie. shovel or harp, but not shield upgrade).
@@ -4856,7 +4857,7 @@ tokayHoldingItemScript:
 	; Set var3b as a signal to face Link instead of always facing down
 	writeobjectbyte Interaction.var3b, $01
 
-	asm15 scriptHlp.tokayGiveItemToLink
+	asm15 scriptHelp.tokayGiveItemToLink
 	wait 30
 	showtextlowindex <TX_0a0c
 	orroomflag $40
@@ -4917,12 +4918,12 @@ tokayGameManagerScript_past:
 	scriptjump @dontHaveBracelet
 
 @waitForLinkToTalk:
-	asm15 scriptHlp.tokayGame_determinePrizeAndCheckRupees
+	asm15 scriptHelp.tokayGame_determinePrizeAndCheckRupees
 	checkabutton
 	showtextlowindex <TX_0a10
 	disableinput
 	wait 10
-	asm15 scriptHlp.tokayGame_createAccessoryForPrize, $06
+	asm15 scriptHelp.tokayGame_createAccessoryForPrize, $06
 	writeobjectbyte Interaction.animCounter, $7f
 	playsound SND_GETSEED
 	wait 40
@@ -4974,20 +4975,20 @@ tokayGameManagerScript_past:
 ; Room is being loaded just after a game has ended. Decide what to do based on whether
 ; Link won the game.
 @endingGame:
-	asm15 scriptHlp.tokayGame_resetRoomFlag40
+	asm15 scriptHelp.tokayGame_resetRoomFlag40
 	disableinput
 
 	jumpifmemoryeq wTmpcfc0.wildTokay.cfde, $ff, @failedGame
 
 	; Won game
 	wait 30
-	asm15 scriptHlp.tokayGame_givePrizeToLink
+	asm15 scriptHelp.tokayGame_givePrizeToLink
 	wait 30
 	scriptjump @enableInput
 
 @failedGame:
 	; Ask to play again
-	asm15 scriptHlp.tokayGame_checkRupees
+	asm15 scriptHelp.tokayGame_checkRupees
 	showtextlowindex <TX_0a19
 	jumpiftextoptioneq $01, @enableInput
 	jumpifobjectbyteeq Interaction.var3d, $01, @notEnoughRupees
@@ -5006,7 +5007,7 @@ tokayShopkeeperScript:
 	checkabutton
 
 	; Check that at least one shop item exists
-	asm15 scriptHlp.tokayFindShopItem
+	asm15 scriptHelp.tokayFindShopItem
 	jumpifobjectbyteeq Interaction.var3f, $00, @noItemsAvailable
 
 	; At least one item available
@@ -5034,10 +5035,10 @@ tokayWithDimitri1Script:
 	enableinput
 	checkabutton
 	disableinput
-	asm15 scriptHlp.tokayTurnToFaceLink
+	asm15 scriptHelp.tokayTurnToFaceLink
 	showtextlowindex <TX_0a1f
 
-	asm15 scriptHlp.tokayCheckHaveEmberSeeds
+	asm15 scriptHelp.tokayCheckHaveEmberSeeds
 	jumpifobjectbyteeq Interaction.var3f, $00, @npcLoop
 
 	showtextlowindex <TX_0a20
@@ -5052,7 +5053,7 @@ tokayWithDimitri1Script:
 ; Agreed to trade ember seeds
 @selectedYes:
 	showtextlowindex <TX_0a23
-	asm15 scriptHlp.tokayDecNumEmberSeeds
+	asm15 scriptHelp.tokayDecNumEmberSeeds
 	ormemory w1Companion.var3e, $04
 	spawninteraction INTERACID_TOKAY_CUTSCENE_EMBER_SEED, $00, $48, $18
 	spawninteraction INTERACID_TOKAY_CUTSCENE_EMBER_SEED, $00, $58, $38
@@ -5089,7 +5090,7 @@ tokayWithDimitri2Script:
 	jumpifobjectbyteeq Interaction.pressedAButton, $00, @didntPressA
 
 	; Pressed A next to tokay
-	asm15 scriptHlp.tokayTurnToFaceLink
+	asm15 scriptHelp.tokayTurnToFaceLink
 	showtextlowindex <TX_0a1e
 	writeobjectbyte Interaction.pressedAButton, $00
 	scriptjump @faceUp
@@ -5118,7 +5119,7 @@ tokayAtSeedlingPlotScript:
 @npcLoop:
 	setangleandanimation $10
 	checkabutton
-	asm15 scriptHlp.tokayTurnToFaceLink
+	asm15 scriptHelp.tokayTurnToFaceLink
 	jumpifroomflagset $80, @alreadyPlantedSeedling
 	jumpifitemobtained TREASURE_SCENT_SEEDLING, @plantSeedling
 	showtextlowindex <TX_0a40
@@ -5131,17 +5132,17 @@ tokayAtSeedlingPlotScript:
 
 	showtextlowindex <TX_0a41
 
-	asm15 scriptHlp.tokayFlipDirection
+	asm15 scriptHelp.tokayFlipDirection
 	setspeed SPEED_100
 	applyspeed $10
 
-	asm15 scriptHlp.tokayFlipDirection
-	asm15 scriptHlp.tokayPlantScentSeedling
+	asm15 scriptHelp.tokayFlipDirection
+	asm15 scriptHelp.tokayPlantScentSeedling
 	spawninteraction INTERACID_DECORATION, $04, $38, $48
 	playsound SND_GETSEED
 	wait 120
 
-	asm15 scriptHlp.tokayTurnToFaceLink
+	asm15 scriptHelp.tokayTurnToFaceLink
 	showtextlowindex <TX_0a42
 
 	enableinput
@@ -5244,7 +5245,7 @@ tokayGameManagerScript_present:
 
 ; Just finished a minigame.
 @endingMinigame:
-	asm15 scriptHlp.tokayGame_resetRoomFlag40
+	asm15 scriptHelp.tokayGame_resetRoomFlag40
 	disableinput
 	jumpifmemoryeq wTmpcfc0.wildTokay.cfde, $ff, @failedGame
 
@@ -5252,7 +5253,7 @@ tokayGameManagerScript_present:
 	showtextlowindex <TX_0a4f
 	wait 30
 
-	asm15 scriptHlp.tokayGiveBombUpgrade
+	asm15 scriptHelp.tokayGiveBombUpgrade
 	giveitem TREASURE_BOMB_UPGRADE, $00
 	wait 30
 
@@ -5278,12 +5279,12 @@ tokayGameManagerScript_present:
 
 ; Subid $1d: NPC holding shield upgrade
 tokayWithShieldUpgradeScript:
-	loadscript scriptHlp.tokayWithShieldUpgradeScript
+	loadscript scriptHelp.tokayWithShieldUpgradeScript
 
 
 ; Subid $1e: Present NPC who talks to you after climbing down vine
 tokayExplainingVinesScript:
-	loadscript scriptHlp.tokayExplainingVinesScript
+	loadscript scriptHelp.tokayExplainingVinesScript
 
 
 ; ==============================================================================
@@ -5368,7 +5369,7 @@ rabbitScript_listeningToNayruGameStart:
 	initcollisions
 @npcLoop:
 	checkabutton
-	asm15 scriptHlp.turnToFaceLink
+	asm15 scriptHelp.turnToFaceLink
 	ormemory wTmpcfc0.genericCutscene.cfde, $02
 	showtext TX_5705
 	wait 10
@@ -5590,17 +5591,17 @@ ambiSubid05Script:
 	playsound SNDCTRL_MEDIUM_FADEOUT
 	playsound SND_TELEPORT
 @flickerLoop:
-	asm15 scriptHlp.ambiFlickerVisibility
-	asm15 scriptHlp.ambiDecVar3f
+	asm15 scriptHelp.ambiFlickerVisibility
+	asm15 scriptHelp.ambiDecVar3f
 	jumpifmemoryset wcddb, $80, @beginRising
 	scriptjump @flickerLoop
 
 @beginRising:
 	playsound SND_SWORDSPIN
 @risingLoop:
-	asm15 scriptHlp.ambiRiseUntilOffScreen
+	asm15 scriptHelp.ambiRiseUntilOffScreen
 	jumpifmemoryset wcddb, $10, @doneRising
-	asm15 scriptHlp.ambiFlickerVisibility
+	asm15 scriptHelp.ambiFlickerVisibility
 	scriptjump @risingLoop
 
 @doneRising:
@@ -5660,12 +5661,12 @@ subrosianInVillageScript_postGame:
 	rungenericnpclowindex <TX_1c07
 
 subrosianAtGoronDanceScript_greenNpc:
-	asm15 scriptHlp.checkIsLinkedGameForScript
+	asm15 scriptHelp.checkIsLinkedGameForScript
 	jumpifmemoryset wcddb, $80, stubScript
 	rungenericnpclowindex <TX_1c14
 
 subrosianAtGoronDanceScript_redNpc:
-	asm15 scriptHlp.checkIsLinkedGameForScript
+	asm15 scriptHelp.checkIsLinkedGameForScript
 	jumpifmemoryset wcddb, $80, stubScript
 	writeobjectbyte Interaction.oamFlags, $02
 	rungenericnpclowindex <TX_1c15
@@ -5688,20 +5689,20 @@ impaNpcScript_lookingAtPassage:
 ; INTERACID_DUMBBELL_MAN
 ; ==============================================================================
 dumbbellManScript:
-	loadscript scriptHlp.dumbbellManScript
+	loadscript scriptHelp.dumbbellManScript
 
 
 ; ==============================================================================
 ; INTERACID_OLD_MAN
 ; ==============================================================================
 oldManScript_givesShieldUpgrade:
-	loadscript scriptHlp.oldManScript_givesShieldUpgrade
+	loadscript scriptHelp.oldManScript_givesShieldUpgrade
 
 oldManScript_givesBookOfSeals:
-	loadscript scriptHlp.oldManScript_givesBookOfSeals
+	loadscript scriptHelp.oldManScript_givesBookOfSeals
 
 oldManScript_givesFairyPowder:
-	loadscript scriptHlp.oldManScript_givesFairyPowder
+	loadscript scriptHelp.oldManScript_givesFairyPowder
 
 oldManScript_generic:
 	makeabuttonsensitive
@@ -5709,7 +5710,7 @@ oldManScript_generic:
 	checkabutton
 	turntofacelink
 	showloadedtext
-	asm15 scriptHlp.oldManSetAnimationToVar38
+	asm15 scriptHelp.oldManSetAnimationToVar38
 	scriptjump @npcLoop
 
 
@@ -5717,26 +5718,26 @@ oldManScript_generic:
 ; INTERACID_MAMAMU_YAN
 ; ==============================================================================
 mamamuYanScript:
-	loadscript scriptHlp.mamamuYanScript
+	loadscript scriptHelp.mamamuYanScript
 
 
 ; ==============================================================================
 ; INTERACID_MAMAMU_DOG
 ; ==============================================================================
 dogInMamamusHouseScript:
-	asm15 scriptHlp.mamamuDog_setCounterRandomly
+	asm15 scriptHelp.mamamuDog_setCounterRandomly
 @loop:
-	asm15 scriptHlp.mamamuDog_decCounter
+	asm15 scriptHelp.mamamuDog_decCounter
 	jumpifmemoryset wcddb, $80, @counterHit0
-	asm15 scriptHlp.mamamuDog_updateSpeedZ
-	asm15 scriptHlp.mamamuDog_checkReverseDirection
+	asm15 scriptHelp.mamamuDog_updateSpeedZ
+	asm15 scriptHelp.mamamuDog_checkReverseDirection
 	scriptjump @loop
 
 @counterHit0:
-	asm15 scriptHlp.mamamuDog_setZPositionTo0
-	asm15 scriptHlp.mamamuDog_reverseDirection
+	asm15 scriptHelp.mamamuDog_setZPositionTo0
+	asm15 scriptHelp.mamamuDog_reverseDirection
 	wait 180
-	asm15 scriptHlp.mamamuDog_reverseDirection
+	asm15 scriptHelp.mamamuDog_reverseDirection
 	scriptjump dogInMamamusHouseScript
 
 
@@ -5744,7 +5745,7 @@ dogInMamamusHouseScript:
 ; INTERACID_POSTMAN
 ; ==============================================================================
 postmanScript:
-	loadscript scriptHlp.postmanScript
+	loadscript scriptHelp.postmanScript
 
 
 ; ==============================================================================
@@ -5772,14 +5773,14 @@ pickaxeWorkerSubid01Script_part1:
 	setangle $10
 	applyspeed $10
 	wait 8
-	asm15 scriptHlp.pickaxeWorker_setRandomDelay
+	asm15 scriptHelp.pickaxeWorker_setRandomDelay
 
 	setanimation $05
 	setanimation $06
 	setangle $00
 	applyspeed $10
 	wait 8
-	asm15 scriptHlp.pickaxeWorker_setRandomDelay
+	asm15 scriptHelp.pickaxeWorker_setRandomDelay
 
 	setanimation $05
 	scriptjump @loop
@@ -5794,20 +5795,20 @@ pickaxeWorkerSubid02Script_part1:
 	setangle $00
 	applyspeed $10
 	wait 8
-	asm15 scriptHlp.pickaxeWorker_setRandomDelay
+	asm15 scriptHelp.pickaxeWorker_setRandomDelay
 
 	setanimation $04
 	setanimation $06
 	setangle $10
 	applyspeed $10
 	wait 8
-	asm15 scriptHlp.pickaxeWorker_setRandomDelay
+	asm15 scriptHelp.pickaxeWorker_setRandomDelay
 
 	setanimation $04
 	scriptjump @loop
 
 pickaxeWorkerSubid01Script_part2:
-	loadscript scriptHlp.pickaxeWorkerSubid01Script_part2
+	loadscript scriptHelp.pickaxeWorkerSubid01Script_part2
 
 pickaxeWorkerSubid01Script_part3:
 	writeobjectbyte Interaction.var3f, $01
@@ -5857,11 +5858,11 @@ pickaxeWorkerSubid02Script_part3:
 
 ; Worker in black tower.
 pickaxeWorkerSubid03Script:
-	asm15 scriptHlp.pickaxeWorker_setAnimationFromVar03
+	asm15 scriptHelp.pickaxeWorker_setAnimationFromVar03
 	initcollisions
 @npcLoop:
 	checkabutton
-	asm15 scriptHlp.pickaxeWorker_chooseRandomBlackTowerText
+	asm15 scriptHelp.pickaxeWorker_chooseRandomBlackTowerText
 	showloadedtext
 	scriptjump @npcLoop
 
@@ -5876,7 +5877,7 @@ hardhatWorkerSubid00Script:
 @npcLoop:
 	checkabutton
 	disableinput
-	asm15 scriptHlp.turnToFaceLink
+	asm15 scriptHelp.turnToFaceLink
 	jumptable_objectbyte Interaction.var03
 	.dw @givesShovel
 	.dw @doesntGiveShovel
@@ -5908,14 +5909,14 @@ hardhatWorkerSubid01Script:
 	.dw @var03_01
 
 @var03_00:
-	asm15 scriptHlp.hardhatWorker_checkBlackTowerProgressIs00
+	asm15 scriptHelp.hardhatWorker_checkBlackTowerProgressIs00
 	jumpifmemoryset wcddb, $80, ++
 	scriptend
 ++
 	rungenericnpclowindex <TX_1007
 
 @var03_01:
-	asm15 scriptHlp.hardhatWorker_checkBlackTowerProgressIs01
+	asm15 scriptHelp.hardhatWorker_checkBlackTowerProgressIs01
 	jumpifmemoryset wcddb, $80, ++
 	scriptend
 ++
@@ -5923,18 +5924,18 @@ hardhatWorkerSubid01Script:
 
 
 hardhatWorkerSubid02Script:
-	loadscript scriptHlp.hardhatWorkerSubid02Script
+	loadscript scriptHelp.hardhatWorkerSubid02Script
 
 
 hardhatWorkerSubid03Script:
-	loadscript scriptHlp.hardhatWorkerSubid03Script
+	loadscript scriptHelp.hardhatWorkerSubid03Script
 
 
 ; The object moves for [var3c] frames, and its direction is stored in [var3e]. When
 ; [var3c] hits 0, this returns. The object can also be talked to by Link while doing this.
 hardhatWorkerFunc_patrol:
 	jumpifobjectbyteeq Interaction.pressedAButton, $01, @pressedA
-	asm15 scriptHlp.hardhatWorker_decPatrolCounter
+	asm15 scriptHelp.hardhatWorker_decPatrolCounter
 	jumpifmemoryset wcddb, $80, @doneMoving
 	asm15 objectApplySpeed
 	scriptjump hardhatWorkerFunc_patrol
@@ -5946,11 +5947,11 @@ hardhatWorkerFunc_patrol:
 @pressedA:
 	disableinput
 	writeobjectbyte Interaction.pressedAButton, $00
-	asm15 scriptHlp.turnToFaceLink
+	asm15 scriptHelp.turnToFaceLink
 	showloadedtext
 	wait 30
 
-	asm15 scriptHlp.hardhatWorker_updatePatrolAnimation
+	asm15 scriptHelp.hardhatWorker_updatePatrolAnimation
 	enableinput
 	scriptjump hardhatWorkerFunc_patrol
 
@@ -5959,14 +5960,14 @@ hardhatWorkerFunc_patrol:
 ; INTERACID_POE
 ; ==============================================================================
 poeScript:
-	loadscript scriptHlp.poeScript
+	loadscript scriptHelp.poeScript
 
 
 ; ==============================================================================
 ; INTERACID_OLD_ZORA
 ; ==============================================================================
 oldZoraScript:
-	loadscript scriptHlp.oldZoraScript
+	loadscript scriptHelp.oldZoraScript
 
 
 ; ==============================================================================
@@ -5981,13 +5982,13 @@ toiletHandScript:
 
 @waitForLinkToApproach:
 	wait 1
-	asm15 scriptHlp.toiletHand_checkLinkIsClose
+	asm15 scriptHelp.toiletHand_checkLinkIsClose
 	jumpifmemoryset wcddb, $10, @waitForLinkToApproach
 
 	callscript @retreatAndReturnFromToilet
 @waitForLinkToRetreat:
 	jumpifobjectbyteeq Interaction.pressedAButton, $01, @pressedA
-	asm15 scriptHlp.toiletHand_checkLinkIsClose
+	asm15 scriptHelp.toiletHand_checkLinkIsClose
 	jumpifmemoryset wcddb, $10, @linkRetreated
 	scriptjump @waitForLinkToRetreat
 
@@ -5996,7 +5997,7 @@ toiletHandScript:
 	scriptjump @npcLoop
 
 @waitForLinkToReapproach:
-	asm15 scriptHlp.toiletHand_checkLinkIsClose
+	asm15 scriptHelp.toiletHand_checkLinkIsClose
 	jumpifmemoryset wcddb, $10, ++
 	scriptjump @waitForLinkToReapproach
 ++
@@ -6056,16 +6057,16 @@ toiletHandScript:
 @retreatAndReturnFromToilet:
 	writeobjectbyte Interaction.pressedAButton, $00
 	asm15 objectSetVisible
-	asm15 scriptHlp.toiletHand_disappear
+	asm15 scriptHelp.toiletHand_disappear
 	checkobjectbyteeq Interaction.animParameter, $ff
-	asm15 scriptHlp.toiletHand_comeOutOfToilet
+	asm15 scriptHelp.toiletHand_comeOutOfToilet
 	retscript
 
 
 @retreatIntoToiletAfterDelay:
 	wait 30
 @retreatIntoToilet:
-	asm15 scriptHlp.toiletHand_retreatIntoToilet
+	asm15 scriptHelp.toiletHand_retreatIntoToilet
 
 _toiletHandScriptFunc_waitUntilFullyRetreated:
 	checkobjectbyteeq Interaction.animParameter, $ff
@@ -6076,7 +6077,7 @@ _toiletHandScriptFunc_waitUntilFullyRetreated:
 ; Script runs when Link drops an object in a hole. var38 is set to an index based on which
 ; item it was.
 toiletHandScript_reactToObjectInHole:
-	asm15 scriptHlp.toiletHand_checkVisibility
+	asm15 scriptHelp.toiletHand_checkVisibility
 
 	; This is weird. Did they mean to check bit 7? That would check visibility.
 	; Instead this checks his draw priority (bits 0-2).
@@ -6086,7 +6087,7 @@ toiletHandScript_reactToObjectInHole:
 	scriptjump @react
 
 @retreatIntoToilet:
-	asm15 scriptHlp.toiletHand_retreatIntoToiletIfNotAlready
+	asm15 scriptHelp.toiletHand_retreatIntoToiletIfNotAlready
 	callscript _toiletHandScriptFunc_waitUntilFullyRetreated
 	wait 45
 
@@ -6134,7 +6135,7 @@ toiletHandScript_reactToObjectInHole:
 ; INTERACID_MASK_SALESMAN
 ; ==============================================================================
 maskSalesmanScript:
-	loadscript scriptHlp.maskSalesmanScript
+	loadscript scriptHelp.maskSalesmanScript
 
 
 ; ==============================================================================
@@ -6293,7 +6294,7 @@ syrupScript_purchaseItem:
 ; INTERACID_COMEDIAN
 ; ==============================================================================
 comedianScript:
-	loadscript scriptHlp.comedianScript
+	loadscript scriptHelp.comedianScript
 
 
 ; ==============================================================================
@@ -6308,7 +6309,7 @@ goron_subid00Script:
 _goron_subid00_npcLoop:
 	checkabutton
 	disableinput
-	asm15 scriptHlp.goron_checkInPresent
+	asm15 scriptHelp.goron_checkInPresent
 	jumpifmemoryset wcddb, CPU_ZFLAG, @present
 
 @past:
@@ -6319,13 +6320,13 @@ _goron_subid00_npcLoop:
 	jumpifitemobtained TREASURE_BROTHER_EMBLEM, @danceForGenericItem
 
 	; Dance for brother emblem
-	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2400
+	asm15 scriptHelp.goron_showText_differentForPresent, <TX_2400
 	wait 30
 	jumpiftextoptioneq $00, @acceptedDance
 	scriptjump @declinedDance
 
 @danceForGenericItem:
-	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2401
+	asm15 scriptHelp.goron_showText_differentForPresent, <TX_2401
 	wait 30
 	jumpiftextoptioneq $00, @acceptedDance
 	scriptjump @declinedDance
@@ -6336,7 +6337,7 @@ _goron_subid00_npcLoop:
 	jumpiftextoptioneq $00, @acceptedDance
 
 @declinedDance:
-	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2403
+	asm15 scriptHelp.goron_showText_differentForPresent, <TX_2403
 	wait 1
 	enableinput
 	scriptjump _goron_subid00_npcLoop
@@ -6346,7 +6347,7 @@ _goron_subid00_npcLoop:
 	jumpifmemoryset wcddb, CPU_ZFLAG, @enoughRupees
 
 @notEnoughRupeesLoop:
-	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2409
+	asm15 scriptHelp.goron_showText_differentForPresent, <TX_2409
 	enableinput
 	checkabutton
 	scriptjump @notEnoughRupeesLoop
@@ -6356,26 +6357,26 @@ _goron_subid00_npcLoop:
 	callscript _goronDanceFunc_takeRupeesFromLink
 
 	; Ask whether to explain the rules
-	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2402
+	asm15 scriptHelp.goron_showText_differentForPresent, <TX_2402
 	wait 30
 	jumpiftextoptioneq $00, _goronDance_begin
 
 @giveExplanation:
-	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2404
+	asm15 scriptHelp.goron_showText_differentForPresent, <TX_2404
 	wait 30
 
 	playsound SND_GORON_DANCE_B
 	setanimation $03
 	wait 30
 
-	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2405
+	asm15 scriptHelp.goron_showText_differentForPresent, <TX_2405
 	wait 30
 
 	playsound SND_DING
 	setanimation $06
 	wait 30
 
-	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2406
+	asm15 scriptHelp.goron_showText_differentForPresent, <TX_2406
 	wait 30
 
 	setanimation $02
@@ -6384,7 +6385,7 @@ _goron_subid00_npcLoop:
 
 
 _goronDance_begin:
-	asm15 scriptHlp.goron_checkInPresent
+	asm15 scriptHelp.goron_checkInPresent
 	jumpifmemoryset wcddb, CPU_ZFLAG, ++
 
 	; Only check these in present
@@ -6395,7 +6396,7 @@ _goronDance_begin:
 	jumpifitemobtained TREASURE_BROTHER_EMBLEM, @selectDifficulty
 
 @lowestDanceLevel:
-	asm15 scriptHlp.goron_checkInPresent
+	asm15 scriptHelp.goron_checkInPresent
 	jumpifmemoryset wcddb, CPU_ZFLAG, ++
 
 	; Past
@@ -6407,19 +6408,19 @@ _goronDance_begin:
 	scriptjump @beginDance
 
 @selectDifficulty:
-	asm15 scriptHlp.goron_showText_differentForPresent, <TX_240b
+	asm15 scriptHelp.goron_showText_differentForPresent, <TX_240b
 	wait 30
 	callscript _goronDance_setDifficultyFromSelectedOption
 	wait 30
 
 @beginDance:
-	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2407
+	asm15 scriptHelp.goron_showText_differentForPresent, <TX_2407
 	wait 40
 	asm15 fadeoutToWhite
 	checkpalettefadedone
 
 	asm15 clearAllItemsAndPutLinkOnGround
-	asm15 scriptHlp.goronDance_initLinkPosition
+	asm15 scriptHelp.goronDance_initLinkPosition
 	wait 40
 
 	asm15 fadeinFromWhite
@@ -6428,13 +6429,13 @@ _goronDance_begin:
 	asm15 restartSound
 	wait 40
 
-	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2408
+	asm15 scriptHelp.goron_showText_differentForPresent, <TX_2408
 	wait 40
 	scriptend
 
 
 _goronDance_setDifficultyFromSelectedOption:
-	asm15 scriptHlp.goron_checkInPresent
+	asm15 scriptHelp.goron_checkInPresent
 	jumpifmemoryset wcddb, $80, @present
 
 @past:
@@ -6450,35 +6451,35 @@ _goronDance_setDifficultyFromSelectedOption:
 
 @platinum:
 	writememory wTmpcfc0.goronDance.danceLevel, $00
-	asm15 scriptHlp.goron_showText_differentForPresent, <TX_240c
+	asm15 scriptHelp.goron_showText_differentForPresent, <TX_240c
 	retscript
 @gold:
 	writememory wTmpcfc0.goronDance.danceLevel, $01
-	asm15 scriptHlp.goron_showText_differentForPresent, <TX_240d
+	asm15 scriptHelp.goron_showText_differentForPresent, <TX_240d
 	retscript
 @silver:
 	writememory wTmpcfc0.goronDance.danceLevel, $02
-	asm15 scriptHlp.goron_showText_differentForPresent, <TX_240e
+	asm15 scriptHelp.goron_showText_differentForPresent, <TX_240e
 	retscript
 @bronze:
 	writememory wTmpcfc0.goronDance.danceLevel, $03
-	asm15 scriptHlp.goron_showText_differentForPresent, <TX_240f
+	asm15 scriptHelp.goron_showText_differentForPresent, <TX_240f
 	retscript
 
 
 _goronDanceFunc_checkLinkHasEnoughRupees:
-	asm15 scriptHlp.goron_checkInPresent
+	asm15 scriptHelp.goron_checkInPresent
 	jumpifmemoryset wcddb, CPU_ZFLAG, @present
 @past:
-	asm15 scriptHlp.shootingGallery_checkLinkHasRupees, RUPEEVAL_20
+	asm15 scriptHelp.shootingGallery_checkLinkHasRupees, RUPEEVAL_20
 	retscript
 @present:
-	asm15 scriptHlp.shootingGallery_checkLinkHasRupees, RUPEEVAL_10
+	asm15 scriptHelp.shootingGallery_checkLinkHasRupees, RUPEEVAL_10
 	retscript
 
 
 _goronDanceFunc_takeRupeesFromLink:
-	asm15 scriptHlp.goron_checkInPresent
+	asm15 scriptHelp.goron_checkInPresent
 	jumpifmemoryset wcddb, CPU_ZFLAG, @present
 @past:
 	asm15 removeRupeeValue, RUPEEVAL_20
@@ -6499,12 +6500,12 @@ goronDanceScript_failedRound:
 	.dw @thirdFailure
 
 @firstFailure:
-	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2416
+	asm15 scriptHelp.goron_showText_differentForPresent, <TX_2416
 	wait 30
 	scriptend
 
 @secondFailure:
-	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2417
+	asm15 scriptHelp.goron_showText_differentForPresent, <TX_2417
 	wait 30
 	scriptend
 
@@ -6512,18 +6513,18 @@ goronDanceScript_failedRound:
 @thirdFailure:
 	resetmusic
 
-	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2418
+	asm15 scriptHelp.goron_showText_differentForPresent, <TX_2418
 	wait 30
 
 	; Ask to try again
-	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2415
+	asm15 scriptHelp.goron_showText_differentForPresent, <TX_2415
 	wait 30
 	jumpiftextoptioneq $00, @tryAgain
 
 	; Not trying again
-	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2403
+	asm15 scriptHelp.goron_showText_differentForPresent, <TX_2403
 	wait 1
-	asm15 scriptHlp.goronDance_clearVariables
+	asm15 scriptHelp.goronDance_clearVariables
 	enableinput
 	scriptjump _goron_subid00_npcLoop
 
@@ -6532,7 +6533,7 @@ goronDanceScript_failedRound:
 	jumpifmemoryset wcddb, CPU_ZFLAG, @enoughRupees
 
 @notEnoughRupeesLoop:
-	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2409
+	asm15 scriptHelp.goron_showText_differentForPresent, <TX_2409
 	wait 1
 	enableinput
 	checkabutton
@@ -6541,10 +6542,10 @@ goronDanceScript_failedRound:
 @enoughRupees:
 	asm15 restartSound
 	callscript _goronDanceFunc_takeRupeesFromLink
-	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2407
+	asm15 scriptHelp.goron_showText_differentForPresent, <TX_2407
 	wait 30
-	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2408
-	asm15 scriptHlp.goronDance_restartGame
+	asm15 scriptHelp.goron_showText_differentForPresent, <TX_2408
+	asm15 scriptHelp.goronDance_restartGame
 	scriptend
 
 @showFailureText:
@@ -6567,7 +6568,7 @@ goronDanceScript_failedRound:
 goronDanceScript_givePrize:
 	wait 30
 	resetmusic
-	asm15 scriptHlp.goron_checkInPresent
+	asm15 scriptHelp.goron_checkInPresent
 	jumpifmemoryset wcddb, CPU_ZFLAG, ++
 
 	; Only check these in the past
@@ -6578,13 +6579,13 @@ goronDanceScript_givePrize:
 	jumpifitemobtained TREASURE_BROTHER_EMBLEM, @giveGenericPrize
 
 	; Give brother emblem
-	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2410
+	asm15 scriptHelp.goron_showText_differentForPresent, <TX_2410
 	wait 30
 	giveitem TREASURE_BROTHER_EMBLEM, $00
 	wait 30
-	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2411
+	asm15 scriptHelp.goron_showText_differentForPresent, <TX_2411
 	wait 30
-	asm15 scriptHlp.goronDance_clearVariables
+	asm15 scriptHelp.goronDance_clearVariables
 	enableinput
 	scriptjump _goron_subid00_npcLoop
 
@@ -6595,16 +6596,16 @@ goronDanceScript_givePrize:
 	wait 30
 	showtext TX_241b
 	wait 30
-	asm15 scriptHlp.goronDance_clearVariables
+	asm15 scriptHelp.goronDance_clearVariables
 	enableinput
 	scriptjump _goron_subid00_npcLoop
 
 @giveGenericPrize:
-	asm15 scriptHlp.goronDance_checkNumFailedRounds
+	asm15 scriptHelp.goronDance_checkNumFailedRounds
 	jumpifmemoryset wcddb, CPU_ZFLAG, @perfectGame
 
 	; Failed at least one round
-	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2413
+	asm15 scriptHelp.goron_showText_differentForPresent, <TX_2413
 	wait 1
 	callscript _goronDance_giveRewardForImperfectGame
 	wait 30
@@ -6612,15 +6613,15 @@ goronDanceScript_givePrize:
 
 @perfectGame:
 	; Failed no rounds
-	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2412
+	asm15 scriptHelp.goron_showText_differentForPresent, <TX_2412
 	wait 1
 	callscript _goronDance_giveRewardForPerfectGame
 	wait 30
 
 @cleanup:
-	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2414
+	asm15 scriptHelp.goron_showText_differentForPresent, <TX_2414
 	wait 30
-	asm15 scriptHlp.goronDance_clearVariables
+	asm15 scriptHelp.goronDance_clearVariables
 	enableinput
 	scriptjump _goron_subid00_npcLoop
 
@@ -6636,11 +6637,11 @@ _goronDance_giveRewardForImperfectGame:
 	giveitem TREASURE_GASHA_SEED, $00
 	retscript
 @silver:
-	asm15 scriptHlp.giveRupees, RUPEEVAL_050
+	asm15 scriptHelp.giveRupees, RUPEEVAL_050
 	showtext TX_0006
 	retscript
 @bronze:
-	asm15 scriptHlp.giveRupees, RUPEEVAL_030
+	asm15 scriptHelp.giveRupees, RUPEEVAL_030
 	showtext TX_0005
 	retscript
 
@@ -6653,13 +6654,13 @@ _goronDance_giveRewardForPerfectGame:
 	.dw @bronze
 
 @platinumOrGold:
-	asm15 scriptHlp.goronDance_giveRandomRingPrize
+	asm15 scriptHelp.goronDance_giveRandomRingPrize
 	retscript
 @silver:
 	giveitem TREASURE_GASHA_SEED, $00
 	retscript
 @bronze:
-	asm15 scriptHlp.giveRupees, RUPEEVAL_100
+	asm15 scriptHelp.giveRupees, RUPEEVAL_100
 	showtext TX_0007
 	retscript
 
@@ -6681,25 +6682,25 @@ goron_subid01Script:
 	.dw @val05
 	.dw @val06
 @val00:
-	asm15 scriptHlp.goron_decideTextToShow_differentForLinkedInPast, <TX_2440
+	asm15 scriptHelp.goron_decideTextToShow_differentForLinkedInPast, <TX_2440
 	retscript
 @val01:
-	asm15 scriptHlp.goron_decideTextToShow_differentForLinkedInPast, <TX_2441
+	asm15 scriptHelp.goron_decideTextToShow_differentForLinkedInPast, <TX_2441
 	retscript
 @val02:
-	asm15 scriptHlp.goron_decideTextToShow_differentForLinkedInPast, <TX_2442
+	asm15 scriptHelp.goron_decideTextToShow_differentForLinkedInPast, <TX_2442
 	retscript
 @val03:
-	asm15 scriptHlp.goron_decideTextToShow_differentForLinkedInPast, <TX_2443
+	asm15 scriptHelp.goron_decideTextToShow_differentForLinkedInPast, <TX_2443
 	retscript
 @val04:
-	asm15 scriptHlp.goron_decideTextToShow_differentForLinkedInPast, <TX_2444
+	asm15 scriptHelp.goron_decideTextToShow_differentForLinkedInPast, <TX_2444
 	retscript
 @val05:
-	asm15 scriptHlp.goron_decideTextToShow_differentForLinkedInPast, <TX_2445
+	asm15 scriptHelp.goron_decideTextToShow_differentForLinkedInPast, <TX_2445
 	retscript
 @val06:
-	asm15 scriptHlp.goron_decideTextToShow_differentForLinkedInPast, <TX_2446
+	asm15 scriptHelp.goron_decideTextToShow_differentForLinkedInPast, <TX_2446
 	retscript
 
 
@@ -6732,22 +6733,22 @@ goron_subid03Script:
 ; Goron pacing back and forth, worried about elder
 goron_subid04Script:
 	; Delete self if beaten d5
-	asm15 scriptHlp.checkEssenceObtained, $04
+	asm15 scriptHelp.checkEssenceObtained, $04
 	jumpifmemoryset wcddb, CPU_ZFLAG, stubScript
 
 _goron_moveBackAndForth:
-	asm15 scriptHlp.goron_beginWalkingLeft
+	asm15 scriptHelp.goron_beginWalkingLeft
 	initcollisions
 
 _goron_moveBackAndForthLoop:
 	jumpifobjectbyteeq Interaction.pressedAButton, $01, @pressedA
-	asm15 scriptHlp.goron_decMovementCounter
+	asm15 scriptHelp.goron_decMovementCounter
 	jumpifmemoryset wcddb, CPU_ZFLAG, @turnAround
 	asm15 objectApplySpeed
 	scriptjump _goron_moveBackAndForthLoop
 
 @turnAround:
-	asm15 scriptHlp.goron_reverseWalkingDirection
+	asm15 scriptHelp.goron_reverseWalkingDirection
 	scriptjump _goron_moveBackAndForthLoop
 
 @pressedA:
@@ -6756,23 +6757,23 @@ _goron_moveBackAndForthLoop:
 	; Subid $04
 	disableinput
 	writeobjectbyte Interaction.pressedAButton, $00
-	asm15 scriptHlp.turnToFaceLink
-	asm15 scriptHlp.goron_showTextForGoronWorriedAboutElder
+	asm15 scriptHelp.turnToFaceLink
+	asm15 scriptHelp.goron_showTextForGoronWorriedAboutElder
 	wait 30
-	asm15 scriptHlp.goron_refreshWalkingAnimation
+	asm15 scriptHelp.goron_refreshWalkingAnimation
 	enableinput
 	scriptjump _goron_moveBackAndForthLoop
 
 
 goron_subid05Script_A:
 	; Delete self if beaten d5
-	asm15 scriptHlp.checkEssenceObtained, $04
+	asm15 scriptHelp.checkEssenceObtained, $04
 	jumpifmemoryset wcddb, CPU_ZFLAG, stubScript
 	scriptjump ++
 
 goron_subid05Script_B:
 	; Delete self if not beaten d5
-	asm15 scriptHlp.checkEssenceNotObtained, $04
+	asm15 scriptHelp.checkEssenceNotObtained, $04
 	jumpifmemoryset wcddb, CPU_ZFLAG, stubScript
 ++
 	initcollisions
@@ -6781,17 +6782,17 @@ goron_subid05Script_B:
 
 ; Decide whether goron should be napping or not, enter appropriate loop.
 _goron_chooseNappingLoop:
-	asm15 scriptHlp.goron_checkShouldBeNapping
+	asm15 scriptHelp.goron_checkShouldBeNapping
 	jumpifmemoryset wcddb, CPU_CFLAG, _goron_beginNappingLoop
 	scriptjump _goron_beginNotNappingLoop
 
 
 ; Goron naps until Link approaches.
 _goron_beginNappingLoop:
-	asm15 scriptHlp.goron_setAnimation, $04 ; Nap animation
+	asm15 scriptHelp.goron_setAnimation, $04 ; Nap animation
 
 _goron_nappingLoop:
-	asm15 scriptHlp.goron_checkShouldBeNapping
+	asm15 scriptHelp.goron_checkShouldBeNapping
 	jumpifmemoryset wcddb, CPU_CFLAG, ++
 	scriptjump _goron_beginNotNappingLoop
 ++
@@ -6801,11 +6802,11 @@ _goron_nappingLoop:
 
 ; Goron is standing up until Link walks away.
 _goron_beginNotNappingLoop:
-	asm15 scriptHlp.goron_faceDown
+	asm15 scriptHelp.goron_faceDown
 
 _goron_notNappingLoop:
 	jumpifobjectbyteeq Interaction.pressedAButton, $01, @pressedA
-	asm15 scriptHlp.goron_checkShouldBeNapping
+	asm15 scriptHelp.goron_checkShouldBeNapping
 	jumpifmemoryset wcddb, CPU_CFLAG, ++
 	scriptjump _goron_notNappingLoop
 ++
@@ -6821,7 +6822,7 @@ _goron_notNappingLoop:
 	; Subid $05?
 	disableinput
 	writeobjectbyte Interaction.pressedAButton, $00
-	asm15 scriptHlp.goron_showTextForSubid05
+	asm15 scriptHelp.goron_showTextForSubid05
 	wait 1
 	enableinput
 	scriptjump _goron_notNappingLoop
@@ -6830,14 +6831,14 @@ _goron_notNappingLoop:
 ; Goron who's trying to break the elder out of rock (one on the left)
 goron_subid06Script_A:
 	; Delete self if beaten d5
-	asm15 scriptHlp.checkEssenceObtained, $04
+	asm15 scriptHelp.checkEssenceObtained, $04
 	jumpifmemoryset wcddb, CPU_ZFLAG, stubScript
 
 	initcollisions
 	jumpifglobalflagset GLOBALFLAG_SAVED_GORON_ELDER, @alreadySavedElder
 
 @doRockPunchingAnimation:
-	asm15 scriptHlp.goron_setAnimation, $08
+	asm15 scriptHelp.goron_setAnimation, $08
 @checkCreateRockDebris:
 	jumpifobjectbyteeq Interaction.animParameter, $01, @createDebrisToLeft
 	jumpifobjectbyteeq Interaction.animParameter, $02, @createDebrisToRight
@@ -6849,15 +6850,15 @@ goron_subid06Script_A:
 	scriptjump @checkCreateRockDebris
 
 @createDebrisToLeft:
-	asm15 scriptHlp.goron_createRockDebrisToLeft
+	asm15 scriptHelp.goron_createRockDebrisToLeft
 	scriptjump @checkEvents
 @createDebrisToRight:
-	asm15 scriptHlp.goron_createRockDebrisToRight
+	asm15 scriptHelp.goron_createRockDebrisToRight
 	scriptjump @checkEvents
 
 @pressedA:
 	disableinput
-	asm15 scriptHlp.goron_faceDown
+	asm15 scriptHelp.goron_faceDown
 	writeobjectbyte Interaction.pressedAButton, $00
 	showtext TX_247b
 	wait 30
@@ -6865,10 +6866,10 @@ goron_subid06Script_A:
 	scriptjump @doRockPunchingAnimation
 
 @beginSavedElderLoop:
-	asm15 scriptHlp.goron_faceDown
+	asm15 scriptHelp.goron_faceDown
 
 @alreadySavedElder:
-	asm15 scriptHlp.checkEssenceNotObtained, $04
+	asm15 scriptHelp.checkEssenceNotObtained, $04
 	jumpifmemoryset wcddb, CPU_ZFLAG, @npcLoop
 	setcoords $88, $28 ; After beating d5, change position
 @npcLoop:
@@ -6877,7 +6878,7 @@ goron_subid06Script_A:
 	scriptjump @npcLoop
 
 @beginBombFlowerCutscene:
-	asm15 scriptHlp.goron_setAnimation, $00
+	asm15 scriptHelp.goron_setAnimation, $00
 @waitBeforeFacingDown:
 	jumpifmemoryeq wTmpcfc0.genericCutscene.state, $01, @beginSavedElderLoop
 	wait 1
@@ -6887,41 +6888,41 @@ goron_subid06Script_A:
 ; Goron who's trying to break the elder out of rock (one on the right)
 goron_subid06Script_B:
 	; Delete self if beaten d5
-	asm15 scriptHlp.checkEssenceObtained, $04
+	asm15 scriptHelp.checkEssenceObtained, $04
 	jumpifmemoryset wcddb, CPU_ZFLAG, stubScript
 
 	initcollisions
 	jumpifglobalflagset GLOBALFLAG_SAVED_GORON_ELDER, @alreadySavedElder
 
 @doRockPunchingAnimation:
-	asm15 scriptHlp.goron_setAnimation, $08
+	asm15 scriptHelp.goron_setAnimation, $08
 @checkCreateRockDebris:
 	jumpifobjectbyteeq Interaction.animParameter, $01, @createDebrisToLeft
 	jumpifobjectbyteeq Interaction.animParameter, $02, @createDebrisToRight
 @checkEvents:
 	jumpifobjectbyteeq Interaction.pressedAButton, $01, @pressedA
-	asm15 scriptHlp.goron_checkLinkApproachedWithBombFlower
+	asm15 scriptHelp.goron_checkLinkApproachedWithBombFlower
 	jumpifmemoryset wcddb, CPU_CFLAG, @beginBombFlowerCutscene
 	scriptjump @checkCreateRockDebris
 
 @createDebrisToLeft:
-	asm15 scriptHlp.goron_createRockDebrisToLeft
+	asm15 scriptHelp.goron_createRockDebrisToLeft
 	scriptjump @checkEvents
 @createDebrisToRight:
-	asm15 scriptHlp.goron_createRockDebrisToRight
+	asm15 scriptHelp.goron_createRockDebrisToRight
 	scriptjump @checkEvents
 
 
 @beginBombFlowerCutscene:
 	disableinput
-	asm15 scriptHlp.goron_putLinkInState08
-	asm15 scriptHlp.forceLinkDirection, $03
-	asm15 scriptHlp.goron_setSpeedToMoveDown
+	asm15 scriptHelp.goron_putLinkInState08
+	asm15 scriptHelp.forceLinkDirection, $03
+	asm15 scriptHelp.goron_setSpeedToMoveDown
 
 ; Move down toward Link
 @moveDownLoop:
 	asm15 objectApplySpeed
-	asm15 scriptHlp.goron_cpLinkY
+	asm15 scriptHelp.goron_cpLinkY
 	jumpifmemoryset wcddb, CPU_ZFLAG, @beginMovingRight
 	scriptjump @moveDownLoop
 
@@ -6931,14 +6932,14 @@ goron_subid06Script_B:
 	setangle $08
 @moveRightLoop:
 	asm15 objectApplySpeed
-	asm15 scriptHlp.goron_checkReachedLinkHorizontally
+	asm15 scriptHelp.goron_checkReachedLinkHorizontally
 	jumpifmemoryset wcddb, CPU_ZFLAG, @script6be1
 	scriptjump @moveRightLoop
 
 ; Exclamation mark, ask Link to use bomb
 @script6be1:
 	wait 30
-	asm15 scriptHlp.createExclamationMark, 40
+	asm15 scriptHelp.createExclamationMark, 40
 	wait 60
 	showtext TX_247e
 	wait 30
@@ -6960,7 +6961,7 @@ goron_subid06Script_B:
 ; Move back to rock
 @moveLeftLoop:
 	asm15 objectApplySpeed
-	asm15 scriptHlp.goron_cpXTo48
+	asm15 scriptHelp.goron_cpXTo48
 	jumpifmemoryset wcddb, CPU_ZFLAG, @beginMovingUp
 	scriptjump @moveLeftLoop
 
@@ -6969,30 +6970,30 @@ goron_subid06Script_B:
 	setangle $00
 @moveUpLoop:
 	asm15 objectApplySpeed
-	asm15 scriptHlp.goron_cpYTo60
+	asm15 scriptHelp.goron_cpYTo60
 	jumpifmemoryset wcddb, CPU_ZFLAG, @placeBomb
 	scriptjump @moveUpLoop
 
 @placeBomb:
 	writememory wTmpcfc0.goronCutscenes.elderVar_cfdd, $01
-	asm15 scriptHlp.goron_setAnimation, $03
+	asm15 scriptHelp.goron_setAnimation, $03
 	wait 20
 
-	asm15 scriptHlp.goron_createBombFlowerSprite
+	asm15 scriptHelp.goron_createBombFlowerSprite
 	wait 50
 
-	asm15 scriptHlp.goron_deleteTreasure
-	asm15 scriptHlp.goron_createExplosionIndex, $00
+	asm15 scriptHelp.goron_deleteTreasure
+	asm15 scriptHelp.goron_createExplosionIndex, $00
 	wait 22
 
 	writeobjectbyte Interaction.var3a, $01
 	writeobjectbyte Interaction.var3b, $ff
-	asm15 scriptHlp.goron_initCountersForBombFlowerExplosion
+	asm15 scriptHelp.goron_initCountersForBombFlowerExplosion
 
 @explosionLoop1:
-	asm15 scriptHlp.goron_countdownToNextExplosionGroup
-	asm15 scriptHlp.goron_countdownToPlayRockSoundAndShakeScreen
-	asm15 scriptHlp.goron_decMovementCounter
+	asm15 scriptHelp.goron_countdownToNextExplosionGroup
+	asm15 scriptHelp.goron_countdownToPlayRockSoundAndShakeScreen
+	asm15 scriptHelp.goron_decMovementCounter
 	jumpifmemoryset wcddb, CPU_ZFLAG, @fadeToWhite
 	scriptjump @explosionLoop1
 
@@ -7001,8 +7002,8 @@ goron_subid06Script_B:
 	asm15 fadeoutToWhiteWithDelay, $04
 
 @explosionLoop2:
-	asm15 scriptHlp.goron_countdownToNextExplosionGroup
-	asm15 scriptHlp.goron_countdownToPlayRockSoundAndShakeScreen
+	asm15 scriptHelp.goron_countdownToNextExplosionGroup
+	asm15 scriptHelp.goron_countdownToPlayRockSoundAndShakeScreen
 	jumpifmemoryeq wPaletteThread_mode, $00, @screenFullyWhite
 	wait 1
 	scriptjump @explosionLoop2
@@ -7012,14 +7013,14 @@ goron_subid06Script_B:
 	writememory wTmpcfc0.genericCutscene.cfde, $00
 	spawninteraction INTERACID_GORON_ELDER, $00, $50, $38
 	writememory wTmpcfc0.genericCutscene.state, $01
-	asm15 scriptHlp.goron_faceDown
-	asm15 scriptHlp.goron_clearRockBarrier
+	asm15 scriptHelp.goron_faceDown
+	asm15 scriptHelp.goron_clearRockBarrier
 	wait 10
 
 	asm15 fadeinFromWhite
 	checkpalettefadedone
 
-	asm15 scriptHlp.goron_createFallingRockSpawner
+	asm15 scriptHelp.goron_createFallingRockSpawner
 	wait 75
 
 	writememory wTmpcfc0.genericCutscene.cfdf, $01 ; Signal to stop falling rock spawner
@@ -7029,7 +7030,7 @@ goron_subid06Script_B:
 ; Pressed A while trying to break down the rock
 @pressedA:
 	disableinput
-	asm15 scriptHlp.goron_faceDown
+	asm15 scriptHelp.goron_faceDown
 	writeobjectbyte Interaction.pressedAButton, $00
 	showtext TX_247d
 	wait 30
@@ -7054,15 +7055,15 @@ goron_subid07Script:
 	jumpifroomflagset $80, @brokeDownWall
 	jumpifroomflagset $40, @alreadyGaveEmberSeedsAndBombs
 
-	asm15 scriptHlp.goron_clearRefillBit
+	asm15 scriptHelp.goron_clearRefillBit
 	scriptjump @doRockPunchingAnimation
 
 @alreadyGaveEmberSeedsAndBombs:
-	asm15 scriptHlp.goron_checkEnoughTimePassed
+	asm15 scriptHelp.goron_checkEnoughTimePassed
 	jumpifmemoryset wcddb, CPU_ZFLAG, @justBrokeDownWall
 
 @doRockPunchingAnimation:
-	asm15 scriptHlp.goron_setAnimation, $08
+	asm15 scriptHelp.goron_setAnimation, $08
 
 @checkCreateRockDebris:
 	jumpifobjectbyteeq Interaction.animParameter, $01, @createDebrisToLeft
@@ -7073,15 +7074,15 @@ goron_subid07Script:
 	scriptjump @checkCreateRockDebris
 
 @createDebrisToLeft:
-	asm15 scriptHlp.goron_createRockDebrisToLeft
+	asm15 scriptHelp.goron_createRockDebrisToLeft
 	scriptjump @checkEvents
 @createDebrisToRight:
-	asm15 scriptHlp.goron_createRockDebrisToRight
+	asm15 scriptHelp.goron_createRockDebrisToRight
 	scriptjump @checkEvents
 
 @pressedA:
 	disableinput
-	asm15 scriptHlp.goron_faceDown
+	asm15 scriptHelp.goron_faceDown
 	writeobjectbyte Interaction.pressedAButton, $00
 	jumpifroomflagset $40, @comeBackLaterText
 	showtext TX_2472
@@ -7091,7 +7092,7 @@ goron_subid07Script:
 	scriptjump @enableInput
 
 @tryGiveEmberSeedsAndBombs:
-	asm15 scriptHlp.goron_tryTakeEmberSeedsAndBombs
+	asm15 scriptHelp.goron_tryTakeEmberSeedsAndBombs
 	jumpifmemoryset wcddb, $80, @gaveEmberSeedsAndBombs
 
 	; Not enough bombs/seeds
@@ -7131,19 +7132,19 @@ _goron_subid07_pressedAFromNappingLoop:
 	jumpiftextoptioneq $00, @leftChest
 	
 ; Right chest
-	asm15 scriptHlp.goron_setAnimation, $00
+	asm15 scriptHelp.goron_setAnimation, $00
 	setangle $00
 	applyspeed $11
-	asm15 scriptHlp.goron_setAnimation, $03
+	asm15 scriptHelp.goron_setAnimation, $03
 	setanimation $03
 	setangle $18
 	scriptjump @moveBack
 
 @leftChest:
-	asm15 scriptHlp.goron_setAnimation, $00
+	asm15 scriptHelp.goron_setAnimation, $00
 	setangle $00
 	applyspeed $11
-	asm15 scriptHlp.goron_setAnimation, $01
+	asm15 scriptHelp.goron_setAnimation, $01
 	setanimation $01
 	setangle $08
 
@@ -7170,7 +7171,7 @@ goron_subid08Script:
 	scriptjump _goron_beginNappingLoop
 
 _goron_subid08_pressedAFromNappingLoop:
-	loadscript scriptHlp.goron_subid08_pressedAScript
+	loadscript scriptHelp.goron_subid08_pressedAScript
 
 
 ; Goron running target carts (guy on the left)
@@ -7195,7 +7196,7 @@ goron_subid09Script_A:
 	scriptjump @npcLoop
 
 @beginGame:
-	asm15 scriptHlp.shootingGallery_checkLinkHasRupees, RUPEEVAL_10
+	asm15 scriptHelp.shootingGallery_checkLinkHasRupees, RUPEEVAL_10
 	jumpifmemoryset wcddb, CPU_ZFLAG, @enoughRupees
 
 @notEnoughRupeesLoop:
@@ -7210,22 +7211,22 @@ goron_subid09Script_A:
 	wait 30
 	showtext TX_24ac
 	wait 30
-	asm15 scriptHlp.goron_targetCarts_spawnPrize
+	asm15 scriptHelp.goron_targetCarts_spawnPrize
 	wait 90
 
 	asm15 fadeoutToWhite
 	checkpalettefadedone
 
-	asm15 scriptHlp.goron_targetCarts_deleteCrystals
-	asm15 scriptHlp.goron_deleteTreasure
+	asm15 scriptHelp.goron_targetCarts_deleteCrystals
+	asm15 scriptHelp.goron_deleteTreasure
 	asm15 clearAllItemsAndPutLinkOnGround
-	asm15 scriptHlp.goron_targetCarts_setLinkPositionToCartPlatform
-	asm15 scriptHlp.goron_targetCarts_configureInventory
+	asm15 scriptHelp.goron_targetCarts_setLinkPositionToCartPlatform
+	asm15 scriptHelp.goron_targetCarts_configureInventory
 
 	spawninteraction INTERACID_MINECART, $00, $78, $38
 	wait 20
 
-	asm15 scriptHlp.goron_targetCarts_loadCrystals
+	asm15 scriptHelp.goron_targetCarts_loadCrystals
 	wait 20
 
 	asm15 fadeinFromWhite
@@ -7236,7 +7237,7 @@ goron_subid09Script_A:
 	showtext TX_24ad
 	wait 30
 
-	asm15 scriptHlp.goron_targetCarts_beginGame
+	asm15 scriptHelp.goron_targetCarts_beginGame
 	enableallobjects
 	scriptjump @npcLoop
 
@@ -7260,7 +7261,7 @@ goron_subid09Script_B:
 
 @endingGame:
 	; Wait for Link to jump out of cart
-	asm15 scriptHlp.goron_checkLinkNotInAir
+	asm15 scriptHelp.goron_checkLinkNotInAir
 	jumpifmemoryset wcddb, CPU_ZFLAG, ++
 	scriptjump @linkInAir
 ++
@@ -7269,18 +7270,18 @@ goron_subid09Script_B:
 
 @linkInAir:
 	; Waitfor Link to land on the ground
-	asm15 scriptHlp.goron_checkLinkNotInAir
+	asm15 scriptHelp.goron_checkLinkNotInAir
 	jumpifmemoryset wcddb, CPU_ZFLAG, @linkLanded
 	scriptjump @linkInAir
 
 @linkLanded:
 	disableinput
-	asm15 scriptHlp.setLinkToState08AndSetDirection, DIR_LEFT
+	asm15 scriptHelp.setLinkToState08AndSetDirection, DIR_LEFT
 	writememory wShopHaveEnoughRupees, $01
 	wait 40
 
-	asm15 scriptHlp.goron_targetCarts_endGame
-	asm15 scriptHlp.goron_targetCarts_setupNumTargetsHitText
+	asm15 scriptHelp.goron_targetCarts_endGame
+	asm15 scriptHelp.goron_targetCarts_setupNumTargetsHitText
 	showtext TX_24af
 
 	wait 30
@@ -7288,9 +7289,9 @@ goron_subid09Script_B:
 	checkpalettefadedone
 
 	asm15 clearAllItemsAndPutLinkOnGround
-	asm15 scriptHlp.goron_targetCarts_setLinkPositionAfterGame
-	asm15 scriptHlp.goron_targetCarts_restoreInventory
-	asm15 scriptHlp.goron_targetCarts_deleteMinecartAndClearStaticObjects
+	asm15 scriptHelp.goron_targetCarts_setLinkPositionAfterGame
+	asm15 scriptHelp.goron_targetCarts_restoreInventory
+	asm15 scriptHelp.goron_targetCarts_deleteMinecartAndClearStaticObjects
 	wait 40
 
 	asm15 fadeinFromWhite
@@ -7299,9 +7300,9 @@ goron_subid09Script_B:
 	resetmusic
 	wait 40
 
-	asm15 scriptHlp.goron_targetCarts_checkHitAllTargets
+	asm15 scriptHelp.goron_targetCarts_checkHitAllTargets
 	jumpifmemoryset wcddb, CPU_ZFLAG, @hitAllTargets
-	asm15 scriptHlp.goron_targetCarts_checkHit9OrMoreTargets
+	asm15 scriptHelp.goron_targetCarts_checkHit9OrMoreTargets
 	jumpifmemoryset wcddb, CPU_CFLAG, @hit9OrMoreTargets
 	showtext TX_24b2
 	wait 30
@@ -7326,11 +7327,11 @@ goron_subid09Script_B:
 	giveitem TREASURE_ROCK_BRISKET, $00
 	retscript
 @fiftyRupees:
-	asm15 scriptHlp.giveRupees, RUPEEVAL_050
+	asm15 scriptHelp.giveRupees, RUPEEVAL_050
 	showtext TX_0006
 	retscript
 @hundredRupees:
-	asm15 scriptHlp.giveRupees, RUPEEVAL_100
+	asm15 scriptHelp.giveRupees, RUPEEVAL_100
 	showtext TX_0007
 	retscript
 @gashaSeed:
@@ -7343,7 +7344,7 @@ goron_subid09Script_B:
 ; Pity prize
 @hit9OrMoreTargets:
 	showtext TX_24b1
-	asm15 scriptHlp.giveRupees, RUPEEVAL_20
+	asm15 scriptHelp.giveRupees, RUPEEVAL_20
 	showtext TX_0004
 	wait 30
 
@@ -7375,7 +7376,7 @@ _goron_subid0a_pressedAFromNappingLoop:
 	wait 30
 
 	jumpifroomflagset $40, @alreadyGaveIntroduction
-	asm15 scriptHlp.goron_checkGracefulGoronQuestStatus
+	asm15 scriptHelp.goron_checkGracefulGoronQuestStatus
 	jumptable_objectbyte Interaction.var3e
 	.dw @haveLavaJuiceAndMermaidKey
 	.dw @noMermaidKey
@@ -7474,7 +7475,7 @@ _goron_subid0b_pressedAFromNappingLoop:
 
 
 @takeRupees:
-	asm15 scriptHlp.shootingGallery_checkLinkHasRupees, RUPEEVAL_10
+	asm15 scriptHelp.shootingGallery_checkLinkHasRupees, RUPEEVAL_10
 	jumpifmemoryset wcddb, CPU_ZFLAG, @enoughRupees
 
 @notEnoughRupees:
@@ -7499,7 +7500,7 @@ _goron_subid0b_pressedAFromNappingLoop:
 @beginGame:
 	showtext TX_24bc
 	wait 30
-	asm15 scriptHlp.goron_bigBang_spawnPrize
+	asm15 scriptHelp.goron_bigBang_spawnPrize
 	wait 60
 
 	showtext TX_24be
@@ -7507,11 +7508,11 @@ _goron_subid0b_pressedAFromNappingLoop:
 	asm15 fadeoutToWhite
 	checkpalettefadedone
 
-	asm15 scriptHlp.goron_bigBang_hideSelf
+	asm15 scriptHelp.goron_bigBang_hideSelf
 	asm15 clearAllItemsAndPutLinkOnGround
-	asm15 scriptHlp.goron_bigBang_initLinkPosition
-	asm15 scriptHlp.goron_deleteTreasure
-	asm15 scriptHlp.goron_bigBang_blockOrRestoreExit, $04
+	asm15 scriptHelp.goron_bigBang_initLinkPosition
+	asm15 scriptHelp.goron_deleteTreasure
+	asm15 scriptHelp.goron_bigBang_blockOrRestoreExit, $04
 
 	wait 8
 	callscript _goron_bigBang_loadMinigameLayout
@@ -7525,18 +7526,18 @@ _goron_subid0b_pressedAFromNappingLoop:
 	wait 60
 
 	writememory wTmpcfc0.bigBangGame.gameStatus, $00
-	asm15 scriptHlp.goron_bigBang_createBombSpawner
+	asm15 scriptHelp.goron_bigBang_createBombSpawner
 	enableinput
 
 @waitForGameToFinish:
 	jumpifmemoryeq wTmpcfc0.bigBangGame.gameStatus, $01, @wonGame
-	asm15 scriptHlp.goron_bigBang_checkLinkHitByBomb
+	asm15 scriptHelp.goron_bigBang_checkLinkHitByBomb
 	jumpifmemoryset wcddb, CPU_ZFLAG, @hitByBomb
 	scriptjump @waitForGameToFinish
 
 @hitByBomb:
 	; Link was hit by a bomb; wait for him to land.
-	asm15 scriptHlp.goron_checkLinkInAir
+	asm15 scriptHelp.goron_checkLinkInAir
 	jumpifmemoryset wcddb, CPU_ZFLAG, @lostGame
 	scriptjump @hitByBomb
 
@@ -7545,7 +7546,7 @@ _goron_subid0b_pressedAFromNappingLoop:
 	writeobjectbyte Interaction.pressedAButton, $00
 	playsound SND_LINK_FALL
 
-	asm15 scriptHlp.setLinkToState08AndSetDirection, DIR_DOWN
+	asm15 scriptHelp.setLinkToState08AndSetDirection, DIR_DOWN
 	wait 2
 	writememory wcc50, LINK_ANIM_MODE_COLLAPSED
 	wait 80
@@ -7556,7 +7557,7 @@ _goron_subid0b_pressedAFromNappingLoop:
 
 @wonGame:
 	; Wait for Link to land on ground
-	asm15 scriptHlp.goron_checkLinkInAir
+	asm15 scriptHelp.goron_checkLinkInAir
 	jumpifmemoryset wcddb, $80, ++
 	scriptjump @wonGame
 ++
@@ -7565,7 +7566,7 @@ _goron_subid0b_pressedAFromNappingLoop:
 	writeobjectbyte Interaction.pressedAButton, $00
 	wait 60
 
-	asm15 scriptHlp.setLinkToState08AndSetDirection, DIR_DOWN
+	asm15 scriptHelp.setLinkToState08AndSetDirection, DIR_DOWN
 	wait 2
 	playsound SND_SWORD_OBTAINED
 
@@ -7587,7 +7588,7 @@ _goron_subid0b_pressedAFromNappingLoop:
 	scriptjump @selectedNo
 
 @selectedYes:
-	asm15 scriptHlp.shootingGallery_checkLinkHasRupees, RUPEEVAL_10
+	asm15 scriptHelp.shootingGallery_checkLinkHasRupees, RUPEEVAL_10
 	jumpifmemoryset wcddb, CPU_ZFLAG, @takeRupees_2
 	scriptjump @notEnoughRupees
 
@@ -7601,16 +7602,16 @@ _goron_bigBang_loadNormalRoomLayout:
 	asm15 fadeoutToWhite
 	checkpalettefadedone
 
-	asm15 scriptHlp.goron_bigBang_unhideSelf
+	asm15 scriptHelp.goron_bigBang_unhideSelf
 	asm15 clearAllItemsAndPutLinkOnGround
-	asm15 scriptHlp.goron_bigBang_initLinkPosition
+	asm15 scriptHelp.goron_bigBang_initLinkPosition
 	asm15 clearParts
 
-	asm15 scriptHlp.goron_bigBang_blockOrRestoreExit, $00
+	asm15 scriptHelp.goron_bigBang_blockOrRestoreExit, $00
 	wait 8
-	asm15 scriptHlp.goron_bigBang_loadNormalRoomLayout_topHalf
+	asm15 scriptHelp.goron_bigBang_loadNormalRoomLayout_topHalf
 	wait 8
-	asm15 scriptHlp.goron_bigBang_loadNormalRoomLayout_bottomHalf
+	asm15 scriptHelp.goron_bigBang_loadNormalRoomLayout_bottomHalf
 	wait 24
 
 	asm15 fadeinFromWhite
@@ -7626,15 +7627,15 @@ _goron_bigBang_loadMinigameLayout:
 	jumpifobjectbyteeq Interaction.var3d, $01, @layout2
 
 @layout1:
-	asm15 scriptHlp.goron_bigBang_loadMinigameLayout1_topHalf
+	asm15 scriptHelp.goron_bigBang_loadMinigameLayout1_topHalf
 	wait 8
-	asm15 scriptHlp.goron_bigBang_loadMinigameLayout1_bottomHalf
+	asm15 scriptHelp.goron_bigBang_loadMinigameLayout1_bottomHalf
 	retscript
 
 @layout2:
-	asm15 scriptHlp.goron_bigBang_loadMinigameLayout2_topHalf
+	asm15 scriptHelp.goron_bigBang_loadMinigameLayout2_topHalf
 	wait 8
-	asm15 scriptHlp.goron_bigBang_loadMinigameLayout2_bottomHalf
+	asm15 scriptHelp.goron_bigBang_loadMinigameLayout2_bottomHalf
 	retscript
 
 _goron_bigBang_givePrize:
@@ -7651,12 +7652,12 @@ _goron_bigBang_givePrize:
 	retscript
 
 @hundredRupees:
-	asm15 scriptHlp.giveRupees, RUPEEVAL_100
+	asm15 scriptHelp.giveRupees, RUPEEVAL_100
 	showtext TX_0007
 	retscript
 
 @thirtyRupees:
-	asm15 scriptHlp.giveRupees, RUPEEVAL_30
+	asm15 scriptHelp.giveRupees, RUPEEVAL_30
 	showtext TX_0005
 	retscript
 
@@ -7675,7 +7676,7 @@ _goron_bigBang_givePrize:
 
 ; Generic npc; text changes based on game state.
 goron_subid0cScript:
-	asm15 scriptHlp.goron_determineTextForGenericNpc
+	asm15 scriptHelp.goron_determineTextForGenericNpc
 	jumpifobjectbyteeq Interaction.textID, $ff, stubScript
 	initcollisions
 @npcLoop:
@@ -7686,23 +7687,23 @@ goron_subid0cScript:
 
 ; Generic npc like subid $0c, but moving left and right.
 goron_subid0dScript:
-	asm15 scriptHlp.goron_determineTextForGenericNpc
+	asm15 scriptHelp.goron_determineTextForGenericNpc
 	jumpifobjectbyteeq Interaction.textID, $ff, stubScript
 	scriptjump _goron_moveBackAndForth
 
 _goron_subid0d_pressedAFromMoveBackAndForthLoop:
 	disableinput
 	writeobjectbyte Interaction.pressedAButton, $00
-	asm15 scriptHlp.turnToFaceLink
+	asm15 scriptHelp.turnToFaceLink
 	showloadedtext
-	asm15 scriptHlp.goron_refreshWalkingAnimation
+	asm15 scriptHelp.goron_refreshWalkingAnimation
 	enableinput
 	scriptjump _goron_moveBackAndForthLoop
 
 
 ; Generic npc like subid $0c, but naps when Link isn't near.
 goron_subid0eScript:
-	asm15 scriptHlp.goron_determineTextForGenericNpc
+	asm15 scriptHelp.goron_determineTextForGenericNpc
 	jumpifobjectbyteeq Interaction.textID, $ff, stubScript
 	initcollisions
 	scriptjump _goron_beginNappingLoop
@@ -7722,7 +7723,7 @@ goron_subid10Script:
 @npcLoop:
 	checkabutton
 	disableinput
-	asm15 scriptHlp.goron_showTextForClairvoyantGoron
+	asm15 scriptHelp.goron_showTextForClairvoyantGoron
 	wait 1
 	enableinput
 	scriptjump @npcLoop
@@ -7737,7 +7738,7 @@ rosa_subid00Script:
 	initcollisions
 	checkabutton
 	disableinput
-	asm15 scriptHlp.turnToFaceLink
+	asm15 scriptHelp.turnToFaceLink
 	showtextlowindex <TX_1c10
 	wait 30
 
@@ -7774,7 +7775,7 @@ rosa_subid00Script_alreadyGaveShovel:
 
 ; Rosa at goron dance, linked only
 rosa_subid01Script:
-	asm15 scriptHlp.checkIsLinkedGameForScript
+	asm15 scriptHelp.checkIsLinkedGameForScript
 	jumpifmemoryset wcddb, CPU_ZFLAG, stubScript
 	rungenericnpclowindex <TX_1c13
 
@@ -7798,7 +7799,7 @@ rafton_subid00Script:
 
 @genericNpcLoop:
 	checkabutton
-	asm15 scriptHlp.turnToFaceLink
+	asm15 scriptHelp.turnToFaceLink
 
 @showLoadedTextInGenericNpcLoop:
 	showloadedtext
@@ -7824,7 +7825,7 @@ rafton_subid00Script:
 	callscript @faceLinkAndFreezeAnimation
 	wait 20
 
-	asm15 scriptHlp.createExclamationMark, 60
+	asm15 scriptHelp.createExclamationMark, 60
 	wait 30
 
 	showtextlowindex <TX_2702
@@ -7876,13 +7877,13 @@ rafton_subid00Script:
 
 @faceLinkAndFreezeAnimation:
 	disableinput
-	asm15 scriptHlp.turnToFaceLink
+	asm15 scriptHelp.turnToFaceLink
 	writeobjectbyte Interaction.animCounter, $7f
 	retscript
 
 
 rafton_subid01Script:
-	loadscript scriptHlp.rafton_subid01Script
+	loadscript scriptHelp.rafton_subid01Script
 
 
 ; ==============================================================================
@@ -7896,13 +7897,13 @@ cheval_subid00Script:
 @dontHaveChevalRope:
 	checkabutton
 	showtextlowindex <TX_270c
-	asm15 scriptHlp.cheval_setTalkedGlobalflag
+	asm15 scriptHelp.cheval_setTalkedGlobalflag
 	scriptjump @dontHaveChevalRope
 
 @gotChevalRope:
 	checkabutton
 	showtextlowindex <TX_270d
-	asm15 scriptHlp.cheval_setTalkedGlobalflag
+	asm15 scriptHelp.cheval_setTalkedGlobalflag
 	scriptjump @gotChevalRope
 
 
@@ -7919,14 +7920,14 @@ script71a3:
 interaction6b_subid02Script:
 	jumpifroomflagset $40, interaction6b_stubScript
 
-	asm15 scriptHlp.interaction6b_checkGotBombsFromAmbi
+	asm15 scriptHelp.interaction6b_checkGotBombsFromAmbi
 	jumpifmemoryset wcddb, CPU_ZFLAG, interaction6b_stubScript
 
 	setcollisionradii $04, $18
 	checkcollidedwithlink_ignorez
 
 	disableinput
-	asm15 scriptHlp.setLinkToState08
+	asm15 scriptHelp.setLinkToState08
 	wait 40
 
 	spawninteraction INTERACID_RALPH, $01, $50, $b0
@@ -7942,7 +7943,7 @@ interaction6b_stubScript:
 
 
 interaction6b_subid04Script:
-	loadscript scriptHlp.interaction6b_subid04Script
+	loadscript scriptHelp.interaction6b_subid04Script
 
 
 ; Cutscene in intro where lightning strikes a guy
@@ -7989,7 +7990,7 @@ interaction6b_subid05Script:
 interaction6b_subid0aScript:
 	setcollisionradii $02, $02
 @waitForLinkToGrab:
-	asm15 scriptHlp.interaction6b_checkLinkCanCollect
+	asm15 scriptHelp.interaction6b_checkLinkCanCollect
 	wait 1
 	jumpifobjectbyteeq Interaction.var38, $00, @waitForLinkToGrab
 	disableinput
@@ -8001,7 +8002,7 @@ interaction6b_subid0aScript:
 	.dw @flippers
 
 @bombs:
-	asm15 scriptHlp.interaction6b_refillBombs
+	asm15 scriptHelp.interaction6b_refillBombs
 	giveitem TREASURE_BOMBS, $04
 	wait 30
 	scriptend
@@ -8065,20 +8066,20 @@ interaction6b_subid10Script:
 ; INTERACID_FAIRY_HIDING_MINIGAME
 ; ==============================================================================
 fairyHidingMinigame_subid00Script:
-	loadscript scriptHlp.fairyHidingMinigame_subid00Script
+	loadscript scriptHelp.fairyHidingMinigame_subid00Script
 
 fairyHidingMinigame_subid01Script:
-	loadscript scriptHlp.fairyHidingMinigame_subid01Script
+	loadscript scriptHelp.fairyHidingMinigame_subid01Script
 
 fairyHidingMinigame_subid02Script:
-	loadscript scriptHlp.fairyHidingMinigame_subid02Script
+	loadscript scriptHelp.fairyHidingMinigame_subid02Script
 
 
 ; ==============================================================================
 ; INTERACID_POSSESSED_NAYRU
 ; ==============================================================================
 possessedNayru_beginFightScript:
-	asm15 scriptHlp.possessedNayru_makeExclamationMark
+	asm15 scriptHelp.possessedNayru_makeExclamationMark
 	wait 30
 
 	setanimation $03
@@ -8087,7 +8088,7 @@ possessedNayru_beginFightScript:
 	wait 16
 
 	showtext TX_5608
-	asm15 scriptHlp.possessedNayru_moveLinkForward
+	asm15 scriptHelp.possessedNayru_moveLinkForward
 	wait 12
 
 	showtext TX_5609
@@ -8144,7 +8145,7 @@ interaction6e_subid00Script:
 	wait 60
 
 	setanimation $0b
-	asm15 scriptHlp.nayruSavedCutscene_createEnergySwirl
+	asm15 scriptHelp.nayruSavedCutscene_createEnergySwirl
 	wait 60
 	scriptend
 
@@ -8160,7 +8161,7 @@ interaction6e_subid01Script_part1:
 
 	writememory   wTmpcfc0.genericCutscene.cfd0, $02
 	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $01
-	asm15 scriptHlp.nayruSavedCutscene_setSpeedZIndex, $00
+	asm15 scriptHelp.nayruSavedCutscene_setSpeedZIndex, $00
 	wait 20
 
 	showtext TX_1309
@@ -8179,12 +8180,12 @@ interaction6e_subid01Script_part2:
 	writememory wTmpcfc0.genericCutscene.cfd0, $02
 	wait 15
 
-	asm15 scriptHlp.nayruSavedCutscene_spawnGuardIndex, $00
-	asm15 scriptHlp.nayruSavedCutscene_spawnGuardIndex, $01
-	asm15 scriptHlp.nayruSavedCutscene_spawnGuardIndex, $02
-	asm15 scriptHlp.nayruSavedCutscene_spawnGuardIndex, $03
-	asm15 scriptHlp.nayruSavedCutscene_spawnGuardIndex, $04
-	asm15 scriptHlp.nayruSavedCutscene_spawnGuardIndex, $05
+	asm15 scriptHelp.nayruSavedCutscene_spawnGuardIndex, $00
+	asm15 scriptHelp.nayruSavedCutscene_spawnGuardIndex, $01
+	asm15 scriptHelp.nayruSavedCutscene_spawnGuardIndex, $02
+	asm15 scriptHelp.nayruSavedCutscene_spawnGuardIndex, $03
+	asm15 scriptHelp.nayruSavedCutscene_spawnGuardIndex, $04
+	asm15 scriptHelp.nayruSavedCutscene_spawnGuardIndex, $05
 
 	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $08
 	wait 30
@@ -8203,9 +8204,9 @@ interaction6e_subid01Script_part2:
 
 	writememory w1Link.direction, DIR_DOWN
 
-	asm15 scriptHlp.nayruSavedCutscene_setSpeedZIndex, $01
+	asm15 scriptHelp.nayruSavedCutscene_setSpeedZIndex, $01
 	wait 1
-	asm15 scriptHlp.nayruSavedCutscene_setSpeedZIndex, $01
+	asm15 scriptHelp.nayruSavedCutscene_setSpeedZIndex, $01
 	wait 15
 
 	showtext TX_130a
@@ -8225,11 +8226,11 @@ interaction6e_subid03Script:
 	setanimation $10
 	applyspeed $10
 
-	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $00
+	asm15 scriptHelp.nayruSavedCutscene_loadAngleAndAnimationPreset, $00
 	applyspeed $08
 
 	writememory wTmpcfc0.genericCutscene.cfd0, $04
-	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $01
+	asm15 scriptHelp.nayruSavedCutscene_loadAngleAndAnimationPreset, $01
 	applyspeed $13
 
 	writememory w1Link.direction, DIR_LEFT
@@ -8250,11 +8251,11 @@ interaction6e_subid03Script:
 ; Guards that run into the room
 interaction6e_guard0Script:
 	applyspeed $10
-	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $04
+	asm15 scriptHelp.nayruSavedCutscene_loadAngleAndAnimationPreset, $04
 	applyspeed $20
-	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $02
+	asm15 scriptHelp.nayruSavedCutscene_loadAngleAndAnimationPreset, $02
 	applyspeed $42
-	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $03
+	asm15 scriptHelp.nayruSavedCutscene_loadAngleAndAnimationPreset, $03
 	applyspeed $15
 	setanimation $0e
 
@@ -8264,10 +8265,10 @@ _interaction6e_guardCommon:
 	setanimation $0e
 	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $04
 
-	asm15 scriptHlp.nayruSavedCutscene_loadGuardAnimation
+	asm15 scriptHelp.nayruSavedCutscene_loadGuardAnimation
 	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $05
 
-	asm15 scriptHlp.nayruSavedCutscene_loadGuardAngleToMoveTowardCenter
+	asm15 scriptHelp.nayruSavedCutscene_loadGuardAngleToMoveTowardCenter
 	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $01
 	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $02
 
@@ -8280,11 +8281,11 @@ _interaction6e_guardCommon:
 interaction6e_guard1Script:
 	wait 45
 	applyspeed $10
-	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $03
+	asm15 scriptHelp.nayruSavedCutscene_loadAngleAndAnimationPreset, $03
 	applyspeed $20
-	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $02
+	asm15 scriptHelp.nayruSavedCutscene_loadAngleAndAnimationPreset, $02
 	applyspeed $42
-	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $04
+	asm15 scriptHelp.nayruSavedCutscene_loadAngleAndAnimationPreset, $04
 	applyspeed $15
 	setanimation $0e
 	scriptjump _interaction6e_guardCommon
@@ -8292,40 +8293,40 @@ interaction6e_guard1Script:
 interaction6e_guard2Script:
 	wait 90
 	applyspeed $10
-	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $04
+	asm15 scriptHelp.nayruSavedCutscene_loadAngleAndAnimationPreset, $04
 	applyspeed $20
-	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $02
+	asm15 scriptHelp.nayruSavedCutscene_loadAngleAndAnimationPreset, $02
 	applyspeed $23
-	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $03
+	asm15 scriptHelp.nayruSavedCutscene_loadAngleAndAnimationPreset, $03
 	applyspeed $0a
 	scriptjump _interaction6e_guardCommon
 
 interaction6e_guard3Script:
 	wait 135
 	applyspeed $10
-	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $03
+	asm15 scriptHelp.nayruSavedCutscene_loadAngleAndAnimationPreset, $03
 	applyspeed $20
-	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $02
+	asm15 scriptHelp.nayruSavedCutscene_loadAngleAndAnimationPreset, $02
 	applyspeed $23
-	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $04
+	asm15 scriptHelp.nayruSavedCutscene_loadAngleAndAnimationPreset, $04
 	applyspeed $0a
 	scriptjump _interaction6e_guardCommon
 
 interaction6e_guard4Script:
 	wait 180
 	applyspeed $10
-	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $04
+	asm15 scriptHelp.nayruSavedCutscene_loadAngleAndAnimationPreset, $04
 	applyspeed $12
-	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $02
+	asm15 scriptHelp.nayruSavedCutscene_loadAngleAndAnimationPreset, $02
 	applyspeed $0f
 	scriptjump _interaction6e_guardCommon
 
 interaction6e_guard5Script:
 	wait 225
 	applyspeed $10
-	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $03
+	asm15 scriptHelp.nayruSavedCutscene_loadAngleAndAnimationPreset, $03
 	applyspeed $12
-	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $02
+	asm15 scriptHelp.nayruSavedCutscene_loadAngleAndAnimationPreset, $02
 	applyspeed $0f
 	writememory wTmpcfc0.genericCutscene.cfd0 ,$08
 	scriptjump _interaction6e_guardCommon
@@ -8359,7 +8360,7 @@ companionScript_subid00Script:
 	wait 20
 	playsound SND_DING
 
-	asm15 scriptHlp.companionScript_restoreMusic
+	asm15 scriptHelp.companionScript_restoreMusic
 	writememory   w1Companion.var03, $02
 	checkmemoryeq w1Companion.var3d, $01
 
@@ -8368,9 +8369,9 @@ companionScript_subid00Script:
 	showtext TX_2201
 
 	writememory w1Companion.var03, $03
-	asm15 scriptHlp.companionScript_makeExclamationMark
+	asm15 scriptHelp.companionScript_makeExclamationMark
 	setdisabledobjectsto11
-	asm15 scriptHlp.companionScript_writeAngleTowardLinkToCompanionVar3f
+	asm15 scriptHelp.companionScript_writeAngleTowardLinkToCompanionVar3f
 	wait 60
 
 	jumpifmemoryeq wIsLinkedGame, $00, @meetingMooshFirstTime
@@ -8401,10 +8402,10 @@ companionScript_subid00Script:
 	retscript
 
 companionScript_subid03Script:
-	loadscript scriptHlp.companionScript_subid03Script_body
+	loadscript scriptHelp.companionScript_subid03Script_body
 
 companionScript_subid07Script:
-	loadscript scriptHlp.companionScript_subid07Script_body
+	loadscript scriptHelp.companionScript_subid07Script_body
 
 
 ; Dimitri script where he leaves Link after bringing him to the mainland
@@ -8425,16 +8426,16 @@ companionScript_subid06Script:
 	scriptend
 
 companionScript_subid08Script:
-	loadscript scriptHlp.companionScript_subid08Script_body
+	loadscript scriptHelp.companionScript_subid08Script_body
 
 companionScript_subid09Script:
-	loadscript scriptHlp.companionScript_subid09Script_body
+	loadscript scriptHelp.companionScript_subid09Script_body
 
 companionScript_subid0aScript:
-	loadscript scriptHlp.companionScript_subid0aScript_body
+	loadscript scriptHelp.companionScript_subid0aScript_body
 
 companionScript_subid0bScript:
-	loadscript scriptHlp.companionScript_subid0bScript_body
+	loadscript scriptHelp.companionScript_subid0bScript_body
 
 
 ; ==============================================================================
@@ -8466,7 +8467,7 @@ kingMoblinDefeated_goron0:
 	setspeed SPEED_100
 	applyspeed $18
 	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $02
-	asm15 scriptHlp.kingMoblinDefeated_setGoronDirection, $02
+	asm15 scriptHelp.kingMoblinDefeated_setGoronDirection, $02
 	applyspeed $30
 	scriptend
 
@@ -8477,7 +8478,7 @@ kingMoblinDefeated_goron1:
 	setspeed SPEED_100
 	applyspeed $10
 	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $02
-	asm15 scriptHlp.kingMoblinDefeated_setGoronDirection, $01
+	asm15 scriptHelp.kingMoblinDefeated_setGoronDirection, $01
 	applyspeed $18
 	scriptend
 
@@ -8487,13 +8488,13 @@ kingMoblinDefeated_goron2:
 	wait 20
 	setspeed SPEED_100
 	applyspeed $18
-	asm15 scriptHlp.kingMoblinDefeated_setGoronDirection, $03
+	asm15 scriptHelp.kingMoblinDefeated_setGoronDirection, $03
 	applyspeed $18
 	setanimation $04
 	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $02
-	asm15 scriptHlp.kingMoblinDefeated_setGoronDirection, $01
+	asm15 scriptHelp.kingMoblinDefeated_setGoronDirection, $01
 	applyspeed $18
-	asm15 scriptHlp.kingMoblinDefeated_setGoronDirection, $02
+	asm15 scriptHelp.kingMoblinDefeated_setGoronDirection, $02
 	applyspeed $20
 	scriptend
 
@@ -8511,9 +8512,9 @@ kingMoblinDefeated_goron3:
 
 	showtext TX_3129
 	writememory wTmpcfc0.genericCutscene.cfd0, $02
-	asm15 scriptHlp.kingMoblinDefeated_setGoronDirection, $02
+	asm15 scriptHelp.kingMoblinDefeated_setGoronDirection, $02
 	applyspeed $30
-	asm15 scriptHlp.kingMoblinDefeated_spawnInteraction8a
+	asm15 scriptHelp.kingMoblinDefeated_spawnInteraction8a
 	scriptend
 
 
@@ -8524,7 +8525,7 @@ kingMoblinDefeated_goron3:
 ghiniHarassingMoosh_subid00Script:
 	setdisabledobjectsto11
 
-	asm15 scriptHlp.ghiniHarassingMoosh_beginCircularMovement
+	asm15 scriptHelp.ghiniHarassingMoosh_beginCircularMovement
 @waitUntilStopped:
 	jumpifobjectbyteeq Interaction.speed, $00, ++
 	wait 1
@@ -8546,7 +8547,7 @@ ghiniHarassingMoosh_subid01Script:
 	jumpifmemoryset w1Companion.var3e, $01, ++
 	scriptjump ghiniHarassingMoosh_subid01Script
 ++
-	asm15 scriptHlp.ghiniHarassingMoosh_beginCircularMovement
+	asm15 scriptHelp.ghiniHarassingMoosh_beginCircularMovement
 @waitUntilStopped:
 	jumpifobjectbyteeq Interaction.speed, $00, ++
 	wait 1
@@ -8559,7 +8560,7 @@ ghiniHarassingMoosh_subid01Script:
 	jumpifmemoryset w1Companion.var3e, $08, ++
 	scriptjump @wait2
 ++
-	asm15 scriptHlp.ghiniHarassingMoosh_beginCircularMovement
+	asm15 scriptHelp.ghiniHarassingMoosh_beginCircularMovement
 
 @waitUntilStopped2:
 	jumpifobjectbyteeq Interaction.speed, $00, ++
@@ -8578,7 +8579,7 @@ ghiniHarassingMoosh_subid02Script:
 	jumpifmemoryset w1Companion.var3e, $04, ++
 	scriptjump ghiniHarassingMoosh_subid02Script
 ++
-	asm15 scriptHlp.ghiniHarassingMoosh_beginCircularMovement
+	asm15 scriptHelp.ghiniHarassingMoosh_beginCircularMovement
 @waitUntilStopped:
 	jumpifobjectbyteeq Interaction.speed, $00, ++
 	wait 1
@@ -8621,8 +8622,8 @@ tokayShopItemScript:
 
 @buyFeather:
 	jumpifobjectbyteeq Interaction.var38, $00, @notEnoughSeedsForFeather
-	asm15 scriptHlp.tokayShopItem_lose10MysterySeeds
-	asm15 scriptHlp.tokayShopItem_giveFeatherToLink
+	asm15 scriptHelp.tokayShopItem_lose10MysterySeeds
+	asm15 scriptHelp.tokayShopItem_giveFeatherToLink
 	setglobalflag GLOBALFLAG_BOUGHT_FEATHER_FROM_TOKAY
 	enableinput
 	scriptend
@@ -8638,7 +8639,7 @@ tokayShopItemScript:
 	.dw @declineTrade1
 
 @getFeatherForShovel:
-	asm15 scriptHlp.tokayShopItem_giveFeatherAndLoseShovel
+	asm15 scriptHelp.tokayShopItem_giveFeatherAndLoseShovel
 	scriptjump tokayShopItemScript
 
 @offerReturnBracelet:
@@ -8649,7 +8650,7 @@ tokayShopItemScript:
 
 @returnBracelet:
 	showtextlowindex <TX_0a28
-	asm15 scriptHlp.tokayShopItem_giveShovelAndLoseBracelet
+	asm15 scriptHelp.tokayShopItem_giveShovelAndLoseBracelet
 	scriptjump tokayShopItemScript
 
 
@@ -8662,8 +8663,8 @@ tokayShopItemScript:
 
 @buyBracelet:
 	jumpifobjectbyteeq Interaction.var38, $00, @notEnoughSeedsForBracelet
-	asm15 scriptHlp.tokayShopItem_lose10ScentSeeds
-	asm15 scriptHlp.tokayShopItem_giveBraceletToLink
+	asm15 scriptHelp.tokayShopItem_lose10ScentSeeds
+	asm15 scriptHelp.tokayShopItem_giveBraceletToLink
 	setglobalflag GLOBALFLAG_BOUGHT_BRACELET_FROM_TOKAY
 	wait 1
 	checktext
@@ -8682,7 +8683,7 @@ tokayShopItemScript:
 	.dw @declineTrade1
 
 @getBraceletForShovel:
-	asm15 scriptHlp.tokayShopItem_giveBraceletAndLoseShovel
+	asm15 scriptHelp.tokayShopItem_giveBraceletAndLoseShovel
 	scriptjump tokayShopItemScript
 
 @offerReturnFeather:
@@ -8693,7 +8694,7 @@ tokayShopItemScript:
 
 @returnFeather:
 	showtextlowindex <TX_0a28
-	asm15 scriptHlp.tokayShopItem_giveShovelAndLoseFeather
+	asm15 scriptHelp.tokayShopItem_giveShovelAndLoseFeather
 	scriptjump tokayShopItemScript
 
 
@@ -8705,7 +8706,7 @@ tokayShopItemScript:
 
 @getShovelForFeather:
 	showtextlowindex <TX_0a28
-	asm15 scriptHlp.tokayShopItem_giveShovelAndLoseFeather
+	asm15 scriptHelp.tokayShopItem_giveShovelAndLoseFeather
 	scriptjump tokayShopItemScript
 
 
@@ -8717,7 +8718,7 @@ tokayShopItemScript:
 
 @getShovelForBracelet:
 	showtextlowindex <TX_0a28
-	asm15 scriptHlp.tokayShopItem_giveShovelAndLoseBracelet
+	asm15 scriptHelp.tokayShopItem_giveShovelAndLoseBracelet
 	scriptjump tokayShopItemScript
 
 
@@ -8745,8 +8746,8 @@ tokayShopItemScript:
 
 @getShield:
 	jumpifobjectbyteeq Interaction.var38, $00, @notEnoughSeedsForShield
-	asm15 scriptHlp.tokayShopItem_lose10ScentSeeds
-	asm15 scriptHlp.tokayShopItem_giveShieldToLink
+	asm15 scriptHelp.tokayShopItem_lose10ScentSeeds
+	asm15 scriptHelp.tokayShopItem_giveShieldToLink
 	enableinput
 	scriptend
 @notEnoughSeedsForShield:
@@ -8758,7 +8759,7 @@ tokayShopItemScript:
 ; INTERACID_BOMB_UPGRADE_FAIRY
 ; ==============================================================================
 bombUpgradeFairyScript:
-	loadscript scriptHlp.bombUpgradeFairyScript_body
+	loadscript scriptHelp.bombUpgradeFairyScript_body
 
 
 ; ==============================================================================
@@ -8766,13 +8767,13 @@ bombUpgradeFairyScript:
 ; ==============================================================================
 
 makuTree_subid00Script:
-	loadscript scriptHlp.makuTree_subid00Script_body
+	loadscript scriptHelp.makuTree_subid00Script_body
 
 makuTree_subid01Script:
-	loadscript scriptHlp.makuTree_subid01Script_body
+	loadscript scriptHelp.makuTree_subid01Script_body
 
 makuTree_subid02Script:
-	loadscript scriptHlp.makuTree_subid02Script_body
+	loadscript scriptHelp.makuTree_subid02Script_body
 
 
 ; Cutscene after saving Nayru where Twinrova reveals themselves
@@ -8803,7 +8804,7 @@ makuTree_subid03Script:
 	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $0b
 
 	wait 80
-	asm15 scriptHlp.forceLinkDirection, DIR_UP
+	asm15 scriptHelp.forceLinkDirection, DIR_UP
 	wait 40
 
 	jumpifmemoryeq wIsLinkedGame, $00, @unlinked
@@ -8858,10 +8859,10 @@ makuTree_subid05Script:
 
 
 makuTree_subid06Script_part1:
-	loadscript scriptHlp.makuTree_subid06Script_part1_body
+	loadscript scriptHelp.makuTree_subid06Script_part1_body
 
 makuTree_subid06Script_part2:
-	loadscript scriptHlp.makuTree_subid06Script_part2_body
+	loadscript scriptHelp.makuTree_subid06Script_part2_body
 
 makuTree_subid06Script_part3:
 	jumpifmemoryeq wIsLinkedGame, $01, @linked
@@ -8875,7 +8876,7 @@ makuTree_subid06Script_part3:
 ; ==============================================================================
 
 makuSprout_subid00Script:
-	loadscript scriptHlp.makuSprout_subid00Script_body
+	loadscript scriptHelp.makuSprout_subid00Script_body
 
 
 ; Script where moblins are attacking Maku Sprout
@@ -8927,7 +8928,7 @@ remoteMakuCutsceneScript:
 
 	writememory wDontUpdateStatusBar, $77
 	asm15 hideStatusBar
-	asm15 scriptHlp.remoteMakuCutscene_fadeoutToBlackWithDelay, $02
+	asm15 scriptHelp.remoteMakuCutscene_fadeoutToBlackWithDelay, $02
 	checkpalettefadedone
 
 	jumpifobjectbyteeq Interaction.subid, $01, @past
@@ -8942,11 +8943,11 @@ remoteMakuCutsceneScript:
 	wait 240
 	wait 60
 ++
-	asm15 scriptHlp.makuTree_showTextWithOffsetAndUpdateMapText, $00
+	asm15 scriptHelp.makuTree_showTextWithOffsetAndUpdateMapText, $00
 	wait 1
 	asm15 showStatusBar
 	asm15 clearFadingPalettes
-	asm15 scriptHlp.remoteMakuCutscene_checkinitUnderwaterWaves
+	asm15 scriptHelp.remoteMakuCutscene_checkinitUnderwaterWaves
 	asm15 fadeinFromWhiteWithDelay, $02
 	checkpalettefadedone
 
@@ -8966,20 +8967,20 @@ remoteMakuCutsceneScript:
 ; INTERACID_GORON_ELDER
 ; ==============================================================================
 goronElderScript_subid00:
-	loadscript scriptHlp.goronElderScript_subid00_body
+	loadscript scriptHelp.goronElderScript_subid00_body
 
 goronElderScript_subid01:
-	loadscript scriptHlp.goronElderScript_subid01_body
+	loadscript scriptHelp.goronElderScript_subid01_body
 
 
 ; ==============================================================================
 ; INTERACID_CLOAKED_TWINROVA
 ; ==============================================================================
 cloakedTwinrova_subid00Script:
-	loadscript scriptHlp.cloakedTwinrova_subid00Script_body
+	loadscript scriptHelp.cloakedTwinrova_subid00Script_body
 
 cloakedTwinrova_subid02Script:
-	loadscript scriptHlp.cloakedTwinrova_subid02Script_body
+	loadscript scriptHelp.cloakedTwinrova_subid02Script_body
 
 
 ; ==============================================================================
@@ -8991,11 +8992,11 @@ miscPuzzles_crownDungeonOpeningScript:
 	checkcfc0bit 0
 	setmusic SNDCTRL_STOPMUSIC
 	wait 60
-	asm15 scriptHlp.miscPuzzles_drawCrownDungeonOpeningFrame1
+	asm15 scriptHelp.miscPuzzles_drawCrownDungeonOpeningFrame1
 	wait 30
-	asm15 scriptHlp.miscPuzzles_drawCrownDungeonOpeningFrame2
+	asm15 scriptHelp.miscPuzzles_drawCrownDungeonOpeningFrame2
 	wait 30
-	asm15 scriptHlp.miscPuzzles_drawCrownDungeonOpeningFrame3
+	asm15 scriptHelp.miscPuzzles_drawCrownDungeonOpeningFrame3
 	wait 30
 	settilehere TILEINDEX_DUNGEON_DOOR_1
 
@@ -9032,16 +9033,16 @@ miscPuzzles_eyeglassLibraryOpeningScript:
 ; INTERACID_TWINROVA
 ; ==============================================================================
 twinrova_subid00Script:
-	loadscript scriptHlp.twinrova_subid00Script_body
+	loadscript scriptHelp.twinrova_subid00Script_body
 
 twinrova_subid02Script:
-	loadscript scriptHlp.twinrova_subid02Script_body
+	loadscript scriptHelp.twinrova_subid02Script_body
 
 twinrova_subid04Script:
-	loadscript scriptHlp.twinrova_subid04Script_body
+	loadscript scriptHelp.twinrova_subid04Script_body
 
 twinrova_subid06Script:
-	loadscript scriptHlp.twinrova_subid06Script_body
+	loadscript scriptHelp.twinrova_subid06Script_body
 
 
 ; ==============================================================================
@@ -9049,11 +9050,11 @@ twinrova_subid06Script:
 ; ==============================================================================
 
 patch_upstairsRepairTuniNutScript:
-	loadscript scriptHlp.patch_upstairsRepairTuniNutScript
+	loadscript scriptHelp.patch_upstairsRepairTuniNutScript
 
 
 patch_upstairsRepairSwordScript:
-	loadscript scriptHlp.patch_upstairsRepairSwordScript_body
+	loadscript scriptHelp.patch_upstairsRepairSwordScript_body
 
 
 patch_upstairsRepairedEverythingScript:
@@ -9075,7 +9076,7 @@ patch_upstairsMoveToStaircaseScript:
 
 
 patch_downstairsScript:
-	loadscript scriptHlp.patch_downstairsScript_body
+	loadscript scriptHelp.patch_downstairsScript_body
 
 
 patch_duringMinigameScript:
@@ -9093,25 +9094,25 @@ patch_linkWonMinigameScript:
 	wait 1
 
 	setanimation DIR_DOWN
-	asm15 scriptHlp.patch_moveLinkPositionAtMinigameEnd
+	asm15 scriptHelp.patch_moveLinkPositionAtMinigameEnd
 	wait 3
 	asm15 fadeinFromWhiteWithDelay, $02
 	wait 30
 
-	asm15 scriptHlp.patch_updateTextSubstitution
+	asm15 scriptHelp.patch_updateTextSubstitution
 	showtext TX_580d
 	setanimation $04
 	writememory wTmpcfc0.patchMinigame.wonMinigame, $01
 	wait 60
 
-	asm15 scriptHlp.patch_turnToFaceLink
+	asm15 scriptHelp.patch_turnToFaceLink
 	wait 4
 	showtext TX_580e
 	callscript _patch_giveRepairedItem
 	wait 60
 
 	showtext TX_580f
-	asm15 scriptHlp.patch_restoreControlAndStairs
+	asm15 scriptHelp.patch_restoreControlAndStairs
 	scriptend
 
 
@@ -9142,13 +9143,13 @@ _patch_giveRepairedItem:
 
 
 patch_linkFailedMinigameScript:
-	asm15 scriptHlp.patch_moveLinkPositionAtMinigameEnd
-	asm15 scriptHlp.patch_turnToFaceLink
+	asm15 scriptHelp.patch_moveLinkPositionAtMinigameEnd
+	asm15 scriptHelp.patch_turnToFaceLink
 	asm15 fadeinFromWhiteWithDelay, $04
 	wait 120
-	asm15 scriptHlp.patch_updateTextSubstitution
+	asm15 scriptHelp.patch_updateTextSubstitution
 	showtext TX_580c
-	asm15 scriptHlp.patch_restoreControlAndStairs
+	asm15 scriptHelp.patch_restoreControlAndStairs
 	setanimation $02
 	scriptend
 
@@ -9185,12 +9186,12 @@ _moblin_jumpUntilLinkApproaches:
 	scriptjump _moblin_jumpUntilLinkApproaches
 
 @linkApproached:
-	asm15 scriptHlp.turnToFaceLink
-	asm15 scriptHlp.addToccd4, $01
+	asm15 scriptHelp.turnToFaceLink
+	asm15 scriptHelp.addToccd4, $01
 	checkmemoryeq wccd4, $02
-	asm15 scriptHlp.addTocfc0, $01
+	asm15 scriptHelp.addTocfc0, $01
 	checkmemoryeq wTmpcfc0.genericCutscene.state, $09
-	asm15 scriptHlp.moblin_spawnEnemyHere
+	asm15 scriptHelp.moblin_spawnEnemyHere
 	wait 1
 	scriptend
 
@@ -9214,7 +9215,7 @@ moblin_subid01Script:
 ; ==============================================================================
 
 carpenter_subid00Script:
-	loadscript scriptHlp.carpenter_subid00Script_body
+	loadscript scriptHelp.carpenter_subid00Script_body
 
 
 ; Carpenter #1 to be sought out
@@ -9310,15 +9311,15 @@ carpenter_subid06Script:
 	moveleft $30
 	wait 90
 
-	asm15 scriptHlp.carpenter_buildBridgeColumn, $52
+	asm15 scriptHelp.carpenter_buildBridgeColumn, $52
 	moveleft $10
 	wait 90
 
-	asm15 scriptHlp.carpenter_buildBridgeColumn, $51
+	asm15 scriptHelp.carpenter_buildBridgeColumn, $51
 	moveleft $10
 	wait 90
 
-	asm15 scriptHlp.carpenter_buildBridgeColumn, $50
+	asm15 scriptHelp.carpenter_buildBridgeColumn, $50
 	moveright $50
 	moveup $10
 
@@ -9451,7 +9452,7 @@ _carpenter_talkedWhileWithBoss:
 ; INTERACID_RAFTWRECK_CUTSCENE
 ; ==============================================================================
 raftwreckCutsceneScript:
-	loadscript scriptHlp.raftwreckCutsceneScript_body
+	loadscript scriptHelp.raftwreckCutsceneScript_body
 
 
 ; ==============================================================================
@@ -9629,7 +9630,7 @@ tokkeyScript_alreadyTaughtTune:
 
 tokkeyScript_justHeardTune:
 	disableinput
-	loadscript scriptHlp.tokkayScript_justHeardTune_body
+	loadscript scriptHelp.tokkayScript_justHeardTune_body
 
 
 tokkeyScriptFunc_runAcrossDesk:
@@ -9639,11 +9640,11 @@ tokkeyScriptFunc_runAcrossDesk:
 	moveleft $20
 	wait 15
 
-	asm15 scriptHlp.tokkey_jump
+	asm15 scriptHelp.tokkey_jump
 	moveright $20
 	wait 15
 
-	asm15 scriptHlp.tokkey_jump
+	asm15 scriptHelp.tokkey_jump
 	moveleft $20
 	wait 15
 	retscript
@@ -9693,10 +9694,10 @@ zoraSubid0cScript:
 	wait 30
 	setanimation $01
 	wait 30
-	asm15 scriptHlp.zora_createExclamationMark
+	asm15 scriptHelp.zora_createExclamationMark
 	setanimation $02
 	wait 20
-	asm15 scriptHlp.zora_beginJump
+	asm15 scriptHelp.zora_beginJump
 	wait 8
 	movedown $11
 	moveright $17
@@ -9712,10 +9713,10 @@ zoraSubid0dScript:
 	wait 30
 	setanimation $03
 	wait 30
-	asm15 scriptHlp.zora_createExclamationMark
+	asm15 scriptHelp.zora_createExclamationMark
 	setanimation $02
 	wait 20
-	asm15 scriptHlp.zora_beginJump
+	asm15 scriptHelp.zora_beginJump
 	wait 8
 	moveup $11
 	moveleft $17
@@ -9735,19 +9736,19 @@ zoraSubid0eScript:
 
 ; Gives zora scale to Link
 zoraSubid10Script:
-	asm15 scriptHlp.zora_waitForLinkToMoveDown
+	asm15 scriptHelp.zora_waitForLinkToMoveDown
 	jumptable_memoryaddress wTmpcfc0.genericCutscene.cfc1
 	.dw zoraSubid10Script
 	.dw @linkMovedDown
 
 @linkMovedDown:
 	disableinput
-	asm15 scriptHlp.zora_makeLinkFaceDown
+	asm15 scriptHelp.zora_makeLinkFaceDown
 	wait 30
 
 	setspeed SPEED_100
 	setangle $18
-	asm15 scriptHlp.zora_moveToLinksXPosition
+	asm15 scriptHelp.zora_moveToLinksXPosition
 	wait 1
 
 	moveup $20
@@ -9772,26 +9773,26 @@ zoraSubid11And12Script:
 	disableinput
 	showtext TX_3431
 	wait 30
-	asm15 scriptHlp.zora_createExclamationMarkToTheRight
+	asm15 scriptHelp.zora_createExclamationMarkToTheRight
 	wait 60
 	showtext TX_3432
 	wait 30
 	incstate
 	setspeed SPEED_200
-	asm15 scriptHlp.zora_checkIsLinkedGame
+	asm15 scriptHelp.zora_checkIsLinkedGame
 	jumptable_memoryaddress wTmpcfc0.genericCutscene.cfc1
 	.dw @unlinked
 	.dw @linked
 
 @unlinked:
 	moveleft $18
-	asm15 scriptHlp.zora_setLinkDirectionUp
+	asm15 scriptHelp.zora_setLinkDirectionUp
 	moveup $30
 	scriptjump @end
 
 @linked:
 	movedown $10
-	asm15 scriptHlp.zora_setLinkDirectionRight
+	asm15 scriptHelp.zora_setLinkDirectionRight
 	moveright $40
 @end:
 	orroomflag $40
@@ -9820,15 +9821,15 @@ zeldaSubid00Script:
 
 
 zeldaSubid01Script:
-	loadscript scriptHlp.zeldaSubid01Script_body
+	loadscript scriptHelp.zeldaSubid01Script_body
 
 
 zeldaSubid02Script:
-	loadscript scriptHlp.zeldaSubid02Script_body
+	loadscript scriptHelp.zeldaSubid02Script_body
 
 
 zeldaSubid03Script:
-	loadscript scriptHlp.zeldaSubid03Script_body
+	loadscript scriptHelp.zeldaSubid03Script_body
 
 
 zeldaSubid04Script:
@@ -9863,7 +9864,7 @@ zeldaSubid04Script:
 
 
 zeldaSubid05Script:
-	loadscript scriptHlp.zeldaSubid05Script_body
+	loadscript scriptHelp.zeldaSubid05Script_body
 
 
 zeldaSubid06Script:
@@ -9897,7 +9898,7 @@ zeldaSubid06Script:
 
 zeldaSubid09Script:
 	checkcfc0bit 0
-	asm15 scriptHlp.createExclamationMark, 30
+	asm15 scriptHelp.createExclamationMark, 30
 	wait 120
 
 	xorcfc0bit 1
@@ -9917,7 +9918,7 @@ zeldaSubid09Script:
 	setanimation $02
 	checkcfc0bit 7
 
-	asm15 scriptHlp.createExclamationMark, 30
+	asm15 scriptHelp.createExclamationMark, 30
 	scriptend
 
 
@@ -9925,7 +9926,7 @@ zeldaSubid09Script:
 ; INTERACID_TWINROVA_IN_CUTSCENE
 ; ==============================================================================$08
 twinrovaInCutsceneScript:
-	loadscript scriptHlp.twinrovaInCutsceneScript_body
+	loadscript scriptHelp.twinrovaInCutsceneScript_body
 
 
 ; ==============================================================================
@@ -9965,7 +9966,7 @@ vireSubid1Script:
 	wait 8
 	showtext TX_2f28
 	wait 8
-	asm15 scriptHlp.vire_activateMusic
+	asm15 scriptHelp.vire_activateMusic
 	setangle $00
 	applyspeed $21
 	orroomflag $40
@@ -10040,10 +10041,10 @@ symmetryNpcSubid4And5Script:
 	rungenericnpclowindex <TX_2d23
 
 symmetryNpcSubid6And7Script:
-	loadscript scriptHlp.symmetryNpcSubid6And7Script
+	loadscript scriptHelp.symmetryNpcSubid6And7Script
 
 symmetryNpcSubid8And9Script:
-	loadscript scriptHlp.symmetryNpcSubid8And9Script
+	loadscript scriptHelp.symmetryNpcSubid8And9Script
 
 symmetryNpcSubid8And9Script_afterTuniNutRestored:
 	rungenericnpclowindex <TX_2d18
@@ -10067,7 +10068,7 @@ symmetryNpcSubidCScript:
 ; INTERACID_PIRATE_CAPTAIN
 ; ==============================================================================
 pirateCaptainScript:
-	loadscript scriptHlp.pirateCaptainScript
+	loadscript scriptHelp.pirateCaptainScript
 
 
 ; ==============================================================================
@@ -10101,7 +10102,7 @@ pirateSubid4Script_insertEyeball:
 	shakescreen 160
 	wait 120
 	setcoords $58, $58
-	asm15 scriptHlp.pirate_openEyeballCave
+	asm15 scriptHelp.pirate_openEyeballCave
 	wait 60
 	playsound SND_SOLVEPUZZLE
 	resetmusic
@@ -10202,9 +10203,9 @@ tingleScript:
 	wait 1
 	scriptjump @waitForAnimation
 ++
-	asm15 scriptHlp.tingle_createGlowAroundLink
+	asm15 scriptHelp.tingle_createGlowAroundLink
 	wait 120
-	giveitem TREASURE_SEED_SATCHEL_SUBID_04
+	giveitem TREASURE_SEED_SATCHEL_SUBID_UPGRADE
 	checktext
 	asm15 refillSeedSatchel
 	jumpifobjectbyteeq Interaction.var3d, $02, @haveLevel3Satchel
@@ -10277,10 +10278,10 @@ syrupCuccoScript_triedToSteal:
 ; ==============================================================================
 
 troySubid0Script:
-	loadscript scriptHlp.troySubid0Script
+	loadscript scriptHelp.troySubid0Script
 
 troySubid1Script:
-	loadscript scriptHlp.troySubid1Script
+	loadscript scriptHelp.troySubid1Script
 
 
 ; ==============================================================================
@@ -10289,14 +10290,14 @@ troySubid1Script:
 ; The npcs set "var3f" to the "secret index" (corresponds to wShortSecretIndex) before
 ; running this script.
 linkedGameNpcScript:
-	asm15 scriptHlp.linkedNpc_checkShouldSpawn
+	asm15 scriptHelp.linkedNpc_checkShouldSpawn
 	jumpifmemoryset wcddb, $80, stubScript
 
 	initcollisions
-	asm15 scriptHlp.linkedNpc_initHighTextIndex
+	asm15 scriptHelp.linkedNpc_initHighTextIndex
 
 @offerSecret:
-	asm15 scriptHlp.linkedNpc_calcLowTextIndex, $00
+	asm15 scriptHelp.linkedNpc_calcLowTextIndex, $00
 	checkabutton
 	disableinput
 	showloadedtext
@@ -10310,28 +10311,28 @@ linkedGameNpcScript:
 	scriptjump @offerSecret
 
 @answeredYes:
-	asm15 scriptHlp.linkedNpc_checkHasExtraTextBox
+	asm15 scriptHelp.linkedNpc_checkHasExtraTextBox
 	jumpifmemoryset wcddb, $80, @generateSecret
 
 @showExtraText: ; Only some NPCs have this extra text box
-	asm15 scriptHlp.linkedNpc_calcLowTextIndex, $02
+	asm15 scriptHelp.linkedNpc_calcLowTextIndex, $02
 	showloadedtext
 	wait 20
 	jumpiftextoptioneq $01, @showExtraText
 
 @generateSecret:
-	asm15 scriptHlp.linkedNpc_generateSecret
-	asm15 scriptHlp.linkedNpc_calcLowTextIndex, $03
+	asm15 scriptHelp.linkedNpc_generateSecret
+	asm15 scriptHelp.linkedNpc_calcLowTextIndex, $03
 
 @tellSecret:
 	showloadedtext
 	wait 20
 	jumpiftextoptioneq $01, @tellSecret
 
-	asm15 scriptHlp.linkedNpc_calcLowTextIndex, $04
+	asm15 scriptHelp.linkedNpc_calcLowTextIndex, $04
 	showloadedtext
 	enableinput
-	asm15 scriptHlp.linkedNpc_checkHasExtraTextBox
+	asm15 scriptHelp.linkedNpc_checkHasExtraTextBox
 	jumpifmemoryset wcddb, $80, @offerSecret
 
 	checkabutton
@@ -10343,20 +10344,20 @@ linkedGameNpcScript:
 ; INTERACID_PLEN
 ; ==============================================================================
 plenSubid0Script:
-	loadscript scriptHlp.plenSubid0Script
+	loadscript scriptHelp.plenSubid0Script
 
 
 ; ==============================================================================
 ; INTERACID_GREAT_FAIRY
 ; ==============================================================================
 greatFairySubid0Script:
-	asm15 scriptHlp.linkedNpc_checkShouldSpawn
+	asm15 scriptHelp.linkedNpc_checkShouldSpawn
 	jumpifmemoryset wcddb, $80, stubScript
 	asm15 objectSetInvisible
 	writeobjectbyte Interaction.var3e, $01
 
 @waitLoop:
-	asm15 scriptHlp.greatFairy_checkScreenIsScrolling
+	asm15 scriptHelp.greatFairy_checkScreenIsScrolling
 	jumpifmemoryset wcddb, $80, @spawnIn
 	wait 1
 	scriptjump @waitLoop
@@ -10378,7 +10379,7 @@ slateSlotScript:
 	rungenericnpc TX_5111
 
 slateSlotScript_placeSlate:
-	asm15 scriptHlp.slateSlot_placeSlate
+	asm15 scriptHelp.slateSlot_placeSlate
 	enableinput
 	scriptend
 
@@ -10392,9 +10393,9 @@ interactiondcSubid01Script:
 	checkcfc0bit 0
 	setmusic SNDCTRL_STOPMUSIC
 	wait 60
-	asm15 scriptHlp.interactiondc_removeGraveyardGateTiles1
+	asm15 scriptHelp.interactiondc_removeGraveyardGateTiles1
 	wait 45
-	asm15 scriptHlp.interactiondc_removeGraveyardGateTiles2
+	asm15 scriptHelp.interactiondc_removeGraveyardGateTiles2
 	wait 60
 	resetmusic
 	playsound SND_SOLVEPUZZLE

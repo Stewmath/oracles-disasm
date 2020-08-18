@@ -1,3 +1,5 @@
+ m_section_free Interaction_Code_Treasure NAMESPACE treasureInteraction
+
 ; ==============================================================================
 ; INTERACID_TREASURE
 ;
@@ -33,7 +35,7 @@ interactionCode60:
 .ifdef ROM_AGES
 	callab bank16.interactionLoadTreasureData
 .else
-	callab scriptHlp.interactionLoadTreasureData
+	callab scriptHelp.interactionLoadTreasureData
 .endif
 	ld a,$06
 	call objectSetCollideRadius
@@ -611,3 +613,5 @@ interactionCode60:
 ++
 	xor a
 	ret
+
+.ends

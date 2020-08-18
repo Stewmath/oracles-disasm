@@ -1,3 +1,5 @@
+ m_section_free Interaction_Code_Group2 NAMESPACE commonInteractions2
+
 ;;
 ; Reloads the tiles for "price" on the item selection area when necessary.
 checkReloadShopItemTiles:
@@ -252,7 +254,7 @@ _shopkeeperState2:
 .ifdef ROM_SEASONS
 	ld a,TREASURE_SWORD
 	call checkTreasureObtained
-	ld hl,shopkeeperScript_notOpenYet
+	ld hl,mainScripts.shopkeeperScript_notOpenYet
 	jr nc,_shopkeeperLoadScript
 .endif
 
@@ -276,19 +278,19 @@ _shopkeeperState2:
 	ld e,Interaction.var37
 	ld a,(de)
 	call _shopkeeperCheckLinkHasItemAlready
-	ld hl,shopkeeperScript_purchaseItem
+	ld hl,mainScripts.shopkeeperScript_purchaseItem
 	jp _shopkeeperLoadScript
 
 @holdingNothing:
-	call _shopkeeperCheckAllItemsBought
+	call shopkeeperCheckAllItemsBought
 	jr nz,_shopkeeperLoadScript
 
 	ld e,Interaction.subid
 	ld a,(de)
 	cp $02
-	ld hl,shopkeeperScript_lynnaShopWelcome
+	ld hl,mainScripts.shopkeeperScript_lynnaShopWelcome
 	jr nz,_shopkeeperLoadScript
-	ld hl,shopkeeperScript_advanceShopWelcome
+	ld hl,mainScripts.shopkeeperScript_advanceShopWelcome
 
 
 _shopkeeperLoadScript:
@@ -301,14 +303,14 @@ _shopkeeperLoadScript:
 _shopkeeperPromptChestGame:
 	ld a,$0c
 	call _shopkeeperGetItemPrice
-	ld hl,shopkeeperChestGameScript
+	ld hl,mainScripts.shopkeeperChestGameScript
 	jr _shopkeeperLoadScript
 
 
 ; State 3: Seasons - block Link access
 _shopkeeperState3:
 .ifdef ROM_SEASONS
-	ld hl,shopkeeperScript_blockLinkAccess
+	ld hl,mainScripts.shopkeeperScript_blockLinkAccess
 	jp _shopkeeperLoadScript
 .endif
 
@@ -451,7 +453,7 @@ _shopkeeperState5:
 	; Talked to shopkeep
 	xor a
 	ld (de),a
-	ld hl,shopkeeperScript_talkDuringChestGame
+	ld hl,mainScripts.shopkeeperScript_talkDuringChestGame
 	jp _shopkeeperLoadScript
 ++
 	; Check if Link's opened a chest
@@ -479,7 +481,7 @@ _shopkeeperState5:
 
 	; Wrong chest
 	ld (hl),a
-	ld hl,shopkeeperScript_openedWrongChest
+	ld hl,mainScripts.shopkeeperScript_openedWrongChest
 	jp _shopkeeperLoadScript
 
 @correctChest:
@@ -510,7 +512,7 @@ _shopkeeperState5:
 	ld a,(bc)
 	ld (hl),a
 
-	ld hl,shopkeeperScript_openedCorrectChest
+	ld hl,mainScripts.shopkeeperScript_openedCorrectChest
 	jp _shopkeeperLoadScript
 
 @substate2:
@@ -540,7 +542,7 @@ _shopkeeperState5:
 ;;
 ; @param	a	Item index?
 _shopkeeperGetItemPrice:
-	ld hl,_shopItemPrices
+	ld hl,shopItemPrices
 	rst_addAToHl
 	ld a,(hl)
 	call cpRupeeValue
@@ -623,7 +625,7 @@ _shopkeeperCheckLinkHasItemAlready:
 ;;
 ; @param[out]	hl	Script to run if no shop items exist
 ; @param[out]	zflag	Set if at least one shop item exists
-_shopkeeperCheckAllItemsBought:
+shopkeeperCheckAllItemsBought:
 	ldhl FIRST_DYNAMIC_INTERACTION_INDEX, Interaction.enabled
 ---
 	ld l,Interaction.enabled
@@ -639,7 +641,7 @@ _shopkeeperCheckAllItemsBought:
 	cp LAST_INTERACTION_INDEX+1
 	jr c,---
 
-	ld hl,shopkeeperScript_boughtEverything
+	ld hl,mainScripts.shopkeeperScript_boughtEverything
 	or d
 	ret
 
@@ -655,12 +657,12 @@ _shopkeeperTurnToFaceLink:
 
 _shopkeeperTheftPreventionScriptTable:
 .ifdef ROM_AGES
-	.dw shopkeeperSubid0Script_stopLink
+	.dw mainScripts.shopkeeperSubid0Script_stopLink
 .else
-	.dw shopkeeperSubid2Script_stopLink
+	.dw mainScripts.shopkeeperSubid2Script_stopLink
 .endif
-	.dw shopkeeperSubid1Script_stopLink
-	.dw shopkeeperSubid2Script_stopLink
+	.dw mainScripts.shopkeeperSubid1Script_stopLink
+	.dw mainScripts.shopkeeperSubid2Script_stopLink
 
 
 ; X positions of the chests in the chest minigame (used for spawning rupee "prizes")
@@ -961,7 +963,7 @@ _shopItemState3:
 	; Take rupees
 	ld e,Interaction.subid
 	ld a,(de)
-	ld hl,_shopItemPrices
+	ld hl,shopItemPrices
 	rst_addAToHl
 	ldi a,(hl)
 	call removeRupeeValue
@@ -1032,7 +1034,7 @@ _shopItemGetTilesForRupeeDisplay:
 	ld d,(hl)
 
 	ld a,c
-	ld hl,_shopItemPrices
+	ld hl,shopItemPrices
 	rst_addAToHl
 	ld a,(hl)
 	call getRupeeValue
@@ -1108,7 +1110,7 @@ _shopItemGetTilesForRupeeDisplay:
 	.dw w3VramTiles+$6e
 .endif
 
-_shopItemPrices:
+shopItemPrices:
 	/* $00 */ .db RUPEEVAL_300
 	/* $01 */ .db RUPEEVAL_010
 	/* $02 */ .db RUPEEVAL_300
@@ -2018,3 +2020,5 @@ interactionCode56:
 	rrca
 	jp c,objectSetVisible81
 	jp objectSetVisible82
+
+.ends

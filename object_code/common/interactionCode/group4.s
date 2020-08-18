@@ -1,431 +1,507 @@
+ m_section_superfree Interaction_Code_Group4 NAMESPACE commonInteractions4
+
 ; ==============================================================================
-; INTERACID_FARORE_GIVEITEM
+; INTERACID_VASU
+;
+; Variables:
+;   var36: Nonzero if TREASURE_RING_BOX is obtained
+;   var37: Nonzero if Link has unappraised rings?
+;   var38: Nonzero if Link has rings in the ring list?
 ; ==============================================================================
-interactionCoded9:
-	ld e,Interaction.state
-	ld a,(de)
-	rst_jumpTable
-	.dw _interactiond9_state0
-	.dw _interactiond9_state1
-	.dw _interactiond9_state2
-
-_interactiond9_state0:
-	ld a,$01
-	ld (wLoadedTreeGfxIndex),a
-
-	; Check if the secret has been told already
-	ld e,Interaction.subid
-	ld a,(de)
-	ld b,a
-.ifdef ROM_AGES
-	add GLOBALFLAG_FIRST_AGES_DONE_SECRET
-.else
-	add GLOBALFLAG_FIRST_SEASONS_DONE_SECRET
-.endif
-	call checkGlobalFlag
-	jr z,@secretNotTold
-
-	ld bc,TX_550c ; "You told me this secret already"
-	call showText
-
-	; Bit 1 is a signal for Farore to continue talking
-	ld a,$02
-	ld (wTmpcfc0.genericCutscene.state),a
-
-	jp interactionDelete
-
-@secretNotTold:
-	; Decide whether to go to state 1 or 2 based on the secret told.
-	ld a,b
-	ld hl,@bits
-	call checkFlag
-	ld a,$02
-	jr nz,+
-	dec a
-+
-	ld e,Interaction.state
-	ld (de),a
-	ret
-
-; If a bit is set for a corresponding secret, it's an upgrade (go to state 2); otherwise,
-; it's a new item (go to state 1).
-@bits:
-	dbrev %10001101 %01000000
-
-;;
-; @param[out]	bc	The item ID.
-;			If this is an upgrade, 'c' is a value from 0-4 indicating the
-;			behaviour (ie. compare with current ring box level, sword level)
-_interactiond9_getItemID:
-	ld e,Interaction.subid
-	ld a,(de)
-	ld hl,@chestContents
-	rst_addDoubleIndex
-	ld b,(hl)
-	inc l
-	ld c,(hl)
-	ret
-
-@chestContents:
-	.db  TREASURE_SWORD,           $00 ; upgrade
-	dwbe TREASURE_HEART_CONTAINER_SUBID_01
-	dwbe TREASURE_BOMBCHUS_SUBID_01
-	dwbe TREASURE_RING_SUBID_0c
-	.db  TREASURE_SHIELD,          $01 ; upgrade
-	.db  TREASURE_BOMB_UPGRADE,    $02 ; upgrade
-	dwbe TREASURE_RING_SUBID_0d
-	.db  TREASURE_SATCHEL_UPGRADE, $03 ; upgrade
-	dwbe TREASURE_BIGGORON_SWORD_SUBID_01
-	.db  TREASURE_RING_BOX,        $04 ; upgrade
-
-
-; State 1: it's a new item, not an upgrade
-_interactiond9_state1:
-	ld e,Interaction.substate
-	ld a,(de)
-	rst_jumpTable
-	.dw @substate0
-	.dw @substate1
-	.dw @substate2
-	.dw @substate3
-	.dw @substate4
-
-@substate0:
-	ld a,$01
-	ld (de),a
-	xor a
-	ld (wcca2),a
-
-	call _interactiond9_getItemID
-	ld a,b
-	ld (wChestContentsOverride),a
-	ld a,c
-	ld (wChestContentsOverride+1),a
-
-	ld b,INTERACID_FARORE_MAKECHEST
-	jp objectCreateInteractionWithSubid00
-
-@substate1:
-	ld a,(wTmpcfc0.genericCutscene.state)
+interactionCode89:
+	ld a,(wTextIsActive)
 	or a
-	ret z
+	jr nz,++
 
-	ld e,Interaction.counter1
-	ld a,$3c
-	ld (de),a
-	jp interactionIncSubstate
-
-@substate2:
-	call interactionDecCounter1
-	ret nz
-
-	ld a,GLOBALFLAG_SECRET_CHEST_WAITING
-	call setGlobalFlag
-
-	; Bit 1 of $cfc0 is a signal for Farore to continue talking
+	; Textboxes are always on the bottom in Vasu's shop
 	ld a,$02
-	ld ($cfc0),a
-
-	ld bc,TX_5509 ; "Your secrets have called forth power"
-	call showText
-	jp interactionIncSubstate
-
-@substate3:
-	; Wait for the chest to be opened
-	ld a,(wcca2)
-	or a
-	ret z
-
-	call _interactiond9_markSecretAsTold
-	ld e,Interaction.counter1
-	ld a,$1e
-	ld (de),a
-	jp interactionIncSubstate
-
-@substate4:
-	call interactionDecCounter1
-	ret nz
-
-	; Remove the chest
-	call objectCreatePuff
-	call objectGetShortPosition
-	ld c,a
-	ld a,$ac
-	call setTile
-	jp interactionDelete
-
-
-; State 2: it's an upgrade; it doesn't go in a chest.
-_interactiond9_state2:
-	ld e,Interaction.substate
-	ld a,(de)
-	rst_jumpTable
-	.dw @substate0
-	.dw @substate1
-	.dw @substate2
-	.dw @substate3
-	.dw @substate4
-	.dw @substate5
-	.dw @substate6
-	.dw @substate7
-	.dw @substate8
-
-@substate0:
-	call interactionIncSubstate
-	ld l,Interaction.counter1
-	ld (hl),30
-	ld hl,w1Link
-	jp objectTakePosition
-
-@substate1:
-	call interactionDecCounter1
-	ret nz
-	ld (hl),60
-
-	call getFreeInteractionSlot
-	ret nz
-	ld (hl),INTERACID_SPARKLE
-	ld l,Interaction.yh
-	ld (hl),$28
-	ld l,Interaction.xh
-	ld (hl),$58
-	jp interactionIncSubstate
-
-@substate2:
-	call interactionDecCounter1
-	ret nz
-	ld (hl),20
-
-	ld a,(w1Link.yh)
-	ld b,a
-	ld a,(w1Link.xh)
-	ld c,a
-	ld a,$78
-	call createEnergySwirlGoingIn
-	jp interactionIncSubstate
-
-@substate3:
-@substate4:
-	call interactionDecCounter1
-	ret nz
-	ld (hl),$14
-	call fadeinFromWhite
-
-@playFadeOutSoundAndIncState:
-	ld a,SND_FADEOUT
-	call playSound
-	jp interactionIncSubstate
-
-@substate5:
-	call interactionDecCounter1
-	ret nz
-	ld a,$02
-	call fadeinFromWhiteWithDelay
-	jr @playFadeOutSoundAndIncState
-
-@substate6:
-	ld a,(wPaletteThread_mode)
-	or a
-	ret nz
-	call _interactiond9_getItemID
-	ld a,c
-	rst_jumpTable
-	.dw @swordUpgrade
-	.dw @shieldUpgrade
-	.dw @bombUpgrade
-	.dw @satchelUpgrade
-	.dw @ringBoxUpgrade
-
-@ringBoxUpgrade:
-	ld a,(wRingBoxLevel)
-	and $03
-	ld hl,@ringBoxSubids
-	rst_addAToHl
-	ld c,(hl)
-	ld b,TREASURE_RING_BOX
-	jr @createTreasureAndIncSubstate
-
-@ringBoxSubids:
-	.db $03 $03 $04 $04
-
-@swordShieldSubids:
-	.db $03 $01
-	.db $03 $01
-	.db $05 $02
-	.db $05 $02
-
-@swordUpgrade:
-	ld a,(wSwordLevel)
-	jr ++
-
-@shieldUpgrade:
-	ld a,(wShieldLevel)
+	ld (wTextboxPosition),a
+	ld a,TEXTBOXFLAG_DONTCHECKPOSITION
+	ld (wTextboxFlags),a
 ++
-	ld hl,@swordShieldSubids
-	rst_addDoubleIndex
-	inc hl
-	ld a,(hl)
-	jr @label_0b_135
-
-@bombUpgrade:
-	ldbc TREASURE_BOMB_UPGRADE, $00
-	call @createTreasureAndIncSubstate
-	ld hl,wMaxBombs
-	ld a,(hl)
-	add $20
-	ldd (hl),a
-	ld (hl),a
-	jp setStatusBarNeedsRefreshBit1
-
-@satchelUpgrade:
-	ld a,(wSeedSatchelLevel)
-.ifdef ROM_AGES
-	ldbc TREASURE_SEED_SATCHEL, $04
-.else
-	ldbc TREASURE_SEED_SATCHEL, $01
-.endif
-	jr @createTreasureAndIncSubstate
-
-@label_0b_135:
-	and $03
-	ld c,a
-
-@createTreasureAndIncSubstate:
-	call @createTreasure
-	ld e,Interaction.counter1
-	ld a,30
-	ld (de),a
-	jp interactionIncSubstate
-
-@substate7:
-	call retIfTextIsActive
-	call interactionDecCounter1
-	ret nz
-
+	call @updateState
 	ld e,Interaction.subid
 	ld a,(de)
-	cp $07
-	jr z,@fillSatchel
 	or a
-	jr nz,@cleanup
+	jp nz,objectSetPriorityRelativeToLink_withTerrainEffects
+	jp interactionPushLinkAwayAndUpdateDrawPriority
 
-	; The sword upgrade acts differently? Maybe due to Link doing a spin slash?
-	ld a,(wSwordLevel)
-	add $02
-	ld c,a
-	ld b,TREASURE_SWORD
-	call @createTreasure
-	call interactionIncSubstate
-	ld l,Interaction.counter1
-	ld (hl),$5a
-	ret
-
-@fillSatchel:
-	call refillSeedSatchel
-
-@cleanup:
-	; Bit 1 of $cfc0 is a signal for Farore to continue talking
-	ld a,$02
-	ld ($cfc0),a
-
-	ld bc,TX_5509
-	call showText
-	call _interactiond9_markSecretAsTold
-	jp interactionDelete
-
-@substate8:
-	call interactionDecCounter1
-	ret nz
-	jr @cleanup
-
-;;
-; @param	bc	The treasure to create
-@createTreasure:
-	call createTreasure
-	ret nz
-	jp objectCopyPosition
-
-;;
-_interactiond9_markSecretAsTold:
-	ld e,Interaction.subid
-	ld a,(de)
-.ifdef ROM_AGES
-	add GLOBALFLAG_FIRST_AGES_DONE_SECRET
-.else
-	add GLOBALFLAG_FIRST_SEASONS_DONE_SECRET
-.endif
-	call setGlobalFlag
-	ld a,GLOBALFLAG_SECRET_CHEST_WAITING
-	jp unsetGlobalFlag
-
-
-; ==============================================================================
-; INTERACID_ZELDA_APPROACH_TRIGGER
-; ==============================================================================
-interactionCodeda:
+@updateState:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
 	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+	.dw @state5
 
+
+; State 0: Initialization of vasu or snake
 @state0:
 	ld a,$01
 	ld (de),a
-	call getThisRoomFlags
-	and ROOMFLAG_80
-	jp nz,interactionDelete
-.ifdef ROM_AGES
-	ld a,PALH_ac
-.else
-	ld a,SEASONS_PALH_ac
-.endif
-	jp loadPaletteHeader
+	call interactionInitGraphics
+	call interactionSetAlwaysUpdateBit
+	ld a,>TX_3000
+	call interactionSetHighTextIndex
+	ld e,Interaction.subid
+	ld a,(de)
+	or a
+	jr z,@@initVasu
 
+@@initSnake:
+	ld a,$06
+	call objectSetCollideRadius
+	call objectGetTileCollisions
+	ld (hl),$0f
+	ld a,(de)
+	call interactionSetAnimation
+	ld e,Interaction.pressedAButton
+	jp objectAddToAButtonSensitiveObjectList
+
+@@initVasu:
+	ld a,$04
+	ld e,Interaction.state
+	ld (de),a
+	ld hl,mainScripts.vasuScript
+	jp interactionSetScript
+
+
+; State 1: Snake waiting for Link to talk?
 @state1:
-	call checkLinkVulnerable
+	; Hide snake if Link is within a certain distance
+	ld c,$18
+	call objectCheckLinkWithinDistance
+	ld e,Interaction.subid
+	ld a,(de)
+	jp nc,interactionSetAnimation
+
+	call interactionAnimate
+	ld h,d
+	ld l,Interaction.pressedAButton
+	ld a,(hl)
+	or a
+	ret z
+
+	; Linked talked to snake
+	xor a
+	ld (hl),a
+	inc a
+	ld (wMenuDisabled),a
+	ld (wDisabledObjects),a
+
+	ld e,l
+	call objectRemoveFromAButtonSensitiveObjectList
+
+	ld h,d
+	ld l,Interaction.state
+	ld a,$02
+	ldd (hl),a
+	dec l
+	ld a,(hl)
+	inc a
+	jp interactionSetAnimation
+
+
+; State 2: Just talked to snake
+@state2:
+	call @checkRingBoxAndRingsObtained
+	call interactionAnimate
+	ld e,Interaction.subid
+	ld a,(de)
+	and $04
+	ld b,a
+	ld c,$00
+	ld e,Interaction.var36
+	ld a,(de)
+	or a
+	jr z,@loadPrelinkedScript
+
+	ld a,GLOBALFLAG_FINISHEDGAME
+	call checkGlobalFlag
+	jr nz,@loadLinkedScript
+
+	ld hl,wFileIsLinkedGame
+	ldi a,(hl)
+	or (hl)
+	jr nz,@loadLinkedScript
+
+@loadPrelinkedScript:
+	ld c,$02
+@loadLinkedScript:
+	ld a,b
+	add c
+	ld hl,@scriptTable
+	rst_addAToHl
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+
+@setScriptAndGotoState4:
+	call interactionSetScript
+	ld e,Interaction.state
+	ld a,$04
+	ld (de),a
+	ret
+
+@scriptTable:
+	.dw mainScripts.blueSnakeScript_linked
+	.dw mainScripts.blueSnakeScript_preLinked
+	.dw mainScripts.redSnakeScript_linked
+	.dw mainScripts.redSnakeScript_preLinked
+
+
+; State 3: Cleaning up after a script?
+@state3:
+	call interactionAnimate
+	ld e,Interaction.animParameter
+	ld a,(de)
+	or a
+	ret z
+
+	xor a
+	ld (wMenuDisabled),a
+	ld e,Interaction.state
+	ld a,$01
+	ld (de),a
+	ld e,Interaction.subid
+
+	; For snakes only, reset animation, do stuff with A button?
+	ld a,(de)
+	or a
+	ret z
+	call interactionSetAnimation
+	ld e,Interaction.pressedAButton
+	jp objectAddToAButtonSensitiveObjectList
+
+
+; State 4: Running script for Vasu or snake
+@state4:
+	call @checkRingBoxAndRingsObtained
+	call interactionAnimate
+	call interactionRunScript
 	ret nc
-	ld a,(wScrollMode)
-	and SCROLLMODE_08 | SCROLLMODE_04 | SCROLLMODE_02
+
+	; Script finished
+	xor a
+	ld (wMenuDisabled),a
+	ld (wDisabledObjects),a
+
+	; If this is a snake, set the animation, revert to state 3?
+	ld e,Interaction.subid
+	ld a,(de)
+	or a
+	ret z
+
+	add $02
+	call interactionSetAnimation
+
+	ld e,Interaction.state
+	ld a,$03
+	ld (de),a
+	ret
+
+
+; State 5: Linking with blue snake?
+@state5:
+	call interactionAnimate
+	ld e,Interaction.substate
+	ld a,(de)
+	rst_jumpTable
+	.dw @state5Substate0
+	.dw @state5Substate1
+	.dw @state5Substate2
+	.dw @state5Substate3
+	.dw @state5Substate4
+
+@state5Substate0:
+	call retIfTextIsActive
+	call interactionIncSubstate
+	xor a
+	ld l,Interaction.counter1
+	ld (hl),a
+	ld l,Interaction.counter2
+	ld (hl),$02
+	ld a,$04
+	jp interactionSetAnimation
+
+@state5Substate1:
+	call interactionDecCounter1
+	jr nz,@label_0a_036
+	inc l
+	dec (hl)
+	jr nz,@label_0a_036
+	xor a
+	ld ($ff00+R_SB),a
+	ld hl,mainScripts.blueSnakeExitScript_cableNotConnected
+	ld b,$80
+	jr @setBlueSnakeExitScript
+
+@label_0a_036:
+	ldh a,(<hSerialInterruptBehaviour)
+	or a
+	jp z,serialFunc_0c73
+
+	and $01
+	add $01
+	ldh (<hFFBE),a
+	call interactionIncSubstate
+
+	ld l,Interaction.counter1
+	ld (hl),180
+	ld bc,TX_3030
+	jp showTextNonExitable
+
+@state5Substate2:
+	call serialFunc_0c8d
+	ldh a,(<hSerialInterruptBehaviour)
+	or a
 	ret nz
 
-	ld hl,w1Link.yh
+	ld a,($ff00+R_SVBK)
+	push af
+	ld a,:w4RingFortuneStuff
+	ld ($ff00+R_SVBK),a
+	ldh a,(<hFFBD)
+	ld b,a
+	ld a,($cbc2)
+	ld e,a
+	ld a,(w4RingFortuneStuff)
+	ld c,a
+
+	pop af
+	ld ($ff00+R_SVBK),a
+
+	ld a,b
+	or e
+	jr nz,@blueSnakeErrorCondition
+
+	; Put 'c' into var3a (ring to get from fortune)
+	ld e,Interaction.var3a
+	ld a,c
+	ld (de),a
+	call interactionDecCounter1
+	ret nz
+	ld hl,mainScripts.blueSnakeScript_successfulFortune
+	jr @setBlueSnakeExitScript
+
+@blueSnakeErrorCondition:
+	ld hl,mainScripts.blueSnakeScript_doNotRemoveCable
+	ld a,e
+	cp $8f
+	jr z,@setBlueSnakeExitScript
+	ld hl,mainScripts.blueSnakeExitScript_noValidFile
+	cp $85
+	jr z,@setBlueSnakeExitScript
+	ld hl,mainScripts.blueSnakeExitScript_linkFailed
+
+@setBlueSnakeExitScript:
+	xor a
+	ld (wDisabledObjects),a
+	call @setScriptAndGotoState4
+	ld a,$02
+	jp interactionSetAnimation
+
+@state5Substate3:
+	call retIfTextIsActive
+
+	; Open linking menu
+	ld a,$08
+	call openMenu
+	jp interactionIncSubstate
+
+@state5Substate4:
+	ld a,($ff00+R_SVBK)
+	push af
+	ld a,:w4RingFortuneStuff
+	ld ($ff00+R_SVBK),a
+
+	ldh a,(<hFFBD)
+	ld b,a
+	ld a,($cbc2)
+	ld e,a
+
+	pop af
+	ld ($ff00+R_SVBK),a
+
+	ld a,b
+	or e
+	jr nz,@blueSnakeErrorCondition
+
+	ld hl,mainScripts.blueSnakeScript_successfulRingTransfer
+	jr @setBlueSnakeExitScript
+
+
+; Populates var36, var37, var38 as described in the variable list.
+@checkRingBoxAndRingsObtained:
+	ld a,TREASURE_RING_BOX
+	call checkTreasureObtained
+	ld a,$00
+	rla
+	ld e,Interaction.var36
+	ld (de),a
+
+	ld a,(wNumUnappraisedRingsBcd)
+	inc e
+	ld (de),a
+	ld hl,wRingsObtained
+	ld b,$08
+	xor a
+@@nextRing:
+	or (hl)
+	inc l
+	dec b
+	jr nz,@@nextRing
+	inc e
+	ld (de),a
+	ret
+
+
+; ==============================================================================
+; INTERACID_BUBBLE
+;
+; Variables:
+;   var30: Value to add to angle
+;   var31: Number of times to add [var30] to angle before switching direction
+; ==============================================================================
+interactionCode91:
+	ld e,Interaction.subid
+	ld a,(de)
+	or a
+	ld e,Interaction.state
+	ld a,(de)
+	jp nz,@subid01
+
+@subid00:
+	or a
+	jr z,@@state0
+
+@@state1:
+	call @checkDelete
+	jp c,interactionDelete
+
+	call objectApplySpeed
 	ld e,Interaction.yh
 	ld a,(de)
-	cp (hl)
-	ret c
+	cp $f0
+	jp nc,interactionDelete
 
-	ld l,<w1Link.xh
-	ld e,Interaction.xh
-	ld a,(de)
-	sub (hl)
-	jr nc,+
+	call interactionDecCounter1
+	ret nz
+
+	ld (hl),$04
+	ld l,Interaction.var31
+	dec (hl)
+	jr nz,++
+
+	ld (hl),$08
+	ld l,Interaction.var30
+	ld a,(hl)
 	cpl
 	inc a
-+
-	cp $09
-	ret nc
-
-	; Link has approached, start the cutscene
-	ld a,CUTSCENE_WARP_TO_TWINROVA_FIGHT
-	ld (wCutsceneTrigger),a
-	ld (wMenuDisabled),a
-
-	; Make the flames invisible
-	ldhl FIRST_DYNAMIC_INTERACTION_INDEX, Interaction.enabled
---
-	ld l,Interaction.enabled
-	ldi a,(hl)
-	or a
-	jr z,++
-	ldi a,(hl)
-	cp INTERACID_TWINROVA_FLAME
-	jr nz,++
-	ld l,Interaction.visible
-	res 7,(hl)
+	ld (hl),a
 ++
-	inc h
-	ld a,h
-	cp LAST_INTERACTION_INDEX+1
-	jr c,--
-	jp interactionDelete
+	ld e,Interaction.angle
+	ld a,(de)
+	ld l,Interaction.var30
+	add (hl)
+	and $1f
+	ld (de),a
+	ret
+
+@@state0:
+	call @checkDelete
+	jp c,interactionDelete
+
+	call interactionInitGraphics
+	call interactionIncState
+	ld l,Interaction.speed
+	ld (hl),SPEED_80
+
+	ld l,Interaction.counter1
+	ld a,$04
+	ldi (hl),a
+	ld (hl),180 ; [counter2] = 180
+
+	ld l,Interaction.var31
+	inc a
+	ldd (hl),a
+	call getRandomNumber
+	and $01
+	jr nz,+
+	dec a
++
+	ld (hl),a
+	ld a,(wTilesetFlags)
+	and TILESETFLAG_SIDESCROLL
+	jp nz,objectSetVisible83
+
+@randomNumberFrom0To4:
+	call getRandomNumber_noPreserveVars
+	and $07
+	cp $05
+	jr nc,@randomNumberFrom0To4
+
+	; Set random initial angle
+	sub $02
+	and $1f
+	ld e,Interaction.angle
+	ld (de),a
+	jp objectSetVisible81
+
+@subid01:
+	or a
+	jr z,@@state0
+
+@@state1:
+	ld a,Object.collisionType
+	call objectGetRelatedObject1Var
+	bit 7,(hl)
+	jp z,interactionDelete
+	call objectTakePosition
+	call interactionDecCounter1
+	ret nz
+	ld (hl),90
+	ld b,INTERACID_BUBBLE
+	jp objectCreateInteractionWithSubid00
+
+@@state0:
+	call interactionIncState
+	ld l,Interaction.counter1
+	ld (hl),30
+	ret
+
+;;
+; @param[out]	cflag	c if bubble should be deleted (no longer in water)
+@checkDelete:
+	ld a,(wTilesetFlags)
+	and TILESETFLAG_SIDESCROLL
+	jp nz,@@sidescrolling
+
+@@topDown:
+	call interactionDecCounter2
+	ld a,(hl)
+	cp 60
+	ret nc
+	or a
+	scf
+	ret z
+
+	; In last 60 frames, flicker
+	ld l,Interaction.visible
+	ld a,(hl)
+	xor $80
+	ld (hl),a
+	ret
+
+@@sidescrolling:
+	; Check if it's still in water
+	call objectGetTileAtPosition
+	ld hl,hazardCollisionTable
+	call lookupCollisionTable
+	ccf
+	ret
+
+.ends

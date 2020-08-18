@@ -1,7 +1,4 @@
-.BANK $02 SLOT 1
-.ORG 0
-
- m_section_force "Bank_2" NAMESPACE "bank2"
+ m_section_free "Bank_2" NAMESPACE "bank2"
 
 ;;
 ; This function checks if the game is run on a dmg (instead of a gbc) and, if so, displays
@@ -10610,7 +10607,7 @@ _secretListMenu_printSecret:
 
 @val0: ; game-transfer secret
 @val1:
-	jpab generateGameTransferSecret
+	jpab bank3.generateGameTransferSecret
 
 @val2: ; ring secret
 	ldbc $00,$02
@@ -10810,19 +10807,5 @@ _runFakeReset:
 	ld hl,wMenuLoadState
 	inc (hl)
 	jp fadeoutToWhite
-
-
-.ifdef ROM_AGES
-
-.ends
-
-.include "code/roomInitialization.s"
-.include "code/ages/roomGfxChanges.s"
-
- m_section_force "Bank_2_2" NAMESPACE "bank2"
-
-.include "code/ages/garbage/bank02End.s"
-
-.endif ; ROM_AGES
 
 .ENDS

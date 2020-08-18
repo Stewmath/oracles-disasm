@@ -1,3 +1,6 @@
+; TODO: Some of this file is probably shared with the Ages version? Should try to merge them as
+; much as possible.
+
 ;;
 ; CUTSCENE_S_FLAME_OF_DESTRUCTION
 flameOfDestructionCutsceneBody:
@@ -601,9 +604,9 @@ _waitUntilFadeIsDone:
 bank3CutsceneLoadRoomOfRites:
 	xor a
 	; Room of Rites
-	ld bc,ROOM_SEASONS_59a
+	ld bc,ROOM_ZELDA_IN_FINAL_DUNGEON
 	call disableLcdAndLoadRoom_body
-	ld a,SEASONS_PALH_ac
+	ld a,PALH_ac
 	call loadPaletteHeader
 	ld a,$28
 	ld (wGfxRegs1.SCX),a

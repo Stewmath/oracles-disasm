@@ -1,5 +1,3 @@
- m_section_force Script_Helper1 NAMESPACE scriptHlp
-
 ; ==============================================================================
 ; INTERACID_FARORE
 ; ==============================================================================
@@ -87,7 +85,7 @@ faroreSpawnSecretChest:
 	jp setShortPosition_paramC
 
 faroreGenerateGameTransferSecret:
-	jpab generateGameTransferSecret
+	jpab bank3.generateGameTransferSecret
 
 
 ; ==============================================================================
@@ -667,5 +665,3 @@ gameCompleteDialog_markGameAsComplete:
 .endif
 	ld a,GLOBALFLAG_FINISHEDGAME
 	jp setGlobalFlag
-
-.ENDS

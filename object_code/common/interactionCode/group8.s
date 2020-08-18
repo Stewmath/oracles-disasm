@@ -1,3 +1,5 @@
+ m_section_superfree Interaction_Code_Group8 NAMESPACE commonInteractions8
+
 ; ==============================================================================
 ; INTERACID_ERA_OR_SEASON_INFO
 ; ==============================================================================
@@ -314,7 +316,7 @@ interactionCodee5:
 
 	ld e,Interaction.subid
 	ld a,(de)
-	ld hl,ringHelpBookSubid0Script
+	ld hl,mainScripts.ringHelpBookSubid0Script
 	or a
 	jr z,++
 
@@ -322,7 +324,7 @@ interactionCodee5:
 	ld a,(de)
 	inc a
 	ld (de),a
-	ld hl,ringHelpBookSubid1Script
+	ld hl,mainScripts.ringHelpBookSubid1Script
 ++
 	call interactionSetScript
 	ld e,Interaction.pressedAButton
@@ -330,3 +332,5 @@ interactionCodee5:
 
 @state1:
 	jp interactionRunScript
+
+.ends

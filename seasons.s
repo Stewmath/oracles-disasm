@@ -40,11 +40,18 @@
 .ORG 0
 
 	.include "code/bank3.s"
-	.include "code/seasons/cutscenes/endgameCutscenes.s"
-	.include "code/seasons/cutscenes/pirateShipDeparting.s"
-	.include "code/seasons/cutscenes/volcanoErupting.s"
-	.include "code/seasons/cutscenes/linkedGameCutscenes.s"
-	.include "code/seasons/cutscenes/introCutscenes.s"
+
+	; Note: There appears to be exactly one function call (in seasons) that performs a call from
+	; this section to code in the "bank3.s" include above. For this reason we can't make this
+	; section "superfree".
+	 m_section_free "Bank_3_Cutscenes" NAMESPACE "bank3Cutscenes"
+		.include "code/bank3Cutscenes.s"
+		.include "code/seasons/cutscenes/endgameCutscenes.s"
+		.include "code/seasons/cutscenes/pirateShipDeparting.s"
+		.include "code/seasons/cutscenes/volcanoErupting.s"
+		.include "code/seasons/cutscenes/linkedGameCutscenes.s"
+		.include "code/seasons/cutscenes/introCutscenes.s"
+	.ends
 
 
 .BANK $04 SLOT 1
@@ -52,260 +59,65 @@
 
 	.include "code/bank4.s"
 
-	; These 2 includes must be in the same bank
-	.include "build/data/roomPacks.s"
-	.include "build/data/musicAssignments.s"
-	.include "build/data/roomLayoutGroupTable.s"
-	.include "build/data/tilesets.s"
-	.include "build/data/tilesetAssignments.s"
+	 m_section_superfree "RoomPacksAndMusicAssignments" NAMESPACE "bank4Data1"
+		; These 2 includes must be in the same bank
+		.include "build/data/roomPacks.s"
+		.include "build/data/musicAssignments.s"
+	.ends
 
-	.include "code/animations.s"
+	 m_section_superfree "RoomLayouts" NAMESPACE "roomLayouts"
+		.include "build/data/roomLayoutGroupTable.s"
+	.ends
 
-	.include "data/seasons/uniqueGfxHeaders.s"
-	.include "data/seasons/uniqueGfxHeaderPointers.s"
-	.include "build/data/animationGroups.s"
+	; Must be in the same bank as "Tileset_Loading_2".
+	 m_section_free "Tileset_Loading_1" NAMESPACE "tilesets"
+		.include "build/data/tilesets.s"
+		.include "build/data/tilesetAssignments.s"
+	.ends
 
-	.include "build/data/animationGfxHeaders.s"
+	 m_section_free "animationAndUniqueGfxData" NAMESPACE "animationAndUniqueGfxData"
+		.include "code/animations.s"
 
-	.include "build/data/animationData.s"
+		.include "build/data/uniqueGfxHeaders.s"
+		.include "build/data/uniqueGfxHeaderPointers.s"
+		.include "build/data/animationGroups.s"
+		.include "build/data/animationGfxHeaders.s"
+		.include "build/data/animationData.s"
+	.ends
 
-	.include "code/seasons/tileSubstitutions.s"
-	.include "build/data/singleTileChanges.s"
-	.include "code/seasons/roomSpecificTileChanges.s"
+	 m_section_free "roomTileChanges" NAMESPACE "roomTileChanges"
+		.include "code/seasons/tileSubstitutions.s"
+		.include "build/data/singleTileChanges.s"
+		.include "code/seasons/roomSpecificTileChanges.s"
+	.ends
 
-;;
-; Fills a square in wRoomLayout using the data at hl.
-; Data format:
-; - Top-left position (YX)
-; - Height
-; - Width
-; - Tile value
-fillRectInRoomLayout:
-	ldi a,(hl)
-	ld e,a
-	ldi a,(hl)
-	ld b,a
-	ldi a,(hl)
-	ld c,a
-	ldi a,(hl)
-	ld d,a
-	ld h,>wRoomLayout
---
-	ld a,d
-	ld l,e
-	push bc
--
-	ldi (hl),a
-	dec c
-	jr nz,-
-	ld a,e
-	add $10
-	ld e,a
-	pop bc
-	dec b
-	jr nz,--
-	ret
+	; The 2 sections to follow must be in the same bank. (Namespaces only differ because the
+	; roomGfxChanges file is in a different bank in Ages.)
+	 m_section_free "roomGfxChanges" NAMESPACE "roomGfxChanges"
+		.include "code/seasons/roomGfxChanges.s"
+	.ends
+	 m_section_free "Tileset_Loading_2" NAMESPACE "tilesets"
+		.include "code/loadTilesToRam.s"
+		.include "code/seasons/loadTilesetData.s"
+	.ends
 
-;;
-; @param	bc	$0808
-; @param	de	$c8f0 - d2 rupee room, $c8f8 - d6 rupee room
-; @param	hl	top-left tile of rupees
-replaceRupeeRoomRupees:
-	ld a,(de)
-	inc de
-	push bc
--
-	rrca
-	jr nc,+
-	ld (hl),TILEINDEX_STANDARD_FLOOR
-+
-	inc l
-	dec b
-	jr nz,-
-	ld a,l
-	add $08
-	ld l,a
-	pop bc
-	dec c
-	jr nz,replaceRupeeRoomRupees
-	ret
-
-
-.include "code/seasons/roomGfxChanges.s"
-.include "code/loadTilesToRam.s"
-
-
-loadTilesetData_body:
-	call getTempleRemainsSeasonsTilesetData
-	jr c,+
-	call getMoblinKeepSeasonsTilesetData
-	jr c,+
-	ld a,(wActiveGroup)
-
-	ld hl,roomTilesetsGroupTable
-	rst_addDoubleIndex
-	ldi a,(hl)
-	ld h,(hl)
-	ld l,a
-	ld a,(wActiveRoom)
-	rst_addAToHl
-	ld a,(hl)
-	and $80
-	ldh (<hFF8B),a
-	ld a,(hl)
-
-	and $7f
-	call multiplyABy8
-	ld hl,tilesetData
-	add hl,bc
-
-	ld a,(hl)
-	inc a
-	jr nz,+
-	inc hl
-	ldi a,(hl)
-	ld h,(hl)
-	ld l,a
-	ld a,(wRoomStateModifier)
-	call multiplyABy8
-	add hl,bc
-+
-	ldi a,(hl)
-	ld e,a
-	and $0f
-	cp $0f
-	jr nz,+
-	ld a,$ff
-+
-	ld (wDungeonIndex),a
-	ld a,e
-	swap a
-	and $0f
-	ld (wActiveCollisions),a
-
-	ldi a,(hl)
-	ld (wTilesetFlags),a
-
-	ld b,$06
-	ld de,wTilesetUniqueGfx
-@copyloop:
-	ldi a,(hl)
-	ld (de),a
-	inc e
-	dec b
-	jr nz,@copyloop
-
-	ld e,wTilesetUniqueGfx&$ff
-	ld a,(de)
-	ld b,a
-	ldh a,(<hFF8B)
-	or b
-	ld (de),a
-
-	ld a,(wActiveGroup)
-	or a
-	ret nz
-	ld a,(wActiveRoom)
-	cp <ROOM_SEASONS_096
-	ret nz
-	call getThisRoomFlags
-	and $80
-	ret nz
-	ld a,$20
-	ld (wTilesetUniqueGfx),a
-	ret
-
-getTempleRemainsSeasonsTilesetData:
-	ld a,GLOBALFLAG_TEMPLE_REMAINS_FILLED_WITH_LAVA
-	call checkGlobalFlag
-	ret z
-
-	call checkIsTempleRemains
-	ret nc
-
-	ld a,(wRoomStateModifier)
-	call multiplyABy8
-	ld hl,templeRemainsSeasons
-	add hl,bc
---
-	xor a
-	ldh (<hFF8B),a
-	scf
-	ret
-
-; @param[out]	cflag	set if active room is temple remains
-checkIsTempleRemains:
-	ld a,(wActiveGroup)
-	or a
-	ret nz
-	ld a,(wActiveRoom)
-	cp $14
-	jr c,+
-	sub $04
-	cp $30
-	ret nc
-	and $0f
-	cp $04
-	ret
-+
-	xor a
-	ret
-
-getMoblinKeepSeasonsTilesetData:
-	ld a,(wActiveGroup)
-	or a
-	ret nz
-
-	call getMoblinKeepScreenIndex
-	ret nc
-
-	ld a,GLOBALFLAG_MOBLINS_KEEP_DESTROYED
-	call checkGlobalFlag
-	ret z
-
-	ld a,(wAnimalCompanion)
-	sub $0a
-	and $03
-	call multiplyABy8
-	ld hl,moblinKeepSeasons
-	add hl,bc
-	jr --
-
-;;
-; @param[out]	cflag	Set if active room is in Moblin keep
-getMoblinKeepScreenIndex:
-	ld a,(wActiveRoom)
-	ld b,$05
-	ld hl,moblinKeepRooms
--
-	cp (hl)
-	jr z,+
-	inc hl
-	dec b
-	jr nz,-
-	xor a
-	ret
-+
-	scf
-	ret
-
-moblinKeepRooms:
-	.db $5b $5c $6b $6c $7b
-
-	.include "build/data/warpData.s"
+	; Must be in same bank as "code/bank4.s"
+	 m_section_free "Warp_Data" NAMESPACE "bank4"
+		.include "build/data/warpData.s"
+	.ends
 
 
 .BANK $05 SLOT 1
 .ORG 0
 
- m_section_force "Bank_5" NAMESPACE bank5
+	 m_section_superfree "Bank_5" NAMESPACE bank5
+		.include "code/bank5.s"
 
-	.include "code/bank5.s"
-	.include "build/data/tileTypeMappings.s"
-	.include "build/data/cliffTilesTable.s"
-	.include "code/seasons/subrosiaDanceLink.s"
+		.include "build/data/tileTypeMappings.s"
+		.include "build/data/cliffTilesTable.s"
 
-.ends
+		.include "code/seasons/subrosiaDanceLink.s"
+	.ends
 
 .BANK $06 SLOT 1
 .ORG 0
@@ -332,81 +144,12 @@ moblinKeepRooms:
 	.include "code/items/magnetGloveParent.s"
 
 	.include "code/items/parentItemCommon.s"
-
-
-_itemUsageParameterTable:
-	.db $00 <wGameKeysPressed       ; ITEMID_NONE
-	.db $05 <wGameKeysPressed       ; ITEMID_SHIELD
-	.db $03 <wGameKeysJustPressed   ; ITEMID_PUNCH
-	.db $23 <wGameKeysJustPressed   ; ITEMID_BOMB
-	.db $00 <wGameKeysJustPressed   ; ITEMID_CANE_OF_SOMARIA
-	.db $63 <wGameKeysJustPressed   ; ITEMID_SWORD
-	.db $02 <wGameKeysJustPressed   ; ITEMID_BOOMERANG
-	.db $33 <wGameKeysJustPressed   ; ITEMID_ROD_OF_SEASONS
-	.db $53 <wGameKeysJustPressed   ; ITEMID_MAGNET_GLOVES
-	.db $00 <wGameKeysJustPressed   ; ITEMID_SWITCH_HOOK_HELPER
-	.db $00 <wGameKeysJustPressed   ; ITEMID_SWITCH_HOOK
-	.db $00 <wGameKeysJustPressed   ; ITEMID_SWITCH_HOOK_CHAIN
-	.db $73 <wGameKeysJustPressed   ; ITEMID_BIGGORON_SWORD
-	.db $02 <wGameKeysJustPressed   ; ITEMID_BOMBCHUS
-	.db $05 <wGameKeysJustPressed   ; ITEMID_FLUTE
-	.db $00 <wGameKeysJustPressed   ; ITEMID_SHOOTER
-	.db $00 <wGameKeysJustPressed   ; ITEMID_10
-	.db $00 <wGameKeysJustPressed   ; ITEMID_HARP
-	.db $00 <wGameKeysJustPressed   ; ITEMID_12
-	.db $43 <wGameKeysJustPressed   ; ITEMID_SLINGSHOT
-	.db $00 <wGameKeysJustPressed   ; ITEMID_14
-	.db $13 <wGameKeysJustPressed   ; ITEMID_SHOVEL
-	.db $13 <wGameKeysPressed       ; ITEMID_BRACELET
-	.db $01 <wGameKeysJustPressed   ; ITEMID_FEATHER
-	.db $00 <wGameKeysJustPressed   ; ITEMID_18
-	.db $02 <wGameKeysJustPressed   ; ITEMID_SEED_SATCHEL
-	.db $00 <wGameKeysJustPressed   ; ITEMID_DUST
-	.db $00 <wGameKeysJustPressed   ; ITEMID_1b
-	.db $00 <wGameKeysJustPressed   ; ITEMID_1c
-	.db $00 <wGameKeysJustPressed   ; ITEMID_MINECART_COLLISION
-	.db $03 <wGameKeysJustPressed   ; ITEMID_FOOLS_ORE
-	.db $00 <wGameKeysJustPressed   ; ITEMID_1f
-
-
-_linkItemAnimationTable:
-	.db $00  LINK_ANIM_MODE_NONE	; ITEMID_NONE
-	.db $00  LINK_ANIM_MODE_NONE	; ITEMID_SHIELD
-	.db $d6  LINK_ANIM_MODE_21	; ITEMID_PUNCH
-	.db $30  LINK_ANIM_MODE_LIFT	; ITEMID_BOMB
-	.db $d6  LINK_ANIM_MODE_22	; ITEMID_CANE_OF_SOMARIA
-	.db $e6  LINK_ANIM_MODE_22	; ITEMID_SWORD
-	.db $b0  LINK_ANIM_MODE_21	; ITEMID_BOOMERANG
-	.db $d6  LINK_ANIM_MODE_22	; ITEMID_ROD_OF_SEASONS
-	.db $60  LINK_ANIM_MODE_NONE	; ITEMID_MAGNET_GLOVES
-	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_SWITCH_HOOK_HELPER
-	.db $f6  LINK_ANIM_MODE_21	; ITEMID_SWITCH_HOOK
-	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_SWITCH_HOOK_CHAIN
-	.db $f6  LINK_ANIM_MODE_23	; ITEMID_BIGGORON_SWORD
-	.db $30  LINK_ANIM_MODE_21	; ITEMID_BOMBCHUS
-	.db $70  LINK_ANIM_MODE_FLUTE	; ITEMID_FLUTE
-	.db $c6  LINK_ANIM_MODE_21	; ITEMID_SHOOTER
-	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_10
-	.db $70  LINK_ANIM_MODE_HARP_2	; ITEMID_HARP
-	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_12
-	.db $c6  LINK_ANIM_MODE_21	; ITEMID_SLINGSHOT
-	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_14
-	.db $b0  LINK_ANIM_MODE_DIG_2	; ITEMID_SHOVEL
-	.db $40  LINK_ANIM_MODE_LIFT_3	; ITEMID_BRACELET
-	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_FEATHER
-	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_18
-	.db $a0  LINK_ANIM_MODE_21	; ITEMID_SEED_SATCHEL
-	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_DUST
-	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_1b
-	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_1c
-	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_MINECART_COLLISION
-	.db $e6  LINK_ANIM_MODE_22	; ITEMID_FOOLS_ORE
-	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_1f
+	.include "build/data/itemUsageTables.s"
 
 	.include "object_code/common/specialObjects/minecart.s"
 	.include "object_code/common/specialObjects/raft.s"
 
-	.include "data/seasons/specialObjectAnimationData.s"
+	.include "build/data/specialObjectAnimationData.s"
 	.include "code/seasons/cutscenes/companionCutscenes.s"
 	.include "code/seasons/cutscenes/linkCutscenes.s"
 	.include "build/data/signText.s"
@@ -418,40 +161,34 @@ _linkItemAnimationTable:
 .BANK $07 SLOT 1
 .ORG 0
 
-.include "code/fileManagement.s"
+	 m_section_superfree "File_Management" namespace "fileManagement"
+		.include "code/fileManagement.s"
+	.ends
 
- ; This section can't be superfree, since it must be in the same bank as section
- ; "Bank_7_Data".
- m_section_free "Enemy_Part_Collisions" namespace "bank7"
+	 ; This section can't be superfree, since it must be in the same bank as section
+	 ; "Bank_7_Data".
+	 m_section_free "Enemy_Part_Collisions" namespace "bank7"
+		.include "code/collisionEffects.s"
+	.ends
 
-	.include "code/collisionEffects.s"
+	 m_section_superfree "Item_Code" namespace "itemCode"
+		.include "code/updateItems.s"
 
-.ends
+		.include "build/data/itemConveyorTilesTable.s"
+		.include "build/data/itemPassableCliffTilesTable.s"
+		.include "build/data/itemPassableTilesTable.s"
+		.include "code/itemCodes.s"
+		.include "build/data/itemAttributes.s"
+		.include "data/itemAnimations.s"
+	.ends
 
-
- m_section_superfree "Item_Code" namespace "itemCode"
-
-	.include "code/updateItems.s"
-
-	.include "build/data/itemConveyorTilesTable.s"
-	.include "build/data/itemPassableCliffTilesTable.s"
-	.include "build/data/itemPassableTilesTable.s"
-	.include "code/itemCodes.s"
-	.include "data/seasons/itemAttributes.s"
-	.include "data/itemAnimations.s"
-
-.ends
-
-
- ; This section can't be superfree, since it must be in the same bank as section
- ; "Enemy_Part_Collisions".
- m_section_free "Bank_7_Data" namespace "bank7"
-
-	.include "data/seasons/enemyActiveCollisions.s"
-	.include "data/seasons/partActiveCollisions.s"
-	.include "data/seasons/objectCollisionTable.s"
-
-.ends
+	 ; This section can't be superfree, since it must be in the same bank as section
+	 ; "Enemy_Part_Collisions".
+	 m_section_free "Bank_7_Data" namespace "bank7"
+		.include "build/data/enemyActiveCollisions.s"
+		.include "build/data/partActiveCollisions.s"
+		.include "build/data/objectCollisionTable.s"
+	.ends
 
 
 .BANK $08 SLOT 1
@@ -461,6 +198,7 @@ _linkItemAnimationTable:
         .include "object_code/common/interactionCode/group2.s"
 	.include "object_code/seasons/interactionCode/bank08.s"
 
+
 .BANK $09 SLOT 1
 .ORG 0
 
@@ -468,18 +206,22 @@ _linkItemAnimationTable:
         .include "object_code/common/interactionCode/group3.s"
 	.include "object_code/seasons/interactionCode/bank09.s"
 
+
 .BANK $0a SLOT 1
 .ORG 0
 
-	.include "object_code/common/interactionCode/group5.s"
-        .include "object_code/common/interactionCode/group6.s"
+	.include "object_code/common/interactionCode/group4.s"
+        .include "object_code/common/interactionCode/group5.s"
 	.include "object_code/seasons/interactionCode/bank0a.s"
+
 
 .BANK $0b SLOT 1
 .ORG 0
 
-	.include "code/scripting.s"
-	.include "scripts/seasons/scripts.s"
+	 m_section_superfree "Scripts" namespace "mainScripts"
+		.include "code/scripting.s"
+		.include "scripts/seasons/scripts.s"
+	.ends
 
 
 .BANK $0c SLOT 1
@@ -490,7 +232,7 @@ _linkItemAnimationTable:
 	.include "code/enemyCommon.s"
 	.include "object_code/common/enemyCode/group1.s"
 	.include "object_code/seasons/enemyCode/bank0c.s"
-	.include "data/seasons/enemyAnimations.s"
+	.include "build/data/enemyAnimations.s"
 
 .ends
 
@@ -533,14 +275,16 @@ _linkItemAnimationTable:
 	.include "object_code/seasons/enemyCode/bank0f.s"
 	.include "code/seasons/cutscenes/transitionToDragonOnox.s"
 
-	.REPT $87
-	.db $0f ; emptyfill
-	.ENDR
-
-	.include "object_code/common/interactionCode/group7.s"
-	.include "object_code/seasons/interactionCode/bank0f.s"
-
 .ends
+
+.ifdef BUILD_VANILLA
+	.REPT $87
+	.db $0f ; emptyfill (TODO: replace this with ORGA, update md5 for emptyfill-0)
+	.ENDR
+.endif
+
+	.include "object_code/common/interactionCode/group6.s"
+	.include "object_code/seasons/interactionCode/bank0f.s"
 
 .BANK $10 SLOT 1
 .ORG 0
@@ -576,9 +320,9 @@ _linkItemAnimationTable:
 	.define BASE_OAM_DATA_BANK $12
 	.export BASE_OAM_DATA_BANK
 
-	.include "data/seasons/specialObjectOamData.s"
+	.include "build/data/specialObjectOamData.s"
 	.include "data/itemOamData.s"
-	.include "data/seasons/enemyOamData.s"
+	.include "build/data/enemyOamData.s"
 
 
 .BANK $13 SLOT 1
@@ -588,16 +332,20 @@ _linkItemAnimationTable:
 	.include "data/terrainEffects.s"
 .ends
 
-	.include "data/seasons/interactionOamData.s"
-	.include "data/seasons/partOamData.s"
+	.include "build/data/interactionOamData.s"
+	.include "build/data/partOamData.s"
 
 
 .BANK $14 SLOT 1
 .ORG 0
 
 	.include "build/data/data_4556.s"
-	.include "scripts/seasons/scripts2.s"
-	.include "data/seasons/interactionAnimations.s"
+
+	 m_section_force "Scripts2" NAMESPACE scripts2
+		.include "scripts/seasons/scripts2.s"
+	.ends
+
+	.include "build/data/interactionAnimations.s"
 
 
 .BANK $15 SLOT 1
@@ -605,9 +353,13 @@ _linkItemAnimationTable:
 
 	.include "code/serialFunctions.s"
 
-	.include "scripts/common/scriptHelper.s"
-	.include "object_code/common/interactionCode/group4.s"
+	 m_section_force "Bank_15" NAMESPACE scriptHelp
+		.include "scripts/common/scriptHelper.s"
+	.ends
+
+	.include "object_code/common/interactionCode/group7.s"
 	.include "object_code/common/interactionCode/group8.s"
+
 
 oamData_15_4da3:
 	.db $1a
@@ -652,16 +404,20 @@ oamData_15_4e0c:
 	.db $39 $46 $8e $03
 	.db $3b $3c $92 $03
 
+
 	.include "code/staticObjects.s"
 	.include "build/data/staticDungeonObjects.s"
 	.include "build/data/chestData.s"
 
 	.include "build/data/treasureObjectData.s"
 
-	.include "scripts/seasons/scriptHelper.s"
+	 m_section_force "Bank_15_2" NAMESPACE scriptHelp
+		.include "scripts/seasons/scriptHelper.s"
+	.ends
+
 	.include "object_code/seasons/interactionCode/bank15.s"
 
-	.include "data/seasons/partAnimations.s"
+	.include "build/data/partAnimations.s"
 
 
 .BANK $16 SLOT 1
@@ -670,6 +426,7 @@ oamData_15_4e0c:
 	.include "build/data/paletteData.s"
 	.include "build/data/tilesetCollisions.s"
 	.include "build/data/smallRoomLayoutTables.s"
+
 
 .BANK $17 SLOT 1
 .ORG 0

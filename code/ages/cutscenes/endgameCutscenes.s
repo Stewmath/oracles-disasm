@@ -1,3 +1,5 @@
+; This code goes right after the cutscene code in bank 3 (shares the same namespace)
+
 ;;
 ; CUTSCENE_BLACK_TOWER_ESCAPE
 _endgameCutsceneHandler_09:
@@ -128,8 +130,8 @@ _endgameCutsceneHandler_09_stage0:
 	ld l,<w1Link.direction
 	ld (hl),DIR_DOWN
 
-	ld hl,interactionBank10.blackTowerEscape_simulatedInput1
-	ld a,:interactionBank10.blackTowerEscape_simulatedInput1
+	ld hl,cutscenesBank10.blackTowerEscape_simulatedInput1
+	ld a,:cutscenesBank10.blackTowerEscape_simulatedInput1
 	call setSimulatedInputAddress
 
 	ld hl,_blackTowerEscapeCutscene_doorOpenReplacement
@@ -164,8 +166,8 @@ _endgameCutsceneHandler_09_stage0:
 	ld (wDisabledObjects),a
 	ld (wScrollMode),a
 
-	ld hl,interactionBank10.blackTowerEscape_simulatedInput2
-	ld a,:interactionBank10.blackTowerEscape_simulatedInput2
+	ld hl,cutscenesBank10.blackTowerEscape_simulatedInput2
+	ld a,:cutscenesBank10.blackTowerEscape_simulatedInput2
 	jp setSimulatedInputAddress
 
 @state8:
@@ -214,8 +216,8 @@ _endgameCutsceneHandler_09_stage0:
 	ld l,<w1Link.direction
 	ld (hl),DIR_UP
 
-	ld hl,interactionBank10.blackTowerEscape_simulatedInput3
-	ld a,:interactionBank10.blackTowerEscape_simulatedInput3
+	ld hl,cutscenesBank10.blackTowerEscape_simulatedInput3
+	ld a,:cutscenesBank10.blackTowerEscape_simulatedInput3
 	call setSimulatedInputAddress
 	xor a
 	ld (wScrollMode),a
@@ -226,8 +228,8 @@ _endgameCutsceneHandler_09_stage0:
 	cp $06
 	ret nz
 	call incCbc2
-	ld hl,interactionBank10.blackTowerEscape_simulatedInput4
-	ld a,:interactionBank10.blackTowerEscape_simulatedInput4
+	ld hl,cutscenesBank10.blackTowerEscape_simulatedInput4
+	ld a,:cutscenesBank10.blackTowerEscape_simulatedInput4
 	jp setSimulatedInputAddress
 
 @stateC:
@@ -336,7 +338,7 @@ _endgameCutsceneHandler_09_stage0:
 	ld a,PALH_9d
 	call loadPaletteHeader
 
-	call _cutscene_clearObjects
+	call cutscene_clearObjects
 	call _cutscene_resetOamWithSomething2
 	ld a,$04
 	call loadGfxRegisterStateIndex
@@ -1577,10 +1579,10 @@ _endgameCutsceneHandler_0a:
 	jp fadeoutToWhite
 
 @state2:
-	jpab interactionBank10.agesFunc_10_70f6
+	jpab cutscenesBank10.agesFunc_10_70f6
 
 @state3:
-	jpab interactionBank10.agesFunc_10_7298
+	jpab cutscenesBank10.agesFunc_10_7298
 
 ;;
 ; Called from disableLcdAndLoadRoom in bank 0.

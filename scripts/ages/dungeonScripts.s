@@ -116,7 +116,7 @@ wingDungeonScript_bossDeath:
 ; Spawn stairs to the bracelet room when the two torches are lit.
 spiritsGraveScript_stairsToBraceletRoom:
 	stopifroomflag80set
-	asm15 scriptHlp.makeTorchesLightable
+	asm15 scriptHelp.makeTorchesLightable
 	checkmemoryeq wNumTorchesLit, $02
 	orroomflag $80
 	playsound SND_SOLVEPUZZLE
@@ -164,12 +164,12 @@ crownDungeonScript_spawnChestWhen3TriggersActive:
 mermaidsCaveScript_spawnBridgeWhenOrbHit:
 	stopifroomflag40set
 	checkflagset $00, wToggleBlocksState
-	asm15 scriptHlp.mermaidsCave_spawnBridge_room38
+	asm15 scriptHelp.mermaidsCave_spawnBridge_room38
 	scriptend
 
 mermaidsCaveScript_updateTrigger2BasedOnTriggers0And1:
 	wait 1
-	asm15 scriptHlp.setTrigger2IfTriggers0And1Set
+	asm15 scriptHelp.setTrigger2IfTriggers0And1Set
 	scriptjump mermaidsCaveScript_updateTrigger2BasedOnTriggers0And1
 
 
@@ -198,7 +198,7 @@ ancientTombScript_retractWallWhenTrigger0Active:
 	checkmemoryeq wActiveTriggers, $01
 	disableinput
 	wait 30
-	asm15 scriptHlp.ancientTomb_startWallRetractionCutscene
+	asm15 scriptHelp.ancientTomb_startWallRetractionCutscene
 	scriptend
 
 
@@ -230,7 +230,7 @@ herosCaveScript_spawnChestWhen4TriggersActive:
 herosCaveScript_spawnBridgeWhenTriggerPressed:
 	stopifroomflag40set
 	checkflagset $01, wActiveTriggers
-	asm15 scriptHlp.herosCave_spawnBridge_roomc9
+	asm15 scriptHelp.herosCave_spawnBridge_roomc9
 	scriptend
 
 herosCaveScript_spawnNorthStairsWhenEnemiesKilled:
@@ -263,5 +263,5 @@ moonlitGrottoScript_brokeAllCrystals:
 	showtext TX_1201
 	setglobalflag GLOBALFLAG_D3_CRYSTALS
 	enableinput
-	asm15 scriptHlp.moonlitGrotto_enableControlAfterBreakingCrystal
+	asm15 scriptHelp.moonlitGrotto_enableControlAfterBreakingCrystal
 	scriptend

@@ -1,6 +1,3 @@
- m_section_force Script_Helper2 NAMESPACE scriptHlp
-
-
 ; ==============================================================================
 ; INTERACID_DUNGEON_SCRIPT
 ; ==============================================================================
@@ -1372,7 +1369,7 @@ headSmelter_loseBombFlower:
 
 headSmelter_loadHideFromBombScript:
 	ld hl,$cfde
-	ld bc,headSmelterAtTempleScript_hideFromBomb
+	ld bc,mainScripts.headSmelterAtTempleScript_hideFromBomb
 	jr _headSmelter_loadScriptIntoWram
 
 headSmelter_loadDanceMovements:
@@ -1387,10 +1384,10 @@ headSmelter_loadDanceMovements:
 	ld l,$09
 	ld (hl),$10
 	ld hl,$cfde
-	ld bc,headSmelter_danceMovementText1
+	ld bc,mainScripts.headSmelterScript_danceMovementText1
 	call _headSmelter_loadScriptIntoWram
 	ld hl,$cfdc
-	ld bc,headSmelter_danceMovementText2
+	ld bc,mainScripts.headSmelterScript_danceMovementText2
 
 _headSmelter_loadScriptIntoWram:
 	ldi a,(hl)
@@ -3257,5 +3254,3 @@ dekuScrub_upgradeSatchel:
 	ret
 _table_65cf:
 	.db $20 $50 $99
-
-.ends

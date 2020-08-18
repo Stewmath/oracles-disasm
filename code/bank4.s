@@ -1,3 +1,5 @@
+ m_section_free "Bank_4" NAMESPACE "bank4"
+
 ; At the start of this bank, there are 32 variations of the same function.
 
 .macro m_VBlankFunction
@@ -434,3 +436,5 @@ getLinkWarpQuadrant:
 	ret c
 	inc a
 	ret
+
+.ends

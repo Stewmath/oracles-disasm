@@ -156,7 +156,7 @@ updateAnimationDataPointer:
 loadAnimationGfxIndex:
 	ld c,$06
 	call multiplyAByC
-	ld bc, animationGfxHeaders
+	ld bc, animationAndUniqueGfxData.animationGfxHeaders
 	add hl,bc
 	ldi a,(hl)
 	ld c,a

@@ -1,3 +1,5 @@
+ m_section_free Seasons_Interactions_Bank08 NAMESPACE seasonsInteractionsBank08
+
 ; ==============================================================================
 ; INTERACID_USED_ROD_OF_SEASONS
 ; ==============================================================================
@@ -312,104 +314,104 @@ interactionCode20:
 	.dw @dungeonB
 
 @dungeon0:
-	.dw dungeonScript_end
-	.dw dungeonScript_checkActiveTriggersEq01
+	.dw mainScripts.dungeonScript_end
+	.dw mainScripts.dungeonScript_checkActiveTriggersEq01
 
 @dungeon1:
-	.dw dungeonScript_minibossDeath
-	.dw dungeonScript_checkActiveTriggersEq01
-	.dw dungeonScript_checkActiveTriggersEq01
-	.dw dungeonScript_bossDeath
+	.dw mainScripts.dungeonScript_minibossDeath
+	.dw mainScripts.dungeonScript_checkActiveTriggersEq01
+	.dw mainScripts.dungeonScript_checkActiveTriggersEq01
+	.dw mainScripts.dungeonScript_bossDeath
 
 @dungeon2:
-	.dw snakesRemainsScript_timerForChestDisappearing
-	.dw dungeonScript_minibossDeath
-	.dw snakesRemainsScript_bossDeath
+	.dw mainScripts.snakesRemainsScript_timerForChestDisappearing
+	.dw mainScripts.dungeonScript_minibossDeath
+	.dw mainScripts.snakesRemainsScript_bossDeath
 
 @dungeon3:
-	.dw poisonMothsLairScript_hallwayTrapRoom
-	.dw poisonMothsLairScript_checkStatuePuzzle
-	.dw poisonMothsLairScript_minibossDeath
-	.dw poisonMothsLairScript_bossDeath
-	.dw poisonMothsLairScript_openEssenceDoorIfBossBeat
+	.dw mainScripts.poisonMothsLairScript_hallwayTrapRoom
+	.dw mainScripts.poisonMothsLairScript_checkStatuePuzzle
+	.dw mainScripts.poisonMothsLairScript_minibossDeath
+	.dw mainScripts.poisonMothsLairScript_bossDeath
+	.dw mainScripts.poisonMothsLairScript_openEssenceDoorIfBossBeat
 
 @dungeon4:
-	.dw dancingDragonScript_spawnStairsToB1
-	.dw dancingDragonScript_torchesHallway
-	.dw dancingDragonScript_torchesHallway
-	.dw dancingDragonScript_spawnBossKey
-	.dw dungeonScript_bossDeath
-	.dw dungeonScript_minibossDeath
-	.dw dancingDragonScript_pushingPotsRoom
-	.dw dancingDragonScript_bridgeInB2
+	.dw mainScripts.dancingDragonScript_spawnStairsToB1
+	.dw mainScripts.dancingDragonScript_torchesHallway
+	.dw mainScripts.dancingDragonScript_torchesHallway
+	.dw mainScripts.dancingDragonScript_spawnBossKey
+	.dw mainScripts.dungeonScript_bossDeath
+	.dw mainScripts.dungeonScript_minibossDeath
+	.dw mainScripts.dancingDragonScript_pushingPotsRoom
+	.dw mainScripts.dancingDragonScript_bridgeInB2
 
 @dungeon5:
-	.dw unicornsCaveScript_spawnBossKey
-	.dw unicornsCaveScript_dropMagnetBallAfterDarknutKill
-	.dw dungeonScript_minibossDeath
-	.dw dungeonScript_bossDeath
+	.dw mainScripts.unicornsCaveScript_spawnBossKey
+	.dw mainScripts.unicornsCaveScript_dropMagnetBallAfterDarknutKill
+	.dw mainScripts.dungeonScript_minibossDeath
+	.dw mainScripts.dungeonScript_bossDeath
 
 @dungeon6:
-	.dw dungeonScript_spawnKeyOnMagnetBallToButton
-	.dw ancientRuinsScript_spawnStaircaseUp1FTopLeftRoom
-	.dw ancientRuinsScript_spawnStaircaseUp1FTopMiddleRoom
-	.dw script4c50
-	.dw ancientRuinsScript_5TorchesMovingPlatformsRoom
-	.dw ancientRuinsScript_roomWithJustRopesSpawningButton
-	.dw ancientRuinsScript_UShapePitToMagicBoomerangOrb
-	.dw dungeonScript_minibossDeath
-	.dw ancientRuinsScript_randomButtonRoom
-	.dw ancientRuinsScript_4F3OrbsRoom
-	.dw ancientRuinsScript_spawnStairsLeadingToBoss
-	.dw ancientRuinsScript_spawnHeartContainerAndStairsUp
-	.dw ancientRuinsScript_1FTopRightTrapButtonRoom
-	.dw ancientRuinsScript_crystalTrapRoom
-	.dw ancientRuinsScript_spawnChestAfterCrystalTrapRoom
+	.dw mainScripts.dungeonScript_spawnKeyOnMagnetBallToButton
+	.dw mainScripts.ancientRuinsScript_spawnStaircaseUp1FTopLeftRoom
+	.dw mainScripts.ancientRuinsScript_spawnStaircaseUp1FTopMiddleRoom
+	.dw mainScripts.script4c50
+	.dw mainScripts.ancientRuinsScript_5TorchesMovingPlatformsRoom
+	.dw mainScripts.ancientRuinsScript_roomWithJustRopesSpawningButton
+	.dw mainScripts.ancientRuinsScript_UShapePitToMagicBoomerangOrb
+	.dw mainScripts.dungeonScript_minibossDeath
+	.dw mainScripts.ancientRuinsScript_randomButtonRoom
+	.dw mainScripts.ancientRuinsScript_4F3OrbsRoom
+	.dw mainScripts.ancientRuinsScript_spawnStairsLeadingToBoss
+	.dw mainScripts.ancientRuinsScript_spawnHeartContainerAndStairsUp
+	.dw mainScripts.ancientRuinsScript_1FTopRightTrapButtonRoom
+	.dw mainScripts.ancientRuinsScript_crystalTrapRoom
+	.dw mainScripts.ancientRuinsScript_spawnChestAfterCrystalTrapRoom
 
 @dungeon7:
-	.dw explorersCryptScript_4OrbTrampoline
-	.dw explorersCryptScript_magunesuTrampoline
-	.dw dungeonScript_minibossDeath
-	.dw dungeonScript_bossDeath
-	.dw script4d05
-	.dw explorersCryptScript_randomlyPlaceNonEnemyArmos
-	.dw dungeonScript_checkIfMagnetBallOnButton
-	.dw explorersCryptScript_1stPoeSisterRoom
-	.dw explorersCryptScript_2ndPoeSisterRoom
-	.dw explorersCryptScript_4FiresRoom_1
-	.dw explorersCryptScript_4FiresRoom_2
-	.dw explorersCryptScript_darknutBridge
-	.dw explorersCryptScript_roomLeftOfRandomArmosRoom
-	.dw explorersCryptScript_dropKeyDownAFloor
-	.dw explorersCryptScript_keyDroppedFromAbove
+	.dw mainScripts.explorersCryptScript_4OrbTrampoline
+	.dw mainScripts.explorersCryptScript_magunesuTrampoline
+	.dw mainScripts.dungeonScript_minibossDeath
+	.dw mainScripts.dungeonScript_bossDeath
+	.dw mainScripts.script4d05
+	.dw mainScripts.explorersCryptScript_randomlyPlaceNonEnemyArmos
+	.dw mainScripts.dungeonScript_checkIfMagnetBallOnButton
+	.dw mainScripts.explorersCryptScript_1stPoeSisterRoom
+	.dw mainScripts.explorersCryptScript_2ndPoeSisterRoom
+	.dw mainScripts.explorersCryptScript_4FiresRoom_1
+	.dw mainScripts.explorersCryptScript_4FiresRoom_2
+	.dw mainScripts.explorersCryptScript_darknutBridge
+	.dw mainScripts.explorersCryptScript_roomLeftOfRandomArmosRoom
+	.dw mainScripts.explorersCryptScript_dropKeyDownAFloor
+	.dw mainScripts.explorersCryptScript_keyDroppedFromAbove
 
 @dungeon8:
-	.dw swordAndShieldMazeScript_verticalBridgeUnlockedByOrb
-	.dw swordAndShieldMazeScript_verticalBridgeInLava
-	.dw swordAndShieldMazeScript_armosBlockingStairs
-	.dw dungeonScript_spawnKeyOnMagnetBallToButton
-	.dw swordAndShieldMazeScript_7torchesAfterMiniboss
-	.dw swordAndShieldMazeScript_spawnFireKeeseAtLavaHoles
-	.dw swordAndShieldMazeScript_pushableIceBlocks
-	.dw dungeonScript_minibossDeath
-	.dw dungeonScript_bossDeath
-	.dw swordAndShieldMazeScript_horizontalBridgeByMoldorms
-	.dw swordAndShieldMazeScript_tripleEyesByMiniboss
-	.dw swordAndShieldMazeScript_tripleEyesNearStart
+	.dw mainScripts.swordAndShieldMazeScript_verticalBridgeUnlockedByOrb
+	.dw mainScripts.swordAndShieldMazeScript_verticalBridgeInLava
+	.dw mainScripts.swordAndShieldMazeScript_armosBlockingStairs
+	.dw mainScripts.dungeonScript_spawnKeyOnMagnetBallToButton
+	.dw mainScripts.swordAndShieldMazeScript_7torchesAfterMiniboss
+	.dw mainScripts.swordAndShieldMazeScript_spawnFireKeeseAtLavaHoles
+	.dw mainScripts.swordAndShieldMazeScript_pushableIceBlocks
+	.dw mainScripts.dungeonScript_minibossDeath
+	.dw mainScripts.dungeonScript_bossDeath
+	.dw mainScripts.swordAndShieldMazeScript_horizontalBridgeByMoldorms
+	.dw mainScripts.swordAndShieldMazeScript_tripleEyesByMiniboss
+	.dw mainScripts.swordAndShieldMazeScript_tripleEyesNearStart
 
 @dungeon9:
-	.dw onoxsCastleScript_setFlagOnAllEnemiesDefeated
-	.dw onoxsCastleScript_resetRoomFlagsOnDungeonStart
+	.dw mainScripts.onoxsCastleScript_setFlagOnAllEnemiesDefeated
+	.dw mainScripts.onoxsCastleScript_resetRoomFlagsOnDungeonStart
 
 @dungeonA:
 @dungeonB:
-	.dw dungeonScript_spawnKeyOnMagnetBallToButton
-	.dw dungeonScript_checkActiveTriggersEq01
-	.dw herosCaveScript_spawnChestOnTorchLit
-	.dw dungeonScript_checkIfMagnetBallOnButton
-	.dw herosCaveScript_check6OrbsHit
-	.dw herosCaveScript_allButtonsPressedAndEnemiesDefeated
-	.dw herosCaveScript_spawnChestOn2TorchesLit
+	.dw mainScripts.dungeonScript_spawnKeyOnMagnetBallToButton
+	.dw mainScripts.dungeonScript_checkActiveTriggersEq01
+	.dw mainScripts.herosCaveScript_spawnChestOnTorchLit
+	.dw mainScripts.dungeonScript_checkIfMagnetBallOnButton
+	.dw mainScripts.herosCaveScript_check6OrbsHit
+	.dw mainScripts.herosCaveScript_allButtonsPressedAndEnemiesDefeated
+	.dw mainScripts.herosCaveScript_spawnChestOn2TorchesLit
 
 
 ; ==============================================================================
@@ -434,7 +436,7 @@ interactionCode21:
 	ld a,$01
 	ld ($ccaa),a
 	call _func_5469
-	ld hl,gnarledKeyholeScript
+	ld hl,mainScripts.gnarledKeyholeScript
 	jp interactionSetScript
 @state2:
 	call interactionIncState
@@ -822,17 +824,17 @@ interactionCode22:
 	.db $28 $60
 
 @scriptTable:
-	.dw makuTreeScript_remoteCutscene
-	.dw makuTreeScript_remoteCutscene
-	.dw makuTreeScript_remoteCutscene
-	.dw makuTreeScript_remoteCutscene
-	.dw makuTreeScript_remoteCutscene
-	.dw makuTreeScript_remoteCutscene
-	.dw makuTreeScript_remoteCutscene
-	.dw makuTreeScript_remoteCutscene
-	.dw makuTreeScript_remoteCutscene
-	.dw makuTreeScript_remoteCutsceneDontSetRoomFlag
-	.dw makuTreeScript_gateHit
+	.dw mainScripts.makuTreeScript_remoteCutscene
+	.dw mainScripts.makuTreeScript_remoteCutscene
+	.dw mainScripts.makuTreeScript_remoteCutscene
+	.dw mainScripts.makuTreeScript_remoteCutscene
+	.dw mainScripts.makuTreeScript_remoteCutscene
+	.dw mainScripts.makuTreeScript_remoteCutscene
+	.dw mainScripts.makuTreeScript_remoteCutscene
+	.dw mainScripts.makuTreeScript_remoteCutscene
+	.dw mainScripts.makuTreeScript_remoteCutscene
+	.dw mainScripts.makuTreeScript_remoteCutsceneDontSetRoomFlag
+	.dw mainScripts.makuTreeScript_gateHit
 
 
 ; ==============================================================================
@@ -889,11 +891,11 @@ _table_56a5:
 	.dw _table_56b3
 
 _table_56af:
-	.dw seasonsSpiritsScript_winterTempleOrbBridge
-	.dw seasonsSpiritsScript_spiritStatue
+	.dw mainScripts.seasonsSpiritsScript_winterTempleOrbBridge
+	.dw mainScripts.seasonsSpiritsScript_spiritStatue
 
 _table_56b3:
-	.dw seasonsSpiritsScript_enteringTempleArea
+	.dw mainScripts.seasonsSpiritsScript_enteringTempleArea
 
 
 ; ==============================================================================
@@ -1072,7 +1074,7 @@ _dungeonWiseOldMan_textLookup:
 	.db $00 $00 <TX_3302
 
 ;;
-; param[out]	zflag	set if NPC should not be seen
+; @param[out]	zflag	set if NPC should not be seen
 _checkMayorsHouseNPCshouldBeSeen:
 	; mayor disappears if unlinked game beat
 	; or seen villagers, but not zelda kidnapped
@@ -1135,8 +1137,8 @@ _checkHoronVillageNPCShouldBeSeen:
 	jr checkHoronVillageNPCShouldBeSeen_body@scf
 
 ;;
-; param[out]	cflag	set if NPC is conditional and should be seen at current stage of the game
-; param[out]	zflag	unset if NPC is non-conditional
+; @param[out]	cflag	set if NPC is conditional and should be seen at current stage of the game
+; @param[out]	zflag	unset if NPC is non-conditional
 checkHoronVillageNPCShouldBeSeen_body:
 	; non interactioncode2d/37 - b = $01
 	inc b
@@ -1145,6 +1147,8 @@ checkHoronVillageNPCShouldBeSeen_body:
 	inc b
 	cp $3d
 	ret nz
+
+; This label is used directly in a number of places.
 @main:
 	; interactioncode2d - b = $00
 	; interactioncode37 (except in advance shop) - b = $01
@@ -1180,7 +1184,7 @@ checkHoronVillageNPCShouldBeSeen_body:
 	ret
 
 ;;
-; param[out]	b	$0a if game finished
+; @param[out]	b	$0a if game finished
 ;			$09 if at least 2nd essence gotten, less than 5 essences gotten, and not saved Zelda from Vire
 ;			$08 if zelda kidnapped
 ;			$07 if got maku seed
@@ -1259,19 +1263,14 @@ checkNPCStage:
 	ret
 
 ;;
-; param[out]	zflag	unset if not interactioncode36/39
-; param[out]	b	$04 if game finished
+; @param[out]	zflag	nz if not interactioncode36/39
+; @param[out]	b	$04 if game finished
 ;			$03 if zelda kidnapped seen
 ;			$02 if 8th essence gotten
 ;			$01 if 4th essence gotten
 ;			$00 if none of the above
+;			$ff if not interaction $36 or $39
 getSunkenCityNPCVisibleSubId:
-	; returns b = $04 if game finished
-	; b = $03 is zelda kidnapped seen
-	; b = $02 if 8th essence gotten
-	; b = $01 if 4th essence gotten
-	; b = $00 if no essences, or none of the above
-	; a = $ff if not interactioncode36 or 39
 	ld e,$41
 	ld a,(de)
 	cp INTERACID_MASTER_DIVERS_SON
@@ -1280,6 +1279,8 @@ getSunkenCityNPCVisibleSubId:
 	jr z,@main
 	ld a,$ff
 	ret
+
+; This label is used directly in a number of places.
 @main:
 	ld a,GLOBALFLAG_FINISHEDGAME
 	call checkGlobalFlag
@@ -1463,100 +1464,100 @@ _miscNPC_scriptTable:
 	
 @mayorsHouseScripts:
 @stub:
-	.dw mayorsScript
-	.dw mayorsScript
-	.dw mayorsScript
-	.dw mayorsHouseLadyScript
+	.dw mainScripts.mayorsScript
+	.dw mainScripts.mayorsScript
+	.dw mainScripts.mayorsScript
+	.dw mainScripts.mayorsHouseLadyScript
 
 @mrsRuulScripts:
-	.dw mrsRuulScript
+	.dw mainScripts.mrsRuulScript
 
 @mrWriteScripts:
-	.dw mrWriteScript
+	.dw mainScripts.mrWriteScript
 
 @fickleLadyScripts:
-	.dw fickleLadyScript_text1
-	.dw fickleLadyScript_text2
-	.dw fickleLadyScript_text2
-	.dw fickleLadyScript_text2
-	.dw fickleLadyScript_text3
-	.dw fickleLadyScript_text4
-	.dw fickleLadyScript_text5
-	.dw fickleLadyScript_text5
-	.dw fickleLadyScript_text6
-	.dw fickleLadyScript_text2
-	.dw fickleLadyScript_text7
+	.dw mainScripts.fickleLadyScript_text1
+	.dw mainScripts.fickleLadyScript_text2
+	.dw mainScripts.fickleLadyScript_text2
+	.dw mainScripts.fickleLadyScript_text2
+	.dw mainScripts.fickleLadyScript_text3
+	.dw mainScripts.fickleLadyScript_text4
+	.dw mainScripts.fickleLadyScript_text5
+	.dw mainScripts.fickleLadyScript_text5
+	.dw mainScripts.fickleLadyScript_text6
+	.dw mainScripts.fickleLadyScript_text2
+	.dw mainScripts.fickleLadyScript_text7
 
 @malonScripts:
-	.dw malonScript
+	.dw mainScripts.malonScript
 
 @bathingSubrosiansScripts:
-	.dw bathingSubrosianScript_text1
-	.dw bathingSubrosianScript_stub
-	.dw bathingSubrosianScript_2
-	.dw bathingSubrosianScript_text3
-	.dw bathingSubrosianScript_stub
-	.dw bathingSubrosianScript_stub
+	.dw mainScripts.bathingSubrosianScript_text1
+	.dw mainScripts.bathingSubrosianScript_stub
+	.dw mainScripts.bathingSubrosianScript_2
+	.dw mainScripts.bathingSubrosianScript_text3
+	.dw mainScripts.bathingSubrosianScript_stub
+	.dw mainScripts.bathingSubrosianScript_stub
 
 @masterDiversSonScripts:
-	.dw masterDiversSonScript
-	.dw masterDiversSonScript_4thEssenceGotten
-	.dw masterDiversSonScript_8thEssenceGotten
-	.dw masterDiversSonScript_ZeldaKidnapped
-	.dw masterDiversSonScript_gameFinished
+	.dw mainScripts.masterDiversSonScript
+	.dw mainScripts.masterDiversSonScript_4thEssenceGotten
+	.dw mainScripts.masterDiversSonScript_8thEssenceGotten
+	.dw mainScripts.masterDiversSonScript_ZeldaKidnapped
+	.dw mainScripts.masterDiversSonScript_gameFinished
 
 @fickleManScripts:
-	.dw ficklManScript_text1
-	.dw ficklManScript_text1
-	.dw ficklManScript_text2
-	.dw ficklManScript_text4
-	.dw ficklManScript_text5
-	.dw ficklManScript_text6
-	.dw ficklManScript_text7
-	.dw ficklManScript_text7
-	.dw ficklManScript_text8
-	.dw ficklManScript_text3
-	.dw ficklManScript_text9
-	.dw ficklManScript_textA
+	.dw mainScripts.ficklManScript_text1
+	.dw mainScripts.ficklManScript_text1
+	.dw mainScripts.ficklManScript_text2
+	.dw mainScripts.ficklManScript_text4
+	.dw mainScripts.ficklManScript_text5
+	.dw mainScripts.ficklManScript_text6
+	.dw mainScripts.ficklManScript_text7
+	.dw mainScripts.ficklManScript_text7
+	.dw mainScripts.ficklManScript_text8
+	.dw mainScripts.ficklManScript_text3
+	.dw mainScripts.ficklManScript_text9
+	.dw mainScripts.ficklManScript_textA
 
 @dungeonWiseOldManScripts:
-	.dw dungeonWiseOldManScript
+	.dw mainScripts.dungeonWiseOldManScript
 
 @sunkenCityTreasureHunterScripts:
-	.dw treasureHunterScript_text1
-	.dw treasureHunterScript_text2
-	.dw treasureHunterScript_text3
-	.dw treasureHunterScript_text4
-	.dw treasureHunterScript_text3
+	.dw mainScripts.treasureHunterScript_text1
+	.dw mainScripts.treasureHunterScript_text2
+	.dw mainScripts.treasureHunterScript_text3
+	.dw mainScripts.treasureHunterScript_text4
+	.dw mainScripts.treasureHunterScript_text3
 
 @villageFarmerScripts:
-	.dw oldLadyFarmerScript_text1
-	.dw oldLadyFarmerScript_text1
-	.dw oldLadyFarmerScript_text2
-	.dw oldLadyFarmerScript_text2
-	.dw oldLadyFarmerScript_text3
-	.dw oldLadyFarmerScript_text4
-	.dw oldLadyFarmerScript_text5
-	.dw oldLadyFarmerScript_text5
-	.dw oldLadyFarmerScript_text6
-	.dw oldLadyFarmerScript_text2
-	.dw oldLadyFarmerScript_text7
+	.dw mainScripts.oldLadyFarmerScript_text1
+	.dw mainScripts.oldLadyFarmerScript_text1
+	.dw mainScripts.oldLadyFarmerScript_text2
+	.dw mainScripts.oldLadyFarmerScript_text2
+	.dw mainScripts.oldLadyFarmerScript_text3
+	.dw mainScripts.oldLadyFarmerScript_text4
+	.dw mainScripts.oldLadyFarmerScript_text5
+	.dw mainScripts.oldLadyFarmerScript_text5
+	.dw mainScripts.oldLadyFarmerScript_text6
+	.dw mainScripts.oldLadyFarmerScript_text2
+	.dw mainScripts.oldLadyFarmerScript_text7
 
 @villageFountainManScripts:
-	.dw fountainOldManScript_text1
-	.dw fountainOldManScript_text2
-	.dw fountainOldManScript_text3
-	.dw fountainOldManScript_text4
-	.dw fountainOldManScript_text6
-	.dw fountainOldManScript_text7
-	.dw fountainOldManScript_text8
-	.dw fountainOldManScript_text8
-	.dw fountainOldManScript_text9
-	.dw fountainOldManScript_text5
-	.dw fountainOldManScript_textA
+	.dw mainScripts.fountainOldManScript_text1
+	.dw mainScripts.fountainOldManScript_text2
+	.dw mainScripts.fountainOldManScript_text3
+	.dw mainScripts.fountainOldManScript_text4
+	.dw mainScripts.fountainOldManScript_text6
+	.dw mainScripts.fountainOldManScript_text7
+	.dw mainScripts.fountainOldManScript_text8
+	.dw mainScripts.fountainOldManScript_text8
+	.dw mainScripts.fountainOldManScript_text9
+	.dw mainScripts.fountainOldManScript_text5
+	.dw mainScripts.fountainOldManScript_textA
 
 @tickTockScripts:
-	.dw tickTockScript
+	.dw mainScripts.tickTockScript
 
 
 ; ==============================================================================
@@ -1616,7 +1617,7 @@ interactionCode26:
 	ld h,d
 	ld l,$44
 	ld (hl),$01
-	ld hl,mittensScript
+	ld hl,mainScripts.mittensScript
 	call interactionSetScript
 	ld a,$02
 	call interactionSetAnimation
@@ -1625,7 +1626,7 @@ interactionCode26:
 	ld h,d
 	ld l,$44
 	ld (hl),$02
-	ld hl,mittensOwnerScript
+	ld hl,mainScripts.mittensOwnerScript
 	jp interactionSetScript
 @state1:
 	call interactionRunScript
@@ -1735,7 +1736,7 @@ interactionCode27:
 	bit 6,a
 	jp nz,interactionDelete
 +
-	ld hl,sokraScript_inVillage
+	ld hl,mainScripts.sokraScript_inVillage
 	call interactionSetScript
 	jr @@runScriptSetVisible
 @@subid1:
@@ -1745,7 +1746,7 @@ interactionCode27:
 	call getThisRoomFlags
 	bit 6,a
 	jr nz,+
-	ld hl,sokraScript_easternSuburbsPortal
+	ld hl,mainScripts.sokraScript_easternSuburbsPortal
 	call interactionSetScript
 	jr @@runScriptSetVisible
 +
@@ -1761,7 +1762,7 @@ interactionCode27:
 	jp interactionDelete
 +
 	set 6,(hl)
-	ld hl,sokraScript_needSummerForD3
+	ld hl,mainScripts.sokraScript_needSummerForD3
 	call interactionSetScript
 	jr @@runScriptSetVisible
 @state1:
@@ -1964,18 +1965,18 @@ interactionCode28:
 
 
 @scriptTable:
-	.dw bipinScript0
-	.dw bipinScript1
-	.dw bipinScript1
-	.dw bipinScript1
-	.dw bipinScript1
-	.dw bipinScript2
-	.dw bipinScript1
-	.dw bipinScript1
-	.dw bipinScript1
-	.dw bipinScript1
+	.dw mainScripts.bipinScript0
+	.dw mainScripts.bipinScript1
+	.dw mainScripts.bipinScript1
+	.dw mainScripts.bipinScript1
+	.dw mainScripts.bipinScript1
+	.dw mainScripts.bipinScript2
+	.dw mainScripts.bipinScript1
+	.dw mainScripts.bipinScript1
+	.dw mainScripts.bipinScript1
+	.dw mainScripts.bipinScript1
 .ifdef ROM_AGES
-	.dw bipinScript3
+	.dw mainScripts.bipinScript3
 .endif
 
 
@@ -2002,10 +2003,10 @@ interactionCode2a:
 	ld a,GLOBALFLAG_ZELDA_SAVED_FROM_VIRE
 	call checkGlobalFlag
 	jp nz,interactionDelete
-	ld hl,panickingBirdScript
+	ld hl,mainScripts.panickingBirdScript
 	jr @setScript
 @knowItAllBird:
-	ld hl,knowItAllBirdScript
+	ld hl,mainScripts.knowItAllBirdScript
 @setScript:
 	call interactionSetScript
 
@@ -2283,16 +2284,16 @@ interactionCode2b:
 	jp objectSetPriorityRelativeToLink_withTerrainEffects
 
 @scriptTable:
-	.dw blossomScript0
-	.dw blossomScript1
-	.dw blossomScript2
-	.dw blossomScript3
-	.dw blossomScript4
-	.dw blossomScript5
-	.dw blossomScript6
-	.dw blossomScript7
-	.dw blossomScript8
-	.dw blossomScript9
+	.dw mainScripts.blossomScript0
+	.dw mainScripts.blossomScript1
+	.dw mainScripts.blossomScript2
+	.dw mainScripts.blossomScript3
+	.dw mainScripts.blossomScript4
+	.dw mainScripts.blossomScript5
+	.dw mainScripts.blossomScript6
+	.dw mainScripts.blossomScript7
+	.dw mainScripts.blossomScript8
+	.dw mainScripts.blossomScript9
 
 
 ; ==============================================================================
@@ -2438,11 +2439,11 @@ _func_5f70:
 	ret
 
 _table_5f7e:
-	.dw sunkenCityFickleGirlScript_text1
-	.dw sunkenCityFickleGirlScript_text2
-	.dw sunkenCityFickleGirlScript_text2
-	.dw sunkenCityFickleGirlScript_text3
-	.dw sunkenCityFickleGirlScript_text2
+	.dw mainScripts.sunkenCityFickleGirlScript_text1
+	.dw mainScripts.sunkenCityFickleGirlScript_text2
+	.dw mainScripts.sunkenCityFickleGirlScript_text2
+	.dw mainScripts.sunkenCityFickleGirlScript_text3
+	.dw mainScripts.sunkenCityFickleGirlScript_text2
 
 
 ; ==============================================================================
@@ -2589,45 +2590,45 @@ interactionCode30:
 	jr @substate0
 
 _table_607f:
-	/* $00 */ .dw subrosianScript_smelterByAutumnTemple
-	/* $01 */ .dw subrosianScript_smelterText1 ; unused?
-	/* $02 */ .dw subrosianScript_smelterText1
-	/* $03 */ .dw subrosianScript_smelterText2
-	/* $04 */ .dw subrosianScript_smelterText3
-	/* $05 */ .dw subrosianScript_smelterText4
-	/* $06 */ .dw subrosianScript_beachText1
-	/* $07 */ .dw subrosianScript_beachText2
-	/* $08 */ .dw subrosianScript_beachText3
-	/* $09 */ .dw subrosianScript_beachText4
-	/* $0a */ .dw subrosianScript_villageText1
-	/* $0b */ .dw subrosianScript_villageText2
-	/* $0c */ .dw subrosianScript_shopkeeper
-	/* $0d */ .dw subrosianScript_wildsText1
-	/* $0e */ .dw subrosianScript_wildsText2
-	/* $0f */ .dw subrosianScript_wildsText3
-	/* $10 */ .dw subrosianScript_strangeBrother1_stealingFeather
-	/* $11 */ .dw subrosianScript_strangeBrother2_stealingFeather
-	/* $12 */ .dw subrosianScript_strangeBrother1_inHouse
-	/* $13 */ .dw subrosianScript_strangeBrother2_inHouse
-	/* $14 */ .dw subrosianScript_5716
-	/* $15 */ .dw subrosianScript_westVolcanoesText1
-	/* $16 */ .dw subrosianScript_westVolcanoesText2
-	/* $17 */ .dw subrosianScript_eastVolcanoesText1
-	/* $18 */ .dw subrosianScript_eastVolcanoesText2
-	/* $19 */ .dw subrosianScript_southOfExitToSuburbsPortal
-	/* $1a */ .dw subrosianScript_nearExitToTempleRemainsNorthsPortal
-	/* $1b */ .dw subrosianScript_wildsNearLockedDoor
-	/* $1c */ .dw subrosianScript_boomerangSubrosianFriend
-	/* $1d */ .dw subrosianScript_screenRightOfBoomerangSubrosian
-	/* $1e */ .dw subrosianScript_wildsInAreaWithOre
-	/* $1f */ .dw subrosianScript_wildsOtherSideOfTreesToOre
-	/* $20 */ .dw subrosianScript_wildsNorthOfStrangeBrothersHouse
-	/* $21 */ .dw subrosianScript_wildsOutsideStrangeBrothersHouse
-	/* $22 */ .dw subrosianScript_villageSouthOfShop
-	/* $23 */ .dw subrosianScript_hasLavaPoolInHouse
-	/* $24 */ .dw subrosianScript_beachText5
-	/* $25 */ .dw subrosianScript_goldenByBombFlower
-	/* $26 */ .dw subrosianScript_signsGuy
+	/* $00 */ .dw mainScripts.subrosianScript_smelterByAutumnTemple
+	/* $01 */ .dw mainScripts.subrosianScript_smelterText1 ; unused?
+	/* $02 */ .dw mainScripts.subrosianScript_smelterText1
+	/* $03 */ .dw mainScripts.subrosianScript_smelterText2
+	/* $04 */ .dw mainScripts.subrosianScript_smelterText3
+	/* $05 */ .dw mainScripts.subrosianScript_smelterText4
+	/* $06 */ .dw mainScripts.subrosianScript_beachText1
+	/* $07 */ .dw mainScripts.subrosianScript_beachText2
+	/* $08 */ .dw mainScripts.subrosianScript_beachText3
+	/* $09 */ .dw mainScripts.subrosianScript_beachText4
+	/* $0a */ .dw mainScripts.subrosianScript_villageText1
+	/* $0b */ .dw mainScripts.subrosianScript_villageText2
+	/* $0c */ .dw mainScripts.subrosianScript_shopkeeper
+	/* $0d */ .dw mainScripts.subrosianScript_wildsText1
+	/* $0e */ .dw mainScripts.subrosianScript_wildsText2
+	/* $0f */ .dw mainScripts.subrosianScript_wildsText3
+	/* $10 */ .dw mainScripts.subrosianScript_strangeBrother1_stealingFeather
+	/* $11 */ .dw mainScripts.subrosianScript_strangeBrother2_stealingFeather
+	/* $12 */ .dw mainScripts.subrosianScript_strangeBrother1_inHouse
+	/* $13 */ .dw mainScripts.subrosianScript_strangeBrother2_inHouse
+	/* $14 */ .dw mainScripts.subrosianScript_5716
+	/* $15 */ .dw mainScripts.subrosianScript_westVolcanoesText1
+	/* $16 */ .dw mainScripts.subrosianScript_westVolcanoesText2
+	/* $17 */ .dw mainScripts.subrosianScript_eastVolcanoesText1
+	/* $18 */ .dw mainScripts.subrosianScript_eastVolcanoesText2
+	/* $19 */ .dw mainScripts.subrosianScript_southOfExitToSuburbsPortal
+	/* $1a */ .dw mainScripts.subrosianScript_nearExitToTempleRemainsNorthsPortal
+	/* $1b */ .dw mainScripts.subrosianScript_wildsNearLockedDoor
+	/* $1c */ .dw mainScripts.subrosianScript_boomerangSubrosianFriend
+	/* $1d */ .dw mainScripts.subrosianScript_screenRightOfBoomerangSubrosian
+	/* $1e */ .dw mainScripts.subrosianScript_wildsInAreaWithOre
+	/* $1f */ .dw mainScripts.subrosianScript_wildsOtherSideOfTreesToOre
+	/* $20 */ .dw mainScripts.subrosianScript_wildsNorthOfStrangeBrothersHouse
+	/* $21 */ .dw mainScripts.subrosianScript_wildsOutsideStrangeBrothersHouse
+	/* $22 */ .dw mainScripts.subrosianScript_villageSouthOfShop
+	/* $23 */ .dw mainScripts.subrosianScript_hasLavaPoolInHouse
+	/* $24 */ .dw mainScripts.subrosianScript_beachText5
+	/* $25 */ .dw mainScripts.subrosianScript_goldenByBombFlower
+	/* $26 */ .dw mainScripts.subrosianScript_signsGuy
 
 
 ; ==============================================================================
@@ -2667,7 +2668,7 @@ interactionCode31:
 	ld a,$04
 	ld (de),a
 +
-	ld hl,rosaScript_goOnDate
+	ld hl,mainScripts.rosaScript_goOnDate
 	call interactionSetScript
 	ld a,>TX_2900
 	call interactionSetHighTextIndex
@@ -2845,7 +2846,7 @@ interactionCode31:
 	ld ($d008),a
 	ld a,$29
 	call interactionSetHighTextIndex
-	ld hl,rosaScript_dateEnded
+	ld hl,mainScripts.rosaScript_dateEnded
 	jp interactionSetScript
 @@@substate1:
 	ld c,$20
@@ -3040,14 +3041,14 @@ interactionCode32:
 @animateAsNpc:
 	jp interactionAnimateAsNpc
 @scriptTable:
-	.dw bucketSubrosianScript_text1
-	.dw bucketSubrosianScript_text2
-	.dw bucketSubrosianScript_text3
-	.dw bucketSubrosianScript_text4
-	.dw bucketSubrosianScript_text5
-	.dw bucketSubrosianScript_text6
-	.dw bucketSubrosianScript_text1
-	.dw bucketSubrosianScript_text1
+	.dw mainScripts.bucketSubrosianScript_text1
+	.dw mainScripts.bucketSubrosianScript_text2
+	.dw mainScripts.bucketSubrosianScript_text3
+	.dw mainScripts.bucketSubrosianScript_text4
+	.dw mainScripts.bucketSubrosianScript_text5
+	.dw mainScripts.bucketSubrosianScript_text6
+	.dw mainScripts.bucketSubrosianScript_text1
+	.dw mainScripts.bucketSubrosianScript_text1
 
 
 ; ==============================================================================
@@ -3678,35 +3679,35 @@ _childUpdateCuriousMovement:
 
 
 _childScriptTable:
-	.dw childScript00
-	.dw childScript_stage4_hyperactive
-	.dw childScript_stage4_shy
-	.dw childScript_stage4_curious
-	.dw childScript_stage5_hyperactive
-	.dw childScript_stage5_shy
-	.dw childScript_stage5_curious
-	.dw childScript_stage6_hyperactive
-	.dw childScript_stage6_shy
-	.dw childScript_stage6_curious
-	.dw childScript_stage7_slacker
-	.dw childScript_stage7_warrior
-	.dw childScript_stage7_arborist
-	.dw childScript_stage7_singer
-	.dw childScript_stage8_slacker
-	.dw childScript_stage8_warrior
-	.dw childScript_stage8_arborist
-	.dw childScript_stage8_singer
-	.dw childScript_stage9_slacker
-	.dw childScript_stage9_warrior
-	.dw childScript_stage9_arborist
-	.dw childScript_stage9_singer
-	.dw childScript00
-	.dw childScript00
-	.dw childScript00
-	.dw childScript00
-	.dw childScript00
-	.dw childScript00
-	.dw childScript00
+	.dw mainScripts.childScript00
+	.dw mainScripts.childScript_stage4_hyperactive
+	.dw mainScripts.childScript_stage4_shy
+	.dw mainScripts.childScript_stage4_curious
+	.dw mainScripts.childScript_stage5_hyperactive
+	.dw mainScripts.childScript_stage5_shy
+	.dw mainScripts.childScript_stage5_curious
+	.dw mainScripts.childScript_stage6_hyperactive
+	.dw mainScripts.childScript_stage6_shy
+	.dw mainScripts.childScript_stage6_curious
+	.dw mainScripts.childScript_stage7_slacker
+	.dw mainScripts.childScript_stage7_warrior
+	.dw mainScripts.childScript_stage7_arborist
+	.dw mainScripts.childScript_stage7_singer
+	.dw mainScripts.childScript_stage8_slacker
+	.dw mainScripts.childScript_stage8_warrior
+	.dw mainScripts.childScript_stage8_arborist
+	.dw mainScripts.childScript_stage8_singer
+	.dw mainScripts.childScript_stage9_slacker
+	.dw mainScripts.childScript_stage9_warrior
+	.dw mainScripts.childScript_stage9_arborist
+	.dw mainScripts.childScript_stage9_singer
+	.dw mainScripts.childScript00
+	.dw mainScripts.childScript00
+	.dw mainScripts.childScript00
+	.dw mainScripts.childScript00
+	.dw mainScripts.childScript00
+	.dw mainScripts.childScript00
+	.dw mainScripts.childScript00
 
 
 ; ==============================================================================
@@ -3874,24 +3875,24 @@ interactionCode3b:
 	ret
 
 @biggoronColdNotHealed:
-	.dw goronScript_pacingLeftAndRight
-	.dw goronScript_text1_biggoronSick
-	.dw goronScript_text2
-	.dw goronScript_text3_biggoronSick
-	.dw goronScript_text4_biggoronSick
-	.dw goronScript_text5
-	.dw goronScript_upgradeRingBox
-	.dw goronScript_giveSubrosianSecret
+	.dw mainScripts.goronScript_pacingLeftAndRight
+	.dw mainScripts.goronScript_text1_biggoronSick
+	.dw mainScripts.goronScript_text2
+	.dw mainScripts.goronScript_text3_biggoronSick
+	.dw mainScripts.goronScript_text4_biggoronSick
+	.dw mainScripts.goronScript_text5
+	.dw mainScripts.goronScript_upgradeRingBox
+	.dw mainScripts.goronScript_giveSubrosianSecret
 
 @biggoronColdHealed:
-	.dw goronScript_pacingLeftAndRight
-	.dw goronScript_text1_biggoronHealed
-	.dw goronScript_text2
-	.dw goronScript_text3_biggoronHealed
-	.dw goronScript_text4_biggoronHealed
-	.dw goronScript_text5
-	.dw goronScript_upgradeRingBox
-	.dw goronScript_giveSubrosianSecret
+	.dw mainScripts.goronScript_pacingLeftAndRight
+	.dw mainScripts.goronScript_text1_biggoronHealed
+	.dw mainScripts.goronScript_text2
+	.dw mainScripts.goronScript_text3_biggoronHealed
+	.dw mainScripts.goronScript_text4_biggoronHealed
+	.dw mainScripts.goronScript_text5
+	.dw mainScripts.goronScript_upgradeRingBox
+	.dw mainScripts.goronScript_giveSubrosianSecret
 
 
 ; ==============================================================================
@@ -4286,50 +4287,50 @@ _table_6ac9:
 	.dw @var03_03
 
 @var03_00:
-	.dw boyWithDogScript_text1
-	.dw boyWithDogScript_text2
-	.dw boyWithDogScript_text2
-	.dw boyWithDogScript_text3
-	.dw boyWithDogScript_text5
-	.dw boyWithDogScript_text5
-	.dw boyWithDogScript_text6
-	.dw boyWithDogScript_text6
-	.dw boyWithDogScript_text7
-	.dw boyWithDogScript_text4
-	.dw boyWithDogScript_text5
+	.dw mainScripts.boyWithDogScript_text1
+	.dw mainScripts.boyWithDogScript_text2
+	.dw mainScripts.boyWithDogScript_text2
+	.dw mainScripts.boyWithDogScript_text3
+	.dw mainScripts.boyWithDogScript_text5
+	.dw mainScripts.boyWithDogScript_text5
+	.dw mainScripts.boyWithDogScript_text6
+	.dw mainScripts.boyWithDogScript_text6
+	.dw mainScripts.boyWithDogScript_text7
+	.dw mainScripts.boyWithDogScript_text4
+	.dw mainScripts.boyWithDogScript_text5
 
 @var03_01:
-	.dw horonVillageBoyScript_text1
-	.dw horonVillageBoyScript_text1
-	.dw horonVillageBoyScript_text2
-	.dw horonVillageBoyScript_text2
-	.dw horonVillageBoyScript_text3
-	.dw horonVillageBoyScript_text4
-	.dw horonVillageBoyScript_text5
-	.dw horonVillageBoyScript_text6
-	.dw horonVillageBoyScript_text7
-	.dw horonVillageBoyScript_text2
-	.dw horonVillageBoyScript_text4
+	.dw mainScripts.horonVillageBoyScript_text1
+	.dw mainScripts.horonVillageBoyScript_text1
+	.dw mainScripts.horonVillageBoyScript_text2
+	.dw mainScripts.horonVillageBoyScript_text2
+	.dw mainScripts.horonVillageBoyScript_text3
+	.dw mainScripts.horonVillageBoyScript_text4
+	.dw mainScripts.horonVillageBoyScript_text5
+	.dw mainScripts.horonVillageBoyScript_text6
+	.dw mainScripts.horonVillageBoyScript_text7
+	.dw mainScripts.horonVillageBoyScript_text2
+	.dw mainScripts.horonVillageBoyScript_text4
 
 @var03_02:
-	.dw springBloomBoyScript_text1
-	.dw springBloomBoyScript_text1
-	.dw springBloomBoyScript_text1
-	.dw springBloomBoyScript_text1
-	.dw springBloomBoyScript_text2
-	.dw springBloomBoyScript_text2
-	.dw springBloomBoyScript_text2
-	.dw springBloomBoyScript_text2
-	.dw springBloomBoyScript_text2
-	.dw springBloomBoyScript_text1
-	.dw springBloomBoyScript_text3
+	.dw mainScripts.springBloomBoyScript_text1
+	.dw mainScripts.springBloomBoyScript_text1
+	.dw mainScripts.springBloomBoyScript_text1
+	.dw mainScripts.springBloomBoyScript_text1
+	.dw mainScripts.springBloomBoyScript_text2
+	.dw mainScripts.springBloomBoyScript_text2
+	.dw mainScripts.springBloomBoyScript_text2
+	.dw mainScripts.springBloomBoyScript_text2
+	.dw mainScripts.springBloomBoyScript_text2
+	.dw mainScripts.springBloomBoyScript_text1
+	.dw mainScripts.springBloomBoyScript_text3
 
 @var03_03:
-	.dw sunkenCityBoyScript_text1
-	.dw sunkenCityBoyScript_text2
-	.dw sunkenCityBoyScript_text3
-	.dw sunkenCityBoyScript_text4
-	.dw sunkenCityBoyScript_text3
+	.dw mainScripts.sunkenCityBoyScript_text1
+	.dw mainScripts.sunkenCityBoyScript_text2
+	.dw mainScripts.sunkenCityBoyScript_text3
+	.dw mainScripts.sunkenCityBoyScript_text4
+	.dw mainScripts.sunkenCityBoyScript_text3
 
 
 ; ==============================================================================
@@ -4589,21 +4590,21 @@ _table_6cb2:
 	.db $00
 
 _table_6cbf:
-	.dw piratianCaptainScript_inHouse
-	.dw piratian1FScript_text1BasedOnD6Beaten
-	.dw piratian1FScript_text1BasedOnD6Beaten
-	.dw piratian1FScript_text1BasedOnD6Beaten
-	.dw piratian1FScript_text1BasedOnD6Beaten
-	.dw piratian1FScript_text2BasedOnD6Beaten
-	.dw piratian1FScript_text2BasedOnD6Beaten
-	.dw unluckySailorScript
-	.dw piratian2FScript_textBasedOnD6Beaten
-	.dw piratianRoofScript
-	.dw samasaGatePiratianScript
-	.dw piratianCaptainByShipScript
-	.dw piratianFromShipScript
-	.dw piratianByCaptainWhenDeparting1Script
-	.dw piratianByCaptainWhenDeparting2Script
+	.dw mainScripts.piratianCaptainScript_inHouse
+	.dw mainScripts.piratian1FScript_text1BasedOnD6Beaten
+	.dw mainScripts.piratian1FScript_text1BasedOnD6Beaten
+	.dw mainScripts.piratian1FScript_text1BasedOnD6Beaten
+	.dw mainScripts.piratian1FScript_text1BasedOnD6Beaten
+	.dw mainScripts.piratian1FScript_text2BasedOnD6Beaten
+	.dw mainScripts.piratian1FScript_text2BasedOnD6Beaten
+	.dw mainScripts.unluckySailorScript
+	.dw mainScripts.piratian2FScript_textBasedOnD6Beaten
+	.dw mainScripts.piratianRoofScript
+	.dw mainScripts.samasaGatePiratianScript
+	.dw mainScripts.piratianCaptainByShipScript
+	.dw mainScripts.piratianFromShipScript
+	.dw mainScripts.piratianByCaptainWhenDeparting1Script
+	.dw mainScripts.piratianByCaptainWhenDeparting2Script
 
 
 ; ==============================================================================
@@ -4643,8 +4644,8 @@ interactionCode42:
 	jp npcFaceLinkAndAnimate
 
 _table_6d14:
-	.dw pirateHouseSubrosianScript_piratesAround
-	.dw pirateHouseSubrosianScript_piratesLeft
+	.dw mainScripts.pirateHouseSubrosianScript_piratesAround
+	.dw mainScripts.pirateHouseSubrosianScript_piratesLeft
 
 
 ; ==============================================================================
@@ -4659,9 +4660,9 @@ _table_6d14:
 ; ==============================================================================
 interactionCode43:
 .ifdef ROM_AGES
-	callab checkReloadShopItemTiles
+	callab commonInteractions2.checkReloadShopItemTiles
 .else
-	call checkReloadShopItemTiles
+	call commonInteractions2.checkReloadShopItemTiles
 .endif
 	call @runState
 	jp interactionAnimateAsNpc
@@ -4691,10 +4692,10 @@ interactionCode43:
 .ifdef ROM_SEASONS
 	call getThisRoomFlags
 	and $40
-	ld hl,syrupScript_notTradedMushroomYet
+	ld hl,mainScripts.syrupScript_notTradedMushroomYet
 	jr z,+
 .endif
-	ld hl,syrupScript_spawnShopItems
+	ld hl,mainScripts.syrupScript_spawnShopItems
 +
 	jr @setScriptAndGotoState2
 
@@ -4742,7 +4743,7 @@ interactionCode43:
 
 	; Check if Link has the rupees for it
 	ld a,b
-	ld hl,_shopItemPrices
+	ld hl,commonInteractions2.shopItemPrices
 	rst_addAToHl
 	ld a,(hl)
 	call cpRupeeValue
@@ -4795,18 +4796,18 @@ interactionCode43:
 .endif
 	ld (de),a
 
-	ld hl,syrupScript_purchaseItem
+	ld hl,mainScripts.syrupScript_purchaseItem
 	jr @setScriptAndGotoState2
 
 @talkToSyrupWithoutItem:
-	call _shopkeeperCheckAllItemsBought
+	call commonInteractions2.shopkeeperCheckAllItemsBought
 	jr z,@showWelcomeText
 
-	ld hl,syrupScript_showClosedText
+	ld hl,mainScripts.syrupScript_showClosedText
 	jr @setScriptAndGotoState2
 
 @showWelcomeText:
-	ld hl,syrupScript_showWelcomeText
+	ld hl,mainScripts.syrupScript_showWelcomeText
 
 @setScriptAndGotoState2:
 	ld e,Interaction.state
@@ -4979,16 +4980,16 @@ _zelda_state1:
 	jr @animateAndRunScript
 
 _table_6ea3:
-	.dw zeldaScript_ganonBeat
-	.dw zeldaScript_afterEscapingRoomOfRites
-	.dw zeldaScript_zeldaKidnapped
-	.dw script5fe6
-	.dw script5fe6
-	.dw script5fea
-	.dw script5fee
-	.dw zeldaScript_withAnimalsHopefulText
-	.dw zeldaScript_blessingBeforeFightingOnox
-	.dw zeldaScript_healLinkIfNeeded
+	.dw mainScripts.zeldaScript_ganonBeat
+	.dw mainScripts.zeldaScript_afterEscapingRoomOfRites
+	.dw mainScripts.zeldaScript_zeldaKidnapped
+	.dw mainScripts.script5fe6
+	.dw mainScripts.script5fe6
+	.dw mainScripts.script5fea
+	.dw mainScripts.script5fee
+	.dw mainScripts.zeldaScript_withAnimalsHopefulText
+	.dw mainScripts.zeldaScript_blessingBeforeFightingOnox
+	.dw mainScripts.zeldaScript_healLinkIfNeeded
 
 
 ; ==============================================================================
@@ -5017,7 +5018,7 @@ interactionCode45:
 	ld (hl),$01
 	ld a,>TX_0b00
 	call interactionSetHighTextIndex
-	ld hl,caveTalonScript
+	ld hl,mainScripts.caveTalonScript
 	call interactionSetScript
 	ld a,$03
 	call interactionSetAnimation
@@ -5031,7 +5032,7 @@ interactionCode45:
 	call _func_6f3c
 	ld a,>TX_0b00
 	call interactionSetHighTextIndex
-	ld hl,returnedTalonScript
+	ld hl,mainScripts.returnedTalonScript
 	call interactionSetScript
 	jp interactionAnimateAsNpc
 @state1:
@@ -5387,11 +5388,11 @@ interactionCode49:
 	ld h,a
 	ld e,Interaction.var3a
 	ld (de),a
-	ld hl,syrupCuccoScript_awaitingMushroomText
+	ld hl,mainScripts.syrupCuccoScript_awaitingMushroomText
 	jp @setScriptAndGotoState4
 
 @gotoState4:
-	ld hl,syrupCuccoScript_awaitingMushroomText
+	ld hl,mainScripts.syrupCuccoScript_awaitingMushroomText
 
 @setScriptAndGotoState4:
 	ld e,Interaction.state
@@ -5415,7 +5416,7 @@ interactionCode49:
 	ld e,Interaction.var3d
 	xor a
 	ld (de),a
-	ld hl,syrupCuccoScript_triedToSteal
+	ld hl,mainScripts.syrupCuccoScript_triedToSteal
 	jp @setScriptAndGotoState4
 
 
@@ -5824,7 +5825,7 @@ interactionCode4d:
 +
 	ld a,>TX_4d00
 	call interactionSetHighTextIndex
-	ld hl,pirateSkullScript_notYetCarried
+	ld hl,mainScripts.pirateSkullScript_notYetCarried
 	call interactionSetScript
 	call interactionInitGraphics
 	jp objectSetVisiblec2
@@ -6211,7 +6212,7 @@ interactionCode4e:
 	cp $3f
 	jp nz,@@subid9@func75b5
 	call interactionIncSubstate
-	ld hl,troupeScript_startDanceScene
+	ld hl,mainScripts.troupeScript_startDanceScene
 	call interactionSetScript
 @@@substate1:
 	call @@subid9@func75b5
@@ -6287,7 +6288,7 @@ interactionCode4e:
 	cp $06
 	ret nz
 	call interactionIncSubstate
-	ld hl,troupeScript_tornadoEnd
+	ld hl,mainScripts.troupeScript_tornadoEnd
 	jp interactionSetScript
 @@@substate2:
 	call interactionRunScript
@@ -6310,17 +6311,17 @@ interactionCode4e:
 	jp @@subid9@animate
 
 _table_770a:
-	.dw troupeScript1
-	.dw troupeScript2
-	.dw troupeScript3
-	.dw troupeScript4
-	.dw troupeScript_Impa
-	.dw troupeScript_stub
-	.dw troupeScript_Din
-	.dw troupeScript_tornadoStart
-	.dw troupeScript_stub
-	.dw troupeScript_stub
-	.dw troupeScript_inHoronVillage
+	.dw mainScripts.troupeScript1
+	.dw mainScripts.troupeScript2
+	.dw mainScripts.troupeScript3
+	.dw mainScripts.troupeScript4
+	.dw mainScripts.troupeScript_Impa
+	.dw mainScripts.troupeScript_stub
+	.dw mainScripts.troupeScript_Din
+	.dw mainScripts.troupeScript_tornadoStart
+	.dw mainScripts.troupeScript_stub
+	.dw mainScripts.troupeScript_stub
+	.dw mainScripts.troupeScript_inHoronVillage
 
 
 ; ==============================================================================
@@ -6347,12 +6348,12 @@ _interactionCode4f_state0:
 	.dw @subid5
 
 @subid0:
-	ld hl,dinImprisonedScript_setDinCoords
+	ld hl,mainScripts.dinImprisonedScript_setDinCoords
 	call interactionSetScript
 	jp objectSetVisiblec2
 
 @subid1:
-	ld hl,dinImprisonedScript_OnoxExplainsMotive
+	ld hl,mainScripts.dinImprisonedScript_OnoxExplainsMotive
 	call interactionSetScript
 	jp objectSetVisible82
 
@@ -6384,7 +6385,7 @@ _interactionCode4f_state0:
 	jp objectSetVisible83
 
 @subid5:
-	ld hl,dinImprisonedScript_OnoxSaysComeIfYouDare
+	ld hl,mainScripts.dinImprisonedScript_OnoxSaysComeIfYouDare
 	call interactionSetScript
 	jp objectSetVisible82
 
@@ -6821,7 +6822,7 @@ _interactionCode4f_state1:
 	cp $0e
 	ret nz
 	call objectSetInvisible
-	ld hl,dinImprisonedScript_OnoxSendsTempleDown
+	ld hl,mainScripts.dinImprisonedScript_OnoxSendsTempleDown
 	call interactionSetScript
 	jp interactionIncSubstate
 
@@ -6987,7 +6988,7 @@ interactionCode52:
 	call objectSetVisible82
 	ld a,>TX_0b00
 	call interactionSetHighTextIndex
-	ld hl,biggoronScript
+	ld hl,mainScripts.biggoronScript
 	jp interactionSetScript
 @state1:
 	call interactionAnimate
@@ -7018,7 +7019,7 @@ interactionCode53:
 	ld a,$01
 	ld (de),a
 	call interactionInitGraphics
-	ld hl,headSmelterAtTempleScript
+	ld hl,mainScripts.headSmelterAtTempleScript
 	call interactionSetScript
 	jp objectSetVisible82
 @@state1:
@@ -7046,7 +7047,7 @@ interactionCode53:
 	ld a,$01
 	ld (de),a
 	call interactionInitGraphics
-	ld hl,headSmelterAtFurnaceScript
+	ld hl,mainScripts.headSmelterAtFurnaceScript
 	call interactionSetScript
 	jp objectSetVisible82
 @@state3:
@@ -7183,7 +7184,7 @@ _subrosianAtD8_subid0:
 	jp c,interactionDelete
 
 	call interactionInitGraphics
-	ld hl,subrosianAtD8Script
+	ld hl,mainScripts.subrosianAtD8Script
 	call interactionSetScript
 
 	ld a,$06
@@ -7226,7 +7227,7 @@ _subrosianAtD8_subid0:
 	ld l,Interaction.substate
 	inc (hl)
 	call objectSetVisiblec2
-	ld hl,subrosianAtD8Script_tossItemIntoHole
+	ld hl,mainScripts.subrosianAtD8Script_tossItemIntoHole
 	jp interactionSetScript
 ++
 	xor a
@@ -7336,7 +7337,7 @@ interactionCode57:
 	ld (hl),$01
 	ld a,>TX_0b00
 	call interactionSetHighTextIndex
-	ld hl,ingoScript_tradingVase
+	ld hl,mainScripts.ingoScript_tradingVase
 	call interactionSetScript
 	ld a,$02
 	call interactionSetAnimation
@@ -7362,7 +7363,7 @@ interactionCode57:
 	ld ($cca4),a
 	ld a,$01
 	ld ($cc02),a
-	ld hl,ingoScript_LinkApproachingVases
+	ld hl,mainScripts.ingoScript_LinkApproachingVases
 	call interactionSetScript
 	ld h,d
 	ld l,$44
@@ -7416,7 +7417,7 @@ interactionCode58:
 	call _func_7e20
 	ld a,>TX_0b00
 	call interactionSetHighTextIndex
-	ld hl,guruGuruScript
+	ld hl,mainScripts.guruGuruScript
 	call interactionSetScript
 	jp _func_7ddc
 @state1:
@@ -7522,7 +7523,7 @@ interactionCode59:
 	call interactionIncState
 	call objectSetVisible
 	call objectSetVisible80
-	ld hl,lostWoodsSwordScript
+	ld hl,mainScripts.lostWoodsSwordScript
 	call interactionSetScript
 	ld a,$4d
 	call playSound
@@ -7552,7 +7553,7 @@ interactionCode5a:
 	call interactionSetAlwaysUpdateBit
 	ld a,>TX_2300
 	call interactionSetHighTextIndex
-	ld hl,blainoScript
+	ld hl,mainScripts.blainoScript
 	call interactionSetScript
 
 @state1:
@@ -7585,7 +7586,7 @@ interactionCode5a:
 	call resetLinkInvincibility
 	xor a
 	ld (wInBoxingMatch),a
-	ld hl,blainoFightDoneScript
+	ld hl,mainScripts.blainoFightDoneScript
 	call interactionSetScript
 	jp interactionRunScript
 
@@ -7648,7 +7649,7 @@ interactionCode5b:
 	ld (hl),$01
 	ld l,$49
 	ld (hl),$04
-	ld hl,lostWoodsDekuScrubScript
+	ld hl,mainScripts.lostWoodsDekuScrubScript
 	call interactionSetScript
 @state1:
 	call interactionRunScript
@@ -7690,7 +7691,7 @@ interactionCode5c:
 	ld (hl),$04
 	ld a,>TX_0b00
 	call interactionSetHighTextIndex
-	ld hl,lavaSoupSubrosianScript
+	ld hl,mainScripts.lavaSoupSubrosianScript
 	call interactionSetScript
 @state1:
 	call interactionRunScript
@@ -7725,3 +7726,5 @@ interactionCode5d:
 	call checkFlag
 	jp nz,interactionDelete
 	jp objectPreventLinkFromPassing
+
+.ends

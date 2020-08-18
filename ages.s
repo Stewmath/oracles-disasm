@@ -22,24 +22,40 @@
 
 	.include "code/bank0.s"
 
+
 .BANK $01 SLOT 1
 .ORG 0
 
 	.include "code/bank1.s"
+
+	.include "code/ages/garbage/bank01End.s"
 
 
 .BANK $02 SLOT 1
 .ORG 0
 
 	.include "code/bank2.s"
+	.include "code/roomInitialization.s"
+
+	 m_section_free "roomGfxChanges" NAMESPACE "roomGfxChanges"
+		.include "code/ages/roomGfxChanges.s"
+	.ends
+
+	.include "code/ages/garbage/bank02End.s"
 
 
 .BANK $03 SLOT 1
 .ORG 0
 
 	.include "code/bank3.s"
-	.include "code/ages/cutscenes/endgameCutscenes.s"
-	.include "code/ages/cutscenes/miscCutscenes.s"
+
+	; This section could probably be made superfree in Ages, but this isn't the case in Seasons,
+	; so let's just play it safe and leave it as "free".
+	 m_section_free "Bank_3_Cutscenes" NAMESPACE "bank3Cutscenes"
+		.include "code/bank3Cutscenes.s"
+		.include "code/ages/cutscenes/endgameCutscenes.s"
+		.include "code/ages/cutscenes/miscCutscenes.s"
+	.ends
 
 	.include "code/ages/garbage/bank03End.s"
 
@@ -48,454 +64,47 @@
 
 	.include "code/bank4.s"
 
-	; These 2 includes must be in the same bank
-	.include "build/data/roomPacks.s"
-	.include "build/data/musicAssignments.s"
+	 m_section_superfree "RoomPacksAndMusicAssignments" NAMESPACE "bank4Data1"
+		; These 2 includes must be in the same bank
+		.include "build/data/roomPacks.s"
+		.include "build/data/musicAssignments.s"
+	.ends
 
-	.include "build/data/roomLayoutGroupTable.s"
-	.include "build/data/tilesets.s"
-	.include "build/data/tilesetAssignments.s"
+	 m_section_superfree "RoomLayouts" NAMESPACE "roomLayouts"
+		.include "build/data/roomLayoutGroupTable.s"
+	.ends
 
-	.include "code/animations.s"
+	; Must be in the same bank as "Tileset_Loading_2".
+	 m_section_free "Tileset_Loading_1" NAMESPACE "tilesets"
+		.include "build/data/tilesets.s"
+		.include "build/data/tilesetAssignments.s"
+	.ends
 
-	.include "build/data/uniqueGfxHeaders.s"
-	.include "build/data/uniqueGfxHeaderPointers.s"
-	.include "build/data/animationGroups.s"
-	.include "build/data/animationGfxHeaders.s"
-	.include "build/data/animationData.s"
+	 m_section_free "animationAndUniqueGfxData" NAMESPACE "animationAndUniqueGfxData"
+		.include "code/animations.s"
 
-	.include "code/ages/tileSubstitutions.s"
-	.include "build/data/singleTileChanges.s"
-	.include "code/ages/roomSpecificTileChanges.s"
+		.include "build/data/uniqueGfxHeaders.s"
+		.include "build/data/uniqueGfxHeaderPointers.s"
+		.include "build/data/animationGroups.s"
+		.include "build/data/animationGfxHeaders.s"
+		.include "build/data/animationData.s"
+	.ends
 
-;;
-; Left-over garbage from Seasons (d8LavaRoomsFillTilesWithLava), can be used
-; for other tiles, not just lava
-func_04_6ba8:
-	ld d,>wRoomLayout
-	ldi a,(hl)
-	ld c,a
---
-	ldi a,(hl)
-	cp $ff
-	ret z
+	 m_section_free "roomTileChanges" NAMESPACE "roomTileChanges"
+		.include "code/ages/tileSubstitutions.s"
+		.include "build/data/singleTileChanges.s"
+		.include "code/ages/roomSpecificTileChanges.s"
+	.ends
 
-	ld e,a
-	ld a,c
-	ld (de),a
-	jr --
+	 m_section_free "Tileset_Loading_2" NAMESPACE "tilesets"
+		.include "code/loadTilesToRam.s"
+		.include "code/ages/loadTilesetData.s"
+	.ends
 
-;;
-; Fills a square in wRoomLayout using the data at hl.
-; Data format:
-; - Top-left position (YX)
-; - Height
-; - Width
-; - Tile value
-fillRectInRoomLayout:
-	ldi a,(hl)
-	ld e,a
-	ldi a,(hl)
-	ld b,a
-	ldi a,(hl)
-	ld c,a
-	ldi a,(hl)
-	ld d,a
-	ld h,>wRoomLayout
---
-	ld a,d
-	ld l,e
-	push bc
--
-	ldi (hl),a
-	dec c
-	jr nz,-
-
-	ld a,e
-	add $10
-	ld e,a
-	pop bc
-	dec b
-	jr nz,--
-	ret
-
-;;
-; Like fillRect, but reads a series of bytes for the tile values instead of
-; just one.
-drawRectInRoomLayout:
-	ld a,(de)
-	inc de
-	ld h,>wRoomLayout
-	ld l,a
-	ldh (<hFF8B),a
-	ld a,(de)
-	inc de
-	ld c,a
-	ld a,(de)
-	inc de
-	ldh (<hFF8D),a
----
-	ldh a,(<hFF8D)
-	ld b,a
---
-	ld a,(de)
-	inc de
-	ldi (hl),a
-	dec b
-	jr nz,--
-
-	ldh a,(<hFF8B)
-	add $10
-	ldh (<hFF8B),a
-	ld l,a
-	dec c
-	jr nz,---
-	ret
-
-.include "code/loadTilesToRam.s"
-
-;;
-; Called from loadTilesetData in bank 0.
-;
-loadTilesetData_body:
-	call getAdjustedRoomGroup
-
-	ld hl,roomTilesetsGroupTable
-	rst_addDoubleIndex
-	ldi a,(hl)
-	ld h,(hl)
-	ld l,a
-	ld a,(wActiveRoom)
-	rst_addAToHl
-	ld a,(hl)
-	ldh (<hFF8D),a
-	call @func_6d94
-	call func_6de7
-	ret nc
-	ldh a,(<hFF8D)
-@func_6d94:
-	and $80
-	ldh (<hFF8B),a
-	ldh a,(<hFF8D)
-
-	and $7f
-	call multiplyABy8
-	ld hl,tilesetData
-	add hl,bc
-
-	ldi a,(hl)
-	ld e,a
-	ldi a,(hl)
-	ld (wTilesetFlags),a
-	bit TILESETFLAG_BIT_DUNGEON,a
-	jr z,+
-
-	ld a,e
-	and $0f
-	ld (wDungeonIndex),a
-	jr ++
-+
-	ld a,$ff
-	ld (wDungeonIndex),a
-++
-	ld a,e
-	swap a
-	and $07
-	ld (wActiveCollisions),a
-
-	; HACK-BASE: This has been modified for the expanded tilesets patch.
-	ld b,$06
-	ld de,wTilesetIndex
-@copyloop:
-	ldi a,(hl)
-	ld (de),a
-	inc e
-	dec b
-	jr nz,@copyloop
-
-	ldh a,(<hFF8D)
-	ld e,<wTilesetIndex
-	ld (de),a
-	ret
-
-;;
-; Returns the group to load the room layout from, accounting for bit 0 of the room flag
-; which tells it to use the underwater group
-;
-; @param[out]	a,b	The corrected group number
-getAdjustedRoomGroup:
-	ld a,(wActiveGroup)
-	ld b,a
-	cp $02
-	ret nc
-	call getThisRoomFlags
-	rrca
-	jr nc,+
-	set 1,b
-+
-	ld a,b
-	ret
-
-;;
-; Modifies hFF8D to indicate changes to a room (ie. jabu flooding)?
-func_6de7:
-	call @func_04_6e0d
-	ret c
-
-	call @checkJabuFlooded
-	ret c
-
-	ld a,(wActiveGroup)
-	or a
-	jr nz,@xor
-
-	ld a,(wLoadingRoomPack)
-	cp $7f
-	jr nz,@xor
-
-	ld a,(wAnimalCompanion)
-	sub SPECIALOBJECTID_RICKY
-	jr z,@xor
-
-	ld b,a
-	ldh a,(<hFF8D)
-	add b
-	ldh (<hFF8D),a
-	scf
-	ret
-@xor:
-	xor a
-	ret
-
-;;
-@func_04_6e0d:
-	ld a,(wActiveGroup)
-	or a
-	ret nz
-
-	ld a,(wActiveRoom)
-	cp $38
-	jr nz,+
-
-	ld a,($c848)
-	and $01
-	ret z
-
-	ld hl,hFF8D
-	inc (hl)
-	inc (hl)
-	scf
-	ret
-+
-	xor a
-	ret
-
-;;
-; @param[out]	cflag	Set if the current room is flooded in jabu-jabu?
-@checkJabuFlooded:
-	ld a,(wDungeonIndex)
-	cp $07
-	jr nz,++
-
-	ld a,(wTilesetFlags)
-	and TILESETFLAG_SIDESCROLL
-	jr nz,++
-
-	ld a,$11
-	ld (wDungeonFirstLayout),a
-	callab bank1.findActiveRoomInDungeonLayoutWithPointlessBankSwitch
-	ld a,(wJabuWaterLevel)
-	and $07
-	ld hl,@data
-	rst_addAToHl
-	ld a,(wDungeonFloor)
-	ld bc,bitTable
-	add c
-	ld c,a
-	ld a,(bc)
-	and (hl)
-	ret z
-
-	ldh a,(<hFF8D)
-	inc a
-	ldh (<hFF8D),a
-	scf
-	ret
-++
-	xor a
-	ret
-
-@data:
-	.db $00 $01 $03
-
-;;
-; Ages only: For tiles 0x40-0x7f, in the past, replace blue palettes (6) with red palettes (0). This
-; is done so that tilesets can reuse attribute data for both the past and present tilesets.
-;
-; This is annoying so it's disabled in the hack-base branch, which separates all tileset data
-; anyway.
-;
-setPastCliffPalettesToRed:
-	ld a,(wActiveCollisions)
-	or a
-	jr nz,@done
-
-	ld a,(wTilesetFlags)
-	and TILESETFLAG_PAST
-	jr z,@done
-
-	ld a,(wActiveRoom)
-	cp <ROOM_AGES_138
-	ret z
-
-	; Replace all attributes that have palette "6" with palette "0"
-	ld a,:w3TileMappingData
-	ld ($ff00+R_SVBK),a
-	ld hl,w3TileMappingData + $204
-	ld d,$06
----
-	ld b,$04
---
-	ld a,(hl)
-	and $07
-	cp d
-	jr nz,+
-
-	ld a,(hl)
-	and $f8
-	ld (hl),a
-+
-	inc hl
-	dec b
-	jr nz,--
-
-	ld a,$04
-	rst_addAToHl
-	ld a,h
-	cp $d4
-	jr c,---
-@done:
-	xor a
-	ld ($ff00+R_SVBK),a
-	ret
-
-;;
-func_04_6e9b:
-	ld a,$02
-	ld ($ff00+R_SVBK),a
-	ld hl,wRoomLayout
-	ld de,$d000
-	ld b,$c0
-	call copyMemory
-	ld hl,wRoomCollisions
-	ld de,$d100
-	ld b,$c0
-	call copyMemory
-	ld hl,$df00
-	ld de,$d200
-	ld b,$c0
---
-	ld a,$03
-	ld ($ff00+R_SVBK),a
-	ldi a,(hl)
-	ld c,a
-	ld a,$02
-	ld ($ff00+R_SVBK),a
-	ld a,c
-	ld (de),a
-	inc de
-	dec b
-	jr nz,--
-
-	xor a
-	ld ($ff00+R_SVBK),a
-	ret
-
-;;
-func_04_6ed1:
-	ld a,$02
-	ld ($ff00+R_SVBK),a
-	ld hl,wRoomLayout
-	ld de,$d000
-	ld b,$c0
-	call copyMemoryReverse
-	ld hl,wRoomCollisions
-	ld de,$d100
-	ld b,$c0
-	call copyMemoryReverse
-	ld hl,$df00
-	ld de,$d200
-	ld b,$c0
---
-	ld a,$02
-	ld ($ff00+R_SVBK),a
-	ld a,(de)
-	inc de
-	ld c,a
-	ld a,$03
-	ld ($ff00+R_SVBK),a
-	ld a,c
-	ldi (hl),a
-	dec b
-	jr nz,--
-
-	xor a
-	ld ($ff00+R_SVBK),a
-	ret
-
-;;
-func_04_6f07:
-	ld hl,$d800
-	ld de,$dc00
-	ld bc,$0200
-	call @locFunc
-	ld hl,$dc00
-	ld de,$de00
-	ld bc,$0200
-@locFunc:
-	ld a,$03
-	ld ($ff00+R_SVBK),a
-	ldi a,(hl)
-	ldh (<hFF8B),a
-	ld a,$06
-	ld ($ff00+R_SVBK),a
-	ldh a,(<hFF8B)
-	ld (de),a
-	inc de
-	dec bc
-	ld a,b
-	or c
-	jr nz,@locFunc
-	ret
-
-;;
-func_04_6f31:
-	ld hl,$dc00
-	ld de,$d800
-	ld bc,$0200
-	call @locFunc
-	ld hl,$de00
-	ld de,$dc00
-	ld bc,$0200
-@locFunc:
-	ld a,$06
-	ld ($ff00+R_SVBK),a
-	ldi a,(hl)
-	ldh (<hFF8B),a
-	ld a,$03
-	ld ($ff00+R_SVBK),a
-	ldh a,(<hFF8B)
-	ld (de),a
-	inc de
-	dec bc
-	ld a,b
-	or c
-	jr nz,@locFunc
-	ret
-
-; .ORGA $6f5b
-
-	.include "build/data/warpData.s"
+		; Must be in same bank as "code/bank4.s"
+	 m_section_free "Warp_Data" NAMESPACE "bank4"
+		.include "build/data/warpData.s"
+	.ends
 
 	.include "code/ages/garbage/bank04End.s"
 
@@ -503,15 +112,14 @@ func_04_6f31:
 .BANK $05 SLOT 1
 .ORG 0
 
- m_section_force "Bank_5" NAMESPACE bank5
+	 m_section_superfree "Bank_5" NAMESPACE bank5
+		.include "code/bank5.s"
 
-	.include "code/bank5.s"
-	.include "build/data/tileTypeMappings.s"
-	.include "build/data/cliffTilesTable.s"
+		.include "build/data/tileTypeMappings.s"
+		.include "build/data/cliffTilesTable.s"
 
-	.include "code/ages/garbage/bank05End.s"
-
-.ends
+		.include "code/ages/garbage/bank05End.s"
+	.ends
 
 
 .BANK $06 SLOT 1
@@ -540,104 +148,7 @@ func_04_6f31:
 	.include "code/items/magnetGloveParent.s"
 
 	.include "code/items/parentItemCommon.s"
-
-
-; Following table affects how an item can be used (ie. how it interacts with other items
-; being used).
-;
-; Data format:
-;  b0: bits 4-7: Priority (higher value = higher precedence)
-;                Gets written to high nibble of Item.enabled
-;      bits 0-3: Determines what "parent item" slot to use when the button is pressed.
-;                0: Item is unusable.
-;                1: Uses w1ParentItem3 or 4.
-;                2: Uses w1ParentItem3 or 4, but only one instance of the item may exist
-;                   at once. (boomerang, seed satchel)
-;                3: Uses w1ParentItem2. If an object is already there, it gets
-;                   overwritten if this object's priority is high enough.
-;                   (sword, cane, bombs, etc)
-;                4: Same as 2, but the item can't be used if w1ParentItem2 is in use (Link
-;                   is holding a sword or something)
-;                5: Uses w1ParentItem5 (only if not already in use). (shield, flute, harp)
-;                6-7: invalid
-;  b1: Byte to check input against when the item is first used
-;
-_itemUsageParameterTable:
-	.db $00 <wGameKeysPressed	; ITEMID_NONE
-	.db $05 <wGameKeysPressed	; ITEMID_SHIELD
-	.db $03 <wGameKeysJustPressed	; ITEMID_PUNCH
-	.db $23 <wGameKeysJustPressed	; ITEMID_BOMB
-	.db $03 <wGameKeysJustPressed	; ITEMID_CANE_OF_SOMARIA
-	.db $63 <wGameKeysJustPressed	; ITEMID_SWORD
-	.db $02 <wGameKeysJustPressed	; ITEMID_BOOMERANG
-	.db $00 <wGameKeysJustPressed	; ITEMID_ROD_OF_SEASONS
-	.db $00 <wGameKeysJustPressed	; ITEMID_MAGNET_GLOVES
-	.db $00 <wGameKeysJustPressed	; ITEMID_SWITCH_HOOK_HELPER
-	.db $73 <wGameKeysJustPressed	; ITEMID_SWITCH_HOOK
-	.db $00 <wGameKeysJustPressed	; ITEMID_SWITCH_HOOK_CHAIN
-	.db $73 <wGameKeysJustPressed	; ITEMID_BIGGORON_SWORD
-	.db $02 <wGameKeysJustPressed	; ITEMID_BOMBCHUS
-	.db $05 <wGameKeysJustPressed	; ITEMID_FLUTE
-	.db $43 <wGameKeysJustPressed	; ITEMID_SHOOTER
-	.db $00 <wGameKeysJustPressed	; ITEMID_10
-	.db $05 <wGameKeysJustPressed	; ITEMID_HARP
-	.db $00 <wGameKeysJustPressed	; ITEMID_12
-	.db $00 <wGameKeysJustPressed	; ITEMID_SLINGSHOT
-	.db $00 <wGameKeysJustPressed	; ITEMID_14
-	.db $13 <wGameKeysJustPressed	; ITEMID_SHOVEL
-	.db $13 <wGameKeysPressed	; ITEMID_BRACELET
-	.db $01 <wGameKeysJustPressed	; ITEMID_FEATHER
-	.db $00 <wGameKeysJustPressed	; ITEMID_18
-	.db $02 <wGameKeysJustPressed	; ITEMID_SEED_SATCHEL
-	.db $00 <wGameKeysJustPressed	; ITEMID_DUST
-	.db $00 <wGameKeysJustPressed	; ITEMID_1b
-	.db $00 <wGameKeysJustPressed	; ITEMID_1c
-	.db $00 <wGameKeysJustPressed	; ITEMID_MINECART_COLLISION
-	.db $00 <wGameKeysJustPressed	; ITEMID_FOOLS_ORE
-	.db $00 <wGameKeysJustPressed	; ITEMID_1f
-
-
-
-; Data format:
-;  b0: bit 7:    If set, the corresponding bit in wLinkUsingItem1 will be set.
-;      bits 4-6: Value for bits 0-2 of Item.var3f
-;      bits 0-3: Determines parent item's relatedObj2?
-;                A value of $6 refers to w1WeaponItem.
-;  b1: Animation to set Link to? (see constants/linkAnimations.s)
-;
-_linkItemAnimationTable:
-	.db $00  LINK_ANIM_MODE_NONE	; ITEMID_NONE
-	.db $00  LINK_ANIM_MODE_NONE	; ITEMID_SHIELD
-	.db $d6  LINK_ANIM_MODE_21	; ITEMID_PUNCH
-	.db $30  LINK_ANIM_MODE_LIFT	; ITEMID_BOMB
-	.db $d6  LINK_ANIM_MODE_22	; ITEMID_CANE_OF_SOMARIA
-	.db $e6  LINK_ANIM_MODE_22	; ITEMID_SWORD
-	.db $b0  LINK_ANIM_MODE_21	; ITEMID_BOOMERANG
-	.db $d6  LINK_ANIM_MODE_22	; ITEMID_ROD_OF_SEASONS
-	.db $60  LINK_ANIM_MODE_NONE	; ITEMID_MAGNET_GLOVES
-	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_SWITCH_HOOK_HELPER
-	.db $f6  LINK_ANIM_MODE_21	; ITEMID_SWITCH_HOOK
-	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_SWITCH_HOOK_CHAIN
-	.db $f6  LINK_ANIM_MODE_23	; ITEMID_BIGGORON_SWORD
-	.db $30  LINK_ANIM_MODE_21	; ITEMID_BOMBCHUS
-	.db $70  LINK_ANIM_MODE_FLUTE	; ITEMID_FLUTE
-	.db $c6  LINK_ANIM_MODE_21	; ITEMID_SHOOTER
-	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_10
-	.db $70  LINK_ANIM_MODE_HARP_2	; ITEMID_HARP
-	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_12
-	.db $c6  LINK_ANIM_MODE_21	; ITEMID_SLINGSHOT
-	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_14
-	.db $b0  LINK_ANIM_MODE_DIG_2	; ITEMID_SHOVEL
-	.db $40  LINK_ANIM_MODE_LIFT_3	; ITEMID_BRACELET
-	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_FEATHER
-	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_18
-	.db $a0  LINK_ANIM_MODE_21	; ITEMID_SEED_SATCHEL
-	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_DUST
-	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_1b
-	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_1c
-	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_MINECART_COLLISION
-	.db $e6  LINK_ANIM_MODE_22	; ITEMID_FOOLS_ORE
-	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_1f
+	.include "build/data/itemUsageTables.s"
 
 	.include "object_code/common/specialObjects/minecart.s"
 	.include "object_code/common/specialObjects/raft.s"
@@ -670,102 +181,85 @@ specialObjectLoadAnimationFrameToBuffer:
 
 .ends
 
+
 .BANK $07 SLOT 1
 .ORG 0
 
-.include "code/fileManagement.s"
+	 m_section_superfree "File_Management" namespace "fileManagement"
+		.include "code/fileManagement.s"
+	.ends
 
- ; This section can't be superfree, since it must be in the same bank as section
- ; "Bank_7_Data".
- m_section_free "Enemy_Part_Collisions" namespace "bank7"
-	.include "code/collisionEffects.s"
-.ends
+	 ; This section can't be superfree, since it must be in the same bank as section
+	 ; "Bank_7_Data".
+	 m_section_free "Enemy_Part_Collisions" namespace "bank7"
+		.include "code/collisionEffects.s"
+	.ends
 
+	 m_section_superfree "Item_Code" namespace "itemCode"
+		.include "code/updateItems.s"
 
- m_section_superfree "Item_Code" namespace "itemCode"
+		.include "build/data/itemConveyorTilesTable.s"
+		.include "build/data/itemPassableCliffTilesTable.s"
+		.include "build/data/itemPassableTilesTable.s"
+		.include "code/itemCodes.s"
+		.include "build/data/itemAttributes.s"
+		.include "data/itemAnimations.s"
+	.ends
 
-	.include "code/updateItems.s"
+	 ; This section can't be superfree, since it must be in the same bank as section
+	 ; "Enemy_Part_Collisions".
+	 m_section_free "Bank_7_Data" namespace "bank7"
+		.include "build/data/enemyActiveCollisions.s"
+		.include "build/data/partActiveCollisions.s"
+		.include "build/data/objectCollisionTable.s"
 
-	.include "build/data/itemConveyorTilesTable.s"
-	.include "build/data/itemPassableCliffTilesTable.s"
-	.include "build/data/itemPassableTilesTable.s"
-	.include "code/itemCodes.s"
-	.include "build/data/itemAttributes.s"
-	.include "data/itemAnimations.s"
-.ends
-
-
- ; This section can't be superfree, since it must be in the same bank as section
- ; "Enemy_Part_Collisions".
- m_section_free "Bank_7_Data" namespace "bank7"
-
-	.include "build/data/enemyActiveCollisions.s"
-	.include "build/data/partActiveCollisions.s"
-	.include "build/data/objectCollisionTable.s"
-
-	.include "code/ages/garbage/bank07End.s"
-
-.ends
+		.include "code/ages/garbage/bank07End.s"
+	.ends
 
 
 .BANK $08 SLOT 1
 .ORG 0
 
-
- m_section_force Interaction_Code_Bank08 NAMESPACE interactionBank08
-
 	.include "object_code/common/interactionCode/group1.s"
 	.include "object_code/ages/interactionCode/bank08.s"
-
-.ends
 
 
 .BANK $09 SLOT 1
 .ORG 0
 
- m_section_force Interaction_Code_Bank09 NAMESPACE interactionBank09
-
 	.include "object_code/common/interactionCode/group2.s"
         .include "object_code/common/interactionCode/treasure.s"
 	.include "object_code/ages/interactionCode/bank09.s"
-
-.ends
 
 
 .BANK $0a SLOT 1
 .ORG 0
 
 
- m_section_force Interaction_Code_Bank0a NAMESPACE interactionBank0a
-
 	.include "object_code/common/interactionCode/group3.s"
-        .include "object_code/common/interactionCode/group5.s"
+        .include "object_code/common/interactionCode/group4.s"
 	.include "object_code/ages/interactionCode/bank0a.s"
-
-.ends
 
 
 .BANK $0b SLOT 1
 .ORG 0
 
 
- m_section_force Interaction_Code_Bank0b NAMESPACE interactionBank0b
-
-	.include "object_code/common/interactionCode/group6.s"
+	.include "object_code/common/interactionCode/group5.s"
+        .include "object_code/common/interactionCode/group6.s"
         .include "object_code/common/interactionCode/group7.s"
-        .include "object_code/common/interactionCode/group4.s"
 	.include "object_code/ages/interactionCode/bank0b.s"
 
 	.include "code/ages/garbage/bank0bEnd.s"
-
-.ends
 
 
 .BANK $0c SLOT 1
 .ORG 0
 
-	.include "code/scripting.s"
-	.include "scripts/ages/scripts.s"
+	 m_section_superfree "Scripts" namespace "mainScripts"
+		.include "code/scripting.s"
+		.include "scripts/ages/scripts.s"
+	.ends
 
 
 .BANK $0d SLOT 1
@@ -830,12 +324,9 @@ specialObjectLoadAnimationFrameToBuffer:
 
 .ORGA $6f00
 
- m_section_force Interaction_Code_Bank10 NAMESPACE interactionBank10
-
 	.include "object_code/common/interactionCode/group8.s"
+	.include "code/ages/cutscenes/bank10.s"
 	.include "object_code/ages/interactionCode/bank10.s"
-
-.ends
 
 
 .BANK $11 SLOT 1
@@ -896,6 +387,7 @@ specialObjectLoadAnimationFrameToBuffer:
 	.include "data/itemOamData.s"
 	.include "build/data/enemyOamData.s"
 
+
 .BANK $14 SLOT 1
 .ORG 0
 
@@ -903,49 +395,53 @@ specialObjectLoadAnimationFrameToBuffer:
 	.include "data/terrainEffects.s"
 .ends
 
-.include "build/data/interactionOamData.s"
-.include "build/data/partOamData.s"
+	.include "build/data/interactionOamData.s"
+	.include "build/data/partOamData.s"
 
 
 .BANK $15 SLOT 1
 .ORG 0
 
-.include "scripts/common/scriptHelper.s"
+	 m_section_force "Bank_15" NAMESPACE scriptHelp
+		.include "scripts/common/scriptHelper.s"
+	.ends
 
- m_section_free "Object_Pointers" namespace "objectData"
+	 m_section_free "Object_Pointers" namespace "objectData"
 
-;;
-getObjectDataAddress:
-	ld a,(wActiveGroup)
-	ld hl,objectDataGroupTable
-	rst_addDoubleIndex
-	ldi a,(hl)
-	ld h,(hl)
-	ld l,a
-	ld a,(wActiveRoom)
-	ld e,a
-	ld d,$00
-	add hl,de
-	add hl,de
-	ldi a,(hl)
-	ld d,(hl)
-	ld e,a
-	ret
+	;;
+	getObjectDataAddress:
+		ld a,(wActiveGroup)
+		ld hl,objectDataGroupTable
+		rst_addDoubleIndex
+		ldi a,(hl)
+		ld h,(hl)
+		ld l,a
+		ld a,(wActiveRoom)
+		ld e,a
+		ld d,$00
+		add hl,de
+		add hl,de
+		ldi a,(hl)
+		ld d,(hl)
+		ld e,a
+		ret
 
 
-	.include "objects/ages/pointers.s"
+		.include "objects/ages/pointers.s"
 
-.ENDS
+	.ENDS
 
-.include "scripts/ages/scriptHelper.s"
+	 m_section_force "Bank_15_2" NAMESPACE scriptHelp
+		.include "scripts/ages/scriptHelper.s"
+	.ends
 
 
 .BANK $16 SLOT 1
 .ORG 0
 
-.include "code/serialFunctions.s"
+	.include "code/serialFunctions.s"
 
- m_section_force Bank16 NAMESPACE bank16
+ m_section_free Bank16 NAMESPACE bank16
 
 ;;
 ; @param	d	Interaction index (should be of type INTERACID_TREASURE)
@@ -1006,19 +502,19 @@ interactionLoadTreasureData:
 	ret
 
 
-.include "build/data/data_4556.s"
-.include "build/data/endgameCutsceneOamData.s"
+	.include "build/data/data_4556.s"
+	.include "build/data/endgameCutsceneOamData.s"
 
 .ends
 
 
-.include "code/staticObjects.s"
-.include "build/data/staticDungeonObjects.s"
-.include "build/data/chestData.s"
+	.include "code/staticObjects.s"
+	.include "build/data/staticDungeonObjects.s"
+	.include "build/data/chestData.s"
 
- m_section_force Bank16_2 NAMESPACE bank16
+ m_section_free Bank16_2 NAMESPACE bank16
 
-.include "build/data/treasureObjectData.s"
+	.include "build/data/treasureObjectData.s"
 
 ;;
 ; Used in the room in present Mermaid's Cave with the changing floor
@@ -1093,7 +589,8 @@ loadD6ChangingFloorPatternToBigBuffer:
 	.include "build/data/interactionAnimations.s"
 	.include "build/data/partAnimations.s"
 
-.BANK $17 SLOT 1 ; Seasons: should be bank $16
+
+.BANK $17 SLOT 1
 .ORG 0
 
 	.include "build/data/paletteData.s"
@@ -1111,13 +608,13 @@ loadD6ChangingFloorPatternToBigBuffer:
 .ORG 0
 
  m_section_superfree "Gfx_19_1" ALIGN $10
-	.include "data/ages/gfxDataBank19_1.s"
+	.include "build/data/gfxDataBank19_1.s"
 .ends
 
 ; HACK-BASE: Deleted tileMappings.s include for expanded tilesets patch.
 
  m_section_superfree "Gfx_19_2" ALIGN $10
-	.include "data/ages/gfxDataBank19_2.s"
+	.include "build/data/gfxDataBank19_2.s"
 .ends
 
 
