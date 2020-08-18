@@ -1,4 +1,4 @@
-m_section_superfree Ages_Interactions_Bank10 NAMESPACE agesInteractionsBank10
+m_section_free Ages_Interactions_Bank10 NAMESPACE agesInteractionsBank10
 
 ; ==============================================================================
 ; INTERACID_MISCELLANEOUS_2

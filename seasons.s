@@ -110,7 +110,7 @@
 .BANK $05 SLOT 1
 .ORG 0
 
-	 m_section_superfree "Bank_5" NAMESPACE bank5
+	 m_section_free "Bank_5" NAMESPACE bank5
 		.include "code/bank5.s"
 
 		.include "build/data/tileTypeMappings.s"
@@ -122,7 +122,7 @@
 .BANK $06 SLOT 1
 .ORG 0
 
- m_section_superfree "Bank_6" NAMESPACE bank6
+ m_section_free "Bank_6" NAMESPACE bank6
 
 	.include "code/interactableTiles.s"
 	.include "code/specialObjectAnimationsAndDamage.s"
@@ -218,7 +218,7 @@
 .BANK $0b SLOT 1
 .ORG 0
 
-	 m_section_superfree "Scripts" namespace "mainScripts"
+	 m_section_free "Scripts" namespace "mainScripts"
 		.include "code/scripting.s"
 		.include "scripts/seasons/scripts.s"
 	.ends
@@ -341,6 +341,7 @@
 
 	.include "build/data/data_4556.s"
 
+	; TODO: "SIMPLE_SCRIPT_BANK" define should be tied to this section somehow
 	 m_section_force "Scripts2" NAMESPACE scripts2
 		.include "scripts/seasons/scripts2.s"
 	.ends
@@ -431,7 +432,7 @@ oamData_15_4e0c:
 .BANK $17 SLOT 1
 .ORG 0
 
- m_section_superfree Tile_Mappings
+ m_section_free Tile_Mappings
 
 	tileMappingIndexDataPointer:
 		.dw tileMappingIndexData

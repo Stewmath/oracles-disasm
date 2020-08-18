@@ -1,4 +1,4 @@
- m_section_superfree Interaction_Code_Group1 NAMESPACE commonInteractions1
+ m_section_free Interaction_Code_Group1 NAMESPACE commonInteractions1
 
 ; ==============================================================================
 ; INTERACID_GRASSDEBRIS (and other animations)
