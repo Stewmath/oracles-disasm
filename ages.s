@@ -112,7 +112,7 @@
 .BANK $05 SLOT 1
 .ORG 0
 
-	 m_section_superfree "Bank_5" NAMESPACE bank5
+	 m_section_free "Bank_5" NAMESPACE bank5
 		.include "code/bank5.s"
 
 		.include "build/data/tileTypeMappings.s"
@@ -126,7 +126,7 @@
 .ORG 0
 
 
- m_section_superfree "Bank_6" NAMESPACE bank6
+ m_section_free "Bank_6" NAMESPACE bank6
 
 	.include "code/interactableTiles.s"
 	.include "code/specialObjectAnimationsAndDamage.s"
@@ -256,7 +256,8 @@ specialObjectLoadAnimationFrameToBuffer:
 .BANK $0c SLOT 1
 .ORG 0
 
-	 m_section_superfree "Scripts" namespace "mainScripts"
+	; TODO: "SIMPLE_SCRIPT_BANK" define should be tied to this section somehow
+	 m_section_free "Scripts" namespace "mainScripts"
 		.include "code/scripting.s"
 		.include "scripts/ages/scripts.s"
 	.ends
@@ -603,7 +604,7 @@ loadD6ChangingFloorPatternToBigBuffer:
 .BANK $18 SLOT 1
 .ORG 0
 
- m_section_superfree Tile_Mappings
+ m_section_free Tile_Mappings
 
 	tileMappingIndexDataPointer:
 		.dw tileMappingIndexData
@@ -627,7 +628,7 @@ loadD6ChangingFloorPatternToBigBuffer:
 .BANK $19 SLOT 1
 .ORG 0
 
- m_section_superfree "Gfx_19_1" ALIGN $10
+ m_section_free "Gfx_19_1" ALIGN $10
 	.include "build/data/gfxDataBank19_1.s"
 .ends
 
@@ -635,7 +636,7 @@ loadD6ChangingFloorPatternToBigBuffer:
 	.include "build/data/tilesetMappings.s"
 .ends
 
- m_section_superfree "Gfx_19_2" ALIGN $10
+ m_section_free "Gfx_19_2" ALIGN $10
 	.include "build/data/gfxDataBank19_2.s"
 .ends
 

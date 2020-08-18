@@ -1,4 +1,4 @@
-m_section_superfree Ages_Interactions_BankA NAMESPACE agesInteractionsBank0a
+m_section_free Ages_Interactions_BankA NAMESPACE agesInteractionsBank0a
 
 .include "object_code/common/interactionCode/companionSpawner.s"
 

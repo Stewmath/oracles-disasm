@@ -1,4 +1,4 @@
- m_section_superfree Interaction_Code_Group8 NAMESPACE commonInteractions8
+ m_section_free Interaction_Code_Group8 NAMESPACE commonInteractions8
 
 ; ==============================================================================
 ; INTERACID_ERA_OR_SEASON_INFO

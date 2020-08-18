@@ -1,4 +1,4 @@
-m_section_superfree Ages_Interactions_Bank8 NAMESPACE agesInteractionsBank08
+m_section_free Ages_Interactions_Bank8 NAMESPACE agesInteractionsBank08
 
 ; ==============================================================================
 ; INTERACID_TOGGLE_FLOOR: red/yellow/blue floor tiles that change color when jumped over.
