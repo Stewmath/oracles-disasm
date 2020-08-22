@@ -4,30 +4,15 @@
 ; b0: bit 7    = next 2 bytes are a pointer
 ;     bits 4-6 = spawn mode
 ;     bit 3    = ?
-;     bits 0-2 = collect mode
+;     bits 0-2 = grab mode
 ; b1: Parameter (value of 'c' to pass to "giveTreasure")
 ; b2: Low text ID on pickup ($ff for no text; high byte of ID is always $00)
 ; b3: Graphics to use. (Gets copied to object's subid, so graphics are determined by the
 ;     corresponding value for interaction $60 in data/interactionData.s.)
 ;
-; Spawn modes:
-;   0: instantaneous
-;   1: appears with a puff
-;   2: falls from top of screen, plays "solved puzzle" sound effect
-;   3: from a chest
-;   4: picked up from underwater? (that one key in dungeon 4 of seasons?)
-;   5: falls toward from link when [$ccaa]=$ff?
-;   6: appears at Link's position after a short delay
+; For documentation of spawn modes and grab modes, see "constants/treasureSpawnModes.s".
 ;
-; Collect modes:
-;   0: no change in animation
-;   1: holds it over his head with one hand
-;   2: holds it over his head with both hands
-;   3: performs a spin slash
-;   4: same as 1?
-;   5: same as 2?
-;
-; See also constants/treasure.s.
+; See also constants/treasure.s for treasure lists.
 
 treasureObjectData:
 	; 0x00
