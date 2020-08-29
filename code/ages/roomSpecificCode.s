@@ -123,11 +123,7 @@ _roomSpecificCode7:
 	call getThisRoomFlags
 	bit 6,a
 	ret nz
-.ifdef ROM_AGES
 	ld a,MUS_RALPH
-.else
-	ld a,$35
-.endif
 	ld (wActiveMusic2),a
 	ret
 
@@ -158,11 +154,7 @@ _roomSpecificCode8:
 	ld a, GLOBALFLAG_RALPH_ENTERED_PORTAL
 	call checkGlobalFlag
 	ret nz
-.ifdef ROM_AGES
 	ld a, MUS_RALPH
-.else
-	ld a,$35
-.endif
 	ld (wActiveMusic2),a
 	ret
 
@@ -172,11 +164,7 @@ _roomSpecificCode9:
 	ld a,GLOBALFLAG_FINISHEDGAME
 	call checkGlobalFlag
 	ret z
-.ifdef ROM_AGES
 	ld a, MUS_NAYRU
-.else
-	ld a,$08
-.endif
 	ld (wActiveMusic2),a
 	ret
 
