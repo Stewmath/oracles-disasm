@@ -1,3 +1,5 @@
+; TODO: Some of this code is shared with Seasons; merge them where appropriate.
+
 ;;
 specialObjectCode_linkInCutscene:
 	ld e,SpecialObject.subid

@@ -1,4 +1,4 @@
- m_section_force serialCode NAMESPACE serialCode
+ m_section_free serialCode NAMESPACE serialCode
 
 ;;
 func_4000:

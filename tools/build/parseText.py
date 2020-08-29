@@ -455,6 +455,11 @@ def parseTextFile(textFile, isDictionary):
                             c = 0x18
                             textStruct.data.append(c)
                             addWidth(state, characterSpacing[c])
+                        elif textEq('times'):
+                            validToken = True
+                            c = 0x19
+                            textStruct.data.append(c)
+                            addWidth(state, characterSpacing[c])
                         elif textEq('abtn'):
                             validToken = True
                             c = 0xb8

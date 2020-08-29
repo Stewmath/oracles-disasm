@@ -5743,7 +5743,7 @@ _func_5e1a:
 
 .include "code/roomInitialization.s"
 
- m_section_force "Part_Code_2" NAMESPACE "partCode"
+ m_section_free "Part_Code_2" NAMESPACE "partCode"
 .endif
 
 

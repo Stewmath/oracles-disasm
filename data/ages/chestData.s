@@ -1,4 +1,4 @@
- m_section_force "chestData" NAMESPACE chestData
+ m_section_free "chestData" NAMESPACE chestData
 
 chestDataGroupTable:
 	.dw chestGroup0Data

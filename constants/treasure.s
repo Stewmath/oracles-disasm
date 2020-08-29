@@ -5,6 +5,10 @@
 .define NUM_INVENTORY_ITEMS	$20
 
 
+; This is checked by LynnaLab to set limits on valid values
+.define NUM_TREASURES		$68
+
+
 .enum 0
 
 	TREASURE_NONE			db ; $00

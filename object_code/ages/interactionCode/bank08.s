@@ -272,11 +272,7 @@ interactionCode19:
 	call @setColor
 	call objectCenterOnTile
 
-.ifdef ROM_AGES
 	ld a,SND_MOVE_BLOCK_2
-.else
-	ld a,$7f
-.endif
 	call playSound
 
 ;;
@@ -536,11 +532,7 @@ interactionCode1b:
 	ld e,Interaction.state
 	ld a,$03
 	ld (de),a
-.ifdef ROM_AGES
 	ld a,SND_OPEN_GATE
-.else
-	ld a,$7d
-.endif
 	call playSound
 	jp @setAnimationAndUpdateCollisions
 

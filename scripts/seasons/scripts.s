@@ -1,1196 +1,7 @@
 ; Scripts for interactions are in this file. You may want to cross-reference with the corresponding
-; code for the script to get the full picture (search for INTERACID_X in main.s to find the code).
-;
-; A great deal of stuff here is shared with Ages. Maybe it will be merged together in the future.
+; assembly code to get the full picture (run "git grep INTERACID_X" to search for its code).
 
-stubScript:
-	scriptend
-
-genericNpcScript:
-	initcollisions
---
-	checkabutton
-	showloadedtext
-	scriptjump --
-
-
-; ==============================================================================
-; INTERACID_FARORE
-; ==============================================================================
-
-faroreScript:
-	jumptable_memoryaddress wIsLinkedGame
-	.dw _faroreUnlinked
-	.dw _faroreLinked
-
-; When talking to farore in a completed unlinked game, you can tell her secrets, but all
-; she'll do is direct you to the person you're supposed to tell them to.
-_faroreUnlinked:
-	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, @finishedGame
-	rungenericnpclowindex <TX_5501
-
-@finishedGame:
-	initcollisions
-@npcLoop:
-	enableinput
-	checkabutton
-	setdisabledobjectsto91
-	showtextlowindex <TX_5502
-	jumpiftextoptioneq $00, @askForPassword
-
-@offerOtherGameSecret:
-	showtextlowindex <TX_5519
-	jumpiftextoptioneq $00, @sayOtherGameSecret
-	showtextlowindex <TX_5505
-	scriptjump @npcLoop
-
-@sayOtherGameSecret:
-	asm15 scriptHelp.faroreGenerateGameTransferSecret
-	showtextlowindex <TX_551a
-	scriptjump @npcLoop
-
-@askForPassword:
-	askforsecret $ff
-	asm15 scriptHelp.faroreCheckSecretValidity
-	jumptable_objectbyte Interaction.var3f
-	.dw @offerOtherGameSecret
-	.dw @offerOtherGameSecret
-	.dw @offerOtherGameSecret
-	.dw @secretOK
-	.dw @wrongGame
-	.dw @offerOtherGameSecret
-
-@wrongGame: ; A Seasons secret was given in Ages.
-	showtextlowindex <TX_550b
-	scriptjump @offerOtherGameSecret
-
-@secretOK: ; The secret is fine, but you're supposed to tell it to someone else.
-	asm15 scriptHelp.faroreShowTextForSecretHint
-	wait 30
-	showtextlowindex <TX_5504
-	scriptjump @offerOtherGameSecret
-
-
-; When talking to Farore in a linked game, you can tell her secrets and she'll respond by
-; giving you an item if it's correct.
-_faroreLinked:
-	initcollisions
-	checkabutton
-	setdisabledobjectsto91
-	showtextlowindex <TX_5506
-	scriptjump ++
-@npcLoop:
-	enableinput
-	checkabutton
-	disableinput
-	jumpifglobalflagset GLOBALFLAG_SECRET_CHEST_WAITING, @waitForLinkToOpenChest
-++
-	showtextlowindex <TX_5507 ; Do you know a secret?
-	jumpiftextoptioneq $00, @showPasswordScreen
-	showtextlowindex <TX_5508 ; Come back anytime
-	scriptjump @npcLoop
-
-@showPasswordScreen:
-	askforsecret $ff
-	asm15 scriptHelp.faroreCheckSecretValidity
-	jumptable_objectbyte Interaction.var3f
-	.dw @script4667
-	.dw @secretOK
-	.dw @alreadyToldSecret
-	.dw @script4667
-	.dw @wrongGame
-	.dw @secretNotActive
-
-@script4667:
-	showtextlowindex <TX_5505
-	scriptjump @npcLoop
-
-@secretOK:
-	asm15 scriptHelp.faroreSpawnSecretChest
-	checkcfc0bit 1
-	xorcfc0bit 1
-	enableinput
-	scriptjump @npcLoop
-
-@alreadyToldSecret: ; The secret has already been told to farore
-	showtextlowindex <TX_550c
-	scriptjump @npcLoop
-
-@wrongGame: ; A secret for Seasons was told in Ages, or vice versa
-	showtextlowindex <TX_550b
-	scriptjump @npcLoop
-
-@secretNotActive: ; Need to talk to the corresponding npc before you can tell the secret
-	showtextlowindex <TX_551c
-	scriptjump @npcLoop
-
-@waitForLinkToOpenChest: ; A chest exists already, waiting for Link to open it
-	showtextlowindex <TX_550a
-	scriptjump @npcLoop
-
-
-; ==============================================================================
-; INTERACID_DUNGEON_STUFF
-; ==============================================================================
-
-dropSmallKeyWhenNoEnemiesScript:
-	stopifitemflagset ; Stop if already got the key
-	checknoenemies
-	spawnitem TREASURE_SMALL_KEY, $01
-	scriptend
-
-createChestWhenNoEnemiesScript:
-	stopifitemflagset ; Stop if already opened the chest
-	setcollisionradii $04, $06
-	checknoenemies
-	playsound SND_SOLVEPUZZLE
-	createpuff
-	wait 30
-	settilehere TILEINDEX_CHEST
-	incstate
-	scriptend
-
-setRoomFlagBit7WhenNoEnemiesScript:
-	stopifroomflag80set
-	checknoenemies
-	orroomflag $80
-	scriptend
-
-
-; ==============================================================================
-; INTERACID_FARORES_MEMORY
-; ==============================================================================
-faroresMemoryScript:
-	initcollisions
---
-	enableinput
-	checkabutton
-	setdisabledobjectsto91
-	showtext TX_551b
-	jumpiftextoptioneq $00, @openSecretList
-	wait 8
-	scriptjump --
-
-@openSecretList:
-	asm15 openMenu, $0a
-	wait 8
-	scriptjump --
-
-
-; ==================================================
-; INTERACID_DOOR_CONTROLLER.
-; ==================================================
-;
-; Door opener/closer scripts.
-;
-; States:
-;   $01: does nothing except run the script
-;   $02: opens the door
-;   $03: closes the door
-;
-; Variables:
-;   angle: the type and direction of door (see interactionTypes.s)
-;   speed: for subids $14-$17, this is the number of torches that must be lit.
-;   var3d: Bitmask to check on wActiveTriggers (value of "X" parameter converted to
-;          a bitmask)
-;   var3e: Short-form position of the tile the door is on (value of "Y" parameter)
-;   var3f: Value of "X" parameter (a number from 0-7 corresponding to a switch; see
-;          var3d)
-
-
-_doorController_updateRespawnWhenLinkNotTouching:
-	checknotcollidedwithlink_ignorez
-	asm15 scriptHelp.doorController_updateLinkRespawn
-	retscript
-
-
-; Subid $00: door just opens.
-doorOpenerScript:
-	incstate
-	scriptend
-
-
-; Subids $04-$07:
-;   Door is controlled by a bit in "wActiveTriggers" (uses the bitmask in var3d).
-
-; Subid $04
-doorController_controlledByTriggers_up:
-	setcollisionradii $0a, $08
-	setangle $10
-	scriptjump _doorController_controlledByTriggers
-
-; Subid $05
-doorController_controlledByTriggers_right:
-	setcollisionradii $08, $0a
-	setangle $12
-	scriptjump _doorController_controlledByTriggers
-
-; Subid $06
-doorController_controlledByTriggers_down:
-	setcollisionradii $0a, $08
-	setangle $14
-	scriptjump _doorController_controlledByTriggers
-
-; Subid $07
-doorController_controlledByTriggers_left:
-	setcollisionradii $08, $0a
-	setangle $16
-
-_doorController_controlledByTriggers:
-	callscript _doorController_updateRespawnWhenLinkNotTouching
-@loop:
-	asm15 scriptHelp.doorController_decideActionBasedOnTriggers
-	jumptable_memoryaddress wTmpcfc0.normal.doorControllerState
-	.dw @loop
-	.dw @open
-	.dw @close
-@open:
-	playsound SND_SOLVEPUZZLE
-	setstate $02
-	scriptjump @loop
-@close:
-	setstate $03
-	scriptjump @loop
-
-
-; Subids $08-$0b:
-;   Door shuts itself until [wNumEnemies] == 0.
-
-_doorController_shutUntilEnemiesDead:
-	callscript _doorController_updateRespawnWhenLinkNotTouching
-	jumpifnoenemies @end
-	setstate $03
-	checknoenemies
-	playsound SND_SOLVEPUZZLE
-	wait 8
-	incstate
-@end:
-	scriptend
-
-_doorController_open:
-	setstate $02
-	scriptend
-
-; Subid $08
-doorController_shutUntilEnemiesDead_up:
-	setcollisionradii $0a, $08
-	setangle $10
-	jumpifnoenemies _doorController_open
-	scriptjump _doorController_shutUntilEnemiesDead
-
-; Subid $09
-doorController_shutUntilEnemiesDead_right:
-	setcollisionradii $08, $0a
-	setangle $12
-	jumpifnoenemies _doorController_open
-	scriptjump _doorController_shutUntilEnemiesDead
-
-; Subid $0a
-doorController_shutUntilEnemiesDead_down:
-	setcollisionradii $0a, $08
-	setangle $14
-	jumpifnoenemies _doorController_open
-	scriptjump _doorController_shutUntilEnemiesDead
-
-; Subid $0b
-doorController_shutUntilEnemiesDead_left:
-	setcollisionradii $08, $0a
-	setangle $16
-	jumpifnoenemies _doorController_open
-	scriptjump _doorController_shutUntilEnemiesDead
-
-_doorController_openOnMinecartCollision:
-	asm15 scriptHelp.doorController_checkMinecartCollidedWithDoor
-	jumptable_memoryaddress wTmpcfc0.normal.doorControllerState
-	.dw _doorController_openOnMinecartCollision
-	.dw @incState
-
-@incState:
-	incstate
-
-_doorController_closeDoorWhenLinkNotTouching:
-	callscript _doorController_updateRespawnWhenLinkNotTouching
-	setstate $03
-	scriptend
-
-_doorController_minecart:
-	asm15 scriptHelp.doorController_checkTileIsMinecartTrack
-	jumptable_memoryaddress wTmpcfc0.normal.doorControllerState
-	.dw _doorController_openOnMinecartCollision ; Not minecart track (door is closed)
-	.dw _doorController_closeDoorWhenLinkNotTouching ; Minecart track (door is open)
-
-
-; Subids $0c-$0f:
-;   Minecart door; opens when a minecart collides with it
-
-; Subid $0c
-doorController_minecartDoor_up:
-	setcollisionradii $10, $08
-	setangle $18
-	scriptjump _doorController_minecart
-
-; Subid $0d
-doorController_minecartDoor_right:
-	setcollisionradii $08, $0e
-	setangle $1a
-	scriptjump _doorController_minecart
-
-; Subid $0e
-doorController_minecartDoor_down:
-	setcollisionradii $0f, $08
-	setangle $1c
-	scriptjump _doorController_minecart
-
-; Subid $0f
-doorController_minecartDoor_left:
-	setcollisionradii $08, $0f
-	setangle $1e
-	scriptjump _doorController_minecart
-
-
-; Subids $10-$13:
-;   Door which automatically closes when Link walks out of that tile.
-;   When Link transitions onto a shutter door tile, the game automatically removes that
-;   tile and replaces it with an interaction of this type.
-
-_doorController_closeDoorWhenLinkNotTouchingAndFlipcfc0:
-	callscript _doorController_updateRespawnWhenLinkNotTouching
-	setstate $03
-	xorcfc0bit 0
-	scriptend
-
-; Subid $10
-doorController_closeAfterLinkEnters_up:
-	setcollisionradii $0c, $08
-	setangle $10
-	scriptjump _doorController_closeDoorWhenLinkNotTouchingAndFlipcfc0
-
-; Subid $11
-doorController_closeAfterLinkEnters_right:
-	setcollisionradii $08, $0c
-	setangle $12
-	scriptjump _doorController_closeDoorWhenLinkNotTouchingAndFlipcfc0
-
-; Subid $12
-doorController_closeAfterLinkEnters_down:
-	setcollisionradii $0c, $08
-	setangle $14
-	scriptjump _doorController_closeDoorWhenLinkNotTouchingAndFlipcfc0
-
-; Subid $13
-doorController_closeAfterLinkEnters_left:
-	setcollisionradii $08, $0c
-	setangle $16
-	scriptjump _doorController_closeDoorWhenLinkNotTouchingAndFlipcfc0
-
-
-; Subids $14-$17:
-;   Door opens when a number of torches are lit.
-
-_doorController_shutUntilTorchesLit:
-	callscript _doorController_updateRespawnWhenLinkNotTouching
-	setstate $03
-@loop:
-	asm15 scriptHelp.doorController_checkEnoughTorchesLit
-	jumptable_memoryaddress wTmpcec0
-	.dw @loop
-	.dw @torchesLit
-
-@torchesLit:
-	wait 30
-	playsound SND_SOLVEPUZZLE
-	incstate
-	scriptend
-
-; Subid $14
-doorController_openWhenTorchesLit_up_2Torches:
-	setcollisionradii $0a, $08
-	setangle $10
-	setspeed $02
-	scriptjump _doorController_shutUntilTorchesLit
-
-; Subid $15
-doorController_openWhenTorchesLit_left_2Torches:
-	setcollisionradii $08, $0a
-	setangle $16
-	setspeed $02
-	scriptjump _doorController_shutUntilTorchesLit
-
-.ifdef ROM_AGES
-; Subid $16
-doorController_openWhenTorchesLit_down_1Torch:
-	setcollisionradii $0a, $08
-	setangle $14
-	setspeed $01
-	scriptjump _doorController_shutUntilTorchesLit
-
-; Subid $17
-doorController_openWhenTorchesLit_left_1Torch:
-	setcollisionradii $08, $0a
-	setangle $16
-	setspeed $01
-	scriptjump _doorController_shutUntilTorchesLit
-.endif
-
-
-; ==============================================================================
-; INTERACID_SHOPKEEPER
-; ==============================================================================
-
-.ifdef ROM_SEASONS
-shopkeeperScript_blockLinkAccess:
-	setspeed SPEED_200
-	setdisabledobjectsto11
-	playsound SND_CLINK
-	movedown $10
-	setangleandanimation $08
-	jumptable_objectbyte Interaction.var3e
-	.dw @noMembersCard
-	.dw @membersCard
-
-@membersCard:
-	showtextlowindex <TX_0e0c
-	writeobjectbyte $7d, $01
-	scriptjump +
-
-@noMembersCard:
-	showtextlowindex <TX_0e01
-+
-	moveup $10
-	setangleandanimation $08
-	enableallobjects
-	scriptend
-.endif
-
-shopkeeperScript_lynnaShopWelcome:
-	showtextlowindex <TX_0e00
-	scriptend
-
-shopkeeperScript_advanceShopWelcome:
-	showtextlowindex <TX_0e20
-	scriptend
-
-shopkeeperScript_boughtEverything:
-	showtextlowindex <TX_0e26
-	scriptend
-
-shopkeeperScript_purchaseItem:
-	jumptable_objectbyte Interaction.var37
-	.dw @buySatchelUpgrade
-	.dw @buy3Hearts
-	.dw @buyHiddenShopGashaSeed1
-	.dw @buyL1Shield
-	.dw @buy10Bombs
-	.dw @buyTreasureMap
-	.dw @buyHiddenShopGashaSeed2
-	.dw @buySatchelUpgrade
-	.dw @buySatchelUpgrade
-	.dw @buySatchelUpgrade
-	.dw @buySatchelUpgrade
-	.dw @buySatchelUpgrade
-	.dw @buySatchelUpgrade
-	.dw @buyStrangeFlute
-	.dw @buyAdvanceShopGashaSeed
-	.dw @buyAdvanceShopGbaRing
-	.dw @buyAdvanceShopRing
-	.dw @buyL2Shield
-	.dw @buyL3Shield
-	.dw @buyNormalShopGashaSeed
-
-@buySatchelUpgrade:
-	showtextnonexitablelowindex <TX_0e1c
-	callscript _shopkeeperConfirmPurchase
-	ormemory wBoughtShopItems1, $01
-	scriptend
-
-@buy3Hearts:
-	showtextnonexitablelowindex <TX_0e02
-	callscript _shopkeeperConfirmPurchase
-	scriptend
-
-@buyL1Shield:
-	showtextnonexitablelowindex <TX_0e03
-	callscript _shopkeeperConfirmPurchase
-	scriptend
-
-@buy10Bombs:
-	showtextnonexitablelowindex <TX_0e04
-	callscript _shopkeeperConfirmPurchase
-	scriptend
-
-@buyHiddenShopGashaSeed1:
-	showtextnonexitablelowindex <TX_0e1d
-	callscript _shopkeeperConfirmPurchase
-	ormemory wBoughtShopItems1, $02
-	scriptend
-
-@buyTreasureMap:
-	showtextnonexitablelowindex <TX_0e1e
-	callscript _shopkeeperConfirmPurchase
-	ormemory wBoughtShopItems1, $08
-	showtextlowindex <TX_0e27
-	scriptend
-
-@buyHiddenShopGashaSeed2:
-	showtextnonexitablelowindex <TX_0e1d
-	callscript _shopkeeperConfirmPurchase
-	ormemory wBoughtShopItems1, $04
-	scriptend
-
-@buyStrangeFlute:
-	showtextnonexitablelowindex <TX_0e1b
-	callscript _shopkeeperConfirmPurchase
-	ormemory wRickyState, $20
-	scriptend
-
-@buyAdvanceShopGashaSeed:
-	showtextnonexitablelowindex <TX_0e1d
-	callscript _shopkeeperConfirmPurchase
-	ormemory wBoughtShopItems2, $01
-	scriptend
-
-@buyAdvanceShopGbaRing:
-	showtextnonexitablelowindex <TX_0e23
-	callscript _shopkeeperConfirmPurchase
-	ormemory wBoughtShopItems2, $02
-	scriptend
-
-@buyAdvanceShopRing:
-	showtextnonexitablelowindex <TX_0e25
-	callscript _shopkeeperConfirmPurchase
-	ormemory wBoughtShopItems2, $04
-	scriptend
-
-@buyL2Shield:
-	showtextnonexitablelowindex <TX_0e29
-	callscript _shopkeeperConfirmPurchase
-	scriptend
-
-@buyL3Shield:
-	showtextnonexitablelowindex <TX_0e2a
-	callscript _shopkeeperConfirmPurchase
-	scriptend
-
-@buyNormalShopGashaSeed:
-	showtextnonexitablelowindex <TX_0e1d
-	callscript _shopkeeperConfirmPurchase
-	ormemory wBoughtShopItems1, $20
-	scriptend
-
-_shopkeeperConfirmPurchase:
-	jumpiftextoptioneq $00, @answeredYes
-
-	; Answered no
-	writememory wcbad, $03
-	writememory wTextIsActive, $01
-	writeobjectbyte Interaction.var3a, $ff
-	scriptend
-
-@answeredYes:
-	jumpifmemoryeq wShopHaveEnoughRupees, $00, _shopkeeperAttemptToPurchaseItem
-	showtextlowindex <TX_0e06
-
-
-_shopkeeperCancelPurchase:
-	writeobjectbyte Interaction.var3a, $ff
-	enableallobjects
-	scriptend
-
-
-_shopkeeperNotEnoughRupeesToReplayChestGame:
-	callscript _shopkeeperReturnToDeskAfterChestGame
-
-_shopkeeperNotEnoughRupees:
-	showtextlowindex <TX_0e06
-	scriptjump _shopkeeperCancelPurchase
-	
-
-_shopkeeperAttemptToPurchaseItem:
-	jumptable_objectbyte Interaction.var38
-	.dw @canBuy
-	.dw _shopkeeperCantBuy
-
-@canBuy:
-	writememory wTextIsActive, $01
-	writeobjectbyte Interaction.var3a, $01
-	disablemenu
-	retscript
-
-
-; Can't buy an item because Link already has it
-_shopkeeperCantBuy:
-	writememory wcbad, $02
-	writememory wTextIsActive, $01
-	writeobjectbyte Interaction.var3a, $ff
-	scriptend
-
-
-; Advance shop shopkeeper prevents Link from stealing something
-shopkeeperSubid2Script_stopLink:
-	setspeed SPEED_200
-	playsound SND_CLINK
-	movedown $10
-	moveright $18
-	showtextlowindex <TX_0e07
-	moveleft $18
-	moveup $10
-	setangleandanimation $08
-	enableallobjects
-	scriptend
-
-; Horon Village shopkeeper prevents Link from stealing something
-shopkeeperSubid1Script_stopLink:
-	setspeed SPEED_200
-	moveup $10
-	showtextlowindex <TX_0e07
-	setdisabledobjectsto11
-	movedown $10
-	setangleandanimation $08
-	enableallobjects
-	scriptend
-
-.ifdef ROM_AGES
-; Lynna city shopkeeper prevents Link from stealing something
-shopkeeperSubid0Script_stopLink:
-	setspeed SPEED_200
-	playsound SND_CLINK
-	movedown $08
-	moveleft $18
-	showtextlowindex <TX_0e07
-	moveright $18
-	moveup $08
-	setangleandanimation $18
-	enableallobjects
-	scriptend
-.endif
-
-
-; Prompt to play the chest-choosing minigame
-shopkeeperChestGameScript:
-	jumpifc6xxset <wBoughtShopItems1, $80, @notFirstTime
-
-	showtextlowindex <TX_0e0d
-	ormemory wBoughtShopItems1, $80
-	scriptjump ++
-
-@notFirstTime:
-	showtextlowindex <TX_0e0e
-++
-	setdisabledobjectsto11
-	jumpiftextoptioneq $00, @answeredYes
-
-	; Answered no
-	showtextlowindex <TX_0e11
-	enableallobjects
-	scriptend
-
-@answeredYes:
-	jumpifmemoryeq wShootingGalleryccd5, $01, _shopkeeperNotEnoughRupees
-	asm15 scriptHelp.shopkeeper_take10Rupees
-	setspeed SPEED_200
-	setcollisionradii $06, $06
-	moveup    $08
-	moveright $19
-	moveup    $1a
-	moveright $11
-	movedown  $08
-	scriptjump ++
-
-@playAgain:
-	asm15 scriptHelp.shopkeeper_take10Rupees
-++
-	setangleandanimation $08
-	writeobjectbyte Interaction.substate, $02 ; Signal to close whichever chest he faces
-	writeobjectbyte Interaction.state,  $05
-	wait 60
-
-	setangleandanimation $18
-	wait 60
-
-	setangleandanimation $10
-	writeobjectbyte Interaction.var3c, $00 ; Initialize to round 0
-	showtextlowindex <TX_0e10
-
-	enableallobjects
-	ormemory wInShop, $80
-	writeobjectbyte Interaction.substate, $00
-	writeobjectbyte Interaction.state,  $05
-	; Script will stop here since state has been changed.
-
-
-; Opened the incorrect chest in the chest minigame.
-shopkeeperScript_openedWrongChest:
-	setdisabledobjectsto11
-	showtextlowindex <TX_0e17
-	jumpiftextoptioneq $01, @selectedNo
-
-	; Selected "Yes" to play again
-	jumpifmemoryeq wShopHaveEnoughRupees, $01, _shopkeeperNotEnoughRupeesToReplayChestGame
-	scriptjump shopkeeperChestGameScript@playAgain
-
-@selectedNo:
-	callscript _shopkeeperReturnToDeskAfterChestGame
-	enableallobjects
-	scriptend
-
-
-; Opened the correct chest in the chest minigame.
-shopkeeperScript_openedCorrectChest:
-	setdisabledobjectsto11
-	jumptable_objectbyte Interaction.var3c
-	.dw @nextRound
-	.dw @nextRound
-	.dw @nextRound
-	.dw @round3
-	.dw @round4
-	.dw @round5
-
-@nextRound:
-	showtextlowindex <TX_0e13
-	setangleandanimation $08
-	writeobjectbyte Interaction.substate, $02 ; Signal to close whichever chest he faces
-	writeobjectbyte Interaction.state,  $05
-	wait 60
-
-	setangleandanimation $18
-	wait 60
-
-	setangleandanimation $10
-	showtextlowindex <TX_0e18
-	enableallobjects
-	scriptend
-
-@round3:
-	showtextlowindex <TX_0e12
-	jumpiftextoptioneq $00, @nextRound
-
-	; Selected no; get round 3 prize
-	showtextlowindex <TX_0e14
-	writeobjectbyte Interaction.var3f, $03 ; Tier 3 ring
-	callscript _shopkeeperReturnToDeskAfterChestGame
-	enableallobjects
-	scriptend
-
-@round4:
-	showtextlowindex <TX_0e15
-	jumpiftextoptioneq $00, @nextRound
-
-	; Selected no; get round 4 prize
-	showtextlowindex <TX_0e14
-	writeobjectbyte Interaction.var3f, $02 ; Tier 2 ring
-	callscript _shopkeeperReturnToDeskAfterChestGame
-	enableallobjects
-	scriptend
-
-@round5:
-	; Get round 5 prize
-	showtextlowindex <TX_0e16
-	writeobjectbyte Interaction.var3f, $01 ; Tier 1 ring
-	callscript _shopkeeperReturnToDeskAfterChestGame
-	enableallobjects
-	scriptend
-
-
-; Linked talked to the shopkeep in the middle of the chest game.
-shopkeeperScript_talkDuringChestGame:
-	showtextlowindex <TX_0e1a
-	writeobjectbyte Interaction.substate, $01
-	writeobjectbyte Interaction.state,  $05
-	; Script stops here since state has been changed.
-
-
-_shopkeeperReturnToDeskAfterChestGame:
-	moveup   $08
-	moveleft $11
-	movedown $1a
-	moveleft $19
-	movedown $08
-	setangleandanimation $08
-	setcollisionradii $06, $14
-	retscript
-
-
-; Seasons - Shop not open until Link gets sword
-shopkeeperScript_notOpenYet:
-	showtextlowindex <TX_0e28
-	scriptend
-
-
-; ==============================================================================
-; INTERACID_BOMB_FLOWER
-; ==============================================================================
-
-; bomb flower placed on rocks blocking temple of autumn
-bombflower_unblockAutumnTemple:
-	wait 60
-	incstate
-	wait 10
-	playsound SND_FADEOUT
-	asm15 fadeoutToWhite
-	wait 20
-	playsound SND_FADEOUT
-	asm15 fadeoutToWhite
-	shakescreen 120
-	asm15 scriptHelp.createBossDeathExplosion
-	wait 20
-	playsound SND_FADEOUT
-	asm15 fadeoutToWhite
-	checkpalettefadedone
-	setdisabledobjectsto11
-	settilehere TILEINDEX_DUG_HOLE
-	settileat $32, TILEINDEX_DUG_HOLE
-	settileat $34, TILEINDEX_DUG_HOLE
-	incstate
-	wait 60
-	asm15 fadeinFromWhite
-	checkpalettefadedone
-	orroomflag $80
-	setglobalflag GLOBALFLAG_UNBLOCKED_AUTUMN_TEMPLE
-	playsound SND_SOLVEPUZZLE
-	xorcfc0bit 0
-	scriptend
-
-
-; ==============================================================================
-; INTERACID_SPINNER
-; ==============================================================================
-
-spinnerScript_initialization:
-	setcollisionradii $09, $09
-
-spinnerScript_waitForLinkAfterDelay:
-	wait 30
-
-spinnerScript_waitForLink:
-	checkcollidedwithlink_onground
-	ormemory wcc95, $80 ; Signal that Link's in a spinner?
-	asm15 dropLinkHeldItem
-	setanimationfromangle
-	incstate
-	; Script stops here since we changed to state 2 (which reloads the script)
-
-
-; ==============================================================================
-; INTERACID_ESSENCE
-; ==============================================================================
-essenceScript_essenceGetCutscene:
-	playsound MUS_ESSENCE
-	asm15 scriptHelp.essence_createEnergySwirl
-	wait 180
-	wait 180
-	playsound SND_FADEOUT
-	wait 20
-	playsound SND_FADEOUT
-	wait 20
-	playsound SND_FADEOUT
-	wait 40
-	playsound SND_FADEOUT
-	asm15 scriptHelp.essence_stopEnergySwirl
-	scriptend
-
-
-; ==============================================================================
-; INTERACID_VASU
-; ==============================================================================
-
-vasuScript:
-	setcollisionradii $12, $06
-	makeabuttonsensitive
-
-@npcLoop:
-	enableinput
-	checkabutton
-	disableinput
-	jumpifglobalflagset GLOBALFLAG_OBTAINED_RING_BOX, @alreadyGaveRingBox
-	jumpifmemoryeq wIsLinkedGame, $00, @firstTime
-	jumpifmemoryset wObtainedRingBox, $01, @linkedGameFirstTime
-	scriptjump @firstTime
-
-@linkedGameFirstTime:
-	showtextlowindex <TX_303e
-	jumpifobjectbyteeq Interaction.var36, $01, ++ ; Check TREASURE_RING_BOX
-
-	; Give ring box in linked game
-	showtextlowindex <TX_303b
-	asm15 scriptHelp.vasu_giveRingBox
-	wait 1
-++
-	setdisabledobjectsto11
-	checktext
-	scriptjump @justGaveRingBox
-
-@firstTime:
-	showtextnonexitablelowindex <TX_3000
-@giveExplanation:
-	jumpiftextoptioneq $00, @explanationDone
-	showtextnonexitablelowindex <TX_303a
-	scriptjump @giveExplanation
-@explanationDone:
-	jumpifobjectbyteeq Interaction.var36, $01, ++ ; Check TREASURE_RING_BOX
-
-	; Give ring box in unlinked game
-	showtextlowindex <TX_303b
-	asm15 scriptHelp.vasu_giveRingBox
-	wait 1
-	setdisabledobjectsto11
-	checktext
-++
-	; Give friendship ring
-	showtextlowindex <TX_303f
-	asm15 scriptHelp.vasu_giveFriendshipRing
-	wait 1
-	setdisabledobjectsto11
-	checktext
-
-	; Force Link to appraise it
-	showtextlowindex <TX_3033
-	asm15 scriptHelp.vasu_openRingMenu, $00
-	wait 10
-
-	; Open ring list
-	showtextlowindex <TX_3013
-	asm15 scriptHelp.vasu_openRingMenu, $01
-	wait 10
-	showtextlowindex <TX_3008
-
-@justGaveRingBox:
-	setglobalflag GLOBALFLAG_OBTAINED_RING_BOX
-	ormemory wObtainedRingBox, $01
-	enableinput
-	scriptjump @npcLoop
-
-
-@alreadyGaveRingBox:
-	; Check whether to give special rings
-	asm15 scriptHelp.vasu_checkEarnedSpecialRing
-	jumptable_objectbyte Interaction.var3b
-	.dw @giveSlayersRing
-	.dw @giveWealthRing
-	.dw @giveVictoryRing
-	.dw @noSpecialRing
-
-@giveSlayersRing:
-	showtextlowindex <TX_3036
-	scriptjump @giveSpecialRing
-
-@giveWealthRing:
-	showtextlowindex <TX_3037
-	scriptjump @giveSpecialRing
-
-@giveVictoryRing:
-	showtextlowindex <TX_3039
-@giveSpecialRing:
-	checktext
-	asm15 scriptHelp.vasu_giveRingInVar3a
-	scriptjump @npcLoop
-
-
-; Just show normal welcome text
-@noSpecialRing:
-	showtextnonexitablelowindex <TX_3003
-	jumpiftextoptioneq $00, @appraise
-	jumpiftextoptioneq $01, @list
-
-	; Selected "Quit"
-	enableinput
-	showtextlowindex <TX_3008
-	scriptjump @npcLoop
-
-@appraise:
-	jumpifobjectbyteeq Interaction.var37, $00, @noUnappraisedRings
-	asm15 scriptHelp.vasu_openRingMenu, $00
-	scriptjump @exitedRingMenu
-
-@list:
-	jumpifobjectbyteeq Interaction.var38, $00, @noAppraisedRings
-	asm15 scriptHelp.vasu_openRingMenu, $01
-
-@exitedRingMenu:
-	wait 10
-	jumpifglobalflagset GLOBALFLAG_APPRAISED_HUNDREDTH_RING, @giveHundredthRing
-
-	showtextlowindex <TX_3008
-	enableinput
-	scriptjump @npcLoop
-
-@giveHundredthRing:
-	showtextlowindex <TX_3038
-	checktext
-	unsetglobalflag GLOBALFLAG_APPRAISED_HUNDREDTH_RING
-	asm15 scriptHelp.vasu_giveHundredthRing
-	scriptjump @npcLoop
-
-
-@noUnappraisedRings:
-	showtextlowindex <TX_3014
-	scriptjump @npcLoop
-
-@noAppraisedRings:
-	showtextlowindex <TX_3015
-	scriptjump @npcLoop
-
-
-; Red snake before beating unlinked game
-redSnakeScript_preLinked:
-	showtextnonexitablelowindex <TX_3009
-	jumpiftextoptioneq $00, _redSnake_explain
-
-	writememory wTextIsActive, $01
-	enableinput
-	scriptend
-
-_redSnake_explain:
-	wait 30
-	showtextnonexitablelowindex <TX_300a
-	jumpiftextoptioneq $01, @explainBox
-
-@explainAppraisal:
-	showtextnonexitablelowindex <TX_300b
-	scriptjump ++
-
-@explainBox:
-	showtextnonexitablelowindex <TX_300c
-++
-	jumpiftextoptioneq $00, _redSnake_explain
-	writememory wTextIsActive, $01
-	scriptend
-
-
-; Blue snake before beating unlinked game
-blueSnakeScript_preLinked:
-	showtextnonexitablelowindex <TX_301f
-	jumpiftextoptioneq $01, blueSnakeScript_doNotRemoveCable
-	scriptjump _blueSnake_linkOrFortune
-
-; Blue snake after beating linked game
-blueSnakeScript_linked:
-	showtextnonexitablelowindex <TX_3024
-	jumpiftextoptioneq $02, blueSnakeScript_doNotRemoveCable
-
-_blueSnake_linkOrFortune:
-	setdisabledobjectsto11
-	asm15 scriptHelp.blueSnake_linkOrFortune
-	wait 1
-	scriptend
-
-blueSnakeScript_doNotRemoveCable:
-	showtextlowindex <TX_302e
-	scriptend
-blueSnakeExitScript_cableNotConnected:
-	showtextlowindex <TX_300f
-	scriptend
-blueSnakeExitScript_linkFailed:
-	showtextlowindex <TX_3031
-	scriptend
-blueSnakeExitScript_noValidFile:
-	showtextlowindex <TX_302a
-	scriptend
-
-
-; Red snake after beating linked game
-redSnakeScript_linked:
-	showtextnonexitablelowindex <TX_3018
-	jumpiftextoptioneq $02, @quit
-	jumpiftextoptioneq $00, @tellSecretToSnake
-
-	; Generate a secret
-	asm15 scriptHelp.redSnake_generateRingSecret
-@tellSecretToLink:
-	showtextnonexitablelowindex <TX_301d
-	jumpiftextoptioneq $00, @tellSecretToLink
-	scriptjump @quit
-
-@tellSecretToSnake:
-	asm15 scriptHelp.redSnake_openSecretInputMenu
-	wait 1
-	jumpifmemoryeq wTextInputResult, $00, @toldValidSecret
-
-	; Told invalid secret
-	showtextlowindex <TX_301e
-	scriptend
-
-@quit:
-	showtextlowindex <TX_3010
-	scriptend
-
-@toldValidSecret:
-	showtextlowindex <TX_3027
-	scriptend
-
-
-blueSnakeScript_successfulFortune:
-	setdisabledobjectsto11
-	showtextlowindex <TX_3023
-	asm15 scriptHelp.vasu_giveRingInVar3a
-	wait 1
-	checktext
-	enableallobjects
-	scriptend
-
-blueSnakeScript_successfulRingTransfer:
-	showtextlowindex <TX_3027
-	scriptend
-
-
-; ==============================================================================
-; INTERACID_GAME_COMPLETE_DIALOG
-; ==============================================================================
-gameCompleteDialogScript:
-	wait 30
-	showtext TX_550d
-	jumpiftextoptioneq $00, @dontSave
-
-	; Save
-	asm15 scriptHelp.gameCompleteDialog_markGameAsComplete
-	asm15 saveFile
-	wait 30
-	scriptjump ++
-
-@dontSave:
-	wait 30
-	showtext TX_550e
-	jumpiftextoptioneq $00, gameCompleteDialogScript
-++
-	writememory wTmpcfc0.genericCutscene.cfde, $01
-	scriptend
-
-
-; ==============================================================================
-; INTERACID_RING_HELP_BOOK
-; ==============================================================================
-
-ringHelpBookSubid1Reset:
-	writememory wTextIsActive, $01
-
-ringHelpBookSubid1Script:
-	checkabutton
-	showtextnonexitablelowindex <TX_3019
-	jumpiftextoptioneq $01, ringHelpBookSubid1Reset
-	showtextlowindex <TX_301a
-	scriptjump ringHelpBookSubid1Script
-
-
-ringHelpBookSubid0Reset:
-	writememory wTextIsActive, $01
-
-ringHelpBookSubid0Script:
-	checkabutton
-	showtextnonexitablelowindex <TX_3020
-	jumpiftextoptioneq $01, ringHelpBookSubid0Reset
-
-@showAgain:
-	showtextnonexitablelowindex <TX_3025
-	jumpiftextoptioneq $01, @option1
-@option0:
-	jumpiftextoptioneq $02, ringHelpBookSubid0Reset
-	showtextnonexitablelowindex <TX_303d
-	jumpiftextoptioneq $01, ringHelpBookSubid0Reset
-	scriptjump @showAgain
-@option1:
-	showtextnonexitablelowindex <TX_3026
-	jumpiftextoptioneq $01, ringHelpBookSubid0Reset
-	scriptjump @showAgain
-
+.include "scripts/common/commonScripts.s"
 
 ; ==============================================================================
 ; INTERACID_DUNGEON_SCRIPT
@@ -1199,7 +10,7 @@ ringHelpBookSubid0Script:
 
 
 ; ==============================================================================
-; INTERACID_GANRLED_KEYHOLE
+; INTERACID_GNARLED_KEYHOLE
 ; ==============================================================================
 gnarledKeyholeScript:
 	checkcfc0bit 0
@@ -1226,7 +37,7 @@ makuTreeScript_remoteCutsceneDontSetRoomFlag:
 	asm15 hideStatusBar
 	asm15 scriptHelp.seasonsFunc_15_571a, $02
 	checkpalettefadedone
-	spawninteraction INTERACID_MAKU_LEAF $00, $40, $50
+	spawninteraction INTERACID_MAKU_LEAF, $00, $40, $50
 	wait 240
 	wait 60
 	callscript script4e25
@@ -1301,7 +112,7 @@ makuTreeScript_gateHit:
 	.dw @checkLinkHitGateWithSword
 	.dw @gateHit
 @gateHit:
-	giveitem ITEMID_SWORD $03
+	giveitem ITEMID_SWORD, $03
 	disableinput
 	wait 60
 	incstate
@@ -1494,17 +305,17 @@ _seasonsSpiritsScript_imbueSeason:
 	.dw @autumn
 	.dw @winter
 @spring:
-	giveitem TREASURE_ROD_OF_SEASONS $02
+	giveitem TREASURE_ROD_OF_SEASONS, $02
 	retscript
 @summer:
-	giveitem TREASURE_ROD_OF_SEASONS $03
+	giveitem TREASURE_ROD_OF_SEASONS, $03
 	retscript
 @autumn:
 	writememory wTextboxFlags, TEXTBOXFLAG_ALTPALETTE2
-	giveitem TREASURE_ROD_OF_SEASONS $04
+	giveitem TREASURE_ROD_OF_SEASONS, $04
 	retscript
 @winter:
-	giveitem TREASURE_ROD_OF_SEASONS $05
+	giveitem TREASURE_ROD_OF_SEASONS, $05
 	retscript
 
 
@@ -1520,7 +331,7 @@ mayorsScript:
 	jumpifroomflagset $20, +
 	showtext TX_310b
 	wait 20
-	giveitem TREASURE_GASHA_SEED $04
+	giveitem TREASURE_GASHA_SEED, $04
 	scriptjump ++
 +
 ; unused?
@@ -1562,17 +373,17 @@ mayorsHouseLadyScript:
 	jumpifitemobtained TREASURE_RING_BOX, @upgradeRingbox
 	showtext TX_3109
 	wait 20
-	giveitem TREASURE_RING_BOX $03
+	giveitem TREASURE_RING_BOX, $03
 	scriptjump @provideReturnSecret
 @upgradeRingbox:
 	showtext TX_3108
 	wait 20
 	asm15 scriptHelp.getNextRingboxLevel
 	jumpifmemoryeq wTextNumberSubstitution, $05, @upgradeTo5
-	giveitem TREASURE_RING_BOX $01
+	giveitem TREASURE_RING_BOX, $01
 	scriptjump @provideReturnSecret
 @upgradeTo5:
-	giveitem TREASURE_RING_BOX $02
+	giveitem TREASURE_RING_BOX, $02
 @provideReturnSecret:
 	wait 20
 @doneSecret:
@@ -1612,7 +423,7 @@ mrsRuulScript:
 @givingDoll:
 	wait 30
 	showtext TX_0b1c
-	giveitem TREASURE_TRADEITEM $03
+	giveitem TREASURE_TRADEITEM, $03
 	orroomflag $40
 	enableinput
 @gaveDoll:
@@ -1641,7 +452,7 @@ mrWriteScript:
 	disableinput
 	wait 40
 	showtext TX_0b01
-	giveitem TREASURE_TRADEITEM $00
+	giveitem TREASURE_TRADEITEM, $00
 	orroomflag $40
 	enableinput
 @alreadyLitTorch:
@@ -1700,7 +511,7 @@ malonScript:
 @givingCuccodex:
 	wait 30
 	showtext TX_0b14
-	giveitem TREASURE_TRADEITEM $01
+	giveitem TREASURE_TRADEITEM, $01
 	orroomflag $40
 	enableinput
 @gaveCuccodex:
@@ -1713,7 +524,7 @@ malonScript:
 	showtext TX_0b15
 	scriptjump @talonNotReturned
 @talonReturned:
-	spawninteraction INTERACID_TALON $01, $68, $78
+	spawninteraction INTERACID_TALON, $01, $68, $78
 -
 	checkabutton
 	showtext TX_0b17
@@ -1958,7 +769,7 @@ tickTockScript:
 @givingEngineGrease:
 	wait 30
 	showtext TX_0b45
-	giveitem TREASURE_TRADEITEM $0a
+	giveitem TREASURE_TRADEITEM, $0a
 	orroomflag $40
 	enableinput
 @gaveEngineGrease:
@@ -2001,7 +812,7 @@ mittensOwnerScript:
 @givingFish:
 	wait 30
 	writememory $cfde, $00
-	spawninteraction INTERACID_TRADE_ITEM $06, $44, $68
+	spawninteraction INTERACID_TRADE_ITEM, $06, $44, $68
 	showtextlowindex <TX_0b33
 	ormemory $cceb, $01
 	showtextlowindex <TX_0b34
@@ -2009,7 +820,7 @@ mittensOwnerScript:
 	setanimation $02
 	writememory $cfde, $40
 	showtextlowindex <TX_0b35
-	giveitem TREASURE_TRADEITEM $07
+	giveitem TREASURE_TRADEITEM, $07
 	orroomflag $40
 	enableinput
 @mittensCameDown:
@@ -3667,10 +2478,10 @@ goronScript_upgradeRingBox:
 	showtextlowindex <TX_370a
 	asm15 scriptHelp.getNextRingboxLevel
 	jumpifmemoryeq $cba8, $05, @upgradeTo5
-	giveitem TREASURE_RING_BOX $01
+	giveitem TREASURE_RING_BOX, $01
 	scriptjump @finishedGivingRingBox
 @upgradeTo5:
-	giveitem TREASURE_RING_BOX $02
+	giveitem TREASURE_RING_BOX, $02
 @finishedGivingRingBox:
 	orroomflag $40
 	enableallobjects
@@ -4026,7 +2837,7 @@ unluckySailorScript:
 @have777OreChunks:
 	showtextlowindex <TX_3a32
 	asm15 scriptHelp.unluckySailor_increaseBombCapacityAndCount
-	giveitem TREASURE_BOMB_UPGRADE $00
+	giveitem TREASURE_BOMB_UPGRADE, $00
 	wait 60
 	setglobalflag GLOBALFLAG_DONE_PIRATE_SECRET
 --
@@ -4212,7 +3023,7 @@ syrupScript_notTradedMushroomYet:
 @tradingMushroom:
 	wait 30
 	disableinput
-	giveitem TREASURE_TRADEITEM $09
+	giveitem TREASURE_TRADEITEM, $09
 	wait 30
 	showtext TX_0b40
 	orroomflag $40
@@ -4428,7 +3239,7 @@ zeldaScript_healLinkIfNeeded:
 caveTalonScript:
 	writememory $cfde, $00
 	writememory $cfdf, $00
-	spawninteraction INTERACID_TRADE_ITEM $08, $68, $48
+	spawninteraction INTERACID_TRADE_ITEM, $08, $68, $48
 	initcollisions
 -
 	checkabutton
@@ -4662,7 +3473,7 @@ biggoronScript:
 	asm15 scriptHelp.biggoron_loadAnimationData, $0d
 	showtextlowindex <TX_0b28
 	disableinput
-	giveitem TREASURE_TRADEITEM $05
+	giveitem TREASURE_TRADEITEM, $05
 	orroomflag $40
 @coldHealed:
 	disableinput
@@ -4902,8 +3713,8 @@ ingoScript_tradingVase:
 	wait 30
 	showtextlowindex <TX_0b2d
 	disableinput
-	giveitem TREASURE_TRADEITEM $06
-	spawninteraction INTERACID_MISC_STATIC_OBJECTS $09, $08, $58
+	giveitem TREASURE_TRADEITEM, $06
+	spawninteraction INTERACID_MISC_STATIC_OBJECTS, $09, $08, $58
 	orroomflag $40
 	enableinput
 @tradedVase:
@@ -4993,7 +3804,7 @@ guruGuruScript:
 	cplinkx $48
 	addobjectbyte $48, $06
 	setanimationfromobjectbyte $48
-	giveitem TREASURE_TRADEITEM $0b
+	giveitem TREASURE_TRADEITEM, $0b
 	orroomflag $40
 	writeobjectbyte $79, $01
 	setcounter1 $32
@@ -5029,12 +3840,12 @@ lostWoodsSwordScript:
 	.dw @giveNobleSword
 	.dw @giveMasterSword
 @giveNobleSword:
-	giveitem TREASURE_SWORD $01
-	giveitem TREASURE_SWORD $04
+	giveitem TREASURE_SWORD, $01
+	giveitem TREASURE_SWORD, $04
 	retscript
 @giveMasterSword:
-	giveitem TREASURE_SWORD $02
-	giveitem TREASURE_SWORD $05
+	giveitem TREASURE_SWORD, $02
+	giveitem TREASURE_SWORD, $05
 	retscript
 
 
@@ -5150,7 +3961,7 @@ blainoFightDoneScript:
 @fightWon:
 	jumpifroomflagset $40, @give30Rupees
 	showtextlowindex <TX_2306
-	giveitem TREASURE_RICKY_GLOVES $00
+	giveitem TREASURE_RICKY_GLOVES, $00
 	orroomflag $40
 	enableinput
 	scriptjump @finishedTalking
@@ -5366,7 +4177,7 @@ d8ArmosScript_pattern4:
 
 d8ArmosScript_giveKey:
 	setcoords $58, $b8
-	spawnitem TREASURE_SMALL_KEY $01
+	spawnitem TREASURE_SMALL_KEY, $01
 	scriptend
 
 
@@ -5400,19 +4211,19 @@ danceLeaderScript_promptForTutorial:
 	loadscript scripts2.danceLeaderScript_danceTutorial
 
 danceLeaderScript_boomerang:
-	giveitem TREASURE_BOOMERANG $00
+	giveitem TREASURE_BOOMERANG, $00
 	scriptjump danceLeaderScript_itemGiven
 
 danceLeaderScript_giveFlute:
-	giveitem TREASURE_FLUTE $00
+	giveitem TREASURE_FLUTE, $00
 	scriptjump danceLeaderScript_itemGiven
 
 danceLeaderScript_gashaSeed:
-	giveitem TREASURE_GASHA_SEED $00
+	giveitem TREASURE_GASHA_SEED, $00
 	scriptjump danceLeaderScript_itemGiven
 
 danceLeaderScript_giveOreChunks:
-	giveitem TREASURE_ORE_CHUNKS $00
+	giveitem TREASURE_ORE_CHUNKS, $00
 
 danceLeaderScript_itemGiven:
 	wait 30
@@ -5503,7 +4314,7 @@ floodgateKeyholeScript_keyEntered:
 	wait 60
 	writememory $d008, $01
 	orroomflag $80
-	spawninteraction INTERACID_S_MISCELLANEOUS_1 $14, $00, $00
+	spawninteraction INTERACID_S_MISCELLANEOUS_1, $14, $00, $00
 	incstate
 	scriptend
 
@@ -5906,7 +4717,7 @@ strangeBrother1Script_finishedScreen:
 	xorcfc0bit 0
 	movedown $50
 	resetmusic
-	spawninteraction INTERACID_S_MISCELLANEOUS_1 $16, $48, $28
+	spawninteraction INTERACID_S_MISCELLANEOUS_1, $16, $48, $28
 	asm15 scriptHelp.strangeBrothersFunc_15_5dc4
 	enableinput
 	scriptend
@@ -6058,7 +4869,7 @@ _hollyScript_shovelNotYetGiven:
 	checkabutton
 	showtext TX_2c00
 	disableinput
-	giveitem TREASURE_SHOVEL $00
+	giveitem TREASURE_SHOVEL, $00
 	enablemenu
 _hollyScript_shovelGiven:
 	enableallobjects
@@ -6572,9 +5383,9 @@ moblinBulliesScript_mooshBully1:
 	scriptend
 	
 _moblinBulliesScript_spawnMoblins:
-	spawninteraction INTERACID_ANIMAL_MOBLIN_BULLIES $03, $88, $30
-	spawninteraction INTERACID_ANIMAL_MOBLIN_BULLIES $04, $88, $50
-	spawninteraction INTERACID_ANIMAL_MOBLIN_BULLIES $05, $18, $b0
+	spawninteraction INTERACID_ANIMAL_MOBLIN_BULLIES, $03, $88, $30
+	spawninteraction INTERACID_ANIMAL_MOBLIN_BULLIES, $04, $88, $50
+	spawninteraction INTERACID_ANIMAL_MOBLIN_BULLIES, $05, $18, $b0
 	retscript
 
 moblinBulliesScript_mooshBully2:
@@ -6645,7 +5456,7 @@ _moblinBulliesScript_spawnMoblin:
 	jumpifmemoryset $d13e, $80, +
 	scriptjump _moblinBulliesScript_spawnMoblin
 +
-	spawnenemyhere ENEMYID_MASKED_MOBLIN $00
+	spawnenemyhere ENEMYID_MASKED_MOBLIN, $00
 	scriptend
 
 moblinBulliesScript_maskedMoblin2MovingUp:
@@ -7074,7 +5885,7 @@ script71c8:
 	setcounter1 $61
 	setcounter1 $61
 	playsound SND_GETSEED
-	giveitem TREASURE_MAKU_SEED $00
+	giveitem TREASURE_MAKU_SEED, $00
 	wait 40
 	asm15 scriptHelp.makuTree_storeIntoVar37SpawnBubbleIf0, $01
 	asm15 scriptHelp.makuTree_showTextAndSetMapText, <TX_1718 ; you can defeat Onox
@@ -7241,7 +6052,7 @@ masterDiverScript_text1:
 @seenIntroText:
 	showtext TX_3401
 	wait 20
-	giveitem TREASURE_FLIPPERS $00
+	giveitem TREASURE_FLIPPERS, $00
 	wait 20
 @gotFlippers:
 	showtext TX_3404
@@ -7308,14 +6119,14 @@ jewelHelperScript_underwaterPyramidJewel:
 	.dw @unlinked
 	.dw @linked
 @unlinked:
-	spawnitem TREASURE_PYRAMID_JEWEL $00
+	spawnitem TREASURE_PYRAMID_JEWEL, $00
 -
 	jumpifitemobtained TREASURE_PYRAMID_JEWEL, @end
 	scriptjump -
 @end:
 	scriptend
 @linked:
-	spawnitem TREASURE_RUPEES RUPEEVAL_100
+	spawnitem TREASURE_RUPEES, RUPEEVAL_100
 	scriptend
 	
 jewelHelperScript_createBridgeToXJewelMoldorm:
@@ -7725,7 +6536,7 @@ subrosianSmithyScript:
 	wait 30
 	showtextlowindex <TX_3b07
 	callscript _smithyScript_smithItem
-	giveitem TREASURE_PIRATES_BELL $02
+	giveitem TREASURE_PIRATES_BELL, $02
 	scriptjump _smithyScript_smithingDone
 @please:
 	wait 30
@@ -8067,7 +6878,7 @@ shipPirationScript_piratianComingDownHandler:
 	setstate $03
 	setdisabledobjectsto11
 	wait 240
-	spawninteraction INTERACID_SHIP_PIRATIAN $02, $98, $78
+	spawninteraction INTERACID_SHIP_PIRATIAN, $02, $98, $78
 	checkcfc0bit 0
 	xorcfc0bit 0
 	wait 240
@@ -8148,7 +6959,7 @@ shipPiratianScript_dizzyPirate1Spawner:
 	setdisabledobjectsto11
 	wait 180
 	setmusic MUS_PIRATES
-	spawninteraction INTERACID_SHIP_PIRATIAN $0a, $98, $78
+	spawninteraction INTERACID_SHIP_PIRATIAN, $0a, $98, $78
 	checkcfc0bit 7
 	wait 30
 	showtextlowindex <TX_4e11
@@ -8181,7 +6992,7 @@ shipPiratianScript_1stDizzyPirateDescending:
 	writememory $d008, $00
 	wait 30
 	showtextlowindex <TX_4e0b
-	spawninteraction INTERACID_SHIP_PIRATIAN $0b, $98, $78
+	spawninteraction INTERACID_SHIP_PIRATIAN, $0b, $98, $78
 	checkcfc0bit 7
 	setzspeed -$01c0
 	scriptjump _pirateShipLoop
@@ -8215,7 +7026,7 @@ shipPirationScript_2ndDizzyPirateDescending:
 	writememory $d008, $00
 	wait 30
 	showtextlowindex <TX_4e0d
-	spawninteraction INTERACID_SHIP_PIRATIAN $0c, $98, $78
+	spawninteraction INTERACID_SHIP_PIRATIAN, $0c, $98, $78
 	checkcfc0bit 7
 	setzspeed -$01c0
 	scriptjump _pirateShipLoop
@@ -8240,7 +7051,7 @@ shipPirationScript_3rdDizzyPirateDescending:
 	wait 30
 	writememory $d008, $03
 	showtextlowindex <TX_4e0f
-	spawninteraction INTERACID_SHIP_PIRATIAN_CAPTAIN $01, $98, $78
+	spawninteraction INTERACID_SHIP_PIRATIAN_CAPTAIN, $01, $98, $78
 	checkcfc0bit 7
 	setzspeed -$01c0
 	scriptjump _pirateShipLoop
@@ -8353,7 +7164,7 @@ shipPiratianCaptainScript_arrivingInWestCoast:
 	wait 60
 	showtextlowindex <TX_4e12
 	wait 60
-	spawninteraction INTERACID_SHIP_PIRATIAN_CAPTAIN $03, $68, $68
+	spawninteraction INTERACID_SHIP_PIRATIAN_CAPTAIN, $03, $68, $68
 	orroomflag $40
 	scriptend
 @arrived:
@@ -8768,12 +7579,12 @@ troyScript_giveReward:
 	.dw @nobleSword
 	.dw @masterSword
 @nobleSword:
-	giveitem TREASURE_SWORD $01
-	giveitem TREASURE_SWORD $04
+	giveitem TREASURE_SWORD, $01
+	giveitem TREASURE_SWORD, $04
 	retscript
 @masterSword:
-	giveitem TREASURE_SWORD $02
-	giveitem TREASURE_SWORD $05
+	giveitem TREASURE_SWORD, $02
+	giveitem TREASURE_SWORD, $05
 	retscript
 	
 	
@@ -8914,9 +7725,9 @@ linkedGhiniScript_startRound:
 	playsound SND_GETSEED
 	showtextlowindex <TX_4c1a
 	wait 30
-	giveitem TREASURE_HEART_CONTAINER $02
+	giveitem TREASURE_HEART_CONTAINER, $02
 	wait 60
-	spawninteraction INTERACID_PUFF $00, $68, $18
+	spawninteraction INTERACID_PUFF, $00, $68, $18
 	wait 4
 	settileat $61, TILEINDEX_INDOOR_UPSTAIRCASE
 	setcounter1 $2d
@@ -8939,7 +7750,7 @@ linkedGhiniScript_startRound:
 	playsound SND_ERROR
 	showtextlowindex <TX_4c18
 	jumpiftextoptioneq $00, linkedGhiniScript_begunSecret@startGame
-	spawninteraction INTERACID_PUFF $00, $68, $18
+	spawninteraction INTERACID_PUFF, $00, $68, $18
 	wait 4
 	settileat $61, TILEINDEX_INDOOR_UPSTAIRCASE
 	wait 15
@@ -9077,7 +7888,7 @@ goldenCaveSubrosianScript_7d87:
 	checkpalettefadedone
 	showtextlowindex <TX_4c2b
 	wait 20
-	giveitem TREASURE_BOMBCHUS $00
+	giveitem TREASURE_BOMBCHUS, $00
 	wait 20
 --
 	generatesecret SUBROSIAN_RETURN_SECRET
@@ -9158,7 +7969,7 @@ masterDiverScript_begunSecret:
 	jumpiftextoptioneq $00, @startingChallenge
 	scriptjump -
 @startingChallenge:
-	spawninteraction INTERACID_PUFF $00, $58, $88
+	spawninteraction INTERACID_PUFF, $00, $58, $88
 	wait 4
 	settileat $58, TILEINDEX_INDOOR_DOWNSTAIRCASE
 	setcounter1 $2d
@@ -9236,7 +8047,7 @@ masterDiverScript_secretDone:
 	
 	
 masterDiverScript_spawnFakeStarOre:
-	spawnitem TREASURE_60 $01
+	spawnitem TREASURE_60, $01
 	scriptend
 	
 	
@@ -9332,7 +8143,7 @@ _dekuScrubScript_finishSecret:
 	jumpifobjectbyteeq Interaction.var38, $00, dekuScrubScript_gaveSecret
 	showtextlowindex <TX_4c44
 	wait 20
-	giveitem TREASURE_SATCHEL_UPGRADE $00
+	giveitem TREASURE_SATCHEL_UPGRADE, $00
 	asm15 refillSeedSatchel
 	wait 20
 	showtextlowindex <TX_4c45
