@@ -321,9 +321,12 @@ specialObjectLoadAnimationFrameToBuffer:
 .ends
 
 
-; Some blank space here ($6e1f-$6eff)
+.ifdef BUILD_VANILLA
 
+; Some blank space here ($6e1f-$6eff)
 .ORGA $6f00
+
+.endif
 
 	.include "object_code/common/interactionCode/group8.s"
 	.include "code/ages/cutscenes/bank10.s"
