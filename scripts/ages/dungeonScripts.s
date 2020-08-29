@@ -83,7 +83,7 @@ _enableLinkAndMenu:
 
 ; Spawn a heart container when the boss is killed.
 dungeonScript_bossDeath:
-	jumpifroomflagset $80 ++
+	jumpifroomflagset $80, ++
 	checknoenemies
 	orroomflag $80
 ++

@@ -5,7 +5,7 @@ dungeonScript_minibossDeath:
 	checknoenemies
 	orroomflag $80
 	wait 20
-	spawninteraction INTERACID_MINIBOSS_PORTAL $00, $00, $00
+	spawninteraction INTERACID_MINIBOSS_PORTAL, $00, $00, $00
 
 _enableLinkAndMenu:
 	writememory wDisableLinkCollisionsAndMenu, $00
@@ -35,7 +35,7 @@ dungeonScript_bossDeath:
 _spawnHeartContainerCenterOfRoom:
 	stopifitemflagset
 	setcoords $58, $78
-	spawnitem TREASURE_HEART_CONTAINER $00
+	spawnitem TREASURE_HEART_CONTAINER, $00
 	writememory wDisableLinkCollisionsAndMenu, $00
 	scriptend
 
@@ -65,7 +65,7 @@ snakesRemainsScript_bossDeath:
 	setcoords $88, $78
 
 _spawnHeartContainerHere:
-	spawnitem TREASURE_HEART_CONTAINER $00
+	spawnitem TREASURE_HEART_CONTAINER, $00
 	writememory wDisableLinkCollisionsAndMenu, $00
 	scriptend
 
@@ -90,7 +90,7 @@ poisonMothsLairScript_minibossDeath:
 	wait 20
 	createpuff
 	settilehere TILEINDEX_INDOOR_UPSTAIRCASE
-	spawninteraction INTERACID_MINIBOSS_PORTAL $00, $00, $00
+	spawninteraction INTERACID_MINIBOSS_PORTAL, $00, $00, $00
 	scriptjump _enableLinkAndMenu
 
 
@@ -116,7 +116,7 @@ dancingDragonScript_spawnStairsToB1:
 	stopifroomflag80set
 	checknoenemies
 	orroomflag $80
-	spawninteraction INTERACID_PUFF $00, $38, $98
+	spawninteraction INTERACID_PUFF, $00, $38, $98
 	wait 8
 	settilehere TILEINDEX_SOUTH_STAIRS
 	playsound SND_SOLVEPUZZLE
@@ -313,7 +313,7 @@ explorersCryptScript_keyDroppedFromAbove:
 	jumpifroomflagset $80, @keyDroppedFromAbove
 	scriptend
 @keyDroppedFromAbove:
-	spawnitem TREASURE_SMALL_KEY $01
+	spawnitem TREASURE_SMALL_KEY, $01
 	scriptend
 
 

@@ -37,7 +37,7 @@ makuTreeScript_remoteCutsceneDontSetRoomFlag:
 	asm15 hideStatusBar
 	asm15 scriptHelp.seasonsFunc_15_571a, $02
 	checkpalettefadedone
-	spawninteraction INTERACID_MAKU_LEAF $00, $40, $50
+	spawninteraction INTERACID_MAKU_LEAF, $00, $40, $50
 	wait 240
 	wait 60
 	callscript script4e25
@@ -112,7 +112,7 @@ makuTreeScript_gateHit:
 	.dw @checkLinkHitGateWithSword
 	.dw @gateHit
 @gateHit:
-	giveitem ITEMID_SWORD $03
+	giveitem ITEMID_SWORD, $03
 	disableinput
 	wait 60
 	incstate
@@ -305,17 +305,17 @@ _seasonsSpiritsScript_imbueSeason:
 	.dw @autumn
 	.dw @winter
 @spring:
-	giveitem TREASURE_ROD_OF_SEASONS $02
+	giveitem TREASURE_ROD_OF_SEASONS, $02
 	retscript
 @summer:
-	giveitem TREASURE_ROD_OF_SEASONS $03
+	giveitem TREASURE_ROD_OF_SEASONS, $03
 	retscript
 @autumn:
 	writememory wTextboxFlags, TEXTBOXFLAG_ALTPALETTE2
-	giveitem TREASURE_ROD_OF_SEASONS $04
+	giveitem TREASURE_ROD_OF_SEASONS, $04
 	retscript
 @winter:
-	giveitem TREASURE_ROD_OF_SEASONS $05
+	giveitem TREASURE_ROD_OF_SEASONS, $05
 	retscript
 
 
@@ -331,7 +331,7 @@ mayorsScript:
 	jumpifroomflagset $20, +
 	showtext TX_310b
 	wait 20
-	giveitem TREASURE_GASHA_SEED $04
+	giveitem TREASURE_GASHA_SEED, $04
 	scriptjump ++
 +
 ; unused?
@@ -373,17 +373,17 @@ mayorsHouseLadyScript:
 	jumpifitemobtained TREASURE_RING_BOX, @upgradeRingbox
 	showtext TX_3109
 	wait 20
-	giveitem TREASURE_RING_BOX $03
+	giveitem TREASURE_RING_BOX, $03
 	scriptjump @provideReturnSecret
 @upgradeRingbox:
 	showtext TX_3108
 	wait 20
 	asm15 scriptHelp.getNextRingboxLevel
 	jumpifmemoryeq wTextNumberSubstitution, $05, @upgradeTo5
-	giveitem TREASURE_RING_BOX $01
+	giveitem TREASURE_RING_BOX, $01
 	scriptjump @provideReturnSecret
 @upgradeTo5:
-	giveitem TREASURE_RING_BOX $02
+	giveitem TREASURE_RING_BOX, $02
 @provideReturnSecret:
 	wait 20
 @doneSecret:
@@ -423,7 +423,7 @@ mrsRuulScript:
 @givingDoll:
 	wait 30
 	showtext TX_0b1c
-	giveitem TREASURE_TRADEITEM $03
+	giveitem TREASURE_TRADEITEM, $03
 	orroomflag $40
 	enableinput
 @gaveDoll:
@@ -452,7 +452,7 @@ mrWriteScript:
 	disableinput
 	wait 40
 	showtext TX_0b01
-	giveitem TREASURE_TRADEITEM $00
+	giveitem TREASURE_TRADEITEM, $00
 	orroomflag $40
 	enableinput
 @alreadyLitTorch:
@@ -511,7 +511,7 @@ malonScript:
 @givingCuccodex:
 	wait 30
 	showtext TX_0b14
-	giveitem TREASURE_TRADEITEM $01
+	giveitem TREASURE_TRADEITEM, $01
 	orroomflag $40
 	enableinput
 @gaveCuccodex:
@@ -524,7 +524,7 @@ malonScript:
 	showtext TX_0b15
 	scriptjump @talonNotReturned
 @talonReturned:
-	spawninteraction INTERACID_TALON $01, $68, $78
+	spawninteraction INTERACID_TALON, $01, $68, $78
 -
 	checkabutton
 	showtext TX_0b17
@@ -769,7 +769,7 @@ tickTockScript:
 @givingEngineGrease:
 	wait 30
 	showtext TX_0b45
-	giveitem TREASURE_TRADEITEM $0a
+	giveitem TREASURE_TRADEITEM, $0a
 	orroomflag $40
 	enableinput
 @gaveEngineGrease:
@@ -812,7 +812,7 @@ mittensOwnerScript:
 @givingFish:
 	wait 30
 	writememory $cfde, $00
-	spawninteraction INTERACID_TRADE_ITEM $06, $44, $68
+	spawninteraction INTERACID_TRADE_ITEM, $06, $44, $68
 	showtextlowindex <TX_0b33
 	ormemory $cceb, $01
 	showtextlowindex <TX_0b34
@@ -820,7 +820,7 @@ mittensOwnerScript:
 	setanimation $02
 	writememory $cfde, $40
 	showtextlowindex <TX_0b35
-	giveitem TREASURE_TRADEITEM $07
+	giveitem TREASURE_TRADEITEM, $07
 	orroomflag $40
 	enableinput
 @mittensCameDown:
@@ -2478,10 +2478,10 @@ goronScript_upgradeRingBox:
 	showtextlowindex <TX_370a
 	asm15 scriptHelp.getNextRingboxLevel
 	jumpifmemoryeq $cba8, $05, @upgradeTo5
-	giveitem TREASURE_RING_BOX $01
+	giveitem TREASURE_RING_BOX, $01
 	scriptjump @finishedGivingRingBox
 @upgradeTo5:
-	giveitem TREASURE_RING_BOX $02
+	giveitem TREASURE_RING_BOX, $02
 @finishedGivingRingBox:
 	orroomflag $40
 	enableallobjects
@@ -2837,7 +2837,7 @@ unluckySailorScript:
 @have777OreChunks:
 	showtextlowindex <TX_3a32
 	asm15 scriptHelp.unluckySailor_increaseBombCapacityAndCount
-	giveitem TREASURE_BOMB_UPGRADE $00
+	giveitem TREASURE_BOMB_UPGRADE, $00
 	wait 60
 	setglobalflag GLOBALFLAG_DONE_PIRATE_SECRET
 --
@@ -3023,7 +3023,7 @@ syrupScript_notTradedMushroomYet:
 @tradingMushroom:
 	wait 30
 	disableinput
-	giveitem TREASURE_TRADEITEM $09
+	giveitem TREASURE_TRADEITEM, $09
 	wait 30
 	showtext TX_0b40
 	orroomflag $40
@@ -3239,7 +3239,7 @@ zeldaScript_healLinkIfNeeded:
 caveTalonScript:
 	writememory $cfde, $00
 	writememory $cfdf, $00
-	spawninteraction INTERACID_TRADE_ITEM $08, $68, $48
+	spawninteraction INTERACID_TRADE_ITEM, $08, $68, $48
 	initcollisions
 -
 	checkabutton
@@ -3473,7 +3473,7 @@ biggoronScript:
 	asm15 scriptHelp.biggoron_loadAnimationData, $0d
 	showtextlowindex <TX_0b28
 	disableinput
-	giveitem TREASURE_TRADEITEM $05
+	giveitem TREASURE_TRADEITEM, $05
 	orroomflag $40
 @coldHealed:
 	disableinput
@@ -3713,8 +3713,8 @@ ingoScript_tradingVase:
 	wait 30
 	showtextlowindex <TX_0b2d
 	disableinput
-	giveitem TREASURE_TRADEITEM $06
-	spawninteraction INTERACID_MISC_STATIC_OBJECTS $09, $08, $58
+	giveitem TREASURE_TRADEITEM, $06
+	spawninteraction INTERACID_MISC_STATIC_OBJECTS, $09, $08, $58
 	orroomflag $40
 	enableinput
 @tradedVase:
@@ -3804,7 +3804,7 @@ guruGuruScript:
 	cplinkx $48
 	addobjectbyte $48, $06
 	setanimationfromobjectbyte $48
-	giveitem TREASURE_TRADEITEM $0b
+	giveitem TREASURE_TRADEITEM, $0b
 	orroomflag $40
 	writeobjectbyte $79, $01
 	setcounter1 $32
@@ -3840,12 +3840,12 @@ lostWoodsSwordScript:
 	.dw @giveNobleSword
 	.dw @giveMasterSword
 @giveNobleSword:
-	giveitem TREASURE_SWORD $01
-	giveitem TREASURE_SWORD $04
+	giveitem TREASURE_SWORD, $01
+	giveitem TREASURE_SWORD, $04
 	retscript
 @giveMasterSword:
-	giveitem TREASURE_SWORD $02
-	giveitem TREASURE_SWORD $05
+	giveitem TREASURE_SWORD, $02
+	giveitem TREASURE_SWORD, $05
 	retscript
 
 
@@ -3961,7 +3961,7 @@ blainoFightDoneScript:
 @fightWon:
 	jumpifroomflagset $40, @give30Rupees
 	showtextlowindex <TX_2306
-	giveitem TREASURE_RICKY_GLOVES $00
+	giveitem TREASURE_RICKY_GLOVES, $00
 	orroomflag $40
 	enableinput
 	scriptjump @finishedTalking
@@ -4177,7 +4177,7 @@ d8ArmosScript_pattern4:
 
 d8ArmosScript_giveKey:
 	setcoords $58, $b8
-	spawnitem TREASURE_SMALL_KEY $01
+	spawnitem TREASURE_SMALL_KEY, $01
 	scriptend
 
 
@@ -4211,19 +4211,19 @@ danceLeaderScript_promptForTutorial:
 	loadscript scripts2.danceLeaderScript_danceTutorial
 
 danceLeaderScript_boomerang:
-	giveitem TREASURE_BOOMERANG $00
+	giveitem TREASURE_BOOMERANG, $00
 	scriptjump danceLeaderScript_itemGiven
 
 danceLeaderScript_giveFlute:
-	giveitem TREASURE_FLUTE $00
+	giveitem TREASURE_FLUTE, $00
 	scriptjump danceLeaderScript_itemGiven
 
 danceLeaderScript_gashaSeed:
-	giveitem TREASURE_GASHA_SEED $00
+	giveitem TREASURE_GASHA_SEED, $00
 	scriptjump danceLeaderScript_itemGiven
 
 danceLeaderScript_giveOreChunks:
-	giveitem TREASURE_ORE_CHUNKS $00
+	giveitem TREASURE_ORE_CHUNKS, $00
 
 danceLeaderScript_itemGiven:
 	wait 30
@@ -4314,7 +4314,7 @@ floodgateKeyholeScript_keyEntered:
 	wait 60
 	writememory $d008, $01
 	orroomflag $80
-	spawninteraction INTERACID_S_MISCELLANEOUS_1 $14, $00, $00
+	spawninteraction INTERACID_S_MISCELLANEOUS_1, $14, $00, $00
 	incstate
 	scriptend
 
@@ -4717,7 +4717,7 @@ strangeBrother1Script_finishedScreen:
 	xorcfc0bit 0
 	movedown $50
 	resetmusic
-	spawninteraction INTERACID_S_MISCELLANEOUS_1 $16, $48, $28
+	spawninteraction INTERACID_S_MISCELLANEOUS_1, $16, $48, $28
 	asm15 scriptHelp.strangeBrothersFunc_15_5dc4
 	enableinput
 	scriptend
@@ -4869,7 +4869,7 @@ _hollyScript_shovelNotYetGiven:
 	checkabutton
 	showtext TX_2c00
 	disableinput
-	giveitem TREASURE_SHOVEL $00
+	giveitem TREASURE_SHOVEL, $00
 	enablemenu
 _hollyScript_shovelGiven:
 	enableallobjects
@@ -5383,9 +5383,9 @@ moblinBulliesScript_mooshBully1:
 	scriptend
 	
 _moblinBulliesScript_spawnMoblins:
-	spawninteraction INTERACID_ANIMAL_MOBLIN_BULLIES $03, $88, $30
-	spawninteraction INTERACID_ANIMAL_MOBLIN_BULLIES $04, $88, $50
-	spawninteraction INTERACID_ANIMAL_MOBLIN_BULLIES $05, $18, $b0
+	spawninteraction INTERACID_ANIMAL_MOBLIN_BULLIES, $03, $88, $30
+	spawninteraction INTERACID_ANIMAL_MOBLIN_BULLIES, $04, $88, $50
+	spawninteraction INTERACID_ANIMAL_MOBLIN_BULLIES, $05, $18, $b0
 	retscript
 
 moblinBulliesScript_mooshBully2:
@@ -5456,7 +5456,7 @@ _moblinBulliesScript_spawnMoblin:
 	jumpifmemoryset $d13e, $80, +
 	scriptjump _moblinBulliesScript_spawnMoblin
 +
-	spawnenemyhere ENEMYID_MASKED_MOBLIN $00
+	spawnenemyhere ENEMYID_MASKED_MOBLIN, $00
 	scriptend
 
 moblinBulliesScript_maskedMoblin2MovingUp:
@@ -5885,7 +5885,7 @@ script71c8:
 	setcounter1 $61
 	setcounter1 $61
 	playsound SND_GETSEED
-	giveitem TREASURE_MAKU_SEED $00
+	giveitem TREASURE_MAKU_SEED, $00
 	wait 40
 	asm15 scriptHelp.makuTree_storeIntoVar37SpawnBubbleIf0, $01
 	asm15 scriptHelp.makuTree_showTextAndSetMapText, <TX_1718 ; you can defeat Onox
@@ -6052,7 +6052,7 @@ masterDiverScript_text1:
 @seenIntroText:
 	showtext TX_3401
 	wait 20
-	giveitem TREASURE_FLIPPERS $00
+	giveitem TREASURE_FLIPPERS, $00
 	wait 20
 @gotFlippers:
 	showtext TX_3404
@@ -6119,14 +6119,14 @@ jewelHelperScript_underwaterPyramidJewel:
 	.dw @unlinked
 	.dw @linked
 @unlinked:
-	spawnitem TREASURE_PYRAMID_JEWEL $00
+	spawnitem TREASURE_PYRAMID_JEWEL, $00
 -
 	jumpifitemobtained TREASURE_PYRAMID_JEWEL, @end
 	scriptjump -
 @end:
 	scriptend
 @linked:
-	spawnitem TREASURE_RUPEES RUPEEVAL_100
+	spawnitem TREASURE_RUPEES, RUPEEVAL_100
 	scriptend
 	
 jewelHelperScript_createBridgeToXJewelMoldorm:
@@ -6536,7 +6536,7 @@ subrosianSmithyScript:
 	wait 30
 	showtextlowindex <TX_3b07
 	callscript _smithyScript_smithItem
-	giveitem TREASURE_PIRATES_BELL $02
+	giveitem TREASURE_PIRATES_BELL, $02
 	scriptjump _smithyScript_smithingDone
 @please:
 	wait 30
@@ -6878,7 +6878,7 @@ shipPirationScript_piratianComingDownHandler:
 	setstate $03
 	setdisabledobjectsto11
 	wait 240
-	spawninteraction INTERACID_SHIP_PIRATIAN $02, $98, $78
+	spawninteraction INTERACID_SHIP_PIRATIAN, $02, $98, $78
 	checkcfc0bit 0
 	xorcfc0bit 0
 	wait 240
@@ -6959,7 +6959,7 @@ shipPiratianScript_dizzyPirate1Spawner:
 	setdisabledobjectsto11
 	wait 180
 	setmusic MUS_PIRATES
-	spawninteraction INTERACID_SHIP_PIRATIAN $0a, $98, $78
+	spawninteraction INTERACID_SHIP_PIRATIAN, $0a, $98, $78
 	checkcfc0bit 7
 	wait 30
 	showtextlowindex <TX_4e11
@@ -6992,7 +6992,7 @@ shipPiratianScript_1stDizzyPirateDescending:
 	writememory $d008, $00
 	wait 30
 	showtextlowindex <TX_4e0b
-	spawninteraction INTERACID_SHIP_PIRATIAN $0b, $98, $78
+	spawninteraction INTERACID_SHIP_PIRATIAN, $0b, $98, $78
 	checkcfc0bit 7
 	setzspeed -$01c0
 	scriptjump _pirateShipLoop
@@ -7026,7 +7026,7 @@ shipPirationScript_2ndDizzyPirateDescending:
 	writememory $d008, $00
 	wait 30
 	showtextlowindex <TX_4e0d
-	spawninteraction INTERACID_SHIP_PIRATIAN $0c, $98, $78
+	spawninteraction INTERACID_SHIP_PIRATIAN, $0c, $98, $78
 	checkcfc0bit 7
 	setzspeed -$01c0
 	scriptjump _pirateShipLoop
@@ -7051,7 +7051,7 @@ shipPirationScript_3rdDizzyPirateDescending:
 	wait 30
 	writememory $d008, $03
 	showtextlowindex <TX_4e0f
-	spawninteraction INTERACID_SHIP_PIRATIAN_CAPTAIN $01, $98, $78
+	spawninteraction INTERACID_SHIP_PIRATIAN_CAPTAIN, $01, $98, $78
 	checkcfc0bit 7
 	setzspeed -$01c0
 	scriptjump _pirateShipLoop
@@ -7164,7 +7164,7 @@ shipPiratianCaptainScript_arrivingInWestCoast:
 	wait 60
 	showtextlowindex <TX_4e12
 	wait 60
-	spawninteraction INTERACID_SHIP_PIRATIAN_CAPTAIN $03, $68, $68
+	spawninteraction INTERACID_SHIP_PIRATIAN_CAPTAIN, $03, $68, $68
 	orroomflag $40
 	scriptend
 @arrived:
@@ -7579,12 +7579,12 @@ troyScript_giveReward:
 	.dw @nobleSword
 	.dw @masterSword
 @nobleSword:
-	giveitem TREASURE_SWORD $01
-	giveitem TREASURE_SWORD $04
+	giveitem TREASURE_SWORD, $01
+	giveitem TREASURE_SWORD, $04
 	retscript
 @masterSword:
-	giveitem TREASURE_SWORD $02
-	giveitem TREASURE_SWORD $05
+	giveitem TREASURE_SWORD, $02
+	giveitem TREASURE_SWORD, $05
 	retscript
 	
 	
@@ -7725,9 +7725,9 @@ linkedGhiniScript_startRound:
 	playsound SND_GETSEED
 	showtextlowindex <TX_4c1a
 	wait 30
-	giveitem TREASURE_HEART_CONTAINER $02
+	giveitem TREASURE_HEART_CONTAINER, $02
 	wait 60
-	spawninteraction INTERACID_PUFF $00, $68, $18
+	spawninteraction INTERACID_PUFF, $00, $68, $18
 	wait 4
 	settileat $61, TILEINDEX_INDOOR_UPSTAIRCASE
 	setcounter1 $2d
@@ -7750,7 +7750,7 @@ linkedGhiniScript_startRound:
 	playsound SND_ERROR
 	showtextlowindex <TX_4c18
 	jumpiftextoptioneq $00, linkedGhiniScript_begunSecret@startGame
-	spawninteraction INTERACID_PUFF $00, $68, $18
+	spawninteraction INTERACID_PUFF, $00, $68, $18
 	wait 4
 	settileat $61, TILEINDEX_INDOOR_UPSTAIRCASE
 	wait 15
@@ -7888,7 +7888,7 @@ goldenCaveSubrosianScript_7d87:
 	checkpalettefadedone
 	showtextlowindex <TX_4c2b
 	wait 20
-	giveitem TREASURE_BOMBCHUS $00
+	giveitem TREASURE_BOMBCHUS, $00
 	wait 20
 --
 	generatesecret SUBROSIAN_RETURN_SECRET
@@ -7969,7 +7969,7 @@ masterDiverScript_begunSecret:
 	jumpiftextoptioneq $00, @startingChallenge
 	scriptjump -
 @startingChallenge:
-	spawninteraction INTERACID_PUFF $00, $58, $88
+	spawninteraction INTERACID_PUFF, $00, $58, $88
 	wait 4
 	settileat $58, TILEINDEX_INDOOR_DOWNSTAIRCASE
 	setcounter1 $2d
@@ -8047,7 +8047,7 @@ masterDiverScript_secretDone:
 	
 	
 masterDiverScript_spawnFakeStarOre:
-	spawnitem TREASURE_60 $01
+	spawnitem TREASURE_60, $01
 	scriptend
 	
 	
@@ -8143,7 +8143,7 @@ _dekuScrubScript_finishSecret:
 	jumpifobjectbyteeq Interaction.var38, $00, dekuScrubScript_gaveSecret
 	showtextlowindex <TX_4c44
 	wait 20
-	giveitem TREASURE_SATCHEL_UPGRADE $00
+	giveitem TREASURE_SATCHEL_UPGRADE, $00
 	asm15 refillSeedSatchel
 	wait 20
 	showtextlowindex <TX_4c45

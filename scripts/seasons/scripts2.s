@@ -18,21 +18,21 @@ explorersCrypt_firesGoingOut_1:
 
 	setcounter1 $30
 	playsound SND_LIGHTTORCH
-	settileat $46 TILEINDEX_UNLIT_TORCH
+	settileat $46, TILEINDEX_UNLIT_TORCH
 
 	setcounter1 $30
 	playsound SND_LIGHTTORCH
-	settileat $48 TILEINDEX_UNLIT_TORCH
+	settileat $48, TILEINDEX_UNLIT_TORCH
 	asm15 darkenRoomLightly
 
 	setcounter1 $30
 	playsound SND_LIGHTTORCH
-	settileat $68 TILEINDEX_UNLIT_TORCH
+	settileat $68, TILEINDEX_UNLIT_TORCH
 	asm15 darkenRoom
 
 	setcounter1 $30
 	playsound SND_LIGHTTORCH
-	settileat $66 TILEINDEX_UNLIT_TORCH
+	settileat $66, TILEINDEX_UNLIT_TORCH
 
 	setcounter1 $30
 	playsound SND_TELEPORT
@@ -48,21 +48,21 @@ explorersCrypt_firesGoingOut_2:
 
 	setcounter1 $30
 	playsound SND_LIGHTTORCH
-	settileat $35 TILEINDEX_UNLIT_TORCH
+	settileat $35, TILEINDEX_UNLIT_TORCH
 
 	setcounter1 $30
 	playsound SND_LIGHTTORCH
-	settileat $39 TILEINDEX_UNLIT_TORCH
+	settileat $39, TILEINDEX_UNLIT_TORCH
 	asm15 darkenRoomLightly
 
 	setcounter1 $30
 	playsound SND_LIGHTTORCH
-	settileat $79 TILEINDEX_UNLIT_TORCH
+	settileat $79, TILEINDEX_UNLIT_TORCH
 	asm15 darkenRoom
 
 	setcounter1 $30
 	playsound SND_LIGHTTORCH
-	settileat $75 TILEINDEX_UNLIT_TORCH
+	settileat $75, TILEINDEX_UNLIT_TORCH
 
 	setcounter1 $30
 	playsound SND_TELEPORT
@@ -72,11 +72,11 @@ explorersCrypt_firesGoingOut_2:
 
 explorersCrypt_firstPoeSister:
 	stopifroomflag40set
-	checkmemoryeq wNumTorchesLit $02
+	checkmemoryeq wNumTorchesLit, $02
 
 	playsound SND_GHOST
 	delay 8
-	spawnenemy ENEMYID_POE_SISTER_1 $00 $48 $c8
+	spawnenemy ENEMYID_POE_SISTER_1, $00, $48, $c8
 	delay 6
 	showtext TX_0a01
 	delay 6
@@ -89,11 +89,11 @@ explorersCrypt_firstPoeSister:
 
 explorersCrypt_secondPoeSister:
 	stopifroomflag40set
-	checkmemoryeq wNumTorchesLit $04
+	checkmemoryeq wNumTorchesLit, $04
 
 	playsound SND_GHOST
 	delay 8
-	spawnenemy ENEMYID_POE_SISTER_2 $00 $58 $78
+	spawnenemy ENEMYID_POE_SISTER_2, $00, $58, $78
 	delay 6
 	showtext TX_0a03
 	delay 6
@@ -104,20 +104,20 @@ explorersCrypt_secondPoeSister:
 
 
 startCrystalTrapRoomSequence:
-	spawninteraction INTERACID_DOOR_CONTROLLER $13 $30 $00
-	spawninteraction INTERACID_PUFF $00 $18 $48
+	spawninteraction INTERACID_DOOR_CONTROLLER, $13, $30, $00
+	spawninteraction INTERACID_PUFF, $00, $18, $48
 	delay 4
-	settileat $14 TILEINDEX_STANDARD_FLOOR
-	spawninteraction INTERACID_PUFF $00 $38 $48
+	settileat $14, TILEINDEX_STANDARD_FLOOR
+	spawninteraction INTERACID_PUFF, $00, $38, $48
 	delay 4
-	settileat $34 TILEINDEX_STANDARD_FLOOR
-	spawninteraction INTERACID_PUFF $00 $28 $48
+	settileat $34, TILEINDEX_STANDARD_FLOOR
+	spawninteraction INTERACID_PUFF, $00, $28, $48
 	delay 4
-	settileat $24 TILEINDEX_STANDARD_FLOOR
-	spawninteraction INTERACID_PUFF $00 $48 $48
+	settileat $24, TILEINDEX_STANDARD_FLOOR
+	spawninteraction INTERACID_PUFF, $00, $48, $48
 	delay 4
-	settileat $44 TILEINDEX_STANDARD_FLOOR
-	spawninteraction INTERACID_D6_CRYSTAL_TRAP_ROOM $00 $00 $00
+	settileat $44, TILEINDEX_STANDARD_FLOOR
+	spawninteraction INTERACID_D6_CRYSTAL_TRAP_ROOM, $00, $00, $00
 	scriptend
 
 
@@ -126,7 +126,7 @@ startCrystalTrapRoomSequence:
 ; ==============================================================================
 seasonsSpirits_enteringTempleCutscene:
 	stopifroomflag40set
-	setcollisionradii $08 $20
+	setcollisionradii $08, $20
 	checkcollidedwithlink_onground
 	disableinput
 	setmusic $0d
@@ -145,10 +145,10 @@ seasonsSpirits_enteringTempleCutscene:
 
 seasonsSpirits_createBridgeOnOrbHit:
 	stopifroomflag40set
-	checkmemoryeq w1Link.state LINK_STATE_NORMAL
+	checkmemoryeq w1Link.state, LINK_STATE_NORMAL
 	delay 3
-	checkmemoryeq wToggleBlocksState $01
-	setcoords $78 $78
+	checkmemoryeq wToggleBlocksState, $01
+	setcoords $78, $78
 	setcounter1 $0c
 	createpuff
 	delay 2
@@ -163,7 +163,7 @@ seasonsSpirits_createBridgeOnOrbHit:
 ; ==============================================================================
 subrosianScript_steaLinksFeather:
 	stopifroomflag40set
-	writeobjectbyte Interaction.oamFlags $01
+	writeobjectbyte Interaction.oamFlags, $01
 	callscript mainScripts.subrosianScript_runLeft
 	checkcfc0bit 0
 	asm15 scriptHelp.subrosian_setYAboveLink
@@ -194,8 +194,8 @@ subrosianScript_steaLinksFeather:
 
 
 subrosianScript_inHouseRunFromLink:
-	jumpifglobalflagset GLOBALFLAG_SAW_STRANGE_BROTHERS_IN_HOUSE mainScripts.stubScript
-	writeobjectbyte Interaction.oamFlags $02
+	jumpifglobalflagset GLOBALFLAG_SAW_STRANGE_BROTHERS_IN_HOUSE, mainScripts.stubScript
+	writeobjectbyte Interaction.oamFlags, $02
 	callscript mainScripts.subrosianScript_runLeft
 	setanimation $02
 	setdisabledobjectsto11
@@ -213,7 +213,7 @@ subrosianScript_inHouseRunFromLink:
 ; INTERACID_PIRATIAN_CAPTAIN
 ; ==============================================================================
 linkedPirateCaptainScript_sayingByeToAmbi:
-	asm15 scriptHelp.forceLinkState8AndSetDirection DIR_DOWN
+	asm15 scriptHelp.forceLinkState8AndSetDirection, DIR_DOWN
 	delay 6
 	showtextlowindex <TX_3a20
 	delay 6
@@ -242,7 +242,7 @@ showSamasaGateCombination:
 	setdisabledobjectsto91
 	showtextlowindex <TX_3a0c
 	delay 6
-	writeobjectbyte Interaction.var3c $01
+	writeobjectbyte Interaction.var3c, $01
 	setspeed SPEED_200
 	moveup $15
 	delay 1
@@ -275,7 +275,7 @@ showSamasaGateCombination:
 	applyspeed $11
 	delay 1
 	movedown $15
-	writeobjectbyte Interaction.var3c $00
+	writeobjectbyte Interaction.var3c, $00
 	delay 6
 	showtextlowindex <TX_3a0d
 	delay 6
@@ -285,7 +285,7 @@ showSamasaGateCombination:
 piratianCaptain_preCutsceneScene:
 	disableinput
 	asm15 scriptHelp.pirateCaptain_freezeLinkForCutscene
-	writememory wcc90 $01
+	writememory wcc90, $01
 	delay 8
 	asm15 scriptHelp.piratesDeparting_spawnPirateFromShip
 	checkcfc0bit 0
@@ -294,7 +294,7 @@ piratianCaptain_preCutsceneScene:
 	showtextlowindex <TX_3a25
 	delay 6
 	xorcfc0bit 1
-	writeobjectbyte Interaction.var3c $01
+	writeobjectbyte Interaction.var3c, $01
 	asm15 objectSetVisible81
 	setspeed SPEED_100
 	moveright $41
@@ -306,14 +306,14 @@ piratianCaptain_preCutsceneScene:
 	checkcfc0bit 2
 	asm15 scriptHelp.piratianCaptain_simulatedInput
 	enableallobjects
-	checkflagset $07 $cbc3
+	checkflagset $07, $cbc3
 	setdisabledobjectsto91
 	delay 5
 	asm15 scriptHelp.piratianCaptain_setLinkInvisible
-	writememory $cbc3 $00
+	writememory $cbc3, $00
 	delay 8
 	setdisabledobjectsto11
-	writememory wCutsceneTrigger CUTSCENE_S_PIRATES_DEPART
+	writememory wCutsceneTrigger, CUTSCENE_S_PIRATES_DEPART
 	scriptend
 
 
@@ -322,24 +322,24 @@ piratianCaptain_preCutsceneScene:
 ; ==============================================================================
 zelda_triforceOnHandText:
 	asm15 objectSetInvisible
-	checkmemoryeq $cfc0 $01
+	checkmemoryeq $cfc0, $01
 	asm15 objectSetVisible
-	checkmemoryeq $cfc0 $06
+	checkmemoryeq $cfc0, $06
 	setanimation $03
 	delay 2
-	writememory $cfc0 $07
+	writememory $cfc0, $07
 	showtext TX_3d0c ; triforce on your hand
 	delay 3
 	setanimation $07
 	setangle ANGLE_LEFT
 	setspeed SPEED_20
 	applyspeed $1e
-	writememory $cfc0 $08
+	writememory $cfc0, $08
 	scriptend
 
 zelda_kidnapped:
 	delay 8
-	setcoords $18 $18
+	setcoords $18, $18
 	setspeed SPEED_100
 	movedown $11
 	delay 1
@@ -349,7 +349,7 @@ zelda_kidnapped:
 	delay 1
 	showtext TX_500d ; Zelda! No!
 	delay 6
-	spawninteraction INTERACID_ba $01 $18 $18
+	spawninteraction INTERACID_ba, $01, $18, $18
 	checkcfc0bit 0
 	applyspeed $51
 	xorcfc0bit 1
@@ -377,7 +377,7 @@ script_14_49c8:
 	delay 10
 	setanimation $00
 	setcounter1 $96
-	writememory $cfdf $01
+	writememory $cfdf, $01
 	scriptend
 
 
@@ -386,20 +386,20 @@ script_14_49c8:
 ; ==============================================================================
 talon_giveMushroomAfterWaking:
 	disableinput
-	spawninteraction INTERACID_TRADE_ITEM $07 $68 $58
-	writeobjectbyte Interaction.var39 $00
+	spawninteraction INTERACID_TRADE_ITEM, $07, $68, $58
+	writeobjectbyte Interaction.var39, $00
 	playsound $69
 	setanimation $04
 	delay 7
-	writememory $cfde $80
+	writememory $cfde, $80
 	setanimation $02
 	showtextlowindex <TX_0b3b
-	writememory $cfdf $01
-	giveitem TREASURE_TRADEITEM $08
+	writememory $cfdf, $01
+	giveitem TREASURE_TRADEITEM, $08
 	orroomflag $40
 	asm15 scriptHelp.resetBit5ofRoomFlags
 	delay 6
-	writeobjectbyte Interaction.var3a $01
+	writeobjectbyte Interaction.var3a, $01
 	setspeed SPEED_200
 	setangle ANGLE_RIGHT
 	applyspeed $11
@@ -414,47 +414,47 @@ talon_giveMushroomAfterWaking:
 ; INTERACID_DIN_DANCING_EVENT
 ; ==============================================================================
 tornadoScript_startDestruction:
-	setcoords $70 $18
+	setcoords $70, $18
 	setspeed $50
 	setmusic $21
 	delay 10
 	setangle $08
 	applyspeed $11
-	ormemory $cfd1 $10
+	ormemory $cfd1, $10
 	delay 5
 	applyspeed $0d
 	delay 7
 	setangle $00
 	applyspeed $08
-	ormemory $cfd1 $02
+	ormemory $cfd1, $02
 	delay 7
 	setangle $08
 	applyspeed $13
-	ormemory $cfd1 $08
+	ormemory $cfd1, $08
 	delay 7
 	setangle $00
 	applyspeed $0a
-	ormemory $cfd1 $04
+	ormemory $cfd1, $04
 	delay 7
 	setangle $18
 	applyspeed $30
 	setangle $00
 	applyspeed $0d
-	ormemory $cfd1 $01
+	ormemory $cfd1, $01
 	scriptend
 
 tornadoScript_endDestruction:
 	setangle $08
 	applyspeed $14
-	ormemory $cfd1 $40
-	checkmemoryeq $cfd0 $07
+	ormemory $cfd1, $40
+	checkmemoryeq $cfd0, $07
 	applyspeed $16
-	ormemory $cfd1 $80
-	checkmemoryeq $cfd0 $0a
+	ormemory $cfd1, $80
+	checkmemoryeq $cfd0, $0a
 	delay 9
 	setangle $00
 	applyspeed $28
-	writememory $cfd0 $0b
+	writememory $cfd0, $0b
 	orroomflag $80
 	scriptend
 
@@ -463,7 +463,7 @@ tornadoScript_endDestruction:
 ; INTERACID_DIN_IMPRISONED_EVENT
 ; ==============================================================================
 dinImprisoned_OnoxExplainsMotive:
-	setcoords $e0 $80
+	setcoords $e0, $80
 	delay 6
 	setspeed SPEED_100
 	setangle ANGLE_UP
@@ -479,11 +479,11 @@ dinImprisoned_OnoxExplainsMotive:
 	delay 3
 	showtext TX_1e04
 	delay 3
-	writememory $cfd0 $0b
+	writememory $cfd0, $0b
 	scriptend
 
 dinImprisoned_OnoxSaysComeIfYouDare:
-	setcoords $00 $60
+	setcoords $00, $60
 	setspeed $14
 	setangle $10
 	applyspeed $80
@@ -500,17 +500,17 @@ dinImprisoned_OnoxSaysComeIfYouDare:
 ; ==============================================================================
 biggoronScript_giveBiggoronSword:
 	setglobalflag GLOBALFLAG_BEGAN_BIGGORON_SECRET
-	asm15 scriptHelp.biggoron_loadAnimationData $0d
+	asm15 scriptHelp.biggoron_loadAnimationData, $0d
 	showtextlowindex <TX_0b55
-	asm15 scriptHelp.biggoron_loadAnimationData $0b
+	asm15 scriptHelp.biggoron_loadAnimationData, $0b
 	asm15 fadeoutToWhite
 	checkpalettefadedone
 	delay 8
 	asm15 fadeinFromWhite
 	checkpalettefadedone
-	asm15 scriptHelp.biggoron_loadAnimationData $0d
+	asm15 scriptHelp.biggoron_loadAnimationData, $0d
 	showtextlowindex <TX_0b57
-	asm15 scriptHelp.biggoron_loadAnimationData $0b
+	asm15 scriptHelp.biggoron_loadAnimationData, $0b
 	asm15 scriptHelp.biggoron_createSparkleAtLink
 	delay 6
 	asm15 scriptHelp.createSwirlAtLink
@@ -525,9 +525,9 @@ biggoronScript_giveBiggoronSword:
 	asm15 fadeoutToWhite
 	checkpalettefadedone
 	delay 5
-	asm15 fadeinFromWhiteWithDelay $04
+	asm15 fadeinFromWhiteWithDelay, $04
 	checkpalettefadedone
-	giveitem TREASURE_BIGGORON_SWORD $00
+	giveitem TREASURE_BIGGORON_SWORD, $00
 	delay 8
 	setglobalflag GLOBALFLAG_DONE_BIGGORON_SECRET
 	scriptjump mainScripts.biggoronScript@generateSecret
@@ -555,7 +555,7 @@ script_14_4aea:
 	asm15 scriptHelp.headSmelter_loadDanceMovements
 	movedown $11
 	delay 6
-	writememory $d008 $00
+	writememory $d008, $00
 	delay 8
 	showtext TX_2a03
 	setmusic $31
@@ -590,7 +590,7 @@ headSmelterScript_blowUpRocks:
 	asm15 scriptHelp.headSmelter_loseBombFlower
 	setanimation $00
 	delay 8
-	spawninteraction INTERACID_BOMB_FLOWER $01 $38 $38
+	spawninteraction INTERACID_BOMB_FLOWER, $01, $38, $38
 	playsound $6c
 	delay 4
 	incstate
@@ -601,7 +601,7 @@ headSmelterScript_blowUpRocks:
 	setangleandanimation $18
 	checkcfc0bit 0
 	asm15 scriptHelp.headSmelter_loadHideFromBombScript
-	writememory $d008 $00
+	writememory $d008, $00
 	moveleft $19
 	moveup $19
 	delay 5
@@ -615,7 +615,7 @@ headSmelterScript_blowUpRocks:
 	showtext TX_2709
 	xorcfc0bit 2
 	applyspeed $31
-	writememory $d008 $02
+	writememory $d008, $02
 	enableinput
 	asm15 scriptHelp.headSmelter_enableScreenTransitions
 	scriptend
@@ -627,7 +627,7 @@ headSmelterScript_blowUpRocks:
 lavaSoupSubrosianScript_fillPot:
 	delay 6
 	showtextlowindex <TX_0b21
-	writeobjectbyte Interaction.var3f $01
+	writeobjectbyte Interaction.var3f, $01
 	setspeed $50
 	moveleft $11
 	playsound $6e
@@ -663,9 +663,9 @@ lavaSoupSubrosianScript_fillPot:
 	setanimation $02
 	showtextlowindex <TX_0b23
 	disableinput
-	giveitem TREASURE_TRADEITEM $04
+	giveitem TREASURE_TRADEITEM, $04
 	orroomflag $40
-	writeobjectbyte Interaction.var3f $00
+	writeobjectbyte Interaction.var3f, $00
 	enableinput
 	scriptjump mainScripts.lavaSoupSubrosianScript@filledPot
 
@@ -677,7 +677,7 @@ danceLeaderScript_moveIntoPosition:
 	showtext TX_0102
 	orroomflag $80
 	setdisabledobjectsto91
-	writememory $d008 $03
+	writememory $d008, $03
 	incstate
 	setspeed $50
 	moveleft $21
@@ -693,41 +693,41 @@ danceLeaderScript_moveIntoPosition:
 	scriptend
 
 danceLeaderScript_danceTutorial:
-	writememory $cfdf $00
-	spawninteraction INTERACID_DANCE_HALL_MINIGAME $03 $00 $00
+	writememory $cfdf, $00
+	spawninteraction INTERACID_DANCE_HALL_MINIGAME, $03, $00, $00
 	setanimation $05
-	writememory $cfdf $01
+	writememory $cfdf, $01
 	delay 2
 	showtext TX_0105
 	setanimation $05
 	playsound $ca
 	asm15 scriptHelp.seasonsFunc_15_5d20
-	checkmemoryeq $cfd1 $00
+	checkmemoryeq $cfd1, $00
 	setcounter1 $32
 	setanimation $06
-	writememory $cfdf $02
+	writememory $cfdf, $02
 	delay 2
 	showtext TX_0106
 	setanimation $06
 	playsound $cb
 	asm15 scriptHelp.seasonsFunc_15_5d29
-	checkmemoryeq $cfd1 $00
+	checkmemoryeq $cfd1, $00
 	setcounter1 $32
 	setanimation $04
-	writememory $cfdf $03
+	writememory $cfdf, $03
 	delay 2
 	showtext TX_0107
 	setanimation $04
 	playsound $cd
 	asm15 scriptHelp.seasonsFunc_15_5d32
-	checkmemoryeq $cfd1 $00
+	checkmemoryeq $cfd1, $00
 	setcounter1 $32
-	writememory $cfdf $ff
+	writememory $cfdf, $ff
 	setanimation $01
 	showtext TX_0108
-	jumpiftextoptioneq $01 mainScripts.danceLeaderScript_promptForTutorial@needTutorial
+	jumpiftextoptioneq $01, mainScripts.danceLeaderScript_promptForTutorial@needTutorial
 	showtext TX_0109
-	checkmemoryeq $cba0 $00
+	checkmemoryeq $cba0, $00
 	scriptjump mainScripts.danceLeaderScript_promptForTutorial@danceLeaderScript_readyToDance
 
 
@@ -737,121 +737,121 @@ danceLeaderScript_danceTutorial:
 simpleScript_unblockingD3Dam:
 	ss_wait $1e
 	ss_playsound $70
-	ss_setinterleavedtile $14 $fd $a0 $02
-	ss_setinterleavedtile $15 $fd $a0 $02
-	ss_setinterleavedtile $16 $fd $a0 $02
+	ss_setinterleavedtile $14, $fd, $a0, $02
+	ss_setinterleavedtile $15, $fd, $a0, $02
+	ss_setinterleavedtile $16, $fd, $a0, $02
 	ss_wait $1e
 
 	ss_playsound $70
-	ss_setrowoftiles $03 $14 $fd
+	ss_setrowoftiles $03, $14, $fd
 	ss_wait $1e
 
 	ss_playsound $c2
-	ss_setrowofinterleavedtiles $03 $04 $fe $00
+	ss_setrowofinterleavedtiles $03, $04, $fe, $00
 	ss_wait $0f
 
-	ss_setrowoftiles $03 $04 $fe
+	ss_setrowoftiles $03, $04, $fe
 	ss_wait $0f
 
-	ss_setrowofinterleavedtiles $03 $14 $fe $00
-	ss_setrowoftiles $03 $04 $ff
+	ss_setrowofinterleavedtiles $03, $14, $fe, $00
+	ss_setrowoftiles $03, $04, $ff
 	ss_wait $0f
 
-	ss_setrowoftiles $03 $14 $fe
+	ss_setrowoftiles $03, $14, $fe
 	ss_wait $0f
 
-	ss_setrowofinterleavedtiles $03 $24 $fe $00
-	ss_setrowoftiles $03 $14 $ff
+	ss_setrowofinterleavedtiles $03, $24, $fe, $00
+	ss_setrowoftiles $03, $14, $ff
 	ss_wait $0f
 
-	ss_setrowoftiles $03 $24 $fe
+	ss_setrowoftiles $03, $24, $fe
 	ss_wait $0f
 
-	ss_setrowofinterleavedtiles $03 $34 $fe $00
-	ss_setrowoftiles $03 $24 $ff
+	ss_setrowofinterleavedtiles $03, $34, $fe, $00
+	ss_setrowoftiles $03, $24, $ff
 	ss_wait $0f
 
-	ss_setrowoftiles $03 $34 $fe
+	ss_setrowoftiles $03, $34, $fe
 	ss_wait $0f
 
-	ss_setrowofinterleavedtiles $03 $44 $fe $00
-	ss_setrowoftiles $03 $34 $ff
+	ss_setrowofinterleavedtiles $03, $44, $fe, $00
+	ss_setrowoftiles $03, $34, $ff
 	ss_wait $0f
 
-	ss_setrowoftiles $03 $44 $fe
+	ss_setrowoftiles $03, $44, $fe
 	ss_wait $0f
 
-	ss_setrowofinterleavedtiles $03 $54 $fe $00
-	ss_setrowoftiles $03 $44 $ff
+	ss_setrowofinterleavedtiles $03, $54, $fe, $00
+	ss_setrowoftiles $03, $44, $ff
 	ss_wait $0f
 
-	ss_setrowoftiles $03 $54 $fe
+	ss_setrowoftiles $03, $54, $fe
 	ss_wait $0f
 
-	ss_setrowofinterleavedtiles $03 $64 $fe $00
-	ss_setrowoftiles $03 $54 $ff
+	ss_setrowofinterleavedtiles $03, $64, $fe, $00
+	ss_setrowoftiles $03, $54, $ff
 	ss_wait $0f
 
-	ss_setrowoftiles $03 $64 $fe
+	ss_setrowoftiles $03, $64, $fe
 	ss_wait $0f
 
-	ss_setrowofinterleavedtiles $03 $74 $fe $00
-	ss_setrowoftiles $03 $64 $ff
+	ss_setrowofinterleavedtiles $03, $74, $fe, $00
+	ss_setrowoftiles $03, $64, $ff
 	ss_wait $0f
 
-	ss_setrowoftiles $03 $74 $fe
+	ss_setrowoftiles $03, $74, $fe
 	ss_wait $0f
 
-	ss_setrowoftiles $03 $74 $ff
+	ss_setrowoftiles $03, $74, $ff
 	ss_wait $3c
 	ss_wait $0f
 
-	ss_setrowofinterleavedtiles $03 $04 $fa $00
+	ss_setrowofinterleavedtiles $03, $04, $fa, $00
 	ss_wait $0f
 
-	ss_setrowoftiles $03 $04 $fa
+	ss_setrowoftiles $03, $04, $fa
 	ss_wait $0f
 
-	ss_setrowofinterleavedtiles $03 $14 $fa $00
+	ss_setrowofinterleavedtiles $03, $14, $fa, $00
 	ss_wait $0f
 
-	ss_setrowoftiles $03 $14 $fa
+	ss_setrowoftiles $03, $14, $fa
 	ss_wait $0f
 
-	ss_setrowofinterleavedtiles $03 $24 $fa $00
+	ss_setrowofinterleavedtiles $03, $24, $fa, $00
 	ss_wait $0f
 
-	ss_setrowoftiles $03 $24 $fa
+	ss_setrowoftiles $03, $24, $fa
 	ss_wait $0f
 
-	ss_setrowofinterleavedtiles $03 $34 $fa $00
+	ss_setrowofinterleavedtiles $03, $34, $fa, $00
 	ss_wait $0f
 
-	ss_setrowoftiles $03 $34 $fa
+	ss_setrowoftiles $03, $34, $fa
 	ss_wait $0f
 
-	ss_setrowofinterleavedtiles $03 $44 $fa $00
+	ss_setrowofinterleavedtiles $03, $44, $fa, $00
 	ss_wait $0f
 
-	ss_setrowoftiles $03 $44 $fa
+	ss_setrowoftiles $03, $44, $fa
 	ss_wait $0f
 
-	ss_setrowofinterleavedtiles $03 $54 $fa $00
+	ss_setrowofinterleavedtiles $03, $54, $fa, $00
 	ss_wait $0f
 
-	ss_setrowoftiles $03 $54 $fa
+	ss_setrowoftiles $03, $54, $fa
 	ss_wait $0f
 
-	ss_setrowofinterleavedtiles $03 $64 $fa $00
+	ss_setrowofinterleavedtiles $03, $64, $fa, $00
 	ss_wait $0f
 
-	ss_setrowoftiles $03 $64 $fa
+	ss_setrowoftiles $03, $64, $fa
 	ss_wait $0f
 
-	ss_setrowofinterleavedtiles $03 $74 $fa $00
+	ss_setrowofinterleavedtiles $03, $74, $fa, $00
 	ss_wait $0f
 
-	ss_setrowoftiles $03 $74 $fa
+	ss_setrowoftiles $03, $74, $fa
 	ss_wait $b4
 
 	ss_playsound $f1
@@ -860,73 +860,73 @@ simpleScript_unblockingD3Dam:
 simpleScript_waterfallEmptyingAboveD4:
 	ss_playsound $c2
 	ss_wait $14
-	ss_setinterleavedtile $62 $45 $ff $02
-	ss_setinterleavedtile $63 $54 $ff $02
-	ss_setinterleavedtile $64 $46 $ff $02
+	ss_setinterleavedtile $62, $45, $ff, $02
+	ss_setinterleavedtile $63, $54, $ff, $02
+	ss_setinterleavedtile $64, $46, $ff, $02
 	ss_wait $14
 
-	ss_settile $62 $45
-	ss_settile $63 $54
-	ss_settile $64 $46
+	ss_settile $62, $45
+	ss_settile $63, $54
+	ss_settile $64, $46
 	ss_wait $14
 
-	ss_setinterleavedtile $72 $45 $ff $02
-	ss_setinterleavedtile $73 $54 $ff $02
-	ss_setinterleavedtile $74 $46 $ff $02
+	ss_setinterleavedtile $72, $45, $ff, $02
+	ss_setinterleavedtile $73, $54, $ff, $02
+	ss_setinterleavedtile $74, $46, $ff, $02
 	ss_wait $14
 
-	ss_settile $72 $45
-	ss_settile $73 $54
-	ss_settile $74 $46
+	ss_settile $72, $45
+	ss_settile $73, $54
+	ss_settile $74, $46
 	ss_wait $0a
 	ss_end
 
 simpleScript_waterfallEmptyingAtD4:
-	ss_setinterleavedtile $02 $b6 $ff $02
-	ss_setinterleavedtile $03 $b7 $ff $02
-	ss_setinterleavedtile $04 $b8 $ff $02
+	ss_setinterleavedtile $02, $b6, $ff, $02
+	ss_setinterleavedtile $03, $b7, $ff, $02
+	ss_setinterleavedtile $04, $b8, $ff, $02
 	ss_wait $14
 
-	ss_settile $02 $b6
-	ss_settile $03 $b7
-	ss_settile $04 $b8
+	ss_settile $02, $b6
+	ss_settile $03, $b7
+	ss_settile $04, $b8
 	ss_wait $14
 
-	ss_setinterleavedtile $12 $6b $ff $02
-	ss_setinterleavedtile $13 $ee $ff $02
-	ss_setinterleavedtile $14 $6b $ff $02
+	ss_setinterleavedtile $12, $6b, $ff, $02
+	ss_setinterleavedtile $13, $ee, $ff, $02
+	ss_setinterleavedtile $14, $6b, $ff, $02
 	ss_wait $14
 
-	ss_settile $12 $6b
-	ss_settile $13 $ee
-	ss_settile $14 $6b
+	ss_settile $12, $6b
+	ss_settile $13, $ee
+	ss_settile $14, $6b
 	ss_wait $14
 
-	ss_setinterleavedtile $22 $6b $ff $02
-	ss_setinterleavedtile $23 $cc $ff $02
-	ss_setinterleavedtile $24 $6b $ff $02
+	ss_setinterleavedtile $22, $6b, $ff, $02
+	ss_setinterleavedtile $23, $cc, $ff, $02
+	ss_setinterleavedtile $24, $6b, $ff, $02
 	ss_wait $14
 
-	ss_settile $22 $6b
-	ss_settile $23 $cc
-	ss_settile $24 $6b
+	ss_settile $22, $6b
+	ss_settile $23, $cc
+	ss_settile $24, $6b
 	ss_wait $3c
 	ss_end
 
 simpleScript_creatingBridgeToNatzu:
 	ss_wait $28
 	ss_playsound $70
-	ss_setinterleavedtile $43 $fd $2d $03
-	ss_setinterleavedtile $44 $fd $2d $01
-	ss_setinterleavedtile $53 $fd $2e $03
-	ss_setinterleavedtile $54 $fd $2e $01
+	ss_setinterleavedtile $43, $fd, $2d, $03
+	ss_setinterleavedtile $44, $fd, $2d, $01
+	ss_setinterleavedtile $53, $fd, $2e, $03
+	ss_setinterleavedtile $54, $fd, $2e, $01
 	ss_wait $28
 
 	ss_playsound $70
-	ss_settile $43 $2d
-	ss_settile $44 $2d
-	ss_settile $53 $2e
-	ss_settile $54 $2e
+	ss_settile $43, $2d
+	ss_settile $44, $2d
+	ss_settile $53, $2e
+	ss_settile $54, $2e
 	ss_wait $28
 
 	ss_playsound $4d
@@ -937,7 +937,7 @@ simpleScript_creatingBridgeToNatzu:
 ; INTERACID_ROSA_HIDING
 ; ==============================================================================
 rosaHidingScript_firstEncounterIntro:
-	setcoords $48 $b0
+	setcoords $48, $b0
 	orroomflag $40
 	delay 8
 	setsubstate $03
@@ -1121,7 +1121,7 @@ strangeBrother2Script_1stScreenPattern2:
 	scriptend
 
 strangeBrother2Script_2ndScreenPattern1:
-	setcoords $28 $88
+	setcoords $28, $88
 	asm15 scriptHelp.subrosianHiding_createDetectionHelper
 	setangleandanimation $18
 	delay 8
@@ -1143,7 +1143,7 @@ strangeBrother2Script_2ndScreenPattern1:
 	scriptend
 
 strangeBrother2Script_2ndScreenPattern2:
-	setcoords $78 $38
+	setcoords $78, $38
 	asm15 scriptHelp.subrosianHiding_createDetectionHelper
 	setangleandanimation $08
 	delay 8
@@ -1162,7 +1162,7 @@ strangeBrother2Script_2ndScreenPattern2:
 	scriptend
 
 strangeBrother2Script_3rdScreenPattern1:
-	setcoords $38 $88
+	setcoords $38, $88
 	asm15 scriptHelp.subrosianHiding_createDetectionHelper
 	setangleandanimation $18
 	delay 8
@@ -1180,7 +1180,7 @@ strangeBrother2Script_3rdScreenPattern1:
 	scriptend
 
 strangeBrother2Script_3rdScreenPattern2:
-	setcoords $38 $28
+	setcoords $38, $28
 	asm15 scriptHelp.subrosianHiding_createDetectionHelper
 	setangleandanimation $18
 	delay 8
@@ -1202,7 +1202,7 @@ strangeBrother2Script_3rdScreenPattern2:
 	scriptend
 
 strangeBrother2Script_4thScreenPattern1:
-	setcoords $38 $48
+	setcoords $38, $48
 	asm15 scriptHelp.subrosianHiding_createDetectionHelper
 	setangleandanimation $00
 	delay 8
@@ -1223,7 +1223,7 @@ strangeBrother2Script_4thScreenPattern1:
 	scriptend
 
 strangeBrother2Script_4thScreenPattern2:
-	setcoords $08 $18
+	setcoords $08, $18
 	asm15 scriptHelp.subrosianHiding_createDetectionHelper
 	setangleandanimation $10
 	delay 8
@@ -1236,7 +1236,7 @@ strangeBrother2Script_4thScreenPattern2:
 	scriptend
 
 strangeBrother2Script_5thScreenPattern1:
-	setcoords $08 $38
+	setcoords $08, $38
 	asm15 scriptHelp.subrosianHiding_createDetectionHelper
 	setangleandanimation $08
 	delay 8
@@ -1252,7 +1252,7 @@ strangeBrother2Script_5thScreenPattern1:
 	scriptend
 
 strangeBrother2Script_5thScreenPattern2:
-	setcoords $08 $88
+	setcoords $08, $88
 	asm15 scriptHelp.subrosianHiding_createDetectionHelper
 	setangleandanimation $18
 	delay 8
@@ -1267,7 +1267,7 @@ strangeBrother2Script_5thScreenPattern2:
 	scriptend
 
 strangeBrother2Script_6thScreenPattern1:
-	setcoords $18 $88
+	setcoords $18, $88
 	asm15 scriptHelp.subrosianHiding_createDetectionHelper
 	setangleandanimation $10
 	delay 8
@@ -1285,7 +1285,7 @@ strangeBrother2Script_6thScreenPattern1:
 	scriptend
 
 strangeBrother2Script_6thScreenPattern2:
-	setcoords $18 $88
+	setcoords $18, $88
 	asm15 scriptHelp.subrosianHiding_createDetectionHelper
 	setangleandanimation $10
 	delay 8
@@ -1302,7 +1302,7 @@ strangeBrother2Script_6thScreenPattern2:
 	scriptend
 
 strangeBrother2Script_finishedScreenPattern2:
-	setcoords $48 $38
+	setcoords $48, $38
 	setanimation $03
 	checkcfc0bit 0
 	movedown $50
@@ -1315,64 +1315,64 @@ strangeBrother2Script_finishedScreenPattern2:
 jewelHelperScript_jewelMoldorm_body:
 	stopifroomflag40set
 	checkcfc0bit 0
-	writememory $ccab $01
+	writememory $ccab, $01
 	delay 8
 	playsound $4d
 	delay 8
 	playsound $73
-	asm15 scriptHelp.jewelHelper_createPuff $04
+	asm15 scriptHelp.jewelHelper_createPuff, $04
 	delay 3
 	playsound $73
-	asm15 scriptHelp.jewelHelper_createPuff $05
-	asm15 scriptHelp.jewelHelper_createPuff $03
+	asm15 scriptHelp.jewelHelper_createPuff, $05
+	asm15 scriptHelp.jewelHelper_createPuff, $03
 	delay 3
 	playsound $73
-	asm15 scriptHelp.jewelHelper_createPuff $01
-	asm15 scriptHelp.jewelHelper_createPuff $07
+	asm15 scriptHelp.jewelHelper_createPuff, $01
+	asm15 scriptHelp.jewelHelper_createPuff, $07
 	delay 3
 	playsound $73
-	asm15 scriptHelp.jewelHelper_createPuff $00
-	asm15 scriptHelp.jewelHelper_createPuff $08
+	asm15 scriptHelp.jewelHelper_createPuff, $00
+	asm15 scriptHelp.jewelHelper_createPuff, $08
 	delay 3
 	playsound $73
-	asm15 scriptHelp.jewelHelper_createPuff $02
-	asm15 scriptHelp.jewelHelper_createPuff $06
+	asm15 scriptHelp.jewelHelper_createPuff, $02
+	asm15 scriptHelp.jewelHelper_createPuff, $06
 	delay 3
 	playsound $73
-	asm15 scriptHelp.jewelHelper_createPuff $01
-	asm15 scriptHelp.jewelHelper_createPuff $05
-	asm15 scriptHelp.jewelHelper_createPuff $03
-	asm15 scriptHelp.jewelHelper_createPuff $07
+	asm15 scriptHelp.jewelHelper_createPuff, $01
+	asm15 scriptHelp.jewelHelper_createPuff, $05
+	asm15 scriptHelp.jewelHelper_createPuff, $03
+	asm15 scriptHelp.jewelHelper_createPuff, $07
 	delay 3
 	playsound $73
-	asm15 scriptHelp.jewelHelper_createPuff $04
-	asm15 scriptHelp.jewelHelper_createPuff $00
-	asm15 scriptHelp.jewelHelper_createPuff $02
-	asm15 scriptHelp.jewelHelper_createPuff $06
-	asm15 scriptHelp.jewelHelper_createPuff $08
-	settileat $22 $0f
-	settileat $23 $11
-	settileat $32 $11
-	settileat $33 $0f
-	settileat $34 $11
+	asm15 scriptHelp.jewelHelper_createPuff, $04
+	asm15 scriptHelp.jewelHelper_createPuff, $00
+	asm15 scriptHelp.jewelHelper_createPuff, $02
+	asm15 scriptHelp.jewelHelper_createPuff, $06
+	asm15 scriptHelp.jewelHelper_createPuff, $08
+	settileat $22, $0f
+	settileat $23, $11
+	settileat $32, $11
+	settileat $33, $0f
+	settileat $34, $11
 	delay 4
 	playsound $73
-	asm15 scriptHelp.jewelHelper_createPuff $01
-	asm15 scriptHelp.jewelHelper_createPuff $05
-	asm15 scriptHelp.jewelHelper_createPuff $03
-	asm15 scriptHelp.jewelHelper_createPuff $07
+	asm15 scriptHelp.jewelHelper_createPuff, $01
+	asm15 scriptHelp.jewelHelper_createPuff, $05
+	asm15 scriptHelp.jewelHelper_createPuff, $03
+	asm15 scriptHelp.jewelHelper_createPuff, $07
 	setcounter1 $06
 	playsound $67
-	writememory $cfc0 $00
+	writememory $cfc0, $00
 	asm15 scriptHelp.jewelHelper_createMoldorm
 	playsound $73
-	asm15 scriptHelp.jewelHelper_createPuff $04
-	asm15 scriptHelp.jewelHelper_createPuff $00
-	asm15 scriptHelp.jewelHelper_createPuff $02
-	asm15 scriptHelp.jewelHelper_createPuff $06
-	asm15 scriptHelp.jewelHelper_createPuff $08
+	asm15 scriptHelp.jewelHelper_createPuff, $04
+	asm15 scriptHelp.jewelHelper_createPuff, $00
+	asm15 scriptHelp.jewelHelper_createPuff, $02
+	asm15 scriptHelp.jewelHelper_createPuff, $06
+	asm15 scriptHelp.jewelHelper_createPuff, $08
 	setmusic $2d
-	writememory $ccab $00
+	writememory $ccab, $00
 	checkcfc0bit 0
 	playsound $4d
 	resetmusic
@@ -1389,18 +1389,18 @@ jewelHelperScript_jewelMoldorm_body:
 ; INTERACID_KING_MOBLIN
 ; ==============================================================================
 kingMoblin_trapLinkInBombedHouse:
-	writeobjectbyte Interaction.var37 $01
+	writeobjectbyte Interaction.var37, $01
 	setspeed $50
-	settileat $16 $a2
-	settileat $17 $a2
-	settileat $18 $a2
-	settileat $26 $a2
-	settileat $27 $a2
-	settileat $28 $a2
+	settileat $16, $a2
+	settileat $17, $a2
+	settileat $18, $a2
+	settileat $26, $a2
+	settileat $27, $a2
+	settileat $28, $a2
 	asm15 scriptHelp.kingMoblin_func_61eb
 	setcounter1 $50
 	showtext TX_3804
-	writeobjectbyte Interaction.var37 $00
+	writeobjectbyte Interaction.var37, $00
 	setangle $18
 	setanimation $02
 	applyspeed $16
@@ -1408,7 +1408,7 @@ kingMoblin_trapLinkInBombedHouse:
 	setangle $10
 	setanimation $01
 	applyspeed $30
-	writememory $cfd1 $01
+	writememory $cfd1, $01
 	scriptend
 
 
@@ -1428,7 +1428,7 @@ impaScript_askedToSaveZeldaButHavent_body:
 	applyspeed $14
 	delay 6
 	showtext TX_0500
-	writeobjectbyte Interaction.zh $00
+	writeobjectbyte Interaction.zh, $00
 	delay 6
 	setangleandanimation $18
 	applyspeed $10
@@ -1436,7 +1436,7 @@ impaScript_askedToSaveZeldaButHavent_body:
 	setangleandanimation $10
 	applyspeed $58
 	enableinput
-	writeobjectbyte Interaction.visible $00
+	writeobjectbyte Interaction.visible, $00
 	setglobalflag GLOBALFLAG_IMPA_ASKED_TO_SAVE_ZELDA
 	scriptend
 
@@ -1449,12 +1449,12 @@ dinScript_subid2Init_body:
 	setspeed $28
 	setangleandanimation $10
 	applyspeed $0a
-	writememory $cfc0 $01
+	writememory $cfc0, $01
 	applyspeed $1b
 	setcounter1 $06
-	writememory $cfc0 $02
+	writememory $cfc0, $02
 	setcounter1 $6e
-	writememory $cfdf $01
+	writememory $cfdf, $01
 	scriptend
 
 dinScript_subid4Init_body:
@@ -1463,27 +1463,27 @@ dinScript_subid4Init_body:
 	applyspeed $80
 	setcounter1 $06
 	setangleandanimation $18
-	checkmemoryeq $cfc0 $02
+	checkmemoryeq $cfc0, $02
 	setanimation $07
 	scriptend
 
 dinScript_discoverLinkCollapsed_body:
-	checkmemoryeq $d00f $00
+	checkmemoryeq $d00f, $00
 	delay 10
 	setspeed $14
 	movedown $3c
 	delay 3
-	writeobjectbyte Interaction.var38 $80
-	asm15 scriptHelp.din_createExclamationMark $1e
+	writeobjectbyte Interaction.var38, $80
+	asm15 scriptHelp.din_createExclamationMark, $1e
 	delay 7
 	callscript mainScripts.piratianScript_jump
 	setcounter1 $06
-	writeobjectbyte Interaction.var38 $01
+	writeobjectbyte Interaction.var38, $01
 	setspeed $28
 	movedown $13
-	writeobjectbyte Interaction.var38 $80
+	writeobjectbyte Interaction.var38, $80
 	delay 3
-	writeobjectbyte Interaction.var38 $01
+	writeobjectbyte Interaction.var38, $01
 	delay 8
 	setglobalflag GLOBALFLAG_SEASON_ALWAYS_SPRING
 	orroomflag $40
@@ -1495,22 +1495,22 @@ dinScript_discoverLinkCollapsed_body:
 ; ==============================================================================
 ZeldaBeingKidnappedEvent_body:
 	disableinput
-	writememory $ccab $01
+	writememory $ccab, $01
 	delay 6
 	setmusic $2d
 	delay 6
 	showtext TX_0504
 	delay 6
-	writememory $cfc0 $01
+	writememory $cfc0, $01
 	setcounter1 $3e
 	showtext TX_0505
 	asm15 restartSound
 	delay 6
-	writememory $cfc0 $02
+	writememory $cfc0, $02
 	setcounter1 $80
 	playsound $c8
 	delay 7
-	writememory $cfc0 $03
+	writememory $cfc0, $03
 	setcounter1 $02
 	setmusic $2d
 	enableinput
@@ -1525,42 +1525,42 @@ ZeldaBeingKidnappedEvent_body:
 	delay 5
 	playsound $c8
 	delay 6
-	writememory $cfc0 $04
+	writememory $cfc0, $04
 	asm15 scriptHelp.playLinkCutscene2
-	checkmemoryeq $d001 $00
+	checkmemoryeq $d001, $00
 	delay 6
-	asm15 scriptHelp.forceLinkState8AndSetDirection DIR_UP
+	asm15 scriptHelp.forceLinkState8AndSetDirection, DIR_UP
 	setmusic $39
-	writememory $cfc0 $05
+	writememory $cfc0, $05
 	setcounter1 $42
 	showtext TX_0506
-	writememory $cfc0 $06
+	writememory $cfc0, $06
 	setcounter1 $24
-	writememory $cfc0 $07
+	writememory $cfc0, $07
 	delay 5
-	asm15 scriptHelp.forceLinkState8AndSetDirection DIR_LEFT
+	asm15 scriptHelp.forceLinkState8AndSetDirection, DIR_LEFT
 	setcounter1 $46
 	showtext TX_0507
 	asm15 scriptHelp.zeldaKidnappedRoom_loadImpa
-	writememory $cfc0 $08
+	writememory $cfc0, $08
 	delay 7
-	writememory $cfc0 $09
-	asm15 scriptHelp.forceLinkState8AndSetDirection DIR_DOWN
+	writememory $cfc0, $09
+	asm15 scriptHelp.forceLinkState8AndSetDirection, DIR_DOWN
 	setcounter1 $32
 	showtext TX_0508
-	writememory $cfc0 $0a
+	writememory $cfc0, $0a
 	delay 6
 	showtext TX_0509
 	delay 3
-	asm15 scriptHelp.linkedScript_giveRing BLUE_JOY_RING
+	asm15 scriptHelp.linkedScript_giveRing, BLUE_JOY_RING
 	delay 6
 	showtext TX_050a
 	delay 6
-	writememory $cfc0 $0b
+	writememory $cfc0, $0b
 	setcounter1 $40
 	resetmusic
 	setglobalflag GLOBALFLAG_ZELDA_SAVED_FROM_VIRE
-	writememory $ccab $0
+	writememory $ccab, $0
 	enableinput
 	scriptend
 
@@ -1569,8 +1569,8 @@ ZeldaBeingKidnappedEvent_body:
 ; INTERACID_GET_ROD_OF_SEASONS
 ; ==============================================================================
 gettingRodOfSeasons_body:
-	setcoords $40 $50
-	setcollisionradii $02 $04
+	setcoords $40, $50
+	setcollisionradii $02, $04
 	checkcollidedwithlink_onground
 	disableinput
 	asm15 seasonsInteractionsBank15.spawnRodOfSeasonsSparkles
@@ -1589,11 +1589,11 @@ gettingRodOfSeasons_body:
 	checkpalettefadedone
 	delay 5
 
-	spawninteraction INTERACID_GET_ROD_OF_SEASONS $02 $38 $50
-	asm15 fadeinFromWhiteWithDelay $04
+	spawninteraction INTERACID_GET_ROD_OF_SEASONS, $02, $38, $50
+	asm15 fadeinFromWhiteWithDelay, $04
 	checkpalettefadedone
-	checkflagset $00 $cceb
-	asm15 seasonsInteractionsBank15.forceLinksDirection DIR_DOWN
+	checkflagset $00, $cceb
+	asm15 seasonsInteractionsBank15.forceLinksDirection, DIR_DOWN
 	delay $07
 
 	showtext TX_0810

@@ -7160,7 +7160,7 @@ interaction6e_guard5Script:
 	applyspeed $12
 	asm15 scriptHelp.nayruSavedCutscene_loadAngleAndAnimationPreset, $02
 	applyspeed $0f
-	writememory wTmpcfc0.genericCutscene.cfd0 ,$08
+	writememory wTmpcfc0.genericCutscene.cfd0, $08
 	scriptjump _interaction6e_guardCommon
 
 
