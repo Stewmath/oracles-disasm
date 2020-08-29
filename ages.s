@@ -339,7 +339,7 @@ specialObjectLoadAnimationFrameToBuffer:
 	.define PART_BANK $11
 	.export PART_BANK
 
- m_section_force "Bank_11" NAMESPACE "partCode"
+ m_section_free "Bank_11" NAMESPACE "partCode"
 
 	.include "code/partCommon.s"
 	.include "object_code/common/partCode.s"
@@ -406,7 +406,7 @@ specialObjectLoadAnimationFrameToBuffer:
 .BANK $15 SLOT 1
 .ORG 0
 
-	 m_section_force "Bank_15" NAMESPACE scriptHelp
+	 m_section_free "Bank_15" NAMESPACE scriptHelp
 		.include "scripts/common/scriptHelper.s"
 	.ends
 
@@ -435,7 +435,7 @@ specialObjectLoadAnimationFrameToBuffer:
 
 	.ENDS
 
-	 m_section_force "Bank_15_2" NAMESPACE scriptHelp
+	 m_section_free "Bank_15_2" NAMESPACE scriptHelp
 		.include "scripts/ages/scriptHelper.s"
 	.ends
 
@@ -681,9 +681,9 @@ loadD6ChangingFloorPatternToBigBuffer:
 	.include "build/data/largeRoomLayoutTables.s" ; $719c0
 	.include "code/ages/garbage/bank1cEnd.s"
 
-; "build/textData.s" will determine where this data starts.
-;   Ages:    1d:4000
-;   Seasons: 1c:5c00
+	; "build/textData.s" will determine where this data starts.
+	;   Ages:    1d:4000
+	;   Seasons: 1c:5c00
 
 	.include "build/textData.s"
 
@@ -698,7 +698,7 @@ loadD6ChangingFloorPatternToBigBuffer:
 .BANK $3f SLOT 1
 .ORG 0
 
- m_section_force Bank3f NAMESPACE bank3f
+ m_section_free Bank3f NAMESPACE bank3f
 
 .define BANK_3f $3f
 

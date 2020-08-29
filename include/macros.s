@@ -112,8 +112,8 @@
 	.endif
 .endif
 
-; Ideally, there should be no m_section_force's when the disassembly's done.
-; These are sections which need to be in specific places.
+; These are sections which need to be in specific places. Currently unused since (in theory) all
+; labels are now moveable.
 .macro m_section_force
 	.if NARGS == 1
 		.section \1 FORCE

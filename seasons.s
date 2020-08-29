@@ -292,10 +292,10 @@
 	.define PART_BANK $10
 	.export PART_BANK
 
- m_section_force "Part_Code" NAMESPACE "partCode"
+ m_section_free "Part_Code" NAMESPACE "partCode"
 
 	.include "code/partCommon.s"
-	.include "object_code/common/partCode.s"
+	.include "object_code/common/partCode.s" ; Note: closes and opens a new section (seasons only)
         .include "data/partCodeTable.s"
 	.include "object_code/seasons/partCode.s"
 
@@ -342,7 +342,7 @@
 	.include "build/data/data_4556.s"
 
 	; TODO: "SIMPLE_SCRIPT_BANK" define should be tied to this section somehow
-	 m_section_force "Scripts2" NAMESPACE scripts2
+	 m_section_free "Scripts2" NAMESPACE scripts2
 		.include "scripts/seasons/scripts2.s"
 	.ends
 
@@ -354,7 +354,7 @@
 
 	.include "code/serialFunctions.s"
 
-	 m_section_force "Bank_15" NAMESPACE scriptHelp
+	 m_section_free "Bank_15" NAMESPACE scriptHelp
 		.include "scripts/common/scriptHelper.s"
 	.ends
 
@@ -412,7 +412,7 @@ oamData_15_4e0c:
 
 	.include "build/data/treasureObjectData.s"
 
-	 m_section_force "Bank_15_2" NAMESPACE scriptHelp
+	 m_section_free "Bank_15_2" NAMESPACE scriptHelp
 		.include "scripts/seasons/scriptHelper.s"
 	.ends
 
@@ -495,9 +495,6 @@ oamData_15_4e0c:
 
 	m_GfxDataSimple map_rings ; $717a0
 
-	; TODO: where does "build/data/largeRoomLayoutTables.s" go?
-
-
 	; "build/textData.s" will determine where this data starts.
 	;   Ages:    1d:4000
 	;   Seasons: 1c:5c00
@@ -513,7 +510,7 @@ oamData_15_4e0c:
 .BANK $3f SLOT 1
 .ORG 0
 
- m_section_force Bank3f NAMESPACE bank3f
+ m_section_free Bank3f NAMESPACE bank3f
 
 .define BANK_3f $3f
 

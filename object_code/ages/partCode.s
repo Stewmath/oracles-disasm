@@ -4245,7 +4245,7 @@ partCode47:
 	; Landed on ground; time to explode
 
 	ld l,Part.state
-	inc (hl) ; [state] = 4
+	inc (hl) ; [state] = 3
 
 	ld l,Part.collisionType
 	set 7,(hl)
