@@ -355,7 +355,7 @@ interactionCode20:
 	.dw mainScripts.dungeonScript_spawnKeyOnMagnetBallToButton
 	.dw mainScripts.ancientRuinsScript_spawnStaircaseUp1FTopLeftRoom
 	.dw mainScripts.ancientRuinsScript_spawnStaircaseUp1FTopMiddleRoom
-	.dw mainScripts.script4c50
+	.dw mainScripts.ancientRuinsScript_4c50
 	.dw mainScripts.ancientRuinsScript_5TorchesMovingPlatformsRoom
 	.dw mainScripts.ancientRuinsScript_roomWithJustRopesSpawningButton
 	.dw mainScripts.ancientRuinsScript_UShapePitToMagicBoomerangOrb
@@ -373,7 +373,7 @@ interactionCode20:
 	.dw mainScripts.explorersCryptScript_magunesuTrampoline
 	.dw mainScripts.dungeonScript_minibossDeath
 	.dw mainScripts.dungeonScript_bossDeath
-	.dw mainScripts.script4d05
+	.dw mainScripts.explorersCryptScript_4d05
 	.dw mainScripts.explorersCryptScript_randomlyPlaceNonEnemyArmos
 	.dw mainScripts.dungeonScript_checkIfMagnetBallOnButton
 	.dw mainScripts.explorersCryptScript_1stPoeSisterRoom
@@ -415,7 +415,7 @@ interactionCode20:
 
 
 ; ==============================================================================
-; INTERACID_GANRLED_KEYHOLE
+; INTERACID_GNARLED_KEYHOLE
 ; ==============================================================================
 interactionCode21:
 	ld e,$44

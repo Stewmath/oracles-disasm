@@ -3,14 +3,14 @@
 dungeonScript_spawnChestOnTriggerBit0:
 	stopifitemflagset
 	checkflagset $00, wActiveTriggers
-	scriptjump _spawnChestHere
+	scriptjump _spawnChestAfterPuff
 
 
 makuPathScript_spawnChestWhenActiveTriggersEq01:
 	stopifitemflagset
 	checkmemoryeq wActiveTriggers, $01
 
-_spawnChestHere:
+_spawnChestAfterPuff:
 	playsound SND_SOLVEPUZZLE
 	createpuff
 	wait 15
@@ -77,7 +77,7 @@ dungeonScript_minibossDeath:
 	spawninteraction INTERACID_MINIBOSS_PORTAL, $00, $00, $00
 
 
-_script4bc8:
+_enableLinkAndMenu:
 	writememory wDisableLinkCollisionsAndMenu, $00
 	scriptend
 
@@ -92,7 +92,7 @@ dungeonScript_bossDeath:
 
 _spawnHeartContainer:
 	spawnitem TREASURE_HEART_CONTAINER, $00
-	scriptjump _script4bc8
+	scriptjump _enableLinkAndMenu
 
 wingDungeonScript_bossDeath:
 	jumpifroomflagset $80, @spawnHeart
@@ -138,27 +138,27 @@ wingDungeonScript_spawn30Rupees:
 moonlitGrottoScript_spawnChestWhen2TorchesLit:
 	stopifitemflagset
 	checkmemoryeq wNumTorchesLit, $02
-	scriptjump _spawnChestHere
+	scriptjump _spawnChestAfterPuff
 
 
 ; The room with the moving platform and an orb to hit
 skullDungeonScript_spawnChestWhenOrb0Hit:
 	stopifitemflagset
 	checkflagset $00, wToggleBlocksState
-	scriptjump _spawnChestHere
+	scriptjump _spawnChestAfterPuff
 
 ; The room with an orb that's being blocked by a moldorm
 skullDungeonScript_spawnChestWhenOrb1Hit:
 	stopifitemflagset
 	checkflagset $01, wToggleBlocksState
-	scriptjump _spawnChestHere
+	scriptjump _spawnChestAfterPuff
 
 
 ; The room with 3 eyeball-statue things that need to be hit with a seed shooter
 crownDungeonScript_spawnChestWhen3TriggersActive:
 	stopifitemflagset
 	checkmemoryeq wActiveTriggers, $07
-	scriptjump _spawnChestHere
+	scriptjump _spawnChestAfterPuff
 
 
 mermaidsCaveScript_spawnBridgeWhenOrbHit:
@@ -225,7 +225,7 @@ ancientTombScript_spawnVerticalBridgeWhenTorchLit:
 herosCaveScript_spawnChestWhen4TriggersActive:
 	stopifitemflagset
 	checkmemoryeq wActiveTriggers, $0f
-	scriptjump _spawnChestHere
+	scriptjump _spawnChestAfterPuff
 
 herosCaveScript_spawnBridgeWhenTriggerPressed:
 	stopifroomflag40set

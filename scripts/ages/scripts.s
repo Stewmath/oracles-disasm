@@ -1,5 +1,5 @@
 ; Scripts for interactions are in this file. You may want to cross-reference with the corresponding
-; code for the script to get the full picture (search for INTERACID_X in main.s to find the code).
+; assembly code to get the full picture (run "git grep INTERACID_X" to search for its code).
 
 .include "scripts/common/commonScripts.s"
 
@@ -8501,7 +8501,7 @@ tokkeyScriptFunc_hopAcrossDesk:
 ; ==============================================================================
 ; INTERACID_DIN
 ; ==============================================================================
-; Unused?
+; Unused? (Identical to "zeldaSubid00Script")
 dinScript:
 	setanimation $05
 	setcollisionradii $08, $04
@@ -8639,7 +8639,7 @@ zoraSubid11And12Script:
 ; In room of rites, waiting to be rescued by talking to her
 zeldaSubid00Script:
 	setanimation $05
-	setcollisionradii $08,$04
+	setcollisionradii $08, $04
 	makeabuttonsensitive
 	checkabutton
 

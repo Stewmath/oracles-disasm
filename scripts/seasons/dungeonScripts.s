@@ -1,11 +1,15 @@
+; These are a bunch of scripts used by INTERACID_DUNGEON_SCRIPT.
+
 dungeonScript_minibossDeath:
 	stopifroomflag80set
 	checknoenemies
 	orroomflag $80
 	wait 20
 	spawninteraction INTERACID_MINIBOSS_PORTAL $00, $00, $00
-dungeonScriptEnableLinkAndMenu:
+
+_enableLinkAndMenu:
 	writememory wDisableLinkCollisionsAndMenu, $00
+
 dungeonScript_end:
 	scriptend
 
@@ -15,7 +19,7 @@ dungeonScript_checkActiveTriggersEq01:
 	checkmemoryeq wActiveTriggers, $01
 
 
-spawnChestAfterPuff:
+_spawnChestAfterPuff:
 	playsound SND_SOLVEPUZZLE
 	createpuff
 	wait 15
@@ -27,6 +31,7 @@ dungeonScript_bossDeath:
 	jumpifroomflagset $80, _spawnHeartContainerCenterOfRoom
 	checknoenemies
 	orroomflag $80
+
 _spawnHeartContainerCenterOfRoom:
 	stopifitemflagset
 	setcoords $58, $78
@@ -52,13 +57,14 @@ snakesRemainsScript_timerForChestDisappearing:
 
 
 snakesRemainsScript_bossDeath:
-	jumpifroomflagset $80, _snakesRemains_coordsForHeartContainer
+	jumpifroomflagset $80, ++
 	checknoenemies
 	orroomflag $80
-_snakesRemains_coordsForHeartContainer:
+++
 	stopifitemflagset
 	setcoords $88, $78
-_spawnHeartContainerAtCustomPosition:
+
+_spawnHeartContainerHere:
 	spawnitem TREASURE_HEART_CONTAINER $00
 	writememory wDisableLinkCollisionsAndMenu, $00
 	scriptend
@@ -85,7 +91,7 @@ poisonMothsLairScript_minibossDeath:
 	createpuff
 	settilehere TILEINDEX_INDOOR_UPSTAIRCASE
 	spawninteraction INTERACID_MINIBOSS_PORTAL $00, $00, $00
-	scriptjump dungeonScriptEnableLinkAndMenu
+	scriptjump _enableLinkAndMenu
 
 
 poisonMothsLairScript_bossDeath:
@@ -94,10 +100,11 @@ poisonMothsLairScript_bossDeath:
 	wait 60
 	createpuff
 	settilehere $45
+
 _poisonMothsLair_coordsForHeartContainer:
 	stopifitemflagset
 	setcoords $20, $78
-	scriptjump _spawnHeartContainerAtCustomPosition
+	scriptjump _spawnHeartContainerHere
 
 
 poisonMothsLairScript_openEssenceDoorIfBossBeat:
@@ -123,19 +130,19 @@ dancingDragonScript_torchesHallway:
 	wait 8
 @spawnChest:
 	stopifitemflagset
-	scriptjump spawnChestAfterPuff
+	scriptjump _spawnChestAfterPuff
 
 
 dancingDragonScript_spawnBossKey:
 	stopifitemflagset
-	spawnitem TREASURE_BOSS_KEY $02
+	spawnitem TREASURE_BOSS_KEY, $02
 	scriptend
 
 
 dancingDragonScript_pushingPotsRoom:
 	stopifitemflagset
 	checkmemoryeq wActiveTriggers, $ff
-	spawnitem TREASURE_SMALL_KEY $01
+	spawnitem TREASURE_SMALL_KEY, $01
 	scriptend
 
 
@@ -148,7 +155,7 @@ dancingDragonScript_bridgeInB2:
 
 unicornsCaveScript_spawnBossKey:
 	stopifitemflagset
-	spawnitem TREASURE_BOSS_KEY $00
+	spawnitem TREASURE_BOSS_KEY, $00
 	scriptend
 
 
@@ -163,7 +170,7 @@ unicornsCaveScript_dropMagnetBallAfterDarknutKill:
 dungeonScript_spawnKeyOnMagnetBallToButton:
 	stopifitemflagset
 	checkmemoryeq wActiveTriggers, $01
-	spawnitem TREASURE_SMALL_KEY $01
+	spawnitem TREASURE_SMALL_KEY, $01
 	scriptend
 
 
@@ -171,6 +178,7 @@ ancientRuinsScript_spawnStaircaseUp1FTopLeftRoom:
 	stopifroomflag80set
 	checkflagset $00, wToggleBlocksState
 	setangle <ROOM_SEASONS_5bc
+
 _createWallUpStaircaseAndSetOtherRoomFlag:
 	; angle is the low index of the other room
 	asm15 scriptHelp.D6setFlagBit7InRoomWithLowIndexInAngle
@@ -190,8 +198,9 @@ ancientRuinsScript_spawnStaircaseUp1FTopMiddleRoom:
 
 
 ; ???
-script4c50:
+ancientRuinsScript_4c50:
 	setangle $02
+
 _loopCheckToggleBlocks:
 	asm15 scriptHelp.toggleBlocksInAngleBitsHit
 	wait 8
@@ -201,7 +210,7 @@ _loopCheckToggleBlocks:
 ancientRuinsScript_5TorchesMovingPlatformsRoom:
 	stopifroomflag80set
 	checkmemoryeq wNumTorchesLit, $05
-	setcounter1 $2d
+	setcounter1 45
 	setangle <ROOM_SEASONS_5c4
 	scriptjump _createWallUpStaircaseAndSetOtherRoomFlag
 
@@ -278,7 +287,7 @@ ancientRuinsScript_1FTopRightTrapButtonRoom:
 
 ancientRuinsScript_crystalTrapRoom:
 	stopifitemflagset
-	spawnitem TREASURE_RUPEES $0a
+	spawnitem TREASURE_RUPEES, $0a
 @waitUntilRupeeGotten:
 	jumpifroomflagset $20, @rupeeGotten
 	wait 8
@@ -310,17 +319,21 @@ explorersCryptScript_keyDroppedFromAbove:
 
 explorersCryptScript_4OrbTrampoline:
 	setangle $01
+
 explorersCryptScript_roomLeftOfRandomArmosRoom:
 	jumpifroomflagset $40, _D7createTrampoline
 	checkmemoryeq wActiveTriggers, $01
 	scriptjump _D7buttonPressed
+
 explorersCryptScript_magunesuTrampoline:
 	asm15 interactionSetAlwaysUpdateBit
 	jumpifroomflagset $40, _D7createTrampoline
 	checknoenemies
+
 _D7buttonPressed:
 	orroomflag $40
 	playsound SND_SOLVEPUZZLE
+
 _D7createTrampoline:
 	wait 8
 	createpuff
@@ -330,12 +343,12 @@ _D7createTrampoline:
 
 
 ; ???
-script4d05:
+explorersCryptScript_4d05:
 	stopifitemflagset
-	jumpifroomflagset $40, spawnChestAfterPuff
+	jumpifroomflagset $40, _spawnChestAfterPuff
 	checkmemoryeq wActiveTriggers, $01
 	orroomflag $40
-	scriptjump spawnChestAfterPuff
+	scriptjump _spawnChestAfterPuff
 
 
 explorersCryptScript_randomlyPlaceNonEnemyArmos:
@@ -369,10 +382,12 @@ explorersCryptScript_4FiresRoom_1:
 	asm15 scriptHelp.checkFirstPoeBeaten
 	jumptable_memoryaddress $cfc1
 	.dw @notBeaten
-	.dw poeBeaten
+	.dw _explorersCrypt_poeBeaten
+
 @notBeaten:
 	loadscript scripts2.explorersCrypt_firesGoingOut_1
-poeBeaten:
+
+_explorersCrypt_poeBeaten:
 	playsound SND_SOLVEPUZZLE
 	orroomflag $40
 	scriptend
@@ -383,7 +398,8 @@ explorersCryptScript_4FiresRoom_2:
 	asm15 scriptHelp.checkSecondPoeBeaten
 	jumptable_memoryaddress $cfc1
 	.dw @notBeaten
-	.dw poeBeaten
+	.dw _explorersCrypt_poeBeaten
+
 @notBeaten:
 	loadscript scripts2.explorersCrypt_firesGoingOut_2
 
@@ -413,6 +429,7 @@ swordAndShieldMazeScript_verticalBridgeInLava:
 swordAndShieldMazeScript_armosBlockingStairs:
 	stopifroomflag80set
 	writeobjectbyte Interaction.direction, $96
+
 @checkIfWillMove:
 	asm15 scriptHelp.D8armosCheckIfWillMove
 	jumptable_objectbyte $49
@@ -424,6 +441,7 @@ swordAndShieldMazeScript_7torchesAfterMiniboss:
 	asm15 scriptHelp.D8createFiresGoingOut, $a0
 	stopifroomflag80set
 	checkmemoryeq wNumTorchesLit, $07
+
 _puzzelSolvedSpawnUpStaircase:
 	orroomflag $80
 	createpuff
@@ -475,7 +493,7 @@ swordAndShieldMazeScript_tripleEyesByMiniboss:
 swordAndShieldMazeScript_tripleEyesNearStart:
 	stopifitemflagset
 	checkmemoryeq wActiveTriggers, $07
-	scriptjump spawnChestAfterPuff
+	scriptjump _spawnChestAfterPuff
 
 
 onoxsCastleScript_setFlagOnAllEnemiesDefeated:
@@ -494,13 +512,13 @@ onoxsCastleScript_resetRoomFlagsOnDungeonStart:
 herosCaveScript_spawnChestOnTorchLit:
 	stopifitemflagset
 	checkmemoryeq wNumTorchesLit, $01
-	scriptjump spawnChestAfterPuff
+	scriptjump _spawnChestAfterPuff
 
 
 herosCaveScript_spawnChestOn2TorchesLit:
 	stopifitemflagset
 	checkmemoryeq wNumTorchesLit, $02
-	scriptjump spawnChestAfterPuff
+	scriptjump _spawnChestAfterPuff
 
 
 herosCaveScript_check6OrbsHit:
@@ -513,5 +531,5 @@ herosCaveScript_allButtonsPressedAndEnemiesDefeated:
 	checkmemoryeq wActiveTriggers, $ff
 	wait 60
 	checknoenemies
-	spawnitem TREASURE_SMALL_KEY $01
+	spawnitem TREASURE_SMALL_KEY, $01
 	scriptend

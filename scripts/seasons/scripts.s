@@ -1,5 +1,5 @@
 ; Scripts for interactions are in this file. You may want to cross-reference with the corresponding
-; code for the script to get the full picture (search for INTERACID_X in main.s to find the code).
+; assembly code to get the full picture (run "git grep INTERACID_X" to search for its code).
 
 .include "scripts/common/commonScripts.s"
 
