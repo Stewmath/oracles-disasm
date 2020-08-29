@@ -41,6 +41,9 @@ else # ROM_AGES
 	TEXT_INSERT_ADDRESS = 0x74000
 endif
 
+# HACK-BASE: Enable bugfixes.
+CFLAGS += -D ENABLE_BUGFIXES
+
 CFLAGS += $(DEFINES)
 
 ifeq ($(BUILD_VANILLA), true)
