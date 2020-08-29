@@ -58,14 +58,19 @@ jpKanaTable = """
 """.replace('\n', '')
 
 
-# I couldn't recognize all the kanji. Unknown ones are marked with "?".
+# Kanji characters. Values with "?" are represented with the "\sym(XX)" opcode instead of
+# a character when being dumped.
+#   0x1b: Unused, can't decipher
+#   0x1c: Musical note
+#   0x4f: I think this is a "keyhole" drawing and not an actual kanji.
+#   0x57: Triforce symbol
 jpKanjiTable = """
 姫村下木東西南北地図出入口水氷池
-見門手力知？？気火金？？？実上四
-季？？秋冬右左大小本王国男女？年
-山人世中々？花？？軍？？？者？目
-？死心？？？？？？川？界生時？？
-？空？黒？海？？
+見門手力知恵勇気火金銀？？実上四
+季春夏秋冬右左大小本王国男女少年
+山人世中々剣花闇将軍真支配者鉄目
+詩死心節甲邪悪魔聖川結界生時炎？
+天空暗黒塔海仙？
 """.replace('\n', '')
 
 
@@ -111,13 +116,12 @@ textBase3 = None
 textTable = None
 
 if romIsAges(rom):
+    numHighTextIndices = 0x64
     lastGroupSize = 0x16
     precmpDir = 'precompressed/text/ages/'
     textDir = 'text/ages/'
 
     if region == "US":
-        numHighTextIndices = 0x64
-
         textBase1IndexStart = 0x00
         textBase1Table = 0xfcfb3
 
@@ -131,8 +135,6 @@ if romIsAges(rom):
         languageTable = 0xfcfe3
 
     elif region == "EU":
-        numHighTextIndices = 0x64
-
         textBase1IndexStart = 0x00
         textBase1Table = 0xfcfd9
 
@@ -144,17 +146,30 @@ if romIsAges(rom):
 
         languageTable = 0xfd015
 
+    elif region == "JP":
+        textBase1IndexStart = 0x00
+        textBase1Table = bankedAddress(0x3f, 0x4f63)
+
+        textBase2IndexStart = 0x34
+        textBase2Table = -1 # JAPANESE VERSION ONLY: Use hardcoded value (below) instead of table lookup
+        textBase2 = bankedAddress(0x22, 0x09f5)
+
+        textBase3IndexStart = 0x100
+        textBase3Table = 0
+
+        # JAPANESE VERSION ONLY: "languageTable" does not exist, define
+        # "textTable" directly.
+        textTable = bankedAddress(0x1e, 0x4000)
     else:
         assert False, "Unsupported region."
 
 elif romIsSeasons(rom):
+    numHighTextIndices = 0x64
     lastGroupSize = 0x1d
     precmpDir = 'precompressed/text/seasons/'
     textDir = 'text/seasons/'
 
     if region == "US":
-        numHighTextIndices = 0x64
-
         textBase1IndexStart = 0x00
         textBase1Table = 0xfcfe2
 
@@ -167,8 +182,6 @@ elif romIsSeasons(rom):
         languageTable = 0xfd012
 
     elif region == "EU":
-        numHighTextIndices = 0x64
-
         textBase1IndexStart = 0x00
         textBase1Table = 0xfd008
 
@@ -180,8 +193,6 @@ elif romIsSeasons(rom):
 
         languageTable = 0xfd044
     elif region == "JP":
-        numHighTextIndices = 0x64
-
         textBase1IndexStart = 0x00
         textBase1Table = bankedAddress(0x3f, 0x4f92)
 
@@ -191,8 +202,6 @@ elif romIsSeasons(rom):
 
         textBase3IndexStart = 0x100
         textBase3Table = 0
-
-        # 4f44: _getTextAddress
 
         # JAPANESE VERSION ONLY: "languageTable" does not exist, define
         # "textTable" directly.
@@ -235,14 +244,35 @@ def getTextBase(index):
 # Converts a byte to a character.
 def lookupNormalCharacter(b):
     assert(isNormalCharacter(b))
+    c = chr(b)
     if region == "JP":
-        if b < 0x60:
-            if b == 0x20:
+        if b < 0x20:
+            if b == 0x1a: # LEFT quotation mark
+                return '“'
+            elif b == 0x1b:
+                return '「'
+            elif b == 0x1c:
+                return '」'
+            elif b == 0x1e:
+                return '、'
+            else:
+                assert(False) # Anything else below 0x20 is unused
+        elif b < 0x60:
+            if b == 0x20: # Fullwidth space
                 return '　'
-            return chr(0xff00 + b - 0x20) # Fullwidth form
+            elif b == 0x22: # RIGHT quotation mark (Override "normal" quotation mark)
+                return '”'
+            elif b == 0x5c:
+                return '〜'
+            elif b == 0x5f:
+                return '。'
+            else:
+                return chr(0xff00 + b - 0x20) # Fullwidth form
         else:
             return jpKanaTable[b-0x60]
     else:
+        if b == 0x5c:
+            return '~'
         return chr(b)
 
 def lookupSymbol(b):
@@ -255,7 +285,7 @@ def lookupSymbol(b):
 
 def isNormalCharacter(b):
     if region == "JP":
-        return b >= 0x20
+        return b >= 0x20 or b == 0x1a or b == 0x1b or b == 0x1c or b == 0x1e
     else:
         return b >= 0x20 and b < 0x80
 
@@ -514,6 +544,8 @@ def parseTextData(data):
             textData += '\\left'
         elif b == 0x18:
             textData += '\\right'
+        elif b == 0x19:
+            textData += '\\times'
         elif b == 0xb8 and len(data)>i+1 and data[i+1] == 0xb9:
             textData += '\\abtn'
             i+=1
