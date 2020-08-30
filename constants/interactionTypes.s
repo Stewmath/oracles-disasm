@@ -1059,7 +1059,7 @@
 
 ;;
 ; A small key attached to an enemy. Due to a bug, this only works if the enemy to be
-; attached to is in the first enemy slot.
+; attached to is in the first enemy slot. (Fixed in hack-base branch.)
 ;
 ; @subid{The enemy ID to attach the small key to}
 .define INTERACID_SMALL_KEY_ON_ENEMY	$77
