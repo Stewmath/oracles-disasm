@@ -1059,7 +1059,7 @@
 
 ;;
 ; A small key attached to an enemy. Due to a bug, this only works if the enemy to be
-; attached to is in the first enemy slot.
+; attached to is in the first enemy slot. (Fixed in hack-base branch.)
 ;
 ; @subid{The enemy ID to attach the small key to}
 .define INTERACID_SMALL_KEY_ON_ENEMY	$77
@@ -1071,6 +1071,7 @@
 ; @subid{Bitmask to check on wSwitchState (if nonzero, "active" tile is placed)}
 ; @X{"index" of tile replacement (defines what tiles are placed for on/off)}
 ; @Y{Position of tile that should change when wSwitchState changes}
+; @postype{short}
 .define INTERACID_SWITCH_TILE_TOGGLER	$78
 
 ;;
