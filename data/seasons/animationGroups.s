@@ -1,3 +1,8 @@
+
+; Define is just for LynnaLab
+.define NUM_ANIMATION_GROUPS $1b
+
+
 animationGroupTable:
 	.dw animationGroup00
 	.dw animationGroup01
