@@ -6838,6 +6838,12 @@ _fireballShooter_checkAllEnemiesKilled:
 	ld a,(wNumEnemies)
 	or a
 	ret nz
+
+.ifdef ENABLE_BUGFIXES
+	; Workaround for above mentioned bug: this will return from the caller.
+	pop bc
+.endif
+
 	jp enemyDelete
 
 
