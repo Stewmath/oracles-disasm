@@ -1071,6 +1071,7 @@
 ; @subid{Bitmask to check on wSwitchState (if nonzero, "active" tile is placed)}
 ; @X{"index" of tile replacement (defines what tiles are placed for on/off)}
 ; @Y{Position of tile that should change when wSwitchState changes}
+; @postype{short}
 .define INTERACID_SWITCH_TILE_TOGGLER	$78
 
 ;;
