@@ -1,3 +1,19 @@
+; OAM data for each animation of an interaction.
+;
+; The first line of each entry is the number of OAM blocks. The following lines are the OAM blocks themselves.
+;
+; OAM Block Format:
+;  b0: Y Position of the tile
+;  b1: X Position of the tile
+;  b2: Tile Number (In 8x16 mode, the lower bit of the tile number is ignored. IE: the upper 8x8 tile is "NN AND FEh", and the lower 8x8 tile is "NN OR 01h".)
+;  b3:
+;    bits 0-2: GBC Palette Number (palettes 0-7)
+;    bit 3: Tile VRAM-Bank (should probably be 0 for most things)
+;    bit 4: GB Palette Number (palettes 0-1, probably unused in GBC?)
+;    bit 5: X Flip (0=Normal, 1=Horizontally mirrored)
+;    bit 6: Y Flip (0=Normal, 1=Vertically mirrored)
+;    bit 7: OBJ-to-BG Priority (0=OBJ Above BG, 1=OBJ Behind BG color 1-3); Used for both BG and Window. BG color 0 is always behind OBJ
+
 interactionOamData50067:
 	.db $00
 
