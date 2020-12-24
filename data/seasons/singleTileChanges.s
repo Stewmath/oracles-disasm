@@ -8,6 +8,14 @@ singleTileChangeGroupTable:
 	.dw singleTileChangeGroup6Data
 	.dw singleTileChangeGroup7Data
 
+; Data format:
+; b0: Room index
+; b1: Bitmask to check. If bitmask & [room flags] is nonzero, the change is applied.
+;     The $f0/$f1/$f2 special cases from Ages do NOT exist in seasons unless the "AGES_ENGINE"
+;     define is enabled.
+; b2: Position of tile to change
+; b3: New tile to put at that position
+
 singleTileChangeGroup0Data:
 	.db $9a $40 $33 $c5
 	.db $52 $40 $02 $d0
