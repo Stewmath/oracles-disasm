@@ -98,13 +98,3 @@
 .define DISABLE_COMPANION		$20
 .define DISABLE_40			$40
 .define DISABLE_ALL_BUT_INTERACTIONS	$80
-
-
-; Room indices
-
-.ifdef ROM_AGES
-	.define GANON_ROOM $5f5
-	; TODO: twinrova room
-.else; ROM_SEASONS
-	.define GANON_ROOM $59e
-.endif

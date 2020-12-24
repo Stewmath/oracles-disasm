@@ -6438,10 +6438,10 @@ _dungeonMap_calculateVisitedFloorsAndLinkPosition:
 	; Check for the final battle room with ganon; this room is hardcoded to pretend to
 	; be just below the other one
 	ld a,(wActiveGroup)
-	cp >GANON_ROOM
+	cp >ROOM_TWINROVA_FIGHT
 	ret nz
 	ld a,(wActiveRoom)
-	cp <GANON_ROOM
+	cp <ROOM_TWINROVA_FIGHT
 	ret nz
 	ld a,$13
 	ld (wMapMenu.dungeonCursorIndex),a
