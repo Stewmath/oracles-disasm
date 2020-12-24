@@ -7766,10 +7766,10 @@ _mapMenu_checkRoomVisited:
 	ld hl,wPresentRoomFlags
 
 .ifdef ROM_SEASONS
-	; Special-case for the sword upgrade screen
-	cp $c9
+	; Special-case for the sword upgrade screen (read the maku tree screen's flag instead)
+	cp <ROOM_SEASONS_0c9
 	jr nz,++
-	ld hl,wPastRoomFlags+$0b
+	ld hl,wPastRoomFlags + <ROOM_SEASONS_10b
 	xor a
 .endif
 
