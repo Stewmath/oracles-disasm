@@ -2,10 +2,10 @@
 
 ; Garbage data/code
 
-	m_BreakableTileData %00000000 %00010000 %0000 $0 $df $37 ; $2f
-	m_BreakableTileData %00110000 %00000000 %0000 $0 $06 $01 ; $30
-	m_BreakableTileData %00100101 %00000001 %0000 $0 $06 $01 ; $31
-	m_BreakableTileData %00111110 %10000000 %1011 $0 $1f $00 ; $32
+	m_BreakableTileData %00000000 %00001000 %0000 $0 $df $37 ; $2f
+	m_BreakableTileData %00001100 %00000000 %0000 $0 $06 $01 ; $30
+	m_BreakableTileData %10100100 %10000000 %0000 $0 $06 $01 ; $31
+	m_BreakableTileData %01111100 %00000001 %1101 $0 $1f $00 ; $32
 
 
 _fake_specialObjectLoadAnimationFrameToBuffer:

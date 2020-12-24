@@ -235,7 +235,9 @@
 .endm
 
 .MACRO revb
-	.redefine tmp \1
+	.define tmp \1
+	.define tmp1
+	.define tmp2
 	.REPT 4 index tmpi
 		.redefine tmp1 tmp&(1<<tmpi)
 		.redefine tmp2 tmp&($80>>tmpi)
