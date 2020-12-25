@@ -299,10 +299,10 @@ treasureObjectData30:
 
 treasureObjectData31:
 	m_BeginTreasureSubids TREASURE_BOSS_KEY
-	m_TreasureSubid $19, $00, $1b, $43, TREASURE_OBJECT_BOSS_KEY_05
-	m_TreasureSubid $29, $00, $1b, $43, TREASURE_OBJECT_BOSS_KEY_06
-	m_TreasureSubid $49, $00, $1b, $43, TREASURE_OBJECT_BOSS_KEY_07
-	m_TreasureSubid $38, $00, $1b, $43, TREASURE_OBJECT_BOSS_KEY_08
+	m_TreasureSubid $19, $00, $1b, $43, TREASURE_OBJECT_BOSS_KEY_00
+	m_TreasureSubid $29, $00, $1b, $43, TREASURE_OBJECT_BOSS_KEY_01
+	m_TreasureSubid $49, $00, $1b, $43, TREASURE_OBJECT_BOSS_KEY_02
+	m_TreasureSubid $38, $00, $1b, $43, TREASURE_OBJECT_BOSS_KEY_03
 
 treasureObjectData32:
 	m_BeginTreasureSubids TREASURE_COMPASS
