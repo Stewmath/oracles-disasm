@@ -25,7 +25,8 @@ interactionLoadTreasureData:
 	jr --
 +
 	; var31 = spawn mode
-	ldi a,(hl)
+	ldi a,(hl) ; Rando: Original value is ignored
+	call rando_modifyTreasure
 	ld b,a
 	swap a
 	and $07
@@ -60,4 +61,5 @@ interactionLoadTreasureData:
 	ld (de),a
 	ret
 
+	.include "code/rando/loadTreasureData.s"
 .ends

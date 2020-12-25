@@ -14229,4 +14229,6 @@ func_3ee4:
 .endif
 
 
+.include "code/rando/util.s"
+
 .ENDS
