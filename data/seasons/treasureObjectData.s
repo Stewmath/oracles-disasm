@@ -23,20 +23,17 @@
 
 
 .macro m_BeginTreasureSubids
-	.IF \1 == 0
-		.PRINTT "m_BeginTreasureSubids with param 0 not handled properly\n"
-		.FAIL
-	.ENDIF
 	.redefine CURRENT_TREASURE_INDEX, (\1)<<8
 .endm
 
 .macro m_TreasureSubid
 	.db \1, \2, \3, \4
 
-	.IF CURRENT_TREASURE_INDEX < $100
+	.IF CURRENT_TREASURE_INDEX >= $10000
 		; Within the "treasureObjectData" table, "CURRENT_TREASURE_INDEX" corresponds to
-		; values from "constants/treasure.s"
-		.define \5, (CURRENT_TREASURE_INDEX << 8)
+		; values from "constants/treasure.s". (We add $10000 just to make it easy to
+		; differentiate which mode we're in.)
+		.define \5, (CURRENT_TREASURE_INDEX - $10000) << 8
 	.ELSE
 		; Within a subid table, "CURRENT_TREASURE_INDEX" corresponds to a treasure object
 		; index (2-byte number)
@@ -56,7 +53,7 @@
 .endm
 
 
-.define CURRENT_TREASURE_INDEX $00
+.define CURRENT_TREASURE_INDEX $10000
 
 treasureObjectData:
 	/* $00 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_NONE_00
