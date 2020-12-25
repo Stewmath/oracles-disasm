@@ -175,7 +175,11 @@ chestGroup5Data:
 	m_ChestData $22, $b8, TREASURE_OBJECT_RING_19
 	m_ChestData $14, $ac, TREASURE_OBJECT_RUPEES_08
 	m_ChestData $12, $f7, TREASURE_OBJECT_RING_1b
+	.db $ff
+
 chestGroup6Data:
+	.db $ff
+
 chestGroup7Data:
 	.db $ff
 
