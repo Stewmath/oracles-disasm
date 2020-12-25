@@ -724,7 +724,15 @@
 ; Spawn an item at link's coordinates. In most cases this will cause link to
 ; grab it instantly.
 ;
-; (TODO: only allow two parameters here, not one. Reduces confusion.
+; There are two ways you can use this command:
+;
+; - Option A: giveitem TREASURE_SWORD $01
+; - Option B: giveitem TREASURE_OBJECT_SWORD_01
+;
+; Option A (2 parameters) specifies the treasure index and subid number manually.
+;
+; Option B (1 parameter) uses the TREASURE_OBJECT constant as defined in
+; "data/{game}/treasureObjectData.s".
 ;
 ; param1:	High byte of ID (see constants/treasure.s)
 ; param2:	Low byte of ID

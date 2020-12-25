@@ -1,3 +1,11 @@
+; "AGES_ENGINE" is like "ROM_AGES", but anything wrapped in this define could potentially be used in
+; Seasons as well. Generally this enables extra engine features added in Ages. However, it could
+; also cause subtle differences in how certain things work.
+; I might enable this by default in the hack-base branch for seasons.
+.ifdef ROM_AGES
+	.define AGES_ENGINE
+.endif
+
 ; Room sizes (in 16x16 tiles)
 ; LARGE_ROOM_WIDTH/LARGE_ROOM_HEIGHT shouldn't be increased because it could overflow into
 ; buffers used immediately after the room layout in RAM.
@@ -90,13 +98,3 @@
 .define DISABLE_COMPANION		$20
 .define DISABLE_40			$40
 .define DISABLE_ALL_BUT_INTERACTIONS	$80
-
-
-; Room indices
-
-.ifdef ROM_AGES
-	.define GANON_ROOM $5f5
-	; TODO: twinrova room
-.else; ROM_SEASONS
-	.define GANON_ROOM $59e
-.endif

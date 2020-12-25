@@ -13882,7 +13882,7 @@ checkLinkCanSurface:
 	ld a,(wTilesetFlags)
 	and TILESETFLAG_UNDERWATER
 	ret z
-	callab checkLinkCanSurface_isUnderwater
+	callab underwaterSurfacing.checkLinkCanSurface_isUnderwater
 	srl c
 	ret
 

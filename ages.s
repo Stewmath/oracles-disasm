@@ -368,9 +368,10 @@ specialObjectLoadAnimationFrameToBuffer:
 
 .ends
 
- m_section_superfree "Underwater Surface Data"
+ m_section_superfree "Underwater Surface Data" namespace "underwaterSurfacing"
 
-	.include "code/ages/underwaterSurface.s"
+	.include "code/ages/underwaterSurfacing.s"
+	.include "data/ages/underwaterSurfaceData.s"
 
 .ENDS
 

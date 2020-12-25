@@ -1,518 +1,559 @@
-; See data/ages/treasureObjectData.s for documentation
+; Treasure objects are a kind of Interaction (INTERACID_TREASURE). Each "Treasure Object" contains
+; the information necessary to display a specific treasure (see "constants/treasure.s") and give it
+; to Link. Many treasures need a "parameter" to go with them (ie. level, amount). All of this "extra
+; data" is defined here.
+;
+; The "m_TreasureSubid" macro takes 4 bytes as parameters:
+;   b0: bit 7    = next 2 bytes are a pointer
+;       bits 4-6 = spawn mode
+;       bit 3    = ?
+;       bits 0-2 = grab mode
+;   b1: Parameter (value of 'c' to pass to "giveTreasure")
+;   b2: Low text ID on pickup ($ff for no text; high byte of ID is always $00)
+;   b3: Graphics to use. (Gets copied to object's subid, so graphics are determined by the
+;       corresponding value for interaction $60 in data/interactionData.s.)
+;
+; Then, the macro takes two more parameters:
+;   Param 4: The treasure index (TREASURE_...)
+;   Param 5: The name to give this new subid of the treasure index. This name will resolve to
+;            a 4-digit hex number (XXYY, where XX = treasure index and YY = subid).
+;
+; If multiple subids are being specified for a single treasure, then parameter 4 is omitted and the
+; "m_BeginTreasureSubids" macro must be used.
+;
+; For documentation of spawn modes and grab modes, see "constants/treasureSpawnModes.s".
+;
+; See also constants/treasure.s for treasure lists.
+
+
+.macro m_BeginTreasureSubids
+	.IF \1 == 0
+		.PRINTT "m_BeginTreasureSubids with param 0 not handled properly\n"
+		.FAIL
+	.ENDIF
+	.redefine CURRENT_TREASURE_INDEX, (\1)<<8
+.endm
+
+.macro m_TreasureSubid
+	.db \1, \2, \3, \4
+
+	.IF CURRENT_TREASURE_INDEX < $100
+		; Within the "treasureObjectData" table, "CURRENT_TREASURE_INDEX" corresponds to
+		; values from "constants/treasure.s"
+		.define \5, (CURRENT_TREASURE_INDEX << 8)
+	.ELSE
+		; Within a subid table, "CURRENT_TREASURE_INDEX" corresponds to a treasure object
+		; index (2-byte number)
+		.define \5, CURRENT_TREASURE_INDEX
+	.ENDIF
+
+	.export \5
+	.redefine CURRENT_TREASURE_INDEX, CURRENT_TREASURE_INDEX+1
+.endm
+
+.macro m_UndefinedTreasure
+	.db $00 $00 $ff $00
+
+	.redefine CURRENT_TREASURE_INDEX, CURRENT_TREASURE_INDEX+1
+.endm
+
+.macro m_TreasurePointer
+	.db $80
+	.dw \1
+	.db $00
+
+	.redefine CURRENT_TREASURE_INDEX, CURRENT_TREASURE_INDEX+1
+.endm
+
+
+.define CURRENT_TREASURE_INDEX $00
 
 treasureObjectData:
 	; 0x00
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x01
-	.db $80
-	.dw treasureObjectData01 ; $52bd
-	.db $00
+	m_TreasurePointer treasureObjectData01 ; $52bd
 
 	; 0x02
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x03
-	.db $80
-	.dw treasureObjectData03 ; $52c9
-	.db $00
+	m_TreasurePointer treasureObjectData03 ; $52c9
 
 	; 0x04
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x05
-	.db $80
-	.dw treasureObjectData05 ; $52d9
-	.db $00
+	m_TreasurePointer treasureObjectData05 ; $52d9
 
 	; 0x06
-	.db $80
-	.dw treasureObjectData06 ; $52f1
-	.db $00
+	m_TreasurePointer treasureObjectData06 ; $52f1
 
 	; 0x07
-	.db $80
-	.dw treasureObjectData07 ; $52f9
-	.db $00
+	m_TreasurePointer treasureObjectData07 ; $52f9
 
 	; 0x08
-	.db $38 $00 $30 $18
+	m_TreasureSubid $38, $00, $30, $18, TREASURE_OBJECT_MAGNET_GLOVES_00
 
 	; 0x09
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x0a
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x0b
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x0c
-	.db $80
-	.dw treasureObjectData0c ; $5315
-	.db $00
+	m_TreasurePointer treasureObjectData0c ; $5315
 
 	; 0x0d
-	.db $80
-	.dw treasureObjectData0d ; $531d
-	.db $00
+	m_TreasurePointer treasureObjectData0d ; $531d
 
 	; 0x0e
-	.db $0a $0c $3b $23
+	m_TreasureSubid $0a, $0c, $3b, $23, TREASURE_OBJECT_FLUTE_00
 
 	; 0x0f
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x10
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x11
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x12
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x13
-	.db $80
-	.dw treasureObjectData13 ; $5325
-	.db $00
+	m_TreasurePointer treasureObjectData13 ; $5325
 
 	; 0x14
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x15
-	.db $0a $00 $25 $1b
+	m_TreasureSubid $0a, $00, $25, $1b, TREASURE_OBJECT_SHOVEL_00
 
 	; 0x16
-	.db $38 $00 $26 $19
+	m_TreasureSubid $38, $00, $26, $19, TREASURE_OBJECT_BRACELET_00
 
 	; 0x17
-	.db $80
-	.dw treasureObjectData17 ; $532d
-	.db $00
+	m_TreasurePointer treasureObjectData17 ; $532d
 
 	; 0x18
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x19
-	.db $80
-	.dw treasureObjectData19 ; $52b5
-	.db $00
+	m_TreasurePointer treasureObjectData19 ; $52b5
 
 	; 0x1a
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x1b
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x1c
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x1d
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x1e
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x1f
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x20
-	.db $80
-	.dw treasureObjectData20 ; $5339
-	.db $00
+	m_TreasurePointer treasureObjectData20 ; $5339
 
 	; 0x21
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x22
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x23
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x24
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x25
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x26
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x27
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x28
-	.db $80
-	.dw treasureObjectData28 ; $5355
-	.db $00
+	m_TreasurePointer treasureObjectData28 ; $5355
 
 	; 0x29
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x2a
-	.db $80
-	.dw treasureObjectData2a ; $5399
-	.db $00
+	m_TreasurePointer treasureObjectData2a ; $5399
 
 	; 0x2b
-	.db $80
-	.dw treasureObjectData2b ; $538d
-	.db $00
+	m_TreasurePointer treasureObjectData2b ; $538d
 
 	; 0x2c
-	.db $80
-	.dw treasureObjectData2c ; $53a5
-	.db $00
+	m_TreasurePointer treasureObjectData2c ; $53a5
 
 	; 0x2d
-	.db $80
-	.dw treasureObjectData2d ; $53b9
-	.db $00
+	m_TreasurePointer treasureObjectData2d ; $53b9
 
 	; 0x2e
-	.db $02 $00 $31 $31
+	m_TreasureSubid $02, $00, $31, $31, TREASURE_OBJECT_FLIPPERS_00
 
 	; 0x2f
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x30
-	.db $80
-	.dw treasureObjectData30 ; $53fd
-	.db $00
+	m_TreasurePointer treasureObjectData30 ; $53fd
 
 	; 0x31
-	.db $80
-	.dw treasureObjectData31 ; $540d
-	.db $00
+	m_TreasurePointer treasureObjectData31 ; $540d
 
 	; 0x32
-	.db $80
-	.dw treasureObjectData32 ; $541d
-	.db $00
+	m_TreasurePointer treasureObjectData32 ; $541d
 
 	; 0x33
-	.db $80
-	.dw treasureObjectData33 ; $5429
-	.db $00
+	m_TreasurePointer treasureObjectData33 ; $5429
 
 	; 0x34
-	.db $80
-	.dw treasureObjectData34 ; $533d
-	.db $00
+	m_TreasurePointer treasureObjectData34 ; $533d
 
 	; 0x35
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x36
-	.db $02 $00 $33 $47
+	m_TreasureSubid $02, $00, $33, $47, TREASURE_OBJECT_MAKU_SEED_00
 
 	; 0x37
-	.db $02 $0b $6b $2f
+	m_TreasureSubid $02, $0b, $6b, $2f, TREASURE_OBJECT_ORE_CHUNKS_00
 
 	; 0x38
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x39
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x3a
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x3b
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x3c
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x3d
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x3e
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x3f
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x40
-	.db $80
-	.dw $0000
-	.db $00
+	m_TreasurePointer $0000
 
 	; 0x41
-	.db $80
-	.dw treasureObjectData41 ; $5435
-	.db $00
+	m_TreasurePointer treasureObjectData41 ; $5435
 
 	; 0x42
-	.db $80
-	.dw treasureObjectData42 ; $5465
-	.db $00
+	m_TreasurePointer treasureObjectData42 ; $5465
 
 	; 0x43
-	.db $09 $00 $43 $45
+	m_TreasureSubid $09, $00, $43, $45, TREASURE_OBJECT_FLOODGATE_KEY_00
 
 	; 0x44
-	.db $09 $00 $44 $46
+	m_TreasureSubid $09, $00, $44, $46, TREASURE_OBJECT_DRAGON_KEY_00
 
 	; 0x45
-	.db $5a $00 $40 $57
+	m_TreasureSubid $5a, $00, $40, $57, TREASURE_OBJECT_STAR_ORE_00
 
 	; 0x46
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x47
-	.db $0a $00 $66 $54
+	m_TreasureSubid $0a, $00, $66, $54, TREASURE_OBJECT_SPRING_BANANA_00
 
 	; 0x48
-	.db $09 $01 $67 $55
+	m_TreasureSubid $09, $01, $67, $55, TREASURE_OBJECT_RICKY_GLOVES_00
 
 	; 0x49
-	.db $0a $00 $3c $56
+	m_TreasureSubid $0a, $00, $3c, $56, TREASURE_OBJECT_BOMB_FLOWER_00
 
 	; 0x4a
-	.db $80
-	.dw treasureObjectData4a ; $546d
-	.db $00
+	m_TreasurePointer treasureObjectData4a ; $546d
 
 	; 0x4b
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x4c
-	.db $0a $00 $47 $36
+	m_TreasureSubid $0a, $00, $47, $36, TREASURE_OBJECT_ROUND_JEWEL_00
 
 	; 0x4d
-	.db $80
-	.dw treasureObjectData4d ; $5479
-	.db $00
+	m_TreasurePointer treasureObjectData4d ; $5479
 
 	; 0x4e
-	.db $38 $00 $48 $38
+	m_TreasureSubid $38, $00, $48, $38, TREASURE_OBJECT_SQUARE_JEWEL_00
 
 	; 0x4f
-	.db $38 $00 $49 $39
+	m_TreasureSubid $38, $00, $49, $39, TREASURE_OBJECT_X_SHAPED_JEWEL_00
 
 	; 0x50
-	.db $38 $00 $3f $59
+	m_TreasureSubid $38, $00, $3f, $59, TREASURE_OBJECT_RED_ORE_00
 
 	; 0x51
-	.db $38 $00 $3e $58
+	m_TreasureSubid $38, $00, $3e, $58, TREASURE_OBJECT_BLUE_ORE_00
 
 	; 0x52
-	.db $0a $00 $3d $5a
+	m_TreasureSubid $0a, $00, $3d, $5a, TREASURE_OBJECT_HARD_ORE_00
 
 	; 0x53
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x54
-	.db $38 $00 $70 $26
+	m_TreasureSubid $38, $00, $70, $26, TREASURE_OBJECT_MASTERS_PLAQUE_00
 
 	; 0x55
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x56
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x57
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x58
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x59
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x5a
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x5b
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x5c
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x5d
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x5e
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x5f
-	.db $00 $00 $ff $00
+	m_UndefinedTreasure
 
 	; 0x60
-	.db $0c $00 $72 $57
+	m_TreasureSubid $0c, $00, $72, $57, TREASURE_OBJECT_60_00
 
 	; 0x61
-	.db $02 $00 $6e $05
+	m_TreasureSubid $02, $00, $6e, $05, TREASURE_OBJECT_BOMB_UPGRADE_00
 
 	; 0x62
-	.db $02 $00 $46 $20
+	m_TreasureSubid $02, $00, $46, $20, TREASURE_OBJECT_SATCHEL_UPGRADE_00
 
 
 treasureObjectData19:
-	.db $0a $01 $2d $20
-	.db $01 $00 $46 $20
+	m_BeginTreasureSubids TREASURE_SEED_SATCHEL
+	m_TreasureSubid $0a, $01, $2d, $20, TREASURE_OBJECT_SEED_SATCHEL_00
+	m_TreasureSubid $01, $00, $46, $20, TREASURE_OBJECT_SEED_SATCHEL_UPGRADE
 
 treasureObjectData01:
-	.db $0a $01 $1f $13
-	.db $0a $02 $20 $14
-	.db $0a $03 $21 $15
+	m_BeginTreasureSubids TREASURE_SHIELD
+	m_TreasureSubid $0a, $01, $1f, $13, TREASURE_OBJECT_SHIELD_00
+	m_TreasureSubid $0a, $02, $20, $14, TREASURE_OBJECT_SHIELD_01
+	m_TreasureSubid $0a, $03, $21, $15, TREASURE_OBJECT_SHIELD_02
 
 treasureObjectData03:
-	.db $38 $10 $4d $05
-	.db $30 $10 $4d $05
-	.db $02 $10 $4d $05
-	.db $38 $30 $4d $05
+	m_BeginTreasureSubids TREASURE_BOMBS
+	m_TreasureSubid $38, $10, $4d, $05, TREASURE_OBJECT_BOMBS_00
+	m_TreasureSubid $30, $10, $4d, $05, TREASURE_OBJECT_BOMBS_01
+	m_TreasureSubid $02, $10, $4d, $05, TREASURE_OBJECT_BOMBS_02
+	m_TreasureSubid $38, $30, $4d, $05, TREASURE_OBJECT_BOMBS_03
 
 treasureObjectData05:
-	.db $38 $01 $1c $10
-	.db $09 $02 $1d $11
-	.db $09 $03 $1e $12
-	.db $03 $01 $ff $10
-	.db $03 $02 $ff $11
-	.db $03 $03 $ff $12
+	m_BeginTreasureSubids TREASURE_SWORD
+	m_TreasureSubid $38, $01, $1c, $10, TREASURE_OBJECT_SWORD_00
+	m_TreasureSubid $09, $02, $1d, $11, TREASURE_OBJECT_SWORD_01
+	m_TreasureSubid $09, $03, $1e, $12, TREASURE_OBJECT_SWORD_02
+	m_TreasureSubid $03, $01, $ff, $10, TREASURE_OBJECT_SWORD_03
+	m_TreasureSubid $03, $02, $ff, $11, TREASURE_OBJECT_SWORD_04
+	m_TreasureSubid $03, $03, $ff, $12, TREASURE_OBJECT_SWORD_05
 
 treasureObjectData06:
-	.db $0a $01 $22 $1c
-	.db $38 $02 $23 $1d
+	m_BeginTreasureSubids TREASURE_BOOMERANG
+	m_TreasureSubid $0a, $01, $22, $1c, TREASURE_OBJECT_BOOMERANG_00
+	m_TreasureSubid $38, $02, $23, $1d, TREASURE_OBJECT_BOOMERANG_01
 
 treasureObjectData07:
-	.db $38 $07 $0a $1e
-	.db $01 $07 $ff $1e
-	.db $09 $00 $0d $1e
-	.db $09 $01 $0b $1e
-	.db $09 $02 $0c $1e
-	.db $09 $03 $0a $1e
-	.db $09 $07 $71 $1e
+	m_BeginTreasureSubids TREASURE_ROD_OF_SEASONS
+	m_TreasureSubid $38, $07, $0a, $1e, TREASURE_OBJECT_ROD_OF_SEASONS_00
+	m_TreasureSubid $01, $07, $ff, $1e, TREASURE_OBJECT_ROD_OF_SEASONS_01
+	m_TreasureSubid $09, $00, $0d, $1e, TREASURE_OBJECT_ROD_OF_SEASONS_02
+	m_TreasureSubid $09, $01, $0b, $1e, TREASURE_OBJECT_ROD_OF_SEASONS_03
+	m_TreasureSubid $09, $02, $0c, $1e, TREASURE_OBJECT_ROD_OF_SEASONS_04
+	m_TreasureSubid $09, $03, $0a, $1e, TREASURE_OBJECT_ROD_OF_SEASONS_05
+	m_TreasureSubid $09, $07, $71, $1e, TREASURE_OBJECT_ROD_OF_SEASONS_06
 
 treasureObjectData0c:
-	.db $02 $00 $6f $25
-	.db $30 $00 $6f $25
+	m_BeginTreasureSubids TREASURE_BIGGORON_SWORD
+	m_TreasureSubid $02, $00, $6f, $25, TREASURE_OBJECT_BIGGORON_SWORD_00
+	m_TreasureSubid $30, $00, $6f, $25, TREASURE_OBJECT_BIGGORON_SWORD_01
 
 treasureObjectData0d:
-	.db $0a $10 $32 $24
-	.db $30 $10 $32 $24
+	m_BeginTreasureSubids TREASURE_BOMBCHUS
+	m_TreasureSubid $0a, $10, $32, $24, TREASURE_OBJECT_BOMBCHUS_00
+	m_TreasureSubid $30, $10, $32, $24, TREASURE_OBJECT_BOMBCHUS_01
 
 treasureObjectData13:
-	.db $38 $01 $2e $21
-	.db $38 $02 $2f $22
+	m_BeginTreasureSubids TREASURE_SLINGSHOT
+	m_TreasureSubid $38, $01, $2e, $21, TREASURE_OBJECT_SLINGSHOT_00
+	m_TreasureSubid $38, $02, $2f, $22, TREASURE_OBJECT_SLINGSHOT_01
 
 treasureObjectData17:
-	.db $38 $01 $27 $16
-	.db $38 $02 $28 $17
-	.db $5a $01 $37 $16
+	m_BeginTreasureSubids TREASURE_FEATHER
+	m_TreasureSubid $38, $01, $27, $16, TREASURE_OBJECT_FEATHER_00
+	m_TreasureSubid $38, $02, $28, $17, TREASURE_OBJECT_FEATHER_01
+	m_TreasureSubid $5a, $01, $37, $16, TREASURE_OBJECT_FEATHER_02
 
 treasureObjectData20:
-	.db $30 $04 $4f $06
+	m_BeginTreasureSubids TREASURE_EMBER_SEEDS
+	m_TreasureSubid $30, $04, $4f, $06, TREASURE_OBJECT_EMBER_SEEDS_00
 
 treasureObjectData34:
-	.db $02 $01 $4b $0d
-	.db $38 $01 $4b $0d
-	.db $52 $01 $4b $0d
-	.db $02 $01 $4b $0d
-	.db $0a $01 $4b $0d
-	.db $4a $01 $4b $0d
+	m_BeginTreasureSubids TREASURE_GASHA_SEED
+	m_TreasureSubid $02, $01, $4b, $0d, TREASURE_OBJECT_GASHA_SEED_00
+	m_TreasureSubid $38, $01, $4b, $0d, TREASURE_OBJECT_GASHA_SEED_01
+	m_TreasureSubid $52, $01, $4b, $0d, TREASURE_OBJECT_GASHA_SEED_02
+	m_TreasureSubid $02, $01, $4b, $0d, TREASURE_OBJECT_GASHA_SEED_03
+	m_TreasureSubid $0a, $01, $4b, $0d, TREASURE_OBJECT_GASHA_SEED_04
+	m_TreasureSubid $4a, $01, $4b, $0d, TREASURE_OBJECT_GASHA_SEED_05
 
 treasureObjectData28:
-	.db $38 $01 $01 $28
-	.db $38 $03 $02 $29
-	.db $38 $04 $03 $2a
-	.db $38 $05 $04 $2b
-	.db $38 $07 $05 $2b
-	.db $38 $0b $06 $2c
-	.db $38 $0c $07 $2d
-	.db $38 $0f $08 $2d
-	.db $38 $0d $09 $2e
-	.db $30 $01 $01 $28
-	.db $18 $01 $ff $2e
-	.db $08 $05 $ff $2b
-	.db $08 $07 $05 $2b
-	.db $30 $04 $03 $2a
+	m_BeginTreasureSubids TREASURE_RUPEES
+	m_TreasureSubid $38, $01, $01, $28, TREASURE_OBJECT_RUPEES_00
+	m_TreasureSubid $38, $03, $02, $29, TREASURE_OBJECT_RUPEES_01
+	m_TreasureSubid $38, $04, $03, $2a, TREASURE_OBJECT_RUPEES_02
+	m_TreasureSubid $38, $05, $04, $2b, TREASURE_OBJECT_RUPEES_03
+	m_TreasureSubid $38, $07, $05, $2b, TREASURE_OBJECT_RUPEES_04
+	m_TreasureSubid $38, $0b, $06, $2c, TREASURE_OBJECT_RUPEES_05
+	m_TreasureSubid $38, $0c, $07, $2d, TREASURE_OBJECT_RUPEES_06
+	m_TreasureSubid $38, $0f, $08, $2d, TREASURE_OBJECT_RUPEES_07
+	m_TreasureSubid $38, $0d, $09, $2e, TREASURE_OBJECT_RUPEES_08
+	m_TreasureSubid $30, $01, $01, $28, TREASURE_OBJECT_RUPEES_09
+	m_TreasureSubid $18, $01, $ff, $2e, TREASURE_OBJECT_RUPEES_0a
+	m_TreasureSubid $08, $05, $ff, $2b, TREASURE_OBJECT_RUPEES_0b
+	m_TreasureSubid $08, $07, $05, $2b, TREASURE_OBJECT_RUPEES_0c
+	m_TreasureSubid $30, $04, $03, $2a, TREASURE_OBJECT_RUPEES_0d
 
 treasureObjectData2b:
-	.db $0a $01 $17 $3a
-	.db $38 $01 $17 $3a
-	.db $02 $01 $17 $3a
+	m_BeginTreasureSubids TREASURE_HEART_PIECE
+	m_TreasureSubid $0a, $01, $17, $3a, TREASURE_OBJECT_HEART_PIECE_00
+	m_TreasureSubid $38, $01, $17, $3a, TREASURE_OBJECT_HEART_PIECE_01
+	m_TreasureSubid $02, $01, $17, $3a, TREASURE_OBJECT_HEART_PIECE_02
 
 treasureObjectData2a:
-	.db $1a $04 $16 $3b
-	.db $30 $04 $16 $3b
-	.db $02 $04 $16 $3b
+	m_BeginTreasureSubids TREASURE_HEART_CONTAINER
+	m_TreasureSubid $1a, $04, $16, $3b, TREASURE_OBJECT_HEART_CONTAINER_00
+	m_TreasureSubid $30, $04, $16, $3b, TREASURE_OBJECT_HEART_CONTAINER_01
+	m_TreasureSubid $02, $04, $16, $3b, TREASURE_OBJECT_HEART_CONTAINER_02
 
 treasureObjectData2c:
-	.db $02 $01 $57 $33
-	.db $02 $02 $34 $34
-	.db $02 $03 $34 $35
-	.db $02 $02 $58 $34
-	.db $02 $03 $59 $35
+	m_BeginTreasureSubids TREASURE_RING_BOX
+	m_TreasureSubid $02, $01, $57, $33, TREASURE_OBJECT_RING_BOX_00
+	m_TreasureSubid $02, $02, $34, $34, TREASURE_OBJECT_RING_BOX_01
+	m_TreasureSubid $02, $03, $34, $35, TREASURE_OBJECT_RING_BOX_02
+	m_TreasureSubid $02, $02, $58, $34, TREASURE_OBJECT_RING_BOX_03
+	m_TreasureSubid $02, $03, $59, $35, TREASURE_OBJECT_RING_BOX_04
 
 treasureObjectData2d:
-	.db $09 $ff $54 $0e
-	.db $29 $ff $54 $0e
-	.db $49 $ff $54 $0e
-	.db $59 $ff $54 $0e
-	.db $38 $28 $54 $0e
-	.db $38 $2b $54 $0e
-	.db $38 $10 $54 $0e
-	.db $38 $0c $54 $0e
-	.db $38 $0d $54 $0e
-	.db $38 $2a $54 $0e
-	.db $38 $23 $54 $0e
-	.db $38 $05 $54 $0e
-	.db $30 $2f $54 $0e
-	.db $30 $21 $54 $0e
-	.db $38 $01 $54 $0e
-	.db $38 $03 $54 $0e
-	.db $38 $2d $54 $0e
+	m_BeginTreasureSubids TREASURE_RING
+	m_TreasureSubid $09, $ff, $54, $0e, TREASURE_OBJECT_RING_00
+	m_TreasureSubid $29, $ff, $54, $0e, TREASURE_OBJECT_RING_01
+	m_TreasureSubid $49, $ff, $54, $0e, TREASURE_OBJECT_RING_02
+	m_TreasureSubid $59, $ff, $54, $0e, TREASURE_OBJECT_RING_03
+	m_TreasureSubid $38, $28, $54, $0e, TREASURE_OBJECT_RING_04
+	m_TreasureSubid $38, $2b, $54, $0e, TREASURE_OBJECT_RING_05
+	m_TreasureSubid $38, $10, $54, $0e, TREASURE_OBJECT_RING_06
+	m_TreasureSubid $38, $0c, $54, $0e, TREASURE_OBJECT_RING_07
+	m_TreasureSubid $38, $0d, $54, $0e, TREASURE_OBJECT_RING_08
+	m_TreasureSubid $38, $2a, $54, $0e, TREASURE_OBJECT_RING_09
+	m_TreasureSubid $38, $23, $54, $0e, TREASURE_OBJECT_RING_0a
+	m_TreasureSubid $38, $05, $54, $0e, TREASURE_OBJECT_RING_0b
+	m_TreasureSubid $30, $2f, $54, $0e, TREASURE_OBJECT_RING_0c
+	m_TreasureSubid $30, $21, $54, $0e, TREASURE_OBJECT_RING_0d
+	m_TreasureSubid $38, $01, $54, $0e, TREASURE_OBJECT_RING_0e
+	m_TreasureSubid $38, $03, $54, $0e, TREASURE_OBJECT_RING_0f
+	m_TreasureSubid $38, $2d, $54, $0e, TREASURE_OBJECT_RING_10
 
 treasureObjectData30:
-	.db $18 $01 $ff $42
-	.db $28 $01 $ff $42
-	.db $49 $01 $1a $42
-	.db $38 $01 $1a $42
+	m_BeginTreasureSubids TREASURE_SMALL_KEY
+	m_TreasureSubid $18, $01, $ff, $42, TREASURE_OBJECT_SMALL_KEY_00
+	m_TreasureSubid $28, $01, $ff, $42, TREASURE_OBJECT_SMALL_KEY_01
+	m_TreasureSubid $49, $01, $1a, $42, TREASURE_OBJECT_SMALL_KEY_02
+	m_TreasureSubid $38, $01, $1a, $42, TREASURE_OBJECT_SMALL_KEY_03
 
 treasureObjectData31:
-	.db $19 $00 $1b $43
-	.db $29 $00 $1b $43
-	.db $49 $00 $1b $43
-	.db $38 $00 $1b $43
+	m_BeginTreasureSubids TREASURE_BOSS_KEY
+	m_TreasureSubid $19, $00, $1b, $43, TREASURE_OBJECT_BOSS_KEY_05
+	m_TreasureSubid $29, $00, $1b, $43, TREASURE_OBJECT_BOSS_KEY_06
+	m_TreasureSubid $49, $00, $1b, $43, TREASURE_OBJECT_BOSS_KEY_07
+	m_TreasureSubid $38, $00, $1b, $43, TREASURE_OBJECT_BOSS_KEY_08
 
 treasureObjectData32:
-	.db $1a $00 $19 $41
-	.db $2a $00 $19 $41
-	.db $68 $00 $19 $41
+	m_BeginTreasureSubids TREASURE_COMPASS
+	m_TreasureSubid $1a, $00, $19, $41, TREASURE_OBJECT_COMPASS_00
+	m_TreasureSubid $2a, $00, $19, $41, TREASURE_OBJECT_COMPASS_01
+	m_TreasureSubid $68, $00, $19, $41, TREASURE_OBJECT_COMPASS_02
 
 treasureObjectData33:
-	.db $1a $00 $18 $40
-	.db $2a $00 $18 $40
-	.db $68 $00 $18 $40
+	m_BeginTreasureSubids TREASURE_MAP
+	m_TreasureSubid $1a, $00, $18, $40, TREASURE_OBJECT_MAP_00
+	m_TreasureSubid $2a, $00, $18, $40, TREASURE_OBJECT_MAP_01
+	m_TreasureSubid $68, $00, $18, $40, TREASURE_OBJECT_MAP_02
 
 treasureObjectData41:
-	.db $0a $00 $5a $70
-	.db $0a $01 $5b $71
-	.db $0a $02 $5c $72
-	.db $0a $03 $5d $73
-	.db $0a $04 $5e $74
-	.db $0a $05 $5f $75
-	.db $0a $06 $60 $76
-	.db $0a $07 $61 $77
-	.db $0a $08 $62 $78
-	.db $0a $09 $63 $79
-	.db $0a $0a $64 $7a
-	.db $0a $0b $65 $7b
+	m_BeginTreasureSubids TREASURE_TRADEITEM
+	m_TreasureSubid $0a, $00, $5a, $70, TREASURE_OBJECT_TRADEITEM_00
+	m_TreasureSubid $0a, $01, $5b, $71, TREASURE_OBJECT_TRADEITEM_01
+	m_TreasureSubid $0a, $02, $5c, $72, TREASURE_OBJECT_TRADEITEM_02
+	m_TreasureSubid $0a, $03, $5d, $73, TREASURE_OBJECT_TRADEITEM_03
+	m_TreasureSubid $0a, $04, $5e, $74, TREASURE_OBJECT_TRADEITEM_04
+	m_TreasureSubid $0a, $05, $5f, $75, TREASURE_OBJECT_TRADEITEM_05
+	m_TreasureSubid $0a, $06, $60, $76, TREASURE_OBJECT_TRADEITEM_06
+	m_TreasureSubid $0a, $07, $61, $77, TREASURE_OBJECT_TRADEITEM_07
+	m_TreasureSubid $0a, $08, $62, $78, TREASURE_OBJECT_TRADEITEM_08
+	m_TreasureSubid $0a, $09, $63, $79, TREASURE_OBJECT_TRADEITEM_09
+	m_TreasureSubid $0a, $0a, $64, $7a, TREASURE_OBJECT_TRADEITEM_0a
+	m_TreasureSubid $0a, $0b, $65, $7b, TREASURE_OBJECT_TRADEITEM_0b
 
 treasureObjectData42:
-	.db $29 $00 $42 $44
-	.db $09 $00 $42 $44
+	m_BeginTreasureSubids TREASURE_GNARLED_KEY
+	m_TreasureSubid $29, $00, $42, $44, TREASURE_OBJECT_GNARLED_KEY_00
+	m_TreasureSubid $09, $00, $42, $44, TREASURE_OBJECT_GNARLED_KEY_01
 
 treasureObjectData4a:
-	.db $0a $00 $55 $5b
-	.db $4a $00 $55 $5b
-	.db $0a $01 $56 $5c
+	m_BeginTreasureSubids TREASURE_PIRATES_BELL
+	m_TreasureSubid $0a, $00, $55, $5b, TREASURE_OBJECT_PIRATES_BELL_00
+	m_TreasureSubid $4a, $00, $55, $5b, TREASURE_OBJECT_PIRATES_BELL_01
+	m_TreasureSubid $0a, $01, $56, $5c, TREASURE_OBJECT_PIRATES_BELL_02
 
 treasureObjectData4d:
-	.db $08 $00 $4a $37
-	.db $02 $00 $4a $37
+	m_BeginTreasureSubids TREASURE_PYRAMID_JEWEL
+	m_TreasureSubid $08, $00, $4a, $37, TREASURE_OBJECT_PYRAMID_JEWEL_00
+	m_TreasureSubid $02, $00, $4a, $37, TREASURE_OBJECT_PYRAMID_JEWEL_01
 

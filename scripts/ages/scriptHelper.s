@@ -7523,7 +7523,7 @@ tokkayScript_justHeardTune_body:
 	wait 60
 
 	playsound SNDCTRL_STOPSFX
-	giveitem TREASURE_TUNE_OF_CURRENTS_SUBID_00
+	giveitem TREASURE_OBJECT_TUNE_OF_CURRENTS_00
 	xorcfc0bit 0
 	orroomflag $40
 	enableinput
@@ -7929,11 +7929,11 @@ symmetryNpcSubid8And9Script:
 	jumpifmemoryeq wTextNumberSubstitution, $05, @giveLevel3RingBox
 
 	; Level 2 box
-	giveitem TREASURE_RING_BOX_SUBID_01
+	giveitem TREASURE_OBJECT_RING_BOX_01
 	scriptjump ++
 
 @giveLevel3RingBox:
-	giveitem TREASURE_RING_BOX_SUBID_02
+	giveitem TREASURE_OBJECT_RING_BOX_02
 ++
 	wait 30
 	orroomflag ROOMFLAG_ITEM
@@ -8004,7 +8004,7 @@ symmetryNpcSubid6And7Script:
 @giveTuniNut:
 	showtextlowindex <TX_2d05
 	wait 30
-	giveitem TREASURE_TUNI_NUT_SUBID_00
+	giveitem TREASURE_OBJECT_TUNI_NUT_00
 	enableinput
 	scriptjump @nutNotRepaired
 
@@ -8050,7 +8050,7 @@ pirateCaptainScript:
 	asm15 loseTreasure, TREASURE_ZORA_SCALE
 	showtext TX_3606
 	wait 30
-	giveitem TREASURE_TOKAY_EYEBALL_SUBID_00
+	giveitem TREASURE_OBJECT_TOKAY_EYEBALL_00
 	wait 60
 	asm15 pirateCaptain_warpOut
 	setglobalflag GLOBALFLAG_PIRATES_GONE
@@ -8183,7 +8183,7 @@ troySubid0Script:
 @giveReward:
 	showtext TX_2c0c
 	wait 30
-	giveitem TREASURE_BOMBCHUS_SUBID_02
+	giveitem TREASURE_OBJECT_BOMBCHUS_02
 	wait 30
 	setglobalflag GLOBALFLAG_DONE_TROY_SECRET
 

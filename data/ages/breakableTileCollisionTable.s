@@ -110,7 +110,12 @@ _breakableTileCollision3Data:
 	.db $00
 
 ; Data format:
-;  First 3 parameters are ways the tile can be broken.
+;  Parameters 1-3:
+;    The ways the tile can be broken. Each bit corresponds to a different method
+;    (see "constants/breakableTileSources.s"). Bit order in each byte is reversed so that, when read
+;    left-to-right, the first bit corresponds to breakable tile source "$00" and the last
+;    corresponds to source "$13".
+;
 ;  4th parameter:
 ;   Dunno
 ;  5th parameter:
@@ -129,60 +134,62 @@ _breakableTileCollision3Data:
 	.fail
 	.endif
 
-	.db \1 \2
-	.db \3 | (\4<<4)
-	.db \5 \6
+	; Parameters 1-3 have their bits reversed.
+	dbrev \1, \2
+	revb \3
+	.db (_out >> 4) | ((\4)<<4) ; "_out" is the output from the revb macro ("\3" with bits flipped).
+	.db \5, \6
 .endm
 
 _breakableTileModes:
-	m_BreakableTileData %10010110 %00110000 %0010 $1 $10 $3a ; $00
-	m_BreakableTileData %10110111 %10110001 %0110 $1 $00 $3a ; $01
-	m_BreakableTileData %10110111 %10110001 %0110 $0 $c0 $d7 ; $02
-	m_BreakableTileData %10110111 %10110001 %0110 $0 $c0 $d2 ; $03
-	m_BreakableTileData %10110111 %10110001 %0110 $0 $c0 $dc ; $04
-	m_BreakableTileData %10110111 %10110001 %0110 $0 $00 $f3 ; $05
-	m_BreakableTileData %10110111 %10110001 %0110 $0 $00 $3a ; $06
-	m_BreakableTileData %00100001 %00000000 %0000 $4 $06 $3a ; $07
-	m_BreakableTileData %00100001 %00000000 %0000 $0 $c6 $dc ; $08
-	m_BreakableTileData %00100001 %00000000 %0000 $0 $c6 $d2 ; $09
-	m_BreakableTileData %00100001 %00000000 %0000 $0 $c6 $d7 ; $0a
-	m_BreakableTileData %00100001 %00000000 %0000 $0 $06 $3a ; $0b
-	m_BreakableTileData %00110000 %10000000 %0000 $0 $c6 $dd ; $0c
-	m_BreakableTileData %10101101 %00010001 %0000 $7 $0c $3a ; $0d
-	m_BreakableTileData %01000000 %10000000 %0111 $4 $0a $3a ; $0e
-	m_BreakableTileData %00000000 %00010000 %0000 $7 $1f $3a ; $0f
-	m_BreakableTileData %00000000 %00010000 %0000 $0 $df $dc ; $10
-	m_BreakableTileData %01000000 %00000000 %0000 $9 $0a $1c ; $11
-	m_BreakableTileData %01000000 %00000000 %0000 $0 $ca $d2 ; $12
-	m_BreakableTileData %01000000 %00000000 %0000 $0 $0a $d7 ; $13
-	m_BreakableTileData %00100000 %00000001 %0000 $0 $06 $3a ; $14
-	m_BreakableTileData %00010110 %10010000 %1111 $0 $00 $3b ; $15
-	m_BreakableTileData %10101101 %00010001 %0000 $7 $0c $a0 ; $16
-	m_BreakableTileData %10110111 %00110001 %0100 $1 $00 $a0 ; $17
-	m_BreakableTileData %10110111 %00110001 %0100 $0 $00 $a0 ; $18
-	m_BreakableTileData %10110111 %00110001 %0100 $0 $40 $45 ; $19
-	m_BreakableTileData %10110111 %00110001 %0100 $0 $00 $f3 ; $1a
-	m_BreakableTileData %00100101 %00000001 %0000 $0 $06 $a0 ; $1b
-	m_BreakableTileData %00100101 %00000001 %0000 $0 $46 $45 ; $1c
-	m_BreakableTileData %00100101 %00000001 %0000 $2 $06 $a0 ; $1d
-	m_BreakableTileData %00100101 %00000001 %0000 $0 $46 $0d ; $1e
-	m_BreakableTileData %00110000 %00000000 %0000 $0 $06 $a0 ; $1f
-	m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $34 ; $20
-	m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $35 ; $21
-	m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $36 ; $22
-	m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $37 ; $23
-	m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $34 ; $24
-	m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $35 ; $25
-	m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $36 ; $26
-	m_BreakableTileData %00110000 %00000000 %0000 $0 $c6 $37 ; $27
-	m_BreakableTileData %00111111 %00010000 %0000 $0 $06 $a0 ; $28
-	m_BreakableTileData %00100001 %00000000 %0000 $4 $06 $4c ; $29
-	m_BreakableTileData %10010110 %00110000 %0010 $0 $10 $ef ; $2a
-	m_BreakableTileData %01000000 %00000000 %0000 $c $0a $4c ; $2b
-	m_BreakableTileData %01000000 %00000000 %0000 $0 $0a $a1 ; $2c
-	m_BreakableTileData %00100000 %00000001 %0000 $0 $06 $a0 ; $2d
-	m_BreakableTileData %00000000 %00010000 %0000 $0 $df $35 ; $2e
-	m_BreakableTileData %00000000 %00010000 %0000 $0 $df $37 ; $2f
-	m_BreakableTileData %00110000 %00000000 %0000 $0 $06 $01 ; $30
-	m_BreakableTileData %00100101 %00000001 %0000 $0 $06 $01 ; $31
-	m_BreakableTileData %00111110 %10000000 %1011 $0 $1f $00 ; $32
+	m_BreakableTileData %01101001 %00001100 %0100 $1 $10 $3a ; $00
+	m_BreakableTileData %11101101 %10001101 %0110 $1 $00 $3a ; $01
+	m_BreakableTileData %11101101 %10001101 %0110 $0 $c0 $d7 ; $02
+	m_BreakableTileData %11101101 %10001101 %0110 $0 $c0 $d2 ; $03
+	m_BreakableTileData %11101101 %10001101 %0110 $0 $c0 $dc ; $04
+	m_BreakableTileData %11101101 %10001101 %0110 $0 $00 $f3 ; $05
+	m_BreakableTileData %11101101 %10001101 %0110 $0 $00 $3a ; $06
+	m_BreakableTileData %10000100 %00000000 %0000 $4 $06 $3a ; $07
+	m_BreakableTileData %10000100 %00000000 %0000 $0 $c6 $dc ; $08
+	m_BreakableTileData %10000100 %00000000 %0000 $0 $c6 $d2 ; $09
+	m_BreakableTileData %10000100 %00000000 %0000 $0 $c6 $d7 ; $0a
+	m_BreakableTileData %10000100 %00000000 %0000 $0 $06 $3a ; $0b
+	m_BreakableTileData %00001100 %00000001 %0000 $0 $c6 $dd ; $0c
+	m_BreakableTileData %10110101 %10001000 %0000 $7 $0c $3a ; $0d
+	m_BreakableTileData %00000010 %00000001 %1110 $4 $0a $3a ; $0e
+	m_BreakableTileData %00000000 %00001000 %0000 $7 $1f $3a ; $0f
+	m_BreakableTileData %00000000 %00001000 %0000 $0 $df $dc ; $10
+	m_BreakableTileData %00000010 %00000000 %0000 $9 $0a $1c ; $11
+	m_BreakableTileData %00000010 %00000000 %0000 $0 $ca $d2 ; $12
+	m_BreakableTileData %00000010 %00000000 %0000 $0 $0a $d7 ; $13
+	m_BreakableTileData %00000100 %10000000 %0000 $0 $06 $3a ; $14
+	m_BreakableTileData %01101000 %00001001 %1111 $0 $00 $3b ; $15
+	m_BreakableTileData %10110101 %10001000 %0000 $7 $0c $a0 ; $16
+	m_BreakableTileData %11101101 %10001100 %0010 $1 $00 $a0 ; $17
+	m_BreakableTileData %11101101 %10001100 %0010 $0 $00 $a0 ; $18
+	m_BreakableTileData %11101101 %10001100 %0010 $0 $40 $45 ; $19
+	m_BreakableTileData %11101101 %10001100 %0010 $0 $00 $f3 ; $1a
+	m_BreakableTileData %10100100 %10000000 %0000 $0 $06 $a0 ; $1b
+	m_BreakableTileData %10100100 %10000000 %0000 $0 $46 $45 ; $1c
+	m_BreakableTileData %10100100 %10000000 %0000 $2 $06 $a0 ; $1d
+	m_BreakableTileData %10100100 %10000000 %0000 $0 $46 $0d ; $1e
+	m_BreakableTileData %00001100 %00000000 %0000 $0 $06 $a0 ; $1f
+	m_BreakableTileData %00001100 %00000000 %0000 $0 $c6 $34 ; $20
+	m_BreakableTileData %00001100 %00000000 %0000 $0 $c6 $35 ; $21
+	m_BreakableTileData %00001100 %00000000 %0000 $0 $c6 $36 ; $22
+	m_BreakableTileData %00001100 %00000000 %0000 $0 $c6 $37 ; $23
+	m_BreakableTileData %00001100 %00000000 %0000 $0 $c6 $34 ; $24
+	m_BreakableTileData %00001100 %00000000 %0000 $0 $c6 $35 ; $25
+	m_BreakableTileData %00001100 %00000000 %0000 $0 $c6 $36 ; $26
+	m_BreakableTileData %00001100 %00000000 %0000 $0 $c6 $37 ; $27
+	m_BreakableTileData %11111100 %00001000 %0000 $0 $06 $a0 ; $28
+	m_BreakableTileData %10000100 %00000000 %0000 $4 $06 $4c ; $29
+	m_BreakableTileData %01101001 %00001100 %0100 $0 $10 $ef ; $2a
+	m_BreakableTileData %00000010 %00000000 %0000 $c $0a $4c ; $2b
+	m_BreakableTileData %00000010 %00000000 %0000 $0 $0a $a1 ; $2c
+	m_BreakableTileData %00000100 %10000000 %0000 $0 $06 $a0 ; $2d
+	m_BreakableTileData %00000000 %00001000 %0000 $0 $df $35 ; $2e
+	m_BreakableTileData %00000000 %00001000 %0000 $0 $df $37 ; $2f
+	m_BreakableTileData %00001100 %00000000 %0000 $0 $06 $01 ; $30
+	m_BreakableTileData %10100100 %10000000 %0000 $0 $06 $01 ; $31
+	m_BreakableTileData %01111100 %00000001 %1101 $0 $1f $00 ; $32

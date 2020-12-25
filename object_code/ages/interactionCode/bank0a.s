@@ -6945,7 +6945,7 @@ _miscPuzzles_subid1d:
 	and ROOMFLAG_ITEM
 	jr nz,@delete
 
-	ld bc,TREASURE_GASHA_SEED_SUBID_07
+	ld bc,TREASURE_OBJECT_GASHA_SEED_07
 	call createTreasure
 	call z,objectCopyPosition
 @delete:
@@ -7064,7 +7064,7 @@ _miscPuzzles_subid20:
 	and ROOMFLAG_ITEM
 	jr nz,@delete
 
-	ld bc,TREASURE_RUPEES_SUBID_16
+	ld bc,TREASURE_OBJECT_RUPEES_16
 	call createTreasure
 	jp nz,@delete
 	call objectCopyPosition
