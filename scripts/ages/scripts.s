@@ -3247,7 +3247,7 @@ soldierSubid04Script:
 	setangle $18
 	applyspeed $15
 	wait 30
-	giveitem TREASURE_BOMBS_SUBID_02
+	giveitem TREASURE_OBJECT_BOMBS_02
 	setdisabledobjectsto11
 	wait 30
 	asm15 scriptHelp.forceLinkDirection, $00
@@ -7954,7 +7954,7 @@ _patch_giveRepairedItem:
 	.dw @sword
 
 @tuniNut:
-	giveitem TREASURE_TUNI_NUT_SUBID_01
+	giveitem TREASURE_OBJECT_TUNI_NUT_01
 	retscript
 
 @sword:
@@ -7962,12 +7962,12 @@ _patch_giveRepairedItem:
 	.dw @level3
 	.dw @level2
 @level2:
-	giveitem TREASURE_SWORD_SUBID_01
-	giveitem TREASURE_SWORD_SUBID_04
+	giveitem TREASURE_OBJECT_SWORD_01
+	giveitem TREASURE_OBJECT_SWORD_04
 	scriptjump @loseTradeItem
 @level3:
-	giveitem TREASURE_SWORD_SUBID_02
-	giveitem TREASURE_SWORD_SUBID_05
+	giveitem TREASURE_OBJECT_SWORD_02
+	giveitem TREASURE_OBJECT_SWORD_05
 
 @loseTradeItem:
 	asm15 loseTreasure, TREASURE_TRADEITEM
@@ -8308,7 +8308,7 @@ kingZoraScript_present_giveKey:
 _kingZoraScript_present_justAcceptedTask:
 	disableinput
 	showtext TX_340b
-	giveitem TREASURE_LIBRARY_KEY_SUBID_00
+	giveitem TREASURE_OBJECT_LIBRARY_KEY_00
 	wait 60
 	showtext TX_340c
 	enableinput
@@ -8381,13 +8381,13 @@ kingZoraScript_present_postGame:
 	.dw @giveLevel2
 
 @giveLevel2:
-	giveitem TREASURE_SWORD_SUBID_01
-	giveitem TREASURE_SWORD_SUBID_04
+	giveitem TREASURE_OBJECT_SWORD_01
+	giveitem TREASURE_OBJECT_SWORD_04
 	retscript
 
 @giveLevel3:
-	giveitem TREASURE_SWORD_SUBID_02
-	giveitem TREASURE_SWORD_SUBID_05
+	giveitem TREASURE_OBJECT_SWORD_02
+	giveitem TREASURE_OBJECT_SWORD_05
 	retscript
 
 
@@ -8588,7 +8588,7 @@ zoraSubid10Script:
 	showtext TX_3430
 	wait 30
 
-	giveitem TREASURE_ZORA_SCALE_SUBID_00
+	giveitem TREASURE_OBJECT_ZORA_SCALE_00
 	movedown $80
 	enableinput
 	scriptend
@@ -8975,7 +8975,7 @@ tingleScript:
 	disableinput
 	showtextlowindex <TX_1e02
 	checktext
-	giveitem TREASURE_ISLAND_CHART_SUBID_00
+	giveitem TREASURE_OBJECT_ISLAND_CHART_00
 	wait 1
 	checktext
 	showtextlowindex <TX_1e04
@@ -9037,7 +9037,7 @@ tingleScript:
 ++
 	asm15 scriptHelp.tingle_createGlowAroundLink
 	wait 120
-	giveitem TREASURE_SEED_SATCHEL_SUBID_UPGRADE
+	giveitem TREASURE_OBJECT_SEED_SATCHEL_UPGRADE
 	checktext
 	asm15 refillSeedSatchel
 	jumpifobjectbyteeq Interaction.var3d, $02, @haveLevel3Satchel

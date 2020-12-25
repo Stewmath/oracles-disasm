@@ -38,7 +38,7 @@ _interactiondc_subid07:
 	call getThisRoomFlags
 	and ROOMFLAG_ITEM
 	jp nz,interactionDelete
-	ld bc,TREASURE_HEART_PIECE_SUBID_00
+	ld bc,TREASURE_OBJECT_HEART_PIECE_00
 	call createTreasure
 	call objectCopyPosition
 	jp interactionDelete
@@ -94,7 +94,7 @@ _interactiondc_subid00:
 	ld a,(wNumTorchesLit)
 	cp $02
 	ret nz
-	ld bc,TREASURE_GRAVEYARD_KEY_SUBID_00
+	ld bc,TREASURE_OBJECT_GRAVEYARD_KEY_00
 	call createTreasure
 	call objectCopyPosition
 	jp interactionDelete
@@ -854,8 +854,8 @@ _interactiondc_subid15And16_setChestContents:
 	jp interactionDelete
 
 @chestContents:
-	dwbe TREASURE_GASHA_SEED_SUBID_01 ; Unlinked
-	dwbe TREASURE_RING_SUBID_1e       ; Linked
+	dwbe TREASURE_OBJECT_GASHA_SEED_01 ; Unlinked
+	dwbe TREASURE_OBJECT_RING_1e       ; Linked
 
 _interactiondc_subid15And16_state0:
 	call getThisRoomFlags
