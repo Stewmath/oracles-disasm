@@ -5,8 +5,9 @@
 .define NUM_INVENTORY_ITEMS	$20
 
 
-; This is checked by LynnaLab to set limits on valid values
-.define NUM_TREASURES		$68
+; This is checked by LynnaLab to set limits on valid values. It should match the number of treasures
+; defined in "data/{game}/treasureObjectData.s".
+.define NUM_TREASURES		$63
 
 
 .enum 0
