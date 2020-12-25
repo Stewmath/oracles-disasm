@@ -13,13 +13,9 @@
 ;   b3: Graphics to use. (Gets copied to object's subid, so graphics are determined by the
 ;       corresponding value for interaction $60 in data/interactionData.s.)
 ;
-; Then, the macro takes two more parameters:
-;   Param 4: The treasure index (TREASURE_...)
-;   Param 5: The name to give this new subid of the treasure index. This name will resolve to
-;            a 4-digit hex number (XXYY, where XX = treasure index and YY = subid).
-;
-; If multiple subids are being specified for a single treasure, then parameter 4 is omitted and the
-; "m_BeginTreasureSubids" macro must be used.
+; The macro takes a final parameter, which will be the name to give this new subid of the treasure
+; index. This name will resolve to a 4-digit hex number (XXYY, where XX = treasure index and YY
+; = subid).
 ;
 ; For documentation of spawn modes and grab modes, see "constants/treasureSpawnModes.s".
 ;
@@ -51,12 +47,6 @@
 	.redefine CURRENT_TREASURE_INDEX, CURRENT_TREASURE_INDEX+1
 .endm
 
-.macro m_UndefinedTreasure
-	.db $00 $00 $ff $00
-
-	.redefine CURRENT_TREASURE_INDEX, CURRENT_TREASURE_INDEX+1
-.endm
-
 .macro m_TreasurePointer
 	.db $80
 	.dw \1
@@ -69,302 +59,105 @@
 .define CURRENT_TREASURE_INDEX $00
 
 treasureObjectData:
-	; 0x00
-	m_UndefinedTreasure
-
-	; 0x01
-	m_TreasurePointer treasureObjectData01 ; $52bd
-
-	; 0x02
-	m_UndefinedTreasure
-
-	; 0x03
-	m_TreasurePointer treasureObjectData03 ; $52c9
-
-	; 0x04
-	m_UndefinedTreasure
-
-	; 0x05
-	m_TreasurePointer treasureObjectData05 ; $52d9
-
-	; 0x06
-	m_TreasurePointer treasureObjectData06 ; $52f1
-
-	; 0x07
-	m_TreasurePointer treasureObjectData07 ; $52f9
-
-	; 0x08
-	m_TreasureSubid $38, $00, $30, $18, TREASURE_OBJECT_MAGNET_GLOVES_00
-
-	; 0x09
-	m_UndefinedTreasure
-
-	; 0x0a
-	m_UndefinedTreasure
-
-	; 0x0b
-	m_UndefinedTreasure
-
-	; 0x0c
-	m_TreasurePointer treasureObjectData0c ; $5315
-
-	; 0x0d
-	m_TreasurePointer treasureObjectData0d ; $531d
-
-	; 0x0e
-	m_TreasureSubid $0a, $0c, $3b, $23, TREASURE_OBJECT_FLUTE_00
-
-	; 0x0f
-	m_UndefinedTreasure
-
-	; 0x10
-	m_UndefinedTreasure
-
-	; 0x11
-	m_UndefinedTreasure
-
-	; 0x12
-	m_UndefinedTreasure
-
-	; 0x13
-	m_TreasurePointer treasureObjectData13 ; $5325
-
-	; 0x14
-	m_UndefinedTreasure
-
-	; 0x15
-	m_TreasureSubid $0a, $00, $25, $1b, TREASURE_OBJECT_SHOVEL_00
-
-	; 0x16
-	m_TreasureSubid $38, $00, $26, $19, TREASURE_OBJECT_BRACELET_00
-
-	; 0x17
-	m_TreasurePointer treasureObjectData17 ; $532d
-
-	; 0x18
-	m_UndefinedTreasure
-
-	; 0x19
-	m_TreasurePointer treasureObjectData19 ; $52b5
-
-	; 0x1a
-	m_UndefinedTreasure
-
-	; 0x1b
-	m_UndefinedTreasure
-
-	; 0x1c
-	m_UndefinedTreasure
-
-	; 0x1d
-	m_UndefinedTreasure
-
-	; 0x1e
-	m_UndefinedTreasure
-
-	; 0x1f
-	m_UndefinedTreasure
-
-	; 0x20
-	m_TreasurePointer treasureObjectData20 ; $5339
-
-	; 0x21
-	m_UndefinedTreasure
-
-	; 0x22
-	m_UndefinedTreasure
-
-	; 0x23
-	m_UndefinedTreasure
-
-	; 0x24
-	m_UndefinedTreasure
-
-	; 0x25
-	m_UndefinedTreasure
-
-	; 0x26
-	m_UndefinedTreasure
-
-	; 0x27
-	m_UndefinedTreasure
-
-	; 0x28
-	m_TreasurePointer treasureObjectData28 ; $5355
-
-	; 0x29
-	m_UndefinedTreasure
-
-	; 0x2a
-	m_TreasurePointer treasureObjectData2a ; $5399
-
-	; 0x2b
-	m_TreasurePointer treasureObjectData2b ; $538d
-
-	; 0x2c
-	m_TreasurePointer treasureObjectData2c ; $53a5
-
-	; 0x2d
-	m_TreasurePointer treasureObjectData2d ; $53b9
-
-	; 0x2e
-	m_TreasureSubid $02, $00, $31, $31, TREASURE_OBJECT_FLIPPERS_00
-
-	; 0x2f
-	m_UndefinedTreasure
-
-	; 0x30
-	m_TreasurePointer treasureObjectData30 ; $53fd
-
-	; 0x31
-	m_TreasurePointer treasureObjectData31 ; $540d
-
-	; 0x32
-	m_TreasurePointer treasureObjectData32 ; $541d
-
-	; 0x33
-	m_TreasurePointer treasureObjectData33 ; $5429
-
-	; 0x34
-	m_TreasurePointer treasureObjectData34 ; $533d
-
-	; 0x35
-	m_UndefinedTreasure
-
-	; 0x36
-	m_TreasureSubid $02, $00, $33, $47, TREASURE_OBJECT_MAKU_SEED_00
-
-	; 0x37
-	m_TreasureSubid $02, $0b, $6b, $2f, TREASURE_OBJECT_ORE_CHUNKS_00
-
-	; 0x38
-	m_UndefinedTreasure
-
-	; 0x39
-	m_UndefinedTreasure
-
-	; 0x3a
-	m_UndefinedTreasure
-
-	; 0x3b
-	m_UndefinedTreasure
-
-	; 0x3c
-	m_UndefinedTreasure
-
-	; 0x3d
-	m_UndefinedTreasure
-
-	; 0x3e
-	m_UndefinedTreasure
-
-	; 0x3f
-	m_UndefinedTreasure
-
-	; 0x40
-	m_TreasurePointer $0000
-
-	; 0x41
-	m_TreasurePointer treasureObjectData41 ; $5435
-
-	; 0x42
-	m_TreasurePointer treasureObjectData42 ; $5465
-
-	; 0x43
-	m_TreasureSubid $09, $00, $43, $45, TREASURE_OBJECT_FLOODGATE_KEY_00
-
-	; 0x44
-	m_TreasureSubid $09, $00, $44, $46, TREASURE_OBJECT_DRAGON_KEY_00
-
-	; 0x45
-	m_TreasureSubid $5a, $00, $40, $57, TREASURE_OBJECT_STAR_ORE_00
-
-	; 0x46
-	m_UndefinedTreasure
-
-	; 0x47
-	m_TreasureSubid $0a, $00, $66, $54, TREASURE_OBJECT_SPRING_BANANA_00
-
-	; 0x48
-	m_TreasureSubid $09, $01, $67, $55, TREASURE_OBJECT_RICKY_GLOVES_00
-
-	; 0x49
-	m_TreasureSubid $0a, $00, $3c, $56, TREASURE_OBJECT_BOMB_FLOWER_00
-
-	; 0x4a
-	m_TreasurePointer treasureObjectData4a ; $546d
-
-	; 0x4b
-	m_UndefinedTreasure
-
-	; 0x4c
-	m_TreasureSubid $0a, $00, $47, $36, TREASURE_OBJECT_ROUND_JEWEL_00
-
-	; 0x4d
-	m_TreasurePointer treasureObjectData4d ; $5479
-
-	; 0x4e
-	m_TreasureSubid $38, $00, $48, $38, TREASURE_OBJECT_SQUARE_JEWEL_00
-
-	; 0x4f
-	m_TreasureSubid $38, $00, $49, $39, TREASURE_OBJECT_X_SHAPED_JEWEL_00
-
-	; 0x50
-	m_TreasureSubid $38, $00, $3f, $59, TREASURE_OBJECT_RED_ORE_00
-
-	; 0x51
-	m_TreasureSubid $38, $00, $3e, $58, TREASURE_OBJECT_BLUE_ORE_00
-
-	; 0x52
-	m_TreasureSubid $0a, $00, $3d, $5a, TREASURE_OBJECT_HARD_ORE_00
-
-	; 0x53
-	m_UndefinedTreasure
-
-	; 0x54
-	m_TreasureSubid $38, $00, $70, $26, TREASURE_OBJECT_MASTERS_PLAQUE_00
-
-	; 0x55
-	m_UndefinedTreasure
-
-	; 0x56
-	m_UndefinedTreasure
-
-	; 0x57
-	m_UndefinedTreasure
-
-	; 0x58
-	m_UndefinedTreasure
-
-	; 0x59
-	m_UndefinedTreasure
-
-	; 0x5a
-	m_UndefinedTreasure
-
-	; 0x5b
-	m_UndefinedTreasure
-
-	; 0x5c
-	m_UndefinedTreasure
-
-	; 0x5d
-	m_UndefinedTreasure
-
-	; 0x5e
-	m_UndefinedTreasure
-
-	; 0x5f
-	m_UndefinedTreasure
-
-	; 0x60
-	m_TreasureSubid $0c, $00, $72, $57, TREASURE_OBJECT_60_00
-
-	; 0x61
-	m_TreasureSubid $02, $00, $6e, $05, TREASURE_OBJECT_BOMB_UPGRADE_00
-
-	; 0x62
-	m_TreasureSubid $02, $00, $46, $20, TREASURE_OBJECT_SATCHEL_UPGRADE_00
+	/* $00 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_NONE_00
+	/* $01 */ m_TreasurePointer treasureObjectData01
+	/* $02 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_PUNCH_00
+	/* $03 */ m_TreasurePointer treasureObjectData03
+	/* $04 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_CANE_OF_SOMARIA_00
+	/* $05 */ m_TreasurePointer treasureObjectData05
+	/* $06 */ m_TreasurePointer treasureObjectData06
+	/* $07 */ m_TreasurePointer treasureObjectData07
+	/* $08 */ m_TreasureSubid   $38, $00, $30, $18, TREASURE_OBJECT_MAGNET_GLOVES_00
+	/* $09 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_SWITCH_HOOK_HELPER_00
+	/* $0a */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_SWITCH_HOOK_00
+	/* $0b */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_SWITCH_HOOK_CHAIN_00
+	/* $0c */ m_TreasurePointer treasureObjectData0c
+	/* $0d */ m_TreasurePointer treasureObjectData0d
+	/* $0e */ m_TreasureSubid   $0a, $0c, $3b, $23, TREASURE_OBJECT_FLUTE_00
+	/* $0f */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_SHOOTER_00
+	/* $10 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_10_00
+	/* $11 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_HARP_00
+	/* $12 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_12_00
+	/* $13 */ m_TreasurePointer treasureObjectData13
+	/* $14 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_14_00
+	/* $15 */ m_TreasureSubid   $0a, $00, $25, $1b, TREASURE_OBJECT_SHOVEL_00
+	/* $16 */ m_TreasureSubid   $38, $00, $26, $19, TREASURE_OBJECT_BRACELET_00
+	/* $17 */ m_TreasurePointer treasureObjectData17
+	/* $18 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_18_00
+	/* $19 */ m_TreasurePointer treasureObjectData19
+	/* $1a */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_1a_00
+	/* $1b */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_1b_00
+	/* $1c */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_1c_00
+	/* $1d */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_MINECART_COLLISION_00
+	/* $1e */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_FOOLS_ORE_00
+	/* $1f */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_1f_00
+	/* $20 */ m_TreasurePointer treasureObjectData20
+	/* $21 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_SCENT_SEEDS_00
+	/* $22 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_PEGASUS_SEEDS_00
+	/* $23 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_GALE_SEEDS_00
+	/* $24 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_MYSTERY_SEEDS_00
+	/* $25 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_TUNE_OF_ECHOES_00
+	/* $26 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_TUNE_OF_CURRENTS_00
+	/* $27 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_TUNE_OF_AGES_00
+	/* $28 */ m_TreasurePointer treasureObjectData28
+	/* $29 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_HEART_REFILL_00
+	/* $2a */ m_TreasurePointer treasureObjectData2a
+	/* $2b */ m_TreasurePointer treasureObjectData2b
+	/* $2c */ m_TreasurePointer treasureObjectData2c
+	/* $2d */ m_TreasurePointer treasureObjectData2d
+	/* $2e */ m_TreasureSubid   $02, $00, $31, $31, TREASURE_OBJECT_FLIPPERS_00
+	/* $2f */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_POTION_00
+	/* $30 */ m_TreasurePointer treasureObjectData30
+	/* $31 */ m_TreasurePointer treasureObjectData31
+	/* $32 */ m_TreasurePointer treasureObjectData32
+	/* $33 */ m_TreasurePointer treasureObjectData33
+	/* $34 */ m_TreasurePointer treasureObjectData34
+	/* $35 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_35_00
+	/* $36 */ m_TreasureSubid   $02, $00, $33, $47, TREASURE_OBJECT_MAKU_SEED_00
+	/* $37 */ m_TreasureSubid   $02, $0b, $6b, $2f, TREASURE_OBJECT_ORE_CHUNKS_00
+	/* $38 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_38_00
+	/* $39 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_39_00
+	/* $3a */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_3a_00
+	/* $3b */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_3b_00
+	/* $3c */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_3c_00
+	/* $3d */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_3d_00
+	/* $3e */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_3e_00
+	/* $3f */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_3f_00
+	/* $40 */ m_TreasurePointer $0000
+	/* $41 */ m_TreasurePointer treasureObjectData41
+	/* $42 */ m_TreasurePointer treasureObjectData42
+	/* $43 */ m_TreasureSubid   $09, $00, $43, $45, TREASURE_OBJECT_FLOODGATE_KEY_00
+	/* $44 */ m_TreasureSubid   $09, $00, $44, $46, TREASURE_OBJECT_DRAGON_KEY_00
+	/* $45 */ m_TreasureSubid   $5a, $00, $40, $57, TREASURE_OBJECT_STAR_ORE_00
+	/* $46 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_RIBBON_00
+	/* $47 */ m_TreasureSubid   $0a, $00, $66, $54, TREASURE_OBJECT_SPRING_BANANA_00
+	/* $48 */ m_TreasureSubid   $09, $01, $67, $55, TREASURE_OBJECT_RICKY_GLOVES_00
+	/* $49 */ m_TreasureSubid   $0a, $00, $3c, $56, TREASURE_OBJECT_BOMB_FLOWER_00
+	/* $4a */ m_TreasurePointer treasureObjectData4a
+	/* $4b */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_TREASURE_MAP_00
+	/* $4c */ m_TreasureSubid   $0a, $00, $47, $36, TREASURE_OBJECT_ROUND_JEWEL_00
+	/* $4d */ m_TreasurePointer treasureObjectData4d
+	/* $4e */ m_TreasureSubid   $38, $00, $48, $38, TREASURE_OBJECT_SQUARE_JEWEL_00
+	/* $4f */ m_TreasureSubid   $38, $00, $49, $39, TREASURE_OBJECT_X_SHAPED_JEWEL_00
+	/* $50 */ m_TreasureSubid   $38, $00, $3f, $59, TREASURE_OBJECT_RED_ORE_00
+	/* $51 */ m_TreasureSubid   $38, $00, $3e, $58, TREASURE_OBJECT_BLUE_ORE_00
+	/* $52 */ m_TreasureSubid   $0a, $00, $3d, $5a, TREASURE_OBJECT_HARD_ORE_00
+	/* $53 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_MEMBERS_CARD_00
+	/* $54 */ m_TreasureSubid   $38, $00, $70, $26, TREASURE_OBJECT_MASTERS_PLAQUE_00
+	/* $55 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_55_00
+	/* $56 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_56_00
+	/* $57 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_57_00
+	/* $58 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_BOMB_FLOWER_LOWER_HALF_00
+	/* $59 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_59_00
+	/* $5a */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_5a_00
+	/* $5b */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_5b_00
+	/* $5c */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_5c_00
+	/* $5d */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_5d_00
+	/* $5e */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_5e_00
+	/* $5f */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_5f_00
+	/* $60 */ m_TreasureSubid   $0c, $00, $72, $57, TREASURE_OBJECT_60_00
+	/* $61 */ m_TreasureSubid   $02, $00, $6e, $05, TREASURE_OBJECT_BOMB_UPGRADE_00
+	/* $62 */ m_TreasureSubid   $02, $00, $46, $20, TREASURE_OBJECT_SATCHEL_UPGRADE_00
 
 
 treasureObjectData19:
