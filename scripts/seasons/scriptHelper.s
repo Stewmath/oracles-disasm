@@ -2397,9 +2397,9 @@ makuTree_dropGnarledKey:
 	ret nz
 	ld (hl),INTERACID_TREASURE
 	inc l
-	ld (hl),TREASURE_GNARLED_KEY
+	ld (hl),>RANDO_SEASONS_ITEM_MAKU_TREE
 	inc l
-	ld (hl),$00
+	ld (hl),<RANDO_SEASONS_ITEM_MAKU_TREE
 	ld l,Interaction.yh
 	ld (hl),$60
 	ld a,(w1Link.xh)

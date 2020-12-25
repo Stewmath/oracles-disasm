@@ -7068,6 +7068,7 @@ makuTree_setAppropriateStage:
 	ld ($cc39),a
 	ret
 
+; TODO RANDO: Fix treasure checks?
 _makuTree_setRoomFlag40OnGnarledKeyGet:
 	call getThisRoomFlags
 	and $40
@@ -7089,9 +7090,9 @@ _makuTree_spawnGnarledKey:
 	ret nz
 	ld (hl),INTERACID_TREASURE
 	inc l
-	ld (hl),TREASURE_GNARLED_KEY
+	ld (hl),>RANDO_SEASONS_ITEM_MAKU_TREE
 	inc l
-	ld (hl),$01
+	ld (hl),<RANDO_SEASONS_ITEM_MAKU_TREE
 	ld l,Interaction.yh
 	ld a,$58
 	ldi (hl),a

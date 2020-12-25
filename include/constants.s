@@ -44,3 +44,5 @@
 .ifdef ROM_SEASONS
 .include "constants/seasons.s"
 .endif
+
+.include "constants/rando.s"
