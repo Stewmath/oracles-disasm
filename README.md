@@ -23,9 +23,10 @@ a specific game, run `make ages` or `make seasons`. (Don't try "make ages season
 will try to build them in parallel which doesn't currently work).
 
 By default, the rom is built with precompressed assets, so that an exact copy of the
-original game is produced. In order to edit text, graphics, and other things, run the
-"./swapbuild.sh" script in the root of the repository. This will switch the build mode to
-"modifiable" instead of "precompressed".
+original game is produced. In order to edit text, graphics, and other things,
+switch to the "hack-base" branch. Alternatively, run the "./swapbuild.sh" script
+in the root of the repository. This will switch the build mode to "modifiable"
+instead of "precompressed".
 
 There are 4 build directories (for ages and seasons, vanilla or editable) which are
 symlinked to the "build" directory depending on which game is built for which mode.
@@ -45,8 +46,8 @@ Type "make doc" to generate documentation, which may or may not work at this poi
 
 # Graphics files
 
-(Note: ensure that you've run `./swapbuild.sh` as mentioned above before
-attempting to edit graphics in the `gfx_compressible` folder)
+(Note: Graphics editing will only work if you're on the "hack-base" branch or
+have disabled the use of precompressed graphics)
 
 Graphics are stored as 4-color indexed PNG files. Other formats (RGB) are
 supported, as long as you stick to using the original 4 colors. But the indexed
