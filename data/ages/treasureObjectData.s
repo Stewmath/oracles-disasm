@@ -11,7 +11,7 @@
 ;   b1: Parameter (value of 'c' to pass to "giveTreasure")
 ;   b2: Low text ID on pickup ($ff for no text; high byte of ID is always $00)
 ;   b3: Graphics to use. (Gets copied to object's subid, so graphics are determined by the
-;       corresponding value for interaction $60 in data/interactionData.s.)
+;       corresponding value for interaction $60 in data/{game}/interactionData.s.)
 ;
 ; The macro takes a final parameter, which will be the name to give this new subid of the treasure
 ; index. This name will resolve to a 4-digit hex number (XXYY, where XX = treasure index and YY
