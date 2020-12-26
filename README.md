@@ -11,7 +11,7 @@ setup instructions.
 # Required tools to build
 
 * Python 3
-* [WLA-DX](https://github.com/vhelin/wla-dx) (A recent build is required)
+* [WLA-DX](https://github.com/vhelin/wla-dx) v9.11
 ** For Seasons to build properly, use [this branch](https://github.com/Drenn1/wla-dx/tree/emptyfill-banknumber). Otherwise, empty space won't be filled with the correct values (but the game will still work).
 * [Cygwin](http://cygwin.com/install.html) (Only required for windows users)
 
