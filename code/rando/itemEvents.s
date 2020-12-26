@@ -1,3 +1,6 @@
+; This file is included by "object_code/common/interactionCode/treasure.s" which puts it in the
+; "treasureInteraction" namespace.
+
 ;;
 ; Run certain actions depending on what item was picked up and where. This has to be explicitly
 ; called if an item is given by an interaction other than ID 60. Parameters to this are the same as
@@ -8,6 +11,7 @@ handleGetItem:
 	push de
 	ld e,Interaction.var33 ; nonzero if interaction should set item room flag
 	ld a,(de)
+	or a
 	pop de
 
 .ifdef ROM_SEASONS
@@ -18,7 +22,7 @@ handleGetItem:
 	jr z,@subrosia
 	cp $02
 	jr z,@indoors
-	ret
+	jr @giveTreasure
 
 @subrosia:
 	; RANDO-TODO
@@ -41,7 +45,6 @@ handleGetItem:
 	ret
 
 .else; ROM_AGES
-	or a
 	push af
 	; RANDO-TODO
 	;call satchelRefillSeeds

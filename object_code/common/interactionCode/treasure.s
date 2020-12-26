@@ -536,7 +536,9 @@ interactionCode60:
 	inc c
 ++
 	ld a,b
-	call giveTreasure
+	; RANDO: This function does some extra checks before calling giveTreasure
+	call handleGetItem
+	;call giveTreasure
 	ld b,a
 
 	ld e,Interaction.var32
@@ -611,4 +613,6 @@ interactionCode60:
 	xor a
 	ret
 
+
+	.include "code/rando/itemEvents.s"
 .ends

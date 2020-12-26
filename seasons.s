@@ -527,4 +527,5 @@ oamData_15_4e0c:
 	.include "build/data/treasureCollectionBehaviours.s"
 	.include "build/data/treasureDisplayData.s"
 
+	.include "code/rando/bank3f.s"
 .ends

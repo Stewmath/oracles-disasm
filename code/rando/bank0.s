@@ -5,7 +5,7 @@
 giveTreasureCustom_body:
 	ld b,a
 	push hl
-	callab getTreasureDataBCE
+	callab treasureData.getTreasureDataBCE
 	pop hl
 	ld a,b
 	jp giveTreasure

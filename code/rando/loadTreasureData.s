@@ -1,3 +1,6 @@
+; Code in this file is included by the "code/loadTreasureData.s" file, meaning it's in the
+; "treasureData" namespace.
+
 ; Return treasure data address and collect mode modified as necessary, given a treasure ID in dx42.
 rando_modifyTreasure:
 	push bc
@@ -23,7 +26,7 @@ rando_upgradeTreasure:
 	ret
 
 
-; Neturn a spawning item's collection mode in a and e, based on current room.  the table format is
+; Return a spawning item's collection mode in a and e, based on current room.  the table format is
 ; (group, room, mode), and modes 80+ are used to index a jump table for special cases. If no match
 ; is found, it returns the regular, non-overriden mode. Does nothing if the item's collect mode is
 ; already set.
@@ -67,4 +70,55 @@ lookupCollectMode:
 	;ld l,a
 	;jp (hl)
 
+
 .include "data/rando/collectPropertiesTable.s"
+
+
+;;
+; Call through getTreasureDataBCE or getTreasureDataSprite.
+;
+; @param	bc	Treasure object ID to look up
+; @param[out]	hl	The address of the treasure with ID b and subID c, accounting for
+;			progressive upgrades.
+getTreasureData_body:
+	ld hl,treasureObjectData
+	ld a,b
+	add a,a
+	rst_addAToHl
+	ld a,b
+	add a,a
+	rst_addAToHl
+	bit 7,(hl)
+	jr z,@next
+	inc hl
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+@next:
+	ld a,c
+	add a,a
+	add a,a
+	rst_addAToHl
+	inc hl
+	ret
+	;jp getUpgradedTreasure ; RANDO-TODO
+
+;;
+; Load final treasure ID, param, and text into b, c, and e.
+getTreasureDataBCE:
+	call getTreasureData_body
+	ld c,(hl)
+	inc hl
+	ld e,(hl)
+	ret
+
+;;
+; @param	bc	Treasure object ID
+; @param[out]	e	Final treasure sprite
+; Load final treasure sprite into e.
+getTreasureDataSprite:
+	call getTreasureData_body
+	inc hl
+	inc hl
+	ld e,(hl)
+	ret

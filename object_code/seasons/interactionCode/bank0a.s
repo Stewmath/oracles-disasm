@@ -7819,13 +7819,20 @@ interactionCodec6:
 	jp nz,objectApplySpeed
 
 	call interactionIncState
-	ld a,TREASURE_SWORD
-	ld c,$01
-	call giveTreasure
+
+	; RANDO: Replace giveTreasure call since we're using a treasure object subid
+	ld a,>RANDO_SEASONS_ITEM_D0_SWORD
+	ld c,<RANDO_SEASONS_ITEM_D0_SWORD
+	call giveTreasureCustom
+	;call giveTreasure
+
 	ld a,SND_GETITEM
 	call playSound
-	ld bc,TX_001c
-	jp showText
+	ret
+
+	; RANDO: Don't show this text (let the treasure show its own text)
+	;ld bc,TX_001c
+	;jp showText
 
 @state3:
 	ld a,(wTextIsActive)
@@ -7836,21 +7843,24 @@ interactionCodec6:
 	ld e,Interaction.counter1
 	ld a,90
 	ld (de),a
-	call getFreeInteractionSlot
-	ret nz
-	ld (hl),INTERACID_TREASURE
-	inc l
-	ld (hl),>TREASURE_OBJECT_SWORD_03
-	inc l
-	ld (hl),<TREASURE_OBJECT_SWORD_03
-	ld a,(w1Link.yh)
-	ld l,Interaction.yh
-	ldi (hl),a
-	inc l
-	ld a,(w1Link.xh)
-	ld (hl),a
-	ld a,SNDCTRL_MEDIUM_FADEOUT
-	jp playSound
+	ret
+
+	; RANDO: Stop hero's cave chest from giving a second sword that causes a spin slash.
+	;call getFreeInteractionSlot
+	;ret nz
+	;ld (hl),INTERACID_TREASURE
+	;inc l
+	;ld (hl),>TREASURE_OBJECT_SWORD_03
+	;inc l
+	;ld (hl),<TREASURE_OBJECT_SWORD_03
+	;ld a,(w1Link.yh)
+	;ld l,Interaction.yh
+	;ldi (hl),a
+	;inc l
+	;ld a,(w1Link.xh)
+	;ld (hl),a
+	;ld a,SNDCTRL_MEDIUM_FADEOUT
+	;jp playSound
 
 @state4:
 	call interactionDecCounter1

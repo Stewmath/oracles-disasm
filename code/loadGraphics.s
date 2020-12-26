@@ -688,6 +688,7 @@ _partGetObjectGfxIndex:
 _interactionGetObjectGfxIndex:
 	push bc
 	call _interactionGetData
+	call checkLoadCustomSprite ; RANDO: Replace item sprite if necessary
 	pop bc
 	ldi a,(hl)
 	ret
