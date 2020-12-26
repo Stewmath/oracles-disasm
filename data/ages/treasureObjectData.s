@@ -1,3 +1,5 @@
+m_section_free TreasureObjectData NAMESPACE treasureData
+
 ; Treasure objects are a kind of Interaction (INTERACID_TREASURE). Each "Treasure Object" contains
 ; the information necessary to display a specific treasure (see "constants/treasure.s") and give it
 ; to Link. Many treasures need a "parameter" to go with them (ie. level, amount). All of this "extra
@@ -420,3 +422,4 @@ treasureObjectData5e:
 	m_TreasureSubid $0a, $00, $3e, $4e, TREASURE_OBJECT_ROCK_BRISKET_00
 	m_TreasureSubid $10, $00, $3e, $4e, TREASURE_OBJECT_ROCK_BRISKET_01
 
+.ends

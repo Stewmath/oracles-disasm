@@ -407,9 +407,7 @@ specialObjectLoadAnimationFrameToBuffer:
 .BANK $15 SLOT 1
 .ORG 0
 
-	 m_section_free "Bank_15" NAMESPACE scriptHelp
-		.include "scripts/common/scriptHelper.s"
-	.ends
+	.include "scripts/common/scriptHelper.s"
 
 	 m_section_free "Object_Pointers" namespace "objectData"
 
@@ -445,81 +443,20 @@ specialObjectLoadAnimationFrameToBuffer:
 .ORG 0
 
 	.include "code/serialFunctions.s"
+	.include "code/loadTreasureData.s"
 
- m_section_free Bank16 NAMESPACE bank16
-
-;;
-; @param	d	Interaction index (should be of type INTERACID_TREASURE)
-interactionLoadTreasureData:
-	ld e,Interaction.subid
-	ld a,(de)
-	ld e,Interaction.var30
-	ld (de),a
-	ld hl,treasureObjectData
---
-	call multiplyABy4
-	add hl,bc
-	bit 7,(hl)
-	jr z,+
-
-	inc hl
-	ldi a,(hl)
-	ld h,(hl)
-	ld l,a
-	ld e,Interaction.var03
-	ld a,(de)
-	jr --
-+
-	; var31 = spawn mode
-	ldi a,(hl)
-	ld b,a
-	swap a
-	and $07
-	ld e,Interaction.var31
-	ld (de),a
-
-	; var32 = collect mode
-	ld a,b
-	and $07
-	inc e
-	ld (de),a
-
-	; var33 = ?
-	ld a,b
-	and $08
-	inc e
-	ld (de),a
-
-	; var34 = parameter (value of 'c' for "giveTreasure")
-	ldi a,(hl)
-	inc e
-	ld (de),a
-
-	; var35 = low text ID
-	ldi a,(hl)
-	inc e
-	ld (de),a
-
-	; subid = graphics to use
-	ldi a,(hl)
-	ld e,Interaction.subid
-	ld (de),a
-	ret
-
-
-	.include "build/data/data_4556.s"
-	.include "build/data/endgameCutsceneOamData.s"
-
-.ends
+	 m_section_free Bank16 NAMESPACE bank16
+		.include "build/data/data_4556.s"
+		.include "build/data/endgameCutsceneOamData.s"
+	.ends
 
 
 	.include "code/staticObjects.s"
 	.include "build/data/staticDungeonObjects.s"
 	.include "build/data/chestData.s"
+	.include "build/data/treasureObjectData.s"
 
  m_section_free Bank16_2 NAMESPACE bank16
-
-	.include "build/data/treasureObjectData.s"
 
 ;;
 ; Used in the room in present Mermaid's Cave with the changing floor

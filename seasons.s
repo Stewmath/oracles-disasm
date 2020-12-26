@@ -354,9 +354,7 @@
 
 	.include "code/serialFunctions.s"
 
-	 m_section_free "Bank_15" NAMESPACE scriptHelp
-		.include "scripts/common/scriptHelper.s"
-	.ends
+	.include "scripts/common/scriptHelper.s"
 
 	.include "object_code/common/interactionCode/group7.s"
 	.include "object_code/common/interactionCode/group8.s"
@@ -409,10 +407,9 @@ oamData_15_4e0c:
 	.include "code/staticObjects.s"
 	.include "build/data/staticDungeonObjects.s"
 	.include "build/data/chestData.s"
-
 	.include "build/data/treasureObjectData.s"
 
-	 m_section_free "Bank_15_2" NAMESPACE scriptHelp
+	m_section_free "Bank_15_2" NAMESPACE scriptHelp
 		.include "scripts/seasons/scriptHelper.s"
 	.ends
 

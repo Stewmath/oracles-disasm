@@ -32,11 +32,7 @@ interactionCode60:
 @state0:
 	ld a,$01
 	ld (de),a
-.ifdef ROM_AGES
-	callab bank16.interactionLoadTreasureData
-.else
-	callab scriptHelp.interactionLoadTreasureData
-.endif
+	callab treasureData.interactionLoadTreasureData
 	ld a,$06
 	call objectSetCollideRadius
 
