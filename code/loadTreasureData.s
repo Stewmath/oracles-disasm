@@ -38,7 +38,7 @@ interactionLoadTreasureData:
 	inc e
 	ld (de),a
 
-	; var33 = ?
+	; var33 = set "ROOMFLAG_ITEM" flag if nonzero
 	ld a,b
 	and $08
 	inc e
