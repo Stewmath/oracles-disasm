@@ -921,7 +921,7 @@ interactionCode90:
 	ld e,Interaction.substate
 	ld (de),a
 	ld ($cc02),a
-	ld ($cca4),a
+	ld (wDisabledObjects),a
 	ret
 
 @insertedAllJewels:
@@ -1044,7 +1044,7 @@ interactionCode90:
 	ld a,$80
 	ld ($cc02),a
 	ld a,$81
-	ld ($cca4),a
+	ld (wDisabledObjects),a
 	ret
 @@substate1:
 	call interactionDecCounter1
@@ -1461,7 +1461,7 @@ interactionCode94:
 	ld ($cc6a),a
 	ld a,$01
 	ld ($cc6b),a
-	ld hl,$d00b
+	ld hl,w1Link.yh
 	ld bc,$f200
 	call objectTakePositionWithOffset
 	call interactionIncState
@@ -1492,7 +1492,7 @@ interactionCode94:
 	ret nz
 	xor a
 	ld ($cba0),a
-	ld ($cca4),a
+	ld (wDisabledObjects),a
 	ld a,$02
 	ld ($d105),a
 	jp interactionDelete
@@ -1983,7 +1983,7 @@ _func_5768:
 	ld l,$4b
 	ld a,(hl)
 	ld b,a
-	ld hl,$d00b
+	ld hl,w1Link.yh
 	ld a,(hl)
 	sub b
 	call _func_57ad
@@ -1995,7 +1995,7 @@ _func_5768:
 	ld l,$4d
 	ld a,(hl)
 	ld b,a
-	ld hl,$d00d
+	ld hl,w1Link.xh
 	ld a,(hl)
 	ld c,a
 	ld e,$42
@@ -2223,7 +2223,7 @@ interactionCode9a:
 	ld l,$70
 	ld (hl),a
 	ld a,$01
-	ld ($cca4),a
+	ld (wDisabledObjects),a
 	ld ($cc02),a
 	ld l,$46
 	ld (hl),$5a
@@ -2344,7 +2344,7 @@ interactionCode9a:
 	ld hl,$cc69
 	res 1,(hl)
 	xor a
-	ld ($cca4),a
+	ld (wDisabledObjects),a
 	ld ($cc02),a
 	jp interactionDelete
 
@@ -2422,7 +2422,7 @@ _state1_subid3:
 	call interactionIncSubstate
 	ld l,$46
 	ld (hl),$1e
-	ld hl,$d00b
+	ld hl,w1Link.yh
 	ld a,$40
 	ldi (hl),a
 	inc l
@@ -2644,9 +2644,9 @@ _func_5b49:
 	call _func_5a82
 	ret nz
 	ld a,$40
-	ld ($d00b),a
+	ld (w1Link.yh),a
 	ld a,$50
-	ld ($d00d),a
+	ld (w1Link.xh),a
 	ld a,$80
 	ld ($d01a),a
 	ld a,$02
@@ -2743,7 +2743,7 @@ interactionCode9c:
 	call dropLinkHeldItem
 	call resetLinkInvincibility
 	ld a,$83
-	ld ($cca4),a
+	ld (wDisabledObjects),a
 	ld ($cc88),a
 	call setLinkForceStateToState08
 	call interactionSetAlwaysUpdateBit
@@ -2752,7 +2752,7 @@ interactionCode9c:
 	call _func_5cf2
 	ld e,$4d
 	ld a,(de)
-	ld ($d00d),a
+	ld (w1Link.xh),a
 	xor a
 	ld ($d00f),a
 	ld a,$52
@@ -2774,7 +2774,7 @@ interactionCode9c:
 	ld a,$06
 	call _func_5cf2
 	xor a
-	ld ($cca4),a
+	ld (wDisabledObjects),a
 	ld e,$44
 	ld a,$04
 	ld (de),a
@@ -2824,7 +2824,7 @@ _func_5cf2:
 	ld e,$4b
 	ld a,(de)
 	add (hl)
-	ld ($d00b),a
+	ld (w1Link.yh),a
 	inc hl
 	ld e,$5a
 	ld a,(de)
@@ -2969,7 +2969,7 @@ interactionCode9d:
 	push de
 	call setSimulatedInputAddress
 	pop de
-	ld hl,$d00b
+	ld hl,w1Link.yh
 	ld (hl),$76
 	inc l
 	inc l
@@ -3053,7 +3053,7 @@ interactionCode9d:
 	xor a
 	ld ($cbc3),a
 	inc a
-	ld ($cca4),a
+	ld (wDisabledObjects),a
 	call interactionIncSubstate
 	jp objectSetVisible
 _func_5eb1:
@@ -3127,7 +3127,7 @@ interactionCode9e:
 	ld l,$7d
 	ld (hl),$28
 	ld a,$81
-	ld ($cca4),a
+	ld (wDisabledObjects),a
 	ld a,$80
 	ld ($cc02),a
 	ld hl,mainScripts.script7556
@@ -3170,7 +3170,7 @@ interactionCode9e:
 	ret nz
 	xor a
 	ld ($cc02),a
-	ld ($cca4),a
+	ld (wDisabledObjects),a
 	ld a,$4d
 	call playSound
 	call getThisRoomFlags
@@ -3221,9 +3221,9 @@ _func_5fba:
 
 _func_5fcd:
 	ld hl,_table_5ff4
-	ld a,($d00b)
+	ld a,(w1Link.yh)
 	ld c,a
-	ld a,($d00d)
+	ld a,(w1Link.xh)
 	ld b,a
 --
 	; bc is xh, yh
@@ -4213,7 +4213,7 @@ _dinState1_subid0:
 	ret nz
 	call interactionIncSubstate
 	xor a
-	ld ($cca4),a
+	ld (wDisabledObjects),a
 	inc a
 	ld ($ccab),a
 	jp setCameraFocusedObjectToLink
@@ -4240,7 +4240,7 @@ _dinState1_subid0:
 	ret nz
 	call interactionIncSubstate
 	ld a,$80
-	ld ($cca4),a
+	ld (wDisabledObjects),a
 	ld l,$46
 	ld (hl),$32
 	ld l,$4d
@@ -4918,7 +4918,7 @@ interactionCodeab:
 	ld a,($d10d)
 	jr ++
 +
-	ld a,($d00d)
+	ld a,(w1Link.xh)
 ++
 	cp $3d
 	jp c,interactionDelete
@@ -7784,7 +7784,7 @@ _d4floorTrapRoom_storeIncrementedAddressOfNextHoleTile:
 ; INTERACID_HEROS_CAVE_SWORD_CHEST
 ; ==============================================================================
 interactionCodec6:
-	ld e,$44
+	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
@@ -7792,60 +7792,66 @@ interactionCodec6:
 	.dw @state2
 	.dw @state3
 	.dw @state4
+
 @state0:
 	ld a,$01
 	ld (de),a
-	ld ($ccbb),a
+	ld (wcca1),a
 	jp interactionInitGraphics
+
 @state1:
-	ld a,($ccbc)
+	ld a,(wcca2)
 	or a
 	ret z
 	ld a,$81
-	ld ($cbca),a
-	ld ($cca4),a
+	ld (wDisableLinkCollisionsAndMenu),a
+	ld (wDisabledObjects),a
 	call interactionIncState
 	call interactionSetAlwaysUpdateBit
-	ld l,$50
-	ld (hl),$0a
-	ld l,$46
+	ld l,Interaction.speed
+	ld (hl),SPEED_40
+	ld l,Interaction.counter1
 	ld (hl),$20
 	jp objectSetVisible80
+
 @state2:
 	call interactionDecCounter1
 	jp nz,objectApplySpeed
+
 	call interactionIncState
 	ld a,TREASURE_SWORD
 	ld c,$01
 	call giveTreasure
-	ld a,$4c
+	ld a,SND_GETITEM
 	call playSound
 	ld bc,TX_001c
 	jp showText
+
 @state3:
-	ld a,($cba0)
+	ld a,(wTextIsActive)
 	or a
 	ret nz
 	call interactionIncState
 	call objectSetInvisible
-	ld e,$46
-	ld a,$5a
+	ld e,Interaction.counter1
+	ld a,90
 	ld (de),a
 	call getFreeInteractionSlot
 	ret nz
 	ld (hl),INTERACID_TREASURE
 	inc l
-	ld (hl),TREASURE_SWORD
+	ld (hl),>TREASURE_OBJECT_SWORD_03
 	inc l
-	ld (hl),$03
-	ld a,($d00b)
-	ld l,$4b
+	ld (hl),<TREASURE_OBJECT_SWORD_03
+	ld a,(w1Link.yh)
+	ld l,Interaction.yh
 	ldi (hl),a
 	inc l
-	ld a,($d00d)
+	ld a,(w1Link.xh)
 	ld (hl),a
-	ld a,$fb
+	ld a,SNDCTRL_MEDIUM_FADEOUT
 	jp playSound
+
 @state4:
 	call interactionDecCounter1
 	ret nz
@@ -7853,9 +7859,10 @@ interactionCodec6:
 	set 5,(hl)
 	ld hl,@warpDestVariables
 	call setWarpDestVariables
-	ld a,$b4
+	ld a,SND_FADEOUT
 	call playSound
 	jp interactionDelete
+
 @warpDestVariables:
 	m_HardcodedWarpA ROOM_SEASONS_0d4 $00 $54 $83
 

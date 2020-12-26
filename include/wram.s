@@ -2173,7 +2173,7 @@ wActiveTriggers: ; $cca0/$ccba
 	db
 
 ; $cca1-$cca2: Changes behaviour of chests in shops? (For the chest game probably)
-wcca1: ; $cca1
+wcca1: ; $cca1/$ccbb
 	db
 wcca2: ; $cca2/$ccbc
 ; Position of a chest?
