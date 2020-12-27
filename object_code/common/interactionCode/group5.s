@@ -1058,6 +1058,11 @@ interactionCodeb6:
 	rst_addAToHl
 	ld c,(hl)
 	ld b,>TX_3500
+
+	; RANDO: Don't show text for rings (the "giveTreasure" function will do that)
+	ld a,c
+	cp <TX_3504
+	ret z
 	jp showText
 
 ; Text to show upon getting each respective item
