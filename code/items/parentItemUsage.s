@@ -215,10 +215,11 @@ _checkItemUsed:
 
 	; Punch if nothing equipped
 @punch:
-	ld l,<wInventoryB
-	ldi a,(hl)
-	or (hl)
-	ret nz
+	; RANDO: Allow punching even if only 1 item slot is empty.
+	;ld l,<wInventoryB
+	;ldi a,(hl)
+	;or (hl)
+	;ret nz
 
 @forcePunch:
 	ld a,ITEMID_PUNCH
