@@ -1,3 +1,8 @@
+; Dev ring is a fake ring that enables debug features. This is $80 instead of $40 like in the
+; original randomizer, because bit 6 is used to temporarily disable rings while remembering what
+; ring you should have equipped (while fighting blaino).
+.define DEV_RING $80
+
 ; Values for "collect mode" (override for the 1st byte in the treasure object data)
 .define COLLECT_MODE_PICKUP_ALT,           $02
 .define COLLECT_MODE_PICKUP,               $0a

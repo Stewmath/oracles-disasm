@@ -6916,6 +6916,18 @@ _specialObjectUpdateAdjacentWallsBitset:
 	xor a
 	ld (de),a
 
+	; RANDO - DEV RING: Walk through walls if B is pressed with no item equipped
+	ld a,DEV_RING
+	call cpActiveRing
+	jr nz,++
+	ld a,(wInventoryB)
+	or a
+	jr nz,++
+	ld a,(wKeysPressed)
+	and BTN_B
+	ret nz
+++
+
 	; Return if Link is riding a companion, minecart
 	ld a,(wLinkObjectIndex)
 	rrca
