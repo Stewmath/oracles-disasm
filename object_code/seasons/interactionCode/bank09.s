@@ -6999,8 +6999,13 @@ makuTree_setAppropriateStage:
 	ld a,GLOBALFLAG_FINISHEDGAME
 	call checkGlobalFlag
 	jp nz,@setStageToLast
-	ld a,TREASURE_ESSENCE
-	call checkTreasureObtained
+
+	; RANDO: Keep the tree in its initial state until you've gotten the item from it.
+	ld a,RANDO_MAKU_TREE_FLAG
+	call checkRandoFlag
+	ld a,(wEssencesObtained)
+	;ld a,TREASURE_ESSENCE
+	;call checkTreasureObtained
 	jr c,+
 	xor a
 +
@@ -7068,12 +7073,11 @@ makuTree_setAppropriateStage:
 	ld ($cc39),a
 	ret
 
-; TODO RANDO: Fix treasure checks?
 _makuTree_setRoomFlag40OnGnarledKeyGet:
 	call getThisRoomFlags
 	and $40
 	ret nz
-	ld a,TREASURE_GNARLED_KEY
+	ld a,RANDO_MAKU_TREE_FLAG
 	call checkTreasureObtained
 	ret nc
 	set 6,(hl)

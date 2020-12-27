@@ -537,8 +537,8 @@ interactionCode60:
 ++
 	ld a,b
 	call giveTreasure
-	call randoGiveTreasureFromObjectHook
 	ld b,a
+	call randoGiveTreasureFromObjectHook
 
 	ld e,Interaction.var32
 	ld a,(de)

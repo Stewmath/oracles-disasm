@@ -63,6 +63,22 @@ searchValue:
 	ret
 
 
+;;
+; Certain randomized slots (ie. maku tree screen) borrow unused treasure flags for remembering if
+; they have been obtained.
+;
+; @param	a	Flag to check
+checkRandoFlag:
+	ld hl,wObtainedTreasureFlags
+	jp checkFlag
+
+;;
+; @param	a	Flag to set
+setRandoFlag:
+	ld hl,wObtainedTreasureFlags
+	jp setFlag
+
+
 .ifdef ROM_SEASONS
 
 ; Call a function hl in bank $02, preserving af. 'e' can't be used as a parameter to that function,

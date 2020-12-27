@@ -29,6 +29,9 @@ satchelRefillSeeds:
 ; Can't use the "randoGiveTreasureHook" function for this because it would also trigger on things
 ; like dug up rupees.
 randoGiveTreasureFromObjectHook:
+	push bc
+	push de
+	push hl
 
 .ifdef ROM_SEASONS
 	ld a,(wActiveGroup)
@@ -36,7 +39,7 @@ randoGiveTreasureFromObjectHook:
 	jr z,@subrosia
 	cp $02
 	jr z,@indoors
-	ret
+	jr @ret
 
 @subrosia:
 	; RANDO-TODO
@@ -46,17 +49,19 @@ randoGiveTreasureFromObjectHook:
 	;ret nz
 	;ld hl,c694
 	;set 2,(hl)
-	ret
+	jr @ret
 
 @indoors:
-	; RANDO-TODO
-	;ld a,(wActiveRoom)
-	;ld hl,makuTreeRooms
-	;call searchValue
-	;ret nz
-	;ld hl,c693
-	;set 2,(hl)
-	ret
+	ld a,(wActiveRoom)
+	ld hl,@makuTreeRooms
+	call searchValue
+	ret nz
+	ld a,RANDO_MAKU_TREE_FLAG
+	call setRandoFlag
+	jr @ret
+
+@makuTreeRooms:
+	.db $0b, $0c, $7b, $2b, $2c, $2d, $5b, $5c, $5d, $ff
 
 .else; ROM_AGES
 	push af
@@ -82,4 +87,8 @@ randoGiveTreasureFromObjectHook:
 .endif
 
 
-
+@ret:
+	pop hl
+	pop de
+	pop bc
+	ret

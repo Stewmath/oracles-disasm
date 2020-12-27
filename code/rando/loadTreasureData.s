@@ -45,6 +45,8 @@ rando_upgradeTreasure:
 ; (group, room, mode), and modes 80+ are used to index a jump table for special cases. If no match
 ; is found, it returns the regular, non-overriden mode. Does nothing if the item's collect mode is
 ; already set.
+;
+; @param[out]	a	Collect mode for the treasure
 lookupCollectMode:
 	push hl
 	call @helper
@@ -72,7 +74,6 @@ lookupCollectMode:
 	ld e,$02
 	ld hl,rando_collectPropertiesTable
 	call searchDoubleKey
-	ld e,a
 	ret nc
 
 	; Multiworld stuff
@@ -82,22 +83,42 @@ lookupCollectMode:
 	;ld (de),a
 
 	ld a,(hl)
-	ld e,a
 	cp a,$80
 	ret c
 
-	; TODO: Special collect modes
+	ld hl,@collectSpecialJumpTable
+	and a,$7f
+	add a
+	rst_addAToHl
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	jp (hl)
+
+@collectSpecialJumpTable:
+	.dw @collectDiverRoom
+	.dw @collectPoeSkipRoom
+	.dw @collectMakuTree
+	.dw @collectD4Pool
+	.dw @collectD5Armos
+
+; maku tree item drops at a specific script pos, otherwise use regular mode.
+@collectMakuTree:
+	ld a,($d258) ; IDK how this works but I trust jangler
+	cp $8e
+	ld a,COLLECT_MODE_FALL
+	ret z
+	ld a,COLLECT_MODE_PICKUP
 	ret
 
-	;ld hl,collectSpecialJumpTable
-	;and a,$7f
-	;add a
-	;rst_addAToHl
-	;ldi a,(hl)
-	;ld h,(hl)
-	;ld l,a
-	;jp (hl)
 
+
+@collectDiverRoom:
+@collectPoeSkipRoom:
+@collectD4Pool:
+@collectD5Armos:
+; RANDO-TODO
+	ret
 
 .include "data/rando/collectPropertiesTable.s"
 
