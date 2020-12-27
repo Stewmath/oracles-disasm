@@ -980,15 +980,17 @@ vasuScript:
 	setdisabledobjectsto11
 	checktext
 
-	; Force Link to appraise it
-	showtextlowindex <TX_3033
-	asm15 scriptHelp.vasu_openRingMenu, $00
-	wait 10
+	; RANDO: Disable forced ring appraisal & ring list (prevents softlock)
+	;; Force Link to appraise it
+	;showtextlowindex <TX_3033
+	;asm15 scriptHelp.vasu_openRingMenu, $00
+	;wait 10
 
-	; Open ring list
-	showtextlowindex <TX_3013
-	asm15 scriptHelp.vasu_openRingMenu, $01
-	wait 10
+	;; Open ring list
+	;showtextlowindex <TX_3013
+	;asm15 scriptHelp.vasu_openRingMenu, $01
+	;wait 10
+
 	showtextlowindex <TX_3008
 
 @justGaveRingBox:
