@@ -46,3 +46,4 @@
 .endif
 
 .include "constants/rando.s"
+.include "constants/randoItemSlots.s"

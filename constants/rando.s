@@ -13,9 +13,3 @@
 ; Certain randomized slots (ie. maku tree screen) borrow unused treasure flags for remembering if
 ; they have been obtained.
 .define RANDO_MAKU_TREE_FLAG, TREASURE_SWITCH_HOOK_HELPER
-
-
-; The defines below here modified by the randomizer.
-
-.define RANDO_SEASONS_ITEM_D0_SWORD, TREASURE_OBJECT_SWORD_00
-.define RANDO_SEASONS_ITEM_MAKU_TREE, TREASURE_OBJECT_GNARLED_KEY_00
