@@ -2,28 +2,41 @@
 ; "treasureInteraction" namespace.
 
 ;;
-; This is roughly based on the "handleGetItem" function from the original randomizer although it's
-; morphed into a sort of wrapper over "giveTreasure".
-;
-; Run certain actions depending on what item was picked up and where. This has to be explicitly
-; called if an item is given by an interaction other than ID 60. (This *should* be called when any
-; randomized treasure is received, no matter the source.)
+; This is called just by the "giveTreasure" function just after giving the treasure.
 ;
 ; @param	b	Treasure
 ; @param	c	Parameter
-; @param[out]	b	Sound to play (from giveTreasure function)
-giveRandomizedTreasure_body:
+randoGiveTreasureHook:
 	call satchelRefillSeeds
+	ret
+
+;;
+; Have seed satchel inherently refill all seeds.
+satchelRefillSeeds:
+	ld a,b
+	cp TREASURE_SEED_SATCHEL
+	ret nz
+
+	push bc
+	call refillSeedSatchel
+	pop bc
+	ret
+
+;;
+; This is like above, but it is ONLY called when a treasure object is obtained. This is used to
+; handle specific rooms with non-standard ways of marking the item as "obtained".
+;
+; Can't use the "randoGiveTreasureHook" function for this because it would also trigger on things
+; like dug up rupees.
+randoGiveTreasureFromObjectHook:
 
 .ifdef ROM_SEASONS
-	jr z,@giveTreasure
-
 	ld a,(wActiveGroup)
 	cp $01
 	jr z,@subrosia
 	cp $02
 	jr z,@indoors
-	jr @giveTreasure
+	ret
 
 @subrosia:
 	; RANDO-TODO
@@ -65,30 +78,8 @@ giveRandomizedTreasure_body:
 	; RANDO-TODO
 	;call setD6BossKey
 	;call makuSeedResetTreeState
+	ret
 .endif
 
-@giveTreasure:
-	ld a,b
-	call giveTreasure
-	ld b,a
-	ret
 
 
-
-; Have seed satchel inherently refill all seeds.
-satchelRefillSeeds:
-	ld a,b
-	cp TREASURE_SEED_SATCHEL
-	ret nz
-
-	push bc
-	push de
-	push hl
-	ld hl,wSeedSatchelLevel
-	inc (hl) ; Needed since this is run *before* the satchel is given
-	call refillSeedSatchel
-	dec (hl)
-	pop hl
-	pop de
-	pop bc
-	ret

@@ -122,6 +122,9 @@ giveTreasure_body:
 	call @findItemInTable
 	call nz,@giveTreasure
 
+	; RANDO: Do extra stuff after getting an item
+	callab treasureInteraction.randoGiveTreasureHook
+
 	pop bc
 	pop de
 	pop hl

@@ -536,9 +536,8 @@ interactionCode60:
 	inc c
 ++
 	ld a,b
-	; RANDO: This function does some extra checks before calling giveTreasure
-	call giveRandomizedTreasure
-	;call giveTreasure
+	call giveTreasure
+	call randoGiveTreasureFromObjectHook
 	ld b,a
 
 	ld e,Interaction.var32
