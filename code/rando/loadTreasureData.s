@@ -1,6 +1,7 @@
 ; Code in this file is included by the "code/loadTreasureData.s" file, meaning it's in the
 ; "treasureData" namespace.
 
+;;
 ; Return treasure data address and collect mode modified as necessary, given a treasure ID in dx42.
 rando_modifyTreasure:
 	push bc
@@ -18,6 +19,7 @@ rando_modifyTreasure:
 	ret
 
 
+;;
 ; Given a treasure at dx40, return hl = the start of the treasure data + 1, accounting for
 ; progressive upgrades. Also writes the new treasure ID to dx70, which is used to set the treasure
 ; obtained flag.
@@ -30,22 +32,38 @@ rando_upgradeTreasure:
 	ld c,a
 	;call getMultiworldItemDest
 	call getUpgradedTreasure
+
+	; Update Treasure ID
 	ld e,Interaction.var30
 	ld a,b
 	ld (de),a
 	ret
 
 
-; Return a spawning item's collection mode in a and e, based on current room.  the table format is
+;;
+; Return a spawning item's collection mode in a and e, based on current room. The table format is
 ; (group, room, mode), and modes 80+ are used to index a jump table for special cases. If no match
 ; is found, it returns the regular, non-overriden mode. Does nothing if the item's collect mode is
 ; already set.
 lookupCollectMode:
-	ld e,Interaction.var31 ; Check if collect mode has been set already
-	ld a,(de)
-	ld e,a
-	and a
+	push hl
+	call @helper
+	pop hl
+	cp $ff
 	ret nz
+
+	; Retrieve the original collect mode byte
+	dec hl
+	ldi a,(hl)
+	ret
+
+@helper:
+	; This might be multiworld related
+	;ld e,Interaction.var31 ; Check if collect mode has been set already
+	;ld a,(de)
+	;ld e,a
+	;and a
+	;ret nz
 
 	ld a,(wActiveGroup)
 	ld b,a
