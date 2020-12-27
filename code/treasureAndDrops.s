@@ -431,24 +431,40 @@ giveTreasure_body:
 
 ; Add a ring to the unappraised ring list.
 @mode9:
-	; Setting bit 6 means the ring is unappraised
-	set 6,c
-	call realignUnappraisedRings
-
-	; Check that there are less than 64 unappraised rings (checking aginst a bcd
-	; number)
-	cp $64
-	jr c,+
-
-	; If there are already 64 unappraised rings, remove one duplicate ring and
-	; re-align the list.
-	call @removeOneDuplicateRing
-	call realignUnappraisedRings
-+
-	; Add the ring to the end of the list
+	; RANDO: Put obtained rings directly into ring list (no need for appraisal), and tell the
+	; player what type of ring it is.
+	; It's unusual to show text when calling the "giveTreasure" function, but it's the best way
+	; to ensure that all the various methods of getting rings will show the text. (However those
+	; various methods will need to not show any text themselves for this to work.)
+	ld hl,wRingsObtained
 	ld a,c
-	ld (wUnappraisedRingsEnd-1),a
-	jr realignUnappraisedRings
+	and a,$3f
+	call setFlag
+	ld a,c
+	add a,$40
+	ld (wTextSubstitutions+2),a
+	ld bc,TX_30_GETRING
+	call showText
+	ret
+
+	; Setting bit 6 means the ring is unappraised
+	;set 6,c
+	;call realignUnappraisedRings
+
+	;; Check that there are less than 64 unappraised rings (checking aginst a bcd
+	;; number)
+	;cp $64
+	;jr c,+
+
+	;; If there are already 64 unappraised rings, remove one duplicate ring and
+	;; re-align the list.
+	;call @removeOneDuplicateRing
+	;call realignUnappraisedRings
++
+	;; Add the ring to the end of the list
+	;ld a,c
+	;ld (wUnappraisedRingsEnd-1),a
+	;jr realignUnappraisedRings
 
 ;;
 ; Decides on one ring to remove by counting all of the unappraised rings and finding the

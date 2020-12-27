@@ -1,3 +1,7 @@
+; Since we're not doing "BUILD_VANILLA", we can at least use "FORCE_SECTIONS" to keep the overall
+; structure of the ROM somewhat close to the original
+.define FORCE_SECTIONS
+
 ; Dev ring is a fake ring that enables debug features. This is $80 instead of $40 like in the
 ; original randomizer, because bit 6 is used to temporarily disable rings while remembering what
 ; ring you should have equipped (while fighting blaino).

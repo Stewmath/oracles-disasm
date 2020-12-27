@@ -9762,6 +9762,13 @@ groups:
       \call(0xfd)
       \call(0xfc)
 
+  # RANDO: Custom text used when auto-appraising rings
+  - name: TX_30_GETRING
+    index: auto
+    text: |-
+      You got the
+      \call(0xfd)!
+
 - group: 0x31
   data:
   - name: TX_3100
