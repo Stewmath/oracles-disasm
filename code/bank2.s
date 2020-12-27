@@ -2731,6 +2731,23 @@ _menuStateFadeIntoMenu:
 	call nz,playSound
 	ld a,$02
 	call setMusicVolume
+
+	; RANDO: Fix ring menu graphics when opened from inventory
+	ld a,(wRingMenu_mode)
+	bit 7,a
+	jr z,++
+	and $7f
+	ld (wRingMenu_mode),a
+	xor a
+	ldh (<hCameraY),a
+	ldh (<hCameraX),a
+	ld hl,wScreenOffsetY
+	ldi (hl),a
+	ldi (hl),a
+	call _clearMenu
+	; Does not return
+++
+
 ;;
 _saveGraphicsOnEnterMenu:
 	ldh a,(<hCameraY)
@@ -2758,6 +2775,7 @@ _saveGraphicsOnEnterMenu:
 	ld de,w4SavedVramTiles
 	call copyMemoryBc
 
+_clearMenu:
 	ld hl,wMenuUnionStart
 	ld b,wMenuUnionEnd - wMenuUnionStart
 	call clearMemory
@@ -4154,6 +4172,16 @@ _inventoryMenuState1:
 	jr ++
 +
 	call @checkEquipRing
+
+	; RANDO: Open ring list if selected the ring box.
+	ld a,(wInventorySubmenu1CursorPos)
+	cp $0f
+	jr nz,++
+	ld a,$81
+	ld (wRingMenu_mode),a
+	ld a,$04
+	call openMenu
+
 ++
 	call _inventorySubmenu1_drawCursor
 	ld a,(wInventorySubmenu1CursorPos)
