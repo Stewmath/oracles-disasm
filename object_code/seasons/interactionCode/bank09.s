@@ -7094,9 +7094,13 @@ _makuTree_spawnGnarledKey:
 	ret nz
 	ld (hl),INTERACID_TREASURE
 	inc l
-	ld (hl),>RANDO_SEASONS_ITEM_MAKU_TREE
+
+	ld bc,RANDO_SLOT_SEASONS_MAKU_TREE
+	call randoLookupItemSlot
+	ld (hl),b
 	inc l
-	ld (hl),<RANDO_SEASONS_ITEM_MAKU_TREE
+	ld (hl),c
+
 	ld l,Interaction.yh
 	ld a,$58
 	ldi (hl),a

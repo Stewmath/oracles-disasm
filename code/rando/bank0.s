@@ -1,3 +1,4 @@
+;;
 ; This is a replacement for giveTreasure that accounts for item progression. Call through
 ; giveTreasureCustom or giveTreasureCustomSilent, since this function doesn't xor the a that it
 ; returns. Importantly, this replacement treats c as a subID, not a param, so this should *not* be
@@ -32,4 +33,17 @@ giveTreasureCustom:
 	ld c,e
 	call showText
 	xor a
+	ret
+
+;;
+; Takes a constant from "constants/randoItemSlots.s" and returns the treasure object to use for that
+; item slot. This is used for non-chest items. (It does not account for progressive upgrades.)
+;
+; Currently this does nothing (the constant itself is set to the correct value by the randomizer),
+; but in the future I might want to change things such that it's possible to apply the randomization
+; without re-assembling the ROM. This will make that easier.
+;
+; @param	bc	Item slot index (from constants/randoItemSlots.s)
+; @param[out]	bc	Treasure object
+randoLookupItemSlot:
 	ret

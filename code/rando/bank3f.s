@@ -53,9 +53,9 @@ lookupItemSprite:
 ; Format:
 ; - Interaction ID
 ; - SubID
-; - Treasure object ID to use for gfx (little-endian word)
+; - Item slot to use for gfx (little-endian word)
 customSpriteLookupTable:
-	dbbw INTERACID_HEROS_CAVE_SWORD_CHEST, $00, RANDO_SEASONS_ITEM_D0_SWORD
+	dbbw INTERACID_HEROS_CAVE_SWORD_CHEST, $00, RANDO_SLOT_SEASONS_D0_SWORD
 	.db $ff
 
 
