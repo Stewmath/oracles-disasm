@@ -274,23 +274,23 @@ treasureObjectData2c:
 
 treasureObjectData2d:
 	m_BeginTreasureSubids TREASURE_RING
-	m_TreasureSubid $09, $ff, $54, $0e, TREASURE_OBJECT_RING_00
-	m_TreasureSubid $29, $ff, $54, $0e, TREASURE_OBJECT_RING_01
-	m_TreasureSubid $49, $ff, $54, $0e, TREASURE_OBJECT_RING_02
-	m_TreasureSubid $59, $ff, $54, $0e, TREASURE_OBJECT_RING_03
-	m_TreasureSubid $38, $28, $54, $0e, TREASURE_OBJECT_RING_04
-	m_TreasureSubid $38, $2b, $54, $0e, TREASURE_OBJECT_RING_05
-	m_TreasureSubid $38, $10, $54, $0e, TREASURE_OBJECT_RING_06
-	m_TreasureSubid $38, $0c, $54, $0e, TREASURE_OBJECT_RING_07
-	m_TreasureSubid $38, $0d, $54, $0e, TREASURE_OBJECT_RING_08
-	m_TreasureSubid $38, $2a, $54, $0e, TREASURE_OBJECT_RING_09
-	m_TreasureSubid $38, $23, $54, $0e, TREASURE_OBJECT_RING_0a
-	m_TreasureSubid $38, $05, $54, $0e, TREASURE_OBJECT_RING_0b
-	m_TreasureSubid $30, $2f, $54, $0e, TREASURE_OBJECT_RING_0c
-	m_TreasureSubid $30, $21, $54, $0e, TREASURE_OBJECT_RING_0d
-	m_TreasureSubid $38, $01, $54, $0e, TREASURE_OBJECT_RING_0e
-	m_TreasureSubid $38, $03, $54, $0e, TREASURE_OBJECT_RING_0f
-	m_TreasureSubid $38, $2d, $54, $0e, TREASURE_OBJECT_RING_10
+	m_TreasureSubid $09, $ff, $ff, $0e, TREASURE_OBJECT_RING_00
+	m_TreasureSubid $29, $ff, $ff, $0e, TREASURE_OBJECT_RING_01
+	m_TreasureSubid $49, $ff, $ff, $0e, TREASURE_OBJECT_RING_02
+	m_TreasureSubid $59, $ff, $ff, $0e, TREASURE_OBJECT_RING_03
+	m_TreasureSubid $38, $28, $ff, $0e, TREASURE_OBJECT_RING_04
+	m_TreasureSubid $38, $2b, $ff, $0e, TREASURE_OBJECT_RING_05
+	m_TreasureSubid $38, $10, $ff, $0e, TREASURE_OBJECT_RING_06
+	m_TreasureSubid $38, $0c, $ff, $0e, TREASURE_OBJECT_RING_07
+	m_TreasureSubid $38, $0d, $ff, $0e, TREASURE_OBJECT_RING_08
+	m_TreasureSubid $38, $2a, $ff, $0e, TREASURE_OBJECT_RING_09
+	m_TreasureSubid $38, $23, $ff, $0e, TREASURE_OBJECT_RING_0a
+	m_TreasureSubid $38, $05, $ff, $0e, TREASURE_OBJECT_RING_0b
+	m_TreasureSubid $30, $2f, $ff, $0e, TREASURE_OBJECT_RING_0c
+	m_TreasureSubid $30, $21, $ff, $0e, TREASURE_OBJECT_RING_0d
+	m_TreasureSubid $38, $01, $ff, $0e, TREASURE_OBJECT_RING_0e
+	m_TreasureSubid $38, $03, $ff, $0e, TREASURE_OBJECT_RING_0f
+	m_TreasureSubid $38, $2d, $ff, $0e, TREASURE_OBJECT_RING_10
 
 treasureObjectData30:
 	m_BeginTreasureSubids TREASURE_SMALL_KEY
