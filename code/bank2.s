@@ -9477,6 +9477,15 @@ _ringMenu_ringList_substate0:
 
 ; Selected a ring box slot; move the cursor to the ring list (substate 1).
 @aPressed:
+	; RANDO: Auto-equip the ring
+	ld a,(wRingMenu.ringBoxCursorIndex)
+	ld hl,wRingBoxContents
+	rst_addAToHl
+	ld a,(hl)
+	cp $ff
+	jr z,+
+	ld (wActiveRing),a
++
 	xor a
 	ld (wRingMenu.boxCursorFlickerCounter),a
 	inc a
@@ -9584,6 +9593,10 @@ _ringMenu_selectedRingFromList:
 
 	; Put the ring (if it exists) in the box
 	call _ringMenu_updateSelectedRingFromList
+
+	; RANDO: Auto-equip the selected ring
+	ld (wActiveRing),a
+
 	ld c,a
 	ld hl,wRingsObtained
 	call checkFlag
