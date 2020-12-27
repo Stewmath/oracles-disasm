@@ -252,10 +252,11 @@ _shopkeeperState2:
 	jr nz,_shopkeeperPromptChestGame
 
 .ifdef ROM_SEASONS
-	ld a,TREASURE_SWORD
-	call checkTreasureObtained
-	ld hl,mainScripts.shopkeeperScript_notOpenYet
-	jr nc,_shopkeeperLoadScript
+	; RANDO: Shop always open even before getting sword
+	;ld a,TREASURE_SWORD
+	;call checkTreasureObtained
+	;ld hl,mainScripts.shopkeeperScript_notOpenYet
+	;jr nc,_shopkeeperLoadScript
 .endif
 
 	ld a,(wLinkGrabState)
@@ -724,9 +725,11 @@ _shopItemState0:
 	jr @checkFlutePurchasable
 ++
 .else
-	ld a,TREASURE_SWORD
-	call checkTreasureObtained
-	jp nc,_shopItemPopStackAndDeleteSelf
+	; RANDO: Shop always open even before getting sword
+	;ld a,TREASURE_SWORD
+	;call checkTreasureObtained
+	;jp nc,_shopItemPopStackAndDeleteSelf
+
 	ld e,Interaction.subid
 	ld a,(de)
 .endif
@@ -747,19 +750,20 @@ _shopItemState0:
 	call checkTreasureObtained
 	jr c,@fluteNotPurchasable
 
+	; RANDO: "Flute" item is always available (both games).
 .ifdef ROM_AGES
-	ld a,GLOBALFLAG_CAN_BUY_FLUTE
-	call checkGlobalFlag
-	jr z,@fluteNotPurchasable
+	;ld a,GLOBALFLAG_CAN_BUY_FLUTE
+	;call checkGlobalFlag
+	;jr z,@fluteNotPurchasable
 .else
-	ld a,(wRickyState)
-	bit 5,a
-	jr nz,@fluteNotPurchasable
-	ld a,(wEssencesObtained)
-	bit 1,a
-	jr z,@fluteNotPurchasable
-	call checkIsLinkedGame
-	jr nz,@fluteNotPurchasable
+	;ld a,(wRickyState)
+	;bit 5,a
+	;jr nz,@fluteNotPurchasable
+	;ld a,(wEssencesObtained)
+	;bit 1,a
+	;jr z,@fluteNotPurchasable
+	;call checkIsLinkedGame
+	;jr nz,@fluteNotPurchasable
 .endif
 
 	; Flute purchasable
