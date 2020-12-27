@@ -2946,11 +2946,14 @@ _warpTransitionB:
 .else
 	xor a
 	ld (wDisabledObjects),a
-	ld a,SPECIALOBJECTID_LINK_CUTSCENE
-	call setLinkIDOverride
-	ld l,SpecialObject.subid
-	ld (hl),$02
-	ret
+	; RANDO: Make link actionable as soon as he drops into the world.
+	jp setLinkIDOverride
+
+	;ld a,SPECIALOBJECTID_LINK_CUTSCENE
+	;call setLinkIDOverride
+	;ld l,SpecialObject.subid
+	;ld (hl),$02
+	;ret
 .endif
 
 @warpVar2:

@@ -59,6 +59,9 @@ _initializeFile:
 	callab roomTileChanges.initializeVinePositions
 .endif
 
+	; RANDO: More initialization to be done
+	call randoInitializeFile
+
 ;;
 ; In addition to saving, this is called after creating a file, as well as when it's about
 ; to be loaded (for some reason)
@@ -375,7 +378,7 @@ _initialFileVariables:
 .else
 	.db <wDeathRespawnBuffer.group		$00
 	.db <wDeathRespawnBuffer.room       $a7
-	.db <wDeathRespawnBuffer.y          $38
+	.db <wDeathRespawnBuffer.y          $58 ; RANDO: Changed link starting position
 	.db <wDeathRespawnBuffer.x          $48
 	.db <wDeathRespawnBuffer.facingDir  $02
 .endif
@@ -417,3 +420,6 @@ _saveVerificationString:
 .else
 	.ASC "Z11216-0"
 .endif
+
+
+	.include "code/rando/fileInitialization.s"
