@@ -2,17 +2,18 @@
 ; "treasureInteraction" namespace.
 
 ;;
+; This is roughly based on the "handleGetItem" function from the original randomizer although it's
+; morphed into a sort of wrapper over "giveTreasure".
+;
 ; Run certain actions depending on what item was picked up and where. This has to be explicitly
-; called if an item is given by an interaction other than ID 60. Parameters to this are the same as
-; the "giveTreasure" function (a, c).
-handleGetItem:
-	ld e,a
-
-	push de
-	ld e,Interaction.var33 ; nonzero if interaction should set item room flag
-	ld a,(de)
-	or a
-	pop de
+; called if an item is given by an interaction other than ID 60. (This *should* be called when any
+; randomized treasure is received, no matter the source.)
+;
+; @param	b	Treasure
+; @param	c	Parameter
+; @param[out]	b	Sound to play (from giveTreasure function)
+giveRandomizedTreasure_body:
+	call satchelRefillSeeds
 
 .ifdef ROM_SEASONS
 	jr z,@giveTreasure
@@ -47,14 +48,13 @@ handleGetItem:
 .else; ROM_AGES
 	push af
 	; RANDO-TODO
-	;call satchelRefillSeeds
 	;call seedShooterGiveSeeds
 	;call activateFlute
 	pop af
 	jr z,@incoming
 
 @outgoing:
-	; RANDO-TODO ("Item obtained" flag doesn't work for these slots?)
+	; RANDO-TODO
 	;call dirtSetFakeId
 	;call tingleSetFakeId
 	;call symmetryBrotherSetFakeId
@@ -68,5 +68,27 @@ handleGetItem:
 .endif
 
 @giveTreasure:
-	ld a,e
-	jp giveTreasure
+	ld a,b
+	call giveTreasure
+	ld b,a
+	ret
+
+
+
+; Have seed satchel inherently refill all seeds.
+satchelRefillSeeds:
+	ld a,b
+	cp TREASURE_SEED_SATCHEL
+	ret nz
+
+	push bc
+	push de
+	push hl
+	ld hl,wSeedSatchelLevel
+	inc (hl) ; Needed since this is run *before* the satchel is given
+	call refillSeedSatchel
+	dec (hl)
+	pop hl
+	pop de
+	pop bc
+	ret

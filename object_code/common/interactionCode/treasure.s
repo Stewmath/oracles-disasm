@@ -537,7 +537,7 @@ interactionCode60:
 ++
 	ld a,b
 	; RANDO: This function does some extra checks before calling giveTreasure
-	call handleGetItem
+	call giveRandomizedTreasure
 	;call giveTreasure
 	ld b,a
 

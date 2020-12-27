@@ -982,10 +982,11 @@ _shopItemState3:
 	call giveTreasure
 
 .ifdef ROM_SEASONS
-	ld e,Interaction.subid
-	ld a,(de)
-	or a
-	call z,refillSeedSatchel
+	; RANDO: Don't refill seeds when getting the 1st member's shop item.
+	;ld e,Interaction.subid
+	;ld a,(de)
+	;or a
+	;call z,refillSeedSatchel
 .endif
 
 	ld e,Interaction.state

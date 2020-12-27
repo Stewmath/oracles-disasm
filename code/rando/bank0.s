@@ -8,7 +8,7 @@ giveTreasureCustom_body:
 	callab treasureData.getTreasureDataBCE
 	pop hl
 	ld a,b
-	jp giveTreasure
+	jp giveRandomizedTreasure
 
 
 giveTreasureCustomSilent:
@@ -32,4 +32,21 @@ giveTreasureCustom:
 	ld c,e
 	call showText
 	xor a
+	ret
+
+
+; Like calling giveTreasure. See "handleGetItem_body".
+;
+; @param	a	Treasure
+; @param	c	Parameter
+giveRandomizedTreasure:
+	push bc
+	push de
+	push hl
+	ld b,a
+	callab treasureInteraction.giveRandomizedTreasure_body
+	ld a,b
+	pop hl
+	pop de
+	pop bc
 	ret
