@@ -8001,10 +8001,13 @@ enemyCode5a:
 	ldi a,(hl)
 	ldh (<hFF8B),a
 	ldi a,(hl)
-	ld b,a
-	ld a,(wRoomStateModifier)
-	cp b
-	jp nz,enemyDelete
+
+	; RANDO: Allow seeds to grow in all seasons.
+	;ld b,a
+	;ld a,(wRoomStateModifier)
+	;cp b
+	;jp nz,enemyDelete
+
 	ld a,(hl)
 	cpl
 	ld e,Enemy.direction
