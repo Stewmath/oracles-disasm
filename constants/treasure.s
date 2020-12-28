@@ -98,15 +98,15 @@
 	TREASURE_SCENT_SEEDLING		db ; $4d
 	TREASURE_ZORA_SCALE		db ; $4e
 	TREASURE_TOKAY_EYEBALL		db ; $4f
-	TREASURE_EMPTY_BOTTLE		db ; $50: unused? (similar to fairy powder)
+	TREASURE_EMPTY_BOTTLE		db ; $50: Unused? (similar to fairy powder)
 	TREASURE_FAIRY_POWDER		db ; $51
 	TREASURE_CHEVAL_ROPE		db ; $52
-	TREASURE_MEMBERS_CARD		db ; $53
+	TREASURE_MEMBERS_CARD		db ; $53: Unused but appears in the inventory if given
 	TREASURE_ISLAND_CHART		db ; $54
 	TREASURE_BOOK_OF_SEALS		db ; $55
 	TREASURE_56			db ; $56
 	TREASURE_57			db ; $57
-	TREASURE_BOMB_FLOWER_LOWER_HALF	db ; $58: lower half of bomb flower (uses different palette)
+	TREASURE_BOMB_FLOWER_LOWER_HALF	db ; $58: Lower half of bomb flower (uses different palette)
 	TREASURE_GORON_LETTER		db ; $59
 	TREASURE_LAVA_JUICE		db ; $5a
 	TREASURE_BROTHER_EMBLEM		db ; $5b
@@ -141,7 +141,7 @@
 	TREASURE_55			db ; $55
 	TREASURE_56			db ; $56
 	TREASURE_57			db ; $57
-	TREASURE_BOMB_FLOWER_LOWER_HALF	db ; $58: lower half of bomb flower (uses different palette)
+	TREASURE_BOMB_FLOWER_LOWER_HALF	db ; $58: Lower half of bomb flower (uses different palette)
 
 	; The remainder appear as seeds in seed satchel/slingshot, but that probably
 	; doesn't mean anything. These may not be valid treasures.
