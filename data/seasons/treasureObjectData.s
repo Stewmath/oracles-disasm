@@ -133,7 +133,7 @@ treasureObjectData:
 	/* $48 */ m_TreasureSubid   $09, $01, $67, $55, TREASURE_OBJECT_RICKY_GLOVES_00
 	/* $49 */ m_TreasureSubid   $0a, $00, $3c, $56, TREASURE_OBJECT_BOMB_FLOWER_00
 	/* $4a */ m_TreasurePointer treasureObjectData4a
-	/* $4b */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_TREASURE_MAP_00
+	/* $4b */ m_TreasureSubid   $00, $00, $6c, $49, TREASURE_OBJECT_TREASURE_MAP_00
 	/* $4c */ m_TreasureSubid   $0a, $00, $47, $36, TREASURE_OBJECT_ROUND_JEWEL_00
 	/* $4d */ m_TreasurePointer treasureObjectData4d
 	/* $4e */ m_TreasureSubid   $38, $00, $48, $38, TREASURE_OBJECT_SQUARE_JEWEL_00

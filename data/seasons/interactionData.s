@@ -320,11 +320,15 @@ interaction18SubidData:
 	m_InteractionData $5e $10 $40
 	m_InteractionData $5e $12 $10
 	m_InteractionData $66 $12 $0a
-	m_InteractionData $00 $00 $00
-	m_InteractionData $00 $00 $00
-	m_InteractionData $00 $00 $00
-	m_InteractionData $00 $00 $00
-	m_InteractionData $00 $00 $00
+
+	; RANDO: Give items that don't normally appear as treasure interactions entries in
+	; the treasure graphics table.
+	m_InteractionData $5d $0c $13 ; $48: member's card
+	m_InteractionData $65 $14 $33 ; $49: treasure map
+	m_InteractionData $60 $14 $00 ; $4a: fool's ore
+	m_InteractionData $5d $10 $26 ; $4b: rare peach stone
+	m_InteractionData $65 $0c $23 ; $4c: ribbon
+
 	m_InteractionData $00 $00 $00
 	m_InteractionData $00 $00 $00
 	m_InteractionData $00 $00 $00
