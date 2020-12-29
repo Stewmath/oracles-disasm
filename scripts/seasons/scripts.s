@@ -5838,14 +5838,8 @@ _givenGnarledKey:
 	asm15 scriptHelp.makuTree_showText, <TX_1702
 	wait 1
 	jumpifroomflagset $80, _gnarledKeySpawned
-
-	; RANDO: Set the room flag AFTER spawning the gnarled key so that the room flag can be used
-	; to check what spawn mode to use (drop from ceiling or spawn immediately). Must also add
-	; the "wait 1" command to allow the object to spawn before changing the flag.
-	asm15 scriptHelp.makuTree_dropGnarledKey
-	wait 1
 	orroomflag $80
-
+	asm15 scriptHelp.makuTree_dropGnarledKey
 _gnarledKeySpawned:
 	asm15 scriptHelp.makuTree_storeIntoVar37SpawnBubbleIf0, $02
 	checkobjectbyteeq Interaction.animParameter, $ff
