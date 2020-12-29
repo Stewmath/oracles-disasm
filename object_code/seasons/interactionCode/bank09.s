@@ -7078,7 +7078,7 @@ _makuTree_setRoomFlag40OnGnarledKeyGet:
 	and $40
 	ret nz
 	ld a,RANDO_MAKU_TREE_FLAG
-	call checkTreasureObtained
+	call checkRandoFlag
 	ret nc
 	set 6,(hl)
 	ret

@@ -68,26 +68,18 @@ searchValue:
 ; they have been obtained.
 ;
 ; @param	a	Flag to check
+; @param[out]	z,cflag	Set if the flag is set
 checkRandoFlag:
+	push hl
 	ld hl,wObtainedTreasureFlags
-	jp checkFlag
+	call checkFlag
+	pop hl
+	ret z
+	scf
+	ret
 
 ;;
 ; @param	a	Flag to set
 setRandoFlag:
 	ld hl,wObtainedTreasureFlags
 	jp setFlag
-
-
-.ifdef ROM_SEASONS
-
-; Call a function hl in bank $02, preserving af. 'e' can't be used as a parameter to that function,
-; but it can be returned. This function only exists because banks $08 and $09 are so tight on space.
-callBank2:
-	push af
-	ld e,$02
-	call interBankCall
-	pop af
-	ret
-
-.endif

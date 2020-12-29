@@ -102,10 +102,10 @@ lookupCollectMode:
 	.dw @collectD4Pool
 	.dw @collectD5Armos
 
-; maku tree item drops at a specific script pos, otherwise use regular mode.
+; Maku tree item drops from ceiling if room flag bit 7 is unset
 @collectMakuTree:
-	ld a,($d258) ; IDK how this works but I trust jangler
-	cp $8e
+	call getThisRoomFlags
+	and $80
 	ld a,COLLECT_MODE_FALL
 	ret z
 	ld a,COLLECT_MODE_PICKUP
