@@ -746,7 +746,7 @@ _shopItemState0:
 
 @checkFlutePurchasable:
 	; Decide whether the flute is purchasable (update bit 3 of wBoughtShopItems2)
-	ld a,TREASURE_FLUTE
+	ld a,RANDO_SHOP_FLUTE_FLAG
 	call checkTreasureObtained
 	jr c,@fluteNotPurchasable
 
@@ -983,7 +983,32 @@ _shopItemState3:
 	jr nz,+
 	call getRandomRingOfGivenTier
 +
+	; RANDO: Call giveTreasureCustom instead of giveTreasure in the shop iff the given item is
+	; randomized. Also set fake treasure id when buying the "flute", so that that id can be
+	; checked instead of the flute's to determine whether to stock the item.
+	; (RANDO-TODO: Ages version of this)
+	push bc
+	ld b,a
+	ld hl,@randomizedShopItemSubids
+	ld a,(de) ; subid
+	call searchValue
+	ld a,b
+	pop bc
+	jr z,@randomizedTreasure
 	call giveTreasure
+	jr ++
+
+@randomizedTreasure:
+	call randoLookupItemSlot
+	call giveTreasureCustom
+	ld e,Interaction.subid
+	ld a,(de)
+	cp a,$0d ; Flute item slot
+	jr nz,++
+	ld hl,wObtainedTreasureFlags
+	ld a,RANDO_SHOP_FLUTE_FLAG
+	call setFlag
+++
 
 .ifdef ROM_SEASONS
 	; RANDO: Don't refill seeds when getting the 1st member's shop item.
@@ -1013,6 +1038,11 @@ _shopItemState3:
 	ld b,>TX_0000
 	jp nz,showText
 	ret
+
+; RANDO: These are the subids of randomized shop items.
+@randomizedShopItemSubids:
+	.db $0d, $00, $02, $05
+	.db $ff
 
 ;;
 ; Gets the tiles to replace in the rupee display.
@@ -1190,16 +1220,20 @@ shopItemTreasureToGive:
 .ifdef ROM_AGES
 	/* $00 */ .db  TREASURE_RING_BOX      $02
 .else
-	/* $00 */ .db  TREASURE_SEED_SATCHEL  $01
+	/* $00 */ dwbe RANDO_SLOT_SEASONS_MEMBERS_SHOP_1
 .endif
 	/* $01 */ .db  TREASURE_HEART_REFILL  $0c
+.ifdef ROM_AGES
 	/* $02 */ .db  TREASURE_GASHA_SEED    $01
+.else
+	/* $02 */ dwbe RANDO_SLOT_SEASONS_MEMBERS_SHOP_2
+.endif
 	/* $03 */ .db  TREASURE_SHIELD        $01
 	/* $04 */ .db  TREASURE_BOMBS         $10
 .ifdef ROM_AGES
 	/* $05 */ .db  $00                    $03
 .else
-	/* $05 */ .db  TREASURE_TREASURE_MAP  $01
+	/* $05 */ dwbe RANDO_SLOT_SEASONS_MEMBERS_SHOP_3
 .endif
 	/* $06 */ .db  TREASURE_GASHA_SEED    $01
 	/* $07 */ .db  TREASURE_POTION        $01
@@ -1209,11 +1243,11 @@ shopItemTreasureToGive:
 	/* $0b */ .db  TREASURE_BOMBCHUS      $05
 	/* $0c */ .db  $00                    $00
 .ifdef ROM_AGES
-	/* $0d */ .db  TREASURE_FLUTE         SPECIALOBJECTID_DIMITRI
+	/* $0d */ dwbe RANDO_SLOT_AGES_SHOP_150
 	/* $0e */ .db  TREASURE_GASHA_SEED    $01
 	/* $0f */ .db  TREASURE_RING          GBA_TIME_RING
 .else
-	/* $0d */ .db  TREASURE_FLUTE         SPECIALOBJECTID_MOOSH
+	/* $0d */ dwbe RANDO_SLOT_SEASONS_SHOP_150
 	/* $0e */ .db  TREASURE_GASHA_SEED    $01
 	/* $0f */ .db  TREASURE_RING          GBA_NATURE_RING
 .endif
@@ -1261,20 +1295,21 @@ _shopItemReplacementTable:
 
 
 ; Text to show upon buying a shop item (or $00 for no text)
+; RANDO: Removed text for randomized items
 _shopItemTextTable:
 .ifdef ROM_AGES
 	/* $00 */ .db <TX_0058
 .else
-	/* $00 */ .db <TX_0046
+	/* $00 */ .db $00
 .endif
 	/* $01 */ .db <TX_004c
-	/* $02 */ .db <TX_004b
+	/* $02 */ .db $00
 	/* $03 */ .db <TX_001f
 	/* $04 */ .db <TX_004d
 .ifdef ROM_AGES
 	/* $05 */ .db <TX_0054
 .else
-	/* $05 */ .db <TX_006c
+	/* $05 */ .db $00
 .endif
 	/* $06 */ .db <TX_004b
 	/* $07 */ .db <TX_006d
@@ -1283,7 +1318,7 @@ _shopItemTextTable:
 	/* $0a */ .db <TX_004b
 	/* $0b */ .db <TX_0032
 	/* $0c */ .db $00
-	/* $0d */ .db <TX_003b
+	/* $0d */ .db $00
 	/* $0e */ .db <TX_004b
 	/* $0f */ .db <TX_0054
 	/* $10 */ .db <TX_0054

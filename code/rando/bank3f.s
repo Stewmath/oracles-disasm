@@ -55,8 +55,19 @@ lookupItemSprite:
 ; - SubID
 ; - Item slot to use for gfx (little-endian word)
 customSpriteLookupTable:
+
+.ifdef ROM_SEASONS
 	dbbw INTERACID_HEROS_CAVE_SWORD_CHEST, $00, RANDO_SLOT_SEASONS_D0_SWORD
+	dbbw INTERACID_SHOP_ITEM,              $00, RANDO_SLOT_SEASONS_MEMBERS_SHOP_1
+	dbbw INTERACID_SHOP_ITEM,              $02, RANDO_SLOT_SEASONS_MEMBERS_SHOP_2
+	dbbw INTERACID_SHOP_ITEM,              $05, RANDO_SLOT_SEASONS_MEMBERS_SHOP_3
+	dbbw INTERACID_SHOP_ITEM,              $0d, RANDO_SLOT_SEASONS_SHOP_150
 	.db $ff
+
+.else; ROM_AGES
+	; RANDO-TODO
+	.db $ff
+.endif
 
 
 ; Format: Interaction ID; subID; jump address.

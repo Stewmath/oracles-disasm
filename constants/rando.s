@@ -22,3 +22,4 @@
 ; Certain randomized slots (ie. maku tree screen) borrow unused treasure flags for remembering if
 ; they have been obtained.
 .define RANDO_MAKU_TREE_FLAG, TREASURE_SWITCH_HOOK_HELPER
+.define RANDO_SHOP_FLUTE_FLAG, TREASURE_SWITCH_HOOK_CHAIN
