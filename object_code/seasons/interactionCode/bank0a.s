@@ -7821,9 +7821,7 @@ interactionCodec6:
 	call interactionIncState
 
 	; RANDO: Replace giveTreasure call since we're using a treasure object subid
-	ld bc,RANDO_SLOT_SEASONS_D0_SWORD
-	call randoLookupItemSlot
-	ld a,b
+	ld bc,rando.seasonsSlot_d0SwordChest
 	call giveTreasureCustom
 	;call giveTreasure
 

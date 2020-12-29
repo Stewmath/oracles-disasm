@@ -7090,16 +7090,18 @@ _makuTree_spawnGnarledKey:
 	; not yet gotten gnarled key
 	bit 7,a
 	ret z
-	call getFreeInteractionSlot
-	ret nz
-	ld (hl),INTERACID_TREASURE
-	inc l
 
-	ld bc,RANDO_SLOT_SEASONS_MAKU_TREE
-	call randoLookupItemSlot
-	ld (hl),b
-	inc l
-	ld (hl),c
+	; RANDO: Spawn whatever replaces the treasure
+	ld bc,rando.seasonsSlot_makuTree
+	call spawnRandomizedTreasure
+	ret nz
+	;call getFreeInteractionSlot
+	;ret nz
+	;ld (hl),INTERACID_TREASURE
+	;inc l
+	;ld (hl),TREASURE_GNARLED_KEY
+	;inc l
+	;ld (hl),$01
 
 	ld l,Interaction.yh
 	ld a,$58
@@ -7107,6 +7109,10 @@ _makuTree_spawnGnarledKey:
 	ld a,(ws_c6e0)
 	ld l,Interaction.xh
 	ld (hl),a
+
+	; RANDO: Override collect mode
+	ld l,Interaction.var31
+	ld (hl),COLLECT_MODE_PICKUP
 	ret
 
 

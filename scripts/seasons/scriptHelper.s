@@ -2393,16 +2393,17 @@ makuTree_storeIntoVar37SpawnBubbleIf0:
 	jp interactionSetAnimation
 
 makuTree_dropGnarledKey:
-	call getFreeInteractionSlot
+	; RANDO: Spawn whatever replaces the treasure
+	ld bc,rando.seasonsSlot_makuTree
+	call spawnRandomizedTreasure
 	ret nz
-	ld (hl),INTERACID_TREASURE
-	inc l
-
-	ld bc,RANDO_SLOT_SEASONS_MAKU_TREE
-	call randoLookupItemSlot
-	ld (hl),b
-	inc l
-	ld (hl),c
+	;call getFreeInteractionSlot
+	;ret nz
+	;ld (hl),INTERACID_TREASURE
+	;inc l
+	;ld (hl),TREASURE_GNARLED_KEY
+	;inc l
+	;ld (hl),$00
 
 	ld l,Interaction.yh
 	ld (hl),$60

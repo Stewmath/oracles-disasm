@@ -979,10 +979,7 @@ _shopItemState3:
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld c,(hl)
-	cp $00
-	jr nz,+
-	call getRandomRingOfGivenTier
-+
+
 	; RANDO: Call giveTreasureCustom instead of giveTreasure in the shop iff the given item is
 	; randomized. Also set fake treasure id when buying the "flute", so that that id can be
 	; checked instead of the flute's to determine whether to stock the item.
@@ -995,11 +992,17 @@ _shopItemState3:
 	ld a,b
 	pop bc
 	jr z,@randomizedTreasure
+
+	; Non-randomized
+	cp $00
+	jr nz,+
+	call getRandomRingOfGivenTier
++
 	call giveTreasure
 	jr ++
 
 @randomizedTreasure:
-	call randoLookupItemSlot
+	ld b,a
 	call giveTreasureCustom
 	ld e,Interaction.subid
 	ld a,(de)
@@ -1220,20 +1223,20 @@ shopItemTreasureToGive:
 .ifdef ROM_AGES
 	/* $00 */ .db  TREASURE_RING_BOX      $02
 .else
-	/* $00 */ dwbe RANDO_SLOT_SEASONS_MEMBERS_SHOP_1
+	/* $00 */ dwbe rando.seasonsSlot_membersShop1
 .endif
 	/* $01 */ .db  TREASURE_HEART_REFILL  $0c
 .ifdef ROM_AGES
 	/* $02 */ .db  TREASURE_GASHA_SEED    $01
 .else
-	/* $02 */ dwbe RANDO_SLOT_SEASONS_MEMBERS_SHOP_2
+	/* $02 */ dwbe rando.seasonsSlot_membersShop2
 .endif
 	/* $03 */ .db  TREASURE_SHIELD        $01
 	/* $04 */ .db  TREASURE_BOMBS         $10
 .ifdef ROM_AGES
 	/* $05 */ .db  $00                    $03
 .else
-	/* $05 */ dwbe RANDO_SLOT_SEASONS_MEMBERS_SHOP_3
+	/* $05 */ dwbe rando.seasonsSlot_membersShop3
 .endif
 	/* $06 */ .db  TREASURE_GASHA_SEED    $01
 	/* $07 */ .db  TREASURE_POTION        $01
@@ -1243,11 +1246,11 @@ shopItemTreasureToGive:
 	/* $0b */ .db  TREASURE_BOMBCHUS      $05
 	/* $0c */ .db  $00                    $00
 .ifdef ROM_AGES
-	/* $0d */ dwbe RANDO_SLOT_AGES_SHOP_150
+	/* $0d */ dwbe agesRandoSlot_shop150Rupees
 	/* $0e */ .db  TREASURE_GASHA_SEED    $01
 	/* $0f */ .db  TREASURE_RING          GBA_TIME_RING
 .else
-	/* $0d */ dwbe RANDO_SLOT_SEASONS_SHOP_150
+	/* $0d */ dwbe rando.seasonsSlot_shop150Rupees
 	/* $0e */ .db  TREASURE_GASHA_SEED    $01
 	/* $0f */ .db  TREASURE_RING          GBA_NATURE_RING
 .endif

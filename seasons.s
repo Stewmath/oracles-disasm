@@ -53,7 +53,6 @@
 		.include "code/seasons/cutscenes/introCutscenes.s"
 	.ends
 
-
 .BANK $04 SLOT 1
 .ORG 0
 
@@ -189,6 +188,9 @@
 		.include "build/data/partActiveCollisions.s"
 		.include "build/data/objectCollisionTable.s"
 	.ends
+
+	; RANDO: This can go anywhare
+	.include "code/rando/rando.s"
 
 
 .BANK $08 SLOT 1

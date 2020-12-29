@@ -911,6 +911,10 @@ _scriptCmd_spawnItem:
 	jp nz,_scriptFunc_restoreActiveObject
 	ld (hl),INTERACID_TREASURE
 	inc l
+
+	; RANDO: Replace treasures spawned in specific rooms (key drops).
+	call randoLookupRoomTreasure
+
 	ld (hl),b
 	inc l
 	ld (hl),c

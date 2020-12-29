@@ -24,6 +24,7 @@ checkLoadCustomSprite:
 	ld c,a
 	ld b,(hl)
 	pop hl
+	callab rando.lookupItemSlot
 	call lookupItemSprite
 	pop bc
 	pop af
@@ -57,11 +58,11 @@ lookupItemSprite:
 customSpriteLookupTable:
 
 .ifdef ROM_SEASONS
-	dbbw INTERACID_HEROS_CAVE_SWORD_CHEST, $00, RANDO_SLOT_SEASONS_D0_SWORD
-	dbbw INTERACID_SHOP_ITEM,              $00, RANDO_SLOT_SEASONS_MEMBERS_SHOP_1
-	dbbw INTERACID_SHOP_ITEM,              $02, RANDO_SLOT_SEASONS_MEMBERS_SHOP_2
-	dbbw INTERACID_SHOP_ITEM,              $05, RANDO_SLOT_SEASONS_MEMBERS_SHOP_3
-	dbbw INTERACID_SHOP_ITEM,              $0d, RANDO_SLOT_SEASONS_SHOP_150
+	dbbw INTERACID_HEROS_CAVE_SWORD_CHEST, $00, rando.seasonsSlot_d0SwordChest
+	dbbw INTERACID_SHOP_ITEM,              $00, rando.seasonsSlot_membersShop1
+	dbbw INTERACID_SHOP_ITEM,              $02, rando.seasonsSlot_membersShop2
+	dbbw INTERACID_SHOP_ITEM,              $05, rando.seasonsSlot_membersShop3
+	dbbw INTERACID_SHOP_ITEM,              $0d, rando.seasonsSlot_shop150Rupees
 	.db $ff
 
 .else; ROM_AGES

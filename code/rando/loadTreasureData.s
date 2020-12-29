@@ -3,14 +3,16 @@
 
 ;;
 ; Return treasure data address and collect mode modified as necessary, given a treasure ID in dx42.
-rando_modifyTreasure:
+modifyTreasure:
 	push bc
 	push de
 	push hl
 
+	ld e,Interaction.var31
+	ld a,(de)
 	call lookupCollectMode
 	push af
-	call rando_upgradeTreasure
+	call upgradeTreasure
 	pop af
 
 	pop hl
@@ -23,7 +25,7 @@ rando_modifyTreasure:
 ; Given a treasure at dx40, return hl = the start of the treasure data + 1, accounting for
 ; progressive upgrades. Also writes the new treasure ID to dx70, which is used to set the treasure
 ; obtained flag.
-rando_upgradeTreasure:
+upgradeTreasure:
 	ld e,Interaction.subid
 	ld a,(de)
 	ld b,a
@@ -64,7 +66,7 @@ lookupCollectMode:
 	;ld e,Interaction.var31 ; Check if collect mode has been set already
 	;ld a,(de)
 	;ld e,a
-	;and a
+	;or a
 	;ret nz
 
 	ld a,(wActiveGroup)
@@ -102,17 +104,7 @@ lookupCollectMode:
 	.dw @collectD4Pool
 	.dw @collectD5Armos
 
-; Maku tree item drops from ceiling if room flag bit 7 is unset
 @collectMakuTree:
-	call getThisRoomFlags
-	and $80
-	ld a,COLLECT_MODE_FALL
-	ret z
-	ld a,COLLECT_MODE_PICKUP
-	ret
-
-
-
 @collectDiverRoom:
 @collectPoeSkipRoom:
 @collectD4Pool:
@@ -125,6 +117,9 @@ lookupCollectMode:
 
 ;;
 ; Looks up data for a treasure object, no rando-adjustments made.
+;
+; @param	bc	Treasure object ID to look up
+; @param[out]	hl	Add
 getTreasureData_noAdjust:
 	ld hl,treasureObjectData
 	ld a,b
@@ -153,14 +148,14 @@ getTreasureData_noAdjust:
 ; @param	bc	Treasure object ID to look up
 ; @param[out]	hl	The address of the treasure with ID b and subID c, accounting for
 ;			progressive upgrades.
-getTreasureData_body:
+getTreasureDataHelper:
 	call getTreasureData_noAdjust
 	jp getUpgradedTreasure
 
 ;;
 ; Load final treasure ID, param, and text into b, c, and e.
 getTreasureDataBCE:
-	call getTreasureData_body
+	call getTreasureDataHelper
 	ld c,(hl)
 	inc hl
 	ld e,(hl)
@@ -172,7 +167,7 @@ getTreasureDataBCE:
 ; @param	bc	Treasure object ID
 ; @param[out]	e	Final treasure sprite
 getTreasureDataSprite:
-	call getTreasureData_body
+	call getTreasureDataHelper
 	inc hl
 	inc hl
 	ld e,(hl)

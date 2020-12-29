@@ -25,8 +25,16 @@ interactionLoadTreasureData:
 	jr --
 +
 	; var31 = spawn mode
-	ldi a,(hl) ; RANDO: Original value is ignored
-	call rando_modifyTreasure
+
+	; RANDO: Use value from var31 as a replacement for collect mode if nonzero
+	ld e,Interaction.var31
+	ld a,(de)
+	or a
+	jr nz,+
+	ld a,(hl)
++
+	inc hl
+
 	ld b,a
 	swap a
 	and $07
