@@ -907,17 +907,18 @@ _scriptCmd_spawnItem:
 	ldi a,(hl)
 	ld c,a
 	push hl
-	call getFreeInteractionSlot
-	jp nz,_scriptFunc_restoreActiveObject
-	ld (hl),INTERACID_TREASURE
-	inc l
 
 	; RANDO: Replace treasures spawned in specific rooms (key drops).
 	call randoLookupRoomTreasure
+	;call getFreeInteractionSlot
+	jp nz,_scriptFunc_restoreActiveObject
+	;ld (hl),INTERACID_TREASURE
+	;inc l
 
-	ld (hl),b
-	inc l
-	ld (hl),c
+	;ld (hl),b
+	;inc l
+	;ld (hl),c
+
 	ld a,e
 	cp $de
 	jr z,+

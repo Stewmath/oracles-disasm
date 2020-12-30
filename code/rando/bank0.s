@@ -67,9 +67,17 @@ _lookupItemSlot:
 	ret
 
 ;;
-; Called from the "spawnitem" script command. Replaces treasures spawned in specific rooms. (TODO)
+; See "lookupRoomTreasure_body".
 ;
 ; @param	bc	Original treasure object to be spawned
-; @param[out]	bc	Replacement treasure (or unchanged)
+; @param[out]	hl	Spawned treasure (if applicable)
+; @param[out]	zflag	nz if failed to spawn the object
 randoLookupRoomTreasure:
+	push bc
+	push de
+	callab rando.lookupRoomTreasure_body
+	ld a,d
+	or a
+	pop de
+	pop bc
 	ret

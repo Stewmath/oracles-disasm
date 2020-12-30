@@ -36,17 +36,86 @@ spawnRandomizedTreasure_body:
 	ld (hl),INTERACID_TREASURE ; id
 	inc l
 	ld a,(de)
+	ld b,a
 	ldi (hl),a ; subid (treasure id)
 	inc de
 	ld a,(de)
+	ld c,a
 	ld (hl),a ; var03 (treasure subid)
+
+	; Write collect mode to var31
 	ld l,Interaction.var31
 	inc de
+
+	; Small keys only: Change COLLECT_MODE_FALL to COLLECT_MODE_FALL_KEY
+	ld a,b
+	cp TREASURE_SMALL_KEY
+	jr nz,++
 	ld a,(de)
+	cp COLLECT_MODE_FALL
+	jr nz,++
+	ld a,COLLECT_MODE_FALL_KEY
+	jr @setCollectMode
+++
+	ld a,(de)
+
+@setCollectMode:
 	ld (hl),a ; Collect mode
 
 	ld d,0
 	ret
+
+
+;;
+; Called from the "spawnitem" script command. Replaces treasures spawned in specific rooms.
+;
+; This uses a room-based lookup table, meaning it replaces all treasure objects spawned in a given
+; room using the "spawnitem" command. Ideally we would do a more surgical replacement, but this is
+; less work and it works fine, since in the vast majority of cases only one treasure object is ever
+; used in one room.
+;
+; This will spawn the treasure (either the randomized treasure or the original requested one).
+;
+; @param	bc	Original treasure object to be spawned
+; @param[out]	hl	Spawned treasure object
+; @param[out]	d	nz if failed to spawn the object
+lookupRoomTreasure_body:
+	push bc
+	ld a,(wActiveGroup)
+	ld b,a
+	ld a,(wActiveRoom)
+	ld c,a
+	ld hl,@roomTreasureTable
+	ld e,$02
+	call searchDoubleKey
+	jr nc,@notFound
+
+	pop bc
+	ldi a,(hl)
+	ld c,a
+	ld b,(hl)
+	call spawnRandomizedTreasure_body
+	ret
+
+@notFound:
+	pop bc
+	call getFreeInteractionSlot
+	ld d,1
+	ret nz
+
+	ld (hl),INTERACID_TREASURE
+	inc l
+	ld (hl),b
+	inc l
+	ld (hl),c
+	ld d,0
+	ret
+
+
+@roomTreasureTable:
+	dbbw $04, $1b, seasonsSlot_d1_stalfosDrop
+	.db $ff
+
 
 
 .include "data/rando/itemSlots.s"
