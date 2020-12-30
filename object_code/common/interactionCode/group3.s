@@ -1639,8 +1639,16 @@ _interaction7f_subid00:
 	ld (wWarpDestPos),a
 	ld a,(hl)
 	ld (wWarpTransition),a
-	ld a,$83
+
+	; RANDO: Use a non-cutscene screen transition for exiting a dungeon via essence, so that
+	; overworld music plays, and update maku tree state (because we're skipping the cutscene).
+	ld a,$81
 	ld (wWarpTransition2),a
+.ifdef ROM_SEASONS
+	ld a,(wEssencesObtained)
+	call getNumSetBits
+	ld (wc6e5),a ; Maku tree state
+.endif
 
 	xor a
 	ld (wActiveMusic),a
