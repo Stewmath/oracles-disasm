@@ -135,7 +135,11 @@ seasonsSpiritsScript_winterTempleOrbBridge:
 	
 seasonsSpiritsScript_spiritStatue:
 	jumpifroomflagset $40, _seasonsSpiritsScript_seasonsGotten
-	jumpifitemobtained TREASURE_ROD_OF_SEASONS, @haveRodOfSeasons
+
+	; RANDO: Don't require rod to get items from season spirits.
+	scriptjump @haveRodOfSeasons
+	;jumpifitemobtained TREASURE_ROD_OF_SEASONS, @haveRodOfSeasons
+
 	setcoords $28, $70
 	setcollisionradii $04, $10
 	makeabuttonsensitive
@@ -180,7 +184,10 @@ seasonsSpiritsScript_spiritStatue:
 	asm15 fadeinFromWhiteWithDelay, $04
 	checkpalettefadedone
 	callscript _seasonsSpiritsScript_imbueSeason
-	asm15 scriptHelp.seasonsSpirits_checkPostSeasonGetText
+
+	; RANDO: skip "you got all four seasons" text from season spirts.
+	;asm15 scriptHelp.seasonsSpirits_checkPostSeasonGetText
+
 	jumptable_objectbyte $7f
 	.dw @@notAllSeasonsGotten
 	.dw @@allSeasonsGotten_nonAutumnText
@@ -305,17 +312,17 @@ _seasonsSpiritsScript_imbueSeason:
 	.dw @autumn
 	.dw @winter
 @spring:
-	giveitem TREASURE_ROD_OF_SEASONS, $02
+	giverandomizeditem rando.seasonsSlot_towerOfSpring
 	retscript
 @summer:
-	giveitem TREASURE_ROD_OF_SEASONS, $03
+	giverandomizeditem rando.seasonsSlot_towerOfSummer
 	retscript
 @autumn:
 	writememory wTextboxFlags, TEXTBOXFLAG_ALTPALETTE2
-	giveitem TREASURE_ROD_OF_SEASONS, $04
+	giverandomizeditem rando.seasonsSlot_towerOfAutumn
 	retscript
 @winter:
-	giveitem TREASURE_ROD_OF_SEASONS, $05
+	giverandomizeditem rando.seasonsSlot_towerOfWinter
 	retscript
 
 
