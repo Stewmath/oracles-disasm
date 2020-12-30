@@ -36,6 +36,7 @@
 .include "constants/tradeitems.s"
 .include "constants/transitions.s"
 .include "constants/treasure.s"
+.include "constants/treasureSpawnModes.s"
 .include "constants/treeGfxHeaders.s"
 .include "constants/uncmpGfxHeaders.s"
 .include "constants/uniqueGfxHeaders.s"
