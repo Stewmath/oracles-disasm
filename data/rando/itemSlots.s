@@ -81,6 +81,11 @@ seasonsSlot_blainoPrize:
 	.db  COLLECT_MODE_PICKUP_1HAND
 	.dw  $0000
 
+seasonsSlot_floodgateKeepersHouse:
+	dwbe TREASURE_OBJECT_FLOODGATE_KEY_00
+	.db  COLLECT_MODE_PICKUP_1HAND
+	.dw  $0000
+
 ; ================================================================================
 ; SUBROSIA
 ; ================================================================================

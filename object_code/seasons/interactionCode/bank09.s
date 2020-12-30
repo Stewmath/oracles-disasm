@@ -2870,11 +2870,11 @@ _floodgateKey:
 	and $60
 	cp $40
 	ret nz
-	ldbc TREASURE_FLOODGATE_KEY $00
-	call _misc1_spawnTreasureBC
+	ld bc,rando.seasonsSlot_floodgateKeepersHouse
+	call _misc1_spawnRandomizedTreasureBC
 	jp interactionIncState
 @state1:
-	ld a,TREASURE_FLOODGATE_KEY
+	ld a,TREASURE_FLOODGATE_KEY ; RANDO-TODO: Do something with this?
 	call checkTreasureObtained
 	ret nc
 	call interactionIncState
@@ -3026,8 +3026,7 @@ _misc1_spawnRandomizedTreasureBCifRoomFlagBit5NotSet:
 	call getThisRoomFlags
 	and $20
 	jr nz,+
-	call spawnRandomizedTreasure
-	call objectCopyPosition
+	call _misc1_spawnRandomizedTreasureBC
 +
 	jp interactionDelete
 
@@ -3041,6 +3040,14 @@ _misc1_spawnTreasureBC:
 	inc l
 	ld (hl),c
 	jp objectCopyPosition
+
+
+; RANDO: Randomized version of above function
+_misc1_spawnRandomizedTreasureBC:
+	call spawnRandomizedTreasure
+	ret nz
+	jp objectCopyPosition
+
 
 ; eg rocks, ember trees that should stay removed
 _permanentlyRemovableObjects:
