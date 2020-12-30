@@ -26,6 +26,16 @@ seasonsSlot_makuTree:
 	.db  COLLECT_MODE_FALL
 	.dw  seasonsSlotCallback_makuTree
 
+seasonsSlot_horonVillageSWChest:
+	dwbe TREASURE_OBJECT_RUPEES_03
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_horonVillageSEChest:
+	dwbe TREASURE_OBJECT_RUPEES_03
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
 seasonsSlot_shop150Rupees:
 	dwbe TREASURE_OBJECT_FLUTE_00
 	.db  $00
@@ -66,6 +76,11 @@ seasonsSlot_chestOnTopOfD2:
 	.db  COLLECT_MODE_CHEST
 	.dw  $0000
 
+seasonsSlot_blainoPrize:
+	dwbe TREASURE_OBJECT_RICKY_GLOVES_00
+	.db  COLLECT_MODE_PICKUP_1HAND
+	.dw  $0000
+
 ; ================================================================================
 ; SUBROSIA
 ; ================================================================================
@@ -101,7 +116,7 @@ seasonsSlot_towerOfSpring:
 	.dw  $0000
 
 ; ================================================================================
-; DUNGEONS
+; D0
 ; ================================================================================
 
 seasonsSlot_d0KeyChest:
@@ -119,6 +134,9 @@ seasonsSlot_d0RupeeChest:
 	.db  COLLECT_MODE_CHEST
 	.dw  $0000
 
+; ==============================================================================
+; D1
+; ==============================================================================
 
 seasonsSlot_d1_stalfosDrop:
 	dwbe TREASURE_OBJECT_SMALL_KEY_03
@@ -170,6 +188,9 @@ seasonsSlot_d1_boss:
 	.db  COLLECT_MODE_POOF
 	.dw  $0000
 
+; ==============================================================================
+; D2
+; ==============================================================================
 
 seasonsSlot_d2_leftFromEntrance:
 	dwbe TREASURE_OBJECT_RUPEES_01

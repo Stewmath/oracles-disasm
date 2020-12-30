@@ -34,8 +34,8 @@ chestDataGroupTable:
 	.dw chestGroup7Data
 
 chestGroup0Data:
-	m_ChestData $11, $f5, TREASURE_OBJECT_RUPEES_03
-	m_ChestData $58, $f9, TREASURE_OBJECT_RUPEES_03
+	m_ChestDataRando $11, $f5, rando.seasonsSlot_horonVillageSWChest
+	m_ChestDataRando $58, $f9, rando.seasonsSlot_horonVillageSEChest
 	m_ChestDataRando $11, $8e, rando.seasonsSlot_chestOnTopOfD2
 	m_ChestData $45, $f4, TREASURE_OBJECT_X_SHAPED_JEWEL_00
 	m_ChestData $15, $5b, TREASURE_OBJECT_HEART_PIECE_01

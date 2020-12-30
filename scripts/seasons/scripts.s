@@ -3968,7 +3968,7 @@ blainoFightDoneScript:
 @fightWon:
 	jumpifroomflagset $40, @give30Rupees
 	showtextlowindex <TX_2306
-	giveitem TREASURE_RICKY_GLOVES, $00
+	giverandomizeditem rando.seasonsSlot_blainoPrize
 	orroomflag $40
 	enableinput
 	scriptjump @finishedTalking
