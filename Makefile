@@ -79,7 +79,7 @@ MAPPINGINDICESFILES := $(foreach file,$(MAPPINGINDICESFILES),build/tileset_layou
 MAPPINGINDICESFILES := $(MAPPINGINDICESFILES:.bin=Indices.cmp)
 
 # Common data files (for both games)
-COMMONDATAFILES = $(wildcard data/*.s)
+COMMONDATAFILES = $(shell find data/ -name '*.s' | grep -v '/ages/\|/seasons/')
 
 # Game-specific data files
 GAMEDATAFILES = $(wildcard data/$(GAME)/*.s)
