@@ -67,19 +67,7 @@ initializeRandomizedTreasure_body:
 	ld l,Interaction.var3d
 	inc de
 
-	; Small keys only: Change COLLECT_MODE_FALL to COLLECT_MODE_FALL_KEY
-	ld a,b
-	cp TREASURE_SMALL_KEY
-	jr nz,++
 	ld a,(de)
-	cp COLLECT_MODE_FALL
-	jr nz,++
-	ld a,COLLECT_MODE_FALL_KEY
-	jr @setCollectMode
-++
-	ld a,(de)
-
-@setCollectMode:
 	ld (hl),a ; Collect mode
 
 	; Write pointer to item slot

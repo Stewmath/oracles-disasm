@@ -10,7 +10,8 @@
 ;
 ; Misc notes:
 ; - COLLECT_MODE_FALL will be changed to COLLECT_MODE_FALL_KEY if the item in the slot is a small
-;   key (uses "TREASURE_COLLECT_MODE_NO_CHANGE"). This is done in the disassembly code.
+;   key (uses "TREASURE_COLLECT_MODE_NO_CHANGE"). Also, the key won't have its text shown. This is
+;   done in the disassembly code.
 
 
 .ifdef ROM_SEASONS
@@ -58,6 +59,46 @@ seasonsSlot_membersShop3:
 seasonsSlot_d1_stalfosDrop:
 	dwbe TREASURE_OBJECT_SMALL_KEY_03
 	.db  COLLECT_MODE_FALL
+	.dw  $0000
+
+seasonsSlot_d1_stalfosChest:
+	dwbe TREASURE_OBJECT_MAP_02
+	.db  COLLECT_MODE_CHEST_MAP_OR_COMPASS
+	.dw  $0000
+
+seasonsSlot_d1_blockPushingRoom:
+	dwbe TREASURE_OBJECT_GASHA_SEED_01
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d1_leverRoom:
+	dwbe TREASURE_OBJECT_COMPASS_02
+	.db  COLLECT_MODE_CHEST_MAP_OR_COMPASS
+	.dw  $0000
+
+seasonsSlot_d1_railwayChest:
+	dwbe TREASURE_OBJECT_BOMBS_00
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d1_buttonChest:
+	dwbe TREASURE_OBJECT_SMALL_KEY_03
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d1_basement:
+	dwbe TREASURE_OBJECT_SEED_SATCHEL_00
+	.db  COLLECT_MODE_PICKUP_2HAND
+	.dw  $0000
+
+seasonsSlot_d1_goriyaChest:
+	dwbe TREASURE_OBJECT_BOSS_KEY_03
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d1_floormasterRoom:
+	dwbe TREASURE_OBJECT_RING_04
+	.db  COLLECT_MODE_CHEST
 	.dw  $0000
 
 .endif

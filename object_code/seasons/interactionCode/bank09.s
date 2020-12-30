@@ -3016,6 +3016,17 @@ _misc1_spawnTreasureBCifRoomFlagBit5NotSet:
 +
 	jp interactionDelete
 
+; RANDO: Randomized version of above function
+_misc1_spawnRandomizedTreasureBCifRoomFlagBit5NotSet:
+	call getThisRoomFlags
+	and $20
+	jr nz,+
+	call spawnRandomizedTreasure
+	call objectCopyPosition
++
+	jp interactionDelete
+
+
 _misc1_spawnTreasureBC:
 	call getFreeInteractionSlot
 	ret nz
@@ -3459,8 +3470,8 @@ _sidescrollingStaticGashaSeed:
 	jp _misc1_spawnTreasureBCifRoomFlagBit5NotSet
 
 _sidescrollingStaticSeedSatchel:
-	ldbc TREASURE_SEED_SATCHEL $00
-	jp _misc1_spawnTreasureBCifRoomFlagBit5NotSet
+	ld bc,rando.seasonsSlot_d1_basement
+	jp _misc1_spawnRandomizedTreasureBCifRoomFlagBit5NotSet
 
 _mtCuccoBananaTree:
 	ld a,($cc4e)
@@ -7112,7 +7123,7 @@ _makuTree_spawnGnarledKey:
 
 	; RANDO: Override collect mode
 	ld l,Interaction.var3d
-	ld (hl),COLLECT_MODE_PICKUP
+	ld (hl),COLLECT_MODE_PICKUP_1HAND
 	ret
 
 

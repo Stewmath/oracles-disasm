@@ -15,7 +15,7 @@ modifyTreasureInteraction:
 	ld a,(de) ; Treasure SubID
 	ld c,a
 	call getUpgradedTreasure
-	ret nc
+	jr nc,@loadedData
 
 	ld a,b
 	ld e,Interaction.subid
@@ -24,7 +24,29 @@ modifyTreasureInteraction:
 	inc e
 	ld (de),a ; var03
 	; Call this again to make sure everything gets updated
-	jp interactionLoadTreasureData
+	call interactionLoadTreasureData
+
+@loadedData:
+	; Small keys only: Change behaviour when falling from the ceiling
+	ld a,b
+	cp TREASURE_SMALL_KEY
+	jr nz,++
+	ld e,Interaction.var31
+	ld a,(de)
+	cp TREASURE_SPAWN_MODE_FROM_SCREEN_TOP
+	jr nz,++
+
+	; Use GRAB_MODE_NO_CHANGE instead of GRAB_MODE_1_HAND
+	ld a,TREASURE_GRAB_MODE_NO_CHANGE
+	ld e,Interaction.var32
+	ld (de),a
+
+	; Remove text
+	ld a,$ff
+	ld e,Interaction.var35
+	ld (de),a
+++
+	ret
 
 
 ;;

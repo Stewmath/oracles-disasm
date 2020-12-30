@@ -8,8 +8,9 @@
 .define DEV_RING $80
 
 ; Values for "collect mode" (override for the 1st byte in the treasure object data)
-.define COLLECT_MODE_PICKUP_ALT,           $02
-.define COLLECT_MODE_PICKUP,               $0a
+;.define COLLECT_MODE_PICKUP_ALT,           $02
+.define COLLECT_MODE_PICKUP_1HAND,         $09
+.define COLLECT_MODE_PICKUP_2HAND,         $0a
 .define COLLECT_MODE_POOF,                 $1a
 .define COLLECT_MODE_FALL_KEY,             $28
 .define COLLECT_MODE_FALL,                 $29
