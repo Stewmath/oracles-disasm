@@ -188,7 +188,7 @@ treasureObjectData05:
 
 treasureObjectData06:
 	m_BeginTreasureSubids TREASURE_BOOMERANG
-	m_TreasureSubid $38, $01, $22, $1c, TREASURE_OBJECT_BOOMERANG_00
+	m_TreasureSubid $0a, $01, $22, $1c, TREASURE_OBJECT_BOOMERANG_00
 	m_TreasureSubid $38, $02, $23, $1d, TREASURE_OBJECT_BOOMERANG_01
 
 treasureObjectData07:
