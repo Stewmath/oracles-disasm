@@ -61,6 +61,11 @@ seasonsSlot_hollysHouse:
 	.db  COLLECT_MODE_PICKUP_2HAND
 	.dw  $0000
 
+seasonsSlot_chestOnTopOfD2:
+	dwbe TREASURE_OBJECT_GASHA_SEED_01
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
 ; ================================================================================
 ; SUBROSIA
 ; ================================================================================
@@ -161,6 +166,57 @@ seasonsSlot_d1_floormasterRoom:
 	.dw  $0000
 
 seasonsSlot_d1_boss:
+	dwbe TREASURE_OBJECT_HEART_CONTAINER_00
+	.db  COLLECT_MODE_POOF
+	.dw  $0000
+
+
+seasonsSlot_d2_leftFromEntrance:
+	dwbe TREASURE_OBJECT_RUPEES_01
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d2_ropeDrop:
+	dwbe TREASURE_OBJECT_SMALL_KEY_03
+	.db  COLLECT_MODE_FALL
+	.dw  $0000
+
+seasonsSlot_d2_ropeChest:
+	dwbe TREASURE_OBJECT_COMPASS_02
+	.db  COLLECT_MODE_CHEST_MAP_OR_COMPASS
+	.dw  $0000
+
+seasonsSlot_d2_moblinChest:
+	dwbe TREASURE_OBJECT_BRACELET_00
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d2_potChest:
+	dwbe TREASURE_OBJECT_MAP_02
+	.db  COLLECT_MODE_CHEST_MAP_OR_COMPASS
+	.dw  $0000
+
+seasonsSlot_d2_bladeChest:
+	dwbe TREASURE_OBJECT_SMALL_KEY_03
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d2_spiralChest:
+	dwbe TREASURE_OBJECT_SMALL_KEY_03
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d2_rollerChest:
+	dwbe TREASURE_OBJECT_RUPEES_02
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d2_terraceChest:
+	dwbe TREASURE_OBJECT_BOSS_KEY_03
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d2_boss:
 	dwbe TREASURE_OBJECT_HEART_CONTAINER_00
 	.db  COLLECT_MODE_POOF
 	.dw  $0000

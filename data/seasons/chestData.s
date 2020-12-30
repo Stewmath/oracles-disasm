@@ -36,7 +36,7 @@ chestDataGroupTable:
 chestGroup0Data:
 	m_ChestData $11, $f5, TREASURE_OBJECT_RUPEES_03
 	m_ChestData $58, $f9, TREASURE_OBJECT_RUPEES_03
-	m_ChestData $11, $8e, TREASURE_OBJECT_GASHA_SEED_01
+	m_ChestDataRando $11, $8e, rando.seasonsSlot_chestOnTopOfD2
 	m_ChestData $45, $f4, TREASURE_OBJECT_X_SHAPED_JEWEL_00
 	m_ChestData $15, $5b, TREASURE_OBJECT_HEART_PIECE_01
 	m_ChestData $33, $b8, TREASURE_OBJECT_GASHA_SEED_01
@@ -66,14 +66,14 @@ chestGroup4Data:
 	m_ChestDataRando $57, $14, rando.seasonsSlot_d1_goriyaChest
 	m_ChestDataRando $23, $17, rando.seasonsSlot_d1_floormasterRoom
 	m_ChestDataRando $57, $19, rando.seasonsSlot_d1_stalfosChest
-	m_ChestData $7b, $1f, TREASURE_OBJECT_RUPEES_02
-	m_ChestData $6d, $24, TREASURE_OBJECT_BOSS_KEY_03
-	m_ChestData $5b, $2a, TREASURE_OBJECT_BRACELET_00
-	m_ChestData $27, $2b, TREASURE_OBJECT_MAP_02
-	m_ChestData $57, $2d, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $44, $31, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $57, $36, TREASURE_OBJECT_COMPASS_02
-	m_ChestData $42, $38, TREASURE_OBJECT_RUPEES_01
+	m_ChestDataRando $7b, $1f, rando.seasonsSlot_d2_rollerChest
+	m_ChestDataRando $6d, $24, rando.seasonsSlot_d2_terraceChest
+	m_ChestDataRando $5b, $2a, rando.seasonsSlot_d2_moblinChest
+	m_ChestDataRando $27, $2b, rando.seasonsSlot_d2_potChest
+	m_ChestDataRando $57, $2d, rando.seasonsSlot_d2_spiralChest
+	m_ChestDataRando $44, $31, rando.seasonsSlot_d2_bladeChest
+	m_ChestDataRando $57, $36, rando.seasonsSlot_d2_ropeChest
+	m_ChestDataRando $42, $38, rando.seasonsSlot_d2_leftFromEntrance
 	m_ChestData $18, $41, TREASURE_OBJECT_RUPEES_04
 	m_ChestData $28, $46, TREASURE_OBJECT_BOSS_KEY_03
 	m_ChestData $86, $44, TREASURE_OBJECT_GASHA_SEED_01
