@@ -93,7 +93,7 @@ runRandoTreasureCallback:
 ; a randomized treasure object is to be spawned.
 ;
 ; @param	bc	Item slot pointer (something from "data/rando/itemSlots.s")
-; @param[out]	hl	Pointer to newly spawned treasure object
+; @param[out]	h	Pointer to newly spawned treasure object
 ; @param[out]	zflag	nz if failed to spawn the object
 spawnRandomizedTreasure:
 	push de
@@ -101,6 +101,22 @@ spawnRandomizedTreasure:
 	ld a,d
 	or a
 	pop de
+	ret
+
+
+;;
+; Similar to above, but writes to a spawned treasure. The treasure object should have its ID set,
+; but nothing else.
+;
+; @param	bc	Item slot pointer (something from "data/rando/itemSlots.s")
+; @param	h	Treasure object
+initializeRandomizedTreasure:
+	push bc
+	push de
+	ld d,h
+	callab rando.initializeRandomizedTreasure_body
+	pop de
+	pop bc
 	ret
 
 

@@ -111,12 +111,21 @@ _nextToChestTile:
 	ldi (hl),a
 	ld (hl),INTERACID_TREASURE
 
+	; RANDO: If it has bit 7 set, it's a randomized treasure
+	ld a,b
+	and $80
+	jr z,@notRandomized
+	res 7,b
+	call initializeRandomizedTreasure
+	jr ++
+
+@notRandomized:
 	; Write contents to Interaction.subid, Interaction.var03
 	inc l
 	ld (hl),b
 	inc l
 	ld (hl),c
-
+++
 	; Set the interaction's position variables
 	ld l,Interaction.yh
 	ld a,(wcca2)

@@ -16,6 +16,13 @@
 .endm
 
 
+; RANDO: Chest whose contents refer to an item slot
+.macro m_ChestDataRando
+	.db \1 \2
+	dwbe \3 | $8000
+.endm
+
+
 chestDataGroupTable:
 	.dw chestGroup0Data
 	.dw chestGroup1Data
@@ -49,8 +56,8 @@ chestGroup3Data:
 	.db $ff
 
 chestGroup4Data:
-	m_ChestData $5b, $03, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $5d, $05, TREASURE_OBJECT_RUPEES_04
+	m_ChestDataRando $5b, $03, rando.seasonsSlot_d0KeyChest
+	m_ChestDataRando $5d, $05, rando.seasonsSlot_d0RupeeChest
 	m_ChestData $27, $06, TREASURE_OBJECT_SWORD_00
 	m_ChestData $11, $0d, TREASURE_OBJECT_GASHA_SEED_01
 	m_ChestData $3b, $0f, TREASURE_OBJECT_COMPASS_02

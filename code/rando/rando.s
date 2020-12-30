@@ -31,14 +31,32 @@ spawnRandomizedTreasure_body:
 	ld d,1
 	ret nz
 
+	ld (hl),INTERACID_TREASURE ; id
+	inc l
+
+	ld d,h
+	call initializeRandomizedTreasure_body
+
+	ld d,0
+	ld l,Interaction.id
+	ret
+
+
+;;
+; Similar to above, but writes to a spawned treasure.
+;
+; @param	bc	Item slot pointer (something from "data/rando/itemSlots.s")
+; @param	de	Treasure object
+initializeRandomizedTreasure_body:
+	ld h,d
+
 	push bc
 
 	ld d,b
 	ld e,c
-	ld (hl),INTERACID_TREASURE ; id
-	inc l
 	ld a,(de)
 	ld b,a
+	ld l,Interaction.subid
 	ldi (hl),a ; subid (treasure id)
 	inc de
 	ld a,(de)
@@ -71,9 +89,6 @@ spawnRandomizedTreasure_body:
 	ldi (hl),a
 	ld a,b
 	ld (hl),a
-
-	ld d,0
-	ld l,Interaction.id
 	ret
 
 

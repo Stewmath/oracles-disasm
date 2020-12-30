@@ -15,9 +15,19 @@
 
 .ifdef ROM_SEASONS
 
+seasonsSlot_d0KeyChest:
+	dwbe TREASURE_OBJECT_SMALL_KEY_03
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
 seasonsSlot_d0SwordChest:
 	dwbe TREASURE_OBJECT_SWORD_00
 	.db  $00
+	.dw  $0000
+
+seasonsSlot_d0RupeeChest:
+	dwbe TREASURE_OBJECT_RUPEES_04
+	.db  COLLECT_MODE_CHEST
 	.dw  $0000
 
 seasonsSlot_makuTree:
@@ -46,7 +56,7 @@ seasonsSlot_membersShop3:
 	.dw  $0000
 
 seasonsSlot_d1_stalfosDrop:
-	dwbe TREASURE_OBJECT_SMALL_KEY_00
+	dwbe TREASURE_OBJECT_SMALL_KEY_03
 	.db  COLLECT_MODE_FALL
 	.dw  $0000
 
