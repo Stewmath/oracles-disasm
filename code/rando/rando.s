@@ -128,6 +128,7 @@ lookupRoomTreasure_body:
 
 @roomTreasureTable:
 	dbbw $04, $1b, seasonsSlot_d1_stalfosDrop
+	dbbw $04, $12, seasonsSlot_d1_boss
 	.db $ff
 
 

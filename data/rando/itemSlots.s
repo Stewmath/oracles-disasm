@@ -101,4 +101,9 @@ seasonsSlot_d1_floormasterRoom:
 	.db  COLLECT_MODE_CHEST
 	.dw  $0000
 
+seasonsSlot_d1_boss:
+	dwbe TREASURE_OBJECT_HEART_CONTAINER_00
+	.db  COLLECT_MODE_POOF
+	.dw  $0000
+
 .endif
