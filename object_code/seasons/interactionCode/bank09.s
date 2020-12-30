@@ -2231,11 +2231,16 @@ interactionCode6a:
 	jr nz,@@@func_5e56
 	call checkIsLinkedGame
 	jr nz,@@@func_5e56
-	ld a,($c643)
-	and $20
-	jr nz,@@@func_5e56
+
+	; RANDO: Prevent subrosian dancing from giving dimitri's flute.
+	jr @@@func_5e56
+	;ld a,($c643)
+	;and $20
+	;jr nz,@@@func_5e56
+
 	ld hl,mainScripts.danceLeaderScript_giveFlute
 	jr @@@func_5e68
+
 @@@func_5e40:
 	callab scriptHelp.seasonsFunc_15_5e20
 	bit 7,b
