@@ -143,7 +143,7 @@ chestGroup5Data:
 	m_ChestData $38, $24, TREASURE_OBJECT_GASHA_SEED_01
 	m_ChestData $27, $34, TREASURE_OBJECT_RING_0f
 	m_ChestData $19, $b3, TREASURE_OBJECT_RING_05
-	m_ChestData $2b, $b4, TREASURE_OBJECT_RUPEES_04
+	m_ChestDataRando $2b, $b4, rando.seasonsSlot_woodsOfWinter1stCave
 	m_ChestData $16, $b5, TREASURE_OBJECT_GASHA_SEED_01
 	m_ChestData $1c, $bc, TREASURE_OBJECT_MASTERS_PLAQUE_00
 	m_ChestData $22, $bd, TREASURE_OBJECT_RUPEES_05
@@ -152,7 +152,7 @@ chestGroup5Data:
 	m_ChestData $1d, $c8, TREASURE_OBJECT_RING_0b
 	m_ChestData $4a, $b6, TREASURE_OBJECT_RING_10
 	m_ChestData $5c, $0e, TREASURE_OBJECT_RUPEES_05
-	m_ChestData $32, $12, TREASURE_OBJECT_GASHA_SEED_01
+	m_ChestDataRando $32, $12, rando.seasonsSlot_woodsOfWinter2ndCave
 chestGroup6Data:
 chestGroup7Data:
 	.db $ff

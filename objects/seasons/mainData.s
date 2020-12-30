@@ -1751,8 +1751,10 @@ group5Map11ObjectData:
 	obj_End
 
 group5Map12ObjectData:
-	obj_Interaction $90 $06 $38 $28
-	obj_Interaction $90 $07 $7c $78
+	; RANDO: Remove linked events from Woods of Winter 2nd cave (this will make the chest act
+	; like a normal chest)
+	;obj_Interaction $90 $06 $38 $28
+	;obj_Interaction $90 $07 $7c $78
 	obj_End
 
 group5Mapb2ObjectData:

@@ -16,6 +16,11 @@
 
 .ifdef ROM_SEASONS
 
+
+; ================================================================================
+; OVERWORLD
+; ================================================================================
+
 seasonsSlot_makuTree:
 	dwbe TREASURE_OBJECT_GNARLED_KEY_00
 	.db  COLLECT_MODE_FALL
@@ -40,6 +45,25 @@ seasonsSlot_membersShop3:
 	dwbe TREASURE_OBJECT_TREASURE_MAP_00
 	.db  $00
 	.dw  $0000
+
+seasonsSlot_woodsOfWinter1stCave:
+	dwbe TREASURE_OBJECT_RUPEES_04
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_woodsOfWinter2ndCave:
+	dwbe TREASURE_OBJECT_GASHA_SEED_01
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_hollysHouse:
+	dwbe TREASURE_OBJECT_SHOVEL_00
+	.db  COLLECT_MODE_PICKUP_2HAND
+	.dw  $0000
+
+; ================================================================================
+; SUBROSIA
+; ================================================================================
 
 seasonsSlot_subrosianDanceHall:
 	dwbe TREASURE_OBJECT_BOOMERANG_00
@@ -71,6 +95,9 @@ seasonsSlot_towerOfSpring:
 	.db  COLLECT_MODE_PICKUP_1HAND
 	.dw  $0000
 
+; ================================================================================
+; DUNGEONS
+; ================================================================================
 
 seasonsSlot_d0KeyChest:
 	dwbe TREASURE_OBJECT_SMALL_KEY_03

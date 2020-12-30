@@ -4876,7 +4876,7 @@ _hollyScript_shovelNotYetGiven:
 	checkabutton
 	showtext TX_2c00
 	disableinput
-	giveitem TREASURE_SHOVEL, $00
+	giverandomizeditem rando.seasonsSlot_hollysHouse
 	enablemenu
 _hollyScript_shovelGiven:
 	enableallobjects
