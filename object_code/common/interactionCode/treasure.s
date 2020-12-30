@@ -535,6 +535,9 @@ interactionCode60:
 +
 	inc c
 ++
+	; RANDO: Apply progressive upgrades
+	callab treasureData.getTreasureDataBCE
+
 	ld a,b
 	call giveTreasure
 	ld b,a

@@ -1,119 +1,6 @@
 ; Code in this file is included by the "code/loadTreasureData.s" file, meaning it's in the
 ; "treasureData" namespace.
 
-;;
-; Return treasure data address and collect mode modified as necessary, given a treasure ID in dx42.
-modifyTreasure:
-	push bc
-	push de
-	push hl
-
-	ld e,Interaction.var31
-	ld a,(de)
-	call lookupCollectMode
-	push af
-	call upgradeTreasure
-	pop af
-
-	pop hl
-	pop de
-	pop bc
-	ret
-
-
-;;
-; Given a treasure at dx40, return hl = the start of the treasure data + 1, accounting for
-; progressive upgrades. Also writes the new treasure ID to dx70, which is used to set the treasure
-; obtained flag.
-upgradeTreasure:
-	ld e,Interaction.subid
-	ld a,(de)
-	ld b,a
-	inc de
-	ld a,(de)
-	ld c,a
-	;call getMultiworldItemDest
-	call getUpgradedTreasure
-
-	; Update Treasure ID
-	ld e,Interaction.var30
-	ld a,b
-	ld (de),a
-	ret
-
-
-;;
-; Return a spawning item's collection mode in a and e, based on current room. The table format is
-; (group, room, mode), and modes 80+ are used to index a jump table for special cases. If no match
-; is found, it returns the regular, non-overriden mode. Does nothing if the item's collect mode is
-; already set.
-;
-; @param[out]	a	Collect mode for the treasure
-lookupCollectMode:
-	push hl
-	call @helper
-	pop hl
-	cp $ff
-	ret nz
-
-	; Retrieve the original collect mode byte
-	dec hl
-	ldi a,(hl)
-	ret
-
-@helper:
-	; This might be multiworld related
-	;ld e,Interaction.var31 ; Check if collect mode has been set already
-	;ld a,(de)
-	;ld e,a
-	;or a
-	;ret nz
-
-	ld a,(wActiveGroup)
-	ld b,a
-	ld a,(wActiveRoom)
-	ld c,a
-	ld e,$02
-	ld hl,rando_collectPropertiesTable
-	call searchDoubleKey
-	ret nc
-
-	; Multiworld stuff
-	;inc hl
-	;ldd a,(hl)
-	;ld e,INTERAC_MULTI_BYTE
-	;ld (de),a
-
-	ld a,(hl)
-	cp a,$80
-	ret c
-
-	ld hl,@collectSpecialJumpTable
-	and a,$7f
-	add a
-	rst_addAToHl
-	ldi a,(hl)
-	ld h,(hl)
-	ld l,a
-	jp (hl)
-
-@collectSpecialJumpTable:
-	.dw @collectDiverRoom
-	.dw @collectPoeSkipRoom
-	.dw @collectMakuTree
-	.dw @collectD4Pool
-	.dw @collectD5Armos
-
-@collectMakuTree:
-@collectDiverRoom:
-@collectPoeSkipRoom:
-@collectD4Pool:
-@collectD5Armos:
-; RANDO-TODO
-	ret
-
-.include "data/rando/collectPropertiesTable.s"
-
 
 ;;
 ; Looks up data for a treasure object, no rando-adjustments made.
@@ -139,7 +26,6 @@ getTreasureData_noAdjust:
 	add a,a
 	add a,a
 	rst_addAToHl
-	inc hl
 	ret
 
 ;;
@@ -153,21 +39,23 @@ getTreasureDataHelper:
 	jp getUpgradedTreasure
 
 ;;
-; Load final treasure ID, param, and text into b, c, and e.
+; Load final treasure ID, param, and text into b, c, and e (accounts for progressive upgrades).
 getTreasureDataBCE:
 	call getTreasureDataHelper
+	inc hl
 	ld c,(hl)
 	inc hl
 	ld e,(hl)
 	ret
 
 ;;
-; Load final treasure sprite into e.
+; Load final treasure sprite into e (accounts for progressive upgrades).
 ;
 ; @param	bc	Treasure object ID
 ; @param[out]	e	Final treasure sprite
 getTreasureDataSprite:
 	call getTreasureDataHelper
+	inc hl
 	inc hl
 	inc hl
 	ld e,(hl)

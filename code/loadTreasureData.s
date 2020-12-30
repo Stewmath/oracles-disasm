@@ -24,6 +24,19 @@ interactionLoadTreasureData:
 	ld a,(de)
 	jr --
 +
+	; RANDO: Account for progressive upgrades (transform treasure ID & get updated pointer in
+	; hl)
+	ld e,Interaction.subid
+	ld a,(de)
+	ld b,a
+	inc de
+	ld a,(de) ; var03
+	ld c,a
+	call getUpgradedTreasure
+	ld e,Interaction.var30 ; Update treasure ID
+	ld a,b
+	ld (de),a
+
 	; var31 = spawn mode
 
 	; RANDO: Use value from var31 as a replacement for collect mode if nonzero

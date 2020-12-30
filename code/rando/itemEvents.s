@@ -2,7 +2,7 @@
 ; "treasureInteraction" namespace.
 
 ;;
-; This is called just by the "giveTreasure" function just after giving the treasure.
+; This is called by the "giveTreasure" function just after giving the treasure.
 ;
 ; @param	b	Treasure
 ; @param	c	Parameter
