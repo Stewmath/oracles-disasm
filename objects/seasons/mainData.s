@@ -523,11 +523,12 @@ group0Map83ObjectData:
 	obj_End
 
 group0Map90ObjectData:
-	obj_Interaction $5f $03
-	obj_Interaction $71 $01
-	obj_Interaction $73 $00 $28 $38
-	obj_Interaction $73 $01 $18 $48
-	obj_Interaction $73 $02 $18 $18
+	; RANDO: Remove moosh event in spool swamp
+	;obj_Interaction $5f $03
+	;obj_Interaction $71 $01
+	;obj_Interaction $73 $00 $28 $38
+	;obj_Interaction $73 $01 $18 $48
+	;obj_Interaction $73 $02 $18 $18
 	obj_End
 
 group1Map80ObjectData:
@@ -1042,11 +1043,12 @@ group0Map91ObjectData:
 	obj_End
 
 group0Map92ObjectData:
-	obj_Interaction $5f $02
-	obj_Interaction $71 $04
-	obj_Interaction $73 $00 $28 $68
-	obj_Interaction $73 $01 $18 $78
-	obj_Interaction $73 $02 $28 $58
+	; RANDO: Remove dimitri event in spool swap
+	;obj_Interaction $5f $02
+	;obj_Interaction $71 $04
+	;obj_Interaction $73 $00 $28 $68
+	;obj_Interaction $73 $01 $18 $78
+	;obj_Interaction $73 $02 $28 $58
 	obj_End
 
 group0Map93ObjectData:
