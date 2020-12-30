@@ -337,9 +337,12 @@ interactionCode5f:
 
 @subid01:
 	ld hl,wRickyState
-	ld a,(wEssencesObtained)
-	bit 1,a
-	jr z,@deleteSelf
+
+	; RANDO: Ignore essence check for spawning Ricky
+	;ld a,(wEssencesObtained)
+	;bit 1,a
+	;jr z,@deleteSelf
+
 	ld a,(wAnimalCompanion)
 	cp SPECIALOBJECTID_RICKY
 	jr z,@deleteSelfIfBit7OfAnimalStateSet

@@ -14240,5 +14240,6 @@ func_3ee4:
 
 .include "code/rando/bank0.s"
 .include "code/rando/util.s"
+.include "data/rando/variables.s"
 
 .ENDS

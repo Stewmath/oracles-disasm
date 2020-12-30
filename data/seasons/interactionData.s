@@ -328,10 +328,10 @@ interaction18SubidData:
 	m_InteractionData $60 $14 $00 ; $4a: fool's ore
 	m_InteractionData $5d $10 $26 ; $4b: rare peach stone
 	m_InteractionData $65 $0c $23 ; $4c: ribbon
+	m_InteractionData $5f,$16,$33 ; $4d: ricky's flute
+	m_InteractionData $5f,$16,$23 ; $4e: dimitri's flute
+	m_InteractionData $5f,$16,$13 ; $4f: moosh's flute
 
-	m_InteractionData $00 $00 $00
-	m_InteractionData $00 $00 $00
-	m_InteractionData $00 $00 $00
 	m_InteractionData $00 $00 $00
 	m_InteractionData $00 $00 $00
 	m_InteractionData $00 $00 $00

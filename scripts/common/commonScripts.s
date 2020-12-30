@@ -566,7 +566,8 @@ shopkeeperScript_purchaseItem:
 	showtextnonexitablelowindex <TX_0e1b
 	callscript _shopkeeperConfirmPurchase
 .ifdef ROM_SEASONS
-	ormemory wRickyState, $20
+	; RANDO: Don't change ricky's state when buying flute
+	;ormemory wRickyState, $20
 .endif
 	scriptend
 

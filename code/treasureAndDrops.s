@@ -114,16 +114,18 @@ giveTreasure_body:
 +
 	pop bc
 	ld a,b
+	push bc
 	call @giveTreasure
-
-	; Check if adding this item requires adding another item.
+	pop bc
 	push af
-	ld hl,@extraItemsToAddTable
-	call @findItemInTable
-	call nz,@giveTreasure
 
 	; RANDO: Do extra stuff after getting an item
 	callab rando.randoGiveTreasureHook
+
+	; Check if adding this item requires adding another item.
+	ld hl,@extraItemsToAddTable
+	call @findItemInTable
+	call nz,@giveTreasure
 
 	pop bc
 	pop de

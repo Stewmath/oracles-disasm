@@ -4769,8 +4769,10 @@ _companionScript_subid09:
 	ld a,TREASURE_FLUTE
 	call checkTreasureObtained
 	jr c,+
-	ld l,<wAnimalCompanion
-	ld (hl),SPECIALOBJECTID_RICKY
+
+	; RANDO: Don't change the animal region when entering holodrum plain.
+	;ld l,<wAnimalCompanion
+	;ld (hl),SPECIALOBJECTID_RICKY
 +
 	ld l,<wRickyState
 	set 5,(hl)

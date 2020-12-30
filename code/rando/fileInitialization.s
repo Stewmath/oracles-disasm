@@ -15,11 +15,11 @@ randoInitializeFile:
 @done:
 	pop hl
 	
-	; animal vars (RANDO-TODO)
-	;ld a,(romAnimalRegion)
-	;ld (wAnimalRegion),a
-	;ld a,$ff
-	;ld (wAnimalTutorialFlags),a
+	; animal vars
+	ld a,(randovar_animalCompanion)
+	ld (wAnimalCompanion),a
+	ld a,$ff
+	ld (wCompanionTutorialTextShown),a
 	
 	; room flags 4 | 6
 	ld a,$50

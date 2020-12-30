@@ -72,7 +72,7 @@ treasureObjectData:
 	/* $0b */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_SWITCH_HOOK_CHAIN_00
 	/* $0c */ m_TreasurePointer treasureObjectData0c
 	/* $0d */ m_TreasurePointer treasureObjectData0d
-	/* $0e */ m_TreasureSubid   $0a, $0c, $3b, $23, TREASURE_OBJECT_FLUTE_00
+	/* $0e */ m_TreasurePointer treasureObjectData0e
 	/* $0f */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_SHOOTER_00
 	/* $10 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_10_00
 	/* $11 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_HARP_00
@@ -348,5 +348,16 @@ treasureObjectData4d:
 	m_BeginTreasureSubids TREASURE_PYRAMID_JEWEL
 	m_TreasureSubid $08, $00, $4a, $37, TREASURE_OBJECT_PYRAMID_JEWEL_00
 	m_TreasureSubid $02, $00, $4a, $37, TREASURE_OBJECT_PYRAMID_JEWEL_01
+
+
+; RANDO: Strange flute gets separate subids for animal companions, like in Ages.
+treasureObjectData0e:
+	m_BeginTreasureSubids TREASURE_FLUTE
+	m_TreasureSubid $0a, $0b, $38, $4d, TREASURE_OBJECT_FLUTE_00
+	m_TreasureSubid $0a, $0c, $39, $4e, TREASURE_OBJECT_FLUTE_01
+	m_TreasureSubid $0a, $0d, $3a, $4f, TREASURE_OBJECT_FLUTE_02
+
+	; Old data for strange flute, unused
+	;m_TreasureSubid $0a, $0c, $3b, $23, TREASURE_OBJECT_FLUTE_00
 
 .ends
