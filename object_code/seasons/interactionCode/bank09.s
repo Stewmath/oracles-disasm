@@ -7096,7 +7096,7 @@ _makuTree_spawnGnarledKey:
 	ld a,$58
 	ldi (hl),a
 	ld a,(ws_c6e0)
-	ld l,$4d
+	ld l,Interaction.xh
 	ld (hl),a
 	ret
 
