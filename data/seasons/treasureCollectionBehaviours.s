@@ -520,5 +520,3 @@ treasureCollectionBehaviourTable:
 	.db $00
 	.db $0b
 	.db SND_NONE
-
-

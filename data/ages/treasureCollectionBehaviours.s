@@ -104,7 +104,7 @@ treasureCollectionBehaviourTable:
 	.db SND_GETITEM
 
 	; TREASURE_FLUTE (0x0e)
-	.db $10
+	.db <wAnimalCompanion
 	.db $08
 	.db SND_GETITEM
 
@@ -289,7 +289,7 @@ treasureCollectionBehaviourTable:
 	.db SND_GETITEM
 
 	; TREASURE_MAP (0x33)
-	.db $86
+	.db <wDungeonMaps
 	.db $86
 	.db SND_GETITEM
 
