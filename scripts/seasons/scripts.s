@@ -4211,7 +4211,7 @@ danceLeaderScript_promptForTutorial:
 	loadscript scripts2.danceLeaderScript_danceTutorial
 
 danceLeaderScript_boomerang:
-	giveitem TREASURE_BOOMERANG, $00
+	giverandomizeditem rando.seasonsSlot_subrosianDanceHall
 	scriptjump danceLeaderScript_itemGiven
 
 danceLeaderScript_giveFlute:

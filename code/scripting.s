@@ -908,7 +908,16 @@ _scriptCmd_spawnItem:
 	ld c,a
 	push hl
 
-	; RANDO: Replace treasures spawned in specific rooms (key drops).
+	; RANDO: If bit 7 is set, it's a randomized treasure
+	ld a,b
+	and $80
+	jr z,++
+	res 7,b
+	call spawnRandomizedTreasure
+	jp nz,_scriptFunc_restoreActiveObject
+	jr @spawned
+++
+	; RANDO: Replace treasures spawned in specific rooms (ie. key drops) even if bit 7 isn't set.
 	call randoLookupRoomTreasure
 	;call getFreeInteractionSlot
 	jp nz,_scriptFunc_restoreActiveObject
@@ -919,6 +928,7 @@ _scriptCmd_spawnItem:
 	;inc l
 	;ld (hl),c
 
+@spawned:
 	ld a,e
 	cp $de
 	jr z,+

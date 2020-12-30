@@ -1073,3 +1073,10 @@
 	.undefine M_TMP
 	*/
 .ENDM
+
+
+
+; RANDO: Replacement for "giveitem" that takes an item slot (from "data/rando/itemSlots.s").
+.MACRO giverandomizeditem
+	giveitem \1 | $8000
+.ENDM
