@@ -63,6 +63,7 @@ customSpriteLookupTable:
 	dbbw INTERACID_SHOP_ITEM,              $02, rando.seasonsSlot_membersShop2
 	dbbw INTERACID_SHOP_ITEM,              $05, rando.seasonsSlot_membersShop3
 	dbbw INTERACID_SHOP_ITEM,              $0d, rando.seasonsSlot_shop150Rupees
+	dbbw INTERACID_GET_ROD_OF_SEASONS,     $02, rando.seasonsSlot_templeOfSeasons
 	.db $ff
 
 .else; ROM_AGES
@@ -74,10 +75,6 @@ customSpriteLookupTable:
 ; Format: Interaction ID; subID; jump address.
 ; These functions *must* pop af as the last instruction before returning.
 customSpriteJumpTable:
-;	dbbw $47, $00, setMembersShop1Sprite
-;	dbbw $47, $02, setMembersShop2Sprite
-;	dbbw $47, $05, setMembersShop3Sprite
-;	dbbw $47, $0d, setShopSprite
 ;	dbbw $59, $00, setPedestalSprite
 ;	dbbw $6e, $00, setStolenFeatherSprite
 ;	dbbw $81, $00, setMarket1Sprite

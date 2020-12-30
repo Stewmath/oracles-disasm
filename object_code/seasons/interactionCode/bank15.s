@@ -1728,9 +1728,12 @@ _interactionCodee6_state1:
 	ld a,MUS_ESSENCE
 	call playSound
 
-	ld c,$07
-	ld a,TREASURE_ROD_OF_SEASONS
-	call giveTreasure
+	; RANDO: Give what's in the item slot
+	ld bc,rando.seasonsSlot_templeOfSeasons
+	call giveTreasureCustom
+	;ld c,$07
+	;ld a,TREASURE_ROD_OF_SEASONS
+	;call giveTreasure
 
 	jp darkenRoom
 

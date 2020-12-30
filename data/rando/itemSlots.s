@@ -46,6 +46,11 @@ seasonsSlot_subrosianDanceHall:
 	.db  COLLECT_MODE_PICKUP_2HAND
 	.dw  $0000
 
+seasonsSlot_templeOfSeasons:
+	dwbe TREASURE_OBJECT_ROD_OF_SEASONS_01
+	.db  $00
+	.dw  $0000
+
 seasonsSlot_towerOfWinter:
 	dwbe TREASURE_OBJECT_ROD_OF_SEASONS_05
 	.db  COLLECT_MODE_PICKUP_1HAND

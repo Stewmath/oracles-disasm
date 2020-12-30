@@ -9033,8 +9033,13 @@ interactionSetAnimation:
 	push af
 	ld a,:interactionAnimationTable
 	setrombank
-	ld e,Interaction.id
-	ld a,(de)
+
+	; RANDO: Certain interactions that imitate treasures don't use the animation table of
+	; INTERACID_TREASURE. This must be fixed.
+	call interactionGetIDForAnimationTable
+	;ld e,Interaction.id
+	;ld a,(de)
+
 	ld hl,interactionAnimationTable
 	rst_addDoubleIndex
 	ldi a,(hl)
@@ -9084,8 +9089,12 @@ _interactionNextAnimationFrame:
 	ld a,h
 	ld (de),a
 
-	ld e,Interaction.id
-	ld a,(de)
+	; RANDO: Certain interactions that imitate treasures don't use the animation table of
+	; INTERACID_TREASURE. This must be fixed.
+	call interactionGetIDForAnimationTable
+	;ld e,Interaction.id
+	;ld a,(de)
+
 	ld hl,interactionOamDataTable
 	rst_addDoubleIndex
 	ldi a,(hl)
