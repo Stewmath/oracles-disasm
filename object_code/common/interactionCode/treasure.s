@@ -19,6 +19,10 @@
 ;   var35: low text ID
 ;
 ;   var39: If set, this is part of the chest minigame? Gets written to "wDisabledObjects"?
+;
+; RANDO-SPECIFIC:
+;   var3d: Collect mode override (can write to here while spawning the object)
+;   var3e-var3f: Item slot pointer
 ; ==============================================================================
 interactionCode60:
 	ld e,Interaction.state
@@ -34,6 +38,10 @@ interactionCode60:
 	ld a,$01
 	ld (de),a
 	callab treasureData.interactionLoadTreasureData
+
+	; RANDO: Update fields for progressive treasure
+	callab treasureData.modifyTreasureInteraction
+
 	ld a,$06
 	call objectSetCollideRadius
 
@@ -514,6 +522,9 @@ interactionCode60:
 	jp interactionDelete
 
 @giveTreasure:
+	; RANDO: Update fields for progressive treasure
+	callab treasureData.modifyTreasureInteraction
+
 	ld e,Interaction.var34
 	ld a,(de)
 	ld c,a
@@ -535,13 +546,23 @@ interactionCode60:
 +
 	inc c
 ++
-	; RANDO: Apply progressive upgrades
-	callab treasureData.getTreasureDataBCE
-
 	ld a,b
 	call giveTreasure
 	ld b,a
-	call randoGiveTreasureFromObjectHook
+
+	; RANDO: Run item slot callback if it exists
+	push bc
+	ld e,Interaction.var3e
+	ld a,(de)
+	ld c,a
+	inc e
+	ld a,(de)
+	ld b,a
+	or c
+	jr z,+
+	call runRandoTreasureCallback
++
+	pop bc
 
 	ld e,Interaction.var32
 	ld a,(de)
@@ -615,6 +636,4 @@ interactionCode60:
 	xor a
 	ret
 
-
-	.include "code/rando/itemEvents.s"
 .ends

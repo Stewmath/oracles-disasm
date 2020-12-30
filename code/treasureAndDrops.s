@@ -123,7 +123,7 @@ giveTreasure_body:
 	call nz,@giveTreasure
 
 	; RANDO: Do extra stuff after getting an item
-	callab treasureInteraction.randoGiveTreasureHook
+	callab rando.randoGiveTreasureHook
 
 	pop bc
 	pop de

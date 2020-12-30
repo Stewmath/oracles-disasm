@@ -31,6 +31,8 @@ spawnRandomizedTreasure_body:
 	ld d,1
 	ret nz
 
+	push bc
+
 	ld d,b
 	ld e,c
 	ld (hl),INTERACID_TREASURE ; id
@@ -43,8 +45,8 @@ spawnRandomizedTreasure_body:
 	ld c,a
 	ld (hl),a ; var03 (treasure subid)
 
-	; Write collect mode to var31
-	ld l,Interaction.var31
+	; Write collect mode to var3d
+	ld l,Interaction.var3d
 	inc de
 
 	; Small keys only: Change COLLECT_MODE_FALL to COLLECT_MODE_FALL_KEY
@@ -62,7 +64,16 @@ spawnRandomizedTreasure_body:
 @setCollectMode:
 	ld (hl),a ; Collect mode
 
+	; Write pointer to item slot
+	pop bc
+	ld l,Interaction.var3e
+	ld a,c
+	ldi (hl),a
+	ld a,b
+	ld (hl),a
+
 	ld d,0
+	ld l,Interaction.id
 	ret
 
 
@@ -118,6 +129,7 @@ lookupRoomTreasure_body:
 
 
 
+.include "code/rando/itemEvents.s"
 .include "data/rando/itemSlots.s"
 
 .ends

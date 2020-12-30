@@ -7111,7 +7111,7 @@ _makuTree_spawnGnarledKey:
 	ld (hl),a
 
 	; RANDO: Override collect mode
-	ld l,Interaction.var31
+	ld l,Interaction.var3d
 	ld (hl),COLLECT_MODE_PICKUP
 	ret
 

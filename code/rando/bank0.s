@@ -1,26 +1,41 @@
 ;;
-; This is a replacement for giveTreasure that accounts for item progression. Call through
+; This is a replacement for giveTreasure that handles randomized item slots. Call through
 ; giveTreasureCustom or giveTreasureCustomSilent, since this function doesn't xor the a that it
 ; returns. Importantly, "bc" represents an item slot pointer, NOT a treasure index.
 ;
 ; @param	bc	Item slot pointer (something from "data/rando/itemSlots.s")
+; @param[out]	a	Result from giveTreasure (sound to play)
+; @param[out]	e	Text to show
+; @param[out]	zflag	Result from giveTreasure (status of 'a' register)
 giveTreasureCustom_body:
+	push bc
 	call _lookupItemSlot
-	push hl
 	callab treasureData.getTreasureDataBCE
-	pop hl
 	ld a,b
-	jp giveTreasure
+	push de
+	call giveTreasure
+	pop de
+
+	; Run callback function if it exists
+	pop bc
+	push af
+	call runRandoTreasureCallback
+	pop af
+	ret
 
 
 giveTreasureCustomSilent:
+	push hl
 	call giveTreasureCustom_body
 	xor a
+	pop hl
 	ret
 
 
 giveTreasureCustom:
+	push hl
 	call giveTreasureCustom_body
+
 	jr z,@noSound
 	push hl
 	call playSound
@@ -34,6 +49,42 @@ giveTreasureCustom:
 	ld c,e
 	call showText
 	xor a
+	pop hl
+	ret
+
+
+;;
+; Run the callback function for an item slot.
+;
+; @param	bc	Pointer to item slot
+runRandoTreasureCallback:
+	push bc
+	push de
+	push hl
+
+	ldh a,(<hRomBank)
+	push af
+
+	ld a,:rando.itemSlotCallbacksStart
+	setrombank
+
+	ld h,b
+	ld l,c
+	ld a,3
+	rst_addAToHl
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	or h
+	jr z,+
+	call jpHl
++
+	pop af
+	setrombank
+
+	pop hl
+	pop de
+	pop bc
 	ret
 
 

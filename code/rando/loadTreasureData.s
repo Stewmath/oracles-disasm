@@ -3,10 +3,35 @@
 
 
 ;;
+; RANDO: Modify the variables of an interaction of type INTERACID_TREASURE. This is called both when
+; it is spawned, and when it is time to give the treasure to Link.
+;
+; @param	d	Interaction to modify
+modifyTreasureInteraction:
+	ld e,Interaction.var30
+	ld a,(de) ; Treasure ID
+	ld b,a
+	ld e,Interaction.var03
+	ld a,(de) ; Treasure SubID
+	ld c,a
+	call getUpgradedTreasure
+	ret nc
+
+	ld a,b
+	ld e,Interaction.subid
+	ld (de),a
+	ld a,c
+	inc e
+	ld (de),a ; var03
+	; Call this again to make sure everything gets updated
+	jp interactionLoadTreasureData
+
+
+;;
 ; Looks up data for a treasure object, no rando-adjustments made.
 ;
 ; @param	bc	Treasure object ID to look up
-; @param[out]	hl	Add
+; @param[out]	hl	Address of data
 getTreasureData_noAdjust:
 	ld hl,treasureObjectData
 	ld a,b
