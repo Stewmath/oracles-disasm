@@ -332,10 +332,15 @@ interactionCode5f:
 	cp $02
 
 	jr z,@deleteSelf
+
 	ld hl,wDimitriState
-	ld a,TREASURE_FLIPPERS
-	call checkTreasureObtained
-	jr nc,@loadCompanionPresetIfHasntLeft
+
+	; RANDO: Don't remove dimitri after getting flippers
+	;ld a,TREASURE_FLIPPERS
+	;call checkTreasureObtained
+	;jr nc,@loadCompanionPresetIfHasntLeft
+	jr @loadCompanionPresetIfHasntLeft
+
 	set 6,(hl)
 	jr @deleteSelf
 
