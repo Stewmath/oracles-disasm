@@ -371,4 +371,63 @@ seasonsSlot_d3_boss:
 	.db  COLLECT_MODE_POOF
 	.dw  $0000
 
+; ================================================================================
+; D4
+; ================================================================================
+
+seasonsSlot_d4_northOfEntrance:
+	dwbe TREASURE_OBJECT_BOMBS_00
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d4_potPuzzle:
+	dwbe TREASURE_OBJECT_SMALL_KEY_04
+	.db  COLLECT_MODE_FALL
+	.dw  $0000
+
+seasonsSlot_d4_mazeChest:
+	dwbe TREASURE_OBJECT_MAP_04
+	.db  COLLECT_MODE_CHEST_MAP_OR_COMPASS
+	.dw  $0000
+
+seasonsSlot_d4_darkRoom:
+	dwbe TREASURE_OBJECT_SMALL_KEY_04
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d4_waterRingRoom:
+	dwbe TREASURE_OBJECT_COMPASS_04
+	.db  COLLECT_MODE_CHEST_MAP_OR_COMPASS
+	.dw  $0000
+
+seasonsSlot_d4_pool:
+	dwbe TREASURE_OBJECT_SMALL_KEY_04
+	.db  COLLECT_MODE_FALL
+	.dw  $0000
+
+seasonsSlot_d4_terrace:
+	dwbe TREASURE_OBJECT_SMALL_KEY_04
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d4_crackedFloorRoom:
+	dwbe TREASURE_OBJECT_SLINGSHOT_00
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d4_torchChest:
+	dwbe TREASURE_OBJECT_SMALL_KEY_04
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d4_diveSpot:
+	dwbe TREASURE_OBJECT_BOSS_KEY_04
+	.db  COLLECT_MODE_DIVE
+	.dw  $0000
+
+seasonsSlot_d4_boss:
+	dwbe TREASURE_OBJECT_HEART_CONTAINER_00
+	.db  COLLECT_MODE_POOF
+	.dw  $0000
+
 .endif

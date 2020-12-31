@@ -209,10 +209,15 @@ interactionCode60:
 	ld l,Interaction.subid
 	ldi (hl),a
 
-	inc (hl) ; [var03]++ (use the subsequent entry in treasureObjectData)
+	; RANDO: Instead of switching to a different subid, override the collect mode. This should
+	; always work, unlike the original version which depends on specific subids having specific
+	; collect modes.
+	;inc (hl) ; [var03]++
+	ld l,Interaction.var3d
+	ld (hl),COLLECT_MODE_DIVE
 
 	; Clear state
-	inc l
+	ld l,Interaction.state
 	xor a
 	ldi (hl),a
 	ld (hl),a

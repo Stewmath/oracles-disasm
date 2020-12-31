@@ -83,13 +83,13 @@ chestGroup4Data:
 	m_ChestDataRando $54, $51, rando.seasonsSlot_d3_bombedWallChest
 	m_ChestDataRando $57, $50, rando.seasonsSlot_d3_mimicChest
 	m_ChestDataRando $55, $54, rando.seasonsSlot_d3_moldormChest
-	m_ChestData $22, $63, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $95, $64, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $54, $69, TREASURE_OBJECT_MAP_02
-	m_ChestData $59, $6d, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $2c, $73, TREASURE_OBJECT_SLINGSHOT_00
-	m_ChestData $88, $7f, TREASURE_OBJECT_BOMBS_00
-	m_ChestData $57, $83, TREASURE_OBJECT_COMPASS_02
+	m_ChestDataRando $22, $63, rando.seasonsSlot_d4_terrace
+	m_ChestDataRando $95, $64, rando.seasonsSlot_d4_torchChest
+	m_ChestDataRando $54, $69, rando.seasonsSlot_d4_mazeChest
+	m_ChestDataRando $59, $6d, rando.seasonsSlot_d4_darkRoom
+	m_ChestDataRando $2c, $73, rando.seasonsSlot_d4_crackedFloorRoom
+	m_ChestDataRando $88, $7f, rando.seasonsSlot_d4_northOfEntrance
+	m_ChestDataRando $57, $83, rando.seasonsSlot_d4_waterRingRoom
 	m_ChestData $57, $8f, TREASURE_OBJECT_MAP_02
 	m_ChestData $25, $89, TREASURE_OBJECT_MAGNET_GLOVES_00
 	m_ChestData $11, $97, TREASURE_OBJECT_RUPEES_06
