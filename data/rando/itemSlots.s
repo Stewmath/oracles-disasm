@@ -121,9 +121,19 @@ seasonsSlot_mtCuccoPlatformCave:
 	.db  COLLECT_MODE_FALL
 	.dw  $0000
 
+seasonsSlot_mtCuccoTalonsCave:
+	dwbe TREASURE_OBJECT_RING_10
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
 seasonsSlot_goronMountainAcrossPits:
 	dwbe TREASURE_OBJECT_DRAGON_KEY_00
 	.db  COLLECT_MODE_PICKUP_1HAND
+	.dw  $0000
+
+seasonsSlot_chestInGoronMountain:
+	dwbe TREASURE_OBJECT_RING_0b
+	.db  COLLECT_MODE_CHEST
 	.dw  $0000
 
 ; ================================================================================

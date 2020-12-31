@@ -149,8 +149,8 @@ chestGroup5Data:
 	m_ChestDataRando $22, $bd, rando.seasonsSlot_chestInMasterDiversCave
 	m_ChestData $45, $c0, TREASURE_OBJECT_HEART_PIECE_01
 	m_ChestData $47, $c6, TREASURE_OBJECT_GASHA_SEED_01
-	m_ChestData $1d, $c8, TREASURE_OBJECT_RING_0b
-	m_ChestData $4a, $b6, TREASURE_OBJECT_RING_10
+	m_ChestDataRando $1d, $c8, rando.seasonsSlot_chestInGoronMountain
+	m_ChestDataRando $4a, $b6, rando.seasonsSlot_mtCuccoTalonsCave
 	m_ChestData $5c, $0e, TREASURE_OBJECT_RUPEES_05
 	m_ChestDataRando $32, $12, rando.seasonsSlot_woodsOfWinter2ndCave
 chestGroup6Data:
