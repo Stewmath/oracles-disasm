@@ -446,10 +446,11 @@ giveTreasure_body:
 	; various methods will need to not show any text themselves for this to work.)
 	ld hl,wRingsObtained
 	ld a,c
-	and a,$3f
+	and $3f
+	ld c,a
 	call setFlag
 	ld a,c
-	add a,$40
+	add $40
 	ld (wTextSubstitutions+2),a
 	ld bc,TX_30_GETRING
 	call showText
