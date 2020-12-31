@@ -7528,14 +7528,16 @@ interactionCode59:
 	call getThisRoomFlags
 	and $40
 	jp nz,interactionDelete
-	ld a,TREASURE_SWORD
-	call checkTreasureObtained
-	jr nc,+
-	cp $03
-	jp nc,interactionDelete
-	sub $01
-	ld e,$42
-	ld (de),a
+
+	; RANDO: Don't change subid or delete self based on sword level (always subid 0)
+	;ld a,TREASURE_SWORD
+	;call checkTreasureObtained
+	;jr nc,+
+	;cp $03
+	;jp nc,interactionDelete
+	;sub $01
+	;ld e,$42
+	;ld (de),a
 +
 	call interactionInitGraphics
 	call interactionIncState

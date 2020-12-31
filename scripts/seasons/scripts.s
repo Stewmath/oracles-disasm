@@ -3843,18 +3843,23 @@ lostWoodsSwordScript:
 	wait 90
 	enableinput
 	scriptend
+
+	; RANDO: Ignore sword level and randomize the item.
 @giveSword:
-	jumptable_objectbyte $42
-	.dw @giveNobleSword
-	.dw @giveMasterSword
+	;jumptable_objectbyte $42
+	;.dw @giveNobleSword
+	;.dw @giveMasterSword
+
 @giveNobleSword:
-	giveitem TREASURE_SWORD, $01
-	giveitem TREASURE_SWORD, $04
+	giverandomizeditem rando.seasonsSlot_lostWoods
+	;giveitem TREASURE_SWORD, $01
+	;giveitem TREASURE_SWORD, $04
 	retscript
-@giveMasterSword:
-	giveitem TREASURE_SWORD, $02
-	giveitem TREASURE_SWORD, $05
-	retscript
+
+;@giveMasterSword:
+	;giveitem TREASURE_SWORD, $02
+	;giveitem TREASURE_SWORD, $05
+	;retscript
 
 
 ; ==============================================================================

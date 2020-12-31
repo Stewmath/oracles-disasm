@@ -162,12 +162,16 @@ interactionGetIDForAnimationTable:
 	ld a,(de)
 
 .ifdef ROM_SEASONS
+	cp INTERACID_LOST_WOODS_SWORD
+	jr z,@fake
 	cp INTERACID_GET_ROD_OF_SEASONS
 	jr nz,++
 	inc e
 	ld a,(de) ; subid
 	cp $02
 	jr nz,++
+
+@fake:
 	ld a,INTERACID_TREASURE
 	ret
 ++

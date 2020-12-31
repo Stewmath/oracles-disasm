@@ -51,7 +51,7 @@ chestGroup1Data:
 
 chestGroup2Data:
 chestGroup3Data:
-	m_ChestData $34, $9b, TREASURE_OBJECT_GASHA_SEED_01
+	m_ChestDataRando $34, $9b, rando.seasonsSlot_tarmRuinsUnderTree
 	m_ChestDataRando $13, $88, rando.seasonsSlot_westernCoastInHouse
 	.db $ff
 

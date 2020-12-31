@@ -86,6 +86,7 @@ customSpriteLookupTable:
 	dbbw INTERACID_SUBROSIAN_SHOP,         $04, rando.seasonsSlot_subrosiaMarket2ndItem
 	dbbw INTERACID_SUBROSIAN_SHOP,         $0d, rando.seasonsSlot_subrosiaMarket5thItem
 	dbbw INTERACID_STEALING_FEATHER,       $00, $8000 | setStolenFeatherSprite
+	dbbw INTERACID_LOST_WOODS_SWORD,       $00, rando.seasonsSlot_lostWoods
 	.db $ff
 
 
