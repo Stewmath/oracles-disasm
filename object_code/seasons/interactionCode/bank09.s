@@ -3201,8 +3201,9 @@ _masterDiverPuzzle:
 	ret
 
 _piratesBell:
-	ldbc TREASURE_PIRATES_BELL $00
-	jp _misc1_spawnTreasureBCifRoomFlagBit5NotSet
+	; RANDO: Spawn whatever's in the item slot
+	ld bc,rando.seasonsSlot_samasaDesertPit
+	jp _misc1_spawnRandomizedTreasureBCifRoomFlagBit5NotSet
 
 _armosBlockingFlowerPathToD6:
 	call returnIfScrollMode01Unset

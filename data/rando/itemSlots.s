@@ -91,6 +91,20 @@ seasonsSlot_easternSuburbsOnCliff:
 	.dw  $0000
 
 ; ================================================================================
+; Samasa Desert
+; ================================================================================
+
+seasonsSlot_samasaDesertPit:
+	dwbe TREASURE_OBJECT_PIRATES_BELL_00
+	.db  COLLECT_MODE_PICKUP_2HAND
+	.dw  $0000
+
+seasonsSlot_samasaDesertChest:
+	dwbe TREASURE_OBJECT_RING_08
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+; ================================================================================
 ; North Horon / Horon Plain
 ; ================================================================================
 

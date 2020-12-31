@@ -41,7 +41,7 @@ chestGroup0Data:
 	m_ChestDataRando $15, $5b, rando.seasonsSlot_moblinKeep
 	m_ChestDataRando $33, $b8, rando.seasonsSlot_eyeglassLakeAcrossBridge
 	m_ChestData $11, $e3, TREASURE_OBJECT_RING_07
-	m_ChestData $18, $ff, TREASURE_OBJECT_RING_08
+	m_ChestDataRando $18, $ff, rando.seasonsSlot_samasaDesertChest
 	.db $ff
 
 chestGroup1Data:

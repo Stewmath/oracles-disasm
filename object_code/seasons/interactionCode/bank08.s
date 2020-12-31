@@ -5831,9 +5831,10 @@ interactionCode4d:
 	call func_228f
 	jp z,interactionDelete
 +
-	ld a,TREASURE_PIRATES_BELL
-	call checkTreasureObtained
-	jr c,+
+	; RANDO: Allow desert pits to work even if player has the actual bell already.
+	;ld a,TREASURE_PIRATES_BELL
+	;call checkTreasureObtained
+	;jr c,+
 	call getRandomNumber
 	and $03
 	inc a
