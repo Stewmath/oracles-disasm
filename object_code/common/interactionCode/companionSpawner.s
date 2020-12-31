@@ -318,8 +318,14 @@ interactionCode5f:
 	ld a,(wDimitriState)
 	and $20
 	jr z,@deleteSelf
-	ld a,(wAnimalCompanion)
-	cp SPECIALOBJECTID_DIMITRI
+
+	; RANDO: Check wFluteIcon instead of wAnimalCompanion (dimitri event in sunken city will
+	; trigger before getting his flute)
+	;ld a,(wAnimalCompanion)
+	;cp SPECIALOBJECTID_DIMITRI
+	ld a,(wFluteIcon)
+	cp $02
+
 	jr z,@deleteSelf
 	ld hl,wDimitriState
 	ld a,TREASURE_FLIPPERS

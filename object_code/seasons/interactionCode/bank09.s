@@ -4706,8 +4706,14 @@ _companionScript_subid05:
 	ld a,(wDimitriState)
 	and $80
 	jr nz,_companionScript_delete2
-	ld a,($c610)
-	cp $0c
+
+	; RANDO: Check wFluteIcon instead of wAnimalCompanion (dimitri event in sunken city will
+	; trigger before getting his flute)
+	;ld a,($c610)
+	;cp $0c
+	ld a,(wFluteIcon)
+	cp $02
+
 	jr z,_companionScript_delete2
 	ld a,$01
 	ld (de),a
@@ -4735,8 +4741,14 @@ _companionScript_subid08:
 	ld a,($d101)
 	cp SPECIALOBJECTID_DIMITRI
 	jr nz,_companionScript_delete2
-	ld a,(wAnimalCompanion)
-	cp SPECIALOBJECTID_DIMITRI
+
+	; RANDO: Check wFluteIcon instead of wAnimalCompanion (dimitri event in sunken city will
+	; trigger before getting his flute)
+	;ld a,(wAnimalCompanion)
+	;cp SPECIALOBJECTID_DIMITRI
+	ld a,(wFluteIcon)
+	cp $02
+
 	jr z,_companionScript_delete2
 @state1:
 	ld a,($cd00)
@@ -5431,8 +5443,14 @@ interactionCode76:
 	ld a,(hl)
 	cp SPECIALOBJECTID_DIMITRI
 	jr nz,@delete
-	ld a,($c610)
-	cp SPECIALOBJECTID_DIMITRI
+
+	; RANDO: Check wFluteIcon instead of wAnimalCompanion (dimitri event in sunken city will
+	; trigger before getting his flute)
+	;ld a,($c610)
+	;cp SPECIALOBJECTID_DIMITRI
+	ld a,(wFluteIcon)
+	cp $02
+
 	jr z,@delete
 	ld a,(wDimitriState)
 	bit 5,a
