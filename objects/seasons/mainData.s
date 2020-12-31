@@ -744,7 +744,8 @@ group0Map4aObjectData:
 	obj_End
 
 group0Map56ObjectData:
-	obj_Interaction $6b $11 $68 $68
+	; RANDO: Disable the switch that opens the bridge in Natzu Prairie/Wasteland
+	;obj_Interaction $6b $11 $68 $68
 	obj_Interaction $98 $00 $78 $88
 	obj_Pointer group0Map56EnemyObjectData
 	obj_End
