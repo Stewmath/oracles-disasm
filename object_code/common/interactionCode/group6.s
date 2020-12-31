@@ -35,9 +35,10 @@ interactionCodece:
 	cp SPECIALOBJECTID_MOOSH
 	jr z,@moosh
 @noCompanion:
-	ld a,(wEssencesObtained)
-	bit 3,a
-	jr nz,+++
+	; RANDO: Disable essence check causing Moosh to leave & business scrub to replace him
+	;ld a,(wEssencesObtained)
+	;bit 3,a
+	;jr nz,+++
 @moosh:
 	jp interactionDelete
 +++

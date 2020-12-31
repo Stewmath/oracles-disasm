@@ -304,9 +304,12 @@ interactionCode5f:
 
 @subid05:
 	ld hl,wMooshState
-	ld a,(wEssencesObtained)
-	bit 3,a
-	jp z,@loadCompanionPresetIfHasntLeft
+	; RANDO: Disable essence check causing Moosh to leave
+	;ld a,(wEssencesObtained)
+	;bit 3,a
+	;jp z,@loadCompanionPresetIfHasntLeft
+	jp @loadCompanionPresetIfHasntLeft
+
 	set 6,(hl)
 	jr @deleteSelf
 
