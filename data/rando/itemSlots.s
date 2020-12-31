@@ -114,6 +114,11 @@ seasonsSlot_dryEyeglassLakeWestCave:
 	.db  COLLECT_MODE_CHEST
 	.dw  $0000
 
+seasonsSlot_dryEyeglassLakeEastCave:
+	dwbe TREASURE_OBJECT_HEART_PIECE_01
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
 ; ==============================================================================
 ; Spool Swamp
 ; ==============================================================================
