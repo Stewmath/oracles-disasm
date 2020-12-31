@@ -18,6 +18,7 @@
 .define COLLECT_MODE_CHEST,                $38
 .define COLLECT_MODE_DIVE,                 $49
 .define COLLECT_MODE_CHEST_MAP_OR_COMPASS, $68
+.define COLLECT_MODE_DIG,                  $5a
 
 
 ; Certain randomized slots (ie. maku tree screen) borrow unused treasure flags for remembering if

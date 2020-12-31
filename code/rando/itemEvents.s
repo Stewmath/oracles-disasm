@@ -8,6 +8,9 @@
 randoGiveTreasureHook:
 	call satchelRefillSeeds
 	call activateFlute
+
+	; RANDO-TODO:
+	; - Remove star ore & hard ore from inventory after being used
 	ret
 
 ;;
@@ -66,7 +69,10 @@ itemSlotCallbacksStart:
 
 seasonsSlotCallback_makuTree:
 	ld a,RANDO_MAKU_TREE_FLAG
-	call setRandoFlag
-	ret
+	jp setRandoFlag
+
+seasonsSlotCallback_subrosiaSeaside:
+	ld a,GLOBALFLAG_STAR_ORE_FOUND
+	jp setGlobalFlag
 
 .endif

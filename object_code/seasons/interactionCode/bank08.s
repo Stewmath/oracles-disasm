@@ -2963,23 +2963,35 @@ interactionCode31:
 	ld a,(de)
 	cp b
 	jr nz,+
-	call getFreeInteractionSlot
+
+	; RANDO: Spawn whatever's in the item slot
+	ld bc,rando.seasonsSlot_subrosiaSeaside
+	call spawnRandomizedTreasure
 	ret nz
-	ld (hl),INTERACID_TREASURE
-	inc l
-	ld (hl),TREASURE_STAR_ORE
+	;call getFreeInteractionSlot
+	;ret nz
+	;ld (hl),INTERACID_TREASURE
+	;inc l
+	;ld (hl),TREASURE_STAR_ORE
+
 	ld e,$71
 	ld a,(de)
 	ld l,$4b
 	jp setShortPosition
 +
-	ld a,TREASURE_STAR_ORE
-	call checkTreasureObtained
-	jr c,+
+	; RANDO: Check the global flag which will be set by the item slot callback.
+	ld a,GLOBALFLAG_STAR_ORE_FOUND
+	call checkGlobalFlag
+	jr nz,@delete
+	;ld a,TREASURE_STAR_ORE
+	;call checkTreasureObtained
+	;jr c,+
+
 	ld a,b
 	cp $60
 	ret nc
 -
+@delete:
 	xor a
 	ld (wcc84),a
 	jp interactionDelete

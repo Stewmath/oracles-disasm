@@ -215,11 +215,13 @@ giveTreasure_body:
 
 ; This is similar to above, except whenever Link obtains an item in the first column, the
 ; game takes away the items in the next two columns. Apparently unused in ages.
+;
+; RANDO: Due to randomization, each of these cases must be handled with special code.
 @itemsToRemoveTable:
 .ifdef ROM_SEASONS
-	.db TREASURE_RIBBON	TREASURE_STAR_ORE	$00
-	.db TREASURE_HARD_ORE	TREASURE_RED_ORE	TREASURE_BLUE_ORE
-	.db TREASURE_FEATHER	TREASURE_FOOLS_ORE	$00
+	;.db TREASURE_RIBBON	TREASURE_STAR_ORE	$00
+	;.db TREASURE_HARD_ORE	TREASURE_RED_ORE	TREASURE_BLUE_ORE
+	;.db TREASURE_FEATHER	TREASURE_FOOLS_ORE	$00
 .endif
 	.db $00
 

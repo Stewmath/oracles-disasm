@@ -120,6 +120,11 @@ seasonsSlot_towerOfSpring:
 	.db  COLLECT_MODE_PICKUP_1HAND
 	.dw  $0000
 
+seasonsSlot_subrosiaSeaside:
+	dwbe TREASURE_OBJECT_STAR_ORE_00
+	.db  COLLECT_MODE_DIG
+	.dw  seasonsSlotCallback_subrosiaSeaside
+
 ; ================================================================================
 ; D0
 ; ================================================================================
