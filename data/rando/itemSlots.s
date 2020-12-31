@@ -150,7 +150,7 @@ seasonsSlot_subrosiaMarket5thItem:
 ; ================================================================================
 
 seasonsSlot_d0KeyChest:
-	dwbe TREASURE_OBJECT_SMALL_KEY_03
+	dwbe TREASURE_OBJECT_SMALL_KEY_00
 	.db  COLLECT_MODE_CHEST
 	.dw  $0000
 
@@ -169,12 +169,12 @@ seasonsSlot_d0RupeeChest:
 ; ==============================================================================
 
 seasonsSlot_d1_stalfosDrop:
-	dwbe TREASURE_OBJECT_SMALL_KEY_03
+	dwbe TREASURE_OBJECT_SMALL_KEY_01
 	.db  COLLECT_MODE_FALL
 	.dw  $0000
 
 seasonsSlot_d1_stalfosChest:
-	dwbe TREASURE_OBJECT_MAP_02
+	dwbe TREASURE_OBJECT_MAP_01
 	.db  COLLECT_MODE_CHEST_MAP_OR_COMPASS
 	.dw  $0000
 
@@ -184,7 +184,7 @@ seasonsSlot_d1_blockPushingRoom:
 	.dw  $0000
 
 seasonsSlot_d1_leverRoom:
-	dwbe TREASURE_OBJECT_COMPASS_02
+	dwbe TREASURE_OBJECT_COMPASS_01
 	.db  COLLECT_MODE_CHEST_MAP_OR_COMPASS
 	.dw  $0000
 
@@ -194,7 +194,7 @@ seasonsSlot_d1_railwayChest:
 	.dw  $0000
 
 seasonsSlot_d1_buttonChest:
-	dwbe TREASURE_OBJECT_SMALL_KEY_03
+	dwbe TREASURE_OBJECT_SMALL_KEY_01
 	.db  COLLECT_MODE_CHEST
 	.dw  $0000
 
@@ -204,7 +204,7 @@ seasonsSlot_d1_basement:
 	.dw  $0000
 
 seasonsSlot_d1_goriyaChest:
-	dwbe TREASURE_OBJECT_BOSS_KEY_03
+	dwbe TREASURE_OBJECT_BOSS_KEY_01
 	.db  COLLECT_MODE_CHEST
 	.dw  $0000
 
@@ -228,7 +228,7 @@ seasonsSlot_d2_leftFromEntrance:
 	.dw  $0000
 
 seasonsSlot_d2_ropeDrop:
-	dwbe TREASURE_OBJECT_SMALL_KEY_03
+	dwbe TREASURE_OBJECT_SMALL_KEY_02
 	.db  COLLECT_MODE_FALL
 	.dw  $0000
 
@@ -248,12 +248,12 @@ seasonsSlot_d2_potChest:
 	.dw  $0000
 
 seasonsSlot_d2_bladeChest:
-	dwbe TREASURE_OBJECT_SMALL_KEY_03
+	dwbe TREASURE_OBJECT_SMALL_KEY_02
 	.db  COLLECT_MODE_CHEST
 	.dw  $0000
 
 seasonsSlot_d2_spiralChest:
-	dwbe TREASURE_OBJECT_SMALL_KEY_03
+	dwbe TREASURE_OBJECT_SMALL_KEY_02
 	.db  COLLECT_MODE_CHEST
 	.dw  $0000
 
@@ -263,7 +263,7 @@ seasonsSlot_d2_rollerChest:
 	.dw  $0000
 
 seasonsSlot_d2_terraceChest:
-	dwbe TREASURE_OBJECT_BOSS_KEY_03
+	dwbe TREASURE_OBJECT_BOSS_KEY_02
 	.db  COLLECT_MODE_CHEST
 	.dw  $0000
 

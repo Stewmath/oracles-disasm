@@ -278,8 +278,9 @@ giveTreasure_body:
 
 ; Set bit [wDungeonIndex] in [de].
 @mode6:
-	ld a,(wDungeonIndex)
-	ld c,a
+	; RANDO: Use "parameter" instead of "wDungeonIndex" to allow for keysanity.
+	;ld a,(wDungeonIndex)
+	;ld c,a
 
 ; Set bit c in [de].
 @mode1:
@@ -314,7 +315,10 @@ giveTreasure_body:
 ; Increment [de+[wDungeonIndex]].
 ; Used for small keys.
 @mode7:
-	ld a,(wDungeonIndex)
+	; RANDO: Use "parameter" instead of "wDungeonIndex" to allow for keysanity.
+	;ld a,(wDungeonIndex)
+	ld a,c
+
 	add e
 	ld l,a
 	ld h,d

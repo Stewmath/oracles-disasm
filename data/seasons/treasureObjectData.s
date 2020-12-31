@@ -295,30 +295,57 @@ treasureObjectData2d:
 	m_TreasureSubid $38, $2d, $ff, $0e, TREASURE_OBJECT_RING_10
 
 treasureObjectData30:
+	; RANDO: Changed how dungeon items work so that their parameter corresponds to their
+	; dungeon.  Added many subid entries as a result.
 	m_BeginTreasureSubids TREASURE_SMALL_KEY
-	m_TreasureSubid $18, $01, $ff, $42, TREASURE_OBJECT_SMALL_KEY_00
-	m_TreasureSubid $28, $01, $ff, $42, TREASURE_OBJECT_SMALL_KEY_01
-	m_TreasureSubid $49, $01, $1a, $42, TREASURE_OBJECT_SMALL_KEY_02
-	m_TreasureSubid $38, $01, $1a, $42, TREASURE_OBJECT_SMALL_KEY_03
+	m_TreasureSubid $00, $00, $1a, $42, TREASURE_OBJECT_SMALL_KEY_00
+	m_TreasureSubid $00, $01, $1a, $42, TREASURE_OBJECT_SMALL_KEY_01
+	m_TreasureSubid $00, $02, $1a, $42, TREASURE_OBJECT_SMALL_KEY_02
+	m_TreasureSubid $00, $03, $1a, $42, TREASURE_OBJECT_SMALL_KEY_03
+	m_TreasureSubid $00, $04, $1a, $42, TREASURE_OBJECT_SMALL_KEY_04
+	m_TreasureSubid $00, $05, $1a, $42, TREASURE_OBJECT_SMALL_KEY_05
+	m_TreasureSubid $00, $06, $1a, $42, TREASURE_OBJECT_SMALL_KEY_06
+	m_TreasureSubid $00, $07, $1a, $42, TREASURE_OBJECT_SMALL_KEY_07
+	m_TreasureSubid $00, $08, $1a, $42, TREASURE_OBJECT_SMALL_KEY_08
 
 treasureObjectData31:
+	; RANDO: Same as above
 	m_BeginTreasureSubids TREASURE_BOSS_KEY
-	m_TreasureSubid $19, $00, $1b, $43, TREASURE_OBJECT_BOSS_KEY_00
-	m_TreasureSubid $29, $00, $1b, $43, TREASURE_OBJECT_BOSS_KEY_01
-	m_TreasureSubid $49, $00, $1b, $43, TREASURE_OBJECT_BOSS_KEY_02
-	m_TreasureSubid $38, $00, $1b, $43, TREASURE_OBJECT_BOSS_KEY_03
+	m_TreasureSubid $00, $00, $1b, $43, TREASURE_OBJECT_BOSS_KEY_00
+	m_TreasureSubid $00, $01, $1b, $43, TREASURE_OBJECT_BOSS_KEY_01
+	m_TreasureSubid $00, $02, $1b, $43, TREASURE_OBJECT_BOSS_KEY_02
+	m_TreasureSubid $00, $03, $1b, $43, TREASURE_OBJECT_BOSS_KEY_03
+	m_TreasureSubid $00, $04, $1b, $43, TREASURE_OBJECT_BOSS_KEY_04
+	m_TreasureSubid $00, $05, $1b, $43, TREASURE_OBJECT_BOSS_KEY_05
+	m_TreasureSubid $00, $06, $1b, $43, TREASURE_OBJECT_BOSS_KEY_06
+	m_TreasureSubid $00, $07, $1b, $43, TREASURE_OBJECT_BOSS_KEY_07
+	m_TreasureSubid $00, $08, $1b, $43, TREASURE_OBJECT_BOSS_KEY_08
 
 treasureObjectData32:
+	; RANDO: Same as above
 	m_BeginTreasureSubids TREASURE_COMPASS
-	m_TreasureSubid $1a, $00, $19, $41, TREASURE_OBJECT_COMPASS_00
-	m_TreasureSubid $2a, $00, $19, $41, TREASURE_OBJECT_COMPASS_01
-	m_TreasureSubid $68, $00, $19, $41, TREASURE_OBJECT_COMPASS_02
+	m_TreasureSubid $00, $00, $19, $41, TREASURE_OBJECT_COMPASS_00
+	m_TreasureSubid $00, $01, $19, $41, TREASURE_OBJECT_COMPASS_01
+	m_TreasureSubid $00, $02, $19, $41, TREASURE_OBJECT_COMPASS_02
+	m_TreasureSubid $00, $03, $19, $41, TREASURE_OBJECT_COMPASS_03
+	m_TreasureSubid $00, $04, $19, $41, TREASURE_OBJECT_COMPASS_04
+	m_TreasureSubid $00, $05, $19, $41, TREASURE_OBJECT_COMPASS_05
+	m_TreasureSubid $00, $06, $19, $41, TREASURE_OBJECT_COMPASS_06
+	m_TreasureSubid $00, $07, $19, $41, TREASURE_OBJECT_COMPASS_07
+	m_TreasureSubid $00, $08, $19, $41, TREASURE_OBJECT_COMPASS_08
 
 treasureObjectData33:
+	; RANDO: Same as above
 	m_BeginTreasureSubids TREASURE_MAP
-	m_TreasureSubid $1a, $00, $18, $40, TREASURE_OBJECT_MAP_00
-	m_TreasureSubid $2a, $00, $18, $40, TREASURE_OBJECT_MAP_01
-	m_TreasureSubid $68, $00, $18, $40, TREASURE_OBJECT_MAP_02
+	m_TreasureSubid $00, $00, $18, $40, TREASURE_OBJECT_MAP_00
+	m_TreasureSubid $00, $01, $18, $40, TREASURE_OBJECT_MAP_01
+	m_TreasureSubid $00, $02, $18, $40, TREASURE_OBJECT_MAP_02
+	m_TreasureSubid $00, $03, $18, $40, TREASURE_OBJECT_MAP_03
+	m_TreasureSubid $00, $04, $18, $40, TREASURE_OBJECT_MAP_04
+	m_TreasureSubid $00, $05, $18, $40, TREASURE_OBJECT_MAP_05
+	m_TreasureSubid $00, $06, $18, $40, TREASURE_OBJECT_MAP_06
+	m_TreasureSubid $00, $07, $18, $40, TREASURE_OBJECT_MAP_07
+	m_TreasureSubid $00, $08, $18, $40, TREASURE_OBJECT_MAP_08
 
 treasureObjectData41:
 	m_BeginTreasureSubids TREASURE_TRADEITEM
