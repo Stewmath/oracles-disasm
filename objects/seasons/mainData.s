@@ -1689,7 +1689,9 @@ group4MapfaObjectData:
 	obj_End
 
 group4MapfbObjectData:
-	obj_Interaction $90 $05 $58 $78
+	; RANDO: Remove linked event from the eyeglass lake cave (this will make the chest act like
+	; a normal chest)
+	;obj_Interaction $90 $05 $58 $78
 	obj_End
 
 group5Map01ObjectData:
