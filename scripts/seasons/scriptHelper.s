@@ -1676,7 +1676,8 @@ putAwayLinksItems:
 	ret
 
 
-; unknown
+; TODO: This is possibly a function for restoring Link's items after the blaino fight, which may be
+; used in the Japanese version only?
 seasonsFunc_15_5cf0:
 	ld a,($ccec)
 	cp $03

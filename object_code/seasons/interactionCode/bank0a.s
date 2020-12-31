@@ -22,7 +22,7 @@ interactionCode8d:
 	call getHighestSetBit
 	cp $02
 	jp c,interactionDelete
-	; master diver - at least 2nd essence gotten
+	; master diver - at least 3rd essence gotten
 +
 	call getSunkenCityNPCVisibleSubId_caller
 	ld e,$42

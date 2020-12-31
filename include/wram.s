@@ -578,6 +578,10 @@ wMooshState: ; $c648/$c645
 ;     1: talked to Moosh after above
 ;     2: moblins lost and fleed
 ;     3: left after above, came back, and reinforcements arrived
+;     4: ?
+;     5: set if you have Moosh's flute
+;     6: set if Moosh should disappear from mt. cucco
+;     7: set after giving spring bananas to moosh
 	db
 wCompanionTutorialTextShown: ; $c649
 ; Bits here are used by INTERACID_COMPANION_TUTORIAL to remember which pieces of
