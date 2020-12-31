@@ -12793,14 +12793,17 @@ _mooshState0:
 	cp SPECIALOBJECTID_MOOSH
 	jr nz,@gotoCutsceneStateA
 
-	ld a,$20
-	and (hl)
-	jr z,+
-
 	ld a,(wActiveRoom)
 	; mt cucco
 	cp $2f
 	jr z,@gotoCutsceneStateA
+
+	; RANDO: Moved this check *below* the mt. cucco check because he should remain in his
+	; cutscene state even before getting his flute on mt. cucco
+	ld a,$20
+	and (hl)
+	jr z,+
+
 	jr @setAnimation
 +
 	ld a,(wActiveRoom)
@@ -13524,7 +13527,12 @@ _mooshStateASubstate0:
 	ld a,$01
 	ld (de),a
 
-	ld a,(wAnimalCompanion)
+	; RANDO: Make Moosh unrideable on mt. cucco in the case of not having Moosh's flute in
+	; a Moosh seed.
+	;ld a,(wAnimalCompanion)
+	ld a,TREASURE_FLUTE
+	call checkTreasureObtained
+
 	cp SPECIALOBJECTID_MOOSH
 	jr nz,+
 	ld a,(wMooshState)
