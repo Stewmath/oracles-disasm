@@ -128,6 +128,7 @@ lookupRoomTreasure_body:
 
 @roomTreasureTable:
 	dbbw $07, $e5, seasonsSlot_divingSpotOutsideD4
+	dbbw $03, $94, seasonsSlot_oldManInTreehouse
 
 	dbbw $04, $1b, seasonsSlot_d1_stalfosDrop
 	dbbw $04, $12, seasonsSlot_d1_boss

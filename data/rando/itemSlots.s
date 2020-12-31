@@ -18,7 +18,7 @@
 
 
 ; ================================================================================
-; OVERWORLD
+; Horon Village
 ; ================================================================================
 
 seasonsSlot_makuTree:
@@ -56,6 +56,10 @@ seasonsSlot_membersShop3:
 	.db  $00
 	.dw  $0000
 
+; ==============================================================================
+; Woods of Winter
+; ==============================================================================
+
 seasonsSlot_woodsOfWinter1stCave:
 	dwbe TREASURE_OBJECT_RUPEES_04
 	.db  COLLECT_MODE_CHEST
@@ -76,10 +80,38 @@ seasonsSlot_chestOnTopOfD2:
 	.db  COLLECT_MODE_CHEST
 	.dw  $0000
 
+; ================================================================================
+; North Horon / Horon Plain
+; ================================================================================
+
+seasonsSlot_eyeglassLakeAcrossBridge:
+	dwbe TREASURE_OBJECT_GASHA_SEED_00
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_oldManInTreehouse:
+	dwbe TREASURE_OBJECT_ROUND_JEWEL_00
+	.db  COLLECT_MODE_PICKUP_2HAND
+	.dw  $0000
+
+seasonsSlot_caveSouthOfMrsRuul:
+	dwbe TREASURE_OBJECT_RING_09
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
 seasonsSlot_blainoPrize:
 	dwbe TREASURE_OBJECT_RICKY_GLOVES_00
 	.db  COLLECT_MODE_PICKUP_1HAND
 	.dw  $0000
+
+seasonsSlot_caveNorthOfD1:
+	dwbe TREASURE_OBJECT_RING_0a
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+; ==============================================================================
+; Spool Swamp
+; ==============================================================================
 
 seasonsSlot_floodgateKeepersHouse:
 	dwbe TREASURE_OBJECT_FLOODGATE_KEY_00
@@ -90,6 +122,10 @@ seasonsSlot_spoolSwampCave:
 	dwbe TREASURE_OBJECT_SQUARE_JEWEL_00
 	.db  COLLECT_MODE_CHEST
 	.dw  $0000
+
+; ==============================================================================
+; Sunken City
+; ==============================================================================
 
 seasonsSlot_sunkenCitySummerCave:
 	dwbe TREASURE_OBJECT_GASHA_SEED_01
@@ -110,6 +146,10 @@ seasonsSlot_masterDiversReward:
 	dwbe TREASURE_OBJECT_FLIPPERS_00
 	.db  COLLECT_MODE_PICKUP_2HAND_NOFLAG
 	.dw  seasonsSlotCallback_masterDiversReward
+
+; ==============================================================================
+; Mount Cucco / Goron Mountain
+; ==============================================================================
 
 seasonsSlot_springBananaTree:
 	dwbe TREASURE_OBJECT_SPRING_BANANA_00
@@ -142,7 +182,7 @@ seasonsSlot_chestInGoronMountain:
 	.dw  $0000
 
 ; ================================================================================
-; SUBROSIA
+; Subrosia
 ; ================================================================================
 
 seasonsSlot_subrosianDanceHall:
