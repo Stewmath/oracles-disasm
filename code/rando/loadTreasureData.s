@@ -167,6 +167,10 @@ getUpgradedTreasure:
 	call checkTreasureObtained
 	ret nc
 
+	push hl
+	push bc
+	ld c,a ; "related variable" (item level)
+
 	; RANDO-TODO: Check this harp stuff when ages is implemented
 	ld a,b
 	cp TREASURE_TUNE_OF_ECHOES
@@ -178,12 +182,12 @@ getUpgradedTreasure:
 	ld b,e
 
 @harpDone:
-	push hl
 	ld hl,progressiveUpgrades
 	ld e,$02
 	call searchDoubleKey
 	jr nc,@done
 
+	pop bc
 	ldi a,(hl)
 	ld b,a
 	ld c,(hl)
@@ -193,6 +197,7 @@ getUpgradedTreasure:
 	ret
 
 @done:
+	pop bc
 	pop hl
 	xor a
 	ret
