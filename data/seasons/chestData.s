@@ -144,7 +144,7 @@ chestGroup5Data:
 	m_ChestData $27, $34, TREASURE_OBJECT_RING_0f
 	m_ChestData $19, $b3, TREASURE_OBJECT_RING_05
 	m_ChestDataRando $2b, $b4, rando.seasonsSlot_woodsOfWinter1stCave
-	m_ChestData $16, $b5, TREASURE_OBJECT_GASHA_SEED_01
+	m_ChestDataRando $16, $b5, rando.seasonsSlot_sunkenCitySummerCave
 	m_ChestDataRando $1c, $bc, rando.seasonsSlot_masterDiversChallenge
 	m_ChestDataRando $22, $bd, rando.seasonsSlot_chestInMasterDiversCave
 	m_ChestData $45, $c0, TREASURE_OBJECT_HEART_PIECE_01

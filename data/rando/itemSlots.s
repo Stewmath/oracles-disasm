@@ -91,6 +91,11 @@ seasonsSlot_spoolSwampCave:
 	.db  COLLECT_MODE_CHEST
 	.dw  $0000
 
+seasonsSlot_sunkenCitySummerCave:
+	dwbe TREASURE_OBJECT_GASHA_SEED_01
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
 seasonsSlot_masterDiversChallenge:
 	dwbe TREASURE_OBJECT_MASTERS_PLAQUE_00
 	.db  COLLECT_MODE_CHEST
