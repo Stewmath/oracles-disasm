@@ -90,14 +90,14 @@ chestGroup4Data:
 	m_ChestDataRando $2c, $73, rando.seasonsSlot_d4_crackedFloorRoom
 	m_ChestDataRando $88, $7f, rando.seasonsSlot_d4_northOfEntrance
 	m_ChestDataRando $57, $83, rando.seasonsSlot_d4_waterRingRoom
-	m_ChestData $57, $8f, TREASURE_OBJECT_MAP_02
-	m_ChestData $25, $89, TREASURE_OBJECT_MAGNET_GLOVES_00
-	m_ChestData $11, $97, TREASURE_OBJECT_RUPEES_06
-	m_ChestData $46, $99, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $57, $9d, TREASURE_OBJECT_COMPASS_02
-	m_ChestData $42, $9f, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $34, $a3, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $7b, $a5, TREASURE_OBJECT_SMALL_KEY_03
+	m_ChestDataRando $57, $8f, rando.seasonsSlot_d5_gibdoZolChest
+	m_ChestDataRando $25, $89, rando.seasonsSlot_d5_magnetBallChest
+	m_ChestDataRando $11, $97, rando.seasonsSlot_d5_terraceChest
+	m_ChestDataRando $46, $99, rando.seasonsSlot_d5_cartChest
+	m_ChestDataRando $57, $9d, rando.seasonsSlot_d5_spiralChest
+	m_ChestDataRando $42, $9f, rando.seasonsSlot_d5_spinnerChest
+	m_ChestDataRando $34, $a3, rando.seasonsSlot_d5_leftChest
+	m_ChestDataRando $7b, $a5, rando.seasonsSlot_d5_stalfosChest
 	m_ChestData $11, $ad, TREASURE_OBJECT_COMPASS_02
 	m_ChestData $1d, $af, TREASURE_OBJECT_RUPEES_02
 	m_ChestData $71, $b0, TREASURE_OBJECT_MAP_02

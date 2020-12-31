@@ -155,7 +155,7 @@ dancingDragonScript_bridgeInB2:
 
 unicornsCaveScript_spawnBossKey:
 	stopifitemflagset
-	spawnitem TREASURE_BOSS_KEY, $00
+	spawnrandomizeditem rando.seasonsSlot_d5_basement
 	scriptend
 
 

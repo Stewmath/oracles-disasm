@@ -311,6 +311,14 @@ interactionCode62:
 	inc l
 	ld a,($cfd8)
 	dec a
+
+	; RANDO: Last item is a randomized treasure
+	cp $03
+	jr nz,+
+	ld bc,rando.seasonsSlot_d5_armosChest
+	call initializeRandomizedTreasure
+	jr ++
++
 	ld bc,@@table_504b
 	call addDoubleIndexToBc
 	ld a,(bc)
@@ -319,6 +327,7 @@ interactionCode62:
 	inc bc
 	ld a,(bc)
 	ld (hl),a
+++
 	ld bc,$f800
 	call objectCopyPositionWithOffset
 	ld e,Interaction.state

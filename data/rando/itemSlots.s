@@ -523,4 +523,63 @@ seasonsSlot_d4_boss:
 	.db  COLLECT_MODE_POOF
 	.dw  $0000
 
+; ==============================================================================
+; D5
+; ==============================================================================
+
+seasonsSlot_d5_leftChest:
+	dwbe TREASURE_OBJECT_SMALL_KEY_05
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d5_spiralChest:
+	dwbe TREASURE_OBJECT_COMPASS_05
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d5_terraceChest:
+	dwbe TREASURE_OBJECT_RUPEES_06
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d5_armosChest:
+	dwbe TREASURE_OBJECT_SMALL_KEY_05
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d5_spinnerChest:
+	dwbe TREASURE_OBJECT_SMALL_KEY_05
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d5_cartChest:
+	dwbe TREASURE_OBJECT_SMALL_KEY_05
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d5_stalfosChest:
+	dwbe TREASURE_OBJECT_SMALL_KEY_05
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d5_gibdoZolChest:
+	dwbe TREASURE_OBJECT_MAP_05
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d5_magnetBallChest:
+	dwbe TREASURE_OBJECT_MAGNET_GLOVES_00
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d5_basement:
+	dwbe TREASURE_OBJECT_BOSS_KEY_05
+	.db  COLLECT_MODE_PICKUP_1HAND ; NOTE: Original "poofed" in, but that's not really right
+	.dw  $0000
+
+seasonsSlot_d5_boss:
+	dwbe TREASURE_OBJECT_HEART_CONTAINER_00
+	.db  COLLECT_MODE_POOF
+	.dw  $0000
+
 .endif

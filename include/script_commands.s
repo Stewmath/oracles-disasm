@@ -1080,3 +1080,7 @@
 .MACRO giverandomizeditem
 	giveitem \1 | $8000
 .ENDM
+
+.MACRO spawnrandomizeditem
+	spawnitem \1 | $8000
+.ENDM

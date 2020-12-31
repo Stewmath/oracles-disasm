@@ -8,4 +8,4 @@ randovar_animalCompanion:
 ; Boolean options will be written here and can be accessed with the "checkRandoConfig" function. See
 ; "constants/rando.s" for values.
 randoConfig:
-	.db %00000001
+	.db %00000000
