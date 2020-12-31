@@ -57,7 +57,7 @@ seasonsSlot_membersShop3:
 	.dw  $0000
 
 ; ==============================================================================
-; Woods of Winter
+; Eastern Suburbs / Woods of Winter
 ; ==============================================================================
 
 seasonsSlot_woodsOfWinter1stCave:
@@ -76,6 +76,16 @@ seasonsSlot_hollysHouse:
 	.dw  $0000
 
 seasonsSlot_chestOnTopOfD2:
+	dwbe TREASURE_OBJECT_GASHA_SEED_01
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_caveOutsideD2:
+	dwbe TREASURE_OBJECT_RING_05
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_easternSuburbsOnCliff:
 	dwbe TREASURE_OBJECT_GASHA_SEED_01
 	.db  COLLECT_MODE_CHEST
 	.dw  $0000

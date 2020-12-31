@@ -110,7 +110,7 @@ chestGroup4Data:
 	m_ChestData $5d, $d0, TREASURE_OBJECT_BOOMERANG_00
 	m_ChestDataRando $57, $e0, rando.seasonsSlot_caveSouthOfMrsRuul
 	m_ChestDataRando $25, $e1, rando.seasonsSlot_caveNorthOfD1
-	m_ChestData $7d, $f7, TREASURE_OBJECT_GASHA_SEED_01
+	m_ChestDataRando $7d, $f7, rando.seasonsSlot_easternSuburbsOnCliff
 	m_ChestDataRando $57, $fa, rando.seasonsSlot_spoolSwampCave
 	m_ChestDataRando $57, $fb, rando.seasonsSlot_dryEyeglassLakeWestCave
 	m_ChestData $57, $f1, TREASURE_OBJECT_GASHA_SEED_01
@@ -142,7 +142,7 @@ chestGroup5Data:
 	m_ChestData $1d, $28, TREASURE_OBJECT_GASHA_SEED_01
 	m_ChestData $38, $24, TREASURE_OBJECT_GASHA_SEED_01
 	m_ChestData $27, $34, TREASURE_OBJECT_RING_0f
-	m_ChestData $19, $b3, TREASURE_OBJECT_RING_05
+	m_ChestDataRando $19, $b3, rando.seasonsSlot_caveOutsideD2
 	m_ChestDataRando $2b, $b4, rando.seasonsSlot_woodsOfWinter1stCave
 	m_ChestDataRando $16, $b5, rando.seasonsSlot_sunkenCitySummerCave
 	m_ChestDataRando $1c, $bc, rando.seasonsSlot_masterDiversChallenge
