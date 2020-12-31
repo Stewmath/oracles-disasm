@@ -1318,6 +1318,10 @@ companionDismountAndSavePosition:
 	; The below code checks your animal companion, but ultimately appears to do the
 	; same thing in all cases.
 
+	; RANDO: In Seasons, vanilla game doesn't save non-natzu animal positions when it thinks you
+	; won't need them anymore. Stop that.
+	jr @normalDismount
+
 	ld e,SpecialObject.id
 	ld a,(de)
 	ld hl,wAnimalCompanion
