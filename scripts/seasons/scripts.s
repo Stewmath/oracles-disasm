@@ -6046,7 +6046,7 @@ masterDiverScript_text1:
 	enableinput
 	checkabutton
 	disableinput
-	jumpifitemobtained TREASURE_FLIPPERS, @gotFlippers
+	jumpifitemobtained RANDO_MASTER_DIVERS_REWARD_FLAG, @gotFlippers
 	jumpifitemobtained TREASURE_MASTERS_PLAQUE, @gotMastersPlaque
 	showtext TX_3400
 	orroomflag $40
@@ -6059,7 +6059,7 @@ masterDiverScript_text1:
 @seenIntroText:
 	showtext TX_3401
 	wait 20
-	giveitem TREASURE_FLIPPERS, $00
+	giverandomizeditem rando.seasonsSlot_masterDiversReward
 	wait 20
 @gotFlippers:
 	showtext TX_3404

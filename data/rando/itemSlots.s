@@ -91,6 +91,21 @@ seasonsSlot_spoolSwampCave:
 	.db  COLLECT_MODE_CHEST
 	.dw  $0000
 
+seasonsSlot_masterDiversChallenge:
+	dwbe TREASURE_OBJECT_MASTERS_PLAQUE_00
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_chestInMasterDiversCave:
+	dwbe TREASURE_OBJECT_RUPEES_05
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_masterDiversReward:
+	dwbe TREASURE_OBJECT_FLIPPERS_00
+	.db  COLLECT_MODE_PICKUP_2HAND_NOFLAG
+	.dw  seasonsSlotCallback_masterDiversReward
+
 ; ================================================================================
 ; SUBROSIA
 ; ================================================================================

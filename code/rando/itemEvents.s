@@ -85,4 +85,8 @@ seasonsSlotCallback_subrosiaMarket5thItem:
 	ld a,RANDO_SUBROSIA_MARKET_5_FLAG
 	jp setRandoFlag
 
+seasonsSlotCallback_masterDiversReward:
+	ld a,RANDO_MASTER_DIVERS_REWARD_FLAG
+	jp setRandoFlag
+
 .endif
