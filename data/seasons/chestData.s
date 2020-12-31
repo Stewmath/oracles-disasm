@@ -74,15 +74,15 @@ chestGroup4Data:
 	m_ChestDataRando $44, $31, rando.seasonsSlot_d2_bladeChest
 	m_ChestDataRando $57, $36, rando.seasonsSlot_d2_ropeChest
 	m_ChestDataRando $42, $38, rando.seasonsSlot_d2_leftFromEntrance
-	m_ChestData $18, $41, TREASURE_OBJECT_RUPEES_04
-	m_ChestData $28, $46, TREASURE_OBJECT_BOSS_KEY_03
-	m_ChestData $86, $44, TREASURE_OBJECT_GASHA_SEED_01
-	m_ChestData $68, $4c, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $57, $4d, TREASURE_OBJECT_COMPASS_02
-	m_ChestData $29, $4f, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $54, $51, TREASURE_OBJECT_MAP_02
-	m_ChestData $57, $50, TREASURE_OBJECT_FEATHER_00
-	m_ChestData $55, $54, TREASURE_OBJECT_BOMBS_00
+	m_ChestDataRando $18, $41, rando.seasonsSlot_d3_waterRoom
+	m_ChestDataRando $28, $46, rando.seasonsSlot_d3_giantBladeRoom
+	m_ChestDataRando $86, $44, rando.seasonsSlot_d3_quicksandTerrace
+	m_ChestDataRando $68, $4c, rando.seasonsSlot_d3_rollerChest
+	m_ChestDataRando $57, $4d, rando.seasonsSlot_d3_trampolineChest
+	m_ChestDataRando $29, $4f, rando.seasonsSlot_d3_zolChest
+	m_ChestDataRando $54, $51, rando.seasonsSlot_d3_bombedWallChest
+	m_ChestDataRando $57, $50, rando.seasonsSlot_d3_mimicChest
+	m_ChestDataRando $55, $54, rando.seasonsSlot_d3_moldormChest
 	m_ChestData $22, $63, TREASURE_OBJECT_SMALL_KEY_03
 	m_ChestData $95, $64, TREASURE_OBJECT_SMALL_KEY_03
 	m_ChestData $54, $69, TREASURE_OBJECT_MAP_02

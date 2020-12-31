@@ -272,4 +272,58 @@ seasonsSlot_d2_boss:
 	.db  COLLECT_MODE_POOF
 	.dw  $0000
 
+; ================================================================================
+; D3
+; ================================================================================
+
+seasonsSlot_d3_rollerChest:
+	dwbe TREASURE_OBJECT_SMALL_KEY_03
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d3_moldormChest:
+	dwbe TREASURE_OBJECT_BOMBS_00
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d3_bombedWallChest:
+	dwbe TREASURE_OBJECT_MAP_03
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d3_mimicChest:
+	dwbe TREASURE_OBJECT_FEATHER_00
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d3_trampolineChest:
+	dwbe TREASURE_OBJECT_COMPASS_03
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d3_zolChest:
+	dwbe TREASURE_OBJECT_SMALL_KEY_03
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d3_waterRoom:
+	dwbe TREASURE_OBJECT_RUPEES_04
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d3_quicksandTerrace:
+	dwbe TREASURE_OBJECT_GASHA_SEED_01
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d3_giantBladeRoom:
+	dwbe TREASURE_OBJECT_BOSS_KEY_03
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d3_boss:
+	dwbe TREASURE_OBJECT_HEART_CONTAINER_00
+	.db  COLLECT_MODE_POOF
+	.dw  $0000
+
 .endif

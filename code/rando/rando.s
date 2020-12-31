@@ -131,6 +131,7 @@ lookupRoomTreasure_body:
 	dbbw $04, $12, seasonsSlot_d1_boss
 	dbbw $04, $34, seasonsSlot_d2_ropeDrop
 	dbbw $04, $29, seasonsSlot_d2_boss
+	dbbw $04, $53, seasonsSlot_d3_boss
 	.db $ff
 
 
