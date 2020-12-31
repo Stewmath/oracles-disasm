@@ -38,7 +38,7 @@ chestGroup0Data:
 	m_ChestDataRando $58, $f9, rando.seasonsSlot_horonVillageSEChest
 	m_ChestDataRando $11, $8e, rando.seasonsSlot_chestOnTopOfD2
 	m_ChestData $45, $f4, TREASURE_OBJECT_X_SHAPED_JEWEL_00
-	m_ChestData $15, $5b, TREASURE_OBJECT_HEART_PIECE_01
+	m_ChestDataRando $15, $5b, rando.seasonsSlot_moblinKeep
 	m_ChestDataRando $33, $b8, rando.seasonsSlot_eyeglassLakeAcrossBridge
 	m_ChestData $11, $e3, TREASURE_OBJECT_RING_07
 	m_ChestData $18, $ff, TREASURE_OBJECT_RING_08
@@ -151,7 +151,7 @@ chestGroup5Data:
 	m_ChestData $47, $c6, TREASURE_OBJECT_GASHA_SEED_01
 	m_ChestDataRando $1d, $c8, rando.seasonsSlot_chestInGoronMountain
 	m_ChestDataRando $4a, $b6, rando.seasonsSlot_mtCuccoTalonsCave
-	m_ChestData $5c, $0e, TREASURE_OBJECT_RUPEES_05
+	m_ChestDataRando $5c, $0e, rando.seasonsSlot_natzuRegionAcrossWater
 	m_ChestDataRando $32, $12, rando.seasonsSlot_woodsOfWinter2ndCave
 chestGroup6Data:
 chestGroup7Data:

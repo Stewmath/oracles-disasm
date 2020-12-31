@@ -120,6 +120,20 @@ seasonsSlot_dryEyeglassLakeEastCave:
 	.dw  $0000
 
 ; ==============================================================================
+; Natzu
+; ==============================================================================
+
+seasonsSlot_natzuRegionAcrossWater:
+	dwbe TREASURE_OBJECT_RUPEES_05
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_moblinKeep:
+	dwbe TREASURE_OBJECT_HEART_PIECE_01
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+; ==============================================================================
 ; Spool Swamp
 ; ==============================================================================
 
