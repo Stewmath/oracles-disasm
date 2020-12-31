@@ -111,6 +111,21 @@ seasonsSlot_masterDiversReward:
 	.db  COLLECT_MODE_PICKUP_2HAND_NOFLAG
 	.dw  seasonsSlotCallback_masterDiversReward
 
+seasonsSlot_springBananaTree:
+	dwbe TREASURE_OBJECT_SPRING_BANANA_00
+	.db  COLLECT_MODE_PICKUP_2HAND
+	.dw  $0000
+
+seasonsSlot_mtCuccoPlatformCave:
+	dwbe TREASURE_OBJECT_RING_11
+	.db  COLLECT_MODE_FALL
+	.dw  $0000
+
+seasonsSlot_goronMountainAcrossPits:
+	dwbe TREASURE_OBJECT_DRAGON_KEY_00
+	.db  COLLECT_MODE_PICKUP_1HAND
+	.dw  $0000
+
 ; ================================================================================
 ; SUBROSIA
 ; ================================================================================

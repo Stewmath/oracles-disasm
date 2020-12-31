@@ -1772,7 +1772,7 @@ group5Mapb3ObjectData:
 	obj_End
 
 group5Mapb6ObjectData:
-	obj_Interaction $45 $00 $68 $58
+	obj_Interaction $45 $00 $88 $a8 ; RANDO: Moved Talon so he doesn't block the chest
 	obj_End
 
 group5Mapb7ObjectData:

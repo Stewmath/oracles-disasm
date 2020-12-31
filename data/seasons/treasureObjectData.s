@@ -298,6 +298,10 @@ treasureObjectData2d:
 	m_TreasureSubid $38, $03, $ff, $0e, TREASURE_OBJECT_RING_0f
 	m_TreasureSubid $38, $2d, $ff, $0e, TREASURE_OBJECT_RING_10
 
+	; RANDO: Item slots which used to use the "createRingTreasure" function need to have subids
+	; added explicitly.
+	m_TreasureSubid $00, $27, $ff, $0e, TREASURE_OBJECT_RING_11 ; GREEN_JOY_RING
+
 treasureObjectData30:
 	; RANDO: Changed how dungeon items work so that their parameter corresponds to their
 	; dungeon.  Added many subid entries as a result.

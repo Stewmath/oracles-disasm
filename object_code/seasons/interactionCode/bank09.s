@@ -2886,8 +2886,9 @@ _floodgateKey:
 	jp interactionSetScript
 
 _dragonKey:
-	ldbc TREASURE_DRAGON_KEY $00
-	jp _misc1_spawnTreasureBCifRoomFlagBit5NotSet
+	; RANDO: Spawn whatever's in the item slot
+	ld bc,rando.seasonsSlot_goronMountainAcrossPits
+	jp _misc1_spawnRandomizedTreasureBCifRoomFlagBit5NotSet
 	
 _tarmArmosUnlockingStairs:
 	ld e,Interaction.state
@@ -3121,7 +3122,15 @@ _greenJoyRing:
 	ld a,(wActiveTriggers)
 	or a
 	ret z
-	ldbc GREEN_JOY_RING $01
+
+	; RANDO: Spawn whatever's in the item slot
+	;ldbc GREEN_JOY_RING $01
+	ld bc,rando.seasonsSlot_mtCuccoPlatformCave
+	call spawnRandomizedTreasure
+	ret nz
+	call objectCopyPosition
+	jp interactionDelete
+
 _createRingTreasureAtPosition:
 	call createRingTreasure
 	ret nz
@@ -3500,8 +3509,11 @@ _mtCuccoBananaTree:
 	call getThisRoomFlags
 	and $20
 	jp nz,interactionDelete
-	ldbc TREASURE_SPRING_BANANA $00
-	call _misc1_spawnTreasureBC
+
+	; RANDO: Spawn whatever's in the item slot
+	ld bc,rando.seasonsSlot_springBananaTree
+	call _misc1_spawnRandomizedTreasureBC
+
 	ld b,h
 	ld a,$06
 	ldi (hl),a

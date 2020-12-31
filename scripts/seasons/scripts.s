@@ -3246,7 +3246,8 @@ zeldaScript_healLinkIfNeeded:
 caveTalonScript:
 	writememory $cfde, $00
 	writememory $cfdf, $00
-	spawninteraction INTERACID_TRADE_ITEM, $08, $68, $48
+	; RANDO: Moved mushroom to not block the chest
+	spawninteraction INTERACID_TRADE_ITEM, $08, $78, $a8
 	initcollisions
 -
 	checkabutton
