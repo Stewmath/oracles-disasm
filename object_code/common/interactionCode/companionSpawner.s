@@ -312,9 +312,11 @@ interactionCode5f:
 
 ; dimitri after being saved
 @subid04:
-	ld a,(wEssencesObtained)
-	bit 2,a
-	jr z,@deleteSelf
+	; RANDO: Disable essence check for sunken city event
+	;ld a,(wEssencesObtained)
+	;bit 2,a
+	;jr z,@deleteSelf
+
 	ld a,(wDimitriState)
 	and $20
 	jr z,@deleteSelf
