@@ -16,12 +16,14 @@ interactionCode8d:
 	ld a,(de)
 	cp INTERACID_S_MASTER_DIVER
 	jr nz,+
-	ld a,TREASURE_ESSENCE
-	call checkTreasureObtained
-	jp nc,interactionDelete
-	call getHighestSetBit
-	cp $02
-	jp c,interactionDelete
+
+	; RANDO: Enable master diver even without essences
+	;ld a,TREASURE_ESSENCE
+	;call checkTreasureObtained
+	;jp nc,interactionDelete
+	;call getHighestSetBit
+	;cp $02
+	;jp c,interactionDelete
 	; master diver - at least 3rd essence gotten
 +
 	call getSunkenCityNPCVisibleSubId_caller
