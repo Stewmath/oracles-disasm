@@ -108,8 +108,21 @@ getTreasureDataSprite:
 	ld e,(hl)
 	ret
 
+;;
+; Same as above but not accounting for progression.
+getTreasureDataSpriteWithoutProgression:
+	call getTreasureData_noAdjust
+	inc hl
+	inc hl
+	inc hl
+	ld e,(hl)
+	ret
+
 
 ;;
+; Note about hide & seek minigame: This does nothing to the feather because of the
+; "checkTreasureObtained" function call (you don't have the feather during the minigame).
+;
 ; @param	bc	Treasure object ID (may be modified)
 ; @param[out]	hl	The start of the upgraded treasure data (or unchanged)
 ; @param[out]	cflag	c if the treasure existed in the progressiveUpgrades table

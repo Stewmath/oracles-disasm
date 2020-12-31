@@ -178,7 +178,10 @@ subrosianScript_steaLinksFeather:
 	setstate $03
 	checkcollidedwithlink_onground
 	setstate $02
-	asm15 scriptHelp.subrosian_giveFoolsOre
+
+	; RANDO: Don't give fool's ore
+	;asm15 scriptHelp.subrosian_giveFoolsOre
+
 	delay 6
 	xorcfc0bit 4
 	setanimation $03

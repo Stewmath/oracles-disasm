@@ -24,8 +24,19 @@ checkLoadCustomSprite:
 	ld c,a
 	ld b,(hl)
 	pop hl
+
+	bit 7,b
+	jr z,+
+	res 7,b
+	ld h,b
+	ld l,c
+	call jpHl
+	call lookupItemSpriteWithoutProgression
+	jr ++
++
 	callab rando.lookupItemSlot
-	call lookupItemSprite
+	call lookupItemSpriteWithProgression
+++
 	pop bc
 	pop af
 	ret
@@ -38,10 +49,17 @@ checkLoadCustomSprite:
 
 
 ;;
+; Same as below but without accounting for item progression.
+lookupItemSpriteWithoutProgression:
+	callab treasureData.getTreasureDataSpriteWithoutProgression
+	jr +++
+
+;;
 ; @param	bc	Treasure object ID to get graphics for
 ; @param[out]	hl	Address of sprite data (pointing somewhere in "data/{game}/interactionData.s")
-lookupItemSprite:
+lookupItemSpriteWithProgression:
 	callab treasureData.getTreasureDataSprite
++++
 	ld a,e
 	ld hl,interaction60SubidData
 	add a
@@ -67,7 +85,18 @@ customSpriteLookupTable:
 	dbbw INTERACID_SUBROSIAN_SHOP,         $00, rando.seasonsSlot_subrosiaMarket1stItem
 	dbbw INTERACID_SUBROSIAN_SHOP,         $04, rando.seasonsSlot_subrosiaMarket2ndItem
 	dbbw INTERACID_SUBROSIAN_SHOP,         $0d, rando.seasonsSlot_subrosiaMarket5thItem
+	dbbw INTERACID_STEALING_FEATHER,       $00, $8000 | setStolenFeatherSprite
 	.db $ff
+
+
+setStolenFeatherSprite:
+	ld b,TREASURE_FEATHER
+	ld a,(wFeatherLevel)
+	dec a
+	ld c,a
+	ret
+
+
 
 .else; ROM_AGES
 	; RANDO-TODO
@@ -79,10 +108,6 @@ customSpriteLookupTable:
 ; These functions *must* pop af as the last instruction before returning.
 customSpriteJumpTable:
 ;	dbbw $59, $00, setPedestalSprite
-;	dbbw $6e, $00, setStolenFeatherSprite
-;	dbbw $81, $00, setMarket1Sprite
-;	dbbw $81, $04, setMarket2Sprite
-;	dbbw $81, $0d, setMarket5Sprite
 ;	dbbw $e6, $02, setTempleOfSeasonsSprite
 	.db $ff
 

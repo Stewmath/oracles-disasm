@@ -220,7 +220,11 @@ treasureObjectData17:
 	m_BeginTreasureSubids TREASURE_FEATHER
 	m_TreasureSubid $38, $01, $27, $16, TREASURE_OBJECT_FEATHER_00
 	m_TreasureSubid $38, $02, $28, $17, TREASURE_OBJECT_FEATHER_01
-	m_TreasureSubid $5a, $01, $37, $16, TREASURE_OBJECT_FEATHER_02
+
+	; RANDO: Feather from hide & seek appears without needing to be dug up. Also added
+	; a separate subid for the roc's cape.
+	m_TreasureSubid $1a, $01, $37, $16, TREASURE_OBJECT_FEATHER_02
+	m_TreasureSubid $1a, $01, $37, $17, TREASURE_OBJECT_FEATHER_03
 
 treasureObjectData20:
 	m_BeginTreasureSubids TREASURE_EMBER_SEEDS

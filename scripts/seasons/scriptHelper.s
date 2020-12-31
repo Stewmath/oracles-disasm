@@ -1841,7 +1841,13 @@ strangeBrothersFunc_15_5dc4:
 	call getThisRoomFlags
 	bit 5,(hl)
 	jr nz,_strangeBrothersFunc_15_5ddb
-	ldbc TREASURE_FEATHER $02
+
+	; RANDO: Spawn either the feather (subid $02) or cape (subid $03).
+	;ldbc TREASURE_FEATHER $02
+	ld b,TREASURE_FEATHER
+	ld a,(wFeatherLevel)
+	inc a
+	ld c,a
 	jr _strangeBrothersFunc_15_5e00
 	
 _strangeBrothersFunc_15_5ddb:

@@ -3334,11 +3334,19 @@ _stolenFeatherGottenHandler:
 @state1:
 	ld a,$01
 	ld ($ccab),a
-	call objectGetTileAtPosition
-	ld e,$49
-	ld a,(de)
-	cp (hl)
-	ret z
+
+	; RANDO: Allow transitioning off the screen after getting the feather, instead of after
+	; digging up the spot. (This means that you'll be able to transition early when playing the
+	; game a 2nd time, but that's no big deal.)
+	;call objectGetTileAtPosition
+	;ld e,$49
+	;ld a,(de)
+	;cp (hl)
+	;ret z
+	ld a,TREASURE_FEATHER
+	call checkTreasureObtained
+	ret nc
+
 	xor a
 	ld ($ccab),a
 	jp interactionDelete
