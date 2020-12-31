@@ -960,6 +960,87 @@ groups:
     text: |-
       GOAL!!!
 
+
+  # RANDO: Dungeon names for text substitution
+  - name: TX_00_D0_NAME
+    index: auto
+    text: |-
+      Hero's Cave
+
+  - name: TX_00_D1_NAME
+    index: auto
+    text: |-
+      Gnarled Root
+      Dungeon
+
+  - name: TX_00_D2_NAME
+    index: auto
+    text: |-
+      Snake's Remains
+
+  - name: TX_00_D3_NAME
+    index: auto
+    text: |-
+      Poison Moth's
+      Lair
+
+  - name: TX_00_D4_NAME
+    index: auto
+    text: |-
+      Dancing Dragon
+      Dungeon
+
+  - name: TX_00_D5_NAME
+    index: auto
+    text: |-
+      Unicorn's Cave
+
+  - name: TX_00_D6_NAME
+    index: auto
+    text: |-
+      Ancient Ruins
+
+  - name: TX_00_D7_NAME
+    index: auto
+    text: |-
+      Explorer's
+      Crypt
+
+  - name: TX_00_D8_NAME
+    index: auto
+    text: |-
+      Sword & Shield
+      Maze
+
+  # Dungeon-specific item text used when keysanity is enabled
+  - name: TX_00_KEYSANITY_KEY
+    index: auto
+    text: |-
+      You found a
+      \col(1)Small Key\col(0) for
+      \col(3)\call(0xfd)\col(0)!
+
+  - name: TX_00_KEYSANITY_MAP
+    index: auto
+    text: |-
+      You found the
+      \col(1)Dungeon Map\col(0) for
+      \col(3)\call(0xfd)\col(0)!
+
+  - name: TX_00_KEYSANITY_COMPASS
+    index: auto
+    text: |-
+      You found the
+      \col(1)Compass\col(0) for
+      \col(3)\call(0xfd)\col(0)!
+
+  - name: TX_00_KEYSANITY_BOSS_KEY
+    index: auto
+    text: |-
+      You found the
+      \col(1)Boss Key\col(0) for
+      \col(3)\call(0xfd)\col(0)!
+
 - group: 0x01
   data:
   - name: TX_0100

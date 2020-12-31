@@ -69,7 +69,7 @@ searchValue:
 ;
 ; @param	a	Flag to check
 ; @param[out]	z,cflag	Set if the flag is set
-checkRandoFlag:
+checkRandoItemFlag:
 	push hl
 	ld hl,wObtainedTreasureFlags
 	call checkFlag
@@ -80,6 +80,19 @@ checkRandoFlag:
 
 ;;
 ; @param	a	Flag to set
-setRandoFlag:
+setRandoItemFlag:
 	ld hl,wObtainedTreasureFlags
 	jp setFlag
+
+
+;;
+; Checks boolean configuration options for rando.
+;
+; @param	a	Option to check (see "constants/rando.s")
+; @param[out]	zflag	nz if set
+checkRandoConfig:
+	push hl
+	ld hl,randoConfig
+	call checkFlag
+	pop hl
+	ret

@@ -69,7 +69,7 @@ itemSlotCallbacksStart:
 
 seasonsSlotCallback_makuTree:
 	ld a,RANDO_MAKU_TREE_FLAG
-	jp setRandoFlag
+	jp setRandoItemFlag
 
 seasonsSlotCallback_subrosiaSeaside:
 	ld a,GLOBALFLAG_STAR_ORE_FOUND
@@ -83,10 +83,10 @@ seasonsSlotCallback_subrosiaMarket1stItem:
 
 seasonsSlotCallback_subrosiaMarket5thItem:
 	ld a,RANDO_SUBROSIA_MARKET_5_FLAG
-	jp setRandoFlag
+	jp setRandoItemFlag
 
 seasonsSlotCallback_masterDiversReward:
 	ld a,RANDO_MASTER_DIVERS_REWARD_FLAG
-	jp setRandoFlag
+	jp setRandoItemFlag
 
 .endif

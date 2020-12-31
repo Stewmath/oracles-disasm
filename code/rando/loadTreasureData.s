@@ -3,19 +3,31 @@
 
 
 ;;
-; RANDO: Modify the variables of an interaction of type INTERACID_TREASURE. This is called both when
-; it is spawned, and when it is time to give the treasure to Link.
+; Modify the variables of an interaction of type INTERACID_TREASURE. This is called both when it is
+; spawned, and when it is time to give the treasure to Link.
+;
+; Note that this is only called by treasure objects, and that the "giveTreasureCustom" function is
+; an alternate method of giving treasure; so, certain things (like modifying text to be shown) need
+; to be done in place that works for both.
 ;
 ; @param	d	Interaction to modify
 modifyTreasureInteraction:
+	push hl
 	ld e,Interaction.var30
 	ld a,(de) ; Treasure ID
 	ld b,a
 	ld e,Interaction.var03
 	ld a,(de) ; Treasure SubID
 	ld c,a
+	call @upgradeTreasure
+	call @modifyText
+	call @modifyKeys
+	pop hl
+	ret
+
+@upgradeTreasure:
 	call getUpgradedTreasure
-	jr nc,@loadedData
+	ret nc
 
 	ld a,b
 	ld e,Interaction.subid
@@ -23,18 +35,34 @@ modifyTreasureInteraction:
 	ld a,c
 	inc e
 	ld (de),a ; var03
+
+	push bc
 	; Call this again to make sure everything gets updated
 	call interactionLoadTreasureData
+	pop bc
+	ret
 
-@loadedData:
-	; Small keys only: Change behaviour when falling from the ceiling
+@modifyText:
+	call getModifiedTreasureText
+	ld e,Interaction.var35
+	ld (de),a
+	ret
+
+; Change behaviour of falling small keys when in non-keysanity mode
+@modifyKeys:
+	ld a,RANDO_CONFIG_KEYSANITY
+	call checkRandoConfig
+	ret nz
+
 	ld a,b
 	cp TREASURE_SMALL_KEY
-	jr nz,++
+	ret nz
+
+	; Only change behaviour when falling from ceiling
 	ld e,Interaction.var31
 	ld a,(de)
 	cp TREASURE_SPAWN_MODE_FROM_SCREEN_TOP
-	jr nz,++
+	ret nz
 
 	; Use GRAB_MODE_NO_CHANGE instead of GRAB_MODE_1_HAND
 	ld a,TREASURE_GRAB_MODE_NO_CHANGE
@@ -45,9 +73,7 @@ modifyTreasureInteraction:
 	ld a,$ff
 	ld e,Interaction.var35
 	ld (de),a
-++
 	ret
-
 
 ;;
 ; Looks up data for a treasure object, no rando-adjustments made.
@@ -78,21 +104,23 @@ getTreasureData_noAdjust:
 ;;
 ; Call through getTreasureDataBCE or getTreasureDataSprite.
 ;
-; @param	bc	Treasure object ID to look up
+; @param	bc	Treasure object ID to look up (may be modified)
 ; @param[out]	hl	The address of the treasure with ID b and subID c, accounting for
 ;			progressive upgrades.
-getTreasureDataHelper:
+_getTreasureDataHelper:
+	push de
 	call getTreasureData_noAdjust
-	jp getUpgradedTreasure
+	call getUpgradedTreasure
+	pop de
+	ret
 
 ;;
 ; Load final treasure ID, param, and text into b, c, and e (accounts for progressive upgrades).
 getTreasureDataBCE:
-	call getTreasureDataHelper
+	call getModifiedTreasureText
+	call _getTreasureDataHelper
 	inc hl
 	ld c,(hl)
-	inc hl
-	ld e,(hl)
 	ret
 
 ;;
@@ -101,7 +129,7 @@ getTreasureDataBCE:
 ; @param	bc	Treasure object ID
 ; @param[out]	e	Final treasure sprite
 getTreasureDataSprite:
-	call getTreasureDataHelper
+	call _getTreasureDataHelper
 	inc hl
 	inc hl
 	inc hl
@@ -137,9 +165,10 @@ getUpgradedTreasure:
 
 @notSpinSlash:
 	call checkTreasureObtained
-	ld c,a
-	ld a,b
 	ret nc
+
+	; RANDO-TODO: Check this harp stuff when ages is implemented
+	ld a,b
 	cp TREASURE_TUNE_OF_ECHOES
 	jr nz,@harpDone
 	ld a,TREASURE_TUNE_OF_CURRENTS
@@ -193,3 +222,65 @@ progressiveUpgrades:
 	.db $ff
 
 .endif
+
+
+;;
+; This gets the text for a treasure, accounting for keysanity modifications and progressive
+; upgrades. This may *also* write to wTextSubstitutions.
+;
+; @param	bc	Treasure object ID / SubID
+; @param[out]	a,e	Text index
+getModifiedTreasureText:
+	push hl
+
+	ld a,RANDO_CONFIG_KEYSANITY
+	call checkRandoConfig
+	jr z,@unmodifiedText
+
+	; Keysanity: Change the text to show for dungeon items
+	ld e,b
+	ld hl,@keysanityTextTable
+	call lookupKey
+	jr nc,@unmodifiedText
+	push af
+
+	; Get dungeon name for text substitution
+	call _getTreasureDataHelper
+	inc hl
+	ld a,(hl) ; Parameter (dungeon index)
+	ld hl,@dungeonTextTable
+	rst_addAToHl
+	ld a,(hl)
+	ld (wTextSubstitutions+2),a
+	pop af
+	pop hl
+	ld e,a
+	ret
+
+@unmodifiedText:
+	call _getTreasureDataHelper
+	inc hl
+	inc hl
+	ld a,(hl)
+	ld e,a
+	pop hl
+	ret
+
+
+@keysanityTextTable:
+	.db TREASURE_SMALL_KEY, <TX_00_KEYSANITY_KEY
+	.db TREASURE_MAP,       <TX_00_KEYSANITY_MAP
+	.db TREASURE_COMPASS,   <TX_00_KEYSANITY_COMPASS
+	.db TREASURE_BOSS_KEY,  <TX_00_KEYSANITY_BOSS_KEY
+	.db $00
+
+@dungeonTextTable:
+	.db <TX_00_D0_NAME
+	.db <TX_00_D1_NAME
+	.db <TX_00_D2_NAME
+	.db <TX_00_D3_NAME
+	.db <TX_00_D4_NAME
+	.db <TX_00_D5_NAME
+	.db <TX_00_D6_NAME
+	.db <TX_00_D7_NAME
+	.db <TX_00_D8_NAME

@@ -6066,7 +6066,7 @@ interactionCode81:
 	;ld a,TREASURE_MEMBERS_CARD
 	;call checkTreasureObtained
 	ld a,RANDO_SUBROSIA_MARKET_5_FLAG
-	call checkRandoFlag
+	call checkRandoItemFlag
 
 	jr c,@func_776b
 	jr @func_7770
@@ -7088,7 +7088,7 @@ makuTree_setAppropriateStage:
 
 	; RANDO: Keep the tree in its initial state until you've gotten the item from it.
 	ld a,RANDO_MAKU_TREE_FLAG
-	call checkRandoFlag
+	call checkRandoItemFlag
 	ld a,(wEssencesObtained)
 	;ld a,TREASURE_ESSENCE
 	;call checkTreasureObtained
@@ -7164,7 +7164,7 @@ _makuTree_setRoomFlag40OnGnarledKeyGet:
 	and $40
 	ret nz
 	ld a,RANDO_MAKU_TREE_FLAG
-	call checkRandoFlag
+	call checkRandoItemFlag
 	ret nc
 	set 6,(hl)
 	ret
