@@ -734,15 +734,19 @@ interactionCode8f:
 	jp npcFaceLinkAndAnimate
 
 @checkHaveEssences:
-	ld a,(wEssencesObtained)
-	call getNumSetBits
-	ld h,d
+	; RANDO: Disable essence check for old man who give the jewel.
 	ld l,Interaction.var38
-	cp $05
-	ld (hl),$00
-	ret c
-	inc (hl)
+	ld (hl),$01
 	ret
+	;ld a,(wEssencesObtained)
+	;call getNumSetBits
+	;ld h,d
+	;ld l,Interaction.var38
+	;cp $05
+	;ld (hl),$00
+	;ret c
+	;inc (hl)
+	;ret
 
 
 ; ==============================================================================
