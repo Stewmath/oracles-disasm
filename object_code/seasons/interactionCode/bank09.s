@@ -6018,12 +6018,18 @@ interactionCode81:
 	jr z,@shield
 	cp $0d
 	jr nz,@func_7770
+
 	; member's card
-	ld a,(wEssencesObtained)
-	bit 2,a
-	jr z,@func_776b
-	ld a,TREASURE_MEMBERS_CARD
-	call checkTreasureObtained
+	; RANDO: Skip essence check & don't rely on the "member's card" treasure flag
+	;ld a,(wEssencesObtained)
+	;bit 2,a
+	;jr z,@func_776b
+
+	;ld a,TREASURE_MEMBERS_CARD
+	;call checkTreasureObtained
+	ld a,RANDO_SUBROSIA_MARKET_5_FLAG
+	call checkRandoFlag
+
 	jr c,@func_776b
 	jr @func_7770
 @shield:
@@ -6091,11 +6097,11 @@ interactionCode81:
 	.db $00, $00,             $00, RUPEEVAL_005
 	.db $00, <wNumGaleSeeds,  $20, $00
 @table_77da:
-	.db TREASURE_RIBBON,        $00
+	dwbe rando.seasonsSlot_subrosiaMarket1stItem | $8000
 	.db TREASURE_BOMBS,         $10
 	.db TREASURE_GASHA_SEED,    $01
 	.db TREASURE_GASHA_SEED,    $01
-	.db TREASURE_HEART_PIECE,   $01
+	dwbe rando.seasonsSlot_subrosiaMarket2ndItem | $8000
 	.db TREASURE_RING,          $03
 	.db TREASURE_RING,          $03
 	.db TREASURE_RING,          $03
@@ -6104,7 +6110,7 @@ interactionCode81:
 	.db TREASURE_SHIELD,        $01
 	.db TREASURE_PEGASUS_SEEDS, $10
 	.db TREASURE_HEART_REFILL,  $0c
-	.db TREASURE_MEMBERS_CARD,  $10
+	dwbe rando.seasonsSlot_subrosiaMarket5thItem | $8000
 	.db TREASURE_ORE_CHUNKS,    $04
 @state1:
 	call interactionAnimateAsNpc
@@ -6191,18 +6197,35 @@ interactionCode81:
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld c,(hl)
+
+	; RANDO: Handle randomized market treasure
+	bit 7,a
+	jr z,@notRandomized
+	and $7f
+	ld b,a
+	call giveTreasureCustom
+	jr ++
+
+@notRandomized:
 	cp $2d
 	jr nz,+
 	call getRandomRingOfGivenTier
 +
 	call giveTreasure
+++
 	ld e,Interaction.subid
 	ld a,(de)
 	ld hl,@table_78b1
 	rst_addAToHl
 	ld c,(hl)
 	ld b,$00
+
+	; RANDO: Don't show text if the value is $ff (will be handled elsewhere)
+	ld a,c
+	cp $ff
+	jr z,+
 	call showText
++
 	ld e,Interaction.subid
 	ld a,(de)
 	cp $04
@@ -6215,11 +6238,11 @@ interactionCode81:
 	inc (hl)
 	ret
 @table_78b1:
-	.db <TX_0041 ; Ribbon
+	.db $ff      ; Ribbon
 	.db <TX_0000 ; this table not used for bomb upgrade
 	.db <TX_004b ; Gasha seed
 	.db <TX_004b ; Gasha seed
-	.db <TX_0017 ; Piece of heart
+	.db $ff      ; Piece of heart
 	.db <TX_0054 ; Ring
 	.db <TX_0054 ; Ring
 	.db <TX_0054 ; Ring
@@ -6228,7 +6251,7 @@ interactionCode81:
 	.db <TX_001f ; Shield
 	.db <TX_0050 ; 10 pegasus seeds
 	.db <TX_004c ; 3 hearts
-	.db <TX_0045 ; Member's card
+	.db $ff      ; Member's card
 	.db <TX_004e ; 10 ore chunks
 @substate1:
 	call retIfTextIsActive

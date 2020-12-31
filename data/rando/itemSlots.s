@@ -125,6 +125,21 @@ seasonsSlot_subrosiaSeaside:
 	.db  COLLECT_MODE_DIG
 	.dw  seasonsSlotCallback_subrosiaSeaside
 
+seasonsSlot_subrosiaMarket1stItem:
+	dwbe TREASURE_OBJECT_RIBBON_00
+	.db  $00
+	.dw  seasonsSlotCallback_subrosiaMarket1stItem
+
+seasonsSlot_subrosiaMarket2ndItem:
+	dwbe TREASURE_OBJECT_HEART_PIECE_03
+	.db  $00
+	.dw  seasonsSlotCallback_subrosiaMarket1stItem
+
+seasonsSlot_subrosiaMarket5thItem:
+	dwbe TREASURE_OBJECT_MEMBERS_CARD_00
+	.db  $00
+	.dw  seasonsSlotCallback_subrosiaMarket5thItem
+
 ; ================================================================================
 ; D0
 ; ================================================================================

@@ -128,7 +128,7 @@ treasureObjectData:
 	/* $43 */ m_TreasureSubid   $09, $00, $43, $45, TREASURE_OBJECT_FLOODGATE_KEY_00
 	/* $44 */ m_TreasureSubid   $09, $00, $44, $46, TREASURE_OBJECT_DRAGON_KEY_00
 	/* $45 */ m_TreasureSubid   $5a, $00, $40, $57, TREASURE_OBJECT_STAR_ORE_00
-	/* $46 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_RIBBON_00
+	/* $46 */ m_TreasureSubid   $00, $00, $41, $4c, TREASURE_OBJECT_RIBBON_00
 	/* $47 */ m_TreasureSubid   $0a, $00, $66, $54, TREASURE_OBJECT_SPRING_BANANA_00
 	/* $48 */ m_TreasureSubid   $09, $01, $67, $55, TREASURE_OBJECT_RICKY_GLOVES_00
 	/* $49 */ m_TreasureSubid   $0a, $00, $3c, $56, TREASURE_OBJECT_BOMB_FLOWER_00
@@ -141,7 +141,7 @@ treasureObjectData:
 	/* $50 */ m_TreasureSubid   $38, $00, $3f, $59, TREASURE_OBJECT_RED_ORE_00
 	/* $51 */ m_TreasureSubid   $38, $00, $3e, $58, TREASURE_OBJECT_BLUE_ORE_00
 	/* $52 */ m_TreasureSubid   $0a, $00, $3d, $5a, TREASURE_OBJECT_HARD_ORE_00
-	/* $53 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_MEMBERS_CARD_00
+	/* $53 */ m_TreasureSubid   $00, $00, $45, $48, TREASURE_OBJECT_MEMBERS_CARD_00
 	/* $54 */ m_TreasureSubid   $38, $00, $70, $26, TREASURE_OBJECT_MASTERS_PLAQUE_00
 	/* $55 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_55_00
 	/* $56 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_56_00
@@ -257,6 +257,8 @@ treasureObjectData2b:
 	m_TreasureSubid $0a, $01, $17, $3a, TREASURE_OBJECT_HEART_PIECE_00
 	m_TreasureSubid $38, $01, $17, $3a, TREASURE_OBJECT_HEART_PIECE_01
 	m_TreasureSubid $02, $01, $17, $3a, TREASURE_OBJECT_HEART_PIECE_02
+	; RANDO: Added a subid for the rare peach stone.
+	m_TreasureSubid $02, $01, $17, $4b, TREASURE_OBJECT_HEART_PIECE_03
 
 treasureObjectData2a:
 	m_BeginTreasureSubids TREASURE_HEART_CONTAINER

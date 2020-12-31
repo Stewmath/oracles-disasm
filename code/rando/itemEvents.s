@@ -75,4 +75,14 @@ seasonsSlotCallback_subrosiaSeaside:
 	ld a,GLOBALFLAG_STAR_ORE_FOUND
 	jp setGlobalFlag
 
+seasonsSlotCallback_subrosiaMarket1stItem:
+	; This used to be done automatically when you get the ribbon, but obviously the treasure you
+	; get might not be the ribbon
+	ld a,TREASURE_STAR_ORE
+	jp loseTreasure
+
+seasonsSlotCallback_subrosiaMarket5thItem:
+	ld a,RANDO_SUBROSIA_MARKET_5_FLAG
+	jp setRandoFlag
+
 .endif

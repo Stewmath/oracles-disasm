@@ -64,6 +64,9 @@ customSpriteLookupTable:
 	dbbw INTERACID_SHOP_ITEM,              $05, rando.seasonsSlot_membersShop3
 	dbbw INTERACID_SHOP_ITEM,              $0d, rando.seasonsSlot_shop150Rupees
 	dbbw INTERACID_GET_ROD_OF_SEASONS,     $02, rando.seasonsSlot_templeOfSeasons
+	dbbw INTERACID_SUBROSIAN_SHOP,         $00, rando.seasonsSlot_subrosiaMarket1stItem
+	dbbw INTERACID_SUBROSIAN_SHOP,         $04, rando.seasonsSlot_subrosiaMarket2ndItem
+	dbbw INTERACID_SUBROSIAN_SHOP,         $0d, rando.seasonsSlot_subrosiaMarket5thItem
 	.db $ff
 
 .else; ROM_AGES
