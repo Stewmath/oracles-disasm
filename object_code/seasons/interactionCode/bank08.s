@@ -4504,19 +4504,24 @@ _table_6c09:
 	.db $00 $08 $08 $00 $00 $00 $10 $10
 	.db $00 $00 $00 $20 $20 $00 $00 $00
 _func_6c29:
-	ld a,TREASURE_ESSENCE
-	call checkTreasureObtained
-	jr c,+
-	xor a
-+
-	cp $20
+	; RANDO: Skip essence check for piratian captain
 	ld a,$01
-	jr nc,+
-	xor a
-+
 	ld e,$7a
 	ld (de),a
 	ret
+	;ld a,TREASURE_ESSENCE
+	;call checkTreasureObtained
+	;jr c,+
+	;xor a
++
+	;cp $20
+	;ld a,$01
+	;jr nc,+
+	;xor a
++
+	;ld e,$7a
+	;ld (de),a
+	;ret
 _func_6c3c:
 	ld a,TREASURE_PIRATES_BELL
 	call checkTreasureObtained
