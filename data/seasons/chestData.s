@@ -37,10 +37,10 @@ chestGroup0Data:
 	m_ChestDataRando $11, $f5, rando.seasonsSlot_horonVillageSWChest
 	m_ChestDataRando $58, $f9, rando.seasonsSlot_horonVillageSEChest
 	m_ChestDataRando $11, $8e, rando.seasonsSlot_chestOnTopOfD2
-	m_ChestData $45, $f4, TREASURE_OBJECT_X_SHAPED_JEWEL_00
+	m_ChestDataRando $45, $f4, rando.seasonsSlot_blackBeastsChest
 	m_ChestDataRando $15, $5b, rando.seasonsSlot_moblinKeep
 	m_ChestDataRando $33, $b8, rando.seasonsSlot_eyeglassLakeAcrossBridge
-	m_ChestData $11, $e3, TREASURE_OBJECT_RING_07
+	m_ChestDataRando $11, $e3, rando.seasonsSlot_westernCoastBeachChest
 	m_ChestDataRando $18, $ff, rando.seasonsSlot_samasaDesertChest
 	.db $ff
 
@@ -52,7 +52,7 @@ chestGroup1Data:
 chestGroup2Data:
 chestGroup3Data:
 	m_ChestData $34, $9b, TREASURE_OBJECT_GASHA_SEED_01
-	m_ChestData $13, $88, TREASURE_OBJECT_BOMBS_00
+	m_ChestDataRando $13, $88, rando.seasonsSlot_westernCoastInHouse
 	.db $ff
 
 chestGroup4Data:

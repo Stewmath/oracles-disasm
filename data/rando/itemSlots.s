@@ -57,6 +57,25 @@ seasonsSlot_membersShop3:
 	.dw  $0000
 
 ; ==============================================================================
+; Western Coast
+; ==============================================================================
+
+seasonsSlot_blackBeastsChest:
+	dwbe TREASURE_OBJECT_X_SHAPED_JEWEL_00
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_westernCoastBeachChest:
+	dwbe TREASURE_OBJECT_RING_07
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_westernCoastInHouse:
+	dwbe TREASURE_OBJECT_BOMBS_00
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+; ==============================================================================
 ; Eastern Suburbs / Woods of Winter
 ; ==============================================================================
 
