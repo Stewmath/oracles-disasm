@@ -111,7 +111,7 @@ chestGroup4Data:
 	m_ChestData $57, $e0, TREASURE_OBJECT_RING_09
 	m_ChestData $25, $e1, TREASURE_OBJECT_RING_0a
 	m_ChestData $7d, $f7, TREASURE_OBJECT_GASHA_SEED_01
-	m_ChestData $57, $fa, TREASURE_OBJECT_SQUARE_JEWEL_00
+	m_ChestDataRando $57, $fa, rando.seasonsSlot_spoolSwampCave
 	m_ChestData $57, $fb, TREASURE_OBJECT_RUPEES_06
 	m_ChestData $57, $f1, TREASURE_OBJECT_GASHA_SEED_01
 	.db $ff

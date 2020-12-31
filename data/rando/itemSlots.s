@@ -86,6 +86,11 @@ seasonsSlot_floodgateKeepersHouse:
 	.db  COLLECT_MODE_PICKUP_1HAND
 	.dw  $0000
 
+seasonsSlot_spoolSwampCave:
+	dwbe TREASURE_OBJECT_SQUARE_JEWEL_00
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
 ; ================================================================================
 ; SUBROSIA
 ; ================================================================================

@@ -1682,7 +1682,9 @@ group4Mapf8ObjectData:
 	obj_End
 
 group4MapfaObjectData:
-	obj_Interaction $90 $04 $58 $78
+	; RANDO: Remove linked event from the spool swamp cave (this will make the chest act like
+	; a normal chest)
+	;obj_Interaction $90 $04 $58 $78
 	obj_End
 
 group4MapfbObjectData:
