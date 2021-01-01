@@ -1159,12 +1159,24 @@ piratian_replaceTileAtPiratian:
 headToPirateShip:
 	ld a,GLOBALFLAG_PIRATES_LEFT_FOR_SHIP
 	call setGlobalFlag
+
+	; RANDO: Remove cutscene after talking to pirates & warp directly to the docked ship.
+	ld a,GLOBALFLAG_PIRATE_SHIP_DOCKED
+	call setGlobalFlag
+	ld a,GLOBALFLAG_TALKED_WITH_GHOST_PIRATE
+	call setGlobalFlag
+	ld hl,wPresentRoomFlags+$e2
+	set 6,(hl) ; Disable end of cutscene (after docking on the beach)
+
+	; RANDO-TODO: Set season
+
 	ld hl,@warpDestVariables
 	call setWarpDestVariables
 	ld a,$8d
 	jp playSound
+
 @warpDestVariables:
-	m_HardcodedWarpA ROOM_SEASONS_174 $00 $42 $83
+	m_HardcodedWarpA ROOM_SEASONS_0e2 $00 $66 $83
 
 piratesDeparting_spawnPirateFromShip:
 	call getFreeInteractionSlot
