@@ -313,7 +313,7 @@ explorersCryptScript_keyDroppedFromAbove:
 	jumpifroomflagset $80, @keyDroppedFromAbove
 	scriptend
 @keyDroppedFromAbove:
-	spawnitem TREASURE_SMALL_KEY, $01
+	spawnrandomizeditem rando.seasonsSlot_d7_zolButton
 	scriptend
 
 

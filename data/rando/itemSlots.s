@@ -699,4 +699,68 @@ seasonsSlot_d6_boss:
 	.db  COLLECT_MODE_POOF
 	.dw  $0000
 
+; ==============================================================================
+; D7
+; ==============================================================================
+
+seasonsSlot_d7_bombedWallChest:
+	dwbe TREASURE_OBJECT_COMPASS_07
+	.db  COLLECT_MODE_CHEST_MAP_OR_COMPASS
+	.dw  $0000
+
+seasonsSlot_d7_wizzrobeChest:
+	dwbe TREASURE_OBJECT_SMALL_KEY_07
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d7_rightOfEntrance:
+	dwbe TREASURE_OBJECT_RING_0e
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d7_zolButton:
+	dwbe TREASURE_OBJECT_SMALL_KEY_07
+	.db  COLLECT_MODE_FALL
+	.dw  $0000
+
+seasonsSlot_d7_armosPuzzle:
+	dwbe TREASURE_OBJECT_SMALL_KEY_07
+	.db  COLLECT_MODE_FALL
+	.dw  $0000
+
+seasonsSlot_d7_magunesuChest:
+	dwbe TREASURE_OBJECT_SMALL_KEY_07
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d7_quicksandChest:
+	dwbe TREASURE_OBJECT_MAP_07
+	.db  COLLECT_MODE_CHEST_MAP_OR_COMPASS
+	.dw  $0000
+
+seasonsSlot_d7_spikeChest:
+	dwbe TREASURE_OBJECT_FEATHER_00
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d7_mazeChest:
+	dwbe TREASURE_OBJECT_RUPEES_00
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d7_b2fDrop:
+	dwbe TREASURE_OBJECT_SMALL_KEY_07
+	.db  COLLECT_MODE_FALL
+	.dw  $0000
+
+seasonsSlot_d7_stalfosChest:
+	dwbe TREASURE_OBJECT_BOSS_KEY_07
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d7_boss:
+	dwbe TREASURE_OBJECT_HEART_CONTAINER_00
+	.db  COLLECT_MODE_POOF
+	.dw  $0000
+
 .endif

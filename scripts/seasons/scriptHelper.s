@@ -253,13 +253,18 @@ D7MagnetBallRoom_addChest:
 
 
 D7dropKeyDownAFloor:
-	call getFreeInteractionSlot
+	; RANDO: Spawn whatever should be in the item slot
+	ld bc,rando.seasonsSlot_d7_zolButton
+	call spawnRandomizedTreasure
 	ret nz
-	ld (hl),INTERACID_TREASURE
-	inc l
-	ld (hl),$30
-	inc l
-	ld (hl),$01
+	;call getFreeInteractionSlot
+	;ret nz
+	;ld (hl),INTERACID_TREASURE
+	;inc l
+	;ld (hl),$30
+	;inc l
+	;ld (hl),$01
+
 	call objectCopyPosition
 	call getThisRoomFlags
 	set 6,(hl)

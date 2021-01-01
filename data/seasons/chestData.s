@@ -117,14 +117,14 @@ chestGroup4Data:
 	.db $ff
 
 chestGroup5Data:
-	m_ChestData $87, $43, TREASURE_OBJECT_RUPEES_00
-	m_ChestData $47, $44, TREASURE_OBJECT_FEATHER_00
-	m_ChestData $61, $47, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $57, $48, TREASURE_OBJECT_BOSS_KEY_03
-	m_ChestData $3b, $52, TREASURE_OBJECT_COMPASS_02
-	m_ChestData $46, $54, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $57, $58, TREASURE_OBJECT_MAP_02
-	m_ChestData $2b, $5a, TREASURE_OBJECT_RING_0e
+	m_ChestDataRando $87, $43, rando.seasonsSlot_d7_mazeChest
+	m_ChestDataRando $47, $44, rando.seasonsSlot_d7_spikeChest
+	m_ChestDataRando $61, $47, rando.seasonsSlot_d7_magunesuChest
+	m_ChestDataRando $57, $48, rando.seasonsSlot_d7_stalfosChest
+	m_ChestDataRando $3b, $52, rando.seasonsSlot_d7_bombedWallChest
+	m_ChestDataRando $46, $54, rando.seasonsSlot_d7_wizzrobeChest
+	m_ChestDataRando $57, $58, rando.seasonsSlot_d7_quicksandChest
+	m_ChestDataRando $2b, $5a, rando.seasonsSlot_d7_rightOfEntrance
 	m_ChestData $75, $6a, TREASURE_OBJECT_BOMBS_00
 	m_ChestData $5c, $6b, TREASURE_OBJECT_SMALL_KEY_03
 	m_ChestData $74, $70, TREASURE_OBJECT_SMALL_KEY_03

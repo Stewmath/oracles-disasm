@@ -1231,8 +1231,12 @@ interactionCode66:
 	call playSound
 	jp interactionDelete
 +
-	ldbc TREASURE_SMALL_KEY $01
-	call createTreasure
+	; RANDO: Spawn whatever should be in the item slot.
+	ld bc,rando.seasonsSlot_d7_armosPuzzle
+	call spawnRandomizedTreasure
+	;ldbc TREASURE_SMALL_KEY $01
+	;call createTreasure
+
 	call objectCopyPosition
 	jp interactionDelete
 _func_5694:
