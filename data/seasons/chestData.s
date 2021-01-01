@@ -113,7 +113,7 @@ chestGroup4Data:
 	m_ChestDataRando $7d, $f7, rando.seasonsSlot_easternSuburbsOnCliff
 	m_ChestDataRando $57, $fa, rando.seasonsSlot_spoolSwampCave
 	m_ChestDataRando $57, $fb, rando.seasonsSlot_dryEyeglassLakeWestCave
-	m_ChestData $57, $f1, TREASURE_OBJECT_GASHA_SEED_01
+	m_ChestDataRando $57, $f1, rando.seasonsSlot_subrosiaOpenCave
 	.db $ff
 
 chestGroup5Data:
@@ -148,7 +148,7 @@ chestGroup5Data:
 	m_ChestDataRando $1c, $bc, rando.seasonsSlot_masterDiversChallenge
 	m_ChestDataRando $22, $bd, rando.seasonsSlot_chestInMasterDiversCave
 	m_ChestDataRando $45, $c0, rando.seasonsSlot_dryEyeglassLakeEastCave
-	m_ChestData $47, $c6, TREASURE_OBJECT_GASHA_SEED_01
+	m_ChestDataRando $47, $c6, rando.seasonsSlot_subrosiaLockedCave
 	m_ChestDataRando $1d, $c8, rando.seasonsSlot_chestInGoronMountain
 	m_ChestDataRando $4a, $b6, rando.seasonsSlot_mtCuccoTalonsCave
 	m_ChestDataRando $5c, $0e, rando.seasonsSlot_natzuRegionAcrossWater

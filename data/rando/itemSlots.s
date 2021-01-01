@@ -316,6 +316,16 @@ seasonsSlot_subrosiaMarket5thItem:
 	.db  $00
 	.dw  seasonsSlotCallback_subrosiaMarket5thItem
 
+seasonsSlot_subrosiaOpenCave:
+	dwbe TREASURE_OBJECT_GASHA_SEED_01
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_subrosiaLockedCave:
+	dwbe TREASURE_OBJECT_GASHA_SEED_01
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
 seasonsSlot_subrosianWildsChest:
 	dwbe TREASURE_OBJECT_BLUE_ORE_00
 	.db  COLLECT_MODE_CHEST
