@@ -59,6 +59,13 @@ randoInitializeFile:
 	set (TREASURE_RING_BOX & 7),(hl)
 	ld a,$03
 	ld (wRingBoxLevel),a
+
+	; Fix initial season
+	ld hl,bank1.roomPackSeasonTable+$10 ; North Horon season
+	ld e,:bank1.roomPackSeasonTable
+	call readByte
+	ld a,e
+	ld (wDeathRespawnBuffer.stateModifier),a
 	
 	; linked start item (RANDO-TODO)
 	;ld a,(wIsLinkedGame)

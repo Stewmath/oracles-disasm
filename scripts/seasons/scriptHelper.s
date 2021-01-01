@@ -1173,7 +1173,12 @@ headToPirateShip:
 	ld hl,wPresentRoomFlags+$e2
 	set 6,(hl) ; Disable end of cutscene (after docking on the beach)
 
-	; RANDO-TODO: Set season
+	; Fix the season
+	ld hl,bank1.roomPackSeasonTable+$1b ; Western Coast season
+	ld e,:bank1.roomPackSeasonTable
+	call readByte
+	ld a,e
+	ld (wRoomStateModifier),a
 
 	ld hl,@warpDestVariables
 	call setWarpDestVariables
