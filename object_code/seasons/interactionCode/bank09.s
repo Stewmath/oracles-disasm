@@ -7117,7 +7117,12 @@ makuTree_setAppropriateStage:
 	; dungeon 1 to 5?
 	cp $1f
 	jr z,@highestEssenceIs5
-	call getHighestSetBit
+
+	; RANDO: Set stage by NUMBER of essences obtained, not the LATEST essence obtained.
+	; This is important for the maku seed cutscene.
+	;call getHighestSetBit
+	call getNumSetBits
+
 	jr nc,+
 	inc a
 +

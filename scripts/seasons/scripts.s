@@ -5899,6 +5899,13 @@ script71c8:
 	setcounter1 $61
 	playsound SND_GETSEED
 	giveitem TREASURE_MAKU_SEED, $00
+
+	; RANDO: End cutscene right after getting the maku seed.
+	setglobalflag GLOBALFLAG_GOT_MAKU_SEED
+	enableinput
+	scriptend
+
+	/*
 	wait 40
 	asm15 scriptHelp.makuTree_storeIntoVar37SpawnBubbleIf0, $01
 	asm15 scriptHelp.makuTree_showTextAndSetMapText, <TX_1718 ; you can defeat Onox
@@ -5907,6 +5914,7 @@ script71c8:
 	asm15 scriptHelp.makuTree_OnoxTauntingAfterMakuSeedGet
 	setcounter1 $ff
 	scriptend
+	*/
 	
 	
 _stageMakuSeedGotten:
@@ -7241,6 +7249,12 @@ linkedCutsceneScript_witches1:
 
 linkedCutsceneScript_witches2:
 	checkflagset $00, wScrollMode
+
+	; RANDO: End the northern peaks cutscene before onox's castle early.
+	setglobalflag GLOBALFLAG_WITCHES_2_SEEN
+	enableinput
+	scriptend
+
 	disablemenu
 	setdisabledobjects $35
 	setcoords $18, $50
