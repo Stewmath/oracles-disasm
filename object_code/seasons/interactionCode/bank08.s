@@ -7197,9 +7197,10 @@ _subrosianAtD8_subid0:
 	.dw @state2
 
 @state0:
-	call _subrosianAtD8_getNumEssences
-	cp $07
-	jp c,interactionDelete
+	; RANDO: Don't disappear when you don't have 7 essences
+	;call _subrosianAtD8_getNumEssences
+	;cp $07
+	;jp c,interactionDelete
 
 	call interactionInitGraphics
 	ld hl,mainScripts.subrosianAtD8Script
@@ -7287,9 +7288,10 @@ _subrosianAtD8_subid1:
 	.dw @state1
 
 @state0:
-	call _subrosianAtD8_getNumEssences
-	cp $07
-	jp c,interactionDelete
+	; RANDO: Don't disappear when you don't have 7 essences
+	;call _subrosianAtD8_getNumEssences
+	;cp $07
+	;jp c,interactionDelete
 
 	call getThisRoomFlags
 	and $40
@@ -7307,7 +7309,10 @@ _subrosianAtD8_subid1:
 	ld a,DISABLE_LINK
 	ld (wDisabledObjects),a
 	ld (wMenuDisabled),a
-	ld (wDisableScreenTransitions),a
+
+	; RANDO: Allow player to leave the screen after the skipped cutscene
+	;ld (wDisableScreenTransitions),a
+
 	ld a,90
 	call setScreenShakeCounter
 
@@ -7319,6 +7324,33 @@ _subrosianAtD8_subid1:
 	jp playSound
 
 @state1:
+	; RANDO: Shorten the cutscene.
+	ld c,INTERACID_SUBROSIAN_AT_D8
+	call objectFindSameTypeObjectWithID ; Find the subrosian object
+	ret nz
+	ld l,Interaction.state
+	ld a,(hl)
+	cp $01
+	ret nz
+
+	push hl
+	call interactionDelete
+	call getThisRoomFlags
+	set 6,(hl)
+
+	; We've deleted ourselves, but do stuff to the subid 0 interaction (the subrosian)
+	pop de
+	ld e,Interaction.state
+	ld a,$02
+	ld (de),a
+	ld hl,mainScripts.subrosianAtD8Script
+	call interactionSetScript
+
+	ld a,GLOBALFLAG_TEMPLE_REMAINS_FILLED_WITH_LAVA
+	jp setGlobalFlag
+
+	; Original state 1 code
+	/*
 	ld a,(wScreenShakeCounterY)
 	or a
 	ret nz
@@ -7329,6 +7361,7 @@ _subrosianAtD8_subid1:
 	ld (wCutsceneTrigger),a
 	call fadeoutToWhite
 	jp interactionDelete
+	*/
 
 ;;
 _subrosianAtD8_getNumEssences:
