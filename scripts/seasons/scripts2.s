@@ -561,14 +561,17 @@ script_14_4aea:
 	writememory $d008, $00
 	delay 8
 	showtext TX_2a03
-	setmusic $31
-	setcounter1 $7d
-	setstate $03
-	callscript mainScripts.script62b1
-	callscript mainScripts.script62b1
-	setcounter1 $c6
-	callscript mainScripts.script62b1
-	callscript mainScripts.script62b1
+
+	; RANDO: Skip the dancing during the hard ore smelting cutscene.
+	;setmusic $31
+	;setcounter1 $7d
+	;setstate $03
+	;callscript mainScripts.script62b1
+	;callscript mainScripts.script62b1
+	;setcounter1 $c6
+	;callscript mainScripts.script62b1
+	;callscript mainScripts.script62b1
+
 	asm15 scriptHelp.headSmelter_smeltingDone
 	playsound $79
 	delay 6
