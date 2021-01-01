@@ -763,4 +763,78 @@ seasonsSlot_d7_boss:
 	.db  COLLECT_MODE_POOF
 	.dw  $0000
 
+; ==============================================================================
+; D8
+; ==============================================================================
+
+seasonsSlot_d8_eyeDrop:
+	dwbe TREASURE_OBJECT_SMALL_KEY_08
+	.db  COLLECT_MODE_FALL
+	.dw  $0000
+
+seasonsSlot_d8_threeEyesChest:
+	dwbe TREASURE_OBJECT_RING_06
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d8_hardhatDrop:
+	dwbe TREASURE_OBJECT_SMALL_KEY_08
+	.db  COLLECT_MODE_FALL
+	.dw  $0000
+
+seasonsSlot_d8_spikeRoom:
+	dwbe TREASURE_OBJECT_COMPASS_08
+	.db  COLLECT_MODE_CHEST_MAP_OR_COMPASS
+	.dw  $0000
+
+seasonsSlot_d8_armosChest:
+	dwbe TREASURE_OBJECT_SLINGSHOT_00
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d8_magnetBallRoom:
+	dwbe TREASURE_OBJECT_MAP_08
+	.db  COLLECT_MODE_CHEST_MAP_OR_COMPASS
+	.dw  $0000
+
+seasonsSlot_d8_spinnerChest:
+	dwbe TREASURE_OBJECT_SMALL_KEY_08
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d8_darknutChest:
+	dwbe TREASURE_OBJECT_SMALL_KEY_08
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d8_polsVoiceChest:
+	dwbe TREASURE_OBJECT_BOSS_KEY_08
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d8_ghostArmosDrop:
+	dwbe TREASURE_OBJECT_SMALL_KEY_08
+	.db  COLLECT_MODE_FALL
+	.dw  $0000
+
+seasonsSlot_d8_seLavaChest:
+	dwbe TREASURE_OBJECT_SMALL_KEY_08
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d8_swLavaChest:
+	dwbe TREASURE_OBJECT_BOMBS_00
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d8_sparkChest:
+	dwbe TREASURE_OBJECT_SMALL_KEY_08
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d8_boss:
+	dwbe TREASURE_OBJECT_HEART_CONTAINER_00
+	.db  COLLECT_MODE_POOF
+	.dw  $0000
+
 .endif

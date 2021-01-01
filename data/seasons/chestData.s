@@ -125,16 +125,16 @@ chestGroup5Data:
 	m_ChestDataRando $46, $54, rando.seasonsSlot_d7_wizzrobeChest
 	m_ChestDataRando $57, $58, rando.seasonsSlot_d7_quicksandChest
 	m_ChestDataRando $2b, $5a, rando.seasonsSlot_d7_rightOfEntrance
-	m_ChestData $75, $6a, TREASURE_OBJECT_BOMBS_00
-	m_ChestData $5c, $6b, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $74, $70, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $47, $7d, TREASURE_OBJECT_RING_06
-	m_ChestData $43, $80, TREASURE_OBJECT_BOSS_KEY_03
-	m_ChestData $73, $8a, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $3b, $8b, TREASURE_OBJECT_COMPASS_02
-	m_ChestData $33, $8c, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $34, $8d, TREASURE_OBJECT_SLINGSHOT_00
-	m_ChestData $87, $8e, TREASURE_OBJECT_MAP_02
+	m_ChestDataRando $75, $6a, rando.seasonsSlot_d8_swLavaChest
+	m_ChestDataRando $5c, $6b, rando.seasonsSlot_d8_seLavaChest
+	m_ChestDataRando $74, $70, rando.seasonsSlot_d8_spinnerChest
+	m_ChestDataRando $47, $7d, rando.seasonsSlot_d8_threeEyesChest
+	m_ChestDataRando $43, $80, rando.seasonsSlot_d8_polsVoiceChest
+	m_ChestDataRando $73, $8a, rando.seasonsSlot_d8_sparkChest
+	m_ChestDataRando $3b, $8b, rando.seasonsSlot_d8_spikeRoom
+	m_ChestDataRando $33, $8c, rando.seasonsSlot_d8_darknutChest
+	m_ChestDataRando $34, $8d, rando.seasonsSlot_d8_armosChest
+	m_ChestDataRando $87, $8e, rando.seasonsSlot_d8_magnetBallRoom
 	m_ChestData $11, $2c, TREASURE_OBJECT_RUPEES_03
 	m_ChestData $6c, $31, TREASURE_OBJECT_GASHA_SEED_01
 	m_ChestData $77, $2f, TREASURE_OBJECT_GASHA_SEED_01
