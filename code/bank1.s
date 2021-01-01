@@ -2136,12 +2136,13 @@ playCompassSoundIfKeyInRoom:
 
 .ifdef ROM_SEASONS
 	; Hardcoded to play compass sound in d5 boss key room
-	ld a,(wActiveGroup)
-	cp $06
-	jr nz,+
-	ld a,(wActiveRoom)
-	cp $8b
-	jr z,@playSound
+	; RANDO: Disable this.
+	;ld a,(wActiveGroup)
+	;cp $06
+	;jr nz,+
+	;ld a,(wActiveRoom)
+	;cp $8b
+	;jr z,@playSound
 +
 .endif
 
