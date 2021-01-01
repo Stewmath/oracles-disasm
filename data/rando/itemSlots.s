@@ -459,7 +459,7 @@ seasonsSlot_d3_moldormChest:
 
 seasonsSlot_d3_bombedWallChest:
 	dwbe TREASURE_OBJECT_MAP_03
-	.db  COLLECT_MODE_CHEST
+	.db  COLLECT_MODE_CHEST_MAP_OR_COMPASS
 	.dw  $0000
 
 seasonsSlot_d3_mimicChest:
@@ -469,7 +469,7 @@ seasonsSlot_d3_mimicChest:
 
 seasonsSlot_d3_trampolineChest:
 	dwbe TREASURE_OBJECT_COMPASS_03
-	.db  COLLECT_MODE_CHEST
+	.db  COLLECT_MODE_CHEST_MAP_OR_COMPASS
 	.dw  $0000
 
 seasonsSlot_d3_zolChest:
@@ -567,7 +567,7 @@ seasonsSlot_d5_leftChest:
 
 seasonsSlot_d5_spiralChest:
 	dwbe TREASURE_OBJECT_COMPASS_05
-	.db  COLLECT_MODE_CHEST
+	.db  COLLECT_MODE_CHEST_MAP_OR_COMPASS
 	.dw  $0000
 
 seasonsSlot_d5_terraceChest:
@@ -597,7 +597,7 @@ seasonsSlot_d5_stalfosChest:
 
 seasonsSlot_d5_gibdoZolChest:
 	dwbe TREASURE_OBJECT_MAP_05
-	.db  COLLECT_MODE_CHEST
+	.db  COLLECT_MODE_CHEST_MAP_OR_COMPASS
 	.dw  $0000
 
 seasonsSlot_d5_magnetBallChest:
@@ -611,6 +611,70 @@ seasonsSlot_d5_basement:
 	.dw  $0000
 
 seasonsSlot_d5_boss:
+	dwbe TREASURE_OBJECT_HEART_CONTAINER_00
+	.db  COLLECT_MODE_POOF
+	.dw  $0000
+
+; ==============================================================================
+; D6
+; ==============================================================================
+
+seasonsSlot_d6_1fEast:
+	dwbe TREASURE_OBJECT_RUPEES_01
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d6_1fTerrace:
+	dwbe TREASURE_OBJECT_MAP_06
+	.db  COLLECT_MODE_CHEST_MAP_OR_COMPASS
+	.dw  $0000
+
+seasonsSlot_d6_crystalTrapRoom:
+	dwbe TREASURE_OBJECT_RUPEES_02
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d6_magnetBallDrop:
+	dwbe TREASURE_OBJECT_SMALL_KEY_06
+	.db  COLLECT_MODE_FALL
+	.dw  $0000
+
+seasonsSlot_d6_beamosRoom:
+	dwbe TREASURE_OBJECT_COMPASS_06
+	.db  COLLECT_MODE_CHEST_MAP_OR_COMPASS
+	.dw  $0000
+
+seasonsSlot_d6_2fGibdoChest:
+	dwbe TREASURE_OBJECT_BOMBS_00
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d6_2fArmosChest:
+	dwbe TREASURE_OBJECT_RUPEES_01
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d6_armosHall:
+	dwbe TREASURE_OBJECT_BOOMERANG_00
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d6_spinnerNorth:
+	dwbe TREASURE_OBJECT_SMALL_KEY_06
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d6_escapeRoom:
+	dwbe TREASURE_OBJECT_BOSS_KEY_06
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d6_vireChest:
+	dwbe TREASURE_OBJECT_SMALL_KEY_06
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_d6_boss:
 	dwbe TREASURE_OBJECT_HEART_CONTAINER_00
 	.db  COLLECT_MODE_POOF
 	.dw  $0000

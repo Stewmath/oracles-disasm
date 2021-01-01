@@ -98,16 +98,16 @@ chestGroup4Data:
 	m_ChestDataRando $42, $9f, rando.seasonsSlot_d5_spinnerChest
 	m_ChestDataRando $34, $a3, rando.seasonsSlot_d5_leftChest
 	m_ChestDataRando $7b, $a5, rando.seasonsSlot_d5_stalfosChest
-	m_ChestData $11, $ad, TREASURE_OBJECT_COMPASS_02
-	m_ChestData $1d, $af, TREASURE_OBJECT_RUPEES_02
-	m_ChestData $71, $b0, TREASURE_OBJECT_MAP_02
-	m_ChestData $5c, $b3, TREASURE_OBJECT_RUPEES_01
-	m_ChestData $53, $bf, TREASURE_OBJECT_BOMBS_00
-	m_ChestData $75, $c1, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $21, $c2, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $57, $c3, TREASURE_OBJECT_RUPEES_01
-	m_ChestData $66, $c4, TREASURE_OBJECT_BOSS_KEY_03
-	m_ChestData $5d, $d0, TREASURE_OBJECT_BOOMERANG_00
+	m_ChestDataRando $11, $ad, rando.seasonsSlot_d6_beamosRoom
+	m_ChestDataRando $1d, $af, rando.seasonsSlot_d6_crystalTrapRoom
+	m_ChestDataRando $71, $b0, rando.seasonsSlot_d6_1fTerrace
+	m_ChestDataRando $5c, $b3, rando.seasonsSlot_d6_1fEast
+	m_ChestDataRando $53, $bf, rando.seasonsSlot_d6_2fGibdoChest
+	m_ChestDataRando $75, $c1, rando.seasonsSlot_d6_vireChest
+	m_ChestDataRando $21, $c2, rando.seasonsSlot_d6_spinnerNorth
+	m_ChestDataRando $57, $c3, rando.seasonsSlot_d6_2fArmosChest
+	m_ChestDataRando $66, $c4, rando.seasonsSlot_d6_escapeRoom
+	m_ChestDataRando $5d, $d0, rando.seasonsSlot_d6_armosHall
 	m_ChestDataRando $57, $e0, rando.seasonsSlot_caveSouthOfMrsRuul
 	m_ChestDataRando $25, $e1, rando.seasonsSlot_caveNorthOfD1
 	m_ChestDataRando $7d, $f7, rando.seasonsSlot_easternSuburbsOnCliff

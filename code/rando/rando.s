@@ -140,6 +140,8 @@ lookupRoomTreasure_body:
 	dbbw $04, $6c, seasonsSlot_d4_diveSpot
 	dbbw $04, $5f, seasonsSlot_d4_boss
 	dbbw $04, $8c, seasonsSlot_d5_boss
+	dbbw $04, $ab, seasonsSlot_d6_magnetBallDrop
+	dbbw $04, $d5, seasonsSlot_d6_boss
 	.db $ff
 
 
