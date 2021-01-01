@@ -3541,8 +3541,10 @@ _hardOre:
 	call getThisRoomFlags
 	and $40
 	jp z,interactionDelete
-	ldbc TREASURE_HARD_ORE $00
-	jp _misc1_spawnTreasureBCifRoomFlagBit5NotSet
+
+	; RANDO: Spawn whatever's in the item slot
+	ld bc,rando.seasonsSlot_greatFurnace
+	jp _misc1_spawnRandomizedTreasureBCifRoomFlagBit5NotSet
 
 ; TODO: has 3 buttons, 2 keese (linked hero's cave?)
 interactionCode6bSubid23:

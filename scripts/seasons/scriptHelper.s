@@ -1423,11 +1423,17 @@ headSmelter_giveHardOre:
 	call loseTreasure
 	ld a,TREASURE_BLUE_ORE
 	call loseTreasure
-	call getFreeInteractionSlot
+
+	; RANDO: Spawn whatever's in the item slot
+	ld bc,rando.seasonsSlot_greatFurnace
+	call spawnRandomizedTreasure
 	ret nz
-	ld (hl),INTERACID_TREASURE
-	inc l
-	ld (hl),TREASURE_HARD_ORE
+	;call getFreeInteractionSlot
+	;ret nz
+	;ld (hl),INTERACID_TREASURE
+	;inc l
+	;ld (hl),TREASURE_HARD_ORE
+
 	ld l,$4b
 	ld (hl),$1c
 	ld l,$4d
@@ -2681,23 +2687,30 @@ subrosianSmith_takeHardOre:
 	call loseTreasure
 
 subrosianSmith_giveUpgradedShield:
-	ld a,TREASURE_SHIELD
-	call checkTreasureObtained
-	jr c,@haveShield
-	xor a
-@haveShield:
-	cp $03
-	jr c,+
-	ld a,$02
-+
-	ld c,a
-	call getFreeInteractionSlot
+	; RANDO: Skip shield level check, just spawn the randomized item.
+	ld bc,rando.seasonsSlot_subrosianSmithy
+	call spawnRandomizedTreasure
 	ret nz
-	ld (hl),INTERACID_TREASURE
-	inc l
-	ld (hl),TREASURE_SHIELD
-	inc l
-	ld (hl),c
+
+	;ld a,TREASURE_SHIELD
+	;call checkTreasureObtained
+	;jr c,@haveShield
+	;xor a
+;@haveShield:
+	;cp $03
+	;jr c,+
+	;ld a,$02
++
+	;ld c,a
+	;call getFreeInteractionSlot
+	;ret nz
+	;ld (hl),INTERACID_TREASURE
+	;inc l
+	;ld (hl),TREASURE_SHIELD
+	;inc l
+	;ld (hl),c
+
+	; Move to Link's position
 	push de
 	ld de,$d00b
 	call objectCopyPosition_rawAddress

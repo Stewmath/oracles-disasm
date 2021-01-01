@@ -6564,8 +6564,11 @@ subrosianSmithyScript:
 	checkabutton
 	disableinput
 	callscript _smithyScript_introText
-	jumpifitemobtained TREASURE_SHIELD, @haveShield
-	scriptjump @noShield
+
+	; RANDO: Skip shield check.
+	;jumpifitemobtained TREASURE_SHIELD, @haveShield
+	;scriptjump @noShield
+
 @haveShield:
 	showtextlowindex <TX_3b0a
 	jumpiftextoptioneq $00, @makeItFine

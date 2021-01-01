@@ -316,6 +316,26 @@ seasonsSlot_subrosiaMarket5thItem:
 	.db  $00
 	.dw  seasonsSlotCallback_subrosiaMarket5thItem
 
+seasonsSlot_subrosianWildsChest:
+	dwbe TREASURE_OBJECT_BLUE_ORE_00
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_subrosiaVillageChest:
+	dwbe TREASURE_OBJECT_RED_ORE_00
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_greatFurnace:
+	dwbe TREASURE_OBJECT_HARD_ORE_00
+	.db  COLLECT_MODE_PICKUP_2HAND
+	.dw  $0000
+
+seasonsSlot_subrosianSmithy:
+	dwbe TREASURE_OBJECT_SHIELD_01
+	.db  COLLECT_MODE_PICKUP_2HAND
+	.dw  $0000
+
 ; ==============================================================================
 ; D0
 ; ==============================================================================

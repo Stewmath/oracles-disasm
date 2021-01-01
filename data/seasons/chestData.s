@@ -45,8 +45,8 @@ chestGroup0Data:
 	.db $ff
 
 chestGroup1Data:
-	m_ChestData $11, $41, TREASURE_OBJECT_BLUE_ORE_00
-	m_ChestData $22, $58, TREASURE_OBJECT_RED_ORE_00
+	m_ChestDataRando $11, $41, rando.seasonsSlot_subrosianWildsChest
+	m_ChestDataRando $22, $58, rando.seasonsSlot_subrosiaVillageChest
 	.db $ff
 
 chestGroup2Data:
