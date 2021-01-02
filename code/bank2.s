@@ -421,6 +421,13 @@ _fileSelectMode5:
 	ret z
 
 	ld a,(wFileSelect.cursorPos)
+
+	; RANDO: Disable linked games for now
+	or a
+	jr z,+
+	ld a,SND_ERROR
+	jp playSound
++
 	ld hl,@selectionModes
 	rst_addAToHl
 	ld a,(hl)
