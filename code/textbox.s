@@ -2740,24 +2740,48 @@ _handleTextControlCode:
 	ldh a,(<hFF8B)
 	ld (wTextIndexH),a
 	call _getTextAddress
-	jr @popBcAndRet
+	jp @popBcAndRet
 
 ;;
 ; "Call" another piece of text; insert that text, then go back to reading the
 ; current text.
+; RANDO: This has been modified so that parameters 0xf0-0xfb will read custom, uncompressed text,
+; which is easy for the randomizer to modify.
 @controlCodeF:
 	pop hl
 	call _readByteFromW7ActiveBankAndIncHl
 	cp $fc
-	jr c,+
+	jr nc,@textSubstitution
+	cp $f0
+	jr c,+++
 
+	pop bc
+	push hl
+	ld hl,randoTextSubstitutionTable
+	sub $f0
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+@@loop:
+	ldi a,(hl)
+	or a
+	jr z,+
+	call _setLineTextBuffers
+	call retrieveTextCharacter
+	jr @@loop
++
+	pop hl
+	ret
+
+@textSubstitution:
 	push hl
 	cpl
 	ld hl,wTextSubstitutions
 	rst_addAToHl
 	ld a,(hl)
 	pop hl
-+
++++
 	ld (wTextIndexL),a
 	ld a,(wTextIndexH_backup)
 	ld (wTextIndexH),a
@@ -3216,3 +3240,8 @@ _extraTextIndices:
 	.dw $cbad
 	.db <TX_0d0c <TX_0d08 <TX_0d07 <TX_0d03
 .endif
+
+
+
+; Uncompressed text substitutions for rando
+.include "data/rando/text.s"

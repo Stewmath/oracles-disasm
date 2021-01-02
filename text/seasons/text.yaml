@@ -4401,36 +4401,33 @@ groups:
     text: |-
       Hurry up!
 
+  # RANDO: Next 4 pieces of text have been modified. "\call" with a parameter between 0xf0-0xfb
+  # performs special-case uncompressed text substitution which is easy for the randomizer to modify.
   - name: TX_0e1b
     index: 0x1b
     text: |-
-      \col(1)Strange Flute\col(0)\stop
+      \col(1)\call(0xf0)\col(0)\stop
        150 Rupees
         \opt()OK \opt()No thanks\cmd8(0x0f)
 
   - name: TX_0e1c
     index: 0x1c
     text: |-
-      This satchel
-      holds lots of
-      \col(1)seeds\col(0). It's
+      \col(1)\call(0xf1)\col(0)\stop
       300 Rupees.
         \opt()OK \opt()No thanks
 
   - name: TX_0e1d
     index: 0x1d
     text: |-
-      \col(1)Gasha Seed\col(0)\stop
+      \col(1)\call(0xf2)\col(0)\stop
       \num1 Rupees
         \opt()OK \opt()No thanks
 
   - name: TX_0e1e
     index: 0x1e
     text: |-
-      Treasure Map
-      It may be linked
-      to the legendary
-      ruins...
+      \col(1)\call(0xf3)\col(0)\stop
       200 Rupees
         \opt()OK \opt()No thanks
 
@@ -7753,10 +7750,13 @@ groups:
 
 - group: 0x2b
   data:
+
+  # RANDO: 3 pieces of text here have been modified. "\call" with a parameter between 0xf0-0xfb
+  # performs special-case uncompressed text substitution which is easy for the randomizer to modify.
   - name: TX_2b00
     index: 0x00
     text: |-
-      A cute \col(1)Ribbon\col(0)
+      \col(1)\call(0xf5)\col(0)
       I'll trade for
       \col(1)Star-Shaped Ore\col(0).
       \jump(TX_2b0b)
@@ -7765,7 +7765,7 @@ groups:
   - name: TX_2b01
     index: 0x01
     text: |-
-      Rare Peach Stone
+      \col(1)\call(0xf6)\col(0)
       I'll trade for
       \col(1)\num1 Ore Chunks\col(0)
       and
@@ -7892,10 +7892,7 @@ groups:
   - name: TX_2b10
     index: 0x10
     text: |-
-      It's shiny and
-      it has "Member's
-      Card" on it.
-      I don't know...
+      \col(1)\call(0xf7)\col(0)
       I'll trade for
       \col(1)\num1 Ore Chunks\col(0).
       \jump(TX_2b0b)
