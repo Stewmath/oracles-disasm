@@ -448,6 +448,12 @@ _intro_capcomScreen:
 ; Fading in, waiting
 @state1:
 	ld hl,wTmpcbb3
+
+	; RANDO: Allow player to skip past the capcom logo early
+	ld a,$94
+	cp (hl)
+	call nc,enableIntroInputs
+
 	call decHlRef16WithCap
 	ret nz
 
