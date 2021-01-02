@@ -53,6 +53,11 @@ randoInitializeFile:
 	; room flag 0
 	ld a,$01
 	ld (wPresentRoomFlags+$01),a ; flag determines whether flower/rock tile exists (d6)
+
+	; Initial satchel / slingshot / seed shooter selection
+	ld a,(randovar_initialSeedType)
+	ld (wSatchelSelectedSeeds),a
+	ld (wShooterSelectedSeeds),a
 	
 	; give L-3 ring box
 	ld hl,wObtainedTreasureFlags + TREASURE_RING_BOX / 8

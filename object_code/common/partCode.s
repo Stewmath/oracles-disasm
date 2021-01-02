@@ -2102,7 +2102,14 @@ partCode10:
 	or a
 	ret nz
 
+	; RANDO: Allow getting seeds off trees even with only slingshot or seed shooter.
 	ld a,TREASURE_SEED_SATCHEL
+	call checkTreasureObtained
+	jr c,@knockOffTree
+	ld a,TREASURE_SLINGSHOT
+	call checkTreasureObtained
+	jr c,@knockOffTree
+	ld a,TREASURE_SHOOTER
 	call checkTreasureObtained
 	jr c,@knockOffTree
 

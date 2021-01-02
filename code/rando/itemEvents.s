@@ -7,10 +7,8 @@
 ; @param	c	Parameter
 randoGiveTreasureHook:
 	call satchelRefillSeeds
+	call giveInitialSeeds
 	call activateFlute
-
-	; RANDO-TODO:
-	; - Remove star ore & hard ore from inventory after being used
 	ret
 
 ;;
@@ -22,6 +20,25 @@ satchelRefillSeeds:
 
 	push bc
 	call refillSeedSatchel
+	pop bc
+	ret
+
+;;
+; Satchel, slingshot, and shooter give seeds of the same type as the starting tree.
+giveInitialSeeds:
+	ld a,b
+	cp TREASURE_SEED_SATCHEL
+	jr z,++
+	cp TREASURE_SLINGSHOT
+	jr z,++
+	cp TREASURE_SHOOTER
+	ret nz
+++
+	push bc
+	ld a,(randovar_initialSeedType)
+	add TREASURE_EMBER_SEEDS
+	ld c,$20
+	call giveTreasure
 	pop bc
 	ret
 
