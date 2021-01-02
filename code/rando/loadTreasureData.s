@@ -289,3 +289,6 @@ getModifiedTreasureText:
 	.db <TX_00_D6_NAME
 	.db <TX_00_D7_NAME
 	.db <TX_00_D8_NAME
+	.db $ff
+	.db $ff
+	.db <TX_00_D0_NAME ; Linked hero's cave

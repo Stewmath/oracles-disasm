@@ -138,7 +138,7 @@ chestGroup5Data:
 	m_ChestData $11, $2c, TREASURE_OBJECT_RUPEES_03
 	m_ChestData $6c, $31, TREASURE_OBJECT_GASHA_SEED_01
 	m_ChestData $77, $2f, TREASURE_OBJECT_GASHA_SEED_01
-	m_ChestData $62, $29, TREASURE_OBJECT_SMALL_KEY_03
+	m_ChestDataRando $62, $29, rando.seasonsSlot_herosCave_torchChest
 	m_ChestData $1d, $28, TREASURE_OBJECT_GASHA_SEED_01
 	m_ChestData $38, $24, TREASURE_OBJECT_GASHA_SEED_01
 	m_ChestData $27, $34, TREASURE_OBJECT_RING_0f

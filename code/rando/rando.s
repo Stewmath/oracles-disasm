@@ -148,6 +148,10 @@ lookupRoomTreasure_body:
 	dbbw $05, $75, seasonsSlot_d8_hardhatDrop
 	dbbw $05, $7f, seasonsSlot_d8_ghostArmosDrop
 	dbbw $05, $64, seasonsSlot_d8_boss
+
+	; For fixing small keys only (not randomized)
+	dbbw $05, $32, seasonsSlot_herosCave_holeRoomDrop
+	dbbw $05, $2a, seasonsSlot_herosCave_waterRoomDrop
 	.db $ff
 
 

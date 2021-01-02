@@ -315,6 +315,9 @@ treasureObjectData30:
 	m_TreasureSubid $00, $06, $1a, $42, TREASURE_OBJECT_SMALL_KEY_06
 	m_TreasureSubid $00, $07, $1a, $42, TREASURE_OBJECT_SMALL_KEY_07
 	m_TreasureSubid $00, $08, $1a, $42, TREASURE_OBJECT_SMALL_KEY_08
+	m_TreasureSubid $00, $09, $1a, $42, TREASURE_OBJECT_SMALL_KEY_09 ; Unused
+	m_TreasureSubid $00, $0a, $1a, $42, TREASURE_OBJECT_SMALL_KEY_0a ; Unused
+	m_TreasureSubid $00, $0b, $1a, $42, TREASURE_OBJECT_SMALL_KEY_0b ; Linked Hero's Cave
 
 treasureObjectData31:
 	; RANDO: Same as above

@@ -531,5 +531,5 @@ herosCaveScript_allButtonsPressedAndEnemiesDefeated:
 	checkmemoryeq wActiveTriggers, $ff
 	wait 60
 	checknoenemies
-	spawnitem TREASURE_SMALL_KEY, $01
+	spawnrandomizeditem rando.seasonsSlot_herosCave_enemyButtonRoom
 	scriptend

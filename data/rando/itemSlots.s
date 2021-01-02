@@ -847,4 +847,33 @@ seasonsSlot_d8_boss:
 	.db  COLLECT_MODE_POOF
 	.dw  $0000
 
+; ==============================================================================
+; Linked Hero's Cave (UNUSED for rando, but here to fix small keys; not complete)
+; ==============================================================================
+
+seasonsSlot_herosCave_holeRoomDrop:
+	dwbe TREASURE_OBJECT_SMALL_KEY_0b
+	.db  COLLECT_MODE_FALL
+	.dw  $0000
+
+seasonsSlot_herosCave_torchChest:
+	dwbe TREASURE_OBJECT_SMALL_KEY_0b
+	.db  COLLECT_MODE_CHEST
+	.dw  $0000
+
+seasonsSlot_herosCave_waterRoomDrop:
+	dwbe TREASURE_OBJECT_SMALL_KEY_0b
+	.db  COLLECT_MODE_FALL
+	.dw  $0000
+
+seasonsSlot_herosCave_enemyButtonRoom:
+	dwbe TREASURE_OBJECT_SMALL_KEY_0b
+	.db  COLLECT_MODE_FALL
+	.dw  $0000
+
+seasonsSlot_herosCave_orbAcrossPits:
+	dwbe TREASURE_OBJECT_SMALL_KEY_0b
+	.db  COLLECT_MODE_FALL
+	.dw  $0000
+
 .endif

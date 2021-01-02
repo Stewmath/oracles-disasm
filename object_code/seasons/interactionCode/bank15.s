@@ -463,13 +463,13 @@ _interactionCodedc_subid6:
 	ld a,($cc31)
 	bit 6,a
 	ret z
-	call getFreeInteractionSlot
+
+	; RANDO: Spawn whatever's in the item slot (not randomized right now, this is just to fix
+	; the small key due to keysanity changes)
+	ld bc,rando.seasonsSlot_herosCave_orbAcrossPits
+	call spawnRandomizedTreasure
 	ret nz
-	ld (hl),INTERACID_TREASURE
-	inc l
-	ld (hl),TREASURE_SMALL_KEY
-	inc l
-	ld (hl),$01
+
 	call objectCopyPosition
 	jp interactionDelete
 
