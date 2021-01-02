@@ -6124,6 +6124,8 @@ _galeSeedMenu_state2:
 	jr nz,_galeSeedMenu_gotoState1
 	ld (wOpenedMenuType),a
 	ld a,(wActiveGroup)
+
+_galeSeedMenu_activateWarp:
 	or $80
 	ld (wWarpDestGroup),a
 	ld a,(wMapMenu.warpIndex)
@@ -6595,8 +6597,32 @@ _mapMenu_state1:
 	bit BTN_BIT_A,a
 	jr nz,@showRoomText
 	and (BTN_B | BTN_SELECT)
-	jp nz,_closeMenu
-	ret
+	ret z
+
+	; RANDO: Enable "treewarp" (warp back to starting tree) by holding Start while closing the
+	; menu, if enabled.
+	; RANDO-TODO: Make this work in Ages too.
+.ifdef ROM_SEASONS
+	ld a,RANDO_CONFIG_TREEWARP
+	call checkRandoConfig
+	jr z,++
+	ld a,(wKeysPressed)
+	and BTN_START
+	jr z,++
+	ld a,(wTilesetFlags)
+	and TILESETFLAG_OUTDOORS
+	jr nz,@warp
+	ld a,SND_ERROR
+	jp playSound
+@warp:
+	ld hl,wMapMenu.warpIndex
+	ld (hl),$05
+	xor a
+	call _galeSeedMenu_activateWarp
+++
+.endif
+
+	jp _closeMenu
 
 @showRoomText:
 	call _mapGetRoomTextOrReturn
