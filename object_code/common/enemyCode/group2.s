@@ -7511,7 +7511,7 @@ enemyCode53:
 _dragonfly_state0:
 .ifdef ROM_SEASONS
 	ld a,(wRoomStateModifier)
-	cp SEASON_FALL
+	cp SEASON_AUTUMN
 	jp nz,enemyDelete
 .endif
 	ld h,d
@@ -8065,7 +8065,7 @@ enemyCode5a:
 	.db $00, SEASON_WINTER, $80
 	.db $04, SEASON_SUMMER, $40
 	.db $01, SEASON_SPRING, $20
-	.db $02, SEASON_FALL  , $10
+	.db $02, SEASON_AUTUMN, $10
 	.db $03, SEASON_SUMMER, $08
 	.db $03, SEASON_SUMMER, $04
 .endif

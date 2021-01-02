@@ -4634,7 +4634,7 @@ screenTransitionLostWoods:
 	ret
 
 @transition1:
-	ldbc DIR_DOWN, SEASON_FALL
+	ldbc DIR_DOWN, SEASON_AUTUMN
 	jr @checkTransitionForNorth
 
 @transition2:
@@ -4671,7 +4671,7 @@ screenTransitionLostWoods:
 	jr @checkTransition
 
 @@transition1:
-	ldbc DIR_LEFT, SEASON_FALL
+	ldbc DIR_LEFT, SEASON_AUTUMN
 	ld hl,wLostWoodsTransitionCounter2
 	jr @checkTransition
 

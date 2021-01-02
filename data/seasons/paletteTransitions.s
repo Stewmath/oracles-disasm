@@ -14,7 +14,7 @@ paletteTransitionSeasonData:
 	; $00
 	.dw paletteData49b0 ; SEASON_SPRING
 	.dw paletteData49e0 ; SEASON_SUMMER
-	.dw paletteData4a10 ; SEASON_FALL
+	.dw paletteData4a10 ; SEASON_AUTUMN
 	.dw paletteData4a40 ; SEASON_WINTER
 
 	; $01
