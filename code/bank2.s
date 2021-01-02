@@ -8039,10 +8039,12 @@ _mapMenu_drawJewelLocations:
 	add (hl)
 	ld (hl),a
 
-	; Return if in subrosia
+	; Return if in subrosia (RANDO: Don't)
+	/*
 	ld a,(wMapMenu.mode)
 	rrca
 	ret c
+	*/
 
 	; Return if Link doesn't have the treasure map
 	ld a,TREASURE_TREASURE_MAP
@@ -8064,20 +8066,32 @@ _mapMenu_drawJewelLocations:
 	call checkFlag
 	jr nz,@nextTreasure
 
-	; Treasures are in different locations for linked game
 	push bc
+
+	; Treasures are in different locations for linked game (RANDO: Disable this)
 	call checkIsLinkedGame
 	ld a,c
-	jr z,+
-	add $04
+	;jr z,+
+	;add $04
 +
 	; Get the location, draw the treasure
+	; RANDO: Format has been changed to accomodate jewels in Subrosia, each location is now
+	; 2 bytes instead of 1. First byte has value "$01" if in subrosia.
 	ld hl,@jewelLocations
+	add a
 	rst_addAToHl
+
+	ld a,(wMapMenu.mode)
+	and $01
+	xor (hl)
+	jr nz,@doneDrawing ; Don't draw if the map is wrong
+
+	inc hl
 	ld a,(hl)
 	ld hl,wTmpcec0
 	call _mapMenu_drawSpriteAtRoomIndex
 
+@doneDrawing:
 	pop bc
 @nextTreasure
 	inc c
@@ -8086,8 +8100,7 @@ _mapMenu_drawJewelLocations:
 	ret
 
 @jewelLocations:
-	.db $b5 $1d $c2 $f4 ; Normal locations
-	.db $b5 $7e $a7 $f4 ; Linked game locations
+	dwbe $00b5, $001d, $00c2, $00f4
 
 @sprite:
 	.db $01
