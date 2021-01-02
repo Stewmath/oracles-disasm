@@ -7996,7 +7996,7 @@ enemyCode5a:
 	ld b,a
 	add a
 	add b
-	ld hl,@seasonsTable_0d_68fb
+	ld hl,@treeDataTable
 	rst_addAToHl
 	ldi a,(hl)
 	ldh (<hFF8B),a
@@ -8056,14 +8056,18 @@ enemyCode5a:
 	.db $00 $08
 
 .ifdef ROM_SEASONS
-@seasonsTable_0d_68fb:
-	; <hFF8B - required season - checked against wSeedTreeRefilledBitset
-	.db $00	SEASON_WINTER	$80
-	.db $04	SEASON_SUMMER	$40
-	.db $01	SEASON_SPRING	$20
-	.db $02	SEASON_FALL	$10
-	.db $03	SEASON_SUMMER	$08
-	.db $03	SEASON_SUMMER	$04
+
+; Data:
+; - Seed type
+; - Required season to grow
+; - Bitmask checked against wSeedTreeRefilledBitset
+@treeDataTable:
+	.db $00, SEASON_WINTER, $80
+	.db $04, SEASON_SUMMER, $40
+	.db $01, SEASON_SPRING, $20
+	.db $02, SEASON_FALL  , $10
+	.db $03, SEASON_SUMMER, $08
+	.db $03, SEASON_SUMMER, $04
 .endif
 
 
