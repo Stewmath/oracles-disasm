@@ -6180,10 +6180,14 @@ _galeSeedMenu_addOffsetToWarpIndex:
 	or a
 	jr z,--
 
+	; RANDO: Always allow warping to the starting tree.
+	cp STARTING_TREE_MAP_INDEX
+	jr z,++
+
 	; We can only use entry if we've visited the room.
 	call _mapMenu_checkRoomVisited
 	jr z,--
-
+++
 	ldi a,(hl)
 	ld (wMapMenu.cursorIndex),a
 
@@ -6614,6 +6618,12 @@ _mapMenu_state1:
 ;
 ; @param[out]	bc	Text to show for the selected room on the map.
 _mapGetRoomTextOrReturn:
+	; RANDO: Always allow selection of starting tree screen. (This is really just for gale seed
+	; warping but has the side-effect of letting you select it on the map. Oh well.)
+	ld a,(wMapMenu.cursorIndex)
+	cp STARTING_TREE_MAP_INDEX
+	jr z,@visited
+
 	call _mapMenu_checkCursorRoomVisited
 	jr nz,@visited
 
@@ -7903,9 +7913,13 @@ _mapMenu_drawWarpSites:
 	; Check if we've visited this room
 	push bc
 	ld c,a
+
+	; RANDO: Always allow warping to the starting tree.
+	cp STARTING_TREE_MAP_INDEX
+	jr z,++
 	call _mapMenu_checkRoomVisited
 	jr z,@nextTree
-
+++
 	; If so, draw the sprite
 	ld a,c
 	ld hl,wTmpcec0

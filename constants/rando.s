@@ -10,6 +10,14 @@
 ; ring you should have equipped (while fighting blaino).
 .define DEV_RING $80
 
+; Location of starting tree. Will always be able to warp here with gale seeds even without having
+; visited that location.
+.ifdef ROM_AGES
+	.define STARTING_TREE_MAP_INDEX $78
+.else
+	.define STARTING_TREE_MAP_INDEX $f8
+.endif
+
 ; Values for "collect mode" (override for the 1st byte in the treasure object data)
 .define COLLECT_MODE_PICKUP_NOANIM,        $08
 .define COLLECT_MODE_PICKUP_1HAND,         $09
@@ -28,7 +36,9 @@
 
 ; Certain randomized slots (ie. maku tree screen) borrow unused treasure flags for remembering if
 ; they have been obtained.
-.define RANDO_MAKU_TREE_FLAG, TREASURE_SWITCH_HOOK_HELPER
-.define RANDO_SHOP_FLUTE_FLAG, TREASURE_SWITCH_HOOK_CHAIN
-.define RANDO_SUBROSIA_MARKET_5_FLAG, TREASURE_10
-.define RANDO_MASTER_DIVERS_REWARD_FLAG, TREASURE_12
+.ifdef ROM_SEASONS
+	.define RANDO_MAKU_TREE_FLAG,            TREASURE_SWITCH_HOOK_HELPER
+	.define RANDO_SHOP_FLUTE_FLAG,           TREASURE_SWITCH_HOOK_CHAIN
+	.define RANDO_SUBROSIA_MARKET_5_FLAG,    TREASURE_10
+	.define RANDO_MASTER_DIVERS_REWARD_FLAG, TREASURE_12
+.endif
