@@ -127,6 +127,8 @@ lookupRoomTreasure_body:
 
 
 @roomTreasureTable:
+
+.ifdef ROM_SEASONS
 	dbbw $07, $e5, seasonsSlot_divingSpotOutsideD4
 	dbbw $03, $94, seasonsSlot_oldManInTreehouse
 
@@ -154,6 +156,11 @@ lookupRoomTreasure_body:
 	dbbw $05, $2a, seasonsSlot_herosCave_waterRoomDrop
 	.db $ff
 
+.else
+	; RANDO-TODO: Ages
+	.db $ff
+.endif
+
 
 ;;
 ; Replaces the "playCompassSoundIfKeyInRoom" function in bank 1.
@@ -165,23 +172,36 @@ playCompassSoundIfKeyInRoom_override:
 	;or a
 	;ret nz
 
-	ld hl,slotsStart + 3
-	ld b,(slotsEnd - slotsStart) / ITEM_SLOT_SIZE
-
 	ld a,(wActiveGroup)
+	ld b,a
+	ld a,(wActiveRoom)
 	ld c,a
 
+	; Substitute rooms (ie. maku tree screen variants always look at the 1st variant for data)
+	ld hl,@roomSubstitutionTable
+	ld e,2
+	call searchDoubleKey
+	jr nc,+
+	ld b,(hl)
+	inc hl
+	ld c,(hl)
++
+
+	ld hl,slotsStart + 3
+	ld d,(slotsEnd - slotsStart) / ITEM_SLOT_SIZE
+
 @loop:
-	ld a,c
+	ld a,b
 	cp (hl)
 	inc hl
 	jr nz,@nextSlot
-	ld a,(wActiveRoom)
+	ld a,c
 	cp (hl)
 	jr nz,@nextSlot
 
 	; This item slot is for this room
 	push hl
+	push de
 	push bc
 	dec hl
 	dec hl
@@ -224,22 +244,47 @@ playCompassSoundIfKeyInRoom_override:
 
 @playSound:
 	pop bc
+	pop de
 	pop hl
 	ld a,SND_COMPASS
 	jp playSound
 
 @popVars:
-	; TODO: Test multiple items in same room
 	pop bc
+	pop de
 	pop hl
 
 @nextSlot:
 	ld a,ITEM_SLOT_SIZE - 1
 	rst_addAToHl
-	dec b
+	dec d
 	jr nz,@loop
 	ret
 
+
+
+; If in room X, check room Y for item slot data. Use this when an item slot can occupy multiple
+; rooms.
+@roomSubstitutionTable:
+
+.ifdef ROM_SEASONS
+	dwbe $020c, $020b ; Maku Tree variant screens
+	dwbe $022b, $020b
+	dwbe $022c, $020b
+	dwbe $022d, $020b
+	dwbe $025b, $020b
+	dwbe $025c, $020b
+	dwbe $025d, $020b
+	dwbe $027b, $020b
+
+	dwbe $052c, $0405 ; Linked variant of d0 rupee chest
+
+	; Subrosian seaside has multiple rooms but is handled as a special case
+	.db $ff
+.else
+	; RANDO-TODO: Ages may have a few of these
+	.db $ff
+.endif
 
 
 .include "code/rando/itemEvents.s"
