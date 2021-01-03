@@ -2118,45 +2118,13 @@ clearObjectsWithEnabled2_hlpr:
 	cp c
 	jr c,clearObjectsWithEnabled2_hlpr
 	ret
+
 ;;
+; RANDO: Completely overhauled this function. We ignore the "dungeon properties" and instead check
+; the item slot data.
 playCompassSoundIfKeyInRoom:
-	ld a,(wMenuDisabled)
-	or a
-	ret nz
-	ld a,(wDungeonIndex)
-	cp $ff
-	ret z
+	jpab rando.playCompassSoundIfKeyInRoom_override
 
-	ld hl,wDungeonCompasses
-	call checkFlag
-	ret z
-	call getThisRoomFlags
-	and ROOMFLAG_ITEM
-	ret nz
-
-.ifdef ROM_SEASONS
-	; Hardcoded to play compass sound in d5 boss key room
-	; RANDO: Disable this.
-	;ld a,(wActiveGroup)
-	;cp $06
-	;jr nz,+
-	;ld a,(wActiveRoom)
-	;cp $8b
-	;jr z,@playSound
-+
-.endif
-
-	ld a,(wDungeonRoomProperties)
-	and $70
-	cp (DUNGEONROOMPROPERTY_CHEST | DUNGEONROOMPROPERTY_KEY)
-	jr z,@playSound
-
-	cp DUNGEONROOMPROPERTY_KEY
-	ret nz
-
-@playSound:
-	ld a,SND_COMPASS
-	jp playSound
 
 updateLinkBeingShocked:
 	ld de,wIsLinkBeingShocked

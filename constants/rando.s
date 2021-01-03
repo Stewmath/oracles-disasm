@@ -6,6 +6,9 @@
 .define RANDO_CONFIG_KEYSANITY,  $00
 .define RANDO_CONFIG_TREEWARP,   $01
 
+; Size of an item slot (data/rando/itemSlots.s)
+.define ITEM_SLOT_SIZE, 7
+
 ; Dev ring is a fake ring that enables debug features. This is $80 instead of $40 like in the
 ; original randomizer, because bit 6 is used to temporarily disable rings while remembering what
 ; ring you should have equipped (while fighting blaino).

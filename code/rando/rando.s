@@ -155,6 +155,92 @@ lookupRoomTreasure_body:
 	.db $ff
 
 
+;;
+; Replaces the "playCompassSoundIfKeyInRoom" function in bank 1.
+playCompassSoundIfKeyInRoom_override:
+	; Original game did this check, but this causes compass chimes to be skipped when entering
+	; buildings. I guess it was used to mute the compass during specific circumstances, ie.
+	; throwing ice blocks down in seasons D8. Maybe another way can be found to handle that?
+	;ld a,(wMenuDisabled)
+	;or a
+	;ret nz
+
+	ld hl,slotsStart + 3
+	ld b,(slotsEnd - slotsStart) / ITEM_SLOT_SIZE
+
+	ld a,(wActiveGroup)
+	ld c,a
+
+@loop:
+	ld a,c
+	cp (hl)
+	inc hl
+	jr nz,@nextSlot
+	ld a,(wActiveRoom)
+	cp (hl)
+	jr nz,@nextSlot
+
+	; This item slot is for this room
+	push hl
+	push bc
+	dec hl
+	dec hl
+	dec hl
+	dec hl
+	ldi a,(hl)
+	cp TREASURE_SMALL_KEY
+	jr z,@key
+	cp TREASURE_BOSS_KEY
+	jr nz,@popVars
+
+@key:
+	; It's a key. Do we have the compass for it?
+	push hl
+	ld a,(hl) ; Treasure subid (always the same as parameter, or dungeon index)
+	ld hl,wDungeonCompasses
+	call checkFlag
+	pop hl
+	jr z,@popVars
+
+	; Check if we already got it. In most cases this just means checking ROOMFLAG_ITEM, but
+	; there are a handful of item slots that this doesn't work with. For those cases, we check
+	; for the item slot's "isItemObtained" callback function.
+	dec hl
+	ld b,h
+	ld c,l
+	ld a,1
+	call getItemSlotCallback
+	jr nz,@callback
+	
+	call getThisRoomFlags
+	ld a,ROOMFLAG_ITEM
+	and (hl)
+	jr z,@playSound
+	jr @popVars
+
+@callback:
+	call jpHl
+	jr c,@popVars
+
+@playSound:
+	pop bc
+	pop hl
+	ld a,SND_COMPASS
+	jp playSound
+
+@popVars:
+	; TODO: Test multiple items in same room
+	pop bc
+	pop hl
+
+@nextSlot:
+	ld a,ITEM_SLOT_SIZE - 1
+	rst_addAToHl
+	dec b
+	jr nz,@loop
+	ret
+
+
 
 .include "code/rando/itemEvents.s"
 .include "data/rando/itemSlots.s"

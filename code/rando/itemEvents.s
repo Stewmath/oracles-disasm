@@ -76,34 +76,116 @@ activateFlute:
 
 
 ; ================================================================================
-; Below here are callbacks from "data/rando/itemSlots.s", called when items in specific slots are
-; received. These are called just after "giveTreasure" is called.
+; Below here are callbacks from "data/rando/itemSlots.s". "onItemObtained" is called just after
+; "giveTreasure", and "isItemObtained" is called to check whether to play compass chimes.
 ; ================================================================================
 
 itemSlotCallbacksStart:
 
 .ifdef ROM_SEASONS
 
-seasonsSlotCallback_makuTree:
+seasonsSlotCallbackTable_makuTree:
+	.dw @onItemObtained
+	.dw @isItemObtained
+@onItemObtained:
 	ld a,RANDO_MAKU_TREE_FLAG
 	jp setRandoItemFlag
+@isItemObtained:
+	ld a,RANDO_MAKU_TREE_FLAG
+	jp checkRandoItemFlag
 
-seasonsSlotCallback_subrosiaSeaside:
+
+seasonsSlotCallbackTable_shop150Rupees:
+	.dw $0000
+	.dw @isItemObtained
+@isItemObtained:
+	ld a,RANDO_SHOP_FLUTE_FLAG
+	jp checkRandoItemFlag
+
+
+seasonsSlotCallbackTable_membersShop1:
+	.dw $0000
+	.dw @isItemObtained
+@isItemObtained:
+	ld a,(wBoughtShopItems1)
+	rrca
+	ret
+
+
+seasonsSlotCallbackTable_membersShop2:
+	.dw $0000
+	.dw @isItemObtained
+@isItemObtained:
+	ld a,(wBoughtShopItems1)
+	rrca
+	rrca
+	ret
+
+
+seasonsSlotCallbackTable_membersShop3:
+	.dw $0000
+	.dw @isItemObtained
+@isItemObtained:
+	ld a,(wBoughtShopItems1)
+	swap a
+	rlca
+	ret
+
+
+seasonsSlotCallbackTable_masterDiversReward:
+	.dw @onItemObtained
+	.dw @isItemObtained
+@onItemObtained:
+	ld a,RANDO_MASTER_DIVERS_REWARD_FLAG
+	jp setRandoItemFlag
+@isItemObtained:
+	ld a,RANDO_MASTER_DIVERS_REWARD_FLAG
+	jp checkRandoItemFlag
+
+
+seasonsSlotCallbackTable_subrosiaSeaside:
+	.dw @onItemObtained
+	.dw @isItemObtained
+@onItemObtained:
 	ld a,GLOBALFLAG_STAR_ORE_FOUND
 	jp setGlobalFlag
+@isItemObtained:
+	ld a,GLOBALFLAG_STAR_ORE_FOUND
+	jp checkGlobalFlag
 
-seasonsSlotCallback_subrosiaMarket1stItem:
+
+seasonsSlotCallbackTable_subrosiaMarket1stItem:
+	.dw @onItemObtained
+	.dw @isItemObtained
+@onItemObtained:
 	; This used to be done automatically when you get the ribbon, but obviously the treasure you
 	; get might not be the ribbon
 	ld a,TREASURE_STAR_ORE
 	jp loseTreasure
+@isItemObtained:
+	ld a,(wBoughtSubrosianShopItems)
+	rrca
+	ret
 
-seasonsSlotCallback_subrosiaMarket5thItem:
+
+seasonsSlotCallbackTable_subrosiaMarket2ndItem:
+	.dw $0000
+	.dw @isItemObtained
+@isItemObtained:
+	ld a,(wBoughtSubrosianShopItems)
+	rrca
+	rrca
+	ret
+
+
+seasonsSlotCallbackTable_subrosiaMarket5thItem:
+	.dw @onItemObtained
+	.dw @isItemObtained
+@onItemObtained:
 	ld a,RANDO_SUBROSIA_MARKET_5_FLAG
 	jp setRandoItemFlag
-
-seasonsSlotCallback_masterDiversReward:
-	ld a,RANDO_MASTER_DIVERS_REWARD_FLAG
-	jp setRandoItemFlag
+@isItemObtained:
+	ld a,RANDO_SUBROSIA_MARKET_5_FLAG
+	jp checkRandoItemFlag
 
 .endif

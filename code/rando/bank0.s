@@ -68,22 +68,43 @@ runRandoTreasureCallback:
 	ld a,:rando.itemSlotCallbacksStart
 	setrombank
 
-	ld h,b
-	ld l,c
-	ld a,3
-	rst_addAToHl
-	ldi a,(hl)
-	ld h,(hl)
-	ld l,a
-	or h
-	jr z,+
+	xor a
+	call getItemSlotCallback
+	jr z,++
 	call jpHl
-+
+++
 	pop af
 	setrombank
 
 	pop hl
 	pop de
+	pop bc
+	ret
+
+;;
+; @param	a	Callback index to get
+; @param	bc	The item slot
+; @param[out]	hl	The callback address (may be null)
+; @param[out]	zflag	z if the callback is null
+getItemSlotCallback:
+	push bc
+	ld h,b
+	ld l,c
+	ld b,a
+	ld a,5
+	rst_addAToHl
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	or h
+	jr z,@ret
+	ld a,b
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	or h
+@ret:
 	pop bc
 	ret
 
