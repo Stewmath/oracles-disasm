@@ -1282,6 +1282,13 @@ getSunkenCityNPCVisibleSubId:
 
 ; This label is used directly in a number of places.
 @main:
+	; RANDO: No matter what, keep sunken NPCs (particularly master diver) at subid $00 until you
+	; get the item from him.
+	ld a,RANDO_MASTER_DIVERS_REWARD_FLAG
+	call checkRandoItemFlag
+	ld b,$00
+	jr nc,@xorARet
+
 	ld a,GLOBALFLAG_FINISHEDGAME
 	call checkGlobalFlag
 	ld b,$04
