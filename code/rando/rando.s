@@ -186,7 +186,6 @@ playCompassSoundIfKeyInRoom_override:
 	inc hl
 	ld c,(hl)
 +
-
 	ld hl,slotsStart + 3
 	ld d,(slotsEnd - slotsStart) / ITEM_SLOT_SIZE
 
@@ -232,6 +231,7 @@ playCompassSoundIfKeyInRoom_override:
 	call getItemSlotCallback
 	jr nz,@callback
 	
+	; No callback defined
 	call getThisRoomFlags
 	ld a,ROOMFLAG_ITEM
 	and (hl)
@@ -277,9 +277,11 @@ playCompassSoundIfKeyInRoom_override:
 	dwbe $025d, $020b
 	dwbe $027b, $020b
 
-	dwbe $052c, $0405 ; Linked variant of d0 rupee chest
+	dwbe $0176, $0166 ; Subrosia Seaside
+	dwbe $0175, $0166
+	dwbe $0165, $0166
 
-	; Subrosian seaside has multiple rooms but is handled as a special case
+	;dwbe $052c, $0405 ; Linked variant of d0 rupee chest (idk what I'll do with this yet)
 	.db $ff
 .else
 	; RANDO-TODO: Ages may have a few of these

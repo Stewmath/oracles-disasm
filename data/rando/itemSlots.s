@@ -16,7 +16,8 @@
 ;
 ; Either of those 2 pointers can also be null. "IsItemObtained" returns with the carry flag set if
 ; the item is obtained. If it is null, then the item is considered obtained if ROOMFLAG_ITEM is set
-; in that room (this works in 90% of cases). Currently this is only used for compasses.
+; in that room (this works in 90% of cases). Currently this is only used for compasses. (The
+; subrosian seaside check, in particular, is built on the assumption that it's for compasses only.)
 ;
 ; Misc notes:
 ; - COLLECT_MODE_FALL will be changed to COLLECT_MODE_FALL_KEY if the item in the slot is a small

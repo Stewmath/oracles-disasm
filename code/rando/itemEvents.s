@@ -151,7 +151,43 @@ seasonsSlotCallbackTable_subrosiaSeaside:
 	jp setGlobalFlag
 @isItemObtained:
 	ld a,GLOBALFLAG_STAR_ORE_FOUND
-	jp checkGlobalFlag
+	call checkGlobalFlag
+	jr nz,@have
+
+	; Because this is only used for compasses, pretend we have it already if this is not the
+	; screen where the star ore spawns.
+	call @findStarOreObject
+	jr nz,@dontHave
+	ld a,(wActiveRoom)
+	ld l,Interaction.var30
+	cp (hl)
+	jr z,@dontHave
+@have:
+	scf
+	ret
+@dontHave:
+	xor a
+	ret
+
+@findStarOreObject:
+	ld h,FIRST_INTERACTION_INDEX
+	ld l,Interaction.id
+@loop:
+	ld a,INTERACID_ROSA
+	cp (hl)
+	jr nz,@next
+	inc l
+	ld a,$02
+	cp (hl) ; subid
+	ret z
+	dec l
+@next:
+	inc h
+	ld a,h
+	cp LAST_INTERACTION_INDEX+1
+	jr c,@loop
+	or h
+	ret
 
 
 seasonsSlotCallbackTable_subrosiaMarket1stItem:
