@@ -504,10 +504,10 @@ wMapleKillCounter: ; $c641/$c63e
 	db
 
 wBoughtShopItems1: ; $c642/$c63f
-; Bit 0: Bought ring box upgrade from hidden shop.
+; Bit 0: Bought ring box (ages) or satchel (seasons) upgrade from hidden shop.
 ; Bit 1: Bought gasha seed 1 from hidden shop.
 ; Bit 2: Bought gasha seed 2 from hidden shop.
-; Bit 3: Bought ring from hidden shop.
+; Bit 3: Bought ring (ages) or treasure map (seasons) from hidden shop.
 ; Bit 5: Bought gasha seed from normal shop (linked game only).
 ; Bit 7: Set the first time you talk to the shopkeeper for the chest game.
 	db
@@ -519,7 +519,7 @@ wBoughtShopItems2: ; $c643/$c640
 ; Bit 3: Set if the flute should be sold instead of hearts (calculated on the fly)
 ; Bit 4: Set iff link has bombchus (calculated on the fly)
 ; Bit 5: Set iff link doesn't have bombchus (calculated on the fly)
-; Bit 6: Bought heart piece from hidden shop.
+; Bit 6: Bought heart piece from hidden shop (ages only).
 	db
 
 wMapleState: ; $c644/$c641
@@ -538,6 +538,7 @@ wBoughtSubrosianShopItems: ; $c645/$c642
 ; Bit 5: Bought ring 2
 ; Bit 6: Bought ring 3
 ; Bit 7: Bought ring 4
+; (Member's Card is considered "bought" if it's in your inventory)
 	db
 
 wCompanionStates: ; $c646
