@@ -255,7 +255,10 @@
 ; Define a byte, reversing the bits
 .MACRO dbrev
 	.REPT NARGS
-		.dbm revb \1
+		; Used to use the ".dbm" command here, but it's sometimes causing segfaults in
+		; WLA-DX v9.11. Should be fixed in the next release.
+		revb \1
+		.db _out
 		.shift
 	.ENDR
 .ENDM
