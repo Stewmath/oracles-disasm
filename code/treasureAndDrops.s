@@ -424,7 +424,7 @@ giveTreasure_body:
 	call @mode4
 	call setStatusBarNeedsRefreshBit1
 	ld a,(wSeedSatchelLevel)
-	ld hl,@seedSatchelCapacities-1
+	ld hl,@seedSatchelCapacities
 	rst_addAToHl
 	ld a,(de)
 	cp (hl)
@@ -434,8 +434,11 @@ giveTreasure_body:
 	ld (de),a
 	ret
 
+; RANDO: Add a capacity for "level zero" allowing you to hold seeds before getting them (ie. when
+; you only have the slingshot, or even when you have nothing but get them from weird sources like
+; the subrosian shop or whatever).
 @seedSatchelCapacities:
-	.db $20 $50 $99
+	.db $20 $20 $50 $99
 
 ; Add a ring to the unappraised ring list.
 @mode9:
