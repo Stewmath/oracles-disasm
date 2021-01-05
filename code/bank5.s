@@ -262,7 +262,7 @@ func_410d:
 	ld a,(de)
 	ld (hl),a
 	ld a,$01
-	ld (wcc90),a
+	ld (wDisableWarpTiles),a
 
 	ld l,<w1Link.var2a
 	ldi a,(hl)
@@ -1249,7 +1249,7 @@ _companionTryToMount:
 	; Link can mount the companion. Set up all variables accordingly.
 
 	inc a
-	ld (wcc90),a
+	ld (wDisableWarpTiles),a
 	ld (wWarpsDisabled),a
 	ld e,SpecialObject.state
 	ld a,$03
@@ -1417,7 +1417,7 @@ companionDismount:
 	ld (wLinkObjectIndex),a
 
 	xor a
-	ld (wcc90),a
+	ld (wDisableWarpTiles),a
 	ld (wWarpsDisabled),a
 	ld (wForceCompanionDismount),a
 	ld (wDisableScreenTransitions),a
@@ -1947,7 +1947,7 @@ _companionCheckMountingComplete:
 
 @stopMounting:
 	xor a
-	ld (wcc90),a
+	ld (wDisableWarpTiles),a
 	ld (wWarpsDisabled),a
 	ld (wDisableScreenTransitions),a
 	ld a,$01
@@ -11841,7 +11841,7 @@ _dimitriState2Substate0:
 	ld (wLinkGrabState2),a
 	call itemIncSubstate
 	xor a
-	ld (wcc90),a
+	ld (wDisableWarpTiles),a
 
 	ld l,SpecialObject.var38
 	ld (hl),a

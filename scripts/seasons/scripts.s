@@ -7262,7 +7262,7 @@ linkedCutsceneScript_witches2:
 	scriptend
 
 linkedCutsceneScript_zeldaVillagers:
-	writememory wcc90, $01
+	writememory wDisableWarpTiles, $01
 	setcollisionradii $02, $02
 	checkcollidedwithlink_onground
 	writememory wCutsceneTrigger, CUTSCENE_S_ZELDA_VILLAGERS

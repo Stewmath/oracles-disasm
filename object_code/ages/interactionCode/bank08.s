@@ -643,7 +643,7 @@ interactionCode1f:
 
 @subid1State2:
 	ld a,d
-	ld (wcc90),a
+	ld (wDisableWarpTiles),a
 	ld a,(wLinkObjectIndex)
 	cp >w1Companion
 	ret nz
@@ -1156,7 +1156,7 @@ _interaction21_subid0d:
 	ld (wDisabledObjects),a
 	ld (wMenuDisabled),a
 	ld (wDisableScreenTransitions),a
-	ld (wcc90),a
+	ld (wDisableWarpTiles),a
 
 	ld hl,mainScripts.moonlitGrottoScript_brokeCrystal
 	call interactionSetScript

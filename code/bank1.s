@@ -5028,7 +5028,7 @@ func_60e9:
 	or a
 	ret nz
 
-	ld a,(wcc90)
+	ld a,(wDisableWarpTiles)
 	or a
 	ret nz
 

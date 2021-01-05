@@ -85,7 +85,7 @@ moonlitGrotto_enableControlAfterBreakingCrystal:
 	ld (wMenuDisabled),a
 _label_15_031:
 	ld (wDisableScreenTransitions),a
-	ld (wcc90),a
+	ld (wDisableWarpTiles),a
 	ret
 
 ; ==============================================================================

@@ -259,7 +259,7 @@ _interactionCodedc_subid1:
 	ld (de),a
 	call checkIsLinkedGame
 	jp z,interactionDelete
-	ld (wcc90),a
+	ld (wDisableWarpTiles),a
 	ret
 @state1:
 	call returnIfScrollMode01Unset
@@ -297,7 +297,7 @@ _interactionCodedc_subid2:
 	.dw @state1
 @state1:
 	ld a,$01
-	ld (wcc90),a
+	ld (wDisableWarpTiles),a
 	call objectGetTileAtPosition
 	ld b,a
 	ld a,(wActiveTileIndex)

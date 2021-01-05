@@ -1533,7 +1533,7 @@ interactionCode68:
 	call resetLinkInvincibility
 	ld a,$80
 	ld ($cc02),a
-	ld ($ccaa),a
+	ld (wDisableWarpTiles),a
 	ld ($ccab),a
 	call getThisRoomFlags
 	set 6,(hl)

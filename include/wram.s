@@ -2088,7 +2088,7 @@ wEnteredWarpPosition: ; $cc8e/$cca8
 wNumTorchesLit: ; $cc8f/$cca9
 	db
 
-wcc90: ; $cc90/$ccaa
+wDisableWarpTiles: ; $cc90/$ccaa
 ; Disables warp tiles if nonzero?
 	db
 

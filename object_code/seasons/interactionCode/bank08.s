@@ -124,7 +124,7 @@ _specialWarp_subid4:
 
 @state1:
 	ld a,d
-	ld ($ccaa),a
+	ld (wDisableWarpTiles),a
 	ld a,($cc48)
 	cp $d1
 	ret nz
@@ -434,7 +434,7 @@ interactionCode21:
 	ld a,$01
 	ld (de),a
 	ld a,$01
-	ld ($ccaa),a
+	ld (wDisableWarpTiles),a
 	call _func_5469
 	ld hl,mainScripts.gnarledKeyholeScript
 	jp interactionSetScript
@@ -487,7 +487,7 @@ interactionCode21:
 	ld bc,_table_5494
 	call _func_5471
 	xor a
-	ld ($ccaa),a
+	ld (wDisableWarpTiles),a
 	ld ($cca4),a
 	ld ($cc02),a
 	ld a,$4d
