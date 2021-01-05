@@ -7292,11 +7292,17 @@ linkedCutsceneScript_witches2:
 	scriptend
 
 linkedCutsceneScript_zeldaVillagers:
+	; RANDO: Skip this cutscene. (It may mess up the entrance randomization of d8.)
+	setglobalflag GLOBALFLAG_ZELDA_VILLAGERS_SEEN
+	scriptend
+
+	/*
 	writememory wDisableWarpTiles, $01
 	setcollisionradii $02, $02
 	checkcollidedwithlink_onground
 	writememory wCutsceneTrigger, CUTSCENE_S_ZELDA_VILLAGERS
 	scriptend
+	*/
 
 linkedCutsceneScript_zeldaKidnapped:
 	writememory wCutsceneTrigger, CUTSCENE_S_ZELDA_KIDNAPPED
