@@ -142,9 +142,12 @@ tileReplacement_group0Mapf6:
 
 ; Open GBA shop
 tileReplacement_group0Mapc5:
+	; RANDO: Advance shop always open
+	/*
 	ldh a,(<hGameboyType)
 	rlca
 	ret nc
+	*/
 	ld hl,wRoomLayout+$14
 	ld (hl),$ea
 	ret

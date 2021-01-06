@@ -150,9 +150,12 @@ roomTileChangerCodeGroup7Data:
 ;;
 ; Opens advance shop
 tileReplacement_group1Map58:
+	; RANDO: Advance shop always open
+	/*
 	ldh a,(<hGameboyType)
 	rlca
 	ret nc
+	*/
 	ld hl,wRoomLayout + $35
 	ld (hl),$de
 	ret
