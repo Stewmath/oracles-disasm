@@ -961,7 +961,18 @@ groups:
       GOAL!!!
 
 
-  # RANDO: Dungeon names for text substitution
+  # RANDO: Some custom text below here.
+
+  # Getting ember seeds from a tree for the first time
+  - name: TX_00_GET_EMBER_SEEDS
+    index: auto
+    text: |-
+      You got \col(1)Ember
+      Seeds\col(0)! Open your
+      \col(1)Seed Satchel\col(0) to
+      use them.
+
+  # Dungeon names for text substitution
   - name: TX_00_D0_NAME
     index: auto
     text: |-

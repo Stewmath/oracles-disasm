@@ -2061,7 +2061,7 @@ partCode10:
 	jr @giveSeed
 
 @textIndices:
-	.db <TX_0029
+	.db <TX_00_GET_EMBER_SEEDS
 	.db <TX_0029
 	.db <TX_002b
 	.db <TX_002c

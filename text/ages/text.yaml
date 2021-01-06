@@ -1018,6 +1018,18 @@ groups:
       carry more
       \col(1)seeds\col(0)!
 
+
+  # RANDO: Some custom text below here.
+
+  # Getting ember seeds from a tree for the first time
+  - name: TX_00_GET_EMBER_SEEDS
+    index: auto
+    text: |-
+      You got \col(1)Ember
+      Seeds\col(0)! Open your
+      \col(1)Seed Satchel\col(0) to
+      use them.
+
 - group: 0x01
   data:
   - name: TX_0100
