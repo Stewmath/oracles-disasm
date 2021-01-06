@@ -119,6 +119,17 @@
 
 	; Marker for end of "normal" hram (memory gets cleared up to here upon game initialization)
 	hramEnd			 	.db	; $ffc0/$ffbe
+
+
+	; RANDO: Extra stuff put here. This area of RAM (after the "hramEnd" label) should never be
+	; touched by any other code (ie. not cleared when starting up the game), so it's a good
+	; place to put persistent stuff.
+
+	; Copied from "sramRandoVars".
+	; Bit 3: Disable GBA-mode palette adjustment if set
+	; Bit 2: Disable music if set
+	hRandoVars:			db	; $ffc0/$ffbe
+
 .ende
 
 .enum $ffd8 export

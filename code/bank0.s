@@ -2634,6 +2634,13 @@ playSound:
 setMusicVolume:
 	or $80
 	ldh (<hMusicVolume),a
+
+	; RANDO: Always set music volume to 0 when music should be disabled
+	ldh a,(<hRandoVars)
+	and $04
+	ret z
+	ld a,$80
+	ldh (<hMusicVolume),a
 	ret
 
 ;;

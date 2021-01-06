@@ -678,8 +678,11 @@ _fileSelectMode4:
 ;;
 ; Returns z-flag unset if something was selected.
 _fileSelectUpdateInput:
+	call checkChangeRandoVars
+
 	ld a,(wKeysJustPressed)
 	ld c,a
+
 	ld hl,wFileSelect.cursorPos
 	ld a,$ff
 	bit BTN_BIT_UP,c
@@ -10908,5 +10911,8 @@ _runFakeReset:
 	ld hl,wMenuLoadState
 	inc (hl)
 	jp fadeoutToWhite
+
+
+.include "code/rando/fileSelect.s"
 
 .ENDS

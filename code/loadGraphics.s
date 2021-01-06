@@ -51,6 +51,11 @@ refreshDirtyPalettes:
 	; h = >w2FadingBgPalettes (or equivalently, >w2FadingSprPalettes)
 	inc h
 +
+	; RANDO: Check if GBA-mode palettes should be disabled
+	ldh a,(<hRandoVars)
+	and $08
+	jr nz,@gbcMode
+
 	ldh a,(<hGameboyType)
 	inc a
 	jr nz,@gbcMode

@@ -30,6 +30,8 @@ init:
 	ld b,hramEnd-hActiveFileSlot
 	call clearMemory
 
+	call randoOnStartup
+
 	; Clear all memory after the stacks
 	ld hl,wThread3StackTop
 	ld bc,$dfff-wThread3StackTop
@@ -837,5 +839,8 @@ _secretXorCipher:
 	.db $28 $13 $34 $32 $01 $0b $0a $35
 	.db $0e $1b $12 $2c $21 $2d $25 $30
 	.db $19 $2a $06 $39 $3c $17 $33 $18
+
+
+.include "code/rando/startup.s"
 
 .ends

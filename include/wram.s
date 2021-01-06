@@ -3579,3 +3579,18 @@ w6SpecialObjectGfxBuffer:	dsb $100	; $d600
 ; $d5e0: Used at some point for unknown purpose
 
 .define w7d800			$d800 ; $300 bytes? Secret text gets written here?
+
+
+
+
+; RANDO: Save files are stored in SRAM starting at $a010, meaning $a000-$a00f are free space (I'm
+; pretty sure?) so this is a good place to store file-independent configuration. However it can't be
+; accessed while sram is locked. Currently this works the same as jangler's original randomizer.
+
+; 4 byte string, if this matches the expected value then sram is considered initialized.
+.define sramMagicString $a008
+
+; This is copied to hSramRandoVars.
+; Bit 3: Disable GBA-mode palette adjustment if set
+; Bit 2: Disable music if set
+.define sramRandoVars $a00f
