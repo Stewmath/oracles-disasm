@@ -145,6 +145,12 @@ _label_04_033:
 	ld (wActiveGroup),a
 	ld a,(wWarpDestRoom)
 	ld (wActiveRoom),a
+
+	; RANDO: In certain rooms, move animal companions to prevent softlocks
+.ifdef ROM_SEASONS
+	call updateAnimalSavePointForRando
+.endif
+
 	ld hl,w1Link.enabled
 	ld (hl),$03
 	ld a,(wWarpDestPos)
@@ -436,5 +442,8 @@ getLinkWarpQuadrant:
 	ret c
 	inc a
 	ret
+
+
+.include "code/rando/companionSavePoints.s"
 
 .ends
