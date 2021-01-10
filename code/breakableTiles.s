@@ -247,6 +247,18 @@ func_483d:
 	call decideItemDrop
 	jr z,@done
 
+	; RANDO: 25% chance to replace item drops from destroyed tiles with gale seeds, if you have
+	; none. Just to be nice, since warping out of one-ways is in logic in Seasons.
+	ld a,TREASURE_GALE_SEEDS
+	call checkTreasureObtained
+	jr nc,++
+	or a ; Number of gale seeds
+	jr nz,++
+	call getRandomNumber
+	cp $40
+	jr nc,++
+	ld c,$08
+++
 	call getFreePartSlot
 	jr nz,@done
 
