@@ -49,10 +49,6 @@ randoInitializeFile:
 	ld (wPastRoomFlags+$00),a ; d8 entrance
 	ld (wPastRoomFlags+$29),a ; temple of seasons "gate"
 	ld (wPastRoomFlags+$2a),a ; winter tower
-	
-	; room flag 0
-	ld a,$01
-	ld (wPresentRoomFlags+$01),a ; flag determines whether flower/rock tile exists (d6)
 
 	; Initial satchel / slingshot / seed shooter selection
 	ld a,(randovar_initialSeedType)

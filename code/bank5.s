@@ -7600,8 +7600,55 @@ _checkLinkJumpingOffCliff:
 	push hl
 	call objectGetRelativeTile
 	ldh (<hFF8B),a
+
+	; RANDO: Special-case exceptions allowing Link to jump down the ledge at the Seasons D7
+	; entrance, and down the snow mound in the modified room layout in woods of winder.
+.ifdef ROM_SEASONS
+	push af
+	ld a,(wActiveGroup)
+	or a
+	jr nz,@done
+
+	ld a,(wActiveRoom)
+	cp <ROOM_SEASONS_0d0 ; D7 entrance
+	jr nz,@notD7Entrance
+	pop af
+	cp $a8 ; Right-side ledge
+	jr nz,+
+	ld a,ANGLE_RIGHT
+	scf
+	jr @gotValue
++
+	cp $b9 ; Bottom-side ledge
+	jr nz,@doneNoPop
+	ld a,ANGLE_DOWN
+	scf
+	jr @gotValue
+
+
+@notD7Entrance:
+	cp <ROOM_SEASONS_09d ; Woods of Winter
+	jr nz,@done
+	pop af
+	cp $99 ; Left snow tile
+	jr z,@snowJump
+	cp $9b ; Right snow tile
+	jr nz,@doneNoPop
+@snowJump:
+	ld a,ANGLE_DOWN
+	scf
+	jr @gotValue
+
+@done:
+	pop af
+@doneNoPop:
+
+.endif
+
 	ld hl,cliffTilesTable
 	call lookupCollisionTable
+
+@gotValue:
 	pop hl
 	ret nc
 

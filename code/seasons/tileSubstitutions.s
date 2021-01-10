@@ -1,5 +1,6 @@
 ; TODO: Synchronize with Ages version of file
 applyAllTileSubstitutions:
+	call applyRandoTileChanges
 	call applySingleTileChanges
 	call applyStandardTileSubstitutions
 	call replaceOpenedChest
@@ -245,3 +246,4 @@ applyStandardTileSubstitutions:
 	.db $00
 
 .include "code/commonTileSubstitutions.s"
+.include "code/rando/tileSubstitutions.s"

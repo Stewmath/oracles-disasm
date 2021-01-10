@@ -107,6 +107,20 @@ tryToBreakTile_body:
 @setTile:
 	call setTile
 
+	; RANDO: On the screen before Seasons D6 entrance, make the spring flower disappear permanently
+	; by setting a bit when it's destroyed. (This bit will be checked elsewhere.)
+.ifdef ROM_SEASONS
+	ld bc,$0100
+	call compareRoom
+	jr nz,+
+	ldh a,(<hFF93) ; Position
+	cp $52
+	jr nz,+
+	call getThisRoomFlags
+	set 0,(hl)
++
+.endif
+
 @doneSettingTile:
 	ldh a,(<hFF92)
 
