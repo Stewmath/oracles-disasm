@@ -26,6 +26,8 @@
 ;        pushed to the left without shovel.
 ; - 07f: Holly's house, winter version. Removed snow pile outside so that shovel isn't required to
 ;        leave.
+; - 056: Natzu region, Ricky/Moosh versions. Removed switch tile to prevent waterway from being
+;        blocked (although really it's the removal of the interaction that prevents it).
 
 applyRandoTileChanges:
 	ld a,(wActiveGroup)
