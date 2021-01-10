@@ -15910,3 +15910,13 @@ groups:
       memory, so I
       cannot give
       shape to it.
+
+
+# RANDO: New text group for miscellaneous stuff
+- group: 0x56
+  data:
+  - name: TX_RANDO_WARNCLIFF
+    index: auto
+    text: |-
+      If you go down there, you won't be able to get back up.\stop
+      You may get stuck!

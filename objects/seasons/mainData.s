@@ -1240,6 +1240,7 @@ group0Map39ObjectData:
 	obj_End
 
 group0Map3cObjectData:
+	obj_Interaction $61 $00 $20 $78 ; RANDO: Mt Cucco waterfall warning
 	obj_End
 
 group0Map89ObjectData:
@@ -1582,6 +1583,8 @@ group0Map37ObjectData:
 
 group0Map3dObjectData:
 	obj_Interaction $1f $08 $68 $68
+	obj_Interaction $61 $00 $20 $18 ; RANDO: Mt Cucco waterfall warnings
+	obj_Interaction $61 $00 $20 $58
 	obj_End
 
 group0Map44ObjectData:

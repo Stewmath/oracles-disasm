@@ -331,7 +331,7 @@ interactionCodeTable: ; $3b8b
 	.dw seasonsInteractionsBank09.interactionCode5e ; 0x5e
 	.dw seasonsInteractionsBank09.interactionCode5f ; 0x5f
 	.dw       treasureInteraction.interactionCode60 ; 0x60
-	.dw                           interactionDelete ; 0x61
+	.dw seasonsInteractionsBank09.interactionCode61 ; 0x61 ; RANDO: Warning message
 	.dw seasonsInteractionsBank09.interactionCode62 ; 0x62
 	.dw seasonsInteractionsBank09.interactionCode63 ; 0x63
 	.dw seasonsInteractionsBank09.interactionCode64 ; 0x64

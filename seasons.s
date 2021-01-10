@@ -531,3 +531,7 @@ oamData_15_4e0c:
 
 	.include "code/rando/bank3f.s"
 .ends
+
+
+; Randomizer stuff that sets the section on its own
+.include "code/rando/warningObject.s"

@@ -2902,4 +2902,9 @@
 ;;
 .define INTERACID_LONE_ZORA		$e7
 
+
+;;
+; RANDO: Warning message for various potential softlock situations.
+.define INTERACID_RANDO_WARNING_MESSAGE $61
+
 .endif

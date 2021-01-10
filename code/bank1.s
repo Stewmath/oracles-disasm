@@ -5657,6 +5657,21 @@ checkRoomPackAfterWarp_body:
 	ld (wRoomStateModifier),a
 	ret
 
+
+;;
+; RANDO: Helper function to check the default season for a room pack.
+;
+; @param	b	Room pack
+; @param[out]	b	Default season
+readDefaultSeason:
+	push hl
+	ld hl,roomPackSeasonTable
+	ld a,b
+	rst_addAToHl
+	ld b,(hl)
+	pop hl
+	ret
+
 .else ; ROM_AGES
 
 ;;
