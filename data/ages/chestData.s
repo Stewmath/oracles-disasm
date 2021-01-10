@@ -1,4 +1,4 @@
- m_section_free "chestData" NAMESPACE chestData
+ m_section_free chestData NAMESPACE chestData
 
 ; m_ChestData macro takes 3 parameters:
 ;   1: Y/X position of chest (byte); an opened chest tile will be placed here when the room is

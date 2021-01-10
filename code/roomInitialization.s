@@ -1,4 +1,4 @@
- m_section_superfree "roomInitialization" NAMESPACE roomInitialization
+ m_section_superfree roomInitialization NAMESPACE roomInitialization
 
 ; Most functions in this file are called from the "initializeRoom" function in bank
 ; 0 (perhaps indirectly).

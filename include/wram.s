@@ -6,7 +6,7 @@
 ; The RAMSECTION names are referenced in the linkfiles (linkfile_ages, linkfile_seasons) in order to
 ; place them at the correct addresses. Their banks and slots are also set in the linkfile.
 
-.RAMSECTION "Wram0_c000"
+.RAMSECTION Wram0_c000
 
 wMusicReadFunction: ; $c000
 ; Function copied to RAM to read a byte from another bank.
@@ -128,7 +128,7 @@ wChannelVolumes: ; $c07d
 
 ; TODO: Make this a ramsection. Currently it creates annoying warnings when made a ramsection due to
 ; some strange arithmetic done between slots; the warning needs to be muted in wla-dx.
-;.RAMSECTION "Wram0_c0a0"
+;.RAMSECTION Wram0_c0a0
 .ENUM $c0a0
 
 wMusicQueue: ; $c0a0
@@ -192,7 +192,7 @@ wThreadStateBuffer: ; $c2e0
 .define wPaletteThread_fadeOffset	wThreadStateBuffer + $1f ; $c2ff
 
 
-.RAMSECTION "Wram0_c300"
+.RAMSECTION Wram0_c300
 
 wBigBuffer: ; $c300
 ; General purpose $100 byte buffer. This has several, mutually exclusive uses:
@@ -316,7 +316,7 @@ wPuddleAnimationPointer: ; $c4ba
 .ENDS
 
 
-.RAMSECTION "Wram0_c4c0"
+.RAMSECTION Wram0_c4c0
 
 wTerrainEffectsBuffer: ; $c4c0
 ; This might only be used for drawing objects' shadows, though in theory it could also be
@@ -343,7 +343,7 @@ wObjectsToDraw: ; $c500
 ; Everything from this point ($c5b0) up to $caff goes into the save data ($550 bytes).
 ; ========================================================================================
 
-.RAMSECTION "Wram0_c5b0"
+.RAMSECTION Wram0_c5b0
 
 wFileStart: ; $c5b0
 ; Start of file data (same address as checksum)
@@ -363,7 +363,7 @@ wSavefileString: ; $c5b2
 .ENDS
 
 
-.RAMSECTION "Wram0_c5c0"
+.RAMSECTION Wram0_c5c0
 
 wUnappraisedRings: ; $c5c0
 ; List of unappraised rings. each byte always seems to have bit 6 set, indicating that the
@@ -899,7 +899,7 @@ wSecretType: ; $c6fe
 .define wSeedsAndHarpSongsObtained	wObtainedTreasureFlags+TREASURE_EMBER_SEEDS/8
 
 
-.RAMSECTION "Wram0_c700"
+.RAMSECTION Wram0_c700
 
 ; Flags shared for above water and underwater
 wPresentRoomFlags: ; $c700
@@ -931,7 +931,7 @@ wGroup5Flags: ; $ca00
 ; $cb00: END of data that goes into the save file
 ; ========================================================================================
 
-.RAMSECTION "Wram0_cb00"
+.RAMSECTION Wram0_cb00
 
 wOam: ; $cb00
 	dsb $a0
@@ -1535,7 +1535,7 @@ wAItemDisplayMode: ; $cbf3
 .ENDS
 
 
-.RAMSECTION "Wram0_cc00"
+.RAMSECTION Wram0_cc00
 
 wcc00Block: ; $cc00
 	.db
@@ -1628,7 +1628,7 @@ wcc1e: ; -/$cc1e
 ; Seasons: Starts at $cc3b. Appended to "Wram0_FloatingSection2" section.
 ;          (Addrs $cc1f-$cc3a are used but defined later, in the aforementioned section.)
 
-.RAMSECTION "Wram0_FloatingSection1"
+.RAMSECTION Wram0_FloatingSection1
 
 wcc1f: ; $cc1f/$cc3b
 ; Used in Seasons during a cutscene?
@@ -2386,7 +2386,7 @@ wcce9: ; $cce9
 .define wScreenVariables.size $30
 
 
-.RAMSECTION "Wram0_cd00"
+.RAMSECTION Wram0_cd00
 
 wScreenVariables: ; $cd00
 	.db
@@ -2544,7 +2544,7 @@ wDeleteEnergyBeads: ; $cd2d
 .ENDS
 
 
-.RAMSECTION "Wram0_cd30"
+.RAMSECTION Wram0_cd30
 
 wAnimationState: ; $cd30
 ; Bits 0-3 determine whether to use animation data 1-4
@@ -2575,7 +2575,7 @@ wAnimationPointer4: ; $cd3b
 .ENDS
 
 
-.RAMSECTION "Wram0_cd40"
+.RAMSECTION Wram0_cd40
 
 wTmpVramBuffer: ; $cd40
 ; Used temporarily for vram transfers, dma, etc.
@@ -2598,7 +2598,7 @@ wStaticObjects: ; $cd80
 ; Ages: Starts at $cdc0. Appended to "Wram0_cd40" section just above
 ; Seasons: Starts at $cc1f. Appended to "Wram0_cc00" section from a bit earlier.
 
-.RAMSECTION "Wram0_FloatingSection2"
+.RAMSECTION Wram0_FloatingSection2
 
 wEnemiesKilledList: ; $cdc0/$cc1f
 ; This remembers the enemies that have been killed in the last 8 visited rooms.
@@ -2711,7 +2711,7 @@ wcde3: ; $cde3
 .ENDS
 
 
-.RAMSECTION "Wram0_ce00"
+.RAMSECTION Wram0_ce00
 
 wRoomCollisions: ; $ce00
 ; $10 bytes larger than it needs to be?
@@ -2733,7 +2733,7 @@ wEnemyPlacement: instanceof EnemyPlacementStruct
 .ENDS
 
 
-.RAMSECTION "Wram0_cee0"
+.RAMSECTION Wram0_cee0
 
 .union
 	wShootingGalleryTileLayoutsToShow: ; $cee0
@@ -2758,7 +2758,7 @@ wEnemyPlacement: instanceof EnemyPlacementStruct
 
 
 
-.RAMSECTION "Wram0_cf00"
+.RAMSECTION Wram0_cf00
 
 wRoomLayout: ; $cf00
 ; $10 bytes larger than it needs to be; the row below the last row is reserved and filled
@@ -3256,7 +3256,7 @@ wRoomLayoutEnd: ; $cfc0
 ; Bank 2: used for palettes & other things
 ; ========================================================================================
 
-.RAMSECTION "RAM 2" BANK 2 SLOT 3
+.RAMSECTION RAM_2 BANK 2 SLOT 3
 
 ; $d000 used as part of the routine for redrawing the collapsed d2 cave in the present
 w2TmpGfxBuffer:			dsb $0800
@@ -3326,7 +3326,7 @@ w2FadingSprPalettes:	dsb $40		; $dfc0
 ; Bank 3: tileset data
 ; ========================================================================================
 
-.RAMSECTION "RAM 3" BANK 3 SLOT 3
+.RAMSECTION RAM_3 BANK 3 SLOT 3
 
 ; 8 bytes per tile: 4 for tile indices, 4 for tile attributes
 w3TileMappingData:	dsb $800	; $d000
@@ -3365,7 +3365,7 @@ wxSeedTreeRefillData:		dsb NUM_SEED_TREES*8 ; 2:d900/3:dfc0
 ; Bank 4
 ; ========================================================================================
 
-.RAMSECTION "Ram 4" BANK 4 SLOT 3
+.RAMSECTION Ram_4 BANK 4 SLOT 3
 
 .union
 	w4RandomBuffer:		dsb $100	; $d000-$d0ff
@@ -3410,7 +3410,7 @@ w4GfxBuf2:			dsb $200	; $de00
 ; Bank 5
 ; ========================================================================================
 
-.RAMSECTION "Ram 5" BANK 5 SLOT 3
+.RAMSECTION Ram_5 BANK 5 SLOT 3
 
 w5NameEntryCharacterGfx:	dsb $100	; $d000
 
@@ -3420,7 +3420,7 @@ w5NameEntryCharacterGfx:	dsb $100	; $d000
 ; Bank 6
 ; ========================================================================================
 
-.RAMSECTION "Ram 6" BANK 6 SLOT 3
+.RAMSECTION Ram_6 BANK 6 SLOT 3
 
 w6Filler1:			dsb $600
 
