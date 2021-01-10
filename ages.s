@@ -37,7 +37,7 @@
 	.include "code/bank2.s"
 	.include "code/roomInitialization.s"
 
-	 m_section_free "roomGfxChanges" NAMESPACE "roomGfxChanges"
+	 m_section_free roomGfxChanges NAMESPACE roomGfxChanges
 		.include "code/ages/roomGfxChanges.s"
 	.ends
 
@@ -51,7 +51,7 @@
 
 	; This section could probably be made superfree in Ages, but this isn't the case in Seasons,
 	; so let's just play it safe and leave it as "free".
-	 m_section_free "Bank_3_Cutscenes" NAMESPACE "bank3Cutscenes"
+	 m_section_free Bank_3_Cutscenes NAMESPACE bank3Cutscenes
 		.include "code/bank3Cutscenes.s"
 		.include "code/ages/cutscenes/endgameCutscenes.s"
 		.include "code/ages/cutscenes/miscCutscenes.s"
@@ -64,23 +64,23 @@
 
 	.include "code/bank4.s"
 
-	 m_section_superfree "RoomPacksAndMusicAssignments" NAMESPACE "bank4Data1"
+	 m_section_superfree RoomPacksAndMusicAssignments NAMESPACE bank4Data1
 		; These 2 includes must be in the same bank
 		.include "build/data/roomPacks.s"
 		.include "build/data/musicAssignments.s"
 	.ends
 
-	 m_section_superfree "RoomLayouts" NAMESPACE "roomLayouts"
+	 m_section_superfree RoomLayouts NAMESPACE roomLayouts
 		.include "build/data/roomLayoutGroupTable.s"
 	.ends
 
 	; Must be in the same bank as "Tileset_Loading_2".
-	 m_section_free "Tileset_Loading_1" NAMESPACE "tilesets"
+	 m_section_free Tileset_Loading_1 NAMESPACE tilesets
 		.include "build/data/tilesets.s"
 		.include "build/data/tilesetAssignments.s"
 	.ends
 
-	 m_section_free "animationAndUniqueGfxData" NAMESPACE "animationAndUniqueGfxData"
+	 m_section_free animationAndUniqueGfxData NAMESPACE animationAndUniqueGfxData
 		.include "code/animations.s"
 
 		.include "build/data/uniqueGfxHeaders.s"
@@ -90,19 +90,19 @@
 		.include "build/data/animationData.s"
 	.ends
 
-	 m_section_free "roomTileChanges" NAMESPACE "roomTileChanges"
+	 m_section_free roomTileChanges NAMESPACE roomTileChanges
 		.include "code/ages/tileSubstitutions.s"
 		.include "build/data/singleTileChanges.s"
 		.include "code/ages/roomSpecificTileChanges.s"
 	.ends
 
-	 m_section_free "Tileset_Loading_2" NAMESPACE "tilesets"
+	 m_section_free Tileset_Loading_2 NAMESPACE tilesets
 		.include "code/loadTilesToRam.s"
 		.include "code/ages/loadTilesetData.s"
 	.ends
 
 		; Must be in same bank as "code/bank4.s"
-	 m_section_free "Warp_Data" NAMESPACE "bank4"
+	 m_section_free Warp_Data NAMESPACE bank4
 		.include "build/data/warpData.s"
 	.ends
 
@@ -112,7 +112,7 @@
 .BANK $05 SLOT 1
 .ORG 0
 
-	 m_section_free "Bank_5" NAMESPACE bank5
+	 m_section_free Bank_5 NAMESPACE bank5
 		.include "code/bank5.s"
 
 		.include "build/data/tileTypeMappings.s"
@@ -126,7 +126,7 @@
 .ORG 0
 
 
- m_section_free "Bank_6" NAMESPACE bank6
+ m_section_free Bank_6 NAMESPACE bank6
 
 	.include "code/interactableTiles.s"
 	.include "code/specialObjectAnimationsAndDamage.s"
@@ -185,17 +185,17 @@ specialObjectLoadAnimationFrameToBuffer:
 .BANK $07 SLOT 1
 .ORG 0
 
-	 m_section_superfree "File_Management" namespace "fileManagement"
+	 m_section_superfree File_Management namespace fileManagement
 		.include "code/fileManagement.s"
 	.ends
 
 	 ; This section can't be superfree, since it must be in the same bank as section
 	 ; "Bank_7_Data".
-	 m_section_free "Enemy_Part_Collisions" namespace "bank7"
+	 m_section_free Enemy_Part_Collisions namespace bank7
 		.include "code/collisionEffects.s"
 	.ends
 
-	 m_section_superfree "Item_Code" namespace "itemCode"
+	 m_section_superfree Item_Code namespace itemCode
 		.include "code/updateItems.s"
 
 		.include "build/data/itemConveyorTilesTable.s"
@@ -208,7 +208,7 @@ specialObjectLoadAnimationFrameToBuffer:
 
 	 ; This section can't be superfree, since it must be in the same bank as section
 	 ; "Enemy_Part_Collisions".
-	 m_section_free "Bank_7_Data" namespace "bank7"
+	 m_section_free Bank_7_Data namespace bank7
 		.include "build/data/enemyActiveCollisions.s"
 		.include "build/data/partActiveCollisions.s"
 		.include "build/data/objectCollisionTable.s"
@@ -257,7 +257,7 @@ specialObjectLoadAnimationFrameToBuffer:
 .ORG 0
 
 	; TODO: "SIMPLE_SCRIPT_BANK" define should be tied to this section somehow
-	 m_section_free "Scripts" namespace "mainScripts"
+	 m_section_free Scripts namespace mainScripts
 		.include "code/scripting.s"
 		.include "scripts/ages/scripts.s"
 	.ends
@@ -339,7 +339,7 @@ specialObjectLoadAnimationFrameToBuffer:
 	.define PART_BANK $11
 	.export PART_BANK
 
- m_section_free "Bank_11" NAMESPACE "partCode"
+ m_section_free Bank_11 NAMESPACE partCode
 
 	.include "code/partCommon.s"
 	.include "object_code/common/partCode.s"
@@ -355,27 +355,27 @@ specialObjectLoadAnimationFrameToBuffer:
 
 	.include "code/objectLoading.s"
 
- m_section_superfree "Room_Code" namespace "roomSpecificCode"
+ m_section_superfree Room_Code namespace roomSpecificCode
 
 	.include "code/ages/roomSpecificCode.s"
 
 .ends
 
- m_section_free "Objects_2" namespace "objectData"
+ m_section_free Objects_2 namespace objectData
 
 	.include "objects/ages/mainData.s"
 	.include "objects/ages/extraData3.s"
 
 .ends
 
- m_section_superfree "Underwater Surface Data" namespace "underwaterSurfacing"
+ m_section_superfree Underwater_Surface_Data namespace underwaterSurfacing
 
 	.include "code/ages/underwaterSurfacing.s"
 	.include "data/ages/underwaterSurfaceData.s"
 
 .ENDS
 
- m_section_free "Objects_3" namespace "objectData"
+ m_section_free Objects_3 namespace objectData
 
 	.include "objects/ages/extraData4.s"
 
@@ -396,7 +396,7 @@ specialObjectLoadAnimationFrameToBuffer:
 .BANK $14 SLOT 1
 .ORG 0
 
- m_section_superfree "Terrain_Effects" NAMESPACE "terrainEffects"
+ m_section_superfree Terrain_Effects NAMESPACE terrainEffects
 	.include "data/terrainEffects.s"
 .ends
 
@@ -409,7 +409,7 @@ specialObjectLoadAnimationFrameToBuffer:
 
 	.include "scripts/common/scriptHelper.s"
 
-	 m_section_free "Object_Pointers" namespace "objectData"
+	 m_section_free Object_Pointers namespace objectData
 
 	;;
 	getObjectDataAddress:
@@ -434,7 +434,7 @@ specialObjectLoadAnimationFrameToBuffer:
 
 	.ENDS
 
-	 m_section_free "Bank_15_2" NAMESPACE scriptHelp
+	 m_section_free Bank_15_3 NAMESPACE scriptHelp
 		.include "scripts/ages/scriptHelper.s"
 	.ends
 
@@ -569,15 +569,15 @@ loadD6ChangingFloorPatternToBigBuffer:
 .BANK $19 SLOT 1
 .ORG 0
 
- m_section_free "Gfx_19_1" ALIGN $10
+ m_section_free Gfx_19_1 ALIGN $10
 	.include "build/data/gfxDataBank19_1.s"
 .ends
 
- m_section_superfree "Tile_mappings"
+ m_section_superfree Tile_mappings
 	.include "build/data/tilesetMappings.s"
 .ends
 
- m_section_free "Gfx_19_2" ALIGN $10
+ m_section_free Gfx_19_2 ALIGN $10
 	.include "build/data/gfxDataBank19_2.s"
 .ends
 
@@ -586,7 +586,7 @@ loadD6ChangingFloorPatternToBigBuffer:
 .ORG 0
 
 
- m_section_free "Gfx_1a" ALIGN $20
+ m_section_free Gfx_1a ALIGN $20
 	.include "data/gfxDataBank1a.s"
 .ends
 
@@ -594,7 +594,7 @@ loadD6ChangingFloorPatternToBigBuffer:
 .BANK $1b SLOT 1
 .ORG 0
 
- m_section_free "Gfx_1b" ALIGN $20
+ m_section_free Gfx_1b ALIGN $20
 	.include "data/gfxDataBank1b.s"
 .ends
 

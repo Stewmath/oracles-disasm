@@ -3,21 +3,21 @@ build/seasons.o
 build/audio.o
 
 [ramsections]
-bank 0 slot $c000 orga $c000 "Wram0_c000"
-bank 0 slot $c000 orga $c300 "Wram0_c300"
-bank 0 slot $c000 orga $c4c0 "Wram0_c4c0"
-bank 0 slot $c000 orga $c5b0 "Wram0_c5b0"
-bank 0 slot $c000 orga $c5c0 "Wram0_c5c0"
-bank 0 slot $c000 orga $c700 "Wram0_c700"
-bank 0 slot $c000 orga $cb00 "Wram0_cb00"
-bank 0 slot $c000 orga $cc00 "Wram0_cc00"
-bank 0 slot $c000 orga $cd00 "Wram0_cd00"
-bank 0 slot $c000 orga $cd30 "Wram0_cd30"
-bank 0 slot $c000 orga $cd40 "Wram0_cd40"
-bank 0 slot $c000 orga $ce00 "Wram0_ce00"
-bank 0 slot $c000 orga $cee0 "Wram0_cee0"
-bank 0 slot $c000 orga $cf00 "Wram0_cf00"
+bank 0 slot $c000 orga $c000 Wram0_c000
+bank 0 slot $c000 orga $c300 Wram0_c300
+bank 0 slot $c000 orga $c4c0 Wram0_c4c0
+bank 0 slot $c000 orga $c5b0 Wram0_c5b0
+bank 0 slot $c000 orga $c5c0 Wram0_c5c0
+bank 0 slot $c000 orga $c700 Wram0_c700
+bank 0 slot $c000 orga $cb00 Wram0_cb00
+bank 0 slot $c000 orga $cc00 Wram0_cc00
+bank 0 slot $c000 orga $cd00 Wram0_cd00
+bank 0 slot $c000 orga $cd30 Wram0_cd30
+bank 0 slot $c000 orga $cd40 Wram0_cd40
+bank 0 slot $c000 orga $ce00 Wram0_ce00
+bank 0 slot $c000 orga $cee0 Wram0_cee0
+bank 0 slot $c000 orga $cf00 Wram0_cf00
 
 ; TODO: Use "appendto" instead of "orga". I'll do this when a new stable wla-dx version is released.
-bank 0 slot $c000 orga $cc1f "Wram0_FloatingSection2"
-bank 0 slot $c000 orga $cc3b "Wram0_FloatingSection1"
+bank 0 slot $c000 orga $cc1f Wram0_FloatingSection2
+bank 0 slot $c000 orga $cc3b Wram0_FloatingSection1

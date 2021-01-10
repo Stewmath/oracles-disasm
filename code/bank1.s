@@ -1,4 +1,4 @@
- m_section_free "Bank_1_Code_1" NAMESPACE "bank1"
+ m_section_free Bank_1_Code_1 NAMESPACE bank1
 
 ;;
 func_4000:
@@ -2582,7 +2582,7 @@ cutscene19:
 
 .ENDS
 
- m_section_free "Bank_1_Data_1" NAMESPACE "bank1"
+ m_section_free Bank_1_Data_1 NAMESPACE bank1
 
 .include "build/data/dungeonData.s"
 .include "data/dungeonProperties.s"
@@ -2590,7 +2590,7 @@ cutscene19:
 
 .ends
 
- m_section_free "Bank_1_Code_2" NAMESPACE "bank1"
+ m_section_free Bank_1_Code_2 NAMESPACE bank1
 
 ;;
 ; Load 8 bytes into wDungeonMapData and up to $100 bytes into w2DungeonLayout.
@@ -5426,7 +5426,7 @@ _warpTileTable:
 
 
 ; This is superfree (bank can change) so namespace should be different from the others
- m_section_superfree "Bank_1_Data_2" NAMESPACE "bank1Moveable"
+ m_section_superfree Bank_1_Data_2 NAMESPACE bank1Moveable
 
 	.include "build/data/paletteHeaders.s"
 	.include "build/data/uncmpGfxHeaders.s"
@@ -5436,7 +5436,7 @@ _warpTileTable:
 .ends
 
 
- m_section_free "Bank_1_Code_3" NAMESPACE "bank1"
+ m_section_free Bank_1_Code_3 NAMESPACE bank1
 
 .ifdef ROM_AGES
 ;;
