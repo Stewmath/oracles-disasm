@@ -444,6 +444,9 @@ interactionCode5f:
 ;;
 ; Check if the first 2 tiles near the edge of the screen are walkable for a companion.
 ;
+; RANDO: Modified this function & the version below to allow wide bridge tiles & stairs to be valid
+; tiles for companions to spawn on (mainly for the seasons D1 entrance screen).
+;
 ; @param	hl	Address in wRoomCollisions to start at
 ; @param[out]	bc	Position to spawn at
 ; @param[out]	zflag	z if the companion can spawn from there
@@ -459,13 +462,13 @@ interactionCode5f:
 	ld b,$01
 ++
 	ld a,(hl)
-	or a
+	call checkCompanionCanSpawnOnCollision
 	ret nz
 	ld a,l
 	add b
 	ld l,a
 	ld a,(hl)
-	or a
+	call checkCompanionCanSpawnOnCollision
 	ld a,l
 	ret nz
 	call convertShortToLongPosition
@@ -498,7 +501,7 @@ interactionCode5f:
 
 @@nextRowOrColumn:
 	ld a,(hl)
-	or a
+	call checkCompanionCanSpawnOnCollision2
 	jr z,@@tryThisRowOrColumn
 
 @@resumeSearch:
@@ -516,7 +519,7 @@ interactionCode5f:
 	add e
 	ld l,a
 	ld a,(hl)
-	or a
+	call checkCompanionCanSpawnOnCollision2
 	ld a,l
 	jr z,@@foundRowOrColumn
 	sub e
@@ -556,3 +559,36 @@ interactionCode5f:
 .include "build/data/companionCallableRooms.s"
 
 
+;;
+; RANDO: Allow companions to spawn on wide bridges & stairs.
+;
+; @param	a	Collision value
+; @param	b	$01 for horizontal, $10 for vertical
+; @param[out]	zflag	z if the companion can spawn on it
+checkCompanionCanSpawnOnCollision:
+	or a
+	ret z
+	cp SPECIALCOLLISION_STAIRS
+	ret z
+	bit 0,b
+	jr z,@vertical
+
+@horizontal:
+	cp SPECIALCOLLISION_HORIZONTAL_BRIDGE_LEFT
+	ret z
+	cp SPECIALCOLLISION_HORIZONTAL_BRIDGE_RIGHT
+	ret
+
+@vertical:
+	cp SPECIALCOLLISION_VERTICAL_BRIDGE_LEFT
+	ret z
+	cp SPECIALCOLLISION_VERTICAL_BRIDGE_RIGHT
+	ret
+
+;;
+checkCompanionCanSpawnOnCollision2:
+	push bc
+	ld b,e
+	call checkCompanionCanSpawnOnCollision
+	pop bc
+	ret

@@ -2122,9 +2122,8 @@ _companionInitializeOnEnteringScreen:
 ;
 ; @param	hl	Table of direction offsets
 _companionRetIfNotFinishedWalkingIn:
-	; Check that the tile in front has collision value 0
-	call _specialObjectGetRelativeTileWithDirectionTable
-	or a
+	; Check that the tile in front can be walked on
+	call randoCheckCompanionCanWalkInHere
 	ret nz
 
 	; Decrement counter2
@@ -11564,8 +11563,7 @@ _rickyStateC:
 
 	call _rickyBreakTilesOnLanding
 	ld hl,_rickyHoleCheckOffsets
-	call _specialObjectGetRelativeTileWithDirectionTable
-	or a
+	call randoCheckCompanionCanWalkInHere
 	jr nz,@initializeRicky
 	call itemDecCounter2
 	jr z,@initializeRicky
@@ -13779,3 +13777,26 @@ _specialObjectCode_raft:
 .ifdef ROM_AGES
 	jpab bank6.specialObjectCode_raft
 .endif
+
+
+;;
+; RANDO: Due to changes elsewhere, animal companions can spawn on wide bridge & stair tiles
+; (particularly the seasons D1 bridge). This function is also necessary to prevent them from
+; immediately stopping on bridges when they spawn in.
+; (Note: There is a small possibility that this could cause animal companions to walk through
+; bridges in the wrong direction. However I don't think there's any room layout that would cause
+; this to happen.)
+randoCheckCompanionCanWalkInHere:
+	call _specialObjectGetRelativeTileWithDirectionTable
+	or a
+	ret z
+	cp SPECIALCOLLISION_STAIRS
+	ret z
+	cp SPECIALCOLLISION_HORIZONTAL_BRIDGE_LEFT
+	ret z
+	cp SPECIALCOLLISION_HORIZONTAL_BRIDGE_RIGHT
+	ret z
+	cp SPECIALCOLLISION_VERTICAL_BRIDGE_LEFT
+	ret z
+	cp SPECIALCOLLISION_VERTICAL_BRIDGE_RIGHT
+	ret
