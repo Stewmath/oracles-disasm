@@ -58,7 +58,9 @@ dungeon8StaticObjects:
 	.db $03, $84, INTERACID_MINECART,      $00, $58, $28
 	.db $03, $88, INTERACID_MINECART,      $00, $38, $38
 	.db $03, $75, INTERACID_DUNGEON_STUFF, $05, $18, $38
-	.db $03, $8e, INTERACID_DUNGEON_STUFF, $05, $38, $48
+
+	; RANDO: Moved magnet ball 1 tile left, to allow the player to re-enter the staircase
+	.db $03, $8e, INTERACID_DUNGEON_STUFF, $05, $38, $38
 	.db $ff
 
 dungeon9StaticObjects:
