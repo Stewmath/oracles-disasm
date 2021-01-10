@@ -422,7 +422,7 @@ interactionCode21:
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
-	.dw interactionRunScript
+	.dw @state1
 	.dw @state2
 	.dw @state3
 	.dw @state4
@@ -438,6 +438,14 @@ interactionCode21:
 	call _func_5469
 	ld hl,mainScripts.gnarledKeyholeScript
 	jp interactionSetScript
+
+; RANDO: Forcibly disable warps. Fixes a vanilla bug where dismounting your companion resets the
+; "wDisableWarpTiles" variable to 0, allowing you to enter d1 before opening it.
+@state1:
+	ld a,1
+	ld (wDisableWarpTiles),a
+	jp interactionRunScript
+
 @state2:
 	call interactionIncState
 	ld l,$46
