@@ -480,6 +480,7 @@ group0Map5bObjectData:
 group0Map5cObjectData:
 	obj_Interaction $ab $00 $40 $70
 	obj_Part $2d $00 $33
+	obj_Interaction $61 $01 $58 $44 ; RANDO: Moblin Keep softlock warning
 	obj_End
 
 group0Map5dObjectData:
@@ -516,6 +517,7 @@ group0Map7bObjectData:
 
 group0Map7cObjectData:
 	obj_Interaction $9c $00 $58 $58
+	obj_Interaction $61 $04 $30 $58 ; RANDO: Natzu -> Woods of Winter cliff softlock warning
 	obj_End
 
 group0Map83ObjectData:
@@ -1203,6 +1205,7 @@ group0Map6dObjectData:
 group0Map6eObjectData:
 	obj_Interaction $1f $0d $68 $68
 	obj_Interaction $3e $31 $18 $68
+	obj_Interaction $61 $05 $64 $68 ; RANDO: Sunken city diving spot softlock warning
 	obj_End
 
 group0Map6fObjectData:
@@ -1506,6 +1509,7 @@ group0Map03ObjectData:
 
 group0Map05ObjectData:
 	obj_Pointer group0Map05EnemyObjectData
+	obj_Interaction $61 $03 $68 $58 ; RANDO: Temple Remains upper cliff softlock warning
 	obj_End
 
 group0Map06ObjectData:
@@ -1545,6 +1549,7 @@ group0Map24ObjectData:
 
 group0Map25ObjectData:
 	obj_Interaction $e1 $00 $28 $28
+	obj_Interaction $61 $02 $38 $38 ; RANDO: Temple Remains lower cliff softlock warning
 	obj_End
 
 objectData6bea: ; UNUSED?
@@ -3716,6 +3721,7 @@ group5Map77ObjectData:
 
 group5Map78ObjectData:
 	obj_Interaction $20 $09 $88 $98
+	obj_Interaction $61 $06 $88 $98 ; RANDO: HSS Skip softlock warning
 	obj_Pointer group5Map78EnemyObjectData
 	obj_End
 

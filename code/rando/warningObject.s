@@ -75,10 +75,16 @@ interactionCode61_body:
 	ld e,Interaction.subid
 	ld a,(de)
 	rst_jumpTable
-	.dw @subid0
+	.dw @subid00
+	.dw @subid01
+	.dw @subid02
+	.dw @subid03
+	.dw @subid04
+	.dw @subid05
+	.dw @subid06
 
 ; Warning for the ledges & waterfalls from mt. cucco to sunken city.
-@subid0:
+@subid00:
 	call @checkGaleSatchel
 	jr c,@delete
 	ld b,$15 ; sunken city / mt. cucco
@@ -87,9 +93,108 @@ interactionCode61_body:
 	jr z,@delete
 	ret
 
+; Warning for moblin keep cliff to Sunken
+@subid01:
+	call @checkGaleSatchel
+	jr c,@delete
+	ld a,(wAnimalCompanion)
+	cp SPECIALOBJECTID_DIMITRI
+	jr nz,@delete
+	ld a,TREASURE_FEATHER
+	call checkTreasureObtained
+	jr c,@delete
+	ret
+
+; Warning for the lower temple remains ledge (only exists in rando). This doesn't account for fall
+; skip because it gets very complicated and conditional.
+@subid02:
+	call @checkGaleSatchel
+	jr c,@delete
+	ld a,(wFeatherLevel)
+	or a
+	ret z
+	ld a,GLOBALFLAG_TEMPLE_REMAINS_FILLED_WITH_LAVA
+	call checkGlobalFlag
+	jr nz,@delete
+	ld b,$1c ; temple remains
+	ld c,1<<SEASON_AUTUMN
+	call @checkSeasonAccessInArea
+	ret nz
+	ld a,(wObtainedSeasons)
+	and 1<<SEASON_WINTER
+	jr nz,@delete
+	ret
+
+
 @delete:
 	pop bc ; Return from caller
 	jp interactionDelete
+
+
+; Warning for the upper temple remains ledge. This is dumb complicated just to figure out whether
+; the player can for sure get back up, and *technically* it assumes you can bomb jump across the
+; lava if you have feather.
+@subid03:
+	call @checkGaleSatchel
+	jr c,@delete
+	ld a,(wFeatherLevel)
+	or a
+	ret z
+	ld a,GLOBALFLAG_TEMPLE_REMAINS_FILLED_WITH_LAVA
+	call checkGlobalFlag
+	ret z
+	ld b,$1c ; temple remains
+	ld c,1<<SEASON_SUMMER
+	call @checkSeasonAccessInArea
+	ret nz
+	ld a,TREASURE_MAGNET_GLOVES
+	call checkTreasureObtained
+	jr c,@delete
+	ld a,(wFeatherLevel)
+	cp $02
+	ret c
+	ld a,TREASURE_SEED_SATCHEL
+	call checkTreasureObtained
+	ret nc
+	ld a,TREASURE_PEGASUS_SEEDS
+	call checkTreasureObtained
+	jr c,@delete
+	ret
+
+; Warning for the ledge from natzu to eastern suburbs.
+@subid04:
+	call @checkGaleSatchel
+	jr c,@delete
+	ld b,$11 ; eastern suburbs
+	ld c,1<<SEASON_SPRING
+	call @checkSeasonAccessInArea
+	jr z,@delete
+	ret
+
+; warning for the diving spot from sunken city to woods of winter.
+@subid05:
+	ld a,(wRoomStateModifier)
+	cp SEASON_WINTER
+	jr z,@delete
+	call @checkGaleSatchel
+	jr c,@delete
+	ld b,$11 ; eastern suburbs
+	ld c,(1<<SEASON_SPRING) | (1<<SEASON_WINTER) ; Must have both
+	call @checkSeasonAccessInArea
+	jr z,@delete
+	ret
+
+; Warning for small key softlock with HSS skip. Checks and sets room flags so as not to display the
+; warning more than once, ever.
+@subid06:
+	ld a,(wGroup5Flags + (<ROOM_SEASONS_586)) ; check if ice puzzle room is visited?
+	or a
+	jr nz,@delete
+	call getThisRoomFlags
+	bit 6,(hl)
+	jr nz,@delete
+	set 6,(hl)
+	ret
 
 
 @showText:
@@ -102,7 +207,13 @@ interactionCode61_body:
 	jp showText
 
 @textTable:
-	.db <TX_RANDO_WARNCLIFF
+	.db <TX_RANDO_WARNCLIFF ; $00
+	.db <TX_RANDO_WARNCLIFF ; $01
+	.db <TX_RANDO_WARNCLIFF ; $02
+	.db <TX_RANDO_WARNCLIFF ; $03
+	.db <TX_RANDO_WARNCLIFF ; $04
+	.db <TX_RANDO_WARNCLIFF ; $05
+	.db <TX_RANDO_WARNKEYS ; $06
 
 
 @disableInput:
