@@ -55,3 +55,32 @@ checkChangeRandoVars:
 	ldh (<hDirtyBgPalettes),a
 	ldh (<hDirtySprPalettes),a
 	ret
+
+
+;;
+; Queues a DMA transfer for the custom string to be displayed at the top of the file select screen.
+drawRandoFileSelectString:
+      ; first load custom font
+      ld b,$19 ; 26*16 bytes
+      ld c,:randoCustomFontLetters
+      ld de,$8e21
+      ld hl,randoCustomFontLetters
+      call queueDmaTransfer
+
+      ld b,3 ; 4*16 bytes
+      ld c,:randoCustomFontPunct
+      ld de,$8fc1
+      ld hl,randoCustomFontPunct
+      call queueDmaTransfer
+
+      ld b,3 ; 64 bytes
+      ld c,:randoFileSelectStringAttrs
+      ld de,$9c21
+      ld hl,randoFileSelectStringAttrs
+      call queueDmaTransfer
+
+      ld b,3 ; 64 bytes
+      ld c,:randoFileSelectStringTiles
+      ld de,$9c20
+      ld hl,randoFileSelectStringTiles
+      jp queueDmaTransfer
