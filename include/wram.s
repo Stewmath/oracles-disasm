@@ -1791,8 +1791,9 @@ wWarpDestVariables: ; $cc47/$cc63
 	.db
 
 wWarpDestGroup: ; $cc47/$cc63
-; Like wActiveGroup, except among other things, bit 7 can be set. Dunno what
-; that means.
+; Group to warp to. If bit 7 is set, you warp directly to "wWarpDestGroup"/"wWarpDestRoom". If it is
+; not set, then "wWarpDestRoom" is actually interpreted as an index for "warpDestTable"; the actual
+; room value is written there shortly afterward.
 	db
 wWarpDestRoom: ; $cc48/$cc64
 ; This first holds the warp destination index, then (later) the room index.
