@@ -3,8 +3,9 @@
 .define FORCE_SECTIONS
 
 ; Configuration settings that can be checked with "checkRandoConfig"
-.define RANDO_CONFIG_KEYSANITY,  $00
-.define RANDO_CONFIG_TREEWARP,   $01
+.define RANDO_CONFIG_KEYSANITY,         $00
+.define RANDO_CONFIG_TREEWARP,          $01
+.define RANDO_CONFIG_DUNGEON_ENTRANCES, $02 ; Dungeon entrances randomized
 
 ; Size of an item slot (data/rando/itemSlots.s)
 .define ITEM_SLOT_SIZE, 7

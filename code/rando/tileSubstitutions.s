@@ -41,12 +41,22 @@ applyRandoTileChanges:
 	call searchDoubleKey
 	ret nc
 
+	ld a,(hl)
+	cp $f3
+	jr nz,+
+
+	; Entrance Rando only
+	ld a,RANDO_CONFIG_DUNGEON_ENTRANCES
+	call checkRandoConfig
+	ret z
+	jr ++
++
 	push hl
 	call getThisRoomFlags
 	pop hl
 	and (hl)
 	ret z
-
+++
 	inc hl
 	ld d,>wRoomLayout
 	ld e,(hl)
@@ -58,6 +68,8 @@ applyRandoTileChanges:
 
 ; Single-tile change data format: group; room; flags; yx; tile.
 ; "flags" are usually $10 (ROOMFLAG_VISITED) which applies the change always.
+; If "flags" is $f3, then it is a special case which only applies when dungeon entrances are
+; randomized.
 @tileSubTable:
 
 .ifdef ROM_SEASONS
@@ -72,6 +84,8 @@ applyRandoTileChanges:
 	.db $00, $9a, $10, $34, $04 ; remove bush next to rosa portal
 	.db $00, $b0, $10, $21, $13 ; remove spool swamp pits to prevent winter softlock
 	.db $00, $b0, $10, $51, $13 ; cont.
+	.db $00, $8d, $f3, $18, $04 ; D2 alt entrance removal (entrance rando only)
+	.db $00, $8e, $f3, $12, $04 ; D2 alt entrance removal (entrance rando only)
 	.db $ff
 
 .else
