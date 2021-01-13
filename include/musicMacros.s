@@ -221,11 +221,11 @@
 
 ; 60/61: set wait counters.
 
-.macro wait1
+.macro rest
 	.db $60 \1
 .endm
 
-.macro wait2
+.macro rest2 ; Unused?
 	.db $61 \1
 .endm
 
