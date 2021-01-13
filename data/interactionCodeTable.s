@@ -465,5 +465,5 @@ interactionCodeTable: ; $3b8b
 	.dw seasonsInteractionsBank15.interactionCodee4 ; 0xe4
 	.dw       commonInteractions8.interactionCodee5 ; 0xe5
 	.dw seasonsInteractionsBank15.interactionCodee6 ; 0xe6
-	.dw seasonsInteractionsBank15.interactionCodee7 ; 0xe6
+	.dw seasonsInteractionsBank15.interactionCodee7 ; 0xe7
 .endif
