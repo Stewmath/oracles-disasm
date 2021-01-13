@@ -5,22 +5,58 @@
 soundd5Start:
 soundd5Channel2: ; D1 Chime
 	duty 2
-	vibrato $72
-	
+
 	vol 9
-	note b4 $06
+	note b4 $05
 	vol 3
-	note b4 $06
-	
+	note b4 $01
+
 	vol 9
-	note c5 $06
+	note as4 $05
 	vol 3
-	note c5 $06
-	
+	note as4 $01
+
 	vol 9
-	note cs5 $18
+	note gs4 $05
 	vol 3
-	note cs5 $06
+	note gs4 $01
+
+	vol 9
+	note fs4 $05
+	vol 3
+	note fs4 $01
+
+	vol 9
+	note f4  $05
+	vol 3
+	note f4  $01
+
+	rest 16
+
+	vol 9
+	note a4  $05
+	vol 3
+	note a4  $01
+
+	vol 9
+	note gs4 $05
+	vol 3
+	note gs4 $01
+
+	vol 9
+	note fs4 $05
+	vol 3
+	note fs4 $01
+
+	vol 9
+	note f4  $05
+	vol 3
+	note f4  $01
+
+	vol 9
+	note ds4 $05
+	vol 3
+	note ds4 $01
 	cmdff
 
 soundd6Start:
@@ -46,6 +82,13 @@ soundd6Channel2: ; D2 Chime
 	note d5 $06
 	vol 3
 	note d5 $06
+
+	rest $0c
+
+	vol 9
+	note c5 $06
+	vol 3
+	note c5 $06
 	cmdff
 
 soundd7Start:
@@ -76,6 +119,18 @@ soundd7Channel2: ; D3 Chime
 	note as4 $06
 	vol 3
 	note as4 $06
+
+	rest $0c
+
+	vol 9
+	note f5 $06
+	vol 3
+	note f5 $06
+
+	vol 9
+	note d5 $06
+	vol 3
+	note d5 $06
 	cmdff
 
 
@@ -171,46 +226,46 @@ sounddaChannel2: ; D6 Chime
 	duty 2
 
 	vol 9
-	note fs3 $06
+	note fs4 $06
 	vol 3
-	note fs3 $06
+	note fs4 $06
 
 	vol 9
-	note cs4 $06
+	note cs5 $06
 	vol 3
-	note cs4 $06
+	note cs5 $06
 
 	vol 9
-	note c4 $06
+	note c5 $06
 	vol 3
-	note c4 $06
+	note c5 $06
 
 	rest $0c
 
 	vol 9
-	note gs3 $05
+	note gs4 $05
 	vol 3
-	note gs3 $01
+	note gs4 $01
 
 	vol 9
-	note a3 $05
+	note a4 $05
 	vol 3
-	note a3 $01
+	note a4 $01
 
 	vol 9
-	note b3 $05
+	note b4 $05
 	vol 3
-	note b3 $01
+	note b4 $01
 
 	vol 9
-	note a3 $05
+	note a4 $05
 	vol 3
-	note a3 $01
+	note a4 $01
 
 	vol 9
-	note gs3 $06
+	note gs4 $06
 	vol 3
-	note gs3 $06
+	note gs4 $06
 	cmdff
 
 
